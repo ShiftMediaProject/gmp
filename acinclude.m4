@@ -102,12 +102,13 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
 ])dnl
 
 dnl  GMP_PROG_LIBTOOL
-dnl  Wrap [AC_PROG_LIBTOOL] to avoid the [AC_PROG_CC] problems.
+dnl  [ Wrap AC_PROG_LIBTOOL to avoid invoking AC_PROG_CC since AC_PROVIDE      ]
+dnl  [ in our own PROG_CC doesn't seem to have any effect.  FIXME: Find out    ]
+dnl  [ what's wrong with the AC_PROVIDE idea.                                  ]
 AC_DEFUN(GMP_PROG_LIBTOOL, [
-dnl  Save any variable that [AC_PROG_CC] may possibly set, invoke [AC_PROG_CC], and
-dnl  restore the variables.  Finally, invoke [AC_PROG_LIBTOOL].
-dnl  This is highly dependant on Autoconf version and
-dnl  generally a mess.
+dnl  [ Save any variables that AC_PROG_CC may possibly set, invoke AC_PROG_CC, ]
+dnl  [ and restore the variables.  Finally, invoke AC_PROG_LIBTOOL.	       ]
+dnl  [ This is highly dependant on Autoconf version and generally a mess.      ]
 gmp_save_CC=$CC
 gmp_save_CFLAGS=$CFLAGS
 gmp_save_ac_cv_prog_gcc=$ac_cv_prog_gcc
@@ -115,7 +116,9 @@ gmp_save_GCC=$GCC
 gmp_save_ac_cv_prog_cc_g=$ac_cv_prog_cc_g
 gmp_save_ac_cv_prog_cc_works=$ac_cv_prog_cc_works
 gmp_save_ac_cv_prog_cc_cross=$ac_cv_prog_cc_cross
+
 AC_PROG_CC
+
 CC=$gmp_save_CC
 CFLAGS=$gmp_save_CFLAGS
 ac_cv_prog_gcc=$gmp_save_ac_cv_prog_gcc
@@ -123,6 +126,7 @@ GCC=$gmp_save_GCC
 ac_cv_prog_cc_g=$gmp_save_ac_cv_prog_cc_g
 ac_cv_prog_cc_works=$gmp_save_ac_cv_prog_cc_works
 ac_cv_prog_cc_cross=$gmp_save_ac_cv_prog_cc_cross
+
 AC_PROG_LIBTOOL
 ])dnl
 
@@ -518,3 +522,7 @@ else
   ifelse([$4], , :, [$4])
 fi
 ])dnl
+
+dnl  Deal with bad synchronization of Autoconf with Libtool.
+AC_DEFUN(AC_CANONICAL_BUILD, [_AC_CANONICAL_BUILD])
+AC_DEFUN(AC_CHECK_TOOL_PREFIX, [_AC_CHECK_TOOL_PREFIX])
