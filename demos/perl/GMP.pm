@@ -132,9 +132,6 @@ GMP - Perl interface to the GNU Multiple Precision Arithmetic Library
 
 =head1 DESCRIPTION
 
-B<Note: Everything here is preliminary and may be subject to incompatible
-changes.>
-
 This module provides access to GNU MP arbitrary precision integers,
 rationals and floating point.
 
@@ -180,9 +177,9 @@ corresponding GMP mpz functions,
 bin, cdiv, cdiv_2exp, clrbit, congruent_p, congruent_2exp_p, divexact,
 divisible_p, divisible_2exp_p, even_p, fac, fdiv, fdiv_2exp, fib, fib2, gcd,
 gcdext, hamdist, invert, jacobi, kronecker, lcm, lucnum, lucnum2, mod,
-nextprime, odd_p, perfect_power_p, perfect_square_p, popcount, powm,
-probab_prime_p, realloc, remove, root, roote, scan0, scan1, setbit,
-sizeinbase, sqrtrem, tdiv, tdiv_2exp, tstbit
+mpz_export, mpz_import, nextprime, odd_p, perfect_power_p, perfect_square_p,
+popcount, powm, probab_prime_p, realloc, remove, root, roote, scan0, scan1,
+setbit, sizeinbase, sqrtrem, tdiv, tdiv_2exp, tstbit
 
 =back
 
@@ -196,6 +193,17 @@ more).  C<gcdext> returns a triplet of gcd and two cofactors, for example
     $b = 10701;
     ($g, $x, $y) = gcdext ($a, $b);
     print "gcd($a,$b) is $g, and $g == $a*$x + $b*$y\n";
+
+C<mpz_import> and C<mpz_export> are so named to avoid the C<import> keyword.
+Their parameters are as follows,
+
+    $z = mpz_import ($order, $size, $endian, $nails, $string);
+    $string = mpz_export ($order, $size, $endian, $nails, $z);
+
+The order, size, endian and nails parameters are as per the corresponding C
+functions.  The string input for C<mpz_import> is interpreted as byte data
+and must be a multiple of size bytes.  C<mpz_export> conversely returns a
+string of byte data, which will be a multiple of size bytes.
 
 C<invert> returns the inverse, or undef if it doesn't exist.
 C<remove> returns a remainder/multiplicty pair.  C<root> returns the
