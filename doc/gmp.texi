@@ -521,7 +521,7 @@ near you, see @uref{http://www.gnu.org/order/ftp.html} for a full list.
 @cindex Mailing lists
 There are three public mailing lists of interest.  One for release
 announcements, one for general questions and discussions about usage of the
-GMP library and one for discussions about development of GMP.  These lists are
+GMP library and one for discussions about development of GMP@.  These lists are
 @strong{not} for bug reports.  For more information, see
 
 @display
@@ -698,7 +698,7 @@ Currently a warning is given unless an explicit @samp{--build} is used when
 cross-compiling, because it may not be possible to correctly guess the build
 system type if the @env{PATH} has only a cross-compiling @command{cc}.
 
-Note that the @samp{--target} option is not appropriate for GMP.  It's for use
+Note that the @samp{--target} option is not appropriate for GMP@.  It's for use
 when building compiler tools, with @samp{--host} being where they will run,
 and @samp{--target} what they'll produce code for.  Ordinary programs or
 libraries like GMP are only interested in the @samp{--host} part, being where
@@ -1036,7 +1036,7 @@ debugging memory related problems (@pxref{Debugging}).
 @cindex FFT multiplication
 @cindex @code{--disable-fft}
 By default multiplications are done using Karatsuba, 3-way Toom, and
-Fermat FFT.  The FFT is only used on large to very large operands and can be
+Fermat FFT@.  The FFT is only used on large to very large operands and can be
 disabled to save code size if desired.
 
 @item Berkeley MP, @option{--enable-mpbsd}
@@ -1069,7 +1069,7 @@ MPN_PATH="sparc32/v8 sparc32 generic"
 @end example
 
 which means look first for v8 code, then plain sparc32 (which is v7), and
-finally fall back on generic C.  Knowledgeable users with special requirements
+finally fall back on generic C@.  Knowledgeable users with special requirements
 can specify a different path.  Normally this is completely unnecessary.
 
 @item Documentation
@@ -1135,7 +1135,7 @@ copied around.  @file{gmp.h} remains compiler independent though, since all
 compilers for a particular ABI will be expected to use the same limb type.
 
 Currently no attempt is made to follow whatever conventions a system has for
-installing library or header files built for a particular ABI.  This will
+installing library or header files built for a particular ABI@.  This will
 probably only matter when installing multiple builds of GMP, and it might be
 as simple as configuring with a special @samp{libdir}, or it might require
 more than that.  Note that builds for different ABIs need to done separately,
@@ -1202,7 +1202,7 @@ instructions for @code{long long} operations and so may be slower than for
 2.0w.  (The GMP assembler code is the same though.)
 
 @item @samp{ABI=1.0}
-HPPA 2.0 CPUs can run all HPPA 1.0 and 1.1 code in the 32-bit HPPA 1.0 ABI.
+HPPA 2.0 CPUs can run all HPPA 1.0 and 1.1 code in the 32-bit HPPA 1.0 ABI@.
 No special compiler options are needed for applications.
 @end table
 
@@ -1211,7 +1211,7 @@ All three ABIs are available for CPU types @samp{hppa2.0w}, @samp{hppa2.0} and
 considered.
 
 Note that GCC on HP-UX has no options to choose between 2.0n and 2.0w modes,
-unlike HP @command{cc}.  Instead it must be built for one or the other ABI.
+unlike HP @command{cc}.  Instead it must be built for one or the other ABI@.
 GMP will detect how it was built, and skip to the corresponding @samp{ABI}.
 
 @sp 1
@@ -1375,7 +1375,7 @@ because 64-bits is considered the more important case and has therefore had
 better code written for it.
 
 Don't be confused by the names of the @samp{-m} and @samp{-x} compiler
-options, they're called @samp{arch} but effectively control both ABI and ISA.
+options, they're called @samp{arch} but effectively control both ABI and ISA@.
 
 On Solaris 2.6 and earlier, only @samp{ABI=32} is available since the kernel
 doesn't save all registers.
@@ -1432,13 +1432,13 @@ Users who care about speed will want GMP built for their exact CPU type, to
 make best use of the available optimizations.  Providing a way to suitably
 rebuild a package may be useful.  This could be as simple as making it
 possible for a user to omit @samp{--build} (and @samp{--host}) so
-@samp{./config.guess} will detect the CPU.  But a way to manually specify a
+@samp{./config.guess} will detect the CPU@.  But a way to manually specify a
 @samp{--build} will be wanted for systems where @samp{./config.guess} is
 inexact.
 
 On systems with multiple ABIs, a packaged build will need to decide which
 among the choices is to be provided, see @ref{ABI and ISA}.  A given run of
-@samp{./configure} etc will only build one ABI.  If a second ABI is also
+@samp{./configure} etc will only build one ABI@.  If a second ABI is also
 required then a second run of @samp{./configure} etc must be made, starting
 from a clean directory tree (@samp{make distclean}).
 
@@ -1451,7 +1451,7 @@ variables as necessary.
 Note that @file{gmp.h} is a generated file, and will be architecture and ABI
 dependent.  When attempting to install two ABIs simultaneously it will be
 important that an application compile gets the correct @file{gmp.h} for its
-desired ABI.  If compiler include paths don't vary with ABI options then it
+desired ABI@.  If compiler include paths don't vary with ABI options then it
 might be necessary to create a @file{/usr/include/gmp.h} which tests
 preprocessor symbols and chooses the correct actual @file{gmp.h}.
 
@@ -1557,7 +1557,7 @@ default GMP builds only a static library, but a DLL can be built instead using
 Static and DLL libraries can't both be built, since certain export directives
 in @file{gmp.h} must be different.
 
-A MINGW DLL build of GMP can be used with Microsoft C.  Libtool doesn't
+A MINGW DLL build of GMP can be used with Microsoft C@.  Libtool doesn't
 install a @file{.lib} format import library, but it can be created with MS
 @command{lib} as follows, and copied to the install directory.  Similarly for
 @file{libmp} and @file{libgmpxx}.
@@ -1723,7 +1723,7 @@ rebuilt).
 @cindex MacOS X
 @cindex Darwin
 Libtool currently only knows how to create shared libraries on MacOS X using
-the native @command{cc} (which is a modified GCC), not a plain GCC.  A
+the native @command{cc} (which is a modified GCC), not a plain GCC@.  A
 static-only build should work though (@samp{--disable-shared}).
 
 @item NeXT prior to 3.3
@@ -1736,7 +1736,7 @@ release 3.3 of their system.)
 @item POWER and PowerPC
 @cindex Power/PowerPC
 Bugs in GCC 2.7.2 (and 2.6.3) mean it can't be used to compile GMP on POWER or
-PowerPC.  If you want to use GCC for these machines, get GCC 2.7.2.1 (or
+PowerPC@.  If you want to use GCC for these machines, get GCC 2.7.2.1 (or
 later).
 
 @item Sequent Symmetry
@@ -2250,7 +2250,7 @@ source and binary compatible with the standard @file{libmp}.
 @cindex Demonstration programs
 @cindex Example programs
 @cindex Sample programs
-The @file{demos} subdirectory has some sample programs using GMP.  These
+The @file{demos} subdirectory has some sample programs using GMP@.  These
 aren't built or installed, but there's a @file{Makefile} with rules for them.
 For instance,
 
@@ -2293,7 +2293,7 @@ class numbers.
 @cindex @code{perl}
 @cindex GMP Perl module
 @cindex Perl module
-The @samp{perl} subdirectory is a comprehensive perl interface to GMP.  See
+The @samp{perl} subdirectory is a comprehensive perl interface to GMP@.  See
 @file{demos/perl/INSTALL} for more information.  Documentation is in POD
 format in @file{demos/perl/GMP.pm}.
 @end itemize
@@ -2433,7 +2433,7 @@ However, applications that know something about the factorization of the
 values they're working with might be able to avoid some of the GCDs used for
 canonicalization, or swap them for divisions.  For example when multiplying by
 a prime it's enough to check for factors of it in the denominator instead of
-doing a full GCD.  Or when forming a big product it might be known that very
+doing a full GCD@.  Or when forming a big product it might be known that very
 little cancellation will be possible, and so canonicalization can be left to
 the end.
 
@@ -2503,7 +2503,7 @@ and each stack allocation.
 @cindex Malloc problems
 The most likely cause of application problems with GMP is heap corruption.
 Failing to @code{init} GMP variables will have unpredictable effects, and
-corruption arising elsewhere in a program may well affect GMP.  Initializing
+corruption arising elsewhere in a program may well affect GMP@.  Initializing
 GMP variables more than once or failing to clear them will cause memory leaks.
 
 @cindex Malloc debugger
@@ -2540,7 +2540,7 @@ potentially moving a memory problem or hiding a compiler bug will apply.
 @cindex GDB
 @cindex GNU Debugger
 A sample @file{.gdbinit} is included in the distribution, showing how to call
-some undocumented dump functions to print GMP variables from within GDB.  Note
+some undocumented dump functions to print GMP variables from within GDB@.  Note
 that these functions shouldn't be used in final application code since they're
 undocumented and may be subject to incompatible changes in future versions of
 GMP.
@@ -2599,7 +2599,7 @@ For C++, add @samp{--enable-cxx CXXFLAGS=-g}.
 @cindex Checker
 @cindex GCC Checker
 The GCC checker (@uref{http://savannah.gnu.org/projects/checker/}) can be used
-with GMP.  It contains a stub library which means GMP applications compiled
+with GMP@.  It contains a stub library which means GMP applications compiled
 with checker can use a normal GMP build.
 
 A build of GMP with checking within GMP itself can be made.  This will run
@@ -3856,7 +3856,7 @@ The parameters specify the format of the data.  @var{count} many words are
 read, each @var{size} bytes.  @var{order} can be 1 for most significant word
 first or -1 for least significant first.  Within each word @var{endian} can be
 1 for most significant byte first, -1 for least significant first, or 0 for
-the native endianness of the host CPU.  The most significant @var{nails} bits
+the native endianness of the host CPU@.  The most significant @var{nails} bits
 of each word are skipped, this can be 0 to use the full words.
 
 There is no sign taken from the data, @var{rop} will simply be a positive
@@ -3892,7 +3892,7 @@ The parameters specify the format of the data produced.  Each word will be
 @var{size} bytes and @var{order} can be 1 for most significant word first or
 -1 for least significant first.  Within each word @var{endian} can be 1 for
 most significant byte first, -1 for least significant first, or 0 for the
-native endianness of the host CPU.  The most significant @var{nails} bits of
+native endianness of the host CPU@.  The most significant @var{nails} bits of
 each word are unused and set to zero, this can be 0 to produce full words.
 
 The number of words produced is written to @code{*@var{countp}}, or
@@ -5057,7 +5057,7 @@ limb of the product.  @{@var{s1p}, @var{n}@} and @{@var{rp}, @var{n}@} are
 allowed to overlap provided @math{@var{rp} @le{} @var{s1p}}.
 
 This is a low-level function that is a building block for general
-multiplication as well as other operations in GMP.  It is written in assembly
+multiplication as well as other operations in GMP@.  It is written in assembly
 for most CPUs.
 
 Don't call this function if @var{s2limb} is a power of 2; use @code{mpn_lshift}
@@ -5071,7 +5071,7 @@ to @var{rp}.  Return the most significant limb of the product, plus carry-out
 from the addition.
 
 This is a low-level function that is a building block for general
-multiplication as well as other operations in GMP.  It is written in assembly
+multiplication as well as other operations in GMP@.  It is written in assembly
 for most CPUs.
 @end deftypefun
 
@@ -5082,7 +5082,7 @@ result to @var{rp}.  Return the most significant limb of the product, minus
 borrow-out from the subtraction.
 
 This is a low-level function that is a building block for general
-multiplication and division as well as other operations in GMP.  It is written
+multiplication and division as well as other operations in GMP@.  It is written
 in assembly for most CPUs.
 @end deftypefun
 
@@ -7497,7 +7497,7 @@ that sense the algorithm thresholds are merely of academic interest.
 The Karatsuba formula is the simplest case of a general approach to splitting
 inputs that leads to both Toom and FFT algorithms.  A description of
 Toom can be found in Knuth section 4.3.3, with an example 3-way
-calculation after Theorem A.  The 3-way form used in GMP is described here.
+calculation after Theorem A@.  The 3-way form used in GMP is described here.
 
 The operands are each considered split into 3 pieces of equal length (or the
 most significant part 1 or 2 limbs shorter than the other two).
@@ -7735,7 +7735,7 @@ done.
 At large to very large sizes a Fermat style FFT multiplication is used,
 following Sch@"onhage and Strassen (@pxref{References}).  Descriptions of FFTs
 in various forms can be found in many textbooks, for instance Knuth section
-4.3.3 part C or Lipson chapter IX.  A brief description of the form used in
+4.3.3 part C or Lipson chapter IX@.  A brief description of the form used in
 GMP is given here.
 
 The multiplication done is @m{xy \bmod 2^N+1, x*y mod 2^N+1}, for a given
@@ -7804,7 +7804,7 @@ and Toom-3 etc can be compared directly.  A @math{k=4} FFT at
 @math{O(N^@W{1.333})} can be expected to be the first faster than Toom-3 at
 @math{O(N^@W{1.465})}.  In practice this is what's found, with
 @code{MUL_FFT_MODF_THRESHOLD} and @code{SQR_FFT_MODF_THRESHOLD} being between
-300 and 1000 limbs, depending on the CPU.  So far it's been found that only
+300 and 1000 limbs, depending on the CPU@.  So far it's been found that only
 very large FFTs recurse into pointwise multiplies above these sizes.
 
 When an FFT is to give a full product, the change of @math{N} to @math{2N}
@@ -7848,7 +7848,7 @@ needed.
 
 The 3-way Toom algorithm described above (@pxref{Toom 3-Way
 Multiplication}) generalizes to split into an arbitrary number of pieces, as
-per Knuth section 4.3.3 algorithm C.  This is not currently used, though it's
+per Knuth section 4.3.3 algorithm C@.  This is not currently used, though it's
 possible a Toom-4 might fit in between Toom-3 and the FFTs.  The notes here
 are merely for interest.
 
@@ -7999,7 +7999,7 @@ These overheads mean that it's only when N/2 is above
 
 @code{DIV_DC_THRESHOLD} is based on the divisor size N, so it will be somewhere
 above twice @code{MUL_KARATSUBA_THRESHOLD}, but how much above depends on the
-CPU.  An optimized @code{mpn_mul_basecase} can lower @code{DIV_DC_THRESHOLD} a
+CPU@.  An optimized @code{mpn_mul_basecase} can lower @code{DIV_DC_THRESHOLD} a
 little by offering a ready-made advantage over repeated @code{mpn_submul_1}
 calls.
 
@@ -8186,8 +8186,8 @@ section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
 @node Binary GCD, Accelerated GCD, Greatest Common Divisor Algorithms, Greatest Common Divisor Algorithms
 @subsection Binary GCD
 
-At small sizes GMP uses an @math{O(N^2)} binary style GCD.  This is described
-in many textbooks, for example Knuth section 4.5.2 algorithm B.  It simply
+At small sizes GMP uses an @math{O(N^2)} binary style GCD@.  This is described
+in many textbooks, for example Knuth section 4.5.2 algorithm B@.  It simply
 consists of successively reducing odd operands @math{a} and @math{b} using
 
 @quotation
@@ -8957,7 +8957,7 @@ important, but of course speedups in low level routines will still speed up
 everything proportionally.
 
 Carry handling and widening multiplies that are important for GMP can't be
-easily expressed in C.  GCC @code{asm} blocks help a lot and are provided in
+easily expressed in C@.  GCC @code{asm} blocks help a lot and are provided in
 @file{longlong.h}, but hand coding low level routines invariably offers a
 speedup over generic C by a factor of anything from 2 to 10.
 
@@ -9046,7 +9046,7 @@ rarely needs to fall through to a loop propagating further carries.
 
 On the x86s, GCC (as of version 2.95.2) doesn't generate particularly good code
 for the RISC style idioms that are necessary to handle carry bits in
-C.  Often conditional jumps are generated where @code{adc} or @code{sbb} forms
+C@.  Often conditional jumps are generated where @code{adc} or @code{sbb} forms
 would be better.  And so unfortunately almost any loop involving carry bits
 needs to be coded in assembler for best results.
 
