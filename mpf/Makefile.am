@@ -36,6 +36,5 @@ libmpf_la_SOURCES = \
   pow_ui.c urandomb.c swap.c get_si.c get_ui.c int_p.c \
   ceilfloor.c trunc.c \
   fits_sint.c fits_slong.c fits_sshort.c \
-  fits_uint.c fits_ulong.c fits_ushort.c
-
-EXTRA_DIST = fits_s.i fits_u.i
+  fits_uint.c fits_ulong.c fits_ushort.c \
+  fits_s.h fits_u.h
