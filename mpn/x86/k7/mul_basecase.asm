@@ -458,7 +458,7 @@ L(unroll_here):
 
 
 ifdef(`PIC',`
-L(add_eip_to_ecx):
+L(pic_calc):
 	# See README.family about old gas bugs
 	leal	(%ecx,%edx,1), %ecx
 	addl	$L(unroll_entry)-L(unroll_here), %ecx
