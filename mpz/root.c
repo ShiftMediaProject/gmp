@@ -31,7 +31,14 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 int
+#if __STDC__
 mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
+#else
+mpz_root (r, c, nth)
+     mpz_ptr r;
+     mpz_srcptr c;
+     unsigned long int nth;
+#endif
 {
   mpz_t x, t0, t1, t2;
   __mpz_struct ccs, *cc = &ccs;
@@ -41,6 +48,15 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
   int i;
   unsigned long int lowz;
   unsigned long int rl;
+
+  /* even roots of negatives provoke an exception */
+  if (mpz_sgn (c) < 0 && (nth & 1) == 0)
+    SQRT_OF_NEGATIVE;
+
+  /* root extraction interpreted as c^(1/nth) means a zeroth root should
+     provoke a divide by zero, do this even if c==0 */
+  if (nth == 0)
+    DIVIDE_BY_ZERO;
 
   if (mpz_sgn (c) == 0)
     {
