@@ -839,12 +839,15 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define UMUL_TIME 100
 #define UDIV_TIME 400
 #endif /* not mc68020 */
-/* The '020, '030, '040 and '060 have bitfield insns.  */
-#if defined (__mc68020__) || defined (mc68020) \
+/* The '020, '030, '040 and '060 have bitfield insns.
+   GCC 3.4 defines __mc68020__ when in CPU32 mode, check for __mcpu32__ to
+   exclude bfffo on that chip (bitfield insns not available).  */
+#if (defined (__mc68020__) || defined (mc68020)    \
      || defined (__mc68030__) || defined (mc68030) \
      || defined (__mc68040__) || defined (mc68040) \
      || defined (__mc68060__) || defined (mc68060) \
-     || defined (__NeXT__)
+     || defined (__NeXT__))                        \
+  && ! defined (__mcpu32__)
 #define count_leading_zeros(count, x) \
   __asm__ ("bfffo %1{%b2:%b2},%0"					\
 	   : "=d" ((USItype) (count))					\
