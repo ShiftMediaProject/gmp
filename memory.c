@@ -48,14 +48,27 @@ _mp_default_allocate (size)
 #endif
 {
   void *ret;
-
+#ifdef DEBUG
+  size_t req_size = size;
+  size += 2 * BYTES_PER_MP_LIMB;
+#endif
   ret = malloc (size);
   if (ret == 0)
     {
       perror ("cannot allocate in gmp");
       abort ();
     }
-
+  
+#ifdef DEBUG
+  {
+    mp_ptr p = ret;
+    p++;
+    p[-1] = (0xdeadbeef << 31) + 0xdeafdeed;
+    if (req_size % BYTES_PER_MP_LIMB == 0)
+      p[req_size / BYTES_PER_MP_LIMB] = ~((0xdeadbeef << 31) + 0xdeafdeed);
+    ret = p;
+  }
+#endif
   return ret;
 }
 
@@ -71,6 +84,29 @@ _mp_default_reallocate (oldptr, old_size, new_size)
 {
   void *ret;
 
+#ifdef DEBUG
+  size_t req_size = new_size;
+
+  if (old_size != 0)
+    {
+      mp_ptr p = oldptr;
+      if (p[-1] != (0xdeadbeef << 31) + 0xdeafdeed)
+	{
+	  fprintf (stderr, "gmp: (realloc) data clobbered before allocation block\n");
+	  abort ();
+	}
+      if (old_size % BYTES_PER_MP_LIMB == 0)
+	if (p[old_size / BYTES_PER_MP_LIMB] != ~((0xdeadbeef << 31) + 0xdeafdeed))
+	  {
+	    fprintf (stderr, "gmp: (realloc) data clobbered after allocation block\n");
+	    abort ();
+	  }
+      oldptr = p - 1;
+    }
+
+  new_size += 2 * BYTES_PER_MP_LIMB;
+#endif
+
   ret = realloc (oldptr, new_size);
   if (ret == 0)
     {
@@ -78,6 +114,16 @@ _mp_default_reallocate (oldptr, old_size, new_size)
       abort ();
     }
 
+#ifdef DEBUG
+  {
+    mp_ptr p = ret;
+    p++;
+    p[-1] = (0xdeadbeef << 31) + 0xdeafdeed;
+    if (req_size % BYTES_PER_MP_LIMB == 0)
+      p[req_size / BYTES_PER_MP_LIMB] = ~((0xdeadbeef << 31) + 0xdeafdeed);
+    ret = p;
+  }
+#endif
   return ret;
 }
 
@@ -90,5 +136,25 @@ _mp_default_free (blk_ptr, blk_size)
      size_t blk_size;
 #endif
 {
+#ifdef DEBUG
+  {
+    mp_ptr p = blk_ptr;
+    if (blk_size != 0)
+      {
+	if (p[-1] != (0xdeadbeef << 31) + 0xdeafdeed)
+	  {
+	    fprintf (stderr, "gmp: (free) data clobbered before allocation block\n");
+	    abort ();
+	  }
+	if (blk_size % BYTES_PER_MP_LIMB == 0)
+	  if (p[blk_size / BYTES_PER_MP_LIMB] != ~((0xdeadbeef << 31) + 0xdeafdeed))
+	    {
+	      fprintf (stderr, "gmp: (free) data clobbered after allocation block\n");
+	      abort ();
+	    }
+      }
+    blk_ptr = p - 1;
+  }
+#endif
   free (blk_ptr);
 }
