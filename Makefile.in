@@ -369,7 +369,7 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 # get them in "make dist".
 #
 EXTRA_LTLIBRARIES = libdummy.la
-libdummy_la_SOURCES = stack-alloc.c tal-debug.c tal-reent.c
+libdummy_la_SOURCES = tal-debug.c tal-notre.c tal-reent.c
 
 info_TEXINFOS = gmp.texi
 gmp_TEXINFOS = fdl.texi
@@ -382,7 +382,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 
 libdummy_la_LDFLAGS =
 libdummy_la_LIBADD =
-am_libdummy_la_OBJECTS = stack-alloc$U.lo tal-debug$U.lo tal-reent$U.lo
+am_libdummy_la_OBJECTS = tal-debug$U.lo tal-notre$U.lo tal-reent$U.lo
 libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 am_libgmp_la_OBJECTS = assert$U.lo compat$U.lo errno$U.lo \
 	extract-dbl$U.lo insert-dbl$U.lo memory$U.lo mp_bpl$U.lo \
@@ -588,10 +588,10 @@ randsd_.c: randsd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randsd.c; then echo $(srcdir)/randsd.c; else echo randsd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randsd_.c || rm -f randsd_.c
 randsdui_.c: randsdui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randsdui.c; then echo $(srcdir)/randsdui.c; else echo randsdui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randsdui_.c || rm -f randsdui_.c
-stack-alloc_.c: stack-alloc.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stack-alloc.c; then echo $(srcdir)/stack-alloc.c; else echo stack-alloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stack-alloc_.c || rm -f stack-alloc_.c
 tal-debug_.c: tal-debug.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tal-debug.c; then echo $(srcdir)/tal-debug.c; else echo tal-debug.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tal-debug_.c || rm -f tal-debug_.c
+tal-notre_.c: tal-notre.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tal-notre.c; then echo $(srcdir)/tal-notre.c; else echo tal-notre.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tal-notre_.c || rm -f tal-notre_.c
 tal-reent_.c: tal-reent.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tal-reent.c; then echo $(srcdir)/tal-reent.c; else echo tal-reent.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tal-reent_.c || rm -f tal-reent_.c
 version_.c: version.c $(ANSI2KNR)
@@ -605,9 +605,9 @@ mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo randclr_.$(OBJEXT) randclr_.lo \
 randlc_.$(OBJEXT) randlc_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
 randraw_.$(OBJEXT) randraw_.lo rands_.$(OBJEXT) rands_.lo \
 randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
-stack-alloc_.$(OBJEXT) stack-alloc_.lo tal-debug_.$(OBJEXT) \
-tal-debug_.lo tal-reent_.$(OBJEXT) tal-reent_.lo version_.$(OBJEXT) \
-version_.lo : $(ANSI2KNR)
+tal-debug_.$(OBJEXT) tal-debug_.lo tal-notre_.$(OBJEXT) tal-notre_.lo \
+tal-reent_.$(OBJEXT) tal-reent_.lo version_.$(OBJEXT) version_.lo : \
+$(ANSI2KNR)
 
 .cc.o:
 	$(CXXCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
