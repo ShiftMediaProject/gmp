@@ -84,7 +84,7 @@ AC_HELP_STRING([--enable-cxx],[enable C++ support [default=detect]]),
 yes|no|detect) ;;
 *) AC_MSG_ERROR([bad value $enableval for --enable-cxx, need yes/no/detect]) ;;
 esac],
-[enable_cxx=detect])
+[enable_cxx=no])
 
 
 AC_ARG_ENABLE(fft,
