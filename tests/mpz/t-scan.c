@@ -59,7 +59,8 @@ void
 check_ref (void)
 {
   mpz_t          z;
-  int            test, size, neg, sought;
+  int            test, neg, sought;
+  mp_size_t      size;
   unsigned long  i, got, want;
 
   mpz_init (z);
@@ -91,7 +92,7 @@ check_ref (void)
 
                       if (got != want)
                         {
-                          printf ("wrong at test=%d, size=%d, neg=%d, i=%lu, sought=%d\n",
+                          printf ("wrong at test=%d, size=%ld, neg=%d, i=%lu, sought=%d\n",
                                   test, size, neg, i, sought);
                           printf ("   z 0x");
                           mpz_out_str (stdout, -16, z);
