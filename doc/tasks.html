@@ -47,8 +47,8 @@
      1000000000... and the other operand is 0111111111..., i.e., extremely
      close.  There is a special case in <code>mpf_sub</code> for this
      situation; put similar code in <code>mpf_eq</code>.
-<li> mpf_eq doesn't implement what gmp.texi specifies.  It should not use just
-     whole limbs, but partial limbs.
+<li> <code>mpf_eq</code> doesn't implement what gmp.texi specifies.  It should
+     not use just whole limbs, but partial limbs.
 <li> NeXT has problems with newlines in asm strings in longlong.h.  Also,
      <code>__builtin_constant_p</code> is unavailable?  Same problem with MacOS
      X.
@@ -69,16 +69,15 @@
 
 <h4>Machine Independent Optimization</h4>
 <ul>
-<li> In hundreds of places in the code, we invoke
-     <code>count_leading_zeros</code> and then check if the returned count is
-     zero.  Instead check the most significant bit of the operand, and avoid
-     invoking <code>count_leading_zeros</code> if the bit is set.  This is an
-     optimization on all machines, and significant on machines with slow
-     <code>count_leading_zeros</code>.
-<li> In a couple of places <code>count_trailing_zeros</code> is used
-     on more or less uniformly distributed numbers.  For some CPUs
-     <code>count_trailing_zeros</code> is slow and it's probably worth
-     handling the frequently occurring 0 to 2 trailing zeros cases specially.
+<li> <code>count_leading_zeros</code> returned count is checked for zero in
+     hundreds of places.  Instead check the most significant bit of the
+     operand, and avoid invoking <code>count_leading_zeros</code> if the bit is
+     set.  This is an optimization on all machines, and significant on machines
+     with slow <code>count_leading_zeros</code>.
+<li> <code>count_trailing_zeros</code> is used on more or less uniformly
+     distributed numbers in a couple of places.  For some CPUs
+     <code>count_trailing_zeros</code> is slow and it's probably worth handling
+     the frequently occurring 0 to 2 trailing zeros cases specially.
 <li> Reorganize longlong.h so that we can inline the operations even for the
      system compiler.  When there is no such compiler feature, make calls to
      stub functions.  Write such stub functions for as many machines as
