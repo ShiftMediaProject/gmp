@@ -3084,7 +3084,8 @@ or any number theory textbook.  See also the example program
 
 @deftypefun {unsigned long int} mpz_remove (mpz_t @var{rop}, mpz_t @var{op}, mpz_t @var{f})
 Remove all occurrences of the factor @var{f} from @var{op} and store the
-result in @var{rop}.  Return the multiplicity of @var{f} in @var{op}.
+result in @var{rop}.  The return value is how many such occurrences were
+removed.
 @end deftypefun
 
 @deftypefun void mpz_fac_ui (mpz_t @var{rop}, unsigned long int @var{op})
