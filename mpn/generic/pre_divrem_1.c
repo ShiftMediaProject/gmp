@@ -1,6 +1,10 @@
 /* mpn_preinv_divrem_1 -- mpn by limb division with pre-inverted divisor.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+   THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
+   CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
+   FUTURE GNU MP RELEASES.
+
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
