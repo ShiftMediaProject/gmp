@@ -1,3 +1,25 @@
+2001-01-29  Kevin Ryde  <kevin@swox.se>
+
+	* tune/speed.h (SPEED_ROUTINE_INVERT_LIMB_CALL): Don't let the
+	compiler optimize everything away.
+
+	* tune/speed.c, tune/speed.h, tune/common.c, tune/Makefile.am: Measure
+	operator_div, operator_mod, mpn_divrem_2_div, mpn_divrem_2_inv,
+	mpn_sb_divrem_m3, mpn_sb_divrem_m3_div, mpn_sb_divrem_m3_inv,
+	mpn_dc_divrem_sb_div, mpn_dc_divrem_sb_inv.
+	* tune/divrem_2_div.c, tune/divrem_2_inv.c, tune/sb_div.c,
+	tune/sb_inv.c: New files.
+
+	* tune/tuneup.c, gmp-impl.h, tune/speed.h, tune/common.c,
+	tune/Makefile.am: Tune SB_PREINV_THRESHOLD and DIVREM_2_THRESHOLD.
+
+	* mpn/generic/divrem_2.c: Use new DIVREM_2_THRESHOLD.
+	* mpn/generic/sb_divrem_mn.c: Use new SB_PREINV_THRESHOLD.
+
+	* mpn/x86/p6/mmx/lshift.asm, mpn/x86/p6/mmx/rshift.asm: New files,
+	just m4 include()ing the P55 code.
+	* configure.in (pentium[23]-*-*): Remove x86/pentium/mmx from path.
+
 2001-01-27  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (AC_CHECK_FUNCS): Add srand48.
