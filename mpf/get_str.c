@@ -108,7 +108,7 @@ mpn_pow_1_highpart (mp_ptr rp, mp_size_t *ignp,
 }
 
 char *
-mpf_get_str (char *dp, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
+mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
 {
   mp_exp_t ue;
   mp_size_t n_limbs_needed;
@@ -122,6 +122,7 @@ mpf_get_str (char *dp, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
   mp_size_t i;
   const char *num_to_text;
   size_t alloc_size = 0;
+  char *dp;
   TMP_DECL (marker);
 
   up = PTR(u);
@@ -151,18 +152,18 @@ mpf_get_str (char *dp, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
   if (n_digits == 0 || n_digits > max_digits)
     n_digits = max_digits;
 
-  if (dp == 0)
+  if (dbuf == 0)
     {
       /* We didn't get a string from the user.  Allocate one (and return
 	 a pointer to it) with space for `-' and terminating null.  */
       alloc_size = n_digits + 2;
-      dp = (char *) (*__gmp_allocate_func) (n_digits + 2);
+      dbuf = (char *) (*__gmp_allocate_func) (n_digits + 2);
     }
 
   if (un == 0)
     {
       *exp = 0;
-      *dp = 0;
+      *dbuf = 0;
       n_digits = 0;
       goto done;
     }
@@ -292,12 +293,20 @@ mpf_get_str (char *dp, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
   while (n_digits != 0 && tstr[n_digits - 1] == 0)
     n_digits--;
 
+  dp = dbuf + (SIZ(u) < 0);
+
   /* Translate to ASCII and copy to result string.  */
   for (i = 0; i < n_digits; i++)
     dp[i] = num_to_text[tstr[i]];
   dp[n_digits] = 0;
 
   *exp = exp_in_base;
+
+  if (SIZ(u) < 0)
+    {
+      dbuf[0] = '-';
+      n_digits++;
+    }
 
  done:
   TMP_FREE (marker);
@@ -306,8 +315,8 @@ mpf_get_str (char *dp, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
      required.  */
   if (alloc_size != 0)
     {
-      __GMP_REALLOCATE_FUNC_MAYBE_TYPE (dp, alloc_size, n_digits + 1, char);
+      __GMP_REALLOCATE_FUNC_MAYBE_TYPE (dbuf, alloc_size, n_digits + 1, char);
     }
 
-  return dp;
+  return dbuf;
 }
