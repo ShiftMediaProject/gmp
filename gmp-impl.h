@@ -684,9 +684,17 @@ void __gmp_default_free _PROTO ((void *, size_t));
    regparm cannot be used with calls going through the PLT, because the
    binding code there may clobber the registers (%eax, %edx, %ecx) used for
    the regparm parameters.  Calls to local (ie. static) functions could
-   still use this, if we cared to differentiate locals and globals.  */
+   still use this, if we cared to differentiate locals and globals.
 
-#if HAVE_HOST_CPU_FAMILY_x86 && __GMP_GNUC_PREREQ (2,96) && ! defined (PIC)
+   On athlon-unknown-freebsd4.9 with gcc 3.3.3, regparm cannot be used with
+   -p or -pg profiling, since that version of gcc doesn't realize the
+   .mcount calls will clobber the parameter registers.  Other systems are
+   ok, like debian with glibc 2.3.2 (mcount doesn't clobber), but we don't
+   bother to try to detect this.  regparm is only an optimization so we just
+   disable it when profiling (profiling being a slowdown anyway).  */
+
+#if HAVE_HOST_CPU_FAMILY_x86 && __GMP_GNUC_PREREQ (2,96) && ! defined (PIC) \
+  && ! WANT_PROFILING_PROF && ! WANT_PROFILING_GPROF 
 #define USE_LEADING_REGPARM 1
 #else
 #define USE_LEADING_REGPARM 0
