@@ -1703,12 +1703,10 @@ AC_SUBST(TUNE_SQR_OBJ)
 
 
 # Configs for demos/expr directory
+AM_CONFIG_HEADER(demos/expr/expr-config.h:demos/expr/expr-config-h.in)
 if test $enable_mpfr = yes; then
-  HAVE_MPFR=1
-else
-  HAVE_MPFR=0
+  AC_DEFINE(HAVE_MPFR, 1, [Whether mpfr functions and headers are available.])
 fi
-AC_SUBST(HAVE_MPFR)
 
 
 # Create config.m4.
@@ -1728,6 +1726,4 @@ AC_OUTPUT(Makefile							\
   mpfr/Makefile mpfr/tests/Makefile					\
   tune/Makefile								\
   demos/Makefile demos/calc/Makefile demos/expr/Makefile		\
-  gmp.h:gmp-h.in mp.h:mp-h.in						\
-  demos/expr/expr-impl.h:demos/expr/expr-impl-h.in)
-
+  gmp.h:gmp-h.in mp.h:mp-h.in)
