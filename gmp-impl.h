@@ -295,6 +295,9 @@ mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_siz
 mp_limb_t mpn_bz_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 /* void mpn_tdiv_q _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t)); */
 
+#define mpn_zero_p  __MPN(zero_p)
+int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
+
 /* Copy NLIMBS *limbs* from SRC to DST, NLIMBS==0 allowed.  */
 #ifndef MPN_COPY_INCR
 #if HAVE_NATIVE_mpn_copyi
