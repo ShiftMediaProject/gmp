@@ -122,7 +122,7 @@ typedef __mpf_struct mpf_t[1];
 typedef enum
 {
   GMP_RAND_ALG_DEFAULT = 0,
-  GMP_RAND_ALG_LC = GMP_RAND_ALG_DEFAULT, /* Linear congruential.  */
+  GMP_RAND_ALG_LC = GMP_RAND_ALG_DEFAULT /* Linear congruential.  */
 } gmp_randalg_t;
 
 /* Linear congruential data struct.  */
