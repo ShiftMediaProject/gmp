@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-09-22  Kevin Ryde  <kevin@swox.se>
+
+        * mpfr/*: Update to mpfr cvs 2003-09-22.
+
 2003-09-21  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium4/sse2/gmp-mparam.h (USE_PREINV_DIVREM_1,
