@@ -23,6 +23,8 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define _GNU_SOURCE    /* for DECIMAL_POINT in langinfo.h */
+
 #include "config.h"
 
 #if HAVE_STDARG
@@ -35,6 +37,10 @@ MA 02111-1307, USA. */
 #include <stddef.h>    /* for ptrdiff_t */
 #include <stdio.h>
 #include <string.h>
+
+#if HAVE_LANGINFO_H
+#include <langinfo.h>  /* for nl_langinfo */
+#endif
 
 #if HAVE_LOCALE_H
 #include <locale.h>    /* for localeconv */
@@ -235,21 +241,18 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
       /* decimal point */
       if (p->type == 'F' && ! seen_point)
         {
-#if HAVE_LOCALECONV
           /* For a multi-character decimal point, if the first character is
              present then all of it must be, otherwise the input is
              considered invalid.  */
-          const char  *point;
-          int         pc;
-          point = localeconv()->decimal_point;
-          pc = *point++;
+          const char  *point = GMP_DECIMAL_POINT;
+          int         pc = (unsigned char) *point++;
           if (c == pc)
             {
               for (;;)
                 {
                   STORE (c);
                   GET (c);
-                  pc = *point++;
+                  pc = (unsigned char) *point++;
                   if (pc == '\0')
                     break;
                   if (c != pc)
@@ -258,13 +261,6 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
               seen_point = 1;
               goto digits;
             }
-#else
-          if (c == '.')
-            {
-              seen_point = 1;
-              goto store_get_digits;
-            }
-#endif
         }
 
       /* exponent */

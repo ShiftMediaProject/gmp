@@ -22,11 +22,17 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define _GNU_SOURCE    /* for DECIMAL_POINT in langinfo.h */
+
 #include "config.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+#if HAVE_LANGINFO_H
+#include <langinfo.h>  /* for nl_langinfo */
+#endif
 
 #if HAVE_LOCALE_H
 #include <locale.h>    /* for localeconv */
@@ -55,20 +61,9 @@ digit_value_in_base (int c, int base)
   return -1;
 }
 
-#if HAVE_LOCALECONV
 /* Avoid memcmp for the usual case that point is one character.  Don't
    bother with str+1,point+1,pointlen-1 since those offsets would add to the
    code size.  */
-#define POINTCMP_FAST(c, str)                                           \
-  ((c) == point0                                                        \
-   && (pointlen == 1 || memcmp (str, point, pointlen) == 0))
-#define POINTCMP_SMALL(c, str)   (memcmp (str, point, pointlen) == 0)
-#define POINTLEN                 (pointlen)
-#else
-#define POINTCMP_FAST(c, str)    ((c) == '.')
-#define POINTCMP_SMALL(c, str)   ((c) == '.')
-#define POINTLEN                 1
-#endif
 
 int
 mpf_set_str (mpf_ptr x, const char *str, int base)
@@ -82,11 +77,9 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   char *dotpos = 0;
   int expflag;
   int decimal_exponent_flag;
-#if HAVE_LOCALECONV
-  const char  *point = localeconv()->decimal_point;
+  const char  *point = GMP_DECIMAL_POINT;
   size_t      pointlen = strlen (point);
-  int         point0 = point[0];
-#endif
+  int         point0 = (unsigned char) point[0];
   TMP_DECL (marker);
 
   TMP_MARK (marker);
@@ -110,9 +103,9 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   /* require at least one digit, possibly after an initial decimal point */
   if (digit_value_in_base (c, base == 0 ? 10 : base) < 0)
     {
-      if (! POINTCMP_SMALL (c, str))
+      if (memcmp (str, point, pointlen) != 0)
         return -1;
-      if (digit_value_in_base (str[POINTLEN], base == 0 ? 10 : base) < 0)
+      if (digit_value_in_base (str[pointlen], base == 0 ? 10 : base) < 0)
         return -1;
     }
 
@@ -158,7 +151,9 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	{
 	  int dig;
 
-	  if (POINTCMP_FAST (c, str))
+          if (UNLIKELY (c == point0)
+              && (LIKELY (pointlen == 1)
+                  || memcmp (str+1, point+1, pointlen-1) == 0))
             {
 	      if (dotpos != 0)
 		{
@@ -166,8 +161,8 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 		  return -1;
 		}
 	      dotpos = s;
-              str += POINTLEN - 1;
-              i += POINTLEN - 1;
+              str += pointlen - 1;
+              i += pointlen - 1;
 	    }
 	  else
 	    {
