@@ -101,7 +101,10 @@ speed_cpu_frequency_environment (void)
        used.
 
    Darwin 1.3 powerpc - hw.cpufrequency is in hertz, but for some reason
-       only seems to be available from sysctl(), not sysctlbyname().  */
+       only seems to be available from sysctl(), not sysctlbyname().
+
+   GNU/Linux with glibc 2.2 has a sysctl call, but it doesn't give a cpu
+       frequency as such, not in kernel 2.2 at least.  */
 
 #if HAVE_SYSCTLBYNAME
 int
@@ -141,56 +144,64 @@ speed_cpu_frequency_sysctlbyname (void)
 int
 speed_cpu_frequency_sysctl (void)
 {
-  int       mib[2];
-  char      str[128];
-  unsigned  val;
-  size_t    size;
-
 #if defined (CTL_HW) && defined (HW_CPU_FREQ)
-  mib[0] = CTL_HW;
-  mib[1] = HW_CPU_FREQ;
-  size = sizeof(val);
-  if (sysctl (mib, 2, &val, &size, NULL, 0) == 0)
-    {
-      if (speed_option_verbose)
-        printf ("Using sysctl() hw.cpufrequency %u for cycle time %.3g\n",
-                val, speed_cycletime);
-      speed_cycletime = 1.0 / (double) val;
-      return 1;
-    }
+  {
+    int       mib[2];
+    unsigned  val;
+    size_t    size;
+
+    mib[0] = CTL_HW;
+    mib[1] = HW_CPU_FREQ;
+    size = sizeof(val);
+    if (sysctl (mib, 2, &val, &size, NULL, 0) == 0)
+      {
+        if (speed_option_verbose)
+          printf ("Using sysctl() hw.cpufrequency %u for cycle time %.3g\n",
+                  val, speed_cycletime);
+        speed_cycletime = 1.0 / (double) val;
+        return 1;
+      }
+  }
 #endif
 
 #if defined (CTL_HW) && defined (HW_MODEL)
-  mib[0] = CTL_HW;
-  mib[1] = HW_MODEL;
-  size = sizeof(str);
-  if (sysctl (mib, 2, str, &size, NULL, 0) == 0)
-    {
-      char  *p = &str[size-1];
-      int   i;
+  {
+    int       mib[2];
+    char      str[128];
+    unsigned  val;
+    size_t    size;
 
-      /* find the second last space */
-      for (i = 0; i < 2; i++)
-        {
-          for (;;)
-            {
-              if (p <= str)
-                goto hw_model_fail;
-              p--;
-              if (*p == ' ')
-                break;
-            }
-        }
+    mib[0] = CTL_HW;
+    mib[1] = HW_MODEL;
+    size = sizeof(str);
+    if (sysctl (mib, 2, str, &size, NULL, 0) == 0)
+      {
+        char  *p = &str[size-1];
+        int   i;
 
-      if (sscanf (p, "%u MHz", &val) != 1)
-        goto hw_model_fail;
+        /* find the second last space */
+        for (i = 0; i < 2; i++)
+          {
+            for (;;)
+              {
+                if (p <= str)
+                  goto hw_model_fail;
+                p--;
+                if (*p == ' ')
+                  break;
+              }
+          }
 
-      if (speed_option_verbose)
-        printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
-                val, speed_cycletime);
-      speed_cycletime = 1e-6 / (double) val;
-      return 1;
-    }
+        if (sscanf (p, "%u MHz", &val) != 1)
+          goto hw_model_fail;
+
+        if (speed_option_verbose)
+          printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
+                  val, speed_cycletime);
+        speed_cycletime = 1e-6 / (double) val;
+        return 1;
+      }
+  }
  hw_model_fail:
 #endif
 
