@@ -5,7 +5,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -356,7 +356,7 @@ __gmp_replacement_vsnprintf (char *buf, size_t buf_size,
     {
       char  *s;
 
-      s = (*__gmp_allocate_func) (total_width);
+      s = __GMP_ALLOCATE_FUNC_TYPE (total_width, char);
       vsprintf (s, orig_fmt, orig_ap);
       len = strlen (s);
       if (buf_size != 0)

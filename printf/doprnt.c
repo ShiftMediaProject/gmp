@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -156,7 +156,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
      use __gmp_allocate_func rather than TMP_ALLOC, to avoid overflowing the
      stack if a long output string is given.  */
   alloc_fmt_size = strlen (orig_fmt) + 1;
-  alloc_fmt = (*__gmp_allocate_func) (alloc_fmt_size);
+  alloc_fmt = __GMP_ALLOCATE_FUNC_TYPE (alloc_fmt_size, char);
   fmt = alloc_fmt;
   strcpy (fmt, orig_fmt);
 

@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -97,7 +97,7 @@ gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt,
   do
     {
       alloc *= 2;
-      p = (*__gmp_allocate_func) (alloc);
+      p = __GMP_ALLOCATE_FUNC_TYPE (alloc, char);
       va_copy (ap, orig_ap);
       ret = vsnprintf (p, alloc, fmt, ap);
       (*__gmp_free_func) (p, alloc);

@@ -1,6 +1,6 @@
 /* __gmp_asprintf_memory etc -- formatted output to allocated space.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -70,7 +70,7 @@ __gmp_asprintf_final (struct gmp_asprintf_t *d)
   char  *buf = d->buf;
   ASSERT (d->alloc >= d->size + 1);
   buf[d->size] = '\0';
-  __GMP_REALLOCATE_FUNC_MAYBE (buf, d->alloc, d->size+1);
+  __GMP_REALLOCATE_FUNC_MAYBE_TYPE (buf, d->alloc, d->size+1, char);
   *d->result = buf;
   return 0;
 }
