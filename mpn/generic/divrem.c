@@ -1,4 +1,4 @@
-/* mpn_divrem -- Divide natural numbers, producing both remainder and
+/* mpn_divrem_classic -- Divide natural numbers, producing both remainder and
    quotient.
 
 Copyright (C) 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
@@ -42,13 +42,13 @@ MA 02111-1307, USA. */
 
 mp_limb_t
 #if __STDC__
-mpn_divrem (mp_ptr qp, mp_size_t qextra_limbs,
+mpn_divrem_classic (mp_ptr qp, mp_size_t qxn,
 	    mp_ptr np, mp_size_t nsize,
 	    mp_srcptr dp, mp_size_t dsize)
 #else
-mpn_divrem (qp, qextra_limbs, np, nsize, dp, dsize)
+mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
      mp_ptr qp;
-     mp_size_t qextra_limbs;
+     mp_size_t qxn;
      mp_ptr np;
      mp_size_t nsize;
      mp_srcptr dp;
@@ -60,9 +60,8 @@ mpn_divrem (qp, qextra_limbs, np, nsize, dp, dsize)
   switch (dsize)
     {
     case 0:
-      /* We are asked to divide by zero, so go ahead and do it!  (To make
-	 the compiler not remove this statement, return the value.)  */
-      return 1 / dsize;
+      DIVIDE_BY_ZERO;
+      return 0;
 
     case 1:
       {
@@ -79,12 +78,12 @@ mpn_divrem (qp, qextra_limbs, np, nsize, dp, dsize)
 	    most_significant_q_limb = 1;
 	  }
 
-	qp += qextra_limbs;
+	qp += qxn;
 	for (i = nsize - 2; i >= 0; i--)
 	  udiv_qrnnd (qp[i], n1, n1, np[i], d);
-	qp -= qextra_limbs;
+	qp -= qxn;
 
-	for (i = qextra_limbs - 1; i >= 0; i--)
+	for (i = qxn - 1; i >= 0; i--)
 	  udiv_qrnnd (qp[i], n1, n1, 0, d);
 
 	np[0] = n1;
@@ -109,12 +108,12 @@ mpn_divrem (qp, qextra_limbs, np, nsize, dp, dsize)
 	    most_significant_q_limb = 1;
 	  }
 
-	for (i = qextra_limbs + nsize - 2 - 1; i >= 0; i--)
+	for (i = qxn + nsize - 2 - 1; i >= 0; i--)
 	  {
 	    mp_limb_t q;
 	    mp_limb_t r;
 
-	    if (i >= qextra_limbs)
+	    if (i >= qxn)
 	      np--;
 	    else
 	      np[0] = 0;
@@ -183,14 +182,14 @@ mpn_divrem (qp, qextra_limbs, np, nsize, dp, dsize)
 	      }
 	  }
 
-	for (i = qextra_limbs + nsize - dsize - 1; i >= 0; i--)
+	for (i = qxn + nsize - dsize - 1; i >= 0; i--)
 	  {
 	    mp_limb_t q;
 	    mp_limb_t n1, n2;
 	    mp_limb_t cy_limb;
 
 	    n2 = np[dsize - 1];
-	    if (i >= qextra_limbs)
+	    if (i >= qxn)
 	      {
 		np--;
 	      }
