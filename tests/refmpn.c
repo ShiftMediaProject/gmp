@@ -424,21 +424,23 @@ refmpn_sub (mp_ptr rp,
 #define HIGHPART(x)  SHIFTLOW((x) & HIGHMASK)
 
 /* set *hi,*lo to x*y */
-void
-refmpn_umul_ppmm (mp_limb_t *hi, mp_limb_t *lo, mp_limb_t x, mp_limb_t y)
+mp_limb_t
+refmpn_umul_ppmm (mp_limb_t *lo, mp_limb_t x, mp_limb_t y)
 {
-  mp_limb_t s;
+  mp_limb_t  hi, s;
   
   *lo = LOWPART(x) * LOWPART(y);
-  *hi = HIGHPART(x) * HIGHPART(y);
+  hi = HIGHPART(x) * HIGHPART(y);
 
   s = LOWPART(x) * HIGHPART(y);
-  ASSERT_NOCARRY (add (hi, *hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
-  ASSERT_NOCARRY (add (hi, *hi, HIGHPART(s)));
+  ASSERT_NOCARRY (add (&hi, hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
+  ASSERT_NOCARRY (add (&hi, hi, HIGHPART(s)));
 
   s = HIGHPART(x) * LOWPART(y);
-  ASSERT_NOCARRY (add (hi, *hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
-  ASSERT_NOCARRY (add (hi, *hi, HIGHPART(s)));
+  ASSERT_NOCARRY (add (&hi, hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
+  ASSERT_NOCARRY (add (&hi, hi, HIGHPART(s)));
+
+  return hi;
 }
 
 mp_limb_t
@@ -453,7 +455,7 @@ refmpn_mul_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier,
                                                                           
   for (i = 0; i < size; i++)
     {
-      refmpn_umul_ppmm (&hi, &lo, sp[i], multiplier);
+      hi = refmpn_umul_ppmm (&lo, sp[i], multiplier);
       ASSERT_NOCARRY (add (&hi, hi, add (&lo, lo, carry)));
       rp[i] = lo;
       carry = hi;
