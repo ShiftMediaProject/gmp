@@ -1,8 +1,6 @@
 # AMD K6 mpn_lshift -- mpn left shift.
 #
-# K6: 1.8 cycles/limb (at 32 limbs/loop), PIC adds 4 cycles at the start.
-#
-# Future: A version with the same speed but less unrolling is in progress.
+# K6: 1.75 cycles/limb
 
 
 # Copyright (C) 1999-2000 Free Software Foundation, Inc.
@@ -27,68 +25,32 @@
 include(`../config.m4')
 
 
-dnl  K6: UNROLL_COUNT cycles/limb
-dnl           8           2.0
-dnl          16           1.9
-dnl          32           1.8
-dnl          64           1.75
-dnl  Maximum possible with the current code is 64.
-
-deflit(UNROLL_COUNT, 32)
-
-
 # mp_limb_t mpn_lshift (mp_ptr dst, mp_srcptr src, mp_size_t size,
 #                       unsigned shift);
 #
 # Shift src,size left by shift many bits and store the result in dst,size.
 # Zeros are shifted in at the right.  Return the bits shifted out at the
 # left.
-#
-# This code uses MMX to handle two limbs at a time, and with the MMX
-# instructions being short decodes, it approaches 1.5 cycles/limb.  Plain
-# integer code, on the other hand, suffers from shrd being a 2 cycle vector
-# decode, meaning at best 3 cycles/limb.
-#
-# In practice this code is 1.75 cycles/limb, or 7 cycles per 4 limb chunk in
-# the loop.  It's not clear where the extra cycle is going.  No 1.5 c/l
-# version has been found.
-#
-# Full speed depends on the destination being aligned to an 8 byte boundary,
-# and one limb is separately processed at the start to arrange this if
-# necessary.
-#
-# Aligning the source to an 8 byte boundary makes no difference, ie. 0mod8
-# or 4mod8 are the same speed.
-#
-# Two limbs are left to the end to process since zeros are shifted in there,
-# rather than src data.  Or if the size is odd three limbs are left since
-# the unrolled loop only handles an even number of limbs.
-
-
-dnl  The unrolled loop takes slightly longer when dst+4*size isn't a
-dnl  multiple of 8, so check both aligned and unaligned destinations when
-dnl  determining these thresholds.  Must be at least 4, since the unrolled
-dnl  loop can't handle smaller.
-
-ifdef(`PIC',`
-deflit(UNROLL_THRESHOLD, 10)
-',`
-deflit(UNROLL_THRESHOLD, 8)
-')
 
 defframe(PARAM_SHIFT,16)
 defframe(PARAM_SIZE, 12)
 defframe(PARAM_SRC,  8)
 defframe(PARAM_DST,  4)
+deflit(`FRAME',0)
 
-dnl  retval held here after shift has been fetched
-define(VAR_RETVAL,`PARAM_SHIFT')
+dnl  used after src has been fetched
+define(VAR_RETVAL,`PARAM_SRC')
+
+dnl  minimum 9, because unrolled loop can't handle less
+deflit(UNROLL_THRESHOLD, 12)
 
 	.text
 	ALIGN(32)
 
 PROLOGUE(mpn_lshift)
-deflit(`FRAME',0)
+	# The 1 limb case can be done without the push %ebx, but it's then
+	# still the same speed.  The push is left as a free helping hand for
+	# the two_or_more code.
 
 	movl	PARAM_SIZE, %eax
 	pushl	%ebx
@@ -98,264 +60,254 @@ deflit(`FRAME',4)
 	decl	%eax
 
 	movl	PARAM_SHIFT, %ecx
-	jnz	L(more_than_one_limb)
+	jnz	L(two_or_more)
 
-
-	movl	(%ebx), %edx	# src limb
+	movl	(%ebx), %edx		# src limb
 	movl	PARAM_DST, %ebx
 
-	shldl	%cl, %edx, %eax	# eax was decremented to zero
+	shldl	%cl, %edx, %eax		# return value
 
  	shll	%cl, %edx
 
-	movl	%edx, (%ebx)	# dst limb
+	movl	%edx, (%ebx)		# dst limb
 	popl	%ebx
 
 	ret
 
 
-# -----------------------------------------------------
-	ALIGN(16)
-L(more_than_one_limb):
+#------------------------------------------------------------------------------
+	ALIGN(16)	# avoid offset 0x1f
+L(two_or_more):
 	# eax	size-1
 	# ebx	src
 	# ecx	shift
 	# edx
-	# esi
-	# edi
-	# ebp
 
-	cmp	$UNROLL_THRESHOLD-1, %eax
-	pushl	%edi
-deflit(`FRAME',8)
-	
 	movl	(%ebx,%eax,4), %edx	# src high limb
-	pushl	%esi
-deflit(`FRAME',12)
+	negl	%ecx
 
-	movl	$0, %esi
+	movd	PARAM_SHIFT, %mm6
+	addl	$32, %ecx
+
+	shrl	%cl, %edx
+	cmpl	$UNROLL_THRESHOLD-1, %eax
+
+	movl	%edx, VAR_RETVAL
 	jae	L(unroll)
 
 
-	shldl	%cl, %edx, %esi
-
-	movl	PARAM_DST, %edi
-	movl	%esi, VAR_RETVAL
-
-
-	# aligning to 16 here slows down by 1 cycle
-L(simple):
-	# eax	counter
+	# eax	size-1
 	# ebx	src
-	# ecx	shift
-	# edx	carry
-	# esi	scratch
-	# edi	dst
-	# ebp
+	# ecx	32-shift
+	# edx	retval
+	#
+	# mm6	shift
 
-	movl	%edx, %esi
-	movl	-4(%ebx,%eax,4), %edx
+	movd	%ecx, %mm7
+	movl	%eax, %ecx
 
-	shldl	%cl, %edx, %esi
+	movl	PARAM_DST, %eax
 
-	movl	%esi, (%edi,%eax,4)
-	decl	%eax
+L(simple):
+	# ecx	dst
+	# ebx	src
+	# ecx	counter
+	# edx	retval
+	#
+	# mm0	scratch
+	# mm6	shift
+	# mm7	32-shift
 
-	jnz	L(simple)
+	movq	-4(%ebx,%ecx,4), %mm0
+ 	psrlq	%mm7, %mm0
+
+	movd	%mm0, (%eax,%ecx,4)
+	loop	L(simple)
 
 
-	shll	%cl, %edx	# result low limb, zeros shifted in
-	movl	VAR_RETVAL, %eax
-
-	movl	%edx, (%edi)
-	popl	%esi
-
-	popl	%edi
+	movd	(%ebx), %mm0
 	popl	%ebx
 
+ 	psllq	%mm6, %mm0
+
+	movd	%mm0, (%eax)
+	movl	%edx, %eax
+
+	emms_or_femms
 	ret
 
 
-# -----------------------------------------------------
-# aligning here saves a couple of cycles
-#	ALIGN(16)
+#------------------------------------------------------------------------------
+# The strange offsets used on src and dst are due to the following,
+# - needing no displacement (%ebx,%eax,4) and (%edx,%eax,4) first in the loop
+# - needing the loop running %eax downwards and wanting to stop when %eax
+#   goes negative
+# - wanting to end up with %eax set to -1 to -4 so as to be able to test for
+#   0-3 extras with test $2 and test $1
+
 L(unroll):
 	# eax	size-1
 	# ebx	src
-	# ecx	shift
-	# edx	src high limb
-	# esi	zero
-	# edi	dst
-	# ebp
+	# ecx	32-shift
+	# edx	retval (but instead VAR_RETVAL is used)
+	#
+	# mm6	shift
 
-deflit(`FRAME',12)
+	addl	$32, %ecx
+	movl	PARAM_DST, %edx
 
-	movl	PARAM_DST, %edi
-	movd	%ecx, %mm6		# lshift
+	movd	%ecx, %mm7
+	subl	$7, %eax		# size-8
 
-	shldl	%cl, %edx, %esi
+	leal	(%edx,%eax,4), %ecx	# alignment of dst
+	addl	$40, %edx
 
-	leal	-4(%edi,%eax,4), %edi	# dst point at high qword
-	movl	%esi, VAR_RETVAL
+	movq	32-8(%ebx,%eax,4), %mm2		# src high qword
+	testb	$4, %cl
 
-	testl	$4, %edi
+	jz	L(dst_aligned)
+	psllq	%mm6, %mm2
 
-	leal	-4(%ebx,%eax,4), %ebx	# src point at high qword
-	jz	L(start_dst_aligned)
-
-
-	# dst isn't aligned, process one limb to make it aligned
-	movq	(%ebx), %mm0		# src high qword
+	psrlq	$32, %mm2
 	decl	%eax
 
-	psllq	%mm6, %mm0
-	subl	$4, %ebx
+	movd	%mm2, 32-40+4-4(%edx,%eax,4)	# dst high limb
+	movq	32-8(%ebx,%eax,4), %mm2		# new src high qword
+L(dst_aligned):
 
-	psrlq	$32, %mm0
-	subl	$4, %edi
-
-	movd	%mm0, 8(%edi)
-L(start_dst_aligned):
+	movq	32-16(%ebx,%eax,4), %mm0	# src second highest qword
+	addl	$24, %ebx
 
 
-	movl	%eax, %edx	# size held for end
-	decl	%eax		# size-2, two last limbs handled at end
 
-	andl	$~1, %eax	# round size down to even
-	movl	%eax, %esi
-
-	movq	(%ebx), %mm1	# src high qword
-	negl	%eax
-
-	andl	$UNROLL_MASK, %eax
-	negl	%ecx
-
-	shll	%eax
-	movq	%mm1, %mm2	# initial carry in both mm1 and mm2
-
-	leal	ifelse(UNROLL_BYTES,256,-124) -8(%ebx,%eax,2), %ebx
-	addl	$64, %ecx
-
-	leal	ifelse(UNROLL_BYTES,256,-124) (%edi,%eax,2), %edi
-	decl	%esi		# loop counter
-
-ifdef(`PIC',`
-	call	L(pic_calc)
-L(here):
-',`
-	leal	L(entry) (%eax,%eax,4), %eax	# 10 bytes code per limb
-')
-	movd	%ecx, %mm7	# rshift = 64-lshift
-
-	shrl	$UNROLL_LOG2, %esi
-	jmp	*%eax
+	# This loop is the important bit, the rest is just support for it.
+	# Four src limbs are held at the start, and four more will be read.
+	# Four dst limbs will be written.
+	#
+	# The magic ingredients for speed here are the same as in rshift,
+	#
+	# - aligning the code to 32 bytes
+	# - fitting the first 10 instructions into 32 bytes (the first fetch
+	#   and store must have no displacements)
+	# - the instruction scheduling shown
 
 
-ifdef(`PIC',`
-L(pic_calc):
-	leal	L(entry)-L(here) (%eax,%eax,4), %eax
-	addl	(%esp), %eax
-	ret
-')
+	# Offset 0x95 here, so use a jump to get to L(top) in one cycle.
+	# This guards against executing through a bunch of nop's if a dumb
+	# assembler doesn't generate multi-byte do-nothing instructions when
+	# aligning.
 
+	jmp L(top)
 
-# ---------------------------------------------------
 	ALIGN(32)
 L(top):
-	# eax	was computed jump
-	# ebx	src
-	# ecx	shift
-	# edx	size-1 (for use at end)
-	# esi	loop counter
-	# edi	dst
-	# ebp
+	# eax	limb counter
+	# ebx	src + 24
+	# ecx
+	# edx	dst + 40
 	#
-	# mm0   scratch
-	# mm1 \	previous src qword (alternately in mm1 or mm2)
-	# mm2 /
-	# mm6	lshift
-	# mm7	rshift (64-lshift)
-	#
-	# 10 code bytes per limb processed
-	#
-	# The two chunks differ in whether mm1 or mm2 holds the carry.
-	# The computed jump puts the initial carry in both mm1 and mm2.
-
-L(entry):
-deflit(CHUNK_COUNT, 4)
-forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
-deflit(`disp0', eval(-i*CHUNK_COUNT*4 ifelse(UNROLL_BYTES,256,+124)))
-deflit(`disp1', eval(disp0 - 8))
-
- 	movq	disp0(%ebx), %mm0
- 	psllq	%mm6, %mm2
-
- 	movq	%mm0, %mm1
- 	psrlq	%mm7, %mm0
-
- 	por	%mm2, %mm0
- 	movq	%mm0, disp0(%edi)
-
-
- 	movq	disp1(%ebx), %mm0
- 	psllq	%mm6, %mm1
-
- 	movq	%mm0, %mm2
- 	psrlq	%mm7, %mm0
-
- 	por	%mm1, %mm0
- 	movq	%mm0, disp1(%edi)
-')
-
-	subl	$UNROLL_BYTES, %ebx
-	subl	$UNROLL_BYTES, %edi
-	
-	decl	%esi
-	jns	L(top)
-
-
-deflit(`disp0', ifelse(UNROLL_BYTES,256,124))
-deflit(`disp1', eval(disp0 - 8))
-
-	testb	$1, %dl		# size-1
-	movl	VAR_RETVAL, %eax
+	# mm0	src next qword
+	# mm1	scratch
+	# mm2	src prev qword
+	# mm6	shift
+	# mm7	64-shift
 
 	psllq	%mm6, %mm2
-	jnz	L(end_even)
+	subl	$4, %eax
+
+	movq	%mm0, %mm1
+	psrlq	%mm7, %mm0
+
+	por	%mm0, %mm2
+	movq	(%ebx,%eax,4), %mm0
+
+	psllq	%mm6, %mm1
+	movq	%mm2, (%edx,%eax,4)
+
+	movq	%mm0, %mm2
+	psrlq	%mm7, %mm0
+
+	por	%mm0, %mm1
+	movq	-8(%ebx,%eax,4), %mm0
+
+	movq	%mm1, -8(%edx,%eax,4)
+	jnc	L(top)
 
 
-L(end_odd):
-	# size odd, three more limbs on dst
+	# Now have four limbs in mm2 (prev) and mm0 (next), plus eax mod 4.
+	#
+	# -16(%ebx) is the next source, and -16(%edx) is the next destination.
+	# %eax is between -4 and -1, representing respectively 0 to 3 extra
+	# limbs that must be read.
 
-	# note load is first in case src==dst
-	movq	eval(disp0+4)(%ebx), %mm0	# src low qword
-	movq	%mm2, disp0(%edi)	# high dword of this
 
-	psllq	%mm6, %mm0
-	popl	%esi
+	testb	$2, %al
+	jz	L(finish_nottwo)
 
-	movq	%mm0, disp1+4(%edi)	# gives low two limbs
-	popl	%edi
+	# Two more limbs: lshift mm2, OR it with rshifted mm0, mm0 becomes
+	# new mm2 and a new mm0 is loaded.
 
+	psllq	%mm6, %mm2
+	movq	%mm0, %mm1
+
+	psrlq	%mm7, %mm0
+	subl	$2, %eax
+
+	por	%mm0, %mm2
+	movq	-8(%ebx,%eax,4), %mm0
+
+	movq	%mm2, -8(%edx,%eax,4)
+	movq	%mm1, %mm2
+L(finish_nottwo):
+
+
+	# lshift mm2, OR with rshifted mm0, mm1 becomes lshifted mm0
+
+	testb	$1, %al
+	psllq	%mm6, %mm2
+
+	movq	%mm0, %mm1
+	psrlq	%mm7, %mm0
+
+	por	%mm0, %mm2
+	psllq	%mm6, %mm1
+
+	movq	%mm2, -16(%edx,%eax,4)
+	jz	L(finish_even)
+
+
+	# Size is odd, so mm1 and one extra limb to process.
+
+	movd	-24(%ebx), %mm0		# src[0]
 	popl	%ebx
+deflit(`FRAME',0)
+
+	movq	%mm0, %mm2
+	psllq	$32, %mm0
+
+	psrlq	%mm7, %mm0
+
+	psllq	%mm6, %mm2
+	por	%mm0, %mm1
+
+	movq	%mm1, 4-40(%edx)	# dst[1,2]
+	movd	%mm2, -40(%edx)		# dst[0]
+
+	movl	VAR_RETVAL, %eax
 
 	emms_or_femms
-
 	ret
 
 
-L(end_even):
-	# size even, must store two limbs
+L(finish_even):
+deflit(`FRAME',4)
+	# Size is even, so only mm1 left to process.
 
-	movq	%mm2, disp0(%edi)
-	popl	%esi
+	movq	%mm1, -40(%edx)		# dst[0,1]
+	movl	VAR_RETVAL, %eax
 
-	popl	%edi
 	popl	%ebx
-
 	emms_or_femms
-
 	ret
-
 
 EPILOGUE()
