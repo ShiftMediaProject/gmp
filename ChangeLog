@@ -18,6 +18,28 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-03-07  Kevin Ryde  <kevin@swox.se>
+
+	* mpf/reldiff.c: Use rprec+ysize limbs for d, to ensure accurate
+	result.  Inline mpf_abs(d,d) and mpf_cmp_ui(x,0), and rate the latter
+	UNLIKELY.
+
+	* mpf/ui_div.c: Use mpn_tdiv_qr.  Use just one TMP_ALLOC.  Use full
+	divisor, since truncating can lose accuracy.
+	* tests/mpf/t-ui_div.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+	
+	* mpf/set_q.c: Expand TMP_ALLOC_LIMBS_2, to make conditional clearer
+	and avoid 1 limb alloc when not wanted.
+
+	* gmp-impl.h (WANT_TMP_DEBUG): Define to 0 if not defined.
+	(TMP_ALLOC_LIMBS_2): Use "if" within macro rather than "#if", for less
+	preprocessor conditionals.
+
+	* mpf/mul_2exp.c, mpf/div_2exp.c: Add some comments.	
+
+	* tests/refmpn.c (refmpn_sb_divrem_mn, refmpn_tdiv_qr): Nailify.
+
 2004-03-04  Kevin Ryde  <kevin@swox.se>
 
 	* gen-psqr.c (print): Add CNST_LIMB in PERFSQR_MOD_TEST, for benefit
