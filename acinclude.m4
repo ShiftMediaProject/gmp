@@ -1018,8 +1018,8 @@ AC_MSG_RESULT([determined])
 ])
 
 
-dnl  GMP_ASM_POWERPC_REGISTERS
-dnl  -------------------------
+dnl  GMP_ASM_POWERPC_R_REGISTERS
+dnl  ---------------------------
 dnl
 dnl  Determine whether the assembler takes powerpc registers with an "r" as
 dnl  in "r6", or as plain "6".  The latter is standard, but NeXT, Rhapsody,
@@ -1028,23 +1028,23 @@ dnl
 dnl  See also mpn/powerpc32/powerpc-defs.m4 which uses the result of this
 dnl  test.
 
-AC_DEFUN(GMP_ASM_POWERPC_REGISTERS,
+AC_DEFUN(GMP_ASM_POWERPC_R_REGISTERS,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler needs r on registers],
-               gmp_cv_asm_powerpc_registers,
+               gmp_cv_asm_powerpc_r_registers,
 [cat >conftest.s <<EOF
       	$gmp_cv_asm_text
 	mtctr	6
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 if AC_TRY_EVAL(gmp_assemble); then
-  gmp_cv_asm_powerpc_registers=no
+  gmp_cv_asm_powerpc_r_registers=no
 else 
-  gmp_cv_asm_powerpc_registers=yes
+  gmp_cv_asm_powerpc_r_registers=yes
 fi
 rm -f conftest*
 ])
-GMP_DEFINE_RAW(["define(<WANT_REGISTERS_R>,<$gmp_cv_asm_powerpc_registers>)"])
+GMP_DEFINE_RAW(["define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)"])
 ])
 
 
