@@ -367,20 +367,52 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
     }
 }
 
+/******************************************************************************
+ *                                                                            *
+ *              Toom 3-way multiplication and squaring                        *
+ *                                                                            *
+ *****************************************************************************/
+
+/* The toom3 code uses 4 new mpn functions:
+   - mpn_addlsh1_n (c, a, b, n) puts in {c, n} the value of {a, n} + 2*{b, n},
+     and returns the carry out
+   - mpn_sublsh1_n (c, a, b, n) puts in {c, n} the value of {a, n} - 2*{b, n},
+     and returns the borrow out
+   - mpn_rsh1add_n (c, a, b, n) puts in {c, n} the value of {a, n} + {b, n}
+     divided by two, and returns the rshift carry (this carry is not used in
+     toom3, where the division by 2 is exact):
+       cy = mpn_add_n (c, a, b, n);
+       cy2 = mpn_rshift (c, c, n, 1);
+       c[n - 1] += cy << (GMP_NUMB_BITS - 1);
+       return cy2;
+   - mpn_rsh1sub_n (c, a, b, n) puts in {c, n} the value of {a, n} - {b, n}
+     divided by two, and returns a two-bit carry (this carry is not used in
+     toom3, since a >= b, and the division by 2 is exact):
+       cy = mpn_sub_n (c, a, b, n);
+       cy2 = mpn_rshift (c, c, n, 1);
+       return (cy2 >> (GMP_NUMB_BITS - 1)) + (cy << 1);
+*/
+
 /* put in {c, 2n} where n = 2k+r the value of {v0,2k} (already in place)
    + B^k * [{v1, 2k+1} - {t1, 2k+1}]
-   + B^(2k) * [{t2, 2k+1} - {v0, 2k} - {vinf, 2r}]
+   + B^(2k) * [{t2, 2k+1} - {v0+vinf, 2k}]
    + B^(3k) * [{t1, 2k+1} - {t2, 2k+1}]
    + B^(4k) * {vinf,2r} (high 2r-1 limbs already in place)
    where {t1, 2k+1} = (3*{v0,2k}+2*sa*{vm1,2k+1}+{v2,2k+1})/6-2*{vinf,2r}
          {t2, 2k+1} = ({v1, 2k+1} + sa * {vm1, 2k+1})/2
    (sa is the sign of {vm1, 2k+1}).
+
+   {vinf, 2r} stores the content of {v0, 2r} + {vinf, 2r}, with carry in cinf0.
+   vinf0 is the low limb of vinf.
+
+   ws is temporary space, and should have at least 2r limbs.
 */
 static void
 toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
-             mp_ptr vinf, mp_size_t k, mp_size_t r, int sa)
+                   mp_ptr vinf, mp_size_t k, mp_size_t r, int sa,
+                   mp_limb_t vinf0, mp_limb_t cinf0, mp_ptr ws)
 {
-  mp_limb_t cy;
+  mp_limb_t cy, saved;
   unsigned long twok = k + k;
   unsigned long kk1 = twok + 1;
   unsigned long twor = r + r;
@@ -394,29 +426,65 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
 #define v0 (c)
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       vm1       hi(vinf)       v1       v2+2vm1      vinf   */
+       v0       vm1       hi(vinf)       v1       v2+2vm1      vinf
+                                                              +lo(v0) */
 
-  cy = mpn_divexact_by3 (v2, v2, kk1);    /* v2 <- v2 / 3 */
-  ASSERT(cy == 0); /* division should be exact */
+  ASSERT_NOCARRY (mpn_divexact_by3 (v2, v2, kk1));    /* v2 <- v2 / 3 */
+#ifdef HAVE_MPN_RSH1ADD_N
+  mpn_rsh1add_n (v2, v2, v0, twok); /* v2 <- (lo(v2)+v0) / 2, exact */
+  cy = v2[twok] & 1; /* add high limb of v2 divided by 2 */
+  v2[twok] >>= 1;
+  MPN_INCR_U (v2 + twok - 1, 2, cy << (GMP_NUMB_BITS - 1));
+#else
   v2[twok] += mpn_add_n (v2, v2, v0, twok);
   mpn_rshift (v2, v2, kk1, 1);
+#endif  
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
        v0       vm1       hi(vinf)       v1    (3v0+2vm1+v2)    vinf
-						    /6                */
+						    /6         +lo(v0) */
 
   /* vm1 <- t2 := (v1 + sa*vm1) / 2
      t2 = a0*b0+a0*b2+a1*b1+a2*b0+a2*b2 >= 0
-   */
-  ((sa >= 0) ? mpn_add_n : mpn_sub_n) (vm1, v1, vm1, kk1); /* no carry */
-  mpn_rshift (vm1, vm1, kk1, 1); /* exact division */
+     No carry comes out from {v1, kk1} +/- {vm1, kk1},
+     and the division by two is exact */
+  if (sa >= 0)
+#ifdef HAVE_MPN_RSH1ADD_N
+    mpn_rsh1add_n (vm1, v1, vm1, kk1);
+#else
+  {
+    mpn_add_n (vm1, vm1, v1, kk1);
+    mpn_rshift (vm1, vm1, kk1, 1);
+  }
+#endif
+  else
+#ifdef HAVE_MPN_RSH1SUB_N
+    mpn_rsh1sub_n (vm1, v1, vm1, kk1);
+#else
+  {
+    mpn_sub_n (vm1, v1, vm1, kk1);
+    mpn_rshift (vm1, vm1, kk1, 1);
+  }
+#endif
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       t2        hi(vinf)       v1         t1          vinf */
+       v0       t2        hi(vinf)       v1         t1       vinf+lo(v0) */
+
+  /* subtract 2*vinf to v2,
+     result is t1 := a0*b0+a0*b2+a1*b1+a1*b2+a2*b0+a2*b1+a2*b2 >= 0 */
+  saved = c4[0];
+  c4[0] = vinf0;
+#ifdef HAVE_MPN_SUBLSH1_N
+  cy = mpn_sublsh1_n (v2, v2, c4, twor);
+#else
+  cy = mpn_lshift (ws, c4, twor, 1);
+  cy += mpn_sub_n (v2, v2, ws, twor);
+#endif
+  MPN_DECR_U (v2 + twor, kk1 - twor, cy);
+  c4[0] = saved;
 
   /* subtract {t2, 2k+1} in {c+3k, 2k+1} i.e. in {t2+k, 2k+1}:
      by chunks of k limbs from right to left to avoid overlap */
-
 #define t2 (vm1)
   MPN_DECR_U (c5, twor - k, t2[twok]);
   cy = mpn_sub_n (c4, c4, t2 + k, k);
@@ -426,40 +494,29 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
   /* c  c+k c+2k c+3k c+4k+1   t  t+2k+1 t+4k+2
      v0     t2        hi(vinf) v1 t1     vinf
-		 -t2
+		 -t2                    +lo(v0)
   */
 
-  /* don't forget to add {vinf, 1} in {c+4k, ...} */
-  MPN_INCR_U (c4, twor, vinf[0]);
+  /* don't forget to add vinf0 in {c+4k, ...} */
+  MPN_INCR_U (c4, twor, vinf0);
 
   /* c  c+k c+2k c+3k c+4k     t  t+2k+1 t+4k+2
      v0     t2        vinf     v1 t1     vinf
-		 -t2
+		 -t2                    +lo(v0)
   */
 
-  /* subtract v0 in {c+2k, ...} */
-  cy = mpn_sub_n (c2, c2, v0, twok);
+  /* subtract v0+vinf in {c+2k, ...} */
+  cy = cinf0 + mpn_sub_n (c2, c2, vinf, twor);
+  if (twor < twok)
+    cy = mpn_sub_1 (c2 + twor, c2 + twor, twok - twor, cy)
+      + mpn_sub_n (c2 + twor, c2 + twor, v0 + twor, twok - twor);
   MPN_DECR_U (c4, twor, cy); /* 2n-4k = 2r */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0       t2          vinf      v1  t1      vinf
-	      -v0   -t2
-  */
-
-  /* subtract vinf in {c+2k, ...} */
-  cy = mpn_sub_n (c2, c2, vinf, twor);
-  MPN_DECR_U (c2 + twor, twok, cy); /* n-k-r=k */
-
-  /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
-     v0       t2          vinf      v1  t1      vinf
-	      -v0   -t2
+	      -v0   -t2                        +lo(v0)
 	      -vinf                                    */
 
-  /* subtract 2*vinf to v2,
-     result is t1 := a0*b0+a0*b2+a1*b1+a1*b2+a2*b0+a2*b1+a2*b2 >= 0 */
-  cy = mpn_lshift (vinf, vinf, twor, 1);
-  cy += mpn_sub_n (v2, v2, vinf, twor);
-  MPN_DECR_U (v2 + twor, kk1 - twor, cy);
   /* subtract t1 in {c+k, ...} */
   cy = mpn_sub_n (c1, c1, v2, kk1);
   MPN_DECR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
@@ -516,7 +573,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
   } while (0)
 
 /* The necessary temporary space T(n) satisfies T(n)=0 for n < THRESHOLD,
-   and T(n) <= max(2n+2, 6k+3, 4k+3+T(k+1)) otherwise, where k = ceil(n/2).
+   and T(n) <= max(2n+2, 6k+3, 4k+3+T(k+1)) otherwise, where k = ceil(n/3).
 
    Assuming T(n) >= 2n, 6k+3 <= 4k+3+T(k+1).
    Similarly, 2n+2 <= 6k+2 <= 4k+3+T(k+1).
@@ -524,13 +581,16 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
    With T(n) = 2n+S(n), this simplifies to S(n) <= 9 + S(k+1).
    Since THRESHOLD >= 17, we have n/(k+1) >= 19/8
    thus S(n) <= S(n/(19/8)) + 9 thus S(n) <= 9*log(n)/log(19/8) <= 8*log2(n).
+
+   We need in addition 2*r for mpn_sublsh1_n, so the total is at most
+   8/3*n+8*log2(n).
 */
 
 void
 mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
 {
   mp_size_t k, k1, kk1, r, twok, twor;
-  mp_limb_t cy, cc, saved;
+  mp_limb_t cy, cc, saved, vinf0, cinf0;
   mp_ptr trec;
   int sa, sb;
   mp_ptr c1, c2, c3, c4, c5;
@@ -672,17 +732,25 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
      thus 0 <= v2 < 51*B^(2k) < 2^6*B^(2k)
      Uses temporary space {t+4k+2,2k+1}, requires T(n) >= 6k+3.
   */
-#ifdef HAVE_MPN_ADDLSH1_N
   if (sa >= 0)
+#ifdef HAVE_MPN_ADDLSH1_N
     mpn_addlsh1_n (v2, v2, c2, kk1);
-  else
-    {
-      mpn_lshift (t + 4 * k + 2, c2, kk1, 1);
-      mpn_sub_n (v2, v2, t + 4 * k + 2, kk1);
-    }
 #else
-  mpn_lshift (t + 4 * k + 2, c2, kk1, 1);
-  ((sa >= 0) ? mpn_add_n : mpn_sub_n) (v2, v2, t + 4 * k + 2, kk1);
+  {
+    /* we can use vinf=t+4k+2 as workspace since it is not full yet */
+    mpn_lshift (vinf, c2, kk1, 1);
+    mpn_add_n (v2, v2, vinf, kk1);
+  }
+#endif
+  else
+#ifdef HAVE_MPN_SUBLSH1_N
+    mpn_sublsh1_n (v2, v2, c2, kk1);
+#else
+  {
+    /* we can use vinf=t+4k+2 as workspace since it is not full yet */
+    mpn_lshift (vinf, c2, kk1, 1);
+    mpn_sub_n (v2, v2, vinf, kk1);
+  }
 #endif
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
@@ -692,10 +760,11 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
      then copy it in {t+4k+2,2r} */
   saved = c4[0];
   TOOM3_MUL_REC (c4, a + twok, b + twok, r, trec);
-  MPN_COPY(vinf, c4, twor);
+  cinf0 = mpn_add_n (vinf, c4, c, twor); /* {v0,2r} + {vinf,2r} */
+  vinf0 = c4[0];
   c4[0] = saved;
 
-  toom3_interpolate (c, t, v2, c2, vinf, k, r, sa);
+  toom3_interpolate (c, t, v2, c2, vinf, k, r, sa, vinf0, cinf0, vinf + twor);
 
 #undef v2
 #undef vinf
@@ -705,7 +774,7 @@ void
 mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 {
   mp_size_t k, k1, kk1, r, twok, twor;
-  mp_limb_t cy, saved;
+  mp_limb_t cy, saved, vinf0, cinf0;
   mp_ptr trec;
   int sa;
   mp_ptr c1, c2, c3, c4, c5;
@@ -749,7 +818,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 
   sa = (c[k] != 0) ? 1 : mpn_cmp (c, a + k, k);
   c[k] = (sa >= 0) ? c[k] - mpn_sub_n (c, c, a + k, k)
-		   : mpn_sub_n (c, a + k, c, k);
+    : mpn_sub_n (c, a + k, c, k);
 
   TOOM3_SQR_REC (c2, c, k1, trec);
 
@@ -780,10 +849,11 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 
   saved = c4[0];
   TOOM3_SQR_REC (c4, a + twok, r, trec);
-  MPN_COPY(vinf, c4, twor);
+  cinf0 = mpn_add_n (vinf, c4, c, twor);
+  vinf0 = c4[0];
   c4[0] = saved;
 
-  toom3_interpolate (c, t, v2, c2, vinf, k, r, 1);
+  toom3_interpolate (c, t, v2, c2, vinf, k, r, 1, vinf0, cinf0, vinf + twor);
 
 #undef v2
 #undef vinf
