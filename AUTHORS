@@ -1,12 +1,13 @@
 Authors if GNU MP (in chronological order)
-Torbjörn Granlund
-John Amanatides
-Paul Zimmermann
-Ken Weber
-Bennet Yee
-Andreas Schwab
-Robert Harley
-Linus Nordberg
-Kent Boortz
-Kevin Ryde
-Guillaume Hanrot
+Torbjörn Granlund	all except:
+John Amanatides		original version of mpz/pprime_p.c
+Paul Zimmermann		mpn/generic/mul_fft.c, mpn/generic/dc_divrem_n.c,
+			new mpz/powm.c, mpfr functions (with Guillaume Hanrot)
+Ken Weber		mpn/generic/gcd.c mpn/generic/bdivmod.c
+Bennet Yee		mpz/jacobi.c mpz/legendre.c
+Andreas Schwab		mpn/m68k/lshift.S, mpn/m68k/rshift.S
+Robert Harley		mpn/generic/mul_n.c, files in mpn/arm
+Linus Nordberg		New random number framework, original autoconfery
+Kent Boortz		MacOS port
+Kevin Ryde		Most x86 assembly, new autoconfery, ...
+Guillaume Hanrot	mpfr functions (with Paul Zimmermann)
