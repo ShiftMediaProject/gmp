@@ -2,6 +2,11 @@
 
 	* Version 3.0 released.
 
+	* mpn/arm/add_n.S: New version from Robert Harley.
+	* mpn/arm/addmul_1.S: Likewise.
+	* mpn/arm/mul_1.S: Likewise.
+	* mpn/arm/sub_n.S: Likewise.
+
 	* gmp.h (__GNU_MP_VERSION_PATCHLEVEL): Now 0.
 
 2000-04-17  Linus Nordberg  <linus@swox.se>
