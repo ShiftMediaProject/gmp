@@ -66,7 +66,8 @@ mpz_kronecker_zi_si (a, b)
   count_trailing_zeros (twos, b);
   result_bit1 ^= JACOBI_TWOS_U_BIT1 (twos, PTR(a)[0]);
 
-  if ((((unsigned long) b) >>= twos) == 1)
+  b = ((unsigned long) b) >> twos;
+  if (b == 1)
     return JACOBI_BIT1_TO_PN (result_bit1);
   else
     return mpn_jacobi_base (mpz_fdiv_ui (a, b), b, result_bit1);

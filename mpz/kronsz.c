@@ -115,7 +115,7 @@ mpz_kronecker_si_zi (a, b)
   if ((a & 1) == 0)
     {
       count_trailing_zeros (twos, a);
-      ((unsigned long) a) >>= twos;
+      a = ((unsigned long) a) >> twos;
       result_bit1 ^= JACOBI_TWOS_U_BIT1 (twos, b_low);
     }
 
