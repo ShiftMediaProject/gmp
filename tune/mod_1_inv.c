@@ -1,6 +1,5 @@
-/* mpn/generic/mod_1.c forced to use mul-by-inverse udiv_qrnnd_preinv. */
+/* mpn/generic/mod_1.c forced to use mul-by-inverse udiv_qrnnd_preinv.
 
-/*
 Copyright 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,9 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
+
+#define OPERATION_mod_1
 
 #include "gmp.h"
 #include "gmp-impl.h"
