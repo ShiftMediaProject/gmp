@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 20 Nov 2001.  An up-to-date version is available at
+  This file current as of 23 Nov 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -242,15 +242,6 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      targets with native versions of those routines.  Need to be careful not to
      pass size==0.  Is some code sharing possible between the <code>mpz</code>
      routines?
-<li> <code>DIVEXACT_THRESHOLD</code> could be added to control whether
-     <code>mpz_divexact</code> uses <code>mpn_bdivmod</code> or
-     <code>mpn_tdiv_qr</code>, since the latter is faster on large divisors.
-     Or better still would be the following task:
-<li> <code>mpn_bdivmod</code> should use a divide and conquer like the normal
-     division.  See "Exact Division with Karatsuba Complexity" by Jebelean for
-     a (brief) description.  This will benefit <code>mpz_divexact</code>
-     immediately, and <code>mpn_gcd</code> on large unequal size operands.
-     REDC should be able to use it too.
 <li> <code>mpf_add</code>: Don't do a copy to avoid overlapping operands
      unless it's really necessary (currently only sizes are tested, not
      whether r really is u or v).
