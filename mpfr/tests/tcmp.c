@@ -1,20 +1,20 @@
 /* Test file for mpfr_cmp.
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -24,20 +24,34 @@ MA 02111-1307, USA. */
 #include <math.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 #define Infp 1/0.
 #define Infm -1/0.
 
-extern int isnan();
-
-int main()
+int
+main (void)
 {
   double x, y;
   mpfr_t xx, yy;
   int i, c;
 
-  mpfr_init2(xx, 65); mpfr_init2(yy, 65);
+  mpfr_init (xx);
+  mpfr_init (yy);
+
+  mpfr_set_prec (xx, 2);
+  mpfr_set_prec (yy, 2);
+  mpfr_set_str_raw(xx, "-0.10E0");
+  mpfr_set_str_raw(yy, "-0.10E0");
+  if (mpfr_cmp (xx, yy))
+    {
+      fprintf (stderr, "mpfr_cmp (xx, yy) returns non-zero for prec=2\n");
+      exit (1);
+    }
+
+  mpfr_set_prec (xx, 65);
+  mpfr_set_prec (yy, 65);
   mpfr_set_str_raw(xx, "0.10011010101000110101010000000011001001001110001011101011111011101E623");
   mpfr_set_str_raw(yy, "0.10011010101000110101010000000011001001001110001011101011111011100E623");
   if (mpfr_cmp2(xx,yy)!=64) { printf("Error (1) in mpfr_cmp\n"); exit(1); }
@@ -149,5 +163,6 @@ int main()
   }
 
   mpfr_clear(xx); mpfr_clear(yy);
+
   return 0;
 }

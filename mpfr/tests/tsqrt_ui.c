@@ -1,20 +1,20 @@
 /* Test file for mpfr_sqrt_ui.
 
-Copyright (C) 2000 Free Software Foundation.
+Copyright (C) 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -54,7 +54,8 @@ void check (unsigned long a, mp_rnd_t rnd_mode, double Q)
   mpfr_clear(q);
 }
 
-int main()
+int
+main (void)
 {
 #ifdef TEST
   int i; unsigned long a;
@@ -75,5 +76,6 @@ int main()
 #endif
   check(0, GMP_RNDN, 0.0);
   check(2116118, GMP_RNDU, 1.45468828276026215e3);
+
   return 0;
 }

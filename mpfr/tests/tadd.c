@@ -1,20 +1,20 @@
 /* Test file for mpfr_add and mpfr_sub.
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999-2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -29,7 +29,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-extern int isnan();
 extern int getpid();
 void check _PROTO((double, double, mp_rnd_t, unsigned int, unsigned int, unsigned int, double)); 
 void checknan _PROTO((double, double, mp_rnd_t, unsigned int, unsigned int, unsigned int)); 
@@ -40,6 +39,9 @@ void check2 _PROTO((double, int, double, int, int, int));
 void check2a _PROTO((double, int, double, int, int, int, char *)); 
 void check64 _PROTO((void)); 
 void check_same _PROTO((void)); 
+void check_case_1b _PROTO((void)); 
+void check_case_2 _PROTO((void));
+void check_inexact _PROTO((void));
 
 /* checks that x+y gives the same results in double
    and with mpfr with 53 bits of precision */
@@ -61,7 +63,7 @@ unsigned int py, unsigned int pz, double z1)
   if (z1==0.0) z1=x+y; else cert=1;
   z2 = mpfr_get_d(zz);
   mpfr_set_d (yy, z2, GMP_RNDN);
-  if (!mpfr_cmp (xx, yy) && cert && z1!=z2 && !(isnan(z1) && isnan(z2))) {
+  if (!mpfr_cmp (zz, yy) && cert && z1!=z2 && !(isnan(z1) && isnan(z2))) {
     printf("expected sum is %1.20e, got %1.20e\n",z1,z2);
     printf("mpfr_add failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
 	   x, y, mpfr_print_rnd_mode(rnd_mode));
@@ -218,7 +220,63 @@ void check64 ()
 {
   mpfr_t x, t, u;
 
-  mpfr_init(x); mpfr_init(t); mpfr_init(u);
+  mpfr_init (x);
+  mpfr_init (t);
+  mpfr_init (u);
+
+  mpfr_set_prec (x, 29);
+  mpfr_set_str_raw (x, "1.1101001000101111011010010110e-3");
+  mpfr_set_prec (t, 58);
+  mpfr_set_str_raw (t, "0.11100010011111001001100110010111110110011000000100101E-1");
+  mpfr_set_prec (u, 29);
+  mpfr_add (u, x, t, GMP_RNDD);
+  mpfr_set_str_raw (t, "1.0101011100001000011100111110e-1");
+  if (mpfr_cmp (u, t))
+    {
+      fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=29, prec(t)=58\n");
+      printf ("expected "); mpfr_out_str (stdout, 2, 29, t, GMP_RNDN);
+      putchar ('\n');
+      printf ("got      "); mpfr_out_str (stdout, 2, 29, u, GMP_RNDN);
+      putchar ('\n');
+      exit(1);
+    }
+
+  mpfr_set_prec (x, 4);
+  mpfr_set_str_raw (x, "-1.0E-2");
+  mpfr_set_prec (t, 2);
+  mpfr_set_str_raw (t, "-1.1e-2");
+  mpfr_set_prec (u, 2);
+  mpfr_add (u, x, t, GMP_RNDN);
+  if (MPFR_MANT(u)[0] << 2)
+    {
+      fprintf (stderr, "result not normalized for prec=2\n");
+      mpfr_print_raw (u); putchar ('\n');
+      exit (1);
+    }
+  mpfr_set_str_raw (t, "-1.0e-1");
+  if (mpfr_cmp (u, t))
+    {
+      fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=4, prec(t)=2\n");
+      printf ("expected -1.0e-1\n");
+      printf ("got      "); mpfr_out_str (stdout, 2, 4, u, GMP_RNDN);
+      putchar ('\n');
+      exit (1);
+    }
+
+  mpfr_set_prec (x, 8);
+  mpfr_set_str_raw (x, "-0.10011010"); /* -77/128 */
+  mpfr_set_prec (t, 4);
+  mpfr_set_str_raw (t, "-1.110e-5"); /* -7/128 */
+  mpfr_set_prec (u, 4);
+  mpfr_add (u, x, t, GMP_RNDN); /* should give -5/8 */
+  mpfr_set_str_raw (t, "-1.010e-1");
+  if (mpfr_cmp (u, t)) {
+    fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=8, prec(t)=4\n");
+    printf ("expected -1.010e-1\n");
+    printf ("got      "); mpfr_out_str (stdout, 2, 4, u, GMP_RNDN);
+    putchar ('\n');
+    exit (1);
+  }
 
   mpfr_set_prec (x, 112); mpfr_set_prec (t, 98); mpfr_set_prec (u, 54);
   mpfr_set_str_raw (x, "-0.11111100100000000011000011100000101101010001000111E-401");
@@ -283,7 +341,7 @@ void check64 ()
   }
   if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] & 
       ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0) {
-    printf("Error in mpfr_sub: result is not msb-normalized\n"); exit(1);
+    printf("Error in mpfr_sub: result is not msb-normalized (1)\n"); exit(1);
   }
   mpfr_set_prec(x, 65); mpfr_set_prec(t, 65); mpfr_set_prec(u, 65);
   mpfr_set_str_raw(x, "0.10011010101000110101010000000011001001001110001011101011111011101E623");
@@ -336,9 +394,35 @@ void check64 ()
   mpfr_sub(u, x, t, GMP_RNDN);
   if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] & 
       ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0) {
-    printf("Error in mpfr_sub: result is not msb-normalized\n"); exit(1);
+    printf("Error in mpfr_sub: result is not msb-normalized (2)\n"); exit(1);
   }
 
+  /* bug found by Nathalie Revol, 21 March 2001 */
+  mpfr_set_prec (x, 65);
+  mpfr_set_prec (t, 65);
+  mpfr_set_prec (u, 65);
+  mpfr_set_str_raw (x, "0.11100100101101001100111011111111110001101001000011101001001010010E-35");
+  mpfr_set_str_raw (t, "0.10000000000000000000000000000000000001110010010110100110011110000E1");
+  mpfr_sub (u, t, x, GMP_RNDU);
+  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] & 
+      ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0) {
+    fprintf(stderr, "Error in mpfr_sub: result is not msb-normalized (3)\n");
+    exit (1);
+  }
+
+  /* bug found by Fabrice Rouillier, 27 Mar 2001 */
+  mpfr_set_prec (x, 107);
+  mpfr_set_prec (t, 107);
+  mpfr_set_prec (u, 107);
+  mpfr_set_str_raw (x, "0.10111001001111010010001000000010111111011011011101000001001000101000000000000000000000000000000000000000000E315");
+  mpfr_set_str_raw (t, "0.10000000000000000000000000000000000101110100100101110110000001100101011111001000011101111100100100111011000E350");
+  mpfr_sub (u, x, t, GMP_RNDU);
+  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] & 
+      ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0) {
+    fprintf(stderr, "Error in mpfr_sub: result is not msb-normalized (4)\n");
+    exit (1);
+  }
+  
   /* checks that NaN flag is correctly reset */
   mpfr_set_d (t, 1.0, GMP_RNDN);
   mpfr_set_d (u, 1.0, GMP_RNDN);
@@ -350,6 +434,88 @@ void check64 ()
   }
 
   mpfr_clear(x); mpfr_clear(t); mpfr_clear(u);
+}
+
+/* check case when c does not overlap with a, but both b and c count
+   for rounding */
+void check_case_1b (void)
+{
+  mpfr_t a, b, c;
+  unsigned int prec_a, prec_b, prec_c, dif;
+
+  mpfr_init (a);
+  mpfr_init (b);
+  mpfr_init (c);
+
+  for (prec_a = 1; prec_a <= 64; prec_a++)
+    {
+      mpfr_set_prec (a, prec_a);
+      for (prec_b = prec_a + 1; prec_b <= 64; prec_b++)
+	{
+	  dif = prec_b - prec_a;
+	  mpfr_set_prec (b, prec_b);
+	  /* b = 1 - 2^(-prec_a) + 2^(-prec_b) */
+	  mpfr_set_ui (b, 1, GMP_RNDN);
+	  mpfr_div_2exp (b, b, dif, GMP_RNDN);
+	  mpfr_sub_ui (b, b, 1, GMP_RNDN);
+	  mpfr_div_2exp (b, b, prec_a, GMP_RNDN);
+	  mpfr_add_ui (b, b, 1, GMP_RNDN);
+	  for (prec_c = dif; prec_c <= 64; prec_c++)
+	    {
+	      /* c = 2^(-prec_a) - 2^(-prec_b) */
+	      mpfr_set_prec (c, prec_c);
+	      mpfr_set_si (c, -1, GMP_RNDN);
+	      mpfr_div_2exp (c, c, dif, GMP_RNDN);
+	      mpfr_add_ui (c, c, 1, GMP_RNDN);
+	      mpfr_div_2exp (c, c, prec_a, GMP_RNDN);
+	      mpfr_add (a, b, c, GMP_RNDN);
+	      if (mpfr_cmp_ui (a, 1) != 0)
+		{
+		  fprintf (stderr, "case (1b) failed for prec_a=%u, prec_b=%u, prec_c=%u\n", prec_a, prec_b, prec_c);
+		  printf("b="); mpfr_print_raw(b); putchar('\n');
+		  printf("c="); mpfr_print_raw(c); putchar('\n');
+		  printf("a="); mpfr_print_raw(a); putchar('\n');
+		  exit (1);
+		}
+	    }
+	}
+    }
+
+  mpfr_clear (a);
+  mpfr_clear (b);
+  mpfr_clear (c);
+}
+
+/* check case when c overlaps with a */
+void check_case_2 (void)
+{
+  mpfr_t a, b, c, d;
+
+  mpfr_init2 (a, 300);
+  mpfr_init2 (b, 800);
+  mpfr_init2 (c, 500);
+  mpfr_init2 (d, 800);
+
+  mpfr_set_str_raw(a, "1E110");  /* a = 2^110 */
+  mpfr_set_str_raw(b, "1E900");  /* b = 2^900 */
+  mpfr_set_str_raw(c, "1E500");  /* c = 2^500 */
+  mpfr_add(c, c, a, GMP_RNDZ);   /* c = 2^500 + 2^110 */
+  mpfr_sub(d, b, c, GMP_RNDZ);   /* d = 2^900 - 2^500 - 2^110 */
+  mpfr_add(b, b, c, GMP_RNDZ);   /* b = 2^900 + 2^500 + 2^110 */
+  mpfr_add(a, b, d, GMP_RNDZ);   /* a = 2^901 */
+  if (mpfr_cmp_ui_2exp (a, 1, 901))
+    {
+      fprintf (stderr, "b + d fails for b=2^900+2^500+2^110, d=2^900-2^500-2^110\n");
+      fprintf (stderr, "expected 1.0e901, got ");
+      mpfr_out_str (stderr, 2, 0, a, GMP_RNDN);
+      fprintf (stderr, "\n");
+      exit (1);
+    }
+
+  mpfr_clear (a);
+  mpfr_clear (b);
+  mpfr_clear (c);
+  mpfr_clear (d);
 }
 
 /* checks when source and destination are equal */
@@ -368,7 +534,99 @@ void check_same ()
 #define check53(x, y, r, z) check(x, y, r, 53, 53, 53, z)
 #define check53nan(x, y, r) checknan(x, y, r, 53, 53, 53); 
 
-int main(argc,argv) int argc; char *argv[];
+#define MAX_PREC 100
+
+void
+check_inexact ()
+{
+  mpfr_t x, y, z, u;
+  mp_prec_t px, py, pu, pz;
+  int inexact, cmp;
+  mp_rnd_t rnd;
+  
+  mpfr_init (x);
+  mpfr_init (y);
+  mpfr_init (z);
+  mpfr_init (u);
+
+  mpfr_set_prec (x, 1);
+  mpfr_set_str_raw (x, "0.1E-4");
+  mpfr_set_prec (u, 33);
+  mpfr_set_str_raw (u, "0.101110100101101100000000111100000E-1");
+  mpfr_set_prec (y, 31);
+  if ((inexact = mpfr_add (y, x, u, GMP_RNDN)))
+    {
+      fprintf (stderr, "Wrong inexact flag (2): expected 0, got %d\n", inexact);
+      exit (1);
+    }
+
+  mpfr_set_prec (x, 1);
+  mpfr_set_str_raw (x, "0.1E-4");
+  mpfr_set_prec (u, 33);
+  mpfr_set_str_raw (u, "0.101110100101101100000000111100000E-1");
+  mpfr_set_prec (y, 28);
+  if ((inexact = mpfr_add (y, x, u, GMP_RNDN)))
+    {
+      fprintf (stderr, "Wrong inexact flag (1): expected 0, got %d\n", inexact);
+      exit (1);
+    }
+
+  for (px=1; px<MAX_PREC; px++)
+    {
+      mpfr_set_prec (x, px);
+      mpfr_random (x);
+      for (pu=1; pu<MAX_PREC; pu++)
+	{
+	  mpfr_set_prec (u, pu);
+	  mpfr_random (u);
+	  for (py=1; py<MAX_PREC; py++)
+	    {
+	      mpfr_set_prec (y, py);
+	      pz =  (mpfr_cmp_abs (x, u) >= 0) ? MPFR_EXP(x)-MPFR_EXP(u)
+		: MPFR_EXP(u)-MPFR_EXP(x);
+	      /* x + u is exactly representable with precision
+		 abs(EXP(x)-EXP(u)) + max(prec(x), prec(u)) + 1 */
+	      pz = pz + MAX(MPFR_PREC(x), MPFR_PREC(u)) + 1;
+	      mpfr_set_prec (z, pz);
+	      rnd = rand () % 4;
+	      if (mpfr_add (z, x, u, rnd))
+		{
+		  fprintf (stderr, "z <- x + u should be exact\n");
+		  printf ("x="); mpfr_print_raw (x); putchar ('\n');
+		  printf ("u="); mpfr_print_raw (u); putchar ('\n');
+		  printf ("z="); mpfr_print_raw (z); putchar ('\n');
+		  exit (1);
+		}
+	      for (rnd=0; rnd<4; rnd++)
+		{
+		  inexact = mpfr_add (y, x, u, rnd);
+		  cmp = mpfr_cmp (y, z);
+		  if (((inexact == 0) && (cmp != 0)) ||
+		      ((inexact > 0) && (cmp <= 0)) ||
+		      ((inexact < 0) && (cmp >= 0)))
+		    {
+		      fprintf (stderr, "Wrong inexact flag for rnd=%s\n",
+			   mpfr_print_rnd_mode(rnd));
+		      printf ("expected %d, got %d\n", cmp, inexact);
+		      printf ("x="); mpfr_print_raw (x); putchar ('\n');
+		      printf ("u="); mpfr_print_raw (u); putchar ('\n');
+		      printf ("y=  "); mpfr_print_raw (y); putchar ('\n');
+		      printf ("x+u="); mpfr_print_raw (z); putchar ('\n');
+		      exit (1);
+		    }
+		}
+	    }
+	}
+    }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (z);
+  mpfr_clear (u);
+}
+
+int
+main (int argc, char *argv[])
 {
   int prec, rnd_mode;
 #ifdef TEST
@@ -383,6 +641,9 @@ int main(argc,argv) int argc; char *argv[];
     set_fpc_csr(exp.fc_word);
 #endif
 
+  check_inexact ();
+  check_case_1b ();
+  check_case_2 ();
   check64();
   check(293607738.0, 1.9967571564050541e-5, GMP_RNDU, 64, 53, 53,
 	2.9360773800002003e8);
@@ -554,6 +815,13 @@ int main(argc,argv) int argc; char *argv[];
 	  GMP_RNDN, -1.90982880222349071e-121);
 
   check53nan(1/0., -1/0., GMP_RNDN);
+
+  /* tests for particular cases (Vincent Lefevre, 22 Aug 2001) */
+  check53(9007199254740992.0, 1.0, GMP_RNDN, 9007199254740992.0);
+  check53(9007199254740994.0, 1.0, GMP_RNDN, 9007199254740996.0);
+  check53(9007199254740992.0, -1.0, GMP_RNDN, 9007199254740991.0);
+  check53(9007199254740994.0, -1.0, GMP_RNDN, 9007199254740992.0);
+  check53(9007199254740996.0, -1.0, GMP_RNDN, 9007199254740996.0);
   
 #ifdef TEST
   /* Comparing to double precision using machine arithmetic */
@@ -605,6 +873,6 @@ int main(argc,argv) int argc; char *argv[];
     check5(x, rnd);
   }
 #endif
+
   return 0;
 }
-

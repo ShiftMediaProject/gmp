@@ -1,20 +1,20 @@
 /* Test file for mpfr_ui_sub.
 
-Copyright (C) 2000 Free Software Foundation.
+Copyright (C) 2000-2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -28,11 +28,111 @@ MA 02111-1307, USA. */
 #include "mpfr-test.h"
 #endif
 
-void check _PROTO((unsigned long, double, mp_rnd_t, double)); 
+void special _PROTO ((void));
+void check _PROTO ((unsigned long, double, mp_rnd_t, double));
+void check_two_sum _PROTO ((mp_prec_t));
+
+void
+special ()
+{
+  mpfr_t x, y, res;
+  int inexact;
+  
+  mpfr_init (x);
+  mpfr_init (y);
+  mpfr_init (res);
+
+  mpfr_set_prec (x, 24);
+  mpfr_set_prec (y, 24);
+  mpfr_set_str_raw (y, "0.111100110001011010111");
+  inexact = mpfr_ui_sub (x, 1, y, GMP_RNDN);
+  if (inexact)
+    {
+      fprintf (stderr, "Wrong inexact flag: got %d, expected 0\n", inexact);
+      exit (1);
+    }
+
+  mpfr_set_prec (x, 24);
+  mpfr_set_prec (y, 24);
+  mpfr_set_str_raw (y, "0.111100110001011010111");
+  if ((inexact = mpfr_ui_sub (x, 38181761, y, GMP_RNDN)) >= 0)
+    {
+      fprintf (stderr, "Wrong inexact flag: got %d, expected -1\n", inexact);
+      exit (1);
+    }
+
+  mpfr_set_prec (x, 63);
+  mpfr_set_prec (y, 63);
+  mpfr_set_str_raw (y, "0.111110010010100100110101101010001001100101110001000101110111111E-1");
+  if ((inexact = mpfr_ui_sub (x, 1541116494, y, GMP_RNDN)) <= 0)
+    {
+      fprintf (stderr, "Wrong inexact flag: got %d, expected +1\n", inexact);
+      exit (1);
+    }
+
+  mpfr_set_prec (x, 32);
+  mpfr_set_prec (y, 32);
+  mpfr_set_str_raw (y, "0.11011000110111010001011100011100E-1");
+  if ((inexact = mpfr_ui_sub (x, 2000375416, y, GMP_RNDN)) >= 0)
+    {
+      fprintf (stderr, "Wrong inexact flag: got %d, expected -1\n", inexact);
+      exit (1);
+    }
+
+  mpfr_set_prec (x, 24);
+  mpfr_set_prec (y, 24);
+  mpfr_set_str_raw (y, "0.110011011001010011110111E-2");
+  if ((inexact = mpfr_ui_sub (x, 927694848, y, GMP_RNDN)) <= 0)
+    {
+      fprintf (stderr, "Wrong inexact flag: got %d, expected +1\n", inexact);
+      exit (1);
+    }
+
+  /* bug found by Mathieu Dutour, 12 Apr 2001 */
+  mpfr_set_prec (x, 5);
+  mpfr_set_prec (y, 5);
+  mpfr_set_prec (res, 5);
+  mpfr_set_str_raw (x, "1e-12");
+
+  mpfr_ui_sub (y, 1, x, GMP_RNDD);
+  mpfr_set_str_raw (res, "0.11111");
+  if (mpfr_cmp (y, res))
+    {
+      fprintf (stderr, "Error in mpfr_ui_sub (y, 1, x, GMP_RNDD) for x=2^(-12)\nexpected 1.1111e-1, got ");
+      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
+      fprintf (stderr, "\n");
+      exit (1);
+    }
+  
+  mpfr_ui_sub (y, 1, x, GMP_RNDU);
+  mpfr_set_str_raw (res, "1.0");
+  if (mpfr_cmp (y, res))
+    {
+      fprintf (stderr, "Error in mpfr_ui_sub (y, 1, x, GMP_RNDU) for x=2^(-12)\nexpected 1.0, got ");
+      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
+      fprintf (stderr, "\n");
+      exit (1);
+    }
+  
+  mpfr_ui_sub (y, 1, x, GMP_RNDN);
+  mpfr_set_str_raw (res, "1.0");
+  if (mpfr_cmp (y, res))
+    {
+      fprintf (stderr, "Error in mpfr_ui_sub (y, 1, x, GMP_RNDN) for x=2^(-12)\nexpected 1.0, got ");
+      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
+      fprintf (stderr, "\n");
+      exit (1);
+    }
+  
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (res);
+}
 
 /* checks that y/x gives the same results in double
    and with mpfr with 53 bits of precision */
-void check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
+void
+check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
 {
   double z2; mpfr_t xx, zz;
 
@@ -54,10 +154,60 @@ void check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
   mpfr_clear(xx); mpfr_clear(zz);
 }
 
-int main(argc,argv) int argc; char *argv[];
+/* if u = o(x-y), v = o(u-x), w = o(v+y), then x-y = u-w */
+void
+check_two_sum (mp_prec_t p)
 {
+  unsigned int x;
+  mpfr_t y, u, v, w;
+  mp_rnd_t rnd;
+  int inexact;
+  
+  mpfr_init2 (y, p);
+  mpfr_init2 (u, p);
+  mpfr_init2 (v, p);
+  mpfr_init2 (w, p);
+  do
+    {
+      x = lrand48 ();
+    }
+  while (x < 1);
+  mpfr_random (y);
+  rnd = rand() % 4;
+  rnd = GMP_RNDN;
+  inexact = mpfr_ui_sub (u, x, y, GMP_RNDN);
+  mpfr_sub_ui (v, u, x, GMP_RNDN);
+  mpfr_add (w, v, y, GMP_RNDN);
+  /* as u = (x-y) + w, we should have inexact and w of same sign */
+  if (((inexact == 0) && mpfr_cmp_ui (w, 0)) ||
+      ((inexact > 0) && (mpfr_cmp_ui (w, 0) <= 0)) ||
+      ((inexact < 0) && (mpfr_cmp_ui (w, 0) >= 0)))
+    {
+      fprintf (stderr, "Wrong inexact flag for prec=%u, rnd=%s\n", (unsigned)p,
+	       mpfr_print_rnd_mode (rnd));
+      printf ("x=%u\n", x);
+      printf ("y="); mpfr_print_raw(y); putchar('\n');
+      printf ("u="); mpfr_print_raw(u); putchar('\n');
+      printf ("v="); mpfr_print_raw(v); putchar('\n');
+      printf ("w="); mpfr_print_raw(w); putchar('\n');
+      printf ("inexact = %d\n", inexact);
+      exit (1);
+    }
+  mpfr_clear (y);
+  mpfr_clear (u);
+  mpfr_clear (v);
+  mpfr_clear (w);
+}
+
+int
+main (int argc, char *argv[])
+{
+  mp_prec_t p;
+  unsigned k;
 #ifdef TEST
-  double x; unsigned long y, N; int i,rnd_mode,rnd;
+  double x;
+  unsigned long y, N;
+  int i, rnd_mode, rnd;
 #ifdef __mips
     /* to get denormalized numbers on IRIX64 */
     union fpc_csr exp;
@@ -79,6 +229,10 @@ int main(argc,argv) int argc; char *argv[];
     }
   }
 #endif
+  special ();
+  for (p=1; p<100; p++)
+    for (k=0; k<100; k++)
+      check_two_sum (p);
   check(1, 1.0/0.0, GMP_RNDN, -1.0/0.0); 
   check(1, -1.0/0.0, GMP_RNDN, 1.0/0.0); 
   check(1, 0.0/0.0, GMP_RNDN, 0.0/0.0); 
@@ -94,6 +248,6 @@ int main(argc,argv) int argc; char *argv[];
 	1.0849682612928422704e187);
   check(293607738, -1.9967571564050541e-5, GMP_RNDU, 2.9360773800002003e8);
   check(354270183, 2.9469161763489528e3, GMP_RNDN, 3.5426723608382362e8);
+
   return 0;
 }
-

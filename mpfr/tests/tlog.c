@@ -1,20 +1,20 @@
 /* Test file for mpfr_log.
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -256,7 +256,12 @@ void special ()
   mpfr_clear (y);
 }
 
-int main(int argc, char *argv[]) {
+#define TEST_FUNCTION mpfr_log
+#include "tgeneric.c"
+
+int
+main (int argc, char *argv[])
+{
   int N=0;
 
   srand48(getpid());
@@ -339,5 +344,8 @@ int main(int argc, char *argv[]) {
   check2(7.34302197248998461006e+43,GMP_RNDZ,1.01004909469513179942e+02);
   check2(6.09969788341579732815e+00,GMP_RNDD,1.80823924264386204363e+00);
   }
+
+  test_generic (1, 100, 40);
+
   return 0;
 }

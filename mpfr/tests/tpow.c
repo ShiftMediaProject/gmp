@@ -1,28 +1,31 @@
 /* Test file for mpfr_pow and mpfr_pow_ui.
 
-Copyright (C) 2000 Free Software Foundation.
+Copyright (C) 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
 
 void check_pow_ui (void);
+void check_inexact (mp_prec_t);
 
 void check_pow_ui ()
 {
@@ -59,8 +62,70 @@ void check_pow_ui ()
   mpfr_clear (b);
 }
 
-int main ()
+void
+check_inexact (mp_prec_t p)
 {
+  mpfr_t x, y, z, t;
+  unsigned long u;
+  mp_prec_t q;
+  int inexact, cmp;
+  mp_rnd_t rnd;
+
+  mpfr_init2 (x, p);
+  mpfr_init (y);
+  mpfr_init (z);
+  mpfr_init (t);
+  mpfr_random (x);
+  u = lrand48() % 2;
+  for (q=1; q<=p; q++)
+    for (rnd=0; rnd<4; rnd++)
+      {
+	mpfr_set_prec (y, q);
+	mpfr_set_prec (z, q + 10);
+	mpfr_set_prec (t, q);
+	inexact = mpfr_pow_ui (y, x, u, rnd);
+	cmp = mpfr_pow_ui (z, x, u, rnd);
+	if (mpfr_can_round (z, q + 10, rnd, rnd, q))
+	  {
+	    cmp = mpfr_set (t, z, rnd) || cmp;
+	    if (mpfr_cmp (y, t))
+	      {
+		fprintf (stderr, "results differ for u=%lu rnd=%s\n", u,
+			 mpfr_print_rnd_mode(rnd));
+		printf ("x="); mpfr_print_raw (x); putchar ('\n');
+		printf ("y="); mpfr_print_raw (y); putchar ('\n');
+		printf ("t="); mpfr_print_raw (t); putchar ('\n');
+		printf ("z="); mpfr_print_raw (z); putchar ('\n');
+		exit (1);
+	      }
+	    if (((inexact == 0) && (cmp != 0)) ||
+		((inexact != 0) && (cmp == 0)))
+	      {
+		fprintf (stderr, "Wrong inexact flag for p=%u, q=%u, rnd=%s\n",
+			 (unsigned) p, (unsigned) q, mpfr_print_rnd_mode (rnd));
+		printf ("expected %d, got %d\n", cmp, inexact);
+		printf ("u=%lu x=", u); mpfr_print_raw (x); putchar ('\n');
+                printf ("y="); mpfr_print_raw (y); putchar ('\n');
+		exit (1);
+	      }
+	  }
+      }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (z);
+  mpfr_clear (t);
+}
+
+int
+main (void)
+{
+  mp_prec_t p;
+
   check_pow_ui ();
+
+  for (p=1; p<100; p++)
+    check_inexact (p);
+
   return 0;
 }

@@ -1,20 +1,20 @@
 /* Test file for mpfr_mul_2exp.
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -30,7 +30,7 @@ MA 02111-1307, USA. */
    and with mpfr with 53 bits of precision */
 
 int
-main(argc,argv) int argc; char *argv[];
+main (int argc, char *argv[])
 {
   double x, z; mpfr_t w; unsigned long k; 
 
@@ -52,22 +52,20 @@ main(argc,argv) int argc; char *argv[];
     if (x != (z = mpfr_get_d(w)/1024))
       {
 	fprintf(stderr, "%f != %f\n", x, z); 
-	return (-1); 
+	return -1;
       }
-    
+
     mpfr_set_d(w, x, 0);
-    mpfr_div_2exp(w, w, 10, GMP_RNDZ); 
+    mpfr_div_2exp(w, w, 10, GMP_RNDZ);
     if (x != (z = mpfr_get_d(w)*1024))
       {
-	fprintf(stderr, "%f != %f\n", x, z); 
-	mpfr_clear(w); 
-	return (-1); 
+	fprintf(stderr, "%f != %f\n", x, z);
+	mpfr_clear(w);
+	return -1;
       }
   }
 
-  
+  mpfr_clear(w);
 
-  mpfr_clear(w); 
-  return (0); 
+  return 0;
 }
-

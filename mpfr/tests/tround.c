@@ -1,20 +1,20 @@
 /* Test file for mpfr_round.
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999-2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -24,21 +24,45 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 
-int main()
+int
+main (void)
 {
    mpfr_t x;
 
-   /* checks that rounds to nearest sets the last
-     bit to zero in case of equal distance */
-   mpfr_init2(x, 2);
-   mpfr_set_d(x, 5.0, GMP_RNDN);
-   if (mpfr_get_d(x) != 4.0) { printf("Error in tround: got %1.1f instead of 4.0\n",mpfr_get_d(x)); }
+   mpfr_init2 (x, 3);
 
-   mpfr_set_d(x, 0.00098539467465030839, GMP_RNDN);
+   mpfr_set_ui (x, 5, GMP_RNDN);
+   mpfr_round (x, GMP_RNDN, 2);
+   if (mpfr_cmp_ui(x, 4))
+     {
+       fprintf (stderr, "Error in tround: got %1.1f instead of 4\n",
+		mpfr_get_d (x));
+       exit (1);
+     }
 
-   mpfr_set_d(x, 9.84891017624509146344e-01, GMP_RNDU); 
-   if (mpfr_get_d(x) != 1.0) { printf("Error in tround: got %f instead of 1.0\n",mpfr_get_d(x)); exit(1); }
+   /* check case when reallocation is needed */
+   mpfr_set_prec (x, 3);
+   mpfr_set_ui (x, 5, GMP_RNDN); /* exact */
+   mpfr_round (x, GMP_RNDN, mp_bits_per_limb + 1);
+   if (mpfr_cmp_ui(x, 5))
+     {
+       fprintf (stderr, "Error in tround: got %1.1f instead of 5\n",
+		mpfr_get_d (x));
+       exit (1);
+     }
+
+   /* check case when new precision needs less limbs */
+   mpfr_set_prec (x, mp_bits_per_limb + 1);
+   mpfr_set_ui (x, 5, GMP_RNDN); /* exact */
+   mpfr_round (x, GMP_RNDN, 3); /* exact */
+   if (mpfr_cmp_ui(x, 5))
+     {
+       fprintf (stderr, "Error in tround: got %1.1f instead of 5\n",
+		mpfr_get_d (x));
+       exit (1);
+     }
 
    mpfr_clear(x);
+
    return 0;
 }

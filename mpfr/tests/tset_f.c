@@ -1,20 +1,20 @@
 /* Test file for mpfr_set_f.
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
 The MPFR Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
 option) any later version.
 
 The MPFR Library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
-You should have received a copy of the GNU Library General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
@@ -25,28 +25,30 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "time.h"
 
-#if defined(hpux)
-#define srandom srand48
-#endif
-
 int
-main()
+main (void)
 {
-  mpfr_t x, u; mpf_t y, z; unsigned long k, pr;
+  mpfr_t x, u;
+  mpf_t y, z;
+  unsigned long k, pr;
   
-  mpfr_init2(x, 100);
   mpf_init(y); 
   mpf_init(z);
 
-  mpf_set_d(y, 0.0);
-  mpfr_set_f(x, y, GMP_RNDN);
+  mpf_set_d (y, 0.0);
+
+  /* check prototype of mpfr_init_set_f */
+  mpfr_init_set_f (x, y, GMP_RNDN);
+  mpfr_set_prec (x, 100);
+  mpfr_set_f (x, y, GMP_RNDN);
 
   srandom((int)time(NULL));
   mpf_random2(y, 10, 0); 
   mpfr_set_f(x, y, rand() & 3);
 
   /* bug found by Jean-Pierre Merlet */
-  mpfr_set_prec(x, 256); mpf_set_prec(y, 256);
+  mpfr_set_prec(x, 256);
+  mpf_set_prec(y, 256);
   mpfr_init2(u, 256);
   mpfr_set_str(u,
      "7.f10872b020c49ba5e353f7ced916872b020c49ba5e353f7ced916872b020c498@2",
@@ -77,5 +79,6 @@ main()
     }
   mpf_clear(y);
   mpf_clear(z);
-  return(0);
+
+  return 0;
 }
