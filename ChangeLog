@@ -29,6 +29,9 @@ MA 02111-1307, USA.
 	(udiv_qrnnd_preinv2): New name for udiv_qrnnd_preinv2norm.
 	(udiv_qrnnd_preinv): New #define, making udiv_qrnnd_preinv2
 	the default.
+	* tune/speed.c: Corresponding changes.
+	* tune/speed.h: Likewise.
+	* tune/common.c: Likewise.
 
 	* mpf/get_str.c: Simplify `off' computation.
 
