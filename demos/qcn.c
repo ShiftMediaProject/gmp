@@ -2,7 +2,7 @@
    class number h(d), for a given negative fundamental discriminant, using
    Dirichlet's analytic formula.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,7 +21,7 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 
-/* Usage: qcn <discriminant>...
+/* Usage: qcn [-p limit] <discriminant>...
 
    A fundamental discriminant means one of the form D or 4*D with D
    square-free.  Each argument is checked to see it's congruent to 0 or 1
@@ -40,6 +40,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "gmp.h"
 
@@ -82,11 +84,11 @@ prime_p (unsigned long n)
    the estimate primes up to 132,000 are used.  Shanks found this giving an
    accuracy of about 1 part in 1000, in normal cases.  */
 
+unsigned long  p_limit = 132000;
+
 double
 qcn_estimate (mpz_t d)
 {
-#define P_LIMIT  132000
-
   double  h;
   unsigned long  p;
 
@@ -97,7 +99,7 @@ qcn_estimate (mpz_t d)
   if (mpz_cmp_si (d, -3) == 0)       h *= 3;
   else if (mpz_cmp_si (d, -4) == 0)  h *= 2;
 
-  for (p = 3; p < P_LIMIT; p += 2)
+  for (p = 3; p <= p_limit; p += 2)
     if (prime_p (p))
       h *= (double) p / (double) (p - mpz_kronecker_ui (d, p));
 
@@ -136,18 +138,35 @@ int
 main (int argc, char *argv[])
 {
   int  i;
+  int  saw_number = 0;
 
-  if (argc < 2)
+  for (i = 1; i < argc; i++)
     {
+      if (strcmp (argv[i], "-p") == 0)
+        {
+          i++;
+          if (i >= argc)
+            {
+              fprintf (stderr, "Missing argument to -p\n");
+              exit (1);
+            }
+          p_limit = atoi (argv[i]);
+        }
+      else
+        {
+          qcn_str (argv[i]);
+          saw_number = 1;
+        }
+    }
+
+  if (! saw_number)
+    {
+      /* some default output */
       qcn_str ("-85702502803");           /* is 16259   */
       qcn_str ("-328878692999");          /* is 1499699 */
       qcn_str ("-928185925902146563");    /* is 52739552 */
       qcn_str ("-84148631888752647283");  /* is 496652272 */
-    }
-  else
-    {
-      for (i = 1; i < argc; i++)
-        qcn_str (argv[i]);
+      return 0;
     }
 
   return 0;
