@@ -3902,14 +3902,58 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 # clobbered by the next message.
 exec 5>>./config.log
 
+echo $ECHO_N "checking whether optarg is declared... $ECHO_C" 1>&6
+echo "configure:3907: checking whether optarg is declared" 1>&5
+if test "${ac_cv_have_decl_optarg+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" 1>&6
+else
+  cat >conftest.$ac_ext <<EOF
+#line 3912 "configure"
+#include "confdefs.h"
+$ac_includes_default
+int
+main ()
+{
+#ifndef optarg
+  char *p = (char *) optarg;
+#endif
+
+  ;
+  return 0;
+}
+EOF
+if { (eval echo configure:3926: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+  rm -rf conftest*
+  ac_cv_have_decl_optarg=yes
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  ac_cv_have_decl_optarg=no
+fi
+rm -f conftest*
+fi
+echo "$ECHO_T""$ac_cv_have_decl_optarg" 1>&6
+if test $ac_cv_have_decl_optarg = yes; then
+  cat >>confdefs.h <<EOF
+#define HAVE_DECL_OPTARG 1
+EOF
+
+else
+  cat >>confdefs.h <<EOF
+#define HAVE_DECL_OPTARG 0
+EOF
+
+fi
+
 echo $ECHO_N "checking for ANSI C header files... $ECHO_C" 1>&6
-echo "configure:3907: checking for ANSI C header files" 1>&5
+echo "configure:3951: checking for ANSI C header files" 1>&5
 if test "${ac_cv_header_stdc+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
 
 cat >conftest.$ac_ext <<EOF
-#line 3913 "configure"
+#line 3957 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3918,7 +3962,7 @@ cat >conftest.$ac_ext <<EOF
 
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:3922: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:3966: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -3936,7 +3980,7 @@ if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 
 cat >conftest.$ac_ext <<EOF
-#line 3940 "configure"
+#line 3984 "configure"
 #include "confdefs.h"
 #include <string.h>
 
@@ -3956,7 +4000,7 @@ if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 
 cat >conftest.$ac_ext <<EOF
-#line 3960 "configure"
+#line 4004 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 
@@ -3978,7 +4022,7 @@ if test "$cross_compiling" = yes; then
   :
 else
   cat >conftest.$ac_ext <<EOF
-#line 3982 "configure"
+#line 4026 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #if ((' ' & 0x0FF) == 0x020)
@@ -4003,7 +4047,7 @@ main ()
   exit (0);
 }
 EOF
-if { (eval echo configure:4007: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
+if { (eval echo configure:4051: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
 then
   :
 else
@@ -4027,12 +4071,12 @@ EOF
 fi
 
 echo $ECHO_N "checking for void... $ECHO_C" 1>&6
-echo "configure:4031: checking for void" 1>&5
+echo "configure:4075: checking for void" 1>&5
 if test "${ac_cv_type_void+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
   cat >conftest.$ac_ext <<EOF
-#line 4036 "configure"
+#line 4080 "configure"
 #include "confdefs.h"
 $ac_includes_default
 int
@@ -4046,7 +4090,7 @@ if (sizeof (void))
   return 0;
 }
 EOF
-if { (eval echo configure:4050: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:4094: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_type_void=yes
 else
@@ -4066,13 +4110,13 @@ EOF
 fi
 
 echo $ECHO_N "checking for preprocessor stringizing operator... $ECHO_C" 1>&6
-echo "configure:4070: checking for preprocessor stringizing operator" 1>&5
+echo "configure:4114: checking for preprocessor stringizing operator" 1>&5
 if test "${ac_cv_c_stringize+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
 
 cat >conftest.$ac_ext <<EOF
-#line 4076 "configure"
+#line 4120 "configure"
 #include "confdefs.h"
 
 #define x(y) #y
@@ -5033,4 +5077,3 @@ rm -fr confdefs* $ac_clean_files
 trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
-
