@@ -252,7 +252,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype, UWtype, UWtype, UWtype *));
 	   : "%r" (ah), "rI" (bh), "%r" (al), "rI" (bl))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
   __asm__ ("sub %1,%4,%5\n\tsubc %0,%2,%3"				\
-	   : "=r" (sh),	"=&r" (sl)					\
+	   : "=r" (sh), "=&r" (sl)					\
 	   : "r" (ah), "rI" (bh), "r" (al), "rI" (bl))
 #define umul_ppmm(xh, xl, m0, m1) \
   do {									\
@@ -300,9 +300,45 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype, UWtype, UWtype, UWtype *));
 	   : "=r" (sh), "=&r" (sl)					\
 	   : "%r" (ah), "rI" (bh), "%r" (al), "rI" (bl) __CLOBBER_CC)
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
-  __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
-	   : "=r" (sh),	"=&r" (sl)					\
-	   : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC)
+  do {									\
+    if (__builtin_constant_p (al))					\
+      {									\
+	if (__builtin_constant_p (ah))					\
+	  __asm__ ("rsbs\t%1, %5, %4\n\trsc\t%0, %3, %2"		\
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "rI" (ah), "r" (bh), "rI" (al), "r" (bl) __CLOBBER_CC); \
+	else								\
+	  __asm__ ("rsbs\t%1, %5, %4\n\tsbc\t%0, %2, %3"		\
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "r" (ah), "rI" (bh), "rI" (al), "r" (bl) __CLOBBER_CC); \
+      }									\
+    else if (__builtin_constant_p (ah))					\
+      {									\
+	if (__builtin_constant_p (bl))					\
+	  __asm__ ("subs\t%1, %4, %5\n\trsc\t%0, %3, %2"		\
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "rI" (ah), "r" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
+	else								\
+	  __asm__ ("rsbs\t%1, %5, %4\n\trsc\t%0, %3, %2"		\
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "rI" (ah), "r" (bh), "rI" (al), "r" (bl) __CLOBBER_CC); \
+      }									\
+    else if (__builtin_constant_p (bl))					\
+      {									\
+	if (__builtin_constant_p (bh))					\
+	  __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"		\
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
+	else								\
+	  __asm__ ("subs\t%1, %4, %5\n\trsc\t%0, %3, %2"		\
+		   : "=r" (sh), "=&r" (sl)				\
+		   : "rI" (ah), "r" (bh), "r" (al), "rI" (bl) __CLOBBER_CC); \
+      }									\
+    else /* only bh might be a constant */				\
+      __asm__ ("subs\t%1, %4, %5\n\tsbc\t%0, %2, %3"			\
+	       : "=r" (sh), "=&r" (sl)					\
+	       : "r" (ah), "rI" (bh), "r" (al), "rI" (bl) __CLOBBER_CC);\
+    } while (0)
 #if 1 || defined (__arm_m__)	/* `M' series has widening multiply support */
 #define umul_ppmm(xh, xl, a, b) \
   __asm__ ("umull %0,%1,%2,%3" : "=&r" (xl), "=&r" (xh) : "r" (a), "r" (b))
