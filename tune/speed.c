@@ -49,7 +49,6 @@ MA 02111-1307, USA.
 #endif
 #include <limits.h>
 #include <stdio.h>
-#include <stdlib.h> 
 #include <string.h>
 #include <unistd.h> /* for getpid() */
 #include <sys/time.h>  /* for struct timeval for sys/resource.h */
@@ -60,6 +59,15 @@ MA 02111-1307, USA.
 /* #include "urandom.h" */
 
 #include "speed.h"
+
+#if !HAVE_DECL_OPTARG
+extern char *optarg;
+extern int optind, opterr;
+#endif
+
+#if !HAVE_STRTOUL
+#define strtoul(p,e,b)  (unsigned long) strtol(p,e,b)
+#endif
 
 #ifdef SPEED_EXTRA_PROTOS
 SPEED_EXTRA_PROTOS
@@ -115,9 +123,9 @@ struct speed_params  sp;
 
 const struct routine_t {
   /* constants */
-  const char  *name;
-  double      (*fun)(struct speed_params *s);
-  int         flag;
+  const char        *name;
+  speed_function_t  fun;
+  int               flag;
   
 } routine[] = {
 
@@ -638,19 +646,17 @@ The available routines are as follows.\n\
         printf ("\t%s\n", routine[i].name); 
     }
       
-  printf ("\
-\n\
-Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n\
-r should be in decimal, or use 0xN for hexadecimal.
-Special forms for r are Nbits for a random N bit number, and Nones for N one\n\
-bits.\n\
-\n\
-Times for sizes out of the range accepted by a routine are shown as 0.\n\
-The fastest routine at each size is marked with a # (free form output only).\n\
-\n\
-Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n\
-Quickplot home page http://www.kachinatech.com/~quickplot\n\
-");
+  printf ("\n");
+  printf ("Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n");
+  printf ("r should be in decimal, or use 0xN for hexadecimal.\n");
+  printf ("Special forms for r are Nbits for a random N bit number, and Nones for N one\n");
+  printf ("bits.\n");
+  printf ("\n");
+  printf ("Times for sizes out of the range accepted by a routine are shown as 0.\n");
+  printf ("The fastest routine at each size is marked with a # (free form output only).\n");
+  printf ("\n");
+          printf ("Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n");
+  printf ("Quickplot home page http://www.kachinatech.com/~quickplot\n");
 
   printf("%s", speed_time_string);
 }
@@ -698,145 +704,145 @@ main (int argc, char *argv[])
   while ((opt = getopt_long(argc, argv, OPTSTRING, longopts, NULL))
          != EOF)
 #else
-  while ((opt = getopt(argc, argv, OPTSTRING)) != EOF)
+    while ((opt = getopt(argc, argv, OPTSTRING)) != EOF)
 #endif
-    {
-      switch (opt) {
-      case 'a':
-        if (strcmp (optarg, "zeros") == 0)
-          option_data = DATA_ZEROS;
-        else if (strcmp (optarg, "ffs") == 0)
-          option_data = DATA_FFS;
-        else
-          {
-            fprintf (stderr, "unrecognised data option: %s\n", optarg);
-            exit (1);
-          }
-        break;
-      case 'C':
-        if (option_unit  != UNIT_SECONDS)
-          goto bad_unit;
-        option_unit = UNIT_CYCLESPERLIMB;
-        break;
-      case 'c':
-        if (option_unit != UNIT_SECONDS)
-          {
-          bad_unit:
-            fprintf (stderr, "cannot use more than one of -c, -C\n");
-            exit (1);
-          }
-        option_unit = UNIT_CYCLES;
-        break;
-      case 'D':
-        if (option_cmp != CMP_ABSOLUTE)
-          goto bad_cmp;
-        option_cmp = CMP_DIFFPREV;
-        break;
-      case 'd':
-        if (option_cmp != CMP_ABSOLUTE)
-          {
-          bad_cmp:
-            fprintf (stderr, "cannot use more than one of -d, -D, -r\n");
-            exit (1);
-          }
-        option_cmp = CMP_DIFFERENCE;
-        break;
-      case 'E':
-        option_square = 1;
-        break;
-      case 'F':
-        option_square = 2;
-        break;
-      case 'f':
-        option_factor = atof (optarg);
-        if (option_factor <= 1.0)
-          {
-            fprintf (stderr, "-f factor must be > 1.0\n");
-            exit (1);
-          }
-        break;
-      case 'P':
-        option_gnuplot = 1;
-        option_gnuplot_basename = optarg;
-        break;
-      case 'p':
-        speed_precision = atoi (optarg);
-        break;
-      case 'R':
-        srand (time (NULL));
-        srandom (time (NULL));
-        srand48 (time (NULL));
-        break;
-      case 'r':
-        if (option_cmp != CMP_ABSOLUTE)
-          goto bad_cmp;
-        option_cmp = CMP_RATIO;
-        break;
-      case 's':
-        {
-          char  *s;
-          for (s = strtok (optarg, ","); s != NULL; s = strtok (NULL, ","))
+      {
+        switch (opt) {
+        case 'a':
+          if (strcmp (optarg, "zeros") == 0)
+            option_data = DATA_ZEROS;
+          else if (strcmp (optarg, "ffs") == 0)
+            option_data = DATA_FFS;
+          else
             {
-              if (size_num == size_allocnum)
-                {
-                  size_array = _mp_allocate_or_reallocate
-                    (size_array, 
-                     size_allocnum * sizeof(size_array[0]),
-                     (size_allocnum+10) * sizeof(size_array[0]));
-                  size_allocnum += 10;
-                }
-              if (sscanf (s, "%ld-%ld",
-                          &size_array[size_num].start,
-                          &size_array[size_num].end) != 2)
-                {
-                  size_array[size_num].start = size_array[size_num].end
-                    = atol (s);
-                }
-
-              if (size_array[size_num].start < 1
-                  || size_array[size_num].end < 1
-                  || size_array[size_num].start > size_array[size_num].end)
-                {
-                  fprintf (stderr, "invalid size parameter: %s\n", s);
-                  exit (1);
-                }
-
-              size_num++;
+              fprintf (stderr, "unrecognised data option: %s\n", optarg);
+              exit (1);
             }
-        }
-        break;
-      case 't':
-        option_step = atol (optarg);
-        if (option_step < 1)
+          break;
+        case 'C':
+          if (option_unit  != UNIT_SECONDS)
+            goto bad_unit;
+          option_unit = UNIT_CYCLESPERLIMB;
+          break;
+        case 'c':
+          if (option_unit != UNIT_SECONDS)
+            {
+            bad_unit:
+              fprintf (stderr, "cannot use more than one of -c, -C\n");
+              exit (1);
+            }
+          option_unit = UNIT_CYCLES;
+          break;
+        case 'D':
+          if (option_cmp != CMP_ABSOLUTE)
+            goto bad_cmp;
+          option_cmp = CMP_DIFFPREV;
+          break;
+        case 'd':
+          if (option_cmp != CMP_ABSOLUTE)
+            {
+            bad_cmp:
+              fprintf (stderr, "cannot use more than one of -d, -D, -r\n");
+              exit (1);
+            }
+          option_cmp = CMP_DIFFERENCE;
+          break;
+        case 'E':
+          option_square = 1;
+          break;
+        case 'F':
+          option_square = 2;
+          break;
+        case 'f':
+          option_factor = atof (optarg);
+          if (option_factor <= 1.0)
+            {
+              fprintf (stderr, "-f factor must be > 1.0\n");
+              exit (1);
+            }
+          break;
+        case 'P':
+          option_gnuplot = 1;
+          option_gnuplot_basename = optarg;
+          break;
+        case 'p':
+          speed_precision = atoi (optarg);
+          break;
+        case 'R':
+          srand (time (NULL));
+          srandom (time (NULL));
+          srand48 (time (NULL));
+          break;
+        case 'r':
+          if (option_cmp != CMP_ABSOLUTE)
+            goto bad_cmp;
+          option_cmp = CMP_RATIO;
+          break;
+        case 's':
           {
-            fprintf (stderr, "-t step must be >= 1\n");
-            exit (1);
+            char  *s;
+            for (s = strtok (optarg, ","); s != NULL; s = strtok (NULL, ","))
+              {
+                if (size_num == size_allocnum)
+                  {
+                    size_array = _mp_allocate_or_reallocate
+                      (size_array, 
+                       size_allocnum * sizeof(size_array[0]),
+                       (size_allocnum+10) * sizeof(size_array[0]));
+                    size_allocnum += 10;
+                  }
+                if (sscanf (s, "%ld-%ld",
+                            &size_array[size_num].start,
+                            &size_array[size_num].end) != 2)
+                  {
+                    size_array[size_num].start = size_array[size_num].end
+                      = atol (s);
+                  }
+
+                if (size_array[size_num].start < 1
+                    || size_array[size_num].end < 1
+                    || size_array[size_num].start > size_array[size_num].end)
+                  {
+                    fprintf (stderr, "invalid size parameter: %s\n", s);
+                    exit (1);
+                  }
+
+                size_num++;
+              }
           }
-        break;
-      case 'u':
-        option_resource_usage = 1;
-        break;
-      case 'z':
-        sp.cache = 1;
-        break;
-      case OPTION_ALIGN:
-        abort();
-      case 'x':
-        sp.align_xp = atol (optarg);
-        break;
-      case 'y':
-        sp.align_yp = atol (optarg);
-        break;
-      case 'w':
-        sp.align_wp = atol (optarg);
-        break;
-      case 'W':
-        sp.align_wp2 = atol (optarg);
-        break;
-      case '?':
-        exit(1);
+          break;
+        case 't':
+          option_step = atol (optarg);
+          if (option_step < 1)
+            {
+              fprintf (stderr, "-t step must be >= 1\n");
+              exit (1);
+            }
+          break;
+        case 'u':
+          option_resource_usage = 1;
+          break;
+        case 'z':
+          sp.cache = 1;
+          break;
+        case OPTION_ALIGN:
+          abort();
+        case 'x':
+          sp.align_xp = atol (optarg);
+          break;
+        case 'y':
+          sp.align_yp = atol (optarg);
+          break;
+        case 'w':
+          sp.align_wp = atol (optarg);
+          break;
+        case 'W':
+          sp.align_wp2 = atol (optarg);
+          break;
+        case '?':
+          exit(1);
+        }
       }
-    }
 
   if (optind >= argc)
     {
@@ -870,13 +876,10 @@ main (int argc, char *argv[])
   if ((option_unit == UNIT_CYCLES || option_unit == UNIT_CYCLESPERLIMB)
       && speed_cycletime == 1.0)
     {
-      fprintf (stderr,
-               "Times in cycles requested, but CPU frequency unknown.\n"
-               "Use environment variable GMP_CPU_FREQUENCY in Hertz, eg. 450e6\n"
-               );
+      fprintf (stderr, "Times in cycles requested, but CPU frequency unknown.\n");
+      fprintf (stderr, "Use environment variable GMP_CPU_FREQUENCY in Hertz, eg. 450e6\n");
       exit (1);
     }
-
 
   if (option_gnuplot)
     {
