@@ -1,3 +1,9 @@
+2002-12-10  Torbjorn Granlund  <tege@swox.com>
+
+	* set_d.c: Don't use TMP_ allocation mechanism for fixed size objects.
+        Resulting streamlining.  Misc addressing changes to work around GNUPro
+        bugs. 
+
 2002-12-07  Torbjorn Granlund  <tege@swox.com>
 
 	* const_euler.c (mpfr_const_euler_S, mpfr_const_euler_R):
