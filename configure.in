@@ -153,6 +153,16 @@ else
 fi
 
 
+AC_ARG_WITH(readline,
+AC_HELP_STRING([--with-readline],
+               [readline support in calc demo program [default=detect]]),
+[case $withval in
+yes|no|detect) ;;
+*) AC_MSG_ERROR([bad value $withval for --with-readline, need yes/no/detect]) ;;
+esac],
+[with_readline=detect])
+
+
 
 # Table of compilers, options, and mpn paths.  This code has a couple of
 # related purposes
