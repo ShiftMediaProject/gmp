@@ -149,7 +149,7 @@ freq_getsysinfo (int help)
   if (getsysinfo (GSI_CPU_INFO, (caddr_t) &c, sizeof (c),
                   &start, NULL, NULL) != -1)
     {
-      speed_cycletime = 1.0 / (double) c.mhz;
+      speed_cycletime = 1e-6 / (double) c.mhz;
       if (speed_option_verbose)
         printf ("Using getsysinfo() GSI_CPU_INFO %u for cycle time %.3g\n",
                 c.mhz, speed_cycletime);
