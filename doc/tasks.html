@@ -293,8 +293,9 @@ MA 02111-1307, USA.
      making <code>configure</code> choose the slower
      <code>malloc-reentrant</code> allocation method.  Is there a better way?
      Maybe variable-length arrays per notes below.
-<li> ARM: On v5 cpus see if the <code>clz</code> instruction can be used for
-     <code>count_leading_zeros</code>.
+<li> ARM V5: <code>count_leading_zeros</code> can use the <code>clz</code>
+     instruction.  For GCC 3.4 and up, do this via <code>__builtin_clzl</code>
+     since then gcc knows it's "predicable".
 <li> Itanium: <code>mpn_hamdist</code> could be put together based on the
      current <code>mpn_popcount</code>.
 <li> Itanium: GCC 3.4 introduces <code>__builtin_popcount</code> which can be
