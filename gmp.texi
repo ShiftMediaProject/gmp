@@ -790,6 +790,7 @@ The Berkeley MP compatibility library (@file{libmp}) and header file
 @xref{BSD Compatible Functions}.
 
 @item @option{--enable-mpfr}
+@cindex MPFR
 
 The optional MPFR functions are built and installed only if
 @option{--enable-mpfr} is used.  These are in a separate library
@@ -1300,9 +1301,8 @@ Functions compatible with Berkeley MP, such as @code{itom}, @code{madd}, and
 Fast low-level functions that operate on natural numbers.  These are used by
 the functions in the preceding groups, and you can also call them directly
 from very time-critical user programs.  These functions' names begin with
-@code{mpn_}.  There are about 30 (hard-to-use) functions in this class.
-
-The associated type is array of @code{mp_limb_t}.
+@code{mpn_}.  The associated type is array of @code{mp_limb_t}.  There are
+about 30 (hard-to-use) functions in this class.
 
 @item
 Miscellaneous functions.  Functions for setting up custom allocation and
@@ -1334,9 +1334,9 @@ purpose.  Which function to use depends on the type of variable.  See the
 chapters on integer functions, rational number functions, and floating-point
 functions for details.
 
-A variable should only be initialized once, or at least cleared out between
-each initialization.  After a variable has been initialized, it may be
-assigned to any number of times.
+A variable should only be initialized once, or at least cleared between each
+initialization.  After a variable has been initialized, it may be assigned to
+any number of times.
 
 For efficiency reasons, avoid excessive initializing and clearing.  In
 general, initialize near the start of a function and clear near the end.  For
@@ -1365,7 +1365,7 @@ foo (void)
 @cindex Parameter conventions
 @cindex Conventions for parameters
 
-When an GMP variable is used as a function parameter, it's effectively a
+When a GMP variable is used as a function parameter, it's effectively a
 call-by-reference, meaning if the function stores a value there it will change
 the original in the caller.
 
@@ -1376,7 +1376,7 @@ library functions.  A @code{return} of an @code{mpz_t} etc doesn't return the
 object, only a pointer, and this is almost certainly not what's wanted.
 
 Here's an example function accepting an @code{mpz_t} parameter, doing a
-certain calculation, and storing a result to the indicated parameter.
+calculation, and storing the result to the indicated parameter.
 
 @example
 void
@@ -1400,13 +1400,14 @@ main (void)
 @}
 @end example
 
-This example will work if @code{result} and @code{param} are the same
-variable, just like the library functions.  But sometimes this is tricky to
-arrange, and an application might not want to bother for its own subroutines.
+In this example, @code{foo} work even if the mainline passes the same variable
+as both @code{param} and @code{result}, just like the library functions.  But
+sometimes this is tricky to arrange, and an application might not want to
+bother.
 
 For interest, the GMP types @code{mpz_t} etc are implemented as one-element
-arrays of certain structure types.  This is why declaring a variable creates
-an object with the fields GMP needs, but then using it as a parameter passes a
+arrays of certain structures.  This is why declaring a variable creates an
+object with the fields GMP needs, but then using it as a parameter passes a
 pointer to the object.  Note that the actual fields in each @code{mpz_t} etc
 are for internal use only and should not be accessed directly by code that
 expects to be compatible with future GMP releases.
@@ -1417,15 +1418,15 @@ expects to be compatible with future GMP releases.
 @section Memory Management
 @cindex Memory
 
-GMP variables are small, containing only a couple of sizes, and pointers to
-allocated data.  Once a variable is initialized, GMP takes care of all space
-allocation.  Additional space is allocated whenever a variable doesn't have
-enough.
+The GMP types like @code{mpz_t} are small, containing only a couple of sizes,
+and pointers to allocated data.  Once a variable is initialized, GMP takes
+care of all space allocation.  Additional space is allocated whenever a
+variable doesn't have enough.
 
 @code{mpz_t} and @code{mpq_t} variables never reduce their allocated space.
 Normally this is the best policy, since it avoids frequent reallocation.
-Applications that must return memory to the heap at some particular point can
-use @code{_mpz_realloc}, or clear variables no longer needed.
+Applications that need to return memory to the heap at some particular point
+can use @code{_mpz_realloc}, or clear variables no longer needed.
 
 @code{mpf_t} variables, in the current implementation, use a fixed amount of
 space, determined by the chosen precision and allocated at initialization, so
@@ -1433,8 +1434,8 @@ their size doesn't change.
 
 All memory is allocated using @code{malloc} and friends by default, but this
 can be changed, see @ref{Custom Allocation}.  Temporary memory on the stack is
-also used, but this can be changed at build-time if desired, see @ref{Build
-Options}.
+also used (via @code{alloca}), but this can be changed at build-time if
+desired, see @ref{Build Options}.
 
 
 @node Reentrancy, Useful Macros and Constants, Memory Management, GMP Basics
@@ -1527,7 +1528,7 @@ with other @code{mpn} functions.
 
 @item
 @code{mpf_get_prec} counted precision slightly differently in GMP 3.0 and
-3.0.1, but in 3.1 has reverted to the 2.x style.
+3.0.1, but in 3.1 reverted to the 2.x style.
 @end itemize
 
 There are a number of compatibility issues between GMP 1 and GMP 2 that of
@@ -1591,10 +1592,10 @@ see the GMP 2 manual for details.
 
 @table @asis
 @item Small operands
-On small operands, function call overheads and memory allocation can be
-significant in comparison to actual calculating.  This is unavoidable in a
-general purpose variable precision library, although GMP attempts to be as
-efficient as it can on both large and small operands.
+On small operands, the time for function call overheads and memory allocation
+can be significant in comparison to actual calculation.  This is unavoidable
+in a general purpose variable precision library, although GMP attempts to be
+as efficient as it can on both large and small operands.
 
 @item Initializing and clearing
 Avoid excessive initializing and clearing of variables, since this can be
@@ -1721,7 +1722,7 @@ versions of GMP.
 @item Source File Paths
 GMP has multiple source files with the same name, in different directories.
 For example @file{mpz}, @file{mpq}, @file{mpf} and @file{mpfr} each have an
-@file{init.c}.  If the debugger can't already determine the right one it can
+@file{init.c}.  If the debugger can't already determine the right one it may
 help to build with absolute paths on each C file.  One way to do that is to
 use a separate object directory with an absolute path to the source directory.
 
@@ -1730,14 +1731,15 @@ cd /my/build/dir
 /my/source/dir/gmp-@value{VERSION}/configure
 @end example
 
-This works via @code{VPATH}, and might require GNU Make.  Alternately it might
-be possible to change the @code{.c.lo} rules appropriately.
+This works via @code{VPATH}, and might require GNU @command{make}.
+Alternately it might be possible to change the @code{.c.lo} rules
+appropriately.
 
 @item Assertion Checking
 The build option @option{--enable-assert} is available to add some consistency
 checks to the library (see @ref{Build Options}).  These are likely to be of
 limited value to most applications.  Assertion failures are just as likely to
-indicate a memory corruption as a library or compiler bug.
+indicate memory corruption as a library or compiler bug.
 
 Applications using the low-level @code{mpn} functions, however, will benefit
 from @option{--enable-assert} since it adds checks on the parameters of most
@@ -1762,7 +1764,7 @@ Depending on the system, it may be possible to get a flat profile, meaning
 simple timer sampling of the program counter, with no special GMP build
 options, just a @samp{-p} when compiling the mainline.  This is a good way to
 ensure minimum interference with normal operation.  The necessary symbol type
-and size information exists in most assembler code.
+and size information exists in most of the GMP assembler code.
 
 The @samp{--enable-profiling} build option can be used to add suitable
 compiler flags, either for @command{prof} (@samp{-p}) or @command{gprof}
@@ -1788,17 +1790,17 @@ be expected to be valid, not the @samp{gprof -q} call graph.
 @section Autoconf
 @cindex Autoconf detections
 
-It should be easy for autoconf based applications to check whether GMP is
-installed.  The only thing to be noted is that GMP 3 library symbols have
-prefixes like @code{__gmpz}.  The following would be a simple test,
+Autoconf based applications can easily check whether GMP is installed.  The
+only thing to be noted is that GMP 3 library symbols have prefixes like
+@code{__gmpz}.  The following therefore would be a simple test,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init)
 @end example
 
 This just uses the default @code{AC_CHECK_LIB} actions for found or not found,
-but an application that must have GMP available would want to generate an
-error if not found.  For example,
+but an application that must have GMP would want to generate an error if not
+found.  For example,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
@@ -1845,8 +1847,8 @@ AC_CHECK_SIZEOF(mp_limb_t, , [#include <gmp.h>])
 @end example
 
 The optional @code{mpfr} functions are provided in a separate
-@file{libmpfr.a}, and this might be from GMP @option{--enable-mpfr} or from
-MPFR installed separately.  Either way @file{libmpfr} depends on
+@file{libmpfr.a}, and this might be from GMP with @option{--enable-mpfr} or
+from MPFR installed separately.  Either way @file{libmpfr} depends on
 @file{libgmp}, it doesn't stand alone.  Currently only a static
 @file{libmpfr.a} will be available, not a shared library, since upward binary
 compatibility is not guaranteed.
@@ -1866,8 +1868,11 @@ See http://www.mpfr.org or http://www.swox.com/gmp])
 
 If you think you have found a bug in the GMP library, please investigate it
 and report it.  We have made this library available to you, and it is not too
-much to ask you to report the bugs you find.  Before you report a bug, you may
-want to check @uref{http://swox.com/gmp/} for patches for this release.
+much to ask you to report the bugs you find.
+
+Before you report a bug, check it's not already addressed in @ref{Known Build
+Problems}, or perhaps @ref{Notes for Particular Systems}.  You may also want
+to check @uref{http://swox.com/gmp/} for patches for this release.
 
 Please include the following in any report,
 
