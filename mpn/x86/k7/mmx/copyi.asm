@@ -1,6 +1,6 @@
 dnl  AMD K7 mpn_copyi -- copy limb vector, incrementing.
 
-dnl  Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2002, 2003 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -34,9 +34,11 @@ C
 C This code at 0.75 or 1.0 c/l is always faster than a plain rep movsl at
 C 1.33 c/l.
 C
-C The K7 can do two loads, or two stores, or a load and a store, in one
-C cycle, so if those are 64-bit operations then 0.5 c/l should be possible,
-C however nothing under 0.7 c/l is known.
+C The K7 can do a 64-bit load and 64-bit store in one cycle (optimization
+C guile 22007 appendix B), so 0.5 c/l should be possible, however nothing
+C under 0.7 c/l is known.  Apparently only two 32-bit stores can be done in
+C one cycle, so perhaps some scheduling is needed to ensure it's a
+C load+store in each cycle, not store+store.
 C
 C If both source and destination are unaligned then one limb is processed at
 C the start to make them aligned and so get 0.75 c/l, whereas if they'd been
