@@ -44,6 +44,9 @@ MA 02111-1307, USA. */
 #define COUNT_TRAILING_ZEROS_TIME   20  /* cycles */
 #endif
 
+/* For mpn/x86/pentium/mod_1.asm */
+#define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+
 
 /* 166MHz P55, gcc 2.95.2 */
 
