@@ -431,8 +431,8 @@ AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_CACHE_CHECK([what assembly label suffix to use],
                 gmp_cv_asm_label_suffix,
 [case "$target" in 
-  *-*-hpux*) gmp_cv_asm_label_suffix=[""] ;;
-  *) gmp_cv_asm_label_suffix=[":"] ;;
+  *-*-hpux*) gmp_cv_asm_label_suffix=  ;;
+  *)         gmp_cv_asm_label_suffix=: ;;
 esac
 ])
 echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
@@ -529,10 +529,8 @@ foo$gmp_cv_asm_label_suffix
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 if AC_TRY_EVAL(ac_assemble); then
-  changequote(<,>)
-  gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
-       -e 's;[^1-9]*\([0-9]*\).*;\1;'`
-  changequote([, ])dnl
+  gmp_tmp_val=[`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
+       -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
     gmp_cv_asm_align_log=yes
   else
@@ -620,13 +618,9 @@ AC_DEFUN(GMP_ASM_TEXT,
 [AC_CACHE_CHECK([how to switch to text section],
                 gmp_cv_asm_text,
 [case "$target" in
-  *-*-aix*)
-    changequote({, })
-    gmp_cv_asm_text={".csect .text[PR]"}
-    changequote([, ])
-    ;;
-  *-*-hpux*) gmp_cv_asm_text=[".code"] ;;
-  *) gmp_cv_asm_text=[".text"] ;;
+  *-*-aix*)  gmp_cv_asm_text=[".csect .text[PR]"] ;;
+  *-*-hpux*) gmp_cv_asm_text=".code" ;;
+  *)         gmp_cv_asm_text=".text" ;;
 esac
 ])
 echo ["define(<TEXT>, <$gmp_cv_asm_text>)"] >> $gmp_tmpconfigm4
@@ -641,12 +635,8 @@ AC_DEFUN(GMP_ASM_DATA,
 [AC_CACHE_CHECK([how to switch to data section],
                 gmp_cv_asm_data,
 [case "$target" in
-  *-*-aix*)
-    changequote({, })
-    gmp_cv_asm_data={".csect .data[RW]"}
-    changequote([, ])
-    ;;
-  *) gmp_cv_asm_data=[".data"] ;;
+  *-*-aix*) gmp_cv_asm_data=[".csect .data[RW]"] ;;
+  *)        gmp_cv_asm_data=".data" ;;
 esac
 ])
 echo ["define(<DATA>, <$gmp_cv_asm_data>)"] >> $gmp_tmpconfigm4
@@ -677,10 +667,8 @@ AC_DEFUN(GMP_ASM_RODATA,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_DATA])
 case "$target" in
-X86_PATTERN)
-  gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
-*)
-  gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
+X86_PATTERN) gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
+*)           gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
 esac
 ])
 echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
@@ -695,8 +683,8 @@ AC_DEFUN(GMP_ASM_GLOBL,
 [AC_CACHE_CHECK([how to export a symbol],
                 gmp_cv_asm_globl,
 [case "$target" in
-  *-*-hpux*) gmp_cv_asm_globl=[".export"] ;;
-  *) gmp_cv_asm_globl=[".globl"] ;;
+  *-*-hpux*) gmp_cv_asm_globl=".export" ;;
+  *)         gmp_cv_asm_globl=".globl" ;;
 esac
 ])
 echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
@@ -817,10 +805,8 @@ foo${gmp_cv_asm_label_suffix}
 	.byte	0
 EOF
       if AC_TRY_EVAL(ac_assemble); then
-        changequote(<,>)
-        gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
-             -e 's;[^1-9]*\([0-9]*\).*;\1;'`
-        changequote([, ])dnl
+        gmp_tmp_val=[`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
+             -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
         if test "$gmp_tmp_val" = "4"; then
           gmp_cv_asm_w32="$gmp_tmp_op"
           break
