@@ -2265,33 +2265,3 @@ mpn_hgcd (struct hgcd *hgcd,
 
   return hgcd_final (hgcd, M, quotients, tp, talloc);
 }
-
-#if 0
-int
-mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B)
-{
-  unsigned i;
-
-  if (A->sign != B->sign)
-    return 0;
-
-  if (A->size != B->size)
-    return 0;
-
-  for (i = 0; i < 4; i++)
-    {
-      unsigned j;
-
-      if (!MPN_EQUAL_P (A->row[i].rp, A->row[i].rsize,
-			B->row[i].rp, B->row[i].rsize))
-	return 0;
-
-      for (j = 0; j < 2; j++)
-	if (mpn_cmp (A->row[i].uvp[j],
-		     B->row[i].uvp[j], A->size) != 0)
-	  return 0;
-    }
-
-  return 1;
-}
-#endif
