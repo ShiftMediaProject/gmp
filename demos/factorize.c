@@ -28,9 +28,7 @@ int flag_verbose = 0;
 static unsigned add[] = {4, 2, 4, 2, 4, 6, 2, 6};
 
 void
-factor_using_division (t, limit)
-     mpz_t t;
-     unsigned int limit;
+factor_using_division (mpz_t t, unsigned int limit)
 {
   mpz_t q, r;
   unsigned long int f;
@@ -106,10 +104,7 @@ factor_using_division (t, limit)
 }
 
 void
-factor_using_division_2kp (t, limit, p)
-     mpz_t t;
-     unsigned int limit;
-     unsigned long p;
+factor_using_division_2kp (mpz_t t, unsigned int limit, unsigned long p)
 {
   mpz_t r;
   mpz_t f;
@@ -137,10 +132,7 @@ factor_using_division_2kp (t, limit, p)
 }
 
 void
-factor_using_pollard_rho (n, a_int, p)
-     mpz_t n;
-     int a_int;
-     unsigned long p;
+factor_using_pollard_rho (mpz_t n, int a_int, unsigned long p)
 {
   mpz_t x, x1, y, P;
   mpz_t a;
@@ -273,9 +265,7 @@ S4:
 }
 
 void
-factor (t, p)
-     mpz_t t;
-     unsigned long p;
+factor (mpz_t t, unsigned long p)
 {
   unsigned int division_limit;
 
@@ -305,9 +295,7 @@ factor (t, p)
     }
 }
 
-main (argc, argv)
-     int argc;
-     char *argv[];
+main (int argc, char *argv[])
 {
   mpz_t t;
   unsigned long p;
@@ -352,8 +340,7 @@ main (argc, argv)
 }
 
 void
-dmp (x)
-     mpz_t x;
+dmp (mpz_t x)
 {
   mpz_out_str (stdout, 10, x);
   puts ("");
