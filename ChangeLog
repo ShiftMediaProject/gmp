@@ -25,7 +25,8 @@ MA 02111-1307, USA.
 	(ref_mpn_mul): Use library code for kara and toom, but skewded so that
 	we never use the same algorithm that we're testing.
 	(mul_kara): Delete.
-	
+	(debug_mp): Print just one line of large numbers.
+
 2004-09-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/mul_2.asm: For HAVE_ABI_32, convert vp.
