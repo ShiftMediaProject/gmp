@@ -1672,33 +1672,36 @@ There are six classes of functions in the GMP library:
 @item
 Functions for signed integer arithmetic, with names beginning with
 @code{mpz_}.  The associated type is @code{mpz_t}.  There are about 150
-functions in this class.
+functions in this class.  (@pxref{Integer Functions})
 
 @item
 Functions for rational number arithmetic, with names beginning with
 @code{mpq_}.  The associated type is @code{mpq_t}.  There are about 40
 functions in this class, but the integer functions can be used for arithmetic
-on the numerator and denominator separately.
+on the numerator and denominator separately.  (@pxref{Rational Number
+Functions})
 
 @item
 Functions for floating-point arithmetic, with names beginning with
 @code{mpf_}.  The associated type is @code{mpf_t}.  There are about 60
-functions is this class.
+functions is this class.  (@pxref{Floating-point Functions})
 
 @item
 Functions compatible with Berkeley MP, such as @code{itom}, @code{madd}, and
-@code{mult}.  The associated type is @code{MINT}.
+@code{mult}.  The associated type is @code{MINT}.  (@pxref{BSD Compatible
+Functions})
 
 @item
 Fast low-level functions that operate on natural numbers.  These are used by
 the functions in the preceding groups, and you can also call them directly
 from very time-critical user programs.  These functions' names begin with
 @code{mpn_}.  The associated type is array of @code{mp_limb_t}.  There are
-about 30 (hard-to-use) functions in this class.
+about 30 (hard-to-use) functions in this class.  (@pxref{Low-level Functions})
 
 @item
 Miscellaneous functions.  Functions for setting up custom allocation and
-functions for generating random numbers.
+functions for generating random numbers.  (@pxref{Custom Allocation}, and
+@pxref{Random Number Functions})
 @end enumerate
 
 
