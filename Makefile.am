@@ -35,13 +35,13 @@
 # Do this separately for libgmp and libmp, and only for releases.
 #
 #	  GMP	   -version-info
-#	release   libgmp  libmp
-#	 2.0.x      -       -
-#	 3.0      3:0:0   3:0:0
-#        3.0.1    3:1:0   3:0:0
-#        3.1      4:0:1   4:0:1
-#        3.1.1    4:1:1   4:1:1
-#        4.0      5:0:2   4:2:1
+#       release   libgmp  libgmpxx libmp
+#        2.0.x      -        -       -
+#        3.0      3:0:0      -     3:0:0
+#        3.0.1    3:1:0      -     3:0:0
+#        3.1      4:0:1      -     4:0:1
+#        3.1.1    4:1:1      -     4:1:1
+#        4.0      5:0:2    3:0:0   4:2:1
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
@@ -51,6 +51,10 @@
 LIBGMP_LT_CURRENT =  5
 LIBGMP_LT_REVISION = 0
 LIBGMP_LT_AGE =      2
+
+LIBGMPXX_LT_CURRENT =  3
+LIBGMPXX_LT_REVISION = 0
+LIBGMPXX_LT_AGE =      0
 
 LIBMP_LT_CURRENT =  4
 LIBMP_LT_REVISION = 2
@@ -74,10 +78,10 @@ endif
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
 #
-SUBDIRS = tests mpn mpz mpq mpf printf mpbsd $(MPFR_DIR) demos tune
+SUBDIRS = tests mpn mpz mpq mpf printf cxx mpbsd $(MPFR_DIR) demos tune
 
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
-lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
+lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
 EXTRA_DIST = doc macos \
   configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf libmp.sym
@@ -181,6 +185,9 @@ PRINTF_OBJECTS =							\
   printf/vasprintf$U.lo printf/vfprintf$U.lo printf/vprintf$U.lo	\
   printf/vsnprintf$U.lo printf/vsprintf$U.lo
 
+CXX_OBJECTS =								\
+   cxx/osdoprnti$U.lo cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
+
 MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/powm$U.lo mpbsd/sub$U.lo mpbsd/cmp$U.lo mpbsd/mfree$U.lo	\
   mpbsd/mtox$U.lo mpbsd/realloc$U.lo mpbsd/gcd$U.lo mpbsd/itom$U.lo	\
@@ -211,6 +218,20 @@ libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
+
+
+# We need at least one .cc file in $(libgmpxx_la_SOURCES) so automake will
+# use $(CXXLINK) rather than the plain C $(LINK).  cxx/osfuns.cc is an
+# arbitrary choice for that.
+
+if WANT_CXX
+GMPXX_LTLIBRARIES_OPTION = libgmpxx.la
+endif
+libgmpxx_la_SOURCES = cxx/osfuns.cc
+libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS)
+libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES) libgmp.la
+libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) \
+  -version-info $(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE)
 
 
 # The selected mpz objects here support mpz/powm.c (built as mpbsd/powm.lo)
