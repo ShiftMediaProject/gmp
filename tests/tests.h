@@ -43,6 +43,9 @@ void tests_end _PROTO ((void));
 void tests_memory_start _PROTO ((void));
 void tests_memory_end _PROTO ((void));
 
+void tests_rand_start _PROTO ((void));
+void tests_rand_end _PROTO ((void));
+
 
 #if HAVE_CALLING_CONVENTIONS
 extern mp_limb_t (*calling_conventions_function) _PROTO ((ANYARGS));
@@ -95,6 +98,7 @@ void mpz_erandomb _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                            unsigned long nbits));
 void mpz_erandomb_nonzero _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
                                    unsigned long nbits));
+mp_limb_t urandom _PROTO ((void));
 
 
 void refmpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
