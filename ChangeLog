@@ -19,6 +19,14 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-17  Torbjorn Granlund  <tege@swox.com>
+
+	* mpfr/mpfr-test.h: Test "__hpux", not "hpux".  Mask off mrand48
+	return value to 31 bits to work around sloppy mpfr #include practices.
+
+	* mpfr/tests/*.c: Use #include "", not <>, for gmp.h and mpfr.h.
+	Make sure to #include mpfr-test.h from all files that use random().
+
 2002-01-17  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (__GMP_REALLOCATE_FUNC_MAYBE_TYPE): New macro.
@@ -74,7 +82,7 @@ MA 02111-1307, USA.
 	(Formatted Output Strings): Add type N, tweak some wording.
 
 	* tests/refmpn.c (refmpn_divmod_1c): Avoid a bug in i386 gcc 3.0.
-	
+
 2002-01-12  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/root.c: Add <stdlib.h>, for abort().
@@ -86,7 +94,7 @@ MA 02111-1307, USA.
 	trandom.c, tset_z.c, tsin.c, tsqrt.c, tsqrt_ui.c, tsub_ui.c, ttan.c,
 	tui_div.c: Fixes for K&R.
 
-	* tests/misc/t-scanf.c (check_misc, check_misc): 
+	* tests/misc/t-scanf.c (check_misc, check_misc):
 
 	* tests/mpz/t-inp_str.c, tests/mpq/t-inp_str.c, tests/misc/t-scanf.c:
 	Avoid strings in ASSERT, not enjoyed by K&R.
