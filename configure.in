@@ -1141,6 +1141,8 @@ found_compiler=no
 
 for abi in $abilist; do
 
+  echo "checking ABI=$abi"
+
   # Suppose abilist="64 32", then for abi=64, will have abi1="_64" and
   # abi2="_64".  For abi=32, will have abi1="_32" and abi2="".  This is how
   # $gcc_cflags becomes a fallback for $gcc_32_cflags (the last in the
