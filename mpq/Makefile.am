@@ -1,11 +1,10 @@
 ## Process this file with automake to generate Makefile.in
 
-#AUTOMAKE_OPTIONS = gnu no-dependencies
 AUTOMAKE_OPTIONS = gnu
 
-# $top_srcdir is needed for `#include "gmp-impl.h"'.  FIXME?
-# FIXME: Need `-I$(srcdir)' and `-I.'?  Where to find config.h?
-INCLUDES = -I$(top_srcdir)
+# $top_srcdir is needed for `#include "gmp-impl.h"'.
+# .. is needed for config.h and gmp-mparam.h.
+INCLUDES = -I$(top_srcdir) -I..
 
 EXTRA_DIST = tests
 

@@ -5,9 +5,10 @@ AUTOMAKE_OPTIONS = gnu
 CPP	= @CPP@
 
 # $top_srcdir is needed for `#include "gmp-impl.h"'.
+# .. is needed for config.h and gmp-mparam.h.
 # Tell multi-function files which function to produce.  (This should be
 # put in DEFS, but then we lose some `-I':s.)
-INCLUDES = -I$(top_srcdir) -DOPERATION_$*
+INCLUDES = -I$(top_srcdir) -I.. -DOPERATION_$*
 
 GENERIC_SOURCES = mp_bases.c
 OFILES = @mpn_objects@
