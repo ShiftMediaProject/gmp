@@ -113,6 +113,8 @@ check_data (void)
                       printf ("mpz_inp_str nread wrong\n");
                       printf ("  inp          \"%s\"\n", data[i].inp);
                       printf ("  base         %d\n", data[i].base);
+                      printf ("  pre          %d\n", pre);
+                      printf ("  post         %d\n", post);
                       printf ("  got_nread    %d\n", got_nread);
                       printf ("  ftell_nread  %ld\n", ftell_nread);
                       abort ();
@@ -129,6 +131,8 @@ check_data (void)
                       printf ("mpz_inp_str didn't read to EOF\n");
                       printf ("  inp   \"%s\"\n", data[i].inp);
                       printf ("  base  %d\n", data[i].base);
+                      printf ("  pre   %d\n", pre);
+                      printf ("  post  %d\n", post);
                       printf ("  c     '%c' %#x\n", c, c);
                       abort ();
                     }
