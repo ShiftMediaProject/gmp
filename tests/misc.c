@@ -1,6 +1,6 @@
 /* Miscellaneous test program support routines.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -359,4 +359,49 @@ urandom (void)
   _gmp_rand (n, RANDS, BITS_PER_MP_LIMB);
   return n[0] + (n[1] << GMP_NUMB_BITS);
 #endif
+}
+
+
+/* Call (*func)() with various random number generators. */
+void
+call_rand_algs (void (*func) __GMP_PROTO ((const char *, gmp_randstate_ptr)))
+{
+  gmp_randstate_t  rstate;
+  mpz_t            a;
+
+  mpz_init (a);
+
+  gmp_randinit_default (rstate);
+  (*func) ("gmp_randinit_default", rstate);
+  gmp_randclear (rstate);
+
+  gmp_randinit_mt (rstate);
+  (*func) ("gmp_randinit_mt", rstate);
+  gmp_randclear (rstate);
+
+  gmp_randinit_lc_2exp_size (rstate, 8L);
+  (*func) ("gmp_randinit_lc_2exp_size 8", rstate);
+  gmp_randclear (rstate);
+
+  gmp_randinit_lc_2exp_size (rstate, 16L);
+  (*func) ("gmp_randinit_lc_2exp_size 16", rstate);
+  gmp_randclear (rstate);
+
+  gmp_randinit_lc_2exp_size (rstate, 128L);
+  (*func) ("gmp_randinit_lc_2exp_size 128", rstate);
+  gmp_randclear (rstate);
+
+  /* degenerate always zeros */
+  mpz_set_ui (a, 0L);
+  gmp_randinit_lc_2exp (rstate, a, 0L, 8L);
+  (*func) ("gmp_randinit_lc_2exp a=0 c=0 m=8", rstate);
+  gmp_randclear (rstate);
+
+  /* degenerate always FFs */
+  mpz_set_ui (a, 0L);
+  gmp_randinit_lc_2exp (rstate, a, 0xFFL, 8L);
+  (*func) ("gmp_randinit_lc_2exp a=0 c=0xFF m=8", rstate);
+  gmp_randclear (rstate);
+
+  mpz_clear (a);
 }
