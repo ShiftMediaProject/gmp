@@ -59,9 +59,9 @@ gmp_fprintf_reps (FILE *fp, int c, int reps)
   ASSERT (reps >= 0);
 
   memset (buf, c, MIN (reps, sizeof (buf)));
-  for (i = reps; i > 0; i -= piece)
+  for (i = reps; i > 0; i -= sizeof (buf))
     {
-      piece = MIN (reps, sizeof (buf));
+      piece = MIN (i, sizeof (buf));
       ret = fwrite (buf, 1, piece, fp);
       if (ret == -1)
         return ret;
