@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 8 Oct 2002.  An up-to-date version is available at
+  This file current as of 24 Oct 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -250,6 +250,21 @@ MA 02111-1307, USA.
      under <code>USE_MORE_MPN</code>, but isn't because it uses
      <code>alloca</code>.  Do something with a macro to avoid that, and indeed
      to get it always irrespective.
+<li> <code>mpz_n_pow_ui</code> does a good job with small bases and stripping
+     powers of 2, but it's perhaps a bit too complicated for what it gains.
+     The simpler <code>mpn_pow_1</code> is a little faster on small exponents.
+     (Note some of the ugliness in <code>mpz_n_pow_ui</code> is due to
+     supporting <code>mpn_mul_2</code>.)
+     <br>
+     Perhaps the stripping of 2s in <code>mpz_n_pow_ui</code> should be
+     confined to single limb operands for simplicity and since that's where
+     the greatest gain would be.
+     <br>
+     Ideally <code>mpn_pow_1</code> and <code>mpz_n_pow_ui</code> would be
+     merged.  The reason <code>mpz_n_pow_ui</code> writes to an
+     <code>mpz_t</code> is that its callers leave it to make a good estimate
+     of the result size.  Callers of <code>mpn_pow_1</code> already know the
+     size by separate means (<code>mp_bases</code>).
 </ul>
 
 
@@ -450,6 +465,11 @@ MA 02111-1307, USA.
 <li> IRIX 6 MIPSpro compiler has an <code>__inline</code> which could perhaps
      be used in <code>__GMP_EXTERN_INLINE</code>.  What would be the right way
      to identify suitable versions of that compiler?
+<li> IRIX <code>cc</code> is rumoured to have an <code>_int_mult_upper</code>
+     (in <code>&lt;intrinsics.h&gt;</code> like Cray), but it didn't seem to
+     exist on some IRIX 6.5 systems tried.  If it does actually exist
+     somewhere it would very likely be an improvement over a function call to
+     umul.asm.
 <li> VAX D and G format <code>double</code> floats are straightforward and
      could perhaps be handled directly in <code>__gmp_extract_double</code>
      and maybe in <code>mpz_get_d</code>, rather than falling back on the
@@ -672,10 +692,6 @@ MA 02111-1307, USA.
 <li> m68k: config.guess can detect 68000, 68010, CPU32 and 68020, but relies
      on system information for 030, 040 and 060.  Can they be identified by
      running some code?
-<li> m68k: gas 2.11.90.0.1 pads with zero bytes in text segments, which is not
-     valid code.  Probably need <code>.balignw &lt;n&gt;,0x4e7f</code> to get
-     nops, if <code>ALIGN</code> is going to be used for anything that's
-     executed across.
 <li> Some CPUs have <code>umul</code> and <code>udiv</code> code not being
      used.  Check all such for bit rot and then put umul and udiv in
      <code>$gmp_mpn_functions_optional</code> as "standard optional" objects.
