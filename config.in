@@ -143,7 +143,7 @@ MA 02111-1307, USA.
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Whether a speed_cyclecounter exists for the tune programs */
+/* Define if a speed_cyclecounter exists (for the tune programs) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
 /* Define if mpn/tests has calling conventions checking for the CPU */
