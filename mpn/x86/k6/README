@@ -6,9 +6,10 @@
 This directory contains code optimized for AMD K6 CPUs, meaning K6, K6-2 and
 K6-3.
 
-The mmx and k62mmx subdirectories have routines using MMX instructions.  All
-K6s have MMX, the separate directories are just so that ./configure can omit
-them if the assembler doesn't support MMX.
+The mmx subdirectory has MMX code suiting plain K6, the k62mmx subdirectory
+has MMX code suiting K6-2 and K6-3.  All chips in the K6 family have MMX,
+the separate directories are just so that ./configure can omit them if the
+assembler doesn't support MMX.
 
 
 
@@ -28,36 +29,20 @@ Times for the loops, with all code and data in L1 cache, are as follows.
 	mpn_sqr_basecase           4.7  cycles/crossproduct (approx)
                                    or 9.2 cycles/triangleproduct (approx)
 
+	mpn_l/rshift               3.0
+
 	mpn_divrem_1              20.0
 	mpn_mod_1                 20.0
 	mpn_divexact_by3          11.0
 
-	mpn_l/rshift               3.0
-
 	mpn_copyi/copyd            1.0
-
-	mpn_com_n                  1.5-1.85  \
-	mpn_and/andn/ior/xor_n     1.5-1.75  | varying with
-	mpn_iorn/xnor_n            2.0-2.25  | data alignment
-	mpn_nand/nior_n            2.0-2.25  /
-
-	mpn_popcount		  12.5
-	mpn_hamdist		  13.0
 
 
 K6-2 and K6-3 have dual-issue MMX and get the following improvements.
 
 	mpn_l/rshift               1.75
 
-	mpn_copyi/copyd            0.56 or 1.0  \
-                                                |
-	mpn_com_n                  1.0-1.2      | varying with
-	mpn_and/andn/ior/xor_n     1.2-1.5      | data alignment
-	mpn_iorn/xnor_n            1.5-2.0      |
-	mpn_nand/nior_n            1.75-2.0     /
-
-	mpn_popcount		   9.0
-	mpn_hamdist		  11.5
+	mpn_copyi/copyd            0.56 or 1.0  (varying with data alignment)
 
 
 Prefetching of sources hasn't yet given any joy.  With the 3DNow "prefetch"
@@ -74,7 +59,7 @@ NOTES
 All K6 family chips have MMX, but only K6-2 and K6-3 have 3DNow.
 
 Plain K6 executes MMX instructions only in the X pipe, but K6-2 and K6-3 can
-execute them in both X and Y (and together).
+execute them in both X and Y (and in both together).
 
 Branch misprediction penalty is 1 to 4 cycles (Optimization Manual
 chapter 6 table 12).
@@ -163,7 +148,7 @@ Addressing modes
   happens with forms like "0F opcode mod/rm" with mod/rm=00-xxx-100 since
   with mod=00 the sib determines whether there's a displacement.
 
-  This affects all MMX and 3DNow instructions, and others with an 0F prefix
+  This affects all MMX and 3DNow instructions, and others with an 0F prefix,
   like movzbl.  The modes affected are anything with an index and no
   displacement, or an index but no base, and this includes (%esp) which is
   really (,%esp,1).
@@ -188,7 +173,7 @@ Various
 - femms     3 cycles
 - jecxz     2 cycles taken, 13 not taken (optimization manual says 7 not taken)
 - divl      20 cycles back-to-back
-- imull     2 decode, 2 execute
+- imull     2 decode, 3 execute
 - mull      2 decode, 3 execute (optimization manual decoding sample)
 - prefetch  2 cycles
 - rcll/rcrl implicit by one bit: 2 cycles
