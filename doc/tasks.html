@@ -124,12 +124,15 @@
      be left available for CPUs without caching.  Depending how karatsuba etc
      is applied to unequal size operands it might be possible to assume M is
      always smallish.
-<li> <code>mpz_probab_prime_p</code> and <code>mpn_perfect_square_p</code>
-     could take a remainder mod 2^24-1 to quickly get remainders mod 3, 5, 7,
-     13 and 17 (factors of 2^24-1).
+<li> <code>mpz_probab_prime_p</code>, <code>mpn_perfect_square_p</code> and
+     <code>mpz_perfect_power_p</code> could take a remainder mod 2^24-1 to
+     quickly get remainders mod 3, 5, 7, 13 and 17 (factors of 2^24-1).
 <li> <code>mpf_set_str</code> produces low zero limbs when a string has a
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
+<li> <code>mpz_and</code>, <code>mpz_ior</code> and <code>mpz_xor</code> should
+     use <code>mpn_and</code> etc.  Need to be careful not to pass size==0.  Is
+     some code sharing possible between the <code>mpz</code>s?
 </ul>
 
 
@@ -257,51 +260,27 @@
 <h4>Configuration</h4>
 
 <ul>
-<li> Improve config.guess.  We want to recognize the processor very
-     accurately, more accurately than other GNU packages.
-     config.guess does not currently make the distinctions we would
-     like it to do and a --target often needs to be set explicitly.
-
-     For example, "sparc" is not very useful as a machine architecture
-     denotation.  We want to distinguish old 32-bit SPARC without
-     multiply support from newer 32-bit SPARC with such support.  We
-     want to recognize a SuperSPARC, since its implementation of the
-     UDIV instruction is not complete, and will trap to the OS kernel
-     for certain operands.  And we want to recognize 64-bit capable
-     SPARC processors as such.  While the assembly routines can use
-     64-bit operations on all 64-bit SPARC processors, one can not use
-     64-bit limbs under all operating system.  E.g., Solaris 2.5 and
-     2.6 doesn't preserve the upper 32 bits of most processor
-     registers.  For SPARC we therefore sometimes need to choose GMP
-     configuration depending both on processor and operating system.
-
-<li> Remember to make sure config.sub accepts any output from config.guess.
-
 <li> Find out whether there's an alloca available and how to use it.
      AC_FUNC_ALLOCA has various system dependencies covered, but we
      don't want its alloca.c replacement.  (One thing current cpp
      tests don't cover: HPUX 10 C compiler supports alloca, but
      cannot find any symbol to test in order to know if we're on
      HPUX 10.  Damn.)
-<li> Identify Mips processor under Irix: `hinv -c processor'.
-     config.guess should say mips2, mips3, and mips4.
-<li> Identify Alpha processor under OSF: "/usr/sbin/sizer -c".
-     Unfortunately, sizer is not available before some revision of
-     Dec Unix 4.0, and it also returns some rather cryptic names for
-     processors.  Perhaps the <code>implver</code> and
-     <code>amask</code> assembly instructions are better, but that
-     doesn't differentiate between ev5 and ev56.
-<li> Identify Sparc processors.  config.guess should say supersparc,
-     microsparc, ultrasparc1, ultrasparc2, etc.
-<li> Identify HPPA processors similarly.
-<li> Get lots of information about a Solaris system: prtconf -vp
-<li> For some target machines and some compilers, specific options
-     are needed (sparcv8/gcc needs -mv8, sparcv8/cc needs -cg92,
-     Irix64/cc needs -64, Irix32/cc might need -n32, etc).  Some are
-     set already, add more, see configure.in.
-<li> Options to be passed to the assembler (via the compiler, using
-     whatever syntax the compiler uses for passing options to the
-     assembler).
+<li> HPPA: config.guess should distinguish hppa 7000 and 7100.
+<li> Mips: config.guess should say mips2, mips3, and mips4.  "hinv -c
+     processor" gives lots of information on Irix.
+<li> Alpha: config.guess: Identify processor under OSF: "/usr/sbin/sizer -c".
+     Unfortunately, sizer is not available before some revision of Dec Unix
+     4.0, and it also returns some rather cryptic names for processors.
+     Perhaps the <code>implver</code> and <code>amask</code> assembly
+     instructions are better, but that doesn't differentiate between ev5 and
+     ev56.  Is some of this already in the FSF config.guess?
+<li> Sparc: config.guess should say supersparc, microsparc, ultrasparc1,
+     ultrasparc2, etc.  "prtconf -vp" gives lots of information about a Solaris
+     system.
+<li> Sparc32: floating point or integer <code>udiv</code> should be selected
+     according to the CPU target.  Currently floating point ends up being used
+     on all sparcs, which is probably not right for generic V7 and V8.
 <li> On Solaris 7, check if gcc supports native v9 64-bit
      arithmetic.  If not compile using "cc -fast -xarch=v9".
      (Problem: -fast requires that we link with -fast too, which
