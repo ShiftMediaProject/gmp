@@ -211,7 +211,7 @@ LDADD = -L$(top_builddir)/.libs \
 @WANT_MPFR_TRUE@LIBMPFR = $(top_builddir)/mpfr/libmpfr.a
 
 @WANT_CXX_TRUE@check_PROGRAMS = t-assign t-binary t-cast t-constr t-headers t-headfr \
-@WANT_CXX_TRUE@  t-locale t-misc t-ops t-ostream t-prec t-rand t-ternary t-unary
+@WANT_CXX_TRUE@  t-istream t-locale t-misc t-ops t-ostream t-prec t-rand t-ternary t-unary
 
 @WANT_CXX_TRUE@TESTS = $(check_PROGRAMS)
 
@@ -221,6 +221,7 @@ t_cast_SOURCES = t-cast.cc
 t_constr_SOURCES = t-constr.cc
 t_headers_SOURCES = t-headers.cc
 t_headfr_SOURCES = t-headfr.cc
+t_istream_SOURCES = t-istream.cc
 t_locale_SOURCES = t-locale.cc clocale.c
 t_misc_SOURCES = t-misc.cc
 t_ops_SOURCES = t-ops.cc
@@ -249,7 +250,8 @@ CONFIG_CLEAN_FILES =
 @WANT_CXX_TRUE@check_PROGRAMS = t-assign$(EXEEXT) t-binary$(EXEEXT) \
 @WANT_CXX_TRUE@	t-cast$(EXEEXT) t-constr$(EXEEXT) \
 @WANT_CXX_TRUE@	t-headers$(EXEEXT) t-headfr$(EXEEXT) \
-@WANT_CXX_TRUE@	t-locale$(EXEEXT) t-misc$(EXEEXT) t-ops$(EXEEXT) \
+@WANT_CXX_TRUE@	t-istream$(EXEEXT) t-locale$(EXEEXT) \
+@WANT_CXX_TRUE@	t-misc$(EXEEXT) t-ops$(EXEEXT) \
 @WANT_CXX_TRUE@	t-ostream$(EXEEXT) t-prec$(EXEEXT) \
 @WANT_CXX_TRUE@	t-rand$(EXEEXT) t-ternary$(EXEEXT) \
 @WANT_CXX_TRUE@	t-unary$(EXEEXT)
@@ -330,6 +332,19 @@ t_headfr_LDADD = $(LDADD)
 @WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
 @WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_headfr_LDFLAGS =
+am_t_istream_OBJECTS = t-istream.$(OBJEXT)
+t_istream_OBJECTS = $(am_t_istream_OBJECTS)
+t_istream_LDADD = $(LDADD)
+@WANT_MPFR_TRUE@t_istream_DEPENDENCIES = \
+@WANT_MPFR_TRUE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_TRUE@	$(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@	$(top_builddir)/libgmp.la
+@WANT_MPFR_FALSE@t_istream_DEPENDENCIES = \
+@WANT_MPFR_FALSE@	$(top_builddir)/tests/libtests.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
+@WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
+t_istream_LDFLAGS =
 am_t_locale_OBJECTS = t-locale.$(OBJEXT) clocale$U.$(OBJEXT)
 t_locale_OBJECTS = $(am_t_locale_OBJECTS)
 t_locale_LDADD = $(LDADD)
@@ -446,11 +461,11 @@ CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(t_assign_SOURCES) $(t_binary_SOURCES) $(t_cast_SOURCES) \
 	$(t_constr_SOURCES) $(t_headers_SOURCES) $(t_headfr_SOURCES) \
-	$(t_locale_SOURCES) $(t_misc_SOURCES) $(t_ops_SOURCES) \
-	$(t_ostream_SOURCES) $(t_prec_SOURCES) $(t_rand_SOURCES) \
-	$(t_ternary_SOURCES) $(t_unary_SOURCES)
+	$(t_istream_SOURCES) $(t_locale_SOURCES) $(t_misc_SOURCES) \
+	$(t_ops_SOURCES) $(t_ostream_SOURCES) $(t_prec_SOURCES) \
+	$(t_rand_SOURCES) $(t_ternary_SOURCES) $(t_unary_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(t_assign_SOURCES) $(t_binary_SOURCES) $(t_cast_SOURCES) $(t_constr_SOURCES) $(t_headers_SOURCES) $(t_headfr_SOURCES) $(t_locale_SOURCES) $(t_misc_SOURCES) $(t_ops_SOURCES) $(t_ostream_SOURCES) $(t_prec_SOURCES) $(t_rand_SOURCES) $(t_ternary_SOURCES) $(t_unary_SOURCES)
+SOURCES = $(t_assign_SOURCES) $(t_binary_SOURCES) $(t_cast_SOURCES) $(t_constr_SOURCES) $(t_headers_SOURCES) $(t_headfr_SOURCES) $(t_istream_SOURCES) $(t_locale_SOURCES) $(t_misc_SOURCES) $(t_ops_SOURCES) $(t_ostream_SOURCES) $(t_prec_SOURCES) $(t_rand_SOURCES) $(t_ternary_SOURCES) $(t_unary_SOURCES)
 
 all: all-am
 
@@ -486,6 +501,9 @@ t-headers$(EXEEXT): $(t_headers_OBJECTS) $(t_headers_DEPENDENCIES)
 t-headfr$(EXEEXT): $(t_headfr_OBJECTS) $(t_headfr_DEPENDENCIES) 
 	@rm -f t-headfr$(EXEEXT)
 	$(CXXLINK) $(t_headfr_LDFLAGS) $(t_headfr_OBJECTS) $(t_headfr_LDADD) $(LIBS)
+t-istream$(EXEEXT): $(t_istream_OBJECTS) $(t_istream_DEPENDENCIES) 
+	@rm -f t-istream$(EXEEXT)
+	$(CXXLINK) $(t_istream_LDFLAGS) $(t_istream_OBJECTS) $(t_istream_LDADD) $(LIBS)
 t-locale$(EXEEXT): $(t_locale_OBJECTS) $(t_locale_DEPENDENCIES) 
 	@rm -f t-locale$(EXEEXT)
 	$(CXXLINK) $(t_locale_LDFLAGS) $(t_locale_OBJECTS) $(t_locale_LDADD) $(LIBS)
