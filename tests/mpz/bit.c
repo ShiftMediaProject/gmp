@@ -120,7 +120,7 @@ check_single (void)
               MPZ_CHECK_FORMAT (x);
               if (mpz_tstbit (x, bit) != 1)
                 {
-                  printf ("check_single(): expected 0\n");
+                  printf ("check_single(): expected 1\n");
                   abort ();
                 }
           
