@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2004-01-25  Niels Möller  <nisse@lysator.liu.se>
 
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add t-hgcd.
+
 	* mpn/generic/hgcd.c (hgcd_jebelean): Simplify, use mpn_cmp_sum3.
 	(mpn_cmp_sum3): New function.
 	(mpn_diff_smaller_p): Remove.
