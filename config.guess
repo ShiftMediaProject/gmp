@@ -523,8 +523,8 @@ sparc-*-* | sparc64-*-*)
         if grep 'cpu0 is a "SuperSPARC' conftest.dat >/dev/null; then
           exact_cpu=supersparc
           break
-        elif grep 'cpu0 is a .*TMS390Z55' conftest.dat >/dev/null; then
-          # TMS390Z55 is a supersparc
+        elif grep 'cpu0 is a .*TMS390Z5.' conftest.dat >/dev/null; then
+          # TMS390Z50 and TMS390Z55
           exact_cpu=supersparc
           break
         fi
@@ -589,6 +589,14 @@ sparc-*-* | sparc64-*-*)
         exact_cpu=ultrasparc2
       elif grep 'UltraSparc' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc
+      elif grep 'TMS390Z5.' conftest.dat >/dev/null; then
+        # TMS390Z50 and TMS390Z55
+        exact_cpu=supersparc
+      elif grep 'TMS390S10' conftest.dat >/dev/null; then
+        exact_cpu=microsparc
+      elif grep 'MB86904' conftest.dat >/dev/null; then
+        # actually MicroSPARC-II
+        exact_cpu=microsparc
       fi
     fi
     rm -f conftest.dat
