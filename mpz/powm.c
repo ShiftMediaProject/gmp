@@ -32,8 +32,11 @@ MA 02111-1307, USA. */
 /* Set c <- tp/R^n mod m.
    tp should have space for 2*n+1 limbs; clobber its most significant limb. */
 
+#if WANT_REDC_GLOBAL
+static
+#endif
 void
-mpn_redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
+redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
 {
   mp_limb_t cy;
   mp_limb_t q;
@@ -174,7 +177,7 @@ pow (base, e, mod, res)
   if (use_redc)
     {
       mpn_sqr_n (tp, PTR(g[0]), n);
-      mpn_redc (PTR(xx), PTR(mod), n, invm, tp); /* xx = x^2*R^n */
+      redc (PTR(xx), PTR(mod), n, invm, tp); /* xx = x^2*R^n */
     }
   else
     {
@@ -188,7 +191,7 @@ pow (base, e, mod, res)
 	{
 	  _mpz_realloc (g[i], n);
 	  mpn_mul_n (tp, PTR(g[i - 1]), PTR(xx), n);
-	  mpn_redc (PTR(g[i]), PTR(mod), n, invm, tp); /* g[i] = x^(2i+1)*R^n */
+	  redc (PTR(g[i]), PTR(mod), n, invm, tp); /* g[i] = x^(2i+1)*R^n */
 	  SIZ(g[i]) = n;
 	}
       else
@@ -230,7 +233,7 @@ pow (base, e, mod, res)
       if (use_redc)
 	{
 	  mpn_sqr_n (tp, PTR(xx), n);
-	  mpn_redc (PTR(xx), PTR(mod), n, invm, tp);
+	  redc (PTR(xx), PTR(mod), n, invm, tp);
 	}
       else
 	{
@@ -268,7 +271,7 @@ pow (base, e, mod, res)
 	  if (use_redc)
 	    {
 	      mpn_sqr_n (tp, PTR(xx), n);
-	      mpn_redc (PTR(xx), PTR(mod), n, invm, tp);
+	      redc (PTR(xx), PTR(mod), n, invm, tp);
 	    }
 	  else
 	    {
@@ -304,7 +307,7 @@ pow (base, e, mod, res)
 	      if (use_redc)
 		{
 		  mpn_sqr_n (tp, PTR(xx), n);
-		  mpn_redc (PTR(xx), PTR(mod), n, invm, tp);
+		  redc (PTR(xx), PTR(mod), n, invm, tp);
 		}
 	      else
 		{
@@ -315,7 +318,7 @@ pow (base, e, mod, res)
 	  if (use_redc)
 	    {
 	      mpn_mul_n (tp, PTR(xx), PTR(g[c >> 1]), n);
-	      mpn_redc (PTR(xx), PTR(mod), n, invm, tp);
+	      redc (PTR(xx), PTR(mod), n, invm, tp);
 	    }
 	  else
 	    {
@@ -330,7 +333,7 @@ pow (base, e, mod, res)
 	  if (use_redc)
 	    {
 	      mpn_sqr_n (tp, PTR(xx), n);
-	      mpn_redc (PTR(xx), PTR(mod), n, invm, tp);
+	      redc (PTR(xx), PTR(mod), n, invm, tp);
 	    }
 	  else
 	    {
@@ -345,7 +348,7 @@ pow (base, e, mod, res)
     {
       MPN_COPY (tp, PTR(xx), n);
       MPN_ZERO (tp + n, n);
-      mpn_redc (PTR(xx), PTR(mod), n, invm, tp);
+      redc (PTR(xx), PTR(mod), n, invm, tp);
       SIZ(xx) = n;
       MPN_NORMALIZE (PTR(xx), SIZ(xx));
       if (mpz_cmp (xx, mod) >= 0)
