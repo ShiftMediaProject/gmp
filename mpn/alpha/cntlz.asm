@@ -23,6 +23,7 @@ include(`../config.m4')
 
 ASM_START()
 PROLOGUE_GP(MPN(count_leading_zeros))
+	.set at		C need the `at' register for expanding ldbu on ev4/ev5
 	cmpbge	r31,  r16, r1
 	lda	r3,   MPN(clz_tab)
 	sra	r1,   1,   r1
