@@ -41,6 +41,11 @@ RELEVANT OPTIMIZATION ISSUES
    cycles, contrary to the SGI documentation.  There seem to be 3 or 4
    possible latencies.
 
+4. The R1x000 processors can issue one floating-point operation, two integer
+   operations, and one memory operation per cycle.  The FPU has very short
+   latencies, while the integer multiply unit is non-pipelined.  We should
+   therefore write fp based mpn_Xmul_1.
+
 STATUS
 
 Good...

@@ -84,8 +84,9 @@ mpn_addmul_1:
 
 The current code runs at 3.7 cycles/limb, but that somewhat odd timing
 is reached only for huge operands.  It uses the mod-scheduled software
-pipelining feature.  The reason for the poor speed for small operands
-is that mod-scheduled loops have a very long start-up overhead.
+pipelining feature.  Performance for small operands is poor.  The
+reason for the poor speed for small operands is that mod-scheduled
+loops have significant start-up overhead.
 
 For optimal speed, we need to load two 64-bit limbs with the ldfp8
 instruction, and stay away from mod-scheduled loops.  Since rp and up
@@ -211,12 +212,17 @@ pattern:
 	   2 fpops/max 2 fpops/cycle:		1.0 cycles/limb
 
 ================================================================
-mpn_mul_8
+mpn_addmul_8
+
+For best speed, we need to give up using mpn_addmul_1 as the main
+multiply building block, and instead take multiple v limbs per loop.
+For the Itanium, we need to take about 8 limbs at a time for full
+speed.
 
 The add+cmp+add we use on the other codes is optimal for shortening
-recurrencies (2 cycles) but the sequence takes up 4 execution slots.  When
-recurrency depth is not critical, a more standard 3-cycle add+cmp+add is
-better.
+recurrencies (2 cycles) but the sequence takes up 4 execution slots.
+When recurrency depth is not critical, a more standard 3-cycle
+add+cmp+add is better.
 
 /* First load the 8 values from v */
 	ldfp8		v0, v1 = [r35], 16;;
@@ -227,6 +233,7 @@ better.
 /* In the inner loop, get a new U limb and store a result limb. */
 	mov		lc = un
 Loop:	ldf8		u0 = [r33], 8
+	ldf8		r0 = [r32]
 	xma.l		lp0 = v0, u0, hp0
 	xma.hu		hp0 = v0, u0, hp0
 	xma.l		lp1 = v1, u0, hp1
@@ -250,30 +257,28 @@ Loop:	ldf8		u0 = [r33], 8
 	getf.sig	l4 = lp4
 	getf.sig	l5 = lp5
 	getf.sig	l6 = lp6
-	getf.sig	l7 = lp7
-	add+cmp+add	l0, l0, h0
-	add+cmp+add	l1, l1, h1
-	add+cmp+add	l2, l2, h2
-	add+cmp+add	l3, l3, h3
-	add+cmp+add	l4, l4, h4
-	add+cmp+add	l5, l5, h5
-	add+cmp+add	l6, l6, h6
-	add+cmp+add	l7, l7, h7
+	add+cmp+add	xx, l0, r0
+	add+cmp+add	acc0, acc1, l1
+	add+cmp+add	acc1, acc2, l2
+	add+cmp+add	acc2, acc3, l3
+	add+cmp+add	acc3, acc4, l4
+	add+cmp+add	acc4, acc5, l5
+	add+cmp+add	acc5, acc6, l6
+	getf.sig	acc6 = lp7
 	st8		[r32] = xx, 8
 	br.cloop Loop
 
-	50 insn at max 6 insn/cycle:		8.33 cycles/limb8
-	10 memops at max 2 memops/cycle:	5 cycles/limb8
+	49 insn at max 6 insn/cycle:		8.167 cycles/limb8
+	11 memops at max 2 memops/cycle:	5.5 cycles/limb8
 	16 fpops at max 2 fpops/cycle:		8 cycles/limb8
-	24 intops at max 4 intops/cycle:	6 cycles/limb8
-	10+24 memops+intops at max 4/cycle	8.5 cycles/limb8
-						1.0625 cycles/limb
+	21 intops at max 4 intops/cycle:	5.25 cycles/limb8
+	11+21 memops+intops at max 4/cycle	8 cycles/limb8
 
 ================================================================
 mpn_lshift, mpn_rshift
 
 The current code runs at 2 cycles/limb, but has a too deep software
-pipeline.  The code suffers badly from the 4 cycle latency of the
+pipeline.  The code suffers badly from Itanium's 4 cycle latency for
 variable shift instructions.
 
 Using 63 separate loops, we could use the double-word SHRP
