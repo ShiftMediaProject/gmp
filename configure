@@ -2541,8 +2541,8 @@ echo "include_mpn(\`arm/arm-defs.m4')" >> $gmp_tmpconfigm4i
 	gcc_20n_cflags_optlist="arch"
         gcc_20n_testlist="sizeof-long-4 hppa-level-2.0"
 
-        # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
-        cc_20n_cflags="+DA2.0 +e +O3 -Wl,+vnocompatwarnings"
+        # +O3 causes problems with fp rounding in mpfr/tests/tdiv.
+        cc_20n_cflags="+DA2.0 +e +O2 -Wl,+vnocompatwarnings"
         cc_20n_testlist="hpc-hppa-2-0"
 
 	# ABI=2.0w is available for hppa2.0w and hppa2.0, but not for
@@ -2561,7 +2561,8 @@ echo "include_mpn(\`arm/arm-defs.m4')" >> $gmp_tmpconfigm4i
           cclist_20w="gcc cc"
 	  gcc_20w_cflags="-O2 -mpa-risc-2-0"
 	  gcc_20w_testlist="sizeof-long-8"
-          cc_20w_cflags="+DD64 +O3"
+	  # +O3 causes problems with fp rounding in mpfr/tests/tdiv.
+          cc_20w_cflags="+DD64 +O2"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
           extra_functions_20w="umul udiv"
@@ -7586,7 +7587,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7589 "configure"' > conftest.$ac_ext
+  echo '#line 7590 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -11024,7 +11025,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11027 "configure"
+#line 11028 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11122,7 +11123,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11125 "configure"
+#line 11126 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14227,7 +14228,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14230 "configure"
+#line 14231 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14325,7 +14326,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14328 "configure"
+#line 14329 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16959,7 +16960,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16962 "configure"
+#line 16963 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17057,7 +17058,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 17060 "configure"
+#line 17061 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
