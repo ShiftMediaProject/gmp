@@ -18,6 +18,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-04-19  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_ROOTREM): New #define.
+	(speed_mpn_rootrem): Declare.
+	* tune/common.c (speed_mpn_rootrem): New function.
+	* tune/speed.c (routine): Add entry for mpn_rootrem.
+
 2004-04-14  Kevin Ryde  <kevin@swox.se>
 
 	* doc/gmp.texi (Reentrancy, Random State Initialization): Note
@@ -88,7 +95,7 @@ MA 02111-1307, USA.
 
 	* mpn/x86/k7/mmx/divrem_1.asm, mpn/x86/pentium4/sse2/divrem_1.asm: Add
 	note on how "dr" part of algorithm is handled.
-	
+
 	* mpn/x86/k7/dive_1.asm, mpn/x86/k7/mod_34lsub1.asm,
 	mpn/x86/k7/mode1o.asm: Note Hammer (32-bit mode) speeds.
 
@@ -198,7 +205,7 @@ MA 02111-1307, USA.
 	divisor, since truncating can lose accuracy.
 	* tests/mpf/t-ui_div.c: New file.
 	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
-	
+
 	* mpf/set_q.c: Expand TMP_ALLOC_LIMBS_2, to make conditional clearer
 	and avoid 1 limb alloc when not wanted.
 
@@ -206,7 +213,7 @@ MA 02111-1307, USA.
 	(TMP_ALLOC_LIMBS_2): Use "if" within macro rather than "#if", for less
 	preprocessor conditionals.
 
-	* mpf/mul_2exp.c, mpf/div_2exp.c: Add some comments.	
+	* mpf/mul_2exp.c, mpf/div_2exp.c: Add some comments.
 
 	* tests/refmpn.c (refmpn_sb_divrem_mn, refmpn_tdiv_qr): Nailify.
 
@@ -221,7 +228,7 @@ MA 02111-1307, USA.
 	* acinclude.m4 (GMP_PROG_AR): Remove AR_FLAGS=cq, libtool 1.5.2 now
 	does this itself on detecting duplicate object filenames in piecewise
 	linking mode.
- 
+
 	* configure.in (hppa2.0*-*-*): Test sizeof(long) == 4 or 8 to verify
 	ABI=2.0n versus ABI=2.0w.  In particular this lets CC=cc_bundled
 	correctly fall back to ABI=2.0n (we don't automatically add CC=+DD64
@@ -245,7 +252,7 @@ MA 02111-1307, USA.
 	MPN_COPY_INCR, only an ASSERT failure.
 	* tests/mpf/t-set.c: New file.
 	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
-	
+
 	* mpf/set.c, mpf/iset.c: Do MPN_COPY last, for possible tail call.
 
 	* mpf/set_d.c: Rate d==0 as UNLIKELY.  Store size before extract call,
@@ -411,7 +418,7 @@ MA 02111-1307, USA.
 
 	* mpn/generic/mul_n.c: Add some remarks about toom3 high zero
 	stripping.
- 
+
 	* mpn/generic/scan0.c, mpn/generic/scan1.c: Remove design issue
 	remarks.  What to do about going outside `up' space is a problem, but
 	anything to address it would be an incompatible change.
@@ -700,7 +707,7 @@ MA 02111-1307, USA.
 
 	* gmp-h.in, mp-h.in (__GMP_SHORT_LIMB): Renamed from _SHORT_LIMB, to
 	keep in our namespace.  (Not actually used anywhere currently.)
-	Reported by Patrick Pelissier.	
+	Reported by Patrick Pelissier.
 
 	* mp-h.in: Use "! defined (__GMP_WITHIN_CONFIGURE)" in the same style
 	as gmp-h.in (though mp-h.in is not actually used during configure).
