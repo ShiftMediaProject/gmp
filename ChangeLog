@@ -1,5 +1,7 @@
 2000-08-02  Torbjorn Granlund  <tege@swox.com>
 
+	* Version 3.1 released.
+
 	* mpn/alpha/ev6: New directory with ev6/21264 optimize code.
 	* mpn/alpha/ev6/addmul_1.asm: New file.
 	* mpn/alpha/ev6/gmp-mparam.h: New file.
@@ -2292,6 +2294,10 @@
 
 	* configure.in (--enable-alloca): New option.
 	* acconfig.h (USE_STACK_ALLOC): For --disable-alloca.
+
+2000-03-18  Kent Boortz  <kent@swox.com>
+
+	* macos: New directory with macos port files.
 
 2000-03-17  Torbjorn Granlund  <tege@swox.com>
 
