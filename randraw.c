@@ -116,11 +116,18 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
     {
       /* Seed is 0.  Result is C % M.  Assume table is sensibly stored,
 	 with C smaller than M.  */
-      *rp = c;
+      unsigned long  skipbits = m2exp / 2;
+      unsigned long  retbits = m2exp - skipbits;
+      mp_size_t      retlimbs = (retbits + GMP_NUMB_BITS-1) / GMP_NUMB_BITS;
 
       *seedp = c;
       SIZ (rstate->_mp_seed) = 1;
-      return m2exp;
+
+      MPN_ZERO (rp, retlimbs);
+      if (skipbits < GMP_NUMB_BITS)
+        rp[0] = c >> skipbits;
+
+      return retbits;
     }
 
   /* Allocate temporary storage.  Let there be room for calculation of
