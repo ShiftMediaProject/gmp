@@ -360,20 +360,20 @@ mostlyclean distclean maintainer-clean
 
 # *.s are not preprocessed at all.
 .s.o:
-	$(COMPILE) -c $<
+	$(CCAS) $(COMPILE_FLAGS) $<
 .s.obj:
-	$(COMPILE) -c `cygpath -w $<`
+	$(CCAS) $(COMPILE_FLAGS) `cygpath -w $<`
 .s.lo:
-	$(LTCOMPILE) -c $<
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) $<
 
 # *.S are preprocessed with CPP.
 .S.o:
 	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(COMPILE) -c tmp-$*.s -o $@
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 .S.obj:
 	$(CPP) $(COMPILE_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
-	$(COMPILE) -c tmp-$*.s -o $@
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 
 # We have to rebuild the static object file without passing -DPIC to
@@ -382,23 +382,25 @@ mostlyclean distclean maintainer-clean
 
 .S.lo:
 	$(CPP) $(COMPILE_FLAGS) -DPIC $< | grep -v '^#' >tmp-$*.s
-	$(LTCOMPILE) -c tmp-$*.s -o $@
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(COMPILE) -c tmp-$*.s -o $*.o
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
 	rm -f tmp-$*.s
 
 # *.m4 are preprocessed with m4.
 .asm.o:
 	$(M4) -DOPERATION_$* $< >tmp-$*.s
-	$(COMPILE) -c tmp-$*.s -o $@
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 .asm.obj:
-	@echo NIY: Can't build .obj from .asm.  FIXME.
+	$(M4) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	rm -f tmp-$*.s
 .asm.lo:
 	$(M4) -DPIC -DOPERATION_$* $< >tmp-$*.s
-	$(LTCOMPILE) -c tmp-$*.s -o $@
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(M4) -DOPERATION_$* $< >tmp-$*.s
-	$(COMPILE) -c tmp-$*.s -o $*.o
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
 	rm -f tmp-$*.s
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
