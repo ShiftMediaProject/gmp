@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 7 Jan 2004.  An up-to-date version is available at
+  This file current as of 15 Jan 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -294,6 +294,11 @@ MA 02111-1307, USA.
 	#endif	</pre>
 <li> <code>invert_limb</code> on various processors might benefit from the
      little Newton iteration done for alpha and ia64.
+<li> Alpha 21264: <code>mpn_addlsh1_n</code> could be implemented with
+     <code>mpn_addmul_1</code>, since that code at 3.5 is a touch faster than
+     a separate <code>lshift</code> and <code>add_n</code> at
+     1.75+2.125=3.875.  Or very likely some specific <code>addlsh1_n</code>
+     code could beat both.
 <li> Alpha 21264: Improve feed-in code for <code>mpn_mul_1</code>,
      <code>mpn_addmul_1</code>, and <code>mpn_submul_1</code>.
 <li> Alpha 21164: Rewrite <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
