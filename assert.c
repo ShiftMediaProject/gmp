@@ -1,4 +1,8 @@
-/* GMP assertion failure handler. */
+/* GMP assertion failure handler.
+
+   THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
+   CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
+   FUTURE GNU MP RELEASES.  */
 
 /*
 Copyright 2000, 2001 Free Software Foundation, Inc.
