@@ -120,11 +120,34 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 SUBDIRS = rand
+
+INCLUDES = -I$(top_srcdir)
+LDADD = $(top_builddir)/libgmp.la
+
+check_PROGRAMS = t-constants
+TESTS = $(check_PROGRAMS)
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
-DIST_SOURCES = 
+check_PROGRAMS =  t-constants$(EXEEXT)
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+ANSI2KNR = $(top_builddir)/ansi2knr
+t_constants_SOURCES = t-constants.c
+t_constants_OBJECTS =  t-constants$U.$(OBJEXT)
+t_constants_LDADD = $(LDADD)
+t_constants_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_constants_LDFLAGS = 
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES =  t-constants.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -132,8 +155,12 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
+SOURCES = t-constants.c
+OBJECTS = t-constants$U.$(OBJEXT)
+
 all: all-redirect
 .SUFFIXES:
+.SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/Makefile
 
@@ -141,6 +168,64 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
+
+mostlyclean-checkPROGRAMS:
+
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+
+distclean-checkPROGRAMS:
+
+maintainer-clean-checkPROGRAMS:
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+
+maintainer-clean-libtool:
+$(top_builddir)/ansi2knr: $(top_builddir)/ansi2knr.$(OBJEXT)
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
+
+$(top_builddir)/ansi2knr.$(OBJEXT):
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr.$(OBJEXT)
+
+
+mostlyclean-kr:
+	-rm -f *_.c
+
+clean-kr:
+
+distclean-kr:
+
+maintainer-clean-kr:
+
+t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES)
+	@rm -f t-constants$(EXEEXT)
+	$(LINK) $(t_constants_LDFLAGS) $(t_constants_OBJECTS) $(t_constants_LDADD) $(LIBS)
+.c.o:
+	$(COMPILE) -c $<
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+.c.lo:
+	$(LTCOMPILE) -c -o $@ $<
+t-constants_.c: t-constants.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-constants.c; then echo $(srcdir)/t-constants.c; else echo t-constants.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-constants_.c
+t-constants_.$(OBJEXT) t-constants_.lo : $(ANSI2KNR)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -254,11 +339,64 @@ distdir: $(DISTFILES)
 	      || exit 1; \
 	  fi; \
 	done
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; \
+	srcdir=$(srcdir); export srcdir; \
+	for tst in $(TESTS); do \
+	  if test -f ./$$tst; then dir=./; \
+	  elif test -f $$tst; then dir=; \
+	  else dir="$(srcdir)/"; fi; \
+	  if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	    all=`expr $$all + 1`; \
+	    case " $(XFAIL_TESTS) " in \
+	    *" $$tst "*) \
+	      xpass=`expr $$xpass + 1`; \
+	      failed=`expr $$failed + 1`; \
+	      echo "XPASS: $$tst"; \
+	    ;; \
+	    *) \
+	      echo "PASS: $$tst"; \
+	    ;; \
+	    esac; \
+	  elif test $$? -ne 77; then \
+	    all=`expr $$all + 1`; \
+	    case " $(XFAIL_TESTS) " in \
+	    *" $$tst "*) \
+	      xfail=`expr $$xfail + 1`; \
+	      echo "XFAIL: $$tst"; \
+	    ;; \
+	    *) \
+	      failed=`expr $$failed + 1`; \
+	      echo "FAIL: $$tst"; \
+	    ;; \
+	    esac; \
+	  fi; \
+	done; \
+	if test "$$failed" -eq 0; then \
+	  if test "$$xfail" -eq 0; then \
+	    banner="All $$all tests passed"; \
+	  else \
+	    banner="All $$all tests behaved as expected ($$xfail expected failures)"; \
+	  fi; \
+	else \
+	  if test "$$xpass" -eq 0; then \
+	    banner="$$failed of $$all tests failed"; \
+	  else \
+	    banner="$$failed of $$all tests did not behave as expected ($$xpass unexpected passes)"; \
+	  fi; \
+	fi; \
+	dashes=`echo "$$banner" | sed s/./=/g`; \
+	echo "$$dashes"; \
+	echo "$$banner"; \
+	echo "$$dashes"; \
+	test "$$failed" -eq 0
 info-am:
 info: info-recursive
 dvi-am:
 dvi: dvi-recursive
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
 installcheck-am:
 installcheck: installcheck-recursive
@@ -291,36 +429,48 @@ distclean-generic:
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-tags mostlyclean-generic
+mostlyclean-am:  mostlyclean-checkPROGRAMS mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-kr mostlyclean-tags \
+		mostlyclean-generic
 
 mostlyclean: mostlyclean-recursive
 
-clean-am:  clean-tags clean-generic mostlyclean-am
+clean-am:  clean-checkPROGRAMS clean-compile clean-libtool clean-kr \
+		clean-tags clean-generic mostlyclean-am
 
 clean: clean-recursive
 
-distclean-am:  distclean-tags distclean-generic clean-am
+distclean-am:  distclean-checkPROGRAMS distclean-compile \
+		distclean-libtool distclean-kr distclean-tags \
+		distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-recursive
 
-maintainer-clean-am:  maintainer-clean-tags maintainer-clean-generic \
-		distclean-am
+maintainer-clean-am:  maintainer-clean-checkPROGRAMS \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-kr maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
 maintainer-clean: maintainer-clean-recursive
 
-.PHONY: install-recursive uninstall-recursive install-data-recursive \
-uninstall-data-recursive install-exec-recursive \
+.PHONY: mostlyclean-checkPROGRAMS distclean-checkPROGRAMS \
+clean-checkPROGRAMS maintainer-clean-checkPROGRAMS mostlyclean-compile \
+distclean-compile clean-compile maintainer-clean-compile \
+mostlyclean-libtool distclean-libtool clean-libtool \
+maintainer-clean-libtool mostlyclean-kr distclean-kr clean-kr \
+maintainer-clean-kr install-recursive uninstall-recursive \
+install-data-recursive uninstall-data-recursive install-exec-recursive \
 uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
 all-recursive check-recursive installcheck-recursive info-recursive \
 dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
 maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
-dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
-install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all install-strip \
+distclean-tags clean-tags maintainer-clean-tags distdir check-TESTS \
+info-am info dvi-am dvi check check-am installcheck-am installcheck \
+install-exec-am install-exec install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all install-strip \
 installdirs-am installdirs mostlyclean-generic distclean-generic \
 clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean
