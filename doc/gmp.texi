@@ -9862,7 +9862,7 @@ Steve Root helped write the optimized alpha 21264 assembly code.
 Gerardo Ballabio wrote the @file{gmpxx.h} C++ class interface and the C++
 @code{istream} input routines.
 
-GNU MP 4.0 was finished and released by Torbjorn Granlund and Kevin Ryde.
+GNU MP 4 was finished and released by Torbjorn Granlund and Kevin Ryde.
 Torbjorn's work was partially funded by the IDA Center for Computing Sciences,
 USA.
 
@@ -9870,6 +9870,8 @@ Jason Moxham rewrote @code{mpz_fac_ui}.
 
 Pedro Gimeno implemented the Mersenne Twister and made other random number
 improvements.
+
+Niels Moller wrote the sub-quadratic GCD code introduced with GMP 5.
 
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
