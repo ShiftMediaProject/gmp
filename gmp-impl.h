@@ -247,13 +247,11 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #define __GMP_FREE_FUNC_LIMBS(p,n)     __GMP_FREE_FUNC_TYPE (p, n, mp_limb_t)
 
 
-#if (__STDC__-0) || defined (__cplusplus)
-
-#else
-
-#define const			/* Empty */
-#define signed			/* Empty */
-
+/* const and signed must match __gmp_const and __gmp_signed, so follow the
+   decision made for those in gmp.h.    */
+#if ! __GMP_HAVE_CONST
+#define const   /* empty */
+#define signed  /* empty */
 #endif
 
 
@@ -1440,13 +1438,13 @@ extern const int __gmp_0;
 #define SQRT_OF_NEGATIVE  GMP_ERROR(GMP_ERROR_SQRT_OF_NEGATIVE)
 
 #if defined _LONG_LONG_LIMB
-#if defined (__STDC__)
+#if __GMP_HAVE_TOKEN_PASTE
 #define CNST_LIMB(C) C##LL
 #else
 #define CNST_LIMB(C) C/**/LL
 #endif
 #else /* not _LONG_LONG_LIMB */
-#if defined (__STDC__)
+#if __GMP_HAVE_TOKEN_PASTE
 #define CNST_LIMB(C) C##L
 #else
 #define CNST_LIMB(C) C/**/L
