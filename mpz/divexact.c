@@ -58,6 +58,14 @@ mpz_divexact (quot, num, den)
     _mpz_realloc (quot, qsize);
   qp = quot->_mp_d;
 
+  if (nsize == 0)
+    {
+      if (dsize == 0)
+	DIVIDE_BY_ZERO;
+      quot->_mp_size = 0;
+      return;
+    }
+
   if (dsize <= 1)
     {
       if (dsize == 1)
@@ -68,15 +76,8 @@ mpz_divexact (quot, num, den)
 	  return;
 	}
 
-      /*  Generate divide-by-zero error if dsize == 0.  */
-      quot->_mp_size = 1 / dsize;
-      return;
-    }
-
-  if (nsize == 0)
-    {
-      quot->_mp_size = 0;
-      return;
+      /*  Generate divide-by-zero error since dsize == 0.  */
+      DIVIDE_BY_ZERO;
     }
 
   TMP_MARK (marker);
