@@ -2753,6 +2753,7 @@ for i in .exe ,ff8 ""; do
     fi
   fi
 done
+rm -f conftest*
 if test "${gmp_cv_prog_exeext_for_build+set}" != set; then
   AC_MSG_ERROR([Cannot determine executable suffix])
 fi
@@ -2823,6 +2824,7 @@ if AC_TRY_EVAL(gmp_compile); then
 else
   gmp_cv_check_libm_for_build=no
 fi
+rm -f conftest* a.out b.out a.exe a_out.exe
 ])
 case $gmp_cv_check_libm_for_build in
   yes) AC_SUBST(LIBM_FOR_BUILD,-lm) ;;
