@@ -138,7 +138,8 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/tstbit$U.lo mpz/ui_pow_ui$U.lo mpz/urandomb$U.lo			\
   mpz/urandomm$U.lo mpz/xor$U.lo
 
-MPQ_OBJECTS = mpq/add$U.lo mpq/canonicalize$U.lo mpq/clear$U.lo		\
+MPQ_OBJECTS = mpq/abs$U.lo mpq/add$U.lo					\
+  mpq/canonicalize$U.lo mpq/clear$U.lo					\
   mpq/cmp$U.lo mpq/cmp_ui$U.lo mpq/div$U.lo mpq/get_d$U.lo		\
   mpq/get_den$U.lo mpq/get_num$U.lo mpq/init$U.lo mpq/inv$U.lo		\
   mpq/mul$U.lo mpq/neg$U.lo mpq/out_str$U.lo mpq/set$U.lo		\
