@@ -1,9 +1,16 @@
+2001-01-10  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/kronzs.c: Don't depend on right shifting a negative.
+
 2001-01-09  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/t-constants.c: Disable some undefined tests.
 	(CHECK_MAX_S): Remove workaround for gcc 2.95.2 bug recently added.
 
 2001-01-09  Kevin Ryde  <kevin@swox.se>
+
+	* tests/t-constants.c: Add more diagnostics.
+	(CHECK_MAX_S): Fix for gcc 2.95.2 -mpowerpc64 -maix64.
 
 	* mpn/x86/k6/mode1o.asm: New file.
 	* mpn/x86/k7/mode1o.asm: New file.
