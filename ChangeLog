@@ -59,7 +59,7 @@
 	(Exact Remainder): Divisibility tests now implemented.
 	And more index entries in a few places.
 
-	* tests/mpz/dive_i.c: New file.
+	* tests/mpz/dive_ui.c: New file.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
 
 	* mpz/dive_ui.c: New file.
