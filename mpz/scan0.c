@@ -1,6 +1,6 @@
 /* mpz_scan0 -- search for a 0 bit.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -36,7 +36,7 @@ mpz_scan0 (mpz_srcptr u, unsigned long starting_bit)
   int            size = SIZ(u);
   unsigned       abs_size = ABS(size);
   mp_srcptr      u_end = u_ptr + abs_size;
-  unsigned long  starting_limb = starting_bit / BITS_PER_MP_LIMB;
+  unsigned long  starting_limb = starting_bit / GMP_NUMB_BITS;
   mp_srcptr      p = u_ptr + starting_limb;
   mp_limb_t      limb;
   int            cnt;
@@ -51,7 +51,7 @@ mpz_scan0 (mpz_srcptr u, unsigned long starting_bit)
   if (size >= 0)
     {
       /* Mask to 1 all bits before starting_bit, thus ignoring them. */
-      limb |= (CNST_LIMB(1) << (starting_bit % BITS_PER_MP_LIMB)) - 1;
+      limb |= (CNST_LIMB(1) << (starting_bit % GMP_NUMB_BITS)) - 1;
 
       /* Search for a limb which isn't all ones.  If the end is reached then
          the zero bit immediately past the end is returned.  */
@@ -59,7 +59,7 @@ mpz_scan0 (mpz_srcptr u, unsigned long starting_bit)
         {
           p++;
           if (p == u_end)
-            return (unsigned long) abs_size * BITS_PER_MP_LIMB;
+            return (unsigned long) abs_size * GMP_NUMB_BITS;
           limb = *p;
         }
 
@@ -92,7 +92,7 @@ mpz_scan0 (mpz_srcptr u, unsigned long starting_bit)
       /* Now seeking a 1 bit. */
 
       /* Mask to 0 all bits before starting_bit, thus ignoring them. */
-      limb &= (MP_LIMB_T_MAX << (starting_bit % BITS_PER_MP_LIMB));
+      limb &= (MP_LIMB_T_MAX << (starting_bit % GMP_NUMB_BITS));
 
       if (limb == 0)
         {
@@ -120,5 +120,5 @@ mpz_scan0 (mpz_srcptr u, unsigned long starting_bit)
   limb &= -limb;
 
   count_leading_zeros (cnt, limb);
-  return (p - u_ptr) * BITS_PER_MP_LIMB + BITS_PER_MP_LIMB-1 - cnt;
+  return (p - u_ptr) * GMP_NUMB_BITS + GMP_NUMB_BITS-1 - cnt;
 }

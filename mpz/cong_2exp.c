@@ -1,7 +1,6 @@
-/* mpz_congruent_2exp_p -- test congruence of mpz mod 2^n */
+/* mpz_congruent_2exp_p -- test congruence of mpz mod 2^n.
 
-/*
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -36,8 +34,8 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, unsigned long d)
   if (ABSIZ(a) < ABSIZ(c))
     MPZ_SRCPTR_SWAP (a, c);
 
-  dlimbs = d / BITS_PER_MP_LIMB;
-  dbits = d % BITS_PER_MP_LIMB;
+  dlimbs = d / GMP_NUMB_BITS;
+  dbits = d % GMP_NUMB_BITS;
   dmask = (CNST_LIMB(1) << dbits) - 1;
 
   ap = PTR(a);

@@ -1,6 +1,6 @@
 /* mpz_mul_2exp -- Multiply a bignum by 2**CNT
 
-Copyright 1991, 1993, 1994, 1996, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -38,7 +38,7 @@ mpz_mul_2exp (mpz_ptr w, mpz_srcptr u, unsigned long int cnt)
       return;
     }
 
-  limb_cnt = cnt / BITS_PER_MP_LIMB;
+  limb_cnt = cnt / GMP_NUMB_BITS;
   wsize = abs_usize + limb_cnt + 1;
   if (w->_mp_alloc < wsize)
     _mpz_realloc (w, wsize);
@@ -46,7 +46,7 @@ mpz_mul_2exp (mpz_ptr w, mpz_srcptr u, unsigned long int cnt)
   wp = w->_mp_d;
   wsize = abs_usize + limb_cnt;
 
-  cnt %= BITS_PER_MP_LIMB;
+  cnt %= GMP_NUMB_BITS;
   if (cnt != 0)
     {
       wlimb = mpn_lshift (wp + limb_cnt, u->_mp_d, abs_usize, cnt);

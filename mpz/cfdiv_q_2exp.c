@@ -1,7 +1,7 @@
 /* mpz_cdiv_q_2exp, mpz_fdiv_q_2exp -- quotient from mpz divided by 2^n.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2001 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2001, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -39,7 +39,7 @@ cfdiv_q_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
 
   usize = SIZ (u);
   abs_usize = ABS (usize);
-  limb_cnt = cnt / BITS_PER_MP_LIMB;
+  limb_cnt = cnt / GMP_NUMB_BITS;
   wsize = abs_usize - limb_cnt;
   if (wsize <= 0)
     {
@@ -62,7 +62,7 @@ cfdiv_q_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
       round = up[i];
 
   wp = PTR(w);
-  cnt %= BITS_PER_MP_LIMB;
+  cnt %= GMP_NUMB_BITS;
   if (cnt != 0)
     {
       round |= rmask & mpn_rshift (wp, up + limb_cnt, wsize, cnt);

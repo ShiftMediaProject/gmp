@@ -1,7 +1,6 @@
-/* mpz_divisible_2exp_p -- mpz by 2^n divisibility test */
+/* mpz_divisible_2exp_p -- mpz by 2^n divisibility test
 
-/*
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -34,7 +32,7 @@ mpz_divisible_2exp_p (mpz_srcptr a, unsigned long d)
   int            asize;
 
   asize = ABSIZ(a);
-  dlimbs = d / BITS_PER_MP_LIMB;
+  dlimbs = d / GMP_NUMB_BITS;
 
   /* if d covers the whole of a, then only a==0 is divisible */
   if (asize <= dlimbs)
@@ -47,7 +45,7 @@ mpz_divisible_2exp_p (mpz_srcptr a, unsigned long d)
       return 0;
 
   /* left over bits must be zero */
-  dbits = d % BITS_PER_MP_LIMB;
+  dbits = d % GMP_NUMB_BITS;
   dmask = (CNST_LIMB(1) << dbits) - 1;
   return (ap[dlimbs] & dmask) == 0;
 }

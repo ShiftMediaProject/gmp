@@ -1,6 +1,6 @@
 /* mpz_realloc2 -- change allocated data size.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,7 +28,7 @@ mpz_realloc2 (mpz_ptr m, unsigned long bits)
   mp_ptr mp;
   mp_size_t new_alloc;
 
-  new_alloc = (bits + BITS_PER_MP_LIMB-1) / BITS_PER_MP_LIMB;
+  new_alloc = (bits + GMP_NUMB_BITS-1) / GMP_NUMB_BITS;
 
   /* Never allocate zero space. */
   new_alloc = MAX (new_alloc, 1);

@@ -1,7 +1,7 @@
 /* mpz_tdiv_q_2exp -- Divide an integer by 2**CNT.  Round the quotient
    towards -infinity.
 
-Copyright 1991, 1993, 1994, 1996, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,7 +30,7 @@ mpz_tdiv_q_2exp (mpz_ptr w, mpz_srcptr u, unsigned long int cnt)
   mp_size_t limb_cnt;
 
   usize = u->_mp_size;
-  limb_cnt = cnt / BITS_PER_MP_LIMB;
+  limb_cnt = cnt / GMP_NUMB_BITS;
   wsize = ABS (usize) - limb_cnt;
   if (wsize <= 0)
     w->_mp_size = 0;
@@ -45,7 +45,7 @@ mpz_tdiv_q_2exp (mpz_ptr w, mpz_srcptr u, unsigned long int cnt)
       wp = w->_mp_d;
       up = u->_mp_d;
 
-      cnt %= BITS_PER_MP_LIMB;
+      cnt %= GMP_NUMB_BITS;
       if (cnt != 0)
 	{
 	  mpn_rshift (wp, up + limb_cnt, wsize, cnt);

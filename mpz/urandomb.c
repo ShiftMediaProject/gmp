@@ -2,7 +2,7 @@
    integer in the range 0 to 2^N - 1, inclusive, using STATE as the
    random state previously initialized by a call to gmp_randinit().
 
-Copyright 1999, 2000  Free Software Foundation, Inc.
+Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,7 +30,7 @@ mpz_urandomb (mpz_ptr rop, gmp_randstate_t rstate, unsigned long int nbits)
   mp_ptr rp;
   mp_size_t size;
 
-  size = (nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
+  size = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
   if (ALLOC (rop) < size)
     _mpz_realloc (rop, size);
 

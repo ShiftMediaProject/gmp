@@ -1,7 +1,7 @@
 /* mpz_setbit -- set a specified bit.
 
-Copyright 1991, 1993, 1994, 1995, 1997, 1999, 2001 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1995, 1997, 1999, 2001, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,12 +30,12 @@ mpz_setbit (mpz_ptr d, unsigned long int bit_index)
   mp_ptr dp = d->_mp_d;
   mp_size_t limb_index;
 
-  limb_index = bit_index / BITS_PER_MP_LIMB;
+  limb_index = bit_index / GMP_NUMB_BITS;
   if (dsize >= 0)
     {
       if (limb_index < dsize)
 	{
-	  dp[limb_index] |= (mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB);
+	  dp[limb_index] |= (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
 	  d->_mp_size = dsize;
 	}
       else
@@ -48,7 +48,7 @@ mpz_setbit (mpz_ptr d, unsigned long int bit_index)
 	      dp = d->_mp_d;
 	    }
 	  MPN_ZERO (dp + dsize, limb_index - dsize);
-	  dp[limb_index] = (mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB);
+	  dp[limb_index] = (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS);
 	  d->_mp_size = limb_index + 1;
 	}
     }
@@ -73,7 +73,7 @@ mpz_setbit (mpz_ptr d, unsigned long int bit_index)
 	{
 	  if (limb_index < dsize)
             {
-              dp[limb_index] &= ~((mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB));
+              dp[limb_index] &= ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
               MPN_NORMALIZE (dp, dsize);
               d->_mp_size = -dsize;
             }
@@ -81,7 +81,7 @@ mpz_setbit (mpz_ptr d, unsigned long int bit_index)
       else if (limb_index == zero_bound)
 	{
 	  dp[limb_index] = ((dp[limb_index] - 1)
-			    & ~((mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB))) + 1;
+			    & ~((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS))) + 1;
 	  if (dp[limb_index] == 0)
 	    {
 	      mp_size_t i;
@@ -107,7 +107,7 @@ mpz_setbit (mpz_ptr d, unsigned long int bit_index)
       else
 	{
 	  mpn_decr_u (dp + limb_index,
-		     (mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB));
+		     (mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
 	  dsize -= dp[dsize - 1] == 0;
 	  d->_mp_size = -dsize;
 	}

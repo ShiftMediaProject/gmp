@@ -1,6 +1,6 @@
 /* mpz_tstbit -- test a specified bit.
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -45,7 +45,7 @@ mpz_tstbit (mpz_srcptr u, unsigned long bit_index)
   mp_srcptr      u_ptr      = PTR(u);
   int            size       = SIZ(u);
   unsigned       abs_size   = ABS(size);
-  unsigned long  limb_index = bit_index / BITS_PER_MP_LIMB;
+  unsigned long  limb_index = bit_index / GMP_NUMB_BITS;
   mp_srcptr      p          = u_ptr + limb_index;
   mp_limb_t      limb;
 
@@ -68,5 +68,5 @@ mpz_tstbit (mpz_srcptr u, unsigned long bit_index)
         }
     }
 
-  return (limb >> (bit_index % BITS_PER_MP_LIMB)) & 1;
+  return (limb >> (bit_index % GMP_NUMB_BITS)) & 1;
 }
