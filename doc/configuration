@@ -251,7 +251,7 @@ The following files need to be updated when going to a new version of
 the build tools.  Unfortunately the tools generally don't identify
 when an out-of-date version is present.
 
-aclocal.m4 is updated by running "aclocal -I mpfr".
+aclocal.m4 is updated by running "aclocal".
 
 INSTALL.autoconf can be copied from INSTALL in autoconf.
 
@@ -281,8 +281,7 @@ During development:
     ---------------------------------------------------------
                                  
     acinclude.m4                \    aclocal
-    mpfr/acinclude.m4           | --------------> aclocal.m4
-    $prefix/share/aclocal*/*.m4 /
+    $prefix/share/aclocal*/*.m4 / --------------> aclocal.m4
 
                    
     configure.in \                   autoconf
@@ -315,7 +314,7 @@ This can end up running a lot more things than are really necessary.
 If a build tree is in too much of a mess for those rules to work
 properly then a bootstrap can be done from the source directory with
 
-	aclocal -I mpfr
+	aclocal
 	autoconf
 	automake
 	autoheader
