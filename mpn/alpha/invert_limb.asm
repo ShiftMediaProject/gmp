@@ -1,6 +1,6 @@
 dnl  Alpha mpn_invert_limb -- Invert a normalized limb.
 
-dnl  Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -33,7 +33,7 @@ ASM_START()
 
 FLOAT64($C36,9223372036854775808.0)		C 2^63
 
-PROLOGUE_GP(mpn_invert_limb)
+PROLOGUE(mpn_invert_limb,gp)
 	lda	r30,-16(r30)
 	addq	r16,r16,r1
 	bne	r1,$73

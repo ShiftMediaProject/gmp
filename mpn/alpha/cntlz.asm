@@ -1,6 +1,6 @@
 dnl  Alpha auxiliary for longlong.h's count_leading_zeros
 
-dnl  Copyright 1997, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1997, 2000, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,7 +24,7 @@ include(`../config.m4')
 
 ASM_START()
 EXTERN(__clz_tab)
-PROLOGUE_GP(mpn_count_leading_zeros)
+PROLOGUE(mpn_count_leading_zeros,gp)
 	cmpbge	r31,  r16, r1
 	LEA(r3,__clz_tab)
 	sra	r1,   1,   r1
