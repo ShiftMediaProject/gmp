@@ -1044,7 +1044,6 @@ case $host in
         case $host in
           [*-*-solaris2.[7-9]*])
             abilist="64 32"
-            extra_functions=
             path_64="sparc64"
             cclist_64="gcc cc"
             gcc_64_cflags="-O2 -m64 -mptr64"
@@ -1068,6 +1067,7 @@ case $host in
           *-*-*bsd*)
             # NetBSD and OpenBSD sparc64
             abilist="64"
+            extra_functions=
             path="sparc64"
             gcc_cflags="-O2"
             cyclecounter_size=2
