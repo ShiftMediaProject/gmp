@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-06-05  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-powm_ui.c Print proper routine name in error message.
+
 2002-06-03  Kevin Ryde  <kevin@swox.se>
 
 	* tune/time.c, tune/freq.c, tune/speed.h: Add powerpc mftb support.
