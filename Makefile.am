@@ -357,6 +357,19 @@ gen-bases_.c: gen-bases.c $(ANSI2KNR)
 	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-bases.c; then echo $(srcdir)/gen-bases.c; else echo gen-bases.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-bases_.c || rm -f gen-bases_.c
 
 
+mpn/perfsqr.h: gen-psqr$(EXEEXT_FOR_BUILD)
+	./gen-psqr $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpn/perfsqr.h || (rm -f mpn/perfsqr.h; exit 1)
+BUILT_SOURCES += mpn/perfsqr.h
+
+gen-psqr$(EXEEXT_FOR_BUILD): gen-psqr$(U_FOR_BUILD).c dumbmp.c
+	$(CC_FOR_BUILD) `test -f 'gen-psqr$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-psqr$(U_FOR_BUILD).c -o gen-psqr$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
+DISTCLEANFILES += gen-psqr$(EXEEXT_FOR_BUILD)
+EXTRA_DIST += gen-psqr.c
+
+gen-psqr_.c: gen-psqr.c $(ANSI2KNR)
+	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-psqr.c; then echo $(srcdir)/gen-psqr.c; else echo gen-psqr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-psqr_.c || rm -f gen-psqr_.c
+
+
 # Avoid: CVS - cvs directories
 #        *~  - emacs backups
 #        .#* - cvs merge originals
