@@ -1,7 +1,7 @@
 /* Time routines for speed measurments. */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,41 +27,100 @@ MA 02111-1307, USA.
   
    speed_starttime() - start a time measurment.
 
-   speed_endtime() - end a time measurment, return time taken, in seconds.
-
-   speed_unittime - global variable with the unit of time measurement
-   accuracy, in seconds.
-
-   speed_precision - global variable which is the intended accuracy of time
-   measurements.  speed_measure() for instance runs target routines with
-   enough repetitions so it takes at least speed_unittime*speed_precision
-   seconds.  A program can provide an option so the user can set this.
-
-   speed_cycletime - the time in seconds for each CPU cycle, for example on
-   a 100 MHz CPU this would be 1.0e-8.  If the CPU frequency is unknown,
-   speed_cycletime is 1.0.  See speed_cycletime_init().
+   speed_endtime() - end a time measurment, return time taken (seconds or
+   cycles).
 
    speed_time_string - a string describing the time method in use.
 
+   speed_unittime - global variable with the unit of time measurement
+   accuracy (seconds or cycles).
 
-   Enhancements:
+   speed_precision - global variable which is the intended accuracy of time
+   measurements.  speed_measure() for instance runs target routines with
+   enough repetitions so it takes at least speed_unittime*speed_precision.
+   A program can provide an option so the user can set this, otherwise it
+   gets a default based on the measuring method chosen.
 
-   Add support for accurate timing on more CPUs, machines and systems.
-
-   Extend automatic CPU frequency determination to more kernels and systems.
-
- */
+   speed_cycletime - the time in seconds for each CPU cycle, for example on
+   a 100 MHz CPU this would be 1.0e-8.  This is 0.0 if the CPU frequency is
+   unknown.
 
 
+   speed_endtime() and speed_unittime are normally in seconds, but if a
+   cycle counter is being used to measure and the CPU frequency is unknown,
+   then speed_endtime() returns cycles and speed_cycletime and
+   speed_unittime are 1.0.
+
+   Notice that speed_unittime*speed_precision is the target duration for
+   speed_endtime() irrespective of whether that's in seconds or cycles.
+
+   Call speed_cycletime_need_seconds() to demand that speed_endtime() is in
+   seconds and not perhaps in cycles.
+
+   Call speed_cycletime_need_cycles() to demand that speed_cycletime is
+   non-zero, so that speed_endtime()/speed_cycletime will work to give times
+   in cycles.
+
+
+   Notes:
+
+   Various combinations of cycle counter, getrusage(), gettimeofday() and
+   times() can arise, according to which are available and their precision.
+
+
+   Allowing speed_endtime() to return either seconds or cycles is only a
+   slight complication and makes it possible for the speed program to do
+   some sensible things without demanding the CPU frequency.  If seconds are
+   being measured then it can always print seconds, and if cycles are being
+   measured then it can always print them without needing to know how long
+   they are.  Also the tune program doesn't care at all what the units are.
+
+   GMP_CPU_FREQUENCY can always be set when the automated methods in freq.c
+   fail.  This will be needed if times in seconds are wanted but a cycle
+   counter is being used, or if times in cycles are wanted but getrusage or
+   another seconds based timer is in use.
+
+   If the measuring method uses a cycle counter but supplements it with
+   getrusage or the like, then knowing the CPU frequency is mandatory since
+   the code compares values from the two.
+
+
+   Solaris gethrtime() seems no more than a slow way to access the Sparc V9
+   cycle counter.  gethrvtime() seems to be relevant only to LWP, it doesn't
+   for instance give nanosecond virtual time.  So neither of these are used.
+
+*/
+
+#include "config.h"
+
+#include <setjmp.h>
+#include <signal.h>
 #include <stdio.h>
-#include <stdlib.h> /* for getenv */
+#include <stdlib.h> /* for getenv() */
+
 #if HAVE_UNISTD_H
-#include <unistd.h>
+#include <unistd.h> /* for sysconf() */
 #endif
 
 #include <sys/types.h>
-#if HAVE_SYS_SYSCTL_H
-#include <sys/sysctl.h>
+
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>  /* for struct timeval */
+# include <time.h>
+#else
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
+
+#if HAVE_SYS_TIMES_H
+#include <sys/times.h>  /* for times() and struct tms */
+#endif
+
+#if HAVE_SYS_RESOURCE_H
+#include <sys/resource.h>  /* for struct rusage */
 #endif
 
 #include "gmp.h"
@@ -71,489 +130,589 @@ MA 02111-1307, USA.
 #include "speed.h"
 
 
-#if HAVE_SPEED_CYCLECOUNTER
-#define SPEED_USE_CYCLECOUNTER               1
-#else
-#define SPEED_USE_MICROSECOND_GETRUSAGE      0
-#define SPEED_USE_MICROSECOND_GETTIMEOFDAY   1
-#define SPEED_USE_TMS_UTIME                  0
-#endif
+
+const char *speed_time_string = NULL;
+int         speed_precision = 0;
+double      speed_unittime;
+double      speed_cycletime = 0.0;
 
 
+/* "struct timeval *" -> "double" in seconds */
 #define TIMEVAL_SECS(tp) \
   ((double) (tp)->tv_sec + (double) (tp)->tv_usec * 1.0e-6)
 
+/* don't rely on "unsigned" to "double" conversion, it's broken in SunOS 4
+   native cc */
+#define M_2POWU   ((double) (1 << (BITS_PER_INT-2)) * 4.0)
 
-/* Look for an environment variable for CPU clock frequency.
-   GMP_CPU_FREQUENCY should be in Hertz, in floating point form,
-   eg. "450e6". */
-int
-speed_cpu_frequency_environment (void)
-{
-  char  *e;
-
-  e = getenv ("GMP_CPU_FREQUENCY");
-  if (e == NULL)
-    return 0;
-
-  speed_cycletime = 1.0 / atof (e);
-  return 1;
-}
+#define M_2POW32  4294967296.0
+#define M_2POW64  (M_2POW32 * M_2POW32)
 
 
-/* On FreeBSD 3.3 the headers have #defines like CPU_WALLCLOCK under
-   CTL_MACHDEP but don't seem to have anything for machdep.tsc_freq or
-   machdep.i586_freq.  Using the string forms with sysctlbyname() works
-   though, and lets libc worry about the defines and headers.
+/* Conditionals for which time functions are available are done with normal
+   C code, which is a lot easier than wildly nested preprocessor directives.
 
-   FreeBSD 3.3 has tsc_freq, FreeBSD 2.2.8 has i586_freq instead.
-   The "sysctl -a" command prints everything available. */
+   The choice of what to use is partly made at run-time, according to
+   whether the cycle counter works and the measured accuracy of getrusage
+   and gettimeofday.
 
-#if HAVE_SYSCTLBYNAME
-int
-speed_cpu_frequency_sysctlbyname (void)
-{
-  unsigned  val;
-  size_t    valsize;
+   A routine that's not available won't be getting called, but is an abort()
+   to be sure it isn't called mistakenly.
 
-  valsize = sizeof(val);
-  if (sysctlbyname ("machdep.tsc_freq", &val, &valsize, NULL, 0) != 0
-      || valsize != sizeof(val))
-    {
-      valsize = sizeof(val);
-      if (sysctlbyname ("machdep.i586_freq", &val, &valsize, NULL, 0) != 0
-          || valsize != sizeof(val))
-        return 0;
-    }
+   It can be assumed that if a function exists then its data type will, but
+   if the function doesn't then the data type might or might not exist, so
+   the type can't be used unconditionally.  The "struct_rusage" etc macros
+   provide dummies when the respective function doesn't exist. */
 
-  speed_cycletime = 1.0 / (double) val;
-  return 1;
-}
+
+#if HAVE_SPEED_CYCLECOUNTER
+static const int have_cycles = HAVE_SPEED_CYCLECOUNTER;
+#else
+static const int have_cycles = 0;
+#define speed_cyclecounter(p)  abort()
 #endif
 
-
-/* Linux doesn't seem to have any system call to get the CPU frequency, at
-   least not in 2.0.x or 2.2.x, so it's necessary to read /proc/cpuinfo.
-
-   i386 2.0.36 - "bogomips" is the CPU frequency.
-
-   i386 2.2.13 - has both "cpu MHz" and "bogomips", and it's "cpu MHz" which
-                 is the frequency.
-
-   alpha 2.2.5 - "cycle frequency [Hz]" seems to be right, "BogoMIPS" is
-                 very slightly different.  */
-
-int
-speed_cpu_frequency_proc_cpuinfo (void)
-{
-  FILE    *fp;
-  char    buf[128];
-  double  val;
-  int     ret = 0;
-
-  if ((fp = fopen ("/proc/cpuinfo", "r")) != NULL)
-    {
-      while (fgets (buf, sizeof (buf), fp) != NULL)
-        {
-          if (sscanf (buf, "cycle frequency [Hz]    : %lf est.\n", &val) == 1)
-            {
-              speed_cycletime = 1.0 / val;
-              ret = 1;
-              break;
-            }
-          if (sscanf (buf, "cpu MHz  : %lf\n", &val) == 1)
-            {
-              speed_cycletime = 1e-6 / val;
-              ret = 1;
-              break;
-            }
-          if (sscanf (buf, "bogomips : %lf\n", &val) == 1)
-            {
-              speed_cycletime = 1e-6 / val;
-              ret = 1;
-              break;
-            }
-        }
-      fclose (fp);
-    }
-  return ret;
-}
-
-
-/* SunOS /bin/sysinfo prints a line like:
-       cpu0 is a "75 MHz TI,TMS390Z55" CPU */
-
-#if HAVE_POPEN
-int
-speed_cpu_frequency_sunos_sysinfo (void)
-{
-  FILE    *fp;
-  char    buf[128];
-  double  val;
-  int     ret = 0;
-
-  /* Error messages are sent to /dev/null in case /bin/sysinfo doesn't
-     exist.  The brackets are necessary for some shells (eg. ash). */
-  if ((fp = popen ("(/bin/sysinfo) 2>/dev/null", "r")) != NULL)
-    {
-      while (fgets (buf, sizeof (buf), fp) != NULL)
-        {
-          if (sscanf (buf, " cpu0 is a \"%lf MHz", &val) == 1)
-            {
-              speed_cycletime = 1e-6 / val;
-              ret = 1;
-              break;
-            }
-        }
-      pclose (fp);
-    }
-  return ret;
-}
+#if HAVE_GETRUSAGE
+static const int have_grus = 1;
+#define struct_rusage   struct rusage
+#else
+static const int have_grus = 0;
+#define getrusage(n,ru)  abort()
+#define struct_rusage    struct rusage_dummy
 #endif
 
-
-/* This is for Solaris.  "psrinfo" is the command-line interface to
-   processor_info().  "prtconf -vp" gives similar information.  */
-
-#if HAVE_PROCESSOR_INFO
-#include <sys/unistd.h>     /* for _SC_NPROCESSORS_CONF */
-#include <sys/processor.h>  /* for processor_info_t */
-int
-speed_cpu_frequency_processor_info (void)
-{
-  processor_info_t  p;
-  int  i, n, mhz = 0;
-
-  n = sysconf (_SC_NPROCESSORS_CONF);
-  for (i = 0; i < n; i++)
-    {
-      if (processor_info (i, &p) != 0)
-        continue;
-      if (p.pi_state != P_ONLINE)
-        continue;
-
-      if (mhz != 0 && p.pi_clock != mhz)
-        {
-          fprintf (stderr,
-                   "speed_cpu_frequency_processor_info(): There's more than one CPU and they have different clock speeds\n");
-          return 0;
-        }
-
-      mhz = p.pi_clock;
-    }
-
-  speed_cycletime = 1.0e-6 / (double) mhz;
-  return 1;
-}
+#if HAVE_GETTIMEOFDAY
+static const int have_gtod = 1;
+#define struct_timeval   struct timeval
+#else
+static const int have_gtod = 0;
+#define gettimeofday(tv,tz)  abort()
+#define struct_timeval   struct timeval_dummy
 #endif
 
-
-/* Each function returns 1 if it succeeds in setting speed_cycletime, or 0
-   if not.  */
-
-static const struct {
-  int         (*fun) _PROTO ((void));
-  const char  *description;
-
-} speed_cpu_frequency_table[] = {
-
-  /* This should be first, so an environment variable can override anything
-     the system gives. */
-  { speed_cpu_frequency_environment,
-    "environment variable GMP_CPU_FREQUENCY (in Hertz)" },
-
-#if HAVE_SYSCTLBYNAME
-  { speed_cpu_frequency_sysctlbyname,
-    "sysctlbyname() machdep.tsc_freq or machdep.i586_freq" },
+#if HAVE_TIMES
+static const int have_times = 1;
+#define struct_tms   struct tms
+#else
+static const int have_times = 0;
+#define times(tms)  abort()
+#define struct_tms   struct tms_dummy
 #endif
 
-#if HAVE_PROCESSOR_INFO
-  { speed_cpu_frequency_processor_info,
-    "processor_info() pi_clock" },
-#endif
-
-  { speed_cpu_frequency_proc_cpuinfo,
-    "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
-
-#if HAVE_POPEN
-  { speed_cpu_frequency_sunos_sysinfo,
-    "SunOS /bin/sysinfo program cpu0 output" },
-#endif
+struct tms_dummy {
+  long  tms_utime;
+};
+struct timeval_dummy {
+  long  tv_sec;
+  long  tv_usec;
+};
+struct rusage_dummy {
+  struct timeval_dummy ru_utime;
 };
 
+static int  use_cycles;
+static int  use_gtod;
+static int  use_grus;
+static int  use_times;
+static int  use_tick_boundary;
+
+static struct_rusage  start_grus;
+static struct_timeval start_gtod;
+static struct_tms     start_times;
+static unsigned       start_cycles[2];
+
+static double  cycles_limit = 1e100;
+static double  grus_unittime;
+static double  gtod_unittime;
+static double  times_unittime;
+
+
+static jmp_buf  cycles_works_buf;
+
+static RETSIGTYPE
+cycles_works_handler (int sig)
+{
+  longjmp (cycles_works_buf, 1);
+}
 
 int
-speed_cycletime_init (void)
+cycles_works_p (void)
 {
-  int  i;
+  static int  result = -1;
+  RETSIGTYPE (*old_handler) _PROTO ((int));
+  unsigned  cycles[2];
 
-  for (i = 0; i < numberof (speed_cpu_frequency_table); i++)
-    if ((*speed_cpu_frequency_table[i].fun)())
-      return 1;
+  if (result != -1)
+    goto done;
 
-  fprintf (stderr,
-           "Cannot determine CPU frequency, need one of the following\n");
-  for (i = 0; i < numberof (speed_cpu_frequency_table); i++)
-    fprintf (stderr, "\t- %s\n", speed_cpu_frequency_table[i].description);
+#ifdef SIGILL
+  old_handler = signal (SIGILL, cycles_works_handler);
+  if (old_handler == SIG_ERR)
+    {
+      if (speed_option_verbose)
+        printf ("cycles_works_p(): SIGILL not supported, assuming speed_cyclecounter() works\n");
+      goto yes;
+    }
+  if (setjmp (cycles_works_buf))
+    {
+      if (speed_option_verbose)
+        printf ("cycles_works_p(): SIGILL during speed_cyclecounter(), so doesn't work\n");
+      result = 0;
+      goto done;
+    }
+  speed_cyclecounter (cycles);
+  signal (SIGILL, old_handler);
+  if (speed_option_verbose)
+    printf ("cycles_works_p(): speed_cyclecounter() works\n");
+#else
 
-  return 0;
+  if (speed_option_verbose)
+    printf ("cycles_works_p(): SIGILL not defined, assuming speed_cyclecounter() works\n");
+#endif
+
+ yes:
+  result = 1;
+
+ done:
+  return result;
 }
 
 
-/* ---------------------------------------------------------------------- */
-#if SPEED_USE_CYCLECOUNTER
+long
+clk_tck (void)
+{
+  static long  result = -1L;
+  if (result != -1L)
+    goto success;
 
-const char *speed_time_string 
-  = "Time measurements using CPU cycle counter.\n";
+#if HAVE_SYSCONF
+  result = sysconf (_SC_CLK_TCK);
+  if (result != -1L)
+    {
+      if (speed_option_verbose)
+        printf ("sysconf(_SC_CLK_TCK) is %ld per second\n", result);
+      goto success;
+    }
 
-/* bigish value because we have a fast timer */
-int speed_precision = 10000;
+  fprintf (stderr,
+           "sysconf(_SC_CLK_TCK) not available, using CLK_TCK instead\n");
+#endif
 
-double speed_unittime;
-double speed_cycletime;
+#ifdef CLK_TCK
+  result = CLK_TCK;
+  if (speed_option_verbose)
+    printf ("CLK_TCK is %ld per second\n", result);
+  goto success;
+#endif
 
-static int  speed_time_initialized = 0;
-static unsigned  speed_starttime_save[2];
+  fprintf (stderr, "CLK_TCK not defined, cannot continue\n");
+  abort ();
 
-/* Knowing the CPU frequency is mandatory, so cycles can be converted to
-   seconds.  */
+ success:
+  return result;
+}
+
+
+/* Assume that if a time difference that's non-zero but less than CLK_TCK/2
+   is seen then the routine is microsecond accurate. */
+
+#define MICROSECONDS_P(name, decl, tv, call)                            \
+  do {                                                                  \
+    static int  result = -1;                                            \
+                                                                        \
+    long  clk_usec = 1000000L / clk_tck ();                             \
+    long  prev, delta;                                                  \
+    int   count = 0;                                                    \
+    decl;                                                               \
+                                                                        \
+    if (result != -1)                                                   \
+      return result;                                                    \
+                                                                        \
+    call;                                                               \
+    prev = tv.tv_usec;                                                  \
+    for (;;)                                                            \
+      {                                                                 \
+        call;                                                           \
+                                                                        \
+        delta = (tv.tv_usec - prev) % 1000000L;                         \
+        if (delta != 0)                                                 \
+          {                                                             \
+            if (speed_option_verbose >= 2)                              \
+              printf ("%s saw .%06ld -> .%06ld for delta %ld\n",        \
+                      name, prev, tv.tv_usec, delta);                   \
+                                                                        \
+            if (delta < clk_usec/2)                                     \
+              {                                                         \
+                result = 1;                                             \
+                break;                                                  \
+              }                                                         \
+                                                                        \
+            count++;                                                    \
+            if (count > 10)                                             \
+              {                                                         \
+                result = 0;                                             \
+                break;                                                  \
+              }                                                         \
+          }                                                             \
+                                                                        \
+        prev = tv.tv_usec;                                              \
+      }                                                                 \
+                                                                        \
+    if (speed_option_verbose)                                           \
+      printf ("%s is %s accurate\n",                                    \
+              name, result ? "microsecond" : "clock tick");             \
+    return result;                                                      \
+  } while (0)
+
+
+int
+gtod_microseconds_p (void)
+{
+  MICROSECONDS_P ("gettimeofday",
+                  struct_timeval t, t, gettimeofday (&t, NULL));
+}
+
+int
+grus_microseconds_p (void)
+{
+  MICROSECONDS_P ("getrusage",
+                  struct_rusage r, (r.ru_utime), getrusage (0, &r));
+}
+
+
+#define DEFAULT(var,n)  \
+  do {                  \
+    if (! (var))        \
+      (var) = (n);      \
+  } while (0)
+
+
 void
 speed_time_init (void)
 {
+  double supplement_unittime = 0.0;
+
+  static int  speed_time_initialized = 0;
   if (speed_time_initialized)
     return;
   speed_time_initialized = 1;
 
-  if (!speed_cycletime_init ())
-    exit (1);
+  speed_cycletime_init ();
 
-  speed_unittime = speed_cycletime;
-}
-
-void
-speed_starttime (void)
-{
-  if (!speed_time_initialized)
-    speed_time_init ();
-  speed_cyclecounter (speed_starttime_save);
-}
-
-#define M_2POWU   ((double) (1L << (BITS_PER_INT-2)) * 4.0)
-#define M_2POW32  4294967296.0
-
-double
-speed_endtime (void)
-{
-  unsigned  endtime[2], e0;
-  double    t;
-
-  speed_cyclecounter (endtime);
-
-  if (endtime[1] == 0 && speed_starttime_save[1] == 0)
+  if (have_cycles && cycles_works_p ())
     {
-      /* High words are zero, assume we have a single-word counter.  */
-      e0 = endtime[0] - speed_starttime_save[0];
-      if (endtime[0] < speed_starttime_save[0])
-	t = M_2POWU + e0;	/* Counter wrapped.  Hopefully just once. */
-      else
-	t = e0;
+      use_cycles = 1;
+      DEFAULT (speed_cycletime, 1.0);
+      speed_unittime = speed_cycletime;
+      DEFAULT (speed_precision, 10000);
+      speed_time_string = "CPU cycle counter";
+
+      /* only used if a supplementary method is chosen below */
+      cycles_limit = (have_cycles == 1 ? M_2POW32 : M_2POW64) / 2.0
+        * speed_cycletime;
+
+      if (have_grus && grus_microseconds_p())
+        {
+          /* this is a good combination */
+          use_grus = 1;
+          supplement_unittime = grus_unittime = 1.0e-6;
+          speed_time_string = "CPU cycle counter, supplemented by microsecond getrusage()";
+        }
+      else if (have_cycles == 1)
+        {
+          /* When speed_cyclecounter has a limited range, look for something
+             to supplement it. */
+          if (have_gtod && gtod_microseconds_p())
+            {
+              use_gtod = 1;
+              supplement_unittime = gtod_unittime = 1.0e-6;
+              speed_time_string = "CPU cycle counter, supplemented by microsecond gettimeofday()";
+            }
+          else if (have_grus)
+            {
+              use_grus = 1;
+              supplement_unittime = grus_unittime = 1.0 / (double) clk_tck ();
+              speed_time_string = "CPU cycle counter, supplemented by clock tick getrusage()";
+            }
+          else if (have_times)
+            {
+              use_times = 1;
+              supplement_unittime = times_unittime = 1.0 / (double) clk_tck ();
+              speed_time_string = "CPU cycle counter, supplemented by clock tick times()";
+            }
+          else if (have_gtod)
+            {
+              use_gtod = 1;
+              supplement_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
+              speed_time_string = "CPU cycle counter, supplemented by clock tick gettimeofday()";
+            }
+          else
+            {
+              fprintf (stderr, "WARNING: cycle counter is 32 bits and there's no other functions.\n");
+              fprintf (stderr, "    Wraparounds may produce bad results on long measurements.\n");
+            }
+        }
+
+      if (use_grus || use_times || use_gtod)
+        {
+          /* must know cycle period to compare cycles to other measuring
+             (via cycles_limit) */
+          speed_cycletime_need_seconds ();
+
+          if (speed_precision * supplement_unittime > cycles_limit)
+            {
+              fprintf (stderr, "WARNING: requested precision can't always be achieved due to limited range\n");
+              fprintf (stderr, "    cycle counter and limited precision supplemental method\n");
+              fprintf (stderr, "    (%s)\n", speed_time_string);
+            }
+        }
     }
   else
     {
-      t = (endtime[0] + endtime[1] * M_2POWU)
-	- (speed_starttime_save[0] + speed_starttime_save[1] * M_2POWU);
+      /* No cycle counter */
+
+      if (have_grus && grus_microseconds_p())
+        {
+          use_grus = 1;
+          speed_unittime = grus_unittime = 1.0e-6;
+          DEFAULT (speed_precision, 1000);
+          speed_time_string = "microsecond accurate getrusage()";
+        }
+      else if (have_gtod && gtod_microseconds_p())
+        {
+          use_gtod = 1;
+          speed_unittime = gtod_unittime = 1.0e-6;
+          DEFAULT (speed_precision, 1000);
+          speed_time_string = "microsecond accurate gettimeofday()";
+        }
+      else if (have_times)
+        {
+          use_times = 1;
+          use_tick_boundary = 1;
+          speed_unittime = times_unittime = 1.0 / (double) clk_tck ();
+          DEFAULT (speed_precision, 200);
+          speed_time_string = "clock tick times()";
+        }
+      else if (have_grus)
+        {
+          use_grus = 1;
+          use_tick_boundary = 1;
+          speed_unittime = grus_unittime = 1.0 / (double) clk_tck ();
+          DEFAULT (speed_precision, 200);
+          speed_time_string = "clock tick accurate getrusage()\n";
+        }
+      else if (have_gtod)
+        {
+          use_gtod = 1;
+          use_tick_boundary = 1;
+          speed_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
+          DEFAULT (speed_precision, 200);
+          speed_time_string = "clock tick accurate gettimeofday()";
+        }
+      else
+        {
+          fprintf (stderr, "No time measuring method available\n");
+          fprintf (stderr, "None of: speed_cyclecounter(), getrusage(), gettimeofday(), times()\n");
+          abort ();
+        }
     }
 
-  return t * speed_unittime;
+    if (speed_option_verbose)
+      {
+        printf ("speed_time_init: %s\n", speed_time_string);
+        printf ("    speed_precision     %d\n", speed_precision);
+        printf ("    speed_unittime      %.2g\n", speed_unittime);
+        if (supplement_unittime)
+          printf ("    supplement_unittime %.2g\n", supplement_unittime);
+        printf ("    use_tick_boundary   %d\n", use_tick_boundary);
+        if (have_cycles)
+          printf ("    cycles_limit        %.2g seconds\n", cycles_limit);
+      }
 }
 
-#endif
 
 
-/* ---------------------------------------------------------------------- */
-#if SPEED_USE_MICROSECOND_GETRUSAGE
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-
-const char *speed_time_string
-  = "Time measurements using microsecond accurate getrusage.\n";
-
-int speed_precision = 1000;
-
-double speed_unittime = 1.0e-6;
-double speed_cycletime = 1.0;
-
-static struct rusage  speed_starttime_save;
-static int  speed_time_initialized = 0;
+/* Burn up CPU until a clock tick boundary, for greater accuracy.  Set the
+   corresponding "start_foo" appropriately too. */
 
 void
-speed_time_init (void)
+grus_tick_boundary (void)
 {
-  if (speed_time_initialized)
-    return;
-  speed_time_initialized = 1;
-
-  speed_cycletime_init ();
+  struct_rusage  prev;
+  getrusage (0, &prev);
+  do {
+    getrusage (0, &start_grus);
+  } while (start_grus.ru_utime.tv_usec == prev.ru_utime.tv_usec);
 }
 
 void
-speed_starttime (void)
+gtod_tick_boundary (void)
 {
-  if (!speed_time_initialized)
-    speed_time_init ();
-
-  getrusage (0, &speed_starttime_save);
-}
-
-double
-speed_endtime (void)
-{
-  struct rusage r;
-
-  getrusage (0, &r);
-  return TIMEVAL_SECS (&r.ru_utime)
-    - TIMEVAL_SECS (&speed_starttime_save.ru_utime);
-}
-#endif
-
-
-/* ---------------------------------------------------------------------- */
-#if SPEED_USE_MICROSECOND_GETTIMEOFDAY
-/* This method is for systems with a microsecond accurate gettimeofday().
-
-   A dummy timezone parameter is always given to gettimeofday(), in case it
-   doesn't allow NULL.  */
-
-#include <sys/time.h>
-
-const char *speed_time_string 
-  = "Time measurements using microsecond accurate gettimeofday.\n";
-
-/* highish value because we have an accurate timer */
-int speed_precision = 1000;
-
-double speed_unittime = 1.0e-6;
-double speed_cycletime = 1.0;
-
-static struct timeval  speed_starttime_save;
-static int  speed_time_initialized = 0;
-
-void
-speed_time_init (void)
-{
-  if (speed_time_initialized)
-    return;
-  speed_time_initialized = 1;
-
-  speed_cycletime_init ();
+  struct_timeval  prev;
+  gettimeofday (&prev, NULL);
+  do {
+    gettimeofday (&start_gtod, NULL);
+  } while (start_gtod.tv_usec == prev.tv_usec);
 }
 
 void
-speed_starttime (void)
+times_tick_boundary (void)
 {
-  struct timezone  tz;
-  if (!speed_time_initialized)
-    speed_time_init ();
-
-  gettimeofday (&speed_starttime_save, &tz);
-}
-
-double
-speed_endtime (void)
-{
-  struct timeval   t;
-  struct timezone  tz;
-
-  gettimeofday (&t, &tz);
-  return TIMEVAL_SECS (&t) - TIMEVAL_SECS (&speed_starttime_save);
-}
-
-#endif
-
-
-/* ---------------------------------------------------------------------- */
-#if SPEED_USE_TMS_UTIME
-/* You're in trouble if you have to use this method.  Speed measurments and
-   threshold tuning are going to take a long time. */
-
-#if STDC_HEADERS
-#include <errno.h>      /* for errno */
-#include <string.h>     /* for strerror */
-#endif
-#if HAVE_UNISTD_H
-#include <unistd.h>     /* for sysconf */
-#endif
-#include <sys/times.h>  /* for times */
-
-const char *speed_time_string 
-  = "Time measurements using tms_utime.\n";
-
-
-/* lowish default value so we don't take days and days to do tuning */
-int  speed_precision = 200;
-
-double  speed_unittime;
-double  speed_cycletime = 1.0;
-
-static struct tms  speed_starttime_save;
-static int  speed_time_initialized = 0;
-
-void
-speed_time_init (void)
-{
-  long  clk_tck;
-
-  if (speed_time_initialized)
-    return;
-  speed_time_initialized = 1;
-
-  speed_cycletime_init ();
-
-#if HAVE_SYSCONF
-  clk_tck = sysconf (_SC_CLK_TCK);
-  if (clk_tck == -1L)
-    {
-      fprintf (stderr, "sysconf(_SC_CLK_TCK) not available: %s\n",
-	       strerror(errno));
-      fprintf (stderr, "\tusing CLK_TCK instead\n");
-      clk_tck = CLK_TCK;
-    }
-#else
-  clk_tck = CLK_TCK;
-#endif
-
-  speed_unittime = 1.0 / (double) clk_tck;
-}
-
-/* Burn up CPU until a times() tms_utime tick boundary.
-   Doing so lets you know a measurement has started on a tick boundary,
-   effectively halving the uncertainty in the measurement.
-   *t1 gets the start times() values the caller should use. */
-void
-times_utime_boundary (struct tms *t1)
-{
-  struct tms  t2;
-  times (&t2);
+  struct_tms  prev;
+  times (&prev);
   do
-    times (t1);
-  while (t1->tms_utime == t2.tms_utime);
+    times (&start_times);
+  while (start_times.tms_utime == prev.tms_utime);
 }
+
 
 void
 speed_starttime (void)
 {
-  if (!speed_time_initialized)
-    speed_time_init ();
-  times_utime_boundary (&speed_starttime_save);
+  speed_time_init ();
+
+  if (use_grus)
+    {
+      if (use_tick_boundary)
+        grus_tick_boundary ();
+      else
+        getrusage (0, &start_grus);
+    }
+
+  if (use_gtod)
+    {
+      if (use_tick_boundary)
+        gtod_tick_boundary ();
+      else
+        gettimeofday (&start_gtod, NULL);
+    }
+
+  if (use_times)
+    {
+      if (use_tick_boundary)
+        times_tick_boundary ();
+      else
+        times (&start_times);
+    }
+
+  /* Cycles sampled last for maximum accuracy. */
+  if (use_cycles)
+    speed_cyclecounter (start_cycles);
 }
+
 
 double
 speed_endtime (void)
 {
-  struct tms  t;
-  times (&t);
-  return (t.tms_utime - speed_starttime_save.tms_utime) * speed_unittime;
-}
 
-#endif
+#define END_USE(name,value)                             \
+  do {                                                  \
+    if (speed_option_verbose >= 3)                      \
+      printf ("speed_endtime(): used %s\n", name);      \
+    return value;                                       \
+  } while (0)
+
+#define END_ENOUGH(name,value)                                          \
+  do {                                                                  \
+    if (speed_option_verbose >= 3)                                      \
+      printf ("speed_endtime(): %s gives enough precision\n", name);    \
+    return value;                                                       \
+  } while (0)
+
+#define END_EXCEED(name,value)                                            \
+  do {                                                                    \
+    if (speed_option_verbose >= 3)                                        \
+      printf ("speed_endtime(): cycle counter limit exceeded, used %s\n", \
+              name);                                                      \
+    return value;                                                         \
+  } while (0)
+
+  unsigned        end_cycles[2];
+  struct_timeval  end_gtod;
+  struct_rusage   end_grus;
+  struct_tms      end_times;
+  double          t_gtod, t_grus, t_times, t_cycles;
+
+  /* Cycles sampled first for maximum accuracy. */
+
+  if (use_cycles)  speed_cyclecounter (end_cycles);
+  if (use_gtod)    gettimeofday (&end_gtod, NULL);
+  if (use_grus)    getrusage (0, &end_grus);
+  if (use_times)   times (&end_times);
+
+  if (use_grus)
+    {
+      t_grus = TIMEVAL_SECS (&end_grus.ru_utime)
+        - TIMEVAL_SECS (&start_grus.ru_utime);
+
+      /* Use getrusage() if the cycle counter limit would be exceeded, or if
+         it provides enough accuracy already. */
+      if (use_cycles)  
+        {
+          if (t_grus >= speed_precision*grus_unittime)
+            END_ENOUGH ("getrusage()", t_grus);
+          if (t_grus >= cycles_limit)
+            END_EXCEED ("getrusage()", t_grus);
+        }
+    }
+
+  if (use_times)
+    {
+      t_times = (end_times.tms_utime - start_times.tms_utime) * times_unittime;
+
+      /* Use times() if the cycle counter limit would be exceeded, or if
+         it provides enough accuracy already. */
+      if (use_cycles)  
+        {
+          if (t_times >= speed_precision*times_unittime)
+            END_ENOUGH ("times()", t_times);
+          if (t_times >= cycles_limit)
+            END_EXCEED ("times()", t_times);
+        }
+    }
+
+  if (use_gtod)
+    {
+      t_gtod = TIMEVAL_SECS (&end_gtod) - TIMEVAL_SECS (&start_gtod);
+
+      /* Use gettimeofday() if it measured a value bigger than the cycle
+         counter can handle.  */
+      if (use_cycles)  
+        {
+          if (t_gtod >= cycles_limit)
+            END_EXCEED ("gettimeofday()", t_gtod);
+        }
+    }
+  
+  if (use_cycles)  
+    {
+      if (have_cycles == 1)
+        {
+          t_cycles = (end_cycles[0] - start_cycles[0]);
+        }
+      else
+        {
+          /* This works even if speed_cyclecounter() puts a value bigger
+             than 32-bits in the low word.  The start and end values are
+             allowed to cancel in uints in case a uint is more than the 53
+             bits that will normally fit in a double. */
+          unsigned  d;
+          d = end_cycles[0] - start_cycles[0];
+          t_cycles = d - (d > end_cycles[0] ? M_2POWU : 0);
+          t_cycles += (end_cycles[1] - start_cycles[1]) * M_2POW32;
+        }
+      t_cycles *= speed_cycletime;
+
+      END_USE ("cycle counter", t_cycles);
+    }
+
+  if (use_grus && grus_microseconds_p())  END_USE ("getrusage()",    t_grus);
+  if (use_gtod && gtod_microseconds_p())  END_USE ("gettimeofday()", t_gtod);
+
+  if (use_times)  END_USE ("times()",        t_times);
+  if (use_grus)   END_USE ("getrusage()",    t_grus);
+  if (use_gtod)   END_USE ("gettimeofday()", t_gtod);
+
+  fprintf (stderr, "speed_endtime(): oops, no time method available\n");
+  abort ();
+}
