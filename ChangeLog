@@ -15083,7 +15083,7 @@ mode: indented-text
 left-margin: 8
 fill-column: 79
 version-control: never
-eval: (unless (string-match "GNU Emacs \\(21\.[3-9]\\|22\.\\)" (emacs-version))
+eval: (unless (string-match "GNU Emacs \\(21\.[4-9]\\|22\.\\)" (emacs-version))
 	(save-excursion
 	  (goto-char (point-min))
 	  (when (looking-at "Copyright")
