@@ -125,7 +125,7 @@ define(`ma064',`%r20')	dnl
 C define(`r000',`%r3')	dnl	FIXME don't save r3 for n < 4.
 
 	extrd,u		n, 63, 2, %r5
-	comb,=		%r5, %r0, L(BIG)
+	cmpb,=		%r5, %r0, L(BIG)
 	nop
 
 	fldd		0(up), %fr4
@@ -261,7 +261,7 @@ L(0_one_out)
 	add,dc		ma064, climb, climb
 	std		s000, 0(rp)
 
-	comib,>=	4, n, L(done)
+	cmpib,>=	4, n, L(done)
 	ldo		8(rp), rp
 
 dnl 4-way unrolled code.
