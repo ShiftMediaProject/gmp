@@ -59,11 +59,6 @@ fi
 # A fake $RANDOM is established, if not already available, so that
 # configfsf.guess will work on m68k NetBSD 1.4.1.
 #
-# FIXME: configfsf.guess ought to make its own arrangements for this system.
-# Certainly it's old, but doesn't seem completely dead.  If/when this
-# happens our configfsf.guess invocation here would revert to just `$SHELL
-# $configfsf_guess`.
-#
 # The problem is that when configfsf.guess wants to run the compiler to
 # probe the system, it creates a directory under /tmp (so as not to make a
 # mess in the current directory), and it attempts to do this securely (in
@@ -71,7 +66,17 @@ fi
 # "mktemp" program or a "$RANDOM" shell variable, neither of which is
 # available in an m68k NetBSD 1.4.1 base system.
 #
-guess_full=`$SHELL -c 'if test -z "$RANDOM"; then RANDOM=12345; fi; . '"$configfsf_guess"`
+# The availablility of RANDOM is checked in $SHELL, since it's at least
+# possible we're executing in some other shell.
+#
+# Debian "ash" 0.4.16 segfaults when ". $configfsf_guess" uses $0, so
+# instead RANDOM is exported and $configfsf_guess run from scratch.
+#
+# FIXME: configfsf.guess ought to make its own arrangements for NetBSD 1.4.
+# Certainly it's old, but doesn't seem completely dead.  If/when this
+# happens then only guess_full=`$SHELL $configfsf_guess` will be needed.
+#
+guess_full=`$SHELL -c 'if test -z "$RANDOM"; then RANDOM=12345; export RANDOM; fi; '"exec $SHELL $configfsf_guess"`
 if test $? != 0; then
   exit 1
 fi
