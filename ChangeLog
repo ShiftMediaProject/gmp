@@ -1,3 +1,22 @@
+2001-01-04  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/fits_s.c, mpz/fits_u.c: New files, split from fits.c, use plain
+	UINT_MAX etc, not MPZ_FITS_UTYPE_SDT etc.
+	* mpz/fits.c: Remove file.
+	* mpz/Makefile.am, macos/Makefile.in: Update.
+
+	* gmp-impl.h (UNSIGNED_TYPE_MAX etc): Remove these generic forms.
+	(MPZ_FITS_[SU]TYPE_SDT): Remove these.
+	(UINT_MAX etc): Provide a full set of defaults.
+	* gmp-h.in (__GMP_MP_SIZE_T_INT): New define.
+
+	* mpz/tests/t-scan.c: New file.
+	* mpz/tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpz/scan0.c, mpz/scan1.c: Rewrite, don't read beyond allocated
+	memory, support negatives, return ULONG_MAX for no bit found.
+	* gmp.texi (Integer Logic and Bit Fiddling): Update.
+
 2001-01-03  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/dive.c: Generate test operands using new random functions.
