@@ -27,6 +27,18 @@ int flag_verbose = 0;
 
 static unsigned add[] = {4, 2, 4, 2, 4, 6, 2, 6};
 
+#if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
+/* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
+long mrand48 ();
+static inline long
+random ()
+{
+  return mrand48 ();
+}
+#else
+long random ();
+#endif
+
 void
 factor_using_division (mpz_t t, unsigned int limit)
 {
@@ -224,7 +236,7 @@ S4:
       if (!mpz_probab_prime_p (g, 3))
 	{
 	  do
-	    a_int = mrand48 ();
+	    a_int = random ();
 	  while (a_int == -2 || a_int == 0);
 
 	  if (flag_verbose)
