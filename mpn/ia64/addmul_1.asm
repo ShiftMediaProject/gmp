@@ -51,33 +51,39 @@ ifdef(`HAVE_ABI_32',
 	zxt4		n = n			C I
 	;;
 ')
-	.mmi
-	ldf8		f7 = [up], 8		C M
-	ldf8		f8 = [rp], 8		C M
-	mov.i		r2 = ar.lc		C I0
-	.mmi
+{.mmi
 	adds		r15 = -1, n		C M I
 	mov		r20 = rp		C M I
+	mov.i		r2 = ar.lc		C I0
+}
+{.mmi
+	ldf8		f7 = [up], 8		C M
+	ldf8		f8 = [rp], 8		C M
 	and		r14 = 3, n		C M I
 	;;
-	.mii
+}
+{.mii
 	setf.sig	f6 = vl			C M2 M3
 	shr.u		r31 = r15, 2		C I
 	cmp.eq		p10, p0 = 0, r14	C M I
-	.mii
+}
+{.mii
 	cmp.eq		p11, p0 = 2, r14	C M I
 	cmp.eq		p12, p0 = 3, r14	C M I
 	nop.i		0			C I
 	;;
-	.mii
+}
+{.mii
 	cmp.ne		p6, p7 = r0, r0		C M I
 	mov.i		ar.lc = r31		C I0
 	cmp.ne		p8, p9 = r0, r0		C M I
-	.bbb
+}
+{.bbb
   (p10)	br.dptk		.Lb00			C B
   (p11)	br.dptk		.Lb10			C B
   (p12)	br.dptk		.Lb11			C B
 	;;
+}
 
 .Lb01:	br.cloop.dptk	.grt1			C B
 
