@@ -112,7 +112,7 @@ mpn_mul_basecase (mp_ptr rp,
 #define MAX_LEFT 1
 #endif
 
-  while (vn >= 0)
+  while (vn >= 1)
     {
       rp[un] = mpn_addmul_1 (rp, up, un, vp[0]);
       if (MAX_LEFT - 1 <= 1)
