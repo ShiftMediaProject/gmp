@@ -3857,33 +3857,6 @@ Return non-zero iff @{@var{s1p}, @var{n}@} is a perfect square.
 @end deftypefun
 
 
-@ignore
-The rest of the this chapter documents some internal functions.  This section
-is only relevant to implementors.
-
-@comment this should be put into an "implementor's" section.
-@deftypefun void mpn_mul_basecase (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
-Multiply @{@var{s1p}, @var{s1n}@} and @{@var{s2p}, @var{s2n}@}, and write the
-(@var{s1n}+@var{s2n})-limb result to @var{rp}.  It is required that @var{s1n}
->= @var{s2n}.  
-
-The allowed size of the @{@var{s1p},@var{s1n}@} operand varies; @var{s1n}
-greater than KARATSUBA_MUL_THRESHOLD will give unpredictable results.
-
-This is an internal low-level routine that is implemented in assembly for some
-CPUs.  If it is not provided in assembly, a default version is provided that
-uses @code{mpn_addmul_1} and @code{mpn_mul_1}.  For high-performance
-microarchitectures, implementing @code{mpn_mul_basecase} can provide a very
-significant performance advantage, since it will allow for more
-micro-parallelism and less recurrences than @code{mpn_addmul_1}.
-
-The destination has to have space for (@var{s1n}+@var{s2n}) limbs, even if the
-product's most significant limb is zero.
-@end deftypefun
-
-@end ignore
-
-
 @node Random Number Functions, BSD Compatible Functions, Low-level Functions, Top
 @chapter Random Number Functions
 @cindex Random number functions
