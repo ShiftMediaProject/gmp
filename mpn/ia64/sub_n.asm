@@ -24,9 +24,11 @@ include(`../config.m4')
 
 C INPUT PARAMETERS
 C rp = r32
-C s1p = r33
-C s2p = r34
+C up = r33
+C vp = r34
 C n = r35
+
+C This code runs at 3.0 cycles/limb on the Itanium, for large operands.
 
 ASM_START()
 PROLOGUE(mpn_sub_n)
