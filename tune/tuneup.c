@@ -590,7 +590,7 @@ fft_step_size (int k)
   step = MAX ((mp_size_t) 1 << (k-1), BITS_PER_MP_LIMB) / BITS_PER_MP_LIMB;
   step *= (mp_size_t) 1 << k;
 
-  if (step == 0 || step < 0)
+  if (step <= 0)
     {
       printf ("Can't handle k=%d\n", k);
       abort ();
