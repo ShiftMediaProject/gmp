@@ -73,10 +73,10 @@ mpn_mul_basecase (mp_ptr rp,
   rp += 1, vp += 1, vn -= 1;
 #endif
 
-  /* Now accumulate the product of up[] and the next low-order limb (or
-     depending on optional function availability, limbs) from vp[0].  */
+  /* Now accumulate the product of up[] and the next higher limb (or depending
+     on optional function availability, limbs) from vp[].  */
 
-#define MAX_LEFT MP_SIZE_T_MAX
+#define MAX_LEFT MP_SIZE_T_MAX	/* Used to simplify loops into if statements */
 
 
 #if HAVE_NATIVE_mpn_addmul_6
