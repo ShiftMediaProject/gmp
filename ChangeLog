@@ -29,6 +29,7 @@
 	cases, introduce MOD_1_{NORM,UNNORM}_THRESHOLD.
 	* longlong.h (UDIV_PREINV_ALWAYS): New define, set for alpha and ia64.
 	* tune/tuneup.c ({DIVREM,MOD}_1_{NORM,UNNORM}_THRESHOLD): Tune these.
+	* gmp-impl.h [TUNE_PROGRAM_BUILD]: Support for this.
 	* tune/Makefile.am (TUNE_MPN_SRCS): Add divrem_1.c and mod_1.c.
 
 	* gmp-impl.h (UDIV_NORM_PREINV_TIME): Renamed from UDIV_PREINV_TIME.
@@ -37,6 +38,7 @@
 
 	* configure.in (AC_C_INLINE, HAVE_INLINE): New test and define.
 	* gmp-impl.h (inline): Remove, use config.h.
+	(_EXTERN_INLINE): Redefine based on HAVE_INLINE.
 	(mpn_zero_p): Use HAVE_INLINE.
 
 	* acinclude.m4 (GMP_PROG_AR, GMP_PROG_NM): Don't add flags to a user
