@@ -820,10 +820,10 @@ actually due to a bug in the compiler; the GMP code tends to explore
 interesting corners in compilers.)
 
 @item
-The output from @samp{uname -a}.
+The output from running @samp{uname -a}.
 
 @item
-The output from @samp{./config.guess}.
+The output from running @samp{config.guess}.
 
 @item
 If the bug is related to @samp{configure}, include the file @file{config.log}.
