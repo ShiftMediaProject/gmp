@@ -443,6 +443,12 @@ int cmov () { return (n >= 0 ? n : 0); }
 double d;
 unsigned long gcc303 () { return (unsigned long) d; }
 
+/* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
+   the assembler doesn't know hppa 2.0 instructions.  fneg is a 2.0
+   instruction, and a "-x" like this comes out using that.  */
+double fneg_data;
+unsigned long fneg () { return -fneg_data; }
+
 int main () { return 0; }
 EOF
 gmp_prog_cc_works=no
@@ -771,6 +777,39 @@ if test "$result" = yes; then
   ifelse([$3],,:,[$3])
 else
   ifelse([$4],,:,[$4])
+fi
+])
+
+
+dnl  GMP_HPPA_LEVEL_20(cc/cflags [, ACTION-GOOD [,ACTION-BAD]])
+dnl  ----------------------------------------------------------
+dnl  Check that the given cc/cflags accepts HPPA 2.0n assembler code.
+dnl
+dnl  Old versions of gas don't know 2.0 instructions.  It rejects ".level
+dnl  2.0" for a start, so just test that.
+dnl
+dnl  This test is designed to be run for various different compiler and
+dnl  flags combinations, and hence doesn't cache its result.
+
+AC_DEFUN(GMP_HPPA_LEVEL_20,
+[AC_MSG_CHECKING([$1 assembler knows hppa 2.0])
+result=no
+cat >conftest.s <<EOF
+	.level 2.0
+EOF
+gmp_compile="$1 -c conftest.s >&AC_FD_CC 2>&1"
+if AC_TRY_EVAL(gmp_compile); then
+  result=yes
+else
+  echo "failed program was" >&AC_FD_CC
+  cat conftest.s >&AC_FD_CC
+fi
+rm -f conftest*
+AC_MSG_RESULT($result)
+if test "$result" = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
 fi
 ])
 
