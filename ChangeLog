@@ -1,3 +1,9 @@
+2001-02-05  Kevin Ryde  <kevin@swox.se>
+
+	* urandom.h: Use rand() on mingw.
+
+	* mpn/powerpc64/lshift.asm,addsub_n.asm: Use r1 not 1.
+
 2001-02-04  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/copyi.asm: New file.
