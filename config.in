@@ -486,6 +486,9 @@ MA 02111-1307, USA.
 /* Define to 1 to enable ASSERT checking, per --enable-assert */
 #undef WANT_ASSERT
 
+/* Define to 1 when building a fat binary. */
+#undef WANT_FAT_BINARY
+
 /* Define to 1 to enable FFTs for multiplication, per --enable-fft */
 #undef WANT_FFT
 
