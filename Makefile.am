@@ -138,13 +138,14 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/tstbit$U.lo mpz/ui_pow_ui$U.lo mpz/urandomb$U.lo			\
   mpz/urandomm$U.lo mpz/xor$U.lo
 
-MPQ_OBJECTS = mpq/abs$U.lo mpq/add$U.lo					\
-  mpq/canonicalize$U.lo mpq/clear$U.lo					\
-  mpq/cmp$U.lo mpq/cmp_ui$U.lo mpq/div$U.lo mpq/get_d$U.lo		\
-  mpq/get_den$U.lo mpq/get_num$U.lo mpq/init$U.lo mpq/inv$U.lo		\
-  mpq/mul$U.lo mpq/neg$U.lo mpq/out_str$U.lo mpq/set$U.lo		\
-  mpq/set_den$U.lo mpq/set_num$U.lo mpq/set_si$U.lo mpq/set_ui$U.lo	\
-  mpq/sub$U.lo mpq/equal$U.lo mpq/set_z$U.lo mpq/set_d$U.lo		\
+MPQ_OBJECTS = mpq/abs$U.lo mpq/add$U.lo				\
+  mpq/canonicalize$U.lo mpq/clear$U.lo				\
+  mpq/cmp$U.lo mpq/cmp_ui$U.lo mpq/div$U.lo mpq/get_d$U.lo	\
+  mpq/get_den$U.lo mpq/get_num$U.lo mpq/init$U.lo mpq/inv$U.lo	\
+  mpq/md_2exp$U.lo mpq/mul$U.lo mpq/neg$U.lo mpq/out_str$U.lo	\
+  mpq/set$U.lo mpq/set_den$U.lo mpq/set_num$U.lo 		\
+  mpq/set_si$U.lo mpq/set_ui$U.lo				\
+  mpq/sub$U.lo mpq/equal$U.lo mpq/set_z$U.lo mpq/set_d$U.lo	\
   mpq/set_f$U.lo mpq/swap$U.lo
 
 MPN_OBJECTS = @mpn_objs_in_libgmp@
