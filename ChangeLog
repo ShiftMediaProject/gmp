@@ -19,6 +19,24 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-10  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr: Update to 20020301, except internal_ceil_exp2.c,
+	internal_ceil_log2.c, internal_floor_log2.c renamed to i_ceil_exp2.c,
+	i_ceil_log2.c, i_floor_log2.c to be unique in DOS 8.3.  And sqrtrem.c
+	removed since no longer required.
+	* mpfr/mpfr.texi: Fix some formatting.
+	* mpfr/tests/reuse.c: Patch by Paul to fix test4 variable handling.
+	* mpfr/sinh.c: Patch by Paul to fix err calculation when t==0.
+	* mpfr/tests/tget_d.c: Disable until portability of rnd_mode.c can be
+	sorted out.
+
+	* configure.in (powerpc*-*-*): Separate gcc and xlc cpu flags setups
+	for clarity.
+
+	* longlong.h (count_leading_zeros, count_trailing_zeros) [x86_64]: New
+	macros.
+
 2002-03-07  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options): Note all the ultrasparcs accepted.
