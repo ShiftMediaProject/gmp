@@ -54,7 +54,7 @@ MA 02111-1307, USA.
 
 	* gmp.texi (Build Options): Add ia64 under cpu types.
 	(ABI and ISA): Describe IRIX 6 ABI=o32.
-	(Notes for Particular Systems): Remove -mcpu=pentiumpro, now ok.
+	(Notes for Particular Systems): Remove -march=pentiumpro, now ok.
 	(Known Build Problems): Binutils 2.12 is ok for libgmp.a.
 	(Emacs): New section.
 	(Language Bindings): Update MLton URL, reported by Stephen Weeks.
