@@ -1,5 +1,27 @@
+/* mpz_perfect_power_p(arg) -- Return non-zero if ARG is a perfect power,
+   zero otherwise.
+
+Copyright (C) 1998, 2000 Free Software Foundation, Inc.
+
+This file is part of the GNU MP Library.
+
+The GNU MP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+The GNU MP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+MA 02111-1307, USA. */
+
 /*
-  Suppose we are to determine if c is a perfect power, c = a ^ b.
+  We are to determine if c is a perfect power, c = a ^ b.
   Assume c is divisible by 2^n and that codd = c/2^n is odd.
   Assume a is divisible by 2^m and that aodd = a/2^m is odd.
   It is always true that m divides n.
@@ -14,8 +36,8 @@
 */
 
 /* This is a naive approach to recognizing perfect powers.
-   But it is at least a start that can be developed into something
-   for GMP 2.1.  */
+   Many things can be improved.  In particular, we should use p-adic
+   arithmetic for computing possible roots.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -41,7 +63,8 @@ static unsigned short primes[] =
 
 
 int
-mpz_perfect_power_p (mpz_srcptr u)
+mpz_perfect_power_p (u)
+     mpz_srcptr u;
 {
   unsigned long int prime;
   unsigned long int n, n2;
@@ -181,7 +204,8 @@ n2prime:
 }
 
 static unsigned long int
-gcd (unsigned long int a, unsigned long int b)
+gcd (a, b)
+     unsigned long int a, b;
 {
   int an2, bn2, n2;
 
@@ -220,7 +244,8 @@ gcd (unsigned long int a, unsigned long int b)
 }
 
 static int
-isprime (unsigned long int t)
+isprime (t)
+     unsigned long int t;
 {
   unsigned long int q, r, d;
 
