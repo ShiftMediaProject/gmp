@@ -38,7 +38,7 @@ gmp_rand_init_lc (s, a, c, m)
      mpz_t m;
 #endif
 {
-  mpz_init_set_ui (s->seed, 0);
+  mpz_init_set_ui (s->seed, 1);
 
   /* Allocate algorithm specific data. */
   s->data.lc = (__gmp_rand_data_lc *)
