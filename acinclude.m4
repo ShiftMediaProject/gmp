@@ -756,6 +756,51 @@ else
 fi
 ])dnl
 
+
+dnl  GMP_GCC_MARCH_PENTIUMPRO([ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
+dnl  ------------------------------------------------------------
+dnl
+dnl  mpz/powm.c swox cvs rev 1.4 tickles a bug in gcc 2.95.2 when
+dnl  -march=pentiumpro is used.  The problem appears to be fixed in 2.96, so
+dnl  that option is used only on 2.96 and up.
+dnl
+dnl  The bug is incorrect code generated for a simple ABSIZ(z) expression in
+dnl  mpz_redc(), some registers being clobbered near a cmov.  There's no
+dnl  obvious reason for this, and there's many similar or identical
+dnl  expressions throughout the library, so it seems wisest to disable the
+dnl  option until 2.96.
+
+AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
+[AC_CACHE_CHECK([whether gcc -march=pentiumpro is good],
+  gmp_cv_gcc_march_pentiumpro,
+[
+tmp_major="`(gcc --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
+tmp_minor="`(gcc --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`"
+echo "gcc major '$tmp_major', minor '$tmp_minor'" 1>&AC_FD_CC
+
+gmp_cv_gcc_march_pentiumpro=no
+if test -n "$tmp_major"; then
+  if test "$tmp_major" -gt 2; then
+    gmp_cv_gcc_march_pentiumpro=yes
+  else
+    if test "$tmp_major" -eq 2; then
+      if test -n "$tmp_minor"; then
+        if test "$tmp_minor" -ge 96; then
+          gmp_cv_gcc_march_pentiumpro=yes
+        fi
+      fi
+    fi
+  fi
+fi
+])
+if test $gmp_cv_gcc_march_pentiumpro = yes; then
+  ifelse([$1], , :, [$1])
+else
+  ifelse([$2], , :, [$2])
+fi
+])
+
+
 dnl  GMP_PROG_CC_WORKS(CC, CFLAGS, ACTION-IF-WORKS, [ACTION-IF-NOT-WORKS])
 dnl  Check if CC can compile and link.  Perform various target specific tests.
 dnl  FIXME: Require `$target'.
