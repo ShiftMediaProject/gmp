@@ -6085,11 +6085,15 @@ Read @var{rop} from @var{stream}, using its @code{ios} formatting settings.
 @end deftypefun
 
 @deftypefun istream& operator>> (istream& @var{stream}, mpq_t @var{rop})
-Read @var{rop} from @var{stream}, using its @code{ios} formatting settings.
+An integer like @samp{123} will be read, or a fraction like @samp{5/9}.  No
+whitespace is allowed around the @samp{/}.  If the fraction is not in
+canonical form then @code{mpq_canonicalize} must be called (@pxref{Rational
+Number Functions}) before operating on it.
 
-An integer like @samp{123} will be read, or a fraction like @samp{5/9}.  If
-the fraction is not in canonical form then @code{mpq_canonicalize} must be
-called (@pxref{Rational Number Functions}).
+As per integer input, an @samp{0} or @samp{0x} base indicator is read when
+none of @code{ios::dec}, @code{ios::oct} or @code{ios::hex} are set.  This is
+done separately for numerator and denominator, so that for instance
+@samp{0x10/11} is @math{16/11} and @samp{0x10/0x11} is @math{16/17}.
 @end deftypefun
 
 @deftypefun istream& operator>> (istream& @var{stream}, mpf_t @var{rop})
