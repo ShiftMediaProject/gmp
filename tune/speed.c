@@ -107,9 +107,10 @@ struct speed_params  sp;
 
 #define COLUMN_WIDTH  13  /* for the free-form output */
 
-#define FLAG_R            (1<<0)
-#define FLAG_R_OPTIONAL   (1<<1)
+#define FLAG_R            (1<<0)  /* require ".r" */
+#define FLAG_R_OPTIONAL   (1<<1)  /* optional ".r" */
 #define FLAG_RSIZE        (1<<2)
+#define FLAG_NODATA       (1<<3)  /* don't alloc xp, yp */
 
 const struct routine_t {
   /* constants */
@@ -193,9 +194,9 @@ const struct routine_t {
   { "mpn_toom3_sqr_n_open",  speed_mpn_toom3_sqr_n_open  },
 
   { "mpz_add",           speed_mpz_add              },
-  { "mpz_bin_uiui",      speed_mpz_bin_uiui, FLAG_R_OPTIONAL },
-  { "mpz_fac_ui",        speed_mpz_fac_ui           },
-  { "mpz_fib_ui",        speed_mpz_fib_ui           },
+  { "mpz_bin_uiui",      speed_mpz_bin_uiui, FLAG_NODATA | FLAG_R_OPTIONAL },
+  { "mpz_fac_ui",        speed_mpz_fac_ui,   FLAG_NODATA   },
+  { "mpz_fib_ui",        speed_mpz_fib_ui,   FLAG_NODATA   },
   { "mpz_powm",          speed_mpz_powm             },
 
   { "MPN_COPY",          speed_MPN_COPY             },
@@ -203,7 +204,11 @@ const struct routine_t {
   { "MPN_COPY_DECR",     speed_MPN_COPY_DECR        },
   { "memcpy",            speed_memcpy               },
 
-  { "modlimb_invert",    speed_modlimb_invert       },
+  { "modlimb_invert",       speed_modlimb_invert,       FLAG_NODATA },
+  { "modlimb_invert_mul1",  speed_modlimb_invert_mul1,  FLAG_NODATA },
+  { "modlimb_invert_loop",  speed_modlimb_invert_loop,  FLAG_NODATA },
+  { "modlimb_invert_cond",  speed_modlimb_invert_cond,  FLAG_NODATA },
+  { "modlimb_invert_arith", speed_modlimb_invert_arith, FLAG_NODATA },
 
   { "malloc_free",                 speed_malloc_free                 },
   { "malloc_realloc_free",         speed_malloc_realloc_free         },
@@ -282,16 +287,30 @@ void
 run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
 {
   const char  *first_open_fastest, *first_open_notfastest, *first_close;
-  int         i, fastest;
+  int         i, fastest, want_data;
   double      fastest_time;
   TMP_DECL (marker);
 
   TMP_MARK (marker);
-  sp.xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);
-  sp.yp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_yp);
 
-  data_fill (s->xp, s->size);
-  data_fill (s->yp, s->size);
+  /* allocate data, unless all routines are NODATA */
+  want_data = 0;
+  for (i = 0; i < num_choices; i++)
+    want_data |= ((choice[i].p->flag & FLAG_NODATA) == 0);
+
+  if (want_data)
+    {
+      sp.xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);
+      sp.yp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_yp);
+
+      data_fill (s->xp, s->size);
+      data_fill (s->yp, s->size);
+    }
+  else
+    {
+      sp.xp = NULL;
+      sp.yp = NULL;
+    }
 
   if (prev_size == -1 && option_cmp == CMP_DIFFPREV)
     {
