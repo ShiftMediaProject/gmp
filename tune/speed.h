@@ -63,8 +63,9 @@ MA 02111-1307, USA.
     (TMP_ALLOC_LIMBS((limbs) + SPEED_TMP_ALLOC_ADJUST_MASK), (align)))
 
 /* Minimum source data limbs available in s.xp and y.sp from speed program.
-   1024 means 4kbytes of data, which should fit in any L1 data cache. */
-#define SPEED_DATA_SIZE   1024
+   512 means 2kbytes of data for xp and yp, making 4k total, which should
+   fit easily in any L1 data cache. */
+#define SPEED_DATA_SIZE   512
 
 extern double  speed_unittime;
 extern double  speed_cycletime;
@@ -592,114 +593,6 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
 
 /* function (wp1, wp2, wp1, wp2, s->size); */ /*full*/          
 
-
-#define SPEED_ROUTINE_MPN_GCD(function)                                    \
-  {                                                                        \
-    mp_ptr    wp, xp, yp, s1, s2;                                          \
-    unsigned  i;                                                           \
-    double    t;                                                           \
-    TMP_DECL (marker);                                                     \
-                                                                           \
-    SPEED_RESTRICT_COND (s->size >= 1);                                    \
-                                                                           \
-    TMP_MARK (marker);                                                     \
-    xp = TMP_ALLOC_LIMBS (s->size);                                        \
-    yp = TMP_ALLOC_LIMBS (s->size);                                        \
-                                                                           \
-    MPN_COPY (xp, s->xp, s->size);                                         \
-    MPN_COPY (yp, s->yp, s->size);                                         \
-                                                                           \
-    /* does mpn_gcd need non-zero high limbs? */                           \
-    xp[s->size-1] += (xp[s->size-1] == 0);                                 \
-    yp[s->size-1] += (yp[s->size-1] == 0);                                 \
-                                                                           \
-    if (mpn_cmp (xp, yp, s->size) < 0)                                     \
-      MP_PTR_SWAP (xp, yp);                                                \
-                                                                           \
-    /* must have s2 odd */                                                 \
-    yp[0] |= 1;                                                            \
-    ASSERT_ALWAYS (mpn_cmp (xp, yp, s->size) >= 0);                        \
-                                                                           \
-    wp = SPEED_TMP_ALLOC (s->size, s->align_wp);                           \
-    s1 = SPEED_TMP_ALLOC (s->size, s->align_xp);                           \
-    s2 = SPEED_TMP_ALLOC (s->size, s->align_yp);                           \
-                                                                           \
-    SPEED_OPERAND_SRC (s, s1, s->size);                                    \
-    SPEED_OPERAND_SRC (s, s2, s->size);                                    \
-    SPEED_OPERAND_DST (s, wp, s->size);                                    \
-    speed_cache_fill (s);                                                  \
-                                                                           \
-    speed_starttime ();                                                    \
-    i = s->reps;                                                           \
-    do                                                                     \
-      {                                                                    \
-        /* mpn_gcd is destructive, so must copy the data in each time,     \
-           but this should be insignificant compared to the actual gcd. */ \
-        MPN_COPY (s1, xp, s->size);                                        \
-        MPN_COPY (s2, yp, s->size);                                        \
-        function (wp, s1, s->size, s2, s->size);                           \
-      }                                                                    \
-    while (--i != 0);                                                      \
-    t = speed_endtime ();                                                  \
-                                                                           \
-    TMP_FREE (marker);                                                     \
-    return t;                                                              \
-  }  
-
-#define SPEED_ROUTINE_MPN_GCDEXT(function)                                  \
-  {                                                                         \
-    mp_ptr    wp, wp2, xp, yp, s1, s2;                                      \
-    mp_size_t wp2size;                                                      \
-    unsigned  i;                                                            \
-    double    t;                                                            \
-    TMP_DECL (marker);                                                      \
-                                                                            \
-    SPEED_RESTRICT_COND (s->size >= 1);                                     \
-                                                                            \
-    TMP_MARK (marker);                                                      \
-    xp = TMP_ALLOC_LIMBS (s->size);                                         \
-    yp = TMP_ALLOC_LIMBS (s->size);                                         \
-                                                                            \
-    MPN_COPY (xp, s->xp, s->size);                                          \
-    MPN_COPY (yp, s->yp, s->size);                                          \
-                                                                            \
-    /* does mpn_gcdext need non-zero high limbs? */                         \
-    xp[s->size-1] += (xp[s->size-1] == 0);                                  \
-    yp[s->size-1] += (yp[s->size-1] == 0);                                  \
-                                                                            \
-    if (mpn_cmp (xp, yp, s->size) < 0)                                      \
-      MP_PTR_SWAP (xp, yp);                                                 \
-                                                                            \
-    /* mpn_gcdext needs 1 extra limb above each source */                   \
-    s1 = SPEED_TMP_ALLOC (s->size+1, s->align_xp);                          \
-    s2 = SPEED_TMP_ALLOC (s->size+1, s->align_yp);                          \
-    wp = SPEED_TMP_ALLOC (s->size+1, s->align_wp);                          \
-    wp2 = SPEED_TMP_ALLOC (s->size+1, s->align_wp2);                        \
-                                                                            \
-    SPEED_OPERAND_SRC (s, s1, s->size);                                     \
-    SPEED_OPERAND_SRC (s, s2, s->size);                                     \
-    SPEED_OPERAND_DST (s, wp, s->size+1);                                   \
-    SPEED_OPERAND_DST (s, wp2, s->size+1);                                  \
-    speed_cache_fill (s);                                                   \
-                                                                            \
-    speed_starttime ();                                                     \
-    i = s->reps;                                                            \
-    do                                                                      \
-      {                                                                     \
-        /* mpn_gcdext is destructive, so must copy the data in each time,   \
-           but this will be insignificant compared to the actual gcdext. */ \
-        MPN_COPY (s1, xp, s->size);                                         \
-        MPN_COPY (s2, yp, s->size);                                         \
-        function (wp, wp2, &wp2size, s1, s->size, s2, s->size);             \
-      }                                                                     \
-    while (--i != 0);                                                       \
-    t = speed_endtime ();                                                   \
-                                                                            \
-    TMP_FREE (marker);                                                      \
-    return t;                                                               \
-  }  
-
-
 #define SPEED_ROUTINE_MPN_GCD_1xN(function)     \
   {                                             \
     unsigned  i;                                \
@@ -726,13 +619,13 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
   }  
 
 
-/* "function" is run doing 1x1 gcds of "s->size" bits each.  A total of
-   SPEED_DATA_SIZE/2 gcds are run. */
+/* SPEED_DATA_SIZE many one GCDs of s->size bits each. */
+
 #define SPEED_ROUTINE_MPN_GCD_1(function)                       \
   {                                                             \
     unsigned  i, j;                                             \
-    mp_ptr    p;                                                \
-    mp_limb_t mask;                                             \
+    mp_ptr    px, py;                                           \
+    mp_limb_t x, mask;                                          \
     double    t;                                                \
     TMP_DECL (marker);                                          \
                                                                 \
@@ -740,27 +633,32 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
     SPEED_RESTRICT_COND (s->size <= mp_bits_per_limb);          \
                                                                 \
     TMP_MARK (marker);                                          \
-    p = SPEED_TMP_ALLOC (SPEED_DATA_SIZE, s->align_xp);         \
-    MPN_COPY (p, s->xp, SPEED_DATA_SIZE);                       \
+    px = SPEED_TMP_ALLOC (SPEED_DATA_SIZE, s->align_xp);        \
+    py = SPEED_TMP_ALLOC (SPEED_DATA_SIZE, s->align_yp);        \
+    MPN_COPY (px, s->xp, SPEED_DATA_SIZE);                      \
+    MPN_COPY (py, s->yp, SPEED_DATA_SIZE);                      \
                                                                 \
     mask = MP_LIMB_T_LOWBITMASK (s->size);                      \
     for (i = 0; i < SPEED_DATA_SIZE; i++)                       \
       {                                                         \
-        p[i] &= mask;                                           \
-        if (p[i] == 0)                                          \
-          p[i] = 1;                                             \
+        px[i] &= mask; px[i] += (px[i] == 0);                   \
+        py[i] &= mask; py[i] += (py[i] == 0);                   \
       }                                                         \
                                                                 \
-    SPEED_OPERAND_SRC (s, p, SPEED_DATA_SIZE);                  \
+    SPEED_OPERAND_SRC (s, px, SPEED_DATA_SIZE);                 \
+    SPEED_OPERAND_SRC (s, py, SPEED_DATA_SIZE);                 \
     speed_cache_fill (s);                                       \
                                                                 \
     speed_starttime ();                                         \
     i = s->reps;                                                \
     do                                                          \
       {                                                         \
-        j = SPEED_DATA_SIZE/2;                                  \
+        j = SPEED_DATA_SIZE;                                    \
         do                                                      \
-          function (&p[j-1], 1, p[j+SPEED_DATA_SIZE/2-1]);      \
+          {                                                     \
+            x = px[j-1];                                        \
+            function (&x, 1, py[j-1]);                          \
+          }                                                     \
         while (--j != 0);                                       \
       }                                                         \
     while (--i != 0);                                           \
@@ -768,8 +666,86 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
                                                                 \
     TMP_FREE (marker);                                          \
                                                                 \
-    s->time_divisor = SPEED_DATA_SIZE/2;                        \
+    s->time_divisor = SPEED_DATA_SIZE;                          \
     return t;                                                   \
   }  
+
+
+/* SPEED_DATA_SIZE/s->size many GCDs of s->size limbs each. 
+   FIXME: Reduce the number of GCDs as s->size increases.  */
+
+#define SPEED_ROUTINE_MPN_GCD_CALL(call)                        \
+  {                                                             \
+    unsigned  i;                                                \
+    mp_size_t j, pieces, psize;                                 \
+    mp_ptr    wp, wp2, xtmp, ytmp, px, py;                      \
+    double    t;                                                \
+    TMP_DECL (marker);                                          \
+                                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);                         \
+                                                                \
+    TMP_MARK (marker);                                          \
+    xtmp = SPEED_TMP_ALLOC (s->size+1, s->align_xp);            \
+    ytmp = SPEED_TMP_ALLOC (s->size+1, s->align_yp);            \
+    wp = SPEED_TMP_ALLOC (s->size, s->align_wp);                \
+    wp2 = SPEED_TMP_ALLOC (s->size, s->align_wp2);              \
+                                                                \
+    pieces = SPEED_DATA_SIZE / s->size;                         \
+    if (pieces == 0)                                            \
+      pieces = 1;                                               \
+                                                                \
+    psize = pieces * s->size;                                   \
+    px = TMP_ALLOC_LIMBS (psize);                               \
+    py = TMP_ALLOC_LIMBS (psize);                               \
+    MPN_COPY (px, s->xp, psize);                                \
+    MPN_COPY (py, s->yp, psize);                                \
+                                                                \
+    /* y must be odd, x must have at least as many bits as y */ \
+    for (j = 0; j < pieces; j++)                                \
+      {                                                         \
+        mp_ptr  x = px+j*s->size;                               \
+        mp_ptr  y = py+j*s->size;                               \
+        y[0] |= 1;                                              \
+        if (x[s->size-1] == 0) x[s->size-1] = 1;                \
+        if (y[s->size-1] == 0) y[s->size-1] = 1;                \
+        x[s->size-1] = MAX (x[s->size-1], y[s->size-1]);        \
+      }                                                         \
+                                                                \
+    SPEED_OPERAND_SRC (s, px, psize);                           \
+    SPEED_OPERAND_SRC (s, py, psize);                           \
+    SPEED_OPERAND_DST (s, xtmp, s->size);                       \
+    SPEED_OPERAND_DST (s, ytmp, s->size);                       \
+    SPEED_OPERAND_DST (s, wp, s->size);                         \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      {                                                         \
+        j = pieces;                                             \
+        do                                                      \
+          {                                                     \
+            MPN_COPY (xtmp, px+(j-1)*s->size, s->size);         \
+            MPN_COPY (ytmp, py+(j-1)*s->size, s->size);         \
+            call;                                               \
+          }                                                     \
+        while (--j != 0);                                       \
+      }                                                         \
+    while (--i != 0);                                           \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+                                                                \
+    s->time_divisor = pieces;                                   \
+    return t;                                                   \
+  }  
+
+#define SPEED_ROUTINE_MPN_GCD(function) \
+  SPEED_ROUTINE_MPN_GCD_CALL (function (wp, xtmp, s->size, ytmp, s->size))
+
+#define SPEED_ROUTINE_MPN_GCDEXT(function)                              \
+  SPEED_ROUTINE_MPN_GCD_CALL                                            \
+    ({ mp_size_t  wp2size;                                              \
+       function (wp, wp2, &wp2size, xtmp, s->size, ytmp, s->size); })
 
 #endif
