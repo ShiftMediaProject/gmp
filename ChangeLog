@@ -1,3 +1,7 @@
+2001-09-27  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in (__GMPN_AORS_1): Rewrite to work around Cray compiler bug.
+
 2001-09-26  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/sse2/gmp-mparam.h: New file.
