@@ -258,8 +258,7 @@ int refmpn_tstbit _PROTO ((mp_srcptr ptr, mp_size_t size));
 
 void refmpn_udiv_qrnnd _PROTO ((mp_limb_t *q, mp_limb_t *r,
                                 mp_limb_t h, mp_limb_t l, mp_limb_t d));
-void refmpn_umul_ppmm _PROTO ((mp_limb_t *hi, mp_limb_t *lo,
-                               mp_limb_t x, mp_limb_t y));
+mp_limb_t refmpn_umul_ppmm _PROTO ((mp_limb_t *lo, mp_limb_t x, mp_limb_t y));
 
 void refmpn_xnor_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
