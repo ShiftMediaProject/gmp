@@ -20,7 +20,7 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_srcdir)/ansi2knr
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
 
@@ -37,33 +37,38 @@ libspeed_la_SOURCES = common.c time.c noop.c
 libspeed_la_LIBADD = $(PENTIUM_RDTSC_OBJ)
 
 # Both libspeed and the programs are built static-only since static is
-# fastest and will be preferred by users who care about speed.
+# fastest and will be preferred by users who care about maximizing speed.
 LDFLAGS = -static
 LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
 
 EXTRA_PROGRAMS = speed tuneup
-
-allprogs: $(EXTRA_PROGRAMS)
 
 tuneup_SOURCES = tuneup.c
 tuneup_DEPENDENCIES = libspeed.la libgmptune.a
 tuneup_LDADD = $(tuneup_DEPENDENCIES) -lm
 
 # Don't know how to get tuneup$U.lo to depend on sqr_basecase.h, so just do
-# an explicit make of it.  A plain "make tuneup" will fail if used directly.
+# an explicit make.  A plain "make tuneup" will fail if used directly.
 tune:
 	$(MAKE) $(AM_MAKEFLAGS) sqr_basecase.h tuneup
 	./tuneup
+
+allprogs: sqr_basecase.h $(EXTRA_PROGRAMS)
 
 
 speed_SOURCES = speed.c
 
 SQR_CLEANFILES = sqr_basecase.c sqr_basecase.h sqr_basecase.asm
+
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
-	$(SQR_CLEANFILES) libgmptune.a libgmptmp.a
+	$(SQR_CLEANFILES) libgmptune.a libgmptmp.a \
+	stg.gnuplot stg.data \
+	mtg.gnuplot mtg.data \
+	fibg.gnuplot fibg.data \
+	graph.gnuplot graph.data
 
 
-# This bit is the same as mpn/Makefile.am
+# This bit like mpn/Makefile.am
 SUFFIXES = .asm
 .asm.o:
 	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
@@ -82,20 +87,18 @@ SUFFIXES = .asm
 
 
 # Recompiled versions of $(LIBGMPTUNE_OBJS) are always used.  sqr_basecase.o
-# is replaced if it's mpn/generic/sqr_basecase.c (due to the fixed size
+# is replaced if it's mpn/generic/sqr_basecase.c (due to its fixed size
 # temporary array), or sqr_basecase.asm with a KARATSUBA_SQR_THRESHOLD_MAX
-# (because that says it normally supports only up to
-# KARATSUBA_SQR_THRESHOLD).
+# (because that says it normally works only up to KARATSUBA_SQR_THRESHOLD).
 
 SQR_GENERIC_MAX = 200
 
-LIBGMPTUNE_OBJS = mul_n.o mul.o bz_divrem_n.o tdiv_qr.o
+LIBGMPTUNE_OBJS = mul_n.o mul.o bz_divrem_n.o tdiv_qr.o fib_ui.o
 
 sqr_basecase.h: libgmptune.a
 
 
 # "cp -f" is not portable (eg. it fails on SunOS)
-#
 # "ar r" is going to be a bit fragile because there's more than one mul.o in
 # libgmp.a.
 
@@ -148,6 +151,9 @@ bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n.c
 tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr.c
 	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/tdiv_qr.c
 
+fib_ui.o: $(top_srcdir)/mpz/fib_ui.c
+	$(COMPILE) $(THRESHOLDS) -c $(top_srcdir)/mpz/fib_ui.c
+
 
 
 
@@ -176,6 +182,11 @@ stg:
 
 bz:
 	./speed -s 5-40 -c mpn_bz_divrem_sb mpn_bz_divrem_n mpn_bz_tdiv_qr
+
+fib:
+	./speed -s 80-120 -c mpz_fib_ui
+fibg:
+	./speed -s 10-300 -P fibg mpz_fib_ui
 
 
 graph:
