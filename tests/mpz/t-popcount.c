@@ -57,8 +57,8 @@ check_data (void)
     const char     *n;
     unsigned long  want;
   } data[] = {
-    { "-1", ~0L },
-    { "-12345678", ~0L },
+    { "-1", ~ (unsigned long) 0 },
+    { "-12345678", ~ (unsigned long) 0 },
     { "0", 0 },
     { "1", 1 },
     { "3", 2 },
