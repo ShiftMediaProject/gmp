@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C         integer part  fraction part
 C         cycles/limb   cycles/limb
-C Hammer:     21            19
+C Hammer:     17            16
 
 
 C mp_limb_t mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
@@ -118,20 +118,23 @@ L(intloop):
 	leaq	(d,%r14), %r12
 	cmovz	%r14, %r12
 	addq	rem, %rax
+
 	mulq	dinv
-	addq	%rax, %r12		C %r12 result ignored, just generate cy
-	adcq	$0, %rdx
-	leaq	(%rdx,rem), %rax
-	notq	%rax
-	movq	%rax, %r12
-	mulq	d
+
+	addq	%r12, %rax
+	movq	d, %rax
+	adcq	rem, %rdx
+	notq	%rdx
+	movq	%rdx, %r12
+
+	mulq	%rdx
+
 	addq	%r14, %rax
 	adcq	rem, %rdx
-	subq	d, %rdx
-	movq	d, %r14
-	andq	%rdx, %r14
-	leaq	(%r14,%rax), rem	C new remainder
-	subq	%r12, %rdx
+	subq	d, %rdx			C 00..00 or 11.11
+	leaq	(d,%rax), rem		C remainder
+	cmovz	%rax, rem		C remainder
+	subq	%r12, %rdx		C quotient
 	movq	%rdx, 8(qp,nn,8)
 	movq	(np,nn,8), %rax
 	decq	nn
@@ -143,19 +146,22 @@ L(intlast):
 	leaq	(d,%r14), %r12
 	cmovz	%r14, %r12
 	addq	rem, %rax
+
 	mulq	dinv
-	addq	%rax, %r12		C %r12 result ignored, just generate cy
-	adcq	$0, %rdx
-	leaq	(%rdx,rem), %rax
-	notq	%rax
-	movq	%rax, %r12
-	mulq	d
+
+	addq	%r12, %rax
+	movq	d, %rax
+	adcq	rem, %rdx
+	notq	%rdx
+	movq	%rdx, %r12
+
+	mulq	%rdx
+
 	addq	%r14, %rax
 	adcq	rem, %rdx
 	subq	d, %rdx
-	movq	d, %r14
-	andq	%rdx, %r14
-	leaq	(%r14,%rax), rem	C new remainder
+	leaq	(d,%rax), rem		C remainder
+	cmovz	%rax, rem		C remainder
 	subq	%r12, %rdx
 	movq	%rdx, (qp)
 
@@ -166,17 +172,20 @@ L(frac):
 	js	L(fracskip)
 L(fracloop):
 	movq	rem, %rax
+
 	mulq	dinv
-	leaq	(%rdx,rem), %rax
-	notq	%rax
-	movq	%rax, %r12
-	mulq	d
-	addq	$0, %rax
-	adcq	rem, %rdx
+
+	movq	d, %rax
+	addq	rem, %rdx
+	notq	%rdx
+	movq	%rdx, %r12
+
+	mulq	%rdx
+
+	addq	rem, %rdx
 	subq	d, %rdx
-	movq	d, %r14
-	andq	%rdx, %r14
-	leaq	(%r14,%rax), rem	C new remainder
+	leaq	(d,%rax), rem		C remainder
+	cmovz	%rax, rem		C remainder
 	subq	%r12, %rdx
 	movq	%rdx, (qp,fn,8)
 	decq	fn
