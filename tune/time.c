@@ -185,7 +185,8 @@ speed_cpu_frequency_sunos_sysinfo (void)
   double  val;
   int     ret = 0;
 
-  if ((fp = popen ("/bin/sysinfo", "r")) != NULL)
+  /* /dev/null suppresses error messages if /bin/sysinfo doesn't exist */
+  if ((fp = popen ("(/bin/sysinfo) 2>/dev/null", "r")) != NULL)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
