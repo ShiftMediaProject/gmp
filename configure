@@ -4809,7 +4809,7 @@ for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
   .)  srcdir=.
       if test -z "$ac_dots"; then top_srcdir=.
       else top_srcdir=`echo $ac_dots | sed 's%/$%%'`; fi ;;
-  [/\\]* | ?:[/\\]* )
+  [\\/]* | ?:[\\/]* )
       srcdir="$ac_given_srcdir$ac_dir_suffix";
       top_srcdir=$ac_given_srcdir ;;
   *) # Relative path.
@@ -4818,7 +4818,7 @@ for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
   esac
 
   case "$ac_given_INSTALL" in
-  [/\\$]* | ?:[/\\]* ) INSTALL="$ac_given_INSTALL" ;;
+  [\\/$]* | ?:[\\/]* ) INSTALL="$ac_given_INSTALL" ;;
   *) INSTALL="$ac_dots$ac_given_INSTALL" ;;
   esac
 
@@ -5034,7 +5034,7 @@ for ac_file in : $CONFIG_LINKS; do if test "x$ac_file" != x:; then
   fi
 
   case "$srcdir" in
-  [/\\$]* | ?:[/\\]* ) ac_rel_source="$srcdir/$ac_source" ;;
+  [\\/$]* | ?:[\\/]* ) ac_rel_source="$srcdir/$ac_source" ;;
       *) ac_rel_source="$ac_dots$srcdir/$ac_source" ;;
   esac
 
@@ -5109,3 +5109,4 @@ rm -fr confdefs* $ac_clean_files
 trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
+
