@@ -39,4 +39,4 @@ libmpfr_la_SOURCES = \
 	add_ulp.c log2.c random.c log.c exp.c div_ui.c zeta.c karadiv.c \
 	karasqrt.c print_rnd_mode.c
 
-EXTRA_DIST = mpfr-impl.h
+EXTRA_DIST = mpfr.h mpfr-impl.h
