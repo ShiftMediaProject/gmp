@@ -65,36 +65,37 @@ PROLOGUE(mpn_lshift)
 	b		L(7)
 	copy		%r21, %r20
 
-L(loop)
-L(0)	ldd		-16(up), %r20
+LDEF(loop)
+LDEF(0)	ldd		-16(up), %r20
 	shrpd		%r21, %r20, %sar, %r21
 	std		%r21, -8(rp)
-L(7)	ldd		-24(up), %r21
+LDEF(7)	ldd		-24(up), %r21
 	shrpd		%r20, %r21, %sar, %r20
 	std		%r20, -16(rp)
-L(6)	ldd		-32(up), %r20
+LDEF(6)	ldd		-32(up), %r20
 	shrpd		%r21, %r20, %sar, %r21
 	std		%r21, -24(rp)
-L(5)	ldd		-40(up), %r21
+LDEF(5)	ldd		-40(up), %r21
 	shrpd		%r20, %r21, %sar, %r20
 	std		%r20, -32(rp)
-L(4)	ldd		-48(up), %r20
+LDEF(4)	ldd		-48(up), %r20
 	shrpd		%r21, %r20, %sar, %r21
 	std		%r21, -40(rp)
-L(3)	ldd		-56(up), %r21
+LDEF(3)	ldd		-56(up), %r21
 	shrpd		%r20, %r21, %sar, %r20
 	std		%r20, -48(rp)
-L(2)	ldd		-64(up), %r20
+LDEF(2)	ldd		-64(up), %r20
 	shrpd		%r21, %r20, %sar, %r21
 	std		%r21, -56(rp)
-L(1)	ldd		-72(up), %r21
+LDEF(1)	ldd		-72(up), %r21
 	ldo		-64(up), up
 	shrpd		%r20, %r21, %sar, %r20
 	std		%r20, -64(rp)
 	addib,>		-8, n, L(loop)
 	ldo		-64(rp), rp
 
-L(end)	shrpd		%r21, %r0, %sar, %r21
+LDEF(end)
+	shrpd		%r21, %r0, %sar, %r21
 	std		%r21, -8(rp)
 	bve		(%r2)
 ifdef(`HAVE_ABI_2_0w',

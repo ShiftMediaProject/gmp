@@ -69,7 +69,8 @@ ifdef(`HAVE_ABI_2_0n',
 	ldi		8,%r31		C setup loop counter
 
 	sub		%r0,d,dn
-Loop	divstep divstep divstep divstep divstep divstep divstep divstep
+LDEF(Loop)
+	divstep divstep divstep divstep divstep divstep divstep divstep
 	addib,<>	-1,%r31,Loop
 	nop
 
@@ -80,7 +81,7 @@ ifdef(`HAVE_ABI_2_0n',
 	bve		(%r2)
 	std		n1,0(remptr)	C store remainder
 
-large_divisor
+LDEF(large_divisor)
 	extrd,u		n0,63,1,%r19	C save lsb of dividend
 	shrpd		n1,n0,1,n0	C n0 = lo(n1n0 >> 1)
 	shrpd		%r0,n1,1,n1	C n1 = hi(n1n0 >> 1)
@@ -89,7 +90,8 @@ large_divisor
 	add,l		%r20,d,d	C d = ceil(orig_d / 2)
 
 	sub		%r0,d,dn
-Loop2	divstep divstep divstep divstep divstep divstep divstep divstep
+LDEF(Loop2)
+	divstep divstep divstep divstep divstep divstep divstep divstep
 	addib,<>	-1,%r31,Loop2
 	nop
 
@@ -108,7 +110,7 @@ Loop2	divstep divstep divstep divstep divstep divstep divstep divstep
 	add,l		n1,dn,n1	C adjust remainder
 	add,dc		%r0,q,q		C adjust quotient
 
-even_divisor
+LDEF(even_divisor)
 ifdef(`HAVE_ABI_2_0n',
 `	copy		%r28,%r29
 	extrd,u		%r28,31,32,%r28

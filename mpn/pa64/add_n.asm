@@ -48,35 +48,36 @@ PROLOGUE(mpn_add_n)
 	blr		%r28, %r0		C branch into loop
 	add		%r0, %r0, %r0		C reset carry
 
-L(loop)	ldd		0(up), %r20
+LDEF(loop)
+	ldd		0(up), %r20
 	ldd		0(vp), %r31
 	add,dc		%r20, %r31, %r20
 	std		%r20, 0(rp)
-L(7)	ldd		8(up), %r21
+LDEF(7)	ldd		8(up), %r21
 	ldd		8(vp), %r19
 	add,dc		%r21, %r19, %r21
 	std		%r21, 8(rp)
-L(6)	ldd		16(up), %r20
+LDEF(6)	ldd		16(up), %r20
 	ldd		16(vp), %r31
 	add,dc		%r20, %r31, %r20
 	std		%r20, 16(rp)
-L(5)	ldd		24(up), %r21
+LDEF(5)	ldd		24(up), %r21
 	ldd		24(vp), %r19
 	add,dc		%r21, %r19, %r21
 	std		%r21, 24(rp)
-L(4)	ldd		32(up), %r20
+LDEF(4)	ldd		32(up), %r20
 	ldd		32(vp), %r31
 	add,dc		%r20, %r31, %r20
 	std		%r20, 32(rp)
-L(3)	ldd		40(up), %r21
+LDEF(3)	ldd		40(up), %r21
 	ldd		40(vp), %r19
 	add,dc		%r21, %r19, %r21
 	std		%r21, 40(rp)
-L(2)	ldd		48(up), %r20
+LDEF(2)	ldd		48(up), %r20
 	ldd		48(vp), %r31
 	add,dc		%r20, %r31, %r20
 	std		%r20, 48(rp)
-L(1)	ldd		56(up), %r21
+LDEF(1)	ldd		56(up), %r21
 	ldd		56(vp), %r19
 	add,dc		%r21, %r19, %r21
 	ldo		64(up), up

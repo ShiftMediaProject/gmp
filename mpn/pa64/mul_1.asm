@@ -139,14 +139,14 @@ C define(`r000',`%r3')	dnl	FIXME don't save r3 for n < 4.
 	fstd		%fr24, -0x80(%r30)	C low product to  -0x80..-0x79
 	addib,<>	-1, %r5, L(two_or_more)
 	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
-L(one)
+LDEF(one)
 	ldd		-0x78(%r30), p032a1
 	ldd		-0x70(%r30), p032a2
 	ldd		-0x80(%r30), p000a
 	b		L(0_one_out)
 	ldd		-0x68(%r30), p064a
 
-L(two_or_more)
+LDEF(two_or_more)
 	fldd		0(up), %fr4
 	ldo		8(up), up
 	xmpyu		%fr8R, %fr4L, %fr22
@@ -162,7 +162,7 @@ L(two_or_more)
 	ldd		-0x68(%r30), p064a
 	addib,<>	-1, %r5, L(three_or_more)
 	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
-L(two)
+LDEF(two)
 	add		p032a1, p032a2, m032
 	add,dc		%r0, %r0, m096
 	depd,z		m032, 31, 32, ma000
@@ -170,7 +170,7 @@ L(two)
 	b		L(0_two_out)
 	depd		m096, 31, 32, ma064
 
-L(three_or_more)
+LDEF(three_or_more)
 	fldd		0(up), %fr4
 	add		p032a1, p032a2, m032
 	add,dc		%r0, %r0, m096
@@ -178,7 +178,7 @@ L(three_or_more)
 	extrd,u		m032, 31, 32, ma064
 dnl	addib,=		-1, %r5, L(0_out)
 	depd		m096, 31, 32, ma064
-L(oop0)
+LDEF(Loop0)
 dnl	xmpyu		%fr8R, %fr4L, %fr22
 dnl	xmpyu		%fr8L, %fr4R, %fr23
 dnl	ldd		-0x78(%r30), p032a1
@@ -210,9 +210,9 @@ dnl	add,dc		%r0, %r0, m096
 dnl
 dnl	depd,z		m032, 31, 32, ma000
 dnl	extrd,u		m032, 31, 32, ma064
-dnl	addib,<>	-1, %r5, L(oop0)
+dnl	addib,<>	-1, %r5, L(Loop0)
 dnl	depd		m096, 31, 32, ma064
-L(0_out)
+LDEF(0_out)
 	ldo		8(up), up
 	xmpyu		%fr8R, %fr4L, %fr22
 	xmpyu		%fr8L, %fr4R, %fr23
@@ -237,7 +237,7 @@ L(0_out)
 	depd,z		m032, 31, 32, ma000
 	extrd,u		m032, 31, 32, ma064
 	depd		m096, 31, 32, ma064
-L(0_two_out)
+LDEF(0_two_out)
 	ldd		-0x78(%r30), p032a1
 	ldd		-0x70(%r30), p032a2
 	ldo		8(rp), rp
@@ -248,7 +248,7 @@ L(0_two_out)
 	add		ma000, s000, s000
 	add,dc		ma064, climb, climb
 	std		s000, -8(rp)
-L(0_one_out)
+LDEF(0_one_out)
 	add		p032a1, p032a2, m032
 	add,dc		%r0, %r0, m096
 	depd,z		m032, 31, 32, ma000
@@ -266,7 +266,7 @@ L(0_one_out)
 
 dnl 4-way unrolled code.
 
-L(BIG)
+LDEF(BIG)
 
 define(`p032a1',`%r1')	dnl
 define(`p032a2',`%r19')	dnl
@@ -317,7 +317,7 @@ ifdef(`HAVE_ABI_2_0w',
 ',`	extrd,u		n, 61, 30, n		C right shift 2, zero extend
 ')
 
-L(4_or_more)
+LDEF(4_or_more)
 	fldd		0(up), %fr4
 	fldd		8(up), %fr5
 	fldd		16(up), %fr6
@@ -366,7 +366,7 @@ L(4_or_more)
 	b		L(end1)
 	nop
 
-L(8_or_more)
+LDEF(8_or_more)
 	fstd		%fr28, -0x18(%r30)	C mid product to  -0x18..-0x11
 	fstd		%fr29, -0x10(%r30)	C mid product to  -0x10..-0x09
 	ldo		32(up), up
@@ -413,7 +413,7 @@ L(8_or_more)
 	fstd		%fr27, -0x50(%r30)	C mid product to  -0x50..-0x49
 	addib,=		-1, n, L(end2)
 	xmpyu		%fr8L, %fr7L, %fr27
-L(oop)
+LDEF(Loop)
 	add		p032a1, p032a2, m032
 	ldd		-0x80(%r30), p000a
 	add,dc		p096b1, p096b2, m096
@@ -516,10 +516,10 @@ L(oop)
 	fstd		%fr27, -0x50(%r30)	C mid product to  -0x50..-0x49
 	xmpyu		%fr8L, %fr7L, %fr27
 
-	addib,<>	-1, n, L(oop)
+	addib,<>	-1, n, L(Loop)
 	ldo		32(rp), rp
 
-L(end2)
+LDEF(end2)
 	add		p032a1, p032a2, m032
 	ldd		-0x80(%r30), p000a
 	add,dc		p096b1, p096b2, m096
@@ -576,7 +576,7 @@ L(end2)
 	ldd		-0x10(%r30), p224d2
 	ldo		32(rp), rp
 
-L(end1)
+LDEF(end1)
 	add		p032a1, p032a2, m032
 	ldd		-0x80(%r30), p000a
 	add,dc		p096b1, p096b2, m096
@@ -622,7 +622,7 @@ L(end1)
 	ldd		-0xd8(%r30), %r8
 	ldd		-0xe0(%r30), %r7
 	ldd		-0xe8(%r30), %r6
-L(done)
+LDEF(done)
 ifdef(`HAVE_ABI_2_0w',
 `	copy		climb, %r28
 ',`	extrd,u		climb, 63, 32, %r29
