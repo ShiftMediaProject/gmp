@@ -112,6 +112,7 @@ double speed_measure _PROTO ((speed_function_t fun, struct speed_params *s));
 
 /* Prototypes for speed measuring routines */
 
+double speed_back_to_back (struct speed_params *s);
 double speed_count_leading_zeros _PROTO ((struct speed_params *s));
 double speed_count_trailing_zeros _PROTO ((struct speed_params *s));
 double speed_find_a _PROTO ((struct speed_params *s));
@@ -136,6 +137,8 @@ double speed_mpn_and_n _PROTO ((struct speed_params *s));
 double speed_mpn_andn_n _PROTO ((struct speed_params *s));
 double speed_mpn_addmul_1 _PROTO ((struct speed_params *s));
 double speed_mpn_com_n _PROTO ((struct speed_params *s));
+double speed_mpn_copyd _PROTO ((struct speed_params *s));
+double speed_mpn_copyi _PROTO ((struct speed_params *s));
 double speed_mpn_dc_divrem_n _PROTO ((struct speed_params *s));
 double speed_mpn_dc_divrem_sb _PROTO ((struct speed_params *s));
 double speed_mpn_dc_divrem_sb_div _PROTO ((struct speed_params *s));
@@ -144,6 +147,7 @@ double speed_mpn_dc_tdiv_qr _PROTO ((struct speed_params *s));
 double speed_MPN_COPY _PROTO ((struct speed_params *s));
 double speed_MPN_COPY_DECR _PROTO ((struct speed_params *s));
 double speed_MPN_COPY_INCR _PROTO ((struct speed_params *s));
+double speed_mpn_divexact_1 _PROTO ((struct speed_params *s));
 double speed_mpn_divexact_by3 _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1 _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1f _PROTO ((struct speed_params *s));
@@ -471,6 +475,9 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 #define SPEED_ROUTINE_MPN_UNARY_1C(function) \
   SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->xp, s->size, s->r, 0))
+
+#define SPEED_ROUTINE_MPN_DIVEXACT_1(function)                            \
+  SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->xp, s->size, s->r))
 
 #define SPEED_ROUTINE_MPN_DIVREM_1(function) \
   SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, 0, s->xp, s->size, s->r))
@@ -1745,3 +1752,15 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 
 #endif
+
+
+#define SPEED_ROUTINE_MPN_BACK_TO(function)     \
+  {                                             \
+    unsigned  i;                                \
+    speed_starttime ();                         \
+    i = s->reps;                                \
+    do                                          \
+      function ();                              \
+    while (--i != 0);                           \
+    return speed_endtime ();                    \
+  }
