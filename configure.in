@@ -29,7 +29,8 @@ AH_TOP(/*GMP_COPYRIGHT*/)
 
 AC_REVISION($Revision$)
 AC_PREREQ(2.53)
-AC_INIT(gmp-impl.h)
+AC_INIT(GNU MP, GMP_VERSION, bug-gmp@gnu.org, gmp)
+AC_CONFIG_SRCDIR(gmp-impl.h)
 m4_pattern_forbid([^[ \t]*GMP_])
 m4_pattern_forbid([^[ \t]*MPFR_CONFIGS])
 m4_pattern_allow(GMP_LDFLAGS)
@@ -53,7 +54,7 @@ fi
 GMP_INIT(config.m4)
 
 AC_CANONICAL_HOST
-AM_INIT_AUTOMAKE(gmp, GMP_VERSION)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
 
