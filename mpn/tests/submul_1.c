@@ -161,7 +161,8 @@ main (argc, argv)
       mpn_random2 (s1, size);
       mpn_random2 (dy+1, size);
 #if defined (PRINT) || defined (XPRINT)
-      printf ("xlimb=%*lX\n", (int) (2 * sizeof(mp_limb_t)), xlimb);
+      printf ("xlimb=");
+      mpn_print (&xlimb, 1);
 #endif
 #ifdef PRINT
       mpn_print (dy+1, size);
