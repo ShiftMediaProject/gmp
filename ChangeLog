@@ -1,5 +1,8 @@
 2000-03-20  Linus Nordberg  <linus@swox.se>
 
+	* mpn/generic/rawrandom.c (mpn_rawrandom): Handle seed value of 0
+	correctly.
+
 	* configure.in: Fix detection of alpha flavour.  
 	Set compiler options for `sparcv8'.
 	* configure: Regenerate.
