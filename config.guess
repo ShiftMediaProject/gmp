@@ -76,7 +76,7 @@ exact_cpu=
 
 
 dummy=dummy-$$
-trap 'rm -f $dummy.c $dummy.o $dummy ${dummy}1.s ${dummy}2.c ; exit 1' 1 2 15
+trap 'rm -f $dummy.c $dummy.o $dummy.core $dummy ${dummy}1.s ${dummy}2.c ; exit 1' 1 2 15
 
 # Use $HOST_CC if defined. $CC may point to a cross-compiler
 if test x"$CC_FOR_BUILD" = x; then
@@ -312,8 +312,8 @@ EOF
 
 
 rs6000-*-* | powerpc*-*-*)
-  # Try to read the PVR.  mfpvr is a protected instruction, MacOS and AIX
-  # don't allow it in user mode, but the Linux kernel does.
+  # Try to read the PVR.  mfpvr is a protected instruction, NetBSD, MacOS
+  # and AIX don't allow it in user mode, but the Linux kernel does.
   #
   # Using explicit bytes for mfpvr avoids worrying about assembler syntax
   # and underscores.  "char"s are used instead of "int"s to avoid worrying
@@ -369,7 +369,7 @@ EOF
       exact_cpu=$x
     fi
   fi
-  rm -f $dummy.c $dummy
+  rm -f $dummy.c $dummy $dummy.core
 
   # Grep the linux kernel /proc/cpuinfo pseudo-file.
   # Anything unrecognised is ignored, since of course we mustn't spit out
