@@ -20,221 +20,165 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h> /* for NULL */
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
-void
-mpz_powm_ui (mpz_ptr res, mpz_srcptr base, unsigned long int exp, mpz_srcptr mod)
+/* Compute t = a mod m, a is defined by (ap,an), m is defined by (mp,mn), and
+   t is defined by (tp,mn).  */
+static void
+reduce (mp_ptr tp, mp_srcptr ap, mp_size_t an, mp_srcptr mp, mp_size_t mn)
 {
-  mp_ptr rp, mp, bp;
-  mp_size_t msize, bsize, rsize;
-  mp_size_t size;
-  int mod_shift_cnt;
-  int negative_result;
-  mp_limb_t *free_me = NULL;
-  size_t free_me_size;
+  mp_ptr qp;
   TMP_DECL (marker);
 
-  msize = ABS (mod->_mp_size);
-  size = 2 * msize;
+  TMP_MARK (marker);
+  qp = TMP_ALLOC_LIMBS (an - mn + 1);
 
-  rp = res->_mp_d;
+  mpn_tdiv_qr (qp, tp, 0L, ap, an, mp, mn);
 
-  if (msize == 0)
+  TMP_FREE (marker);
+}
+
+void
+mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
+{
+  mp_ptr xp, tp, qp, mp, bp;
+  mp_size_t xn, tn, mn, bn;
+  int m_zero_cnt;
+  int c;
+  mp_limb_t e;
+  TMP_DECL (marker);
+
+  mp = PTR(m);
+  mn = ABSIZ(m);
+  if (mn == 0)
     DIVIDE_BY_ZERO;
 
-  if (exp == 0)
+  if (el == 0)
     {
       /* Exponent is zero, result is 1 mod MOD, i.e., 1 or 0
 	 depending on if MOD equals 1.  */
-      res->_mp_size = (msize == 1 && (mod->_mp_d)[0] == 1) ? 0 : 1;
-      rp[0] = 1;
+      SIZ(r) = (mn == 1 && mp[0] == 1) ? 0 : 1;
+      PTR(r)[0] = 1;
       return;
     }
 
   TMP_MARK (marker);
 
-  /* Normalize MOD (i.e. make its most significant bit set) as required by
-     mpn_divmod.  This will make the intermediate values in the calculation
-     slightly larger, but the correct result is obtained after a final
-     reduction using the original MOD value.  */
-
-  mp = (mp_ptr) TMP_ALLOC (msize * BYTES_PER_MP_LIMB);
-  count_leading_zeros (mod_shift_cnt, mod->_mp_d[msize - 1]);
-  if (mod_shift_cnt != 0)
-    mpn_lshift (mp, mod->_mp_d, msize, mod_shift_cnt);
-  else
-    MPN_COPY (mp, mod->_mp_d, msize);
-
-  bsize = ABS (base->_mp_size);
-  if (bsize > msize)
+  /* Normalize m (i.e. make its most significant bit set) as required by
+     division functions below.  */
+  count_leading_zeros (m_zero_cnt, mp[mn - 1]);
+  if (m_zero_cnt != 0)
     {
-      /* The base is larger than the module.  Reduce it.  */
-
-      /* Allocate (BSIZE + 1) with space for remainder and quotient.
-	 (The quotient is (bsize - msize + 1) limbs.)  */
-      bp = (mp_ptr) TMP_ALLOC ((bsize + 1) * BYTES_PER_MP_LIMB);
-      MPN_COPY (bp, base->_mp_d, bsize);
-      /* We don't care about the quotient, store it above the remainder,
-	 at BP + MSIZE.  */
-      mpn_divmod (bp + msize, bp, bsize, mp, msize);
-      bsize = msize;
-      /* Canonicalize the base, since we are going to multiply with it
-	 quite a few times.  */
-      MPN_NORMALIZE (bp, bsize);
+      mp_ptr new_mp = TMP_ALLOC_LIMBS (mn);
+      mpn_lshift (new_mp, mp, mn, m_zero_cnt);
+      mp = new_mp;
     }
-  else
-    bp = base->_mp_d;
 
-  if (bsize == 0)
+  bn = ABSIZ(b);
+  bp = PTR(b);
+  if (bn > mn)
     {
-      res->_mp_size = 0;
+      /* Reduce possibly huge base.  Use a function call to reduce, since we
+	 don't want the quotient allocation to live until function return.  */
+      mp_ptr new_bp = TMP_ALLOC_LIMBS (mn);
+      reduce (new_bp, bp, bn, mp, mn);
+      bp = new_bp;
+      bn = mn;
+      /* Canonicalize the base, since we are potentially going to multiply with
+	 it quite a few times.  */
+      MPN_NORMALIZE (bp, bn);
+    }
+
+  if (bn == 0)
+    {
+      SIZ(r) = 0;
       TMP_FREE (marker);
       return;
     }
 
-  if (res->_mp_alloc < size)
-    {
-      /* We have to allocate more space for RES.  If any of the input
-	 parameters are identical to RES, defer deallocation of the old
-	 space.  */
+  tp = TMP_ALLOC_LIMBS (2 * mn + 1);
+  xp = TMP_ALLOC_LIMBS (mn);
 
-      if (rp == mp || rp == bp)
+  qp = TMP_ALLOC_LIMBS (mn + 1);
+
+  MPN_COPY (xp, bp, bn);
+  xn = bn;
+
+  e = el;
+  count_leading_zeros (c, e);
+  e = (e << c) << 1;		/* shift the exp bits to the left, lose msb */
+  c = BITS_PER_MP_LIMB - 1 - c;
+
+  /* Main loop. */
+
+  while (c != 0)
+    {
+      mpn_sqr_n (tp, xp, xn);
+      tn = 2 * xn; tn -= tp[tn - 1] == 0;
+      if (tn < mn)
 	{
-	  free_me = rp;
-	  free_me_size = res->_mp_alloc;
+	  MPN_COPY (xp, tp, tn);
+	  xn = tn;
 	}
       else
-	(*__gmp_free_func) (rp, res->_mp_alloc * BYTES_PER_MP_LIMB);
-
-      rp = (mp_ptr) (*__gmp_allocate_func) (size * BYTES_PER_MP_LIMB);
-      res->_mp_alloc = size;
-      res->_mp_d = rp;
-    }
-  else
-    {
-      /* Make BASE, EXP and MOD not overlap with RES.  */
-      if (rp == bp)
 	{
-	  /* RES and BASE are identical.  Allocate temp. space for BASE.  */
-	  bp = (mp_ptr) TMP_ALLOC (bsize * BYTES_PER_MP_LIMB);
-	  MPN_COPY (bp, rp, bsize);
+	  mpn_tdiv_qr (qp, xp, 0L, tp, tn, mp, mn);
+	  xn = mn;
 	}
-      if (rp == mp)
+
+      if ((mp_limb_signed_t) e < 0)
 	{
-	  /* RES and MOD are identical.  Allocate temporary space for MOD.  */
-	  mp = (mp_ptr) TMP_ALLOC (msize * BYTES_PER_MP_LIMB);
-	  MPN_COPY (mp, rp, msize);
+	  mpn_mul (tp, xp, xn, bp, bn);
+	  tn = xn + bn; tn -= tp[tn - 1] == 0;
+	  if (tn < mn)
+	    {
+	      MPN_COPY (xp, tp, tn);
+	      xn = tn;
+	    }
+	  else
+	    {
+	      mpn_tdiv_qr (qp, xp, 0L, tp, tn, mp, mn);
+	      xn = mn;
+	    }
 	}
+      e <<= 1;
+      c--;
     }
 
-  MPN_COPY (rp, bp, bsize);
-  rsize = bsize;
-
-  {
-    mp_ptr xp = (mp_ptr) TMP_ALLOC (2 * (msize + 1) * BYTES_PER_MP_LIMB);
-    int c;
-    mp_limb_t e;
-    mp_limb_t carry_limb;
-
-    negative_result = (exp & 1) && base->_mp_size < 0;
-
-    e = exp;
-    count_leading_zeros (c, e);
-    e = (e << c) << 1;		/* shift the exp bits to the left, lose msb */
-    c = BITS_PER_MP_LIMB - 1 - c;
-
-    /* Main loop.
-
-       Make the result be pointed to alternately by XP and RP.  This
-       helps us avoid block copying, which would otherwise be necessary
-       with the overlap restrictions of mpn_divmod.  With 50% probability
-       the result after this loop will be in the area originally pointed
-       by RP (==RES->_mp_d), and with 50% probability in the area originally
-       pointed to by XP.  */
-
-    while (c != 0)
-      {
-	mp_ptr tp;
-	mp_size_t xsize;
-
-	mpn_sqr_n (xp, rp, rsize);
-	xsize = 2 * rsize;
-	xsize -= xp[xsize - 1] == 0;
-	if (xsize > msize)
-	  {
-	    mpn_divmod (xp + msize, xp, xsize, mp, msize);
-	    xsize = msize;
-	  }
-
-	tp = rp; rp = xp; xp = tp;
-	rsize = xsize;
-
-	if ((mp_limb_signed_t) e < 0)
-	  {
-	    mpn_mul (xp, rp, rsize, bp, bsize);
-	    xsize = rsize + bsize;
-	    xsize -= xp[xsize - 1] == 0;
-	    if (xsize > msize)
-	      {
-		mpn_divmod (xp + msize, xp, xsize, mp, msize);
-		xsize = msize;
-	      }
-
-	    tp = rp; rp = xp; xp = tp;
-	    rsize = xsize;
-	  }
-	e <<= 1;
-	c--;
-      }
-
-    /* We shifted MOD, the modulo reduction argument, left MOD_SHIFT_CNT
-       steps.  Adjust the result by reducing it with the original MOD.
-
-       Also make sure the result is put in RES->_mp_d (where it already
-       might be, see above).  */
-
-    if (mod_shift_cnt != 0)
-      {
-	carry_limb = mpn_lshift (res->_mp_d, rp, rsize, mod_shift_cnt);
-	rp = res->_mp_d;
-	if (carry_limb != 0)
-	  {
-	    rp[rsize] = carry_limb;
-	    rsize++;
-	  }
-      }
-    else
-      {
-	MPN_COPY (res->_mp_d, rp, rsize);
-	rp = res->_mp_d;
-      }
-
-    if (rsize >= msize)
-      {
-	mpn_divmod (rp + msize, rp, rsize, mp, msize);
-	rsize = msize;
-      }
-
-    /* Remove any leading zero words from the result.  */
-    if (mod_shift_cnt != 0)
-      mpn_rshift (rp, rp, rsize, mod_shift_cnt);
-    MPN_NORMALIZE (rp, rsize);
-  }
-
-  if (negative_result && rsize != 0)
+  /* We shifted m left m_zero_cnt steps.  Adjust the result by reducing
+     it with the original MOD.  */
+  if (m_zero_cnt != 0)
     {
-      if (mod_shift_cnt != 0)
-	mpn_rshift (mp, mp, msize, mod_shift_cnt);
-      mpn_sub (rp, mp, msize, rp, rsize);
-      rsize = msize;
-      MPN_NORMALIZE (rp, rsize);
+      mp_limb_t cy;
+      cy = mpn_lshift (tp, xp, xn, m_zero_cnt);
+      tp[xn] = cy; xn += cy != 0;
+	
+      if (xn < mn)
+	{
+	  MPN_COPY (xp, tp, xn);
+	}
+      else
+	{
+	  mpn_tdiv_qr (qp, xp, 0L, tp, xn, mp, mn);
+	  xn = mn;
+	}
+      mpn_rshift (xp, xp, xn, m_zero_cnt);
     }
-  res->_mp_size = rsize;
+  MPN_NORMALIZE (xp, xn);
 
-  if (free_me != NULL)
-    (*__gmp_free_func) (free_me, free_me_size * BYTES_PER_MP_LIMB);
+  if ((el & 1) != 0 && SIZ(b) < 0 && xn != 0)
+    {
+      mp = PTR(m);			/* want original, unnormalized m */
+      mpn_sub (xp, mp, mn, xp, xn);
+      xn = mn;
+      MPN_NORMALIZE (xp, xn);
+    }
+  MPZ_REALLOC (r, xn);
+  SIZ (r) = xn;
+  MPN_COPY (PTR(r), xp, xn);
+
   TMP_FREE (marker);
 }
