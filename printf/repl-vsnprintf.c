@@ -42,7 +42,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 
 #if HAVE_INTTYPES_H
-# include <inttypes.h>
+# include <inttypes.h> /* for intmax_t */
 #else
 # if HAVE_STDINT_H
 #  include <stdint.h>
