@@ -1964,14 +1964,7 @@ esac
 #
 AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
 
-# FIXME: Would have done this with an AM_CONDITIONAL, but automake 1.5
-# doesn't like that under libgmp_la_DEPENDENCIES.
 GMP_FUNC_VSNPRINTF
-if test "$gmp_cv_func_vsnprintf" = no; then
-  AC_SUBST(REPL_VSNPRINTF_PRINTF_OBJ, 'printf/repl-vsnprintf$U.lo')
-  AC_SUBST(REPL_VSNPRINTF_OBJ,        'repl-vsnprintf$U.lo')
-fi
-
 GMP_FUNC_SSCANF_WRITABLE_INPUT
 
 
