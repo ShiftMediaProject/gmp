@@ -1,3 +1,58 @@
+2000-12-06  Kevin Ryde  <kevin@swox.se>
+
+	* tune/{divrem,mod}_1_{div,inv}.c,gcdext_double.c: New files for
+	measuring.
+	* tune/Makefile.am (libspeed_la_SOURCES): Add them.
+	* tune/speed.[ch],common.c: Add measuring of them.
+	(mpn_preinv_mod_1, mpz_jacobi, mpz_powm_ui): Add measuring.
+
+	* speed.c (getopt_long): Don't use this, just plain getopt.
+	* configure.in (getopt_long): Remove test.
+
+	* gmp-impl.h (MPN_{KARA,TOOM3}_MUL_N_{TSIZE,MINSIZE}): New macros, and
+	assume toom3 square tsize was meant to be the same as the mul (both
+	are overestimates).
+	* tune/tuneup.c, mpn/generic/{mul,mul_n}.c: Use them.
+	* mpn/generic/mul_n.c (mpn_toom3_sqr_n): Fix an ASSERT to use
+	TOOM3_SQR_THRESHOLD not TOOM3_MUL_THRESHOLD.
+	* tune/speed.h (SPEED_ROUTINE_MPN_{MUL,SQR}_N_TSPACE etc): Use minsize.
+	
+	* mpn/generic/divrem_1.c: Partial rewrite, merge fractional part
+	calculation, skip a divide step in more cases, introduce
+	DIVREM_1_{NORM,UNNORM}_THRESHOLD.
+	* mpn/generic/mod_1.c: Partial rewrite, skip a divide step in more
+	cases, introduce MOD_1_{NORM,UNNORM}_THRESHOLD.
+	* longlong.h (UDIV_PREINV_ALWAYS): New define, set for alpha and ia64.
+	* tune/tuneup.c ({DIVREM,MOD}_1_{NORM,UNNORM}_THRESHOLD): Tune these.
+	* tune/Makefile.am (TUNE_MPN_SRCS): Add divrem_1.c and mod_1.c.
+
+	* gmp-impl.h (UDIV_NORM_PREINV_TIME): Renamed from UDIV_PREINV_TIME.
+	* mpn/generic/{perfsqr,sb_divrem_mn}.c, mpn/x86/*/gmp-mparam.h: Ditto.
+	* gmp-impl.h (UDIV_UNNORM_PREINV_TIME): New define.
+
+	* configure.in (AC_C_INLINE, HAVE_INLINE): New test and define.
+	* gmp-impl.h (inline): Remove, use config.h.
+	(mpn_zero_p): Use HAVE_INLINE.
+
+	* acinclude.m4 (GMP_PROG_AR, GMP_PROG_NM): Don't add flags to a user
+	selected $AR or $NM.
+
+	* tune/tuneup.c (all): Print how long the tuning took.
+
+	* configure.in (AM_C_PROTOTYPES): Use this, not GMP_ANSI2KNR.
+	* acinclude.m4 (GMP_ANSI2KNR): Remove.
+
+	* Makefile.am (gmp.h, mp.h): In DISTCLEANFILES not CLEANFILES.
+
+	* gmp-h.in (mpn_divmod, mpn_divmod_1, mpn_divexact_by3): Cast some
+	zeros, for the benefit of K&R if long!=int.
+
+	* mpn/lisp/gmpasm-mode.el (gmpasm-comment-start-regexp): Add "*" for
+	the benefit of cray.
+
+	* compat.c (mpn_divexact_by3, mpn_divmod_1): Return types should be
+	mp_limb_t, not int, and need an actual "return".
+
 2000-12-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc32/v8/supersparc/gmp-mparam.h: Retune.
