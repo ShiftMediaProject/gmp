@@ -1373,25 +1373,26 @@ mpf_size (mpf_srcptr f)
 /* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
    negative.  size==0 is allowed.  On random data usually only one limb will
    need to be examined to get a result, so it's worth having it inline.  */
-#define __GMPN_CMP(result, xp, yp, size)        \
-  do {                                          \
-    mp_size_t  __i;                             \
-    mp_limb_t  __x, __y;                        \
-                                                \
-    /* ASSERT ((size) >= 0); */                 \
-                                                \
-    (result) = 0;                               \
-    __i = (size);                               \
-    while (--__i >= 0)                          \
-      {                                         \
-        __x = (xp)[__i];                        \
-        __y = (yp)[__i];                        \
-        if (__x != __y)                         \
-          {                                     \
-            (result) = (__x > __y ? 1 : -1);    \
-            break;                              \
-          }                                     \
-      }                                         \
+#define __GMPN_CMP(result, xp, yp, size)                        \
+  do {                                                          \
+    mp_size_t  __i;                                             \
+    mp_limb_t  __x, __y;                                        \
+                                                                \
+    /* ASSERT ((size) >= 0); */                                 \
+                                                                \
+    (result) = 0;                                               \
+    __i = (size);                                               \
+    while (--__i >= 0)                                          \
+      {                                                         \
+        __x = (xp)[__i];                                        \
+        __y = (yp)[__i];                                        \
+        if (__x != __y)                                         \
+          {                                                     \
+            /* Cannot use __x - __y, may overflow an "int" */   \
+            (result) = (__x > __y ? 1 : -1);                    \
+            break;                                              \
+          }                                                     \
+      }                                                         \
   } while (0)
 
 #if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpn_cmp
