@@ -101,6 +101,7 @@ typedef double (*speed_function_t) _PROTO ((struct speed_params *s));
 double speed_measure _PROTO ((double (*fun)_PROTO ((struct speed_params *s)),
                               struct speed_params *s));
 double speed_memcpy _PROTO ((struct speed_params *s));
+double speed_modlimb_invert _PROTO ((struct speed_params *s));
 double speed_mpn_add_n _PROTO ((struct speed_params *s));
 double speed_mpn_add_n_self _PROTO ((struct speed_params *s));
 double speed_mpn_add_n_inplace _PROTO ((struct speed_params *s));
@@ -119,6 +120,7 @@ double speed_mpn_divrem_1 _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1f _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1c _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1cf _PROTO ((struct speed_params *s));
+double speed_mpn_divrem_2 _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext _PROTO ((struct speed_params *s));
@@ -164,12 +166,13 @@ double speed_noop _PROTO ((struct speed_params *s));
 double speed_noop_wxs _PROTO ((struct speed_params *s));
 double speed_noop_wxys _PROTO ((struct speed_params *s));
 
-mp_limb_t speed_cyclecounter_1 _PROTO ((void));
-void speed_cyclecounter_2 _PROTO ((mp_limb_t p[2]));
+/* low 32-bits in p[0], high 32-bits in p[1] */
+void speed_cyclecounter_2 _PROTO ((unsigned long p[2]));
 
 void pentium_wbinvd _PROTO ((void));
 
 void noop _PROTO ((void));
+void noop_1 _PROTO ((mp_limb_t n));
 void noop_wxs _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size));
 void noop_wxys _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                         mp_size_t size));
@@ -458,49 +461,54 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
    SPEED_ROUTINE_MPN_MOD_CALL ((*function) (s->xp, s->size, s->r, 0))
 
 
-#define SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(call)                          \
-  {                                                                     \
-    unsigned   i;                                                       \
-    mp_ptr     a, q, r;                                                 \
-                                                                        \
-    SPEED_RESTRICT_COND (s->size >= 1);                                 \
-                                                                        \
-    /* normalization by a naughty alteration to the given data */       \
-    s->yp[s->size-1] |= 0x80000000;                                     \
-    s->xp[s->size-1] = s->yp[s->size-1]-1;                              \
-                                                                        \
-    TMP_MARK (marker);                                                  \
-    a = SPEED_TMP_ALLOC (2*s->size, s->align_wp);                       \
-    q = SPEED_TMP_ALLOC (s->size+1, s->align_wp);                       \
-    r = SPEED_TMP_ALLOC (s->size, s->align_wp2);                        \
-                                                                        \
-    MPN_COPY (a, s->xp, s->size);                                       \
-    MPN_COPY (a+s->size, s->xp, s->size);                               \
-                                                                        \
-    SPEED_OPERAND_SRC (s, a, 2*s->size);                                \
-    SPEED_OPERAND_SRC (s, s->yp, s->size);                              \
-    SPEED_OPERAND_DST (s, q, s->size+1);                                \
-    SPEED_OPERAND_DST (s, r, s->size);                                  \
-    speed_cache_fill (s);                                               \
-                                                                        \
-    speed_starttime ();                                                 \
-    i = s->reps;                                                        \
-    do                                                                  \
-      call;                                                             \
-    while (--i != 0);                                                   \
-    return speed_endtime ();                                            \
+/* A division of 2*s->size by s->size limbs */
+
+#define SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(call)          \
+  {                                                     \
+    unsigned   i;                                       \
+    mp_ptr     a, d, q, r;                              \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 1);                 \
+                                                        \
+    TMP_MARK (marker);                                  \
+    a = SPEED_TMP_ALLOC (2*s->size, s->align_xp);       \
+    d = SPEED_TMP_ALLOC (s->size, s->align_yp);         \
+    q = SPEED_TMP_ALLOC (s->size+1, s->align_wp);       \
+    r = SPEED_TMP_ALLOC (s->size, s->align_wp2);        \
+                                                        \
+    MPN_COPY (a, s->xp, s->size);                       \
+    MPN_COPY (a+s->size, s->xp, s->size);               \
+                                                        \
+    MPN_COPY (d, s->yp, s->size);                       \
+                                                        \
+    /* normalize the data */                            \
+    d[s->size-1] |= MP_LIMB_T_HIGHBIT;                  \
+    a[2*s->size-1] = d[s->size-1] - 1;                  \
+                                                        \
+    SPEED_OPERAND_SRC (s, a, 2*s->size);                \
+    SPEED_OPERAND_SRC (s, d, s->size);                  \
+    SPEED_OPERAND_DST (s, q, s->size+1);                \
+    SPEED_OPERAND_DST (s, r, s->size);                  \
+    speed_cache_fill (s);                               \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      call;                                             \
+    while (--i != 0);                                   \
+    return speed_endtime ();                            \
   }  
 
 #define SPEED_ROUTINE_MPN_BZ_DIVREM_N(function) \
-  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL((*function) (q, a, s->yp, s->size))
+  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL((*function) (q, a, d, s->size))
 
 #define SPEED_ROUTINE_MPN_BZ_DIVREM_SB(function)        \
   SPEED_ROUTINE_MPN_BZ_DIVREM_CALL                      \
-    ((*function) (q, a, 2*s->size, s->yp, s->size))
+    ((*function) (q, a, 2*s->size, d, s->size))
 
 #define SPEED_ROUTINE_MPN_BZ_TDIV_QR(function)                  \
   SPEED_ROUTINE_MPN_BZ_DIVREM_CALL                              \
-    ((*function) (q, r, 0, a, 2*s->size, s->yp, s->size))
+    ((*function) (q, r, 0, a, 2*s->size, d, s->size))
 
 
 #define SPEED_ROUTINE_MPN_POPCOUNT(function)    \
@@ -538,6 +546,8 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
     return speed_endtime ();                    \
   }  
 
+
+/* For mpz_fib_ui, mpz_fac_ui, etc */
 
 #define SPEED_ROUTINE_MPZ_UI(function)  \
   {                                     \
@@ -599,39 +609,59 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
   }  
 
 
-/* Currently testing overlap cases only */
-#define SPEED_ROUTINE_MPN_ADDSUB_N(function)                    \
-  {                                                             \
-    mp_ptr    wp1, wp2;                                         \
-    unsigned  i;                                                \
-    double    t;                                                \
-    TMP_DECL (marker);                                          \
-                                                                \
-    SPEED_RESTRICT_COND (s->size >= 0);                         \
-                                                                \
-    TMP_MARK (marker);                                          \
-    wp1 = TMP_ALLOC_LIMBS_ALIGNED (s->size, CACHE_LINE_SIZE);   \
-    wp2 = TMP_ALLOC_LIMBS_ALIGNED (s->size, CACHE_LINE_SIZE);   \
-                                                                \
-    MPN_COPY (wp1, s->xp, s->size);                             \
-    MPN_COPY (wp2, s->yp, s->size);                             \
-                                                                \
-    SPEED_OPERAND_SRC (s, s->xp, s->size);                      \
-    SPEED_OPERAND_SRC (s, s->yp, s->size);                      \
-    SPEED_OPERAND_DST (s, wp1, s->size);                        \
-    SPEED_OPERAND_DST (s, wp2, s->size);                        \
-    speed_cache_fill (s);                                       \
-                                                                \
-    speed_starttime ();                                         \
-    i = s->reps;                                                \
-    do                                                          \
-      function (wp1, wp2, wp2, wp1, s->size); /*reverse*/       \
-    while (--i != 0);                                           \
-    t = speed_endtime ();                                       \
-                                                                \
-    TMP_FREE (marker);                                          \
-    return t;                                                   \
+#define SPEED_ROUTINE_MPN_ADDSUB_CALL(call)                               \
+  {                                                                       \
+    mp_ptr    wp, wp2, xp, yp;                                            \
+    unsigned  i;                                                          \
+    double    t;                                                          \
+    TMP_DECL (marker);                                                    \
+                                                                          \
+    SPEED_RESTRICT_COND (s->size >= 0);                                   \
+                                                                          \
+    TMP_MARK (marker);                                                    \
+    wp  = SPEED_TMP_ALLOC (s->size, s->align_wp);                         \
+    wp2 = SPEED_TMP_ALLOC (s->size, s->align_wp2);                        \
+    xp = s->xp;                                                           \
+    yp = s->yp;                                                           \
+                                                                          \
+    switch (s->r) {                                                       \
+    case 0:                           break;                              \
+    case 1: xp =    wp;               break;                              \
+    case 2:              yp =    wp2; break;                              \
+    case 3: xp =    wp;  yp =    wp2; break;                              \
+    case 4: xp =    wp2; yp =    wp;  break;                              \
+    default:                                                              \
+      fprintf (stderr, "Unrecognised r=%ld in addsub measuring\n", s->r); \
+      abort ();                                                           \
+    }                                                                     \
+    if (xp != s->xp) MPN_COPY (xp, s->xp, s->size);                       \
+    if (yp != s->yp) MPN_COPY (yp, s->yp, s->size);                       \
+                                                                          \
+    SPEED_OPERAND_SRC (s, xp, s->size);                                   \
+    SPEED_OPERAND_SRC (s, yp, s->size);                                   \
+    SPEED_OPERAND_DST (s, wp, s->size);                                   \
+    SPEED_OPERAND_DST (s, wp2, s->size);                                  \
+    speed_cache_fill (s);                                                 \
+                                                                          \
+    speed_starttime ();                                                   \
+    i = s->reps;                                                          \
+    do                                                                    \
+      call;                                                               \
+    while (--i != 0);                                                     \
+    t = speed_endtime ();                                                 \
+                                                                          \
+    TMP_FREE (marker);                                                    \
+    return t;                                                             \
   }
+
+#define SPEED_ROUTINE_MPN_ADDSUB_N(function)                    \
+  SPEED_ROUTINE_MPN_ADDSUB_CALL                                 \
+    (function (wp, wp2, xp, yp, s->size));
+
+#define SPEED_ROUTINE_MPN_ADDSUB_NC(function)                   \
+  SPEED_ROUTINE_MPN_ADDSUB_CALL                                 \
+    (function (wp, wp2, xp, yp, s->size, 0));
+
 
 /* function (wp1, wp2, wp1, wp2, s->size); */ /*full*/          
 
@@ -808,5 +838,71 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
   SPEED_ROUTINE_MPN_GCD_CALL                                            \
     (4, { mp_size_t  wp2size;                                           \
           function (wp, wp2, &wp2size, xtmp, s->size, ytmp, s->size); })
+
+
+#define SPEED_ROUTINE_MPN_DIVREM_2(function)            \
+  {                                                     \
+    mp_ptr    xp, wp;                                   \
+    unsigned  i;                                        \
+    double    t;                                        \
+    TMP_DECL (marker);                                  \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 1);                 \
+                                                        \
+    TMP_MARK (marker);                                  \
+    xp = SPEED_TMP_ALLOC (s->size, s->align_xp);        \
+    wp = SPEED_TMP_ALLOC (s->size, s->align_wp);        \
+                                                        \
+    /* source is overwritten */                         \
+    MPN_COPY (xp, s->xp, s->size);                      \
+                                                        \
+    SPEED_OPERAND_SRC (s, xp, s->size);                 \
+    SPEED_OPERAND_DST (s, wp, s->size);                 \
+    speed_cache_fill (s);                               \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      function (wp, 0, xp, s->size, s->yp);             \
+    while (--i != 0);                                   \
+    t = speed_endtime ();                               \
+                                                        \
+    TMP_FREE (marker);                                  \
+    return t;                                           \
+  }  
+
+
+#define SPEED_ROUTINE_MODLIMB_INVERT(function)          \
+  {                                                     \
+    unsigned   i, j;                                    \
+    mp_ptr     xp;                                      \
+    mp_limb_t  n = 1;                                   \
+    double     t;                                       \
+                                                        \
+    xp = s->xp - 1;                                     \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      {                                                 \
+        j = SPEED_DATA_SIZE;                            \
+        do                                              \
+          {                                             \
+            /* randomized but successively dependent */ \
+            n += (xp[j] << 1);                          \
+                                                        \
+            function (n, n);                            \
+          }                                             \
+        while (--j != 0);                               \
+      }                                                 \
+    while (--i != 0);                                   \
+    t = speed_endtime ();                               \
+                                                        \
+    /* make sure the compiler won't optimize away n */  \
+    noop_1 (n);                                         \
+                                                        \
+    s->time_divisor = SPEED_DATA_SIZE;                  \
+    return t;                                           \
+  }  
 
 #endif
