@@ -409,6 +409,16 @@ int _mpz_cmp_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_ATTRIBUTE_PURE;
 int mpz_cmpabs _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 int mpz_cmpabs_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_ATTRIBUTE_PURE;
 void mpz_com _PROTO ((mpz_ptr, mpz_srcptr));
+
+#define mpz_congruent_p __gmpz_congruent_p
+int     mpz_congruent_p _PROTO ((mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)) __GMP_ATTRIBUTE_PURE;
+
+#define mpz_congruent_2exp_p __gmpz_congruent_2exp_p
+int     mpz_congruent_2exp_p _PROTO ((mpz_srcptr a, mpz_srcptr c, unsigned long d)) __GMP_ATTRIBUTE_PURE;
+
+#define mpz_congruent_ui_p __gmpz_congruent_ui_p
+int     mpz_congruent_ui_p _PROTO ((mpz_srcptr a, unsigned long c, unsigned long d)) __GMP_ATTRIBUTE_PURE;
+
 void mpz_divexact _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 
 #define mpz_divisible_p __gmpz_divisible_p
