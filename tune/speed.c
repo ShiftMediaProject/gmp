@@ -181,11 +181,16 @@ const struct routine_t {
   { "mpn_kara_sqr_n",    speed_mpn_kara_sqr_n       },
   { "mpn_toom3_mul_n",   speed_mpn_toom3_mul_n      },
   { "mpn_toom3_sqr_n",   speed_mpn_toom3_sqr_n      },
-  { "mpn_mul_fft_full",     speed_mpn_mul_fft_full     },
-  { "mpn_mul_fft_full_sqr", speed_mpn_mul_fft_full_sqr },
+  { "mpn_mul_fft_full",      speed_mpn_mul_fft_full      },
+  { "mpn_mul_fft_full_sqr",  speed_mpn_mul_fft_full_sqr  },
 
   { "mpn_mul_fft",       speed_mpn_mul_fft,     FLAG_R_OPTIONAL },
   { "mpn_mul_fft_sqr",   speed_mpn_mul_fft_sqr, FLAG_R_OPTIONAL },
+
+  { "mpn_toom3_mul_n_mpn",   speed_mpn_toom3_mul_n_mpn   },
+  { "mpn_toom3_mul_n_open",  speed_mpn_toom3_mul_n_open  },
+  { "mpn_toom3_sqr_n_mpn",   speed_mpn_toom3_sqr_n_mpn   },
+  { "mpn_toom3_sqr_n_open",  speed_mpn_toom3_sqr_n_open  },
 
   { "mpz_add",           speed_mpz_add              },
   { "mpz_bin_uiui",      speed_mpz_bin_uiui, FLAG_R_OPTIONAL },
@@ -510,7 +515,7 @@ fclose_written (FILE *fp, const char *filename)
 
 
 void
-run_gnuplot (void)
+run_gnuplot (int argc, char *argv[])
 {
   char  *plot_filename;
   char  *data_filename;
@@ -526,6 +531,13 @@ run_gnuplot (void)
   sprintf (data_filename, "%s.data",    option_gnuplot_basename);
 
   fp = fopen_for_write (plot_filename);
+
+  fprintf (fp, "# Generated with:\n");
+  fprintf (fp, "#");
+  for (i = 0; i < argc; i++)
+    fprintf (fp, " %s", argv[i]);
+  fprintf (fp, "\n");
+  fprintf (fp, "\n");
 
   /* Putting the key at the top left is usually good, and you can change it
      interactively if it's not. */
@@ -951,7 +963,7 @@ main (int argc, char *argv[])
 
   if (option_gnuplot)
     {
-      run_gnuplot ();
+      run_gnuplot (argc, argv);
     }
   else
     {
