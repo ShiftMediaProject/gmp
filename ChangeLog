@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-30  Gerardo Ballabio  <ballabio@sissa.it>
+
+	* tests/cxx/t-constr.cc, tests/cxx/t-expr.cc: New files.
+	* tests/cxx/Makefile.am (check_PROGRAMS): Add them.
+
 2001-11-30  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/s370: Rename to s390.
