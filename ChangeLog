@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-10-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/cray/ieee/addmul_1.c: Handle overlap as in mul_1.c.
+	* mpn/cray/ieee/submul_1.c: Likewise.
+
 2002-10-19  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (sparcv9 etc -*-*bsd*): Add support for NetBSD and
