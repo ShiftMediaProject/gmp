@@ -1,3 +1,12 @@
+2001-09-14  Kevin Ryde  <kevin@swox.se>
+	
+	* ChangeLog: Merge in tests/rand/ChangeLog.
+	* tests/rand/ChangeLog: Remove file.
+
+	* printf/doprnt.c: Fix handling of a plain format after a GMP one; no
+	need to protect against negative precision internally.
+	* tests/printf/t-printf.c (check_misc): More checks.
+
 2001-09-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/ieee/invert_limb.c: Add a PROLOGUE in a comment to have
