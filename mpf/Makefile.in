@@ -98,6 +98,7 @@ gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
+mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
 # Copyright 1996, 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
 #

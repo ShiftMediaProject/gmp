@@ -98,6 +98,7 @@ gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
+mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
 # Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001 Free Software
 # Foundation, Inc.
@@ -174,7 +175,7 @@ lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
 EXTRA_DIST = doc macos \
   configfsf.guess configfsf.sub .gdbinit gmp-h.in gmp-impl.h mp-h.in \
-  INSTALL.autoconf longlong.h stack-alloc.h urandom.h
+  INSTALL.autoconf longlong.h stack-alloc.h
 
 
 DISTCLEANFILES = $(nodist_include_HEADERS) asm-syntax.h config.m4 \
@@ -208,13 +209,16 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/addmul_ui$U.lo mpz/and$U.lo mpz/array_init$U.lo mpz/bin_ui$U.lo	\
   mpz/bin_uiui$U.lo mpz/cdiv_q$U.lo mpz/cdiv_q_ui$U.lo			\
   mpz/cdiv_qr$U.lo mpz/cdiv_qr_ui$U.lo mpz/cdiv_r$U.lo			\
-  mpz/cdiv_r_ui$U.lo mpz/cdiv_ui$U.lo mpz/clear$U.lo mpz/clrbit$U.lo	\
+  mpz/cdiv_r_ui$U.lo mpz/cdiv_ui$U.lo					\
+  mpz/cfdiv_q_2exp$U.lo mpz/cfdiv_r_2exp$U.lo				\
+  mpz/clear$U.lo mpz/clrbit$U.lo					\
   mpz/cmp$U.lo mpz/cmp_si$U.lo mpz/cmp_ui$U.lo mpz/cmpabs$U.lo		\
   mpz/cmpabs_ui$U.lo mpz/com$U.lo					\
-  mpz/divexact$U.lo mpz/divegcd$U.lo mpz/dump$U.lo			\
-  mpz/fac_ui$U.lo mpz/fdiv_q$U.lo mpz/fdiv_q_2exp$U.lo			\
+  mpz/divexact$U.lo mpz/divegcd$U.lo					\
+  mpz/divis$U.lo mpz/divis_ui$U.lo mpz/divis_2exp$U.lo mpz/dump$U.lo	\
+  mpz/fac_ui$U.lo mpz/fdiv_q$U.lo					\
   mpz/fdiv_q_ui$U.lo mpz/fdiv_qr$U.lo mpz/fdiv_qr_ui$U.lo		\
-  mpz/fdiv_r$U.lo mpz/fdiv_r_2exp$U.lo mpz/fdiv_r_ui$U.lo		\
+  mpz/fdiv_r$U.lo mpz/fdiv_r_ui$U.lo					\
   mpz/fdiv_ui$U.lo mpz/fib_ui$U.lo mpz/fits_sint$U.lo			\
   mpz/fits_slong$U.lo mpz/fits_sshort$U.lo mpz/fits_uint$U.lo		\
   mpz/fits_ulong$U.lo mpz/fits_ushort$U.lo mpz/gcd$U.lo			\
@@ -275,7 +279,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 libgmp_la_SOURCES = \
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
-  rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c randsdui.c	\
+  rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
   stack-alloc.c version.c 
 
 libgmp_la_DEPENDENCIES = \
@@ -295,7 +299,8 @@ libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
   mp_minv_tab.c mp_set_fns.c stack-alloc.c
 
-libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS) \
+MPN_OBJS_IN_LIBMP = @mpn_objs_in_libmp@
+libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP) \
   mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/init$U.lo mpz/mod$U.lo	\
   mpz/mul$U.lo mpz/mul_2exp$U.lo mpz/n_pow_ui$U.lo			\
   mpz/realloc$U.lo mpz/set$U.lo						\
@@ -323,8 +328,8 @@ ANSI2KNR = @ANSI2KNR@
 am_libgmp_la_OBJECTS =  assert$U.lo compat$U.lo errno$U.lo \
 extract-dbl$U.lo insert-dbl$U.lo memory$U.lo mp_bpl$U.lo \
 mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo rand$U.lo randclr$U.lo \
-randlc$U.lo randlc2x$U.lo randraw$U.lo randsd$U.lo randsdui$U.lo \
-stack-alloc$U.lo version$U.lo
+randlc$U.lo randlc2x$U.lo randraw$U.lo rands$U.lo randsd$U.lo \
+randsdui$U.lo stack-alloc$U.lo version$U.lo
 libgmp_la_OBJECTS =  $(am_libgmp_la_OBJECTS)
 am_libmp_la_OBJECTS =  assert$U.lo errno$U.lo memory$U.lo mp_bpl$U.lo \
 mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo stack-alloc$U.lo
@@ -515,6 +520,8 @@ randlc2x_.c: randlc2x.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randlc2x.c; then echo $(srcdir)/randlc2x.c; else echo randlc2x.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randlc2x_.c
 randraw_.c: randraw.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randraw.c; then echo $(srcdir)/randraw.c; else echo randraw.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randraw_.c
+rands_.c: rands.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rands.c; then echo $(srcdir)/rands.c; else echo rands.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rands_.c
 randsd_.c: randsd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randsd.c; then echo $(srcdir)/randsd.c; else echo randsd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randsd_.c
 randsdui_.c: randsdui.c $(ANSI2KNR)
@@ -530,9 +537,10 @@ mp_bpl_.$(OBJEXT) mp_bpl_.lo mp_clz_tab_.$(OBJEXT) mp_clz_tab_.lo \
 mp_minv_tab_.$(OBJEXT) mp_minv_tab_.lo mp_set_fns_.$(OBJEXT) \
 mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo randclr_.$(OBJEXT) randclr_.lo \
 randlc_.$(OBJEXT) randlc_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
-randraw_.$(OBJEXT) randraw_.lo randsd_.$(OBJEXT) randsd_.lo \
-randsdui_.$(OBJEXT) randsdui_.lo stack-alloc_.$(OBJEXT) stack-alloc_.lo \
-version_.$(OBJEXT) version_.lo : $(ANSI2KNR)
+randraw_.$(OBJEXT) randraw_.lo rands_.$(OBJEXT) rands_.lo \
+randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
+stack-alloc_.$(OBJEXT) stack-alloc_.lo version_.$(OBJEXT) version_.lo : \
+$(ANSI2KNR)
 
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@stamp-vti
 	@:
