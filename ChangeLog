@@ -19,6 +19,16 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc64/mul_1.asm: Rename r72 -> r80.
+	* mpn/sparc64/addmul_1.asm: Likewise.
+
+2001-12-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/tdiv_qr.c: Misc formatting cleanups.
+	For switch case 2, replace `dn' with its value (2).
+
 2001-12-25  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/devel/mul_1.c: Add FIXED_XLIMB.
