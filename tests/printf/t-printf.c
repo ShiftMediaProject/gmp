@@ -105,7 +105,9 @@ check_plain (va_alist)
            directly. */
         goto done;
       case 'F':
-        /* discard */
+        if (p > fmt_orig && *(p-1) == '.')
+          goto done;  /* don't test the "all digits" cases */
+        /* discard 'F' type */
         break;
       case 'Z':
         /* transmute */
