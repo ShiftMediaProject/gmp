@@ -1,6 +1,6 @@
 /* mpf_mul_ui -- Multiply a float and an unsigned integer.
 
-Copyright 1993, 1994, 1996, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -39,6 +39,22 @@ mpf_mul_ui (mpf_ptr r, mpf_srcptr u, unsigned long int v)
       r->_mp_exp = 0;
       return;
     }
+
+#if GMP_NAIL_BITS != 0
+  if (v > GMP_NUMB_MAX)
+    {
+      mpf_t     vf;
+      mp_limb_t vp[2];
+      vp[0] = v & GMP_NUMB_MASK;
+      vp[1] = v >> GMP_NUMB_BITS;
+      PTR(vf) = vp;
+      SIZ(vf) = 2;
+      ASSERT_CODE (PREC(vf) = 2);
+      EXP(vf) = 2;
+      mpf_mul (r, u, vf);
+      return;
+    }
+#endif
 
   size = ABS (usize);
   prec = r->_mp_prec;
