@@ -3375,14 +3375,22 @@ of each word are skipped, this can be 0 to use the full words.
 
 There are no data alignment restrictions on @var{op}, any address is allowed.
 
-Here's an example converting an array of @code{unsigned short} data, most
+Here's an example converting an array of @code{unsigned long} data, most
 significant element first and host byte order within each value.
 
 @example
-unsigned short  a[20];
-mpz_t           z;
+unsigned long  a[20];
+mpz_t          z;
 mpz_import (z, 20, 1, sizeof(a[0]), 0, 0, a);
 @end example
+
+This example assumes the full @code{sizeof} bytes are used for data in the
+given type, which is usually true, and certainly true for @code{unsigned long}
+everywhere we know of.  However on Cray vector systems it may be noted that
+@code{short} and @code{int} are always stored in 8 bytes (and with
+@code{sizeof} indicating that) but use only 32 or 46 bits.  The @var{nails}
+feature can be used to account for this, by passing for instance
+@code{8*sizeof(a[0])-INT_BIT}.
 @end deftypefun
 
 @deftypefun void *mpz_export (void *@var{rop}, size_t *@var{count}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
