@@ -1971,6 +1971,16 @@ mpn_sub_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
 #define mpz_even_p(z)  (! mpz_odd_p (z))
 
 
+/**************** C++ routines ****************/
+
+#ifdef __cplusplus
+class ostream;
+ostream& __GMP_DECLSPEC mpz_out_ostream (ostream &o, mpz_srcptr z);
+ostream& __GMP_DECLSPEC mpq_out_ostream (ostream &o, mpq_srcptr q);
+ostream& __GMP_DECLSPEC mpf_out_ostream (ostream &o, mpf_srcptr f);
+#endif
+
+
 /* Compatibility with GMP 2 and earlier. */
 #define mpn_divmod(qp,np,nsize,dp,dsize) \
   mpn_divrem (qp, (mp_size_t) 0, np, nsize, dp, dsize)
