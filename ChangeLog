@@ -32,6 +32,17 @@
 
 2000-04-05  Linus Nordberg  <linus@swox.se>
 
+	* gmp.texi (Top): Add `Random Number Functions' to menu.
+	(Introduction to MP): Fix typo.
+	(MP Basics): Create menu for all sections.  Move `Random Number
+	Functions' to its own chapter.  Add nodes for all sections.
+	(Function Classes): Mention random generation functions under
+	miscellaneous.
+	(Miscellaneous Integer Functions): Update mpz_urandomb,
+	mpz_urandomm.
+	(Low-level Functions): Remove mpn_rawrandom.
+	(Random State Initialization): Update.
+	
 	* mpf/urandom.c (mpf_urandomb): Remove SIZE parameter.  Normalize
 	result correctly.
 
