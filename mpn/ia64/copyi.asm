@@ -74,10 +74,10 @@ ifdef(`HAVE_ABI_32',
 		;;
 
 .Lb01:	C  n = 1, 5, 9, 13, ...
-{ .mib		add	r21 = 0, r33
+  { .mib;	add	r21 = 0, r33
 		add	r20 = 0, r32
 		nop.b	0
-} { .mib	add	r33 = 8, r33
+} { .mib;	add	r33 = 8, r33
 		add	r32 = 8, r32
 		nop.b	0
 		;;
@@ -110,10 +110,10 @@ ifdef(`HAVE_ABI_32',
 		;;
 
 .Lb11:	C  n = 3, 7, 11, 15, ...
-{ .mib		add	r21 = 0, r33
+  { .mib;	add	r21 = 0, r33
 		add	r20 = 0, r32
 		nop.b	0
-} { .mib	add	r33 = 8, r33
+} { .mib;	add	r33 = 8, r33
 		add	r32 = 8, r32
 		nop.b	0
 		;;
