@@ -1,7 +1,7 @@
 /* Test mpz_ui_pow_ui, mpz_fdiv_q, mpz_fdiv_q_2exp, mpz_fdiv_r,
    mpz_fdiv_r_2exp, and mpz_mul_2exp.
 
-Copyright (C) 1997, 1999 Free Software Foundation, Inc.
+Copyright (C) 1997, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -54,7 +54,7 @@ main (argc, argv)
     {
       mpz_random2 (x, urandom () % (2 * SIZE) - SIZE);
       c = urandom () % (3 * SIZE / 2 * BITS_PER_MP_LIMB);
-      mpz_ui_pow_ui (d, 2ul, c);
+      mpz_ui_pow_ui (d, (unsigned long) 2, c);
 
       mpz_fdiv_q (q1, x, d);
       mpz_fdiv_q_2exp (q2, x, c);
