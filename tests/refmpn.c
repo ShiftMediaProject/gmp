@@ -691,7 +691,7 @@ refmpn_sub (mp_ptr rp,
 #define LOWPART(x)   ((x) & LOWMASK)
 #define HIGHPART(x)  SHIFTLOW((x) & HIGHMASK)
 
-/* Set *hi,*lo to x*y, using full limbs not nails. */
+/* Set return:*lo to x*y, using full limbs not nails. */
 mp_limb_t
 refmpn_umul_ppmm (mp_limb_t *lo, mp_limb_t x, mp_limb_t y)
 {
