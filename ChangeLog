@@ -19,9 +19,21 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64/add_n.asm: New file, generalized for both 2.0N and 2.0W.
+	* mpn/pa64/sub_n.asm: Likewise.
+	* mpn/pa64/lshift.asm: Likewise.
+	* mpn/pa64/rshift.asm: Likewise.
+	* mpn/pa64/add_n.s: Remove.
+	* mpn/pa64/sub_n.s: Likewise.
+	* mpn/pa64/lshift.s: Likewise.
+	* mpn/pa64/rshift.s: Likewise.
+
 2002-03-23  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/pa64w/addmul_1.asm: New file, twice faster code.
+	* mpn/pa64w/addmul_1.asm: New file with twice faster code;
+	generalized for both 2.0N and 2.0W.
 	* mpn/pa64w/addmul_1.S: Remove.
 
 2002-03-22  Kevin Ryde  <kevin@swox.se>
@@ -124,7 +136,7 @@ MA 02111-1307, USA.
 2002-03-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/com_n.asm, mpn/x86/pentium/logops_n.asm,
-	mpn/x86/k6/mmx/com_n.asm: Add nails support.	
+	mpn/x86/k6/mmx/com_n.asm: Add nails support.
 
 	* texinfo.tex: Update to 2002-03-01.06 (per texinfo 4.1).
 	* gmp.texi (@ma): Remove, @math does this now.
@@ -164,7 +176,7 @@ MA 02111-1307, USA.
 2002-03-11  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (LIBC211): New AC_DEFINE, for mpfr.
-	
+
 	* configure.in (mips*-*-*): Support ABI=o32 on irix 6, allow gcc 2.7.2
 	to fall back on it, but detect it doesn't work with gcc 2.95.  Use
 	single mips-defs.m4 for both mips32 and mips64.
@@ -249,7 +261,7 @@ MA 02111-1307, USA.
 	* gmp-impl.h: Add __GMP_DECLSPEC to libgmp functions used by libgmpxx.
 
 	* longlong.h (COUNT_TRAILING_ZEROS_TIME): Remove, no longer used.
-	
+
 	* gmp-impl.h (MPN_SIZEINBASE, MPN_SIZEINBASE_16): Correction to
 	__totbits for nails.
 
@@ -302,7 +314,7 @@ MA 02111-1307, USA.
 	* configure.in (alpha*-*-*): Rearrange -mcpu selection for gcc,
 	provide an ev67 -> ev6 fallback.  Fix -arch,-tune selection for DEC C.
 	Allow ~ for space in optional options lists.
-	
+
 	* tune/tuneup.c (tune_preinv_divrem_1): Compare against an assembler
 	mpn_divrem_1 if it exists, not the generic C mpn_divrem_1_div.
 	(tune_preinv_mod_1): Ditto with mpn_mod_1.
