@@ -46,7 +46,7 @@ PROLOGUE(mpn_mul_1)
 	xorq	%r12, %r12		C maintain r12 = 0 FIXME: don't!      3
 	subq	$4, %rbx		C				      4
 	jb	.Lend			C				      2
-	.byte	0x66, 0x90, 0x66, 0x90, 0x66, 0x90			      6
+	.byte	0x66, 0x90, 0x66, 0x90, 0x66, 0x90
 .Loop:
 	movq	(%rsi), %rax		C				      3
 	mulq	%rcx			C				      3
