@@ -548,10 +548,10 @@ check_O (void)
 
   /*
   mpfr_out_str(stdout, 2,40,th,GMP_RNDN);
-  putchar('\n');
+  puts ("");
 
   mpfr_out_str(stdout, 2,40,ath,GMP_RNDU);
-  putchar('\n');
+  puts ("");
   */
 
   if(mpfr_cmp_ui(ath,2)!=0)

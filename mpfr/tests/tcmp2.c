@@ -199,10 +199,10 @@ special (void)
     printf ("Error in mpfr_cmp2:\n");
     printf ("x=");
     mpfr_print_binary (x);
-    putchar ('\n');
+    puts ("");
     printf ("y=");
     mpfr_print_binary (y);
-    putchar ('\n');
+    puts ("");
     printf ("got %lu, expected 1\n", j);
     exit (1);
   }
@@ -213,8 +213,8 @@ special (void)
   j = 0;
   if (mpfr_cmp2(x, y, &j) <= 0 || j != 32) {
     printf("Error in mpfr_cmp2:\n");
-    printf("x="); mpfr_print_binary(x); putchar('\n');
-    printf("y="); mpfr_print_binary(y); putchar('\n');
+    printf("x="); mpfr_print_binary(x); puts ("");
+    printf("y="); mpfr_print_binary(y); puts ("");
     printf("got %lu, expected 32\n", j);
     exit(1);
   }
@@ -225,8 +225,8 @@ special (void)
   j = 0;
   if (mpfr_cmp2(x, y, &j) <= 0 || j != 164) {
     printf("Error in mpfr_cmp2:\n");
-    printf("x="); mpfr_print_binary(x); putchar('\n');
-    printf("y="); mpfr_print_binary(y); putchar('\n');
+    printf("x="); mpfr_print_binary(x); puts ("");
+    printf("y="); mpfr_print_binary(y); puts ("");
     printf("got %lu, expected 164\n", j);
     exit(1);
   }
@@ -238,8 +238,8 @@ special (void)
   j = 0;
   if (mpfr_cmp2(x, y, &j) <= 0 || j != 127) {
     printf("Error in mpfr_cmp2:\n");
-    printf("x="); mpfr_print_binary(x); putchar('\n');
-    printf("y="); mpfr_print_binary(y); putchar('\n');
+    printf("x="); mpfr_print_binary(x); puts ("");
+    printf("y="); mpfr_print_binary(y); puts ("");
     printf("got %lu, expected 127\n", j);
     exit(1);
   }
@@ -251,8 +251,8 @@ special (void)
   j = 0;
   if (mpfr_cmp2(x, y, &j) <= 0 || j != 63) {
     printf("Error in mpfr_cmp2:\n");
-    printf("x="); mpfr_print_binary(x); putchar('\n');
-    printf("y="); mpfr_print_binary(y); putchar('\n');
+    printf("x="); mpfr_print_binary(x); puts ("");
+    printf("y="); mpfr_print_binary(y); puts ("");
     printf("got %lu, expected 63\n", j);
     exit(1);
   }
@@ -264,8 +264,8 @@ special (void)
   j = 0;
   if (mpfr_cmp2(x, y, &j) <= 0 || j != 63) {
     printf("Error in mpfr_cmp2:\n");
-    printf("x="); mpfr_print_binary(x); putchar('\n');
-    printf("y="); mpfr_print_binary(y); putchar('\n');
+    printf("x="); mpfr_print_binary(x); puts ("");
+    printf("y="); mpfr_print_binary(y); puts ("");
     printf("got %lu, expected 63\n", j);
     exit(1);
   }

@@ -101,7 +101,7 @@ main (int argc, char *argv[])
       mpfr_const_log2 (x, rnd);
       printf ("log(2)=");
       mpfr_out_str (stdout, 10, 0, x, rnd);
-      putchar('\n');
+      puts ("");
     }
   
   mpfr_set_prec (x, 53);

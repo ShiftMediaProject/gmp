@@ -93,7 +93,7 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error: x+x rounded to nearest for x=2^1023 should give +Inf\n");
       printf ("emax = %ld\n", mpfr_get_emax ());
-      printf ("got "); mpfr_print_binary (x); putchar ('\n');
+      printf ("got "); mpfr_print_binary (x); puts ("");
       exit (1);
     }
 
@@ -113,7 +113,7 @@ main (int argc, char *argv[])
   if (mpfr_cmp_ui (y, 0))
     {
       fprintf (stderr, "Error: y-x rounded to zero should give 0 for y=3/2*2^(-1022), x=2^(-1022)\n");
-      printf ("y="); mpfr_print_binary (y); putchar ('\n');
+      printf ("y="); mpfr_print_binary (y); puts ("");
       exit (1);
     }
 

@@ -90,9 +90,9 @@ check_inexact (void)
 		  fprintf (stderr, "Wrong inexact flag for u=%lu, rnd=%s\n", u,
 			   mpfr_print_rnd_mode(rnd));
 		  printf ("expected %d, got %d\n", cmp, inexact);
-		  printf ("x="); mpfr_print_binary (x); putchar ('\n');
-		  printf ("y="); mpfr_print_binary (y); putchar ('\n');
-		  printf ("y*x="); mpfr_print_binary (z); putchar ('\n');
+		  printf ("x="); mpfr_print_binary (x); puts ("");
+		  printf ("y="); mpfr_print_binary (y); puts ("");
+		  printf ("y*x="); mpfr_print_binary (z); puts ("");
 		  exit (1);
 		}
 	    }

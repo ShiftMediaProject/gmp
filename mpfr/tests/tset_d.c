@@ -51,7 +51,7 @@ main (int argc, char *argv[])
             fprintf (stderr, "got ");
             mpfr_out_str (stderr, 10, 10, x, GMP_RNDN);
             fprintf (stderr, "\n");
-            mpfr_print_binary (x); putchar ('\n');
+            mpfr_print_binary (x); puts ("");
             exit (1);
           }
       }
@@ -84,13 +84,13 @@ main (int argc, char *argv[])
   mpfr_init2(z, 32);
   mpfr_set_d(z, 1.0, 0);
   if (mpfr_get_d1 (z) != 1.0) {
-    mpfr_print_binary(z); putchar('\n');
+    mpfr_print_binary(z); puts ("");
     printf("Error: 1.0 != 1.0\n"); exit(1);
   }
   mpfr_set_prec(x, 53); mpfr_init2(y, 53);
   mpfr_set_d(x, d=-1.08007920352320089721e+150, 0);
   if (mpfr_get_d1 (x) != d) {
-    mpfr_print_binary(x); putchar('\n');
+    mpfr_print_binary(x); puts ("");
     printf("Error: get_d o set_d <> identity for d = %1.20e %1.20e\n",d,
 	   mpfr_get_d1 (x)); exit(1);
   }
@@ -100,7 +100,7 @@ main (int argc, char *argv[])
   d = -6.72658901114033715233e-165;
   mpfr_set_d(x, d, 0);
   if (d != mpfr_get_d1 (x)) {
-    mpfr_print_binary(x); putchar('\n');
+    mpfr_print_binary(x); puts ("");
     printf("Error: get_d o set_d <> identity for d = %1.20e %1.20e\n",d,
 	   mpfr_get_d1 (x)); exit(1);
   }
@@ -123,7 +123,7 @@ main (int argc, char *argv[])
 	  fprintf (stderr, 
                    "Mismatch on : %1.18g != %1.18g\n", d, mpfr_get_d1 (x)); 
 	  mpfr_print_binary (x);
-          putchar ('\n');
+          puts ("");
 	  exit (1);
 	}
     }

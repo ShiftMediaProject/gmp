@@ -180,7 +180,7 @@ check64 (void)
   mpfr_sub(u, x, t, GMP_RNDU);
   mpfr_set_str_raw(t, "0.1011000101110010000101111111011100111111101010011011110110101011101000000100");
   if (mpfr_cmp(u,t)) {
-    printf("expect "); mpfr_print_binary(t); putchar('\n');
+    printf("expect "); mpfr_print_binary(t); puts ("");
     fprintf (stderr, "mpfr_add failed for precisions 53-76\n"); exit(1);
   }
   mpfr_set_prec(x, 53); mpfr_set_prec(t, 108); mpfr_set_prec(u, 108);
@@ -189,7 +189,7 @@ check64 (void)
   mpfr_sub(u, x, t, GMP_RNDU);
   mpfr_set_str_raw(t, "0.101100010111001000010111111101110011111110101001101111011010101110100000001011000010101110011000000000111111");
   if (mpfr_cmp(u,t)) {
-    printf("expect "); mpfr_print_binary(t); putchar('\n');
+    printf("expect "); mpfr_print_binary(t); puts ("");
     fprintf(stderr, "mpfr_add failed for precisions 53-108\n"); exit(1);
   }
   mpfr_set_prec(x, 97); mpfr_set_prec(t, 97); mpfr_set_prec(u, 97);
@@ -235,9 +235,9 @@ check64 (void)
   mpfr_add(u, x, t, GMP_RNDU);
   if ((MPFR_MANT(u)[0] & 1) != 1) { 
     printf("error in mpfr_add with rnd_mode=GMP_RNDU\n");
-    printf("b=  "); mpfr_print_binary(x); putchar('\n');
-    printf("c=  "); mpfr_print_binary(t); putchar('\n');
-    printf("b+c="); mpfr_print_binary(u); putchar('\n');
+    printf("b=  "); mpfr_print_binary(x); puts ("");
+    printf("c=  "); mpfr_print_binary(t); puts ("");
+    printf("b+c="); mpfr_print_binary(u); puts ("");
     exit(1);
   }
 
@@ -351,9 +351,9 @@ check_case_1b (void)
 	      if (mpfr_cmp_ui (a, 1) != 0)
 		{
 		  fprintf (stderr, "case (1b) failed for prec_a=%u, prec_b=%u, prec_c=%u\n", prec_a, prec_b, prec_c);
-		  printf("b="); mpfr_print_binary(b); putchar('\n');
-		  printf("c="); mpfr_print_binary(c); putchar('\n');
-		  printf("a="); mpfr_print_binary(a); putchar('\n');
+		  printf("b="); mpfr_print_binary(b); puts ("");
+		  printf("c="); mpfr_print_binary(c); puts ("");
+		  printf("a="); mpfr_print_binary(a); puts ("");
 		  exit (1);
 		}
 	    }

@@ -46,7 +46,7 @@ main (int argc, char *argv[])
       mpfr_init2 (x, prec);
       mpfr_set_str_raw (x, argv[1]);
       mpfr_out_str (stdout, 10, 0, x, GMP_RNDN);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       return 0;
     }
@@ -91,9 +91,9 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error in mpfr_set_str (1a):\n");
       mpfr_print_binary (x);
-      putchar ('\n');
+      puts ("");
       mpfr_print_binary (y);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       mpfr_clear (y); 
       exit (1);
@@ -105,9 +105,9 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error in mpfr_set_str (1b):\n");
       mpfr_print_binary (x);
-      putchar ('\n');
+      puts ("");
       mpfr_print_binary (y);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       mpfr_clear (y);
       exit (1);
@@ -171,11 +171,11 @@ main (int argc, char *argv[])
 		   mpfr_print_rnd_mode (k));
 	  printf ("x=");
 	  mpfr_print_binary (x);
-	  putchar('\n');
+	  puts ("");
 	  printf ("s=%s, exp=%d, base=%d\n", str, (int) e, base);
 	  printf ("y=");
 	  mpfr_print_binary (y);
-	  putchar('\n');
+	  puts ("");
 	  mpfr_clear (x);
 	  mpfr_clear (y);
 	  exit (1);
@@ -230,9 +230,9 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error in mpfr_set_str (2):\n");
       mpfr_print_binary (x);
-      putchar ('\n');
+      puts ("");
       mpfr_print_binary (y);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       mpfr_clear (y); 
       exit (1);
@@ -251,9 +251,9 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error in mpfr_set_str (3):\n");
       mpfr_print_binary (x);
-      putchar ('\n');
+      puts ("");
       mpfr_print_binary (y);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       mpfr_clear (y); 
       exit (1);
@@ -275,9 +275,9 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error in mpfr_set_str (4):\n");
       mpfr_print_binary (x);
-      putchar ('\n');
+      puts ("");
       mpfr_print_binary (y);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       mpfr_clear (y); 
       exit (1);
@@ -294,9 +294,9 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error in mpfr_set_str (5):\n");
       mpfr_print_binary (x);
-      putchar ('\n');
+      puts ("");
       mpfr_print_binary (y);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       mpfr_clear (y); 
       exit (1);
@@ -311,9 +311,9 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error in mpfr_set_str (6):\n");
       mpfr_print_binary (x);
-      putchar ('\n');
+      puts ("");
       mpfr_print_binary (y);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       mpfr_clear (y); 
       exit (1);
@@ -328,9 +328,9 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error in mpfr_set_str (7):\n");
       mpfr_print_binary (x);
-      putchar ('\n');
+      puts ("");
       mpfr_print_binary (y);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (x);
       mpfr_clear (y); 
       exit (1);
@@ -368,14 +368,10 @@ main (int argc, char *argv[])
 
 	      mpfr_get_str (str + 2, &exp, base[cbase],
 			    nb_digit, x, rnd[crnd]);
-	      if (str[2] == '-') 
-		{
-		  str[0] = '-'; str[1] = '0'; str[2] = '.';
-		}
-	      else
-		{
-		  str[0] = '0'; str[1] = '.';
-		}
+	      str[0] = '-';
+	      str[(str[2] == '-')] =  '0';
+	      str[(str[2] == '-') + 1] =  '.';
+
 	      for (str1 = str; *str1 != 0; str1++);
 	      sprintf (str1, "@%i", (int) exp);
 
@@ -386,10 +382,10 @@ main (int argc, char *argv[])
 		  fprintf (stderr, "Error in mpfr_set_str for nb_digit=%u, base=%u, rnd=%s:\n", nb_digit, base[cbase], mpfr_print_rnd_mode (rnd[crnd]));
 		  fprintf (stderr, "instead of: ");
 		  mpfr_print_binary (x);
-		  putchar ('\n');
+		  puts ("");
 		  fprintf (stderr, "return    : ");
 		  mpfr_print_binary (y);
-		  putchar ('\n');
+		  puts ("");
 		}
 
 	    }

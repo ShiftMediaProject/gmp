@@ -105,13 +105,13 @@ main (int argc, char *argv[])
 			  mpfr_print_rnd_mode (rnd));
 		  printf ("   got ");
 		  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
-		  putchar ('\n');
+		  puts ("");
 		  printf ("   expected ");
 		  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
-		  putchar ('\n');
+		  puts ("");
 		  printf ("   approximation was ");
 		  mpfr_print_binary (y);
-		  putchar ('\n');
+		  puts ("");
 		  exit (1);
 		}
 	    }

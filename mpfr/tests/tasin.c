@@ -77,10 +77,10 @@ main (void)
 			  mpfr_print_rnd_mode (rnd));
 		  printf ("   got ");
 		  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
-		  putchar ('\n');
+		  puts ("");
 		  printf ("   expected ");
 		  mpfr_out_str (stdout, 2, prec, y, GMP_RNDN);
-		  putchar ('\n');
+		  puts ("");
 		}
 	    }
 	}

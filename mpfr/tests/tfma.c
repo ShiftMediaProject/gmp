@@ -295,13 +295,13 @@ main (int argc, char *argv[])
 		      mpfr_print_rnd_mode (rnd));
 	      printf ("got      ");
 	      mpfr_out_str (stdout, 2, prec, s, GMP_RNDN);
-	      putchar ('\n');
+	      puts ("");
 	      printf ("expected ");
 	      mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
-	      putchar ('\n');
+	      puts ("");
 	      printf ("approx  ");
 	      mpfr_print_binary (slong);
-	      putchar ('\n');
+	      puts ("");
 	      exit (1);
 	    }
 	  if (((inexact == 0) && (compare != 0)) ||

@@ -96,10 +96,10 @@ check_large (double d, int n, mp_rnd_t rnd)
   else
     printf ("exp(%1.20e)=", d);
   mpfr_out_str (stdout, 10, 0, y, rnd);
-  putchar ('\n');
+  puts ("");
   printf (" =");
   mpfr_print_binary (y);
-  putchar ('\n');
+  puts ("");
   if (n == 53)
     printf (" =%1.20e\n", mpfr_get_d1 (y));
 
@@ -200,13 +200,13 @@ compare_exp2_exp3 (int n)
           printf ("mpfr_exp_2 and mpfr_exp3 disagree for rnd=%s and\nx=",
                   mpfr_print_rnd_mode (rnd));
           mpfr_print_binary (x);
-          putchar ('\n');
+          puts ("");
           printf ("mpfr_exp_2 gives  ");
           mpfr_print_binary (y);
-          putchar ('\n');
+          puts ("");
           printf ("mpfr_exp3 gives ");
           mpfr_print_binary (z);
-          putchar ('\n');
+          puts ("");
           exit (1);
         }
   }

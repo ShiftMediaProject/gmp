@@ -155,7 +155,7 @@ check_small (void)
     {
       fprintf(stderr, "Error in mpfr_get_str: 688 printed up to 4 bits should give 1.011e9\ninstead of ");
     mpfr_out_str (stderr, 2, 4, x, GMP_RNDU);
-    putchar ('\n');
+    puts ("");
     exit (1);
   }
   (*__gmp_free_func) (s, strlen (s) + 1);

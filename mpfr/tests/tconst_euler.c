@@ -42,7 +42,7 @@ main (int argc, char *argv[])
       mpfr_init2 (gamma, prec);
       mpfr_const_euler (gamma, GMP_RNDN);
       printf("gamma="); mpfr_out_str (stdout, 10, 0, gamma, GMP_RNDD);
-      putchar ('\n');
+      puts ("");
       mpfr_clear (gamma);
       return 0;
     }
@@ -72,13 +72,13 @@ main (int argc, char *argv[])
 			  mpfr_print_rnd_mode (rnd));
 		  printf ("   got      ");
 		  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
-		  putchar ('\n');
+		  puts ("");
 		  printf ("   expected ");
 		  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
-		  putchar ('\n');
+		  puts ("");
 		  printf ("   approximation was ");
 		  mpfr_print_binary (y);
-		  putchar ('\n');
+		  puts ("");
 		  exit (1);
 		}
 	    }

@@ -115,13 +115,13 @@ main (int argc, char *argv[])
 			  mpfr_print_rnd_mode (rnd));
 		  printf ("got      ");
 		  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
-		  putchar ('\n');
+		  puts ("");
 		  printf ("expected ");
 		  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
-		  putchar ('\n');
+		  puts ("");
 		  printf ("approx  ");
 		  mpfr_print_binary (y);
-		  putchar ('\n');
+		  puts ("");
 		  exit (1);
 		}
 	      compare2 = mpfr_cmp (t, y);
@@ -137,9 +137,9 @@ main (int argc, char *argv[])
 		{
 		  fprintf (stderr, "Wrong inexact flag for rnd=%s: expected %d, got %d\n",
 			   mpfr_print_rnd_mode (rnd), compare, inexact);
-		  printf ("x="); mpfr_print_binary (x); putchar ('\n');
-		  printf ("y="); mpfr_print_binary (y); putchar ('\n');
-		  printf ("t="); mpfr_print_binary (t); putchar ('\n');
+		  printf ("x="); mpfr_print_binary (x); puts ("");
+		  printf ("y="); mpfr_print_binary (y); puts ("");
+		  printf ("t="); mpfr_print_binary (t); puts ("");
 		  exit (1);
 		}
 	    }

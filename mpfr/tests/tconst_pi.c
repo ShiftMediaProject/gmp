@@ -54,7 +54,7 @@ main (int argc, char *argv[])
         {
           printf ("Pi=");
           mpfr_out_str (stdout, 10, 0, x, rnd);
-          putchar ('\n');
+          puts ("");
         }
     }
   else if (mpfr_get_d1 (x) != 3.141592653589793116)
