@@ -52,7 +52,7 @@ PROLOGUE(mpn_mod_34lsub1)
 	bis	r31, r31, a0
 	bis	r31, r31, a1
 	bis	r31, r31, a2
-	br	$L_012
+	br	r31, $L_012
 
 $L_3_or_more:
 	ldq	a0, 0(r16)
