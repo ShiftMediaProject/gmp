@@ -31,6 +31,16 @@ _mpz_cmp_si (mpz_srcptr u, signed long int v_digit)
   mp_size_t vsize;
   mp_limb_t u_digit;
 
+#if GMP_NAIL_BITS != 0
+  /* FIXME.  This isn't very pretty.  */
+  mpz_t tmp;
+  mp_limb_t tt[2];
+  PTR(tmp) = tt;
+  ALLOC(tmp) = 2;
+  mpz_set_si (tmp, v_digit);
+  return mpz_cmp (u, tmp);
+#endif
+
   vsize = 0;
   if (v_digit > 0)
     vsize = 1;
