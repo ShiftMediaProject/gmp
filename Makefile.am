@@ -187,8 +187,9 @@ MACOS_DEPS = $(srcdir)/macos/configure			\
 
 # Keep the macos directory up-to-date during any development build.
 if MAINTAINER_MODE
-all-local: $(MACOS_GENERATED)
+ALL_LOCAL_MACOS_GENERATED = $(MACOS_GENERATED)
 endif
+all-local: $(ALL_LOCAL_MACOS_GENERATED)
 
 $(srcdir)/macos/Makefile: $(MACOS_MAKEFILE_DEPS)
 	cd $(srcdir)/macos; perl configure
