@@ -229,7 +229,9 @@ void _mp_default_free _PROTO ((void *, size_t));
 #endif
 
 #if defined (__GNUC__) && defined (__i386__)
-#if 0			/* check that these actually improve things */
+#if 0
+/* Check that these actually improve things.
+   Need a cld after each std too. */
 #define MPN_COPY_INCR(DST, SRC, N)					\
   __asm__ ("cld\n\trep\n\tmovsl" : :					\
 	   "D" (DST), "S" (SRC), "c" (N) :				\
@@ -1069,7 +1071,7 @@ extern const int __gmp_0;
   JACOBI_BSGN_SZ_BIT1(b, a)
 
 /* (a/b) reciprocity to switch to (b/a), a,b both unsigned and odd.
-   Is (-1)^((a-1)*(b-1)/4), which means +1 if either a,b==1mod4 or -1 if
+   Is (-1)^((a-1)*(b-1)/4), which means +1 if either a,b==1mod4, or -1 if
    both a,b==3mod4, achieved in bit 1 by a&b.  No ASSERT()s about a,b odd
    because this is used in a couple of places with only bit 1 of a or b
    valid. */
@@ -1180,11 +1182,18 @@ extern mp_size_t  gcdext_threshold[];
 #define GCD_ACCEL_THRESHOLD      gcd_accel_threshold[0]
 #define GCDEXT_THRESHOLD         gcdext_threshold[0]
 
+/* Sizes the tune program tests up to, used in a couple of recompilations. */
+#define KARATSUBA_SQR_MAX_GENERIC  200
 #define TOOM3_MUL_THRESHOLD_LIMIT  700
 
 #undef  FFT_TABLE_ATTRS
 #define FFT_TABLE_ATTRS
 extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
+
+#if TUNE_PROGRAM_BUILD_SQR
+#undef KARATSUBA_SQR_THRESHOLD
+#define KARATSUBA_SQR_THRESHOLD  KARATSUBA_SQR_MAX_GENERIC
+#endif
 
 #endif /* TUNE_PROGRAM_BUILD */
 
