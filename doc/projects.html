@@ -71,35 +71,6 @@
 
   </ol>
 
-<p> <li> <strong>Division and modular multiplication</strong>
-
-  <p> GMP's current division routines are O(n^2), or to be accurate, O(n(m-n))
-  where n is the digit count of the divisor, and m is the digit count of the
-  dividend.  Modular reduction code rely on division, and is thus also slow.
-
-  <p> Desirable new developments:
-
-  <ol>
-  <li> Implement O(n^1.58) division.  There is an algorithm published recently
-       that accomplish this.
-  <li> Implement division based on first computing an approximation to the
-       reciprocal of the divisor, using Newton's algorithm, and then multiplying
-       the dividend by the approximate reciprocal.
-  <li> Implement modular multiplication based on Peter Montgomery's REDC
-       algorithm.  This algorithm is O(n^2) and should therefore be used only for
-       operands under a certain limit.  Operands greater than that limit need to
-       reply on computing the divisor reciprocal, see above.
-  <li> Make <code>mpz_powm</code>, <code>mpz_powm_ui</code>, etc, use modular
-       multiplication for the operand ranges where that helps.  Actually, these
-       functions should probably be implemented at the mpn level as part of
-       this development.
-  <li> Tune the aging plain division functions.  (Mostly done by Torbjörn.)
-       Perhaps write new functions with better interfaces,
-       (<code>mpn_tdiv_q</code>, <code>mpn_tdiv_r</code>,
-       <code>mpn_tdiv_qr</code>) replacing <code>mpn_divmod</code> and (the
-       slow!) <code>mpn_divrem</code>.
-  </ol>
-
 <p> <li> <strong>Assembly routines</strong>
 
   <p> Write new and tune existing assembly routines.  The functions in
