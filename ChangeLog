@@ -1,6 +1,12 @@
+2000-04-09  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/urandomm.c: Get type of count right.
+	Simplify computation of nbits.
+
 2000-04-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/urandomb.c: Fix reallocation condition.
+	Simplify size computation.
 
 2000-04-08  Linus Nordberg  <linus@swox.se>
 
