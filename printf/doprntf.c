@@ -239,7 +239,7 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
       expsign = (expval >= 0 ? '+' : '-');
       expval = ABS (expval);
 
-#if HAVE_SNPRINTF
+#if HAVE_VSNPRINTF
       explen = snprintf (exponent, sizeof(exponent),
                          p->expfmt, expsign, expval);
       /* test for < sizeof-1 since a glibc 2.0.x return of sizeof-1 might
