@@ -247,10 +247,8 @@ const struct routine_t {
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
-#if GMP_NAIL_BITS == 0
   { "mpn_hgcd",          speed_mpn_hgcd             },
   { "mpn_hgcd_lehmer",   speed_mpn_hgcd_lehmer      },
-#endif
   { "mpn_gcd_1",         speed_mpn_gcd_1,  FLAG_R_OPTIONAL },
   { "mpn_gcd_1N",        speed_mpn_gcd_1N, FLAG_R_OPTIONAL },
 
