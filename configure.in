@@ -1336,6 +1336,14 @@ AC_PROG_CPP
 GMP_H_ANSI
 
 
+# The C compiler on the build system, and associated tests.
+GMP_PROG_CC_FOR_BUILD
+GMP_PROG_CPP_FOR_BUILD
+GMP_PROG_EXEEXT_FOR_BUILD
+GMP_C_FOR_BUILD_ANSI
+GMP_CHECK_LIBM_FOR_BUILD
+
+
 # How to assemble, used with CFLAGS etc, see mpn/Makeasm.am.
 # Using the compiler is a lot easier than figuring out how to invoke the
 # assembler directly.
@@ -1551,20 +1559,6 @@ Use "--disable-static --enable-shared" to build just a DLL.])
       # libtool requires "-no-undefined", see AC_LIBTOOL_WIN32_DLL doco.
       GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
       LIBGMP_DLL=1
-    fi
-    ;;
-esac
-
-# When cross compiling a DLL, libtool requires $HOST_CC, to compile impgen.c
-# on the build system.  It's a well-known misfeature that libtool doesn't
-# hunt around for a useful HOST_CC on its own.
-# FIXME: Newer libtool looks like it'll need this only for "*-*-mingw* |
-# *-*-pw32*", not *-*-cygwin*.
-#
-case $host in
-  *-*-cygwin* | *-*-mingw* | *-*-pw32*)
-    if test "$cross_compiling" != no && test "$enable_shared" != no; then
-      GMP_PROG_HOST_CC
     fi
     ;;
 esac
