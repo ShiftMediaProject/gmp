@@ -82,7 +82,7 @@ down the time to 2 cycles/limb.
 ================================================================
 mpn_addmul_1:
 
-The current code runs at 3.7 cycles/limb, but that somewhat odd timing
+The current code runs at 4 cycles/limb, but that somewhat odd timing
 is reached only for huge operands.  It uses the mod-scheduled software
 pipelining feature.  Performance for small operands is poor.  The
 reason for the poor speed for small operands is that mod-scheduled
@@ -183,7 +183,7 @@ Here is how it works:
 ================================================================
 mpn_mul_1:
 
-The current code runs at 3.7 cycles/limb.  The code is very similar to
+The current code runs at 4 cycles/limb.  The code is very similar to
 the mpn_addmul_1 code.  See comments above.
 
 Faster code wouldn't be too hard to write.  This is one possible
@@ -191,14 +191,29 @@ pattern:
 
   { .mfi	getf.sig
 		xma.l
-	   (p6) cmp.leu		p6, p7 =
+	   (p6) cmp.leu		p8, p9 =
 } { .mfi	stf8
 		xma.hu
-	   (p7) cmp.ltu		p6, p7 =
+	   (p7) cmp.ltu		p8, p9 =
+		;;
+} { .mib	getf.sig
+	   (p8) add 1
+		nop.b		0
+} { .mib	ldf8		 = [up], 8
+	   (p9) add
+		nop.b		0
+		;;
+}
+  { .mfi	getf.sig
+		xma.l
+	   (p8) cmp.leu		p6, p7 =
+} { .mfi	stf8
+		xma.hu
+	   (p9) cmp.ltu		p6, p7 =
 		;;
 } { .mib	getf.sig
 	   (p6) add 1
-		nop.b
+		nop.b		0
 } { .mib	ldf8		 = [up], 8
 	   (p7) add
 		br.cloop
