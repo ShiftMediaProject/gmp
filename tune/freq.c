@@ -636,15 +636,18 @@ speed_cycletime_fail (const char *str)
   abort ();
 }
 
+/* speed_time_init leaves speed_cycletime set to either 0.0 or 1.0 when the
+   CPU frequency is unknown.  0.0 is when the time base is in seconds, so
+   that's no good if cycles are wanted.  1.0 is when the time base is in
+   cycles, which conversely is no good if seconds are wanted.  */
 void
 speed_cycletime_need_cycles (void)
 {
   speed_time_init ();
-  if (speed_cycletime == 1.0)
+  if (speed_cycletime == 0.0)
     speed_cycletime_fail
       ("Need to know CPU frequency to give times in cycles");
 }
-
 void
 speed_cycletime_need_seconds (void)
 {
