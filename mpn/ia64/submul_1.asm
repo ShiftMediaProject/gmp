@@ -57,7 +57,7 @@ ifdef(`HAVE_ABI_32',
   { .mib;	setf.sig	f6 = r35
 		adds		r19 = -1, r34		C n - 1
 		nop.b		0
-} { .mib;	nop.m		0
+} { .mib;	cmp.eq		p6, p7 = 0, r35
 		mov		r18 = r32
 		nop.b		0		;;
 } { .mib;	mov		r16 = r32
@@ -71,11 +71,10 @@ ifdef(`HAVE_ABI_32',
 		nop.b		0
 } { .mib;	mov		r23 = 0			C clear "carry in"
 		mov		r24 = 0			C clear "carry in"
-		nop.b		0
+	   (p6)	br.spnt		.Ldone			C multiplier == 0
 		;;
 }
 		.align	32
-	.align	32
 .Loop:
   { .mfi; (p16)	ldf8		f32 = [r17], 8		C >0  3  6  9 12 15 18
 	  (p19)	xma.l		f40 = f35, f6, f39	C  0  3  6 >9 12 15 18
@@ -96,8 +95,8 @@ ifdef(`HAVE_ABI_32',
 		nop.i		0			C  2  5  8 11 14 17 20
 		br.ctop.sptk.few .Loop		;;	C  2  5  8 11 14 17 20
 }
-		mov		r8 = r23
-		mov		pr = r22,0x1fffe
+.Ldone:		mov		r8 = r23
+		mov		pr = r22, 0x1fffe
 		mov		ar.lc = r2
 		mov		ar.ec = r20
 		mov		ar.pfs = r21;;
