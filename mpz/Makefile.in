@@ -135,7 +135,8 @@ libmpz_la_SOURCES = \
   fits_ulong_p.c fits_ushort_p.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
-  jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c neg.c nextprime.c \
+  jacobi.c kronsz.c kronuz.c kronzs.c kronzu.c \
+  lcm.c legendre.c mod.c mul.c mul_2exp.c neg.c nextprime.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
@@ -171,15 +172,16 @@ fib_ui.lo fits_sint_p.lo fits_slong_p.lo fits_sshort_p.lo \
 fits_uint_p.lo fits_ulong_p.lo fits_ushort_p.lo gcd.lo gcd_ui.lo \
 gcdext.lo get_d.lo get_si.lo get_str.lo get_ui.lo getlimbn.lo \
 hamdist.lo init.lo inp_raw.lo inp_str.lo invert.lo ior.lo iset.lo \
-iset_d.lo iset_si.lo iset_str.lo iset_ui.lo jacobi.lo lcm.lo \
-legendre.lo mod.lo mul.lo mul_2exp.lo neg.lo nextprime.lo out_raw.lo \
-out_str.lo perfpow.lo perfsqr.lo popcount.lo pow_ui.lo powm.lo \
-powm_ui.lo pprime_p.lo random.lo random2.lo realloc.lo remove.lo \
-root.lo rrandomb.lo scan0.lo scan1.lo set.lo set_d.lo set_f.lo set_q.lo \
-set_si.lo set_str.lo set_ui.lo setbit.lo size.lo sizeinbase.lo sqrt.lo \
-sqrtrem.lo sub.lo sub_ui.lo swap.lo tdiv_ui.lo tdiv_q.lo tdiv_q_2exp.lo \
-tdiv_q_ui.lo tdiv_qr.lo tdiv_qr_ui.lo tdiv_r.lo tdiv_r_2exp.lo \
-tdiv_r_ui.lo tstbit.lo ui_pow_ui.lo urandomb.lo urandomm.lo xor.lo
+iset_d.lo iset_si.lo iset_str.lo iset_ui.lo jacobi.lo kronsz.lo \
+kronuz.lo kronzs.lo kronzu.lo lcm.lo legendre.lo mod.lo mul.lo \
+mul_2exp.lo neg.lo nextprime.lo out_raw.lo out_str.lo perfpow.lo \
+perfsqr.lo popcount.lo pow_ui.lo powm.lo powm_ui.lo pprime_p.lo \
+random.lo random2.lo realloc.lo remove.lo root.lo rrandomb.lo scan0.lo \
+scan1.lo set.lo set_d.lo set_f.lo set_q.lo set_si.lo set_str.lo \
+set_ui.lo setbit.lo size.lo sizeinbase.lo sqrt.lo sqrtrem.lo sub.lo \
+sub_ui.lo swap.lo tdiv_ui.lo tdiv_q.lo tdiv_q_2exp.lo tdiv_q_ui.lo \
+tdiv_qr.lo tdiv_qr_ui.lo tdiv_r.lo tdiv_r_2exp.lo tdiv_r_ui.lo \
+tstbit.lo ui_pow_ui.lo urandomb.lo urandomm.lo xor.lo
 nodist_libmpz_la_OBJECTS =  mul_si.lo mul_ui.lo
 libmpz_la_OBJECTS =  $(am_libmpz_la_OBJECTS) $(nodist_libmpz_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
