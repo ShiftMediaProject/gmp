@@ -23,8 +23,6 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Botch:  SLOW!  */
-
 void
 #if __STDC__
 mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
@@ -37,52 +35,99 @@ mpz_gcdext (g, s, t, a, b)
      mpz_srcptr b;
 #endif
 {
-  mpz_t s0, s1, q, r, x, d0, d1;
+  mp_size_t asize, bsize, usize, vsize;
+  mp_srcptr ap, bp;
+  mp_ptr up, vp;
+  mp_size_t gsize, ssize, tmp_ssize;
+  mp_ptr gp, sp, tmp_gp, tmp_sp;
+  mpz_srcptr u, v;
+  mpz_ptr ss, tt;
+  __mpz_struct tmp_struct;
+  TMP_DECL (marker);
 
-  mpz_init_set_ui (s0, 1L);
-  mpz_init_set_ui (s1, 0L);
-  mpz_init (q);
-  mpz_init (r);
-  mpz_init (x);
-  mpz_init_set (d0, a);
-  mpz_init_set (d1, b);
+  TMP_MARK (marker);
 
-  while (d1->_mp_size != 0)
+  /* mpn_gcdext requires that U >= V.  Therefore, we often have to swap U and
+     V.  This in turn leads to a lot of complications.  The computed cofactor
+     will be the wrong one, so we have to fix that up at the end.  */
+
+  asize = ABS (SIZ (a));
+  bsize = ABS (SIZ (b));
+  ap = PTR (a);
+  bp = PTR (b);
+  if (asize > bsize || (asize == bsize && mpn_cmp (ap, bp, asize) > 0))
     {
-      mpz_tdiv_qr (q, r, d0, d1);
-      mpz_set (d0, d1);
-      mpz_set (d1, r);
-
-      mpz_mul (x, s1, q);
-      mpz_sub (x, s0, x);
-      mpz_set (s0, s1);
-      mpz_set (s1, x);
+      usize = asize;
+      vsize = bsize;
+      up = (mp_ptr) TMP_ALLOC ((usize + 1) * BYTES_PER_MP_LIMB);
+      vp = (mp_ptr) TMP_ALLOC ((vsize + 1) * BYTES_PER_MP_LIMB);
+      MPN_COPY (up, ap, usize);
+      MPN_COPY (vp, bp, vsize);
+      u = a;
+      v = b;
+      ss = s;
+      tt = t;
+    }
+  else
+    {
+      usize = bsize;
+      vsize = asize;
+      up = (mp_ptr) TMP_ALLOC ((usize + 1) * BYTES_PER_MP_LIMB);
+      vp = (mp_ptr) TMP_ALLOC ((vsize + 1) * BYTES_PER_MP_LIMB);
+      MPN_COPY (up, bp, usize);
+      MPN_COPY (vp, ap, vsize);
+      u = b;
+      v = a;
+      ss = t;
+      tt = s;
     }
 
-  if (t != NULL)
+  tmp_gp = (mp_ptr) TMP_ALLOC ((usize + 1) * BYTES_PER_MP_LIMB);
+  tmp_sp = (mp_ptr) TMP_ALLOC ((usize + 1) * BYTES_PER_MP_LIMB);
+
+  if (vsize == 0)
     {
-      mpz_mul (x, s0, a);
-      mpz_sub (x, d0, x);
-      if (b->_mp_size == 0)
-	t->_mp_size = 0;
+      tmp_sp[0] = 1;
+      tmp_ssize = 1;
+      MPN_COPY (tmp_gp, up, usize);
+      gsize = usize;
+    }
+  else
+    gsize = mpn_gcdext (tmp_gp, tmp_sp, &tmp_ssize, up, usize, vp, vsize);
+  ssize = ABS (tmp_ssize);
+
+  if (ALLOC (g) < gsize)
+    _mpz_realloc (g, gsize);
+  gp = PTR (g);
+  MPN_COPY (gp, tmp_gp, gsize);
+  SIZ (g) = gsize;
+
+  if (ss == NULL)
+    {
+      ss = &tmp_struct;
+      MPZ_TMP_INIT (ss, ssize);
+    }
+  else
+    {
+      if (ALLOC (ss) < ssize)
+	_mpz_realloc (ss, ssize);
+    }
+  sp = PTR (ss);
+  MPN_COPY (sp, tmp_sp, ssize);
+  SIZ (ss) = tmp_ssize >= 0 ? ssize : -ssize;
+
+  if (tt != NULL)
+    {
+      mpz_t x;
+      MPZ_TMP_INIT (x, ssize + usize + 1);
+
+      mpz_mul (x, ss, u);
+      mpz_sub (x, g, x);
+      if (SIZ (v) == 0)
+	SIZ (tt) = 0;
       else
-	mpz_tdiv_q (t, x, b);
-    }
-  mpz_set (s, s0);
-  mpz_set (g, d0);
-  if (g->_mp_size < 0)
-    {
-      g->_mp_size = -g->_mp_size;
-      s->_mp_size = -s->_mp_size;
-      if (t != NULL)
-	t->_mp_size = -t->_mp_size;
+	mpz_tdiv_q (tt, x, v);
     }
 
-  mpz_clear (s0);
-  mpz_clear (s1);
-  mpz_clear (q);
-  mpz_clear (r);
-  mpz_clear (x);
-  mpz_clear (d0);
-  mpz_clear (d1);
+  TMP_FREE (marker);
 }
