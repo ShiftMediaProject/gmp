@@ -27,11 +27,10 @@ C POWER3/PPC630:     ?
 C POWER4/PPC970:     16
 
 C INPUT PARAMETERS
-C res_ptr	r3
-C s1_ptr	r4
-C size		r5
-C s2_limb	r6
-C cy_limb	r7
+C rp	r3
+C up	r4
+C n	r5
+C v	r6,r7
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
