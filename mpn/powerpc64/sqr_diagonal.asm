@@ -23,26 +23,26 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:    18
-C POWER4/PPC970:     9
+C POWER4/PPC970:     8
 
 C INPUT PARAMETERS
-C res_ptr	r3
-C s1_ptr	r4
-C size		r5
-C s2_limb	r6
+C rp	r3
+C up	r4
+C n	r5
 
 ASM_START()
 PROLOGUE(mpn_sqr_diagonal)
 	mtctr	r5
-	addi	r3, r3, -8
-	addi	r4, r4, -8
-
-.Loop:	ldu	r0, 8(r4)
-	mulld	r7, r0, r0
-	mulhdu	r9, r0, r0
-	std	r7, 8(r3)
-	stdu	r9, 16(r3)
+.Loop:
+	ld	r0, 0(r4)
+	nop
+	mulld	r5, r0, r0
+	mulhdu	r6, r0, r0
+	std	r5, 0(r3)
+	addi	r4, r4, 8
+	std	r6, 8(r3)
+	addi	r3, r3, 16
 	bdnz	.Loop
 
 	blr
-EPILOGUE(mpn_sqr_diagonal)
+EPILOGUE()
