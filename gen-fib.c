@@ -1,6 +1,6 @@
 /* Generate Fibonacci table data.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -101,7 +101,7 @@ table (int numb_bits)
   for (i = 0; i < fnum; i++)
     {
       printf ("  CNST_LIMB (0x");
-      mpz_out_str (0, 16, f[i]);
+      mpz_out_str (stdout, 16, f[i]);
       printf ("),  /* %d */\n", i-1);
     }
   printf ("};\n");
