@@ -7038,7 +7038,7 @@ Librep @spaceuref{http://librep.sourceforge.net/}
 @item
 @c  FIXME: When there's a stable release with gmp support, just refer to it
 @c  rather than bothering to talk about betas.
-XEmacs (21.5.18 betas and up) @spaceuref{http://www.xemacs.org} @* Optional
+XEmacs (21.5.18 beta and up) @spaceuref{http://www.xemacs.org} @* Optional
 big integers, rationals and floats using GMP.
 @end itemize
 
@@ -7120,7 +7120,7 @@ GMPY @uref{http://gmpy.sourceforge.net/}
 @item Scheme
 @itemize @bullet
 @item
-GNU Guile (1.8) @spaceuref{http://www.gnu.org/software/guile/guile.html}
+GNU Guile (upcoming 1.8) @spaceuref{http://www.gnu.org/software/guile/guile.html}
 @item
 RScheme @spaceuref{http://www.rscheme.org/}
 @item
