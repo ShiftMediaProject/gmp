@@ -2650,7 +2650,16 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
 /* Set a_rem to {a_ptr,a_size} reduced modulo b, either using mod_1 or
    modexact_1_odd, but in either case leaving a_rem<b.  b must be odd and
    unsigned.  modexact_1_odd effectively calculates -a mod b, and
-   result_bit1 is adjusted for the factor of -1.  */
+   result_bit1 is adjusted for the factor of -1.
+
+   The way mpn_modexact_1_odd sometimes bases its remainder on a_size and
+   sometimes on a_size-1 means if GMP_NUMB_BITS is odd we can't know what
+   factor to introduce into result_bit1, so for that case use mpn_mod_1
+   unconditionally.
+
+   FIXME: mpn_modexact_1_odd is more efficient, so some way to get it used
+   for odd GMP_NUMB_BITS would be good.  Perhaps it could mung its result,
+   or not skip a divide step, or something. */
 
 #define JACOBI_MOD_OR_MODEXACT_1_ODD(result_bit1, a_rem, a_ptr, a_size, b) \
   do {                                                                     \
@@ -2661,7 +2670,8 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
     ASSERT (__a_size >= 1);                                                \
     ASSERT (__b & 1);                                                      \
                                                                            \
-    if (BELOW_THRESHOLD (__a_size, MODEXACT_1_ODD_THRESHOLD))              \
+    if ((GMP_NUMB_BITS % 2) != 0                                           \
+        || BELOW_THRESHOLD (__a_size, MODEXACT_1_ODD_THRESHOLD))           \
       {                                                                    \
         (a_rem) = mpn_mod_1 (__a_ptr, __a_size, __b);                      \
       }                                                                    \
