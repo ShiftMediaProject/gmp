@@ -236,7 +236,9 @@ typedef unsigned long  stck_t;   /* dummy */
 #endif
 #define STCK_PERIOD      (1.0 / 4096e6)   /* 2^-12 microseconds */
 
-/* mftb */
+/* mftb
+   Enhancement: On 64-bit chips mftb gives a 64-bit value, no need for mftbu
+   and a loop (see powerpc64.asm).  */
 #if HAVE_HOST_CPU_FAMILY_powerpc
 static const int  have_mftb = 1;
 #if defined (__GNUC__) && ! defined (NO_ASM)
