@@ -29,10 +29,10 @@ INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
 	-I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 nodist_libmpbsd_la_SOURCES = \
-	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c \
-	tdiv_qr.c
+	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c \
+	set.c sqrtrem.c sub.c tdiv_qr.c
 libmpbsd_la_SOURCES = \
-	itom.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c
+	itom.c mfree.c min.c mout.c mtox.c sdiv.c xtom.c
 
 if WANT_MPBSD
 noinst_LTLIBRARIES = libmpbsd.la
@@ -61,6 +61,9 @@ powm.c: $(top_srcdir)/mpz/powm.c
 
 realloc.c: $(top_srcdir)/mpz/realloc.c
 	cp $(top_srcdir)/mpz/realloc.c realloc.c
+
+set.c: $(top_srcdir)/mpz/set.c
+	cp $(top_srcdir)/mpz/set.c set.c
 
 sqrtrem.c: $(top_srcdir)/mpz/sqrtrem.c
 	cp $(top_srcdir)/mpz/sqrtrem.c sqrtrem.c
