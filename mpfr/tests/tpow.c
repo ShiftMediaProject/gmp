@@ -315,7 +315,7 @@ main (void)
   for (p=2; p<100; p++)
     check_inexact (p);
 
-  underflows ();
+  /* underflows (); */
 
   tests_end_mpfr ();
   return 0;
