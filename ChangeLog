@@ -18,6 +18,33 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-15  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, acinclude.m4 (GMP_C_RIGHT_SHIFT): New test.
+	* gmp-impl.h (LIMB_HIGHBIT_TO_MASK): New macro.
+	(udiv_qrnnd_preinv2, udiv_qrnnd_preinv2gen): Use it.
+
+	* mpn/amd64/amd64-defs.m4: New file, with a non-aligning PROLOGUE.
+	* configure.in (amd64-*-*): Use it.
+	* mpn/amd64/addlsh1_n.asm: Add ALIGN(16).
+
+	* mpfr/*: Update to mpfr cvs 2003-10-15.
+
+	* mpn/generic/get_d.c: Rewrite, simplifying and truncating towards
+	zero unconditionally.
+	* tests/mpn/t-get_d.c: Add various further tests.
+	* gmp-impl.h (FORCE_DOUBLE): New macro.
+
+	* gmp-h.in (__mpz_struct): Add comment on __mpz_struct getting into
+	C++ mangled function names.
+
+	* doc/gmp.texi (Build Options): Update notes for new doc subdir.
+	(Low-level Functions): Note mpn functions don't check for zero limbs
+	etc, it's up to an application to strip.
+
+	* doc/configuration (Configure): mdate-sh now in doc subdir, add
+	generated fat.h.
+
 2003-10-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/lorrshift.asm: Rewrite.
