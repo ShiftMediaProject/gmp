@@ -239,10 +239,6 @@ MPBSD_OBJECTS = mpbsd/add.lo mpbsd/tdiv_qr.lo mpbsd/move.lo mpbsd/powm.lo \
   mpbsd/pow_ui.lo mpbsd/sdiv.lo mpbsd/sqrtrem.lo mpbsd/xtom.lo 
 
 
-# libgmp needs -lm for floor() and sqrt() used by mpn/generic/sqrtrem.c.
-# Some compilers (eg. gcc on i386) might in-line these, making -lm
-# unnecessary, but we don't try to detect that.
-#
 libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
   mp_clz_tab.c mp_minv_tab.c						 \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c		 \
@@ -251,12 +247,11 @@ libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
 libgmp_la_DEPENDENCIES = \
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 
-libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES) -lm
+libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
 
-# -lm wanted on libmp_la_LIBADD for the same reason as libgmp
 @WANT_MPBSD_TRUE@MPBSD_HEADERS_OPTION = @WANT_MPBSD_TRUE@mp.h
 @WANT_MPBSD_TRUE@MPBSD_LTLIBRARIES_OPTION = @WANT_MPBSD_TRUE@libmp.la
 libmp_la_SOURCES = \
@@ -266,7 +261,7 @@ libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)			    \
   mpz/add.lo mpz/clear.lo mpz/init.lo mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo \
   mpz/realloc.lo mpz/set.lo mpz/set_ui.lo mpz/tdiv_r.lo mpz/sub.lo
 
-libmp_la_LIBADD = $(libmp_la_DEPENDENCIES) -lm
+libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
 libmp_la_LDFLAGS = \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)
 
