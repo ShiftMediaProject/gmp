@@ -1,3 +1,8 @@
+2000-05-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpf/iset_str.c: Initialize _mp_size and _mp_exp to 0, in case no
+	digits in string, so it's the same as a separate init and set_str.
+
 2000-05-24  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/reuse.c: Use mpz_random2 instead of mpz_random.
