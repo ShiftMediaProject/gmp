@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_popcount.
 
-dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -29,6 +29,11 @@ C         cycles/limb
 C Itanium:    1
 C Itanium 2:  1
 
+
+C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
+C
+C 1 c/l is optimal on both itanium and itanium2.  itanium can only sustain 1
+C load and 1 store per cycle, and itanium2 has only one popcnt unit.
 
 ASM_START()
 PROLOGUE(mpn_popcount)
