@@ -342,10 +342,6 @@ MA 02111-1307, USA.
      "<code>mulx</code>"s either with an asm block or via the generic C code is
      about 90 cycles.  Try using fp operations, and also try using karatsuba
      for just three "<code>mulx</code>"s.
-<li> UltraSPARC/64: <code>mpn_divrem_1</code> and <code>mpn_mod_1</code>,
-     could process 32 bits at a time when the divisor fits 32-bits.  This will
-     need only 4 <code>mulx</code>'s per limb instead of 8 in the general
-     case.
 <li> UltraSPARC/32: Rewrite <code>mpn_lshift</code>, <code>mpn_rshift</code>.
      Will give 2 cycles/limb.  Trivial modifications of mpn/sparc64 should do.
 <li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 &lt; 2^16.
