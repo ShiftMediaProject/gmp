@@ -52,6 +52,18 @@ MA 02111-1307, USA.
    to the final speed of the relevant routines, but nothing has been done to
    check that carefully.
 
+   Remarks:
+
+   The code here isn't a vision of loveliness, mainly because it's subject
+   to ongoing modifications according to new things wanting to be tuned and
+   practical requirements of systems tested.
+
+   The way parts of the library are recompiled to insinuate the tuning
+   variables is a bit subtle, but unavoidable since of course the main
+   library has fixed thresholds compiled-in but we want to vary them here.
+   Most of the nonsense for this can be found in tune/Makefile.am and under
+   TUNE_PROGRAM_BUILD in gmp-impl.h.
+
    Limitations:
    
    The FFTs aren't subject to the same badness rule as the other thresholds,
@@ -110,9 +122,7 @@ int  allocdat = 0;
    the one it's determining. */
 
 mp_size_t  mul_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
-mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
 mp_size_t  sqr_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
-mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
 mp_size_t  dc_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  fib_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  powm_threshold[2] = { MP_SIZE_T_MAX };
@@ -123,6 +133,8 @@ mp_size_t  divrem_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_norm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
 
+mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
+mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
 
 #ifndef TUNE_KARATSUBA_SQR_MAX
 #define TUNE_KARATSUBA_SQR_MAX  0 /* meaning no limit */
@@ -234,6 +246,25 @@ analyze_dat (int i, int final)
 }
 
 
+/* Measuring for recompiled mpn/generic/divrem_1.c and mpn/generic/mod_1.c */
+
+mp_limb_t mpn_divrem_1_tune _PROTO ((mp_ptr qp, mp_size_t xsize,
+                                    mp_srcptr ap, mp_size_t size,
+                                    mp_limb_t d));
+mp_limb_t mpn_mod_1_tune _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
+
+double
+speed_mpn_mod_1_tune (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1 (mpn_mod_1_tune);
+}
+double
+speed_mpn_divrem_1_tune (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1 (mpn_divrem_1_tune);
+}
+
+
 double
 tuneup_measure (speed_function_t fun,
                 const struct param_t *param,
@@ -255,7 +286,7 @@ tuneup_measure (speed_function_t fun,
   mpn_random (s->xp, s->size);
   mpn_random (s->yp, s->size);
 
-  if (param != NULL && param->data_high_lt_r)
+  if (param->data_high_lt_r)
     {
       s->xp[s->size-1] %= s->r;
       s->yp[s->size-1] %= s->r;
@@ -855,7 +886,7 @@ all (void)
     param.name[0] = "DIVREM_1_NORM_THRESHOLD";
     DIV_1_PARAMS;
     s.r = randlimb_norm ();
-    param.function = speed_mpn_divrem_1;
+    param.function = speed_mpn_divrem_1_tune;
     one (divrem_1_norm_threshold, 1, &param);
   }
   {
@@ -863,17 +894,18 @@ all (void)
     param.name[0] = "DIVREM_1_UNNORM_THRESHOLD";
     DIV_1_PARAMS;
     s.r = randlimb_half ();
-    param.function = speed_mpn_divrem_1;
+    param.function = speed_mpn_divrem_1_tune;
     one (divrem_1_unnorm_threshold, 1, &param);
   }
-#endif
+#endif /* ! HAVE_NATIVE_mpn_divrem_1 */
 #if ! HAVE_NATIVE_mpn_mod_1
+#define SPEED_MPN_MOD_1  speed_mpn_mod_1_tune
   {
     static struct param_t  param;
     param.name[0] = "MOD_1_NORM_THRESHOLD";
     DIV_1_PARAMS;
     s.r = randlimb_norm ();
-    param.function = speed_mpn_mod_1;
+    param.function = speed_mpn_mod_1_tune;
     one (mod_1_norm_threshold, 1, &param);
   }
   {
@@ -881,11 +913,50 @@ all (void)
     param.name[0] = "MOD_1_UNNORM_THRESHOLD";
     DIV_1_PARAMS;
     s.r = randlimb_half ();
-    param.function = speed_mpn_mod_1;
+    param.function = speed_mpn_mod_1_tune;
     one (mod_1_unnorm_threshold, 1, &param);
   }
+#endif /* ! HAVE_NATIVE_mpn_mod_1 */
+#endif /* ! UDIV_PREINV_ALWAYS */
+
+#if HAVE_NATIVE_mpn_preinv_mod_1
+  /* Any native version of mpn_preinv_mod_1 is assumed to exist because it's
+     faster than mpn_mod_1.  */
+  printf ("#define USE_PREINV_MOD_1           1   /* (native) */\n");
+#else
+#if UDIV_PREINV_ALWAYS
+  /* If udiv_qrnnd_preinv is the only division method then of course
+     mpn_preinv_mod_1 should be used.  */
+  printf ("#define USE_PREINV_MOD_1           1   /* (preinv always) */\n");
+#else
+  /* the native version if not a tuned generic one from above */
+#ifndef SPEED_MPN_MOD_1
+#define SPEED_MPN_MOD_1  speed_mpn_mod_1
 #endif
-#endif
+  {
+    static struct param_t  param;
+    double   t1, t2;
+
+    param.data_high_lt_r = 1; /* let mpn_mod_1 skip one division */    
+    s.size = 200;             /* generous but not too big */
+    s.r = randlimb_norm();    /* divisor */
+
+    t1 = tuneup_measure (speed_mpn_preinv_mod_1, &param, &s);
+    t2 = tuneup_measure (SPEED_MPN_MOD_1, &param, &s);
+    if (t1 == -1.0 || t2 == -1.0)
+      {
+        printf ("Oops, can't measure mpn_preinv_mod_1 and mpn_mod_1 at %ld\n",
+                s.size);
+        abort ();
+      }
+    if (option_trace >= 1)
+        printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1 %.9f\n",
+                s.size, t1, t2);
+
+    printf ("#define USE_PREINV_MOD_1           %d\n", t1 < t2);
+  }
+#endif /* ! UDIV_PREINV_ALWAYS */
+#endif /* ! HAVE_NATIVE_mpn_preinv_mod_1 */
   printf("\n");
 
   if (option_fft_max_size != 0)
@@ -965,27 +1036,4 @@ main (int argc, char *argv[])
 		
   all ();
   exit (0);
-}
-
-
-
-
-
-/* The tune program uses a recompiled mpn/generic/divrem_1.c, which doesn't
-   provide an mpn_divrem_1c.  If a native divrem_1 is instead being used
-   then common.c will want an mpn_divrem_1c, so provide a dummy here.
-   Without this the linker would drag in divrem_1.o from libgmp.la and
-   mpn_divrem_1 there would conflict with the recompiled divrem_1.c.  */
-
-mp_limb_t
-mpn_divrem_1c (mp_ptr dst, mp_size_t xsize, mp_srcptr src, mp_size_t size,
-               mp_limb_t divisor, mp_limb_t carry)
-{
-  abort ();
-}
-
-mp_limb_t
-mpn_mod_1c (mp_srcptr src, mp_size_t size, mp_limb_t divisor, mp_limb_t carry)
-{
-  abort ();
 }
