@@ -1159,6 +1159,8 @@ if test $enable_cxx != no; then
   if test $want_cxx = no && test $enable_cxx = yes; then
     AC_MSG_ERROR([C++ compiler not available])
   fi
+else
+  AC_PROG_CXX
 fi
 
 AM_CONDITIONAL(WANT_CXX, test $want_cxx = yes)
