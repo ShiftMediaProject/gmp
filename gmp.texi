@@ -65,7 +65,7 @@ by the Foundation.
 @subtitle Edition 2.1 SNAPSHOT
 @subtitle November 1998
 
-@author by Torbj@"orn Granlund, TMG Datakonsult
+@author by Torbj@"orn Granlund, Swox AB
 tege@@gnu.org
 
 @c Include the Distribution inside the titlepage so
@@ -186,16 +186,12 @@ by using sophisticated algorithms, by including carefully optimized assembly
 code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
 
-There is carefully optimized assembly code for these CPUs: DEC Alpha, Amd
-29000, HPPA 1.0 and 1.1, Intel Pentium and generic x86, Intel i960, Motorola
-MC68000, MC68020, MC88100, and MC88110, Motorola/IBM PowerPC, National
-NS32000, IBM POWER, MIPS R3000, R4000, SPARCv7, SuperSPARC, generic SPARCv8,
-and DEC VAX.  Some optimizations also for ARM, Clipper, IBM ROMP (RT), and
-Pyramid AP/XP.
-
-This version of MP is released under a more liberal license than previous
-versions.  It is now permitted to link MP to non-free programs, as long as MP
-source code is provided when distributing the non-free program.
+There is carefully optimized assembly code for these CPUs: ARM, DEC Alpha
+21064, 21164, and 21264, Amd 29000, HPPA 1.0 and 1.1, Intel Pentium, Pentium
+Pro/Pentium II, generic x86, Intel i960, Motorola MC68000, MC68020, MC88100,
+and MC88110, Motorola/IBM PowerPC, National NS32000, IBM POWER, MIPS R3000,
+R4000, SPARCv7, SuperSPARC, generic SPARCv8, UltraSPARC, and DEC VAX.  Some
+optimizations also for Clipper, IBM ROMP (RT), and Pyramid AP/XP.
 
 For up-to-date information on MP,
 @samp{http://www.matematik.su.se/~tege/gmp/}, is a good place to look.
