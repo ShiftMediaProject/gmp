@@ -21,8 +21,9 @@ MA 02111-1307, USA.
 
 2001-11-15  Torbjorn Granlund  <tege@swox.com>
 
-	* tests/mpz/reuse.c (main): Don't exercise negative exponents for
-	mpz_powm.
+	* mpz/powm.c (HANDLE_NEGATIVE_EXPONENT): #define to 1.
+	* tests/mpz/reuse.c (main): Use	mpz_invert to avoid undefined mpz_powm
+	cases.
 
 2001-11-14  Torbjorn Granlund  <tege@swox.com>
 
