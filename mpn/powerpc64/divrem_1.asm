@@ -292,7 +292,6 @@ Loop3:	ld	r6,0(r28)
 	addi	r8,r8,1
 .L543:	std	r8,0(r31)
 	addi	r31,r31,-8
-	addic.	r12,r12,-1
 	mr	r5,r6
 	bdnz	Loop3
 
