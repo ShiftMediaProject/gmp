@@ -20,6 +20,10 @@ MA 02111-1307, USA.
 
 2003-10-01  Kevin Ryde  <kevin@swox.se>
 
+	* acinclude.m4 (GMP_C_DOUBLE_FORMAT): Make bad ARM last byte into a
+	separate case and consider it non-IEEE, since it looks like this is
+	due to some sort of restricted or incorrect software floats.
+
 	* demos/calc/Makefile.am: Use automake yacc/lex support, seems fine in
 	separate objdir now.
 
