@@ -38,8 +38,6 @@ MA 02111-1307, USA. */
      easily be interrupted when the needed number of digits are generated.
 */
 
-#define assert(true) do { if (!(true)) abort (); } while (0)
-
 #define swapptr(xp,yp) \
 do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
 
@@ -197,7 +195,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 	      usize = rsize;
 	      if (cy)
 		up[usize++] = cy;
-	      assert (usize <= ralloc);	/* sufficient space? */
+	      ASSERT_ALWAYS (usize <= ralloc);	/* sufficient space? */
 	    }
 	  else
 	    {
@@ -345,7 +343,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 
       cy = mpn_mul_1 (rp, rp, rsize, big_base);
 
-      assert (! (digits_computed_so_far == 0 && cy == 0));
+      ASSERT_ALWAYS (! (digits_computed_so_far == 0 && cy == 0));
 
       /* Convert N1 from BIG_BASE to a string of digits in BASE
 	 using single precision operations.  */
