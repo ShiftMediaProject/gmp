@@ -472,12 +472,12 @@ case ${target} in
   [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
     gmp_m4postinc="x86/x86-defs.m4"
     extra_functions="udiv umul"
-
     CALLING_CONVENTIONS_OBJS="x86call.o x86check.o"
 
     GMP_CHECK_ASM_SHLDL_CL(
       [GMP_DEFINE(WANT_SHLDL_CL,1)],
       [GMP_DEFINE(WANT_SHLDL_CL,0)])
+    GMP_CHECK_ASM_ALIGN_FILL_0x90
 
     # the CPUs below wanting to know about mmx
     case ${target} in
