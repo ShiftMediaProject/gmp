@@ -1,5 +1,8 @@
 2001-02-03  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in (arm*-*-*): Set gcc_cflags in order to pass
+	$fomit_frame_pointer.
+
 	* tests/mpz/t-mul.c (base_mul): Remove an unused variable.
 
 2001-02-02  Torbjorn Granlund  <tege@swox.com>
@@ -275,7 +278,7 @@
 
 	* mpz/kronsz.c: Temporary workaround for Cray right shift oddities.
 	Explicitly compare against zero in tests.
-	
+
 2001-01-10  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/kronzs.c: Don't depend on right shifting a negative.
@@ -384,7 +387,7 @@
 	* tests/trace.c: Use tests.h, add mpf_trace.
 	* tests/refmpn.c: Use tests.h, add refmpn_malloc_limbs_aligned,
 	refmpn_tstbit, refmpn_neg.
-	
+
 	* tune/common.c, tune/speed.h: Update for functions moved to
 	tests/misc.c.
 
