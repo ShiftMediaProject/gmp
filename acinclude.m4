@@ -1158,11 +1158,12 @@ dnl  ------------------
 dnl  Do we need something after `GLOBL symbol'?
 
 AC_DEFUN(GMP_ASM_GLOBL_ATTR,
-[AC_CACHE_CHECK([if the export directive needs an attribute],
+[AC_REQUIRE([GMP_ASM_GLOBL])
+AC_CACHE_CHECK([for assembler global directive attribute],
                 gmp_cv_asm_globl_attr,
-[case $host in
-  *-*-hpux*) gmp_cv_asm_globl_attr=",entry" ;;
-  *)         gmp_cv_asm_globl_attr="" ;;
+[case $gmp_cv_asm_globl in
+  .export) gmp_cv_asm_globl_attr=",entry" ;;
+  *)       gmp_cv_asm_globl_attr="" ;;
 esac
 ])
 echo ["define(<GLOBL_ATTR>, <$gmp_cv_asm_globl_attr>)"] >> $gmp_tmpconfigm4
