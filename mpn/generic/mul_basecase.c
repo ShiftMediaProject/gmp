@@ -28,16 +28,25 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Handle simple cases with traditional multiplication.
 
-   This is the most critical code of multiplication.  All multiplies rely on
-   this, both small and huge.  Small ones arrive here immediately, huge ones
-   arrive here as this is the base case for Karatsuba's recursive algorithm. */
+/* Multiply {up,usize} by {vp,vsize} and write the result to
+   {prodp,usize+vsize}.  Must have usize>=vsize.
+
+   Note that prodp gets usize+vsize limbs stored, even if the actual result
+   only needs usize+vsize-1.
+
+   There's no good reason to call here with vsize>=KARATSUBA_MUL_THRESHOLD.
+   Currently this is allowed, but it might not be in the future.
+
+   This is the most critical code for multiplication.  All multiplies rely
+   on this, both small and huge.  Small ones arrive here immediately, huge
+   ones arrive here as this is the base case for Karatsuba's recursive
+   algorithm.  */
 
 void
 mpn_mul_basecase (mp_ptr prodp,
-		     mp_srcptr up, mp_size_t usize,
-		     mp_srcptr vp, mp_size_t vsize)
+                  mp_srcptr up, mp_size_t usize,
+                  mp_srcptr vp, mp_size_t vsize)
 {
   ASSERT (usize >= vsize);
   ASSERT (vsize >= 1);
