@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+# Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -71,4 +71,4 @@ $(top_builddir)/tests/libtests.la:
 # Note this fix applies only when running "make check".  The cp here should
 # be done manually if just one program is to be built and run.
 #
-TESTS_ENVIRONMENT = cp $(top_builddir)/.libs/libgmp.so.* .libs 2>/dev/null;
+TESTS_ENVIRONMENT = cp $(top_builddir)/.libs/libgmp.so.* .libs 2>/dev/null || true;
