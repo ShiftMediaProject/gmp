@@ -4116,6 +4116,20 @@ echo "include(\`$tmp_basename_f')" >> $gmp_tmpconfigm4i
 
 done
 
+# Path from mpn build subdirectory to top source directory.
+# The regexp testing for an absolute path is the same as in
+# _AC_OUTPUT_FILES of autoconf acgeneral.m4.
+case "$srcdir" in
+[/\\]* | ?:[/\\]* )
+
+echo "define(\`CONFIG_SRCDIR',\`\`$srcdir'')" >> $gmp_tmpconfigm4
+    ;;
+*)
+
+echo "define(\`CONFIG_SRCDIR',\`\`../$srcdir'')" >> $gmp_tmpconfigm4
+ ;;
+esac
+
 # After including asm.m4.
 
 echo "define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')" >> $gmp_tmpconfigm4p
