@@ -1,5 +1,7 @@
 Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpz/set_d.c: Call _mpz_realloc.
+
 	* mpq/set_z.c: New file.
 	* mpq/Makefile.in: Compile it.
 	* make.bat: Likewise.

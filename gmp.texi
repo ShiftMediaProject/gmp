@@ -218,7 +218,7 @@ You need a C compiler, preferably GCC, but any reasonable compiler should
 work.  And you need a standard Unix @samp{make} program, plus some other
 standard Unix utility programs.
 
-(If you're on a MS-DOS machine, your can build MP using @file{make.bat}.  It
+(If you're on an MS-DOS machine, your can build MP using @file{make.bat}.  It
 requires that djgpp is installed.  It does not require configuration, nor is
 @samp{make} needed; @file{make.bat} both configures and builds the library.)
 
@@ -450,8 +450,8 @@ argument(s) last.)
 
 MP allows you to use the same variable for both input and output in the same
 expression.  For example, the main function for integer multiplication,
-@code{mpz_mul}, can be used like this: @code{mpz_mul (x, x, x);}.  This
-computes the square of @var{x} and put the result back in @var{x}.
+@code{mpz_mul}, can be used like this: @code{mpz_mul (x, x, x)}.  This
+computes the square of @var{x} and puts the result back in @var{x}.
 
 Before you can assign to an MP variable, you need to initialize it by calling
 one of the special initialization functions.  When you're done with a
