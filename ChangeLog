@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-02-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/hamdist.asm: Remove bundling incompatible with HP-UX
+	assember.  Misc HP-UX changes.
+	* mpn/ia64/gcd_1.asm: Add some syntax to placid the HP-UX assembler.
+
 2004-02-11  Kevin Ryde  <kevin@swox.se>
 
 	* longlong.h (power, powerpc): Use HAVE_HOST_CPU_FAMILY_power and
