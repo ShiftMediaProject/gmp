@@ -137,9 +137,12 @@ MA 02111-1307, USA. */
 #endif
 #define MP_LIMB_T_MAX      (~ (mp_limb_t) 0)
 
-#define ULONG_HIGHBIT      (ULONG_MAX ^ (ULONG_MAX >> 1))
-#define UINT_HIGHBIT       (UINT_MAX ^ (UINT_MAX >> 1))
-#define USHRT_HIGHBIT      ((unsigned short) (USHRT_MAX ^ (USHRT_MAX >> 1)))
+/* Must cast ULONG_MAX etc to unsigned long etc, since they might not be
+   unsigned on a K&R compiler.  In particular the HP-UX 10 bundled K&R cc
+   treats the plain decimal values in <limits.h> as signed.  */
+#define ULONG_HIGHBIT      (ULONG_MAX ^ ((unsigned long) ULONG_MAX >> 1))
+#define UINT_HIGHBIT       (UINT_MAX ^ ((unsigned) UINT_MAX >> 1))
+#define USHRT_HIGHBIT      ((unsigned short) (USHRT_MAX ^ ((unsigned short) USHRT_MAX >> 1)))
 #define MP_LIMB_T_HIGHBIT  (MP_LIMB_T_MAX ^ (MP_LIMB_T_MAX >> 1))
 
 #ifndef LONG_MIN
