@@ -1350,12 +1350,11 @@ mpn_mul_n (p, a, b, n)
     {
       /* Allocate workspace of fixed size on stack: fast! */
 #if TUNE_PROGRAM_BUILD
-      mp_limb_t ws[2 * (500-1) + 2 * BITS_PER_MP_LIMB];
-      mpn_kara_mul_n (p, a, b, n, ws);
+      mp_limb_t ws[2 * (TOOM3_MUL_THRESHOLD_LIMIT-1) + 2 * BITS_PER_MP_LIMB];
 #else
       mp_limb_t ws[2 * (TOOM3_MUL_THRESHOLD-1) + 2 * BITS_PER_MP_LIMB];
-      mpn_kara_mul_n (p, a, b, n, ws);
 #endif
+      mpn_kara_mul_n (p, a, b, n, ws);
     }
   else
     {
