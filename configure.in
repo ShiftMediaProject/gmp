@@ -2338,15 +2338,44 @@ DECL_$tmp_fbase (__MPN(${tmp_fbase}_init));" >>fat.h
   done
 
   echo "
+/* Copy all fields into __gmpn_cpuvec.
+   memcpy is not used because it might operate byte-wise (depending on its
+   implemenation), and we need the function pointer writes to be atomic.
+   "volatile" discourages the compiler from trying to optimize this.  */
+#define CPUVEC_INSTALL(vec) \\
+  do { \\
+    volatile struct cpuvec_t *p = &__gmpn_cpuvec; \\" >>fat.h
+  for tmp_fn in $fat_functions; do
+    GMP_FILE_TO_FUNCTION(tmp_fbase,tmp_fn)
+    echo "    p->$tmp_fbase = vec.$tmp_fbase; \\" >>fat.h
+  done
+  for tmp_tn in $fat_thresholds; do
+    tmp_field_name=`echo $tmp_tn | tr A-Z a-z`
+    echo "    p->$tmp_field_name = vec.$tmp_field_name; \\" >>fat.h
+  done
+  echo "  } while (0)" >>fat.h
+
+  echo "
 /* A helper to check all fields are filled. */
 #define ASSERT_CPUVEC(vec) \\
   do { \\" >>fat.h
   for tmp_fn in $fat_functions; do
     GMP_FILE_TO_FUNCTION(tmp_fbase,tmp_fn)
-    echo "  ASSERT (vec.$tmp_fbase != NULL); \\" >>fat.h
+    echo "    ASSERT (vec.$tmp_fbase != NULL); \\" >>fat.h
   done
   for tmp_tn in $fat_thresholds; do
-    echo "  ASSERT (vec.`echo $tmp_tn | tr A-Z a-z` != 0); \\" >>fat.h
+    tmp_field_name=`echo $tmp_tn | tr A-Z a-z`
+    echo "    ASSERT (vec.$tmp_field_name != 0); \\" >>fat.h
+  done
+  echo "  } while (0)" >>fat.h
+
+  echo "
+/* Call ITERATE(field) for each fat threshold field. */
+#define ITERATE_FAT_THRESHOLDS() \\
+  do { \\" >>fat.h
+  for tmp_tn in $fat_thresholds; do
+    tmp_field_name=`echo $tmp_tn | tr A-Z a-z`
+    echo "    ITERATE ($tmp_tn, $tmp_field_name); \\" >>fat.h
   done
   echo "  } while (0)" >>fat.h
 
