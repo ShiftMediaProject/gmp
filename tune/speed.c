@@ -65,8 +65,6 @@ SPEED_EXTRA_PROTOS
 #endif
 
 
-#define numberof(x)    (sizeof (x) / sizeof ((x)[0]))
-
 #define MPN_FILL(ptr, size, n)                  \
   do {                                          \
     mp_size_t  i;                               \
@@ -183,6 +181,11 @@ const struct routine_t {
   { "mpn_kara_sqr_n",    speed_mpn_kara_sqr_n       },
   { "mpn_toom3_mul_n",   speed_mpn_toom3_mul_n      },
   { "mpn_toom3_sqr_n",   speed_mpn_toom3_sqr_n      },
+  { "mpn_mul_fft_full",     speed_mpn_mul_fft_full     },
+  { "mpn_mul_fft_full_sqr", speed_mpn_mul_fft_full_sqr },
+
+  { "mpn_mul_fft",       speed_mpn_mul_fft,     FLAG_R_OPTIONAL },
+  { "mpn_mul_fft_sqr",   speed_mpn_mul_fft_sqr, FLAG_R_OPTIONAL },
 
   { "mpz_add",           speed_mpz_add              },
   { "mpz_bin_uiui",      speed_mpz_bin_uiui, FLAG_R_OPTIONAL },
@@ -681,13 +684,13 @@ Times are in seconds, accuracy is shown.\n\
 \n\
 If both -t and -f are used, it means step by the factor or the step, whichever\n\
 is greater.\n\
-If both -C and -D are used, it means cycles per how many limbs between a size\n\
-and the previous size.\n\
+If both -C and -D are used, it means cycles per however many limbs between a\n\
+size and the previous size.\n\
 \n\
 After running with -P, plots can be viewed with Gnuplot or Quickplot.\n\
 \"gnuplot name.gnuplot\" (use \"set logscale xy; replot\" at the prompt for\n\
 a log/log plot).\n\
-\"quickplot -s name.data\" (with interactive zooming, and note -s is important\n\
+\"quickplot -s name.data\" (has interactive zooming, and note -s is important\n\
 when viewing more than one routine, it means same axis scales for all data).\n\
 \n\
 The available routines are as follows.\n\
@@ -698,7 +701,9 @@ The available routines are as follows.\n\
     {
       if (routine[i].flag & FLAG_R) 
         printf ("\t%s.r\n", routine[i].name); 
-      else 
+      else if (routine[i].flag & FLAG_R_OPTIONAL) 
+        printf ("\t%s (optional .r)\n", routine[i].name); 
+      else
         printf ("\t%s\n", routine[i].name); 
     }
       

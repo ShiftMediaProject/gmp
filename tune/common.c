@@ -41,7 +41,7 @@ MA 02111-1307, USA.
 /* Change this to "#define TRACE(x) x" to get traces. */
 #define TRACE(x)
 
-#define numberof(x)   (sizeof (x) / sizeof ((x)[0]))
+
 typedef int (*qsort_function_t) _PROTO ((const void *, const void *));
 
 
@@ -686,6 +686,75 @@ double
 speed_mpn_toom3_sqr_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_TOOM3_SQR_N (mpn_toom3_sqr_n);
+}
+
+double
+speed_mpn_mul_fft_full (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL_N_CALL
+    (mpn_mul_fft_full (wp, s->xp, s->size, s->yp, s->size));
+}
+double
+speed_mpn_mul_fft_full_sqr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQR_CALL
+    (mpn_mul_fft_full (wp, s->xp, s->size, s->xp, s->size));
+}
+
+
+/* These are mod 2^N+1 multiplies and squares.  If s->r is supplied it's
+   used as k, otherwise the best k for the size is used.  If s->size isn't a
+   multiple of 2^k it's rounded up to make the effective operation size.  */
+
+#define SPEED_ROUTINE_MPN_MUL_FFT_CALL(call, sqr)       \
+  {                                                     \
+    mp_ptr     wp;                                      \
+    mp_size_t  pl;                                      \
+    int        k;                                       \
+    unsigned   i;                                       \
+    double     t;                                       \
+    TMP_DECL (marker);                                  \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 1);                 \
+                                                        \
+    if (s->r != 0)                                      \
+      k = s->r;                                         \
+    else                                                \
+      k = mpn_fft_best_k (s->size, sqr);                \
+                                                        \
+    TMP_MARK (marker);                                  \
+    pl = mpn_fft_next_size (s->size, k);                \
+    wp = SPEED_TMP_ALLOC_LIMBS (pl+1, s->align_wp);     \
+                                                        \
+    speed_operand_src (s, s->xp, s->size);              \
+    if (!sqr)                                           \
+      speed_operand_src (s, s->yp, s->size);            \
+    speed_operand_dst (s, wp, pl+1);                    \
+    speed_cache_fill (s);                               \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      call;                                             \
+    while (--i != 0);                                   \
+    t = speed_endtime ();                               \
+                                                        \
+    TMP_FREE (marker);                                  \
+    return t;                                           \
+  }  
+
+double
+speed_mpn_mul_fft (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL_FFT_CALL
+    (mpn_mul_fft (wp, pl, s->xp, s->size, s->yp, s->size, k), 0);
+}
+
+double
+speed_mpn_mul_fft_sqr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL_FFT_CALL
+    (mpn_mul_fft (wp, pl, s->xp, s->size, s->xp, s->size, k), 1);
 }
 
 
