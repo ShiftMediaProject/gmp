@@ -19,6 +19,25 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/sb_divrem_mn.c, mpn/generic/divrem_1.c,
+	mpn/generic/divrem_2.c, mpn/generic/mod_1.c: Don't use UMUL_TIME and
+	UDIV_TIME, just default to preinv.
+	* gmp-impl.h (USE_PREINV_DIVREM_1, USE_PREINV_MOD_1): Ditto.
+	(DIVEXACT_1_THRESHOLD, MODEXACT_1_ODD_THRESHOLD): Don't use UMUL_TIME
+	and UDIV_TIME, make default thresholds 0.
+	(UDIV_NORM_PREINV_TIME, UDIV_UNNORM_PREINV_TIME): Remove macros.
+	* mpn/x86/*/gmp-mparam.h (UMUL_TIME, UDIV_TIME,
+	UDIV_NORM_PREINV_TIME): Remove macros.
+
+	* gmp.texi (Headers and Libraries): New section, being the header
+	notes from "GMP Basics" and some new stuff.
+	(Parameter Conventions): Notes on "const" parameters.
+	(Formatted Output Strings): Add type N, tweak some wording.
+
+	* tests/refmpn.c (refmpn_divmod_1c): Avoid a bug in i386 gcc 3.0.
+	
 2002-01-12  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/root.c: Add <stdlib.h>, for abort().
@@ -34,6 +53,7 @@ MA 02111-1307, USA.
 
 	* tests/mpz/t-inp_str.c, tests/mpq/t-inp_str.c, tests/misc/t-scanf.c:
 	Avoid strings in ASSERT, not enjoyed by K&R.
+	* gmp-impl.h (ASSERT): Note this.
 
 	* tests/tests.h (refmpn_mod_34lsub1): Add __GMP_PROTO.
 
