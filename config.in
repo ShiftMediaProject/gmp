@@ -277,9 +277,9 @@ MA 02111-1307, USA. */
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define one (just one) of the following for the endianness of `mp_limb_t'.
+/* Define one of these to 1 for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
-   it is, then leave both of these undefined. */
+   it is, then leave both undefined. */
 #undef HAVE_LIMB_BIG_ENDIAN
 #undef HAVE_LIMB_LITTLE_ENDIAN
 
