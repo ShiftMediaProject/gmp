@@ -18,7 +18,7 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 #include <stddef.h>  /* for size_t */
-#ifdef NO_CALC_H
+#ifndef NO_CALC_H
 #include "calc.h"
 #endif
 #include "calc-config.h"
