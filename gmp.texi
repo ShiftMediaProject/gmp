@@ -1297,9 +1297,8 @@ for applications.
 @table @asis
 @item @samp{ABI=64}
 The 64-bit V9 ABI is available on Solaris 2.7 and up (when the kernel is in
-64-bit mode), and on the sparc64 ports of NetBSD and OpenBSD.  GCC 3.2 or up,
-or Sun @command{cc} is required.  On Solaris applications must be compiled
-with
+64-bit mode), and on the BSD sparc64 ports.  GCC 3.2 or up, or Sun
+@command{cc} is required.  On Solaris applications must be compiled with
 
 @example
 gcc  -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9
