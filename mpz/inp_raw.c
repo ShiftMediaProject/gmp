@@ -115,31 +115,74 @@ mpz_inp_raw (mpz_ptr x, FILE *fp)
   abs_csize = ABS (csize);
 
   /* round up to a multiple of limbs */
-  abs_xsize = (abs_csize + BYTES_PER_MP_LIMB-1) / BYTES_PER_MP_LIMB;
+  abs_xsize = (abs_csize*8 + GMP_NUMB_BITS-1) / GMP_NUMB_BITS;
 
   if (abs_xsize != 0)
     {
       MPZ_REALLOC (x, abs_xsize);
       xp = PTR(x);
 
-      /* get limb boundaries right in the read */
+      /* Get limb boundaries right in the read, for the benefit of the
+         non-nails case.  */
       xp[0] = 0;
       cp = (char *) (xp + abs_xsize) - abs_csize;
       if (fread (cp, abs_csize, 1, fp) != 1)
         return 0;
 
-      /* Reverse limbs to least significant first, and byte swap.  If
-         abs_xsize is odd then on the last iteration elimb and slimb are the
-         same.  It doesn't seem extra code to handle that case separately,
-         to save an NTOH.  */
-      sp = xp;
-      ep = xp + abs_xsize-1;
-      for (i = 0; i < (abs_xsize+1)/2; i++)
+      if (GMP_NAIL_BITS == 0)
         {
-          NTOH_LIMB_FETCH (elimb, ep);
-          NTOH_LIMB_FETCH (slimb, sp);
-          *sp++ = elimb;
-          *ep-- = slimb;
+          /* Reverse limbs to least significant first, and byte swap.  If
+             abs_xsize is odd then on the last iteration elimb and slimb are
+             the same.  It doesn't seem extra code to handle that case
+             separately, to save an NTOH.  */
+          sp = xp;
+          ep = xp + abs_xsize-1;
+          for (i = 0; i < (abs_xsize+1)/2; i++)
+            {
+              NTOH_LIMB_FETCH (elimb, ep);
+              NTOH_LIMB_FETCH (slimb, sp);
+              *sp++ = elimb;
+              *ep-- = slimb;
+            }
+        }
+      else
+        {
+          /* It ought to be possible to do the transformation in-place, but
+             for now it's easier to use an extra temporary area.  */
+          mp_limb_t  byte, limb;
+          int        bits;
+          mp_size_t  tpos;
+          mp_ptr     tp;
+          TMP_DECL (marker);
+
+          TMP_MARK (marker);
+          tp = TMP_ALLOC_LIMBS (abs_xsize);
+          limb = 0;
+          bits = 0;
+          tpos = 0;
+          for (i = abs_csize-1; i >= 0; i--)
+            {
+              byte = (unsigned char) cp[i];
+              limb |= (byte << bits);
+              bits += 8;
+              if (bits >= GMP_NUMB_BITS)
+                {
+                  ASSERT (tpos < abs_xsize);
+                  tp[tpos++] = limb & GMP_NUMB_MASK;
+                  bits -= GMP_NUMB_BITS;
+                  ASSERT (bits < 8);
+                  limb = byte >> (8 - bits);
+                }
+            }
+          if (bits != 0)
+            {
+              ASSERT (tpos < abs_xsize);
+              tp[tpos++] = limb;
+            }
+          ASSERT (tpos == abs_xsize);
+
+          MPN_COPY (xp, tp, abs_xsize);
+          TMP_FREE (marker);
         }
 
       /* GMP 1.x mpz_out_raw wrote high zero bytes, strip any high zero

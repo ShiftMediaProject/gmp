@@ -93,7 +93,7 @@ mpz_out_raw (FILE *fp, mpz_srcptr x)
 
   xsize = SIZ(x);
   abs_xsize = ABS (xsize);
-  bytes = BYTES_PER_MP_LIMB * abs_xsize;
+  bytes = (abs_xsize * GMP_NUMB_BITS + 7) / 8;
   tsize = ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB) + bytes;
 
   tp = __GMP_ALLOCATE_FUNC_TYPE (tsize, char);
@@ -101,27 +101,75 @@ mpz_out_raw (FILE *fp, mpz_srcptr x)
 
   if (bytes != 0)
     {
-      /* reverse limb order, and byte swap if necessary */
       bp += bytes;
       xp = PTR (x);
       i = abs_xsize;
-#ifdef _CRAY
-      _Pragma ("_CRI ivdep");
-#endif
-      do
-        {
-          bp -= BYTES_PER_MP_LIMB;
-          xlimb = *xp;
-          HTON_LIMB_STORE ((mp_ptr) bp, xlimb);
-          xp++;
-        }
-      while (--i > 0);
 
-      /* strip high zero bytes (without fetching from bp) */
-      count_leading_zeros (zeros, xlimb);
-      zeros /= 8;
-      bp += zeros;
-      bytes -= zeros;
+      if (GMP_NAIL_BITS == 0)
+        {
+          /* reverse limb order, and byte swap if necessary */
+#ifdef _CRAY
+          _Pragma ("_CRI ivdep");
+#endif
+          do
+            {
+              bp -= BYTES_PER_MP_LIMB;
+              xlimb = *xp;
+              HTON_LIMB_STORE ((mp_ptr) bp, xlimb);
+              xp++;
+            }
+          while (--i > 0);
+
+          /* strip high zero bytes (without fetching from bp) */
+          count_leading_zeros (zeros, xlimb);
+          zeros /= 8;
+          bp += zeros;
+          bytes -= zeros;
+        }
+      else
+        {
+          mp_limb_t  new_xlimb;
+          int        bits;
+          ASSERT_CODE (char *bp_orig = bp - bytes);
+
+          ASSERT_ALWAYS (GMP_NUMB_BITS >= 8);
+
+          bits = 0;
+          xlimb = 0;
+          for (;;)
+            {
+              while (bits >= 8)
+                {
+                  ASSERT (bp > bp_orig);
+                  *--bp = xlimb & 0xFF;
+                  xlimb >>= 8;
+                  bits -= 8;
+                }
+
+              if (i == 0)
+                break;
+
+              new_xlimb = *xp++;
+              i--;
+              ASSERT (bp > bp_orig);
+              *--bp = (xlimb | (new_xlimb << bits)) & 0xFF;
+              xlimb = new_xlimb >> (8 - bits);
+              bits += GMP_NUMB_BITS - 8;
+            }
+
+          if (bits != 0)
+            {
+              ASSERT (bp > bp_orig);
+              *--bp = xlimb;
+            }
+
+          ASSERT (bp == bp_orig);
+          while (*bp == 0)
+            {
+              bp++;
+              bytes--;
+            }
+        }
     }
 
   /* total bytes to be written */
