@@ -36,13 +36,14 @@ check_one (mpq_srcptr q, int base, const char *want)
   mp_trace_base = base;
 
   str_alloc =
-    mpz_sizeinbase (mpq_numref(q), base) +
-    mpz_sizeinbase (mpq_denref(q), base) + 3;
+    mpz_sizeinbase (mpq_numref(q), ABS(base)) +
+    mpz_sizeinbase (mpq_denref(q), ABS(base)) + 3;
   
   str = mpq_get_str (NULL, base, q);
   if (strlen(str)+1 > str_alloc)
     {
       printf ("mpq_get_str size bigger than should be (passing NULL)\n");
+      printf ("  base %d\n", base);
       printf ("  got  size %u \"%s\"\n", strlen(str)+1, str);
       printf ("  want size %u\n", str_alloc);
       abort ();
@@ -50,6 +51,7 @@ check_one (mpq_srcptr q, int base, const char *want)
   if (strcmp (str, want) != 0)
     {
       printf ("mpq_get_str wrong (passing NULL)\n");
+      printf ("  base %d\n", base);
       printf ("  got  \"%s\"\n", str);
       printf ("  want \"%s\"\n", want);
       mpq_trace ("  q", q);
@@ -63,6 +65,7 @@ check_one (mpq_srcptr q, int base, const char *want)
   if (str != ret)
     {
       printf ("mpq_get_str wrong return value (passing non-NULL)\n");
+      printf ("  base %d\n", base);
       printf ("  got  0x%lX\n", (unsigned long) ret);
       printf ("  want 0x%lX\n", (unsigned long) want);
       abort ();
@@ -70,6 +73,7 @@ check_one (mpq_srcptr q, int base, const char *want)
   if (strcmp (str, want) != 0)
     {
       printf ("mpq_get_str wrong (passing non-NULL)\n");
+      printf ("  base %d\n", base);
       printf ("  got  \"%s\"\n", str);
       printf ("  want \"%s\"\n", want);
       abort ();
@@ -77,6 +81,19 @@ check_one (mpq_srcptr q, int base, const char *want)
   (*__gmp_free_func) (str, str_alloc);
 }
 
+
+void
+check_all (mpq_srcptr q, int base, const char *want)
+{
+  char  *s;
+
+  check_one (q, base, want);
+
+  s = __gmp_allocate_strdup (want);
+  strtoupper (s);
+  check_one (q, -base, s);
+  (*__gmp_free_func) (s, strlen(s)+1);
+}
 
 void
 check_data (void)
@@ -90,11 +107,11 @@ check_data (void)
     { 10, "0", "1", "0" },
     { 10, "1", "1", "1" },
 
-    { 16, "FFFFFFFF", "1", "ffffffff" },
-    { 16, "FFFFFFFFFFFFFFFF", "1", "ffffffffffffffff" },
+    { 16, "ffffffff", "1", "ffffffff" },
+    { 16, "ffffffffffffffff", "1", "ffffffffffffffff" },
 
-    { 16, "1", "FFFFFFFF", "1/ffffffff" },
-    { 16, "1", "FFFFFFFFFFFFFFFF", "1/ffffffffffffffff" },
+    { 16, "1", "ffffffff", "1/ffffffff" },
+    { 16, "1", "ffffffffffffffff", "1/ffffffffffffffff" },
     { 16, "1", "10000000000000003", "1/10000000000000003" },
 
     { 10, "12345678901234567890", "9876543210987654323",
@@ -109,7 +126,7 @@ check_data (void)
     {
       mpz_set_str_or_abort (mpq_numref(q), data[i].num, data[i].base);
       mpz_set_str_or_abort (mpq_denref(q), data[i].den, data[i].base);
-      check_one (q, data[i].base, data[i].want);
+      check_all (q, data[i].base, data[i].want);
     }
   mpq_clear (q);
 }
