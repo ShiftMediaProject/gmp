@@ -68,6 +68,12 @@ mpn_bdivmod (qp, up, usize, vp, vsize, d)
 {
   mp_limb_t v_inv;
 
+  ASSERT (usize >= 1);
+  ASSERT (vsize >= 1);
+  ASSERT (! MPN_OVERLAP_P (up, usize, vp, vsize));
+  ASSERT (! MPN_OVERLAP_P (qp, d/BITS_PER_MP_LIMB, up, usize));
+  ASSERT (! MPN_OVERLAP_P (qp, d/BITS_PER_MP_LIMB, vp, vsize));
+
   /* 1/V mod 2^BITS_PER_MP_LIMB. */
   modlimb_invert (v_inv, vp[0]);
 
