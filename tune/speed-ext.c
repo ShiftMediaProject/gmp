@@ -1,7 +1,6 @@
-/* An example of extending the speed program to measure routines not in GMP. */
+/* An example of extending the speed program to measure routines not in GMP.
 
-/*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 /* The extension here is three versions of an mpn arithmetic mean.  These
@@ -60,10 +58,10 @@ MA 02111-1307, USA.
    not using libtool) to get common.o and other objects needed by speed.c.  */
 
 
-#define SPEED_EXTRA_PROTOS                              \
-  double speed_mean_calls (struct speed_params *s);     \
-  double speed_mean_open  (struct speed_params *s);     \
-  double speed_mean_open2 (struct speed_params *s);
+#define SPEED_EXTRA_PROTOS                                              \
+  double speed_mean_calls __GMP_PROTO ((struct speed_params *s));       \
+  double speed_mean_open  __GMP_PROTO ((struct speed_params *s));       \
+  double speed_mean_open2 __GMP_PROTO ((struct speed_params *s));
 
 #define SPEED_EXTRA_ROUTINES            \
   { "mean_calls",  speed_mean_calls  }, \
