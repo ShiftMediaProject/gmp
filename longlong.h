@@ -1180,6 +1180,27 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #endif /* udiv_qrnnd */
 #endif /* __sparc__ */
 
+#if defined (__sparc__) && W_TYPE_SIZE == 64
+#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
+  __asm__ (								\
+       "addcc	%4,%5,%1\n"						\
+      "	addccc	%6,%7,%%g0\n"						\
+      "	addc	%2,%3,%0"						\
+	  : "=r" (sh), "=&r" (sl)					\
+	  : "%rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl),		\
+	    "rJ" ((al) >> 32), "rJ" ((bl) >> 32)			\
+	   __CLOBBER_CC)
+#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
+  __asm__ (								\
+       "subcc	%4,%5,%1\n"						\
+      "	subccc	%6,%7,%%g0\n"						\
+      "	subc	%2,%3,%0"						\
+	  : "=r" (sh), "=&r" (sl)					\
+	  : "%rJ" (ah), "rI" (bh), "%rJ" (al), "rI" (bl),		\
+	    "rJ" ((al) >> 32), "rJ" ((bl) >> 32)			\
+	   __CLOBBER_CC)
+#endif
+
 #if defined (__vax__) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("addl2 %5,%1\n\tadwc %3,%0"					\
