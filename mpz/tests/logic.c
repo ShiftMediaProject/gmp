@@ -25,22 +25,36 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
 void dump_abort _PROTO (());
 void debug_mp _PROTO ((mpz_t, int));
 
-#ifndef SIZE
-#define SIZE 16
-#endif
-
 main (int argc, char **argv)
 {
   mpz_t x, y, r1, r2;
-  mpz_t t1, t2, t3, t4;
+  mpz_t t1, t2, t3;
   mp_size_t xsize, ysize;
   int i;
-  int reps = 100000;
+  int reps = 40000;
+  gmp_randstate_t rands;
+  mpz_t bs;
+  unsigned long bsi, size_range;
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
+  mpz_init (bs);
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -52,15 +66,27 @@ main (int argc, char **argv)
   mpz_init (t1);
   mpz_init (t2);
   mpz_init (t3);
-  mpz_init (t4);
 
   for (i = 0; i < reps; i++)
     {
-      xsize = urandom () % SIZE - SIZE/2;
-      mpz_random2 (x, xsize);
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 8 + 2;
 
-      ysize = urandom () % SIZE - SIZE/2;
-      mpz_random2 (y, ysize);
+      mpz_urandomb (bs, rands, size_range);
+      xsize = mpz_get_ui (bs);
+      mpz_rrandomb (x, rands, xsize);
+      mpz_urandomb (bs, rands, 1);
+      bsi = mpz_get_ui (bs);
+      if ((bsi & 1) != 0)
+	mpz_neg (x, x);
+
+      mpz_urandomb (bs, rands, size_range);
+      ysize = mpz_get_ui (bs);
+      mpz_rrandomb (y, rands, ysize);
+      mpz_urandomb (bs, rands, 1);
+      bsi = mpz_get_ui (bs);
+      if ((bsi & 1) != 0)
+	mpz_neg (y, y);
 
       mpz_com (r1, x);
       MPZ_CHECK_FORMAT (r1);
