@@ -21,11 +21,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpf_set_prec_raw 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-void
-mpf_set_prec_raw (mpf_ptr x, unsigned long int prec_in_bits)
-{
-  x->_mp_prec = MPF_BITS_TO_PREC (prec_in_bits);
-}

@@ -19,11 +19,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define __GMP_FORCE_mpf_get_prec 1
+
 #include "gmp.h"
 #include "gmp-impl.h"
-
-unsigned long int
-mpf_get_prec (mpf_srcptr x)
-{
-  return MPF_PREC_TO_BITS ((unsigned long) PREC(x));
-}
