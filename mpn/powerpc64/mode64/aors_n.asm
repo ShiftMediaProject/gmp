@@ -25,7 +25,7 @@ C		cycles/limb
 C POWER3/PPC630:     1.5
 C POWER4/PPC970:     2
 
-C	   POWER3/PPC630   POWER4/PPC970
+C   n	   POWER3/PPC630   POWER4/PPC970
 C     1	       17.00	       19.00
 C     2		9.00	       10.49
 C     3		5.33		7.66
