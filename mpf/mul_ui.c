@@ -51,7 +51,7 @@ MA 02111-1307, USA. */
    this is also the case when add_1 is used, since if r==u and ABSIZ(r) >
    PREC(r) then the mpn_mul_1 overwrites the low part of the input.
 
-   An reuse r==u with size > prec can occur from a size PREC(r)+1 in the
+   A reuse r==u with size > prec can occur from a size PREC(r)+1 in the
    usual way, or it can occur from an mpf_set_prec_raw leaving a bigger
    sized value.  In both cases we can end up calling mpn_mul_1 with
    overlapping src and dst regions, but this will be with dst < src and such
