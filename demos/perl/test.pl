@@ -1825,7 +1825,9 @@ ok (trunc(mpf(7.5)) == 7.0);
 
 ok (GMP::fits_slong_p(0));
 
-ok (! GMP::fits_slong_p($uv_max));
+# in perl 5.005 uv_max is only 32-bits on a 64-bit system, so won't exceed a
+# long
+# ok (! GMP::fits_slong_p($uv_max));
 
 ok (GMP::fits_slong_p(0.0));
 
