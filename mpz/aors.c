@@ -1,4 +1,4 @@
-/* mpz_add -- Add two integers.
+/* mpz_add, mpz_sub -- add or subtract integers.
 
 Copyright (C) 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
@@ -21,31 +21,42 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+
+
 #ifdef BERKELEY_MP
+
 #include "mp.h"
+#ifdef OPERATION_add
+#define FUNCTION     madd
+#define VARIATION
+#endif
+#ifdef OPERATION_sub
+#define FUNCTION     msub
+#define VARIATION    -
+#endif
+#define ARGUMENTS    mpz_srcptr u, mpz_srcptr v, mpz_ptr w
+
+#else /* normal GMP */
+
+#ifdef OPERATION_add
+#define FUNCTION     mpz_add
+#define VARIATION
+#endif
+#ifdef OPERATION_sub
+#define FUNCTION     mpz_sub
+#define VARIATION    -
+#endif
+#define ARGUMENTS    mpz_ptr w, mpz_srcptr u, mpz_srcptr v
+
 #endif
 
-#ifndef BERKELEY_MP
-void
-#if __STDC__
-mpz_add (mpz_ptr w, mpz_srcptr u, mpz_srcptr v)
-#else
-mpz_add (w, u, v)
-     mpz_ptr w;
-     mpz_srcptr u;
-     mpz_srcptr v;
+#ifndef FUNCTION
+Error, need OPERATION_add or OPERATION_sub
 #endif
-#else /* BERKELEY_MP */
+
+
 void
-#if __STDC__
-madd (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
-#else
-madd (u, v, w)
-     mpz_srcptr u;
-     mpz_srcptr v;
-     mpz_ptr w;
-#endif
-#endif /* BERKELEY_MP */
+FUNCTION (ARGUMENTS)
 {
   mp_srcptr up, vp;
   mp_ptr wp;
@@ -54,7 +65,7 @@ madd (u, v, w)
   mp_size_t abs_vsize;
 
   usize = u->_mp_size;
-  vsize = v->_mp_size;
+  vsize = VARIATION v->_mp_size;
   abs_usize = ABS (usize);
   abs_vsize = ABS (vsize);
 
