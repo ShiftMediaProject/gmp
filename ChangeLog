@@ -1,10 +1,15 @@
+2000-03-03  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Fix tyops.
+	* configure: Regenerate.
+
 2000-03-02  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc32/regmap.m4: New file.
 	* mpn/powerpc32: Translate `.S' files to `.asm'.
 	* configure.in: Use mpn/powerpc32/regmap.m4 for powerpc targets
 	except some weird ones.
-	
+
 2000-03-03  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/lisp/gmpasm-mode.el: Suppress filladapt postscript comment
@@ -86,7 +91,7 @@
 	* gmp-impl.h: Move mpn_copyd, mpn_copyi here from gmp.h.
 	* gmp-impl.h (MPN_COPY_INCR): Use mpn_copyi if available.
 	* gmp-impl.h (MPN_COPY_DECR): Use mpn_copyd if available.
-	
+
 	* mpn/x86/k6/mmx/com_n.asm: Moved into mmx subdirectory.
 	* mpn/x86/k6/mmx/copyi.asm: Ditto.
 	* mpn/x86/k6/mmx/lshift.asm: Ditto.
@@ -139,7 +144,7 @@
 	Don't invoke AM_CONFIG_HEADER; it makes autoconf confused.
 	Dig out entry points declared in assembly code and AC_DEFINE proper
 	HAVE_NATIVE_func.
-	
+
 	* mpn/asm-defs.m4 (MULFUNC_PROLOGUE): New macro.
 
 	* mpn/x86/p6/aorsmul_1.asm: Use MULFUNC_PROLOGUE.
@@ -158,7 +163,7 @@
 	gmp-mparam.h.
 	* mpq/tests/Makefile.am: Likewise.
 	* mpz/tests/Makefile.am: Likewise.
-	
+
 	* configure: Regenerate.
 	* aclocal.m4: Regenerate.
 	* config.in: Regenerate.
@@ -213,7 +218,7 @@
 
 	* mpz/tests/Makefile.am: New test t-root.
 	* mpz/tests/Makefile.in: Regenerate.
-	
+
 2000-02-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/root.c: Complete rewrite; still primitive, but at least correct.
@@ -250,10 +255,10 @@
 	* gmp.h: Undo 1996-10-06 NeXT change, it was clearly improperly written.
 
 2000-02-21  Linus Nordberg  <linus@swox.se>
-	
+
 	* configure.in: Link <src>/mpn/asm-defs.m4 to <build>mpn/asm.m4.
 	* configure: Regenerate.
-	
+
 2000-02-21  Linus Nordberg  <linus@swox.se>
 
 	* mpn/x86/k7/aorsmul_1.asm: Change OPERATION_ADDMUL -->
@@ -316,7 +321,7 @@
 	`GSYM_PREFIX'.  Run ACTIONs even when value is found in cache.
 	(GMP_CHECK_ASM_ALIGN_LOG): GMP_DEFINE `ALIGN'.  Run ACTIONs even
 	when value is found in cache.
-	* aclocal.m4: Regenerate.  
+	* aclocal.m4: Regenerate.
 
 	* configure.in: Don't define GSYM_PREFIX or ALIGN.
 	Add mechanism for multi-function files.
@@ -400,7 +405,7 @@
 	(GMP_CHECK_ASM_LABEL_SUFFIX): Set to empty string for HP-UX.
 	(GMP_CHECK_ASM_GLOBL): Change `.xport' --> `.export'.
 	* aclocal.m4: Regenerate.
-	
+
 2000-02-16  Linus Nordberg  <linus@swox.se>
 
 	* acinclude.m4 (GMP_CHECK_ASM_LSYM_PREFIX): Define LSYM_PREFIX as
@@ -445,7 +450,7 @@
 	* mpn/Makefile.am: Add target for building .lo and .o from
 	.asm.
 	Pass -DPIC to preprocessor (CPP/m4) when building .lo.
-	Build .o a second time for target .lo, without -DPIC to 
+	Build .o a second time for target .lo, without -DPIC to
 	preprocessor.
 	(SUFFIX): Add `.asm'.
 	(EXTRA_DIST): Add asm-defs.m4.
@@ -457,7 +462,7 @@
 	* mpq/tests/Makefile.in: Regenerate.
 	* mpz/Makefile.in: Regenerate.
 	* mpz/tests/Makefile.in: Regenerate.
-	
+
 2000-02-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc32/udiv_fp.asm: Change `RODATA' to `DATA'.
@@ -471,7 +476,7 @@
 
 	* sparc32: Rename `.s' and `.S' files to `.asm'.
 	* sparc64: Rename `.s' and `.S' files to `.asm'.
-	
+
 2000-02-11  Torbjorn Granlund  <tege@swox.com>
 
 	* config.sub: Adopt to new config.guess sparc naming conventions.
@@ -492,12 +497,12 @@
 	Change sparc8 --> sparcv8.
 	Change sparc9 --> sparcv9.
 	* configure: Regenerate.
-	
+
 2000-02-10  Linus Nordberg  <linus@swox.se>
 
 	* configure.in: Use Autoconf.
 	* Makefile.am: New file.
-	
+
 	* AUTHORS: New file.
 	* COPYING: New file.
 	* acinclude.m4: New file.
