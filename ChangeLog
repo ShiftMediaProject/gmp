@@ -19,6 +19,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-11  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/hppa/*.asm, mpn/pa64/*.asm, mpn/pa64w/*.asm: Use L().
+
 2002-01-08  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/asm-defs.m4 (PROLOGUE, EPILOGUE): New scheme, optional function
