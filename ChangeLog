@@ -1,5 +1,10 @@
 2000-12-21  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/alpha/unicos.m4: Define LEA.
+	* mpn/alpha/default.m4: Likewise.
+	* mpn/alpha/invert_limb.asm: Use LEA for loading symbolic addresses.
+	* mpn/alpha/cntlz.asm: Likewise.
+
 	* mpn/alpha/cntlz.asm: Don't use `ldbu', use slightly slower
 	`ldq_u' + `extbl' instead.
 
