@@ -93,6 +93,7 @@ STRIP = @STRIP@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+WANT_MPFR_VAL = @WANT_MPFR_VAL@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
@@ -145,6 +146,7 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 #        3.0.1    3:1:0   3:0:0
 #        3.1      4:0:1   4:0:1
 #        3.1.1    4:1:1   4:1:1
+#        3.2      5:0:2   4:2:1
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
@@ -152,19 +154,18 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 # gmp 3 mean 3:0:0 is right.
 
 
-LIBGMP_LT_CURRENT = 4
+LIBGMP_LT_CURRENT = 5
 LIBGMP_LT_REVISION = 0
-LIBGMP_LT_AGE = 1
+LIBGMP_LT_AGE = 2
 
 LIBMP_LT_CURRENT = 4
-LIBMP_LT_REVISION = 0
+LIBMP_LT_REVISION = 2
 LIBMP_LT_AGE = 1
 
 AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
 
 SUBDIRS = tests mpn mpz mpq mpf mpbsd mpfr demos tune
 
-include_HEADERS = $(MPFR_HEADERS_OPTION)
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
@@ -268,33 +269,15 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/sdiv$U.lo mpbsd/sqrtrem$U.lo mpbsd/xtom$U.lo
 
 
-# FIXME: Add mpfr/rnd_mode$U.lo when it's clean.
-MPFR_OBJECTS = mpfr/add$U.lo mpfr/div_2exp$U.lo mpfr/neg$U.lo		\
-  mpfr/set_dfl_prec$U.lo mpfr/set_str_raw$U.lo mpfr/agm$U.lo		\
-  mpfr/get_str$U.lo mpfr/print_raw$U.lo mpfr/set_dfl_rnd$U.lo		\
-  mpfr/sqrt$U.lo mpfr/clear$U.lo mpfr/init$U.lo mpfr/set_f$U.lo		\
-  mpfr/sub$U.lo mpfr/cmp$U.lo mpfr/mul$U.lo mpfr/round$U.lo		\
-  mpfr/set_prec$U.lo mpfr/cmp_ui$U.lo mpfr/mul_2exp$U.lo mpfr/set$U.lo	\
-  mpfr/set_si$U.lo mpfr/div$U.lo mpfr/mul_ui$U.lo mpfr/set_d$U.lo	\
-  mpfr/pow$U.lo mpfr/out_str$U.lo mpfr/pi$U.lo mpfr/set_z$U.lo		\
-  mpfr/add_ulp$U.lo mpfr/log2$U.lo mpfr/random$U.lo mpfr/log$U.lo	\
-  mpfr/exp$U.lo mpfr/div_ui$U.lo mpfr/zeta$U.lo mpfr/karadiv$U.lo	\
-  mpfr/karasqrt$U.lo mpfr/print_rnd_mode$U.lo
-
-
-@WANT_MPFR_TRUE@MPFR_HEADERS_OPTION = @WANT_MPFR_TRUE@mpfr/mpfr.h
-@WANT_MPFR_TRUE@MPFR_OBJECTS_OPTION = @WANT_MPFR_TRUE@$(MPFR_OBJECTS)
-@WANT_MPFR_TRUE@MPFR_LIBADD_OPTION = @WANT_MPFR_TRUE@$(LIBM)
 libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
   mp_clz_tab.c mp_minv_tab.c						 \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c		 \
   randsdui.c version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 
 libgmp_la_DEPENDENCIES = \
-  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) \
-  $(MPFR_OBJECTS_OPTION)
+  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 
-libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES) $(MPFR_LIBADD_OPTION)
+libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
@@ -347,14 +330,14 @@ TEXI2DVI = texi2dvi
 INFO_DEPS = gmp.info
 DVIS = gmp.dvi
 TEXINFOS = gmp.texi
-HEADERS =  $(include_HEADERS) $(nodist_include_HEADERS)
+HEADERS =  $(nodist_include_HEADERS)
 
 depcomp = 
-DIST_COMMON =  README $(include_HEADERS) ./stamp-h.in AUTHORS COPYING \
-COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in NEWS acconfig.h \
-acinclude.m4 aclocal.m4 ansi2knr.1 ansi2knr.c config.guess config.in \
-config.sub configure configure.in install-sh ltconfig ltmain.sh \
-mdate-sh missing mkinstalldirs stamp-vti texinfo.tex version.texi
+DIST_COMMON =  README ./stamp-h.in AUTHORS COPYING COPYING.LIB ChangeLog \
+INSTALL Makefile.am Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 \
+ansi2knr.1 ansi2knr.c config.guess config.in config.sub configure \
+configure.in install-sh ltconfig ltmain.sh mdate-sh missing \
+mkinstalldirs stamp-vti texinfo.tex version.texi
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -684,24 +667,6 @@ maintainer-clean-aminfo:
 	  fi; \
 	done
 
-install-includeHEADERS: $(include_HEADERS)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(includedir)
-	@list='$(include_HEADERS)'; for p in $$list; do \
-	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(includedir)/$$f"; \
-	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(includedir)/$$f; \
-	done
-
-uninstall-includeHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(include_HEADERS)'; for p in $$list; do \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " rm -f $(DESTDIR)$(includedir)/$$f"; \
-	  rm -f $(DESTDIR)$(includedir)/$$f; \
-	done
-
 install-nodist_includeHEADERS: $(nodist_include_HEADERS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(includedir)
@@ -869,7 +834,6 @@ distdir: $(DISTFILES)
 	fi
 	-chmod -R a+w $(distdir) > /dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/mpfr
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -906,15 +870,13 @@ all-recursive-am: config.h
 install-exec-am: install-libLTLIBRARIES
 install-exec: install-exec-recursive
 
-install-data-am: install-info-am install-includeHEADERS \
-		install-nodist_includeHEADERS
+install-data-am: install-info-am install-nodist_includeHEADERS
 install-data: install-data-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 install: install-recursive
 uninstall-am: uninstall-libLTLIBRARIES uninstall-info \
-		uninstall-includeHEADERS \
 		uninstall-nodist_includeHEADERS
 uninstall: uninstall-recursive
 all-am: Makefile $(INFO_DEPS) $(ANSI2KNR) $(LTLIBRARIES) $(HEADERS) \
@@ -925,7 +887,7 @@ install-strip:
 installdirs: installdirs-recursive
 installdirs-am:
 	$(mkinstalldirs)  $(DESTDIR)$(libdir) $(DESTDIR)$(infodir) \
-		$(DESTDIR)$(includedir) $(DESTDIR)$(nodist_includedir)
+		$(DESTDIR)$(nodist_includedir)
 
 
 mostlyclean-generic:
@@ -986,7 +948,6 @@ clean-krextra maintainer-clean-krextra mostlyclean-kr distclean-kr \
 clean-kr maintainer-clean-kr mostlyclean-vti distclean-vti clean-vti \
 maintainer-clean-vti install-info-am uninstall-info mostlyclean-aminfo \
 distclean-aminfo clean-aminfo maintainer-clean-aminfo \
-uninstall-includeHEADERS install-includeHEADERS \
 uninstall-nodist_includeHEADERS install-nodist_includeHEADERS \
 install-recursive uninstall-recursive install-data-recursive \
 uninstall-data-recursive install-exec-recursive \
