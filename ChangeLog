@@ -8,6 +8,10 @@
 	* mpn/x86/k6/com_n.asm: New file.
 	* mpn/x86/k6/copyi.asm: New file.
 	* gmp.texi (Low-level Functions): Clarify mpn overlaps permitted.
+	* gmp-impl.h (MPN_OVERLAP_P): New macro.
+	* gmp-impl.h (assert_nocarry): New macro.
+	* mpn/tests/ref.c: New file, based in part on other mpn/tests/*.c.
+	* mpn/tests/ref.h: New file.
 
 2000-02-17  Torbjorn Granlund  <tege@swox.com>
 
