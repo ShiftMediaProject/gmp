@@ -1,7 +1,7 @@
 dnl  HP-PA  __udiv_qrnnd division support, used from longlong.h.
 dnl  This version runs fast on PA 7000 and later.
 
-dnl  Copyright 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1993, 1994, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -41,9 +41,7 @@ ifdef(`PIC',`',
 ')
 
 PROLOGUE(mpn_udiv_qrnnd)
-	.proc
-	.callinfo	frame=64,no_calls
-	.entry
+C	.callinfo	frame=64,no_calls
 
 	ldo		64(%r30),%r30
 
@@ -91,6 +89,5 @@ LDEF(1)
 LDEF(2)
 	bv		0(%r2)
 	stws		%r22,0(0,%r26)
-	.exit
-	.procend
+
 EPILOGUE(mpn_udiv_qrnnd)
