@@ -23,15 +23,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-#define DIV_OR_SET(q,a,d)       \
-  do {                          \
-    if (MPZ_EQUAL_1_P (d))      \
-      mpz_set (q, a);           \
-    else                        \
-      mpz_divexact (q, a, d);   \
-  } while (0)
-
-
 void
 #if __STDC__
 mpq_div (mpq_ptr quot, mpq_srcptr op1, mpq_srcptr op2)
@@ -63,13 +54,13 @@ mpq_div (quot, op1, op2)
   mpz_gcd (gcd1, &(op1->_mp_num), &(op2->_mp_num));
   mpz_gcd (gcd2, &(op2->_mp_den), &(op1->_mp_den));
 
-  DIV_OR_SET (tmp1, &(op1->_mp_num), gcd1);
-  DIV_OR_SET (tmp2, &(op2->_mp_den), gcd2);
+  mpz_divexact_gcd (tmp1, &(op1->_mp_num), gcd1);
+  mpz_divexact_gcd (tmp2, &(op2->_mp_den), gcd2);
 
   mpz_mul (numtmp, tmp1, tmp2);
 
-  DIV_OR_SET (tmp1, &(op2->_mp_num), gcd1);
-  DIV_OR_SET (tmp2, &(op1->_mp_den), gcd2);
+  mpz_divexact_gcd (tmp1, &(op2->_mp_num), gcd1);
+  mpz_divexact_gcd (tmp2, &(op1->_mp_den), gcd2);
 
   mpz_mul (&(quot->_mp_den), tmp1, tmp2);
 
