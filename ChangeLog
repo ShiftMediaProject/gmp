@@ -1,3 +1,24 @@
+2001-03-29  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpf/t-trunc.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+	* gmp-impl.h (MPF_CHECK_FORMAT): New macro.
+
+	* mpf/trunc.c: New file, rewrite of integer.c, preserve prec+1 in
+	copy, don't copy if unnecessary.
+	* mpf/ceilfloor.c: New file likewise, and use common subroutine for
+	ceil and floor.
+	* mpf/integer.c: Remove file.
+	* Makefile.am, mpf/Makefile.am: Update.
+
+        * acinclude.m4 (GMP_GCC_VERSION_GE): New macro.
+        (GMP_GCC_MARCH_PENTIUMPRO): Use it, remove CCBASE parameter (don't
+	bother checking it's gcc).
+	(GMP_GCC_ARM_UMODSI): New macro.
+	* configure.in (GMP_GCC_MARCH_PENTIUMPRO): Update parameters.
+	(arm*-*-*): Use GMP_GCC_ARM_UMODSI.
+        * gmp.texi (Notes for Particular Systems): Add arm gcc requirements.
+
 2001-03-28  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Converting Integers): Document mpz_getlimbn using absolute
