@@ -196,6 +196,11 @@ LDEF(ret)
 ifdef(`OPERATION_sublsh1_n',
 `	sub	%r0, %r28, %r28')
 
+ifdef(`HAVE_ABI_2_0n',
+`	copy	%r28, %r29
+	ldi	0, %r28
+')
+
 	ldd		-0xd0(%r30), %r9
 	ldd		-0xd8(%r30), %r8
 	ldd		-0xe0(%r30), %r7
