@@ -3,7 +3,7 @@ dnl
 dnl  K7: 1.21 cycles/limb (at 16 limbs/loop).
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -276,7 +276,7 @@ L(here):
 
 ifdef(`PIC',`
 L(pic_calc):
-	C See README.family about old gas bugs
+	C See mpn/x86/README about old gas bugs
 	leal	(%eax,%eax,4), %esi
 	addl	$L(entry)-L(here), %esi
 	addl	(%esp), %esi

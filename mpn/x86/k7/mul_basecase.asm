@@ -464,7 +464,7 @@ L(unroll_here):
 
 ifdef(`PIC',`
 L(pic_calc):
-	C See README.family about old gas bugs
+	C See mpn/x86/README about old gas bugs
 	leal	(%ecx,%edx,1), %ecx
 	addl	$L(unroll_entry)-L(unroll_here), %ecx
 	addl	(%esp), %ecx
