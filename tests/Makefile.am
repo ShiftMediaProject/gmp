@@ -20,6 +20,6 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 SUBDIRS = rand
