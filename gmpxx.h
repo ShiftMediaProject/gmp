@@ -2651,7 +2651,7 @@ public:
 
   signed long int get_si() const { return mpz_get_si(mp); }
   unsigned long int get_ui() const { return mpz_get_ui(mp); }
-  double get_d() const { return mpz_get_d(mp); } // should be long double
+  double get_d() const { return mpz_get_d(mp); }
 
   // bool fits_schar_p() const { return mpz_fits_schar_p(mp); }
   // bool fits_uchar_p() const { return mpz_fits_uchar_p(mp); }
@@ -2813,7 +2813,7 @@ public:
   mpz_srcptr get_den_mpz_t() const { return mpq_denref(mp); }
   mpz_ptr get_den_mpz_t() { return mpq_denref(mp); }
 
-  double get_d() const { return mpq_get_d(mp); } // should be long double
+  double get_d() const { return mpq_get_d(mp); }
 
   // compound assignments
   __GMP_DECLARE_COMPOUND_OPERATOR(operator+=)
@@ -2964,7 +2964,7 @@ public:
 
   signed long int get_si() const { return mpf_get_si(mp); }
   unsigned long int get_ui() const { return mpf_get_ui(mp); }
-  double get_d() const { return mpf_get_d(mp); } // should be long double
+  double get_d() const { return mpf_get_d(mp); }
 
   // bool fits_schar_p() const { return mpf_fits_schar_p(mp); }
   // bool fits_uchar_p() const { return mpf_fits_uchar_p(mp); }
@@ -3163,8 +3163,7 @@ public:
 
   // signed long get_si() const { return mpfr_get_si(mp); }
   // unsigned long get_ui() const { return mpfr_get_ui(mp); }
-  double get_d() const // should be long double
-  { return mpfr_get_d(mp, __gmp_default_rounding_mode); }
+  double get_d() const { return mpfr_get_d(mp, __gmp_default_rounding_mode); }
 
   // check for exceptional values
   bool is_inf() const { return mpfr_inf_p(mp); }
