@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -34,7 +34,7 @@ lib_LIBRARIES = libmpfr.a
 include_HEADERS = mpfr.h mpf2mpfr.h
 endif
 
-# FIXME: Automake (version 1.7.7) doesn't allow conditionalized info_TEXINFOS,
+# FIXME: Automake (version 1.8) doesn't allow conditionalized info_TEXINFOS,
 # see top level Makefile.am for the workaround.
 info_TEXINFOS = mpfr.texi
 mpfr_TEXINFOS = ../doc/fdl.texi
