@@ -20,9 +20,16 @@
 # MA 02111-1307, USA.
 
 
+# LDADD has an explicit -L of $(top_builddir)/$(LIBS) for the benefit of gcc
+# 3.2 on itanium2-hp-hpux11.22.  Without this option, the libgmp.sl.6
+# required by libgmpxx.sl (ie. in its NEEDED records) is not found by the
+# linker.  FIXME: Presumably libtool should do something about this itself.
+#
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
-LDADD = $(top_builddir)/tests/libtests.la \
-  $(top_builddir)/libgmpxx.la $(LIBMPFR) $(top_builddir)/libgmp.la
+LDADD = -L$(top_builddir)/$(LIBS) \
+  $(top_builddir)/tests/libtests.la \
+  $(top_builddir)/libgmpxx.la \
+  $(LIBMPFR) $(top_builddir)/libgmp.la
 if WANT_MPFR
 LIBMPFR = $(top_builddir)/mpfr/libmpfr.a
 endif
