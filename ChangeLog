@@ -23,10 +23,11 @@ MA 02111-1307, USA.
 	* mpn/generic/hgcd.c (mpn_hgcd_lehmer): Rewritten, after some more
 	analysis of the size reduction for one Lehmer step.
 
-2004-01-11  Torbjorn Granlund  <tege@swox.com>
-
 	* tests/mpn/t-hgcd.c: New file.
 
+2004-01-11  Torbjorn Granlund  <tege@swox.com>
+
+	With Niels Möller:
 	* mpn/generic/hgcd.c (hgcd_normalize): Fix ASSERTs.
 	(hgcd_mul): Normalize R[1].uvp[1].  Add some more ASSERTs.
 	(hgcd_update_uv): Streamline.  ASSERT that input and output is
