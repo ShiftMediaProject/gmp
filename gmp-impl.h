@@ -450,13 +450,6 @@ void __gmp_default_free _PROTO ((void *, size_t));
   __asm__ ("std\n\trep\n\tmovsl" : :					\
 	   "D" ((DST) + (N) - 1), "S" ((SRC) + (N) - 1), "c" (N) :	\
 	   "cx", "di", "si", "memory")
-#define MPN_NORMALIZE_NOT_ZERO(P, N)					\
-  do {									\
-    __asm__ ("std\n\trepe\n\tscasl" : "=c" (N) :			\
-	     "a" (0), "D" ((P) + (N) - 1), "0" (N) :			\
-	     "cx", "di");						\
-    (N)++;								\
-  } while (0)
 #endif
 #endif
 
@@ -648,6 +641,17 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
   } while (0)
 #endif
 
+
+/* On the x86s repe/scasl doesn't seem useful, since it takes many cycles to
+   start up and would need to strip a lot of zeros before it'd be faster
+   than a simple cmpl loop.  std/repe/scasl/cld stripping no zeros runs as
+   follows,
+               cycles
+           P5    18
+           P6    46
+           K6    36
+           K7    21
+*/
 #ifndef MPN_NORMALIZE
 #define MPN_NORMALIZE(DST, NLIMBS) \
   do {									\
