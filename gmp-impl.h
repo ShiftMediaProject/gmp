@@ -327,6 +327,11 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+/* n-1 inverts any low zeros and the lowest one bit.  If n&(n-1) leaves zero
+   then that lowest one bit must have been the only bit set.  n==0 will
+   return true though, so avoid that.  */
+#define POW2_P(n)  (((n) & ((n) - 1)) == 0)
+
 
 /* Might be already defined by gmp-mparam.h, otherwise use what's in gmp.h. */
 #ifndef BITS_PER_MP_LIMB
