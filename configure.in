@@ -1604,6 +1604,20 @@ Use "--disable-static --enable-shared" to build just a DLL.])
 esac
 
 
+# Ensure that $CONFIG_SHELL is available for AC_LIBTOOL_SYS_MAX_CMD_LEN.
+# It's often set already by _LT_AC_PROG_ECHO_BACKSLASH or
+# _AS_LINENO_PREPARE, but not always.
+#
+# The symptom of CONFIG_SHELL unset is some "expr" errors during the test,
+# and an empty result.  This only happens when invoked as "sh configure",
+# ie. no path, and can be seen for instance on ia64-*-hpux*.
+#
+# FIXME: Newer libtool should have it's own fix for this.
+#
+if test -z "$CONFIG_SHELL"; then
+  CONFIG_SHELL=$SHELL
+fi
+
 # Libtool requires $HOST_CC in certain Windows DLL cross-compiles (to build
 # the impgen program).  Arguably it should establish a value for this
 # itself.  No need to restrict this to the configurations actually needing
