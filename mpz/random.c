@@ -1,7 +1,6 @@
-/* mpz_random -- Generate a random mpz_t of specified size.
-   This function is non-portable and generates poor random numbers.
+/* mpz_random -- Generate a random mpz_t of specified size in limbs.
 
-Copyright 1991, 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
+Copyright 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,29 +21,11 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
 void
 mpz_random (mpz_ptr x, mp_size_t size)
 {
-  mp_size_t i;
-  mp_limb_t ran;
-  mp_ptr xp;
-  mp_size_t abs_size;
-
-  abs_size = ABS (size);
-
-  if (x->_mp_alloc < abs_size)
-    _mpz_realloc (x, abs_size);
-
-  xp = x->_mp_d;
-
-  for (i = 0; i < abs_size; i++)
-    {
-      ran = urandom ();
-      xp[i] = ran;
-    }
-
-  MPN_NORMALIZE (xp, abs_size);
-  x->_mp_size = size < 0 ? -abs_size : abs_size;
+  mpz_urandomb (x, RANDS, ABS (size) * BITS_PER_MP_LIMB);
+  if (size < 0)
+    SIZ(x) = -SIZ(x);
 }
