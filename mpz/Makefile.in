@@ -121,8 +121,6 @@ SUBDIRS = tests
 
 INCLUDES = -I$(top_srcdir)
 
-EXTRA_DIST = dmincl.c
-
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
   abs.c add.c add_ui.c addmul_ui.c and.c array_init.c \
