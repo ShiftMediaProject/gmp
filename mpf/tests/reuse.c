@@ -59,11 +59,13 @@ typedef void (*dsi_func) ();
 dsi_func dsi_funcs[] =
 {
   mpf_div_ui, mpf_add_ui, mpf_mul_ui, mpf_sub_ui,
+  mpf_mul_2exp, mpf_div_2exp
 };
 
 char *dsi_func_names[] =
 {
   "mpf_div_ui", "mpf_add_ui", "mpf_mul_ui", "mpf_sub_ui",
+  "mpf_mul_2exp", "mpf_div_2exp"
 };
 
 #if __STDC__
@@ -140,7 +142,7 @@ main (argc, argv)
       for (i = 0; i < sizeof (dsi_funcs) / sizeof (dsi_func); i++)
 	{
 	  /* Don't divide by 0.  */
-	  if (i == 0 && in2i == 0)
+	  if (strcmp (dsi_func_names[i], "mpf_div_ui") == 0 && in2i == 0)
 	    continue;
 
 	  (dsi_funcs[i]) (res1, in1, in2i);
@@ -179,7 +181,7 @@ dump_abort (name, res1, res2)
      char *name;
      mpf_t res1, res2;
 {
-  printf ("failure in %s:", name);
+  printf ("failure in %s:\n", name);
   oo (res1);
   oo (res2);
   abort ();
