@@ -1,7 +1,7 @@
 dnl  SPARC v9 64-bit mpn_submul_1 -- Multiply a limb vector with a limb and
 dnl  subtract the result from a second limb vector.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -29,7 +29,7 @@ C n	i2
 C v	i3
 
 ASM_START()
-	.register	%g2,#scratch
+	REGISTER(%g2,#scratch)
 
 PROLOGUE(mpn_submul_1)
 	save	%sp,-176,%sp

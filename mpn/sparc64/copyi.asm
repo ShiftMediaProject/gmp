@@ -29,8 +29,8 @@ C n	%o2
 C This code runs at 2 cycles/limb on UltraSPARC 1 and 2.
 
 ASM_START()
-	.register	%g2,#scratch
-	.register	%g3,#scratch
+	REGISTER(%g2,#scratch)
+	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_copyi)
 	addcc	%o2,-8,%o2
 	bl,pt	%icc,L(end01234567)

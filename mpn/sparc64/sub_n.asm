@@ -1,7 +1,7 @@
 dnl  SPARC v9 mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 dnl  store difference in a third limb vector.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -50,8 +50,8 @@ define(`fanop',`fitod %f0,%f2')		dnl  A quasi nop running in the FA pipe
 define(`fmnop',`fmuld %f0,%f0,%f4')	dnl  A quasi nop running in the FM pipe
 
 ASM_START()
-	.register	%g2,#scratch
-	.register	%g3,#scratch
+	REGISTER(%g2,#scratch)
+	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_sub_n)
 	save	%sp,-160,%sp
 

@@ -1,6 +1,6 @@
 dnl  SPARC v9 64-bit mpn_sqr_diagonal.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -29,8 +29,8 @@ C Ultimately, this should be replaced by hand-written code in the same software
 C pipeline style as e.g., addmul_1.asm.
 
 ASM_START()
-	.register	%g2,#scratch
-	.register	%g3,#scratch
+	REGISTER(%g2,#scratch)
+	REGISTER(%g3,#scratch)
 PROLOGUE(mpn_sqr_diagonal)
 	save	%sp, -240, %sp
 
