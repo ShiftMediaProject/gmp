@@ -483,17 +483,6 @@ case ${target} in
       [GMP_DEFINE(WANT_SHLDL_CL,1)],
       [GMP_DEFINE(WANT_SHLDL_CL,0)])
 
-    # rdtsc is in pentium and up, but not in i386 and i486
-    case ${target} in
-      [i[34]86*-*-*])
-        ;;
-      *)
-        AC_DEFINE(HAVE_PENTIUM_RDTSC,1,
-        [Define if the 80x86 rdtsc instruction is available (pentium and up).])
-        gmp_have_pentium_rdtsc=yes
-        ;;
-    esac
-
     # the CPUs below wanting to know about mmx
     case ${target} in
       [pentiummmx-*-* | pentium[23]-*-* | k6*-*-* | athlon-*-*])
@@ -597,13 +586,33 @@ case ${target} in
   clipper*-*-*) path="clipper";;
 esac
 
-AM_CONDITIONAL(HAVE_PENTIUM_RDTSC, test "$gmp_have_pentium_rdtsc" = yes)
-
 AC_SUBST(CALLING_CONVENTIONS_OBJS)
 if test -n "$CALLING_CONVENTIONS_OBJS"; then
   AC_DEFINE(HAVE_CALLING_CONVENTIONS,1,
   [Define if mpn/tests has calling conventions checking for the CPU])
 fi
+
+
+case ${target} in
+  # rdtsc is in pentium and up, but not in i386 and i486
+  [i[5-8]86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
+    AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 2,
+    [How many limbs in a speed measuring cycle counter, if one exists])
+    SPEED_CYCLECOUNTER_OBJS=pentium.lo
+    ;;
+  [sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-* | athlon-*-*])
+    if test -n "$CC64"; then
+      AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 1)
+      SPEED_CYCLECOUNTER_OBJS=sparc64.lo
+    else
+      AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 2)
+      SPEED_CYCLECOUNTER_OBJS=sparcv9.lo
+    fi
+    ;;
+esac
+
+AC_SUBST(SPEED_CYCLECOUNTER_OBJS)
+
 
 
 dnl Extensions for executable and object files.
