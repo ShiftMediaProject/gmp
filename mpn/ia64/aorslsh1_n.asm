@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_addlsh1_n/mpn_sublsh1_n -- rp[] = up[] +- (vp[] << 1).
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,15 +21,11 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C         cycles/limb
-C Itanium:    2.5?
-C Itanium 2:  1.5
-
-C This code has been optimized for Itanium 2 at the expense of Itanium 1, since
-C the latter chip is very rare out there.
+C           cycles/limb
+C Itanium 2:    1.5
 
 C TODO
-C  * Micro-optimize feed-in and wind-down code.
+C  * Use shladd in feed-in code (for mpn_addlsh1_n).
 
 C INPUT PARAMETERS
 define(`rp',`r32')
@@ -57,7 +53,7 @@ define(`u0',`r14') define(`u1',`r15') define(`u2',`r16') define(`u3',`r17')
 define(`v0',`r18') define(`v1',`r19') define(`v2',`r20') define(`v3',`r21')
 define(`w0',`r22') define(`w1',`r23') define(`w2',`r24') define(`w3',`r25')
 define(`s0',`r26') define(`s1',`r27') define(`s2',`r28') define(`s3',`r29')
-define(`x0',`r8') define(`x1',`r9') define(`x2',`r30') define(`x3',`r31')
+define(`x0',`r30') define(`x1',`r31') define(`x2',`r30') define(`x3',`r31')
 
 MULFUNC_PROLOGUE(mpn_addlsh1_n mpn_sublsh1_n)
 
@@ -67,276 +63,265 @@ PROLOGUE(func)
 	.save	ar.lc, r2
 	.body
 ifdef(`HAVE_ABI_32',`
-	addp4		rp = 0, rp
-	addp4		up = 0, up
-	addp4		vp = 0, vp
-	zxt4		n = n
+	addp4		rp = 0, rp		C			M I
+	addp4		up = 0, up		C			M I
+	addp4		vp = 0, vp		C			M I
+	zxt4		n = n			C			I
 	;;
 ')
-	and		r14 = 3, n
-	adds		n = -1, n
-	mov.i		r2 = ar.lc
+{.mmi
+	ld8		r11 = [vp], 8		C			M01
+	ld8		r10 = [up], 8		C			M01
+	mov.i		r2 = ar.lc		C			I0
+}
+{.mmi
+	and		r14 = 3, n		C			M I
+	cmp.lt		p15, p0 = 4, n		C			M I
+	shr.u		n = n, 2		C			I0
 	;;
-	shr.u		r15 = n, 2
-	cmp.eq		p6, p0 = 0, r14
-	cmp.eq		p7, p0 = 1, r14
-	cmp.eq		p8, p0 = 3, r14
-	;;
-	mov.i		ar.lc = r15
-   (p6)	br.dptk		.Lb00
-   (p7)	br.dptk		.Lb01
-   (p8)	br.dptk		.Lb11
+}
+{.mmi
+	cmp.eq		p6, p0 = 1, r14		C			M I
+	cmp.eq		p7, p0 = 2, r14		C			M I
+	cmp.eq		p8, p0 = 3, r14		C			M I
+}
+{.bbb
+  (p6)	br.dptk	.Lb01				C			B
+  (p7)	br.dptk	.Lb10				C			B
+  (p8)	br.dptk	.Lb11				C			B
+}
 
-.Lb10:  C  n = 2, 6, 10, ...
-	ld8		v1 = [vp], 8
-	ld8		u1 = [up], 8
+.Lb00:	ld8		v0 = [vp], 8		C			M01
+	ld8		u0 = [up], 8		C			M01
+	add		n = -2, n		C loop count		M I
 	;;
-	ld8		v2 = [vp], 8
-	ld8		u2 = [up], 8
-	br.cloop.dptk	.Lb10_grt2
-					C n = 2
-	shl		x1 = v1, 1
+	ld8		v1 = [vp], 8		C			M01
+	ld8		u1 = [up], 8		C			M01
+	add		x3 = r11, r11		C			M I
 	;;
-	ADDSUB		w1 = u1, x1
-	shrp		x2 = v2, v1, 63
+	ld8		v2 = [vp], 8		C			M01
+	ld8		u2 = [up], 8		C			M01
+	ADDSUB		w3 = r10, x3		C			M I
+  (p15)	br.dpnt		.grt4			C			B
 	;;
-	cmp.PRED	p8, p9 = w1, u1
-	shr.u		x3 = v2, 63
-	ADDSUB		w2 = u2, x2
+	shrp		x0 = v0, r11, 63	C			I0
+	cmp.PRED	p8, p0 = w3, r10	C			M I
 	;;
-	cmp.PRED	p6, p7 = w2, u2
-	br		.Lcj2
+	shrp		x1 = v1, v0, 63		C			I0
+	ADDSUB		w0 = u0, x0		C			M I
+	;;
+	cmp.PRED	p6, p0 = w0, u0		C			M I
+	ADDSUB		w1 = u1, x1		C			M I
+	br		.Lcj4			C			B
 
-.Lb10_grt2:				C n = 6, 10, 14, ...
-	ld8		v3 = [vp], 8
-	ld8		u3 = [up], 8
-	shl		x1 = v1, 1
+.grt4:	ld8		v3 = [vp], 8		C			M01
+	shrp		x0 = v0, r11, 63	C			I0
+	cmp.PRED	p8, p0 = w3, r10	C			M I
 	;;
-	ld8		v0 = [vp], 8
-	ld8		u0 = [up], 8
-	ADDSUB		w1 = u1, x1
+	ld8		u3 = [up], 8		C			M01
+	mov.i		ar.lc = n		C			I0
+	shrp		x1 = v1, v0, 63		C			I0
+	ld8		v0 = [vp], 8		C			M01
+	ADDSUB		w0 = u0, x0		C			M I
 	;;
-	shrp		x2 = v2, v1, 63
-	ld8		v1 = [vp], 8
-	cmp.PRED	p8, p9 = w1, u1
-	;;
-	ld8		u1 = [up], 8
-	shrp		x3 = v3, v2, 63
-	ld8		v2 = [vp], 8
-	ADDSUB		w2 = u2, x2
-	;;
-	cmp.PRED	p6, p7 = w2, u2
-	ld8		u2 = [up], 8
-	ADDSUB		w3 = u3, x3
-	br.cloop.dptk	.Loop		C n = 10, 14, 18, ...
-	br		.Lskip		C n = 6
+	cmp.PRED	p6, p0 = w0, u0
+	ld8		u0 = [up], 8		C			M01
+	ADDSUB		w1 = u1, x1		C			M I
+	br		.LL00			C			B
 
-.Lb11:					C  n = 3, 7, 11, 15, ...
-	ld8		v0 = [vp], 8
-	ld8		u0 = [up], 8
+.Lb01:	add		x2 = r11, r11		C			M I
+	add		n = -1, n		C loop count		M I
+  (p15)	br.dpnt		.grt1			C			B
 	;;
-	ld8		v1 = [vp], 8
-	ld8		u1 = [up], 8
+	ADDSUB		w2 = r10, x2		C			M I
+	shr.u		r8 = r11, 63		C retval		I0
 	;;
-	ld8		v2 = [vp], 8
-	ld8		u2 = [up], 8
-	br.cloop.dptk	.Lb11_grt3
-					C n = 3
-	shl		x0 = v0, 1
-	;;
-	shrp		x1 = v1, v0, 63
-	ADDSUB		w0 = u0, x0
-	;;
-	cmp.PRED	p6, p7 = w0, u0
-	ADDSUB		w1 = u1, x1
-	;;
-	shrp		x2 = v2, v1, 63
-	cmp.PRED	p8, p9 = w1, u1
-	br		.Lcj3
+	cmp.PRED	p6, p0 = w2, r10	C			M I
+	br		.Lcj1			C			B
 
-.Lb11_grt3:				C n = 7, 11, 15, ...
-	shl		x0 = v0, 1
-	ld8		v3 = [vp], 8
+.grt1:	ld8		v3 = [vp], 8		C			M01
+	ld8		u3 = [up], 8		C			M01
+	mov.i		ar.lc = n		C FIXME swap with next	I0
 	;;
-	ld8		u3 = [up], 8
-	shrp		x1 = v1, v0, 63
-	ld8		v0 = [vp], 8
-	ADDSUB		w0 = u0, x0
+	ld8		v0 = [vp], 8		C			M01
+	ld8		u0 = [up], 8		C			M01
+	ADDSUB		w2 = r10, x2
 	;;
-	cmp.PRED	p6, p7 = w0, u0
-	ld8		u0 = [up], 8
-	ADDSUB		w1 = u1, x1
+	ld8		v1 = [vp], 8		C			M01
+	ld8		u1 = [up], 8		C			M01
+	shrp		x3 = v3, r11, 63	C			I0
 	;;
-	shrp		x2 = v2, v1, 63
-	ld8		v1 = [vp], 8
-	cmp.PRED	p8, p9 = w1, u1
-	br		.LL11
+	ld8		v2 = [vp], 8		C			M01
+	ld8		u2 = [up], 8		C			M01
+	cmp.PRED	p6, p0 = w2, r10	C			M I
+	ADDSUB		w3 = u3, x3		C			M I
+	br.cloop.dptk	.grt5			C			B
+	;;
+	shrp		x0 = v0, v3, 63		C			I0
+	cmp.PRED	p8, p0 = w3, u3		C			M I
+	br		.Lcj5			C			B
 
-.Lb00:					C  n = 4, 8, 12, ...
-	ld8		v3 = [vp], 8
-	ld8		u3 = [up], 8
-	;;
-	ld8		v0 = [vp], 8
-	ld8		u0 = [up], 8
-	;;
-	ld8		v1 = [vp], 8
-	ld8		u1 = [up], 8
-	shl		x3 = v3, 1
-	;;
-	ld8		v2 = [vp], 8
-	ld8		u2 = [up], 8
-	ADDSUB		w3 = u3, x3
-	br.cloop.dptk	.Lb00_grt4
-	;;				C n = 4
-	shrp		x0 = v0, v3, 63
-	cmp.PRED	p8, p9 = w3, u3
-	;;
-	shrp		x1 = v1, v0, 63
-	ADDSUB		w0 = u0, x0
-	;;
-	cmp.PRED	p6, p7 = w0, u0
-	ADDSUB		w1 = u1, x1
-	br		.Lcj4
+.grt5:	shrp		x0 = v0, v3, 63		C			I0
+	ld8		v3 = [vp], 8		C			M01
+	cmp.PRED	p8, p0 = w3, u3		C			M I
+	br		.LL01			C			B
 
-.Lb00_grt4:				C n = 8, 12, 16, ...
-	shrp		x0 = v0, v3, 63
-	ld8		v3 = [vp], 8
-	cmp.PRED	p8, p9 = w3, u3
+.Lb10: 	ld8		v2 = [vp], 8		C			M01
+	ld8		u2 = [up], 8		C			M01
+	add		n = -1, n		C loop count		M I
+	add		x1 = r11, r11		C			M I
+  (p15)	br.dpnt		.grt2			C			B
 	;;
-	ld8		u3 = [up], 8
-	shrp		x1 = v1, v0, 63
-	ld8		v0 = [vp], 8
-	ADDSUB		w0 = u0, x0
+	ADDSUB		w1 = r10, x1		C			M I
+	shrp		x2 = v2, r11, 63	C			I0
 	;;
-	cmp.PRED	p6, p7 = w0, u0
-	ld8		u0 = [up], 8
-	ADDSUB		w1 = u1, x1
-	br		.LL00
+	cmp.PRED	p8, p0 = w1, r10	C			M I
+	ADDSUB		w2 = u2, x2		C			M I
+	shr.u		r8 = v2, 63		C retval		I0
+	;;
+	cmp.PRED	p6, p0 = w2, u2		C			M I
+	br		.Lcj2			C			B
 
-.Lb01:					C  n = 1, 5, 9, ...
-	ld8		v2 = [vp], 8
-	ld8		u2 = [up], 8
-	br.cloop.dptk	.Lb01_grt1
-	;;				C n = 1
-	shl		x2 = v2, 1
+.grt2:	ld8		v3 = [vp], 8		C			M01
+	ld8		u3 = [up], 8		C			M01
+	mov.i		ar.lc = n		C			I0
 	;;
-	ADDSUB		w2 = u2, x2
-	shr.u		x3 = v2, 63
+	ld8		v0 = [vp], 8		C			M01
+	ld8		u0 = [up], 8		C			M01
+	ADDSUB		w1 = r10, x1		C			M I
 	;;
-	cmp.PRED	p6, p7 = w2, u2
-	br		.Lcj1
+	ld8		v1 = [vp], 8		C			M01
+	shrp		x2 = v2, r11, 63	C			I0
+	cmp.PRED	p8, p0 = w1, r10	C			M I
+	;;
+	ld8		u1 = [up], 8		C			M01
+	shrp		x3 = v3, v2, 63		C			I0
+	ld8		v2 = [vp], 8		C			M01
+	ADDSUB		w2 = u2, x2		C			M I
+	;;
+	cmp.PRED	p6, p0 = w2, u2		C			M I
+	ld8		u2 = [up], 8		C			M01
+	ADDSUB		w3 = u3, x3		C			M I
+	br.cloop.dpnt	.Loop			C			B
+	br		.Lskip			C			B
 
-.Lb01_grt1:				C n = 5, 9, 13, ...
-	ld8		v3 = [vp], 8
-	ld8		u3 = [up], 8
+.Lb11:	ld8		v1 = [vp], 8		C			M01
+	ld8		u1 = [up], 8		C			M01
+	add		x0 = r11, r11		C			M I
+	add		n = -1, n		C loop count		M I
 	;;
-	ld8		v0 = [vp], 8
-	ld8		u0 = [up], 8
-	shl		x2 = v2, 1
+	ld8		v2 = [vp], 8		C			M01
+	ld8		u2 = [up], 8		C			M01
+  (p15)	br.dpnt		.grt3			C			B
 	;;
-	ld8		v1 = [vp], 8
-	ld8		u1 = [up], 8
-	shrp		x3 = v3, v2, 63
-	;;
-	ld8		v2 = [vp], 8
-	ADDSUB		w2 = u2, x2
-	;;
-	cmp.PRED	p6, p7 = w2, u2
-	ld8		u2 = [up], 8
-	ADDSUB		w3 = u3, x3
-	br.cloop.dptk	.Lb01_grt5
-	;;				C n = 5
-	shrp		x0 = v0, v3, 63
-	cmp.PRED	p8, p9 = w3, u3
-	br		.Lcj5
 
-.Lb01_grt5:				C n = 9, 13, 17, ...
-	shrp		x0 = v0, v3, 63
-	ld8		v3 = [vp], 8
-	cmp.PRED	p8, p9 = w3, u3
-	br		.LL01
+	shrp		x1 = v1, r11, 63	C			I0
+	ADDSUB		w0 = r10, x0		C			M I
+	;;
+	cmp.PRED	p6, p0 = w0, r10	C			M I
+	ADDSUB		w1 = u1, x1		C			M I
+	;;
+	shrp		x2 = v2, v1, 63		C			I0
+	cmp.PRED	p8, p0 = w1, u1		C			M I
+	br		.Lcj3			C			B
+
+.grt3:	ld8		v3 = [vp], 8		C			M01
+	ld8		u3 = [up], 8		C			M01
+	mov.i		ar.lc = n		C			I0
+	shrp		x1 = v1, r11, 63	C			I0
+	ADDSUB		w0 = r10, x0		C			M I
+	;;
+	ld8		v0 = [vp], 8		C			M01
+	cmp.PRED	p6, p0 = w0, r10	C			M I
+	ld8		u0 = [up], 8		C			M01
+	ADDSUB		w1 = u1, x1		C			M I
+	;;
+	shrp		x2 = v2, v1, 63		C			I0
+	ld8		v1 = [vp], 8		C			M01
+	cmp.PRED	p8, p0 = w1, u1		C			M I
+	br		.LL11			C			B
+
 
 C *** MAIN LOOP START ***
 	ALIGN(32)
-.Loop:	st8		[rp] = w1, 8
+.Loop:	st8		[rp] = w1, 8		C			M23
 	shrp		x0 = v0, v3, 63
-   (p8)	cmp.eq.or	p6, p7 = LIM, w2
-   (p8)	add		w2 = INCR, w2
+   (p8)	cmp.eq.or	p6, p0 = LIM, w2	C			M I
+   (p8)	add		w2 = INCR, w2		C			M I
 	ld8		v3 = [vp], 8
-	cmp.PRED	p8, p9 = w3, u3
+	cmp.PRED	p8, p0 = w3, u3		C			M I
 	;;
 .LL01:	ld8		u3 = [up], 8
 	shrp		x1 = v1, v0, 63
-   (p6)	cmp.eq.or	p8, p9 = LIM, w3
-   (p6)	add		w3 = INCR, w3
+   (p6)	cmp.eq.or	p8, p0 = LIM, w3	C			M I
+   (p6)	add		w3 = INCR, w3		C			M I
 	ld8		v0 = [vp], 8
-	ADDSUB		w0 = u0, x0
+	ADDSUB		w0 = u0, x0		C			M I
 	;;
-	st8		[rp] = w2, 8
-	cmp.PRED	p6, p7 = w0, u0
+	st8		[rp] = w2, 8		C			M23
+	cmp.PRED	p6, p0 = w0, u0		C			M I
 	ld8		u0 = [up], 8
-	ADDSUB		w1 = u1, x1
+	ADDSUB		w1 = u1, x1		C			M I
 	;;
-.LL00:	st8		[rp] = w3, 8
+.LL00:	st8		[rp] = w3, 8		C			M23
 	shrp		x2 = v2, v1, 63
-   (p8)	cmp.eq.or	p6, p7 = LIM, w0
-   (p8)	add		w0 = INCR, w0
+   (p8)	cmp.eq.or	p6, p0 = LIM, w0	C			M I
+   (p8)	add		w0 = INCR, w0		C			M I
 	ld8		v1 = [vp], 8
-	cmp.PRED	p8, p9 = w1, u1
+	cmp.PRED	p8, p0 = w1, u1		C			M I
 	;;
 .LL11:	ld8		u1 = [up], 8
 	shrp		x3 = v3, v2, 63
-   (p6)	cmp.eq.or	p8, p9 = LIM, w1
-   (p6)	add		w1 = INCR, w1
+   (p6)	cmp.eq.or	p8, p0 = LIM, w1	C			M I
+   (p6)	add		w1 = INCR, w1		C			M I
 	ld8		v2 = [vp], 8
-	ADDSUB		w2 = u2, x2
+	ADDSUB		w2 = u2, x2		C			M I
 	;;
-	st8		[rp] = w0, 8
-	cmp.PRED	p6, p7 = w2, u2
+	st8		[rp] = w0, 8		C			M23
+	cmp.PRED	p6, p0 = w2, u2		C			M I
 	ld8		u2 = [up], 8
-	ADDSUB		w3 = u3, x3
-	br.cloop.dptk	.Loop
+	ADDSUB		w3 = u3, x3		C			M I
+	br.cloop.dptk	.Loop			C			B
 	;;
 C *** MAIN LOOP END ***
 
-.Lskip:	st8		[rp] = w1, 8
-	shrp		x0 = v0, v3, 63
-   (p8)	cmp.eq.or	p6, p7 = LIM, w2
-   (p8)	add		w2 = INCR, w2
-	cmp.PRED	p8, p9 = w3, u3
+.Lskip:	st8		[rp] = w1, 8		C			M23
+	shrp		x0 = v0, v3, 63		C			I0
+   (p8)	cmp.eq.or	p6, p0 = LIM, w2	C			M I
+   (p8)	add		w2 = INCR, w2		C			M I
+	cmp.PRED	p8, p0 = w3, u3		C			M I
 	;;
-.Lcj5:	shrp		x1 = v1, v0, 63
-   (p6)	cmp.eq.or	p8, p9 = LIM, w3
-   (p6)	add		w3 = INCR, w3
-	ADDSUB		w0 = u0, x0
+.Lcj5:	shrp		x1 = v1, v0, 63		C			I0
+   (p6)	cmp.eq.or	p8, p0 = LIM, w3	C			M I
+   (p6)	add		w3 = INCR, w3		C			M I
+	ADDSUB		w0 = u0, x0		C			M I
 	;;
-	st8		[rp] = w2, 8
-	cmp.PRED	p6, p7 = w0, u0
-	ADDSUB		w1 = u1, x1
+	st8		[rp] = w2, 8		C			M23
+	cmp.PRED	p6, p0 = w0, u0		C			M I
+	ADDSUB		w1 = u1, x1		C			M I
 	;;
-.Lcj4:	st8		[rp] = w3, 8
-	shrp		x2 = v2, v1, 63
-   (p8)	cmp.eq.or	p6, p7 = LIM, w0
-   (p8)	add		w0 = INCR, w0
-	cmp.PRED	p8, p9 = w1, u1
+.Lcj4:	st8		[rp] = w3, 8		C			M23
+	shrp		x2 = v2, v1, 63		C			I0
+   (p8)	cmp.eq.or	p6, p0 = LIM, w0	C			M I
+   (p8)	add		w0 = INCR, w0		C			M I
+	cmp.PRED	p8, p0 = w1, u1		C			M I
 	;;
-.Lcj3:	shr.u		x3 = v2, 63
-   (p6)	cmp.eq.or	p8, p9 = LIM, w1
-   (p6)	add		w1 = INCR, w1
-	ADDSUB		w2 = u2, x2
+.Lcj3:	shr.u		r8 = v2, 63		C			I0
+   (p6)	cmp.eq.or	p8, p0 = LIM, w1	C			M I
+   (p6)	add		w1 = INCR, w1		C			M I
+	ADDSUB		w2 = u2, x2		C			M I
 	;;
-	st8		[rp] = w0, 8
-	cmp.PRED	p6, p7 = w2, u2
+	st8		[rp] = w0, 8		C			M23
+	cmp.PRED	p6, p0 = w2, u2		C			M I
 	;;
-.Lcj2:	st8		[rp] = w1, 8
-   (p8)	cmp.eq.or	p6, p7 = LIM, w2
-   (p8)	add		w2 = INCR, w2
+.Lcj2:	st8		[rp] = w1, 8		C			M23
+   (p8)	cmp.eq.or	p6, p0 = LIM, w2	C			M I
+   (p8)	add		w2 = INCR, w2		C			M I
 	;;
-.Lcj1:	st8		[rp] = w2, 8
-   (p6)	add		x3 = 1, x3
-	;;
-	mov		r8 = x3
-	mov.i		ar.lc = r2
-	br.ret.sptk.many `rp'
+.Lcj1:
+	st8		[rp] = w2, 8		C			M23
+	mov.i		ar.lc = r2		C			I0
+   (p6)	add		r8 = 1, r8		C			M I
+	br.ret.sptk	b0			C			B
 EPILOGUE()
 ASM_END()

@@ -25,33 +25,15 @@ include(`../config.m4')
 C           cycles/limb
 C Itanium 2:    1
 
-C   n	      Itanium 2
-C     1	       11.05
-C     2		5.52
-C     3		4.35
-C     4		3.76
-C     5		3.41
-C     6		3.18
-C     7		2.72
-C     8		2.51
-C     9		2.34
-C    10		2.21
-C    11		2.10
-C    12		2.00
-C    13		1.93
-C    14		1.86
-C    15		1.80
-C    50		1.24
-C   100		1.12
-C   200		1.06
-C   400		1.03#
-C  1000		1.04
-C  2000		2.23
-C  4000		2.13
-C  8000		2.13
-C 16000		4.13
-C 32000		5.20
-C 64000	       11.74
+C TODO
+C  * Use rp,rpx scheme of aors_n.asm to allow parallel stores (useful in
+C    wind-down code).
+
+C INPUT PARAMETERS
+define(`rp', `r32')
+define(`up', `r33')
+define(`vp', `r34')
+define(`n', `r35')
 
 ifdef(`OPERATION_and_n',
 `	define(`func',`mpn_and_n')
@@ -86,12 +68,6 @@ ifdef(`OPERATION_xnor_n',
 	define(`logop',		`xor	$1 = $2, $3')
 	define(`notormov',	`sub	$1 = -1, $2')')
 
-C INPUT PARAMETERS
-define(`rp', `r32')
-define(`up', `r33')
-define(`vp', `r34')
-define(`n', `r35')
-
 MULFUNC_PROLOGUE(mpn_and_n mpn_andn_n mpn_nand_n mpn_ior_n mpn_iorn_n mpn_nior_n mpn_xor_n mpn_xnor_n)
 
 ASM_START()
@@ -100,210 +76,203 @@ PROLOGUE(func)
 	.save	ar.lc, r2
 	.body
 ifdef(`HAVE_ABI_32',
-`	addp4	rp = 0, rp			C M I
-	addp4	up = 0, up			C M I
-	addp4	vp = 0, vp			C M I
-	zxt4	n = n				C I
+`	addp4	rp = 0, rp			C			M I
+	addp4	up = 0, up			C			M I
+	addp4	vp = 0, vp			C			M I
+	zxt4	n = n				C			I
 	;;
 ')
 {.mmi
-	ld8		r30 = [up], 8		C M
-	ld8		r31 = [vp], 8		C M
-	mov.i		r2 = ar.lc		C I0
+	ld8		r10 = [up], 8		C			M
+	ld8		r11 = [vp], 8		C			M
+	mov.i		r2 = ar.lc		C			I0
 }
 {.mmi
-	and		r14 = 3, n		C M I
-	adds		n = -1, n		C M I
-	nop		0			C M I
+	and		r14 = 3, n		C			M I
+	cmp.lt		p15, p14 = 4, n		C			M I
+	shr.u		n = n, 2		C			I
 	;;
 }
 {.mmi
-	cmp.eq		p6, p0 = 0, r14		C M I
-	cmp.eq		p7, p9 = 1, r14		C M I
-	shr.u		r15 = n, 2		C I
-}
-{.mmi
-	cmp.eq		p8, p0 = 3, r14		C M I
-	nop		0			C M I
-	nop		0			C M I
-	;;
-}
-{.mmi
-	nop		0			C M I
-	nop		0			C M I
-	mov.i		ar.lc = r15		C I0
+	cmp.eq		p6, p0 = 1, r14		C			M I
+	cmp.eq		p7, p0 = 2, r14		C			M I
+	cmp.eq		p8, p0 = 3, r14		C			M I
 }
 {.bbb
-   (p6)	br.dptk		.Lb00			C B
-   (p7)	br.dptk		.Lb01			C B
-   (p8)	br.dptk		.Lb11			C B
-	;;
+   (p6)	br.dptk		.Lb01			C			B
+   (p7)	br.dptk		.Lb10			C			B
+   (p8)	br.dptk		.Lb11			C			B
 }
 
-.Lb10:	ld8		r19 = [up], 8
-	ld8		r23 = [vp], 8
-	br.cloop.dptk	.grt2
+.Lb00:	ld8		r17 = [up], 8		C			M
+	ld8		r21 = [vp], 8		C			M
+	add		n = -2, n		C			M I
+	;;
+	ld8		r18 = [up], 8		C			M
+	ld8		r22 = [vp], 8		C			M
+	;;
+	ld8		r19 = [up], 8		C			M
+	ld8		r23 = [vp], 8		C			M
+  (p15)	br		.grt4			C			B
 
-	logop(		r14, r30, r31)
+	logop(		r14, r10, r11)		C			M I
 	;;
-	logop(		r15, r19, r23)
-	notormov(	r8, r14)
-	br		.Lcj2
+	logop(		r15, r17, r21)		C			M I
+	notormov(	r8, r14)		C			M I
+	br		.Lcj4			C			B
 
-.grt2:	ld8		r16 = [up], 8
-	ld8		r20 = [vp], 8
+.grt4:	logop(		r14, r10, r11)		C			M I
+	ld8		r16 = [up], 8		C			M
+	ld8		r20 = [vp], 8		C			M
 	;;
-	ld8		r17 = [up], 8
-	ld8		r21 = [vp], 8
-	;;
-	logop(		r14, r30, r31)
-	ld8		r18 = [up], 8
-	ld8		r22 = [vp], 8
-	;;
-	logop(		r15, r19, r23)
-	ld8		r19 = [up], 8
-	notormov(	r8, r14)
-	ld8		r23 = [vp], 8
-	br.cloop.dptk	.Loop
-	br		.Lcj6
+	logop(		r15, r17, r21)		C			M I
+	ld8		r17 = [up], 8		C			M
+	mov.i		ar.lc = n		C			I0
+	notormov(	r8, r14)		C			M I
+	ld8		r21 = [vp], 8		C			M
+	br		.LL00			C			B
 
-.Lb11:	ld8		r18 = [up], 8
-	ld8		r22 = [vp], 8
-	;;
-	ld8		r19 = [up], 8
-	ld8		r23 = [vp], 8
-	br.cloop.dptk	.grt3
-
-	logop(		r15, r30, r31)
-	;;
-	logop(		r14, r18, r22)
-	notormov(	r9, r15)
-	br		.Lcj3
-
-.grt3:	ld8		r16 = [up], 8
-	ld8		r20 = [vp], 8
-	;;
-	logop(		r15, r30, r31)
-	ld8		r17 = [up], 8
-	ld8		r21 = [vp], 8
-	;;
-	logop(		r14, r18, r22)
-	ld8		r18 = [up], 8
-	notormov(	r9, r15)
-	ld8		r22 = [vp], 8
-	br		.LL11
-
-.Lb00:	ld8		r17 = [up], 8
-	ld8		r21 = [vp], 8
-	;;
-	ld8		r18 = [up], 8
-	ld8		r22 = [vp], 8
-	;;
-	ld8		r19 = [up], 8
-	ld8		r23 = [vp], 8
-	br.cloop.dptk	.grt4
-
-	logop(		r14, r30, r31)
-	;;
-	logop(		r15, r17, r21)
-	notormov(	r8, r14)
-	br		.Lcj4
-
-.grt4:	logop(		r14, r30, r31)
-	ld8		r16 = [up], 8
-	ld8		r20 = [vp], 8
-	;;
-	logop(		r15, r17, r21)
-	ld8		r17 = [up], 8
-	notormov(	r8, r14)
-	ld8		r21 = [vp], 8
-	br		.LL00
-
-.Lb01:	br.cloop.dptk	.grt1
+.Lb01:	add		n = -1, n		C			M I
+	logop(		r15, r10, r11)		C			M I
+  (p15)	br		.grt1			C			B
 	;;
 
-	logop(		r15, r30, r31)
-	;;
-	notormov(	r9, r15)
-	br		.Lcj1
+	notormov(	r9, r15)		C			M I
+	br		.Lcj1			C			B
 
-.grt1:	ld8		r16 = [up], 8
-	ld8		r20 = [vp], 8
+.grt1:	ld8		r16 = [up], 8		C			M
+	ld8		r20 = [vp], 8		C			M
 	;;
-	ld8		r17 = [up], 8
-	ld8		r21 = [vp], 8
+	ld8		r17 = [up], 8		C			M
+	ld8		r21 = [vp], 8		C			M
+	mov.i		ar.lc = n		C			I0
 	;;
-	ld8		r18 = [up], 8
-	ld8		r22 = [vp], 8
+	ld8		r18 = [up], 8		C			M
+	ld8		r22 = [vp], 8		C			M
 	;;
-	logop(		r15, r30, r31)
-	ld8		r19 = [up], 8
-	ld8		r23 = [vp], 8
-	br.cloop.dptk	.grt5
+	ld8		r19 = [up], 8		C			M
+	ld8		r23 = [vp], 8		C			M
+	br.cloop.dptk	.grt5			C			B
 	;;
 
-	logop(		r14, r16, r20)
-	notormov(	r9, r15)
-	br		.Lcj5
+	logop(		r14, r16, r20)		C			M I
+	notormov(	r9, r15)		C			M I
+	br		.Lcj5			C			B
 
-.grt5:	logop(		r14, r16, r20)
-	ld8		r16 = [up], 8
-	notormov(	r9, r15)
-	ld8		r20 = [vp], 8
-	br		.LL01
+.grt5:	logop(		r14, r16, r20)		C			M I
+	ld8		r16 = [up], 8		C			M
+	notormov(	r9, r15)		C			M I
+	ld8		r20 = [vp], 8		C			M
+	br		.LL01			C			B
+
+.Lb10:	ld8		r19 = [up], 8		C			M
+	ld8		r23 = [vp], 8		C			M
+  (p15)	br		.grt2			C			B
+
+	logop(		r14, r10, r11)		C			M I
+	;;
+	logop(		r15, r19, r23)		C			M I
+	notormov(	r8, r14)		C			M I
+	br		.Lcj2			C			B
+
+.grt2:	ld8		r16 = [up], 8		C			M
+	ld8		r20 = [vp], 8		C			M
+	add		n = -1, n		C			M I
+	;;
+	ld8		r17 = [up], 8		C			M
+	ld8		r21 = [vp], 8		C			M
+	logop(		r14, r10, r11)		C			M I
+	;;
+	ld8		r18 = [up], 8		C			M
+	ld8		r22 = [vp], 8		C			M
+	mov.i		ar.lc = n		C			I0
+	;;
+	logop(		r15, r19, r23)		C			M I
+	ld8		r19 = [up], 8		C			M
+	notormov(	r8, r14)		C			M I
+	ld8		r23 = [vp], 8		C			M
+	br.cloop.dptk	.Loop			C			B
+	br		.Lcj6			C			B
+
+.Lb11:	ld8		r18 = [up], 8		C			M
+	ld8		r22 = [vp], 8		C			M
+	add		n = -1, n		C			M I
+	;;
+	ld8		r19 = [up], 8		C			M
+	ld8		r23 = [vp], 8		C			M
+	logop(		r15, r10, r11)		C			M I
+  (p15)	br		.grt3			C			B
+	;;
+
+	logop(		r14, r18, r22)		C			M I
+	notormov(	r9, r15)		C			M I
+	br		.Lcj3			C			B
+
+.grt3:	ld8		r16 = [up], 8		C			M
+	ld8		r20 = [vp], 8		C			M
+	;;
+	ld8		r17 = [up], 8		C			M
+	ld8		r21 = [vp], 8		C			M
+	mov.i		ar.lc = n		C			I0
+	;;
+	logop(		r14, r18, r22)		C			M I
+	ld8		r18 = [up], 8		C			M
+	notormov(	r9, r15)		C			M I
+	ld8		r22 = [vp], 8		C			M
+	br		.LL11			C			B
 
 C *** MAIN LOOP START ***
 	ALIGN(32)
-.Loop:	st8		[rp] = r8, 8
-	logop(		r14, r16, r20)
-	notormov(	r9, r15)
-	ld8		r16 = [up], 8
-	ld8		r20 = [vp], 8
+.Loop:	st8		[rp] = r8, 8		C			M
+	logop(		r14, r16, r20)		C			M I
+	notormov(	r9, r15)		C			M I
+	ld8		r16 = [up], 8		C			M
+	ld8		r20 = [vp], 8		C			M
 	nop.b		0
 	;;
-.LL01:	st8		[rp] = r9, 8
-	logop(		r15, r17, r21)
-	notormov(	r8, r14)
-	ld8		r17 = [up], 8
-	ld8		r21 = [vp], 8
+.LL01:	st8		[rp] = r9, 8		C			M
+	logop(		r15, r17, r21)		C			M I
+	notormov(	r8, r14)		C			M I
+	ld8		r17 = [up], 8		C			M
+	ld8		r21 = [vp], 8		C			M
 	nop.b		0
 	;;
-.LL00:	st8		[rp] = r8, 8
-	logop(		r14, r18, r22)
-	notormov(	r9, r15)
-	ld8		r18 = [up], 8
-	ld8		r22 = [vp], 8
+.LL00:	st8		[rp] = r8, 8		C			M
+	logop(		r14, r18, r22)		C			M I
+	notormov(	r9, r15)		C			M I
+	ld8		r18 = [up], 8		C			M
+	ld8		r22 = [vp], 8		C			M
 	nop.b		0
 	;;
-.LL11:	st8		[rp] = r9, 8
-	logop(		r15, r19, r23)
-	notormov(	r8, r14)
-	ld8		r19 = [up], 8
-	ld8		r23 = [vp], 8
-	br.cloop.dptk	.Loop	;;
+.LL11:	st8		[rp] = r9, 8		C			M
+	logop(		r15, r19, r23)		C			M I
+	notormov(	r8, r14)		C			M I
+	ld8		r19 = [up], 8		C			M
+	ld8		r23 = [vp], 8		C			M
+	br.cloop.dptk	.Loop	;;		C			B
 C *** MAIN LOOP END ***
 
-.Lcj6:	st8		[rp] = r8, 8
-	logop(		r14, r16, r20)
-	notormov(	r9, r15)
+.Lcj6:	st8		[rp] = r8, 8		C			M
+	logop(		r14, r16, r20)		C			M I
+	notormov(	r9, r15)		C			M I
 	;;
-.Lcj5:	st8		[rp] = r9, 8
-	logop(		r15, r17, r21)
-	notormov(	r8, r14)
+.Lcj5:	st8		[rp] = r9, 8		C			M
+	logop(		r15, r17, r21)		C			M I
+	notormov(	r8, r14)		C			M I
 	;;
-.Lcj4:	st8		[rp] = r8, 8
-	logop(		r14, r18, r22)
-	notormov(	r9, r15)
+.Lcj4:	st8		[rp] = r8, 8		C			M
+	logop(		r14, r18, r22)		C			M I
+	notormov(	r9, r15)		C			M I
 	;;
-.Lcj3:	st8		[rp] = r9, 8
-	logop(		r15, r19, r23)
-	notormov(	r8, r14)
+.Lcj3:	st8		[rp] = r9, 8		C			M
+	logop(		r15, r19, r23)		C			M I
+	notormov(	r8, r14)		C			M I
 	;;
-.Lcj2:	st8		[rp] = r8, 8
-	notormov(	r9, r15)
+.Lcj2:	st8		[rp] = r8, 8		C			M
+	notormov(	r9, r15)		C			M I
 	;;
-.Lcj1:	st8		[rp] = r9, 8
-	mov.i		ar.lc = r2
-	br.ret.sptk.many b0
+.Lcj1:	st8		[rp] = r9, 8		C			M
+	mov.i		ar.lc = r2		C			I0
+	br.ret.sptk.many b0			C			B
 EPILOGUE()
 ASM_END()
