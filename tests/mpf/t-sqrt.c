@@ -1,6 +1,6 @@
 /* Test mpf_sqrt, mpf_mul.
 
-Copyright 1996, 2001 Free Software Foundation, Inc.
+Copyright 1996, 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,8 +30,8 @@ MA 02111-1307, USA. */
 #define SIZE 16
 #endif
 
-int
-main (int argc, char **argv)
+void
+check_rand1 (int argc, char **argv)
 {
   mp_size_t size;
   mp_exp_t exp;
@@ -40,8 +40,6 @@ main (int argc, char **argv)
   mpf_t x, y, y2;
   mp_size_t bprec = 100;
   mpf_t rerr, max_rerr, limit_rerr;
-
-  tests_start ();
 
   if (argc > 1)
     {
@@ -70,6 +68,7 @@ main (int argc, char **argv)
       mpf_random2 (x, size, exp);
 
       mpf_sqrt (y, x);
+      MPF_CHECK_FORMAT (y);
       mpf_mul (y2, y, y);
 
       mpf_reldiff (rerr, x, y2);
@@ -97,6 +96,91 @@ main (int argc, char **argv)
   mpf_clear (x);
   mpf_clear (y);
   mpf_clear (y2);
+}
+
+void
+check_rand2 (void)
+{
+  unsigned long      max_prec = 20;
+  unsigned long      min_prec = __GMPF_BITS_TO_PREC (1);
+  gmp_randstate_ptr  rands = RANDS;
+  unsigned long      x_prec, r_prec;
+  mpf_t              x, r, s;
+  int                i;
+
+  mpf_init (x);
+  mpf_init (r);
+  mpf_init (s);
+  refmpf_set_prec_limbs (s, 2*max_prec+10);
+
+  for (i = 0; i < 500; i++)
+    {
+      /* input precision */
+      x_prec = gmp_urandomm_ui (rands, max_prec-min_prec) + min_prec;
+      refmpf_set_prec_limbs (x, x_prec);
+
+      /* result precision */
+      r_prec = gmp_urandomm_ui (rands, max_prec-min_prec) + min_prec;
+      refmpf_set_prec_limbs (r, r_prec);
+
+      mpf_random2 (x, x_prec, 1000);
+
+      mpf_sqrt (r, x);
+      MPF_CHECK_FORMAT (r);
+
+      /* Expect to prec limbs of result.
+         In the current implementation there's no stripping of low zero
+         limbs in mpf_sqrt, so size should be exactly prec.  */
+      if (SIZ(r) != r_prec)
+        {
+          printf ("mpf_sqrt wrong number of result limbs\n");
+          mpf_trace ("  x", x);
+          mpf_trace ("  r", r);
+          printf    ("  r_prec=%lu\n", r_prec);
+          printf    ("  SIZ(r)  %ld\n", (long) SIZ(r));
+          printf    ("  PREC(r) %ld\n", (long) PREC(r));
+          abort ();
+        }
+
+      /* Must have r^2 <= x, since r has been truncated. */
+      mpf_mul (s, r, r);
+      if (! (mpf_cmp (s, x) <= 0))
+        {
+          printf    ("mpf_sqrt result too big\n");
+          mpf_trace ("  x", x);
+          printf    ("  r_prec=%lu\n", r_prec);
+          mpf_trace ("  r", r);
+          mpf_trace ("  s", s);
+          abort ();
+        }
+
+      /* Must have (r+ulp)^2 > x, or else r is too small. */
+      refmpf_add_ulp (r);
+      mpf_mul (s, r, r);
+      if (! (mpf_cmp (s, x) > 0))
+        {
+          printf    ("mpf_sqrt result too small\n");
+          mpf_trace ("  x", x);
+          printf    ("  r_prec=%lu\n", r_prec);
+          mpf_trace ("  r+ulp", r);
+          mpf_trace ("  s", s);
+          abort ();
+        }
+    }
+
+  mpf_clear (x);
+  mpf_clear (r);
+  mpf_clear (s);
+}
+
+int
+main (int argc, char **argv)
+{
+  tests_start ();
+  mp_trace_base = -16;
+
+  check_rand1 (argc, argv);
+  check_rand2 ();
 
   tests_end ();
   exit (0);
