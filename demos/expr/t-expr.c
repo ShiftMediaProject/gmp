@@ -299,6 +299,9 @@ const struct data_t  data_r[] = {
   { 0, "exp2(4)",         "16" },
   { 0, "expm1(0)",        "0" },
 
+  { 0, "nan_p(erf(nan))", "1" },
+  { 0, "erf(0)",          "0" },
+
   { 0, "fma(2,3,4)",      "10" },
   { 0, "fma(-2,3,4)",     "-2" },
   { 0, "fma(2,-3,4)",     "-2" },
@@ -386,6 +389,10 @@ const struct data_t  data_r[] = {
   { 0, "tan(7*pi/4)",   "~-1" },
 
   { 0, "tan(0)",        "0" },
+
+  { 0, "nan_p(zeta(nan))", "1" },
+  { 0, "inf_p(zeta(1))",   "1" },
+  { 0, "zeta(0)",          "-0.5" },
 };
 
 struct datalist_t {

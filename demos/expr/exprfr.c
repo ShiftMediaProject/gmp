@@ -142,6 +142,12 @@ e_mpfr_div_2exp (mpfr_ptr dst, mpfr_srcptr src, unsigned long n)
 }
 
 static void
+e_mpfr_erf (mpfr_ptr dst, mpfr_srcptr src)
+{
+  mpfr_erf (dst, src, ROUND);
+}
+
+static void
 e_mpfr_exp (mpfr_ptr dst, mpfr_srcptr src)
 {
   mpfr_exp (dst, src, ROUND);
@@ -279,6 +285,12 @@ e_mpfr_tanh (mpfr_ptr dst, mpfr_srcptr src)
   mpfr_tanh (dst, src, ROUND);
 }
 
+static void
+e_mpfr_zeta (mpfr_ptr dst, mpfr_srcptr src)
+{
+  mpfr_zeta (dst, src, ROUND);
+}
+
 
 static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
 
@@ -331,6 +343,7 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { "cosh",    (mpexpr_fun_t) e_mpfr_cosh,    MPEXPR_TYPE_UNARY        },
   { "dim",     (mpexpr_fun_t) e_mpfr_dim,     MPEXPR_TYPE_BINARY       },
   { "eq",      (mpexpr_fun_t) mpfr_eq,        MPEXPR_TYPE_I_TERNARY_UI },
+  { "erf",     (mpexpr_fun_t) e_mpfr_erf,     MPEXPR_TYPE_UNARY        },
   { "exp",     (mpexpr_fun_t) e_mpfr_exp,     MPEXPR_TYPE_UNARY        },
   { "exp2",    (mpexpr_fun_t) e_mpfr_exp2,    MPEXPR_TYPE_UNARY        },
   { "expm1",   (mpexpr_fun_t) e_mpfr_expm1,   MPEXPR_TYPE_UNARY        },
@@ -362,6 +375,7 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { "tan",     (mpexpr_fun_t) e_mpfr_tan,     MPEXPR_TYPE_UNARY        },
   { "tanh",    (mpexpr_fun_t) e_mpfr_tanh,    MPEXPR_TYPE_UNARY        },
   { "trunc",   (mpexpr_fun_t) mpfr_trunc,     MPEXPR_TYPE_UNARY        },
+  { "zeta",    (mpexpr_fun_t) e_mpfr_zeta,    MPEXPR_TYPE_UNARY        },
 
   { "euler",   (mpexpr_fun_t) e_mpfr_const_euler, MPEXPR_TYPE_CONSTANT },
   { "loge2",   (mpexpr_fun_t) e_mpfr_const_log2,  MPEXPR_TYPE_CONSTANT },
