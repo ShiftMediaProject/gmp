@@ -29,6 +29,10 @@ MA 02111-1307, USA. */
 
    Future:
 
+   There might be some value in returning both F[n] and F[n-1], so that an
+   application can then iterate from that pair.  Currently that would
+   require a wasteful second call to get F[n-1].
+
    If the Lucas numbers L[n] were used as an auxiliary sequence, the
    "doubling" operation would be two squares rather than two multiplies.
    The formulas are a little more complicated, something like the following
@@ -58,6 +62,133 @@ MA 02111-1307, USA. */
 
 /* table1[i] is F[i], table2[i] is F[i+numberof(table1)].
    table2[i][0] is the low limb, table2[i][1] the high limb.  */
+
+#if BITS_PER_MP_LIMB == 2
+static const mp_limb_t table1[] = {
+ CNST_LIMB (0x0),  /* 0 */
+ CNST_LIMB (0x1),  /* 1 */
+ CNST_LIMB (0x1),  /* 2 */
+ CNST_LIMB (0x2),  /* 3 */
+ CNST_LIMB (0x3),  /* 4 */
+};
+static const mp_limb_t table2[][2] = {
+ {CNST_LIMB(0x1), CNST_LIMB(0x1)}, /* 5 */
+ {CNST_LIMB(0x0), CNST_LIMB(0x2)}, /* 6 */
+ {CNST_LIMB(0x1), CNST_LIMB(0x3)}, /* 7 */
+};
+/* total 11 bytes if BITS_PER_LIMB==2 */
+#endif
+
+#if BITS_PER_MP_LIMB == 4
+static const mp_limb_t table1[] = {
+ CNST_LIMB (0x0),  /* 0 */
+ CNST_LIMB (0x1),  /* 1 */
+ CNST_LIMB (0x1),  /* 2 */
+ CNST_LIMB (0x2),  /* 3 */
+ CNST_LIMB (0x3),  /* 4 */
+ CNST_LIMB (0x5),  /* 5 */
+ CNST_LIMB (0x8),  /* 6 */
+ CNST_LIMB (0xD),  /* 7 */
+};
+static const mp_limb_t table2[][2] = {
+ {CNST_LIMB(0x5), CNST_LIMB(0x1)}, /* 8 */
+ {CNST_LIMB(0x2), CNST_LIMB(0x2)}, /* 9 */
+ {CNST_LIMB(0x7), CNST_LIMB(0x3)}, /* 10 */
+ {CNST_LIMB(0x9), CNST_LIMB(0x5)}, /* 11 */
+ {CNST_LIMB(0x0), CNST_LIMB(0x9)}, /* 12 */
+ {CNST_LIMB(0x9), CNST_LIMB(0xE)}, /* 13 */
+};
+/* total 20 bytes if BITS_PER_LIMB==4 */
+#endif
+
+#if BITS_PER_MP_LIMB == 8
+static const mp_limb_t table1[] = {
+ CNST_LIMB (0x0),  /* 0 */
+ CNST_LIMB (0x1),  /* 1 */
+ CNST_LIMB (0x1),  /* 2 */
+ CNST_LIMB (0x2),  /* 3 */
+ CNST_LIMB (0x3),  /* 4 */
+ CNST_LIMB (0x5),  /* 5 */
+ CNST_LIMB (0x8),  /* 6 */
+ CNST_LIMB (0xD),  /* 7 */
+ CNST_LIMB (0x15),  /* 8 */
+ CNST_LIMB (0x22),  /* 9 */
+ CNST_LIMB (0x37),  /* 10 */
+ CNST_LIMB (0x59),  /* 11 */
+ CNST_LIMB (0x90),  /* 12 */
+ CNST_LIMB (0xE9),  /* 13 */
+};
+static const mp_limb_t table2[][2] = {
+ {CNST_LIMB(0x79), CNST_LIMB(0x1)}, /* 14 */
+ {CNST_LIMB(0x62), CNST_LIMB(0x2)}, /* 15 */
+ {CNST_LIMB(0xDB), CNST_LIMB(0x3)}, /* 16 */
+ {CNST_LIMB(0x3D), CNST_LIMB(0x6)}, /* 17 */
+ {CNST_LIMB(0x18), CNST_LIMB(0xA)}, /* 18 */
+ {CNST_LIMB(0x55), CNST_LIMB(0x10)}, /* 19 */
+ {CNST_LIMB(0x6D), CNST_LIMB(0x1A)}, /* 20 */
+ {CNST_LIMB(0xC2), CNST_LIMB(0x2A)}, /* 21 */
+ {CNST_LIMB(0x2F), CNST_LIMB(0x45)}, /* 22 */
+ {CNST_LIMB(0xF1), CNST_LIMB(0x6F)}, /* 23 */
+ {CNST_LIMB(0x20), CNST_LIMB(0xB5)}, /* 24 */
+};
+/* total 36 bytes if BITS_PER_LIMB==8 */
+#endif
+
+#if BITS_PER_MP_LIMB == 16
+static const mp_limb_t table1[] = {
+ CNST_LIMB (0x0),  /* 0 */
+ CNST_LIMB (0x1),  /* 1 */
+ CNST_LIMB (0x1),  /* 2 */
+ CNST_LIMB (0x2),  /* 3 */
+ CNST_LIMB (0x3),  /* 4 */
+ CNST_LIMB (0x5),  /* 5 */
+ CNST_LIMB (0x8),  /* 6 */
+ CNST_LIMB (0xD),  /* 7 */
+ CNST_LIMB (0x15),  /* 8 */
+ CNST_LIMB (0x22),  /* 9 */
+ CNST_LIMB (0x37),  /* 10 */
+ CNST_LIMB (0x59),  /* 11 */
+ CNST_LIMB (0x90),  /* 12 */
+ CNST_LIMB (0xE9),  /* 13 */
+ CNST_LIMB (0x179),  /* 14 */
+ CNST_LIMB (0x262),  /* 15 */
+ CNST_LIMB (0x3DB),  /* 16 */
+ CNST_LIMB (0x63D),  /* 17 */
+ CNST_LIMB (0xA18),  /* 18 */
+ CNST_LIMB (0x1055),  /* 19 */
+ CNST_LIMB (0x1A6D),  /* 20 */
+ CNST_LIMB (0x2AC2),  /* 21 */
+ CNST_LIMB (0x452F),  /* 22 */
+ CNST_LIMB (0x6FF1),  /* 23 */
+ CNST_LIMB (0xB520),  /* 24 */
+};
+static const mp_limb_t table2[][2] = {
+ {CNST_LIMB(0x2511), CNST_LIMB(0x1)}, /* 25 */
+ {CNST_LIMB(0xDA31), CNST_LIMB(0x1)}, /* 26 */
+ {CNST_LIMB(0xFF42), CNST_LIMB(0x2)}, /* 27 */
+ {CNST_LIMB(0xD973), CNST_LIMB(0x4)}, /* 28 */
+ {CNST_LIMB(0xD8B5), CNST_LIMB(0x7)}, /* 29 */
+ {CNST_LIMB(0xB228), CNST_LIMB(0xC)}, /* 30 */
+ {CNST_LIMB(0x8ADD), CNST_LIMB(0x14)}, /* 31 */
+ {CNST_LIMB(0x3D05), CNST_LIMB(0x21)}, /* 32 */
+ {CNST_LIMB(0xC7E2), CNST_LIMB(0x35)}, /* 33 */
+ {CNST_LIMB(0x4E7), CNST_LIMB(0x57)}, /* 34 */
+ {CNST_LIMB(0xCCC9), CNST_LIMB(0x8C)}, /* 35 */
+ {CNST_LIMB(0xD1B0), CNST_LIMB(0xE3)}, /* 36 */
+ {CNST_LIMB(0x9E79), CNST_LIMB(0x170)}, /* 37 */
+ {CNST_LIMB(0x7029), CNST_LIMB(0x254)}, /* 38 */
+ {CNST_LIMB(0xEA2), CNST_LIMB(0x3C5)}, /* 39 */
+ {CNST_LIMB(0x7ECB), CNST_LIMB(0x619)}, /* 40 */
+ {CNST_LIMB(0x8D6D), CNST_LIMB(0x9DE)}, /* 41 */
+ {CNST_LIMB(0xC38), CNST_LIMB(0xFF8)}, /* 42 */
+ {CNST_LIMB(0x99A5), CNST_LIMB(0x19D6)}, /* 43 */
+ {CNST_LIMB(0xA5DD), CNST_LIMB(0x29CE)}, /* 44 */
+ {CNST_LIMB(0x3F82), CNST_LIMB(0x43A5)}, /* 45 */
+ {CNST_LIMB(0xE55F), CNST_LIMB(0x6D73)}, /* 46 */
+ {CNST_LIMB(0x24E1), CNST_LIMB(0xB119)}, /* 47 */
+};
+/* total 142 bytes if BITS_PER_LIMB==16 */
+#endif
 
 #if BITS_PER_MP_LIMB == 32
 static const mp_limb_t table1[] = {
@@ -680,7 +811,7 @@ generate (int bpml)
           printf (" CNST_LIMB (0x");
           mpz_out_str (stdout, -16, fn);
           printf("),  /* %d */\n", n);
-          bytes += bpml/8;
+          bytes += MAX (bpml, 8) / 8;
         }
       else
         {
@@ -692,7 +823,7 @@ generate (int bpml)
           printf("), CNST_LIMB(0x");
           mpz_out_str (stdout, -16, hi);
           printf(")}, /* %d */\n", n);
-          bytes += 2 * bpml/8;
+          bytes += 2 * MAX (bpml, 8) /8;
         }
 
       mpz_add (fn1, fn1, fn);  /* F[n+1] = F[n] + F[n-1] */
@@ -707,6 +838,10 @@ generate (int bpml)
 int
 main (void)
 {
+  generate (2);
+  generate (4);
+  generate (8);
+  generate (16);
   generate (32);
   generate (64);
 
