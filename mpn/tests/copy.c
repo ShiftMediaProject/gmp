@@ -90,9 +90,9 @@ cputime ()
 
 void
 #if __STDC__
-refmpn_copy (mp_ptr rptr, mp_srcptr sptr, mp_size_t n)
+refmpn_copyi (mp_ptr rptr, mp_srcptr sptr, mp_size_t n)
 #else
-refmpn_copy (rptr, sptr, n)
+refmpn_copyi (rptr, sptr, n)
      register mp_ptr rptr;
      register mp_srcptr sptr;
      mp_size_t n;
@@ -143,17 +143,17 @@ main (argc, argv)
 #ifndef NOCHECK
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
-	refmpn_copy (dx+1, s1, size);
+	refmpn_copyi (dx+1, s1, size);
       t = cputime() - t0;
-      printf ("refmpn_copy:   %ldms (%.2f cycles/limb)\n",
+      printf ("refmpn_copyi:   %ldms (%.2f cycles/limb)\n",
 	      t, ((double) t * CLOCK) / (OPS * 1000.0));
 #endif
 
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
-	__gmpn_copy (dx+1, s1, size);
+	MPN_COPY_INCR (dx+1, s1, size);
       t = cputime() - t0;
-      printf ("mpn_copy:   %ldms (%.2f cycles/limb)\n",
+      printf ("MPN_COPY_INCR:   %ldms (%.2f cycles/limb)\n",
 	      t, ((double) t * CLOCK) / (OPS * 1000.0));
 #endif
 
@@ -171,8 +171,8 @@ main (argc, argv)
 	  dy[i+1] = 0xbeef;
 	}
 
-      refmpn_copy (dx+1, s1, size);
-      __gmpn_copy (dy+1, s1, size);
+      refmpn_copyi (dx+1, s1, size);
+      MPN_COPY_INCR (dy+1, s1, size);
 #ifdef PRINT
       mpn_print (dx+1, size);
       mpn_print (dy+1, size);
