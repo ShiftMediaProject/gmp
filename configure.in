@@ -12,7 +12,7 @@ srcname="GNU Multi-Precision library"
 
 case "${target}" in
   sparc*-*-none | supersparc*-*-none | ultrasparc*-*-none | microsparc*-*-none | \
-  i[56]86*-*-* | pentium-*-* | pentiumpro-*-*)
+  i[56]86*-*-none | pentium-*-none | pentiumpro-*-none)
     echo "*** Operating system specification required for this cpu." 1>&2
     exit 1;;
   sparc9-*-* | sparc64*-*-* | ultrasparc*-*-* | sparc8-*-* | microsparc*-*-*)
