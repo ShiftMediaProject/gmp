@@ -1,5 +1,17 @@
 2001-01-03  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h: For Cray, #include limits.h.
+	(LONG_MIN): New #define.
+	(ULONG_HIGHBIT): #define in terms of ULONG_MAX.
+	(LONG_HIGHBIT): #define as LONG_MIN.
+	(USHRT_MAX): New name for USHORT_MAX.
+	(SHRT_MAX): New name for SHORT_MAX.
+	(SHRT_MIN): New #define.
+	(USHORT_HIGHBIT,SHORT_HIGHBIT): Removed.
+
+	* mpbsd/tests/t-misc.c (check_itom [data]): *SHORT* => *SHRT*;
+	remove code disabling a test for Cray.
+
 	* tests/t-constants.c (CHECK_CONSTANT): Cast parameters to long.
 
 	* mpn/generic/mul_n.c (mpn_kara_sqr_n): Remove unused variable `t'.
