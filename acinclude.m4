@@ -50,11 +50,12 @@ ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h) > 0),1,
 
 dnl  GMP_PROG_M4()
 dnl  -------------
-dnl 
-dnl  Find a working m4, either in $PATH or likely locations.  Setup $M4 and
-dnl  an AC_SUBST accordingly.  If $M4 is already set then it's from the user
-dnl  and is accepted with no checks.  GMP_PROG_M4 is like AC_PATH_PROG or
-dnl  AC_CHECK_PROG, but testing each m4 found to see if it's good enough.
+dnl
+dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
+dnl  and an AC_SUBST accordingly.  If $M4 is already set then it's a user
+dnl  choice and is accepted with no checks.  GMP_PROG_M4 is like
+dnl  AC_PATH_PROG or AC_CHECK_PROG, but it tests each m4 found to see if
+dnl  it's good enough.
 dnl 
 dnl  See mpn/asm-defs.m4 for details on the known bad m4s.
 
@@ -78,11 +79,10 @@ ifelse(t1`'t2,YY,`good
 EOF
   echo "trying m4" 1>&AC_FD_CC
   gmp_tmp_val="`(m4 conftest.m4) 2>&AC_FD_CC`"
+  echo "$gmp_tmp_val" 1>&AC_FD_CC
   if test "$gmp_tmp_val" = good; then
     gmp_cv_prog_m4="m4"
   else
-    echo "$gmp_tmp_val" 1>&AC_FD_CC
-
     IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
 dnl $ac_dummy forces splitting on constant user-supplied paths.
 dnl POSIX.2 word splitting is done only on the output of word expansions,
@@ -92,11 +92,11 @@ dnl not every word.  This closes a longstanding sh security hole.
       test -z "$ac_dir" && ac_dir=.
       echo "trying $ac_dir/m4" 1>&AC_FD_CC
       gmp_tmp_val="`($ac_dir/m4 conftest.m4) 2>&AC_FD_CC`"
+      echo "$gmp_tmp_val" 1>&AC_FD_CC
       if test "$gmp_tmp_val" = good; then
         gmp_cv_prog_m4="$ac_dir/m4"
         break
       fi
-      echo "$gmp_tmp_val" 1>&AC_FD_CC
     done
     IFS="$ac_save_ifs"
     if test -z "$gmp_cv_prog_m4"; then
@@ -304,17 +304,36 @@ test -f $gmp_tmpconfigm4p && rm $gmp_tmpconfigm4p
 ])dnl
 
 dnl  GMP_FINISH
-dnl  Create 
+dnl  ----------
+dnl  Create config.m4 from its accumulated parts.
+dnl
+dnl  __CONFIG_M4_INCLUDED__ is used so that a second or subsequent include
+dnl  of config.m4 is harmless.
+dnl
+dnl  A separate ifdef on the angle bracket quoted part ensures the quoting
+dnl  style there is respected.  The basic defines from gmp_tmpconfigm4 are
+dnl  fully quoted but are still put under an ifdef in case any have been
+dnl  redefined by one of the m4 include files (eg. x86-defs.m4 appends to
+dnl  the definition of ALIGN).
+dnl
+dnl  Doing a big ifdef within asm-defs.m4 and/or other macro files wouldn't
+dnl  work, since it'd interpret parentheses and quotes in dnl comments, and
+dnl  having a whole file as a macro argument would overflow the string space
+dnl  on BSD m4.
+
 AC_DEFUN(GMP_FINISH,
 [AC_REQUIRE([GMP_INIT])
 echo "creating $gmp_configm4"
 echo ["dnl $gmp_configm4.  Generated automatically by configure."] > $gmp_configm4
 if test -f $gmp_tmpconfigm4; then
   echo ["changequote(<,>)dnl"] >> $gmp_configm4
+  echo ["ifdef(<__CONFIG_M4_INCLUDED__>,,<"] >> $gmp_configm4
   cat $gmp_tmpconfigm4 >> $gmp_configm4
+  echo [">)"] >> $gmp_configm4
   echo ["changequote(\`,')dnl"] >> $gmp_configm4
   rm $gmp_tmpconfigm4
 fi
+echo ["ifdef(\`__CONFIG_M4_INCLUDED__',,\`"] >> $gmp_configm4
 if test -f $gmp_tmpconfigm4i; then
   cat $gmp_tmpconfigm4i >> $gmp_configm4
   rm $gmp_tmpconfigm4i
@@ -323,6 +342,8 @@ if test -f $gmp_tmpconfigm4p; then
   cat $gmp_tmpconfigm4p >> $gmp_configm4
   rm $gmp_tmpconfigm4p
 fi
+echo ["')"] >> $gmp_configm4
+echo ["define(\`__CONFIG_M4_INCLUDED__')"] >> $gmp_configm4
 ])dnl
 
 dnl  GMP_INCLUDE(FILE)
