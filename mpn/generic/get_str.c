@@ -186,7 +186,7 @@ mpn_sb_get_str (unsigned char *str, size_t len,
       while (un > 1)
 	{
 	  int i;
-	  mp_limb_t frac;
+	  mp_limb_t frac, digit;
 	  MPN_DIVREM_OR_PREINV_DIVREM_1 (rp, (mp_size_t) 1, rp + 1, un,
 					 MP_BASES_BIG_BASE_10,
 					 MP_BASES_BIG_BASE_INVERTED_10,
@@ -194,14 +194,51 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 	  un -= rp[un] == 0;
 	  frac = rp[0] + 1;
 	  s -= MP_BASES_CHARS_PER_LIMB_10;
+#if HAVE_HOST_CPU_FAMILY_x86
+	  /* The code below turns out to be a bit slower for x86 using gcc.
+	     Use plain code.  */
 	  i = MP_BASES_CHARS_PER_LIMB_10;
 	  do
 	    {
-	      mp_limb_t digit;
 	      umul_ppmm (digit, frac, frac, 10);
 	      *s++ = digit;
 	    }
 	  while (--i);
+#else
+	  /* Use the fact that 10 in binary is 1010, with the lowest bit 0.
+	     After a few umul_ppmm, we will have accumulated enough low zeros
+	     to use a plain multiply.  */
+	  if (MP_BASES_NORMALIZATION_STEPS_10 == 0)
+	    {
+              umul_ppmm (digit, frac, frac, 10);
+              *s++ = digit;
+            }
+	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 1)
+	    {
+              umul_ppmm (digit, frac, frac, 10);
+              *s++ = digit;
+            }
+	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 2)
+	    {
+              umul_ppmm (digit, frac, frac, 10);
+              *s++ = digit;
+            }
+	  if (MP_BASES_NORMALIZATION_STEPS_10 <= 3)
+	    {
+              umul_ppmm (digit, frac, frac, 10);
+              *s++ = digit;
+            }
+	  i = MP_BASES_CHARS_PER_LIMB_10 - (4-MP_BASES_NORMALIZATION_STEPS_10);
+	  frac >>= 4;
+	  do
+            {
+	      frac *= 10;
+	      digit = frac >> (BITS_PER_MP_LIMB - 4);
+              *s++ = digit;
+	      frac &= (~(mp_limb_t) 0) >> 4;
+            }
+	  while (--i);
+#endif
 	  s -= MP_BASES_CHARS_PER_LIMB_10;
 	}
 
