@@ -18,6 +18,20 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-30  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/alpha/ev67/popcount.asm, mpn/alpha/ev67/hamdist.asm: New files.
+
+	* mpn/alpha/ev67: New directory.
+	* configure.in (alphaev67, alphaev68, alphaev7*): Use it.
+
+	* doc/gmp.texi (GMPrefu, GMPpxrefu): Change back to plain ref and
+	pxref, remove macros.
+	(GMPreftopu, GMPpxreftopu): Remove URL parameter, rename to GMPreftop
+	and GMPpxreftop.
+	(Debugging): Remove debauch, seems to have disappeared.
+	(Language Bindings): Corrections to URLs for CLN, Omni F77, Pike.
+
 2003-11-29  Kevin Ryde  <kevin@swox.se>
 
 	* demos/perl/GMP/Mpf.pm (overload_string): Use $OFMT to avoid warnings
