@@ -61,28 +61,38 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
   unsigned long int bi;
   mp_limb_t ranm;		/* buffer for random bits */
   unsigned cap_chunksize, chunksize;
+  mp_size_t i;
 
-  MPN_ZERO (rp, (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS);
-  bi = nbits;
+  /* Set entire result to 111..1  */
+  i = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS - 1;
+  rp[i] = GMP_NUMB_MAX >> (GMP_NUMB_BITS - (nbits % GMP_NUMB_BITS)) % GMP_NUMB_BITS;
+  for (i = i - 1; i >= 0; i--)
+    rp[i] = GMP_NUMB_MAX;
 
   _gmp_rand (&ranm, rstate, BITS_PER_RANDCALL);
   cap_chunksize = nbits / (ranm % 4 + 1);
   cap_chunksize += cap_chunksize == 0; /* make it at least 1 */
 
+  bi = nbits - 1;
+
   for (;;)
     {
-      mpn_incr_u (rp + bi / GMP_NUMB_BITS, CNST_LIMB (1) << bi % GMP_NUMB_BITS);
-      _gmp_rand (&ranm, rstate, BITS_PER_RANDCALL);
-      chunksize = 1 + ranm % cap_chunksize;
-      if (bi < chunksize)
-	break;
-      bi -= chunksize;
+      if (bi == 0)
+	break;			/* low chunk is ...1 */
 
-      mpn_decr_u (rp + bi / GMP_NUMB_BITS, CNST_LIMB (1) << bi % GMP_NUMB_BITS);
+      rp[bi / GMP_NUMB_BITS] ^= CNST_LIMB (1) << bi % GMP_NUMB_BITS;
+
       _gmp_rand (&ranm, rstate, BITS_PER_RANDCALL);
       chunksize = 1 + ranm % cap_chunksize;
-      if (bi < chunksize)
-	break;
-      bi -= chunksize;
+      bi = (bi < chunksize) ? 0 : bi - chunksize;
+
+      mpn_incr_u (rp + bi / GMP_NUMB_BITS, CNST_LIMB (1) << bi % GMP_NUMB_BITS);
+
+      if (bi == 0)
+	break;			/* low chunk is ...0 */
+
+      _gmp_rand (&ranm, rstate, BITS_PER_RANDCALL);
+      chunksize = 1 + ranm % cap_chunksize;
+      bi = (bi < chunksize) ? 0 : bi - chunksize;
     }
 }
