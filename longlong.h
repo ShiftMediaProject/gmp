@@ -922,10 +922,10 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
       __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{aze|addze} %0,%2"		\
-	     : "=r" (sh), "=&r" (sl) : "%r" (ah), "%r" (al), "rI" (bl));\
+	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
     else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
       __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{ame|addme} %0,%2"		\
-	     : "=r" (sh), "=&r" (sl) : "%r" (ah), "%r" (al), "rI" (bl));\
+	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
     else								\
       __asm__ ("{a%I5|add%I5c} %1,%4,%5\n\t{ae|adde} %0,%2,%3"		\
 	     : "=r" (sh), "=&r" (sl)					\
@@ -988,10 +988,10 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
       __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{aze|addze} %0,%2"		\
-	     : "=r" (sh), "=&r" (sl) : "%r" (ah), "%r" (al), "rI" (bl));\
+	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
     else if (__builtin_constant_p (bh) && (bh) == ~(UDItype) 0)		\
       __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{ame|addme} %0,%2"		\
-	     : "=r" (sh), "=&r" (sl) : "%r" (ah), "%r" (al), "rI" (bl));\
+	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
     else								\
       __asm__ ("{a%I5|add%I5c} %1,%4,%5\n\t{ae|adde} %0,%2,%3"		\
 	     : "=r" (sh), "=&r" (sl)					\
