@@ -131,15 +131,16 @@ libmpf_la_SOURCES = \
   add.c add_ui.c sub.c sub_ui.c ui_sub.c mul.c mul_ui.c div.c div_ui.c \
   cmp.c cmp_ui.c cmp_si.c mul_2exp.c div_2exp.c abs.c neg.c get_d.c \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_prc.c ui_div.c sqrt_ui.c \
-  pow_ui.c urandomb.c swap.c get_si.c get_ui.c int_p.c
+  pow_ui.c urandomb.c swap.c get_si.c get_ui.c int_p.c \
+  ceilfloor.c trunc.c
 
 
-nodist_libmpf_la_SOURCES = floor.c ceil.c trunc.c	\
-  fits_sint.c fits_slong.c fits_sshort.c		\
+nodist_libmpf_la_SOURCES = \
+  fits_sint.c fits_slong.c fits_sshort.c \
   fits_uint.c fits_ulong.c fits_ushort.c
 
 
-EXTRA_DIST = integer.c fits_s.c fits_u.c
+EXTRA_DIST = fits_s.c fits_u.c
 CLEANFILES = $(nodist_libmpf_la_SOURCES)
 subdir = mpf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -164,10 +165,9 @@ sub_ui$U.lo ui_sub$U.lo mul$U.lo mul_ui$U.lo div$U.lo div_ui$U.lo \
 cmp$U.lo cmp_ui$U.lo cmp_si$U.lo mul_2exp$U.lo div_2exp$U.lo abs$U.lo \
 neg$U.lo get_d$U.lo set_dfl_prec$U.lo set_prc$U.lo set_prc_raw$U.lo \
 get_prc$U.lo ui_div$U.lo sqrt_ui$U.lo pow_ui$U.lo urandomb$U.lo \
-swap$U.lo get_si$U.lo get_ui$U.lo int_p$U.lo
-nodist_libmpf_la_OBJECTS =  floor$U.lo ceil$U.lo trunc$U.lo \
-fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo \
-fits_ulong$U.lo fits_ushort$U.lo
+swap$U.lo get_si$U.lo get_ui$U.lo int_p$U.lo ceilfloor$U.lo trunc$U.lo
+nodist_libmpf_la_OBJECTS =  fits_sint$U.lo fits_slong$U.lo \
+fits_sshort$U.lo fits_uint$U.lo fits_ulong$U.lo fits_ushort$U.lo
 libmpf_la_OBJECTS =  $(am_libmpf_la_OBJECTS) $(nodist_libmpf_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -255,8 +255,8 @@ add_.c: add.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c
 add_ui_.c: add_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add_ui.c; then echo $(srcdir)/add_ui.c; else echo add_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_ui_.c
-ceil_.c: ceil.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ceil.c; then echo $(srcdir)/ceil.c; else echo ceil.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ceil_.c
+ceilfloor_.c: ceilfloor.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ceilfloor.c; then echo $(srcdir)/ceilfloor.c; else echo ceilfloor.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ceilfloor_.c
 clear_.c: clear.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clear.c; then echo $(srcdir)/clear.c; else echo clear.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clear_.c
 cmp_.c: cmp.c $(ANSI2KNR)
@@ -287,8 +287,6 @@ fits_ulong_.c: fits_ulong.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_ulong.c; then echo $(srcdir)/fits_ulong.c; else echo fits_ulong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_ulong_.c
 fits_ushort_.c: fits_ushort.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_ushort.c; then echo $(srcdir)/fits_ushort.c; else echo fits_ushort.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_ushort_.c
-floor_.c: floor.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/floor.c; then echo $(srcdir)/floor.c; else echo floor.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > floor_.c
 get_d_.c: get_d.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_d.c; then echo $(srcdir)/get_d.c; else echo get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_d_.c
 get_prc_.c: get_prc.c $(ANSI2KNR)
@@ -374,16 +372,16 @@ ui_sub_.c: ui_sub.c $(ANSI2KNR)
 urandomb_.c: urandomb.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/urandomb.c; then echo $(srcdir)/urandomb.c; else echo urandomb.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > urandomb_.c
 abs_.$(OBJEXT) abs_.lo add_.$(OBJEXT) add_.lo add_ui_.$(OBJEXT) \
-add_ui_.lo ceil_.$(OBJEXT) ceil_.lo clear_.$(OBJEXT) clear_.lo \
-cmp_.$(OBJEXT) cmp_.lo cmp_si_.$(OBJEXT) cmp_si_.lo cmp_ui_.$(OBJEXT) \
-cmp_ui_.lo div_.$(OBJEXT) div_.lo div_2exp_.$(OBJEXT) div_2exp_.lo \
-div_ui_.$(OBJEXT) div_ui_.lo dump_.$(OBJEXT) dump_.lo eq_.$(OBJEXT) \
-eq_.lo fits_sint_.$(OBJEXT) fits_sint_.lo fits_slong_.$(OBJEXT) \
-fits_slong_.lo fits_sshort_.$(OBJEXT) fits_sshort_.lo \
-fits_uint_.$(OBJEXT) fits_uint_.lo fits_ulong_.$(OBJEXT) fits_ulong_.lo \
-fits_ushort_.$(OBJEXT) fits_ushort_.lo floor_.$(OBJEXT) floor_.lo \
-get_d_.$(OBJEXT) get_d_.lo get_prc_.$(OBJEXT) get_prc_.lo \
-get_si_.$(OBJEXT) get_si_.lo get_str_.$(OBJEXT) get_str_.lo \
+add_ui_.lo ceilfloor_.$(OBJEXT) ceilfloor_.lo clear_.$(OBJEXT) \
+clear_.lo cmp_.$(OBJEXT) cmp_.lo cmp_si_.$(OBJEXT) cmp_si_.lo \
+cmp_ui_.$(OBJEXT) cmp_ui_.lo div_.$(OBJEXT) div_.lo div_2exp_.$(OBJEXT) \
+div_2exp_.lo div_ui_.$(OBJEXT) div_ui_.lo dump_.$(OBJEXT) dump_.lo \
+eq_.$(OBJEXT) eq_.lo fits_sint_.$(OBJEXT) fits_sint_.lo \
+fits_slong_.$(OBJEXT) fits_slong_.lo fits_sshort_.$(OBJEXT) \
+fits_sshort_.lo fits_uint_.$(OBJEXT) fits_uint_.lo \
+fits_ulong_.$(OBJEXT) fits_ulong_.lo fits_ushort_.$(OBJEXT) \
+fits_ushort_.lo get_d_.$(OBJEXT) get_d_.lo get_prc_.$(OBJEXT) \
+get_prc_.lo get_si_.$(OBJEXT) get_si_.lo get_str_.$(OBJEXT) get_str_.lo \
 get_ui_.$(OBJEXT) get_ui_.lo init_.$(OBJEXT) init_.lo init2_.$(OBJEXT) \
 init2_.lo inp_str_.$(OBJEXT) inp_str_.lo int_p_.$(OBJEXT) int_p_.lo \
 iset_.$(OBJEXT) iset_.lo iset_d_.$(OBJEXT) iset_d_.lo \
@@ -527,13 +525,6 @@ all-redirect all-am all install-strip installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
-
-floor.c: $(srcdir)/integer.c
-	cp $(srcdir)/integer.c floor.c
-ceil.c: $(srcdir)/integer.c
-	cp $(srcdir)/integer.c ceil.c
-trunc.c: $(srcdir)/integer.c
-	cp $(srcdir)/integer.c trunc.c
 
 fits_sint.c: $(srcdir)/fits_s.c
 	cp $(srcdir)/fits_s.c fits_sint.c
