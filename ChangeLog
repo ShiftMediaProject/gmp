@@ -19,6 +19,17 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-24  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (*-*-cygwin*): Give a sensible default command line
+	limit, to avoid blowups reported by Jim Fougeron on windows 9x.
+	(--enable-nails): Make the default 2, since mp_bases has data for that.
+
+	* mpfr/mpfr-math.h (__mpfr_nan): Use a "double" for the bytes, to
+	avoid a mis-conversion on alpha gcc 3.0.2.
+	(_MPFR_INFP_BYTES, _MPFR_INFM_BYTES): Should be a zero mantissa.
+	
+
 2002-04-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/dive_ui.c: Fix typo.
