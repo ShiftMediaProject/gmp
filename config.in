@@ -273,7 +273,7 @@ MA 02111-1307, USA. */
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define one (just one) of the following for the endiannes of `mp_limb_t'.
+/* Define one (just one) of the following for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
    it is, then leave both of these undefined. */
 #undef HAVE_LIMB_BIG_ENDIAN
@@ -492,10 +492,6 @@ MA 02111-1307, USA. */
 
 /* --enable-alloca=malloc-reentrant */
 #undef WANT_TMP_REENTRANT
-
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
-#undef WORDS_BIGENDIAN
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
