@@ -1,7 +1,7 @@
 dnl  AMD64 mpn_mul_1 -- Multiply a limb vector with a limb and store the
 dnl  result in a second limb vector.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,7 +24,10 @@ include(`../config.m4')
 
 
 C         cycles/limb
-C Hammer:     3.25
+C Hammer:     3.0
+
+C TODO
+C  * Perhaps make this use the algorithm of addmul_1.asm.
 
 
 C INPUT PARAMETERS
@@ -35,104 +38,92 @@ C vl	rcx
 
 	TEXT
 	ALIGN(16)
-	.byte	0x66, 0x90, 0x66, 0x90, 0x66, 0x90, 0x66, 0x90
+	.byte	0,0,0,0,0,0,0,0,0	C this aligns the loop		      9
 ASM_START()
 PROLOGUE(mpn_mul_1)
-	pushq	%r12			C				      2
-	pushq	%rbx			C				      1
+	movq	%rdx, %r11		C				      3
+	leaq	(%rsi,%rdx,8), %rsi	C				      4
+	leaq	(%rdi,%rdx,8), %rdi	C				      4
+	negq	%r11			C				      3
+	xorl	%r8d, %r8d		C clear carry limb		      3
+	addq	$3, %r11		C				      4
+	jb	.Ltail			C jump for n = 1, 2, 3		      2
 
-	movq	%rdx, %rbx		C				      3
-	xorq	%r8, %r8		C clear carry limb		      3
-	xorq	%r12, %r12		C maintain r12 = 0 FIXME: don't!      3
-	subq	$4, %rbx		C				      4
-	jb	.Lend			C				      2
-	.byte	0x66, 0x90, 0x66, 0x90, 0x66, 0x90
-.Loop:
-	movq	(%rsi), %rax		C				      3
+.Loop:	movq	-24(%rsi,%r11,8), %rax	C				      5
 	mulq	%rcx			C				      3
-	movq	%r12, %r9		C				      3
+	xorq	%r9, %r9		C				      3
 	addq	%rax, %r8		C				      3
 	adcq	%rdx, %r9		C				      3
 
-	movq	8(%rsi), %rax		C				      4
+	movq	-16(%rsi,%r11,8), %rax	C				      5
 	mulq	%rcx			C				      3
-	movq	%r12, %r10		C				      3
+	xorq	%r10, %r10		C				      3
 	addq	%rax, %r9		C				      3
 	adcq	%rdx, %r10		C				      3
 
-	movq	16(%rsi), %rax		C				      4
+	movq	%r8, -24(%rdi,%r11,8)	C				      5
+	movq	%r9, -16(%rdi,%r11,8)	C				      5
+
+	movq	-8(%rsi,%r11,8), %rax	C				      5
 	mulq	%rcx			C				      3
-	movq	%r12, %r11		C				      3
+	xorq	%r9, %r9		C				      3
 	addq	%rax, %r10		C				      3
-	adcq	%rdx, %r11		C				      3
+	adcq	%rdx, %r9		C				      3
 
-	movq	%r8, (%rdi)		C				      3
-	movq	%r9, 8(%rdi)		C				      4
-
-	movq	24(%rsi), %rax		C				      4
+	movq	(%rsi,%r11,8), %rax	C				      4
 	mulq	%rcx			C				      3
-	movq	%r12, %r8		C				      3
-	addq	%rax, %r11		C				      3
+	xorq	%r8, %r8		C				      3
+	addq	%rax, %r9		C				      3
 	adcq	%rdx, %r8		C				      3
 
-	movq	%r10, 16(%rdi)		C				      4
-	movq	%r11, 24(%rdi)		C				      4
+	movq	%r10, -8(%rdi,%r11,8)	C				      5
+	movq	%r9, (%rdi,%r11,8)	C				      4
 
-	leaq	32(%rsi), %rsi		C				      4
-	leaq	32(%rdi), %rdi		C				      4
-	subq	$4, %rbx		C				      4
+	addq	$4, %r11		C				      4
 	jae	.Loop			C				      2
 
-	cmpl	$-4, %ebx		C				      3
-	jne	.Lend			C				      2
+	cmpl	$3, %r11d		C				      4
+	jne	.Ltail			C				      2
 
 	movq	%r8, %rax		C				      3
-	popq	%rbx			C				      1
-	popq	%r12			C				      2
 	ret				C				      1
 
-.Lend:	movq	(%rsi), %rax		C				      3
+.Ltail:	movq	-24(%rsi,%r11,8), %rax	C				      5
 	mulq	%rcx			C				      3
-	movq	%r12, %r9		C				      3
+	xorq	%r9, %r9		C				      3
 	addq	%rax, %r8		C				      3
 	adcq	%rdx, %r9		C				      3
 
-	cmpl	$-3, %ebx		C				      3
+	cmpl	$2, %r11d		C				      4
 	jne	.L1			C				      2
 
-	movq	%r8, (%rdi)		C				      3
+	movq	%r8, -8(%rdi)		C				      4
 	movq	%r9, %rax		C				      3
-	popq	%rbx			C				      1
-	popq	%r12			C				      2
 	ret				C				      1
 
-.L1:	movq	8(%rsi), %rax		C				      4
+.L1:	movq	-16(%rsi,%r11,8), %rax	C				      5
 	mulq	%rcx			C				      3
-	movq	%r12, %r10		C				      3
+	xorq	%r10, %r10		C				      3
 	addq	%rax, %r9		C				      3
 	adcq	%rdx, %r10		C				      3
 
-	cmpl	$-2, %ebx		C				      3
+	cmpl	$1, %r11d		C				      4
 	jne	.L2			C				      2
 
-	movq	%r8, (%rdi)		C				      3
-	movq	%r9, 8(%rdi)		C				      4
+	movq	%r8, -16(%rdi)		C				      4
+	movq	%r9, -8(%rdi)		C				      4
 	movq	%r10, %rax		C				      3
-	popq	%rbx			C				      1
-	popq	%r12			C				      2
 	ret				C				      1
 
-.L2:	movq	16(%rsi), %rax		C				      4
+.L2:	movq	-8(%rsi), %rax		C				      4
 	mulq	%rcx			C				      3
-	movq	%r12, %r11		C				      3
+	xorq	%r11, %r11		C				      3
 	addq	%rax, %r10		C				      3
 	adcq	%rdx, %r11		C				      3
 
-	movq	%r8, (%rdi)		C				      3
-	movq	%r9, 8(%rdi)		C				      4
-	movq	%r10, 16(%rdi)		C				      4
+	movq	%r8, -24(%rdi)		C				      4
+	movq	%r9, -16(%rdi)		C				      4
+	movq	%r10, -8(%rdi)		C				      4
 	movq	%r11, %rax		C				      3
-	popq	%rbx			C				      1
-	popq	%r12			C				      2
 	ret				C				      1
 EPILOGUE()
