@@ -1,3 +1,17 @@
+2000-04-10  Linus Nordberg  <linus@swox.se>
+
+	* Makefile.am (test, bigtest): Quote argument to grep.
+	* Makefile.in: Regenerate.
+
+	* gen.c: Declare optarg, optind, opterr if not already declared.
+	(main): Use new names for the random stuff.
+	(main): Don't use strtoul() if we don't have it.  Use strtol()
+	instead, if we have it.  Otherwise, use atoi().
+	(main): Use srandom/srandomdev for __FreeBSD__ only.
+	(main): Use new parameter order to gmp_randinit().
+
+	* stat.c: Declare optarg, optind, opterr if not already declared.
+
 2000-04-10  Kevin Ryde  <kevin@swox.se>
 
 	* statlib.c: mpz_cmp_abs => mpz_cmpabs.
