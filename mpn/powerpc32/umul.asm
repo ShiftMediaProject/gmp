@@ -23,10 +23,10 @@ dnl MA 02111-1307, USA.
 include(`../config.m4')
 
 ASM_START()
-PROLOGUE(umul_ppmm)
+PROLOGUE(mpn_umul_ppmm)
 	mullw	0,4,5
 	mulhwu	9,4,5
 	stw	0,0(3)
 	mr	3,9
 	blr
-EPILOGUE(umul_ppmm)
+EPILOGUE(mpn_umul_ppmm)

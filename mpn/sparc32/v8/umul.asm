@@ -1,4 +1,4 @@
-dnl  SPARC v8 __umul_ppmm -- support for longlong.h for non-gcc.
+dnl  SPARC v8 mpn_umul_ppmm -- support for longlong.h for non-gcc.
 
 dnl  Copyright (C) 1995, 1996, 2000 Free Software Foundation, Inc.
 
@@ -23,9 +23,9 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 ASM_START()
-PROLOGUE(__umul_ppmm)
+PROLOGUE(mpn_umul_ppmm)
 	umul %o1,%o2,%g2
 	st %g2,[%o0]
 	retl
 	rd %y,%o0
-EPILOGUE(__umul_ppmm)
+EPILOGUE(mpn_umul_ppmm)
