@@ -189,7 +189,7 @@ void __gmp_tmp_free _PROTO ((tmp_marker *));
 /* gcc recognises "(-(8*n))%8" or the like is always zero, which means the
    rounding up is a noop for allocs of whole limbs. */
 #define TMP_ALLOC(size) \
-  __gmp_tmp_alloc (ROUND_UP_MULTIPLE ((unsigned long) (size)))
+  __gmp_tmp_alloc (ROUND_UP_MULTIPLE ((unsigned long) (size), __TMP_ALIGN))
 #define TMP_MARK(marker) __gmp_tmp_mark (&marker)
 #define TMP_FREE(marker) __gmp_tmp_free (&marker)
 #endif
