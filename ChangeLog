@@ -1,5 +1,7 @@
 2001-01-05  Kevin Ryde  <kevin@swox.se>
 
+	* configure.in (mp.h): Only create this under --enable-mpbsd.
+
 	* demos/calc: New subdirectory, move demos/calc* to it.
 	* demos/calc/Makefile.am: New file, split from demos/Makefile.am.
 	* demos/Makefile.am: Update.
