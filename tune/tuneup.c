@@ -87,6 +87,7 @@ extern int optind, opterr;
 
 mp_size_t  option_fft_max_size = 50000;  /* limbs */
 int        option_trace = 0;
+int        option_fft_trace = 0;
 struct speed_params  s;
 
 struct dat_t {
@@ -274,7 +275,8 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
           if (s.size >= param->max_size[i])
             {
               if (option_trace)
-                fprintf (stderr, "Reached maximum size (%ld) without otherwise stopping\n", param->max_size[i]);
+                printf ("Reached maximum size (%ld) without otherwise stopping\n",
+                        param->max_size[i]);
               break;
             }
 
@@ -396,9 +398,16 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
 }
 
 
-/* Special probing for the fft thresholds.  The thresholds for each k and
-   for FFTs over plain multiplication are declared as soon as one faster
-   measurment is found.  */
+/* Special probing for the fft thresholds.  The size restrictions on the
+   FFTs mean the graph of time vs size has a step effect.  See this for
+   example using
+
+       ./speed -s 4096-16384 -t 128 -P foo mpn_mul_fft.8 mpn_mul_fft.9
+       gnuplot foo.gnuplot
+
+   The current approach is to compare routines at the midpoint of relevant
+   steps.  Arguably a more sophisticated system of threshold data is wanted
+   if this step effect remains. */
 
 struct fft_param_t {
   const char        *table_name;
@@ -413,14 +422,40 @@ struct fft_param_t {
   mp_size_t         sqr;
 };
 
+/* mpn_mul_fft requires pl a multiple of 2^k limbs, but with
+   N=pl*BIT_PER_MP_LIMB it internally also pads out so N/2^k is a multiple
+   of 2^(k-1) bits. */
+
+mp_size_t
+fft_step_size (int k)
+{
+  if (2*k-1 > BITS_PER_INT)
+    {
+      printf ("Can't handle k=%d\n", k);
+      abort ();
+    }
+  return (1<<k) * (MAX (1<<(k-1), BITS_PER_MP_LIMB)) / BITS_PER_MP_LIMB;
+}
+
+mp_size_t
+fft_next_size (mp_size_t pl, int k)
+{
+  mp_size_t  m = fft_step_size (k);
+
+/*    printf ("[k=%d %ld] %ld ->", k, m, pl); */
+
+  if (pl == 0 || (pl & (m-1)) != 0)
+    pl = (pl | (m-1)) + 1;
+
+/*    printf (" %ld\n", pl); */
+  return pl;
+}
+
 void
 fft (struct fft_param_t *p)
 {
-  mp_size_t  size, size_k1;
+  mp_size_t  size;
   int        i, k;
-  double     tk, tk1, tm;
-
-  /*  option_trace = 2; */
 
   for (i = 0; i < numberof (mpn_fft_table[p->sqr]); i++)
     mpn_fft_table[p->sqr][i] = MP_SIZE_T_MAX;
@@ -428,99 +463,124 @@ fft (struct fft_param_t *p)
   *p->p_threshold = MP_SIZE_T_MAX;
   *p->p_modf_threshold = MP_SIZE_T_MAX;
 
-  size = p->first_size;
-  size_k1 = 0;
-  k = FFT_FIRST_K;
+  option_trace = MAX (option_trace, option_fft_trace);
 
   printf ("#ifndef %s\n", p->table_name);
   printf ("#define %s  {", p->table_name);
   if (option_trace >= 2)
     printf ("\n");
 
+  k = FFT_FIRST_K;
+  size = p->first_size;
   for (;;)
     {
-      /* step by 4 percent, or at least 1 */
-      size += MAX (1, (mp_size_t) (size * 0.04));
+      double  tk, tk1;
 
-      size = mpn_fft_next_size (size, k);
-      if (option_trace >= 2)
-        printf ("size=%ld  ", size);
+      size = fft_next_size (size+1, k+1);
 
       if (size >= p->max_size)
         break;
       if (k >= FFT_FIRST_K + numberof (mpn_fft_table[p->sqr]))
         break;
 
-      s.size = size;
+      usleep(10000);
+
+      /* compare k to k+1 in the middle of the current k+1 step */
+      s.size = size + fft_step_size (k+1) / 2;
       s.r = k;
       tk = tuneup_measure (p->function, &s);
       if (tk == -1.0)
         abort ();
+
+      usleep(10000);
+
+      s.r = k+1;
+      tk1 = tuneup_measure (p->function, &s);
+      if (tk1 == -1.0)
+        abort ();
+
       if (option_trace >= 2)
-        printf ("k=%d  %.9lf", k, tk);
+        printf ("at %ld   size=%ld  k=%d  %.9lf   k=%d %.9lf\n",
+                size, s.size, k, tk, k+1, tk1);
 
-      if (size_k1 != mpn_fft_next_size (size, k+1))
-        {
-          size_k1 = mpn_fft_next_size (size, k+1);
-          s.size = size_k1;
-          s.r = k+1;
-          tk1 = tuneup_measure (p->function, &s);
-          if (tk1 == -1.0)
-            abort ();
-
-          if (option_trace >= 2)
-            printf ("   k=%d  %.9lf", k+1, tk1);
-        }
-      if (option_trace >= 2)
-        printf ("\n");
-
-      /* declare a new k found as soon as one faster measurement obtained */
+      /* declare the k+1 threshold as soon as it's faster at its midpoint */
       if (tk1 < tk)
         {
-          printf (" %ld,", size);
-          if (option_trace >= 2)
-            printf ("\n");
-
+          mpn_fft_table[p->sqr][k-FFT_FIRST_K] = s.size;
+          printf (" %ld,", s.size);
+          if (option_trace >= 2) printf ("\n");
           k++;
-          size_k1 = 0;
-          tk = tk1;
+        }
+    }
+
+  mpn_fft_table[p->sqr][k-FFT_FIRST_K] = 0;
+  printf (" 0 }\n");
+  printf ("#endif\n");
+
+
+  size = p->first_size;
+  
+  /* Declare an FFT faster than a plain toom3 etc multiplication found as
+     soon as one faster measurement obtained.  A multiplication in the
+     middle of the FFT step is tested.  */
+  for (;;)
+    {
+      int     modf = (*p->p_modf_threshold == MP_SIZE_T_MAX);
+      double  tk, tm;
+
+      /* k=7 should be the first FFT which can beat toom3 on a full
+         multiply, so jump to that threshold and save some probing after the
+         modf threshold is found.  */
+      if (!modf && size < mpn_fft_table[p->sqr][2])
+        {
+          size = mpn_fft_table[p->sqr][2];
+          if (option_trace >= 2)
+            printf ("jump to size=%ld\n", size);
         }
 
-      /* declare an FFT faster than normal multiplication found as soon as
-         one faster measurement obtained */
-      if (*p->p_modf_threshold == MP_SIZE_T_MAX)
+      size = fft_next_size (size+1, mpn_fft_best_k (size, p->sqr));
+      k = mpn_fft_best_k (size, p->sqr);
+
+      if (size >= p->max_size)
+        break;
+
+      usleep(10000);
+
+      s.size = size + fft_step_size (k) / 2;
+      s.r = k;
+      tk = tuneup_measure (p->function, &s);
+      if (tk == -1.0)
+        abort ();
+
+      usleep(10000);
+
+      if (!modf)  s.size /= 2;
+      tm = tuneup_measure (p->mul_function, &s);
+      if (tm == -1.0)
+        abort ();
+
+      if (option_trace >= 2)
+        printf ("at %ld   size=%ld   k=%d  %.9lf   size=%ld %s mul %.9lf\n",
+                size,
+                size + fft_step_size (k) / 2, k, tk,
+                s.size, modf ? "modf" : "full", tm);
+
+      if (tk < tm)
         {
-          s.size = size - (1<<(k-1));
-          tm = tuneup_measure (p->mul_function, &s);
-          if (option_trace >= 2)
-            printf ("   plain mul size=%ld  %.9lf\n", s.size, tm);
-          if (tk < tm)
+          if (modf)
             {
               *p->p_modf_threshold = s.size;
-              if (option_trace >= 2)
-                printf ("   (%s found)\n", p->modf_threshold_name);
+              print_define (p->modf_threshold_name, *p->p_modf_threshold);
             }
-        }
-      else if (*p->p_threshold == MP_SIZE_T_MAX)
-        {
-          s.size = (size - (1<<(k-1))) / 2;
-          tm = tuneup_measure (p->mul_function, &s);
-          if (option_trace >= 2)
-            printf ("   plain half mul  %.9lf\n", tm);
-          if (tk < tm)
+          else
             {
               *p->p_threshold = s.size;
-              if (option_trace >= 2)
-                printf ("   (%s found)\n", p->threshold_name);
+              print_define (p->threshold_name,      *p->p_threshold);
+              break;
             }
         }
     }
 
-  printf (" 0 }\n");
-  printf ("#endif\n");
-
-  print_define (p->modf_threshold_name, *p->p_modf_threshold);
-  print_define (p->threshold_name,      *p->p_threshold);
 }
 
 
@@ -613,9 +673,9 @@ all (void)
     param.p_threshold         = &FFT_MUL_THRESHOLD;
     param.modf_threshold_name = "FFT_MODF_MUL_THRESHOLD";
     param.p_modf_threshold    = &FFT_MODF_MUL_THRESHOLD;
-    param.first_size          = TOOM3_MUL_THRESHOLD;
+    param.first_size          = TOOM3_MUL_THRESHOLD / 2;
     param.max_size            = option_fft_max_size;
-    param.function            = speed_mpn_mul_fft_full;
+    param.function            = speed_mpn_mul_fft;
     param.mul_function        = speed_mpn_mul_n;
     param.sqr = 0;
     fft (&param);
@@ -628,9 +688,9 @@ all (void)
     param.p_threshold         = &FFT_SQR_THRESHOLD;
     param.modf_threshold_name = "FFT_MODF_SQR_THRESHOLD";
     param.p_modf_threshold    = &FFT_MODF_SQR_THRESHOLD;
-    param.first_size          = TOOM3_SQR_THRESHOLD;
+    param.first_size          = TOOM3_SQR_THRESHOLD / 2;
     param.max_size            = option_fft_max_size;
-    param.function            = speed_mpn_mul_fft_full_sqr;
+    param.function            = speed_mpn_mul_fft_sqr;
     param.mul_function        = speed_mpn_sqr_n;
     param.sqr = 0;
     fft (&param);
@@ -655,7 +715,10 @@ main (int argc, char *argv[])
     {
       switch (opt) {
       case 'f':
-        option_fft_max_size = atol (optarg);
+        if (optarg[0] == 't')
+          option_fft_trace = 2;
+        else
+          option_fft_max_size = atol (optarg);
         break;
       case 'o':
         speed_option_set (optarg);
