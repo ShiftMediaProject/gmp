@@ -911,6 +911,34 @@ fi
 ])
 
 
+dnl  GMP_GCC_POWERPC64(CC+CFLAGS,[ACTION-IF-YES][,ACTION-IF-NO])
+dnl  ---------------------------------------------------------------
+dnl  Determine whether gcc CC+CFLAGS is a good enough version for
+dnl  -mpowerpc64.
+dnl
+dnl  Gcc 3.3 on a powerpc970-apple-darwin6.8.5 was seen generating wrong
+dnl  code for ulonglong->double conversions.  It assumed the return from
+dnl  __fixunsdfdi is a 64-bit value in r3, where in fact it follows the
+dnl  standard calling convention and is in two parts r3 and r4.
+dnl
+dnl  We're unsure when this bug first arose or when it's fixed, so for the
+dnl  moment just exclude versions we know are bad.
+
+AC_DEFUN(GMP_GCC_POWERPC64,
+[AC_MSG_CHECKING([whether gcc is good for -mpowerpc64])
+case `$1 -dumpversion` in
+  3.3) result=no ;;
+  *)   result=yes ;;
+esac
+AC_MSG_RESULT($result)
+if test "$result" = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
 dnl  GMP_GCC_WA_MCPU(CC+CFLAGS, NEWFLAG [,ACTION-YES [,ACTION-NO]])
 dnl  --------------------------------------------------------------
 dnl  Check whether gcc (or gas rather) accepts a flag like "-Wa,-mev67".
