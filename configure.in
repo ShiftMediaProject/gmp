@@ -830,6 +830,8 @@ case $host in
 	    # -fns=no and -fsimple=1 disables some transformations that
 	    # conflict with IEEE 754, which some compiler versions perform.
             cc_64_cflags="-fast -fns=no -fsimple=1 -xarch=v9"
+            SPEED_CYCLECOUNTER_OBJ_64=sparcv9.lo
+            cyclecounter_size_64=2
             ;;
         esac
       ;;
