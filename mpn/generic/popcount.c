@@ -23,7 +23,9 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 #if defined __GNUC__
-#if defined __sparc_v9__ && BITS_PER_MP_LIMB == 64
+/* No processor claiming to be SPARC v9 compliant seem to
+   implement the POPC instruction.  Disable pattern for now.  */
+#if 0 && defined __sparc_v9__ && BITS_PER_MP_LIMB == 64
 #define popc_limb(a) \
   ({									\
     DItype __res;							\
