@@ -52,7 +52,7 @@ nodist_libdummy_la_SOURCES =						    \
 
 
 noinst_LTLIBRARIES = libmpn.la
-nodist_libmpn_la_SOURCES = mp_bases.c
+nodist_libmpn_la_SOURCES = fib_table.c mp_bases.c
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
@@ -61,6 +61,15 @@ TARG_DIST = a29k alpha arm clipper cray generic i960 ia64 lisp m68k m88k \
   sparc32 sparc64 thumb vax x86 z8000 z8000x
 
 EXTRA_DIST = Makeasm.am asm-defs.m4 cpp-ccas m4-ccas $(TARG_DIST)
+
+
+# These are BUILT_SOURCES at the top-level, so normally they're built before
+# recursing into this directory.
+#
+fib_table.c:
+	cd ..; $(MAKE) $(AM_MAKEFLAGS) mpn/fib_table.c
+mp_bases.c:
+	cd ..; $(MAKE) $(AM_MAKEFLAGS) mpn/mp_bases.c
 
 
 include Makeasm.am
