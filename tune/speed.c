@@ -181,7 +181,7 @@ const struct routine_t {
   { "mpn_mul_1",         speed_mpn_mul_1,     FLAG_R },
   { "mpn_mul_1_inplace", speed_mpn_mul_1_inplace, FLAG_R },
 #if HAVE_NATIVE_mpn_mul_2
-  { "mpn_mul_2",         speed_mpn_mul_2,     FLAG_R },
+  { "mpn_mul_2",         speed_mpn_mul_2,     FLAG_R_OPTIONAL },
 #endif
 
   { "mpn_divrem_1",      speed_mpn_divrem_1,  FLAG_R },
