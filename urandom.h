@@ -19,6 +19,20 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#ifdef __MINGW32__
+
+/* msvcrt.dll lacks random(), and rand() supposedly returns only 15 bits.
+   http://msdn.microsoft.com/library/devprods/vs6/visualc/vccore/_crt_rand_max.htm  */
+static inline mp_limb_t
+urandom ()
+{
+  return ((mp_limb_t) rand()
+          ^ ((mp_limb_t) rand() << 15)
+          ^ ((mp_limb_t) rand() << 30));
+}
+
+#else
+
 /* Use mrand48 on systems that either lacks the function `random',
    or are known to have non-standard `random'.  */
 #if defined (__hpux) || defined (__svr4__) || defined (__SVR4) \
@@ -68,4 +82,5 @@ urandom ()
 #endif
 }
 
+#endif
 #endif
