@@ -24,17 +24,11 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 #if BITS_PER_MP_LIMB != 32 && BITS_PER_MP_LIMB != 64
-This file does not handle any the used BITS_PER_MP_LIMB.
+  choke me
 #endif
 
 void
-#if __STDC__
 mpq_set_d (mpq_ptr dest, double d)
-#else
-mpq_set_d (dest, d)
-     mpq_ptr dest;
-     double d;
-#endif
 {
   int negative;
   mp_exp_t exp;
