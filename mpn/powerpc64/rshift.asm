@@ -26,11 +26,6 @@ C POWER3/PPC630:     1.5
 C POWER4/PPC970:     3.0
 
 C INPUT PARAMETERS
-C rp	r3
-C up	r4
-C vp	r5
-C n	r6
-
 define(`rp',`r3')
 define(`up',`r4')
 define(`n',`r5')
