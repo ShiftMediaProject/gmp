@@ -209,19 +209,15 @@ L(here):
 	addl	%ebx, %eax	# initial carry (from _1c)
 	adcl	$0, %edx
 
-	movl	%edx, %ebx  # high carry
+	movl	%edx, %ebx	# high carry
 	leal	ifelse(UNROLL_BYTES,256,128) (%edi,%ecx,4), %edi
 
 	movl	VAR_JUMP, %edx
 	testl	$1, %ecx
-	movl	%eax, %ecx  # low carry
+	movl	%eax, %ecx	# low carry
 
-	jz	L(noswap)
-
-	movl	%ecx, %eax  # high,low carry other way around
-	movl	%ebx, %ecx
-	movl	%eax, %ebx
-L(noswap):
+	cmovnz_ebx_ecx		# high,low carry other way around
+	cmovnz_eax_ebx
 
 	jmp	*%edx
 
