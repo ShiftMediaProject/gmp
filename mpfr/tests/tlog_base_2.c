@@ -22,8 +22,8 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <gmp.h>
-#include <mpfr.h>
+#include "gmp.h"
+#include "mpfr.h"
 
 #define TEST_FUNCTION mpfr_log2
 #include "tgeneric.c"

@@ -19,10 +19,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
                    
 #include <stdio.h>
-#include <gmp.h>
-#include <gmp-impl.h>
-#include <mpfr.h>
-#include <mpfr-impl.h>
+#include "gmp.h"
+#include "gmp-impl.h"
+#include "mpfr.h"
+#include "mpfr-impl.h"
 
 
 int check_O _PROTO((void));

@@ -21,8 +21,8 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <gmp.h>
-#include <mpfr.h>
+#include "gmp.h"
+#include "mpfr.h"
 
 void mpfr_set_double_range _PROTO((void));
 
