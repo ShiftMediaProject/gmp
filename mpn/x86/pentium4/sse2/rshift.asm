@@ -1,6 +1,6 @@
-dnl  x86 mpn_rshift -- mpn left shift.
+dnl  x86 mpn_rshift -- right shift.
 dnl 
-dnl  Pentium4: 5.5 cycles/limb
+dnl  Pentium4: 4.0 cycles/limb
 
 dnl  Copyright 2001 Free Software Foundation, Inc.
 dnl 
