@@ -164,8 +164,8 @@ MA 02111-1307, USA. */
 /* bytes per mp_limb_t, if not in gmp-mparam.h */
 #undef BYTES_PER_MP_LIMB
 
-/* The gmp-mparam.h file compiled-in. */
-#undef GMP_MPARAM_H_FILENAME
+/* The gmp-mparam.h to update when tuning. */
+#undef GMP_MPARAM_H_SUGGEST
 
 /* Define if you have the `alarm' function. */
 #undef HAVE_ALARM
