@@ -20,6 +20,13 @@ MA 02111-1307, USA.
 
 2004-10-14  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/logops_n.asm: Don't use naked "br", rejected by Intel
+	assembler.
+	* mpn/ia64/aors_n.asm: Likewise.
+
+	* mpn/ia64/hamdist.asm: Put alloc first in bundle, enforced by the
+	Intel assembler.
+
 	* longlong.h: Exclude masquerading __INTEL_COMPILER from ia64 asm.
 	* gmp-impl.h: Likewise.
 
