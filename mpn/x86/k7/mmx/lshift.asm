@@ -313,24 +313,24 @@ forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 	deflit(`disp0', eval(-i*CHUNK_COUNT*4 ifelse(UNROLL_BYTES,256,-128)))
 	deflit(`disp1', eval(disp0 - 8))
 
- 	movq	disp0(%edx), %mm0
+Zdisp(	movq,	disp0,(%edx), %mm0)
  	psllq	%mm6, %mm2
 
  	movq	%mm0, %mm1
  	psrlq	%mm7, %mm0
 
  	por	%mm2, %mm0
- 	movq	%mm0, disp0(%edi)
+Zdisp(	movq,	%mm0, disp0,(%edi))
 
 
- 	movq	disp1(%edx), %mm0
+Zdisp(	movq,	disp1,(%edx), %mm0)
  	psllq	%mm6, %mm1
 
  	movq	%mm0, %mm2
  	psrlq	%mm7, %mm0
 
  	por	%mm1, %mm0
- 	movq	%mm0, disp1(%edi)
+Zdisp(	movq,	%mm0, disp1,(%edi))
 ')
 
 	subl	$UNROLL_BYTES, %edx
