@@ -486,8 +486,8 @@ void mpz_tdiv_r_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int mpz_tdiv_r_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 int mpz_tstbit _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_ui_pow_ui _PROTO ((mpz_ptr, unsigned long int, unsigned long int));
-void mpz_urandomb _PROTO ((mpz_t, gmp_randstate_t, unsigned long int));
-void mpz_urandomm _PROTO ((mpz_t, gmp_randstate_t, mpz_t));
+void mpz_urandomb _PROTO ((mpz_ptr, gmp_randstate_t, unsigned long int));
+void mpz_urandomm _PROTO ((mpz_ptr, gmp_randstate_t, mpz_srcptr));
 void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #if defined (__cplusplus)
 }
