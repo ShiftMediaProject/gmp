@@ -1027,7 +1027,7 @@ speed_mpn_hgcd (struct speed_params *s)
   t = speed_endtime (); 
 #if WANT_ASSERT
   if (res)
-    hgcd_sanity (&hgcd, ap, s->size, bp, s->size, 0, 4);
+    ASSERT_HGCD (&hgcd, ap, s->size, bp, s->size, 0, 4);
 #endif
   TMP_FREE (marker);
   return t;
@@ -1085,7 +1085,7 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   t = speed_endtime (); 
 #if WANT_ASSERT
   if (res)
-    hgcd_sanity (&hgcd, ap, s->size, bp, s->size, 0, 4);
+    ASSERT_HGCD (&hgcd, ap, s->size, bp, s->size, 0, 4);
 #endif
   TMP_FREE (marker);
   return t;
