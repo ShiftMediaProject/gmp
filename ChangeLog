@@ -1,3 +1,17 @@
+2000-03-23  Kevin Ryde  <kevin@swox.se>
+
+	* config.guess (i?86:*:*:*): Use uname -m if detection program fails.
+	
+	* mpn/x86/README: Remove remarks on the now implemented MMX shifts.
+	* mpn/x86/k6/README: Add speed of mpn_divexact_by3, update mpn_mul_1.
+
+	* gmp.texi (Installing MP): Corrections to target CPUs.
+
+	* version.c: Use VERSION from config.h, add copyright comment,
+	restore "const" somehow lost.
+
+	* configure.in (a29k*-*-*): Fix directory name.
+
 2000-03-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/root.c: Handle roots of negative numbers.
