@@ -25,18 +25,10 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 gmp_randinit_lc_2exp (gmp_randstate_t rstate,
-		      mpz_t a,
+		      mpz_srcptr a,
 		      unsigned long int c,
 		      unsigned long int m2exp)
-#else
-gmp_randinit_lc_2exp (rstate, a, c, m2exp)
-     gmp_randstate_t rstate;
-     mpz_t a;
-     unsigned long int c;
-     unsigned long int m2exp;
-#endif
 {
   mpz_init_set_ui (rstate->seed, 1);
   _mpz_realloc (rstate->seed, m2exp / BITS_PER_MP_LIMB

@@ -25,18 +25,10 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 gmp_randinit_lc (gmp_randstate_t rstate,
-		 mpz_t a,
+		 mpz_srcptr a,
 		 unsigned long int c,
-		 mpz_t m)
-#else
-gmp_randinit_lc (rstate, a, c, m)
-     gmp_randstate_t rstate;
-     mpz_t a;
-     unsigned long int c;
-     mpz_t m;
-#endif
+		 mpz_srcptr m)
 {
   /* FIXME: Not finished.  We don't handle this in _gmp_rand() yet. */
   abort ();			
