@@ -174,6 +174,7 @@ LIBMP_LT_REVISION = 2
 LIBMP_LT_AGE = 1
 
 AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
+ACLOCAL_AMFLAGS = -I mpfr
 
 # FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
 # conditionalized.  We want mpfr/mpfr.info only installed under
@@ -488,7 +489,7 @@ $(top_builddir)/config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 $(srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
 
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in acinclude.m4
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in acinclude.m4 mpfr/acinclude.m4
 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 config.h: stamp-h1
 	@if test ! -f $@; then \
