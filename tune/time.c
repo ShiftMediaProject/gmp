@@ -284,7 +284,7 @@ speed_cycletime_init (void)
   fprintf (stderr,
            "Cannot determine CPU frequency, need one of the following\n");
   for (i = 0; i < numberof (speed_cpu_frequency_table); i++)
-    fprintf (stderr, "\t%s\n", speed_cpu_frequency_table[i].description);
+    fprintf (stderr, "\t- %s\n", speed_cpu_frequency_table[i].description);
 
   return 0;
 }
@@ -328,10 +328,7 @@ speed_starttime (void)
   speed_cyclecounter (speed_starttime_save);
 }
 
-#ifndef UINT_BIT
-#define UINT_BIT  (sizeof (unsigned) * 8)
-#endif
-#define M_2POWU   ((double) (1L << (UINT_BIT-2)) * 4.0)
+#define M_2POWU   ((double) (1L << (BITS_PER_INT-2)) * 4.0)
 #define M_2POW32  4294967296.0
 
 double
