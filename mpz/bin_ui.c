@@ -1,4 +1,4 @@
-/* mpz_bin_uiui - compute n over k.
+/* mpz_bin_ui - compute n over k.
 
 Copyright 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
