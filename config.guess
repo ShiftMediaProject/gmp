@@ -98,6 +98,30 @@ fi
 
 
 case "$guess_full" in
+rs6000-*-aix4* | powerpc-*-aix4*)
+  cat >$dummy.c <<EOF
+#include <stdio.h>
+#include <sys/systemcfg.h>
+main ()
+{
+  if (_system_configuration.architecture == POWER_RS
+      || _system_configuration.implementation == POWER_601)
+    puts ("power");
+  else
+    {
+      if (_system_configuration.width == 64)
+        puts ("powerpc64");
+      else
+        puts ("powerpc");
+    }
+  exit (0);
+}
+EOF
+  $CC_FOR_BUILD $dummy.c -o $dummy
+  exact_cpu=`./$dummy`
+  rm -f $dummy.c $dummy
+  ;;
+
 sparc-*-*)
   case "`uname -m`" in
   sun4[md]) exact_cpu=sparcv8 ;;
