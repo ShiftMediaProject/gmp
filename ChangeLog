@@ -19,6 +19,31 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-24  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Efficiency): Suggest hex or octal for input and output.
+	(Formatted Output Strings): Mention "*" for width and precision.
+
+	* mpn/generic/sizeinbase.c: New file, adapted from mpz/sizeinbase.c.
+	Use POW2_P, use __mp_bases[base].big_base for log2(base).
+	* configure.in, mpn/Makefile.am: Add it.
+	* gmp-impl.h: Add prototype.
+	* mpz/sizeinbase.c, tune/speed.h, mpn/generic/get_str.c,
+	mpz/get_str.c, mpbsd/mout.c, mpbsd/mtox.c: Use it.
+	* mpz/get_str.c: Write directly to user buffer, skip at most one
+	leading zero, eliminate special case for x==0.
+	* mpbsd/mtox.c: Allocate exact result space at the start, eliminate
+	special case for x==0.
+	* mpbsd/mout.c: Only need to skip one high zero with mpn_sizeinbase.
+
+	* configure.in (--enable-nails): New option.
+	(GMP_NAIL_BITS, GMP_LIMB_BITS, GMP_NUMB_BITS): New defines for gmp.h
+	and config.m4.
+	* gmp-h.in: Add templates.
+
+	* mpfr/mpfr-test.h (MAX, MIN, ABS): Use #ifndef to avoid a redefine
+	error on AIX xlc.
+
 2002-01-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/get_str.c: Correct type of `out_len'.
