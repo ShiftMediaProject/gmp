@@ -57,14 +57,14 @@ mpn_preinv_divrem_1 (mp_ptr qp, mp_size_t xsize,
 
   ASSERT (xsize >= 0);
   ASSERT (size >= 1);
-  ASSERT (d != 0);
+  ASSERT (d_unnorm != 0);
 #if WANT_ASSERT
   {
     int        want_shift;
     mp_limb_t  want_dinv;
-    count_leading_zeros (want_shift, d);
+    count_leading_zeros (want_shift, d_unnorm);
     ASSERT (shift == want_shift);
-    invert_limb (want_dinv, d << shift);
+    invert_limb (want_dinv, d_unnorm << shift);
     ASSERT (dinv == want_dinv);
   }
 #endif
