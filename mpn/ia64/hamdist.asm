@@ -82,12 +82,12 @@ ifdef(`HAVE_ABI_32',
 		;;
 ')
 
-		mov	xp = xp_param		C M0
-		mov	yp = yp_param		C M1
-	.save	ar.lc, save_lc
-		mov	save_lc = ar.lc		C I0
 	.save	ar.pfs, save_pfs
 		alloc	save_pfs = ar.pfs, 3,21,0,24	C M2
+		mov	xp = xp_param		C M0
+	.save	ar.lc, save_lc
+		mov	save_lc = ar.lc		C I0
+		mov	yp = yp_param		C M1
 		add	siz = -1, siz		C M3  size-1
 		nop.i	0
 		;;
