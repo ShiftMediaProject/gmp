@@ -1,6 +1,6 @@
 # GMP module external subroutine type mappings.
 
-# Copyright 2001 Free Software Foundation, Inc.
+# Copyright 2001, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -33,7 +33,6 @@ mpz_coerce		MPZ_COERCE
 mpq_coerce		MPQ_COERCE
 mpf_coerce_st0		MPF_COERCE_ST0
 mpf_coerce_def		MPF_COERCE_DEF
-mpz_mutate		MPZ_MUTATE
 randstate		RANDSTATE
 ulong_coerce		ULONG_COERCE
 malloced_string		MALLOCED_STRING
@@ -67,8 +66,6 @@ MPF_COERCE_DEF
         /* default precision used */
 	$var = coerce_mpf (tmp_mpf_${(my $stnum=$arg)=~s/[^0-9]//g;\$stnum},
 	                   $arg, mpf_get_default_prec())
-MPZ_MUTATE
-	$var = mutate_mpz ($arg)
 RANDSTATE
 	class_or_croak ($arg, rand_class); $var = SvRANDSTATE($arg);
 ULONG_COERCE
@@ -87,17 +84,11 @@ CONST_STRING_ASSUME
 
 OUTPUT
 MPZ
-    sv_setref_pv ($arg, mpz_class, $var);
+    sv_bless (sv_setref_pv ($arg, NULL, $var), mpz_class_hv);
 MPQ
-    sv_setref_pv ($arg, mpq_class, $var);
+    sv_bless (sv_setref_pv ($arg, NULL, $var), mpq_class_hv);
 MPF
-    sv_setref_pv ($arg, mpf_class, $var);
-MPZ_ASSUME
-    sv_setref_pv ($arg, mpz_class, $var);
-MPQ_ASSUME
-    sv_setref_pv ($arg, mpq_class, $var);
-MPF_ASSUME
-    sv_setref_pv ($arg, mpf_class, $var);
+    sv_bless (sv_setref_pv ($arg, NULL, $var), mpf_class_hv);
 RANDSTATE
     sv_setref_pv ($arg, rand_class, $var);
 MALLOCED_STRING
