@@ -18,6 +18,32 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-07-24  Kevin Ryde  <kevin@swox.se>
+
+	* gmpxx.h (struct __gmp_binary_multiplies): Use mpz_mul_si for
+	mpz*long and long*mpz.
+	* tests/cxx/t-ops.cc (check_mpz): Exercise mpz*long and mpz*ulong.
+
+	* cxx/ismpf.cc: Use std::locale decimal point when available.  Expect
+	localeconv available always.
+	* tests/cxx/t-locale.cc: Enable check_input tests.
+
+	* gmpxx.h (struct __gmp_hypot_function): Use mpfr_hypot.
+	* tests/cxx/t-misc.cc (check_mpfr_hypot): New tests.
+
+	* tests/cxx/t-assign.cc, tests/cxx/t-binary.cc, tests/cxx/t-ops.cc,
+	tests/cxx/t-prec.cc, tests/cxx/t-ternary.cc, tests/cxx/t-unary.cc:
+	Include config.h for WANT_MPFR.
+
+	* tests/mpz/bit.c (check_single): Correction to a diagnostic print.
+
+2003-07-24  Niels Möller  <nisse@lysator.liu.se>
+
+	* mpz/combit.c: New file.
+	* Makefile.am, mpz/Makefile.am: Add it.
+	* gmp-h.in (mpz_combit): Add prototype.
+	* tests/mpz/bit.c (check_single): Exercise mpz_combit.
+
 2003-07-16  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/get_d.c: Correction to infinity handling for large exp.
