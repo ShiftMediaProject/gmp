@@ -57,8 +57,8 @@ info_TEXINFOS = gmp.texi
 
 lib_LTLIBRARIES = libgmp.la
 libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
-  rand.c randclr.c randlc.c randlc2x.c randsd.c randsdui.c version.c \
-  stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
+  rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c randsdui.c \
+  version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 libgmp_la_LIBADD = \
 	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 libgmp_la_DEPENDENCIES = \
