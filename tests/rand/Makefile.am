@@ -25,6 +25,9 @@ AUTOMAKE_OPTIONS = gnu
 INCLUDES = -I$(top_srcdir)
 LDADD = libstat.la $(top_builddir)/libgmp.la
 
+check_PROGRAMS = t-rand
+TESTS = $(check_PROGRAMS)
+
 EXTRA_PROGRAMS = findlc gen gen.static spect stat
 gen_static_SOURCES = gen.c
 gen_static_LDFLAGS = -static
@@ -34,7 +37,7 @@ libstat_la_SOURCES = statlib.c zdiv_round.c
 
 EXTRA_DIST = gmpstat.h
 
-test: gen stat
+manual-test: gen stat
 	@(echo -n '16i: '; ./gen -f mpz_urandomb -z 16 1000 \
 		| ./stat -i 0xffff | grep '^[0-9]')
 	@(echo -n '32i: '; ./gen -f mpz_urandomb -z 32 1000 \
@@ -57,7 +60,7 @@ test: gen stat
 	@(echo -n '128f: '; ./gen -f mpf_urandomb -z 128 1000 \
 		| ./stat | grep '^[0-9]')
 
-bigtest: gen stat
+manual-bigtest: gen stat
 	@(echo '16i: '; ./gen -f mpz_urandomb -z 16 50000 \
 		| ./stat -2 1000 -i 0xffff | grep '^K[mp]')
 	@(echo '32i: '; ./gen -f mpz_urandomb -z 32 50000 \

@@ -120,6 +120,9 @@ AUTOMAKE_OPTIONS = gnu
 INCLUDES = -I$(top_srcdir)
 LDADD = libstat.la $(top_builddir)/libgmp.la
 
+check_PROGRAMS = t-rand
+TESTS = $(check_PROGRAMS)
+
 EXTRA_PROGRAMS = findlc gen gen.static spect stat
 gen_static_SOURCES = gen.c
 gen_static_LDFLAGS = -static
@@ -141,6 +144,7 @@ libstat_la_LDFLAGS =
 libstat_la_LIBADD = 
 am_libstat_la_OBJECTS =  statlib.lo zdiv_round.lo
 libstat_la_OBJECTS =  $(am_libstat_la_OBJECTS)
+check_PROGRAMS =  t-rand$(EXEEXT)
 findlc_SOURCES = findlc.c
 findlc_OBJECTS =  findlc.$(OBJEXT)
 findlc_LDADD = $(LDADD)
@@ -165,13 +169,18 @@ stat_OBJECTS =  stat.$(OBJEXT)
 stat_LDADD = $(LDADD)
 stat_DEPENDENCIES =  libstat.la $(top_builddir)/libgmp.la
 stat_LDFLAGS = 
+t_rand_SOURCES = t-rand.c
+t_rand_OBJECTS =  t-rand.$(OBJEXT)
+t_rand_LDADD = $(LDADD)
+t_rand_DEPENDENCIES =  libstat.la $(top_builddir)/libgmp.la
+t_rand_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(libstat_la_SOURCES) findlc.c gen.c \
-$(gen_static_SOURCES) spect.c stat.c
+$(gen_static_SOURCES) spect.c stat.c t-rand.c
 DIST_COMMON =  ChangeLog Makefile.am Makefile.in
 
 
@@ -181,9 +190,9 @@ GZIP_ENV = --best
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 DEP_FILES =  @AMDEP@ $(DEPDIR)/findlc.Po $(DEPDIR)/gen.Po \
 $(DEPDIR)/spect.Po $(DEPDIR)/stat.Po $(DEPDIR)/statlib.Plo \
-$(DEPDIR)/zdiv_round.Plo
-SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c
-OBJECTS = $(am_libstat_la_OBJECTS) findlc.$(OBJEXT) gen.$(OBJEXT) $(am_gen_static_OBJECTS) spect.$(OBJEXT) stat.$(OBJEXT)
+$(DEPDIR)/t-rand.Po $(DEPDIR)/zdiv_round.Plo
+SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-rand.c
+OBJECTS = $(am_libstat_la_OBJECTS) findlc.$(OBJEXT) gen.$(OBJEXT) $(am_gen_static_OBJECTS) spect.$(OBJEXT) stat.$(OBJEXT) t-rand.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -220,6 +229,15 @@ maintainer-clean-libtool:
 libstat.la: $(libstat_la_OBJECTS) $(libstat_la_DEPENDENCIES)
 	$(LINK)  $(libstat_la_LDFLAGS) $(libstat_la_OBJECTS) $(libstat_la_LIBADD) $(LIBS)
 
+mostlyclean-checkPROGRAMS:
+
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+
+distclean-checkPROGRAMS:
+
+maintainer-clean-checkPROGRAMS:
+
 findlc$(EXEEXT): $(findlc_OBJECTS) $(findlc_DEPENDENCIES)
 	@rm -f findlc$(EXEEXT)
 	$(LINK) $(findlc_LDFLAGS) $(findlc_OBJECTS) $(findlc_LDADD) $(LIBS)
@@ -239,6 +257,10 @@ spect$(EXEEXT): $(spect_OBJECTS) $(spect_DEPENDENCIES)
 stat$(EXEEXT): $(stat_OBJECTS) $(stat_DEPENDENCIES)
 	@rm -f stat$(EXEEXT)
 	$(LINK) $(stat_LDFLAGS) $(stat_OBJECTS) $(stat_LDADD) $(LIBS)
+
+t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES)
+	@rm -f t-rand$(EXEEXT)
+	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
 
 tags: TAGS
 
@@ -291,6 +313,7 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/spect.Po
 @AMDEP@include $(DEPDIR)/stat.Po
 @AMDEP@include $(DEPDIR)/statlib.Plo
+@AMDEP@include $(DEPDIR)/t-rand.Po
 @AMDEP@include $(DEPDIR)/zdiv_round.Plo
 
 mostlyclean-depend:
@@ -322,11 +345,64 @@ maintainer-clean-depend:
 @AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `cygpath -w $<`
 
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; \
+	srcdir=$(srcdir); export srcdir; \
+	for tst in $(TESTS); do \
+	  if test -f ./$$tst; then dir=./; \
+	  elif test -f $$tst; then dir=; \
+	  else dir="$(srcdir)/"; fi; \
+	  if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	    all=`expr $$all + 1`; \
+	    case " $(XFAIL_TESTS) " in \
+	    *" $$tst "*) \
+	      xpass=`expr $$xpass + 1`; \
+	      failed=`expr $$failed + 1`; \
+	      echo "XPASS: $$tst"; \
+	    ;; \
+	    *) \
+	      echo "PASS: $$tst"; \
+	    ;; \
+	    esac; \
+	  elif test $$? -ne 77; then \
+	    all=`expr $$all + 1`; \
+	    case " $(XFAIL_TESTS) " in \
+	    *" $$tst "*) \
+	      xfail=`expr $$xfail + 1`; \
+	      echo "XFAIL: $$tst"; \
+	    ;; \
+	    *) \
+	      failed=`expr $$failed + 1`; \
+	      echo "FAIL: $$tst"; \
+	    ;; \
+	    esac; \
+	  fi; \
+	done; \
+	if test "$$failed" -eq 0; then \
+	  if test "$$xfail" -eq 0; then \
+	    banner="All $$all tests passed"; \
+	  else \
+	    banner="All $$all tests behaved as expected ($$xfail expected failures)"; \
+	  fi; \
+	else \
+	  if test "$$xpass" -eq 0; then \
+	    banner="$$failed of $$all tests failed"; \
+	  else \
+	    banner="$$failed of $$all tests did not behave as expected ($$xpass unexpected passes)"; \
+	  fi; \
+	fi; \
+	dashes=`echo "$$banner" | sed s/./=/g`; \
+	echo "$$dashes"; \
+	echo "$$banner"; \
+	echo "$$dashes"; \
+	test "$$failed" -eq 0
 info-am:
 info: info-am
 dvi-am:
 dvi: dvi-am
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 installcheck-am:
 installcheck: installcheck-am
@@ -359,24 +435,27 @@ distclean-generic:
 maintainer-clean-generic:
 	-rm -f Makefile.in
 mostlyclean-am:  mostlyclean-compile mostlyclean-libtool \
-		mostlyclean-tags mostlyclean-depend mostlyclean-generic
+		mostlyclean-checkPROGRAMS mostlyclean-tags \
+		mostlyclean-depend mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
-clean-am:  clean-compile clean-libtool clean-tags clean-depend \
-		clean-generic mostlyclean-am
+clean-am:  clean-compile clean-libtool clean-checkPROGRAMS clean-tags \
+		clean-depend clean-generic mostlyclean-am
 
 clean: clean-am
 
-distclean-am:  distclean-compile distclean-libtool distclean-tags \
-		distclean-depend distclean-generic clean-am
+distclean-am:  distclean-compile distclean-libtool \
+		distclean-checkPROGRAMS distclean-tags distclean-depend \
+		distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
 maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-tags maintainer-clean-depend \
-		maintainer-clean-generic distclean-am
+		maintainer-clean-checkPROGRAMS maintainer-clean-tags \
+		maintainer-clean-depend maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -384,18 +463,19 @@ maintainer-clean: maintainer-clean-am
 
 .PHONY: mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir \
-mostlyclean-depend distclean-depend clean-depend \
-maintainer-clean-depend info-am info dvi-am dvi check check-am \
-installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+clean-libtool maintainer-clean-libtool mostlyclean-checkPROGRAMS \
+distclean-checkPROGRAMS clean-checkPROGRAMS \
+maintainer-clean-checkPROGRAMS tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir mostlyclean-depend \
+distclean-depend clean-depend maintainer-clean-depend check-TESTS \
+info-am info dvi-am dvi check check-am installcheck-am installcheck \
+install-exec-am install-exec install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
-test: gen stat
+manual-test: gen stat
 	@(echo -n '16i: '; ./gen -f mpz_urandomb -z 16 1000 \
 		| ./stat -i 0xffff | grep '^[0-9]')
 	@(echo -n '32i: '; ./gen -f mpz_urandomb -z 32 1000 \
@@ -418,7 +498,7 @@ test: gen stat
 	@(echo -n '128f: '; ./gen -f mpf_urandomb -z 128 1000 \
 		| ./stat | grep '^[0-9]')
 
-bigtest: gen stat
+manual-bigtest: gen stat
 	@(echo '16i: '; ./gen -f mpz_urandomb -z 16 50000 \
 		| ./stat -2 1000 -i 0xffff | grep '^K[mp]')
 	@(echo '32i: '; ./gen -f mpz_urandomb -z 32 50000 \
