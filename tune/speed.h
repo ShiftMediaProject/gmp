@@ -1218,8 +1218,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     mp_ptr    xp;                                       \
     unsigned  i;                                        \
     double    t;                                        \
-    TMP_DECL (marker);                                  \
     mp_limb_t dummy = 0;                                \
+    TMP_DECL (marker);                                  \
                                                         \
     SPEED_RESTRICT_COND (s->size >= 1);                 \
     SPEED_RESTRICT_COND (s->r != 0);                    \
