@@ -492,6 +492,12 @@ case $host in
     ;;
 
 
+  amd64-*-*)
+    SPEED_CYCLECOUNTER_OBJ=amd64.lo
+    path="amd64"
+    ;;
+
+
   # Cray vector machines.
   # This must come after alpha* so that we can recognize present and future
   # vector processors with a wildcard.
