@@ -216,7 +216,7 @@ SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) demos tune
 # to be BUILT_SOURCES, but are done that way to get all the built-time stuff
 # over with at the start.
 #
-EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf gmpxx.h libmp.sym dumbmp.c gen-fib.c gen-bases.c
+EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf gmpxx.h libmp.sym dumbmp.c gen-fac_ui.c gen-fib.c gen-bases.c
 
 @WANT_CXX_TRUE@GMPXX_HEADERS_OPTION = gmpxx.h
 
@@ -224,9 +224,9 @@ include_HEADERS = $(GMPXX_HEADERS_OPTION)
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
-BUILT_SOURCES = gmp.h mp.h fib_table.h mpn/fib_table.c mp_bases.h mpn/mp_bases.c
+BUILT_SOURCES = gmp.h mp.h mpz/fac_ui.h fib_table.h mpn/fib_table.c mp_bases.h mpn/mp_bases.c
 
-DISTCLEANFILES = $(BUILT_SOURCES) config.m4 @gmp_srclinks@ gen-fib$(EXEEXT_FOR_BUILD) gen-bases$(EXEEXT_FOR_BUILD)
+DISTCLEANFILES = $(BUILT_SOURCES) config.m4 @gmp_srclinks@ gen-fac_ui$(EXEEXT_FOR_BUILD) gen-fib$(EXEEXT_FOR_BUILD) gen-bases$(EXEEXT_FOR_BUILD)
 
 # Tell gmp.h it's building gmp, not an application, used by windows DLL stuff.
 INCLUDES = -D__GMP_WITHIN_GMP
@@ -1117,6 +1117,15 @@ uninstall-info: uninstall-info-recursive
 	uninstall-info-recursive uninstall-libLTLIBRARIES \
 	uninstall-nodist_includeHEADERS uninstall-recursive
 
+
+mpz/fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
+	./gen-fac_ui $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpz/fac_ui.h || (rm -f mpz/fac_ui.h; exit 1)
+
+gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c dumbmp.c
+	$(CC_FOR_BUILD) `test -f gen-fac_ui$(U_FOR_BUILD).c || echo '$(srcdir)/'`gen-fac_ui$(U_FOR_BUILD).c -o gen-fac_ui$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
+
+gen-fac_ui_.c: gen-fac_ui.c $(ANSI2KNR)
+	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-fac_ui.c; then echo $(srcdir)/gen-fac_ui.c; else echo gen-fac_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-fac_ui_.c || rm -f gen-fac_ui_.c
 
 fib_table.h: gen-fib$(EXEEXT_FOR_BUILD)
 	./gen-fib header $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >fib_table.h || (rm -f fib_table.h; exit 1)
