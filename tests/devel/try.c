@@ -256,15 +256,80 @@ struct each_t  fun = { "Fun" };
 
 #define SRC_SIZE(n)  ((n) == 1 && tr->size2 ? size2 : size)
 
-void print_all _PROTO ((void));
+void validate_fail _PROTO ((void));
 
 
-void
-validate_fail (void)
-{
-  print_all();
-  abort();
-}
+#if HAVE_TRY_NEW_C
+#include "try-new.c"
+#endif
+
+
+typedef mp_limb_t (*tryfun_t) _PROTO ((ANYARGS));
+
+struct try_t {
+  char  retval;
+
+  char  src[2];
+  char  dst[2];
+
+#define SIZE_ALLOW_ZERO   1
+#define SIZE_2            2  /* 2 limbs */
+#define SIZE_3            3  /* 3 limbs */
+#define SIZE_YES          4
+#define SIZE_FRACTION     5  /* size2 is fraction for divrem etc */
+#define SIZE_SIZE2        6
+#define SIZE_PLUS_1       7
+#define SIZE_SUM          8
+#define SIZE_DIFF         9
+#define SIZE_DIFF_PLUS_1 10
+#define SIZE_RETVAL      11
+#define SIZE_CEIL_HALF   12
+  char  size;
+  char  size2;
+  char  dst_size[2];
+
+  char  dst0_from_src1;
+
+#define CARRY_BIT     1  /* single bit 0 or 1 */
+#define CARRY_3       2  /* 0, 1, 2 */
+#define CARRY_4       3  /* 0 to 3 */
+#define CARRY_LIMB    4  /* any limb value */
+#define CARRY_DIVISOR 5  /* carry<divisor */
+  char  carry;
+
+  /* a fudge to tell the output when to print negatives */
+  char  carry_sign;
+
+  char  multiplier;
+  char  shift;
+
+#define DIVISOR_LIMB  1
+#define DIVISOR_NORM  2
+#define DIVISOR_ODD   3
+  char  divisor;
+
+#define DATA_NON_ZERO         1
+#define DATA_GCD              2
+#define DATA_SRC1_ODD         3
+#define DATA_SRC1_HIGHBIT     4
+#define DATA_MULTIPLE_DIVISOR 5
+  char  data;
+
+/* Default is allow full overlap. */
+#define OVERLAP_NONE         1
+#define OVERLAP_LOW_TO_HIGH  2
+#define OVERLAP_HIGH_TO_LOW  3
+#define OVERLAP_NOT_SRCS     4
+  char  overlap;
+
+  tryfun_t    reference;
+  const char  *reference_name;
+
+  void        (*validate) _PROTO ((void));
+  const char  *validate_name;
+};
+
+struct try_t  *tr;
 
 
 void
@@ -406,79 +471,6 @@ validate_sqrtrem (void)
   if (error)
     validate_fail ();
 }
-
-
-#if HAVE_TRY_NEW_C
-#include "try-new.c"
-#endif
-
-
-typedef mp_limb_t (*tryfun_t) _PROTO ((ANYARGS));
-
-struct try_t {
-  char  retval;
-
-  char  src[2];
-  char  dst[2];
-
-#define SIZE_ALLOW_ZERO   1
-#define SIZE_2            2  /* 2 limbs */
-#define SIZE_3            3  /* 3 limbs */
-#define SIZE_YES          4
-#define SIZE_FRACTION     5  /* size2 is fraction for divrem etc */
-#define SIZE_SIZE2        6
-#define SIZE_PLUS_1       7
-#define SIZE_SUM          8
-#define SIZE_DIFF         9
-#define SIZE_DIFF_PLUS_1 10
-#define SIZE_RETVAL      11
-#define SIZE_CEIL_HALF   12
-  char  size;
-  char  size2;
-  char  dst_size[2];
-
-  char  dst0_from_src1;
-
-#define CARRY_BIT     1  /* single bit 0 or 1 */
-#define CARRY_3       2  /* 0, 1, 2 */
-#define CARRY_4       3  /* 0 to 3 */
-#define CARRY_LIMB    4  /* any limb value */
-#define CARRY_DIVISOR 5  /* carry<divisor */
-  char  carry;
-
-  /* a fudge to tell the output when to print negatives */
-  char  carry_sign;
-
-  char  multiplier;
-  char  shift;
-
-#define DIVISOR_LIMB  1
-#define DIVISOR_NORM  2
-#define DIVISOR_ODD   3
-  char  divisor;
-
-#define DATA_NON_ZERO         1
-#define DATA_GCD              2
-#define DATA_SRC1_ODD         3
-#define DATA_SRC1_HIGHBIT     4
-#define DATA_MULTIPLE_DIVISOR 5
-  char  data;
-
-/* Default is allow full overlap. */
-#define OVERLAP_NONE         1
-#define OVERLAP_LOW_TO_HIGH  2
-#define OVERLAP_HIGH_TO_LOW  3
-#define OVERLAP_NOT_SRCS     4
-  char  overlap;
-
-  tryfun_t    reference;
-  const char  *reference_name;
-
-  void        (*validate) _PROTO ((void));
-  const char  *validate_name;
-};
-
-struct try_t  *tr;
 
 
 /* These types are indexes into the param[] array and are arbitrary so long
@@ -1402,6 +1394,7 @@ print_each (const struct each_t *e)
       printf ("   s[%d] located %p\n", i, e->s[i].p);
 }
 
+
 void
 print_all (void)
 {
@@ -1868,6 +1861,21 @@ pointer_setup (struct each_t *e)
         break;
       }
     }
+}
+
+
+void
+validate_fail (void)
+{
+  if (tr->reference)
+    {
+      trap_location = TRAP_REF;
+      call (&ref, tr->reference);
+      trap_location = TRAP_NOWHERE;
+    }
+
+  print_all();
+  abort();
 }
 
 
