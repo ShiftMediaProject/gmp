@@ -73,6 +73,7 @@ e_mpfr_atan (mpfr_ptr dst, mpfr_srcptr src)
   mpfr_atan (dst, src, ROUND);
 }
 
+/* because mpfr_cmp is a macro */
 static int
 e_mpfr_cmp (mpfr_srcptr x, mpfr_srcptr y)
 {
@@ -212,6 +213,12 @@ e_mpfr_reldiff (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
 }
 
 static void
+e_mpfr_set_posinf (mpfr_ptr dst)
+{
+  mpfr_set_inf (dst, 1);
+}
+
+static void
 e_mpfr_sin (mpfr_ptr dst, mpfr_srcptr src)
 {
   mpfr_sin (dst, src, ROUND);
@@ -332,6 +339,8 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
 
   { "euler",   (mpexpr_fun_t) e_mpfr_const_euler, MPEXPR_TYPE_CONSTANT },
   { "loge2",   (mpexpr_fun_t) e_mpfr_const_log2,  MPEXPR_TYPE_CONSTANT },
+  { "nan",     (mpexpr_fun_t) mpfr_set_nan,       MPEXPR_TYPE_CONSTANT },
+  { "inf",     (mpexpr_fun_t) e_mpfr_set_posinf,  MPEXPR_TYPE_CONSTANT },
   { "pi",      (mpexpr_fun_t) e_mpfr_const_pi,    MPEXPR_TYPE_CONSTANT },
 
   { NULL }
