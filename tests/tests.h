@@ -155,6 +155,7 @@ void refmpn_andn_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 mp_limb_t refmpn_bswap_limb __GMP_PROTO ((mp_limb_t src));
 
 int refmpn_cmp __GMP_PROTO ((mp_srcptr s1p, mp_srcptr s2p, mp_size_t size));
+int refmpn_cmp_allowzero __GMP_PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
 int refmpn_cmp_twosizes __GMP_PROTO ((mp_srcptr xp, mp_size_t xsize,
                                  mp_srcptr yp, mp_size_t ysize));
 
