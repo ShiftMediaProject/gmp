@@ -28,13 +28,25 @@ FUNCTION (mpz_srcptr z)
 {
   mp_size_t n = SIZ(z);
   mp_ptr p = PTR(z);
+  mp_limb_t limb = p[0];
 
-  return (n == 0
-          || (n == 1  && p[0] <= MAXIMUM)
-          || (n == -1 && p[0] <= - (mp_limb_t) MINIMUM)
-#if GMP_NAIL_BITS != 0	/* too broad, better compare MAXIMUM to GMP_NUMB_MAX */
-	  || (n == 2 && p[1] <= (MAXIMUM >> GMP_NUMB_BITS))
-	  || (n == -2 && p[1] <= (- (mp_limb_t) MINIMUM) >> GMP_NUMB_BITS)
+  if (n == 0)
+    return 1;
+  if (n == 1)
+    return limb <= MAXIMUM;
+  if (n == -1)
+    return limb <= - (mp_limb_t) MINIMUM;
+#if GMP_NAIL_BITS != 0
+  {
+    if ((p[1] >> GMP_NAIL_BITS) == 0)
+      {
+	limb += p[1] << GMP_NUMB_BITS;
+	if (n == 2)
+	  return limb <= MAXIMUM;
+	if (n == -2)
+	  return limb <= - (mp_limb_t) MINIMUM;
+      }
+  }
 #endif
-	  );
+  return 0;
 }
