@@ -2,6 +2,7 @@ The MPFR distribution contains the following files:
 
 
 AUTHORS     - the authors of the library
+BUGS        - bugs in MPFR - please read this file!
 COPYING     - the license under which the MPFR library is distributed
 ChangeLog   - the log of changes
 INSTALL     - how to install MPFR (see also mpfr.texi)
@@ -24,4 +25,3 @@ mpfr.info   - info file for MPFR
 mpfr.texi   - texinfo documentation for MPFR
 tests/      - test directory
 texinfo.tex - TeX macros to handle mpfr.texi
-

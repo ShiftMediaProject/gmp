@@ -1,13 +1,27 @@
+Documentation:
+
+- update AUTHORS
+- add a description of the algorithms used + proof of correctness
+
+Installation:
+
+- from Kevin Ryde <user42@zip.com.au>:
+   Determine the exp2/exp3 thresholds using tune/tuneup.c.
+
+- problems when mpfr uses a different compiler (gcc) than gmp (for example
+	cc under Solaris 2.7).
+
 New functions to implement:
 
-- mpfr_mul_mpz, mpfr_div_mpz
+Rounding:
+
+Efficiency:
 
 Miscellaneous:
 
-- implement a C++ wrapper [see with Torbjo"rn and/or Fabrice]
+- change Library GPL to Lesser GPL, and mention INRIA and/or SPACES
 
-- in all functions that do rounding, return an int indicating if the result
-  is exact (i.e. no bit was lost) or not (like in mpfr_div_ui)
+- rename mpf2mpfr.h to gmp-mpf2mpfr.h?
 
 - detect overflow/underflow in exponent (from Ben Hinkle <bhinkle4@juno.com>)
 
@@ -21,13 +35,7 @@ Miscellaneous:
    Also for pi.c, a pre-calculated compiled-in pi to a few thousand
    digits would be good value I think.  After all, say 10000 bits using
    1250 bytes would still be small compared to the code size!
-
-- from Kevin Ryde <user42@zip.com.au>:
-   Determine the exp2/exp3 thresholds using tune/tuneup.c.
-
-- add a description of the algorithms used
-
-- add undef's in mpf2mpfr.h to avoid warnings
+   Store pi in round to zero mode (to recover other modes).
 
 - rewrite mpfr_get_d2 to avoid rounding problems, for example on the IA64:
 x=8.94446216651049664713e+94,74 y=-8.69096029476006043478e+78,113 pz=102,rnd=GMP_RNDU
@@ -37,3 +45,12 @@ i.e.0.10101011100001010011001101100101110011101110010001011000000000000000000000
 
 - problem when reading a float followed by a character, for example 1.5*x
 	[from Fabrice.Rouillier@loria.fr, Mon, 04 Dec 2000]
+
+- use another scheme that sqrt(-1.0) in tests/tdiv.c and tests/tsqrt.c
+	to generate a NaN (for example under freebsd by default,
+	invalid, zerodivide and overflow generate exceptions)
+
+- detect overflows/underflows in addition/multiplication of ordinary numbers
+	(PUTOT Sylvie <sputot@aigle.saclay.cea.fr>, Tue, 20 Mar 2001)
+
+- check correctness of +/-0 - +/-0 with different rounding modes.
