@@ -24,13 +24,13 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-#if defined(OPERATION_mul_si) || defined(OPERATION_mul_si_)
+#ifdef OPERATION_mul_si
 #define FUNCTION               mpz_mul_si
 #define MULTIPLICAND_UNSIGNED
 #define MULTIPLICAND_ABS(x)    ABS(x)
 #endif
 
-#if defined(OPERATION_mul_ui) || defined(OPERATION_mul_ui_)
+#ifdef OPERATION_mul_ui
 #define FUNCTION               mpz_mul_ui
 #define MULTIPLICAND_UNSIGNED  unsigned
 #define MULTIPLICAND_ABS(x)    x
