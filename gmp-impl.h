@@ -462,7 +462,7 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
     __x->_mp_d = (mp_ptr) TMP_ALLOC ((NLIMBS) * BYTES_PER_MP_LIMB);     \
   } while (0)
 
-/* Realloc for an mpz_t WHAT if it has less thann NEEDED limbs.  */
+/* Realloc for an mpz_t WHAT if it has less than NEEDED limbs.  */
 #define MPZ_REALLOC(what,needed) \
   do {								\
     if ((needed) > ALLOC (what))				\
