@@ -191,14 +191,14 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
         c = mpn_add_n (np + l, np + l, sp + l, h);
       mpn_sqr_n (np + n, sp, l);
       b = q + mpn_sub_n (np, np, np + n, 2 * l);
-      c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, b);
+      c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, (mp_limb_t) b);
       q = mpn_add_1 (sp + l, sp + l, h, q);
 
       if (c < 0)
         {
-          c += mpn_addmul_1 (np, sp, n, 2) + 2 * q;
-          c -= mpn_sub_1 (np, np, n, 1);
-          q -= mpn_sub_1 (sp, sp, n, 1);
+          c += mpn_addmul_1 (np, sp, n, CNST_LIMB(2)) + 2 * q;
+          c -= mpn_sub_1 (np, np, n, CNST_LIMB(1));
+          q -= mpn_sub_1 (sp, sp, n, CNST_LIMB(1));
         }
     }
 
