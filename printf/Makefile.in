@@ -129,8 +129,6 @@ OBJDUMP = @OBJDUMP@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 RC = @RC@
-REPL_VSNPRINTF_OBJ = @REPL_VSNPRINTF_OBJ@
-REPL_VSNPRINTF_PRINTF_OBJ = @REPL_VSNPRINTF_PRINTF_OBJ@
 SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
 STRIP = @STRIP@
 TAL_OBJECT = @TAL_OBJECT@
@@ -153,36 +151,28 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libprintf.la
-EXTRA_LTLIBRARIES = libdummy.la
 
 libprintf_la_SOURCES = \
   asprintf.c asprntffuns.c doprnt.c doprntf.c doprnti.c			 \
   fprintf.c obprintf.c obvprintf.c obprntffuns.c			 \
   printf.c printffuns.c snprintf.c snprntffuns.c sprintf.c sprintffuns.c \
-  vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c
+  vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c		 \
+  repl-vsnprintf.c
 
-libprintf_la_LIBADD = @REPL_VSNPRINTF_OBJ@
-libprintf_la_DEPENDENCIES = $(libprintf_la_LIBADD)
-
-# Ensure there's an ansi2knr rule for this, if it's needed.
-libdummy_la_SOURCES = repl-vsnprintf.c
 subdir = printf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 
-libdummy_la_LDFLAGS =
-libdummy_la_LIBADD =
-am_libdummy_la_OBJECTS = repl-vsnprintf$U.lo
-libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 libprintf_la_LDFLAGS =
+libprintf_la_LIBADD =
 am_libprintf_la_OBJECTS = asprintf$U.lo asprntffuns$U.lo doprnt$U.lo \
 	doprntf$U.lo doprnti$U.lo fprintf$U.lo obprintf$U.lo \
 	obvprintf$U.lo obprntffuns$U.lo printf$U.lo printffuns$U.lo \
 	snprintf$U.lo snprntffuns$U.lo sprintf$U.lo sprintffuns$U.lo \
 	vasprintf$U.lo vfprintf$U.lo vprintf$U.lo vsnprintf$U.lo \
-	vsprintf$U.lo
+	vsprintf$U.lo repl-vsnprintf$U.lo
 libprintf_la_OBJECTS = $(am_libprintf_la_OBJECTS)
 
 DEFS = @DEFS@
@@ -200,9 +190,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(libdummy_la_SOURCES) $(libprintf_la_SOURCES)
+DIST_SOURCES = $(libprintf_la_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libdummy_la_SOURCES) $(libprintf_la_SOURCES)
+SOURCES = $(libprintf_la_SOURCES)
 
 all: all-am
 
@@ -222,8 +212,6 @@ clean-noinstLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES) 
-	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
 libprintf.la: $(libprintf_la_OBJECTS) $(libprintf_la_DEPENDENCIES) 
 	$(LINK)  $(libprintf_la_LDFLAGS) $(libprintf_la_OBJECTS) $(libprintf_la_LIBADD) $(LIBS)
 
