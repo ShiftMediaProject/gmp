@@ -32,7 +32,7 @@ C TODO
 C  * Tune.  It should be possible to reach 5 c/l for popcount and 6 c/l for
 C    hamdist.
 C  * Consider a combined SSE2 + integer operation loop.  It seems hard to beat
-C    5 c/l for popcount though, due to the 2-slot decode tyoe of most needed
+C    5 c/l for popcount though, due to the 2-slot decode type of most needed
 C    SSE2 insns.
 
 
