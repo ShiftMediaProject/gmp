@@ -397,6 +397,9 @@ main ()
   switch (_system_configuration.implementation) {
   /* Old versions of AIX don't have all these constants,
      use ifdef for safety. */
+#ifdef POWER_RS2
+  case POWER_RS2:    puts ("power2");     break;
+#endif
 #ifdef POWER_601
   case POWER_601:    puts ("power");      break;
 #endif
