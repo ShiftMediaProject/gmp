@@ -18,6 +18,37 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-07  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (hppa2.0*-*-* ABI=2.0n): Make -mpa-risc-2-0 optional.
+	New hppa-level-2.0 test using GMP_HPPA_LEVEL_20 to detect assembler
+	support for 2.0n.
+	* acinclude.m4 (GMP_PROG_CC_WORKS): Add code that provokes an error
+	from gcc -mpa-risc-2-0 if the assembler doesn't know 2.0 instructions.
+	(GMP_HPPA_LEVEL_20): New macro.
+
+2002-12-07  Pedro Gimeno  <pggimeno@wanadoo.es>
+
+	* gmp-impl.h (gmp_randfnptr_t.randseed_fn) Return void.
+	(LIMBS_PER_ULONG, MPN_SET_UI): New macros.
+	(MPZ_FAKE_UI): Rename couple of parameters.
+
+	* randlc2x.c (gmp_rand_lc_struct): _mp_c and _mp_c_limbs replaced
+	with mpn style _cp and _cn.  All callers changed.
+	(randseed_lc): Fix limbs(seed) > bits_to_limbs(m2exp) case.
+	Remove return value.
+	(gmp_randinit_lc_2exp): Attempt to avoid redundant reallocation.
+
+	* randmt.c (mangle_seed): New function by Kevin.
+	(randseed_mt): Use it instead of mpz_powm, for performance.  Remove
+	return value.  Remove commented out code (an inferior alternative to
+	mpz_export).
+
+	* randsdui.c (gmp_randseed_ui): Use MPZ_FAKE_UI.
+
+	* tests/rand/t-lc2exp.c (check_bigm, check_bigs): New tests.
+	* tests/rand/t-urndmm.c: Add L to constants in calls, for K&R.
+
 2002-12-06  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Remove -g.
@@ -31,8 +62,8 @@ MA 02111-1307, USA.
 2002-12-05  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/pa64/sub_n.asm: Remove space in "sub, db" which gas objects to.
-	* mpn/pa64/*.asm: Use ".level 2.0" for 2.0n, since gas doesn't like
-	".level 2.0N".
+	* mpn/pa64/*.asm, tune/hppa2.asm: Use ".level 2.0" for 2.0n, since gas
+	doesn't like ".level 2.0N".
 
 	* configure.in (hppa*-*-*): Group path and flags choices, for clarity.
 	(hppa1.0*-*-*): Use gcc -mpa-risc-1-0 when available.
