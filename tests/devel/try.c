@@ -440,6 +440,9 @@ validate_modexact_1c_odd (void)
   ASSERT (size >= 1);
   ASSERT (divisor & 1);
 
+  if ((r & GMP_NAIL_MASK) != 0)
+    printf ("r has non-zero nail\n");
+
   if (carry < divisor)
     {
       if (! (r < divisor))
@@ -1213,13 +1216,17 @@ udiv_qrnnd_fun (mp_limb_t *remptr, mp_limb_t n1, mp_limb_t n0, mp_limb_t d)
   return q;
 }
 
-void
+mp_limb_t
 mpn_divexact_by3_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
-{ mpn_divexact_by3 (rp, sp, size); }
+{
+  return mpn_divexact_by3 (rp, sp, size);
+}
 
-void
+mp_limb_t
 mpn_modexact_1_odd_fun (mp_srcptr ptr, mp_size_t size, mp_limb_t divisor)
-{ mpn_modexact_1_odd (ptr, size, divisor); }
+{
+  return mpn_modexact_1_odd (ptr, size, divisor);
+}
 
 void
 mpn_kara_mul_n_fun (mp_ptr dst, mp_srcptr src1, mp_srcptr src2, mp_size_t size)
