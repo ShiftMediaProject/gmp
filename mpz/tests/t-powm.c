@@ -21,19 +21,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
 void debug_mp ();
-
-#ifndef SIZE
-#define SIZE 50
-#endif
-
-#ifndef EXP_SIZE
-#define EXP_SIZE 2
-#endif
 
 main (argc, argv)
      int argc;
@@ -43,7 +37,26 @@ main (argc, argv)
   mpz_t r1, r2, t1, exp2, base2;
   mp_size_t base_size, exp_size, mod_size;
   int i;
-  int reps = 2500;
+  int reps = 200;
+  gmp_randstate_t rands;
+  mpz_t bs;
+  unsigned long bsi, size_range;
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
+  mpz_init (bs);
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -59,24 +72,35 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      do
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 13 + 2;
+
+      do  /* Loop until mathematically well-defined.  */
 	{
-	  base_size = urandom () % 2 * SIZE - SIZE;
-	  mpz_random2 (base, base_size);
+	  mpz_urandomb (bs, rands, size_range);
+	  base_size = mpz_get_ui (bs);
+	  mpz_rrandomb (base, rands, base_size);
 
-	  exp_size = urandom () % (EXP_SIZE + 1);
-	  mpz_random2 (exp, exp_size);
-
-      /* Loop until mathematically well-defined.  */
+	  mpz_urandomb (bs, rands, 7L);
+	  exp_size = mpz_get_ui (bs);
+	  mpz_rrandomb (exp, rands, exp_size);
 	}
       while (mpz_cmp_ui (base, 0) == 0 && mpz_cmp_ui (exp, 0) == 0);
 
       do
-	{
-	  mod_size = urandom () % SIZE /* - SIZE/2 */;
-	  mpz_random2 (mod, mod_size);
+        {
+	  mpz_urandomb (bs, rands, size_range);
+	  mod_size = mpz_get_ui (bs);
+	  mpz_rrandomb (mod, rands, mod_size);
 	}
       while (mpz_cmp_ui (mod, 0) == 0);
+
+      mpz_urandomb (bs, rands, 2);
+      bsi = mpz_get_ui (bs);
+      if ((bsi & 1) != 0)
+	mpz_neg (base, base);
+
+      printf ("%ld %ld %ld\n", SIZ (base), SIZ (exp), SIZ (mod));
 
 #if 0
       putc ('\n', stderr);
