@@ -46,7 +46,7 @@ dnl This is an alternative sequence that might be faster, but probably is
 dnl one cycle slower:
 dnl
 dnl	cmpbge	r31,  r16, r1
-dnl	lda	r3,   MPN(clz_tab)
+dnl	lda	r3,   __clz_tab
 dnl	sra	r1,   1,   r1
 dnl	xor	r1,   127, r1
 dnl	addq	r1,   r3,  r1
