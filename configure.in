@@ -3025,6 +3025,11 @@ AC_SUBST(HAVE_STACK_T_01)
 # version 4.3) doesn't use libtool, so we can't rely on a .la to cover
 # necessary dependencies.
 #
+# On a couple of systems we've seen libreadline available, but the headers
+# not in the default include path, so check for readline/readline.h.  We've
+# also seen readline/history.h missing, not sure if that's just a broken
+# install or a very old version, but check that too.
+#
 AC_CONFIG_FILES(demos/calc/calc-config.h:demos/calc/calc-config-h.in)
 LIBCURSES=
 if test $with_readline != no; then
@@ -3034,8 +3039,13 @@ fi
 AC_SUBST(LIBCURSES)
 use_readline=$with_readline
 if test $with_readline = detect; then
+  use_readline=no
   AC_CHECK_LIB(readline, readline,
-               use_readline=yes, use_readline=no, $LIBCURSES)
+    [AC_CHECK_HEADER(readline/readline.h, 
+      [AC_CHECK_HEADER(readline/history.h, use_readline=yes)])],
+    , $LIBCURSES)
+  AC_MSG_CHECKING(readline detected)
+  AC_MSG_RESULT($use_readline)
 fi
 if test $use_readline = yes; then
   AC_SUBST(WITH_READLINE_01, 1)
