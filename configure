@@ -5291,6 +5291,7 @@ for i in .exe ,ff8 ""; do
     fi
   fi
 done
+rm -f conftest*
 if test "${gmp_cv_prog_exeext_for_build+set}" != set; then
   { { echo "$as_me:$LINENO: error: Cannot determine executable suffix" >&5
 echo "$as_me: error: Cannot determine executable suffix" >&2;}
@@ -5326,6 +5327,7 @@ if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
 else
   gmp_cv_c_for_build_ansi=no
 fi
+rm -f conftest* a.out b.out a.exe a_out.exe
 
 fi
 echo "$as_me:$LINENO: result: $gmp_cv_c_for_build_ansi" >&5
@@ -5366,6 +5368,7 @@ if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
 else
   gmp_cv_check_libm_for_build=no
 fi
+rm -f conftest* a.out b.out a.exe a_out.exe
 
 fi
 echo "$as_me:$LINENO: result: $gmp_cv_check_libm_for_build" >&5
@@ -7492,7 +7495,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7495 "configure"' > conftest.$ac_ext
+  echo '#line 7498 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -10930,7 +10933,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10933 "configure"
+#line 10936 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11028,7 +11031,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11031 "configure"
+#line 11034 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14133,7 +14136,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14136 "configure"
+#line 14139 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14231,7 +14234,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14234 "configure"
+#line 14237 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16865,7 +16868,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16868 "configure"
+#line 16871 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16963,7 +16966,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16966 "configure"
+#line 16969 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -21397,7 +21400,8 @@ echo $ECHO_N "checking for assembler label suffix... $ECHO_C" >&6
 if test "${gmp_cv_asm_label_suffix+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  for i in "" ":"; do
+  gmp_cv_asm_label_suffix=unknown
+for i in "" ":"; do
   echo "trying $i" >&5
   cat >conftest.s <<EOF
 	$gmp_cv_asm_text
@@ -21422,7 +21426,7 @@ fi
 rm -f conftest*
 
 done
-if test -z "$gmp_cv_asm_label_suffix"; then
+if test "$gmp_cv_asm_label_suffix" = "unknown"; then
   { { echo "$as_me:$LINENO: error: Cannot determine label suffix" >&5
 echo "$as_me: error: Cannot determine label suffix" >&2;}
    { (exit 1); exit 1; }; }
@@ -21434,43 +21438,16 @@ echo "${ECHO_T}$gmp_cv_asm_label_suffix" >&6
 echo "define(<LABEL_SUFFIX>, <$gmp_cv_asm_label_suffix>)" >> $gmp_tmpconfigm4
 
 
-
 echo "$as_me:$LINENO: checking for assembler global directive" >&5
 echo $ECHO_N "checking for assembler global directive... $ECHO_C" >&6
 if test "${gmp_cv_asm_globl+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  for i in .globl .global .export; do
-  echo "trying $i" >&5
-  cat >conftest.s <<EOF
-	$gmp_cv_asm_text
-	$i	foo
-foo$gmp_cv_asm_label_suffix
-EOF
-gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
-if { (eval echo "$as_me:$LINENO: \"$gmp_assemble\"") >&5
-  (eval $gmp_assemble) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; then
-  cat conftest.out >&5
-  gmp_cv_asm_globl=$i
-     rm -f conftest*
-     break
-else
-  cat conftest.out >&5
-  echo "configure: failed program was:" >&5
-  cat conftest.s >&5
-  cat conftest.out >&5
-fi
-rm -f conftest*
-
-done
-if test -z "$gmp_cv_asm_globl"; then
-  { { echo "$as_me:$LINENO: error: Cannot determine how to maks a symbol global" >&5
-echo "$as_me: error: Cannot determine how to maks a symbol global" >&2;}
-   { (exit 1); exit 1; }; }
-fi
+  case $host in
+  hppa*-*-*)     gmp_cv_asm_globl=.export ;;
+  ia64*-*-* | itanium-*-* | itanium2-*-*)  gmp_cv_asm_globl=.global ;;
+  *)             gmp_cv_asm_globl=.globl  ;;
+esac
 
 fi
 echo "$as_me:$LINENO: result: $gmp_cv_asm_globl" >&5
