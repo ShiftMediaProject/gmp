@@ -47,9 +47,9 @@ MA 02111-1307, USA. */
    Whether this succeeds is tested by GMP_FUNC_ALLOCA and HAVE_ALLOCA will
    be setup appropriately.
 
-   ifndef alloca - a cpp define might already exist.  glibc <stdlib.h>
-       includes <alloca.h> which uses GCC __builtin_alloca.  HP cc
-       +Olibcalls supposedly provides a #define.
+   ifndef alloca - a cpp define might already exist.
+       glibc <stdlib.h> includes <alloca.h> which uses GCC __builtin_alloca.
+       HP cc +Olibcalls adds a #define of alloca to __builtin_alloca.
 
    GCC __builtin_alloca - preferred whenever available.
 
@@ -539,9 +539,9 @@ extern gmp_randstate_t  __gmp_rands;
 #define MPN_KARA_MUL_N_MINSIZE    2
 #define MPN_KARA_SQR_N_MINSIZE    2
 
-/* need 5 so that l,ls>=1 */
-#define MPN_TOOM3_MUL_N_MINSIZE   5
-#define MPN_TOOM3_SQR_N_MINSIZE   5
+/* Need l>=1, ls>=1, and 2*ls > l (the latter for the tD MPN_INCR_U) */
+#define MPN_TOOM3_MUL_N_MINSIZE   11
+#define MPN_TOOM3_SQR_N_MINSIZE   11
 
 #define mpn_sqr_diagonal __MPN(sqr_diagonal)
 void mpn_sqr_diagonal _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
@@ -1218,8 +1218,11 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #ifndef MPN_INCR_U
 #if WANT_ASSERT
-#define MPN_INCR_U(ptr, size, n) \
-  ASSERT_NOCARRY (mpn_add_1 (ptr, ptr, size, n))
+#define MPN_INCR_U(ptr, size, n)                        \
+  do {                                                  \
+    ASSERT ((size) >= 1);                               \
+    ASSERT_NOCARRY (mpn_add_1 (ptr, ptr, size, n));     \
+  } while (0)
 #else
 #define MPN_INCR_U(ptr, size, n)   mpn_incr_u (ptr, n)
 #endif
@@ -1227,8 +1230,11 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
 #ifndef MPN_DECR_U
 #if WANT_ASSERT
-#define MPN_DECR_U(ptr, size, n) \
-  ASSERT_NOCARRY (mpn_sub_1 (ptr, ptr, size, n))
+#define MPN_DECR_U(ptr, size, n)                        \
+  do {                                                  \
+    ASSERT ((size) >= 1);                               \
+    ASSERT_NOCARRY (mpn_sub_1 (ptr, ptr, size, n));     \
+  } while (0)
 #else
 #define MPN_DECR_U(ptr, size, n)   mpn_decr_u (ptr, n)
 #endif
@@ -1409,12 +1415,15 @@ void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 #endif
 #endif
 
-#define MPN_DIVREM_OR_DIVEXACT_1(dst, src, size, divisor)       \
-  do {                                                          \
-    if (BELOW_THRESHOLD (size, DIVEXACT_1_THRESHOLD))           \
-      mpn_divrem_1 (dst, (mp_size_t) 0, src, size, divisor);    \
-    else                                                        \
-      mpn_divexact_1 (dst, src, size, divisor);                 \
+#define MPN_DIVREM_OR_DIVEXACT_1(dst, src, size, divisor)                     \
+  do {                                                                        \
+    if (BELOW_THRESHOLD (size, DIVEXACT_1_THRESHOLD))                         \
+      ASSERT_NOCARRY (mpn_divrem_1 (dst, (mp_size_t) 0, src, size, divisor)); \
+    else                                                                      \
+      {                                                                       \
+        ASSERT (mpn_mod_1 (src, size, divisor) == 0);                         \
+        mpn_divexact_1 (dst, src, size, divisor);                             \
+      }                                                                       \
   } while (0)
 
 
