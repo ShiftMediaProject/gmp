@@ -223,7 +223,7 @@ double speed_umul_ppmm _PROTO ((struct speed_params *s));
 #define TIMEVAL_DIFF_USEC(end, start)                           \
   ((end)->tv_usec - (start)->tv_usec                            \
    + 1000000L * ((end)->tv_sec - (start)->tv_sec                \
-                 + ((end)->tv_usec < (start)->tv_usec)))
+                 - ((end)->tv_usec < (start)->tv_usec)))
 #define TIMEVAL_DIFF_SEC(end, start)            \
   (TIMEVAL_DIFF_USEC (end, start) * 1e-6)
 
