@@ -1159,31 +1159,30 @@ speed_mpz_bin_uiui (struct speed_params *s)
     h = s->xp[0];               \
     l = s->yp[0];               \
                                 \
-    switch (s->r) {             \
-    case 1:                     \
-      speed_starttime ();       \
-      i = s->reps;              \
-      do                        \
-        {
+    if (s->r == 1)              \
+      {                         \
+        speed_starttime ();     \
+        i = s->reps;            \
+        do                      \
+          {
 
 #define SPEED_MACRO_UMUL_PPMM_B \
-        }                       \
-      while (--i != 0);         \
-      t = speed_endtime ();     \
-      break;                    \
-                                \
-    default:                    \
-      speed_starttime ();       \
-      i = s->reps;              \
-      do                        \
-        {
+          }                     \
+        while (--i != 0);       \
+        t = speed_endtime ();   \
+      }                         \
+    else                        \
+      {                         \
+        speed_starttime ();     \
+        i = s->reps;            \
+        do                      \
+          {
 
 #define SPEED_MACRO_UMUL_PPMM_C                                         \
-        }                                                               \
-      while (--i != 0);                                                 \
-      t = speed_endtime ();                                             \
-      break;                                                            \
-    }                                                                   \
+          }                                                             \
+        while (--i != 0);                                               \
+        t = speed_endtime ();                                           \
+      }                                                                 \
                                                                         \
     /* stop the compiler optimizing away the whole calculation! */      \
     noop_1 (h);                                                         \
@@ -1452,39 +1451,41 @@ speed_invert_limb (struct speed_params *s)
    between 0 and BITS_PER_MP_LIMB-1.  This is probably sensible for
    count_leading_zeros on the high limbs of divisors.  */
 
-void
+int
 speed_routine_count_zeros_setup (struct speed_params *s,
                                  mp_ptr xp, int leading, int zero)
 {
   int        i, c;
   mp_limb_t  n;
 
-  switch (s->r) {
-  case 0:
-  default:
-    /* Make uniformly distributed data.  If zero isn't allowed then change
-       it to 1 for leading, or 0x800..00 for trailing.  */
-    MPN_COPY (xp, s->xp_block, SPEED_BLOCK_SIZE);
-    if (! zero)
+  if (s->r == 0)
+    {
+      /* Make uniformly distributed data.  If zero isn't allowed then change
+         it to 1 for leading, or 0x800..00 for trailing.  */
+      MPN_COPY (xp, s->xp_block, SPEED_BLOCK_SIZE);
+      if (! zero)
+        for (i = 0; i < SPEED_BLOCK_SIZE; i++)
+          if (xp[i] == 0)
+            xp[i] = leading ? 1 : MP_LIMB_T_HIGHBIT;
+    }
+  else if (s->r == 1)
+    {
+      /* Make counts uniformly distributed.  A randomly chosen bit is set, and
+         for leading the rest above it are cleared, or for trailing then the
+         rest below.  */
       for (i = 0; i < SPEED_BLOCK_SIZE; i++)
-        if (xp[i] == 0)
-          xp[i] = leading ? 1 : MP_LIMB_T_HIGHBIT;
-    break;
-
-  case 1:
-    /* Make counts uniformly distributed.  A randomly chosen bit is set, and
-       for leading the rest above it are cleared, or for trailing then the
-       rest below.  */
-    for (i = 0; i < SPEED_BLOCK_SIZE; i++)
-      {
-        mp_limb_t  set = CNST_LIMB(1) << (s->yp_block[i] % BITS_PER_MP_LIMB);
-        mp_limb_t  keep_below = set-1;
-        mp_limb_t  keep_above = MP_LIMB_T_MAX ^ keep_below;
-        mp_limb_t  keep = (leading ? keep_below : keep_above);
-        xp[i] = (s->xp_block[i] & keep) | set;
-      }
-    break;
-  }
+        {
+          mp_limb_t  set = CNST_LIMB(1) << (s->yp_block[i] % BITS_PER_MP_LIMB);
+          mp_limb_t  keep_below = set-1;
+          mp_limb_t  keep_above = MP_LIMB_T_MAX ^ keep_below;
+          mp_limb_t  keep = (leading ? keep_below : keep_above);
+          xp[i] = (s->xp_block[i] & keep) | set;
+        }
+    }
+  else
+    {
+      return 0;
+    }
 
   /* Account for the effect of n^=c. */
   c = 0;
@@ -1498,6 +1499,8 @@ speed_routine_count_zeros_setup (struct speed_params *s,
       else
         count_trailing_zeros (c, n);
     }
+
+  return 1;
 }
 
 double
