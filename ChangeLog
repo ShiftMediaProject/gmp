@@ -1,3 +1,9 @@
+2000-07-16  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/gmp-mparam.h: Update with output from tune utility.
+	* mpn/powerpc64/copyi.asm: New file.
+	* mpn/powerpc64/copyd.asm: New file.
+
 2000-07-16  Kevin Ryde  <kevin@swox.se>
 
 	* tune/*: Add measuring for umul_ppmm and udiv_qrnnd.
@@ -36,7 +42,7 @@
 2000-07-13  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/t-root.c: Also test mpz_perfect_power_p.
-	Generate nth so that there will be fewer trivial values.
+	Generate `nth' so that there will be fewer trivial values.
 
 	* mpz/root.c: Reverse return value in tests for detecting root of +1
 	and -1.
