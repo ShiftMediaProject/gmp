@@ -147,6 +147,13 @@ mpn_sb_get_str (unsigned char *str, size_t len,
   mp_limb_t rl, ul;
   unsigned char *s;
   int base;
+  size_t l;
+#if TUNE_PROGRAM_BUILD
+#define BUF_ALLOC (GET_STR_THRESHOLD_LIMIT * BITS_PER_MP_LIMB)
+#else
+#define BUF_ALLOC (GET_STR_PRECOMPUTE_THRESHOLD * BITS_PER_MP_LIMB)
+#endif
+  unsigned char buf[BUF_ALLOC];
 
 #if TUNE_PROGRAM_BUILD
 #define USE_MULTILIMB  1
@@ -155,18 +162,11 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 #endif
 
 #if USE_MULTILIMB
-#if TUNE_PROGRAM_BUILD
-#define BUF_ALLOC (GET_STR_THRESHOLD_LIMIT * BITS_PER_MP_LIMB)
-#else
-#define BUF_ALLOC (GET_STR_PRECOMPUTE_THRESHOLD * BITS_PER_MP_LIMB)
-#endif
   base = powtab->base;
   if (base == 10)
     {
       /* Special case code for base==10 so that the compiler has a
 	 chance to optimize divisions by 10 in udiv_qrnd_unnorm.  */
-      size_t l;
-      unsigned char buf[BUF_ALLOC];
 
       s = buf + BUF_ALLOC;
       while (un > 1)
@@ -195,23 +195,9 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 	  udiv_qrnd_unnorm (ul, rl, ul, 10);
 	  *--s = rl;
 	}
-      l = buf + BUF_ALLOC - s;
-      while (l < len)
-        {
-          *str++ = 0;
-          len--;
-        }
-      while (l != 0)
-	{
-	  *str++ = *s++;
-	  l--;
-	}
-      return str;
     }
   else
     {
-      size_t l;
-      unsigned char buf[BUF_ALLOC];
       unsigned chars_per_limb = __mp_bases[base].chars_per_limb;
       mp_limb_t big_base = __mp_bases[base].big_base;
 #if USE_PREINV_DIVREM_1
@@ -246,19 +232,19 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 	  udiv_qrnd_unnorm (ul, rl, ul, base);
 	  *--s = rl;
 	}
-      l = buf + BUF_ALLOC - s;
-      while (l < len)
-        {
-          *str++ = 0;
-          len--;
-        }
-      while (l != 0)
-	{
-	  *str++ = *s++;
-	  l--;
-	}
-      return str;
     }
+  l = buf + BUF_ALLOC - s;
+  while (l < len)
+    {
+      *str++ = 0;
+      len--;
+    }
+  while (l != 0)
+    {
+      *str++ = *s++;
+      l--;
+    }
+  return str;
 #else
   ASSERT_ALWAYS (un == 1);
 
