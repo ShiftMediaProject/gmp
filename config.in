@@ -256,6 +256,9 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the `nl_langinfo' function. */
 #undef HAVE_NL_LANGINFO
 
+/* Define to 1 if you have the <nl_types.h> header file. */
+#undef HAVE_NL_TYPES_H
+
 /* Define to 1 if you have the `obstack_vprintf' function. */
 #undef HAVE_OBSTACK_VPRINTF
 
