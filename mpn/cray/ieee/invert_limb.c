@@ -23,6 +23,11 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+/*
+  This is needed to make configure define HAVE_NATIVE_mpn_invert_limb:
+  PROLOGUE(mpn_invert_limb)
+*/
+
 static const unsigned short int approx_tab[0x100] =
 {
   /* 0x400, */
