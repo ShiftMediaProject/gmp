@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-08  Kevin Ryde  <kevin@swox.se>
+
+	* demos/perl/GMP.pm: Correction to canonicalize example.
+
+	* demos/perl/GMP.xs: New type check scheme, support magic scalars,
+	support UV when available.  Remove some unused local variables.
+	(coerce_long): Check range of double.
+	(get_d_2exp): Remove stray printf.
+
+	* demos/perl/test.pl: Exercise magic, rearrange to make it clearer
+	what's being tested.
+
 2003-12-07  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/hgcd.c (mpn_hgcd): Use BELOW_THRESHOLD, to follow the
