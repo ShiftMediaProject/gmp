@@ -9076,7 +9076,7 @@ else
 #line 9076 "configure"
 #include "confdefs.h"
 #include <stdio.h>
-#define __GMP_DISABLE_CONFIG_DEFS 1
+#define __GMP_WITHIN_CONFIGURE 1
 #include "$srcdir/gmp-h.in"
 
 int
@@ -9115,7 +9115,7 @@ cat >conftest.$ac_ext <<_ACEOF
 #line 9115 "configure"
 #include "confdefs.h"
 #include <stdio.h>
-#define __GMP_DISABLE_CONFIG_DEFS 1
+#define __GMP_WITHIN_CONFIGURE 1
 #include "$srcdir/gmp-h.in"
 
 int
@@ -9134,7 +9134,7 @@ if { (eval echo $as_me:9130: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } &&
 #line 9134 "configure"
 #include "confdefs.h"
 #include <stdio.h>
-#define __GMP_DISABLE_CONFIG_DEFS 1
+#define __GMP_WITHIN_CONFIGURE 1
 #include "$srcdir/gmp-h.in"
 
 int
@@ -9164,7 +9164,7 @@ else
 #line 9164 "configure"
 #include "confdefs.h"
 #include <stdio.h>
-#define __GMP_DISABLE_CONFIG_DEFS 1
+#define __GMP_WITHIN_CONFIGURE 1
 #include "$srcdir/gmp-h.in"
 
 int
@@ -9194,7 +9194,7 @@ while test "x$ac_lo" != "x$ac_hi"; do
 #line 9194 "configure"
 #include "confdefs.h"
 #include <stdio.h>
-#define __GMP_DISABLE_CONFIG_DEFS 1
+#define __GMP_WITHIN_CONFIGURE 1
 #include "$srcdir/gmp-h.in"
 
 int
@@ -9221,7 +9221,7 @@ else
 #line 9221 "configure"
 #include "confdefs.h"
 #include <stdio.h>
-#define __GMP_DISABLE_CONFIG_DEFS 1
+#define __GMP_WITHIN_CONFIGURE 1
 #include "$srcdir/gmp-h.in"
 
 int
