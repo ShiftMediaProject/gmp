@@ -169,6 +169,8 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 	     : "f" (m0), "f" (m1));					\
     (pl) = __m0 * __m1;							\
   } while (0)
+#define UMUL_TIME 14
+#define UDIV_TIME 220
 #define count_leading_zeros(count, x) \
   do {									\
     UWtype _x = (x), _y, _a, _c;					\
