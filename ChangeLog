@@ -1,5 +1,9 @@
 2000-12-29  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/tests/reuse.c: Rename dump_abort => dump.
+	* mpz/tests/reuse.c: Generate operands using gmp_rand*.
+	* mpz/tests/convert.c: Likewise.
+
 	* configure.in: Detect T90-ieee systems; move Cray path
 	selection to after AC_PROG_CC.  Invoke AC_PROG_CPP.
 	* mpn/cray/cfp: New directory.  Move cfp specific files here.
