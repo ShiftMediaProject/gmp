@@ -36,7 +36,7 @@
 	cleanup the nesting a bit.
 
 	* gmp.texi (Integer Division): Fix mpz_congruent_2exp_p "c" type.
-	(Integer Division): Add mpz_divexact_si and mpz_divexact_ui.
+	(Integer Division): Add mpz_divexact_ui.
 	(Number Theoretic Functions): Fix mpz_nextprime return type.
 	(Exact Remainder): Divisibility tests now implemented.
 	And more index entries in a few places.
@@ -44,9 +44,9 @@
 	* tests/mpz/dive_i.c: New file.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
 
-	* mpz/dive_si.c, mpz/dive_ui.c: New files.
-	* Makefile.am, mpz/Makefile.am: Add them.
-	* gmp-h.in (mpz_divexact_si, mpz_divexact_ui): Add prototypes.
+	* mpz/dive_ui.c: New file.
+	* Makefile.am, mpz/Makefile.am: Add it.
+	* gmp-h.in (mpz_divexact_ui): Add prototype.
 
 	* tune/many.pl, tune/speed.h: Add special mpn_back_to_back for
 	development.

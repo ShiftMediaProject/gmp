@@ -427,9 +427,6 @@ int     mpz_congruent_ui_p _PROTO ((mpz_srcptr a, unsigned long c, unsigned long
 
 void mpz_divexact _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 
-#define mpz_divexact_si __gmpz_divexact_si
-void    mpz_divexact_si _PROTO ((mpz_ptr, mpz_srcptr, long));
-
 #define mpz_divexact_ui __gmpz_divexact_ui
 void    mpz_divexact_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long));
 
