@@ -40,7 +40,7 @@ define(`old_divstep',
 	copy		%r22,n1')
 
 define(`divstep',
-       `add,dc		n0,n0,n0
+       `add		n0,n0,n0
 	add,dc		n1,n1,n1
 	sub		n1,d,%r1
 	add,dc		q,q,q
