@@ -19,6 +19,30 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-08  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_GCC_VERSION_GE): Fix sed regexps to work on
+	Solaris 8.
+
+	* printf/doprnt.c: Support %n of all types, per glibc.
+
+	* gmp-h.in, gmp-impl.h, mpf/abs.c, mpf/neg.c, mpf/get_prc.c,
+	mpf/get_dfl_prec.c, mpf/set_dfl_prec.c, mpf/set_prc_raw.c,
+	mpf/set_si.c, mpf/set_ui.c, mpf/size.c: Revert mpf inlining, in order
+	to leave open the possibility of keeping binary compatibility if mpf
+	becomes mpfr.
+
+	* mpn/x86/k7/mmx/lshift.asm, mpn/x86/k7/mmx/rshift.asm: Use Zdisp to
+	force code size for computed jumps.
+	* mpn/x86/k6/mod_34lsub1.asm, mpn/x86/k6/k62mmx/copyd.asm: Use Zdisp
+	to force good code alignment.
+	* mpn/x86/x86-defs.m4 (Zdisp): More instructions.
+
+	* mpn/x86/pentium/sqr_basecase.asm, mpn/x86/k7/mmx/mod_1.asm,
+	mpn/x86/k7/mmx/popham.asm: Remove some unnecessary "0" address offsets.
+
+	* mpq/set_si.c, mpq/set_ui.c: Set _mp_den._mp_size correctly if	den==0.
+
 2001-11-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/hppa/hppa1_1/udiv_qrnnd.asm: Work around gas bug.
@@ -2041,7 +2065,7 @@ MA 02111-1307, USA.
 
 	* tune/speed.h (speed_cyclecounter): Inline asm version for i386.
 
-	* mpz/cfdiv_r_2exp.c (cfdiv_r_2exp): Only reread up after second
+	* mpz/cfdiv_r_2exp.c (cfdiv_r_2exp): Only reread "up" after second
 	realloc, first is under w!=u.
 
 2001-03-05  Torbjorn Granlund  <tege@swox.com>
