@@ -1435,10 +1435,10 @@ various subdirectories uses up memory.
 @item @samp{DESTDIR} and shared @file{libgmpxx}
 @cindex @samp{DESTDIR}
 
-@samp{make install DESTDIR=/my/staging/area} or the same with a @samp{prefix}
-override to install to a temporary directory is not fully supported by current
-versions of libtool when building a shared version of a library which depends
-on another being built at the same time, like @file{libgmpxx} and
+@samp{make install DESTDIR=/my/staging/area}, or the same with a @samp{prefix}
+override, to install to a temporary directory is not fully supported by
+current versions of libtool when building a shared version of a library which
+depends on another being built at the same time, like @file{libgmpxx} and
 @file{libgmp}.
 
 The problem is that @file{libgmpxx} is relinked at the install stage to ensure
@@ -1447,15 +1447,14 @@ that if the system puts a hard-coded path to @file{libgmp} within
 directed to look only at the final location, not the staging area, so if
 @file{libgmp} is not already in that final location then the link will fail.
 
-On systems which don't hard-code library paths, for instance SVR4 style
-systems like GNU/Linux, a workaround is to insert a suitable @code{-L} in
-the @code{relink_command} of @file{libgmpxx.la} after building but before
-installing.  This can be automated with something like
+A workaround for this on SVR4 style systems, such as GNU/Linux, where paths
+are not hard-coded, is to include the staging area in the linker's search
+using @code{LD_LIBRARY_PATH}.  For example with @samp{--prefix=/usr} but
+installing under @samp{/my/staging/area},
 
 @example
-sed '/^relink_command/s:libgmp.la:-L /my/staging/area libgmp.la:' \
-    <libgmpxx.la >libgmpxx.new
-mv libgmpxx.new libgmpxx.la
+LD_LIBRARY_PATH=/my/staging/area/usr/lib \
+  make install DESTDIR=/my/staging/area
 @end example
 
 @item GNU binutils @command{strip}
@@ -5878,14 +5877,12 @@ mechanism for it.
 @node C++ Interface MPFR, C++ Interface Random Numbers, C++ Interface Floats, C++ Class Interface
 @section C++ Interface MPFR
 
-The C++ class interface to MPFR is provided if MPFR is enabled (@pxref{Build
-Options}).  This interface must be regarded as preliminary and possibly
-subject to incompatible changes in the future, since MPFR itself is
-preliminary.  All definitions can be obtained with
+The C++ class interface to MPFR is incorporated within @file{gmpxx.h} and is
+enabled by first including @file{mpfr.h}.
 
-@cindex mpfrxx.h
 @example
-#include <mpfrxx.h>
+#include <mpfr.h>
+#include <gmpxx.h>
 @end example
 
 @noindent
@@ -5896,6 +5893,9 @@ This defines
 
 @noindent
 which behaves similarly to @code{mpf_class} (@pxref{C++ Interface Floats}).
+
+This interface must be regarded as preliminary and possibly subject to
+incompatible changes in the future, since MPFR itself is preliminary.
 
 
 @node C++ Interface Random Numbers, C++ Interface Limitations, C++ Interface MPFR, C++ Class Interface
