@@ -940,6 +940,12 @@ echo configure: using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPP
 
 AC_PROG_CC
 
+# Automake ansi2knr support.  This needs to be before compiler feature tests
+# because it will change CC/CFLAGS to put the compiler into ansi mode, if it
+# needs to, and if it can.
+#
+AM_C_PROTOTYPES
+
 GMP_PROG_AR
 GMP_PROG_NM
 
@@ -1032,16 +1038,6 @@ if test "$enable_alloca" = yes && test "$gmp_cv_func_alloca" = no; then
 fi
 
 AC_CHECK_FUNCS(getopt_long getpagesize getrusage gettimeofday popen processor_info read_real_time srandom strtoul sysconf sysctl sysctlbyname times)
-
-
-dnl  Trick automake into thinking we've run AM_C_PROTOTYPES which it wants
-dnl  for ansi2knr, and instead use our own test.  (Automake only prints a
-dnl  warning, but it's good to suppress it.)
-
-ifelse(0,1,[
-AM_C_PROTOTYPES
-])
-GMP_C_ANSI2KNR
 
 
 # Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
