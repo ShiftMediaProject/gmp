@@ -448,6 +448,8 @@ randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
   /* Split seed1 into N-1 32-bit chunks.  */
   mpz_export (&p->mt[1], &cnt, -1, sizeof (p->mt[1]), 0,
               8 * sizeof (p->mt[1]) - 32, seed1);
+  cnt++;
+  ASSERT (cnt <= N);
   while (cnt < N)
     p->mt[cnt++] = 0;
 
