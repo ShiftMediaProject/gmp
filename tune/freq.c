@@ -373,7 +373,7 @@ speed_cpu_frequency_measure_one (void)
       gettimeofday (&et, NULL);
       speed_cyclecounter (ec);
 
-      dt = (et->tv_sec - st->tv_sec) * 1000000L + (et->tv_usec - st->tv_usec);
+      dt = (et.tv_sec - st.tv_sec) * 1000000L + (et.tv_usec - st.tv_usec);
       if (dt >= 100000)
         break;
     }
