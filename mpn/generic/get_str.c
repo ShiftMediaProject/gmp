@@ -56,6 +56,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
   ASSERT (msize >= 0);
   ASSERT (base >= 2);
   ASSERT (base < numberof (__mp_bases));
+  ASSERT (msize == 0 || mptr[msize-1] != 0);
 
   big_base = __mp_bases[base].big_base;
 
