@@ -1,7 +1,7 @@
 /* Reference mpz functions */
 
 /*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -196,4 +196,30 @@ refmpz_si_kronecker (long a, mpz_srcptr b)
   ret = refmpz_kronecker (az, b);
   mpz_clear (az);
   return ret;
+}
+
+
+void
+refmpz_pow_ui (mpz_ptr w, mpz_srcptr b, unsigned long e)
+{
+  mpz_t          s, t;
+  unsigned long  i;
+
+  mpz_init_set_ui (t, 1L);
+  mpz_init_set (s, b);
+
+  if ((e & 1) != 0)
+    mpz_mul (t, t, s);
+
+  for (i = 2; i <= e; i <<= 1)
+    {
+      mpz_mul (s, s, s);
+      if ((i & e) != 0)
+	mpz_mul (t, t, s);
+    }
+
+  mpz_set (w, t);
+
+  mpz_clear (s);
+  mpz_clear (t);
 }
