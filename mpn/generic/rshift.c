@@ -54,11 +54,6 @@ mpn_rshift (wp, up, usize, cnt)
   ASSERT (cnt < BITS_PER_MP_LIMB);
   ASSERT (MPN_SAME_OR_INCR_P (wp, up, usize));
 
-#ifdef DEBUG
-  if (usize == 0 || cnt == 0)
-    abort ();
-#endif
-
   sh_1 = cnt;
 
 #if 0
