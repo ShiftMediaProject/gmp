@@ -55,7 +55,8 @@ for i in "$@"; do
         echo "Only one .asm file permitted"
         exit 1
       fi
-      TMP=tmp-`echo "$i" | sed -e 's/\.asm$//' -e 's/^.*[\\/:]//'`.s
+      BASENAME=`echo "$i" | sed -e 's/\.asm$//' -e 's/^.*[\\/:]//'`
+      TMP=tmp-$BASENAME.s
       ASM=$i
       CC="$CC $TMP"
       ;;
@@ -84,7 +85,7 @@ fi
 # explicit -o in both cases since we're assembling tmp-foo.s.
 #
 if test $SEEN_O = no; then
-  CC="$CC -o `echo "$ASM" | sed 's/\.asm$//'`.o"
+  CC="$CC -o $BASENAME.o"
 fi
 
 echo "$M4 $DEFS $ASM >$TMP"
