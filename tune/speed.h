@@ -673,7 +673,7 @@ void speed_option_set _PROTO((const char *s));
 
 /* Calculate 2^(m-1) mod m for random odd m of s->size limbs.  Having m odd
    allows redc to be used.  Actually the exponent (m-1) is cut down to at
-   most 10 limbs so the calculation doesn't take too long.  */
+   most 6 limbs so the calculation doesn't take too long.  */
 #define SPEED_ROUTINE_MPZ_POWM(function)        \
   {                                             \
     mpz_t     r, b, e, m;                       \
@@ -692,7 +692,7 @@ void speed_option_set _PROTO((const char *s));
                                                 \
     mpz_init_set (e, m);                        \
     mpz_sub_ui (e, e, 1);                       \
-    SIZ(e) = MIN (SIZ(e), 10);                  \
+    SIZ(e) = MIN (SIZ(e), 6);                   \
                                                 \
     speed_starttime ();                         \
     i = s->reps;                                \
@@ -855,12 +855,12 @@ void speed_option_set _PROTO((const char *s));
      function (px[j-1], py[j-1], 0))
 
 
-/* SPEED_BLOCK_SIZE/s->size many GCDs of s->size limbs each.
+/* Run some GCDs of s->size limbs each.  The number of different data values
+   is decreased as s->size**2, since GCD is a quadratic algorithm.
+   SPEED_ROUTINE_MPN_GCD runs more times than SPEED_ROUTINE_MPN_GCDEXT
+   though, because the plain gcd is about twice as fast as gcdext.  */
 
-   FIXME: It might be worth reducing the number of GCDs as s->size increases,
-   after all GCD is an O(n^2) algorithm. */
-
-#define SPEED_ROUTINE_MPN_GCD_CALL(datadivisor, call)           \
+#define SPEED_ROUTINE_MPN_GCD_CALL(datafactor, call)            \
   {                                                             \
     unsigned  i;                                                \
     mp_size_t j, pieces, psize;                                 \
@@ -876,9 +876,9 @@ void speed_option_set _PROTO((const char *s));
     wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);          \
     wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);        \
                                                                 \
-    pieces = SPEED_BLOCK_SIZE / s->size / datadivisor;          \
-    if (pieces == 0)                                            \
-      pieces = 1;                                               \
+    pieces = SPEED_BLOCK_SIZE * datafactor / s->size / s->size; \
+    pieces = MAX (pieces, 1);                                   \
+    pieces = MIN (pieces, SPEED_BLOCK_SIZE / s->size);          \
                                                                 \
     psize = pieces * s->size;                                   \
     px = TMP_ALLOC_LIMBS (psize);                               \
@@ -927,13 +927,11 @@ void speed_option_set _PROTO((const char *s));
   }  
 
 #define SPEED_ROUTINE_MPN_GCD(function) \
-  SPEED_ROUTINE_MPN_GCD_CALL (1, function (wp, xtmp, s->size, ytmp, s->size))
+  SPEED_ROUTINE_MPN_GCD_CALL (8, function (wp, xtmp, s->size, ytmp, s->size))
 
-/* mpn_gcdext takes a lot longer than mpn_gcd, so run it only on 1/4 as many
-   data values */
-#define SPEED_ROUTINE_MPN_GCDEXT(function)                              \
-  SPEED_ROUTINE_MPN_GCD_CALL                                            \
-    (4, { mp_size_t  wp2size;                                           \
+#define SPEED_ROUTINE_MPN_GCDEXT(function)                               \
+  SPEED_ROUTINE_MPN_GCD_CALL                                             \
+    (4, { mp_size_t  wp2size;                                            \
           function (wp, wp2, &wp2size, xtmp, s->size, ytmp, s->size); })
 
 
