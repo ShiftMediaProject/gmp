@@ -1,5 +1,7 @@
 Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* Version 2.0.1 released.
+
 	* mpf/tests/ref.c: Cast result of TMP_ALLOC to the right pointer type.
 
 	* extract-double.c: Test _GMP_IEEE_FLOATS with #if, not plain if.
