@@ -100,7 +100,7 @@ main (argc, argv)
       if ((bsi & 1) != 0)
 	mpz_neg (base, base);
 
-      printf ("%ld %ld %ld\n", SIZ (base), SIZ (exp), SIZ (mod));
+      /* printf ("%ld %ld %ld\n", SIZ (base), SIZ (exp), SIZ (mod)); */
 
 #if 0
       putc ('\n', stderr);
