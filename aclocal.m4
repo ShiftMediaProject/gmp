@@ -1998,28 +1998,32 @@ else
 fi
 ])
 
+AH_VERBATIM([HAVE_DOUBLE],
+[/* Define one (and only one) of the following for the format of a `double'.
+   If your format is not among these choices, or you don't know what it is,
+   then leave all of them undefined.
+   "IEEE_LITTLE_SWAPPED" means little endian, but with the two 4-byte halves
+   swapped, as used by ARM CPUs in little endian mode.  */
+#undef HAVE_DOUBLE_IEEE_BIG_ENDIAN
+#undef HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
+#undef HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
+#undef HAVE_DOUBLE_VAX_D
+#undef HAVE_DOUBLE_VAX_G
+#undef HAVE_DOUBLE_CRAY_CFP])
+
 case $gmp_cv_c_double_format in
   "IEEE big endian")
-    AC_DEFINE(HAVE_DOUBLE_IEEE_BIG_ENDIAN, 1,
-    [Define if `double' is IEEE format, big endian])
-    ;;
+    AC_DEFINE(HAVE_DOUBLE_IEEE_BIG_ENDIAN, 1) ;;
   "IEEE little endian")
-    AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_ENDIAN, 1,
-    [Define if `double' is IEEE format, little endian])
-    ;;
+    AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_ENDIAN, 1) ;;
   "IEEE little endian, swapped halves")
-    AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_SWAPPED, 1,
-    [Define if `double' is IEEE format, little endian, with halves swapped])
-    ;;
+    AC_DEFINE(HAVE_DOUBLE_IEEE_LITTLE_SWAPPED, 1) ;;
   "VAX D")
-    AC_DEFINE(HAVE_DOUBLE_VAX_D, 1, [Define if `double' is VAX D format])
-    ;;
+    AC_DEFINE(HAVE_DOUBLE_VAX_D, 1) ;;
   "VAX G")
-    AC_DEFINE(HAVE_DOUBLE_VAX_G, 1, [Define if `double' is VAX G format])
-    ;;
+    AC_DEFINE(HAVE_DOUBLE_VAX_G, 1) ;;
   "Cray CFP")
-    AC_DEFINE(HAVE_DOUBLE_CRAY_CFP, 1, [Define if `double' is Cray CFP format])
-    ;;
+    AC_DEFINE(HAVE_DOUBLE_CRAY_CFP, 1) ;;
   unknown*)
     ;;
   *) 
