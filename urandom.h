@@ -46,7 +46,8 @@ urandom ()
 #if defined (__cplusplus)
 extern "C" {
 #endif
-#if ! (defined (__GLIBC__) && defined (_STDLIB_H))
+#if ! ((defined (__GLIBC__) && defined (_STDLIB_H)) || \
+       (defined (__CYGWIN32__) && defined (_STDLIB_H_)))
 long random ();
 #endif
 #if defined (__cplusplus)
