@@ -293,6 +293,25 @@ gmp_rand_getraw (rp, s, nbits)
 	TMP_MARK (lcmark);
 	tp = TMP_ALLOC ((rn + 1) * BYTES_PER_MP_LIMB);
 
+  /* Main loop:
+     Fill RP with NBITS random bits.
+     RP is built from least significant limb and up.
+     RN is the number of limbs in RP.
+     NBITS_STORED is the number of bits stored in RP so far.
+     RI is the index in RP to currently most significant limb,
+     i.e. where next chunk of random bits are to be copied.
+
+     i) Get random bits from lc() and store them in TP.  
+     NRANDBITS is the number of random bits in TP.
+     TN is the number of limbs in TP.
+
+     ii) Shift TP left as many steps as necessary for copying TP into
+     RP.
+     Mask in least significant limb of TP into (currently) most
+     significant limb of RP.
+
+     iii) Copy the rest of the limbs in TP to RP.  */
+
 	ri = 0;
 	nbits_stored = 0;
 	while (nbits_stored < nbits)
@@ -304,17 +323,31 @@ gmp_rand_getraw (rp, s, nbits)
 	    /* Shift the bits in place for copying into
                destination. */
 	    shiftc = nbits_stored % BITS_PER_MP_LIMB;
-	    /* FIXME: Do this only if shiftc != 0?  */
-	    tlimb = mpn_lshift (tp, tp, tn, shiftc);
-	    if (tlimb != 0)
-	      tp[tn++] = tlimb;
+	    if (shiftc != 0)
+	      {
+		tlimb = mpn_lshift (tp, tp, tn, shiftc);
+		if (tlimb != 0)
+		  tp[tn++] = tlimb;
+	      }
 
 	    /* Mask in least significant limb.  */
-	    rp[ri++] |= tp[0];
-	    nbits_stored += BITS_PER_MP_LIMB - shiftc;
+	    rp[ri] |= tp[0];
+
+	    /* Is rp[ri] full yet?  */
+	    if (nrandbits >= BITS_PER_MP_LIMB - shiftc)
+	      {
+		ri++;
+		nbits_stored += BITS_PER_MP_LIMB - shiftc;
+		nrandbits -= BITS_PER_MP_LIMB - shiftc;
+	      }
+	    else
+	      {
+		nbits_stored += nrandbits;
+		nrandbits = 0;
+	      }
+
 	    if (nbits_stored >= nbits)
 	      break;
-	    nrandbits -= BITS_PER_MP_LIMB - shiftc;
 
 	    /* More bits to store?  */
 	    if (nrandbits > 0)
