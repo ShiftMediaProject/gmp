@@ -132,9 +132,15 @@ static struct rt farr[] =
   
 
 int 
+#if __STDC__
 main (int argc, char *argv[])
+#else
+main (argc, argv)
+     int argc;
+     char *argv[];
+#endif
 {
-  const char usage[] = "usage: t-rand [function nbits]\n" \
+  char usage[] = "usage: t-rand [function nbits]\n" \
     "  function is one of z, f\n" \
     "  nbits is number of bits\n" \
     "";
