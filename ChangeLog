@@ -19,6 +19,40 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-26  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpq/t-get_d.c: Limit the size of "eps" for vax.	
+
+	* gmp.texi (maybepagebreak): New macro, use it in a few places.
+	(Notes for Particular Systems): C++ Windows DLLs are not supported.
+	(Known Build Problems): Note sparc solaris 2.7 gcc 2.95.2 shared
+	library problems.
+	(Autoconf): Tweak version numbers shown.
+	(Integer Roots): mpz_perfect_square_p and mpz_perfect_power_p consider
+	0 and 1 perfect powers, mpz_perfect_power_p accepts negatives.
+	(Number Theoretic Functions): Add mpz_millerrabin, combined with a
+	reworded mpz_probab_prime_p.
+	(Formatted Output Strings): Misc clarifications.
+	(Formatted Output Functions): gmp_asprintf, gmp_vasprintf,
+	gmp_snprintf, gmp_vsnprintf always available.
+	(C++ Formatted Output): Misc rewordings.
+	(Formatted Input): New chapter.
+	(C++ Class Interface): New chapter, by Gerardo and me.
+	(Language Bindings): Update GMP++ now in GMP.
+	(C++ Interface Internals): New section, by Gerardo and me.
+
+	* printf/repl-vsnprintf.c: New file.
+	* configure.in, acinclude.m4, Makefile.am, printf/Makefile.am: Use it
+	if libc vsnprintf missing or bad.
+	* configure.in (AC_CHECK_FUNCS): Add strnlen.
+
+	* printf/snprntffuns.c, printf/vasprintf.c: Use 
+	__gmp_replacement_vsnprintf if libc vsnprintf not available.
+	* printf/asprintf.c, printf/snprintf.c, printf/vasprintf.c,
+	printf/vsnprintf.c: Provide these functions unconditionally.
+	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Remove warning about omissions
+	when vsnprintf not available.
+
 2001-10-24  Kevin Ryde  <kevin@swox.se>
 
 	* configure, aclocal.m4: Regenerate with a libtool patch for a stray
