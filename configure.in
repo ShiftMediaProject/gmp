@@ -1159,12 +1159,19 @@ if test $enable_cxx != no; then
   if test $want_cxx = no && test $enable_cxx = yes; then
     AC_MSG_ERROR([C++ compiler not available])
   fi
-else
-  AC_PROG_CXX
 fi
 
 AM_CONDITIONAL(WANT_CXX, test $want_cxx = yes)
 AC_DEFINE(WANT_CXX, 1, [Define if C++ support is wanted])
+
+# FIXME: We're not interested in CXXCPP for ourselves, but if we don't call
+# it here then AC_PROG_LIBTOOL (via _LT_AC_TAGCONFIG) will do so
+# unconditionally, and that will fail if there's no C++ compiler (and no
+# generic /lib/cpp).
+#
+if test $want_cxx = yes; then
+  AC_PROG_CXXCPP
+fi
 
 cat >&AC_FD_CC <<EOF
 configure:__line__: Decided:
