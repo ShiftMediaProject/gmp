@@ -24,6 +24,7 @@ MA 02111-1307, USA.
 	Reported by Jason Moxham.
 	(Formatted Input Strings): Correction to strtoul cross reference
 	formatting.
+	(BSD Compatible Functions): Add index entry for MINT.
 
 2003-01-29  Torbjorn Granlund  <tege@swox.com>
 
