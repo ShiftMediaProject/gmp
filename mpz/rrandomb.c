@@ -34,9 +34,8 @@ mpz_rrandomb (mpz_ptr x, gmp_randstate_t rstate, unsigned long int nbits)
   if (nbits != 0)
     {
       mp_ptr xp;
-      nl = (nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
-      if (x->_mp_alloc < nl)
-	_mpz_realloc (x, nl);
+      nl = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
+      MPZ_REALLOC (x, nl);
 
       xp = PTR(x);
       gmp_rrandomb (xp, rstate, nbits);
@@ -61,11 +60,19 @@ mpz_rrandomb (mpz_ptr x, gmp_randstate_t rstate, unsigned long int nbits)
    truncated by nailing.
 
    For efficiency, we make sure to use most bits returned from _gmp_rand, since
-   the underlying random number generator is slow.  Keep returned bits in
+   the underlying random number generator is slow.  We keep returned bits in
    ranm/ran, and a count of how many bits remaining in ran_nbits.  */
 
 #define LOGBITS_PER_BLOCK 4
+
+/* Ask _gmp_rand for 32 bits per call unless that's more than a limb can hold.
+   Thus, we get the same random number sequence in the common cases.
+   FIXME: We should always generate the same random number sequence!  */
+#if GMP_NUMB_BITS < 32
+#define BITS_PER_RANDCALL GMP_NUMB_BITS
+#else
 #define BITS_PER_RANDCALL 32
+#endif
 
 static void
 gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
@@ -79,8 +86,8 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
   int ran_nbits;		/* number of valid bits in ran */
 
   ran_nbits = 0;
-  bit_pos = (nbits - 1) % BITS_PER_MP_LIMB;
-  ri = (nbits - 1) / BITS_PER_MP_LIMB;
+  bit_pos = (nbits - 1) % GMP_NUMB_BITS;
+  ri = (nbits - 1) / GMP_NUMB_BITS;
 
   acc = 0;
   while (ri >= 0)
@@ -99,9 +106,9 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
 	  if (nb > bit_pos)
 	    {
 	      rp[ri--] = acc | (((mp_limb_t) 2 << bit_pos) - 1);
-	      bit_pos += BITS_PER_MP_LIMB;
+	      bit_pos += GMP_NUMB_BITS;
 	      bit_pos -= nb;
-	      acc = (~(mp_limb_t) 1) << bit_pos;
+	      acc = ((~(mp_limb_t) 1) << bit_pos) & GMP_NUMB_MASK;
 	    }
 	  else
 	    {
@@ -116,7 +123,7 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
 	    {
 	      rp[ri--] = acc;
 	      acc = 0;
-	      bit_pos += BITS_PER_MP_LIMB;
+	      bit_pos += GMP_NUMB_BITS;
 	    }
 	  bit_pos -= nb;
 	}
