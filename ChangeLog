@@ -1,3 +1,32 @@
+2000-06-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpbsd/tests/allfuns.c (main): Call exit() instead of doing return.
+
+	* doc/{tasks.html,projects.html}: Moved from projects directory.
+	* doc/multiplication: New file.
+	* Makefile.am (EXTRA_DIST): Remove projects, add doc.
+
+	* Makefile.am (libgmp_la_LIBADD, libmp_la_LIBADD): Remove
+	unnecessary -lm.
+	* INSTALL: Remove -lm from instructions.
+	* demos/Makefile.am (qcn_LDADD): Add -lm.
+
+	* tune/*: Add measuring for mpn_divrem_2 and modlimb_invert,
+	improve addsub_n.  Switch to unified speed_cyclecounter.
+	* configure.in: Update configs for speed_cyclecounter.
+
+	* gmp-impl.h (MP_LIMB_T_MAX, MP_LIMB_T_HIGHBIT): New macros.
+	* mpn/generic/{diveby3,mul_n,gcd}, tune/speed.c: Use them.
+	
+	* mpn/tests/spinner.c: Remove setitimer, just alarm is enough.
+	* configure.in (AC_CHECK_FUNCS): Remove setitimer.
+	* mpn/tests/x86call.asm: Start with junk in %eax, %ecx, %edx.
+	* mpn/tests/ref.[ch] (refmpn_addsub_nc): New function.
+	* mpn/tests/try.c: Add some support for mpn_addsub_nc.
+	* mpn/tests/Makefile.am (EXTRA_PROGRAMS): Remove addsub_n and
+	addsub_n_2 which don't currently build.
+	* mpn/tests/copy.c: Test MPN_COPY_INCR, not __gmpn_copy.
+
 2000-06-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/Makefile.am (TARG_DIST): Add pa64w.
