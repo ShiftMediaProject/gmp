@@ -1,7 +1,7 @@
 \input texinfo    @c -*-texinfo-*-
 @c %**start of header
 @setfilename gmp.info
-@settitle GNU MP 2.0
+@settitle GNU MP 2.0.1
 @synindex tp fn
 @iftex
 @afourpaper
@@ -62,7 +62,7 @@ by the Foundation.
 
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
-@subtitle Edition 2.0
+@subtitle Edition 2.0.1
 @subtitle June 1996
 
 @author by Torbj@"orn Granlund, TMG Datakonsult
@@ -108,7 +108,7 @@ by the Foundation.
 @top GNU MP
 
 This manual documents how to install and use the GNU multiple precision
-arithmetic library, version 2.0.
+arithmetic library, version 2.0.1.
 
 @end ifinfo
 

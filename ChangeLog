@@ -1,5 +1,9 @@
 Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpn/config/t-oldgas: Renamed from t-freebsd.
+	* mpn/configure.in: Use t-oldgas for freebsd, netbsd, and some linux
+	configurations.
+
 	* mpn/powerpc32/mul_1.s: Really clear cy before entering loop.
 	* mpn/powerpc32/*.s: Fix power/powerpc syntax issues.
 
