@@ -20,8 +20,17 @@ MA 02111-1307, USA.
 
 2002-12-01  Torbjorn Granlund  <tege@swox.com>
 
-	* gen-psqr.c (f_cmp_fraction, f_cmp_divisor): Change parameter
-	to `const void *', to match qsort spec.
+	* mpn/generic/gcdext.c (div1): Disable unused function.
+
+	* mpz/root.c: Don't include stdlib.h or longlong.h.
+	* mpz/rootrem.c: Likewise.
+
+	* extract-dbl.c: abort => ASSERT_ALWAYS.
+	* mpz/set_d.c: Likewise.
+	* mpn/generic/tdiv_qr.c: Likewise.
+
+	* gen-psqr.c (f_cmp_fraction, f_cmp_divisor): Change parameter to
+	`const void *', to match qsort spec.
 
 2002-12-01  Kevin Ryde  <kevin@swox.se>
 

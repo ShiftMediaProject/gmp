@@ -67,6 +67,16 @@ hpux "as" doesn't.
 for ELF, so those directives don't need to be given explicitly.
 
 
+REGISTER USAGE
+
+Special:
+   r0: constant 0
+   r1: global pointer (gp)
+   r8: return value
+   r12: stack pointer (sp)
+   r13: thread pointer (tp)
+Caller-saves: r8-r11 r14-r31 f6-f15
+Caller-saves but rotating: r32- f32-
 
 
 ================================================================
