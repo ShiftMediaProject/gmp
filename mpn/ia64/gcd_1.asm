@@ -195,7 +195,7 @@ ifdef(`HAVE_ABI_32',
 }{ .mmi;	sub	r10 = r10, x	// M2  d-1 = y - x - 1
 }		;;
 
-{ .mmi;	.pred.rel.mutex	p8, p9
+{ .mmi;	.pred.rel "mutex", p8, p9
 	(p8)	sub	x = x, y	// M0  x>y  use x=x-y, y unchanged
 	(p9)	mov	y = x		// M1  y>=x use y=x
 	(p9)	mov	x = r9		// I0  y>=x use x=y-x
