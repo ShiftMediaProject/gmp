@@ -63,22 +63,6 @@ MA 02111-1307, USA. */
 /* table1[i] is F[i], table2[i] is F[i+numberof(table1)].
    table2[i][0] is the low limb, table2[i][1] the high limb.  */
 
-#if BITS_PER_MP_LIMB == 2
-static const mp_limb_t table1[] = {
- CNST_LIMB (0x0),  /* 0 */
- CNST_LIMB (0x1),  /* 1 */
- CNST_LIMB (0x1),  /* 2 */
- CNST_LIMB (0x2),  /* 3 */
- CNST_LIMB (0x3),  /* 4 */
-};
-static const mp_limb_t table2[][2] = {
- {CNST_LIMB(0x1), CNST_LIMB(0x1)}, /* 5 */
- {CNST_LIMB(0x0), CNST_LIMB(0x2)}, /* 6 */
- {CNST_LIMB(0x1), CNST_LIMB(0x3)}, /* 7 */
-};
-/* total 11 bytes if BITS_PER_LIMB==2 */
-#endif
-
 #if BITS_PER_MP_LIMB == 4
 static const mp_limb_t table1[] = {
  CNST_LIMB (0x0),  /* 0 */
@@ -838,7 +822,6 @@ generate (int bpml)
 int
 main (void)
 {
-  generate (2);
   generate (4);
   generate (8);
   generate (16);
