@@ -145,8 +145,8 @@ fi
 # called.  User selections of CC etc are respected.
 #
 # Care is taken not to use macros like AC_TRY_COMPILE during the GMP
-# pre-testing, since they of course depend on AC_PROG_CC, and also they
-# cache their results, which is not wanted.
+# pre-testing, since they of course depend on AC_PROG_CC, and also some of
+# them cache their results, which is not wanted.
 #
 # The ABI selection mechanism is unique to GMP.  All that reaches autoconf
 # is a different selection of CC/CFLAGS according to the best ABI the system
@@ -176,7 +176,8 @@ fi
 # Suppose xx_cflags_optlist="arch", then flags from $xx_cflags_arch are
 # tried, and the first flag that works will be used.  An optlist like "arch
 # cpu optimize" can be used to get multiple independent sets of flags tried.
-# The first that works from each will be used.
+# The first that works from each will be used.  If no flag in a set works
+# then nothing from that set is added.
 #
 # For multiple ABIs, the scheme extends as follows.
 #
@@ -200,7 +201,7 @@ fi
 # defined.  This makes it easy to add some 64-bit compilers and flags to an
 # unadorned 32-bit set.
 #
-# limb=longlong (or limb_abi=longlong) applies to all compilers within that
+# limb=longlong (or limb_aa=longlong) applies to all compilers within that
 # ABI.  It won't work to have some needing long long and some not, since a
 # single instantiated gmp.h will be used by both.
 #
@@ -637,6 +638,9 @@ case $host in
     gcc_cflags_cpu="-mcpu=i486"
     gcc_cflags_arch="-march=i486"
 
+    # gcc 2.7.2 only knows i386, i486 and pentium
+    # gcc 2.95.2 adds k6 and pentiumpro
+    # gcc 3 will add athlon
     case $host in
       i386*-*-*)
         # Because i386 means generic x86, -mcpu=i486 is used since that
@@ -1117,6 +1121,9 @@ changequote([,])
 #       make sure to run and examine the output from
 #       
 #           % (cd macos; perl configure)
+#
+# Note: $gmp_mpn_functions must have mod_1 before pre_mod_1 so the former
+#       can optionally have the latter as an extra entrypoint.
 
 gmp_mpn_functions_optional="copyi copyd com_n		\
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n	\
@@ -1149,6 +1156,12 @@ for tmp_fn in $gmp_mpn_functions; do
     rm -f mpn/$tmp_fn.$tmp_ext
   done
 
+  # Don't need pre_mod_1 if it's already been provided (by an asm mod_1).
+  case $tmp_fn in
+  pre_mod_1)
+    if test "$HAVE_NATIVE_mpn_preinv_mod_1" = yes; then continue; fi ;;
+  esac
+
   # functions that can be provided by multi-function files
   tmp_mulfunc=
   case $tmp_fn in
@@ -1180,14 +1193,16 @@ for tmp_fn in $gmp_mpn_functions; do
           AC_CONFIG_LINKS(mpn/$tmp_fn.$tmp_ext:mpn/$tmp_dir/$tmp_base.$tmp_ext)
           gmp_srclinks="$gmp_srclinks mpn/$tmp_fn.$tmp_ext"
 
-          # duplicate AC_DEFINEs are harmless, so it doesn't matter
-          # that multi-function files get grepped here repeatedly
+          # Duplicate AC_DEFINEs are harmless, so it doesn't matter
+          # that multi-function files get grepped here repeatedly.
+	  # The PROLOGUE pattern has ".*" so that alpha PROLOGUE_GP matches.
           gmp_ep=[`
             sed -n 's/^[ 	]*MULFUNC_PROLOGUE(\(.*\))/\1/p' $tmp_file ;
             sed -n 's/^[ 	]*PROLOGUE.*(\(.*\))/\1/p' $tmp_file
           `]
           for gmp_tmp in $gmp_ep; do
             AC_DEFINE_UNQUOTED(HAVE_NATIVE_$gmp_tmp)
+            eval HAVE_NATIVE_$gmp_tmp=yes
           done
 
           case $tmp_fn in
