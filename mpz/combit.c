@@ -28,8 +28,8 @@ mpz_combit (mpz_ptr d, unsigned long int bit_index)
   mp_size_t dsize = ABSIZ(d);
   mp_ptr dp = LIMBS(d);
   
-  mp_size_t limb_index = bit_index / BITS_PER_MP_LIMB;
-  mp_limb_t bit = ((mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB));
+  mp_size_t limb_index = bit_index / GMP_NUMB_BITS;
+  mp_limb_t bit = ((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS));
 
   if (limb_index >= dsize)
     {
