@@ -1,6 +1,6 @@
 /* Test gmp_scanf and related functions.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -66,6 +66,34 @@ MA 02111-1307, USA. */
 int   option_libc_scanf = 0;
 
 typedef int (*fun_t) _PROTO ((const char *, const char *, void *, void *));
+
+
+/* This problem was seen on powerpc7450-apple-darwin7.0.0, sscanf returns 0
+   where it should return EOF.  A workaround in gmp_sscanf would be a bit
+   tedious, and since this is a rather obvious libc bug, quite likely
+   affecting other programs, we'll just supress affected tests for now.  */
+int
+test_sscanf_eof_ok (void)
+{
+  static int  result = -1;
+
+  if (result == -1)
+    {
+      int  x;
+      if (sscanf ("", "%d", &x) == EOF)
+        {
+          result = 1;
+        }
+      else
+        {
+          printf ("Warning, sscanf(\"\",\"%%d\",&x) doesn't return EOF.\n");
+          printf ("This affects gmp_sscanf, tests involving it will be suppressed.\n");
+          printf ("You should try to get a fix for your libc.\n");
+          result = 0;
+        }
+    }
+  return result;
+}
 
 
 /* Convert fmt from a GMP scanf format string to an equivalent for a plain
@@ -1462,44 +1490,47 @@ check_misc (void)
     mpz_clear (z);
   }
 
-  /* -1 for no matching */
+  /* EOF for no matching */
   {
     char buf[128];
     ret = gmp_sscanf ("   ", "%s", buf);
-    ASSERT_ALWAYS (ret == -1);
+    ASSERT_ALWAYS (ret == EOF);
     ret = fromstring_gmp_fscanf ("   ", "%s", buf);
-    ASSERT_ALWAYS (ret == -1);
+    ASSERT_ALWAYS (ret == EOF);
     if (option_libc_scanf)
       {
         ret = sscanf ("   ", "%s", buf);
-        ASSERT_ALWAYS (ret == -1);
+        ASSERT_ALWAYS (ret == EOF);
         ret = fun_fscanf ("   ", "%s", buf, NULL);
-        ASSERT_ALWAYS (ret == -1);
+        ASSERT_ALWAYS (ret == EOF);
       }
   }
 
   /* suppressed field, then eof */
   {
     int  x;
-    ret = gmp_sscanf ("123", "%*d%d", &x);
-    ASSERT_ALWAYS (ret == -1);
+    if (test_sscanf_eof_ok ())
+      {
+        ret = gmp_sscanf ("123", "%*d%d", &x);
+        ASSERT_ALWAYS (ret == EOF);
+      }
     ret = fromstring_gmp_fscanf ("123", "%*d%d", &x);
-    ASSERT_ALWAYS (ret == -1);
+    ASSERT_ALWAYS (ret == EOF);
     if (option_libc_scanf)
       {
         ret = sscanf ("123", "%*d%d", &x);
-        ASSERT_ALWAYS (ret == -1);
+        ASSERT_ALWAYS (ret == EOF);
         ret = fun_fscanf ("123", "%*d%d", &x, NULL);
-        ASSERT_ALWAYS (ret == -1);
+        ASSERT_ALWAYS (ret == EOF);
       }
   }
   {
     mpz_t  x;
     mpz_init (x);
     ret = gmp_sscanf ("123", "%*Zd%Zd", x);
-    ASSERT_ALWAYS (ret == -1);
+    ASSERT_ALWAYS (ret == EOF);
     ret = fromstring_gmp_fscanf ("123", "%*Zd%Zd", x);
-    ASSERT_ALWAYS (ret == -1);
+    ASSERT_ALWAYS (ret == EOF);
     mpz_clear (x);
   }
 
