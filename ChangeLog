@@ -1,5 +1,8 @@
 2001-02-18  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/hppa/hppa1_1/gmp-mparam.h: New file.
+	* mpn/hppa/hppa2_0/gmp-mparam.h: New file.
+
 	* mpn/pa64/sqr_diagonal.asm: New file.
 	* mpn/pa64w/sqr_diagonal.asm: New file.
 	* mpn/hppa/hppa1_1/sqr_diagonal.asm: New file.
