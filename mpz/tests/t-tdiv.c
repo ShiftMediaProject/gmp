@@ -74,7 +74,7 @@ main (argc, argv)
   for (i = 0; i < reps; i++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 16 + 2;
+      size_range = mpz_get_ui (bs) % 16 + 2; /* 0..131071 bit operands */
 
       do
 	{
