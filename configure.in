@@ -341,8 +341,8 @@ abilist="standard"
 #
 cclist="gcc cc"
 
-gcc_cflags="-g -O2"
-gcc_64_cflags="-g -O2"
+gcc_cflags="-O3"
+gcc_64_cflags="-O3"
 cc_cflags="-O"
 cc_64_cflags="-O"
 
@@ -509,7 +509,7 @@ case $host in
     # mode, we must instead detect which of the two it is.  This is done by
     # checking sizeof(long), either 4 or 8 bytes respectively.
     #
-    gcc_cflags="-g -O2"
+    gcc_cflags="-O2"
     gcc_cflags_optlist="arch"
     gcc_testlist="sizeof-long-4"
     extra_functions="udiv"
@@ -556,7 +556,7 @@ case $host in
 
         # no gcc support for long long in 2.0n
 	cclist_20n="gcc cc"
-	gcc_20n_cflags="-g -O2 -mpa-risc-2-0"
+	gcc_20n_cflags="-O2 -mpa-risc-2-0"
         gcc_20n_testlist="sizeof-long-4"
         # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
         cc_20n_cflags="+DA2.0 +e +O3 -Wl,+vnocompatwarnings"
@@ -581,7 +581,7 @@ case $host in
           esac
 
           cclist_20w="gcc cc"
-	  gcc_20w_cflags="-g -O2 -mpa-risc-2-0"
+	  gcc_20w_cflags="-O2 -mpa-risc-2-0"
 	  gcc_20w_testlist="sizeof-long-8"
           cc_20w_cflags="+DD64 +O3"
           cc_20w_testlist="hpc-hppa-2-0"
@@ -643,7 +643,7 @@ case $host in
   m68*-*-*)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_m68k)
     GMP_INCLUDE_MPN(m68k/m68k-defs.m4)
-    gcc_cflags="-g $fomit_frame_pointer"
+    gcc_cflags="$fomit_frame_pointer"
     gcc_cflags_optlist="optimize arch"
     gcc_cflags_optimize="-O2"   # munged below on gcc 2.95.x
 
@@ -677,7 +677,7 @@ case $host in
     ;;
   m88110*-*-*)
     # FIXME: Use `-O2'?
-    gcc_cflags="-g -O -m88110"
+    gcc_cflags="-O -m88110"
     path="m88k/mc88110 m88k"
     ;;
 
@@ -718,7 +718,7 @@ case $host in
         abilist="n32 64 o32"
 
         cclist_n32="gcc cc"
-        gcc_n32_cflags="-g -O2 -mabi=n32"
+        gcc_n32_cflags="-O2 -mabi=n32"
         gcc_n32_ldflags="-Wc,-mabi=n32"
 	# Pass just -O1, MIPSpro 7.2.1 miscompiles mpn/generic/divrem_1.c
 	# cvs version 1.20, for -O2 and -O3
@@ -729,7 +729,7 @@ case $host in
         extra_functions_n32="umul"
 
         cclist_64="gcc cc"
-        gcc_64_cflags="-g -O2 -mabi=64"
+        gcc_64_cflags="-O2 -mabi=64"
         gcc_64_ldflags="-Wc,-mabi=64"
         cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
         cc_64_ldflags="-Wc,-64"
@@ -757,8 +757,8 @@ case $host in
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_powerpc)
     HAVE_HOST_CPU_FAMILY_powerpc=1
     cclist="gcc cc"
-    cc_cflags="-g -O2"
-    gcc_cflags="-g -O2 -mpowerpc"
+    cc_cflags="-O2"
+    gcc_cflags="-O2 -mpowerpc"
     gcc_cflags_optlist="asm precomp cpu"
     gcc_cflags_asm="-Wa,-mppc"
     gcc_cflags_precomp="-no-cpp-precomp"
@@ -813,7 +813,7 @@ case $host in
     case $host in
       *-*-aix*)
         cclist="gcc xlc cc"
-        xlc_cflags="-g -O2 -qmaxmem=20000"
+        xlc_cflags="-O2 -qmaxmem=20000"
         xlc_cflags_optlist="arch"
 
         # xlc (what version?) knows -qarch=ppc, ppcgr, 601, 602, 603, 604,
@@ -841,10 +841,10 @@ case $host in
             # Need -Wc to pass object type flags through to the linker.
             abilist="aix64 $abilist"
             cclist_aix64="gcc xlc"
-            gcc_aix64_cflags="-g -O2 -maix64 -mpowerpc64"
+            gcc_aix64_cflags="-O2 -maix64 -mpowerpc64"
             gcc_aix64_cflags_optlist="cpu"
 	    gcc_aix64_ldflags="-Wc,-maix64"
-            xlc_aix64_cflags="-g -O2 -q64 -qtune=pwr3 -qmaxmem=20000"
+            xlc_aix64_cflags="-O2 -q64 -qtune=pwr3 -qmaxmem=20000"
 	    xlc_aix64_ldflags="-Wc,-q64"
             # Must indicate object type to ar and nm
 	    ar_aix64_flags="-X64"
@@ -879,7 +879,7 @@ case $host in
     case $host in
     *-*-aix*)
       cclist="gcc xlc"
-      xlc_cflags="-g -O2 -qarch=pwr -qmaxmem=20000"
+      xlc_cflags="-O2 -qarch=pwr -qmaxmem=20000"
       ;;
     esac
     ;;
@@ -898,7 +898,7 @@ case $host in
 
   # IBM s/370 and similar
   [s3[6-9]0*-*-*])
-    gcc_cflags="-g -O2 $fomit_frame_pointer"
+    gcc_cflags="-O2 $fomit_frame_pointer"
     path="s390"
     extra_functions="udiv_w_sdiv"
     ;;
@@ -932,9 +932,9 @@ case $host in
     #
     case $host_cpu in
       sparc64 | sparcv9* | ultrasparc*)
-        gcc_cflags="-g -O2 -Wa,-xarch=v8plus" ;;
+        gcc_cflags="-O2 -Wa,-xarch=v8plus" ;;
       *)
-        gcc_cflags="-g -O2" ;;
+        gcc_cflags="-O2" ;;
     esac
     gcc_cflags_optlist="cpu"
 
@@ -1016,7 +1016,7 @@ case $host in
             abilist="64 32"
             path_64="sparc64"
             cclist_64="gcc cc"
-            gcc_64_cflags="-g -O2 -m64 -mptr64 -Wa,-xarch=v9"
+            gcc_64_cflags="-O2 -m64 -mptr64"
             gcc_64_ldflags="-Wc,-m64"
             gcc_64_cflags_optlist="cpu"
 
@@ -1039,7 +1039,7 @@ case $host in
             abilist="64"
             extra_functions=
             path="sparc64"
-            gcc_cflags="-g -O2"
+            gcc_cflags="-O2"
             cyclecounter_size=2
             ;;
         esac
@@ -1063,7 +1063,7 @@ case $host in
     # (config/vax/vax.h FRAME_POINTER_REQUIRED=1), so -fomit-frame-pointer
     # will be ignored.
     #
-    gcc_cflags="-g -O2 $fomit_frame_pointer"
+    gcc_cflags="-O2 $fomit_frame_pointer"
     path="vax"
     extra_functions="udiv_w_sdiv"
     ;;
@@ -1074,7 +1074,7 @@ case $host in
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_x86)
     # Rumour has it gcc -O2 used to give worse register allocation than just
     # -O, but lets assume that's no longer true.
-    gcc_cflags="-g -O2 $fomit_frame_pointer"
+    gcc_cflags="-O2 $fomit_frame_pointer"
     GMP_INCLUDE_MPN(x86/x86-defs.m4)
     extra_functions="udiv umul"
     CALLING_CONVENTIONS_OBJS='x86call.lo x86check$U.lo'
