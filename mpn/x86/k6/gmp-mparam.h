@@ -1,6 +1,6 @@
 /* gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright (C) 1991, 1993, 1994 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,16 +26,21 @@ MA 02111-1307, USA. */
 #define BITS_PER_SHORTINT 16
 #define BITS_PER_CHAR 8
 
-/* A fairly definite crossover point. */
-#ifndef KARATSUBA_MUL_THRESHOLD
-#define KARATSUBA_MUL_THRESHOLD 19
-#endif
-
-/* Basecase and karatsuba about equal on sizes 18 to 21.
-   Bias choice higher since the basecase is smaller code. */
-#ifndef KARATSUBA_SQR_THRESHOLD
-#define KARATSUBA_SQR_THRESHOLD 22
-#endif
 
 #define UMUL_TIME   3   /* cycles */
 #define UDIV_TIME   20  /* cycles */
+
+
+#ifndef KARATSUBA_MUL_THRESHOLD
+#define KARATSUBA_MUL_THRESHOLD   19
+#endif
+#ifndef TOOM3_MUL_THRESHOLD
+#define TOOM3_MUL_THRESHOLD      129
+#endif
+
+#ifndef KARATSUBA_SQR_THRESHOLD
+#define KARATSUBA_SQR_THRESHOLD   22
+#endif
+#ifndef TOOM3_SQR_THRESHOLD
+#define TOOM3_SQR_THRESHOLD      141
+#endif
