@@ -139,32 +139,32 @@ long __MPN(count_leading_zeros) ();
 #endif /* LONGLONG_STANDALONE */
 #endif /* __alpha */
 
-#if defined (_CRAYIEEE) && W_TYPE_SIZE == 64
-/* Cray T90/ieee, T3D, and T3E */
+#if defined (_CRAY) && W_TYPE_SIZE == 64
 #include <intrinsics.h>
+#define UDIV_PREINV_ALWAYS  1
+#define UDIV_NEEDS_NORMALIZATION 1
+#define UDIV_TIME 220
+long __MPN(count_leading_zeros) ();
+#define count_leading_zeros(count, x) \
+  ((count) = _leadz ((UWtype) (x)))
+#if defined (_CRAYIEEE)		/* I.e., Cray T90/ieee, T3D, and T3E */
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     UDItype __m0 = (m0), __m1 = (m1);					\
     (ph) = _int_mult_upper (m0, m1);					\
     (pl) = __m0 * __m1;							\
   } while (0)
-#if defined (_CRAYMPP)
-/* T3D and T3E alpha-based machines */
+#if defined (_CRAYMPP)		/* I.e., T3D and T3E alpha-based machines */
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { UDItype __di;							\
     __di = __MPN(invert_limb) (d);					\
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
-#define UDIV_PREINV_ALWAYS  1
-#define UDIV_NEEDS_NORMALIZATION 1
-#define UDIV_TIME 220
-long __MPN(count_leading_zeros) ();
-#define count_leading_zeros(count, x) \
-  ((count) = __MPN(count_leading_zeros) (x))
 #endif /* LONGLONG_STANDALONE */
 #endif /* _CRAYMPP */
 #endif /* _CRAYIEEE */
+#endif /* _CRAY */
 
 #if defined (__hppa) && W_TYPE_SIZE == 64
 /* We put the result pointer parameter last here, since it makes passing
