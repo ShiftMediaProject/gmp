@@ -127,7 +127,7 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d \
-  t-misc t-fits t-get_si t-int_p t-trunc
+  t-cmp_si t-fits t-get_si t-gsprec t-int_p t-set_si t-trunc
 
 TESTS = $(check_PROGRAMS)
 subdir = tests/mpf
@@ -136,8 +136,9 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 check_PROGRAMS = t-add$(EXEEXT) t-sub$(EXEEXT) t-conv$(EXEEXT) \
 	t-sqrt$(EXEEXT) t-muldiv$(EXEEXT) t-dm2exp$(EXEEXT) \
-	reuse$(EXEEXT) t-get_d$(EXEEXT) t-misc$(EXEEXT) t-fits$(EXEEXT) \
-	t-get_si$(EXEEXT) t-int_p$(EXEEXT) t-trunc$(EXEEXT)
+	reuse$(EXEEXT) t-get_d$(EXEEXT) t-cmp_si$(EXEEXT) \
+	t-fits$(EXEEXT) t-get_si$(EXEEXT) t-gsprec$(EXEEXT) \
+	t-int_p$(EXEEXT) t-set_si$(EXEEXT) t-trunc$(EXEEXT)
 reuse_SOURCES = reuse.c
 reuse_OBJECTS = reuse$U.$(OBJEXT)
 reuse_LDADD = $(LDADD)
@@ -150,6 +151,12 @@ t_add_LDADD = $(LDADD)
 t_add_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_add_LDFLAGS =
+t_cmp_si_SOURCES = t-cmp_si.c
+t_cmp_si_OBJECTS = t-cmp_si$U.$(OBJEXT)
+t_cmp_si_LDADD = $(LDADD)
+t_cmp_si_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_cmp_si_LDFLAGS =
 t_conv_SOURCES = t-conv.c
 t_conv_OBJECTS = t-conv$U.$(OBJEXT)
 t_conv_LDADD = $(LDADD)
@@ -180,24 +187,30 @@ t_get_si_LDADD = $(LDADD)
 t_get_si_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_get_si_LDFLAGS =
+t_gsprec_SOURCES = t-gsprec.c
+t_gsprec_OBJECTS = t-gsprec$U.$(OBJEXT)
+t_gsprec_LDADD = $(LDADD)
+t_gsprec_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_gsprec_LDFLAGS =
 t_int_p_SOURCES = t-int_p.c
 t_int_p_OBJECTS = t-int_p$U.$(OBJEXT)
 t_int_p_LDADD = $(LDADD)
 t_int_p_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_int_p_LDFLAGS =
-t_misc_SOURCES = t-misc.c
-t_misc_OBJECTS = t-misc$U.$(OBJEXT)
-t_misc_LDADD = $(LDADD)
-t_misc_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(top_builddir)/libgmp.la
-t_misc_LDFLAGS =
 t_muldiv_SOURCES = t-muldiv.c
 t_muldiv_OBJECTS = t-muldiv$U.$(OBJEXT)
 t_muldiv_LDADD = $(LDADD)
 t_muldiv_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_muldiv_LDFLAGS =
+t_set_si_SOURCES = t-set_si.c
+t_set_si_OBJECTS = t-set_si$U.$(OBJEXT)
+t_set_si_LDADD = $(LDADD)
+t_set_si_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_set_si_LDFLAGS =
 t_sqrt_SOURCES = t-sqrt.c
 t_sqrt_OBJECTS = t-sqrt$U.$(OBJEXT)
 t_sqrt_LDADD = $(LDADD)
@@ -231,11 +244,11 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = reuse.c t-add.c t-conv.c t-dm2exp.c t-fits.c t-get_d.c \
-	t-get_si.c t-int_p.c t-misc.c t-muldiv.c t-sqrt.c t-sub.c \
-	t-trunc.c
+DIST_SOURCES = reuse.c t-add.c t-cmp_si.c t-conv.c t-dm2exp.c t-fits.c \
+	t-get_d.c t-get_si.c t-gsprec.c t-int_p.c t-muldiv.c t-set_si.c \
+	t-sqrt.c t-sub.c t-trunc.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = reuse.c t-add.c t-conv.c t-dm2exp.c t-fits.c t-get_d.c t-get_si.c t-int_p.c t-misc.c t-muldiv.c t-sqrt.c t-sub.c t-trunc.c
+SOURCES = reuse.c t-add.c t-cmp_si.c t-conv.c t-dm2exp.c t-fits.c t-get_d.c t-get_si.c t-gsprec.c t-int_p.c t-muldiv.c t-set_si.c t-sqrt.c t-sub.c t-trunc.c
 
 all: all-am
 
@@ -257,6 +270,9 @@ reuse$(EXEEXT): $(reuse_OBJECTS) $(reuse_DEPENDENCIES)
 t-add$(EXEEXT): $(t_add_OBJECTS) $(t_add_DEPENDENCIES)
 	@rm -f t-add$(EXEEXT)
 	$(LINK) $(t_add_LDFLAGS) $(t_add_OBJECTS) $(t_add_LDADD) $(LIBS)
+t-cmp_si$(EXEEXT): $(t_cmp_si_OBJECTS) $(t_cmp_si_DEPENDENCIES)
+	@rm -f t-cmp_si$(EXEEXT)
+	$(LINK) $(t_cmp_si_LDFLAGS) $(t_cmp_si_OBJECTS) $(t_cmp_si_LDADD) $(LIBS)
 t-conv$(EXEEXT): $(t_conv_OBJECTS) $(t_conv_DEPENDENCIES)
 	@rm -f t-conv$(EXEEXT)
 	$(LINK) $(t_conv_LDFLAGS) $(t_conv_OBJECTS) $(t_conv_LDADD) $(LIBS)
@@ -272,15 +288,18 @@ t-get_d$(EXEEXT): $(t_get_d_OBJECTS) $(t_get_d_DEPENDENCIES)
 t-get_si$(EXEEXT): $(t_get_si_OBJECTS) $(t_get_si_DEPENDENCIES)
 	@rm -f t-get_si$(EXEEXT)
 	$(LINK) $(t_get_si_LDFLAGS) $(t_get_si_OBJECTS) $(t_get_si_LDADD) $(LIBS)
+t-gsprec$(EXEEXT): $(t_gsprec_OBJECTS) $(t_gsprec_DEPENDENCIES)
+	@rm -f t-gsprec$(EXEEXT)
+	$(LINK) $(t_gsprec_LDFLAGS) $(t_gsprec_OBJECTS) $(t_gsprec_LDADD) $(LIBS)
 t-int_p$(EXEEXT): $(t_int_p_OBJECTS) $(t_int_p_DEPENDENCIES)
 	@rm -f t-int_p$(EXEEXT)
 	$(LINK) $(t_int_p_LDFLAGS) $(t_int_p_OBJECTS) $(t_int_p_LDADD) $(LIBS)
-t-misc$(EXEEXT): $(t_misc_OBJECTS) $(t_misc_DEPENDENCIES)
-	@rm -f t-misc$(EXEEXT)
-	$(LINK) $(t_misc_LDFLAGS) $(t_misc_OBJECTS) $(t_misc_LDADD) $(LIBS)
 t-muldiv$(EXEEXT): $(t_muldiv_OBJECTS) $(t_muldiv_DEPENDENCIES)
 	@rm -f t-muldiv$(EXEEXT)
 	$(LINK) $(t_muldiv_LDFLAGS) $(t_muldiv_OBJECTS) $(t_muldiv_LDADD) $(LIBS)
+t-set_si$(EXEEXT): $(t_set_si_OBJECTS) $(t_set_si_DEPENDENCIES)
+	@rm -f t-set_si$(EXEEXT)
+	$(LINK) $(t_set_si_LDFLAGS) $(t_set_si_OBJECTS) $(t_set_si_LDADD) $(LIBS)
 t-sqrt$(EXEEXT): $(t_sqrt_OBJECTS) $(t_sqrt_DEPENDENCIES)
 	@rm -f t-sqrt$(EXEEXT)
 	$(LINK) $(t_sqrt_LDFLAGS) $(t_sqrt_OBJECTS) $(t_sqrt_LDADD) $(LIBS)
@@ -325,6 +344,8 @@ reuse_.c: reuse.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/reuse.c; then echo $(srcdir)/reuse.c; else echo reuse.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > reuse_.c || rm -f reuse_.c
 t-add_.c: t-add.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-add.c; then echo $(srcdir)/t-add.c; else echo t-add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-add_.c || rm -f t-add_.c
+t-cmp_si_.c: t-cmp_si.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-cmp_si.c; then echo $(srcdir)/t-cmp_si.c; else echo t-cmp_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-cmp_si_.c || rm -f t-cmp_si_.c
 t-conv_.c: t-conv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-conv.c; then echo $(srcdir)/t-conv.c; else echo t-conv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-conv_.c || rm -f t-conv_.c
 t-dm2exp_.c: t-dm2exp.c $(ANSI2KNR)
@@ -335,25 +356,28 @@ t-get_d_.c: t-get_d.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-get_d.c; then echo $(srcdir)/t-get_d.c; else echo t-get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-get_d_.c || rm -f t-get_d_.c
 t-get_si_.c: t-get_si.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-get_si.c; then echo $(srcdir)/t-get_si.c; else echo t-get_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-get_si_.c || rm -f t-get_si_.c
+t-gsprec_.c: t-gsprec.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gsprec.c; then echo $(srcdir)/t-gsprec.c; else echo t-gsprec.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-gsprec_.c || rm -f t-gsprec_.c
 t-int_p_.c: t-int_p.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-int_p.c; then echo $(srcdir)/t-int_p.c; else echo t-int_p.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-int_p_.c || rm -f t-int_p_.c
-t-misc_.c: t-misc.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-misc.c; then echo $(srcdir)/t-misc.c; else echo t-misc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-misc_.c || rm -f t-misc_.c
 t-muldiv_.c: t-muldiv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-muldiv.c; then echo $(srcdir)/t-muldiv.c; else echo t-muldiv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-muldiv_.c || rm -f t-muldiv_.c
+t-set_si_.c: t-set_si.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-set_si.c; then echo $(srcdir)/t-set_si.c; else echo t-set_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-set_si_.c || rm -f t-set_si_.c
 t-sqrt_.c: t-sqrt.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sqrt.c; then echo $(srcdir)/t-sqrt.c; else echo t-sqrt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-sqrt_.c || rm -f t-sqrt_.c
 t-sub_.c: t-sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sub.c; then echo $(srcdir)/t-sub.c; else echo t-sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-sub_.c || rm -f t-sub_.c
 t-trunc_.c: t-trunc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-trunc.c; then echo $(srcdir)/t-trunc.c; else echo t-trunc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-trunc_.c || rm -f t-trunc_.c
-reuse_.$(OBJEXT) reuse_.lo t-add_.$(OBJEXT) t-add_.lo t-conv_.$(OBJEXT) \
-t-conv_.lo t-dm2exp_.$(OBJEXT) t-dm2exp_.lo t-fits_.$(OBJEXT) \
-t-fits_.lo t-get_d_.$(OBJEXT) t-get_d_.lo t-get_si_.$(OBJEXT) \
-t-get_si_.lo t-int_p_.$(OBJEXT) t-int_p_.lo t-misc_.$(OBJEXT) \
-t-misc_.lo t-muldiv_.$(OBJEXT) t-muldiv_.lo t-sqrt_.$(OBJEXT) \
-t-sqrt_.lo t-sub_.$(OBJEXT) t-sub_.lo t-trunc_.$(OBJEXT) t-trunc_.lo : \
-$(ANSI2KNR)
+reuse_.$(OBJEXT) reuse_.lo t-add_.$(OBJEXT) t-add_.lo \
+t-cmp_si_.$(OBJEXT) t-cmp_si_.lo t-conv_.$(OBJEXT) t-conv_.lo \
+t-dm2exp_.$(OBJEXT) t-dm2exp_.lo t-fits_.$(OBJEXT) t-fits_.lo \
+t-get_d_.$(OBJEXT) t-get_d_.lo t-get_si_.$(OBJEXT) t-get_si_.lo \
+t-gsprec_.$(OBJEXT) t-gsprec_.lo t-int_p_.$(OBJEXT) t-int_p_.lo \
+t-muldiv_.$(OBJEXT) t-muldiv_.lo t-set_si_.$(OBJEXT) t-set_si_.lo \
+t-sqrt_.$(OBJEXT) t-sqrt_.lo t-sub_.$(OBJEXT) t-sub_.lo \
+t-trunc_.$(OBJEXT) t-trunc_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
