@@ -168,7 +168,12 @@ analyze_dat (int i, int final)
       x += dat[j].d;
 
   if (option_trace >= 2 && final)
-    printf ("i=%d size=%ld  first x %.4f\n", i, dat[j].size, x);
+    {
+      printf ("\n");
+      printf ("x is the sum of the badness from setting thresh at given size\n");
+      printf ("  (minimum x is sought)\n");
+      printf ("i=%d size=%ld  first x=%.4f\n", i, dat[j].size, x);
+    }
 
   min_x = x;
   min_j = 0;
@@ -223,6 +228,12 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
       since_positive = 0;
       since_thresh_change = 0;
       thresh_idx = 0;
+
+      if (option_trace >= 2)
+        {
+          printf ("             algorithm-A  algorithm-B   ratio  possible\n");
+          printf ("              (seconds)    (seconds)    diff    thresh\n");
+        }
 
       for ( ; s.size < MAX_SIZE; 
             s.size += MAX ((mp_size_t) floor (s.size * STEP_FACTOR), 1))
