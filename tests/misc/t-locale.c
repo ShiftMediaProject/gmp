@@ -78,7 +78,7 @@ void
 check_input (void)
 {
   static char *point[] = {
-    ".", ",", "xy", "xyz", "xyz***"
+    ".", ",", "WU", "STR", "ZTV***"
   };
 
   static const struct {
@@ -99,7 +99,7 @@ check_input (void)
     { "1%s5e1", 15.0 },
   };
 
-  int     i, j, neg;
+  int     i, j, neg, ret;
   char    str[128];
   mpf_t   f;
   double  d;
@@ -140,11 +140,13 @@ check_input (void)
                 }
 
               mpf_set_d (f, 123.0);
-              if (gmp_sscanf (str, "%Ff", f) != 1)
+              ret = gmp_sscanf (str, "%Ff", f);
+              if (ret != 1)
                 {
                   printf ("gmp_sscanf wrong return value\n");
                   printf ("  point  %s\n", decimal_point);
                   printf ("  str    %s\n", str);
+                  printf ("  ret    %d\n", ret);
                   abort ();
                 }
               if (mpf_cmp_d (f, d) != 0)
