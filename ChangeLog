@@ -19,6 +19,18 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-06  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (MPN_COPY_INCR): Prepend local variable by `__'.
+	(MPN_COPY_DECR): Likewise.
+
+2001-11-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/powm.c: Call mpn functions, not mpz functions, for computation
+	mod m.  Streamline allocations to use a mixture of stack allocation and
+	heap allocation.  Add currently disabled phi(m) exponent reduction
+	code.  Misc optimizations and cleanups.
+
 2001-11-05  Kevin Ryde  <kevin@swox.se>
 
 	* mpq/inp_str.c: Remove unused variable "ret".
