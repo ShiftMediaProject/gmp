@@ -168,13 +168,13 @@ dnl  GMP_SUBST_CHECK_FUNCS(func,...)
 dnl  ------------------------------
 dnl  Setup an AC_SUBST of HAVE_FUNC_01 for each argument.
 
-AC_DEFUN(GMP_SUBST_CHECK_FUNCS,
+AC_DEFUN([GMP_SUBST_CHECK_FUNCS],
 [m4_if([$1],,,
 [_GMP_SUBST_CHECK_FUNCS(ac_cv_func_[$1],HAVE_[]m4_translit([$1],[a-z],[A-Z])_01)
 GMP_SUBST_CHECK_FUNCS(m4_shift($@))])])
 
 dnl  Called: _GMP_SUBST_CHECK_FUNCS(cachevar,substvar)
-AC_DEFUN(_GMP_SUBST_CHECK_FUNCS,
+AC_DEFUN([_GMP_SUBST_CHECK_FUNCS],
 [case $[$1] in
 yes) AC_SUBST([$2],1) ;;
 no)  [$2]=0 ;;
@@ -186,14 +186,14 @@ dnl  GMP_SUBST_CHECK_HEADERS(foo.h,...)
 dnl  ----------------------------------
 dnl  Setup an AC_SUBST of HAVE_FOO_H_01 for each argument.
 
-AC_DEFUN(GMP_SUBST_CHECK_HEADERS,
+AC_DEFUN([GMP_SUBST_CHECK_HEADERS],
 [m4_if([$1],,,
 [_GMP_SUBST_CHECK_HEADERS(ac_cv_header_[]m4_translit([$1],[./],[__]),
 HAVE_[]m4_translit([$1],[a-z./],[A-Z__])_01)
 GMP_SUBST_CHECK_HEADERS(m4_shift($@))])])
 
 dnl  Called: _GMP_SUBST_CHECK_HEADERS(cachevar,substvar)
-AC_DEFUN(_GMP_SUBST_CHECK_HEADERS,
+AC_DEFUN([_GMP_SUBST_CHECK_HEADERS],
 [case $[$1] in
 yes) AC_SUBST([$2],1) ;;
 no)  [$2]=0 ;;
@@ -216,12 +216,12 @@ dnl
 dnl  would test whether $major.$minor.$subminor is greater than or equal to
 dnl  10.3.1.
 
-AC_DEFUN(GMP_COMPARE_GE,
+AC_DEFUN([GMP_COMPARE_GE],
 [gmp_compare_ge=no
 GMP_COMPARE_GE_INTERNAL($@)
 ])
 
-AC_DEFUN(GMP_COMPARE_GE_INTERNAL,
+AC_DEFUN([GMP_COMPARE_GE_INTERNAL],
 [ifelse(len([$3]),0,
 [if test -n "$1" && test "$1" -ge $2; then
   gmp_compare_ge=yes
@@ -263,7 +263,7 @@ dnl  enough to have two same-named objects in separate pieces, as happens
 dnl  for instance to random.o (and others) on vax-dec-ultrix4.5.  Naturally
 dnl  a user-selected $AR_FLAGS is left unchanged.
 
-AC_DEFUN(GMP_PROG_AR,
+AC_DEFUN([GMP_PROG_AR],
 [dnl  Want to establish $AR before libtool initialization.
 AC_BEFORE([$0],[AC_PROG_LIBTOOL])
 gmp_user_AR=$AR
@@ -295,7 +295,7 @@ dnl  good enough.
 dnl 
 dnl  See mpn/asm-defs.m4 for details on the known bad m4s.
 
-AC_DEFUN(GMP_PROG_M4,
+AC_DEFUN([GMP_PROG_M4],
 [AC_ARG_VAR(M4,[m4 macro processor])
 AC_CACHE_CHECK([for suitable m4],
                 gmp_cv_prog_m4,
@@ -363,7 +363,7 @@ dnl
 dnl  Enhancement: Maybe this could be in GMP_PROG_M4, and attempt to prefer
 dnl  an m4 with a working m4wrap, if it can be found.
 
-AC_DEFUN(GMP_M4_M4WRAP_SPURIOUS,
+AC_DEFUN([GMP_M4_M4WRAP_SPURIOUS],
 [AC_REQUIRE([GMP_PROG_M4])
 AC_CACHE_CHECK([if m4wrap produces spurious output],
                gmp_cv_m4_m4wrap_spurious,
@@ -407,7 +407,7 @@ dnl  much trouble over detecting a broken set of tools.  And libtool doesn't
 dnl  do anything at all for say ranlib or strip.  So for now we're inclined
 dnl  to just demand that the user provides a coherent environment.
 
-AC_DEFUN(GMP_PROG_NM,
+AC_DEFUN([GMP_PROG_NM],
 [dnl  Make sure we're the first to call AC_PROG_NM, so our extra flags are
 dnl   used by everyone.
 AC_BEFORE([$0],[AC_PROG_NM])
@@ -464,7 +464,7 @@ dnl  compiles.  Although this is probably a bit slower than one test
 dnl  program, it makes it easy to indicate the problem in AC_MSG_RESULT,
 dnl  hence giving the user a clue about why we rejected the compiler.
 
-AC_DEFUN(GMP_PROG_CC_WORKS,
+AC_DEFUN([GMP_PROG_CC_WORKS],
 [AC_MSG_CHECKING([compiler $1])
 gmp_prog_cc_works=yes
 
@@ -602,7 +602,7 @@ esac
 
 dnl  Called: GMP_PROG_CC_WORKS_PART(CC+CFLAGS,FAIL-MESSAGE [,CODE])
 dnl
-AC_DEFUN(GMP_PROG_CC_WORKS_PART,
+AC_DEFUN([GMP_PROG_CC_WORKS_PART],
 [GMP_PROG_CC_WORKS_PART_TEST([$1],[$2],[$3],
   [],
   gmp_prog_cc_works="no[]m4_if([$2],,,[[, ]])[$2]",
@@ -612,7 +612,7 @@ AC_DEFUN(GMP_PROG_CC_WORKS_PART,
 dnl  Called: GMP_PROG_CC_WORKS_PART_TEST(CC+CFLAGS,TITLE,[CODE],
 dnl            [ACTION-GOOD],[ACTION-BAD][ACTION-NORUN])
 dnl
-AC_DEFUN(GMP_PROG_CC_WORKS_PART_TEST,
+AC_DEFUN([GMP_PROG_CC_WORKS_PART_TEST],
 [if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 [$3]
@@ -658,7 +658,7 @@ dnl
 dnl  This test is designed to be run repeatedly with different cc+cflags
 dnl  selections, so the result is not cached.
 
-AC_DEFUN(GMP_PROG_CC_WORKS_LONGLONG,
+AC_DEFUN([GMP_PROG_CC_WORKS_LONGLONG],
 [AC_MSG_CHECKING([compiler $1 has long long])
 cat >conftest.c <<EOF
 long long  foo;
@@ -698,7 +698,7 @@ dnl  condition test is false comes from autoconf AC_CHECK_SIZEOF.  The cast
 dnl  to "long" in the array dimension also follows autoconf, apparently it's
 dnl  a workaround for a HP compiler bug.
 
-AC_DEFUN(GMP_C_TEST_SIZEOF,
+AC_DEFUN([GMP_C_TEST_SIZEOF],
 [echo "configure: testlist $2" >&AC_FD_CC
 [gmp_sizeof_type=`echo "$2" | sed 's/sizeof-\([a-z]*\).*/\1/'`]
 [gmp_sizeof_want=`echo "$2" | sed 's/sizeof-[a-z]*-\([0-9]*\).*/\1/'`]
@@ -735,7 +735,7 @@ dnl  This test is the same as autoconf _AC_LANG_COMPILER_GNU, but doesn't
 dnl  cache the result.  The same "ifndef" style test is used, to avoid
 dnl  problems with syntax checking cpp's used on NeXT and Apple systems.
 
-AC_DEFUN(GMP_PROG_CC_IS_GNU,
+AC_DEFUN([GMP_PROG_CC_IS_GNU],
 [cat >conftest.c <<EOF
 #ifndef __GNUC__
   choke me
@@ -762,7 +762,7 @@ dnl  There doesn't seem to be a preprocessor symbol to test for this, or if
 dnl  there is one then it's well hidden in xlc 3.1 on AIX 4.3, so just grep
 dnl  the man page printed when xlc is invoked with no arguments.
 
-AC_DEFUN(GMP_PROG_CC_IS_XLC,
+AC_DEFUN([GMP_PROG_CC_IS_XLC],
 [gmp_command="$1 2>&1 | grep xlc >/dev/null"
 if AC_TRY_EVAL(gmp_command); then
   AC_MSG_CHECKING([whether $1 is xlc])
@@ -781,7 +781,7 @@ dnl
 dnl  This test might be repeated for different compilers, so the result is
 dnl  not cached.
 
-AC_DEFUN(GMP_HPC_HPPA_2_0,
+AC_DEFUN([GMP_HPC_HPPA_2_0],
 [AC_MSG_CHECKING([whether HP compiler $1 is good for 64-bits])
 # Bad compiler output:
 #   ccom: HP92453-01 G.10.32.05 HP C Compiler
@@ -822,7 +822,7 @@ dnl  There's only a couple of places gmp cares about this, one is the
 dnl  size==1 case in mpn/generic/mode1o.c, and this shows up in
 dnl  tests/mpz/t-jac.c as a wrong result from mpz_kronecker_ui.
 
-AC_DEFUN(GMP_GCC_ARM_UMODSI,
+AC_DEFUN([GMP_GCC_ARM_UMODSI],
 [AC_MSG_CHECKING([whether ARM gcc unsigned division works])
 tmp_version=`$1 --version`
 echo "$tmp_version" >&AC_FD_CC
@@ -847,7 +847,7 @@ dnl
 dnl  gcc 2.95 accepts -mabi=32 but it only works on irix5, on irix6 it gives
 dnl  "cc1: The -mabi=32 support does not work yet".
 
-AC_DEFUN(GMP_GCC_MIPS_O32,
+AC_DEFUN([GMP_GCC_MIPS_O32],
 [AC_MSG_CHECKING([whether gcc supports o32])
 echo 'int x;' >conftest.c
 echo "$1 -mabi=32 -c conftest.c" >&AC_FD_CC
@@ -882,7 +882,7 @@ dnl  (as of 3.0 at least) only gives a warning, not an actual error, and we
 dnl  watch for that and decide against the option in that case, to avoid
 dnl  confusing the user.
 
-AC_DEFUN(GMP_GCC_NO_CPP_PRECOMP,
+AC_DEFUN([GMP_GCC_NO_CPP_PRECOMP],
 [if test "$ccbase" = gcc; then
   AC_MSG_CHECKING([compiler $2 $3 -no-cpp-precomp])
   result=no
@@ -917,7 +917,7 @@ dnl  Gcc 3.2.1 was seen generating incorrect code for raw double -> int
 dnl  conversions through a union.  We believe the problem is in all 3.1 and
 dnl  3.2 versions, but that it's fixed in 3.3.
 
-AC_DEFUN(GMP_GCC_PENTIUM4_SSE2,
+AC_DEFUN([GMP_GCC_PENTIUM4_SSE2],
 [AC_MSG_CHECKING([whether gcc is good for sse2])
 case `$1 -dumpversion` in
   [3.[012] | 3.[012].*]) result=no ;;
@@ -942,7 +942,7 @@ dnl
 dnl  This is intended for use on alpha, since only recent versions of gas
 dnl  accept -mev67, but there's nothing here that's alpha specific.
 
-AC_DEFUN(GMP_GCC_WA_MCPU,
+AC_DEFUN([GMP_GCC_WA_MCPU],
 [AC_MSG_CHECKING([assembler $1 $2])
 result=no
 cat >conftest.c <<EOF
@@ -994,7 +994,7 @@ dnl
 dnl  This macro is designed for use while probing for a good compiler, and
 dnl  so doesn't cache it's result.
 
-AC_DEFUN(GMP_GCC_WA_OLDAS,
+AC_DEFUN([GMP_GCC_WA_OLDAS],
 [AC_MSG_CHECKING([for $1 -Wa,-oldas])
 result=no
 cat >conftest.c <<EOF
@@ -1054,7 +1054,7 @@ dnl  still want $CC/$CFLAGS for the link.)  But this test is used before
 dnl  AC_PROG_CC sets $OBJEXT, so we'd need to check for various object file
 dnl  suffixes ourselves.
 
-AC_DEFUN(GMP_OS_X86_XMM,
+AC_DEFUN([GMP_OS_X86_XMM],
 [AC_CACHE_CHECK([whether the operating system supports XMM registers],
 		gmp_cv_os_x86_xmm,
 [if test "$build" = "$host"; then
@@ -1123,7 +1123,7 @@ dnl  AC_EGREP_CPP will be expanded at the top-level, ie. for all hosts not
 dnl  merely c90 and t90.  In autoconf 2.57 for instance this means
 dnl  AC_PROG_EGREP, which is needed by various other macros.
 
-AC_DEFUN(GMP_CRAY_OPTIONS,
+AC_DEFUN([GMP_CRAY_OPTIONS],
 [case $host_cpu in
   c90 | t90)
     AC_EGREP_CPP(yes,
@@ -1150,7 +1150,7 @@ dnl
 dnl  This test is designed to be run for various different compiler and
 dnl  flags combinations, and hence doesn't cache its result.
 
-AC_DEFUN(GMP_HPPA_LEVEL_20,
+AC_DEFUN([GMP_HPPA_LEVEL_20],
 [AC_MSG_CHECKING([$1 assembler knows hppa 2.0])
 result=no
 cat >conftest.s <<EOF
@@ -1190,7 +1190,7 @@ dnl  compiles.  Although this is probably a bit slower than one test
 dnl  program, it makes it easy to indicate the problem in AC_MSG_RESULT,
 dnl  hence giving the user a clue about why we rejected the compiler.
 
-AC_DEFUN(GMP_PROG_CXX_WORKS,
+AC_DEFUN([GMP_PROG_CXX_WORKS],
 [AC_MSG_CHECKING([C++ compiler $1])
 gmp_prog_cxx_works=yes
 
@@ -1226,7 +1226,7 @@ esac
 
 dnl  Called: GMP_PROG_CXX_WORKS_PART(CXX+CXXFLAGS, FAIL-MESSAGE [,CODE])
 dnl
-AC_DEFUN(GMP_PROG_CXX_WORKS_PART,
+AC_DEFUN([GMP_PROG_CXX_WORKS_PART],
 [if test "$gmp_prog_cxx_works" = yes; then
   cat >conftest.cc <<EOF
 [$3]
@@ -1262,7 +1262,7 @@ dnl
 dnl  FIXME: The generated config.m4 doesn't get recreated by config.status.
 dnl  Maybe the relevant "echo"s should go through AC_CONFIG_COMMANDS.
 
-AC_DEFUN(GMP_INIT,
+AC_DEFUN([GMP_INIT],
 [ifelse([$1], , gmp_configm4=config.m4, gmp_configm4="[$1]")
 gmp_tmpconfigm4=cnfm4.tmp
 gmp_tmpconfigm4i=cnfm4i.tmp
@@ -1279,7 +1279,7 @@ esac
 echo ["define(<CONFIG_TOP_SRCDIR>,<\`$tmp'>)"] >>$gmp_tmpconfigm4
 
 # All CPUs use asm-defs.m4 
-echo ["include(CONFIG_TOP_SRCDIR\`/mpn/asm-defs.m4')"] >>$gmp_tmpconfigm4i
+echo ["include][(CONFIG_TOP_SRCDIR\`/mpn/asm-defs.m4')"] >>$gmp_tmpconfigm4i
 ])
 
 
@@ -1300,7 +1300,7 @@ dnl  work, since it'd interpret parentheses and quotes in dnl comments, and
 dnl  having a whole file as a macro argument would overflow the string space
 dnl  on BSD m4.
 
-AC_DEFUN(GMP_FINISH,
+AC_DEFUN([GMP_FINISH],
 [AC_REQUIRE([GMP_INIT])
 echo "creating $gmp_configm4"
 echo ["d""nl $gmp_configm4.  Generated automatically by configure."] > $gmp_configm4
@@ -1334,7 +1334,7 @@ dnl
 dnl      GMP_INCLUDE_MPN(`x86/x86-defs.m4')
 dnl
 
-AC_DEFUN(GMP_INCLUDE_MPN,
+AC_DEFUN([GMP_INCLUDE_MPN],
 [AC_REQUIRE([GMP_INIT])
 echo ["include_mpn(\`$1')"] >> $gmp_tmpconfigm4i
 ])
@@ -1350,7 +1350,7 @@ dnl  variables will get expanded.  Don't forget to invoke GMP_FINISH to
 dnl  create file config.m4.  config.m4 uses `<' and '>' as quote characters
 dnl  for all defines.
 
-AC_DEFUN(GMP_DEFINE, 
+AC_DEFUN([GMP_DEFINE], 
 [AC_REQUIRE([GMP_INIT])
 echo ['define(<$1>, <$2>)'] >>ifelse([$3], [POST],
                               $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
@@ -1365,7 +1365,7 @@ dnl  If LOCATION is `POST', the definition will appear after any include()
 dnl  directives inserted by GMP_INCLUDE.  Don't forget to invoke GMP_FINISH
 dnl  to create file config.m4.
 
-AC_DEFUN(GMP_DEFINE_RAW,
+AC_DEFUN([GMP_DEFINE_RAW],
 [AC_REQUIRE([GMP_INIT])
 echo [$1] >> ifelse([$2], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
 ])
@@ -1383,7 +1383,7 @@ dnl
 dnl  This is not unlike AC_TRY_COMPILE, but there's no default includes or
 dnl  anything in "asm-code", everything wanted must be given explicitly.
 
-AC_DEFUN(GMP_TRY_ASSEMBLE,
+AC_DEFUN([GMP_TRY_ASSEMBLE],
 [cat >conftest.s <<EOF
 [$1]
 EOF
@@ -1410,7 +1410,7 @@ dnl  Note that it's necessary to test the empty case first, since HP "as"
 dnl  will accept "somelabel:", and take it to mean a label with a name that
 dnl  happens to end in a colon.
 
-AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
+AC_DEFUN([GMP_ASM_LABEL_SUFFIX],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([for assembler label suffix],
                 gmp_cv_asm_label_suffix,
@@ -1451,7 +1451,7 @@ dnl  The fallback on no underscore is based on the assumption that the world
 dnl  is moving towards non-underscore systems.  There should actually be no
 dnl  good reason for nm to fail though.
 
-AC_DEFUN(GMP_ASM_UNDERSCORE,
+AC_DEFUN([GMP_ASM_UNDERSCORE],
 [AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([if globals are prefixed by underscore], 
                gmp_cv_asm_underscore,
@@ -1501,7 +1501,7 @@ dnl  GMP_ASM_ALIGN_LOG
 dnl  -----------------
 dnl  Is parameter to `.align' logarithmic?
 
-AC_DEFUN(GMP_ASM_ALIGN_LOG,
+AC_DEFUN([GMP_ASM_ALIGN_LOG],
 [AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_BYTE])
 AC_REQUIRE([GMP_ASM_DATA])
@@ -1560,7 +1560,7 @@ dnl
 dnl  The warning from solaris 2.8 is supressed to stop anyone worrying that
 dnl  something might be wrong.
 
-AC_DEFUN(GMP_ASM_ALIGN_FILL_0x90,
+AC_DEFUN([GMP_ASM_ALIGN_FILL_0x90],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
                gmp_cv_asm_align_fill_0x90,
@@ -1589,7 +1589,7 @@ dnl
 dnl  This macro is just to support other configure tests, not any actual asm
 dnl  code.
 
-AC_DEFUN(GMP_ASM_BYTE,
+AC_DEFUN([GMP_ASM_BYTE],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([for assembler byte directive],
@@ -1618,7 +1618,7 @@ dnl  .text - is usual.
 dnl  .code - is needed by the hppa on HP-UX (but ia64 HP-UX uses .text)
 dnl  .csect .text[PR] - is for AIX.
 
-AC_DEFUN(GMP_ASM_TEXT,
+AC_DEFUN([GMP_ASM_TEXT],
 [AC_CACHE_CHECK([how to switch to text section],
                 gmp_cv_asm_text,
 [for i in ".text" ".code" [".csect .text[PR]"]; do
@@ -1640,7 +1640,7 @@ dnl  GMP_ASM_DATA
 dnl  ------------
 dnl  Can we say `.data'?
 
-AC_DEFUN(GMP_ASM_DATA,
+AC_DEFUN([GMP_ASM_DATA],
 [AC_CACHE_CHECK([how to switch to data section],
                 gmp_cv_asm_data,
 [case $host in
@@ -1668,7 +1668,7 @@ dnl  FIXME: gcc on aix generates something like ".csect _foo.ro_c[RO],3"
 dnl  where foo is the object file.  Might need to check for that if we use
 dnl  RODATA there.
 
-AC_DEFUN(GMP_ASM_RODATA,
+AC_DEFUN([GMP_ASM_RODATA],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
@@ -1736,7 +1736,7 @@ dnl
 dnl  "gas" tends to accept .globl everywhere, in addition to .export or
 dnl  .global or whatever the system assembler demands.  
 
-AC_DEFUN(GMP_ASM_GLOBL,
+AC_DEFUN([GMP_ASM_GLOBL],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([for assembler global directive],
                 gmp_cv_asm_globl,
@@ -1754,7 +1754,7 @@ dnl  GMP_ASM_GLOBL_ATTR
 dnl  ------------------
 dnl  Do we need something after `GLOBL symbol'?
 
-AC_DEFUN(GMP_ASM_GLOBL_ATTR,
+AC_DEFUN([GMP_ASM_GLOBL_ATTR],
 [AC_REQUIRE([GMP_ASM_GLOBL])
 AC_CACHE_CHECK([for assembler global directive attribute],
                 gmp_cv_asm_globl_attr,
@@ -1786,7 +1786,7 @@ dnl  routines), and in those circumstances a missing .type isn't fatal,
 dnl  letting the problem go unnoticed.  tests/mpn/t-asmtype.c aims to check
 dnl  for it.
 
-AC_DEFUN(GMP_ASM_TYPE,
+AC_DEFUN([GMP_ASM_TYPE],
 [AC_CACHE_CHECK([for assembler .type directive],
                 gmp_cv_asm_type,
 [gmp_cv_asm_type=
@@ -1808,7 +1808,7 @@ dnl  GMP_ASM_SIZE
 dnl  ------------
 dnl  Can we say `.size'?
 
-AC_DEFUN(GMP_ASM_SIZE,
+AC_DEFUN([GMP_ASM_SIZE],
 [AC_CACHE_CHECK([for assembler .size directive],
                 gmp_cv_asm_size,
 [gmp_cv_asm_size=
@@ -1864,7 +1864,7 @@ dnl
 dnl  On an ELF system, this is (correctly) rejected due to .def, .endef and
 dnl  .scl being invalid, and .type not having enough arguments.
 
-AC_DEFUN(GMP_ASM_COFF_TYPE,
+AC_DEFUN([GMP_ASM_COFF_TYPE],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_GLOBL_ATTR])
@@ -1921,7 +1921,7 @@ dnl
 dnl  HP-UX nm prints an error message (though seems to give a 0 exit) if
 dnl  there's no symbols at all in an object file, hence the use of "dummy".
 
-AC_DEFUN(GMP_ASM_LSYM_PREFIX,
+AC_DEFUN([GMP_ASM_LSYM_PREFIX],
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_PROG_NM])
@@ -1980,7 +1980,7 @@ dnl  FIXME: This test is not right for ia64-*-hpux*.  The directive should
 dnl  be "data4", but the W32 macro is not currently used by the mpn/ia64 asm
 dnl  files.
 
-AC_DEFUN(GMP_ASM_W32,
+AC_DEFUN([GMP_ASM_W32],
 [AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_BYTE])
 AC_REQUIRE([GMP_ASM_GLOBL])
@@ -2064,7 +2064,7 @@ dnl  tests will be reasonably quick and won't give a fatal error, so this
 dnl  arrangement is ok.  AC_LIBTOOL_PROG_COMPILER_PIC does its
 dnl  $lt_prog_compiler_pic setups even for --disable-shared too.
 
-AC_DEFUN(GMP_ASM_X86_GOT_UNDERSCORE,
+AC_DEFUN([GMP_ASM_X86_GOT_UNDERSCORE],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_GLOBL_ATTR])
@@ -2120,7 +2120,7 @@ dnl  2.7 wrongly assemble it to "0f 6f c1" (that being the reverse "movq
 dnl  %mm1, %mm0").  It seems more trouble than it's worth to work around
 dnl  this in the code, so just detect and reject.
 
-AC_DEFUN(GMP_ASM_X86_MMX,
+AC_DEFUN([GMP_ASM_X86_MMX],
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
 		gmp_cv_asm_x86_mmx,
 [GMP_TRY_ASSEMBLE(
@@ -2172,7 +2172,7 @@ fi
 dnl  GMP_ASM_X86_SHLDL_CL
 dnl  --------------------
 
-AC_DEFUN(GMP_ASM_X86_SHLDL_CL,
+AC_DEFUN([GMP_ASM_X86_SHLDL_CL],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler takes cl with shldl],
 		gmp_cv_asm_x86_shldl_cl,
@@ -2199,7 +2199,7 @@ dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
 dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
 dnl  needed at all, at least for just checking instruction syntax.
 
-AC_DEFUN(GMP_ASM_X86_SSE2,
+AC_DEFUN([GMP_ASM_X86_SSE2],
 [AC_CACHE_CHECK([if the assembler knows about SSE2 instructions],
 		gmp_cv_asm_x86_sse2,
 [GMP_TRY_ASSEMBLE(
@@ -2262,7 +2262,7 @@ dnl  Enhancement: Cache the values determined here. But what's the right way
 dnl  to get two variables (mcount_nonpic_reg and mcount_nonpic_call say) set
 dnl  from one block of commands?
 
-AC_DEFUN(GMP_ASM_X86_MCOUNT,
+AC_DEFUN([GMP_ASM_X86_MCOUNT],
 [AC_REQUIRE([AC_ENABLE_SHARED])
 AC_REQUIRE([AC_PROG_LIBTOOL])
 AC_MSG_CHECKING([how to call x86 mcount])
@@ -2335,7 +2335,7 @@ dnl  The test here detects the bad case, and assumes anything else is ok
 dnl  (there are many sensible nop bundles, so it'd be impractical to try to
 dnl  match everything good).
 
-AC_DEFUN(GMP_ASM_IA64_ALIGN_OK,
+AC_DEFUN([GMP_ASM_IA64_ALIGN_OK],
 [AC_CACHE_CHECK([whether assembler .align padding is good],
 		gmp_cv_asm_ia64_align_ok,
 [cat >conftest.awk <<\EOF
@@ -2449,7 +2449,7 @@ dnl  gas 1.92.3 on NetBSD 1.4 needs to be tested with a two operand
 dnl  instruction.  It takes registers without "%", but a single operand
 dnl  "clrl %d0" only gives a warning, not an error.
 
-AC_DEFUN(GMP_ASM_M68K_INSTRUCTION,
+AC_DEFUN([GMP_ASM_M68K_INSTRUCTION],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([assembler instruction and register style],
 		gmp_cv_asm_m68k_instruction,
@@ -2480,7 +2480,7 @@ GMP_DEFINE_RAW(["define(<WANT_DOT_SIZE>, <\`$want_dot_size'>)"])
 dnl  GMP_ASM_M68K_ADDRESSING
 dnl  -----------------------
 
-AC_DEFUN(GMP_ASM_M68K_ADDRESSING,
+AC_DEFUN([GMP_ASM_M68K_ADDRESSING],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_M68K_INSTRUCTION])
 AC_CACHE_CHECK([assembler addressing style],
@@ -2517,7 +2517,7 @@ dnl  displacement only as big as it needs to be, whereas "bra" is always
 dnl  16-bits.  This applies to the conditional branches "bcc" etc too.
 dnl  However "dbcc" etc on gas are already only as big as they need to be.
 
-AC_DEFUN(GMP_ASM_M68K_BRANCHES,
+AC_DEFUN([GMP_ASM_M68K_BRANCHES],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([assembler shortest branches],
 		gmp_cv_asm_m68k_branches,
@@ -2554,7 +2554,7 @@ dnl  On Darwin "cc -static" is non-PIC with syntax "ha16(_foo)", but that's
 dnl  apparently only for use in the kernel, which we're not attempting to
 dnl  target at the moment, so don't look for that.
 
-AC_DEFUN(GMP_ASM_POWERPC_PIC_ALWAYS,
+AC_DEFUN([GMP_ASM_POWERPC_PIC_ALWAYS],
 [AC_REQUIRE([AC_PROG_CC])
 AC_CACHE_CHECK([whether compiler output is PIC by default],
                gmp_cv_asm_powerpc_pic,
@@ -2588,7 +2588,7 @@ dnl
 dnl  See also mpn/powerpc32/powerpc-defs.m4 which uses the result of this
 dnl  test.
 
-AC_DEFUN(GMP_ASM_POWERPC_R_REGISTERS,
+AC_DEFUN([GMP_ASM_POWERPC_R_REGISTERS],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler needs r on registers],
                gmp_cv_asm_powerpc_r_registers,
@@ -2613,7 +2613,7 @@ dnl  Old versions of solaris "as" don't.
 dnl
 dnl  See also mpn/sparc32/sparc-defs.m4 which uses the result of this test.
 
-AC_DEFUN(GMP_ASM_SPARC_REGISTER,
+AC_DEFUN([GMP_ASM_SPARC_REGISTER],
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler accepts ".register"],
                gmp_cv_asm_sparc_register,
@@ -2631,7 +2631,7 @@ GMP_DEFINE_RAW(["define(<HAVE_REGISTER>,<$gmp_cv_asm_sparc_register>)"])
 dnl  GMP_C_ATTRIBUTE_CONST
 dnl  ---------------------
 
-AC_DEFUN(GMP_C_ATTRIBUTE_CONST,
+AC_DEFUN([GMP_C_ATTRIBUTE_CONST],
 [AC_CACHE_CHECK([whether gcc __attribute__ ((const)) works],
                 gmp_cv_c_attribute_const,
 [AC_TRY_COMPILE([int foo (int x) __attribute__ ((const));], ,
@@ -2650,7 +2650,7 @@ dnl  gcc 2.95.x accepts __attribute__ ((malloc)) but with a warning that
 dnl  it's ignored.  Pretend it doesn't exist in this case, to avoid that
 dnl  warning.
 
-AC_DEFUN(GMP_C_ATTRIBUTE_MALLOC,
+AC_DEFUN([GMP_C_ATTRIBUTE_MALLOC],
 [AC_CACHE_CHECK([whether gcc __attribute__ ((malloc)) works],
                 gmp_cv_c_attribute_malloc,
 [cat >conftest.c <<EOF
@@ -2680,7 +2680,7 @@ dnl  GMP_C_ATTRIBUTE_MODE
 dnl  --------------------
 dnl  Introduced in gcc 2.2, but perhaps not in all Apple derived versions.
 
-AC_DEFUN(GMP_C_ATTRIBUTE_MODE,
+AC_DEFUN([GMP_C_ATTRIBUTE_MODE],
 [AC_CACHE_CHECK([whether gcc __attribute__ ((mode (XX))) works],
                 gmp_cv_c_attribute_mode,
 [AC_TRY_COMPILE([typedef int SItype __attribute__ ((mode (SI)));], ,
@@ -2696,7 +2696,7 @@ fi
 dnl  GMP_C_ATTRIBUTE_NORETURN
 dnl  ------------------------
 
-AC_DEFUN(GMP_C_ATTRIBUTE_NORETURN,
+AC_DEFUN([GMP_C_ATTRIBUTE_NORETURN],
 [AC_CACHE_CHECK([whether gcc __attribute__ ((noreturn)) works],
                 gmp_cv_c_attribute_noreturn,
 [AC_TRY_COMPILE([void foo (int x) __attribute__ ((noreturn));], ,
@@ -2723,7 +2723,7 @@ dnl  "od -b", incidentally, is supported even by Unix V7, and the awk script
 dnl  used doesn't have functions or anything, so even an "old" awk should
 dnl  suffice.
 
-AC_DEFUN(GMP_C_DOUBLE_FORMAT,
+AC_DEFUN([GMP_C_DOUBLE_FORMAT],
 [AC_REQUIRE([AC_PROG_CC])
 AC_REQUIRE([AC_PROG_AWK])
 AC_CACHE_CHECK([format of `double' floating point],
@@ -2958,7 +2958,7 @@ dnl  only to C, not C++.
 dnl
 dnl  FIXME: Hopefully autoconf will address this itself some time.
 
-AC_DEFUN(GMP_C_INLINE,
+AC_DEFUN([GMP_C_INLINE],
 [AC_CACHE_CHECK([for inline], gmp_cv_c_inline,
 [gmp_cv_c_inline=no
 for i in inline __inline__ __inline; do
@@ -3008,7 +3008,7 @@ dnl
 dnl  The test here generates a negative array size and hence a compiler
 dnl  error if a right shift doesn't replicate the sign bit.
 
-AC_DEFUN(GMP_C_RIGHT_SHIFT,
+AC_DEFUN([GMP_C_RIGHT_SHIFT],
 [AC_CACHE_CHECK([whether signed right shifts are arithmetic],
                 gmp_cv_c_right_shift,
 [AC_TRY_COMPILE(
@@ -3035,7 +3035,7 @@ dnl  to be ANSI or K&R and the two can be differentiated by AC_PROG_CC_STDC
 dnl  or very likely by the setups for _PROTO in gmp.h.  On the other hand
 dnl  this test is nice and direct, being what we're going to actually use.
 
-AC_DEFUN(GMP_C_STDARG,
+AC_DEFUN([GMP_C_STDARG],
 [AC_CACHE_CHECK([whether <stdarg.h> exists and works],
                 gmp_cv_c_stdarg,
 [AC_TRY_COMPILE(
@@ -3064,7 +3064,7 @@ dnl  autoconf, but changed so it doesn't use alloca.c if alloca() isn't
 dnl  available, and also to use gmp-impl.h for the conditionals detecting
 dnl  compiler builtin alloca's.
 
-AC_DEFUN(GMP_FUNC_ALLOCA,
+AC_DEFUN([GMP_FUNC_ALLOCA],
 [AC_REQUIRE([GMP_HEADER_ALLOCA])
 AC_CACHE_CHECK([for alloca (via gmp-impl.h)],
                gmp_cv_func_alloca,
@@ -3080,7 +3080,7 @@ if test $gmp_cv_func_alloca = yes; then
 fi
 ])
 
-AC_DEFUN(GMP_HEADER_ALLOCA,
+AC_DEFUN([GMP_HEADER_ALLOCA],
 [# The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
 # for constant arguments.  Useless!
 AC_CACHE_CHECK([for working alloca.h],
@@ -3101,7 +3101,7 @@ dnl  -----------------
 dnl  Decide what to do about --enable-alloca from the user.
 dnl  This is a macro so it can require GMP_FUNC_ALLOCA.
 
-AC_DEFUN(GMP_OPTION_ALLOCA,
+AC_DEFUN([GMP_OPTION_ALLOCA],
 [AC_REQUIRE([GMP_FUNC_ALLOCA])
 AC_CACHE_CHECK([how to allocate temporary memory],
                gmp_cv_option_alloca,
@@ -3168,7 +3168,7 @@ dnl  It might be nicer to run a program to determine this when doing a
 dnl  native build, but the systems afflicted are few and far between these
 dnl  days, so it seems good enough just to list them.
 
-AC_DEFUN(GMP_FUNC_SSCANF_WRITABLE_INPUT,
+AC_DEFUN([GMP_FUNC_SSCANF_WRITABLE_INPUT],
 [AC_CACHE_CHECK([whether sscanf needs writable input],
                  gmp_cv_func_sscanf_writable_input,
 [case $host in
@@ -3206,7 +3206,7 @@ dnl  glibc 2.0.x returns either -1 or bufsize-1 for an overflow (both seen,
 dnl  not sure which 2.0.x does which), but still puts the correct null
 dnl  terminated result into the buffer.
 
-AC_DEFUN(GMP_FUNC_VSNPRINTF,
+AC_DEFUN([GMP_FUNC_VSNPRINTF],
 [AC_REQUIRE([GMP_C_STDARG])
 AC_CHECK_FUNC(vsnprintf,
               [gmp_vsnprintf_exists=yes],
@@ -3287,7 +3287,7 @@ dnl  GMP_H_ANSI
 dnl  ----------
 dnl  Check whether gmp.h recognises the compiler as ANSI capable.
 
-AC_DEFUN(GMP_H_ANSI,
+AC_DEFUN([GMP_H_ANSI],
 [AC_REQUIRE([AC_PROG_CC_STDC])
 case $ac_cv_prog_cc_stdc in
   no)
@@ -3310,7 +3310,7 @@ dnl  -------------------
 dnl  If the compiler has an "inline" of some sort, check whether the
 dnl  #ifdef's in gmp.h recognise it.
 
-AC_DEFUN(GMP_H_EXTERN_INLINE,
+AC_DEFUN([GMP_H_EXTERN_INLINE],
 [AC_REQUIRE([GMP_C_INLINE])
 case $gmp_cv_c_inline in
 no) ;;
@@ -3337,7 +3337,7 @@ dnl  ---------------
 dnl  Check whether the #ifdef's in gmp.h recognise when stdio.h has been
 dnl  included to get FILE.
 
-AC_DEFUN(GMP_H_HAVE_FILE,
+AC_DEFUN([GMP_H_HAVE_FILE],
 [AC_TRY_COMPILE(
 [#include <stdio.h>]
 GMP_INCLUDE_GMP_H
@@ -3357,7 +3357,7 @@ dnl  If CC_FOR_BUILD is set then it's expected to work, likewise the old
 dnl  style HOST_CC, otherwise some likely candidates are tried, the same as
 dnl  configfsf.guess.
 
-AC_DEFUN(GMP_PROG_CC_FOR_BUILD,
+AC_DEFUN([GMP_PROG_CC_FOR_BUILD],
 [AC_REQUIRE([AC_PROG_CC])
 if test -n "$CC_FOR_BUILD"; then
   GMP_PROG_CC_FOR_BUILD_WORKS($CC_FOR_BUILD,,
@@ -3389,7 +3389,7 @@ dnl
 dnl  It seems easiest to just use the default compiler output, rather than
 dnl  figuring out the .exe or whatever at this stage.
 
-AC_DEFUN(GMP_PROG_CC_FOR_BUILD_WORKS,
+AC_DEFUN([GMP_PROG_CC_FOR_BUILD_WORKS],
 [AC_MSG_CHECKING([build system compiler $1])
 rm -f conftest* a.out b.out a.exe a_out.exe
 cat >conftest.c <<EOF
@@ -3422,7 +3422,7 @@ dnl  Establish CPP_FOR_BUILD, the build system C preprocessor.
 dnl  The choices tried here are the same as AC_PROG_CPP, but with
 dnl  CC_FOR_BUILD.
 
-AC_DEFUN(GMP_PROG_CPP_FOR_BUILD,
+AC_DEFUN([GMP_PROG_CPP_FOR_BUILD],
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
 AC_MSG_CHECKING([for build system preprocessor])
 if test -z "$CPP_FOR_BUILD"; then
@@ -3462,7 +3462,7 @@ dnl  system cross compile it can be ",ff8" apparently.  Not sure if the
 dnl  latter actually applies to a build-system executable, maybe it doesn't,
 dnl  but it won't hurt to try.
 
-AC_DEFUN(GMP_PROG_EXEEXT_FOR_BUILD,
+AC_DEFUN([GMP_PROG_EXEEXT_FOR_BUILD],
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
 AC_CACHE_CHECK([for build system executable suffix],
                gmp_cv_prog_exeext_for_build,
@@ -3496,7 +3496,7 @@ dnl  --------------------
 dnl  Determine whether CC_FOR_BUILD is ANSI, and establish U_FOR_BUILD
 dnl  accordingly.
 
-AC_DEFUN(GMP_C_FOR_BUILD_ANSI,
+AC_DEFUN([GMP_C_FOR_BUILD_ANSI],
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
 AC_CACHE_CHECK([whether build system compiler is ANSI],
                gmp_cv_c_for_build_ansi,
@@ -3530,7 +3530,7 @@ dnl
 dnl  Libtool AC_CHECK_LIBM also uses -lmw on *-ncr-sysv4.3*, if it works.
 dnl  Don't know what that does, lets assume it's not needed just for log().
 
-AC_DEFUN(GMP_CHECK_LIBM_FOR_BUILD,
+AC_DEFUN([GMP_CHECK_LIBM_FOR_BUILD],
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
 AC_CACHE_CHECK([for build system compiler math library],
                gmp_cv_check_libm_for_build,
