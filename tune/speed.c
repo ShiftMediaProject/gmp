@@ -958,6 +958,19 @@ usage (void)
   printf ("Quickplot home page http://www.kachinatech.com/~quickplot\n");
 }
 
+void
+check_align_option (const char *name, mp_size_t align)
+{
+  if (align < 0 || align > SPEED_TMP_ALLOC_ADJUST_MASK)
+    {
+      fprintf (stderr, "Alignment request out of range: %s %ld\n",
+               name, (long) align);
+      fprintf (stderr, "  should be 0 to %ld (limbs), inclusive\n",
+               SPEED_TMP_ALLOC_ADJUST_MASK);
+      exit (1);
+    }
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -1096,15 +1109,19 @@ main (int argc, char *argv[])
         break;
       case 'x':
         sp.align_xp = atol (optarg);
+        check_align_option ("-x", sp.align_xp);
         break;
       case 'y':
         sp.align_yp = atol (optarg);
+        check_align_option ("-x", sp.align_yp);
         break;
       case 'w':
         sp.align_wp = atol (optarg);
+        check_align_option ("-x", sp.align_wp);
         break;
       case 'W':
         sp.align_wp2 = atol (optarg);
+        check_align_option ("-x", sp.align_wp2);
         break;
       case '?':
         exit(1);
