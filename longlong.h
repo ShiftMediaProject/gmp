@@ -153,6 +153,19 @@ extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
 #define UDIV_TIME 60
 #endif /* hppa */
 
+#if defined (__ia64) && W_TYPE_SIZE == 64
+#if defined (__GNUC__)
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    UDItype __m0 = (m0), __m1 = (m1);					\
+    __asm__ ("xma.hu %0 = %1, %2, f0"					\
+	     : "=e" (ph)						\
+	     : "e" (m0), "e" (m1));					\
+    (pl) = __m0 * __m1;							\
+  } while (0)
+#endif
+#endif
+
 
 #if defined (__GNUC__) && !defined (NO_ASM)
 
