@@ -41,6 +41,10 @@ libstat_la_LIBADD = $(top_builddir)/libgmp.la -lm
 
 EXTRA_DIST = gmpstat.h
 
+CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES)
+
+allprogs: $(EXTRA_PROGRAMS)
+
 manual-test: gen$(EXEEXT) stat$(EXEEXT)
 	@(echo -n '16i: '; ./gen -f mpz_urandomb -z 16 1000 \
 		| ./stat -i 0xffff | grep '^[0-9]')
