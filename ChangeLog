@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-19  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/rootrem.c: Allocate 1.585 (log2(3)) times more space
+	for pp temporary to allow for worst case overestimate of root.
+	Add some asserts.
+
+	* tests/mpz/t-root.c: Generalize and speed up.
+
 2002-12-19  Kevin Ryde  <kevin@swox.se>
 
 	* tests/cxx/t-rand.cc (check_randinit): Add gmp_randinit_mt test.
