@@ -54,12 +54,12 @@ L(loop):
 	sub	%o4,%o5,%g4
 	add	rp,8,rp
 	lduw	[s1p+8],%o4
-	fxtod	%f0,%f2
+	fitod	%f0,%f2
 C ---
 	sub	%g4,cy,%g4
 	addcc	n,-1,n
 	lduw	[s2p+8],%o5
-	fxtod	%f0,%f2
+	fitod	%f0,%f2
 C ---
 	srlx	%g4,63,cy
 	add	s2p,8,s2p
@@ -69,12 +69,12 @@ C ---
 	sub	%g2,%g3,%g4
 	addcc	n,-1,n
 	lduw	[s1p+12],%g2
-	fxtod	%f0,%f2
+	fitod	%f0,%f2
 C ---
 	sub	%g4,cy,%g4
 	add	s1p,8,s1p
 	lduw	[s2p+4],%g3
-	fxtod	%f0,%f2
+	fitod	%f0,%f2
 C ---
 	srlx	%g4,63,cy
 	bne,pt	%icc,L(loop)
