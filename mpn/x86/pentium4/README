@@ -54,14 +54,19 @@ The shifts ought to be able to go at 1.5 c/l, but not much effort has been
 applied to them yet.
 
 In-place operations, and all addmul, submul, mul_basecase and sqr_basecase
-calls, suffer from hardware slowdowns associated with write combining and
-movd reads and writes to the same or nearby locations.  Software movq and
-splitting/combining seems to require too many extra instructions to help.
-Perhaps future chip steppings will be better.
+calls, suffer from pipeline anomalies associated with write combining and
+movd reads and writes to the same or nearby locations.  The movq
+instructions do not trigger the same hardware problems.  Unfortunately,
+using movq and splitting/combining seems to require too many extra
+instructions to help.  Perhaps future chip steppings will be better.
 
 
 
 NOTES
+
+The Pentium-4 pipeline "Netburst", provides for quite a number of surprises.
+Many traditional x86 instructions run very slowly, requiring use of
+alterative instructions for acceptable performance.
 
 adcl and sbbl are quite slow at 8 cycles for reg->reg.  paddq of 32-bits
 within a 64-bit mmx register seems better, though the combination
@@ -70,6 +75,10 @@ paddq/psrlq when propagating a carry is still a 4 cycle latency.
 incl and decl should be avoided, instead use add $1 and sub $1.  Apparently
 the carry flag is not separately renamed, so incl and decl depend on all
 previous flags-setting instructions.
+
+shll and shrl have a 4 cycle latency, or 8 times the latency of the fastest
+integer instructions (addl, subl, orl, andl, and some more).  shldl and
+shrdl seem to have around 13 cycle latency.
 
 movq mmx -> mmx does have 6 cycle latency, as noted in the documentation.
 pxor/por or similar combination at 2 cycles latency can be used instead.
