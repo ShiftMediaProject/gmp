@@ -908,14 +908,15 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif /* __ns32000__ */
 
 /* FIXME: We should test _IBMR2 here when we add assembly support for the
-   system vendor compilers.  */
+   system vendor compilers.
+   FIXME: What's needed for gcc PowerPC VxWorks?  __vxworks__ is not good
+   enough, since that hits ARM and m68k too.  */
 #if (defined (_ARCH_PPC)       /* AIX */                \
      || defined (_ARCH_PWR)    /* AIX */                \
      || defined (__powerpc__)  /* gcc */                \
      || defined (__POWERPC__)  /* BEOS */               \
      || defined (__ppc__)      /* Darwin */             \
      || defined (PPC)          /* GNU/Linux, SysV */    \
-     || defined (__vxworks__)  /* VxWorks */            \
      ) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
