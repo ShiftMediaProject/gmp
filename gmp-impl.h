@@ -534,7 +534,7 @@ int __gmp_assert_fail _PROTO((const char *filename, int linenum,
 #define ASSERT_NOCARRY(expr)   ASSERT_ALWAYS ((expr) == 0)
 
 #else
-#define ASSERT(expr)           (CAST_TO_VOID 0)
+#define ASSERT(expr)           do {} while (0)
 #define ASSERT_NOCARRY(expr)   (expr)
 #endif
 
