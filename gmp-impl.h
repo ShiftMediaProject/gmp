@@ -845,6 +845,8 @@ typedef struct {
        (__rstate, rp, bits);                                    \
   } while (0)
 
+__GMP_DECLSPEC void __gmp_randinit_mt_noseed __GMP_PROTO ((gmp_randstate_t));
+
 
 /* __gmp_rands is the global state for the old-style random functions, and
    is also used in the test programs (hence the __GMP_DECLSPEC).
