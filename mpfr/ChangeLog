@@ -1,3 +1,7 @@
+2003-06-05  Torbjorn Granlund  <tege@swox.com>
+
+	* get_d.c: Change include file order to placate gcc under hpux 11.
+
 2002-12-13  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
 
 	* mpfr.texi: IEEE 754 / IEEE P754 -> IEEE 754-1985.
