@@ -1545,6 +1545,18 @@ extern const struct bases __mp_bases[256];
 #define MP_BASES_NORMALIZATION_STEPS_10 0
 #endif
 
+/* Set str_size to the size in bytes needed for the byte string output from
+   mpn_get_str.  The +1 rounds up the float expression, irrespective of the
+   hardware rounding mode.  The result ends up being exact, or one too big. */
+#define MPN_GET_STR_SIZE(str_size, base, limbs)                               \
+  do {                                                                        \
+    ASSERT ((limbs) >= 0);                                                    \
+    ASSERT ((base) >= 2);                                                     \
+    ASSERT ((base) < numberof (__mp_bases));                                  \
+    (str_size) = (size_t) ((limbs) * BITS_PER_MP_LIMB                         \
+                           * __mp_bases[(base)].chars_per_bit_exactly) + 1;   \
+  } while (0)
+
 
 #if HAVE_HOST_CPU_FAMILY_x86
 #define TARGET_REGISTER_STARVED 1
