@@ -18,6 +18,35 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-06-06  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (sparc): Use ABI=32 instead of ABI=standard on v7 and
+	v8, for consistency with v9 choices.
+	(sparc64): Restrict GMP_ASM_SPARC_REGISTER to ABI=64.
+	(x86): Move MMX $path munging to before printout.
+	(CCAS): Move upward to support this.
+
+	* gmp-impl.h (modlimb_invert): Merge macros for specific limb sizes,
+	add a version for arbitrary limb size, use GMP_NUMB_BITS.
+	(modlimb_invert, MODLIMB_INVERSE_3): Fix comments to say GMP_NUMB_BITS.
+
+	* gmp-h.in (__GMP_LIKELY, __GMP_UNLIKELY): New macros.
+	(mpz_getlimbn, mpz_perfect_square_p, mpz_popcount): Use them, make the
+	fetch or mpn call likely, unconditionally calculate the alternative so
+	as to avoid an "else" clause.
+	* gmp-impl.h (LIKELY, UNLIKELY): Aliases.
+
+	* configure.in, mpfr/tests/Makefile.am: Add $LIBM to $LIBS for
+	MPFR_CONFIGS so it detects fesetround, and let it go through to
+	$MPFR_LIBS.
+	* mpfr/rnd_mode.c: Use gmp-impl.h to get MPFR_HAVE_FESETROUND.
+
+	* tests/mpz/t-sizeinbase.c: Disable fake bits test, such pointer
+	setups are bogus and have been seen failing on hppa.
+
+	* tests/misc.c, tests/refmpz.c, tests.tests.h, tests/mpz/t-cong.c:
+	Rename mpz_flipbit to refmpz_combit and move from misc.c to refmpz.c.
+
 2002-06-05  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-powm_ui.c Print proper routine name in error message.
