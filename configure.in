@@ -1421,8 +1421,15 @@ case $host in
   m68*-*-netbsd1.4*) ac_cv_func_getrusage=no ;;
 esac
 
-AC_CHECK_FUNCS(alarm getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time strchr strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time strchr strnlen strtoul sysconf sysctl sysctlbyname times)
+
+# FIXME: Would have done this with an AM_CONDITIONAL, but automake 1.5
+# doesn't like that under libgmp_la_DEPENDENCIES.
 GMP_FUNC_VSNPRINTF
+if test "$gmp_cv_func_vsnprintf" = no; then
+  AC_SUBST(REPL_VSNPRINTF_PRINTF_OBJ, 'printf/repl-vsnprintf$U.lo')
+  AC_SUBST(REPL_VSNPRINTF_OBJ,        'repl-vsnprintf$U.lo')
+fi
 
 
 # Pick the correct source files in $path and link them to mpn/.
