@@ -1,7 +1,7 @@
 ! SPARC v9 __mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 ! store difference in a third limb vector.
 
-! Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+! Copyright (C) 1999 Free Software Foundation, Inc.
 
 ! This file is part of the GNU MP Library.
 
@@ -35,26 +35,138 @@
 	.type	 __mpn_sub_n,#function
 	.proc	04
 __mpn_sub_n:
-	sub %g0,%o3,%g3
-	sllx %o3,3,%g1
-	add %o1,%g1,%o1			! make s1_ptr point at end
-	add %o2,%g1,%o2			! make s2_ptr point at end
-	add %o0,%g1,%o0			! make res_ptr point at end
-	mov 0,%o4			! clear carry variable
-	sllx %g3,3,%o5			! compute initial address index
 
-.Loop:	ldx [%o2+%o5],%g1		! load s2 limb
-	add %g3,1,%g3			! increment loop count
-	ldx [%o1+%o5],%g2		! load s1 limb
-	addcc %g1,%o4,%g1		! add s2 limb and carry variable
-	movcc %xcc,0,%o4		! if carry-out, o4 was 1; clear it
-	subcc %g2,%g1,%g1		! subtract s1 limb from sum
-	stx %g1,[%o0+%o5]		! store result
-	add %o5,8,%o5			! increment address index
-	brnz,pt %g3,.Loop
-	movcs %xcc,1,%o4		! if s1 subtract gave carry, record it
+! 12 mem ops >= 12 cycles
+! 8 shift insn >= 8 cycles
+! 8 addccc, executing alone, +8 cycles
+! Unrolling not mandatory...perhaps 2-way is best?
+! Put one ldx/stx and one s?lx per issue tuple, fill with pointer arith and loop ctl
+! All in all, it runs at 5 cycles/limb
 
-	retl
-	mov %o4,%o0
+	save	%sp,-160,%sp
+
+	addcc	%g0,%g0,%g0
+
+	add	%i3,-4,%i3
+	brlz,pn	%i3,.Lthere
+	nop
+
+	ldx	[%i1+0],%l0
+	ldx	[%i2+0],%l4
+	ldx	[%i1+8],%l1
+	ldx	[%i2+8],%l5
+	ldx	[%i1+16],%l2
+	ldx	[%i2+16],%l6
+	ldx	[%i1+24],%l3
+	ldx	[%i2+24],%l7
+	add	%i1,32,%i1
+	add	%i2,32,%i2
+
+	add	%i3,-4,%i3
+	brlz,pn	%i3,.Lskip
+	nop
+	b	.Loop		! jump instead of executing many NOPs
+	nop
+	.align	32
+!---------  Start main loop ---------
+.Loop:	subccc	%l0,%l4,%g1
+!-
+	srlx	%l0,32,%o0
+	ldx	[%i1+0],%l0
+!-
+	srlx	%l4,32,%o4
+	ldx	[%i2+0],%l4
+!-
+	subccc	%o0,%o4,%g0
+!-
+	subccc	%l1,%l5,%g2
+!-
+	srlx	%l1,32,%o1
+	ldx	[%i1+8],%l1
+!-
+	srlx	%l5,32,%o5
+	ldx	[%i2+8],%l5
+!-
+	subccc	%o1,%o5,%g0
+!-
+	subccc	%l2,%l6,%g3
+!-
+	srlx	%l2,32,%o2
+	ldx	[%i1+16],%l2
+!-
+	srlx	%l6,32,%g5	! asymmetry
+	ldx	[%i2+16],%l6
+!-
+	subccc	%o2,%g5,%g0
+!-
+	subccc	%l3,%l7,%g4
+!-
+	srlx	%l3,32,%o3
+	ldx	[%i1+24],%l3
+	add	%i1,32,%i1
+!-
+	srlx	%l7,32,%o7
+	ldx	[%i2+24],%l7
+	add	%i2,32,%i2
+!-
+	subccc	%o3,%o7,%g0
+!-
+	stx	%g1,[%i0+0]
+!-
+	stx	%g2,[%i0+8]
+!-
+	stx	%g3,[%i0+16]
+	add	%i3,-4,%i3
+!-
+	stx	%g4,[%i0+24]
+	add	%i0,32,%i0
+
+	brgez,pt	%i3,.Loop
+	nop
+!---------  End main loop ---------
+.Lskip:	subccc	%l0,%l4,%g1
+	srlx	%l0,32,%o0
+	srlx	%l4,32,%o4
+	subccc	%o0,%o4,%g0
+	subccc	%l1,%l5,%g2
+	srlx	%l1,32,%o1
+	srlx	%l5,32,%o5
+	subccc	%o1,%o5,%g0
+	subccc	%l2,%l6,%g3
+	srlx	%l2,32,%o2
+	srlx	%l6,32,%g5	! asymmetry
+	subccc	%o2,%g5,%g0
+	subccc	%l3,%l7,%g4
+	srlx	%l3,32,%o3
+	srlx	%l7,32,%o7
+	subccc	%o3,%o7,%g0
+	stx	%g1,[%i0+0]
+	stx	%g2,[%i0+8]
+	stx	%g3,[%i0+16]
+	stx	%g4,[%i0+24]
+	add	%i0,32,%i0
+
+.Lthere:
+	add	%i3,4,%i3
+	brz,pt	%i3,.Lend
+	nop
+
+.Loop2:	ldx	[%i1+0],%l0
+	add	%i1,8,%i1
+	ldx	[%i2+0],%l4
+	add	%i2,8,%i2
+	srlx	%l0,32,%g2
+	srlx	%l4,32,%g3
+	subccc	%l0,%l4,%g1
+	subccc	%g2,%g3,%g0
+	stx	%g1,[%i0+0]
+	add	%i0,8,%i0
+	add	%i3,-1,%i3
+	brgz,pt	%i3,.Loop2
+	nop
+
+.Lend:	addc	%g0,%g0,%i0
+	ret
+	restore
 .LLfe1:
 	.size	 __mpn_sub_n,.LLfe1-__mpn_sub_n
