@@ -71,7 +71,7 @@ ASM_START()
 	.register	%g3,#scratch
 
 define(`p00', `%f8') define(`p16',`%f10') define(`p32',`%f12') define(`p48',`%f14')
-define(`r32',`%f16') define(`r48',`%f18') define(`r64',`%f20') define(`r72',`%f22')
+define(`r32',`%f16') define(`r48',`%f18') define(`r64',`%f20') define(`r80',`%f22')
 define(`v00',`%f24') define(`v16',`%f26') define(`v32',`%f28') define(`v48',`%f30')
 define(`u00',`%f32') define(`u32', `%f34')
 define(`a00',`%f36') define(`a16',`%f38') define(`a32',`%f40') define(`a48',`%f42')
@@ -143,7 +143,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	faddd	p32, r32, a32
 	fdtox	a00, a00
 	faddd	p48, r48, a48
-	fmuld	u32, v48, r72	C FIXME not urgent
+	fmuld	u32, v48, r80	C FIXME not urgent
 	fdtox	a16, a16
 	fdtox	a32, a32
 	fdtox	a48, a48
@@ -155,7 +155,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 
 	fdtox	r64, a00
 	ldx	[%i0+%i2], rlimb	C read rp[i]
-	fdtox	r72, a16
+	fdtox	r80, a16
 	ldx	[%sp+2223+0], i00
 	ldx	[%sp+2223+8], i16
 	ldx	[%sp+2223+16], i32
@@ -195,7 +195,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	ld	[%i1+%i2], %f5		C read high 32 bits of up[i]
 	fdtox	a00, a00
 	faddd	p48, r48, a48
-	fmuld	u32, v48, r72	C FIXME not urgent
+	fmuld	u32, v48, r80	C FIXME not urgent
 	fdtox	a16, a16
 	fdtox	a32, a32
 	fxtod	%f2, u00
@@ -210,7 +210,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	std	a48, [%sp+2223+24]
 	faddd	p00, r64, a00
 	fmuld	u32, v00, r32
-	faddd	p16, r72, a16
+	faddd	p16, r80, a16
 	fmuld	u00, v48, p48
 	addcc	%i2, 8, %i2
 	bnz,pt	%icc, .L_three_or_more
@@ -222,7 +222,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	fdtox	a00, a00
 	ldx	[%i0+%i2], rlimb	C read rp[i]
 	faddd	p48, r48, a48
-	fmuld	u32, v48, r72	C FIXME not urgent
+	fmuld	u32, v48, r80	C FIXME not urgent
 	fdtox	a16, a16
 	ldx	[%sp+2223+0], i00
 	fdtox	a32, a32
@@ -241,7 +241,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	and	rlimb, xffffffff, %g5	C LO(rlimb)
 	ldx	[%i0+%i2], rlimb	C read rp[i]
 	add	i00, %g5, %g5		C i00+ now in g5
-	fdtox	r72, a16
+	fdtox	r80, a16
 	ldx	[%sp+2223+0], i00
 	srlx	i16, 48, %l4		C (i16 >> 48)
 	mov	i16, %g2
@@ -273,7 +273,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	fdtox	a00, a00
 	ldx	[%i0+%i2], rlimb	C read rp[i]
 	faddd	p48, r48, a48
-	fmuld	u32, v48, r72	C FIXME not urgent
+	fmuld	u32, v48, r80	C FIXME not urgent
 	fdtox	a16, a16
 	ldx	[%sp+2223+0], i00
 	fdtox	a32, a32
@@ -292,7 +292,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	std	a48, [%sp+2223+24]
 	faddd	p00, r64, a00
 	fmuld	u32, v00, r32
-	faddd	p16, r72, a16
+	faddd	p16, r80, a16
 	fmuld	u00, v48, p48
 	addcc	%i2, 8, %i2
 	bnz,pt	%icc, .L_four_or_more
@@ -307,7 +307,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	ldx	[%i0+%i2], rlimb	C read rp[i]
 	faddd	p48, r48, a48
 	add	i00, %g5, %g5		C i00+ now in g5
-	fmuld	u32, v48, r72	C FIXME not urgent
+	fmuld	u32, v48, r80	C FIXME not urgent
 	fdtox	a16, a16
 	ldx	[%sp+2223+0], i00
 	fdtox	a32, a32
@@ -347,7 +347,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	ldx	[%i0+%i2], rlimb	C read rp[i]
 	faddd	p48, r48, a48
 	add	i00, %g5, %g5		C i00+ now in g5
-	fmuld	u32, v48, r72	C FIXME not urgent
+	fmuld	u32, v48, r80	C FIXME not urgent
 	fdtox	a16, a16
 	ldx	[%sp+2223+0], i00
 	fdtox	a32, a32
@@ -379,7 +379,7 @@ C The software pipeline is very deep, requiring 4 feed-in stages.
 	faddd	p00, r64, a00
 	fmuld	u32, v00, r32
 	sub	%o2, %o3, %o2		C mi64 in %o2   1st ASSIGNMENT
-	faddd	p16, r72, a16
+	faddd	p16, r80, a16
 	fmuld	u00, v48, p48
 	add	cy, %g5, %o4		C x = prev(i00) + cy
 	addcc	%i2, 8, %i2
@@ -410,7 +410,7 @@ C 02
 C 03
 	srlx	%o2, 48, %o7		C (mi64 >> 48)
 	add	i00, %g5, %g5		C i00+ now in g5
-	fmuld	u32, v48, r72	C FIXME not urgent
+	fmuld	u32, v48, r80	C FIXME not urgent
 	fdtox	a16, a16
 C 04
 	sllx	%o2, 16, %i3		C (mi64 << 16)
@@ -455,7 +455,7 @@ C 11
 C 12
 	sub	%o2, %o3, %o2		C mi64 in %o2   1st ASSIGNMENT
 	stx	%o5, [%i4+%i2]
-	faddd	p16, r72, a16
+	faddd	p16, r80, a16
 	fmuld	u00, v48, p48
 C 13
 	add	cy, %g5, %o4		C x = prev(i00) + cy
@@ -477,7 +477,7 @@ C END MAIN LOOP
 	faddd	p48, r48, a48
 	srlx	%o2, 48, %o7		C (mi64 >> 48)
 	add	i00, %g5, %g5		C i00+ now in g5
-	fmuld	u32, v48, r72	C FIXME not urgent
+	fmuld	u32, v48, r80	C FIXME not urgent
 	fdtox	a16, a16
 	sllx	%o2, 16, %i3		C (mi64 << 16)
 	add	%o7, %o1, cy		C new cy
@@ -518,7 +518,7 @@ C END MAIN LOOP
 	ldx	[%i0+%i2], rlimb	C read rp[i]
 	srlx	%o2, 48, %o7		C (mi64 >> 48)
 	add	i00, %g5, %g5		C i00+ now in g5
-	fdtox	r72, a16
+	fdtox	r80, a16
 	sllx	%o2, 16, %i3		C (mi64 << 16)
 	add	%o7, %o1, cy		C new cy
 	ldx	[%sp+2223+0], i00
