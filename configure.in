@@ -931,7 +931,7 @@ CPPFLAGS=$CPPFLAGS
 GMP_LDFLAGS=$GMP_LDFLAGS
 path=$path
 EOF
-echo configure: using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
+echo using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
 
 
 AC_PROG_CC
