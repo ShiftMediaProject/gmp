@@ -30,7 +30,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
    -o        print output in octal
    -d        print output in decimal (the default)
    -x        print output in hexadecimal
-   -<NUM>    print output in base NUM
+   -b<NUM>   print output in base NUM
    -t        print timing information
    -html     output html
    -wml      output wml
