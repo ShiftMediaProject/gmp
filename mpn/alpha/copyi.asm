@@ -1,6 +1,6 @@
 dnl  Alpha mpn_copyi -- copy, incrementing.
 
-dnl  Copyright 2002 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
