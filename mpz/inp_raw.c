@@ -106,9 +106,11 @@ mpz_inp_raw (mpz_ptr x, FILE *fp)
     + ((mp_size_t) csize_bytes[2] << 8)
     + ((mp_size_t) csize_bytes[3]);
 
-  /* sign extend if necessary */
-  if (sizeof (csize) > 4)
-    csize -= (csize & 0x80000000L) << 1;
+  /* Sign extend if necessary.
+     Could write "csize -= ((csize & 0x80000000L) << 1)", but that tickles a
+     bug in gcc 3.0 for powerpc64 on AIX.  */
+  if (sizeof (csize) > 4 && csize & 0x80000000L)
+    csize -= 0x80000000L << 1;
 
   abs_csize = ABS (csize);
 
