@@ -74,13 +74,16 @@ mpn_sqr_n (mp_ptr prodp,
 #else
   else
 #endif
-    { /* toom3 multiplication */
-      mp_ptr tspace;
-      TMP_DECL (marker);
-      TMP_MARK (marker);
-      tspace = TMP_ALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (un));
+    { /* Toom3 multiplication.
+         Use workspace from the heap, as stack may be limited.  Since n is
+         at least TOOM3_MUL_THRESHOLD, the multiplication will take much
+         longer than malloc()/free().  */
+      mp_ptr     tspace;
+      mp_size_t  tsize;
+      tsize = MPN_TOOM3_SQR_N_TSIZE (un);
+      tspace = __GMP_ALLOCATE_FUNC_LIMBS (tsize);
       mpn_toom3_sqr_n (prodp, up, un, tspace);
-      TMP_FREE (marker);
+      __GMP_FREE_FUNC_LIMBS (tspace, tsize);
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
   else
