@@ -120,7 +120,7 @@ mpfr_round_raw(y, xp, xprec, negative, yprec, RND_MODE)
      mp_limb_t *y; 
      mp_limb_t *xp; 
      unsigned long xprec; 
-     cher negative;
+     char negative;
      unsigned long yprec; 
      char RND_MODE; 
 #endif
