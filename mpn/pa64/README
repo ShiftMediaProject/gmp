@@ -20,29 +20,42 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 
 
-
 This directory contains mpn functions for 64-bit PA-RISC 2.0.
 
 RELEVANT OPTIMIZATION ISSUES
 
-The PA8000 has a multi-issue pipeline with large buffers for instructions
-awaiting pending results.  Therefore, no RAW register latency scheduling is
-necessary (and might actually be harmful).  RAW memory scheduling is still
-necessary.
+The PA8x00 processors have a 4-way OOO pipeline.  No register RAW
+latency scheduling is necessary.  Memory RAW scheduling is still
+necessary.  Completion unit scheduling is necessary.
 
-Two 64-bit loads can be completed per cycle.  One 64-bit store can be
-completed per cycle.  A store cannot complete in the same cycle as a load.
+According to HP's published publication, two memory operations can be
+completed per cycle, but at most one of these may be a store.  Two ALU
+operations may be completed per cycle; integer and fp operations are
+equal here.  Tests indicate that in practice when a store is executed,
+no load can execute in the same cycle.
+
+Since the completion unit can only handle 4 instructions per cycle,
+and since completion is made in strict program order, we need to
+schedule 4-group instructions that can complete together, e.g., two
+loads and two ALU operations.
+
+Instructions that read the carry flag seem to cause hickup in the
+pipeline.
+
+Warning for the "nop" mnemonic; it stalls the pipeline.
 
 STATUS
 
-* mpn_lshift, mpn_rshift, mpn_add_n, mpn_sub_n are all well-tuned and run at
-  the peak cache bandwidth; 1.5 cycles/limb for shifting and 2.0 cycles/limb
-  for add/subtract.
+* mpn_lshift and mpn_rshift run at 1.5 cycles/limb.  That cannot be
+  improved.
 
-* The multiplication functions run at 11 cycles/limb.  The cache bandwidth
-  allows 7.5 cycles/limb for mul_1 and 8 cycles/limb for addmul_1/submul_1.
-  It would surely be possible, using unrolling to allow better RAW memory
-  scheduling, to reach the cache bandwidth limit.
+* mpn_add_n and mpn_sub_n run at 2.0 cycles/limb.  That cannot be
+  improved.
+
+* The multiplication functions run at 11 cycles/limb.  The memory unit
+  bandwidth allows 5.0 cycles/limb for mul_1 and 5.5 cycles/limb for
+  addmul_1/submul_1.  With proper scheduling, the performance will be
+  limited by ALU bandwidth.
 
 * xaddmul_1.S contains a quicker method for forming the 128 bit product.  It
   uses some fewer operations, and keep the carry flag live across the loop
@@ -61,3 +74,24 @@ STATUS
 
   In practice, adjacent groups (1 and 2, 2 and 3, etc) will be interleaved
   for better instruction mix.
+
+ 1                 
+ 2                 6                 0
+ 8                 4
+
+sp[i] * x
+  ________ ________
+ |________|________|			phi
+	   ________ ________
+	  |________|________|		pm1
+	   ________ ________
+	  |________|________|		pm0
+		    ________ ________
+		   |________|________|	plo
+		    ________ ________
+		   |________|________|	rpi
+		    ________ ________
+		   |________|________|	cyl
+
+
+(rpi >> B/2) + (plo >> B/2) + pm0 + pm1
