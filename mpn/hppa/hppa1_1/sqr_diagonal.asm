@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C This code runs at 6 cycles/limb on the PA7100 and 2.5 cycles/limb on PA8x00.
 C 2-way unrolling wouldn't help the PA7100; it could however bring times down
-C to 2.0 cycles/limb for the PA8x00.  Big deal.
+C to 2.0 cycles/limb for the PA8x00.
 
 C INPUT PARAMETERS
 define(`rp',`%r26')

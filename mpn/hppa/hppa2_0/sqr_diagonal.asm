@@ -1,4 +1,4 @@
-dnl  HP-PA 1.1 32-bit mpn_sqr_diagonal.
+dnl  HP-PA 32-bit mpn_sqr_diagonal optimized for the PA8x00.
 
 dnl  Copyright 2001 Free Software Foundation, Inc.
 
