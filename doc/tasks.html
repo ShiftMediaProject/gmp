@@ -202,17 +202,8 @@
 <li> P6: <code>mpn_add_n</code> and <code>mpn_sub_n</code> should be able to go
      faster than the generic x86 code at 3.5 c/l.  The athlon code for instance
      runs at about 2.7.
-<li> Alpha: Optimize <code>count_leading_zeros</code>.
-<li> Alpha: Optimize <code>udiv_qrnnd</code>.  (Ask Torbjörn for the file
-     test-udiv-preinv.c as a starting point.)
-<li> R10000/R12000: Rewrite <code>mpn_add_n</code> and <code>mpn_sub_n</code>.
-     It should just require 3 cycles/limb, but the current code propagates
-     carry poorly.  The trick is to add carry-in later than we do now,
-     decreasing the number of operations used to generate carry-out from 4 to
-     to 3.
 <li> PPC32: Try using fewer registers in the current <code>mpn_lshift</code>.
-     The pipeline is now extremely deep, perhaps unnecessarily deep.  Also, r5
-     is unused.  (Ask Torbjörn for a copy of the current code.)
+     The pipeline is now extremely deep, perhaps unnecessarily deep.
 <li> PPC32: Write <code>mpn_rshift</code> based on new <code>mpn_lshift</code>.
 <li> PPC32: Rewrite <code>mpn_add_n</code> and <code>mpn_sub_n</code>.  Should
      run at just 3.25 cycles/limb.  (Ask for xxx-add_n.s as a starting point.)
@@ -226,11 +217,10 @@
      <code>mpn_sqr_basecase</code>.  Same comment applies to this as to the
      same functions for Fujitsu VPP.
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
-
   <pre>
-  if ((x &gt&gt W_TYPE_SIZE-W_TYPE_SIZE/2) == 0) { x &lt&lt= W_TYPE_SIZE/2; cnt += W_TYPE_SIZE/2}
-  if ((x &gt&gt W_TYPE_SIZE-W_TYPE_SIZE/4) == 0) { x &lt&lt= W_TYPE_SIZE/4; cnt += W_TYPE_SIZE/4}
-  ... </pre>
+	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
+	   if ((x &gt&gt 48) == 0) { x &lt&lt= 16; cnt += 16; }
+	   ... </pre>
 
 </ul>
 
