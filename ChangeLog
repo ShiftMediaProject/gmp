@@ -1,3 +1,65 @@
+2001-04-20  Kevin Ryde  <kevin@swox.se>
+
+	* tests/devel/try.c: Don't test size==0 on mpn_popcount and
+	mpn_hamdist; add testing for mpn_divexact_1; print some limb values
+	with mpn_trace not printf.
+
+	* mpz/popcount.c, mpz/hamdist.c: Don't pass size==0 to mpn_popcount
+	and mpn_hamdist.
+	* mpn/generic/popham.c: Don't support size==0.
+
+	* config.guess (m68k-*-*): Detect m68010, return m68360 for cpu32,
+	cleanup the nesting a bit.
+
+	* gmp.texi (Integer Division): Fix mpz_congruent_2exp_p "c" type.
+	(Integer Division): Add mpz_divexact_si and mpz_divexact_ui.
+	(Number Theoretic Functions): Fix mpz_nextprime return type.
+	(Exact Remainder): Divisibility tests now implemented.
+	And more index entries in a few places.
+
+	* tests/mpz/dive_i.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpz/dive_si.c, mpz/dive_ui.c: New files.
+	* Makefile.am, mpz/Makefile.am: Add them.
+	* gmp-h.in (mpz_divexact_si, mpz_divexact_ui): Add prototypes.
+
+	* tune/many.pl, tune/speed.h: Add special mpn_back_to_back for
+	development.
+
+	* gmp-impl.h (MPN_DIVREM_OR_DIVEXACT_1): New macro.
+	* mpz/divexact.c: Use it.
+
+	* gmp-impl.h (DIVEXACT_1_THRESHOLD): New threshold.
+	* tune/tuneup.c: Tune it.
+
+	* tune/speed.c,speed.h,common.c,many.pl: Add measuring of
+	mpn_divexact_1, mpn_copyi, mpn_copyd.
+
+	* mpn/generic/dive_1.c: New file.
+	* configure.in (gmp_mpn_functions): Add it.
+	* gmp-impl.h (mpn_divexact_1): Add prototype.
+	* mpn/asm-defs.m4: Add define_mpn(divexact_1).
+
+	* tests/mpn: New directory.
+	* tests/Makefile.am: Add it.
+	* tests/mpn/Makefile.am: New file.
+	* configure.in (AC_OUTPUT): Add it.
+	* tests/mpn/t-asmtype.c: New file.
+
+	* configure, config.in: Update to autoconf 2.49d.
+
+	* configure.in, gmp-h.in, mp-h.in, demos/expr/expr-impl-h.in: Revert
+	to generating gmp.h, mp.h and expr-impl.h with AC_OUTPUT and AC_SUBST.
+
+	* configure.in (m68*-*-*): Oops, m683?2 is 68000, m68360 is cpu32.
+	* mpn/m68k/m68k-defs.m4 (scale_available_p): Ditto.
+
+	* configure.in (underscore, asm_align): Remove these variables,	unused.
+	(GMP_ASM_*): Sort by AC_REQUIREs, to avoid duplication.
+	* acinclude.m4 (GMP_ASM_UNDERSCORE, GMP_ASM_ALIGN_LOG): Remove support
+	for actions, no longer needed.
+
 2001-04-17  Kevin Ryde  <kevin@swox.se>
 
 	* config.guess (m68k-*-*): Look for cpu in linux kernel /proc/cpuinfo.
