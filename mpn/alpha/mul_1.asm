@@ -45,7 +45,7 @@ PROLOGUE(mpn_mul_1c)
 	stq	r3,0(r16)
 	cmpult	r3,r20,r0	C r0 = carry from (cy_limb + cl)
 	bne	r18,$Loop	C jump if size was == 2
-	br	$Le2
+	br	r31,$Le2
 $Le1c:	addq	r3,r20,r3	C r3 = cy_limb + cl
 	cmpult	r3,r20,r0	C r0 = carry from (cy_limb + cl)
 $Le1:	stq	r3,0(r16)
