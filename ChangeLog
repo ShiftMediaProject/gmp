@@ -1,5 +1,7 @@
 2001-02-14  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc64/sqr_diagonal.asm: New file.
+
 	* mpn/mips3/sqr_diagonal.asm: New file.
 
 2001-02-12  Torbjorn Granlund  <tege@swox.com>
