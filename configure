@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.421 .
+# From configure.in Revision: 1.422 .
 #
 #
 #
@@ -2058,7 +2058,7 @@ echo "include_mpn(\`alpha/default.m4')" >> $gmp_tmpconfigm4i
   *-cray-unicos*)
     gmp_asm_syntax_testing=no
     cclist="cc"
-    cc_cflags="-O3 -htask0 -Wa,-B"
+    cc_cflags="-O3 -hscalar0 -htask0 -Wa,-B"
     path="cray"
     ;;
 
