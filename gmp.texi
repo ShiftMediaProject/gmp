@@ -8961,6 +8961,8 @@ USA.
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
 about the omission!)
 
+Thanks goes to Hans Thorsen for donating an SGI system for the GMP test system
+environment.
 
 @node References, GNU Free Documentation License, Contributors, Top
 @comment  node-name,  next,  previous,  up
