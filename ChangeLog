@@ -1,3 +1,8 @@
+2000-11-13  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in [SPEED_CYCLECOUNTER_OBJS switch]:
+	Declare hppa.asm as just 32 bits (cyclecounter_size=1).
+
 2000-11-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/t-mul.c
