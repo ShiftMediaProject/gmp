@@ -1,10 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 #include "gmp.h"
 #include "gmpstat.h"
 
 int g_debug = 0;
+
+static mpz_t a;
+
+static void
+sh_status (int sig)
+{
+  printf ("sh_status: signal %d caught. dumping status.\n", sig);
+
+  printf ("  a = ");
+  mpz_out_str (stdout, 10, a);
+  printf ("\n");
+
+  if (SIGSEGV == sig)		/* remove SEGV handler */
+    signal (SIGSEGV, SIG_DFL);
+}
 
 /* Input is a modulus (m).  We shall find multiplyer (a) and adder (c)
    conforming to the rules found in the first comment block in file
@@ -14,12 +30,6 @@ int g_debug = 0;
    multipliers not passing.  */
 
 /* TODO:
-
-   1) catch signals and print current 'a'.
-
-   2) print low_merit and high_merit on startup.
-
-   3) print "done" on exit.
 
 */
 
@@ -34,7 +44,7 @@ main (int argc, char *argv[])
   int have_start_a = 0;
   int cnt_high_merit;
   unsigned long int rem;
-  mpz_t m, a;
+  mpz_t m;
   mpz_t ulim, z_tmp;
 #define DIMS 6			/* dimensions run in spectral test */
   mpf_t v[DIMS-1];		/* spectral test result (there's no v
@@ -75,6 +85,18 @@ main (int argc, char *argv[])
       exit (1);
     }
 
+  /* Install signal handler. */
+  if (SIG_ERR == signal (SIGSEGV, sh_status))
+    {
+      perror ("signal (SIGSEGV)");
+      exit (1);
+    }
+  if (SIG_ERR == signal (SIGHUP, sh_status))
+    {
+      perror ("signal (SIGHUP)");
+      exit (1);
+    }
+
   mpz_set_str (m, argv[0], 0);
   printf ("m = 0x");
   mpz_out_str (stdout, 16, m);
@@ -93,10 +115,15 @@ main (int argc, char *argv[])
 
   if (debug)
     {
-      /*      fprintf (stderr, "0x");*/
       mpz_out_str (stderr, 10, a);
       fprintf (stderr, " < a < ");
       mpz_out_str (stderr, 10, ulim);
+      fputs ("\n", stderr);
+
+      fprintf (stderr, "low_merit = ");
+      mpf_out_str (stderr, 10, 0, low_merit);
+      fprintf (stderr, "; high_merit = ");
+      mpf_out_str (stderr, 10, 0, high_merit);
       fputs ("\n", stderr);
     }
 
