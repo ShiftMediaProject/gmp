@@ -1,4 +1,4 @@
- # MIPS3 __mpn_lshift --
+ # MIPS3 __gmpn_lshift --
 
  # Copyright (C) 1995 Free Software Foundation, Inc.
 
@@ -28,9 +28,9 @@
 
 	.text
 	.align	2
-	.globl	__mpn_lshift
-	.ent	__mpn_lshift
-__mpn_lshift:
+	.globl	__gmpn_lshift
+	.ent	__gmpn_lshift
+__gmpn_lshift:
 	.set	noreorder
 	.set	nomacro
 
@@ -92,4 +92,4 @@ __mpn_lshift:
 .Lend:	dsll	$8,$10,$7
 	j	$31
 	sd	$8,-8($4)
-	.end	__mpn_lshift
+	.end	__gmpn_lshift

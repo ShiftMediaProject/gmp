@@ -1,4 +1,4 @@
-# ns32000 __mpn_add_n -- Add two limb vectors of the same length > 0 and store
+# ns32000 __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
 # sum in a third limb vector.
 
 # Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 
 	.align 1
-.globl ___mpn_add_n
-___mpn_add_n:
+.globl ___gmpn_add_n
+___gmpn_add_n:
 	save	[r3,r4,r5]
 	negd	28(sp),r3
 	movd	r3,r0

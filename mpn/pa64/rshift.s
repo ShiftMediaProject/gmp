@@ -1,4 +1,4 @@
-; HP-PA 2.0 __mpn_rshift --
+; HP-PA 2.0 __gmpn_rshift --
 
 ; Copyright (C) 1997 Free Software Foundation, Inc.
 
@@ -30,8 +30,8 @@
 
 	.level	2.0n
 	.code
-	.export	__mpn_rshift
-__mpn_rshift
+	.export	__gmpn_rshift
+__gmpn_rshift
 	.proc
 	.callinfo frame=0,args_saved
 	.entry

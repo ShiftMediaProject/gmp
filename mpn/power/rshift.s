@@ -1,4 +1,4 @@
-# IBM POWER __mpn_rshift -- 
+# IBM POWER __gmpn_rshift -- 
 
 # Copyright (C) 1992, 1994, 1999 Free Software Foundation, Inc.
 
@@ -27,14 +27,14 @@
 # cnt		r6
 
 	.toc
-	.globl	__mpn_rshift
-	.globl	.__mpn_rshift
-	.csect	__mpn_rshift[DS]
-__mpn_rshift:
-	.long	.__mpn_rshift, TOC[tc0], 0
+	.globl	__gmpn_rshift
+	.globl	.__gmpn_rshift
+	.csect	__gmpn_rshift[DS]
+__gmpn_rshift:
+	.long	.__gmpn_rshift, TOC[tc0], 0
 	.csect	.text[PR]
 	.align	2
-.__mpn_rshift:
+.__gmpn_rshift:
 	sfi	8,6,32
 	mtctr	5		# put limb count in CTR loop register
 	l	0,0(4)		# read least significant limb

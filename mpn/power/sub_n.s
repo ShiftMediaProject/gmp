@@ -1,4 +1,4 @@
-# IBM POWER __mpn_sub_n -- Subtract two limb vectors of equal, non-zero length.
+# IBM POWER __gmpn_sub_n -- Subtract two limb vectors of equal, non-zero length.
 
 # Copyright (C) 1992, 1994, 1995, 1996, 1999 Free Software Foundation, Inc.
 
@@ -27,14 +27,14 @@
 # size		r6
 
 	.toc
-	.globl	__mpn_sub_n
-	.globl	.__mpn_sub_n
-	.csect	__mpn_sub_n[DS]
-__mpn_sub_n:
-	.long	.__mpn_sub_n, TOC[tc0], 0
+	.globl	__gmpn_sub_n
+	.globl	.__gmpn_sub_n
+	.csect	__gmpn_sub_n[DS]
+__gmpn_sub_n:
+	.long	.__gmpn_sub_n, TOC[tc0], 0
 	.csect	.text[PR]
 	.align	2
-.__mpn_sub_n:
+.__gmpn_sub_n:
 	andil.	10,6,1		# odd or even number of limbs?
 	l	8,0(4)		# load least significant s1 limb
 	l	0,0(5)		# load least significant s2 limb

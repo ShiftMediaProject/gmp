@@ -151,7 +151,7 @@ main (argc, argv)
 
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
-	__mpn_copy (dx+1, s1, size);
+	__gmpn_copy (dx+1, s1, size);
       t = cputime() - t0;
       printf ("mpn_copy:   %ldms (%.2f cycles/limb)\n",
 	      t, ((double) t * CLOCK) / (OPS * 1000.0));
@@ -172,7 +172,7 @@ main (argc, argv)
 	}
 
       refmpn_copy (dx+1, s1, size);
-      __mpn_copy (dy+1, s1, size);
+      __gmpn_copy (dy+1, s1, size);
 #ifdef PRINT
       mpn_print (dx+1, size);
       mpn_print (dy+1, size);

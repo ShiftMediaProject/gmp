@@ -1,4 +1,4 @@
-# ns32000 __mpn_addmul_1 -- Multiply a limb vector with a limb and add
+# ns32000 __gmpn_addmul_1 -- Multiply a limb vector with a limb and add
 # the result to a second limb vector.
 
 # Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 
 	.align 1
-.globl ___mpn_addmul_1
-___mpn_addmul_1:
+.globl ___gmpn_addmul_1
+___gmpn_addmul_1:
 	save	[r3,r4,r5,r6,r7]
 	negd	24(sp),r4
 	movd	r4,r0

@@ -1,4 +1,4 @@
-; HP-PA 2.0 __mpn_sub_n -- Subtract two limb vectors of the same length > 0
+; HP-PA 2.0 __gmpn_sub_n -- Subtract two limb vectors of the same length > 0
 ; and store difference in a third limb vector.
 
 ; Copyright (C) 1997 Free Software Foundation, Inc.
@@ -31,8 +31,8 @@
 
 	.level	2.0n
 	.code
-	.export	__mpn_sub_n
-__mpn_sub_n
+	.export	__gmpn_sub_n
+__gmpn_sub_n
 	.proc
 	.callinfo frame=0,args_saved
 	.entry

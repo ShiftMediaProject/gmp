@@ -1,4 +1,4 @@
- # MIPS3 __mpn_add_n -- Add two limb vectors of the same length > 0 and
+ # MIPS3 __gmpn_add_n -- Add two limb vectors of the same length > 0 and
  # store sum in a third limb vector.
 
  # Copyright (C) 1995 Free Software Foundation, Inc.
@@ -29,9 +29,9 @@
 
 	.text
 	.align	2
-	.globl	__mpn_add_n
-	.ent	__mpn_add_n
-__mpn_add_n:
+	.globl	__gmpn_add_n
+	.ent	__gmpn_add_n
+__gmpn_add_n:
 	.set	noreorder
 	.set	nomacro
 
@@ -117,4 +117,4 @@ __mpn_add_n:
 	j	$31
 	or	$2,$2,$8
 
-	.end	__mpn_add_n
+	.end	__gmpn_add_n

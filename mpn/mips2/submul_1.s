@@ -1,4 +1,4 @@
- # MIPS __mpn_submul_1 -- Multiply a limb vector with a single limb and
+ # MIPS __gmpn_submul_1 -- Multiply a limb vector with a single limb and
  # subtract the product from a second limb vector.
 
  # Copyright (C) 1992, 1994, 1996 Free Software Foundation, Inc.
@@ -29,9 +29,9 @@
 
 	.text
 	.align	 4
-	.globl	 __mpn_submul_1
-	.ent	__mpn_submul_1
-__mpn_submul_1:
+	.globl	 __gmpn_submul_1
+	.ent	__gmpn_submul_1
+__gmpn_submul_1:
 	.set    noreorder
 	.set    nomacro
 
@@ -94,4 +94,4 @@ $LC0:	lw	$10,0($4)
 	j	$31
 	addu	$2,$9,$2	# add high product limb and carry from addition
 
-	.end	__mpn_submul_1
+	.end	__gmpn_submul_1

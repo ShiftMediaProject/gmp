@@ -1,4 +1,4 @@
-# VAX __mpn_mul_1 -- Multiply a limb vector with a limb and store
+# VAX __gmpn_mul_1 -- Multiply a limb vector with a limb and store
 # the result in a second limb vector.
 
 # Copyright (C) 1992, 1994, 1996 Free Software Foundation, Inc.
@@ -29,8 +29,8 @@
 
 .text
 	.align 1
-.globl ___mpn_mul_1
-___mpn_mul_1:
+.globl ___gmpn_mul_1
+___gmpn_mul_1:
 	.word	0xfc0
 	movl	12(ap),r4
 	movl	8(ap),r8

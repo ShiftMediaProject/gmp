@@ -1,4 +1,4 @@
-# Pyramid __mpn_mul_1 -- Multiply a limb vector with a limb and store
+# Pyramid __gmpn_mul_1 -- Multiply a limb vector with a limb and store
 # the result in a second limb vector.
 
 # Copyright (C) 1995 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 .text
 	.align	2
-.globl	___mpn_mul_1
-___mpn_mul_1:
+.globl	___gmpn_mul_1
+___gmpn_mul_1:
 	mova	(pr0)[pr2*4],pr0
 	mova	(pr1)[pr2*4],pr1
 	mnegw	pr2,pr2

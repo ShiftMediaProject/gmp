@@ -1,4 +1,4 @@
-# ns32000 __mpn_submul_1 -- Multiply a limb vector with a limb and subtract
+# ns32000 __gmpn_submul_1 -- Multiply a limb vector with a limb and subtract
 # the result from a second limb vector.
 
 # Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 
 	.align 1
-.globl ___mpn_submul_1
-___mpn_submul_1:
+.globl ___gmpn_submul_1
+___gmpn_submul_1:
 	save	[r3,r4,r5,r6,r7]
 	negd	24(sp),r4
 	movd	r4,r0

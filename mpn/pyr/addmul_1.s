@@ -1,4 +1,4 @@
-# Pyramid __mpn_addmul_1 -- Multiply a limb vector with a limb and add
+# Pyramid __gmpn_addmul_1 -- Multiply a limb vector with a limb and add
 # the result to a second limb vector.
 
 # Copyright (C) 1995 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 .text
 	.align	2
-.globl	___mpn_addmul_1
-___mpn_addmul_1:
+.globl	___gmpn_addmul_1
+___gmpn_addmul_1:
 	mova	(pr0)[pr2*4],pr0
 	mova	(pr1)[pr2*4],pr1
 	mnegw	pr2,pr2

@@ -1,4 +1,4 @@
-# VAX __mpn_rshift -- right shift.
+# VAX __gmpn_rshift -- right shift.
 
 # Copyright (C) 1999 Free Software Foundation, Inc.
 
@@ -30,8 +30,8 @@
 
 .text
 	.align 1
-.globl ___mpn_rshift
-___mpn_rshift:
+.globl ___gmpn_rshift
+___gmpn_rshift:
 	.word	0x1c0
 	movl	4(ap),r7
 	movl	8(ap),r6

@@ -1,4 +1,4 @@
-# VAX __mpn_sub_n -- Subtract two limb vectors of the same length > 0 and store
+# VAX __gmpn_sub_n -- Subtract two limb vectors of the same length > 0 and store
 # difference in a third limb vector.
 
 # Copyright (C) 1999 Free Software Foundation, Inc.
@@ -29,8 +29,8 @@
 
 .text
 	.align 1
-.globl ___mpn_sub_n
-___mpn_sub_n:
+.globl ___gmpn_sub_n
+___gmpn_sub_n:
 	.word	0x0
 	movl	16(ap),r0
 	movl	12(ap),r1

@@ -1,4 +1,4 @@
- # MIPS2 __mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
+ # MIPS2 __gmpn_sub_n -- Subtract two limb vectors of the same length > 0 and
  # store difference in a third limb vector.
 
  # Copyright (C) 1995 Free Software Foundation, Inc.
@@ -29,9 +29,9 @@
 
 	.text
 	.align	2
-	.globl	__mpn_sub_n
-	.ent	__mpn_sub_n
-__mpn_sub_n:
+	.globl	__gmpn_sub_n
+	.ent	__gmpn_sub_n
+__gmpn_sub_n:
 	.set	noreorder
 	.set	nomacro
 
@@ -117,4 +117,4 @@ __mpn_sub_n:
 	j	$31
 	or	$2,$2,$8
 
-	.end	__mpn_sub_n
+	.end	__gmpn_sub_n

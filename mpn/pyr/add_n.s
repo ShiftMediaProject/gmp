@@ -1,4 +1,4 @@
-# Pyramid __mpn_add_n -- Add two limb vectors of the same length > 0 and store
+# Pyramid __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
 # sum in a third limb vector.
 
 # Copyright (C) 1995 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 .text
 	.align	2
-.globl	___mpn_add_n
-___mpn_add_n:
+.globl	___gmpn_add_n
+___gmpn_add_n:
 	movw	$-1,tr0		# representation for carry clear
 
 	movw	pr3,tr2

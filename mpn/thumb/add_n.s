@@ -1,4 +1,4 @@
-@ ARM/Thumb __mpn_add -- Add two limb vectors of the same length > 0 and store
+@ ARM/Thumb __gmpn_add -- Add two limb vectors of the same length > 0 and store
 @ sum in a third limb vector.
 
 @ Copyright (C) 1997 Free Software Foundation, Inc.
@@ -32,8 +32,8 @@
 	.text
 	.thumb
 	.align	0
-	.global	___mpn_add_n
-___mpn_add_n:
+	.global	___gmpn_add_n
+___gmpn_add_n:
 	push	{r4, r5, r6, lr}
 	mov	r6, #1			@ init carry save register
 

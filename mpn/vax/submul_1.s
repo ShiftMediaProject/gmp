@@ -1,4 +1,4 @@
-# VAX __mpn_submul_1 -- Multiply a limb vector with a limb and subtract
+# VAX __gmpn_submul_1 -- Multiply a limb vector with a limb and subtract
 # the result from a second limb vector.
 
 # Copyright (C) 1992, 1994, 1996 Free Software Foundation, Inc.
@@ -29,8 +29,8 @@
 
 .text
 	.align 1
-.globl ___mpn_submul_1
-___mpn_submul_1:
+.globl ___gmpn_submul_1
+___gmpn_submul_1:
 	.word	0xfc0
 	movl	12(ap),r4
 	movl	8(ap),r8

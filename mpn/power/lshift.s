@@ -1,4 +1,4 @@
-# IBM POWER __mpn_lshift -- 
+# IBM POWER __gmpn_lshift -- 
 
 # Copyright (C) 1992, 1994, 1999 Free Software Foundation, Inc.
 
@@ -27,14 +27,14 @@
 # cnt		r6
 
 	.toc
-	.globl	__mpn_lshift
-	.globl	.__mpn_lshift
-	.csect	__mpn_lshift[DS]
-__mpn_lshift:
-	.long	.__mpn_lshift, TOC[tc0], 0
+	.globl	__gmpn_lshift
+	.globl	.__gmpn_lshift
+	.csect	__gmpn_lshift[DS]
+__gmpn_lshift:
+	.long	.__gmpn_lshift, TOC[tc0], 0
 	.csect	.text[PR]
 	.align	2
-.__mpn_lshift:
+.__gmpn_lshift:
 	sli	0,5,2
 	cax	9,3,0
 	cax	4,4,0

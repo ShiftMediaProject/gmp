@@ -1,4 +1,4 @@
-# IBM POWER __mpn_submul_1 -- Multiply a limb vector with a limb and subtract
+# IBM POWER __gmpn_submul_1 -- Multiply a limb vector with a limb and subtract
 # the result from a second limb vector.
 
 # Copyright (C) 1992, 1994, 1999 Free Software Foundation, Inc.
@@ -38,14 +38,14 @@
 # we can branch in zero cycles, so that's how we perform the additions.
 
 	.toc
-	.globl	__mpn_submul_1
-	.globl	.__mpn_submul_1
-	.csect	__mpn_submul_1[DS]
-__mpn_submul_1:
-	.long	.__mpn_submul_1[PR], TOC[tc0], 0
-	.csect	.__mpn_submul_1[PR]
+	.globl	__gmpn_submul_1
+	.globl	.__gmpn_submul_1
+	.csect	__gmpn_submul_1[DS]
+__gmpn_submul_1:
+	.long	.__gmpn_submul_1[PR], TOC[tc0], 0
+	.csect	.__gmpn_submul_1[PR]
 	.align	2
-.__mpn_submul_1:
+.__gmpn_submul_1:
 
 	cal	3,-4(3)
 	l	0,0(4)

@@ -1,4 +1,4 @@
-; HP-PA 2.0 __mpn_add_n -- Add two limb vectors of the same length > 0 and
+; HP-PA 2.0 __gmpn_add_n -- Add two limb vectors of the same length > 0 and
 ; store sum in a third limb vector.
 
 ; Copyright (C) 1997 Free Software Foundation, Inc.
@@ -31,8 +31,8 @@
 
 	.level	2.0n
 	.code
-	.export	__mpn_add_n
-__mpn_add_n
+	.export	__gmpn_add_n
+__gmpn_add_n
 	.proc
 	.callinfo frame=0,args_saved
 	.entry
