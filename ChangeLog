@@ -16,6 +16,7 @@
 	* tune/{speed.h,common.c,speed.c}: Add measuring, and of invert_limb.
 
 	* tune/speed.h (speed_params r): Use mp_limb_t, not long.
+	* tune/{speed.h,common.c}: Don't "switch" on "r".
 	* tune/speed.c (r_string): Accept limb sized constants.
 	(choice scale): Add a scale factor (eg. "2.33*mpn_add_n").
 	* tune/common.c (SPEED_ROUTINE_UDIV_QRNND_A): Default r to
