@@ -29,6 +29,10 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#ifdef HAVE_NATIVE_mpn_sqr_diagonal
+void mpn_sqr_diagonal (mp_ptr, mp_srcptr, mp_size_t);
+#endif
+
 void
 mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
 {
@@ -63,12 +67,16 @@ mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
 	  cy = mpn_addmul_1 (tp + 2 * i - 2, up + i, n - i, up[i - 1]);
 	  tp[n + i - 2] = cy;
 	}
+#ifdef HAVE_NATIVE_mpn_sqr_diagonal
+      mpn_sqr_diagonal (prodp + 2, up + 1, n - 1);
+#else
       for (i = 1; i < n; i++)
 	{
 	  mp_limb_t x;
 	  x = up[i];
 	  umul_ppmm (prodp[2 * i + 1], prodp[2 * i], x, x);
 	}
+#endif
       {
 	mp_limb_t cy;
 	cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
