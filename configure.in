@@ -1992,6 +1992,7 @@ if test "$gmp_asm_syntax_testing" != no; then
       GMP_ASM_M68K_BRANCHES
       ;;
     powerpc*-*-*)
+      GMP_ASM_POWERPC_PIC_ALWAYS
       GMP_ASM_POWERPC_R_REGISTERS
       GMP_INCLUDE_MPN(powerpc32/powerpc-defs.m4)
       case $host in

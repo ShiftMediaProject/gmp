@@ -1701,6 +1701,47 @@ GMP_DEFINE_RAW(["define(<WANT_BRANCHES>, <\`$gmp_cv_asm_m68k_branches'>)"])
 ])
 
 
+dnl  GMP_ASM_POWERPC_PIC_ALWAYS
+dnl  --------------------------
+dnl  Determine whether PIC is the default compiler output.
+dnl
+dnl  SVR4 style "foo@ha" addressing is interpreted as non-PIC, and anything
+dnl  else is assumed to require PIC always (Darwin or AIX).  SVR4 is the
+dnl  only non-PIC addressing syntax the asm files have at the moment anyway.
+dnl
+dnl  Libtool does this by taking "*-*-aix* | *-*-darwin* | *-*-rhapsody*" to
+dnl  mean PIC always, but it seems more reliable to grep the compiler
+dnl  output.
+dnl
+dnl  On Darwin "cc -static" is non-PIC with syntax "ha16(_foo)", but that's
+dnl  apparently only for use in the kernel, which we're not attempting to
+dnl  target at the moment, so don't look for that.
+
+AC_DEFUN(GMP_ASM_POWERPC_PIC_ALWAYS,
+[AC_REQUIRE([AC_PROG_CC])
+AC_CACHE_CHECK([whether compiler output is PIC by default],
+               gmp_cv_asm_powerpc_pic,
+[gmp_cv_asm_powerpc_pic=yes
+cat >conftest.c <<EOF
+int foo;
+int *bar() { return &foo; }
+EOF
+echo "Test program:" >&AC_FD_CC
+cat conftest.c >&AC_FD_CC
+gmp_compile="$CC $CFLAGS $CPPFLAGS -S conftest.c >&AC_FD_CC"
+if AC_TRY_EVAL(gmp_compile); then
+  echo "Compiler output:" >&AC_FD_CC
+  cat conftest.s >&AC_FD_CC
+  if grep 'foo@ha' conftest.s >/dev/null 2>&AC_FD_CC; then
+    gmp_cv_asm_powerpc_pic=no
+  fi
+fi
+rm -f conftest*
+])
+GMP_DEFINE_RAW(["define(<PIC_ALWAYS>,<$gmp_cv_asm_powerpc_pic>)"])
+])
+
+
 dnl  GMP_ASM_POWERPC_R_REGISTERS
 dnl  ---------------------------
 dnl  Determine whether the assembler takes powerpc registers with an "r" as
@@ -2281,6 +2322,8 @@ esac
 dnl  GMP_FUNC_VSNPRINTF
 dnl  ------------------
 dnl  Check whether vsnprintf exists, and works properly.
+dnl
+dnl  Systems without vsnprintf include mingw32, OSF 4.
 dnl
 dnl  Sparc Solaris 2.7 in 64-bit mode doesn't always truncate, making
 dnl  vsnprintf like vsprintf, and hence completely useless.  On one system a
