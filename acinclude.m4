@@ -455,8 +455,8 @@ struct try_t
  char overlap;
 };
 struct try_t param[6];
-void
-param_init (void)
+int
+param_init ()
 {
  struct try_t *p;
  memcpy (p, &param[ 2 ], sizeof (*p));
@@ -474,6 +474,7 @@ param_init (void)
  memcpy (p, &param[ 5 ], sizeof (*p));
  memcpy (p, &param[ 5 ], sizeof (*p));
  memcpy (p, &param[ 5 ], sizeof (*p));
+ return 0;
 }
 
 int main () { return 0; }
