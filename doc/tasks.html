@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 24 Mar 2002.  An up-to-date version is available at
+  This file current as of 6 Apr 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -386,6 +386,8 @@ MA 02111-1307, USA.
      current <code>mpn_popcount</code>.
 <li> Itanium: <code>popc_limb</code> in gmp-impl.h could use the
      <code>popcnt</code> insn.
+<li> Itanium: <code>mpn_submul_1</code> is not implemented directly, only via
+     a combination of <code>mpn_mul_1</code> and <code>mpn_sub_n</code>.
 <li> UltraSPARC/64: Optimize <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
      for s2 &lt; 2^32 (or perhaps for any zero 16-bit s2 chunk).  Not sure how
      much this can improve the speed, though, since the symmetry that we rely
@@ -943,11 +945,6 @@ near future, but are at least worth thinking about.
      having to do a reallocate if the <code>mpz_t</code> grows a bit more.
      This could only be an option, since it'd badly bloat memory usage in
      applications using many small values.
-<li> m68k: configure could accept <code>m68020fp</code> or similar to select
-     68881 floating point.  config.guess could try to detect that too.  This
-     would only be to add -m68881 to gcc, there's no GMP asm code using float,
-     so perhaps it's just as easily left to the user to set
-     <code>CFLAGS</code>.
 <li> <code>mpq</code> functions could perhaps check for numerator or
      denominator equal to 1, on the assumption that integers or
      denominator-only values might be expected to occur reasonably often.
