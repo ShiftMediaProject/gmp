@@ -113,9 +113,9 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 
       if (n3 < KARATSUBA_MUL_THRESHOLD)
 	{
-	  __gmpn_mul_basecase (tspace, prodp, n3, prodp + n3, n3);
-	  __gmpn_mul_basecase (prodp, up, n3, vp, n3);
-	  __gmpn_mul_basecase (prodp + np1, up + n3, n2, vp + n3, n2);
+	  mpn_mul_basecase (tspace, prodp, n3, prodp + n3, n3);
+	  mpn_mul_basecase (prodp, up, n3, vp, n3);
+	  mpn_mul_basecase (prodp + np1, up + n3, n2, vp + n3, n2);
 	}
       else
 	{
@@ -189,9 +189,9 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 
       if (n2 < KARATSUBA_MUL_THRESHOLD)
 	{
-	  __gmpn_mul_basecase (tspace, prodp, n2, prodp + n2, n2);
-	  __gmpn_mul_basecase (prodp, up, n2, vp, n2);
-	  __gmpn_mul_basecase (prodp + n, up + n2, n2, vp + n2, n2);
+	  mpn_mul_basecase (tspace, prodp, n2, prodp + n2, n2);
+	  mpn_mul_basecase (prodp, up, n2, vp, n2);
+	  mpn_mul_basecase (prodp + n, up + n2, n2, vp + n2, n2);
 	}
       else
 	{
@@ -259,9 +259,9 @@ __gmpn_sqr (prodp, up, n, tspace)
 
       if (n3 < KARATSUBA_SQR_THRESHOLD)
 	{
-	  __gmpn_sqr_basecase (tspace, prodp, n3);
-	  __gmpn_sqr_basecase (prodp, up, n3);
-	  __gmpn_sqr_basecase (prodp + np1, up + n3, n2);
+	  mpn_sqr_basecase (tspace, prodp, n3);
+	  mpn_sqr_basecase (prodp, up, n3);
+	  mpn_sqr_basecase (prodp + np1, up + n3, n2);
 	}
       else
 	{
@@ -309,9 +309,9 @@ __gmpn_sqr (prodp, up, n, tspace)
 
     if (n2 < KARATSUBA_SQR_THRESHOLD)
       {
-	__gmpn_sqr_basecase (tspace, prodp, n2);
-	__gmpn_sqr_basecase (prodp, up, n2);
-	__gmpn_sqr_basecase (prodp + n, up + n2, n2);
+	mpn_sqr_basecase (tspace, prodp, n2);
+	mpn_sqr_basecase (prodp, up, n2);
+	mpn_sqr_basecase (prodp + n, up + n2, n2);
       }
     else
       {
@@ -345,7 +345,7 @@ mpn_mul_n (prodp, up, vp, n)
     {
       if (n < KARATSUBA_SQR_THRESHOLD)
 	{
-	  __gmpn_sqr_basecase (prodp, up, n);
+	  mpn_sqr_basecase (prodp, up, n);
 	}
       else
 	{
@@ -358,7 +358,7 @@ mpn_mul_n (prodp, up, vp, n)
     {
       if (n < KARATSUBA_MUL_THRESHOLD)
 	{
-	  __gmpn_mul_basecase (prodp, up, n, vp, n);
+	  mpn_mul_basecase (prodp, up, n, vp, n);
 	}
       else
 	{
