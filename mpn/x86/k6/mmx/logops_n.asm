@@ -1,12 +1,16 @@
-dnl  AMD K6 mpn_and_n, mpn_andn_n, mpn_nand_n, mpn_ior_n, mpn_iorn_n,
+dnl  AMD K6-2 mpn_and_n, mpn_andn_n, mpn_nand_n, mpn_ior_n, mpn_iorn_n,
 dnl  mpn_nior_n, mpn_xor_n, mpn_xnor_n -- mpn bitwise logical operations.
 dnl   
 dnl          alignment dst/src1/src2, A=0mod8, N=4mod8
-dnl      A/A/A A/A/N A/N/A A/N/N N/A/A N/A/N N/N/A N/N/N
+dnl       A/A/A A/A/N A/N/A A/N/N N/A/A N/A/N N/N/A N/N/N
 dnl 
-dnl  K6   1.2   1.5   1.5   1.2   1.2   1.5   1.5   1.2    and,andn,ior,xor
-dnl  K6   1.5   1.75  2.0   1.75  1.75  2.0   1.75  1.5    iorn,xnor
-dnl  K6   1.75  2.0   2.0   2.0   2.0   2.0   2.0   1.75   nand,nior
+dnl  K6-2  1.2   1.5   1.5   1.2   1.2   1.5   1.5   1.2   and,andn,ior,xor
+dnl  K6-2  1.5   1.75  2.0   1.75  1.75  2.0   1.75  1.5   iorn,xnor
+dnl  K6-2  1.75  2.0   2.0   2.0   2.0   2.0   2.0   1.75  nand,nior
+dnl
+dnl  K6    1.5   1.68  1.75  1.2   1.75  1.75  1.68  1.5   and,andn,ior,xor
+dnl  K6    2.0   2.0   2.25  2.25  2.25  2.25  2.0   2.0   iorn,xnor
+dnl  K6    2.0   2.25  2.25  2.25  2.25  2.25  2.25  2.0   nand,nior
 
 
 dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.

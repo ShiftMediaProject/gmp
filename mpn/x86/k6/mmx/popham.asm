@@ -1,7 +1,9 @@
-dnl  AMD K6 mpn_popcount, mpn_hamdist -- mpn bit population count and
+dnl  AMD K6-2 mpn_popcount, mpn_hamdist -- mpn bit population count and
 dnl  hamming distance.
-dnl 
-dnl  K6: popcount 9.0 cycles/limb, hamdist 11.5 cycles/limb
+dnl
+dnl         popcount  hamdist
+dnl  K6-2:    9.0       11.5   cycles/limb
+dnl  K6:      12.5      13.0
 
 
 dnl  Copyright (C) 2000 Free Software Foundation, Inc.

@@ -1,8 +1,9 @@
-dnl  AMD K6 mpn_com_n -- mpn bitwise one's complement.
+dnl  AMD K6-2 mpn_com_n -- mpn bitwise one's complement.
 dnl   
 dnl     alignment dst/src, A=0mod8 N=4mod8
 dnl        A/A   A/N   N/A   N/N
-dnl  K6    1.0   1.18  1.18  1.18  cycles/limb
+dnl  K6-2  1.0   1.18  1.18  1.18  cycles/limb
+dnl  K6    1.5   1.85  1.75  1.85
 
 
 dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
