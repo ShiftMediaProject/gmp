@@ -1,5 +1,9 @@
 /* mpn_fib2_ui -- calculate Fibonacci numbers.
 
+   THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
+   CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
+   FUTURE GNU MP RELEASES.
+
 Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
