@@ -39,7 +39,6 @@ dnl  -----------
 dnl  The gmp version number, extracted from the #defines in gmp.h.
 dnl  Two digits like 3.0 if patchlevel <= 0, or three digits like 3.0.1 if
 dnl  patchlevel > 0.
-dnl  Using AC_DEFUN here causes an error, so plain define is used.
 
 define(GMP_VERSION,
 [GMP_HEADER_GETVAL(__GNU_MP_VERSION,gmp.h)[]dnl
