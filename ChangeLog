@@ -18,6 +18,31 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-07  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/hgcd.c (mpn_hgcd): Use BELOW_THRESHOLD, to follow the
+	convention of N<THRESH for the lower algorithm, not <=.  Fixes
+	algorithm selection in tuneup.c.
+
+	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer): Use intended
+	align_xp, align_yp.
+
+	* tune/tuneup.c (mul_toom3_threshold): Use MUL_TOOM3_THRESHOLD_LIMIT,
+	for the benefit of ASSERT in mpn_mul_n.
+
+	* tune/tuneup.c (tune_mul): Correction to toom3 param.min_size, should
+	use MPN_TOOM3_MUL_N_MINSIZE.
+
+	* tune/speed.c (check_align_option): Correction to printf format.
+	* tune/freq.c (freq_sysctl_hw_model): Remove unused "i" variable.
+
+	* scanf/doscan.c: Correction to a couple of trace printfs.
+	Add <stdlib.h> for strtol.
+
+	* tests/misc/t-scanf.c (test_sscanf_eof_ok): New function.
+	(check_misc): Use it to suppress tests broken by libc.
+	And should be EOF rather than -1 in various places.
+
 2003-12-06  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer):
