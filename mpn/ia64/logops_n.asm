@@ -25,35 +25,35 @@ include(`../config.m4')
 C         cycles/limb
 C Itanium 2:  1
 
-ifdef(`OPERATION_mpn_and_n',
+ifdef(`OPERATION_and_n',
 `	define(`func',`mpn_and_n')
 	define(`logop',		`and	$1 = $2, $3')
 	define(`notormov',	`mov	$1 = $2')')
-ifdef(`OPERATION_mpn_andn_n',
+ifdef(`OPERATION_andn_n',
 `	define(`func',`mpn_andn_n')
 	define(`logop',		`andcm	$1 = $2, $3')
 	define(`notormov',	`mov	$1 = $2')')
-ifdef(`OPERATION_mpn_nand_n',
+ifdef(`OPERATION_nand_n',
 `	define(`func',`mpn_nand_n')
 	define(`logop',		`and	$1 = $2, $3')
 	define(`notormov',	`sub	$1 = -1, $2')')
-ifdef(`OPERATION_mpn_ior_n',
+ifdef(`OPERATION_ior_n',
 `	define(`func',`mpn_ior_n')
 	define(`logop',		`or	$1 = $2, $3')
 	define(`notormov',	`mov	$1 = $2')')
-ifdef(`OPERATION_mpn_iorn_n',
+ifdef(`OPERATION_iorn_n',
 `	define(`func',`mpn_iorn_n')
 	define(`logop',		`andcm	$1 = $3, $2')
 	define(`notormov',	`sub	$1 = -1, $2')')
-ifdef(`OPERATION_mpn_nior_n',
+ifdef(`OPERATION_nior_n',
 `	define(`func',`mpn_nior_n')
 	define(`logop',		`or	$1 = $2, $3')
 	define(`notormov',	`sub	$1 = -1, $2')')
-ifdef(`OPERATION_mpn_xor_n',
+ifdef(`OPERATION_xor_n',
 `	define(`func',`mpn_xor_n')
 	define(`logop',		`xor	$1 = $2, $3')
 	define(`notormov',	`mov	$1 = $2')')
-ifdef(`OPERATION_mpn_xnor_n',
+ifdef(`OPERATION_xnor_n',
 `	define(`func',`mpn_xnor_n')
 	define(`logop',		`xor	$1 = $2, $3')
 	define(`notormov',	`sub	$1 = -1, $2')')
