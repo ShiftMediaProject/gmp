@@ -36,8 +36,8 @@ random ()
   return mrand48 ();
 }
 #else
-/* Glibc stdlib.h has "int32_t random();" which is right, and in fact
-   redeclaring it as "long" conflicts on i386. */
+/* Glibc stdlib.h has "int32_t random();" which, on i386 at least, conflicts
+   with a redeclaration as "long". */
 #ifndef __GLIBC__
 long random ();
 #endif
