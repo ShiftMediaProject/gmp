@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void dump (char *, mpz_t, mpz_t, mpz_t);
+void dump _PROTO ((char *, mpz_t, mpz_t, mpz_t));
 
 typedef void (*dss_func) _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 typedef void (*dsi_func) _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));

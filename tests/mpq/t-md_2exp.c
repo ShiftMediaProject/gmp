@@ -34,7 +34,7 @@ struct pair_t {
 int
 main (void)
 {
-  struct {
+  static const struct {
     struct pair_t  left;
     unsigned long  n;
     struct pair_t  right;
