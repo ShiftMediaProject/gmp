@@ -19,6 +19,52 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-02  Kevin Ryde  <kevin@swox.se>
+
+	* mpbsd/Makefile.am: Compile mpz files directly, no copying.
+	Use mpz/add.c and mpz/sub.c rather than mpz/aors.c.
+	(INCLUDES): Remove -DOPERATION_$*, no longer needed (by mpz).
+
+	* mpz/aors.h: Renamed from mpz/aors.c.
+	* mpz/add.c, mpz/sub.c: New files, using mpz/aors.h.
+	* mpz/aors_ui.h: Renamed from mpz/aors_ui.c.
+	* mpz/add_ui.c, mpz/sub_ui.c: New files, using mpz/aors_ui.h.
+	* mpz/fits_s.h: Renamed and adapted from mpz/fits_s.c.
+	* mpz/fits_sshort.c, mpz/fits_sint.c, mpz/fits_slong.c: New files.
+	* mpz/mul_i.h: Renamed from mpz/mul_siui.c.
+	* mpz/mul_ui.c, mpz/mul_ui.c: New files, using mpz/mul_i.h.
+	* mpz/Makefile.am: Consequent updates.
+	(INCLUDES): Remove -DOPERATION_$*.
+
+	* mpf/fits_s.h: Renamed and adapted from mpf/fits_s.c.
+	* mpf/fits_sshort.c, mpf/fits_sint.c, mpf/fits_slong.c: New files.
+	* mpf/fits_u.h: Renamed and adapted from mpf/fits_u.c.
+	* mpf/fits_ushort.c, mpf/fits_uint.c, mpf/fits_ulong.c: New files.
+	* mpf/Makefile.am: Consequent updates.
+	(INCLUDES): Remove -DOPERATION_$*.
+
+	* cxx/osfuns.cc (__gmp_doprnt_params_from_ios): Don't use ios::hex as
+	cases in a switch, they're not constant in g++ 3.0.
+
+	* mpn/Makeasm.am (.s.o, .s.obj, .S.o, .S.obj, .asm.o, .asm.obj):
+	Locate source file with test -f the same as automake.
+	(.S): Let CCAS do the preprocessing, and run libtool for .S.lo.
+	(.asm.lo): Run libtool via m4-ccas to get new style foo.lo right.
+	(COMPILE_FLAGS): Add $(DEFAULT_INCLUDES), per new automake.
+	* mpn/m4-ccas: New file.
+	* mpn/Makefile.am (EXTRA_DIST): Add it.
+	* mpn/asm-defs.m4: Add m4_not_for_expansion(`DLL_EXPORT').
+	* mpn/x86/x86-defs.m4: Undefine PIC if DLL_EXPORT is set.
+	* configure.in (CFLAGS_PIC, ASMFLAGS_PIC): Remove, no longer needed.
+
+	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Warn what's omitted when
+	vsnprintf not available.
+
+	* mpn/underscore.h: Remove file, not used since m68k converted to asm.
+	* mpn/Makefile.am (EXTRA_DIST): Remove it.
+
+	* tests/refmpz.c: Add <stdlib.h>, for free().
+
 2001-10-01  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (--enable-cxx): New option for C++ support.
