@@ -31,7 +31,7 @@ noinst_HEADERS = speed.h
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
 libspeed_la_SOURCES =							\
-  common.c divrem_1_div.c divrem_1_inv.c divrem_2_div.c divrem_2_inv.c	\
+  common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
   freq.c gcd_bin.c gcd_finda_gen.c					\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
