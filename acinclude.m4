@@ -145,8 +145,8 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
 
   case "$target" in 
     hppa2.0*-*-*)
-      # FIXME: If the user sets CC=my-gcc at configure time, we will test the 
-      # wrong thing.
+      # FIXME: If gcc is installed under another name than "gcc", we will 
+      # test the wrong thing.
       if test "$CC" != "gcc"; then
         dnl Let compiler version A.10.32.30 or higher be ok.
         dnl Bad compiler output:
@@ -171,7 +171,21 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
 	gmp_cv_cc_64bit=no
       fi
       ;;
+    mips-sgi-irix6.*)
+      # We use `-n32' to cc and `-mabi=n32' to gcc, resulting in 64-bit 
+      # arithmetic but not 64-bit pointers, so the general test for sizeof
+      # (void *) is not valid.
+      # Simply try to compile an empty main.  If that succeeds return
+      # true.
+      AC_TRY_COMPILE( , ,
+                     gmp_cv_cc_64bit=yes, gmp_cv_cc_64bit=no,
+                     gmp_cv_cc_64bit=no)
+      ;;
     *-*-*)
+      # FIXME: Avoid running anything on target at configure time.  Someone
+      # may want to cross compile.  Instead, compile something like
+      # [int pre; char arr[sizeof (void *)]; int post;]
+      # and look at the distance between pre and post.
       AC_TRY_RUN([
         int main() { return (sizeof (void *) != 8); }
       ], gmp_cv_cc_64bit=yes, gmp_cv_cc_64bit=no, gmp_cv_cc_64bit=no)
