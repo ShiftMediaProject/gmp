@@ -1,7 +1,6 @@
-/* mpz_out_raw -- Output a mpz_t in binary.  Use an endianess and word size
-   independent format.
+/* mpz_out_raw -- write an mpz_t in raw format.
 
-Copyright 1995, 2001 Free Software Foundation, Inc.
+Copyright 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,66 +20,130 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
-
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 
-#define BITS_PER_CHAR  8
+/* HTON_LIMB_STORE takes a normal host byte order limb and stores it as
+   network byte order (ie. big endian). */
+
+#if HAVE_BIG_ENDIAN
+#define HTON_LIMB_STORE(dst, limb)  do { *(dst) = (limb); } while (0)
+#endif
+
+/* The generic implementations below very likely come out as lots of
+   separate byte stores, so if we know the host is little endian then
+   instead use a purely arithmetic BSWAP_LIMB and a single store.  */
+#if HAVE_LIMB_LITTLE_ENDIAN
+#define HTON_LIMB_STORE(dst, limb)  BSWAP_LIMB (*dst, limb)
+#endif
+
+#if ! defined (HTON_LIMB_STORE)
+#if BITS_PER_MP_LIMB == 8
+#define HTON_LIMB_STORE(dst, limb)  do { *(dst) = (limb); } while (0)
+#endif
+#if BITS_PER_MP_LIMB == 16
+#define HTON_LIMB_STORE(dst, limb)      \
+  do {                                  \
+    mp_limb_t  __limb = (limb);         \
+    char  *__p = (char *) (dst);        \
+    __p[1] = (__limb);                  \
+    __p[0] = (__limb) >> 8;             \
+  } while (0)
+#endif
+#if BITS_PER_MP_LIMB == 32
+#define HTON_LIMB_STORE(dst, limb)      \
+  do {                                  \
+    mp_limb_t  __limb = (limb);         \
+    char  *__p = (char *) (dst);        \
+    __p[3] = (__limb);                  \
+    __p[2] = (__limb) >> 8;             \
+    __p[1] = (__limb) >> 16;            \
+    __p[0] = (__limb) >> 24;            \
+  } while (0)
+#endif
+#if BITS_PER_MP_LIMB == 64
+#define HTON_LIMB_STORE(dst, limb)      \
+  do {                                  \
+    mp_limb_t  __limb = (limb);         \
+    char  *__p = (char *) (dst);        \
+    __p[7] = (__limb);                  \
+    __p[6] = (__limb) >> 8;             \
+    __p[5] = (__limb) >> 16;            \
+    __p[4] = (__limb) >> 24;            \
+    __p[3] = (__limb) >> 32;            \
+    __p[2] = (__limb) >> 40;            \
+    __p[1] = (__limb) >> 48;            \
+    __p[0] = (__limb) >> 56;            \
+  } while (0)
+#endif
+#endif
+
 
 size_t
-mpz_out_raw (FILE *stream, mpz_srcptr x)
+mpz_out_raw (FILE *fp, mpz_srcptr x)
 {
-  int i;
-  mp_size_t s;
-  mp_size_t xsize = ABS (x->_mp_size);
-  mp_srcptr xp = x->_mp_d;
-  mp_size_t out_bytesize;
-  mp_limb_t hi_limb;
-  int n_bytes_in_hi_limb;
+  mp_size_t   xsize, abs_xsize, bytes, i;
+  mp_srcptr   xp;
+  char        *tp, *bp;
+  mp_limb_t   xlimb;
+  int         zeros;
+  size_t      tsize, ssize;
 
-  if (stream == 0)
-    stream = stdout;
+  xsize = SIZ(x);
+  abs_xsize = ABS (xsize);
+  bytes = BYTES_PER_MP_LIMB * abs_xsize;
+  tsize = ROUND_UP_MULTIPLE (4, BYTES_PER_MP_LIMB) + bytes;
 
-  if (xsize == 0)
+  tp = (*__gmp_allocate_func) (tsize);
+  bp = tp + ROUND_UP_MULTIPLE (4, BYTES_PER_MP_LIMB);
+
+  if (bytes != 0)
     {
-      for (i = 4 - 1; i >= 0; i--)
-	fputc (0, stream);
-      return ferror (stream) ? 0 : 4;
+      /* reverse limb order, and byte swap if necessary */
+      bp += bytes;
+      xp = PTR (x);
+      i = abs_xsize;
+#ifdef _CRAY
+      _Pragma ("_CRI ivdep");
+#endif
+      do
+        {
+          bp -= BYTES_PER_MP_LIMB;
+          xlimb = *xp;
+          HTON_LIMB_STORE ((mp_ptr) bp, xlimb);
+          xp++;
+        }
+      while (--i > 0);
+
+      /* strip high zero bytes (without fetching from bp) */
+      count_leading_zeros (zeros, xlimb);
+      zeros /= 8;
+      bp += zeros;
+      bytes -= zeros;
     }
 
-  hi_limb = xp[xsize - 1];
-  for (i = BYTES_PER_MP_LIMB - 1; i > 0; i--)
-    {
-      if ((hi_limb >> i * BITS_PER_CHAR) != 0)
-	break;
-    }
-  n_bytes_in_hi_limb = i + 1;
-  out_bytesize = BYTES_PER_MP_LIMB * (xsize - 1) + n_bytes_in_hi_limb;
-  if (x->_mp_size < 0)
-    out_bytesize = -out_bytesize;
+  /* total bytes to be written */
+  ssize = 4 + bytes;
 
-  /* Make the size 4 bytes on all machines, to make the format portable.  */
-  for (i = 4 - 1; i >= 0; i--)
-    fputc ((out_bytesize >> (i * BITS_PER_CHAR)) % (1 << BITS_PER_CHAR),
-	   stream);
+  /* twos complement negative for the size value */
+  bytes = (xsize >= 0 ? bytes : -bytes);
 
-  /* Output from the most significant limb to the least significant limb,
-     with each limb also output in decreasing significance order.  */
+  /* so we don't rely on sign extension in ">>" */
+  ASSERT_ALWAYS (sizeof (bytes) >= 4);
 
-  /* Output the most significant limb separately, since we will only
-     output some of its bytes.  */
-  for (i = n_bytes_in_hi_limb - 1; i >= 0; i--)
-    fputc ((hi_limb >> (i * BITS_PER_CHAR)) % (1 << BITS_PER_CHAR), stream);
+  bp[-4] = bytes >> 24;
+  bp[-3] = bytes >> 16;
+  bp[-2] = bytes >> 8;
+  bp[-1] = bytes;
+  bp -= 4;
 
-  /* Output the remaining limbs.  */
-  for (s = xsize - 2; s >= 0; s--)
-    {
-      mp_limb_t x_limb;
+  if (fp == 0)
+    fp = stdout;
+  if (fwrite (bp, ssize, 1, fp) != 1)
+    ssize = 0;
 
-      x_limb = xp[s];
-      for (i = BYTES_PER_MP_LIMB - 1; i >= 0; i--)
-	fputc ((x_limb >> (i * BITS_PER_CHAR)) % (1 << BITS_PER_CHAR), stream);
-    }
-  return ferror (stream) ? 0 : ABS (out_bytesize) + 4;
+  (*__gmp_free_func) (tp, tsize);
+  return ssize;
 }

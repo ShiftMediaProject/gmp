@@ -1,7 +1,6 @@
-/* mpz_inp_raw -- Input a mpz_t in raw, but endianess, and wordsize
-   independent format (as output by mpz_out_raw).
+/* mpz_inp_raw -- read an mpz_t in raw format.
 
-Copyright 1991, 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
+Copyright 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,78 +20,131 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
-
 #include "gmp.h"
 #include "gmp-impl.h"
 
 
-#define BITS_PER_CHAR  8
+/* NTOH_LIMB_FETCH fetches a limb which is in network byte order (ie. big
+   endian) and produces a normal host byte order result. */
+
+#if HAVE_LIMB_BIG_ENDIAN
+#define NTOH_LIMB_FETCH(limb, src)  do { (limb) = *(src); } while (0)
+#endif
+
+/* The generic implementations below very likely come out as lots of
+   separate byte fetches, so if we know the host is little endian then
+   instead use a single load and a purely arithmetic BSWAP_LIMB.  */
+#if HAVE_LIMB_LITTLE_ENDIAN
+#define NTOH_LIMB_FETCH(limb, src)  BSWAP_LIMB (limb, *(src))
+#endif
+
+#if ! defined (NTOH_LIMB_FETCH)
+#if BITS_PER_MP_LIMB == 8
+#define NTOH_LIMB_FETCH(limb, src)  do { (limb) = *(src); } while (0)
+#endif
+#if BITS_PER_MP_LIMB == 16
+#define NTOH_LIMB_FETCH(limb, src)                              \
+  do {                                                          \
+    const unsigned char  *__p = (const unsigned char *) (src);  \
+    (limb) =                                                    \
+      + ((mp_limb_t) __p[0] << 8)                               \
+      +  (mp_limb_t) __p[1];                                    \
+  } while (0)
+#endif
+#if BITS_PER_MP_LIMB == 32
+#define NTOH_LIMB_FETCH(limb, src)                              \
+  do {                                                          \
+    const unsigned char  *__p = (const unsigned char *) (src);  \
+    (limb) =                                                    \
+      (  (mp_limb_t) __p[0] << 24)                              \
+      + ((mp_limb_t) __p[1] << 16)                              \
+      + ((mp_limb_t) __p[2] << 8)                               \
+      +  (mp_limb_t) __p[3];                                    \
+  } while (0)
+#endif
+#if ! defined (NTOH_LIMB_FETCH) && BITS_PER_MP_LIMB == 64
+#define NTOH_LIMB_FETCH(limb, src)                              \
+  do {                                                          \
+    const unsigned char  *__p = (const unsigned char *) (src);  \
+    (limb) =                                                    \
+      (  (mp_limb_t) __p[0] << 56)                              \
+      + ((mp_limb_t) __p[1] << 48)                              \
+      + ((mp_limb_t) __p[2] << 40)                              \
+      + ((mp_limb_t) __p[3] << 32)                              \
+      + ((mp_limb_t) __p[4] << 24)                              \
+      + ((mp_limb_t) __p[5] << 16)                              \
+      + ((mp_limb_t) __p[6] << 8)                               \
+      +  (mp_limb_t) __p[7];                                    \
+  } while (0)
+#endif
+#endif
+
+
+/* Enhancement: The byte swap loop ought to be safe to vectorize on Cray
+   etc, but someone who knows what they're doing needs to check it.  */
 
 size_t
-mpz_inp_raw (mpz_ptr x, FILE *stream)
+mpz_inp_raw (mpz_ptr x, FILE *fp)
 {
-  int i;
-  mp_size_t s;
-  mp_size_t xsize;
-  mp_ptr xp;
-  unsigned int c;
-  mp_limb_t x_limb;
-  mp_size_t in_bytesize;
-  int neg_flag;
+  unsigned char  csize_bytes[4];
+  mp_size_t      csize, abs_xsize, i;
+  size_t         abs_csize;
+  char           *cp;
+  mp_ptr         xp, sp, ep;
+  mp_limb_t      slimb, elimb;
 
-  if (stream == 0)
-    stream = stdin;
+  if (fp == 0)
+    fp = stdin;
 
-  /* Read 4-byte size */
-  in_bytesize = 0;
-  for (i = 4 - 1; i >= 0; i--)
+  /* 4 bytes for size */
+  if (fread (csize_bytes, sizeof (csize_bytes), 1, fp) != 1)
+    return 0;
+
+  csize =
+    (  (mp_size_t) csize_bytes[0] << 24)
+    + ((mp_size_t) csize_bytes[1] << 16)
+    + ((mp_size_t) csize_bytes[2] << 8)
+    + ((mp_size_t) csize_bytes[3]);
+
+  /* sign extend if necessary */
+  if (sizeof (csize) > 4)
+    csize -= (csize & 0x80000000L) << 1;
+
+  abs_csize = ABS (csize);
+
+  /* round up to a multiple of limbs */
+  abs_xsize = (abs_csize + BYTES_PER_MP_LIMB-1) / BYTES_PER_MP_LIMB;
+
+  if (abs_xsize != 0)
     {
-      c = fgetc (stream);
-      in_bytesize = (in_bytesize << BITS_PER_CHAR) | c;
+      MPZ_REALLOC (x, abs_xsize);
+      xp = PTR(x);
+
+      /* get limb boundaries right in the read */
+      xp[0] = 0;
+      cp = (char *) (xp + abs_xsize) - abs_csize;
+      if (fread (cp, abs_csize, 1, fp) != 1)
+        return 0;
+
+      /* Reverse limbs to least significant first, and byte swap.  If
+         abs_xsize is odd then on the last iteration elimb and slimb are the
+         same.  It doesn't seem extra code to handle that case separately,
+         to save an NTOH.  */
+      sp = xp;
+      ep = xp + abs_xsize-1;
+      for (i = 0; i < (abs_xsize+1)/2; i++)
+        {
+          NTOH_LIMB_FETCH (elimb, ep);
+          NTOH_LIMB_FETCH (slimb, sp);
+          *sp++ = elimb;
+          *ep-- = slimb;
+        }
+
+      /* GMP 1.x mpz_out_raw wrote high zero bytes, strip any high zero
+         limbs resulting from this */
+      MPN_NORMALIZE_NOT_ZERO (xp, abs_xsize);
     }
 
-  /* Size is stored as a 32 bit word; sign extend in_bytesize for non-32 bit
-     machines.  */
-  if (sizeof (mp_size_t) > 4)
-    in_bytesize |= (-(in_bytesize < 0)) << 31;
-
-  neg_flag = in_bytesize < 0;
-  in_bytesize = ABS (in_bytesize);
-  xsize = (in_bytesize + BYTES_PER_MP_LIMB - 1) / BYTES_PER_MP_LIMB;
-
-  if (xsize == 0)
-    {
-      x->_mp_size = 0;
-      return 4;			/* we've read 4 bytes */
-    }
-
-  if (x->_mp_alloc < xsize)
-    _mpz_realloc (x, xsize);
-  xp = x->_mp_d;
-
-  x_limb = 0;
-  for (i = (in_bytesize - 1) % BYTES_PER_MP_LIMB; i >= 0; i--)
-    {
-      c = fgetc (stream);
-      x_limb = (x_limb << BITS_PER_CHAR) | c;
-    }
-  xp[xsize - 1] = x_limb;
-
-  for (s = xsize - 2; s >= 0; s--)
-    {
-      x_limb = 0;
-      for (i = BYTES_PER_MP_LIMB - 1; i >= 0; i--)
-	{
-	  c = fgetc (stream);
-	  x_limb = (x_limb << BITS_PER_CHAR) | c;
-	}
-      xp[s] = x_limb;
-    }
-
-  if (c == EOF)
-    return 0;			/* error */
-
-  MPN_NORMALIZE (xp, xsize);
-  x->_mp_size = neg_flag ? -xsize : xsize;
-  return in_bytesize + 4;
+  SIZ(x) = (csize >= 0 ? abs_xsize : -abs_xsize);
+  return abs_csize + 4;
 }
