@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-06  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer):
+	Move SPEED_TMP_ALLOC_LIMBS invocations out from calls.
+
+	* mpn/generic/get_str.c (mpn_get_str, POW2_P case):
+	Don't append extra '\0' byte.
+
 2003-12-05  Niels Möller  <niels@s3.kth.se>
 
 	* tune/common.c (speed_mpn_hgcd_lehmer, speed_mpn_hgcd):
