@@ -1,6 +1,6 @@
 /* mpf_init_set -- Initialize a float and assign it from another float.
 
-Copyright 1993, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1995, 2000, 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -46,8 +46,8 @@ mpf_init_set (mpf_ptr r, mpf_srcptr s)
       size = prec;
     }
 
-  MPN_COPY (rp, sp, size);
-
   r->_mp_exp = s->_mp_exp;
   r->_mp_size = ssize >= 0 ? size : -size;
+
+  MPN_COPY (rp, sp, size);
 }
