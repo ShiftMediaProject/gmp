@@ -73,6 +73,13 @@ main (argc, argv)
       if (mpz_cmp_ui (multiplicand, 0) != 0)
       if (mpz_cmp_ui (remainder, 0) || mpz_cmp (quotient, multiplier))
 	dump_abort (multiplier, multiplicand);
+
+      /* Test squaring.  */
+      mpz_mul (product, multiplier, multiplier);
+      mpz_refmul (ref_product, multiplier, multiplier);
+
+      if (mpz_cmp (product, ref_product))
+	dump_abort (multiplier, multiplier);
     }
 
   exit (0);
