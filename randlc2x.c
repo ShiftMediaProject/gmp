@@ -2,7 +2,7 @@
    state STATE for a linear congruential generator with multiplier A,
    adder C, and modulus 2 ^ M2EXP.
 
-Copyright 2000  Free Software Foundation, Inc.
+Copyright 2000, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
