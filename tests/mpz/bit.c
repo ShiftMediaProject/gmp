@@ -88,8 +88,59 @@ check_tstbit (void)
   mpz_clear (z);
 }
 
+
+void
+check_single (void)
+{
+  mpz_t  x;
+  int    limb, offset, initial;
+  unsigned long  bit;
+
+  mpz_init (x);
+
+  for (limb = 0; limb < 4; limb++)
+    {
+      for (offset = (limb==0 ? 0 : -2); offset <= 2; offset++)
+        {
+          for (initial = 0; initial >= -1; initial--)
+            {
+              mpz_set_si (x, (long) initial);
+
+              bit = (unsigned long) limb*BITS_PER_MP_LIMB + offset;
+
+              mpz_clrbit (x, bit);
+              MPZ_CHECK_FORMAT (x);
+              if (mpz_tstbit (x, bit) != 0)
+                {
+                  printf ("check_single(): expected 0\n");
+                  abort ();
+                }
+          
+              mpz_setbit (x, bit);
+              MPZ_CHECK_FORMAT (x);
+              if (mpz_tstbit (x, bit) != 1)
+                {
+                  printf ("check_single(): expected 0\n");
+                  abort ();
+                }
+          
+              mpz_clrbit (x, bit);
+              MPZ_CHECK_FORMAT (x);
+              if (mpz_tstbit (x, bit) != 0)
+                {
+                  printf ("check_single(): expected 0\n");
+                  abort ();
+                }
+            }
+        }
+    }          
+
+  mpz_clear (x);
+}
+
+
 int
-main (int argc, char *argv[])
+check_random (int argc, char *argv[])
 {
   mpz_t x, s0, s1, s2, s3, m;
   mp_size_t xsize;
@@ -99,12 +150,8 @@ main (int argc, char *argv[])
   unsigned long int bitindex;
   const char  *s = "";
 
-  tests_start ();
-
   if (argc == 2)
     reps = atoi (argv[1]);
-
-  check_tstbit ();
 
   mpz_init (x);
   mpz_init (s0);
@@ -180,9 +227,7 @@ main (int argc, char *argv[])
   mpz_clear (s2);
   mpz_clear (s3);
   mpz_clear (m);
-
-  tests_end ();
-  exit (0);
+  return;
 
 
  fail:
@@ -191,3 +236,20 @@ main (int argc, char *argv[])
   printf ("x = "); mpz_out_str (stdout, -16, x); printf (" hex\n");
   exit (1);
 }
+
+
+
+int
+main (int argc, char *argv[])
+{
+  tests_start ();
+
+  check_tstbit ();
+  check_random (argc, argv);
+  check_single ();
+
+  tests_end ();
+  exit (0);
+}
+
+
