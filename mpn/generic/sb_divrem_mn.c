@@ -75,10 +75,12 @@ mpn_sb_divrem_mn (mp_ptr qp,
 
   ASSERT (dn > 2);
   ASSERT (nn >= dn);
-  ASSERT (dp[dn-1] & MP_LIMB_T_HIGHBIT);
+  ASSERT (dp[dn-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (np, nn, dp, dn));
   ASSERT (! MPN_OVERLAP_P (qp, nn-dn, dp, dn));
   ASSERT (! MPN_OVERLAP_P (qp, nn-dn, np, nn) || qp+dn >= np);
+  ASSERT_MPN (np, nn);
+  ASSERT_MPN (dp, dn);
 
   np += qn;
   dx = dp[dn - 1];

@@ -75,8 +75,10 @@ mpn_divrem_2 (mp_ptr qp, mp_size_t qxn,
 
   ASSERT (nn >= 2);
   ASSERT (qxn >= 0);
-  ASSERT (dp[1] & MP_LIMB_T_HIGHBIT);
+  ASSERT (dp[1] & GMP_NUMB_HIGHBIT);
   ASSERT (! MPN_OVERLAP_P (qp, nn-2+qxn, np, nn) || qp+2 >= np);
+  ASSERT_MPN (np, nn);
+  ASSERT_MPN (dp, 2);
 
   np += nn - 2;
   d1 = dp[1];
