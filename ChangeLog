@@ -1,3 +1,13 @@
+2000-03-19  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi: Use @include version.texi.
+	Use @email and @uref.
+	(Installing MP): Rewrite for new configure.
+	(Low-level Functions): Add mpn_divexact_by3.
+
+	* configure.in (--enable-alloca): New option.
+	* acconfig.h (USE_STACK_ALLOC): For --disable-alloca.
+
 2000-03-17  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (union ieee_double_extract): Check _CRAYMPP.
