@@ -21,31 +21,16 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdlib.h>		/* for random(), mrand48() */
-
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
-/* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
-static inline long
-myrandom ()
-{
-  return mrand48 ();
-}
-#else
-static inline long
-myrandom ()
-{
-  return random ();
-}
-#endif
 
 void
 mpf_random2 (mpf_ptr x, mp_size_t size, mp_exp_t exp)
 {
   mp_size_t asize;
   mp_size_t prec = x->_mp_prec;
+  mp_limb_t elimb;
 
   asize = ABS (size);
   if (asize != 0)
@@ -57,7 +42,10 @@ mpf_random2 (mpf_ptr x, mp_size_t size, mp_exp_t exp)
     }
 
   if (exp != 0)
-    exp = myrandom () % (2 * exp) - exp;
+    {
+      _gmp_rand (&elimb, RANDS, BITS_PER_MP_LIMB);
+      exp = elimb % (2 * exp) - exp;
+    }
   x->_mp_exp = asize == 0 ? 0 : exp;
   x->_mp_size = size < 0 ? -asize : asize;
 }
