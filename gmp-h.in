@@ -1467,7 +1467,7 @@ mpz_abs (mpz_ptr __gmp_w, mpz_srcptr __gmp_u)
 __GMP_EXTERN_INLINE
 #endif
 int
-mpz_fits_uint_p (mpz_srcptr __gmp_z)
+mpz_fits_uint_p (mpz_srcptr __gmp_z) __GMP_NOTHROW
 {
   __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_UINT_MAX);
 }
@@ -1478,7 +1478,7 @@ mpz_fits_uint_p (mpz_srcptr __gmp_z)
 __GMP_EXTERN_INLINE
 #endif
 int
-mpz_fits_ulong_p (mpz_srcptr __gmp_z)
+mpz_fits_ulong_p (mpz_srcptr __gmp_z) __GMP_NOTHROW
 {
   __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_ULONG_MAX);
 }
@@ -1489,7 +1489,7 @@ mpz_fits_ulong_p (mpz_srcptr __gmp_z)
 __GMP_EXTERN_INLINE
 #endif
 int
-mpz_fits_ushort_p (mpz_srcptr __gmp_z)
+mpz_fits_ushort_p (mpz_srcptr __gmp_z) __GMP_NOTHROW
 {
   __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_USHRT_MAX);
 }
@@ -1500,7 +1500,7 @@ mpz_fits_ushort_p (mpz_srcptr __gmp_z)
 __GMP_EXTERN_INLINE
 #endif
 unsigned long
-mpz_get_ui (mpz_srcptr __gmp_z)
+mpz_get_ui (mpz_srcptr __gmp_z) __GMP_NOTHROW
 {
   mp_limb_t __gmp_l = __gmp_z->_mp_d[0];
   return __gmp_z->_mp_size ? __gmp_l : 0;
@@ -1512,7 +1512,7 @@ mpz_get_ui (mpz_srcptr __gmp_z)
 __GMP_EXTERN_INLINE
 #endif
 mp_limb_t
-mpz_getlimbn (mpz_srcptr __gmp_z, mp_size_t __gmp_n)
+mpz_getlimbn (mpz_srcptr __gmp_z, mp_size_t __gmp_n) __GMP_NOTHROW
 {
   if (__GMP_ABS (__gmp_z->_mp_size) <= __gmp_n || __gmp_n < 0)
     return 0;
@@ -1551,7 +1551,7 @@ mpz_perfect_square_p (mpz_srcptr __gmp_a)
 __GMP_EXTERN_INLINE
 #endif
 unsigned long
-mpz_popcount (mpz_srcptr __gmp_u)
+mpz_popcount (mpz_srcptr __gmp_u) __GMP_NOTHROW
 {
   mp_size_t __gmp_usize = __gmp_u->_mp_size;
 
@@ -1578,7 +1578,7 @@ mpz_set_q (mpz_ptr __gmp_w, mpq_srcptr __gmp_u)
 __GMP_EXTERN_INLINE
 #endif
 size_t
-mpz_size (mpz_srcptr __gmp_z)
+mpz_size (mpz_srcptr __gmp_z) __GMP_NOTHROW
 {
   return __GMP_ABS (__gmp_z->_mp_size);
 }
@@ -1853,7 +1853,7 @@ mpn_add (mp_ptr __gmp_wp, mp_srcptr __gmp_xp, mp_size_t __gmp_xsize, mp_srcptr _
 __GMP_EXTERN_INLINE
 #endif
 mp_limb_t
-mpn_add_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_t __gmp_n)
+mpn_add_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_t __gmp_n) __GMP_NOTHROW
 {
   mp_limb_t  __gmp_c;
   __GMPN_ADD_1 (__gmp_c, __gmp_dst, __gmp_src, __gmp_size, __gmp_n);
@@ -1866,7 +1866,7 @@ mpn_add_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_
 __GMP_EXTERN_INLINE
 #endif
 int
-mpn_cmp (mp_srcptr __gmp_xp, mp_srcptr __gmp_yp, mp_size_t __gmp_size)
+mpn_cmp (mp_srcptr __gmp_xp, mp_srcptr __gmp_yp, mp_size_t __gmp_size) __GMP_NOTHROW
 {
   int __gmp_result;
   __GMPN_CMP (__gmp_result, __gmp_xp, __gmp_yp, __gmp_size);
@@ -1892,7 +1892,7 @@ mpn_sub (mp_ptr __gmp_wp, mp_srcptr __gmp_xp, mp_size_t __gmp_xsize, mp_srcptr _
 __GMP_EXTERN_INLINE
 #endif
 mp_limb_t
-mpn_sub_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_t __gmp_n)
+mpn_sub_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_t __gmp_n) __GMP_NOTHROW
 {
   mp_limb_t  __gmp_c;
   __GMPN_SUB_1 (__gmp_c, __gmp_dst, __gmp_src, __gmp_size, __gmp_n);
