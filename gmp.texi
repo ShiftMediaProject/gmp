@@ -2466,6 +2466,11 @@ the function @code{mpz_fits_slong_p}.
 Convert @var{op} to a @code{double}.
 @end deftypefun
 
+@deftypefun double mpz_get_d_2exp (signed long int @var{exp}, mpz_t @var{op})
+Find @var{d} <= 0.5 and @var{exp} such that @var{d} * 2**@var{exp} is a good
+approximation to @var{op}.
+@end deftypefun
+
 @deftypefun {char *} mpz_get_str (char *@var{str}, int @var{base}, mpz_t @var{op})
 Convert @var{op} to a string of digits in base @var{base}.  The base may vary
 from 2 to 36.
@@ -3739,6 +3744,12 @@ set by @code{mpf_set_default_prec}.
 
 @deftypefun double mpf_get_d (mpf_t @var{op})
 Convert @var{op} to a @code{double}.
+@end deftypefun
+
+@deftypefun double mpf_get_d_2exp (signed long int @var{exp}, mpf_t @var{op})
+Find @var{d} <= 0.5 and @var{exp} such that @var{d} * 2**@var{exp} is a good
+approximation to @var{op}.  This is similar to the standard C function
+@code{frexp}.
 @end deftypefun
 
 @deftypefun long mpf_get_si (mpf_t @var{op})
