@@ -23,10 +23,10 @@ Changes between MP version 4.0.1 and 4.1
 * Bug fixes.
 * Asymptotically fast conversion to/from strings (mpz, mpq, mpn levels),
   but also major speed improvements for tiny operands.
-* mpn_get_str requirements relaxed.
+* mpn_get_str parameter restrictions relaxed.
 * Major speed improvments for HPPA 2.0 systems.
 * Major speed improvments for IA-64 systems (but still sub-optimal code).
-* mpfr is back, with many portability fixes.
+* mpfr is back, with many bug fixes and portability improvements.
 
 Changes between MP version 4.0 and 4.0.1
 
