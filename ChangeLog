@@ -23,7 +23,7 @@
 
 	* tune/tuneup.c (DIVREM_1, MOD_1): Fix result values, were off by 1.
 
-	* mpz/fib_ui.c (table1, table2): Add data for 2,4,8,16 bits per limb.
+	* mpz/fib_ui.c (table1, table2): Add data for 4,8,16 bits per limb.
 
 2000-12-12  Torbjorn Granlund  <tege@swox.com>
 
