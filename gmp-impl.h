@@ -23,44 +23,66 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+
+/* When used from the GMP_FUNC_ALLOC test, config.h doesn't exist, but the
+   equivalent definitions will have come from confdefs.h included at the
+   start of the test program.  */
+#if ! GMP_FUNC_ALLOCA_TEST
 #include "config.h"
+#endif
+
 #include "gmp-mparam.h"
 /* #include "longlong.h" */
 
-/* When using gcc, make sure to use its builtin alloca.  */
-#if ! defined (alloca) && defined (__GNUC__)
-#define alloca __builtin_alloca
-#define HAVE_ALLOCA
+
+/* The following tries to get a good version of alloca.  The tests are
+   adapted from autoconf AC_FUNC_ALLOCA, with a couple of additions.
+   Whether this succeeds is tested by GMP_FUNC_ALLOCA and HAVE_ALLOCA will
+   be setup appropriately.
+
+   ifndef alloca - a cpp define might already exist.  glibc <stdlib.h>
+       includes <alloca.h> which uses GCC __builtin_alloca.  HP cc
+       +Olibcalls supposedly provides a #define.
+
+   GCC __builtin_alloca - preferred whenever available.
+
+   _AIX pragma - IBM compilers need a #pragma in "each module that needs to
+       use alloca".  Pragma indented to protect pre-ANSI cpp's.  _IBMR2 was
+       used in past versions of GMP, retained still in case it matters.
+
+       The autoconf manual says this pragma needs to be at the start of a C
+       file, apart from comments and preprocessor directives.  Is that true?
+       xlc on aix 4.xxx doesn't seem to mind it being after prototypes etc
+       from gmp.h.
+*/
+
+#ifndef alloca
+# ifdef __GNUC__
+#  define alloca __builtin_alloca
+# else
+#  ifdef __DECC
+#   define alloca(x) __ALLOCA(x)
+#  else
+#   ifdef _MSC_VER
+#    include <malloc.h>
+#    define alloca _alloca
+#   else
+#    if HAVE_ALLOCA_H
+#     include <alloca.h>
+#    else
+#     if defined (_AIX) || defined (_IBMR2)
+ #pragma alloca
+#     else
+       char *alloca ();
+#     endif
+#    endif
+#   endif
+#  endif
+# endif
 #endif
 
-/* When using cc, do whatever necessary to allow use of alloca.  For many
-   machines, this means including alloca.h.  IBM's compilers need a #pragma
-   in "each module that needs to use alloca".  */
-#if ! defined (alloca)
-/* We need lots of variants for MIPS, to cover all versions and perversions
-   of OSes for MIPS.  */
-#if defined (__mips) || defined (MIPSEL) || defined (MIPSEB) \
- || defined (_MIPSEL) || defined (_MIPSEB) || defined (__sgi) \
- || defined (__alpha) || defined (__sparc) || defined (sparc) \
- || defined (__ksr__)
-#include <alloca.h>
-#define HAVE_ALLOCA
-#endif
-#if defined (_IBMR2)
-#pragma alloca
-#define HAVE_ALLOCA
-#endif
-#if defined (__DECC)
-#define alloca(x) __ALLOCA(x)
-#define HAVE_ALLOCA
-#endif
-#endif
 
-#if defined (alloca)
-#define HAVE_ALLOCA
-#endif
-
-#if ! defined (HAVE_ALLOCA) || USE_STACK_ALLOC
+#if ! HAVE_ALLOCA || USE_STACK_ALLOC
 #include "stack-alloc.h"
 #else
 #define TMP_DECL(m)
