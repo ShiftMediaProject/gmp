@@ -26,5 +26,5 @@ void
 gmp_randseed (gmp_randstate_t rstate,
 	      mpz_srcptr seed)
 {
-  (*RNG_FNPTR (rstate)->randseed_fn) (rstate, seed);
+  (*((gmp_randfnptr_t *) RNG_FNPTR (rstate))->randseed_fn) (rstate, seed);
 }
