@@ -1,4 +1,4 @@
-/* __gmpn_mul_basecase -- Internal routine to multiply two natural numbers
+/* mpn_mul_basecase -- Internal routine to multiply two natural numbers
    of length m and n.
 
 Copyright (C) 1991, 1992, 1993, 1994, 1996 Free Software Foundation, Inc.
