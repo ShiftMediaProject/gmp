@@ -3,7 +3,7 @@
 	* Makefile (test, bigtest): Add 33-bit tests.
 
 	* gen.c (main): Set precision of variable passed to
-	mpf_urandomb().
+	mpf_urandomb().  Add option `-p'.
 
 1999-05-21  Linus Nordberg  <linus@swox.se>
 

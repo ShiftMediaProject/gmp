@@ -42,6 +42,7 @@ int main (argc, argv)
     "           mpz_urandomb (default), mpf_urandomb, rand, random\n" \
     "  -g       algorithm, one of lc (default), bbs\n" \
     "  -h       print this text and exit\n" \
+    "  -p       print seed on stderr\n" \
     "  -s #     initial seed (default: output from time(3))\n" \
     "  -z #     size in bits of generated integer numbers (0<= X <2^#) \n" \
     "           (default 32)\n" \
@@ -59,7 +60,7 @@ int main (argc, argv)
   mpf_t f1;
   gmp_rand_state s;
   int c, i;
-  int ascout = 1, binout = 0;
+  int ascout = 1, binout = 0, printseed = 0;
   double drand;
   long lrand;
   int do_exclude = 0;
@@ -87,7 +88,7 @@ int main (argc, argv)
   mpz_init (z_seed);
 
 
-  while ((c = getopt (argc, argv, "abc:f:g:hn:s:z:x:")) != -1)
+  while ((c = getopt (argc, argv, "abc:f:g:hn:ps:z:x:")) != -1)
     switch (c)
       {
       case 'a':
@@ -160,6 +161,10 @@ int main (argc, argv)
 	  }
 	break;
 
+      case 'p':			/* print seed on stderr */
+	printseed = 1;
+	break;
+
       case 's':			/* user provided seed */
 	if (mpz_set_str (z_seed, optarg, 0))
 	  {
@@ -208,6 +213,13 @@ int main (argc, argv)
   if (!seed_from_user)
     mpz_set_ui (z_seed, (unsigned long int) time (NULL));
   seed = mpz_get_ui (z_seed);
+  if (printseed)
+    {
+      fprintf (stderr, "gen: seed used: ");
+      mpz_out_str (stderr, 10, z_seed);
+      fprintf (stderr, "\n");
+    }
+  
 
   mpf_set_prec (f1, size);
   

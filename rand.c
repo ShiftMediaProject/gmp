@@ -29,23 +29,13 @@ MA 02111-1307, USA. */
    containing all zeros. */
 static __gmp_rand_lc_scheme_struct __gmp_rand_scheme[] =
 {
-  /* FIXME: For reference only.  Remove. */
-  {31,				/* Knuth, p. 185 */
-   "48271",
-   0,				/* c = 0 */
-   "0x7fffffff",},	/* m = 2^31 - 1 */
-  
-  /* FIXME: For reference only.  Remove. */
-  {31,				/* fbsd random(3), lazy */
-   "16807",			/* a = 7^5 */
-   0,				/* c = 0 */
-   "0x7fffffff"},		/* m = 2^31 - 1 */
+  /* FIXME: Testing.  Remove. */
+  {8, "7", 0, "256"},
 
-  /* FIXME: For reference only.  Remove. */
   {31,				/* fbsd rand(3) */
    "1103515245",		/* a (multiplier) */
    12345,			/* c (adder) */
-   "0x80000000"},	/* m (modulo) = 2^31 */
+   "0x80000000"},		/* m (modulo) = 2^31 */
 
   /* The multipliers are all between 0.01m and 0.99m, and are
      congruent to 5 (mod 8). */
@@ -81,8 +71,7 @@ static __gmp_rand_lc_scheme_struct __gmp_rand_scheme[] =
   {256, "1157920892373161954235709850086879078532699846656405640394575840079131296413",	/* working: moufang */
     1, "0x10000000000000000000000000000000000000000000000000000000000000000"},
 
-  /*  {, "", 	 1, "0x"}, */
-  {0, NULL,  0, NULL}	/* End of array. */
+  {0, NULL,  0, NULL}		/* End of array. */
 };
 
 /* gmp_rand_init() -- Initialize a gmp_rand_state.  Return 0 on
@@ -161,7 +150,7 @@ gmp_rand_init (s, alg, size, seed)
 
 	s->alg = alg;
 	s->size = size;
-	mpz_init_set_ui (s->seed, seed);
+	mpz_init_set (s->seed, seed);
 
 	mpz_clear (p);
 	mpz_clear (q);
