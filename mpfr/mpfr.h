@@ -184,6 +184,7 @@ int mpfr_log _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_exp _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_exp2 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_sin _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_sin_cos _PROTO ((mpfr_ptr, mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_cos _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_tan _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_mul_ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));

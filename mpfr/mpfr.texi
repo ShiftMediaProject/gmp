@@ -1125,6 +1125,13 @@ in fact only when @var{op} is 0 i.e. the sine is 0, the cosine is 1, and the
 tangent is 0).
 @end deftypefun
 
+@deftypefun int mpfr_sin_cos (mpfr_t @var{sop}, mpfr_t @var{cop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+Set simultaneously @var{sop} to the sine of @var{op} and
+                   @var{cop} to the cosine of @var{op},
+rounded to the direction @var{rnd} with their corresponding precisions.
+Return 0 iff both results are exact.
+@end deftypefun
+
 @deftypefun int mpfr_cosh (mpfr_t @var{cop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_sinh (mpfr_t @var{sop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_tanh (mpfr_t @var{top}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
