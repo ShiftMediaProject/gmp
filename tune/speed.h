@@ -167,7 +167,7 @@ double speed_noop_wxs _PROTO ((struct speed_params *s));
 double speed_noop_wxys _PROTO ((struct speed_params *s));
 
 /* low 32-bits in p[0], high 32-bits in p[1] */
-void speed_cyclecounter_2 _PROTO ((unsigned long p[2]));
+void speed_cyclecounter _PROTO ((unsigned p[2]));
 
 void pentium_wbinvd _PROTO ((void));
 

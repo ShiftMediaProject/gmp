@@ -23,7 +23,7 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C void speed_cyclecounter (unsigned long p[2]);
+C void speed_cyclecounter (unsigned p[2]);
 C
 C Get the pentium rdtsc cycle counter, storing the least significant word in
 C p[0] and the most significant in p[1].

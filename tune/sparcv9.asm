@@ -22,7 +22,7 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C void speed_cyclecounter (unsigned long p[2]);
+C void speed_cyclecounter (unsigned p[2]);
 C
 C Get the sparc v9 tick counter.
 
