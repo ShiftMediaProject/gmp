@@ -34,6 +34,13 @@ dnl    conftest.exe - various DOS compilers
 define(IA64_PATTERN,
 [[ia64*-*-* | itanium-*-* | itanium2-*-*]])
 
+dnl  Need to be careful not to match m6811, m6812, m68hc11 and m68hc12, all
+dnl  of which config.sub accepts.  (Though none of which are likely to work
+dnl  with GMP.)
+dnl
+define(M68K_PATTERN,
+[[m68k-*-* | m68[0-9][0-9][0-9]-*-*]])
+
 define(POWERPC64_PATTERN,
 [[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-*]])
 
@@ -625,7 +632,7 @@ dnl  removed.
 
 AC_DEFUN(GMP_GCC_M68K_OPTIMIZE,
 [case $host in
-m68*-*-*)
+M68K_PATTERN)
   if test $1 = gcc; then
     case `$2 --version` in
     2.95*) $3=-O ;;
