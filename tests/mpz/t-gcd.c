@@ -73,6 +73,11 @@ check_data (void)
           abort ();
         }
     }
+
+  mpz_clear (a);
+  mpz_clear (b);
+  mpz_clear (got);
+  mpz_clear (want);
 }
 
 /* Keep one_test's variables global, so that we don't need
