@@ -240,9 +240,9 @@ MPBSD_OBJECTS = mpbsd/add.lo mpbsd/tdiv_qr.lo mpbsd/move.lo mpbsd/powm.lo \
 # Some compilers (eg. gcc on i386) might in-line these, making -lm
 # unnecessary, but we don't try to detect that.
 #
-libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
-  rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c randsdui.c \
-  version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
+libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
+  mp_clz_tab.c rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c	 \
+  randsdui.c version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 
 libgmp_la_DEPENDENCIES = \
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
@@ -281,7 +281,7 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 ANSI2KNR = @ANSI2KNR@
-am_libgmp_la_OBJECTS =  assert$U.lo errno$U.lo memory$U.lo \
+am_libgmp_la_OBJECTS =  assert$U.lo compat$U.lo errno$U.lo memory$U.lo \
 mp_set_fns$U.lo mp_clz_tab$U.lo rand$U.lo randclr$U.lo randlc$U.lo \
 randlc2x$U.lo randraw$U.lo randsd$U.lo randsdui$U.lo version$U.lo \
 stack-alloc$U.lo mp_bpl$U.lo extract-dbl$U.lo insert-dbl$U.lo
@@ -448,6 +448,8 @@ libmp.la: $(libmp_la_OBJECTS) $(libmp_la_DEPENDENCIES)
 	$(LTCOMPILE) -c -o $@ $<
 assert_.c: assert.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/assert.c; then echo $(srcdir)/assert.c; else echo assert.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > assert_.c
+compat_.c: compat.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/compat.c; then echo $(srcdir)/compat.c; else echo compat.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > compat_.c
 errno_.c: errno.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/errno.c; then echo $(srcdir)/errno.c; else echo errno.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > errno_.c
 extract-dbl_.c: extract-dbl.c $(ANSI2KNR)
@@ -480,15 +482,16 @@ stack-alloc_.c: stack-alloc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stack-alloc.c; then echo $(srcdir)/stack-alloc.c; else echo stack-alloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stack-alloc_.c
 version_.c: version.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/version.c; then echo $(srcdir)/version.c; else echo version.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > version_.c
-assert_.$(OBJEXT) assert_.lo errno_.$(OBJEXT) errno_.lo \
-extract-dbl_.$(OBJEXT) extract-dbl_.lo insert-dbl_.$(OBJEXT) \
-insert-dbl_.lo memory_.$(OBJEXT) memory_.lo mp_bpl_.$(OBJEXT) \
-mp_bpl_.lo mp_clz_tab_.$(OBJEXT) mp_clz_tab_.lo mp_set_fns_.$(OBJEXT) \
-mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo randclr_.$(OBJEXT) randclr_.lo \
-randlc_.$(OBJEXT) randlc_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
-randraw_.$(OBJEXT) randraw_.lo randsd_.$(OBJEXT) randsd_.lo \
-randsdui_.$(OBJEXT) randsdui_.lo stack-alloc_.$(OBJEXT) stack-alloc_.lo \
-version_.$(OBJEXT) version_.lo : $(ANSI2KNR)
+assert_.$(OBJEXT) assert_.lo compat_.$(OBJEXT) compat_.lo \
+errno_.$(OBJEXT) errno_.lo extract-dbl_.$(OBJEXT) extract-dbl_.lo \
+insert-dbl_.$(OBJEXT) insert-dbl_.lo memory_.$(OBJEXT) memory_.lo \
+mp_bpl_.$(OBJEXT) mp_bpl_.lo mp_clz_tab_.$(OBJEXT) mp_clz_tab_.lo \
+mp_set_fns_.$(OBJEXT) mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo \
+randclr_.$(OBJEXT) randclr_.lo randlc_.$(OBJEXT) randlc_.lo \
+randlc2x_.$(OBJEXT) randlc2x_.lo randraw_.$(OBJEXT) randraw_.lo \
+randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
+stack-alloc_.$(OBJEXT) stack-alloc_.lo version_.$(OBJEXT) version_.lo : \
+$(ANSI2KNR)
 
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@stamp-vti
 	@:
