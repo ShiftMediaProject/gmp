@@ -585,6 +585,7 @@ Zdisp_match( movl, %esi, 0,(%edi), `137,119,0',   $@)`'dnl
 Zdisp_match( movl, 0,(%ebx), %eax, `139,67,0',    $@)`'dnl
 Zdisp_match( movl, 0,(%ebx), %esi, `139,115,0',   $@)`'dnl
 Zdisp_match( movl, 0,(%esi), %eax, `139,70,0',    $@)`'dnl
+Zdisp_match( movl, 0,(%esi,%ecx,4), %eax, `0x8b,0x44,0x8e,0x00',      $@)`'dnl
 Zdisp_match( addl, %ebx, 0,(%edi), `1,95,0',      $@)`'dnl
 Zdisp_match( addl, %ecx, 0,(%edi), `1,79,0',      $@)`'dnl
 Zdisp_match( addl, %esi, 0,(%edi), `1,119,0',     $@)`'dnl
