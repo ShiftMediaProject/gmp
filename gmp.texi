@@ -2967,8 +2967,7 @@ The functions actually generating random functions are documented under
 See @ref{Random Number Functions} for a discussion on how to choose the
 initial seed value passed to these functions.
 
-@deftypefun int gmp_randinit (gmp_randstate_t @var{state}, unsigned long int
-@var{size}, gmp_randalg_t @var{alg})
+@deftypefun void gmp_randinit (gmp_randstate_t @var{state}, gmp_randalg_t @var{alg}, ...)
 Initialize random state variable @var{state}.
 
 @var{alg} denotes what algorithm to use for random number generation.
@@ -2978,31 +2977,28 @@ Use one of
 
 A fast generator defined by @math{X = (aX + c) mod m}.
 
+A third argument @var{size} of type unsigned long int is required.  @var{size}
+is the size of the largest good quality random number to be generated,
+expressed in number of bits.  If the random generation functions are asked for
+a bigger random number than indicated by this parameter, two or more numbers
+of @var{size} bits will be generated and concatenated, resulting in a ``bad''
+random number.  This can be used to generate big random numbers relatively
+cheap if the quality of randomness isn't of great importance.
+
 a, c, and m are picked from a table where the modulus (m) is a power of 2 and
-the multiplier is congruent to 5 (mod 8).  All schemes in the table have passed
-the spectral test, as defined by [D. Knuth, "The Art of Computer Programming:
-Volume 2, Seminumerical Algorithms", Third Edition, Addison Wesley, 1998,
-p.93.].  The choice is based on the @var{size} parameter.  The maximum
-@var{size} supported by this algorithm is 128.  If you need bigger random
-numbers, use your own scheme and call one of the other @code{gmp_randinit}
-functions.
+the multiplier is congruent to 5 (mod 8).  The choice is based on the
+@var{size} parameter.  The maximum @var{size} supported by this algorithm is
+128.  If you need bigger random numbers, use your own scheme and call one of
+the other @code{gmp_randinit} functions.
 
 @ignore
 @item GMP_RAND_ALG_BBS --- Blum, Blum, and Shub.
 @end ignore
 @end itemize
 
-If @var{alg} is 0 or GMP_RAND_ALG_DEFAULT, the default algorithm is
-used.  The default algorithm is typically a fast algorithm like the
-linear congruential.
-
-@var{size} is the size of the largest good quality random number to be
-generated, expressed in number of bits.  If the random generation
-functions are asked for a bigger random number than indicated by this
-parameter, two or more numbers of @var{size} bits will be generated and
-concatenated, resulting in a ``bad'' random number.  This can be used to
-generate big random numbers relatively cheap if the quality of
-randomness isn't of great importance.
+If @var{alg} is 0 or GMP_RAND_ALG_DEFAULT, the default algorithm is used.  The
+default algorithm is typically a fast algorithm like the linear congruential
+and requires a third @var{size} argument (see GMP_RAND_ALG_LC).
 
 When you're done with a @var{state} variable, call @code{gmp_randclear}
 to deallocate any memory allocated by this function.
