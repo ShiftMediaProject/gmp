@@ -1,6 +1,6 @@
 dnl  PowerPC mftb_function -- read time base registers, 64-bit integer.
 
-dnl  Copyright 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2002, 2003, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -30,7 +30,6 @@ PROLOGUE(mftb_function)
 
 	C r3	a
 
-L(again):
 	mftb	r5
 
 	srdi	r4, r5, 32
