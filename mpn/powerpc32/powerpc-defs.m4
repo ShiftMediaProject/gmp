@@ -2,7 +2,7 @@ divert(-1)
 
 dnl  m4 macros for PowerPC assembler (32 and 64 bit).
 
-dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -78,6 +78,7 @@ dnl  But assertions are only for development, so it doesn't matter too much.
 
 define(ASSERT,
 m4_assert_numargs_range(1,2)
+m4_assert_defined(`WANT_ASSERT')
 `ifelse(WANT_ASSERT,1,
 	`C ASSERT
 	$2

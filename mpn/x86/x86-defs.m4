@@ -839,6 +839,7 @@ dnl         ASSERT(, `movl %eax, VAR_KEEPVAL')
 
 define(ASSERT,
 m4_assert_numargs_range(1,2)
+m4_assert_defined(`WANT_ASSERT')
 `ifelse(WANT_ASSERT,1,
 `ifelse(`$1',,
 	`$2',
