@@ -22,50 +22,69 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-dnl  INPUT PARAMETERS
-dnl  res_ptr	r16
-dnl  s1_ptr	r17
-dnl  size	r18
-dnl  s2_limb	r19
+C  INPUT PARAMETERS
+C  rp	r16
+C  up	r17
+C  n	r18
+C  vl	r19
+C  cl	r20
 
-dnl  This code runs at 42 cycles/limb on EV4, 18 cycles/limb on EV5, and 7
-dnl  cycles/limb on EV6.
+C  This code runs at 42 cycles/limb on EV4, 18 cycles/limb on EV5, and 7
+C  cycles/limb on EV6.
 
 ASM_START()
+PROLOGUE(mpn_mul_1c)
+	ldq	r2,0(r17)	C r2 = s1_limb
+	lda	r18,-1(r18)	C size--
+	mulq	r2,r19,r3	C r3 = prod_low
+	umulh	r2,r19,r4	C r4 = prod_high
+	beq	r18,$Le1c	C jump if size was == 1
+	ldq	r2,8(r17)	C r2 = s1_limb
+	lda	r18,-1(r18)	C size--
+	addq	r3,r20,r3	C r3 = cy_limb + cl
+	stq	r3,0(r16)
+	cmpult	r3,r20,r0	C r0 = carry from (cy_limb + cl)
+	bne	r18,$Loop	C jump if size was == 2
+	br	$Le2
+$Le1c:	addq	r3,r20,r3	C r3 = cy_limb + cl
+	cmpult	r3,r20,r0	C r0 = carry from (cy_limb + cl)
+$Le1:	stq	r3,0(r16)
+	addq	r4,r0,r0
+	ret	r31,(r26),1
+EPILOGUE(mpn_mul_1c)
+
 PROLOGUE(mpn_mul_1)
 	ldq	r2,0(r17)	C r2 = s1_limb
-	subq	r18,1,r18	C size--
+	lda	r18,-1(r18)	C size--
 	mulq	r2,r19,r3	C r3 = prod_low
-	bic	r31,r31,r4	C clear cy_limb
-	umulh	r2,r19,r0	C r0 = prod_high
-	beq	r18,$Lend1	C jump if size was == 1
+	bic	r31,r31,r0	C clear cy_limb
+	umulh	r2,r19,r4	C r4 = prod_high
+	beq	r18,$Le1	C jump if size was == 1
 	ldq	r2,8(r17)	C r2 = s1_limb
-	subq	r18,1,r18	C size--
+	lda	r18,-1(r18)	C size--
 	stq	r3,0(r16)
-	beq	r18,$Lend2	C jump if size was == 2
+	beq	r18,$Le2	C jump if size was == 2
 
 	ALIGN(8)
 $Loop:	mulq	r2,r19,r3	C r3 = prod_low
 	addq	r4,r0,r0	C cy_limb = cy_limb + 'cy'
-	subq	r18,1,r18	C size--
-	umulh	r2,r19,r4	C r4 = cy_limb
+	lda	r18,-1(r18)	C size--
+	umulh	r2,r19,r4	C r4 = prod_high
 	ldq	r2,16(r17)	C r2 = s1_limb
-	addq	r17,8,r17	C s1_ptr++
+	lda	r17,8(r17)	C s1_ptr++
 	addq	r3,r0,r3	C r3 = cy_limb + prod_low
 	stq	r3,8(r16)
 	cmpult	r3,r0,r0	C r0 = carry from (cy_limb + prod_low)
-	addq	r16,8,r16	C res_ptr++
+	lda	r16,8(r16)	C res_ptr++
 	bne	r18,$Loop
 
-$Lend2:	mulq	r2,r19,r3	C r3 = prod_low
+$Le2:	mulq	r2,r19,r3	C r3 = prod_low
 	addq	r4,r0,r0	C cy_limb = cy_limb + 'cy'
-	umulh	r2,r19,r4	C r4 = cy_limb
+	umulh	r2,r19,r4	C r4 = prod_high
 	addq	r3,r0,r3	C r3 = cy_limb + prod_low
 	cmpult	r3,r0,r0	C r0 = carry from (cy_limb + prod_low)
 	stq	r3,8(r16)
 	addq	r4,r0,r0	C cy_limb = prod_high + cy
-	ret	r31,(r26),1
-$Lend1:	stq	r3,0(r16)
 	ret	r31,(r26),1
 EPILOGUE(mpn_mul_1)
 ASM_END()
