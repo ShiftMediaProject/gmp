@@ -22,8 +22,8 @@
 	* mpfr/trunc.c: Use -DOPERATION scheme, and gmp mpn_zero_p.
 	* mpfr/sqrt.c: Use plain mpn_sqrtrem, not mpn_sqrtrem_new.
 	* mpfr/sqrtrem.c: Remove file.
-	* mpfr/Makefile.am (libmpfr_a_SOURCES): Add set_ui.c, remove sqrtrem.c
-	and srandom.h.
+	* mpfr/Makefile.am (libmpfr_a_SOURCES): Add isnan.c and set_ui.c,
+	remove sqrtrem.c and srandom.h.
 
 	* configfsf.guess: Update to 2001-02-13.
 	* configfsf.sub: Update to 2001-02-16.
