@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 14 Sep 2002.  An up-to-date version is available at
+  This file current as of 27 Sep 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -792,23 +792,9 @@ MA 02111-1307, USA.
      <li> Perhaps the <code>2exp</code> and general LC cases should be split,
           for clarity (if the general case is retained).
      </ul>
-<li> <code>gmp_randinit_mers</code> for a Mersenne Twister generator.  It's
-     likely to be more random and about the same speed as Knuth's 55-element
-     Fibonacci generator, and can probably become the default.  Pedro Gimeno
-     has started on this.
 <li> Blum-Blum-Shub: Finish or remove.  A separate
      <code>gmp_randinit_bbs</code> would be wanted, not the currently
      commented out case in <code>gmp_randinit</code>.
-<li> <code>_gmp_rand</code> could be done as a function pointer within
-     <code>gmp_randstate_t</code> (or rather in the <code>_mp_algdata</code>
-     part), instead of switching on a <code>gmp_randalg_t</code>.  Likewise
-     <code>gmp_randclear</code>, and perhaps <code>gmp_randseed</code> if it
-     became algorithm-specific.  This would be more modular, and would ensure
-     only code for the desired algorithms is dragged into the link.
-<li> <code>mpz_urandomm</code> should do something for n&lt;=0, but what?
-<li> <code>mpz_urandomm</code> implementation looks like it could be improved.
-     Perhaps it's enough to calculate <code>nbits</code> as ceil(log2(n)) and
-     call <code>_gmp_rand</code> until a value <code>&lt;n</code> is obtained.
 <li> <code>gmp_randstate_t</code> used for parameters perhaps should become
      <code>gmp_randstate_ptr</code> the same as other types.
 <li> Some of the empirical randomness tests could be included in a "make
