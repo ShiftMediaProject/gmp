@@ -1,5 +1,20 @@
 2000-06-07  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/remove.c: Fail for `src' being zero.
+
+	* mpz/tests/reuse.c: Test more functions.
+	(FAIL): New define.
+
+	* mpz/tests/t-powm.c: Loop during operand generation while they
+	are mathematically ill-defined (used to just skip such tests).
+
+	* mpz/powm.c (mpz_redc): Clean up argument declarations.
+
+	* configure.in (gmp_cflags64_gcc): Don't add bogus -mWHAT option.
+	(sparcv9-*-solaris2.[7-9]], gmp_cflags64_gcc):
+	Inherit from previous gmp_cflags64_gcc; pass `-m64 -mptr64'.
+	(ia64*-*-*): New.
+	
 	* mpn/generic/dump.c: Make it work when an mp_limb_t is not `long'.
 
 	* mpf/set_prc.c: MPN_COPY => MPN_COPY_INCR.
