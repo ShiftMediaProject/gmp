@@ -47,9 +47,9 @@ __gmp_doprnt_integer (const struct doprnt_funs_t *funs,
 {
   int         retval = 0;
   int         slen, justlen, showbaselen, sign, signlen, slashlen, zeros;
-  int         justify;
+  int         justify, den_showbaselen;
   const char  *slash, *showbase;
-  
+
   /* '+' or ' ' if wanted, and don't already have '-' */
   sign = p->sign;
   if (s[0] == '-')
@@ -59,40 +59,39 @@ __gmp_doprnt_integer (const struct doprnt_funs_t *funs,
     }
   signlen = (sign != '\0');
 
-  showbase = NULL;
-  showbaselen = 0;
-  switch (p->showbase) {
-  default:
-    ASSERT (0);
-    /*FALLTHRU*/
-  case DOPRNT_SHOWBASE_NO:
-    break;
-  case DOPRNT_SHOWBASE_NONZERO:
-    if (s[0] == '0')
-      break;
-    /*FALLTHRU*/
-  case DOPRNT_SHOWBASE_YES:
-    switch (p->base) {
-    case 16:  showbase = "0x"; showbaselen = 2; break;
-    case -16: showbase = "0X"; showbaselen = 2; break;
-    case 8:   showbase = "0";  showbaselen = 1; break;
-    }
-    break;
-  }
-
   /* if the precision was explicitly 0, print nothing for a 0 value */
   if (*s == '0' && p->prec == 0)
     s++;
-  
+
   slen = strlen (s);
   slash = strchr (s, '/');
 
+  showbase = NULL;
+  showbaselen = 0;
+
+  if (p->showbase != DOPRNT_SHOWBASE_NO)
+    {
+      switch (p->base) {
+      case 16:  showbase = "0x"; showbaselen = 2; break;
+      case -16: showbase = "0X"; showbaselen = 2; break;
+      case 8:   showbase = "0";  showbaselen = 1; break;
+      }
+    }
+
+  den_showbaselen = showbaselen;
+  if (slash == NULL
+      || (p->showbase == DOPRNT_SHOWBASE_NONZERO && slash[1] == '0'))
+    den_showbaselen = 0;
+
+  if (p->showbase == DOPRNT_SHOWBASE_NONZERO && s[0] == '0')
+    showbaselen = 0;
+
+  /* the influence of p->prec on mpq is currently undefined */
   zeros = MAX (0, p->prec - slen);
 
   /* space left over after actual output length */
-  justlen = p->width - (strlen(s) + signlen + showbaselen + zeros);
-  if (slash != NULL)
-    justlen -= showbaselen;
+  justlen = p->width
+    - (strlen(s) + signlen + showbaselen + den_showbaselen + zeros);
 
   justify = p->justify;
   if (justlen <= 0) /* no justifying if exceed width */
@@ -110,16 +109,19 @@ __gmp_doprnt_integer (const struct doprnt_funs_t *funs,
   if (justify == DOPRNT_JUSTIFY_INTERNAL)          /* pad internal */
     DOPRNT_REPS (p->fill, justlen);
 
-  if (slash != NULL && showbaselen != 0)
+  /* if there's a showbase on the denominator, then print the numerator
+     separately so it can be inserted */
+  if (den_showbaselen != 0)
     {
+      ASSERT (slash != NULL);
       slashlen = slash+1 - s;
-      DOPRNT_MEMORY (s, slashlen);                 /* possible numerator */
+      DOPRNT_MEMORY (s, slashlen);                 /* numerator and slash */
       slen -= slashlen;
       s += slashlen;
-      DOPRNT_MEMORY_MAYBE (showbase, showbaselen); /* possible extra base */
+      DOPRNT_MEMORY (showbase, den_showbaselen);
     }
 
-  DOPRNT_MEMORY (s, slen);                         /* number or denominator */
+  DOPRNT_MEMORY (s, slen);                         /* number, or denominator */
 
   if (justify == DOPRNT_JUSTIFY_LEFT)              /* pad left */
     DOPRNT_REPS (p->fill, justlen);
