@@ -631,7 +631,7 @@ case ${target} in
   ppc601-*-*) path="power powerpc32";;
   powerpc64*-*-*) path="powerpc64";;
   powerpc*-*-*) path="powerpc32";;
-  rs6000-*-* | power-*-* | power2-*-*)
+  power-*-* | power2-*-*)
     path="power"
     extra_functions="udiv_w_sdiv"
     ;;
