@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_addmul_1/mpn_submul_1 -- add or subtract mpn multiple.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -46,33 +46,30 @@ ifdef(`OPERATION_addmul_1', `
 	define(M4_inst,        addl)
 	define(M4_function_1,  mpn_addmul_1)
 	define(M4_function_1c, mpn_addmul_1c)
-	define(M4_description, add it to)
-	define(M4_desc_retval, carry)
 ',`ifdef(`OPERATION_submul_1', `
 	define(M4_inst,        subl)
 	define(M4_function_1,  mpn_submul_1)
 	define(M4_function_1c, mpn_submul_1c)
-	define(M4_description, subtract it from)
-	define(M4_desc_retval, borrow)
 ',`m4_error(`Need OPERATION_addmul_1 or OPERATION_submul_1
 ')')')
 
 MULFUNC_PROLOGUE(mpn_addmul_1 mpn_addmul_1c mpn_submul_1 mpn_submul_1c)
 
 
-C mp_limb_t M4_function_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
-C                          mp_limb_t mult);
-C mp_limb_t M4_function_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
-C                           mp_limb_t mult, mp_limb_t carry);
-C
-C Calculate src,size multiplied by mult and M4_description dst,size.
-C Return the M4_desc_retval limb from the top of the result.
+C mp_limb_t mpn_addmul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                         mp_limb_t mult);
+C mp_limb_t mpn_addmul_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                          mp_limb_t mult, mp_limb_t carry);
+C mp_limb_t mpn_submul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                         mp_limb_t mult);
+C mp_limb_t mpn_submul_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                          mp_limb_t mult, mp_limb_t carry);
 C
 C The jadcl0()s in the unrolled loop makes the speed data dependent.  Small
 C multipliers (most significant few bits clear) result in few carry bits and
 C speeds up to 7.65 cycles/limb are attained.  Large multipliers (most
 C significant few bits set) make the carry bits 50/50 and lead to something
-C more like 8.4 c/l.  (With adcl's both of these would be 9.3 c/l.)
+C more like 8.4 c/l.  With adcl's both of these would be 9.3 c/l.
 C
 C It's important that the gains for jadcl0 on small multipliers don't come
 C at the cost of slowing down other data.  Tests on uniformly distributed
@@ -87,6 +84,9 @@ C In the simple loop, note that running ecx from negative to zero and using
 C it as an index in the two movs wouldn't help.  It would save one
 C instruction (2*addl+loop becoming incl+jnz), but there's nothing unpaired
 C that would be collapsed by this.
+C
+C Attempts at a simpler main loop, with less unrolling, haven't yielded much
+C success, generally running over 9 c/l.
 C
 C
 C jadcl0
@@ -112,7 +112,7 @@ C
 C In a back-to-back style test this measures 7 with the jnc not taken, or 8
 C with it taken (both when correctly predicted).  This is opposite to the
 C measurements showing small multipliers running faster than large ones.
-C Watch this space for more info ...
+C Don't really know why.
 C
 C It's not clear how much branch misprediction might be costing.  The K6
 C doco says it will be 1 to 4 cycles, but presumably it's near the low end
@@ -352,8 +352,8 @@ Zdisp(	M4_inst,%ecx, disp0,(%edi))
 ')
 
 	decl	VAR_COUNTER
-	leal	UNROLL_BYTES(%ebx), %ebx
 
+	leal	UNROLL_BYTES(%ebx), %ebx
 	jns	L(top)
 
 
