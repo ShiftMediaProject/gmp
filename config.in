@@ -351,6 +351,9 @@ MA 02111-1307, USA. */
 /* ./configure --enable-assert option, to enable some ASSERT()s */
 #undef WANT_ASSERT
 
+/* Define if C++ support is wanted */
+#undef WANT_CXX
+
 /* ./configure --enable-fft option, to enable FFTs for multiplication */
 #undef WANT_FFT
 

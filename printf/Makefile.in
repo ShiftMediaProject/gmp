@@ -86,6 +86,7 @@ CC = @CC@
 CCAS = @CCAS@
 CFLAGS_PIC = @CFLAGS_PIC@
 CPP = @CPP@
+CXX = @CXX@
 DEFN_LONG_LONG_LIMB = @DEFN_LONG_LONG_LIMB@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -129,7 +130,7 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 noinst_LTLIBRARIES = libprintf.la
 
 libprintf_la_SOURCES = \
-  asprintf.c doprnt.c doprntf.c doprnti.c				 \
+  asprintf.c asprntffuns.c doprnt.c doprntf.c doprnti.c			 \
   fprintf.c obprintf.c obvprintf.c obprntffuns.c			 \
   printf.c printffuns.c snprintf.c snprntffuns.c sprintf.c sprintffuns.c \
   vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c
@@ -142,11 +143,12 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libprintf_la_LDFLAGS =
 libprintf_la_LIBADD =
-am_libprintf_la_OBJECTS = asprintf$U.lo doprnt$U.lo doprntf$U.lo \
-	doprnti$U.lo fprintf$U.lo obprintf$U.lo obvprintf$U.lo \
-	obprntffuns$U.lo printf$U.lo printffuns$U.lo snprintf$U.lo \
-	snprntffuns$U.lo sprintf$U.lo sprintffuns$U.lo vasprintf$U.lo \
-	vfprintf$U.lo vprintf$U.lo vsnprintf$U.lo vsprintf$U.lo
+am_libprintf_la_OBJECTS = asprintf$U.lo asprntffuns$U.lo doprnt$U.lo \
+	doprntf$U.lo doprnti$U.lo fprintf$U.lo obprintf$U.lo \
+	obvprintf$U.lo obprntffuns$U.lo printf$U.lo printffuns$U.lo \
+	snprintf$U.lo snprntffuns$U.lo sprintf$U.lo sprintffuns$U.lo \
+	vasprintf$U.lo vfprintf$U.lo vprintf$U.lo vsnprintf$U.lo \
+	vsprintf$U.lo
 libprintf_la_OBJECTS = $(am_libprintf_la_OBJECTS)
 
 DEFS = @DEFS@
@@ -216,6 +218,8 @@ mostlyclean-kr:
 	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 asprintf_.c: asprintf.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/asprintf.c; then echo $(srcdir)/asprintf.c; else echo asprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > asprintf_.c || rm -f asprintf_.c
+asprntffuns_.c: asprntffuns.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/asprntffuns.c; then echo $(srcdir)/asprntffuns.c; else echo asprntffuns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > asprntffuns_.c || rm -f asprntffuns_.c
 doprnt_.c: doprnt.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/doprnt.c; then echo $(srcdir)/doprnt.c; else echo doprnt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > doprnt_.c || rm -f doprnt_.c
 doprntf_.c: doprntf.c $(ANSI2KNR)
@@ -252,16 +256,17 @@ vsnprintf_.c: vsnprintf.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/vsnprintf.c; then echo $(srcdir)/vsnprintf.c; else echo vsnprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > vsnprintf_.c || rm -f vsnprintf_.c
 vsprintf_.c: vsprintf.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/vsprintf.c; then echo $(srcdir)/vsprintf.c; else echo vsprintf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > vsprintf_.c || rm -f vsprintf_.c
-asprintf_.$(OBJEXT) asprintf_.lo doprnt_.$(OBJEXT) doprnt_.lo \
-doprntf_.$(OBJEXT) doprntf_.lo doprnti_.$(OBJEXT) doprnti_.lo \
-fprintf_.$(OBJEXT) fprintf_.lo obprintf_.$(OBJEXT) obprintf_.lo \
-obprntffuns_.$(OBJEXT) obprntffuns_.lo obvprintf_.$(OBJEXT) \
-obvprintf_.lo printf_.$(OBJEXT) printf_.lo printffuns_.$(OBJEXT) \
-printffuns_.lo snprintf_.$(OBJEXT) snprintf_.lo snprntffuns_.$(OBJEXT) \
-snprntffuns_.lo sprintf_.$(OBJEXT) sprintf_.lo sprintffuns_.$(OBJEXT) \
-sprintffuns_.lo vasprintf_.$(OBJEXT) vasprintf_.lo vfprintf_.$(OBJEXT) \
-vfprintf_.lo vprintf_.$(OBJEXT) vprintf_.lo vsnprintf_.$(OBJEXT) \
-vsnprintf_.lo vsprintf_.$(OBJEXT) vsprintf_.lo : $(ANSI2KNR)
+asprintf_.$(OBJEXT) asprintf_.lo asprntffuns_.$(OBJEXT) asprntffuns_.lo \
+doprnt_.$(OBJEXT) doprnt_.lo doprntf_.$(OBJEXT) doprntf_.lo \
+doprnti_.$(OBJEXT) doprnti_.lo fprintf_.$(OBJEXT) fprintf_.lo \
+obprintf_.$(OBJEXT) obprintf_.lo obprntffuns_.$(OBJEXT) obprntffuns_.lo \
+obvprintf_.$(OBJEXT) obvprintf_.lo printf_.$(OBJEXT) printf_.lo \
+printffuns_.$(OBJEXT) printffuns_.lo snprintf_.$(OBJEXT) snprintf_.lo \
+snprntffuns_.$(OBJEXT) snprntffuns_.lo sprintf_.$(OBJEXT) sprintf_.lo \
+sprintffuns_.$(OBJEXT) sprintffuns_.lo vasprintf_.$(OBJEXT) \
+vasprintf_.lo vfprintf_.$(OBJEXT) vfprintf_.lo vprintf_.$(OBJEXT) \
+vprintf_.lo vsnprintf_.$(OBJEXT) vsnprintf_.lo vsprintf_.$(OBJEXT) \
+vsprintf_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS

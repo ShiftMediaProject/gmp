@@ -312,13 +312,13 @@ void *f() { return g(); }
 
 int main () { return 0; }
 EOF
-gmp_compile="$1 conftest.c >&AC_FD_CC"
+gmp_compile="$1 conftest.c -o conftest >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
-  rm -f conftest* a.out
+  rm -f conftest*
   AC_MSG_RESULT(yes)
   ifelse([$2],,:,[$2])
 else
-  rm -f conftest* a.out
+  rm -f conftest*
   AC_MSG_RESULT(no)
   ifelse([$3],,:,[$3])
 fi
@@ -553,6 +553,39 @@ EOF
   else
       ifelse([$5],,:,[$5])
   fi
+fi
+])
+
+
+dnl  GMP_PROG_CXX_WORKS(cxx/cxxflags [, ACTION-YES [,ACTION-NO]])
+dnl  ------------------------------------------------------------
+dnl  Check whether cxx/cxxflags can compile and link.
+dnl
+dnl  This test is designed to be run repeatedly with different cxx/cxxflags
+dnl  selections, so the result is not cached.
+
+AC_DEFUN(GMP_PROG_CXX_WORKS,
+[AC_MSG_CHECKING([C++ compiler $1])
+cat >conftest.cc <<EOF
+#include <iostream.h>
+int
+main (void)
+{
+  cout.setf (ios::hex);
+  cout << 123;
+  return 0;
+}
+EOF
+
+gmp_cxxcompile="$1 conftest.cc -o conftest"
+if AC_TRY_EVAL(gmp_cxxcompile); then
+  rm -f conftest*
+  AC_MSG_RESULT(yes)
+  ifelse([$2],,:,[$2])
+else
+  rm -f conftest*
+  AC_MSG_RESULT(no)
+  ifelse([$3],,:,[$3])
 fi
 ])
 

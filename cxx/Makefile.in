@@ -129,7 +129,8 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 @WANT_CXX_TRUE@noinst_LTLIBRARIES = libcxx.la
 
-libcxx_la_SOURCES = osdoprnti.cc osfuns.cc osmpf.cc osmpq.cc osmpz.cc
+# osfuns.cc is handled from the top-level Makefile.am
+libcxx_la_SOURCES = osdoprnti.cc osmpf.cc osmpq.cc osmpz.cc
 subdir = cxx
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -138,7 +139,7 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 
 libcxx_la_LDFLAGS =
 libcxx_la_LIBADD =
-am_libcxx_la_OBJECTS = osdoprnti.lo osfuns.lo osmpf.lo osmpq.lo osmpz.lo
+am_libcxx_la_OBJECTS = osdoprnti.lo osmpf.lo osmpq.lo osmpz.lo
 libcxx_la_OBJECTS = $(am_libcxx_la_OBJECTS)
 
 DEFS = @DEFS@
