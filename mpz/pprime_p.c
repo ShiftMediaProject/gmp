@@ -42,7 +42,7 @@ mpz_probab_prime_p (mpz_srcptr n, int reps)
   if (mpz_cmp_ui (n, 1000000L) <= 0)
     {
       int is_prime;
-      if (SIZ(n) >= 0)
+      if (mpz_cmpabs_ui (n, 1000000L) <= 0)
 	{
 	  is_prime = isprime (mpz_get_ui (n));
 	  return is_prime ? 2 : 0;
