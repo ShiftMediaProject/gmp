@@ -1,3 +1,12 @@
+1999-04-12  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* urandom.c: Split up into randclr.c, randi.c, randi_lc.c,
+	randicom.c.
+	* randclr.c, randi.c, randi_lc.c, randicom.c: New files.
+	* Makefile.in: Remove urandom.  Add randclr, randi, randi_lc,
+	randicom.
+	* make.bat: Ditto
+
 1999-03-30  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* urandom.c (__gmp_rand_scheme): Change NULL->0.

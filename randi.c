@@ -1,11 +1,5 @@
 /* gmp_rand_init (state, alg, size, seed) -- Initialize a random state.
 
-   gmp_rand_init_lc (state, size, seed, a, c, m) -- Initialize a
-   random state for a linear congruental generator with multiplier A,
-   adder C, and modulus M.
-
-   gmp_rand_clear (state) -- Clear and deallocate random state STATE.
-
 Copyright (C) 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -26,7 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdlib.h>		/* FIXME: For malloc(). */
-#include "gmp.h"
+#include <gmp.h>
 
 /* Array of CL-schemes, ordered in increasing order for the first
    member (the 'bits' value).  The 'm' entry is converted by
@@ -89,30 +83,8 @@ static __gmp_rand_lc_scheme_struct __gmp_rand_scheme[] =
     1, "0x10000000000000000000000000000000000000000000000000000000000000000"},
 
   /*  {, "", 	 1, "0x"}, */
-  {0, 0,  0, 0}	/* End of array. */
+  {0, NULL,  0, NULL}	/* End of array. */
 };
-
-
-void
-#if __STDC__
-__gmp_rand_init_common (gmp_rand_state *s,
-			gmp_rand_algorithm alg,
-			unsigned long int size,
-			mpz_t seed)
-#else
-__gmp_rand_init_common (s, alg, size, seed)
-     gmp_rand_state *s;
-     gmp_rand_algorithm alg;
-     unsigned long int size;
-     mpz_t seed;
-#endif     
-{
-  s->alg = alg;
-  s->size = size;
-  mpz_init_set (s->seed, seed);
-  mpz_init_set_ui (s->maxval, 1);
-  mpz_mul_2exp (s->maxval, s->maxval, s->size);
-}
 
 /* gmp_rand_init() -- Initialize a gmp_rand_state struct.  Return 0 on
    success and 1 on failure. */
@@ -201,63 +173,3 @@ gmp_rand_init (s, alg, size, seed)
 
   return 0;
 }
-
-void
-#if __STDC__
-gmp_rand_init_lc (gmp_rand_state *s,
-		  unsigned long int size,
-		  mpz_t seed,
-		  mpz_t a,
-		  unsigned long int c,
-		  mpz_t m)
-#else
-gmp_rand_init_lc (s, size, seed, a, c, m)
-     gmp_rand_state *s;
-     unsigned long int size;
-     mpz_t seed;
-     mpz_t a;
-     unsigned long int c;
-     mpz_t m;
-#endif
-{
-  /* Allocate algorithm specific data. */
-  /* FIXME: Use user supplied allocation func instead of malloc? */
-  s->data.lc = (__gmp_rand_data_lc *) malloc (sizeof (__gmp_rand_data_lc));
-
-  mpz_init_set (s->data.lc->a, a);
-  mpz_init_set (s->data.lc->m, m);
-  s->data.lc->c = c;
-
-  __gmp_rand_init_common (s, GMP_RAND_ALG_LC, size, seed);
-}
-
-void
-#if __STDC__
-gmp_rand_clear (gmp_rand_state *s)
-#else
-gmp_rand_clear (s)
-     gmp_rand_state *s;
-#endif
-{
-
-
-  mpz_clear (s->seed);
-  mpz_clear (s->maxval);
-
-  switch (s->alg)
-    {
-    case GMP_RAND_ALG_LC:
-      {
-	  mpz_clear (s->data.lc->a);
-	  mpz_clear (s->data.lc->m);
-	  free (s->data.lc);
-	  break;
-    }
-
-    case GMP_RAND_ALG_BBS:
-      mpz_clear (s->data.bbs->bi);
-      free (s->data.bbs);
-      break;
-    }
-}
-
