@@ -419,7 +419,7 @@ MA 02111-1307, USA.
      <code>mpn_sqr_basecase</code>.  This should use a "vertical multiplication
      method", to avoid carry propagation.  splitting one of the operands in
      11-bit chunks.
-<li> 68k, Pentium: <code>mpn_lshift</code> by 31 should use the special rshift
+<li> Pentium: <code>mpn_lshift</code> by 31 should use the special rshift
      by 1 code, and vice versa <code>mpn_rshift</code> by 31 should use the
      special lshift by 1.  This would be best as a jump across to the other
      routine, could let both live in lshift.asm and omit rshift.asm on finding
@@ -451,14 +451,6 @@ MA 02111-1307, USA.
      other code?  Also, is it worth using for <code>BSWAP_LIMB</code> too, or
      would that mean a store and re-fetch?  Presumably that's what comes out
      in glibc.
-<li> 68000: <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
-     <code>mpn_submul_1</code>: Check for a 16-bit multiplier and use two
-     multiplies per limb, not four.
-<li> 68000: <code>mpn_lshift</code> and <code>mpn_rshift</code> could use a
-     <code>roll</code> and mask instead of <code>lsrl</code> and
-     <code>lsll</code>.  This promises to be a speedup, effectively trading a
-     6+2*n shift for one or two 4 cycle masks.  Suggested by Jean-Charles
-     Meyrignac.
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
   <pre>
 	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
@@ -673,9 +665,6 @@ MA 02111-1307, USA.
      <code>*-*-aix*</code>.  It might be more reliable to do some sort of
      feature test, examining the compiler output perhaps.  It might also be
      nice to merge the aix.m4 files into powerpc-defs.m4.
-<li> m68k: config.guess can detect 68000, 68010, CPU32 and 68020, but relies
-     on system information for 030, 040 and 060.  Can they be identified by
-     running some code?
 <li> Some CPUs have <code>umul</code> and <code>udiv</code> code not being
      used.  Check all such for bit rot and then put umul and udiv in
      <code>$gmp_mpn_functions_optional</code> as "standard optional" objects.
@@ -906,13 +895,6 @@ near future, but are at least worth thinking about.
      normally only one or two limbs.  The same applies to <code>mpz_add</code>
      when one operand is longer than the other, and to <code>mpz_com</code>
      since it's just -(x+1).
-<li> 68000: A 16-bit limb might suit 68000 better than 32-bits, since the
-     native multiply is only 16x16.  Could have this as an <code>ABI</code>
-     option, selecting <code>_SHORT_LIMB</code> in gmp.h.  Naturally a new set
-     of asm subroutines would be necessary.  Would need new
-     <code>mpz_set_ui</code> etc since the current code assumes limb&gt;=long,
-     but 2-limb operand forms would find a use for <code>long long</code> on
-     other processors too.
 </ul>
 
 
