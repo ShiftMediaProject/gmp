@@ -57,6 +57,7 @@ check_data (void)
         {
           printf ("mpz_set_d wrong on data[%d]\n", i);
         bad:
+          d_trace   ("  d  ", data[i].d);
           printf    ("  got  size %ld\n", (long) z->_mp_size);
           printf    ("  want size %ld\n", (long) data[i].want_size);
           mpn_trace ("  got  d", z->_mp_d, z->_mp_size);
