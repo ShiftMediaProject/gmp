@@ -1,4 +1,4 @@
-Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,8 +19,23 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 
 
+                      IA-64 MPN SUBROUTINES
 
 
+This directory contains mpn functions for the IA-64 architecture.
+
+
+CODE ORGANIZATION
+
+	mpn/ia64          itanium-2, and generic ia64
+
+The code here has been optimized primarily for itanium-2.  Very few
+itanium-1 chips were ever sold, and itanium-2 is more powerful, so the
+latter is what we concentrate on.
+
+
+
+CHIP NOTES
 
 The IA-64 ISA keeps instructions three and three in 128 bit bundles.
 Programmers/compilers need to put explicit breaks `;;' when there are
