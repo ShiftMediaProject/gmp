@@ -36,13 +36,13 @@ struct tmp_marker
 typedef struct tmp_marker tmp_marker;
 
 #if __STDC__
-void *__tmp_alloc (unsigned long);
-void __tmp_mark (tmp_marker *);
-void __tmp_free (tmp_marker *);
+void *__gmp_tmp_alloc (unsigned long);
+void __gmp_tmp_mark (tmp_marker *);
+void __gmp_tmp_free (tmp_marker *);
 #else
-void *__tmp_alloc ();
-void __tmp_mark ();
-void __tmp_free ();
+void *__gmp_tmp_alloc ();
+void __gmp_tmp_mark ();
+void __gmp_tmp_free ();
 #endif
 
 #ifndef __TMP_ALIGN
@@ -51,6 +51,6 @@ void __tmp_free ();
 
 #define TMP_DECL(marker) tmp_marker marker
 #define TMP_ALLOC(size) \
-  __tmp_alloc (((unsigned long) (size) + __TMP_ALIGN - 1) & -__TMP_ALIGN)
-#define TMP_MARK(marker) __tmp_mark (&marker)
-#define TMP_FREE(marker) __tmp_free (&marker)
+  __gmp_tmp_alloc (((unsigned long) (size) + __TMP_ALIGN - 1) & -__TMP_ALIGN)
+#define TMP_MARK(marker) __gmp_tmp_mark (&marker)
+#define TMP_FREE(marker) __gmp_tmp_free (&marker)

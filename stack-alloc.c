@@ -50,7 +50,7 @@ static tmp_stack *current = &xxx;
 /* Allocate a block of exactly <size> bytes.  This should only be called
    through the TMP_ALLOC macro, which takes care of rounding/alignment.  */
 void *
-__tmp_alloc (size)
+__gmp_tmp_alloc (size)
      unsigned long size;
 {
   void *this;
@@ -95,19 +95,20 @@ __tmp_alloc (size)
   return this;
 }
 
-/* Typically called at function entry.  <mark> is assigned so that __tmp_free
-   can later be used to reclaim all subsequently allocated storage.  */
+/* Typically called at function entry.  <mark> is assigned so that
+   __gmp_tmp_free can later be used to reclaim all subsequently allocated
+   storage.  */
 void
-__tmp_mark (mark)
+__gmp_tmp_mark (mark)
      tmp_marker *mark;
 {
   mark->which_chunk = current;
   mark->alloc_point = current->alloc_point;
 }
 
-/* Free everything allocated since <mark> was assigned by __tmp_mark */
+/* Free everything allocated since <mark> was assigned by __gmp_tmp_mark */
 void
-__tmp_free (mark)
+__gmp_tmp_free (mark)
      tmp_marker *mark;
 {
   while (mark->which_chunk != current)
