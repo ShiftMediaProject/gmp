@@ -135,6 +135,25 @@ extern char *optarg;
 extern int optind, opterr;
 #endif
 
+#if ! HAVE_DECL_SYS_NERR
+extern int sys_nerr;
+#endif
+
+#if ! HAVE_DECL_SYS_ERRLIST
+extern char *sys_errlist[];
+#endif
+
+#if ! HAVE_STRERROR
+char *
+strerror (int n)
+{
+  if (n < 0 || n >= sys_nerr)
+    return "errno out of range";
+  else
+    return sys_errlist[n];
+}
+#endif
+
 /* Rumour has it some systems lack a define of PROT_NONE. */
 #ifndef PROT_NONE
 #define PROT_NONE   0
@@ -1408,7 +1427,7 @@ malloc_region (struct region_t *r, mp_size_t n)
       exit (1);
     }
 #else
-  p = malloc (nbytes);
+  p = (mp_ptr) malloc (nbytes);
   ASSERT_ALWAYS (p != NULL);
 #endif
 
