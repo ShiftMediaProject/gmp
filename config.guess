@@ -155,35 +155,38 @@ ia64*-*-*)
   # Defining both getcpuid and _getcpuid lets us ignore whether the system
   # expects underscores or not.
   #
+  # "unsigned long long" is always 64 bits, in fact on hpux in ilp32 mode
+  # (which is the default there), it's the only 64-bit type.
+  #
   cat >${dummy}a.s <<EOF
 	.text
 	.global	_getcpuid
 	.proc	_getcpuid
 _getcpuid:
-	mov	r8 = 3 ;;
-	mov	r8 = CPUID[r8] ;;
-	br.ret.sptk.many	rp
-	;;
+	mov	r8 = CPUID[r32] ;;
+	br.ret.sptk.many rp ;;
 	.endp	_getcpuid
 	.global	getcpuid
 	.proc	getcpuid
 getcpuid:
-	mov	r8 = 3 ;;
-	mov	r8 = CPUID[r8] ;;
-	br.ret.sptk.many	rp
-	;;
+	mov	r8 = CPUID[r32] ;;
+	br.ret.sptk.many rp ;;
 	.endp	getcpuid
 EOF
   cat >${dummy}b.c <<EOF
 #include <stdio.h>
-unsigned long getcpuid ();
+unsigned long long getcpuid ();
 int
 main ()
 {
-  switch ((getcpuid() >> 24) & 0xFF) {
-  case 0x07: puts ("itanium");  break;
-  case 0x1F: puts ("itanium2"); break;
-  }
+  if (getcpuid(0LL) == 0x49656E69756E6547LL && getcpuid(1LL) == 0x6C65746ELL)
+    {
+      /* "GenuineIntel" */
+      switch ((getcpuid(3LL) >> 24) & 0xFF) {
+      case 0x07: puts ("itanium");  break;
+      case 0x1F: puts ("itanium2"); break;
+      }
+    }
   return 0;
 }
 EOF
