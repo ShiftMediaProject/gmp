@@ -1734,11 +1734,11 @@ machines.
 @cindex Miscellaneous integer functions
 
 @deftypefun int mpz_fits_ulong_p (mpz_t @var{op})
-@deftypefunx mpz_fits_slong_p (mpz_t @var{op})
-@deftypefunx mpz_fits_uint_p (mpz_t @var{op})
-@deftypefunx mpz_fits_sint_p (mpz_t @var{op})
-@deftypefunx mpz_fits_ushort_p (mpz_t @var{op})
-@deftypefunx mpz_fits_sshort_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_slong_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_uint_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_sint_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_ushort_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_sshort_p (mpz_t @var{op})
 Return non-zero iff the value of @var{op} fits in an @code{unsigned long int},
 @code{signed long int}, @code{unsigned int}, @code{signed int}, @code{unsigned
 short int}, or @code{signed short int}, respectively.  Otherwise, return zero.
