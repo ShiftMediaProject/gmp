@@ -955,9 +955,9 @@ check_mpfr (void)
   ASSERT_ALWAYS (cmp (mpfr_class(-123), -100.0) < 0);
   ASSERT_ALWAYS (cmp (mpfr_class(-123), -123.0) == 0);
   ASSERT_ALWAYS (cmp (mpfr_class(-123), -200.0) > 0);
-  ASSERT_ALWAYS (cmp (-100.0, mpfr_class(-123)) < 0);
+  ASSERT_ALWAYS (cmp (-100.0, mpfr_class(-123)) > 0);
   ASSERT_ALWAYS (cmp (-123.0, mpfr_class(-123)) == 0);
-  ASSERT_ALWAYS (cmp (-200.0, mpfr_class(-123)) > 0);
+  ASSERT_ALWAYS (cmp (-200.0, mpfr_class(-123)) < 0);
 
 #endif /* WANT_MPFR */
 }
