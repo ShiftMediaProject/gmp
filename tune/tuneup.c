@@ -499,16 +499,12 @@ fft (struct fft_param_t *p)
       if (k >= FFT_FIRST_K + numberof (mpn_fft_table[p->sqr]))
         break;
 
-      usleep(10000);
-
       /* compare k to k+1 in the middle of the current k+1 step */
       s.size = size + fft_step_size (k+1) / 2;
       s.r = k;
       tk = tuneup_measure (p->function, &s);
       if (tk == -1.0)
         abort ();
-
-      usleep(10000);
 
       s.r = k+1;
       tk1 = tuneup_measure (p->function, &s);
