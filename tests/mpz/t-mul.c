@@ -233,7 +233,7 @@ base_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
   mp_size_t i, j;
   mp_limb_t prod_low, prod_high;
   mp_limb_t cy_dig;
-  mp_limb_t v_limb, c;
+  mp_limb_t v_limb;
 
   /* Multiply by the first limb in V separately, as the result can
      be stored (not added) to PROD.  We also avoid a loop for zeroing.  */
