@@ -371,17 +371,6 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_USHRT_MAX  ((unsigned short) ~0)
 
 
-/* __GMPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
-   limb and adds an extra limb.  __GMPF_PREC_TO_BITS drops that extra limb,
-   hence giving back the user's size in bits rounded up.  Notice that
-   converting prec->bits->prec gives an unchanged value.  */
-#define __GMPF_BITS_TO_PREC(n)                                          \
-  ((mp_size_t) ((__GMP_MAX (53, n) + 2 * __GMP_BITS_PER_MP_LIMB - 1)    \
-                / __GMP_BITS_PER_MP_LIMB))
-#define __GMPF_PREC_TO_BITS(n) \
-  ((unsigned long) (n) * __GMP_BITS_PER_MP_LIMB - __GMP_BITS_PER_MP_LIMB)
-
-
 /* Allow direct user access to numerator and denominator of a mpq_t object.  */
 #define mpq_numref(Q) (&((Q)->_mp_num))
 #define mpq_denref(Q) (&((Q)->_mp_den))
@@ -1051,9 +1040,7 @@ void __GMP_DECLSPEC mpq_swap _PROTO ((mpq_ptr, mpq_ptr));
 /**************** Float (i.e. F) routines.  ****************/
 
 #define mpf_abs __gmpf_abs
-#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_abs
 void __GMP_DECLSPEC mpf_abs _PROTO ((mpf_ptr, mpf_srcptr));
-#endif
 
 #define mpf_add __gmpf_add
 void __GMP_DECLSPEC mpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
@@ -1118,14 +1105,10 @@ void __GMP_DECLSPEC mpf_floor _PROTO ((mpf_ptr, mpf_srcptr));
 double __GMP_DECLSPEC mpf_get_d _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 #define mpf_get_default_prec __gmpf_get_default_prec
-#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_get_default_prec
 unsigned long int __GMP_DECLSPEC mpf_get_default_prec _PROTO ((void)) __GMP_ATTRIBUTE_PURE;
-#endif
 
 #define mpf_get_prec __gmpf_get_prec
-#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_get_prec
 unsigned long int __GMP_DECLSPEC mpf_get_prec _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
-#endif
 
 #define mpf_get_si __gmpf_get_si
 long __GMP_DECLSPEC mpf_get_si _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
@@ -1175,9 +1158,7 @@ void __GMP_DECLSPEC mpf_mul_2exp _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int
 void __GMP_DECLSPEC mpf_mul_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 
 #define mpf_neg __gmpf_neg
-#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_neg
 void __GMP_DECLSPEC mpf_neg _PROTO ((mpf_ptr, mpf_srcptr));
-#endif
 
 #define mpf_out_str __gmpf_out_str
 #ifdef _GMP_H_HAVE_FILE
@@ -1200,33 +1181,25 @@ void __GMP_DECLSPEC mpf_set _PROTO ((mpf_ptr, mpf_srcptr));
 void __GMP_DECLSPEC mpf_set_d _PROTO ((mpf_ptr, double));
 
 #define mpf_set_default_prec __gmpf_set_default_prec
-#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_set_default_prec
 void __GMP_DECLSPEC mpf_set_default_prec _PROTO ((unsigned long int));
-#endif
 
 #define mpf_set_prec __gmpf_set_prec
 void __GMP_DECLSPEC mpf_set_prec _PROTO ((mpf_ptr, unsigned long int));
 
 #define mpf_set_prec_raw __gmpf_set_prec_raw
-#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_set_prec_raw
 void __GMP_DECLSPEC mpf_set_prec_raw _PROTO ((mpf_ptr, unsigned long int));
-#endif
 
 #define mpf_set_q __gmpf_set_q
 void __GMP_DECLSPEC mpf_set_q _PROTO ((mpf_ptr, mpq_srcptr));
 
 #define mpf_set_si __gmpf_set_si
-#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_set_si
 void __GMP_DECLSPEC mpf_set_si _PROTO ((mpf_ptr, signed long int));
-#endif
 
 #define mpf_set_str __gmpf_set_str
 int  __GMP_DECLSPEC mpf_set_str _PROTO ((mpf_ptr, __gmp_const char *, int));
 
 #define mpf_set_ui __gmpf_set_ui
-#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_set_ui
 void __GMP_DECLSPEC mpf_set_ui _PROTO ((mpf_ptr, unsigned long int));
-#endif
 
 #define mpf_set_z __gmpf_set_z
 void __GMP_DECLSPEC mpf_set_z _PROTO ((mpf_ptr, mpz_srcptr));
@@ -1593,109 +1566,6 @@ mpq_neg (mpq_ptr w, mpq_srcptr u)
   if (w != u)
     mpq_set (w, u);
   w->_mp_num._mp_size = - w->_mp_num._mp_size;
-}
-#endif
-
-
-/**************** mpf inlines ****************/
-
-#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_abs
-__GMP_EXTERN_INLINE void
-mpf_abs (mpf_ptr w, mpf_srcptr u)
-{
-  if (w != u)
-    mpf_set (w, u);
-  w->_mp_size = __GMP_ABS (w->_mp_size);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_get_default_prec
-#if ! __GMP_FORCE_mpf_get_default_prec
-__GMP_EXTERN_INLINE
-#endif
-unsigned long
-mpf_get_default_prec (void)
-{
-  return __GMPF_PREC_TO_BITS (__gmp_default_fp_limb_precision);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_get_prec
-#if ! __GMP_FORCE_mpf_get_prec
-__GMP_EXTERN_INLINE
-#endif
-unsigned long int
-mpf_get_prec (mpf_srcptr x)
-{
-  return __GMPF_PREC_TO_BITS (x->_mp_prec);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpf_neg
-__GMP_EXTERN_INLINE void
-mpf_neg (mpf_ptr w, mpf_srcptr u)
-{
-  if (w != u)
-    mpf_set (w, u);
-  w->_mp_size = - w->_mp_size;
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_set_default_prec
-#if ! __GMP_FORCE_mpf_set_default_prec
-__GMP_EXTERN_INLINE
-#endif
-void
-mpf_set_default_prec (unsigned long int prec_in_bits)
-{
-  __gmp_default_fp_limb_precision = __GMPF_BITS_TO_PREC (prec_in_bits);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_set_prec_raw
-#if ! __GMP_FORCE_mpf_set_prec_raw
-__GMP_EXTERN_INLINE
-#endif
-void
-mpf_set_prec_raw (mpf_ptr x, unsigned long int prec_in_bits)
-{
-  x->_mp_prec = __GMPF_BITS_TO_PREC (prec_in_bits);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_set_si
-#if ! __GMP_FORCE_mpf_set_si
-__GMP_EXTERN_INLINE
-#endif
-void
-mpf_set_si (mpf_ptr f, long n)
-{
-  f->_mp_d[0] = (unsigned long) (n >= 0 ? n : -n);
-  f->_mp_exp = (n != 0);
-  f->_mp_size = (n < 0 ? -1 : n != 0);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_set_ui
-#if ! __GMP_FORCE_mpf_set_ui
-__GMP_EXTERN_INLINE
-#endif
-void
-mpf_set_ui (mpf_ptr f, unsigned long n)
-{
-  f->_mp_d[0] = n;
-  f->_mp_exp = f->_mp_size = (n != 0);
-}
-#endif
-
-#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpf_size
-#if ! __GMP_FORCE_mpf_size
-__GMP_EXTERN_INLINE
-#endif
-size_t
-mpf_size (mpf_srcptr f)
-{
-  return __GMP_ABS (f->_mp_size);
 }
 #endif
 

@@ -19,7 +19,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#define __GMP_FORCE_mpf_set_ui 1
-
 #include "gmp.h"
 #include "gmp-impl.h"
+
+void
+mpf_set_ui (mpf_ptr f, unsigned long n)
+{
+  f->_mp_d[0] = n;
+  f->_mp_exp = f->_mp_size = (n != 0);
+}

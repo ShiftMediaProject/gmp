@@ -2122,6 +2122,17 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
   } while (0)
 
 
+/* __GMPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
+   limb and adds an extra limb.  __GMPF_PREC_TO_BITS drops that extra limb,
+   hence giving back the user's size in bits rounded up.  Notice that
+   converting prec->bits->prec gives an unchanged value.  */
+#define __GMPF_BITS_TO_PREC(n)                                          \
+  ((mp_size_t) ((__GMP_MAX (53, n) + 2 * __GMP_BITS_PER_MP_LIMB - 1)    \
+                / __GMP_BITS_PER_MP_LIMB))
+#define __GMPF_PREC_TO_BITS(n) \
+  ((unsigned long) (n) * __GMP_BITS_PER_MP_LIMB - __GMP_BITS_PER_MP_LIMB)
+
+
 /* Set n to the number of significant digits an mpf of the given _mp_prec
    field, in the given base.  This is a rounded up value, designed to ensure
    there's enough digits to reproduce all the guaranteed part of the value.
