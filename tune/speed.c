@@ -328,6 +328,18 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_copyd
   { "mpn_copyd",         speed_mpn_copyd            },
 #endif
+#if HAVE_NATIVE_mpn_addlsh1_n
+  { "mpn_addlsh1_n",     speed_mpn_addlsh1_n        },
+#endif
+#if HAVE_NATIVE_mpn_sublsh1_n
+  { "mpn_sublsh1_n",     speed_mpn_sublsh1_n        },
+#endif
+#if HAVE_NATIVE_mpn_rsh1add_n
+  { "mpn_rsh1add_n",     speed_mpn_rsh1add_n        },
+#endif
+#if HAVE_NATIVE_mpn_rsh1sub_n
+  { "mpn_rsh1sub_n",     speed_mpn_rsh1sub_n        },
+#endif
 
   { "MPN_ZERO",          speed_MPN_ZERO             },
 
