@@ -175,6 +175,8 @@ double speed_mpn_sub_n _PROTO ((struct speed_params *s));
 double speed_mpn_submul_1 _PROTO ((struct speed_params *s));
 double speed_mpn_toom3_mul_n _PROTO ((struct speed_params *s));
 double speed_mpn_toom3_sqr_n _PROTO ((struct speed_params *s));
+double speed_mpn_udiv_qrnnd _PROTO ((struct speed_params *s));
+double speed_mpn_umul_ppmm _PROTO ((struct speed_params *s));
 double speed_mpn_xnor_n _PROTO ((struct speed_params *s));
 double speed_mpn_xor_n _PROTO ((struct speed_params *s));
 
@@ -191,6 +193,11 @@ double speed_mpz_powm _PROTO ((struct speed_params *s));
 double speed_noop _PROTO ((struct speed_params *s));
 double speed_noop_wxs _PROTO ((struct speed_params *s));
 double speed_noop_wxys _PROTO ((struct speed_params *s));
+
+double speed_udiv_qrnnd _PROTO ((struct speed_params *s));
+double speed_udiv_qrnnd_preinv _PROTO ((struct speed_params *s));
+double speed_udiv_qrnnd_preinv2norm _PROTO ((struct speed_params *s));
+double speed_umul_ppmm _PROTO ((struct speed_params *s));
 
 
 /* Prototypes for other routines */

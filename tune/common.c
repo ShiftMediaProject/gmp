@@ -34,6 +34,7 @@ MA 02111-1307, USA.
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 #include "speed.h"
 
@@ -954,3 +955,161 @@ speed_mpz_bin_uiui (struct speed_params *s)
   mpz_clear (w);
   return t;
 }  
+
+
+/* The multiplies are successively dependent so the latency is measured, not
+   the issue rate.  There's only 10 per loop so the code doesn't get too big
+   since umul_ppmm is several instructions on some cpus.
+
+   Putting the arguments as "h,l,l,h" gives slightly better code from gcc
+   2.95.2 on x86, it puts only one mov between each mul, not two.  That mov
+   though will probably show up as a bogus extra cycle though.
+
+   Limitations:
+
+   Don't blindly use this to set UMUL_TIME in gmp-mparam.h, check the code
+   generated first, especially on CPUs with low latency multipliers.
+
+   CPUs with data-dependent multipliers may want more attention paid to the
+   randomness of the data used.  Probably the measurement wanted is over
+   uniformly distributed numbers, but what's here might not be giving that.  */
+
+#define SPEED_MACRO_UMUL_PPMM(call)                                     \
+  {                                                                     \
+    mp_limb_t  h, l;                                                    \
+    unsigned   i;                                                       \
+    double     t;                                                       \
+                                                                        \
+    s->time_divisor = 10;                                               \
+                                                                        \
+    h = s->xp[0];                                                       \
+    l = s->yp[0];                                                       \
+                                                                        \
+    speed_starttime ();                                                 \
+    i = s->reps;                                                        \
+    do                                                                  \
+      {                                                                 \
+        call; call; call; call; call;                                   \
+        call; call; call; call; call;                                   \
+      }                                                                 \
+    while (--i != 0);                                                   \
+    t = speed_endtime ();                                               \
+                                                                        \
+    /* stop the compiler optimizing away the whole calculation! */      \
+    noop_1 (h);                                                         \
+    noop_1 (l);                                                         \
+                                                                        \
+    return t;                                                           \
+  }
+
+double
+speed_umul_ppmm (struct speed_params *s)
+{
+  SPEED_MACRO_UMUL_PPMM (umul_ppmm (h, l, l, h));
+}
+
+#if HAVE_NATIVE_mpn_umul_ppmm
+double
+speed_mpn_umul_ppmm (struct speed_params *s)
+{
+#if defined (__hppa) && W_TYPE_SIZE == 64
+  SPEED_MACRO_UMUL_PPMM (h = __MPN (umul_ppmm) (h, l, &l));
+#else
+  SPEED_MACRO_UMUL_PPMM (h = __MPN (umul_ppmm) (&l, h, l));
+#endif
+}
+#endif
+
+
+/* The divisions are successively dependent so latency is measured, not
+   issue rate.  There's only 10 per loop so the code doesn't get too big,
+   especially for udiv_qrnnd_preinv and preinv2norm, which are several
+   instructions each.
+
+   Note that it's only the division which is measured here, there's no data
+   fetching and no shifting (if the divisor is normalized).
+
+   In speed_udiv_qrnnd with gcc 2.95.2 on x86 the parameters "q,r,r,q,d"
+   generate x86 div instructions with nothing in between.
+
+   Limitations:
+
+   Don't blindly use this to set UDIV_TIME in gmp-mparam.h, check the code
+   generated first.
+
+   CPUs with data-dependent divisions may want more attention paid to the
+   randomness of the data used.  Probably the measurement wanted is over
+   uniformly distributed numbers, but what's here might not be giving that.  */
+
+#define SPEED_ROUTINE_UDIV_QRNND(normalize, call)                       \
+  {                                                                     \
+    double     t;                                                       \
+    unsigned   i;                                                       \
+    mp_limb_t  q, r, d;                                                 \
+    mp_limb_t  dinv;                                                    \
+                                                                        \
+    s->time_divisor = 10;                                               \
+                                                                        \
+    /* divisor from "r" parameter, or a default */                      \
+    d = s->r;                                                           \
+    if (d == 0)                                                         \
+      d = 0x12345678;                                                   \
+                                                                        \
+    if (normalize)                                                      \
+      {                                                                 \
+        unsigned  norm;                                                 \
+        count_leading_zeros (norm, d);                                  \
+        d <<= norm;                                                     \
+        invert_limb (dinv, d);                                          \
+      }                                                                 \
+                                                                        \
+    q = s->xp[0];                                                       \
+    r = s->yp[0] % d;                                                   \
+                                                                        \
+    speed_starttime ();                                                 \
+    i = s->reps;                                                        \
+    do                                                                  \
+      {                                                                 \
+        call; call; call; call; call;                                   \
+        call; call; call; call; call;                                   \
+      }                                                                 \
+    while (--i != 0);                                                   \
+    t = speed_endtime ();                                               \
+                                                                        \
+    /* stop the compiler optimizing away the whole calculation! */      \
+    noop_1 (q);                                                         \
+    noop_1 (r);                                                         \
+                                                                        \
+    return t;                                                           \
+  }
+
+double
+speed_udiv_qrnnd (struct speed_params *s)
+{
+  SPEED_ROUTINE_UDIV_QRNND (UDIV_NEEDS_NORMALIZATION,
+                            udiv_qrnnd (q, r, r, q, d));
+}
+
+double
+speed_udiv_qrnnd_preinv (struct speed_params *s)
+{
+  SPEED_ROUTINE_UDIV_QRNND (1, udiv_qrnnd_preinv (q, r, r, q, d, dinv));
+}  
+
+double
+speed_udiv_qrnnd_preinv2norm (struct speed_params *s)
+{
+  SPEED_ROUTINE_UDIV_QRNND (1, udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv));
+}
+
+#if HAVE_NATIVE_mpn_udiv_qrnnd
+double
+speed_mpn_udiv_qrnnd (struct speed_params *s)
+{
+#if defined (__hppa) && W_TYPE_SIZE == 64
+  SPEED_ROUTINE_UDIV_QRNND (1, q = __MPN (udiv_qrnnd) (r, q, d, &r));
+#else
+  SPEED_ROUTINE_UDIV_QRNND (1, q = __MPN (udiv_qrnnd) (&r, r, q, d));
+#endif
+}
+#endif

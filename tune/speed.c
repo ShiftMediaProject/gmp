@@ -206,6 +206,18 @@ const struct routine_t {
   { "mpf_init_clear",              speed_mpf_init_clear              },
   { "mpz_init_realloc_clear",      speed_mpz_init_realloc_clear      },
 
+  { "umul_ppmm",              speed_umul_ppmm       },
+#if HAVE_NATIVE_mpn_umul_ppmm
+  { "mpn_umul_ppmm",          speed_mpn_umul_ppmm   },
+#endif
+
+  { "udiv_qrnnd",             speed_udiv_qrnnd,             FLAG_R_OPTIONAL },
+  { "udiv_qrnnd_preinv",      speed_udiv_qrnnd_preinv,      FLAG_R_OPTIONAL },
+  { "udiv_qrnnd_preinv2norm", speed_udiv_qrnnd_preinv2norm, FLAG_R_OPTIONAL },
+#if HAVE_NATIVE_mpn_udiv_qrnnd
+  { "mpn_udiv_qrnnd",         speed_mpn_udiv_qrnnd,         FLAG_R_OPTIONAL },
+#endif
+
 #ifdef SPEED_EXTRA_ROUTINES
   SPEED_EXTRA_ROUTINES
 #endif
