@@ -50,6 +50,14 @@ MA 02111-1307, USA. */
 #include "mp_bases.h"
 #endif
 
+#if HAVE_INTTYPES_H      /* for uint_least32_t */
+# include <inttypes.h>
+#else
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
+#endif
+
 #ifdef __cplusplus
 #include <cstring>  /* for strlen */
 #include <string>   /* for std::string */
@@ -115,6 +123,22 @@ MA 02111-1307, USA. */
 #endif
 
 #define BITS_PER_ULONG  (8 * SIZEOF_UNSIGNED_LONG)
+
+
+/* gmp_uint_least32_t is an unsigned integer type with at least 32 bits. */
+#if HAVE_UINT_LEAST32_T
+typedef uint_least32_t      gmp_uint_least32_t;
+#else
+#if SIZEOF_UNSIGNED_SHORT >= 4
+typedef unsigned short      gmp_uint_least32_t;
+#else
+#if SIZEOF_UNSIGNED >= 4
+typedef unsigned            gmp_uint_least32_t;
+#else
+typedef unsigned long       gmp_uint_least32_t;
+#endif
+#endif
+#endif
 
 
 /* const and signed must match __gmp_const and __gmp_signed, so follow the
@@ -2235,7 +2259,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
       }                                         \
     while (__n != 0);                           \
                                                 \
-    (p) = __p;                                  \
+    (p) = __p & 1;                              \
   } while (0)
 #endif
 
@@ -2553,14 +2577,15 @@ typedef unsigned int UHWtype;
 
 /* Define ieee_double_extract and _GMP_IEEE_FLOATS.
 
-   "unsigned" is used for the bit fields, unless that's less than 32 bits,
-   which is the case for instance on the m68k palmos prc tools port of gcc.  */
+   Bit field packing is "implementation defined" according to C99, which
+   leaves us at the compiler's mercy here.  For some systems packing is
+   defined in the ABI (eg. x86).  In any case so far it seems universal that
+   little endian systems pack from low to high, and big endian from high to
+   low within the given type.
 
-#if SIZEOF_UNSIGNED >= 4
-#define GMP_UINT32  unsigned
-#else
-#define GMP_UINT32  unsigned long
-#endif
+   Within the fields we rely on the integer endianness being the same as the
+   float endianness, this is true everywhere we know of and it'd be a fairly
+   strange system that did anything else.  */
 
 #if HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
 #define _GMP_IEEE_FLOATS 1
@@ -2568,10 +2593,10 @@ union ieee_double_extract
 {
   struct
     {
-      GMP_UINT32 manh:20;
-      GMP_UINT32 exp:11;
-      GMP_UINT32 sig:1;
-      GMP_UINT32 manl:32;
+      gmp_uint_least32_t manh:20;
+      gmp_uint_least32_t exp:11;
+      gmp_uint_least32_t sig:1;
+      gmp_uint_least32_t manl:32;
     } s;
   double d;
 };
@@ -2583,10 +2608,10 @@ union ieee_double_extract
 {
   struct
     {
-      GMP_UINT32 manl:32;
-      GMP_UINT32 manh:20;
-      GMP_UINT32 exp:11;
-      GMP_UINT32 sig:1;
+      gmp_uint_least32_t manl:32;
+      gmp_uint_least32_t manh:20;
+      gmp_uint_least32_t exp:11;
+      gmp_uint_least32_t sig:1;
     } s;
   double d;
 };
@@ -2598,10 +2623,10 @@ union ieee_double_extract
 {
   struct
     {
-      GMP_UINT32 sig:1;
-      GMP_UINT32 exp:11;
-      GMP_UINT32 manh:20;
-      GMP_UINT32 manl:32;
+      gmp_uint_least32_t sig:1;
+      gmp_uint_least32_t exp:11;
+      gmp_uint_least32_t manh:20;
+      gmp_uint_least32_t manl:32;
     } s;
   double d;
 };
