@@ -453,11 +453,15 @@ dnl  gets rearranged or rewritten so the ICE doesn't happen then this can be
 dnl  removed.
 
 AC_DEFUN(GMP_GCC_M68K_OPTIMIZE,
-[if test $1 = gcc; then
-  case `$2 --version` in
+[case $host in
+m68*-*-*)
+  if test $1 = gcc; then
+    case `$2 --version` in
     2.95*) $3=-O ;;
-  esac
-fi
+    esac
+  fi
+  ;;
+esac
 ])
 
 
