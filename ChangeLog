@@ -19,6 +19,24 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-27  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h, mpn/asm-defs.m4, configure.in, tune/speed.h,
+	tune/speed.c, tune/common.c, tune/many.pl, tests/devel/try.c: Add
+	mpn_mod_34lsub1.
+	* tests/refmpn.c (refmpn_mod_34lsub1): New function.
+
+	* mpn/generic/mod_34lsub1.c: New file.
+	* mpn/x86/k6/mod_34lsub1.asm: New file.
+	* mpn/x86/pentium4/sse2/mod_34lsub1.asm: New file.
+	* mpn/x86/x86-defs.m4 (Zdisp): Add another instruction.
+
+	* gmp-h.in, gmpxx.h: Use <iosfwd> not whole <iostream>.
+
+	* gmp.texi (Known Build Problems): Add note on test programs with
+	Windows DLLs.
+
+
 2001-10-26  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpq/t-get_d.c: Limit the size of "eps" for vax.	
