@@ -1259,6 +1259,14 @@ This function returns 0 if the entire string up to the '\0' is a valid
 number in base @var{base}.  Otherwise it returns @minus{}1.
 @end deftypefun
 
+[It turns out that it is not entirely true that this function ignores
+white-space.  It does ignore it between digits, but not after a minus sign or
+within within or after "0x".  We are considering changing the definition of
+this function, making it fail when there is any white-space in the input,
+since that makes a lot of sense.  Please tell us your opinion about this
+change.  Do you really want it to accept "3 14" as meaning 314 as it does
+now?]
+
 @deftypefun void mpz_swap (mpz_t @var{rop1}, mpz_t @var{rop2})
 Swap the values @var{rop1} and @var{rop2} efficiently.
 @end deftypefun
@@ -2654,7 +2662,13 @@ Unlike the corresponding @code{mpz} function, the base will not be determined
 from the leading characters of the string if @var{base} is 0.  This is so that
 numbers like @samp{0.23} are not interpreted as octal.
 
-White space is allowed in the string, and is simply ignored.
+White space is allowed in the string, and is simply ignored.  [This is not
+really true; white-space is ignored in the beginning of the string and within
+the mantissa, but not in other places, such as after a minus sign or in the
+exponent.  We are considering changing the definition of this function, making
+it fail when there is any white-space in the input, since that makes a lot of
+sense.  Please tell us your opinion about this change.  Do you really want it
+to accept "3 14" as meaning 314 as it does now?]
 
 This function returns 0 if the entire string up to the '\0' is a valid number
 in base @var{base}.  Otherwise it returns @minus{}1.
