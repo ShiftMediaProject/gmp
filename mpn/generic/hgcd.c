@@ -1547,8 +1547,8 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 
 	  /* Top two rows of R must be the identity matrix, followed
 	     by a row (1, q). */
-	  ASSERT (R.row[0].u == 1 & R.row[0].v == 0);
-	  ASSERT (R.row[1].u == 0 & R.row[1].v == 1);
+	  ASSERT (R.row[0].u == 1 && R.row[0].v == 0);
+	  ASSERT (R.row[1].u == 0 && R.row[1].v == 1);
 	  ASSERT (R.row[2].u == 1);
 	  
 	  qsize = (R.row[2].v != 0);
@@ -1607,7 +1607,9 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 #if WANT_ASSERT
 	  switch (res)
 	    {
-	    default: abort();
+	    default:
+	      ASSERT_ALWAYS (0 == "Unexpected value of res");
+	      break;
 	    case 2:
 	      ASSERT (hgcd->row[2].rsize >= L - 1);
 	      ASSERT (hgcd->row[3].rsize >= L - 2);
@@ -1683,8 +1685,8 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 
 	  /* Top two rows of R must be the identity matrix, followed
 	     by a row (1, q). */
-	  ASSERT (R.row[0].u == 1 & R.row[0].v == 0);
-	  ASSERT (R.row[1].u == 0 & R.row[1].v == 1);
+	  ASSERT (R.row[0].u == 1 && R.row[0].v == 0);
+	  ASSERT (R.row[1].u == 0 && R.row[1].v == 1);
 	  ASSERT (R.row[2].u == 1);
 	  
 	  qsize = (R.row[2].v != 0);
@@ -1817,6 +1819,7 @@ mpn_hgcd_lehmer_itch (mp_size_t asize)
   return HGCD_JEBELEAN_ITCH (asize);
 }
 
+/* FIXME: This function is not needed anymore. */
 /* Repeatedly divides A by B, until the remainder fits in M =
    ceil(asize / 2) limbs. Stores cofactors in HGCD, and pushes the
    quotients on STACK. On success, HGCD->row[0, 1, 2] correspond to
@@ -1868,9 +1871,14 @@ mpn_hgcd_itch (mp_size_t asize)
   return asize + mpn_hgcd_init_itch (asize + 6 * k) + 12 * k;
 }
 
-/* Computes hgcd using Schönhage's algorithm. Should return the same
-   numbers as mpn_hgcd_lehmer, but computes them asymptotically
-   faster. */
+/* Repeatedly divides A by B, until the remainder fits in M =
+   ceil(asize / 2) limbs. Stores cofactors in HGCD, and pushes the
+   quotients on STACK. On success, HGCD->row[0, 1, 2] correspond to
+   remainders that are larger than M limbs, while HGCD->row[3]
+   correspond to a remainder that fit in M limbs.
+
+   Return 0 on failure (if B or A mod B fits in M limbs), otherwise
+   return one of 1 - 4 as specified for hgcd_jebelean. */
 int
 mpn_hgcd (struct hgcd *hgcd,
 	  mp_srcptr ap, mp_size_t asize,
@@ -1900,12 +1908,11 @@ mpn_hgcd (struct hgcd *hgcd,
 
   ASSERT (asize >= 2);
 
-  if (BELOW_THRESHOLD (N, HGCD_SCHOENHAGE_THRESHOLD))
-    return mpn_hgcd_lehmer (hgcd, ap, asize, bp, bsize,
-			    quotients, tp, talloc);
-
   /* Initialize, we keep r0 and r1 as the reduced numbers (so far). */
   hgcd_start (hgcd, ap, asize, bp, bsize);
+  
+  if (BELOW_THRESHOLD (N, HGCD_SCHOENHAGE_THRESHOLD))
+    return hgcd_final (hgcd, M, quotients, tp, talloc);
 
   /* Reduce the size to M + m + 1. Usually, only one hgcd call is
      needed, but we may need multiple calls. When finished, the values
@@ -2146,7 +2153,6 @@ mpn_hgcd (struct hgcd *hgcd,
 	{
 	  /* The first remainder was small. Then there's a good chance
 	     that the remainder A % B is also small. */
-	euclid_2:
 	  res = euclid_step (hgcd, M, quotients, tp, talloc);
 
 	  if (res > 0)
