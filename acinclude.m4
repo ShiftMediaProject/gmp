@@ -890,6 +890,94 @@ fi
 ])
 
 
+dnl  GMP_ASM_X86_MCOUNT
+dnl  ------------------
+dnl  Find out how to call mcount for profiling on an x86 system.
+dnl
+dnl  A dummy function is compiled and the ".s" output examined.  The pattern
+dnl  matching might be a bit fragile, but should work at least with gcc on
+dnl  sensible systems.  Certainly it's better than hard coding a table of
+dnl  conventions.
+dnl
+dnl  For non-PIC, any ".data" is taken to mean a counter might be passed.
+dnl  It's assumed a movl will set it up, and the right register is taken
+dnl  from that movl.  Any movl involving %esp is ignored (a frame pointer
+dnl  setup normally).
+dnl
+dnl  For PIC, any ".data" is similarly interpreted, but a GOTOFF identifies
+dnl  the line setting up the right register.
+dnl
+dnl  In both cases a line with "mcount" identifies the call and that line is
+dnl  used literally.
+dnl
+dnl  On some systems (eg. FreeBSD 3.5) gcc emits ".data" but doesn't use it,
+dnl  so it's not an error to have .data but then not find a register.
+dnl
+dnl  Variations in mcount conventions on different x86 systems can be found
+dnl  in gcc config/i386.  mcount can have a "_" prefix or be .mcount or
+dnl  _mcount_ptr, and for PIC it can be called through a GOT entry, or via
+dnl  the PLT.  If a pointer to a counter is required it's passed in %eax or
+dnl  %edx.
+dnl
+dnl  Flags to specify PIC are taken from $ac_cv_prog_cc_pic set by
+dnl  AC_PROG_LIBTOOL.
+dnl
+dnl  Enhancement: Cache the values determined here. But what's the right way
+dnl  to get two variables (mcount_nonpic_reg and mcount_nonpic_call say) set
+dnl  from one block of commands?
+
+AC_DEFUN(GMP_ASM_X86_MCOUNT,
+[AC_REQUIRE([AC_ENABLE_SHARED])
+AC_REQUIRE([AC_PROG_LIBTOOL])
+AC_MSG_CHECKING([how to call x86 mcount])
+cat >conftest.c <<EOF
+foo(){bar();}
+EOF
+
+if test "$enable_static" = yes; then
+  gmp_asmout_compile="$CC $CFLAGS -S conftest.c 1>&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_asmout_compile); then
+    if grep '\.data' conftest.s >/dev/null; then
+      mcount_nonpic_reg="`sed -n ['/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
+    else
+      mcount_nonpic_reg=
+    fi
+    mcount_nonpic_call="`grep 'call.*mcount' conftest.s`"
+    if test -z "$mcount_nonpic_call"; then
+      AC_MSG_ERROR([Cannot find mcount call for non-PIC])
+    fi
+  else
+    AC_MSG_ERROR([Cannot compile test program for non-PIC])
+  fi
+fi
+
+if test "$enable_shared" = yes; then
+  gmp_asmout_compile="$CC $CFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_asmout_compile); then
+    if grep '\.data' conftest.s >/dev/null; then
+      mcount_pic_reg="`sed -n ['s/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
+    else
+      mcount_pic_reg=
+    fi
+    mcount_pic_call="`grep 'call.*mcount' conftest.s`"
+    if test -z "$mcount_pic_call"; then
+      AC_MSG_ERROR([Cannot find mcount call for PIC])
+    fi
+  else
+    AC_MSG_ERROR([Cannot compile test program for PIC])
+  fi
+fi
+
+GMP_DEFINE_RAW(["define(<MCOUNT_NONPIC_REG>, <\`$mcount_nonpic_reg'>)"])
+GMP_DEFINE_RAW(["define(<MCOUNT_NONPIC_CALL>,<\`$mcount_nonpic_call'>)"])
+GMP_DEFINE_RAW(["define(<MCOUNT_PIC_REG>,    <\`$mcount_pic_reg'>)"])
+GMP_DEFINE_RAW(["define(<MCOUNT_PIC_CALL>,   <\`$mcount_pic_call'>)"])
+
+rm -f conftest.*
+AC_MSG_RESULT([determined])
+])
+
+
 dnl  GMP_PROG_CC_WORKS(CC, CFLAGS, ACTION-IF-WORKS, [ACTION-IF-NOT-WORKS])
 dnl  Check if CC can compile and link.  Perform various target specific tests.
 dnl  FIXME: Require `$target'.
