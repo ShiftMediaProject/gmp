@@ -1,3 +1,8 @@
+2001-02-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/sqr_basecase.c: Remove declaration of mpn_sqr_diagonal.
+	Fix typo in header comment.
+
 2001-02-12  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/mul.c, mpn/generic/mul_n.c, gmp-impl.h: Use
