@@ -170,30 +170,31 @@
      to have gmp-mparam.h files in practically every implementation specific
      mpn subdirectory, and repeat each *_THRESHOLD for gcc and the system
      compiler.  See the `tune' top-level directory for more information.
-<li> Alpha: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
-     <code>mpn_mul_1</code> for the 21264.  On 21264, they should run at 4, 3,
-     and 3 cycles/limb respectively, if the code is unrolled properly.  (Ask
-     Torbjörn for his xm.s and xam.s skeleton files.)
-<li> Alpha: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
-     <code>mpn_mul_1</code> for the 21164.  This should use both integer
+<li> Alpha 21264: Improve feed-in code for <code>mpn_addmul_1</code> and
+     <code>mpn_submul_1</code>.  Integrate new <code>mpn_mul_1</code> code.
+<li> Alpha 21164: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>,
+     and <code>mpn_mul_1</code> for the 21164.  This should use both integer
      multiplies and floating-point multiplies.  For the floating-point
      operations, the single-limb multiplier should be split into three 21-bit
      chunks.
-<li> UltraSPARC: Rewrite 64-bit <code>mpn_addmul_1</code>,
+<li> UltraSPARC/64: Rewrite <code>mpn_addmul_1</code>,
      <code>mpn_submul_1</code>, and <code>mpn_mul_1</code>.  Should use
      floating-point operations, and split the invariant single-limb multiplier
      into 21-bit chunks.  Should give about 18 cycles/limb, but the pipeline
      will become very deep.  (Torbjörn has C code that is useful as a starting
      point.)
-<li> UltraSPARC: Rewrite <code>mpn_lshift</code> and <code>mpn_rshift</code>.
-     Should give 2 cycles/limb.  (Torbjörn has code that just needs to be
-     finished.)
-<li> SPARC32/V9: Find out why the speed of <code>mpn_addmul_1</code>
-     and the other multiplies varies so much on successive sizes.
+<li> UltraSPARC/64: Rewrite <code>mpn_lshift</code> and
+     <code>mpn_rshift</code>.  Will give 2 cycles/limb.  (Torbjörn has code
+     that just needs to be finished.)
+<li> UltraSPARC/32: Rewrite <code>mpn_lshift</code> and
+     <code>mpn_rshift</code>.  Will give 2 cycles/limb.  (Torbjörn has code
+     that just needs to be finished.)
+<li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 < 2^16.
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current development code runs at 11
      cycles/limb, which is already very good.  But it should be possible to
-     saturate the cache, which will happen at 7.5 cycles/limb.
+     saturate the cache, which will happen at 7.5 cycles/limb.  Write special
+     mpn_Xmul_1 loops for s2 < 2^32.
 <li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
      <code>mpn_sqr_basecase</code>.  Using four "<code>mulx</code>"s either
      with an asm block or via the generic C code is about 90 cycles.
@@ -202,7 +203,8 @@
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
 <li> POWER2/POWER2SC: Schedule <code>mpn_lshift</code>/<code>mpn_rshift</code>.
      Will bring time from 1.75 to 1.25 cycles/limb.
-<li> X86: Optimize non-MMX <code>mpn_lshift</code> for shifts by 1.  (See Pentium code.)
+<li> X86: Optimize non-MMX <code>mpn_lshift</code> for shifts by 1.  (See
+     Pentium code.)
 <li> PentiumPro: <code>mpn_mod_1</code> can use a mul-by-inverse the same as
      P-II but without the shifts inside the loop and hence without MMX.  The
      same might speed up the loop for P-II also, but maybe at the cost of one
