@@ -84,17 +84,20 @@ MA 02111-1307, USA.
 
 #include "config.h"
 
-#if HAVE_GETOPT_H
-#include <getopt.h>  /* for getopt_long() */
-#endif
 #include <limits.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#if HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -109,6 +112,12 @@ MA 02111-1307, USA.
 #if !HAVE_DECL_OPTARG
 extern char *optarg;
 extern int optind, opterr;
+#endif
+
+#ifndef PROT_NONE
+#define PROT_NONE   0
+#define PROT_READ   0
+#define PROT_WRITE  0
 #endif
 
 
@@ -539,11 +548,23 @@ mprotect_maybe (void *addr, size_t len, int prot)
   if (!option_redzones)
     return;
 
+#if HAVE_MPROTECT
   if (mprotect (addr, len, prot) != 0)
     {
       fprintf (stderr, "Cannot mprotect %p 0x%X 0x%X\n", addr, len, prot);
       exit (1);
     }
+#else
+  {
+    static int  warned = 0;
+    if (!warned)
+      {
+        fprintf (stderr,
+                 "mprotect not available, bounds testing not performed\n");
+        warned = 1;
+      }
+  }
+#endif
 }
 
 /* round "a" up to a multiple of "m" */
