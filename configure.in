@@ -1706,7 +1706,8 @@ GMP_FUNC_SSCANF_WRITABLE_INPUT
 #           % (cd macos; perl configure)
 #
 # Note: $gmp_mpn_functions must have mod_1 before pre_mod_1 so the former
-#       can optionally provide the latter as an extra entrypoint.
+#       can optionally provide the latter as an extra entrypoint.  Likewise
+#       divrem_1 and pre_divrem_1.
 
 gmp_mpn_functions_optional="copyi copyd com_n		\
   and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n	\
@@ -1740,8 +1741,11 @@ for tmp_fn in $gmp_mpn_functions; do
     test "$no_create" = yes || rm -f mpn/$tmp_fn.$tmp_ext
   done
 
-  # Don't need pre_mod_1 if it's already been provided (by an asm mod_1).
+  # mpn_preinv_divrem_1 might have been provided by divrem_1.asm, likewise
+  # mpn_preinv_mod_1 by mod_1.asm.
   case $tmp_fn in
+  pre_divrem_1)
+    if test "$HAVE_NATIVE_mpn_preinv_divrem_1" = yes; then continue; fi ;;
   pre_mod_1)
     if test "$HAVE_NATIVE_mpn_preinv_mod_1" = yes; then continue; fi ;;
   esac
