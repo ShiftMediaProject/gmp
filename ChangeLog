@@ -18,6 +18,16 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-05-01  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (AC_CHECK_FUNCS): Add getsysinfo.
+	(AC_CHECK_HEADERS): Add sys/sysinfo.h and machine/hal_sysinfo.h.
+	* tune/freq.c (freq_getsysinfo): New function.
+	(freq_all): Use it.
+	(freq_sysctlbyname_i586_freq, freq_sysctlbyname_tsc_freq,
+	freq_sysctl_hw_cpufrequency, freq_sysctl_hw_model): Set
+	speed_cycletime before trying to print it, when verbose.
+
 2003-04-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/set_str.c: Major overhaul.
