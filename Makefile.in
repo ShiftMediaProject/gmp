@@ -875,7 +875,7 @@ GZIP_ENV = --best
 distdir: $(DISTFILES)
 	-chmod -R a+w $(distdir) >/dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/demos/calc $(distdir)/demos/expr $(distdir)/mpfr
+	$(mkinstalldirs) $(distdir)/. $(distdir)/demos $(distdir)/demos/calc $(distdir)/demos/expr $(distdir)/mpfr
 	@for file in $(DISTFILES); do \
 	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
 	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \

@@ -151,7 +151,7 @@ CLEANFILES = $(EXTRA_PROGRAMS)
 subdir = demos
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = pexpr-config.h
 EXTRA_PROGRAMS = factorize$(EXEEXT) isprime$(EXEEXT) pexpr$(EXEEXT) \
 	primes$(EXEEXT) qcn$(EXEEXT)
 factorize_SOURCES = factorize.c
@@ -198,7 +198,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
-DIST_COMMON = Makefile.am Makefile.in
+DIST_COMMON = Makefile.am Makefile.in pexpr-config-h.in
 DIST_SUBDIRS = $(SUBDIRS)
 SOURCES = factorize.c isprime.c pexpr.c primes.c qcn.c
 
@@ -222,6 +222,8 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+pexpr-config.h: $(top_builddir)/config.status pexpr-config-h.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@:demos/pexpr-config-h.in CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 factorize$(EXEEXT): $(factorize_OBJECTS) $(factorize_DEPENDENCIES) 
 	@rm -f factorize$(EXEEXT)
 	$(LINK) $(factorize_LDFLAGS) $(factorize_OBJECTS) $(factorize_LDADD) $(LIBS)
