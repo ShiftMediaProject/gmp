@@ -416,94 +416,12 @@ EOF
   ;;
 
 sparc-*-* | sparc64-*-*)
-  # Try "rd %psr".  This is only available in v7 and v8.  (The rough
-  # equivalent "rdpr %ver" in v9 is a privileged instruction and hence not
-  # useful to us.)
-  #
-  # If we're sure the CPU is a plain v7 then exact_cpu is set to "sparc" so
-  # as to stop further probes.
-  # FIXME: Someone who knows what all these crazy CPU variations are should
-  # put in sparc or sparcv8 as appropriate.
-  #
-  cat >${dummy}a.s <<EOF
-	.text
-	.globl	getpsr
-	.globl	_getpsr
-getpsr:
-_getpsr:
-	rd	%psr, %o0
-	nop
-	nop
-	nop
-	retl
-	nop
-EOF
-  cat >${dummy}b.c <<EOF
-#include <stdio.h>
-int
-main ()
-{
-  unsigned  psr, impl, vers;
-  psr = getpsr ();
-  impl = (psr >> 28) & 0xF;
-  vers = (psr >> 24) & 0xF;
-  switch (impl) {
-  case 0:
-    switch (vers) {
-    case 0: break;  /* Fujitsu MB86900/1A or LSI L64831 SparcKIT-40 */
-    case 4: break;  /* Fujitsu MB86904 */
-    case 5: break;  /* Fujitsu TurboSparc MB86907 */
-    }
-    break;
-  case 1:
-    switch (vers) {
-    case 0:                       break;  /* LSI L64811 */
-    case 1:  puts ("sparc");      break;  /* Cypress cy7c601 */
-    case 2:  puts ("sparc");      break;  /* Cypress cy7c611 */
-    case 14: puts ("sparcv8");    break;  /* HyperSparc RT625, RT626 */
-    case 15: puts ("sparcv8");    break;  /* HyperSparc RT620 */
-    }
-    break;
-  case 2: /* Bipolar B5010 */
-    break;
-  case 3: /* LSI of some sort */
-    break;
-  case 4:
-    switch (vers) {
-    case 0: puts ("supersparc");  break;  /* TI SuperSparc 50 */
-    case 1: puts ("microsparc");  break;  /* TI MicroSparc    */
-    case 2: puts ("microsparc");  break;  /* TI MicroSparc II */
-    case 3: puts ("supersparc");  break;  /* TI SuperSparc 51 */
-    case 4: puts ("supersparc");  break;  /* TI SuperSparc 61 */
-    }
-    break;
-  case 5: /* Matsushita MN10501 */
-    break;
-  case 6: /* Philips something */
-    break;
-  case 7: /* Harvest something */
-    break;
-  case 8: /* SPEC something */
-    break;
-  case 9: /* Fujitsu or Weitek Power-UP */
-    break;
-  }
-  return 0;
-}
-EOF
-  if ($CC_FOR_BUILD ${dummy}a.s ${dummy}b.c -o $dummy) >/dev/null 2>&1; then
-    # suppress SIGILL message on v9
-    x=`$SHELL -c ./$dummy 2>/dev/null`
-    if test -n "$x"; then
-      exact_cpu=$x
-    fi
-  fi
 
   # Grep the linux kernel /proc/cpuinfo pseudo-file.
   # A typical line is "cpu\t\t: TI UltraSparc II  (BlackBird)"
   # Anything unrecognised is ignored, since of course we mustn't spit out
   # a cpu type config.sub doesn't know.
-  if test -z "$exact_cpu" && test -f /proc/cpuinfo; then
+  if test -f /proc/cpuinfo; then
     x=`sed -n 's/^cpu[ 	]*:[ 	]*(TI )?\([a-z0-9 ]*\).*/\1/p' /proc/cpuinfo`
     case $x in
       "UltraSparc I")    exact_cpu="ultrasparc1"  ;;
@@ -513,21 +431,44 @@ EOF
     esac
   fi
 
+  # Grep the output from sysinfo on SunOS.
+  # sysinfo has been seen living in /bin or in /usr/kvm
+  #	cpu0 is a "SuperSPARC Model 41 SPARCmodule" CPU
+  #	cpu0 is a "75 MHz TI,TMS390Z55" CPU
+  #
+  if test -z "$exact_cpu"; then
+    for i in sysinfo /usr/kvm/sysinfo; do
+      if $SHELL -c $i 2>/dev/null >conftest.dat; then
+        if grep 'cpu0 is a "SuperSPARC' conftest.dat >/dev/null; then
+          exact_cpu=supersparc
+          break
+        elif grep 'cpu0 is a .*TMS390Z55' conftest.dat >/dev/null; then
+          # TMS390Z55 is a supersparc
+          exact_cpu=supersparc
+          break
+        fi
+      fi
+    done
+    rm -f conftest.dat
+  fi  
+
   # Grep the output from prtconf on Solaris.
-  # A typical line is: SUNW,UltraSPARC-II (driver not attached)
   # Use an explicit /usr/sbin path on prntconf, since that directory might
   # not be in a normal user's path.
+  #	SUNW,UltraSPARC-II (driver not attached)
+  #	SUNW,UltraSPARC-IIi (driver not attached)
+  #	SUNW,UltraSPARC-III+ (driver not attached)
   #
   if test -z "$exact_cpu"; then
     if $SHELL -c /usr/sbin/prtconf 2>/dev/null >conftest.dat; then
-      if grep 'SUNW,UltraSPARC ' conftest.dat >/dev/null; then
-        exact_cpu=ultrasparc
-      elif grep 'SUNW,UltraSPARC-II ' conftest.dat >/dev/null; then
-        exact_cpu=ultrasparc2
-      elif grep 'SUNW,UltraSPARC-IIi ' conftest.dat >/dev/null; then
-        exact_cpu=ultrasparc2i
-      elif grep 'SUNW,UltraSPARC-III ' conftest.dat >/dev/null; then
+      if grep 'SUNW,UltraSPARC-III' conftest.dat >/dev/null; then
         exact_cpu=ultrasparc3
+      elif grep 'SUNW,UltraSPARC-IIi' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparc2i
+      elif grep 'SUNW,UltraSPARC-II' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparc2
+      elif grep 'SUNW,UltraSPARC' conftest.dat >/dev/null; then
+        exact_cpu=ultrasparc
       fi
     fi
     rm -f conftest.dat
