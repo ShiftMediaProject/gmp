@@ -56,7 +56,7 @@ mp_size_t
 mpn_rootrem (mp_ptr rootp, mp_ptr remp,
 	     mp_srcptr up, mp_size_t un, mp_limb_t nth)
 {
-  mp_ptr pp, qp;
+  mp_ptr pp, qp, xp;
   mp_size_t pn, xn, qn;
   unsigned long int unb, xnb, bit;
   unsigned int cnt;
@@ -66,7 +66,6 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
 
   TMP_MARK (marker);
   pp = TMP_ALLOC_LIMBS (un + 2);
-  qp = TMP_ALLOC_LIMBS (un);	/* should try and reduce this allocation */
 
   count_leading_zeros (cnt, up[un - 1]);
   unb = un * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
@@ -74,22 +73,25 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
   xnb = (unb + nth - 1) / nth;
   if (xnb == 1)
     {
-      rootp[0] = 1;
       if (remp == NULL)
 	remp = pp;
       mpn_sub_1 (remp, up, un, (mp_limb_t) 1);
       MPN_NORMALIZE (remp, un);
+      rootp[0] = 1;
       TMP_FREE (marker);
       return un;
     }
 
   xn = (xnb + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
 
+  qp = TMP_ALLOC_LIMBS (un);	/* should try and reduce this allocation */
+  xp = TMP_ALLOC_LIMBS (xn + 1);
+
   /* Set initial root to only ones.  This is an overestimate of the actual root
      by less than a factor of 2.  */
   for (i = 0; i < xn; i++)
-    rootp[i] = GMP_NUMB_MAX;
-  rootp[xnb / GMP_NUMB_BITS] = ((mp_limb_t) 1 << (xnb % GMP_NUMB_BITS)) - 1;
+    xp[i] = GMP_NUMB_MAX;
+  xp[xnb / GMP_NUMB_BITS] = ((mp_limb_t) 1 << (xnb % GMP_NUMB_BITS)) - 1;
 
   /* Improve the initial approximation, one bit at a time.  Keep the
      approximations >= root(U,nth).  */
@@ -97,12 +99,12 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
   n_valid_bits = 0;
   for (i = 0; (nth >> i) != 0; i++)
     {
-      mp_limb_t xl = rootp[bit / GMP_NUMB_BITS];
-      rootp[bit / GMP_NUMB_BITS] = xl ^ (mp_limb_t) 1 << bit % GMP_NUMB_BITS;
-      pn = mpn_pow_1 (pp, rootp, xn, nth, qp);
+      mp_limb_t xl = xp[bit / GMP_NUMB_BITS];
+      xp[bit / GMP_NUMB_BITS] = xl ^ (mp_limb_t) 1 << bit % GMP_NUMB_BITS;
+      pn = mpn_pow_1 (pp, xp, xn, nth, qp);
       /* If the new root approximation is too small, restore old value.  */
       if (! (un < pn || (un == pn && mpn_cmp (up, pp, pn) < 0)))
-	rootp[bit / GMP_NUMB_BITS] = xl;		/* restore old value */
+	xp[bit / GMP_NUMB_BITS] = xl;		/* restore old value */
       n_valid_bits += 1;
       if (bit == 0)
 	goto done;
@@ -118,10 +120,10 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
     {
       mp_limb_t cy;
 
-      pn = mpn_pow_1 (pp, rootp, xn, nth - 1, qp);
+      pn = mpn_pow_1 (pp, xp, xn, nth - 1, qp);
       mpn_tdiv_qr (qp, pp, (mp_size_t) 0, up, un, pp, pn); /* junk remainder */
       qn = un - pn + 1;
-      cy = mpn_addmul_1 (qp, rootp, xn, nth - 1);
+      cy = mpn_addmul_1 (qp, xp, xn, nth - 1);
       if (qn == xn + 1)
 	{
 	  cy += qp[xn];
@@ -136,17 +138,17 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
       qp[xn] = cy;
       qn = xn + (cy != 0);
 
-      mpn_divrem_1 (rootp, (mp_size_t) 0, qp, qn, nth);
+      mpn_divrem_1 (xp, (mp_size_t) 0, qp, qn, nth);
       n_valid_bits = n_valid_bits * 2 - adj;
     }
 
   /* The computed result might be one unit too large.  Adjust as necessary.  */
  done:
-  pn = mpn_pow_1 (pp, rootp, xn, nth, qp);
+  pn = mpn_pow_1 (pp, xp, xn, nth, qp);
   if (un < pn || (un == pn && mpn_cmp (up, pp, pn) < 0))
     {
-      mpn_decr_u (rootp, 1);
-      pn = mpn_pow_1 (pp, rootp, xn, nth, qp);
+      mpn_decr_u (xp, 1);
+      pn = mpn_pow_1 (pp, xp, xn, nth, qp);
 
       ASSERT_ALWAYS (! (un < pn || (un == pn && mpn_cmp (up, pp, pn) < 0)));
     }
@@ -155,7 +157,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
     remp = pp;
   mpn_sub (remp, up, un, pp, pn);
   MPN_NORMALIZE (remp, un);
-
+  MPN_COPY (rootp, xp, xn);
   TMP_FREE (marker);
   return un;
 }
