@@ -229,7 +229,7 @@
      allocation.  Set <code>ALLOC(var)</code> to 0, and have
      <code>mpz_realloc</code> special-handle that case.  Update functions that
      rely on a single limb (like <code>mpz_set_ui</code>,
-     <code>mpz_[tfc]div_r_ui</code>, and others).
+     <code>mpz_{t,f,c}div_{qr,r}_ui</code>, and others).
 <li> Add <code>mpf_out_raw</code> and <code>mpf_inp_raw</code>.  Make sure
      format is portable between 32-bit and 64-bit machines, and between
      little-endian and big-endian machines.
@@ -271,44 +271,32 @@
      compiler builtins.  One thing current tests don't cover: HPUX 10 C
      compiler supports <code>alloca</code>, but cannot find any symbol to test
      for HPUX 10.  Damn.
-<li> HPPA: config.guess should distinguish hppa 7000 and 7100.
-<li> Mips: config.guess should say mips2, mips3, and mips4.  "hinv -c
-     processor" gives lots of information on Irix.
-<li> Alpha: config.guess: Identify processor under OSF: "/usr/sbin/sizer -c".
-     Unfortunately, sizer is not available before some revision of Dec Unix
-     4.0, and it also returns some rather cryptic names for processors.
-     Perhaps the <code>implver</code> and <code>amask</code> assembly
-     instructions are better, but that doesn't differentiate between ev5 and
-     ev56.  Is some of this already in the FSF config.guess?
+<li> HPPA: config.guess should recognize 7000, 7100, 7200, and 8x00.
+<li> Mips: config.guess should say mipsr3000, mipsr4000, mipsr10000, etc.
+     "hinv -c processor" gives lots of information on Irix.
 <li> Sparc: config.guess should say supersparc, microsparc, ultrasparc1,
-     ultrasparc2, etc.  "prtconf -vp" gives lots of information about a Solaris
-     system.
+     ultrasparc2, etc.  "prtconf -vp" gives lots of information about a
+     Solaris system.
 <li> Sparc32: floating point or integer <code>udiv</code> should be selected
-     according to the CPU target.  Currently floating point ends up being used
-     on all sparcs, which is probably not right for generic V7 and V8.
-<li> On Solaris 7, check if gcc supports native v9 64-bit
-     arithmetic.  If not compile using "cc -fast -xarch=v9".
-     (Problem: -fast requires that we link with -fast too, which
-     might not be very good.  Pass "-xO4 -xtarget=native" instead?)
-<li> Extend the "optional" compiler arguments to choose the first
-     that works from from a set, so when gcc gets athlon support it
-     can try -mcpu=athlon, -mcpu=pentiumpro, or -mcpu=i486,
-     whichever works.
-<li> Build multiple variants of the library under certain systems.
-     An example is -n32, -o32, and -64 on Irix.
-<li> There's a few filenames that don't fit in 14 chars, if this
-     matters.
+     according to the CPU target.  Currently floating point ends up being
+     used on all sparcs, which is probably not right for generic V7 and V8.
+<li> Extend the "optional" compiler arguments to choose the first that works
+     from from a set, so when gcc gets athlon support it can try
+     -mcpu=athlon, -mcpu=pentiumpro, or -mcpu=i486, whichever works.
+<li> Build multiple variants of the library under certain systems.  An
+     example is -n32 and -64 on Irix.
+<li> There's a few filenames that don't fit in 14 chars, if this matters.
 <li> Enable support for FORTRAN versions of mpn files (eg. for
      mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
-     <code>AC_PROG_F77</code> if such a file is found.  Automake will generate
-     some of what's needed in the makefiles, but libtool doesn't know fortran
-     and so rules like the current ".asm.lo" will be needed.
+     <code>AC_PROG_F77</code> if such a file is found.  Automake will
+     generate some of what's needed in the makefiles, but libtool doesn't
+     know fortran and so rules like the current ".asm.lo" will be needed.
 <li> Consider running the <code>GMP_CHECK_ASM</code> tests only if they're
-     needed, ie. if there's a .S or .asm in the mpn path.  Hopefully the path
-     can be determined without reference to those tests.  (x86s need to know
-     whether the assembler supports MMX though.)
-<li> Configure in demos directory.  Now pexpr.c is becoming the usual *nix mess
-     of nested ifdefs.
+     needed, ie. if there's a .S or .asm in the mpn path.  Hopefully the
+     path can be determined without reference to those tests.  (x86s need to
+     know whether the assembler supports MMX though.)
+<li> Configure in demos directory.  Now pexpr.c is becoming the usual *nix
+     mess of nested ifdefs.
 </ul>
 
 <p> In general, getting the exact right configuration, passing the
