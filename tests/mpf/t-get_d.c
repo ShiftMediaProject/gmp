@@ -19,6 +19,7 @@
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
    MA 02111-1307, USA. */
 
+#include <stdlib.h>
 #include "gmp.h"
 #include "tests.h"
 
@@ -58,7 +59,7 @@ main (int argc, char **argv)
 	abort ();
       e = mpf_get_d (v);
       r = e/d;
-      if (r < 0.99999999999999 | r > 1.00000000000001)
+      if (r < 0.99999999999999 || r > 1.00000000000001)
 	abort ();
       mpf_set (u, v);
     }
