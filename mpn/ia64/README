@@ -24,19 +24,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 The IA-64 ISA keeps instructions three and three in 128 bit bundles.
 Programmers/compilers need to put explicit breaks `;;' when there are
-WAW or RAW dependencies.  Such breaks can typically just be at the end
-of a bundle, with some exceptions.
+WAW or RAW dependencies, with some notable exceptions.  Such "breaks"
+are typically be at the end of a bundle, but can be put between
+operations within a bundle too.
 
-The Itanium and Itanium 2 implementations can under ideal conditions
+The Itanium 1 and Itanium 2 implementations can under ideal conditions
 execute two bundles per cycle.  The Itanium 2 allows 4 of these
 instructions to do integer operations, while the Itanium 2 allows all
 6 to be integer operations.
 
 Taken cloop branches seem to insert a bubble into the pipeline most of
-the time.
+the time on Itanium 1.
 
 Loads to the fp registers bypass the L1 cache and thus get extremely
-long latencies, 9 cycles on the Itanium and 7 cycles on the Itanium 2.
+long latencies, 9 cycles on the Itanium 1 and 7 cycles on the Itanium 2.
 
 The software pipeline stuff using br.ctop instruction causes delays,
 since many issue slots are taken up by instructions with zero
@@ -44,11 +45,14 @@ predicates, and since about many extra instructions are needed to set
 things up.  These features are designed for code density, not maximum
 speed.
 
-Misc pipeline limitations (Itanium):
+Misc pipeline limitations (Itanium 1):
 * The getf.sig instruction can only execute in M0.
 * At most four integer instructions/cycle.
 * Nops take up resources like any plain instructions.
 
+Misc pipeline limitations (Itanium 2):
+* The getf.sig instruction can only execute in M0.
+* Nops take up resources like any plain instructions.
 
 
 ASSEMBLY SYNTAX
@@ -80,12 +84,12 @@ particular for Itanium 2, with a 1 cycle recurrency is this:
    (p8) add             r22 = 1, r22            ;;
         st8             [r32] = r22, 8
 
-This could reach 1.75 c/l for Itanium and 1.17 c/l for Itanium 2.
+This could reach 1.75 c/l for Itanium 1 and 1.17 c/l for Itanium 2.
 
 ================================================================
 mpn_addmul_1:
 
-The current code runs at 4 cycles/limb on Itanium and 7 cycles/limb on
+The current code runs at 4 cycles/limb on Itanium 1 and 7 cycles/limb on
 Itanium 2, and that is reached only for large operands.  It uses the
 mod-scheduled software pipelining feature.  Performance for small
 operands is poor.  The reason for the poor speed for small operands is
@@ -145,7 +149,7 @@ at any rate, something close to 2 cycles/limb should be possible.
 ================================================================
 mpn_mul_1:
 
-The current code runs at 2.5 cycles/limb on Itanium and 2 cycles/limb
+The current code runs at 2.5 cycles/limb on Itanium 1 and 2 cycles/limb
 on Itanium 2.
 
 ================================================================
@@ -153,7 +157,7 @@ mpn_addmul_N
 
 For best speed, we need to give up using mpn_addmul_1 as the main
 multiply building block, and instead take multiple v limbs per loop.
-For the Itanium, we need to take about 8 limbs at a time for full
+For the Itanium 1, we need to take about 8 limbs at a time for full
 speed.  For the Itanium 2, something like mpn_addmul_4 should be
 enough.
 
@@ -215,7 +219,7 @@ Loop:	ldf8		u0 = [r33], 8
 ================================================================
 mpn_lshift, mpn_rshift
 
-The current code runs at 2 cycles/limb on Itanium and 1.5 cycles/limb
+The current code runs at 2 cycles/limb on Itanium 1 and 1.5 cycles/limb
 on Itanium 2.  The code suffers badly from Itanium's 4 cycle latency
 for variable shift instructions.
 
@@ -223,12 +227,12 @@ Using 63 separate loops, we could use the double-word shrp
 instruction.  That instruction has a plain single-cycle latency.  We
 need 63 loops since this instruction only accept immediate count.
 That would lead to a somewhat silly code size, but the speed would
-double on Itanium to 1 c/l and tripple on Itanium 2 to 0.5 c/l.
+double on Itanium 1 to 1 c/l and tripple on Itanium 2 to 0.5 c/l.
 
 ================================================================
 mpn_copyi, mpn_copyd
 
-The current code runs at 1 cycle/limb on Itanium and 0.5 cycles/limb
+The current code runs at 1 cycle/limb on Itanium 1 and 0.5 cycles/limb
 on Itanium 2.  But that is just for L1 cache hit.  On Itanium 2, the
 4-way unrolled loop takes just 2 cycles, and thus load-use scheduling
 isn't great.  It might be best to use modulo scheduled loops, since
