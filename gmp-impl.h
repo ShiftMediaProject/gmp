@@ -759,6 +759,12 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
     (q) = _xh - _q1;							\
   } while (0)
 
+/* Two dependent multiplies, plus about 6 cycles of other dependent
+   calculations. */
+#ifndef UDIV_PREINV_TIME
+#define UDIV_PREINV_TIME   (2*UMUL_TIME + 6)
+#endif
+
 
 /* modlimb_invert() sets "inv" to the multiplicative inverse of "n" modulo
    2^BITS_PER_MP_LIMB, ie. so that inv*n == 1 mod 2^BITS_PER_MP_LIMB.
