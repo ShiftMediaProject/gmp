@@ -41,10 +41,8 @@ mpz_kronecker_si_zi (a, b)
   int        twos;
   int        result_bit1;
 
-  /* long must fit in mp_limb_t */
-  ASSERT (sizeof (mp_limb_t) >= sizeof (long));
-
-  if ((b_abs_size = ABSIZ (b)) == 0)
+  b_abs_size = ABSIZ (b);
+  if (b_abs_size == 0)
     return JACOBI_S0 (a);  /* (a/0) */
 
   b_ptr = PTR(b);

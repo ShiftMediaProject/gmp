@@ -40,8 +40,6 @@ mpz_kronecker_zi_ui (a, b)
 {
   int  twos;
 
-  ASSERT (sizeof (mp_limb_t) >= sizeof (unsigned long));
-
   if (b & 1)
     {
       if (b != 1)
@@ -59,7 +57,8 @@ mpz_kronecker_zi_ui (a, b)
 
   /* (a/2)=(2/a) when a odd */
   count_trailing_zeros (twos, b);  
-  if ((b >>= twos) == 1)
+  b >>= twos;
+  if (b == 1)
     return JACOBI_TWOS_U (twos, PTR(a)[0]);
 
   return mpn_jacobi_base (mpz_fdiv_ui (a, b), b,

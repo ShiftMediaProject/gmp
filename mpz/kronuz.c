@@ -41,11 +41,9 @@ mpz_kronecker_ui_zi (a, b)
   int        twos;
   int        result_bit1;
 
-  /* unsigned long must fit in mp_limb_t */
-  ASSERT (sizeof (mp_limb_t) >= sizeof (unsigned long));
-
   /* (a/0) */
-  if ((b_abs_size = ABSIZ (b)) == 0)
+  b_abs_size = ABSIZ (b);
+  if (b_abs_size == 0)
     return JACOBI_U0 (a);
 
   /* (a/-1)=1 when a>=0, so the sign of b is ignored */
@@ -64,7 +62,8 @@ mpz_kronecker_ui_zi (a, b)
         return 1;
 
       count_trailing_zeros (twos, a);
-      if ((a >>= twos) == 1)
+      a >>= twos;
+      if (a == 1)
         return JACOBI_TWOS_U (twos, b_low);  /* powers of (2/b) only */
 
       /* powers of (2/b); reciprocity to (b/a); (b/a) == (b mod a / a) */
