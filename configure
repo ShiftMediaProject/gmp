@@ -4213,7 +4213,7 @@ esac
 
 echo "dnl  CONFIG_TOP_SRCDIR is a path from the mpn builddir to the top srcdir" >> $gmp_tmpconfigm4
 
-case "$top_srcdir" in
+case "$srcdir" in
 [\\/]* | ?:[\\/]* )
 
 echo "define(<CONFIG_TOP_SRCDIR>,<\`$srcdir'>)" >> $gmp_tmpconfigm4
