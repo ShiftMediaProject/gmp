@@ -869,14 +869,18 @@ when making binaries that must run on both.
 
 @item x86 MMX and old GAS
 
+If the CPU selected has MMX code but the assembler doesn't support it, a
+warning is given and non-MMX code is used instead.  This will be an inferior
+build, since the MMX code that's present is there because it's faster than the
+corresponding plain integer code.
+
 Old versions of GAS don't support MMX instructions, in particular version
 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately there's no
 newer assembler for that system).
 
-If the target CPU has MMX code but the assembler doesn't support it, a warning
-is given and non-MMX code is used instead.  This will be an inferior build,
-since the MMX code that's present is there because it's faster than the
-corresponding plain integer code.
+Solaris 2.6 @command{as} generates incorrect object code for register to
+register @code{movq} instructions, making it unusable.  Install GNU binutils
+@command{gas} if MMX code is wanted.
 
 @item x86 GCC @samp{-march=pentiumpro}
 
