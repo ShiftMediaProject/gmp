@@ -4,6 +4,9 @@
 /* Versoin of package. */
 #undef VERSION
 
+/* --enable-assert option */
+#undef WANT_ASSERT
+
 /* Define if we have native implementation of function. */
 #undef HAVE_NATIVE_
 #undef HAVE_NATIVE_mpn_add                 
