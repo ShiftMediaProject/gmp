@@ -285,6 +285,9 @@ factor (mpz_t t, unsigned long p)
 {
   unsigned int division_limit;
 
+  if (mpz_sgn (t) == 0)
+    return;
+
   /* Set the trial division limit according the size of t.  */
   division_limit = mpz_sizeinbase (t, 2);
   if (division_limit > 1000)
@@ -324,40 +327,50 @@ main (int argc, char *argv[])
       argc--;
     }
 
-  p = 0;
-  for (i = 1; i < argc; i++)
+  mpz_init (t);
+  if (argc > 1)
     {
-      if (!strncmp (argv[i], "-Mp", 3))
+      p = 0;
+      for (i = 1; i < argc; i++)
 	{
-	  p = atoi (argv[i] + 3);
-	  mpz_init_set_ui (t, 1);
-	  mpz_mul_2exp (t, t, p);
-	  mpz_sub_ui (t, t, 1);
-	}
-      else if (!strncmp (argv[i], "-2kp", 4))
-	{
-	  p = atoi (argv[i] + 4);
-	  continue;
-	}
-      else
-	{
-	  mpz_init_set_str (t, argv[i], 0);
-	}
+	  if (!strncmp (argv[i], "-Mp", 3))
+	    {
+	      p = atoi (argv[i] + 3);
+	      mpz_set_ui (t, 1);
+	      mpz_mul_2exp (t, t, p);
+	      mpz_sub_ui (t, t, 1);
+	    }
+	  else if (!strncmp (argv[i], "-2kp", 4))
+	    {
+	      p = atoi (argv[i] + 4);
+	      continue;
+	    }
+	  else
+	    {
+	      mpz_set_str (t, argv[i], 0);
+	    }
 
-      if (mpz_cmp_ui (t, 0) == 0)
-	puts ("-");
-      else
+	  if (mpz_cmp_ui (t, 0) == 0)
+	    puts ("-");
+	  else
+	    {
+	      factor (t, p);
+	      puts ("");
+	    }
+	}
+    }
+  else
+    {
+      for (;;)
 	{
-	  factor (t, p);
+	  mpz_inp_str (t, stdin, 0);
+	  if (feof (stdin))
+	    break;
+	  mpz_out_str (stdout, 10, t); printf (" = ");
+	  factor (t, 0);
 	  puts ("");
 	}
     }
-  exit (0);
-}
 
-void
-dmp (mpz_t x)
-{
-  mpz_out_str (stdout, 10, x);
-  puts ("");
+  exit (0);
 }
