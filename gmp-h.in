@@ -1698,11 +1698,6 @@ mpf_size (mpf_srcptr f)
    disappear, and the load/add/store gets a chance to become a
    read-modify-write on CISC CPUs.
 
-   The use of __n is designed to keep code size down by sharing the
-   load/add/store for the first limb and subsequent carry propagation.
-   There's also a good chance a compile time n==1 input will be recognised
-   as making __n a constant 1, certainly gcc recognises this.
-
    Alternatives:
 
    Using a pair of pointers instead of indexing would be possible, but gcc
@@ -1722,41 +1717,50 @@ mpf_size (mpf_srcptr f)
    instructions to save and any gain is all too easily lost by register
    juggling setting up for the asm.  */
 
-#define __GMPN_AORS_1(cout, dst, src, size, n, OP, CB)          \
-  do {                                                          \
-    mp_size_t  __i;                                             \
-    mp_limb_t  __n, __x;                                        \
-                                                                \
-    /* ASSERT ((size) >= 1); */                                 \
-    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */     \
-                                                                \
-    __i = 0;                                                    \
-    __n = (n);                                                  \
-    for (;;)                                                    \
-      {                                                         \
-        __x = (src)[__i];                                       \
-	(dst)[__i] = __x OP __n;				\
-        if (!CB)                                                \
-          {                                                     \
-            if ((src) != (dst))                                 \
-              __GMPN_COPY_REST (dst, src, size, __i+1);         \
-	    (cout) = 0;                                         \
-            break;                                              \
-          }                                                     \
-        __n = 1;                                                \
-        if (++__i >= (size))                                    \
-          {                                                     \
-            (cout) = 1;                                         \
-            break;                                              \
-          }                                                     \
-      }                                                         \
-                                                                \
+#define __GMPN_AORS_1(cout, dst, src, n, v, OP, CB)		\
+  do {								\
+    mp_size_t  __i;						\
+    mp_limb_t  __x, __r;					\
+								\
+    /* ASSERT ((n) >= 1); */					\
+    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, n)); */	\
+								\
+    __x = (src)[0];						\
+    __r = __x OP (v);						\
+    (dst)[0] = __r;						\
+    if (CB (__r, __x, (v)))					\
+      {								\
+	(cout) = 1;						\
+	for (__i = 1; __i < (n);)				\
+	  {							\
+	    __x = (src)[__i];					\
+	    __r = __x OP 1;					\
+	    (dst)[__i] = __r;					\
+	    ++__i;						\
+	    if (!CB (__r, __x, 1))				\
+	      {							\
+		if ((src) != (dst))				\
+		  __GMPN_COPY_REST (dst, src, n, __i);		\
+		(cout) = 0;					\
+		break;						\
+	      }							\
+	  }							\
+      }								\
+    else							\
+      {								\
+	if ((src) != (dst))					\
+	  __GMPN_COPY_REST (dst, src, n, 1);			\
+	(cout) = 0;						\
+      }								\
   } while (0)
 
-#define __GMPN_ADD_1(cout, dst, src, size, n)           \
-  __GMPN_AORS_1(cout, dst, src, size, n, +, (__x + __n < __x)) 
-#define __GMPN_SUB_1(cout, dst, src, size, n)           \
-  __GMPN_AORS_1(cout, dst, src, size, n, -, (__x < __n))
+#define __GMPN_ADDCB(r,x,y) ((r) < (y))
+#define __GMPN_SUBCB(r,x,y) ((x) < (y))
+
+#define __GMPN_ADD_1(cout, dst, src, n, v)	     \
+  __GMPN_AORS_1(cout, dst, src, n, v, +, __GMPN_ADDCB)
+#define __GMPN_SUB_1(cout, dst, src, n, v)	     \
+  __GMPN_AORS_1(cout, dst, src, n, v, -, __GMPN_SUBCB)
 
 
 /* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
