@@ -1073,7 +1073,9 @@ mpn_toom3_mul_n (p, a, b, n, ws)
   {
     mp_limb_t m;
 
+    /* this is probably unnecessarily strict */
     ASSERT (n >= TOOM3_MUL_THRESHOLD);
+
     l = ls = n / 3;
     m = n - l * 3;
     if (m != 0)
@@ -1092,6 +1094,9 @@ mpn_toom3_mul_n (p, a, b, n, ws)
     E = p + l4;
     W = ws + l4;
   }
+
+  ASSERT (l >= 1);
+  ASSERT (ls >= 1);
 
   /** First stage: evaluation at points 0, 1/2, 1, 2, oo. **/
   evaluate3 (A, B, C, &cB, &cC, &cD, a, a + l, a + l2, l, ls);
@@ -1178,7 +1183,9 @@ mpn_toom3_sqr_n (p, a, n, ws)
   {
     mp_limb_t m;
 
-    ASSERT (n >= TOOM3_MUL_THRESHOLD);
+    /* this is probably unnecessarily strict */
+    ASSERT (n >= TOOM3_SQR_THRESHOLD);
+
     l = ls = n / 3;
     m = n - l * 3;
     if (m != 0)
@@ -1197,6 +1204,9 @@ mpn_toom3_sqr_n (p, a, n, ws)
     E = p + l4;
     W = ws + l4;
   }
+
+  ASSERT (l >= 1);
+  ASSERT (ls >= 1);
 
   /** First stage: evaluation at points 0, 1/2, 1, 2, oo. **/
   evaluate3 (A, B, C, &cB, &cC, &cD, a, a + l, a + l2, l, ls);
@@ -1259,9 +1269,9 @@ mpn_mul_n (p, a, b, n)
     {
       /* Allocate workspace of fixed size on stack: fast! */
 #if TUNE_PROGRAM_BUILD
-      mp_limb_t ws[2 * (TOOM3_MUL_THRESHOLD_LIMIT-1) + 2 * BITS_PER_MP_LIMB];
+      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (TOOM3_MUL_THRESHOLD_LIMIT-1)];
 #else
-      mp_limb_t ws[2 * (TOOM3_MUL_THRESHOLD-1) + 2 * BITS_PER_MP_LIMB];
+      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (TOOM3_MUL_THRESHOLD-1)];
 #endif
       mpn_kara_mul_n (p, a, b, n, ws);
     }
@@ -1275,10 +1285,10 @@ mpn_mul_n (p, a, b, n)
        * be limited.  Since n is at least TOOM3_MUL_THRESHOLD, the
        * multiplication will take much longer than malloc()/free().  */
       mp_limb_t wsLen, *ws;
-      wsLen = 2 * n + 3 * BITS_PER_MP_LIMB;
-      ws = (mp_ptr) (*__gmp_allocate_func) ((size_t) wsLen * sizeof (mp_limb_t));
+      wsLen = MPN_TOOM3_MUL_N_TSIZE (n);
+      ws = __GMP_ALLOCATE_FUNC_LIMBS ((size_t) wsLen);
       mpn_toom3_mul_n (p, a, b, n, ws);
-      (*__gmp_free_func) (ws, (size_t) wsLen * sizeof (mp_limb_t));
+      __GMP_FREE_FUNC_LIMBS (ws, (size_t) wsLen);
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
   else
