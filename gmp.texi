@@ -1772,11 +1772,12 @@ or up,
 AC_CHECK_SIZEOF(mp_limb_t, , [#include <gmp.h>])
 @end example
 
-The optional @code{mpfr} functions are provided in a separate @file{libmpfr},
-and this might be from GMP @option{--enable-mpfr} or from MPFR installed
-separately.  Either way @file{libmpfr} depends on @file{libgmp}, it doesn't
-stand alone.  Currently only a static @file{libmpfr.a} will be available, not
-a shared library, since upward binary compatibility is not guaranteed.
+The optional @code{mpfr} functions are provided in a separate
+@file{libmpfr.a}, and this might be from GMP @option{--enable-mpfr} or from
+MPFR installed separately.  Either way @file{libmpfr} depends on
+@file{libgmp}, it doesn't stand alone.  Currently only a static
+@file{libmpfr.a} will be available, not a shared library, since upward binary
+compatibility is not guaranteed.
 
 @example
 AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR(
@@ -2171,6 +2172,10 @@ division or modulo functions (including the modular powering functions
 zero.  This lets a program handle arithmetic exceptions in these functions the
 same way as for normal C @code{int} arithmetic.
 
+@c  Separate deftypefun groups for cdiv, fdiv and tdiv produce a blank line
+@c  between each, and seem to let tex do a better job of page breaks than an
+@c  @sp 1 in the middle of one big set.
+
 @deftypefun void mpz_cdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_cdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_cdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
@@ -2178,8 +2183,9 @@ same way as for normal C @code{int} arithmetic.
 @deftypefunx {unsigned long int} mpz_cdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, @w{mpz_t @var{n}}, @w{unsigned long int @var{d}})
 @deftypefunx {unsigned long int} mpz_cdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
+@end deftypefun
 
-@deftypefunx void mpz_fdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefun void mpz_fdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_fdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_fdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_fdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{d}})
@@ -2188,8 +2194,9 @@ same way as for normal C @code{int} arithmetic.
 @deftypefunx {unsigned long int} mpz_fdiv_ui (mpz_t @var{n}, @w{unsigned long int @var{d}})
 @deftypefunx void mpz_fdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{b}})
 @deftypefunx void mpz_fdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{b}})
+@end deftypefun
 
-@deftypefunx void mpz_tdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefun void mpz_tdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_tdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx void mpz_tdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_tdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, @w{unsigned long int @var{d}})
@@ -2230,20 +2237,20 @@ only the remainder, and the @code{qr} functions calculate both.  Note that for
 @code{qr} the same variable cannot be passed for both @var{q} and @var{r}, or
 results will be unpredictable.
 
-The @code{ui} variants also provide the remainder as the return value, and in
-fact returning the remainder is all the plain @code{div_ui} functions do.  For
+For the @code{ui} variants the return value is the remainder, and in fact
+returning the remainder is all the @code{div_ui} functions do.  For
 @code{tdiv} and @code{cdiv} the remainder can be negative, so for those the
 return value is the absolute value of the remainder.
 
-The @code{2exp} functions do a right shift of @var{n} by @var{b} bits to form
-@var{q}, and a mask leaving the low @var{b} bits for @var{r}, although the
-effect of rounding is then applied.  For positive @var{n} both @code{fdiv} and
-@code{tdiv} are simple shifts and masks.  For negative @var{n}, @code{tdiv}
-effectively treats @var{n} as sign and magnitude and shifts the magnitude,
-whereas @code{fdiv} effectively treats @var{n} as an infinite precision twos
-complement negative and does an arithmetic right shift.
+The @code{2exp} functions are right shifts and bit masks, but of course
+rounding the same as the other functions.  For positive @var{n} both
+@code{mpz_fdiv_q_2exp} and @code{mpz_tdiv_q_2exp} are simple bitwise right
+shifts.  For negative @var{n}, @code{mpz_fdiv_q_2exp} is effectively an
+arithmetic right shift treating @var{n} as twos complement the same as the
+bitwise logical functions do, whereas @code{mpz_tdiv_q_2exp} effectively
+treats @var{n} as sign and magnitude.
 
-Currently @code{cdiv} @code{2exp} forms are not available.
+Currently @code{mpz_cdiv_q_2exp} and @code{mpz_cdiv_r_2exp} are not available.
 @end deftypefun
 
 @deftypefun void mpz_mod (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
@@ -3219,7 +3226,7 @@ large for the mantissa, that being @var{n_digits} + 2.  The two extra bytes
 are for a possible minus sign, and for the null-terminator.
 
 When @var{n_digits} is 0, to get all significant digits, an application won't
-be able to know the space required, and @var{STR} should be @code{NULL} in
+be able to know the space required, and @var{str} should be @code{NULL} in
 that case.
 
 The generated string is a fraction, with an implicit radix point immediately
@@ -3321,7 +3328,7 @@ equal.
 @deftypefun void mpf_reldiff (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 Compute the relative difference between @var{op1} and @var{op2} and store the
 result in @var{rop}.  This is
-@m{|@var{op1}-@var{op2}| / @var{op2}, abs(@var{op1}-@var{op2})/@var{op2}}.
+@m{|@var{op1}-@var{op2}| / @var{op1}, abs(@var{op1}-@var{op2})/@var{op1}}.
 @end deftypefun
 
 @deftypefn Macro int mpf_sgn (mpf_t @var{op})
@@ -3418,7 +3425,7 @@ Return non-zero if @var{op} is an integer.
 @deftypefunx int mpf_fits_ushort_p (mpf_t @var{op})
 @deftypefunx int mpf_fits_sshort_p (mpf_t @var{op})
 Return non-zero if @var{op} would fit in the respective C data type, when
-truncated.
+truncated to an integer.
 @end deftypefun
 
 @deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{nbits})
@@ -3966,8 +3973,7 @@ Initialize @var{state} for a linear congruential scheme @m{X = (@var{a}X +
 
 @deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a}, @w{unsigned long int @var{c}}, @w{unsigned long int @var{m2exp}})
 Initialize @var{state} for a linear congruential scheme @m{X = (@var{a}X +
-@var{c}) @bmod 2 \GMPraise{@var{m2exp}}, X = (@var{a}*X + @var{c}) mod
-2^@var{m2exp}}.
+@var{c}) @bmod 2^{m2exp}, X = (@var{a}*X + @var{c}) mod 2^@var{m2exp}}.
 
 The low bits of random numbers from this scheme are not very random, so the
 low half of each number generated is discarded.  This should be taken into
