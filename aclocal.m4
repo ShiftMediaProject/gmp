@@ -440,9 +440,9 @@ dnl  ----------------------------------------------------------
 dnl  Attempt to assemble the given code.
 dnl  Do "action-success" if this succeeds, "action-fail" if not.
 dnl
-dnl  conftest.o is available for inspection in "action-success".  If either
-dnl  action does a "break" out of a loop then an explicit "rm -f conftest*"
-dnl  will be necessary.
+dnl  conftest.o and conftest.out are available for inspection in
+dnl  "action-success".  If either action does a "break" out of a loop then
+dnl  an explicit "rm -f conftest*" will be necessary.
 dnl
 dnl  This is not unlike AC_TRY_COMPILE, but there's no default includes or
 dnl  anything in "asm-code", everything wanted must be given explicitly.
@@ -451,10 +451,14 @@ AC_DEFUN(GMP_TRY_ASSEMBLE,
 [cat >conftest.s <<EOF
 [$1]
 EOF
-gmp_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
 if AC_TRY_EVAL(gmp_assemble); then
+  cat conftest.out >&AC_FD_CC
   ifelse([$2],,:,[$2])
 else
+  cat conftest.out >&AC_FD_CC
+  echo "configure: failed program was:" >&AC_FD_CC
+  cat conftest.s >&AC_FD_CC
   ifelse([$3],,:,[$3])
 fi
 rm -f conftest*
@@ -616,29 +620,20 @@ AC_DEFUN(GMP_ASM_ALIGN_FILL_0x90,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
                gmp_cv_asm_align_fill_0x90,
-[cat > conftest.s <<EOF
-      	$gmp_cv_asm_text
+[GMP_TRY_ASSEMBLE(
+[      	$gmp_cv_asm_text
       	.align  4, 0x90
 	.byte   0
-      	.align  4, 0x90
-EOF
-if $CCAS $CFLAGS conftest.s >conftest.out 2>&1; then
-  cat conftest.out 1>&AC_FD_CC
-  if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
-    echo "Supressing this warning by omitting 0x90" 1>&AC_FD_CC
-    gmp_cv_asm_align_fill_0x90=no
-  else
-    gmp_cv_asm_align_fill_0x90=yes
-  fi
-else
-  cat conftest.out 1>&AC_FD_CC
-  echo "Non-zero exit code" 1>&AC_FD_CC
+      	.align  4, 0x90],
+[if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
+  echo "Supressing this warning by omitting 0x90" >&AC_FD_CC
   gmp_cv_asm_align_fill_0x90=no
-fi
-rm -f conftest*
-])
-GMP_DEFINE_RAW(
-["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
+else
+  gmp_cv_asm_align_fill_0x90=yes
+fi],
+[gmp_cv_asm_align_fill_0x90=no])])
+
+GMP_DEFINE_RAW(["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
 ])
 
 
@@ -853,19 +848,43 @@ dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
 dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
 dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
 dnl  needed at all, at least for just checking instruction syntax.
+dnl
+dnl  "movq %mm0, %mm1" should assemble as "0f 6f c8", but Solaris 2.6
+dnl  wrongly assembles it as "0f 6f c1" (that being the reverse "movq %mm1,
+dnl  %mm0").  It doesn't seem worth bothering to work around this bug, so
+dnl  just detect it.
 
 AC_DEFUN(GMP_ASM_X86_MMX,
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
 		gmp_cv_asm_x86_mmx,
 [GMP_TRY_ASSEMBLE(
 [	.text
-	por	%mm0, %mm0],
-  gmp_cv_asm_x86_mmx=yes,
-  gmp_cv_asm_x86_mmx=no)
-])
-if test "$gmp_cv_asm_x86_mmx" = "yes"; then
-  ifelse([$1], , :, [$1])
-else
+	movq	%mm0, %mm1],
+[gmp_cv_asm_x86_mmx=yes
+case $host in
+*-*-solaris*)
+  if (dis conftest.o >conftest.out) 2>&AC_FD_CC; then
+    if grep "0f 6f c1" conftest.out >/dev/null; then
+      gmp_cv_asm_x86_mmx=movq-bug
+    fi
+  else
+    AC_MSG_WARN([\"dis\" not available to check for \"as\" movq bug])
+  fi
+esac],
+[gmp_cv_asm_x86_mmx=no])])
+
+case $gmp_cv_asm_x86_mmx in
+movq-bug)
+  AC_MSG_WARN([+----------------------------------------------------------])
+  AC_MSG_WARN([| WARNING WARNING WARNING])
+  AC_MSG_WARN([| Target CPU has MMX code, but the assembler])
+  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([| has the Solaris 2.6 bug where reg->reg movqs are reversed.])
+  AC_MSG_WARN([| Non-MMX replacements will be used.])
+  AC_MSG_WARN([| This will be an inferior build.])
+  AC_MSG_WARN([+----------------------------------------------------------])
+  ;;
+no)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Target CPU has MMX code, but it can't be assembled by])
@@ -873,9 +892,16 @@ else
   AC_MSG_WARN([| Non-MMX replacements will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
   AC_MSG_WARN([+----------------------------------------------------------])
-  ifelse([$2], , :, [$2])
+  ;;
+esac
+if test "$gmp_cv_asm_x86_mmx" = yes; then
+  ifelse([$1],,:,[$1])
+else
+  ifelse([$2],,:,[$2])
 fi
 ])
+
+
 
 
 dnl  GMP_ASM_X86_SHLDL_CL
