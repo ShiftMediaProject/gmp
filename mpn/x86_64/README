@@ -1,0 +1,99 @@
+Copyright 2003 Free Software Foundation, Inc.
+
+This file is part of the GNU MP Library.
+
+The GNU MP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
+option) any later version.
+
+The GNU MP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+02111-1307, USA.
+
+
+
+
+
+			AMD64 MPN SUBROUTINES
+
+
+This directory contains mpn functions for AMD64 chips.
+
+
+		     RELEVANT OPTIMIZATION ISSUES
+
+The only AMD64 core as of this writing is the AMD Hammer, sold under the
+names Opteron and Athlon64.  The Hammer can sustain up to 3 instructions per
+cycle, but in practice that is only possible for integer instructions.  But
+almost any three integer instructions can issue simultaneously, including
+any 3 ALU operationd, including shifts.  Up to two memory operations can
+issue each cycle.
+
+Scheduling typically requires that load-use instructions are split into
+separate load and use instructions.  That requires more decode resources,
+and it rarely a win.  Hammer is a deep out-of-order core.
+
+
+		      STATUS OF INDIVIDUAL ROUTINES
+
+mpn_addmul_1, mpn_submul_1, mpn_mul_1:
+
+It is possible to run the critical mulq instruction at a rate 1 every 2nd
+cycle.  But only if either the low or the high product part is ignored.
+As soon as we use the full product, any tested sequence need 3 cycles.
+
+Considering this core limitation, the current multiplication code runs very
+well at between 3.25 and 3.75 cycles/limb.
+
+
+mpn_add_n, mpn_sub_n:
+
+Currently: 1.75 cycles/limb, using 4-way unrolling.
+
+It seems possible to reach the ld/st bandwidth 1.5 cycles/limb, perhaps even
+with only 2-way unrolling, by making use of indexed addressing.
+
+
+mpn_lshift, mpn_rshift:
+
+Currently: 2.375 cycles/limb, using 4-way unrolling.
+
+Using integer instructions, it seems 2 cycles/limb is the limit.  It might be
+possible to use 128-bit SSE2 instructions for better performance, but since
+Hammer in practice only execute 1 SSE instruction/cycle, that seem unlikely.
+
+
+mpn_copyi, mpn_copyd:
+
+Currently: 1 cycle/limb, using 4-way unrolling.  Slow for 1-limb operations,
+somewhat varying performance for small blocks.  The code uses an unusual
+method for the non-unrolled code, which might need improvements.
+
+Using integer instructions, 1 cycle/limb is the limit.  SSE 128-bit
+instructions would surely be a win for 128-bit aligned operations, but one
+would probably want to fall back to integer instructions for small or
+unaligned operations.  SSE instructions might reach 0.5 cycles/limb.
+
+
+logops:
+
+All logops could be made to run at 1.5 cycles/limb using integer
+instructions.  SSE operations could perhaps reach 0.75 cycles/limb, but only
+if all 3 operands are 128-bit aligned.  That 1/8 win doesn't seem worth the
+implementation effort.
+
+
+mpn_divrem_1, mpn_mod_1, mpn_preinv_divrem_1, mpn_preinv_mod_1:
+
+The current generic C code needs 37 cycles/limb for mpn_divrem_1, and 30
+cycles/limb for mpn_mod_1 (gcc 3.2.2).
+
+The critical path mainly consists of two mulq instructions, with a latency of
+8 cycles.  It should be possible to reach about 20 cycles/limb.
