@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2003-12-20  Kevin Ryde  <kevin@swox.se>
 
+	* tune/speed.h (SPEED_TMP_ALLOC_LIMBS): Correction to last change,
+	don't want "- 1" on the TMP_ALLOC_LIMBS.
+
 	* demos/expr/expr.h: Test #ifdef MPFR_VERSION_MAJOR for when mpfr.h is
 	included, not GMP_RNDZ which is now an enum.
 
