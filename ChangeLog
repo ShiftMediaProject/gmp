@@ -1,3 +1,7 @@
+2001-05-27  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, gmp-h.in, mp-h.in: Add support for windows DLLs.
+
 2001-05-26  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (ABI and ISA, Reentrancy): Minor tweaks
