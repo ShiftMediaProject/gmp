@@ -19,6 +19,16 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-18  Kevin Ryde  <kevin@swox.se>
+
+	* gmpxx.h (gmp_randclass): Don't allow copy constructors or "=",
+	implementation by Gerardo.
+
+	* gmp-h.in (operator<<, operator>>): Remove parameter names from
+	prototypes, to keep out of user namespace.
+
+	* acinclude.m4 (GMP_FUNC_VSNPRINTF): Let the test program work as C++.
+
 2001-12-16  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc64/mul_1.asm: Rewrite.
