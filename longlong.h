@@ -1557,7 +1557,16 @@ extern UWtype mpn_udiv_qrnnd_r _PROTO ((UWtype, UWtype, UWtype, UWtype *));
   } while (0)
 #endif
 
-/* If we still don't have umul_ppmm, define it using plain C.  */
+/* If we still don't have umul_ppmm, define it using plain C.
+
+   For reference, when this code is used for squaring (ie. u and v identical
+   expressions), gcc recognises __x1 and __x2 are the same and generates 3
+   multiplies, not 4.  The subsequent additions could be optimized a bit,
+   but the only place GMP currently uses such a square is mpn_sqr_basecase,
+   and chips obliged to use this generic C umul will have plenty of worse
+   performance problems than a couple of extra instructions on the diagonal
+   of sqr_basecase.  */
+
 #if !defined (umul_ppmm)
 #define umul_ppmm(w1, w0, u, v)						\
   do {									\
