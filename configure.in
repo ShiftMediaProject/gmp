@@ -472,6 +472,8 @@ case $host in
     cc_64_cflags="-O2 -64"		# no -g, it disables all optimizations
     cc_64_ldflags="-Wc,-64"
     path_64="mips3"
+
+    GMP_INCLUDE_MPN(mips3/mips.m4)
     ;;
 
   mips*-*-*)
