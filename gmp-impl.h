@@ -296,6 +296,12 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #endif
 
 
+/* Dummy for non-gcc, code involving it will go dead. */
+#ifndef __GNUC__
+#define __builtin_constant_p(x)   0
+#endif
+
+
 /* In gcc 2.96 and up on i386, tail calls are optimized to jumps if the
    stack usage is compatible.  __attribute__ ((regparm (N))) helps by
    putting leading parameters in registers, avoiding extra stack.  */
@@ -1051,24 +1057,44 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #endif
 
 #ifndef mpn_incr_u
-#define mpn_incr_u(p,incr) \
-  do { mp_limb_t __x; mp_ptr __p = (p);			\
-    __x = *__p + (incr);				\
-    *__p = __x;						\
-    if (__x < (incr))					\
-      while (++(*(++__p)) == 0)				\
-        ;						\
+#define mpn_incr_u(p,incr)                              \
+  do {                                                  \
+    mp_limb_t __x;                                      \
+    mp_ptr __p = (p);                                   \
+    if (__builtin_constant_p (incr) && (incr) == 1)     \
+      {                                                 \
+        while (++(*(__p++)) == 0)                       \
+          ;                                             \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        __x = *__p + (incr);                            \
+        *__p = __x;                                     \
+        if (__x < (incr))                               \
+          while (++(*(++__p)) == 0)                     \
+            ;                                           \
+      }                                                 \
   } while (0)
 #endif
 
 #ifndef mpn_decr_u
-#define mpn_decr_u(p,incr) \
-  do { mp_limb_t __x; mp_ptr __p = (p);			\
-    __x = *__p;						\
-    *__p = __x - (incr);				\
-    if (__x < (incr))					\
-      while ((*(++__p))-- == 0)				\
-        ;						\
+#define mpn_decr_u(p,incr)                              \
+  do {                                                  \
+    mp_limb_t __x;                                      \
+    mp_ptr __p = (p);                                   \
+    if (__builtin_constant_p (incr) && (incr) == 1)     \
+      {                                                 \
+        while ((*(__p++))-- == 0)                       \
+          ;                                             \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        __x = *__p;                                     \
+        *__p = __x - (incr);                            \
+        if (__x < (incr))                               \
+          while ((*(++__p))-- == 0)                     \
+            ;                                           \
+      }                                                 \
   } while (0)
 #endif
 
