@@ -18,6 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-02-13  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (AC_PREREQ): Bump to 2.57.
+
+	* configure.in, acinclude.m4 (GMP_GCC_WA_OLDAS): New macro, applying
+	-Wa,-oldas only when necessary.
+
+	* configure.in (powerpc*-*-*): Don't use -Wa,-mppc with gcc, it
+	overrides options recent gcc adds for -mcpu, making generated code
+	fail to assemble.
+
+	* tune/tuneup.c (mpn_fft_table): Remove definition, it's in mul_fft.c.
+
 2003-02-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/sse2/gmp-mparam.h: Retune.
