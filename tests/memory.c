@@ -22,6 +22,7 @@ MA 02111-1307, USA.
 */
 
 #include <stdio.h>
+#include <stdlib.h>  /* for abort */
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -32,9 +33,9 @@ MA 02111-1307, USA.
    Sizes passed when reallocating or freeing are checked (the default
    routines don't care about these).
 
-   Memory leaks are check by requiring that all blocks are freed before
-   tests_memory_end().  Test programs must be sure to have "clear"s for all
-   temporary variables used.  */
+   Memory leaks are checked by requiring that all blocks have been freed
+   when tests_memory_end() is called.  Test programs must be sure to have
+   "clear"s for all temporary variables used.  */
 
 
 struct header {
