@@ -1906,7 +1906,8 @@ AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([for assembler local label prefix], 
                gmp_cv_asm_lsym_prefix,
-[for gmp_tmp_pre in L .L $ L$; do
+[gmp_tmp_pre_appears=yes
+for gmp_tmp_pre in L .L $ L$; do
   echo "Trying $gmp_tmp_pre" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
@@ -1920,14 +1921,19 @@ ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}],
   cat conftest.nm >&AC_FD_CC
   if grep gurkmacka conftest.nm >/dev/null; then : ; else
     # no mention of the symbol, this is good
+    echo "$gmp_tmp_pre label doesn't appear in object file at all (good)" >&AC_FD_CC
     gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
+    gmp_tmp_pre_appears=no
     break
   fi
   if grep [' [a-zN] .*gurkmacka'] conftest.nm >/dev/null; then
     # symbol mentioned as a local, use this if nothing better
+    echo "$gmp_tmp_pre label is local but still in object file" >&AC_FD_CC
     if test -z "$gmp_cv_asm_lsym_prefix"; then
       gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
     fi
+  else
+    echo "$gmp_tmp_pre label is something unknown" >&AC_FD_CC
   fi
   ])
 done
@@ -1936,6 +1942,8 @@ if test -z "$gmp_cv_asm_lsym_prefix"; then
   gmp_cv_asm_lsym_prefix=L
   AC_MSG_WARN([cannot determine local label, using default $gmp_cv_asm_lsym_prefix])
 fi
+# for development purposes, note whether we got a purely temporary local label
+echo "Local label appears in object files: $gmp_tmp_pre_appears" >&AC_FD_CC
 ])
 echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 AC_DEFINE_UNQUOTED(LSYM_PREFIX, "$gmp_cv_asm_lsym_prefix",

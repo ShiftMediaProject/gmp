@@ -26988,7 +26988,8 @@ echo $ECHO_N "checking for assembler local label prefix... $ECHO_C" >&6
 if test "${gmp_cv_asm_lsym_prefix+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  for gmp_tmp_pre in L .L $ L$; do
+  gmp_tmp_pre_appears=yes
+for gmp_tmp_pre in L .L $ L$; do
   echo "Trying $gmp_tmp_pre" >&5
   cat >conftest.s <<EOF
 	$gmp_cv_asm_text
@@ -27011,14 +27012,19 @@ echo "$as_me: WARNING: \"$NM\" failure" >&2;}
   cat conftest.nm >&5
   if grep gurkmacka conftest.nm >/dev/null; then : ; else
     # no mention of the symbol, this is good
+    echo "$gmp_tmp_pre label doesn't appear in object file at all (good)" >&5
     gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
+    gmp_tmp_pre_appears=no
     break
   fi
   if grep ' [a-zN] .*gurkmacka' conftest.nm >/dev/null; then
     # symbol mentioned as a local, use this if nothing better
+    echo "$gmp_tmp_pre label is local but still in object file" >&5
     if test -z "$gmp_cv_asm_lsym_prefix"; then
       gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
     fi
+  else
+    echo "$gmp_tmp_pre label is something unknown" >&5
   fi
 
 else
@@ -27036,6 +27042,8 @@ if test -z "$gmp_cv_asm_lsym_prefix"; then
   { echo "$as_me:$LINENO: WARNING: cannot determine local label, using default $gmp_cv_asm_lsym_prefix" >&5
 echo "$as_me: WARNING: cannot determine local label, using default $gmp_cv_asm_lsym_prefix" >&2;}
 fi
+# for development purposes, note whether we got a purely temporary local label
+echo "Local label appears in object files: $gmp_tmp_pre_appears" >&5
 
 fi
 echo "$as_me:$LINENO: result: $gmp_cv_asm_lsym_prefix" >&5
