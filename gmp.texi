@@ -3349,7 +3349,7 @@ the size of an object, normally an 8 bit byte.)
 @comment  node-name,  next,  previous,  up
 @unnumbered Contributors
 
-Torbjorn Granlund authored the original GMP library and is still developing
+Torbjorn Granlund wrote the original GMP library and is still developing
 and maintaining it.  Several other individuals and organizations have
 contributed to GMP in various ways.  Here is a list in chronological order:
 
