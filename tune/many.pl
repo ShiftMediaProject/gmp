@@ -448,6 +448,7 @@ my @table =
        'regexp'=> 'gcd_1',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_ptr xp, mp_size_t xsize, mp_limb_t y',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'speed_flags'=> 'FLAG_R_OPTIONAL',
        'speed_suffixes' => ['N'],
      },
@@ -460,6 +461,7 @@ my @table =
        'regexp'=> 'gcd_finda',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr cp',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
      },
      
 
@@ -469,6 +471,7 @@ my @table =
        'mpX'   => 'mpz',
        'ret'   => 'int',
        'args'  => 'mpz_srcptr a, mpz_srcptr b',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'try-legendre' => 'TYPE_MPZ_JACOBI',
      },
      {
@@ -476,6 +479,7 @@ my @table =
        'funs'  => ['jacobi_base'],
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_limb_t a, mp_limb_t b, int bit1',
+       'attrib'=> 'ATTRIBUTE_CONST',
        'speed' => 'SPEED_ROUTINE_MPN_JACBASE',
        'try'   => 'none',
      },
@@ -503,6 +507,7 @@ my @table =
        'ret'   => 'mp_limb_t',
        'args_mod_1'       => 'mp_srcptr xp, mp_size_t size, mp_limb_t divisor',
        'args_preinv_mod_1'=> 'mp_srcptr xp, mp_size_t size, mp_limb_t divisor, mp_limb_t inverse',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'speed_flags'=> 'FLAG_R',
      },
      {
@@ -510,6 +515,7 @@ my @table =
        'funs'  => ['preinv_mod_1'],
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr xp, mp_size_t size, mp_limb_t divisor, mp_limb_t inverse',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'speed_flags'=> 'FLAG_R',
      },
      {
@@ -526,16 +532,19 @@ my @table =
        'funs'  => ['modexact_1_odd'],
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_srcptr src, mp_size_t size, mp_limb_t divisor',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        'speed_flags'=> 'FLAG_R',
      },
-
      {
-       'regexp'=> 'sb_divrem_mn',
+       'regexp'=> 'modlinv',
+       'funs'  => ['modlimb_invert'],
        'ret'   => 'mp_limb_t',
-       'args'  => 'mp_ptr qp, mp_ptr np, mp_size_t nsize, mp_srcptr dp, mp_size_t dsize',
+       'args'  => 'mp_limb_t v',
+       'attrib'=> 'ATTRIBUTE_CONST',
+       'carrys'=> [''],
        'try'   => 'none',
      },
-     
+
      {
        'regexp'=> 'mul_1',
        'ret'   => 'mp_limb_t',
@@ -576,19 +585,22 @@ my @table =
      {
        'regexp'=> 'popham',
        'mulfunc'=> ['popcount','hamdist'],
-       'ret'   => 'void',
+       'ret'   => 'unsigned long',
        'args_popcount'=> 'mp_srcptr xp, mp_size_t size',
        'args_hamdist' => 'mp_srcptr xp, mp_srcptr yp, mp_size_t size',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
      },
      {
        'regexp'=> 'popcount',
-       'ret'   => 'void',
+       'ret'   => 'unsigned long',
        'args'  => 'mp_srcptr xp, mp_size_t size',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
      },
      {
        'regexp'=> 'hamdist',
-       'ret'   => 'void',
+       'ret'   => 'unsigned long',
        'args'  => 'mp_srcptr xp, mp_srcptr yp, mp_size_t size',
+       'attrib'=> '__GMP_ATTRIBUTE_PURE',
        # extra renaming to support sharing a data table with mpn_popcount
        'rename'=> ['popcount'],
      },
@@ -962,6 +974,7 @@ foreach my $file_full (@files) {
 		       " -DOPERATION_$obj\\\n$renaming\t\t");
 	$MANY_OBJS .= " $objbase\$U.o";
 
+        $CLEAN .= " tmp-$objbase.c";
 	open(TMP_C,">tmp-$objbase.c")
 	    or die "Can't create tmp-$objbase.c: $!\n";
 	print TMP_C
@@ -1109,7 +1122,7 @@ EOF
 	      if defined $t->{'speed_suffixes'};
 	  
           my $macro_speed = $t->{'macro-speed'};
-          $macro_speed = "" if ! defined $macro_speed;
+          $macro_speed = "$speed_routine ($fun_carry)" if ! defined $macro_speed;
           $macro_speed =~ s/\$fun/$fun_carry/g;
 
 	  foreach my $S (@speed_suffixes) {
