@@ -237,7 +237,7 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
               && s.size >= table_max_size[i])
             {
               if (option_trace)
-                printf (stderr, "Reached maximum size (%ld) without otherwise stopping\n", table_max_size[i]);
+                fprintf (stderr, "Reached maximum size (%ld) without otherwise stopping\n", table_max_size[i]);
               break;
             }
 
