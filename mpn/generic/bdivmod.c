@@ -66,24 +66,13 @@ mpn_bdivmod (qp, up, usize, vp, vsize, d)
      unsigned long int d;
 #endif
 {
-  mp_limb_t v_inv = 0;		/* 1/V mod 2^BITS_PER_MP_LIMB.  */
+  mp_limb_t v_inv;
 
-  /* Compute v_inv.  */
-    {
-      mp_limb_t v = vp[0];
-      mp_limb_t make_zero = 1;
-      mp_limb_t two_i = 1;
-      do
-	{
-	  while ((two_i & make_zero) == 0)
-	    two_i <<= 1, v <<= 1;
-	  v_inv += two_i;
-	  make_zero -= v;
-	}
-      while (make_zero);
-    }
+  /* 1/V mod 2^BITS_PER_MP_LIMB. */
+  modlimb_invert (v_inv, vp[0]);
 
-  /* Need faster computation for some common cases in mpn_accelgcd.  */
+  /* Fast code for two cases previously used by the accel part of mpn_gcd.
+     (Could probably remove this now it's inlined there.) */
   if (usize == 2 && vsize == 2 &&
       (d == BITS_PER_MP_LIMB || d == 2*BITS_PER_MP_LIMB))
     {
