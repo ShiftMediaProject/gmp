@@ -2519,19 +2519,47 @@ esac
 
 dnl  GMP_PROG_CC_FOR_BUILD
 dnl  ---------------------
-dnl  Find CC_FOR_BUILD, a C compiler for the build system.
+dnl  Establish CC_FOR_BUILD, a C compiler for the build system.
 dnl
-dnl  If CC_FOR_BUILD is set, it's used without testing, likewise $HOST_CC,
-dnl  otherwise some likely candidates are tried, as per configfsf.guess.
-dnl
-dnl  HOST_CC is the old name for what's now normally CC_FOR_BUILD.  HOST_CC
-dnl  is tested in case the user has set that name.  HOST_CC is established
-dnl  in the output for use by libtool in some configurations when generating
-dnl  Windows DLLs (the impgen.c program).
+dnl  If CC_FOR_BUILD is set, it's used without testing, likewise the old
+dnl  style HOST_CC, otherwise some likely candidates are tried, as per
+dnl  configfsf.guess.
 
 AC_DEFUN(GMP_PROG_CC_FOR_BUILD,
-[AC_BEFORE([$0],[AC_PROG_LIBTOOL])
-AC_REQUIRE([AC_PROG_CC])
+[AC_REQUIRE([AC_PROG_CC])
+if test -n "$CC_FOR_BUILD"; then
+  GMP_PROG_CC_FOR_BUILD_WORKS($CC_FOR_BUILD,,
+    [AC_MSG_ERROR([Specified CC_FOR_BUILD doesn't seem to work])])
+elif test -n "$HOST_CC"; then
+  GMP_PROG_CC_FOR_BUILD_WORKS($HOST_CC,
+    [CC_FOR_BUILD=$HOST_CC],
+    [AC_MSG_ERROR([Specified HOST_CC doesn't seem to work])])
+else
+  for i in "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89 c99; do
+    GMP_PROG_CC_FOR_BUILD_WORKS($i,
+      [CC_FOR_BUILD=$i
+       break])
+  done
+  if test -z "$CC_FOR_BUILD"; then
+    AC_MSG_ERROR([Cannot find a build system compiler])
+  fi
+fi
+    
+AC_ARG_VAR(CC_FOR_BUILD,[build system C compiler])
+AC_SUBST(CC_FOR_BUILD)
+])
+
+
+dnl  GMP_PROG_CC_FOR_BUILD_WORKS(cc/cflags[,[action-if-good][,action-if-bad]])
+dnl  -------------------------------------------------------------------------
+dnl  See if the given cc/cflags works on the build system.
+dnl
+dnl  It seems easiest to just use the default compiler output, rather than
+dnl  figuring out the .exe or whatever at this stage.
+
+AC_DEFUN(GMP_PROG_CC_FOR_BUILD_WORKS,
+[AC_MSG_CHECKING([build system compiler $1])
+rm -f conftest* a.out a.exe a_out.exe
 cat >conftest.c <<EOF
 int
 main ()
@@ -2539,39 +2567,32 @@ main ()
   exit(0);
 }
 EOF
-found=no
-for i in "$CC_FOR_BUILD" "$HOST_CC" "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89 c99; do
-  if test -z "$i"; then
-    continue
+gmp_compile="$1 conftest.c"
+cc_for_build_works=no
+if AC_TRY_EVAL(gmp_compile); then
+  if (./a.out || ./a.exe || ./a_out.exe || ./conftest) >&AC_FD_CC 2>&1; then
+    cc_for_build_works=yes
   fi
-  AC_MSG_CHECKING([build system compiler $i])
-  gmp_compile="$i conftest.c"
-  if AC_TRY_EVAL(gmp_compile); then
-    if (./a.out || ./a.exe || ./a_out.exe) >&AC_FD_CC 2>&1; then
-      AC_MSG_RESULT([yes])
-      found=yes
-      break
-    fi
-  fi
-  AC_MSG_RESULT([no])
-
-  # no more probing if a user specified compiler didnt work
-  if test -n "$CC_FOR_BUILD" || test -n "$HOST_CC"; then
-    break
-  fi
-done
+fi
 rm -f conftest* a.out a.exe a_out.exe
-
-if test $found = no; then
-  AC_MSG_ERROR([Cannot find a build system compiler])
+AC_MSG_RESULT($cc_for_build_works)
+if test "$cc_for_build_works" = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
 fi
+])
 
-AC_ARG_VAR(CC_FOR_BUILD,[build system C compiler])
-if test -z "$CC_FOR_BUILD"; then
-  AC_SUBST(CC_FOR_BUILD,$i)
-fi
+
+dnl  GMP_PROG_HOST_CC
+dnl  ----------------
+dnl  Establish a value for $HOST_CC.
+
+AC_DEFUN(GMP_PROG_HOST_CC,
+[AC_BEFORE([$0],[AC_PROG_LIBTOOL])
+AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
 if test -z "$HOST_CC"; then
-  HOST_CC=$i
+  HOST_CC=$CC_FOR_BUILD
 fi
 ])
 
