@@ -1,6 +1,6 @@
 /* mpz_fib_ui(result, n) -- Set RESULT to the Nth Fibonacci number.
 
-Copyright (C) 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,25 +29,19 @@ MA 02111-1307, USA. */
 
    Future:
 
-   There might be some value in returning both F[n] and F[n-1], so that an
-   application can then iterate from that pair.  Currently that would
-   require a wasteful second call to get F[n-1].
+   Return both F[n] and F[n-1], so that an application can iterate from that
+   pair.  Currently that would require a wasteful second call to get F[n-1].
 
-   If the Lucas numbers L[n] were used as an auxiliary sequence, the
-   "doubling" operation would be two squares rather than two multiplies.
-   The formulas are a little more complicated, something like the following
-   (not checked).
+   The doubling steps can be done with two squares rather than two
+   multiplies.
 
-       F[2n] = ((F[n]+L[n])^2 - 6*F[n]^2 - 4*(-1)^n) / 2
-       L[2n] = 5*F[n]^2 + 2*(-1)^n
+       F[2n-1] =   F[n]^2 +   F[n-1]^2
+       F[2n]   = 3*F[n]^2 - 2*F[n-1]^2 + 2*(-1)^n
+       F[2n+1] = 4*F[n]^2 -   F[n-1]^2 + 2*(-1)^n
 
-       F[2n+1] = (F[2n] + L[2n]) / 2
-       L[2n+1] = (5*F[2n] + L[2n]) / 2
-
-   Lookup tables for L[] like the current F[] ones would be wanted.
-   The L[] could even be optionally returned.
-
-   Are there formulas with two squares using just F[n]?  Suspect not.  */
+   The speedup is less than might be expected, because the last step (if
+   only F[n] is wanted) remains a multiply, and that's the biggest and hence
+   slowest step.  Work on this is in progress.  */
 
 
 #include <stdio.h>
