@@ -1,7 +1,7 @@
 /* mpn_sqrtrem -- square root and remainder */
 
 /*
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -56,6 +56,7 @@ static const unsigned char approx_tab[192] =
     247,248,248,249,249,250,250,251,251,252,252,253,253,254,254,255
   };
 
+#define HALF_NAIL (GMP_NAIL_BITS / 2)
 
 /* same as mpn_sqrtrem, but for size=1 and {np, 1} normalized */
 static mp_size_t
@@ -65,38 +66,32 @@ mpn_sqrtrem1 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
   int prec;
 
   ASSERT (np[0] >= GMP_NUMB_HIGHBIT / 2);
+  ASSERT (GMP_LIMB_BITS >= 16);
 
   /* first compute a 8-bit approximation from the high 8-bits of np[0] */
-  np0 = np[0];
-  q = np0 >> (GMP_NUMB_BITS - 8);
+  np0 = np[0] << GMP_NAIL_BITS;
+  q = np0 >> (GMP_LIMB_BITS - 8);
   /* 2^6 = 64 <= q < 256 = 2^8 */
   s = approx_tab[q - 64];				/* 128 <= s < 255 */
-  r = (np0 >> (GMP_NUMB_BITS - 16)) - s * s;		/* r <= 2*s */
+  r = (np0 >> (GMP_LIMB_BITS - 16)) - s * s;		/* r <= 2*s */
   if (r > 2 * s)
     {
       r -= 2 * s + 1;
       s++;
     }
-#ifdef DEBUG
-  if (r > 2 * s)
-    {
-      fprintf(stderr, "Error: r > 2*s, np[0]=%lu r=%lu s=%lu\n", np[0], r, s);
-      exit(1);
-    }
-#endif
 
   prec = 8;
   np0 <<= 2 * prec;
-  while (2 * prec < GMP_NUMB_BITS)
+  while (2 * prec < GMP_LIMB_BITS)
     {
       /* invariant: s has prec bits, and r <= 2*s */
-      r = (r << prec) + (np0 >> (GMP_NUMB_BITS - prec));
+      r = (r << prec) + (np0 >> (GMP_LIMB_BITS - prec));
       np0 <<= prec;
       u = 2 * s;
       q = r / u;
       u = r - q * u;
       s = (s << prec) + q;
-      u = (u << prec) + (np0 >> (GMP_NUMB_BITS - prec));
+      u = (u << prec) + (np0 >> (GMP_LIMB_BITS - prec));
       q = q * q;
       r = u - q;
       if (u < q)
@@ -107,7 +102,16 @@ mpn_sqrtrem1 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
       np0 <<= prec;
       prec = 2 * prec;
     }
-  sp[0] = s;
+
+  ASSERT (2 * prec == GMP_LIMB_BITS); /* GMP_LIMB_BITS must be a power of 2 */
+
+  /* normalize back, assuming GMP_NAIL_BITS is even */
+  ASSERT (GMP_NAIL_BITS % 2 == 0);
+  sp[0] = s >> HALF_NAIL;
+  u = s - (sp[0] << HALF_NAIL); /* s mod 2^HALF_NAIL */
+  r += u * ((sp[0] << (HALF_NAIL + 1)) + u);
+  r = r >> GMP_NAIL_BITS;
+
   if (rp != NULL)
     rp[0] = r;
   return r != 0 ? 1 : 0;
@@ -117,7 +121,7 @@ mpn_sqrtrem1 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
 #define Prec (GMP_NUMB_BITS >> 1)
 
 /* same as mpn_sqrtrem, but for size=2 and {np, 2} normalized
-   return cc such that {np, 2} = sp[0]^2 + cc*2^BITS+PER_MP_LIMB + rp[0] */
+   return cc such that {np, 2} = sp[0]^2 + cc*2^GMP_NUMB_BITS + rp[0] */
 static mp_limb_t
 mpn_sqrtrem2 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
 {
@@ -144,18 +148,18 @@ mpn_sqrtrem2 (mp_ptr sp, mp_ptr rp, mp_srcptr np)
   /* now we have (initial rp[0])<<Prec + np0>>Prec = (qhl<<Prec + q) * (2sp[0]) + u */
   sp[0] = ((sp[0] + qhl) << Prec) + q;
   cc = u >> Prec;
-  rp[0] = (u << Prec) + (np0 & (((mp_limb_t) 1 << Prec) - 1));
+  rp[0] = ((u << Prec) & GMP_NUMB_MASK) + (np0 & (((mp_limb_t) 1 << Prec) - 1));
   /* subtract q * q or qhl*2^(2*Prec) from rp */
-  cc -= mpn_sub_1(rp, rp, 1, q * q) + qhl;
+  cc -= mpn_sub_1 (rp, rp, 1, q * q) + qhl;
   /* now subtract 2*q*2^Prec + 2^(2*Prec) if qhl is set */
   if (cc < 0)
     {
       cc += sp[0] != 0 ? mpn_add_1 (rp, rp, 1, sp[0]) : 1;
       cc += mpn_add_1 (rp, rp, 1, --sp[0]);
     }
+
   return cc;
 }
-
 
 /* writes in {sp, n} the square root (rounded towards zero) of {np, 2n},
    and in {np, n} the low n limbs of the remainder, returns the high
@@ -172,30 +176,32 @@ mpn_dc_sqrtrem (mp_ptr sp, mp_ptr np, mp_size_t n)
   ASSERT (np[2 * n - 1] >= GMP_NUMB_HIGHBIT / 2);
 
   if (n == 1)
-    return mpn_sqrtrem2 (sp, np, np);
-
-  l = n / 2;
-  h = n - l;
-  q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h);
-  if (q != 0)
-    mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h);
-  q += mpn_divrem (sp, 0, np + l, n, sp + l, h);
-  c = sp[0] & 1;
-  mpn_rshift (sp, sp, l, 1);
-  sp[l - 1] |= q << (GMP_NUMB_BITS - 1);
-  q >>= 1;
-  if (c != 0)
-    c = mpn_add_n (np + l, np + l, sp + l, h);
-  mpn_sqr_n (np + n, sp, l);
-  b = q + mpn_sub_n (np, np, np + n, 2 * l);
-  c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, b);
-  q = mpn_add_1 (sp + l, sp + l, h, q);
-
-  if (c < 0)
+    c = mpn_sqrtrem2 (sp, np, np);
+  else
     {
-      c += mpn_addmul_1 (np, sp, n, 2) + 2 * q;
-      c -= mpn_sub_1 (np, np, n, 1);
-      q -= mpn_sub_1 (sp, sp, n, 1);
+      l = n / 2;
+      h = n - l;
+      q = mpn_dc_sqrtrem (sp + l, np + 2 * l, h);
+      if (q != 0)
+        mpn_sub_n (np + 2 * l, np + 2 * l, sp + l, h);
+      q += mpn_divrem (sp, 0, np + l, n, sp + l, h);
+      c = sp[0] & 1;
+      mpn_rshift (sp, sp, l, 1);
+      sp[l - 1] |= (q << (GMP_NUMB_BITS - 1)) & GMP_NUMB_MASK;
+      q >>= 1;
+      if (c != 0)
+        c = mpn_add_n (np + l, np + l, sp + l, h);
+      mpn_sqr_n (np + n, sp, l);
+      b = q + mpn_sub_n (np, np, np + n, 2 * l);
+      c -= (l == h) ? b : mpn_sub_1 (np + 2 * l, np + 2 * l, 1, b);
+      q = mpn_add_1 (sp + l, sp + l, h, q);
+
+      if (c < 0)
+        {
+          c += mpn_addmul_1 (np, sp, n, 2) + 2 * q;
+          c -= mpn_sub_1 (np, np, n, 1);
+          q -= mpn_sub_1 (sp, sp, n, 1);
+        }
     }
 
   return c;
@@ -228,7 +234,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   c -= GMP_NAIL_BITS;
 
   c = c / 2; /* we have to shift left by 2c bits to normalize {np, nn} */
-  tn = (nn+1) / 2; /* 2*tn is the smallest even integer >= nn */
+  tn = (nn + 1) / 2; /* 2*tn is the smallest even integer >= nn */
 
   TMP_MARK (marker);
   if (nn % 2 != 0 || c > 0)

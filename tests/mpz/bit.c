@@ -68,7 +68,7 @@ check_tstbit (void)
           mpz_set_n (z, neg, numberof(neg));
           mpz_neg (z, z);
 
-          for (i = 0; i < numberof(pos)*BITS_PER_MP_LIMB; i++)
+          for (i = 0; i < numberof(pos)*GMP_NUMB_BITS; i++)
             {
               got = mpz_tstbit (z, i);
               want = refmpn_tstbit (pos, i);

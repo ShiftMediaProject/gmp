@@ -69,9 +69,9 @@ MA 02111-1307, USA. */
 
 /* floor(sqrt(MP_LIMB_T_MAX)), ie. the biggest value that can be squared in
    a limb without overflowing.
-   FIXME: This formula is an underestimate when BITS_PER_MP_LIMB is odd. */
+   FIXME: This formula is an underestimate when GMP_NUMB_BITS is odd. */
 
-#define MP_LIMB_T_HALFMAX  (MP_LIMB_T_MAX >> ((BITS_PER_MP_LIMB+1)/2))
+#define MP_LIMB_T_HALFMAX  (((mp_limb_t) 1 << GMP_NUMB_BITS/2) - 1)
 
 
 /* The following are for convenience, they update the size and check the
@@ -202,8 +202,8 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
   count_trailing_zeros (btwos, blimb);
   blimb >>= btwos;
   rtwos_bits = e * btwos;
-  rtwos_limbs += rtwos_bits / BITS_PER_MP_LIMB;
-  rtwos_bits %= BITS_PER_MP_LIMB;
+  rtwos_limbs += rtwos_bits / GMP_NUMB_BITS;
+  rtwos_bits %= GMP_NUMB_BITS;
   TRACE (printf ("trailing zero btwos=%d rtwos_limbs=%ld rtwos_bits=%lu\n",
                  btwos, rtwos_limbs, rtwos_bits));
 
@@ -259,10 +259,10 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 
       if (rtwos_bits != 0
           && ! (rl_high == 0 && rl == 1)
-          && (rl_high >> (BITS_PER_MP_LIMB-rtwos_bits)) == 0)
+          && (rl_high >> (GMP_NUMB_BITS-rtwos_bits)) == 0)
         {
           mp_limb_t  new_rl_high = (rl_high << rtwos_bits)
-            | (rl >> (BITS_PER_MP_LIMB-rtwos_bits));
+            | (rl >> (GMP_NUMB_BITS-rtwos_bits));
           if (! (rl_high == 0 && new_rl_high != 0))
             {
               rl_high = new_rl_high;
@@ -284,7 +284,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 
       if (rtwos_bits != 0
           && rl != 1
-          && (rl >> (BITS_PER_MP_LIMB-rtwos_bits)) == 0)
+          && (rl >> (GMP_NUMB_BITS-rtwos_bits)) == 0)
         {
           rl <<= rtwos_bits;
           rtwos_bits = 0;
@@ -296,7 +296,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
     {
       mp_limb_t  bsecond = bp[1];
       if (btwos != 0)
-        blimb |= (bsecond << (BITS_PER_MP_LIMB - btwos));
+        blimb |= (bsecond << (GMP_NUMB_BITS - btwos)) & GMP_NUMB_MASK;
       bsecond >>= btwos;
       if (bsecond == 0)
         {
@@ -352,7 +352,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 
   ASSERT (blimb != 0);
   count_leading_zeros (cnt, blimb);
-  ralloc = (bsize*BITS_PER_MP_LIMB - cnt) * e / BITS_PER_MP_LIMB + 5;
+  ralloc = (bsize*GMP_NUMB_BITS - cnt) * e / GMP_NUMB_BITS + 5;
   TRACE (printf ("ralloc %ld, from bsize=%ld blimb=0x%lX cnt=%d\n",
                  ralloc, bsize, blimb, cnt));
   MPZ_REALLOC (r, ralloc + rtwos_limbs);
@@ -401,7 +401,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
       /* Go from high to low over the bits of e, starting with i pointing at
          the bit below the highest 1 (which will mean i==-1 if e==1).  */
       count_leading_zeros (cnt, e);
-      i = BITS_PER_MP_LIMB - cnt - 2;
+      i = GMP_LIMB_BITS - cnt - 2;
 
 #if HAVE_NATIVE_mpn_mul_2
       if (bsize <= 2)
