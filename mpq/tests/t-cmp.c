@@ -20,6 +20,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
@@ -29,6 +32,7 @@ MA 02111-1307, USA. */
 
 #define SGN(x) ((x) < 0 ? -1 : (x) > 0 ? 1 : 0)
 
+int
 ref_mpq_cmp (mpq_t a, mpq_t b)
 {
   mpz_t ai, bi;
@@ -94,12 +98,4 @@ main (int argc, char **argv)
     }
 
   exit (0);
-}
-
-dump (mpq_t x)
-{
-  mpz_out_str (stdout, 10, NUM (x));
-  printf ("/");
-  mpz_out_str (stdout, 10, DEN (x));
-  printf ("\n");
 }
