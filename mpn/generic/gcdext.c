@@ -1,6 +1,6 @@
 /* mpn_gcdext -- Extended Greatest Common Divisor.
 
-Copyright (C) 1996, 1998 Free Software Foundation, Inc.
+Copyright (C) 1996, 1998, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -73,7 +73,16 @@ do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
 /* Division optimized for small quotients.  If the quotient is more than one limb,
    store 1 in *qh and return 0.  */
 static mp_limb_t
+#if __STDC__
 div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
+#else
+div2 (qh, n1, n0, d1, d0)
+     mp_limb_t *qh;
+     mp_limb_t n1;
+     mp_limb_t n0;
+     mp_limb_t d1;
+     mp_limb_t d0;
+#endif
 {
   if (d1 == 0)
     {
