@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-08-19  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/Makefile.am (EXTRA_DIST): Add amd64.asm.
+
 2003-08-17  Kevin Ryde  <kevin@swox.se>
 
 	* gmpxx.h [__MPFR_H]: Include full <iostream> for inlines.
