@@ -128,7 +128,7 @@ L(top):
 
 	js	L(combine)		C 0 more
 
-	adcl	0(%edx), %ebx
+Zdisp(	adcl,	0,(%edx), %ebx)		C avoid code cache line crossings
 
 	movb	$8, %cl
 	decl	%eax

@@ -71,8 +71,8 @@ deflit(`FRAME',0)
 	jz	L(one_more)
 	leal	4(%edx,%ecx,4), %ebx
 
-	movd	0(%eax,%ecx,4), %mm0	C high limb
-	movd	%mm0, 0(%edx,%ecx,4)
+Zdisp(	movd,	0,(%eax,%ecx,4), %mm0)	C high limb
+Zdisp(	movd,	%mm0, 0,(%edx,%ecx,4))	C Zdisp for good code alignment
 
 	cmpl	$1, %ecx
 	je	L(one_more)
