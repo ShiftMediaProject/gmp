@@ -89,3 +89,31 @@ STATUS
    efficiently by rotating (when s1/s2 are aligned), masking+bit field
    inserting when (they are not).  The speed should double compared to the
    code used today.
+
+
+
+
+LABEL SYNTAX
+
+The HP-UX assembler takes labels starting in column 0 with no colon,
+
+	L$loop  ldws,mb -4(0,%r25),%r22
+
+Gas on hppa GNU/Linux however requires a colon,
+
+	L$loop: ldws,mb -4(0,%r25),%r22
+
+Fortunately both accept a ".label" pseudo-op,
+
+	        .label  L$loop
+                ldws,mb -4(0,%r25),%r22
+
+
+
+
+
+----------------
+Local variables:
+mode: text
+fill-column: 76
+End:
