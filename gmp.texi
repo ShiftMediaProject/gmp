@@ -1034,10 +1034,10 @@ is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
 
 @item Power Variants
 
-CPU types @samp{power} and @samp{powerpc} will each use instructions not
-available on the other, so it's important to choose the right one for the CPU
-that will be used.  Currently GMP has no assembler code support for using just
-the common instruction subset.  To get executables that run on both, the
+In GMP, CPU types @samp{power} and @samp{powerpc} will each use instructions
+not available on the other, so it's important to choose the right one for the
+CPU that will be used.  Currently GMP has no assembler code support for using
+just the common instruction subset.  To get executables that run on both, the
 current suggestion is to use the generic C code (CPU @samp{none}), possibly
 with appropriate compiler options (like @samp{-mcpu=common} for
 @command{gcc}).  CPU @samp{rs6000} (which is not a CPU but a family of
@@ -1074,8 +1074,8 @@ version 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately
 there's no newer assembler for that system).
 
 Solaris 2.6 and 2.7 @command{as} generate incorrect object code for register
-to register @code{movq} instructions, making it unusable.  Install a recent
-@command{gas} if MMX code is wanted on that system.
+to register @code{movq} instructions, making that assembler unusable.  Install
+a recent @command{gas} if MMX code is wanted on these systems.
 
 @item x86 GCC @samp{-march=pentiumpro}
 
@@ -1113,6 +1113,14 @@ If stripped static libraries are wanted, the suggested workaround is to build
 normally, strip the separate object files, and do another @samp{make all} to
 rebuild.  Alternately @samp{CFLAGS} with @samp{-g} omitted can always be used
 if it's just debugging which is unwanted.
+
+@item @command{make}, @code{$*} and K&R
+
+When using a K&R compiler, GMP relies on @command{make} setting the special
+@code{$*} variable in explicit rules, not just suffix rules.  Some versions of
+@code{make} don't do this, in particular the HP-UX 10 bundled @code{make}
+doesn't, and the bundled @command{cc} on that system only accepts K&R, hence
+triggering the problem.  GNU @code{make} is recommended instead.
 
 @item NeXT prior to 3.3
 
@@ -1782,7 +1790,7 @@ compatibility is not guaranteed.
 @example
 AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR(
 [Need MPFR either from GNU MP 3.2 or separate MPFR package.
-See http://www.loria.fr/projets/mpfr or http://www.swox.com/gmp])
+See http://www.mpfr.org or http://www.swox.com/gmp])
 @end example
 
 
@@ -3500,9 +3508,9 @@ cy = mpn_add_n (destp, s1p, s2p, n)
 @end example
 
 @noindent
-In the notation used here, a source operand is identified by the pointer to the
-least significant limb, and the limb count in braces.  For example, @{s1p,
-s1n@}.
+In the notation used here, a source operand is identified by the pointer to
+the least significant limb, and the limb count in braces.  For example,
+@{@var{s1p}, @var{s1n}@}.
 
 @deftypefun mp_limb_t mpn_add_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
 Add @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@}, and write the @var{n}
@@ -3775,15 +3783,16 @@ Compute the square root of @{@var{sp}, @var{n}@} and put the result at
 @{@var{r2p}, @var{retval}@}.  @var{r2p} needs space for @var{n} limbs, but the
 return value indicates how many are produced.
 
-The most significant limb of @var{sp} must be non-zero.  The areas at
-@var{r1p} and @var{sp} must be distinct.  The areas at @var{r2p} and @var{sp}
-must be identical or completely separate.
+The most significant limb of @var{sp} must be non-zero.  The areas
+@{@var{r1p}, @m{\lceil@var{n}/2\rceil, ceil(@var{n}/2)}@} and @{@var{sp},
+@var{n}@} must be completely separate.  The areas @{@var{r2p}, @var{n}@} and
+@{@var{sp}, @var{n}@} must be either identical or completely separate.
 
-If the remainder is not wanted @var{r2p} can be @code{NULL}, and in this case
-the return value is zero or non-zero according to whether the remainder would
-have been zero or non-zero.
+If the remainder is not wanted then @var{r2p} can be @code{NULL}, and in this
+case the return value is zero or non-zero according to whether the remainder
+would have been zero or non-zero.
 
-A return value of zero indicates a perfect square, see also
+A return value of zero indicates a perfect square.  See also
 @code{mpz_perfect_square_p}.
 @end deftypefun
 
@@ -4328,6 +4337,11 @@ u4 |   |   |   |   | d |
 In practice squaring isn't a full 2@cross{} faster than multiplying, it's
 usually around 1.5@cross{}.  Less than 1.5@cross{} probably indicates
 @code{mpn_sqr_basecase} wants improving on that CPU.
+
+On some CPUs @code{mpn_mul_basecase} can be faster than the generic C
+@code{mpn_sqr_basecase}.  @code{BASECASE_SQR_THERSHOLD} is the size at which
+to use @code{mpn_sqr_basecase}, this will be zero if that routine should be
+used always.
 
 
 @node Karatsuba Multiplication, Toom-Cook 3-Way Multiplication, Basecase Multiplication, Multiplication Algorithms
