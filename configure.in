@@ -694,7 +694,9 @@ case $host in
     # gcc 2.95.2 adds k6, pentium and pentiumpro, and allows -march= and
     # -mcpu=.
     #
-    # gcc 2.96 (pre-release gcc 3) adds athlon.
+    # gcc 3.0 adds athlon.
+    #
+    # gcc 3.1 adds pentium4.
 
     # Defaults for anything not otherwise mentioned.
     path="x86"
@@ -1291,7 +1293,7 @@ case $host in
   m68*-*-netbsd1.4*) ac_cv_func_getrusage=no ;;
 esac
 
-AC_CHECK_FUNCS(getpagesize getrusage gettimeofday localeconv memset mprotect obstack_vprintf popen processor_info read_real_time strchr strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time strchr strtoul sysconf sysctl sysctlbyname times)
 GMP_FUNC_VSNPRINTF
 
 
