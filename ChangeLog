@@ -1,3 +1,8 @@
+2000-06-30  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/factorize.c (random): New function, defined conditionally.
+	(factor_using_pollard_rho): Use it, not mrand48.
+
 2000-06-30  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/aorsmul_1.asm: Add MULFUNC_PROLOGUE.
