@@ -51,6 +51,11 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
+/* SunOS 4 stdio.h doesn't provide a prototype for this */
+#if ! HAVE_DECL_SSCANF
+int sscanf _PROTO ((const char *input, const char *fmt, ...));
+#endif
+
 
 #define TEMPFILE  "t-scanf.tmp"
 
