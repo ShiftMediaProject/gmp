@@ -138,10 +138,10 @@ MA 02111-1307, USA. */
 
 
 
-const char *speed_time_string = NULL;
-int         speed_precision = 0;
-double      speed_unittime;
-double      speed_cycletime = 0.0;
+char    speed_time_string[256];
+int     speed_precision = 0;
+double  speed_unittime;
+double  speed_cycletime = 0.0;
 
 
 /* don't rely on "unsigned" to "double" conversion, it's broken in SunOS 4
@@ -210,6 +210,15 @@ struct timebasestruct_dummy {
 };
 #endif
 
+#if HAVE_CLOCK_GETTIME
+static const int have_cgt = 1;
+#define struct_timespec  struct timespec
+#else
+static const int have_cgt = 0;
+#define clock_gettime(id,ts)  abort()
+#define struct_timespec       struct timespec_dummy
+#endif
+
 #if HAVE_GETRUSAGE
 static const int have_grus = 1;
 #define struct_rusage   struct rusage
@@ -247,28 +256,70 @@ struct timeval_dummy {
 struct rusage_dummy {
   struct_timeval ru_utime;
 };
+struct timespec_dummy {
+  long  tv_sec;
+  long  tv_nsec;
+};
 
 static int  use_cycles;
 static int  use_rrt;
 static int  use_gtod;
 static int  use_grus;
+static int  use_cgt;
 static int  use_times;
 static int  use_tick_boundary;
 
 static unsigned         start_cycles[2];
 static stck_t           start_stck;
 static timebasestruct_t start_rrt;
+static struct_timespec  start_cgt;
 static struct_rusage    start_grus;
 static struct_timeval   start_gtod;
 static struct_tms       start_times;
 
 static double  cycles_limit = 1e100;
+static double  cgt_unittime;
 static double  grus_unittime;
 static double  gtod_unittime;
 static double  times_unittime;
 
 /* for RTC_POWER format, ie. seconds and nanoseconds */
 #define TIMEBASESTRUCT_SECS(t)  ((t)->tb_high + (t)->tb_low * 1e-9)
+
+
+/* Return a string representing a time in seconds, nicely formatted.
+   Eg. "10.25ms".  */
+char *
+unittime_string (double t)
+{
+  static char  buf[128];
+  
+  const char  *unit;
+  int         prec;
+
+  /* choose units and scale */
+  if (t < 1e-9)
+    t *= 1e9, unit = "ns";
+  else if (t < 1e-6)
+    t *= 1e6, unit = "us";
+  else if (t < 1.0)
+    t *= 1e3, unit = "ms";
+  else
+    unit = "s";
+
+  /* want 4 significant figures */
+  if (t < 1.0)
+    prec = 4;
+  else if (t < 10.0)
+    prec = 3;
+  else if (t < 100.0)
+    prec = 2;
+  else
+    prec = 1;
+
+  sprintf (buf, "%.*f%s", prec, t, unit);
+  return buf;
+}
 
 
 static jmp_buf  cycles_works_buf;
@@ -285,6 +336,9 @@ cycles_works_p (void)
   static int  result = -1;
   RETSIGTYPE (*old_handler) _PROTO ((int));
   unsigned  cycles[2];
+
+  /* suppress a warning about cycles[] unused */
+  cycles[0] = 0;
 
   if (result != -1)
     goto done;
@@ -423,6 +477,47 @@ getrusage_microseconds_p (void)
 }
 
 
+int
+cgt_works_p (void)
+{
+#if HAVE_CLOCK_GETTIME
+  static int  result = -1;
+  struct_timespec  unit;
+
+  if (result != -1)
+    return result;
+
+  
+  /* trial run to see if it works */
+  if (clock_gettime (CLOCK_PROCESS_CPUTIME_ID, &unit) != 0)
+    {
+      if (speed_option_verbose)
+        printf ("clock_gettime doesn't work\n");
+      result = 0;
+      return result;
+    }
+
+  /* get the resolution */
+  if (clock_getres (CLOCK_PROCESS_CPUTIME_ID, &unit) != 0)
+    {
+      if (speed_option_verbose)
+        printf ("clock_gettime doesn't work\n");
+      result = 0;
+      return result;
+    }
+
+  cgt_unittime = unit.tv_sec + unit.tv_nsec * 1e-9;
+  printf ("clock_gettime is %s accurate\n",
+          unittime_string (cgt_unittime));
+  result = 1;
+  return result;
+
+#else
+  return 0;
+#endif
+}
+
+
 #define DEFAULT(var,n)  \
   do {                  \
     if (! (var))        \
@@ -448,7 +543,7 @@ speed_time_init (void)
       DEFAULT (speed_cycletime, 1.0);
       speed_unittime = speed_cycletime;
       DEFAULT (speed_precision, 10000);
-      speed_time_string = "CPU cycle counter";
+      strcpy (speed_time_string, "CPU cycle counter");
 
       /* only used if a supplementary method is chosen below */
       cycles_limit = (have_cycles == 1 ? M_2POW32 : M_2POW64) / 2.0
@@ -459,7 +554,7 @@ speed_time_init (void)
           /* this is a good combination */
           use_grus = 1;
           supplement_unittime = grus_unittime = 1.0e-6;
-          speed_time_string = "CPU cycle counter, supplemented by microsecond getrusage()";
+          strcpy (speed_time_string, "CPU cycle counter, supplemented by microsecond getrusage()");
         }
       else if (have_cycles == 1)
         {
@@ -469,25 +564,25 @@ speed_time_init (void)
             {
               use_gtod = 1;
               supplement_unittime = gtod_unittime = 1.0e-6;
-              speed_time_string = "CPU cycle counter, supplemented by microsecond gettimeofday()";
+              strcpy (speed_time_string, "CPU cycle counter, supplemented by microsecond gettimeofday()");
             }
           else if (have_grus)
             {
               use_grus = 1;
               supplement_unittime = grus_unittime = 1.0 / (double) clk_tck ();
-              speed_time_string = "CPU cycle counter, supplemented by clock tick getrusage()";
+              sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick getrusage()", unittime_string (supplement_unittime));
             }
           else if (have_times)
             {
               use_times = 1;
               supplement_unittime = times_unittime = 1.0 / (double) clk_tck ();
-              speed_time_string = "CPU cycle counter, supplemented by clock tick times()";
+              sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick times()", unittime_string (supplement_unittime));
             }
           else if (have_gtod)
             {
               use_gtod = 1;
               supplement_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
-              speed_time_string = "CPU cycle counter, supplemented by clock tick gettimeofday()";
+              sprintf (speed_time_string, "CPU cycle counter, supplemented by %s clock tick gettimeofday()", unittime_string (supplement_unittime));
             }
           else
             {
@@ -512,7 +607,7 @@ speed_time_init (void)
     }
   else if (have_stck)
     {
-      speed_time_string = "STCK timestamp";
+      strcpy (speed_time_string, "STCK timestamp");
       /* stck is in units of 2^-12 microseconds, which is very likely higher
          resolution than a cpu cycle */
       if (speed_cycletime == 0.0)
@@ -531,14 +626,15 @@ speed_time_init (void)
       case RTC_POWER:
         /* FIXME: What's the actual RTC resolution? */
         speed_unittime = 1e-7;
-        speed_time_string = "read_real_time() power nanoseconds";
+        strcpy (speed_time_string, "read_real_time() power nanoseconds");
         break;
       case RTC_POWER_PC:
         t.tb_high = 1;
         t.tb_low = 0;
         time_base_to_time (&t, sizeof(t));
         speed_unittime = TIMEBASESTRUCT_SECS(&t) / M_2POW32;
-        speed_time_string = "read_real_time() powerpc ticks";
+        sprintf (speed_time_string, "%s read_real_time() powerpc ticks",
+                 unittime_string (speed_unittime));
         break;
       default:
         fprintf (stderr, "ERROR: Unrecognised timebasestruct_t flag=%d\n",
@@ -546,19 +642,33 @@ speed_time_init (void)
         abort ();
       }
     }
+  else if (have_cgt && cgt_works_p() && cgt_unittime < 1.5e-6)
+    {
+      /* use clock_gettime if microsecond or better resolution */
+    choose_cgt:
+      use_cgt = 1;
+      speed_unittime = cgt_unittime;
+      DEFAULT (speed_precision, (cgt_unittime <= 0.1e-6 ? 10000 : 1000));
+      strcpy (speed_time_string, "microsecond accurate getrusage()");
+    }
   else if (have_grus && getrusage_microseconds_p())
     {
       use_grus = 1;
       speed_unittime = grus_unittime = 1.0e-6;
       DEFAULT (speed_precision, 1000);
-      speed_time_string = "microsecond accurate getrusage()";
+      strcpy (speed_time_string, "microsecond accurate getrusage()");
     }
   else if (have_gtod && gettimeofday_microseconds_p())
     {
       use_gtod = 1;
       speed_unittime = gtod_unittime = 1.0e-6;
       DEFAULT (speed_precision, 1000);
-      speed_time_string = "microsecond accurate gettimeofday()";
+      strcpy (speed_time_string, "microsecond accurate gettimeofday()");
+    }
+  else if (have_cgt && cgt_works_p() && cgt_unittime < 1.5/clk_tck())
+    {
+      /* use clock_gettime if 1 tick or better resolution */
+      goto choose_cgt;
     }
   else if (have_times)
     {
@@ -566,7 +676,8 @@ speed_time_init (void)
       use_tick_boundary = 1;
       speed_unittime = times_unittime = 1.0 / (double) clk_tck ();
       DEFAULT (speed_precision, 200);
-      speed_time_string = "clock tick times()";
+      sprintf (speed_time_string, "%s clock tick times()",
+               unittime_string (speed_unittime));
     }
   else if (have_grus)
     {
@@ -574,7 +685,8 @@ speed_time_init (void)
       use_tick_boundary = 1;
       speed_unittime = grus_unittime = 1.0 / (double) clk_tck ();
       DEFAULT (speed_precision, 200);
-      speed_time_string = "clock tick accurate getrusage()\n";
+      sprintf (speed_time_string, "%s clock tick getrusage()\n",
+               unittime_string (speed_unittime));
     }
   else if (have_gtod)
     {
@@ -582,7 +694,8 @@ speed_time_init (void)
       use_tick_boundary = 1;
       speed_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
       DEFAULT (speed_precision, 200);
-      speed_time_string = "clock tick accurate gettimeofday()";
+      sprintf (speed_time_string, "%s clock tick gettimeofday()",
+               unittime_string (speed_unittime));
     }
   else
     {
@@ -671,6 +784,9 @@ speed_starttime (void)
         times (&start_times);
     }
 
+  if (have_cgt && use_cgt)
+    clock_gettime (CLOCK_PROCESS_CPUTIME_ID, &start_cgt);
+
   if (have_rrt && use_rrt)
     read_real_time (&start_rrt, sizeof(start_rrt));
 
@@ -752,6 +868,12 @@ rusage_diff_secs (const struct_rusage *end, const struct_rusage *start)
   DIFF_SECS_ROUTINE (long, ru_utime.tv_sec, ru_utime.tv_usec, 1e-6);
 }
 
+double
+timespec_diff_secs (const struct_timespec *end, const struct_timespec *start)
+{
+  DIFF_SECS_ROUTINE (long, tv_sec, tv_nsec, 1e-9);
+}
+
 
 double
 speed_endtime (void)
@@ -784,11 +906,12 @@ speed_endtime (void)
   unsigned          end_cycles[2];
   stck_t            end_stck;
   timebasestruct_t  end_rrt;
+  struct_timespec   end_cgt;
   struct_timeval    end_gtod;
   struct_rusage     end_grus;
   struct_tms        end_times;
-  double            t_gtod, t_grus, t_times, t_rrt, t_stck, t_cycles;
-  double            result = -1.0;
+  double            t_gtod, t_grus, t_times, t_cgt, t_rrt, t_stck, t_cycles;
+  double            result;
 
   /* Cycles sampled first for maximum accuracy.
      "have_" values tested to let unused code go dead.  */
@@ -796,9 +919,17 @@ speed_endtime (void)
   if (have_cycles && use_cycles)  speed_cyclecounter (end_cycles);
   if (have_stck   && use_stck)    STCK (end_stck);
   if (have_rrt    && use_rrt)     read_real_time (&end_rrt, sizeof(end_rrt));
+  if (have_cgt && use_cgt) clock_gettime (CLOCK_PROCESS_CPUTIME_ID, &end_cgt);
   if (have_gtod   && use_gtod)    gettimeofday (&end_gtod, NULL);
   if (have_grus   && use_grus)    getrusage (0, &end_grus);
   if (have_times  && use_times)   times (&end_times);
+
+  result = -1.0;
+
+  /* suppress warnings about unused variables */
+  t_gtod = 0.0;
+  t_grus = 0.0;
+  t_times = 0.0;
 
   if (speed_option_verbose >= 4)
     {
@@ -812,9 +943,14 @@ speed_endtime (void)
         printf ("   stck  0x%lX -> 0x%lX\n", start_stck, end_stck);
 
       if (use_rrt)
-        printf ("   read_real_time  (%d)%u,%u (%d)%u,%u\n",
+        printf ("   read_real_time  (%d)%u,%u -> (%d)%u,%u\n",
                 start_rrt.flag, start_rrt.tb_high, start_rrt.tb_low,
                 end_rrt.flag, end_rrt.tb_high, end_rrt.tb_low);
+
+      if (use_cgt)
+        printf ("   clock_gettime  %ld.%09ld -> %ld.%09ld\n",
+                start_cgt.tv_sec, start_cgt.tv_nsec,
+                end_cgt.tv_sec, end_cgt.tv_nsec);
 
       if (use_gtod)
         printf ("   gettimeofday  %ld.%06ld -> %ld.%06ld\n",
@@ -837,6 +973,12 @@ speed_endtime (void)
       time_base_to_time (&end_rrt, sizeof(end_rrt));
       t_rrt = timebasestruct_diff_secs (&end_rrt, &start_rrt);
       END_USE ("read_real_time()", t_rrt);
+    }
+
+  if (use_cgt)
+    {
+      t_cgt = timespec_diff_secs (&end_cgt, &start_cgt);
+      END_USE ("clock_gettime()", t_cgt);
     }
 
   if (use_grus)
