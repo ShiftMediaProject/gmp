@@ -604,24 +604,28 @@ Note that if @samp{CC} is set then @samp{CFLAGS} must also be set.  This
 applies even if @samp{CC} is merely one of the choices GMP would make itself.
 This may change in a future release.
 
-@item @option{--disable-alloca}
+@item @option{--enable-alloca=yes/no/detect}, @option{--disable-alloca}
 @cindex Stack overflow segfaults
 @cindex @code{alloca}
 
-By default, GMP allocates temporary workspace using @code{alloca} if that
-function is available, or @code{malloc} if not.  If you're working with large
-numbers and @code{alloca} overflows the available stack space, you can build
-with @option{--disable-alloca} to use @code{malloc} instead.  @code{malloc}
-will probably be slightly slower than @code{alloca}.
+GMP allocates temporary workspace using either @code{alloca} or @code{malloc}.
+The default @samp{--enable-alloca=detect} uses @code{alloca} if available, or
+@code{malloc} if not.  @option{--disable-alloca} or @samp{--enable-alloca=no}
+always uses @code{malloc}.  @samp{--enable-alloca=yes} always uses
+@code{alloca} (generating an error if that function isn't avaiable).
 
-When not using @code{alloca}, it's actually the allocation function
-selected with @code{mp_set_memory_functions} that's used, this being
-@code{malloc} by default.  @xref{Custom Allocation}.
+@code{alloca} is fast but when working with large numbers it can overflow the
+available stack space.  Depending on the system, the only indication of stack
+overflow might be a segmentation violation.  It may be possible to increase
+available stack space with @command{limit}, @command{ulimit} or
+@code{setrlimit}, or under DJGPP with @command{stubedit} or @code{_stklen}.
 
-Depending on your system, the only indication of stack overflow might be a
-segmentation violation.  It might be possible to increase available stack
-space with @command{limit}, @command{ulimit} or @code{setrlimit}, or under
-DJGPP with @command{stubedit} or @code{_stklen}.
+When @code{malloc} is used, it's actually the memory allocation functions
+selected by @code{mp_set_memory_functions} that are used, these being
+@code{malloc} and friends by default.  @xref{Custom Allocation}.
+
+Currently when @code{malloc} is used the library is not re-entrant or thread
+safe, due to the implementation of @file{stack-alloc.c}.  @xref{Reentrancy}.
 
 @item @option{--enable-fft}
 
