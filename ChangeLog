@@ -19,6 +19,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-28  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Converting Integers): Fix type of exp in mpz_get_d_2exp,
+	reported by epl@unimelb.edu.au.
+	(References): Update Burnikel and Ziegler URL, reported by Keith
+	Briggs.
+
+	* gmp-h.in, mp-h.in, configure.in, acinclude.m4: Remove __GMP from
+	AC_SUBSTs, since autoconf says leading "_" in makefile variables is
+	not portable.
+
+	* demos/expr/run-expr.c: Declare optarg, optind, opterr if necessary.
+	* configure.in, demos/expr/expr-config-h.in: Configs for this.
+
 2002-03-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/Makefile.am (TARG_DIST): Remove pa64w and hppa, add pa32.
