@@ -68,7 +68,7 @@ MPZ_OBJS = init.o set.o set_ui.o set_si.o set_str.o set_d.o set_f.o \
 
 INCLUDES = -I. -I.. -I../mpn -I$(srcdir)/..
 
-libmpz.a: Makefile.in $(MPZ_OBJS)
+libmpz.a: Makefile $(MPZ_OBJS)
 	rm -f $@
 	$(AR) $(AR_FLAGS) $@ $(MPZ_OBJS)
 
