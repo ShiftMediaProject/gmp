@@ -58,6 +58,12 @@ rpow (b, e, r)
 
   /* Single out cases that give result == 0 or 1.  These tests are here
      to simplify the general code below, not to optimize.  */
+  if (e == 0)
+    {
+      r->_mp_d[0] = 1;
+      r->_mp_size = 1;
+      return;
+    }
   if (bsize == 0
 #ifdef BERKELEY_MP
       || e < 0
@@ -65,12 +71,6 @@ rpow (b, e, r)
       )
     {
       r->_mp_size = 0;
-      return;
-    }
-  if (e == 0)
-    {
-      r->_mp_d[0] = 1;
-      r->_mp_size = 1;
       return;
     }
 
