@@ -171,10 +171,12 @@ dnl  Configuring mpn.
 dnl  ----------------------------------------
 dnl  Set the following target specific variables:
 dnl  path		where to search for source files
-dnl  family		processor family (FIXME: Needed for building 
-dnl 			asm-syntax.h for now.)
+dnl  family		processor family (Needed for building 
+dnl 			asm-syntax.h for now.  FIXME: Remove.)
 dnl  extra_functions	extra functions
+dnl  gmp_mulfunc_files  files containing more than one function
 family=generic
+gmp_mulfunc_files=
 
 changequote(,)dnl
 case ${target} in
@@ -250,6 +252,7 @@ case ${target} in
 	family=x86;;
   athlon-*-*)
 	path="x86/k7 x86/mmx x86"
+	gmp_mulfunc_files="aors_n aorsmul_1"
 	family=x86;;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
@@ -494,6 +497,7 @@ case "$target" in
 esac
 changequote([,])dnl
 
+dnl  `files' and `links' are not used.  FIXME: Remove.
 files=
 links=
 gmp_links=
@@ -508,6 +512,18 @@ for tmp_f in $gmp_m4postinc; do
   GMP_INCLUDE($tmp_canon_f)
 done
 
+# Pick the correct source files in `path' and link them to mpn/.
+# `gmp_mpn_functions' lists all functions that we need.  
+
+# The general rule is to suffix the function name with .asm, .S, .s,
+# or .c to find a file containing the implementation.  
+
+# `gmp_mpn_mulfunc_files' lists files containing more than one
+# function implementation.  The normal rules still apply since we
+# have stub files including the multifunction file.  We just link
+# the multifunction file up to mpn and let the generic mechanism
+# find the stub files needed.
+
 path="$path generic"
 mpn_objects=
 mpn_objs_in_libgmp="mpn/mp_bases.lo"
@@ -516,6 +532,15 @@ gmp_mpn_functions="${extra_functions} inlines add_n sub_n mul_1 addmul_1 submul_
  dump mul mul_n mul_basecase sqr_basecase random random2 rawrandom \
  sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp \
  perfsqr bdivmod gcd_1 gcd gcdext"
+
+# Look for multi-function files.
+for m in $gmp_mulfunc_files; do
+  for d in $path; do
+    if test -f $srcdir/mpn/$d/$m.asm; then
+      gmp_links="$gmp_links mpn/$m.asm:mpn/$d/$m.asm"
+    fi
+  done
+done
 
 for tmp_fn in ${gmp_mpn_functions} ; do
   mpn_objects="$mpn_objects ${tmp_fn}.lo"
@@ -590,5 +615,6 @@ dnl  Create config.m4
 GMP_FINISH
 
 dnl  Create Makefiles
+dnl  FIXME: Upcoming version of autoconf/automake may not like broken lines.
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
   mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile)
