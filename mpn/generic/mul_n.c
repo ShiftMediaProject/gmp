@@ -1198,14 +1198,14 @@ mpn_toom3_mul_n (p, a, b, n, ws)
 	y = x < y;
       }
     y += tC;
-    for (i = 0; y && i < ls; ++i)
+    for (i = 0; y && i < l; ++i)
       {
 	x = p[l4 + i] + y;
 	p[l4 + i] = x;
 	y = x < y;
       }
     y += tD;
-    for (i = 0; y && i < ls; ++i)
+    for (i = 0; y && i < 2*n-l5; ++i)
       {
 	x = p[l5 + i] + y;
 	p[l5 + i] = x;
@@ -1316,14 +1316,14 @@ mpn_toom3_sqr_n (p, a, n, ws)
 	y = x < y;
       }
     y += tC;
-    for (i = 0; y && i < ls; ++i)
+    for (i = 0; y && i < l; ++i)
       {
 	x = p[l4 + i] + y;
 	p[l4 + i] = x;
 	y = x < y;
       }
     y += tD;
-    for (i = 0; y && i < ls; ++i)
+    for (i = 0; y && i < 2*n-l5; ++i)
       {
 	x = p[l5 + i] + y;
 	p[l5 + i] = x;
