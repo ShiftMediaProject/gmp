@@ -21,6 +21,8 @@ MA 02111-1307, USA.
 
 2002-05-07  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/aors_ui.h: Nailify.
+
 	* tests/mpz/t-addsub.c: New file.
 	* tests/mpz/Makefile.am (check_PROGRAMS): Add t-addsub.
 
