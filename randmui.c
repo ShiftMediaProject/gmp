@@ -1,6 +1,6 @@
 /* gmp_urandomm_ui -- uniform random number 0 to N-1 for ulong N.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -45,9 +45,10 @@ gmp_urandomm_ui (gmp_randstate_ptr rstate, unsigned long n)
     DIVIDE_BY_ZERO;
 
   /* start with zeros, since if bits==0 then _gmp_rand will store nothing at
-     all, or if bits <= GMP_NUMB_BITS then it will store only a[0] */
+     all (bits==0 arises when n==1), or if bits <= GMP_NUMB_BITS then it
+     will store only a[0].  */
   a[0] = 0;
-#if GMP_NAIL_BITS != 0
+#if LIMBS_PER_ULONG > 1
   a[1] = 0;
 #endif
 
@@ -57,7 +58,7 @@ gmp_urandomm_ui (gmp_randstate_ptr rstate, unsigned long n)
   for (i = 0; i < MAX_URANDOMM_ITER; i++)
     {
       _gmp_rand (a, rstate, bits);
-#if GMP_NAIL_BITS == 0
+#if LIMBS_PER_ULONG == 1
       ret = a[0];
 #else
       ret = a[0] | (a[1] << GMP_NUMB_BITS);

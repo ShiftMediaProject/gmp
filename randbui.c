@@ -1,6 +1,6 @@
 /* gmp_urandomb_ui -- random bits returned in a ulong.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,13 +34,13 @@ gmp_urandomb_ui (gmp_randstate_ptr rstate, unsigned long bits)
   /* start with zeros, since if bits==0 then _gmp_rand will store nothing at
      all, or if bits <= GMP_NUMB_BITS then it will store only a[0] */
   a[0] = 0;
-#if GMP_NAIL_BITS != 0
+#if LIMBS_PER_ULONG > 1
   a[1] = 0;
 #endif
 
   _gmp_rand (a, rstate, MIN (bits, BITS_PER_ULONG));
 
-#if GMP_NAIL_BITS == 0
+#if LIMBS_PER_ULONG == 1
   return a[0];
 #else
   return a[0] | (a[1] << GMP_NUMB_BITS);
