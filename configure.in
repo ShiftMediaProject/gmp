@@ -269,12 +269,8 @@ esac
 
 dnl  Check for programs needed by macros for finding compiler.
 dnl  More programs are checked for below, when a compiler is found.
-AC_CHECK_TOOL(NM, nm, :)
-if test "$NM" = ":"; then
-  echo ["$0: fatal: need nm"]
-  exit 1
-fi
-# nm on AIX needs to know the object file format 
+AC_PROG_NM	dnl  Macro from Libtool.
+# nm on 64-bit AIX needs to know the object file format 
 case "$target" in
   powerpc64*-*-aix*)
     NM="$NM -X 64"
@@ -349,8 +345,6 @@ GMP_PROG_CC_SELECT
 
 # How to assemble.
 CCAS="$CC -c"
-dnl  FIXME: CCAS may change below.  Do we have to move the AC_SUBST until 
-dnl  after that?
 AC_SUBST(CCAS)
 
 dnl Checks for programs.
@@ -359,7 +353,7 @@ AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 GMP_PROG_M4
-AC_CHECK_TOOL(AR, ar, ar)
+AC_CHECK_PROG(AR, ar, ar)
 # ar on AIX needs to know the object file format 
 case "$target" in
   powerpc64*-*-aix*)
