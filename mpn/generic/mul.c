@@ -6,7 +6,7 @@
    THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -42,15 +42,8 @@ MA 02111-1307, USA. */
       the multiplier and the multiplicand.  */
 
 void
-#if __STDC__
 mpn_sqr_n (mp_ptr prodp,
-         mp_srcptr up, mp_size_t un)
-#else
-mpn_sqr_n (prodp, up, un)
-     mp_ptr prodp;
-     mp_srcptr up;
-     mp_size_t un;
-#endif
+	   mp_srcptr up, mp_size_t un)
 {
   ASSERT (un >= 1);
   ASSERT (! MPN_OVERLAP_P (prodp, 2*un, up, un));
@@ -93,18 +86,9 @@ mpn_sqr_n (prodp, up, un)
 }
 
 mp_limb_t
-#if __STDC__
 mpn_mul (mp_ptr prodp,
 	 mp_srcptr up, mp_size_t un,
 	 mp_srcptr vp, mp_size_t vn)
-#else
-mpn_mul (prodp, up, un, vp, vn)
-     mp_ptr prodp;
-     mp_srcptr up;
-     mp_size_t un;
-     mp_srcptr vp;
-     mp_size_t vn;
-#endif
 {
   mp_size_t l;
   mp_limb_t c;
@@ -138,10 +122,10 @@ mpn_mul (prodp, up, un, vp, vn)
       up += vn;
       un -= vn;
 
-      if (un < vn) 
+      if (un < vn)
 	{
 	  /* Swap u's and v's. */
-          MPN_SRCPTR_SWAP (up,un, vp,vn);
+	  MPN_SRCPTR_SWAP (up,un, vp,vn);
 	}
 
       ws = (mp_ptr) TMP_ALLOC (((vn >= KARATSUBA_MUL_THRESHOLD ? vn : un) + vn)
@@ -151,7 +135,7 @@ mpn_mul (prodp, up, un, vp, vn)
       while (vn >= KARATSUBA_MUL_THRESHOLD)
 	{
 	  mpn_mul_n (ws, up, vp, vn);
-	  if (l <= 2*vn) 
+	  if (l <= 2*vn)
 	    {
 	      t += mpn_add_n (prodp, prodp, ws, l);
 	      if (l != 2*vn)
@@ -169,22 +153,22 @@ mpn_mul (prodp, up, un, vp, vn)
 	  l -= vn;
 	  up += vn;
 	  un -= vn;
-	  if (un < vn) 
+	  if (un < vn)
 	    {
 	      /* Swap u's and v's. */
-              MPN_SRCPTR_SWAP (up,un, vp,vn);
+	      MPN_SRCPTR_SWAP (up,un, vp,vn);
 	    }
 	}
 
       if (vn)
 	{
 	  mpn_mul_basecase (ws, up, un, vp, vn);
-	  if (l <= un + vn) 
+	  if (l <= un + vn)
 	    {
 	      t += mpn_add_n (prodp, prodp, ws, l);
 	      if (l != un + vn)
 		t = mpn_add_1 (prodp + l, ws + l, un + vn - l, t);
-	    } 
+	    }
 	  else
 	    {
 	      c = mpn_add_n (prodp, prodp, ws, un + vn);
@@ -192,7 +176,7 @@ mpn_mul (prodp, up, un, vp, vn)
 	    }
 	}
 
-    TMP_FREE (marker);
-  }
+      TMP_FREE (marker);
+    }
   return prodp[un + vn - 1];
 }
