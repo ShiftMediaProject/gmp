@@ -6817,6 +6817,11 @@ undefined.
 
 @deftypefun void pow (MINT *@var{base}, MINT *@var{exp}, MINT *@var{mod}, MINT *@var{dest})
 Set @var{dest} to (@var{base} raised to @var{exp}) modulo @var{mod}.
+
+Note that the name @code{pow} clashes with @code{pow} from the standard C math
+library (@pxref{Exponents and Logarithms,, Exponentiation and Logarithms,
+libc, The GNU C Library Reference Manual}).  An application will only be able
+to use one or the other.
 @end deftypefun
 
 @deftypefun void rpow (MINT *@var{base}, signed short int @var{exp}, MINT *@var{dest})
@@ -7030,11 +7035,18 @@ Kissme @spaceuref{http://kissme.sourceforge.net/}
 GNU Common Lisp @spaceuref{http://www.gnu.org/software/gcl/gcl.html}
 @item
 Librep @spaceuref{http://librep.sourceforge.net/}
+@item
+@c  FIXME: When there's a stable release with gmp support, just refer to it
+@c  rather than bothering to talk about betas.
+XEmacs (21.5.18 betas and up) @spaceuref{http://xemacs.org} @* Optional big
+integers, rationals and floats using GMP.
 @end itemize
 
 @item M4
 @itemize @bullet
 @item
+@c  FIXME: When there's a stable release with gmp support, just refer to it
+@c  rather than bothering to talk about betas.
 GNU m4 betas @spaceuref{http://www.seindal.dk/rene/gnu/} @* Optionally provides
 an arbitrary precision @code{mpeval}.
 @end itemize
