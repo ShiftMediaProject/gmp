@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void dump_abort _PROTO ((mpz_t, mpz_t));
+void dump_abort _PROTO ((int, mpz_t, mpz_t));
 void debug_mp _PROTO ((mpz_t, int));
 
 int
@@ -50,7 +50,7 @@ main (int argc, char **argv)
   mpz_init (bs);
 
   if (argc == 2)
-     gmp_randseed_ui (rands, atoi (argv[1]));
+    reps = atoi (argv[1]);
 
   mpz_init (op1);
   mpz_init (op2);
@@ -95,21 +95,21 @@ main (int argc, char **argv)
       /* We know GCD will be at least X, since we multiplied both operands
 	 with it.  */
       if (mpz_cmp (gcd, x) < 0 && mpz_sgn (op1) != 0 && mpz_sgn (op2) != 0)
-	dump_abort (op1, op2);
+	dump_abort (i, op1, op2);
 
       mpz_gcdext (gcd2, s, t, op1, op2);
       if (mpz_cmp (gcd, gcd2))
-	dump_abort (op1, op2);
+	dump_abort (i, op1, op2);
 
       mpz_gcdext (gcd2, s, NULL, op1, op2);
       if (mpz_cmp (gcd, gcd2))
-	dump_abort (op1, op2);
+	dump_abort (i, op1, op2);
 
       mpz_mul (temp1, s, op1);
       mpz_mul (temp2, t, op2);
       mpz_add (gcd2, temp1, temp2);
       if (mpz_cmp (gcd, gcd2))
-	dump_abort (op1, op2);
+	dump_abort (i, op1, op2);
     }
 
   mpz_clear (bs);
@@ -128,9 +128,9 @@ main (int argc, char **argv)
 }
 
 void
-dump_abort (mpz_t op1, mpz_t op2)
+dump_abort (int testnr, mpz_t op1, mpz_t op2)
 {
-  fprintf (stderr, "ERROR\n");
+  fprintf (stderr, "ERROR in test %d\n", testnr);
   fprintf (stderr, "op1 = "); debug_mp (op1, -16);
   fprintf (stderr, "op2 = "); debug_mp (op2, -16);
   abort();

@@ -48,7 +48,7 @@ main (int argc, char **argv)
   mpz_init (bs);
 
   if (argc == 2)
-     gmp_randseed_ui (rands, atoi (argv[1]));
+    reps = atoi (argv[1]);
 
   mpz_init (x2);
   mpz_init (x);
