@@ -25,11 +25,6 @@ MA 02111-1307, USA. */
 #define BYTES_PER_MP_LIMB 4
 
 
-/* bsf takes 18-42 cycles, put an average for uniform random numbers */
-#ifndef COUNT_TRAILING_ZEROS_TIME
-#define COUNT_TRAILING_ZEROS_TIME   20  /* cycles */
-#endif
-
 /* For mpn/x86/pentium/mod_1.asm */
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 
