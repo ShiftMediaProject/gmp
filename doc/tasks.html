@@ -829,10 +829,6 @@ near future, but are at least worth thinking about.
 <li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000, whereas it's
      sort of supposed to return the low 31 (or 63) bits.  But this is
      undocumented, and perhaps not too important.
-<li> <code>mpz_*_ui</code> division routines currently return abs(a%b).
-     Perhaps make them return the real remainder instead?  Return type would
-     be <code>signed long int</code>.  But this would be an incompatible
-     change, so it might have to be under newly named functions.
 <li> <code>mpz_init_set*</code> and <code>mpz_realloc</code> could allocate
      say an extra 16 limbs over what's needed, so as to reduce the chance of
      having to do a reallocate if the <code>mpz_t</code> grows a bit more.
