@@ -19,6 +19,21 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-20  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-tdiv_ui.c: Check returned remainders.
+	* tests/mpz/t-fdiv_ui.c: Merge in recent t-tdiv_ui changes.
+
+	* mpz/tdiv_q_ui.c: Remove spurious TMP_* calls.
+
+	* mpz/fdiv_qr_ui.c: Nailify.
+	* mpz/fdiv_q_ui.c: Nailify.
+	* mpz/fdiv_r_ui.c: Nailify.
+
+	* mpz/get_si.c: Misc nailify changes to shut up compiler warnings.
+
+	* mpz/ui_pow_ui.c: Fix typo in last change.
+
 2002-04-20  Kevin Ryde  <kevin@swox.se>
 
 	* tests/misc/t-printf.c, tests/misc/t-scanf.c: Check all %n types.
@@ -153,7 +168,7 @@ MA 02111-1307, USA.
 	* mpz/hamdist.c: Nailify.
 	* tests/misc.c (urandom): Nailify.
 
-	* mpz/get_si.c (mpz_get_si): Nailify.
+	* mpz/get_si.c: Nailify.
 	* gmp-h.in (mpz_get_ui): Nailify.  Streamline (and probably upset
 	memory checkers).
 
