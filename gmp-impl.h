@@ -82,7 +82,9 @@ MA 02111-1307, USA. */
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+#ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
 #include "gmp-mparam.h"
 /* #include "longlong.h" */
 
