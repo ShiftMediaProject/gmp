@@ -25,6 +25,7 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 void debug_mp _PROTO ((mpz_t, int));
 
@@ -82,7 +83,7 @@ main (int argc, char **argv)
 	base = 0;
 
       str = mpz_get_str ((char *) 0, base, op1);
-      MPZ_SET_STR_OR_ABORT (op2, str, base);
+      mpz_set_str_or_abort (op2, str, base);
       (*__gmp_free_func) (str, 0);
 
       if (mpz_cmp (op1, op2))

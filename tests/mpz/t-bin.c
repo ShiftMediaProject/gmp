@@ -1,7 +1,7 @@
 /* Exercise mpz_bin_ui and mpz_bin_uiui. */
 
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,6 +24,7 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 
 void
@@ -165,8 +166,8 @@ samples (void)
 
   for (i = 0; i < numberof (data); i++)
     {
-      MPZ_SET_STR_OR_ABORT (n, data[i].n, 0);
-      MPZ_SET_STR_OR_ABORT (want, data[i].want, 0);
+      mpz_set_str_or_abort (n, data[i].n, 0);
+      mpz_set_str_or_abort (want, data[i].want, 0);
 
       try_mpz_bin_ui (want, n, data[i].k);
 
