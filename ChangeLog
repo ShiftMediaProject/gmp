@@ -19,6 +19,19 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-02  Kevin Ryde  <kevin@swox.se>
+
+	* tune/many.pl: Setup CFLAGS_PIC and ASMFLAGS_PIC, since that's no
+	longer done by configure.
+
+	* mpn/x86/pentium4/mmx/popham.asm: New file.
+
+	* mpn/x86/x86-defs.m4 (psadbw): New macro.
+	* mpn/x86/k7/mmx/popham.asm: Use it.
+
+	* tests/refmpn.c (refmpn_overlap_p): New function, independent of
+	MPN_OVERLAP_P.
+
 2001-10-31  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/mod_34lsub1.asm: New file.
