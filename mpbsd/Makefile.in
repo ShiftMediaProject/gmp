@@ -48,7 +48,7 @@ libmpbsd.a: Makefile.in $(MPBSD_OBJS)
 	$(AR) cr $@ $(MPBSD_OBJS)
 
 .c.o:
-	$(CC) -c $(INCLUDES) -DBERKELEY_MP $(CFLAGS) $(XCFLAGS) $<
+	$(CC) -c $(INCLUDES) -DBERKELEY_MP $(CFLAGS) $(XCFLAGS) -D_mpz_realloc=_mp_realloc $<
 
 check:
 	true
