@@ -836,19 +836,43 @@ dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
 dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
 dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
 dnl  needed at all, at least for just checking instruction syntax.
+dnl
+dnl  "movq %mm0, %mm1" should assemble as "0f 6f c8", but Solaris 2.6
+dnl  wrongly assembles it as "0f 6f c1" (that being the reverse "movq %mm1,
+dnl  %mm0").  It doesn't seem worth bothering to work around this bug, so
+dnl  just detect it.
 
 AC_DEFUN(GMP_ASM_X86_MMX,
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
 		gmp_cv_asm_x86_mmx,
 [GMP_TRY_ASSEMBLE(
 [	.text
-	por	%mm0, %mm0],
-  gmp_cv_asm_x86_mmx=yes,
-  gmp_cv_asm_x86_mmx=no)
-])
-if test "$gmp_cv_asm_x86_mmx" = "yes"; then
-  ifelse([$1], , :, [$1])
-else
+	movq	%mm0, %mm1],
+[gmp_cv_asm_x86_mmx=yes
+case $host in
+*-*-solaris*)
+  if (dis conftest.o >conftest.out) 2>&AC_FD_CC; then
+    if grep "0f 6f c1" conftest.out >/dev/null; then
+      gmp_cv_asm_x86_mmx=movq-bug
+    fi
+  else
+    AC_MSG_WARN([\"dis\" not available to check for \"as\" movq bug])
+  fi
+esac],
+[gmp_cv_asm_x86_mmx=no])])
+
+case $gmp_cv_asm_x86_mmx in
+movq-bug)
+  AC_MSG_WARN([+----------------------------------------------------------])
+  AC_MSG_WARN([| WARNING WARNING WARNING])
+  AC_MSG_WARN([| Target CPU has MMX code, but the assembler])
+  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([| has the Solaris 2.6 bug where reg->reg movqs are reversed.])
+  AC_MSG_WARN([| Non-MMX replacements will be used.])
+  AC_MSG_WARN([| This will be an inferior build.])
+  AC_MSG_WARN([+----------------------------------------------------------])
+  ;;
+no)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Target CPU has MMX code, but it can't be assembled by])
@@ -856,9 +880,16 @@ else
   AC_MSG_WARN([| Non-MMX replacements will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
   AC_MSG_WARN([+----------------------------------------------------------])
-  ifelse([$2], , :, [$2])
+  ;;
+esac
+if test "$gmp_cv_asm_x86_mmx" = yes; then
+  ifelse([$1],,:,[$1])
+else
+  ifelse([$2],,:,[$2])
 fi
 ])
+
+
 
 
 dnl  GMP_ASM_X86_SHLDL_CL
