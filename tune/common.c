@@ -477,6 +477,55 @@ speed_mpn_submul_1 (struct speed_params *s)
   SPEED_ROUTINE_MPN_UNARY_1 (mpn_submul_1);
 }
 
+#if HAVE_NATIVE_mpn_addmul_2
+double
+speed_mpn_addmul_2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ADDMUL_2 (mpn_addmul_2);
+}
+#endif
+#if HAVE_NATIVE_mpn_addmul_3
+double
+speed_mpn_addmul_3 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ADDMUL_3 (mpn_addmul_3);
+}
+#endif
+#if HAVE_NATIVE_mpn_addmul_4
+double
+speed_mpn_addmul_4 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ADDMUL_4 (mpn_addmul_4);
+}
+#endif
+#if HAVE_NATIVE_mpn_addmul_5
+double
+speed_mpn_addmul_5 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ADDMUL_5 (mpn_addmul_5);
+}
+#endif
+#if HAVE_NATIVE_mpn_addmul_6
+double
+speed_mpn_addmul_6 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ADDMUL_6 (mpn_addmul_6);
+}
+#endif
+#if HAVE_NATIVE_mpn_addmul_7
+double
+speed_mpn_addmul_7 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ADDMUL_7 (mpn_addmul_7);
+}
+#endif
+#if HAVE_NATIVE_mpn_addmul_8
+double
+speed_mpn_addmul_8 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ADDMUL_8 (mpn_addmul_8);
+}
+#endif
 
 double
 speed_mpn_mul_1 (struct speed_params *s)
@@ -493,7 +542,7 @@ speed_mpn_mul_1_inplace (struct speed_params *s)
 double
 speed_mpn_mul_2 (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_MUL_2 (mpn_mul_2);
+  SPEED_ROUTINE_MPN_UNARY_2 (mpn_mul_2);
 }
 #endif
 
