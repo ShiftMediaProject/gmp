@@ -1,8 +1,6 @@
 # PowerPC-64 mpn_lshift -- Shift a number left.
-#
-# ppc630: 1.6375 cycles/limb
 
-# Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+# Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 # This file is part of the GNU MP Library.
 
@@ -21,14 +19,17 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
 
+include(`../config.m4')
+
+
+# ppc630: 1.6375 cycles/limb
+
 
 # INPUT PARAMETERS
 # res_ptr	r3
 # s1_ptr	r4
 # size		r5
 # cnt		r6
-
-include(`../config.m4')
 
 ASM_START()
 PROLOGUE(mpn_lshift)

@@ -1,9 +1,4 @@
 dnl  PowerPC 750 mpn_com_n -- mpn bitwise one's complement
-dnl
-dnl      cycles/limb
-dnl  604e:  3.0
-dnl  750:   2.0
-dnl  7400:  2.0
 
 dnl  Copyright 2002 Free Software Foundation, Inc.
 dnl
@@ -25,6 +20,12 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C     cycles/limb
+C 604e:  3.0
+C 750:   2.0
+C 7400:  2.0
 
 
 C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);

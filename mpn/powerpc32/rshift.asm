@@ -1,8 +1,4 @@
 dnl PowerPC-32 mpn_rshift -- Shift a number right.
-dnl
-dnl      cycles/limb
-dnl 604e:    5.0
-dnl 750:     4.0
 
 dnl Copyright 1995, 2000, 2002 Free Software Foundation, Inc.
 
@@ -23,14 +19,19 @@ dnl along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl MA 02111-1307, USA.
 
+include(`../config.m4')
+
+
+C      cycles/limb
+C 604e:    5.0
+C 750:     4.0
+
 
 dnl INPUT PARAMETERS
 dnl res_ptr	r3
 dnl s1_ptr	r4
 dnl size	r5
 dnl cnt		r6
-
-include(`../config.m4')
 
 ASM_START()
 PROLOGUE(mpn_rshift)

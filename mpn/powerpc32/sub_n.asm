@@ -1,8 +1,4 @@
 dnl  PowerPC 750 mpn_sub_n -- subtract limb vectors.
-dnl
-dnl        cycles/limb
-dnl  604e:     4.0
-dnl  750:      4.0
 
 dnl  Copyright 2002 Free Software Foundation, Inc.
 dnl
@@ -24,6 +20,11 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
+
+
+C       cycles/limb
+C 604e:     4.0
+C 750:      4.0
 
 
 C mp_limb_t mpn_sub_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
