@@ -80,7 +80,6 @@ POST_UNINSTALL = :
 host_alias = @host_alias@
 host_triplet = @host@
 AMTAR = @AMTAR@
-AR = @AR@
 AS = @AS@
 AWK = @AWK@
 CALLING_CONVENTIONS_OBJS = @CALLING_CONVENTIONS_OBJS@
@@ -129,6 +128,9 @@ install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 mpn_objs_in_libmp = @mpn_objs_in_libmp@
+
+# Override automake default AR=ar with the value from GMP_PROG_AR.
+AR = @AR@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
@@ -241,8 +243,6 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
-
-AR = ar
 install-libLIBRARIES: $(lib_LIBRARIES)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)
