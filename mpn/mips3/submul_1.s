@@ -1,7 +1,7 @@
  # MIPS3 __gmpn_submul_1 -- Multiply a limb vector with a single limb and
  # subtract the product from a second limb vector.
 
- # Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
+ # Copyright (C) 1992, 1994, 1995, 2000 Free Software Foundation, Inc.
 
  # This file is part of the GNU MP Library.
 

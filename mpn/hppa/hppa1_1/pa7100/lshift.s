@@ -1,7 +1,7 @@
 ; HP-PA  __gmpn_lshift --
 ; This is optimized for the PA7100, where is runs at 3.25 cycles/limb
 
-; Copyright (C) 1992, 1994 Free Software Foundation, Inc.
+; Copyright (C) 1992, 1994, 2000 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 
