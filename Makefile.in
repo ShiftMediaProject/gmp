@@ -59,7 +59,7 @@ FILES = gmp.h mp.h gmp-impl.h longlong.h urandom.h move-if-change \
  gmp.info* gmp.texi texinfo.tex $(SRCS)
 
 INCLUDES = -I. -Impn -I$(srcdir)
-FLAGS_TO_PASS = "CC=$(CC)" "CFLAGS=$(CFLAGS)" "XCFLAGS=$(XCFLAGS)"
+FLAGS_TO_PASS = "CC=$(CC)" "CFLAGS=$(CFLAGS)" "XCFLAGS=$(XCFLAGS)" "AR=$(AR)"
 
 all: libgmp.a
 
