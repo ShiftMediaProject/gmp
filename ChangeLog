@@ -19,6 +19,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-07  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (MPN_COPY_INCR, MPN_COPY_DECR): Rewrite generic versions.
+
 2002-01-06  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/pre_divrem_1.c: Don't support size==0.
