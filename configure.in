@@ -1010,8 +1010,17 @@ case $host in
 
 
   *sparc*-*-*)
+    # sizeof(long)==4 or 8 is tested, to ensure we get the right ABI.  We've
+    # had various bug reports where users have set CFLAGS for their desired
+    # mode, but not set our ABI.  For some reason it's sparc where this
+    # keeps coming up, presumably users there are accustomed to driving the
+    # compiler mode that way.  The effect of our testlist setting is to
+    # reject ABI=64 in favour of ABI=32 if the user has forced the flags to
+    # 32-bit mode.
+    #
     abilist="32"
     cclist="gcc acc cc"
+    any_testlist="sizeof-long-4"
     GMP_INCLUDE_MPN(sparc32/sparc-defs.m4)
 
     case $host_cpu in
@@ -1131,6 +1140,7 @@ case $host in
 
         path_64="sparc64"
         cclist_64="gcc"
+        any_64_testlist="sizeof-long-8"
 
         # gcc -mptr64 is probably implied by -m64, but we're not sure if
         # this was always so.  On Solaris in the past we always used both
@@ -1554,6 +1564,8 @@ for abi in $abilist; do
         # The tests to perform on this $cc, if any
                                eval testlist=\"\$${ccbase}${abi1}_testlist\"
         test -n "$testlist" || eval testlist=\"\$${ccbase}${abi2}_testlist\"
+        test -n "$testlist" || eval testlist=\"\$any${abi1}_testlist\"
+        test -n "$testlist" || eval testlist=\"\$any${abi2}_testlist\"
 
         testlist_pass=yes
         for tst in $testlist; do
