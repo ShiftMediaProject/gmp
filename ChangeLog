@@ -1,3 +1,11 @@
+2001-03-10  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/cfdiv_q_2exp.c: Don't scan for non-zero limbs if they don't
+	matter to the rounding.
+
+	* mpz/get_ui.c: Fetch _mp_d[0] unconditionally, so the code can come
+	out branch-free.
+
 2001-03-08  Kevin Ryde  <kevin@swox.se>
 
 	* tests/devel/try.c (param_init): Fix reference functions for and_n
