@@ -547,40 +547,18 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	   : "=a" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "rm" ((USItype)(dx)))
 
-/* P5 bsrl takes between 10 and 72 cycles depending where the most
-   significant 1 bit is, hence the use of the alternatives below.  bsfl is
-   slow too, between 18 and 42 depending where the least significant 1 bit
-   is.  The faster count_leading_zeros are pressed into service via the
-   generic count_trailing_zeros at the end of the file.  */
+#if HAVE_HOST_CPU_i586 || HAVE_HOST_CPU_pentium || HAVE_HOST_CPU_pentiummmx
+/* Pentium bsrl takes between 10 and 72 cycles depending where the most
+   significant 1 bit is, hence the use of the following alternatives.  bsfl
+   is slow too, between 18 and 42 depending where the least significant 1
+   bit is, so let the generic count_trailing_zeros below make use of the
+   count_leading_zeros here too.  */
 
-#if HAVE_HOST_CPU_i586 || HAVE_HOST_CPU_pentium
-
-/* The following should be a fixed 14 cycles or so.  Some scheduling
-   opportunities should be available between the float load/store too.  This
-   is used (with "n&-n" to get trailing zeros) in gcc 3 for __builtin_ffs
-   and is apparently suggested by the Intel optimizing manual (don't know
-   exactly where).  gcc 2.95 or up will be best for this, so the "double" is
-   correctly aligned on the stack.  */
-
-#define count_leading_zeros(c,n)					\
-  do {									\
-    union {								\
-      double    d;							\
-      unsigned  a[2];							\
-    } __u;								\
-    ASSERT ((n) != 0);							\
-    __u.d = (UWtype) (n);						\
-    (c) = 0x3FF + 31 - (__u.a[1] >> 20);				\
-  } while (0)
-#define COUNT_LEADING_ZEROS_0   (0x3FF + 31)
-
-#else /* ! pentium */
-#if HAVE_HOST_CPU_pentiummmx
-
+#if HAVE_HOST_CPU_pentiummmx && ! defined (LONGLONG_STANDALONE)
 /* The following should be a fixed 14 or 15 cycles, but possibly plus an L1
-   cache miss reading from __clz_tab.  It's favoured over the float above so
-   as to avoid mixing MMX and x87, since the penalty for switching between
-   the two is about 100 cycles.
+   cache miss reading from __clz_tab.  For P55 it's favoured over the float
+   below so as to avoid mixing MMX and x87, since the penalty for switching
+   between the two is about 100 cycles.
 
    The asm block sets __shift to -3 if the high 24 bits are clear, -2 for
    16, -1 for 8, or 0 otherwise.  This could be written equivalently as
@@ -609,11 +587,30 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __shift = __shift*8 + 24 + 1;					\
     (c) = 32 + 1 - __shift - __clz_tab[__n >> __shift];			\
   } while (0)
-
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #define COUNT_LEADING_ZEROS_0   31   /* n==0 indistinguishable from n==1 */
 
-#else /* !pentiummmx */
+#else /* ! pentiummmx || LONGLONG_STANDALONE */
+/* The following should be a fixed 14 cycles or so.  Some scheduling
+   opportunities should be available between the float load/store too.  This
+   sort of code is used in gcc 3 for __builtin_ffs (with "n&-n") and is
+   apparently suggested by the Intel optimizing manual (don't know exactly
+   where).  gcc 2.95 or up will be best for this, so the "double" is
+   correctly aligned on the stack.  */
+#define count_leading_zeros(c,n)					\
+  do {									\
+    union {								\
+      double    d;							\
+      unsigned  a[2];							\
+    } __u;								\
+    ASSERT ((n) != 0);							\
+    __u.d = (UWtype) (n);						\
+    (c) = 0x3FF + 31 - (__u.a[1] >> 20);				\
+  } while (0)
+#define COUNT_LEADING_ZEROS_0   (0x3FF + 31)
+#endif /* pentiummx */
+
+#else /* ! pentium */
 /* On P6, gcc prior to 3.0 generates a partial register stall for
    __cbtmp^31, due to using "xorb $31" instead of "xorl $31", the former
    being 1 code byte smaller.  "31-__cbtmp" is a workaround, probably at the
@@ -647,7 +644,6 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     ASSERT ((x) != 0);							\
     __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));	\
   } while (0)
-#endif /* ! pentiummmx */
 #endif /* ! pentium */
 
 #ifndef UMUL_TIME
