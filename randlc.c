@@ -1,8 +1,8 @@
-/* gmp_rand_init_lc (state, size, seed, a, c, m) -- Initialize a
-   random state for a linear congruental generator with multiplier A,
-   adder C, and modulus M.
+/* gmp_rand_init_lc (state, a, c, m) -- Initialize a random state for
+   a linear congruental generator with multiplier A, adder C, and
+   modulus M.
 
-Copyright (C) 1999 Free Software Foundation, Inc.
+Copyright (C) 1999, 2000  Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,37 +21,32 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdlib.h>		/* FIXME: For malloc(). */
 #include "gmp.h"
 #include "gmp-impl.h"
 
 void
 #if __STDC__
 gmp_rand_init_lc (gmp_rand_state s,
-		  unsigned long int size, /* FIXME: Remove. */
-		  mpz_t seed,
 		  mpz_t a,
 		  unsigned long int c,
 		  mpz_t m)
 #else
-gmp_rand_init_lc (s, size, seed, a, c, m)
+gmp_rand_init_lc (s, a, c, m)
      gmp_rand_state s;
-     unsigned long int size;
-     mpz_t seed;
      mpz_t a;
      unsigned long int c;
      mpz_t m;
 #endif
 {
+  mpz_init_set_ui (s->seed, 0);
+
   /* Allocate algorithm specific data. */
-  /* FIXME: Use user supplied allocation func instead of malloc? */
-  s->data.lc = (__gmp_rand_data_lc *) malloc (sizeof (__gmp_rand_data_lc));
+  s->data.lc = (__gmp_rand_data_lc *)
+    (*_mp_allocate_func) (sizeof (__gmp_rand_data_lc));
 
   mpz_init_set (s->data.lc->a, a);
-  mpz_init_set (s->data.lc->m, m);
   s->data.lc->c = c;
+  mpz_init_set (s->data.lc->m, m);
 
   s->alg = GMP_RAND_ALG_LC;
-  s->size = size;		/* FIXME: Should be log2(m). */
-  mpz_init_set (s->seed, seed);
 }
