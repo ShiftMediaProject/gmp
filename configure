@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.149
+# From configure.in Revision: 1.151
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -4827,8 +4827,8 @@ done
 SPEED_CYCLECOUNTER_OBJ=
 cyclecounter_size=2
 case ${target} in
-  i[5-8]86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
-    # rdtsc is in pentium and up, not in i386 and i486
+  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
+    # Availability of rdtsc is checked at run-time.
     SPEED_CYCLECOUNTER_OBJ=pentium.lo ;;
   alpha*-*-*)
     SPEED_CYCLECOUNTER_OBJ=alpha.lo
