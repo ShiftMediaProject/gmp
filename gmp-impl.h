@@ -2672,11 +2672,54 @@ union ieee_double_extract
 double __gmp_scale2 _PROTO ((double, int)) ATTRIBUTE_CONST;
 int __gmp_extract_double _PROTO ((mp_ptr, double));
 
+
+/* DOUBLE_NAN_INF_ACTION executes code a_nan if x is a NaN, or executes
+   a_inf if x is an infinity.  Both are considered unlikely values, for
+   branch prediction.  */
+
+#if _GMP_IEEE_FLOATS
+#define DOUBLE_NAN_INF_ACTION(x, a_nan, a_inf)  \
+  do {                                          \
+    union ieee_double_extract  u;               \
+    u.d = (x);                                  \
+    if (UNLIKELY (u.s.exp == 0x7FF))            \
+      {                                         \
+        if (u.s.manl == 0 && u.s.manh == 0)     \
+          { a_inf; }                            \
+        else                                    \
+          { a_nan; }                            \
+      }                                         \
+  } while (0)
+#endif
+
+#if HAVE_DOUBLE_VAX_D || HAVE_DOUBLE_VAX_G || HAVE_DOUBLE_CRAY_CFP
+/* no nans or infs in these formats */
+#define DOUBLE_NAN_INF_ACTION(x, a_nan, a_inf)  \
+  do { } while (0)
+#endif
+
+#ifndef DOUBLE_NAN_INF_ACTION
+/* Unknown format, try something generic.
+   NaN should be "unordered", so x!=x.
+   Inf should be bigger than DBL_MAX.  */
+#define DOUBLE_NAN_INF_ACTION(x, a_nan, a_inf)                  \
+  do {                                                          \
+    {                                                           \
+      if (UNLIKELY ((x) != (x)))                                \
+        { a_nan; }                                              \
+      else if (UNLIKELY ((x) > DBL_MAX || (x) < -DBL_MAX))      \
+        { a_inf; }                                              \
+    }                                                           \
+  } while (0)
+#endif
+
+
 extern int __gmp_junk;
 extern const int __gmp_0;
 void __gmp_exception _PROTO ((int)) ATTRIBUTE_NORETURN;
 void __gmp_divide_by_zero _PROTO ((void)) ATTRIBUTE_NORETURN;
 void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
+void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 #define GMP_ERROR(code)   __gmp_exception (code)
 #define DIVIDE_BY_ZERO    __gmp_divide_by_zero ()
 #define SQRT_OF_NEGATIVE  __gmp_sqrt_of_negative ()
