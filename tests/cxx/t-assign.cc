@@ -168,6 +168,28 @@ check_mpz (void)
     mpz_class b;
     b = a; ASSERT_ALWAYS(b == 1234567890L);
   }
+
+  // operator=(const char *) with invalid
+  {
+    try {
+      const char *a = "abc";
+      mpz_class b;
+      b = a;
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // operator=(const std::string &) with invalid
+  {
+    try {
+      string a("def");
+      mpz_class b;
+      b = a;
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
 }
 
 void
@@ -303,6 +325,28 @@ check_mpq (void)
     mpq_class b;
     b = a; ASSERT_ALWAYS(b == 1234567890L);
   }
+
+  // operator=(const char *) with invalid
+  {
+    try {
+      const char *a = "abc";
+      mpq_class b;
+      b = a;
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // operator=(const std::string &) with invalid
+  {
+    try {
+      string a("def");
+      mpq_class b;
+      b = a;
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
 }
 
 void
@@ -437,6 +481,28 @@ check_mpf (void)
     string a("1234567890");
     mpf_class b;
     b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
+
+  // operator=(const char *) with invalid
+  {
+    try {
+      const char *a = "abc";
+      mpf_class b;
+      b = a;
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // operator=(const std::string &) with invalid
+  {
+    try {
+      string a("def");
+      mpf_class b;
+      b = a;
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
   }
 }
 
@@ -595,6 +661,28 @@ check_mpfr (void)
     string a("1234567890");
     mpfr_class b;
     b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
+
+  // operator=(const char *) with invalid
+  {
+    try {
+      const char *a = "abc";
+      mpfr_class b;
+      b = a;
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
+  }
+
+  // operator=(const std::string &) with invalid
+  {
+    try {
+      string a("def");
+      mpfr_class b;
+      b = a;
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (invalid_argument) {
+    }
   }
 
 #endif /* WANT_MPFR */
