@@ -209,8 +209,8 @@ and Zilog Z8000.
 Some optimizations also for Clipper, IBM ROMP (RT), and Pyramid AP/XP.
 
 There is a mailing list for GMP users.  To join it, send a mail to
-gmp-request@swox.com with the word ``subscribe'' in the message *body* (not in
-the subject line).
+@email{gmp-request@@swox.com} with the word @samp{subscribe} in the message
+@strong{body} (not in the subject line).
 
 For up-to-date information on GMP, please see the GMP Home Pages at
 @uref{http://www.swox.com/gmp/}.
