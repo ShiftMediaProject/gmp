@@ -28,7 +28,7 @@
 
 ; This runs at 11 cycles/limb on a PA8000.  It might be possible to make
 ; it faster, but the PA8000 pipeline is not publically documented and it
-; is very complex to reveser engineer
+; is very complex to reverse engineer
 
 #define t1 %r19
 #define rlimb %r20
