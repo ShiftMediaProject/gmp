@@ -424,6 +424,25 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define MPZ_EQUAL_1_P(z)  (SIZ(z)==1 && PTR(z)[0] == 1)
 
 
+/* FIB_SIZE(n) is the number of limbs needed for Fibonacci number F[n], not
+   exactly but certainly it's no fewer than needed.
+
+   From Knuth vol 1 section 1.2.8, F[n] = phi^n/sqrt(5) rounded to the
+   nearest integer, where phi=(1+sqrt(5))/2 is the golden ratio.  So the
+   number of bits required is n*log_2((1+sqrt(5))/2) = n*0.6942419.
+
+   The multiplier is done with 23/32=0.71875 for efficient calculation on
+   CPUs without good floating point.  The +2 is for rounding up.
+
+   Note that a division is done first, since on a 32-bit system it's at
+   least conceivable to go right up to n==ULONG_MAX.  (F[2^32-1] would be
+   about 380Mbytes, plus temporary workspace of about 1.2Gbytes here and
+   whatever a multiply of two 190Mbyte numbers takes.)  */
+
+#define MPZ_FIB_SIZE(n) \
+  ((mp_size_t) ((n) / 32 * 23 / BITS_PER_MP_LIMB) + 2)
+
+
 #define mpn_zero_p  __MPN(zero_p)
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
 /* n==0 is allowed and is considered a zero value.  */
