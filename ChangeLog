@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2003-09-22  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/Makefile.am (TARG_DIST): Add amd64.
+
 	* mpn/generic/sqr_basecase.c: Use mpn_addlsh1_n when available.
 
 	* mpn/generic/mul_n.c: Use proper form for HAVE_NATIVE macros.
