@@ -512,6 +512,7 @@ case $host in
     gcc_cflags_optlist="asm"
     gcc_cflags_asm="-Wa,-mppc"
     path="powerpc32"
+    extra_functions="umul"
     case $host in
       *-*-aix*) cclist="gcc xlc cc"
                 xlc_cflags="-g -O2 -qarch=ppc -qmaxmem=20000" ;;
