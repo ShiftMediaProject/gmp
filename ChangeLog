@@ -1,3 +1,11 @@
+2000-09-25  Kevin Ryde  <kevin@swox.se>
+
+	* randlc.c, randlc2x.c, randsd.c, mpz/urandomb.c, mpz/urandomm.c:
+	Use mpz_ptr and mpz_srcptr for parameters.
+	* gmp.h (gmp_randinit_lc, gmp_randinit_lc_2exp, gmp_randseed,
+	mpz_urandomb, mpz_urandomm): Corresponding change to prototypes.
+	* randsdui.c: Remove wrong K&R parameters part.
+
 2000-09-12  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (mpn_tdiv_qr): Move prototype from here ...
