@@ -494,7 +494,7 @@ case $host in
             cclist_aix64="gcc xlc"
             gcc_aix64_cflags="-g -O2 -maix64 -mpowerpc64"
 	    gcc_aix64_ldflags="-Wc,-maix64"
-            xlc_aix64_cflags="-g -O2 -q64 -qtune=pwr3"
+            xlc_aix64_cflags="-g -O2 -q64 -qtune=pwr3 -qmaxmem=20000"
 	    xlc_aix64_ldflags="-Wc,-q64"
             # Must indicate object type to ar and nm
 	    ar_aix64_flags="-X64"
