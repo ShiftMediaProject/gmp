@@ -96,6 +96,37 @@ xmalloc_limbs (int n)
 }
 
 void
+mem_copyi (char *dst, char *src, int size)
+{
+  int  i;
+  for (i = 0; i < size; i++)
+    dst[i] = src[i];
+}
+
+int
+isprime (int n)
+{
+  int  i;
+  if (n < 2)
+    return 0;
+  for (i = 2; i < n; i++)
+    if ((n % i) == 0)
+      return 0;
+  return 1;
+}
+
+int
+log2_ceil (int n)
+{
+  int  e;
+  ASSERT (n >= 1);
+  for (e = 0; ; e++)
+    if ((1 << e) >= n)
+      break;
+  return e;
+}
+
+void
 mpz_realloc (mpz_t r, int n)
 {
   if (n <= ALLOC(r))
@@ -128,6 +159,14 @@ mpn_copyi (mp_limb_t *dst, mp_limb_t *src, int n)
 }
 
 void
+mpn_zero (mp_limb_t *rp, int rn)
+{
+  int  i;
+  for (i = 0; i < rn; i++)
+    rp[i] = 0;
+}
+
+void
 mpz_init (mpz_t r)
 {
   ALLOC(r) = 1;
@@ -143,6 +182,30 @@ mpz_clear (mpz_t r)
   ALLOC(r) = -1;
   SIZ (r) = 0xbadcafeL;
   PTR (r) = (mp_limb_t *) 0xdeadbeefL;
+}
+
+int
+mpz_sgn (mpz_t a)
+{
+  return (SIZ(a) > 0 ? 1 : SIZ(a) == 0 ? 0 : -1);
+}
+
+int
+mpz_odd_p (mpz_t a)
+{
+  if (SIZ(a) == 0)
+    return 0;
+  else
+    return (PTR(a)[0] & 1) != 0;
+}
+
+int
+mpz_even_p (mpz_t a)
+{
+  if (SIZ(a) == 0)
+    return 1;
+  else
+    return (PTR(a)[0] & 1) == 0;
 }
 
 size_t
@@ -174,6 +237,13 @@ mpz_set (mpz_t r, mpz_t a)
 }
 
 void
+mpz_init_set (mpz_t r, mpz_t a)
+{
+  mpz_init (r);
+  mpz_set (r, a);
+}
+
+void
 mpz_set_ui (mpz_t r, unsigned long ui)
 {
   int  rn;
@@ -190,6 +260,72 @@ mpz_init_set_ui (mpz_t r, unsigned long ui)
 {
   mpz_init (r);
   mpz_set_ui (r, ui);
+}
+
+void
+mpz_setbit (mpz_t r, unsigned long bit)
+{
+  int        limb, rn, extend;
+  mp_limb_t  *rp;
+
+  rn = SIZ(r);
+  if (rn < 0)
+    abort ();  /* only r>=0 */
+
+  limb = bit / GMP_LIMB_BITS;
+  bit %= GMP_LIMB_BITS;
+
+  mpz_realloc (r, limb+1);
+  rp = PTR(r);
+  extend = (limb+1) - rn;
+  if (extend > 0)
+    mpn_zero (rp + rn, extend);
+
+  rp[limb] |= (mp_limb_t) 1 << bit;
+  SIZ(r) = MAX (rn, limb+1);
+}
+
+int
+mpz_tstbit (mpz_t r, unsigned long bit)
+{
+  int  limb;
+
+  if (SIZ(r) < 0)
+    abort ();  /* only r>=0 */
+
+  limb = bit / GMP_LIMB_BITS;
+  if (SIZ(r) <= limb)
+    return 0;
+
+  bit %= GMP_LIMB_BITS;
+  return (PTR(r)[limb] >> bit) & 1;
+}
+
+int
+popc_limb (mp_limb_t a)
+{
+  int  ret = 0;
+  while (a != 0)
+    {
+      ret += (a & 1);
+      a >>= 1;
+    }
+  return ret;
+}
+
+unsigned long
+mpz_popcount (mpz_t a)
+{
+  unsigned long  ret;
+  int            i;
+
+  if (SIZ(a) < 0)
+    abort ();
+
+  ret = 0;
+  for (i = 0; i < SIZ(a); i++)
+    ret += popc_limb (PTR(a)[i]);
+  return ret;
 }
 
 void
@@ -298,6 +434,17 @@ mpz_sub (mpz_t r, mpz_t a, mpz_t b)
 
   mpn_normalize (rp, &rn);
   SIZ (r) = rn;
+}
+
+void
+mpz_sub_ui (mpz_t r, mpz_t a, unsigned long int ui)
+{
+  mpz_t b;
+
+  mpz_init (b);
+  mpz_set_ui (b, ui);
+  mpz_sub (r, a, b);
+  mpz_clear (b);
 }
 
 void
@@ -422,6 +569,25 @@ mpz_tdiv_q_2exp (mpz_t r, mpz_t a, unsigned long int bcnt)
     }
 }
 
+void
+mpz_tdiv_r_2exp (mpz_t r, mpz_t a, unsigned long int bcnt)
+{
+  int    rn, bwhole;
+
+  mpz_set (r, a);
+  rn = ABSIZ(r);
+
+  bwhole = bcnt / GMP_LIMB_BITS;
+  bcnt %= GMP_LIMB_BITS;
+  if (rn > bwhole)
+    {
+      rn = bwhole+1;
+      PTR(r)[rn-1] &= ((mp_limb_t) 1 << bcnt) - 1;
+      mpn_normalize (PTR(r), &rn);
+      SIZ(r) = (SIZ(r) >= 0 ? rn : -rn);
+    }
+}
+
 int
 mpz_cmp (mpz_t a, mpz_t b)
 {
@@ -447,39 +613,92 @@ mpz_cmp (mpz_t a, mpz_t b)
   return 0;
 }
 
+int
+mpz_cmp_ui (mpz_t a, unsigned long b)
+{
+  mpz_t  bz;
+  int    ret;
+  mpz_init_set_ui (bz, b);
+  ret = mpz_cmp (a, bz);
+  mpz_clear (bz);
+  return ret;
+}
+
+void
+mpz_tdiv_qr (mpz_t q, mpz_t r, mpz_t a, mpz_t b)
+{
+  int            bn;
+  mpz_t          tmpr, tmpb;
+  unsigned long  cnt;
+
+  ASSERT (mpz_sgn(a) >= 0);
+  ASSERT (mpz_sgn(b) > 0);
+
+  mpz_init_set (tmpr, a);
+  mpz_init_set (tmpb, b);
+  mpz_set_ui (q, 0L);
+
+  if (mpz_cmp (tmpr, tmpb) > 0)
+    {
+      cnt = mpz_sizeinbase (tmpr, 2) - mpz_sizeinbase (tmpb, 2) + 1;
+      mpz_mul_2exp (tmpb, tmpb, cnt);
+
+      for ( ; cnt > 0; cnt--)
+        {
+          mpz_mul_2exp (q, q, 1);
+          mpz_tdiv_q_2exp (tmpb, tmpb, 1L);
+          if (mpz_cmp (tmpr, tmpb) >= 0)
+            {
+              mpz_sub (tmpr, tmpr, tmpb);
+              mpz_add_ui (q, q, 1L);
+              ASSERT (mpz_cmp (tmpr, tmpb) < 0);
+            }
+        }
+    }
+
+  mpz_set (r, tmpr);
+  mpz_clear (tmpr);
+  mpz_clear (tmpb);
+}
+
+void
+mpz_tdiv_qr_ui (mpz_t q, mpz_t r, mpz_t a, unsigned long b)
+{
+  mpz_t  bz;
+  mpz_init_set_ui (bz, b);
+  mpz_tdiv_qr (q, r, a, bz);
+  mpz_clear (bz);
+}
+
 void
 mpz_tdiv_q (mpz_t q, mpz_t a, mpz_t b)
 {
-  int       bn;
-  mpz_t     tmpr, tmpb;
-  unsigned  cnt;
+  mpz_t  r;
 
-  bn = ABSIZ (b);
-  if (bn == 0)
-    abort ();
+  mpz_init (r);
+  mpz_tdiv_qr (q, r, a, b);
+  mpz_clear (r);
+}
 
-  mpz_init (tmpr);
-  mpz_init (tmpb);
+/* Set inv to the inverse of d, in the style of invert_limb, ie. for
+   udiv_qrnnd_preinv.  */
+void
+mpz_preinv_invert (mpz_t inv, mpz_t d, int numb_bits)
+{
+  mpz_t  t;
+  int    norm;
+  ASSERT (SIZ(d) > 0);
 
-  mpz_set (tmpr, a);
-  cnt = mpz_sizeinbase (a, 2) - mpz_sizeinbase (b, 2) + 1;
-  mpz_mul_2exp (tmpb, b, cnt);
-  mpz_set_ui (q, 0L);
+  norm = numb_bits - mpz_sizeinbase (d, 2);
+  ASSERT (norm >= 0);
+  mpz_init_set_ui (t, 1L);
+  mpz_mul_2exp (t, t, 2*numb_bits - norm);
+  mpz_tdiv_q (inv, t, d);
+  mpz_set_ui (t, 1L);
+  mpz_mul_2exp (t, t, numb_bits);
+  mpz_sub (inv, inv, t);
 
-  for ( ; cnt != 0; cnt--)
-    {
-      mpz_mul_2exp (q, q, 1);
-      mpz_tdiv_q_2exp (tmpb, tmpb, 1L);
-      if (mpz_cmp (tmpr, tmpb) >= 0)
-	{
-	  mpz_sub (tmpr, tmpr, tmpb);
-	  mpz_add_ui (q, q, 1L);
-          ASSERT (mpz_cmp (tmpr, tmpb) < 0);
-	}
-    }
-
-  mpz_clear (tmpr);
-  mpz_clear (tmpb);
+  mpz_clear (t);
 }
 
 /* Remove leading '0' characters from the start of a string, by copying the
@@ -560,4 +779,43 @@ mpz_out_str (FILE *file, int base, mpz_t a)
   str = mpz_get_str (0, 16, a);
   fputs (str, file);
   free (str);
+}
+
+/* Calculate r satisfying r*d == 1 mod 2^n. */
+void
+mpz_invert_2exp (mpz_t r, mpz_t a, unsigned long n)
+{
+  unsigned long  i;
+  mpz_t  inv, prod;
+
+  ASSERT (mpz_odd_p (a));
+
+  mpz_init_set_ui (inv, 1L);
+  mpz_init (prod);
+
+  for (i = 1; i < n; i++)
+    {
+      mpz_mul (prod, inv, a);
+      if (mpz_tstbit (prod, i) != 0)
+        mpz_setbit (inv, i);
+    }
+
+  mpz_mul (prod, inv, a);
+  mpz_tdiv_r_2exp (prod, prod, n);
+  ASSERT (mpz_cmp_ui (prod, 1L) == 0);
+
+  mpz_set (r, inv);
+
+  mpz_clear (inv);
+  mpz_clear (prod);
+}
+
+/* Calculate inv satisfying r*a == 1 mod 2^n. */
+void
+mpz_invert_ui_2exp (mpz_t r, unsigned long a, unsigned long n)
+{
+  mpz_t  az;
+  mpz_init_set_ui (az, a);
+  mpz_invert_2exp (r, az, n);
+  mpz_clear (az);
 }
