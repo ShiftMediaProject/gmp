@@ -336,6 +336,9 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #endif
 #endif
 
+void __gmpz_aorsmul_1 _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr u, mp_limb_t v, mp_size_t sub))) REGPARM_ATTR(1);
+#define mpz_aorsmul_1(w,u,v,sub)  __gmpz_aorsmul_1 (REGPARM_3_1 (w, u, v, sub))
+
 #if HAVE_NATIVE_mpn_copyi
 #define mpn_copyi __MPN(copyi)
 void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
@@ -955,6 +958,47 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
           }                                     \
       }                                         \
   } while (0)
+
+
+/* mpn +/- limb, in-place and expecting no carry (or borrow). */
+
+#define mpn_incr_u(p,incr) \
+  do { mp_limb_t __x; mp_ptr __p = (p);			\
+    __x = *__p + (incr);				\
+    *__p = __x;						\
+    if (__x < (incr))					\
+      while (++(*(++__p)) == 0)				\
+        ;						\
+  } while (0)
+
+#define mpn_decr_u(p,incr) \
+  do { mp_limb_t __x; mp_ptr __p = (p);			\
+    __x = *__p;						\
+    *__p = __x - (incr);				\
+    if (__x < (incr))					\
+      while ((*(++__p))-- == 0)				\
+        ;						\
+  } while (0)
+
+/* The following take an intended size for the mpn being incremented, so
+   assertions can guard against a carry or borrow out.
+
+   FIXME: Implement MPN_{INCR,DECR}_U with a block of code like mpn_incr_u
+   with the assertions builtin, rather than using the separate add_1 and
+   sub_1 when assertion checking.
+
+   FIXME: Switch all code from mpn_{incr,decr}_u to MPN_{INCR,DECR}_U,
+   declaring their operand sizes, then remove the former.  */
+
+#if WANT_ASSERT
+#define MPN_INCR_U(ptr, size, n) \
+  ASSERT_NOCARRY (mpn_add_1 (ptr, ptr, size, n))
+#define MPN_DECR_U(ptr, size, n) \
+  ASSERT_NOCARRY (mpn_sub_1 (ptr, ptr, size, n))
+#else
+#define MPN_INCR_U(ptr, size, n)   mpn_incr_u (ptr, n)
+#define MPN_DECR_U(ptr, size, n)   mpn_decr_u (ptr, n)
+#endif
 
 
 /* Structure for conversion between internal binary format and
