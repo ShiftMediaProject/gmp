@@ -39,7 +39,6 @@ MA 02111-1307, USA.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -54,7 +53,6 @@ MA 02111-1307, USA.
 
 
 int option_pari = 0;
-gmp_randstate_t rands;
 
 
 unsigned long
@@ -630,6 +628,7 @@ check_data (void)
 void
 check_squares_zi (void)
 {
+  gmp_randstate_ptr rands = RANDS;
   mpz_t  a, b, g;
   int    i, answer;
   mp_size_t size_range, an, bn;
@@ -713,22 +712,7 @@ check_a_zero (void)
 int
 main (int argc, char *argv[])
 {
-  char *perform_seed;
-
   tests_start ();
-
-  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
-
-  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
-  if (perform_seed != 0)
-    {
-      struct timeval tv;
-      gettimeofday (&tv, NULL);
-      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
-      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
-      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
-	      tv.tv_sec + tv.tv_usec);
-    }
 
   if (argc >= 2 && strcmp (argv[1], "-p") == 0)
     {
@@ -747,8 +731,6 @@ try(a,b,answer) =\n\
   check_data ();
   check_squares_zi ();
   check_a_zero ();
-
-  gmp_randclear (rands);
 
   tests_end ();
   exit (0);

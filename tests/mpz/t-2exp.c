@@ -22,7 +22,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -36,25 +35,12 @@ main (int argc, char **argv)
   unsigned long int c;
   int test;
   int ntests = 50000;
-  gmp_randstate_t rands;
+  gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
-  char *perform_seed;
 
   tests_start ();
-
-  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
-
-  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
-  if (perform_seed != 0)
-    {
-      struct timeval tv;
-      gettimeofday (&tv, NULL);
-      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
-      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
-      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
-	      tv.tv_sec + tv.tv_usec);
-    }
+  rands = RANDS;
 
   mpz_init (bs);
 
@@ -111,7 +97,6 @@ main (int argc, char **argv)
   mpz_clear (r2);
   mpz_clear (d);
   mpz_clear (t);
-  gmp_randclear (rands);
 
   tests_end ();
   exit (0);
