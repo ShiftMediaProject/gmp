@@ -1,4 +1,4 @@
-/* config.in.  Generated automatically from configure.in by autoheader.  */
+/* config.in.  Generated from configure.in by autoheader.  */
 /* Templates for defines setup by configure.
 
 Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
@@ -19,7 +19,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
-
 
 
 /* Define one (and only one) of these for the CPU host.
@@ -179,7 +178,7 @@ MA 02111-1307, USA. */
 /* The gmp-mparam.h to update when tuning. */
 #undef GMP_MPARAM_H_SUGGEST
 
-/* Define if you have the `alarm' function. */
+/* Define to 1 if you have the `alarm' function. */
 #undef HAVE_ALARM
 
 /* Define if alloca() works (via gmp-impl.h). */
@@ -203,13 +202,13 @@ MA 02111-1307, USA. */
 /* Define if tests/libtests has calling conventions checking for the CPU */
 #undef HAVE_CALLING_CONVENTIONS
 
-/* Define if you have the `clock' function. */
+/* Define to 1 if you have the `clock' function. */
 #undef HAVE_CLOCK
 
-/* Define if you have the `clock_gettime' function. */
+/* Define to 1 if you have the `clock_gettime' function. */
 #undef HAVE_CLOCK_GETTIME
 
-/* Define if you have the `cputime' function. */
+/* Define to 1 if you have the `cputime' function. */
 #undef HAVE_CPUTIME
 
 /* Define to 1 if you have the declaration of `fgetc', and to 0 if you don't.
@@ -235,7 +234,7 @@ MA 02111-1307, USA. */
 /* Define if denormalized floats work. */
 #undef HAVE_DENORMS
 
-/* Define if you have the <dlfcn.h> header file. */
+/* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
 /* Define one (and only one) of the following for the format of a `double'.
@@ -250,28 +249,28 @@ MA 02111-1307, USA. */
 #undef HAVE_DOUBLE_VAX_G
 #undef HAVE_DOUBLE_CRAY_CFP
 
-/* Define if you have the <fcntl.h> header file. */
+/* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
-/* Define if you have the <fpu_control.h> header file. */
+/* Define to 1 if you have the <fpu_control.h> header file. */
 #undef HAVE_FPU_CONTROL_H
 
-/* Define if you have the `getpagesize' function. */
+/* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
-/* Define if you have the `getrusage' function. */
+/* Define to 1 if you have the `getrusage' function. */
 #undef HAVE_GETRUSAGE
 
-/* Define if you have the `gettimeofday' function. */
+/* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
 /* Define if 0/0, 1/0, -1/0 and sqrt(-1) work to generate NaN/infinities. */
 #undef HAVE_INFS
 
-/* Define if the system has the type `intmax_t'. */
+/* Define to 1 if the system has the type `intmax_t'. */
 #undef HAVE_INTMAX_T
 
-/* Define if you have the <inttypes.h> header file. */
+/* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
 /* Define one (just one) of the following for the endiannes of `mp_limb_t'.
@@ -280,145 +279,145 @@ MA 02111-1307, USA. */
 #undef HAVE_LIMB_BIG_ENDIAN
 #undef HAVE_LIMB_LITTLE_ENDIAN
 
-/* Define if you have the `localeconv' function. */
+/* Define to 1 if you have the `localeconv' function. */
 #undef HAVE_LOCALECONV
 
-/* Define if you have the <locale.h> header file. */
+/* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
 
-/* Define if the system has the type `long double'. */
+/* Define to 1 if the system has the type `long double'. */
 #undef HAVE_LONG_DOUBLE
 
-/* Define if the system has the type `long long'. */
+/* Define to 1 if the system has the type `long long'. */
 #undef HAVE_LONG_LONG
 
-/* Define if you have the `lrand48' function. */
+/* Define to 1 if you have the `lrand48' function. */
 #undef HAVE_LRAND48
 
-/* Define if you have the <memory.h> header file. */
+/* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define if you have the `memset' function. */
+/* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
 
-/* Define if you have the `mmap' function. */
+/* Define to 1 if you have the `mmap' function. */
 #undef HAVE_MMAP
 
-/* Define if you have the `mprotect' function. */
+/* Define to 1 if you have the `mprotect' function. */
 #undef HAVE_MPROTECT
 
-/* Define if you have the `obstack_vprintf' function. */
+/* Define to 1 if you have the `obstack_vprintf' function. */
 #undef HAVE_OBSTACK_VPRINTF
 
-/* Define if you have the `popen' function. */
+/* Define to 1 if you have the `popen' function. */
 #undef HAVE_POPEN
 
-/* Define if you have the `processor_info' function. */
+/* Define to 1 if you have the `processor_info' function. */
 #undef HAVE_PROCESSOR_INFO
 
-/* Define if the system has the type `ptrdiff_t'. */
+/* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T
 
-/* Define if the system has the type `quad_t'. */
+/* Define to 1 if the system has the type `quad_t'. */
 #undef HAVE_QUAD_T
 
-/* Define if you have the `read_real_time' function. */
+/* Define to 1 if you have the `read_real_time' function. */
 #undef HAVE_READ_REAL_TIME
 
-/* Define if you have the `sigaction' function. */
+/* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION
 
-/* Define if you have the `sigaltstack' function. */
+/* Define to 1 if you have the `sigaltstack' function. */
 #undef HAVE_SIGALTSTACK
 
-/* Define if you have the `sigstack' function. */
+/* Define to 1 if you have the `sigstack' function. */
 #undef HAVE_SIGSTACK
 
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
-/* Define if the system has the type `stack_t'. */
+/* Define to 1 if the system has the type `stack_t'. */
 #undef HAVE_STACK_T
 
 /* Define if <stdarg.h> exists and works */
 #undef HAVE_STDARG
 
-/* Define if you have the <stdint.h> header file. */
+/* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
-/* Define if you have the <stdlib.h> header file. */
+/* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define if you have the `strcasecmp' function. */
+/* Define to 1 if you have the `strcasecmp' function. */
 #undef HAVE_STRCASECMP
 
-/* Define if you have the `strchr' function. */
+/* Define to 1 if you have the `strchr' function. */
 #undef HAVE_STRCHR
 
-/* Define if cpp supports the ANSI # stringizing operator. */
+/* Define to 1 if cpp supports the ANSI # stringizing operator. */
 #undef HAVE_STRINGIZE
 
-/* Define if you have the <strings.h> header file. */
+/* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
 
-/* Define if you have the <string.h> header file. */
+/* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define if you have the `strnlen' function. */
+/* Define to 1 if you have the `strnlen' function. */
 #undef HAVE_STRNLEN
 
-/* Define if you have the `strtoul' function. */
+/* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
 
-/* Define if you have the `sysconf' function. */
+/* Define to 1 if you have the `sysconf' function. */
 #undef HAVE_SYSCONF
 
-/* Define if you have the `sysctl' function. */
+/* Define to 1 if you have the `sysctl' function. */
 #undef HAVE_SYSCTL
 
-/* Define if you have the `sysctlbyname' function. */
+/* Define to 1 if you have the `sysctlbyname' function. */
 #undef HAVE_SYSCTLBYNAME
 
-/* Define if you have the `syssgi' function. */
+/* Define to 1 if you have the `syssgi' function. */
 #undef HAVE_SYSSGI
 
-/* Define if you have the <sys/mman.h> header file. */
+/* Define to 1 if you have the <sys/mman.h> header file. */
 #undef HAVE_SYS_MMAN_H
 
-/* Define if you have the <sys/param.h> header file. */
+/* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
 
-/* Define if you have the <sys/processor.h> header file. */
+/* Define to 1 if you have the <sys/processor.h> header file. */
 #undef HAVE_SYS_PROCESSOR_H
 
-/* Define if you have the <sys/resource.h> header file. */
+/* Define to 1 if you have the <sys/resource.h> header file. */
 #undef HAVE_SYS_RESOURCE_H
 
-/* Define if you have the <sys/stat.h> header file. */
+/* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
-/* Define if you have the <sys/sysctl.h> header file. */
+/* Define to 1 if you have the <sys/sysctl.h> header file. */
 #undef HAVE_SYS_SYSCTL_H
 
-/* Define if you have the <sys/syssgi.h> header file. */
+/* Define to 1 if you have the <sys/syssgi.h> header file. */
 #undef HAVE_SYS_SYSSGI_H
 
-/* Define if you have the <sys/systemcfg.h> header file. */
+/* Define to 1 if you have the <sys/systemcfg.h> header file. */
 #undef HAVE_SYS_SYSTEMCFG_H
 
-/* Define if you have the <sys/times.h> header file. */
+/* Define to 1 if you have the <sys/times.h> header file. */
 #undef HAVE_SYS_TIMES_H
 
-/* Define if you have the <sys/time.h> header file. */
+/* Define to 1 if you have the <sys/time.h> header file. */
 #undef HAVE_SYS_TIME_H
 
-/* Define if you have the <sys/types.h> header file. */
+/* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define if you have the `times' function. */
+/* Define to 1 if you have the `times' function. */
 #undef HAVE_TIMES
 
-/* Define if you have the <unistd.h> header file. */
+/* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
 /* Define if you have vsnprintf and it works properly. */
@@ -433,6 +432,21 @@ MA 02111-1307, USA. */
 
 /* Name of package */
 #undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
 
 /* Define if compiler has function prototypes */
 #undef PROTOTYPES
@@ -449,10 +463,10 @@ MA 02111-1307, USA. */
 /* Define if sscanf requires writable inputs */
 #undef SSCANF_WRITABLE_INPUT
 
-/* Define if you have the ANSI C header files. */
+/* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Define if you can safely include both <sys/time.h> and <time.h>. */
+/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
 
 /* Maximum size the tune program can test for SQR_KARATSUBA_THRESHOLD */
@@ -479,12 +493,12 @@ MA 02111-1307, USA. */
 /* --enable-alloca=malloc-reentrant */
 #undef WANT_TMP_REENTRANT
 
-/* Define if your processor stores words with the most significant byte first
-   (like Motorola and SPARC, unlike Intel and VAX). */
+/* Define to 1 if your processor stores words with the most significant byte
+   first (like Motorola and SPARC, unlike Intel and VAX). */
 #undef WORDS_BIGENDIAN
 
-/* Define if `lex' declares `yytext' as a `char *' by default, not a `char[]'.
-   */
+/* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
+   `char[]'. */
 #undef YYTEXT_POINTER
 
 /* Define as `__inline' if that's what the C compiler calls it, or to nothing
