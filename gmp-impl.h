@@ -295,8 +295,6 @@ mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_siz
 mp_limb_t mpn_bz_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 /* void mpn_tdiv_q _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t)); */
 
-#define mpn_zero_p  __MPN(zero_p)
-int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
 
 /* Copy NLIMBS *limbs* from SRC to DST, NLIMBS==0 allowed.  */
 #ifndef MPN_COPY_INCR
@@ -423,6 +421,25 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
     if ((needed) > ALLOC (what))				\
       _mpz_realloc (what, needed);				\
   } while (0)
+
+
+#if defined (__GNUC__) || defined (_FORCE_INLINES)
+/* n==0 is allowed and is considered a zero value.  */
+#define mpn_zero_p  __MPN(zero_p)
+int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
+_EXTERN_INLINE int
+mpn_zero_p (mp_srcptr p, mp_size_t n)
+{
+  mp_size_t i;
+
+  for (i = 0; i < n; i++)
+    if (p[i] != 0)
+      return 0;
+
+  return 1;
+}
+#endif
+
 
 /* If KARATSUBA_MUL_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
