@@ -1,6 +1,6 @@
 /* mpz_inp_raw -- read an mpz_t in raw format.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -47,8 +47,8 @@ MA 02111-1307, USA. */
   do {                                                          \
     const unsigned char  *__p = (const unsigned char *) (src);  \
     (limb) =                                                    \
-      + ((mp_limb_t) __p[0] << 8)                               \
-      +  (mp_limb_t) __p[1];                                    \
+      ( (mp_limb_t) __p[0] << 8)                                \
+      + (mp_limb_t) __p[1];                                     \
   } while (0)
 #endif
 #if BITS_PER_MP_LIMB == 32
