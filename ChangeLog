@@ -18,6 +18,29 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-29  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (sparc*-*-*): Use gcc -m32 when that option works, to
+	force 32-bit mode on dual 32/64 configurations like GNU/Linux.
+	(sparc64-*-linux*): Add support for ABI=64.
+
+	* mpn/generic/pre_divrem_1.c: In fraction part, use CNST_LIMB(0) with
+	udiv_qrnnd_preinv to avoid warning about shift > type.
+
+	* mpfr/*: Update to mpfr-2-0-2-branch 2003-10-29.
+
+	* tests/cxx/t-istream.cc: Avoid tellg() checks if putback() doesn't
+	update that, avoids certain g++ 2.96 problems.
+
+	* tests/mpn/t-fat.c: New file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add it.
+
+	* configure.in (CPUVEC_INSTALL, ITERATE_FAT_THRESHOLDS): New macros
+	for fat.h.
+	* mpn/x86/fat/fat.c (__gmpn_cpuvec_init): Use CPUVEC_INSTALL instead
+	of memcpy.  Correction to location of "initialized" set.  Improve
+	various comments.
+
 2003-10-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc64/mul_1.asm: Change addcc => add in a few places.
