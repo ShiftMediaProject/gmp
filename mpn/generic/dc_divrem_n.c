@@ -6,7 +6,7 @@
    FUTURE GNU MP RELEASE.
 
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 Contributed by Paul Zimmermann.
 
 This file is part of the GNU MP Library.
@@ -35,35 +35,10 @@ MA 02111-1307, USA. */
     http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz
 */
 
-static mp_limb_t mpn_dc_div_3_halves_by_2
-  _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n));
-
-
-#if 0
-static
-unused_mpn_divrem (qp, qxn, np, nn, dp, dn)
-     mp_ptr qp;
-     mp_size_t qxn;
-     mp_ptr np;
-     mp_size_t nn;
-     mp_srcptr dp;
-     mp_size_t dn;
-{
-  /* This might be useful: */
-  if (qxn != 0)
-    {
-      mp_limb_t c;
-      mp_ptr tp = alloca ((nn + qxn) * BYTES_PER_MP_LIMB);
-      MPN_COPY (tp + qxn - nn, np, nn);
-      MPN_ZERO (tp, qxn);
-      c = mpn_divrem (qp, 0L, tp, nn + qxn, dp, dn);
-      /* Maybe copy proper part of tp to np?  Documentation is unclear about
-	 the returned np value when qxn != 0 */
-      return c;
-    }
-}
-#endif
-
+static mp_limb_t mpn_dc_div_3_by_2
+  _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr scratch));
+static mp_limb_t mpn_dc_div_2_by_1
+  _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr scratch));
 
 /* mpn_dc_divrem_n - Implements algorithm of page 8 in [1]: divides (np,2n)
    by (dp,n) and puts the quotient in (qp,n), the remainder in (np,n).
@@ -73,28 +48,48 @@ unused_mpn_divrem (qp, qxn, np, nn, dp, dn)
 mp_limb_t
 mpn_dc_divrem_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
 {
+  mp_limb_t ret;
+  mp_ptr scratch;
+  TMP_DECL (marker);
+  TMP_MARK (marker);
+
+  scratch = TMP_ALLOC_LIMBS (n);
+  ret = mpn_dc_div_2_by_1 (qp, np, dp, n, scratch);
+
+  TMP_FREE (marker);
+  return ret;
+}
+
+static mp_limb_t
+mpn_dc_div_2_by_1 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
+{
   mp_limb_t qhl, cc;
+  mp_size_t n2 = n/2;
 
   if (n % 2 != 0)
     {
-      qhl = mpn_dc_divrem_n (qp + 1, np + 2, dp + 1, n - 1);
-      cc = mpn_submul_1 (np + 1, qp + 1, n - 1, dp[0]);
+      mp_ptr qp1 = qp + 1;
+      qhl = mpn_dc_div_3_by_2 (qp1 + n2, np + 2 + n2, dp + 1, n2, scratch);
+      qhl += mpn_add_1 (qp1 + n2, qp1 + n2, n2,
+			mpn_dc_div_3_by_2 (qp1, np + 2, dp + 1, n2, scratch));
+
+      cc = mpn_submul_1 (np + 1, qp1, n - 1, dp[0]);
       cc = mpn_sub_1 (np + n, np + n, 1, cc);
-      if (qhl) cc += mpn_sub_1 (np + n, np + n, 1, dp[0]);
-      while (cc)
+      if (qhl != 0)
+	cc += mpn_sub_1 (np + n, np + n, 1, dp[0]);
+      while (cc != 0)
 	{
-	  qhl -= mpn_sub_1 (qp + 1, qp + 1, n - 1, (mp_limb_t) 1);
+	  qhl -= mpn_sub_1 (qp1, qp1, n - 1, (mp_limb_t) 1);
 	  cc -= mpn_add_n (np + 1, np + 1, dp, n);
 	}
-      qhl += mpn_add_1 (qp + 1, qp + 1, n - 1,
+      qhl += mpn_add_1 (qp1, qp1, n - 1,
 			mpn_sb_divrem_mn (qp, np, n + 1, dp, n));
     }
   else
     {
-      mp_size_t n2 = n/2;
-      qhl = mpn_dc_div_3_halves_by_2 (qp + n2, np + n2, dp, n2);
+      qhl = mpn_dc_div_3_by_2 (qp + n2, np + n2, dp, n2, scratch);
       qhl += mpn_add_1 (qp + n2, qp + n2, n2,
-			mpn_dc_div_3_halves_by_2 (qp, np, dp, n2));
+			mpn_dc_div_3_by_2 (qp, np, dp, n2, scratch));
     }
   return qhl;
 }
@@ -104,24 +99,22 @@ mpn_dc_divrem_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
    the remainder in (np, 2n) */
 
 static mp_limb_t
-mpn_dc_div_3_halves_by_2 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
+mpn_dc_div_3_by_2 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n, mp_ptr scratch)
 {
   mp_size_t twon = n + n;
   mp_limb_t qhl, cc;
-  mp_ptr tmp;
-  TMP_DECL (marker);
 
-  TMP_MARK (marker);
   if (n < DIV_DC_THRESHOLD)
     qhl = mpn_sb_divrem_mn (qp, np + n, twon, dp + n, n);
   else
-    qhl = mpn_dc_divrem_n (qp, np + n, dp + n, n);
-  tmp = (mp_ptr) TMP_ALLOC (twon * BYTES_PER_MP_LIMB);
-  mpn_mul_n (tmp, qp, dp, n);
-  cc = mpn_sub_n (np, np, tmp, twon);
-  TMP_FREE (marker);
-  if (qhl) cc += mpn_sub_n (np + n, np + n, dp, n);
-  while (cc)
+    qhl = mpn_dc_div_2_by_1 (qp, np + n, dp + n, n, scratch);
+
+  mpn_mul_n (scratch, qp, dp, n);
+  cc = mpn_sub_n (np, np, scratch, twon);
+
+  if (qhl != 0)
+    cc += mpn_sub_n (np + n, np + n, dp, n);
+  while (cc != 0)
     {
       qhl -= mpn_sub_1 (qp, qp, n, (mp_limb_t) 1);
       cc -= mpn_add_n (np, np, dp, twon);
