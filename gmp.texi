@@ -422,7 +422,7 @@ code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
 
 There is carefully optimized assembly code for these CPUs:
-@cindex CPUs supported
+@cindex CPU types
 ARM,
 DEC Alpha 21064, 21164, and 21264,
 AMD 29000,
@@ -537,7 +537,6 @@ installation information too.
 
 @table @asis
 @item Non-Unix Systems
-
 @samp{configure} requires various Unix-like tools.  On an MS-DOS system DJGPP
 can be used, and on MS Windows Cygwin or MINGW can be used,
 
@@ -555,7 +554,6 @@ It might be possible to build without the help of @samp{configure}, certainly
 all the code is there, but unfortunately you'll be on your own.
 
 @item Build Directory
-
 To compile in a separate build directory, @command{cd} to that directory, and
 prefix the configure command with the path to the GMP source directory.  For
 example
@@ -571,14 +569,12 @@ make them unable to build in a separate directory.  Use GNU @command{make}
 instead.
 
 @item @option{--disable-shared}, @option{--disable-static}
-
 By default both shared and static libraries are built (where possible), but
 one or other can be disabled.  Shared libraries result in smaller executables
 and permit code sharing between separate running processes, but on some CPUs
 are slightly slower, having a small cost on each function call.
 
 @item Native Compilation, @option{--build=CPU-VENDOR-OS}
-
 For normal native compilation, the system can be specified with
 @samp{--build}.  By default @samp{./configure} uses the output from running
 @samp{./config.guess}.  On some systems @samp{./config.guess} can determine
@@ -594,7 +590,6 @@ generates shared libraries.  Running @samp{./config.guess} is the simplest way
 to see what it should be, if you don't know already.
 
 @item Cross Compilation, @option{--host=CPU-VENDOR-OS}
-
 When cross-compiling, the system used for compiling is given by @samp{--build}
 and the system where the library will run is given by @samp{--host}.  For
 example when using a FreeBSD Athlon system to build GNU/Linux m68k binaries,
@@ -634,7 +629,7 @@ libraries like GMP are only interested in the @samp{--host} part, being where
 they'll run.  (Some past versions of GMP used @samp{--target} incorrectly.)
 
 @item CPU types
-
+@cindex CPU types
 In general, if you want a library that runs as fast as possible, you should
 configure GMP for the exact CPU type your system uses.  However, this may mean
 the binaries won't run on older members of the family, and might run slower on
@@ -762,6 +757,7 @@ Other:
 @nisamp{arm},
 @nisamp{clipper},
 @nisamp{i960},
+@nisamp{ia64},
 @nisamp{ns32k},
 @nisamp{pyramid},
 @nisamp{sh},
@@ -773,7 +769,6 @@ Other:
 CPUs not listed will use generic C code.
 
 @item Generic C Build
-
 If some of the assembly code causes problems, or if otherwise desired, the
 generic C code can be selected with CPU @samp{none}.  For example,
 
@@ -785,7 +780,7 @@ Note that this will run quite slowly, but it should be portable and should at
 least make it possible to get something running if all else fails.
 
 @item @option{ABI}
-
+@cindex ABI
 On some systems GMP supports multiple ABIs (application binary interfaces),
 meaning data type sizes and calling conventions.  By default GMP chooses the
 best ABI available, but a particular ABI can be selected.  For example
@@ -798,7 +793,7 @@ See @ref{ABI and ISA}, for the available choices on relevant CPUs, and what
 applications need to do.
 
 @item @option{CC}, @option{CFLAGS}
-
+@cindex @code{CFLAGS}
 By default the C compiler used is chosen from among some likely candidates,
 with @command{gcc} normally preferred if it's present.  The usual
 @samp{CC=whatever} can be passed to @samp{./configure} to choose something
@@ -823,7 +818,6 @@ compiler will be used (if GMP recognises it).  For example @samp{CC=gcc} can
 be used to force the use of GCC, with default flags (and default ABI).
 
 @item @option{CPPFLAGS}
-
 Any flags like @samp{-D} defines or @samp{-I} includes required by the
 preprocessor should be set in @samp{CPPFLAGS} rather than @samp{CFLAGS}.
 Compiling is done with both @samp{CPPFLAGS} and @samp{CFLAGS}, but
@@ -855,6 +849,7 @@ built it, since name mangling and runtime support are usually incompatible
 between different compilers.
 
 @item @option{CXX}, @option{CXXFLAGS}
+@cindex @code{CXXFLAGS}
 When C++ support is enabled, the C++ compiler and its flags can be set with
 variables @samp{CXX} and @samp{CXXFLAGS} in the usual way.  The default for
 @samp{CXX} is the first compiler that works from a list of likely candidates,
@@ -880,7 +875,6 @@ building an executable or shared library from object files.
 @item Temporary Memory, @option{--enable-alloca=<choice>}
 @cindex Stack overflow
 @cindex @code{alloca}
-
 GMP allocates temporary workspace using one of the following three methods,
 which can be selected with for instance
 @samp{--enable-alloca=malloc-reentrant}.
@@ -895,7 +889,7 @@ which can be selected with for instance
 @end itemize
 
 For convenience, the following choices are also available.
-@samp{--disable-alloca} is the same as @samp{--enable-alloca=no}.
+@samp{--disable-alloca} is the same as @samp{no}.
 
 @itemize @bullet
 @item
@@ -930,36 +924,31 @@ An additional choice @samp{--enable-alloca=debug} is available, to help when
 debugging memory related problems (@pxref{Debugging}).
 
 @item FFT Multiplication, @option{--disable-fft}
-
 By default multiplications are done using Karatsuba, 3-way Toom-Cook, and
 Fermat FFT.  The FFT is only used on large to very large operands and can be
 disabled to save code size if desired.
 
 @item Berkeley MP, @option{--enable-mpbsd}
-
 The Berkeley MP compatibility library (@file{libmp}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
 @item MPFR, @option{--enable-mpfr}
 @cindex MPFR
-
 The optional MPFR functions are built and installed only if
 @option{--enable-mpfr} is used.  These are in a separate library
 @file{libmpfr.a} and are documented separately too (@pxref{Introduction to
 MPFR,, Introduction to MPFR, mpfr, MPFR}).
 
 @item Assertion Checking, @option{--enable-assert}
-
+@cindex Assertion checking
 This option enables some consistency checking within the library.  This can be
 of use while debugging, @pxref{Debugging}.
 
 @item Execution Profiling, @option{--enable-profiling=prof/gprof/instrument}
-
 Enable profiling support, in one of various styles, @pxref{Profiling}.
 
 @item @option{MPN_PATH}
-
 Various assembler versions of each mpn subroutines are provided.  For a given
 CPU, a search is made though a path to choose a version of each.  For example
 @samp{sparcv8} has
@@ -975,7 +964,6 @@ can specify a different path.  Normally this is completely unnecessary.
 @item Demonstration Programs
 @cindex Demonstration programs
 @cindex Example programs
-
 The @file{demos} subdirectory has some sample programs using GMP.  These
 aren't built or installed, but there's a @file{Makefile} with rules for them.
 For instance,
@@ -986,7 +974,6 @@ make pexpr
 @end example
 
 @item Documentation
-
 The document you're now reading is @file{gmp.texi}.  The usual automake
 targets are available to make PostScript @file{gmp.ps} and/or DVI
 @file{gmp.dvi}.
@@ -1053,10 +1040,8 @@ with a fresh @command{./configure} and @command{make} each.
 @sp 1
 @need 1000
 @item HPPA 2.0 (@samp{hppa2.0*})
-
 @table @asis
 @item @samp{ABI=2.0w}
-
 The 2.0w ABI uses 64-bit limbs and pointers and is available on HP-UX 11 or up
 when using @command{cc}.  @command{gcc} support for this is in progress.
 Applications must be compiled with
@@ -1066,7 +1051,6 @@ cc  +DD64
 @end example
 
 @item @samp{ABI=2.0n}
-
 The 2.0n ABI means the 32-bit HPPA 1.0 ABI but with a 64-bit limb using
 @code{long long}.  This is available on HP-UX 10 or up when using
 @command{cc}.  No @command{gcc} support is planned for this.  Applications
@@ -1077,7 +1061,6 @@ cc  +DA2.0 +e
 @end example
 
 @item @samp{ABI=1.0}
-
 HPPA 2.0 CPUs can run all HPPA 1.0 and 1.1 code in the 32-bit HPPA 1.0 ABI.
 No special compiler options are needed for applications.
 @end table
@@ -1086,18 +1069,16 @@ All three ABIs are available for CPUs @samp{hppa2.0w} and @samp{hppa2.0}, but
 for CPU @samp{hppa2.0n} only 2.0n or 1.0 are allowed.
 
 @sp 1
-@need 1000
+@need 1500
 @item IA-64 under HP-UX (@samp{ia64*-*-hpux*})
-
 HP-UX supports two ABIs for IA-64.  GMP performance is the same in both.
 
 @table @asis
 @item @samp{ABI=32}
-
-In the 32-bit ABI pointers, @code{int}s and @code{long}s are all 32 bits and
-GMP uses a @code{long long} (which is 64 bits) for a limb.  No special options
-are required for since this is the default for both HP C and GCC, but for
-reference the flags are
+In the 32-bit ABI pointers, @code{int}s and @code{long}s are 32 bits and GMP
+uses a 64 bit @code{long long} for a limb.  Applications can be compiled
+without any special flags since this is the default in both HP C and GCC, but
+for reference the flags are
 
 @example
 gcc  -milp32
@@ -1105,9 +1086,8 @@ cc   +DD32
 @end example
 
 @item @samp{ABI=64}
-
-In the 64-bit ABI, @code{long}s and pointers are 64 bits and GMP uses an
-@code{unsigned long} for a limb.  Applications must be compiled with
+In the 64-bit ABI, @code{long}s and pointers are 64 bits and GMP uses a
+@code{long} for a limb.  Applications must be compiled with
 
 @example
 gcc  -mlp64
@@ -1116,19 +1096,28 @@ cc   +DD64
 @end table
 
 On other IA-64 systems, GNU/Linux for instance, @samp{ABI=64} is the only
-choice, both for GMP and GCC.
+choice.
 
 @sp 1
 @need 1000
 @item MIPS under IRIX 6 (@samp{mips*-*-irix[6789]})
-
-IRIX 6 supports the n32 and 64 ABIs and always has a 64-bit MIPS 3 or better
-CPU.  In both these ABIs GMP uses a 64-bit limb.  A new enough @command{gcc}
-is required (2.95 for instance).
+IRIX 6 always has a 64-bit MIPS 3 or better CPU, and supports ABIs o32, n32,
+and 64.  n32 or 64 are recommended, and GMP performance will be the same in
+each.  The default is n32.
 
 @table @asis
-@item @samp{ABI=n32}
+@item @samp{ABI=o32}
+The o32 ABI is 32-bit pointers and integers, and no 64-bit operations.  GMP
+will be slower than in n32 or 64, this option only exists to support old
+compilers, eg. GCC 2.7.2.  Applications can be compiled with no special flags
+on an old compiler, or on a newer compiler with
 
+@example
+gcc  -mabi=32
+cc   -32
+@end example
+
+@item @samp{ABI=n32}
 The n32 ABI is 32-bit pointers and integers, but with a 64-bit limb using a
 @code{long long}.  Applications must be compiled with
 
@@ -1138,7 +1127,6 @@ cc   -n32
 @end example
 
 @item @samp{ABI=64}
-
 The 64-bit ABI is 64-bit pointers and integers.  Applications must be compiled
 with
 
@@ -1154,10 +1142,8 @@ support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
 @sp 1
 @need 1000
 @item PowerPC 64 (@samp{powerpc64*})
-
 @table @asis
 @item @samp{ABI=aix64}
-
 The AIX 64 ABI uses 64-bit limbs and pointers and is available on systems
 @samp{powerpc64*-*-aix*}.  Applications must be compiled with
 
@@ -1167,7 +1153,6 @@ xlc  -q64
 @end example
 
 @item @samp{ABI=32L}
-
 This uses the 32-bit ABI but a 64-bit limb using GCC @code{long long} in
 64-bit registers.  Applications must be compiled with
 
@@ -1176,7 +1161,6 @@ gcc  -mpowerpc64
 @end example
 
 @item @samp{ABI=32}
-
 This is the basic 32-bit PowerPC ABI.  No special compiler options are needed
 for applications.
 @end table
@@ -1187,9 +1171,9 @@ for applications.
 
 @table @asis
 @item @samp{ABI=64}
-
-The 64-bit V9 ABI is available on Solaris 2.7 and up and GNU/Linux.  GCC 2.95
-or up, or Sun @command{cc} is required.  Applications must be compiled with
+The 64-bit V9 ABI is available on Solaris 2.7 and up, and on GNU/Linux.  GCC
+2.95 or up, or Sun @command{cc} is required.  Applications must be compiled
+with
 
 @example
 gcc  -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9
@@ -1197,7 +1181,6 @@ cc   -xarch=v9
 @end example
 
 @item @samp{ABI=32}
-
 On Solaris 2.6 and earlier, and on Solaris 2.7 with the kernel in 32-bit mode,
 only the plain V8 32-bit ABI can be used, since the kernel doesn't save all
 registers.  GMP still uses as much of the V9 ISA as it can in these
@@ -1286,7 +1269,6 @@ dependent.
 @c above section.
 
 @item AIX 3 and 4
-
 On systems @samp{*-*-aix[34]*} shared libraries are disabled by default, since
 some versions of the native @command{ar} fail on the convenience libraries
 used.  A shared build can be attempted with
@@ -1302,7 +1284,6 @@ but unfortunately this is done even if a fully functional @command{ld} is
 available.
 
 @item ARM
-
 On systems @samp{arm*-*-*}, versions of GCC up to and including 2.95.3 have a
 bug in unsigned division, giving wrong results for some operands.  GMP
 @samp{./configure} will demand GCC 2.95.4 or later.
@@ -1333,21 +1314,18 @@ cp _libs/libgmp-3.dll-exp /my/inst/dir/lib/libgmp-3.exp
 @end example
 
 @item Motorola 68k CPU Types
-
 @samp{m68k} is taken to mean 68000.  @samp{m68020} or higher will give a
 performance boost on applicable CPUs.  @samp{m68360} can be used for CPU32
 series chips.  @samp{m68302} can be used for ``Dragonball'' series chips,
 though this is merely a synonym for @samp{m68000}.
 
 @item OpenBSD 2.6
-
 @command{m4} in this release of OpenBSD has a bug in @code{eval} that makes it
 unsuitable for @file{.asm} file processing.  @samp{./configure} will detect
 the problem and either abort or choose another m4 in the @env{PATH}.  The bug
 is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
 
 @item Power CPU Types
-
 In GMP, CPU types @samp{power*} and @samp{powerpc*} will each use instructions
 not available on the other, so it's important to choose the right one for the
 CPU that will be used.  Currently GMP has no assembler code support for using
@@ -1359,19 +1337,16 @@ workstations) is accepted by @file{config.sub}, but is currently equivalent to
 @samp{none}.
 
 @item Sparc CPU Types
-
 @samp{sparcv8} or @samp{supersparc} on relevant systems will give a
 significant performance increase over the V7 code.
 
 @item SunOS 4
-
 @command{/usr/bin/m4} lacks various features needed to process @file{.asm}
 files, and instead @samp{./configure} will automatically use
 @command{/usr/5bin/m4}, which we believe is always available (if not then use
 GNU m4).
 
 @item x86 CPU Types
-
 @samp{i386} selects generic code which will run reasonably well on all x86
 chips.
 
@@ -1385,7 +1360,6 @@ on Pentium 4.  The specific code is for instance roughly a 2@cross{} to
 3@cross{} speedup over the generic @samp{i386} code.
 
 @item x86 MMX and SSE2 Code
-
 If the CPU selected has MMX code but the assembler doesn't support it, a
 warning is given and non-MMX code is used instead.  This will be an inferior
 build, since the MMX code that's present is there because it's faster than the
@@ -1398,12 +1372,6 @@ there's no newer assembler for that system).
 Solaris 2.6 and 2.7 @command{as} generate incorrect object code for register
 to register @code{movq} instructions, and so can't be used for MMX code.
 Install a recent @command{gas} if MMX code is wanted on these systems.
-
-@item x86 GCC @samp{-march=pentiumpro}
-
-GCC 2.95.2 and 2.95.3 miscompiled some versions of @file{mpz/powm.c} when
-@samp{-march=pentiumpro} was used, so for relevant CPUs that option is only in
-the default @env{CFLAGS} for GCC 2.95.4 and up.
 @end table
 
 
@@ -1419,7 +1387,6 @@ You might find more up-to-date information at @uref{http://swox.com/gmp/}.
 
 @table @asis
 @item DJGPP
-
 The DJGPP port of @command{bash} 2.03 is unable to run the @samp{configure}
 script, it exits silently, having died writing a preamble to
 @file{config.log}.  Use @command{bash} 2.04 or higher.
@@ -1431,7 +1398,6 @@ various subdirectories uses up memory.
 
 @item @samp{DESTDIR} and shared @file{libgmpxx}
 @cindex @samp{DESTDIR}
-
 @samp{make install DESTDIR=/my/staging/area}, or the same with a @samp{prefix}
 override, to install to a temporary directory is not fully supported by
 current versions of libtool when building a shared version of a library which
@@ -1454,26 +1420,18 @@ LD_LIBRARY_PATH=/my/staging/area/usr/lib \
   make install DESTDIR=/my/staging/area
 @end example
 
-@item GNU binutils @command{strip}
+@item GNU binutils @command{strip} prior to 2.12
 @cindex Stripped libraries
+@command{strip} from GNU binutils 2.11 and earlier should not be used on the
+static libraries @file{libgmp.a} and @file{libmp.a} since it will discard all
+but the last of multiple archive members with the same name, like the three
+versions of @file{init.o} in @file{libgmp.a}.  Binutils 2.12 or higher can be
+used successfully.
 
-GNU binutils @command{strip} should not be used on the static libraries
-@file{libgmp.a} and @file{libmp.a}, neither directly nor via @samp{make
-install-strip}.  It can be used on the shared libraries @file{libgmp.so} and
-@file{libmp.so} though.
-
-Currently (binutils 2.10.0), @command{strip} unpacks an archive then operates
-on the files, but GMP contains multiple object files of the same name
-(eg. three versions of @file{init.o}), and they overwrite each other, leaving
-only the one that happens to be last.
-
-If stripped static libraries are wanted, the suggested workaround is to build
-normally, strip the separate object files, and do another @samp{make all} to
-rebuild.  Alternately @samp{CFLAGS} with @samp{-g} omitted can always be used
-if it's just debugging which is unwanted.
+The shared libraries @file{libgmp.so} and @file{libmp.so} are not affected by
+this and any version of @command{strip} can be used on them.
 
 @item @command{make} syntax error
-
 On certain versions of SCO OpenServer 5 and IRIX 6.5 the native @command{make}
 is unable to handle the long dependencies list for @file{libgmp.la}.  The
 symptom is a ``syntax error'' on the following line of the top-level
@@ -1489,44 +1447,37 @@ build work, but if any recompiling is done @file{libgmp.la} might not be
 rebuilt).
 
 @item MacOS X and GCC
-
 Libtool currently only knows how to create shared libraries with the native
 @command{cc} (which is a modified GCC), not a plain GCC.  A static-only build
 should work though (@samp{--disable-shared}).
 
 @item NeXT prior to 3.3
-
 The system compiler on old versions of NeXT was a massacred and old GCC, even
 if it called itself @file{cc}.  This compiler cannot be used to build GMP, you
 need to get a real GCC, and install that.  (NeXT may have fixed this in
 release 3.3 of their system.)
 
 @item POWER and PowerPC
-
 Bugs in GCC 2.7.2 (and 2.6.3) mean it can't be used to compile GMP on POWER or
 PowerPC.  If you want to use GCC for these machines, get GCC 2.7.2.1 (or
 later).
 
 @item Sequent Symmetry
-
 Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
 
 @item Solaris 2.6
-
 The system @command{sed} prints an error ``Output line too long'' when libtool
 builds @file{libgmp.la}.  This doesn't seem to cause any obvious ill effects,
 but GNU @command{sed} is recommended, to avoid any doubt.
 
 @item Sparc Solaris 2.7 with gcc 2.95.2 in @samp{ABI=32}
-
 A shared library build of GMP seems to fail in this combination, it builds but
 then fails the tests, apparently due to some incorrect data relocations within
 @code{gmp_randinit_lc_2exp_size}.  The exact cause is unknown,
 @samp{--disable-shared} is recommended.
 
 @item Windows DLL test programs
-
 When creating a DLL version of @file{libgmp}, libtool creates wrapper scripts
 like @file{t-mul} for programs that would normally be @file{t-mul.exe}, in
 order to setup the right library paths etc.  This works fine, but the absence
@@ -1558,6 +1509,7 @@ to be incompatible with future versions of GMP.}
 * Debugging::                   
 * Profiling::                   
 * Autoconf::                    
+* Emacs::                       
 @end menu
 
 @node Headers and Libraries, Nomenclature and Types, GMP Basics, GMP Basics
@@ -1607,9 +1559,7 @@ GMP is built using Libtool and an application can use that to link if desired,
 
 If GMP has been installed to a non-standard location then it may be necessary
 to use @samp{-I} and @samp{-L} compiler options to point to the right
-directories, and some sort of run-time path for a shared library.  Consult
-your compiler documentation, for instance @ref{Top,,Introduction,gcc,Using and
-Porting the GNU Compiler Collection}.
+directories, and some sort of run-time path for a shared library.
 
 
 @node Nomenclature and Types, Function Classes, Headers and Libraries, GMP Basics
@@ -2076,7 +2026,6 @@ in-place operations.  If a result should go to a particular variable then just
 direct it there and let GMP take care of data movement.
 
 @item Divisibility Testing (Small Integers)
-
 @code{mpz_divisible_ui_p} and @code{mpz_congruent_ui_p} are the best functions
 for testing whether an @code{mpz_t} is divisible by an individual small
 integer.  They use an algorithm which is faster than @code{mpz_tdiv_ui}, but
@@ -2192,7 +2141,8 @@ is used and this generally inhibits stack backtracing.  Recompiling without
 such options may help while debugging, though the usual caveats about it
 potentially moving a memory problem or hiding a compiler bug will apply.
 
-@item GNU Debugger
+@item GDB, the GNU Debugger
+@cindex GDB
 A sample @file{.gdbinit} is included in the distribution, showing how to call
 some undocumented dump functions to print GMP variables from within GDB.  Note
 that these functions shouldn't be used in final application code since they're
@@ -2216,6 +2166,7 @@ Alternately it might be possible to change the @code{.c.lo} rules
 appropriately.
 
 @item Assertion Checking
+@cindex Assertion checking
 The build option @option{--enable-assert} is available to add some consistency
 checks to the library (see @ref{Build Options}).  These are likely to be of
 limited value to most applications.  Assertion failures are just as likely to
@@ -2239,6 +2190,7 @@ or may be allocated with a compiler builtin @code{alloca} which will go
 nowhere near any malloc debugger hooks.
 
 @item Checker
+@cindex Checker
 The checker program (@uref{http://savannah.gnu.org/projects/checker}) can be
 used with GMP.  It contains a stub library which means GMP applications
 compiled with checker can use a normal GMP build.
@@ -2255,12 +2207,13 @@ the checking scheme.  The GMP C++ features cannot be used, since current
 versions of checker (0.9.9.1) don't yet support the standard C++ library.
 
 @item Valgrind
+@cindex Valgrind
 The valgrind program (@uref{http://devel-home.kde.org/~sewardj}) is a memory
 checker for x86s.  It translates and emulates machine instructions to do
 strong checks for uninitialized data (at the level of individual bits), memory
 accesses through bad pointers, and memory leaks.
 
-Current versions (20020226 snapshot) don't support MMX or SSE, so GMP must be
+Currently (version 1.0.0) it doesn't support MMX or SSE, so GMP must be
 configured for an x86 without those (eg. plain @samp{i386}), or with a special
 @code{MPN_PATH} that excludes those subdirectories (@pxref{Build Options}).
 
@@ -2280,7 +2233,6 @@ for a GMP build are as follows.
 
 @table @asis
 @item @samp{--disable-profiling}
-
 The default is to add nothing special for profiling.
 
 It should be possible to just compile the mainline of a program with @code{-p}
@@ -2294,7 +2246,6 @@ milliseconds for instance), requiring long runs to get accurate information.
 
 @item @samp{--enable-profiling=prof}
 @cindex prof
-
 Build with support for the system @command{prof}, which means @samp{-p} added
 to the @samp{CFLAGS}.
 
@@ -2312,7 +2263,6 @@ instead.
 
 @item @samp{--enable-profiling=gprof}
 @cindex gprof
-
 Build with support for @command{gprof} (@pxref{Top, Profiling a Program,
 Introduction,gprof,GNU gprof}), which means @samp{-pg} added to the
 @samp{CFLAGS}.
@@ -2340,7 +2290,6 @@ graph.
 @item @samp{--enable-profiling=instrument}
 @cindex -finstrument-functions
 @cindex instrument-functions
-
 Build with the GCC option @samp{-finstrument-functions} added to the
 @samp{CFLAGS} (@pxref{Code Gen Options,Options for Code Generation,Options for
 Code Generation,gcc,Using the GNU Compiler Collection (GCC)}).
@@ -2373,9 +2322,9 @@ attributed to their caller.
 @end table
 
 
-@node Autoconf,  , Profiling, GMP Basics
+@node Autoconf, Emacs, Profiling, GMP Basics
 @section Autoconf
-@cindex Autoconf detections
+@cindex Autoconf
 
 Autoconf based applications can easily check whether GMP is installed.  The
 only thing to be noted is that GMP library symbols from version 3 onwards have
@@ -2390,8 +2339,8 @@ but an application that must have GMP would want to generate an error if not
 found.  For example,
 
 @example
-AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
-[GNU MP not found, see http://swox.com/gmp])])
+AC_CHECK_LIB(gmp, __gmpz_init, ,
+  [AC_MSG_ERROR([GNU MP not found, see http://swox.com/gmp])])
 @end example
 
 If functions added in some particular version of GMP are required, then one of
@@ -2399,8 +2348,9 @@ those can be used when checking.  For example @code{mpz_mul_si} was added in
 GMP 3.1,
     
 @example
-AC_CHECK_LIB(gmp, __gmpz_mul_si, , [AC_MSG_ERROR(
-[GNU MP not found, or not 3.1 or up, see http://swox.com/gmp])])
+AC_CHECK_LIB(gmp, __gmpz_mul_si, ,
+  [AC_MSG_ERROR(
+  [GNU MP not found, or not 3.1 or up, see http://swox.com/gmp])])
 @end example
 
 An alternative would be to test the version number in @file{gmp.h} using say
@@ -2441,10 +2391,37 @@ from MPFR installed separately.  Either way @file{libmpfr} depends on
 compatibility is not guaranteed.
 
 @example
-AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR(
+AC_CHECK_LIB(mpfr, mpfr_add, ,
+  [AC_MSG_ERROR(
 [Need MPFR either from GNU MP 4 or separate MPFR package.
 See http://www.mpfr.org or http://swox.com/gmp])
 @end example
+
+
+@node Emacs,  , Autoconf, GMP Basics
+@section Emacs
+@cindex Emacs
+
+@key{C-h C-i} (@code{info-lookup-symbol}) is a good way to find documentation
+on C functions while editing (@pxref{Info Lookup, , Info Documentation Lookup,
+emacs, The Emacs Editor}).
+
+The GMP manual can be included in such lookups by putting the following in
+your @file{.emacs},
+
+@c  This isn't pretty, but there doesn't seem to be a better way (in emacs
+@c  21.2 at least).  info-lookup->mode-value could be used for the "assoc"s,
+@c  but that function isn't documented, whereas info-lookup-alist is.
+@c
+@example
+(eval-after-load "info-look"
+  '(let ((mode-value (assoc 'c-mode (assoc 'symbol info-lookup-alist))))
+     (setcar (nthcdr 3 mode-value)
+             (cons '("(gmp)Function Index" nil "^ -.* " "\\>")
+                   (nth 3 mode-value)))))
+@end example
+
+The same can be done for MPFR, with @code{(mpfr)} in place of @code{(gmp)}.
 
 
 @node Reporting Bugs, Integer Functions, GMP Basics, Top
@@ -6073,7 +6050,6 @@ There's many of those in the GMP classes, and a good way to reestablish them
 in a subclass is not yet provided.
 
 @item Templated Expressions
-
 A subtle difficulty exists when using expressions together with
 application-defined template functions.  Consider the following, with @code{T}
 intended to be some numeric type,
@@ -6415,7 +6391,7 @@ an arbitrary precision @code{mpeval}.
 @item ML
 @itemize @bullet
 @item
-MLton compiler @spaceuref{http://www.sourcelight.com/MLton}
+MLton compiler @spaceuref{http://www.mlton.org}
 @end itemize
 
 @item Oz
@@ -7939,6 +7915,7 @@ much faster than @code{mpn_divrem_1} (often by a factor of 10, or more).
 @section Other Algorithms
 
 @menu
+* Prime Testing Algorithm::     
 * Factorial Algorithm::         
 * Binomial Coefficients Algorithm::  
 * Fibonacci Numbers Algorithm::  
@@ -7946,7 +7923,33 @@ much faster than @code{mpn_divrem_1} (often by a factor of 10, or more).
 @end menu
 
 
-@node Factorial Algorithm, Binomial Coefficients Algorithm, Other Algorithms, Other Algorithms
+@node Prime Testing Algorithm, Factorial Algorithm, Other Algorithms, Other Algorithms
+@subsection Prime Testing
+@cindex Prime testing algorithms
+
+The primality testing in @code{mpz_probab_prime_p} (@pxref{Number Theoretic
+Functions}) first does some trial division by small factors and then uses the
+Miller-Rabin probabilistic primality testing algorithm, as described in Knuth
+section 4.5.4 algorithm P (@pxref{References}).
+
+For an odd input @math{n}, and with @math{n = q@GMPmultiply{}2^k+1} where
+@math{q} is odd, this algorithm selects a random base @math{x} and tests
+whether @math{x^q @bmod{} n} is 1 or @math{-1} or an @m{x^{q2^j} \bmod n,
+x^(q*2^j) mod n} is @math{1}, for @math{1@le{}j@le{}k}.  If so then @math{n}
+is probably prime, if not then @math{n} is definitely composite.
+
+Any prime @math{n} will pass the test, but some composites do too.  Such
+composites are known as strong pseudoprimes to base @math{x}.  No @math{n} is
+a strong pseudoprime to more than @math{1/4} of all bases (see Knuth exercise
+22), hence with @math{x} chosen at random there's no more than a @math{1/4}
+chance a ``probable prime'' will in fact be composite.
+
+Actually strong pseudoprimes are quite rare, making the test much more
+powerful than this analysis would suggest, but @math{1/4} is all that's proven
+for an arbitrary @math{n}.
+
+
+@node Factorial Algorithm, Binomial Coefficients Algorithm, Prime Testing Algorithm, Other Algorithms
 @subsection Factorial
 
 Factorials @math{n!} are calculated by a simple product from @math{1} to
