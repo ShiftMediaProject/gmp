@@ -562,6 +562,8 @@ void speed_option_set _PROTO((const char *s));
   {                                                             \
     unsigned   i;                                               \
     mp_ptr     a, d, q, r;                                      \
+    double    t;                                                \
+    TMP_DECL (marker);                                          \
                                                                 \
     SPEED_RESTRICT_COND (s->size >= 1);                         \
                                                                 \
@@ -591,7 +593,10 @@ void speed_option_set _PROTO((const char *s));
     do                                                          \
       call;                                                     \
     while (--i != 0);                                           \
-    return speed_endtime ();                                    \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+    return t;                                                   \
   }  
 
 #define SPEED_ROUTINE_MPN_BZ_DIVREM_N(function) \
