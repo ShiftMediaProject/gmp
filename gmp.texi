@@ -447,18 +447,9 @@ IBM ROMP (RT),
 and
 Pyramid AP/XP.
 
-@cindex Mailing lists
-There are two public mailing lists of interest.  One for general questions and
-discussions about usage of the GMP library and one for discussions about
-development of GMP.  There's more information about the mailing lists at
-@uref{http://swox.com/mailman/listinfo/}.  These lists are @strong{not} for
-bug reports.
-
-The proper place for bug reports is @email{bug-gmp@@gnu.org}.  See
-@ref{Reporting Bugs} for info about reporting bugs.
-
 @cindex Home page
 @cindex Web page
+@noindent
 For up-to-date information on GMP, please see the GMP web pages at
 
 @display
@@ -468,6 +459,7 @@ For up-to-date information on GMP, please see the GMP web pages at
 @cindex Latest version of GMP
 @cindex Anonymous FTP of latest version
 @cindex FTP of latest version
+@noindent
 The latest version of the library is available at
 
 @display
@@ -477,7 +469,20 @@ The latest version of the library is available at
 Many sites around the world mirror @samp{ftp.gnu.org}, please use a mirror
 near you, see @uref{http://www.gnu.org/order/ftp.html} for a full list.
 
+@cindex Mailing lists
+There are three public mailing lists of interest.  One for release
+announcements, one for general questions and discussions about usage of the
+GMP library and one for discussions about development of GMP.  These lists are
+@strong{not} for bug reports.  For more information, see
 
+@display
+@uref{http://swox.com/mailman/listinfo/}.  
+@end display
+
+The proper place for bug reports is @email{bug-gmp@@gnu.org}.  See
+@ref{Reporting Bugs} for information about reporting bugs.
+
+@sp 1
 @section How to use this Manual
 @cindex About this manual
 
