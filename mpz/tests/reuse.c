@@ -1,7 +1,7 @@
 /* Test that routines allow reusing a source variable as destination.  */
 
 /*
-Copyright (C) 1996, 1999 Free Software Foundation, Inc.
+Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -38,7 +38,14 @@ typedef void (*dss_func) ();
 #endif
 
 void
+#if __STDC__
 mpz_xinvert (mpz_ptr r, mpz_srcptr a, mpz_srcptr b)
+#else
+mpz_xinvert (r, a, b)
+     mpz_ptr    r;
+     mpz_srcptr a;
+     mpz_srcptr b;
+#endif
 {
   int res;
   res = mpz_invert (r, a, b);

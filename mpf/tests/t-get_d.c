@@ -1,6 +1,6 @@
 /* Test mpf_set_d.
 
-   Copyright (C) 1996, 1999 Free Software Foundation, Inc.
+   Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
 
    This file is part of the GNU MP Library.
 
@@ -29,7 +29,14 @@
 #define HIGH_BOUND 1e300
 #endif
 
+int
+#if __STDC__
 main (int argc, char **argv)
+#else
+main (argc, argv)
+     int  argc;
+     char **argv;
+#endif
 {
   double d, e, r;
   mpf_t u, v;
