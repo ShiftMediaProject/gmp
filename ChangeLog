@@ -1,3 +1,24 @@
+2000-07-27  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/mul_fft.c: New file, by Paul Zimmermann, minor mods
+	applied.
+	* configure.in (gmp_mpn_functions): Add it.
+	* mpn/generic/{mul,mul_n}.c: Use it.
+	* doc/multiplication: Describe it (briefly).
+
+	* gmp-impl.h (FFT_MUL_THRESHOLD etc): New thresholds.
+	(mpn_fft_best_k, mpn_mul_fft, mpn_mul_fft_full): New functions.
+	(numberof, TMP_ALLOC_TYPE etc, _MP_ALLOCATE_FUNC_TYPE etc,
+	UNSIGNED_TYPE_MAX etc): New macros.
+	
+	* tune/*: Add FFT threshold tuning and speed measuring.
+	* tune/common.c: Avoid huge macro expansions for umul and udiv.
+
+	* mpz/tests/t-{bin,jac,misc}.c, mp{bsd,f}/tests/t-misc.c,
+	mpn/tests/{try,spinner}.c: Use new gmp-impl.h macros.
+
+	* demos/Makefile.am (BUILT_SOURCES): Don't need calc.c etc under this.
+
 2000-07-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/gmp-mparam.h: New file.
