@@ -76,6 +76,10 @@ main (argc, argv)
       if (mpz_cmp (gcd, gcd2))
 	dump_abort (op1, op2);
 
+      mpz_gcdext (gcd2, s, NULL, op1, op2);
+      if (mpz_cmp (gcd, gcd2))
+	dump_abort (op1, op2);
+
       mpz_mul (temp1, s, op1);
       mpz_mul (temp2, t, op2);
       mpz_add (gcd2, temp1, temp2);
