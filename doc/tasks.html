@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 12 Oct 2003.  An up-to-date version is available at
+  This file current as of 18 Oct 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -923,11 +923,6 @@ It's unlikely anything will be done about them unless anyone is actively using
 them.
 
 <ul>
-<li> m88k: Make the assembler code work on non-underscore systems.  Conversion
-     to .asm would be desirable.  Ought to be easy, but would want to be
-     tested.
-<li> m88110: add_n.S and sub_n.S won't compile, due to using the defunct
-     sysdep.h scheme (for underscore prefix handling).
 <li> Sparc32: The integer based udiv_nfp.asm used to be selected by
      <code>configure --nfp</code> but that option is gone now that autoconf is
      used.  The file could go somewhere suitable in the mpn search if any
