@@ -1,7 +1,12 @@
 2000-12-31  Kevin Ryde  <kevin@swox.se>
 
+	* gmp.texi (ABI and ISA): New enough gcc needed for mips n32 etc, gcc
+	2.95 needed for sparc 64-bit ABI, gcc 2.8 needed for -mv8plus.
+
 	* configure.in ([cjt]90,sv1-cray-unicos*): Preserve user specified
 	MPN_PATH, amend test program indenting.
+	(none-*-*): Add -DNO_ASM to gcc to disable longlong.h asm macros in
+	generic C.
 
 	* config.sub (j90, t90): Preserve these, don't let configfsf.sub turn
 	them into c90.
