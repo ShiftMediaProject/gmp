@@ -6,14 +6,15 @@ This file describes briefly the multiplication and squaring used in GMP.
 The code is likely to be hard to understand without knowing something about
 the algorithms.
 
-GMP performs NxN limb multiplications and squares using one of three
-algorithms, according to the size N.
+GMP does NxN limb multiplications and squares using one of four algorithms,
+according to the size N.
 
          Algorithm      Sizes
 
          basecase    < KARATSUBA_MUL_THRESHOLD
 	 karatsuba   >= KARATSUBA_MUL_THRESHOLD
 	 toom3       >= TOOM3_MUL_THRESHOLD
+	 fft         >= FFT_MUL_THRESHOLD
 
 Similarly for squaring, with the SQR thresholds.
 
@@ -295,16 +296,54 @@ same interpolate3() subroutine is used for both squaring and multiplying.
 
 
 
-TOOM-COOK N-WAY
+FFT MULTIPLY
 
-The above Toom-Cook procedure generalizes to split into an arbitrary number
-of pieces, as per Knuth volume 2 section 4.3.3 algorithm C.  Some code
-implementing this for GMP exists, but is not present since it has yet to
-prove worthwhile.  The notes here are merely for interest.
+At large to very large sizes a Fermat style FFT is used, meaning an FFT in a
+ring of integers modulo 2^M+1.  This is asymptotically fast, but overheads
+mean it's only worthwhile for large products.
 
-In general a split into r+1 pieces is made, and evaluations and pointwise
-multiplications are done at 2*r+1 points.  So a 4-way split does 7 pointwise
-multiplies, 5-way does 9, etc.
+Some brief notes are given here.  Full explanations can be found in various
+texts.  Knuth section 4.3.3 part C describes the method, but using complex
+numbers.  In the references below Schonhage and Strassen is the original
+paper, and Pollard gives some of the mathematics for a finite field as used
+here.
+
+The FFT does its multiplication modulo 2^N+1, but by choosing
+N>=bits(A)+bits(B), a full product A*B is obtained.  The algorithm splits
+the inputs into 2^k pieces, for a chosen k, and will recusively perform 2^k
+pointwise multiplications modulo 2^M+1, where M=N/2^k.  N must be a multiple
+of 2^k.  Those multiplications are either done by recursing into a further
+FFT, or by a plain toom3 etc multiplication, whichever is optimal at the
+resultant size.  Note that in the current implementation M is always a
+multiple of the limb size.
+
+The steps leading to the pointwise products are like the evaluation and
+interpolation stages of the Karatsuba and Toom-Cook algorithms, but use a
+convolution, which can be efficiently calculated because 2^(2N/2^k) is a
+2^k'th root of unity.
+
+As operand sizes gets bigger, bigger splits are used.  Each time a bigger k
+is used some multiplying is effectively swapped for some shifts, adds and
+overheads.  A table of thresholds gives the points where a k+1 FFT is faster
+than a k FFT.  A separate threshold gives the point where a mod 2^N+1 FFT
+first becomes faster than a plain multiply of that size, and this normally
+happens in the k=4 range.  A further threshold gives the point where an
+N/2xN/2 multiply done with an FFT mod 2^N+1 is faster than a plain multiply
+of that size, and this is normally in the k=7 or k=8 range.
+
+
+
+
+TOOM-COOK N-WAY (NOT USED)
+
+The 3-way Toom-Cook procedure described above generalizes to split into an
+arbitrary number of pieces, as per Knuth volume 2 section 4.3.3 algorithm C.
+Some code implementing this for GMP exists, but is not present since it has
+yet to prove worthwhile.  The notes here are merely for interest.
+
+In general a split into r+1 pieces will be made, and evaluations and
+pointwise multiplications done at 2*r+1 points.  So a 4-way split does 7
+pointwise multiplies, 5-way does 9, etc.
 
 Asympotically an r+1-way algorithm is O(n^(log(2*r+1)/log(r+1)).  Only the
 pointwise multiplications count towards big O() complexity, but the time
@@ -321,12 +360,6 @@ separate odd and even final coefficients and then perform algorithm C steps
 C7 and C8 on them separately.  The multipliers and divisors at step C7 then
 become j^2 and 2*t*j-j*j respectively.
 
-Any set of points can be used, and it might be an open question as to
-whether some particularly well chosen set of points leads to a particularly
-efficient evaluate and interpolate stage.  Since different sets of points
-lead to different steps then clearly it should be possible to optimize for
-whatever desired criteria.
-
 In the references below, Zuras presents 3-way and 4-way Toom-Cook methods,
 and compares them to small order FFTs.  Hollerbach presents an N-way
 algorithm from first principles.  Bernstein presents the N-way algorithm in
@@ -340,6 +373,12 @@ REFERENCES
 
 "Algorithms for Computer Algebra", Keith O. Geddes, Stephen R. Czapor,
 George Labahn, Kluwer Academic Publishers, 1992, ISBN 0-7923-9259-0.
+
+"Schnelle Multiplikation grosser Zahlen", by Arnold Schonhage and Volker
+Strassen, Computing 7, p. 281-292, 1971.
+
+"The Fast Fourier Transform in a Finite Field", J.M. Pollard, Mathematics of
+Computation, vol 25, num 114, April 1971.
 
 "On Squaring and Multiplying Large Integers", Dan Zuras, ARITH-11: IEEE
 Symposium on Computer Arithmetic, 1993, pages 260 to 271.  And reprinted as
