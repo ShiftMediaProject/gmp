@@ -46,6 +46,10 @@ MA 02111-1307, USA. */
 void
 tests_start (void)
 {
+  /* don't buffer, so output is not lost if a test causes a segv etc */
+  setbuf (stdout, NULL);
+  setbuf (stderr, NULL);
+
   tests_memory_start ();
   tests_rand_start ();
 }
