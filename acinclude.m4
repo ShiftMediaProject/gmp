@@ -1773,7 +1773,7 @@ case $gmp_cv_option_alloca in
     ;;
   malloc-notreentrant)
     AC_DEFINE(WANT_TMP_NOTREENTRANT, 1, [--enable-alloca=malloc-notreentrant])
-    TAL_OBJECT=tal-notre$U.lo
+    TAL_OBJECT=tal-notreent$U.lo
     ;;
   debug)
     AC_DEFINE(WANT_TMP_DEBUG, 1, [--enable-alloca=debug])

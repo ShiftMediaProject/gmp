@@ -270,7 +270,7 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 # get them in "make dist".
 #
 EXTRA_LTLIBRARIES = libdummy.la
-libdummy_la_SOURCES = tal-debug.c tal-notre.c tal-reent.c
+libdummy_la_SOURCES = tal-debug.c tal-notreent.c tal-reent.c
 
 
 info_TEXINFOS = gmp.texi
