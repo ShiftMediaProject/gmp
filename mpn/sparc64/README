@@ -25,29 +25,42 @@ This directory contains mpn functions for 64-bit V9 SPARC
 
 RELEVANT OPTIMIZATION ISSUES
 
-The Ultra I/II pipeline executes up to two simple integer arithmetic operations
-per cycle.  The 64-bit integer multiply instruction mulx takes from 5 cycles to
-35 cycles, depending on the position of the most significant bit of the 1st
-source operand.  When used for 32x32->64 multiplication, it needs 20 cycles.
-Furthermore, it stalls the processor while executing.  We stay away from that
-instruction, and instead use floating-point operations.
+The UltraSPARC-1/2 pipeline executes up to two simple integer arithmetic
+operations per cycle.  The 64-bit integer multiply instruction mulx takes from
+5 cycles to 35 cycles, depending on the position of the most significant bit of
+the 1st source operand.  When used for 32x32->64 multiplication, it needs 20
+cycles.  Furthermore, it stalls the processor while executing.  We stay away
+from that instruction, and instead use floating-point operations.
 
 Integer conditional move instructions cannot dual-issue with other integer
 instructions.  No conditional move can issue 1-5 cycles after a load.  (Or
-something such bizarre.)  We don't use these.
+something such bizarre.)  Useless.
 
 Integer branches can issue with two integer arithmetic instructions.  Likewise
-for integer loads.  Four instructions may issue (iop, iop, ld/st/fop,
-branch/fop) but only if a branch or fop is last.
+for integer loads.  Four instructions may issue each cycle.  The only patterns
+that can reach 4 cycles/limb are: (anyint, iaddlog, ld/st/fop/branch, fop).
+
+The UltraSPARC-3 pipeline is similar, but is somewhat more rigid.  Branches
+execute slower, and there are other new stalls.  Integer multiply doesn't halt
+the CPU and also has a much lower latency.  But it's still not really useful
+to GMP.
 
 STATUS
 
 Timings on UltraSPARC-1/2:
 
-* lshift, rshift: The code is well-optimized and runs at 2.0 cycles/limb.
+* mpn_lshift, mpn_rshift: The current code runs at 2.0 cycles/limb.
+  The IEU0 functional unit is saturated with shifts.
 
-* add_n, sub_n: The current code runs at 4 cycles/limb.
+* mpn_add_n, mpn_sub_n: The current code runs at 4 cycles/limb.  The
+  4 instruction recurrency is the speed limiter.
 
-* mul_1/addmul_1/submul_1: The current code runs at about 33 cycles/limb.  By
-  splitting the invariant operand into 16-bit chunks and other operand into
-  32-bit chunks, we could reach 14 cycles/limb.
+* mpn_addmul_1: The current code runs at 14 cycles/limb asymptotically.  The
+  code sustains 4 instructions/cycle.  It might be possible to invent a better
+  way of summing the intermediate 49-bit operands, but it is unlikely that it
+  will save enough instructions to save an entire cycle.
+
+* mpn_mul_1: The current code is a straightforward edit of the mpn_addmul_1
+  code.  It would be possible to shave one cycle from it, with some labour.
+
+* mpn_submul_1: Braindead code just calling mpn_mul_1 + mpn_sub_n.  FIXME.
