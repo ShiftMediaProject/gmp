@@ -239,6 +239,11 @@ case "$target" in
     gmp_cflags_c89="$gmp_cflags_cc +O2"
     gmp_cflags_cc="$gmp_cflags_cc +O2"
     ;;
+  hppa2.0w*-*-*)
+    cclist="c89 cc"
+    gmp_cflags_c89="+DD64 +O3"
+    gmp_cflags_cc="+DD64 +O3"
+    ;;
   hppa2.0*-*-*)
     os_64bit=yes
     cclist="gcc c89 cc"
@@ -431,6 +436,10 @@ case ${target} in
   hppa1.0*-*-*)
     path="hppa"
     extra_functions="udiv_qrnnd"
+    ;;
+  hppa2.0w-*-*)
+    path="pa64w"
+    extra_functions="umul_ppmm udiv_qrnnd"
     ;;
   hppa2.0*-*-*)
     if test -n "$CC64"; then
