@@ -324,9 +324,12 @@ typedef __mpq_struct *mpq_ptr;
    inline" would be an acceptable substitute if the compiler (or linker)
    discards unused statics.  */
 
-/* gcc has __inline__ in all modes, including strict ansi */
+/* gcc has __inline__ in all modes, including strict ansi.  Give a prototype
+   for an inline too, so as to correctly specify "dllimport" on windows, in
+   case the function is called rather than inlined.  */
 #ifdef __GNUC__
-#define __GMP_EXTERN_INLINE  extern __inline__
+#define __GMP_EXTERN_INLINE      extern __inline__
+#define __GMP_INLINE_PROTOTYPES  1
 #endif
 
 /* SCO OpenUNIX 8 cc supports "static inline foo()" but not in -Xc strict
@@ -343,9 +346,20 @@ typedef __mpq_struct *mpq_ptr;
 
 /* C++ always has "inline" and since it's a normal feature the linker should
    discard duplicate non-inlined copies, or if it doesn't then that's a
-   problem for everyone, not just GMP */
+   problem for everyone, not just GMP.  */
 #if defined (__cplusplus) && ! defined (__GMP_EXTERN_INLINE)
 #define __GMP_EXTERN_INLINE  inline
+#endif
+
+/* By default, don't give a prototype when there's going to be an inline
+   version.  Note in particular that Cray C++ objects to the combination of
+   prototype and inline.  */
+#ifdef __GMP_EXTERN_INLINE
+#ifndef __GMP_INLINE_PROTOTYPES
+#define __GMP_INLINE_PROTOTYPES  0
+#endif
+#else
+#define __GMP_INLINE_PROTOTYPES  1
 #endif
 
 
@@ -478,7 +492,9 @@ int __GMP_DECLSPEC gmp_vsprintf _PROTO ((char *, const char *, va_list));
 void * __GMP_DECLSPEC _mpz_realloc _PROTO ((mpz_ptr, mp_size_t));
 
 #define mpz_abs __gmpz_abs
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_abs
 void __GMP_DECLSPEC mpz_abs _PROTO ((mpz_ptr, mpz_srcptr));
+#endif
 
 #define mpz_add __gmpz_add
 void __GMP_DECLSPEC mpz_add _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
@@ -634,13 +650,19 @@ int __GMP_DECLSPEC mpz_fits_slong_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 int __GMP_DECLSPEC mpz_fits_sshort_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 #define mpz_fits_uint_p __gmpz_fits_uint_p
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_fits_uint_p
 int __GMP_DECLSPEC mpz_fits_uint_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpz_fits_ulong_p __gmpz_fits_ulong_p
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_fits_ulong_p
 int __GMP_DECLSPEC mpz_fits_ulong_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpz_fits_ushort_p __gmpz_fits_ushort_p
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_fits_ushort_p
 int __GMP_DECLSPEC mpz_fits_ushort_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpz_gcd __gmpz_gcd
 void __GMP_DECLSPEC mpz_gcd _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
@@ -661,10 +683,14 @@ double __GMP_DECLSPEC mpz_get_d _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 char * __GMP_DECLSPEC mpz_get_str _PROTO ((char *, int, mpz_srcptr));
 
 #define mpz_get_ui __gmpz_get_ui
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_get_ui
 unsigned long int __GMP_DECLSPEC mpz_get_ui _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpz_getlimbn __gmpz_getlimbn
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_getlimbn
 mp_limb_t __GMP_DECLSPEC mpz_getlimbn _PROTO ((mpz_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpz_hamdist __gmpz_hamdist
 unsigned long int __GMP_DECLSPEC mpz_hamdist _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
@@ -750,7 +776,9 @@ void __GMP_DECLSPEC mpz_mul_si _PROTO ((mpz_ptr, mpz_srcptr, long int));
 void __GMP_DECLSPEC mpz_mul_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 
 #define mpz_neg __gmpz_neg
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_neg
 void __GMP_DECLSPEC mpz_neg _PROTO ((mpz_ptr, mpz_srcptr));
+#endif
 
 #define mpz_nextprime __gmpz_nextprime
 void __GMP_DECLSPEC mpz_nextprime _PROTO ((mpz_ptr, mpz_srcptr));
@@ -769,10 +797,14 @@ size_t __GMP_DECLSPEC mpz_out_str _PROTO ((FILE *, int, mpz_srcptr));
 int __GMP_DECLSPEC mpz_perfect_power_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 #define mpz_perfect_square_p __gmpz_perfect_square_p
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_perfect_square_p
 int __GMP_DECLSPEC mpz_perfect_square_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpz_popcount __gmpz_popcount
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_popcount
 unsigned long int __GMP_DECLSPEC mpz_popcount _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpz_pow_ui __gmpz_pow_ui
 void __GMP_DECLSPEC mpz_pow_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
@@ -817,7 +849,9 @@ void __GMP_DECLSPEC mpz_set_d _PROTO ((mpz_ptr, double));
 void __GMP_DECLSPEC mpz_set_f _PROTO ((mpz_ptr, mpf_srcptr));
 
 #define mpz_set_q __gmpz_set_q
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_set_q
 void __GMP_DECLSPEC mpz_set_q _PROTO ((mpz_ptr, mpq_srcptr));
+#endif
 
 #define mpz_set_si __gmpz_set_si
 void __GMP_DECLSPEC mpz_set_si _PROTO ((mpz_ptr, signed long int));
@@ -832,7 +866,9 @@ void __GMP_DECLSPEC mpz_set_ui _PROTO ((mpz_ptr, unsigned long int));
 void __GMP_DECLSPEC mpz_setbit _PROTO ((mpz_ptr, unsigned long int));
 
 #define mpz_size __gmpz_size
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpz_size
 size_t __GMP_DECLSPEC mpz_size _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpz_sizeinbase __gmpz_sizeinbase
 size_t __GMP_DECLSPEC mpz_sizeinbase _PROTO ((mpz_srcptr, int)) __GMP_ATTRIBUTE_PURE;
@@ -904,9 +940,10 @@ void __GMP_DECLSPEC mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 
 /**************** Rational (i.e. Q) routines.  ****************/
 
-
 #define mpq_abs __gmpq_abs
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpq_abs
 void __GMP_DECLSPEC mpq_abs _PROTO ((mpq_ptr, mpq_srcptr));
+#endif
 
 #define mpq_add __gmpq_add
 void __GMP_DECLSPEC mpq_add _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
@@ -965,7 +1002,9 @@ void __GMP_DECLSPEC mpq_mul _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 void __GMP_DECLSPEC mpq_mul_2exp _PROTO ((mpq_ptr, mpq_srcptr, unsigned long));
 
 #define mpq_neg __gmpq_neg
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpq_neg
 void __GMP_DECLSPEC mpq_neg _PROTO ((mpq_ptr, mpq_srcptr));
+#endif
 
 #define mpq_out_str __gmpq_out_str
 #ifdef _GMP_H_HAVE_FILE
@@ -1009,7 +1048,9 @@ void __GMP_DECLSPEC mpq_swap _PROTO ((mpq_ptr, mpq_ptr));
 /**************** Float (i.e. F) routines.  ****************/
 
 #define mpf_abs __gmpf_abs
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_abs
 void __GMP_DECLSPEC mpf_abs _PROTO ((mpf_ptr, mpf_srcptr));
+#endif
 
 #define mpf_add __gmpf_add
 void __GMP_DECLSPEC mpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
@@ -1074,10 +1115,14 @@ void __GMP_DECLSPEC mpf_floor _PROTO ((mpf_ptr, mpf_srcptr));
 double __GMP_DECLSPEC mpf_get_d _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 #define mpf_get_default_prec __gmpf_get_default_prec
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_get_default_prec
 unsigned long int __GMP_DECLSPEC mpf_get_default_prec _PROTO ((void)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpf_get_prec __gmpf_get_prec
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_get_prec
 unsigned long int __GMP_DECLSPEC mpf_get_prec _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpf_get_si __gmpf_get_si
 long __GMP_DECLSPEC mpf_get_si _PROTO ((mpf_srcptr)) __GMP_ATTRIBUTE_PURE;
@@ -1127,7 +1172,9 @@ void __GMP_DECLSPEC mpf_mul_2exp _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int
 void __GMP_DECLSPEC mpf_mul_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 
 #define mpf_neg __gmpf_neg
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_neg
 void __GMP_DECLSPEC mpf_neg _PROTO ((mpf_ptr, mpf_srcptr));
+#endif
 
 #define mpf_out_str __gmpf_out_str
 #ifdef _GMP_H_HAVE_FILE
@@ -1150,25 +1197,33 @@ void __GMP_DECLSPEC mpf_set _PROTO ((mpf_ptr, mpf_srcptr));
 void __GMP_DECLSPEC mpf_set_d _PROTO ((mpf_ptr, double));
 
 #define mpf_set_default_prec __gmpf_set_default_prec
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_set_default_prec
 void __GMP_DECLSPEC mpf_set_default_prec _PROTO ((unsigned long int));
+#endif
 
 #define mpf_set_prec __gmpf_set_prec
 void __GMP_DECLSPEC mpf_set_prec _PROTO ((mpf_ptr, unsigned long int));
 
 #define mpf_set_prec_raw __gmpf_set_prec_raw
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_set_prec_raw
 void __GMP_DECLSPEC mpf_set_prec_raw _PROTO ((mpf_ptr, unsigned long int));
+#endif
 
 #define mpf_set_q __gmpf_set_q
 void __GMP_DECLSPEC mpf_set_q _PROTO ((mpf_ptr, mpq_srcptr));
 
 #define mpf_set_si __gmpf_set_si
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_set_si
 void __GMP_DECLSPEC mpf_set_si _PROTO ((mpf_ptr, signed long int));
+#endif
 
 #define mpf_set_str __gmpf_set_str
 int  __GMP_DECLSPEC mpf_set_str _PROTO ((mpf_ptr, __gmp_const char *, int));
 
 #define mpf_set_ui __gmpf_set_ui
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpf_set_ui
 void __GMP_DECLSPEC mpf_set_ui _PROTO ((mpf_ptr, unsigned long int));
+#endif
 
 #define mpf_set_z __gmpf_set_z
 void __GMP_DECLSPEC mpf_set_z _PROTO ((mpf_ptr, mpz_srcptr));
@@ -1369,7 +1424,14 @@ void __GMP_DECLSPEC mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, m
 
    Within gmp itself this inlining generally isn't relied on, since it
    doesn't get done for all compilers, whereas if something is worth
-   inlining then it's worth arranging always.  */
+   inlining then it's worth arranging always.
+
+   There are two styles of inlining here.  When the same bit of code is
+   wanted for the inline as for the library version, then __GMP_FORCE_foo
+   arranges for that code to be emitted and the __GMP_EXTERN_INLINE
+   directive suppressed, eg. mpz_fits_uint_p.  When a different bit of code
+   is wanted for the inline than for the library version, then
+   __GMP_FORCE_foo arranges the inline to be suppressed, eg. mpz_abs.  */
 
 #if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_abs
 __GMP_EXTERN_INLINE void
