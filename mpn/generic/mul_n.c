@@ -75,7 +75,8 @@ mpn_kara_mul_n(p, a, b, n, ws)
      mp_ptr    ws;
 #endif
 {
-  mp_limb_t i, n2, sign, w, w0, w1;
+  mp_limb_t i, sign, w, w0, w1;
+  mp_size_t n2;
   mp_srcptr x, y;
 
   n2 = n >> 1;
@@ -293,7 +294,8 @@ mpn_kara_sqr_n (p, a, n, ws)
      mp_ptr    ws;
 #endif
 {
-  mp_limb_t i, n2, sign, w, w0, w1;
+  mp_limb_t i, sign, w, w0, w1;
+  mp_size_t n2;
   mp_srcptr x, y;
 
   n2 = n >> 1;
@@ -1103,18 +1105,19 @@ interpolate3 (A, B, C, D, E,
 
 void
 #if __STDC__
-mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_limb_t n, mp_ptr ws)
+mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 #else
 mpn_toom3_mul_n (p, a, b, n, ws)
      mp_ptr    p;
      mp_srcptr a;
      mp_srcptr b;
-     mp_limb_t n;
+     mp_size_t n;
      mp_ptr    ws;
 #endif
 {
-  mp_limb_t cB,cC,cD, dB,dC,dD, l,l2,l3,l4,l5,ls, tB,tC,tD;
+  mp_limb_t cB,cC,cD, dB,dC,dD, tB,tC,tD;
   mp_limb_t *A,*B,*C,*D,*E, *W;
+  mp_size_t l,l2,l3,l4,l5,ls;
 
   /* Break n words into chunks of size l, l and ls.
    * n = 3*k   => l = k,   ls = k
@@ -1211,17 +1214,18 @@ mpn_toom3_mul_n (p, a, b, n, ws)
 
 void
 #if __STDC__
-mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_limb_t n, mp_ptr ws)
+mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
 #else
 mpn_toom3_sqr_n (p, a, n, ws)
      mp_ptr    p;
      mp_srcptr a;
-     mp_limb_t n;
+     mp_size_t n;
      mp_ptr    ws;
 #endif
 {
-  mp_limb_t cB,cC,cD, l,l2,l3,l4,l5,ls, tB,tC,tD;
+  mp_limb_t cB,cC,cD, tB,tC,tD;
   mp_limb_t *A,*B,*C,*D,*E, *W;
+  mp_size_t l,l2,l3,l4,l5,ls;
 
   /* Break n words into chunks of size l, l and ls.
    * n = 3*k   => l = k,   ls = k
