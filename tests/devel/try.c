@@ -20,8 +20,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 /* Usage: try [options] <function>...
@@ -503,9 +502,10 @@ validate_sqrtrem (void)
 #define TYPE_RSHIFT           14
 #define TYPE_LSHIFT           15
 
-#define TYPE_COPYI            16
-#define TYPE_COPYD            17
-#define TYPE_COM_N            18
+#define TYPE_COPY             16
+#define TYPE_COPYI            17
+#define TYPE_COPYD            18
+#define TYPE_COM_N            19
 
 #define TYPE_MOD_1            20
 #define TYPE_MOD_1C           21
@@ -699,6 +699,13 @@ param_init (void)
   p->carry = CARRY_4;
   REFERENCE (refmpn_addsub_nc);
 
+
+  p = &param[TYPE_COPY];
+  p->dst[0] = 1;
+  p->src[0] = 1;
+  p->overlap = OVERLAP_NONE;
+  p->size = SIZE_ALLOW_ZERO;
+  REFERENCE (refmpn_copy);
 
   p = &param[TYPE_COPYI];
   p->dst[0] = 1;
@@ -952,12 +959,26 @@ param_init (void)
    functions that can be in try_array[]. */
 
 void
+MPN_COPY_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{ MPN_COPY (rp, sp, size); }
+
+void
 MPN_COPY_INCR_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 { MPN_COPY_INCR (rp, sp, size); }
 
 void
 MPN_COPY_DECR_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 { MPN_COPY_DECR (rp, sp, size); }
+
+void
+__GMPN_COPY_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{ __GMPN_COPY (rp, sp, size); }
+
+#ifdef __GMPN_COPY_INCR
+void
+__GMPN_COPY_INCR_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
+{ __GMPN_COPY_INCR (rp, sp, size); }
+#endif
 
 void
 mpn_com_n_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
@@ -1098,8 +1119,14 @@ const struct choice_t choice_array[] = {
 
   { TRY_FUNFUN(mpn_com_n),  TYPE_COM_N },
 
+  { TRY_FUNFUN(MPN_COPY),      TYPE_COPY },
   { TRY_FUNFUN(MPN_COPY_INCR), TYPE_COPYI },
   { TRY_FUNFUN(MPN_COPY_DECR), TYPE_COPYD },
+
+  { TRY_FUNFUN(__GMPN_COPY),      TYPE_COPY },
+#ifdef __GMPN_COPY_INCR
+  { TRY_FUNFUN(__GMPN_COPY_INCR), TYPE_COPYI },
+#endif
 
   { TRY_FUNFUN(mpn_and_n),  TYPE_AND_N  },
   { TRY_FUNFUN(mpn_andn_n), TYPE_ANDN_N },
@@ -1600,6 +1627,7 @@ call (struct each_t *e, tryfun_t function)
       (e->d[0].p, e->d[1].p, e->s[0].p, e->s[1].p, size, carry);
     break;
 
+  case TYPE_COPY:
   case TYPE_COPYI:
   case TYPE_COPYD:
   case TYPE_COM_N:
@@ -1615,13 +1643,6 @@ call (struct each_t *e, tryfun_t function)
                                                 carry);
     break;
 
-  case TYPE_MODEXACT_1_ODD:
-    e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, size, divisor);
-    break;
-  case TYPE_MODEXACT_1C_ODD:
-    e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, size, divisor,
-                                                carry);
-    break;
 
   case TYPE_DIVMOD_1:
   case TYPE_DIVEXACT_1:
@@ -1641,10 +1662,12 @@ call (struct each_t *e, tryfun_t function)
       (e->d[0].p, size2, e->s[0].p, size, divisor, carry);
     break;
   case TYPE_MOD_1:
+  case TYPE_MODEXACT_1_ODD:
     e->retval = CALLING_CONVENTIONS (function)
       (e->s[0].p, size, divisor);
     break;
   case TYPE_MOD_1C:
+  case TYPE_MODEXACT_1C_ODD:
     e->retval = CALLING_CONVENTIONS (function)
       (e->s[0].p, size, divisor, carry);
     break;
@@ -1790,7 +1813,7 @@ call (struct each_t *e, tryfun_t function)
     break;
 
   case TYPE_ZERO:
-    e->retval = CALLING_CONVENTIONS (function) (e->d[0].p, size);
+    CALLING_CONVENTIONS (function) (e->d[0].p, size);
     break;
 
 #ifdef EXTRA_CALL
