@@ -115,7 +115,6 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
   size_t max_digits;
   mp_ptr up, pp, tp;
   mp_size_t un, pn, tn;
-  mp_size_t prec;
   unsigned char *tstr;
   mp_exp_t exp_in_base;
   size_t n_digits_computed;
@@ -128,7 +127,6 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
   up = PTR(u);
   un = ABSIZ(u);
   ue = EXP(u);
-  prec = PREC(u) + 1;
 
   if (base >= 0)
     {
@@ -148,7 +146,7 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
       num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 
-  MPF_SIGNIFICANT_DIGITS (max_digits, base, prec-1);
+  MPF_SIGNIFICANT_DIGITS (max_digits, base, PREC(u));
   if (n_digits == 0 || n_digits > max_digits)
     n_digits = max_digits;
 
@@ -306,9 +304,9 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
       n_digits++;
     }
 
- done:
   TMP_FREE (marker);
 
+ done:
   /* If the string was alloced then resize it down to the actual space
      required.  */
   if (alloc_size != 0)
