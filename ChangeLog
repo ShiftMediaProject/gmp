@@ -1,4 +1,30 @@
+1999-12-07  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (udiv_qrnnd_preinv2gen): Prefix local variables with `_'.
+	(udiv_qrnnd_preinv2norm): Likewise.
+	From Kevin Ryde:
+	(HAVE_ALLOCA): #define also if defined (alloca).
+
+1999-12-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/tests/add_n.c: Set OPS from CLOCK.
+	* mpn/tests/sub_n.c: Likewise.
+	* mpn/tests/mul_1.c: Likewise.
+	* mpn/tests/addmul_1.c: Likewise.
+	* mpn/tests/submul_1.c: Likewise.
+
+	* mpn/tests/lshift.c: Update from add_n.c.
+	* mpn/tests/rshift.c: Likewise.
+
+1999-12-03  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/copy.S: New file.
+
 1999-12-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc64/copy.s: New file.
+
+	* mpn/tests/copy.c: New file.
 
 	* mpn/configure.in: Recognize more Amd CPUs; Set special paths for
 	k7 CPU.
