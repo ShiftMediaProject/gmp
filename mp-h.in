@@ -44,9 +44,10 @@ MA 02111-1307, USA. */
 #if  defined (__STDC__)                                 \
   || defined (__cplusplus)                              \
   || defined (_AIX)                                     \
+  || defined (__DECC)                                   \
   || (defined (__mips) && defined (_SYSTYPE_SVR4))      \
   || defined (_MSC_VER)                                 \
-  || defined(_WIN32)
+  || defined (_WIN32)
 #define __GMP_HAVE_CONST        1
 #define __GMP_HAVE_PROTOTYPES   1
 #define __GMP_HAVE_TOKEN_PASTE  1
@@ -55,6 +56,7 @@ MA 02111-1307, USA. */
 #define __GMP_HAVE_PROTOTYPES   0
 #define __GMP_HAVE_TOKEN_PASTE  0
 #endif
+
 
 #if __GMP_HAVE_CONST
 #define __gmp_const   const
