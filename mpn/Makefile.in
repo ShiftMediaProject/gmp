@@ -186,10 +186,16 @@ TARG_DIST = a29k alpha arm clipper cray generic hppa i960 ia64 lisp m68k m88k \
   sparc64 thumb vax x86 z8000 z8000x
 
 
-EXTRA_DIST = asm-defs.m4 m4-ccas $(TARG_DIST)
+EXTRA_DIST = asm-defs.m4 cpp-ccas m4-ccas $(TARG_DIST)
 
 COMPILE_FLAGS = $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+
+
+# Flags used for preprocessing (in ansi2knr rules).
+#
+PREPROCESS_FLAGS = $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS)
 
 
 # Recent versions of automake (1.5 and up for instance) append automake
@@ -606,20 +612,22 @@ uninstall-am: uninstall-info-am
 
 # .S assembler, preprocessed with cpp.
 #
-# It was vaguely intended that CCAS would just be asked to assemble .s
-# files, not do a combined preprocess and assemble, certainly that's how it
-# was in the past.  But arranging that for .S.lo would require something
-# like the .asm.lo handling below, so instead take the easy way and pass .S
-# directly.  Since normally CCAS="$CC -c" the only thing lost from the past
-# is removing "#line" and "#file" lines left by cpp.  Let's hope CCAS is
-# smart enough to do that itself if it's needed.
+# It's necessary to run $(CPP) separately, since it seems not all compilers
+# recognise .S files, in particular "cc" on HP-UX 10 and 11 doesn't (and
+# will silently do nothing if given a .S).
+#
+# For .lo we need a helper script, as described below for .asm.lo.
 #
 .S.o:
-	$(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
+	$(CPP) $(PREPROCESS_FLAGS) `test -f $< || echo '$(srcdir)/'`$< | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(RM_TMP) tmp-$*.s
 .S.obj:
-	$(CCAS) $(COMPILE_FLAGS) `cygpath -w $<`
+	$(CPP) $(PREPROCESS_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(RM_TMP) tmp-$*.s
 .S.lo:
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) -o $@ `test -f $< || echo '$(srcdir)/'`$<
+	$(LIBTOOL) --mode=compile --tag=CC $(top_srcdir)/mpn/cpp-ccas --cpp="$(CPP) $(PREPROCESS_FLAGS)" $(CCAS) $(COMPILE_FLAGS) `test -f $< || echo '$(srcdir)/'`$<
 
 # .asm assembler, preprocessed with m4.
 #
