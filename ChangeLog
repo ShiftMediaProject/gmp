@@ -1,3 +1,21 @@
+2000-03-15  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/diveby3.c: New file.
+	* mpn/x86/diveby3.asm: New file.
+	* mpn/x86/k6/diveby3.asm: New file.
+	* gmp.h (mpn_divexact_by3): Prototype and define.
+	* mpn/asm-defs.m4: define_mpn(divexact_by3).
+	* configure.in (gmp_mpn_functions): Add diveby3.
+
+	* mpn/x86/pentium/sqr_basecase.asm: A few better addressing modes.
+
+	* configure.in: Add AC_C_STRINGIZE and AC_CHECK_TYPES((void)).
+	* gmp-impl.h (ASSERT): Use them.
+
+	* mpn/x86/k7/mmx/lshift.asm: New file.
+	* mpn/x86/k7/mmx/rshift.asm: Rewrite simple loop and return value
+	handling, add some pictures.
+
 2000-03-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc32/v8/mul_1.asm: Make PIC actually work.
