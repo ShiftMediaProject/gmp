@@ -27,22 +27,18 @@ mpz_get_si (mpz_srcptr z)
 {
   mp_ptr zp = z->_mp_d;
   mp_size_t size = z->_mp_size;
-  mp_limb_t low_limb = zp[0];
+  mp_limb_t zl = zp[0];
 
 #if GMP_NAIL_BITS != 0
   if (ULONG_MAX > GMP_NUMB_MAX != 0 && ABS (size) >= 2)
-    {
-      /* happens for nails, but not if LONG_LONG_LIMB */
-      /* assume two limbs are enough to fill an ulong */
-      low_limb += zp[1] << GMP_NUMB_BITS;
-    }
+    zl |= zp[1] << GMP_NUMB_BITS;
 #endif
 
   if (size > 0)
-    return (long) low_limb & LONG_MAX;
+    return (long) zl & LONG_MAX;
   else if (size < 0)
     /* This expression is necessary to properly handle 0x80000000 */
-    return ~(((long) low_limb - 1L) & LONG_MAX);
+    return ~(((long) zl - 1L) & LONG_MAX);
   else
     return 0;
 }
