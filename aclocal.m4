@@ -600,9 +600,9 @@ EOF
   echo "Test compile: [$2]" >&AC_FD_CC
   gmp_compile="$1 conftest.c >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_compile); then
+    cc_works_part=yes
     if test "$cross_compiling" = no; then
-      if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then
-        cc_works_part=yes
+      if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then :;
       else
         cc_works_part=norun
       fi
