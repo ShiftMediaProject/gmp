@@ -82,6 +82,7 @@ MA 02111-1307, USA. */
    Only hosts that are going to be tested for need to be in this list,
    not everything that can possibly be selected.
  */
+#undef HAVE_HOST_CPU_FAMILY_m68k
 #undef HAVE_HOST_CPU_FAMILY_power
 #undef HAVE_HOST_CPU_FAMILY_powerpc
 #undef HAVE_HOST_CPU_FAMILY_x86
