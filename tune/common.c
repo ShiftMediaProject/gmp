@@ -1,7 +1,7 @@
 /* Shared speed subroutines.  */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -36,6 +36,7 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#include "tests.h"
 #include "speed.h"
 
 
@@ -325,37 +326,6 @@ speed_cache_fill (struct speed_params *s)
 }
 
 
-/* Return p advanced to the next multiple of "align" bytes.  "align" must be
-   a power of 2.  Care is taken not to assume sizeof(int)==sizeof(pointer).
-   Using "unsigned long" avoids a warning on hpux.  */
-void *
-align_pointer (void *p, size_t align)
-{
-  unsigned long  d;
-  d = ((unsigned long) p) & (align-1);
-  d = (d != 0 ? align-d : 0);
-  return (void *) (((char *) p) + d);
-}
-
-/* Note that memory allocated with this function can never be freed, because
-   the start address of the block allocated is discarded. */
-void *
-__gmp_allocate_func_aligned (size_t bytes, size_t align)
-{
-  return align_pointer ((*__gmp_allocate_func) (bytes + align-1), align);
-}
-
-
-void *
-__gmp_allocate_or_reallocate (void *ptr, size_t oldsize, size_t newsize)
-{
-  if (ptr == NULL)
-    return (*__gmp_allocate_func) (newsize);
-  else
-    return (*__gmp_reallocate_func) (ptr, oldsize, newsize);
-}
-
-
 /* Adjust ptr to align to CACHE_LINE_SIZE bytes plus "align" limbs.  ptr
    needs to have room for up to CACHE_LINE_SIZE-4 extra bytes.  */
 
@@ -373,29 +343,6 @@ speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
 
   return (mp_ptr) ptr 
     + ((align - ((mp_size_t) ptr >> 2)) & SPEED_TMP_ALLOC_ADJUST_MASK);
-}
-
-
-void
-mpz_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
-{
-  ASSERT (size >= 0);
-  MPN_NORMALIZE (p, size);
-  MPZ_REALLOC (z, size);
-  MPN_COPY (PTR(z), p, size);
-  SIZ(z) = size;
-}
-
-void
-mpz_init_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
-{
-  ASSERT (size >= 0);
-
-  MPN_NORMALIZE (p, size);
-  ALLOC(z) = MAX (size, 1);
-  PTR(z) = __GMP_ALLOCATE_FUNC_LIMBS (ALLOC(z));
-  SIZ(z) = size;
-  MPN_COPY (PTR(z), p, size);
 }
 
 
@@ -868,6 +815,7 @@ speed_mpn_gcd_binary (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD (mpn_gcd_binary);
 }
+
 double
 speed_mpn_gcdext (struct speed_params *s)
 {
