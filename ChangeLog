@@ -18,6 +18,31 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-08-19  Kevin Ryde  <kevin@swox.se>
+
+	* longlong.h (add_ssaaaa, sub_ddmmss) [hppa 64]: Move down into main
+	__GNUC__ block.  Exclude for _LONG_LONG_LIMB (ie. ABI=2.0n) since
+	these forms are only for ABI=2.0w.
+
+	* longlong.h (count_leading_zeros) [__mcpu32__]: Check __mcpu32__ to
+	avoid bfffo on GCC 3.4 in CPU32 mode.  Reported by Bernardo Innocenti.
+
+	* longlong.h (count_trailing_zeros) [x86_64]: Use "%q0" to force
+	64-bit register destination.  Pointed out by Torbjorn.
+
+	* mpz/combit.c: Correction to carry handling when extending a
+	negative, and use __GMPN_ADD_1.  Correction to complement limb for a
+	negative when there's a non-zero low limb.
+	* tests/mpz/bit.c (check_clr_extend, check_com_negs): Exercise these.
+
+	* demos/perl/GMP.xs, demos/perl/GMP.pm, demos/perl/test.pl: Add
+	get_d_2exp.
+	* demos/perl/GMP.xs, demos/perl/GMP.pm, demos/perl/GMP/Rand.pm,
+	demos/perl/test.pl: Add gmp_urandomb_ui, gmp_urandomm_ui.
+	(GMP::Rand::randstate): Accept a randstate object to copy.
+	* demos/perl/GMP.xs, demos/perl/GMP.pm, demos/perl/GMP/Mpz.pm,
+	demos/perl/test.pl: Add combit, rootrem.
+
 2003-08-19  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/Makefile.am (EXTRA_DIST): Add amd64.asm.
