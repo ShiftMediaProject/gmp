@@ -54,7 +54,7 @@ dnl
 dnl  Usage: PROLOGUE(functionname)
 dnl
 dnl  Generate a function prologue.  functionname gets GSYM_PREFIX added.
-dnl  For example,
+dnl  Examples,
 dnl
 dnl         PROLOGUE(mpn_add_n)
 dnl         PROLOGUE(somefun)
@@ -67,7 +67,7 @@ m4_assert_defined(`PROLOGUE_cpu')
 )')dnl
 m4_file_seen()dnl
 define(`PROLOGUE_current_function',`$1')dnl
-PROLOGUE_cpu(GSYM_PREFIX(`$1'))')
+PROLOGUE_cpu(GSYM_PREFIX`'$1)')
 
 
 dnl  Usage: EPILOGUE()
@@ -81,7 +81,7 @@ m4_assert_defined(`EPILOGUE_cpu')
 `ifdef(`PROLOGUE_current_function',,
 `m4_error(`EPILOGUE'() with no `PROLOGUE'()
 )')dnl
-EPILOGUE_cpu(GSYM_PREFIX(PROLOGUE_current_function))`'dnl
+EPILOGUE_cpu(GSYM_PREFIX`'PROLOGUE_current_function)`'dnl
 undefine(`PROLOGUE_current_function')')
 
 m4wrap(
@@ -126,10 +126,12 @@ dnl  happen if the local label prefix is is empty.)  Underscores are used so
 dnl  the whole label will still be a valid C identifier and so can be easily
 dnl  used in gdb.
 
+dnl  LSYM_PREFIX can be L$, so defn() is used to prevent L expanding as the
+dnl  L macro and making an infinite recursion.
 define(LF,
 m4_assert_numargs(2)
 m4_assert_defined(`LSYM_PREFIX')
-`defn(`LSYM_PREFIX')GSYM_PREFIX($1)__$2')
+`defn(`LSYM_PREFIX')GSYM_PREFIX`'$1`'__$2')
 
 define(`L',
 m4_assert_numargs(1)
