@@ -55,7 +55,7 @@ case "${target}" in
       target_makefile_frag=config/mt-m68k
     fi
     ;;
-  i[3456]86*-*-* | pentium-*-* | pentiumpro-*-*)
+  i[3456]86*-*-* | pentium-*-* | pentiumpro-*-* | k[5678]-*-*)
     if [ x$with_gcc != xno ]
     then
       target_makefile_frag=config/mt-x86
