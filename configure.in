@@ -24,15 +24,13 @@ dnl  MA 02111-1307, USA.
 dnl [AC_REVISION([$CVSid$])]
 AC_PREREQ(2.14)dnl
 AC_INIT(gmp-impl.h)
-AC_CONFIG_HEADERS(config.h:config.in)
 
 dnl Check system.
 AC_CANONICAL_SYSTEM
 
 dnl  Automake
 AM_INIT_AUTOMAKE(gmp, GMP_VERSION)
-dnl [ AM_CONFIG_HEADER makes autoconf confused. ]
-dnl [AM_CONFIG_HEADER]
+AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
 
 dnl  GMP specific
@@ -63,6 +61,16 @@ esac],
 if test "$enable_alloca" = "no"; then
   AC_DEFINE(USE_STACK_ALLOC)
 fi
+
+
+AC_ARG_ENABLE(mpbsd,
+AC_HELP_STRING([--enable-mpbsd],[build Berkley MP compatibility library [default=no]]),
+[case "${enableval}" in
+yes|no) ;;
+*) AC_MSG_ERROR([bad value ${enableval} for --enable-mpbsd, need yes or no]) ;;
+esac],
+[enable_mpbsd=no])
+AM_CONDITIONAL(WANT_MPBSD, test "$enable_mpbsd" = "yes")
 
 
 dnl Switch on OS and determine what compiler to use.
@@ -768,4 +776,4 @@ dnl  Create Makefiles
 dnl  FIXME: Upcoming version of autoconf/automake may not like broken lines.
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
   mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile \
-  tests/Makefile tests/rand/Makefile)
+  tests/Makefile tests/rand/Makefile demos/Makefile mpbsd/Makefile)
