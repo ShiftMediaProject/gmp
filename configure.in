@@ -190,6 +190,14 @@ esac],
 [enable_profiling=no])
 
 case $enable_profiling in
+  prof)
+    AC_DEFINE(WANT_PROFILING_PROF, 1,
+              [Define to 1 if --enable-profiling=prof])
+    ;;
+  gprof)
+    AC_DEFINE(WANT_PROFILING_GPROF, 1,
+              [Define to 1 if --enable-profiling=gprof])
+    ;;
   instrument)
     AC_DEFINE(WANT_PROFILING_INSTRUMENT, 1,
               [Define to 1 if --enable-profiling=instrument])
