@@ -31,7 +31,7 @@ MA 02111-1307, USA.
 #define CHECK_CONSTANT(x,y)                                     \
   if ((x) != (y))                                               \
     {                                                           \
-      printf ("%s == %d, but %s == %d\n", #x, x, #y, y);        \
+      printf ("%s == %lx, but %s == %lx\n", #x, x, #y, y);        \
       abort ();                                                 \
     }
 #define CHECK_CONDITION(x)              \
@@ -45,7 +45,7 @@ MA 02111-1307, USA.
 #define CHECK_CONSTANT(x,y)                     \
   if ((x) != (y))                               \
     {                                           \
-      printf ("x == %d, but y == %d\n", x, y);  \
+      printf ("x == %lx, but y == %lx\n", x, y);  \
       abort ();                                 \
     }
 #define CHECK_CONDITION(x)      \
