@@ -442,7 +442,7 @@ mp_limb_t mpn_dc_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 #define mpz_divexact_gcd  __gmpz_divexact_gcd
 void mpz_divexact_gcd _PROTO ((mpz_ptr q, mpz_srcptr a, mpz_srcptr d));
 
-#define mpn_divisible_p __gmpn_divisible_p
+#define mpn_divisible_p __MPN(divisible_p)
 int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
                                  mp_srcptr dp, mp_size_t dsize)) __GMP_ATTRIBUTE_PURE;
 
