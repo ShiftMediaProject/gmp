@@ -1,92 +1,450 @@
-# Makefile for mpf/tests for GNU MP
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
 
-srcdir = .
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
-CC = gcc
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
 
-TEST_LIBS = ../../libgmp.a
-INCLUDES = -I../../mpn -I$(srcdir)/../..
-CFLAGS = -g -O
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ../..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+
+@SET_MAKE@
+build_alias = @build_alias@
+build_triplet = @build@
+host_alias = @host_alias@
+host_triplet = @host@
+target_alias = @target_alias@
+target_triplet = @target@
+AMDEP = @AMDEP@
+AMTAR = @AMTAR@
+AR = @AR@
+AS = @AS@
+AWK = @AWK@
+CC = @CC@
+CC_TEST = @CC_TEST@
+CPP = @CPP@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
+EXEEXT = @EXEEXT@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+M4 = @M4@
+MAINT = @MAINT@
+MAKEINFO = @MAKEINFO@
+NM = @NM@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+STRIP = @STRIP@
+VERSION = @VERSION@
+install_sh = @install_sh@
+mpn_objects = @mpn_objects@
+mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
+
+
+AUTOMAKE_OPTIONS = gnu
+
+INCLUDES = -I$(top_srcdir)
+LDADD = ../../libgmp.la
+
+noinst_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d
+
+t_add_SOURCES = t-add.c ref.c
+t_sub_SOURCES = t-sub.c ref.c
+subdir = mpf/tests
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../../config.h
+CONFIG_CLEAN_FILES = 
+noinst_PROGRAMS =  t-add$(EXEEXT) t-sub$(EXEEXT) t-conv$(EXEEXT) \
+t-sqrt$(EXEEXT) t-muldiv$(EXEEXT) t-dm2exp$(EXEEXT) reuse$(EXEEXT) \
+t-get_d$(EXEEXT)
+PROGRAMS =  $(noinst_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I../..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+reuse_SOURCES = reuse.c
+reuse_OBJECTS =  reuse.$(OBJEXT)
+reuse_LDADD = $(LDADD)
+reuse_DEPENDENCIES =  ../../libgmp.la
+reuse_LDFLAGS = 
+am_t_add_OBJECTS =  t-add.$(OBJEXT) ref.$(OBJEXT)
+t_add_OBJECTS =  $(am_t_add_OBJECTS)
+t_add_LDADD = $(LDADD)
+t_add_DEPENDENCIES =  ../../libgmp.la
+t_add_LDFLAGS = 
+t_conv_SOURCES = t-conv.c
+t_conv_OBJECTS =  t-conv.$(OBJEXT)
+t_conv_LDADD = $(LDADD)
+t_conv_DEPENDENCIES =  ../../libgmp.la
+t_conv_LDFLAGS = 
+t_dm2exp_SOURCES = t-dm2exp.c
+t_dm2exp_OBJECTS =  t-dm2exp.$(OBJEXT)
+t_dm2exp_LDADD = $(LDADD)
+t_dm2exp_DEPENDENCIES =  ../../libgmp.la
+t_dm2exp_LDFLAGS = 
+t_get_d_SOURCES = t-get_d.c
+t_get_d_OBJECTS =  t-get_d.$(OBJEXT)
+t_get_d_LDADD = $(LDADD)
+t_get_d_DEPENDENCIES =  ../../libgmp.la
+t_get_d_LDFLAGS = 
+t_muldiv_SOURCES = t-muldiv.c
+t_muldiv_OBJECTS =  t-muldiv.$(OBJEXT)
+t_muldiv_LDADD = $(LDADD)
+t_muldiv_DEPENDENCIES =  ../../libgmp.la
+t_muldiv_LDFLAGS = 
+t_sqrt_SOURCES = t-sqrt.c
+t_sqrt_OBJECTS =  t-sqrt.$(OBJEXT)
+t_sqrt_LDADD = $(LDADD)
+t_sqrt_DEPENDENCIES =  ../../libgmp.la
+t_sqrt_LDFLAGS = 
+am_t_sub_OBJECTS =  t-sub.$(OBJEXT) ref.$(OBJEXT)
+t_sub_OBJECTS =  $(am_t_sub_OBJECTS)
+t_sub_LDADD = $(LDADD)
+t_sub_DEPENDENCIES =  ../../libgmp.la
+t_sub_LDFLAGS = 
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES =  reuse.c $(t_add_SOURCES) t-conv.c t-dm2exp.c t-get_d.c \
+t-muldiv.c t-sqrt.c $(t_sub_SOURCES)
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+GZIP_ENV = --best
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+DEP_FILES =  @AMDEP@ $(DEPDIR)/ref.Po $(DEPDIR)/reuse.Po \
+$(DEPDIR)/t-add.Po $(DEPDIR)/t-conv.Po $(DEPDIR)/t-dm2exp.Po \
+$(DEPDIR)/t-get_d.Po $(DEPDIR)/t-muldiv.Po $(DEPDIR)/t-sqrt.Po \
+$(DEPDIR)/t-sub.Po
+SOURCES = reuse.c $(t_add_SOURCES) t-conv.c t-dm2exp.c t-get_d.c t-muldiv.c t-sqrt.c $(t_sub_SOURCES)
+OBJECTS = reuse.$(OBJEXT) $(am_t_add_OBJECTS) t-conv.$(OBJEXT) t-dm2exp.$(OBJEXT) t-get_d.$(OBJEXT) t-muldiv.$(OBJEXT) t-sqrt.$(OBJEXT) $(am_t_sub_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .c .lo .o .obj
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu mpf/tests/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-noinstPROGRAMS:
+
+clean-noinstPROGRAMS:
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+
+distclean-noinstPROGRAMS:
+
+maintainer-clean-noinstPROGRAMS:
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+
+maintainer-clean-libtool:
+
+reuse$(EXEEXT): $(reuse_OBJECTS) $(reuse_DEPENDENCIES)
+	@rm -f reuse$(EXEEXT)
+	$(LINK) $(reuse_LDFLAGS) $(reuse_OBJECTS) $(reuse_LDADD) $(LIBS)
+
+t-add$(EXEEXT): $(t_add_OBJECTS) $(t_add_DEPENDENCIES)
+	@rm -f t-add$(EXEEXT)
+	$(LINK) $(t_add_LDFLAGS) $(t_add_OBJECTS) $(t_add_LDADD) $(LIBS)
+
+t-conv$(EXEEXT): $(t_conv_OBJECTS) $(t_conv_DEPENDENCIES)
+	@rm -f t-conv$(EXEEXT)
+	$(LINK) $(t_conv_LDFLAGS) $(t_conv_OBJECTS) $(t_conv_LDADD) $(LIBS)
+
+t-dm2exp$(EXEEXT): $(t_dm2exp_OBJECTS) $(t_dm2exp_DEPENDENCIES)
+	@rm -f t-dm2exp$(EXEEXT)
+	$(LINK) $(t_dm2exp_LDFLAGS) $(t_dm2exp_OBJECTS) $(t_dm2exp_LDADD) $(LIBS)
+
+t-get_d$(EXEEXT): $(t_get_d_OBJECTS) $(t_get_d_DEPENDENCIES)
+	@rm -f t-get_d$(EXEEXT)
+	$(LINK) $(t_get_d_LDFLAGS) $(t_get_d_OBJECTS) $(t_get_d_LDADD) $(LIBS)
+
+t-muldiv$(EXEEXT): $(t_muldiv_OBJECTS) $(t_muldiv_DEPENDENCIES)
+	@rm -f t-muldiv$(EXEEXT)
+	$(LINK) $(t_muldiv_LDFLAGS) $(t_muldiv_OBJECTS) $(t_muldiv_LDADD) $(LIBS)
+
+t-sqrt$(EXEEXT): $(t_sqrt_OBJECTS) $(t_sqrt_DEPENDENCIES)
+	@rm -f t-sqrt$(EXEEXT)
+	$(LINK) $(t_sqrt_LDFLAGS) $(t_sqrt_OBJECTS) $(t_sqrt_LDADD) $(LIBS)
+
+t-sub$(EXEEXT): $(t_sub_OBJECTS) $(t_sub_DEPENDENCIES)
+	@rm -f t-sub$(EXEEXT)
+	$(LINK) $(t_sub_LDFLAGS) $(t_sub_OBJECTS) $(t_sub_LDADD) $(LIBS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pR $$d/$$file $(distdir); \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+
+@AMDEP@include $(DEPDIR)/ref.Po
+@AMDEP@include $(DEPDIR)/reuse.Po
+@AMDEP@include $(DEPDIR)/t-add.Po
+@AMDEP@include $(DEPDIR)/t-conv.Po
+@AMDEP@include $(DEPDIR)/t-dm2exp.Po
+@AMDEP@include $(DEPDIR)/t-get_d.Po
+@AMDEP@include $(DEPDIR)/t-muldiv.Po
+@AMDEP@include $(DEPDIR)/t-sqrt.Po
+@AMDEP@include $(DEPDIR)/t-sub.Po
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+	-rm -rf $(DEPDIR)
+
+maintainer-clean-depend:
+
+@AMDEP@CCDEPMODE = @CCDEPMODE@
 
 .c.o:
-	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ $<
 
-TEST_SRCS = t-add.c t-sub.c t-conv.c t-sqrt.c t-muldiv.c t-dm2exp.c t-reuse.c \
-  t-get_d.c ref.c
-TEST_OBJS = t-add.o t-sub.o t-conv.o t-sqrt.o t-muldiv.o t-dm2exp.c reuse.o \
-  t-get_d.o
-TESTS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d
+.c.lo:
+@AMDEP@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LTCOMPILE) -c -o $@ $<
+
+.c.obj:
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `cygpath -w $<`
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am:
+uninstall: uninstall-am
+all-am: Makefile $(PROGRAMS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+installdirs:
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	-rm -f Makefile.in
+mostlyclean-am:  mostlyclean-noinstPROGRAMS mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
+		mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-noinstPROGRAMS clean-compile clean-libtool clean-tags \
+		clean-depend clean-generic mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-noinstPROGRAMS distclean-compile \
+		distclean-libtool distclean-tags distclean-depend \
+		distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-noinstPROGRAMS \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-tags maintainer-clean-depend \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-noinstPROGRAMS distclean-noinstPROGRAMS \
+clean-noinstPROGRAMS maintainer-clean-noinstPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile mostlyclean-libtool distclean-libtool \
+clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir \
+mostlyclean-depend distclean-depend clean-depend \
+maintainer-clean-depend info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all install-strip installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
 
 check: Makefile st-add st-sub st-conv st-sqrt st-muldiv st-dm2exp st-reuse \
   st-get_d
 	@echo "The tests passed."
 
-st-add: t-add
+st-add: t-add@EXEEXT@
 	./t-add
 	touch $@
-st-sub: t-sub
+st-sub: t-sub@EXEEXT@
 	./t-sub
 	touch $@
-st-conv: t-conv
+st-conv: t-conv@EXEEXT@
 	./t-conv
 	touch $@
-st-sqrt: t-sqrt
+st-sqrt: t-sqrt@EXEEXT@
 	./t-sqrt
 	touch $@
-st-muldiv: t-muldiv
+st-muldiv: t-muldiv@EXEEXT@
 	./t-muldiv
 	touch $@
-st-dm2exp: t-dm2exp
+st-dm2exp: t-dm2exp@EXEEXT@
 	./t-dm2exp
 	touch $@
-st-reuse: reuse
+st-reuse: reuse@EXEEXT@
 	./reuse
 	touch $@
-st-get_d: t-get_d
+st-get_d: t-get_d@EXEEXT@
 	./t-get_d
 	touch $@
 
-H = $(srcdir)/../../gmp.h $(srcdir)/../../gmp-impl.h \
- $(srcdir)/../../urandom.h ../../mpn/gmp-mparam.h
-
-t-add: t-add.o ref.o $(TEST_LIBS)
-	$(CC) -o tmp-$@ $@.o ref.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
-	$(srcdir)/move-if-change tmp-$@ $@
-t-sub: t-sub.o ref.o $(TEST_LIBS)
-	$(CC) -o tmp-$@ $@.o ref.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
-	$(srcdir)/move-if-change tmp-$@ $@
-t-conv: t-conv.o $(TEST_LIBS)
-	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
-	$(srcdir)/move-if-change tmp-$@ $@
-t-sqrt: t-sqrt.o  $(TEST_LIBS)
-	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
-	$(srcdir)/move-if-change tmp-$@ $@
-t-muldiv: t-muldiv.o $(TEST_LIBS)
-	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
-	$(srcdir)/move-if-change tmp-$@ $@
-t-dm2exp: t-dm2exp.o $(TEST_LIBS)
-	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
-	$(srcdir)/move-if-change tmp-$@ $@
-reuse: reuse.o $(TEST_LIBS)
-	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
-	$(srcdir)/move-if-change tmp-$@ $@
-t-get_d: t-get_d.o $(TEST_LIBS)
-	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
-	$(srcdir)/move-if-change tmp-$@ $@
-
-t-add.o: $(srcdir)/t-add.c
-t-sub.o: $(srcdir)/t-sub.c
-t-conv.o: $(srcdir)/t-conv.c
-t-sqrt.o: $(srcdir)/t-sqrt.c
-t-muldiv.o: $(srcdir)/t-muldiv.c
-t-dm2exp.o: $(srcdir)/t-dm2exp.c
-reuse.o: $(srcdir)/reuse.c
-t-get_d.o: $(srcdir)/t-get_d.c
-
-clean mostlyclean:
-	rm -f *.o st-* $(TESTS)
-distclean maintainer-clean: clean
-	rm -f Makefile config.status
-
-Makefile: $(srcdir)/Makefile.in
-	$(SHELL) ./config.status
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
