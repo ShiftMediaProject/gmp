@@ -247,7 +247,10 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
   ASSERT (op_ptr[op_size-1] != 0);
   ASSERT (rem_ptr == NULL
           || MPN_SAME_OR_SEPARATE_P (op_ptr, rem_ptr, op_size));
+  ASSERT (rem_ptr == NULL
+          || ! MPN_OVERLAP_P (root_ptr, (op_size+1)/2, rem_ptr, op_size));
   ASSERT (! MPN_OVERLAP_P (root_ptr, (op_size+1)/2, op_ptr, op_size));
+
 
   count_leading_zeros (cnt, op_ptr[op_size - 1]);
   tsize = op_size;
