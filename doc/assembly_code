@@ -7,7 +7,7 @@ There is one subdirectory for each ISA family.  Note that e.g., 32-bit SPARC
 and 64-bit SPARC are very different ISA's, and thus cannot share any code.
 
 A particular compile will only use code from one subdirectory, and the
-`generic' subdirectory.  The ISA-specific subdirectories contain hierachies of
+`generic' subdirectory.  The ISA-specific subdirectories contain hierarchies of
 directories for various architecture variants and implementations; the
 top-most level contains code that runs correctly on all variants.
 
@@ -15,7 +15,7 @@ HOW TO WRITE FAST ASSEMBLY CODE FOR GMP
 
 [This should ultimately be made into a chapter of the GMP manual.]
 
-The most basic techinques are software pipelining and loop unrolling.
+The most basic techniques are software pipelining and loop unrolling.
 
 Software pipelining is the technique of scheduling instructions around
 the branch point in a loop, so that consecutive iterations overlap.
@@ -30,17 +30,17 @@ For processors with very few registers, software pipelining is not
 feasible as it increases register pressure.
 
 For superscalar machines, it is often the case that all available
-execution capabilites are not used.  Scheduling some instructions
+execution capabilities are not used.  Scheduling some instructions
 for these otherwise unused resources will never cost us anything.
 
 Try to determine the alternative instructions that can be used for a
 particular processor.  For GMP, the problem that presents most
-challenges is rpopagating carry from one iteration to the next.
+challenges is propagating carry from one iteration to the next.
 Explore the different possibilities for doing that with the available
 instructions!
 
 For wide superscalar processors, the performance might be completely
-determined by the number of dependent instruction requied from
+determined by the number of dependent instruction required from
 accepting carry-in from the previous iteration until producing
 carry-out for the next iteration.  This is particularly true for
 simple operations like mpn_add_n and mpn_sub_n.  Some carry
