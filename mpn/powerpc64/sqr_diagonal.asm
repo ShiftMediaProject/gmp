@@ -22,8 +22,8 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     18
-C POWER4/PPC970:     ?
+C POWER3/PPC630:    18
+C POWER4/PPC970:     9
 
 C INPUT PARAMETERS
 C res_ptr	r3
@@ -34,14 +34,14 @@ C s2_limb	r6
 ASM_START()
 PROLOGUE(mpn_sqr_diagonal)
 	mtctr	r5
-	cal	r3,-8(r3)
-	cal	r4,-8(r4)
+	addi	r3, r3, -8
+	addi	r4, r4, -8
 
-.Loop:	ldu	r0,8(r4)
-	mulld	r7,r0,r0
-	mulhdu	r9,r0,r0
-	std	r7,8(r3)
-	stdu	r9,16(r3)
+.Loop:	ldu	r0, 8(r4)
+	mulld	r7, r0, r0
+	mulhdu	r9, r0, r0
+	std	r7, 8(r3)
+	stdu	r9, 16(r3)
 	bdnz	.Loop
 
 	blr
