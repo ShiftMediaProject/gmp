@@ -73,7 +73,7 @@ deflit(`FRAME',8)
 
 	jnz	L(simple)
 
-	shrdl	%cl, %edi, %eax		# eax was decremented to zero
+	shrdl(	%cl, %edi, %eax)	# eax was decremented to zero
 
  	shrl	%cl, %edi
 
