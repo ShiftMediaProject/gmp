@@ -1265,6 +1265,13 @@ case $host in
     # (eg. solaris 2.8 native "as"), so always have -march=pentium after
     # that as a fallback.
     #
+    # -march=pentium4 and -march=k8 enable SSE2 instructions, which may or
+    # may not be supported by the assembler and/or the OS, and is bad in gcc
+    # prior to 3.3.  The tests will reject these if no good, so fallbacks
+    # like "-march=pentium4 -mno-sse2" are given to try also without SSE2.
+    # Note the relevant -march types are listed in the optflags handling
+    # below, be sure to update there if adding new types emitting SSE2.
+    #
     # -mtune is used at the start of each cpu option list to give something
     # gcc 3.4 will use, thereby avoiding warnings from -mcpu.  -mcpu forms
     # are retained for use by prior gcc.  For example pentium has
@@ -1323,10 +1330,6 @@ case $host in
         gcc_cflags_arch="-march=athlon -march=pentiumpro -march=pentium"
         ;;
       i786-*-* | pentium4-*-*)
-        # -march=pentium4 will use SSE2 instructions, which might not be
-        # supported by the assembler or the OS (see checks with optflags
-        # below).  Fallback on "-march=pentium4 -mno-sse2" if necessary.
-        #
         # pentiumpro is the primary fallback when gcc doens't know pentium4.
         # This gets us cmov to eliminate branches.  Maybe "athlon" would be
         # a possibility on gcc 3.0.
@@ -1347,7 +1350,7 @@ case $host in
         ;;
       x86_64-*-*)
         gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=k8 -march=athlon -march=pentiumpro -march=pentium"
+        gcc_cflags_arch="-march=k8 -march=k8~-mno-sse2 -march=athlon -march=pentiumpro -march=pentium"
         ;;
       *)
         gcc_cflags_cpu="-mtune=i486 -mcpu=i486 -m486"
@@ -1699,11 +1702,22 @@ if test $found_compiler = yes; then
         flag=`echo "$flag" | tr '~' ' '`
 
         case $flag in
-          -march=pentium4)
-            # for sse2 we need a good enough gcc and a good enough OS
-            GMP_GCC_PENTIUM4_SSE2($cc $cflags $cppflags,
-              [GMP_OS_X86_XMM($cc $cflags $cppflags,, [continue])],
-              [continue])
+          -march=pentium4 | -march=k8)
+            # For -march settings which enable SSE2 we exclude certain bad
+            # gcc versions and we need an OS knowing how to save xmm regs.
+            #
+            # This is only for ABI=32, any 64-bit gcc is good and any OS
+            # knowing x86_64 will know xmm.
+            #
+            # -march=k8 was only introduced in gcc 3.3, so we shouldn't need
+            # the GMP_GCC_PENTIUM4_SSE2 check (for gcc 3.2 and prior).  But
+            # it doesn't hurt to run it anyway, sharing code with the
+            # pentium4 case.
+            #
+            if test "$abi" = 32; then
+              GMP_GCC_PENTIUM4_SSE2($cc $cflags $cppflags,, continue)
+              GMP_OS_X86_XMM($cc $cflags $cppflags,, continue)
+            fi
             ;;
           -no-cpp-precomp)
             # special check, avoiding a warning
