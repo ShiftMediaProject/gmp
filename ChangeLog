@@ -1,3 +1,9 @@
+2001-02-24  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (arm*-*-*): Set extra_functions.
+	* longlong.h (arm): #define udiv_qrnnd.
+	* mpn/arm/udiv.asm: New file.
+
 2001-02-24  Kevin Ryde  <kevin@swox.se>
 
 	* tune/many.pl: Add mpn_count_{leading,trailing}_zeros and
