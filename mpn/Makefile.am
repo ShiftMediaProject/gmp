@@ -47,8 +47,6 @@ COMPILE_FLAGS =	\
 
 SUFFIXES = .s .S .asm
 
-# FIXME: Use `$(CCAS) $(COMPILE_FLAGS)' instead of $(COMPILE).
-
 # *.s are not preprocessed at all.
 .s.o:
 	$(CCAS) $(COMPILE_FLAGS) $<
