@@ -1,3 +1,15 @@
+2001-02-21  Kevin Ryde  <kevin@swox.se>
+
+	* tune/tuneup.c (all): Only one compiler print should match, no need
+	for #undef PRINTED_COMPILER.
+
+	* mpfr/mpfr.h (mpfr_sgn): Use mpfr_cmp_ui (patch from Paul).
+
+	* mpz/fib_ui.c: Update some remarks about alternative algorithms.
+	* gmp.texi (Fibonacci Numbers Algorithm): Ditto.
+	(Assigning Floats): Clarify mpf_swap swaps the precisions too.
+	(Low-level Functions): Try to be clearer about negative cofactors.
+
 2001-02-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc64/copyi.asm: Streamline for small operands.
