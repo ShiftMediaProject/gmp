@@ -5,21 +5,16 @@ RELEVANT OPTIMIZATION ISSUES
 The Ultra I/II pipeline executes up to two simple integer arithmetic operations
 per cycle.  The 64-bit integer multiply instruction mulx takes from 5 cycles to
 35 cycles, depending on the position of the most significant bit of the 1st
-source operand.  It cannot overlap with other instructions.  For our use of
-mulx, it will take from 5 to 20 cycles.
+source operand.  It stalls the processor while executing.  We stay away from
+that instruction, and instead use floating-point operations.
 
 Integer conditional move instructions cannot dual-issue with other integer
 instructions.  No conditional move can issue 1-5 cycles after a load.  (Or
-something such bizzare.)
+something such bizarre.)  We don't use these.
 
 Integer branches can issue with two integer arithmetic instructions.  Likewise
-for integer loads.  Four instructions may issue (arith, arith, ld/st, branch)
-but only if the branch is last.
-
-(The V9 architecture manual recommends that the 2nd operand of a multiply
-instruction be the smaller one.  For UltraSPARC, they got things backwards and
-optimize for the wrong operand!  Really helpful in the light of that multiply
-is incredibly slow on these CPUs!)
+for integer loads.  Four instructions may issue (iop, iop, ld/st/fop,
+branch/fop) but only if a branch or fop is last.
 
 STATUS
 
@@ -27,9 +22,10 @@ Timings on UltraSPARC-1/2:
 
 * lshift, rshift: The code is well-optimized and runs at 2.0 cycles/limb.
 
-* add_n, sub_n: currently runs at 5 cycles/limb.  Not very fast, but
-  probably optimal.
+* add_n, sub_n: currently runs at 5 cycles/limb.  Using logic on the
+  most significant bit of the two operands and the result, we would
+  get down to 4 cycles/limb.
 
-* mul_1/addmul_1/submul_1: The used method is within 2x from what would be
-  attainable by the 21-bit chunk split method.
-
+* mul_1/addmul_1/submul_1: Split invariant operand in 16-bit chunks and other
+  operand in 32-bit chunks.  Confirmed that such a loop can be made to run in
+  14 cycles, albeit with a 4-way deep software pipeline.
