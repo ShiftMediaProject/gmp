@@ -28,6 +28,11 @@ MA 02111-1307, USA.
 	* mpn/generic/qstack.c (mpn_hgcd_max_recursion): ... moved from
 	here. 
 
+2003-12-18  Niels Möller  <niels@s3.kth.se>
+
+	* mpn/generic/hgcd.c (hgcd_update_r): Assert that the output r2 is
+	smaller than the input r1.
+
 2003-12-18  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/get_d.c: Don't include longlong.h.
