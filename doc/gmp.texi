@@ -14,7 +14,7 @@ This manual describes how to install and use the GNU multiple precision
 arithmetic library, version @value{VERSION}.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
-2003 Free Software Foundation, Inc.
+2003, 2004 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.2 or any later
@@ -1149,6 +1149,35 @@ with a fresh @command{./configure} and @command{make} each.
 @sp 1
 @table @asis
 @need 1000
+@item AMD64 (@samp{x86_64})
+@cindex AMD64
+On AMD64 systems supporting both 32-bit and 64-bit modes for applications, the
+following ABI choices are available.
+
+@table @asis
+@item @samp{ABI=64}
+The 64-bit ABI uses 64-bit limbs and pointers and makes full use of the chip
+architecture.  This is the default.  Applications will usually not need
+special compiler flags, but for reference the option is
+
+@example
+gcc  -m64
+@end example
+
+@item @samp{ABI=32}
+The 32-bit ABI is the usual i386 conventions.  This will be slower, and is not
+recommended except for inter-operating with other code not yet 64-bit capable.
+Applications must be compiled with
+
+@example
+gcc  -m32
+@end example
+
+(In GCC 2.95 and earlier there's no @samp{-m32} option, it's the only mode.)
+@end table
+
+@sp 1
+@need 1000
 @item HPPA 2.0 (@samp{hppa2.0*}, @samp{hppa64})
 @cindex HPPA
 @cindex HP-UX
@@ -1192,7 +1221,7 @@ GMP will detect how it was built, and skip to the corresponding @samp{ABI}.
 
 @sp 1
 @need 1500
-@item IA-64 under HP-UX (@samp{ia64*-*-hpux*})
+@item IA-64 under HP-UX (@samp{ia64*-*-hpux*}, @samp{itanium*-*-hpux*})
 @cindex IA-64
 @cindex HP-UX
 HP-UX supports two ABIs for IA-64.  GMP performance is the same in both.
