@@ -312,6 +312,22 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
   } while (0)
 #endif
 
+/* Strip least significant zero limbs from ptr,size by incrementing ptr and
+   decrementing size.  The number in ptr,size must be non-zero, ie. size!=0
+   and somewhere a non-zero limb.  */
+#define MPN_STRIP_LOW_ZEROS_NOT_ZERO(ptr, size) \
+  do                                            \
+    {                                           \
+      ASSERT ((size) != 0);                     \
+      while ((ptr)[0] == 0)                     \
+        {                                       \
+          (ptr)++;                              \
+          (size)--;                             \
+          ASSERT (size >= 0);                   \
+	}                                       \
+    }                                           \
+  while (0)
+
 /* Initialize X of type mpz_t with space for NLIMBS limbs.  X should be a
    temporary variable; it will be automatically cleared out at function
    return.  We use __x here to make it possible to accept both mpz_ptr and
@@ -756,6 +772,71 @@ extern const int __gmp_0;
 #define PP_MASK CNST_LIMB(0x208A20A08A28A8)
 #endif
 
+
+/* BIT1 means a result value in bit 1 (second least significant bit), with a
+   zero bit representing +1 and a one bit representing -1.  Bits other than
+   bit 1 are garbage.
+
+   JACOBI_TWOS_U_BIT1 and JACOBI_RECIP_UU_BIT1 are used in mpn_jacobi_base
+   and their speed is important.  Expressions are used rather than
+   conditionals to accumulate sign changes, which effectively means XORs
+   instead of conditional JUMPs. */
+
+/* (a/0), with a signed; is 1 if a=+/-1, 0 otherwise */
+#define JACOBI_S0(a) \
+  (((a) == 1) | ((a) == -1))
+
+/* (a/0), with a unsigned; is 1 if a=+/-1, 0 otherwise */
+#define JACOBI_U0(a) \
+  ((a) == 1)
+
+/* (a/0), with a an mpz_t; is 1 if a=+/-1, 0 otherwise
+   An mpz_t always has at least one limb of allocated space, so the fetch of
+   the low limb is valid. */
+#define JACOBI_Z0(a) \
+  (((SIZ(a) == 1) | (SIZ(a) == -1)) & (PTR(a)[0] == 1))
+
+/* Convert a bit1 to +1 or -1. */
+#define JACOBI_BIT1_TO_PN(result_bit1) \
+  (1 - ((result_bit1) & 2))
+
+/* (2/b), with b unsigned and odd;
+   is (-1)^((b^2-1)/8) which is 1 if b==1,7mod8 or -1 if b==3,5mod8 and
+   hence obtained from (b>>1)^b */
+#define JACOBI_TWO_U_BIT1(b) \
+  (ASSERT (b & 1), (((b) >> 1) ^ (b)))
+
+/* (2/b)^twos, with b unsigned and odd */
+#define JACOBI_TWOS_U_BIT1(twos, b) \
+  (((twos) << 1) & JACOBI_TWO_U_BIT1 (b))
+
+/* (2/b)^twos, with b unsigned and odd */
+#define JACOBI_TWOS_U(twos, b) \
+  (JACOBI_BIT1_TO_PN (JACOBI_TWOS_U_BIT1 (twos, b)))
+
+/* (a/b) effect due to sign of a: signed/unsigned, b odd;
+   is (-1)^((b-1)/2) if a<0, or +1 if a>=0 */
+#define JACOBI_ASGN_SU_BIT1(a, b) \
+  ((((a) < 0) << 1) & (b))
+
+/* (a/b) effect due to sign of b: signed/mpz;
+   is -1 if a and b both negative, +1 otherwise */
+#define JACOBI_BSGN_SZ_BIT1(a, b) \
+  ((((a) < 0) & (SIZ(b) < 0)) << 1)
+
+/* (a/b) effect due to sign of b: mpz/signed */
+#define JACOBI_BSGN_ZS_BIT1(a, b) \
+  JACOBI_BSGN_SZ_BIT1(b, a)
+
+/* (a/b) reciprocity to switch to (b/a), a,b both unsigned and odd.
+   Is (-1)^((a-1)*(b-1)/4), which means +1 if either a,b==1mod4 or -1 if
+   both a,b==3mod4, achieved in bit 1 by a&b.  No ASSERT()s about a,b odd
+   because this is used in a couple of places with only bit 1 of a or b
+   valid. */
+#define JACOBI_RECIP_UU_BIT1(a, b) \
+  ((a) & (b))
+
+
 /* For testing and debugging.  */
 #define MPZ_CHECK_FORMAT(z)                                     	\
   (ASSERT_ALWAYS (SIZ(z) == 0 || PTR(z)[ABSIZ(z) - 1] != 0),    	\
@@ -772,6 +853,7 @@ extern mp_size_t  mul_threshold[];
 extern mp_size_t  sqr_threshold[];
 extern mp_size_t  bz_threshold[];
 extern mp_size_t  fib_threshold[];
+extern mp_size_t  powm_threshold[];
 extern mp_size_t  gcd_accel_threshold[];
 extern mp_size_t  gcdext_threshold[];
 
@@ -783,6 +865,7 @@ extern mp_size_t  gcdext_threshold[];
 #undef FFT_SQR_THRESHOLD
 #undef BZ_THRESHOLD
 #undef FIB_THRESHOLD
+#undef POWM_THRESHOLD
 #undef GCD_ACCEL_THRESHOLD
 #undef GCDEXT_THRESHOLD
 
@@ -794,6 +877,7 @@ extern mp_size_t  gcdext_threshold[];
 #define FFT_SQR_THRESHOLD        sqr_threshold[2]
 #define BZ_THRESHOLD             bz_threshold[0]
 #define FIB_THRESHOLD            fib_threshold[0]
+#define POWM_THRESHOLD           powm_threshold[0]
 #define GCD_ACCEL_THRESHOLD      gcd_accel_threshold[0]
 #define GCDEXT_THRESHOLD         gcdext_threshold[0]
 
