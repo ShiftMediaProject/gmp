@@ -5300,7 +5300,7 @@ AR=$lt_AR
 AR_FLAGS=$lt_AR_FLAGS
 
 # A C compiler.
-LTCC=$LTCC
+LTCC="$LTCC"
 
 # A language-specific compiler.
 CC=$lt_[]_LT_AC_TAGVAR(compiler, $1)
