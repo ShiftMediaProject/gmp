@@ -1,7 +1,8 @@
 dnl  Intel Pentium-4 mpn_addmul_1 -- Multiply a limb vector with a limb and add
 dnl  the result to a second limb vector.
 dnl 
-dnl  Pentium4: 6.0 cycles/limb
+dnl  Pentium4: 6 cycles/limb, unstable timing, at least on early Pentium4
+dnl  silicon (stepping 10).
 
 dnl  Copyright 2001 Free Software Foundation, Inc.
 dnl 
@@ -58,15 +59,23 @@ L(start_1c):
 	movl	PARAM_DST, %edx
 	movd	PARAM_MULTIPLIER, %mm7
 
+	C eax	src, incrementing
+	C ebx
+	C ecx	loop counter, decrementing
+	C edx	dst, incrementing
+	C
+	C mm0	carry, low 32-bits
+	C mm7	multiplier
+
 L(loop):
-	movd	(%eax), %mm1
+	movd	(%eax), %mm1		C src
 	leal	4(%eax), %eax
-	movd	(%edx),%mm2
+	movd	(%edx),%mm2		C dst
 	pmuludq	%mm7, %mm1
-	paddq	%mm2, %mm1
-	paddq	%mm1, %mm0
+	paddq	%mm2, %mm1		C prod
+	paddq	%mm1, %mm0		C carry
 	subl	$1, %ecx
-	movd	%mm0, (%edx)
+	movd	%mm0, (%edx)		C result
 	psrlq	$32, %mm0
 	leal	4(%edx), %edx
 	jnz	L(loop)
