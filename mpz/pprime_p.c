@@ -7,7 +7,7 @@
    probabilistic algorithm.  Knuth indicates that 25 passes are reasonable.
 
 Copyright (C) 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000 Free Software
-Foundation, Inc.  Contributed by John Amanatides.
+Foundation, Inc.  Miller-Rabin code contributed by John Amanatides.
 
 This file is part of the GNU MP Library.
 
@@ -31,36 +31,36 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 static int isprime ();
-static int millerrabin ();
+static int mpz_millerrabin ();
 
 int
-mpz_probab_prime_p (m, reps)
-     mpz_srcptr m;
+mpz_probab_prime_p (n, reps)
+     mpz_srcptr n;
      int reps;
 {
-  mpz_t n, tmp, two, n_minus_1, x, y, q;
   mp_limb_t r;
-  int i, is_prime;
-  unsigned long int k;
 
-  mpz_init (n);
-  /* Take the absolute value of M, to handle positive and negative primes.  */
-  mpz_abs (n, m);
-
-  /* Handle small n.  */
+  /* Handle small and negative n.  */
   if (mpz_cmp_ui (n, 1000000L) <= 0)
     {
+      int is_prime;
+      if (mpz_sgn (n) < 0)
+	{
+	  /* Negative number.  Negate and call ourselves.  */
+	  mpz_t n2;
+	  mpz_init (n2);
+	  mpz_neg (n2, n);
+	  is_prime = mpz_probab_prime_p (n2, reps);
+	  mpz_clear (n2);
+	  return is_prime;
+	}
       is_prime = isprime (mpz_get_ui (n));
-      mpz_clear (n);
       return is_prime ? 2 : 0;
     }
 
-  /* Return if n is now even.  */
+  /* If n is now even, it is not a prime.  */
   if ((mpz_get_ui (n) & 1) == 0)
-    {
-      mpz_clear (n);
-      return 0;
-    }
+    return 0;
 
   /* Check if n has small factors.  */
   if (UDIV_TIME > (2 * UMUL_TIME + 6))
@@ -75,12 +75,12 @@ mpz_probab_prime_p (m, reps)
 #endif
       )
     {
-      mpz_clear (n);
       return 0;
     }
 
-#if 1
-  /* Do more dividing.  */
+  /* Do more dividing.  We collect small primes, using umul_ppmm, until we
+     overflow a single limb.  We divide our number by the small primes product,
+     and look for factors in the remainder.  */
   {
     unsigned long int ln2;
     unsigned long int q;
@@ -90,7 +90,7 @@ mpz_probab_prime_p (m, reps)
 
     nprimes = 0;
     p = 1;
-    ln2 = SIZ(n)*BITS_PER_MP_LIMB/30; ln2 = ln2 * ln2;
+    ln2 = mpz_sizeinbase (n, 2) / 30; ln2 = ln2 * ln2;
     for (q = BITS_PER_MP_LIMB == 64 ? 59 : 31; q < ln2; q += 2)
       {
 	if (isprime (q))
@@ -104,7 +104,6 @@ mpz_probab_prime_p (m, reps)
 		    {
 		      if (mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) primes[nprimes]) != 0)
 			abort ();
-		      mpz_clear (n);
 		      return 0;
 		    }
 		p = q;
@@ -118,51 +117,16 @@ mpz_probab_prime_p (m, reps)
 	  }
       }
   }
-#endif
 
-  mpz_init (tmp);
-  mpz_init (n_minus_1);
-  mpz_sub_ui (n_minus_1, n, 1L);
-
-  /* Perform a Fermat test.  */
-  mpz_init_set_ui (two, 210L);
-  mpz_powm (tmp, two, n_minus_1, n);
-  mpz_clear (two);
-  if (mpz_cmp_ui (tmp, 1L) != 0)
-    {
-      mpz_clear (n_minus_1);
-      mpz_clear (tmp);
-      mpz_clear (n);
-      return 0;
-    }
-
-  /* Finally perform a number of Miller-Rabin tests.  */
-     
-  mpz_init (x);
-  mpz_init (y);
-  mpz_init (q);
-
-  /* Find q and k, where q is odd and n = 1 + 2**k * q.  */
-  k = mpz_scan1 (n_minus_1, 0L);
-  mpz_tdiv_q_2exp (q, n_minus_1, k);
-
-  is_prime = 1;
-  for (i = 0; i < reps && is_prime; i++)
-    is_prime &= millerrabin (n, n_minus_1, x, y, q, k);
-
-  mpz_clear (n_minus_1);
-  mpz_clear (n);
-  mpz_clear (x);
-  mpz_clear (y);
-  mpz_clear (q);
-  return is_prime;
+  /* Perform a number of Miller-Rabin tests.  */
+  return mpz_millerrabin (n, reps);
 }
 
 static int
 isprime (t)
      unsigned long int t;
 {
-  unsigned int q, r, d;
+  unsigned long int q, r, d;
 
   if (t < 3 || (t & 1) == 0)
     return t == 2;
@@ -177,52 +141,77 @@ isprime (t)
   return 0;
 }
 
+static int millerrabin ();
+
 static int
-millerrabin (n, n_minus_1, x, y, q, k)
+mpz_millerrabin (n, reps)
      mpz_srcptr n;
-     mpz_srcptr n_minus_1;
+     int reps;
+{
+  int r;
+  mpz_t nm1, x, y, q;
+  unsigned long int k;
+  gmp_randstate_t rstate;
+  int is_prime;
+
+  MPZ_TMP_INIT (nm1, SIZ (n) + 1);
+  mpz_sub_ui (nm1, n, 1L);
+
+  MPZ_TMP_INIT (x, SIZ (n));
+  MPZ_TMP_INIT (y, 2 * SIZ (n)); /* mpz_powm_ui needs excessive memory!!! */
+
+  /* Perform a Fermat test.  */
+  mpz_set_ui (x, 210L);
+  mpz_powm (y, x, nm1, n);
+  if (mpz_cmp_ui (y, 1L) != 0)
+    return 0;
+
+  MPZ_TMP_INIT (q, SIZ (n));
+
+  /* Find q and k, where q is odd and n = 1 + 2**k * q.  */
+  k = mpz_scan1 (nm1, 0L);
+  mpz_tdiv_q_2exp (q, nm1, k);
+
+  gmp_randinit (rstate, GMP_RAND_ALG_DEFAULT, 32L);
+
+  is_prime = 1;
+  for (r = 0; r < reps && is_prime; r++)
+    {
+      do
+	mpz_urandomb (x, rstate, mpz_sizeinbase (n, 2) - 1);
+      while (mpz_cmp_ui (x, 1L) <= 0);
+
+      is_prime = millerrabin (n, nm1, x, y, q, k);
+    }
+
+  gmp_randclear (rstate);
+
+  return is_prime;
+}
+
+static int
+millerrabin (n, nm1, x, y, q, k)
+     mpz_srcptr n;
+     mpz_srcptr nm1;
      mpz_ptr x;
      mpz_ptr y;
      mpz_srcptr q;
      unsigned long int k;
 {
   unsigned long int i;
-  gmp_randstate_t rstate;
-  unsigned long int nb;
-
-  nb = mpz_sizeinbase (n, 2);
-  gmp_randinit (rstate, GMP_RAND_ALG_DEFAULT, 32L);
-
-  /* find random x s.t. 1 < x < n */
-  do
-    {
-      mpz_urandomb (x, rstate, nb);
-      mpz_mod (x, x, n);
-    }
-  while (mpz_cmp_ui (x, 1L) <= 0);
 
   mpz_powm (y, x, q, n);
 
-  if (mpz_cmp_ui (y, 1L) == 0 || mpz_cmp (y, n_minus_1) == 0)
-    {
-      gmp_randclear (rstate);
-      return 1;
-    }
+  if (mpz_cmp_ui (y, 1L) == 0 || mpz_cmp (y, nm1) == 0)
+    return 1;
 
   for (i = 1; i < k; i++)
     {
       mpz_powm_ui (y, y, 2L, n);
-      if (mpz_cmp (y, n_minus_1) == 0)
-	{
-	  gmp_randclear (rstate);
-	  return 1;
-	}
+      if (mpz_cmp (y, nm1) == 0)
+	return 1;
       if (mpz_cmp_ui (y, 1L) == 0)
-	{
-	  gmp_randclear (rstate);
-	  return 0;
-	}
+	return 0;
     }
-  gmp_randclear (rstate);
   return 0;
 }
