@@ -82,7 +82,7 @@ In practice, that example would be written like this instead:
 
 Finally, you have to compile your test program, and link it with the MP
 library.  Assuming your working directory is still the gmp source directory,
-type:
+type, and that your source file is called example.c, do:
 
 	gcc -g -I. example.c libgmp.a
 

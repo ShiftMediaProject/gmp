@@ -6,10 +6,9 @@ machine-dependent replacement for a particular machine.
 
 There is one subdirectory for each architecture.  Note that e.g., 32-bit
 sparc and 64-bit sparc cannot share any code, and are therefore considered
-completely different architecture.
+completely different architectures.
 
 A particular machine will only use code from one such subdirectory, and the
 `generic' subdirectory.  The architecture-specific subdirectory contains a
-hierachy of directories for various architecture variants and
-implementations; the top-most level contains code that runs correctly on all
-variants.
+hierachy of directories for various architecture variants and implementations;
+the top-most level contains code that runs correctly on all variants.
