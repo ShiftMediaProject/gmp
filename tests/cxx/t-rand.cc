@@ -46,6 +46,10 @@ check_randinit (void)
     gmp_randclass r(gmp_randinit_lc_2exp_size, m2exp);
   }
 
+  {
+    gmp_randclass r(gmp_randinit_mt);
+  }
+
   /* obsolete, but still available */
   {
     gmp_randalg_t alg = GMP_RAND_ALG_LC;
