@@ -1076,47 +1076,40 @@ GMP_DEFINE_RAW(["define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)"])
 dnl  GMP_C_SIZES
 dnl  -----------
 dnl
-dnl  Determine various sizes needed by GMP at preprocessing time (for use in
-dnl  #if conditionals), if they aren't already provided by gmp-mparam.h.
-dnl  $gmp_mparam_source is the selected gmp-mparam.h.
+dnl  Determine the size of a limb, if it isn't already provided by
+dnl  gmp-mparam.h.  $gmp_mparam_source is the selected gmp-mparam.h.  This
+dnl  is needed by GMP at preprocessing time, for use in #if conditionals.
 dnl
-dnl  These sizes need to be known at pre-processing time, for use in #if
-dnl  conditionals.  Most preprocessors won't accept sizeof(), GNU cpp
-dnl  doesn't for instance.
-dnl
-dnl  When assembler code depends on particular sizes it's probably best to
-dnl  put explicit #defines in gmp-mparam.h.  That way if strange compiler
-dnl  options change the size of some type then the mismatch will be detected
-dnl  by t-constants.c rather than only by the code crashing or giving wrong
+dnl  If some assembler code depends on a particular limb size it's probably
+dnl  best to put explicit #defines in gmp-mparam.h.  That way if strange
+dnl  compiler options change it then the mismatch will be detected by
+dnl  t-constants.c rather than only by the code crashing or giving wrong
 dnl  results.
+dnl
+dnl  The test here assumes bits=8*sizeof, but that might not be universally
+dnl  true.  It'd be better to probe for how many bits seem to work, like
+dnl  t-constants does.  But all currently supported systems have limbs with
+dnl  bits=8*sizeof, so it's academic.  Strange systems can always have the
+dnl  right values put in gmp-mparam.h explicitly.
 
 AC_DEFUN(GMP_C_SIZES,
-[GMP_C_SIZES_ONE(BITS_PER_LONGINT, long)
-GMP_C_SIZES_ONE(BITS_PER_INT,      int)
-GMP_C_SIZES_ONE(BITS_PER_SHORTINT, short)
-GMP_C_SIZES_ONE(BITS_PER_MP_LIMB,  mp_limb_t,
+[if   grep "^#define BITS_PER_MP_LIMB"  $gmp_mparam_source >/dev/null \
+   && grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
+else
+  AC_CHECK_SIZEOF(mp_limb_t,,
 [#include <stdio.h>
-#include "gmp.h"])
-
-if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
-else
-  AC_DEFINE(BYTES_PER_MP_LIMB, [(BITS_PER_MP_LIMB / 8)],
-            [bytes per mp_limb_t, if not in gmp-mparam.h])
-fi
-if grep "^#define BITS_PER_CHAR" $gmp_mparam_source >/dev/null; then : ;
-else
-  AC_DEFINE(BITS_PER_CHAR, 8,
-            [bits per char, if not in gmp-mparam.h])
-fi
+#include "gmp.h"
 ])
-
-dnl  Called: GMP_C_SIZES_ONE(bits,type,includes)
-AC_DEFUN(GMP_C_SIZES_ONE,
-[if grep "^#define $1" $gmp_mparam_source >/dev/null; then : ;
-else
-  AC_CHECK_SIZEOF($2,,[$3])
-  AC_DEFINE_UNQUOTED($1, (8 * $ac_cv_sizeof_$2),
-                     [bits per $2, if not in gmp-mparam.h])  
+  if grep "^#define BITS_PER_MP_LIMB"  $gmp_mparam_source >/dev/null; then : ;
+  else
+    AC_DEFINE_UNQUOTED(BITS_PER_MP_LIMB,  (8 * $ac_cv_sizeof_mp_limb_t),
+                       [bits per mp_limb_t, if not in gmp-mparam.h])  
+  fi
+  if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
+  else
+    AC_DEFINE_UNQUOTED(BYTES_PER_MP_LIMB, $ac_cv_sizeof_mp_limb_t,
+                       [bytes per mp_limb_t, if not in gmp-mparam.h])
+  fi
 fi
 ])
 

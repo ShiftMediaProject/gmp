@@ -134,20 +134,8 @@ MA 02111-1307, USA.
 /* a dummy to make autoheader happy */
 #undef HAVE_NATIVE_
 
-/* bits per char, if not in gmp-mparam.h */
-#undef BITS_PER_CHAR
-
-/* bits per int, if not in gmp-mparam.h */
-#undef BITS_PER_INT
-
-/* bits per long, if not in gmp-mparam.h */
-#undef BITS_PER_LONGINT
-
 /* bits per mp_limb_t, if not in gmp-mparam.h */
 #undef BITS_PER_MP_LIMB
-
-/* bits per short, if not in gmp-mparam.h */
-#undef BITS_PER_SHORTINT
 
 /* bytes per mp_limb_t, if not in gmp-mparam.h */
 #undef BYTES_PER_MP_LIMB
@@ -252,17 +240,8 @@ MA 02111-1307, USA.
 /* Define as the return type of signal handlers (`int' or `void'). */
 #undef RETSIGTYPE
 
-/* The size of a `int', as computed by sizeof. */
-#undef SIZEOF_INT
-
-/* The size of a `long', as computed by sizeof. */
-#undef SIZEOF_LONG
-
 /* The size of a `mp_limb_t', as computed by sizeof. */
 #undef SIZEOF_MP_LIMB_T
-
-/* The size of a `short', as computed by sizeof. */
-#undef SIZEOF_SHORT
 
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
