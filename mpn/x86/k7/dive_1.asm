@@ -139,7 +139,7 @@ L(movl_eip_edx):
 	ALIGN(8)
 L(top):
 	C eax	q
-	C ebx	carry bit, 0 or -1
+	C ebx	carry bit, 0 or 1
 	C ecx	shift
 	C edx
 	C esi	src end
