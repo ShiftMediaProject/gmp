@@ -9594,6 +9594,7 @@ EOF
     AC_MSG_WARN([oops, cannot compile test program])
   fi
 fi
+rm -f conftest*
 ])
 
 AH_VERBATIM([HAVE_LDOUBLE],

@@ -30364,6 +30364,7 @@ EOF
 echo "$as_me: WARNING: oops, cannot compile test program" >&2;}
   fi
 fi
+rm -f conftest*
 
 fi
 echo "$as_me:$LINENO: result: $mpfr_cv_c_long_double_format" >&5
