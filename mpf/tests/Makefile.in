@@ -11,11 +11,14 @@ CFLAGS = -g -O
 .c.o:
 	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
 
-TEST_SRCS = t-add.c t-sub.c t-conv.c t-sqrt.c t-muldiv.c t-dm2exp.c t-reuse.c ref.c
-TEST_OBJS = t-add.o t-sub.o t-conv.o t-sqrt.o t-muldiv.o t-dm2exp.c reuse.o
-TESTS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse
+TEST_SRCS = t-add.c t-sub.c t-conv.c t-sqrt.c t-muldiv.c t-dm2exp.c t-reuse.c \
+  t-get_d.c ref.c
+TEST_OBJS = t-add.o t-sub.o t-conv.o t-sqrt.o t-muldiv.o t-dm2exp.c reuse.o \
+  t-get_d.o
+TESTS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d
 
-check: Makefile st-add st-sub st-conv st-sqrt st-muldiv st-dm2exp st-reuse
+check: Makefile st-add st-sub st-conv st-sqrt st-muldiv st-dm2exp st-reuse \
+  st-get_d
 	@echo "The tests passed."
 
 st-add: t-add
@@ -39,6 +42,9 @@ st-dm2exp: t-dm2exp
 st-reuse: reuse
 	./reuse
 	touch $@
+st-get_d: t-get_d
+	./t-get_d
+	touch $@
 
 H = $(srcdir)/../../gmp.h $(srcdir)/../../gmp-impl.h \
  $(srcdir)/../../urandom.h ../../mpn/gmp-mparam.h
@@ -57,6 +63,8 @@ t-dm2exp: t-dm2exp.o $(TEST_LIBS)
 	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
 reuse: reuse.o $(TEST_LIBS)
 	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+t-get_d: t-get_d.o $(TEST_LIBS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
 
 t-add.o: $(srcdir)/t-add.c
 t-sub.o: $(srcdir)/t-sub.c
@@ -65,6 +73,7 @@ t-sqrt.o: $(srcdir)/t-sqrt.c
 t-muldiv.o: $(srcdir)/t-muldiv.c
 t-dm2exp.o: $(srcdir)/t-dm2exp.c
 reuse.o: $(srcdir)/reuse.c
+t-get_d.o: $(srcdir)/t-get_d.c
 
 clean mostlyclean:
 	rm -f *.o st-* $(TESTS)
