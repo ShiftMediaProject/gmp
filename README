@@ -68,7 +68,7 @@ If you find a bug in the library, please make sure to tell us about it!
 
 You should first check the GNU MP web pages at http://www.swox.com/gmp/,
 under "Status of the current release".  There will be patches for all known
-bugs there.
+serious bugs there.
 
 Report bugs to bug-gmp@gnu.org.  What information is needed in a good bug
 report is described in the manual.  The same address can be used for
