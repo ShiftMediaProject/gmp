@@ -44,6 +44,8 @@ MA 02111-1307, USA.
 	* mpn/x86/x86-defs.m4 (CPUVEC_FUNCS_LIST): New define.
 	* mpn/x86/sqr_basecase.asm: New file, primarily as a fallback for fat
 	binaries.
+	* mpn/x86/p6/gmp-mparam.h, mpn/x86/p6/mmx/gmp-mparam.h: Add comments
+	about fat binary SQR_KARATSUBA_THRESHOLD for p6 and p6/mmx.
 
 	* configure.in: Add various supports for fat binaries, via fat_path,
 	fat_functions and fat_thresholds variables.
