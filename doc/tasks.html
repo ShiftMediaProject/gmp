@@ -256,10 +256,6 @@
      <code>mpn_sqr_basecase</code>.  This should use a "vertical multiplication
      method", to avoid carry propagation.  splitting one of the operands in
      11-bit chunks.
-<li> Cray: Vectorize main functions, perhaps in assembly language.
-<li> Cray: Write <code>mpn_mul_basecase</code> and
-     <code>mpn_sqr_basecase</code>.  Same comment applies to this as to the
-     same functions for Fujitsu VPP.
 <li> Cray T3E: Experiment with optimization options.  In particular,
      -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
 <li> Cray: Variable length arrays seem to be faster than the stack-alloc.c
