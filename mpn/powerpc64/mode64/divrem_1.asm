@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:    40
-C POWER4/PPC970:    ??
+C POWER4/PPC970:    23/26
 
 C INPUT PARAMETERS
 C qp  = r3
@@ -82,7 +82,7 @@ C Start invert_limb
 	li	r11,1
 	sldi	r11,r11,32
 	divdu	r8,r0,r5
-	rldicl	r30,r7,r0,32
+	rldicl	r30,r7,0,32
 	mulld	r9,r8,r5
 	mulld	r12,r8,r30
 	subf	r10,r9,r0
@@ -123,7 +123,7 @@ C End invert_limb
 .L274:	addic.	r12,r6,-1
 	mtctr	r6
 	blt	cr0,.L638
-	sldi	cr0,r12,3
+	sldi	r0,r12,3
 	add	r28,r28,r0
 
 Loop1:	ld	r6,0(r28)
@@ -212,7 +212,7 @@ C Start invert_limb
 	li	r11,1
 	sldi	r11,r11,32
 	divdu	r8,r0,r5
-	rldicl	r4,r7,r0,32
+	rldicl	r4,r7,0,32
 	mulld	r9,r8,r5
 	mulld	r12,r8,r4
 	subf	r10,r9,r0
@@ -295,7 +295,7 @@ Loop3:	ld	r6,0(r28)
 	mr	r5,r6
 	bdnz	Loop3
 
-.L640:	mulhdu	r11,r3,4
+.L640:	mulhdu	r11,r3,r4
 	add	r11,r11,r3
 	mulhdu	r10,r11,r7
 	mulld	r9,r11,r7
