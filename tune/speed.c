@@ -1036,13 +1036,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  srand (option_seed);
-#if HAVE_SRAND48
-  srand48 (option_seed);
-#endif
-#if HAVE_SRANDOM
-  srandom (option_seed);
-#endif
+  gmp_randseed_ui (RANDS, option_seed);
 
   choice = (struct choice_t *) (*__gmp_allocate_func)
     ((argc - optind) * sizeof(choice[0]));
