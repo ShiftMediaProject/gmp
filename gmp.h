@@ -942,7 +942,7 @@ mpn_divrem (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn)
 #define mpq_sgn(Q) ((Q)->_mp_num._mp_size < 0 ? -1 : (Q)->_mp_num._mp_size > 0)
 
 /* When using GCC, optimize certain common comparisons.  */
-#if defined (__GNUC__) && (defined (__GNU__) && defined (__NeXT__))
+#if defined (__GNUC__)
 #define mpz_cmp_ui(Z,UI) \
   (__builtin_constant_p (UI) && (UI) == 0				\
    ? mpz_sgn (Z) : _mpz_cmp_ui (Z,UI))
@@ -988,8 +988,20 @@ mpn_divrem (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn)
 #define mpz_div_2exp	mpz_fdiv_q_2exp
 #define mpz_mod_2exp	mpz_fdiv_r_2exp
 
-#define __GNU_MP_VERSION 2
-#define __GNU_MP_VERSION_MINOR 1
-#define __GNU_MP_VERSION_PATCHLEVEL (-91)
+extern int gmp_errno;
+
+enum
+{
+  GMP_ERROR_NONE = 0,
+  GMP_ERROR_UNSUPPORTED_ARGUMENT = 1,
+  GMP_ERROR_DIVISION_BY_ZERO = 2,
+  GMP_ERROR_SQRT_OF_NEGATIVE = 4,
+  GMP_ERROR_INVALID_ARGUMENT = 8,
+  GMP_ERROR_UNUSED_ERROR,
+};
+
+#define __GNU_MP_VERSION 3
+#define __GNU_MP_VERSION_MINOR 0
+#define __GNU_MP_VERSION_PATCHLEVEL (-1)
 #define __GMP_H__
 #endif /* __GMP_H__ */
