@@ -1,6 +1,6 @@
 /* Test ostream formatted output.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -79,8 +79,8 @@ void
 check_mpz (void)
 {
   static const struct {
-    char           *z;
-    char           *want;
+    const char     *z;
+    const char     *want;
     ios::fmtflags  flags;
     int            width;
     int            precision;
@@ -179,8 +179,8 @@ void
 check_mpq (void)
 {
   static const struct {
-    char           *q;
-    char           *want;
+    const char     *q;
+    const char     *want;
     ios::fmtflags  flags;
     int            width;
     int            precision;
@@ -260,8 +260,8 @@ void
 check_mpf (void)
 {
   static const struct {
-    char           *f;
-    char           *want;
+    const char     *f;
+    const char     *want;
     ios::fmtflags  flags;
     int            width;
     int            precision;
