@@ -422,6 +422,7 @@ AC_DEFUN(GMP_CHECK_ASM_UNDERSCORE,
 	        gmp_cv_check_asm_underscore,
 [AC_REQUIRE([GMP_CHECK_ASM_TEXT])
 AC_REQUIRE([GMP_CHECK_ASM_GLOBL])
+AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
 cat > conftes1.c <<EOF
 main () { underscore_test(); }
 EOF
@@ -429,7 +430,7 @@ for tmp_underscore in "" "_"; do
   cat > conftes2.s <<EOF
       	$gmp_cv_check_asm_text
 	$gmp_cv_check_asm_globl ${tmp_underscore}underscore_test
-${tmp_underscore}underscore_test:
+${tmp_underscore}underscore_test$gmp_cv_check_asm_label_suffix
 EOF
   case "$target" in
   *-*-aix*)
