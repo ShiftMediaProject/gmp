@@ -49,6 +49,8 @@ int tests_memory_valid __GMP_PROTO ((void *ptr));
 void tests_rand_start __GMP_PROTO ((void));
 void tests_rand_end __GMP_PROTO ((void));
 
+double tests_infinity_d __GMP_PROTO (()); 
+
 
 #if HAVE_CALLING_CONVENTIONS
 extern mp_limb_t (*calling_conventions_function) __GMP_PROTO ((ANYARGS));
@@ -80,6 +82,7 @@ void mpz_trace __GMP_PROTO ((const char *name, mpz_srcptr z));
 void mpz_tracen __GMP_PROTO ((const char *name, int num, mpz_srcptr z));
 void byte_trace __GMP_PROTO ((const char *, const void *, mp_size_t));
 void byte_tracen __GMP_PROTO ((const char *, int, const void *, mp_size_t));
+void d_trace __GMP_PROTO ((const char *, double));
 
 
 void spinner __GMP_PROTO ((void));
