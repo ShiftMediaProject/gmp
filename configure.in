@@ -1651,10 +1651,10 @@ fi
 
 AM_CONDITIONAL(WANT_CXX, test $want_cxx = yes)
 
-# FIXME: We're not interested in CXXCPP for ourselves, but if we don't call
-# it here then AC_PROG_LIBTOOL (via _LT_AC_TAGCONFIG) will do so
-# unconditionally, and that will fail if there's no C++ compiler (and no
-# generic /lib/cpp).
+# FIXME: We're not interested in CXXCPP for ourselves, but if we don't do it
+# here then AC_PROG_LIBTOOL will AC_REQUIRE it (via _LT_AC_TAGCONFIG) and
+# hence execute it unconditionally, and that will fail if there's no C++
+# compiler (and no generic /lib/cpp).
 #
 if test $want_cxx = yes; then
   AC_PROG_CXXCPP
@@ -1865,11 +1865,12 @@ if test "$enable_shared" = yes && test "$enable_static" = yes; then
   esac
 fi
 
+GMP_LDFLAGS_SYMBOLIC
 AM_CONDITIONAL(ENABLE_STATIC, test "$enable_static" = yes)
 
 
-# The library and header checks are mostly for the benefit of supplementary
-# programs.  libgmp doesn't use anything too weird.
+# Many of these library and header checks are for the benefit of
+# supplementary programs.  libgmp doesn't use anything too weird.
 
 AC_HEADER_STDC
 AC_HEADER_TIME
@@ -1936,7 +1937,12 @@ AC_TYPE_SIGNAL
 AC_CHECK_TYPES([intmax_t, long double, long long, ptrdiff_t, quad_t])
 
 AC_C_STRINGIZE
+
+# FIXME: Really want #ifndef __cplusplus around the #define volatile
+# replacement autoconf gives, since volatile is always available in C++.
+# But we don't use it in C++ currently.
 AC_C_VOLATILE
+
 GMP_C_STDARG
 GMP_C_ATTRIBUTE_CONST
 GMP_C_ATTRIBUTE_MALLOC
