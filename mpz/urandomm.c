@@ -26,14 +26,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 void
-#if __STDC__
-mpz_urandomm (mpz_t rop, gmp_randstate_t rstate, mpz_t n)
-#else
-mpz_urandomm (rop, rstate, n)
-     mpz_t rop;
-     gmp_randstate_t rstate;
-     mpz_t n;
-#endif
+mpz_urandomm (mpz_ptr rop, gmp_randstate_t rstate, mpz_srcptr n)
 {
   mpz_t t, p, m;
   mp_ptr tp;
