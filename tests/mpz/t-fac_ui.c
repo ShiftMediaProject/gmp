@@ -1,6 +1,6 @@
 /* Exercise mpz_fac_ui.
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -48,8 +48,8 @@ main (int argc, char *argv[])
   else if (argc > 1)
     limit = atoi (argv[1]);
 
-  if (BITS_PER_MP_LIMB < BITS_PER_LONGINT)
-    limit = MIN (limit, MP_LIMB_T_MAX);
+  /* for small limb testing */
+  limit = MIN (limit, MP_LIMB_T_MAX);
 
   mpz_init_set_ui (f, 1);  /* 0! = 1 */
   mpz_init (r);
