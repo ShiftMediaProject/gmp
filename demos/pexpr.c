@@ -114,6 +114,10 @@ int flag_html = 0;
 int flag_splitup_output = 0;
 char *newline = "";
 
+#ifdef _AIX
+#define sigaltstack sigstack
+#endif
+
 void
 setup_error_handler ()
 {
@@ -124,8 +128,10 @@ setup_error_handler ()
      overflow, and in such situation a signal can not be delivered on the
      overflown stack.  */
   sigstk.ss_sp = malloc (SIGSTKSZ);
+#ifndef _AIX
   sigstk.ss_size = SIGSTKSZ;
   sigstk.ss_flags = 0;
+#endif
   if (sigaltstack (&sigstk, 0) < 0)
     perror("sigaltstack");
 
