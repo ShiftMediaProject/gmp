@@ -30,7 +30,7 @@ unsigned long int
 mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
 {
   mp_srcptr up, vp;
-  mp_size_t usize, vsize, size;
+  mp_size_t usize, vsize;
   unsigned long int count;
 
   usize = SIZ(u);
