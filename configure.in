@@ -521,12 +521,18 @@ case $host in
     ;;
 
 
+  # Darwin (powerpc-apple-darwin1.3) has gcc installed as cc.  -Wa,-mppc is
+  # unnecessary (and in fact doesn't work, it'd be -arch ppc or some such).
+  #
   powerpc*-*-*)
-    cclist="gcc"
-    gcc_cflags="-g -O2 -mpowerpc -Wa,-mppc"
+    cclist="gcc cc"
+    cc_cflags="-g -O2"
+    gcc_cflags="-g -O2 -mpowerpc"
+    gcc_cflags_optlist="asm"
+    gcc_cflags_asm="-Wa,-mppc"
     path="powerpc32"
     case $host in
-      *-*-aix*) cclist="gcc xlc"
+      *-*-aix*) cclist="gcc xlc cc"
                 xlc_cflags="-g -O2 -qarch=ppc -qmaxmem=20000" ;;
     esac
 
