@@ -19,6 +19,18 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-05  Kevin Ryde  <kevin@swox.se>
+
+	* longlong.h (count_leading_zeros, count_trailing_zeros) [alphaev67,
+	alphaev68]: Use ctlz and cttz insns (as per gcc longlong.h).
+	(count_leading_zeros) [sparclite]: Fix parameter order (as per gcc
+	longlong.h).
+	* acconfig.h (HAVE_HOST_CPU_alphaev68): New define.
+
+	* config.guess [i?86-*-*]: Suppress error messages if compiler not
+	found or test program won't run.
+	[rs6000-*-*, powerpc-*-*]: Force code alignment for mfpvr test.
+
 2002-03-04  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/pow_1.c: New file.
