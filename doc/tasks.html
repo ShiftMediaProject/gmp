@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 8 Nov 2001.  An up-to-date version is available at
+  This file current as of 16 Nov 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -457,8 +457,9 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
 <li> Cray: <code>mpn_com_n</code> and <code>mpn_and_n</code> etc very probably
      wants a pragma like <code>MPN_COPY_INCR</code>.
-<li> Cray vector systems: <code>mpn_lshift</code> and <code>mpn_rshift</code>
-     are nice and small and could be inlined to avoid function calls.
+<li> Cray vector systems: <code>mpn_lshift</code>, <code>mpn_rshift</code>,
+     <code>mpn_popcount</code> and <code>mpn_hamdist</code> are nice and small
+     and could be inlined to avoid function calls.
 <li> Cray: Variable length arrays seem to be faster than the tal-notreent.c
      scheme.  Not sure why, maybe they merely give the compiler more
      information about aliasing (or the lack thereof).  Would like to modify
@@ -821,6 +822,14 @@ near future, but are at least worth thinking about.
      future scheme for allowing out-of-memory or divide-by-zero exceptions.
      Though such things may or may not be feasible, it seems wisest not to
      close the door on them yet.
+<li> Nx1 remainders can be taken at multiplier throughput speed by
+     pre-calculating an array "p[i] = 2^(i*<code>BITS_PER_MP_LIMB</code>) mod
+     m", then for the input limbs x calculating an inner product "sum
+     p[i]*x[i]", and a final 3x1 limb remainder mod m.  If those powers take
+     roughly N divide steps to calculate then there'd be an advantage any time
+     the same m is used three or more times.  Suggested by Victor Shoup in
+     connection with chinese-remainder style decompositions, but perhaps with
+     other uses.
 </ul>
 <hr>
 
