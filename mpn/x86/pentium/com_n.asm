@@ -1,9 +1,8 @@
-dnl  Intel P5 mpn_com_n -- mpn bitwise ones-complement.
-dnl 
-dnl  P5: 2.0 cycles/limb
+dnl  Intel Pentium mpn_com_n -- mpn ones complement.
+dnl
+dnl  P5: 1.75 cycles/limb
 
-
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1996, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,95 +21,146 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
 
 
 C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
-C Nothing complicated here, just some care to avoid an AGI in the loop.
-C Further unrolling could approach 1.5 c/l if desired.
+C This code is similar to mpn_copyi, basically there's just some "xorl $-1"s
+C inserted.
 C
-C On P55 some MMX code could approach 1.0 c/l if src and dst are the same
-C alignment mod 8, but that doesn't seem worth the trouble.
+C Alternatives:
+C
+C On P55 some MMX code could be 1.25 c/l (8 limb unrolled) if src and dst
+C are the same alignment mod 8, but it doesn't seem worth the trouble for
+C just that case (there'd need to be some plain integer available too for
+C the unaligned case).
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
 defframe(PARAM_DST, 4)
 
-	TEXT
-	ALIGN(8)
 PROLOGUE(mpn_com_n)
 deflit(`FRAME',0)
 
 	movl	PARAM_SRC, %eax
 	movl	PARAM_SIZE, %ecx
 
-	shrl	%ecx
-	jnz	L(two_or_more)
-
-	movl	(%eax), %ecx
-	movl	PARAM_DST, %edx		C risk of data cache bank clash here
-
-	notl	%ecx
-
-	movl	%ecx, (%edx)
-
-	ret
-
-
-L(two_or_more):
-	pushl	%ebx	FRAME_pushl()
 	pushl	%esi	FRAME_pushl()
+	pushl	%edi	FRAME_pushl()
+
+	leal	(%eax,%ecx,4), %eax
+	xorl	$-1, %ecx		C -size-1
 
 	movl	PARAM_DST, %edx
-	jnc	L(entry)
+	addl	$8, %ecx		C -size+7
 
-	movl	(%eax,%ecx,8), %ebx
-	movl	-8(%eax,%ecx,8), %esi
+	jns	L(end)
 
-	notl	%ebx
-
-	movl	%ebx, (%edx,%ecx,8)
-	movl	-4(%eax,%ecx,8), %ebx	C risk of data cache bank clash here
-
-	decl	%ecx
-	jz	L(done)
-
+	movl	(%edx), %esi		C fetch destination cache line
+	nop
 
 L(top):
-	C eax	src
-	C ebx	data
-	C ecx	counter, limb pairs, decrementing
-	C edx	dst
-	C esi	data
-	C edi
+	C eax	&src[size]
+	C ebx
+	C ecx	counter, limbs, negative
+	C edx	dst, incrementing
+	C esi	scratch
+	C edi	scratch
 	C ebp
 
-	xorl	$-1, %ebx
+	movl	28(%edx), %esi		C destination prefetch
+	addl	$32, %edx
+
+	movl	-28(%eax,%ecx,4), %esi
+	movl	-24(%eax,%ecx,4), %edi
 	xorl	$-1, %esi
+	xorl	$-1, %edi
+	movl	%esi, -32(%edx)
+	movl	%edi, -28(%edx)
 
-	movl	%ebx, 4(%edx,%ecx,8)
-	movl	%esi, (%edx,%ecx,8)
+	movl	-20(%eax,%ecx,4), %esi
+	movl	-16(%eax,%ecx,4), %edi
+	xorl	$-1, %esi
+	xorl	$-1, %edi
+	movl	%esi, -24(%edx)
+	movl	%edi, -20(%edx)
 
-L(entry):
-	movl	-4(%eax,%ecx,8), %ebx
-	movl	-8(%eax,%ecx,8), %esi
+	movl	-12(%eax,%ecx,4), %esi
+	movl	-8(%eax,%ecx,4), %edi
+	xorl	$-1, %esi
+	xorl	$-1, %edi
+	movl	%esi, -16(%edx)
+	movl	%edi, -12(%edx)
 
-	decl	%ecx
-	jnz	L(top)
+	movl	-4(%eax,%ecx,4), %esi
+	movl	(%eax,%ecx,4), %edi
+	xorl	$-1, %esi
+	xorl	$-1, %edi
+	movl	%esi, -8(%edx)
+	movl	%edi, -4(%edx)
 
+	addl	$8, %ecx
+	js	L(top)
+
+
+L(end):
+	C eax	&src[size]
+	C ecx	0 to 7, representing respectively 7 to 0 limbs remaining
+	C edx	dst, next location to store
+
+	subl	$4, %ecx
+	nop
+
+	jns	L(no4)
+
+	movl	-12(%eax,%ecx,4), %esi
+	movl	-8(%eax,%ecx,4), %edi
+	xorl	$-1, %esi
+	xorl	$-1, %edi
+	movl	%esi, (%edx)
+	movl	%edi, 4(%edx)
+
+	movl	-4(%eax,%ecx,4), %esi
+	movl	(%eax,%ecx,4), %edi
+	xorl	$-1, %esi
+	xorl	$-1, %edi
+	movl	%esi, 8(%edx)
+	movl	%edi, 12(%edx)
+
+	addl	$16, %edx
+	addl	$4, %ecx
+L(no4):
+
+	subl	$2, %ecx
+	nop
+
+	jns	L(no2)
+
+	movl	-4(%eax,%ecx,4), %esi
+	movl	(%eax,%ecx,4), %edi
+	xorl	$-1, %esi
+	xorl	$-1, %edi
+	movl	%esi, (%edx)
+	movl	%edi, 4(%edx)
+
+	addl	$8, %edx
+	addl	$2, %ecx
+L(no2):
+
+	popl	%edi
+	jnz	L(done)
+
+	movl	-4(%eax), %ecx
+
+	xorl	$-1, %ecx
+	popl	%esi
+
+	movl	%ecx, (%edx)
+	ret
 
 L(done):
-	xorl	$-1, %ebx
-	xorl	$-1, %esi
-
-	movl	%ebx, 4(%edx,%ecx,4)
-	movl	%esi, (%edx,%ecx,4)
-	
 	popl	%esi
-	popl	%ebx
-
 	ret
 
 EPILOGUE()
