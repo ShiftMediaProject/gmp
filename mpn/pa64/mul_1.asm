@@ -1,5 +1,5 @@
-dnl  HP-PA 2.0 64-bit mpn_addmul_1 -- Multiply a limb vector with a limb and
-dnl  add the result to a second limb vector.
+dnl  HP-PA 2.0 64-bit mpn_mul_1 -- Multiply a limb vector with a limb and store
+dnl  the result in a second limb vector.
 
 dnl  Copyright 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
 
@@ -21,10 +21,8 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 
-dnl  This approaches 7.0 cycles/limb on PA8000 and 6.375 cycles/limb on PA8500
-dnl  for huge operands.  It should be possible to do 6.0 cycles/limb with the
-dnl  current instructions and unrolling level.  It is unknown why the code runs
-dnl  somewhat slower.
+dnl  This approaches ?? cycles/limb on PA8000 and 5.625 cycles/limb on PA8500
+dnl  for huge operands.  These numbers are close to optimal.
 
 dnl  The feed-in and wind-down code has not yet been scheduled.  Many cycles
 dnl  could be saved there per call.
@@ -99,7 +97,7 @@ ifdef(`HAVE_ABI_2_0w',
 `	.level	2.0W
 ',`	.level	2.0N
 ')
-PROLOGUE(mpn_addmul_1)
+PROLOGUE(mpn_mul_1)
 
 ifdef(`HAVE_ABI_2_0w',
 `	std		vlimb, -0x38(%r30)	C store vlimb into "home" slot
@@ -124,7 +122,7 @@ define(`s000',`%r31')	dnl
 define(`ma000',`%r4')	dnl
 define(`ma064',`%r20')	dnl
 
-define(`r000',`%r3')	dnl
+C define(`r000',`%r3')	dnl	FIXME don't save r3 for n < 4.
 
 	extrd,u		n, 63, 2, %r5
 	comb,=		%r5, %r0, L(BIG)
@@ -169,7 +167,6 @@ L(two)
 	add,dc		%r0, %r0, m096
 	depd,z		m032, 31, 32, ma000
 	extrd,u		m032, 31, 32, ma064
-	ldd		0(rp), r000
 	b		L(0_two_out)
 	depd		m096, 31, 32, ma064
 
@@ -179,7 +176,6 @@ L(three_or_more)
 	add,dc		%r0, %r0, m096
 	depd,z		m032, 31, 32, ma000
 	extrd,u		m032, 31, 32, ma064
-	ldd		0(rp), r000
 dnl	addib,=		-1, %r5, L(0_out)
 	depd		m096, 31, 32, ma064
 L(oop0)
@@ -207,8 +203,6 @@ dnl	add		ma000, s000, s000
 dnl	add,dc		ma064, climb, climb
 dnl	fldd		0(up), %fr4
 dnl
-dnl	add		r000, s000, s000
-dnl	add,dc		%r0, climb, climb
 dnl	std		s000, -8(rp)
 dnl
 dnl	add		p032a1, p032a2, m032
@@ -216,7 +210,6 @@ dnl	add,dc		%r0, %r0, m096
 dnl
 dnl	depd,z		m032, 31, 32, ma000
 dnl	extrd,u		m032, 31, 32, ma064
-dnl	ldd		0(rp), r000
 dnl	addib,<>	-1, %r5, L(oop0)
 dnl	depd		m096, 31, 32, ma064
 L(0_out)
@@ -238,14 +231,11 @@ L(0_out)
 	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
 	add		ma000, s000, s000
 	add,dc		ma064, climb, climb
-	add		r000, s000, s000
-	add,dc		%r0, climb, climb
 	std		s000, -8(rp)
 	add		p032a1, p032a2, m032
 	add,dc		%r0, %r0, m096
 	depd,z		m032, 31, 32, ma000
 	extrd,u		m032, 31, 32, ma064
-	ldd		0(rp), r000
 	depd		m096, 31, 32, ma064
 L(0_two_out)
 	ldd		-0x78(%r30), p032a1
@@ -257,23 +247,18 @@ L(0_two_out)
 	ldd		-0x68(%r30), p064a
 	add		ma000, s000, s000
 	add,dc		ma064, climb, climb
-	add		r000, s000, s000
-	add,dc		%r0, climb, climb
 	std		s000, -8(rp)
 L(0_one_out)
 	add		p032a1, p032a2, m032
 	add,dc		%r0, %r0, m096
 	depd,z		m032, 31, 32, ma000
 	extrd,u		m032, 31, 32, ma064
-	ldd		0(rp), r000
 	depd		m096, 31, 32, ma064
 
 	add		climb, p000a, s000
 	add,dc		p064a, %r0, climb
 	add		ma000, s000, s000
 	add,dc		ma064, climb, climb
-	add		r000, s000, s000
-	add,dc		%r0, climb, climb
 	std		s000, 0(rp)
 
 	comib,>=	4, n, L(done)
@@ -317,11 +302,6 @@ define(`ma064',`%r4')	dnl
 define(`ma128',`%r5')	dnl
 define(`ma192',`%r6')	dnl
 define(`ma256',`%r7')	dnl
-			dnl
-define(`r000',`%r1')	dnl
-define(`r064',`%r19')	dnl
-define(`r128',`%r20')	dnl
-define(`r192',`%r21')	dnl
 
 	std		%r6, -0xe8(%r30)
 	std		%r7, -0xe0(%r30)
@@ -475,42 +455,31 @@ L(oop)
 	fstd		%fr25, -0x48(%r30)	C high product to -0x48..-0x41
 
 	add,dc		p064a, p064b, s064
-	ldd		0(rp), r000
 	add,dc		p128b, p128c, s128
 	fstd		%fr26, -0x20(%r30)	C low product to  -0x20..-0x19
 
 	add,dc		p192c, p192d, s192
-	ldd		8(rp), r064
 	add,dc		p256d, %r0, climb
 	fstd		%fr27, -0x88(%r30)	C high product to -0x88..-0x81
 
-	ldd		16(rp), r128
 	add		ma000, s000, s000	C accum mid 0
-	ldd		24(rp), r192
+	fldd		0(up), %fr4
 	add,dc		ma064, s064, s064	C accum mid 1
+	std		s000, 0(rp)
 
 	add,dc		ma128, s128, s128	C accum mid 2
-	fldd		0(up), %fr4
-	add,dc		ma192, s192, s192	C accum mid 3
 	fldd		8(up), %fr5
+	add,dc		ma192, s192, s192	C accum mid 3
+	std		s064, 8(rp)
 
 	add,dc		ma256, climb, climb
 	fldd		16(up), %fr6
-	add		r000, s000, s000	C accum rlimb 0
-	fldd		24(up), %fr7
-
-	add,dc		r064, s064, s064	C accum rlimb 1
-	add,dc		r128, s128, s128	C accum rlimb 2
-	std		s000, 0(rp)
-
-	add,dc		r192, s192, s192	C accum rlimb 3
-	add,dc		%r0, climb, climb
-	std		s064, 8(rp)
+	std		s128, 16(rp)
 
 	xmpyu		%fr8R, %fr4L, %fr22
 	ldd		-0x78(%r30), p032a1
 	xmpyu		%fr8L, %fr4R, %fr23
-	std		s128, 16(rp)
+	fldd		24(up), %fr7
 
 	xmpyu		%fr8R, %fr5L, %fr24
 	ldd		-0x70(%r30), p032a2
@@ -583,26 +552,17 @@ L(end2)
 	add		climb, p000a, s000
 	fstd		%fr25, -0x48(%r30)	C high product to -0x48..-0x41
 	add,dc		p064a, p064b, s064
-	ldd		0(rp), r000
 	add,dc		p128b, p128c, s128
 	fstd		%fr26, -0x20(%r30)	C low product to  -0x20..-0x19
 	add,dc		p192c, p192d, s192
-	ldd		8(rp), r064
 	add,dc		p256d, %r0, climb
 	fstd		%fr27, -0x88(%r30)	C high product to -0x88..-0x81
-	ldd		16(rp), r128
 	add		ma000, s000, s000	C accum mid 0
-	ldd		24(rp), r192
 	add,dc		ma064, s064, s064	C accum mid 1
 	add,dc		ma128, s128, s128	C accum mid 2
 	add,dc		ma192, s192, s192	C accum mid 3
 	add,dc		ma256, climb, climb
-	add		r000, s000, s000	C accum rlimb 0
-	add,dc		r064, s064, s064	C accum rlimb 1
-	add,dc		r128, s128, s128	C accum rlimb 2
 	std		s000, 0(rp)
-	add,dc		r192, s192, s192	C accum rlimb 3
-	add,dc		%r0, climb, climb
 	std		s064, 8(rp)
 	ldd		-0x78(%r30), p032a1
 	std		s128, 16(rp)
@@ -641,24 +601,15 @@ L(end1)
 	ldd		-0x88(%r30), p256d
 	add		climb, p000a, s000
 	add,dc		p064a, p064b, s064
-	ldd		0(rp), r000
 	add,dc		p128b, p128c, s128
 	add,dc		p192c, p192d, s192
-	ldd		8(rp), r064
 	add,dc		p256d, %r0, climb
-	ldd		16(rp), r128
 	add		ma000, s000, s000	C accum mid 0
-	ldd		24(rp), r192
 	add,dc		ma064, s064, s064	C accum mid 1
 	add,dc		ma128, s128, s128	C accum mid 2
 	add,dc		ma192, s192, s192	C accum mid 3
 	add,dc		ma256, climb, climb
-	add		r000, s000, s000	C accum rlimb 0
-	add,dc		r064, s064, s064	C accum rlimb 1
-	add,dc		r128, s128, s128	C accum rlimb 2
 	std		s000, 0(rp)
-	add,dc		r192, s192, s192	C accum rlimb 3
-	add,dc		%r0, climb, climb
 	std		s064, 8(rp)
 	std		s128, 16(rp)
 	std		s192, 24(rp)
@@ -681,4 +632,4 @@ ifdef(`HAVE_ABI_2_0w',
 	ldd		-0xf8(%r30), %r4
 	bve		(%r2)
 	ldd,mb		-0x100(%r30), %r3
-EPILOGUE(mpn_addmul_1)
+EPILOGUE(mpn_mul_1)
