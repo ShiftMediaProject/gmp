@@ -100,12 +100,12 @@ esac],
 
 
 AC_ARG_ENABLE(fft,
-AC_HELP_STRING([--enable-fft],[enable FFTs for multiplication [default=no]]),
+AC_HELP_STRING([--enable-fft],[enable FFTs for multiplication [default=yes]]),
 [case $enableval in
 yes|no) ;;
 *) AC_MSG_ERROR([bad value $enableval for --enable-fft, need yes or no]) ;;
 esac],
-[enable_fft=no])
+[enable_fft=yes])
 
 if test "$enable_fft" = "yes"; then
   AC_DEFINE(WANT_FFT,1,
