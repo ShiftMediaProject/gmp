@@ -1,3 +1,26 @@
+2000-04-05  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp.h (__MPN): Make it use __gmpn instead of __mpn for consistency.
+	* gmp.h (GMP_ERROR_ALLOCATE): New errcode.
+
+	* gmp-impl.h (MPN_MUL_N_RECURSE): Delete.
+	(MPN_SQR_RECURSE): Delete.
+
+	* gmp-impl.h (TARGET_REGISTER_STARVED): New define.
+
+	* gmp-impl.h (mpn_kara_sqr_n): Remap with __MPN.
+	(mpn_toom3_sqr_n): Likewise.
+	(mpn_kara_mul_n): Likewise.
+	(mpn_toom3_mul_n): Likewise.
+	(mpn_reciprocal): Likewise.
+
+	* gmp-impl.h (__gmpn_mul_n): Remove declaration.
+	(__gmpn_sqr): Likewise.
+	* gmp.h (mpn_sqr_n): Declare/remap.
+	
+	* gmp.h (mpn_udiv_w_sdiv): Move __MPN remap from here...
+	* gmp-impl.h: ...to here.
+
 2000-04-05  Linus Nordberg  <linus@swox.se>
 
 	* mpf/urandom.c (mpf_urandomb): Remove SIZE parameter.  Normalize
@@ -40,7 +63,7 @@
 	* mpn/generic/rawrandom.c: Remove file and replace with randraw.c
 	on top level.
 	(mpn_rawrandom): Rename to gmp_rand_getraw.
-	
+
 	* randraw.c: New file; essentially a copy of
 	mpn/generic/rawrandom.c.
 	(gmp_rand_getraw): New function (formerly known as mpn_rawrandom).
@@ -57,8 +80,8 @@
 	* Makefile.in: Regenerate.
 
 	* configure.in (gmp_mpn_functions): Remove rawrandom.
-	* configure: Regenerate.	
-	
+	* configure: Regenerate.
+
 2000-04-04  Linus Nordberg  <linus@swox.se>
 
 	* gmp.h (GMP_ERROR enum): Remove comma after last enumeration
@@ -103,7 +126,7 @@
 	(__gmp_rand_data_lc): Add `m2exp' as another way of representing
 	the modulus.
 	(__gmp_rand_state_struct): Remove unused `size'.
-	
+
 	* rand.c (__gmp_rand_scheme): Use better multipliers.  Remove test
 	schemes.  Replace `m' with `m2exp'.
 	(gmp_rand_init): Change parameters and return type.  Use `m2exp'
@@ -111,7 +134,7 @@
 
 	* randlc.c (gmp_rand_init_lc): Don't use malloc().  Change
 	parameters.
-	
+
 	* randclr.c (gmp_rand_clear): Don't use free().  Disable BBS
 	algorithm.  Set `gmp_errno' on error.
 
@@ -119,7 +142,7 @@
 	* randsd.c (gmp_rand_seed): New function.
 	* randsdui.c (gmp_rand_seed_ui): New function.
 	* randlcui.c: Remove unused file.
-	
+
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Rewrite.
 	(mpn_lc): New static function.
 
@@ -127,7 +150,7 @@
 	determining size of ROP.
 
 	* mpf/urandom.c (mpf_urandomb): Add third parameter, nbits.  (Not
-	used yet!)  
+	used yet!)
 	Change parameter order to mpn_rawrandom().
 
 	* Makefile.am (libgmp_la_SOURCES): Add errno.c, randlc2x.c,
@@ -149,7 +172,7 @@
 	* mpn/sparc64/mul_1.asm: Ditto.
 
 2000-03-31  Linus Nordberg  <linus@swox.se>
-	
+
 	* mpz/urandom.c: Rename to...
 	* mpz/urandomb.c: ...this.
 
@@ -204,7 +227,7 @@
 2000-03-23  Kevin Ryde  <kevin@swox.se>
 
 	* config.guess (i?86:*:*:*): Use uname -m if detection program fails.
-	
+
 	* mpn/x86/README: Remove remarks on the now implemented MMX shifts.
 	* mpn/x86/k6/README: Add speed of mpn_divexact_by3, update mpn_mul_1.
 
@@ -224,7 +247,7 @@
 	* mpz/root.c: Handle roots of negative numbers.
 	Fix other border cases.
 	Fix rare memory leakage.
-	
+
 	* errno.c: New file.
 
 2000-03-21  Torbjorn Granlund  <tege@swox.com>
@@ -261,7 +284,7 @@
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Handle seed value of 0
 	correctly.
 
-	* configure.in: Fix detection of alpha flavour.  
+	* configure.in: Fix detection of alpha flavour.
 	Set compiler options for `sparcv8'.
 	* configure: Regenerate.
 
@@ -278,7 +301,7 @@
 
 	* Makefile.am (EXTRA_DIST): Add directory `tests'.
 
- 	* mkinstalldirs: Update (Automake 2000-03-17).
+	* mkinstalldirs: Update (Automake 2000-03-17).
 	* ltconfig: Update (Libtool 2000-03-17).
 	* ltmain.sh: Ditto.
 
