@@ -128,12 +128,12 @@ check_PROGRAMS = t-cmp t-cmp_ui t-equal t-get_d t-get_str t-md_2exp t-set_f
 TESTS = $(check_PROGRAMS)
 subdir = tests/mpq
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../config.h ../../gmp.h ../../mp.h ../../demos/expr/expr-impl.h
+CONFIG_HEADER = ../../gmp.h ../../mp.h ../../demos/expr/expr-impl.h ../../config.h
 CONFIG_CLEAN_FILES = 
 check_PROGRAMS =  t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) t-equal$(EXEEXT) \
 t-get_d$(EXEEXT) t-get_str$(EXEEXT) t-md_2exp$(EXEEXT) t-set_f$(EXEEXT)
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../.. -I../../demos/expr
+DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../../demos/expr -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@

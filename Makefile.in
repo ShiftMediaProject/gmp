@@ -316,12 +316,12 @@ info_TEXINFOS = gmp.texi
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = config.h gmp.h mp.h ./demos/expr/expr-impl.h
+CONFIG_HEADER = gmp.h mp.h ./demos/expr/expr-impl.h config.h
 CONFIG_CLEAN_FILES = 
 LTLIBRARIES =  $(lib_LTLIBRARIES)
 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I. -I. -I. -I./demos/expr
+DEFS = @DEFS@ -I. -I$(srcdir) -I. -I. -I./demos/expr -I.
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -348,7 +348,7 @@ TEXINFOS = gmp.texi
 HEADERS =  $(nodist_include_HEADERS)
 
 depcomp = 
-DIST_COMMON =  README ./stamp-h1.in ./stamp-h2.in ./stamp-h3.in AUTHORS \
+DIST_COMMON =  README ./stamp-h1.in ./stamp-h2.in ./stamp-h4.in AUTHORS \
 COPYING COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in NEWS \
 acconfig.h acinclude.m4 aclocal.m4 ansi2knr.1 ansi2knr.c config.guess \
 config.in config.sub configure configure.in gmp-h.in install-sh \
@@ -380,19 +380,19 @@ config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 $(srcdir)/configure: @MAINTAINER_MODE_TRUE@$(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
 
-config.h: stamp-h1
+gmp.h: stamp-h1
 	@if test ! -f $@; then \
 		rm -f stamp-h1; \
 		$(MAKE) stamp-h1; \
 	else :; fi
-stamp-h1: $(srcdir)/config.in $(top_builddir)/config.status
+stamp-h1: $(srcdir)/gmp-h.in $(top_builddir)/config.status
 	@rm -f stamp-h1 stamp-h1T
 	@echo timestamp > stamp-h1T 2> /dev/null
 	cd $(top_builddir) \
-	  && CONFIG_FILES= CONFIG_HEADERS=config.h:config.in \
+	  && CONFIG_FILES= CONFIG_HEADERS=gmp.h:gmp-h.in \
 	     $(SHELL) ./config.status
 	@mv stamp-h1T stamp-h1
-$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h1.in
+$(srcdir)/gmp-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h1.in
 	@if test ! -f $@; then \
 		rm -f $(srcdir)/./stamp-h1.in; \
 		$(MAKE) $(srcdir)/./stamp-h1.in; \
@@ -403,19 +403,19 @@ $(srcdir)/./stamp-h1.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
 	cd $(top_srcdir) && $(AUTOHEADER)
 	@mv $(srcdir)/./stamp-h1.inT $(srcdir)/./stamp-h1.in
 
-gmp.h: stamp-h2
+mp.h: stamp-h2
 	@if test ! -f $@; then \
 		rm -f stamp-h2; \
 		$(MAKE) stamp-h2; \
 	else :; fi
-stamp-h2: $(srcdir)/gmp-h.in $(top_builddir)/config.status
+stamp-h2: $(srcdir)/mp-h.in $(top_builddir)/config.status
 	@rm -f stamp-h2 stamp-h2T
 	@echo timestamp > stamp-h2T 2> /dev/null
 	cd $(top_builddir) \
-	  && CONFIG_FILES= CONFIG_HEADERS=gmp.h:gmp-h.in \
+	  && CONFIG_FILES= CONFIG_HEADERS=mp.h:mp-h.in \
 	     $(SHELL) ./config.status
 	@mv stamp-h2T stamp-h2
-$(srcdir)/gmp-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h2.in
+$(srcdir)/mp-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h2.in
 	@if test ! -f $@; then \
 		rm -f $(srcdir)/./stamp-h2.in; \
 		$(MAKE) $(srcdir)/./stamp-h2.in; \
@@ -426,35 +426,35 @@ $(srcdir)/./stamp-h2.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
 	cd $(top_srcdir) && $(AUTOHEADER)
 	@mv $(srcdir)/./stamp-h2.inT $(srcdir)/./stamp-h2.in
 
-mp.h: stamp-h3
+config.h: stamp-h4
 	@if test ! -f $@; then \
-		rm -f stamp-h3; \
-		$(MAKE) stamp-h3; \
+		rm -f stamp-h4; \
+		$(MAKE) stamp-h4; \
 	else :; fi
-stamp-h3: $(srcdir)/mp-h.in $(top_builddir)/config.status
-	@rm -f stamp-h3 stamp-h3T
-	@echo timestamp > stamp-h3T 2> /dev/null
+stamp-h4: $(srcdir)/config.in $(top_builddir)/config.status
+	@rm -f stamp-h4 stamp-h4T
+	@echo timestamp > stamp-h4T 2> /dev/null
 	cd $(top_builddir) \
-	  && CONFIG_FILES= CONFIG_HEADERS=mp.h:mp-h.in \
+	  && CONFIG_FILES= CONFIG_HEADERS=config.h:config.in \
 	     $(SHELL) ./config.status
-	@mv stamp-h3T stamp-h3
-$(srcdir)/mp-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h3.in
+	@mv stamp-h4T stamp-h4
+$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h4.in
 	@if test ! -f $@; then \
-		rm -f $(srcdir)/./stamp-h3.in; \
-		$(MAKE) $(srcdir)/./stamp-h3.in; \
+		rm -f $(srcdir)/./stamp-h4.in; \
+		$(MAKE) $(srcdir)/./stamp-h4.in; \
 	else :; fi
-$(srcdir)/./stamp-h3.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
-	@rm -f $(srcdir)/./stamp-h3.in $(srcdir)/./stamp-h3.inT
-	@echo timestamp > $(srcdir)/./stamp-h3.inT 2> /dev/null
+$(srcdir)/./stamp-h4.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
+	@rm -f $(srcdir)/./stamp-h4.in $(srcdir)/./stamp-h4.inT
+	@echo timestamp > $(srcdir)/./stamp-h4.inT 2> /dev/null
 	cd $(top_srcdir) && $(AUTOHEADER)
-	@mv $(srcdir)/./stamp-h3.inT $(srcdir)/./stamp-h3.in
+	@mv $(srcdir)/./stamp-h4.inT $(srcdir)/./stamp-h4.in
 
 mostlyclean-hdr:
 
 clean-hdr:
 
 distclean-hdr:
-	-rm -f config.h gmp.h mp.h
+	-rm -f gmp.h mp.h config.h
 
 maintainer-clean-hdr:
 
@@ -815,7 +815,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES) config.in gmp-h.in mp-h.in $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES) gmp-h.in mp-h.in config.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -830,8 +830,8 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.in gmp-h.in mp-h.in $(TAGS_DEP
 	  done | \
 	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)config.in gmp-h.in mp-h.in$$unique$(LISP)$$tags" \
-	  || etags $(ETAGS_ARGS) $$tags config.in gmp-h.in mp-h.in $$unique $(LISP)
+	test -z "$(ETAGS_ARGS)gmp-h.in mp-h.in config.in$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags gmp-h.in mp-h.in config.in $$unique $(LISP)
 
 mostlyclean-tags:
 
@@ -929,7 +929,7 @@ check-am: all-am
 check: check-recursive
 installcheck-am:
 installcheck: installcheck-recursive
-all-recursive-am: config.h gmp.h mp.h
+all-recursive-am: gmp.h mp.h config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 install-exec-am: install-libLTLIBRARIES
@@ -945,7 +945,7 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-info \
 		uninstall-nodist_includeHEADERS
 uninstall: uninstall-recursive
 all-am: Makefile $(INFO_DEPS) $(ANSI2KNR) $(LTLIBRARIES) $(HEADERS) \
-		config.h gmp.h mp.h
+		gmp.h mp.h config.h
 all-redirect: all-recursive-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install

@@ -140,10 +140,10 @@ t_expr_LDADD = $(top_builddir)/tests/libtests.la $(LDADD)
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES)
 subdir = demos/expr
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../config.h ../../gmp.h ../../mp.h expr-impl.h
+CONFIG_HEADER = ../../gmp.h ../../mp.h expr-impl.h ../../config.h
 CONFIG_CLEAN_FILES = 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../.. -I.
+DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I. -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -187,7 +187,7 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(libexpr_a_SOURCES) run-expr.c t-expr.c
 depcomp = 
-DIST_COMMON =  README ./stamp-h4.in Makefile.am Makefile.in \
+DIST_COMMON =  README ./stamp-h3.in Makefile.am Makefile.in \
 expr-impl-h.in
 
 
@@ -208,28 +208,28 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 
-expr-impl.h: stamp-h4
+expr-impl.h: stamp-h3
 	@if test ! -f $@; then \
-		rm -f stamp-h4; \
-		$(MAKE) stamp-h4; \
+		rm -f stamp-h3; \
+		$(MAKE) stamp-h3; \
 	else :; fi
-stamp-h4: $(srcdir)/expr-impl-h.in $(top_builddir)/config.status
-	@rm -f stamp-h4 stamp-h4T
-	@echo timestamp > stamp-h4T 2> /dev/null
+stamp-h3: $(srcdir)/expr-impl-h.in $(top_builddir)/config.status
+	@rm -f stamp-h3 stamp-h3T
+	@echo timestamp > stamp-h3T 2> /dev/null
 	cd $(top_builddir) \
 	  && CONFIG_FILES= CONFIG_HEADERS=demos/expr/expr-impl.h:demos/expr/expr-impl-h.in \
 	     $(SHELL) ./config.status
-	@mv stamp-h4T stamp-h4
-$(srcdir)/expr-impl-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h4.in
+	@mv stamp-h3T stamp-h3
+$(srcdir)/expr-impl-h.in: @MAINTAINER_MODE_TRUE@$(srcdir)/./stamp-h3.in
 	@if test ! -f $@; then \
-		rm -f $(srcdir)/./stamp-h4.in; \
-		$(MAKE) $(srcdir)/./stamp-h4.in; \
+		rm -f $(srcdir)/./stamp-h3.in; \
+		$(MAKE) $(srcdir)/./stamp-h3.in; \
 	else :; fi
-$(srcdir)/./stamp-h4.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/acconfig.h
-	@rm -f $(srcdir)/./stamp-h4.in $(srcdir)/./stamp-h4.inT
-	@echo timestamp > $(srcdir)/./stamp-h4.inT 2> /dev/null
+$(srcdir)/./stamp-h3.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/acconfig.h
+	@rm -f $(srcdir)/./stamp-h3.in $(srcdir)/./stamp-h3.inT
+	@echo timestamp > $(srcdir)/./stamp-h3.inT 2> /dev/null
 	cd $(top_srcdir) && $(AUTOHEADER)
-	@mv $(srcdir)/./stamp-h4.inT $(srcdir)/./stamp-h4.in
+	@mv $(srcdir)/./stamp-h3.inT $(srcdir)/./stamp-h3.in
 
 mostlyclean-hdr:
 

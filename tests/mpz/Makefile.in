@@ -136,7 +136,7 @@ TESTS = $(check_PROGRAMS)
 CLEANFILES = io.tmp
 subdir = tests/mpz
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../config.h ../../gmp.h ../../mp.h ../../demos/expr/expr-impl.h
+CONFIG_HEADER = ../../gmp.h ../../mp.h ../../demos/expr/expr-impl.h ../../config.h
 CONFIG_CLEAN_FILES = 
 check_PROGRAMS =  t-cmp$(EXEEXT) t-mul$(EXEEXT) t-tdiv$(EXEEXT) \
 t-tdiv_ui$(EXEEXT) t-fdiv$(EXEEXT) t-fdiv_ui$(EXEEXT) t-gcd$(EXEEXT) \
@@ -148,7 +148,7 @@ t-fac_ui$(EXEEXT) t-fib_ui$(EXEEXT) t-scan$(EXEEXT) t-fits$(EXEEXT) \
 t-divis$(EXEEXT) t-divis_2exp$(EXEEXT) t-cong$(EXEEXT) \
 t-cong_2exp$(EXEEXT) t-sizeinbase$(EXEEXT)
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../.. -I../../demos/expr
+DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../../demos/expr -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@

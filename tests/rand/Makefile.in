@@ -143,10 +143,10 @@ EXTRA_DIST = gmpstat.h
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES)
 subdir = tests/rand
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../config.h ../../gmp.h ../../mp.h ../../demos/expr/expr-impl.h
+CONFIG_HEADER = ../../gmp.h ../../mp.h ../../demos/expr/expr-impl.h ../../config.h
 CONFIG_CLEAN_FILES = 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../.. -I../../demos/expr
+DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../../demos/expr -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
