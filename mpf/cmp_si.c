@@ -72,9 +72,15 @@ mpf_cmp_si (u, vslimb)
 
   up = u->_mp_d;
 
+  /* 3. Compare the most significant mantissa limb with V.  */
+  if (up[usize - 1] > vslimb)
+    return usign;
+  else if (up[usize - 1] < vslimb)
+    return -usign;
+
 #define STRICT_MPF_NORMALIZATION 0
 #if ! STRICT_MPF_NORMALIZATION
-  /* Ignore zeroes at the low end of U and V.  */
+  /* Ignore zeroes at the low end of U.  */
   while (*up == 0)
     {
       up++;
@@ -82,16 +88,10 @@ mpf_cmp_si (u, vslimb)
     }
 #endif
 
-  /* 3. Now, if the number of limbs are different, we have a difference
+  /* 4. Now, if the number of limbs are different, we have a difference
      since we have made sure the trailing limbs are not zero.  */
   if (usize > 1)
     return usign;
-
-  /* 4. Compare the mantissas.  */
-  if (*up > vslimb)
-    return usign;
-  else if (*up < vslimb)
-    return -usign;
 
   /* Wow, we got zero even if we tried hard to avoid it.  */
   return 0;
