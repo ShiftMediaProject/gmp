@@ -96,6 +96,7 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
               ulimb >>= 1;
               ASSERT (ulimb != 0);
             strip_u_maybe:
+              ;
             }
           while ((ulimb & 1) == 0);
         }
