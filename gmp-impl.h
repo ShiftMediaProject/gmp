@@ -275,24 +275,50 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define MPN_OVERLAP_P(xp, xsize, yp, ysize) \
   ((xp) + (xsize) > (yp) && (yp) + (ysize) > (xp))
 
-/* assert_nocarry() uses assert() to check the given expression is zero.
-   If assertion checking is disabled, the expression is still evaluated.
 
-   The name of this macro is based on its typical use with routines like
-   mpn_add_n() where the return value represents a carry.  Unless a carry is
-   expected and handled, a non-zero return would indicate an overflow and
-   should be guarded against.  For example,
+/* ASSERT() is a private assertion checking scheme, similar to <assert.h>.
+   ASSERT() does the check only if DEBUG is selected, ASSERT_ALWAYS() does
+   it always.  Generally assertions are meant for development, but might
+   help when looking for a problem later too.
 
-         assert_nocarry (mpn_add_n (rp, s1p, s2p, size));
+   ASSERT_NOCARRY() uses ASSERT() to check the expression is zero, but if
+   assertion checking is disabled, the expression is still evaluated.  This
+   is meant for use with routines like mpn_add_n() where the return value
+   represents a carry or whatever that shouldn't occur.  For example,
+   ASSERT_NOCARRY (mpn_add_n (rp, s1p, s2p, size)); */
 
-   Obviously other routines can be checked in a similar way, eg. for a
-   borrow from mpn_sub_n(), remainder from mpn_divrem_1(), etc. */
-
-#ifdef NDEBUG
-#define assert_nocarry(expr)   (expr)
+#if defined (__LINE__)
+#define ASSERT_LINE  __LINE__
 #else
-#define assert_nocarry(expr)   assert ((expr) == 0)
+#define ASSERT_LINE  -1
 #endif
+
+#if defined (__FILE__)
+#define ASSERT_FILE  __FILE__
+#else
+#define ASSERT_FILE  ""
+#endif
+
+/* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
+#if defined (__STDC__) || defined (__cplusplus)
+#define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, #expr)
+#else
+#define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, "expr")
+#endif
+
+#define ASSERT_ALWAYS(expr) ((expr) ? 0 : ASSERT_FAIL (expr))
+
+#if DEBUG
+#define ASSERT(expr)           ASSERT_ALWAYS (expr)
+#define ASSERT_NOCARRY(expr)   ASSERT_ALWAYS ((expr) == 0)
+#else
+#define ASSERT(expr)
+#define ASSERT_NOCARRY(expr)   (expr)
+#endif
+
+void __gmp_assert_fail _PROTO((const char *filename, int linenum,
+                               const char *expr));
+
 
 #if HAVE_NATIVE_mpn_com_n
 #define mpn_com_n __MPN(com_n)
