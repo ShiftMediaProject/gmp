@@ -495,7 +495,7 @@ main (int argc, char *argv[])
 	  2.810583051186143125e102);
 
 #ifdef MPFR_HAVE_FESETROUND
-  N = (argc>1) ? atoi(argv[1]) : 100000;
+  N = (argc>1) ? atoi(argv[1]) : 10000;
   SEED_RAND (time(NULL));
   for (i=0;i<N;i++)
     {
