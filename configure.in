@@ -860,13 +860,9 @@ SPEED_CYCLECOUNTER_OBJ="$tmp"
 test -n "$tmp" || eval tmp=\"\$cyclecounter_size$abi2\"
 cyclecounter_size="$tmp"
 
-if test -n "$SPEED_CYCLECOUNTER_OBJ"
-then
+if test -n "$SPEED_CYCLECOUNTER_OBJ"; then
   AC_DEFINE_UNQUOTED(HAVE_SPEED_CYCLECOUNTER, $cyclecounter_size,
   [Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits)])
-
-  # All cycle counters are .asm files currently
-  found_asm=yes
 fi
 AC_SUBST(SPEED_CYCLECOUNTER_OBJ)
 
@@ -1159,6 +1155,11 @@ for tmp_fn in $gmp_mpn_functions; do
     fi
   fi
 done
+
+# All cycle counters are .asm files currently
+if test -n "$SPEED_CYCLECOUNTER_OBJ"; then
+  found_asm=yes
+fi
 
 
 # Don't demand an m4 unless it's actually needed.
