@@ -576,11 +576,13 @@ speed_mpn_preinv_divrem_1f (struct speed_params *s)
   SPEED_ROUTINE_MPN_PREINV_DIVREM_1F (mpn_preinv_divrem_1);
 }
 
+#if GMP_NUMB_BITS % 4 == 0
 double
 speed_mpn_mod_34lsub1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MOD_34LSUB1 (mpn_mod_34lsub1);
 }
+#endif
 
 double
 speed_mpn_divrem_2 (struct speed_params *s)
