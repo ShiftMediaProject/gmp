@@ -457,8 +457,8 @@ const struct {
     "processor_info() pi_clock" },
 #endif
 
-/*    { speed_cpu_frequency_proc_cpuinfo, */
-/*      "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" }, */
+  { speed_cpu_frequency_proc_cpuinfo,
+    "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
 
 #if HAVE_POPEN
   { speed_cpu_frequency_sunos_sysinfo,
