@@ -114,6 +114,10 @@ MA 02111-1307, USA. */
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+#if defined _CRAY
+#include <limits.h>
+#endif
+
 /* Extra casts because shorts are promoted to ints by "~" and "<<".  "-1"
    rather than "1" in SIGNED_TYPE_MIN avoids warnings from some compilers
    about arithmetic overflow.  */
@@ -131,19 +135,23 @@ MA 02111-1307, USA. */
 #ifndef ULONG_MAX
 #define ULONG_MAX          UNSIGNED_TYPE_MAX (unsigned long)
 #endif
-#define ULONG_HIGHBIT      UNSIGNED_TYPE_HIGHBIT (unsigned long)
-#define LONG_HIGHBIT       SIGNED_TYPE_HIGHBIT (long)
 #ifndef LONG_MAX
 #define LONG_MAX           SIGNED_TYPE_MAX (long)
 #endif
-
-#ifndef USHORT_MAX
-#define USHORT_MAX         UNSIGNED_TYPE_MAX (unsigned short)
+#ifndef LONG_MIN
+#define LONG_MIN           SIGNED_TYPE_MIN (long)
 #endif
-#define USHORT_HIGHBIT     UNSIGNED_TYPE_HIGHBIT (unsigned short)
-#define SHORT_HIGHBIT      SIGNED_TYPE_HIGHBIT (short)
-#ifndef SHORT_MAX
-#define SHORT_MAX          SIGNED_TYPE_MAX (short)
+#define ULONG_HIGHBIT      (ULONG_MAX ^ (ULONG_MAX >> 1))
+#define LONG_HIGHBIT       LONG_MIN
+
+#ifndef USHRT_MAX
+#define USHRT_MAX          UNSIGNED_TYPE_MAX (unsigned short)
+#endif
+#ifndef SHRT_MAX
+#define SHRT_MAX           SIGNED_TYPE_MAX (short)
+#endif
+#ifndef SHRT_MIN
+#define SHRT_MIN           SIGNED_TYPE_MIN (short)
 #endif
 
 
