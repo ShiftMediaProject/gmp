@@ -252,7 +252,7 @@ fi
 GMP_PROG_CC_SELECT
 
 # How to assemble.
-CCAS="$CC -c $CFLAGS"
+CCAS="$CC -c"
 AC_SUBST(CCAS)
 
 dnl Checks for programs.
