@@ -52,6 +52,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
 mp_limb_t
 #if __STDC__
 mpn_bdivmod (mp_ptr qp, mp_ptr up, mp_size_t usize,
@@ -71,8 +72,8 @@ mpn_bdivmod (qp, up, usize, vp, vsize, d)
   ASSERT (usize >= 1);
   ASSERT (vsize >= 1);
   ASSERT (! MPN_OVERLAP_P (up, usize, vp, vsize));
-  ASSERT (! MPN_OVERLAP_P (qp, d/BITS_PER_MP_LIMB, up, usize));
   ASSERT (! MPN_OVERLAP_P (qp, d/BITS_PER_MP_LIMB, vp, vsize));
+  ASSERT (MPN_SAME_OR_INCR2_P (qp, d/BITS_PER_MP_LIMB, up, usize));
 
   /* 1/V mod 2^BITS_PER_MP_LIMB. */
   modlimb_invert (v_inv, vp[0]);
