@@ -609,6 +609,9 @@ all (void)
   s.xp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, 0);
   s.yp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, 0);
 
+  mpn_random (s.xp_block, SPEED_BLOCK_SIZE);
+  mpn_random (s.yp_block, SPEED_BLOCK_SIZE);
+
   speed_time_init ();
   fprintf (stderr, "Using: %s\n", speed_time_string);
 
