@@ -2117,20 +2117,25 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 #define TARGET_REGISTER_STARVED 0
 #endif
 
-/* LIMB_HIGHBIT_TO_MASK(n) gives 0xFF..FF if the high bit of n is 1, or
-   gives 0 if the high bit is 0.
-   This is intended to be an arithmetic right shift by GMP_LIMB_BITS-1, but
-   C doesn't guarantee signed right shifts are arithmetic, so we only do
-   that if configure says it's ok.  The fallback is to a ?:.  Recent
-   versions of gcc (eg. 3.3) will in fact optimize such a ?: to an
-   arithmetic shift.  */
-#if HAVE_RIGHT_SHIFT_ARITHMETIC
-#define LIMB_HIGHBIT_TO_MASK(n) \
-  ((mp_limb_signed_t) (n) >> (GMP_LIMB_BITS-1))
-#else
-#define LIMB_HIGHBIT_TO_MASK(n) \
-  ((n) & GMP_LIMB_HIGHBIT ? MP_LIMB_T_MAX : CNST_LIMB(0))
-#endif
+
+/* LIMB_HIGHBIT_TO_MASK(n) examines the high bit of a limb value and turns 1
+   or 0 there into a limb 0xFF..FF or 0 respectively.
+
+   On most CPUs this is just an arithmetic right shift by GMP_LIMB_BITS-1,
+   but C99 doesn't guarantee signed right shifts are arithmetic, so we have
+   a little compile-time test and a fallback to a "? :" form.  The latter is
+   necessary for instance on Cray vector systems.
+
+   Recent versions of gcc (eg. 3.3) will in fact optimize a "? :" like this
+   to an arithmetic right shift anyway, but it's good to get the desired
+   shift on past versions too (in particular since an important use of
+   LIMB_HIGHBIT_TO_MASK is in udiv_qrnnd_preinv).  */
+
+#define LIMB_HIGHBIT_TO_MASK(n)                                 \
+  (((mp_limb_signed_t) -1 >> 1) < 0                             \
+   ? (mp_limb_signed_t) (n) >> (GMP_LIMB_BITS - 1)              \
+   : (n) & GMP_LIMB_HIGHBIT ? MP_LIMB_T_MAX : CNST_LIMB(0))
+
 
 /* Use a library function for invert_limb, if available. */
 #define mpn_invert_limb  __MPN(invert_limb)
