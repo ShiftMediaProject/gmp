@@ -25,18 +25,19 @@ MA 02111-1307, USA. */
 
 
 #ifdef OPERATION_add
-#define FUNCTION   mpq_add
-#define VARIATION  mpz_add
+#define FUNCTION     mpq_add
+#define ADD_OR_SUB   mpz_add
 #endif
 
 #ifdef OPERATION_sub
-#define FUNCTION   mpq_sub
-#define VARIATION  mpz_sub
+#define FUNCTION     mpq_sub
+#define ADD_OR_SUB   mpz_sub
 #endif
 
 #ifndef FUNCTION
 Error, need OPERATION_add or OPERATION_sub
 #endif
+
 
 void
 FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
@@ -64,16 +65,16 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
     {
       mpz_t t;
 
-      mpz_divexact (tmp1, &(op2->_mp_den), gcd);
+      mpz_divexact_gcd (tmp1, &(op2->_mp_den), gcd);
       mpz_mul (tmp1, &(op1->_mp_num), tmp1);
 
-      mpz_divexact (tmp2, &(op1->_mp_den), gcd);
+      mpz_divexact_gcd (tmp2, &(op1->_mp_den), gcd);
       mpz_mul (tmp2, &(op2->_mp_num), tmp2);
 
       MPZ_TMP_INIT (t, MAX (ABS (tmp1->_mp_size), ABS (tmp2->_mp_size)) + 1);
 
-      VARIATION (t, tmp1, tmp2);
-      mpz_divexact (tmp2, &(op1->_mp_den), gcd);
+      ADD_OR_SUB (t, tmp1, tmp2);
+      mpz_divexact_gcd (tmp2, &(op1->_mp_den), gcd);
 
       mpz_gcd (gcd, t, gcd);
       if (MPZ_EQUAL_1_P (gcd))
@@ -83,8 +84,8 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
         }
       else
         {
-          mpz_divexact (&(rop->_mp_num), t, gcd);
-          mpz_divexact (tmp1, &(op2->_mp_den), gcd);
+          mpz_divexact_gcd (&(rop->_mp_num), t, gcd);
+          mpz_divexact_gcd (tmp1, &(op2->_mp_den), gcd);
           mpz_mul (&(rop->_mp_den), tmp1, tmp2);
         }
     }
@@ -94,7 +95,7 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
 	 probability 6/(pi**2).  */
       mpz_mul (tmp1, &(op1->_mp_num), &(op2->_mp_den));
       mpz_mul (tmp2, &(op2->_mp_num), &(op1->_mp_den));
-      VARIATION (&(rop->_mp_num), tmp1, tmp2);
+      ADD_OR_SUB (&(rop->_mp_num), tmp1, tmp2);
       mpz_mul (&(rop->_mp_den), &(op1->_mp_den), &(op2->_mp_den));
     }
   TMP_FREE (marker);
