@@ -209,11 +209,12 @@ extern "C" {
 
 void _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long int));
 void gmp_randinit _PROTO ((gmp_randstate_t, gmp_randalg_t, ...));
-void gmp_randinit_lc _PROTO ((gmp_randstate_t, mpz_t, unsigned long int,
-			      mpz_t));
-void gmp_randinit_lc_2exp _PROTO ((gmp_randstate_t, mpz_t, unsigned long int,
+void gmp_randinit_lc _PROTO ((gmp_randstate_t,
+                              mpz_srcptr, unsigned long int, mpz_srcptr));
+void gmp_randinit_lc_2exp _PROTO ((gmp_randstate_t,
+                                   mpz_srcptr, unsigned long int,
 				   unsigned long int));
-void gmp_randseed _PROTO ((gmp_randstate_t, mpz_t));
+void gmp_randseed _PROTO ((gmp_randstate_t, mpz_srcptr));
 void gmp_randseed_ui _PROTO ((gmp_randstate_t, unsigned long int));
 void gmp_randclear _PROTO ((gmp_randstate_t));
 
