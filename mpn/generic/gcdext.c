@@ -68,17 +68,10 @@ int arr[BITS_PER_MP_LIMB + 1];
 	   and then switch to double-limb arithmetic.  */
 
 
-/* Division optimized for small quotients.  If the quotient is more than one limb,
-   store 1 in *qh and return 0.  */
+/* Two-limb division optimized for small quotients.  */
 static mp_limb_t
-div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
+div2 (mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
 {
-  if (d1 == 0)
-    {
-      *qh = 1;
-      return 0;
-    }
-
   if ((mp_limb_signed_t) n1 < 0)
     {
       mp_limb_t q;
@@ -103,7 +96,6 @@ div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
 	  cnt--;
 	}
 
-      *qh = 0;
       return q;
     }
   else
@@ -130,7 +122,6 @@ div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
 	  cnt--;
 	}
 
-      *qh = 0;
       return q;
     }
 }
@@ -173,8 +164,6 @@ mpn_gcd (mp_ptr gp,
 
   TMP_MARK (mark);
 
-  use_double_flag = ABOVE_THRESHOLD (size, GCDEXT_THRESHOLD);
-
   tp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
   wp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
 #if EXTEND
@@ -203,6 +192,8 @@ mpn_gcd (mp_ptr gp,
       size = vsize;
       MP_PTR_SWAP (up, vp);
     }
+
+  use_double_flag = ABOVE_THRESHOLD (size, GCDEXT_THRESHOLD);
 
   for (;;)
     {
@@ -245,26 +236,20 @@ mpn_gcd (mp_ptr gp,
 	  for (;;)
 	    {
 	      mp_limb_t T;
-	      mp_limb_t qh, q1, q2;
+	      mp_limb_t q1, q2;
 	      mp_limb_t nh, nl, dh, dl;
 	      mp_limb_t t1, t0;
 	      mp_limb_t Th, Tl;
 
 	      sub_ddmmss (dh, dl, vh, vl, 0, C);
-	      if ((dl | dh) == 0)
+	      if (dh == 0)
 		break;
 	      add_ssaaaa (nh, nl, uh, ul, 0, A);
-	      q1 = div2 (&qh, nh, nl, dh, dl);
-	      if (qh != 0)
-		break;		/* could handle this */
+	      q1 = div2 (nh, nl, dh, dl);
 
 	      add_ssaaaa (dh, dl, vh, vl, 0, D);
-	      if ((dl | dh) == 0)
-		break;
 	      sub_ddmmss (nh, nl, uh, ul, 0, B);
-	      q2 = div2 (&qh, nh, nl, dh, dl);
-	      if (qh != 0)
-		break;		/* could handle this */
+	      q2 = div2 (nh, nl, dh, dl);
 
 	      if (q1 != q2)
 		break;
@@ -285,17 +270,13 @@ mpn_gcd (mp_ptr gp,
 
 	      add_ssaaaa (dh, dl, vh, vl, 0, C);
 	      sub_ddmmss (nh, nl, uh, ul, 0, A);
-	      q1 = div2 (&qh, nh, nl, dh, dl);
-	      if (qh != 0)
-		break;		/* could handle this */
+	      q1 = div2 (nh, nl, dh, dl);
 
 	      sub_ddmmss (dh, dl, vh, vl, 0, D);
-	      if ((dl | dh) == 0)
+	      if (dh == 0)
 		break;
 	      add_ssaaaa (nh, nl, uh, ul, 0, B);
-	      q2 = div2 (&qh, nh, nl, dh, dl);
-	      if (qh != 0)
-		break;		/* could handle this */
+	      q2 = div2 (nh, nl, dh, dl);
 
 	      if (q1 != q2)
 		break;
