@@ -28,9 +28,9 @@ MA 02111-1307, USA. */
 
 #if HAVE_MPFR
 extern mpfr_t __mpfr_const_pi;
-extern int __mpfr_const_pi_prec;
+extern int __gmpfr_const_pi_prec;
 extern mpfr_t __mpfr_const_log2;
-extern int __mpfr_const_log2_prec;
+extern int __gmpfr_const_log2_prec;
 #endif
 
 
@@ -750,15 +750,15 @@ check_r (void)
   mpfr_clear (diff);
   mpfr_clear (tolerance);
 
-  if (__mpfr_const_pi_prec != 0)
+  if (__gmpfr_const_pi_prec != 0)
     {
       mpfr_clear (__mpfr_const_pi);
-      __mpfr_const_pi_prec = 0;
+      __gmpfr_const_pi_prec = 0;
     }
-  if (__mpfr_const_log2_prec != 0)
+  if (__gmpfr_const_log2_prec != 0)
     {
       mpfr_clear (__mpfr_const_log2);
-      __mpfr_const_log2_prec = 0;
+      __gmpfr_const_log2_prec = 0;
     }
 
   return;
