@@ -19,7 +19,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-07  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in (mpn_pow_1): Add declaration.
+
+	* mpn/generic/pow_1.c: Handle exp <= 1.  Reverse rp/tp parity scheme
+	for bn == 1 arm.
+
+	* Rename MP_LIMB_T_HIGHBIT => GMP_LIMB_HIGHBIT.
+
 2002-05-06  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (main): Don't call mpz_sizeinbase with negative base.
+
+	* randraw.c (lc): Remove an unused variable.
 
 	* mpn/generic/get_str.c: Clarify an algorithm description.
 
