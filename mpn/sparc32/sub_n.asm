@@ -1,33 +1,33 @@
-C SPARC mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
-C store difference in a third limb vector.
+dnl  SPARC mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
+dnl  store difference in a third limb vector.
 
-C Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+dnl  Copyright (C) 1995, 1996, 2000 Free Software Foundation, Inc.
 
-C This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-C The GNU MP Library is free software; you can redistribute it and/or modify
-C it under the terms of the GNU Library General Public License as published by
-C the Free Software Foundation; either version 2 of the License, or (at your
-C option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Library General Public License as published
+dnl  by the Free Software Foundation; either version 2 of the License, or (at
+dnl  your option) any later version.
 
-C The GNU MP Library is distributed in the hope that it will be useful, but
-C WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-C or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-C License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+dnl  License for more details.
 
-C You should have received a copy of the GNU Library General Public License
-C along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-C the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-C MA 02111-1307, USA.
+dnl  You should have received a copy of the GNU Library General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
+
+include(`../config.m4')
 
 C INPUT PARAMETERS
 define(res_ptr,%o0)
 define(s1_ptr,%o1)
 define(s2_ptr,%o2)
 define(n,%o3)
-
-include(`../config.m4')
 
 ASM_START()
 PROLOGUE(mpn_sub_n)
