@@ -1,0 +1,121 @@
+98-01-11: Om endast kvoten önskas, kanske man skulle kunna inkludera färre
+och färre limbar från divisorn vid subtraktion från den partiella resten?
+Om divisorn är n linbar, så måste första submul-anropet använda n linbar,
+det andra n-1 limbar, osv.  I gränsfall måste man ta med någon limb till då
+och då, eller så kan man kanske kolla lite efter det hela är klart?
+
+mpn_tdiv_qr:
+
+1. mpn_divrem_newton is faster for large operands since mpn_tdiv_qr cannot
+   use the partial remainder computed by mpn_tdiv_q.  If we made the partial
+   remainder available somehow, the mpn_tdiv_qr code would need to take into
+   account that its value depends on the number of extra limbs that were
+   needed to get a reliable quotient.
+
+2. Do we really need the qxn argument?  For symmetry with mpn_tdiv_q maybe?
+
+3. Decide what argument overlap to permit.
+
+mpn_tdiv_q:
+
+1. Make it work when qxn is non-zero.
+2. Decide what argument overlap to permit.
+
+
+Misc thoughts:
+
+If we put the meat of optimized case of mpn_tdiv_q in a separate,
+non-allocating hidden low level function, it would get more registers, and
+we could make the interface return the partial remainder.  The return value
+could signify the number of extra limbs that were used from the dividend and
+dividor.  We would put mpn_tdiv_q as an inline function in gmp.h, and have
+that inline function determine wheather to do a plain non-tricky divide
+(__gmpn_tdiv_qr_newton_or_classic) or the tricky divide (__gmpn_tdiv_tricky).
+
+__gmpn_tdiv_qr_newton:
+
+   Can safely be made to assume that the quotient is greater than the divisor.
+
+__gmpn_tdiv_tricky:
+
+   Do not accept qxn argument per se.
+
+   Generate quotient and partial remainder, return remainder status (a count
+   of the number of extra dividend/divisor limbs used to compute result).
+
+mpn_tdiv_qr:
+
+  Remember to take qxn into account.
+
+  qn = nn - dn + 1 + qxn
+  if (dn < 10)
+    goto small;
+  if (qn < KARATSUBA_MUL_THRESHOLD)
+    goto plain_not_newton;
+  if (qn >= dn)
+    goto plain;
+
+  use_tricky_code:
+    ... allocate internals for __gmpn_tdiv_tricky ...
+    -- Note that we need to pass enough information that __gmpn_tdiv_tricky
+    -- call tell when either the dividend or divisor runs out.  The dividend
+    -- might run out before the divisor only if qxn is non-zero.
+    oxn = __gmpn_tdiv_tricky (qp, prp, np, nn, dp, dn, temp1, temp2,...)
+    -- Partial remainder now is high(dividend) - quotient X high(divisor).
+    -- Compute true remainder by appending unused part of dividend to partial
+    -- remainder, multiplying quotient by unused part of divisor, and then
+    -- subtracting the latter from the former.
+    -- But, on 2nd thought, we could do even better by avoiding most of the
+    -- hair of __gmpn_tdiv_tricky, and call mpn_mul+mpn_sub_n directly after
+    -- the mpn_divrem call.
+    return;
+
+  small:
+    if (dn == 1)
+      {
+	mpn_divrem_1 (...);
+	return;
+      }
+
+  plain_not_newton:
+    count_leading_zeros (cnt, dp[dn - 1]);
+    if (cnt != 0)
+      {
+	cy = mpn_lshift (n2p, np, nn, cnt);
+	n2p[nn] = cy;
+	nn += cy != 0;
+	mpn_lshift (d2p, dp, dn, cnt);
+        __gmpn_tdiv_qr_classic (qp, qxn, n2p, nn, d2p, dn);
+	mpn_rshift (rp, n2p, dn, cnt);
+      }
+    else
+      {
+	-- fix: if np == rp, no need to alloca/copy
+	mpn_copy (n2p, np, nn);
+        __gmpn_tdiv_qr_classic (qp, qxn, n2p, nn, d2p, dn);
+	mpn_copy (rp, n2p, dn);
+      }
+    return;
+
+  plain:
+    if (classic is better)
+      goto plain_not_newton;
+  newton:
+    count_leading_zeros (cnt, dp[dn - 1]);
+    if (cnt != 0)
+      {
+	cy = mpn_lshift (n2p, np, nn, cnt);
+	n2p[nn] = cy;
+	nn += cy != 0;
+	mpn_lshift (d2p, dp, dn, cnt);
+        __gmpn_tdiv_qr_newton (qp, qxn, n2p, nn, d2p, dn);
+	mpn_rshift (rp, n2p, dn, cnt);
+      }
+    else
+      {
+	-- fix: if np == rp, no need to alloca/copy
+	mpn_copy (n2p, np, nn);
+        __gmpn_tdiv_qr_newton (qp, qxn, n2p, nn, d2p, dn);
+	mpn_copy (rp, n2p, dn);
+      }
+    }
