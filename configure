@@ -3309,7 +3309,7 @@ cat >$CONFIG_STATUS <<EOF
 # Files that config.status was made for.
 config_files="\\
   Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile
-  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile demos/Makefile"
+  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile"
 config_headers="\\
   config.h:config.in"
 config_links="\\
@@ -3406,7 +3406,6 @@ Try \\\`$CONFIG_STATUS --help' for more information."; exit 1 ;;
   'mpf/tests/Makefile' ) CONFIG_FILES="\$CONFIG_FILES mpf/tests/Makefile" ;;
   'mpz/tests/Makefile' ) CONFIG_FILES="\$CONFIG_FILES mpz/tests/Makefile" ;;
   'mpq/tests/Makefile' ) CONFIG_FILES="\$CONFIG_FILES mpq/tests/Makefile" ;;
-  'demos/Makefile' ) CONFIG_FILES="\$CONFIG_FILES demos/Makefile" ;;
   '$gmp_links' ) CONFIG_LINKS="\$CONFIG_LINKS $gmp_links" ;;
   'default-1' ) CONFIG_COMMANDS="\$CONFIG_COMMANDS default-1" ;;
   'default-2' ) CONFIG_COMMANDS="\$CONFIG_COMMANDS default-2" ;;
