@@ -1,8 +1,12 @@
 
-			AMD K7 MPN SUBROUTINES
+                      AMD K7 MPN SUBROUTINES
 
 
 This directory contains code optimized for the AMD Athalon CPU.
+
+The mmx subdirectory has routines using mmx instructions.  All Athalons have
+MMX, the separate directory is just so that configure can omit it if the
+assembler doesn't support MMX.
 
 
 
@@ -13,14 +17,19 @@ Times for the loops, with all code and data in L1 cache.
                                cycles/limb
 	mpn_add/sub_n             1.6
 
-	mpn_divmod/divrem/mod_1  41.0
+	mpn_copyi                 0.75 or 1.0   \ varying with data alignment
+	mpn_copyd                 0.75 or 1.0   /
+
+	mpn_divrem_1             42.0
+	mpn_mod_1                42.0
 
 	mpn_l/rshift              1.2
 
 	mpn_mul_1                 3.4
-	mpn_add/submul_1          3.9
+	mpn_addmul/submul_1       3.9
 
 	mpn_mul_basecase          4.42 cycles/crossproduct (approx)
+
 
 Prefetching of sources hasn't yet been tried.
 
@@ -54,7 +63,7 @@ The K7 has 64k L1 code cache so quite big unrolling is allowable.
 Computed jumps into the unrolling are used to handle sizes not a multiple of
 the unrolling.  An attractive feature of this is that times increase
 smoothly with operand size, but it may be that some routines should just
-have simple loops to finish up, especially when PIC is adds between 2 and 16
+have simple loops to finish up, especially when PIC adds between 2 and 16
 cycles to get eip.
 
 Position independent code is implemented using a call to get eip for the
