@@ -33,12 +33,6 @@
 #     '("^.*Failed test [0-9]+ in \\([^ ]+\\) at line \\([0-9]+\\)" 1 2)))
 
 
-# Bugs:
-#
-# The :constants tests seem to provoke segvs in perl 5.005_03 and are hence
-# disabled for now.
-
-
 use strict;
 use Test;
 
@@ -68,29 +62,6 @@ sub str {
   my $s = "@_[0]" . "";
   return $s;
 }
-
-
-#  use GMP::Mpz qw(:constants);
-#  {
-#    my $a = 123;
-#    ok (UNIVERSAL::isa ($a, "GMP::Mpz"));
-#  }
-#  use GMP::Mpz qw(:noconstants);
-  
-#  use GMP::Mpq qw(:constants);
-#  {
-#    my $a = 123;
-#    ok (UNIVERSAL::isa ($a, "GMP::Mpq"));
-#  }
-#  use GMP::Mpq qw(:noconstants);
-  
-#  use GMP::Mpf qw(:constants);
-#  {
-#    my $a = 123;
-#    ok (UNIVERSAL::isa ($a, "GMP::Mpf"));
-#  }
-#  use GMP::Mpf qw(:noconstants);
-
 
 foreach my $name ('mpz', 'mpq', 'mpf') {
   print "$name\n";
@@ -244,7 +215,6 @@ foreach my $name ('mpz', 'mpq', 'mpf') {
 foreach my $x (-123, -1, 0, 1, 123) {
   foreach my $xv ($x, "$x", substr("$x",0), $x+0.0,
 		  mpz($x), mpq($x), mpf($x)) {
-    # print "x is $x\n";
 
     ok (GMP::get_d($xv) == $x);
     ok (GMP::get_si($xv) == $x);
@@ -254,7 +224,6 @@ foreach my $x (-123, -1, 0, 1, 123) {
     foreach my $y (-123, -1, 0, 1, 123) {
       foreach my $yv ($y, "$y", 0.0+$y, mpz($y), mpq($y), mpf($y)) {
 
-	# print "$x cmp $y\n";
 	ok (($xv <=> $yv) == ($x <=> $y));
       }
     }
@@ -265,15 +234,15 @@ foreach my $xpair ([-123,"-7b"], [-1,"-1"], [0,"0"], [1,"1"], [123,"7b"]) {
   my $x = $$xpair[0];
   my $xhex = $$xpair[1];
 
-  foreach my $xv ($x, "$x", substr("$x",0), $x+0.0,
-		  mpz($x), mpq($x), mpf($x)) {
+  foreach my $xv ($x, "$x", substr("$x",0),
+		  mpz($x), mpq($x)) {
 
-    ok (GMP::get_str($xv) eq "$x");
-    ok (GMP::get_str($xv,10) eq "$x");
+    ok (get_str($xv) eq "$x");
+    ok (get_str($xv,10) eq "$x");
 
-    ok (GMP::get_str($xv,16) == $xhex);
+    ok (get_str($xv,16) == $xhex);
     $xhex =~ tr [a-z] [A-Z];
-    ok (GMP::get_str($xv,-16) == $xhex);
+    ok (get_str($xv,-16) == $xhex);
   }
 }
 
@@ -284,18 +253,62 @@ ok (GMP::get_str(mpq(255/256),-16) eq "FF/100");
 ok (GMP::get_str(mpq(-255/256),16) eq "-ff/100");
 ok (GMP::get_str(mpq(-255/256),-16) eq "-FF/100");
 
-ok (GMP::get_str(1.5) eq "1.5");
-ok (GMP::get_str(-1.5) eq "-1.5");
-ok (GMP::get_str(1.5,16) eq "1.8");
-ok (GMP::get_str(-1.5,16) eq "-1.8");
+foreach my $x (1.5, mpf(1.5)) {
+  { my ($s,$e) = get_str($x, 10);
+    ok ($s eq '15');
+    ok ($e == 1); }
+}
+foreach my $x (-1.5, mpf(-1.5)) {
+  { my ($s,$e) = get_str($x, 10);
+    ok ($s eq '-15');
+    ok ($e == 1); }
+}
+foreach my $x (1.5, mpf(1.5)) {
+  { my ($s,$e) = get_str($x, 16);
+    ok ($s eq '18');
+    ok ($e == 1); }
+}
+foreach my $x (-1.5, mpf(-1.5)) {
+  { my ($s,$e) = get_str($x, 16);
+    ok ($s eq '-18');
+    ok ($e == 1); }
+}
+foreach my $x (65536.0, mpf(65536.0)) {
+  { my ($s,$e) = get_str($x, 16);
+    ok ($s eq '1');
+    ok ($e == 5); }
+}
+foreach my $x (1.625, mpf(1.625)) {
+  { my ($s,$e) = get_str($x, 16);
+    ok ($s eq '1a');
+    ok ($e == 1); }
+}
+foreach my $x (1.625, mpf(1.625)) {
+  { my ($s,$e) = get_str($x, -16);
+    ok ($s eq '1A');
+    ok ($e == 1); }
+}
+foreach my $f (255.0, mpf(255)) {
+  my ($s, $e) = get_str(255.0,16,0);
+  ok ($s eq "ff");
+  ok ($e == 2);
+}
+foreach my $f (255.0, mpf(255)) {
+  my ($s, $e) = get_str(255.0,-16,0);
+  ok ($s eq "FF");
+  ok ($e == 2);
+}
+foreach my $f (-255.0, mpf(-255)) {
+  my ($s, $e) = get_str(-255.0,16,0);
+  ok ($s eq "-ff");
+  ok ($e == 2);
+}
+foreach my $f (-255.0, mpf(-255)) {
+  my ($s, $e) = get_str(-255.0,-16,0);
+  ok ($s eq "-FF");
+  ok ($e == 2);
+}
 
-ok (GMP::get_str(mpf(1.5)) eq "1.5");
-ok (GMP::get_str(mpf(-1.5)) eq "-1.5");
-ok (GMP::get_str(mpf(1.5),16) eq "1.8");
-ok (GMP::get_str(mpf(-1.5),16) eq "-1.8");
-
-ok (GMP::get_str(1.625,-16) eq "1.A");
-ok (GMP::get_str(mpf(0x1000),16) eq '1@3');
 
 ok (  GMP::integer_p (mpq(1)));
 ok (! GMP::integer_p (mpq(1,2)));
@@ -440,18 +453,6 @@ ok (bin(3,3) == 1);
   $b = $a;
   ok ($b == 1);
 }
-
-#  # compiled constants unchanged
-#  foreach (0, 1, 2) {
-#    use GMP::Mpz qw(:constants);
-#    my $a = 15;
-#    my $b = 6;
-#    use GMP::Mpz qw(:noconstants);
-#    clrbit ($a, 0);
-#    ok ($a == 14);
-#    setbit ($b, 0);
-#    ok ($b == 7);
-#  }
 
 ok (  congruent_p (21, 0, 7));
 ok (! congruent_p (21, 1, 7));
@@ -785,12 +786,12 @@ ok (mpf("0.5") == 0.5);
 ok (mpf("1.0") == 1.0);
 ok (mpf("1.5") == 1.5);
 
-{ my $f = mpf(0.25); ok("$f" eq "0.25"); }
-{ my $f = mpf(-0.25); ok("$f" eq "-0.25"); }
-{ my $f = mpf(1.25); ok("$f" eq "1.25"); }
-{ my $f = mpf(-1.25); ok("$f" eq "-1.25"); }
-{ my $f = mpf(1000000); ok("$f" eq "1e6"); }
-{ my $f = mpf(-1000000); ok("$f" eq "-1e6"); }
+{ my $f = mpf(0.25);   	 ok("$f" eq "0.25"); }
+{ my $f = mpf(-0.25);  	 ok("$f" eq "-0.25"); }
+{ my $f = mpf(1.25);   	 ok("$f" eq "1.25"); }
+{ my $f = mpf(-1.25);  	 ok("$f" eq "-1.25"); }
+{ my $f = mpf(1000000);	 ok("$f" eq "1000000"); }
+{ my $f = mpf(-1000000); ok("$f" eq "-1000000"); }
 
 ok (floor(mpf(-7.5)) == -8.0);
 ok (ceil (mpf(-7.5)) == -7.0);
@@ -808,37 +809,6 @@ ok (! mpf_eq (mpz("0x11"), mpz("0x12"), 128));
   my $p = get_default_prec();
   set_default_prec($p);
   ok (get_default_prec() == $p);
-}
-
-foreach my $f (0.0, mpf(0.0)) {
-  my ($s, $e);
-  ($s, $e) = mpf_get_str ($f, 10, 0);
-  ok ($s eq "");
-  ok ($e == 0);
-  ($s, $e) = mpf_get_str ($f, 16, 0);
-  ok ($s eq "");
-  ok ($e == 0);
-}
-
-foreach my $f (255.0, mpf(255)) {
-  my ($s, $e) = mpf_get_str(255.0,16,0);
-  ok ($s eq "ff");
-  ok ($e == 2);
-}
-foreach my $f (255.0, mpf(255)) {
-  my ($s, $e) = mpf_get_str(255.0,-16,0);
-  ok ($s eq "FF");
-  ok ($e == 2);
-}
-foreach my $f (-255.0, mpf(-255)) {
-  my ($s, $e) = mpf_get_str(-255.0,16,0);
-  ok ($s eq "-ff");
-  ok ($e == 2);
-}
-foreach my $f (-255.0, mpf(-255)) {
-  my ($s, $e) = mpf_get_str(-255.0,-16,0);
-  ok ($s eq "-FF");
-  ok ($e == 2);
 }
 
 ok (reldiff (2,4) == 1);
@@ -873,6 +843,68 @@ ok (reldiff (4,2) == 0.5);
 }
 
 
+# overloaded constants
+
+if ($^V > 5.00503) {
+  if (! do 'test2.pl') {
+    die "Cannot run test2.pl\n";
+  }
+}
+
+
+# printf functions
+
+{
+  GMP::printf ("hello world\n");
+
+  sub via_printf {
+    my $s;
+    open TEMP, ">test.tmp" or die;
+    GMP::printf TEMP @_;
+    close TEMP or die;
+    open TEMP, "<test.tmp" or die;
+    read (TEMP, $s, 1024);
+    close TEMP or die;
+    unlink 'test.tmp';
+    return $s;
+  }
+
+  my $z = mpz(123);
+  my $q = mpq(15,16);
+  my $f = mpf(1.5);
+
+  foreach my $name ('via_printf', 'sprintf') {
+    print "$name\n";
+    my $mpx = eval("\\&$name");
+    
+    ok (&$mpx ("%d", $z) eq '123');
+    ok (&$mpx ("%d %d %d", 456, $z, 789) eq '456 123 789');
+    ok (&$mpx ("%d", $q) eq '15/16');
+    ok (&$mpx ("%f", $f) eq '1.500000');
+    ok (&$mpx ("%.2f", $f) eq '1.50');
+
+    ok (&$mpx ("%*d", 6, 123) eq '   123');
+    ok (&$mpx ("%*d", 6, $z)  eq '   123');
+    ok (&$mpx ("%*d", 6, $q)  eq ' 15/16');
+
+    ok (&$mpx ("%x", 123) eq '7b');
+    ok (&$mpx ("%x", $z)  eq '7b');
+    ok (&$mpx ("%X", 123) eq '7B');
+    ok (&$mpx ("%X", $z)  eq '7B');
+    ok (&$mpx ("%#x", 123) eq '0x7b');
+    ok (&$mpx ("%#x", $z)  eq '0x7b');
+    ok (&$mpx ("%#X", 123) eq '0X7B');
+    ok (&$mpx ("%#X", $z)  eq '0X7B');
+
+    ok (&$mpx ("%x", $q)  eq 'f/10');
+    ok (&$mpx ("%X", $q)  eq 'F/10');
+    ok (&$mpx ("%#x", $q)  eq '0xf/0x10');
+    ok (&$mpx ("%#X", $q)  eq '0XF/0X10');
+
+    ok (&$mpx ("%*.*f", 10, 3, 1.25) eq '     1.250');
+    ok (&$mpx ("%*.*f", 10, 3, $f)   eq '     1.500');
+  }
+}
 
 # Local variables:
 # perl-indent-level: 2
