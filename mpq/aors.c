@@ -76,12 +76,17 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
       mpz_divexact (tmp2, &(op1->_mp_den), gcd);
 
       mpz_gcd (gcd, t, gcd);
-      if (! MPZ_EQUAL_1_P (gcd))
+      if (MPZ_EQUAL_1_P (gcd))
+        {
+          mpz_set (&(rop->_mp_num), t);
+          mpz_mul (&(rop->_mp_den), &(op2->_mp_den), tmp2);
+        }
+      else
         {
           mpz_divexact (&(rop->_mp_num), t, gcd);
           mpz_divexact (tmp1, &(op2->_mp_den), gcd);
+          mpz_mul (&(rop->_mp_den), tmp1, tmp2);
         }
-      mpz_mul (&(rop->_mp_den), tmp1, tmp2);
     }
   else
     {
