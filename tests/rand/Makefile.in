@@ -79,6 +79,7 @@ CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 EXEEXT = @EXEEXT@
+LIBM = @LIBM@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 M4 = @M4@
@@ -135,7 +136,7 @@ stat_LDADD = libstat.la
 
 EXTRA_LTLIBRARIES = libstat.la
 libstat_la_SOURCES = statlib.c zdiv_round.c
-libstat_la_LIBADD = $(top_builddir)/libgmp.la -lm
+libstat_la_LIBADD = $(top_builddir)/libgmp.la $(LIBM)
 
 EXTRA_DIST = gmpstat.h
 

@@ -79,6 +79,7 @@ CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 EXEEXT = @EXEEXT@
+LIBM = @LIBM@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 M4 = @M4@
@@ -274,7 +275,7 @@ MPFR_OBJECTS = mpfr/add$U.lo mpfr/div_2exp$U.lo mpfr/neg$U.lo		\
 
 @WANT_MPFR_TRUE@MPFR_HEADERS_OPTION = @WANT_MPFR_TRUE@mpfr/mpfr.h
 @WANT_MPFR_TRUE@MPFR_OBJECTS_OPTION = @WANT_MPFR_TRUE@$(MPFR_OBJECTS)
-@WANT_MPFR_TRUE@MPFR_LIBADD_OPTION = @WANT_MPFR_TRUE@-lm
+@WANT_MPFR_TRUE@MPFR_LIBADD_OPTION = @WANT_MPFR_TRUE@$(LIBM)
 libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
   mp_clz_tab.c mp_minv_tab.c						 \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c		 \
