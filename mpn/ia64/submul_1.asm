@@ -430,80 +430,96 @@ ifdef(`HAVE_ABI_32',
 
 	ALIGN(32)
 .Loop:
-.mmi
+{.mmi
 	ldf8		f44 = [rp], 8
 	cmp.ltu		p6, p0 = r27, r8	C lo cmp
 	sub		r14 = r27, r8		C lo sub
-.mmi
+}
+{.mmi
 	getf.sig	r30 = f42			C hi
 	ldf8		f32 = [up], 8
 	sub		r8 = r20, r31		C hi sub
 	;;				C 01
-.mmf
+}
+{.mmf
 	getf.sig	r27 = f39			C lo
 	st8		[r10] = r14, 8
 	xma.l		f37 = f33, f6, f45
-.mfi
+}
+{.mfi
 	ld8		r21 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
    (p6)	add		r8 = 1, r8
 	;;				C 02
+}
 .LL00:
-.mmi
+{.mmi
 	ldf8		f45 = [rp], 8
 	cmp.ltu		p6, p0 = r24, r8
 	sub		r14 = r24, r8
-.mmi
+}
+{.mmi
 	getf.sig	r31 = f43			C hi
 	ldf8		f33 = [up], 8
 	sub		r8 = r21, r28
 	;;				C 03
-.mmf
+}
+{.mmf
 	getf.sig	r24 = f36			C lo
 	st8		[r10] = r14, 8
 	xma.l		f38 = f34, f6, f46
-.mfi
+}
+{.mfi
 	ld8		r22 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
    (p6)	add		r8 = 1, r8
 	;;				C 04
+}
 .LL11:
-.mmi
+{.mmi
 	ldf8		f46 = [rp], 8
 	cmp.ltu		p6, p0 = r25, r8
 	sub		r14 = r25, r8
-.mmi
+}
+{.mmi
 	getf.sig	r28 = f40			C hi
 	ldf8		f34 = [up], 8
 	sub		r8 = r22, r29
 	;;				C 05
-.mmf
+}
+{.mmf
 	getf.sig	r25 = f37			C lo
 	st8		[r10] = r14, 8
 	xma.l		f39 = f35, f6, f47
-.mfi
+}
+{.mfi
 	ld8		r23 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
    (p6)	add		r8 = 1, r8
 	;;				C 06
+}
 .LL10:
-.mmi
+{.mmi
 	ldf8		f47 = [rp], 8
 	cmp.ltu		p6, p0 = r26, r8
 	sub		r14 = r26, r8
-.mmi
+}
+{.mmi
 	getf.sig	r29 = f41			C hi
 	ldf8		f35 = [up], 8
 	sub		r8 = r23, r30
 	;;				C 07
-.mmf
+}
+{.mmf
 	getf.sig	r26 = f38			C lo
 	st8		[r10] = r14, 8
 	xma.l		f36 = f32, f6, f44
-.mfi
+}
+{.mfi
 	ld8		r20 = [r9], 8
 	xma.hu		f40 = f32, f6, f44
    (p6)	add		r8 = 1, r8
+}
 	br.cloop.dptk	.Loop
 	;;
 .Lend:
