@@ -22,12 +22,11 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
-  -DOPERATION_`echo $* | sed 's/_$$//'`
+INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
-  abs.c aorsmul.c aorsmul_i.c and.c array_init.c \
+  add.c add_ui.c abs.c aorsmul.c aorsmul_i.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
   cfdiv_q_2exp.c cfdiv_r_2exp.c \
@@ -39,49 +38,20 @@ libmpz_la_SOURCES = \
   dump.c fac_ui.c fdiv_q.c fdiv_q_ui.c \
   fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_ui.c fdiv_ui.c \
   fib_ui.c fib2_ui.c \
+  fits_sint.c fits_slong.c fits_sshort.c \
   fits_uint.c fits_ulong.c fits_ushort.c \
   gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c kronsz.c kronuz.c kronzs.c kronzu.c \
   lcm.c lcm_ui.c lucnum_ui.c lucnum2_ui.c \
-  mod.c mul.c mul_2exp.c n_pow_ui.c neg.c nextprime.c \
+  mod.c mul.c mul_2exp.c mul_si.c mul_ui.c n_pow_ui.c neg.c nextprime.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
-  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c \
+  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c sub.c sub_ui.c \
   swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
 
-EXTRA_DIST = aors.c aors_ui.c fits_s.c mul_siui.c
-
-nodist_libmpz_la_SOURCES =			\
-  add.c sub.c					\
-  add_ui.c sub_ui.c 				\
-  fits_sint.c fits_slong.c fits_sshort.c	\
-  mul_si.c mul_ui.c
-
-CLEANFILES = $(nodist_libmpz_la_SOURCES)
-
-add.c: $(srcdir)/aors.c
-	cp $(srcdir)/aors.c add.c
-sub.c: $(srcdir)/aors.c
-	cp $(srcdir)/aors.c sub.c
-
-add_ui.c: $(srcdir)/aors_ui.c
-	cp $(srcdir)/aors_ui.c add_ui.c
-sub_ui.c: $(srcdir)/aors_ui.c
-	cp $(srcdir)/aors_ui.c sub_ui.c
-
-fits_sint.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_sint.c
-fits_slong.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_slong.c
-fits_sshort.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_sshort.c
-
-mul_si.c: $(srcdir)/mul_siui.c
-	cp $(srcdir)/mul_siui.c mul_si.c
-mul_ui.c: $(srcdir)/mul_siui.c
-	cp $(srcdir)/mul_siui.c mul_ui.c
+EXTRA_DIST = aors.i aors_ui.i fits_s.i mul_i.i
