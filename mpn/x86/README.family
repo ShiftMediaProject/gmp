@@ -50,10 +50,10 @@ and can be used instead of explicit definitions if preferred.
 defframe_pushl() is a combination FRAME_pushl() and defframe().
 
 There's generally some slackness in redefining FRAME.  If new values aren't
-going to get used, then the redefinitions are omitted to keep from
-cluttering up the code.  This happens for instance at the end of a routine,
-where there might be just four register pops and then a ret, so FRAME isn't
-getting used.
+going to get used then the redefinitions are omitted to keep from cluttering
+up the code.  This happens for instance at the end of a routine, where there
+might be just four register pops and then a ret, so FRAME isn't getting
+used.
 
 Local variables and saved registers can be similarly defined, with negative
 offsets representing stack space below the initial stack pointer.  For
@@ -90,7 +90,7 @@ In particular note that a "/" anywhere in a line starts a comment in Solaris
 
 Binutils gas/config/tc-i386.c has a choice between "/" being a comment
 anywhere in a line, or only at the start.  FreeBSD patches 2.9.1 to select
-the latter, and as of 2.9.5 it's the default for GNU/Linux too.
+the latter, and from 2.9.5 it's the default for GNU/Linux too.
 
 
 
@@ -100,11 +100,15 @@ Solaris "as" doesn't support "#" commenting, using /* */ instead.  For that
 reason "C" commenting is used (see asm-defs.m4) and the intermediate ".s"
 files have no comments.
 
+Any comments before include(`../config.m4') must use m4 "dnl", since it's
+only after the include that "C" is available.  By convention "dnl" is also
+used for comments about m4 macros.
+
 
 
 TEMPORARY LABELS
 
-Temporary numbered labels like "1:" used with "1f" or "1b" are available in
+Temporary numbered labels like "1:" used as "1f" or "1b" are available in
 "gas" and Solaris "as", but not in SCO "as".  Normal L() labels should be
 used instead, possibly with a counter to make them unique, see jadcl0() for
 instance.  A separate counter for each macro makes it possible to nest them,
@@ -135,12 +139,29 @@ SHLD/SHRD INSTRUCTIONS
 
 The %cl count forms of double shift instructions like "shldl %cl,%eax,%ebx"
 must be written "shldl %eax,%ebx" for some assemblers.  gas takes either,
-Solaris "as" doesn't allow %cl, gcc generates %cl for gas and NeXT (which
-has gas), and omits %cl elsewhere.
+Solaris "as" doesn't allow %cl, gcc generates %cl for gas and NeXT (which is
+gas), and omits %cl elsewhere.
 
-For GMP an autoconf test is used to determine whether %cl should be used and
-the macros shldl, shrdl, shldw and shrdw in mpn/x86/x86-defs.m4 pass through
-or omit %cl as necessary.  See comments with those macros for usage.
+For GMP an autoconf test GMP_ASM_SHLDL_CL is used to determine whether %cl
+should be used, and the macros shldl, shrdl, shldw and shrdw in
+mpn/x86/x86-defs.m4 pass through or omit %cl as necessary.  See comments
+with those macros for usage.
+
+
+
+IMUL INSTRUCTION
+
+GCC config/i386/i386.md (cvs rev 1.187, 21 Oct 00) under *mulsi3_1 notes
+that the following two forms produce identical object code
+
+	imul	$12, %eax
+	imul	$12, %eax, %eax
+
+but that the former isn't accepted by some assemblers, in particular the SCO
+OSR5 COFF assembler.  GMP follows GCC and uses only the latter form.
+
+(This applies only to immediate operands, the three operand form is only
+valid with an immediate.)
 
 
 
@@ -187,6 +208,26 @@ so they need the GOT anyway.  Object files with no global data references
 and only intra-library calls could go into the library as non-PIC under
 -Bsymbolic.  Integrating this into libtool and automake is left as an
 exercise for the reader.
+
+
+
+GLOBAL OFFSET TABLE CODING
+
+It's believed the magic _GLOBAL_OFFSET_TABLE_ used by code establishing the
+address of the GOT should be written without a GSYM_PREFIX, ie. that it's
+the same "_GLOBAL_OFFSET_TABLE_" on an underscore or non-underscore system.
+Certainly this is true for instance of NetBSD 1.4 which is an underscore
+system but requires "_GLOBAL_OFFSET_TABLE_".
+
+Current versions of gas (binutils 2.10) wrongly assemble the following
+
+	L1:
+	    addl  $_GLOBAL_OFFSET_TABLE_+[.-L1], %eax
+
+generating a "2" displacement in the R_386_GOTPC rather than a "1" as would
+be appropriate for the one byte opcode for addl $n,%eax.  The best
+workaround is just to use any other register, since then it'll then be a two
+byte opcode+mod/rm.  GCC for example always uses %ebx.
 
 
 
