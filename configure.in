@@ -1661,6 +1661,11 @@ if test $want_cxx = yes; then
 fi
 
 
+# Must ensure the first AC_PROG_EGREP isn't with AC_EGREP_CPP inside the
+# Cray conditionals below, otherwise it doesn't get run for other systems.
+#
+AC_PROG_EGREP
+
 # Path setups for Cray, according to IEEE or CFP.  These have to come after
 # deciding the compiler.
 #
