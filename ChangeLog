@@ -1,3 +1,35 @@
+2000-12-30  Kevin Ryde  <kevin@swox.se>
+
+	* mpq/neg.c: Rewrite, use mpn, avoid denominator copy if unnecessary.
+
+	* mpz/tstbit.c: Rewrite, slightly simplified.
+	* mpz/tests/bit.c (check_tstbit): New test, and add a couple more
+	diagnostics elsewhere.
+
+	* configure.in (x86 gcc_cflags_cpu): Add -m486 for gcc 2.7.2.
+	(ccbase): Only use a known compiler in eval statements (avoids
+	problems with non-symbol characters).
+	(ccbase): Use GMP_PROG_CC_IS_GNU to identify gcc installed under a
+	different name.
+	(cclist): Use same style $abi as other variables.
+
+	* acinclude.m4 (GMP_PROG_CC_IS_GNU): New macro.
+	(GMP_GCC_MARCH_PENTIUMPRO): Use $ccbase to identify gcc.
+	(GMP_ASM_TYPE): Define TYPE to empty, not "dnl", when no .type needed.
+	(GMP_ASM_SIZE): Ditto for SIZE, which ensures EPILOGUE on the last
+	line of a file doesn't leave a tab and no newline.
+	(GMP_ASM_UNDERSCORE): Add a prototype for C++.
+
+	* configure.in (sys/mman.h, mprotect): New tests.
+	* mpn/tests/try.c: Use them, and HAVE_UNISTD_H too.
+
+	* configure.in (getopt.h): Remove test.
+	* tune/speed.c, mpn/tests/try.c (getopt.h): Remove include, since
+	plain getopt() is in <unistd.h>.
+
+	* configure.in, gmp-h.in (mips*-*-irix6*): Set limb_n32=longlong
+	rather than using _ABIN32.
+
 2000-12-29  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/reuse.c: Rename dump_abort => dump.
