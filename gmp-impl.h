@@ -310,6 +310,10 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 /* From gmp.h, nicer names for internal use. */
 #define MPN_CMP(result, xp, yp, size)  __GMPN_CMP(result, xp, yp, size)
 
+/* Might search and replace _PROTO to __GMP_PROTO internally one day, to
+   avoid two names for one thing, but no hurry for that.  */
+#define _PROTO(x)  __GMP_PROTO(x)
+
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
 #define MAX(h,i) ((h) > (i) ? (h) : (i))
