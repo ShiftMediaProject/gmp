@@ -1081,7 +1081,7 @@ refmpn_divexact_by3c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t carry)
   cs = refmpn_sub_1 (spcopy, sp, size, carry);
 
   for (c = 0; c <= 2; c++)
-    if (refmpn_divmod_1c (rp, spcopy, size, 3, c) == 0)
+    if (refmpn_divmod_1c (rp, spcopy, size, CNST_LIMB(3), c) == 0)
       goto done;
   ASSERT_FAIL (no value of c satisfies);
 
@@ -1303,27 +1303,32 @@ refmpn_gcd (mp_ptr gp, mp_ptr xp, mp_size_t xsize, mp_ptr yp, mp_size_t ysize)
   return xsize;
 }
 
+unsigned long
+ref_popc_limb (mp_limb_t src)
+{
+  unsigned long  count;
+  int  i;
+
+  count = 0;
+  for (i = 0; i < GMP_LIMB_BITS; i++)
+    {
+      count += (src & 1);
+      src >>= 1;
+    }
+  return count;
+}
 
 unsigned long
 refmpn_popcount (mp_srcptr sp, mp_size_t size)
 {
   unsigned long  count = 0;
   mp_size_t  i;
-  int        j;
-  mp_limb_t  l;
 
   ASSERT (size >= 0);
   ASSERT_MPN (sp, size);
 
   for (i = 0; i < size; i++)
-    {
-      l = sp[i];
-      for (j = 0; j < GMP_NUMB_BITS; j++)
-        {
-          count += (l & 1);
-          l >>= 1;
-        }
-    }
+    count += ref_popc_limb (sp[i]);
   return count;
 }
 
@@ -1573,7 +1578,7 @@ refmpn_get_str (unsigned char *dst, int base, mp_ptr src, mp_size_t size)
 
 
 mp_limb_t
-refmpn_bswap_limb (mp_limb_t src)
+ref_bswap_limb (mp_limb_t src)
 {
   mp_limb_t  dst;
   int        i;
