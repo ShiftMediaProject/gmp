@@ -18,6 +18,32 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-06-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/*/gmp-mparam.h (USE_PREINV_DIVREM_1): Add tuned settings.
+
+	* acconfig.h (HAVE_NATIVE_mpn_preinv_divrem_1): New template.
+
+	* tests/refmpn.c, tests/tests.h (refmpn_chars_per_limb,
+	refmpn_big_base): New functions.
+	* tests/mpn/t-mp_bases.c: Use them, and don't test big_base_inverted
+	unless it's being used.
+
+	* gmp.texi (Notes for Particular Systems): Using Microsoft C with DLLs.
+	(Known Build Problems): Notes on MacOS and GCC.
+	(Integer Logic and Bit Fiddling): Use ULONG_MAX for maximum ulong.
+	(Low-level Functions): mpn_get_str accepts base==256.
+	(Formatted Output Functions): Note output is not atomic.
+	(Internals): Note mp_size_t for limb counts.
+
+	* mp-h.in, gmp-h.in (mp_ptr, mp_srcptr, mp_size_t, mp_exp_t): Remove
+	these types from mp.h, not needed.
+
+	* mpfr/tests/tadd.c, mpfr/tests/tmul.c (check): Apply a hack to the
+	parameter order to make sparc gcc 2.95.2 happy.
+
+	* doc/configuration: Notes on bootstrapping.
+
 2002-06-08  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr/tests/tsqrt.c, mpfr/tests/tsqrt_ui.c: Suppress tests if sqrt is
