@@ -1319,7 +1319,7 @@ mpn_mul_n (p, a, b, n)
 #endif
       mpn_kara_mul_n (p, a, b, n, ws);
     }
-  else
+  else if (n < FFT_MUL_THRESHOLD)
     {
       /* Use workspace of unknown size in heap, as stack space may
        * be limited.  Since n is at least TOOM3_MUL_THRESHOLD, the
@@ -1329,5 +1329,9 @@ mpn_mul_n (p, a, b, n)
       ws = (mp_ptr) (*_mp_allocate_func) ((size_t) wsLen * sizeof (mp_limb_t));
       mpn_toom3_mul_n (p, a, b, n, ws);
       (*_mp_free_func) (ws, (size_t) wsLen * sizeof (mp_limb_t));
+    }
+  else
+    {
+      mpn_mul_fft_full (p, a, n, b, n);      
     }
 }
