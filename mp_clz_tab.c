@@ -19,14 +19,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#if 0
 #include "gmp.h"
 #include "gmp-impl.h"
-#endif
 
-#if 0
 const
-#endif
 unsigned char __clz_tab[] =
 {
   0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
