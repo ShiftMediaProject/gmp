@@ -35,6 +35,9 @@ dnl  Maximum possible with the current code is 64.
 deflit(UNROLL_COUNT, 16)
 
 
+MULFUNC_PROLOGUE(mpn_addmul_1c)
+MULFUNC_PROLOGUE(mpn_submul_1c)
+
 ifdef(`OPERATION_addmul_1', `
 	define(M4_inst,        addl)
 	define(M4_function_1,  mpn_addmul_1)
@@ -86,10 +89,6 @@ defframe(PARAM_DST,       4)
 
 	.text
 	ALIGN(32)
-
-	
-MULFUNC_PROLOGUE(mpn_addmul_1c)
-MULFUNC_PROLOGUE(mpn_submul_1c)
 
 PROLOGUE(M4_function_1c)
 	pushl	%ebx
