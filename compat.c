@@ -29,9 +29,8 @@ MA 02111-1307, USA.
 /* mpn_divexact_by3 was a function in gmp 3.0, but in gmp 3.1 it became a
    macro calling mpn_divexact_by3c.  */
 
-#undef mpn_divexact_by3
 int
-__MPN (mpn_divexact_by3) (mp_ptr dst, mp_srcptr src, mp_size_t size)
+__MPN (divexact_by3) (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
-  mpn_divexact_by3c (dst, src, size, 0);
+  mpn_divexact_by3 (dst, src, size);
 }
