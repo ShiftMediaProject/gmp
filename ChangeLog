@@ -1,7 +1,6 @@
 2001-01-03  Torbjorn Granlund  <tege@swox.com>
 
-	* stack-alloc.h (__TMP_ALIGN): For vector Crays, define to 1L.
-	(default __TMP_ALIGN): Append `L'.
+	* stack-alloc.h (__TMP_ALIGN): Append `L'.
 
 	* gmp-impl.h: For Cray, #include limits.h.
 	(LONG_MIN): New #define.
