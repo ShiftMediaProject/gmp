@@ -24,7 +24,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -149,8 +148,8 @@ mpfr_zeta_part_a (mpfr_t sum, mpfr_srcptr s, int n)
   mpfr_out_str (stdout, 10, 0, sum, GMP_RNDN);
   printf ("\n");
 #endif
-  mpfr_clear(s1);
-  mpfr_clear(u);
+  mpfr_clear (s1);
+  mpfr_clear (u);
 }
 
 /* Input: s - a floating-point number >= 1/2.
@@ -213,27 +212,34 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
 	}
       else /* Branch 2 */
         {
+          size_t size;
 #ifdef DEBUG	
           printf ("branch 2\n");
 #endif
           /* Computation of parameters n, p and working precision */
-          dnep = (double) d * log (2.0);
+          dnep = (double) d * LOG2;
           sd = mpfr_get_d (s, GMP_RNDN);
-          beta = dnep + 0.61 + sd * log (6.2832 / sd);
+          /* beta = dnep + 0.61 + sd * log (6.2832 / sd);
+             but a larger value is ok */
+#define LOG6dot2832 1.83787940484160805532
+          beta = dnep + 0.61 + sd * (LOG6dot2832 - LOG2 * 
+                                     __gmpfr_floor_log2 (sd));
           if (beta <= 0.0)
             {
               p = 0;
-              n = 1 + (int) (exp ((dnep - log(2.0)) / sd));
+              /* n = 1 + (int) (exp ((dnep - LOG2) / sd)); */
+              n = 1 + (int) __gmpfr_ceil_exp2 ((d - 1.0) / sd);
             }
           else
             {
               p = 1 + (int) beta / 2;
-              n = 1 + (int) floor((sd + 2.0 * (double) p - 1.0) / 6.2832);
+              n = 1 + (int) ((sd + 2.0 * (double) p - 1.0) / 6.2832);
             }
 #ifdef DEBUG
           printf ("\nn=%d\np=%d\n",n,p);
 #endif
-          add = 4 + (int) floor (1.5 * log ((double) d) / log(2.0));
+          /* add = 4 + floor(1.5 * log(d) / log (2)) */
+          add = 4 + (3 * __gmpfr_ceil_log2 ((double) d)) / 2;
           if (add < 10)
             add = 10;
           dint = d + add;
@@ -242,7 +248,8 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
 #ifdef DEBUG
           printf("internal precision=%d\n",dint);
 #endif
-          tc1 = (mpfr_t*) malloc ((p + 1) * sizeof(mpfr_t));
+          size = (p + 1) * sizeof(mpfr_t);
+          tc1 = (mpfr_t*) (*__gmp_allocate_func) (size);
           for (l=1; l<=p; l++)
             mpfr_init2 (tc1[l], dint);
           mpfr_set_prec (a, dint);
@@ -271,7 +278,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
           mpfr_add (z_pre, z_pre, b, GMP_RNDN);
           for (l=1; l<=p; l++)
             mpfr_clear (tc1[l]);
-          free(tc1);
+          (*__gmp_free_func) (tc1, size);
           /* End branch 2 */
         }
 #ifdef DEBUG
@@ -364,11 +371,14 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
   /* Precision precs1 needed to represent 1 - s, and s + 2,
      without any truncation */
   precs1 = precs + 2 + MAX (0, - abs (MPFR_GET_EXP (s)));
-  sd = mpfr_get_d (s, GMP_RNDN);
+  sd = mpfr_get_d (s, GMP_RNDN) - 1.0;
+  if (sd < 0.0)
+    sd = -sd; /* now sd = abs(s-1.0) */
   /* Precision prec1 is the precision on elementary computations; it ensures
      a final precision prec1 - add for zeta(s) */
-  eps = pow (2.0, - (double) precz - 14.0);
-  m1 = 1.0 + MAX(1.0 / eps,  2.0 * fabs (sd - 1.0)) * (1.0 + eps);
+  /* eps = pow (2.0, - (double) precz - 14.0); */
+  eps = __gmpfr_ceil_exp2 (- (double) precz - 14.0);
+  m1 = 1.0 + MAX(1.0 / eps,  2.0 * sd) * (1.0 + eps);
   c = (1.0 + eps) * (1.0 + eps * MAX(8.0, m1));
   /* add = 1 + floor(log(c*c*c*(13 + m1))/log(2)); */
   add = __gmpfr_ceil_log2 (c * c * c * (13.0 + m1));
@@ -396,7 +406,7 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
       mpfr_ui_sub(s1, 1, s, GMP_RNDN);
       mpfr_add_ui(sfrac, s, 2, GMP_RNDN);
       mpfr_div_2ui(sfrac, sfrac, 2, GMP_RNDN);
-      mpfr_floor(sint, sfrac);
+      mpfr_floor (sint, sfrac);
       mpfr_sub(sfrac, sfrac, sint, GMP_RNDN);
       mpfr_mul_2ui(sfrac, sfrac, 2, GMP_RNDN);
       mpfr_sub_ui(sfrac, sfrac, 2, GMP_RNDN);

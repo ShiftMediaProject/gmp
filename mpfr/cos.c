@@ -130,7 +130,7 @@ mpfr_cos2_aux (mpfr_ptr s, mpfr_srcptr r)
 	 i.e. b+EXP(t)-PREC(t) <= -m */
       prec_t = m + MPFR_GET_EXP (t) + b;
       if (prec_t >= MPFR_PREC_MIN)
-	mpfr_round_prec (t, GMP_RNDN, prec_t);
+	mpfr_prec_round (t, prec_t, GMP_RNDN);
     }
 
   mpfr_clear (t);

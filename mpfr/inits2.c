@@ -1,6 +1,7 @@
-/* mpfr_print_rnd_mode -- convert a given rounding mode to a string
+/* mpfr_inits2 -- initialize several floating-point numbers with given
+   precision
 
-Copyright 1999, 2001, 2002, 2003 Free Software Foundation.
+Copyright 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,23 +20,26 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdarg.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
-__gmp_const char *
-mpfr_print_rnd_mode (mp_rnd_t rnd_mode)
+/*
+ * Contrary to mpfr_init2, mp_prec_t p is the first argument
+ */
+
+void
+mpfr_inits2 (mp_prec_t p, mpfr_ptr x, ...)
 {
-  switch (rnd_mode)
-    {
-    case GMP_RNDD:
-      return "GMP_RNDD";
-    case GMP_RNDU:
-      return "GMP_RNDU";
-    case GMP_RNDN:
-      return "GMP_RNDN";
-    case GMP_RNDZ:
-      return "GMP_RNDZ";
-    }
+  va_list arg;
 
-  return (char *) 0;
+  va_start (arg, x);
+  while (x != 0)
+    {
+      mpfr_init2 (x, p);
+      x = (mpfr_ptr) va_arg (arg, mpfr_ptr);
+    }
+  va_end (arg);
 }

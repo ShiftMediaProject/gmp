@@ -214,18 +214,19 @@ long double __gmpfr_longdouble_volatile __GMP_PROTO ((long double)) ATTRIBUTE_CO
    remaining bits are used to store the number of allocated limbs */
 #define MPFR_CLEAR_FLAGS(x) \
   (((x) -> _mpfr_size &= ~((mp_size_unsigned_t) 3 << 29)))
-#define MPFR_IS_NAN(x) (((x)->_mpfr_size >> 30) & 1)
+#define MPFR_IS_NAN(x) (((x)->_mpfr_size) & ((mp_size_unsigned_t) 1 << 30))
 #define MPFR_SET_NAN(x) \
   (MPFR_SET_INVALID_EXP(x), \
    (x)->_mpfr_size |= ((mp_size_unsigned_t) 1 << 30))
 #define MPFR_CLEAR_NAN(x) \
   (((x) -> _mpfr_size &= ~((mp_size_unsigned_t) 1 << 30)))
-#define MPFR_IS_INF(x) (((x)->_mpfr_size >> 29) & 1)
+#define MPFR_IS_INF(x) (((x)->_mpfr_size) & ((mp_size_unsigned_t) 1 << 29))
 #define MPFR_SET_INF(x) \
   (MPFR_SET_INVALID_EXP(x), \
    (x)->_mpfr_size |= ((mp_size_unsigned_t) 1 << 29))
 #define MPFR_CLEAR_INF(x) ((x)->_mpfr_size &= ~((mp_size_unsigned_t) 1 << 29))
-#define MPFR_IS_FP(x) ((((x) -> _mpfr_size >> 29) & 3) == 0)
+#define MPFR_IS_FP(x) \
+  ((((x) -> _mpfr_size) & ((mp_size_unsigned_t) 3 << 29)) == 0)
 #define MPFR_ABSSIZE(x) \
   ((x)->_mpfr_size & (((mp_size_unsigned_t) 1 << 29) - 1))
 #define MPFR_SET_ABSSIZE(x, n) \

@@ -26,13 +26,24 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void test_generic _PROTO ((void));
-
 #define PREC_MAX 80
 #define N 2
 
-void
-test_generic ()
+static void
+test1 (void)
+{
+  mpfr_t x, y;
+
+  mpfr_init2 (x, 32);
+  mpfr_init2 (y, 42);
+  mpfr_set_str_raw (x, "1.1111111101000111011010010010100e-1");
+  mpfr_zeta (y, x, GMP_RNDN); /* shouldn't crash */
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
+static void
+test_generic (void)
 {
   mp_prec_t prec, yprec;
   int n, err;
@@ -65,7 +76,7 @@ test_generic ()
 	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
 	  if (mpfr_can_round (y, err, rnd, rnd, prec))
 	    {
-	      mpfr_round_prec (y, rnd, prec);
+	      mpfr_prec_round (y, prec, rnd);
 	      mpfr_zeta (z, x, rnd);
 	      if (mpfr_cmp (y, z))
 		{
@@ -126,6 +137,8 @@ main (int argc, char *argv[])
 
       return 0;
     }
+
+  test1();
 
   mpfr_init2 (s, MPFR_PREC_MIN);
   mpfr_init2 (y, MPFR_PREC_MIN);

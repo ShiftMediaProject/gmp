@@ -172,7 +172,7 @@ mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
         mpfr_neg (r, r, GMP_RNDD);
       mpfr_sub (r, x, r, GMP_RNDU);
     }
-  mpfr_round_prec (r, GMP_RNDU, q);
+  mpfr_prec_round (r, q, GMP_RNDU);
 #ifdef DEBUG
   printf("x-r="); mpfr_print_binary(r); putchar('\n');
   if (MPFR_SIGN(r)<0) { fprintf(stderr,"Error in mpfr_exp: r<0\n"); exit(1); }

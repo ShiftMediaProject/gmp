@@ -1,6 +1,7 @@
 \input texinfo    @c -*-texinfo-*-
 @c %**start of header
 @setfilename mpfr.info
+@documentencoding ISO-8859-1
 @set VERSION 2.0.2
 @set UPDATED-MONTH June 2002
 @settitle MPFR @value{VERSION}
@@ -599,7 +600,7 @@ Sets the default rounding mode to @var{rnd}.
 The default rounding mode is to nearest initially.
 @end deftypefun
 
-@deftypefun int mpfr_round_prec (mpfr_t @var{x}, mp_rnd_t @var{rnd}, mp_prec_t @var{prec})
+@deftypefun int mpfr_prec_round (mpfr_t @var{x}, mp_prec_t @var{prec}, mp_rnd_t @var{rnd})
 Rounds @var{x} according to @var{rnd} with precision @var{prec}, which
 may be different from that of @var{x}. 
 If @var{prec} is greater or equal to the precision of @var{x}, then new
@@ -610,6 +611,10 @@ The returned value is zero when the result is exact, positive when it is
 greater than the original value of @var{x}, and negative when it is smaller.
 The precision @var{prec} can be any integer between @code{MPFR_PREC_MIN} and
 @code{MPFR_PREC_MAX}.
+@end deftypefun
+
+@deftypefun int mpfr_round_prec (mpfr_t @var{x}, mp_rnd_t @var{rnd}, mp_prec_t @var{prec})
+[This function is obsolete. Please use @code{mpfr_prec_round} instead.]
 @end deftypefun
 
 @deftypefun {char *} mpfr_print_rnd_mode (mp_rnd_t @var{rnd})
@@ -694,7 +699,7 @@ The precision can be any integer between @code{MPFR_PREC_MIN} and
 @code{MPFR_PREC_MAX}.
 @end deftypefun
 
-@deftypefun mp_prec_t mpfr_get_default_prec ()
+@deftypefun mp_prec_t mpfr_get_default_prec (void)
 Returns the default MPFR precision in bits.
 @end deftypefun
 
@@ -728,6 +733,22 @@ Free the space occupied by @var{x}.  Make sure to call this function for all
 @code{mpfr_t} variables when you are done with them.
 @end deftypefun
 
+@deftypefun void mpfr_inits (mpfr_t @var{x}, ...)
+Initialize the given floating-point numbers with @code{mpfr_init}.
+The list of arguments must be terminated by a null pointer.
+@end deftypefun
+
+@deftypefun void mpfr_inits2 (mp_prec_t @var{prec}, mpfr_t @var{x}, ...)
+Initialize the given floating-point numbers and set their precision to
+be @strong{exactly} @var{prec} bits with @code{mpfr_init2}. The list of
+arguments must be terminated by a null pointer.
+@end deftypefun
+
+@deftypefun void mpfr_clears (mpfr_t @var{x}, ...)
+Free the space occupied by the given floating-point numbers with
+@code{mpfr_clear}.
+@end deftypefun
+
 @need 2000
 Here is an example on how to initialize floating-point variables:
 
@@ -738,8 +759,7 @@ Here is an example on how to initialize floating-point variables:
   mpfr_init2 (y, 256);		/* precision @emph{exactly} 256 bits */
   @dots{}
   /* Unless the program is about to exit, do ... */
-  mpfr_clear (x);
-  mpfr_clear (y);
+  mpfr_clears (x, y, (void *) 0);
 @}
 @end example
 
@@ -767,9 +787,9 @@ Return the precision actually used for assignments of @var{x}, i.e.
 the number of bits used to store its mantissa.
 @end deftypefun
 
-@deftypefun void mpfr_set_prec_raw (mpfr_t @var{x}, unsigned long int @var{p})
+@deftypefun void mpfr_set_prec_raw (mpfr_t @var{x}, unsigned long int @var{prec})
 Reset the precision of @var{x} to be @strong{exactly} @var{prec} bits.
-The only difference with @code{mpfr_set_prec} is that @var{p} is assumed to
+The only difference with @code{mpfr_set_prec} is that @var{prec} is assumed to
 be small enough so that the mantissa fits into the current allocated memory
 space for @var{x}. Otherwise an error will occur.
 @end deftypefun
@@ -791,16 +811,9 @@ These functions assign new values to already initialized floats
 @deftypefunx int mpfr_set_q (mpfr_t @var{rop}, mpq_t @var{op}, mp_rnd_t @var{rnd})
 Set the value of @var{rop} from @var{op}, rounded to the precision of @var{rop}
 towards the given direction @var{rnd}.
-Please note that even a @code{long int} may have to be rounded,
-if the destination precision is less than the machine word width.
 The return value is zero when @var{rop}=@var{op}, positive when 
 @var{rop}>@var{op},
 and negative when @var{rop}<@var{op}.
-For @code{mpfr_set_d}, be careful that the input number @var{op}
-may not be exactly representable as a double-precision number (this happens for
-0.1 for instance), in which case it is first
-rounded by the C compiler to a double-precision number, and then only
-to a @code{mpfr} floating-point number.
 
 Please note that the ISO/IEC 9899:1999 (ISO C99)
 standard does not specify exactly the mantissa
@@ -808,7 +821,7 @@ width of the long double type; the @code{mpfr_set_ld} function assumes
 it has at most 113 bits, and an exponent of at most 15 bits.
 @end deftypefun
 
-@deftypefun int mpfr_set_str (mpfr_t @var{x}, const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
+@deftypefun int mpfr_set_str (mpfr_t @var{x}, __gmp_const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
 Set @var{x} to the value of the string @var{s} in base @var{base} (between
 2 and 36), rounded in direction @var{rnd} to the precision of @var{x}.
 See the documentation of @code{mpfr_inp_str} for a detailed description 
@@ -820,7 +833,7 @@ Special values can be read as follows: @code{NaN}, @code{Inf}, @code{+Inf}
 and @code{-Inf} (possibly in lower case when the base is less than 24).
 @end deftypefun
 
-@deftypefun void mpfr_set_str_raw (mpfr_t @var{x}, const char *@var{s})
+@deftypefun void mpfr_set_str_raw (mpfr_t @var{x}, __gmp_const char *@var{s})
 Set @var{x} to the value of the binary number in string @var{s}, which has to 
 be of the
 form +/-xxxx.xxxxxxEyy. The exponent is read in decimal, but is interpreted
@@ -874,7 +887,7 @@ The return value if zero if @var{rop}=@var{op}, positive if @var{rop}>@var{op},
 and negative when @var{rop}<@var{op}.
 @end deftypefn
 
-@deftypefun int mpfr_init_set_str (mpfr_t @var{x}, const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
+@deftypefun int mpfr_init_set_str (mpfr_t @var{x}, __gmp_const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
 Initialize @var{x} and set its value from
 the string @var{s} in base @var{base}, 
 rounded to direction @var{rnd}.
@@ -905,7 +918,6 @@ Convert @var{op} to a double, using the default MPFR rounding mode
 Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
 raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1} equals
 @var{op} rounded to double precision, using the default MPFR rounding mode.
-Note that @var{exp} may exceed the IEEE 754 exponent range.
 @end deftypefun
 
 @deftypefun long mpfr_get_si (mpfr_t @var{op}, mp_rnd_t @var{rnd})
@@ -1558,12 +1570,12 @@ E(b)-@var{err} where E(b) is the exponent of
 This function @strong{does not modify} its arguments.
 @end deftypefun
 
-@deftypefun mp_exp_t mpfr_get_exp (mpfr_srcptr @var{x})
+@deftypefun mp_exp_t mpfr_get_exp (mpfr_t @var{x})
 Get the exponent of @var{x}, assuming that @var{x} is a non-zero real
 number.
 @end deftypefun
 
-@deftypefun int mpfr_set_exp (mpfr_ptr @var{x}, mp_exp_t @var{e})
+@deftypefun int mpfr_set_exp (mpfr_t @var{x}, mp_exp_t @var{e})
 Set the exponent of @var{x} if @var{e} is in the current exponent range,
 and return 0; otherwise, return 1. If @var{x} is not a real number or is
 equal to zero, nothing visible happens.

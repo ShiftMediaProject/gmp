@@ -61,7 +61,7 @@ main()
       mpfr_init2 (l0, 23);
       mpfr_set (l0, l, GMP_RNDD);
       mpfr_sub (l, l, l0, GMP_RNDU);
-      mpfr_round_prec (l, GMP_RNDU, 53);
+      mpfr_prec_round (l, 53, GMP_RNDU);
       log_b2[beta-2] = mpfr_get_d (l0, GMP_RNDU);
       log_b2_low[beta-2] = mpfr_get_d (l, GMP_RNDU);
       mpfr_clear (l0);

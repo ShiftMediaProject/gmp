@@ -218,16 +218,17 @@ mpfr_set_overflow (mpfr_ptr x, mp_rnd_t rnd_mode, int sign)
   int inex;
 
   MPFR_CLEAR_FLAGS(x);
-  if ((rnd_mode == GMP_RNDU && sign < 0)
-   || (rnd_mode == GMP_RNDD && sign > 0))
-    {
-      mpfr_setmax (x, __gmpfr_emax);
-      inex = -1;
-    }
-  else
+  if (rnd_mode == GMP_RNDN
+      || (rnd_mode == GMP_RNDU && sign > 0)
+      || (rnd_mode == GMP_RNDD && sign < 0))
     {
       MPFR_SET_INF(x);
       inex = 1;
+    }
+  else
+    {
+      mpfr_setmax (x, __gmpfr_emax);
+      inex = -1;
     }
   if (MPFR_SIGN(x) != sign)
     MPFR_CHANGE_SIGN(x);

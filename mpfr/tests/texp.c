@@ -238,7 +238,7 @@ check_special ()
   mpfr_init2 (z, 153);
   mpfr_set_str_raw (x, "1.1101011000111101011110000111010010101001101001110111e28");
   mpfr_exp (z, x, GMP_RNDN);
-  mpfr_round_prec (z, GMP_RNDN, 53);
+  mpfr_prec_round (z, 53, GMP_RNDN);
 
   if (mpfr_cmp (y, z))
     {

@@ -39,7 +39,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
 
   mp_size_t err, k;
   mp_limb_t near; 
-  int inex, sh, can_round, can_round2, sign_quotient;
+  int inex, sh, can_round = 0, can_round2 = 0, sign_quotient;
   unsigned int cc = 0, rw; 
 
   TMP_DECL (marker);
@@ -175,7 +175,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
      To detect asap if the result is inexact, so as to avoid doing the 
      division completely, we perform the following check :
 
-     - if rnd_mode == GMP_RNDN, and the result is exact, we are unable
+     - if rnd_mode != GMP_RNDN, and the result is exact, we are unable
      to round simultaneously to zero and to infinity ; 
 
      - if rnd_mode == GMP_RNDN, and if we can round to zero with one extra
@@ -186,47 +186,49 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
      even rounding or not.
   */
 
-  if (rnd_mode == GMP_RNDN)
-    { 
-      rnd_mode1 = GMP_RNDZ; 
-      near = 1; 
-    }
-  else 
-    { 
-      rnd_mode1 = rnd_mode; 
-      near = 0; 
-    }
-
-  sh += near; 
-  can_round = mpfr_can_round_raw(qp, qsize + 1, sign_quotient, err + sh + 
-				 BITS_PER_MP_LIMB, GMP_RNDN, rnd_mode1, 
-				 MPFR_PREC(q) + sh + BITS_PER_MP_LIMB); 
-
-  switch (rnd_mode1) 
+  if (asize < usize || bsize < vsize) 
     {
-    case GMP_RNDU : rnd_mode2 = GMP_RNDD; break; 
-    case GMP_RNDD : rnd_mode2 = GMP_RNDU; break; 
-    case GMP_RNDZ : rnd_mode2 = sign_quotient == 1 ? GMP_RNDU : GMP_RNDD; 
-      break;
-    default : rnd_mode2 = GMP_RNDZ; 
-    }
-
-  can_round2 = mpfr_can_round_raw(qp, qsize + 1, sign_quotient, err + sh + 
-				  BITS_PER_MP_LIMB, GMP_RNDN, rnd_mode2, 
-				  MPFR_PREC(q) + sh + BITS_PER_MP_LIMB); 
-  
-  sh -= near; 
-  
-  /* If either can_round or can_round2 is 0, either we cannot round or
-     the result might be exact. If asize >= usize and bsize >= vsize, we
-     can just check this by looking at the remainder. Otherwise, we
-     have to correct our first approximation. */
-
-  if ((!can_round || !can_round2) && (asize < usize || bsize < vsize)) 
-    {
-      int b = 0; 
-      mp_ptr rem, rem2; 
-
+      if (rnd_mode == GMP_RNDN)
+	{ 
+	  rnd_mode1 = GMP_RNDZ; 
+	  near = 1; 
+	}
+      else 
+	{ 
+	  rnd_mode1 = rnd_mode; 
+	  near = 0; 
+	}
+      
+      sh += near; 
+      can_round = mpfr_can_round_raw(qp, qsize + 1, sign_quotient, err + sh + 
+				     BITS_PER_MP_LIMB, GMP_RNDN, rnd_mode1, 
+				     MPFR_PREC(q) + sh + BITS_PER_MP_LIMB); 
+      
+      switch (rnd_mode1) 
+	{
+	case GMP_RNDU : rnd_mode2 = GMP_RNDD; break; 
+	case GMP_RNDD : rnd_mode2 = GMP_RNDU; break; 
+	case GMP_RNDZ : rnd_mode2 = sign_quotient == 1 ? GMP_RNDU : GMP_RNDD; 
+	  break;
+	default : rnd_mode2 = GMP_RNDZ; 
+	}
+      
+      can_round2 = mpfr_can_round_raw(qp, qsize + 1, sign_quotient, err + sh + 
+				      BITS_PER_MP_LIMB, GMP_RNDN, rnd_mode2, 
+				      MPFR_PREC(q) + sh + BITS_PER_MP_LIMB); 
+      
+      sh -= near; 
+      
+      /* If either can_round or can_round2 is 0, either we cannot round or
+	 the result might be exact. If asize >= usize and bsize >= vsize, we
+	 can just check this by looking at the remainder. Otherwise, we
+	 have to correct our first approximation. */
+      
+      if (!can_round || !can_round2)
+	{
+	  int b = 0; 
+	  mp_ptr rem, rem2; 
+	  
   /**************************************************************************
    *                                                                        *
    *   The attempt to use only part of u and v failed. We first compute a   *
@@ -236,11 +238,11 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
    *                                                                        *
    **************************************************************************/
 
-      rsize = qsize + 1 + 
-	      (usize - asize > vsize - bsize  
-	       ? usize - asize  
-	       : vsize - bsize); 
-
+	  rsize = qsize + 1 + 
+	    (usize - asize > vsize - bsize  
+	     ? usize - asize  
+	     : vsize - bsize); 
+	  
       /*
 	TODO : One operand is probably enough, but then we have to 
 	perform one further comparison (compute first vlo * q, 
@@ -249,79 +251,80 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
 	[eg. HI(vlo*q) = r => compare LO(vlo*q) with b.]
       */
 
-      rem = (mp_ptr) TMP_ALLOC(rsize * BYTES_PER_MP_LIMB);
-      rem2 = (mp_ptr) TMP_ALLOC(rsize * BYTES_PER_MP_LIMB);
+	  rem = (mp_ptr) TMP_ALLOC(rsize * BYTES_PER_MP_LIMB);
+	  rem2 = (mp_ptr) TMP_ALLOC(rsize * BYTES_PER_MP_LIMB);
 
-      rem[rsize - 1] = rem2 [rsize - 1] = 0; 
-
-      if (bsize < vsize)
-	{
-	  /* Compute vlo * q */
-	  if (qsize + 1 > vsize - bsize)
-	    mpn_mul(rem + rsize - vsize - qsize - 1 + bsize, 
-		    qp, qsize + 1, vp, vsize - bsize);
-	  else
-	    mpn_mul(rem + rsize - vsize - qsize - 1 + bsize, 
-		    vp, vsize - bsize, qp, qsize + 1);
-
-	  MPN_ZERO(rem, rsize - vsize - qsize - 1 + bsize); 
-	}
-      else MPN_ZERO(rem, rsize); 
-     
-      /* Compute ulo + r. The two of them do not overlap. */
-      MPN_COPY(rem2 + rsize - 1 - qsize, rp, bsize);
-      
-      if (qsize + 1 > bsize)
-	MPN_ZERO(rem2 + rsize - 1 - qsize + bsize, qsize + 1 - bsize); 
-    
-      if (asize < usize) 
-	{
-	  MPN_COPY(rem2 + rsize - 1 - qsize - usize + asize, 
-		   up, usize - asize); 
-	  MPN_ZERO(rem2, rsize - 1 - qsize - usize + asize); 
-	}
-      else 
-	MPN_ZERO(rem2, rsize - 1 - qsize); 
-
-      b = 0;       
-      if (mpn_cmp(rem2, rem, rsize) >= 0)
-	{
-	  /* Positive correction is at most 1. */
-
-	  mpn_sub_n(rem, rem2, rem, rsize); 
-	  if (rem[rsize - 1] != 0 || 
-	      mpn_cmp(rem + rsize - vsize - 1, vp, vsize) >= 0)
-	    {
-	      rem[rsize - 1] -= 
-		mpn_sub_n(rem + rsize - vsize - 1, 
-			  rem + rsize - vsize - 1, 
-			  vp, vsize); 
-	      qp[qsize] -= mpn_add_1(qp, qp, qsize, 1); 
-	    }
-	}
-      else 
-	{ 
-	  /* Negative correction is at most 3 */
-	  do 
-	    {
-	      b++; 
-	      rem2[rsize - 1] += 
-		mpn_add_n(rem2 + rsize - vsize - 1, 
-			  rem2 + rsize - vsize - 1, vp, vsize); 
-	    }
-	  while (mpn_cmp(rem2, rem, rsize) < 0);
- 
-	  qp[qsize] -= mpn_sub_1(qp, qp, qsize, b); 
-	  mpn_sub_n(rem, rem2, rem, rsize); 
-	}
+	  rem[rsize - 1] = rem2 [rsize - 1] = 0; 
 	  
-      if (qp[qsize] != 0) 
-	sh = -1; 
-      else 
-	count_leading_zeros(sh, qp[qsize - 1]); 
-
-      err = BITS_PER_MP_LIMB * qsize; 
-      rp = rem; 
+	  if (bsize < vsize)
+	    {
+	      /* Compute vlo * q */
+	      if (qsize + 1 > vsize - bsize)
+		mpn_mul(rem + rsize - vsize - qsize - 1 + bsize, 
+			qp, qsize + 1, vp, vsize - bsize);
+	      else
+		mpn_mul(rem + rsize - vsize - qsize - 1 + bsize, 
+			vp, vsize - bsize, qp, qsize + 1);
+	      
+	      MPN_ZERO(rem, rsize - vsize - qsize - 1 + bsize); 
+	    }
+	  else MPN_ZERO(rem, rsize); 
+	  
+	  /* Compute ulo + r. The two of them do not overlap. */
+	  MPN_COPY(rem2 + rsize - 1 - qsize, rp, bsize);
+	  
+	  if (qsize + 1 > bsize)
+	    MPN_ZERO(rem2 + rsize - 1 - qsize + bsize, qsize + 1 - bsize); 
+	  
+	  if (asize < usize) 
+	    {
+	      MPN_COPY(rem2 + rsize - 1 - qsize - usize + asize, 
+		       up, usize - asize); 
+	      MPN_ZERO(rem2, rsize - 1 - qsize - usize + asize); 
+	    }
+	  else 
+	    MPN_ZERO(rem2, rsize - 1 - qsize); 
+	  
+	  b = 0;       
+	  if (mpn_cmp(rem2, rem, rsize) >= 0)
+	    {
+	      /* Positive correction is at most 1. */
+	      
+	      mpn_sub_n(rem, rem2, rem, rsize); 
+	      if (rem[rsize - 1] != 0 || 
+		  mpn_cmp(rem + rsize - vsize - 1, vp, vsize) >= 0)
+		{
+		  rem[rsize - 1] -= 
+		    mpn_sub_n(rem + rsize - vsize - 1, 
+			      rem + rsize - vsize - 1, 
+			      vp, vsize); 
+		  qp[qsize] -= mpn_add_1(qp, qp, qsize, 1); 
+		}
+	    }
+	  else 
+	    { 
+	      /* Negative correction is at most 3 */
+	      do 
+		{
+		  b++; 
+		  rem2[rsize - 1] += 
+		    mpn_add_n(rem2 + rsize - vsize - 1, 
+			      rem2 + rsize - vsize - 1, vp, vsize); 
+		}
+	      while (mpn_cmp(rem2, rem, rsize) < 0);
+	      
+	      qp[qsize] -= mpn_sub_1(qp, qp, qsize, b); 
+	      mpn_sub_n(rem, rem2, rem, rsize); 
+	    }
+	  
+	  if (qp[qsize] != 0) 
+	    sh = -1; 
+	  else 
+	    count_leading_zeros(sh, qp[qsize - 1]); 
+	  
+	  err = BITS_PER_MP_LIMB * qsize; 
+	  rp = rem; 
+	}
     }
   
   /**************************************************************************
@@ -374,7 +377,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
 	{
 	  k = rsize - 1; 
 
-	  /* If a bit has been shifted out during normalization, hence 
+	  /* If a bit has been shifted out during normalization, then
 	     the remainder is nonzero. */
 	  if (near == 0) 
 	    while (k >= 0) { if (rp[k]) break; k--; }

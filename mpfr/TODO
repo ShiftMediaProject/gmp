@@ -25,6 +25,9 @@ Documentation:
 
 - add a description of the algorithms used + proof of correctness
 
+- support for accented characters when converting the texi file to
+  the dvi file
+
 Installation:
 
 - from Kevin Ryde <user42@zip.com.au>:
@@ -45,14 +48,14 @@ Changes in existing functions:
 	in mpfr_test_init to enable overflow exceptions]
 	
 - allow the ISO C "P" exponent separator for base 16 in input functions
-- invert 2nd and 3rd arguments of mpfr_round_prec (to be coherent with
-	mpfr_set_prec)
+
 - merge mpfr_inp_str and mpfr_set_str (cf glibc sscanf/fscanf)
 	[mpfr_set_str -> with final '\0',
 	 mpfr_strtofr -> without final '\0', returns the number of characters
 	 read (or name mpfr_strtod suggested by Kevin, see below)]
- Suggestion from Kevin:
- - Function: char * mpf_strto (mpz_t ROP, const char *STR)
+
+Suggestion from Kevin:
+- Function: char * mpf_strto (mpz_t ROP, const char *STR)
      Read a floating point number from a string.  If successful the
      result is stored in ROP and the return value points to the
      character after those parsed.  If STR doesn't start with a valid
@@ -83,6 +86,7 @@ Changes in existing functions:
 
      The decimal point character, or string, expected is taken from the
      current locale on systems providing `localeconv'. [end of suggestion]
+
 - in mpfr_set_str, make string comparisons case insensitive and use @Inf@
   and @NaN@ instead of the possibly ambiguous Inf and NaN in bases > 10.
   Modify the other functions to make them consistent with this choice.
@@ -96,7 +100,6 @@ New functions to implement:
 	-> cf code in leibniz:mpfr/mpz_set_fr.c
 - those from LIA: missing secant, cosecant, cotangent (trigo/hyperbolic)
 - atan2
-- mpfr_set_float (MPF -> float) or mpfr_strtof (idem for mpfr_get_*)
 - implement accurate summation algorithms from Demmel
 	(http://www.cs.berkeley.edu/~demmel/AccurateSummation.ps)
 - mpfr_root to compute x^(1/n) for n integer [suggested by Damien Fisher,
@@ -113,7 +116,7 @@ Efficiency:
 - mpfr_asin/acos are too slow for small values (2^(-1021) for example)
 - idem for mpfr_atanh (2^(-1021) for example)
 - improve generic.c to work for number of terms <> 2^k
-- rewrite mpfr_greater_p...
+- rewrite mpfr_greater_p... as native code.
 - combine tests for singular values [from Torbjorn Granlund]:
     For example, mpfr_add could have this structure:
     if (MPFR_SINGULAR (a))
@@ -144,6 +147,7 @@ Efficiency:
 Miscellaneous:
 
 - rename mpf2mpfr.h to gmp-mpf2mpfr.h?
+  (will wait until mpfr is fully integrated into gmp :-)
 
 - from Kevin Ryde <user42@zip.com.au>:
    Also for pi.c, a pre-calculated compiled-in pi to a few thousand

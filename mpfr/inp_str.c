@@ -38,7 +38,7 @@ mpfr_inp_str (mpfr_ptr rop, FILE *stream, int base, mp_rnd_t rnd_mode)
   size_t nread;
 
   MPFR_CLEAR_FLAGS(rop); 
-  if (stream == 0)
+  if (stream == NULL)
     stream = stdin;
 
   alloc_size = 100;

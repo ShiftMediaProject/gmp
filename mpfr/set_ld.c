@@ -75,9 +75,7 @@ mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
   while (d != 0.0)
     {
       if ((d > (long double) DBL_MAX) || ((-d) > (long double) DBL_MAX))
-        { /* d is neither +Inf nor -Inf and u is Inf: this implies that an
-             overflow occured, i.e. the exponent of d is too large for the
-             double format */
+        {
           long double div9, div10, div11, div12, div13;
 
           div9 = (long double) (double) 1.34078079299425971e154; /* 2^(2^9) */

@@ -1,6 +1,6 @@
-/* mpfr_print_rnd_mode -- convert a given rounding mode to a string
+/* Test file for mpfr_inits, mpfr_inits2 and mpfr_clears.
 
-Copyright 1999, 2001, 2002, 2003 Free Software Foundation.
+Copyright 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -21,21 +21,18 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-test.h"
 
-__gmp_const char *
-mpfr_print_rnd_mode (mp_rnd_t rnd_mode)
+int
+main (void)
 {
-  switch (rnd_mode)
-    {
-    case GMP_RNDD:
-      return "GMP_RNDD";
-    case GMP_RNDU:
-      return "GMP_RNDU";
-    case GMP_RNDN:
-      return "GMP_RNDN";
-    case GMP_RNDZ:
-      return "GMP_RNDZ";
-    }
+  mpfr_t a, b, c;
 
-  return (char *) 0;
+  tests_start_mpfr ();
+  mpfr_inits (a, b, c, (mpfr_ptr) 0);
+  mpfr_clears (a, b, c, (mpfr_ptr) 0);
+  mpfr_inits2 (200, a, b, c, (mpfr_ptr) 0);
+  mpfr_clears (a, b, c, (mpfr_ptr) 0);
+  tests_end_mpfr ();
+  return 0;
 }

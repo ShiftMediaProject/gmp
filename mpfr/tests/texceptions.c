@@ -22,7 +22,9 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 static void
@@ -46,6 +48,86 @@ mpfr_set_double_range (void)
   mpfr_set_emax (1024);
 }
 
+static void
+test_set_underflow (void)
+{
+  mpfr_t x, zero, min;
+  mpfr_ptr r[4] = { min, zero, min, zero };
+  int t[4] = { 1, -1, 1, -1 };
+  mp_rnd_t i;
+  int s;
+
+  mpfr_inits (x, zero, min, (mpfr_ptr) 0);
+  mpfr_set_ui (zero, 0, GMP_RNDN);
+  mpfr_set_ui (min, 0, GMP_RNDN);
+  mpfr_nextabove (min);
+  for (s = 1; s > 0; s = -1)
+    {
+      for (i = 0; i < 4; i++)
+        {
+          int j;
+          int inex;
+
+          j = s < 0 && i > 1 ? 5 - i : i;
+          inex = mpfr_set_underflow (x, i, s);
+          if (mpfr_cmp (x, r[j]) || inex * t[j] <= 0)
+            {
+              fprintf (stderr, "Error in test_set_underflow, sign = %d,"
+                       " rnd_mode = %s\n", s, mpfr_print_rnd_mode (i));
+              fprintf (stderr, "Got\n");
+              mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
+              fprintf (stderr, ", inex = %d\ninstead of\n", inex);
+              mpfr_out_str (stderr, 2, 0, r[j], GMP_RNDN);
+              fprintf (stderr, ", inex = %d\n", t[j]);
+              exit (1);
+            }
+        }
+      mpfr_neg (zero, zero, GMP_RNDN);
+      mpfr_neg (min, min, GMP_RNDN);
+    }
+  mpfr_clears (x, zero, min, (mpfr_ptr) 0);
+}
+
+static void
+test_set_overflow (void)
+{
+  mpfr_t x, inf, max;
+  mpfr_ptr r[4] = { inf, max, inf, max };
+  int t[4] = { 1, -1, 1, -1 };
+  mp_rnd_t i;
+  int s;
+
+  mpfr_inits2 (32, x, inf, max, (mpfr_ptr) 0);
+  mpfr_set_inf (inf, 1);
+  mpfr_set_inf (max, 1);
+  mpfr_nextbelow (max);
+  for (s = 1; s > 0; s = -1)
+    {
+      for (i = 0; i < 4; i++)
+        {
+          int j;
+          int inex;
+
+          j = s < 0 && i > 1 ? 5 - i : i;
+          inex = mpfr_set_overflow (x, i, s);
+          if (mpfr_cmp (x, r[j]) || inex * t[j] <= 0)
+            {
+              fprintf (stderr, "Error in test_set_overflow, sign = %d,"
+                       " rnd_mode = %s\n", s, mpfr_print_rnd_mode (i));
+              fprintf (stderr, "Got\n");
+              mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
+              fprintf (stderr, ", inex = %d\ninstead of\n", inex);
+              mpfr_out_str (stderr, 2, 0, r[j], GMP_RNDN);
+              fprintf (stderr, ", inex = %d\n", t[j]);
+              exit (1);
+            }
+        }
+      mpfr_neg (inf, inf, GMP_RNDN);
+      mpfr_neg (max, max, GMP_RNDN);
+    }
+  mpfr_clears (x, inf, max, (mpfr_ptr) 0);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -53,6 +135,9 @@ main (int argc, char *argv[])
   mp_exp_t emin, emax;
 
   tests_start_mpfr ();
+
+  test_set_underflow ();
+  test_set_overflow ();
 
   mpfr_init (x);
   mpfr_init (y);

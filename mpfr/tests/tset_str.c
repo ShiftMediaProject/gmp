@@ -378,7 +378,7 @@ main (int argc, char *argv[])
 	      
 	      if (mpfr_cmp (x, y) != 0)
 		{
-		  fprintf (stderr, "Error in mpfr_set_str for nb_digit=%u, base=%u, rnd=%s:\n", nb_digit, base[cbase], mpfr_print_rnd_mode (rnd[crnd]));
+		  fprintf (stderr, "Error in mpfr_set_str for nb_digit=%u, base=%u, rnd=%s:\n", (unsigned int) nb_digit, base[cbase], mpfr_print_rnd_mode (rnd[crnd]));
 		  fprintf (stderr, "instead of: ");
 		  mpfr_print_binary (x);
 		  puts ("");
