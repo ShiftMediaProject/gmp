@@ -177,7 +177,7 @@ lc (rp, rstate)
   TMP_MARK (mark);
   mn = (m2exp + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
   ta = MAX (an + seedn + 1, mn);
-  tp = TMP_ALLOC (ta * BYTES_PER_MP_LIMB);
+  tp = (mp_ptr) TMP_ALLOC (ta * BYTES_PER_MP_LIMB);
   MPN_ZERO (tp, ta);
 
   /* t = a * seed */
@@ -357,7 +357,7 @@ _gmp_rand (rp, rstate, nbits)
 
 	/* Temp space. */
 	TMP_MARK (lcmark);
-	tp = TMP_ALLOC ((rn + 1) * BYTES_PER_MP_LIMB);
+	tp = (mp_ptr) TMP_ALLOC ((rn + 1) * BYTES_PER_MP_LIMB);
 
   /* Main loop:
      Fill RP with NBITS random bits.
