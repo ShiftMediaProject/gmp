@@ -28,9 +28,13 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 
 void
+#if __STDC__
+mpn_dump (mp_srcptr ptr, mp_size_t size)
+#else
 mpn_dump (ptr, size)
      mp_srcptr ptr;
      mp_size_t size;
+#endif
 {
   MPN_NORMALIZE (ptr, size);
 
