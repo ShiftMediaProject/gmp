@@ -128,6 +128,20 @@ check_mpz (void)
     mpz_class c;
     c = a * b; ASSERT_ALWAYS(c == -8);
   }
+  {
+    mpz_class a(2);
+    long b = -4;
+    mpz_class c;
+    c = a * b; ASSERT_ALWAYS(c == -8);
+    c = b * a; ASSERT_ALWAYS(c == -8);
+  }
+  {
+    mpz_class a(-2);
+    unsigned long b = 4;
+    mpz_class c;
+    c = a * b; ASSERT_ALWAYS(c == -8);
+    c = b * a; ASSERT_ALWAYS(c == -8);
+  }
 
   // operator/ and operator%
   {
