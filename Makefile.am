@@ -78,7 +78,7 @@ lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
 EXTRA_DIST = doc macos \
   configfsf.guess configfsf.sub .gdbinit gmp-h.in gmp-impl.h mp-h.in \
-  INSTALL.autoconf longlong.h stack-alloc.h urandom.h
+  INSTALL.autoconf longlong.h stack-alloc.h
 
 DISTCLEANFILES = $(nodist_include_HEADERS) asm-syntax.h config.m4 \
   @gmp_srclinks@
