@@ -473,20 +473,11 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define GET_STR_PRECOMPUTE_THRESHOLD     42
 #define SET_STR_THRESHOLD              3259
 
-#undef MUL_FFT_TABLE
-#undef MUL_FFT_MODF_THRESHOLD
-#undef MUL_FFT_THRESHOLD
-#define MUL_FFT_TABLE  { 400, 928, 1856, 3840, 7168, 20480, 0 }
-#define MUL_FFT_MODF_THRESHOLD          416
-#define MUL_FFT_THRESHOLD                MP_SIZE_T_MAX
-
-#undef  SQR_FFT_TABLE
-#undef  SQR_FFT_MODF_THRESHOLD
+/* mpn/generic/mul_fft.c is not nails-capable. */
+#undef  MUL_FFT_THRESHOLD
 #undef  SQR_FFT_THRESHOLD
-#define SQR_FFT_TABLE  { 400, 992, 1984, 3840, 9216, 20480, 0 }
-#define SQR_FFT_MODF_THRESHOLD          416
+#define MUL_FFT_THRESHOLD                MP_SIZE_T_MAX
 #define SQR_FFT_THRESHOLD                MP_SIZE_T_MAX
-
 #endif
 
 /* Swap macros. */
