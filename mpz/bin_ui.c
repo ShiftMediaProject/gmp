@@ -32,12 +32,11 @@ MA 02111-1307, USA. */
    1 section 1.2.6 part G. */
 
 
-/* Enhancement: use mpn_divexact_1 when it exists */
-#define DIVIDE()                                                \
-  do {                                                          \
-    ASSERT (SIZ(r) > 0);                                        \
-    MPN_DIVREM_OR_DIVEXACT_1 (PTR(r), PTR(r), SIZ(r), kacc);    \
-    SIZ(r) -= (PTR(r)[SIZ(r)-1] == 0);                          \
+#define DIVIDE()                                                              \
+  do {                                                                        \
+    ASSERT (SIZ(r) > 0);                                                      \
+    MPN_DIVREM_OR_DIVEXACT_1 (PTR(r), PTR(r), (mp_size_t) SIZ(r), kacc);      \
+    SIZ(r) -= (PTR(r)[SIZ(r)-1] == 0);                                        \
   } while (0)
 
 void
