@@ -679,7 +679,6 @@ gcd_lehmer (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 }
 #endif
 
-#if GMP_NAIL_BITS == 0
 /* FIXME: Some duplication, this function is also in hgcd.c. Perhaps
  * we can use some simpler test here? */
 /* Only the first row has v = 0, a = 1 * a + 0 * b */
@@ -928,11 +927,3 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       return gsize;
     }
 }
-#else /* GMP_NAIL_BITS != 0 */
-mp_size_t
-mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
-{
-  return gcd_binary_odd (gp, up, usize, vp, vsize);
-}
-#endif /* GMP_NAIL_BITS != 0 */
-

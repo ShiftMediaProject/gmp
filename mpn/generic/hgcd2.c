@@ -89,6 +89,75 @@ div2 (mp_ptr rp,
 
   return q;
 }
+#else /* GMP_NAIL_BITS != 0 */
+/* Two-limb division optimized for small quotients. Input words
+   include nails, which must be zero. */
+static inline mp_limb_t
+div2 (mp_ptr rp,
+      mp_limb_t nh, mp_limb_t nl,
+      mp_limb_t dh, mp_limb_t dl)
+{
+  mp_limb_t q = 0;
+  int cnt;
+
+  ASSERT_LIMB(nh);
+  ASSERT_LIMB(nl);
+  ASSERT_LIMB(dh);
+  ASSERT_LIMB(dl);
+
+  /* FIXME: Always called with nh > 0 and dh >0. Then it should be
+     enough to look at the high limbs to select cnt. */
+  for (cnt = 0; nh > dh || (nh == dh && nl >= dl); cnt++)
+  {
+    dh = (dh << 1) | (dl >> (GMP_NUMB_BITS - 1));
+    dl = (dl << 1) & GMP_NUMB_MASK;
+  }
+
+  while (cnt)
+    {
+      dl = (dh << (GMP_NUMB_BITS - 1)) | (dl >> 1);
+      dh = dh >> 1;
+      dl &= GMP_NUMB_MASK;
+
+      q <<= 1;
+      if (nh > dh || (nh == dh && nl >= dl))
+       {
+         /* FIXME: We could perhaps optimize this by unrolling the
+            loop 2^GMP_NUMB_BITS - 1 times? */
+         nl -= dl;
+         nh -= dh;
+         nh -= (nl >> (GMP_LIMB_BITS - 1));
+         nl &= GMP_NUMB_MASK;
+
+         q |= 1;
+       }
+      cnt--;
+    }
+  ASSERT (nh < dh || (nh == dh && nl < dl));
+  rp[0] = nl;
+  rp[1] = nh;
+
+  return q;
+}
+#endif /* GMP_NAIL_BITS != 0 */
+
+#define SUB_2(w1,w0, x1,x0, y1,y0)                      \
+  do {                                                  \
+    ASSERT_LIMB (x1);                                   \
+    ASSERT_LIMB (x0);                                   \
+    ASSERT_LIMB (y1);                                   \
+    ASSERT_LIMB (y0);                                   \
+                                                        \
+    if (GMP_NAIL_BITS == 0)                             \
+      sub_ddmmss (w1,w0, x1,x0, y1,y0);                 \
+    else                                                \
+      {                                                 \
+        mp_limb_t   __w0, __c;                          \
+        SUBC_LIMB (__c, __w0, x0, y0);                  \
+        (w1) = ((x1) - (y1) - __c) & GMP_NUMB_MASK;     \
+        (w0) = __w0;                                    \
+      }                                                 \
+  } while (0)
 
 static inline void
 qstack_push_0 (struct qstack *stack)
@@ -121,13 +190,12 @@ qstack_push_1 (struct qstack *stack, mp_limb_t q)
 }
 
 /* Produce r_k from r_i and r_j, and push the corresponding
-   quotient.
-
-   FIXME: Token catenation with ### probably isn't portable enough */
+   quotient. */
+#if __GMP_HAVE_TOKEN_PASTE
 #define HGCD2_STEP(i, j, k) do {			\
-  sub_ddmmss (rh ## k, rl ## k,				\
-	      rh ## i, rl ## i,				\
-	      rh ## j, rl ## j);			\
+  SUB_2 (rh ## k, rl ## k,				\
+	 rh ## i, rl ## i,				\
+	 rh ## j, rl ## j);				\
 							\
   /* Could check here for the special case rh3 == 0,	\
      but it's covered by the below condition as well */	\
@@ -155,9 +223,49 @@ qstack_push_1 (struct qstack *stack, mp_limb_t q)
 	    qstack_push_1 (quotients, q);		\
 	}						\
 } while (0)
+#else /* ! __GMP_HAVE_TOKEN_PASTE */
+#define HGCD2_STEP(i, j, k) do {			\
+  SUB_2 (rh/**/k, rl/**/k,				\
+	 rh/**/i, rl/**/i,				\
+	 rh/**/j, rl/**/j);				\
+							\
+  /* Could check here for the special case rh3 == 0,	\
+     but it's covered by the below condition as well */	\
+  if (       rh/**/k <  rh/**/j				\
+      || (   rh/**/k == rh/**/j				\
+	  && rl/**/k <  rl/**/j))			\
+    {							\
+	  /* Unit quotient */				\
+	  u/**/k = u/**/i + u/**/j;			\
+	  v/**/k = v/**/i + v/**/j;			\
+							\
+	  if (quotients)				\
+	    qstack_push_0 (quotients);			\
+	}						\
+      else						\
+	{						\
+	  mp_limb_t r[2];				\
+	  mp_limb_t q = 1 + div2 (r, rh/**/k, rl/**/k,	\
+				     rh/**/j, rl/**/j);	\
+	  rl/**/k = r[0]; rh/**/k = r[1];		\
+	  u/**/k = u/**/i + q * u/**/j;			\
+	  v/**/k = v/**/i + q * v/**/j;			\
+							\
+	  if (quotients)				\
+	    qstack_push_1 (quotients, q);		\
+	}						\
+} while (0)
+#endif /* ! __GMP_HAVE_TOKEN_PASTE */
 
-/* Returns 0 on failure, otherwise returns 2, 3 or 4 depending on how
-   many of the r:s that satisfy Jebelean's criterion. */
+/* Repeatedly divides A by B, until the remainder is a single limb.
+   Stores cofactors in HGCD, and pushes the quotients on STACK (unless
+   STACK is NULL). On success, HGCD->row[0, 1, 2] correspond to
+   remainders that are larger than one limb, while HGCD->row[3]
+   correspond to a remainder that fit in a single limb.
+
+   Returns 0 on failure (if B or A mod B fits in a single limb),
+   otherwise returns 2, 3 or 4 depending on how many of the r:s that
+   satisfy Jebelean's criterion. */
 /* FIXME: There are two more micro optimizations that could be done to
    this code:
 
@@ -185,6 +293,10 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
   mp_limb_t rh2, rl2, u2, v2;
   mp_limb_t rh3, rl3, u3, v3;
 
+  ASSERT_LIMB(ah);
+  ASSERT_LIMB(al);
+  ASSERT_LIMB(bh);
+  ASSERT_LIMB(bl);
   ASSERT (ah > bh || (ah == bh && al >= bl));
 
   if (bh == 0)
@@ -197,7 +309,7 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
     rh0 = ah; rl0 = al; u0 = 1; v0 = 0;
     rh1 = bh; rl1 = bl; u1 = 0; v1 = 1;
 
-    sub_ddmmss (rh2, rl2, rh0, rl0, rh1, rl1);
+    SUB_2 (rh2, rl2, rh0, rl0, rh1, rl1);
 
     if (rh2 == 0)
       return 0;
@@ -303,13 +415,16 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
   ASSERT (rh1 != 0);
   ASSERT (rh2 != 0);
   ASSERT (rh3 == 0);
+  ASSERT (rh1 > rh2 || (rh1 == rh2 && rl1 > rl2));
+  ASSERT (rh2 > rh3 || (rh2 == rh3 && rl2 > rl3));
 
   /* Coefficients to be returned */
   hgcd->row[1].u = u1; hgcd->row[1].v = v1;
   hgcd->row[2].u = u2; hgcd->row[2].v = v2;
   hgcd->row[3].u = u3; hgcd->row[3].v = v3;
 
-  /* Rows 1, 2 and 3 are used below, rh0 rl0, u0 and v0 are not. */
+  /* Rows 1, 2 and 3 are used below, rh0, rl0, u0 and v0 are not. */
+#if GMP_NAIL_BITS == 0
   {
     mp_limb_t sh;
     mp_limb_t sl;
@@ -372,6 +487,66 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
 
     return 4;
   }
+#else /* GMP_NAIL_BITS > 0 */
+  {
+    mp_limb_t sl;
+    mp_limb_t th;
+    mp_limb_t tl;
+
+    /* Check r2 */
+    /* We always have r2 > u2, v2 */
+
+    if (hgcd->sign >= 0)
+      {
+       /* Check if r1 - r2 >= u2 - u1 = |u2| + |u1| */
+       sl = u2 + u1;
+      }
+    else
+      {
+       /* Check if r1 - r2 >= v2 - v1 = |v2| + |v1| */
+       sl = v2 + v1;
+      }
+
+    tl = rl1 - rl2;
+    th = rh1 - rh2 - (tl >> (GMP_LIMB_BITS - 1));
+    ASSERT_LIMB(th);
+
+    if (th < (CNST_LIMB(1) << GMP_NAIL_BITS)
+       && ((th << GMP_NUMB_BITS) | (tl & GMP_NUMB_MASK)) < sl)
+      return 2;
+
+    /* Check r3 */
+
+    if (hgcd->sign >= 0)
+      {
+       /* Check r3 >= max (-u3, -v3) = |u3| */
+       if (rl3 < u3)
+         return 3;
+
+       /* Check r3 - r2 >= v3 - v2 = |v2| + |v1|*/
+       sl = v3 + v2;
+      }
+    else
+      {
+       /* Check r3 >= max (-u3, -v3) = |v3| */
+       if (rl3 < v3)
+         return 3;
+
+       /* Check r3 - r2 >= u3 - u2 = |u2| + |u1| */
+       sl = u3 + u2;
+      }
+
+    tl = rl2 - rl3;
+    th = rh2 - (tl >> (GMP_LIMB_BITS - 1));
+    ASSERT_LIMB(th);
+
+    if (th < (CNST_LIMB(1) << GMP_NAIL_BITS)
+       && ((th << GMP_NUMB_BITS) | (tl & GMP_NUMB_MASK)) < sl)
+      return 3;
+
+    return 4;
+  }
+#endif /* GMP_NAIL_BITS > 0 */
 }
 
 mp_size_t
@@ -382,6 +557,9 @@ mpn_hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
 {
   mp_size_t rsize;
   mp_limb_t cy;
+
+  ASSERT_LIMB(u);
+  ASSERT_LIMB(v);
 
   if (sign < 0)
     {
@@ -408,7 +586,7 @@ mpn_hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
 	{
 	  ASSERT (bsize < rsize);
 	  ASSERT_NOCARRY (mpn_sub_1 (rp + bsize,
-				   rp + bsize, rsize - bsize, cy));
+				     rp + bsize, rsize - bsize, cy));
 	}
 
       MPN_NORMALIZE (rp, rsize);
@@ -417,4 +595,3 @@ mpn_hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
 }
 
 #undef HGCD2_STEP
-#endif /* GMP_NAIL_BITS == 0 */

@@ -34,8 +34,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#if GMP_NAIL_BITS == 0
-
 #if WANT_TRACE
 static void
 trace (const char *format, ...)
@@ -70,8 +68,9 @@ trace (const char *format, ...)
    count is computed using count_leading_zeros.
 */
 
-#define MPN_EXTRACT_LIMB(count, xh, xl) \
-  (((xh) << (count)) | ((xl) >> (GMP_LIMB_BITS - (count))))
+#define MPN_EXTRACT_LIMB(count, xh, xl)				\
+  ((((xh) << ((count) - GMP_NAIL_BITS)) & GMP_NUMB_MASK) |	\
+   ((xl) >> (GMP_LIMB_BITS - (count))))
 
 /* Checks if a - b < c. Overwrites c. */
 static int
@@ -439,6 +438,8 @@ __gmpn_hgcd_sanity (const struct hgcd *hgcd,
   int sign;
   unsigned i;
   mp_size_t L = hgcd->size;
+  mp_ptr tp;
+  mp_size_t talloc;
   mp_ptr t1p;
   mp_ptr t2p;
   const struct hgcd_row *r;
@@ -453,7 +454,9 @@ __gmpn_hgcd_sanity (const struct hgcd *hgcd,
 
   /* NOTE: We really need only asize + bsize + 2*L, but since we're
    * swapping the pointers around, we allocate 2*(asize + L). */
-  t1p = alloca (2*(asize + L) * sizeof (mp_limb_t));
+  talloc = 2*(asize + L);
+  tp = __GMP_ALLOCATE_FUNC_LIMBS(talloc);
+  t1p = tp;
   t2p = t1p + (asize + L);
 
   sign = hgcd->sign;
@@ -483,6 +486,14 @@ __gmpn_hgcd_sanity (const struct hgcd *hgcd,
 
       MPN_NORMALIZE (t1p, t1size);
       ASSERT (MPN_EQUAL_P (t1p, t1size, r->rp, r->rsize));
+    }
+  __GMP_FREE_FUNC_LIMBS(tp, talloc);
+  for (i = start; i < end - 1; i++)
+    {
+      /* We should have strict inequality after each reduction step,
+	 but we allow equal values for input. */
+      ASSERT (MPN_LEQ_P (hgcd->row[i+1].rp, hgcd->row[i+1].rsize,
+			 hgcd->row[i].rp, hgcd->row[i].rsize));
     }
 }
 #endif
@@ -983,12 +994,15 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
   mp_limb_t bh;
   mp_limb_t bl;
 
+  ASSERT (asize >= bsize);
+  ASSERT (MPN_LEQ_P (bp, bsize, ap, asize));
+
   if (bsize < 2)
     return 0;
 
   /* The case asize == 2 is needed to take care of values that are
      between one and two *full* limbs in size. */
-  if (asize == 2 || (ap[asize-1] & GMP_LIMB_HIGHBIT))
+  if (asize == 2 || (ap[asize-1] & GMP_NUMB_HIGHBIT))
     {
       if (bsize < asize)
 	return 0;
@@ -1421,7 +1435,7 @@ mpn_hgcd_lehmer_itch (mp_size_t asize)
    quotients on STACK. On success, HGCD->row[0, 1, 2] correspond to
    remainders that are larger than M limbs, while HGCD->row[3]
    correspond to a remainder that fit in M limbs.
-  
+
    Returns 0 on failure (if B or A mod B fits in M limbs), otherwise
    returns 2, 3 or 4 depending on how many of the r:s that satisfy
    Jebelean's criterion. */
@@ -1510,7 +1524,9 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 	      hgcd->size = hgcd2_mul (hgcd->row + 2, hgcd->alloc,
 				      R.row + 1, hgcd->row, hgcd->size);
 	      hgcd->sign ^= ~R.sign;
-	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
+	      /* We have r3 > r2, so avoid that assert */
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 3);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 3, 4);
 
 	      /* Discard r3, and the corresponding quotient */
 	      qstack_drop (quotients);
@@ -1747,7 +1763,9 @@ mpn_hgcd (struct hgcd *hgcd,
 				     hgcd->row, hgcd->size,
 				     tp, talloc);
 	      hgcd->sign ^= ~R.sign;
-	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
+	      /* We have r3 > r2, so avoid that assert */
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 3);
+	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 3, 4);
 
 	      /* Discard r3, and the corresponding quotient */
 	      qstack_drop (quotients);
@@ -2103,4 +2121,3 @@ mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B)
 
   return 1;
 }
-#endif /* GMP_NAIL_BITS == 0 */
