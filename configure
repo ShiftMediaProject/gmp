@@ -16200,7 +16200,7 @@ EOF
 
 fi
 
-# inttypes.h, unistd.h and sys/types.h are already in the autoconf default
+# stdint.h, unistd.h and sys/types.h are already in the autoconf default
 # tests
 
 for ac_header in locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h
