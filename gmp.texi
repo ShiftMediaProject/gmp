@@ -5192,34 +5192,22 @@ odd moduli.
 @node Square Root Algorithm, Nth Root Algorithm, Root Extraction Algorithms, Root Extraction Algorithms
 @subsection Square Root
 
-Square roots are taken using Newton's method with the following iteration,
-where @ma{A} is the input.
-@tex
-$$a_{i+1} = {1\over2} \left({A \over a_i} + a_i\right)$$
-@end tex
-@ifnottex
+Square roots are taken using the ``Karatsuba Square Root'' algorithm by
+Paul Zimmermann (@pxref{References}).  This is expressed in a divide and
+conquer form, but as noted in the paper can also be viewed as a discrete
+variant of Newton's method.
 
-@example
-         1      A
-a[i+1] = - * ( ---- + a[i] )
-         2     a[i] 
-@end example
+In the Karatsuba multiplication range this is an @m{O({3\over2}
+M(N/2)),O(1.5*M(N/2))} algorithm, where @ma{M(n)} is the time to multiply two
+numbers of @ma{n} limbs.  In the FFT multiplication range this grows to a
+bound of @m{O(6 M(N/2)),O(6*M(N/2))}.  In practice a factor of about 1.5 to
+1.8 is found in the Karatsuba and Toom-3 ranges, growing to 2 or 3 in the FFT
+range.
 
-@end ifnottex
-The initial approximation @m{a_1,a[1]} is taken from a small table, or from a
-CPU square root instruction if available and worthwhile.  Convergence is
-quadratic, meaning each @m{a_i,a[i]} has twice as many accurate bits as
-@m{a_{i-1},a[i-1]}.
-
-These calculations are all done in integers and the resulting
-@code{mpn_sqrtrem} is used for both @code{mpz_sqrt} and @code{mpf_sqrt}.  The
-extended precision given by @code{mpf_sqrt_ui} is obtained by padding with
-zero limbs.
-
-Currently the divisions don't exploit the fact that @m{a_{i+1},a[i+1]} has
-many high limbs identical to @m{a_i,a[i]}.  ``Karatsuba Square Root'' by Paul
-Zimmermann (@pxref{References}) is effectively able to do this, using a divide
-and conquer algorithm.  This will be implemented in a future version of GMP.
+The algorithm does all its calculations in integers and the resulting
+@code{mpn_sqrtrem} is used for both @code{mpz_sqrt} and @code{mpf_sqrt}.
+The extended precision given by @code{mpf_sqrt_ui} is obtained by
+padding with zero limbs.
 
 
 @node Nth Root Algorithm, Perfect Square Algorithm, Square Root Algorithm, Root Extraction Algorithms
