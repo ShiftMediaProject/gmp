@@ -52,25 +52,26 @@ MA 02111-1307, USA. */
 static int
 gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt, va_list ap)
 {
-  int   ret, step, alloc;
+  int   ret, step, alloc, avail;
   char  *p;
 
   ASSERT (d->size >= 0);
 
-  if (d->size > 1)
+  avail = d->size;
+  if (avail > 1)
     {
-      ret = vsnprintf (d->buf, d->size, fmt, ap);
+      ret = vsnprintf (d->buf, avail, fmt, ap);
       if (ret == -1)
         {
-          ASSERT (strlen (d->buf) == d->size-1);
-          ret = d->size-1;
+          ASSERT (strlen (d->buf) == avail-1);
+          ret = avail-1;
         }
 
-      step = MIN (ret, d->size-1);
+      step = MIN (ret, avail-1);
       d->size -= step;
       d->buf += step;
 
-      if (ret != d->size-1)
+      if (ret != avail-1)
         return ret;
 
       /* probably glibc 2.0.x truncated output, probe for actual size */
