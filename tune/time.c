@@ -144,7 +144,7 @@ double      speed_cycletime = 0.0;
 
 /* don't rely on "unsigned" to "double" conversion, it's broken in SunOS 4
    native cc */
-#define M_2POWU   ((double) (1 << (BITS_PER_INT-2)) * 4.0)
+#define M_2POWU   (((double) INT_MAX + 1.0) * 2.0)
 
 #define M_2POW32  4294967296.0
 #define M_2POW64  (M_2POW32 * M_2POW32)
