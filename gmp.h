@@ -619,7 +619,7 @@ void mpf_sub_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_trunc _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_ui_div _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 void mpf_ui_sub _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
-void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t));
+void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 
 #if defined (__cplusplus)
 }
