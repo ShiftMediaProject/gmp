@@ -1,3 +1,8 @@
+2001-03-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/cray/ieee/mul_basecase.c: New file.
+	* mpn/cray/ieee/sqr_basecase.c: New file, derived from mul_basecase.c.
+
 2001-03-06  Kevin Ryde  <kevin@swox.se>
 
 	* tests/devel/try.c (pointer_setup): Allow dst_size == SIZE_SIZE2 for
