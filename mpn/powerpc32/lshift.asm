@@ -21,10 +21,12 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-
-C      cycles/limb
-C 604e:    3.0
-C 750:     3.0
+C                cycles/limb
+C 603e:            ?
+C 604e:            3.0
+C 75x (G3):        3,0
+C 7400,7410 (G4):  3.0
+C 744x,745x (G4+): 2.5
 
 C INPUT PARAMETERS
 C rp	r3
