@@ -87,7 +87,13 @@ tests_rand_start (void)
   perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
   if (perform_seed != NULL)
     {
+#ifdef HAVE_STRTOUL
+      seed = strtoul (perform_seed, 0, 0);
+#else
+      /* This will not work right for seeds >= 2^31 on 64-bit machines.
+	 Perhaps use atol unconditionally?  Is that ubiquitous?  */
       seed = atoi (perform_seed);
+#endif
       if (! (seed == 0 || seed == 1))
         {
           printf ("Re-seeding with GMP_CHECK_RANDOMIZE=%lu\n", seed);
