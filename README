@@ -18,25 +18,26 @@ operations, since GNU MP in many cases has asymptotically faster algorithms.
 
 			GETTING STARTED
 
-First, you have to configure and compiler GNU MP.  Simply typing
+First, you have to configure and compile GNU MP.  Simply typing
 
-	./configure; make
+      ./configure; make
 
 will normally do a reasonable job, but will not give optimal library
 execution speed.  So unless you're very impatient, please read the detailed
-instructions in the file INSTALL or in gmp.texi.
+instructions in gmp.texi or gmp.info.
 
 Once you have compiled the library, you should write some small example, and
-make sure you can compile them.  A typical compilation command is this:
+make sure you can compile it.  A typical compilation command is this:
 
-	gcc -g your-file.c -I<gmp-source-dir> <gmp-bin-dir>/libgmp.a -lm
+      gcc -g your-file.c -I<gmp-source-dir> <gmp-bin-dir>/.libs/libgmp.a -lm
 
 If you have installed the library, you can simply do:
 
-	gcc -g your-file.c -lgmp -lm
+      gcc -g your-file.c -lgmp -lm
 
 The -lm is normally not needed, since only a few functions in GNU MP use the
-math library.
+math library.  GNU MP is libtool based, so you can use that to compile and
+link if you want.
 
 Here is a sample program that declares 2 variables, initializes them as
 required, and sets one of them from a signed integer, and the other from a
