@@ -166,8 +166,11 @@ void refmpf_add_ulp __GMP_PROTO ((mpf_ptr f));
 void refmpf_fill __GMP_PROTO ((mpf_ptr f, mp_size_t size, mp_limb_t value));
 void refmpf_normalize __GMP_PROTO ((mpf_ptr f));
 void refmpf_set_prec_limbs __GMP_PROTO ((mpf_ptr f, unsigned long prec));
+unsigned long refmpf_set_overlap __GMP_PROTO ((mpf_ptr dst, mpf_srcptr src));
 void refmpf_sub __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 int refmpf_validate __GMP_PROTO ((const char *name, mpf_srcptr got, mpf_srcptr want));
+int refmpf_validate_division __GMP_PROTO ((const char *name, mpf_srcptr got,
+                                           mpf_srcptr n, mpf_srcptr d));
 
 
 mp_limb_t refmpn_add __GMP_PROTO ((mp_ptr rp,
