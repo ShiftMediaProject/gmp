@@ -18,6 +18,29 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-17  Niels Möller  <nisse@harpo.hack.org>
+
+	* mpn/generic/gcd.c [nails]: Use Schönhage's algorithm also for
+	GMP_NAIL_BITS > 0.
+
+	* mpn/generic/hgcd.c [nails]: Enable the code for GMP_NAIL_BITS > 0.
+	(MPN_EXTRACT_LIMB) [nails]: Handle nails.
+	(__gmpn_hgcd_sanity): Allocate temporaries on the heap, not on the
+	stack. Also check that r[i] >= r[i+1]. 
+	(mpn_hgcd2_lehmer_step) [nails]: Handle nails.
+	(mpn_hgcd_lehmer): When we temporarily have r3 > r2, avoid
+	trigging that assert in __gmpn_hgcd_sanity.
+	(mpn_hgcd): Likewise.
+
+	* mpn/generic/hgcd2.c (div2) [nails]: Alternative nail-aware
+	version.
+	(SUB_2): New macro of Kevin's, which reduces do sub_ddmmss in the
+	non-nail case.
+	(HGCD2_STEP): Use SUB_2, not sub_ddmmss. Added alternative version
+	for K&R compilers.
+	(mpn_hgcd2) [nails]: Use SUB_2, not sub_ddmmss. New nail-aware
+	code for checking Jebelean's condition.
+
 2003-12-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpq/get_d.c: Amend comments per mpn_get_d change.
