@@ -79,11 +79,11 @@ dnl       to 1, whereas GNU or SysV m4 set it to 0.  In all though "foo()"
 dnl       sets $# to 1.  This is worked around in various places.
 dnl
 dnl  len() - When "len()" is given an empty argument, BSD m4 evaluates to
-dnl       nothing, whereas GNU or SysV evaluate to 0.  See m4_length() below
-dnl       which works around this.
+dnl       nothing, whereas GNU, SysV, or the new OpenBSD, evaluate to 0.
+dnl       See m4_length() below which works around this.
 dnl
-dnl  translit() - GNU m4 accepts character ranges like A-Z, but BSD and SysV
-dnl       don't.
+dnl  translit() - GNU m4 accepts character ranges like A-Z, and the new
+dnl       OpenBSD m4 does under option -g, but BSD and SysV don't.
 dnl
 dnl  popdef() - BSD and SysV m4 popdef() takes multiple arguments and pops
 dnl       each, but GNU m4 only takes one argument.
@@ -102,8 +102,27 @@ dnl       expression seems to be ok, it just can't be a final result.  "-("
 dnl       will of course upset parsing, with all sorts of strange effects.
 dnl
 dnl  eval() <<,>> - SysV m4 doesn't support shift operators in eval() (on
-dnl       SunOS /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
+dnl       Solaris 7 /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
 dnl       m4_lshift() and m4_rshift() below for workarounds.
+dnl
+dnl  __file__,__line__ - GNU m4 and the latest OpenBSD m4 provide these,
+dnl       and they're used here to make error messages more informative.
+dnl       GNU gives an unhelpful "NONE 0" in an m4wrap(), but that's worked
+dnl       around.
+dnl
+dnl
+dnl  SunOS /usr/bin/m4 - this m4 lacks a number of desired features,
+dnl       including macro $# and $@, eval() bitwise operators, defn(),
+dnl       m4exit(), m4wrap(), pushdef()/popdef().
+dnl
+dnl       /usr/5bin/m4 is a SysV style m4 which should always be available,
+dnl       on SunOS and "configure" will reject /usr/bin/m4 in favour of
+dnl       /usr/5bin/m4 if necessary.
+dnl
+dnl       The sparc code actually has modest m4 requirements currently and
+dnl       could manage with /usr/bin/m4, but there's no reason to put our
+dnl       macros through contortions when /usr/5bin/m4 is available or GNU
+dnl       m4 can easily be installed.
 
 
 ifdef(`__ASM_DEFS_M4_INCLUDED__',
@@ -111,11 +130,18 @@ ifdef(`__ASM_DEFS_M4_INCLUDED__',
 ')m4exit(1)')
 define(`__ASM_DEFS_M4_INCLUDED__')
 
-dnl  Detect and give a message about the unsuitable SunOS m4.  
+
+dnl  Detect and give a message about the unsuitable SunOS /usr/bin/m4.
 dnl
-dnl  Unfortunately SunOS m4 doesn't have an m4exit(), nor does an invalid
-dnl  eval() kill it.  But unexpanded $#'s below will comment out some
-dnl  closing parentheses and kill it with "m4: arg stack overflow".
+dnl  Unfortunately this test doesn't work when m4 is run in the normal way
+dnl  from mpn/Makefile with "m4 -DOPERATION_foo foo.asm", since the bad m4
+dnl  takes "-" in "-D..." to mean read stdin, so it will look like it just
+dnl  hangs.  But running "m4 asm-defs.m4" to try it out will work.
+dnl
+dnl  We'd like to abort immediately on finding the bad m4, but unfortunately
+dnl  it doesn't have an m4exit(), nor does an invalid eval() kill it.  But
+dnl  unexpanded $#'s in some m4_assert_numargs() later on will comment out
+dnl  some closing parentheses and kill it with "m4: arg stack overflow".
 dnl
 define(m4_dollarhash_exists_test,``$#'')
 ifelse(m4_dollarhash_exists_test,`$#',
@@ -277,8 +303,7 @@ define(m4_assert_numargs,
 
 dnl  Called: m4_assert_numargs_internal(`macroname',wantargs,$#,len(`$1'))
 define(m4_assert_numargs_internal,
-`m4_assert_numargs_internal_check(`$1',`$2',
-m4_numargs_count(`$2',`$3',`$4'))')
+`m4_assert_numargs_internal_check(`$1',`$2',m4_numargs_count(`$3',`$4'))')
 
 dnl  Called: m4_assert_numargs_internal_check(`macroname',wantargs,gotargs)
 dnl
@@ -296,9 +321,8 @@ dnl  Called: m4_numargs_count($#,len(`$1'))
 dnl  If $#==0 then -1 args, if $#==1 but len(`$1')==0 then 0 args, otherwise
 dnl  $# args.
 define(m4_numargs_count,
-`ifelse($2,0, -1,
-`ifelse(eval($2==1 && $3-0==0),1, 0,
-$2)')')
+`ifelse($1,0, -1,
+`ifelse(eval($1==1 && $2-0==0),1, 0, $1)')')
 
 dnl  Usage: m4_Narguments(N)
 dnl  "$1 argument" or "$1 arguments" with the plural according to $1.
@@ -350,6 +374,41 @@ dnl  Called: m4_assert_onearg(`macroname',$#)
 define(m4_assert_onearg_internal,
 `ifelse($2,1,,
 `m4_error(`$1 expected 1 argument, got 'm4_Narguments(`$2')
+)')')
+
+
+dnl  Usage: m4_assert_numargs_range(low,high)
+dnl
+dnl  Put this, unquoted, at the start of a macro definition to add some code
+dnl  to check that between low and high many arguments get passed to the
+dnl  macro.  For example,
+dnl
+dnl         define(foo,
+dnl         m4_assert_numargs_range(3,5)
+dnl         `mandatory $1 $2 $3 optional $4 $5 end')
+dnl
+dnl  See m4_assert_numargs() for more info.
+
+define(m4_assert_numargs_range,
+m4_assert_numargs(2)
+``m4_assert_numargs_range_internal'(m4_doublequote($`'0),$1,$2,$`#',`len'(m4_doublequote($`'1)))`dnl '')
+
+dnl  Called: m4_assert_numargs_range_internal(`name',low,high,$#,len(`$1'))
+define(m4_assert_numargs_range_internal,
+m4_assert_numargs(5)
+`m4_assert_numargs_range_check(`$1',`$2',`$3',m4_numargs_count(`$4',`$5'))')
+
+dnl  Called: m4_assert_numargs_range_check(`name',low,high,gotargs)
+dnl
+dnl  If m4_dollarhash_1_if_noparen_p (BSD m4) then gotargs can be 0 when it
+dnl  should be -1.  To ensure a `high' of -1 works, a fudge is applied to
+dnl  gotargs if it's 0 and the 0 and -1 cases can't be distinguished.
+dnl
+define(m4_assert_numargs_range_check,
+m4_assert_numargs(4)
+`ifelse(eval($2 <= $4 &&
+             ($4 - ($4==0 && m4_dollarhash_1_if_noparen_p) <= $3)),0,
+`m4_error(`$1 expected $2 to $3 arguments, got 'm4_Narguments(`$4')
 )')')
 
 
@@ -532,21 +591,22 @@ m4_assert_onearg()
 
 dnl  Usage: m4_empty_if_zero(x)
 dnl
-dnl  Evaluate to x, or to nothing if x is 0.
+dnl  Evaluate to x, or to nothing if x is 0.  x is eval()ed and so can be an
+dnl  expression.
 dnl
 dnl  This is useful for x86 addressing mode displacements since forms like
 dnl  (%ebx) are one byte shorter than 0(%ebx).  A macro `foo' for use as
 dnl  foo(%ebx) could be defined with the following so it'll be empty if the
 dnl  expression comes out zero.
 dnl
-dnl	   deflit(`foo', `m4_empty_if_zero(eval(a+b*4-c))')
+dnl	   deflit(`foo', `m4_empty_if_zero(a+b*4-c)')
 dnl
 dnl  Naturally this shouldn't be done if, say, a computed jump depends on
 dnl  the code being a particular size.
 
 define(m4_empty_if_zero,
 m4_assert_onearg()
-`ifelse(`$1',0,,`$1')')
+`ifelse(eval($1),0,,eval($1))')
 
 
 dnl  Usage: m4_log2(x)
@@ -663,6 +723,21 @@ define(deflit_emptyargcheck,
 ')')')
 
 
+dnl  Usage: m4_assert(`expr')
+dnl
+dnl  Test a compile-time requirement with an m4 expression.  The expression
+dnl  should be quoted, and will be eval()ed and expected to be non-zero.
+dnl  For example,
+dnl
+dnl         m4_assert(`FOO*2+6 < 14')
+
+define(m4_assert,
+m4_assert_numargs(1)
+`ifelse(eval($1),1,,
+`m4_error(`assertion failed: $1
+')')')
+
+
 dnl  --------------------------------------------------------------------------
 dnl  Various assembler things, not specific to any particular CPU.
 dnl
@@ -723,6 +798,25 @@ m4_not_for_expansion(`OPERATION_XOR')
 m4_not_for_expansion(`OPERATION_XNOR')
 
 
+dnl  Usage: m4_config_gmp_mparam(`symbol')
+dnl
+dnl  Check that `symbol' is defined.  If it isn't, issue an error and
+dnl  terminate immediately.  The error message explains that the symbol
+dnl  should be in config.m4, copied from gmp-mparam.h.
+dnl
+dnl  Processing is terminated immediately since missing something like
+dnl  KARATSUBA_SQR_THRESHOLD can lead to infinite loops with endless error
+dnl  messages.
+
+define(m4_config_gmp_mparam,
+m4_assert_numargs(1)
+`ifdef(`$1',,
+`m4_error(`$1 is not defined.
+	"configure" should have extracted this from gmp-mparam.h and put it
+	in config.m4, but somehow this has failed.
+')m4exit(1)')')
+
+
 dnl  Usage: defreg(name,reg)
 dnl
 dnl  Give a name to a $ style register.  For example,
@@ -764,6 +858,43 @@ define(defreg,
 m4_assert_numargs(2)
 `deflit(`$1',
 substr(`$2',0,1)``''substr(`$2',1))')
+
+
+dnl  Usage: m4_instruction_wrapper(num)
+dnl
+dnl  Put this, unquoted, on a line on its own, at the start of a macro
+dnl  that's a wrapper around an assembler instruction.  It adds code to give
+dnl  a descriptive error message if the macro is invoked without arguments.
+dnl
+dnl  For example, suppose jmp needs to be wrapped,
+dnl
+dnl         define(jmp,
+dnl         m4_instruction_wrapper()
+dnl         m4_assert_numargs(1)
+dnl                 `.byte 0x42
+dnl                 .long  $1
+dnl                 nop')
+dnl
+dnl  The point of m4_instruction_wrapper is to get a better error message
+dnl  than m4_assert_numargs would give if jmp is accidentally used as plain
+dnl  "jmp foo" instead of the intended "jmp( foo)".  "jmp()" with no
+dnl  argument also provokes the error message.
+dnl
+dnl  m4_instruction_wrapper should only be used with wrapped instructions
+dnl  that take arguments, since obviously something meant to be used as
+dnl  plain "ret", say, doesn't want to give an error when used that way.
+
+define(m4_instruction_wrapper,
+m4_assert_numargs(0)
+``m4_instruction_wrapper_internal'(m4_doublequote($`'0),dnl
+m4_doublequote(ifdef(`__file__',__file__,`the m4 sources')),dnl
+$`#',m4_doublequote($`'1))`dnl'')
+
+dnl  Called: m4_instruction_wrapper_internal($0,`filename',$#,$1)
+define(m4_instruction_wrapper_internal,
+`ifelse(eval($3<=1 && m4_length(`$4')==0),1,
+`m4_error(`$1 is a macro replacing that instruction and needs arguments, see $2 for details
+')')')
 
 
 dnl  Usage: UNROLL_LOG2, UNROLL_MASK, UNROLL_BYTES
