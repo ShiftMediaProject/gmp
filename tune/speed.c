@@ -90,6 +90,15 @@ SPEED_EXTRA_PROTOS2
       (ptr)[__i] = (n);                 \
   } while (0)
 
+
+#if BITS_PER_MP_LIMB == 32
+#define MP_LIMB_T_0xAA  CNST_LIMB(0xAAAAAAAA)
+#endif
+#if BITS_PER_MP_LIMB == 64
+#define MP_LIMB_T_0xAA  CNST_LIMB(0xAAAAAAAAAAAAAAAA)
+#endif
+
+
 #define CMP_ABSOLUTE     1
 #define CMP_RATIO        2
 #define CMP_DIFFERENCE   3
@@ -104,8 +113,9 @@ int  option_unit = UNIT_SECONDS;
 #define DATA_RANDOM   1
 #define DATA_RANDOM2  2
 #define DATA_ZEROS    3
-#define DATA_FFS      4
-#define DATA_2FD      5
+#define DATA_AAS      4
+#define DATA_FFS      5
+#define DATA_2FD      6
 int  option_data = DATA_RANDOM;
 
 int        option_square = 0;
@@ -152,7 +162,7 @@ const struct routine_t {
   { "mpn_mul_1",         speed_mpn_mul_1,     FLAG_R },
   { "mpn_mul_1_inplace", speed_mpn_mul_1_inplace, FLAG_R },
 #if HAVE_NATIVE_mpn_mul_2
-  { "mpn_mul_2",         speed_mpn_mul_2             },
+  { "mpn_mul_2",         speed_mpn_mul_2,     FLAG_R },
 #endif
 
   { "mpn_divrem_1",      speed_mpn_divrem_1,  FLAG_R },
@@ -361,6 +371,9 @@ data_fill (mp_ptr ptr, mp_size_t size)
     break;
   case DATA_ZEROS:
     MPN_ZERO (ptr, size);
+    break;
+  case DATA_AAS:
+    MPN_FILL (ptr, size, MP_LIMB_T_0xAA);
     break;
   case DATA_FFS:
     MPN_FILL (ptr, size, MP_LIMB_T_MAX);
@@ -701,6 +714,9 @@ r_string (const char *s)
   const char  *s_orig = s;
   long        n;
 
+  if (strcmp (s, "aas") == 0)
+    return MP_LIMB_T_0xAA;
+
   {
     mpz_t      z;
     mp_limb_t  l;
@@ -847,7 +863,7 @@ Times are in seconds, accuracy is shown.\n\
    -C         show times in cycles per limb\n\
    -u         print resource usage (memory) at end\n\
    -P name    output plot files \"name.gnuplot\" and \"name.data\"\n\
-   -a <type>  use given data: random(default), random2, zeros, ffs\n\
+   -a <type>  use given data: random(default), random2, zeros, aas, ffs, 2fd\n\
    -x, -y, -w, -W <align>  specify data alignments, sources and dests\n\
    -o addrs   print addresses of data blocks\n\
 \n\
@@ -879,8 +895,9 @@ The available routines are as follows.\n\
   printf ("\n\
 Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n\
 r should be in decimal, or use 0xN for hexadecimal.\n\
-Special forms for r are Nbits for a random N bit number, and Nones for N one\n\
-bits.\n\
+
+Special forms for r are \"<N>bits\" for a random N bit number, \"<N>ones\" for\n\
+N one bits, or \"aas\" for 0xAA..AA.\n\
 \n\
 Times for sizes out of the range accepted by a routine are shown as 0.\n\
 The fastest routine at each size is marked with a # (free form output only).\n\
@@ -913,6 +930,7 @@ main (int argc, char *argv[])
         if (strcmp (optarg, "random") == 0)       option_data = DATA_RANDOM;
         else if (strcmp (optarg, "random2") == 0) option_data = DATA_RANDOM2;
         else if (strcmp (optarg, "zeros") == 0)   option_data = DATA_ZEROS;
+        else if (strcmp (optarg, "aas") == 0)     option_data = DATA_AAS;
         else if (strcmp (optarg, "ffs") == 0)     option_data = DATA_FFS;
         else if (strcmp (optarg, "2fd") == 0)     option_data = DATA_2FD;
         else
