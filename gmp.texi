@@ -793,15 +793,26 @@ done separately in some configure tests, and in the @samp{ansi2knr} support
 for K&R compilers.
 
 @item C++ Support, @option{--enable-cxx}
-C++ support in GMP can be enabled with @samp{--enable-cxx}, and for this a C++
-compiler will be required.  As a convenience @samp{--enable-cxx=detect} can be
-used to enable C++ support only if a C++ compiler can be found.  The C++
+C++ support in GMP can be enabled with @samp{--enable-cxx}, in which case a
+C++ compiler will be required.  As a convenience @samp{--enable-cxx=detect}
+can be used to enable C++ support only if a compiler can be found.  The C++
 support consists of a library @file{libgmpxx.la} and header file
 @file{gmpxx.h}.
 
-Note that in general @file{libgmpxx} will be usable only with the C++
-compiler that built it, since name mangling and runtime support are usually
-incompatible between different compilers.
+A separate @file{libgmpxx.la} has been adopted rather than having C++ objects
+within @file{libgmp.la} in order to ensure dynamic linked C programs aren't
+bloated by a dependency on the C++ standard library, and to avoid any chance
+that the C++ compiler could be required when linking plain C programs.
+
+@file{libgmpxx.la} will use certain internals from @file{libgmp.la} and can
+only be expected to work with @file{libgmp.la} from the same GMP version.
+Future changes to the relevant internals will be accompanied by renaming, so a
+mismatch will cause unresolved symbols rather than perhaps mysterious
+misbehaviour.
+
+In general @file{libgmpxx.la} will be usable only with the C++ compiler that
+built it, since name mangling and runtime support are usually incompatible
+between different compilers.
 
 @item @option{CXX}, @option{CXXFLAGS}
 When C++ support is enabled, the C++ compiler and its flags can be set with
@@ -1146,6 +1157,12 @@ be added in each release, so on systems where libtool versioning is not fully
 checked by the loader an auxiliary mechanism may be needed to express that a
 dynamic linked application depends on a new enough GMP.
 
+An auxiliary mechanism may also be needed to express that @file{libgmpxx.la}
+(from @option{--enable-cxx}, @pxref{Build Options}) requires @file{libgmp.la}
+from the same GMP version, since this is not done by the libtool versioning,
+nor otherwise.  A mismatch will result in unresolved symbols from the linker,
+or perhaps the loader.
+
 When building a package for a CPU family, care should be taken to use
 @samp{--host} (or @samp{--build}) to choose the least common denominator among
 the CPUs which might use the package.  For example this might necessitate
@@ -1158,8 +1175,8 @@ user to omit @samp{--build} (and @samp{--host}) so @samp{./config.guess} will
 detect the CPU.  But a way to manually specify a @samp{--build} will be wanted
 for systems where @samp{./config.guess} is inexact.
 
-It should be noted that @file{gmp.h} is a generated file, and will be
-architecture and ABI dependent.
+Note that @file{gmp.h} is a generated file, and will be architecture and ABI
+dependent.
 
 
 @need 2000
@@ -2247,11 +2264,10 @@ Initialize @var{integer}, and set its value to 0.
 @end deftypefun
 
 @deftypefun void mpz_init2 (mpz_t @var{integer}, unsigned long @var{n})
-Initialize @var{integer}, initially with space for @var{n} bits, and set its
-value to 0.
+Initialize @var{integer}, with space for @var{n} bits, and set its value to 0.
 
 @var{n} is only the initial space, @var{integer} will grow automatically in
-the normal way if necessary for subsequent values stored.  @code{mpz_init2}
+the normal way, if necessary, for subsequent values stored.  @code{mpz_init2}
 makes it possible to avoid such reallocations if a maximum size is known in
 advance.
 @end deftypefun
