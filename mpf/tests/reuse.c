@@ -13,7 +13,11 @@
 #define EXPO 32
 #endif
 
+#if __STDC__
 typedef void (*dss_func) (mpf_ptr, mpf_srcptr, mpf_srcptr);
+#else
+typedef void (*dss_func) ();
+#endif
 
 dss_func dss_funcs[] =
 {
@@ -25,7 +29,11 @@ char *dss_func_names[] =
   "mpf_div", "mpf_add", "mpf_mul", "mpf_sub",
 };
 
+#if __STDC__
 typedef void (*dsi_func) (mpf_ptr, mpf_srcptr, unsigned long int);
+#else
+typedef void (*dsi_func) ();
+#endif
 
 dsi_func dsi_funcs[] =
 {
@@ -37,7 +45,11 @@ char *dsi_func_names[] =
   "mpf_div_ui", "mpf_add_ui", "mpf_mul_ui", "mpf_sub_ui",
 };
 
+#if __STDC__
 typedef void (*dis_func) (mpf_ptr, unsigned long int, mpf_srcptr);
+#else
+typedef void (*dis_func) ();
+#endif
 
 dis_func dis_funcs[] =
 {

@@ -9,7 +9,11 @@
 #define SIZE 16
 #endif
 
+#if __STDC__
 typedef void (*dss_func) (mpz_ptr, mpz_srcptr, mpz_srcptr);
+#else
+typedef void (*dss_func) ();
+#endif
 
 dss_func dss_funcs[] =
 {
