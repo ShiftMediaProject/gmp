@@ -29,9 +29,16 @@
 # With no arguments, all .o files corresponding to .asm files are processed.
 # This is good in the mpn object directory of a k6*-*-* build.
 #
-# As far as fixing problems goes, any cache line crossing problems in loops
-# get attention, but as a rule it's too tedious to rearrange code or slip in
-# nops to fix every problem in setup or finishup code.
+# Code alignments of 8 bytes or more are handled.  When 32 is used, cache
+# line boundaries will fall in at offsets 0x20,0x40,etc and problems are
+# flagged at those locations.  When 16 is used, the line boundaries can also
+# fall at offsets 0x10,0x30,0x50,etc, depending where the file is loaded, so
+# problems are identified there too.  Likewise when 8 byte alignment is used
+# problems are flagged additionally at 0x08,0x18,0x28,etc.
+#
+# Usually 32 byte alignment is used for k6 routines, but less is certainly
+# possible if through good luck, or a little tweaking, cache line crossing
+# problems can be avoided at the extra locations.
 #
 # Bugs:
 #
@@ -41,13 +48,19 @@
 # though.
 #
 # There's no messages for using the vector decoded addressing mode (%esi),
-# but that mode is easy to avoid when coding.
+# but that's easy to avoid when coding.
+#
+# Future:
+#
+# Warn about jump targets that are poorly aligned (less than 2 instructions
+# before a cache line boundary).
 
 use strict;
 
 sub disassemble {
     my ($file) = @_;
     my ($addr,$b1,$b2,$b3, $prefix,$opcode,$modrm);
+    my $align;
 
     open (IN, "objdump -Srfh $file |")
 	|| die "Cannot open pipe from objdump\n";
@@ -55,8 +68,10 @@ sub disassemble {
 	print;
 
 	if (/^[ \t]*[0-9]+[ \t]+\.text[ \t]/ && /2\*\*([0-9]+)$/) {
-	    if ($1 < 5) {
-		print "ZZ need at least 2**5 for predictable cache line crossing\n";
+	    $align = 1 << $1;
+	    if ($align < 8) {
+		print "ZZ cross.pl cannot handle alignment < 2**3\n";
+		$align = 8
 	    }
 	}
 	
@@ -92,10 +107,14 @@ sub disassemble {
 	}
 
 	# with just an opcode, starting 1f mod 20h
-	if ($addr =~ /[13579bdf]f$/
+	if (($align==32 && $addr =~ /[13579bdf]f$/
+	     || $align==16 && $addr =~ /f$/
+	     || $align==8 && $addr =~ /[7f]$/)
 	    && $prefix !~ /0f/
 	    && $opcode !~ /1[012345]/ # adc
 	    && $opcode !~ /1[89abcd]/ # sbb
+	    && $opcode !~ /^4/        # inc/dec reg
+	    && $opcode !~ /^5/        # push/pop reg
 	    && $opcode !~ /68/        # push $imm32
 	    && $opcode !~ /^7/        # jcond disp8
 	    && $opcode !~ /a[89]/     # test+imm
@@ -111,13 +130,17 @@ sub disassemble {
 	}
 
 	# with an 0F prefix, anything starting at 1f mod 20h
-	if ($addr =~ /[13579bdf][f]$/
+	if (($align==32 && $addr =~ /[13579bdf][f]$/
+	     || $align==16 && $addr =~ /f$/
+	     || $align==8 && $addr =~ /[7f]$/)
 	    && $prefix =~ /0f/) {
 	    print "ZZ ($file) prefix/opcode cross 32-byte boundary\n";
 	}
 
 	# with an 0F prefix, anything with mod/rm starting at 1e mod 20h
-	if ($addr =~ /[13579bdf][e]$/
+	if (($align==32 && $addr =~ /[13579bdf][e]$/
+	     || $align==16 && $addr =~ /[e]$/
+	     || $align==8 && $addr =~ /[6e]$/)
 	    && $prefix =~ /0f/
 	     && $opcode !~ /^8/        # jcond disp32
 	    && $modrm !~ /^$/) {
