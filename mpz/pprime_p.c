@@ -6,8 +6,8 @@
    positive is (1/4)**reps, where reps is the number of internal passes of the
    probabilistic algorithm.  Knuth indicates that 25 passes are reasonable.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001 Free Software
-Foundation, Inc.  Miller-Rabin code contributed by John Amanatides.
+Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001, 2002 Free
+Software Foundation, Inc.  Miller-Rabin code contributed by John Amanatides.
 
 This file is part of the GNU MP Library.
 
@@ -36,21 +36,20 @@ int
 mpz_probab_prime_p (mpz_srcptr n, int reps)
 {
   mp_limb_t r;
+  mpz_t     nabs;
+
+  if (UNLIKELY (SIZ(n) < 0))
+    {
+      SIZ(nabs) = - SIZ(n);
+      PTR(nabs) = PTR(n);
+      ASSERT_CODE (ALLOC(nabs) = ALLOC(n));
+      n = nabs;
+    }
 
   /* Handle small and negative n.  */
   if (mpz_cmp_ui (n, 1000000L) <= 0)
     {
       int is_prime;
-      if (mpz_sgn (n) < 0)
-	{
-	  /* Negative number.  Negate and call ourselves.  */
-	  mpz_t n2;
-	  mpz_init (n2);
-	  mpz_neg (n2, n);
-	  is_prime = mpz_probab_prime_p (n2, reps);
-	  mpz_clear (n2);
-	  return is_prime;
-	}
       is_prime = isprime (mpz_get_ui (n));
       return is_prime ? 2 : 0;
     }
