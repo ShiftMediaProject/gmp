@@ -54,7 +54,7 @@ dnl  MUL_THRESHOLD is the value of xsize+size at which the multiply by
 dnl  inverse method is used, rather than plain "divl"s.  Minimum value 1.
 dnl
 dnl  The inverse takes about 50 cycles to calculate, but after that the
-dnl  multiply is 17 c/l versus division at 39 c/l.
+dnl  multiply is 17 c/l versus division at 42 c/l.
 dnl
 dnl  At 3 limbs the mul is a touch faster than div on the integer part, and
 dnl  even more so on the fractional part.
