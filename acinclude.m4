@@ -955,6 +955,76 @@ AC_SUBST(ANSI2KNR)
 ])
 
 
+dnl  GMP_C_SIZES
+dnl  -----------
+dnl  Probe for the sizes of various data types, if they aren't already
+dnl  provided by gmp-mparam.h.  $gmp_mparam_source is the selected
+dnl  gmp-mparam.h.
+dnl
+dnl  These sizes need to be known at pre-processing time, for use in #if
+dnl  conditionals.  Most preprocessors won't accept sizeof(), GNU cpp
+dnl  doesn't for instance.
+dnl
+dnl  The test probes by creating an array which will have a negative size if
+dnl  $tmp_try doesn't equal sizeof($tmp_type), thereby inducing an error.
+dnl
+dnl  This method won't work if some dumb compiler treats array sizes as
+dnl  unsigned or doesn't test for negatives, but requiring that exactly one
+dnl  of the test values succeeds should protect against this.  Values are
+dnl  also double checked by tests/t-constants.c.
+dnl
+dnl  When assembler code depends on particular sizes it's probably best to
+dnl  put explicit #defines in gmp-mparam.h.  That way if strange compiler
+dnl  options change the size of some type then the mismatch will be detected
+dnl  by t-constants.c rather than only by the code crashing or giving wrong
+dnl  results.
+
+AC_DEFUN(GMP_C_SIZES,
+[for tmp_pair in BITS_PER_MP_LIMB:mp_limb_t \
+                 BITS_PER_LONGINT:long \
+                 BITS_PER_INT:int \
+                 BITS_PER_SHORTINT:short \
+                 BITS_PER_CHAR:char; do
+  tmp_def=`echo $tmp_pair | sed 's/:.*//'`
+  tmp_type=`echo $tmp_pair | sed 's/.*://'`
+  if grep "#define $tmp_def" $gmp_mparam_source >/dev/null; then
+    continue
+  fi
+  AC_CACHE_CHECK([sizeof $tmp_type],
+                 gmp_cv_c_sizes_$tmp_type,
+    [tmp_val=
+    rm -f conftest.out
+    for tmp_try in 1 2 4 8 16 32; do
+      echo "Trying $tmp_try:" >>conftest.out
+      cat >conftest.c <<EOF
+#include "gmp.h"
+[int test [2*(sizeof($tmp_type) == $tmp_try) - 1];]
+EOF
+      cat conftest.c >>conftest.out
+      if ($CC $CFLAGS -c conftest.c) >>conftest.out 2>&1; then
+        if test -n "$tmp_val"; then
+          cat conftest.out 1>&AC_FD_CC
+          AC_MSG_ERROR([$tmp_def $tmp_type passes both $tmp_val and $tmp_try])
+        fi
+        tmp_val=$tmp_try
+      fi
+    done
+    if test -z "$tmp_val"; then
+      cat conftest.out 1>&AC_FD_CC
+      AC_MSG_ERROR([$tmp_def $tmp_type: size not determined])
+    fi
+    eval gmp_cv_c_sizes_$tmp_type=$tmp_val
+    ])
+  eval tmp_val=\$gmp_cv_c_sizes_$tmp_type
+  AC_DEFINE_UNQUOTED($tmp_def, (8*$tmp_val))
+  if test $tmp_def = BITS_PER_MP_LIMB; then
+    AC_DEFINE_UNQUOTED(BYTES_PER_MP_LIMB, $tmp_val)
+  fi
+done
+rm -f conftest.*
+])
+
+
 dnl  Deal with bad synchronization of Autoconf with Libtool.
 AC_DEFUN(AC_CANONICAL_BUILD, [_AC_CANONICAL_BUILD])
 AC_DEFUN(AC_CHECK_TOOL_PREFIX, [_AC_CHECK_TOOL_PREFIX])
