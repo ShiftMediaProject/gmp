@@ -1,9 +1,34 @@
+c     Helper for mpn_mul_1, mpn_addmul_1, and mpn_submul_1 for Cray PVP.
+
+c     Copyright (C) 1996, 2000 Free Software Foundation, Inc.
+
+c     This file is part of the GNU MP Library.
+
+c     The GNU MP Library is free software; you can redistribute it and/or modify
+c     it under the terms of the GNU Library General Public License as published by
+c     the Free Software Foundation; either version 2 of the License, or (at your
+c     option) any later version.
+
+c     The GNU MP Library is distributed in the hope that it will be useful, but
+c     WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+c     or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+c     License for more details.
+
+c     You should have received a copy of the GNU Library General Public License
+c     along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+c     the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+c     MA 02111-1307, USA.
+
+c     p1[] = hi(a[]*s); the upper limbs of each product
+c     p0[] = low(a[]*s); the corresponding lower limbs
+c     n is number of limbs in the vectors
+
       subroutine gmpn_mulww(p1,p0,a,n,s)
       integer*8 p1(0:*),p0(0:*),a(0:*),s
       integer n
 
-      integer*8 a0,a1,a2,s0,s1,s2,cy
-      integer*8 ai,t0,t1,t2,t3,t4,r0,r1,r2
+      integer*8 a0,a1,a2,s0,s1,s2,c
+      integer*8 ai,t0,t1,t2,t3,t4
 
       s0 = shiftl(and(s,4194303),24)
       s1 = shiftl(and(shiftr(s,22),4194303),24)
@@ -16,18 +41,14 @@
          a2 = shiftl(and(shiftr(ai,44),4194303),24)
 
          t0 = i24mult(a0,s0)
-         t1 = i24mult(a0,s1) + i24mult(a1,s0)
-         t2 = i24mult(a0,s2) + i24mult(a1,s1) + i24mult(a2,s0)
-         t3 = i24mult(a1,s2) + i24mult(a2,s1)
+         t1 = i24mult(a0,s1)+i24mult(a1,s0)
+         t2 = i24mult(a0,s2)+i24mult(a1,s1)+i24mult(a2,s0)
+         t3 = i24mult(a1,s2)+i24mult(a2,s1)
          t4 = i24mult(a2,s2)
 
-         r0 = t0 + shiftl(t2,44) + shiftl(t1,22)
-
-         cy = shiftr(shiftr(t0,22)+and(t1,4398046511103)
-     $        +shiftl(and(t2,1048575),22),42)
-
-         p0(i) = r0
-         r2 = shiftl(t4,24)+shiftl(t3,2)+shiftr(t2,20)+shiftr(t1,42)
-         p1(i) = r2 + cy
+         p0(i)=shiftl(t2,44)+shiftl(t1,22)+t0
+         c=shiftr(shiftr(t0,22)+and(t1,4398046511103)+
+     $        shiftl(and(t2,1048575),22),42)
+         p1(i)=shiftl(t4,24)+shiftl(t3,2)+shiftr(t2,20)+shiftr(t1,42)+c
       end do
       end

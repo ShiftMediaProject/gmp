@@ -1,8 +1,6 @@
-/* mpn_addmul_1 for Cray PVP.  This code would run on any machine with 64-bit
-   limbs, but it is optimized for Cray's fast 24/48 bit multiply, and wouldn't
-   run well on other machines.
+/* mpn_submul_1 for Cray PVP.
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright (C) 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,7 +24,7 @@ MA 02111-1307, USA.  */
 #include "gmp-impl.h"
 
 mp_limb_t
-mpn_addmul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t limb)
+mpn_submul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t limb)
 {
   mp_ptr p0, p1, tp;
   mp_limb_t cy_limb;
