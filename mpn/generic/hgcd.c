@@ -1401,7 +1401,6 @@ hgcd_start (struct hgcd *hgcd,
 
 /* Performs one euclid step on r0, r1. Returns >= 0 if hgcd should be
    terminated, -1 if we should go on */
-/* FIXME: Rename function */
 static int
 euclid_step (struct hgcd *hgcd, mp_size_t M,
 	     struct qstack *quotients,
@@ -2108,7 +2107,6 @@ mpn_hgcd (struct hgcd *hgcd,
   if (hgcd->row[0].rsize > M + m + 1)
     {
       /* One euclid step to reduce size. */
-      /* FIXME: Rename euclid_step */
       int res = euclid_step (hgcd, M, quotients, tp, talloc);
 
       if (res > 0)
