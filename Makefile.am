@@ -101,7 +101,7 @@ MPN_OBJECTS = @mpn_objs_in_libgmp@
 
 MPBSD_OBJECTS = mpbsd/add.lo mpbsd/mdiv.lo mpbsd/move.lo mpbsd/powm.lo	  \
   mpbsd/sub.lo mpbsd/cmp.lo mpbsd/mfree.lo mpbsd/mtox.lo mpbsd/realloc.lo \
-  mpbsd/assert.lo mpbsd/memory.lo mpbsd/mp_bpl.lo			  \
+  mpbsd/assert.lo mpbsd/errno.lo mpbsd/memory.lo mpbsd/mp_bpl.lo	  \
   mpbsd/gcd.lo mpbsd/itom.lo mpbsd/min.lo mpbsd/mul.lo mpbsd/mout.lo	  \
   mpbsd/pow_ui.lo mpbsd/sdiv.lo mpbsd/sqrtrem.lo mpbsd/xtom.lo 
 
