@@ -137,6 +137,8 @@ sub disassemble {
 	     || $align==8 && $addr =~ /[7f]$/)
 	    && $prefix =~ /0f/
 	    && $opcode !~ /af/        # imul
+	    && $opcode !~ /a[45]/     # shldl
+	    && $opcode !~ /a[cd]/     # shrdl
 	    ) {
 	    print "ZZ ($file) prefix/opcode cross 32-byte boundary\n";
 	}
@@ -147,7 +149,9 @@ sub disassemble {
 	     || $align==8 && $addr =~ /[6e]$/)
 	    && $prefix =~ /0f/
 	     && $opcode !~ /^8/        # jcond disp32
-	     && $opcode !~ /^af/       # imull reg,reg
+	     && $opcode !~ /af/        # imull reg,reg
+	     && $opcode !~ /a[45]/     # shldl
+	     && $opcode !~ /a[cd]/     # shrdl
 	    && $modrm !~ /^$/) {
 	    print "ZZ ($file) prefix/opcode/modrm cross 32-byte boundary\n";
 	}
