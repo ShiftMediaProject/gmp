@@ -23,15 +23,15 @@ include(`../config.m4')
 
 ASM_START()
 PROLOGUE_GP(mpn_count_leading_zeros)
-	.set at		C need the `at' register for expanding ldbu on ev4/ev5
 	cmpbge	r31,  r16, r1
 	lda	r3,   __clz_tab
 	sra	r1,   1,   r1
 	xor	r1,   127, r1
 	srl	r16,  1,   r16
 	addq	r1,   r3,  r1
-	ldbu	r0,   0(r1)
+	ldq_u	r0,   0(r1)
 	lda	r2,   64
+	extbl	r0,   r1,   r0
 	s8subl	r0,   8,    r0
 	srl	r16,  r0,   r16
 	addq	r16,  r3,   r16
@@ -41,21 +41,3 @@ PROLOGUE_GP(mpn_count_leading_zeros)
 	ret	r31,  (r26),1
 EPILOGUE(mpn_count_leading_zeros)
 ASM_END()
-
-dnl This is an alternative sequence that might be faster, but probably is
-dnl one cycle slower:
-dnl
-dnl	cmpbge	r31,  r16, r1
-dnl	lda	r3,   __clz_tab
-dnl	sra	r1,   1,   r1
-dnl	xor	r1,   127, r1
-dnl	addq	r1,   r3,  r1
-dnl	ldbu	r2,   0(r1)
-dnl	subl	r2,   1,    r2
-dnl	extbl	r16,  r2,   r16
-dnl	srl	r16,  1,    r16
-dnl	addq	r16,  r3,   r16
-dnl	ldbu	r1,   0(r16)
-dnl	lda	r0,   64
-dnl	s8addq	r2,   r1,   r2
-dnl	subl	r0,   r2,   r0
