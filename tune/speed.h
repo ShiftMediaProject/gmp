@@ -73,6 +73,7 @@ extern double  speed_cycletime;
 extern int     speed_precision;
 extern const char *speed_time_string;
 void speed_time_init _PROTO ((void));
+void speed_cycletime_fail _PROTO ((const char *str));
 void speed_cycletime_init _PROTO ((void));
 void speed_cycletime_need_cycles _PROTO ((void));
 void speed_cycletime_need_seconds _PROTO ((void));
