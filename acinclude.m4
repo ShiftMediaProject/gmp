@@ -1939,3 +1939,41 @@ die die die
 ],,,
   [AC_MSG_WARN([gmp.h doesnt recognise <stdio.h>, FILE prototypes will be unavailable])])
 ])
+
+
+dnl  GMP_IMPL_H_IEEE_FLOATS
+dnl  ----------------------
+dnl  Check whether the #ifdef's in gmp-impl.h recognise IEEE format and
+dnl  endianness.
+
+AC_DEFUN(GMP_IMPL_H_IEEE_FLOATS,
+[case $host in
+  vax*-*-*)
+    # not IEEE (neither D nor G formats are IEEE)
+    ;;
+  none-*-*)
+    # don't worry about this when CPU "none"
+    ;;
+  *)
+    case $path in
+      *cray/cfp*)
+        # not IEEE
+        ;;
+      *)
+        AC_TRY_COMPILE(
+[#include <stdio.h>]
+GMP_INCLUDE_GMP_H
+[#include "$srcdir/gmp-impl.h"
+#ifndef _GMP_IEEE_FLOATS
+die die die
+#endif
+],,,[
+          AC_MSG_WARN([gmp-impl.h doesnt recognise "double" as IEEE.])
+          AC_MSG_WARN([If your CPU floats are in fact IEEE then you])
+	  AC_MSG_WARN([might like to augment the tests there.])
+        ])
+        ;;
+    esac
+    ;;
+esac
+])
