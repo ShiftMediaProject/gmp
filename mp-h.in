@@ -23,21 +23,40 @@ MA 02111-1307, USA. */
 
 #ifndef __MP_H__
 
-#ifndef __GNU_MP__		/* to allow inclusion of both gmp.h and mp.h */
+
+/* The following (everything under ifndef __GNU_MP__) must be identical in
+   gmp.h and mp.h to allow both to be included in an application or during
+   the library build.  */
+#ifndef __GNU_MP__
 #define __GNU_MP__ 3
+
 #define __need_size_t
 #include <stddef.h>
 #undef __need_size_t
 
-
 /* The following instantiated by configure, for internal use only */
 @DEFN_LONG_LONG_LIMB@
 
+#if (__STDC__-0) || defined (__cplusplus) || defined (_MSC_VER)
+#define __GMP_HAVE_CONST      1
+#define __GMP_HAVE_PROTOTYPES 1
+#else
+#define __GMP_HAVE_CONST      0
+#define __GMP_HAVE_PROTOTYPES 0
+#endif
 
-#if (__STDC__-0) || defined (__cplusplus)
-#define __gmp_const const
+#if defined (__STDC__) || defined (__cplusplus) || defined (_MSC_VER)
+#define __GMP_HAVE_TOKEN_PASTE  1
+#else
+#define __GMP_HAVE_TOKEN_PASTE  0
+#endif
+
+#if __GMP_HAVE_CONST
+#define __gmp_const   const
+#define __gmp_signed  signed
 #else
 #define __gmp_const
+#define __gmp_signed
 #endif
 
 #ifndef _EXTERN_INLINE
@@ -63,8 +82,16 @@ typedef long int		mp_limb_signed_t;
 
 typedef mp_limb_t *		mp_ptr;
 typedef __gmp_const mp_limb_t *	mp_srcptr;
+#if defined (_CRAY) && ! defined (_CRAYMPP)
+/* plain `int' is much faster (48 bits) */
+#define __GMP_MP_SIZE_T_INT     1
 typedef int			mp_size_t;
+typedef int			mp_exp_t;
+#else
+#define __GMP_MP_SIZE_T_INT     0
+typedef long int		mp_size_t;
 typedef long int		mp_exp_t;
+#endif
 
 typedef struct
 {
@@ -75,6 +102,7 @@ typedef struct
 				   negative this is a negative number.  */
   mp_limb_t *_mp_d;		/* Pointer to the limbs.  */
 } __mpz_struct;
+
 #endif /* __GNU_MP__ */
 
 /* User-visible types.  */
@@ -82,7 +110,7 @@ typedef __mpz_struct MINT;
 
 
 #ifndef _PROTO
-#if (__STDC__-0) || defined (__cplusplus)
+#if __GMP_HAVE_PROTOTYPES
 #define _PROTO(x) x
 #else
 #define _PROTO(x) ()
