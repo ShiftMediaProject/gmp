@@ -5,6 +5,7 @@
 
 	* tune/speed-ext.c: New file.
 	* tune/Makefile.am: Add it.
+	* tune/README: Updates.
 	* tune/speed.h (SPEED_ROUTINE_MPN_DIVREM_2): Bug fixes.
 	
 	* demos/calc.y,calclex.l: New files.
