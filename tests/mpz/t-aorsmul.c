@@ -17,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 #include <stdio.h>
@@ -215,9 +214,9 @@ check_data (void)
 
   for (i = 0; i < numberof (data); i++)
     {
-      mpz_set_n (w, data[i].w, numberof(data[i].w));
-      mpz_set_n (x, data[i].x, numberof(data[i].x));
-      mpz_set_n (y, data[i].y, numberof(data[i].y));
+      mpz_set_n (w, data[i].w, (mp_size_t) numberof(data[i].w));
+      mpz_set_n (x, data[i].x, (mp_size_t) numberof(data[i].x));
+      mpz_set_n (y, data[i].y, (mp_size_t) numberof(data[i].y));
       check_all (w, x, y);
     }
 
