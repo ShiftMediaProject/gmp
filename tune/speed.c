@@ -147,13 +147,20 @@ const struct routine_t {
   { "mpn_add_n_self",    speed_mpn_add_n_self       },
   { "mpn_add_n_inplace", speed_mpn_add_n_inplace    },
 
-  { "mpn_addmul_1",      speed_mpn_addmul_1, FLAG_R },
-  { "mpn_submul_1",      speed_mpn_submul_1, FLAG_R },
-  { "mpn_mul_1",         speed_mpn_mul_1,    FLAG_R },
+  { "mpn_addmul_1",      speed_mpn_addmul_1,  FLAG_R },
+  { "mpn_submul_1",      speed_mpn_submul_1,  FLAG_R },
+  { "mpn_mul_1",         speed_mpn_mul_1,     FLAG_R },
 
-  { "mpn_divmod_1",      speed_mpn_divmod_1, FLAG_R },
-  { "mpn_divrem_1",      speed_mpn_divrem_1, FLAG_R },
-  { "mpn_mod_1",         speed_mpn_mod_1,    FLAG_R },
+  { "mpn_divrem_1",      speed_mpn_divrem_1,  FLAG_R },
+  { "mpn_divrem_1f",     speed_mpn_divrem_1f, FLAG_R },
+#if HAVE_NATIVE_mpn_divrem_1c
+  { "mpn_divrem_1c",     speed_mpn_divrem_1c, FLAG_R },
+  { "mpn_divrem_1cf",    speed_mpn_divrem_1cf,FLAG_R },
+#endif
+  { "mpn_mod_1",         speed_mpn_mod_1,     FLAG_R },
+#if HAVE_NATIVE_mpn_mod_1c
+  { "mpn_mod_1c",        speed_mpn_mod_1c,    FLAG_R },
+#endif
 
   { "mpn_divexact_by3",  speed_mpn_divexact_by3     },
 
@@ -167,11 +174,9 @@ const struct routine_t {
   { "mpn_and_n",         speed_mpn_and_n            },
   { "mpn_andn_n",        speed_mpn_andn_n           },
   { "mpn_nand_n",        speed_mpn_nand_n           },
-
   { "mpn_ior_n",         speed_mpn_ior_n            },
   { "mpn_iorn_n",        speed_mpn_iorn_n           },
   { "mpn_nior_n",        speed_mpn_nior_n           },
-
   { "mpn_xor_n",         speed_mpn_xor_n            },
   { "mpn_xnor_n",        speed_mpn_xnor_n           },
 
@@ -180,10 +185,13 @@ const struct routine_t {
 
   { "mpz_fac_ui",        speed_mpz_fac_ui           },
   { "mpz_fib_ui",        speed_mpz_fib_ui           },
+  { "mpz_powm",          speed_mpz_powm             },
 
   { "mpn_gcdext",        speed_mpn_gcdext           },
   { "mpn_gcd",           speed_mpn_gcd              },
   { "mpn_gcd_1",         speed_mpn_gcd_1            },
+
+  { "mpn_jacobi_base",   speed_mpn_jacobi_base      },
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R },
   { "mpn_sqr_basecase",  speed_mpn_sqr_basecase     },
@@ -193,7 +201,6 @@ const struct routine_t {
 
   { "mpn_kara_mul_n",    speed_mpn_kara_mul_n       },
   { "mpn_kara_sqr_n",    speed_mpn_kara_sqr_n       },
-
   { "mpn_toom3_mul_n",   speed_mpn_toom3_mul_n      },
   { "mpn_toom3_sqr_n",   speed_mpn_toom3_sqr_n      },
 

@@ -116,16 +116,21 @@ double speed_MPN_COPY_INCR _PROTO ((struct speed_params *s));
 double speed_mpn_divexact_by3 _PROTO ((struct speed_params *s));
 double speed_mpn_divmod_1 _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1 _PROTO ((struct speed_params *s));
+double speed_mpn_divrem_1f _PROTO ((struct speed_params *s));
+double speed_mpn_divrem_1c _PROTO ((struct speed_params *s));
+double speed_mpn_divrem_1cf _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext _PROTO ((struct speed_params *s));
 double speed_mpn_hamdist _PROTO ((struct speed_params *s));
 double speed_mpn_ior_n _PROTO ((struct speed_params *s));
 double speed_mpn_iorn_n _PROTO ((struct speed_params *s));
+double speed_mpn_jacobi_base _PROTO ((struct speed_params *s));
 double speed_mpn_kara_mul_n _PROTO ((struct speed_params *s));
 double speed_mpn_kara_sqr_n _PROTO ((struct speed_params *s));
 double speed_mpn_lshift _PROTO ((struct speed_params *s));
 double speed_mpn_mod_1 _PROTO ((struct speed_params *s));
+double speed_mpn_mod_1c _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_mul_n _PROTO ((struct speed_params *s));
@@ -151,6 +156,7 @@ double speed_mpn_xor_n _PROTO ((struct speed_params *s));
 
 double speed_mpz_fac_ui _PROTO ((struct speed_params *s));
 double speed_mpz_fib_ui _PROTO ((struct speed_params *s));
+double speed_mpz_powm _PROTO ((struct speed_params *s));
 
 double speed_mpn_jacobi_base _PROTO ((struct speed_params *s));
 double speed_mpn_jacobi_base_division _PROTO ((struct speed_params *s));
@@ -172,6 +178,7 @@ void *_mp_allocate_or_reallocate _PROTO ((void *ptr,
 void *align_pointer _PROTO ((void *p, size_t align));
 void *_mp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
 void speed_cache_fill _PROTO ((struct speed_params *s));
+void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 
 
 #if defined(__GNUC__)
@@ -536,6 +543,7 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
     return speed_endtime ();                    \
   }  
 
+
 #define SPEED_ROUTINE_MPZ_UI(function)  \
   {                                     \
     mpz_t     z;                        \
@@ -556,6 +564,45 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
     mpz_clear (z);                      \
     return t;                           \
   }  
+
+
+/* Calculate 2^(m-1) mod m for random odd m of s->size limbs.  Having m odd
+   allows redc to be used.  Actually the exponent (m-1) is cut down to at
+   most 10 limbs so the calculation doesn't take too long.  */
+#define SPEED_ROUTINE_MPZ_POWM(function)        \
+  {                                             \
+    mpz_t     r, b, e, m;                       \
+    unsigned  i;                                \
+    double    t;                                \
+                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);         \
+                                                \
+    mpz_init (r);                               \
+    mpz_init_set_ui (b, 2);                     \
+                                                \
+    /* force m to odd */                        \
+    mpz_init (m);                               \
+    mpz_set_n (m, s->xp, s->size);              \
+    PTR(m)[0] |= 1;                             \
+                                                \
+    mpz_init_set (e, m);                        \
+    mpz_sub_ui (e, e, 1);                       \
+    SIZ(e) = MIN (SIZ(e), 10);                  \
+                                                \
+    speed_starttime ();                         \
+    i = s->reps;                                \
+    do                                          \
+      function (r, b, e, m);                    \
+    while (--i != 0);                           \
+    t = speed_endtime ();                       \
+                                                \
+    mpz_clear (r);                              \
+    mpz_clear (b);                              \
+    mpz_clear (e);                              \
+    mpz_clear (m);                              \
+    return t;                                   \
+  }  
+
 
 /* Currently testing overlap cases only */
 #define SPEED_ROUTINE_MPN_ADDSUB_N(function)                    \
@@ -621,11 +668,11 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
 
 /* SPEED_DATA_SIZE many one GCDs of s->size bits each. */
 
-#define SPEED_ROUTINE_MPN_GCD_1(function)                       \
+#define SPEED_ROUTINE_MPN_GCD_1_CALL(setup, call)               \
   {                                                             \
     unsigned  i, j;                                             \
     mp_ptr    px, py;                                           \
-    mp_limb_t x, mask;                                          \
+    mp_limb_t mask;                                             \
     double    t;                                                \
     TMP_DECL (marker);                                          \
                                                                 \
@@ -643,6 +690,7 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
       {                                                         \
         px[i] &= mask; px[i] += (px[i] == 0);                   \
         py[i] &= mask; py[i] += (py[i] == 0);                   \
+        setup;                                                  \
       }                                                         \
                                                                 \
     SPEED_OPERAND_SRC (s, px, SPEED_DATA_SIZE);                 \
@@ -656,8 +704,7 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
         j = SPEED_DATA_SIZE;                                    \
         do                                                      \
           {                                                     \
-            x = px[j-1];                                        \
-            function (&x, 1, py[j-1]);                          \
+            call;                                               \
           }                                                     \
         while (--j != 0);                                       \
       }                                                         \
@@ -669,6 +716,19 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
     s->time_divisor = SPEED_DATA_SIZE;                          \
     return t;                                                   \
   }  
+
+#define SPEED_ROUTINE_MPN_GCD_1(function) \
+  SPEED_ROUTINE_MPN_GCD_1_CALL( , function (&px[j-1], 1, py[j-1]))
+
+#define SPEED_ROUTINE_MPN_JACBASE(function)     \
+  SPEED_ROUTINE_MPN_GCD_1_CALL                  \
+    ({                                          \
+       px[i] %= py[i];                          \
+       px[i] |= 1;                              \
+       py[i] |= 1;                              \
+       if (py[i]==1) py[i]=3;                   \
+     },                                         \
+     function (px[j-1], py[j-1], 0))
 
 
 /* SPEED_DATA_SIZE/s->size many GCDs of s->size limbs each. 
