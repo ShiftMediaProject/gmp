@@ -1892,6 +1892,7 @@ AC_HEADER_TIME
 #   sys/mman.h - not in Cray Unicos
 #   sys/param.h - not in mingw
 #   sys/processor.h - solaris specific, though also present in macos
+#   sys/pstat.h - HPUX specific
 #   sys/resource.h - not in mingw
 #   sys/sysctl.h - not in mingw
 #   sys/sysinfo.h - OSF specific
@@ -1904,7 +1905,7 @@ AC_HEADER_TIME
 # inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
 # default tests
 #
-AC_CHECK_HEADERS(fcntl.h float.h langinfo.h locale.h nl_types.h sys/mman.h sys/param.h sys/processor.h sys/sysinfo.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(fcntl.h float.h langinfo.h locale.h nl_types.h sys/mman.h sys/param.h sys/processor.h sys/pstat.h sys/sysinfo.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # On SunOS, sys/resource.h needs sys/time.h (for struct timeval)
 AC_CHECK_HEADERS(sys/resource.h,,,
@@ -2025,10 +2026,11 @@ esac
 #   nl_langinfo - X/Open standard only, not in djgpp for instance
 #   obstack_vprintf - glibc specific
 #   processor_info - solaris specific
+#   pstat_getprocessor - HPUX specific (10.x and up)
 #   raise - an ANSI-ism, though probably almost universal by now
 #   read_real_time - AIX specific
 #   sigaction - not in mingw
-#   sigaltstack - not in mingw, old AIX (reputedly)
+#   sigaltstack - not in mingw, or old AIX (reputedly)
 #   sigstack - not in mingw
 #   strerror - not in SunOS
 #   strnlen - glibc extension (some other systems too)
@@ -2045,7 +2047,7 @@ esac
 # __gmp_replacement_vsnprintf which is not required on AIX since it has a
 # vsnprintf.
 #
-AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage getsysinfo gettimeofday localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info raise read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage getsysinfo gettimeofday localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info pstat_getprocessor raise read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
 
 GMP_FUNC_VSNPRINTF
 GMP_FUNC_SSCANF_WRITABLE_INPUT
