@@ -1,6 +1,6 @@
 /* gmp_vsscanf -- formatted input from a string.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,6 +26,8 @@ MA 02111-1307, USA. */
 #else
 #include <varargs.h>
 #endif
+
+#include <string.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"

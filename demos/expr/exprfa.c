@@ -1,7 +1,6 @@
-/* mpf expression evaluation */
+/* mpf expression evaluation
 
-/*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,6 +26,7 @@ MA 02111-1307, USA.
 
 #include <ctype.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "gmp.h"
 #include "expr-impl.h"

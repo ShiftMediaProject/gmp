@@ -1,6 +1,6 @@
 /* gmp_obstack_printf -- formatted output to an obstack.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,6 +30,7 @@ MA 02111-1307, USA. */
 #endif
 
 #include <obstack.h>
+#include <string.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
