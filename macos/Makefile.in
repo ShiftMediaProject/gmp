@@ -144,6 +144,25 @@ all	@dep@ {Lib}
 	{C} ::mpq:aors.c -o {Targ} {COptions} -d OPERATION_sub
 
 
+{MpfObjDir}fits_sint.o @dep@ ::mpf:fits_s.c Makefile
+	{C} ::mpf:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_sint
+
+{MpfObjDir}fits_slong.o @dep@ ::mpf:fits_s.c Makefile
+	{C} ::mpf:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_slong
+
+{MpfObjDir}fits_sshort.o @dep@ ::mpf:fits_s.c Makefile
+	{C} ::mpf:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_sshort
+
+{MpfObjDir}fits_uint.o @dep@ ::mpf:fits_u.c Makefile
+	{C} ::mpf:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_uint
+
+{MpfObjDir}fits_ulong.o @dep@ ::mpf:fits_u.c Makefile
+	{C} ::mpf:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_ulong
+
+{MpfObjDir}fits_ushort.o @dep@ ::mpf:fits_u.c Makefile
+	{C} ::mpf:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_ushort
+
+
 {MpfObjDir}floor.o @dep@ ::mpf:integer.c Makefile
 	{C} ::mpf:integer.c -o {Targ} {COptions} -d OPERATION_floor
 
