@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000 Free Software Foundation, Inc.
+# Copyright 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -19,24 +19,57 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
 
-AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
+# Only a libmpfr.a is built, since upward binary compatibility is not yet
+# guaranteed.
+
+
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
 
-
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 if WANT_MPFR
-noinst_LTLIBRARIES = libmpfr.la
+lib_LIBRARIES = libmpfr.a
+include_HEADERS = mpfr.h
 endif
 
-# FIXME: Add rnd_mode.c when it's clean.
-libmpfr_la_SOURCES = \
-	add.c div_2exp.c neg.c set_dfl_prec.c set_str_raw.c agm.c get_str.c \
-	print_raw.c set_dfl_rnd.c sqrt.c clear.c init.c set_f.c \
-	sub.c cmp.c mul.c round.c set_prec.c cmp_ui.c mul_2exp.c set.c \
-	set_si.c div.c mul_ui.c set_d.c pow.c out_str.c pi.c set_z.c \
-	add_ulp.c log2.c random.c log.c exp.c div_ui.c zeta.c karadiv.c \
-	karasqrt.c print_rnd_mode.c
+TEXINFO_TEX = ../texinfo.tex
+info_TEXINFOS = mpfr.texi
 
-EXTRA_DIST = mpfr.h mpfr-impl.h
+# FIXME: As of Jan 2001, automake doesn't like conditionally defined
+# info_TEXINFOS.  The fudge here ensures we distribute mpfr.info
+# unconditionally, but only install it if the user wants mpfr.  This is
+# highly dependent on automake internals.
+#
+if MAINTAINER_MODE
+INFO_DEPS = mpfr.info
+else
+if WANT_MPFR
+INFO_DEPS = mpfr.info
+else
+INFO_DEPS =
+endif
+endif
+
+
+libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h sin_cos.c extract.c	\
+  add.c add_ui.c add_ulp.c agm.c clear.c cmp.c cmp_ui.c div_2exp.c	\
+  div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_str.c init.c	\
+  inp_str.c log2.c log.c mul_2exp.c mul.c mul_ui.c neg.c out_str.c	\
+  pi.c pow.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c	\
+  rnd_mode.c round.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c	\
+  set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c	\
+  set_z.c sqrt.c sqrt_ui.c sub.c sub_ui.c trunc.c ui_div.c ui_sub.c	\
+  urandomb.c sqrtrem.c mpz_set_fr.c swap.c srandom.h
+
+nodist_libmpfr_a_SOURCES = floor.c ceil.c
+
+EXTRA_DIST = generic.c
+
+CLEANFILES = $(nodist_libmpfr_a_SOURCES)
+
+floor.c: $(srcdir)/trunc.c
+	cp $(srcdir)/trunc.c floor.c
+ceil.c: $(srcdir)/trunc.c
+	cp $(srcdir)/trunc.c ceil.c

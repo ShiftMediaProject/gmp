@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000 Free Software Foundation, Inc.
+# Copyright 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -22,15 +22,13 @@
 AUTOMAKE_OPTIONS = gnu no-dependencies
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mpfr
-LDADD = $(top_builddir)/libgmp.la
+LDADD = ../libmpfr.a $(top_builddir)/libgmp.la $(LIBM)
 
 if WANT_MPFR
-# FIXME: The following tests need mpfr_set_machine_rnd_mode() which is not 
-# built right now:
-# tadd tget_str tset_f tsqrt tagm tmul tdiv tlog texp tdiv_ui tout_str
-MPBSD_check_OPTION = tcmp2 tmul_ui tcmp_ui tround tset_si tcmp tmul_2exp \
-  tset_d tset_str tpi tset_z tlog2 tcan_round tzeta
+check_PROGRAMS= reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui tdump teq texp tget_str tlog tlog2 tmul tmul_2exp tmul_ui tout_str tpi tpow trandom tround tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tsin_cos tswap ttrunc
 endif
 
-check_PROGRAMS = $(MPBSD_check_OPTION)
 TESTS = $(check_PROGRAMS)
+ 
+../libmpfr.a:
+	cd $(top_srcdir)/mpfr; make libmpfr.a  
