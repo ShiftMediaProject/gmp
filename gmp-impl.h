@@ -2004,7 +2004,6 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
 #define modlimb_invert_table  __gmp_modlimb_invert_table
 __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
-#if GMP_NUMB_BITS <= 64
 #define modlimb_invert(inv,n)                                           \
   do {                                                                  \
     mp_limb_t  __n = (n);                                               \
@@ -2016,30 +2015,18 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     if (GMP_NUMB_BITS > 16)  __inv = 2 * __inv - __inv * __inv * __n;   \
     if (GMP_NUMB_BITS > 32)  __inv = 2 * __inv - __inv * __inv * __n;   \
                                                                         \
+    if (GMP_NUMB_BITS > 64)                                             \
+      {                                                                 \
+        int  __invbits = 64;                                            \
+        do {                                                            \
+          __inv = 2 * __inv - __inv * __inv * __n;                      \
+          __invbits *= 2;                                               \
+        } while (__invbits < GMP_NUMB_BITS);                            \
+      }                                                                 \
+                                                                        \
     ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);                        \
     (inv) = __inv & GMP_NUMB_MASK;                                      \
   } while (0)
-#endif
-
-#if ! defined (modlimb_invert)
-#define modlimb_invert(inv,n)                           \
-  do {                                                  \
-    mp_limb_t  __n = (n);                               \
-    mp_limb_t  __inv;                                   \
-    int        __invbits;                               \
-    ASSERT ((__n & 1) == 1);                            \
-    __inv = modlimb_invert_table[(__n/2) & 0x7F];       \
-    __invbits = 8;                                      \
-    while (__invbits < GMP_NUMB_BITS)                   \
-      {                                                 \
-        __inv = 2 * __inv - __inv * __inv * __n;        \
-        __invbits *= 2;                                 \
-      }                                                 \
-    ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);        \
-    (inv) = __inv & GMP_NUMB_MASK;                      \
-  } while (0)
-#endif
-
 
 /* Multiplicative inverse of 3, modulo 2^GMP_NUMB_BITS.
    0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
