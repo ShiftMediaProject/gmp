@@ -3443,7 +3443,7 @@ feature can account for this, by passing for instance
 @code{8*sizeof(int)-INT_BIT}.
 @end deftypefun
 
-@deftypefun void *mpz_export (void *@var{rop}, size_t *@var{count}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
+@deftypefun {void *} mpz_export (void *@var{rop}, size_t *@var{count}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
 @cindex Integer export
 @cindex Export
 Fill @var{rop} with word data from @var{op}.
