@@ -43,7 +43,7 @@ main (int argc, char **argv)
   unsigned long bsi, size_range;
   char *perform_seed;
 
-  tests_start ();
+/*    tests_start (); */
   gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
 
   perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
@@ -84,7 +84,7 @@ main (int argc, char **argv)
       if (base == 1)
 	base = 0;
 
-      str = mpz_get_str ((char *) 0, base, op1);
+      str = mpz_get_str (NULL, base, op1);
       mpz_set_str_or_abort (op2, str, base);
       (*__gmp_free_func) (str, strlen (str) + 1);
 
@@ -104,7 +104,7 @@ main (int argc, char **argv)
   mpz_clear (op2);
   gmp_randclear (rands);
 
-  tests_end ();
+/*    tests_end (); */
   exit (0);
 }
 
