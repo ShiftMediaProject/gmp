@@ -414,11 +414,13 @@ speed_mpn_mod_1 (struct speed_params *s)
 }
 
 
+#if 0
 double
 speed_mpn_divexact_by3c (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_COPYC (mpn_divexact_by3c);
 }
+#endif
 double
 speed_mpn_divexact_by3 (struct speed_params *s)
 {
