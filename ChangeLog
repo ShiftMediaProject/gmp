@@ -164,7 +164,7 @@ MA 02111-1307, USA.
 2002-09-12  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/aorsmul_i.c: Allow for w==x overlap with nails.  Test
-	BITS_PER_ULONG >= GMP_NUMB_BITS rather than GMP_NAIL_BITS != 0.
+	BITS_PER_ULONG > GMP_NUMB_BITS rather than GMP_NAIL_BITS != 0.
 	* tests/mpz/t-aorsmul.c: Test this.
 
 	* tune/common.c: mpn_mod_34lsub1 only exists for GMP_NUMB_BITS%4==0
