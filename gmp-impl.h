@@ -399,6 +399,13 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define GMP_NUMB_MASK     (MP_LIMB_T_MAX >> GMP_NAIL_BITS)
 #define GMP_NAIL_MASK     (~ GMP_NUMB_MASK)
 #define GMP_NUMB_HIGHBIT  (CNST_LIMB(1) << (GMP_NUMB_BITS-1))
+#define GMP_NUMB_MAX      GMP_NUMB_MASK
+
+#if GMP_NAIL_BITS == 0
+#define GMP_NAIL_LOWBIT   CNST_LIMB(0)
+#else
+#define GMP_NAIL_LOWBIT   (CNST_LIMB(1) << GMP_NUMB_BITS)
+#endif
 
 
 /* Swap macros. */
@@ -1288,7 +1295,7 @@ __GMP_DECLSPEC void __gmp_assert_fail _PROTO ((const char *filename, int linenum
 
 /* Check that the nail parts are zero. */
 #if WANT_ASSERT
-#define ASSERT_MP_LIMB_T(limb)                  \
+#define ASSERT_LIMB(limb)                       \
   do {                                          \
     mp_limb_t  __nail = (limb) & GMP_NAIL_MASK; \
     ASSERT (__nail == 0);                       \
@@ -1299,11 +1306,11 @@ __GMP_DECLSPEC void __gmp_assert_fail _PROTO ((const char *filename, int linenum
       {                                         \
         mp_size_t  __i;                         \
         for (__i = 0; __i < (size); __i++)      \
-          ASSERT_MP_LIMB_T ((ptr)[__i]);        \
+          ASSERT_LIMB ((ptr)[__i]);             \
       }                                         \
   } while (0)
 #else
-#define ASSERT_MP_LIMB_T(limb)  do {} while (0)
+#define ASSERT_LIMB(limb)  do {} while (0)
 #define ASSERT_MPN(ptr, size)   do {} while (0)
 #endif
 
@@ -1452,50 +1459,50 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
    declaring their operand sizes, then remove the former.  This is purely
    for the benefit of assertion checking.  */
 
-#if defined (__GNUC__) && HAVE_HOST_CPU_FAMILY_x86                      \
+#if defined (__GNUC__) && HAVE_HOST_CPU_FAMILY_x86 && GMP_NAIL_BITS == 0      \
   && BITS_PER_MP_LIMB == 32 && ! defined (NO_ASM) && ! WANT_ASSERT
 /* Better flags handling than the generic C gives on i386, saving a few
-   bytes of code and maybe a cycle or two.  aors is an add or sub, iord is
-   an inc or dec, and jiord is a jump for overflow of iord.  */
+   bytes of code and maybe a cycle or two.  */
 
-#define MPN_IORD_U(ptr, n, aors, iord, jiord)   \
-  do {                                          \
-    mp_ptr  __dummy;                            \
-    if (__builtin_constant_p (n) && (n) == 1)   \
-      {                                         \
-        __asm__ __volatile__                    \
-          ("\n" ASM_L(top) ":\n"                \
-           "\t" iord "(%0)\n"                   \
-           "\tleal 4(%0),%0\n"                  \
-           "\t" jiord " " ASM_L(top)            \
-           : "=r" (__dummy)                     \
-           : "0"  (ptr)                         \
-           : "memory");                         \
-      }                                         \
-    else                                        \
-      {                                         \
-        __asm__ __volatile__                    \
-          (   aors  " %2,(%0)\n"                \
-           "\tjnc " ASM_L(done) "\n"            \
-           ASM_L(top) ":\n"                     \
-           "\t" iord "4(%0)\n"                  \
-           "\tleal 4(%0),%0\n"                  \
-           "\t" jiord " " ASM_L(top) "\n"       \
-           ASM_L(done) ":\n"                    \
-           : "=r" (__dummy)                     \
-           : "0"  (ptr),                        \
-             "ri" (n)                           \
-           : "memory");                         \
-      }                                         \
+#define MPN_IORD_U(ptr, incr, aors)                     \
+  do {                                                  \
+    if (__builtin_constant_p (incr) && (incr) == 1)     \
+      {                                                 \
+        __asm__ __volatile__                            \
+          ("\n" ASM_L(top) ":\n"                        \
+           "\t" aors "$1, (%0)\n"                       \
+           "\tleal 4(%0),%0\n"                          \
+           "\tjc " ASM_L(top)                           \
+           : "=r" (__dummy)                             \
+           : "0"  (ptr)                                 \
+           : "memory");                                 \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        mp_ptr  __ptr_dummy;                            \
+        __asm__ __volatile__                            \
+          (   aors  " %2,(%0)\n"                        \
+           "\tjnc " ASM_L(done) "\n"                    \
+           ASM_L(top) ":\n"                             \
+           "\t" aors "$1,4(%0)\n"                       \
+           "\tleal 4(%0),%0\n"                          \
+           "\tjc " ASM_L(top) "\n"                      \
+           ASM_L(done) ":\n"                            \
+           : "=r" (__ptr_dummy)                         \
+           : "0"  (ptr),                                \
+             "ri" (incr)                                \
+           : "memory");                                 \
+      }                                                 \
   } while (0)
 
-#define MPN_INCR_U(ptr, size, n)  MPN_IORD_U (ptr, n, "addl", "addl $1,", "jc")
-#define MPN_DECR_U(ptr, size, n)  MPN_IORD_U (ptr, n, "subl", "subl $1,", "jc")
-#define mpn_incr_u(ptr, n)  MPN_INCR_U (ptr, 0, n)
-#define mpn_decr_u(ptr, n)  MPN_DECR_U (ptr, 0, n)
+#define MPN_INCR_U(ptr, size, incr)  MPN_IORD_U (ptr, incr, "addl")
+#define MPN_DECR_U(ptr, size, incr)  MPN_IORD_U (ptr, incr, "subl")
+#define mpn_incr_u(ptr, incr)  MPN_INCR_U (ptr, 0, incr)
+#define mpn_decr_u(ptr, incr)  MPN_DECR_U (ptr, 0, incr)
 #endif
 
 #ifndef mpn_incr_u
+#if GMP_NAIL_BITS == 0
 #define mpn_incr_u(p,incr)                              \
   do {                                                  \
     mp_limb_t __x;                                      \
@@ -1514,9 +1521,41 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
             ;                                           \
       }                                                 \
   } while (0)
+#else /* GMP_NAIL_BITS != 0 */
+#define mpn_incr_u(p,incr)                              \
+  do {                                                  \
+    mp_limb_t __x;                                      \
+    mp_ptr __p = (p);                                   \
+    ASSERT_LIMB (incr);                                 \
+    if (__builtin_constant_p (incr) && (incr) == 1)     \
+      {                                                 \
+        do                                              \
+          {                                             \
+            ASSERT_LIMB (*__p);                         \
+            __x = *__p + 1;                             \
+            *__p++ = __x & GMP_NUMB_MASK;               \
+          }                                             \
+        while ((__x & GMP_NAIL_LOWBIT) != 0);           \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        ASSERT_LIMB (*__p);                             \
+        __x = *__p + (incr);                            \
+        for (;;)                                        \
+          {                                             \
+            *__p++ = __x & GMP_NUMB_MASK;               \
+            if ((__x & GMP_NAIL_LOWBIT) == 0)           \
+              break;                                    \
+            ASSERT_LIMB (__p[1]);                       \
+            __x = *__p + 1;                             \
+          }                                             \
+      }                                                 \
+  } while (0)
+#endif
 #endif
 
 #ifndef mpn_decr_u
+#if GMP_NAIL_BITS == 0
 #define mpn_decr_u(p,incr)                              \
   do {                                                  \
     mp_limb_t __x;                                      \
@@ -1535,6 +1574,37 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
             ;                                           \
       }                                                 \
   } while (0)
+#else /* GMP_NAIL_BITS != 0 */
+#define mpn_decr_u(p,incr)                              \
+  do {                                                  \
+    mp_limb_t __x;                                      \
+    mp_ptr __p = (p);                                   \
+    ASSERT_LIMB (incr);                                 \
+    if (__builtin_constant_p (incr) && (incr) == 1)     \
+      {                                                 \
+        do                                              \
+          {                                             \
+            ASSERT_LIMB (*__p);                         \
+            __x = *__p - 1;                             \
+            *__p++ = __x & GMP_NUMB_MASK;               \
+          }                                             \
+        while ((__x & GMP_NAIL_LOWBIT) != 0);           \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        ASSERT_LIMB (*__p);                             \
+        __x = *__p - (incr);                            \
+        for (;;)                                        \
+          {                                             \
+            *__p++ = __x & GMP_NUMB_MASK;               \
+            if ((__x & GMP_NAIL_LOWBIT) == 0)           \
+              break;                                    \
+            ASSERT_LIMB (__p[1]);                       \
+            __x = *__p - 1;                             \
+          }                                             \
+      }                                                 \
+  } while (0)
+#endif
 #endif
 
 #ifndef MPN_INCR_U
