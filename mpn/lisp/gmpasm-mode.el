@@ -348,7 +348,7 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 
 
 (defun gmpasm-comment-region-dnl (beg end &optional arg)
-  "(gmpasm-comment-region-dnl BEG END &option ARG)
+  "(gmpasm-comment-region-dnl BEG END &optional ARG)
 
 Comment or uncomment each line in the region using `dnl'.
 With \\[universal-argument] prefix arg, uncomment each line in region.
