@@ -87,17 +87,15 @@ L(one):
 
 
 L(three_or_more):
-	C eax	size
+	C eax	size-2
 	C ebx
 	C ecx
 	C edx	src
 
 	movl	%ebx, SAVE_EBX
+	xorl	%ebx, %ebx
 
 	movl	%esi, SAVE_ESI
-	decl	%eax			C size-3
-
-	xorl	%ebx, %ebx
 	pushl	%edi	FRAME_pushl()
 
 	xorl	%esi, %esi
@@ -120,22 +118,21 @@ L(top):
 	adcl	-4(%edx), %edi
 
 	decl	%eax
-	jns	L(top)
+	jg	L(top)
 
 
 	C ecx is -3, -2 or -1 representing 0, 1 or 2 more limbs, respectively
 
-	leal	3(%eax), %eax
 	movb	$0, %cl
+	incl	%eax
 
-	decl	%eax
 	js	L(combine)		C 0 more
 
 	adcl	0(%edx), %ebx
 
 	movb	$8, %cl
-
 	decl	%eax
+
 	js	L(combine)		C 1 more
 
 	adcl	4(%edx), %esi
@@ -149,14 +146,14 @@ L(combine):
 	shll	%cl, %edx		C carry
 	movl	%ebx, %eax		C 0mod3
 
-	shrl	$24, %ebx		C 0mod3 high
-	andl	$0x00FFFFFF, %eax	C 0mod3 low
+	shrl	$24, %eax		C 0mod3 high
+	andl	$0x00FFFFFF, %ebx	C 0mod3 low
 
 	subl	%edx, %eax		C apply carry
 	movl	%esi, %ecx		C 1mod3
 
 	shrl	$16, %esi		C 1mod3 high
-	addl	%ebx, %eax		C apply 0mod3 high
+	addl	%ebx, %eax		C apply 0mod3 low
 
 	andl	$0x0000FFFF, %ecx
 	addl	%esi, %eax		C apply 1mod3 high
