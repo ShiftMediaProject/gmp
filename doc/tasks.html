@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 12 Aug 2002.  An up-to-date version is available at
+  This file current as of 22 Aug 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -714,6 +714,12 @@ MA 02111-1307, USA.
 
 <ul>
 <li> a29k: umul.s and udiv.s exist but don't get used.
+<li> Alpha OSF: Libtool doesn't seem to recognise this system is "pic always"
+     and ends up running gcc twice with the same options.  This is wasteful,
+     but harmless.  Perhaps a newer libtool will be better.
+<li> Alpha OSF: Libtool ends up with some <code>${wl}</code> bits coming
+     through to the commands run.  Seems to work anyway, but hopefully a newer
+     version will have this fixed.
 <li> ARM: <code>umul_ppmm</code> in longlong.h always uses <code>umull</code>,
      but is that available only for M series chips or some such?  Perhaps it
      should be configured in some way.
@@ -764,10 +770,11 @@ MA 02111-1307, USA.
 <li> Automake: Latest automake has a <code>CCAS</code>, <code>CCASFLAGS</code>
      scheme.  Though we probably wouldn't be using its assembler support we
      could try to use those variables in compatible ways.
-<li> AIX PowerPC: <code>config.guess</code> prints an unattractive "Memory
-     fault" message from the <code>mfpvr</code> test program.  Should try to
-     suppress that.  The use of <code>$SHELL -c</code> is supposed to do that,
-     but doesn't.
+<li> <code>GMP_LDFLAGS</code> could probably be done with plain
+     <code>LDFLAGS</code> already used by automake for all linking.  But with
+     a bit of luck the next libtool will pass pretty much all
+     <code>CFLAGS</code> through to the compiler when linking, making
+     <code>GMP_LDFLAGS</code> unnecessary.
 </ul>
 
 
