@@ -1210,8 +1210,8 @@ extern const unsigned char  modlimb_invert_table[128];
       }                                                         \
     else                                                        \
       {                                                         \
-        unsigned       __twos;                                  \
-        unsigned long  __dnorm;                                 \
+        unsigned   __twos;                                      \
+        mp_limb_t  __dnorm;                                     \
         count_leading_zeros (__twos, d);                        \
         __dnorm = (d) << __twos;                                \
         (r) = ((a) <= __dnorm ? __dnorm : 2*__dnorm) - (a);     \
