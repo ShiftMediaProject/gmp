@@ -1591,7 +1591,7 @@ speed_udiv_qrnnd (struct speed_params *s)
 }
 
 double
-speed_udiv_qrnnd_preinv (struct speed_params *s)
+speed_udiv_qrnnd_preinv1 (struct speed_params *s)
 {
   SPEED_ROUTINE_UDIV_QRNND_A (1);
   {
