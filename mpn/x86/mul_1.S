@@ -37,6 +37,7 @@ MA 02111-1307, USA. */
 
 	TEXT
 	ALIGN (3)
+PROLOGUE(C_SYMBOL_NAME(__mpn_mul_1))
 	GLOBL	C_SYMBOL_NAME(__mpn_mul_1)
 C_SYMBOL_NAME(__mpn_mul_1:)
 
@@ -113,3 +114,5 @@ Lend:	movl	%ebx,%eax
 	INSN1(pop,l	,R(esi))
 	INSN1(pop,l	,R(edi))
 	ret
+
+EPILOGUE(C_SYMBOL_NAME(__mpn_mul_1))

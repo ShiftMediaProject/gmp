@@ -2,6 +2,7 @@
 
 	TEXT
 	ALIGN (3)
+PROLOGUE(C_SYMBOL_NAME(__umul_ppmm))
 	GLOBL	C_SYMBOL_NAME(__umul_ppmm)
 C_SYMBOL_NAME(__umul_ppmm:)
 	movl 4(%esp),%ecx
@@ -10,3 +11,4 @@ C_SYMBOL_NAME(__umul_ppmm:)
 	movl %eax,(%ecx)
 	movl %edx,%eax
 	ret
+EPILOGUE(C_SYMBOL_NAME(__umul_ppmm))

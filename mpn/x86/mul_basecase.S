@@ -51,6 +51,7 @@ sp =>	saved reg
 
 .text
 	ALIGN (3)
+PROLOGUE(C_SYMBOL_NAME(__mpn_mul_basecase))
 	.globl C_SYMBOL_NAME(__mpn_mul_basecase)
 C_SYMBOL_NAME(__mpn_mul_basecase:)
 	subl	$8,%esp
@@ -190,3 +191,5 @@ Ldone:	movl	%edx,4(%edi)	   /* store to rptr[1] */
 	popl	%esi
 	addl	$8,%esp
 	ret
+
+EPILOGUE(C_SYMBOL_NAME(__mpn_mul_basecase))
