@@ -2374,6 +2374,10 @@ Set @var{quotient} to @var{dividend}/@var{divisor}.
 Set @var{negated_operand} to @minus{}@var{operand}.
 @end deftypefun
 
+@deftypefun void mpq_abs (mpq_t @var{rop}, mpq_t @var{op})
+Set @var{rop} to the absolute value of @var{op}.
+@end deftypefun
+
 @deftypefun void mpq_inv (mpq_t @var{inverted_number}, mpq_t @var{number})
 Set @var{inverted_number} to 1/@var{number}.  If the new denominator is
 zero, this routine will divide by zero.
@@ -2500,48 +2504,26 @@ Convert @var{op} to a double.
 Set @var{rop} to the value of @var{op}, without rounding.
 @end deftypefun
 
-These functions assign between either the numerator or denominator of a
-rational, and an integer.  Instead of using these functions, it is preferable
-to use the more general mechanisms @code{mpq_numref} and @code{mpq_denref},
-together with @code{mpz_set}.
-
-@deftypefun void mpq_set_num (mpq_t @var{rational}, mpz_t @var{numerator})
-Copy @var{numerator} to the numerator of @var{rational}.  When this risks to
-make the numerator and denominator of @var{rational} have common factors, you
-have to pass @var{rational} to @code{mpq_canonicalize} before any operations
-are performed on @var{rational}.
-
-This function is equivalent to
-@code{mpz_set (mpq_numref (@var{rational}), @var{numerator})}.
-@end deftypefun
-
-@deftypefun void mpq_set_den (mpq_t @var{rational}, mpz_t @var{denominator})
-Copy @var{denominator} to the denominator of @var{rational}.  When this risks
-to make the numerator and denominator of @var{rational} have common factors,
-or if the denominator might be negative, you have to pass @var{rational} to
-@code{mpq_canonicalize} before any operations are performed on @var{rational}.
-
-@strong{In version 1 of the library, negative denominators were handled by
-copying the sign to the numerator.  That is no longer done.}
-
-This function is equivalent to
-@code{mpz_set (mpq_denref (@var{rational}), @var{denominator})}.
-@end deftypefun
-
 @deftypefun void mpq_get_num (mpz_t @var{numerator}, mpq_t @var{rational})
-Copy the numerator of @var{rational} to the integer @var{numerator}, to
-prepare for integer operations on the numerator.
+@deftypefunx void mpq_get_den (mpz_t @var{denominator}, mpq_t @var{rational})
+@deftypefunx void mpq_set_num (mpq_t @var{rational}, mpz_t @var{numerator})
+@deftypefunx void mpq_set_den (mpq_t @var{rational}, mpz_t @var{denominator})
+Get or set the numerator or denominator of a rational.  These functions are
+equivalent to calling @code{mpz_set} with an appropriate @code{mpq_numref} or
+@code{mpq_denref}.
 
-This function is equivalent to
-@code{mpz_set (@var{numerator}, mpq_numref (@var{rational}))}.
-@end deftypefun
+When an assignment to the numerator and/or denominator could introduce common
+factors or if the denominator could become negative, the value must be put
+into canonical form using @code{mpq_canonicalize} before any other operations
+on that rational.
 
-@deftypefun void mpq_get_den (mpz_t @var{denominator}, mpq_t @var{rational})
-Copy the denominator of @var{rational} to the integer @var{denominator}, to
-prepare for integer operations on the denominator.
+Note that there's no need to copy a numerator or denominator to an
+@code{mpz_t} just to operate on it, all the @code{mpz} functions can be used
+with an @code{mpq_numref} or @code{mpq_denref}.  When modifying a rational
+that way the rule about canonicalizing still applies of course.
 
-This function is equivalent to
-@code{mpz_set (@var{denominator}, mpq_denref (@var{rational}))}.
+@strong{In version 1 of the library, @code{mpq_set_den} handled negative
+denominators by copying the sign to the numerator.  That is no longer done.}
 @end deftypefun
 
 
