@@ -670,6 +670,15 @@ case $host in
       *)         path="ia64" ;;
     esac
 
+    gcc_64_cflags_optlist="tune"
+    gcc_32_cflags_optlist=$gcc_64_cflags_optlist
+
+    # gcc pre-release 3.4 adds -mtune itanium and itanium2
+    case $host_cpu in
+      itanium)   gcc_cflags_tune="-mtune=itanium" ;;
+      itanium2)  gcc_cflags_tune="-mtune=itanium2" ;;
+    esac
+
     case $host in
       *-*-hpux*)
         # HP cc sometimes gets internal errors if the optimization level is
