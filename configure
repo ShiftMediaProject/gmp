@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.92
+# From configure.in Revision: 1.93
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -1542,7 +1542,7 @@ echo "$ECHO_T""$tmp_works" 1>&6
     if test "$gmp_req_64bit_cc" = "yes"; then
       eval c_flags=\$gmp_cflags64_$c
 
-      # Check that the compiler works in 64-bit mode as well.
+      # Verify that the compiler works in 64-bit mode as well.
       # /usr/ucb/cc on Solaris 7 can *compile* in 64-bit mode, but not link.
       ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
