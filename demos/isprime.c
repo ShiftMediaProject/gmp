@@ -22,9 +22,7 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include "gmp.h"
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpz_t n;
 
