@@ -1,3 +1,9 @@
+2000-10-26  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (ia64): Set UMUL_TIME and UDIV_TIME.
+
+	* mpn/ia64/submul_1.c: Fix typo.
+
 2000-10-25  Kevin Ryde  <kevin@swox.se>
 
 	* tune/freq.c (speed_cpu_frequency_sysctl): New test, supporting
