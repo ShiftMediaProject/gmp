@@ -19,6 +19,24 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-19  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-scan.c: Nailify.
+
+	* mpz/tdiv_qr_ui.c: Nailify.
+	* mpz/tdiv_q_ui.c: Nailify.
+	* mpz/tdiv_r_ui.c: Nailify.
+	* mpz/tdiv_ui.c: Nailify.
+
+	* mpz/cmp_ui.c: Nailify.
+
+	* mpz/ui_pow_ui.c: Misc nailify changes to shut up compiler warnings.
+
+	* mpz/scan0.c: Nailify.
+	* mpz/scan1.c: Nailify.
+
+	* tests/mpz/t-sizeinbase.c (mpz_fake_bits): Nailify.
+
 2002-04-18  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/aorsmul_i.c: Nailify.
@@ -96,10 +114,6 @@ MA 02111-1307, USA.
 
 	* mpz/powm.c: Nailify.
 	* mpz/powm_ui.c: Nailify.
-
-	* tests/mpz/t-tdiv_ui.c (main): Mask off numb part of mpz_get_ui
-	divisor return value.
-	* tests/mpz/t-fdiv_ui.c (main): Likewise.
 
 2002-04-16  Torbjorn Granlund  <tege@swox.com>
 
