@@ -2152,6 +2152,46 @@ extern const struct doprnt_funs_t  __gmp_snprintf_funs;
 extern const struct doprnt_funs_t  __gmp_obstack_printf_funs;
 extern const struct doprnt_funs_t  __gmp_ostream_funs;
 
+/* "buf" is a __gmp_allocate_func block of "alloc" many bytes.  The first
+   "size" of these have been written.  "alloc > size" is maintained, so
+   there's room to store a '\0' at the end.  "result" is where the
+   application wants the final block pointer.  */
+struct gmp_asprintf_t {
+  char    **result;
+  char    *buf;
+  size_t  size;
+  size_t  alloc;
+};
+
+#define GMP_ASPRINTF_T_INIT(d, output)                          \
+  do {                                                          \
+    (d).result = (output);                                      \
+    (d).alloc = 256;                                            \
+    (d).buf = (char *) (*__gmp_allocate_func) ((d).alloc);      \
+    (d).size = 0;                                               \
+  } while (0)
+
+/* If a realloc is necessary, use twice the size actually required, so as to
+   avoid repeated small reallocs.  */
+#define GMP_ASPRINTF_T_NEED(d, n)                                       \
+  do {                                                                  \
+    size_t  alloc, newsize, newalloc;                                   \
+    ASSERT ((d)->alloc >= (d)->size + 1);                               \
+                                                                        \
+    alloc = (d)->alloc;                                                 \
+    newsize = (d)->size + (n);                                          \
+    if (alloc <= newsize)                                               \
+      {                                                                 \
+        newalloc = 2*newsize;                                           \
+        (d)->alloc = newalloc;                                          \
+        (d)->buf = (__gmp_reallocate_func) ((d)->buf, alloc, newalloc); \
+      }                                                                 \
+  } while (0)
+
+int __gmp_asprintf_memory _PROTO ((struct gmp_asprintf_t *d, const char *str, size_t len));
+int __gmp_asprintf_reps _PROTO ((struct gmp_asprintf_t *d, int c, int reps));
+int __gmp_asprintf_final _PROTO ((struct gmp_asprintf_t *d));
+
 /* buf is where to write the next output, and size is how much space is left
    there.  If the application passed size==0 then that's what we'll have
    here, and nothing at all should be written.  */
@@ -2159,6 +2199,7 @@ struct gmp_snprintf_t {
   char    *buf;
   size_t  size;
 };
+
 
 /* Add the bytes printed by the call to the total retval, or bail out on an
    error.  */
@@ -2342,4 +2383,4 @@ extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #endif
 
 
-#endif
+#endif /* __GMP_IMPL_H__ */
