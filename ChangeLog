@@ -1,3 +1,8 @@
+2000-07-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/tests/t-muldiv.c: Relax error limit.  Make precision depend
+	on SIZE.  Misc changes.
+
 2000-07-20  Kent Boortz  <kent@swox.com>
 
 	* macos/Makefile.in: Removed hard coded targets, added special
@@ -8,6 +13,11 @@
 	by Marco Bambini.
 	* configure.in: Added comment about lines that the "macos/configure"
 	script depend on.
+
+2000-07-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/powm.c (mpz_powm): After final mpz_redc call, subtract `mod'
+	from result if it is greater than `mod'.
 
 2000-07-19  Torbjorn Granlund  <tege@swox.com>
 
