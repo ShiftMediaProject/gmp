@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 27 Sep 2002.  An up-to-date version is available at
+  This file current as of 1 Oct 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -143,71 +143,6 @@ MA 02111-1307, USA.
      be left available for CPUs without caching.  Depending how karatsuba etc
      is applied to unequal size operands it might be possible to assume M is
      always smallish.
-<li> <code>mpn_perfect_square_p</code> on small operands might be better off
-     skipping the residue tests and just taking a square root.
-<li> <code>mpz_perfect_power_p</code> could be improved in a number of ways.
-     Test for Nth power residues modulo small primes like
-     <code>mpn_perfect_square_p</code> does.  Use p-adic arithmetic to find
-     possible roots.  Divisibility by other primes should be tested by
-     grouping into a limb like <code>PP</code>.
-<li> <code>mpz_perfect_power_p</code> might like to use <code>mpn_gcd_1</code>
-     instead of a private GCD routine.  The use it's put to isn't
-     time-critical, and it might help be ensure correctness to use the main GCD
-     routine.
-<li> <code>mpz_perfect_power_p</code> could use
-     <code>mpz_divisible_ui_p</code> instead of <code>mpz_tdiv_ui</code> for
-     divisibility testing, the former is faster on a number of systems.  (But
-     all that prime test stuff is going to be rewritten some time.)
-<li> Change <code>PP</code>/<code>PP_INVERTED</code> into an array of such
-     pairs, listing several hundred primes.  Perhaps actually make the
-     products larger than one limb each.
-<li> <code>PP</code> can have factors of 2 introduced in order to get the high
-     bit set and therefore a <code>PP_INVERTED</code> existing.  The factors
-     of 2 don't affect the way the remainder r = a % ((x*y*z)*2^n) is used,
-     further remainders r%x, r%y, etc, are the same since x, y, etc are odd.
-     The advantage of this is that <code>mpn_preinv_mod_1</code> can then be
-     used if it's faster than plain <code>mpn_mod_1</code>.  This would be a
-     change only for 16-bit limbs, all the rest already have <code>PP</code>
-     in the right form.
-<li> <code>PP</code> could have extra factors of 3 or 5 or whatever introduced
-     if they fit, and final remainders mod 9 or 25 or whatever used, thereby
-     making more efficient use of the <code>mpn_mod_1</code> done.  On a
-     16-bit limb it looks like <code>PP</code> could take an extra factor of
-     3.
-<li> <code>mpz_probab_prime_p</code>, <code>mpn_perfect_square_p</code> and
-     <code>mpz_perfect_power_p</code> could use <code>mpn_mod_34lsub1</code>
-     to take a remainder mod 2^24-1 or 2^48-1 and quickly get remainders mod
-     3, 5, 7, 13 and 17 (factors of 2^24-1).  This could either replace the
-     <code>PP</code> division currently done, or allow <code>PP</code> to do
-     larger primes, depending how many residue tests seem worthwhile before
-     launching into full root extractions or Miller-Rabin etc.
-<li> <code>mpz_probab_prime_p</code> (and maybe others) could code the
-     divisibility tests like <code>n%7 == 0</code> in the form
-<pre>
-#define MP_LIMB_DIVISIBLE_7_P(n) \
-  ((n) * MODLIMB_INVERSE_7 &lt;= MP_LIMB_T_MAX/7)
-</pre>
-     This would help compilers which don't know how to optimize divisions by
-     constants, and would help current gcc (3.0) too since gcc forms a whole
-     remainder rather than using a modular inverse and comparing.  This
-     technique works for any odd modulus, and with some tweaks for even moduli
-     too.  See Granlund and Montgomery "Division By Invariant Integers"
-     section 9.
-<li> <code>mpz_probab_prime_p</code> and <code>mpz_nextprime</code> could
-     offer certainty for primes up to 2^32 by using a one limb miller-rabin
-     test to base 2, combined with a table of actual strong pseudoprimes in
-     that range (2314 of them).  If that table is too big then both base 2 and
-     base 3 tests could be done, leaving a table of 104.  The test could use
-     REDC and therefore be a <code>modlimb_invert</code> a remainder (maybe)
-     then two multiplies per bit (successively dependent).  Processors with
-     pipelined multipliers could do base 2 and 3 in parallel.  Vector systems
-     could do a whole bunch of bases in parallel, and perhaps offer near
-     certainty up to 64-bits (certainty might depend on an exhaustive search
-     of pseudoprimes up to that limit).  Obviously 2^32 is not a big number,
-     but an efficient and certain calculation is attractive.  It might find
-     other uses internally, and could even be offered as a one limb prime test
-     <code>mpn_probab_prime_1_p</code> or <code>gmp_probab_prime_ui_p</code>
-     perhaps.
 <li> <code>mpf_set_str</code> produces low zero limbs when a string has a
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
@@ -589,7 +524,6 @@ MA 02111-1307, USA.
      Alternately it looks like the <code>ABOVE_THRESHOLD</code> and
      <code>BELOW_THRESHOLD</code> macros can do this adequately, and also pick
      up cases where a threshold of zero should mean only the second algorithm.
-<li> <code>mpz_nthprime</code>.
 <li> <code>mpz_andn</code>, <code>mpz_iorn</code>, <code>mpz_nand</code>,
      <code>mpz_nior</code>, <code>mpz_xnor</code> might be useful additions,
      if they could share code with the current such functions (which should be
@@ -773,6 +707,15 @@ MA 02111-1307, USA.
      a bit of luck the next libtool will pass pretty much all
      <code>CFLAGS</code> through to the compiler when linking, making
      <code>GMP_LDFLAGS</code> unnecessary.
+<li> mpn/Makeasm.am uses <code>-c</code> and <code>-o</code> together in the
+     .S and .asm rules, but apparently that isn't completely portable (there's
+     an autoconf <code>AC_PROG_CC_C_O</code> test for it).  So far we've not
+     had problems, but perhaps the rules could be rewritten to use "foo.s" as
+     the temporary, or to do a suitable "mv" of the result.  The only danger
+     from using foo.s would be if a compile failed and the temporary foo.s
+     then looked like the primary source.  Hopefully if the
+     <code>SUFFIXES</code> are ordered to have .S and .asm ahead of .s that
+     wouldn't happen.  Might need to check.
 </ul>
 
 
