@@ -1,4 +1,4 @@
-/* mp.h -- Definitions for the GNU multiple precision library
+/* mp.h -- Definitions for the GNU multiple precision library  -*- mode: c -*-
    BSD mp compatible functions.
 
 Copyright 1991, 1993, 1994, 1995, 1996, 2000 Free Software Foundation,
