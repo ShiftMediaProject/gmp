@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 30 Mar 2001.  An up-to-date version is available at
+  This file current as of 2 Apr 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -179,10 +179,12 @@
      separate" function parameters?  If so, judicious use might improve the
      code generated a bit.  Do any compilers have their own flavour of
      restrict as "completely unaliased", and is that still usable?
-<li> GCC 3 <code>__attribute__ ((malloc))</code> could be used on
+<li> GCC <code>__attribute__ ((malloc))</code> could be used on
      <code>__gmp_allocate_func</code> and on the stack-alloc.c
-     <code>TMP_ALLOC</code>.  Don't know if it'd do much, maybe
-     <code>restrict</code> pointers are enough.
+     <code>TMP_ALLOC</code>.  Don't know if it'd do much.  Current pre-release
+     gcc 3 doesn't like attaching function attributes to function pointers
+     like <code>__gmp_allocate_func</code> (see "(gcc)Attribute Syntax"), this
+     has to wait for the future.
 </ul>
 
 
@@ -303,31 +305,44 @@
      limbs would be wanted before this would be useful.
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
-<li> Maybe make <code>mpz_init</code> (and <code>mpq_init</code>) do lazy
-     allocation.  Set <code>ALLOC(var)</code> to 0, and have
-     <code>mpz_realloc</code> special-handle that case.  Update functions that
-     rely on a single limb (like <code>mpz_set_ui</code>,
-     <code>mpz_{t,f,c}div_{qr,r}_ui</code>, and others).
+<li> <code>mpz_init</code> and <code>mpq_init</code> could do lazy allocation.
+     Set <code>ALLOC(var)</code> to 0, and have <code>mpz_realloc</code>
+     special-handle that case.  Would mean the size required for the first use
+     is the first allocated, rather than allocating a small size and then
+     reallocing it.  Update functions that rely on a single limb like
+     <code>mpz_set_ui</code>, <code>mpz_{t,f,c}div_{qr,r}_ui</code>, and
+     others.  Would need the initial <code>z->_mp_d</code> to point to a dummy
+     initial location, so it can be fetched from by <code>mpz_odd_p</code> and
+     similar macros.
 <li> Add <code>mpf_out_raw</code> and <code>mpf_inp_raw</code>.  Make sure
      format is portable between 32-bit and 64-bit machines, and between
      little-endian and big-endian machines.
 <li> Handle numeric exceptions: Call an error handler, and/or set
-     <code>gmp_errno</code>.  If errors are checked nice and early in GMP
-     functions, before temporary memory is allocated or values changed, etc,
-     then it should be possible for an application to do error recovery (with
-     <code>longjmp</code> or whatever).
-<li> Implement <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
+     <code>gmp_errno</code>.  It should be possible to detect errors at the
+     start of documented entrypoints and invoke an exception handler with a
+     nice clean state, giving it the chance to recover with
+     <code>longjmp</code> or a C++ throw or whatever.
+<li> Handle out-of-memory exceptions: It'd be good to offer the custom
+     allocation functions a way to <code>longjmp</code> or throw a C++
+     exception on being out of memory (or out of the memory they care to offer
+     GMP).  This would need GMP to ensure all variables are in a sensible
+     state whenever attempting an alloc or realloc, and would need some way to
+     record other temporary memory or temporary variables in use which should
+     be freed.  The latter might be difficult, perhaps the C++ destructor
+     mechanism would be necessary.
+<li> <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
      <code>gmp_snprintf</code>.  Think about some sort of wrapper around
      <code>printf</code> so it and its several variants don't have to be
      completely reimplemented.  Variants like <code>mpz_printf</code> etc
      supporting only <code>mpz</code> etc could exist to keep down the amount
      of library dragged in.
-<li> Implement some <code>mpq</code> input and output functions.
-<li> Make the mpn logops and copys available in gmp.h, either as library
-     functions or inlines, with the availability of library functions
-     instantiated in the generated gmp.h at build time.
-<li> Make versions of <code>mpz_set_str</code> etc taking string
-     lengths rather than null-terminators.
+<li> <code>mpq</code> input and output functions.
+<li> <code>mpn_and_n</code> ... <code>mpn_copyd</code>: Make the mpn logops
+     and copys available in gmp.h, either as library functions or inlines,
+     with the availability of library functions instantiated in the generated
+     gmp.h at build time.
+<li> <code>mpz_set_str</code> etc variants taking string lengths rather than
+     null-terminators.
 <li> Consider changing the thresholds to apply the simpler algorithm when
      "<code>&lt;=</code>" rather than "<code>&lt;</code>", so a threshold can
      be set to <code>MP_SIZE_T_MAX</code> to get only the simpler code (the
@@ -343,17 +358,21 @@
 <li> <code>mpn_divexact_1</code> could be created and used for an
      <code>mpz_divexact_ui</code> and perhaps other purposes.  Work on this is
      in progress.
+<li> Perhaps <code>mpz_init2</code>, initializing and making initial room for
+     N bits.  The actual size would be rounded up to a limb, and perhaps an
+     extra limb added since so many <code>mpz</code> routines need that on
+     their destination.
 </ul>
 
 
 <h4>Configuration</h4>
 
 <ul>
-<li> Determine floating-point format with a feature test.  Get rid of large
-     <code>#ifdef</code> mess for FP format in gmp-impl.h.  This is simple
-     when doing a native compile, but needs a reliable way to examine object
-     files when cross-compiling.  Falling back on a run-time test would be
-     reasonable, if build time tests fail.
+<li> Floating-point format: Determine this with a feature test.  Get rid of
+     the <code>#ifdef</code> mess in gmp-impl.h.  This is simple when doing a
+     native compile, but needs a reliable way to examine object files when
+     cross-compiling.  Falling back on a run-time test would be reasonable, if
+     build time tests fail.
 <li> HPPA: config.guess should recognize 7000, 7100, 7200, and 8x00.
 <li> Mips: config.guess should say mipsr3000, mipsr4000, mipsr10000, etc.
      "hinv -c processor" gives lots of information on Irix.  Standard
@@ -368,6 +387,10 @@
 <li> Sparc32: floating point or integer <code>udiv</code> should be selected
      according to the CPU target.  Currently floating point ends up being
      used on all sparcs, which is probably not right for generic V7 and V8.
+<li> m68k: config.guess should say <code>m68040</code> etc, currently it just
+     gives <code>m68k</code> for everything.  In particular detect
+     <code>m68000</code> or <code>m68010</code> since they won't like the
+     68020 instructions we use under an <code>m68k</code> config.
 <li> demos/pexpr.c: is becoming the usual *nix mess of nested ifdefs.  Instead
      use the results of configure tests.  pexpr.c could be generated from a
      pexpr.in with a set of #undef's.
@@ -401,6 +424,12 @@
      generate numbers of <code>nbits</code> until getting one &lt;n?)
 <li> demos/factorize.c should use the GMP random functions when restarting
      Pollard-Rho, not <code>random</code> / <code>mrand48</code>.
+<li> The various test programs use quite a bit of the main
+     <code>libgmp</code>.  This establishes good cross-checks, but it might be
+     better to use simple reference routines where possible.  Where it's not
+     possible some attention could be paid to the order of the tests, so a
+     main <code>libgmp</code> is only used to construct tests once it seems to
+     be good.
 </ul>
 
 
@@ -464,6 +493,11 @@ near future, but are at least worth thinking about.
      Perhaps make them return the real remainder instead?  Return type would
      be <code>signed long int</code>.  But this would be an incompatible
      change, so it might have to be under newly named functions.
+<li> <code>mpz_init_set*</code> and <code>mpz_realloc</code> could allocate
+     say an extra 16 limbs over what's needed, so as to reduce the chance of
+     having to do a reallocate if the <code>mpz_t</code> grows a bit more.
+     This could only be an option, since it'd badly bloat memory usage in
+     applications using many small values.
 </ul>
 
 
