@@ -151,6 +151,9 @@ const struct routine_t {
   { "mpn_addmul_1",      speed_mpn_addmul_1,  FLAG_R },
   { "mpn_submul_1",      speed_mpn_submul_1,  FLAG_R },
   { "mpn_mul_1",         speed_mpn_mul_1,     FLAG_R },
+#if HAVE_NATIVE_mpn_mul_2
+  { "mpn_mul_2",         speed_mpn_mul_2             },
+#endif
 
   { "mpn_divrem_1",      speed_mpn_divrem_1,  FLAG_R },
   { "mpn_divrem_1f",     speed_mpn_divrem_1f, FLAG_R },
@@ -203,6 +206,7 @@ const struct routine_t {
   { "mpn_nior_n",        speed_mpn_nior_n           },
   { "mpn_xor_n",         speed_mpn_xor_n            },
   { "mpn_xnor_n",        speed_mpn_xnor_n           },
+  { "mpn_com_n",         speed_mpn_com_n            },
 
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },

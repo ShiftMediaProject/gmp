@@ -135,6 +135,7 @@ double speed_mpn_add_n_inplace _PROTO ((struct speed_params *s));
 double speed_mpn_and_n _PROTO ((struct speed_params *s));
 double speed_mpn_andn_n _PROTO ((struct speed_params *s));
 double speed_mpn_addmul_1 _PROTO ((struct speed_params *s));
+double speed_mpn_com_n _PROTO ((struct speed_params *s));
 double speed_mpn_dc_divrem_n _PROTO ((struct speed_params *s));
 double speed_mpn_dc_divrem_sb _PROTO ((struct speed_params *s));
 double speed_mpn_dc_divrem_sb_div _PROTO ((struct speed_params *s));
@@ -181,6 +182,7 @@ double speed_mpn_mod_1_inv _PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1_odd _PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1c_odd _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
+double speed_mpn_mul_2 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft_sqr _PROTO ((struct speed_params *s));
@@ -481,6 +483,41 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 #define SPEED_ROUTINE_MPN_DIVREM_1CF(function) \
   SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->size, s->xp, 0, s->r, 0))
+
+
+/* For mpn_lshift, mpn_rshift, mpn_mul_1, with r, or similar. */
+#define SPEED_ROUTINE_MPN_UNARY_2_CALL(call)                    \
+  {                                                             \
+    mp_ptr     wp;                                              \
+    unsigned   i;                                               \
+    double     t;                                               \
+    mp_limb_t  h, l;                                            \
+    TMP_DECL (marker);                                          \
+                                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);                         \
+                                                                \
+    TMP_MARK (marker);                                          \
+    wp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);        \
+    l = s->yp[0];                                               \
+    h = s->yp[1];                                               \
+                                                                \
+    speed_operand_src (s, s->xp, s->size);                      \
+    speed_operand_dst (s, wp, s->size+1);                       \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      call;                                                     \
+    while (--i != 0);                                           \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+    return t;                                                   \
+  }  
+
+#define SPEED_ROUTINE_MPN_UNARY_2(function) \
+  SPEED_ROUTINE_MPN_UNARY_2_CALL ((*function) (wp, s->xp, s->size, l, h))
 
 
 /* For mpn_mul_basecase, xsize=r, ysize=s->size. */

@@ -437,6 +437,11 @@ speed_memcpy (struct speed_params *s)
   SPEED_ROUTINE_MPN_COPY_CALL
     (memcpy (wp, s->xp, s->size * BYTES_PER_MP_LIMB));
 }
+double
+speed_mpn_com_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY_CALL (mpn_com_n (wp, s->xp, s->size));
+}
 
 
 double
@@ -456,6 +461,14 @@ speed_mpn_mul_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_UNARY_1 (mpn_mul_1);
 }
+
+#if HAVE_NATIVE_mpn_mul_2
+double
+speed_mpn_mul_2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_2 (mpn_mul_2);
+}
+#endif
 
 
 double
