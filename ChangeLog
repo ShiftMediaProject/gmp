@@ -1,3 +1,18 @@
+2000-04-03  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/brandom.c: New file, replacing random2.
+
+2000-04-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc32/v9/submul_1.asm: Change some carry-form instructions
+	into their plain counterparts.
+
+	* mpn/sparc64/copyi.asm: Avoid executing ALIGN.
+
+	* mpn/sparc64/mul_1.asm: Handle overlap of rp/sp.
+	* mpn/sparc64/addmul_1.asm: Likewise.
+	* mpn/sparc64/submul_1.asm: Likewise.
+
 2000-04-01  Linus Nordberg  <linus@swox.se>
 
 	* gmp.h: Fix function prototypes for randomization functions.
@@ -63,6 +78,21 @@
 
 	* acinclude.m4 (GMP_CHECK_ASM_MMX): Give a warning when mmx code
 	will be omitted.
+
+2000-03-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc64/mul_1h.asm: New file.
+	* mpn/sparc64/addmul_1h.asm: New file.
+	* mpn/sparc64/submul_1h.asm: New file.
+	* mpn/sparc64/mul_1.asm: Rewrite.
+	* mpn/sparc64/addmul_1.asm: Rewrite.
+	* mpn/sparc64/submul_1.asm: Rewrite.
+
+2000-03-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc32/v9/mul_1.asm: Fix typo in branch prediction.
+	* mpn/sparc32/v9/addmul_1.asm: Likewise.
+	* mpn/sparc32/v9/submul_1.asm: Likewise.
 
 2000-03-25  Kevin Ryde  <kevin@swox.se>
 
