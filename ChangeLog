@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-07  Kevin Ryde  <kevin@swox.se>
+
+	* tune/freq.c (freq_sysctl_hw_model): Correction to last sscanf	change.
+
+	* configure.in: Check for psp_iticksperclktick in struct pst_processor.
+	* tune/freq.c (freq_pstat_getprocessor): Use this.
+
+	* tests/devel/try.c (divisor_array): Add a couple of half-limb values.
+
+	* acinclude.m4 (GMP_PROG_CC_WORKS): Correction to last change, need to
+	set result "yes" when cross compiling.
+
 2003-10-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mul_n.c: Use __GMPN_ADD_1/_GMPN_SUB_1 instead of
