@@ -35,6 +35,9 @@ _mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
   int cc;
   TMP_DECL (marker);
 
+  if (den2 == 0)
+    DIVIDE_BY_ZERO;
+
   if (num1_size == 0)
     return -(num2 != 0);
   if (num1_size < 0)
