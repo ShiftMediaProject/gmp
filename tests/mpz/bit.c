@@ -131,6 +131,22 @@ check_single (void)
                   printf ("check_single(): expected 0\n");
                   abort ();
                 }
+
+              mpz_combit (x, bit);
+              MPZ_CHECK_FORMAT (x);
+              if (mpz_tstbit (x, bit) != 1)
+                {
+                  printf ("check_single(): expected 1\n");
+                  abort ();
+                }
+
+              mpz_combit (x, bit);
+              MPZ_CHECK_FORMAT (x);
+              if (mpz_tstbit (x, bit) != 0)
+                {
+                  printf ("check_single(): expected 0\n");
+                  abort ();
+                }
             }
         }
     }          
