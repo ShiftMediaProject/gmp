@@ -291,7 +291,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
                 gmp_str = mpz_get_str (NULL, param.base, z);
                 goto gmp_integer;
               }
-              break;
+              /* break; */
             case 'q':
               /* quad_t is probably the same as long long, but let's treat
                  it separately just to be sure.  Also let's assume u_quad_t
