@@ -616,6 +616,7 @@ AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_CACHE_CHECK([what assembly label suffix to use],
                 gmp_cv_asm_label_suffix,
 [case $host in 
+  # Empty is only for the HP-UX hppa assembler; hppa gas requires a colon.
   *-*-hpux*) gmp_cv_asm_label_suffix=  ;;
   *)         gmp_cv_asm_label_suffix=: ;;
 esac
@@ -996,6 +997,8 @@ if test $gmp_found = no; then
   AC_MSG_WARN([cannot determine local label, using default $gmp_cv_asm_lsym_prefix])
 fi
 ])
+AC_DEFINE_UNQUOTED(LSYM_PREFIX, "$gmp_cv_asm_lsym_prefix",
+  [Assembler local label prefix])
 echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 ])
 
