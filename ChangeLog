@@ -18,6 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-07-20  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/bin_ui.c, mpz/jacobi.c, mpz/pprime_p.c, mpn/generic/divis.c:
+	More care with long and mp_size_t parameters, for the benefit of K&R.
+
+	* gmp-impl.h (invert_limb): Use parens around macro arguments.
+	(mpn_invert_limb): Give prototype and define unconditionally.
+
+	* gmp-impl.h (CACHED_ABOVE_THRESHOLD, CACHED_BELOW_THRESHOLD): New
+	macros.
+	* mpn/generic/sb_divrem_mn.c: Use them to help gcc let preinv code go
+	dead when not wanted.
+
 2002-07-17  Kevin Ryde  <kevin@swox.se>
 
 	* tests/refmpz.c (refmpz_hamdist): Ensure mp_size_t parameters are
