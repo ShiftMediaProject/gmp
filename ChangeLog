@@ -1,3 +1,28 @@
+Thu May 16 20:53:57 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* gmp-impl.h: Set IEEE_DOUBLE_BIG_ENDIAN to 0 for little-endian
+	machines.
+	* mpn/x86/gmp-mparam.h: Delete file.
+
+	* configure.in: Treat microsparc like sparc8.
+
+	* urandom.h: Test __alpha instead of __alpha__, since the former
+	is the standard symbol.
+	* mpn/generic/random2.c: Likewise.
+	* mpf/random2.c: Likewise.
+
+Tue May 14 13:42:39 1996  Torbjorn Granlund  (tege@tiny.tmg.se)
+
+	* mpz/set_f.c: New file.
+	* mpz/Makefile.in: Compile it.
+	* gmp.h: Declare mpz_set_f.
+
+	* mpf/set_q.c: Simplify expression in rsize == nsize if-then-else arms.
+
+Tue May 14 13:03:07 1996  Torbjorn Granlund  (tege@tiny.tmg.se)
+
+	* make.bat: Add all new files.
+
 Sun May 12 22:24:36 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/set_z.c: New file.
@@ -14,12 +39,12 @@ Fri May 10 17:37:38 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/set_q.c: New file.
 	* mpf/Makefile.in: Compile it.
-	
+
 	* config.sub: Recognize sparc8.
 
 Wed May  8 09:19:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
-	* mpf/tets/t-dm2exp.c: New file.
+	* mpf/tests/t-dm2exp.c: New file.
 
 	* mpf/tests/t-add.c: Correct header comment.
 	* mpf/tests/t-sub.c: Likewise.
