@@ -1462,6 +1462,88 @@ echo ["define(<W32>, <$gmp_cv_asm_w32>)"] >> $gmp_tmpconfigm4
 ])
 
 
+dnl  GMP_X86_ASM_GOT_UNDERSCORE
+dnl  --------------------------
+dnl  Determine whether i386 _GLOBAL_OFFSET_TABLE_ needs an additional
+dnl  underscore prefix.
+dnl
+dnl    SVR4      - the standard is _GLOBAL_OFFSET_TABLE_
+dnl    GNU/Linux - follows SVR4
+dnl    OpenBSD   - an a.out underscore system, uses __GLOBAL_OFFSET_TABLE_
+dnl    NetBSD    - also an a.out underscore system, but _GLOBAL_OFFSET_TABLE_
+dnl
+dnl  The test attempts to link a program using _GLOBAL_OFFSET_TABLE_ or
+dnl  __GLOBAL_OFFSET_TABLE_ to see which works.
+dnl
+dnl  $lt_prog_compiler_pic is included in the compile because old versions
+dnl  of gas wouldn't accept PIC idioms without the right option (-K).  This
+dnl  is the same as what libtool and mpn/Makeasm.am will do.
+dnl
+dnl  $lt_prog_compiler_pic is also included in the link because OpenBSD ld
+dnl  won't accept an R_386_GOTPC relocation without the right options.  This
+dnl  is not what's done by the Makefiles when building executables, but
+dnl  let's hope it's ok (it works fine with gcc).
+dnl
+dnl  The fallback is no additional underscore, on the basis that this will
+dnl  suit SVR4/ELF style systems, which should be much more common than
+dnl  a.out systems with shared libraries.
+dnl
+dnl  Note that it's not an error for the tests to fail, since for instance
+dnl  cygwin, mingw and djgpp don't have a _GLOBAL_OFFSET_TABLE_ scheme at
+dnl  all.
+dnl
+dnl  Perhaps $CCAS could be asked to do the linking as well as the
+dnl  assembling, but in the Makefiles it's only used for assembling, so lets
+dnl  keep it that way.
+dnl
+dnl  The test here is run even under --disable-shared, so that PIC objects
+dnl  can be built and tested by the tune/many.pl development scheme.  The
+dnl  tests will be reasonably quick and won't give a fatal error, so this
+dnl  arrangement is ok.  AC_LIBTOOL_PROG_COMPILER_PIC does its
+dnl  $lt_prog_compiler_pic setups even for --disable-shared too.
+
+AC_DEFUN(GMP_ASM_X86_GOT_UNDERSCORE,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_GLOBL_ATTR])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_ASM_UNDERSCORE])
+AC_REQUIRE([AC_LIBTOOL_PROG_COMPILER_PIC])
+AC_CACHE_CHECK([if _GLOBAL_OFFSET_TABLE_ is prefixed by underscore], 
+               gmp_cv_asm_x86_got_underscore,
+[gmp_cv_asm_x86_got_underscore="not applicable"
+if test $gmp_cv_asm_underscore = yes; then
+  tmp_gsym_prefix=_
+else
+  tmp_gsym_prefix=
+fi
+for tmp_underscore in "" "_"; do
+  cat >conftest.s <<EOF
+	$gmp_cv_asm_text
+	$gmp_cv_asm_globl ${tmp_gsym_prefix}main$gmp_cv_asm_globl_attr
+${tmp_gsym_prefix}main$gmp_cv_asm_label_suffix
+	addl	$ ${tmp_underscore}_GLOBAL_OFFSET_TABLE_, %ebx
+EOF
+  gmp_compile="$CCAS $CFLAGS $CPPFLAGS $lt_prog_compiler_pic conftest.s >&AC_FD_CC && $CC $CFLAGS $CPPFLAGS $lt_prog_compiler_pic conftest.$OBJEXT >&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_compile); then
+    if test "$tmp_underscore" = "_"; then
+      gmp_cv_asm_x86_got_underscore=yes
+    else
+      gmp_cv_asm_x86_got_underscore=no
+    fi
+    break
+  fi
+done
+rm -f conftest* a.out b.out a.exe a_out.exe
+])
+if test "$gmp_cv_asm_x86_got_underscore" = "yes"; then
+  GMP_DEFINE(GOT_GSYM_PREFIX, [_])
+else
+  GMP_DEFINE(GOT_GSYM_PREFIX, [])
+fi    
+])
+
+
 dnl  GMP_ASM_X86_MMX([ACTION-IF-YES][,ACTION-IF-NO])
 dnl  -----------------------------------------------
 dnl  Determine whether the assembler supports MMX instructions.

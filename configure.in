@@ -2255,6 +2255,7 @@ if test "$gmp_asm_syntax_testing" != no; then
       ;;
     X86_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
+      GMP_ASM_X86_GOT_UNDERSCORE
       GMP_ASM_X86_SHLDL_CL
       case $enable_profiling in
         prof | gprof)  GMP_ASM_X86_MCOUNT ;;
