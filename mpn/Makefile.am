@@ -21,6 +21,7 @@
 
 
 AUTOMAKE_OPTIONS = gnu no-dependencies
+SUBDIRS = tests
 
 CPP	= @CPP@
 
@@ -39,7 +40,7 @@ TARG_DIST = a29k alpha arm clipper cray generic hppa i960 lisp m68k m88k \
   mips2 mips3 ns32k pa64 power powerpc32 powerpc64 pyr sh sparc32 sparc64 \
   thumb vax x86 z8000 z8000x
 
-EXTRA_DIST = tests underscore.h asm-defs.m4 $(TARG_DIST)
+EXTRA_DIST = underscore.h asm-defs.m4 $(TARG_DIST)
 
 # COMPILE minus CC.  FIXME: Really pass *_CFLAGS to CPP?
 COMPILE_FLAGS =	\
