@@ -315,8 +315,7 @@ mpn_dc_get_str (unsigned char *str, size_t len,
    currently a documented feature.  */
 
 size_t
-xmpn_get_str
-(unsigned char *str, int base, mp_ptr up, mp_size_t un)
+mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 {
   mp_ptr powtab_mem, powtab_mem_ptr;
   mp_limb_t big_base;
