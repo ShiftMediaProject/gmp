@@ -1,3 +1,13 @@
+2000-06-04  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/bin_uiui.c: Fix result for n==0 and n==k.
+	* mpz/bin_ui.c: Fix result for k>n, add support for n<0.
+	* gmp.texi (Number Theoretic Functions): Update mpz_bin_ui to
+	note n<0 is supported.
+
+	* mpz/tests/t-misc.c: New file.
+	* mpz/tests/Makefile.am (check_PROGRAMS): Add it.
+
 2000-05-31  Kevin Ryde  <kevin@swox.se>
 
 	* tune/speed.* (FLAG_R_OPTIONAL): New option for routines, use on
