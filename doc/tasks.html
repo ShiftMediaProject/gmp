@@ -56,11 +56,10 @@
 <li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
      mp?/tests/*.c.
 <li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000.
-<li> <code>TMP_ALLOC</code> is not reentrant when using stack-alloc.c.  Either
-     document or make it reentrant, possibly leaving a config option
-     --enable-alloca=malloc-nonreentrant with the current code.  A reentrant
-     version will probably be slower since it can't share malloced blocks
-     across function calls.
+<li> <code>TMP_ALLOC</code> is not reentrant when using stack-alloc.c.  Perhaps
+     make it so by default and leave a --enable-alloca=malloc-nonreentrant with
+     the current code.  A reentrant version will probably be slower since it
+     can't share malloced blocks across function calls.
 </ul>
 
 
@@ -119,6 +118,8 @@
      be left available for CPUs without caching.  Depending how karatsuba etc
      is applied to unequal size operands it might be possible to assume M is
      always smallish.
+<li> <code>mpz_probab_prime_p</code> could take a remainder mod 2^24-1 to
+     quickly check divisibility by 3, 5, 7, 13 and 17 (factors of 2^24-1).
 </ul>
 
 
@@ -296,9 +297,6 @@
      that works from from a set, so when gcc gets athlon support it
      can try -mcpu=athlon, -mcpu=pentiumpro, or -mcpu=i486,
      whichever works.
-<li> Detect gcc >=2.96 and enable -march=pentiumpro for relevant
-     x86s.  (A bug in gcc 2.95.2 prevents it being used
-     unconditionally.)
 <li> Build multiple variants of the library under certain systems.
      An example is -n32, -o32, and -64 on Irix.
 <li> There's a few filenames that don't fit in 14 chars, if this
@@ -308,9 +306,11 @@
      such a file is found.  Automake will generate some of what's needed in the
      makefiles, but libtool doesn't know fortran and so rules like the current
      ".asm.lo" will be needed.
-<li> Only run GMP_PROG_M4 if it's needed, ie. if there's .asm files
-     selected from the mpn path.  This might help say a generic C
-     build on weird systems.
+<li> Consider running GMP_PROG_M4 only if it's needed, ie. if there's a .asm in
+     the mpn path.  This might help say a generic C build on weird systems.
+<li> Consider running the GMP_CHECK_ASM tests only if they're needed, ie. if
+     there's a .S or .asm in the mpn path.  Hopefully the path be determined
+     without reference to those tests.
 </ul>
 
 <p> In general, getting the exact right configuration, passing the
@@ -325,10 +325,6 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 
 <h4>Miscellaneous</h4>
 <ul>
-
-<li> Work on the way we build the library.  We now do it building
-     convenience libraries but then listing all the object files a
-     second time in the top level Makefile.am.
 <li> Get rid of mp[zq]/sub.c, and instead define a compile parameter to
      mp[zq]/add.c to decide whether it will add or subtract.  Will decrease
      redundancy.  Similarly in other places.
