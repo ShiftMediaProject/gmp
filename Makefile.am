@@ -199,8 +199,8 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h stack-alloc.h			\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
   rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
-  stack-alloc.c version.c 
-libgmp_la_DEPENDENCIES = \
+  version.c
+libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
@@ -216,9 +216,10 @@ MPBSD_HEADERS_OPTION = mp.h
 MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
 libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
-  mp_minv_tab.c mp_set_fns.c stack-alloc.c
+  mp_minv_tab.c mp_set_fns.c
 MPN_OBJS_IN_LIBMP = @mpn_objs_in_libmp@
-libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP) \
+libmp_la_DEPENDENCIES =							\
+  @TAL_OBJECT@ $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP)			\
   mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/init$U.lo mpz/mod$U.lo	\
   mpz/mul$U.lo mpz/mul_2exp$U.lo mpz/n_pow_ui$U.lo			\
   mpz/realloc$U.lo mpz/set$U.lo						\
@@ -226,6 +227,13 @@ libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP) \
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
 libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)
+
+
+# Optional objects, listed in a dummy library to generate ansi2knr rules and
+# get them in "make dist".
+#
+EXTRA_LTLIBRARIES = libdummy.la
+libdummy_la_SOURCES = stack-alloc.c tal-debug.c
 
 
 info_TEXINFOS = gmp.texi
