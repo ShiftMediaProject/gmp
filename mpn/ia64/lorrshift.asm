@@ -1,4 +1,4 @@
-dnl  IA-64 mpn_Xshift.
+dnl  IA-64 mpn_lshift/mpn_rshift.
 
 dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
@@ -21,27 +21,27 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C         cycles/limb
-C Itanium:    2.0
-C Itanium 2:  1.5
+C         cycles/limb	1   2   3   4   5   6   7   8   9  10  11  12  13  14
+C Itanium:    2.0?
+C Itanium 2:  1.0     12.3 9.5 6.7 5.3 4.6 4.2 3.9 3.6 3.1 3.0 2.8 3.0 2.8 2.4
 
-C This code needs a very deep software pipeline, since shl/shr.u have a 4 cycle
-C latency.  The main loop here is not great; it is oversheduled with respect to
-C the shr.u instructions, and this actually turns out to give considerably more
-C complex wind down code.  The code runs slowly for operands with <= 8 limbs,
-C since we have a non-scheduled loop for that case.  We also have a primitive
-C loop for the unrolling edge, and as a consequence of the main loop stupidity
-C it is executed 1-4 steps instead of 0-3 steps.
+C This code is scheduled deeply since the plain shift instructions shr and shl
+C have a latency of 4 (on Itanium) or 3 (on Itanium 2).  Poor scheduling of
+C these instructions cause a 10 cycle replay trap on Itanium.
 
-C By having 63 separate loops using the shrp instruction, we could easily reach
-C 1 cycle/limb.  Such loops would require a less deep software pipeline, since
-C shrp unlike shl/shr.u have a plain one cycle latency.
+C TODO
+C  * Rearrange the loop trivially for better (1.5 c/l) performance on Itanium.
+C  * Optimize function entry code
+C  * The feed-in code might cause replay traps on Itanium.  Explicit bundling
+C    might help, without hurting Itanium 2.
 
 C INPUT PARAMETERS
-C rp = r32
-C sp = r33
-C n = r34
-C cnt = r35
+define(`rp',`r32')
+define(`up',`r33')
+define(`n',`r34')
+define(`cnt',`r35')
+
+define(`tnc',`r9')
 
 ifdef(`OPERATION_lshift',`
 	define(`FSH',`shl')
@@ -56,181 +56,293 @@ ifdef(`OPERATION_rshift',`
 	define(`func',`mpn_rshift')
 ')
 
+MULFUNC_PROLOGUE(mpn_lshift mpn_rshift)
+
 ASM_START()
 PROLOGUE(func)
 	.prologue
+	.save		ar.lc, r2
+	.body
 ifdef(`HAVE_ABI_32',
-`	addp4	r32 = 0, r32
-	addp4	r33 = 0, r33
-	sxt4	r34 = r34
-	zxt4	r35 = r35
+`	addp4	rp = 0, rp
+	addp4	up = 0, up
+	sxt4	n = n
+	zxt4	cnt = cnt
 	;;
 ')
-	add	r34 = -1, r34
-	sub	r31 = 64, r35
-	.save	ar.lc, r2
-	mov	r2 = ar.lc;;
-	.body
-	cmp.leu	p6, p7 = 8,r34
+	and		r14 = 3, n
+	add		r15 = -1, n
+	add		n = -1, n
+	sub		tnc = 64, cnt
+	mov		r2 = ar.lc
+	;;
+	shr.u		r15 = r15, 2
+	cmp.eq		p6, p0 = 1, r14
+	cmp.eq		p7, p0 = 2, r14
+	cmp.eq		p8, p0 = 3, r14
 ifdef(`OPERATION_lshift',`
-	shladd	r33 = r34, 3, r33
-	shladd	r32 = r34, 3, r32;;
+	shladd		up = n, 3, up
+	shladd		rp = n, 3, rp
 ')
-	ld8	r19 = [r33], UPD	;;
-	BSH	r8 = r19, r31		C function return value
-   (p6) br.dptk	.Lbig
+	;;
+	mov.i		ar.lc = r15
+   (p6)	br.dptk		.Lb01
+   (p7)	br.dptk		.Lb10
+   (p8)	br.dptk		.Lb11
 
-C
-C Code for small operands.  Not an optimization for the Itanium, it is here
-C just to simplify the general case.
-C
-	mov	ar.lc = r34;;
-	br.cloop.dptk .Loops
-	FSH	r26 = r19, r35	;;
-	st8	[r32] = r26
-	mov	ar.lc = r2
-	br.ret.sptk.many b0
-.Loops:
-	ld8	r16 = [r33], UPD
-	FSH	r26 = r19, r35	;;
-	BSH	r27 = r16, r31	;;
-	{ .mib;	nop.b 0;; }			C delay to save 6 cycles...
-	{ .mib;	nop.b 0;; }			C delay to save 6 cycles...
-	{ .mib;	nop.b 0;; }			C delay to save 6 cycles...
-	or	r27 = r27, r26
-	mov	r19 = r16	;;
-	st8	[r32] = r27, UPD
-	br.cloop.dptk .Loops
-	FSH	r26 = r19, r35	;;
-	st8	[r32] = r26
-	mov	ar.lc = r2
-	br.ret.sptk.many b0
 
-C
-C Code for operands with >8 limbs.  An edge loop and a very deep software
-C pipeline.
-C
-.Lbig:	and	r15 = 3, r34
-	shr.u	r14 = r34, 2	;;
-	mov	ar.lc = r15
-.Loop0:
-	ld8	r16 = [r33], UPD
-	FSH	r26 = r19, r35	;;
-	BSH	r27 = r16, r31	;;
-	{ .mib;	nop.b 0;; }			C delay to save 6 cycles...
-	{ .mib;	nop.b 0;; }			C delay to save 6 cycles...
-	{ .mib;	nop.b 0;; }			C delay to save 6 cycles...
-	or	r27 = r27, r26
-	mov	r19 = r16	;;
-	st8	[r32] = r27, UPD
-	br.cloop.dptk .Loop0
+.Lb00:	ld8		r18 = [up], UPD
+	;;
+	ld8		r19 = [up], UPD
+	;;
+	ld8		r16 = [up], UPD
+	;;
+	BSH		r8 = r18, tnc		C function return value
+	ld8		r17 = [up], UPD
+	br.cloop.sptk	.L_grt_4
 
-.Lunroll:
-	add	r14 = -2, r14	;;
-	mov	ar.lc = r14
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	;;
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	;;
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	;;
+	or		r14 = r25, r24
+	FSH		r22 = r17, cnt
+	BSH		r23 = r18, tnc
+	br		.Lr4
 
-.Lphase1:
-  { .mmi
-	ld8	r16 = [r33], UPD	;;
-} { .mmi
-	ld8	r17 = [r33], UPD	;;
-} { .mmi
-	ld8	r18 = [r33], UPD
-	FSH	r26 = r19, r35	;;
-} { .mmi
-	ld8	r19 = [r33], UPD
-	BSH	r27 = r16, r31	;;
-} { .mib
-	FSH	r20 = r16, r35
-}
+.L_grt_4:
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	ld8		r18 = [up], UPD
+	;;
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	ld8		r19 = [up], UPD
+	;;
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	ld8		r16 = [up], UPD
+	;;
+	or		r14 = r25, r24
+	FSH		r22 = r17, cnt
+	BSH		r23 = r18, tnc
+	ld8		r17 = [up], UPD
+	br.cloop.sptk	.Ltop
+	br		.Lbot
 
-.Lphase2:
-  { .mmi
-	ld8	r16 = [r33], UPD
-	BSH	r21 = r17, r31
-} { .mib
-	FSH	r22 = r17, r35	;;
-} { .mmi
-	ld8	r17 = [r33], UPD
-	BSH	r23 = r18, r31
-} { .mib
-	or	r27 = r27, r26
-	FSH	r24 = r18, r35
-	br.cloop.dptk .Loop
-}
-	br.sptk	.Lend2
-.Loop:
-  { .mmi
-	st8	[r32] = r27, UPD
-	ld8	r18 = [r33], UPD
-	BSH	r25 = r19, r31
-} { .mib
-	or	r21 = r21, r20
-	FSH	r26 = r19, r35	;;
-} { .mmi
-	st8	[r32] = r21, UPD
-	ld8	r19 = [r33], UPD
-	BSH	r27 = r16, r31
-} { .mib
-	or	r23 = r23, r22
-	FSH	r20 = r16, r35	;;
-} { .mmi
-	st8	[r32] = r23, UPD
-	ld8	r16 = [r33], UPD
-	BSH	r21 = r17, r31
-} { .mib
-	or	r25 = r25, r24
-	FSH	r22 = r17, r35	;;
-} { .mmi
-	st8	[r32] = r25, UPD
-	ld8	r17 = [r33], UPD
-	BSH	r23 = r18, r31
-} { .mib
-	or	r27 = r27, r26
-	FSH	r24 = r18, r35
-	br.cloop.sptk .Loop;;
-}
-.Lend2:
-  { .mmi
-	st8	[r32] = r27, UPD
-	ld8	r18 = [r33], UPD
-	BSH	r25 = r19, r31
-} { .mib
-	or	r21 = r21, r20
-	FSH	r26 = r19, r35	;;
-} { .mmi
-	st8	[r32] = r21, UPD
-	BSH	r27 = r16, r31
-} { .mib
-	or	r23 = r23, r22
-	FSH	r20 = r16, r35	;;
-} { .mmi
-	st8	[r32] = r23, UPD
-	BSH	r21 = r17, r31
-} { .mib
-	or	r25 = r25, r24
-	FSH	r22 = r17, r35	;;
-} { .mmi
-	st8	[r32] = r25, UPD
-	BSH	r23 = r18, r31
-} { .mib
-	or	r27 = r27, r26
-	FSH	r24 = r18, r35	;;
-}
 
-  { .mmi
-	st8	[r32] = r27, UPD
-} { .mib
-	or	r21 = r21, r20	;;
-} { .mmi
-	st8	[r32] = r21, UPD
-} { .mib
-	or	r23 = r23, r22	;;
-} { .mmi
-	st8	[r32] = r23, UPD;;
-} { .mmi
-	st8	[r32] = r24
-}
+.Lb01:	ld8		r17 = [up], UPD
+	br.cloop.sptk	.L_grt_1
+
+	BSH		r8 = r17, tnc		C function return value
+	FSH		r22 = r17, cnt
+	br		.Lr1			C return
+
+.L_grt_1:
+	ld8		r18 = [up], UPD
+	;;
+	ld8		r19 = [up], UPD
+	;;
+	BSH		r8 = r17, tnc		C function return value
+	ld8		r16 = [up], UPD
+	;;
+	FSH		r22 = r17, cnt
+	BSH		r23 = r18, tnc
+	ld8		r17 = [up], UPD
+	br.cloop.sptk	.L_grt_5
+
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	ld8		r18 = [up], UPD
+	;;
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	ld8		r19 = [up], UPD
+	;;
+	or		r15 = r23, r22
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	br		.Lr5
+
+.L_grt_5:
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	ld8		r18 = [up], UPD
+	;;
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	ld8		r19 = [up], UPD
+	;;
+	or		r15 = r23, r22
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	ld8		r16 = [up], UPD
+	br		.LL01
+
+
+.Lb10:	ld8		r16 = [up], UPD
+	;;
+	ld8		r17 = [up], UPD
+	br.cloop.sptk	.L_grt_2
+
+	BSH		r8 = r16, tnc		C function return value
+	;;
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	;;
+	or		r14 = r21, r20
+	FSH		r22 = r17, cnt
+	br		.Lr2			C return
+
+.L_grt_2:
+	ld8		r18 = [up], UPD
+	;;
+	BSH		r8 = r16, tnc		C function return value
+	ld8		r19 = [up], UPD
+	;;
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	ld8		r16 = [up], UPD
+	;;
+	FSH		r22 = r17, cnt
+	BSH		r23 = r18, tnc
+	ld8		r17 = [up], UPD
+	br.cloop.sptk	.L_grt_6
+
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	ld8		r18 = [up], UPD
+	;;
+	or		r14 = r21, r20
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	br		.Lr6
+
+.L_grt_6:
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	ld8		r18 = [up], UPD
+	;;
+	or		r14 = r21, r20
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	ld8		r19 = [up], UPD
+	br		.LL10
+
+
+.Lb11:	ld8		r19 = [up], UPD
+	;;
+	ld8		r16 = [up], UPD
+	;;
+	ld8		r17 = [up], UPD
+	br.cloop.sptk	.L_grt_3
+
+	BSH		r8 = r19, tnc		C function return value
+	;;
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	;;
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	;;
+	FSH		r22 = r17, cnt
+	or		r15 = r27, r26
+	br		.Lr3			C return
+
+.L_grt_3:
+	BSH		r8 = r19, tnc		C function return value
+	ld8		r18 = [up], UPD
+	;;
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	ld8		r19 = [up], UPD
+	;;
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	ld8		r16 = [up], UPD
+	;;
+	FSH		r22 = r17, cnt
+	BSH		r23 = r18, tnc
+	ld8		r17 = [up], UPD
+	br.cloop.sptk	.L_grt_7
+
+	or		r15 = r27, r26
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	br		.Lr7
+
+.L_grt_7:
+	or		r15 = r27, r26
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	ld8		r18 = [up], UPD
+	br		.LL11
+
+C *** MAIN LOOP START ***
+	ALIGN(32)
+.Ltop:	or		r15 = r27, r26
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	st8		[rp] = r14, UPD
+	ld8		r18 = [up], UPD
+	nop.b		0
+	;;
+.LL11:	or		r14 = r21, r20
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	st8		[rp] = r15, UPD
+	ld8		r19 = [up], UPD
+	nop.b		0
+	;;
+.LL10:	or		r15 = r23, r22
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	st8		[rp] = r14, UPD
+	ld8		r16 = [up], UPD
+	nop.b		0
+	;;
+.LL01:	or		r14 = r25, r24
+	FSH		r22 = r17, cnt
+	BSH		r23 = r18, tnc
+	st8		[rp] = r15, UPD
+	ld8		r17 = [up], UPD
+	br.cloop.sptk	.Ltop
+C *** MAIN LOOP END ***
+
+.Lbot:	or		r15 = r27, r26
+	FSH		r24 = r18, cnt
+	BSH		r25 = r19, tnc
+	st8		[rp] = r14, UPD
+	;;
+.Lr7:	or		r14 = r21, r20
+	FSH		r26 = r19, cnt
+	BSH		r27 = r16, tnc
+	st8		[rp] = r15, UPD
+	;;
+.Lr6:	or		r15 = r23, r22
+	FSH		r20 = r16, cnt
+	BSH		r21 = r17, tnc
+	st8		[rp] = r14, UPD
+	;;
+.Lr5:	or		r14 = r25, r24
+	FSH		r22 = r17, cnt
+	st8		[rp] = r15, UPD
+	;;
+
+.Lr4:	or		r15 = r27, r26
+	st8		[rp] = r14, UPD
+	;;
+.Lr3:	or		r14 = r21, r20
+	st8		[rp] = r15, UPD
+	;;
+.Lr2:	st8		[rp] = r14, UPD
+	;;
+.Lr1:	st8		[rp] = r22, UPD
 	mov	ar.lc = r2
 	br.ret.sptk.many b0
 EPILOGUE(func)
