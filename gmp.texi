@@ -988,15 +988,20 @@ combination of chip ABI, plus how GMP chooses to use it.  For example in some
 By default GMP chooses the best ABI available for a given system, and this
 generally gives significantly greater speed.  But an ABI can be chosen
 explicitly to make GMP compatible with other libraries, or particular
-application requirements.  In all cases it's vital that all object code used
-in a given program is compiled for the same ABI.
+application requirements.  For example,
+
+@example
+./configure ABI=32
+@end example
+
+In all cases it's vital that all object code used in a given program is
+compiled for the same ABI.
 
 Usually a limb is implemented as a @code{long}.  When a @code{long long} limb
-is used in a particular ABI, this is encoded in a generated @file{gmp.h}.
-This is convenient for applications, but it does mean that @file{gmp.h} will
-vary, and can't be just copied around.  @file{gmp.h} remains compiler
-independent though, since all compilers for a particular ABI will be expected
-to use the same limb type.
+is used this is encoded in the generated @file{gmp.h}.  This is convenient for
+applications, but it does mean that @file{gmp.h} will vary, and can't be just
+copied around.  @file{gmp.h} remains compiler independent though, since all
+compilers for a particular ABI will be expected to use the same limb type.
 
 Currently no attempt is made to follow whatever conventions a system has for
 installing library or header files built for a particular ABI.  This will
@@ -1121,11 +1126,12 @@ cc   -xarch=v9
 
 @item @samp{ABI=32}
 
-On Solaris 2.6 and earlier only the plain V8 32-bit ABI can be used, since the
-kernel doesn't save all registers.  GMP still uses as much of the V9 ISA as it
-can in these circumstances.  No special compiler options are required for
-applications, though using something like the following requesting V9 code
-within the V8 ABI is recommended.
+On Solaris 2.6 and earlier, and on Solaris 2.7 with the kernel in 32-bit mode,
+only the plain V8 32-bit ABI can be used, since the kernel doesn't save all
+registers.  GMP still uses as much of the V9 ISA as it can in these
+circumstances.  No special compiler options are required for applications,
+though using something like the following requesting V9 code within the V8 ABI
+is recommended.
 
 @example
 gcc  -mv8plus
@@ -1137,6 +1143,15 @@ cc   -xarch=v8plus
 
 Don't be confused by the names of these sparc @samp{-m} and @samp{-x} options,
 they're called @samp{arch} but they effectively control the ABI.
+
+On Solaris 2.7 with the kernel in 32-bit-mode, a normal native build will
+reject @samp{ABI=64} because the resulting executables won't run.
+@samp{ABI=64} can still be built if desired by making it look like a
+cross-compile, for example
+
+@example
+./configure --build=none --host=sparcv9-sun-solaris2.7 ABI=64
+@end example
 @end table
 
 
@@ -4733,7 +4748,7 @@ will be written.  To get the full output, @var{size} must be enough for the
 string and null-terminator.
 
 The return value is the total number of characters which ought to have been
-produced, excluding the terminating null.  If @ma{@var{retval} >= @var{size}}
+produced, excluding the terminating null.  If @ma{@var{retval} @ge{} @var{size}}
 then the actual output has been truncated to the first @ma{@var{size}-1}
 characters, and a null appended.
 
