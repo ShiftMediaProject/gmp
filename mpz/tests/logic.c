@@ -20,11 +20,15 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
 
-void debug_mp ();
+void dump_abort _PROTO (());
+void debug_mp _PROTO ((mpz_t, int));
 
 #ifndef SIZE
 #define SIZE 16
@@ -115,6 +119,7 @@ main (int argc, char **argv)
   exit (0);
 }
 
+void
 dump_abort ()
 {
   abort();
