@@ -183,6 +183,41 @@ refmpn_msbone_mask (mp_limb_t x)
   return (refmpn_msbone (x) << 1) - 1;
 }
 
+/* The biggest n for which base**n fits in GMP_NUMB_BITS. */
+int
+refmpn_chars_per_limb (int base)
+{
+  mp_limb_t  bb, hi;
+  int        chars_per_limb;
+
+  ASSERT (base >= 2);
+  bb = 1;
+  chars_per_limb = 0;
+  for (;;)
+    {
+      hi = refmpn_umul_ppmm (&bb, bb, (mp_limb_t) base);
+      if (hi != 0 || (bb & GMP_NAIL_MASK) != 0)
+        break;
+      chars_per_limb++;
+    }
+  return chars_per_limb;
+}
+
+/* The biggest value base**n which fits in GMP_NUMB_BITS. */
+mp_limb_t
+refmpn_big_base (int base)
+{
+  int        chars_per_limb = refmpn_chars_per_limb (base);
+  int        i;
+  mp_limb_t  bb;
+
+  ASSERT (base >= 2);
+  bb = 1;
+  for (i = 0; i < chars_per_limb; i++)
+    bb *= base;
+  return bb;
+}
+
 
 void
 refmpn_setbit (mp_ptr ptr, unsigned long bit)

@@ -151,8 +151,10 @@ void refmpn_and_n  __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 void refmpn_andn_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 
+mp_limb_t refmpn_big_base __GMP_PROTO ((int));
 mp_limb_t refmpn_bswap_limb __GMP_PROTO ((mp_limb_t src));
 
+int refmpn_chars_per_limb __GMP_PROTO ((int));
 void refmpn_clrbit __GMP_PROTO ((mp_ptr, unsigned long));
 int refmpn_cmp __GMP_PROTO ((mp_srcptr s1p, mp_srcptr s2p, mp_size_t size));
 int refmpn_cmp_allowzero __GMP_PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
