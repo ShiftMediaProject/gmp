@@ -39,15 +39,12 @@ MPQ_OBJS = add.o canonicalize.o clear.o cmp.o cmp_ui.o div.o get_d.o \
 
 INCLUDES = -I. -I.. -I../mpn -I$(srcdir)/..
 
-libmpq.a: Makefile.in $(MPQ_OBJS)
+libmpq.a: Makefile $(MPQ_OBJS)
 	rm -f $@
 	$(AR) $(AR_FLAGS) $@ $(MPQ_OBJS)
 
 .c.o:
 	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
-
-test: libmpq.a
-	cd tests; $(MAKE) srcdir=$(srcdir) CC=$(CC) SHELL=$(SHELL)
 
 clean mostlyclean:
 	rm -f *.o libmpq.a
