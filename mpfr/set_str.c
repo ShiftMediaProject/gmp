@@ -172,6 +172,7 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
   /* test if x = 0 */
   if (prec_s == 0)
     {
+      MPFR_CLEAR_FLAGS (x);
       MPFR_SET_ZERO (x);
       res = 0;
       goto end;
