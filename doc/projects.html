@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 17 Oct 2001.  An up-to-date version is available at
+  This file current as of 17 Nov 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -177,23 +177,6 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 
   <p> If the routine becomes fast enough, perhaps square roots could be computed
   using this function.
-
-<p> <li> <strong>Random number generators</strong>
-
-  <p> The implementation of the linear congruential generator is not
-      particularly fast.  Perhaps a second seed areas within
-      <code>gmp_randstate_t</code> would save some copying, and perhaps a
-      special case for single (or single and double) limb moduli could avoid
-      lots of function calls.
-
-  <p> More generator algorithms would be good.  An additive style (delayed
-      Fibonacci or whatever it's called) ought to be fast.  Blum-Blum-Shub
-      has been started, it needs a way to get large random primes.
-
-  <p> Some random functions giving various distributions (normal, geometric,
-      etc) might be good.
-
-  <p> More empirical tests of the generated numbers.
 
 <p> <li> <strong>Test Suite</strong>
 
