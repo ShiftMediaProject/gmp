@@ -1,5 +1,7 @@
 2000-04-13  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/nextprime.c: Use proper names of new random types and functions.
+
 	* mpz/rrandomb.c: New file.
 	* mpz/Makefile.am: List it.
 	* mpz/Makefile.in: Regenerate.
