@@ -25,7 +25,6 @@ MA 02111-1307, USA.
 #include <fcntl.h>
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #if 0
@@ -85,7 +84,8 @@ pentium_wbinvd(void)
 #endif
 }
 
-static int double_cmp_ptr (const double *p, const double *q)
+static int
+double_cmp_ptr (const double *p, const double *q)
 {
   if (*p > *q)  return 1;
   if (*p < *q)  return -1;
@@ -165,7 +165,7 @@ speed_measure (double (*fun)(struct speed_params *s), struct speed_params *s)
          valid measurement.  Return smallest among them.  */
       if (i >= e)
         {
-          qsort (&t, i, sizeof(t[0]), double_cmp_ptr);
+          qsort (t, i, sizeof(t[0]), double_cmp_ptr);
           for (j = e-1; j < i; j++)
             if (t[j] <= t[j-e+1] * TOLERANCE)
               return t[j-e+1];
@@ -254,6 +254,22 @@ _mp_allocate_or_reallocate (void *ptr, size_t oldsize, size_t newsize)
 }
 
 
+/* Note that memory allocated with this function can never be freed, because
+   the start address of the block allocated is discarded. */
+
+void *
+_mp_allocate_func_aligned (size_t bytes, size_t align)
+{
+  char  *p;
+  unsigned  d;
+  p = (char *) (*_mp_allocate_func) (bytes + align-1);
+  d = ((unsigned) p) & (align-1);
+  if (d != 0)
+    p += (align-d);
+  return p;
+}
+
+
 /* Adjust ptr to aligned to CACHE_LINE_SIZE plus "align".
    ptr needs to have room for up to CACHE_LINE_SIZE-4 extra bytes.  */
 
@@ -319,79 +335,264 @@ speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
 
   */
 
-SPEED_ROUTINE_MPN_COPY (speed_MPN_COPY, MPN_COPY, 1)
-SPEED_ROUTINE_MPN_COPY (speed_MPN_COPY_INCR, MPN_COPY_INCR, 1)
-SPEED_ROUTINE_MPN_COPY (speed_MPN_COPY_DECR, MPN_COPY_DECR, 1)
-SPEED_ROUTINE_MPN_COPY_CALL (speed_memcpy, 1,
-                             memcpy (wp, s->xp, s->size * BYTES_PER_MP_LIMB))
+/* MPN_COPY etc can be inlines, so the _CALL forms are necessary */
+double
+speed_MPN_COPY (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY_CALL (1, MPN_COPY (wp, s->xp, s->size));
+}
 
-SPEED_ROUTINE_MPN_UNARY_1 (speed_mpn_addmul_1, mpn_addmul_1, 1)
-SPEED_ROUTINE_MPN_UNARY_1 (speed_mpn_divmod_1, mpn_divmod_1, 1)
-SPEED_ROUTINE_MPN_UNARY_1 (speed_mpn_lshift,   mpn_lshift, 1)
-SPEED_ROUTINE_MPN_UNARY_1 (speed_mpn_mul_1,    mpn_mul_1, 1)
-SPEED_ROUTINE_MPN_UNARY_1 (speed_mpn_rshift,   mpn_rshift, 1)
-SPEED_ROUTINE_MPN_UNARY_1 (speed_mpn_submul_1, mpn_submul_1, 1)
+double
+speed_MPN_COPY_INCR (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY_CALL (1, MPN_COPY_INCR (wp, s->xp, s->size));
+}
 
-SPEED_ROUTINE_MPN_DIVREM_1 (speed_mpn_divrem_1, mpn_divrem_1, 1)
-SPEED_ROUTINE_MPN_MOD_1 (speed_mpn_mod_1, mpn_mod_1, 1)
-SPEED_ROUTINE_MPN_COPY (speed_mpn_divexact_by3, mpn_divexact_by3, 1)
-SPEED_ROUTINE_MPN_BZ_DIVREM_N (speed_mpn_bz_divrem_n, mpn_bz_divrem_n, 1)
-SPEED_ROUTINE_MPN_BZ_DIVREM_SB (speed_mpn_bz_divrem_sb, mpn_sb_divrem_mn, 1)
-SPEED_ROUTINE_MPN_BZ_TDIV_QR (speed_mpn_bz_tdiv_qr, mpn_tdiv_qr, 1)
+double
+speed_MPN_COPY_DECR (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY_CALL (1, MPN_COPY_DECR (wp, s->xp, s->size));
+}
 
-SPEED_ROUTINE_MPN_POPCOUNT (speed_mpn_popcount, mpn_popcount, 1)
+double
+speed_memcpy (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY_CALL (1, memcpy (wp, s->xp,
+                                          s->size * BYTES_PER_MP_LIMB));
+}
 
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_add_n, mpn_add_n, 1)
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_sub_n, mpn_sub_n, 1)
-SPEED_ROUTINE_MPN_BINARY_N_SELF (speed_mpn_add_n_self, mpn_add_n, 1)
-SPEED_ROUTINE_MPN_BINARY_N_INPLACE (speed_mpn_add_n_inplace, mpn_add_n, 1)
+
+double
+speed_mpn_addmul_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1 (mpn_addmul_1, 1);
+}
+
+double
+speed_mpn_divmod_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1 (mpn_divmod_1, 1);
+}
+
+double
+speed_mpn_lshift (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1 (mpn_lshift, 1);
+}
+
+
+double
+speed_mpn_mul_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1 (mpn_mul_1, 1);
+}
+
+
+double
+speed_mpn_rshift (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1 (mpn_rshift, 1);
+}
+
+
+double
+speed_mpn_submul_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_UNARY_1 (mpn_submul_1, 1);
+}
+
+
+
+double
+speed_mpn_divrem_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1 (mpn_divrem_1, 1);
+}
+
+
+double
+speed_mpn_mod_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1 (mpn_mod_1, 1);
+}
+
+
+double
+speed_mpn_divexact_by3 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY (mpn_divexact_by3, 1);
+}
+
+
+double
+speed_mpn_bz_divrem_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BZ_DIVREM_N (mpn_bz_divrem_n, 1);
+}
+
+
+double
+speed_mpn_bz_divrem_sb (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BZ_DIVREM_SB (mpn_sb_divrem_mn, 1);
+}
+
+
+double
+speed_mpn_bz_tdiv_qr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BZ_TDIV_QR (mpn_tdiv_qr, 1);
+}
+
+
+
+double
+speed_mpn_popcount (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_POPCOUNT (mpn_popcount, 1);
+}
+
+
+
+double
+speed_mpn_add_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N (mpn_add_n, 1);
+}
+double
+speed_mpn_sub_n (struct speed_params *s)
+{
+SPEED_ROUTINE_MPN_BINARY_N (mpn_sub_n, 1);
+}
+double
+speed_mpn_add_n_self (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N_SELF (mpn_add_n, 1);
+}
+double
+speed_mpn_add_n_inplace (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N_INPLACE (mpn_add_n, 1);
+}
+
 
 /* mpn_and_n etc can be macros and so have to be handled with
    SPEED_ROUTINE_MPN_BINARY_N_CALL forms */
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_and_n,  0,
-                                 mpn_and_n  (wp,s->xp,s->yp,s->size))
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_andn_n, 0,
-                                 mpn_andn_n (wp,s->xp,s->yp,s->size))
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_nand_n, 0,
-                                 mpn_nand_n (wp,s->xp,s->yp,s->size))
+double
+speed_mpn_and_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (0, mpn_and_n  (wp,s->xp,s->yp,s->size));
+}
+double
+speed_mpn_andn_n (struct speed_params *s)
+{
+SPEED_ROUTINE_MPN_BINARY_N_CALL (0, mpn_andn_n (wp,s->xp,s->yp,s->size));
+}
+double
+speed_mpn_nand_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (0, mpn_nand_n (wp,s->xp,s->yp,s->size));
+}
+double
+speed_mpn_ior_n (struct speed_params *s)
+{
+SPEED_ROUTINE_MPN_BINARY_N_CALL (0, mpn_ior_n (wp,s->xp,s->yp,s->size));
+}
+double
+speed_mpn_iorn_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (0, mpn_iorn_n (wp,s->xp,s->yp,s->size));
+}
+double
+speed_mpn_nior_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (0, mpn_nior_n (wp,s->xp,s->yp,s->size));
+}
+double
+speed_mpn_xor_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (0, mpn_xor_n (wp,s->xp,s->yp,s->size));
+}
+double
+speed_mpn_xnor_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_BINARY_N_CALL (0, mpn_xnor_n (wp,s->xp,s->yp,s->size));
+}
 
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_ior_n,  0,
-                                 mpn_ior_n  (wp,s->xp,s->yp,s->size))
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_iorn_n, 0,
-                                 mpn_iorn_n (wp,s->xp,s->yp,s->size))
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_nior_n, 0,
-                                 mpn_nior_n (wp,s->xp,s->yp,s->size))
 
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_xor_n,  0,
-                                 mpn_xor_n  (wp,s->xp,s->yp,s->size))
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_xnor_n, 0,
-                                 mpn_xnor_n (wp,s->xp,s->yp,s->size))
-
-SPEED_ROUTINE_MPZ_UI (speed_mpz_fac_ui, mpz_fac_ui)
-SPEED_ROUTINE_MPZ_UI (speed_mpz_fib_ui, mpz_fib_ui)
+double
+speed_mpz_fac_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_UI (mpz_fac_ui);
+}
+double
+speed_mpz_fib_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_UI (mpz_fib_ui);
+}
 
 
-SPEED_ROUTINE_MPN_MUL_N (speed_mpn_mul_n, mpn_mul_n, 1)
-SPEED_ROUTINE_MPN_SQR   (speed_mpn_sqr_n, mpn_sqr_n, 1)
-
-SPEED_ROUTINE_MPN_SQR_CALL (speed_mpn_mul_n_sqr, 1,
-                            mpn_mul_n(wp,s->xp,s->xp,s->size), 1)
+double
+speed_mpn_mul_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL_N (mpn_mul_n, 1);
+}
+double
+speed_mpn_sqr_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQR (mpn_sqr_n, 1);
+}
+double
+speed_mpn_mul_n_sqr (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQR_CALL (1, mpn_mul_n(wp,s->xp,s->xp,s->size), 1);
+}
 
 /* FIXME: size restrictions on some sqr_basecase versions */
-SPEED_ROUTINE_MPN_MUL_BASECASE(speed_mpn_mul_basecase, mpn_mul_basecase, 1)
-SPEED_ROUTINE_MPN_SQR (speed_mpn_sqr_basecase, mpn_sqr_basecase, 1)
+double
+speed_mpn_mul_basecase (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL_BASECASE(mpn_mul_basecase, 1);
+}
+double
+speed_mpn_sqr_basecase (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SQR (mpn_sqr_basecase, 1);
+}
 
 /* FIXME: size restrictions on kara */
-SPEED_ROUTINE_MPN_MUL_N_CALL (speed_mpn_kara_mul_n, 1,
-                              mpn_kara_mul_n(wp,s->xp,s->xp,s->size,tspace),
-                              MPN_KARA_MUL_N_TSIZE (s->size))
-SPEED_ROUTINE_MPN_SQR_CALL (speed_mpn_kara_sqr_n, 1,
-                            mpn_kara_sqr_n(wp,s->xp,s->size,tspace),
-                            MPN_KARA_SQR_N_TSIZE (s->size))
+double
+speed_mpn_kara_mul_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MUL_N_CALL
+    (1,
+     mpn_kara_mul_n (wp, s->xp, s->xp, s->size, tspace),
+     MPN_KARA_MUL_N_TSIZE (s->size));
+}
+
+double
+speed_mpn_kara_sqr_n (struct speed_params *s)
+{
+SPEED_ROUTINE_MPN_SQR_CALL
+  (1,
+   mpn_kara_sqr_n (wp, s->xp, s->size, tspace),
+   MPN_KARA_SQR_N_TSIZE (s->size));
+}
 
 /* FIXME: size restrictions on toom3 */
-SPEED_ROUTINE_GMPN_TOOM3_MUL_N (speed_mpn_toom3_mul_n, mpn_toom3_mul_n, 1)
-SPEED_ROUTINE_GMPN_TOOM3_SQR_N (speed_mpn_toom3_sqr_n, mpn_toom3_sqr_n, 1)
+double
+speed_mpn_toom3_mul_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_GMPN_TOOM3_MUL_N (mpn_toom3_mul_n, 1);
+}
+
+
+double
+speed_mpn_toom3_sqr_n (struct speed_params *s)
+{
+  SPEED_ROUTINE_GMPN_TOOM3_SQR_N (mpn_toom3_sqr_n, 1);
+}
+
 
 double
 speed_noop (struct speed_params *s)
