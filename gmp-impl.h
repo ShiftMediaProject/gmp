@@ -1992,48 +1992,51 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   } while (0)
 #endif
 
+#ifndef udiv_qrnnd_preinv
+#define udiv_qrnnd_preinv udiv_qrnnd_preinv2
+#endif
+
 /* Divide the two-limb number in (NH,,NL) by D, with DI being the largest
    limb not larger than (2**(2*BITS_PER_MP_LIMB))/D - (2**BITS_PER_MP_LIMB).
    If this would yield overflow, DI should be the largest possible number
    (i.e., only ones).  For correct operation, the most significant bit of D
    has to be set.  Put the quotient in Q and the remainder in R.  */
-#define udiv_qrnnd_preinv(q, r, nh, nl, d, di)                            \
-  do {                                                                    \
-    mp_limb_t _q, _ql, _r;                                                \
-    mp_limb_t _xh, _xl;                                                   \
-    ASSERT ((d) != 0);                                                    \
-    umul_ppmm (_q, _ql, (nh), (di));                                      \
-    _q += (nh);                 /* DI is 2**BITS_PER_MP_LIMB too small */ \
-    umul_ppmm (_xh, _xl, _q, (d));                                        \
-    sub_ddmmss (_xh, _r, (nh), (nl), _xh, _xl);                           \
-    if (_xh != 0)                                                         \
-      {                                                                   \
-	sub_ddmmss (_xh, _r, _xh, _r, 0, (d));                            \
-	_q += 1;                                                          \
-	if (_xh != 0)                                                     \
-	  {                                                               \
-	    _r -= (d);                                                    \
-	    _q += 1;                                                      \
-	  }                                                               \
-      }                                                                   \
-    if (_r >= (d))                                                        \
-      {                                                                   \
-	_r -= (d);                                                        \
-	_q += 1;                                                          \
-      }                                                                   \
-    (r) = _r;                                                             \
-    (q) = _q;                                                             \
+#define udiv_qrnnd_preinv1(q, r, nh, nl, d, di)				\
+  do {									\
+    mp_limb_t _q, _ql, _r;						\
+    mp_limb_t _xh, _xl;							\
+    ASSERT ((d) != 0);							\
+    umul_ppmm (_q, _ql, (nh), (di));					\
+    _q += (nh);	/* Compensate, di is 2**GMP_LIMB_BITS too small */	\
+    umul_ppmm (_xh, _xl, _q, (d));					\
+    sub_ddmmss (_xh, _r, (nh), (nl), _xh, _xl);				\
+    if (_xh != 0)							\
+      {									\
+	sub_ddmmss (_xh, _r, _xh, _r, 0, (d));				\
+	_q += 1;							\
+	if (_xh != 0)							\
+	  {								\
+	    _r -= (d);							\
+	    _q += 1;							\
+	  }								\
+      }									\
+    if (_r >= (d))							\
+      {									\
+	_r -= (d);							\
+	_q += 1;							\
+      }									\
+    (r) = _r;								\
+    (q) = _q;								\
   } while (0)
-/* Like udiv_qrnnd_preinv, but for for any value D.  DNORM is D shifted left
-   so that its most significant bit is set.  LGUP is ceil(log2(D)).  */
-#define udiv_qrnnd_preinv2gen(q, r, nh, nl, d, di, dnorm, lgup) \
+/* Like udiv_qrnnd_preinv, but branch-free.  */
+#define udiv_qrnnd_preinv2(q, r, nh, nl, d, di) \
   do {									\
     mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
-    _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
-    _n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
-    _n1 = ((mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1));		\
-    _nadj = _n10 + (_n1 & (dnorm));					\
+    _n2 = (nh);								\
+    _n10 = (nl);							\
+    _n1 = (mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1);		\
+    _nadj = _n10 + (_n1 & (d));						\
     umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
     _q1 = ~(_n2 + _xh);							\
@@ -2043,16 +2046,16 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     (r) = _xl + ((d) & _xh);						\
     (q) = _xh - _q1;							\
   } while (0)
-/* Exactly like udiv_qrnnd_preinv, but branch-free.  It is not clear which
-   version to use.  */
-#define udiv_qrnnd_preinv2norm(q, r, nh, nl, d, di) \
+/* Like udiv_qrnnd_preinv2, but for for any value D.  DNORM is D shifted left
+   so that its most significant bit is set.  LGUP is ceil(log2(D)).  */
+#define udiv_qrnnd_preinv2gen(q, r, nh, nl, d, di, dnorm, lgup) \
   do {									\
     mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
-    _n2 = (nh);								\
-    _n10 = (nl);							\
+    _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
+    _n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
     _n1 = ((mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1));		\
-    _nadj = _n10 + (_n1 & (d));						\
+    _nadj = _n10 + (_n1 & (dnorm));					\
     umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
     _q1 = ~(_n2 + _xh);							\
