@@ -545,7 +545,7 @@ refmpn_addsub_n (mp_ptr r1p, mp_ptr r2p,
 mp_limb_t
 rshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 {
-  ASSERT (shift >= 0 && shift < BITS_PER_MP_LIMB);
+  ASSERT (shift < BITS_PER_MP_LIMB);
   if (shift == 0)
     return lo;
   else
@@ -557,7 +557,7 @@ rshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 mp_limb_t
 lshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
 {
-  ASSERT (shift >= 0 && shift < BITS_PER_MP_LIMB);
+  ASSERT (shift < BITS_PER_MP_LIMB);
   if (shift == 0)
     return hi;
   else
