@@ -145,7 +145,7 @@ const struct data_t  data_z[] = {
   { 10, "gcd(4,6)", "2" },
   { 10, "gcd(4,6,9)", "1" },
 
-  //    { 10, "powm(3,2,9)", "0" },
+  { 10, "powm(3,2,9)", "0" },
   { 10, "powm(3,2,8)", "1" },
 
   /* filling data stack */
