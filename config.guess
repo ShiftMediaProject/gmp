@@ -699,6 +699,11 @@ main ()
 	case 6:
 	  modelstr = "athlon";
 	  break;
+	case 15:
+	  /* We might want to return opteron, athlon64, or the CPU core name
+	     hammer here instead of the architecture name x86_64.  */
+	  modelstr = "x86_64";
+	  break;
 	}
     }
   else if (strcmp (vendor_string, "CyrixInstead") == 0)
