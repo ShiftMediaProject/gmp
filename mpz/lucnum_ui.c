@@ -103,7 +103,7 @@ mpz_lucnum_ui (mpz_ptr ln, unsigned long n)
 
           /* xp = 2*F[k] + F[k-1] */
 #if HAVE_NATIVE_mpn_addlsh1_n
-          c = refmpn_addlsh1_n (xp, yp, xp, xsize);
+          c = mpn_addlsh1_n (xp, yp, xp, xsize);
 #else
           c = mpn_lshift (xp, xp, xsize, 1);
           c += mpn_add_n (xp, xp, yp, xsize);
