@@ -24,10 +24,9 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-/* This TMP_ALLOC method aims to help a malloc debugger find problems.
-
-   A linked list of allocated block is kept for TMP_FREE to release.  This
-   is reentrant and thread safe.
+/* This method aims to help a malloc debugger find problems.  A linked list
+   of allocated block is kept for TMP_FREE to release.  This is reentrant
+   and thread safe.
 
    Each TMP_ALLOC is a separate malloced block, so redzones or sentinels
    applied by a malloc debugger either above or below can guard against
@@ -35,10 +34,6 @@ MA 02111-1307, USA. */
 
    A marker is a "struct tmp_debug_t *" so that TMP_DECL can initialize it
    to NULL and we can detect TMP_ALLOC without TMP_MARK.
-
-   __gmp_allocate_func is used to get the actual "struct tmp_debug_t", so
-   that a memory leak will be induced if TMP_FREE is missing, even if no
-   TMP_ALLOCs have been done.
 
    It will work to realloc an MPZ_TMP_INIT variable, but when TMP_FREE comes
    to release the memory it will have the old size, thereby triggering an
@@ -53,11 +48,10 @@ MA 02111-1307, USA. */
 
 
 void
-__gmp_tmp_debug_mark (const char *file, int line, struct tmp_debug_t **markp)
+__gmp_tmp_debug_mark (const char *file, int line,
+                      struct tmp_debug_t **markp, struct tmp_debug_t *mark)
 {
-  struct tmp_debug_t *mark = *markp;
-  
-  if (mark != NULL)
+  if (*markp != NULL)
     {
       __gmp_assert_header (file, line);
       fprintf (stderr, "GNU MP: Duplicate TMP_MARK\n");
@@ -69,11 +63,10 @@ __gmp_tmp_debug_mark (const char *file, int line, struct tmp_debug_t **markp)
       abort ();
     }
 
-  mark = __GMP_ALLOCATE_FUNC_TYPE (1, struct tmp_debug_t);
+  *markp = mark;
   mark->file = file;
   mark->line = line;
   mark->list = NULL;
-  *markp = mark;
 }
     
 void *
@@ -120,6 +113,5 @@ __gmp_tmp_debug_free (const char *file, int line, struct tmp_debug_t **markp)
       p = next;
     }
 
-  __GMP_FREE_FUNC_TYPE (mark, 1, struct tmp_debug_t);
   *markp = NULL;
 }
