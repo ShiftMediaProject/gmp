@@ -51,13 +51,19 @@ Said by Kevin Ryde:
 /* Determine the needed storage for Fib(n).  */
 #define FIB_SIZE(n) (((mp_size_t) ((n)*0.695)) / BITS_PER_MP_LIMB + 2)
 
-static void mpz_fib_bigcase (mpz_t, mpz_t, unsigned long int);
-static void mpz_fib_basecase (mpz_t, mpz_t, unsigned long int);
+static void mpz_fib_bigcase _PROTO ((mpz_t, mpz_t, unsigned long int));
+static void mpz_fib_basecase _PROTO ((mpz_t, mpz_t, unsigned long int));
 
 #define FIB_THRES 60
 
 void
+#if __STDC__
 mpz_fib_ui (mpz_t r, unsigned long int n)
+#else
+mpz_fib_ui (r, n)
+     mpz_t r;
+     unsigned long int n;
+#endif
 {
   if (n == 0)
     mpz_set_ui (r, 0);
@@ -74,7 +80,14 @@ mpz_fib_ui (mpz_t r, unsigned long int n)
 }
 
 static void
+#if __STDC__
 mpz_fib_basecase (mpz_t t1, mpz_t t2, unsigned long int n)
+#else
+mpz_fib_basecase (t1, t2, n)
+     mpz_t t1;
+     mpz_t t2;
+     unsigned long int n;
+#endif
 {
   unsigned long int m, i;
 
@@ -94,7 +107,14 @@ mpz_fib_basecase (mpz_t t1, mpz_t t2, unsigned long int n)
 }
 
 static void
+#if __STDC__
 mpz_fib_bigcase (mpz_t t1, mpz_t t2, unsigned long int n)
+#else
+mpz_fib_bigcase (t1, t2, n)
+     mpz_t t1;
+     mpz_t t2;
+     unsigned long int n;
+#endif
 {
   unsigned long int n2;
   int ni, i;
