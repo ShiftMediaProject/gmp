@@ -140,7 +140,9 @@ LDADD = $(DEPENDENCIES)
 
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
-libspeed_la_SOURCES = common.c modlinv.c time.c noop.c mul_n_mpn.c mul_n_open.c
+libspeed_la_SOURCES = \
+  common.c freq.c modlinv.c mul_n_mpn.c mul_n_open.c noop.c time.c
+
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la -lm
 
@@ -167,6 +169,9 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 
 # Generating these little files at build time seems better than including
 # them in the distribution, since the list can be changed easily.
+#
+# FIXME: Would like for example mul_n.c to depend on $(top_builddir)/mul_n.c
+# so the recompiled object will be rebuilt if that file changes.
 
 TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c bz_divrem_n.c tdiv_qr.c gcd.c gcdext.c
 TUNE_MPZ_SRCS = fib_ui.c powm.c
@@ -197,8 +202,8 @@ libdummy_la_LIBADD =
 nodist_libdummy_la_OBJECTS =  sqr_basecase$U.lo
 libdummy_la_OBJECTS =  $(nodist_libdummy_la_OBJECTS)
 libspeed_la_LDFLAGS = 
-am_libspeed_la_OBJECTS =  common$U.lo modlinv$U.lo time$U.lo noop$U.lo \
-mul_n_mpn$U.lo mul_n_open$U.lo
+am_libspeed_la_OBJECTS =  common$U.lo freq$U.lo modlinv$U.lo \
+mul_n_mpn$U.lo mul_n_open$U.lo noop$U.lo time$U.lo
 libspeed_la_OBJECTS =  $(am_libspeed_la_OBJECTS)
 EXTRA_PROGRAMS =  speed$(EXEEXT) speed-ext$(EXEEXT) tuneup$(EXEEXT)
 am_speed_OBJECTS =  speed$U.$(OBJEXT)
@@ -312,6 +317,8 @@ common_.c: common.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/common.c; then echo $(srcdir)/common.c; else echo common.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > common_.c
 fib_ui_.c: fib_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_ui.c; then echo $(srcdir)/fib_ui.c; else echo fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_ui_.c
+freq_.c: freq.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/freq.c; then echo $(srcdir)/freq.c; else echo freq.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > freq_.c
 gcd_.c: gcd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd.c; then echo $(srcdir)/gcd.c; else echo gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_.c
 gcdext_.c: gcdext.c $(ANSI2KNR)
@@ -343,14 +350,14 @@ time_.c: time.c $(ANSI2KNR)
 tuneup_.c: tuneup.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tuneup.c; then echo $(srcdir)/tuneup.c; else echo tuneup.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tuneup_.c
 bz_divrem_n_.$(OBJEXT) bz_divrem_n_.lo common_.$(OBJEXT) common_.lo \
-fib_ui_.$(OBJEXT) fib_ui_.lo gcd_.$(OBJEXT) gcd_.lo gcdext_.$(OBJEXT) \
-gcdext_.lo modlinv_.$(OBJEXT) modlinv_.lo mul_.$(OBJEXT) mul_.lo \
-mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo \
-mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) mul_n_open_.lo \
-noop_.$(OBJEXT) noop_.lo powm_.$(OBJEXT) powm_.lo speed_.$(OBJEXT) \
-speed_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo tdiv_qr_.$(OBJEXT) \
-tdiv_qr_.lo time_.$(OBJEXT) time_.lo tuneup_.$(OBJEXT) tuneup_.lo : \
-$(ANSI2KNR)
+fib_ui_.$(OBJEXT) fib_ui_.lo freq_.$(OBJEXT) freq_.lo gcd_.$(OBJEXT) \
+gcd_.lo gcdext_.$(OBJEXT) gcdext_.lo modlinv_.$(OBJEXT) modlinv_.lo \
+mul_.$(OBJEXT) mul_.lo mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) \
+mul_n_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) \
+mul_n_open_.lo noop_.$(OBJEXT) noop_.lo powm_.$(OBJEXT) powm_.lo \
+speed_.$(OBJEXT) speed_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo \
+tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) time_.lo \
+tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
@@ -488,12 +495,12 @@ $(TUNE_MPZ_SRCS):
 	  echo "#include \"mpz/$$i\"" >>$$i; \
 	done
 
-sqr_basecase.c:
+sqr_basecase.c: $(top_srcdir)/mpn/sqr_basecase.c
 	echo '#define TUNE_PROGRAM_BUILD 1' >sqr_basecase.c
 	echo '#define TUNE_PROGRAM_BUILD_SQR 1' >>sqr_basecase.c
 	echo '#include "mpn/sqr_basecase.c"' >>sqr_basecase.c
 
-sqr_asm.asm:
+sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	echo 'define(KARATSUBA_SQR_THRESHOLD_OVERRIDE,KARATSUBA_SQR_THRESHOLD_MAX)' >sqr_asm.asm
 	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
 .asm.o:
