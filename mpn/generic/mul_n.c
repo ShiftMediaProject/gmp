@@ -54,8 +54,6 @@ static void interpolate3 _PROTO ((mp_srcptr,
                                   mp_ptr, mp_ptr, mp_ptr,
                                   mp_size_t, mp_size_t));
 static mp_limb_t add2Times _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
-void mpn_toom3_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_limb_t,
-                              mp_ptr));
 
 
 /*-- mpn_kara_mul_n ---------------------------------------------------------------*/
