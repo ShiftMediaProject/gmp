@@ -1695,10 +1695,10 @@ mpq_neg (mpq_ptr __gmp_w, mpq_srcptr __gmp_u)
 
 #define __GMPN_ADD(cout, wp, xp, xsize, yp, ysize)              \
   __GMPN_AORS (cout, wp, xp, xsize, yp, ysize, mpn_add_n,       \
-               (((wp)[__gmp_i++] = __gmp_x + 1) == 0))
+               (((wp)[__gmp_i++] = (__gmp_x + 1) & GMP_NUMB_MASK) == 0))
 #define __GMPN_SUB(cout, wp, xp, xsize, yp, ysize)              \
   __GMPN_AORS (cout, wp, xp, xsize, yp, ysize, mpn_sub_n,       \
-               (((wp)[__gmp_i++] = __gmp_x - 1), __gmp_x == 0))
+               (((wp)[__gmp_i++] = (__gmp_x - 1) & GMP_NUMB_MASK), __gmp_x == 0))
 
 
 /* The use of __gmp_i indexing is designed to ensure a compile time src==dst
