@@ -60,13 +60,9 @@
 ;;
 ;; FSF Emacs 20.x - gmpasm-mode is designed for this.
 ;; FSF Emacs 19.34 - works if you get a copy of m4-mode.el and chop the
-;;                   20.x-isms out of it.
+;;                   20.x-isms out of it.  "C" commenting with
+;;                   comment-region doesn't really do the right thing though.
 ;; XEmacs 20.4 - seems to work.
-
-
-;;; History:
-;;
-;; Jan 2000 - Initial version.
 
 
 ;;; Code:
@@ -75,6 +71,10 @@
 
 (defvar gmpasm-mode-hook nil
   "*Hook to run after entering `gmpasm-mode'.")
+
+(defconst gmpasm-comment-start-regexp "[#;!@C]"
+  "*Regexp matching possible comment styles.
+See `gmpasm-mode' docstring for how this is used.")
 
 
 (defun gmpasm-add-to-list-second (list-var element)
@@ -132,8 +132,9 @@ won't be affected."
     ;; Don't want # treated as a comment in the syntax table because it can
     ;; foul up sexp motion and bracket and quote matching across # (both
     ;; with $# parameters in m4 defines, or assembler # comments inside
-    ;; ifdef()s or forloop()s).  m4 interprets # as a comment only when
-    ;; outside quotes, and the syntax table can't express that.
+    ;; ifdef()s or forloop()s).  m4 interprets # (or whatever is set with
+    ;; changecom) as a comment only when outside quotes, and the syntax
+    ;; table can't express that.
     (modify-syntax-entry ?#  "w" table)
     (modify-syntax-entry ?\n " " table)
 
@@ -160,7 +161,7 @@ Initialized from `m4-mode-syntax-table', but modified.")
     ;; Some extra keywords for macros defined in asm-incl.m4.
     ;; L and LF don't look good fontified, so they're deliberately omitted.
     (add-to-list 'keywords
-		 '("\\b\\(defframe\\|defframe_pushl\\|deflit\\|defreg\\|EPILOGUE\\|PROLOGUE\\)\\b"
+		 '("\\b\\(define_not_for_expansion\\|defframe\\|defframe_pushl\\|deflit\\|defreg\\|EPILOGUE\\|PROLOGUE\\)\\b"
 		   . font-lock-keyword-face))
     
     ;; This is for $N parameters in m4 definitions, but it doesn't look good
@@ -196,14 +197,23 @@ The right assembler comment regexp is added dynamically, buffer-local.")
 
 This is `m4-mode' with some alterations and improvements.
 
-Filladapt gets @ ! and dnl added buffer-local as fill prefixes (# and ; are
-there already), but only if filladapt.el is already loaded.
-
 `comment-start' and `comment-end' are set buffer-local for assembler style
-commenting.  The first line found starting with # ; ! or @ determines
-`comment-start'.  If there's no comments in the buffer, # is used.  If #
-isn't what you want then type in a comment and do \\[gmpasm-mode] to
-reinitialize.
+comments appropriate to the CPU by looking for something matching
+`gmpasm-comment-start-regexp' at the start of a line, or \"#\" is used if
+there's no match (if \"#\" isn't what you want, type in a desired comment
+and do \\[gmpasm-mode] to reinitialize).
+
+`adaptive-fill-regexp' is set buffer-local to the standard regexp with
+`comment-start' and dnl added.  If filladapt.el has been loaded then it
+similarly gets `comment-start' and dnl added as buffer-local fill prefixes.
+
+Font locking gets some tweaks to the `m4-mode' settings, including assembler
+comments fontified based on the `comment-start' determined.
+
+Note that `gmpasm-comment-start-regexp' is only matched as a whole word, so
+the `C' in it is only matched as a whole word, not on something that happens
+to start with `C'.  Also it's only the particular `comment-start' determined
+that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 
 `m4-mode-hook' is run when `gmpasm-mode' selects `m4-mode', and
 `gmpasm-mode-hook' is run after `gmpasm-mode' has made its alterations.
@@ -219,22 +229,53 @@ reinitialize.
   (use-local-map gmpasm-mode-map)
   (set-syntax-table gmpasm-mode-syntax-table)
   (setq fill-column 76)
+  (setq comment-column 40)
 
-  ;; Don't want to find out the hard way whether some dumb assembler doesn't
-  ;; like a missing final newline.
+  ;; Don't want to find out the hard way which dumb assemblers don't like a
+  ;; missing final newline.
   (set (make-local-variable 'require-final-newline) t)
 
-  ;; Paragraphs are separated by blank lines, or lines with only # ; ! @ or
-  ;; dnl.
+  ;; The first match of gmpasm-comment-start-regexp at the start of a line
+  ;; determines comment-start, or "#" if no match.
+  (set (make-local-variable 'comment-start)
+       (save-excursion
+	 (goto-char (point-min))
+	 (if (re-search-forward
+	      (concat "^\\(" gmpasm-comment-start-regexp "\\)\\b") nil t)
+	     (match-string 0)
+	   "#")))
+  (set (make-local-variable 'comment-end) "")
+
+  ;; Whitespace is required before a comment-start so m4 $# doesn't match
+  ;; when comment-start is "#".
+  (set (make-local-variable 'comment-start-skip)
+       (concat "\\(^\\|\\s-\\)" (regexp-quote comment-start) "\\b\\s-*"))
+
+  ;; Comment fontification based on comment-start.  This regexp is like
+  ;; comment-start-skip, but matching through to the end of the line.
+  (add-to-list (make-local-variable 'gmpasm-font-lock-keywords)
+	       (cons (concat "\\(^\\|\\s-\\)"
+			     (regexp-quote comment-start)
+			     "\\b.*")
+		     'font-lock-comment-face))
+  (set (make-local-variable 'font-lock-defaults)
+       '(gmpasm-font-lock-keywords nil))
+
+  ;; Paragraphs are separated by blank lines, or lines with only dnl or
+  ;; comment-start.
   (set (make-local-variable 'paragraph-separate)
-       "[ \t\f]*\\(\\([#;!@]\\|dnl\\)[ \t]*\\)*$")
+       (concat "[ \t\f]*\\(\\("
+	       (regexp-quote comment-start)
+	       "\\b\\|dnl\\)[ \t]*\\)*$"))
   (set (make-local-variable 'paragraph-start)
        (concat "\f\\|" paragraph-separate))
  
-  ;; ! @ and dnl are comment style prefixes for adaptive fill, added to the
-  ;; standard regexp (which has # and ; already).
+  ;; Adaptive fill gets dnl and comment-start as comment style prefixes on
+  ;; top of the standard regexp (which has # and ; already actually).
   (set (make-local-variable 'adaptive-fill-regexp)
-       "[ \t]*\\(\\([-|#;!@>*]+\\|dnl\\|(?[0-9]+[.)]\\)[ \t]*\\)*")
+       (concat "[ \t]*\\(\\("
+	       (regexp-quote comment-start)
+	       "\\b\\|dnl\\|[-|#;>*]+\\|(?[0-9]+[.)]\\)[ \t]*\\)*"))
   (set (make-local-variable 'adaptive-fill-first-line-regexp)
        "\\`\\([ \t]*dnl\\)?[ \t]*\\'")
 
@@ -249,30 +290,23 @@ reinitialize.
 	      (setq gmpasm-filladapt-token-conversion-table
 		    filladapt-token-conversion-table)
 
-	      ;; Add dnl, ! and @ as fill prefixes (# and ; are there
-	      ;; already).
-	      ;; Comments in filladapt.el say filladapt-token-table must
-	      ;; begin with ("^" beginning-of-line), so put our addition
-	      ;; second.
-	      (gmpasm-add-to-list-second 'gmpasm-filladapt-token-table
-					 '("dnl[ \t]\\|[!@]+" gmpasm-comment))
-	      (add-to-list 'gmpasm-filladapt-token-match-table
-			   '(gmpasm-comment gmpasm-comment))
-	      (add-to-list 'gmpasm-filladapt-token-conversion-table
-			   '(gmpasm-comment . exact))
-
 	      ;; Numbered bullet points like "2.1" get matched at the start
-	      ;; of a line when you're really trying to write something like
-	      ;; "2.1 cycles/limb", so delete this from the list.  The
-	      ;; regexp for "1.", "2." etc is left though.
+	      ;; of a line when it's really say "2.1 cycles/limb", so delete
+	      ;; this from the list.  The regexp for "1.", "2." etc is left
+	      ;; though.
 	      (gmpasm-delete-from-list 'gmpasm-filladapt-token-table
 				       '("[0-9]+\\(\\.[0-9]+\\)+[ \t]"
 					 bullet))
 
-	      ;; "%" as a comment prefix interferes with x86 style register
-	      ;; names like %eax, so delete it.
+	      ;; "%" as a comment prefix interferes with x86 register names
+	      ;; like %eax, so delete it.
               (gmpasm-delete-from-list 'gmpasm-filladapt-token-table
 				       '("%+" postscript-comment))
+
+	      (add-to-list 'gmpasm-filladapt-token-match-table
+			   '(gmpasm-comment gmpasm-comment))
+	      (add-to-list 'gmpasm-filladapt-token-conversion-table
+			   '(gmpasm-comment . exact))
 	      ))
 
         (set (make-local-variable 'filladapt-token-table)
@@ -280,31 +314,18 @@ reinitialize.
         (set (make-local-variable 'filladapt-token-match-table)
 	     gmpasm-filladapt-token-match-table)
         (set (make-local-variable 'filladapt-token-conversion-table)
-	     gmpasm-filladapt-token-conversion-table)))
+	     gmpasm-filladapt-token-conversion-table)
+
+	;; Add dnl and comment-start as fill prefixes.
+	;; Comments in filladapt.el say filladapt-token-table must begin
+	;; with ("^" beginning-of-line), so put our addition second.
+	(gmpasm-add-to-list-second 'filladapt-token-table
+				   (list (concat "dnl[ \t]\\|"
+						 (regexp-quote comment-start)
+						 "\\b")
+					 'gmpasm-comment))
+	))
  
-  ;; The comment regexps above always have all of # ; ! and @, in case a
-  ;; file has some weird combination of styles, but the first of these found
-  ;; at the start of a line is used for comment-start.
-  (set (make-local-variable 'comment-start)
-       (save-excursion
-	 (goto-char (point-min))
-	 (if (re-search-forward "^[#;!@]" nil t)
-	     (buffer-substring (1- (point)) (point))
-	   "#")))
-  (set (make-local-variable 'comment-end) "")
-
-  ;; Comment fontification is added based on the comment-start determined.
-  ;; The regexp requires whitespace before a comment-start so that m4 $#
-  ;; doesn't match when comment-start is "#".
-  (add-to-list (make-local-variable 'gmpasm-font-lock-keywords)
-	       (cons (concat "\\(\\s-\\|^\\)"
-			     (regexp-quote comment-start)
-			     ".*$")
-		     'font-lock-comment-face))
-
-  (set (make-local-variable 'font-lock-defaults)
-       '(gmpasm-font-lock-keywords nil))
-
   (run-hooks 'gmpasm-mode-hook))
 
 
@@ -313,7 +334,7 @@ reinitialize.
 
 Comment or uncomment each line in the region using `dnl'.
 With \\[universal-argument] prefix arg, uncomment each line in region.
-This is `comment-region', but using `dnl'."
+This is `comment-region', but using \"dnl\"."
 
   (interactive "r\nP")
   (let ((comment-start "dnl")
