@@ -1549,13 +1549,13 @@ mpz_get_ui (mpz_srcptr __gmp_z) __GMP_NOTHROW
   mp_size_t __gmp_n = __gmp_z->_mp_size;
   mp_limb_t __gmp_l = __gmp_p[0];
   if (__GMP_ULONG_MAX <= GMP_NUMB_MASK)
-    return __gmp_l & (-(mp_limb_t) __gmp_n);
+    return __gmp_l & (-(mp_limb_t) (__gmp_n != 0));
 #if GMP_NAIL_BITS != 0	/* redundant #if, shuts up compiler warnings */
   else			/* happens for nails, but not if LONG_LONG_LIMB */
     {			/* assume two limbs are enough to fill an ulong */
       __gmp_n = __GMP_ABS (__gmp_n);
       if (__gmp_n <= 1)
-	return __gmp_l & (-(mp_limb_t) __gmp_n);
+	return __gmp_l & (-(mp_limb_t) (__gmp_n != 0));
       else
 	return __gmp_l + (__gmp_p[1] << GMP_NUMB_BITS);
     }
