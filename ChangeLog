@@ -18,6 +18,25 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-05-10  Kevin Ryde  <kevin@swox.se>
+
+	* */Makefile.in, install-sh, aclocal.m4: Update to automake 1.8.4.
+
+	* doc/gmp.texi (Demonstration Programs): Add a remark about expression
+	evaluation in the main gmp library.
+
+	* demos/expr/exprfa.c (mpf_expr_a): Correction to mpX_init, use
+	mpf_init2 to follow requested precision.
+	* demos/expr/exprza.c, demos/expr/exprqa.c: Use wrappers for mpX_init,
+	to make parameters match.
+
+	* demos/expr/run-expr.c: Don't use getopt, to avoid needing configury
+	for optarg declaration.  Remove TRY macro, rename foo and bar to var_a
+	and var_b, for clarity.
+	* demos/expr/expr-impl.h: Don't use expr-config.h.
+	* configure.in (demos/expr/expr-config.h): Remove.
+	* demos/expr/expr-config.in: Remove file.
+
 2004-05-08  Kevin Ryde  <kevin@swox.se>
 
 	* doc/configuration (Configure): Update for current automake not
