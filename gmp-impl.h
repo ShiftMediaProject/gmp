@@ -156,6 +156,7 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
 /* Remap names of internal mpn functions.  */
+#define __clz_tab               __MPN(clz_tab)
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
 #define mpn_kara_sqr_n		__MPN(kara_sqr_n)
 #define mpn_toom3_sqr_n		__MPN(toom3_sqr_n)
