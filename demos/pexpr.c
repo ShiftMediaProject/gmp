@@ -118,6 +118,7 @@ char *newline = "";
 #define sigaltstack sigstack
 #endif
 
+#ifndef _WIN32
 void
 setup_error_handler ()
 {
@@ -131,7 +132,7 @@ setup_error_handler ()
 #ifndef _AIX
   sigstk.ss_size = SIGSTKSZ;
   sigstk.ss_flags = 0;
-#endif
+#endif /* ! _AIX */
   if (sigaltstack (&sigstk, 0) < 0)
     perror("sigaltstack");
 
@@ -160,13 +161,14 @@ setup_error_handler ()
 
     sigaction (SIGXCPU, &act, 0);
   }
-#endif
+#endif /* LIMIT_RESOURCE_USAGE */
 
   sigaction (SIGILL, &act, 0);
   sigaction (SIGSEGV, &act, 0);
   sigaction (SIGBUS, &act, 0);
   sigaction (SIGFPE, &act, 0);
 }
+#endif /* ! _WIN32 */
 
 main (int argc, char **argv)
 {
@@ -177,7 +179,9 @@ main (int argc, char **argv)
   char *str;
   int base = 10;
 
+#ifndef _WIN32
   setup_error_handler ();
+#endif
 
   mpz_init (r);
 
