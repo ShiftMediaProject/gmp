@@ -1055,10 +1055,13 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
    Note that a division is done first, since on a 32-bit system it's at
    least conceivable to go right up to n==ULONG_MAX.  (F[2^32-1] would be
    about 380Mbytes, plus temporary workspace of about 1.2Gbytes here and
-   whatever a multiply of two 190Mbyte numbers takes.)  */
+   whatever a multiply of two 190Mbyte numbers takes.)
+
+   Enhancement: When GMP_NUMB_BITS is not a power of 2 the division could be
+   worked into the multiplier.  */
 
 #define MPN_FIB2_SIZE(n) \
-  ((mp_size_t) ((n) / 32 * 23 / BITS_PER_MP_LIMB) + 4)
+  ((mp_size_t) ((n) / 32 * 23 / GMP_NUMB_BITS) + 4)
 
 
 /* FIB_TABLE(n) returns the Fibonacci number F[n].  Must have n in the range
@@ -2454,28 +2457,28 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
 #endif /* _LONG_LONG_LIMB */
 
 /* Stuff used by mpn/generic/perfsqr.c and mpz/prime_p.c */
-#if BITS_PER_MP_LIMB == 2
+#if GMP_NUMB_BITS == 2
 #define PP 0x3					/* 3 */
 #define PP_FIRST_OMITTED 5
 #endif
-#if BITS_PER_MP_LIMB == 4
+#if GMP_NUMB_BITS == 4
 #define PP 0xF					/* 3 x 5 */
 #define PP_FIRST_OMITTED 7
 #endif
-#if BITS_PER_MP_LIMB == 8
+#if GMP_NUMB_BITS == 8
 #define PP 0x69					/* 3 x 5 x 7 */
 #define PP_FIRST_OMITTED 11
 #endif
-#if BITS_PER_MP_LIMB == 16
+#if GMP_NUMB_BITS == 16
 #define PP 0x3AA7				/* 3 x 5 x 7 x 11 x 13 */
 #define PP_FIRST_OMITTED 17
 #endif
-#if BITS_PER_MP_LIMB == 32
+#if GMP_NUMB_BITS == 32
 #define PP 0xC0CFD797L				/* 3 x 5 x 7 x 11 x ... x 29 */
 #define PP_INVERTED 0x53E5645CL
 #define PP_FIRST_OMITTED 31
 #endif
-#if BITS_PER_MP_LIMB == 64
+#if GMP_NUMB_BITS == 64
 #define PP CNST_LIMB(0xE221F97C30E94E1D)	/* 3 x 5 x 7 x 11 x ... x 53 */
 #define PP_INVERTED CNST_LIMB(0x21CFE6CFC938B36B)
 #define PP_FIRST_OMITTED 59
