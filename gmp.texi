@@ -855,8 +855,8 @@ SPARC:
 @nisamp{k6},
 @nisamp{k62},
 @nisamp{k63},
-@nisamp{athlon}
-@nisamp{viac3}
+@nisamp{athlon},
+@nisamp{viac3},
 @nisamp{viac32}
 
 @item
