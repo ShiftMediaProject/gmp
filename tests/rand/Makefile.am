@@ -41,7 +41,7 @@ libstat_la_LIBADD = $(top_builddir)/libgmp.la -lm
 
 EXTRA_DIST = gmpstat.h
 
-manual-test: gen stat
+manual-test: gen$(EXEEXT) stat$(EXEEXT)
 	@(echo -n '16i: '; ./gen -f mpz_urandomb -z 16 1000 \
 		| ./stat -i 0xffff | grep '^[0-9]')
 	@(echo -n '32i: '; ./gen -f mpz_urandomb -z 32 1000 \
@@ -64,7 +64,7 @@ manual-test: gen stat
 	@(echo -n '128f: '; ./gen -f mpf_urandomb -z 128 1000 \
 		| ./stat | grep '^[0-9]')
 
-manual-bigtest: gen stat
+manual-bigtest: gen$(EXEEXT) stat$(EXEEXT)
 	@(echo '16i: '; ./gen -f mpz_urandomb -z 16 50000 \
 		| ./stat -2 1000 -i 0xffff | grep '^K[mp]')
 	@(echo '32i: '; ./gen -f mpz_urandomb -z 32 50000 \
