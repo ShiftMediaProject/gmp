@@ -38,12 +38,18 @@ MA 02111-1307, USA. */
 
 /*== Function declarations =================================================*/
 
-static void evaluate3 (mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_ptr, mp_ptr,
-		       mp_srcptr, mp_srcptr, mp_srcptr, mp_size_t, mp_size_t);
-static void interpolate3 (mp_srcptr, mp_ptr, mp_ptr, mp_ptr, mp_srcptr,
-			  mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_size_t);
-static mp_limb_t add2Times (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t);
-void mpn_toom3_mul_n (mp_ptr, mp_srcptr, mp_srcptr, mp_limb_t, mp_ptr);
+static void evaluate3 _PROTO ((mp_ptr, mp_ptr, mp_ptr,
+                               mp_ptr, mp_ptr, mp_ptr,
+                               mp_srcptr, mp_srcptr, mp_srcptr,
+                               mp_size_t, mp_size_t));
+static void interpolate3 _PROTO ((mp_srcptr,
+                                  mp_ptr, mp_ptr, mp_ptr,
+                                  mp_srcptr,
+                                  mp_ptr, mp_ptr, mp_ptr,
+                                  mp_size_t, mp_size_t));
+static mp_limb_t add2Times _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+void mpn_toom3_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_limb_t,
+                              mp_ptr));
 
 
 /*-- mpn_kara_mul_n ---------------------------------------------------------------*/
@@ -53,8 +59,18 @@ void mpn_toom3_mul_n (mp_ptr, mp_srcptr, mp_srcptr, mp_limb_t, mp_ptr);
  * No overlap of p[...] with a[...] or b[...].
  * ws is workspace.
  */
+
 void
+#if __STDC__
 mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
+#else
+mpn_kara_mul_n(p, a, b, n, ws)
+     mp_ptr    p;
+     mp_srcptr a;
+     mp_srcptr b;
+     mp_size_t n;
+     mp_ptr    ws;
+#endif
 {
   mp_limb_t i, n2, sign, w, w0, w1;
   mp_srcptr x, y;
@@ -264,7 +280,15 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 }
 
 void
+#if __STDC__
 mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
+#else
+mpn_kara_sqr_n (p, a, n, ws)
+     mp_ptr    p;
+     mp_srcptr a;
+     mp_size_t n;
+     mp_ptr    ws;
+#endif
 {
   mp_limb_t i, n2, sign, w, w0, w1;
   mp_srcptr x, y;
@@ -479,7 +503,15 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
    Note that z and x might point to the same vectors. */
 #ifdef USE_MORE_MPN
 static inline mp_limb_t
+#if __STDC__
 add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
+#else
+add2Times (z, x, y, n)
+     mp_ptr    z;
+     mp_srcptr x;
+     mp_srcptr y;
+     mp_size_t n;
+#endif
 {
   mp_ptr t;
   mp_limb_t c;
@@ -494,7 +526,15 @@ add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
 #else
 
 static mp_limb_t
+#if __STDC__
 add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
+#else
+add2Times (z, x, y, n)
+     mp_ptr    z;
+     mp_srcptr x;
+     mp_srcptr y;
+     mp_size_t n;
+#endif
 {
   mp_limb_t c, v, w;
 
@@ -537,8 +577,24 @@ add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
  */
 #ifdef USE_MORE_MPN
 static void
+#if __STDC__
 evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 	   mp_srcptr A, mp_srcptr B, mp_srcptr C, mp_size_t len, mp_size_t len2)
+#else
+evaluate3 (ph, p1, p2, pth, pt1, pt2,
+           A, B, C, len, len2)
+     mp_ptr    ph;
+     mp_ptr    p1;
+     mp_ptr    p2;
+     mp_ptr    pth;
+     mp_ptr    pt1;
+     mp_ptr    pt2;
+     mp_srcptr A;
+     mp_srcptr B;
+     mp_srcptr C;
+     mp_size_t len;
+     mp_size_t len2;
+#endif
 {
   mp_limb_t c, d, e;
   
@@ -579,8 +635,24 @@ evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 #else
 
 static void
+#if __STDC__
 evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 	   mp_srcptr A, mp_srcptr B, mp_srcptr C, mp_size_t l, mp_size_t ls)
+#else
+evaluate3 (ph, p1, p2, pth, pt1, pt2,
+           A, B, C, l, ls)
+     mp_ptr    ph;
+     mp_ptr    p1;
+     mp_ptr    p2;
+     mp_ptr    pth;
+     mp_ptr    pt1;
+     mp_ptr    pt2;
+     mp_srcptr A;
+     mp_srcptr B;
+     mp_srcptr C;
+     mp_size_t l;
+     mp_size_t ls;
+#endif
 {
   mp_limb_t a,b,c, i, t, th,t1,t2, vh,v1,v2;
 
@@ -671,8 +743,23 @@ evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 
 #ifdef USE_MORE_MPN
 static void
+#if __STDC__
 interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
               mp_ptr ptb, mp_ptr ptc, mp_ptr ptd, mp_size_t len, mp_size_t len2)
+#else
+interpolate3 (A, B, C, D, E,
+              ptb, ptc, ptd, len, len2)
+     mp_srcptr A;
+     mp_ptr    B;
+     mp_ptr    C;
+     mp_ptr    D;
+     mp_srcptr E;
+     mp_ptr    ptb;
+     mp_ptr    ptc;
+     mp_ptr    ptd;
+     mp_size_t len;
+     mp_size_t len2;
+#endif
 {
   mp_ptr ws;
   mp_limb_t t, tb,tc,td;
@@ -803,8 +890,23 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 #else
 
 static void
+#if __STDC__
 interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 	      mp_ptr ptb, mp_ptr ptc, mp_ptr ptd, mp_size_t l, mp_size_t ls)
+#else
+interpolate3 (A, B, C, D, E,
+              ptb, ptc, ptd, l, ls)
+     mp_srcptr A;
+     mp_ptr    B;
+     mp_ptr    C;
+     mp_ptr    D;
+     mp_srcptr E;
+     mp_ptr    ptb;
+     mp_ptr    ptc;
+     mp_ptr    ptd;
+     mp_size_t l;
+     mp_size_t ls;
+#endif
 {
   mp_limb_t a,b,c,d,e,t, i, sb,sc,sd, ob,oc,od;
   const mp_limb_t maskOffHalf = (~(mp_limb_t) 0) << (BITS_PER_MP_LIMB >> 1);
@@ -997,7 +1099,16 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
   } while (0)
 
 void
+#if __STDC__
 mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_limb_t n, mp_ptr ws)
+#else
+mpn_toom3_mul_n (p, a, b, n, ws)
+     mp_ptr    p;
+     mp_srcptr a;
+     mp_srcptr b;
+     mp_limb_t n;
+     mp_ptr    ws;
+#endif
 {
   mp_limb_t cB,cC,cD, dB,dC,dD, l,l2,l3,l4,l5,ls, tB,tC,tD;
   mp_limb_t *A,*B,*C,*D,*E, *W;
@@ -1115,7 +1226,15 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_limb_t n, mp_ptr ws)
   } while (0)
 
 void
+#if __STDC__
 mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_limb_t n, mp_ptr ws)
+#else
+mpn_toom3_sqr_n (p, a, n, ws)
+     mp_ptr    p;
+     mp_srcptr a;
+     mp_limb_t n;
+     mp_ptr    ws;
+#endif
 {
   mp_limb_t cB,cC,cD, l,l2,l3,l4,l5,ls, tB,tC,tD;
   mp_limb_t *A,*B,*C,*D,*E, *W;
@@ -1212,7 +1331,15 @@ mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_limb_t n, mp_ptr ws)
 }
 
 void
+#if __STDC__
 mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
+#else
+mpn_mul_n (p, a, b, n)
+     mp_ptr    p;
+     mp_srcptr a;
+     mp_srcptr b;
+     mp_size_t n;
+#endif
 {
   if (n < KARATSUBA_MUL_THRESHOLD)
     mpn_mul_basecase (p, a, n, b, n);
