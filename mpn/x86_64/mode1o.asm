@@ -59,11 +59,13 @@ C used.
 C
 C Enhancements:
 C
-C For PIC, the GOT fetch for modlimb_invert_table measures about 2 or 3
-C cycles slower then the non-PIC direct reference.  That table will be in
-C rodata or text, so could perhaps be accessed directly %rip relative.
-C Would need to check what the ABI says about this though, and how the
-C linker treats it.
+C For PIC, we shouldn't really need the GOT fetch for modlimb_invert_table,
+C it'll be in rodata or text in libgmp.so and can be accessed directly %rip
+C relative.  This would be for small model only (something we don't
+C presently detect, but which is all that gcc 3.3.3 supports), since 8-byte
+C PC-relative relocations are apparently not available.  Some rough
+C experiments with binutils 2.13 looked worrylingly like it might come out
+C with an unwanted text segment relocation though, even with ".protected".
 
 
 	TEXT
@@ -71,7 +73,7 @@ C linker treats it.
 	ALIGN(32)
 PROLOGUE(mpn_modexact_1_odd)
 
-	xorl	%ecx, %ecx
+	movl	$0, %ecx
 
 PROLOGUE(mpn_modexact_1c_odd)
 
@@ -81,66 +83,66 @@ PROLOGUE(mpn_modexact_1c_odd)
 	C rcx	carry
 
 	movq	%rdx, %r8		C d
-	shrq	%rdx			C d/2
+	shrl	%edx			C d/2
 ifdef(`PIC',`
-	movq	modlimb_invert_table@GOTPCREL(%rip), %r10
-')
-
-	andq	$127, %rdx
-
-ifdef(`PIC',`
-	movzbq	(%r10,%rdx), %r10			C inv 8 bits
+	movq	modlimb_invert_table@GOTPCREL(%rip), %r9
 ',`
-	movzbq	modlimb_invert_table(%rdx), %r10	C inv 8 bits
+	movabsq	$modlimb_invert_table, %r9
 ')
-	C
+
+	andl	$127, %edx
+	movq	%rcx, %r10		C initial carry
+
+	movzbl	(%r9,%rdx), %edx	C inv 8 bits
 
 	movq	(%rdi), %rax		C src[0]
-	leaq	(%rdi,%rsi,8), %rdi	C src end
+	leaq	(%rdi,%rsi,8), %r11	C src end
+	movq	%r8, %rdi		C d, made available to imull
+
+	leal	(%rdx,%rdx), %ecx	C 2*inv
+	imull	%edx, %edx		C inv*inv
+
 	negq	%rsi			C -size
 
-	leaq	(%r10,%r10), %r9	C 2*inv
-	imulq	%r10, %r10		C inv*inv
+	imull	%edi, %edx		C inv*inv*d
 
-	movq	%rcx, %rdx		C initial climb
-	xorq	%rcx, %rcx		C initial cbit
+	subl	%edx, %ecx		C inv = 2*inv - inv*inv*d, 16 bits
 
-	imulq	%r8, %r10		C inv*inv*d
+	leal	(%rcx,%rcx), %edx	C 2*inv
+	imull	%ecx, %ecx		C inv*inv
 
-	subq	%r10, %r9		C inv = 2*inv - inv*inv*d, 16 bits
+	imull	%edi, %ecx		C inv*inv*d
 
-	leaq	(%r9,%r9), %r10		C 2*inv
-	imulq	%r9, %r9		C inv*inv
+	subl	%ecx, %edx		C inv = 2*inv - inv*inv*d, 32 bits
+	xorl	%ecx, %ecx		C initial cbit
 
-	imulq	%r8, %r9		C inv*inv*d
+	leaq	(%rdx,%rdx), %r9	C 2*inv
+	imulq	%rdx, %rdx		C inv*inv
 
-	subq	%r9, %r10		C inv = 2*inv - inv*inv*d, 32 bits
+	imulq	%r8, %rdx		C inv*inv*d
 
-	leaq	(%r10,%r10), %r9	C 2*inv
-	imulq	%r10, %r10		C inv*inv
-
-	imulq	%r8, %r10		C inv*inv*d
-
-	subq	%r10, %r9		C inv = 2*inv - inv*inv*d, 64 bits
+	subq	%rdx, %r9		C inv = 2*inv - inv*inv*d, 64 bits
+	movq	%r10, %rdx		C initial climb
 
 	ASSERT(e,`	C d*inv == 1 mod 2^64
-	movq	%r8, %r10
-	imulq	%r9, %r10
-	cmpq	$1, %r10')
+	movq	%r8, %rdx
+	imulq	%r9, %rdx
+	cmpq	$1, %rdx')
 
 	incq	%rsi
 	jz	L(one)
 
 
-	ALIGN(32)
+	ALIGN(16)
 L(top):
 	C rax	l = src[i]-cbit
 	C rcx	new cbit, 0 or 1
 	C rdx	climb, high of last product
 	C rsi	counter, limbs, negative
-	C rdi	src end ptr
+	C rdi
 	C r8	divisor
 	C r9	inverse
+	C r11	src end ptr
 
 	subq	%rdx, %rax		C l = src[i]-cbit - climb
 
@@ -149,7 +151,7 @@ L(top):
 
 	mulq	%r8			C climb = high (q * d)
 
-	movq	(%rdi,%rsi,8), %rax	C src[i+1]
+	movq	(%r11,%rsi,8), %rax	C src[i+1]
 	subq	%rcx, %rax		C next l = src[i+1] - cbit
 	movq	$0, %rcx
 	setc	%cl			C new cbit
