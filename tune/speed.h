@@ -160,6 +160,7 @@ double speed_mpn_divrem_1f_inv _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_2 _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_2_div _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_2_inv _PROTO ((struct speed_params *s));
+double speed_mpn_fib2_ui _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_finda _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
@@ -227,9 +228,12 @@ double speed_mpz_add _PROTO ((struct speed_params *s));
 double speed_mpz_bin_uiui _PROTO ((struct speed_params *s));
 double speed_mpz_fac_ui _PROTO ((struct speed_params *s));
 double speed_mpz_fib_ui _PROTO ((struct speed_params *s));
+double speed_mpz_fib2_ui _PROTO ((struct speed_params *s));
 double speed_mpz_init_clear _PROTO ((struct speed_params *s));
 double speed_mpz_init_realloc_clear _PROTO ((struct speed_params *s));
 double speed_mpz_jacobi _PROTO ((struct speed_params *s));
+double speed_mpz_lucnum_ui _PROTO ((struct speed_params *s));
+double speed_mpz_lucnum2_ui _PROTO ((struct speed_params *s));
 double speed_mpz_mod _PROTO ((struct speed_params *s));
 double speed_mpz_powm _PROTO ((struct speed_params *s));
 double speed_mpz_powm_mod _PROTO ((struct speed_params *s));
@@ -969,8 +973,6 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   }  
 
 
-/* For mpz_fib_ui, mpz_fac_ui, etc */
-
 #define SPEED_ROUTINE_MPZ_UI(function)  \
   {                                     \
     mpz_t     z;                        \
@@ -991,6 +993,60 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     mpz_clear (z);                      \
     return t;                           \
   }  
+
+#define SPEED_ROUTINE_MPZ_FAC_UI(function)    SPEED_ROUTINE_MPZ_UI(function)
+#define SPEED_ROUTINE_MPZ_FIB_UI(function)    SPEED_ROUTINE_MPZ_UI(function)
+#define SPEED_ROUTINE_MPZ_LUCNUM_UI(function) SPEED_ROUTINE_MPZ_UI(function)
+
+
+#define SPEED_ROUTINE_MPZ_2_UI(function)        \
+  {                                             \
+    mpz_t     z, z2;                            \
+    unsigned  i;                                \
+    double    t;                                \
+                                                \
+    SPEED_RESTRICT_COND (s->size >= 0);         \
+                                                \
+    mpz_init (z);                               \
+    mpz_init (z2);                              \
+                                                \
+    speed_starttime ();                         \
+    i = s->reps;                                \
+    do                                          \
+      function (z, z2, s->size);                \
+    while (--i != 0);                           \
+    t = speed_endtime ();                       \
+                                                \
+    mpz_clear (z);                              \
+    mpz_clear (z2);                             \
+    return t;                                   \
+  }  
+
+#define SPEED_ROUTINE_MPZ_FIB2_UI(function)    SPEED_ROUTINE_MPZ_2_UI(function)
+#define SPEED_ROUTINE_MPZ_LUCNUM2_UI(function) SPEED_ROUTINE_MPZ_2_UI(function)
+
+
+#define SPEED_ROUTINE_MPN_FIB2_UI(function)             \
+  {                                                     \
+    mp_ptr     fp, f1p;                                 \
+    mp_size_t  alloc;                                   \
+    unsigned   i;                                       \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 0);                 \
+                                                        \
+    TMP_MARK (marker);                                  \
+    alloc = MPN_FIB2_SIZE (s->size);                    \
+    fp  = SPEED_TMP_ALLOC_LIMBS (alloc, s->align_xp);   \
+    f1p = SPEED_TMP_ALLOC_LIMBS (alloc, s->align_yp);   \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      function (fp, f1p, s->size);                      \
+    while (--i != 0);                                   \
+    return speed_endtime ();                            \
+  }  
+
 
 
 /* Calculate b^e mod m for random b and m of s->size limbs and random e of 6

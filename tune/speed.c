@@ -260,10 +260,15 @@ const struct routine_t {
 
   { "mpn_sqrtrem",       speed_mpn_sqrtrem          },
 
+  { "mpn_fib2_ui",       speed_mpn_fib2_ui,    FLAG_NODATA },
+  { "mpz_fib_ui",        speed_mpz_fib_ui,     FLAG_NODATA },
+  { "mpz_fib2_ui",       speed_mpz_fib2_ui,    FLAG_NODATA },
+  { "mpz_lucnum_ui",     speed_mpz_lucnum_ui,  FLAG_NODATA },
+  { "mpz_lucnum2_ui",    speed_mpz_lucnum2_ui, FLAG_NODATA },
+
   { "mpz_add",           speed_mpz_add              },
   { "mpz_bin_uiui",      speed_mpz_bin_uiui, FLAG_NODATA | FLAG_R_OPTIONAL },
   { "mpz_fac_ui",        speed_mpz_fac_ui,   FLAG_NODATA   },
-  { "mpz_fib_ui",        speed_mpz_fib_ui,   FLAG_NODATA   },
   { "mpz_powm",          speed_mpz_powm             },
   { "mpz_powm_mod",      speed_mpz_powm_mod         },
   { "mpz_powm_redc",     speed_mpz_powm_redc        },

@@ -976,12 +976,34 @@ speed_mpn_sqrtrem (struct speed_params *s)
 double
 speed_mpz_fac_ui (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPZ_UI (mpz_fac_ui);
+  SPEED_ROUTINE_MPZ_FAC_UI (mpz_fac_ui);
+}
+
+
+double
+speed_mpn_fib2_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_FIB2_UI (mpn_fib2_ui);
 }
 double
 speed_mpz_fib_ui (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPZ_UI (mpz_fib_ui);
+  SPEED_ROUTINE_MPZ_FIB_UI (mpz_fib_ui);
+}
+double
+speed_mpz_fib2_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_FIB2_UI (mpz_fib2_ui);
+}
+double
+speed_mpz_lucnum_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_LUCNUM_UI (mpz_lucnum_ui);
+}
+double
+speed_mpz_lucnum2_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_LUCNUM2_UI (mpz_lucnum2_ui);
 }
 
 

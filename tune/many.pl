@@ -226,6 +226,11 @@
 #
 # Warn if a file provides no functions.
 #
+# Allow mpz and mpn files of the same name.  Currently the mpn fib2_ui
+# matching hides the mpz version of that.  Will need to check the file
+# contents to see which it is.  Would be worth allowing an "mpz_" or "mpn_"
+# prefix on the filenames to have working versions of both in one directory.
+#
 #
 # LIMITATIONS
 #
@@ -389,11 +394,51 @@ my @table =
      },
 
      {
-       'regexp'=> 'fib_ui',
+       'regexp'=> 'fac_ui',
        'mpX'   => 'mpz',
        'ret'   => 'void',
        'args'  => 'mpz_ptr r, unsigned long n',
-       'speed' => 'SPEED_ROUTINE_MPZ_UI',
+       'speed_flags' => 'FLAG_NODATA',
+       'try'   => 'none',
+     },
+
+     {
+       'regexp'=> 'fib2_ui',
+       'ret'   => 'void',
+       'args'  => 'mp_ptr fp, mp_ptr f1p, unsigned long n',
+       'speed_flags' => 'FLAG_NODATA',
+       'try'   => 'none',
+     },
+     {
+       'regexp'=> 'fib_ui',
+       'mpX'   => 'mpz',
+       'ret'   => 'void',
+       'args'  => 'mpz_ptr fn, unsigned long n',
+       'speed_flags' => 'FLAG_NODATA',
+       'try'   => 'none',
+     },
+     {
+       'regexp'=> 'fib2_ui',
+       'mpX'   => 'mpz',
+       'ret'   => 'void',
+       'args'  => 'mpz_ptr fn, mpz_ptr fnsub1, unsigned long n',
+       'speed_flags' => 'FLAG_NODATA',
+       'try'   => 'none',
+     },
+
+     {
+       'regexp'=> 'lucnum_ui',
+       'mpX'   => 'mpz',
+       'ret'   => 'void',
+       'args'  => 'mpz_ptr ln, unsigned long n',
+       'speed_flags' => 'FLAG_NODATA',
+       'try'   => 'none',
+     },
+     {
+       'regexp'=> 'lucnum2_ui',
+       'mpX'   => 'mpz',
+       'ret'   => 'void',
+       'args'  => 'mpz_ptr ln, mpz_ptr lnsub1, unsigned long n',
        'speed_flags' => 'FLAG_NODATA',
        'try'   => 'none',
      },
