@@ -36,7 +36,7 @@ m4_assert_numargs(1)
 `GSYM_PREFIX`'$1')
 
 	.text
-	ALIGN(32)
+	ALIGN(8)
 PROLOGUE(calling_conventions)
 	movl	(%esp), %eax
 	movl	%eax, G(calling_conventions_retaddr)
@@ -52,6 +52,12 @@ PROLOGUE(calling_conventions)
 	movl	$0x89ABCDEF, %esi
 	movl	$0xFEDCBA98, %edi
 	movl	$0x76543210, %ebp
+
+	C try to provoke a problem by starting with junk in the registers,
+	C especially in %eax and %edx which will be return values
+	movl	$0x70246135, %eax
+	movl	$0x8ACE9BDF, %ecx
+	movl	$0xFDB97531, %edx
 
 	jmp	*G(calling_conventions_function)
 
