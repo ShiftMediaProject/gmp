@@ -47,16 +47,19 @@ mpz_divexact (quot, num, den)
 {
   mp_ptr qp, tp;
   mp_size_t qsize, tsize;
-
-  mp_srcptr np = num->_mp_d;
-  mp_srcptr dp = den->_mp_d;
-  mp_size_t nsize = ABS (num->_mp_size);
-  mp_size_t dsize = ABS (den->_mp_size);
+  mp_srcptr np, dp;
+  mp_size_t nsize, dsize;
   TMP_DECL (marker);
+
+  nsize = ABS (num->_mp_size);
+  dsize = ABS (den->_mp_size);
 
   qsize = nsize - dsize + 1;
   if (quot->_mp_alloc < qsize)
     _mpz_realloc (quot, qsize);
+
+  np = num->_mp_d;
+  dp = den->_mp_d;
   qp = quot->_mp_d;
 
   if (nsize == 0)
@@ -89,20 +92,20 @@ mpz_divexact (quot, num, den)
   tsize = MIN (qsize, dsize);
   if ((dp[0] & 1) != 0)
     {
-      if (qp == dp)		/*  QUOT and DEN overlap.  */
+      if (quot == den)		/*  QUOT and DEN overlap.  */
 	{
-	  tp = (mp_ptr) TMP_ALLOC (sizeof (mp_limb_t) * tsize);
+	  tp = (mp_ptr) TMP_ALLOC (tsize * BYTES_PER_MP_LIMB);
 	  MPN_COPY (tp, dp, tsize);
 	}
       else
 	tp = (mp_ptr) dp;
       if (qp != np)
-	MPN_COPY (qp, np, qsize);
+	MPN_COPY_INCR (qp, np, qsize);
     }
   else
     {
       unsigned int r;
-      tp = (mp_ptr) TMP_ALLOC (sizeof (mp_limb_t) * tsize);
+      tp = (mp_ptr) TMP_ALLOC (tsize * BYTES_PER_MP_LIMB);
       count_trailing_zeros (r, dp[0]);
       mpn_rshift (tp, dp, tsize, r);
       if (dsize > tsize)
