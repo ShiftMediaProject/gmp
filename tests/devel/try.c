@@ -236,7 +236,6 @@ mp_size_t  pagesize;
 #define TRY_TYPE_DIVMOD_1C    (TRY_TYPE_MOD_1C | TRY_DST0)
 #define TRY_TYPE_DIVREM_1     (TRY_TYPE_DIVMOD_1  | TRY_XSIZE)
 #define TRY_TYPE_DIVREM_1C    (TRY_TYPE_DIVMOD_1C | TRY_XSIZE)
-#define TRY_TYPE_MOD_1_RSHIFT (TRY_RETVAL | TRY_SRC0 | TRY_SHIFT | TRY_DIVISOR)
 #define TRY_TYPE_PREINV_MOD_1 \
   (TRY_RETVAL | TRY_SRC0 | TRY_DIVISOR | TRY_DIVISOR_NORM)
 
@@ -430,7 +429,6 @@ struct try_t try_array[] = {
 
   { TRY(refmpn_divrem_1),     TRY(mpn_divrem_1),     TRY_TYPE_DIVREM_1 },
   { TRY(refmpn_mod_1),        TRY(mpn_mod_1),        TRY_TYPE_MOD_1 },
-  { TRY(refmpn_mod_1_rshift), TRY(mpn_mod_1_rshift), TRY_TYPE_MOD_1_RSHIFT },
   { TRY(refmpn_preinv_mod_1), TRY(mpn_preinv_mod_1), TRY_TYPE_PREINV_MOD_1 },
 #if HAVE_NATIVE_mpn_divrem_1c
   { TRY(refmpn_divrem_1c),    TRY(mpn_divrem_1c),    TRY_TYPE_DIVREM_1C },
@@ -968,10 +966,6 @@ call (struct each_t *e, tryfun_t function)
   case TRY_TYPE_MOD_1C:
     e->retval = CALLING_CONVENTIONS (function)
       (e->s[0].p, size, divisor, carry);
-    break;
-  case TRY_TYPE_MOD_1_RSHIFT:
-    e->retval = CALLING_CONVENTIONS (function)
-      (e->s[0].p, size, shift, divisor);
     break;
   case TRY_TYPE_PREINV_MOD_1:
     e->retval = CALLING_CONVENTIONS (function)
