@@ -157,6 +157,9 @@ MA 02111-1307, USA.
 #undef HAVE_HOST_CPU_pentium2
 #undef HAVE_HOST_CPU_pentium3
 
+/* Define if HUGE_VAL can be used without the need of a specific library. */
+#undef HAVE_HUGE_VAL
+
 /* Define if 0/0, 1/0, -1/0 and sqrt(-1) work to generate NaN/infinities. */
 #undef HAVE_INFS
 
@@ -325,6 +328,9 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define to 1 if you have the `strncasecmp' function. */
+#undef HAVE_STRNCASECMP
+
 /* Define to 1 if you have the `strnlen' function. */
 #undef HAVE_STRNLEN
 
@@ -397,6 +403,9 @@ MA 02111-1307, USA.
 /* Define if you have the `fesetround' function via the <fenv.h> header file.
    */
 #undef MPFR_HAVE_FESETROUND
+
+/* Define if you have the `isnan' function via the <math.h> header file. */
+#undef MPFR_HAVE_ISNAN
 
 /* Name of package */
 #undef PACKAGE

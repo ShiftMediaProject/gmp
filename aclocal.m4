@@ -8180,7 +8180,7 @@ then
 	then
 	  LDADD="$LDADD $1/lib$2.a"
 	else
-	   AC_MSG_ERROR($2 not found)
+	   AC_MSG_ERROR($1/lib$2.a not found)
 	fi
   AC_MSG_RESULT(yes)
 else
@@ -8225,7 +8225,7 @@ case $host in
 		;;
 esac
 
-AC_REPLACE_FUNCS(strcasecmp)
+AC_REPLACE_FUNCS(strcasecmp strncasecmp)
 
 dnl Check for IEEE-754 switches on Alpha
 case $host in
@@ -8260,6 +8260,15 @@ LIBS="$saved_LIBS"
 if test "$mpfr_cv_have_fesetround" = "yes"; then
   LIBS="$LIBS $LM9X"
   AC_DEFINE(MPFR_HAVE_FESETROUND,1,[Define if you have the `fesetround' function via the <fenv.h> header file.])
+fi
+
+dnl Check for isnan
+AC_CACHE_CHECK([for isnan], mpfr_cv_have_isnan, [
+AC_TRY_LINK([#include <math.h>], [isnan(0.0);],
+  mpfr_cv_have_isnan=yes, mpfr_cv_have_isnan=no)
+])
+if test "$mpfr_cv_have_isnan" = "yes"; then
+  AC_DEFINE(MPFR_HAVE_ISNAN,1,[Define if you have the `isnan' function via the <math.h> header file.])
 fi
 
 dnl Check random functions
@@ -8335,6 +8344,15 @@ int main()
 ])
 if test "$mpfr_cv_have_denorms" = "yes"; then
   AC_DEFINE(HAVE_DENORMS,1,[Define if denormalized floats work.])
+fi
+
+dnl Check if HUGE_VAL is supported without the need of a specific library
+AC_CACHE_CHECK([for HUGE_VAL], mpfr_cv_have_huge_val, [
+AC_TRY_LINK([#include <math.h>], [HUGE_VAL;],
+  mpfr_cv_have_huge_val=yes, mpfr_cv_have_huge_val=no)
+])
+if test "$mpfr_cv_have_huge_val" = "yes"; then
+  AC_DEFINE(HAVE_HUGE_VAL,1,[Define if HUGE_VAL can be used without the need of a specific library.])
 fi
 
 ])
