@@ -61,9 +61,8 @@ command line, multiplies them, and prints the result to stdout.
       /* Multiply a and b and put the result in p */
       mpz_mul (p, a, b);
 
-      /* Print p in base 10 */
-      mpz_out_str (stdout, 10, p);
-      fputc ('\n', stdout);
+      /* Print p in decimal */
+      gmp_printf ("%Zd\n", p);
 
       /* Clear out variables */
       mpz_clear (a);
@@ -100,9 +99,8 @@ avoided.  An experienced GMP user might write:
       /* Multiply a and b and put the result in p */
       mpz_mul (p, a, b);
 
-      /* Print p in base 10 */
-      mpz_out_str (stdout, 10, p);
-      fputc ('\n', stdout);
+      /* Print p in decimal */
+      gmp_printf ("%Zd\n", p);
 
       /* Since we're about to exit, no need to clear out variables */
       exit (0);
