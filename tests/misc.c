@@ -60,8 +60,17 @@ tests_end (void)
 void
 tests_rand_start (void)
 {
+  gmp_randstate_ptr  rands;
   char           *perform_seed;
   unsigned long  seed;
+
+  if (__gmp_rands_initialized)
+    {
+      printf ("Please let tests_start() initialize the global __gmp_rands.\n");
+      printf ("ie. ensure that function is called before the first use of RANDS.\n");
+      abort ();
+    }
+  rands = RANDS;
 
   perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
   if (perform_seed != NULL)
@@ -69,20 +78,19 @@ tests_rand_start (void)
       seed = atoi (perform_seed);
       if (! (seed == 0 || seed == 1))
         {
-          printf ("GMP_CHECK_RANDOMIZE re-seeding with %ld\n", seed);
-          gmp_randseed_ui (RANDS, seed);
+          printf ("GMP_CHECK_RANDOMIZE re-seeding with %lu\n", seed);
+          gmp_randseed_ui (rands, seed);
         }
       else
         {
 #if HAVE_GETTIMEOFDAY
           struct timeval  tv;
           gettimeofday (&tv, NULL);
-          gmp_randseed_ui (RANDS, tv.tv_sec + tv.tv_usec);
-          printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
-          printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
-                  tv.tv_sec + tv.tv_usec);
+          seed = tv.tv_sec + tv.tv_usec;
+          gmp_randseed_ui (rands, seed);
+          printf ("GMP_CHECK_RANDOMIZE seed %lu (include this in bug reports)\n", seed);
 #else
-          printf ("Oops, gettimeofday() not available, use something else\n");
+          printf ("tests_rand_start(): Oops, gettimeofday() not available\n");
           abort ();
 #endif
         }
