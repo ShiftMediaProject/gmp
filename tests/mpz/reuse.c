@@ -6,7 +6,7 @@
 	mpz_mul_si
 	mpz_addmul_ui (should this really allow a+=a*c?)
 
-Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1996, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,10 +33,10 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-#if defined (_WIN32) && __GMP_LIBGMP_SHARED
+#if __GMP_LIBGMP_DLL
 
 /* FIXME: When linking to a DLL libgmp, mpz_add etc can't be used as
-   initializers for global variables because they're effectively a global
+   initializers for global variables because they're effectively global
    variables (function pointers) themselves.  Perhaps calling a test
    function successively with mpz_add etc would be better.  */
 
