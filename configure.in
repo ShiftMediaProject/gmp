@@ -590,7 +590,6 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 dnl --------------------------------------------------------------
 AC_CHECK_TYPES((void))
 AC_C_STRINGIZE
-AM_C_PROTOTYPES
 
 dnl Checks for library functions.
 dnl -----------------------------
@@ -598,6 +597,13 @@ dnl AC_FUNC_MEMCMP
 dnl AC_TYPE_SIGNAL
 dnl AC_CHECK_FUNCS(strtol)
 AC_CHECK_FUNCS(getopt_long strtoul sysconf sysctlbyname)
+
+dnl Trick automake into thinking we've run the AM_C_PROTOTYPES it wants for
+dnl the ansi2knr option (it's only a warning it prints)
+ifelse(0,1,[
+AM_C_PROTOTYPES
+]) dnl ... and instead use our own test
+GMP_C_ANSI2KNR
 
 
 dnl  Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
