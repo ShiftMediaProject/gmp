@@ -1,6 +1,7 @@
-/* mpq_add -- add two rational numbers.
+/* mpq_add, mpq_sub -- add or subtract rational numbers.
 
-Copyright (C) 1991, 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+Copyright (C) 1991, 1994, 1995, 1996, 1997, 2000 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,15 +23,23 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void
-#if __STDC__
-mpq_add (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
-#else
-mpq_add (rop, op1, op2)
-     mpq_ptr rop;
-     mpq_srcptr op1;
-     mpq_srcptr op2;
+
+#ifdef OPERATION_add
+#define FUNCTION   mpq_add
+#define VARIATION  mpz_add
 #endif
+
+#ifdef OPERATION_sub
+#define FUNCTION   mpq_sub
+#define VARIATION  mpz_sub
+#endif
+
+#ifndef FUNCTION
+Error, need OPERATION_add or OPERATION_sub
+#endif
+
+void
+FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
 {
   mpz_t gcd;
   mpz_t tmp1, tmp2;
@@ -63,7 +72,7 @@ mpq_add (rop, op1, op2)
 
       MPZ_TMP_INIT (t, MAX (ABS (tmp1->_mp_size), ABS (tmp2->_mp_size)) + 1);
 
-      mpz_add (t, tmp1, tmp2);
+      VARIATION (t, tmp1, tmp2);
       mpz_divexact (tmp2, &(op1->_mp_den), gcd);
       mpz_gcd (gcd, t, gcd);
 
@@ -78,7 +87,7 @@ mpq_add (rop, op1, op2)
 	 probability 6/(pi**2).  */
       mpz_mul (tmp1, &(op1->_mp_num), &(op2->_mp_den));
       mpz_mul (tmp2, &(op2->_mp_num), &(op1->_mp_den));
-      mpz_add (&(rop->_mp_num), tmp1, tmp2);
+      VARIATION (&(rop->_mp_num), tmp1, tmp2);
       mpz_mul (&(rop->_mp_den), &(op1->_mp_den), &(op2->_mp_den));
     }
   TMP_FREE (marker);
