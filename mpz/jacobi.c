@@ -75,17 +75,12 @@ MA 02111-1307, USA. */
 Error, error, need BITS_PER_MP_LIMB even
 #endif
 
-#if USE_LEADING_REGPARM
-#define JAC_OR_KRON(a,b,e)  jac_or_kron(e,a,b)
-#define PARAMS              int kronecker, mpz_srcptr a, mpz_srcptr b
-static int jac_or_kron (PARAMS) __attribute__ ((regparm (1)));
-#else
-#define JAC_OR_KRON(a,b,e)  jac_or_kron(a,b,e)
-#define PARAMS              mpz_srcptr a, mpz_srcptr b, int kronecker
-#endif
+
+static int __gmpz_jac_or_kron _PROTO ((REGPARM_2_1 (mpz_srcptr a, mpz_srcptr b, int kronecker))) REGPARM_ATTR (1);
+#define jac_or_kron(a,b,k)  __gmpz_jac_or_kron (REGPARM_2_1 (a,b,k))
 
 static int
-jac_or_kron (PARAMS)
+jac_or_kron (mpz_srcptr a, mpz_srcptr b, int kronecker)
 {
   mp_srcptr  asrcp, bsrcp;
   mp_size_t  asize, bsize;
@@ -324,17 +319,17 @@ jac_or_kron (PARAMS)
 int
 mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 {
-  return JAC_OR_KRON (a, b, 0);
+  return jac_or_kron (a, b, 0);
 }
 
 int
 mpz_legendre (mpz_srcptr a, mpz_srcptr b)
 {
-  return JAC_OR_KRON (a, b, 0);
+  return jac_or_kron (a, b, 0);
 }
 
 int
 mpz_kronecker (mpz_srcptr a, mpz_srcptr b)
 {
-  return JAC_OR_KRON (a, b, -1);
+  return jac_or_kron (a, b, -1);
 }
