@@ -89,7 +89,6 @@ PROLOGUE(func)
 .Lb11:	movq	(vp,n,8), %r8
 	LOGOP	(up,n,8), %r8
 	movq	%r8, (rp,n,8)
-	movq	8(vp,n,8), %r8
 	incq	n
 .Lb10:	movq	(vp,n,8), %r8
 	movq	8(vp,n,8), %r9
@@ -107,7 +106,7 @@ PROLOGUE(func)
 	jnc	.Loop
 	ret
 
-	.byte	0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0
 .Lb00:
 
 .Loop:	movq	(vp,n,8), %r8
