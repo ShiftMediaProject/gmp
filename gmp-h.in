@@ -307,7 +307,6 @@ void gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_getlimbn __gmpz_getlimbn
 #define mpz_hamdist __gmpz_hamdist
 #define mpz_init __gmpz_init
-#define mpz_inp_binary __gmpz_inp_binary
 #define mpz_inp_raw __gmpz_inp_raw
 #define mpz_inp_str __gmpz_inp_str
 #define mpz_init_set __gmpz_init_set
@@ -325,7 +324,6 @@ void gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_mul_2exp __gmpz_mul_2exp
 #define mpz_neg __gmpz_neg
 #define mpz_nextprime __gmpz_nextprime
-#define mpz_out_binary __gmpz_out_binary
 #define mpz_out_raw __gmpz_out_raw
 #define mpz_out_str __gmpz_out_str
 #define mpz_perfect_power_p __gmpz_perfect_power_p
@@ -473,7 +471,6 @@ mp_limb_t mpz_getlimbn _PROTO ((mpz_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 unsigned long int mpz_hamdist _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 void mpz_init _PROTO ((mpz_ptr));
 #ifdef _GMP_H_HAVE_FILE
-size_t mpz_inp_binary _PROTO ((mpz_ptr, FILE *));
 size_t mpz_inp_raw _PROTO ((mpz_ptr, FILE *));
 size_t mpz_inp_str _PROTO ((mpz_ptr, FILE *, int));
 #endif
@@ -516,7 +513,6 @@ void mpz_mul_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_neg _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_nextprime _PROTO ((mpz_ptr, mpz_srcptr));
 #ifdef _GMP_H_HAVE_FILE
-size_t mpz_out_binary _PROTO ((FILE *, mpz_srcptr));
 size_t mpz_out_raw _PROTO ((FILE *, mpz_srcptr));
 size_t mpz_out_str _PROTO ((FILE *, int, mpz_srcptr));
 #endif
