@@ -18,6 +18,55 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/ia64/gcd_1.asm: New file.
+
+	* tune/many.pl: Allow for PROLOGUE(fun,...), as used on alpha.
+
+	* doc/gmp.texi (C++ Formatted Input): Describe base indicator handling.
+
+	* tests/cxx/t-istream.cc: New file.
+	* tests/cxx/Makefile.am: Add it.
+
+	* cxx/ismpznw.cc: New file, integer input without whitespace ...
+	* cxx/ismpz.cc: ... from here.
+	* gmp-impl.h (__gmpz_operator_in_nowhite): Add prototype.
+	* cxx/ismpq.cc: Rewrite using mpz input routines.  Change to accept a
+	separate base indicator on numerator and denominator.  Fix base
+	indicator case where "123/0456" would stop at "123/0".
+	* Makefile.am, cxx/Makefile.am: Add cxx/ismpznw.cc.
+
+	* tests/mpz/t-set_d.c: New file, derived from tests/mpz/t-set_si.c
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpn/m68k/lshift.asm, mpn/m68k/rshift.asm: Support 16-bit int and
+	stack alignment.
+	* mpn/m68k/README: Add notes on this.
+	* configure.in (SIZEOF_UNSIGNED): New define in config.m4.
+	* mpn/m68k/m68k-defs.m4 (m68k_definsn): Add cmpw, movew.
+
+	* mpn/m68k/t-m68k-defs.pl: Don't use -> with hashes, to avoid
+	deprecation warnings from perl 5.8.
+
+	* configure.in (viac3-*-*): Use just x86/pentium in $path not x86/p6.
+	If gcc is to be believed the old C3s don't have cmov.
+
+	* Makefile.am: Amend comments about not building from libtool
+	convenience libraries.
+
+	* mpn/asm-defs.m4 (PROLOGUE): Use m4_file_seen, for correct filename
+	in missing EPILOGUE error messages.
+	(m4_file_seen): Amend comments about where used.
+
+	* Makefile.am (CXX_OBJECTS): Remove $U, C++ files are not subject to
+	ansi2knr rules.
+
+	* gmp-h.in (mpn_divmod_1): Use __GMP_CAST, to avoid warnings in
+	applications using g++ -Wold-style-cast.
+
+	* mpn/z8000/README: New file.
+
 2003-10-22  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/get_d.c (CONST_1024, CONST_NEG_1023,
