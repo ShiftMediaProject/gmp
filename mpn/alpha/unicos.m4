@@ -90,9 +90,21 @@ m4_assert_numargs(2)
 	lalm	$1,  $2($1)
 	lal	$1,  $2($1)')
 
-dnl  Unicos assembler seems to align using garbage, so disable aligning
+
+dnl  Usage: ALIGN(bytes)
+dnl
+dnl  Unicos assembler .align emits zeros, even in code segments, so disable
+dnl  aligning.
+dnl
+dnl  GCC uses a macro emiting nops until the desired alignment is reached
+dnl  (see unicosmk_file_start in alpha.c).  Could do something like that if
+dnl  we cared.  The maximum desired alignment must be established at the
+dnl  start of the section though, since of course emitting nops only
+dnl  advances relative to the section beginning.
+
 define(`ALIGN',
 m4_assert_numargs(1)
 )
+
 
 divert
