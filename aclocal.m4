@@ -38,6 +38,7 @@ dnl  Some tests use, or must delete, the default compiler output.  The
 dnl  possible filenames are based on what autoconf looks for, namely
 dnl
 dnl    a.out - normal unix style
+dnl    b.out - i960 systems, including gcc there
 dnl    a.exe - djgpp
 dnl    a_out.exe - OpenVMS DEC C called via GNV wrapper (gnv.sourceforge.net)
 dnl    conftest.exe - Microsoft C, and probably other DOS compilers
@@ -417,14 +418,14 @@ gmp_prog_cc_works=no
 gmp_compile="$1 conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
   if test "$cross_compiling" = no; then
-    if AC_TRY_COMMAND([./a.out || ./a.exe || ./a_out.exe || ./conftest]); then
+    if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then
       gmp_prog_cc_works=yes
     fi
   else
     gmp_prog_cc_works=yes
   fi
 fi
-rm -f conftest* a.out a.exe a_out.exe
+rm -f conftest* a.out b.out a.exe a_out.exe
 AC_MSG_RESULT($gmp_prog_cc_works)
 if test $gmp_prog_cc_works = yes; then
   ifelse([$2],,:,[$2])
@@ -453,7 +454,7 @@ gmp_compile="$1 -c conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
   gmp_prog_cc_works=yes
 fi
-rm -f conftest* a.out a.exe a_out.exe
+rm -f conftest* a.out b.out a.exe a_out.exe
 AC_MSG_RESULT($gmp_prog_cc_works)
 if test $gmp_prog_cc_works = yes; then
   ifelse([$2],,:,[$2])
@@ -654,7 +655,7 @@ EOF
     fi
   fi
   cat conftest.out >&AC_FD_CC
-  rm -f conftest* a.out a.exe a_out.exe
+  rm -f conftest* a.out b.out a.exe a_out.exe
   AC_MSG_RESULT($result)
   if test "$result" = yes; then
       ifelse([$4],,:,[$4])
@@ -968,7 +969,7 @@ else
     AC_MSG_ERROR([Test program links neither with nor without underscore.])
   fi
 fi
-rm -f conftes1* conftes2* a.out a.exe a_out.exe
+rm -f conftes1* conftes2* a.out b.out a.exe a_out.exe
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
@@ -2536,7 +2537,7 @@ dnl  figuring out the .exe or whatever at this stage.
 
 AC_DEFUN(GMP_PROG_CC_FOR_BUILD_WORKS,
 [AC_MSG_CHECKING([build system compiler $1])
-rm -f conftest* a.out a.exe a_out.exe
+rm -f conftest* a.out b.out a.exe a_out.exe
 cat >conftest.c <<EOF
 int
 main ()
@@ -2547,11 +2548,11 @@ EOF
 gmp_compile="$1 conftest.c"
 cc_for_build_works=no
 if AC_TRY_EVAL(gmp_compile); then
-  if (./a.out || ./a.exe || ./a_out.exe || ./conftest) >&AC_FD_CC 2>&1; then
+  if (./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest) >&AC_FD_CC 2>&1; then
     cc_for_build_works=yes
   fi
 fi
-rm -f conftest* a.out a.exe a_out.exe
+rm -f conftest* a.out b.out a.exe a_out.exe
 AC_MSG_RESULT($cc_for_build_works)
 if test "$cc_for_build_works" = yes; then
   ifelse([$2],,:,[$2])
@@ -2595,7 +2596,7 @@ EOF
       break
     fi
   done
-  rm -f conftest* a.out a.exe a_out.exe
+  rm -f conftest* a.out b.out a.exe a_out.exe
   if test -z "$gmp_cv_prog_cpp_for_build"; then
     AC_MSG_ERROR([Cannot find build system C preprocessor.])
   fi
