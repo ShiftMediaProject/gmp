@@ -78,12 +78,17 @@ fi
 
 # First make a best effort at recognizing x86 CPU type and leave it in X86CPU.
 # If we fail, set X86CPU to UNAME_MACHINE
+#
+# DJGPP v2 (or 2.03 at least) always gives "pc" for uname -m, and the
+# OEM for uname -s.  Eg. pc:MS-DOS:6:2 on MS-DOS 6.21.  The list of
+# possible OEMs is in src/libc/dos/dos/getdos_v.c of djlsr203.zip, but
+# just pc:*:*:* seems ok.
 
 case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
-    i?86:*:*:* | i86pc:*:*:*)
-	if test ${UNAME_MACHINE} = i86pc ; then
-	    UNAME_MACHINE=i386
-	fi
+    i?86:*:*:* | i86pc:*:*:* | pc:*:*:*)
+	case "${UNAME_MACHINE}" in
+	i86pc | pc)  UNAME_MACHINE=i386 ;;
+	esac
 	cat <<EOF >${dummy}1.s
 	.globl cpuid
 	.globl _cpuid
