@@ -1,8 +1,10 @@
+#!/usr/bin/perl
+
 # This is a simple configure script for MacOS and MPW.
 # Note that this script can't be run directly from MPW perl
 # because it has the wrong end-of-line characters. See README.
 
-# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -248,6 +250,8 @@ my $file;
 foreach $file (@asm_files) {
   my $ifile = mf("$mpn_asm_dir/$file.asm");
   my $ofile = mf("Asm/$file.s");
+  my $func;
+  my %defs = ();
 
   open(ASM, $ifile)
     or die "Can't read file \"$ifile\"\n";
@@ -263,9 +267,22 @@ foreach $file (@asm_files) {
 
     s/ASM_START\s*\(.*?\)/$asm_start/;
 
-    s/PROLOGUE\s*\(\s*(.*?)\s*\)/asm_prologue($1)/e;
+    if (s/PROLOGUE\s*\(\s*(.*?)\s*\)/asm_prologue($1)/e) {
+      $func = $1;
+    }
 
-    s/EPILOGUE\s*\(\s*(.*?)\s*\)/asm_epilogue($1)/e;
+    s/EPILOGUE\s*\(\s*(.*?)\s*\)/asm_epilogue($func)/e;
+
+    s/L\(([^)]*)\)/L$1/g;       # L() style labels
+
+    # register name defines
+    if (/\bdefine\(`?([a-zA-Z0-9]+)'?,`?([^')]*)\'?\)/) {
+      $defs{$1} = $2;
+      $_ = "\n";
+    }
+    foreach my $i (keys %defs) {
+      s/\b\Q$i\E\b/$defs{$i}/g;
+    }
 
     s/\n/\x0D/g;
     print NEW "$_\x0D";		# Use MacOS end-of-line character
@@ -360,8 +377,8 @@ sub parse_top_configure {
   $/ = $old_eol;
   close CONFIGURE;
 
-  my ($package) = $text =~ /(?:\n|\r)PACKAGE\s*=\s*(\S+)/;
-  my ($version) = $text =~ /(?:\n|\r)VERSION\s*=\s*(\S+)/;
+  my ($package) = $text =~ /(?:\n|\r)PACKAGE_NAME\s*=\s*(\S+)/;
+  my ($version) = $text =~ /(?:\n|\r)PACKAGE_VERSION\s*=\s*(\S+)/;
 
   my $files = join(' ',$text =~ /(?:\n|\r)gmp_mpn_functions\s*=\s*\"([^\"]+)/);
   $files =~ s/\\/ /g;
@@ -433,7 +450,7 @@ sub what_objects {
   close MAKEFILE_AM;
 
   my @ofiles = split(' ',$text);
-  @ofiles > 10 or die "Can't find $part files in \"$makefile_am\"\n";
+  @ofiles > 8 or die "Can't find $part files in \"$makefile_am\"\n";
   my $ofiles = join(' ', map {/^(.+)\.c$/ and $_ = "$dstdir$1.o"} @ofiles);
   $ofiles =~ s/(.{1,66})\s/$1 \xB6\x0D\t/g;
 
