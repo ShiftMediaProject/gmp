@@ -33,12 +33,12 @@ C   1. Align the stack area where we transfer the four 49-bit product-sums
 C      to a 32-byte boundary.  That would minimize the cache collition.
 C      (UltraSPARC-1/2 use a direct-mapped cache.)  (Perhaps even better would
 C      be to align the area to map to the area immediately before s1?)
-C   2. Figure out a better way for summing the 49-bit product-sums.
+C   2. Figure out a better way for summing the 49-bit quantities.
 C   3. Unrolling.  Questionable if it is worth the code expansion, given that
 C      it could only save 1 cycle/limb.
-C   4. Specialize for particular v values.  It would seem as if its upper 32
-C      bits are zero, we could save half of work.  But we would only save in
-C      the FPU, and not really spare any cycles.
+C   4. Specialize for particular v values.  If its upper 32 bits are zero, we
+C      could save many operations, in the FPU (fmuld), but more so in the IEU
+C      since we'll be summing 48-bit quantities, which is much simpler.
 C   5. Ideally, we should schedule the f2/f3 and f4/f5 RAW further apart, and
 C      the i00,i16,i32,i48 RAW less apart.  The latter apart-scheduling should
 C      not be greater than needed for L2 cache latency, and also not so great
@@ -53,7 +53,12 @@ C   10 FA
 C   12 MEM
 C   10 ISHIFT + 14 IADDLOG
 C    1 BRANCH
-C   55 insns totally
+C   55 insns totally (plus one mov insn that should be optimized out)
+
+C The loop executes 56 instructions in 14 cycles on UltraSPARC-1/2, i.e we
+C sustain the peak execution rate of 4 instructions/cycle.  While it may be
+C possible to save one or two instructions, it seems unlikely we can save
+C enough to shave off any more cycles.
 
 C INPUT PARAMETERS
 C rp	i0
