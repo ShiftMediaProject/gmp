@@ -3029,9 +3029,9 @@ returning the remainder is all the @code{div_ui} functions do.  For
 @code{tdiv} and @code{cdiv} the remainder can be negative, so for those the
 return value is the absolute value of the remainder.
 
-For the @code{2exp} variants the divisor is @math{2^@var{b}}.  These functions
-are implemented as right shifts and bit masks, but of course they round the
-same as the other functions.
+For the @code{2exp} variants the divisor is @m{2^b,2^@var{b}}.  These
+functions are implemented as right shifts and bit masks, but of course they
+round the same as the other functions.
 
 For positive @var{n} both @code{mpz_fdiv_q_2exp} and @code{mpz_tdiv_q_2exp}
 are simple bitwise right shifts.  For negative @var{n}, @code{mpz_fdiv_q_2exp}
@@ -3067,6 +3067,11 @@ rational to lowest terms.
 @cindex Divisibility functions
 Return non-zero if @var{n} is exactly divisible by @var{d}, or in the case of
 @code{mpz_divisible_2exp_p} by @m{2^b,2^@var{b}}.
+
+@var{n} is divisible by @var{d} if there exists an integer @var{q} satisfying
+@math{@var{n} = @var{q}@GMPmultiply{}@var{d}}.  Unlike the other division
+functions, @math{@var{d}=0} is accepted and following the rule it can be seen
+that only 0 is divisible by 0.
 @end deftypefun
 
 @deftypefun int mpz_congruent_p (mpz_t @var{n}, mpz_t @var{c}, mpz_t @var{d})
@@ -3076,6 +3081,12 @@ Return non-zero if @var{n} is exactly divisible by @var{d}, or in the case of
 @cindex Congruence functions
 Return non-zero if @var{n} is congruent to @var{c} modulo @var{d}, or in the
 case of @code{mpz_congruent_2exp_p} modulo @m{2^b,2^@var{b}}.
+
+@var{n} is congruent to @var{c} mod @var{d} if there exists an integer @var{q}
+satisfying @math{@var{n} = @var{c} + @var{q}@GMPmultiply{}@var{d}}.  Unlike
+the other division functions, @math{@var{d}=0} is accepted and following the
+rule it can be seen that @var{n} and @var{c} are congruent mod 0 only when
+exactly equal.
 @end deftypefun
 
 
@@ -5148,7 +5159,7 @@ table data provides then the return value is zero.  The maximum @var{size}
 currently supported is 128.
 @end deftypefun
 
-@deftypefun void gmp_randinit (gmp_randstate_t @var{state}, @w{gmp_randalg_t @var{alg}}, ...)
+@deftypefun void gmp_randinit (gmp_randstate_t @var{state}, @w{gmp_randalg_t @var{alg}}, @dots{})
 @strong{This function is obsolete.}
 
 Initialize @var{state} with an algorithm selected by @var{alg}.  The only
@@ -5379,19 +5390,19 @@ output may be produced if a write error occurs.  All the functions can return
 @math{-1} if the C library @code{printf} variant in use returns @math{-1}, but
 this shouldn't normally occur.
 
-@deftypefun int gmp_printf (const char *@var{fmt}, ...)
+@deftypefun int gmp_printf (const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_vprintf (const char *@var{fmt}, va_list @var{ap})
 Print to the standard output @code{stdout}.  Return the number of characters
 written, or @math{-1} if an error occurred.
 @end deftypefun
 
-@deftypefun int gmp_fprintf (FILE *@var{fp}, const char *@var{fmt}, ...)
+@deftypefun int gmp_fprintf (FILE *@var{fp}, const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_vfprintf (FILE *@var{fp}, const char *@var{fmt}, va_list @var{ap})
 Print to the stream @var{fp}.  Return the number of characters written, or
 @math{-1} if an error occurred.
 @end deftypefun
 
-@deftypefun int gmp_sprintf (char *@var{buf}, const char *@var{fmt}, ...)
+@deftypefun int gmp_sprintf (char *@var{buf}, const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_vsprintf (char *@var{buf}, const char *@var{fmt}, va_list @var{ap})
 Form a null-terminated string in @var{buf}.  Return the number of characters
 written, excluding the terminating null.
@@ -5403,7 +5414,7 @@ These functions are not recommended, since there's no protection against
 exceeding the space available at @var{buf}.
 @end deftypefun
 
-@deftypefun int gmp_snprintf (char *@var{buf}, size_t @var{size}, const char *@var{fmt}, ...)
+@deftypefun int gmp_snprintf (char *@var{buf}, size_t @var{size}, const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_vsnprintf (char *@var{buf}, size_t @var{size}, const char *@var{fmt}, va_list @var{ap})
 Form a null-terminated string in @var{buf}.  No more than @var{size} bytes
 will be written.  To get the full output, @var{size} must be enough for the
@@ -5421,7 +5432,7 @@ Notice the return value is in ISO C99 @code{snprintf} style.  This is so even
 if the C library @code{vsnprintf} is the older GLIBC 2.0.x style.
 @end deftypefun
 
-@deftypefun int gmp_asprintf (char **@var{pp}, const char *@var{fmt}, ...)
+@deftypefun int gmp_asprintf (char **@var{pp}, const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_vasprintf (char *@var{pp}, const char *@var{fmt}, va_list @var{ap})
 Form a null-terminated string in a block of memory obtained from the current
 memory allocation function (@pxref{Custom Allocation}).  The block will be the
@@ -5434,7 +5445,7 @@ Unlike the C library @code{asprintf}, @code{gmp_asprintf} doesn't return
 function handle that.
 @end deftypefun
 
-@deftypefun int gmp_obstack_printf (struct obstack *@var{ob}, const char *@var{fmt}, ...)
+@deftypefun int gmp_obstack_printf (struct obstack *@var{ob}, const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_obstack_vprintf (struct obstack *@var{ob}, const char *@var{fmt}, va_list @var{ap})
 @cindex @code{obstack} output
 Append to the current object in @var{ob}.  The return value is the number of
@@ -5687,17 +5698,17 @@ since it doesn't recognise the GMP extensions.
 No overlap is permitted between the @var{fmt} string and any of the results
 produced.
 
-@deftypefun int gmp_scanf (const char *@var{fmt}, ...)
+@deftypefun int gmp_scanf (const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_vscanf (const char *@var{fmt}, va_list @var{ap})
 Read from the standard input @code{stdin}.
 @end deftypefun
 
-@deftypefun int gmp_fscanf (FILE *@var{fp}, const char *@var{fmt}, ...)
+@deftypefun int gmp_fscanf (FILE *@var{fp}, const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_vfscanf (FILE *@var{fp}, const char *@var{fmt}, va_list @var{ap})
 Read from the stream @var{fp}.
 @end deftypefun
 
-@deftypefun int gmp_sscanf (const char *@var{s}, const char *@var{fmt}, ...)
+@deftypefun int gmp_sscanf (const char *@var{s}, const char *@var{fmt}, @dots{})
 @deftypefunx int gmp_vsscanf (const char *@var{s}, const char *@var{fmt}, va_list @var{ap})
 Read from a null-terminated string @var{s}.
 @end deftypefun
@@ -5922,7 +5933,7 @@ Divisions involving @code{mpz_class} round towards zero, as per the
 This corresponds to the rounding used for plain @code{int} calculations on
 most machines.
 
-The @code{mpz_fdiv...} or @code{mpz_cdiv...} functions can always be called
+The @code{mpz_fdiv@dots{}} or @code{mpz_cdiv@dots{}} functions can always be called
 directly if desired.  For example,
 
 @example
@@ -6175,7 +6186,7 @@ The C++ class interface to the GMP random number functions uses
 @code{gmp_randstate_t}.
 @end deftp
 
-@deftypefun {} gmp_randclass::gmp_randclass (void (*@var{randinit}) (gmp_randstate_t, ...), ...)
+@deftypefun {} gmp_randclass::gmp_randclass (void (*@var{randinit}) (gmp_randstate_t, @dots{}), @dots{})
 Construct a @code{gmp_randclass}, using a call to the given @var{randinit}
 function (@pxref{Random State Initialization}).  The arguments expected are
 the same as @var{randinit}, but with @code{mpz_class} instead of @code{mpz_t}.
@@ -6192,7 +6203,7 @@ the behaviour of @code{gmp_randclass::gmp_randclass} is undefined in this case
 (perhaps this will change in the future).
 @end deftypefun
 
-@deftypefun {} gmp_randclass::gmp_randclass (gmp_randalg_t @var{alg}, ...)
+@deftypefun {} gmp_randclass::gmp_randclass (gmp_randalg_t @var{alg}, @dots{})
 Construct a @code{gmp_randclass} using the same parameters as
 @code{gmp_randinit} (@pxref{Random State Initialization}).  This function is
 obsolete and the above @var{randinit} style should be preferred.
@@ -8457,7 +8468,7 @@ instructions between carry-in and carry-out for each limb.
 
 On vector processors good use can be made of the fact that a carry bit only
 very rarely propagates more than one limb.  When adding a single bit to a
-limb, there's only a carry out if that limb was @code{0xFF...FF} which on
+limb, there's only a carry out if that limb was @code{0xFF@dots{}FF} which on
 random data will be only 1 in @m{2\GMPraise{@code{mp\_bits\_per\_limb}},
 2^mp_bits_per_limb}.  @file{mpn/cray/add_n.c} is an example of this, it adds
 all limbs in parallel, adds one set of carry bits in parallel and then only
@@ -9214,7 +9225,7 @@ operator+(const mpf_class &f, const mpf_class &g)
 @}
 @end example
 
-The seemingly redundant @code{__gmp_expr<__gmp_binary_expr<...>>} is used to
+The seemingly redundant @code{__gmp_expr<__gmp_binary_expr<@dots{}>>} is used to
 encapsulate any possible kind of expression into a single template type.  In
 fact even @code{mpf_class} etc are @code{typedef} specializations of
 @code{__gmp_expr}.
