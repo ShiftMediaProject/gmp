@@ -1,7 +1,6 @@
-/* Test mpz_gcd, mpz_gcdext, mpz_mul, mpz_tdiv_r, mpz_add, mpz_cmp,
-   mpz_cmp_ui, mpz_init_set, mpz_set, mpz_clear.
+/* Test mpz_gcd, mpz_gcdext, and mpz_gcd_ui.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -28,123 +27,61 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void dump_abort _PROTO ((int, mpz_t, mpz_t));
+void one_test (mpz_t, mpz_t, mpz_t, int);
 void debug_mp _PROTO ((mpz_t, int));
+void ref_mpz_gcd (mpz_t, mpz_t, mpz_t);
 
-/* Some values that have triggered bugs earlier */
-struct test_value {
-  const char *g;
-  const char *a;
-  const char *b;
-};
+/* Keep one_test's variables global, so that we don't need
+   to reinitialize them for each test.  */
+mpz_t gcd, s, t, temp1, temp2;
 
-static const struct test_value
-gcd_values[] = {
-  { "1196", "52303341519632765276", "49433716644" },
-  { "4740082048705311538943345362292037678602347311085000707982891522106058"
-    "2735763065078988616865606438193460103099042971323306078899664687619951"
-    "0636202858506107680258478263756774379689643340947562894108660163354162"
-    "374936043828126582328304370681608415",
-    "8015326967851188851400293405078493364836916788262508632981042285204035"
-    "5004615997127375101624993764238484599679469711647654938657985688930763"
-    "7287424827169807289924434877622983992042888129128664489696730194326385"
-    "6216391774389540863044605071044379894789674724286157720257605528646713"
-    "2847002885102977402320357016075382192479739083401081052515370727048442"
-    "3864952170123773854472156128206896173541365243433212241042259067713522"
-    "7139214297041190334369882785408312687204541354886134856600715855936646"
-    "70012143505055",
-    "1064135473460906820987605566282348585048825587555590853309997377997553"
-    "2153285969844110945542314457290466401676423923608835657703154250653436"
-    "2697286178081669028728243744799767581489930105123394611992402008612146"
-    "6315135137233526215819225723644477055479414450428533365154622432782101"
-    "2963496044066970313007322547033017615226253884335888150937868475644198"
-    "6815046003786634564130674128257615435686074614583459188437821503026771"
-    "8607377395872495589370924963118031308777475509749809825552073442922966"
-    "622165" },
-  { "7429346139342862110654280467601899372609235135422491568134986074126326"
-    "7001113896911862980149985840437220402126244505210711847099277120075448"
-    "9276466409680247579999500806044547072585736002794426033200059956118884"
-    "95178112011641119249678138689458366456903012217376632",
-    "1166619509302372427119886202041900960295906253140250506966473400972870"
-    "2868415272595956270245640347038981965569437521384521043132169633613249"
-    "8249117793331643400421250155539008296413506091003072721582078890313407"
-    "5333671575963724738316145960654011473422675335352698105685597874707193"
-    "2426934723938037267953469671001286397007933817018297589002719264014779"
-    "1093301688603229865571978531814896753002230183721420784350684633945463"
-    "6266076193248843510536383667108780261298146636632094760114796626569565"
-    "415549047447923471673995780073659239180363707645008",
-    "9081412834795553001082053341636149710899746741805643250698622508162481"
-    "2757857992575979440934687821237077965077417009086508430199860942145838"
-    "8784882177106663022073953743909326410170867657447616086686891699382397"
-    "9597831922038265921394586191537362376710605537371781581038873901710686"
-    "1166374563798203293488605037880984410966747619198666373922329023390967"
-    "3141094488432892460059106640714304595184942245991359196348552390643565"
-    "9072266179708878242815458179581502175601955412576082640535181857091687"
-    "62738315501898494726705392421906689286392" },
-  { NULL, NULL, NULL },
-};
+/* Define this to make all operands be large enough for Schoenhage gcd
+   to be used.  */
+#define WHACK_SCHOENHAGE 0
+
+#if WHACK_SCHOENHAGE
+#define MIN_OPERAND_SIZE (GCD_SCHOENHAGE_THRESHOLD * GMP_NUMB_BITS)
+#else
+#define MIN_OPERAND_SIZE 1
+#endif
 
 int
 main (int argc, char **argv)
 {
-  mpz_t op1, op2, x;
-  mpz_t gcd, gcd2, s, t;
-  mpz_t temp1, temp2;
-  mp_size_t op1_size, op2_size, x_size;
-  int i;
+  mpz_t op1, op2, ref;
+  int i, j, chain_len;
   gmp_randstate_ptr rands;
   mpz_t bs;
-  double fsize_range;
   unsigned long bsi, size_range;
-  const struct test_value *tv;
-  
+
   tests_start ();
   rands = RANDS;
 
   mpz_init (bs);
-
   mpz_init (op1);
   mpz_init (op2);
-  mpz_init (x);
+  mpz_init (ref);
   mpz_init (gcd);
-  mpz_init (gcd2);
   mpz_init (temp1);
   mpz_init (temp2);
   mpz_init (s);
   mpz_init (t);
 
-  for (i = -1, tv = gcd_values; tv->g; tv++, i--)
+  for (i = 0; i < 50; i++)
     {
-      mpz_set_str (gcd, tv->g, 10);
-      mpz_set_str (op1, tv->a, 10);
-      mpz_set_str (op2, tv->b, 10);
+      /* Generate plain operands with unknown gcd.  These types of operands
+	 have proven to trigger certain bugs in development versions of the
+	 gcd code.  The "hgcd->row[3].rsize > M" ASSERT is not triggered by
+	 the division chain code below, but that is most likely just a result
+	 of that other ASSERTs are triggered before it.  */
 
-      mpz_gcd (gcd2, op1, op2);
-      if (mpz_cmp (gcd, gcd2) != 0)
-	dump_abort (i, op1, op2);
-    }
-  
-  fsize_range = 1.0;
-  for (;;)
-    {
       mpz_urandomb (bs, rands, 32);
-
-      size_range = fsize_range;
-      if (size_range > 17)
-	break;
-      fsize_range = fsize_range * 1.02;
+      size_range = mpz_get_ui (bs) % 13 + 2;
 
       mpz_urandomb (bs, rands, size_range);
-      op1_size = mpz_get_ui (bs);
-      mpz_rrandomb (op1, rands, op1_size);
-
+      mpz_urandomb (op1, rands, mpz_get_ui (bs) + MIN_OPERAND_SIZE);
       mpz_urandomb (bs, rands, size_range);
-      op2_size = mpz_get_ui (bs);
-      mpz_rrandomb (op2, rands, op2_size);
-
-      mpz_urandomb (bs, rands, size_range);
-      x_size = mpz_get_ui (bs);
-      mpz_rrandomb (x, rands, x_size);
+      mpz_urandomb (op2, rands, mpz_get_ui (bs) + MIN_OPERAND_SIZE);
 
       mpz_urandomb (bs, rands, 2);
       bsi = mpz_get_ui (bs);
@@ -153,45 +90,59 @@ main (int argc, char **argv)
       if ((bsi & 2) != 0)
 	mpz_neg (op2, op2);
 
-      /* printf ("%ld %ld\n", SIZ (op1), SIZ (op2)); */
+      ref_mpz_gcd (ref, op1, op2);
+      one_test (op1, op2, ref, i);
 
-      mpz_mul (op1, op1, x);
-      mpz_mul (op2, op2, x);
 
-      mpz_gcd (gcd, op1, op2);
-      /* We know GCD will be at least X, since we multiplied both operands
-	 with it.  */
-      if (mpz_cmp (gcd, x) < 0 && mpz_sgn (op1) != 0 && mpz_sgn (op2) != 0)
-	dump_abort (i, op1, op2);
+      /* Generate a division chain backwards, allowing otherwise unlikely huge
+	 quotients.  */
 
-      if (mpz_fits_ulong_p (op2))
+      mpz_set_ui (op1, 0);
+      mpz_urandomb (bs, rands, 32);
+      mpz_urandomb (bs, rands, mpz_get_ui (bs) % 16 + 1);
+      mpz_rrandomb (op2, rands, mpz_get_ui (bs));
+      mpz_add_ui (op2, op2, 1);
+      mpz_set (ref, op2);
+
+#if WHACK_SCHOENHAGE
+      chain_len = 1000000;
+#else
+      mpz_urandomb (bs, rands, 32);
+      chain_len = mpz_get_ui (bs) % (GMP_NUMB_BITS * GCD_SCHOENHAGE_THRESHOLD / 256);
+#endif
+
+      for (j = 0; j < chain_len; j++)
 	{
-	  mpz_gcd_ui (gcd2, op1, mpz_get_ui (op2));
-	  if (mpz_cmp (gcd, gcd2))
-	    dump_abort (i, op1, op2);
+	  mpz_urandomb (bs, rands, 32);
+	  mpz_urandomb (bs, rands, mpz_get_ui (bs) % 12 + 1);
+	  mpz_rrandomb (temp2, rands, mpz_get_ui (bs) + 1);
+	  mpz_add_ui (temp2, temp2, 1);
+	  mpz_mul (temp1, op2, temp2);
+	  mpz_add (op1, op1, temp1);
+
+	  /* Don't generate overly huge operands.  */
+	  if (SIZ (op1) > 3 * GCD_SCHOENHAGE_THRESHOLD)
+	    break;
+
+	  mpz_urandomb (bs, rands, 32);
+	  mpz_urandomb (bs, rands, mpz_get_ui (bs) % 12 + 1);
+	  mpz_rrandomb (temp2, rands, mpz_get_ui (bs) + 1);
+	  mpz_add_ui (temp2, temp2, 1);
+	  mpz_mul (temp1, op1, temp2);
+	  mpz_add (op2, op2, temp1);
+
+	  /* Don't generate overly huge operands.  */
+	  if (SIZ (op2) > 3 * GCD_SCHOENHAGE_THRESHOLD)
+	    break;
 	}
-
-      mpz_gcdext (gcd2, s, t, op1, op2);
-      if (mpz_cmp (gcd, gcd2))
-	dump_abort (i, op1, op2);
-
-      mpz_gcdext (gcd2, s, NULL, op1, op2);
-      if (mpz_cmp (gcd, gcd2))
-	dump_abort (i, op1, op2);
-
-      mpz_mul (temp1, s, op1);
-      mpz_mul (temp2, t, op2);
-      mpz_add (gcd2, temp1, temp2);
-      if (mpz_cmp (gcd, gcd2))
-	dump_abort (i, op1, op2);
+      one_test (op1, op2, ref, i);
     }
 
   mpz_clear (bs);
   mpz_clear (op1);
   mpz_clear (op2);
-  mpz_clear (x);
+  mpz_clear (ref);
   mpz_clear (gcd);
-  mpz_clear (gcd2);
   mpz_clear (temp1);
   mpz_clear (temp2);
   mpz_clear (s);
@@ -202,16 +153,148 @@ main (int argc, char **argv)
 }
 
 void
-dump_abort (int testnr, mpz_t op1, mpz_t op2)
-{
-  fprintf (stderr, "ERROR in test %d\n", testnr);
-  fprintf (stderr, "op1 = "); debug_mp (op1, -16);
-  fprintf (stderr, "op2 = "); debug_mp (op2, -16);
-  abort();
-}
-
-void
 debug_mp (mpz_t x, int base)
 {
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);
+}
+
+void
+one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
+{
+  /*
+  printf ("%ld %ld %ld\n", SIZ (op1), SIZ (op2), SIZ (ref));
+  fflush (stdout);
+  */
+
+  /*
+  fprintf (stderr, "op1=");  debug_mp (op1, -16);
+  fprintf (stderr, "op2=");  debug_mp (op2, -16);
+  */
+
+  mpz_gcd (gcd, op1, op2);
+  if (mpz_cmp (ref, gcd) != 0)
+    {
+      fprintf (stderr, "ERROR in test %d\n", i);
+      fprintf (stderr, "mpz_gcd returned incorrect result\n");
+      fprintf (stderr, "op1=");                 debug_mp (op1, -16);
+      fprintf (stderr, "op2=");                 debug_mp (op2, -16);
+      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
+      fprintf (stderr, "mpz_gcd returns:\n");   debug_mp (gcd, -16);
+      abort ();
+    }
+
+  /* This should probably move to t-gcd_ui.c */
+  if (mpz_fits_ulong_p (op1) || mpz_fits_ulong_p (op2))
+    {
+      if (mpz_fits_ulong_p (op1))
+	mpz_gcd_ui (gcd, op2, mpz_get_ui (op1));
+      else
+	mpz_gcd_ui (gcd, op1, mpz_get_ui (op2));
+      if (mpz_cmp (ref, gcd))
+	{
+	  fprintf (stderr, "ERROR in test %d\n", i);
+	  fprintf (stderr, "mpz_gcd_ui returned incorrect result\n");
+	  fprintf (stderr, "op1=");                 debug_mp (op1, -16);
+	  fprintf (stderr, "op2=");                 debug_mp (op2, -16);
+	  fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
+	  fprintf (stderr, "mpz_gcd returns:\n");   debug_mp (gcd, -16);
+	  abort ();
+	}
+    }
+
+  mpz_gcdext (gcd, s, t, op1, op2);
+  if (mpz_cmp (ref, gcd))
+    {
+      fprintf (stderr, "ERROR in test %d\n", i);
+      fprintf (stderr, "mpz_gcdext returned incorrect result\n");
+      fprintf (stderr, "op1=");                 debug_mp (op1, -16);
+      fprintf (stderr, "op2=");                 debug_mp (op2, -16);
+      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
+      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd, -16);
+      abort ();
+    }
+
+  mpz_gcdext (gcd, s, NULL, op1, op2);
+  if (mpz_cmp (ref, gcd))
+    {
+      fprintf (stderr, "ERROR in test %d\n", i);
+      fprintf (stderr, "mpz_gcdext returned incorrect result\n");
+      fprintf (stderr, "op1=");                 debug_mp (op1, -16);
+      fprintf (stderr, "op2=");                 debug_mp (op2, -16);
+      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
+      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd, -16);
+      fprintf (stderr, "                  s:\n");debug_mp (s, -16);
+      fprintf (stderr, "                  t:\n");debug_mp (t, -16);
+      abort ();
+    }
+
+  mpz_mul (temp1, s, op1);
+  mpz_mul (temp2, t, op2);
+  mpz_add (gcd, temp1, temp2);
+  if (mpz_cmp (ref, gcd))
+    {
+      fprintf (stderr, "ERROR in test %d\n", i);
+      fprintf (stderr, "mpz_gcdext returned incorrect result\n");
+      fprintf (stderr, "op1=");                 debug_mp (op1, -16);
+      fprintf (stderr, "op2=");                 debug_mp (op2, -16);
+      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
+      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd, -16);
+      fprintf (stderr, "                  s:\n");debug_mp (s, -16);
+      fprintf (stderr, "                  t:\n");debug_mp (t, -16);
+      abort ();
+    }
+}
+
+void
+ref_mpz_gcd (mpz_t r, mpz_t u_in, mpz_t v_in)
+{
+  mpz_t u, v;
+  unsigned long uzeros, vzeros, cnt;
+  int cmp;
+
+  if (mpz_cmp_ui (u_in, 0) == 0)
+    {
+      mpz_abs (r, v_in);
+      return;
+    }
+  if (mpz_cmp_ui (v_in, 0) == 0)
+    {
+      mpz_abs (r, u_in);
+      return;
+    }
+
+  mpz_init (u);
+  mpz_init (v);
+
+  uzeros = mpz_scan1 (u_in, 0);
+  mpz_tdiv_q_2exp (u, u_in, uzeros);
+  mpz_abs (u, u);
+
+  vzeros = mpz_scan1 (v_in, 0);
+  mpz_tdiv_q_2exp (v, v_in, vzeros);
+  mpz_abs (v, v);
+
+  for (;;)
+    {
+      cmp = mpz_cmp (u, v);
+
+      if (cmp > 0)
+	{
+	  mpz_sub (u, u, v);
+	  cnt = mpz_scan1 (u, 0);
+	  mpz_tdiv_q_2exp (u, u, cnt);
+	}
+      else if (cmp < 0)
+	{
+	  mpz_sub (v, v, u);
+	  cnt = mpz_scan1 (v, 0);
+	  mpz_tdiv_q_2exp (v, v, cnt);
+	}
+      else
+	break;
+    }
+
+  mpz_mul_2exp (r, u, MIN (uzeros, vzeros));
+  mpz_clear (u);
+  mpz_clear (v);
 }
