@@ -2383,7 +2383,6 @@ AC_SUBST(gmp_srclinks)
 # Configs for mpfr.
 #
 if test $enable_mpfr = yes; then
-  AC_CONFIG_LIBOBJ_DIR(mpfr)
   gmp_CFLAGS=$CFLAGS
   gmp_LIBS=$LIBS
   LIBS="$LIBS $LIBM"
