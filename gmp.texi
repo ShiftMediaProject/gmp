@@ -415,12 +415,14 @@ normally preferred if it's present.  The usual @samp{CC=whatever} can be
 passed to @samp{./configure} to choose something different.
 
 For some configurations specific compiler flags are set based on the target
-CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
-set the best flags.
+CPU and compiler, see @samp{CFLAGS} in the generated @file{Makefile}s.  The
+usual @samp{CFLAGS="-whatever"} can be passed to @samp{./configure} to use
+something different or to set good flags for systems GMP doesn't otherwise
+know.
 
-If @samp{CC} is set then @samp{CFLAGS} must also be set.  This applies even if
-@samp{CC} is merely one of the choices GMP would make itself.  This may change
-in a future release.
+Note that if @samp{CC} is set then @samp{CFLAGS} must also be set.  This
+applies even if @samp{CC} is merely one of the choices GMP would make itself.
+This may change in a future release.
 
 @item @option{--disable-alloca}
 @cindex Stack overflow segfaults
@@ -735,6 +737,17 @@ If stripped static libraries are wanted, the suggested workaround is to build
 normally, strip the separate object files, and do another @samp{make all} to
 rebuild.  Alternately @samp{CFLAGS} with @samp{-g} omitted can always be used
 if it's just debugging which is unwanted.
+
+@item SCO shared libraries @samp{-lc}
+@cindex SCO shared libraries
+
+Some versions of SCO OpenServer and UnixWare don't allow @samp{-lc} when
+creating a shared library.  One symptom of this is @code{<ctype.h>} macros not
+working, leading to failures from @code{mpz_set_str} and similar functions in
+@samp{make check} and application programs.  Currently the suggested
+workaround is to delete the line @code{deplibs="$deplibs -lc"} from
+@file{ltmain.sh} before running @samp{./configure} (or from @file{libtool}
+after).
 
 @item SunOS 4 Native Tools
 
