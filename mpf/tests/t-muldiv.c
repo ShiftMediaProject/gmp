@@ -37,7 +37,7 @@ main (argc, argv)
   int reps = 100000;
   int i;
   mpf_t u, v, w, x;
-  mp_size_t bprec = 100;
+  mp_size_t bprec = SIZE * BITS_PER_MP_LIMB;
   mpf_t rerr, limit_rerr;
   mp_limb_t ulimb, vlimb;
   int single_flag;
@@ -63,12 +63,12 @@ main (argc, argv)
     {
       mp_size_t res_prec;
 
-      res_prec = urandom () % (bprec + 100);
+      res_prec = urandom () % bprec + 1;
       mpf_set_prec (w, res_prec);
       mpf_set_prec (x, res_prec);
 
       mpf_set_ui (limit_rerr, 1);
-      mpf_div_2exp (limit_rerr, limit_rerr, res_prec);
+      mpf_div_2exp (limit_rerr, limit_rerr, res_prec - 1);
 
       single_flag = 0;
 
