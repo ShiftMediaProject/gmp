@@ -44,6 +44,15 @@ int   speed_option_addrs = 0;
 int   speed_option_verbose = 0;
 
 
+/* Provide __clz_tab even if it's not required, for the benefit of new code
+   being tested with many.pl. */
+#ifndef COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+#define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+#include "mp_clz_tab.c"
+#undef COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+#endif
+
+
 void
 pentium_wbinvd(void)
 {
