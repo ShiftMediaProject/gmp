@@ -1,3 +1,11 @@
+2001-07-31  Kevin Ryde  <kevin@swox.se>
+
+	* tests/refmpn.c (refmpn_mul_1c): Allow low to high overlaps.
+
+	* gmp-h.in, gmp-impl.h (_gmp_rand): Move prototype to gmp-impl.h.
+
+	* tune/Makefile.am (EXTRA_DIST): Add many.pl.
+
 2001-07-28  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Random Number Functions): Old rand functions no longer use
