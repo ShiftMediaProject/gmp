@@ -432,33 +432,32 @@ case $host in
   # "m68k" is taken to mean 68020 or better, since that's what most systems
   # are.  Nexts in particular are certainly at least 68020.
   #
-  m68*-*-* | m5200-*-*)
+  m68*-*-*)
     family=m68k
     gcc_cflags="-g $fomit_frame_pointer"
     gcc_cflags_optlist="optimize arch"
     gcc_cflags_optimize="-O2"   # changed below on gcc 2.95.x
 
-    # gcc 2.7.2 doesn't know -m68060, -mcpu32 or -m5200, so let them fall
-    # back appropriately.
+    # gcc 2.7.2 doesn't know -m68060 or -mcpu32, so let them fall back
+    # appropriately.
     # FIXME: Maybe "-m68020 -mnobitfield" would suit cpu32 on 2.7.2.
     #
     case $host in
-    [m680[01]0-*-*])     gcc_cflags_arch="-m68000" ;;
-    m68020-*-*|m68k-*-*) gcc_cflags_arch="-m68020" ;;
-    m68030-*-*)          gcc_cflags_arch="-m68030" ;;
-    m68040-*-*)          gcc_cflags_arch="-m68040" ;;
-    m68060-*-*)          gcc_cflags_arch="-m68060 -m68040" ;;
-    m683??-*-*)          gcc_cflags_arch="-mcpu32 -m68000" ;;
-    m5200-*-*)           gcc_cflags_arch="-m5200 -m68000" ;;
-    *)                   gcc_cflags_arch="-m68000" ;;
+    [m680[01]0-*-*])       gcc_cflags_arch="-m68000" ;;
+    m68020-*-*|m68k-*-*)   gcc_cflags_arch="-m68020" ;;
+    m68030-*-*)            gcc_cflags_arch="-m68030" ;;
+    m68040-*-*)            gcc_cflags_arch="-m68040" ;;
+    m68060-*-*)            gcc_cflags_arch="-m68060 -m68040" ;;
+    m683?2-*-*|m68360-*-*) gcc_cflags_arch="-mcpu32 -m68000" ;;
+    *)                     gcc_cflags_arch="-m68000" ;;
     esac
 
     # FIXME: m68k/mc68020 looks like it's ok for cpu32, but this wants to be
     # tested.  Will need to introduce an m68k/cpu32 if m68/mc62020 ever uses
     # the bitfield instructions.
     case $host in
-    [m680[01]0-*-* | m5200-*-*]) path="m68k" ;; 
-    *)                           path="m68k/mc68020 m68k" ;;
+    [m680[01]0-*-*]) path="m68k" ;; 
+    *)               path="m68k/mc68020 m68k" ;;
     esac
     ;;
 
