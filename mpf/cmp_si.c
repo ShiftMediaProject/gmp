@@ -1,6 +1,6 @@
 /* mpf_cmp_si -- Compare a float with a signed integer.
 
-Copyright (C) 1993, 1994, 1995, 1999 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -73,9 +73,9 @@ mpf_cmp_si (u, vslimb)
   up = u->_mp_d;
 
   /* 3. Compare the most significant mantissa limb with V.  */
-  if (up[usize - 1] > vslimb)
+  if (up[usize - 1] > (unsigned long) vslimb)
     return usign;
-  else if (up[usize - 1] < vslimb)
+  else if (up[usize - 1] < (unsigned long) vslimb)
     return -usign;
 
 #define STRICT_MPF_NORMALIZATION 0
