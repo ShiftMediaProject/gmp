@@ -471,7 +471,9 @@ near you, see @uref{http://www.gnu.org/order/ftp.html} for a full list.
 @cindex About this manual
 
 Everyone should read @ref{GMP Basics}.  If you need to install the library
-yourself, you need to read @ref{Installing GMP}, too.
+yourself, then read @ref{Installing GMP}.  If you have a system with multiple
+ABIs, then read @ref{ABI and ISA}, for the compiler options that must be used
+on applications.
 
 The rest of the manual can be used for later reference, although it is
 probably a good idea to glance through it.
@@ -1278,8 +1280,8 @@ P-III)@.  @samp{i386} is a better choice when making binaries that must run on
 both.
 
 @samp{pentium4} and an SSE2 capable assembler are important for best results
-on Pentium 4.  The specific code is for instance roughly a 2x to 3x speedup
-over the generic @samp{i386} code.
+on Pentium 4.  The specific code is for instance roughly a 2@cross{} to
+3@cross{} speedup over the generic @samp{i386} code.
 
 @item x86 MMX and SSE2 Code
 
@@ -1361,6 +1363,12 @@ later).
 
 Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
+
+@item Solaris 2.6
+
+The system @command{sed} prints an error ``Output line too long'' when libtool
+builds @file{libgmp.la}.  This doesn't seem cause any obvious ill effects, but
+GNU @command{sed} is recommended, to avoid any doubt.
 
 @item Sparc Solaris 2.7 with gcc 2.95.2 in ABI=32
 
@@ -2379,8 +2387,9 @@ This function returns 0 if the entire string is a valid number in base
 white-space.  It does ignore it between digits, but not after a minus sign or
 within or after ``0x''.  We are considering changing the definition of this
 function, making it fail when there is any white-space in the input, since
-that makes a lot of sense.  Please tell us your opinion about this change.  Do
-you really want it to accept @nicode{"3 14"} as meaning 314 as it does now?]
+that makes a lot of sense.  Send your opinion of this change to
+@email{bug-gmp@@gnu.org}.  Do you really want it to accept @nicode{"3 14"} as
+meaning 314 as it does now?]
 @end deftypefun
 
 @deftypefun void mpz_swap (mpz_t @var{rop1}, mpz_t @var{rop2})
@@ -5447,19 +5456,27 @@ The C++ class interface to the GMP random number functions uses
 @code{gmp_randstate_t}.
 @end deftp
 
-@deftypefun {} gmp_randclass::gmp_randclass (gmp_randalg_t @var{alg}, ...)
-Construct a @code{gmp_randclass} using the same parameters as
-@code{gmp_randinit} (@pxref{Random State Initialization}).
-@end deftypefun
-
-@deftypefun {} gmp_randclass::gmp_randclass (void (*@var{randinit}) (gmp_randstate_t, mpz_t, unsigned long, unsigned long), mpz_class @var{a}, unsigned long @var{c}, unsigned long @var{M2EXP})
+@deftypefun {} gmp_randclass::gmp_randclass (void (*@var{randinit}) (gmp_randstate_t, ...), ...)
 Construct a @code{gmp_randclass}, using a call to the given @var{randinit}
-function.  Currently @code{gmp_randinit_lc_2exp} is the only choice for this,
-for example,
+function (@pxref{Random State Initialization}).  The arguments expected are
+the same as @var{randinit}, but with @code{mpz_class} instead of @code{mpz_t}.
+For example,
 
 @example
-gmp_randclass r (gmp_randinit_lc_2exp, a, c, m2exp);
+gmp_randclass r1 (gmp_randinit_default);
+gmp_randclass r2 (gmp_randinit_lc_2exp_size, 32);
+gmp_randclass r3 (gmp_randinit_lc_2exp, a, c, m2exp);
 @end example
+
+@code{gmp_randinit_lc_2exp_size} can fail if the size requested is too big,
+the behaviour of @code{gmp_randclass::gmp_randclass} is undefined in this case
+(perhaps this will change in the future).
+@end deftypefun
+
+@deftypefun {} gmp_randclass::gmp_randclass (gmp_randalg_t @var{alg}, ...)
+Construct a @code{gmp_randclass} using the same parameters as
+@code{gmp_randinit} (@pxref{Random State Initialization}).  This function is
+obsolete and the above @var{randinit} style should be preferred.
 @end deftypefun
 
 @deftypefun void gmp_randclass::seed (unsigned long int @var{s})
@@ -7023,8 +7040,8 @@ the time, see Knuth section 4.5.3 Theorem E.
 When the implied quotient is large, meaning @ma{b} is much smaller than
 @ma{a}, then a division is worthwhile.  This is the basis for the initial
 @ma{a @bmod b} reductions in @code{mpn_gcd} and @code{mpn_gcd_1} (the latter
-for both Nx1 and 1x1 cases).  But after that initial reduction, big quotients
-occur too rarely to make it worth checking for them.
+for both N@cross{}1 and 1@cross{}1 cases).  But after that initial reduction,
+big quotients occur too rarely to make it worth checking for them.
 
 
 @node Accelerated GCD, Extended GCD, Binary GCD, Greatest Common Divisor Algorithms
@@ -7304,8 +7321,8 @@ built up, with two of the same size multiplied together when ready.
 
 Arranging for multiplications to have operands the same (or nearly the same)
 size means the Karatsuba and higher multiplication algorithms can be used.
-And even on sizes below the Karatsuba threshold an NxN multiply will give a
-basecase multiply more to work on.
+And even on sizes below the Karatsuba threshold an N@cross{}N multiply will
+give a basecase multiply more to work on.
 
 An obvious improvement not currently implemented would be to strip factors of
 2 from the products and apply them at the end with a bit shift.  Another
@@ -8281,7 +8298,7 @@ Texts in Mathematics number 138, Springer-Verlag, 1993.
 
 @item
 Donald E. Knuth, ``The Art of Computer Programming'', volume 2,
-``Seminumerical Algorithms'', 3rd edition, Addison-Wesley, 1988.
+``Seminumerical Algorithms'', 3rd edition, Addison-Wesley, 1998.
 @texlinebreak{} @uref{http://www-cs-faculty.stanford.edu/~knuth/taocp.html}
 
 @item
