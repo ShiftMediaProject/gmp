@@ -23,6 +23,11 @@ MA 02111-1307, USA.
 	* tests/refmpn.c (refmpn_addlsh1_n, refmpn_sublsh1_n, refmpn_rsh1add_n,
 	refmpn_rsh1sub_n): New functions.
 
+2003-10-03  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpn/generic/mul_n.c (toom3_interpolate): Use mpn_add_1/mpn_sub_1
+	instead of MPN_INCR_/MPN_DECR_U.
+
 2003-10-02  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (ia64*-*-hpux*): Fall back to +O1, not +O.
