@@ -1,3 +1,67 @@
+2000-05-05  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi: Use @dircategory and @direntry.
+	(Installing GMP): Clarification for --target, updates on SunOS
+	problems.
+	(Integer Arithmetic): Add mpz_mul_si.
+	(Initializing Rationals): Add mpq_swap.
+	(Assigning Floats): Add mpf_swap.
+	(Low-level Functions): Add mpn_divexact_by3c, and details of what
+	the calculation actually gives.
+	(Low-level Functions): Note extra space needed by mpn_gcdext,
+	clarify the details a bit.
+	
+	* compat.c: New file, entry points for upward binary compatibility.
+	(mpn_divexact_by3): Compatibility function.
+
+	* mpn/tests/ref.c: Rearrange macros for ansi2knr.
+	(div1): Renamed from div to avoid library function.
+	(refmpn_divexact_by3c, refmpn_gcd_1, refmpn_popcount,
+	refmpn_hamdist): New functions.
+	* mpn/tests/ref.h: Add extern "C", add new prototypes.
+
+	* gmp.h (gmp_randinit, etc): Add extern "C".
+	(_mpq_cmp_ui): Fix prototype name from mpq_cmp_ui.
+	(mpn_divexact_by3): Now a macro calling mpn_divexact_by3c.
+	(mpn_divexact_by3c): New prototype and define.
+
+	* mpn/x86/diveby3.asm: Change to mpn_divexact_by3c.
+	* mpn/x86/k6/diveby3.asm: Ditto.
+	* mpn/generic/diveby3.c: Ditto.
+	* mpn/asm-defs.m4: Ditto on the define_mpn.
+	* acconfig.h (HAVE_NATIVE_mpn_divexact_by3c): New define.
+
+	* mpq/swap.c: New file, derived from mpz/swap.c.
+	* mpf/swap.c: Ditto.
+	* mpq/Makefile.am: Add swap.c.
+	* mpf/Makefile.am: Ditto.
+	* Makefile.am: Add two new "swap.lo"s.
+
+	* mpn/x86/k6/mmx/com_n.asm: Fix an addressing bug (fortunately
+	this code hasn't been used anywhere yet).
+
+	* mpn/x86/k7/mmx/divrem_1.asm: New file.
+	* mpn/x86/k7/mmx/mod_1.asm: New file.
+	* mpn/x86/k7/diveby3.asm: New file.
+	* mpn/x86/k7/README: Update.
+
+	* mpn/x86/k7/aorsmul_1.asm: Use new cmovCC, no object code change.
+	* mpn/x86/k7/mul_basecase.asm: Ditto.
+	* mpn/x86/p6/aorsmul_1.asm: Ditto.
+
+	* mpn/x86/x86-defs.m4 (defframe_empty_if_zero): Eval the argument.
+	(cmovCC): New macros, replacing individual cmovCC_reg_reg forms.
+	(Zdisp): Recognise more instructions.
+	(shldl,etc): Use m4_instruction_wrapper().
+	(ASSERT, movl_text_address): New macros.
+
+	* mpn/asm-defs.m4: Add remarks on SunOS /usr/bin/m4 and new
+	OpenBSD m4.
+	(m4_assert_numargs_internal_check): Remove a spurious parameter.
+	(m4_empty_if_zero): Eval the argument.
+	(m4_assert, m4_assert_numargs_range, m4_config_gmp_mparam,
+	m4_instruction_wrapper): New macros.
+	
 2000-05-04  Linus Nordberg  <linus@swox.se>
 
 	* gmp.texi (Reporting Bugs): Be explicit about output from running
