@@ -165,6 +165,8 @@ ifdef(`PIC',
 	be,pn	%icc,L(end5)
 	andn	%g2,%g5,%g2		C 0000hhhh0000llll
 
+	b,a	L(loop)
+
 	.align 16
 C --- LOOP BEGIN
 L(loop):
