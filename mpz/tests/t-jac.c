@@ -60,9 +60,24 @@ mpz_mod4 (mpz_srcptr z)
   return ret;
 }
 
+int
+mpz_fits_ulimb_p (mpz_srcptr z)
+{
+  return (SIZ(z) == 1 || SIZ(z) == 0);
+}
+
+mp_limb_t
+mpz_get_ulimb (mpz_srcptr z)
+{
+  if (SIZ(z) == 0)
+    return 0;
+  else
+    return PTR(z)[0];
+}
+
 
 void
-try_base (unsigned long a, unsigned long b, int answer)
+try_base (mp_limb_t a, mp_limb_t b, int answer)
 {
   int  got;
 
@@ -185,8 +200,8 @@ try_each (mpz_srcptr a, mpz_srcptr b, int answer)
       return;
     }
 
-  if (mpz_fits_uint_p (a) && mpz_fits_uint_p (b))
-    try_base (mpz_get_ui (a), mpz_get_ui (b), answer);
+  if (mpz_fits_ulimb_p (a) && mpz_fits_ulimb_p (b))
+    try_base (mpz_get_ulimb (a), mpz_get_ulimb (b), answer);
 
   if (mpz_fits_ulong_p (b))
     try_zi_ui (a, mpz_get_ui (b), answer);
