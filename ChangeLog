@@ -1,7 +1,12 @@
+2000-06-17  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/perfsqr.c: Fix so that zero is considered a perfect square.
+	(Was wrongly calling mpn_perfect_square_p with size==0.)
+
 2000-06-16  Kevin Ryde  <kevin@swox.se>
 
-	* configure.in (k5*-*-*): Set to use basic i386 code.  (Until we
-	know what's good on it.)
+	* configure.in: Set k5*-*-* to use basic i386 code until there's
+	something specific.  Add path=x86 as a default for x86s.
 
 	* acinclude.m4 (GMP_CHECK_ASM_ALIGN_LOG): Generate
 	ALIGN_LOGARITHMIC setting, not a full ALIGN definition.
