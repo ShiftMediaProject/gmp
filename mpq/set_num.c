@@ -1,6 +1,6 @@
 /* mpq_set_num(dest,num) -- Set the numerator of DEST from NUM.
 
-Copyright 1991, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

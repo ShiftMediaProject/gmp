@@ -1,6 +1,6 @@
 /* mpf_sub -- Subtract two floats.
 
-Copyright 1993, 1994, 1995, 1996, 1999, 2000 Free Software Foundation,
+Copyright 1993, 1994, 1995, 1996, 1999, 2000, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.

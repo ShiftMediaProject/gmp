@@ -1,7 +1,7 @@
 /* mpf_trunc, mpf_floor, mpf_ceil -- Assign a float from another float while
    rounding it to an integer.
 
-Copyright 1997, 1998, 2000 Free Software Foundation, Inc.
+Copyright 1997, 1998, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

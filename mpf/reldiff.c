@@ -1,6 +1,6 @@
 /* mpf_reldiff -- Generate the relative difference of two floats.
 
-Copyright 1996 Free Software Foundation, Inc.
+Copyright 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
