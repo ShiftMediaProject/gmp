@@ -1300,21 +1300,6 @@ esac
 AC_SUBST(__GMP_LIBGMP_STATIC)
 
 
-# libtool $pic_flag for use by mpn/Makeasm.am.
-#
-CFLAGS_PIC=$lt_cv_prog_cc_pic
-AC_SUBST(CFLAGS_PIC)
-
-# i386 cygwin and mingw shared libraries are DLLs, but don't use ELF style
-# _GLOBAL_OFFSET_TABLE_ things.
-#
-case $host in
-  *-*-cygwin* | *-*-mingw*) ASMFLAGS_PIC= ;;
-  *)                        ASMFLAGS_PIC=-DPIC ;;
-esac
-AC_SUBST(ASMFLAGS_PIC)
-
-
 # How to assemble, used with CFLAGS etc, see mpn/Makeasm.am.
 # Using the compiler is a lot easier than figuring out how to invoke the
 # assembler directly.
