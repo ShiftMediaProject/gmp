@@ -51,7 +51,7 @@ union ieee_double_extract {
    wrong if that addition overflows.
 
    The workaround here avoids this bug by ensuring n is not a literal
-   constant.  Note that this is alpha specific, the offending transformation
+   constant.  Note that this is alpha specific.  The offending transformation
    is/was in alpha.c alpha_emit_conditional_branch() under "We want to use
    cmpcc/bcc".
 
@@ -59,8 +59,9 @@ union ieee_double_extract {
    alphaev5-cray-unicosmk2.0.6.X, and has the same solution.  Don't know why
    or how.  */
 
-#if (defined (__GNUC__) && defined (__alpha) && ! __GMP_GNUC_PREREQ(3,4))     \
-  || (defined (_CRAY) && defined (__alpha))
+#if HAVE_HOST_CPU_FAMILY_alpha                          \
+  && ((defined (__GNUC__) && ! __GMP_GNUC_PREREQ(3,4))  \
+      || defined (_CRAY))
 static volatile const long CONST_1024 = 1024;
 static volatile const long CONST_NEG_1023 = -1023;
 static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
