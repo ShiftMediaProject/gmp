@@ -28,7 +28,6 @@ mpf_eq (mpf_srcptr u, mpf_srcptr v, unsigned long int n_bits)
   mp_srcptr up, vp;
   mp_size_t usize, vsize, size, i;
   mp_exp_t uexp, vexp;
-  int usign;
 
   uexp = u->_mp_exp;
   vexp = v->_mp_exp;
@@ -54,8 +53,6 @@ mpf_eq (mpf_srcptr u, mpf_srcptr v, unsigned long int n_bits)
     }
 
   /* U and V have the same sign and are both non-zero.  */
-
-  usign = usize >= 0 ? 1 : -1;
 
   /* 2. Are the exponents different?  */
   if (uexp > vexp)
