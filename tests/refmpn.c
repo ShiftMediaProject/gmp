@@ -754,6 +754,68 @@ refmpn_submul_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier)
 
 
 mp_limb_t
+refmpn_addmul_N (mp_ptr dst, mp_srcptr src, mp_size_t size,
+                 mp_srcptr mult, mp_size_t msize)
+{
+  mp_ptr     src_copy;
+  mp_limb_t  ret;
+  mp_size_t  i;
+
+  ASSERT (dst == src || ! refmpn_overlap_p (dst, size+msize-1, src, size));
+  ASSERT (! refmpn_overlap_p (dst, size+msize-1, mult, msize));
+  ASSERT (size >= msize);
+  ASSERT_MPN (mult, msize);
+
+  /* in case dst==src */
+  src_copy = refmpn_malloc_limbs (size);
+  refmpn_copyi (src_copy, src, size);
+  src = src_copy;
+
+  for (i = 0; i < msize-1; i++)
+    dst[size+i] = refmpn_addmul_1 (dst+i, src, size, mult[i]);
+  ret = refmpn_addmul_1 (dst+i, src, size, mult[i]);
+
+  free (src_copy);
+  return ret;
+}
+
+mp_limb_t
+refmpn_addmul_2 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_addmul_N (rp, sp, size, mult, (mp_size_t) 2);
+}
+mp_limb_t
+refmpn_addmul_3 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_addmul_N (rp, sp, size, mult, (mp_size_t) 3);
+}
+mp_limb_t
+refmpn_addmul_4 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_addmul_N (rp, sp, size, mult, (mp_size_t) 4);
+}
+mp_limb_t
+refmpn_addmul_5 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_addmul_N (rp, sp, size, mult, (mp_size_t) 5);
+}
+mp_limb_t
+refmpn_addmul_6 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_addmul_N (rp, sp, size, mult, (mp_size_t) 6);
+}
+mp_limb_t
+refmpn_addmul_7 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_addmul_N (rp, sp, size, mult, (mp_size_t) 7);
+}
+mp_limb_t
+refmpn_addmul_8 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_srcptr mult)
+{
+  return refmpn_addmul_N (rp, sp, size, mult, (mp_size_t) 8);
+}
+
+mp_limb_t
 refmpn_addsub_nc (mp_ptr r1p, mp_ptr r2p,
                   mp_srcptr s1p, mp_srcptr s2p, mp_size_t size,
                   mp_limb_t carry)
