@@ -21,4 +21,4 @@ MA 02111-1307, USA. */
 
 
 #define OPERATION_sub
-#include "mpz/aors.i"
+#include "mpz/aors.h"
