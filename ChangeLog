@@ -1,3 +1,7 @@
+2001-03-04  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (RANDS): Add a `,0' to make it compile on more compilers.
+
 2001-03-03  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/n_pow_ui.c (ULONG_PARITY): Move to gmp-impl.h.
