@@ -18,6 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-10-25  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/mode64/addlsh1_n.asm: Correct cycle counts.
+
+	* mpn/powerpc64/README: Update POWER5/PPC970 pipeline information.
+
+	* mpn/generic/mul_basecase.c (MAX_LEFT): Add comment.
+
+	* doc/gmp.texi: Consistently use "x86" denotation.
+	(Assembler SIMD Instructions): Mention SSE2 usage.
+
+	* demos/pexpr.c (main): Handle "negative" base in mpz_sizeinbase call.
+
 2004-10-18  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/mode64/submul_1.asm: Shave 2 cycles with new carry
