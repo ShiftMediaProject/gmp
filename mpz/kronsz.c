@@ -93,12 +93,12 @@ mpz_si_kronecker (long a, mpz_srcptr b)
       MPN_STRIP_LOW_ZEROS_NOT_ZERO (b_ptr, b_abs_size, b_low);
       if ((b_low & 1) == 0)
         {
-          if (b_low == MP_LIMB_T_HIGHBIT)
+          if (b_low == GMP_NUMB_HIGHBIT)
             {
               if (b_abs_size == 1)
                 {
                   /* (a/0x80000000) = (a/2)^(BPML-1) */
-                  result_bit1 ^= JACOBI_TWOS_U_BIT1 (BITS_PER_MP_LIMB-1, a);
+                  result_bit1 ^= JACOBI_TWOS_U_BIT1 (GMP_NUMB_BITS - 1, a);
                   return JACOBI_BIT1_TO_PN (result_bit1);
                 }
 

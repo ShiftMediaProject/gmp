@@ -69,10 +69,10 @@ mpz_ui_kronecker (unsigned long a, mpz_srcptr b)
       MPN_STRIP_LOW_ZEROS_NOT_ZERO (b_ptr, b_abs_size, b_low);
       if (! (b_low & 1))
         {
-          if (b_low == MP_LIMB_T_HIGHBIT)
+          if (b_low == GMP_NUMB_HIGHBIT)
             {
               if (b_abs_size == 1)   /* (a/0x80000000) == (a/2)^(BPML-1) */
-                return JACOBI_TWOS_U (BITS_PER_MP_LIMB-1, a);
+                return JACOBI_TWOS_U (GMP_NUMB_BITS-1, a);
 
               /* b_abs_size > 1 */
               b_low = b_ptr[1] << 1;

@@ -137,7 +137,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
     {
       bsecond = bsrcp[1];
       if (btwos != 0)
-        blow |= bsecond << (BITS_PER_MP_LIMB-btwos);
+        blow |= (bsecond << (GMP_NUMB_BITS - btwos)) & GMP_NUMB_MASK;
     }
 
   /* account for effect of sign of a, then ignore it */
@@ -174,7 +174,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
     {
       asecond = asrcp[1];
       if (atwos != 0)
-        alow |= asecond << (BITS_PER_MP_LIMB-atwos);
+        alow |= (asecond << (GMP_NUMB_BITS - atwos)) & GMP_NUMB_MASK;
     }
 
   /* (a/2)=(2/a) with a odd */
