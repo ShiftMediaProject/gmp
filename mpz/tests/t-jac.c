@@ -608,13 +608,14 @@ main (int argc, char *argv[])
     {
       option_pari = 1;
       
-      printf ("try(a,b,answer) =\n"
-              "{\n"
-              "  if (kronecker(a,b) != answer,\n"
-              "    print(\"wrong at \", a, \",\", b,\n"
-              "      \" expected \", answer,\n"
-              "      \" pari says \", kronecker(a,b)))\n"
-              "}\n");
+      printf ("\
+try(a,b,answer) =\n\
+{\n\
+  if (kronecker(a,b) != answer,\n\
+    print(\"wrong at \", a, \",\", b,\n\
+      \" expected \", answer,\n\
+      \" pari says \", kronecker(a,b)))\n\
+}\n");
     }
 
   check_data ();
