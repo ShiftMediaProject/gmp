@@ -43,6 +43,8 @@ main (int argc, char **argv)
   mp_size_t bprec = 100;
   mpf_t rerr, max_rerr, limit_rerr;
 
+  tests_start ();
+
   if (argc > 1)
     {
       reps = strtol (argv[1], 0, 0);
@@ -101,5 +103,15 @@ main (int argc, char **argv)
 	}
     }
 
+  mpf_clear (limit_rerr);
+  mpf_clear (rerr);
+  mpf_clear (max_rerr);
+
+  mpf_clear (u);
+  mpf_clear (v);
+  mpf_clear (w);
+  mpf_clear (wref);
+
+  tests_end ();
   exit (0);
 }

@@ -26,11 +26,13 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
+#include "tests.h"
 
 #ifndef SIZE
 #define SIZE 16
 #endif
 
+int
 main (int argc, char **argv)
 {
   mp_size_t size;
@@ -40,6 +42,8 @@ main (int argc, char **argv)
   mpf_t x, y, y2;
   mp_size_t bprec = 100;
   mpf_t rerr, max_rerr, limit_rerr;
+
+  tests_start ();
 
   if (argc > 1)
     {
@@ -88,5 +92,14 @@ main (int argc, char **argv)
 	}
     }
 
+  mpf_clear (limit_rerr);
+  mpf_clear (rerr);
+  mpf_clear (max_rerr);
+
+  mpf_clear (x);
+  mpf_clear (y);
+  mpf_clear (y2);
+
+  tests_end ();
   exit (0);
 }

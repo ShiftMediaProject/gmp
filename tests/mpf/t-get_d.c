@@ -20,6 +20,7 @@
    MA 02111-1307, USA. */
 
 #include "gmp.h"
+#include "tests.h"
 
 #if defined (__vax__)
 #define LOW_BOUND 1e-38
@@ -45,6 +46,7 @@ main (int argc, char **argv)
   double d, e, r;
   mpf_t u, v;
 
+  tests_start ();
   mpf_init (u);
   mpf_init (v);
 
@@ -61,5 +63,9 @@ main (int argc, char **argv)
       mpf_set (u, v);
     }
 
+  mpf_clear (u);
+  mpf_clear (v);
+
+  tests_end ();
   exit (0);
 }

@@ -51,7 +51,6 @@ check_mpf_set_si (void)
   mpf_t  x;
   int    i;
 
-  mpf_init (x);
   for (i = 0; i < numberof (data); i++)
     {
       mpf_init (x);
@@ -170,13 +169,17 @@ check_mpf_getset_prec (void)
           abort ();
         }
     }
+
+  mpf_clear (x);
 }
 
 int
 main (void)
 {
+  tests_start ();
   check_mpf_set_si ();
   check_mpf_cmp_si ();
   check_mpf_getset_prec ();
+  tests_end ();
   exit (0);
 }
