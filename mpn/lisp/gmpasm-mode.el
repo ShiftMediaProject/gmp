@@ -267,7 +267,13 @@ reinitialize.
 	      ;; regexp for "1.", "2." etc is left though.
 	      (gmpasm-delete-from-list 'gmpasm-filladapt-token-table
 				       '("[0-9]+\\(\\.[0-9]+\\)+[ \t]"
-					 bullet))))
+					 bullet))
+
+	      ;; "%" as a comment prefix interferes with x86 style register
+	      ;; names like %eax, so delete it.
+              (gmpasm-delete-from-list 'gmpasm-filladapt-token-table
+				       '("%+" postscript-comment))
+	      ))
 
         (set (make-local-variable 'filladapt-token-table)
 	     gmpasm-filladapt-token-table)
