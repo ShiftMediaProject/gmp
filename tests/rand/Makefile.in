@@ -153,7 +153,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-lc2exp t-rand
+check_PROGRAMS = t-lc2exp t-rand t-urndmm
 TESTS = $(check_PROGRAMS)
 
 EXTRA_PROGRAMS = findlc gen gen.static spect stat
@@ -178,7 +178,7 @@ am_libstat_la_OBJECTS = statlib$U.lo zdiv_round$U.lo
 libstat_la_OBJECTS = $(am_libstat_la_OBJECTS)
 EXTRA_PROGRAMS = findlc$(EXEEXT) gen$(EXEEXT) gen.static$(EXEEXT) \
 	spect$(EXEEXT) stat$(EXEEXT)
-check_PROGRAMS = t-lc2exp$(EXEEXT) t-rand$(EXEEXT)
+check_PROGRAMS = t-lc2exp$(EXEEXT) t-rand$(EXEEXT) t-urndmm$(EXEEXT)
 findlc_SOURCES = findlc.c
 findlc_OBJECTS = findlc$U.$(OBJEXT)
 findlc_DEPENDENCIES = libstat.la
@@ -214,6 +214,12 @@ t_rand_LDADD = $(LDADD)
 t_rand_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_rand_LDFLAGS =
+t_urndmm_SOURCES = t-urndmm.c
+t_urndmm_OBJECTS = t-urndmm$U.$(OBJEXT)
+t_urndmm_LDADD = $(LDADD)
+t_urndmm_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_urndmm_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -231,9 +237,10 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libstat_la_SOURCES) findlc.c gen.c \
-	$(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-rand.c
+	$(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-rand.c \
+	t-urndmm.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-rand.c
+SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-rand.c t-urndmm.c
 
 all: all-am
 
@@ -274,6 +281,9 @@ t-lc2exp$(EXEEXT): $(t_lc2exp_OBJECTS) $(t_lc2exp_DEPENDENCIES)
 t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES) 
 	@rm -f t-rand$(EXEEXT)
 	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
+t-urndmm$(EXEEXT): $(t_urndmm_OBJECTS) $(t_urndmm_DEPENDENCIES) 
+	@rm -f t-urndmm$(EXEEXT)
+	$(LINK) $(t_urndmm_LDFLAGS) $(t_urndmm_OBJECTS) $(t_urndmm_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -310,12 +320,15 @@ t-lc2exp_.c: t-lc2exp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-lc2exp.c; then echo $(srcdir)/t-lc2exp.c; else echo t-lc2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-lc2exp_.c || rm -f t-lc2exp_.c
 t-rand_.c: t-rand.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-rand.c; then echo $(srcdir)/t-rand.c; else echo t-rand.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-rand_.c || rm -f t-rand_.c
+t-urndmm_.c: t-urndmm.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-urndmm.c; then echo $(srcdir)/t-urndmm.c; else echo t-urndmm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-urndmm_.c || rm -f t-urndmm_.c
 zdiv_round_.c: zdiv_round.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/zdiv_round.c; then echo $(srcdir)/zdiv_round.c; else echo zdiv_round.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > zdiv_round_.c || rm -f zdiv_round_.c
 findlc_.$(OBJEXT) findlc_.lo gen_.$(OBJEXT) gen_.lo spect_.$(OBJEXT) \
 spect_.lo stat_.$(OBJEXT) stat_.lo statlib_.$(OBJEXT) statlib_.lo \
 t-lc2exp_.$(OBJEXT) t-lc2exp_.lo t-rand_.$(OBJEXT) t-rand_.lo \
-zdiv_round_.$(OBJEXT) zdiv_round_.lo : $(ANSI2KNR)
+t-urndmm_.$(OBJEXT) t-urndmm_.lo zdiv_round_.$(OBJEXT) zdiv_round_.lo : \
+$(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo
