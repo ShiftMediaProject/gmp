@@ -2278,12 +2278,12 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
       || HAVE_HOST_CPU_powerpc7400)
 #define BSWAP_LIMB_FETCH(limb, src)     \
   do {                                  \
-    mp_srcptr  __src = (src);           \
+    mp_srcptr  __blf_src = (src);       \
     mp_limb_t  __limb;                  \
     __asm__ ("lwbrx %0, 0, %1"          \
              : "=r" (__limb)            \
-             : "r" (__src),             \
-               "m" (*__src));           \
+             : "r" (__blf_src),         \
+               "m" (*__blf_src));       \
     (limb) = __limb;                    \
   } while (0)
 #endif
