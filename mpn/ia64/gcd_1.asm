@@ -22,7 +22,9 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C itanium2: 6.3 cycles/bitpair (1x1 gcd)
+C           cycles/bitpair (1x1 gcd)
+C itanium2:      6.3
+C itanium:      14 (approx)
 
 
 C mpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y);
@@ -87,6 +89,13 @@ C The right shifts are a bit of a bottleneck (shr at 2 or 3 cycles, or extr
 C only going down I0), perhaps it'd be possible to shift left instead,
 C using add.  That would mean keeping track of the lowest not-yet-zeroed
 C bit, using some sort of mask.
+C
+C Itanium-1:
+C
+C This code is not designed for itanium-1 and in fact doesn't run well on
+C that chip.  The loop seems to be about 21 cycles, probably because we end
+C up with a 10 cycle replay for not forcibly scheduling the shr.u latency.
+C Lack of branch hints might introduce a couple of bubbles too.
 C
 
 ASM_START()
