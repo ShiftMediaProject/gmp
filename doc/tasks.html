@@ -25,11 +25,6 @@
 
 <h4>Correctness and Completeness</h4>
 <ul>
-<li> HPUX 10.20 assembler requires a `.LEVEL 1.1' directive for accepting the
-     new instructions.  Unfortunately, the HPUX 9 assembler as well as earlier
-     assemblers reject that directive.  How very clever of HP!  We will have to
-     pass assembler options, and make sure it works with new and old systems
-     and GNU assembler.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c: <code>mpz_XXX(a,a,a)</code>.
