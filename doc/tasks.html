@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 25 Oct 2003.  An up-to-date version is available at
+  This file current as of 31 Oct 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -600,6 +600,12 @@ MA 02111-1307, USA.
      guarantee <code>long long</code> conversions only when using GCC for both
      application and library.  That would cover free software, and we can
      worry about selected vendor compilers later.
+     <br>
+     In C++ the situation is probably clearer, we demand fairly recent C++ so
+     <code>long long</code> should be available always.  We'd probably prefer
+     to have the C and C++ the same in respect of <code>long long</code>
+     support, but it would be possible to have it unconditionally in gmpxx.h,
+     by some means or another.
 <li> <code>mpz_strtoz</code> parsing the same as <code>strtol</code>.
      Suggested by Alexander Kruppa.
 </ul>
