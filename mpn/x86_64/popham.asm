@@ -81,7 +81,7 @@ PROLOGUE(func)
 
 	xorl	%eax, %eax
 
-	bt	$0, n
+	btq	$0, n
 	jnc	.Loop
 
 	movq	(up,n,8), %r8
