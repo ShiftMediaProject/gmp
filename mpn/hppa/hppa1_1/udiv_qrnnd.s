@@ -28,7 +28,7 @@
 ; d		gr23
 
 	.code
-L$0000	.word		0x43f00000
+L$0000	.word		0x43f00000		; 2^64
 	.word		0x0
 	.export		__gmpn_udiv_qrnnd
 __gmpn_udiv_qrnnd
@@ -39,8 +39,13 @@ __gmpn_udiv_qrnnd
 
 	stws		%r25,-16(0,%r30)	; n_hi
 	stws		%r24,-12(0,%r30)	; n_lo
+#ifdef PIC
+	addil		LT'L$0000,%r19
+	ldo		RT'L$0000(%r1),%r19
+#else
 	ldil		L'L$0000,%r19
 	ldo		R'L$0000(%r19),%r19
+#endif	
 	fldds		-16(0,%r30),%fr5
 	stws		%r23,-12(0,%r30)
 	comib,<=	0,%r25,L$1
