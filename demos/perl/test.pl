@@ -610,8 +610,8 @@ ok (  odd_p(mpz(3)));
 # ok (  perfect_power_p(mpz(-27)));
 # ok (! perfect_power_p(mpz(-9)));
 # ok (! perfect_power_p(mpz(-1)));
-ok (! perfect_power_p(mpz(0)));
-ok (! perfect_power_p(mpz(1)));
+ok (  perfect_power_p(mpz(0)));
+ok (  perfect_power_p(mpz(1)));
 ok (! perfect_power_p(mpz(2)));
 ok (! perfect_power_p(mpz(3)));
 ok (  perfect_power_p(mpz(4)));
@@ -829,9 +829,10 @@ ok (reldiff (4,2) == 0.5);
 
 # random functions
 
-{ my $r = randstate(); }
-{ my $r = randstate('lc',64); }
-{ my $r = randstate('lc2exp',1,2,3); }
+{ my $r = randstate();                          ok (defined $r); }
+{ my $r = randstate('lc_2exp', 1, 2, 3);        ok (defined $r); }
+{ my $r = randstate('lc_2exp_size', 64);        ok (defined $r); }
+{ my $r = randstate('lc_2exp_size', 999999999); ok (! defined $r); }
 {
   my $r = randstate();
   $r->seed(123);
