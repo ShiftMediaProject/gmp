@@ -1956,6 +1956,15 @@ GMP_FUNC_VSNPRINTF
 GMP_FUNC_SSCANF_WRITABLE_INPUT
 
 
+# C++ tests, when required
+#
+if test $enable_cxx = yes; then
+  AC_LANG_PUSH(C++)
+  AC_CHECK_TYPES([std::locale],,,[#include <locale>])
+  AC_LANG_POP(C++)
+fi
+
+
 # Pick the correct source files in $path and link them to mpn/.
 # $gmp_mpn_functions lists all functions we need.
 #
