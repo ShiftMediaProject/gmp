@@ -31,21 +31,23 @@ C  * Perhaps make this use the algorithm of addmul_1.asm.
 
 
 C INPUT PARAMETERS
-C rp	rdi
-C up	rsi
-C n	rdx
-C vl	rcx
+C rp		rdi
+C up		rsi
+C n		rdx
+C vl		rcx
+C cylimb	r8
 
 	TEXT
 	ALIGN(16)
 	.byte	0,0,0,0,0,0,0,0,0	C this aligns the loop		      9
 ASM_START()
 PROLOGUE(mpn_mul_1)
+	xorl	%r8d, %r8d		C clear carry limb		      3
+PROLOGUE(mpn_mul_1c)
 	movq	%rdx, %r11		C				      3
 	leaq	(%rsi,%rdx,8), %rsi	C				      4
 	leaq	(%rdi,%rdx,8), %rdi	C				      4
 	negq	%r11			C				      3
-	xorl	%r8d, %r8d		C clear carry limb		      3
 	addq	$3, %r11		C				      4
 	jb	.Ltail			C jump for n = 1, 2, 3		      2
 
@@ -126,4 +128,6 @@ PROLOGUE(mpn_mul_1)
 	movq	%r10, -8(%rdi)		C				      4
 	movq	%r11, %rax		C				      3
 	ret				C				      1
-EPILOGUE()
+EPILOGUE(mpn_mul_1)
+EPILOGUE(mpn_mul_1c)
+
