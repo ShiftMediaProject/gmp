@@ -154,6 +154,9 @@ MA 02111-1307, USA. */
 /* bytes per mp_limb_t, if not in gmp-mparam.h */
 #undef BYTES_PER_MP_LIMB
 
+/* The gmp-mparam.h file compiled-in. */
+#undef GMP_MPARAM_H_FILENAME
+
 /* Define if you have the `alarm' function. */
 #undef HAVE_ALARM
 
@@ -216,6 +219,12 @@ MA 02111-1307, USA. */
 /* Define if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define if `mp_limb_t' is big endian */
+#undef HAVE_LIMB_BIG_ENDIAN
+
+/* Define if `mp_limb_t' is little endian */
+#undef HAVE_LIMB_LITTLE_ENDIAN
+
 /* Define if you have the `localeconv' function. */
 #undef HAVE_LOCALECONV
 
@@ -236,6 +245,9 @@ MA 02111-1307, USA. */
 
 /* Define if you have the `mmap' function. */
 #undef HAVE_MMAP
+
+/* Whether mpfr functions and headers are available. */
+#undef HAVE_MPFR
 
 /* Define if you have the `mprotect' function. */
 #undef HAVE_MPROTECT
@@ -386,6 +398,17 @@ MA 02111-1307, USA. */
 
 /* --enable-alloca=malloc-reentrant */
 #undef WANT_TMP_REENTRANT
+
+/* See demos/calc/calc-config.h */
+#undef WITH_READLINE
+
+/* Define if your processor stores words with the most significant byte first
+   (like Motorola and SPARC, unlike Intel and VAX). */
+#undef WORDS_BIGENDIAN
+
+/* Define if `lex' declares `yytext' as a `char *' by default, not a `char[]'.
+   */
+#undef YYTEXT_POINTER
 
 /* Define as `__inline' if that's what the C compiler calls it, or to nothing
    if it is not supported. */
