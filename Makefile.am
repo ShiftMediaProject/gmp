@@ -256,8 +256,8 @@ if WANT_CXX
 GMPXX_LTLIBRARIES_OPTION = libgmpxx.la
 endif
 libgmpxx_la_SOURCES = dummy.cc
-libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS)
-libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES) libgmp.la
+libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS) libgmp.la
+libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES)
 libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE)
 
