@@ -121,17 +121,18 @@ MA 02111-1307, USA. */
 #define classconst const
 #endif
 
-/* In a MINGW DLL build of gmp, the various gmp functions are given with
-   dllimport directives, which prevents them being used as initializers for
-   constant data.  We give function tables as "static_functable const ...",
-   which is normally "static const", but for mingw expands to just "const"
-   making the table an automatic with a run-time initializer.
+/* In a MINGW or Cygwin DLL build of gmp, the various gmp functions are
+   given with dllimport directives, which prevents them being used as
+   initializers for constant data.  We give function tables as
+   "static_functable const ...", which is normally "static const", but for
+   mingw expands to just "const" making the table an automatic with a
+   run-time initializer.
 
    In gcc 3.3.1, the function tables initialized like this end up getting
    all the __imp__foo values fetched, even though just one or two will be
    used.  This is wasteful, but probably not too bad.  */
 
-#ifdef __MINGW32__
+#if defined (__MINGW32__) || defined (__CYGWIN__)
 #define static_functable
 #else
 #define static_functable  static
