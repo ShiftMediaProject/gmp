@@ -23,6 +23,17 @@ MA 02111-1307, USA.
 	* mpn/alpha/copyi.asm: New file.
 	* mpn/alpha/copyd.asm: New file.
 
+2003-01-03  Kevin Ryde  <kevin@swox.se>
+
+	* demos/expr/t-expr.c: Use __gmpfr on some mpfr internals that have
+	changed.
+
+	* mpfr/*, aclocal.m4, config.in, configure: Update to mpfr cvs
+	2003-01-03.
+
+	* gmp.texi (Introduction to GMP): Mention release announcements
+	mailing list, and put home page and ftp before mailing lists.
+
 2002-12-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mul_fft.c (mpn_fft_next_size): Simplify.
