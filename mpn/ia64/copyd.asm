@@ -28,7 +28,7 @@ C n = r34
 
 C         cycles/limb
 C Itanium:    1
-C Itanium 2:  1
+C Itanium 2:  0.5
 
 
 ASM_START()
@@ -58,96 +58,111 @@ ifdef(`HAVE_ABI_32',
 	  (p10)	br.dptk	.Lb10
 	  (p12)	br.dptk	.Lb11
 
-.Lb00:	C  n = 4, 8, 12, ...
+.Lb00:	C  n = 0, 4, 8, 12, ...
 	  (p14)	br.dptk	.Ls00
 		;;
-		ld8	r16 = [r33], -8
+		add	r21 = -8, r33
+		ld8	r16 = [r33], -16
 		shr	r15 = r34, 2
 		;;
-		ld8	r17 = [r33], -8
+		ld8	r17 = [r21], -16
 		mov	ar.lc = r15
+		ld8	r18 = [r33], -16
+		add	r20 = -8, r32
 		;;
-		ld8	r18 = [r33], -8
-		;;
-		ld8	r19 = [r33], -8
+		ld8	r19 = [r21], -16
 		br.cloop.dptk .Loop
 		;;
 		br.sptk	.Lend
 		;;
 
 .Lb01:	C  n = 1, 5, 9, 13, ...
-		ld8	r19 = [r33], -8
+{ .mib		add	r21 = 0, r33
+		add	r20 = 0, r32
+		nop.b	0
+} { .mib	add	r33 = -8, r33
+		add	r32 = -8, r32
+		nop.b	0
+		;;
+}
+		ld8	r19 = [r21], -16
 		shr	r15 = r34, 2
 	  (p14)	br.dptk	.Ls01
 		;;
-		ld8	r16 = [r33], -8
+		ld8	r16 = [r33], -16
 		mov	ar.lc = r15
 		;;
-		ld8	r17 = [r33], -8
-		;;
-		ld8	r18 = [r33], -8
+		ld8	r17 = [r21], -16
+		ld8	r18 = [r33], -16
 		br.sptk	.Li01
 		;;
 
 .Lb10:	C  n = 2,6, 10, 14, ...
-		ld8	r18 = [r33], -8
+		add	r21 = -8, r33
+		add	r20 = -8, r32
+		ld8	r18 = [r33], -16
 		shr	r15 = r34, 2
 		;;
-		ld8	r19 = [r33], -8
+		ld8	r19 = [r21], -16
 		mov	ar.lc = r15
 	  (p14)	br.dptk	.Ls10
 		;;
-		ld8	r16 = [r33], -8
-		;;
-		ld8	r17 = [r33], -8
+		ld8	r16 = [r33], -16
+		ld8	r17 = [r21], -16
 		br.sptk	.Li10
 		;;
 
 .Lb11:	C  n = 3, 7, 11, 15, ...
-		ld8	r17 = [r33], -8
+{ .mib		add	r21 = 0, r33
+		add	r20 = 0, r32
+		nop.b	0
+} { .mib	add	r33 = -8, r33
+		add	r32 = -8, r32
+		nop.b	0
+		;;
+}
+		ld8	r17 = [r21], -16
 		shr	r15 = r34, 2
 		;;
-		ld8	r18 = [r33], -8
+		ld8	r18 = [r33], -16
 		mov	ar.lc = r15
-		;;
-		ld8	r19 = [r33], -8
+		ld8	r19 = [r21], -16
 	  (p14)	br.dptk	.Ls11
 		;;
-		ld8	r16 = [r33], -8
+		ld8	r16 = [r33], -16
 		br.sptk	.Li11
 		;;
 
+		.align	32
 .Loop:
 .Li00:
-  { .mmb;	st8	[r32] = r16, -8
-		ld8	r16 = [r33], -8
-		;;
+{ .mmb;		st8	[r32] = r16, -16
+		ld8	r16 = [r33], -16
+		nop.b	0
 }
 .Li11:
-  { .mmb;	st8	[r32] = r17, -8
-		ld8	r17 = [r33], -8
+{ .mmb;		st8	[r20] = r17, -16
+		ld8	r17 = [r21], -16
+		nop.b	0
 		;;
 }
 .Li10:
-  { .mmb;	st8	[r32] = r18, -8
-		ld8	r18 = [r33], -8
-		;;
+{ .mmb;		st8	[r32] = r18, -16
+		ld8	r18 = [r33], -16
+		nop.b	0
 }
 .Li01:
-  { .mmb;	st8	[r32] = r19, -8
-		ld8	r19 = [r33], -8
+{ .mmb;		st8	[r20] = r19, -16
+		ld8	r19 = [r21], -16
 		br.cloop.dptk .Loop
 		;;
 }
-.Lend:		st8	[r32] = r16, -8
+.Lend:		st8	[r32] = r16, -16
+.Ls11:		st8	[r20] = r17, -16
 		;;
-.Ls11:		st8	[r32] = r17, -8
-		;;
-.Ls10:		st8	[r32] = r18, -8
-		;;
-.Ls01:		st8	[r32] = r19, -8
-.Ls00:
-		mov	ar.lc = r2
+.Ls10:		st8	[r32] = r18, -16
+.Ls01:		st8	[r20] = r19, -16
+.Ls00:		mov	ar.lc = r2
 		br.ret.sptk.many rp
 EPILOGUE(mpn_copyd)
 ASM_END()
