@@ -1,8 +1,8 @@
 dnl  PowerPC-32 mpn_addmul_1 -- Multiply a limb vector with a limb and add the
 dnl  result to a second limb vector.
 
-dnl  Copyright 1995, 1997, 1998, 2000, 2001, 2002 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1995, 1997, 1998, 2000, 2001, 2002, 2003 Free Software
+dnl  Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -48,7 +48,7 @@ C 9 int ops (8 of which serialize)
 C
 C The multiply insns need 16 cycles/4limb.
 C The integer register writes will need 13 cycles/4limb.
-C All-in-all, it should be possible to get to 4 or 5 cycles/limb,
+C All-in-all, it should be possible to get to 4 or 5 cycles/limb on PPC604,
 C but that will require some clever FPNOPS and BNOPS for exact
 C issue control.
 
