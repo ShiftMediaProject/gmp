@@ -394,7 +394,7 @@ size_t mpz_inp_str _PROTO ((mpz_ptr, FILE *, int));
 void mpz_init_set _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_init_set_d _PROTO ((mpz_ptr, double));
 void mpz_init_set_si _PROTO ((mpz_ptr, signed long int));
-int mpz_init_set_str _PROTO ((mpz_ptr, const char *, int));
+int mpz_init_set_str _PROTO ((mpz_ptr, __gmp_const char *, int));
 void mpz_init_set_ui _PROTO ((mpz_ptr, unsigned long int));
 int mpz_invert _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_ior _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
@@ -429,7 +429,7 @@ void mpz_set_d _PROTO ((mpz_ptr, double));
 void mpz_set_f _PROTO ((mpz_ptr, mpf_srcptr));
 void mpz_set_q _PROTO ((mpz_ptr, mpq_srcptr));
 void mpz_set_si _PROTO ((mpz_ptr, signed long int));
-int mpz_set_str _PROTO ((mpz_ptr, const char *, int));
+int mpz_set_str _PROTO ((mpz_ptr, __gmp_const char *, int));
 void mpz_set_ui _PROTO ((mpz_ptr, unsigned long int));
 void mpz_setbit _PROTO ((mpz_ptr, unsigned long int));
 size_t mpz_size _PROTO ((mpz_srcptr));
@@ -591,7 +591,7 @@ size_t mpf_inp_str _PROTO ((mpf_ptr, FILE *, int));
 void mpf_init_set _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_init_set_d _PROTO ((mpf_ptr, double));
 void mpf_init_set_si _PROTO ((mpf_ptr, signed long int));
-int mpf_init_set_str _PROTO ((mpf_ptr, const char *, int));
+int mpf_init_set_str _PROTO ((mpf_ptr, __gmp_const char *, int));
 void mpf_init_set_ui _PROTO ((mpf_ptr, unsigned long int));
 void mpf_mul _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_mul_2exp _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
@@ -610,7 +610,7 @@ void mpf_set_prec _PROTO ((mpf_ptr, unsigned long int));
 void mpf_set_prec_raw _PROTO ((mpf_ptr, unsigned long int));
 void mpf_set_q _PROTO ((mpf_ptr, mpq_srcptr));
 void mpf_set_si _PROTO ((mpf_ptr, signed long int));
-int mpf_set_str _PROTO ((mpf_ptr, const char *, int));
+int mpf_set_str _PROTO ((mpf_ptr, __gmp_const char *, int));
 void mpf_set_ui _PROTO ((mpf_ptr, unsigned long int));
 void mpf_set_z _PROTO ((mpf_ptr, mpz_srcptr));
 size_t mpf_size _PROTO ((mpf_srcptr));
@@ -708,7 +708,7 @@ void mpn_rawrandom _PROTO ((mp_ptr, unsigned long int, gmp_rand_state));
 mp_limb_t mpn_rshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 unsigned long int mpn_scan0 _PROTO ((mp_srcptr, unsigned long int));
 unsigned long int mpn_scan1 _PROTO ((mp_srcptr, unsigned long int));
-mp_size_t mpn_set_str _PROTO ((mp_ptr, const unsigned char *, size_t, int));
+mp_size_t mpn_set_str _PROTO ((mp_ptr, __gmp_const unsigned char *, size_t, int));
 mp_size_t mpn_sqrtrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_sub _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t));
 mp_limb_t mpn_sub_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
@@ -897,7 +897,7 @@ mpn_divrem (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn)
 #endif
 {
   extern int __gmp_junk;
-  extern const int __gmp_0;
+  extern __gmp_const int __gmp_0;
   extern mp_limb_t __gmpn_divrem_1n ();
 
   /* When the divisor is under 110 limbs, classic division is always faster.  */
