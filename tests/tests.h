@@ -163,8 +163,11 @@ mp_limb_t ref_subc_limb __GMP_PROTO ((mp_limb_t *, mp_limb_t, mp_limb_t));
 
 void refmpf_add __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void refmpf_add_ulp __GMP_PROTO ((mpf_ptr f));
+void refmpf_fill __GMP_PROTO ((mpf_ptr f, mp_size_t size, mp_limb_t value));
+void refmpf_normalize __GMP_PROTO ((mpf_ptr f));
 void refmpf_set_prec_limbs __GMP_PROTO ((mpf_ptr f, unsigned long prec));
 void refmpf_sub __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+int refmpf_validate __GMP_PROTO ((const char *name, mpf_srcptr got, mpf_srcptr want));
 
 
 mp_limb_t refmpn_add __GMP_PROTO ((mp_ptr rp,
@@ -222,6 +225,7 @@ void refmpn_com_n __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 void refmpn_copy  __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 void refmpn_copyi __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
 void refmpn_copyd __GMP_PROTO ((mp_ptr rp, mp_srcptr sp, mp_size_t size));
+void refmpn_copy_extend __GMP_PROTO ((mp_ptr wp, mp_size_t wsize, mp_srcptr xp, mp_size_t xsize));
 
 unsigned refmpn_count_leading_zeros __GMP_PROTO ((mp_limb_t x));
 unsigned refmpn_count_trailing_zeros __GMP_PROTO ((mp_limb_t x));
@@ -267,6 +271,9 @@ mp_limb_t refmpn_lshift __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
 mp_limb_t refmpn_lshift_or_copy __GMP_PROTO ((mp_ptr wp,
                                          mp_srcptr xp, mp_size_t size,
                                          unsigned shift));
+mp_limb_t refmpn_lshift_or_copy_any __GMP_PROTO ((mp_ptr wp,
+                                                  mp_srcptr xp, mp_size_t size,
+                                                  unsigned shift));
 
 mp_ptr refmpn_malloc_limbs __GMP_PROTO ((mp_size_t size));
 mp_ptr refmpn_malloc_limbs_aligned __GMP_PROTO ((mp_size_t n, size_t m));
@@ -326,6 +333,9 @@ mp_limb_t refmpn_rshift __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
 mp_limb_t refmpn_rshift_or_copy __GMP_PROTO ((mp_ptr wp,
                                          mp_srcptr xp, mp_size_t size,
                                          unsigned shift));
+mp_limb_t refmpn_rshift_or_copy_any __GMP_PROTO ((mp_ptr wp,
+                                                  mp_srcptr xp, mp_size_t size,
+                                                  unsigned shift));
 
 mp_limb_t refmpn_sb_divrem_mn __GMP_PROTO ((mp_ptr qp,
                                        mp_ptr np, mp_size_t nsize,
