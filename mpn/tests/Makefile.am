@@ -45,11 +45,11 @@ CLEANFILES = $(EXTRA_PROGRAMS)
 
 SUFFIXES = .asm
 
-# Copying the rules straight from mpn/Makefile.am doesn't work because we're
-# in a second-level subdirectory here.
+# Relative paths don't work out right when running m4 from a second level
+# subdirectory, so copy the necessary files up to build them.
 .asm.o:
-	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
+	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
 .asm.obj:
-	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
+	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
 .asm.lo:
-	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
+	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
