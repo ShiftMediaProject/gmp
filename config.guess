@@ -274,24 +274,25 @@ main ()
   fun = (unsigned (*)()) getpvr;
   pvr = (*fun) ();
   switch (pvr >> 16) {
-  case 1:  puts ("601");    break;
-  case 3:  puts ("603");    break;
-  case 4:  puts ("604");    break;
-  case 6:  puts ("603e");   break;
-  case 7:  puts ("603ev");  break;
-  case 8:  puts ("750");    break;
-  case 9:  puts ("604e");   break;
-  case 10: puts ("604e");   break;  /* 604ev5 */
-  case 50: puts ("821");    break;
-  case 80: puts ("860");    break;
+  case 1:  puts ("powerpc601");  break;
+  case 3:  puts ("powerpc603");  break;
+  case 4:  puts ("powerpc604");  break;
+  case 6:  puts ("powerpc603e"); break;
+  case 7:  puts ("powerpc603e"); break;  /* 603ev */
+  case 8:  puts ("powerpc750");  break;
+  case 9:  puts ("powerpc604e"); break;
+  case 10: puts ("powerpc604e"); break;  /* 604ev5 */
+  case 50: puts ("powerpc821");  break;
+  case 80: puts ("powerpc860");  break;
   }
   return 0;
 }
 EOF
   if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
-    x=`(./$dummy) >/dev/null 2>&1`
+    # use $SHELL -c to avoid a segv message when this program is run on AIX
+    x=`$SHELL -c ./$dummy 2>/dev/null`
     if test -n "$x"; then
-      exact_cpu=powerpc$x
+      exact_cpu=$x
     fi
   fi
   rm -f $dummy.c $dummy
@@ -341,7 +342,44 @@ main ()
 EOF
     if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
       x=`./$dummy`
-echo $x
+      if test -n "$x"; then
+        exact_cpu=$x
+      fi
+    fi
+    rm -f $dummy.c $dummy
+  fi
+
+  if test -z "$exact_cpu"; then
+    # On MacOS X (or any Mach-O presumably), NXGetLocalArchInfo cpusubtype
+    # can tell us the exact cpu.
+    cat >$dummy.c <<EOF
+#include <stdio.h>
+#include <mach-o/arch.h>
+int
+main (void)
+{
+  const NXArchInfo *a = NXGetLocalArchInfo();
+  if (a->cputype == CPU_TYPE_POWERPC)
+    {
+      switch (a->cpusubtype) {
+      case CPU_SUBTYPE_POWERPC_601:   puts ("powerpc601");  break;
+      case CPU_SUBTYPE_POWERPC_602:   puts ("powerpc602");  break;
+      case CPU_SUBTYPE_POWERPC_603:   puts ("powerpc603");  break;
+      case CPU_SUBTYPE_POWERPC_603e:  puts ("powerpc603e"); break;
+      case CPU_SUBTYPE_POWERPC_603ev: puts ("powerpc603e"); break;
+      case CPU_SUBTYPE_POWERPC_604:   puts ("powerpc604");  break;
+      case CPU_SUBTYPE_POWERPC_604e:  puts ("powerpc604e"); break;
+      case CPU_SUBTYPE_POWERPC_620:   puts ("powerpc620");  break;
+      case CPU_SUBTYPE_POWERPC_750:   puts ("powerpc750");  break;
+      case CPU_SUBTYPE_POWERPC_7400:  puts ("powerpc7400"); break;
+      case CPU_SUBTYPE_POWERPC_7450:  puts ("powerpc7450"); break;
+      }
+    }
+  return 0;
+}
+EOF
+    if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
+      x=`./$dummy`
       if test -n "$x"; then
         exact_cpu=$x
       fi
