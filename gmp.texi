@@ -9806,7 +9806,10 @@ technical report version also available
 
 @item
 Makoto Matsumoto and Takuji Nishimura, ``Mersenne Twister: A 623-dimensionally
-equidistributed unform pseudorandom number generator''.
+equidistributed unform pseudorandom number generator'', ACM Transactions on
+Modeling and Computer Simulation, volume 8, January 1998, pp.@: 3-30.
+Available online @texlinebreak{}
+@uref{http://www.math.keio.ac.jp/~nisimura/random/doc/mt.ps.gz} (or .pdf)
 
 @item
 R. Moenck and A. Borodin, ``Fast Modular Transforms via Division'',
