@@ -18,7 +18,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
-2003-11-03  Kevin Ryde  <user42@zip.com.au>
+2003-11-03  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/ia64/hamdist.asm: New file.
 	* mpn/ia64/mode1o.asm: New file.
