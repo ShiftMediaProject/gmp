@@ -1,12 +1,6 @@
 /* Alpha EV5 mpn_modexact_1c_odd -- mpn by limb exact style remainder.
 
-        cycles/limb
-   EV5:    30.0
-   EV6:    15.0
-*/
-
-/*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,12 +17,18 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
+
+
+/*
+        cycles/limb
+   EV5:    30.0
+   EV6:    15.0
+*/
 
 
 /* modlimb_invert is already faster than invert_limb or a "%", so the
@@ -42,10 +42,12 @@ MA 02111-1307, USA.
    the generic loop at 16.  But maybe something better is possible.  */
 
 mp_limb_t
-mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t h)
+mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d,
+                     mp_limb_t orig_c)
 {
-  mp_limb_t  s, x, y, inverse, dummy;
+  mp_limb_t  s, x, y, inverse, dummy, ret;
   mp_limb_t  c = 0;
+  mp_limb_t  h = orig_c;
   mp_size_t  i;
 
   ASSERT (size >= 1);
@@ -77,7 +79,7 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t h)
   s = src[i];
   if (s <= d)
     {
-      /* With high<=d the final step can be a subtract and addback.  If
+      /* With high s<=d the final step can be a subtract and addback.  If
 	 c+h==0 then the addback will restore to l>=0.  If c+h==d then will
 	 get x==d if s==0, but that's ok per the function definition.  */
 
@@ -86,9 +88,7 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t h)
       x = c - s;
       if (x > c)
 	x += d;
-
-      ASSERT (x < d);
-      return x;
+      ret = x;
     }
   else
     {
@@ -103,9 +103,9 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t h)
       y *= inverse;
       umul_ppmm (h, dummy, y, d);
 
-      c += h;
-
-      ASSERT (c < d);
-      return c;
+      ret = c + h;
     }
+
+  ASSERT (orig_c < d ? ret < d : ret <= d);
+  return ret;
 }
