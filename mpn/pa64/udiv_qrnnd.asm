@@ -1,6 +1,6 @@
 dnl  HP-PA 2.0 64-bit mpn_udiv_qrnnd.
 
-dnl  Copyright 2001 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,13 +21,8 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C This runs at about 290 cycles, meaning each bits takes 4.5 cycles to develop.
-C It would probably be possible to optimize it to run at close to 3 cycles.
-C The current code sufffers from its 4 instruction recurrence.  Try merging
-C     add n1,%r22,n1
-C into
-C     shrpd n1,n0,63,n1
-C to see if that helps.
+C This runs at about 280 cycles on both PA8000 and PA8500, corresponding to a
+C bit more than 4 cycles/bit.
 
 C INPUT PARAMETERS
 define(`n1',`%r26')
@@ -39,18 +34,18 @@ define(`q',`%r28')
 define(`dn',`%r29')
 
 define(`old_divstep',
-       `add,dc		$2,$2,$2
-	add,dc		$1,$1,$1
-	sub,*<<		$1,$3,%r22
-	copy		%r22,$1')
+       `add,dc		n0,n0,n0
+	add,dc		n1,n1,n1
+	sub,*<<		n1,d,%r22
+	copy		%r22,n1')
 
 define(`divstep',
-       `shrpd		n1,n0,63,n1
-	add,l		n0,n0,n0
-	cmpclr,*<<	n1,d,%r22
-	copy		dn,%r22
-	add		n1,%r22,n1
+       `add,dc		n0,n0,n0
+	add,dc		n1,n1,n1
+	sub		n1,d,%r1
 	add,dc		q,q,q
+	cmpclr,*<<	n1,d,%r0
+	copy		%r1,n1
 ')
 
 ifdef(`HAVE_ABI_2_0w',
