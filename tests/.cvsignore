@@ -1,4 +1,11 @@
+*.lo
 .libs
 Makefile
 libtests.la
-*.lo
+t-bswap
+t-constants
+t-count_zeros
+t-gmpmax
+t-modlinv
+t-parity
+t-popc
