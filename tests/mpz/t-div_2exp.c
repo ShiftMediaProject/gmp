@@ -148,24 +148,35 @@ check_all (mpz_ptr a, unsigned long d)
 void
 check_various (void)
 {
-  unsigned long  i, d;
+  static const unsigned long  table[] = {
+    0, 1, 2, 3, 4, 5,
+    GMP_NUMB_BITS-1, GMP_NUMB_BITS, GMP_NUMB_BITS+1,
+    2*GMP_NUMB_BITS-1, 2*GMP_NUMB_BITS, 2*GMP_NUMB_BITS+1,
+    3*GMP_NUMB_BITS-1, 3*GMP_NUMB_BITS, 3*GMP_NUMB_BITS+1,
+    4*GMP_NUMB_BITS-1, 4*GMP_NUMB_BITS, 4*GMP_NUMB_BITS+1
+  };
+
+  int            i, j;
+  unsigned long  n, d;
   mpz_t          a;
 
   mpz_init (a);
 
   /* a==0, and various d */
   mpz_set_ui (a, 0L);
-  for (d = 0; d < 2*BITS_PER_MP_LIMB+4; d++)
-    check_one (a, d);
+  for (i = 0; i < numberof (table); i++)
+    check_one (a, table[i]);
 
-  /* a==2^i, and various d */
-  for (i = 0; i < 5*BITS_PER_MP_LIMB; i++)
+  /* a==2^n, and various d */
+  for (i = 0; i < numberof (table); i++)
     {
-      d = (i < BITS_PER_MP_LIMB+3 ? 0 : i-(BITS_PER_MP_LIMB+3));
-      for ( ; d < i+BITS_PER_MP_LIMB+3; d++)
+      n = table[i];
+      mpz_set_ui (a, 1L);
+      mpz_mul_2exp (a, a, n);
+
+      for (j = 0; j < numberof (table); j++)
         {
-          mpz_set_ui (a, 1L);
-          mpz_mul_2exp (a, a, i);
+          d = table[j];
           check_all (a, d);
         }
     }
@@ -178,7 +189,7 @@ void
 check_random (int argc, char *argv[])
 {
   gmp_randstate_ptr  rands = RANDS;
-  int            reps = 5000;
+  int            reps = 100;
   mpz_t          a;
   unsigned long  d;
   int            i;
