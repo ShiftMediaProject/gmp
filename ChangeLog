@@ -1,3 +1,7 @@
+2000-09-07  Kevin Ryde  <kevin@swox.se>
+
+	* tune/common.c,speed.[ch]: Add measuring of mpn_sqrtrem.
+
 2000-09-06  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options): Clarify where to find CFLAGS.
