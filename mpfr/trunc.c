@@ -45,7 +45,6 @@ MA 02111-1307, USA. */
 #define FUNC_NAME mpfr_trunc
 #endif
 
-#if 0
 #ifdef _MPFR_FLOOR_OR_CEIL
 static int
 mpn_zero_p (p, n)
@@ -62,7 +61,6 @@ mpn_zero_p (p, n)
 
   return 1;
 }
-#endif
 #endif
 
 void
