@@ -1,6 +1,6 @@
 /* CPU frequency determination.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -379,8 +379,10 @@ freq_sco_etchw (int help)
 }
 
 
-/* "hinv -c processor" for IRIX.
-   The first line printed is for instance "2 195 MHZ IP27 Processors".  */
+/* "hinv -c processor" for IRIX.  The following outputs have been seen
+           2 195 MHZ IP27 Processors
+           Processor 0: 500 MHZ IP35
+ */
 static int
 freq_irix_hinv (int help)
 {
@@ -399,7 +401,8 @@ freq_irix_hinv (int help)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
-          if (sscanf (buf, "%d %lf MHZ", &nproc, &val) == 2)
+          if (sscanf (buf, "Processor 0: %lf MHZ", &val) == 1
+              || sscanf (buf, "%d %lf MHZ", &nproc, &val) == 2)
             {
               speed_cycletime = 1e-6 / val;
               if (speed_option_verbose)
