@@ -1,6 +1,8 @@
-dnl  Intel Pentium-4 mpn_submul_1 -- subtract mpn multiple.
+dnl  Intel Pentium-4 mpn_submul_1 -- Multiply a limb vector with a limb and
+dnl  subtract the result from a second limb vector.
 dnl 
-dnl  P4: 10 cycles/limb
+dnl  Pentium4: 7 cycles/limb, unstable timing, at least on early Pentium4
+dnl  silicon (stepping 10).
 
 dnl  Copyright 2001 Free Software Foundation, Inc.
 dnl 
@@ -21,6 +23,7 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
+
 include(`../config.m4')
 
 
@@ -40,11 +43,11 @@ C high of d.  This leaves (b-1)+c' mod b, which means b-1 if no borrow, or
 C any other value for a borrow.  Subtracting b-1 produces the desired high
 C limb of c', ie. 0 if no borrow, all 1s if there is a borrow.
 C
-C This code is not particularly good at 10 c/l.  The dependent chain is only
-C 6 c/l and it's not clear what that isn't achieved.  In theory we should be
+C This code is not particularly good at 7 c/l.  The dependent chain is only
+C 6 c/l and it's not clear why that isn't achieved.  In theory we should be
 C able to go at 4 or 5 c/l, for instance by handling a carry bit and carry
 C limb separately, though straightforward attempts have been no better than
-C 10 c/l.
+C 7 c/l.
 
 defframe(PARAM_CARRY,     20)
 defframe(PARAM_MULTIPLIER,16)
@@ -79,43 +82,35 @@ L(start_1c):
 	movl	PARAM_SIZE, %ecx
 	psllq	$32, %mm6		C 0xFFFFFFFF00000000
 
-L(top):
+	paddq	%mm5, %mm0		C offset initial carry
+
+	psubq	%mm5, %mm6		C 0xFFFFFFFE00000001
+
 	C eax	src, incrementing
 	C ebx
-	C ecx	size, decrementing
+	C ecx	loop counter, decrementing
 	C edx	dst, incrementing
 	C
 	C mm0	carry, low 32-bits, twos comp neg of borrow
-	C mm5	0x00000000FFFFFFFF
-	C mm6	0xFFFFFFFF00000000
+	C mm6	0xFFFFFFFE00000001
 	C mm7	multiplier
 
+L(loop):
 	movd	(%eax), %mm1		C src
-	addl	$4, %eax
-
+	leal	4(%eax), %eax
 	movd	(%edx), %mm2		C dst
-	por	%mm6, %mm2		C add 0xFFFFFFFF to high
-
+	paddq	%mm6, %mm2		C add 0xFFFFFFFE00000001
 	pmuludq	%mm7, %mm1
-
 	psubq	%mm1, %mm2		C prod
-
 	paddq	%mm2, %mm0		C borrow
-
-	movd	%mm0, (%edx)		C result
-	addl	$4, %edx
-
-	psrlq	$32, %mm0
-
-	psubq	%mm5, %mm0		C sub 0xFFFFFFFF from low
-
 	subl	$1, %ecx
-	jnz	L(top)
+	movd	%mm0, (%edx)		C result
+	psrlq	$32, %mm0
+	leal	4(%edx), %edx
+	jnz	L(loop)
 
-
-	pxor	%mm1, %mm1
-	psubq	%mm0, %mm1		C twos comp neg, to give borrow
-	movd	%mm1, %eax
+	movd	%mm0, %eax
+	notl	%eax
 	emms
 	ret
 
