@@ -44,28 +44,6 @@ Error, error, unrecognised OPERATION
 #endif
 
 
-#ifdef _MPF_FLOOR_OR_CEIL
-static int
-#if __STDC__
-mpn_zero_p (mp_ptr p, mp_size_t n)
-#else
-mpn_zero_p (p, n)
-     mp_ptr p;
-     mp_size_t n;
-#endif
-{
-  mp_size_t i;
-
-  for (i = 0; i < n; i++)
-    {
-      if (p[i] != 0)
-	return 0;
-    }
-
-  return 1;
-}
-#endif
-
 void
 #if __STDC__
 FUNC_NAME (mpf_ptr r, mpf_srcptr u)

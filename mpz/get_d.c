@@ -24,27 +24,6 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-static int
-#if __STDC__
-mpn_zero_p (mp_ptr p, mp_size_t n)
-#else
-mpn_zero_p (p, n)
-     mp_ptr p;
-     mp_size_t n;
-#endif
-{
-  mp_size_t i;
-
-  for (i = 0; i < n; i++)
-    {
-      if (p[i] != 0)
-	return 0;
-    }
-
-  return 1;
-}
-
-
 double
 #if __STDC__
 mpz_get_d (mpz_srcptr src)
