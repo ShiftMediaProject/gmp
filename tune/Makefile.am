@@ -31,9 +31,10 @@ noinst_HEADERS = speed.h
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
 libspeed_la_SOURCES =							  \
-  common.c freq.c gcd_bin.c gcd_finda_gen.c				  \
-  gcdext_single.c gcdextod.c gcdextos.c					  \
-  modlinv.c mul_n_mpn.c mul_n_open.c noop.c powm_mod.c powm_redc.c time.c
+  common.c divrem_1_div.c divrem_1_inv.c freq.c gcd_bin.c gcd_finda_gen.c \
+  gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			  \
+  mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		  \
+  noop.c powm_mod.c powm_redc.c time.c
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) $(top_builddir)/libgmp.la
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(LIBM)
@@ -90,13 +91,14 @@ DISTCLEANFILES = sqr_basecase.c
 # FIXME: Would like for example mul_n.c to depend on $(top_builddir)/mul_n.c
 # so the recompiled object will be rebuilt if that file changes.
 
-TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c dc_divrem_n.c tdiv_qr.c gcd.c
+TUNE_MPN_SRCS = \
+  dc_divrem_n.c divrem_1.c gcd.c mod_1.c mul_n.c mul_fft.c mul.c tdiv_qr.c
 TUNE_MPZ_SRCS = fib_ui.c
 
 $(TUNE_MPN_SRCS):
 	for i in $(TUNE_MPN_SRCS); do \
 	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
-	  echo "#include \"mpn/$$i\"" >>$$i; \
+	  echo "#include \"mpn/generic/$$i\"" >>$$i; \
 	done
 
 $(TUNE_MPZ_SRCS):
@@ -149,6 +151,15 @@ gcd:
 
 udiv:
 	./speed -s 1 -c udiv_qrnnd udiv_qrnnd_preinv udiv_qrnnd_preinv2norm invert_limb udiv_qrnnd_c
+
+divn:
+	./speed -s 1-30 -c mpn_divrem_1_div.-1 mpn_divrem_1_mul.-1
+divun:
+	./speed -s 1-30 -c mpn_divrem_1_div.12345 mpn_divrem_1_mul.12345
+modn:
+	./speed -s 1-30 -c mpn_mod_1_div.-1 mpn_mod_1_mul.-1
+modun:
+	./speed -s 1-30 -c mpn_mod_1_div.12345 mpn_mod_1_mul.12345
 
 
 graph:
