@@ -1,6 +1,6 @@
 /* Test gmp_scanf and related functions.
 
-Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -71,7 +71,7 @@ typedef int (*fun_t) _PROTO ((const char *, const char *, void *, void *));
 /* This problem was seen on powerpc7450-apple-darwin7.0.0, sscanf returns 0
    where it should return EOF.  A workaround in gmp_sscanf would be a bit
    tedious, and since this is a rather obvious libc bug, quite likely
-   affecting other programs, we'll just supress affected tests for now.  */
+   affecting other programs, we'll just suppress affected tests for now.  */
 int
 test_sscanf_eof_ok (void)
 {
