@@ -25,6 +25,7 @@ Changes between MP version 4.1.1 and 4.2
 * New gmp_randinit_mt Mersenne Twister random numbers, used for
   gmp_randinit_default too.
 * New --enable-profiling=instrument build option.
+* gmp_scanf and friends accept C99 hex floats.
 
 Changes between MP version 4.1 and 4.1.1
 
