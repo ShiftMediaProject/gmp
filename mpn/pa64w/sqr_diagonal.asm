@@ -40,7 +40,7 @@ PROLOGUE(mpn_sqr_diagonal)	C make configure happy...
 
 	.level		`2.0n'
 	.code
-	.export mpn_sqr_diagonal
+	.export mpn_sqr_diagonal,entry
 mpn_sqr_diagonal
 	.proc
 	.callinfo frame=128,no_calls
