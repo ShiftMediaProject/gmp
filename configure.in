@@ -1455,5 +1455,6 @@ GMP_FINISH
 
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
   mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile mpn/tests/Makefile \
-  tests/Makefile tests/rand/Makefile demos/Makefile tune/Makefile \
+  tests/Makefile tests/rand/Makefile
+  demos/Makefile demos/calc/Makefile tune/Makefile \
   mpbsd/Makefile mpbsd/tests/Makefile mpfr/Makefile mpfr/tests/Makefile)
