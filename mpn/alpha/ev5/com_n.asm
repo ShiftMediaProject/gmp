@@ -43,6 +43,7 @@ C result is ready (a 1 cycle stall) then both the branch and following loads
 C can issue together.
 C
 
+ASM_START()
 DATASTART(L(dat))
 	ALIGN(8)
 	.t_floating 2.0
@@ -154,3 +155,4 @@ L(done_2):
 	ret	r31, (r26), 1
 
 EPILOGUE()
+ASM_END()
