@@ -1,7 +1,8 @@
 /* i80386 __mpn_sub_n -- Add two limb vectors of the same length > 0 and store
    sum in a third limb vector.
 
-Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1992, 1994, 1995, 1996, 1999, 2000 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 

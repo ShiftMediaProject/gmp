@@ -1,7 +1,7 @@
 /* x86 __mpn_submul_1 (for 386 and 486) -- Multiply a limb vector
    with a limb and store the result in a second limb vector.
 
-Copyright (C) 1992, 1994, 1997 Free Software Foundation, Inc.
+Copyright (C) 1992, 1994, 1997, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
