@@ -1,3 +1,12 @@
+2000-12-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mp-h.in: Renamed from mp.h.
+	Add #define for _LONG_LONG_LIMB.
+	Move some other fixes from gmp-h.in.
+	* mp.h: Removed.
+	* configure.in: Generate mp.h from mp-h.in like we handle
+	gmp-h.in/gmp.h.
+
 2000-12-04  Torbjorn Granlund  <tege@swox.com>
 
 	* acinclude.m4: Fix typo testing for bad HP compiler.
@@ -11,7 +20,7 @@
 
 	* mpn/cray/gmp-mparam.h (BITS_PER_SHORTINT): 32 => 64.
 	(*_THRESHOLD): Tune.
-	
+
 	* configure.in: Disable shared libs for *-*-unicos*.
 
 2000-12-03  Kevin Ryde  <kevin@swox.se>
