@@ -227,18 +227,19 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/sdiv$U.lo mpbsd/sqrtrem$U.lo mpbsd/xtom$U.lo
 
 
-# In the current libtool it doesn't work to build libgmp.la from convenience
+# In libtool 1.5 it doesn't work to build libgmp.la from the convenience
 # libraries like mpz/libmpz.la.  Or rather it works, but it ends up putting
-# PIC objects into libgmp.a when shared and static are both built.
+# PIC objects into libgmp.a if shared and static are both built.  (The PIC
+# objects go into mpz/.libs/libmpz.a, and thence into .libs/libgmp.a.)
 #
 # For now the big lists of objects above are used.  Something like mpz/*.lo
 # would probably work, but might risk missing something out or getting
 # something extra.  The source files for each .lo are listed in the
 # Makefile.am's in the subdirectories.
 #
-# Currently, unlike libmp below, we're not using -export-symbols, since the
-# tune and speed programs, and perhaps some of the test programs, want to
-# access undocumented symbols.
+# Currently, for libgmp, unlike libmp below, we're not using
+# -export-symbols, since the tune and speed programs, and perhaps some of
+# the test programs, want to access undocumented symbols.
 
 libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c invalid.c memory.c   \
