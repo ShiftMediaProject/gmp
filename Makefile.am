@@ -86,11 +86,7 @@ EXTRA_HEADERS = mp.h
 
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
-# Having $(MACOS_GENERATED) as well as the macos directory ensures those
-# files are regenerated if necessary in a "make dist".
-#
-EXTRA_DIST = .gdbinit gmp-impl.h longlong.h stack-alloc.h urandom.h doc \
-  macos $(MACOS_GENERATED)
+EXTRA_DIST = .gdbinit gmp-impl.h longlong.h stack-alloc.h urandom.h doc macos
 
 DISTCLEANFILES = asm-syntax.h config.m4 @gmp_srclinks@
 
@@ -175,28 +171,6 @@ libmp_la_LDFLAGS = \
 
 
 info_TEXINFOS = gmp.texi
-
-# This is disabled for now
-MACOS_GENERATED = 
-#MACOS_GENERATED = macos/Makefile macos/Makefile.cw
-
-#MACOS_DEPS = $(srcdir)/macos/configure			\
-#  $(srcdir)/configure.in $(srcdir)/config.in		\
-#  $(srcdir)/Makefile.am     $(srcdir)/mpz/Makefile.am	\
-#  $(srcdir)/mpq/Makefile.am $(srcdir)/mpf/Makefile.am	\
-#  $(srcdir)/mpn/powerpc32/*.asm
-
-# Keep the macos directory up-to-date during any development build.
-if MAINTAINER_MODE
-#ALL_LOCAL_MACOS_GENERATED = $(MACOS_GENERATED)
-endif
-all-local: $(ALL_LOCAL_MACOS_GENERATED)
-
-#$(srcdir)/macos/Makefile: $(MACOS_MAKEFILE_DEPS)
-#	cd $(srcdir)/macos; perl configure
-
-#$(srcdir)/macos/Makefile.cw: $(MACOS_MAKEFILE_DEPS)
-#	cd $(srcdir)/macos; perl configure cw
 
 
 # Don't ship CVS directories or emacs backups.
