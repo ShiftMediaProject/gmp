@@ -26,19 +26,16 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C mp_limb_t mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
+C mp_limb_t mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                              mp_limb_t carry);
 C
-C Divide src,size by 3 and store the quotient in dst,size.  If src,size
-C isn't exactly divisible by 3 the result in dst,size won't be very useful.
-C The return value is 0 if src,size was divisible by 3, or non-zero if not.
-C
-C Using %esi in the (%esi,%ecx,4) or 0(%esi,%ecx,4) addressing mode doesn't
+C Using %esi in (%esi,%ecx,4) or 0(%esi,%ecx,4) addressing modes doesn't
 C lead to vector decoding, unlike plain (%esi) does.
 
-defframe(PARAM_SIZE,12)
-defframe(PARAM_SRC, 8)
-defframe(PARAM_DST, 4)
-deflit(`FRAME',0)
+defframe(PARAM_CARRY,16)
+defframe(PARAM_SIZE, 12)
+defframe(PARAM_SRC,   8)
+defframe(PARAM_DST,   4)
 
 dnl  multiplicative inverse of 3, modulo 2^32
 deflit(INVERSE_3, 0xAAAAAAAB)
@@ -46,7 +43,8 @@ deflit(INVERSE_3, 0xAAAAAAAB)
 	.text
 	ALIGN(32)
 
-PROLOGUE(mpn_divexact_by3)
+PROLOGUE(mpn_divexact_by3c)
+deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
 	pushl	%esi		defframe_pushl(SAVE_ESI)
@@ -57,8 +55,8 @@ PROLOGUE(mpn_divexact_by3)
 	movl	PARAM_DST, %edi
 	pushl	%ebx		defframe_pushl(SAVE_EBX)
 
+	movl	PARAM_CARRY, %ebx
 	leal	(%esi,%ecx,4), %esi
-	xorl	%ebx, %ebx
 
 	pushl	$3		defframe_pushl(VAR_THREE)
 	leal	(%edi,%ecx,4), %edi
@@ -66,7 +64,10 @@ PROLOGUE(mpn_divexact_by3)
 	negl	%ecx
 
 
-	ALIGN(32)	C need 32 for claimed speed
+	C Need 32 alignment for claimed speed, to avoid the movl store
+	C opcode/modrm crossing a cache line boundary
+
+	ALIGN(32)
 L(top):
 	C eax	scratch, low product
 	C ebx	carry limb (0 to 3)
@@ -76,11 +77,11 @@ L(top):
 	C edi	&dst[size]
 	C ebp
 	C
-	C The 0(%esi,%ecx,4) pads so the finishup instructions are on a 32
-	C byte boundary, saving a couple of cycles (that's a fixed couple,
-	C not per loop).
+	C The 0(%esi,%ecx,4) form pads so the finishup "movl %ebx, %eax"
+	C doesn't cross a 32 byte boundary, saving a couple of cycles
+	C (that's a fixed couple, not per loop).
 
-	movl	0(%esi,%ecx,4), %eax
+Zdisp(	movl,	0,(%esi,%ecx,4), %eax)
 	subl	%ebx, %eax
 
 	setc	%bl
