@@ -19,6 +19,19 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-05  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/Makeasm.am (.S files): Revert to separate CPP and CCAS, use
+	cpp-ccas, and only pass CPPFLAGS to CPP, not whole CFLAGS.
+	* mpn/cpp-ccas: New file.
+	* mpn/Makefile.am (EXTRA_DIST): Add it.
+
+	* tune/common.c, tune/speed.h: Change SPEED_ROUTINE_MPN_COPY_CALL uses
+	to SPEED_ROUTINE_MPN_COPY or new SPEED_ROUTINE_MPN_COPY_BYTES.  Avoids
+	macro expansion problems on Cray.
+
+	* configure.in (AC_PROG_CXXCPP): Add this, to make libtool happier.
+
 2001-10-04  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options): Add --enable-cxx.
