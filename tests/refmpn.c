@@ -804,9 +804,6 @@ refmpn_udiv_qrnnd (mp_limb_t *rp, mp_limb_t h, mp_limb_t l, mp_limb_t d)
 
   ASSERT (d != 0);
   ASSERT (h < d);
-  ASSERT_LIMB (h);
-  ASSERT_LIMB (l);
-  ASSERT_LIMB (d);
 
 #if 0
   udiv_qrnnd (q, r, h, l, d);
@@ -817,8 +814,11 @@ refmpn_udiv_qrnnd (mp_limb_t *rp, mp_limb_t h, mp_limb_t l, mp_limb_t d)
   n = refmpn_count_leading_zeros (d);
   d <<= n;
 
-  h = lshift_make (h, l, n);
-  l <<= n;
+  if (n != 0)
+    {
+      h = (h << n) | (l >> (GMP_LIMB_BITS - n));
+      l <<= n;
+    }
 
   __udiv_qrnnd_c (q, r, h, l, d);
   r >>= n;
@@ -840,7 +840,12 @@ refmpn_divmod_1c_workaround (mp_ptr rp, mp_srcptr sp, mp_size_t size,
 {
   mp_size_t  i;
   for (i = size-1; i >= 0; i--)
-    rp[i] = refmpn_udiv_qrnnd (&carry, carry, sp[i], divisor);
+    {
+      rp[i] = refmpn_udiv_qrnnd (&carry, carry,
+                                 sp[i] << GMP_NAIL_BITS,
+                                 divisor << GMP_NAIL_BITS);
+      carry >>= GMP_NAIL_BITS;
+    }
   return carry;
 }
 
