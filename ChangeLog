@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_basecase.c: Update pointers before conditional
+	MAX_LEFT break statements.
+
 2002-05-21  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-gcd.c: Test mpz_gcd_ui.
