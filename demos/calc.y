@@ -79,21 +79,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.
    possible saving from this, but a proper calculator or language should
    take some trouble over it.  Don't be surprised if an init/clear takes 3
    or more times as long as a 10 limb addition, depending on the system (see
-   the mpz_init_realloc_clear example in tune/README).
-
-   In a calculator or language using dynamic memory allocation, a good idea
-   would be to keep some "mpz_t"s on a free list.  A structure like the
-   following is effectively an "mpz_t" with an extra field tacked on the end
-   for that purpose.
-
-           struct foo {
-             mpz_t       z;
-             struct foo  *next;
-           };
-
-   A pointer "struct foo *p" used as "p->z" will be just a type-safe cast.
-   With care a free list could be made thread safe, and it should never be
-   larger than the deepest nested calculation.  */
+   the mpz_init_realloc_clear example in tune/README).  */
 
 
 %{
