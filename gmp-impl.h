@@ -90,6 +90,15 @@ MA 02111-1307, USA. */
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+/* FIXME: These are purely internal, so do a search and replace to change
+   them to __gmp forms, rather than using these macros. */
+#define _mp_allocate_func      __gmp_allocate_func
+#define _mp_reallocate_func    __gmp_reallocate_func
+#define _mp_free_func          __gmp_free_func
+#define _mp_default_allocate   __gmp_default_allocate
+#define _mp_default_reallocate __gmp_default_reallocate
+#define _mp_default_free       __gmp_default_free
+
 #if (__STDC__-0) || defined (__cplusplus)
 void *malloc (size_t);
 void *realloc (void *, size_t);
