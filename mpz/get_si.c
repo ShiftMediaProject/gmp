@@ -23,10 +23,18 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 signed long int
-mpz_get_si (mpz_srcptr op)
+mpz_get_si (mpz_srcptr z)
 {
-  mp_size_t size = op->_mp_size;
-  mp_limb_t low_limb = op->_mp_d[0];
+  mp_ptr zp = z->_mp_d;
+  mp_size_t size = z->_mp_size;
+  mp_limb_t low_limb = zp[0];
+
+  if (ULONG_MAX > GMP_NUMB_MAX != 0 && ABS (size) >= 2)
+    {
+      /* happens for nails, but not if LONG_LONG_LIMB */
+      /* assume two limbs are enough to fill an ulong */
+      low_limb += zp[1] << GMP_NUMB_BITS;
+    }
 
   if (size > 0)
     return (long) low_limb & LONG_MAX;
