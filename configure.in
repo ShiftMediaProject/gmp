@@ -1268,7 +1268,7 @@ done
 
 for tmp_fn in $gmp_mpn_functions; do
   for tmp_ext in MPN_SUFFIXES; do
-    rm -f mpn/$tmp_fn.$tmp_ext
+    test "$no_create" = yes || rm -f mpn/$tmp_fn.$tmp_ext
   done
 
   # Don't need pre_mod_1 if it's already been provided (by an asm mod_1).
@@ -1414,7 +1414,7 @@ fi
 # Create link for gmp-mparam.h.
 gmp_mparam_source=
 for tmp_dir in $path; do
-  rm -f gmp-mparam.h
+  test "$no_create" = yes || rm -f gmp-mparam.h
   tmp_file=$srcdir/mpn/$tmp_dir/gmp-mparam.h
   if test -f $tmp_file; then
     AC_CONFIG_LINKS(gmp-mparam.h:mpn/$tmp_dir/gmp-mparam.h)
