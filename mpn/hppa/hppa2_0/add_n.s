@@ -1,7 +1,7 @@
 ; HP-PA 2.0 32-bit __gmpn_add_n -- Add two limb vectors of the same length > 0
 ; and store sum in a third limb vector.
 
-; Copyright 1997, 1998, 2000 Free Software Foundation, Inc.
+; Copyright 1997, 1998, 2000, 2001 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 
@@ -31,7 +31,7 @@
 
 	.code
 	.export	__gmpn_add_n
-__gmpn_add_n
+	.label	__gmpn_add_n
 	.proc
 	.callinfo frame=0,no_calls
 	.entry
@@ -45,35 +45,50 @@ __gmpn_add_n
 	blr		%r28,%r0		; branch into loop
 	add		%r0,%r0,%r0		; reset carry
 
-L$loop	ldw		0(%r25),%r20
+	.label	L$loop
+	ldw		0(%r25),%r20
 	ldw		0(%r24),%r31
 	addc		%r20,%r31,%r20
 	stw		%r20,0(%r26)
-L$7	ldw		4(%r25),%r21
+
+	.label	L$7
+	ldw		4(%r25),%r21
 	ldw		4(%r24),%r19
 	addc		%r21,%r19,%r21
 	stw		%r21,4(%r26)
-L$6	ldw		8(%r25),%r20
+
+	.label	L$6
+	ldw		8(%r25),%r20
 	ldw		8(%r24),%r31
 	addc		%r20,%r31,%r20
 	stw		%r20,8(%r26)
-L$5	ldw		12(%r25),%r21
+
+	.label	L$5
+	ldw		12(%r25),%r21
 	ldw		12(%r24),%r19
 	addc		%r21,%r19,%r21
 	stw		%r21,12(%r26)
-L$4	ldw		16(%r25),%r20
+
+	.label	L$4
+	ldw		16(%r25),%r20
 	ldw		16(%r24),%r31
 	addc		%r20,%r31,%r20
 	stw		%r20,16(%r26)
-L$3	ldw		20(%r25),%r21
+
+	.label	L$3
+	ldw		20(%r25),%r21
 	ldw		20(%r24),%r19
 	addc		%r21,%r19,%r21
 	stw		%r21,20(%r26)
-L$2	ldw		24(%r25),%r20
+
+	.label	L$2
+	ldw		24(%r25),%r20
 	ldw		24(%r24),%r31
 	addc		%r20,%r31,%r20
 	stw		%r20,24(%r26)
-L$1	ldw		28(%r25),%r21
+
+	.label	L$1
+	ldw		28(%r25),%r21
 	ldo		32(%r25),%r25
 	ldw		28(%r24),%r19
 	addc		%r21,%r19,%r21
