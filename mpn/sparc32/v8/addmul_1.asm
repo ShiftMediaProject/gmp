@@ -36,15 +36,15 @@ PROLOGUE(mpn_addmul_1)
 
 	sll	%o2,4,%g1
 	and	%g1,(4-1)<<4,%g1
-#if PIC
-	mov	%o7,%g4		C Save return address register
+ifdef(`PIC',
+`	mov	%o7,%g4		C Save return address register
 	call	1f
 	add	%o7,L(1)-1f,%g3
 1:	mov	%g4,%o7		C Restore return address register
-#else
-	sethi	%hi(L(1)),%g3
+',
+`	sethi	%hi(L(1)),%g3
 	or	%g3,%lo(L(1)),%g3
-#endif
+')
 	jmp	%g3+%g1
 	nop
 L(1):
