@@ -19,6 +19,52 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-08  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/asm-defs.m4 (PROLOGUE, EPILOGUE): New scheme, optional function
+	name to EPILOGUE, check for missing or wrong function name EPILOGUE.
+	* mpn/alpha/unicos.m4, mpn/alpha/default.m4, mpn/m68k/m68k-defs.m4,
+	mpn/mips3/mips.m4, mpn/ia64/default.m4, mpn/powerpc32/aix.m4,
+	mpn/powerpc64/aix.m4, mpn/x86/x86-defs.m4: Consequent updates, add a
+	few more asserts.
+	* mpn/alpha/unicos.m4, mpn/alpha/default.m4, mpn/alpha/cntlz.asm,
+	mpn/alpha/invert_limb.asm (PROLOGUE_GP): Change to an optional "gp"
+	parameter on plain PROLOGUE.
+
+	* gmp.texi (Low-level Functions): mpn_get_str doesn't clobber an extra
+	limb, and doesn't clobber at all for power of 2 bases.
+	(Language Bindings): Add python gmpy.
+
+	* mpz/get_str.c: Determine realloc size arithmetically.
+
+	* mpbsd/mtox.c: Size memory block returned to actual space needed.
+	* gmp.texi (BSD Compatible Functions): Describe this.
+
+	* mpz/get_str.c: Don't copy mpn_get_str input for power of 2 bases.
+	* mpbsd/mtox.c: Ditto, and as a side effect avoid a memory leak from a
+	missing TMP_FREE.
+
+	* mpz/get_str.c, mpbsd/mout.c: No longer need for +1 limb for
+	mpn_get_str clobber.
+
+	* gmp-impl.h (MPN_GET_STR_SIZE): New macro.
+	* mpn/generic/get_str.c, mpz/get_str.c, mpbsd/mout.c, mpbsd/mtox.c,
+	tune/speed.h: Use it.
+	* tests/mpn/t-g_str_size.c: New test.
+	* tests/mpn/Makefile.am: Add it.
+
+	* gmp-impl.h (POW2_P): New macro.
+	* mpn/generic/get_str.c, tests/misc.c: Use it.
+
+	* printf/doprnt.c: Add "N" for mpn, share some code between N, Q and Z.
+	* tests/misc/t-printf.c: Add tests.
+	* gmp-impl.h (ASSERT_CODE): New macro.
+
+	* tests/mpbsd/t-mtox.c: New test.
+	* tests/mpbsd/Makefile.am: Add it.
+	(allfuns_LDADD): Don't link against libgmp when testing everything in
+	libmp can link.
+
 2002-01-07  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (MPN_COPY_INCR, MPN_COPY_DECR): Rewrite generic versions.
