@@ -18,6 +18,49 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-07-17  Kevin Ryde  <kevin@swox.se>
+
+	* tests/refmpz.c (refmpz_hamdist): Ensure mp_size_t parameters are
+	that type, for the benefit of hpux ia64 bundled cc ABI=64.
+
+	* configure.in (ia64*-*-hpux*): Need +DD64 in cc_64_cppflags to get
+	the right headers for ansi2knr.
+
+	* acinclude.m4 (GMP_TRY_ASSEMBLE, GMP_ASM_UNDERSCORE): Use $CPPFLAGS
+	with $CCAS and when linking, as done by the makefiles.
+	(GMP_ASM_X86_MMX, GMP_ASM_X86_SSE2): Show $CPPFLAGS in diagnostics.
+
+	* gmp-impl.h (ieee_double_extract): Setup using HAVE_DOUBLE_IEEE_*.
+	(GMP_UINT32): New define, 32 bit type for ieee_double_extract.
+	* configure.in: Add AC_CHECK_SIZEOF unsigned.
+	* configure.in, acinclude.m4 (GMP_IMPL_H_IEEE_FLOATS): Remove.
+	(GMP_C_DOUBLE_FORMAT): Instead warn about unknown float here.
+
+	* configure.in, acinclude.m4 (GMP_C_SIZES): Remove.
+	* acinclude.m4 (GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB): Remove this
+	scheme, not required.
+	* configure.in (unsigned long, mp_limb_t): Run AC_CHECK_SIZEOF for
+	these unconditionally, check mp_limb_t against gmp-mparam.h values.
+	* gmp-impl.h (BYTES_PER_MP_LIMB, BITS_PER_MP_LIMB): Define based on
+	SIZEOF_MP_LIMB_T if not provided by gmp-mparam.h.
+	(BITS_PER_ULONG): Define here now.
+
+	* gmp.texi (ABI and ISA): Add HP-UX IA-64 choices.
+	(Random State Initialization): Typo in m2exp described for
+	gmp_randinit_lc_2exp_size.
+	(Formatted Output Functions): Clarify gmp_obstack_printf a bit.
+	(Formatted Input Strings): Typo in %n summary.
+
+	* mpz/inp_raw.c (NTOH_LIMB_FETCH): Use simple generic default, since
+	endianness detection is now cross-compile friendly.
+	* mpz/out_raw.c (HTON_LIMB_STORE): Ditto.
+
+	* mpz/fib_ui.c: Nailify.
+	* mpz/random.c: Nailify.
+
+	* mpfr/acinclude.m4 (MPFR_CONFIGS): Patch by Vincent for an apparent
+	float rounding gremlin on powerpc.
+
 2002-07-15  Kevin Ryde  <kevin@swox.se>
 
 	* Makefile.am (PRINTF_OBJECTS): Avoid ending in a backslash, hpux ia64
