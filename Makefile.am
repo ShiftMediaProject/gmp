@@ -22,7 +22,8 @@
 # MA 02111-1307, USA.
 
 
-# Libtool -version-info for libgmp.la and libmp.la.  See (libtool)Versioning
+# Libtool -version-info for libgmp.la and libmp.la.  See "Versioning" in the
+# libtool manual.
 #
 # 1. No interfaces changed, only implementations (good): Increment REVISION.
 #
@@ -42,22 +43,24 @@
 #        3.1      4:0:1      -     4:0:1
 #        3.1.1    4:1:1      -     4:1:1
 #        4.0      5:0:2    3:0:0   4:2:1
+#        4.0.1    5:1:2    3:1:0   4:3:1
+#        4.1      6:0:3    3:2:0   4:4:1
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
 # packages of gmp 2.  Pretend gmp 2 was 2:0:0, so the interface changes for
 # gmp 3 mean 3:0:0 is right.
 
-LIBGMP_LT_CURRENT =  5
+LIBGMP_LT_CURRENT =  6
 LIBGMP_LT_REVISION = 0
-LIBGMP_LT_AGE =      2
+LIBGMP_LT_AGE =      3
 
 LIBGMPXX_LT_CURRENT =  3
-LIBGMPXX_LT_REVISION = 0
+LIBGMPXX_LT_REVISION = 2
 LIBGMPXX_LT_AGE =      0
 
 LIBMP_LT_CURRENT =  4
-LIBMP_LT_REVISION = 2
+LIBMP_LT_REVISION = 4
 LIBMP_LT_AGE =      1
 
 
