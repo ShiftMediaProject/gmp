@@ -55,7 +55,7 @@ MA 02111-1307, USA. */
 #endif
 
 #ifndef POWM_THRESHOLD
-#define POWM_THRESHOLD            23
+#define POWM_THRESHOLD            94
 #endif
 
 #ifndef GCD_ACCEL_THRESHOLD
@@ -63,4 +63,24 @@ MA 02111-1307, USA. */
 #endif
 #ifndef GCDEXT_THRESHOLD
 #define GCDEXT_THRESHOLD          53
+#endif
+
+#ifndef FFT_MUL_TABLE
+#define FFT_MUL_TABLE  { 560, 1312, 2432, 5632, 18432, 57344, 0 }
+#endif
+#ifndef FFT_MODF_MUL_THRESHOLD
+#define FFT_MODF_MUL_THRESHOLD     624
+#endif
+#ifndef FFT_MUL_THRESHOLD
+#define FFT_MUL_THRESHOLD         8960
+#endif
+
+#ifndef FFT_SQR_TABLE
+#define FFT_SQR_TABLE  { 560, 1312, 2432, 5632, 18432, 40960, 0 }
+#endif
+#ifndef FFT_MODF_SQR_THRESHOLD
+#define FFT_MODF_SQR_THRESHOLD     576
+#endif
+#ifndef FFT_SQR_THRESHOLD
+#define FFT_SQR_THRESHOLD         6400
 #endif
