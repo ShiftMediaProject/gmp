@@ -1,4 +1,4 @@
-/* mpz_set_si(integer, val) -- Assign INTEGER with a small value VAL.
+/* mpz_set_si(dest,val) -- Assign DEST with a small value VAL.
 
 Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
 Inc.
