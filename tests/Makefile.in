@@ -52,7 +52,7 @@
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
-SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c t-parity.c t-popc.c t-sub.c
+SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-hightomask.c t-modlinv.c t-parity.c t-popc.c t-sub.c
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -79,8 +79,9 @@ ANSI2KNR = $(top_builddir)/ansi2knr
 DIST_COMMON = $(srcdir)/../mpn/Makeasm.am $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 check_PROGRAMS = t-bswap$(EXEEXT) t-constants$(EXEEXT) \
-	t-count_zeros$(EXEEXT) t-gmpmax$(EXEEXT) t-modlinv$(EXEEXT) \
-	t-popc$(EXEEXT) t-parity$(EXEEXT) t-sub$(EXEEXT)
+	t-count_zeros$(EXEEXT) t-gmpmax$(EXEEXT) t-hightomask$(EXEEXT) \
+	t-modlinv$(EXEEXT) t-popc$(EXEEXT) t-parity$(EXEEXT) \
+	t-sub$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/mpfr/acinclude.m4 \
@@ -110,6 +111,10 @@ t_gmpmax_SOURCES = t-gmpmax.c
 t_gmpmax_OBJECTS = t-gmpmax$U.$(OBJEXT)
 t_gmpmax_LDADD = $(LDADD)
 t_gmpmax_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
+t_hightomask_SOURCES = t-hightomask.c
+t_hightomask_OBJECTS = t-hightomask$U.$(OBJEXT)
+t_hightomask_LDADD = $(LDADD)
+t_hightomask_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
 t_modlinv_SOURCES = t-modlinv.c
 t_modlinv_OBJECTS = t-modlinv$U.$(OBJEXT)
 t_modlinv_LDADD = $(LDADD)
@@ -138,11 +143,11 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) \
-	t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c \
-	t-parity.c t-popc.c t-sub.c
+	t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c \
+	t-hightomask.c t-modlinv.c t-parity.c t-popc.c t-sub.c
 DIST_SOURCES = $(libtests_la_SOURCES) $(EXTRA_libtests_la_SOURCES) \
-	t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c \
-	t-parity.c t-popc.c t-sub.c
+	t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c \
+	t-hightomask.c t-modlinv.c t-parity.c t-popc.c t-sub.c
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-exec-recursive install-info-recursive \
@@ -402,6 +407,9 @@ t-count_zeros$(EXEEXT): $(t_count_zeros_OBJECTS) $(t_count_zeros_DEPENDENCIES)
 t-gmpmax$(EXEEXT): $(t_gmpmax_OBJECTS) $(t_gmpmax_DEPENDENCIES) 
 	@rm -f t-gmpmax$(EXEEXT)
 	$(LINK) $(t_gmpmax_LDFLAGS) $(t_gmpmax_OBJECTS) $(t_gmpmax_LDADD) $(LIBS)
+t-hightomask$(EXEEXT): $(t_hightomask_OBJECTS) $(t_hightomask_DEPENDENCIES) 
+	@rm -f t-hightomask$(EXEEXT)
+	$(LINK) $(t_hightomask_LDFLAGS) $(t_hightomask_OBJECTS) $(t_hightomask_LDADD) $(LIBS)
 t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES) 
 	@rm -f t-modlinv$(EXEEXT)
 	$(LINK) $(t_modlinv_LDFLAGS) $(t_modlinv_OBJECTS) $(t_modlinv_LDADD) $(LIBS)
@@ -458,6 +466,8 @@ t-count_zeros_.c: t-count_zeros.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-count_zeros.c; then echo $(srcdir)/t-count_zeros.c; else echo t-count_zeros.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-gmpmax_.c: t-gmpmax.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gmpmax.c; then echo $(srcdir)/t-gmpmax.c; else echo t-gmpmax.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-hightomask_.c: t-hightomask.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-hightomask.c; then echo $(srcdir)/t-hightomask.c; else echo t-hightomask.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-modlinv_.c: t-modlinv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-modlinv.c; then echo $(srcdir)/t-modlinv.c; else echo t-modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-parity_.c: t-parity.c $(ANSI2KNR)
@@ -476,8 +486,9 @@ refmpn_.$(OBJEXT) refmpn_.lo refmpq_.$(OBJEXT) refmpq_.lo \
 refmpz_.$(OBJEXT) refmpz_.lo spinner_.$(OBJEXT) spinner_.lo \
 t-bswap_.$(OBJEXT) t-bswap_.lo t-constants_.$(OBJEXT) t-constants_.lo \
 t-count_zeros_.$(OBJEXT) t-count_zeros_.lo t-gmpmax_.$(OBJEXT) \
-t-gmpmax_.lo t-modlinv_.$(OBJEXT) t-modlinv_.lo t-parity_.$(OBJEXT) \
-t-parity_.lo t-popc_.$(OBJEXT) t-popc_.lo t-sub_.$(OBJEXT) t-sub_.lo \
+t-gmpmax_.lo t-hightomask_.$(OBJEXT) t-hightomask_.lo \
+t-modlinv_.$(OBJEXT) t-modlinv_.lo t-parity_.$(OBJEXT) t-parity_.lo \
+t-popc_.$(OBJEXT) t-popc_.lo t-sub_.$(OBJEXT) t-sub_.lo \
 trace_.$(OBJEXT) trace_.lo x86check_.$(OBJEXT) x86check_.lo : \
 $(ANSI2KNR)
 
