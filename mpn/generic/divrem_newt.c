@@ -147,7 +147,7 @@ mpn_reciprocal (ip, vp, vn)
       /* X now has more limbs than we care about.  Ignore all but the PREC most
 	 significant ones.  */
       mpn_sub_n (xp, tp, xp + prec, prec);
-      mpn_sub_1 (xp, xp, prec, (mp_limb_t) 1); /* compensate for chopping */
+      mpn_decr_u (xp, (mp_limb_t) 1); /* compensate for chopping */
     }
 
   MPN_COPY (ip, xp, vn);
@@ -226,7 +226,7 @@ mpn_divrem_newton (qp, qxn, np, nn, dp, dn)
       mp_limb_t cy;
       cy = mpn_add_1 (tp, tp, in, (mp_limb_t) 1);
       if (cy)
-	mpn_sub_1 (tp, tp, in, (mp_limb_t) 1);
+	mpn_decr_u (tp, (mp_limb_t) 1);
     }
   mpn_reciprocal (ip, tp, in);
 
@@ -248,9 +248,9 @@ mpn_divrem_newton (qp, qxn, np, nn, dp, dn)
 	  /* Estimated quotient was too large.  */
 	  /* adjust remainder */
 	  cy = mpn_add_n (np, np, dp, dn);
-	  mpn_add_1 (np + dn, np + dn, dn, cy);
+	  mpn_incr_u (np + dn, cy);
 	  /* adjust quotient */
-	  mpn_sub_1 (wp, wp, dn, (mp_limb_t) 1);
+	  mpn_decr_u (wp, (mp_limb_t) 1);
 	}
       else while (np[dn] != 0 || mpn_cmp (np, dp, dn) >= 0)
 	{
@@ -258,9 +258,9 @@ mpn_divrem_newton (qp, qxn, np, nn, dp, dn)
 	  /* Estimated quotient was too small.  */
 	  /* adjust remainder */
 	  cy = mpn_sub_n (np, np, dp, dn);
-	  mpn_sub_1 (np + dn, np + dn, dn, cy);
+	  mpn_decr_u (np + dn, cy);
 	  /* adjust quotient */
-	  mpn_add_1 (wp, wp, dn, (mp_limb_t) 1);
+	  mpn_incr_u (wp, (mp_limb_t) 1);
 	}
       /* Copy quotient in place.  */
       MPN_COPY (qp, wp, dn);
@@ -289,7 +289,7 @@ mpn_divrem_newton (qp, qxn, np, nn, dp, dn)
 	      cy = mpn_add_n (np, np, dp, dn);
 	      cy = !mpn_add_1 (np + dn, np + dn, qn, cy);
 	      /* adjust quotient */
-	      mpn_sub_1 (wp, wp, qn, (mp_limb_t) 1);
+	      mpn_decr_u (wp, (mp_limb_t) 1);
 	    }
 	  while (cy);
 	}
@@ -298,9 +298,9 @@ mpn_divrem_newton (qp, qxn, np, nn, dp, dn)
 	  mp_limb_t cy;
 	  /* adjust remainder */
 	  cy = mpn_sub_n (np, np, dp, dn);
-	  mpn_sub_1 (np + dn, np + dn, qn, cy);
+	  mpn_decr_u (np + dn, cy);
 	  /* adjust quotient */
-	  mpn_add_1 (wp, wp, qn, (mp_limb_t) 1);
+	  mpn_incr_u (wp, (mp_limb_t) 1);
 	}
       MPN_COPY (qp, wp, qn);
     }

@@ -31,19 +31,6 @@ MA 02111-1307, USA. */
    1. PRODP != UP and PRODP != VP, i.e. the destination
       must be distinct from the multiplier and the multiplicand.  */
 
-static inline void
-mpn_incr (mp_ptr p, mp_limb_t incr)
-{
-  mp_limb_t x;
-
-  x = *p + incr;
-  *p = x;
-  if (x >= incr)
-    return;
-  while (++(*(++p)) == 0)
-    ;
-}
-
 void
 #if __STDC__
 __gmpn_mul_n (mp_ptr prodp, mp_srcptr up, mp_srcptr vp, mp_size_t n, mp_ptr tspace)
@@ -150,7 +137,7 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 	    ++tspace[n];
 	}
       if (mpn_add_n (prodp + n3, prodp + n3, tspace, np1))
-	mpn_incr (prodp + np1 + n3, (mp_limb_t) 1);
+	mpn_incr_u (prodp + np1 + n3, (mp_limb_t) 1);
     }
   else
     {
@@ -219,7 +206,7 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 	cy = -mpn_sub_n (tspace, prodp, tspace, n);
       cy += mpn_add_n (tspace, tspace, prodp + n, n);
       cy += mpn_add_n (prodp + n2, prodp + n2, tspace, n);
-      mpn_incr (prodp + n + n2, cy);
+      mpn_incr_u (prodp + n + n2, cy);
     }
 }
 
@@ -293,7 +280,7 @@ __gmpn_sqr (prodp, up, n, tspace)
 	    ++tspace[n];
 	}
       if (mpn_add_n (prodp + n3, prodp + n3, tspace, np1))
-	mpn_incr (prodp + np1 + n3, (mp_limb_t) 1);
+	mpn_incr_u (prodp + np1 + n3, (mp_limb_t) 1);
     }
   else
     {
@@ -336,7 +323,7 @@ __gmpn_sqr (prodp, up, n, tspace)
       cy = -mpn_sub_n (tspace, prodp, tspace, n);
       cy += mpn_add_n (tspace, tspace, prodp + n, n);
       cy += mpn_add_n (prodp + n2, prodp + n2, tspace, n);
-      mpn_incr (prodp + n + n2, cy);
+      mpn_incr_u (prodp + n + n2, cy);
     }
 }
 
