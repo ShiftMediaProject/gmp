@@ -451,7 +451,7 @@ EOF
 EOF
     ;;
   esac
-  tmp_compile="${CC-cc} conftes1.c conftes2.s 1>&AC_FD_CC"
+  tmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s 1>&AC_FD_CC"
   if AC_TRY_EVAL(tmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
@@ -949,7 +949,7 @@ foo(){bar();}
 EOF
 
 if test "$enable_static" = yes; then
-  gmp_asmout_compile="$CC $CFLAGS -S conftest.c 1>&AC_FD_CC"
+  gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS -S conftest.c 1>&AC_FD_CC"
   if AC_TRY_EVAL(gmp_asmout_compile); then
     if grep '\.data' conftest.s >/dev/null; then
       mcount_nonpic_reg="`sed -n ['/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
