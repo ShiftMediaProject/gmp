@@ -217,6 +217,5 @@ check: all
 	cd mpf/tests && $(MAKE) $(FLAGS_TO_PASS) check
 
 # Don't ship CVS directories.
-# FIXME: Check that find(1) accepts the `-X' option.
 dist-hook:
-	-find $(distdir) -X -name CVS -type d | xargs rm
+	-find $(distdir) -name CVS -type d | xargs rm
