@@ -1946,9 +1946,14 @@ dnl  ------------------
 dnl  Check whether vsnprintf exists, and works properly.
 dnl
 dnl  Sparc Solaris 2.7 in 64-bit mode doesn't always truncate, making
-dnl  vsnprintf like vsprintf, and hence completely useless.  The %n in the
-dnl  test case seems to be necessary to tickle the problem, on one system
-dnl  tested at least.
+dnl  vsnprintf like vsprintf, and hence completely useless.  On one system a
+dnl  literal string is enough to provoke the problem, on another a "%n" was
+dnl  needed.  There seems to be something weird going on with the optimizer
+dnl  or something, since on the first system adding a second check with
+dnl  "%n", or even just an initialized local variable, makes it work.  In
+dnl  any case, without bothering to get to the bottom of this, the two
+dnl  program runs in the code below end up successfully detecting the
+dnl  problem.
 dnl
 dnl  glibc 2.0.x returns either -1 or bufsize-1 for an overflow (both seen,
 dnl  not sure which 2.0.x does which), but still puts the correct null
@@ -1964,7 +1969,9 @@ if test "$gmp_vsnprintf_exists" = no; then
 else
   AC_CACHE_CHECK([whether vsnprintf works],
                  gmp_cv_func_vsnprintf,
-  [AC_TRY_RUN([
+  [gmp_cv_func_vsnprintf=yes
+   for i in 'check ("hello world");' 'int n; check ("%nhello world", &n);'; do
+     AC_TRY_RUN([
 #include <string.h>  /* for strcmp */
 #include <stdio.h>   /* for vsnprintf */
 
@@ -2009,14 +2016,14 @@ check (va_alist)
 int
 main ()
 {
-  int n;
-  check ("%nhello world", &n);
+$i
   exit (0);
 }
 ],
-    [gmp_cv_func_vsnprintf=yes],
-    [gmp_cv_func_vsnprintf=no],
-    [gmp_cv_func_vsnprintf=probably])
+      [:],
+      [gmp_cv_func_vsnprintf=no; break],
+      [gmp_cv_func_vsnprintf=probably; break])
+  done
   ])
   if test "$gmp_cv_func_vsnprintf" = probably; then
     AC_MSG_WARN([cannot check for properly working vsnprintf when cross compiling, will assume it's ok])
