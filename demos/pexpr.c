@@ -131,7 +131,7 @@ setup_error_handler ()
 {
   struct sigaction act;
 
-#if HAVE_sigaltstack
+#ifdef HAVE_sigaltstack
   struct sigaltstack sigstk;
   /* Set up a stack for signal handling.  A typical cause of error is stack
      overflow, and in such situation a signal can not be delivered on the
@@ -149,7 +149,7 @@ setup_error_handler ()
   /* Initialize structure for sigaction (called below).  */
   act.sa_handler = cleanup_and_exit;
   sigemptyset (&(act.sa_mask));
-#if HAVE_sigaltstack
+#ifdef HAVE_sigaltstack
   act.sa_flags = SA_ONSTACK;
 #else
   act.sa_flags = 0;
