@@ -603,13 +603,6 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   ASSERT(GMP_NUMB_BITS >= 6);
   ASSERT(n >= 17); /* so that r <> 0 and 5k+3 <= 2n */
 
-  while (n > 17 && a[n - 1] == 0 && b[n - 1] == 0)
-    {
-      c[2 * n - 1] = 0;
-      c[2 * n - 2] = 0;
-      n --;
-    }
-
   /*
   The algorithm is the following:
 
@@ -786,13 +779,6 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 
   ASSERT(GMP_NUMB_BITS >= 6);
   ASSERT(n >= 17); /* so that r <> 0 and 5k+3 <= 2n */
-
-  while (n > 17 && a[n - 1] == 0)
-    {
-      c[2 * n - 1] = 0;
-      c[2 * n - 2] = 0;
-      n --;
-    }
 
   /* the algorithm is the same as mpn_mul_n_tc3, with b=a */
 
