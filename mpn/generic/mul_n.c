@@ -23,13 +23,11 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#if BITS_PER_MP_LIMB == 32
-#define THIRD 0xAAAAAAAB
-#endif
+#define MP_LIMB_T_MAX  (~((mp_limb_t) 0))
 
-#if BITS_PER_MP_LIMB == 64
-#define THIRD 0xAAAAAAAAAAAAAAAB
-#endif
+/* Multiplicative inverse of 3, modulo 2^BITS_PER_MP_LIMB.
+   0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
+#define INVERSE_3      ((MP_LIMB_T_MAX / 3) * 2 + 1)
 
 #if !defined (__alpha) && !defined (__mips)
 /* For all other machines, we want to call mpn functions for the compund
@@ -664,7 +662,6 @@ mpn_divexact3_n (mp_ptr R, mp_srcptr A, mp_size_t len)
 {
   mp_limb_t b, c, w;
   mp_size_t i;
-  const mp_limb_t third = THIRD;
 
   ASSERT(len > 0);
 
@@ -672,7 +669,7 @@ mpn_divexact3_n (mp_ptr R, mp_srcptr A, mp_size_t len)
   do {
     w = A[i];
     c = w < b; w -= b;
-    w *= third;
+    w *= INVERSE_3;
     R[i] = w;
     b = c + (w >> (BITS_PER_MP_LIMB - 1)) + (w*3 < w);
   } while (++i < len);
@@ -704,7 +701,6 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 {
   mp_ptr ws;
   mp_limb_t t, tb,tc,td;
-  const mp_limb_t third = THIRD;
   TMP_DECL (marker);
   TMP_MARK (marker);
 
@@ -772,7 +768,7 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
   tc -= tb + mpn_sub_n (C, C, B, len);
 
   /* d := d/3 */
-  td = (td-mpn_divexact3_n(D, D, len))*third;
+  td = (td - mpn_divexact_by3 (D, D, len)) * INVERSE_3;
 
   /* b, d := b + d, b - d */
 #ifdef HAVE_MPN_ADD_SUB_N
@@ -836,7 +832,6 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 	      mp_ptr ptb, mp_ptr ptc, mp_ptr ptd, mp_size_t l, mp_size_t ls)
 {
   mp_limb_t a,b,c,d,e,t, i, sb,sc,sd, ob,oc,od;
-  const mp_limb_t third = THIRD;
   const mp_limb_t maskOffHalf = (~(mp_limb_t) 0) << (BITS_PER_MP_LIMB >> 1);
 
 #if WANT_ASSERT
@@ -899,9 +894,9 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
       c = t - b;
 
       /* d := d/3 */
-      d *= third;
+      d *= INVERSE_3;
       td = td - (d >> (BITS_PER_MP_LIMB - 1)) - (d*3 < d);
-      td *= third;
+      td *= INVERSE_3;
 
       /* b, d := b + d, b - d */
       t = b + d;
@@ -965,7 +960,7 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
   b = t;
   b -= c << 3;
   c = (c << 1) - b;
-  d *= third;
+  d *= INVERSE_3;
   t = b + d;
   d = b - d;
   b = t;
