@@ -652,7 +652,7 @@ case $host in
 
   IA64_PATTERN)
     abilist="64"
-    GMP_INCLUDE_MPN(ia64/default.m4)
+    GMP_INCLUDE_MPN(ia64/ia64-defs.m4)
     SPEED_CYCLECOUNTER_OBJ=ia64.lo
 
     case $host_cpu in
