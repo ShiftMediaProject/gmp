@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-11-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/amd64/dive_1.asm: Speed divisors with many factors of 2.
+
 2004-11-11  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/amd64/dive_1.asm: New file.
