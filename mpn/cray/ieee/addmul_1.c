@@ -36,6 +36,15 @@ mpn_addmul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
   mp_size_t i;
   int more_carries;
 
+  if (up == rp)
+    {
+      /* The algorithm used below cannot handle overlap.  Handle it here by
+	 making a temporary copy of the source vector, then call ourselves.  */
+      mp_limb_t xp[n];
+      MPN_COPY (xp, up, n);
+      return mpn_addmul_1 (rp, xp, n, vl);
+    }
+
   a = up[0] * vl;
   r = rp[0];
   s0 = a + r;
