@@ -51,7 +51,7 @@ MA 02111-1307, USA. */
 #endif
 
 #ifdef __cplusplus
-#include <string>
+#include <cstring>  /* for strlen */
 #endif
 
 /* Might search and replace _PROTO to __GMP_PROTO internally one day, to
@@ -3222,12 +3222,27 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #ifdef __cplusplus
 
 /* A little helper for a null-terminated __gmp_allocate_func string.
-   The destructor ensures it's freed even if an exception is thrown.  */
+   The destructor ensures it's freed even if an exception is thrown.
+   The len field is needed by the destructor, and can be used by anyone else
+   to avoid a second strlen pass over the data.
+
+   Since our input is a C string, using strlen is correct.  Perhaps it'd be
+   more C++-ish style to use std::char_traits<char>::length, but char_traits
+   isn't available in gcc 2.95.4.  */
+
 class gmp_allocated_string {
  public:
   char *str;
-  gmp_allocated_string(char *arg) { str = arg; }
-  ~gmp_allocated_string() { (*__gmp_free_func) (str, strlen(str)+1); }
+  size_t len;
+  gmp_allocated_string(char *arg)
+  {
+    str = arg;
+    len = strlen (str);
+  }
+  ~gmp_allocated_string()
+  {
+    (*__gmp_free_func) (str, len+1);
+  }
 };
 
 int __gmp_istream_set_base (std::istream &, char &, bool &, bool &);
