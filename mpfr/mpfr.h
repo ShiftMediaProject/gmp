@@ -170,7 +170,7 @@ int mpfr_number_p _PROTO((mpfr_srcptr));
 #define mpfr_set(a,b,r) mpfr_set4(a,b,r,MPFR_SIGN(b))
 #define mpfr_abs(a,b,r) mpfr_set4(a,b,r,1)
 #define mpfr_cmp(b, c) mpfr_cmp3(b, c, 1)
-#define mpfr_sgn(x) ((MPFR_NOTZERO(x)) ? MPFR_SIGN(x) : 0)
+#define mpfr_sgn(x) mpfr_cmp_ui(x,0)
 
 #define mpfr_init_set_si(x, i, rnd) \
  do { mpfr_init(x); mpfr_set_si((x), (i), (rnd)); } while (0)
