@@ -280,6 +280,26 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_gcd_finda	__MPN(gcd_finda)
 mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2]));
 
+
+/* kara uses n+1 limbs of temporary space and then recurses with the
+   balance, so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ... */
+#define MPN_KARA_MUL_N_TSIZE(n)   (2*((n)+BITS_PER_MP_LIMB))
+#define MPN_KARA_SQR_N_TSIZE(n)   (2*((n)+BITS_PER_MP_LIMB))
+
+/* toom3 uses 4*(ceil(n/3)) of temporary space and then recurses with the
+   balance either into itself or kara.  The following might be
+   overestimates. */
+#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 3*BITS_PER_MP_LIMB)
+#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 3*BITS_PER_MP_LIMB)
+
+/* need 2 so that n2>=1 */
+#define MPN_KARA_MUL_N_MINSIZE    2
+#define MPN_KARA_SQR_N_MINSIZE    2
+
+/* need 5 so that l,ls>=1 */
+#define MPN_TOOM3_MUL_N_MINSIZE   5
+#define MPN_TOOM3_SQR_N_MINSIZE   5
+
 #define mpn_kara_mul_n	__MPN(kara_mul_n)
 void mpn_kara_mul_n _PROTO((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 
