@@ -1336,14 +1336,6 @@ the result is always non-negative.
 The function @code{mpz_mod_ui} returns the remainder.
 @end deftypefun
 
-@deftypefn Macro {unsigned long int} mpz_mod2 (mpz_t @var{n})
-@deftypefnx Macro {unsigned long int} mpz_mod4 (mpz_t @var{n})
-@deftypefnx Macro {unsigned long int} mpz_mod8 (mpz_t @var{n})
-Return @var{n} mod 2, 4 or 8, respectively.  The return value is in the range
-0 to 1, 0 to 3, or 0 to 7, respectively.  These macros evaluate their argument
-more than once.
-@end deftypefn
-
 @deftypefun void mpz_divexact (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 Set @var{q} to @var{n}/@var{d}.  This function produces correct results only
 when it is known in advance that @var{d} divides @var{n}.
