@@ -201,6 +201,20 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #endif /* _CRAY */
 
 #if defined (__ia64) && W_TYPE_SIZE == 64
+/* This form encourages gcc (pre-release 3.4 at least) to emit predicated
+   "sub r=r,r" and "sub r=r,r,1", giving a 2 cycle latency.  The generic
+   code using "al<bl" arithmetically comes out making an actual 0 or 1 in a
+   register, which takes an extra cycle.  */
+#define sub_ddmmss(sh, sl, ah, al, bh, bl)      \
+  do {                                          \
+    UWtype __x;                                 \
+    __x = (al) - (bl);                          \
+    if ((al) < (bl))                            \
+      (sh) = (ah) - (bh) - 1;                   \
+    else                                        \
+      (sh) = (ah) - (bh);                       \
+    (sl) = __x;                                 \
+  } while (0)
 #if defined (__GNUC__)
 /* Do both product parts in assembly, since that gives better code with
    all gcc versions.  Some callers will just use the upper part, and in
