@@ -1012,12 +1012,15 @@ all (void)
 
   /* Tune for the integer part of mpn_divrem_2.  This will very possibly be
      a bit out for the fractional part, but that's too bad, the integer part
-     is more important. */
+     is more important.
+
+     min_size must be >=2 since nsize>=2 is required, but is set to 4 to save
+     code space if plain division is better only at size==2 or size==3. */
   {
     static struct param_t  param;
     param.name[0] = "DIVREM_2_THRESHOLD";
     param.check_size = 256;
-    param.min_size = 2;        /* nsize>=2 required */
+    param.min_size = 4;
     param.min_is_always = 1;
     param.size_extra = 2;      /* does qsize==nsize-2 divisions */
     param.stop_factor = 2.0;
