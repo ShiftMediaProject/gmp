@@ -1,3 +1,7 @@
+2000-11-01  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_GET_STR): Fix type of wsize.
+
 2000-10-31  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in [compiler switch] (sparc64-*-linux*): Remove -mvis
