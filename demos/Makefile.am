@@ -21,7 +21,7 @@
 
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-SUBDIRS = calc expr
+SUBDIRS = calc
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
