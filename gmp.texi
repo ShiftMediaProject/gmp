@@ -126,6 +126,7 @@ arithmetic library, version @value{VERSION}.
 * Rational Number Functions:: Functions for arithmetic on rational numbers.
 * Floating-point Functions::  Functions for arithmetic on floats.
 * Low-level Functions::       Fast functions for natural numbers.
+* Random Number Functions::   Functions for generating random numbers.
 * BSD Compatible Functions::  All functions found in BSD MP.
 * Custom Allocation::         How to customize the internal allocation.
 
@@ -190,7 +191,7 @@ code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
 
 There is carefully optimized assembly code for these CPUs: ARM, DEC Alpha
-21064, 21164, and 21264, AMD 29000, K6, and Athalon, HPPA 1.0 and 1.1, Intel
+21064, 21164, and 21264, AMD 29000, K6, and Athlon, HPPA 1.0 and 1.1, Intel
 Pentium, Pentium Pro/Pentium II, generic x86, Intel i960, Motorola MC68000,
 MC68020, MC88100, and MC88110, Motorola/IBM PowerPC 32 and 64, National
 NS32000, IBM POWER, MIPS R3000, R4000, SPARCv7, SuperSPARC, generic SPARCv8,
@@ -468,15 +469,21 @@ the Ultrix assembler.
 @comment  node-name,  next,  previous,  up
 @chapter MP Basics
 
-@menu
-* Random Number Functions::	How to use the random number functions.
-@end menu
-
 @cindex @file{gmp.h}
 All declarations needed to use MP are collected in the include file
 @file{gmp.h}.  It is designed to work with both C and C++ compilers.
 
+@menu
+* Nomenclature and Types::      	Which datatypes are there?
+* Function Classes::            	How the functions are organized.
+* MP Variable Conventions::     	Some rules and hints about variables.
+* MP and reentrancy::           	What about reentrancy?
+* Useful Macros and Constants::  	Convenient helpers.
+* Compatibility with older versions::	Compatibility issues.
+* Getting the Latest Version of MP::  	How to get the software.
+@end menu
 
+@node Nomenclature and Types, Function Classes, MP Basics, MP Basics
 @section Nomenclature and Types
 
 @cindex Integer
@@ -520,6 +527,7 @@ digit, only larger, and containing several digits.)  Normally a limb contains
 32 or 64 bits.  The C data type for a limb is @code{mp_limb_t}.
 
 
+@node Function Classes, MP Variable Conventions, Nomenclature and Types, MP Basics
 @section Function Classes
 
 There are six classes of functions in the MP library:
@@ -554,10 +562,12 @@ from very time-critical user programs.  These functions' names begin with
 The associated type is array of @code{mp_limb_t}.
 
 @item
-Miscellaneous functions.  Functions for setting up custom allocation.
+Miscellaneous functions.  Functions for setting up custom allocation and
+functions for generating random numbers.
 @end enumerate
 
 
+@node MP Variable Conventions, MP and reentrancy, Function Classes, MP Basics
 @section MP Variable Conventions
 
 As a general rule, all MP functions expect output arguments before input
@@ -592,6 +602,7 @@ not, however, reduce the space when a smaller number is stored in the object.
 Most of the time, this policy is best, since it avoids frequent re-allocation.
 
 
+@node MP and reentrancy, Useful Macros and Constants, MP Variable Conventions, MP Basics
 @section MP and reentrancy
 
 The MP code is reentrant and thred-safe, with some exceptions:
@@ -621,6 +632,7 @@ whatever functions set by a call to @code{mp_set_memory_functions}),
 are not reentrant, MP will not be reentrant either.
 
 
+@node Useful Macros and Constants, Compatibility with older versions, MP and reentrancy, MP Basics
 @section Useful Macros and Constants
 
 @deftypevr {Global Constant} {const int} mp_bits_per_limb
@@ -636,7 +648,16 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @end defmac
 
 
-@section Compatibility with Version 1.x
+@node Compatibility with older versions, Getting the Latest Version of MP, Useful Macros and Constants, MP Basics
+@section Compatibility with older versions
+
+@menu
+* Compatibility with Version 1.x::  	
+* Compatibility with Version 2.0.x::  
+@end menu
+
+@node    Compatibility with Version 1.x, Compatibility with Version 2.0.x, Compatibility with older versions, Compatibility with older versions
+@subsection Compatibility with Version 1.x
 
 This version of MP is upward compatible with previous versions of MP, with a
 few exceptions.
@@ -684,153 +705,19 @@ for 0^0.  (In version 1, they yielded 0.)
 @end enumerate
 
 
-@section Compatibility with Version 2.0.x
+@node  Compatibility with Version 2.0.x,  , Compatibility with Version 1.x, Compatibility with older versions
+@subsection Compatibility with Version 2.0.x
 
 This version of MP is upward compatible with version 2.0, 2.0.1, and 2.0.2.
 
 
+@node  Getting the Latest Version of MP,  , Compatibility with older versions, MP Basics
 @section Getting the Latest Version of MP
 
 The latest version of the MP library is available by at
 @samp{ftp://ftp.gnu.org/pub/gnu/gmp}.  Many sites around the world mirror
 @samp{ftp.gnu.org}; please use a mirror site near you.
 
-
-@node Random Number Functions,,, MP Basics
-@comment  node-name,  next,  previous,  up
-@cindex Random Number Functions
-@section Random Number Functions
-
-There are two groups of random number functions in GNU MP; older
-functions that call C library random number generators, rely on a global
-state, and aren't very random; and newer functions that don't have these
-problems.  The newer functions are self-contained, they accept a random
-state parameter that supplants global state, and generate good random
-numbers.
-
-The random state parameter is of the type
-@code{__gmp_rand_state_struct}.  It must be initialized by a call to one
-of the @code{gmp_rand_init} functions (@ref{Random State
-Initialization}).  Each of the @code{gmp_rand_init} functions takes a
-seed parameter, which quality and size to some extent determines the
-``randomness'' of the generated numbers.
-
-The size of the seed determines the number of different sequences of
-random numbers that is possible to generate.  The ``quality'' of the
-seed is the randomness of a given seed compared to the previous seed
-used and affects the randomness of separate number sequences.
-
-On some systems there is a special device, often called
-@code{/dev/random}, which provides a source of somewhat random numbers.
-The traditional method is to use the current system time to produce a
-seed.  One has to be careful when using the current time though.  If the
-application for instance seeds the random functions very often, say
-several times per second, and the resolution of the system clock is
-comparatively low, say one second, we end up with the same sequence of
-numbers until the system clock ticks.
-
-(FIXME: The following is true when speaking of the randomness
-``between'' two sequences, but not true regarding the randomness of
-numbers in @emph{one} sequence.  Remove or rewrite.)
-
-@quotation
-If good uniform random numbers are required, the seed variable needs to
-be set to a value considerably greater than the largest required random
-number.
-@end quotation
-
-The algorithm for assigning seed is critical if the generated random
-numbers are to be used for important applications, such as generating
-cryptographic keys.  
-
-(FIXME: The more often you seed, the more dependant you are of the
-source of the seed.  Only when the seed source is better than the
-algorithm used by the GMP function is the following wise to say.)
-
-@quotation
-One should also avoid generating multiple random numbers from the same
-seed for such applications, since a sequence of random numbers generated
-from the same seed are not truly independent.
-@end quotation
-
-
-@menu
-* Random State Initialization::
-@end menu
-
-@node Random State Initialization,,,Random Number Functions
-@section Random State Initialization
-
-See @ref{Random Number Functions} for a discussion on how to choose the
-initial seed value passed to these functions.
-
-@deftypefun void gmp_rand_clear (gmp_rand_state @var{state})
-Free all memory occupied by @var{state}.  Make sure to call this
-function for all @code{gmp_rand_state} variables when you are done with
-them.
-@end deftypefun
-
-@deftypefun int gmp_rand_init (gmp_rand_state @var{state}, gmp_rand_algorithm @var{alg}, unsigned long int @var{size}, mpz_t @var{seed})
-@deftypefunx int gmp_rand_init_ui (gmp_rand_state @var{state}, gmp_rand_algorithm @var{alg}, unsigned long int @var{size}, unsigned long int @var{seed})
-
-Initialize random state variable @var{state}.  
-
-@var{alg} denotes what algorithm to use for random number generation.
-Use one of
-@itemize @minus
-@item GMP_RAND_ALG_LC -- Linear congruental.
-
-A fast generator defined by @math{X = (aX + c) mod m}.
-
-a, c, and m are picked from a table where the modulus (m) is a power of
-2 and the multiplier is congruent to 5 (mod 8).  The pick is based on
-parameter @var{size}.  Schemes up to and including 128 bits have all
-passed the spectral test, as defined in [D. Knuth, "The Art of Computer
-Programming: Volume 2, Seminumerical Algorithms", Third Edition, Addison
-Wesley, 1998, p.93.]
-
-@item GMP_RAND_ALG_BBS -- Blum, Blum, and Shub.
-@end itemize
-
-If @var{alg} is 0 or GMP_RAND_ALG_DEFAULT, the default algorithm is
-used.  The default algorithm is typically a fast algorithm like the
-Linear Congruental.
-
-@var{size} is the size of the largest good quality random number to be
-generated, expressed in number of bits.  If the random generation
-functions are asked for a bigger random number than indicated by this
-parameter, two or more numbers of @var{size} bits will be generated and
-concatinated, resulting in a ``bad'' random number.  This can be used to
-generate big random numbers relatively cheap if the quality of
-randomness isn't of great importance.
-
-@var{seed} is the initial random seed.  The function
-@code{gmp_rand_init_ui} takes the @var{seed} as an unsigned long int
-rather than as an mpz_t.
-
-Returns 0 on success and 1 on failure (i.e. when the algorithm chosen is
-not supported).
-
-When you're done with a @var{state} variable, call @code{gmp_rand_clear}
-to deallocate any memory allocated by this function.
-@end deftypefun
-
-@deftypefun void gmp_rand_init_lc (gmp_rand_state @var{state}, unsigned long int @var{size}, mpz_t @var{seed}, mpz_t @var{a}, unsigned long int @var{c}, mpz_t @var{m})
-@deftypefunx void gmp_rand_init_lc_ui (gmp_rand_state @var{state}, unsigned long int @var{size}, unsigned long int @var{seed}, mpz_t @var{a}, unsigned long int @var{c}, mpz_t @var{m})
-
-Initialize random state variable @var{state} with given linear
-congruental scheme.
-
-Parameters @var{size} and @var{seed} are the same as for function
-@code{gmp_rand_init}.  The function @code{gmp_rand_init_lc_ui} takes the
-@var{seed} as an unsigned long int rather than as an mpz_t.
-
-Parameters @var{a}, @var{c}, and @var{m} are the multiplier, adder, and
-modulus for the linear congruential scheme used, respectively.
-
-When you're done with a @var{state} variable, call @code{gmp_rand_clear}
-to deallocate any memory allocated by this function.
-@end deftypefun
 
 @node Reporting Bugs, Integer Functions, MP Basics, Top
 @comment  node-name,  next,  previous,  up
@@ -1831,7 +1718,8 @@ when @var{max_size} is negative.
 This function is obsolete.  Use @code{mpz_rrandomb} instead.
 @end deftypefun
 
-@deftypefun void mpz_urandomb (mpz_t @var{rop}, unsigned long int @var{n}, gmp_rand_state @var{state})
+@deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_rand_state @var{state}, 
+unsigned long int @var{n})
 Generate a uniform random integer in the range
 @ifinfo
 0 to 2^@var{n} @minus{} 1,
@@ -1849,28 +1737,22 @@ before invoking this function.
 @end deftypefun
 
 
-@ignore
-
-FIXME: Should GMP have this function?  The problem lies in implementing
-the function efficient.  If n != modulus of chosen LC scheme, it'll cost
-a real division and multiplication for each generated number.  Maybe the
-best solution is to document this and let the user decide?
-
-@deftypefun void mpz_urandomm (mpz_t @var{rop}, mpz_t @var{n}, mpz_t @var{seed})
-Generate a uniform random integer in the range
+@deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_rand_state @var{state}, 
+mpz_t @var{n})
+Generate a uniform random integer in the range 0 to
 @ifinfo
-0 to @var{n}
+@var{n} @minus{} 1, inclusive.
 @end ifinfo
 @iftex
 @tex
-0 to $n-1$
+$n-1$, inclusive.
 @end tex
 @end iftex
 
-The variable @var{seed} is used as a seed for generating the random number.
-It is updated with a new seed.
+The variable @var{state} must be initialized by calling one of the
+@code{gmp_rand_init} functions (@ref{Random State Initialization})
+before invoking this function.
 @end deftypefun
-@end ignore
 
 @deftypefun void mpz_rrandomb (mpz_t @var{rop}, unsigned long int @var{n}, mpz_t @var{seed})
 Generate a random integer with long strings of zeros and ones in the
@@ -2586,7 +2468,7 @@ Return the number of bytes read, or if an error occurred, return 0.
 @c @end deftypefun
 
 
-@node Miscellaneous Float Functions, , I/O of Floats, Floating-point Functions
+@node Miscellaneous Float Functions,  , I/O of Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 @cindex Miscellaneous float functions
@@ -2620,7 +2502,7 @@ before invoking this function.
 @c releases.}
 @c @end deftypefun
 
-@node Low-level Functions, BSD Compatible Functions, Floating-point Functions, Top
+@node Low-level Functions, Random Number Functions, Floating-point Functions, Top
 @comment  node-name,  next,  previous,  up
 @chapter Low-level Functions
 @cindex Low-level functions
@@ -3002,6 +2884,8 @@ The generated random numbers are intended for testing the correctness of the
 implementation of the @code{mpn} routines.
 @end deftypefun
 
+@ignore
+FIXME: Rename to gmp_rand_getraw()
 @deftypefun void mpn_rawrandom (mp_ptr @var{rp}, unsigned long int @var{nbits}, gmp_rand_state @var{state})
 Generate a universally distributed random number of size @var{nbits},
 and store it at @var{rp}.
@@ -3010,7 +2894,7 @@ The variable @var{state} must be initialized by calling one of the
 @code{gmp_rand_init} functions (@ref{Random State Initialization})
 before invoking this function.
 @end deftypefun
-
+@end ignore
 
 @deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, unsigned long int @var{size})
 Count the number of set bits in @{@var{s1p}, @var{size}@}.
@@ -3026,7 +2910,161 @@ Return non-zero iff @{@var{s1p}, @var{size}@} is a perfect square.
 @end deftypefun
 
 
-@node BSD Compatible Functions, Custom Allocation, Low-level Functions, Top
+@node  Random Number Functions, BSD Compatible Functions, Low-level Functions, Top
+@chapter Random Number Functions
+@cindex Random Number Functions
+
+There are two groups of random number functions in GNU MP; older
+functions that call C library random number generators, rely on a global
+state, and aren't very random; and newer functions that don't have these
+problems.  The newer functions are self-contained, they accept a random
+state parameter that supplants global state, and generate good random
+numbers.
+
+The random state parameter is of the type @code{gmp_rand_state}.  It must be
+initialized by a call to one of the @code{gmp_rand_init} functions (@ref{Random
+State Initialization}).  The initial seed is set using one of the
+@code{gmp_rand_seed} functions (@ref{Random State Initialization}).
+
+The size of the seed determines the number of different sequences of
+random numbers that is possible to generate.  The ``quality'' of the
+seed is the randomness of a given seed compared to the previous seed
+used and affects the randomness of separate number sequences.
+
+The algorithm for assigning seed is critical if the generated random numbers
+are to be used for important applications, such as generating cryptographic
+keys.
+
+The traditional method is to use the current system time for seeding.  One has
+to be careful when using the current time though.  If the application seeds the
+random functions very often, say several times per second, and the resolution
+of the system clock is comparatively low, like one second, the same sequence of
+numbers will be generated until the system clock ticks.  Furthermore, the
+current system time is quite easy to guess, so a system depending on any
+unpredictability of the random number sequence should absolutely not use that
+as its only source for a seed value.
+
+On some systems there is a special device, often called @code{/dev/random},
+which provides a source of somewhat random numbers more usable as seed.
+
+@menu
+* Random State Initialization::	How to initialize a random state.
+@end menu
+
+@node  Random State Initialization,  , Random Number Functions, Random Number Functions
+@section Random State Initialization
+
+See @ref{Random Number Functions} for a discussion on how to choose the
+initial seed value passed to these functions.
+
+@deftypefun int gmp_rand_init (gmp_rand_state @var{state}, unsigned long int 
+@var{size}, gmp_rand_algorithm @var{alg}) 
+Initialize random state variable @var{state}.
+
+@var{alg} denotes what algorithm to use for random number generation.
+Use one of
+@itemize @minus
+@item GMP_RAND_ALG_LC -- Linear congruential.
+
+A fast generator defined by @math{X = (aX + c) mod m}.
+
+a, c, and m are picked from a table where the modulus (m) is a power of 2 and
+the multiplier is congruent to 5 (mod 8).  All schemes in the table have passed
+the spectral test, as defined by [D. Knuth, "The Art of Computer Programming:
+Volume 2, Seminumerical Algorithms", Third Edition, Addison Wesley, 1998,
+p.93.].  The choice is based on the @var{size} parameter.  The maximum
+@var{size} supported by this algorithm is 128.  If you need bigger random
+numbers, use your own scheme and call one of the other @code{gmp_rand_init}
+functions.
+
+@ignore
+@item GMP_RAND_ALG_BBS -- Blum, Blum, and Shub.
+@end ignore
+@end itemize
+
+If @var{alg} is 0 or GMP_RAND_ALG_DEFAULT, the default algorithm is
+used.  The default algorithm is typically a fast algorithm like the
+linear congruential.
+
+@var{size} is the size of the largest good quality random number to be
+generated, expressed in number of bits.  If the random generation
+functions are asked for a bigger random number than indicated by this
+parameter, two or more numbers of @var{size} bits will be generated and
+concatenated, resulting in a ``bad'' random number.  This can be used to
+generate big random numbers relatively cheap if the quality of
+randomness isn't of great importance.
+
+When you're done with a @var{state} variable, call @code{gmp_rand_clear}
+to deallocate any memory allocated by this function.
+
+@code{gmp_rand_init} may set the following bits in @var{gmp_errno}:
+@c FIXME: gmp_errno is printed in uppercase.  That's wrong.
+@itemize
+@item GMP_ERROR_UNSUPPORTED_ARGUMENT -- @var{alg} is unsupported
+@item GMP_ERROR_INVALID_ARGUMENT -- @var{size} is too big
+@end itemize
+@end deftypefun
+
+
+@deftypefun void gmp_rand_init_lc (gmp_rand_state @var{state}, mpz_t @var{a}, 
+unsigned long int @var{c}, mpz_t @var{m})
+
+Initialize random state variable @var{state} with given linear congruential
+scheme.
+
+Parameters @var{a}, @var{c}, and @var{m} are the multiplier, adder, and modulus
+for the linear congruential scheme to use, respectively.
+
+When you're done with a @var{state} variable, call @code{gmp_rand_clear}
+to deallocate any memory allocated by this function.
+@end deftypefun
+
+@deftypefun void gmp_rand_init_lc_2exp (gmp_rand_state @var{state}, mpz_t @var{a}, 
+unsigned long int @var{c}, unsigned long int @var{m2exp})
+
+Initialize random state variable @var{state} with given linear congruential
+scheme.
+
+Parameters @var{a}, @var{c}, and @var{m2exp} are the multiplier, adder, and
+modulus for the linear congruential scheme to use, respectively.  The modulus
+is expressed as a power of 2, so that 
+@ifinfo
+@var{m} = 2^@var{m2exp}.
+@end ifinfo
+@iftex
+@tex
+$m = 2^{m2exp}$.
+@end tex
+@end iftex
+
+The least significant bits of a random number generated by the linear
+congruential algorithm where the modulus is a power of two are not very random.
+Therefore, the lower half of a random number generated by an LC scheme
+initialized with this function is discarded.  Thus, the size of a random number
+is @var{m2exp} / 2 (rounded upwards) bits when this function has been used for
+initializing the random state.
+
+When you're done with a @var{state} variable, call @code{gmp_rand_clear}
+to deallocate any memory allocated by this function.
+@end deftypefun
+
+@deftypefun void gmp_rand_seed (gmp_rand_state @var{state}, mpz_t @var{seed})
+@deftypefunx void gmp_rand_seed_ui (gmp_rand_state @var{state}, unsigned long int @var{seed})
+
+Set the initial seed value.
+
+Parameter @var{seed} is the initial random seed.  The function
+@code{gmp_rand_seed_ui} takes the @var{seed} as an unsigned long int rather
+than as an mpz_t.
+@end deftypefun
+
+@deftypefun void gmp_rand_clear (gmp_rand_state @var{state})
+Free all memory occupied by @var{state}.  Make sure to call this
+function for all @code{gmp_rand_state} variables when you are done with
+them.
+@end deftypefun
+
+@node BSD Compatible Functions, Custom Allocation, Random Number Functions, Top
 @comment  node-name,  next,  previous,  up
 @chapter Berkeley MP Compatible Functions
 @cindex BSD MP compatible functions
@@ -3148,6 +3186,8 @@ function, @code{malloc} by default.
 De-allocate, the space used by @var{operand}.  @strong{This function should
 only be passed a value returned by @code{itom} or @code{xtom}.}
 @end deftypefun
+
+
 
 @node Custom Allocation, Contributors, BSD Compatible Functions, Top
 @comment  node-name,  next,  previous,  up
