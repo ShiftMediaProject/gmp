@@ -1,3 +1,20 @@
+2001-07-10  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in (__GMPN_COPY): Add form to help gcc on power and powerpc.
+	* gmp-impl.h (MPN_COPY_INCR, MPN_COPY_DECR, MPN_ZERO): Ditto.
+	* mpn/powerpc64/copyi.asm, mpn/powerpc64/copyd.asm: Remove files.
+	
+	* mpz/tdiv_ui.c: Eliminate some local variables (seems to save code on
+	i386 gcc 2.95.x), remove a bogus comment about quotient.
+
+	* errno.c, gmp-impl.h (__gmp_exception, __gmp_divide_by_zero,
+	__gmp_sqrt_of_negative): New functions.
+	* gmp-impl.h (GMP_ERROR, DIVIDE_BY_ZERO, SQRT_OF_NEGATIVE): Use them.
+
+	* gmp-h.in (__GMPN_ADD_1) [x86]: Avoid a bug in egcs 2.91.66.
+
+	* randclr.c, randraw.c: Use ASSERT(0) for unrecognised algorithms.
+
 2001-07-07  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (powerpc*-*-*): Use -no-cpp-precomp for Darwin.
