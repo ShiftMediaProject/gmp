@@ -202,7 +202,6 @@ check_vfprintf (const char *want, const char *fmt, va_list ap)
 void
 check_vsnprintf (const char *want, const char *fmt, va_list ap)
 {
-#if HAVE_VSNPRINTF
   char    got[MAX_OUTPUT+1];
   int     ret, got_len, want_len;
   size_t  bufsize;
@@ -254,13 +253,11 @@ check_vsnprintf (const char *want, const char *fmt, va_list ap)
             }
         }
     }
-#endif /* HAVE_VSNPRINTF */
 }
 
 void
 check_vasprintf (const char *want, const char *fmt, va_list ap)
 {
-#if HAVE_VSNPRINTF
   char  *got;
   int   got_len, want_len;
   
@@ -278,7 +275,6 @@ check_vasprintf (const char *want, const char *fmt, va_list ap)
       abort ();
     }
   (*__gmp_free_func) (got, strlen(got)+1);
-#endif /* HAVE_VSNPRINTF */
 }
 
 void
@@ -749,6 +745,36 @@ check_misc (void)
   check_one ("12345     ", "%*Zd", -10, z);
   check_one ("12345 and 678", "%Zd and %d", z, 678);
   check_one ("12345,1,12345,2,12345", "%Zd,%d,%Zd,%d,%Zd", z, 1, z, 2, z);
+
+  /* from the glibc info docs */
+  mpz_set_si (z, 0L);
+  check_one ("|    0|0    |   +0|+0   |    0|00000|     |   00|0|",
+             "|%5Zd|%-5Zd|%+5Zd|%+-5Zd|% 5Zd|%05Zd|%5.0Zd|%5.2Zd|%Zd|",
+             /**/ z,    z,    z,     z,    z,    z,     z,     z,  z);
+  mpz_set_si (z, 1L);
+  check_one ("|    1|1    |   +1|+1   |    1|00001|    1|   01|1|",
+             "|%5Zd|%-5Zd|%+5Zd|%+-5Zd|% 5Zd|%05Zd|%5.0Zd|%5.2Zd|%Zd|",
+             /**/ z,    z,    z,     z,    z,    z,     z,     z,  z);
+  mpz_set_si (z, -1L);
+  check_one ("|   -1|-1   |   -1|-1   |   -1|-0001|   -1|  -01|-1|",
+             "|%5Zd|%-5Zd|%+5Zd|%+-5Zd|% 5Zd|%05Zd|%5.0Zd|%5.2Zd|%Zd|",
+             /**/ z,    z,    z,     z,    z,    z,     z,     z,  z);
+  mpz_set_si (z, 100000L);
+  check_one ("|100000|100000|+100000|+100000| 100000|100000|100000|100000|100000|",
+             "|%5Zd|%-5Zd|%+5Zd|%+-5Zd|% 5Zd|%05Zd|%5.0Zd|%5.2Zd|%Zd|",
+             /**/ z,    z,    z,     z,    z,    z,     z,     z,  z);
+  mpz_set_si (z, 0L);
+  check_one ("|    0|    0|    0|    0|    0|    0|  00000000|",
+             "|%5Zo|%5Zx|%5ZX|%#5Zo|%#5Zx|%#5ZX|%#10.8Zx|",
+             /**/ z,   z,   z,    z,    z,    z,       z);
+  mpz_set_si (z, 1L);
+  check_one ("|    1|    1|    1|   01|  0x1|  0X1|0x00000001|",
+             "|%5Zo|%5Zx|%5ZX|%#5Zo|%#5Zx|%#5ZX|%#10.8Zx|",
+             /**/ z,   z,   z,    z,    z,    z,       z);
+  mpz_set_si (z, 100000L);
+  check_one ("|303240|186a0|186A0|0303240|0x186a0|0X186A0|0x000186a0|",
+             "|%5Zo|%5Zx|%5ZX|%#5Zo|%#5Zx|%#5ZX|%#10.8Zx|",
+             /**/ z,   z,   z,    z,    z,    z,       z);
 
   mpz_clear (z);
   mpf_clear (f);
