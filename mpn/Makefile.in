@@ -182,7 +182,10 @@ OFILES = @mpn_objects@
 #
 EXTRA_LTLIBRARIES = libdummy.la
 nodist_libdummy_la_SOURCES = \
-  add.c add_1.c add_n.c addmul_1.c and_n.c andn_n.c bdivmod.c		    \
+  add.c add_1.c add_n.c							    \
+  addmul_1.c addmul_2.c addmul_3.c addmul_4.c addmul_5.c addmul_6.c	    \
+  addmul_7.c addmul_8.c							    \
+  and_n.c andn_n.c bdivmod.c						    \
   cmp.c com_n.c copyd.c copyi.c						    \
   dc_divrem_n.c dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c   \
   dump.c fib2_ui.c gcd.c						    \
@@ -246,12 +249,14 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libdummy_la_LDFLAGS =
 libdummy_la_LIBADD =
 nodist_libdummy_la_OBJECTS = add$U.lo add_1$U.lo add_n$U.lo \
-	addmul_1$U.lo and_n$U.lo andn_n$U.lo bdivmod$U.lo cmp$U.lo \
-	com_n$U.lo copyd$U.lo copyi$U.lo dc_divrem_n$U.lo dive_1$U.lo \
-	diveby3$U.lo divis$U.lo divrem$U.lo divrem_1$U.lo divrem_2$U.lo \
-	dump$U.lo fib2_ui$U.lo gcd$U.lo gcd_finda$U.lo gcd_1$U.lo \
-	gcdext$U.lo get_str$U.lo hamdist$U.lo invert_limb$U.lo \
-	ior_n$U.lo iorn_n$U.lo jacbase$U.lo lshift$U.lo mod_1$U.lo \
+	addmul_1$U.lo addmul_2$U.lo addmul_3$U.lo addmul_4$U.lo \
+	addmul_5$U.lo addmul_6$U.lo addmul_7$U.lo addmul_8$U.lo \
+	and_n$U.lo andn_n$U.lo bdivmod$U.lo cmp$U.lo com_n$U.lo \
+	copyd$U.lo copyi$U.lo dc_divrem_n$U.lo dive_1$U.lo diveby3$U.lo \
+	divis$U.lo divrem$U.lo divrem_1$U.lo divrem_2$U.lo dump$U.lo \
+	fib2_ui$U.lo gcd$U.lo gcd_finda$U.lo gcd_1$U.lo gcdext$U.lo \
+	get_str$U.lo hamdist$U.lo invert_limb$U.lo ior_n$U.lo \
+	iorn_n$U.lo jacbase$U.lo lshift$U.lo mod_1$U.lo \
 	mod_34lsub1$U.lo mode1o$U.lo mul$U.lo mul_1$U.lo mul_2$U.lo \
 	mul_fft$U.lo mul_n$U.lo mul_basecase$U.lo nand_n$U.lo \
 	nior_n$U.lo perfsqr$U.lo popcount$U.lo pre_divrem_1$U.lo \
@@ -336,6 +341,20 @@ add_n_.c: add_n.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add_n.c; then echo $(srcdir)/add_n.c; else echo add_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_n_.c || rm -f add_n_.c
 addmul_1_.c: addmul_1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_1.c; then echo $(srcdir)/addmul_1.c; else echo addmul_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_1_.c || rm -f addmul_1_.c
+addmul_2_.c: addmul_2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_2.c; then echo $(srcdir)/addmul_2.c; else echo addmul_2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_2_.c || rm -f addmul_2_.c
+addmul_3_.c: addmul_3.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_3.c; then echo $(srcdir)/addmul_3.c; else echo addmul_3.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_3_.c || rm -f addmul_3_.c
+addmul_4_.c: addmul_4.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_4.c; then echo $(srcdir)/addmul_4.c; else echo addmul_4.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_4_.c || rm -f addmul_4_.c
+addmul_5_.c: addmul_5.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_5.c; then echo $(srcdir)/addmul_5.c; else echo addmul_5.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_5_.c || rm -f addmul_5_.c
+addmul_6_.c: addmul_6.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_6.c; then echo $(srcdir)/addmul_6.c; else echo addmul_6.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_6_.c || rm -f addmul_6_.c
+addmul_7_.c: addmul_7.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_7.c; then echo $(srcdir)/addmul_7.c; else echo addmul_7.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_7_.c || rm -f addmul_7_.c
+addmul_8_.c: addmul_8.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/addmul_8.c; then echo $(srcdir)/addmul_8.c; else echo addmul_8.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > addmul_8_.c || rm -f addmul_8_.c
 and_n_.c: and_n.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/and_n.c; then echo $(srcdir)/and_n.c; else echo and_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > and_n_.c || rm -f and_n_.c
 andn_n_.c: andn_n.c $(ANSI2KNR)
@@ -467,19 +486,22 @@ xnor_n_.c: xnor_n.c $(ANSI2KNR)
 xor_n_.c: xor_n.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xor_n.c; then echo $(srcdir)/xor_n.c; else echo xor_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xor_n_.c || rm -f xor_n_.c
 add_.$(OBJEXT) add_.lo add_1_.$(OBJEXT) add_1_.lo add_n_.$(OBJEXT) \
-add_n_.lo addmul_1_.$(OBJEXT) addmul_1_.lo and_n_.$(OBJEXT) and_n_.lo \
-andn_n_.$(OBJEXT) andn_n_.lo bdivmod_.$(OBJEXT) bdivmod_.lo \
-cmp_.$(OBJEXT) cmp_.lo com_n_.$(OBJEXT) com_n_.lo copyd_.$(OBJEXT) \
-copyd_.lo copyi_.$(OBJEXT) copyi_.lo dc_divrem_n_.$(OBJEXT) \
-dc_divrem_n_.lo dive_1_.$(OBJEXT) dive_1_.lo diveby3_.$(OBJEXT) \
-diveby3_.lo divis_.$(OBJEXT) divis_.lo divrem_.$(OBJEXT) divrem_.lo \
-divrem_1_.$(OBJEXT) divrem_1_.lo divrem_2_.$(OBJEXT) divrem_2_.lo \
-dump_.$(OBJEXT) dump_.lo fib2_ui_.$(OBJEXT) fib2_ui_.lo \
-fib_table_.$(OBJEXT) fib_table_.lo gcd_.$(OBJEXT) gcd_.lo \
-gcd_1_.$(OBJEXT) gcd_1_.lo gcd_finda_.$(OBJEXT) gcd_finda_.lo \
-gcdext_.$(OBJEXT) gcdext_.lo get_str_.$(OBJEXT) get_str_.lo \
-hamdist_.$(OBJEXT) hamdist_.lo invert_limb_.$(OBJEXT) invert_limb_.lo \
-ior_n_.$(OBJEXT) ior_n_.lo iorn_n_.$(OBJEXT) iorn_n_.lo \
+add_n_.lo addmul_1_.$(OBJEXT) addmul_1_.lo addmul_2_.$(OBJEXT) \
+addmul_2_.lo addmul_3_.$(OBJEXT) addmul_3_.lo addmul_4_.$(OBJEXT) \
+addmul_4_.lo addmul_5_.$(OBJEXT) addmul_5_.lo addmul_6_.$(OBJEXT) \
+addmul_6_.lo addmul_7_.$(OBJEXT) addmul_7_.lo addmul_8_.$(OBJEXT) \
+addmul_8_.lo and_n_.$(OBJEXT) and_n_.lo andn_n_.$(OBJEXT) andn_n_.lo \
+bdivmod_.$(OBJEXT) bdivmod_.lo cmp_.$(OBJEXT) cmp_.lo com_n_.$(OBJEXT) \
+com_n_.lo copyd_.$(OBJEXT) copyd_.lo copyi_.$(OBJEXT) copyi_.lo \
+dc_divrem_n_.$(OBJEXT) dc_divrem_n_.lo dive_1_.$(OBJEXT) dive_1_.lo \
+diveby3_.$(OBJEXT) diveby3_.lo divis_.$(OBJEXT) divis_.lo \
+divrem_.$(OBJEXT) divrem_.lo divrem_1_.$(OBJEXT) divrem_1_.lo \
+divrem_2_.$(OBJEXT) divrem_2_.lo dump_.$(OBJEXT) dump_.lo \
+fib2_ui_.$(OBJEXT) fib2_ui_.lo fib_table_.$(OBJEXT) fib_table_.lo \
+gcd_.$(OBJEXT) gcd_.lo gcd_1_.$(OBJEXT) gcd_1_.lo gcd_finda_.$(OBJEXT) \
+gcd_finda_.lo gcdext_.$(OBJEXT) gcdext_.lo get_str_.$(OBJEXT) \
+get_str_.lo hamdist_.$(OBJEXT) hamdist_.lo invert_limb_.$(OBJEXT) \
+invert_limb_.lo ior_n_.$(OBJEXT) ior_n_.lo iorn_n_.$(OBJEXT) iorn_n_.lo \
 jacbase_.$(OBJEXT) jacbase_.lo lshift_.$(OBJEXT) lshift_.lo \
 mod_1_.$(OBJEXT) mod_1_.lo mod_34lsub1_.$(OBJEXT) mod_34lsub1_.lo \
 mode1o_.$(OBJEXT) mode1o_.lo mp_bases_.$(OBJEXT) mp_bases_.lo \
