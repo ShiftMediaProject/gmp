@@ -100,6 +100,39 @@ MA 02111-1307, USA. */
    Please add support for more CPUs here, or improve the current support
    for the CPUs below!  */
 
+#if defined (__alpha) && W_TYPE_SIZE == 64
+#if defined (__GNUC__)
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    UDItype __m0 = (m0), __m1 = (m1);					\
+    __asm__ ("umulh %r1,%2,%0"						\
+	     : "=r" (ph)						\
+	     : "%rJ" (m0), "rI" (m1));					\
+    (pl) = __m0 * __m1;							\
+  } while (0)
+#define UMUL_TIME 18
+#ifndef LONGLONG_STANDALONE
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do { UDItype __di;							\
+    __di = __mpn_invert_normalized_limb (d);				\
+    udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
+  } while (0)
+#define UDIV_NEEDS_NORMALIZATION 1
+#define UDIV_TIME 220
+#define count_leading_zeros(count, x) \
+  ((count) = __count_leading_zeros (x))
+#endif /* LONGLONG_STANDALONE */
+#else /* ! __GNUC__ */
+#include <machine/builtins.h>
+#define umul_ppmm(ph, pl, m0, m1) \
+  do {									\
+    UDItype __m0 = (m0), __m1 = (m1);					\
+    (ph) = __UMULH (m0, m1);						\
+    (pl) = __m0 * __m1;							\
+  } while (0)
+#endif
+#endif /* __alpha */
+
 #if defined (__GNUC__) && !defined (NO_ASM)
 
 /* We sometimes need to clobber "cc" with gcc2, but that would not be
@@ -141,29 +174,6 @@ MA 02111-1307, USA. */
 	     : "r" (x))
 #define COUNT_LEADING_ZEROS_0 32
 #endif /* __a29k__ */
-
-#if defined (__alpha) && W_TYPE_SIZE == 64
-#define umul_ppmm(ph, pl, m0, m1) \
-  do {									\
-    UDItype __m0 = (m0), __m1 = (m1);					\
-    __asm__ ("umulh %r1,%2,%0"						\
-	     : "=r" (ph)						\
-	     : "%rJ" (m0), "rI" (m1));					\
-    (pl) = __m0 * __m1;							\
-  } while (0)
-#define UMUL_TIME 18
-#ifndef LONGLONG_STANDALONE
-#define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UDItype __di;							\
-    __di = __mpn_invert_normalized_limb (d);				\
-    udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
-  } while (0)
-#define UDIV_NEEDS_NORMALIZATION 1
-#define UDIV_TIME 220
-#define count_leading_zeros(count, x) \
-  ((count) = __count_leading_zeros (x))
-#endif /* LONGLONG_STANDALONE */
-#endif /* __alpha */
 
 #if defined (__arm__) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
