@@ -43,6 +43,7 @@ MA 02111-1307, USA. */
 #define GCD_ACCEL_THRESHOLD            3
 #define GCDEXT_THRESHOLD              45
 
+#define USE_PREINV_DIVREM_1            0
 #define USE_PREINV_MOD_1               1  /* (native) */
 #define DIVREM_2_THRESHOLD             0
 #define DIVEXACT_1_THRESHOLD           0
