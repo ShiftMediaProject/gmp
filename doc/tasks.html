@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 18 Oct 2003.  An up-to-date version is available at
+  This file current as of 19 Oct 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -702,23 +702,14 @@ MA 02111-1307, USA.
 
 <h4>C++</h4>
 <ul>
-<li> <code>gmp_randclass r(gmp_randinit_lc_2exp_size)</code>: Currently
-     silently ignores failure from the C routine (if the size passed is too
-     big).  Some sort of exception might be a C++-ish way to go.
 <li> <code>mp?_class(string)</code>: Call libgmpxx functions
      <code>mp?_set_str_cxxlocale</code>, in preparation for using aspects of
      the C++ global locale, instead of the C one.  Applications will need to
      be recompiled to take advantage of this.
-<li> <code>mpz_class(string)</code> etc: Currently silently sets zero or
-     garbage or something if the string is invalid.  Some sort of exception
-     might be a C++-ish way of keeping programs out of trouble.
 <li> <code>mpf_class(string)</code>: Use the C++ global locale decimal point,
      rather than the C one.
 <li> <code>mp?_class(string)</code>: Use the <code>ctype&lt;char&gt;</code>
      facet of the global locale for whitespace recognition.
-<li> <code>operator&gt;&gt;</code>: Use the <code>ctype&lt;char&gt;</code>
-     facet of the stream locale for whitespace recognition.
-<li> <code>mpf_t operator&gt;&gt;</code>: Use the stream locale decimal point.
 <li> <code>operator&gt;&gt;</code>: Make a test program to see that we accept
      and reject the same as the standard <code>operator&gt;&gt;</code>.  Kevin
      has made a start on this.
