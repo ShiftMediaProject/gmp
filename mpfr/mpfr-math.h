@@ -19,6 +19,13 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#if (defined (__arm__) && (defined (__ARMWEL__) || defined (__linux__)))
+/* little endian ARM */
+#define _MPFR_NAN_BYTES  { 0, 0, 0xf8, 0x7f, 0, 0, 0, 0 }
+#define _MPFR_INFP_BYTES { 0, 0, 0x80, 0x7f }
+#define _MPFR_INFM_BYTES { 0, 0, 0x80, 0xff }
+
+#else
 #if defined (_LITTLE_ENDIAN) || defined (__LITTLE_ENDIAN__)		\
  || defined (__alpha)							\
  || (defined (__arm__) && (defined (__ARMWEL__) || defined (__linux__)))\
@@ -34,6 +41,7 @@ MA 02111-1307, USA. */
 #define _MPFR_NAN_BYTES  { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f }
 #define _MPFR_INFP_BYTES { 0, 0, 0x80, 0x7f }
 #define _MPFR_INFM_BYTES { 0, 0, 0x80, 0xff }
+
 #else
 #if defined (_BIG_ENDIAN) || defined (__BIG_ENDIAN__)			\
  || defined (__mc68000__) || defined (__mc68020__) || defined (__m68k__)\
@@ -55,6 +63,7 @@ MA 02111-1307, USA. */
 #define _MPFR_NAN_BYTES  { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 }
 #define _MPFR_INFP_BYTES { 0x7f, 0x80, 0, 0 }
 #define _MPFR_INFM_BYTES { 0xff, 0x80, 0, 0 }
+#endif
 #endif
 #endif
 
