@@ -1,6 +1,6 @@
 /* mpf_sub -- Subtract two floats.
 
-Copyright 1993, 1994, 1995, 1996, 1999, 2000, 2001, 2002 Free Software
+Copyright 1993, 1994, 1995, 1996, 1999, 2000, 2001, 2002, 2004 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -105,26 +105,29 @@ mpf_sub (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
 
 		  if (usize == 0)
 		    {
+                      /* u cancels high limbs of v, result is rest of v */
+		      negate ^= 1;
+                    cancellation:
+                      /* strip high zeros before truncating to prec */
+                      while (vsize != 0 && vp[vsize - 1] == 0)
+                        {
+                          vsize--;
+                          exp--;
+                        }
 		      if (vsize > prec)
 			{
 			  vp += vsize - prec;
 			  vsize = prec;
 			}
-		      rsize = vsize;
-		      tp = (mp_ptr) vp;
-		      negate ^= 1;
-		      goto normalize;
+                      MPN_COPY_INCR (rp, vp, vsize);
+                      rsize = vsize;
+                      goto done;
 		    }
 		  if (vsize == 0)
 		    {
-		      if (usize > prec)
-			{
-			  up += usize - prec;
-			  usize = prec;
-			}
-		      rsize = usize;
-		      tp = (mp_ptr) up;
-		      goto normalize;
+                      vp = up;
+                      vsize = usize;
+                      goto cancellation;
 		    }
 		}
 	      while (up[usize - 1] == vp[vsize - 1]);
@@ -401,6 +404,8 @@ general_case:
 
  done:
   r->_mp_size = negate ? -rsize : rsize;
+  if (rsize == 0)
+    exp = 0;
   r->_mp_exp = exp;
   TMP_FREE (marker);
 }
