@@ -1,7 +1,7 @@
 /* Test mpq_get_d and mpq_set_d
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002, 2003 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -43,8 +43,8 @@ MA 02111-1307, USA. */
 
 void dump _PROTO ((mpq_t));
 
-int
-main (int argc, char **argv)
+void
+check_monotonic (int argc, char **argv)
 {
   mpq_t a;
   mp_size_t size;
@@ -53,8 +53,6 @@ main (int argc, char **argv)
   double last_d, new_d;
   mpq_t qlast_d, qnew_d;
   mpq_t eps;
-
-  tests_start ();
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -119,9 +117,6 @@ main (int argc, char **argv)
   mpq_clear (eps);
   mpq_clear (qlast_d);
   mpq_clear (qnew_d);
-
-  tests_end ();
-  exit (0);
 }
 
 void
@@ -131,4 +126,82 @@ dump (mpq_t x)
   printf ("/");
   mpz_out_str (stdout, 10, mpq_denref (x));
   printf ("\n");
+}
+
+/* Check various values 2^n and 1/2^n. */
+void
+check_onebit (void)
+{
+  static const long data[] = {
+    -3*GMP_NUMB_BITS-1, -3*GMP_NUMB_BITS, -3*GMP_NUMB_BITS+1,
+    -2*GMP_NUMB_BITS-1, -2*GMP_NUMB_BITS, -2*GMP_NUMB_BITS+1,
+    -GMP_NUMB_BITS-1, -GMP_NUMB_BITS, -GMP_NUMB_BITS+1,
+    -5, -2, -1, 0, 1, 2, 5,
+    GMP_NUMB_BITS-1, GMP_NUMB_BITS, GMP_NUMB_BITS+1,
+    2*GMP_NUMB_BITS-1, 2*GMP_NUMB_BITS, 2*GMP_NUMB_BITS+1,
+    3*GMP_NUMB_BITS-1, 3*GMP_NUMB_BITS, 3*GMP_NUMB_BITS+1,
+  };
+
+  int     i, neg;
+  long    exp, l;
+  mpq_t   q;
+  double  got, want;
+  /* FIXME: It'd be better to base this on the float format. */
+#ifdef __vax
+  int     limit = 127;  /* vax fp numbers have limited range */
+#else
+  int     limit = 512;
+#endif
+
+  mpq_init (q);
+
+  for (i = 0; i < numberof (data); i++)
+    {
+      exp = data[i];
+
+      mpq_set_ui (q, 1L, 1L);
+      if (exp >= 0)
+        mpq_mul_2exp (q, q, exp);
+      else
+        mpq_div_2exp (q, q, -exp);
+
+      want = 1.0;
+      for (l = 0; l < exp; l++)
+        want *= 2.0;
+      for (l = 0; l > exp; l--)
+        want /= 2.0;
+
+      for (neg = 0; neg <= 1; neg++)
+        {
+          if (neg)
+            {
+              mpq_neg (q, q);
+              want = -want;
+            }
+
+          got = mpq_get_d (q);
+
+          if (got != want)
+            {
+              printf    ("mpq_get_d wrong on %s2**%d\n", i, neg ? "-" : "");
+              mpq_trace ("   q    ", q);
+              d_trace   ("   want ", want);
+              d_trace   ("   got  ", got);
+              abort();
+            }
+        }
+    }
+  mpq_clear (q);
+}
+
+int
+main (int argc, char **argv)
+{
+  tests_start ();
+
+  check_onebit ();
+  check_monotonic (argc, argv);
+
+  tests_end ();
+  exit (0);
 }
