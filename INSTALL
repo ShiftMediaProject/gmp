@@ -128,7 +128,7 @@ compiler calls itself cc.  This compiler cannot be used to build GMP.  You
 need to get a real gcc, and install that before you compile GMP.  (NeXT
 might have fixed this in newer releases of their system.)
 
-Please report other problems to bug-gmp@prep.ai.mit.edu.
+Please report other problems to bug-gmp@gnu.org.
 
 
 Patch to apply to GCC 2.6.3 and 2.7.2:

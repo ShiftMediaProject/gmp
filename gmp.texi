@@ -32,7 +32,7 @@ END-INFO-DIR-ENTRY
 @ifinfo
 This file documents GNU MP, a library for arbitrary-precision arithmetic.
 
-Copyright (C) 1991, 1993, 1994, 1995, 1996, 1998 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993-1999 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -63,10 +63,10 @@ by the Foundation.
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
 @subtitle Edition 2.1 SNAPSHOT
-@subtitle November 1998
+@subtitle October 1999
 
 @author by Torbj@"orn Granlund, Swox AB
-tege@@gnu.org
+tege@@swox.com
 
 @c Include the Distribution inside the titlepage so
 @c that headings are turned off.
@@ -79,7 +79,7 @@ tege@@gnu.org
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1991, 1993, 1994, 1995, 1996, 1998 Free Software Foundation, Inc.
+Copyright @copyright{} 1991, 1993-1999 Free Software Foundation, Inc.
 
 @sp 2
 
@@ -193,8 +193,8 @@ and MC88110, Motorola/IBM PowerPC, National NS32000, IBM POWER, MIPS R3000,
 R4000, SPARCv7, SuperSPARC, generic SPARCv8, UltraSPARC, and DEC VAX.  Some
 optimizations also for Clipper, IBM ROMP (RT), and Pyramid AP/XP.
 
-For up-to-date information on MP,
-@samp{http://www.matematik.su.se/~tege/gmp/}, is a good place to look.
+For up-to-date information on MP, please see the GMP Home Pages at
+@samp{http://www.swox.com/gmp/}.
 
 
 @section How to use this Manual
@@ -229,11 +229,10 @@ native and cross-compilation.  If you get error messages, your machine might
 not be supported.
 
 If you want to compile in a separate object directory, cd to that directory,
-and prefix the configure command with the path to the MP source directory.
-Not all @samp{make} programs have the necessary features (VPATH) to support
-this.  In particular, SunOS and Slowaris @samp{make} have bugs that makes them
-unable to build from a separate object directory.  Use GNU @samp{make}
-instead.
+and prefix the configure command with the path to the MP source directory.  Not
+all @samp{make} programs have the necessary features (VPATH) to support this.
+In particular, SunOS and Slowaris @samp{make} have bugs that makes them unable
+to build from a separate object directory.  Use GNU @samp{make} instead.
 
 In addition to the standard cpu-vendor-os tuples, MP recognizes sparc8 and
 supersparc as valid CPU names.  Specifying these CPU names for relevant
@@ -309,50 +308,29 @@ Delete all files copied by @samp{make install}.
 @section Known Build Problems
 
 (You might find more up-to-date information at
-@samp{http://www.matematik.su.se/~tege/gmp/}.)
+@samp{http://www.swox.com/gmp/}.)
 
 GCC 2.7.2 (or 2.6.3) for the POWER and PowerPC can not be used to compile MP,
 due to a bug in GCC.  If you want to use GCC for these machines, get GCC
-2.7.2.1 (or later), or apply the patch below to GCC and recompile GCC.
+2.7.2.1 (or later).
 
 If you are on a Sequent Symmetry, use the GNU assembler instead of the system
 assembler, since the latter has serious bugs.
 
+If you are on a VAX running Ultrix, you need to build and install the GNU
+assembler before you compile MP.  The VAX assembly in MP uses an instruction
+(@samp{jsobgtr}) that cannot be assembled by the Ultrix assembler.
+
 The system compiler on NeXT is a massacred and old GCC, even if the compiler
-calls itself @file{cc}.  This compiler cannot be used to build MP.  You need
-to get a real GCC, and install that before you compile MP.  (NeXT have fixed
-this in release 3.3 of their system.)
+calls itself @file{cc}.  This compiler cannot be used to build MP.  You need to
+get a real GCC, and install that before you compile MP.  (NeXT have fixed this
+in release 3.3 of their system.)
 
 The system C compiler under SunOS 4 has a bug that makes it miscompile
 mpq/get_d.c.  Use GCC instead if plan to use the function @code{mpq_get_d}.
 
 Please report other problems to @samp{bug-gmp@@gnu.org}.
 @xref{Reporting Bugs}.
-
-
-Patch to apply to GCC 2.6.3 and 2.7.2:
-
-@example
-*** config/rs6000/rs6000.md	Sun Feb 11 08:22:11 1996
---- config/rs6000/rs6000.md.new	Sun Feb 18 03:33:37 1996
-***************
-*** 920,926 ****
-     (set (match_operand:SI 0 "gpc_reg_operand" "=r")
-  	(not:SI (match_dup 1)))]
-    ""
-!   "nor. %0,%2,%1"
-    [(set_attr "type" "compare")])
-  
-  (define_insn ""
---- 920,926 ----
-     (set (match_operand:SI 0 "gpc_reg_operand" "=r")
-  	(not:SI (match_dup 1)))]
-    ""
-!   "nor. %0,%1,%1"
-    [(set_attr "type" "compare")])
-  
-  (define_insn ""
-@end example
 
 @node MP Basics, Reporting Bugs, Installing MP, Top
 @comment  node-name,  next,  previous,  up
@@ -471,7 +449,7 @@ A variable should only be initialized once, or at least cleared out between
 each initialization.  After a variable has been initialized, it may be
 assigned to any number of times.
 
-For efficiency reasons, avoid to initialize and clear out a MP variables in
+For efficiency reasons, avoid to initialize and clear out a MP variable in
 loops.  Instead, initialize it before entering the loop, and clear it out after
 the loop has exited.
 
@@ -544,7 +522,7 @@ quotient towards
 $-\infty$
 @end tex
 @end iftex
-There are a lot of new functions for integer division, giving the user better
+There are a lot of functions for integer division, giving the user better
 control over the rounding.
 
 @item The function @code{mpz_mod} now compute the true @strong{mod} function.
@@ -582,8 +560,7 @@ This version of MP is upward compatible with version 2.0, 2.0.1, and 2.0.2.
 @section Getting the Latest Version of MP
 
 The latest version of the MP library is available by at
-@samp{ftp://ftp.gnu.org/pub/gnu}.  The file name will be @file{gmp-I.J.tar.gz}
-or @file{gmp-I.J.K.tar.gz}.  Many sites around the world mirror
+@samp{ftp://ftp.gnu.org/pub/gnu/gmp}.  Many sites around the world mirror
 @samp{ftp.gnu.org}; please use a mirror site near you.
 
 
@@ -728,10 +705,12 @@ to deallocate any memory allocated by this function.
 @chapter Reporting Bugs
 @cindex Reporting bugs
 
-If you think you have found a bug in the MP library, please investigate
-it and report it.  We have made this library available to you, and it is
-not to ask too much from you, to ask you to report the bugs that you
-find.
+If you think you have found a bug in the MP library, please investigate it and
+report it.  We have made this library available to you, and it is not to ask
+too much from you, to ask you to report the bugs that you find.
+
+But before you report a bug, please check @samp{http://www.swox.com/gmp/} for
+patches for this release.
 
 There are a few things you should think about when you put your bug report
 together.
@@ -1093,10 +1072,10 @@ computed.  Functions that compute both the quotient and remainder have
 
 @deftypefun void mpz_tdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_tdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-Set @var{q} to [@var{n}/@var{d}], truncated towards 0.  The function
-@code{mpz_tdiv_q_ui} returns the absolute value of remainder.
+Set @var{q} to [@var{n}/@var{d}], truncated towards 0.
 
-The function @code{mpz_tdiv_q_ui} returns the absolute value of the remainder.
+The function @code{mpz_tdiv_q_ui} returns the absolute value of the true
+remainder.
 @end deftypefun
 
 @deftypefun void mpz_tdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
@@ -1173,7 +1152,7 @@ Unless @var{r} becomes zero, it will get the same sign as @var{d}.
 The function @code{mpz_fdiv_r_ui} returns the remainder.
 @end deftypefun
 
-@deftypefun void mpz_fdiv_qr (mpz_t @var{r}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefun void mpz_fdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_fdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
 @ifinfo
 Set @var{q} to @var{n}/@var{d}, rounded towards @minus{}infinity.  Set @var{r}
@@ -2153,7 +2132,7 @@ is a low-level function that does not change the allocation.  The @var{prec}
 argument must not be larger that the precision previously returned by
 @code{mpf_get_prec}.  It is crucial that the precision of @var{rop} is
 ultimately reset to exactly the value returned by @code{mpf_get_prec} before
-any calls to @code{mpf_set_prec_raw}.
+the first call to @code{mpf_set_prec_raw}.
 @end deftypefun
 
 
@@ -3120,8 +3099,9 @@ The development of floating point functions of GNU MP 2, were supported in part
 by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO (POlynomial
 System SOlving).
 
-GNU MP 2 was finished and released in cooperation with the IDA Center for
-Computing Sciences, USA.
+GNU MP 2 was finished and released by SWOX AB (formerly known as TMG
+Datakonsult), Swedenborgsgatan 23, 118 27 STOCKHOLM, SWEDEN, in
+cooperation with the IDA Center for Computing Sciences, USA.
 
 Robert Harley of Inria, France and David Seal of ARM, England, suggested clever
 improvements for population count.
@@ -3129,8 +3109,9 @@ improvements for population count.
 Robert Harley also wrote a template Karatsuba multiplication function for GMP
 2.1 on which the current implementation is based.
 
-Torsten Ekedahl provided significant inspiration during several phases of the
-GMP development.  His mathematical expertise helped improve several algorithms.
+Torsten Ekedahl of the Mathematical department of Stockholm University provided
+significant inspiration during several phases of the GMP development.  His
+mathematical expertise helped improve several algorithms.
 
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell tege@@gnu.org about

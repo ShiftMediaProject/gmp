@@ -23,7 +23,7 @@ First, you have to configure and compiler GNU MP.  Simply typing
 	./configure; make
 
 will normally do a reasonable job, but will not give optimal library
-execution speed.  So unless you're very unpatient, please read the detailed
+execution speed.  So unless you're very impatient, please read the detailed
 instructions in the file INSTALL or in gmp.texi.
 
 Once you have compiled the library, you should write some small example, and
@@ -132,6 +132,10 @@ the INSTALL file in this directory.
 
 If you find a bug in the library, please make sure to tell us about it!
 
-Report bugs to bug-gmp@prep.ai.mit.edu.  What information is needed in a good
-bug report is described in the manual.  The same address can be used for
+You should first check the GNU MP web pages at http://www.swox.com/gmp/,
+under "Status of the current release".  There will be patches for all known
+bugs there.
+
+Report bugs to bug-gmp@gnu.org.  What information is needed in a good bug
+report is described in the manual.  The same address can be used for
 suggesting modifications and enhancements.
