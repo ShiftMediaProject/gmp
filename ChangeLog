@@ -18,6 +18,40 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to mpfr cvs 2003-06-09.
+	
+	* tests/cxx/Makefile.am (LDADD): Add -L$(top_builddir)/$(LIBS), for
+	the benefit of gcc 3.2 on itanium2-hp-hpux11.22.
+
+	* tune/many.pl (mul_2): Add speed routine settings.
+	(MAKEFILE): Close when done, for the benefit of development hackery.
+
+2003-06-08  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to mpfr cvs 2003-06-08.
+
+	* mpn/x86/x86-defs.m4 (femms): Remove fallback to emms.
+	(cmovCC, psadbw): Remove simulated versions.
+	(cmov_available_p, psadbw_available_p): Remove.
+	This trickery was only ever for development purposes on machines
+	without those instructions.  Removing it simplifies gmp and in
+	particular avoids complications for fat binary builds.  Development
+	can be done with a wrapper around "as" if really needed.
+
+	* mpn/x86/divrem_1.asm: Don't use loop_or_decljnz, now K6 has its own
+	mpn/x86/k6/divrem_1.asm.  Amend K6 comments now moved to there.
+	* mpn/x86/x86-defs.m4 (loop_or_decljnz): Remove, no longer used.
+
+	* mpn/x86/k6/divrem_1.asm: New file, derived from mpn/x86/divrem_1.asm.
+
+	* mpn/x86/k6/pre_mod_1.asm: Remove comments now in mpn/x86/mod_1.asm.
+
+	* mpn/x86/mod_1.asm: Put mpn_mod_1c after mpn_mod_1 for better branch
+	prediction.  Put done_zero at end for less wastage in alignment.  Use
+	decl+jnz unconditionally since in fact it's ok on k6.  Amend comments.
+
 2003-06-07  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/mode1o.c: Fix ASSERTs on return value.
