@@ -171,12 +171,6 @@ MA 02111-1307, USA. */
 /* a dummy to make autoheader happy */
 #undef HAVE_NATIVE_
 
-/* bits per unsigned long, if not in gmp-mparam.h */
-#undef BITS_PER_ULONG
-
-/* bytes per mp_limb_t, if not in gmp-mparam.h */
-#undef BYTES_PER_MP_LIMB
-
 /* The gmp-mparam.h file (a string) the tune program should suggest updating.
    */
 #undef GMP_MPARAM_H_SUGGEST
@@ -462,6 +456,9 @@ MA 02111-1307, USA. */
 
 /* The size of a `mp_limb_t', as computed by sizeof. */
 #undef SIZEOF_MP_LIMB_T
+
+/* The size of a `unsigned', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED
 
 /* The size of a `unsigned long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG
