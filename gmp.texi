@@ -541,7 +541,7 @@ Cygwin, DJGPP or MINGW can be used.  See
 @end display
 
 The @file{macos} directory contains an unsupported port to MacOS 9 on Power
-Macintosh.  Note that MacOS X ``Darwin'' on the other hand can use the normal
+Macintosh.  Note that MacOS X ``Darwin'' can use the normal
 @samp{./configure}.
 
 It might be possible to build without the help of @samp{configure}, certainly
@@ -795,8 +795,8 @@ for K&R compilers.
 @item C++ Support, @option{--enable-cxx}
 C++ support in GMP can be enabled with @samp{--enable-cxx}, and for this a C++
 compiler will be required.  As a convenience @samp{--enable-cxx=detect} can be
-used to enable C++ support only if a C++ compiler is in fact available.  The
-C++ support consists of a library @file{libgmpxx.la} and header file
+used to enable C++ support only if a C++ compiler can be found.  The C++
+support consists of a library @file{libgmpxx.la} and header file
 @file{gmpxx.h}.
 
 Note that in general @file{libgmpxx} will be usable only with the C++
@@ -861,8 +861,8 @@ For convenience, the following choices are also available.
 
 @code{alloca} is reentrant and fast, and is recommended, but when working with
 large numbers it can overflow the available stack space, in which case one of
-the malloc methods will need to be used.  Alternately it might be possible to
-increase available stack with @command{limit}, @command{ulimit} or
+the two malloc methods will need to be used.  Alternately it might be possible
+to increase available stack with @command{limit}, @command{ulimit} or
 @code{setrlimit}, or under DJGPP with @command{stubedit} or
 @code{@w{_stklen}}.  Note that depending on the system the only indication of
 stack overflow might be a segmentation violation.
@@ -1210,7 +1210,7 @@ change in the future.
 
 GCC is recommended for compiling GMP, but the resulting DLL can be used with
 any compiler.  On mingw only the standard Windows libraries will be needed, on
-a cygwin the usual cygwin runtime will be required.
+Cygwin the usual cygwin runtime will be required.
 
 @item Motorola 68k CPU Types
 
@@ -1298,11 +1298,16 @@ the default @env{CFLAGS} for GCC 2.95.4 and up.
 You might find more up-to-date information at @uref{http://swox.com/gmp/}.
 
 @table @asis
-@item DJGPP bash 2.03
+@item DJGPP
 
 The DJGPP port of @command{bash} 2.03 is unable to run the @samp{configure}
 script, it exits silently, having died writing a preamble to
 @file{config.log}.  Use @command{bash} 2.04 or higher.
+
+@samp{make all} was found to run out of memory during the final
+@file{libgmp.la} link on one system tested, despite having 64Mb available.  A
+separate @samp{make libgmp.la} helped, perhaps recursing into the various
+subdirectories uses up memory.
 
 @item GNU binutils @command{strip}
 @cindex Stripped libraries
@@ -1438,9 +1443,9 @@ is @code{mpf_t}.
 @tindex @code{mp_limb_t}
 @noindent
 A @dfn{limb} means the part of a multi-precision number that fits in a single
-word.  (We chose this word because a limb of the human body is analogous to a
-digit, only larger, and containing several digits.)  Normally a limb contains
-32 or 64 bits.  The C data type for a limb is @code{mp_limb_t}.
+machine word.  (We chose this word because a limb of the human body is
+analogous to a digit, only larger, and containing several digits.)  Normally a
+limb is 32 or 64 bits.  The C data type for a limb is @code{mp_limb_t}.
 
 
 @node Function Classes, Variable Conventions, Nomenclature and Types, GMP Basics
@@ -1452,18 +1457,18 @@ There are six classes of functions in the GMP library:
 @enumerate
 @item
 Functions for signed integer arithmetic, with names beginning with
-@code{mpz_}.  The associated type is @code{mpz_t}.  There are about 100
+@code{mpz_}.  The associated type is @code{mpz_t}.  There are about 150
 functions in this class.
 
 @item
 Functions for rational number arithmetic, with names beginning with
-@code{mpq_}.  The associated type is @code{mpq_t}.  There are about 20
-functions in this class, but the functions in the previous class can be used
-for performing arithmetic on the numerator and denominator separately.
+@code{mpq_}.  The associated type is @code{mpq_t}.  There are about 40
+functions in this class, but the integer functions can be used for arithmetic
+on the numerator and denominator separately.
 
 @item
 Functions for floating-point arithmetic, with names beginning with
-@code{mpf_}.  The associated type is @code{mpf_t}.  There are about 50
+@code{mpf_}.  The associated type is @code{mpf_t}.  There are about 60
 functions is this class.
 
 @item
@@ -1548,8 +1553,8 @@ can be returned by having more than one output parameter, again like the
 library functions.  A @code{return} of an @code{mpz_t} etc doesn't return the
 object, only a pointer, and this is almost certainly not what's wanted.
 
-Here's an example function accepting an @code{mpz_t} parameter, doing a
-calculation, and storing the result to the indicated parameter.
+Here's an example accepting an @code{mpz_t} parameter, doing a calculation,
+and storing the result to the indicated parameter.
 
 @example
 void
@@ -1568,15 +1573,15 @@ main (void)
   mpz_init (r);
   mpz_init_set_str (n, "123456", 0);
   foo (r, n, 20L);
-  mpz_out_str (stdout, 10, r); printf ("\n");
+  gmp_printf ("%Zd\n", r);
   return 0;
 @}
 @end example
 
-In this example, @code{foo} works even if the mainline passes the same variable
-as both @code{param} and @code{result}, just like the library functions.  But
+@code{foo} works even if the mainline passes the same variable as both
+@code{param} and @code{result}, just like the library functions.  But
 sometimes this is tricky to arrange, and an application might not want to
-bother.
+bother supporting that sort of thing.
 
 For interest, the GMP types @code{mpz_t} etc are implemented as one-element
 arrays of certain structures.  This is why declaring a variable creates an
@@ -1859,14 +1864,15 @@ it's zero (or a particular value).
 
 However when testing divisibility by several small integers, it's best to take
 a remainder modulo their product, to save multi-precision operations.  For
-instance to test whether a number is divisible by any of 23, 29 and 31 take a
+instance to test whether a number is divisible by any of 23, 29 or 31 take a
 remainder modulo @ma{23@times{}29@times{}31 = 20677} and then test that.
 
 The division functions like @code{mpz_tdiv_q_ui} which give a quotient as well
 as a remainder are generally a little slower than the remainder-only functions
 like @code{mpz_tdiv_ui}.  If the quotient is only rarely wanted then it's
 probably best to just take a remainder and then go back and calculate the
-quotient if and when it's wanted (possibly using @code{mpz_divexact_ui}).
+quotient if and when it's wanted (@code{mpz_divexact_ui} can be used if the
+remainder is zero).
 
 @item Rational Arithmetic
 The @code{mpq} functions operate on @code{mpq_t} values with no common factors
@@ -1990,8 +1996,8 @@ the allocation function set with @code{mp_set_memory_functions}).
 This can help a malloc debugger detect accesses outside the intended bounds,
 or detect memory not released.  In a normal build, on the other hand,
 temporary memory is allocated in blocks which GMP divides up for its own use,
-or of course with the preferred compiler builtin @code{alloca} goes nowhere
-near any malloc hooks.
+or may be allocated with a compiler builtin @code{alloca} which will go
+nowhere near any malloc debugger hooks.
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -4948,7 +4954,7 @@ Read from the stream @var{fp}.
 Read from a null-terminated string @var{s}.
 @end deftypefun
 
-The return value from each of these functions is the same as the standard C
+The return value from each of these functions is the same as the standard C99
 @code{scanf}, namely the number of fields successfully parsed and stored.
 @samp{%n} fields and fields read but suppressed by @samp{*} don't count
 towards the return value.
