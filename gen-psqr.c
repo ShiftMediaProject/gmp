@@ -547,7 +547,7 @@ print (int limb_bits, int nail_bits)
 int
 main (int argc, char *argv[])
 {
-  int  limb_bits, nail_bits, numb_bits;
+  int  limb_bits, nail_bits;
 
   if (argc != 3)
     {
@@ -566,7 +566,6 @@ main (int argc, char *argv[])
                limb_bits, nail_bits);
       exit (1);
     }
-  numb_bits = limb_bits - nail_bits;
 
   generate_sq_res_0x100 (limb_bits);
   generate_mod (limb_bits, nail_bits);
