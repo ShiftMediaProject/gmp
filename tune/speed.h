@@ -377,6 +377,8 @@ mp_limb_t mpn_mod_1_inv _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d));
 
 mp_size_t mpn_gcd_binary
   _PROTO ((mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize));
+mp_size_t mpn_gcd_accel
+  _PROTO ((mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize));
 mp_size_t mpn_gcdext_one_double
   _PROTO ((mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
            mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize));
