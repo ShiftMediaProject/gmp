@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4f from Makefile.am.
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -10,6 +10,27 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
+@SET_MAKE@
+
+# Copyright 1996, 1998, 2000, 2001 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
 
 SHELL = @SHELL@
 
@@ -31,11 +52,9 @@ infodir = @infodir@
 mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
-
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-
 top_builddir = ..
 
 ACLOCAL = @ACLOCAL@
@@ -47,17 +66,14 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
+INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
-
 NORMAL_INSTALL = :
 PRE_INSTALL = :
 POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
 host_alias = @host_alias@
 host_triplet = @host@
 AMDEP = @AMDEP@
@@ -85,7 +101,6 @@ LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 M4 = @M4@
 MAINT = @MAINT@
-MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -95,31 +110,12 @@ STRIP = @STRIP@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+__GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 mpn_objs_in_libmp = @mpn_objs_in_libmp@
-
-# Copyright 1996, 1998, 2000, 2001 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2.1 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
-
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
@@ -141,71 +137,61 @@ CLEANFILES = $(nodist_libmpq_la_SOURCES)
 EXTRA_DIST = aors.c
 subdir = mpq
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../config.h
-CONFIG_CLEAN_FILES = 
-LTLIBRARIES =  $(noinst_LTLIBRARIES)
+CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_CLEAN_FILES =
+LTLIBRARIES = $(noinst_LTLIBRARIES)
 
+libmpq_la_LDFLAGS =
+libmpq_la_LIBADD =
+am_libmpq_la_OBJECTS = abs$U.lo canonicalize$U.lo clear$U.lo cmp$U.lo \
+	cmp_ui$U.lo div$U.lo get_d$U.lo get_den$U.lo get_num$U.lo \
+	get_str$U.lo init$U.lo inv$U.lo md_2exp$U.lo mul$U.lo neg$U.lo \
+	out_str$U.lo set$U.lo set_den$U.lo set_num$U.lo set_si$U.lo \
+	set_str$U.lo set_ui$U.lo equal$U.lo set_z$U.lo set_d$U.lo \
+	set_f$U.lo swap$U.lo
+nodist_libmpq_la_OBJECTS = add$U.lo sub$U.lo
+libmpq_la_OBJECTS = $(am_libmpq_la_OBJECTS) $(nodist_libmpq_la_OBJECTS)
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
+DEFS = @DEFS@
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-ANSI2KNR = $(top_builddir)/ansi2knr
-libmpq_la_LDFLAGS = 
-libmpq_la_LIBADD = 
-am_libmpq_la_OBJECTS =  abs$U.lo canonicalize$U.lo clear$U.lo cmp$U.lo \
-cmp_ui$U.lo div$U.lo get_d$U.lo get_den$U.lo get_num$U.lo get_str$U.lo \
-init$U.lo inv$U.lo md_2exp$U.lo mul$U.lo neg$U.lo out_str$U.lo set$U.lo \
-set_den$U.lo set_num$U.lo set_si$U.lo set_str$U.lo set_ui$U.lo \
-equal$U.lo set_z$U.lo set_d$U.lo set_f$U.lo swap$U.lo
-nodist_libmpq_la_OBJECTS =  add$U.lo sub$U.lo
-libmpq_la_OBJECTS =  $(am_libmpq_la_OBJECTS) $(nodist_libmpq_la_OBJECTS)
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
+depcomp =
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libmpq_la_SOURCES)
-depcomp = 
-DIST_COMMON =  Makefile.am Makefile.in
-
-
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-
-GZIP_ENV = --best
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+DIST_SOURCES = $(libmpq_la_SOURCES)
+DIST_COMMON = Makefile.am Makefile.in
 SOURCES = $(libmpq_la_SOURCES) $(nodist_libmpq_la_SOURCES)
-OBJECTS = $(am_libmpq_la_OBJECTS) $(nodist_libmpq_la_OBJECTS)
 
-all: all-redirect
+all: all-am
+
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu mpq/Makefile
-
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
-
-
-mostlyclean-noinstLTLIBRARIES:
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  mpq/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
 
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-
-distclean-noinstLTLIBRARIES:
-
-maintainer-clean-noinstLTLIBRARIES:
+libmpq.la: $(libmpq_la_OBJECTS) $(libmpq_la_DEPENDENCIES)
+	$(LINK)  $(libmpq_la_LDFLAGS) $(libmpq_la_OBJECTS) $(libmpq_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
-	-rm -f *.o core *.core
-	-rm -f *.$(OBJEXT)
-
-clean-compile:
+	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
-
-maintainer-clean-compile:
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -214,90 +200,81 @@ clean-libtool:
 	-rm -rf .libs _libs
 
 distclean-libtool:
+	-rm -f libtool
 
-maintainer-clean-libtool:
-$(top_builddir)/ansi2knr: $(top_builddir)/ansi2knr.$(OBJEXT)
+ANSI2KNR = $(top_builddir)/ansi2knr
+$(top_builddir)/ansi2knr:
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
-
-$(top_builddir)/ansi2knr.$(OBJEXT):
-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr.$(OBJEXT)
-
 
 mostlyclean-kr:
 	-rm -f *_.c
 
-clean-kr:
-
-distclean-kr:
-
-maintainer-clean-kr:
-
-libmpq.la: $(libmpq_la_OBJECTS) $(libmpq_la_DEPENDENCIES)
-	$(LINK)  $(libmpq_la_LDFLAGS) $(libmpq_la_OBJECTS) $(libmpq_la_LIBADD) $(LIBS)
 .c.o:
-	$(COMPILE) -c $<
+	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
+
 .c.obj:
 	$(COMPILE) -c `cygpath -w $<`
+
 .c.lo:
-	$(LTCOMPILE) -c -o $@ $<
+	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 abs_.c: abs.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/abs.c; then echo $(srcdir)/abs.c; else echo abs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > abs_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/abs.c; then echo $(srcdir)/abs.c; else echo abs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > abs_.c || rm -f abs_.c
 add_.c: add.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c || rm -f add_.c
 canonicalize_.c: canonicalize.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/canonicalize.c; then echo $(srcdir)/canonicalize.c; else echo canonicalize.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > canonicalize_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/canonicalize.c; then echo $(srcdir)/canonicalize.c; else echo canonicalize.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > canonicalize_.c || rm -f canonicalize_.c
 clear_.c: clear.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clear.c; then echo $(srcdir)/clear.c; else echo clear.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clear_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clear.c; then echo $(srcdir)/clear.c; else echo clear.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clear_.c || rm -f clear_.c
 cmp_.c: cmp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp.c; then echo $(srcdir)/cmp.c; else echo cmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp.c; then echo $(srcdir)/cmp.c; else echo cmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_.c || rm -f cmp_.c
 cmp_ui_.c: cmp_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_ui.c; then echo $(srcdir)/cmp_ui.c; else echo cmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_ui.c; then echo $(srcdir)/cmp_ui.c; else echo cmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_ui_.c || rm -f cmp_ui_.c
 div_.c: div.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/div.c; then echo $(srcdir)/div.c; else echo div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > div_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/div.c; then echo $(srcdir)/div.c; else echo div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > div_.c || rm -f div_.c
 equal_.c: equal.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/equal.c; then echo $(srcdir)/equal.c; else echo equal.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > equal_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/equal.c; then echo $(srcdir)/equal.c; else echo equal.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > equal_.c || rm -f equal_.c
 get_d_.c: get_d.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_d.c; then echo $(srcdir)/get_d.c; else echo get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_d_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_d.c; then echo $(srcdir)/get_d.c; else echo get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_d_.c || rm -f get_d_.c
 get_den_.c: get_den.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_den.c; then echo $(srcdir)/get_den.c; else echo get_den.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_den_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_den.c; then echo $(srcdir)/get_den.c; else echo get_den.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_den_.c || rm -f get_den_.c
 get_num_.c: get_num.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_num.c; then echo $(srcdir)/get_num.c; else echo get_num.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_num_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_num.c; then echo $(srcdir)/get_num.c; else echo get_num.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_num_.c || rm -f get_num_.c
 get_str_.c: get_str.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_str.c; then echo $(srcdir)/get_str.c; else echo get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_str_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_str.c; then echo $(srcdir)/get_str.c; else echo get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_str_.c || rm -f get_str_.c
 init_.c: init.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/init.c; then echo $(srcdir)/init.c; else echo init.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > init_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/init.c; then echo $(srcdir)/init.c; else echo init.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > init_.c || rm -f init_.c
 inv_.c: inv.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/inv.c; then echo $(srcdir)/inv.c; else echo inv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > inv_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/inv.c; then echo $(srcdir)/inv.c; else echo inv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > inv_.c || rm -f inv_.c
 md_2exp_.c: md_2exp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/md_2exp.c; then echo $(srcdir)/md_2exp.c; else echo md_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > md_2exp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/md_2exp.c; then echo $(srcdir)/md_2exp.c; else echo md_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > md_2exp_.c || rm -f md_2exp_.c
 mul_.c: mul.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul.c; then echo $(srcdir)/mul.c; else echo mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul.c; then echo $(srcdir)/mul.c; else echo mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_.c || rm -f mul_.c
 neg_.c: neg.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/neg.c; then echo $(srcdir)/neg.c; else echo neg.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > neg_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/neg.c; then echo $(srcdir)/neg.c; else echo neg.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > neg_.c || rm -f neg_.c
 out_str_.c: out_str.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/out_str.c; then echo $(srcdir)/out_str.c; else echo out_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > out_str_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/out_str.c; then echo $(srcdir)/out_str.c; else echo out_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > out_str_.c || rm -f out_str_.c
 set_.c: set.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set.c; then echo $(srcdir)/set.c; else echo set.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set.c; then echo $(srcdir)/set.c; else echo set.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_.c || rm -f set_.c
 set_d_.c: set_d.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_d.c; then echo $(srcdir)/set_d.c; else echo set_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_d_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_d.c; then echo $(srcdir)/set_d.c; else echo set_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_d_.c || rm -f set_d_.c
 set_den_.c: set_den.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_den.c; then echo $(srcdir)/set_den.c; else echo set_den.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_den_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_den.c; then echo $(srcdir)/set_den.c; else echo set_den.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_den_.c || rm -f set_den_.c
 set_f_.c: set_f.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_f.c; then echo $(srcdir)/set_f.c; else echo set_f.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_f_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_f.c; then echo $(srcdir)/set_f.c; else echo set_f.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_f_.c || rm -f set_f_.c
 set_num_.c: set_num.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_num.c; then echo $(srcdir)/set_num.c; else echo set_num.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_num_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_num.c; then echo $(srcdir)/set_num.c; else echo set_num.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_num_.c || rm -f set_num_.c
 set_si_.c: set_si.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_si.c; then echo $(srcdir)/set_si.c; else echo set_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_si_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_si.c; then echo $(srcdir)/set_si.c; else echo set_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_si_.c || rm -f set_si_.c
 set_str_.c: set_str.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_str.c; then echo $(srcdir)/set_str.c; else echo set_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_str_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_str.c; then echo $(srcdir)/set_str.c; else echo set_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_str_.c || rm -f set_str_.c
 set_ui_.c: set_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_ui.c; then echo $(srcdir)/set_ui.c; else echo set_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_ui.c; then echo $(srcdir)/set_ui.c; else echo set_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_ui_.c || rm -f set_ui_.c
 set_z_.c: set_z.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_z.c; then echo $(srcdir)/set_z.c; else echo set_z.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_z_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_z.c; then echo $(srcdir)/set_z.c; else echo set_z.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_z_.c || rm -f set_z_.c
 sub_.c: sub.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c || rm -f sub_.c
 swap_.c: swap.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/swap.c; then echo $(srcdir)/swap.c; else echo swap.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > swap_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/swap.c; then echo $(srcdir)/swap.c; else echo swap.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > swap_.c || rm -f swap_.c
 abs_.$(OBJEXT) abs_.lo add_.$(OBJEXT) add_.lo canonicalize_.$(OBJEXT) \
 canonicalize_.lo clear_.$(OBJEXT) clear_.lo cmp_.$(OBJEXT) cmp_.lo \
 cmp_ui_.$(OBJEXT) cmp_ui_.lo div_.$(OBJEXT) div_.lo equal_.$(OBJEXT) \
@@ -311,6 +288,7 @@ set_num_.$(OBJEXT) set_num_.lo set_si_.$(OBJEXT) set_si_.lo \
 set_str_.$(OBJEXT) set_str_.lo set_ui_.$(OBJEXT) set_ui_.lo \
 set_z_.$(OBJEXT) set_z_.lo sub_.$(OBJEXT) sub_.lo swap_.$(OBJEXT) \
 swap_.lo : $(ANSI2KNR)
+uninstall-info-am:
 
 tags: TAGS
 
@@ -336,20 +314,26 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
 	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
 
-mostlyclean-tags:
-
-clean-tags:
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
 
 distclean-tags:
 	-rm -f TAGS ID
 
-maintainer-clean-tags:
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+top_distdir = ..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    $(mkinstalldirs) "$(distdir)/$$dir"; \
+	  fi; \
 	  if test -d $$d/$$file; then \
 	    cp -pR $$d/$$file $(distdir) \
 	    || exit 1; \
@@ -359,89 +343,93 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-info-am:
-info: info-am
-dvi-am:
-dvi: dvi-am
 check-am: all-am
 check: check-am
-installcheck-am:
-installcheck: installcheck-am
-install-exec-am:
-install-exec: install-exec-am
+all-am: Makefile $(LTLIBRARIES)
 
-install-data-am:
+installdirs:
+
+install: install-am
+install-exec: install-exec-am
 install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-am
-uninstall-am:
-uninstall: uninstall-am
-all-am: Makefile $(LTLIBRARIES)
-all-redirect: all-am
+
+installcheck: installcheck-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
-installdirs:
-
-
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  `test -z '$(STRIP)' || \
+	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
 
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
-	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-noinstLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-kr mostlyclean-tags \
-		mostlyclean-generic
-
-mostlyclean: mostlyclean-am
-
-clean-am:  clean-noinstLTLIBRARIES clean-compile clean-libtool clean-kr \
-		clean-tags clean-generic mostlyclean-am
-
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-distclean-am:  distclean-noinstLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-kr distclean-tags \
-		distclean-generic clean-am
-	-rm -f libtool
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-noinstLTLIBRARIES \
-		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-kr maintainer-clean-tags \
-		maintainer-clean-generic distclean-am
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-libtool distclean-tags
+
+dvi: dvi-am
+
+dvi-am:
+
+info: info-am
+
+info-am:
+
+install-data-am:
+
+install-exec-am:
+
+install-info: install-info-am
+
+install-man:
+
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-noinstLTLIBRARIES distclean-noinstLTLIBRARIES \
-clean-noinstLTLIBRARIES maintainer-clean-noinstLTLIBRARIES \
-mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
-clean-kr maintainer-clean-kr tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
-check-am installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool
+
+uninstall-am: uninstall-info-am
+
+uninstall-info: uninstall-info-am
+
+.PHONY: all all-am check check-am clean clean-generic clean-libtool \
+	clean-noinstLTLIBRARIES distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-kr mostlyclean-libtool tags \
+	uninstall uninstall-am uninstall-info-am
 
 
 add.c: $(srcdir)/aors.c
 	cp $(srcdir)/aors.c add.c
 sub.c: $(srcdir)/aors.c
 	cp $(srcdir)/aors.c sub.c
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

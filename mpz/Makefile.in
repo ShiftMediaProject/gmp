@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4f from Makefile.am.
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -10,6 +10,27 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
+@SET_MAKE@
+
+# Copyright 1996, 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
 
 SHELL = @SHELL@
 
@@ -31,11 +52,9 @@ infodir = @infodir@
 mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
-
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-
 top_builddir = ..
 
 ACLOCAL = @ACLOCAL@
@@ -47,17 +66,14 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
+INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
-
 NORMAL_INSTALL = :
 PRE_INSTALL = :
 POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
 host_alias = @host_alias@
 host_triplet = @host@
 AMDEP = @AMDEP@
@@ -85,7 +101,6 @@ LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 M4 = @M4@
 MAINT = @MAINT@
-MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -95,31 +110,12 @@ STRIP = @STRIP@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+__GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 mpn_objs_in_libmp = @mpn_objs_in_libmp@
-
-# Copyright 1996, 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2.1 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
-
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
@@ -165,92 +161,84 @@ nodist_libmpz_la_SOURCES = \
 CLEANFILES = $(nodist_libmpz_la_SOURCES)
 subdir = mpz
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../config.h
-CONFIG_CLEAN_FILES = 
-LTLIBRARIES =  $(noinst_LTLIBRARIES)
+CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_CLEAN_FILES =
+LTLIBRARIES = $(noinst_LTLIBRARIES)
 
+libmpz_la_LDFLAGS =
+libmpz_la_LIBADD =
+am_libmpz_la_OBJECTS = abs$U.lo aorsmul$U.lo aorsmul_i$U.lo and$U.lo \
+	array_init$U.lo bin_ui$U.lo bin_uiui$U.lo cdiv_q$U.lo \
+	cdiv_q_ui$U.lo cdiv_qr$U.lo cdiv_qr_ui$U.lo cdiv_r$U.lo \
+	cdiv_r_ui$U.lo cdiv_ui$U.lo cfdiv_q_2exp$U.lo cfdiv_r_2exp$U.lo \
+	clear$U.lo clrbit$U.lo cmp$U.lo cmp_d$U.lo cmp_si$U.lo \
+	cmp_ui$U.lo cmpabs$U.lo cmpabs_d$U.lo cmpabs_ui$U.lo com$U.lo \
+	cong$U.lo cong_2exp$U.lo cong_ui$U.lo divexact$U.lo \
+	divegcd$U.lo dive_ui$U.lo divis$U.lo divis_ui$U.lo \
+	divis_2exp$U.lo dump$U.lo fac_ui$U.lo fdiv_q$U.lo \
+	fdiv_q_ui$U.lo fdiv_qr$U.lo fdiv_qr_ui$U.lo fdiv_r$U.lo \
+	fdiv_r_ui$U.lo fdiv_ui$U.lo fib_ui$U.lo gcd$U.lo gcd_ui$U.lo \
+	gcdext$U.lo get_d$U.lo get_si$U.lo get_str$U.lo get_ui$U.lo \
+	getlimbn$U.lo hamdist$U.lo init$U.lo inp_raw$U.lo inp_str$U.lo \
+	invert$U.lo ior$U.lo iset$U.lo iset_d$U.lo iset_si$U.lo \
+	iset_str$U.lo iset_ui$U.lo jacobi$U.lo kronsz$U.lo kronuz$U.lo \
+	kronzs$U.lo kronzu$U.lo lcm$U.lo lcm_ui$U.lo mod$U.lo mul$U.lo \
+	mul_2exp$U.lo n_pow_ui$U.lo neg$U.lo nextprime$U.lo \
+	out_raw$U.lo out_str$U.lo perfpow$U.lo perfsqr$U.lo \
+	popcount$U.lo pow_ui$U.lo powm$U.lo powm_ui$U.lo pprime_p$U.lo \
+	random$U.lo random2$U.lo realloc$U.lo remove$U.lo root$U.lo \
+	rrandomb$U.lo scan0$U.lo scan1$U.lo set$U.lo set_d$U.lo \
+	set_f$U.lo set_q$U.lo set_si$U.lo set_str$U.lo set_ui$U.lo \
+	setbit$U.lo size$U.lo sizeinbase$U.lo sqrt$U.lo sqrtrem$U.lo \
+	swap$U.lo tdiv_ui$U.lo tdiv_q$U.lo tdiv_q_2exp$U.lo \
+	tdiv_q_ui$U.lo tdiv_qr$U.lo tdiv_qr_ui$U.lo tdiv_r$U.lo \
+	tdiv_r_2exp$U.lo tdiv_r_ui$U.lo tstbit$U.lo ui_pow_ui$U.lo \
+	urandomb$U.lo urandomm$U.lo xor$U.lo
+nodist_libmpz_la_OBJECTS = add$U.lo sub$U.lo add_ui$U.lo sub_ui$U.lo \
+	fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo \
+	fits_ulong$U.lo fits_ushort$U.lo mul_si$U.lo mul_ui$U.lo
+libmpz_la_OBJECTS = $(am_libmpz_la_OBJECTS) $(nodist_libmpz_la_OBJECTS)
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
+DEFS = @DEFS@
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-ANSI2KNR = $(top_builddir)/ansi2knr
-libmpz_la_LDFLAGS = 
-libmpz_la_LIBADD = 
-am_libmpz_la_OBJECTS =  abs$U.lo aorsmul$U.lo aorsmul_i$U.lo and$U.lo \
-array_init$U.lo bin_ui$U.lo bin_uiui$U.lo cdiv_q$U.lo cdiv_q_ui$U.lo \
-cdiv_qr$U.lo cdiv_qr_ui$U.lo cdiv_r$U.lo cdiv_r_ui$U.lo cdiv_ui$U.lo \
-cfdiv_q_2exp$U.lo cfdiv_r_2exp$U.lo clear$U.lo clrbit$U.lo cmp$U.lo \
-cmp_d$U.lo cmp_si$U.lo cmp_ui$U.lo cmpabs$U.lo cmpabs_d$U.lo \
-cmpabs_ui$U.lo com$U.lo cong$U.lo cong_2exp$U.lo cong_ui$U.lo \
-divexact$U.lo divegcd$U.lo dive_ui$U.lo divis$U.lo divis_ui$U.lo \
-divis_2exp$U.lo dump$U.lo fac_ui$U.lo fdiv_q$U.lo fdiv_q_ui$U.lo \
-fdiv_qr$U.lo fdiv_qr_ui$U.lo fdiv_r$U.lo fdiv_r_ui$U.lo fdiv_ui$U.lo \
-fib_ui$U.lo gcd$U.lo gcd_ui$U.lo gcdext$U.lo get_d$U.lo get_si$U.lo \
-get_str$U.lo get_ui$U.lo getlimbn$U.lo hamdist$U.lo init$U.lo \
-inp_raw$U.lo inp_str$U.lo invert$U.lo ior$U.lo iset$U.lo iset_d$U.lo \
-iset_si$U.lo iset_str$U.lo iset_ui$U.lo jacobi$U.lo kronsz$U.lo \
-kronuz$U.lo kronzs$U.lo kronzu$U.lo lcm$U.lo lcm_ui$U.lo mod$U.lo \
-mul$U.lo mul_2exp$U.lo n_pow_ui$U.lo neg$U.lo nextprime$U.lo \
-out_raw$U.lo out_str$U.lo perfpow$U.lo perfsqr$U.lo popcount$U.lo \
-pow_ui$U.lo powm$U.lo powm_ui$U.lo pprime_p$U.lo random$U.lo \
-random2$U.lo realloc$U.lo remove$U.lo root$U.lo rrandomb$U.lo \
-scan0$U.lo scan1$U.lo set$U.lo set_d$U.lo set_f$U.lo set_q$U.lo \
-set_si$U.lo set_str$U.lo set_ui$U.lo setbit$U.lo size$U.lo \
-sizeinbase$U.lo sqrt$U.lo sqrtrem$U.lo swap$U.lo tdiv_ui$U.lo \
-tdiv_q$U.lo tdiv_q_2exp$U.lo tdiv_q_ui$U.lo tdiv_qr$U.lo \
-tdiv_qr_ui$U.lo tdiv_r$U.lo tdiv_r_2exp$U.lo tdiv_r_ui$U.lo tstbit$U.lo \
-ui_pow_ui$U.lo urandomb$U.lo urandomm$U.lo xor$U.lo
-nodist_libmpz_la_OBJECTS =  add$U.lo sub$U.lo add_ui$U.lo sub_ui$U.lo \
-fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo \
-fits_ulong$U.lo fits_ushort$U.lo mul_si$U.lo mul_ui$U.lo
-libmpz_la_OBJECTS =  $(am_libmpz_la_OBJECTS) $(nodist_libmpz_la_OBJECTS)
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
+depcomp =
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libmpz_la_SOURCES)
-depcomp = 
-DIST_COMMON =  README Makefile.am Makefile.in
-
-
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-
-GZIP_ENV = --best
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+DIST_SOURCES = $(libmpz_la_SOURCES)
+DIST_COMMON = README Makefile.am Makefile.in
 SOURCES = $(libmpz_la_SOURCES) $(nodist_libmpz_la_SOURCES)
-OBJECTS = $(am_libmpz_la_OBJECTS) $(nodist_libmpz_la_OBJECTS)
 
-all: all-redirect
+all: all-am
+
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu mpz/Makefile
-
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
-
-
-mostlyclean-noinstLTLIBRARIES:
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  mpz/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
 
 clean-noinstLTLIBRARIES:
 	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-
-distclean-noinstLTLIBRARIES:
-
-maintainer-clean-noinstLTLIBRARIES:
+libmpz.la: $(libmpz_la_OBJECTS) $(libmpz_la_DEPENDENCIES)
+	$(LINK)  $(libmpz_la_LDFLAGS) $(libmpz_la_OBJECTS) $(libmpz_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
-	-rm -f *.o core *.core
-	-rm -f *.$(OBJEXT)
-
-clean-compile:
+	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
-
-maintainer-clean-compile:
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -259,298 +247,289 @@ clean-libtool:
 	-rm -rf .libs _libs
 
 distclean-libtool:
+	-rm -f libtool
 
-maintainer-clean-libtool:
-$(top_builddir)/ansi2knr: $(top_builddir)/ansi2knr.$(OBJEXT)
+ANSI2KNR = $(top_builddir)/ansi2knr
+$(top_builddir)/ansi2knr:
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
-
-$(top_builddir)/ansi2knr.$(OBJEXT):
-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr.$(OBJEXT)
-
 
 mostlyclean-kr:
 	-rm -f *_.c
 
-clean-kr:
-
-distclean-kr:
-
-maintainer-clean-kr:
-
-libmpz.la: $(libmpz_la_OBJECTS) $(libmpz_la_DEPENDENCIES)
-	$(LINK)  $(libmpz_la_LDFLAGS) $(libmpz_la_OBJECTS) $(libmpz_la_LIBADD) $(LIBS)
 .c.o:
-	$(COMPILE) -c $<
+	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
+
 .c.obj:
 	$(COMPILE) -c `cygpath -w $<`
+
 .c.lo:
-	$(LTCOMPILE) -c -o $@ $<
+	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 abs_.c: abs.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/abs.c; then echo $(srcdir)/abs.c; else echo abs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > abs_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/abs.c; then echo $(srcdir)/abs.c; else echo abs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > abs_.c || rm -f abs_.c
 add_.c: add.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c || rm -f add_.c
 add_ui_.c: add_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add_ui.c; then echo $(srcdir)/add_ui.c; else echo add_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add_ui.c; then echo $(srcdir)/add_ui.c; else echo add_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_ui_.c || rm -f add_ui_.c
 and_.c: and.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/and.c; then echo $(srcdir)/and.c; else echo and.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > and_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/and.c; then echo $(srcdir)/and.c; else echo and.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > and_.c || rm -f and_.c
 aorsmul_.c: aorsmul.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/aorsmul.c; then echo $(srcdir)/aorsmul.c; else echo aorsmul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > aorsmul_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/aorsmul.c; then echo $(srcdir)/aorsmul.c; else echo aorsmul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > aorsmul_.c || rm -f aorsmul_.c
 aorsmul_i_.c: aorsmul_i.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/aorsmul_i.c; then echo $(srcdir)/aorsmul_i.c; else echo aorsmul_i.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > aorsmul_i_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/aorsmul_i.c; then echo $(srcdir)/aorsmul_i.c; else echo aorsmul_i.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > aorsmul_i_.c || rm -f aorsmul_i_.c
 array_init_.c: array_init.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/array_init.c; then echo $(srcdir)/array_init.c; else echo array_init.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > array_init_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/array_init.c; then echo $(srcdir)/array_init.c; else echo array_init.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > array_init_.c || rm -f array_init_.c
 bin_ui_.c: bin_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/bin_ui.c; then echo $(srcdir)/bin_ui.c; else echo bin_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > bin_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/bin_ui.c; then echo $(srcdir)/bin_ui.c; else echo bin_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > bin_ui_.c || rm -f bin_ui_.c
 bin_uiui_.c: bin_uiui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/bin_uiui.c; then echo $(srcdir)/bin_uiui.c; else echo bin_uiui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > bin_uiui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/bin_uiui.c; then echo $(srcdir)/bin_uiui.c; else echo bin_uiui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > bin_uiui_.c || rm -f bin_uiui_.c
 cdiv_q_.c: cdiv_q.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_q.c; then echo $(srcdir)/cdiv_q.c; else echo cdiv_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_q_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_q.c; then echo $(srcdir)/cdiv_q.c; else echo cdiv_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_q_.c || rm -f cdiv_q_.c
 cdiv_q_ui_.c: cdiv_q_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_q_ui.c; then echo $(srcdir)/cdiv_q_ui.c; else echo cdiv_q_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_q_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_q_ui.c; then echo $(srcdir)/cdiv_q_ui.c; else echo cdiv_q_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_q_ui_.c || rm -f cdiv_q_ui_.c
 cdiv_qr_.c: cdiv_qr.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_qr.c; then echo $(srcdir)/cdiv_qr.c; else echo cdiv_qr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_qr_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_qr.c; then echo $(srcdir)/cdiv_qr.c; else echo cdiv_qr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_qr_.c || rm -f cdiv_qr_.c
 cdiv_qr_ui_.c: cdiv_qr_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_qr_ui.c; then echo $(srcdir)/cdiv_qr_ui.c; else echo cdiv_qr_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_qr_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_qr_ui.c; then echo $(srcdir)/cdiv_qr_ui.c; else echo cdiv_qr_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_qr_ui_.c || rm -f cdiv_qr_ui_.c
 cdiv_r_.c: cdiv_r.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_r.c; then echo $(srcdir)/cdiv_r.c; else echo cdiv_r.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_r_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_r.c; then echo $(srcdir)/cdiv_r.c; else echo cdiv_r.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_r_.c || rm -f cdiv_r_.c
 cdiv_r_ui_.c: cdiv_r_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_r_ui.c; then echo $(srcdir)/cdiv_r_ui.c; else echo cdiv_r_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_r_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_r_ui.c; then echo $(srcdir)/cdiv_r_ui.c; else echo cdiv_r_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_r_ui_.c || rm -f cdiv_r_ui_.c
 cdiv_ui_.c: cdiv_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_ui.c; then echo $(srcdir)/cdiv_ui.c; else echo cdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cdiv_ui.c; then echo $(srcdir)/cdiv_ui.c; else echo cdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cdiv_ui_.c || rm -f cdiv_ui_.c
 cfdiv_q_2exp_.c: cfdiv_q_2exp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cfdiv_q_2exp.c; then echo $(srcdir)/cfdiv_q_2exp.c; else echo cfdiv_q_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cfdiv_q_2exp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cfdiv_q_2exp.c; then echo $(srcdir)/cfdiv_q_2exp.c; else echo cfdiv_q_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cfdiv_q_2exp_.c || rm -f cfdiv_q_2exp_.c
 cfdiv_r_2exp_.c: cfdiv_r_2exp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cfdiv_r_2exp.c; then echo $(srcdir)/cfdiv_r_2exp.c; else echo cfdiv_r_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cfdiv_r_2exp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cfdiv_r_2exp.c; then echo $(srcdir)/cfdiv_r_2exp.c; else echo cfdiv_r_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cfdiv_r_2exp_.c || rm -f cfdiv_r_2exp_.c
 clear_.c: clear.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clear.c; then echo $(srcdir)/clear.c; else echo clear.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clear_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clear.c; then echo $(srcdir)/clear.c; else echo clear.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clear_.c || rm -f clear_.c
 clrbit_.c: clrbit.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clrbit.c; then echo $(srcdir)/clrbit.c; else echo clrbit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clrbit_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clrbit.c; then echo $(srcdir)/clrbit.c; else echo clrbit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clrbit_.c || rm -f clrbit_.c
 cmp_.c: cmp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp.c; then echo $(srcdir)/cmp.c; else echo cmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp.c; then echo $(srcdir)/cmp.c; else echo cmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_.c || rm -f cmp_.c
 cmp_d_.c: cmp_d.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_d.c; then echo $(srcdir)/cmp_d.c; else echo cmp_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_d_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_d.c; then echo $(srcdir)/cmp_d.c; else echo cmp_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_d_.c || rm -f cmp_d_.c
 cmp_si_.c: cmp_si.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_si.c; then echo $(srcdir)/cmp_si.c; else echo cmp_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_si_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_si.c; then echo $(srcdir)/cmp_si.c; else echo cmp_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_si_.c || rm -f cmp_si_.c
 cmp_ui_.c: cmp_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_ui.c; then echo $(srcdir)/cmp_ui.c; else echo cmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_ui.c; then echo $(srcdir)/cmp_ui.c; else echo cmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_ui_.c || rm -f cmp_ui_.c
 cmpabs_.c: cmpabs.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs.c; then echo $(srcdir)/cmpabs.c; else echo cmpabs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs.c; then echo $(srcdir)/cmpabs.c; else echo cmpabs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_.c || rm -f cmpabs_.c
 cmpabs_d_.c: cmpabs_d.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs_d.c; then echo $(srcdir)/cmpabs_d.c; else echo cmpabs_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_d_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs_d.c; then echo $(srcdir)/cmpabs_d.c; else echo cmpabs_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_d_.c || rm -f cmpabs_d_.c
 cmpabs_ui_.c: cmpabs_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs_ui.c; then echo $(srcdir)/cmpabs_ui.c; else echo cmpabs_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs_ui.c; then echo $(srcdir)/cmpabs_ui.c; else echo cmpabs_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_ui_.c || rm -f cmpabs_ui_.c
 com_.c: com.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/com.c; then echo $(srcdir)/com.c; else echo com.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > com_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/com.c; then echo $(srcdir)/com.c; else echo com.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > com_.c || rm -f com_.c
 cong_.c: cong.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cong.c; then echo $(srcdir)/cong.c; else echo cong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cong_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cong.c; then echo $(srcdir)/cong.c; else echo cong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cong_.c || rm -f cong_.c
 cong_2exp_.c: cong_2exp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cong_2exp.c; then echo $(srcdir)/cong_2exp.c; else echo cong_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cong_2exp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cong_2exp.c; then echo $(srcdir)/cong_2exp.c; else echo cong_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cong_2exp_.c || rm -f cong_2exp_.c
 cong_ui_.c: cong_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cong_ui.c; then echo $(srcdir)/cong_ui.c; else echo cong_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cong_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cong_ui.c; then echo $(srcdir)/cong_ui.c; else echo cong_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cong_ui_.c || rm -f cong_ui_.c
 dive_ui_.c: dive_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dive_ui.c; then echo $(srcdir)/dive_ui.c; else echo dive_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dive_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dive_ui.c; then echo $(srcdir)/dive_ui.c; else echo dive_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dive_ui_.c || rm -f dive_ui_.c
 divegcd_.c: divegcd.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divegcd.c; then echo $(srcdir)/divegcd.c; else echo divegcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divegcd_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divegcd.c; then echo $(srcdir)/divegcd.c; else echo divegcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divegcd_.c || rm -f divegcd_.c
 divexact_.c: divexact.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divexact.c; then echo $(srcdir)/divexact.c; else echo divexact.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divexact_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divexact.c; then echo $(srcdir)/divexact.c; else echo divexact.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divexact_.c || rm -f divexact_.c
 divis_.c: divis.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divis.c; then echo $(srcdir)/divis.c; else echo divis.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divis_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divis.c; then echo $(srcdir)/divis.c; else echo divis.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divis_.c || rm -f divis_.c
 divis_2exp_.c: divis_2exp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divis_2exp.c; then echo $(srcdir)/divis_2exp.c; else echo divis_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divis_2exp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divis_2exp.c; then echo $(srcdir)/divis_2exp.c; else echo divis_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divis_2exp_.c || rm -f divis_2exp_.c
 divis_ui_.c: divis_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divis_ui.c; then echo $(srcdir)/divis_ui.c; else echo divis_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divis_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divis_ui.c; then echo $(srcdir)/divis_ui.c; else echo divis_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divis_ui_.c || rm -f divis_ui_.c
 dump_.c: dump.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dump.c; then echo $(srcdir)/dump.c; else echo dump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dump_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dump.c; then echo $(srcdir)/dump.c; else echo dump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dump_.c || rm -f dump_.c
 fac_ui_.c: fac_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fac_ui.c; then echo $(srcdir)/fac_ui.c; else echo fac_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fac_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fac_ui.c; then echo $(srcdir)/fac_ui.c; else echo fac_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fac_ui_.c || rm -f fac_ui_.c
 fdiv_q_.c: fdiv_q.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_q.c; then echo $(srcdir)/fdiv_q.c; else echo fdiv_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_q_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_q.c; then echo $(srcdir)/fdiv_q.c; else echo fdiv_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_q_.c || rm -f fdiv_q_.c
 fdiv_q_ui_.c: fdiv_q_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_q_ui.c; then echo $(srcdir)/fdiv_q_ui.c; else echo fdiv_q_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_q_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_q_ui.c; then echo $(srcdir)/fdiv_q_ui.c; else echo fdiv_q_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_q_ui_.c || rm -f fdiv_q_ui_.c
 fdiv_qr_.c: fdiv_qr.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_qr.c; then echo $(srcdir)/fdiv_qr.c; else echo fdiv_qr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_qr_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_qr.c; then echo $(srcdir)/fdiv_qr.c; else echo fdiv_qr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_qr_.c || rm -f fdiv_qr_.c
 fdiv_qr_ui_.c: fdiv_qr_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_qr_ui.c; then echo $(srcdir)/fdiv_qr_ui.c; else echo fdiv_qr_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_qr_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_qr_ui.c; then echo $(srcdir)/fdiv_qr_ui.c; else echo fdiv_qr_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_qr_ui_.c || rm -f fdiv_qr_ui_.c
 fdiv_r_.c: fdiv_r.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_r.c; then echo $(srcdir)/fdiv_r.c; else echo fdiv_r.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_r_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_r.c; then echo $(srcdir)/fdiv_r.c; else echo fdiv_r.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_r_.c || rm -f fdiv_r_.c
 fdiv_r_ui_.c: fdiv_r_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_r_ui.c; then echo $(srcdir)/fdiv_r_ui.c; else echo fdiv_r_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_r_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_r_ui.c; then echo $(srcdir)/fdiv_r_ui.c; else echo fdiv_r_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_r_ui_.c || rm -f fdiv_r_ui_.c
 fdiv_ui_.c: fdiv_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_ui.c; then echo $(srcdir)/fdiv_ui.c; else echo fdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fdiv_ui.c; then echo $(srcdir)/fdiv_ui.c; else echo fdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fdiv_ui_.c || rm -f fdiv_ui_.c
 fib_ui_.c: fib_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_ui.c; then echo $(srcdir)/fib_ui.c; else echo fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_ui.c; then echo $(srcdir)/fib_ui.c; else echo fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_ui_.c || rm -f fib_ui_.c
 fits_sint_.c: fits_sint.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_sint.c; then echo $(srcdir)/fits_sint.c; else echo fits_sint.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_sint_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_sint.c; then echo $(srcdir)/fits_sint.c; else echo fits_sint.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_sint_.c || rm -f fits_sint_.c
 fits_slong_.c: fits_slong.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_slong.c; then echo $(srcdir)/fits_slong.c; else echo fits_slong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_slong_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_slong.c; then echo $(srcdir)/fits_slong.c; else echo fits_slong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_slong_.c || rm -f fits_slong_.c
 fits_sshort_.c: fits_sshort.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_sshort.c; then echo $(srcdir)/fits_sshort.c; else echo fits_sshort.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_sshort_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_sshort.c; then echo $(srcdir)/fits_sshort.c; else echo fits_sshort.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_sshort_.c || rm -f fits_sshort_.c
 fits_uint_.c: fits_uint.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_uint.c; then echo $(srcdir)/fits_uint.c; else echo fits_uint.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_uint_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_uint.c; then echo $(srcdir)/fits_uint.c; else echo fits_uint.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_uint_.c || rm -f fits_uint_.c
 fits_ulong_.c: fits_ulong.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_ulong.c; then echo $(srcdir)/fits_ulong.c; else echo fits_ulong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_ulong_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_ulong.c; then echo $(srcdir)/fits_ulong.c; else echo fits_ulong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_ulong_.c || rm -f fits_ulong_.c
 fits_ushort_.c: fits_ushort.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_ushort.c; then echo $(srcdir)/fits_ushort.c; else echo fits_ushort.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_ushort_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_ushort.c; then echo $(srcdir)/fits_ushort.c; else echo fits_ushort.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_ushort_.c || rm -f fits_ushort_.c
 gcd_.c: gcd.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd.c; then echo $(srcdir)/gcd.c; else echo gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd.c; then echo $(srcdir)/gcd.c; else echo gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_.c || rm -f gcd_.c
 gcd_ui_.c: gcd_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd_ui.c; then echo $(srcdir)/gcd_ui.c; else echo gcd_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd_ui.c; then echo $(srcdir)/gcd_ui.c; else echo gcd_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_ui_.c || rm -f gcd_ui_.c
 gcdext_.c: gcdext.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdext.c; then echo $(srcdir)/gcdext.c; else echo gcdext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdext_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdext.c; then echo $(srcdir)/gcdext.c; else echo gcdext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdext_.c || rm -f gcdext_.c
 get_d_.c: get_d.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_d.c; then echo $(srcdir)/get_d.c; else echo get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_d_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_d.c; then echo $(srcdir)/get_d.c; else echo get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_d_.c || rm -f get_d_.c
 get_si_.c: get_si.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_si.c; then echo $(srcdir)/get_si.c; else echo get_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_si_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_si.c; then echo $(srcdir)/get_si.c; else echo get_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_si_.c || rm -f get_si_.c
 get_str_.c: get_str.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_str.c; then echo $(srcdir)/get_str.c; else echo get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_str_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_str.c; then echo $(srcdir)/get_str.c; else echo get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_str_.c || rm -f get_str_.c
 get_ui_.c: get_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_ui.c; then echo $(srcdir)/get_ui.c; else echo get_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_ui.c; then echo $(srcdir)/get_ui.c; else echo get_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_ui_.c || rm -f get_ui_.c
 getlimbn_.c: getlimbn.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getlimbn.c; then echo $(srcdir)/getlimbn.c; else echo getlimbn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getlimbn_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/getlimbn.c; then echo $(srcdir)/getlimbn.c; else echo getlimbn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > getlimbn_.c || rm -f getlimbn_.c
 hamdist_.c: hamdist.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/hamdist.c; then echo $(srcdir)/hamdist.c; else echo hamdist.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > hamdist_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/hamdist.c; then echo $(srcdir)/hamdist.c; else echo hamdist.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > hamdist_.c || rm -f hamdist_.c
 init_.c: init.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/init.c; then echo $(srcdir)/init.c; else echo init.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > init_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/init.c; then echo $(srcdir)/init.c; else echo init.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > init_.c || rm -f init_.c
 inp_raw_.c: inp_raw.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/inp_raw.c; then echo $(srcdir)/inp_raw.c; else echo inp_raw.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > inp_raw_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/inp_raw.c; then echo $(srcdir)/inp_raw.c; else echo inp_raw.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > inp_raw_.c || rm -f inp_raw_.c
 inp_str_.c: inp_str.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/inp_str.c; then echo $(srcdir)/inp_str.c; else echo inp_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > inp_str_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/inp_str.c; then echo $(srcdir)/inp_str.c; else echo inp_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > inp_str_.c || rm -f inp_str_.c
 invert_.c: invert.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/invert.c; then echo $(srcdir)/invert.c; else echo invert.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > invert_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/invert.c; then echo $(srcdir)/invert.c; else echo invert.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > invert_.c || rm -f invert_.c
 ior_.c: ior.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ior.c; then echo $(srcdir)/ior.c; else echo ior.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ior_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ior.c; then echo $(srcdir)/ior.c; else echo ior.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ior_.c || rm -f ior_.c
 iset_.c: iset.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset.c; then echo $(srcdir)/iset.c; else echo iset.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset.c; then echo $(srcdir)/iset.c; else echo iset.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_.c || rm -f iset_.c
 iset_d_.c: iset_d.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset_d.c; then echo $(srcdir)/iset_d.c; else echo iset_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_d_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset_d.c; then echo $(srcdir)/iset_d.c; else echo iset_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_d_.c || rm -f iset_d_.c
 iset_si_.c: iset_si.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset_si.c; then echo $(srcdir)/iset_si.c; else echo iset_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_si_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset_si.c; then echo $(srcdir)/iset_si.c; else echo iset_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_si_.c || rm -f iset_si_.c
 iset_str_.c: iset_str.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset_str.c; then echo $(srcdir)/iset_str.c; else echo iset_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_str_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset_str.c; then echo $(srcdir)/iset_str.c; else echo iset_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_str_.c || rm -f iset_str_.c
 iset_ui_.c: iset_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset_ui.c; then echo $(srcdir)/iset_ui.c; else echo iset_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset_ui.c; then echo $(srcdir)/iset_ui.c; else echo iset_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_ui_.c || rm -f iset_ui_.c
 jacobi_.c: jacobi.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/jacobi.c; then echo $(srcdir)/jacobi.c; else echo jacobi.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > jacobi_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/jacobi.c; then echo $(srcdir)/jacobi.c; else echo jacobi.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > jacobi_.c || rm -f jacobi_.c
 kronsz_.c: kronsz.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/kronsz.c; then echo $(srcdir)/kronsz.c; else echo kronsz.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > kronsz_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/kronsz.c; then echo $(srcdir)/kronsz.c; else echo kronsz.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > kronsz_.c || rm -f kronsz_.c
 kronuz_.c: kronuz.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/kronuz.c; then echo $(srcdir)/kronuz.c; else echo kronuz.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > kronuz_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/kronuz.c; then echo $(srcdir)/kronuz.c; else echo kronuz.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > kronuz_.c || rm -f kronuz_.c
 kronzs_.c: kronzs.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/kronzs.c; then echo $(srcdir)/kronzs.c; else echo kronzs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > kronzs_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/kronzs.c; then echo $(srcdir)/kronzs.c; else echo kronzs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > kronzs_.c || rm -f kronzs_.c
 kronzu_.c: kronzu.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/kronzu.c; then echo $(srcdir)/kronzu.c; else echo kronzu.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > kronzu_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/kronzu.c; then echo $(srcdir)/kronzu.c; else echo kronzu.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > kronzu_.c || rm -f kronzu_.c
 lcm_.c: lcm.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/lcm.c; then echo $(srcdir)/lcm.c; else echo lcm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > lcm_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/lcm.c; then echo $(srcdir)/lcm.c; else echo lcm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > lcm_.c || rm -f lcm_.c
 lcm_ui_.c: lcm_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/lcm_ui.c; then echo $(srcdir)/lcm_ui.c; else echo lcm_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > lcm_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/lcm_ui.c; then echo $(srcdir)/lcm_ui.c; else echo lcm_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > lcm_ui_.c || rm -f lcm_ui_.c
 mod_.c: mod.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mod.c; then echo $(srcdir)/mod.c; else echo mod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mod_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mod.c; then echo $(srcdir)/mod.c; else echo mod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mod_.c || rm -f mod_.c
 mul_.c: mul.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul.c; then echo $(srcdir)/mul.c; else echo mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul.c; then echo $(srcdir)/mul.c; else echo mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_.c || rm -f mul_.c
 mul_2exp_.c: mul_2exp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_2exp.c; then echo $(srcdir)/mul_2exp.c; else echo mul_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_2exp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_2exp.c; then echo $(srcdir)/mul_2exp.c; else echo mul_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_2exp_.c || rm -f mul_2exp_.c
 mul_si_.c: mul_si.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_si.c; then echo $(srcdir)/mul_si.c; else echo mul_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_si_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_si.c; then echo $(srcdir)/mul_si.c; else echo mul_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_si_.c || rm -f mul_si_.c
 mul_ui_.c: mul_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_ui.c; then echo $(srcdir)/mul_ui.c; else echo mul_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_ui.c; then echo $(srcdir)/mul_ui.c; else echo mul_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_ui_.c || rm -f mul_ui_.c
 n_pow_ui_.c: n_pow_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/n_pow_ui.c; then echo $(srcdir)/n_pow_ui.c; else echo n_pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > n_pow_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/n_pow_ui.c; then echo $(srcdir)/n_pow_ui.c; else echo n_pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > n_pow_ui_.c || rm -f n_pow_ui_.c
 neg_.c: neg.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/neg.c; then echo $(srcdir)/neg.c; else echo neg.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > neg_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/neg.c; then echo $(srcdir)/neg.c; else echo neg.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > neg_.c || rm -f neg_.c
 nextprime_.c: nextprime.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/nextprime.c; then echo $(srcdir)/nextprime.c; else echo nextprime.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > nextprime_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/nextprime.c; then echo $(srcdir)/nextprime.c; else echo nextprime.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > nextprime_.c || rm -f nextprime_.c
 out_raw_.c: out_raw.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/out_raw.c; then echo $(srcdir)/out_raw.c; else echo out_raw.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > out_raw_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/out_raw.c; then echo $(srcdir)/out_raw.c; else echo out_raw.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > out_raw_.c || rm -f out_raw_.c
 out_str_.c: out_str.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/out_str.c; then echo $(srcdir)/out_str.c; else echo out_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > out_str_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/out_str.c; then echo $(srcdir)/out_str.c; else echo out_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > out_str_.c || rm -f out_str_.c
 perfpow_.c: perfpow.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/perfpow.c; then echo $(srcdir)/perfpow.c; else echo perfpow.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > perfpow_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/perfpow.c; then echo $(srcdir)/perfpow.c; else echo perfpow.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > perfpow_.c || rm -f perfpow_.c
 perfsqr_.c: perfsqr.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/perfsqr.c; then echo $(srcdir)/perfsqr.c; else echo perfsqr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > perfsqr_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/perfsqr.c; then echo $(srcdir)/perfsqr.c; else echo perfsqr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > perfsqr_.c || rm -f perfsqr_.c
 popcount_.c: popcount.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/popcount.c; then echo $(srcdir)/popcount.c; else echo popcount.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > popcount_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/popcount.c; then echo $(srcdir)/popcount.c; else echo popcount.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > popcount_.c || rm -f popcount_.c
 pow_ui_.c: pow_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pow_ui.c; then echo $(srcdir)/pow_ui.c; else echo pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pow_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pow_ui.c; then echo $(srcdir)/pow_ui.c; else echo pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pow_ui_.c || rm -f pow_ui_.c
 powm_.c: powm.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm.c; then echo $(srcdir)/powm.c; else echo powm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm.c; then echo $(srcdir)/powm.c; else echo powm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_.c || rm -f powm_.c
 powm_ui_.c: powm_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm_ui.c; then echo $(srcdir)/powm_ui.c; else echo powm_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm_ui.c; then echo $(srcdir)/powm_ui.c; else echo powm_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_ui_.c || rm -f powm_ui_.c
 pprime_p_.c: pprime_p.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pprime_p.c; then echo $(srcdir)/pprime_p.c; else echo pprime_p.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pprime_p_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pprime_p.c; then echo $(srcdir)/pprime_p.c; else echo pprime_p.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pprime_p_.c || rm -f pprime_p_.c
 random_.c: random.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/random.c; then echo $(srcdir)/random.c; else echo random.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > random_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/random.c; then echo $(srcdir)/random.c; else echo random.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > random_.c || rm -f random_.c
 random2_.c: random2.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/random2.c; then echo $(srcdir)/random2.c; else echo random2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > random2_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/random2.c; then echo $(srcdir)/random2.c; else echo random2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > random2_.c || rm -f random2_.c
 realloc_.c: realloc.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/realloc.c; then echo $(srcdir)/realloc.c; else echo realloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > realloc_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/realloc.c; then echo $(srcdir)/realloc.c; else echo realloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > realloc_.c || rm -f realloc_.c
 remove_.c: remove.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/remove.c; then echo $(srcdir)/remove.c; else echo remove.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > remove_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/remove.c; then echo $(srcdir)/remove.c; else echo remove.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > remove_.c || rm -f remove_.c
 root_.c: root.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/root.c; then echo $(srcdir)/root.c; else echo root.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > root_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/root.c; then echo $(srcdir)/root.c; else echo root.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > root_.c || rm -f root_.c
 rrandomb_.c: rrandomb.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rrandomb.c; then echo $(srcdir)/rrandomb.c; else echo rrandomb.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rrandomb_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rrandomb.c; then echo $(srcdir)/rrandomb.c; else echo rrandomb.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rrandomb_.c || rm -f rrandomb_.c
 scan0_.c: scan0.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/scan0.c; then echo $(srcdir)/scan0.c; else echo scan0.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > scan0_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/scan0.c; then echo $(srcdir)/scan0.c; else echo scan0.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > scan0_.c || rm -f scan0_.c
 scan1_.c: scan1.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/scan1.c; then echo $(srcdir)/scan1.c; else echo scan1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > scan1_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/scan1.c; then echo $(srcdir)/scan1.c; else echo scan1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > scan1_.c || rm -f scan1_.c
 set_.c: set.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set.c; then echo $(srcdir)/set.c; else echo set.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set.c; then echo $(srcdir)/set.c; else echo set.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_.c || rm -f set_.c
 set_d_.c: set_d.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_d.c; then echo $(srcdir)/set_d.c; else echo set_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_d_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_d.c; then echo $(srcdir)/set_d.c; else echo set_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_d_.c || rm -f set_d_.c
 set_f_.c: set_f.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_f.c; then echo $(srcdir)/set_f.c; else echo set_f.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_f_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_f.c; then echo $(srcdir)/set_f.c; else echo set_f.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_f_.c || rm -f set_f_.c
 set_q_.c: set_q.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_q.c; then echo $(srcdir)/set_q.c; else echo set_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_q_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_q.c; then echo $(srcdir)/set_q.c; else echo set_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_q_.c || rm -f set_q_.c
 set_si_.c: set_si.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_si.c; then echo $(srcdir)/set_si.c; else echo set_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_si_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_si.c; then echo $(srcdir)/set_si.c; else echo set_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_si_.c || rm -f set_si_.c
 set_str_.c: set_str.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_str.c; then echo $(srcdir)/set_str.c; else echo set_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_str_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_str.c; then echo $(srcdir)/set_str.c; else echo set_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_str_.c || rm -f set_str_.c
 set_ui_.c: set_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_ui.c; then echo $(srcdir)/set_ui.c; else echo set_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_ui.c; then echo $(srcdir)/set_ui.c; else echo set_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_ui_.c || rm -f set_ui_.c
 setbit_.c: setbit.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/setbit.c; then echo $(srcdir)/setbit.c; else echo setbit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > setbit_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/setbit.c; then echo $(srcdir)/setbit.c; else echo setbit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > setbit_.c || rm -f setbit_.c
 size_.c: size.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/size.c; then echo $(srcdir)/size.c; else echo size.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > size_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/size.c; then echo $(srcdir)/size.c; else echo size.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > size_.c || rm -f size_.c
 sizeinbase_.c: sizeinbase.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sizeinbase.c; then echo $(srcdir)/sizeinbase.c; else echo sizeinbase.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sizeinbase_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sizeinbase.c; then echo $(srcdir)/sizeinbase.c; else echo sizeinbase.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sizeinbase_.c || rm -f sizeinbase_.c
 sqrt_.c: sqrt.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrt.c; then echo $(srcdir)/sqrt.c; else echo sqrt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrt_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrt.c; then echo $(srcdir)/sqrt.c; else echo sqrt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrt_.c || rm -f sqrt_.c
 sqrtrem_.c: sqrtrem.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrtrem.c; then echo $(srcdir)/sqrtrem.c; else echo sqrtrem.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrtrem_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrtrem.c; then echo $(srcdir)/sqrtrem.c; else echo sqrtrem.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrtrem_.c || rm -f sqrtrem_.c
 sub_.c: sub.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c || rm -f sub_.c
 sub_ui_.c: sub_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub_ui.c; then echo $(srcdir)/sub_ui.c; else echo sub_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub_ui.c; then echo $(srcdir)/sub_ui.c; else echo sub_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_ui_.c || rm -f sub_ui_.c
 swap_.c: swap.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/swap.c; then echo $(srcdir)/swap.c; else echo swap.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > swap_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/swap.c; then echo $(srcdir)/swap.c; else echo swap.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > swap_.c || rm -f swap_.c
 tdiv_q_.c: tdiv_q.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_q.c; then echo $(srcdir)/tdiv_q.c; else echo tdiv_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_q_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_q.c; then echo $(srcdir)/tdiv_q.c; else echo tdiv_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_q_.c || rm -f tdiv_q_.c
 tdiv_q_2exp_.c: tdiv_q_2exp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_q_2exp.c; then echo $(srcdir)/tdiv_q_2exp.c; else echo tdiv_q_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_q_2exp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_q_2exp.c; then echo $(srcdir)/tdiv_q_2exp.c; else echo tdiv_q_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_q_2exp_.c || rm -f tdiv_q_2exp_.c
 tdiv_q_ui_.c: tdiv_q_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_q_ui.c; then echo $(srcdir)/tdiv_q_ui.c; else echo tdiv_q_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_q_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_q_ui.c; then echo $(srcdir)/tdiv_q_ui.c; else echo tdiv_q_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_q_ui_.c || rm -f tdiv_q_ui_.c
 tdiv_qr_.c: tdiv_qr.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_qr.c; then echo $(srcdir)/tdiv_qr.c; else echo tdiv_qr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_qr_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_qr.c; then echo $(srcdir)/tdiv_qr.c; else echo tdiv_qr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_qr_.c || rm -f tdiv_qr_.c
 tdiv_qr_ui_.c: tdiv_qr_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_qr_ui.c; then echo $(srcdir)/tdiv_qr_ui.c; else echo tdiv_qr_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_qr_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_qr_ui.c; then echo $(srcdir)/tdiv_qr_ui.c; else echo tdiv_qr_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_qr_ui_.c || rm -f tdiv_qr_ui_.c
 tdiv_r_.c: tdiv_r.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_r.c; then echo $(srcdir)/tdiv_r.c; else echo tdiv_r.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_r_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_r.c; then echo $(srcdir)/tdiv_r.c; else echo tdiv_r.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_r_.c || rm -f tdiv_r_.c
 tdiv_r_2exp_.c: tdiv_r_2exp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_r_2exp.c; then echo $(srcdir)/tdiv_r_2exp.c; else echo tdiv_r_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_r_2exp_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_r_2exp.c; then echo $(srcdir)/tdiv_r_2exp.c; else echo tdiv_r_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_r_2exp_.c || rm -f tdiv_r_2exp_.c
 tdiv_r_ui_.c: tdiv_r_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_r_ui.c; then echo $(srcdir)/tdiv_r_ui.c; else echo tdiv_r_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_r_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_r_ui.c; then echo $(srcdir)/tdiv_r_ui.c; else echo tdiv_r_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_r_ui_.c || rm -f tdiv_r_ui_.c
 tdiv_ui_.c: tdiv_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_ui.c; then echo $(srcdir)/tdiv_ui.c; else echo tdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_ui.c; then echo $(srcdir)/tdiv_ui.c; else echo tdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_ui_.c || rm -f tdiv_ui_.c
 tstbit_.c: tstbit.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tstbit.c; then echo $(srcdir)/tstbit.c; else echo tstbit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tstbit_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tstbit.c; then echo $(srcdir)/tstbit.c; else echo tstbit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tstbit_.c || rm -f tstbit_.c
 ui_pow_ui_.c: ui_pow_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ui_pow_ui.c; then echo $(srcdir)/ui_pow_ui.c; else echo ui_pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ui_pow_ui_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ui_pow_ui.c; then echo $(srcdir)/ui_pow_ui.c; else echo ui_pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ui_pow_ui_.c || rm -f ui_pow_ui_.c
 urandomb_.c: urandomb.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/urandomb.c; then echo $(srcdir)/urandomb.c; else echo urandomb.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > urandomb_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/urandomb.c; then echo $(srcdir)/urandomb.c; else echo urandomb.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > urandomb_.c || rm -f urandomb_.c
 urandomm_.c: urandomm.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/urandomm.c; then echo $(srcdir)/urandomm.c; else echo urandomm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > urandomm_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/urandomm.c; then echo $(srcdir)/urandomm.c; else echo urandomm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > urandomm_.c || rm -f urandomm_.c
 xor_.c: xor.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xor.c; then echo $(srcdir)/xor.c; else echo xor.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xor_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xor.c; then echo $(srcdir)/xor.c; else echo xor.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xor_.c || rm -f xor_.c
 abs_.$(OBJEXT) abs_.lo add_.$(OBJEXT) add_.lo add_ui_.$(OBJEXT) \
 add_ui_.lo and_.$(OBJEXT) and_.lo aorsmul_.$(OBJEXT) aorsmul_.lo \
 aorsmul_i_.$(OBJEXT) aorsmul_i_.lo array_init_.$(OBJEXT) array_init_.lo \
@@ -616,6 +595,7 @@ tdiv_r_ui_.lo tdiv_ui_.$(OBJEXT) tdiv_ui_.lo tstbit_.$(OBJEXT) \
 tstbit_.lo ui_pow_ui_.$(OBJEXT) ui_pow_ui_.lo urandomb_.$(OBJEXT) \
 urandomb_.lo urandomm_.$(OBJEXT) urandomm_.lo xor_.$(OBJEXT) xor_.lo : \
 $(ANSI2KNR)
+uninstall-info-am:
 
 tags: TAGS
 
@@ -641,20 +621,26 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
 	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
 
-mostlyclean-tags:
-
-clean-tags:
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
 
 distclean-tags:
 	-rm -f TAGS ID
 
-maintainer-clean-tags:
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+top_distdir = ..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    $(mkinstalldirs) "$(distdir)/$$dir"; \
+	  fi; \
 	  if test -d $$d/$$file; then \
 	    cp -pR $$d/$$file $(distdir) \
 	    || exit 1; \
@@ -664,82 +650,87 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-info-am:
-info: info-am
-dvi-am:
-dvi: dvi-am
 check-am: all-am
 check: check-am
-installcheck-am:
-installcheck: installcheck-am
-install-exec-am:
-install-exec: install-exec-am
+all-am: Makefile $(LTLIBRARIES)
 
-install-data-am:
+installdirs:
+
+install: install-am
+install-exec: install-exec-am
 install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-am
-uninstall-am:
-uninstall: uninstall-am
-all-am: Makefile $(LTLIBRARIES)
-all-redirect: all-am
+
+installcheck: installcheck-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
-installdirs:
-
-
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  `test -z '$(STRIP)' || \
+	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
 
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
-	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-noinstLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-kr mostlyclean-tags \
-		mostlyclean-generic
-
-mostlyclean: mostlyclean-am
-
-clean-am:  clean-noinstLTLIBRARIES clean-compile clean-libtool clean-kr \
-		clean-tags clean-generic mostlyclean-am
-
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-distclean-am:  distclean-noinstLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-kr distclean-tags \
-		distclean-generic clean-am
-	-rm -f libtool
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-noinstLTLIBRARIES \
-		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-kr maintainer-clean-tags \
-		maintainer-clean-generic distclean-am
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-libtool distclean-tags
+
+dvi: dvi-am
+
+dvi-am:
+
+info: info-am
+
+info-am:
+
+install-data-am:
+
+install-exec-am:
+
+install-info: install-info-am
+
+install-man:
+
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-noinstLTLIBRARIES distclean-noinstLTLIBRARIES \
-clean-noinstLTLIBRARIES maintainer-clean-noinstLTLIBRARIES \
-mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
-clean-kr maintainer-clean-kr tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
-check-am installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool
+
+uninstall-am: uninstall-info-am
+
+uninstall-info: uninstall-info-am
+
+.PHONY: all all-am check check-am clean clean-generic clean-libtool \
+	clean-noinstLTLIBRARIES distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-kr mostlyclean-libtool tags \
+	uninstall uninstall-am uninstall-info-am
 
 
 add.c: $(srcdir)/aors.c
@@ -770,7 +761,6 @@ mul_si.c: $(srcdir)/mul_siui.c
 	cp $(srcdir)/mul_siui.c mul_si.c
 mul_ui.c: $(srcdir)/mul_siui.c
 	cp $(srcdir)/mul_siui.c mul_ui.c
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
