@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_rsh1add_n/mpn_rsh1sub_n -- rp[] = (up[] +- vp[]) >> 1.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,15 +21,12 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C         cycles/limb	 1   2   3   4   5   6   7   8   9  10  11  12  13  14
-C Itanium:    2.5?
-C Itanium 2:  1.5	7.0 7.0 6.0 5.4 4.5 4.1 3.9 3.7 3.4 3.3 3.2 3.0 3.0 2.9
-
-C This code has been optimized for Itanium 2 at the expense of Itanium 1, since
-C the latter chip is very rare out there.
+C         cycles/limb
+C Itanium 2:  1.5
 
 C TODO
-C  * Micro-optimize feed-in and wind-down code.
+C  * Rewrite function entry code using aorslsh1_n.asm style.
+C  * Micro-optimize feed-in and wind-down code.  
 
 C INPUT PARAMETERS
 define(`rp',`r32')
@@ -72,9 +69,16 @@ ifdef(`HAVE_ABI_32',`
 	zxt4		n = n
 	;;
 ')
-	and		r14 = 3, n
-	adds		n = -1, n
+{.mmi
+	ld8		r11 = [vp], 8		C			M01
+	ld8		r10 = [up], 8		C			M01
 	mov.i		r2 = ar.lc
+}
+{.mmi
+	and		r14 = 3, n
+	add		n = -1, n
+	nop		0
+}
 	;;
 	shr.u		r15 = n, 2
 	cmp.eq		p6, p0 = 1, r14
@@ -85,42 +89,41 @@ ifdef(`HAVE_ABI_32',`
    (p6)	br.dptk		.Lb01
    (p7)	br.dptk		.Lb10
    (p8)	br.dptk		.Lb11
-	br.dptk		.Lb00		C FIXME, one should fall through
 	;;
 
-
-.Lb11:	ld8		v0 = [vp], 8
+.Lb00:	ld8		v0 = [vp], 8
 	ld8		u0 = [up], 8
 	;;
 	ld8		v1 = [vp], 8
 	ld8		u1 = [up], 8
+	ADDSUB		w3 = r10, r11
 	;;
 	ld8		v2 = [vp], 8
 	ld8		u2 = [up], 8
-	br.cloop.dptk	.Lb11_grt3
+	br.cloop.dptk	.grt4
+	;;
 
+	cmp.PRED	p7, p0 = w3, r10
+	and		r8 = 1, w3
 	ADDSUB		w0 = u0, v0
 	;;
 	cmp.PRED	p8, p0 = w0, u0
 	ADDSUB		w1 = u1, v1
-	and		r8 = 1, w0
 	;;
 	cmp.PRED	p9, p0 = w1, u1
+   (p7)	cmp.eq.or	p8, p0 = LIM, w0
+   (p7)	add		w0 = INCR, w0
 	;;
+	shrp		x3 = w0, w3, 1
 	ADDSUB		w2 = u2, v2
    (p8)	cmp.eq.or	p9, p0 = LIM, w1
    (p8)	add		w1 = INCR, w1
-	;;
-	cmp.PRED	p6, p0 = w2, u2
-	shrp		x0 = w1, w0, 1
-	;;
-   (p9)	cmp.eq.or	p6, p0 = LIM, w2
-   (p9)	add		w2 = INCR, w2
-	br		.Lcj3
+	br		.Lcj4
 
-.Lb11_grt3:
-	ld8		v3 = [vp], 8
+.grt4:	ld8		v3 = [vp], 8
+	cmp.PRED	p7, p0 = w3, r10
 	ld8		u3 = [up], 8
+	and		r8 = 1, w3
 	;;
 	ADDSUB		w0 = u0, v0
 	ld8		v0 = [vp], 8
@@ -128,123 +131,33 @@ ifdef(`HAVE_ABI_32',`
 	cmp.PRED	p8, p0 = w0, u0
 	ld8		u0 = [up], 8
 	ADDSUB		w1 = u1, v1
-	and		r8 = 1, w0
 	;;
 	ld8		v1 = [vp], 8
 	cmp.PRED	p9, p0 = w1, u1
 	ld8		u1 = [up], 8
+   (p7)	cmp.eq.or	p8, p0 = LIM, w0
+   (p7)	add		w0 = INCR, w0
 	;;
 	ADDSUB		w2 = u2, v2
 	ld8		v2 = [vp], 8
+	shrp		x3 = w0, w3, 1
    (p8)	cmp.eq.or	p9, p0 = LIM, w1
    (p8)	add		w1 = INCR, w1
-	;;
-	cmp.PRED	p6, p0 = w2, u2
-	shrp		x0 = w1, w0, 1
-	ld8		u2 = [up], 8
-	ADDSUB		w3 = u3, v3
-	br.cloop.dptk	.Lb11_grt7
-	;;
-
-	cmp.PRED	p7, p0 = w3, u3
-   (p9)	cmp.eq.or	p6, p0 = LIM, w2
-   (p9)	add		w2 = INCR, w2
-	br		.Lcj7
-
-.Lb11_grt7:
-	ld8		v3 = [vp], 8
-	cmp.PRED	p7, p0 = w3, u3
-	ld8		u3 = [up], 8
-   (p9)	cmp.eq.or	p6, p0 = LIM, w2
-   (p9)	add		w2 = INCR, w2
-	br		.LL11
+	br		.LL00
 
 
-.Lb10:	ld8		v1 = [vp], 8
-	ld8		u1 = [up], 8
-	;;
-	ld8		v2 = [vp], 8
-	ld8		u2 = [up], 8
-	br.cloop.dptk	.Lb10_grt2
-
-	ADDSUB		w1 = u1, v1
-	;;
-	cmp.PRED	p9, p0 = w1, u1
-	and		r8 = 1, w1
-	ADDSUB		w2 = u2, v2
-	;;
-	cmp.PRED	p6, p0 = w2, u2
-	;;
-   (p9)	cmp.eq.or	p6, p0 = LIM, w2
-   (p9)	add		w2 = INCR, w2
-	;;
-	shrp		x1 = w2, w1, 1
-	shr.u		x2 = w2, 1
-	br		.Lcj2
-
-.Lb10_grt2:
-	ld8		v3 = [vp], 8
-	ld8		u3 = [up], 8
-	;;
-	ld8		v0 = [vp], 8
-	ld8		u0 = [up], 8
-	ADDSUB		w1 = u1, v1
-	;;
-	ld8		v1 = [vp], 8
-	cmp.PRED	p9, p0 = w1, u1
-	ld8		u1 = [up], 8
-	and		r8 = 1, w1
-	;;
-	ADDSUB		w2 = u2, v2
-	ld8		v2 = [vp], 8
-	;;
-	cmp.PRED	p6, p0 = w2, u2
-	ld8		u2 = [up], 8
-	ADDSUB		w3 = u3, v3
-	br.cloop.dptk	.Lb10_grt6
+.Lb01:	ADDSUB		w2 = r10, r11
+	br.cloop.dptk	.grt1
 	;;
 
-	cmp.PRED	p7, p0 = w3, u3
-   (p9)	cmp.eq.or	p6, p0 = LIM, w2
-   (p9)	add		w2 = INCR, w2
-	;;
-	shrp		x1 = w2, w1, 1
-	ADDSUB		w0 = u0, v0
-   (p6)	cmp.eq.or	p7, p0 = LIM, w3
-   (p6)	add		w3 = INCR, w3
-	br		.Lcj6
-
-.Lb10_grt6:
-	ld8		v3 = [vp], 8
-	cmp.PRED	p7, p0 = w3, u3
-	ld8		u3 = [up], 8
-   (p9)	cmp.eq.or	p6, p0 = LIM, w2
-   (p9)	add		w2 = INCR, w2
-	;;
-	shrp		x1 = w2, w1, 1
-	ADDSUB		w0 = u0, v0
-	ld8		v0 = [vp], 8
-   (p6)	cmp.eq.or	p7, p0 = LIM, w3
-   (p6)	add		w3 = INCR, w3
-	br		.LL10
-
-
-.Lb01:	ld8		v2 = [vp], 8
-	ld8		u2 = [up], 8
-	br.cloop.dptk	.Lb01_grt1
-	;;
-
-	ADDSUB		w2 = u2, v2
-	;;
-	cmp.PRED	p6, p7 = w2, u2
+	cmp.PRED	p6, p7 = w2, r10
 	and		r8 = 1, w2
 	shr.u		x2 = w2, 1
 	;;
    (p6)	dep		x2 = -1, x2, 63, 1
 	br		.Lcj1
 
-.Lb01_grt1:
-	ld8		v3 = [vp], 8
+.grt1:	ld8		v3 = [vp], 8
 	ld8		u3 = [up], 8
 	;;
 	ld8		v0 = [vp], 8
@@ -253,14 +166,12 @@ ifdef(`HAVE_ABI_32',`
 	ld8		v1 = [vp], 8
 	ld8		u1 = [up], 8
 	;;
-	ADDSUB		w2 = u2, v2
 	ld8		v2 = [vp], 8
-	;;
-	cmp.PRED	p6, p0 = w2, u2
 	ld8		u2 = [up], 8
+	cmp.PRED	p6, p0 = w2, r10
 	and		r8 = 1, w2
 	ADDSUB		w3 = u3, v3
-	br.cloop.dptk	.Lb01_grt5
+	br.cloop.dptk	.grt5
 	;;
 
 	cmp.PRED	p7, p0 = w3, u3
@@ -278,8 +189,7 @@ ifdef(`HAVE_ABI_32',`
    (p7)	add		w0 = INCR, w0
 	br		.Lcj5
 
-.Lb01_grt5:
-	ld8		v3 = [vp], 8
+.grt5:	ld8		v3 = [vp], 8
 	cmp.PRED	p7, p0 = w3, u3
 	ld8		u3 = [up], 8
 	;;
@@ -301,64 +211,131 @@ ifdef(`HAVE_ABI_32',`
 	br		.LL01
 
 
-.Lb00:	ld8		v3 = [vp], 8
+.Lb10:	ld8		v2 = [vp], 8
+	ld8		u2 = [up], 8
+	ADDSUB		w1 = r10, r11
+	br.cloop.dptk	.grt2
+	;;
+
+	cmp.PRED	p9, p0 = w1, r10
+	and		r8 = 1, w1
+	ADDSUB		w2 = u2, v2
+	;;
+	cmp.PRED	p6, p0 = w2, u2
+	;;
+   (p9)	cmp.eq.or	p6, p0 = LIM, w2
+   (p9)	add		w2 = INCR, w2
+	;;
+	shrp		x1 = w2, w1, 1
+	shr.u		x2 = w2, 1
+	br		.Lcj2
+
+.grt2:	ld8		v3 = [vp], 8
 	ld8		u3 = [up], 8
 	;;
 	ld8		v0 = [vp], 8
 	ld8		u0 = [up], 8
 	;;
 	ld8		v1 = [vp], 8
+	cmp.PRED	p9, p0 = w1, r10
+	ld8		u1 = [up], 8
+	and		r8 = 1, w1
+	;;
+	ADDSUB		w2 = u2, v2
+	ld8		v2 = [vp], 8
+	;;
+	cmp.PRED	p6, p0 = w2, u2
+	ld8		u2 = [up], 8
+	ADDSUB		w3 = u3, v3
+	br.cloop.dptk	.grt6
+	;;
+
+	cmp.PRED	p7, p0 = w3, u3
+   (p9)	cmp.eq.or	p6, p0 = LIM, w2
+   (p9)	add		w2 = INCR, w2
+	;;
+	shrp		x1 = w2, w1, 1
+	ADDSUB		w0 = u0, v0
+   (p6)	cmp.eq.or	p7, p0 = LIM, w3
+   (p6)	add		w3 = INCR, w3
+	br		.Lcj6
+
+.grt6:	ld8		v3 = [vp], 8
+	cmp.PRED	p7, p0 = w3, u3
+	ld8		u3 = [up], 8
+   (p9)	cmp.eq.or	p6, p0 = LIM, w2
+   (p9)	add		w2 = INCR, w2
+	;;
+	shrp		x1 = w2, w1, 1
+	ADDSUB		w0 = u0, v0
+	ld8		v0 = [vp], 8
+   (p6)	cmp.eq.or	p7, p0 = LIM, w3
+   (p6)	add		w3 = INCR, w3
+	br		.LL10
+
+
+.Lb11:	ld8		v1 = [vp], 8
 	ld8		u1 = [up], 8
 	;;
 	ld8		v2 = [vp], 8
 	ld8		u2 = [up], 8
-	ADDSUB		w3 = u3, v3
-	br.cloop.dptk	.Lb00_grt4
-	;;
+	ADDSUB		w0 = r10, r11
+	br.cloop.dptk	.grt3
 
-	cmp.PRED	p7, p0 = w3, u3
-	and		r8 = 1, w3
 	;;
-	ADDSUB		w0 = u0, v0
-	;;
-	cmp.PRED	p8, p0 = w0, u0
+	cmp.PRED	p8, p0 = w0, r10
 	ADDSUB		w1 = u1, v1
+	and		r8 = 1, w0
 	;;
 	cmp.PRED	p9, p0 = w1, u1
-   (p7)	cmp.eq.or	p8, p0 = LIM, w0
-   (p7)	add		w0 = INCR, w0
 	;;
-	shrp		x3 = w0, w3, 1
 	ADDSUB		w2 = u2, v2
    (p8)	cmp.eq.or	p9, p0 = LIM, w1
    (p8)	add		w1 = INCR, w1
-	br		.Lcj4
+	;;
+	cmp.PRED	p6, p0 = w2, u2
+	shrp		x0 = w1, w0, 1
+	;;
+   (p9)	cmp.eq.or	p6, p0 = LIM, w2
+   (p9)	add		w2 = INCR, w2
+	br		.Lcj3
 
-.Lb00_grt4:
-	ld8		v3 = [vp], 8
-	cmp.PRED	p7, p0 = w3, u3
+.grt3:	ld8		v3 = [vp], 8
 	ld8		u3 = [up], 8
-	and		r8 = 1, w3
 	;;
-	ADDSUB		w0 = u0, v0
 	ld8		v0 = [vp], 8
-	;;
-	cmp.PRED	p8, p0 = w0, u0
+	cmp.PRED	p8, p0 = w0, r10
 	ld8		u0 = [up], 8
 	ADDSUB		w1 = u1, v1
+	and		r8 = 1, w0
 	;;
 	ld8		v1 = [vp], 8
 	cmp.PRED	p9, p0 = w1, u1
 	ld8		u1 = [up], 8
-   (p7)	cmp.eq.or	p8, p0 = LIM, w0
-   (p7)	add		w0 = INCR, w0
 	;;
-	shrp		x3 = w0, w3, 1
 	ADDSUB		w2 = u2, v2
 	ld8		v2 = [vp], 8
    (p8)	cmp.eq.or	p9, p0 = LIM, w1
    (p8)	add		w1 = INCR, w1
-	br		.LL00
+	;;
+	cmp.PRED	p6, p0 = w2, u2
+	shrp		x0 = w1, w0, 1
+	ld8		u2 = [up], 8
+	ADDSUB		w3 = u3, v3
+	br.cloop.dptk	.grt7
+	;;
+
+	cmp.PRED	p7, p0 = w3, u3
+   (p9)	cmp.eq.or	p6, p0 = LIM, w2
+   (p9)	add		w2 = INCR, w2
+	br		.Lcj7
+
+.grt7:	ld8		v3 = [vp], 8
+	cmp.PRED	p7, p0 = w3, u3
+	ld8		u3 = [up], 8
+   (p9)	cmp.eq.or	p6, p0 = LIM, w2
+   (p9)	add		w2 = INCR, w2
+	br		.LL11
 
 
 C *** MAIN LOOP START ***
