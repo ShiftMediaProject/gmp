@@ -22,7 +22,7 @@ MA 02111-1307, USA. */
 /* Integer greatest common divisor of two unsigned integers, using
    the accelerated algorithm (see reference below).
 
-   mp_size_t mpn_gcd (vp, vsize, up, usize).
+   mp_size_t mpn_gcd (up, usize, vp, vsize).
 
    Preconditions [U = (up, usize) and V = (vp, vsize)]:
 
@@ -176,14 +176,14 @@ find_a (cp)
 
 mp_size_t
 #if __STDC__
-mpn_gcd (mp_ptr gp, mp_ptr vp, mp_size_t vsize, mp_ptr up, mp_size_t usize)
+mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 #else
-mpn_gcd (gp, vp, vsize, up, usize)
+mpn_gcd (gp, up, usize, vp, vsize)
      mp_ptr gp;
-     mp_ptr vp;
-     mp_size_t vsize;
      mp_ptr up;
      mp_size_t usize;
+     mp_ptr vp;
+     mp_size_t vsize;
 #endif
 {
   mp_ptr orig_vp = vp;
