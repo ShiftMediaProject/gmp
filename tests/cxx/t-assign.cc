@@ -19,10 +19,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <cstdlib>
 #include <iostream>
 #include <string>
+
 #include "gmp.h"
+#ifdef WANT_MPFR
+#  include "mpfr.h"
+#endif
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -30,164 +33,560 @@ MA 02111-1307, USA. */
 using namespace std;
 
 
-#define CHECK_GMP(type, message, want)                         \
-  do                                                           \
-    {                                                          \
-      type##_set_str(ref, want, 0);                            \
-      if (type##_cmp(val.get_##type##_t(), ref) != 0)          \
-        {                                                      \
-          cout << "error on " #type "_class assignment: "      \
-	       << message << "\n";                             \
-          cout << "  want:  " << ref << "\n";                  \
-          cout << "  got:   " << val.get_##type##_t() << "\n"; \
-          abort();                                             \
-        }                                                      \
-    }                                                          \
-  while (0)
-
-#define CHECK_MPZ(expr, want) CHECK_GMP(mpz, expr, want)
-#define CHECK_MPQ(expr, want) CHECK_GMP(mpq, expr, want)
-#define CHECK_MPF(expr, want) CHECK_GMP(mpf, expr, want)
-
-
-void check_mpz(void)
+void
+check_mpz (void)
 {
-  mpz_class val;
-  mpz_t ref;
-  mpz_init(ref);
-
-  mpz_class z(1);
-
   // operator=(const mpz_class &)
-  val = z; CHECK_MPZ("val = z [mpz_class]", "1");
+  {
+    mpz_class a(123), b;
+    b = a; ASSERT_ALWAYS(b == 123);
+  }
 
   // template <class T, class U> operator=(const __gmp_expr<T, U> &)
-  // not tested here, see t-expr.cc
+  // not tested here, see t-unary.cc, t-binary.cc
 
   // operator=(signed char)
+  {
+    signed char a = -127;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == -127);
+  }
+
   // operator=(unsigned char)
+  {
+    unsigned char a = 255;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 255);
+  }
+
+  // either signed or unsigned char, machine dependent
+  {
+    mpz_class a;
+    a = 'A'; ASSERT_ALWAYS(a == 65);
+  }
+  {
+    mpz_class a;
+    a = 'z'; ASSERT_ALWAYS(a == 122);
+  }
 
   // operator=(signed int)
-  val = 0;    CHECK_MPZ("val = 0"   , "0"   );
-  val = -123; CHECK_MPZ("val = -123", "-123");
+  {
+    signed int a = 0;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
+  {
+    signed int a = -123;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == -123);
+  }
+  {
+    signed int a = 32767;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 32767);
+  }
 
   // operator=(unsigned int)
+  {
+    unsigned int a = 65535u;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 65535u);
+  }
+
   // operator=(signed short int)
+  {
+    signed short int a = -12345;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == -12345);
+  }
+
   // operator=(unsigned short int)
+  {
+    unsigned short int a = 54321u;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 54321u);
+  }
+
   // operator=(signed long int)
+  {
+    signed long int a = -1234567890L;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == -1234567890L);
+  }
 
   // operator=(unsigned long int)
-  val = 3456789012UL; CHECK_MPZ("val = 3456789012UL", "3456789012");
+  {
+    unsigned long int a = 3456789012UL;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 3456789012UL);
+  }
 
   // operator=(float)
+  {
+    float a = 123.0;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 123);
+  }
+
   // operator=(double)
+  {
+    double a = 0.0;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
+  {
+    double a = -12.375;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == -12);
+  }
+  {
+    double a = 6.789e+3;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 6789);
+  }
+  {
+    double a = 9.375e-1;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
 
   // operator=(long double)
   // currently not implemented
 
   // operator=(const char *)
-  val = "12345678901234567890";
-  CHECK_MPZ("val = \"12345678901234567890\"", "12345678901234567890");
+  {
+    const char *a = "1234567890";
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
 
   // operator=(const std::string &)
-  val = string("1234567890");
-  CHECK_MPZ("val = string(\"1234567890\")", "1234567890");
-
-  mpz_clear(ref);
+  {
+    string a("1234567890");
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
 }
 
-void check_mpq(void)
+void
+check_mpq (void)
 {
-  mpq_class val;
-  mpq_t ref;
-  mpq_init(ref);
-
-  mpq_class q(1, 2);
-
   // operator=(const mpq_class &)
-  val = q; CHECK_MPQ("val = q [mpq_class]", "1/2");
+  {
+    mpq_class a(1, 2), b;
+    b = a; ASSERT_ALWAYS(b == 0.5);
+  }
 
   // template <class T, class U> operator=(const __gmp_expr<T, U> &)
-  // not tested here, see t-expr.cc
+  // not tested here, see t-unary.cc, t-binary.cc
 
   // operator=(signed char)
+  {
+    signed char a = -127;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == -127);
+  }
+
   // operator=(unsigned char)
+  {
+    unsigned char a = 255;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 255);
+  }
+
+  // either signed or unsigned char, machine dependent
+  {
+    mpq_class a;
+    a = 'A'; ASSERT_ALWAYS(a == 65);
+  }
+  {
+    mpq_class a;
+    a = 'z'; ASSERT_ALWAYS(a == 122);
+  }
 
   // operator=(signed int)
-  val = 0;    CHECK_MPQ("val = 0"   , "0"   );
-  val = -123; CHECK_MPQ("val = -123", "-123");
+  {
+    signed int a = 0;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
+  {
+    signed int a = -123;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == -123);
+  }
+  {
+    signed int a = 32767;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 32767);
+  }
 
   // operator=(unsigned int)
+  {
+    unsigned int a = 65535u;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 65535u);
+  }
+
   // operator=(signed short int)
+  {
+    signed short int a = -12345;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == -12345);
+  }
+
   // operator=(unsigned short int)
+  {
+    unsigned short int a = 54321u;
+    mpz_class b;
+    b = a; ASSERT_ALWAYS(b == 54321u);
+  }
+
   // operator=(signed long int)
+  {
+    signed long int a = -1234567890L;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == -1234567890L);
+  }
 
   // operator=(unsigned long int)
-  val = 3456789012UL; CHECK_MPQ("val = 3456789012UL", "3456789012");
+  {
+    unsigned long int a = 3456789012UL;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 3456789012UL);
+  }
 
   // operator=(float)
+  {
+    float a = 123.0;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 123);
+  }
+
   // operator=(double)
+  {
+    double a = 0.0;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
+  {
+    double a = -12.375;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == -12.375);
+  }
+  {
+    double a = 6.789e+3;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 6789);
+  }
+  {
+    double a = 9.375e-1;
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 0.9375);
+  }
+
   // operator=(long double)
+  // currently not implemented
 
   // operator=(const char *)
-  val = "12345678901234567890";
-  CHECK_MPQ("val = \"12345678901234567890\"", "12345678901234567890");
+  {
+    const char *a = "1234567890";
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
 
   // operator=(const std::string &)
-  val = string("1234567890");
-  CHECK_MPQ("val = string(\"1234567890\")", "1234567890");
-
-  mpq_clear(ref);
+  {
+    string a("1234567890");
+    mpq_class b;
+    b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
 }
 
-void check_mpf(void)
+void
+check_mpf (void)
 {
-  mpf_class val;
-  mpf_t ref;
-  mpf_init(ref);
-
-  mpf_class f("1.0");
-
   // operator=(const mpf_class &)
-  val = f; CHECK_MPF("val = f [mpf_class]", "1.0");
+  {
+    mpf_class a(123), b;
+    b = a; ASSERT_ALWAYS(b == 123);
+  }
 
   // template <class T, class U> operator=(const __gmp_expr<T, U> &)
+  // not tested here, see t-unary.cc, t-binary.cc
+
   // operator=(signed char)
+  {
+    signed char a = -127;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == -127);
+  }
+
   // operator=(unsigned char)
+  {
+    unsigned char a = 255;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 255);
+  }
+
+  // either signed or unsigned char, machine dependent
+  {
+    mpf_class a;
+    a = 'A'; ASSERT_ALWAYS(a == 65);
+  }
+  {
+    mpf_class a;
+    a = 'z'; ASSERT_ALWAYS(a == 122);
+  }
 
   // operator=(signed int)
-  val = 0;    CHECK_MPF("val = 0"   , "0.0"   );
-  val = -123; CHECK_MPF("val = -123", "-123.0");
+  {
+    signed int a = 0;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
+  {
+    signed int a = -123;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == -123);
+  }
+  {
+    signed int a = 32767;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 32767);
+  }
 
   // operator=(unsigned int)
+  {
+    unsigned int a = 65535u;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 65535u);
+  }
+
   // operator=(signed short int)
+  {
+    signed short int a = -12345;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == -12345);
+  }
+
   // operator=(unsigned short int)
+  {
+    unsigned short int a = 54321u;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 54321u);
+  }
+
   // operator=(signed long int)
+  {
+    signed long int a = -1234567890L;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == -1234567890L);
+  }
 
   // operator=(unsigned long int)
-  val = 3456789012UL; CHECK_MPF("val = 3456789012UL", "3456789012.0");
+  {
+    unsigned long int a = 3456789012UL;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 3456789012UL);
+  }
 
   // operator=(float)
+  {
+    float a = 123.0;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 123);
+  }
+
   // operator=(double)
+  {
+    double a = 0.0;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
+  {
+    double a = -12.375;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == -12.375);
+  }
+  {
+    double a = 6.789e+3;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 6789);
+  }
+  {
+    double a = 9.375e-1;
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 0.9375);
+  }
+
   // operator=(long double)
+  // currently not implemented
 
   // operator=(const char *)
-  val = "1234567890"; CHECK_MPF("val = \"1234567890\"", "1234567890.0");
+  {
+    const char *a = "1234567890";
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
 
   // operator=(const std::string &)
-  val = string("123456"); CHECK_MPF("val = string(\"123456\")", "123456");
+  {
+    string a("1234567890");
+    mpf_class b;
+    b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
+}
 
-  mpf_clear(ref);
+void
+check_mpfr (void)
+{
+#ifdef WANT_MPFR
+
+  // operator=(const mpfr_class &)
+  {
+    mpfr_class a(123), b;
+    b = a; ASSERT_ALWAYS(b == 123);
+  }
+
+  // template <class T, class U> operator=(const __gmp_expr<T, U> &)
+  // not tested here, see t-unary.cc, t-binary.cc
+
+  // operator=(signed char)
+  {
+    signed char a = -127;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == -127);
+  }
+
+  // operator=(unsigned char)
+  {
+    unsigned char a = 255;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 255);
+  }
+
+  // either signed or unsigned char, machine dependent
+  {
+    mpfr_class a;
+    a = 'A'; ASSERT_ALWAYS(a == 65);
+  }
+  {
+    mpfr_class a;
+    a = 'z'; ASSERT_ALWAYS(a == 122);
+  }
+
+  // operator=(signed int)
+  {
+    signed int a = 0;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
+  {
+    signed int a = -123;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == -123);
+  }
+  {
+    signed int a = 32767;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 32767);
+  }
+
+  // operator=(unsigned int)
+  {
+    unsigned int a = 65535u;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 65535u);
+  }
+
+  // operator=(signed short int)
+  {
+    signed short int a = -12345;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == -12345);
+  }
+
+  // operator=(unsigned short int)
+  {
+    unsigned short int a = 54321u;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 54321u);
+  }
+
+  // operator=(signed long int)
+  {
+    signed long int a = -1234567890L;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == -1234567890L);
+  }
+
+  // operator=(unsigned long int)
+  {
+    unsigned long int a = 3456789012UL;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 3456789012UL);
+  }
+
+  // operator=(float)
+  {
+    float a = 123.0;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 123);
+  }
+
+  // operator=(double)
+  {
+    double a = 0.0;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 0);
+  }
+  {
+    double a = -12.375;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == -12.375);
+  }
+  {
+    double a = 6.789e+3;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 6789);
+  }
+  {
+    double a = 9.375e-1;
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 0.9375);
+  }
+
+  // operator=(long double)
+  // currently not implemented
+
+  // operator=(const char *)
+  {
+    const char *a = "1234567890";
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
+
+  // operator=(const std::string &)
+  {
+    string a("1234567890");
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS(b == 1234567890L);
+  }
+
+#endif /* WANT_MPFR */
 }
 
 
-int main()
+int
+main (void)
 {
   tests_start();
 
   check_mpz();
   check_mpq();
   check_mpf();
+  check_mpfr();
 
   tests_end();
   return 0;
