@@ -435,6 +435,7 @@ dnl FIXME: need more header files?
 dnl [AC_CHECK_HEADERS(unistd.h)]
 
 dnl Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_TYPES((void))
 AC_C_STRINGIZE
 dnl FIXME: If we need [AC_C_CONST], call [AC_PROGCC_STDC] first
 dnl FIXME: If we need [AC_C_INLINE], call [AC_PROGCC_STDC] first
