@@ -37,7 +37,7 @@ C absolute offsets.  Fragile to be sure, but nothing else seems to work.
 ASM_START()
 ifdef(`PIC',`',
 `	RODATA
-	INT64(L(0000), 0x43f00000, 0x0)		C 2^64
+	INT64(0000, 0x43f00000, 0x0)	C 2^64
 ')
 
 PROLOGUE(mpn_udiv_qrnnd)
