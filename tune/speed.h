@@ -182,6 +182,7 @@ double speed_mpn_mod_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mod_1c _PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_div _PROTO ((struct speed_params *s));
 double speed_mpn_mod_1_inv _PROTO ((struct speed_params *s));
+double speed_mpn_mod_34lsub1 _PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1_odd _PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1c_odd _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
