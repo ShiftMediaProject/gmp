@@ -19,6 +19,25 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-06  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/pre_divrem_1.c: Don't support size==0.
+	* tests/devel/try.c: Update.
+
+	* mpn/generic/get_str.c: Add special case for base==10.
+	* gmp-impl.h (MP_BASES_CHARS_PER_LIMB_10, MP_BASES_BIG_BASE_10,
+	MP_BASES_BIG_BASE_INVERTED_10, MP_BASES_NORMALIZATION_STEPS_10): New
+	constants.
+	* tests/t-constants.c: Add checks.
+	* mpn/mp_bases.c [GENERATE_TABLE]: Print defines for gmp-impl.h, print
+	all standard bits-per-limb by default.
+
+	* demos/pexpr.c, demos/expr/expr.h, demos/expr/expr-impl.h: Use
+	__GMP_PROTO.
+
+	* gmp-h.in (mpn_divexact_by3c): Remove variables from prototype, to
+	keep out of application namespace.
+
 2002-01-04  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h: Move _PROTO declaration to before its first usages.
