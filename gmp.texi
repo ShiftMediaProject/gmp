@@ -1569,6 +1569,7 @@ These functions assign new values to already initialized floats
 @deftypefunx void mpf_set_ui (mpf_t @var{rop}, unsigned long int @var{op})
 @deftypefunx void mpf_set_si (mpf_t @var{rop}, signed long int @var{op})
 @deftypefunx void mpf_set_d (mpf_t @var{rop}, double @var{op})
+@deftypefunx void mpf_set_q (mpf_t @var{rop}, mpq_t @var{op})
 Set the value of @var{rop} from @var{op}.
 @end deftypefun
 
