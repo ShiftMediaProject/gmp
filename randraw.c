@@ -341,7 +341,7 @@ _gmp_rand (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
       }
 
     default:
-      gmp_errno |= GMP_ERROR_UNSUPPORTED_ARGUMENT;
+      ASSERT (0);
       break;
     }
 }

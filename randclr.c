@@ -44,6 +44,7 @@ gmp_randclear (gmp_randstate_t rstate)
 #endif /* 0 */
 
     default:
-      gmp_errno |= GMP_ERROR_UNSUPPORTED_ARGUMENT;
+      ASSERT (0);
+      break;
     }
 }
