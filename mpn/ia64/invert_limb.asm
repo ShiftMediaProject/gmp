@@ -30,8 +30,17 @@ C explicitly chopping in the last fma.  That would save about 10 cycles.
 ASM_START()
 	RODATA
 	.align 16
+ifdef(`HAVE_DOUBLE_IEEE_LITTLE_ENDIAN',`
 .LC0:	data4 0x00000000, 0x80000000, 0x0000403f, 0x00000000	C 2^64
 	data4 0x00000000, 0x80000000, 0x0000407f, 0x00000000	C 2^128
+
+',`ifdef(`HAVE_DOUBLE_IEEE_BIG_ENDIAN',`
+.LC0:	data4 0x403f8000, 0x00000000, 0x00000000, 0x00000000	C 2^64
+	data4 0x407f8000, 0x00000000, 0x00000000, 0x00000000	C 2^128
+
+',`m4_error(`Oops, need to know float endianness
+')')')
+
 
 PROLOGUE(mpn_invert_limb)
 	addl		r14 = @ltoff(.LC0),gp
