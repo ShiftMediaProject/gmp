@@ -43,8 +43,8 @@ MA 02111-1307, USA.
 
 2003-10-21  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/ia64/submul_1.asm: Slightly reschedule loop to accomodate Itanium 2
-	getf.sig latency.
+	* mpn/ia64/submul_1.asm: Slightly reschedule loop to accomodate
+	Itanium 2 getf.sig latency.
 
 2003-10-21  Kevin Ryde  <kevin@swox.se>
 
@@ -63,7 +63,8 @@ MA 02111-1307, USA.
 2003-10-19  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h (AMD64): __x86_64__ => __amd64__.
-	(64-bit powerpc): Only define carry-dependent macros if !_LONG_LONG_LIMB.
+	(64-bit powerpc): Only define carry-dependent macros if
+	!_LONG_LONG_LIMB.
 
 	* acinclude.m4 (POWERPC64_PATTERN): Add powerpc970-*-*.
 
