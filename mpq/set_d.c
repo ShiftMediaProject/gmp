@@ -1,6 +1,6 @@
 /* mpq_set_d(mpq_t q, double d) -- Set q to d without rounding.
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -32,7 +32,7 @@ mpq_set_d (mpq_ptr dest, double d)
 {
   int negative;
   mp_exp_t exp;
-  mp_limb_t tp[3];
+  mp_limb_t tp[LIMBS_PER_DOUBLE];
   mp_ptr np, dp;
   mp_size_t nn, dn;
   int c;

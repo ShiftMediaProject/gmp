@@ -1,6 +1,6 @@
 /* mpz_set_d(integer, val) -- Assign INTEGER with a double value VAL.
 
-Copyright 1995, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1995, 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,7 +26,7 @@ void
 mpz_set_d (mpz_ptr r, double d)
 {
   int negative;
-  mp_limb_t tp[3];
+  mp_limb_t tp[LIMBS_PER_DOUBLE];
   mp_ptr rp;
   mp_size_t rn;
 
