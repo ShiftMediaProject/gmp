@@ -69,7 +69,11 @@ MA 02111-1307, USA. */
 #define __gmp_signed
 #endif
 
-#if defined (__GNUC__) || defined (_MSC_VER) || defined (__BORLANDC__)
+#if defined (__GNUC__)
+#define __GMP_DECLSPEC_EXPORT  __declspec(__dllexport__)
+#define __GMP_DECLSPEC_IMPORT  __declspec(__dllimport__)
+#endif
+#if defined (_MSC_VER) || defined (__BORLANDC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(dllexport)
 #define __GMP_DECLSPEC_IMPORT  __declspec(dllimport)
 #endif
