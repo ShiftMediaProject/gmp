@@ -918,6 +918,7 @@ dnl  Is parameter to `.align' logarithmic?
 
 AC_DEFUN(GMP_ASM_ALIGN_LOG,
 [AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_BYTE])
 AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
@@ -927,10 +928,10 @@ AC_CACHE_CHECK([if .align assembly directive is logarithmic],
 [      	$gmp_cv_asm_data
       	.align  4
 	$gmp_cv_asm_globl	foo
-	.byte	1
+	$gmp_cv_asm_byte	1
 	.align	4
 foo$gmp_cv_asm_label_suffix
-	.byte	2],
+	$gmp_cv_asm_byte	2],
   [gmp_tmp_val=[`$NM conftest.$OBJEXT | grep foo | \
      sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
@@ -992,6 +993,37 @@ fi],
 [gmp_cv_asm_align_fill_0x90=no])])
 
 GMP_DEFINE_RAW(["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
+])
+
+
+dnl  GMP_ASM_BYTE
+dnl  ------------
+dnl  .byte - is usual.
+dnl  data1 - required by ia64 (on hpux at least).
+dnl
+dnl  This macro is just to support other configure tests, not any actual asm
+dnl  code.
+
+AC_DEFUN(GMP_ASM_BYTE,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_CACHE_CHECK([for assembler byte directive],
+                gmp_cv_asm_byte,
+[for i in .byte data1; do
+  echo "trying $i" >&AC_FD_CC
+  GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_data
+	$i	0
+],
+    [gmp_cv_asm_byte=$i
+     rm -f conftest*
+     break],
+    [cat conftest.out >&AC_FD_CC])
+done
+if test -z "$gmp_cv_asm_byte"; then
+  AC_MSG_ERROR([Cannot determine how to emit a data byte])
+fi
+])
 ])
 
 
@@ -1268,6 +1300,7 @@ dnl  How to define a 32-bit word.
 
 AC_DEFUN(GMP_ASM_W32,
 [AC_REQUIRE([GMP_ASM_DATA])
+AC_REQUIRE([GMP_ASM_BYTE])
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
@@ -1290,7 +1323,7 @@ AC_CACHE_CHECK([how to define a 32-bit word],
 	$gmp_cv_asm_globl	foo
 	$gmp_tmp_op	0
 foo$gmp_cv_asm_label_suffix
-	.byte	0],
+	$gmp_cv_asm_byte	0],
         [gmp_tmp_val=[`$NM conftest.$OBJEXT | grep foo | \
           sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
         if test "$gmp_tmp_val" = 4; then
