@@ -460,7 +460,7 @@ For up-to-date information on GMP, please see the GMP web pages at
 The latest version of the library is available at
 
 @display
-@uref{ftp://ftp.gnu.org/pub/gnu/gmp}
+@uref{ftp://ftp.gnu.org/gnu/gmp}
 @end display
 
 Many sites around the world mirror @samp{ftp.gnu.org}, please use a mirror
@@ -2080,7 +2080,7 @@ found.  For example,
 
 @example
 AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
-[GNU MP not found, see http://www.swox.com/gmp])])
+[GNU MP not found, see http://swox.com/gmp])])
 @end example
 
 If functions added in some particular version of GMP are required, then one of
@@ -2089,7 +2089,7 @@ GMP 3.1,
     
 @example
 AC_CHECK_LIB(gmp, __gmpz_mul_si, , [AC_MSG_ERROR(
-[GNU MP not found, or not 3.1 or up, see http://www.swox.com/gmp])])
+[GNU MP not found, or not 3.1 or up, see http://swox.com/gmp])])
 @end example
 
 An alternative would be to test the version number in @file{gmp.h} using say
@@ -2132,7 +2132,7 @@ compatibility is not guaranteed.
 @example
 AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR(
 [Need MPFR either from GNU MP 4 or separate MPFR package.
-See http://www.mpfr.org or http://www.swox.com/gmp])
+See http://www.mpfr.org or http://swox.com/gmp])
 @end example
 
 
@@ -8292,7 +8292,7 @@ Applied Cryptography'', @uref{http://www.cacr.math.uwaterloo.ca/hac/}
 @item
 Richard M. Stallman, ``Using and Porting GCC'', Free Software Foundation, 1999,
 available online @uref{http://www.gnu.org/software/gcc/onlinedocs/}, and in
-the GCC package @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}
+the GCC package @uref{ftp://ftp.gnu.org/gnu/gcc/}
 @end itemize
 
 @section Papers
