@@ -66,9 +66,6 @@ AC_DEFUN(GMP_PROG_CC_FIND,
 ifelse([$1], , gmp_cc_list="gcc cc", gmp_cc_list="[$1]")
 ifelse([$2], , gmp_req_64bit_cc="no", gmp_req_64bit_cc="[$2]")
 
-[echo "***DEBUG*** GMP_PROG_CC_FIND: gmp_cc_list=>$gmp_cc_list<"]
-[echo "***DEBUG*** GMP_PROG_CC_FIND: gmp_req_64bit_cc=$gmp_req_64bit_cc"]
-
 CC32=
 CC64=
 for c in $gmp_cc_list; do
@@ -81,12 +78,6 @@ for c in $gmp_cc_list; do
     GMP_PROG_CC_WORKS($CC, $c_flags,
 		      gmp_prog_cc_works=yes, 
 		      gmp_prog_cc_works=no)
-
-dnl   replaced by GMP_PROG_CC_WORKS:
-dnl    CC="$gmp_CC_TEST"
-dnl    AC_LANG_C
-dnl    AC_TRY_COMPILER([int main(){return(0);}],
-dnl                    gmp_prog_cc_works, gmp_prog_cc_cross)
 
     if test "$gmp_prog_cc_works" != "yes"; then
       continue
@@ -112,7 +103,6 @@ dnl                    gmp_prog_cc_works, gmp_prog_cc_cross)
   fi
 done
 CC="$CC32"
-[echo "***DEBUG*** GMP_PROG_CC_FIND: CC=$CC, CC64=$CC64, CFLAGS64=$CFLAGS64"]
 ])dnl
 
 dnl  GMP_PROG_CC_SELECT
