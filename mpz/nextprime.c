@@ -37,7 +37,7 @@ mpz_nextprime (p, t)
 }
 
 #if 0
-/* This code is not yet tested.  Will be enabled in 3.1. */
+/* This code is not yet tested.  Will be enabled some time. */
 
 status unsigned short primes[] =
 {
