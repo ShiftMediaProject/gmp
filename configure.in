@@ -973,7 +973,7 @@ if test $found_compiler = yes; then
 
   if test -n "$CALLING_CONVENTIONS_OBJS"; then
     AC_DEFINE(HAVE_CALLING_CONVENTIONS,1,
-    [Define if mpn/tests has calling conventions checking for the CPU])
+    [Define if tests/libtests has calling conventions checking for the CPU])
   fi
   AC_SUBST(CALLING_CONVENTIONS_OBJS)
 
@@ -1158,7 +1158,7 @@ AC_C_STRINGIZE
 AC_C_INLINE
 case $ac_cv_c_inline in
 no) ;;
-*)  AC_DEFINE(HAVE_INLINE,1,[whether an actual "inline" is available]) ;;
+*)  AC_DEFINE(HAVE_INLINE,1,[Define if an actual "inline" is available]) ;;
 esac
 
 # from libtool
@@ -1414,6 +1414,8 @@ if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
 fi
 
 GMP_C_SIZES
+GMP_C_ATTRIBUTE_NORETURN
+GMP_C_ATTRIBUTE_CONST
 
 
 AC_SUBST(mpn_objects)
