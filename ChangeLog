@@ -8,9 +8,6 @@
 	* tests/mpz/reuse.c, tests/mpq/t-md_2exp.c, demos/pexpr.c,
 	demos/expr/t-expr.c: Ditto.
 	
-	* mpfr/sqrt.c: Use mpn_sqrtrem not mpn_sqrtrem_new.
-	* mpfr/sqrtrem.c: Use mpn_sqrtrem not mpn_sqrtrem_new.
-
 	* configure.in (HAVE_ABI_$abi): New define in config.m4.
 
 	* gmp-impl.h (mpn_sqr_diagonal): Add prototype and define.
