@@ -3,6 +3,7 @@
 #ifndef __SPEED_H__
 #define __SPEED_H__
 
+
 /* size of temporary space required by karatsuba functions */
 #define MPN_KARA_MUL_N_TSIZE(n)  (2*((n)+BITS_PER_MP_LIMB))
 #define MPN_KARA_SQR_N_TSIZE(n)  (2*((n)+BITS_PER_MP_LIMB))
@@ -10,8 +11,6 @@
 #define __GMPN_TOOM3_MUL_N_TSIZE(n) (2*(n) + 3*BITS_PER_MP_LIMB)
 #define __GMPN_TOOM3_SQR_N_TSIZE(n) (2*((n) + BITS_PER_MP_LIMB))
 
-
-void pentium_wbinvd(void);
 
 /* Pad ptr,oldsize with zero limbs (at the most significant end) to make it
    newsize long.  Requires newsize >= oldsize. */
@@ -81,6 +80,8 @@ double speed_memcpy (struct speed_params *s);
 double speed_mpn_add_n (struct speed_params *s);
 double speed_mpn_add_n_self (struct speed_params *s);
 double speed_mpn_add_n_inplace (struct speed_params *s);
+double speed_mpn_and_n (struct speed_params *s);
+double speed_mpn_andn_n (struct speed_params *s);
 double speed_mpn_addmul_1 (struct speed_params *s);
 double speed_mpn_bz_divrem_n (struct speed_params *s);
 double speed_mpn_bz_divrem_sb (struct speed_params *s);
@@ -91,17 +92,12 @@ double speed_MPN_COPY_INCR (struct speed_params *s);
 double speed_mpn_divexact_by3 (struct speed_params *s);
 double speed_mpn_divmod_1 (struct speed_params *s);
 double speed_mpn_divrem_1 (struct speed_params *s);
-double speed_mpn_mod_1 (struct speed_params *s);
-double speed_mpn_popcount (struct speed_params *s);
-double speed_mpn_sqr_recurse (struct speed_params *s);
-double speed_mpn_sqr_toom (struct speed_params *s);
-double speed_mpn_sqr_toom3 (struct speed_params *s);
-double speed_mpn_sub_n (struct speed_params *s);
 double speed_mpn_lshift (struct speed_params *s);
+double speed_mpn_ior_n (struct speed_params *s);
+double speed_mpn_iorn_n (struct speed_params *s);
 double speed_mpn_kara_mul_n (struct speed_params *s);
 double speed_mpn_kara_sqr_n (struct speed_params *s);
-double speed_mpn_toom3_mul_n (struct speed_params *s);
-double speed_mpn_toom3_sqr_n (struct speed_params *s);
+double speed_mpn_mod_1 (struct speed_params *s);
 double speed_mpn_mul_1 (struct speed_params *s);
 double speed_mpn_mul_basecase (struct speed_params *s);
 double speed_mpn_mul_n (struct speed_params *s);
@@ -109,18 +105,33 @@ double speed_mpn_mul_n_recurse (struct speed_params *s);
 double speed_mpn_mul_n_sqr (struct speed_params *s);
 double speed_mpn_mul_n_toom (struct speed_params *s);
 double speed_mpn_mul_n_toom3 (struct speed_params *s);
+double speed_mpn_nand_n (struct speed_params *s);
+double speed_mpn_nior_n (struct speed_params *s);
+double speed_mpn_popcount (struct speed_params *s);
 double speed_mpn_rshift (struct speed_params *s);
-double speed_mpn_sqr_n (struct speed_params *s);
 double speed_mpn_sqr_basecase (struct speed_params *s);
+double speed_mpn_sqr_n (struct speed_params *s);
+double speed_mpn_sqr_recurse (struct speed_params *s);
+double speed_mpn_sqr_toom (struct speed_params *s);
+double speed_mpn_sqr_toom3 (struct speed_params *s);
+double speed_mpn_sub_n (struct speed_params *s);
 double speed_mpn_submul_1 (struct speed_params *s);
+double speed_mpn_toom3_mul_n (struct speed_params *s);
+double speed_mpn_toom3_sqr_n (struct speed_params *s);
+double speed_mpn_xnor_n (struct speed_params *s);
+double speed_mpn_xor_n (struct speed_params *s);
+
 double speed_mpz_fac_ui (struct speed_params *s);
 double speed_mpz_fib_ui (struct speed_params *s);
+
 double speed_mpn_jacobi_base (struct speed_params *s);
 double speed_mpn_jacobi_base_division (struct speed_params *s);
 double speed_noop (struct speed_params *s);
 double speed_noop_wxs (struct speed_params *s);
 double speed_noop_wxys (struct speed_params *s);
-double speed_toom3Mul (struct speed_params *s);
+
+void pentium_wbinvd(void);
+
 void noop (void);
 void noop_wxs (mp_ptr wp, mp_srcptr xp, mp_size_t size);
 void noop_wxys (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size);
