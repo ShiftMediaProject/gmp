@@ -1573,6 +1573,14 @@ Use "--disable-static --enable-shared" to build just a DLL.])
 esac
 
 
+# Libtool requires $HOST_CC in certain Windows DLL cross-compiles (to build
+# the impgen program).  Arguably it should establish a value for this
+# itself.  No need to restrict this to the configurations actually needing
+# it, since we always find a build system compiler for our own purposes
+# anyway.
+#
+GMP_PROG_HOST_CC
+
 # Enable CXX in libtool only if we want it, and never enable GCJ, nor RC on
 # mingw and cygwin.  Under --disable-cxx this avoids some error messages
 # from libtool arising from the fact we didn't actually run AC_PROG_CXX.
@@ -1667,7 +1675,7 @@ AC_C_BIGENDIAN(
 AH_VERBATIM([HAVE_LIMB],
 [/* Define one of these to 1 for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
-   it is, then leave both of these undefined. */
+   it is, then leave both undefined. */
 #undef HAVE_LIMB_BIG_ENDIAN
 #undef HAVE_LIMB_LITTLE_ENDIAN])
 
