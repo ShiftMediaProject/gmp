@@ -1,4 +1,4 @@
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -100,3 +100,10 @@ cycles/limb for mpn_mod_1 (gcc 3.2.2).
 
 The critical path mainly consists of two mulq instructions, with a latency of
 8 cycles.  It should be possible to reach about 20 cycles/limb.
+
+
+
+REFERENCES
+
+"System V Application Binary Interface AMD64 Architecture Processor
+Supplement", draft version 0.90, April 2003.
