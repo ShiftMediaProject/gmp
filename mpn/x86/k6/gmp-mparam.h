@@ -57,13 +57,12 @@ MA 02111-1307, USA. */
 #define DC_THRESHOLD                  71
 #define POWM_THRESHOLD                91
 
-#define FIB_THRESHOLD                 98
-
 #define GCD_ACCEL_THRESHOLD            3
 #define GCDEXT_THRESHOLD              52
 
 #define USE_PREINV_MOD_1               1  /* (native) */
 #define DIVREM_2_THRESHOLD         MP_SIZE_T_MAX
+#define DIVEXACT_1_THRESHOLD           0
 #define MODEXACT_1_ODD_THRESHOLD       0
 
 #define FFT_MUL_TABLE  { 528, 1120, 2176, 5632, 14336, 40960, 0 }
