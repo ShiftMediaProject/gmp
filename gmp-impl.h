@@ -974,6 +974,29 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
 #define modlimb_invert_table  __gmp_modlimb_invert_table
 extern const unsigned char  modlimb_invert_table[128];
 
+#if BITS_PER_MP_LIMB <= 8
+#define modlimb_invert(inv,n)                                   \
+  do {                                                          \
+    mp_limb_t  __n = (n);                                       \
+    mp_limb_t  __inv;                                           \
+    ASSERT ((__n & 1) == 1);                                    \
+    __inv = modlimb_invert_table[(__n&0xFF)/2]; /*  8 */        \
+    ASSERT (__inv * __n == 1);                                  \
+    (inv) = __inv;                                              \
+  } while (0)
+#else
+#if BITS_PER_MP_LIMB <= 16
+#define modlimb_invert(inv,n)                                   \
+  do {                                                          \
+    mp_limb_t  __n = (n);                                       \
+    mp_limb_t  __inv;                                           \
+    ASSERT ((__n & 1) == 1);                                    \
+    __inv = modlimb_invert_table[(__n&0xFF)/2]; /*  8 */        \
+    __inv = 2 * __inv - __inv * __inv * __n;    /* 16 */        \
+    ASSERT (__inv * __n == 1);                                  \
+    (inv) = __inv;                                              \
+  } while (0)
+#else
 #if BITS_PER_MP_LIMB <= 32
 #define modlimb_invert(inv,n)                                   \
   do {                                                          \
@@ -986,9 +1009,8 @@ extern const unsigned char  modlimb_invert_table[128];
     ASSERT (__inv * __n == 1);                                  \
     (inv) = __inv;                                              \
   } while (0)
-#endif
-
-#if BITS_PER_MP_LIMB > 32 && BITS_PER_MP_LIMB <= 64
+#else
+#if BITS_PER_MP_LIMB <= 64
 #define modlimb_invert(inv,n)                                   \
   do {                                                          \
     mp_limb_t  __n = (n);                                       \
@@ -1001,7 +1023,11 @@ extern const unsigned char  modlimb_invert_table[128];
     ASSERT (__inv * __n == 1);                                  \
     (inv) = __inv;                                              \
   } while (0)
-#endif
+#endif /* 64 */
+#endif /* 32 */
+#endif /* 16 */
+#endif /* 8 */
+
 
 /* Multiplicative inverse of 3, modulo 2^BITS_PER_MP_LIMB.
    0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
