@@ -1275,15 +1275,15 @@ assumed, otherwise decimal is assumed.
 
 This function returns 0 if the entire string up to the '\0' is a valid
 number in base @var{base}.  Otherwise it returns @minus{}1.
-@end deftypefun
 
 [It turns out that it is not entirely true that this function ignores
-white-space.  It does ignore it between digits, but not after a minus sign or
-within within or after "0x".  We are considering changing the definition of
+white-space.  It does ignore it between digits, but not after a minus sign
+or within or after "0x".  We are considering changing the definition of
 this function, making it fail when there is any white-space in the input,
 since that makes a lot of sense.  Please tell us your opinion about this
 change.  Do you really want it to accept "3 14" as meaning 314 as it does
 now?]
+@end deftypefun
 
 @deftypefun void mpz_swap (mpz_t @var{rop1}, mpz_t @var{rop2})
 Swap the values @var{rop1} and @var{rop2} efficiently.
