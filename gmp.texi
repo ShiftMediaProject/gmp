@@ -1073,8 +1073,8 @@ Old versions of @samp{gas} don't support MMX instructions, in particular
 version 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately
 there's no newer assembler for that system).
 
-Solaris 2.6 @command{as} generates incorrect object code for register to
-register @code{movq} instructions, making it unusable.  Install a recent
+Solaris 2.6 and 2.7 @command{as} generate incorrect object code for register
+to register @code{movq} instructions, making it unusable.  Install a recent
 @command{gas} if MMX code is wanted on that system.
 
 @item x86 GCC @samp{-march=pentiumpro}
