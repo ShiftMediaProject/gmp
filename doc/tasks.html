@@ -290,8 +290,13 @@
 
 <h4>New Functionality</h4>
 <ul>
-<li> Add in-memory version of mp?_out_raw and mp?_inp_raw.
-<li> <code>mpz_get_nth_ui</code>.  Return the nth word (not necessarily the nth limb).
+<li> Add in-memory versions of <code>mp?_out_raw</code> and
+     <code>mp?_inp_raw</code>.
+<li> <code>mpz_get_nth_ui</code>.  Return the nth word (not necessarily the
+     nth limb).
+<li> <code>mpf_getlimbn</code> similar to <code>mpz_getlimbn</code> and
+     accepting negative N for fraction limbs.  Functions to get the range of
+     limbs would be wanted before this would be useful.
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
 <li> Maybe make <code>mpz_init</code> (and <code>mpq_init</code>) do lazy
@@ -303,7 +308,10 @@
      format is portable between 32-bit and 64-bit machines, and between
      little-endian and big-endian machines.
 <li> Handle numeric exceptions: Call an error handler, and/or set
-     <code>gmp_errno</code>.
+     <code>gmp_errno</code>.  If errors are checked nice and early in GMP
+     functions, before temporary memory is allocated or values changed, etc,
+     then it should be possible for an application to do error recovery (with
+     <code>longjmp</code> or whatever).
 <li> Implement <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
      <code>gmp_snprintf</code>.  Think about some sort of wrapper around
      <code>printf</code> so it and its several variants don't have to be
