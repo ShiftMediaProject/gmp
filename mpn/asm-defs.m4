@@ -758,6 +758,24 @@ m4_assert_numargs(2)
 `m4_popcount_internal(eval($1+($2%2)),eval($2/2))')')
 
 
+dnl  Usage: m4_count_trailing_zeros(N)
+dnl
+dnl  Determine the number of trailing zero bits on N.  N is eval()ed and so
+dnl  can be an expression.  If N is zero an error is generated.
+
+define(m4_count_trailing_zeros,
+m4_assert_numargs(1)
+`m4_count_trailing_zeros_internal(eval(`$1'),0)')
+
+dnl  Called: m4_count_trailing_zeros_internal(val,count)
+define(m4_count_trailing_zeros_internal,
+m4_assert_numargs(2)
+`ifelse($1,0,
+`m4_error(`m4_count_trailing_zeros() given a zero value')',
+`ifelse(eval(($1)%2),1,`$2',
+`m4_count_trailing_zeros_internal(eval($1/2),incr($2))')')')
+
+
 dnl  Usage: deflit(name,value)
 dnl
 dnl  Like define(), but "name" expands like a literal, rather than taking
