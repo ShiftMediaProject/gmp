@@ -40,7 +40,7 @@ mpfr_out_str (stream, base, n_digits, op, rnd_mode)
 #endif
 {
   char *s, *s0;
-  size_t l;
+  size_t slen, l;
   mp_exp_t e;
 
   if (MPFR_IS_NAN(op)) { fprintf(stream, "NaN"); return 3; }
@@ -57,6 +57,7 @@ mpfr_out_str (stream, base, n_digits, op, rnd_mode)
   /* for op=3.1416 we have s = "31416" and e = 1 */
   
   l = strlen(s)+1;
+  slen = l;
   if (*s == '-') fputc(*s++, stream);
 
   fputc(*s++, stream); e--; /* writes leading digit */
@@ -66,6 +67,6 @@ mpfr_out_str (stream, base, n_digits, op, rnd_mode)
     l += fprintf (stream, (base <= 10 ? "e%ld" : "@%ld"), e);
   }
 
-  (*__gmp_free_func)(s0, l); 
+  (*__gmp_free_func)(s0, slen); 
   return l;
 }
