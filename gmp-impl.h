@@ -540,6 +540,12 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
   } while (0)
 
 
+/* Enhancement: __gmp_allocate_func could have "__attribute__ ((malloc))",
+   but current gcc (3.0) doesn't seem to support that.  */
+__GMP_DECLSPEC extern void * (*__gmp_allocate_func) __GMP_PROTO ((size_t));
+__GMP_DECLSPEC extern void * (*__gmp_reallocate_func) __GMP_PROTO ((void *, size_t, size_t));
+__GMP_DECLSPEC extern void   (*__gmp_free_func) __GMP_PROTO ((void *, size_t));
+
 void *__gmp_default_allocate _PROTO ((size_t));
 void *__gmp_default_reallocate _PROTO ((void *, size_t, size_t));
 void __gmp_default_free _PROTO ((void *, size_t));

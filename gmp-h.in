@@ -23,7 +23,7 @@ MA 02111-1307, USA. */
 #ifndef __GMP_H__
 
 #if defined (__cplusplus)
-#include <iosfwd>
+#include <iosfwd>   /* for std::istream, std::ostream, std::string */
 #endif
 
 
@@ -503,13 +503,6 @@ __GMP_DECLSPEC extern int gmp_errno;
 
 #define gmp_version __gmp_version
 __GMP_DECLSPEC extern __gmp_const char * __gmp_const gmp_version;
-
-/* The following for internal use only.
-   Enhancement: __gmp_allocate_func could have "__attribute__ ((malloc))",
-   but current gcc (3.0) doesn't seem to support that.  */
-__GMP_DECLSPEC extern void * (*__gmp_allocate_func) __GMP_PROTO ((size_t));
-__GMP_DECLSPEC extern void * (*__gmp_reallocate_func) __GMP_PROTO ((void *, size_t, size_t));
-__GMP_DECLSPEC extern void   (*__gmp_free_func) __GMP_PROTO ((void *, size_t));
 
 
 /**************** Random number routines.  ****************/
