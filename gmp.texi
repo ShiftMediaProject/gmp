@@ -3571,7 +3571,7 @@ The Benjamin Cummings Publishing Company Inc, 1981.
 
 @item
 Richard M. Stallman, "Using and Porting GCC", Free Software Foundation, 1999,
-available on-line @uref{http://www.gnu.org/software/gcc/onlinedocs/}, and in
+available online @uref{http://www.gnu.org/software/gcc/onlinedocs/}, and in
 the GCC package @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}.
 
 @item
@@ -3588,6 +3588,8 @@ Tudor Jebelean,
 "An algorithm for exact division",
 Journal of Symbolic Computation,
 v. 15, 1993, pp. 169-180.
+Research report version available online @*
+@uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-35.ps.gz}
 
 @item
 Kenneth Weber, "The accelerated integer GCD algorithm",
@@ -3605,8 +3607,8 @@ Applied Cryptography", @uref{http://cacr.math.uwaterloo.ca/hac/}.
 
 @item
 Henri Cohen, "A Course in Computational Algebraic Number Theory", Graduate
-Texts in Mathematics number 138, Springer-Verlag, 1993.  For errata see @*
-@uref{ftp://megrez.ceremab.u-bordeaux.fr/pub/cohenbook}
+Texts in Mathematics number 138, Springer-Verlag, 1993.  Errata available
+online @* @uref{ftp://megrez.ceremab.u-bordeaux.fr/pub/cohenbook}
 @end itemize
 
 @node Concept Index, Function Index, References, Top
