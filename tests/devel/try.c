@@ -3,7 +3,7 @@
    THIS IS A TEST PROGRAM USED ONLY FOR DEVELOPMENT.  IT'S ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -2776,10 +2776,10 @@ main (int argc, char *argv[])
   param_init ();
 
   {
-    unsigned  seed = 123;
+    unsigned long  seed = 123;
     int   opt;
 
-    while ((opt = getopt(argc, argv, "19a:b:pRr:S:s:Wz")) != EOF)
+    while ((opt = getopt(argc, argv, "19a:b:E:pRr:S:s:Wz")) != EOF)
       {
         switch (opt) {
         case '1':
@@ -2804,12 +2804,18 @@ main (int argc, char *argv[])
         case 'b':
           mp_trace_base = atoi (optarg);
           break;
+        case 'E':
+          /* re-seed */
+          sscanf (optarg, "%lu", &seed);
+          printf ("Re-seeding with %lu\"\n", seed);
+          break;
         case 'p':
           option_print = 1;
           break;
         case 'R':
           /* randomize */
 	  seed = time (NULL);
+          printf ("Seeding with %lu, re-run using \"-E %lu\"\n", seed, seed);
           break;
         case 'r':
 	  option_repetitions = atoi (optarg);
