@@ -20,18 +20,15 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 
-/* These routines are provided separately to let mpz_out_ostream,
-   mpq_out_ostream and mpf_out_ostream avoid dragging vsnprintf into the
-   link via __gmp_asprintf_format.
+/* These routines are in a separate file so that the mpz_t, mpq_t and mpf_t
+   operator<< routines can avoid dragging vsnprintf into the link (via
+   __gmp_asprintf_format).
 
    These routines are only needed to support gmp_asprintf if vsnprintf
-   exists, or to support mpz_out_ostream if C++ has been enabled.  (It'd be
-   a pretty strange C++ environment which didn't have vsnprintf, so testing
-   WANT_CXX probably doesn't change anything.)  */
-
-#include "config.h"
-
-#if HAVE_VSNPRINTF || WANT_CXX
+   exists, or to support mpz_out_ostream if C++ has been enabled, and could
+   therefore be under "#if HAVE_VSNPRINTF || WANT_CXX".  But they're
+   provided unconditionally so that the contents of libgmp don't depend on
+   the setting of --enable-cxx.  */
 
 #if HAVE_STDARG
 #include <stdarg.h>
@@ -75,5 +72,3 @@ __gmp_asprintf_final (struct gmp_asprintf_t *d)
   *d->result = buf;
   return 0;
 }
-
-#endif /* HAVE_VSNPRINTF || WANT_CXX */
