@@ -19,6 +19,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-03  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h: Implement separate MPN_COPY_INCR and MPN_COPY_DECR
+	macros for CRAY systems.
+	(CRAY _MPN_COPY): Delete.
+
 2001-10-02  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpz/t-popcount.c (check_data): Use "~ (unsigned long) 0" to
@@ -67,6 +73,12 @@ MA 02111-1307, USA.
 	* mpn/Makefile.am (EXTRA_DIST): Remove it.
 
 	* tests/refmpz.c: Add <stdlib.h>, for free().
+
+2001-10-01  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/pentium4/sse2/submul_1.asm: Apply some algebraic
+	simplifications.
+	* mpn/x86/pentium4/sse2/addmul_1.asm: Comment.
 
 2001-10-01  Kevin Ryde  <kevin@swox.se>
 
