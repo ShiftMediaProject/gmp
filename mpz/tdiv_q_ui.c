@@ -37,10 +37,6 @@ mpz_tdiv_q_ui (mpz_ptr quot, mpz_srcptr dividend, unsigned long int divisor)
   dividend_size = dividend->_mp_size;
   size = ABS (dividend_size);
 
-  /* No need for temporary allocation and copying if QUOT == DIVIDEND as
-     the divisor is just one limb, and thus no intermediate remainders
-     need to be stored.  */
-
   if (quot->_mp_alloc < size)
     _mpz_realloc (quot, size);
 
