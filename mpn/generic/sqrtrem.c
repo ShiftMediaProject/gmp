@@ -1,7 +1,7 @@
 /* mpn_sqrtrem -- square root and remainder */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -242,7 +242,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
       if (rp == NULL) rp = tp;
       c = c << 1;
       if (c < BITS_PER_MP_LIMB) tn++; else { tp++; c -= BITS_PER_MP_LIMB; }
-      if (c) mpn_rshift (rp, tp, tn, c); else MPN_COPY(rp, tp, tn);
+      if (c) mpn_rshift (rp, tp, tn, c); else MPN_COPY_INCR (rp, tp, tn);
       rn = tn;
     }
   else
