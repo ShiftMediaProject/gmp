@@ -36,37 +36,51 @@ MA 02111-1307, USA.
   This file current as of 7 Nov 2002.  An up-to-date version is available at
   <a href="http://swox.com/gmp/projects.html">http://swox.com/gmp/projects.html</a>.
   Please send comments about this page to
-  <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
+  <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
 </comment>
 
 <p> This file lists projects suitable for volunteers.  Please see the
     <a href="tasks.html">tasks file</a> for smaller tasks.
 
-<p> If you want to work on any of the projects below, please let tege@swox.com
-    know.  If you want to help with a project that already somebody else is
-    working on, please talk to that person too, tege@swox.com can put you in
-    touch.  (There are no email addresses of volunteers below, due to spamming
-    problems.)
+<p> If you want to work on any of the projects below, please let <a
+    href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a> know.  If you want
+    to help with a project that already somebody else is working on, you will
+    get in touch through gmp-devel@swox.com.  (There are no email addresses of
+    volunteers below, due to spamming problems.)
 
 <ul>
 <li> <strong>Faster multiplication</strong>
 
-  <p> The current multiplication code uses Karatsuba, 3-way Toom,
-      or Fermat FFT.  Several new developments are desirable:
+  <p> The current multiplication code uses Karatsuba, 3-way Toom, and Fermat
+      FFT.  Several new developments are desirable:
 
   <ol>
-    <li> Handle multiplication of operands with different digit count
-	 better than today.  We now split the operands in a very
-	 inefficient way, see mpn/generic/mul.c.
 
-    <li> Consider N-way Toom.  See Knuth's Seminumerical
-	 Algorithms for details on the method.  Code implementing it
-	 exists.  This is asymptotically inferior to FFTs, but is finer
-	 grained.  A toom-4 might fit in between toom-3 and the FFTs
-	 (or it might not).
+    <li> Handle multiplication of operands with different digit count better
+	 than today.  We now split the operands in a very inefficient way, see
+	 mpn/generic/mul.c.
 
-    <li> It's possible CPU dependent effects like cache locality will
-         have a greater impact on speed than algorithmic improvements.
+    <li> Implement an FFT variant computing the coefficients mod m different
+	 limb size primes of the form l*2^k+1. i.e., compute m separate FFTs.
+	 The wanted coefficients will at the end be found by lifting with CRT
+	 (Chinese Remainder Theorem).  If we let m = 3, i.e., use 3 primes, we
+	 can split the operands into coefficients at limb boundaries, and if
+	 our machine uses b-bit limbs, we can multiply numbers with close to
+	 2^b limbs without coefficient overflow.  For smaller multiplication,
+	 we might perhaps let m = 1, and instead of splitting our operands at
+	 limb boundaries, split them in much smaller pieces.  We might also use
+	 4 or more primes, and split operands into bigger than b-bit chunks.
+	 By using more primes, the gain in shorter transform length, but lose
+	 in having to do more FFTs, but that is a slight total save.  We then
+	 lose in more expensive CRT.
+
+    <li> Perhaps consider N-way Toom.  See Knuth's Seminumerical Algorithms for
+	 details on the method.  Code implementing it exists.  This is
+	 asymptotically inferior to FFTs, but is finer grained.  A toom-4 might
+	 fit in between toom-3 and the FFTs (or it might not).
+
+    <li> It's possible CPU dependent effects like cache locality will have a
+         greater impact on speed than algorithmic improvements.
 
     <li> Add support for partial products, either a given number of low limbs
          or high limbs of the result.  A high partial product can be used by
