@@ -1,7 +1,8 @@
 dnl  SPARC v9 64-bit mpn_addmul_1 -- Multiply a limb vector with a limb and add
 dnl  the result to a second limb vector.
 
-dnl  Copyright 1998, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001, 2002, 2003, 2004 Free Software Foundation,
+dnl  Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -27,7 +28,7 @@ C UltraSPARC 1&2:     14
 C UltraSPARC 3:	      17.5
 
 C Algorithm: We use eight floating-point multiplies per limb product, with the
-C invariant v operand split into four 16-bit pieces, and the s1 operand split
+C invariant v operand split into four 16-bit pieces, and the up operand split
 C into 32-bit pieces.  We sum pairs of 48-bit partial products using
 C floating-point add, then convert the four 49-bit product-sums and transfer
 C them to the integer unit.
@@ -37,7 +38,7 @@ C   0. Rewrite to use algorithm of mpn_addmul_2.
 C   1. Align the stack area where we transfer the four 49-bit product-sums
 C      to a 32-byte boundary.  That would minimize the cache collision.
 C      (UltraSPARC-1/2 use a direct-mapped cache.)  (Perhaps even better would
-C      be to align the area to map to the area immediately before s1?)
+C      be to align the area to map to the area immediately before up?)
 C   2. Sum the 4 49-bit quantities using 32-bit operations, as in the
 C      develop mpn_addmul_2.  This would save many integer instructions.
 C   3. Unrolling.  Questionable if it is worth the code expansion, given that
