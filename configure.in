@@ -606,8 +606,8 @@ dnl Checks for library functions.
 dnl -----------------------------
 dnl AC_FUNC_MEMCMP
 dnl AC_TYPE_SIGNAL
-dnl AC_CHECK_FUNCS(strtol strtoul)
-AC_CHECK_FUNCS(getopt_long sysconf sysctlbyname)
+dnl AC_CHECK_FUNCS(strtol)
+AC_CHECK_FUNCS(getopt_long strtoul sysconf sysctlbyname)
 
 
 dnl  Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
