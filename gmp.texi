@@ -6901,6 +6901,8 @@ GMPY @uref{http://gmpy.sourceforge.net/}
 @item Scheme
 @itemize @bullet
 @item
+GNU Guile (1.8) @spaceuref{http://www.gnu.org/software/guile/guile.html}
+@item
 RScheme @spaceuref{http://www.rscheme.org/}
 @item
 STklos @spaceuref{http://kaolin.unice.fr/STklos/}
