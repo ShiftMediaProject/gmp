@@ -149,7 +149,7 @@ int  allocdat = 0;
 #endif
 
 mp_size_t  mul_karatsuba_threshold      = MP_SIZE_T_MAX;
-mp_size_t  mul_toom3_threshold          = MP_SIZE_T_MAX;
+mp_size_t  mul_toom3_threshold          = MUL_TOOM3_THRESHOLD_LIMIT;
 mp_size_t  mul_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_basecase_threshold       = MP_SIZE_T_MAX;
