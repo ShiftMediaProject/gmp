@@ -569,6 +569,21 @@ support this.  In particular, SunOS and Slowaris @command{make} have bugs that
 make them unable to build in a separate directory.  Use GNU @command{make}
 instead.
 
+@item @option{--prefix} and @option{--exec-prefix}
+@cindex Prefix
+@cindex Exec prefix
+@cindex Install prefix
+The @option{--prefix} option can be used in the normal way to direct GMP to
+install under a particular tree.  The default is @samp{/usr/local}.
+
+@option{--exec-prefix} can be used to direct architecture-dependent files like
+@file{libgmp.a} to a different location.  This can be used to share
+architecture-independent parts like the documentation, but separate the
+dependent parts.  Note however that @file{gmp.h} and @file{mp.h} are
+architecture-dependent since they encode certain aspects of @file{libgmp}, so
+it will be necessary to ensure both @file{$prefix/include} and
+@file{$exec_prefix/include} are available to the compiler.
+
 @item @option{--disable-shared}, @option{--disable-static}
 By default both shared and static libraries are built (where possible), but
 one or other can be disabled.  Shared libraries result in smaller executables
