@@ -1,6 +1,7 @@
 /* Test mpz_cmp, mpz_cmp_ui, mpz_tdiv_qr, mpz_mul.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,9 +28,10 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-void debug_mp ();
-static void base_mul ();
-static void ref_mpz_mul ();
+void debug_mp _PROTO ((mpz_t, int));
+static void base_mul _PROTO ((mp_ptr,mp_srcptr,mp_size_t,mp_srcptr,mp_size_t));
+static void ref_mpz_mul _PROTO ((mpz_t, const mpz_t, const mpz_t));
+void dump_abort _PROTO ((char *, mpz_t, mpz_t, mpz_t, mpz_t));
 
 main (int argc, char **argv)
 {
@@ -261,6 +263,7 @@ base_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
     }
 }
 
+void
 dump_abort (char *s, 
 	    mpz_t multiplier, mpz_t multiplicand, mpz_t product, mpz_t ref_product)
 {
