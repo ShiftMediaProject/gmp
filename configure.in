@@ -1065,7 +1065,9 @@ EOF
 echo using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
 
 
+# The C compiler and preprocessor, put into ANSI mode if possible.
 AC_PROG_CC
+AC_PROG_CC_STDC
 AC_PROG_CPP
 
 
@@ -1087,10 +1089,7 @@ if test -z "$MPN_PATH"; then
 fi
 
 
-# Automake ansi2knr support.  This needs to be before compiler feature tests
-# because it will change CC/CFLAGS to put the compiler into ansi mode, if it
-# needs to, and if it can.
-#
+# Automake ansi2knr support.
 AM_C_PROTOTYPES
 
 GMP_PROG_AR
@@ -1205,6 +1204,9 @@ AC_CHECK_DECLS(optarg)
 AC_TYPE_SIGNAL
 AC_CHECK_TYPES(void)
 AC_C_STRINGIZE
+GMP_C_STDARG
+GMP_C_ATTRIBUTE_NORETURN
+GMP_C_ATTRIBUTE_CONST
 
 AC_C_INLINE
 case $ac_cv_c_inline in
@@ -1445,9 +1447,8 @@ if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
   GMP_DEFINE_RAW(["define(<KARATSUBA_SQR_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
 fi
 
+# This must come after gmp-mparam.h has been chosen.
 GMP_C_SIZES
-GMP_C_ATTRIBUTE_NORETURN
-GMP_C_ATTRIBUTE_CONST
 
 
 # Exclude the mpn random functions from mpbsd since that would drag in the
