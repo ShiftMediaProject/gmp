@@ -372,7 +372,7 @@ all (void)
 
   fprintf (stderr, "speed_precision %d, speed_unittime %.2e\n",
            speed_precision, speed_unittime);
-  fprintf (stderr, "MAX_SIZE %d, STEP_FACTOR %.3f  */\n",
+  fprintf (stderr, "MAX_SIZE %d, STEP_FACTOR %.3f\n",
            MAX_SIZE, STEP_FACTOR);
   fprintf (stderr, "\n");
 
