@@ -286,6 +286,7 @@ my @table =
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size',
        'speed' => 'SPEED_ROUTINE_MPN_BINARY_N',
+       'speed_flags'=> 'FLAG_R_OPTIONAL',
      },
      {
        'regexp'=> 'aors_n',
@@ -293,6 +294,7 @@ my @table =
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size',
        'speed' => 'SPEED_ROUTINE_MPN_BINARY_N',
+       'speed_flags'=> 'FLAG_R_OPTIONAL',
      },
      
      {
@@ -1099,7 +1101,7 @@ EOF
           print "fun_carry $fun_carry\n" if $opt{'t'};
 		    
 	  if ($lang =~ /\.(asm|S)/
-	      && ! grep(m"PROLOGUE.*$mpX$fun_carry",@file_contents)) {
+	      && ! grep(m"PROLOGUE\((.* )?$mpX$fun_carry[ )]",@file_contents)) {
 	    print "no PROLOGUE $mpX$fun_carry\n" if $opt{'t'};
 	    next;
 	  }
