@@ -39,10 +39,14 @@ mpfr_get_emin (void)
 
 #undef mpfr_set_emin
 
+/* this strangely written form avoids a powerpc64 gcc 3.0 -O2 bug */
 int
 mpfr_set_emin (mp_exp_t exponent)
 {
-  if (exponent >= MPFR_EMIN_MIN && exponent <= MPFR_EMIN_MAX)
+  if (exponent < MPFR_EMIN_MIN)
+    return 1;
+
+  if (exponent <= MPFR_EMIN_MAX)
     {
       __mpfr_emin = exponent;
       return 0;
@@ -63,10 +67,14 @@ mpfr_get_emax (void)
 
 #undef mpfr_set_emax
 
+/* this strangely written form avoids a powerpc64 gcc 3.0 -O2 bug */
 int
 mpfr_set_emax (mp_exp_t exponent)
 {
-  if (exponent >= MPFR_EMAX_MIN && exponent <= MPFR_EMAX_MAX)
+  if (exponent < MPFR_EMAX_MIN)
+    return 1;
+
+  if (exponent <= MPFR_EMAX_MAX)
     {
       __mpfr_emax = exponent;
       return 0;
