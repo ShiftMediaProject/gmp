@@ -1347,6 +1347,14 @@ A shared library build of GMP seems to fail in this combination, it builds but
 then fails the tests, apparently due to some incorrect data relocations within
 @code{gmp_randinit}.  The exact cause is unknown, @samp{--disable-shared} is
 recommended.
+
+@item Windows DLL test programs
+
+When creating a DLL version of @file{libgmp}, libtool creates wrapper scripts
+like @file{t-mul} for programs that would normally be @file{t-mul.exe}, in
+order to setup the right library paths etc.  This works fine, but the absense
+of @file{t-mul.exe} etc causes @command{make} to think they need recompiling
+every time, which is an annoyance when re-running a @samp{make check}.
 @end table
 
 
