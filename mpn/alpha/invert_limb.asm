@@ -1,4 +1,4 @@
-dnl  Alpha mpn_invert_normalized_limb -- Invert a normalized limb.
+dnl  Alpha mpn_invert_limb -- Invert a normalized limb.
 
 dnl  Copyright (C) 1996, 2000 Free Software Foundation, Inc.
 
@@ -33,7 +33,7 @@ ASM_START()
 
 FLOAT64($C36,9223372036854775808.0)		C 2^63
 
-PROLOGUE_GP(mpn_invert_normalized_limb)
+PROLOGUE_GP(mpn_invert_limb)
 	lda	r30,-16(r30)
 	addq	r16,r16,r1
 	bne	r1,$73
@@ -83,7 +83,7 @@ $Loop2:	cmpult	r2,r16,r1
 $Lend:
 	lda	r30,16(r30)
 	ret	r31,(r26),1
-EPILOGUE(mpn_invert_normalized_limb)
+EPILOGUE(mpn_invert_limb)
 DATASTART(`$invtab',4)
 	.word 0xffff,0xffc0,0xff80,0xff40,0xff00,0xfec0,0xfe81,0xfe41
 	.word 0xfe01,0xfdc2,0xfd83,0xfd43,0xfd04,0xfcc5,0xfc86,0xfc46
