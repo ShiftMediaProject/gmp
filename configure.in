@@ -419,7 +419,8 @@ case $host in
   *-cray-unicos*)
     gmp_asm_syntax_testing=no
     cclist="cc"
-    cc_cflags="-O3 -hnofastmd -htask0 -Wa,-B"
+    # The -hscalar0 is a workaround for miscompilation of mpz/import.c.
+    cc_cflags="-O3 -hscalar0 -htask0 -Wa,-B"
     path="cray"
     ;;
 
@@ -1724,9 +1725,10 @@ GMP_FUNC_SSCANF_WRITABLE_INPUT
 #       can optionally provide the latter as an extra entrypoint.  Likewise
 #       divrem_1 and pre_divrem_1.
 
-gmp_mpn_functions_optional="copyi copyd com_n		\
-  and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n	\
-  gcd_finda invert_limb mul_2 sqr_diagonal"
+gmp_mpn_functions_optional="copyi copyd com_n 
+  and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n			\
+  gcd_finda invert_limb sqr_diagonal					\
+  mul_2 mul_3 mul_4 addmul_2 addmul_3 addmul_4"
 
 gmp_mpn_functions="$extra_functions					   \
   add add_1 add_n sub sub_1 sub_n mul_1 addmul_1			   \
