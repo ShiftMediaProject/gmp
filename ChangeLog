@@ -1,5 +1,7 @@
 Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpf/tests/ref.c: Cast result of TMP_ALLOC to the right pointer type.
+
 	* extract-double.c: Test _GMP_IEEE_FLOATS with #if, not plain if.
 
 	* insert-double.c: Don't #include stdlib.h.
@@ -18,6 +20,11 @@ Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* extract-double.c: Likewise.
 	* mpf/tests/reuse.c: Likewise.
 	* mpz/tests/reuse.c: Likewise.
+	* mpf/tests/t-sub.c: Likewise.
+	* mpf/tests/t-add.c: Likewise.
+	* mpf/tests/t-muldiv.c: Likewise.
+	* mpf/tests/t-conv.c: Likewise.
+	* mpf/tests/ref.c: Likewise.
 
 	* mpn/config/t-oldgas: Renamed from t-freebsd.
 	* mpn/configure.in: Use t-oldgas for freebsd, netbsd, and some linux
