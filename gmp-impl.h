@@ -1674,8 +1674,11 @@ extern const int __gmp_0;
 
 #define MPF_CHECK_FORMAT(f)                                     \
   do {                                                          \
-    ASSERT_ALWAYS (SIZ(f) == 0 || PTR(f)[ABSIZ(f) - 1] != 0);   \
     ASSERT_ALWAYS (ABSIZ(f) <= PREC(f)+1);                      \
+    if (SIZ(f) == 0)                                            \
+      ASSERT_ALWAYS (EXP(f) == 0);                              \
+    if (SIZ(f) != 0)                                            \
+      ASSERT_ALWAYS (PTR(f)[ABSIZ(f) - 1] != 0); \
   } while (0)
 
 
