@@ -31,22 +31,21 @@
 <li> When printing mpf_t numbers with exponents &gt;2^53 on machines with
      64-bit <code>mp_exp_t</code>, the precision of
      <code>__mp_bases[base].chars_per_bit_exactly</code> is insufficient and
-     <code>mpf_get_str</code> aborts.  Detect and compensate.
+     <code>mpf_get_str</code> aborts.  Detect and compensate.  Alternately,
+     think seriously about using some sort of fixed-point integer value.
+     Avoiding unnecessary floating point is probably a good thing in general,
+     and it might be faster on some CPUs.
 <li> Make the string reading functions allow the `0x' prefix when the base is
      explicitly 16.  They currently only allow that prefix when the base is
-     unspecified.
-<li> In the development sources, we return abs(a%b) in the
-     <code>mpz_*_ui</code> division routines.  Perhaps make them return the
-     real remainder instead?  Changes return type to <code>signed long int</code>.
+     unspecified (zero).
 <li> <code>mpf_eq</code> is not always correct, when one operand is
      1000000000... and the other operand is 0111111111..., i.e., extremely
      close.  There is a special case in <code>mpf_sub</code> for this
      situation; put similar code in <code>mpf_eq</code>.
 <li> <code>mpf_eq</code> doesn't implement what gmp.texi specifies.  It should
      not use just whole limbs, but partial limbs.
-<li> NeXT has problems with newlines in asm strings in longlong.h.  Also,
-     <code>__builtin_constant_p</code> is unavailable?  Same problem with MacOS
-     X.
+<li> NeXT might not have <code>__builtin_constant_p</code> available.  Same
+     problem with MacOS X.
 <li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
      mp?/tests/*.c.
 <li> <code>TMP_ALLOC</code> is not reentrant when using stack-alloc.c.  Perhaps
@@ -268,10 +267,9 @@
 <li> Implement some <code>mpq</code> input and output functions.
 <li> Implement a full precision <code>mpz_kronecker</code>, leave
      <code>mpz_jacobi</code> for compatibility.
-<li> Make the mpn logops and copys available in gmp.h.  Since they can
-     be either library functions or inlines, gmp.h would need to be
-     generated from a gmp.in based on what's in the library.  gmp.h
-     would still be compiler-independent though.
+<li> Make the mpn logops and copys available in gmp.h, either as library
+     functions or inlines, with the availability of library functions
+     instantiated in the generated gmp.h at build time.
 <li> Make versions of <code>mpz_set_str</code> etc taking string
      lengths rather than null-terminators.
 <li> Consider changing the thresholds to apply the simpler algorithm when
@@ -279,8 +277,8 @@
      be set to <code>MP_SIZE_T_MAX</code> to get only the simpler code (the
      compiler will know <code>size &lt;= MP_SIZE_T_MAX</code> is always true).
      Alternately it looks like the <code>ABOVE_THRESHOLD</code> and
-     <code>BELOW_THRESHOLD</code> macros can do this adequately, and pick up
-     cases where a threshold of zero should mean only the second algorithm.
+     <code>BELOW_THRESHOLD</code> macros can do this adequately, and also pick
+     up cases where a threshold of zero should mean only the second algorithm.
 <li> <code>mpz_cdiv_q_2exp</code> and <code>mpz_cdiv_r_2exp</code>
      could be implemented to match the corresponding tdiv and fdiv.
      Maybe some code sharing is possible.
@@ -403,6 +401,10 @@ near future, but are at least worth thinking about.
 <li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000, whereas it's
      sort of supposed to return the low 31 (or 63) bits.  But this is
      undocumented, and perhaps not too important.
+<li> <code>mpz_*_ui</code> division routines currently return abs(a%b).
+     Perhaps make them return the real remainder instead?  Return type would
+     be <code>signed long int</code>.  But this would be an incompatible
+     change, so it might have to be under newly named functions.
 </ul>
 
 
