@@ -1,4 +1,22 @@
-NOTEWORTHY CHANGES IN GNU MP IN VERSION 2
+Changes between MP version 2.0 and 2.1
+
+* Support for a new memory-saving mode.  Compile applications that need less
+  than 315000 decimal digits with -DGMP_SMALL.
+* Almost 10 times faster mpz_gcd, mpz_invert, and mpn_gcdext.
+
+Changes between MP version 2.0.2 and 2.0.3
+
+* Bug fixes.
+* Interface of mpn_gcd has changed.  Please see the manual.
+* Better support for MIPS R4x000 and R5000 under Irix 6.
+* New function: mpz_getlimbn.
+* Better support for SPARC (assembly code now really used!).
+
+Changes between MP version 2.0 and 2.0.2
+
+* Many bug fixes.
+
+Changes between MP version 1.3.2 and 2.0
 
 * Division routines in the mpz class have changed.  There are three classes of
   functions, that rounds the quotient to -infinity, 0, and +infinity,
@@ -38,7 +56,7 @@ NOTEWORTHY CHANGES IN GNU MP IN VERSION 2
 * Uses GNU configure.  This makes it possible to choose target architecture
   and CPU variant, and to compile into a separate object directory.
 * Carefully optimized assembly for important inner loops.  Support for DEC
-  Alpha, Amd 29000, HPPA 1.0 and 1.1, Intel pentium and generic x86, Intel
+  Alpha, Amd 29000, HPPA 1.0 and 1.1, Intel Pentium and generic x86, Intel
   i960, Motorola MC68000, MC68020, MC88100, and MC88110, Motorola/IBM
   PowerPC, National NS32000, IBM POWER, MIPS R3000, R4000, SPARCv7,
   SuperSPARC, generic SPARCv8, and DEC VAX.  Some support also for ARM,

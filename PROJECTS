@@ -28,10 +28,9 @@ IDEAS ABOUT THINGS TO WORK ON
 
 * Document complexity of all functions.
 
-* Add predicate functions mpz_fits_signedlong_p, mpz_fits_unsignedlong_p,
-  mpz_fits_signedint_p, etc.
+* Add predicate functions mpz_fits_si_p, mpz_fits_ui_p.
 
-  mpz_floor (mpz, mpq), mpz_trunc (mpz, mpq), mpz_round (mpz, mpq).
+* mpz_floor_q (mpz, mpq), mpz_trunc_q (mpz, mpq), mpz_round_q (mpz, mpq).
 
 * Better random number generators.  There should be fast (like mpz_random),
   very good (mpz_veryrandom), and special purpose (like mpz_random2).  Sizes
@@ -59,8 +58,8 @@ Bennet Yee at CMU proposes:
 * Make all computation mpz_* functions return a signed int indicating if the
   result was zero, positive, or negative?
 
-* Implement mpz_cmpabs, mpz_xor, mpz_to_double, mpz_to_si, mpz_lcm, mpz_dpb,
-  mpz_ldb, various bit string operations.  Also mpz_@_si for most @??
+* Implement mpz_cmpabs, mpz_dpb, mpz_ldb, various bit
+  string operations.  Also mpz_@_si for most @??
 
 * Add macros for looping efficiently over a number's limbs:
 	MPZ_LOOP_OVER_LIMBS_INCREASING(num,limb)
@@ -84,11 +83,6 @@ Dough Lea proposes:
       can be useful for mixed mode operations with integers, rationals, and
       doubles.
 
-Elliptic curve method description in the Chapter `Algorithms in Number
-Theory' in the Handbook of Theoretical Computer Science, Elsevier,
-Amsterdam, 1990.  Also in Carl Pomerance's lecture notes on Cryptology and
-Computational Number Theory, 1990.
-
 * Harald Kirsh suggests:
   mpq_set_str (MP_RAT *r, char *numerator, char *denominator).
 
@@ -98,7 +92,7 @@ Computational Number Theory, 1990.
   in FRAC_STR.  (This function would do a division of the numerator and the
   denominator.)
 
-* Should mpz_powm* handle negative exponents?
+* Should mpz_powm handle negative exponents?
 
 * udiv_qrnnd: If the denominator is normalized, the n0 argument has very
   little effect on the quotient.  Maybe we can assume it is 0, and
@@ -134,10 +128,10 @@ Computational Number Theory, 1990.
 	  rem =  (slong)((ulong)a * (ulong)b - (ulong)p * (ulong)quot);
 	  if (rem < 0} {rem += p; quot--;}
 
-* Speed modulo arithmetic, using Montgomery's method or my pre-inversion
+* Speed modulo arithmetic, using Montgomery's method or my pre-invert
   method.  In either case, special arithmetic calls would be needed,
-  mpz_mmmul, mpz_mmadd, mpz_mmsub, plus some kind of initialization
-  functions.  Better yet: Write a new mpr layer.
+  mpr_mul, mpr_add, mpr_sub, plus some kind of initialization
+  functions for precomputing whatever is needed for fast reduction.
 
 * mpz_powm* should not use division to reduce the result in the loop, but
   instead pre-compute the reciprocal of the MOD argument and do reduced_val
@@ -145,9 +139,9 @@ Computational Number Theory, 1990.
 
 * mpz_mod_2expplussi -- to reduce a bignum modulo (2**n)+s
 
-* It would be a quite important feature never to allocate more memory than
-  really necessary for a result.  Sometimes we can achieve this cheaply, by
-  deferring reallocation until the result size is known.
+* It would be nice never to allocate more memory than really necessary for a
+  result.  Sometimes we can achieve this cheaply, by deferring reallocation
+  until the result size is known.
 
 * New macro in longlong.h: shift_rhl that extracts a word by shifting two
   words as a unit.  (Supported by i386, i860, HP-PA, POWER, 29k.)  Useful
