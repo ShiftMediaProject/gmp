@@ -1,3 +1,19 @@
+2000-03-21  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k6/diveby3.asm: Tiny speedup.
+
+	* acinclude.m4 (GMP_CHECK_ASM_SHLDL_CL): New macro.
+	* configure.in: Use it, set WANT_SHLDL_CL in config.m4.
+	* mpn/x86/x86-defs.m4 (shldl,shrdl,shldw,shrdw): New macros, using
+	WANT_SHLDL_CL.
+	* mpn/x86/k6/mmx/lshift.asm: Use shldl macro.
+	* mpn/x86/k7/mmx/lshift.asm: Ditto.
+	* mpn/x86/pentium/mmx/lshift.asm: Ditto.
+	* mpn/x86/k6/mmx/rshift.asm: Use shrdl macro.
+	* mpn/x86/k7/mmx/rshift.asm: Ditto.
+	* mpn/x86/pentium/mmx/rshift.asm: Ditto.
+	* mpn/x86/README.family: Add a note about this.
+
 2000-03-20  Linus Nordberg  <linus@swox.se>
 
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Handle seed value of 0
