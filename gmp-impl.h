@@ -866,8 +866,8 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 /* toom3 uses 4*(ceil(n/3)) of temporary space and then recurses with the
    balance either into itself or kara.  The following might be
    overestimates. */
-#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 8*GMP_LIMB_BITS)
-#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 8*GMP_LIMB_BITS)
+#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 4*GMP_LIMB_BITS)
+#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 4*GMP_LIMB_BITS)
 
 /* need 2 so that n2>=1 */
 #define MPN_KARA_MUL_N_MINSIZE    2
