@@ -1,7 +1,8 @@
 /* mpz_fdiv_q_2exp -- Divide an integer by 2**CNT.  Round the quotient
    towards -infinity.
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 1998, 1999 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 

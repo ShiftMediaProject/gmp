@@ -1,6 +1,6 @@
 /* Pentium optimized __mpn_rshift -- mpn right shift.
 
-Copyright (C) 1992, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright (C) 1992, 1994, 1995, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

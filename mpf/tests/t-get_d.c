@@ -1,6 +1,6 @@
 /* Test mpf_set_d.
 
-   Copyright (C) 1996 Free Software Foundation, Inc.
+   Copyright (C) 1996, 1999 Free Software Foundation, Inc.
 
    This file is part of the GNU MP Library.
 

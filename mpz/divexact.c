@@ -1,6 +1,7 @@
 /* mpz_divexact -- finds quotient when known that quot * den == num && den != 0.
 
-Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1995, 1996, 1997, 1998 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

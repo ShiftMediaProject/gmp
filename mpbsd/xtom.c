@@ -1,7 +1,7 @@
 /* xtom -- convert a hexadecimal string to a MINT, and return a pointer to
    the MINT.
 
-Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1991, 1994, 1995, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,6 @@
 /* mpz_bin_uiui - compute n over k.
 
-Copyright (C) 1998, 2000 Free Software Foundation, Inc.
+Copyright (C) 1998, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
