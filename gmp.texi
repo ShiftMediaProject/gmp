@@ -20,7 +20,9 @@
 @finalout
 @end iftex
 
-@c Note: the edition number is in three places and the month/year in one, all
+@c Texinfo version 4 or up will be needed to process this into .info files.
+@c
+@c The edition number is in three places and the month/year in one, all
 @c taken from version.texi.  version.texi is created when you configure with
 @c --enable-maintainer-mode, and is included in a distribution made with
 @c "make dist".
