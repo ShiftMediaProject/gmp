@@ -57,8 +57,8 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      op1_size = urandom () % SIZE /*- SIZE/2 */;
-      op2_size = urandom () % SIZE /*- SIZE/2 */;
+      op1_size = urandom () % SIZE - SIZE/2;
+      op2_size = urandom () % SIZE - SIZE/2;
       x_size = urandom () % SIZE/2;
 
       mpz_random2 (op1, op1_size);
