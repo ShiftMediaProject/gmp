@@ -874,7 +874,7 @@ xlc  -q64
 
 @item @samp{ABI=32L}
 
-This uses the 32-bit ABI but a 64-bit limb using GCC @code{long long} and
+This uses the 32-bit ABI but a 64-bit limb using GCC @code{long long} in
 64-bit registers.  Applications must be compiled with
 
 @example
@@ -962,12 +962,21 @@ for systems where @samp{./config.guess} is inexact.
 @c scratching their head.  Fun with different ABIs on a system belongs in the
 @c above section.
 
-@item AIX
+@item AIX 3 and 4
 
-Currently on systems @samp{*-*-aix*} libtool can't build shared and static
-libraries simultaneously, because when building a shared library it makes
-@file{libgmp.a} a symlink to @file{libgmp.so}.  Either @samp{--disable-shared}
-or @samp{--disable-static} should be used.
+On systems @samp{*-*-aix[34]*} shared libraries are disabled by default, since
+some versions of the native @command{ar} fail on the convenience libraries
+used.  A shared build can be attempted with
+
+@example
+./configure --enable-shared --disable-static
+@end example
+
+Note that the @samp{--disable-static} is necessary because in a shared build
+libtool makes @file{libgmp.a} a symlink to @file{libgmp.so}, apparently for
+the benefit of old versions of @command{ld} which only recognise @file{.a},
+but unfortunately this is done even if an @command{ld} without that
+restriction is available.
 
 @item OpenBSD 2.6
 
@@ -1018,8 +1027,8 @@ version 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately
 there's no newer assembler for that system).
 
 Solaris 2.6 @command{as} generates incorrect object code for register to
-register @code{movq} instructions, making it unusable.  Install GNU binutils
-@command{gas} if MMX code is wanted.
+register @code{movq} instructions, making it unusable.  Install a recent
+@command{gas} if MMX code is wanted on that system.
 
 @item x86 GCC @samp{-march=pentiumpro}
 
