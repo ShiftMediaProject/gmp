@@ -52,7 +52,7 @@ Loop:	movl	-(r6),r2
 	ashq	r8,r2,r4
 	movl	r5,-(r7)
 	movl	r2,r3
-	jsobgtr	r1,Loop
+	sobgtr	r1,Loop
 
 Lend:	movl	r4,-4(r7)
 	ret
