@@ -1,5 +1,11 @@
 2000-10-20  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/mul_1.asm: New file.
+	* mpn/ia64/addmul_1.asm: New file.
+	* mpn/ia64/add_n.asm: New file.
+	* mpn/ia64/sub_n.asm: New file.
+	* mpn/ia64/popcount.asm: New file.
+
 	* mpn/alpha/cntlz.asm: Override `.set noat' from ASM_START.
 
 	* configure.in (HAVE_TARGET_CPU_*): Support hppa1.0, hppa1.1, hppa2.0
@@ -18,7 +24,7 @@
 	(hppa2.0w-*-*): Match with same regexp in both places.
 	(hppa*-*-*): New case.
 	(all hppa alternatives): Don't inherit default gmp_cflags_{cc,c89}.
-	
+
 2000-10-18  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (alpha*-*-*): Define gmp_xoptcflags_gcc like for
@@ -47,7 +53,7 @@
 
 	* acinclude.m4, configure.in (GMP_ASM_*): Rename from GMP_CHECK_ASM_*,
 	to follow autoconf conventions.
-	
+
 	* configure.in: Run GMP_CHECK_ASM tests only if needed.
 	* acinclude.m4 (GMP_CHECK_ASM_MMX): Don't use GMP_CHECK_ASM_TEXT.
 
@@ -133,7 +139,7 @@
 	being invoked incorrectly.
 	Replace __mc68332__ with __mcpu32__.
 	Add ARC support.
-	
+
 2000-10-02  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/mips3/gmp-mparam.h: Retune for both gcc and cc.
