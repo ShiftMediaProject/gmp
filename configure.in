@@ -927,6 +927,7 @@ case $host in
 	    abilist="mode32 $abilist"
 	    cclist_mode32="gcc"
 	    gcc_mode32_cflags="-O3 -mpowerpc64"
+	    gcc_mode32_cflags_optlist="cpu"
 	    path_mode32="powerpc64/mode32 powerpc64"
 	    limb_mode32=longlong
 	    ;;
