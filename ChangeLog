@@ -18,6 +18,27 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-08-05  Kevin Ryde  <kevin@swox.se>
+
+	* tests/refmpn.c, tests/tests.h, tests/misc/t-printf.c,
+	tests/mpf/t-trunc.c, tests/mpn/t-mp_bases.c, tests/mpn/t-scan.c,
+	tests/mpq/t-cmp_ui.c, tests/mpz/bit.c, tests/mpz/t-aorsmul.c,
+	tests/mpz/t-powm_ui.c tests/mpz/t-root.c, tests/mpz/t-scan.c: More
+	care with long and mp_size_t parameters, for the benefit of K&R.
+
+	* demos/perl/GMP.pm, demos/perl/GMP.xs, demos/perl/GMP/Mpz.pm,
+	demos/perl/test.pl: Add mpz_import and mpz_export.
+	* demos/perl/GMP.pm: Remove "preliminary" warning.
+
+	* mpn/lisp/gmpasm-mode.el: Set add-log-current-defun-header-regexp to
+	pick up m4 defines etc.
+
+	* Makefile.am (libgmpxx_la_DEPENDENCIES): libgmp.la should be here,
+	not libgmpxx_la_LIBADD, for the benefit of "make -j2".
+
+	* mpn/ia64/*.asm [hpux ABI=32]: Extend 32-bit operands to 64-bits, not
+	optimal and might not be sufficient, but seems to work.
+
 2002-08-03  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Profiling): Use a table and expand for clarity.
