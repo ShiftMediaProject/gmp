@@ -392,6 +392,8 @@ cycles_works_p (void)
 }
 
 
+/* The number of clock ticks per second, but looking at sysconf rather than
+   just CLK_TCK, where possible.  */
 long
 clk_tck (void)
 {
@@ -424,72 +426,106 @@ clk_tck (void)
 }
 
 
-/* Assume that if a time difference that's non-zero but less than CLK_TCK/2
-   is seen then the routine is microsecond accurate.
+/* If two times can be observed less than half a clock tick apart, then
+   assume "get" is microsecond accurate.
 
-   FIXME: What if clk_tck() is some big value (like 1000000). */
+   Two times only 1 microsecond apart are not believed, since some kernels
+   take it upon themselves to ensure gettimeofday doesn't return the same
+   value twice, for the benefit of applications using it for a timestamp.
+   This is obviously very stupid given the speed of CPUs these days.
 
-#define MICROSECONDS_P(name, decl, tv, call)                            \
-  do {                                                                  \
+   Making "reps" calls to noop_1() is designed to waste some CPU, with a
+   view to getting measurements 2 microseconds (or more) apart.  "reps" is
+   increased progressively until such a period is seen.
+
+   The outer loop "attempts" are just to allow for any random nonsense or
+   system load upsetting the measurements (ie. making two successive calls
+   to "get" come out as a longer interval than normal).
+
+   Bugs:
+
+   The assumption that any interval less than a half tick implies
+   microsecond resolution is obviously fairly rash, the true resolution
+   could be anything between a microsecond and that half tick.  Perhaps
+   something special would have to be done on a system where this is the
+   case, since there's no obvious reliable way to detect it
+   automatically.  */
+
+#define MICROSECONDS_P(name, type, get, sec, usec)                      \
+  {                                                                     \
     static int  result = -1;                                            \
-                                                                        \
-    long  clk_usec = 1000000L / clk_tck ();                             \
-    long  prev, delta;                                                  \
-    int   count = 0;                                                    \
-    decl;                                                               \
+    type      st, et;                                                   \
+    long      dt, half_tick;                                            \
+    unsigned  attempt, reps, i, j;                                      \
                                                                         \
     if (result != -1)                                                   \
       return result;                                                    \
                                                                         \
-    call;                                                               \
-    prev = tv.tv_usec;                                                  \
-    for (;;)                                                            \
+    result = 0;                                                         \
+    half_tick = (1000000L / clk_tck ()) / 2;                            \
+                                                                        \
+    for (attempt = 0; attempt < 5; attempt++)                           \
       {                                                                 \
-        call;                                                           \
-                                                                        \
-        delta = (tv.tv_usec - prev) % 1000000L;                         \
-        if (delta != 0)                                                 \
+        reps = 0;                                                       \
+        for (;;)                                                        \
           {                                                             \
+            get (st);                                                   \
+            for (i = 0; i < reps; i++)                                  \
+              for (j = 0; j < 100; j++)                                 \
+                noop_1 (CNST_LIMB(0));                                  \
+            get (et);                                                   \
+                                                                        \
+            dt = (sec(et)-sec(st))*1000000L + usec(et)-usec(st);        \
+                                                                        \
             if (speed_option_verbose >= 2)                              \
-              printf ("%s saw .%06ld -> .%06ld for delta %ld\n",        \
-                      name, prev, tv.tv_usec, delta);                   \
+              printf ("%s attempt=%u, reps=%u, dt=%ld\n",               \
+                      name, attempt, reps, dt);                         \
                                                                         \
-            if (delta < clk_usec/2)                                     \
-              {                                                         \
-                result = 1;                                             \
-                break;                                                  \
-              }                                                         \
+            if (dt >= 2)                                                \
+              break;                                                    \
                                                                         \
-            count++;                                                    \
-            if (count > 10)                                             \
-              {                                                         \
-                result = 0;                                             \
-                break;                                                  \
-              }                                                         \
+            reps = (reps == 0 ? 1 : 2*reps);                            \
+            if (reps == 0)                                              \
+              break;  /* uint overflow, not normal */                   \
           }                                                             \
                                                                         \
-        prev = tv.tv_usec;                                              \
+        if (dt < half_tick)                                             \
+          {                                                             \
+            result = 1;                                                 \
+            break;                                                      \
+          }                                                             \
       }                                                                 \
                                                                         \
     if (speed_option_verbose)                                           \
-      printf ("%s is %s accurate\n",                                    \
-              name, result ? "microsecond" : "clock tick");             \
+      {                                                                 \
+        if (result)                                                     \
+          printf ("%s is microsecond accurate\n", name);                \
+        else                                                            \
+          printf ("%s is only %s clock tick accurate\n",                \
+                  name, unittime_string (1.0/clk_tck()));               \
+      }                                                                 \
     return result;                                                      \
-  } while (0)
+  }
 
 
 int
 gettimeofday_microseconds_p (void)
 {
-  MICROSECONDS_P ("gettimeofday",
-                  struct_timeval t, t, gettimeofday (&t, NULL));
+#define call_gettimeofday(t)   gettimeofday (&(t), NULL)
+#define timeval_tv_sec(t)      ((t).tv_sec)
+#define timeval_tv_usec(t)     ((t).tv_usec)
+  MICROSECONDS_P ("gettimeofday", struct_timeval,
+                  call_gettimeofday, timeval_tv_sec, timeval_tv_usec);
 }
 
 int
 getrusage_microseconds_p (void)
 {
-  MICROSECONDS_P ("getrusage",
-                  struct_rusage r, (r.ru_utime), getrusage (0, &r));
+#define call_getrusage(t)   getrusage (0, &(t))
+#define rusage_tv_sec(t)    ((t).ru_utime.tv_sec)
+#define rusage_tv_usec(t)   ((t).ru_utime.tv_usec)
+  MICROSECONDS_P ("getrusage", struct_rusage,
+                  call_getrusage, rusage_tv_sec, rusage_tv_usec);
 }
 
 
