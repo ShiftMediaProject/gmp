@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-04-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/set_str.c: Major overhaul.
+	(mpn_pow_1_highpart): New helper function, meat extracted from
+	mpf_set_str.
+
 2003-04-24  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_GCC_ARM_UMODSI): Quote result string against m4.
