@@ -99,6 +99,8 @@ New functions to implement:
 - mpfr_set_float (MPF -> float) or mpfr_strtof (idem for mpfr_get_*)
 - implement accurate summation algorithms from Demmel
 	(http://www.cs.berkeley.edu/~demmel/AccurateSummation.ps)
+- mpfr_root to compute x^(1/n) for n integer [suggested by Damien Fisher,
+	damien@maths.usyd.edu.au, 20 Jul 2003]
 
 Rounding:
 
@@ -120,6 +122,14 @@ Efficiency:
       ...
     else
       plain operands
+
+- MPFR_CLEAR_NAN is inefficient, MPFR_SET_INF and friends should do a
+  single mask and set of their desired flags.
+
+- Nan, inf and the sign might be better off in the _mpfr_exp field,
+  since that would mean only one field set by normal operations, and
+  set by a simple store since the whole field would be updated.
+
 - mpf_t uses a scheme where the number of limbs actually present can
   be less than the selected precision, thereby allowing low precision
   values (for instance small integers) to be stored and manipulated in
@@ -172,6 +182,9 @@ Portability:
   this operation on an integer, which could be done with
   count_leading_zeros from longlong.h.
 
+- mpfr_get_d3 assumes a double is IEEE format.
+
+
 Possible future MPF / MPFR integration:
 
 - mpf routines can become "extern inline"s calling mpfr equivalents,
@@ -194,3 +207,7 @@ Possible future MPF / MPFR integration:
 
 - mpfr routines replacing mpf routines must be reentrant and thread
   safe, since of course that's what has been documented for mpf.
+
+- mpfr_random will not be wanted since there's no corresponding
+  mpf_random and new routines should not use the old style global
+  random state.

@@ -82,15 +82,32 @@ check_large (void)
 {
   mpfr_t a, b, agm;
 
-  mpfr_init2(a, 82); mpfr_init2(b, 82); mpfr_init2(agm, 82);
-  mpfr_set_ui(a, 1, GMP_RNDN);
-  mpfr_set_str_raw(b, "0.1111101100001000000001011000110111101000001011111000100001000101010100011111110010E-39");
-  mpfr_agm(agm, a, b, GMP_RNDN);
-  mpfr_set_str_raw(a, "0.1110001000111101101010101010101101001010001001001011100101111011110101111001111100E-4");
-  if (mpfr_cmp(agm, a)) {
-    fprintf(stderr, "mpfr_agm failed for precision 82\n"); exit(1);
-  }
-  mpfr_clear(a); mpfr_clear(b); mpfr_clear(agm);
+  mpfr_init2 (a, 82);
+  mpfr_init2 (b, 82);
+  mpfr_init2 (agm, 82);
+
+  mpfr_set_ui (a, 1, GMP_RNDN);
+  mpfr_set_str_raw (b, "0.1111101100001000000001011000110111101000001011111000100001000101010100011111110010E-39");
+  mpfr_agm (agm, a, b, GMP_RNDN);
+  mpfr_set_str_raw (a, "0.1110001000111101101010101010101101001010001001001011100101111011110101111001111100E-4");
+  if (mpfr_cmp (agm, a))
+    {
+      fprintf (stderr, "mpfr_agm failed for precision 82\n");
+      exit (1);
+    }
+  
+  /* problem found by Damien Fischer <damien@maths.usyd.edu.au> 4 Aug 2003:
+     produced a division by zero exception */
+  mpfr_set_prec (a, 268);
+  mpfr_set_prec (b, 268);
+  mpfr_set_prec (agm, 268);
+  mpfr_set_str (a, "703.93543315330225238487276503953366664991725089988315253092140138947103394917006", 10, GMP_RNDN);
+  mpfr_set_str (b, "703.93543315330225238487279020523738740563816490895994499256063816906728642622316", 10, GMP_RNDN);
+  mpfr_agm (agm, a, b, GMP_RNDN);
+
+  mpfr_clear (a);
+  mpfr_clear (b);
+  mpfr_clear (agm);
 }
 
 #if 0

@@ -225,10 +225,12 @@ int
 mpfr_can_round (mpfr_ptr b, mp_exp_t err, mp_rnd_t rnd1,
 		mp_rnd_t rnd2, mp_prec_t prec)
 {
-  return MPFR_IS_ZERO(b) ? 0 : /* we cannot round if b=0 */
-    mpfr_can_round_raw (MPFR_MANT(b),
-			(MPFR_PREC(b) - 1)/BITS_PER_MP_LIMB + 1,
-			MPFR_SIGN(b), err, rnd1, rnd2, prec);
+  return MPFR_IS_FP(b) ?
+    (MPFR_IS_ZERO(b) ? 0 : /* we cannot round if b=0 */
+     mpfr_can_round_raw (MPFR_MANT(b),
+			 (MPFR_PREC(b) - 1)/BITS_PER_MP_LIMB + 1,
+			 MPFR_SIGN(b), err, rnd1, rnd2, prec))
+    : 0; /* cannnot round NaN or Inf */
 }
 
 int

@@ -197,7 +197,7 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
      since PREC(r) may be different from PREC(tmp), and then both variables
      would have same precision in the mpfr_set4 call below. */
   MPFR_MANT(tmp) = tmpmant;
-  MPFR_PREC(tmp) = 53;
+  MPFR_PREC(tmp) = IEEE_DBL_MANT_DIG;
   MPFR_SIZE(tmp) = MPFR_LIMBS_PER_DOUBLE;
 
   signd = (d < 0) ? -1 : 1;

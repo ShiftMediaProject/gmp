@@ -21,21 +21,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <float.h>
-#include <limits.h>  /* for CHAR_BIT */
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
-
-#ifndef DBL_MANT_DIG
-#define DBL_MANT_DIG 53
-#endif
-
-#ifndef CHAR_BIT
-#define CHAR_BIT 8
-#endif
-
 
 /* Various i386 systems have been seen with float.h LDBL constants equal to
    the DBL ones, whereas they ought to be bigger, reflecting the 10-byte
@@ -47,19 +37,14 @@ static const struct {
   char         bytes[10];
   long double  dummy;  /* for memory alignment */
 } ldbl_max_struct = {
-  { '\xFF','\xFF','\xFF','\xFF',
-    '\xFF','\xFF','\xFF','\xFF',
-    '\xFE','\x7F' }
+  { '\377','\377','\377','\377',
+    '\377','\377','\377','\377',
+    '\376','\177' }
 };
 #define MPFR_LDBL_MAX   (* (const long double *) ldbl_max_struct.bytes)
 #else
 #define MPFR_LDBL_MAX   LDBL_MAX
 #endif
-
-/* This is an overestimate, but fine for our purposes, it only needs to be
-   enough that "t" below can hold a long double without rounding.  */
-#define MPFR_LDBL_MANT_DIG   (CHAR_BIT * sizeof (long double))
-
 
 int
 mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
@@ -85,7 +70,7 @@ mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
     return mpfr_set_d (r, (double) d, rnd_mode);
 
   mpfr_init2 (t, MPFR_LDBL_MANT_DIG);
-  mpfr_init2 (u, DBL_MANT_DIG);
+  mpfr_init2 (u, IEEE_DBL_MANT_DIG);
   mpfr_set_ui (t, 0, GMP_RNDN);
   while (d != 0.0)
     {

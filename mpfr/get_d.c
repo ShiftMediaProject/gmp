@@ -31,9 +31,6 @@ MA 02111-1307, USA. */
 
 static double mpfr_scale2 _PROTO ((double, int));
 
-#define IEEE_DBL_MANT_DIG 53
-
-
 /* "double" NaN and infinities are written as explicit bytes to be sure of
    getting what we want, and to be sure of not depending on libm.
 
@@ -51,24 +48,24 @@ struct dbl_bytes {
   double d;
 };
 
-#define MPFR_DBL_INFP  (* (double *) dbl_infp.b)
-#define MPFR_DBL_INFM  (* (double *) dbl_infm.b)
-#define MPFR_DBL_NAN   (* (double *) dbl_nan.b)
+#define MPFR_DBL_INFP  (* (const double *) dbl_infp.b)
+#define MPFR_DBL_INFM  (* (const double *) dbl_infm.b)
+#define MPFR_DBL_NAN   (* (const double *) dbl_nan.b)
 
 #if HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
-static struct dbl_bytes dbl_infp = { { 0, 0, 0, 0, 0, 0, 0xF0, 0x7F } };
-static struct dbl_bytes dbl_infm = { { 0, 0, 0, 0, 0, 0, 0xF0, 0xFF } };
-static struct dbl_bytes dbl_nan  = { { 0, 0, 0, 0, 0, 0, 0xF8, 0x7F } };
+static const struct dbl_bytes dbl_infp = { { 0, 0, 0, 0, 0, 0, 0xF0, 0x7F } };
+static const struct dbl_bytes dbl_infm = { { 0, 0, 0, 0, 0, 0, 0xF0, 0xFF } };
+static const struct dbl_bytes dbl_nan  = { { 0, 0, 0, 0, 0, 0, 0xF8, 0x7F } };
 #endif
 #if HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
-static struct dbl_bytes dbl_infp = { { 0, 0, 0xF0, 0x7F, 0, 0, 0, 0 } };
-static struct dbl_bytes dbl_infm = { { 0, 0, 0xF0, 0xFF, 0, 0, 0, 0 } };
-static struct dbl_bytes dbl_nan  = { { 0, 0, 0xF8, 0x7F, 0, 0, 0, 0 } };
+static const struct dbl_bytes dbl_infp = { { 0, 0, 0xF0, 0x7F, 0, 0, 0, 0 } };
+static const struct dbl_bytes dbl_infm = { { 0, 0, 0xF0, 0xFF, 0, 0, 0, 0 } };
+static const struct dbl_bytes dbl_nan  = { { 0, 0, 0xF8, 0x7F, 0, 0, 0, 0 } };
 #endif
 #if HAVE_DOUBLE_IEEE_BIG_ENDIAN
-static struct dbl_bytes dbl_infp = { { 0x7F, 0xF0, 0, 0, 0, 0, 0, 0 } };
-static struct dbl_bytes dbl_infm = { { 0xFF, 0xF0, 0, 0, 0, 0, 0, 0 } };
-static struct dbl_bytes dbl_nan  = { { 0x7F, 0xF8, 0, 0, 0, 0, 0, 0 } };
+static const struct dbl_bytes dbl_infp = { { 0x7F, 0xF0, 0, 0, 0, 0, 0, 0 } };
+static const struct dbl_bytes dbl_infm = { { 0xFF, 0xF0, 0, 0, 0, 0, 0, 0 } };
+static const struct dbl_bytes dbl_nan  = { { 0x7F, 0xF8, 0, 0, 0, 0, 0, 0 } };
 #endif
 #endif
 
@@ -210,9 +207,8 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
         d = 1.0;
       else
         {
-          /* Warning: the rounding may still be incorrect in the rounding
-             to the nearest mode when the result is a subnormal because of
-             a double rounding (-> 53 bits -> final precision). */
+          /* The following computations are exact thanks to the previous
+             mpfr_round_raw. */
           d = (double) tp[0] / MP_BASE_AS_DOUBLE;
           for (i = 1; i <= np; i++)
             d = (d + tp[i]) / MP_BASE_AS_DOUBLE;
@@ -247,8 +243,36 @@ mpfr_get_d1 (mpfr_srcptr src)
 }
 
 double
-mpfr_get_d_2exp (mp_exp_t *exp, mpfr_srcptr src, mp_rnd_t rnd_mode)
+mpfr_get_d_2exp (long *expptr, mpfr_srcptr src, mp_rnd_t rnd_mode)
 {
-  *exp = MPFR_GET_EXP (src);
-  return mpfr_get_d3 (src, 0, rnd_mode);
-} 
+  double ret;
+  mp_exp_t exp;
+
+  ret = mpfr_get_d3 (src, 0, rnd_mode);
+
+  if (MPFR_IS_FP(src) && MPFR_NOTZERO(src))
+    {
+      exp = MPFR_GET_EXP (src);
+
+      /* rounding can give 1.0, adjust back to 0.5 <= abs(ret) < 1.0 */
+      if (ret == 1.0)
+        {
+          ret = 0.5;
+          exp++;
+        }
+      else if (ret == -1.0)
+        {
+          ret = -0.5;
+          exp++;
+        }
+
+      MPFR_ASSERTN ((ret >= 0.5 && ret < 1.0)
+                    || (ret <= -0.5 && ret > -1.0));
+      MPFR_ASSERTN (exp >= LONG_MIN && exp <= LONG_MAX);
+    }
+  else
+    exp = 0;
+
+  *expptr = exp;
+  return ret;
+}

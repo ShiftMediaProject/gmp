@@ -126,11 +126,6 @@ void
 tests_rand_end (void)
 {
   RANDS_CLEAR ();
-  if (__gmp_rands_initialized)
-    {
-      gmp_randclear (__gmp_rands);
-      __gmp_rands_initialized = 0;
-    }
 }
 
 /* initialization function for tests using the hardware floats */
@@ -180,7 +175,7 @@ mpfr_test_init ()
    exponent range is only enforced when storing to memory.
 
    For reference, on most i386 systems the default is 64-bit "long double"
-   precision, but on FreeBSD 3.x it's 53-bit "double".  */
+   precision, but on FreeBSD 3.x and amd64 5.x it's 53-bit "double".  */
 
 void
 tests_machine_prec_double (void)
@@ -263,4 +258,50 @@ int
 Isnan (double d)
 {
   return (d) != (d);
+}
+
+void
+d_trace (const char *name, double d)
+{
+  union {
+    double         d;
+    unsigned char  b[sizeof(double)];
+  } u;
+  int  i;
+
+  if (name != NULL && name[0] != '\0')
+    printf ("%s=", name);
+
+  u.d = d;
+  printf ("[");
+  for (i = 0; i < sizeof (u.b); i++)
+    {
+      if (i != 0)
+        printf (" ");
+      printf ("%02X", (int) u.b[i]);
+    }
+  printf ("] %.20g\n", d);
+}
+
+void
+ld_trace (const char *name, long double ld)
+{
+  union {
+    long double    ld;
+    unsigned char  b[sizeof(long double)];
+  } u;
+  int  i;
+
+  if (name != NULL && name[0] != '\0')
+    printf ("%s=", name);
+
+  u.ld = ld;
+  printf ("[");
+  for (i = 0; i < sizeof (u.b); i++)
+    {
+      if (i != 0)
+        printf (" ");
+      printf ("%02X", (int) u.b[i]);
+    }
+  printf ("] %.20Lg\n", ld);
 }

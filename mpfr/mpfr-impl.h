@@ -117,6 +117,10 @@ typedef unsigned long int       mp_size_unsigned_t;
 
 /* macros for doubles, based on gmp union ieee_double_extract */
 
+#ifndef IEEE_DBL_MANT_DIG
+#define IEEE_DBL_MANT_DIG 53
+#endif
+
 typedef union ieee_double_extract Ieee_double_extract;
 
 /* for x of type ieee_double_extract */
@@ -132,6 +136,23 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define DBL_NEG_INF (-1.0/0.0)
 #define DBL_NAN (0.0/0.0)
 
+/* macros for long doubles */
+
+/* we only require that LDBL_MANT_DIG is a bound on the mantissa length
+   of the "long double" type */
+#ifndef LDBL_MANT_DIG
+#define LDBL_MANT_DIG 113 /* works also if long double == quad */
+#endif
+
+/* Various i386 systems have been seen with incorrect LDBL constants in
+   float.h (notes in set_ld.c), so force the value we know is right for IEEE
+   extended.  */
+
+#if HAVE_LDOUBLE_IEEE_EXT_LITTLE
+#define MPFR_LDBL_MANT_DIG   64
+#else
+#define MPFR_LDBL_MANT_DIG   LDBL_MANT_DIG
+#endif
 
 /* LONGDOUBLE_NAN_ACTION executes the code "action" if x is a NaN. */
 

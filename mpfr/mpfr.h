@@ -161,7 +161,7 @@ int mpfr_set_q _PROTO ((mpfr_ptr, mpq_srcptr, mp_rnd_t));
 double mpfr_get_d _PROTO ((mpfr_srcptr, mp_rnd_t));
 long double mpfr_get_ld _PROTO ((mpfr_srcptr, mp_rnd_t));
 double mpfr_get_d1 _PROTO ((mpfr_srcptr));
-double mpfr_get_d_2exp _PROTO ((mp_exp_t *, mpfr_srcptr, mp_rnd_t));
+double mpfr_get_d_2exp _PROTO ((long *, mpfr_srcptr, mp_rnd_t));
 long mpfr_get_si _PROTO ((mpfr_srcptr, mp_rnd_t));
 unsigned long mpfr_get_ui _PROTO ((mpfr_srcptr, mp_rnd_t));
 int mpfr_set_f _PROTO ((mpfr_ptr, mpf_srcptr, mp_rnd_t));

@@ -34,6 +34,7 @@ mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
   mp_ptr rp;
   mp_prec_t nbits;
   mp_size_t nlimbs;
+  mp_size_t k; /* number of high zero limbs */
   mp_exp_t exp;
   int cnt;
 
@@ -43,16 +44,19 @@ mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
   nbits = MPFR_PREC(rop);
   nlimbs = (nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
 
-  _gmp_rand (rp, rstate, nbits);
+  _gmp_rand (rp, rstate, nlimbs * BITS_PER_MP_LIMB);
 
-  /* If nbits isn't a multiple of BITS_PER_MP_LIMB, shift up.  */
-  if (nbits % BITS_PER_MP_LIMB != 0)
-    mpn_lshift (rp, rp, nlimbs, BITS_PER_MP_LIMB - nbits % BITS_PER_MP_LIMB);
+  /* If nbits isn't a multiple of BITS_PER_MP_LIMB, mask the low bits */
+  cnt = nlimbs * BITS_PER_MP_LIMB - nbits;
+  if (cnt != 0)
+    rp[0] &= ~((MP_LIMB_T_ONE << cnt) - MP_LIMB_T_ONE);
 
   exp = 0;
+  k = 0;
   while (nlimbs != 0 && rp[nlimbs - 1] == 0)
     {
-      nlimbs--;
+      k ++;
+      nlimbs --;
       exp -= BITS_PER_MP_LIMB;
     }
 
@@ -66,11 +70,9 @@ mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
           return 1;
         }
       if (cnt != 0)
-        mpn_lshift (rp, rp, nlimbs, cnt);
-
-      cnt = (mp_prec_t) nlimbs * BITS_PER_MP_LIMB - nbits;
-      /* cnt is the number of non significant bits in the low limb */
-      rp[0] &= ~((MP_LIMB_T_ONE << cnt) - 1);
+        mpn_lshift (rp + k, rp, nlimbs, cnt);
+      if (k)
+        MPN_ZERO (rp, k);
     }
 
   MPFR_SET_POS (rop);

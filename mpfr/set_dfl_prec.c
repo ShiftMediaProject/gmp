@@ -24,8 +24,8 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-/* default is 53 bits */
-mp_prec_t __gmpfr_default_fp_bit_precision = 53;
+/* default is IEEE double precision, i.e. 53 bits */
+mp_prec_t __gmpfr_default_fp_bit_precision = IEEE_DBL_MANT_DIG;
 
 void
 mpfr_set_default_prec (mp_prec_t prec)

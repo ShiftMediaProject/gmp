@@ -59,8 +59,13 @@ check_set_get (long double d, mpfr_t x)
       e = mpfr_get_ld (x, r);
       if (e != d && !(Isnan_ld(e) && Isnan_ld(d)))
         {
-          fprintf (stderr, "Error: mpfr_get_ld o mpfr_set_ld <> Id\n");
-          fprintf (stderr, "d=%1.30Le get_ld(set_ld(d))=%1.30Le\n", d, e);
+          printf ("Error: mpfr_get_ld o mpfr_set_ld <> Id\n");
+          printf ("  r=%d\n", r);
+          printf ("  d=%1.30Le get_ld(set_ld(d))=%1.30Le\n", d, e);
+          ld_trace ("  d", d);
+          printf ("  x="); mpfr_out_str (NULL, 16, 0, x, GMP_RNDN);
+          printf ("\n");
+          ld_trace ("  e", e);
           exit (1);
         }
     }
@@ -122,11 +127,15 @@ main (int argc, char *argv[])
   check_set_get (d, x);
   check_set_get (-d, x);
 
-  /* checks 2^1024 */
+  /* checks largest 2^(2^k) that is representable as a double */
   f = 1.3407807929942597100e155; /* 2^512 */
+  i = 512;
   d = (long double) f;
-  if (sizeof(long double) > sizeof(double))
-    d = d * d; /* 2^1024 */
+  while (2 * i < LDBL_MAX_EXP)
+    {
+      d = d * d;
+      i = 2 * i;
+    }
   check_set_get (d, x);
 
   /* checks that 2^i, 2^i+1 and 2^i-1 are correctly converted */

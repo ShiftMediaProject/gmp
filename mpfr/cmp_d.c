@@ -32,7 +32,7 @@ mpfr_cmp_d (mpfr_srcptr b, double d)
 
   MPFR_ASSERTN(!MPFR_IS_NAN(b));
 
-  mpfr_init2 (tmp, 53); 
+  mpfr_init2 (tmp, IEEE_DBL_MANT_DIG);
   mpfr_set_d (tmp, d, GMP_RNDN); 
 
   z = mpfr_cmp (b, tmp); 

@@ -901,7 +901,7 @@ Convert @var{op} to a double, using the default MPFR rounding mode
 (see function @code{mpfr_set_default_rounding_mode}).
 @end deftypefun
 
-@deftypefun double mpfr_get_d_2exp (mp_exp_t *@var{exp}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefun double mpfr_get_d_2exp (long *@var{exp}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
 raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1} equals
 @var{op} rounded to double precision, using the default MPFR rounding mode.
@@ -1554,7 +1554,8 @@ Assuming @var{b} is an approximation of an unknown number
 E(b)-@var{err} where E(b) is the exponent of 
 @var{b}, returns 1 if one is able to round exactly @var{x} to precision 
 @var{prec} with direction @var{rnd2},
-   and 0 otherwise. This function @strong{does not modify} its arguments.
+   and 0 otherwise (including for NaN and Inf).
+This function @strong{does not modify} its arguments.
 @end deftypefun
 
 @deftypefun mp_exp_t mpfr_get_exp (mpfr_srcptr @var{x})

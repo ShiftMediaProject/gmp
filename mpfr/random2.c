@@ -52,7 +52,7 @@ mpfr_random2 (mpfr_ptr x, mp_size_t size, mp_exp_t exp)
   if (xn > prec + 1)
     xn = prec + 1;
 
-  /* General random mantissa.  */
+  /* Generate random mantissa.  */
   mpn_random2 (xp, xn);
 
   /* Set mandatory most significant bit.  */
