@@ -20,6 +20,15 @@ MA 02111-1307, USA.
 
 2004-04-24  Kevin Ryde  <kevin@swox.se>
 
+	* longlong.h (count_leading_zeros_gcc_clz,
+	count_trailing_zeros_gcc_ctz): New macros.
+	(count_leading_zeros, count_trailing_zeros) [x86]: Use them on gcc
+	3.4.
+
+	* configure.in (x86-*-* gcc_cflags_cpu): Give a -mtune at the start of
+	each option list, for use by gcc 3.4 to avoid deprecation warnings
+	about -mcpu.
+
 	* mpz/aorsmul.c, mpz/aorsmul_i.c, mpz/cfdiv_q_2exp.c,
 	mpz/cfdiv_r_2exp.c, mpq/aors.c, mpf/ceilfloor.c: Give REGPARM_ATTR()
 	on function definition too, as demanded by by gcc 3.4.
