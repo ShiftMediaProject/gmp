@@ -32,7 +32,6 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
   mp_size_t rsize, tsize;
   mp_size_t sign_quotient;
   mp_size_t prec;
-  unsigned normalization_steps;
   mp_limb_t q_limb;
   mp_exp_t rexp;
   TMP_DECL (marker);
@@ -68,13 +67,15 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
   tp = (mp_ptr) TMP_ALLOC ((tsize + 1) * BYTES_PER_MP_LIMB);
   MPN_ZERO (tp, tsize);
 
-  count_leading_zeros (normalization_steps, vp[vsize - 1]);
 
   /* Normalize the divisor and the dividend.  */
-  if (normalization_steps != 0)
+  if (! (vp[vsize - 1] & MP_LIMB_T_HIGHBIT))
     {
       mp_ptr tmp;
       mp_limb_t dividend_high, dividend_low;
+      unsigned normalization_steps;
+
+      count_leading_zeros (normalization_steps, vp[vsize - 1]);
 
       /* Shift up the divisor setting the most significant bit of
 	 the most significant limb.  Use temporary storage not to clobber
