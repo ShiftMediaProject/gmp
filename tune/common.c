@@ -255,12 +255,13 @@ speed_cache_fill (struct speed_params *s)
 
 
 /* Return p advanced to the next multiple of "align" bytes.  "align" must be
-   a power of 2.  Care is taken not to assume sizeof(int)==sizeof(pointer).  */
+   a power of 2.  Care is taken not to assume sizeof(int)==sizeof(pointer).
+   Using "unsigned long" avoids a warning on hpux.  */
 void *
 align_pointer (void *p, size_t align)
 {
-  unsigned  d;
-  d = ((unsigned) p) & (align-1);
+  unsigned long  d;
+  d = ((unsigned long) p) & (align-1);
   d = (d != 0 ? align-d : 0);
   return (void *) (((char *) p) + d);
 }
