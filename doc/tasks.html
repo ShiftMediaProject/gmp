@@ -107,15 +107,14 @@
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> want better
      algorithm selection, and the latter should use REDC.  Both could
      change to use an <code>mpn_powm</code> and <code>mpn_redc</code>.
-<li> <code>mpz_powm</code> could handle negative exponents by powering the
-     modular inverse of the base.  But what to do if an inverse doesn't exist
-     (base and modulus have common factors)?  Throw a divide by zero maybe, or
-     return a flag like <code>mpz_invert</code> does.
 <li> <code>mpz_powm</code> REDC should do multiplications by <code>g[]</code>
      using the division method when they're small, since the REDC form of a
      small multiplier is normally a full size product.  Probably would need a
      new tuned parameter to say what size multiplier is "small", as a function
      of the size of the modulus.
+<li> <code>mpz_powm</code> REDC should handle even moduli if possible.  Maybe
+     this would mean for m=n*2^k doing mod n using REDC and an auxiliary
+     calculation mod 2^k, then putting them together at the end.
 <li> <code>mpn_gcd</code> might be able to be sped up on small to
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
@@ -162,14 +161,6 @@
      Perhaps a function <code>mpn_modexact_1</code>, being the remainder part
      of an <code>mpn_divexact_1</code>.  Creating the modular inverse will take
      a few cycles, so it might be only for say 4 limbs and up.
-<li> <code>mpq_canonicalize</code> and other <code>mpq</code> functions
-     dividing out GCDs could check for and optimize GCD=2, which occurs 15% of
-     the time on random inputs (see Knuth).  In fact knowing that
-     <code>mpz_divexact</code> strips powers of 2 before doing its work, it'd
-     make sense to say apply powers of 2 from the GCD and then test for 1.
-     GCD=3 could be tested for too, to make use of
-     <code>mpn_divexact_by3</code>.  For k>=1, 2^k makes up 20% of GCDs, and
-     3*2^k a further 9%.
 </ul>
 
 
@@ -278,6 +269,10 @@
 <li> <code>mpz_cdiv_q_2exp</code> and <code>mpz_cdiv_r_2exp</code>
      could be implemented to match the corresponding tdiv and fdiv.
      Maybe some code sharing is possible.
+<li> <code>mpz_powm</code> could handle negative exponents by powering the
+     modular inverse of the base.  But what to do if an inverse doesn't exist
+     (base and modulus have common factors)?  Throw a divide by zero maybe, or
+     return a flag like <code>mpz_invert</code> does.
 </ul>
 
 
