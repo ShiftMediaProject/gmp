@@ -1646,7 +1646,7 @@ AC_C_BIGENDIAN(
   [AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1)],
   [:])
 AH_VERBATIM([HAVE_LIMB],
-[/* Define one (just one) of the following for the endiannes of `mp_limb_t'.
+[/* Define one (just one) of the following for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
    it is, then leave both of these undefined. */
 #undef HAVE_LIMB_BIG_ENDIAN
