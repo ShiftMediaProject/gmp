@@ -336,6 +336,9 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_gcd_finda	__MPN(gcd_finda)
 mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2]));
 
+#define mpz_n_pow_ui __gmpz_n_pow_ui
+void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
+
 
 /* kara uses n+1 limbs of temporary space and then recurses with the
    balance, so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ... */
