@@ -1,44 +1,44 @@
-! sparc __mpn_rshift --
+C SPARC mpn_rshift -- Shift a number right.
 
-! Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+C Copyright (C) 1995, 1996 Free Software Foundation, Inc.
 
-! This file is part of the GNU MP Library.
+C This file is part of the GNU MP Library.
 
-! The GNU MP Library is free software; you can redistribute it and/or modify
-! it under the terms of the GNU Library General Public License as published by
-! the Free Software Foundation; either version 2 of the License, or (at your
-! option) any later version.
+C The GNU MP Library is free software; you can redistribute it and/or modify
+C it under the terms of the GNU Library General Public License as published by
+C the Free Software Foundation; either version 2 of the License, or (at your
+C option) any later version.
 
-! The GNU MP Library is distributed in the hope that it will be useful, but
-! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-! or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-! License for more details.
+C The GNU MP Library is distributed in the hope that it will be useful, but
+C WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+C or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+C License for more details.
 
-! You should have received a copy of the GNU Library General Public License
-! along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-! the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-! MA 02111-1307, USA.
+C You should have received a copy of the GNU Library General Public License
+C along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+C the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+C MA 02111-1307, USA.
 
 
-! INPUT PARAMETERS
-! res_ptr	%o0
-! src_ptr	%o1
-! size		%o2
-! cnt		%o3
+C INPUT PARAMETERS
+C res_ptr	%o0
+C src_ptr	%o1
+C size		%o2
+C cnt		%o3
 
 include(`../config.m4')
 
 ASM_START()
 PROLOGUE(mpn_rshift)
-	ld	[%o1],%g2	! load first limb
-	sub	%g0,%o3,%o5	! negate shift count
+	ld	[%o1],%g2	C load first limb
+	sub	%g0,%o3,%o5	C negate shift count
 	add	%o2,-1,%o2
-	andcc	%o2,4-1,%g4	! number of limbs in first loop
-	sll	%g2,%o5,%g1	! compute function result
-	be	L(0)		! if multiple of 4 limbs, skip first loop
+	andcc	%o2,4-1,%g4	C number of limbs in first loop
+	sll	%g2,%o5,%g1	C compute function result
+	be	L(0)		C if multiple of 4 limbs, skip first loop
 	st	%g1,[%sp+80]
 
-	sub	%o2,%g4,%o2	! adjust count for main loop
+	sub	%o2,%g4,%o2	C adjust count for main loop
 
 L(loop0):
 	ld	[%o1+4],%g3

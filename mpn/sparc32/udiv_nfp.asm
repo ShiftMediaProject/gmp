@@ -1,31 +1,31 @@
-! SPARC v7 __udiv_qrnnd division support, used from longlong.h.
-! This is for v7 CPUs without a floating-point unit.
+C SPARC v7 __udiv_qrnnd division support, used from longlong.h.
+C This is for v7 CPUs without a floating-point unit.
 
-! Copyright (C) 1993, 1994, 1996 Free Software Foundation, Inc.
+C Copyright (C) 1993, 1994, 1996 Free Software Foundation, Inc.
 
-! This file is part of the GNU MP Library.
+C This file is part of the GNU MP Library.
 
-! The GNU MP Library is free software; you can redistribute it and/or modify
-! it under the terms of the GNU Library General Public License as published by
-! the Free Software Foundation; either version 2 of the License, or (at your
-! option) any later version.
+C The GNU MP Library is free software; you can redistribute it and/or modify
+C it under the terms of the GNU Library General Public License as published by
+C the Free Software Foundation; either version 2 of the License, or (at your
+C option) any later version.
 
-! The GNU MP Library is distributed in the hope that it will be useful, but
-! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-! or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-! License for more details.
+C The GNU MP Library is distributed in the hope that it will be useful, but
+C WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+C or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+C License for more details.
 
-! You should have received a copy of the GNU Library General Public License
-! along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-! the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-! MA 02111-1307, USA.
+C You should have received a copy of the GNU Library General Public License
+C along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+C the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+C MA 02111-1307, USA.
 
 
-! INPUT PARAMETERS
-! rem_ptr	o0
-! n1		o1
-! n0		o2
-! d		o3
+C INPUT PARAMETERS
+C rem_ptr	o0
+C n1		o1
+C n0		o2
+C d		o3
 
 include(`../config.m4')
 
@@ -89,16 +89,16 @@ L(n5):	st	%o4,[%o0]
 	xnor	%g0,%o2,%o0
 
 L(largedivisor):
-	and	%o2,1,%o5	! %o5 = n0 & 1
+	and	%o2,1,%o5	C %o5 = n0 & 1
 
 	srl	%o2,1,%o2
 	sll	%o1,31,%g2
-	or	%g2,%o2,%o2	! %o2 = lo(n1n0 >> 1)
-	srl	%o1,1,%o1	! %o1 = hi(n1n0 >> 1)
+	or	%g2,%o2,%o2	C %o2 = lo(n1n0 >> 1)
+	srl	%o1,1,%o1	C %o1 = hi(n1n0 >> 1)
 
 	and	%o3,1,%g2
-	srl	%o3,1,%g3	! %g3 = floor(d / 2)
-	add	%g3,%g2,%g3	! %g3 = ceil(d / 2)
+	srl	%o3,1,%g3	C %g3 = floor(d / 2)
+	add	%g3,%g2,%g3	C %g3 = ceil(d / 2)
 
 	b	L(Lp1)
 	addxcc	%o2,%o2,%o2
@@ -124,7 +124,7 @@ L(Lp4):	addx	%o1,%o1,%o1
 	subcc	%o1,%g3,%o4
 	bcc	L(Ln5)
 	addxcc	%o2,%o2,%o2
-L(Lp5):	add	%o1,%o1,%o1	! << 1
+L(Lp5):	add	%o1,%o1,%o1	C << 1
 	tst	%g2
 	bne	L(oddp)
 	add	%o5,%o1,%o1
@@ -153,7 +153,7 @@ L(Ln4):	addx	%o4,%o4,%o4
 	subcc	%o4,%g3,%o1
 	bcc	L(Lp5)
 	addxcc	%o2,%o2,%o2
-L(Ln5):	add	%o4,%o4,%o4	! << 1
+L(Ln5):	add	%o4,%o4,%o4	C << 1
 	tst	%g2
 	bne	L(oddn)
 	add	%o5,%o4,%o4
@@ -163,7 +163,7 @@ L(Ln5):	add	%o4,%o4,%o4	! << 1
 
 L(oddp):
 	xnor	%g0,%o2,%o2
-	! q' in %o2. r' in %o1
+	C q' in %o2. r' in %o1
 	addcc	%o1,%o2,%o1
 	bcc	L(Lp6)
 	addx	%o2,0,%o2
@@ -178,7 +178,7 @@ L(Lp7):	st	%o1,[%o0]
 
 L(oddn):
 	xnor	%g0,%o2,%o2
-	! q' in %o2. r' in %o4
+	C q' in %o2. r' in %o4
 	addcc	%o4,%o2,%o4
 	bcc	L(Ln6)
 	addx	%o2,0,%o2
