@@ -46,12 +46,12 @@ C HP's assembler requires these declarations for importing mpn_invert_limb
 
 PROLOGUE(mpn_divrem_1)
 	.prologue
-	.save ar.pfs, r42
-	alloc		r42 = ar.pfs, 5, 6, 1, 0
-	.save rp, r41
+	.save	ar.pfs, r42
+	alloc		r42 = ar.pfs, 5, 8, 1, 0
+	.save	ar.lc, r44
+	mov		r44 = ar.lc
+	.save	rp, r41
 	mov		r41 = b0
-	.save	ar.lc, r2
-	mov		r2 = ar.lc
 	.body
 ifdef(`HAVE_ABI_32',
 `		addp4	r32 = 0, r32
@@ -83,7 +83,7 @@ ifdef(`HAVE_ABI_32',
 	and		r14 = r14, r36		;;
 	sub		r38 = r38, r14
 .L179:
-	mov		r43 = r36
+	mov		r45 = r36
 	adds		r35 = -1, r35
 	br.call.sptk.many b0 = mpn_invert_limb#
 	;;
@@ -229,7 +229,7 @@ ifdef(`HAVE_ABI_32',
 	sub		r40 = 63, r16		;;
 	shl		r36 = r36, r40
 	shl		r38 = r38, r40		;;
-	mov		r43 = r36
+	mov		r45 = r36
 	br.call.sptk.many b0 = mpn_invert_limb#
 	;;
 	mov		r23 = 1			;;
@@ -400,7 +400,7 @@ ifdef(`HAVE_ABI_32',
 	shr.u		r8 = r38, r40
 .L159:
 	mov		ar.pfs = r42
-	mov		ar.lc = r2
+	mov		ar.lc = r44
 	mov		b0 = r41
 	br.ret.sptk.many b0
 EPILOGUE(mpn_divrem_1)
