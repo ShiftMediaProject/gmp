@@ -28,7 +28,7 @@ LDADD = $(top_builddir)/libgmp.la
 # None of these programs are built by default, but "make <whatever>" will
 # build one once libgmp.la has been built.
 #
-EXTRA_PROGRAMS = factorize isprime pexpr primes
+EXTRA_PROGRAMS = factorize isprime pexpr primes qcn
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 
