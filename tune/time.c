@@ -62,7 +62,6 @@ MA 02111-1307, USA.
 
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <sys/types.h>
 #if HAVE_SYS_SYSCTL_H
@@ -75,6 +74,9 @@ MA 02111-1307, USA.
 
 #include "speed.h"
 
+/* gmp-impl.h and stdlib.h conflict on SunOS, so copy some things here */
+char *getenv _PROTO ((const char *var));
+double atof _PROTO ((const char *s));
 
 #if HAVE_PENTIUM_RDTSC
 #define SPEED_USE_PENTIUM_RDTSC              1
@@ -172,6 +174,33 @@ speed_cpu_frequency_proc_cpuinfo (void)
 }
 
 
+/* SunOS /bin/sysinfo prints a line like:
+       cpu0 is a "75 MHz TI,TMS390Z55" CPU */
+int
+speed_cpu_frequency_sunos_sysinfo (void)
+{
+  FILE    *fp;
+  char    buf[128];
+  double  val;
+  int     ret = 0;
+
+  if ((fp = popen ("/bin/sysinfo", "r")) != NULL)
+    {
+      while (fgets (buf, sizeof (buf), fp) != NULL)
+        {
+          if (sscanf (buf, " cpu0 is a \"%lf MHz", &val) == 1)
+            {
+              speed_cycletime = 1e-6 / val;
+              ret = 1;
+              break;
+            }
+        }
+      pclose (fp);
+    }
+  return ret;
+}
+
+
 /* Each function returns 1 if it succeeds in setting speed_cycletime, or 0
    if not.  */
 
@@ -184,7 +213,7 @@ static const struct {
   /* This should be first, so an environment variable can override anything
      the system gives. */
   { speed_cpu_frequency_environment,
-    "environment variable GMP_CPU_FREQUENCY (in Hertz)\n" },
+    "environment variable GMP_CPU_FREQUENCY (in Hertz)" },
 
 #if HAVE_SYSCTLBYNAME
   { speed_cpu_frequency_sysctlbyname,
@@ -193,6 +222,9 @@ static const struct {
 
   { speed_cpu_frequency_proc_cpuinfo,
     "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
+
+  { speed_cpu_frequency_sunos_sysinfo,
+    "SunOS /bin/sysinfo program cpu0 output" },
 };
 
 
