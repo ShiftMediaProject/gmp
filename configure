@@ -10656,33 +10656,38 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char shl_load (); below.  */
-#include <assert.h>
+    which can conflict with char shl_load (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
 char shl_load ();
-char (*f) ();
-
-int
-main ()
-{
-}
-int
-conftest_shl_load ()
-{
- /* The GNU C library defines this for functions which it implements
+/* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_shl_load) || defined (__stub___shl_load)
 choke me
 #else
-f = shl_load;
+char (*f) () = shl_load;
+#endif
+#ifdef __cplusplus
+}
 #endif
 
+int
+main ()
+{
+return f != shl_load;
   ;
   return 0;
 }
@@ -10783,33 +10788,38 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char dlopen (); below.  */
-#include <assert.h>
+    which can conflict with char dlopen (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
 char dlopen ();
-char (*f) ();
-
-int
-main ()
-{
-}
-int
-conftest_dlopen ()
-{
- /* The GNU C library defines this for functions which it implements
+/* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_dlopen) || defined (__stub___dlopen)
 choke me
 #else
-f = dlopen;
+char (*f) () = dlopen;
+#endif
+#ifdef __cplusplus
+}
 #endif
 
+int
+main ()
+{
+return f != dlopen;
   ;
   return 0;
 }
@@ -11058,7 +11068,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11061 "configure"
+#line 11071 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11156,7 +11166,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11159 "configure"
+#line 11169 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14271,7 +14281,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14274 "configure"
+#line 14284 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14369,7 +14379,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14372 "configure"
+#line 14382 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16593,33 +16603,38 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char shl_load (); below.  */
-#include <assert.h>
+    which can conflict with char shl_load (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
 char shl_load ();
-char (*f) ();
-
-int
-main ()
-{
-}
-int
-conftest_shl_load ()
-{
- /* The GNU C library defines this for functions which it implements
+/* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_shl_load) || defined (__stub___shl_load)
 choke me
 #else
-f = shl_load;
+char (*f) () = shl_load;
+#endif
+#ifdef __cplusplus
+}
 #endif
 
+int
+main ()
+{
+return f != shl_load;
   ;
   return 0;
 }
@@ -16720,33 +16735,38 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char dlopen (); below.  */
-#include <assert.h>
+    which can conflict with char dlopen (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
 char dlopen ();
-char (*f) ();
-
-int
-main ()
-{
-}
-int
-conftest_dlopen ()
-{
- /* The GNU C library defines this for functions which it implements
+/* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_dlopen) || defined (__stub___dlopen)
 choke me
 #else
-f = dlopen;
+char (*f) () = dlopen;
+#endif
+#ifdef __cplusplus
+}
 #endif
 
+int
+main ()
+{
+return f != dlopen;
   ;
   return 0;
 }
@@ -16995,7 +17015,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16998 "configure"
+#line 17018 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17093,7 +17113,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 17096 "configure"
+#line 17116 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -20758,33 +20778,38 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $ac_func (); below.  */
-#include <assert.h>
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
 char $ac_func ();
-char (*f) ();
-
-int
-main ()
-{
-}
-int
-conftest_$ac_func ()
-{
- /* The GNU C library defines this for functions which it implements
+/* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
 choke me
 #else
-f = $ac_func;
+char (*f) () = $ac_func;
+#endif
+#ifdef __cplusplus
+}
 #endif
 
+int
+main ()
+{
+return f != $ac_func;
   ;
   return 0;
 }
@@ -20835,33 +20860,38 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char vsnprintf (); below.  */
-#include <assert.h>
+    which can conflict with char vsnprintf (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
 char vsnprintf ();
-char (*f) ();
-
-int
-main ()
-{
-}
-int
-conftest_vsnprintf ()
-{
- /* The GNU C library defines this for functions which it implements
+/* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_vsnprintf) || defined (__stub___vsnprintf)
 choke me
 #else
-f = vsnprintf;
+char (*f) () = vsnprintf;
+#endif
+#ifdef __cplusplus
+}
 #endif
 
+int
+main ()
+{
+return f != vsnprintf;
   ;
   return 0;
 }
@@ -23938,33 +23968,38 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $ac_func (); below.  */
-#include <assert.h>
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
 char $ac_func ();
-char (*f) ();
-
-int
-main ()
-{
-}
-int
-conftest_$ac_func ()
-{
- /* The GNU C library defines this for functions which it implements
+/* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
 choke me
 #else
-f = $ac_func;
+char (*f) () = $ac_func;
+#endif
+#ifdef __cplusplus
+}
 #endif
 
+int
+main ()
+{
+return f != $ac_func;
   ;
   return 0;
 }
@@ -24284,33 +24319,38 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $ac_func (); below.  */
-#include <assert.h>
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
 extern "C"
+{
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
 char $ac_func ();
-char (*f) ();
-
-int
-main ()
-{
-}
-int
-conftest_$ac_func ()
-{
- /* The GNU C library defines this for functions which it implements
+/* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
 choke me
 #else
-f = $ac_func;
+char (*f) () = $ac_func;
+#endif
+#ifdef __cplusplus
+}
 #endif
 
+int
+main ()
+{
+return f != $ac_func;
   ;
   return 0;
 }
