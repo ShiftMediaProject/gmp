@@ -48,9 +48,9 @@ LN = ln -s
 ###
 
 SRCS = memory.c mp_set_fns.c mp_clz_tab.c version.c stack-alloc.c mp_bpl.c \
-  extract-double.c insert-double.c
+  extract-dbl.c insert-dbl.c
 OBJS = memory.o mp_set_fns.o mp_clz_tab.o version.o stack-alloc.o mp_bpl.o \
-  extract-double.o insert-double.o
+  extract-dbl.o insert-dbl.o
 FILES = gmp.h mp.h gmp-impl.h longlong.h urandom.h move-if-change \
  mkinstalldirs INSTALL COPYING.LIB ChangeLog Makefile.in \
  NEWS README SPEED TODO config.guess config.sub configure configure.in \
@@ -129,7 +129,7 @@ gmp.ps: gmp.dvi
 
 html: gmp_toc.html
 gmp_toc.html: $(srcdir)/gmp.texi
-	texi2html -acc -split_chapter $(srcdir)/gmp.texi
+	texi2html -expandinfo -acc -split_chapter $(srcdir)/gmp.texi
 
 # The semicolon is to prevent the install.sh -> install default rule
 # from doing anything.  Having it run true helps avoid problems and
@@ -139,18 +139,18 @@ install: install-normal ; @true
 install-strip: install-normal
 install-normal: installdirs libgmp.a gmp.info install-info-files
 	$(INSTALL_DATA) libgmp.a $(libdir)/libgmp.a
-	-chmod a-x $(libdir)/libgmp.a
+	@chmod a-x $(libdir)/libgmp.a
 	$(INSTALL_DATA) $(srcdir)/gmp.h $(includedir)/gmp.h
-	-chmod a-x $(includedir)/gmp.h
+	@chmod a-x $(includedir)/gmp.h
 install-bsdmp: installdirs libmp.a gmp.info install-info-files
 	$(INSTALL_DATA) libmp.a $(libdir)/libmp.a
-	-chmod a-x $(libdir)/libmp.a
+	@chmod a-x $(libdir)/libmp.a
 	$(INSTALL_DATA) $(srcdir)/mp.h $(includedir)/mp.h
-	-chmod a-x $(includedir)/mp.h
+	@chmod a-x $(includedir)/mp.h
 install-info-files: installdirs $(srcdir)/gmp.info
 	cd $(srcdir); for f in gmp.info*; \
 	do $(INSTALL_DATA) $$f $(infodir)/$$f; done
-	-chmod a-x $(infodir)/gmp.info*
+	@chmod a-x $(infodir)/gmp.info*
 	# Attempt to edit the info directory node
 	if $(SHELL) -c 'install-info --version' >/dev/null 2>&1; then \
 	  install-info --dir-file=$(infodir)/dir $(infodir)/gmp.info; \
@@ -169,18 +169,18 @@ uninstall:
 clean mostlyclean:
 	rm -f *.o libgmp.a libmp.a gmp.dvi gmp.ps tmp.* tmp-*
 	rm -f gmp.?? gmp.??s gmp.log gmp.toc gmp.*aux gmp*.html
-	-cd mpn; $(MAKE) $@
-	-cd mpz; $(MAKE) $@
-	-cd mpf; $(MAKE) $@
-	-cd mpq; $(MAKE) $@
-	-cd mpbsd; $(MAKE) $@
+	@cd mpn; $(MAKE) $@
+	@cd mpz; $(MAKE) $@
+	@cd mpf; $(MAKE) $@
+	@cd mpq; $(MAKE) $@
+	@cd mpbsd; $(MAKE) $@
 distclean: clean
 	rm -f Makefile config.status
-	-cd mpn; $(MAKE) $@
-	-cd mpz; $(MAKE) $@
-	-cd mpf; $(MAKE) $@
-	-cd mpq; $(MAKE) $@
-	-cd mpbsd; $(MAKE) $@
+	@cd mpn; $(MAKE) $@
+	@cd mpz; $(MAKE) $@
+	@cd mpf; $(MAKE) $@
+	@cd mpq; $(MAKE) $@
+	@cd mpbsd; $(MAKE) $@
 maintainer-clean: distclean
 	rm -f $(srcdir)/gmp.info*
 
@@ -196,8 +196,8 @@ Makefile: $(srcdir)/Makefile.in $(host_makefile_frag) $(target_makefile_frag)
 
 H = $(srcdir)/gmp.h $(srcdir)/gmp-impl.h mpn/gmp-mparam.h
 
-extract-double.o: $(srcdir)/extract-double.c $(H)
-insert-double.o: $(srcdir)/insert-double.c $(H)
+extract-dbl.o: $(srcdir)/extract-dbl.c $(H)
+insert-dbl.o: $(srcdir)/insert-dbl.c $(H)
 memory.o: $(srcdir)/memory.c $(H)
 mp_bpl.o: $(srcdir)/mp_bpl.c
 mp_clz_tab.o: $(srcdir)/mp_clz_tab.c
