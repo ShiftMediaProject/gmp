@@ -28,7 +28,6 @@ MA 02111-1307, USA. */
    s2_limb	(sp + 16)
 */
 
-#include "sysdep.h"
 #include "asm-syntax.h"
 
 #define res_ptr edi

@@ -89,7 +89,7 @@
 !	sll	a,29,y2
 !	st	x,
 
-#include "sysdep.h"
+#include "asm-syntax.h"
 
 .text
 	.align 4

@@ -27,7 +27,7 @@
 #define s2_ptr	%o2
 #define size	%o3
 
-#include "sysdep.h"
+#include "asm-syntax.h"
 
 	.text
 	.align	4

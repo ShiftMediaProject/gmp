@@ -26,7 +26,7 @@
 ! size		%o2
 ! cnt		%o3
 
-#include "sysdep.h"
+#include "asm-syntax.h"
 
 	.text
 	.align	4

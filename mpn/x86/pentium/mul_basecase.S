@@ -34,7 +34,6 @@ MA 02111-1307, USA. */
 sp =>	saved reg
 */
 
-#include "sysdep.h"
 #include "asm-syntax.h"
 
 .text

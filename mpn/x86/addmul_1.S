@@ -1,5 +1,5 @@
 /* x86 __mpn_addmul_1 (for 386, 486, and Pentium Pro) -- Multiply a limb vector
-   with a limb and store the result in a second limb vector.
+   with a limb and add the result to a second limb vector.
 
 Copyright (C) 1992, 1994, 1997 Free Software Foundation, Inc.
 
@@ -28,7 +28,6 @@ MA 02111-1307, USA. */
    s2_limb	(sp + 16)
 */
 
-#include "sysdep.h"
 #include "asm-syntax.h"
 
 #define res_ptr edi

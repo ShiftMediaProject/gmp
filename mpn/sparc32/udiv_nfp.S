@@ -27,7 +27,7 @@
 ! n0		o2
 ! d		o3
 
-#include "sysdep.h"
+#include "asm-syntax.h"
 
 	.text
 	.align 4

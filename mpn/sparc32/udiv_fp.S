@@ -27,7 +27,7 @@
 ! n0		i2
 ! d		i3
 
-#include "sysdep.h"
+#include "asm-syntax.h"
 #undef ret	/* Kludge for glibc */
 
 	.text
