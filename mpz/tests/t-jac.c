@@ -1,4 +1,4 @@
-/* Exercise mpz_kronecker_*() and mpz_jacobi() functions. */
+/* Exercise mpz_*_kronecker_*() and mpz_jacobi() functions. */
 
 /*
 Copyright (C) 1999, 2000 Free Software Foundation, Inc.
@@ -47,6 +47,19 @@ int option_pari = 0;
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
 
 
+unsigned long
+mpz_mod4 (mpz_srcptr z)
+{
+  mpz_t          m;
+  unsigned long  ret;
+
+  mpz_init (m);
+  mpz_fdiv_r_2exp (m, z, 4);
+  ret = mpz_get_ui (m);
+  mpz_clear (m);
+}
+
+
 void
 try_base (unsigned long a, unsigned long b, int answer)
 {
@@ -70,10 +83,10 @@ try_zi_ui (mpz_srcptr a, unsigned long b, int answer)
 {
   int  got;
 
-  got = mpz_kronecker_zi_ui (a, b);
+  got = mpz_kronecker_ui (a, b);
   if (got != answer)
     {
-      printf ("mpz_kronecker_zi_ui (");
+      printf ("mpz_kronecker_ui (");
       mpz_out_str (stdout, 10, a);
       printf (", %lu) is %d should be %d\n", b, got, answer);
       exit (1);
@@ -86,10 +99,10 @@ try_zi_si (mpz_srcptr a, long b, int answer)
 {
   int  got;
 
-  got = mpz_kronecker_zi_si (a, b);
+  got = mpz_kronecker_si (a, b);
   if (got != answer)
     {
-      printf ("mpz_kronecker_zi_si (");
+      printf ("mpz_kronecker_si (");
       mpz_out_str (stdout, 10, a);
       printf (", %ld) is %d should be %d\n", b, got, answer);
       exit (1);
@@ -102,10 +115,10 @@ try_ui_zi (unsigned long a, mpz_srcptr b, int answer)
 {
   int  got;
 
-  got = mpz_kronecker_ui_zi (a, b);
+  got = mpz_ui_kronecker (a, b);
   if (got != answer)
     {
-      printf ("mpz_kronecker_ui_zi (%lu, ", a);
+      printf ("mpz_ui_kronecker (%lu, ", a);
       mpz_out_str (stdout, 10, b);
       printf (") is %d should be %d\n", got, answer);
       exit (1);
@@ -118,10 +131,10 @@ try_si_zi (int a, mpz_srcptr b, int answer)
 {
   int  got;
 
-  got = mpz_kronecker_si_zi (a, b);
+  got = mpz_si_kronecker (a, b);
   if (got != answer)
     {
-      printf ("mpz_kronecker_si_zi (%d, ", a);
+      printf ("mpz_si_kronecker (%d, ", a);
       mpz_out_str (stdout, 10, b);
       printf (") is %d should be %d\n", got, answer);
       exit (1);
@@ -306,7 +319,7 @@ try_periodic_den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 }
 
 
-/* Try (a/b*2^k) for various k.  If it happens mpz_kronecker_ui_zi() gets (a/2)
+/* Try (a/b*2^k) for various k.  If it happens mpz_ui_kronecker() gets (a/2)
    wrong it will show up as wrong answers demanded. */
 void
 try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
@@ -320,7 +333,7 @@ try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
     return;
 
   mpz_init_set (b, b_orig);
-  answer_two = mpz_kronecker_zi_ui (a, 2);
+  answer_two = mpz_kronecker_ui (a, 2);
 
   for (i = 0; i < 3 * BITS_PER_MP_LIMB; i++)
     {
@@ -333,7 +346,7 @@ try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 }
 
 
-/* Try (a*2^k/b) for various k.  If it happens mpz_kronecker_ui_zi() gets (2/b)
+/* Try (a*2^k/b) for various k.  If it happens mpz_ui_kronecker() gets (2/b)
    wrong it will show up as wrong answers demanded. */
 void
 try_2num (mpz_srcptr a_orig, mpz_srcptr b, int answer)
@@ -347,7 +360,7 @@ try_2num (mpz_srcptr a_orig, mpz_srcptr b, int answer)
     return;
 
   mpz_init_set (a, a_orig);
-  answer_twos = mpz_kronecker_ui_zi (2, b);
+  answer_twos = mpz_ui_kronecker (2, b);
   
   for (i = 0; i < 3 * BITS_PER_MP_LIMB; i++)
     {
@@ -449,7 +462,7 @@ check_data (void)
 
     /* (-2/b) = (-1)^((b^2-1)/8)*(-1)^((b-1)/2) which is -1 for b==5,7mod8.
        try_2num() will exercise multiple powers of 2 in the numerator, which
-       will test that the shift in mpz_kronecker_si_zi() uses unsigned not
+       will test that the shift in mpz_si_kronecker() uses unsigned not
        signed.  */
     { "-2",  "1",  1 },
     { "-2",  "3",  1 },
