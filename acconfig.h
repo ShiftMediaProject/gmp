@@ -7,6 +7,9 @@
 /* --enable-assert option */
 #undef WANT_ASSERT
 
+/* Define if a limb is long long. */
+#undef _LONG_LONG_LIMB
+
 /* Define if we have native implementation of function. */
 #undef HAVE_NATIVE_
 #undef HAVE_NATIVE_mpn_add                 
