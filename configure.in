@@ -263,27 +263,27 @@ case "$target" in
     ;;
 
   # POWER/PowerPC
-  powerpc64-*-aix*)
+  powerpc64*-*-aix*)
     cclist="gcc xlc"
     gmp_cflags_gcc="$gmp_cflags_gcc -maix64 -mpowerpc64"
     gmp_cflags_xlc="-g -O2 -q64 -qtune=pwr3"
+    ;;
+  powerpc64*-*-*)
+    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc64"
+    AC_DEFINE(_LONG_LONG_LIMB)	dnl FIXME: Remove.
     ;;
   powerpc*-*-aix*)
     cclist="gcc xlc"
     gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
     gmp_cflags_xlc="$gmp_cflags_cc -qarch=ppc -O2"
     ;;
-  power-*-aix*)
+  powerpc*-*-*)
+    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
+    ;;
+  [power-*-aix* | power[12]-*-aix* | power2sc-*-aix*])
     cclist="gcc xlc"
     gmp_cflags_gcc="$gmp_cflags_gcc -mpower"
     gmp_cflags_xlc="$gmp_cflags_cc -qarch=pwr -O2"
-    ;;
-  powerpc64*-*-*)
-    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc64"
-    AC_DEFINE(_LONG_LONG_LIMB)	dnl FIXME: Remove.
-    ;;
-  powerpc*-*-*)
-    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
     ;;
 
   # MIPS
@@ -628,7 +628,7 @@ case ${target} in
   ppc601-*-*) path="power powerpc32";;
   powerpc64*-*-*) path="powerpc64";;
   powerpc*-*-*) path="powerpc32";;
-  power-*-* | power2-*-*)
+  [power-*-* | power[12]-*-* | power2sc-*-*])
     path="power"
     extra_functions="udiv_w_sdiv"
     ;;
