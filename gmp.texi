@@ -3168,19 +3168,14 @@ This function requires that @var{s1n} is greater than or equal to
 @end deftypefun
 
 @deftypefun void mpn_tdiv_qr (mp_limb_t *@var{qp}, mp_limb_t *@var{rp}, mp_size_t @var{qxn}, const mp_limb_t *@var{np}, mp_size_t @var{nn}, const mp_limb_t *@var{dp}, mp_size_t @var{dn})
-Divide @{@var{np}, @var{nn}@} by @{@var{dp}, @var{dn}@}.  Write the quotient at
-@var{qp} and the remainder at @var{rp}.
+Divide @{@var{np}, @var{nn}@} by @{@var{dp}, @var{dn}@} and put the quotient
+at @{@var{qp}, @var{nn}@minus{}@var{dn}+1@} and the remainder at @{@var{rp},
+@var{dn}@}.  The quotient is rounded towards 0.
 
-The quotient written at @var{qp} will be @var{nn} @minus{} @var{dn} + 1 limbs.
-The remainder written at @var{rp} will be @var{dn} limbs.
-
-It is required that @var{nn} is greater than or equal to @var{dn}.  The
-@var{qxn} operand must be zero.
-
-The quotient is rounded towards 0.
-
-No overlap between arguments is permitted.
-@comment RELAX THIS!
+No overlap is permitted between arguments.  @var{nn} must be greater than or
+equal to @var{dn}.  The most significant limb of @var{dp} must be non-zero.
+The @var{qxn} operand must be zero.
+@comment FIXME: Relax overlap requirements!
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_divrem (mp_limb_t *@var{r1p}, mp_size_t @var{qxn}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2n}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3n})
@@ -3332,60 +3327,65 @@ This function is written in assembly for most targets.
 
 @deftypefun int mpn_cmp (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
 Compare @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@} and return a positive
-value if s1 > src2, 0 of they are equal, and a negative value if s1 < src2.
+value if s1 > src2, 0 if they are equal, and a negative value if s1 < src2.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_gcd (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
-Puts at @var{rp} the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
-@{@var{s2p}, @var{s2n}@}; both source operands are destroyed by the operation.
-The size in limbs of the greatest common divisor is returned.
+Set @{@var{rp}, @var{retval}@} to the greatest common divisor of @{@var{s1p},
+@var{s1n}@} and @{@var{s2p}, @var{s2n}@}.  The result can be up to @var{s2n}
+limbs, the return value is the actual number produced.  Both source operands
+are destroyed.
 
 @{@var{s1p}, @var{s1n}@} must have at least as many bits as @{@var{s2p},
-@var{s2n}@}, and @{@var{s2p}, @var{s2n}@} must be odd.
+@var{s2n}@}.  @{@var{s2p}, @var{s2n}@} must be odd.  Both operands must have
+non-zero most significant limbs.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_gcd_1 (const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb})
 Return the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
-@var{s2limb}, where @var{s2limb} (as well as @var{s1n}) must be different from
-0.
+@var{s2limb}.  Both operands must be non-zero.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2n}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
 Compute the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
-@{@var{s2p}, @var{s2n}@}.  Store the gcd at @var{r1p} and return its size in
-limbs.  Write the first cofactor at @var{r2p} and store its size in *@var{r2n}.
-If the cofactor is negative, *@var{r2n} is negative and @var{r2p} is the
-absolute value of the cofactor.
+@{@var{s2p}, @var{s2n}@}.  Store the gcd at @{@var{r1p}, @var{retval}@}.
+Store the first cofactor at @{@var{r2p}, *@var{r2n}@}.  If the cofactor is
+negative, *@var{r2n} is negative and the absolute value is stored at
+@var{r2p}.  @var{r1p} and @var{r2p} should each have room for @var{s1n} limbs,
+the return value and value stored through @var{r2n} indicate the actual number
+produced.
 
 @{@var{s1p}, @var{s1n}@} must be greater than or equal to @{@var{s2p},
-@var{s2n}@}.  Neither operand may equal 0.  Both source operands are destroyed,
-plus one limb past the end of each, ie. @{@var{s1p}, @var{s1n}+1@} and
-@{@var{s2p}, @var{s2n}+1@}.
+@var{s2n}@}.  Both operands must be non-zero.  Both source regions are
+destroyed, plus one limb past the end of each.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
 Compute the square root of @{@var{sp}, @var{n}@} and put the result at
-@var{r1p}.
-
-If @var{r2p} is not NULL, write the remainder there and return its size.  If
-@var{r2p} is NULL, discard the remainder and return 0 or 1, where 0 means that
-the remainder was identical zero, and 1 means that that the remainder was
-greater than zero.
-
-In either case, iff the operand was a perfect square, the return value will be
-0.
-
-The areas at @var{r1p} and @var{sp} have to be distinct.  The areas at
-@var{r2p} and @var{sp} have to be identical or completely separate, not
-partially overlapping.
-
+@{@var{r1p},
+@tex
+$\lceil@var{n}/2\rceil$%
+@end tex
+@iftex
+@}
+@end iftex
 @ifnottex
+ceil(@var{n}/2)@}
+
 The area at @var{r1p} needs to have space for ceil(@var{n}/2) limbs.
 @end ifnottex
-@tex
-The area at @var{r1p} needs to have space for $\lceil@var{n}/2\rceil$ limbs.
-@end tex
-The area at @var{r2p} needs to be @var{n} limbs large.
+and the remainder at @{@var{r2p}, @var{retval}@}.  @var{r2p} needs space for
+@var{n} limbs, but the return value indicates how many are produced.
+
+The most significant limb of @var{sp} must be non-zero.  The areas at
+@var{r1p} and @var{sp} must be distinct.  The areas at @var{r2p} and @var{sp}
+must be identical or completely separate.
+
+If the remainder is not wanted @var{r2p} can be @code{NULL}, and in this case
+the return value is zero or non-zero according to whether the remainder would
+have been zero or non-zero.
+
+A return value of zero indicates a perfect square.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n})
