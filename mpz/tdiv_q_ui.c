@@ -26,28 +26,53 @@ MA 02111-1307, USA. */
 unsigned long int
 mpz_tdiv_q_ui (mpz_ptr quot, mpz_srcptr dividend, unsigned long int divisor)
 {
-  mp_size_t dividend_size;
-  mp_size_t size;
-  mp_ptr quot_ptr;
-  mp_limb_t remainder_limb;
+  mp_size_t ns, nn, qn;
+  mp_ptr np, qp;
+  mp_limb_t rl;
 
   if (divisor == 0)
     DIVIDE_BY_ZERO;
 
-  dividend_size = dividend->_mp_size;
-  size = ABS (dividend_size);
+  ns = SIZ(dividend);
+  if (ns == 0)
+    {
+      SIZ(quot) = 0;
+      return 0;
+    }
 
-  if (quot->_mp_alloc < size)
-    _mpz_realloc (quot, size);
+  nn = ABS(ns);
+  MPZ_REALLOC (quot, nn);
+  qp = PTR(quot);
+  np = PTR(dividend);
 
-  quot_ptr = quot->_mp_d;
+#if GMP_NAIL_BITS != 0
+  if (divisor > GMP_NUMB_MAX)
+    {
+      mp_limb_t dp[2], rp[2];
+      TMP_DECL (mark);
 
-  remainder_limb
-    = mpn_divmod_1 (quot_ptr, dividend->_mp_d, size, (mp_limb_t) divisor);
+      if (nn == 1)		/* tdiv_qr requirements; tested above for 0 */
+	{
+	  SIZ(quot) = 0;
+	  rl = np[0];
+	  return rl;
+	}
 
-  /* The quotient is SIZE limbs, but the most significant might be zero. */
-  size -= size != 0 && quot_ptr[size - 1] == 0;
-  quot->_mp_size = dividend_size >= 0 ? size : -size;
+      TMP_MARK (mark);
+      dp[0] = divisor & GMP_NUMB_MASK;
+      dp[1] = divisor >> GMP_NUMB_BITS;
+      mpn_tdiv_qr (qp, rp, (mp_size_t) 0, np, nn, dp, (mp_size_t) 2);
+      TMP_FREE (mark);
+      rl = rp[0] + (rp[1] << GMP_NUMB_BITS);
+      qn = nn - 2 + 1; qn -= qp[qn - 1] == 0; qn -= qn != 0 && qp[qn - 1] == 0;
+    }
+  else
+#endif
+    {
+      rl = mpn_divrem_1 (qp, (mp_size_t) 0, np, nn, (mp_limb_t) divisor);
+      qn = nn - (qp[nn - 1] == 0);
+    }
 
-  return remainder_limb;
+  SIZ(quot) = ns >= 0 ? qn : -qn;
+  return rl;
 }

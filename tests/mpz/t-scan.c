@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 unsigned long
 refmpz_scan (mpz_srcptr z, unsigned long i, int sought)
 {
-  unsigned long  z_bits = (unsigned long) ABSIZ(z) * BITS_PER_MP_LIMB;
+  unsigned long  z_bits = (unsigned long) ABSIZ(z) * GMP_NUMB_BITS;
 
   do
     {
@@ -74,7 +74,7 @@ check_ref (void)
               if (neg)
                 mpz_neg (z, z);
 
-              for (i = 0; i < size*BITS_PER_MP_LIMB + 8; i++)
+              for (i = 0; i < size * GMP_NUMB_BITS + 8; i++)
                 {
                   for (sought = 0; sought <= 1; sought++)
                     {

@@ -22,13 +22,37 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 unsigned long int
 mpz_tdiv_ui (mpz_srcptr dividend, unsigned long int divisor)
 {
+  mp_size_t ns, nn;
+  mp_ptr np;
+
   if (divisor == 0)
     DIVIDE_BY_ZERO;
 
-  return mpn_mod_1 (PTR(dividend), (mp_size_t) ABSIZ(dividend),
-                    (mp_limb_t) divisor);
+  ns = SIZ(dividend);
+  nn = ABS(ns);
+  np = PTR(dividend);
+
+#if GMP_NAIL_BITS != 0
+  if (divisor > GMP_NUMB_MAX)
+    {
+      mp_limb_t dp[2], rp[2];
+      mp_ptr qp;
+      TMP_DECL (mark);
+
+      TMP_MARK (mark);
+      dp[0] = divisor & GMP_NUMB_MASK;
+      dp[1] = divisor >> GMP_NUMB_BITS;
+      qp = TMP_ALLOC_LIMBS (nn - 2 + 1);
+      mpn_tdiv_qr (qp, rp, (mp_size_t) 0, np, nn, dp, (mp_size_t) 2);
+      TMP_FREE (mark);
+      return rp[0] + (rp[1] << GMP_NUMB_BITS);
+    }
+#endif
+
+  return mpn_mod_1 (np, nn, (mp_limb_t) divisor);
 }
