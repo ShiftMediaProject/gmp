@@ -107,6 +107,7 @@ tests_rand_start (void)
           gmp_randseed_ui (rands, seed);
           printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
         }
+      fflush (stdout);
     }
 }
 void
