@@ -19,7 +19,32 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/divrem_1.c: Additional nailify changes.
+	* mpn/generic/mod_1.c: Likewise.
+
+	* tests/mpq/t-get_d.c: Print floats with all 16 digits.
+
+	* mpq/get_d.c: Nailify.
+
+	* tests/mpq/t-set_f.c: Disable for nails.
+
+	* mpz/get_d.c: Nailify.
+
+	* gmp-impl.h (LIMBS_PER_DOUBLE, MP_BASE_AS_DOUBLE): Nailify.
+
+	* gmp-h.in (__GMPZ_FITS_UTYPE_P): Cast maxval to before shifting it.
+
+	* extract-dbl.c: Nailify.
+
 2002-04-29  Torbjorn Granlund  <tege@swox.com>
+
+	* mpq/md_2exp.c (mord_2exp): Nailify.
+
+	* mpq/cmp_ui.c: Nailify.
+
+	* mpq/cmp.c (mpq_cmp): Nailify.
 
 	* mpn/generic/gcd.c: Nailify.  GNUify code layout.
 
