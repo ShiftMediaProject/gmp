@@ -31,8 +31,7 @@ necessary.  Completion unit scheduling is necessary.
 According to HP's published publication, two memory operations can be
 completed per cycle, but at most one of these may be a store.  Two ALU
 operations may be completed per cycle; integer and fp operations are
-equal here.  Tests indicate that in practice when a store is executed,
-no load can execute in the same cycle.
+equal here.
 
 Since the completion unit can only handle 4 instructions per cycle,
 and since completion is made in strict program order, we need to
