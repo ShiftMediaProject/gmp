@@ -363,4 +363,5 @@ union ieee_double_extract
 #define LIMBS_PER_DOUBLE 3
 #endif
 
-double __gmp_scale2 ();
+double __gmp_scale2 _PROTO ((double, int));
+int __gmp_extract_double _PROTO((mp_ptr, double));
