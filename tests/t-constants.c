@@ -23,6 +23,18 @@ MA 02111-1307, USA.
 
 #include <stdio.h>
 #include "gmp.h"
+
+#ifdef ULONG_MAX
+char *ulong_max_def = "defined";
+#else
+char *ulong_max_def = "not defined";
+#endif
+#ifdef LONG_MAX
+char *long_max_def = "defined";
+#else
+char *long_max_def = "not defined";
+#endif
+
 #include "gmp-impl.h"
 #include "longlong.h"
 
@@ -116,10 +128,15 @@ MA 02111-1307, USA.
   } while (0)
 
 
+/* gcc 2.95.2 -mpowerpc64 -maix64 needs "static" on maxval and minval or it
+   thinks LONG_MAX<=LONG_MIN (when those values are decimal constants
+   provided by the AIX 4.3 headers at least).  Presumably some gremlin in
+   the constant folding.  */
+
 #define CHECK_MAX_S(max_val, max_name, min_val, min_name, type, format) \
   do {                                                                  \
-    type  maxval = max_val;                                             \
-    type  minval = min_val;                                             \
+    static type  maxval = max_val;                                      \
+    static type  minval = min_val;                                      \
     type  n = maxval;                                                   \
     n++;                                                                \
     if (n != minval)                                                    \
@@ -143,9 +160,6 @@ MA 02111-1307, USA.
   } while (0)
 
 
-
-/* FIXME: printf formats not right for a long long limb. */
-
 #if HAVE_STRINGIZE
 #define CHECK_LIMB(x,y)      CHECK_LIMB_S (x, #x, y, #y)
 #define CHECK_INT(x,y)       CHECK_INT_S (x, #x, y, #y)
@@ -164,9 +178,26 @@ MA 02111-1307, USA.
 
 
 int
-main (void)
+main (int argc, char *argv[])
 {
   int  error = 0;
+
+  if (argc >= 2)
+    {
+      printf ("After gmp.h,\n");
+      printf ("   ULONG_MAX  %s\n", ulong_max_def);
+      printf ("   LONG_MAX   %s\n", long_max_def);
+      printf ("\n");
+
+#ifdef _CRAY
+      printf ("_CRAY is defined, so limits.h is being used\n");
+#endif
+
+      printf ("ULONG_MAX     %lX\n", ULONG_MAX);
+      printf ("ULONG_HIGHBIT %lX\n", ULONG_HIGHBIT);
+      printf ("LONG_MAX      %lX\n", LONG_MAX);
+      printf ("LONG_MIN      %lX\n", LONG_MIN);
+    }
 
   CHECK_INT (BYTES_PER_MP_LIMB, sizeof(mp_limb_t));
   CHECK_INT (mp_bits_per_limb, BITS_PER_MP_LIMB);
