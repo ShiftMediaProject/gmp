@@ -1,6 +1,6 @@
 /* mpf_ceil, mpf_floor -- round an mpf to an integer.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,7 +31,7 @@ MA 02111-1307, USA. */
 static void __gmpf_ceil_or_floor _PROTO ((REGPARM_2_1 (mpf_ptr r, mpf_srcptr u, int dir))) REGPARM_ATTR (1);
 #define mpf_ceil_or_floor(r,u,dir)  __gmpf_ceil_or_floor (REGPARM_2_1 (r, u, dir))
 
-static void
+REGPARM_ATTR (1) static void
 mpf_ceil_or_floor (mpf_ptr r, mpf_srcptr u, int dir)
 {
   mp_ptr     rp, up, p;
