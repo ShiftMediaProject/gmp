@@ -19,6 +19,32 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-11  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4, configure.in (GMP_IMPL_H_IEEE_FLOATS): New macro.
+
+	* ltmain.sh: Send some rm errors to /dev/null, helps during compiles
+	on Solaris 2.7 and HP-UX 10.
+
+	* tal-notreent.c: Renamed from stack-alloc.c.
+	* Makefile.am, acinclude.m4, gmp-impl.h: Update.
+
+	* gmp-h.in: Don't give both prototypes and inlines, except on gcc.
+	
+	* gmp-h.in, gmp-impl.h: Use #includes to get necessary standard
+	classes, add std:: to prototypes.
+	* cxx/*.cc, tests/cxx/t-ostream.cc: Add "use namespace std".
+	* acinclude.m4 (GMP_PROG_CXX_WORKS): Ditto.
+
+	* tests/*/Makefile.in, mpfr/tests/Makefile.in: Regenerate with
+	automake patch to avoid Ultrix problem with empty $(TESTS).
+
+	* */Makefile.in: Regenerate with automake patch to only rm *_.c in
+	"make clean" when ansi2knr actually in use, helps DOS 8.3.
+
+	* Makefile.in: Regenerate with automake patch to fix stamp-h
+	numbering, avoiding an unnecessary config.status run.
+
 2001-10-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/hppa/hppa1_1/udiv_qrnnd.asm: Use L macros for labels.
