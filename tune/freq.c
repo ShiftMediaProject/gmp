@@ -343,6 +343,41 @@ speed_cpu_frequency_sco_etchw (void)
 #endif
 
 
+/* "hinv -c processor" for IRIX.
+   The first line printed is for instance "2 195 MHZ IP27 Processors".  */
+
+#if HAVE_POPEN
+#define HAVE_SPEED_CPU_FREQUENCY_IRIX_HINV 1
+int
+speed_cpu_frequency_irix_hinv (void)
+{
+  FILE    *fp;
+  char    buf[128];
+  double  val;
+  int     nproc, ret = 0;
+
+  /* Error messages are sent to /dev/null in case hinv doesn't exist.  The
+     brackets are necessary for some shells. */
+  if ((fp = popen ("(hinv -c processor) 2>/dev/null", "r")) != NULL)
+    {
+      while (fgets (buf, sizeof (buf), fp) != NULL)
+        {
+          if (sscanf (buf, "%d %lf MHZ", &nproc, &val) == 2)
+            {
+              speed_cycletime = 1e-6 / val;
+              if (speed_option_verbose)
+                printf ("Using hinv -c processor \"%.2f MHZ\" for cycle time %.3g\n", val, speed_cycletime);
+              ret = 1;
+              break;
+            }
+        }
+      pclose (fp);
+    }
+  return ret;
+}
+#endif
+
+
 /* FreeBSD on i386 gives a line like the following at bootup, and which can
    be read back from /var/run/dmesg.boot.
 
@@ -512,7 +547,12 @@ speed_cpu_frequency_measure (void)
 
 
 /* Each function returns 1 if it succeeds in setting speed_cycletime, or 0
-   if not.  */
+   if not.
+
+   In general system call tests are first since they're fast, then file
+   tests, then tests running programs.  Necessary exceptions to this rule
+   are noted.  The measuring is last since it's time consuming, and rather
+   wasteful of cpu.  */
 
 const struct {
   int         (*fun) _PROTO ((void));
@@ -552,6 +592,11 @@ const struct {
 
   { speed_cpu_frequency_bsd_dmesg,
     "BSD /var/run/dmesg.boot file" },
+
+#if HAVE_SPEED_CPU_FREQUENCY_IRIX_HINV
+  { speed_cpu_frequency_irix_hinv,
+    "IRIX \"hinv -c processor\" output" },
+#endif
 
 #if HAVE_SPEED_CPU_FREQUENCY_SUNOS_SYSINFO
   { speed_cpu_frequency_sunos_sysinfo,
