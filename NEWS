@@ -1,13 +1,14 @@
-Changes between MP version 3.1.1 and 3.2
+Changes between MP version 3.1.1 and 4.0
 
 * Bug fixes.
-* Revamped configure, featuring ABI selection.
 * New CPU support: IA-64, Pentium 4.
 * Improved CPU support: 21264, Cray vector systems.
 * New systems supported: Darwin, SCO, Windows DLLs.
 * New Karatsuba Square Root algorithm.
 * New algorithms chapter in the manual.
 * New reentrant malloc temporary memory method.
+* New C++ interface (preliminary).
+* Revamped configure, featuring ABI selection.
 * Updated mpfr.
 * Speed improvements for mpz_powm.
 * New gmp_printf and related functions.
