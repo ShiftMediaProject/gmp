@@ -175,6 +175,48 @@ fi
 ])
 
 
+dnl  GMP_PROG_HOST_CC
+dnl  ----------------
+dnl  Establish a value for $HOST_CC.
+dnl
+dnl  Any HOST_CC already set is used without testing.  Likewise any
+dnl  CC_FOR_BUILD is used without testing.  CC_FOR_BUILD is the new name for
+dnl  a build system compiler, see configfsf.guess.
+
+AC_DEFUN(GMP_PROG_HOST_CC,
+[AC_BEFORE([$0],[AC_PROG_LIBTOOL])
+AC_REQUIRE([AC_PROG_CC])
+AC_CACHE_CHECK([for HOST_CC build system compiler],
+               gmp_cv_prog_host_cc,
+[if test -n "$HOST_CC"; then
+  gmp_cv_prog_host_cc=$HOST_CC
+else
+  if test -n "$CC_FOR_BUILD"; then
+    gmp_cv_prog_host_cc=$CC_FOR_BUILD
+  else
+    cat >conftest.c <<EOF
+int main () { exit(0); }
+EOF
+    for c in "$CC" cc gcc c89; do
+      echo "trying $c" >&AC_FD_CC        
+      if ($c conftest.c -o conftest) >&AC_FD_CC 2>&1; then
+        if (./conftest) >&AC_FD_CC 2>&1; then
+          gmp_cv_prog_host_cc=$c
+          break
+        fi
+      fi
+    done
+    rm -f conftest*
+    if test -z "$gmp_cv_prog_host_cc"; then
+      AC_MSG_ERROR([cannot find a build system compiler])
+    fi
+  fi
+fi
+])
+HOST_CC=$gmp_cv_prog_host_cc
+])
+
+
 dnl  GMP_PROG_M4
 dnl  -----------
 dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
@@ -1069,17 +1111,18 @@ dnl  letting the problem go unnoticed.  tests/mpn/t-asmtype.c aims to check
 dnl  for it.
 
 AC_DEFUN(GMP_ASM_TYPE,
-[AC_CACHE_CHECK([how the .type assembly directive should be used],
+[AC_CACHE_CHECK([for assembler .type directive],
                 gmp_cv_asm_type,
-[for gmp_tmp_prefix in @ \# %; do
+[gmp_cv_asm_type=
+for gmp_tmp_prefix in @ \# %; do
   GMP_TRY_ASSEMBLE([	.type	sym,${gmp_tmp_prefix}function],
-    [gmp_cv_asm_type=".type	\$][1,${gmp_tmp_prefix}\$][2"
-    break])
+    [if grep "\.type pseudo-op used outside of \.def/\.endef ignored" conftest.out >/dev/null; then : ;
+    else
+      gmp_cv_asm_type=".type	\$][1,${gmp_tmp_prefix}\$][2"
+      break
+    fi])
 done
 rm -f conftest*
-if test -z "$gmp_cv_asm_type"; then
-  gmp_cv_asm_type=""
-fi
 ])
 echo ["define(<TYPE>, <$gmp_cv_asm_type>)"] >> $gmp_tmpconfigm4
 ])
@@ -1090,11 +1133,14 @@ dnl  ------------
 dnl  Can we say `.size'?
 
 AC_DEFUN(GMP_ASM_SIZE,
-[AC_CACHE_CHECK([if the .size assembly directive works],
+[AC_CACHE_CHECK([for assembler .size directive],
                 gmp_cv_asm_size,
-[GMP_TRY_ASSEMBLE([	.size	sym,1],
-  [gmp_cv_asm_size=".size	\$][1,\$][2"],
-  [gmp_cv_asm_size=""])
+[gmp_cv_asm_size=
+GMP_TRY_ASSEMBLE([	.size	sym,1],
+  [if grep "\.size pseudo-op used outside of \.def/\.endef ignored" conftest.out >/dev/null; then : ;
+  else
+    gmp_cv_asm_size=".size	\$][1,\$][2"
+  fi])
 ])
 echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
 ])
@@ -5212,6 +5258,7 @@ if test -f "$ltmain"; then
     lt_cv_sys_global_symbol_to_c_name_address \
     sys_lib_search_path_spec sys_lib_dlsearch_path_spec \
     old_postinstall_cmds old_postuninstall_cmds \
+    HOST_CC \
     _LT_AC_TAGVAR(compiler, $1) \
     _LT_AC_TAGVAR(CC, $1) \
     _LT_AC_TAGVAR(LD, $1) \
@@ -5352,6 +5399,9 @@ AR_FLAGS=$lt_AR_FLAGS
 
 # A C compiler.
 LTCC=$lt_LTCC
+
+# A C compiler for the build system.
+HOST_CC=$lt_HOST_CC
 
 # A language-specific compiler.
 CC=$lt_[]_LT_AC_TAGVAR(compiler, $1)
