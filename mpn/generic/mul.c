@@ -169,7 +169,7 @@ mpn_mul (mp_ptr prodp,
 	    }
 	}
 
-      if (vn)
+      if (vn != 0)
 	{
 	  mpn_mul_basecase (ws, up, un, vp, vn);
 	  if (l <= un + vn)
