@@ -32,11 +32,19 @@ INCLUDES = -DBERKELEY_MP -D__GMP_WITHIN_GMP -D__gmpz_realloc=_mp_realloc \
 # The mpz sources here all know to look for -DBERKELEY_MP to compile to in
 # mpbsd form.
 #
-libmpbsd_la_SOURCES =							  \
-	itom.c mfree.c min.c mout.c mtox.c rpow.c sdiv.c xtom.c		  \
-	../mpz/add.c ../mpz/cmp.c ../mpz/gcd.c ../mpz/mul.c ../mpz/powm.c \
-	../mpz/realloc.c ../mpz/set.c ../mpz/sqrtrem.c ../mpz/sub.c	  \
-	../mpz/tdiv_qr.c
+# FIXME: Would have just put ../mpz/add.c etc in libmpbsd_la_SOURCES, but as
+# of automake 1.5 that doesn't work in combination with ansi2knr.
+#
+libmpbsd_la_SOURCES = itom.c mfree.c min.c mout.c mtox.c rpow.c sdiv.c xtom.c
+nodist_libmpbsd_la_SOURCES = \
+  add.c cmp.c gcd.c mul.c powm.c realloc.c set.c sqrtrem.c sub.c tdiv_qr.c
+
+$(nodist_libmpbsd_la_SOURCES):
+	for i in $(nodist_libmpbsd_la_SOURCES); do \
+	  cp $(top_srcdir)/mpz/$$i .; \
+        done
+
+CLEANFILES = $(nodist_libmpbsd_la_SOURCES)
 
 if WANT_MPBSD
 noinst_LTLIBRARIES = libmpbsd.la
