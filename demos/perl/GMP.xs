@@ -17,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 /* Notes:
@@ -29,9 +28,9 @@ MA 02111-1307, USA.
    to be separate though.
 
    The "INTERFACE:" feature isn't available in perl 5.005 and so isn't used.
-   "ALIAS:" requires a table lookup with CvXSUBANY(cv).any_i32 ("ix")
-   whereas "INTERFACE:" would have CvXSUBANY(cv).any_dptr as the function
-   pointer immediately.
+   "ALIAS:" requires a table lookup with CvXSUBANY(cv).any_i32 (which is
+   "ix") whereas "INTERFACE:" would have CvXSUBANY(cv).any_dptr as the
+   function pointer immediately.
 
    Mixed-type swapped-order assignments like "$a = 123; $a += mpz(456);"
    invoke the plain overloaded "+", not "+=", which makes life easier.
@@ -43,7 +42,7 @@ MA 02111-1307, USA.
 
    The overload_constant routines reached via overload::constant get 4
    arguments in perl 5.6, not the 3 as documented.  This is apparently a
-   bug, "..." lets us ignore the extra one.
+   bug, using "..." lets us ignore the extra one.
 
    There's only a few "si" functions in gmp, so generally SvIV values get
    handled with an mpz_set_si into a temporary and then a full precision mpz
@@ -71,6 +70,7 @@ MA 02111-1307, USA.
 
 
 #include <assert.h>
+#include <float.h>
 
 #include "EXTERN.h"
 #include "perl.h"
@@ -120,6 +120,7 @@ assert_support (static long rand_count = 0;)
 
 #define CREATE_MPX(type)                                \
                                                         \
+  /* must have mpz_t etc first, for sprintf below */    \
   struct type##_elem {                                  \
     type##_t            m;                              \
     struct type##_elem  *next;                          \
@@ -869,7 +870,7 @@ OUTPUT:
 
 
 void
-get_str_internal (sv, ...)
+get_str (sv, ...)
     SV   *sv
 PREINIT:
     char      *str;
@@ -878,16 +879,23 @@ PREINIT:
     mpq_ptr   q;
     mpf       f;
     int       base;
+    int       ndigits;
 PPCODE:
-    TRACE (printf ("GMP::get_str_internal\n"));
+    TRACE (printf ("GMP::get_str\n"));
+
     if (items >= 2)
       base = coerce_long (ST(1));
     else
       base = 10;
     TRACE (printf (" base=%d\n", base));
 
-    EXTEND (SP, 3);
-    PUSHs (sv_2mortal (newSViv (base)));
+    if (items >= 3)
+      ndigits = coerce_long (ST(2));
+    else
+      ndigits = 10;
+    TRACE (printf (" ndigits=%d\n", ndigits));
+
+    EXTEND (SP, 2);
     
     if (SvIOK(sv))
       {
@@ -897,7 +905,9 @@ PPCODE:
       }
     else if (SvNOK(sv))
       {
-        tmp_mpf_set_prec (tmp_mpf_0, 53);
+        /* only digits in the original double, not in the coerced form */
+        if (ndigits == 0)
+          ndigits = DBL_DIG;
         mpf_set_d (tmp_mpf_0->m, SvNVX(sv));
         f = tmp_mpf_0->m;
         goto get_mpf;
@@ -1075,6 +1085,29 @@ CODE:
     x_mpq_shrink (tmp_mpq_1);
     tmp_mpf_shrink (tmp_mpf_0);
     tmp_mpf_shrink (tmp_mpf_1);
+
+
+
+malloced_string
+sprintf_internal (fmt, sv)
+    const_string fmt
+    SV           *sv
+CODE:
+    assert (strlen (fmt) >= 3);
+    assert (SvROK(sv));
+    assert ((sv_derived_from (sv, mpz_class)    && fmt[strlen(fmt)-2] == 'Z')
+            || (sv_derived_from (sv, mpq_class) && fmt[strlen(fmt)-2] == 'Q')
+            || (sv_derived_from (sv, mpf_class) && fmt[strlen(fmt)-2] == 'F'));
+    TRACE (printf ("GMP::sprintf_internal\n");
+           printf ("  fmt  |%s|\n", fmt);
+           printf ("  sv   |%p|\n", SvMPZ(sv)));
+
+    /* cheat a bit here, SvMPZ works for mpq and mpf too */
+    gmp_asprintf (&RETVAL, fmt, SvMPZ(sv));
+
+    TRACE (printf ("  result |%s|\n", RETVAL));
+OUTPUT:
+    RETVAL
 
 
 
@@ -2505,21 +2538,6 @@ CODE:
     RETVAL = mpf_eq (x, y, bits);
 OUTPUT:
     RETVAL
-
-
-void
-mpf_get_str (f, base, digits)
-    mpf_coerce_def f
-    int            base
-    int            digits
-PREINIT:
-    char      *str;
-    mp_exp_t  exp;
-PPCODE:
-    str = mpf_get_str (NULL, &exp, base, digits, f);
-    EXTEND (SP, 2);
-    PUSHs (sv_2mortal (newSVpv (str, 0)));
-    PUSHs (sv_2mortal (newSViv (exp)));
 
 
 mpf
