@@ -15,12 +15,12 @@
 
 <comment>
   An up-to-date html version of this file is available at
-  http://www.swox.com/gmp/tasks.html.
+  <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
 <p> This file lists itemized GMP development tasks.  Not all the tasks listed
     here are suitable for volunteers, but many of them are.  Please see the
-    file projects, or <a href="http://www.swox.com/gmp/projects.html">
+    file projects, or <a href="projects.html">
     http://www.swox.com/gmp/projects.html</a> for more sizeable projects.
 
 <h4>Correctness and Completeness</h4>
@@ -31,7 +31,8 @@
      options, and make sure it works with new and old systems and GNU
      assembler.
 <li> HPUX 10 C compiler supports alloca.  Cannot find any symbol to test in
-     order to know if we're on HPUX 10.  Damn.
+     order to know if we're on HPUX 10.  Damn.  Maybe an autoconf test can
+     help.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c: <code>mpz_XXX(a,a,a)</code>.
@@ -52,21 +53,16 @@
      real remainder instead?  Changes return type to <code>signed long int</code>.
 <li> libmp/mout calls strlen with incompatible type.
 <li> libmp/mtox returns from incompatible type.
-<li> libmp.a has references to <code>_mpz_realloc</code>, but doesn't define
-     it.
 <li> <code>mpf_eq</code> is not always correct, when one operand is
      1000000000... and the other operand is 0111111111..., i.e., extremely
      close.  There is a special case in <code>mpf_sub</code> for this
      situation; put similar code in <code>mpf_eq</code>.
-<li> Fix revision numbers in texinfo.tex and configure.
 <li> <code>mpn_divrem</code> cannot throw away the quotient when <code>XSIZE !=
      0</code>.  Document or fix.
 <li> Install Alpha assembly changes (prec/gmp-alpha-patches).
 <li> NeXT has problems with newlines in asm strings in longlong.h.  Also,
      <code>__builtin_constant_p</code> is unavailable?  Same problem with MacOS
      X.
-<li> Solaris/x86 assembler doesn't accept <code>%cl</code> for double-word
-     shift insns.
 <li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
      mp?/tests/*.c.
 <li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000.
@@ -79,10 +75,14 @@
      bit of the operand, and avoid invoking <code>count_leading_zeros</code> if
      the bit is set.  This is an optimization on all machines, and significant
      on machines with slow <code>count_leading_zeros</code>.
+<li> In a couple of places <code>count_trailing_zeros</code> is used
+     on more or less uniformly distributed numbers.  For some CPUs
+     <code>count_trailing_zeros</code> is slow and it's probably worth
+     handling the frequently occurring 0 to 2 trailing zeros cases specially.
 <li> Change all places that use <code>udiv_qrnnd</code> for inverting limbs to
      instead use <code>mpn_invert_limb</code>.
 <li> Reorganize longlong.h so that we can inline the operations even for the
-     system compiler.  When there is not such compiler feature, make calls to
+     system compiler.  When there is no such compiler feature, make calls to
      stub functions.  Write such stub functions for as many machines as
      possible.
 <li> Rewrite <code>umul_ppmm</code> to use floating-point for generating the
@@ -108,8 +108,6 @@
 
 <h4>Machine Dependent Optimization</h4>
 <ul>
-<li> Make special configuration for Amd K6.  Choose mul_1.S, addmul_1.S,
-     submul_1.S from x86/pentium, and add_n.S, sub_n.S from main x86 directory.
 <li> Alpha: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code> for the 21264.  On 21264, they should run at 4, 3,
      and 3 cycles/limb respectively, if the code is unrolled properly.  (Ask
@@ -144,7 +142,7 @@
      for important machines.
 <li> POWER2/POWER2SC: Schedule <code>mpn_lshift</code>/<code>mpn_rshift</code>.
      Will bring time from 1.75 to 1.25 cycles/limb.
-<li> X86: Optimize <code>mpn_lshift</code> for shifts by 1.  (See Pentium code.)
+<li> X86: Optimize non-MMX <code>mpn_lshift</code> for shifts by 1.  (See Pentium code.)
 <li> Alpha: Optimize <code>count_leading_zeros</code>.
 <li> Alpha: Optimize <code>udiv_qrnnd</code>.  (Ask Torbjörn for the file
      test-udiv-preinv.c as a starting point.)
@@ -168,11 +166,6 @@
 <li> Cray: Write <code>mpn_mul_basecase</code> and
      <code>mpn_sqr_basecase</code>.  Same comment applies to this as to the
      same functions for Fujitsu VPP.
-<li> Integrate Rob Harley's Toom3 code.  We need to make it run faster on
-     x86'es and other register-starved architectures by avoiding the current
-     shift-add-subtract code and instead using some temporaries and call the
-     assembly mpn routines.  (If you want to work on this, ask Torbjörn for the
-     code.)
 <li> Integrate Paul Zimmermann's FFT multiply code.  (If you want to work on
      this, ask Torbjörn for the code.)
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
@@ -187,14 +180,10 @@
 <h4>New Functionality</h4>
 <ul>
 <li> <code>mpz_get_nth_ui</code>.  Return the nth word (not necessarily the nth limb).
-<li> Split the 6 functions of mpz/fits_ui.c into separate files.  (Torbjörn
-     will handle this.)
-<li> Make <code>mpn_addmul_1</code> and <code>mpn_submul_1</code> available at
-     the mpz level (per John Abbott's suggestion.)
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
-<li> Add <code>mpq_set_f</code> and <code>mpq_set_d</code> for assignment from
-     <code>mpf_t</code> and <code>double</code>, respectively.
+<li> Add <code>mpq_set_f</code> for assignment from <code>mpf_t</code>
+     (cf. <code>mpq_set_d</code>).
 <li> Maybe make <code>mpz_init</code> (and <code>mpq_init</code>) do lazy
      allocation.  Set <code>ALLOC(var)</code> to 0, and have
      <code>mpz_realloc</code> special-handle that case.  Update functions that
@@ -207,17 +196,21 @@
      <code>gmp_errno</code>.
 <li> Implement <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
      <code>gmp_snprintf</code>.
-<li> Implement mixed precision Kronecker/Jacobi symbol.  Kevin Ryde is working on this.
+<li> Implement some <code>mpq</code> input and output functions.
+<li> Implement mixed precision Kronecker/Jacobi symbol, extend the
+     normal <code>mpz_jacobi</code> to a full range of inputs.
+     Kevin Ryde is working on this.
 </ul>
 
 <h4>Miscellaneous</h4>
 <ul>
-<li> Work on the way we build the library.  We now do it in a slow manner,
-     packing and unpacking archives.
-<li> Modify Makefiles to pass fewer -I options.
+
+<li> Work on the way we build the library.  We now do it building
+     convenience libraries but then listing all the object files a
+     second time in the top level Makefile.am.
 <li> Get rid of mp[zq]/sub.c, and instead define a compile parameter to
      mp[zq]/add.c to decide whether it will add or subtract.  Will decrease
-     redundancy.
+     redundancy.  Similarly in many places.
 <li> Make <code>mpz_div</code> and <code>mpz_divmod</code> use rounding
      analogous to <code>mpz_mod</code>.  Document, and list as an
      incompatibility.
