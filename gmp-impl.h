@@ -100,12 +100,6 @@ MA 02111-1307, USA. */
 #define TMP_ALLOC_MP_PTRS(n)   TMP_ALLOC_TYPE(n,mp_ptr)
 
 
-#if !defined (__GNUC__) || defined (__STRICT_ANSI__)
-				/* FIXME: Test for C++ compilers here,
-				   __DECC understands __inline */
-#define inline			/* Empty */
-#endif
-
 #define ABS(x) (x >= 0 ? x : -x)
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
 #define MAX(h,i) ((h) > (i) ? (h) : (i))
@@ -478,14 +472,16 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 
 
 #define mpn_zero_p  __MPN(zero_p)
-#if defined (__GNUC__) || defined (_FORCE_INLINES)
-/* n==0 is allowed and is considered a zero value.  */
 int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
-_EXTERN_INLINE int
+
+#if HAVE_INLINE || defined (_FORCE_INLINES)
+/* n==0 is allowed and is considered a zero value.  */
+inline int
 mpn_zero_p (mp_srcptr p, mp_size_t n)
 {
   mp_size_t i;
 
+  ASSERT (n >= 0);
   for (i = 0; i < n; i++)
     if (p[i] != 0)
       return 0;
