@@ -79,6 +79,7 @@ CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 EXEEXT = @EXEEXT@
+LIBM = @LIBM@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 M4 = @M4@
@@ -118,6 +119,29 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 # MA 02111-1307, USA.
 
 
+# Copyright 1996, 1998, 1999, 2000 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
+
+# COMPILE minus CC.
+# FIXME: Really pass *_CFLAGS to CPP?
+
+
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
@@ -145,7 +169,7 @@ libspeed_la_SOURCES = \
   mul_n_mpn.c mul_n_open.c noop.c powm_mod.c powm_redc.c time.c
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
-libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la -lm
+libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la $(LIBM)
 
 # create an ansi2knr rule for sqr_basecase.c in case it's recompiled
 nodist_libdummy_la_SOURCES = sqr_basecase.c
@@ -177,14 +201,11 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c dc_divrem_n.c tdiv_qr.c gcd.c gcdext.c
 TUNE_MPZ_SRCS = fib_ui.c
 
-# This bit like mpn/Makefile.am
-
-# COMPILE minus CC.  FIXME: Really pass *_CFLAGS to CPP?
 COMPILE_FLAGS = \
 	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 
 
-SUFFIXES = .asm
+SUFFIXES = .s .S .asm
 
 MTS = -s 50-150 -c
 
@@ -245,8 +266,8 @@ OBJECTS = $(nodist_libdummy_la_OBJECTS) $(am_libspeed_la_OBJECTS) $(am_speed_OBJ
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .asm .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+.SUFFIXES: .s .S .asm .c .lo .o .obj
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) $(srcdir)/../mpn/Makeasm.am
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu tune/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
@@ -513,18 +534,49 @@ sqr_basecase.c: $(top_builddir)/mpn/sqr_basecase.c
 sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	echo 'define(KARATSUBA_SQR_THRESHOLD_OVERRIDE,KARATSUBA_SQR_THRESHOLD_MAX)' >sqr_asm.asm
 	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
+
+# *.s not preprocessed at all.
+.s.o:
+	$(CCAS) $(COMPILE_FLAGS) $<
+.s.obj:
+	$(CCAS) $(COMPILE_FLAGS) `cygpath -w $<`
+.s.lo:
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) $<
+
+# *.S preprocessed with cpp.
+.S.o:
+	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	rm -f tmp-$*.s
+.S.obj:
+	$(CPP) $(COMPILE_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	rm -f tmp-$*.s
+
+# We have to rebuild the static object file without passing -DPIC to
+# preprocessor.  The overhead cost is one extra assemblation.
+# FIXME: Teach libtool how to assemble with a preprocessor pass (cpp or m4).
+
+.S.lo:
+	$(CPP) $(COMPILE_FLAGS) -DPIC $< | grep -v '^#' >tmp-$*.s
+	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
+	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
+	rm -f tmp-$*.s
+
+# *.asm preprocessed with m4.
 .asm.o:
-	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
+	$(M4) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 .asm.obj:
-	$(M4) $(M4FLAGS) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
+	$(M4) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 .asm.lo:
-	$(M4) $(M4FLAGS) -DPIC -DOPERATION_$* $< >tmp-$*.s
+	$(M4) -DPIC -DOPERATION_$* $< >tmp-$*.s
 	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
+	$(M4) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
 	rm -f tmp-$*.s
 
