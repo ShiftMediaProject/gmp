@@ -406,6 +406,7 @@ my @table =
        'regexp'=> 'fib2_ui',
        'ret'   => 'void',
        'args'  => 'mp_ptr fp, mp_ptr f1p, unsigned long n',
+       'rename'=> ['__gmp_fib_table'],
        'speed_flags' => 'FLAG_NODATA',
        'try'   => 'none',
      },
@@ -904,8 +905,13 @@ foreach my $file_full (@files) {
 	    "\t\t-D__g$mpX$fun_carry=$mpX${fun_carry}_$suffix$pic->{'suffix'} \\\n";
       }
       foreach my $r (@{$t->{'rename'}}) {
-	$renaming .= "\\\n" .
-	    "\t\t-D__g$mpX$r=$mpX${r}_$suffix$pic->{'suffix'}";
+	if ($r =~ /^__gmp/) {
+	  $renaming .= "\\\n" .
+	      "\t\t-D$r=${r}_$suffix$pic->{'suffix'}";
+	} else {
+	  $renaming .= "\\\n" .
+	      "\t\t-D__g$mpX$r=$mpX${r}_$suffix$pic->{'suffix'}";
+	}
       }
       print "renaming $renaming\n" if $opt{'t'};
 
