@@ -1,4 +1,4 @@
-/* mpq_out_ostream -- mpq formatted output to an ostream.
+/* operator<< -- mpq formatted output to an ostream.
 
 Copyright 2001 Free Software Foundation, Inc.
 

@@ -1,4 +1,4 @@
-/* mpf_out_ostream -- mpf formatted output to an ostream.
+/* operator<< -- mpf formatted output to an ostream.
 
 Copyright 2001 Free Software Foundation, Inc.
 

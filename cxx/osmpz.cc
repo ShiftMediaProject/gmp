@@ -1,4 +1,4 @@
-/* mpz_out_ostream -- mpz formatted output to an ostream.
+/* operator<< -- mpz formatted output to an ostream.
 
 Copyright 2001 Free Software Foundation, Inc.
 
