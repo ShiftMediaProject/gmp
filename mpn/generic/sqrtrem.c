@@ -309,7 +309,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
     }
   else
     {
-      /* The most significant bit of T_HIGH0 is unset,
+      /* The most significant bit of t_high0 is unset,
 	 the second most significant is set.  */
       initial_approx = t_high0 >> (BITS_PER_MP_LIMB - 8 - 2);
       initial_approx &= 0xff;
@@ -319,7 +319,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
   initial_approx <<= BITS_PER_MP_LIMB - 8 - 1;
 
   /* Perform small precision Newtonian iterations to get a full word
-     approximation.  For small operands, these iteration will make the
+     approximation.  For small operands, these iterations will do the
      entire job.  */
   if (t_high0 == ~(mp_limb_t)0)
     initial_approx = t_high0;
@@ -337,7 +337,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
 
       /* Now get a full word by one (or for > 36 bit machines) several
 	 iterations.  */
-      for (i = 16; i < BITS_PER_MP_LIMB; i <<= 1)
+      for (i = 18; i < BITS_PER_MP_LIMB; i <<= 1)
 	{
 	  mp_limb_t ignored_remainder;
 
@@ -382,7 +382,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
 	 time is spent here.  */
 
       /* It is possible to do a great optimization here.  The successive
-	 divisors in the mpn_divmod call below has more and more leading
+	 divisors in the mpn_divmod call below have more and more leading
 	 words equal to its predecessor.  Therefore the beginning of
 	 each division will repeat the same work as did the last
 	 division.  If we could guarantee that the leading words of two
@@ -479,10 +479,10 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
       /* These operations can't overflow.  */
       cy_limb  = mpn_sub_n (tp, tp, rp, rsize);
       cy_limb += mpn_sub_n (tp, tp, rp, rsize);
-      mpn_sub_1 (tp + rsize, tp + rsize, tsize - rsize, cy_limb);
-      mpn_add_1 (tp, tp, tsize, (mp_limb_t) 1);
+      mpn_decr_u (tp + rsize, cy_limb);
+      mpn_incr_u (tp, (mp_limb_t) 1);
 
-      mpn_sub_1 (rp, rp, rsize, (mp_limb_t) 1);
+      mpn_decr_u (rp, (mp_limb_t) 1);
 
 #ifdef DEBUG
       printf ("(adjusted) R = ");
