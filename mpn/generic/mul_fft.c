@@ -669,8 +669,8 @@ mpn_mul_fft_decompose (mp_ptr A, mp_ptr *Ap, int K, int nprime, mp_srcptr n,
       tmp = TMP_ALLOC_LIMBS(Kl + 1);
       MPN_COPY(tmp, n, Kl);
       cc = mpn_sub_n (tmp, tmp, n + Kl, dif);
-      cc = mpn_sub_1 (tmp + dif, tmp + dif, Kl - dif, cc);
-      tmp[Kl] = mpn_add_1 (tmp, tmp, Kl, cc);
+      cc = mpn_sub_1 (tmp + dif, tmp + dif, Kl - dif, (mp_limb_t) cc);
+      tmp[Kl] = mpn_add_1 (tmp, tmp, Kl, (mp_limb_t) cc);
       nl = Kl + 1;
       n = tmp;
     }
@@ -785,12 +785,12 @@ mpn_mul_fft_internal (mp_ptr op, mp_srcptr n, mp_srcptr m, mp_size_t pl,
       {
 	if (pla >= 2 * pl)
 	  {
-	    while ((sqr = mpn_add_1 (p + pla - 2 * pl, p + pla - 2 * pl, 2 * pl, sqr)))
+	    while ((sqr = mpn_add_1 (p + pla - 2 * pl, p + pla - 2 * pl, 2 * pl, (mp_limb_t) sqr)))
 	      ;
 	  }
 	else
 	  {
-	    sqr = mpn_sub_1 (p + pla - pl, p + pla - pl, pl, sqr);
+	    sqr = mpn_sub_1 (p + pla - pl, p + pla - pl, pl, (mp_limb_t) sqr);
 	    ASSERT (sqr == 0);
 	  }
       }
@@ -847,7 +847,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   K = 1 << k;
   M = N / K;	/* N = 2^k M */
   l = 1 + (M - 1) / GMP_NUMB_BITS;
-  maxLK = mpn_mul_fft_lcm (GMP_NUMB_BITS, k); /* lcm (GMP_NUMB_BITS, 2^k) */
+  maxLK = mpn_mul_fft_lcm ((unsigned long) GMP_NUMB_BITS, k); /* lcm (GMP_NUMB_BITS, 2^k) */
 
   Nprime = ((2 * M + k + 2 + maxLK) / maxLK) * maxLK;
   /* Nprime = ceil((2*M+k+3)/maxLK)*maxLK; */
@@ -945,9 +945,9 @@ mpn_mul_fft_full (mp_ptr op,
   /* 0 <= cc <= 1 */
   l = pl3 - pl2; /* l = pl2 / 2 since pl3 = 3/2 * pl2 */
   c2 = mpn_add_n (pad_op, pad_op, op + pl2, l);
-  cc = mpn_add_1 (pad_op + l, pad_op + l, l, c2) - cc; /* -1 <= cc <= 1 */
+  cc = mpn_add_1 (pad_op + l, pad_op + l, l, (mp_limb_t) c2) - cc; /* -1 <= cc <= 1 */
   if (cc < 0)
-    cc = mpn_add_1 (pad_op, pad_op, pl2, -cc);
+    cc = mpn_add_1 (pad_op, pad_op, pl2, (mp_limb_t) -cc);
   /* 0 <= cc <= 1 */
   /* now lambda-mu = {pad_op, pl2} - cc mod 2^(pl2*GMP_NUMB_BITS)+1 */
   oldcc = cc;
@@ -973,16 +973,16 @@ mpn_mul_fft_full (mp_ptr op,
   /* first normalize {pad_op, pl2} before dividing by 2: c2 is the borrow
      at pad_op + l, cc is the carry at pad_op + pl2 */
   /* 0 <= cc <= 2 */
-  cc -= mpn_sub_1 (pad_op + l, pad_op + l, l, c2);
+  cc -= mpn_sub_1 (pad_op + l, pad_op + l, l, (mp_limb_t) c2);
   /* -1 <= cc <= 2 */
   if (cc > 0)
-    cc = -mpn_sub_1 (pad_op, pad_op, pl2, cc);
+    cc = -mpn_sub_1 (pad_op, pad_op, pl2, (mp_limb_t) cc);
   /* now -1 <= cc <= 0 */
   if (cc < 0)
-    cc = mpn_add_1 (pad_op, pad_op, pl2, -cc);
+    cc = mpn_add_1 (pad_op, pad_op, pl2, (mp_limb_t) -cc);
   /* now {pad_op, pl2} is normalized, with 0 <= cc <= 1 */
   if (pad_op[0] & 1) /* if odd, add 2^(pl2*GMP_NUMB_BITS)+1 */
-    cc += 1 + mpn_add_1 (pad_op, pad_op, pl2, 1);
+    cc += 1 + mpn_add_1 (pad_op, pad_op, pl2, CNST_LIMB(1));
   /* now 0 <= cc <= 2, but cc=2 cannot occur since it would give a carry
      out below */
   mpn_rshift (pad_op, pad_op, pl2, 1); /* divide by two */
@@ -996,5 +996,5 @@ mpn_mul_fft_full (mp_ptr op,
   ASSERT_MPN_ZERO_P (pad_op + pl - pl3, pl2 + pl3 - pl);
   __GMP_FREE_FUNC_LIMBS (pad_op, pl2);
   /* since the final result has at most pl limbs, no carry out below */
-  mpn_add_1 (op + pl2, op + pl2, pl - pl2, c2);
+  mpn_add_1 (op + pl2, op + pl2, pl - pl2, (mp_limb_t) c2);
 }
