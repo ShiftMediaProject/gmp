@@ -751,7 +751,6 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #if ! defined (MPN_COPY_INCR)
 #define MPN_COPY_INCR(dst, src, n)                      \
   do {                                                  \
-    mp_size_t __i;                                      \
     ASSERT ((n) >= 0);                                  \
     ASSERT (MPN_SAME_OR_INCR_P (dst, src, n));          \
     if ((n) != 0)                                       \
@@ -820,7 +819,6 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #if ! defined (MPN_COPY_DECR)
 #define MPN_COPY_DECR(dst, src, n)                      \
   do {                                                  \
-    mp_size_t __i;                                      \
     ASSERT ((n) >= 0);                                  \
     ASSERT (MPN_SAME_OR_DECR_P (dst, src, n));          \
     if ((n) != 0)                                       \
