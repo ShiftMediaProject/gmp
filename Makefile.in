@@ -298,7 +298,7 @@ info_TEXINFOS = gmp.texi
 
 lib_LTLIBRARIES = libgmp.la
 libgmp_la_SOURCES = \
-  memory.c mp_set_fns.c mp_clz_tab.c rand.c randui.c randclr.c \
+  assert.c memory.c mp_set_fns.c mp_clz_tab.c rand.c randui.c randclr.c \
   randlc.c randlcui.c version.c stack-alloc.c mp_bpl.c extract-dbl.c \
   insert-dbl.c
 
@@ -320,9 +320,9 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libgmp_la_LDFLAGS = 
-am_libgmp_la_OBJECTS =  memory.lo mp_set_fns.lo mp_clz_tab.lo rand.lo \
-randui.lo randclr.lo randlc.lo randlcui.lo version.lo stack-alloc.lo \
-mp_bpl.lo extract-dbl.lo insert-dbl.lo
+am_libgmp_la_OBJECTS =  assert.lo memory.lo mp_set_fns.lo mp_clz_tab.lo \
+rand.lo randui.lo randclr.lo randlc.lo randlcui.lo version.lo \
+stack-alloc.lo mp_bpl.lo extract-dbl.lo insert-dbl.lo
 libgmp_la_OBJECTS =  $(am_libgmp_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -336,19 +336,19 @@ DVIS = gmp.dvi
 TEXINFOS = gmp.texi
 DIST_COMMON =  README AUTHORS COPYING COPYING.LIB ChangeLog INSTALL \
 Makefile.am Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 \
-config.guess config.sub configure configure.in depcomp install-sh \
-ltconfig ltmain.sh missing mkinstalldirs texinfo.tex
+config.guess config.sub configure configure.in install-sh ltconfig \
+ltmain.sh missing mkinstalldirs texinfo.tex
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/extract-dbl.Plo $(DEPDIR)/insert-dbl.Plo \
-$(DEPDIR)/memory.Plo $(DEPDIR)/mp_bpl.Plo $(DEPDIR)/mp_clz_tab.Plo \
-$(DEPDIR)/mp_set_fns.Plo $(DEPDIR)/rand.Plo $(DEPDIR)/randclr.Plo \
-$(DEPDIR)/randlc.Plo $(DEPDIR)/randlcui.Plo $(DEPDIR)/randui.Plo \
-$(DEPDIR)/stack-alloc.Plo $(DEPDIR)/version.Plo
+DEP_FILES =  @AMDEP@ $(DEPDIR)/assert.Plo $(DEPDIR)/extract-dbl.Plo \
+$(DEPDIR)/insert-dbl.Plo $(DEPDIR)/memory.Plo $(DEPDIR)/mp_bpl.Plo \
+$(DEPDIR)/mp_clz_tab.Plo $(DEPDIR)/mp_set_fns.Plo $(DEPDIR)/rand.Plo \
+$(DEPDIR)/randclr.Plo $(DEPDIR)/randlc.Plo $(DEPDIR)/randlcui.Plo \
+$(DEPDIR)/randui.Plo $(DEPDIR)/stack-alloc.Plo $(DEPDIR)/version.Plo
 SOURCES = $(libgmp_la_SOURCES)
 OBJECTS = $(am_libgmp_la_OBJECTS)
 
@@ -704,6 +704,7 @@ distdir: $(DISTFILES)
 	$(MAKE) $(AM_MAKEFLAGS) top_distdir="$(top_distdir)" distdir="$(distdir)" dist-info
 	$(MAKE) $(AM_MAKEFLAGS) top_distdir="$(top_distdir)" distdir="$(distdir)" dist-hook
 
+@AMDEP@include $(DEPDIR)/assert.Plo
 @AMDEP@include $(DEPDIR)/extract-dbl.Plo
 @AMDEP@include $(DEPDIR)/insert-dbl.Plo
 @AMDEP@include $(DEPDIR)/memory.Plo
