@@ -23,6 +23,11 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#define swapptr(xp,yp) \
+do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
+
+static void mpz_pow2 ();
+
 void
 #if __STDC__
 mpz_ui_pow_ui (mpz_ptr r, unsigned long int b, unsigned long int e)
@@ -33,79 +38,100 @@ mpz_ui_pow_ui (r, b, e)
      unsigned long int e;
 #endif
 {
-  mp_ptr rp, tp, xp;
-  mp_size_t rsize;
-  int cnt, i;
   mp_limb_t blimb = b;
-  TMP_DECL (marker);
+  mp_limb_t rl;
 
-  /* Single out cases that give result == 0 or 1.  These tests are here
-     to simplify the general code below, not to optimize.  */
+  /* Compute b^e as (b^n)^(e div n) * b^(e mod n), where n is chosen such that
+     the latter factor is the largest number small enough to fit in a limb.  */
+
+  rl = 1;
+  while (e != 0 && blimb < ((mp_limb_t) 1 << BITS_PER_MP_LIMB/2))
+    {
+      if ((e & 1) != 0)
+	rl = rl * blimb;
+      blimb = blimb * blimb;
+      e = e >> 1;
+    }
+
+  /* rl is now b^(e mod n).  (I.e., the latter factor above.)  */
+
   if (e == 0)
     {
-      r->_mp_d[0] = 1;
-      r->_mp_size = 1;
-      return;
-    }
-  if (blimb == 0)
-    {
-      r->_mp_size = 0;
+      if (blimb == 0)
+	{
+	  /* For 0^x we return 0, unless x is 0.  */
+	  r->_mp_size = 0;
+	}
+      else
+	{
+	  /* For x^0 we return 1, even if x is 0.  */
+	  r->_mp_d[0] = rl;
+	  r->_mp_size = 1;
+	}
       return;
     }
 
-  if (blimb < 0x100)
-    {
-      /* Estimate space requirements accurately.  Using the code from the
-	 `else' path would over-estimate space requirements wildly.   */
-      float lb = __mp_bases[blimb].chars_per_bit_exactly;
-      rsize = 2 + ((mp_size_t) (e / lb) / BITS_PER_MP_LIMB);
-    }
-  else
-    {
-      /* Over-estimate space requirements somewhat.  */
-      count_leading_zeros (cnt, blimb);
-      rsize = e - cnt * e / BITS_PER_MP_LIMB + 1;
-    }
+  mpz_pow2 (r, blimb, e, rl);
+}
+
+/* Multi-precision part of expontialization code.  */
+static void
+mpz_pow2 (r, blimb, e, rl)
+     mpz_ptr r;
+     mp_limb_t blimb;
+     unsigned long int e;
+     mp_limb_t rl;
+{
+  mp_ptr rp, tp;
+  mp_size_t ralloc, rsize;
+  int cnt, i;
+  TMP_DECL (marker);
 
   TMP_MARK (marker);
 
-  /* The two areas are used to alternatingly hold the input and recieve the
-     product for mpn_mul.  (This scheme is used to fulfill the requirements
-     of mpn_mul; that the product space may not be the same as any of the
-     input operands.)  */
-  rp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
-  tp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
+  /* Over-estimate temporary space requirements somewhat.  */
+  count_leading_zeros (cnt, blimb);
+  ralloc = e - cnt * e / BITS_PER_MP_LIMB + 1;
+
+  /* The two areas are used to alternatingly hold the input and receive the
+     product for mpn_mul.  (Needed since mpn_mul_n requires that the product
+     is distinct from either input operand.)  */
+  rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
+  tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 
   rp[0] = blimb;
   rsize = 1;
-  count_leading_zeros (cnt, e);
 
+  count_leading_zeros (cnt, e);
   for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
     {
       mpn_mul_n (tp, rp, rp, rsize);
       rsize = 2 * rsize;
       rsize -= tp[rsize - 1] == 0;
-      xp = tp; tp = rp; rp = xp;
+      swapptr (rp, tp);
 
       if ((e & ((mp_limb_t) 1 << i)) != 0)
 	{
 	  mp_limb_t cy;
-	  cy = mpn_mul_1 (tp, rp, rsize, blimb);
-	  if (cy != 0)
-	    {
-	      tp[rsize] = cy;
-	      rsize++;
-	    }
-	  xp = tp; tp = rp; rp = xp;
+	  cy = mpn_mul_1 (rp, rp, rsize, blimb);
+	  rp[rsize] = cy;
+	  rsize += cy != 0;
 	}
     }
 
-  /* Now then we know the exact space requirements, reallocate if
-     necessary.  */
-  if (r->_mp_alloc < rsize)
-    _mpz_realloc (r, rsize);
+  /* We will need rsize or rsize+1 limbs for the result.  */
+  if (r->_mp_alloc <= rsize)
+    _mpz_realloc (r, rsize + 1);
 
-  MPN_COPY (r->_mp_d, rp, rsize);
+  /* Multiply the two factors (in rp,rsize and rl) and put the final result
+     in place.  */
+  {
+    mp_limb_t cy;
+    cy = mpn_mul_1 (r->_mp_d, rp, rsize, rl);
+    (r->_mp_d)[rsize] = cy;
+    rsize += cy != 0;
+  }
+
   r->_mp_size = rsize;
   TMP_FREE (marker);
 }
