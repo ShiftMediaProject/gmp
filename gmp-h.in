@@ -412,6 +412,12 @@ __GMP_DECLSPEC void mp_set_memory_functions __GMP_PROTO ((void *(*) (size_t),
 #define mp_bits_per_limb __gmp_bits_per_limb
 __GMP_DECLSPEC extern __gmp_const int mp_bits_per_limb;
 
+#define gmp_errno __gmp_errno
+__GMP_DECLSPEC extern int gmp_errno;
+
+#define gmp_version __gmp_version
+__GMP_DECLSPEC extern __gmp_const char * __gmp_const gmp_version;
+
 /* The following for internal use only.
    Enhancement: __gmp_allocate_func could have "__attribute__ ((malloc))",
    but current gcc (3.0) doesn't seem to support that.  */
@@ -1982,9 +1988,6 @@ __GMP_DECLSPEC std::istream& operator>> (std::istream &, mpf_ptr);
 #define mpz_div_2exp	mpz_fdiv_q_2exp
 #define mpz_mod_2exp	mpz_fdiv_r_2exp
 
-#define gmp_errno __gmp_errno
-__GMP_DECLSPEC extern int gmp_errno;
-
 enum
 {
   GMP_ERROR_NONE = 0,
@@ -2001,9 +2004,6 @@ enum
 #define __GNU_MP_VERSION 4
 #define __GNU_MP_VERSION_MINOR 0
 #define __GNU_MP_VERSION_PATCHLEVEL 0
-
-#define gmp_version __gmp_version
-__GMP_DECLSPEC extern __gmp_const char * __gmp_const gmp_version;
 
 #define __GMP_H__
 #endif /* __GMP_H__ */
