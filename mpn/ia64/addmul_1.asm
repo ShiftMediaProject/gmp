@@ -266,7 +266,8 @@ ifdef(`HAVE_ABI_32',
 
 C *** MAIN LOOP START ***
 	ALIGN(32)				C insn	fed	cycle #
-.Loop:	.pred.rel "mutex", p6, p7		C num	by	i1 i2
+.Loop:
+	.pred.rel "mutex", p6, p7		C num	by	i1 i2
 	getf.sig	r29 = f39		C 00	16	0   0
 	xma.l		f34 = f32, f6, f33	C 01	06,15	0   0
    (p6)	add		r14 = r30, r27, 1	C 02		0   0
@@ -298,8 +299,9 @@ C *** MAIN LOOP START ***
 	st8		[r20] = r16, 8		C 22		5   3
 	nop.b		0			C 23		5   3
 	;;
+.LL:
 	.pred.rel "mutex", p6, p7
-.LL:	getf.sig	r31 = f47		C 24	40	6   4
+	getf.sig	r31 = f47		C 24	40	6   4
 	xma.l		f42 = f40, f6, f41	C 25	30,39	6   4
    (p6)	add		r14 = r28, r25, 1	C 26		6   4
 	ldf8		f37 = [r32], 8		C 27		6   4
