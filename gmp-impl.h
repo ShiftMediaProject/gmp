@@ -351,7 +351,7 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
   do {                                          \
     ASSERT (MPN_SAME_OR_SEPARATE_P (d, s, n));  \
     MPN_COPY_INCR (d, s, n);                    \
-  } while (0);
+  } while (0)
 #endif
 
 /* Zero NLIMBS *limbs* AT DST.  */
