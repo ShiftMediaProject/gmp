@@ -142,6 +142,7 @@ const struct routine_t {
 
   { "mpn_addmul_1",      speed_mpn_addmul_1, FLAG_R },
   { "mpn_submul_1",      speed_mpn_submul_1, FLAG_R },
+  { "mpn_mul_1",         speed_mpn_mul_1,    FLAG_R },
 
   { "mpn_divmod_1",      speed_mpn_divmod_1, FLAG_R },
   { "mpn_divrem_1",      speed_mpn_divrem_1, FLAG_R },
@@ -152,8 +153,6 @@ const struct routine_t {
   { "mpn_bz_divrem_n",   speed_mpn_bz_divrem_n      },
   { "mpn_bz_divrem_sb",  speed_mpn_bz_divrem_sb     },
   { "mpn_bz_tdiv_qr",    speed_mpn_bz_tdiv_qr       },
-
-  { "mpn_mul_1",         speed_mpn_mul_1,    FLAG_R },
 
   { "mpn_lshift",        speed_mpn_lshift,   FLAG_R },
   { "mpn_rshift",        speed_mpn_rshift,   FLAG_R },
@@ -170,9 +169,13 @@ const struct routine_t {
   { "mpn_xnor_n",        speed_mpn_xnor_n           },
 
   { "mpn_popcount",      speed_mpn_popcount         },
+  { "mpn_hamdist",       speed_mpn_hamdist          },
 
   { "mpz_fac_ui",        speed_mpz_fac_ui           },
   { "mpz_fib_ui",        speed_mpz_fib_ui           },
+
+  { "mpn_gcdext",        speed_mpn_gcdext           },
+  { "mpn_gcd",           speed_mpn_gcd              },
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R },
   { "mpn_sqr_basecase",  speed_mpn_sqr_basecase     },
@@ -650,19 +653,20 @@ The available routines are as follows.\n\
         printf ("\t%s\n", routine[i].name); 
     }
       
-  printf ("\n");
-  printf ("Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n");
-  printf ("r should be in decimal, or use 0xN for hexadecimal.\n");
-  printf ("Special forms for r are Nbits for a random N bit number, and Nones for N one\n");
-  printf ("bits.\n");
-  printf ("\n");
-  printf ("Times for sizes out of the range accepted by a routine are shown as 0.\n");
-  printf ("The fastest routine at each size is marked with a # (free form output only).\n");
-  printf ("\n");
-  printf("%s", speed_time_string);
-  printf ("\n");
-  printf ("Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n");
-  printf ("Quickplot home page http://www.kachinatech.com/~quickplot\n");
+  printf ("\n\
+Routines with a \".r\" need an extra parameter, for example mpn_lshift.6\n\
+r should be in decimal, or use 0xN for hexadecimal.\n\
+Special forms for r are Nbits for a random N bit number, and Nones for N one\n\
+bits.\n\
+\n\
+Times for sizes out of the range accepted by a routine are shown as 0.\n\
+The fastest routine at each size is marked with a # (free form output only).\n\
+\n\
+%s\
+\n\
+Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n\
+Quickplot home page http://www.kachinatech.com/~quickplot\n\
+", speed_time_string);
 }
 
 int
