@@ -4,7 +4,7 @@
    THEY'RE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR
    COMPLETELY IN FUTURE GNU MP RELEASES.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -73,6 +73,7 @@ static struct {
   { "k62",        "AuthenticAMD", MAKE_FMS (5, 8) },
   { "k63",        "AuthenticAMD", MAKE_FMS (5, 9) },
   { "athlon",     "AuthenticAMD", MAKE_FMS (6, 0) },
+  { "x86_64",     "AuthenticAMD", MAKE_FMS (15, 0) },
 
   { "viac3",      "CentaurHauls", MAKE_FMS (6, 0) },
   { "viac32",     "CentaurHauls", MAKE_FMS (6, 9) },
@@ -267,9 +268,13 @@ __gmpn_cpuvec_init (void)
               break;
             case 6:
               TRACE (printf ("  athlon\n"));
+            athlon:
               CPUVEC_SETUP_k7;
               CPUVEC_SETUP_k7_mmx;
               break;
+            case 15:
+              TRACE (printf ("  x86_64\n"));
+              goto athlon;
             }
         }
       else if (strcmp (vendor_string, "CentaurHauls") == 0)
