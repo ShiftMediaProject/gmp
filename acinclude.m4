@@ -332,6 +332,16 @@ dnl  $NM set to "nm", so $NM can't be assumed to actually work.
 dnl
 dnl  A user-selected $NM is always left unchanged.  AC_PROG_NM is still run
 dnl  to get the "checking" message printed though.
+dnl
+dnl  Perhaps it'd be worthwhile checking that nm works, by running it on an
+dnl  actual object file.  For instance on sparcv9 solaris old versions of
+dnl  GNU nm don't recognise 64-bit objects.  Checking would give a better
+dnl  error message than just a failure in later tests like GMP_ASM_W32 etc.
+dnl
+dnl  On the other hand it's not really normal autoconf practice to take too
+dnl  much trouble over detecting a broken set of tools.  And libtool doesn't
+dnl  do anything at all for say ranlib or strip.  So for now we're inclined
+dnl  to just demand that the user provides a coherent environment.
 
 AC_DEFUN(GMP_PROG_NM,
 [dnl  Make sure we're the first to call AC_PROG_NM, so our extra flags are
