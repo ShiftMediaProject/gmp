@@ -170,7 +170,8 @@ libspeed_la_SOURCES = \
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   jacbase1.c jacbase2.c jacbase3.c					\
   mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
-  noop.c powm_mod.c powm_redc.c pre_divrem_1.c time.c			\
+  noop.c powm_mod.c powm_redc.c pre_divrem_1.c				\
+  set_strb.c set_strs.c time.c						\
   sb_div.c sb_inv.c
 
 
@@ -289,8 +290,8 @@ am_libspeed_la_OBJECTS = common$U.lo divrem1div$U.lo divrem1inv$U.lo \
 	gcdextod$U.lo gcdextos$U.lo jacbase1$U.lo jacbase2$U.lo \
 	jacbase3$U.lo mod_1_div$U.lo mod_1_inv$U.lo modlinv$U.lo \
 	mul_n_mpn$U.lo mul_n_open$U.lo noop$U.lo powm_mod$U.lo \
-	powm_redc$U.lo pre_divrem_1$U.lo time$U.lo sb_div$U.lo \
-	sb_inv$U.lo
+	powm_redc$U.lo pre_divrem_1$U.lo set_strb$U.lo set_strs$U.lo \
+	time$U.lo sb_div$U.lo sb_inv$U.lo
 libspeed_la_OBJECTS = $(am_libspeed_la_OBJECTS)
 EXTRA_PROGRAMS = speed$(EXEEXT) speed-dynamic$(EXEEXT) \
 	speed-ext$(EXEEXT) tuneup$(EXEEXT)
@@ -463,6 +464,10 @@ sb_divrem_mn_.c: sb_divrem_mn.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sb_divrem_mn.c; then echo $(srcdir)/sb_divrem_mn.c; else echo sb_divrem_mn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sb_divrem_mn_.c || rm -f sb_divrem_mn_.c
 sb_inv_.c: sb_inv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sb_inv.c; then echo $(srcdir)/sb_inv.c; else echo sb_inv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sb_inv_.c || rm -f sb_inv_.c
+set_strb_.c: set_strb.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_strb.c; then echo $(srcdir)/set_strb.c; else echo set_strb.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_strb_.c || rm -f set_strb_.c
+set_strs_.c: set_strs.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_strs.c; then echo $(srcdir)/set_strs.c; else echo set_strs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_strs_.c || rm -f set_strs_.c
 speed_.c: speed.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed.c; then echo $(srcdir)/speed.c; else echo speed.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed_.c || rm -f speed_.c
 speed-ext_.c: speed-ext.c $(ANSI2KNR)
@@ -493,7 +498,8 @@ mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) mul_n_open_.lo \
 noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) powm_mod_.lo \
 powm_redc_.$(OBJEXT) powm_redc_.lo pre_divrem_1_.$(OBJEXT) \
 pre_divrem_1_.lo sb_div_.$(OBJEXT) sb_div_.lo sb_divrem_mn_.$(OBJEXT) \
-sb_divrem_mn_.lo sb_inv_.$(OBJEXT) sb_inv_.lo speed_.$(OBJEXT) \
+sb_divrem_mn_.lo sb_inv_.$(OBJEXT) sb_inv_.lo set_strb_.$(OBJEXT) \
+set_strb_.lo set_strs_.$(OBJEXT) set_strs_.lo speed_.$(OBJEXT) \
 speed_.lo speed-ext_.$(OBJEXT) speed-ext_.lo sqr_basecase_.$(OBJEXT) \
 sqr_basecase_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) \
 time_.lo tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
