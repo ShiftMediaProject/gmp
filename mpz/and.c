@@ -1,7 +1,7 @@
 /* mpz_and -- Logical and.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2003 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -54,7 +54,7 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 
 	  /* Handle allocation, now then we know exactly how much space is
 	     needed for the result.  */
-	  if (res->_mp_alloc < res_size)
+	  if (UNLIKELY (res->_mp_alloc < res_size))
 	    {
 	      _mpz_realloc (res, res_size);
 	      op1_ptr = op1->_mp_d;
@@ -62,11 +62,9 @@ mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
 	      res_ptr = res->_mp_d;
 	    }
 
-	  /* Second loop computes the real result.  */
-	  for (i = res_size - 1; i >= 0; i--)
-	    res_ptr[i] = op1_ptr[i] & op2_ptr[i];
-
 	  res->_mp_size = res_size;
+          if (LIKELY (res_size != 0))
+            mpn_and_n (res_ptr, op1_ptr, op2_ptr, res_size);
 	  return;
 	}
       else /* op2_size < 0 */
