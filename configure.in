@@ -1776,19 +1776,6 @@ case $host in
     lt_cv_archive_cmds_need_lc=no ;;
 esac
 
-# FIXME: AC_LIBTOOL_SYS_MAX_CMD_LEN has been reported to blow up in some
-# fashion on windows 9x (but not 2k), taking a very long time and
-# temporarily locking the whole PC.  Clearly this is a libtool problem, but
-# for now force a sensible value to avoid the test.
-#
-case $build in
-  *-*-cygwin*)
-    if test -z "$lt_cv_sys_max_cmd_len"; then
-      lt_cv_sys_max_cmd_len=20000
-    fi
-    ;;
-esac
-
 
 # Configs for Windows DLLs.
 
