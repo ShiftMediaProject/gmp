@@ -392,12 +392,19 @@ gmp_cv_check_asm_lsym_prefix,
 fi
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 gmp_cv_check_asm_lsym_prefix="L"
-for gmp_tmp_pre in .L $ L$; do
+for gmp_tmp_pre in L .L $ L$; do
   cat > conftest.s <<EOF
+dummy${gmp_cv_check_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_check_asm_label_suffix}
 	.byte 0
 EOF
   if AC_TRY_EVAL(ac_assemble); then
+    $NM conftest.o >/dev/null 2>&1
+    gmp_rc=$?
+    if test "$gmp_rc" != "0"; then
+      echo "configure: $NM failure, using default"
+      break
+    fi
     if $NM conftest.o | grep gurkmacka >/dev/null; then true; else
       gmp_cv_check_asm_lsym_prefix="$gmp_tmp_pre"
       break
