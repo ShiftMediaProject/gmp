@@ -263,14 +263,14 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 #endif
 
-#if defined (FILE)                                      \
-  || defined (H_STDIO)                                  \
-  || defined (_H_STDIO)               /* AIX */         \
-  || defined (_STDIO_H)               /* glibc, Sun */  \
-  || defined (_STDIO_H_)              /* BSD, OSF */    \
-  || defined (__STDIO_H__)            /* IRIX */        \
-  || defined (_STDIO_INCLUDED)        /* HPUX */        \
-  || defined (__dj_include_stdio_h_)  /* DJGPP */       \
+#if defined (FILE)                                              \
+  || defined (H_STDIO)                                          \
+  || defined (_H_STDIO)               /* AIX */                 \
+  || defined (_STDIO_H)               /* glibc, Sun, SCO */     \
+  || defined (_STDIO_H_)              /* BSD, OSF */            \
+  || defined (__STDIO_H__)            /* IRIX */                \
+  || defined (_STDIO_INCLUDED)        /* HPUX */                \
+  || defined (__dj_include_stdio_h_)  /* DJGPP */               \
   || defined (_FILE_DEFINED)          /* Microsoft */
 #define _GMP_H_HAVE_FILE 1
 #endif
@@ -320,10 +320,21 @@ typedef __mpq_struct *mpq_ptr;
    inline" would be an acceptable substitute if the compiler (or linker)
    discards unused statics.  */
 
+/* gcc has __inline__ in all modes, including strict ansi */
 #ifdef __GNUC__
 #define __GMP_EXTERN_INLINE  extern __inline__
 #endif
 
+/* SCO OpenUNIX 8 cc supports extern inline, except in -Xc strict ANSI mode
+   (__STDC__ is 1 in that mode).  */
+#if __SCO_VERSION__ > 400000000 && __STDC__ != 1 \
+  && ! defined (__GMP_EXTERN_INLINE)
+#define __GMP_EXTERN_INLINE  extern inline
+#endif
+
+/* C++ always has "inline" and since it's a normal feature the linker should
+   discard duplicate non-inlined copies, or if it doesn't then that's a
+   problem for everyone, not just GMP */
 #if defined (__cplusplus) && ! defined (__GMP_EXTERN_INLINE)
 #define __GMP_EXTERN_INLINE  inline
 #endif
