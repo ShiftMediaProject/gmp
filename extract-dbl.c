@@ -67,16 +67,40 @@ __gmp_extract_double (rp, d)
   {
     union ieee_double_extract x;
     x.d = d;
-
     exp = x.s.exp;
-    sc = (unsigned) (exp + 2) % BITS_PER_MP_LIMB;
 #if BITS_PER_MP_LIMB == 64
     manl = (((mp_limb_t) 1 << 63)
 	    | ((mp_limb_t) x.s.manh << 43) | ((mp_limb_t) x.s.manl << 11));
+    if (exp == 0)
+      {
+	/* Denormalized number.  Don't try to be clever about this,
+	   since it is not an important case to make fast.  */
+	exp = 1;
+	do
+	  {
+	    manl = manl << 1;
+	    exp--;
+	  }
+	while ((mp_limb_signed_t) manl >= 0);
+      }
 #else
     manh = ((mp_limb_t) 1 << 31) | (x.s.manh << 11) | (x.s.manl >> 21);
     manl = x.s.manl << 11;
+    if (exp == 0)
+      {
+	/* Denormalized number.  Don't try to be clever about this,
+	   since it is not an important case to make fast.  */
+	exp = 1;
+	do
+	  {
+	    manh = (manh << 1) | (manl >> 31);
+	    manl = manl << 1;
+	    exp--;
+	  }
+	while ((mp_limb_signed_t) manh >= 0);
+      }
 #endif
+    exp -= 1022;		/* Remove IEEE bias.  */
   }
 #else
   {
@@ -112,8 +136,6 @@ __gmp_extract_double (rp, d)
 	  }
       }
 
-    sc = (unsigned) exp % BITS_PER_MP_LIMB;
-
     d *= MP_BASE_AS_DOUBLE;
 #if BITS_PER_MP_LIMB == 64
     manl = d;
@@ -121,12 +143,13 @@ __gmp_extract_double (rp, d)
     manh = d;
     manl = (d - manh) * MP_BASE_AS_DOUBLE;
 #endif
-
-    exp += 1022;
   }
 #endif
 
-  exp = (unsigned) (exp + 1) / BITS_PER_MP_LIMB - 1024 / BITS_PER_MP_LIMB + 1;
+  sc = (unsigned) exp % BITS_PER_MP_LIMB;
+
+  /* We add something here to get rounding right.  */
+  exp = (exp + 2048) / BITS_PER_MP_LIMB - 2048 / BITS_PER_MP_LIMB + 1;
 
 #if BITS_PER_MP_LIMB == 64
   if (sc != 0)
