@@ -190,13 +190,23 @@ by using sophisticated algorithms, by including carefully optimized assembly
 code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
 
-There is carefully optimized assembly code for these CPUs: ARM, DEC Alpha
-21064, 21164, and 21264, AMD 29000, K6 and Athlon, HPPA 1.0 and 1.1, Intel
-Pentium, Pentium Pro/Pentium II, generic x86, Intel i960, Motorola MC68000,
-MC68020, MC88100, and MC88110, Motorola/IBM PowerPC 32 and 64, National
-NS32000, IBM POWER, MIPS R3000, R4000, SPARCv7, SuperSPARC, generic SPARCv8,
-UltraSPARC, and DEC VAX.  Some optimizations also for Clipper, IBM ROMP (RT),
-and Pyramid AP/XP.
+There is carefully optimized assembly code for these CPUs:
+ARM,
+DEC Alpha 21064, 21164, and 21264,
+AMD 29000, K6 and Athlon,
+Hitachi SH and SH2,
+HPPA 1.0, 1.1 and 2.0,
+Intel Pentium, Pentium Pro/Pentium II, generic x86,
+Intel i960,
+Motorola MC68000, MC68020, MC88100, and MC88110,
+Motorola/IBM PowerPC 32 and 64,
+National NS32000,
+IBM POWER,
+MIPS R3000, R4000,
+SPARCv7, SuperSPARC, generic SPARCv8, UltraSPARC,
+DEC VAX,
+and Zilog Z8000.
+Some optimizations also for Clipper, IBM ROMP (RT), and Pyramid AP/XP.
 
 @ignore
 There is a mailing list for GMP users.  To join it, send a mail to
@@ -431,6 +441,11 @@ are available to make @file{gmp.ps} and/or @file{gmp.dvi}.
 @section Notes for Particular Systems
 @table @asis
 
+@item AIX
+
+Targets @samp{*-*-aix*} have shared libraries disabled since they seem to fail
+on AIX 4.3.
+
 @item AIX with PowerPC 64
 
 Currently only a 64-bit version of the MP library is built, and when linking
@@ -472,27 +487,26 @@ You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 
 @table @asis
 
-@item AIX
-
-Targets @samp{*-*-aix*} have shared libraries disabled since they seem to fail
-on AIX 4.3.
-
 @item NeXT prior to 3.3
+
 The system compiler on old versions of NeXT was a massacred and old GCC, even
 if the compiler called itself @file{cc}.  This compiler cannot be used to build
 MP, you need to get a real GCC, and install that before you compile MP.  (NeXT
 may have fixed this in release 3.3 of their system.)
 
 @item POWER and PowerPC
+
 Bugs in GCC 2.7.2 (and 2.6.3) mean it can't be used to compile MP on POWER or
 PowerPC.  If you want to use GCC for these machines, get GCC 2.7.2.1 (or
 later).
 
 @item Sequent Symmetry
+
 Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
 
 @item SunOS 4
+
 The system C compiler has a bug that makes it miscompile @file{mpq/get_d.c}
 and @file{mpf/get_d.c}, and causes two corresponding tests to fail.  (You can
 @command{cd} to the @file{mpz} directory to run @samp{make check} there to
@@ -516,10 +530,13 @@ static library with the native @command{ar}.  After @samp{make}, run
 @samp{ranlib .libs/libmp.a} too.
 
 @item VAX running Ultrix
+
 You need to build and install the GNU assembler before you compile MP.  The VAX
 assembly in MP uses an instruction (@samp{jsobgtr}) that cannot be assembled by
 the Ultrix assembler.
 @end table
+
+
 
 @node MP Basics, Reporting Bugs, Installing MP, Top
 @comment  node-name,  next,  previous,  up
@@ -528,6 +545,10 @@ the Ultrix assembler.
 @cindex @file{gmp.h}
 All declarations needed to use MP are collected in the include file
 @file{gmp.h}.  It is designed to work with both C and C++ compilers.
+
+@strong{Using functions, macros, data types, etc.@: not documented in this
+manual is strongly discouraged.  If you do so your application is guaranteed
+to be incompatible with future versions of MP.}
 
 @menu
 * Nomenclature and Types::      	Which datatypes are there?
@@ -571,7 +592,7 @@ mpq_t quotient;
 @tindex @code{mpf_t}
 @noindent
 @dfn{Floating point number} or @dfn{Float} for short, is an arbitrary precision
-mantissa with an limited precision exponent.  The C data type for such objects
+mantissa with a limited precision exponent.  The C data type for such objects
 is @code{mpf_t}.
 
 @cindex Limb
@@ -674,7 +695,7 @@ variables for storing the selected memory allocation functions.
 
 @item
 The memory allocation functions, @code{malloc} and friends, that MP
-uses unless directed to uses custom allocation, may not be reentrant.
+uses unless directed to use custom allocation, may not be reentrant.
 
 @item
 The random number functions (@code{mpz_random}, etc) use an underlying
