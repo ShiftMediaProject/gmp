@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 17 Oct 2001.  An up-to-date version is available at
+  This file current as of 22 Oct 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -158,11 +158,6 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      always smallish.
 <li> <code>mpn_perfect_square_p</code> on small operands might be better off
      skipping the residue tests and just taking a square root.
-<li> <code>mpn_perfect_square_p</code> could take a remainder mod 15 instead
-     of 3 and 5 separately, and use a bit table which indicates whether an N
-     mod 15 is a quadratic residue mod both 3 and 5.  More combining would
-     work too, like say 3*11 and 5*7, in whatever good combinations, possibly
-     aiming to keep under 64 or 128 bits.
 <li> <code>mpz_perfect_power_p</code> could be improved in a number of ways.
      Test for Nth power residues modulo small primes like
      <code>mpn_perfect_square_p</code> does.  Use p-adic arithmetic to find
