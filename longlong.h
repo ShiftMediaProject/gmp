@@ -647,8 +647,11 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    cost of one extra instruction.  Do this for "i386" too, since that means
    generic x86.  */
 #if __GNUC__ < 3							\
-  && (HAVE_HOST_CPU_i386 || HAVE_HOST_CPU_pentiumpro			\
-      || HAVE_HOST_CPU_pentium2 || HAVE_HOST_CPU_pentium3)
+  && (HAVE_HOST_CPU_i386                                                \
+      || HAVE_HOST_CPU_i686                                             \
+      || HAVE_HOST_CPU_pentiumpro                                       \
+      || HAVE_HOST_CPU_pentium2                                         \
+      || HAVE_HOST_CPU_pentium3)
 #define count_leading_zeros(count, x)					\
   do {									\
     USItype __cbtmp;							\
