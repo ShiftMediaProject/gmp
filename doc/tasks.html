@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 13 May 2001.  An up-to-date version is available at
+  This file current as of 17 May 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -61,7 +61,8 @@
      size of the current value.  Could switch internal uses across to a new
      function, and tighten up <code>_mpz_realloc</code>.
 <li> <code>mpf_set_str</code> doesn't validate it's exponent, for instance
-     123.456eX789X is accepted (and an exponent 0 used).
+     garbage 123.456eX789X is accepted (and an exponent 0 used), and overflow
+     of a <code>long</code> is not detected.
 <li> <code>mpf_set_str</code> and <code>mpf_inp_str</code> could usefully
      accept 0x, 0b etc when base==0.  Perhaps the exponent could default to
      decimal in this case, with a further 0x, 0b etc allowed there.
@@ -69,6 +70,10 @@
 <li> <code>DIVIDE_BY_ZERO</code> on powerpc does nothing, because division by
      zero in the basic "divu" instruction isn't an exception.  Does falling
      though to subsequent code in the gmp routines upset anything?
+<li> <code>mpf_mul_ui</code> calls <code>mpn_mul_1</code> with partially
+     overlapping operands on an in-place <code>mpf_mul_ui(f,f,n)</code> when
+     <code>f</code> has size prec+1 or more (prec+1 arises any time, more can
+     arise from <code>mpf_set_prec_raw</code>).
 </ul>
 
 
@@ -97,19 +102,17 @@
      either make that call or do it on-the-fly.
 <li> Copy tricky code for converting a limb from development version of
      <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
-<li> Consider inlining these functions:
-     <code>mpz_init</code>, <code>mpz_clear</code>,
-     <code>mpz_set_ui</code>,
-     <code>mpz_init_set_ui</code>,
-     <code>mpf_get_prec</code>, <code>mpf_get_default_prec</code>,
-     <code>mpf_set_prec_raw</code>,
+<li> Consider inlining: <code>mpz_init</code>, <code>mpz_clear</code>,
+     <code>mpz_set_ui</code>, <code>mpz_init_set_ui</code>,
      <code>mpf_init</code>, <code>mpf_init2</code>, <code>mpf_clear</code>.
-     <br>
-     These will want to be done with <code>extern inline</code> in the style
-     of the current <code>mpn_add</code> etc, since applications might be
-     using them as function pointers.  The GLIBC trick of first defining a
-     prototype then a macro looks like it won't work with the GMP
-     <code>__gmpz</code> renamings.
+     If inits and clears are not time critical then perhaps they're better as
+     function calls to get smaller code.  <code>mpz_init*</code> would put an
+     initial allocation into application code, which might prevent changing to
+     2 limbs minimum in the future (so <code>mpz_set_ull</code> could be done
+     without a realloc).  <code>mpz_clear</code> would prevent a "lazy"
+     allocation scheme (see below) since applications would be forcibly
+     calling a free.  <code>mpz_set_ui</code> similarly, since it might expect
+     a minimum 1 limb.
 <li> Consider inlining: <code>mpz_[cft]div_ui</code> and maybe
      <code>mpz_[cft]div_r_ui</code>.  A <code>__gmp_divide_by_zero</code>
      would be needed for the divide by zero test, unless that could be left to
@@ -199,6 +202,10 @@
      result, perhaps test for r==u and do nothing in that case, rather than
      currently it looks like an <code>MPN_COPY_INCR</code> will be done to
      reduce prec+1 limbs to prec.
+<li> <code>mpn_divrem_2</code> could usefully accept unnormalized divisors and
+     shift the dividend on-the-fly, since this should cost nothing on
+     superscalar processors and will avoid the need for temporary copying in
+     <code>mpn_tdiv_qr</code>.
 </ul>
 
 
@@ -250,6 +257,8 @@
 <li> UltraSPARC/32: Rewrite <code>mpn_lshift</code>, <code>mpn_rshift</code>.
      Will give 2 cycles/limb.  Trivial modifications of mpn/sparc64 should do.
 <li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 &lt; 2^16.
+<li> UltraSPARC/32: Use <code>mulx</code> for <code>umul_ppmm</code> if
+     possible (see commented out code in longlong.h).
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current code runs at 11 cycles/limb.  It
      should be possible to saturate the cache, which will happen at 8
@@ -265,9 +274,6 @@
      as <code>mpn_lshift</code>.  Some judicious use of m4 might let the two
      share source code, or with a register to control the loop direction
      perhaps even share object code.
-<li> PPC630: <code>mpn_lshift</code> could use an <code>adde</code> for a
-     shift-by-1.  A simple loop seems to be about 1.4 c/l, compared to 1.6 for
-     the unrolled general case.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
      for important machines.  Helping the generic sqr_basecase.c with an
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
@@ -312,6 +318,9 @@
      duplicating code under each conditional.  Don't really want to turn
      everything into a dog's dinner just because Cray don't offer an
      <code>alloca</code>.
+<li> 68000: <code>mpn_mul_1</code> could check for a 16-bit multiplier and use
+     two multiplies per limb, not four.  Ditto <code>mpn_addmul_1</code> and
+     <code>mpn_submul_1</code>.
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
   <pre>
 	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
