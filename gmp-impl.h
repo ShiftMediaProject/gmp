@@ -644,13 +644,15 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 
 /* On the x86s repe/scasl doesn't seem useful, since it takes many cycles to
    start up and would need to strip a lot of zeros before it'd be faster
-   than a simple cmpl loop.  std/repe/scasl/cld stripping no zeros runs as
-   follows,
-               cycles
-           P5    18
-           P6    46
-           K6    36
-           K7    21
+   than a simple cmpl loop.  Here are some times in cycles for
+   std/repe/scasl/cld and cld/repe/scasl (the latter would be for stripping
+   low zeros).
+
+                std   cld
+           P5    18    16
+           P6    46    38
+           K6    36    13
+           K7    21    20
 */
 #ifndef MPN_NORMALIZE
 #define MPN_NORMALIZE(DST, NLIMBS) \
