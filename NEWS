@@ -1,13 +1,13 @@
 Changes between MP version 3.1.1 and 3.2
 
 * Bug fixes.
-* Revamped configure featuring ABI selection and fixes for host/target
-  confusion.
+* Revamped configure, featuring ABI selection.
 * New CPU support: IA-64.
 * Improved CPU support: 21264, Cray vector systems.
 * New systems supported: SCO 5, Darwin, Windows DLLs.
 * New Karatsuba Square Root algorithm.
 * New algorithms chapter in the manual.
+* New reentrant malloc temporary memory method.
 * Updated mpfr.
 * Speed improvements for mpz_powm.
 * New integer functions: mpz_cmp_d, mpz_cmpabs_d, mpz_lcm_ui.
@@ -18,8 +18,8 @@ Changes between MP version 3.1.1 and 3.2
   mpz_congruent_2exp_p.
 * New Fibonacci function: mpz_fib2_ui.
 * New Lucas number functions: mpz_lucnum_ui, mpz_lucnum2_ui.
-* New rational functions: mpq_abs, mpq_div_2exp, mpq_get_str, mpq_mul_2exp,
-  mpq_set_f.
+* New rational functions: mpq_abs, mpq_cmp_si, mpq_div_2exp, mpq_get_str,
+  mpq_mul_2exp, mpq_set_f, mpq_set_str.
 * New float functions: mpf_cmp_d, mpf_get_default_prec, mpf_get_si, mpf_get_ui.
 * New float tests: mpf_integer_p, mpf_fits_sint_p, mpf_fits_slong_p,
   mpf_fits_sshort_p, mpf_fits_uint_p, mpf_fits_ulong_p, mpf_fits_ushort_p.
