@@ -82,8 +82,9 @@ mpz_probab_prime_p (m, reps)
 
   if (mpz_cmp_ui (n, 3L) <= 0)
     {
+      int retval = mpz_cmp_ui (n, 1L) > 0;
       mpz_clear (n);
-      return mpz_cmp_ui (n, 1L) > 0;
+      return retval;
     }
 
   if ((mpz_get_ui (n) & 1) == 0)
