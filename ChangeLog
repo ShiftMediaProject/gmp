@@ -22,6 +22,7 @@
 	quad_t.
 	(AC_CHECK_FUNCS): Add localeconv, memset, obstack_vprintf, snprintf,
 	strchr, vsnprintf.
+	(AC_CHECK_DECLS): Add vfprintf.
 
 	* gmp-h.in, gmp-impl.h: Additions for gmp_printf etc.
 
