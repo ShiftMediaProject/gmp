@@ -38,14 +38,12 @@ MA 02111-1307, USA.
 
 #include "speed.h"
 
-/* Change this to "#define TRACE(x) x" to get traces. */
-#define TRACE(x)
-
 
 typedef int (*qsort_function_t) _PROTO ((const void *, const void *));
 
 
 int   speed_option_addrs = 0;
+int   speed_option_verbose = 0;
 
 
 void
@@ -90,7 +88,8 @@ pentium_wbinvd(void)
 #endif
 }
 
-static int
+
+int
 double_cmp_ptr (const double *p, const double *q)
 {
   if (*p > *q)  return 1;
@@ -146,8 +145,9 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           t[i] = (*fun) (s);
           t_unsorted[i] = t[i];
 
-          TRACE (printf("size=%ld reps=%u r=%d attempt=%d  %.9f\n", 
-                        s->size, s->reps, s->r, i, t[i]));
+          if (speed_option_verbose >= 3)
+            printf("size=%ld reps=%u r=%ld attempt=%d  %.9f\n", 
+                   s->size, s->reps, s->r, i, t[i]);
 
           if (t[i] == -1.0)
             return -1.0;
@@ -396,7 +396,20 @@ mpz_init_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
 void
 speed_option_set (const char *s)
 {
-  if (strcmp (s, "addrs") == 0)  speed_option_addrs = 1;
+  int  n;
+
+  if (strcmp (s, "addrs") == 0)
+    {
+      speed_option_addrs = 1;
+    }
+  else if (strcmp (s, "verbose") == 0)
+    {
+      speed_option_verbose++;
+    }
+  else if (sscanf (s, "verbose=%d", &n) == 1)
+    {
+      speed_option_verbose = n;
+    }
   else 
     {
       printf ("Unrecognised -o option: %s\n", s);
