@@ -124,6 +124,7 @@ int  allocdat = 0;
 
 mp_size_t  mul_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
 mp_size_t  sqr_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
+mp_size_t  sb_preinv_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  dc_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  fib_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  powm_threshold[2] = { MP_SIZE_T_MAX };
@@ -131,6 +132,7 @@ mp_size_t  gcd_accel_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcdext_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  divrem_1_norm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  divrem_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  divrem_2_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_norm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  modexact_1_odd_threshold[2] = { MP_SIZE_T_MAX };
@@ -794,6 +796,22 @@ all (void)
   }
   printf("\n");
 
+#if UDIV_PREINV_ALWAYS
+  printf ("#define SB_PREINV_THRESHOLD        0  /* (preinv always) */\n");
+#else
+  {
+    static struct param_t  param;
+    param.check_size = 256;
+    param.min_size = 3;
+    param.min_is_always = 1;
+    param.size_extra = 3;
+    param.stop_factor = 2.0;
+    param.name[0] = "SB_PREINV_THRESHOLD";
+    param.function = speed_mpn_sb_divrem_m3;
+    one (sb_preinv_threshold, 1, &param);
+  }
+#endif
+
   {
     static struct param_t  param;
     param.name[0] = "DC_THRESHOLD";
@@ -873,8 +891,6 @@ all (void)
   printf("\n");
 
 #if UDIV_PREINV_ALWAYS
-  /* When udiv_qrnnd is implemented using udiv_qrnnd_preinv there's no need
-     to tune, just always use the latter.  */
   printf ("#define DIVREM_1_NORM_THRESHOLD    0  /* (preinv always) */\n");
   printf ("#define DIVREM_1_UNNORM_THRESHOLD  0\n");
   printf ("#define MOD_1_NORM_THRESHOLD       0\n");
@@ -902,8 +918,9 @@ all (void)
      the results in the .asm file, and there's no need for such thresholds
      to appear in gmp-mparam.h.  */
 #if ! HAVE_NATIVE_mpn_divrem_1
-  /* Tune for the integer part of divrem_1.  This will very possibly be a
-     bit out for the fractional part, but that's too bad, the integer part
+
+  /* Tune for the integer part of mpn_divrem_1.  This will very possibly be
+     a bit out for the fractional part, but that's too bad, the integer part
      is more important. */
   {
     static struct param_t  param;
@@ -943,7 +960,7 @@ all (void)
 #endif /* ! HAVE_NATIVE_mpn_mod_1 */
 #endif /* ! UDIV_PREINV_ALWAYS */
 
-/* use the regular mpn_mod_1 if there's no tuned version */
+  /* use the regular mpn_mod_1 if there's no tuned version */
 #ifndef SPEED_MPN_MOD_1
 #define SPEED_MPN_MOD_1  speed_mpn_mod_1
 #endif
@@ -975,13 +992,42 @@ all (void)
         abort ();
       }
     if (option_trace >= 1)
-        printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1 %.9f\n",
-                s.size, t1, t2);
+      printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1 %.9f\n",
+              s.size, t1, t2);
 
     printf ("#define USE_PREINV_MOD_1               %d\n", t1 < t2);
   }
 #endif /* ! UDIV_PREINV_ALWAYS */
 #endif /* ! HAVE_NATIVE_mpn_preinv_mod_1 */
+
+
+#if UDIV_PREINV_ALWAYS
+  printf ("#define DIVREM_2_THRESHOLD         0  /* (preinv always) */\n");
+#else
+
+  /* No support for tuning native assembler code, do that by hand and put
+     the results in the .asm file, and there's no need for such thresholds
+     to appear in gmp-mparam.h.  */
+#if ! HAVE_NATIVE_mpn_divrem_2
+
+  /* Tune for the integer part of mpn_divrem_2.  This will very possibly be
+     a bit out for the fractional part, but that's too bad, the integer part
+     is more important. */
+  {
+    static struct param_t  param;
+    param.name[0] = "DIVREM_2_THRESHOLD";
+    param.check_size = 256;
+    param.min_size = 2;        /* nsize>=2 required */
+    param.min_is_always = 1;
+    param.size_extra = 2;      /* does qsize==nsize-2 divisions */
+    param.stop_factor = 2.0;
+
+    s.r = randlimb_norm ();
+    param.function = speed_mpn_divrem_2;
+    one (divrem_2_threshold, 1, &param);
+  }
+#endif
+#endif
 
 
   /* The generic mpn_modexact_1_odd skips a divide step if high<divisor, the
