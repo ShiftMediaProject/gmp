@@ -337,8 +337,9 @@ typedef __mpq_struct *mpq_ptr;
 /* "pure" is in gcc 2.96 and up, see "(gcc)Function Attributes".  Basically
    it means a function does nothing but examine its arguments and memory
    (global or via arguments) to generate a return value, but changes nothing
-   and has no side-effects. */
-#if __GMP_GNUC_PREREQ (2,96)
+   and has no side-effects.  __GMP_NO_ATTRIBUTE_CONST_PURE lets
+   tune/common.c etc turn this off when trying to write timing loops.  */
+#if __GMP_GNUC_PREREQ (2,96) && ! defined (__GMP_NO_ATTRIBUTE_CONST_PURE)
 #define __GMP_ATTRIBUTE_PURE   __attribute__ ((__pure__))
 #else
 #define __GMP_ATTRIBUTE_PURE
