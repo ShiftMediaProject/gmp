@@ -23,23 +23,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-#ifdef OPERATION_popcount
-#define FUNCTION   mpn_popcount
-#define ARGUMENTS  register mp_srcptr p, register mp_size_t size
-#define OPERAND    (p[i])
-#endif
-
-#ifdef OPERATION_hamdist
-#define FUNCTION   mpn_hamdist
-#define ARGUMENTS  mp_srcptr up, mp_srcptr vp, mp_size_t size
-#define OPERAND    (up[i] ^ vp[i])
-#endif
-
-#ifndef FUNCTION
-Error, need OPERATION_popcount or OPERATION_hamdist
-#endif
-
-
 #if defined __GNUC__
 /* No processor claiming to be SPARC v9 compliant seems to
    implement the POPC instruction.  Disable pattern for now.  */
@@ -107,18 +90,34 @@ popc_limb (mp_limb_t x)
 #endif
 
 
+#ifdef OPERATION_popcount
+#define FUNCTION   mpn_popcount
+#define ARGUMENTS  register mp_srcptr p, register mp_size_t size
+#define OPERAND    (*p++)
+#endif
+
+#ifdef OPERATION_hamdist
+#define FUNCTION   mpn_hamdist
+#define ARGUMENTS  mp_srcptr up, mp_srcptr vp, mp_size_t size
+#define OPERAND    (*up++ ^ *vp++)
+#endif
+
+#ifndef FUNCTION
+Error, need OPERATION_popcount or OPERATION_hamdist
+#endif
+
 unsigned long int
 FUNCTION (ARGUMENTS)
 {
   unsigned long int  result = 0;
   mp_size_t  i;
 
-  /* mpz/popcount.c and mpz/hamdist.c pass size==0 though this isn't a
-     documented feature. */
-  ASSERT (size >= 0);
+  ASSERT (size >= 1);
 
-  for (i = 0; i < size; i++)
+  i = size;
+  do {
     result += popc_limb (OPERAND);
+  } while (--size != 0);
 
   return result;
 }
