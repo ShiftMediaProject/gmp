@@ -1,0 +1,19 @@
+
+                         MPN TEST PROGRAMS
+
+
+This directory contains programs designed to exercise various mpn
+subroutines.  Nothing here is built, installed or even run in a "make
+check", but there's Makefile rules to build each program, or "allprogs" to
+build everything.
+
+All the programs here are meant only for use during development and casual
+GMP users are unlikely to find anything of interest.
+
+
+
+----------------
+Local variables:
+mode: text
+fill-column: 76
+End:
