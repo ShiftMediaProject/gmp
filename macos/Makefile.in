@@ -226,7 +226,7 @@ check @dep@ check-mpz check-mpq check-mpf
 check-mpz @dep@ z-mul z-tdiv z-tdiv_ui z-fdiv z-fdiv_ui @c@
 		z-gcd z-dive z-sqrtrem z-convert z-logic z-bit @c@
 		z-powm z-powm_ui z-pow_ui z-2exp z-reuse z-root @c@
-		z-jac z-bin z-misc z-get_si
+		z-jac z-bin z-misc z-get_si z-fac_ui z-fib_ui
 
 # FIXME: Left out z-io, can't compile it.
 
@@ -295,6 +295,12 @@ z-misc @dep@ {MpzBinDir}t-misc.exe
 
 z-get_si @dep@ {MpzBinDir}t-get_si.exe
 	{MpzBinDir}t-get_si.exe
+
+z-fac_ui @dep@ {MpzBinDir}t-fac_ui.exe
+	{MpzBinDir}t-fac_ui.exe
+
+z-fib_ui @dep@ {MpzBinDir}t-fib_ui.exe
+	{MpzBinDir}t-fib_ui.exe
 
 
 check-mpq @dep@ q-cmp q-cmp_ui q-get_d q-set_f
