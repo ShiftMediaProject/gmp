@@ -288,7 +288,7 @@ compilation.
 If @option{--target} isn't given, @samp{./configure} builds for the host
 system as determined by @samp{./config.guess}.  On some systems it can't
 distinguish between different CPUs in a family, and you should check the
-guess.  Running @samp{./config.guess} on a target system will also show the
+guess.  Running @samp{./config.guess} on the target system will also show the
 relevant @samp{VENDOR-OS}, if you don't already know what it should be.
 
 In general, if you want a library that runs as fast as possible, you should
@@ -394,7 +394,7 @@ passed to @samp{./configure} to choose something different.
 
 For some configurations specific compiler flags are set based on the target
 CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
-choose the best flags.
+set the best flags.
 
 @item @option{--disable-alloca}
 
@@ -452,6 +452,13 @@ of GMP.
 The GMP assembly code for HPPA is not currently position-independent, so shared
 libraries are disabled for targets @samp{hppa*-*-*}.
 
+@item OpenBSD 2.6
+
+@command{m4} in this release of OpenBSD has a bug in @code{eval} that makes it
+unsuitable for @file{.asm} file processing.  @samp{./configure} will detect
+the problem and either abort or choose another m4 in the @env{PATH}.  The bug
+is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
+
 @item Sparc
 
 Using @samp{sparcv8} or @samp{supersparc} for the target CPU will give a
@@ -459,9 +466,10 @@ significant performance increase on relevant systems.
 
 @item SunOS
 
-@command{/usr/bin/m4} lacks features needed to process @file{.asm} files, and
-instead @samp{./configure} will automatically use @command{/usr/5bin/m4},
-which we believe is always available.  (GNU m4 can always be used if not.)
+@command{/usr/bin/m4} lacks various features needed to process @file{.asm}
+files, and instead @samp{./configure} will automatically use
+@command{/usr/5bin/m4}, which we believe is always available (if not then use
+GNU m4).
 
 @item x86 Pentium and PentiumPro
 
@@ -482,6 +490,7 @@ corresponding plain integer code.
 @end table
 
 
+@need 2000
 @section Known Build Problems
 You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 
@@ -490,9 +499,9 @@ You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 @item NeXT prior to 3.3
 
 The system compiler on old versions of NeXT was a massacred and old GCC, even
-if the compiler called itself @file{cc}.  This compiler cannot be used to build
-GMP, you need to get a real GCC, and install that before you compile GMP.  (NeXT
-may have fixed this in release 3.3 of their system.)
+if it called itself @file{cc}.  This compiler cannot be used to build GMP, you
+need to get a real GCC, and install that before you compile GMP.  (NeXT may
+have fixed this in release 3.3 of their system.)
 
 @item POWER and PowerPC
 
@@ -652,7 +661,7 @@ expression.  For example, the main function for integer multiplication,
 @code{mpz_mul}, can be used like this: @code{mpz_mul (x, x, x)}.  This
 computes the square of @var{x} and puts the result back in @var{x}.
 
-Before you can assign to an GMP variable, you need to initialize it by calling
+Before you can assign to a GMP variable, you need to initialize it by calling
 one of the special initialization functions.  When you're done with a
 variable, you need to clear it out, using one of the functions for that
 purpose.  Which function to use depends on the type of variable.  See the
@@ -663,11 +672,11 @@ A variable should only be initialized once, or at least cleared out between
 each initialization.  After a variable has been initialized, it may be
 assigned to any number of times.
 
-For efficiency reasons, avoid initializing and clearing out an GMP variable in
+For efficiency reasons, avoid initializing and clearing out a GMP variable in
 a loop.  Instead, initialize it before entering the loop, and clear it out
 after the loop has exited
 
-Once you have initialized an GMP variable, you don't need to worry about space
+Once you have initialized a GMP variable, you don't need to worry about space
 allocation for that variable.  All functions in GMP automatically allocate
 additional space when a variable does not already have enough space.  They do
 not, however, reduce the space when a smaller number is stored in the object.
@@ -808,32 +817,35 @@ If you get a crash, say so.  If a stack backtrace from the debugger is
 informative (@samp{where} in @command{gdb}), include that.
 
 @item
-@strong{Don't send core dumps, executables or @command{strace}s.}
+@strong{Do not send core dumps, executables or @command{strace}s.}
 
 @item
 The configuration options you used when building GMP, if any.
 
 @item
-The name of the compiler you're using, and its version.  If this is
-@command{gcc} then get the version with @samp{gcc -v}, otherwise @samp{what
-`which cc`}, or similar.  (It is not uncommon that an observed problem is
-actually due to a bug in the compiler; the GMP code tends to explore
-interesting corners in compilers.)
+The name of the compiler and its version.  For @command{gcc}, get the version
+with @samp{gcc -v}, otherwise perhaps @samp{what `which cc`}, or similar.  (It
+is not uncommon that an observed problem is actually due to a bug in the
+compiler; the GMP code tends to explore interesting corners in compilers.)
 
 @item
 The output from running @samp{uname -a}.
 
 @item
-The output from running @samp{config.guess}.
+The output from running @samp{./config.guess}.
 
 @item
-If the bug is related to @samp{configure}, include the file @file{config.log}.
+If the bug is related to @samp{configure}, then the contents of
+@file{config.log}.
 
+@item
+If the bug is related to an @file{asm} file not assembling, then the contents
+of @file{config.m4}.
 @end itemize
 
 If your bug report is good, we will do our best to help you get a corrected
 version of the library; if the bug report is poor, we won't do anything about
-it (except maybe to ask you to send a better report).
+it (except maybe ask you to send a better report).
 
 Send your bug report to: @email{bug-gmp@@gnu.org}.
 
@@ -852,18 +864,16 @@ These functions start with the prefix @code{mpz_}.
 GMP integers are stored in objects of type @code{mpz_t}.
 
 @menu
-* Initializing Integers::
-* Assigning Integers::
-* Simultaneous Integer Init & Assign::
-* Converting Integers::
-* Integer Arithmetic::
-* Comparison Functions::
-* Integer Logic and Bit Fiddling::
-* I/O of Integers::
-* Miscellaneous Integer Functions::
+* Initializing Integers::       
+* Converting Integers::         
+* Integer Arithmetic::          
+* Comparison Functions::        
+* Integer Logic and Bit Fiddling::  
+* I/O of Integers::             
+* Miscellaneous Integer Functions::  
 @end menu
 
-@node Initializing Integers, Assigning Integers, , Integer Functions
+@node Initializing Integers, Converting Integers, Integer Functions, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Initialization and Assignment Functions
 
@@ -923,7 +933,12 @@ Don't call @code{mpz_clear}!
 @end deftypefun
 
 
-@node Assigning Integers, Simultaneous Integer Init & Assign, Initializing Integers, Integer Functions
+@menu
+* Assigning Integers::          
+* Simultaneous Integer Init & Assign::  
+@end menu
+
+@node Assigning Integers, Simultaneous Integer Init & Assign, Initializing Integers, Initializing Integers
 @comment  node-name,  next,  previous,  up
 @subsection Assignment Functions
 @cindex Integer assignment functions
@@ -957,7 +972,7 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @end deftypefun
 
 
-@node Simultaneous Integer Init & Assign, Converting Integers, Assigning Integers, Integer Functions
+@node Simultaneous Integer Init & Assign,  , Assigning Integers, Initializing Integers
 @comment  node-name,  next,  previous,  up
 @subsection Combined Initialization and Assignment Functions
 @cindex Initialization and assignment functions
@@ -1003,7 +1018,7 @@ an error occurs.  (I.e., you have to call @code{mpz_clear} for it.)
 @end deftypefun
 
 
-@node Converting Integers,  Integer Arithmetic, Simultaneous Integer Init & Assign, Integer Functions
+@node Converting Integers, Integer Arithmetic, Initializing Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Conversion Functions
 @cindex Integer conversion functions
@@ -1045,17 +1060,17 @@ Convert @var{op} to a double.
 Convert @var{op} to a string of digits in base @var{base}.  The base may vary
 from 2 to 36.
 
-If @var{str} is NULL, space for the result string is allocated using the
+If @var{str} is @code{NULL}, space for the result string is allocated using the
 default allocation function.
 
-If @var{str} is not NULL, it should point to a block of storage enough large
+If @var{str} is not @code{NULL}, it should point to a block of storage enough large
 for the result.  To find out the right amount of space to provide for
 @var{str}, use @code{mpz_sizeinbase (@var{op}, @var{base}) + 2}.  The two
 extra bytes are for a possible minus sign, and for the terminating null
 character.
 
 A pointer to the result string is returned.  This pointer will will either
-equal @var{str}, or if that is NULL, will point to the allocated storage.
+equal @var{str}, or if that is @code{NULL}, will point to the allocated storage.
 @end deftypefun
 
 
@@ -1489,7 +1504,7 @@ are negative.
 
 @deftypefun {unsigned long int} mpz_gcd_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
 Compute the greatest common divisor of @var{op1} and @var{op2}.  If
-@var{rop} is not NULL, store the result there.
+@var{rop} is not @code{NULL}, store the result there.
 
 If the result is small enough to fit in an @code{unsigned long int}, it is
 returned.  If the result does not fit, 0 is returned, and the result is equal
@@ -1500,7 +1515,7 @@ is non-zero.
 @deftypefun void mpz_gcdext (mpz_t @var{g}, mpz_t @var{s}, mpz_t @var{t}, mpz_t @var{a}, mpz_t @var{b})
 Compute @var{g}, @var{s}, and @var{t}, such that @var{a}@var{s} +
 @var{b}@var{t} = @var{g} = @code{gcd}(@var{a}, @var{b}).  If @var{t} is
-NULL, that argument is not computed.
+@code{NULL}, that argument is not computed.
 @end deftypefun
 
 @deftypefun void mpz_lcm (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -1676,7 +1691,7 @@ Check bit @var{bit_index} in @var{op} and return 0 or 1 accordingly.
 @cindex I/O functions
 
 Functions that perform input from a stdio stream, and functions that output to
-a stdio stream.  Passing a NULL pointer for a @var{stream} argument to any of
+a stdio stream.  Passing a @code{NULL} pointer for a @var{stream} argument to any of
 these functions will make them read from @code{stdin} and write to
 @code{stdout}, respectively.
 
@@ -1728,7 +1743,7 @@ machines.
 
 
 @need 2000
-@node Miscellaneous Integer Functions,, I/O of Integers, Integer Functions
+@node Miscellaneous Integer Functions,  , I/O of Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 @cindex Miscellaneous integer functions
@@ -1864,12 +1879,12 @@ Remove any factors that are common to the numerator and denominator of
 @end deftypefun
 
 @menu
-* Initializing Rationals::
-* Assigning Rationals::
-* Simultaneous Integer Init & Assign::
-* Comparing Rationals::
-* Applying Integer Functions::
-* Miscellaneous Rational Functions::
+* Initializing Rationals::      
+* Assigning Rationals::         
+* Comparing Rationals::         
+* Applying Integer Functions::  
+* I/O of Rationals::            
+* Miscellaneous Rational Functions::  
 @end menu
 
 @node Initializing Rationals, Assigning Rationals, Rational Number Functions, Rational Number Functions
@@ -1995,11 +2010,11 @@ non-equal.  Although @code{mpq_cmp} can be used for the same purpose, this
 function is much faster.
 @end deftypefun
 
-@node Applying Integer Functions, Miscellaneous Rational Functions, Comparing Rationals, Rational Number Functions
+@node Applying Integer Functions, I/O of Rationals, Comparing Rationals, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Applying Integer Functions to Rationals
 
-The set of @code{mpq} functions is quite small.  In particular, there are no
+The set of @code{mpq} functions is quite small.  In particular, there are few
 functions for either input or output.  But there are two macros that allow us
 to apply any @code{mpz} function on the numerator or denominator of a rational
 number.  If these macros are used to assign to the rational number,
@@ -2011,8 +2026,36 @@ Return a reference to the numerator and denominator of @var{op}, respectively.
 The @code{mpz} functions can be used on the result of these macros.
 @end deftypefn
 
+
 @need 2000
-@node Miscellaneous Rational Functions, , Applying Integer Functions, Rational Number Functions
+@node I/O of Rationals, Miscellaneous Rational Functions, Applying Integer Functions, Rational Number Functions
+@comment  node-name,  next,  previous,  up
+@section Input and Output Functions
+@cindex Rational input and output functions
+@cindex Input functions
+@cindex Output functions
+@cindex I/O functions
+
+Functions that perform input from a stdio stream, and functions that output to
+a stdio stream.  Passing a @code{NULL} pointer for a @var{stream} argument to
+any of these functions will make them read from @code{stdin} and write to
+@code{stdout}, respectively.
+
+When using any of these functions, it is a good idea to include @file{stdio.h}
+before @file{gmp.h}, since that will allow @file{gmp.h} to define prototypes
+for these functions.
+
+@deftypefun size_t mpq_out_str (FILE *@var{stream}, int @var{base}, mpq_t @var{op})
+Output @var{op} on stdio stream @var{stream}, as a string of digits in base
+@var{base}.  The base may vary from 2 to 36.  Output is in the form
+@samp{num/den} or if the denominator is 1 then just @samp{num}.
+
+Return the number of bytes written, or if an error occurred, return 0.
+@end deftypefun
+
+
+@need 2000
+@node Miscellaneous Rational Functions,  , I/O of Rationals, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 
@@ -2106,17 +2149,15 @@ computer often differs from the results obtained on a computer with a
 different word size.
 
 @menu
-* Initializing Floats::
-* Assigning Floats::
-* Simultaneous Float Init & Assign::
-* Converting Floats::
-* Float Arithmetic::
-* Float Comparison::
-* I/O of Floats::
-* Miscellaneous Float Functions::
+* Initializing Floats::         
+* Converting Floats::           
+* Float Arithmetic::            
+* Float Comparison::            
+* I/O of Floats::               
+* Miscellaneous Float Functions::  
 @end menu
 
-@node Initializing Floats, Assigning Floats, , Floating-point Functions
+@node Initializing Floats, Converting Floats, Floating-point Functions, Floating-point Functions
 @comment  node-name,  next,  previous,  up
 @section Initialization and Assignment Functions
 
@@ -2187,7 +2228,12 @@ the first call to @code{mpf_set_prec_raw}.
 @end deftypefun
 
 
-@node Assigning Floats, Simultaneous Float Init & Assign, Initializing Floats, Floating-point Functions
+@menu
+* Assigning Floats::            
+* Simultaneous Float Init & Assign::  
+@end menu
+
+@node Assigning Floats, Simultaneous Float Init & Assign, Initializing Floats, Initializing Floats
 @comment  node-name,  next,  previous,  up
 @subsection Assignment Functions
 @cindex Float assignment functions
@@ -2230,7 +2276,7 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @end deftypefun
 
 
-@node Simultaneous Float Init & Assign, Converting Floats, Assigning Floats, Floating-point Functions
+@node Simultaneous Float Init & Assign,  , Assigning Floats, Initializing Floats
 @comment  node-name,  next,  previous,  up
 @subsection Combined Initialization and Assignment Functions
 @cindex Initialization and assignment functions
@@ -2266,7 +2312,7 @@ set by @code{mpf_set_default_prec}.
 @end deftypefun
 
 
-@node Converting Floats, Float Arithmetic, Simultaneous Float Init & Assign, Floating-point Functions
+@node Converting Floats, Float Arithmetic, Initializing Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
 @section Conversion Functions
 @cindex Conversion functions
@@ -2281,10 +2327,10 @@ from 2 to 36.  Generate at most @var{n_digits} significant digits, or if
 @var{n_digits} is 0, the maximum number of digits accurately representable by
 @var{op}.
 
-If @var{str} is NULL, space for the mantissa is allocated using the default
+If @var{str} is @code{NULL}, space for the mantissa is allocated using the default
 allocation function.
 
-If @var{str} is not NULL, it should point to a block of storage enough large
+If @var{str} is not @code{NULL}, it should point to a block of storage enough large
 for the mantissa, i.e., @var{n_digits} + 2.  The two extra bytes are for a
 possible minus sign, and for the terminating null character.
 
@@ -2293,7 +2339,7 @@ The exponent is written through the pointer @var{expptr}.
 If @var{n_digits} is 0, the maximum number of digits meaningfully achievable
 from the precision of @var{op} will be generated.  Note that the space
 requirements for @var{str} in this case will be impossible for the user to
-predetermine.  Therefore, you need to pass NULL for the string argument
+predetermine.  Therefore, you need to pass @code{NULL} for the string argument
 whenever @var{n_digits} is 0.
 
 The generated string is a fraction, with an implicit radix point immediately
@@ -2301,7 +2347,7 @@ to the left of the first digit.  For example, the number 3.1416 would be
 returned as "31416" in the string and 1 written at @var{expptr}.
 
 A pointer to the result string is returned.  This pointer will will either
-equal @var{str}, or if that is NULL, will point to the allocated storage.
+equal @var{str}, or if that is @code{NULL}, will point to the allocated storage.
 @end deftypefun
 
 
@@ -2446,7 +2492,7 @@ arguments multiple times.
 @cindex I/O functions
 
 Functions that perform input from a stdio stream, and functions that output to
-a stdio stream.  Passing a NULL pointer for a @var{stream} argument to any of
+a stdio stream.  Passing a @code{NULL} pointer for a @var{stream} argument to any of
 these functions will make them read from @code{stdin} and write to
 @code{stdout}, respectively.
 
@@ -2885,9 +2931,9 @@ destroyed, plus one limb past the end of each, ie. @{@var{s1p},
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{size})
 Compute the square root of @{@var{sp}, @var{size}@} and put the result at
-@var{r1p}.  Write the remainder at @var{r2p}, unless @var{r2p} is NULL.
+@var{r1p}.  Write the remainder at @var{r2p}, unless @var{r2p} is @code{NULL}.
 
-Return the size of the remainder, whether @var{r2p} was NULL or non-NULL.
+Return the size of the remainder, whether @var{r2p} was @code{NULL} or non-@code{NULL}.
 Iff the operand was a perfect square, the return value will be 0.
 
 The areas at @var{r1p} and @var{sp} have to be distinct.  The areas at
@@ -3006,7 +3052,7 @@ The functions actually generating random functions are documented under
 @ref{Miscellaneous Integer Functions}, @ref{Miscellaneous Float Functions}.
 
 @menu
-* Random State Initialization::	How to initialize a random state.
+* Random State Initialization::  How to initialize a random state.
 @end menu
 
 @node  Random State Initialization,  , Random Number Functions, Random Number Functions
@@ -3256,7 +3302,7 @@ accomplish this, you can specify alternative memory allocation functions.
 
 @deftypefun void mp_set_memory_functions (@* void *(*@var{alloc_func_ptr}) (size_t), @* void *(*@var{realloc_func_ptr}) (void *, size_t, size_t), @* void (*@var{free_func_ptr}) (void *, size_t))
 Replace the current allocation functions from the arguments.  If an argument
-is NULL, the corresponding default function is retained.
+is @code{NULL}, the corresponding default function is retained.
 
 @strong{Make sure to call this function in such a way that there are no active
 GMP objects that were allocated using the previously active allocation
@@ -3372,7 +3418,7 @@ Center for Computing Sciences, USA.
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
 about the omission!)
 
-@node References, , Contributors, Top
+@node References, Concept Index, Contributors, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered References
 
@@ -3387,8 +3433,9 @@ John D. Lipson, "Elements of Algebra and Algebraic Computing",
 The Benjamin Cummings Publishing Company Inc, 1981.
 
 @item
-Richard M. Stallman, "Using and Porting GCC", Free Software Foundation,
-1999, @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}.
+Richard M. Stallman, "Using and Porting GCC", Free Software Foundation, 1999,
+available on-line @uref{http://www.gnu.org/software/gcc/onlinedocs/}, and in
+the GCC package @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}.
 
 @item
 Peter L. Montgomery, "Modular Multiplication Without Trial Division", in
@@ -3420,12 +3467,12 @@ Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, "Handbook of
 Applied Cryptography", @uref{http://cacr.math.uwaterloo.ca/hac/}.
 @end itemize
 
-@node Concept Index, , , Top
+@node Concept Index, Function Index, References, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered Concept Index
 @printindex cp
 
-@node Function Index, , , Top
+@node Function Index,  , Concept Index, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered Function and Type Index
 @printindex fn
