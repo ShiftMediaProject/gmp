@@ -210,7 +210,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
               param.prec = -1;  /* default to all digits */
             param.showbase = DOPRNT_SHOWBASE_YES;
             param.showtrailing = 1;
-            goto floating;
+            goto floating_a;
 
           case 'c':
             /* Let's assume wchar_t will be promoted to "int" in the call,
@@ -303,6 +303,13 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
           case 'e':
             param.conv = DOPRNT_CONV_SCIENTIFIC;
           floating:
+            if (param.showbase == DOPRNT_SHOWBASE_NONZERO)
+              {
+                /* # in %e, %f and %g */
+                param.showpoint = 1;
+                param.showtrailing = 1;
+              }
+          floating_a:
             switch (type) {
             case 'F':
               FLUSH ();
