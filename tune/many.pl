@@ -227,10 +227,13 @@
 #
 # Add mpn_invert_limb and mpn_count_leading_zeros.
 #
+# Maybe the C files should be compiled pic and non-pic too.  Wait until
+# there's a difference that might be of interest.
+#
 #
 # LIMITATIONS
 #
-# Not sure if ansi2knr works, an ANSI capable compiler is probably needed.
+# Not sure if ansi2knr works with this stuff, probably not.
 #
 # Some of the command lines can become very long when a lot of files are
 # included.  If this is a problem on a given system the only suggestion is
@@ -556,8 +559,8 @@ my %pictable =
     (
      'yes' => {
        'suffix' => '_pic',
-       '-D'     => '-DPIC',
-       'cflags' => '-fPIC',
+       '-D'     => '$(ASMFLAGS_PIC)',
+       'cflags' => '$(CFLAGS_PIC)',
      },
      'no' => {
        'suffix' => '',
