@@ -53,7 +53,12 @@ gmp_sscanf (va_alist)
   fmt = va_arg (ap, const char *);
 #endif
 
+#if SSCANF_WRITABLE_INPUT
+  /* let gmp_vsscanf handle the copying */
+  ret = gmp_vsscanf (s, fmt, ap);
+#else
   ret = __gmp_doscan (&__gmp_sscanf_funs, (void *) &s, fmt, ap);
+#endif
   va_end (ap);
   return ret;
 }

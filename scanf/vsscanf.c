@@ -34,5 +34,23 @@ MA 02111-1307, USA. */
 int
 gmp_vsscanf (const char *s, const char *fmt, va_list ap)
 {
+#if SSCANF_WRITABLE_INPUT
+  /* We only actually need this if there's standard C types in fmt, and if
+     "s" is not already writable, but it's too much trouble to check that,
+     and in any case this writable sscanf input business is only for a few
+     old systems. */
+  size_t size;
+  char   *alloc;
+  int    ret;
+  size = strlen (s) + 1;
+  alloc = (char *) (*__gmp_allocate_func) (size);
+  memcpy (alloc, s, size);
+  s = alloc;
+  ret = __gmp_doscan (&__gmp_sscanf_funs, (void *) &s, fmt, ap);
+  (*__gmp_free_func) (alloc, size);
+  return ret;
+
+#else
   return __gmp_doscan (&__gmp_sscanf_funs, (void *) &s, fmt, ap);
+#endif
 }
