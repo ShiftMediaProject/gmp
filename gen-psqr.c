@@ -65,6 +65,27 @@ MA 02111-1307, USA. */
 
 */
 
+
+/* Normally we aren't using const in gen*.c programs, so as not to have to
+   bother figuring out if it works, but using it with f_cmp_divisor and
+   f_cmp_fraction avoids warnings from the qsort calls. */
+
+/* Same tests as gmp.h. */
+#if  defined (__STDC__)                                 \
+  || defined (__cplusplus)                              \
+  || defined (_AIX)                                     \
+  || defined (__DECC)                                   \
+  || (defined (__mips) && defined (_SYSTYPE_SVR4))      \
+  || defined (_MSC_VER)                                 \
+  || defined (_WIN32)
+#define HAVE_CONST        1
+#endif
+
+#if ! HAVE_CONST
+#define const
+#endif
+
+
 mpz_t  *sq_res_0x100;          /* table of limbs */
 int    nsq_res_0x100;          /* elements in sq_res_0x100 array */
 int    sq_res_0x100_num;       /* squares in sq_res_0x100 */
