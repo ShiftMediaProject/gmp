@@ -31,9 +31,13 @@ C                         mp_limb_t divisor);
 C mp_limb_t mpn_divrem_1c (mp_ptr dst, mp_size_t xsize,
 C                          mp_srcptr src, mp_size_t size,
 C                          mp_limb_t divisor, mp_limb_t carry);
+C mp_limb_t mpn_preinv_divrem_1 (mp_ptr dst, mp_size_t xsize,
+C                                mp_srcptr src, mp_size_t size,
+C                                mp_limb_t divisor, mp_limb_t inverse,
+C                                unsigned shift);
 C
 C This code is a lightly reworked version of mpn/x86/k7/mmx/divrem_1.asm,
-C see that file for some comments.  It's likely what's here can be improved.
+C see that file for some comments.  It's possible what's here can be improved.
 
 
 dnl  MUL_THRESHOLD is the value of xsize+size at which the multiply by
@@ -51,7 +55,9 @@ dnl  mul is much faster.
 deflit(MUL_THRESHOLD, 4)
 
 
-defframe(PARAM_CARRY,  24)
+defframe(PARAM_PREINV_SHIFT,   28)  dnl mpn_preinv_divrem_1
+defframe(PARAM_PREINV_INVERSE, 24)  dnl mpn_preinv_divrem_1
+defframe(PARAM_CARRY,  24)          dnl mpn_divrem_1c
 defframe(PARAM_DIVISOR,20)
 defframe(PARAM_SIZE,   16)
 defframe(PARAM_SRC,    12)
@@ -72,6 +78,63 @@ defframe(VAR_DST_STOP,-36)
 deflit(STACK_SPACE, 36)
 
 	TEXT
+	ALIGN(16)
+
+PROLOGUE(mpn_preinv_divrem_1)
+deflit(`FRAME',0)
+	movl	PARAM_XSIZE, %ecx
+	subl	$STACK_SPACE, %esp	FRAME_subl_esp(STACK_SPACE)
+
+	movl	%esi, SAVE_ESI
+	movl	PARAM_SRC, %esi
+
+	movl	%ebx, SAVE_EBX
+	movl	PARAM_SIZE, %ebx
+
+	movl	%ebp, SAVE_EBP
+	movl	PARAM_DIVISOR, %ebp
+
+	movl	%edi, SAVE_EDI
+	movl	PARAM_DST, %edx
+
+	movl	-4(%esi,%ebx,4), %eax	C src high limb
+	xorl	%edi, %edi		C initial carry (if can't skip a div)
+
+	C
+
+	leal	8(%edx,%ecx,4), %edx	C &dst[xsize+2]
+	xor	%ecx, %ecx
+
+	movl	%edx, VAR_DST_STOP	C &dst[xsize+2]
+	cmpl	%ebp, %eax		C high cmp divisor
+
+	cmovc(	%eax, %edi)		C high is carry if high<divisor
+
+	cmovnc(	%eax, %ecx)		C 0 if skip div, src high if not
+					C (the latter in case src==dst)
+
+	movl	%ecx, -12(%edx,%ebx,4)	C dst high limb
+
+	sbbl	$0, %ebx		C skip one division if high<divisor
+	movl	PARAM_PREINV_SHIFT, %ecx
+
+	leal	-8(%edx,%ebx,4), %edx	C &dst[xsize+size]
+	movl	$32, %eax
+
+	movl	%edx, VAR_DST		C &dst[xsize+size]
+
+	shll	%cl, %ebp		C d normalized
+	subl	%ecx, %eax
+	movl	%ecx, VAR_NORM
+
+	movd	%eax, %mm7		C rshift
+	movl	PARAM_PREINV_INVERSE, %eax
+	jmp	L(start_preinv)
+
+EPILOGUE()
+
+
+
 	ALIGN(16)
 
 PROLOGUE(mpn_divrem_1c)
@@ -117,21 +180,27 @@ deflit(`FRAME',STACK_SPACE)
 
 	movl	%esi, SAVE_ESI
 	movl	PARAM_SRC, %esi
-	orl	%ecx, %ecx
+	orl	%ecx, %ecx		C size
 
 	movl	%edi, SAVE_EDI
 	movl	PARAM_DST, %edi
 
 	leal	-4(%edi,%ebx,4), %edi	C &dst[xsize-1]
-	jz	L(no_skip_div)
+	jz	L(no_skip_div)		C if size==0
 
 	movl	-4(%esi,%ecx,4), %eax	C src high limb
-	cmpl	%ebp, %eax		C one less div if high<divisor
-	jnb	L(no_skip_div)
+	xorl	%esi, %esi
+	cmpl	%ebp, %eax		C high cmp divisor
 
-	movl	$0, (%edi,%ecx,4)	C dst high limb
-	decl	%ecx			C size-1
-	movl	%eax, %edx		C src high limb as initial carry
+	cmovc(	%eax, %edx)		C high is carry if high<divisor
+
+	cmovnc(	%eax, %esi)		C 0 if skip div, src high if not
+					C (the latter in case src==dst)
+
+	movl	%esi, (%edi,%ecx,4)	C dst high limb
+
+	sbbl	$0, %ecx		C size-1 if high<divisor
+	movl	PARAM_SRC, %esi		C reload
 L(no_skip_div):
 
 
@@ -220,7 +289,7 @@ L(mul_by_inverse):
 	C edi	&dst[xsize-1]
 	C ebp	divisor
 
-	leal	12(%edi), %ebx
+	leal	12(%edi), %ebx		C &dst[xsize+2], loop dst stop
 
 	movl	%ebx, VAR_DST_STOP
 	leal	4(%edi,%ecx,4), %edi	C &dst[xsize+size]
@@ -244,6 +313,17 @@ L(mul_by_inverse):
 	subl	%ebp, %edx		C (b-d)-1 giving edx:eax = b*(b-d)-1
 
 	divl	%ebp			C floor (b*(b-d)-1) / d
+
+L(start_preinv):
+	C eax	inverse
+	C ebx	size
+	C ecx	shift
+	C edx
+	C esi	src
+	C edi	carry
+	C ebp	divisor
+	C
+	C mm7	rshift
 
 	movl	%eax, VAR_INVERSE
 	orl	%ebx, %ebx		C size
@@ -276,11 +356,14 @@ L(start_one):
 
 
 L(start_zero):
-	shll	%cl, %edi		C n2 = carry << l
-	movl	$0, %esi		C n10 = 0
+	C Can be here with xsize==0 if mpn_preinv_divrem_1 had size==1 and
+	C skipped a division.
 
-	C we're here because xsize+size>=MUL_THRESHOLD, so with size==0 then
-	C must have xsize!=0
+	shll	%cl, %edi		C n2 = carry << l
+	movl	%edi, %eax		C return value for zero_done
+	cmpl    $0, PARAM_XSIZE
+
+	je	L(zero_done)
 	jmp	L(fraction_some)
 
 
@@ -406,7 +489,6 @@ L(integer_two_left):
 	C edi	n2
 	C ebp	divisor
 	C
-	C mm0	src limb, shifted
 	C mm7	rshift
 
 
@@ -474,7 +556,6 @@ L(integer_one_left):
 	C edi	n2
 	C ebp	divisor
 	C
-	C mm0	src limb, shifted
 	C mm7	rshift
 
 
@@ -540,6 +621,7 @@ L(integer_one_left):
 	movl	%edi, %eax
 L(fraction_done):
 	movl	VAR_NORM, %ecx
+L(zero_done):
 	movl	SAVE_EBP, %ebp
 
 	movl	SAVE_EDI, %edi
@@ -616,10 +698,10 @@ L(fraction_some):
 	C ebp	divisor
 
 	movl	PARAM_DST, %esi
-	movl	VAR_DST_STOP, %ecx
+	movl	VAR_DST_STOP, %ecx	C &dst[xsize+2]
 	movl	%edi, %eax
 
-	subl	$8, %ecx
+	subl	$8, %ecx		C &dst[xsize]
 
 
 	ALIGN(16)
