@@ -43,7 +43,7 @@ int
 mpz_tstbit (mpz_srcptr u, unsigned long bit_index)
 {
   mp_srcptr      u_ptr      = PTR(u);
-  int            size       = SIZ(u);
+  mp_size_t      size       = SIZ(u);
   unsigned       abs_size   = ABS(size);
   unsigned long  limb_index = bit_index / GMP_NUMB_BITS;
   mp_srcptr      p          = u_ptr + limb_index;

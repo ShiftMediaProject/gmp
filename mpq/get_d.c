@@ -78,7 +78,7 @@ mpq_get_d (const MP_RAT *src)
   /* Normalize the denominator, i.e. make its most significant bit set by
      shifting it NORMALIZATION_STEPS bits to the left.  Also shift the
      numerator the same number of steps (to keep the quotient the same!).  */
-  if (! (dp[dsize - 1] & GMP_NUMB_HIGHBIT))
+  if ((dp[dsize - 1] & GMP_NUMB_HIGHBIT) == 0)
     {
       mp_ptr tp;
       mp_limb_t nlimb;
@@ -135,7 +135,7 @@ mpq_get_d (const MP_RAT *src)
   {
     double res;
     mp_size_t i;
-    int scale = nsize - dsize - N_QLIMBS;
+    mp_size_t scale = nsize - dsize - N_QLIMBS;
 
 #if defined (__vax__)
     /* Ignore excess quotient limbs.  This is necessary on a vax

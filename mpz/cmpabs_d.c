@@ -47,7 +47,8 @@ mpz_cmpabs_d (mpz_srcptr z, double d)
 {
   mp_limb_t  darray[LIMBS_PER_DOUBLE], zlimb, dlimb;
   mp_srcptr  zp;
-  int        zsize, dexp;
+  mp_size_t  zsize;
+  int        dexp;
 
   /* 1. Check for either operand zero. */
   zsize = SIZ(z);

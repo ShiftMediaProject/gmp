@@ -37,7 +37,7 @@ mpz_ui_kronecker (unsigned long a, mpz_srcptr b)
 {
   mp_srcptr  b_ptr = PTR(b);
   mp_limb_t  b_low = b_ptr[0];
-  int        b_abs_size = ABSIZ (b);
+  mp_size_t  b_abs_size = ABSIZ (b);
   mp_limb_t  b_rem;
   int        twos;
   int        result_bit1 = 0;

@@ -36,7 +36,7 @@ int
 mpz_kronecker_ui (mpz_srcptr a, unsigned long b)
 {
   mp_srcptr  a_ptr = PTR(a);
-  int        a_size;
+  mp_size_t  a_size;
   mp_limb_t  a_rem;
   int        result_bit1;
 

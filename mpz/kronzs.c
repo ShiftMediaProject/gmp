@@ -39,7 +39,7 @@ int
 mpz_kronecker_si (mpz_srcptr a, long b)
 {
   mp_srcptr  a_ptr = PTR(a);
-  int        a_size;
+  mp_size_t  a_size;
   mp_limb_t  a_rem, b_limb;
   int        result_bit1;
 

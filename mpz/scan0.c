@@ -33,8 +33,8 @@ unsigned long
 mpz_scan0 (mpz_srcptr u, unsigned long starting_bit)
 {
   mp_srcptr      u_ptr = PTR(u);
-  int            size = SIZ(u);
-  unsigned       abs_size = ABS(size);
+  mp_size_t      size = SIZ(u);
+  mp_size_t      abs_size = ABS(size);
   mp_srcptr      u_end = u_ptr + abs_size;
   unsigned long  starting_limb = starting_bit / GMP_NUMB_BITS;
   mp_srcptr      p = u_ptr + starting_limb;

@@ -37,8 +37,8 @@ mpz_si_kronecker (long a, mpz_srcptr b)
 {
   mp_srcptr  b_ptr = PTR(b);
   mp_limb_t  b_low = b_ptr[0];
-  int        b_size = SIZ (b);
-  int        b_abs_size = ABS (b_size);
+  mp_size_t  b_size = SIZ (b);
+  mp_size_t  b_abs_size = ABS (b_size);
   mp_limb_t  a_limb, b_rem;
   unsigned   twos;
   int        result_bit1;

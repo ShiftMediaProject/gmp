@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 int
 mpq_equal (mpq_srcptr op1, mpq_srcptr op2)
 {
-  int        num1_size, num2_size, den1_size, den2_size, i;
+  mp_size_t  num1_size, num2_size, den1_size, den2_size, i;
   mp_srcptr  num1_ptr,  num2_ptr,  den1_ptr,  den2_ptr;
 
   /* need fully canonical for correct results */

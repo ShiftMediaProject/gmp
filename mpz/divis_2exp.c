@@ -29,7 +29,7 @@ mpz_divisible_2exp_p (mpz_srcptr a, unsigned long d)
   unsigned long  i, dlimbs, dbits;
   mp_ptr         ap;
   mp_limb_t      dmask;
-  int            asize;
+  mp_size_t      asize;
 
   asize = ABSIZ(a);
   dlimbs = d / GMP_NUMB_BITS;

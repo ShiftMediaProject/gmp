@@ -28,9 +28,9 @@ MA 02111-1307, USA.
 int
 mpf_integer_p (mpf_srcptr f)
 {
-  mp_srcptr  ptr;
-  mp_exp_t   exp;
-  int        size, frac, i;
+  mp_srcptr ptr;
+  mp_exp_t exp;
+  mp_size_t size, frac, i;
 
   size = SIZ (f);
   if (size == 0)
