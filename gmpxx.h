@@ -5366,9 +5366,11 @@ public:
   }
 };
 
-extern "C" typedef void __gmp_randinit_default_t (gmp_randstate_t);
-extern "C" typedef void __gmp_randinit_lc_2exp_t (gmp_randstate_t, mpz_srcptr, unsigned long int, unsigned long int);
-extern "C" typedef void __gmp_randinit_lc_2exp_size_t (gmp_randstate_t, unsigned long int);
+extern "C" {
+  typedef void __gmp_randinit_default_t (gmp_randstate_t);
+  typedef void __gmp_randinit_lc_2exp_t (gmp_randstate_t, mpz_srcptr, unsigned long int, unsigned long int);
+  typedef void __gmp_randinit_lc_2exp_size_t (gmp_randstate_t, unsigned long int);
+}
 
 class gmp_randclass
 {
