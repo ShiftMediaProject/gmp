@@ -1,3 +1,24 @@
+2001-07-03  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/bin_ui.c (DIVIDE): Use MPN_DIVREM_OR_DIVEXACT_1.
+	* mpz/bin_uiui.c (MULDIV): Ditto, and use local variables for size and
+	pointer.
+
+	* acinclude.m4 (GMP_INCLUDE_GMP_H): New macro, use it everywhere gmp.h
+	is wanted at configure time.
+	* acinclude.m4, configure.in (GMP_H_EXTERN_INLINE, GMP_H_HAVE_FILE):
+	New macros.
+
+	* gmp-h.in (__GMP_EXTERN_INLINE): Set to "inline" for C++.
+	(mpn_add, mpn_sub): Use new style __GMP_EXTERN_INLINE.
+	* gmp-h.in, mp-h.in, gmp-impl.h (_EXTERN_INLINE): Remove, unused.
+	* mpn/generic/add.c, mpn/generic/sub.c: New files.
+	* mpn/generic/inlines.c: Remove file.
+	* configure.in, mpn/Makefile.am: Update.
+
+	* gmp.texi (GMP Basics): Note the need for stdio.h to get FILE
+	prototypes.
+
 2001-07-01  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options, Reentrancy): Updates for new
