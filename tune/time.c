@@ -349,13 +349,20 @@ speed_endtime (void)
 
   speed_cyclecounter (endtime);
 
-  /* This still works even if speed_cyclecounter() puts a value bigger than
-     32-bits in the low word.  The start and end values are allowed to
-     cancel in uints in case a uint is more than the 53 bits that will
-     normally fit in a double. */
-  e0 = endtime[0] - speed_starttime_save[0];
-  t = e0 - (e0 > endtime[0] ? M_2POWU : 0);
-  t += (endtime[1] - speed_starttime_save[1]) * M_2POW32;
+  if (endtime[1] == 0 && speed_starttime_save[1] == 0)
+    {
+      /* High words are zero, assume we have a single-word counter.  */
+      e0 = endtime[0] - speed_starttime_save[0];
+      if (endtime[0] < speed_starttime_save[0])
+	t = M_2POWU + e0;	/* Counter wrapped.  Hopefully just once. */
+      else
+	t = e0;
+    }
+  else
+    {
+      t = (endtime[0] + endtime[1] * M_2POWU)
+	- (speed_starttime_save[0] + speed_starttime_save[1] * M_2POWU);
+    }
 
   return t * speed_unittime;
 }
