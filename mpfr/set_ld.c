@@ -21,19 +21,45 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <float.h>
+#include <limits.h>  /* for CHAR_BIT */
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-#ifndef LDBL_MANT_DIG
-#define LDBL_MANT_DIG 113 /* works also if long double == quad */
-#endif
-
 #ifndef DBL_MANT_DIG
 #define DBL_MANT_DIG 53
 #endif
+
+#ifndef CHAR_BIT
+#define CHAR_BIT 8
+#endif
+
+
+/* Various i386 systems have been seen with float.h LDBL constants equal to
+   the DBL ones, whereas they ought to be bigger, reflecting the 10-byte
+   IEEE extended format on that processor.  gcc 3.2.1 on FreeBSD and Solaris
+   has been seen with the problem, and gcc 2.95.4 on FreeBSD 4.7.  */
+
+#if HAVE_LDOUBLE_IEEE_EXT_LITTLE
+static const struct {
+  char         bytes[10];
+  long double  dummy;  /* for memory alignment */
+} ldbl_max_struct = {
+  { '\xFF','\xFF','\xFF','\xFF',
+    '\xFF','\xFF','\xFF','\xFF',
+    '\xFE','\x7F' }
+};
+#define MPFR_LDBL_MAX   (* (const long double *) ldbl_max_struct.bytes)
+#else
+#define MPFR_LDBL_MAX   LDBL_MAX
+#endif
+
+/* This is an overestimate, but fine for our purposes, it only needs to be
+   enough that "t" below can hold a long double without rounding.  */
+#define MPFR_LDBL_MANT_DIG   (CHAR_BIT * sizeof (long double))
+
 
 int
 mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
@@ -47,13 +73,13 @@ mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
       MPFR_RET_NAN;
     }
 
-  if (d > LDBL_MAX)
+  if (d > MPFR_LDBL_MAX)
     {
       mpfr_set_inf (r, 1);
       return 0;
     }
 
-  if (d < -LDBL_MAX)
+  if (d < -MPFR_LDBL_MAX)
     {
       mpfr_set_inf (r, -1);
       return 0;
@@ -62,7 +88,7 @@ mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
   if (d == 0.0)
     return mpfr_set_d (r, (double) d, rnd_mode);
 
-  mpfr_init2 (t, LDBL_MANT_DIG);
+  mpfr_init2 (t, MPFR_LDBL_MANT_DIG);
   mpfr_init2 (u, DBL_MANT_DIG);
   mpfr_set_ui (t, 0, GMP_RNDN);
   while (d != 0.0)

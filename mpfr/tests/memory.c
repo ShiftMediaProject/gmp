@@ -109,8 +109,10 @@ tests_reallocate (void *ptr, size_t old_size, size_t new_size)
 
   if (h->size != old_size)
     {
-      printf ("tests_reallocate(): bad old size %u, should be %u\n",
-              old_size, h->size);
+      /* Note: we should use the standard %zu to print sizes, but
+         this is not supported by old C implementations. */
+      printf ("tests_reallocate(): bad old size %lu, should be %lu\n",
+              (unsigned long) old_size, (unsigned long) h->size);
       abort ();
     }
 
@@ -152,7 +154,10 @@ tests_free (void *ptr, size_t size)
 
   if (h->size != size)
     {
-      printf ("tests_free(): bad size %u, should be %u\n", size, h->size);
+      /* Note: we should use the standard %zu to print sizes, but
+         this is not supported by old C implementations. */
+      printf ("tests_free(): bad size %lu, should be %lu\n",
+              (unsigned long) size, (unsigned long) h->size);
       abort ();
     }
 

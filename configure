@@ -25163,6 +25163,191 @@ fi
 
 
 
+echo "$as_me:$LINENO: checking format of \`long double' floating point" >&5
+echo $ECHO_N "checking format of \`long double' floating point... $ECHO_C" >&6
+if test "${mpfr_cv_c_long_double_format+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  mpfr_cv_c_long_double_format=unknown
+cat >conftest.c <<\EOF
+
+/* "before" is 16 bytes to ensure there's no padding between it and "x".
+   We're not expecting any "long double" bigger than 16 bytes or with
+   alignment requirements stricter than 16 bytes.  */
+struct {
+  char         before[16];
+  long double  x;
+  char         after[8];
+} foo = {
+  { '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0',
+    '\x01', '\x23', '\x45', '\x67', '\x89', '\xAB', '\xCD', '\xEF' },
+  -123456789.0,
+  { '\xFE', '\xDC', '\xBA', '\x98', '\x76', '\x54', '\x32', '\x10' },
+};
+
+EOF
+mpfr_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&5 2>&1"
+if { (eval echo "$as_me:$LINENO: \"$mpfr_compile\"") >&5
+  (eval $mpfr_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+cat >conftest.awk <<\EOF
+
+BEGIN {
+  found = 0
+}
+
+# got[] holds a sliding window of bytes read the input.  got[0] is the most
+# recent byte read, and got[31] the oldest byte read, so when looking to
+# match some data the indices are "reversed".
+#
+{
+  for (f = 2; f <= NF; f++)
+    {
+      # new byte, shift others up
+      for (i = 31; i >= 0; i--)
+        got[i+1] = got[i];
+      got[0] = $f;
+
+      # end sequence
+      if (got[7] != "376") continue
+      if (got[6] != "334") continue
+      if (got[5] != "272") continue
+      if (got[4] != "230") continue
+      if (got[3] != "166") continue
+      if (got[2] != "124") continue
+      if (got[1] != "062") continue
+      if (got[0] != "020") continue
+
+      # start sequence, with 12-byte body
+      if (got[27] == "001" && \
+          got[26] == "043" && \
+          got[25] == "105" && \
+          got[24] == "147" && \
+          got[23] == "211" && \
+          got[22] == "253" && \
+          got[21] == "315" && \
+          got[20] == "357")
+        {
+          saw = " (" got[19] \
+                 " " got[18] \
+                 " " got[17] \
+                 " " got[16] \
+                 " " got[15] \
+                 " " got[14] \
+                 " " got[13] \
+                 " " got[12] \
+                 " " got[11] \
+                 " " got[10] \
+                 " " got[9]  \
+                 " " got[8] ")"
+
+          if (got[19] == "000" && \
+              got[18] == "000" && \
+              got[17] == "000" && \
+              got[16] == "000" && \
+              got[15] == "240" && \
+              got[14] == "242" && \
+              got[13] == "171" && \
+              got[12] == "353" && \
+              got[11] == "031" && \
+              got[10] == "300")
+            {
+              print "IEEE extended, little endian"
+              found = 1
+              exit
+            }
+        }
+
+      # start sequence, with 16-byte body
+      if (got[31] == "001" && \
+          got[30] == "043" && \
+          got[29] == "105" && \
+          got[28] == "147" && \
+          got[27] == "211" && \
+          got[26] == "253" && \
+          got[25] == "315" && \
+          got[24] == "357")
+        {
+          saw = " (" got[23] \
+                 " " got[22] \
+                 " " got[21] \
+                 " " got[20] \
+                 " " got[19] \
+                 " " got[18] \
+                 " " got[17] \
+                 " " got[16] \
+                 " " got[15] \
+                 " " got[14] \
+                 " " got[13] \
+                 " " got[12] \
+                 " " got[11] \
+                 " " got[10] \
+                 " " got[9]  \
+                 " " got[8] ")"
+
+          if (got[23] == "000" && \
+              got[22] == "000" && \
+              got[21] == "000" && \
+              got[20] == "000" && \
+              got[19] == "240" && \
+              got[18] == "242" && \
+              got[17] == "171" && \
+              got[16] == "353" && \
+              got[15] == "031" && \
+              got[14] == "300")
+            {
+              print "IEEE extended, little endian"
+              found = 1
+              exit
+            }
+        }
+    }
+}
+
+END {
+  if (! found)
+    print "unknown", saw
+}
+
+EOF
+  mpfr_cv_c_long_double_format=`od -b conftest.$OBJEXT | $AWK -f conftest.awk`
+  case $mpfr_cv_c_long_double_format in
+  unknown*)
+    echo "cannot match anything, conftest.$OBJEXT contains" >&5
+    od -b conftest.$OBJEXT >&5
+    ;;
+  esac
+else
+  { echo "$as_me:$LINENO: WARNING: oops, cannot compile test program" >&5
+echo "$as_me: WARNING: oops, cannot compile test program" >&2;}
+fi
+
+fi
+echo "$as_me:$LINENO: result: $mpfr_cv_c_long_double_format" >&5
+echo "${ECHO_T}$mpfr_cv_c_long_double_format" >&6
+
+
+
+
+case $mpfr_cv_c_long_double_format in
+  "IEEE extended, little endian")
+    cat >>confdefs.h <<\_ACEOF
+#define HAVE_LDOUBLE_IEEE_EXT_LITTLE 1
+_ACEOF
+
+    ;;
+  unknown*)
+    ;;
+  *)
+    { echo "$as_me:$LINENO: WARNING: oops, unrecognised float format: $mpfr_cv_c_long_double_format" >&5
+echo "$as_me: WARNING: oops, unrecognised float format: $mpfr_cv_c_long_double_format" >&2;}
+    ;;
+esac
+
+
+
   MPFR_CFLAGS=$CFLAGS
 
   MPFR_LIBS=$LIBS

@@ -36,6 +36,18 @@ MA 02111-1307, USA. */
 #define DBL_MANT_DIG 53
 #endif
 
+
+/* Various i386 systems have been seen with incorrect LDBL constants in
+   float.h (notes in set_ld.c), so force the value we know is right for IEEE
+   extended.  */
+
+#if HAVE_LDOUBLE_IEEE_EXT_LITTLE
+#define MPFR_LDBL_MANT_DIG   64
+#else
+#define MPFR_LDBL_MANT_DIG   LDBL_MANT_DIG
+#endif
+
+
 long double
 mpfr_get_ld (mpfr_srcptr x, mp_rnd_t rnd_mode)
 {
@@ -61,7 +73,7 @@ mpfr_get_ld (mpfr_srcptr x, mp_rnd_t rnd_mode)
       /* first round x to the target long double precision, so that
          all subsequent operations are exact (this avoids double rounding
          problems) */
-      mpfr_init2 (y, LDBL_MANT_DIG);
+      mpfr_init2 (y, MPFR_LDBL_MANT_DIG);
       mpfr_set (y, x, rnd_mode);
       negative = MPFR_SIGN(y) < 0;
       e = MPFR_EXP(y);

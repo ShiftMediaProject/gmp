@@ -169,6 +169,13 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the <langinfo.h> header file. */
 #undef HAVE_LANGINFO_H
 
+/* Define one of the following to 1 for the format of a `long double'.
+   If your format is not among these choices, or you don't know what it is,
+   then leave all undefined.
+   IEEE_EXT is the 10-byte IEEE extended format.
+   LITTLE or BIG is the endianness.  */
+#undef HAVE_LDOUBLE_IEEE_EXT_LITTLE
+
 /* Define one of these to 1 for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
    it is, then leave both undefined. */
