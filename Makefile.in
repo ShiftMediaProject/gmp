@@ -88,7 +88,6 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
-STRIP = @STRIP@
 VERSION = @VERSION@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
@@ -191,7 +190,8 @@ TEXINFOS = gmp.texi
 DIST_COMMON =  README AUTHORS COPYING COPYING.LIB ChangeLog INSTALL \
 Makefile.am Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 \
 config.guess config.sub configure configure.in depcomp install-sh \
-ltconfig ltmain.sh missing mkinstalldirs texinfo.tex
+ltconfig ltmain.sh mdate-sh missing mkinstalldirs stamp-vti texinfo.tex \
+version.texi
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -274,8 +274,31 @@ maintainer-clean-libtool:
 libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libgmp_la_LDFLAGS) $(libgmp_la_OBJECTS) $(libgmp_la_LIBADD) $(LIBS)
 
-gmp.info: gmp.texi
-gmp.dvi: gmp.texi
+$(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@stamp-vti
+	@:
+
+$(srcdir)/stamp-vti: gmp.texi $(top_srcdir)/configure.in
+	@echo "@set UPDATED `$(SHELL) $(srcdir)/mdate-sh $(srcdir)/gmp.texi`" > vti.tmp
+	@echo "@set EDITION $(VERSION)" >> vti.tmp
+	@echo "@set VERSION $(VERSION)" >> vti.tmp
+	@cmp -s vti.tmp $(srcdir)/version.texi \
+	  || (echo "Updating $(srcdir)/version.texi"; \
+	      cp vti.tmp $(srcdir)/version.texi)
+	-@rm -f vti.tmp
+	@cp $(srcdir)/version.texi $@
+
+mostlyclean-vti:
+	-rm -f vti.tmp
+
+clean-vti:
+
+distclean-vti:
+
+maintainer-clean-vti:
+	-@MAINTAINER_MODE_TRUE@rm -f $(srcdir)/stamp-vti $(srcdir)/version.texi
+
+gmp.info: gmp.texi version.texi
+gmp.dvi: gmp.texi version.texi
 
 
 DVIPS = dvips
@@ -642,19 +665,21 @@ distclean-generic:
 maintainer-clean-generic:
 	-rm -f Makefile.in
 mostlyclean-am:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-aminfo mostlyclean-tags \
-		mostlyclean-depend mostlyclean-generic
+		mostlyclean-libtool mostlyclean-vti mostlyclean-aminfo \
+		mostlyclean-tags mostlyclean-depend mostlyclean-generic
 
 mostlyclean: mostlyclean-recursive
 
-clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool clean-aminfo \
-		clean-tags clean-depend clean-generic mostlyclean-am
+clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool clean-vti \
+		clean-aminfo clean-tags clean-depend clean-generic \
+		mostlyclean-am
 
 clean: clean-recursive
 
 distclean-am:  distclean-libLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-aminfo distclean-tags \
-		distclean-depend distclean-generic clean-am
+		distclean-libtool distclean-vti distclean-aminfo \
+		distclean-tags distclean-depend distclean-generic \
+		clean-am
 	-rm -f libtool
 
 distclean: distclean-recursive
@@ -662,9 +687,9 @@ distclean: distclean-recursive
 
 maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-aminfo maintainer-clean-tags \
-		maintainer-clean-depend maintainer-clean-generic \
-		distclean-am
+		maintainer-clean-vti maintainer-clean-aminfo \
+		maintainer-clean-tags maintainer-clean-depend \
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -676,13 +701,14 @@ clean-libLTLIBRARIES maintainer-clean-libLTLIBRARIES \
 uninstall-libLTLIBRARIES install-libLTLIBRARIES mostlyclean-compile \
 distclean-compile clean-compile maintainer-clean-compile \
 mostlyclean-libtool distclean-libtool clean-libtool \
-maintainer-clean-libtool install-info-am uninstall-info \
-mostlyclean-aminfo distclean-aminfo clean-aminfo \
-maintainer-clean-aminfo install-recursive uninstall-recursive \
-install-data-recursive uninstall-data-recursive install-exec-recursive \
-uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
-all-recursive check-recursive installcheck-recursive info-recursive \
-dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
+maintainer-clean-libtool mostlyclean-vti distclean-vti clean-vti \
+maintainer-clean-vti install-info-am uninstall-info mostlyclean-aminfo \
+distclean-aminfo clean-aminfo maintainer-clean-aminfo install-recursive \
+uninstall-recursive install-data-recursive uninstall-data-recursive \
+install-exec-recursive uninstall-exec-recursive installdirs-recursive \
+uninstalldirs-recursive all-recursive check-recursive \
+installcheck-recursive info-recursive dvi-recursive \
+mostlyclean-recursive distclean-recursive clean-recursive \
 maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
 distclean-tags clean-tags maintainer-clean-tags distdir \
 mostlyclean-depend distclean-depend clean-depend \
