@@ -125,7 +125,6 @@ extern int optind, opterr;
 
 
 #define DEFAULT_MAX_SIZE   1000  /* limbs */
-#define MAX_TABLE             5  /* entries */
 
 #if WANT_FFT
 mp_size_t  option_fft_max_size = 50000;  /* limbs */
@@ -148,7 +147,7 @@ mp_size_t  mul_toom3_threshold          = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_basecase_threshold       = MP_SIZE_T_MAX;
-mp_size_t  sqr_karatsuba_threshold      = MP_SIZE_T_MAX;
+mp_size_t  sqr_karatsuba_threshold      = TUNE_SQR_KARATSUBA_MAX;
 mp_size_t  sqr_toom3_threshold          = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
