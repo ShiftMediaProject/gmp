@@ -18,6 +18,16 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-09-21  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpn/generic/mul_n.c (mpn_toom3_mul_n): Conditionally use
+	mpn_sublsh1_n, mpn_rsh1add_n and mpn_rsh1sub_n, in addition to
+	mpn_addlsh1_n.  Avoid all copying, at the expense of some additional
+	workspace.
+
+	* gmp-impl.h (MPN_TOOM3_MUL_N_TSIZE, MPN_TOOM3_SQR_N_TSIZE): Accomodate
+	latest toom3 code.
+
 2003-09-19  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium4/sse2/divrem_1.asm, mpn/x86/pentium4/sse2/mod_1.asm:
