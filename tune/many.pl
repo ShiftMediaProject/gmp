@@ -701,10 +701,9 @@ my @table =
      # special for use during development
      {
        'regexp'=> 'back',
-       'funs'  => ['back_to'],
+       'funs'  => ['back_to_back'],
        'ret'   => 'void',
        'args'  => 'void',
-       'suffix'=> 'back',
        'pic'   => 'no',
        'try'   => 'none',
        'speed_flags'=> 'FLAG_NODATA',
@@ -925,8 +924,6 @@ foreach my $file_full (@files) {
     } elsif ($suffix =~ /([^_]*_)*([^_]+)$/) {
       $suffix = $2;
     }
-  } elsif (defined $t->{'suffix'}) {
-    $suffix = $t->{'suffix'};
   } else {
     die "Can't determine suffix for: $file_full (path $path)\n";
   }
