@@ -1834,11 +1834,18 @@ AC_CHECK_HEADERS(fcntl.h float.h locale.h sys/mman.h sys/param.h sys/processor.h
 # Reasons for testing:
 #   optarg - not declared in mingw
 #   fgetc, fscanf, ungetc, vfprintf - not declared in SunOS 4
+#   sys_errlist, sys_nerr - not declared in SunOS 4
 #
 # optarg should be in unistd.h and the rest in stdio.h, both of which are
 # in the autoconf default includes.
 #
+# sys_errlist and sys_nerr are supposedto be in <errno.h> on SunOS according
+# to the man page (but aren't), in glibc they're in stdio.h.
+#
 AC_CHECK_DECLS([fgetc, fscanf, optarg, ungetc, vfprintf])
+AC_CHECK_DECLS([sys_errlist, sys_nerr], , ,
+[#include <stdio.h>
+#include <errno.h>])
 
 AC_TYPE_SIGNAL
 
