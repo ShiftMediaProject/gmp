@@ -38,6 +38,8 @@ ulong_coerce		ULONG_COERCE
 malloced_string		MALLOCED_STRING
 order_noswap		ORDER_NOSWAP
 dummy			DUMMY
+# perl 5.005 doesn't have UV in its standard typemap, so use this instead
+gmp_UV			GMP_UV
 
 
 INPUT
@@ -93,3 +95,5 @@ RANDSTATE
     sv_setref_pv ($arg, rand_class, $var);
 MALLOCED_STRING
     sv_usepvn_mg ($arg, $var, strlen($var));
+GMP_UV
+    sv_setuv ($arg, (UV) ($var));
