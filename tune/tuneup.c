@@ -65,6 +65,8 @@ MA 02111-1307, USA.
 
 */
 
+#define TUNE_PROGRAM_BUILD  1
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
