@@ -198,7 +198,7 @@ speed_LDFLAGS = -static
 
 speed_dynamic_SOURCES = speed.c
 
-speed_ext_SOURCES = speed.c
+speed_ext_SOURCES = speed-ext.c
 speed_ext_LDFLAGS = -static
 
 tuneup_SOURCES = tuneup.c
@@ -295,7 +295,7 @@ speed_dynamic_OBJECTS = $(am_speed_dynamic_OBJECTS)
 speed_dynamic_LDADD = $(LDADD)
 speed_dynamic_DEPENDENCIES = libspeed.la
 speed_dynamic_LDFLAGS =
-am_speed_ext_OBJECTS = speed$U.$(OBJEXT)
+am_speed_ext_OBJECTS = speed-ext$U.$(OBJEXT)
 speed_ext_OBJECTS = $(am_speed_ext_OBJECTS)
 speed_ext_LDADD = $(LDADD)
 speed_ext_DEPENDENCIES = libspeed.la
@@ -449,6 +449,8 @@ sb_inv_.c: sb_inv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sb_inv.c; then echo $(srcdir)/sb_inv.c; else echo sb_inv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sb_inv_.c || rm -f sb_inv_.c
 speed_.c: speed.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed.c; then echo $(srcdir)/speed.c; else echo speed.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed_.c || rm -f speed_.c
+speed-ext_.c: speed-ext.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed-ext.c; then echo $(srcdir)/speed-ext.c; else echo speed-ext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed-ext_.c || rm -f speed-ext_.c
 sqr_basecase_.c: sqr_basecase.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqr_basecase.c; then echo $(srcdir)/sqr_basecase.c; else echo sqr_basecase.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqr_basecase_.c || rm -f sqr_basecase_.c
 tdiv_qr_.c: tdiv_qr.c $(ANSI2KNR)
@@ -473,9 +475,10 @@ mul_n_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) \
 mul_n_open_.lo noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) \
 powm_mod_.lo powm_redc_.$(OBJEXT) powm_redc_.lo sb_div_.$(OBJEXT) \
 sb_div_.lo sb_divrem_mn_.$(OBJEXT) sb_divrem_mn_.lo sb_inv_.$(OBJEXT) \
-sb_inv_.lo speed_.$(OBJEXT) speed_.lo sqr_basecase_.$(OBJEXT) \
-sqr_basecase_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) \
-time_.lo tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
+sb_inv_.lo speed_.$(OBJEXT) speed_.lo speed-ext_.$(OBJEXT) \
+speed-ext_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo \
+tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) time_.lo \
+tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
