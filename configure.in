@@ -1508,6 +1508,7 @@ gmp_mpn_functions="$extra_functions					   \
   mul mul_fft mul_n mul_basecase sqr_basecase random                       \
   random2 sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp perfsqr \
   bdivmod gcd_1 gcd gcdext tdiv_qr dc_divrem_n sb_divrem_mn jacbase        \
+  sizeinbase                                                               \
   $gmp_mpn_functions_optional"
 
 # the list of all object files used by mpn/Makefile.in and the
