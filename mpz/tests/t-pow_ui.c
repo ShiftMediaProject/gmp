@@ -26,8 +26,8 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void debug_mp ();
-void ref_mpz_pow_ui ();
+void debug_mp _PROTO ((char *, mpz_t, int));
+void ref_mpz_pow_ui _PROTO ((mpz_t, const mpz_t, unsigned long int));
 
 main (int argc, char **argv)
 {
