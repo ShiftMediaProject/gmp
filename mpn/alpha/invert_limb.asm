@@ -48,13 +48,12 @@ $73:
 	ldt	f10,0(r1)
 	divt	f10,f1,f10
 	LEA(r2,$invtab-4096)
-	srl	r16,52,r1
-	addq	r1,r1,r1
-	addq	r1,r2,r1
-	bic	r1,6,r2
-	ldq	r2,0(r2)
-	bic	r1,1,r1
-	extwl	r2,r1,r2
+	srl	r16,52,r1		C extract high 8 bits
+	addq	r1,r1,r1		C align ...0000bbbbbbbb0
+	addq	r1,r2,r1		C compute array offset
+	ldq_u	r2,0(r1)		C load quadword containing our 16 bits
+bigend(`addq	r1,1,r1')
+	extwl	r2,r1,r2		C extract desired 16 bits
 	sll	r2,48,r0
 	umulh	r16,r0,r1
 	addq	r16,r1,r3
