@@ -2,24 +2,23 @@
 
 	* Version 3.1 released.
 
+	* mpn/alpha/ev6: New directory with ev6/21264 optimized code.
+	* mpn/alpha/ev6/addmul_1.asm: New file.
+	* mpn/alpha/ev6/gmp-mparam.h: New file.
+
 2000-08-02  Kevin Ryde  <kevin@swox.se>
 
-	* mpfr/round.c: Correction to K&R part.
-	* mpfr/set.c: Likewise.
-	* mpfr/mul_ui: Likewise.
-	* mpfr/set_d.c: Likewise.
-	* mpfr/log.c: Likewise.
+	* demos/factorize.c (random): Don't use "inline".
+
+	* mpfr/{log,mul_ui,round,set,set_d}.c: Corrections to K&R parts.
 
 	* Makefile.am (EXTRA_HEADERS): Omit $(MPFR_HEADERS_OPTION).
 	* mpfr/Makefile.am (EXTRA_DIST): Add mpfr.h.
 
-2000-08-02  Torbjorn Granlund  <tege@swox.com>
+	* gmp.texi (Known Build Problems): Note problem stripping libgmp.a.
 
 	* mpn/tests/try.c (try_init): Account for ALIGNMENTS when sizing
 	source and dest regions.
-	* mpn/alpha/ev6: New directory with ev6/21264 optimize code.
-	* mpn/alpha/ev6/addmul_1.asm: New file.
-	* mpn/alpha/ev6/gmp-mparam.h: New file.
 
 2000-08-02  Kent Boortz  <kent@swox.com>
 
