@@ -714,10 +714,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   } while (0)
 #define count_trailing_zeros(count, x)					\
   do {									\
-    UDItype __cbtmp;                                                    \
     ASSERT ((x) != 0);							\
-    __asm__ ("bsfq %1,%0" : "=r" (__cbtmp) : "rm" ((UDItype)(x)));	\
-    (count) = __cbtmp;                                                  \
+    __asm__ ("bsfq %1,%q0" : "=r" (count) : "rm" ((UDItype)(x)));	\
   } while (0)
 #endif /* x86_64 */
 
