@@ -1,3 +1,9 @@
+2000-12-03  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, tune/Makefile.am: Create tune/sqr_basecase.c during
+	configure, and use it unconditionally in $(nodist_tuneup_SOURCES).
+	Fixes a problem with sqr_basecase.lo under --disable-static.
+
 2000-12-01  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/tests/t-get_d.c (LOW_BOUND,HIGH_BOUND): #define for non-IEEE
