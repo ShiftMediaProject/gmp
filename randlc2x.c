@@ -22,13 +22,37 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* State structure for LC.  */
+
+/* State structure for LC, the RNG_STATE() pointer in a gmp_randstate_t.
+
+   _mp_seed holds the current seed value, in the range 0 to 2^m2exp-1.
+   SIZ(_mp_seed) is fixed at BITS_TO_LIMBS(_mp_m2exp) and the value is
+   padded with high zero limbs if necessary.  ALLOC(_mp_seed) is the current
+   size of PTR(_mp_seed) in the usual way.  There only needs to be
+   BITS_TO_LIMBS(_mp_m2exp) allocated, but the mpz functions in the
+   initialization and seeding end up making it a bit more than this.
+
+   _mp_a is the "a" multiplier, in the range 0 to 2^m2exp-1.  SIZ(_mp_a) is
+   the size of the value in the normal way for an mpz_t, except that a value
+   of zero is held with SIZ(_mp_a)==1 and PTR(_mp_a)[0]==0.  This makes it
+   easy to call mpn_mul, and the case of a==0 is highly un-random and not
+   worth any trouble to optimize.
+
+   {_cp,_cn} is the "c" addend.  Normally _cn is 1, but when nails are in
+   use a ulong can be bigger than one limb, and in this case _cn is 2 if
+   necessary.  c==0 is stored as _cp[0]==0 and _cn==1, which makes it easy
+   to call __GMPN_ADD.  c==0 is fairly un-random so isn't worth optimizing.
+
+   _mp_m2exp gives the modulus, namely 2^m2exp.  We demand m2exp>=1, since
+   m2exp==0 would mean no bits at all out of each iteration, which makes no
+   sense.  */
+
 typedef struct {
-  mpz_t _mp_seed;		/* Current value.  Fixed size.  */
-  mpz_t _mp_a;			/* Multiplier.  */
-  mp_size_t _cn;		/* Number of limbs of the adder.  */
-  mp_limb_t _cp[LIMBS_PER_ULONG];	/* Limbs of the adder.  */
-  unsigned long int _mp_m2exp;	/* Modulus is 2 ^ m2exp.  */
+  mpz_t          _mp_seed;
+  mpz_t          _mp_a;
+  mp_size_t      _cn;
+  mp_limb_t      _cp[LIMBS_PER_ULONG];
+  unsigned long  _mp_m2exp;
 } gmp_rand_lc_struct;
 
 
@@ -199,14 +223,14 @@ static void
 randseed_lc (gmp_randstate_t rstate, mpz_srcptr seed)
 {
   gmp_rand_lc_struct *p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
-  mpz_ptr seedp = p->_mp_seed;
+  mpz_ptr seedz = p->_mp_seed;
   mp_size_t seedn = BITS_TO_LIMBS (p->_mp_m2exp);
 
   /* Store p->_mp_seed as an unnormalized integer with size enough
      for numbers up to 2^m2exp-1.  That size can't be zero.  */
-  mpz_fdiv_r_2exp (seedp, seed, p->_mp_m2exp);
-  MPN_ZERO (&PTR (seedp)[SIZ (seedp)], seedn - SIZ (seedp));
-  SIZ (seedp) = seedn;
+  mpz_fdiv_r_2exp (seedz, seed, p->_mp_m2exp);
+  MPN_ZERO (&PTR (seedz)[SIZ (seedz)], seedn - SIZ (seedz));
+  SIZ (seedz) = seedn;
 }
 
 
@@ -256,7 +280,7 @@ randiset_lc (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
   dstp->_mp_m2exp = srcp->_mp_m2exp;
 }
 
-/* Initialize LC-specific data.  */
+
 void
 gmp_randinit_lc_2exp (gmp_randstate_t rstate,
 		      mpz_srcptr a,
@@ -268,20 +292,18 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
 
   ASSERT_ALWAYS (m2exp != 0);
 
+  p = __GMP_ALLOCATE_FUNC_TYPE (1, gmp_rand_lc_struct);
+  RNG_STATE (rstate) = (void *) p;
   RNG_FNPTR (rstate) = (void *) &Linear_Congruential_Generator;
-  RNG_STATE (rstate) =
-    (mp_ptr) (*__gmp_allocate_func) (sizeof (gmp_rand_lc_struct));
 
-  p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
-  mpz_init2 (p->_mp_seed, m2exp + 1);
-
-  /* Set parameters and default seed.  */
+  /* allocate m2exp bits of space for p->_mp_seed, and initial seed "1" */
+  mpz_init2 (p->_mp_seed, m2exp);
   MPN_ZERO (PTR (p->_mp_seed), seedn);
   SIZ (p->_mp_seed) = seedn;
   PTR (p->_mp_seed)[0] = 1;
 
-  mpz_init2 (p->_mp_a, m2exp + 1);
-  /* Avoid negative a.  */
+  /* "a", forced to 0 to 2^m2exp-1 */
+  mpz_init (p->_mp_a);
   mpz_fdiv_r_2exp (p->_mp_a, a, m2exp);
 
   /* Avoid SIZ(a) == 0 to avoid checking for special case in lc().  */
