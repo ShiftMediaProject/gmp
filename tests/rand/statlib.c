@@ -529,7 +529,7 @@ spectral_test (mpf_t rop[], unsigned int T, mpz_t a, mpz_t m)
 	  mpz_mul (tmp1, h, pp);
 	  mpz_mul (tmp2, hp, p);
 	  mpz_sub (tmp1, tmp1, tmp2);
-	  if (mpz_cmp_abs (m, tmp1))
+	  if (mpz_cmpabs (m, tmp1))
 	    {
 	      printf ("***BUG***: h*pp - hp*p = ");
 	      mpz_out_str (stdout, 10, tmp1);
