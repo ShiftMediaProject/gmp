@@ -1448,7 +1448,6 @@ with other @code{mpn} functions.
 @item
 @code{mpf_get_prec} counted precision slightly differently in GMP 3.0 and
 3.0.1, but in 3.1 has reverted to the 2.x style.
-
 @end itemize
 
 There are a number of compatibility issues between GMP 1 and GMP 2 that of
@@ -4964,7 +4963,7 @@ So the quotient is 678.
 Notice however that the multiplies and subtractions don't need to extend past
 the low three digits of the dividend, since that's enough to determine the
 three quotient digits.  For the last quotient digit no subtraction is needed
-at all.  On a 2N@cross{}N multiply like this one, only about half the work of
+at all.  On a 2N@cross{}N division like this one, only about half the work of
 a normal basecase division is necessary.
 
 For an N@cross{}M exact division producing Q=N@minus{}M quotient limbs, the
