@@ -15,6 +15,13 @@ case "${target}" in
   i[3456]86*-*-none | pentium-*-none | pentiumpro-*-none)
     echo "*** Operating system specification required for this cpu." 1>&2
     exit 1;;
+  sparc9-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*)
+    if [ x$with_gcc != xno ]
+    then
+      target_makefile_frag=config/mt-sprc9-gcc
+      CC="gcc -D_LONG_LONG_LIMB -O2"
+    fi
+    ;;
   sparc9-*-* | sparc64*-*-* | ultrasparc*-*-*)
     if [ x$with_gcc != xno ]
     then
