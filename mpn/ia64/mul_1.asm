@@ -53,26 +53,26 @@ ifdef(`HAVE_ABI_32',
 		sxt4	r34 = r34
 		;;
 ')
-  { .mfi;	setf.sig	f6 = r35
-		nop.f		0
+  { .mib;	setf.sig	f6 = r35
 		adds		r19 = -1, r34		C n - 1
-} { .mfi;	cmp.ne		p6, p7 = r0, r0
-		nop.f		0
-		mov		r18 = r32	;;
-} { .mfi;	mov		r16 = r32
-		nop.f		0
-		mov		ar.lc = r19
-} { .mfi;	mov		r17 = r33
-		nop.f		0
-		mov		ar.ec = 7
-} { .mii;	cmp.ne		p6, p7 = r0, r0
-		mov		pr.rot = 1<<16
-		mov		r32 = 0			C clear "carry in"
-} { .mib;	mov		r33 = 0			C clear for cmp
-		mov		r34 = 0			C clear for cmp
 		nop.b		0
-} { .mib;	mov		r35 = 0			C clear for cmp
-		mov		r36 = 0			C clear for cmp
+} { .mib;	mov		r36 = 0			C clear for cmp
+		mov		r18 = r32
+		nop.b		0		;;
+} { .mib;	mov		r16 = r32
+		mov		ar.lc = r19
+		nop.b		0
+} { .mib;	mov		r17 = r33
+		mov		ar.ec = 7
+		nop.b		0
+} { .mib;	cmp.ne		p6, p7 = r0, r0
+		mov		pr.rot = 1<<16
+		nop.b		0
+} { .mib;	mov		r32 = 0			C clear for cmp
+		mov		r33 = 0			C clear for cmp
+		nop.b		0
+} { .mib;	mov		r34 = 0			C clear for cmp
+		mov		r35 = 0			C clear for cmp
 		nop.b		0		;;
 }
 		.align	32

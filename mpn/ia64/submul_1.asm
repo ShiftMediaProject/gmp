@@ -1,5 +1,5 @@
-dnl  IA-64 mpn_addmul_1 -- Multiply a limb vector with a limb and add the
-dnl  result to a second limb vector.
+dnl  IA-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract the
+dnl  result from a second limb vector.
 
 dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
@@ -37,7 +37,7 @@ C possible improvements.
 
 
 ASM_START()
-PROLOGUE(mpn_addmul_1)
+PROLOGUE(mpn_submul_1)
 	.prologue
 	.save	ar.pfs, r21
 		alloc		r21 = ar.pfs, 4, 12, 0, 16
@@ -51,12 +51,13 @@ ifdef(`HAVE_ABI_32',
 `		addp4	r32 = 0, r32
 		addp4	r33 = 0, r33
 		sxt4	r34 = r34
-		;;
 ')
+		sub r35 = r0, r35			C negate v
+		;;
   { .mib;	setf.sig	f6 = r35
 		adds		r19 = -1, r34		C n - 1
 		nop.b		0
-} { .mib;	mov		r36 = 0			C clear for cmp
+} { .mib;	nop.m		0
 		mov		r18 = r32
 		nop.b		0		;;
 } { .mib;	mov		r16 = r32
@@ -65,44 +66,41 @@ ifdef(`HAVE_ABI_32',
 } { .mib;	mov		r17 = r33
 		mov		ar.ec = 7
 		nop.b		0
-} { .mib;	cmp.ne		p6, p7 = r0, r0
+} { .mib;	mov		r19 = r33
 		mov		pr.rot = 1<<16
 		nop.b		0
-} { .mib;	mov		r32 = 0			C clear for cmp
-		mov		r33 = 0			C clear for cmp
+} { .mib;	mov		r23 = 0			C clear "carry in"
+		mov		r24 = 0			C clear "carry in"
 		nop.b		0
-} { .mib;	mov		r34 = 0			C clear for cmp
-		mov		r35 = 0			C clear for cmp
-		nop.b		0		;;
+		;;
 }
 		.align	32
+	.align	32
 .Loop:
-	.pred.rel "mutex",p6,p7
-  { .mfi; (p16)	ldf8		f32 = [r17], 8		C  *0,3,6,9,12,15,18
-	  (p19)	xma.l		f40 = f35, f6, f39	C  0,3,6,*9,12,15,18
-	   (p6) add		r14 = r33, r38, 1	C  0,3,6,9,12,15,*18
-} { .mfi; (p16)	ldf8		f36 = [r16], 8		C  *0,3,6,9,12,15,18
-	  (p19)	xma.hu		f44 = f35, f6, f39	C  0,3,6,*9,12,15,18
-	   (p7) add		r14 = r33, r38	;;	C  0,3,6,9,12,15,*18
-} { .mii; (p21)	getf.sig	r32 = f42		C  1,4,7,10,13,*16,19
-	   (p6) cmp.leu		p8, p9 = r14, r33	C  1,4,7,10,13,16,*19
-	   (p7) cmp.ltu		p8, p9 = r14, r33;;	C  1,4,7,10,13,16,*19
+  { .mfi; (p16)	ldf8		f32 = [r17], 8		C >0  3  6  9 12 15 18
+	  (p19)	xma.l		f40 = f35, f6, f39	C  0  3  6 >9 12 15 18
+	  (p22)	cmp.ltu		p6, p7 = r33, r23	C  0  3  6  9 12 15>18
+} { .mfi; (p16)	ldf8		f36 = [r16], 8		C >0  3  6  9 12 15 18
+	  (p19)	xma.hu		f44 = f35, f6, f39	C  0  3  6 >9 12 15 18
+	  (p22)	sub		r14 = r33, r23	;;	C  0  3  6  9 12 15>18
+} { .mib; (p21)	getf.sig	r32 = f42		C  1  4  7 10 13>16 19
+	  (p22)	sub		r23 = r24, r37		C  1  4  7 10 13 16>19
+		nop.b		0			C  1  4  7 10 13 16 19
+} { .mib; (p21)	ld8		r24 = [r19], 8		C  1  4  7 10 13>16 19
+		nop.i		0			C  1  4  7 10 13 16>19
+		nop.b		0		;;	C  1  4  7 10 13 16 19
+} { .mib; (p21)	getf.sig	r36 = f46		C  2  5  8 11 14>17 20
+	   (p6)	add		r23 = 1, r23		C  2  5  8 11 14 17 20
+		nop.b		0			C  2  5  8 11 14 17 20
+} { .mib; (p22)	st8		[r18] = r14, 8		C  2  5  8 11 14 17>20
+		nop.i		0			C  2  5  8 11 14 17 20
+		br.ctop.sptk.few .Loop		;;	C  2  5  8 11 14 17 20
 }
-	.pred.rel "mutex",p8,p9
-  { .mib; (p21)	getf.sig	r36 = f46		C  2,5,8,11,14,*17,20
-	   (p8) cmp.eq		p6, p7 = r0, r0
-		nop.b		0
-} { .mib; (p22)	st8		[r18] = r14, 8		C  2,5,8,11,14,17,*20
-	   (p9) cmp.ne		p6, p7 = r0, r0
-		br.ctop.sptk	.Loop		;;
-}
-	.pred.rel "mutex",p6,p7
-	   (p6)	add		r8 = 1, r38
-	   (p7)	mov		r8 = r38
+		mov		r8 = r23
 		mov		pr = r22,0x1fffe
 		mov		ar.lc = r2
 		mov		ar.ec = r20
 		mov		ar.pfs = r21;;
 		br.ret.sptk.many b0
-EPILOGUE(mpn_addmul_1)
+EPILOGUE(mpn_submul_1)
 ASM_END()
