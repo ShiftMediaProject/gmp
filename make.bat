@@ -103,6 +103,7 @@ cd mpz
 gcc -c -I. -I.. -I../mpn -g -O abs.c
 gcc -c -I. -I.. -I../mpn -g -O add.c
 gcc -c -I. -I.. -I../mpn -g -O add_ui.c
+gcc -c -I. -I.. -I../mpn -g -O addmul_ui.c
 gcc -c -I. -I.. -I../mpn -g -O and.c
 gcc -c -I. -I.. -I../mpn -g -O array_init.c
 gcc -c -I. -I.. -I../mpn -g -O cdiv_q.c
