@@ -2,10 +2,19 @@
 
 	* Version 3.1 released.
 
+2000-08-02  Kevin Ryde  <kevin@swox.se>
+
+	* Makefile.am (EXTRA_HEADERS): Omit $(MPFR_HEADERS_OPTION).
+	* mpfr/Makefile.am (EXTRA_DIST): Add mpfr.h.
+
+2000-08-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/tests/try.c (try_init): Account for ALIGNMENTS when sizing
+	source and dest regions.
 	* mpn/alpha/ev6: New directory with ev6/21264 optimize code.
 	* mpn/alpha/ev6/addmul_1.asm: New file.
 	* mpn/alpha/ev6/gmp-mparam.h: New file.
-	
+
 2000-08-02  Kent Boortz  <kent@swox.com>
 
 	* mpfr: Integrated experimental version of mpfr-0.4.
@@ -773,7 +782,7 @@
 2000-05-22  Kevin Ryde  <kevin@swox.se>
 
 	* mp.h (_PROTO): Copy from gmp.h, use on prototypes.
-        Add extern "C" too.
+	Add extern "C" too.
 	* mpbsd/tests/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr.
 	* mpbsd/tests/allfuns.c: Don't execute mout, just link to it.
 	(main): ANSI style definition.
