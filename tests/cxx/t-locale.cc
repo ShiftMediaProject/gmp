@@ -28,18 +28,28 @@ MA 02111-1307, USA. */
 using namespace std;
 
 
-#if HAVE_STD__LOCALE
+char point_string[2];
 
-// Like std::numpunct, but with the decimal point character specified.
-//
+#if HAVE_STD__LOCALE
+// Like std::numpunct, but with decimal_point coming from point_string[].
 class my_numpunct : public numpunct<char> {
- private:
-  char  point;
  public:
-  explicit my_numpunct (size_t r, char c) : numpunct<char>(r) { point = c; }
+  explicit my_numpunct (size_t r = 0) : numpunct<char>(r) { }
  protected:
-  char do_decimal_point() const { return point; }
+  char do_decimal_point() const { return point_string[0]; }
 };
+#endif
+
+void
+set_point (char c)
+{
+  point_string[0] = c;
+
+#if HAVE_STD__LOCALE
+  locale loc (locale::classic(), new my_numpunct ());
+  locale::global (loc);
+#endif
+}
 
 
 void
@@ -65,7 +75,7 @@ check_input (void)
   };
 
   static char point[] = {
-    '.', ',', 'x', 0xFF
+    '.', ',', 'x', '\xFF'
   };
 
   mpf_t  got;
@@ -73,21 +83,17 @@ check_input (void)
 
   for (size_t i = 0; i < numberof (point); i++)
     {
-      locale loc (locale::classic(), new my_numpunct (0, point[i]));
+      set_point (point[i]);
 
       for (int neg = 0; neg <= 1; neg++)
         {
           for (size_t j = 0; j < numberof (data); j++)
             {
-              string str;
+              string str = string(data[j].str1)+point[i]+string(data[j].str2);
               if (neg)
-                str += '-';
-              str += data[j].str1;
-              str += point[i];
-              str += data[j].str2;
+                str = "-" + str;
 
               istringstream is (str.c_str());
-              is.imbue (loc);
 
               // dummy initial value
               mpf_set_d (got, 123.0);
@@ -123,14 +129,13 @@ void
 check_output (void)
 {
   static char point[] = {
-    '.', ',', 'x', 0xFF
+    '.', ',', 'x', '\xFF'
   };
 
-  for (int i = 0; i < numberof (point); i++)
+  for (size_t i = 0; i < numberof (point); i++)
     {
-      locale loc (locale::classic(), new my_numpunct (0, point[i]));
+      set_point (point[i]);
       ostringstream  got;
-      got.imbue (loc);
 
       mpf_t  f;
       mpf_init (f);
@@ -138,10 +143,7 @@ check_output (void)
       got << f;
       mpf_clear (f);
 
-      string  want;
-      want += "1";
-      want += point[i];
-      want += "5";
+      string  want = string("1") + point[i] + string("5");
 
       if (want.compare (got.str()) != 0)
         {
@@ -155,27 +157,36 @@ check_output (void)
 }
 
 int
-main (void)
+replacement_works (void)
 {
-  tests_start ();
+  set_point ('x');
+  mpf_t  f;
+  mpf_init (f);
+  mpf_set_d (f, 1.5);
+  ostringstream s;
+  s << f;
+  mpf_clear (f);
 
-  // not yet working
-  // check_input ();
-
-  check_output ();
-
-  tests_end ();
-  return 0;
+  return (s.str().compare("1x5") == 0);
 }
-
-
-#else
 
 int
 main (void)
 {
-  cout << "std::locale not supported, tests skipped\n";
+  tests_start ();
+
+  if (replacement_works())
+    {
+      // not yet supported
+      // check_input ();
+
+      check_output ();
+    }
+  else
+    {
+      cout << "Replacing decimal point didn't work, tests skipped\n";
+    }
+
+  tests_end ();
   return 0;
 }
-
-#endif
