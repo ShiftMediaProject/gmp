@@ -1,4 +1,10 @@
+2001-02-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/mips3/sqr_diagonal.asm: New file.
+
 2001-02-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/sqr_diagonal.asm: New file.
 
 	* mpn/generic/sqr_basecase.c: Remove declaration of mpn_sqr_diagonal.
 	Fix typo in header comment.
