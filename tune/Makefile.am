@@ -111,29 +111,7 @@ sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
 
 
-
-# This bit like mpn/Makefile.am
-
-# COMPILE minus CC.  FIXME: Really pass *_CFLAGS to CPP?
-COMPILE_FLAGS =	\
-	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-
-SUFFIXES = .asm
-.asm.o:
-	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
-.asm.obj:
-	$(M4) $(M4FLAGS) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
-.asm.lo:
-	$(M4) $(M4FLAGS) -DPIC -DOPERATION_$* $< >tmp-$*.s
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	rm -f tmp-$*.s
-
+include ../mpn/Makeasm.am
 
 
 # "mk" is multiplication in the karatsuba range

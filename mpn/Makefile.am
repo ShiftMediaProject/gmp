@@ -58,53 +58,5 @@ TARG_DIST = a29k alpha arm clipper cray generic hppa i960 ia64 lisp m68k m88k \
 
 EXTRA_DIST = underscore.h asm-defs.m4 $(TARG_DIST)
 
-# COMPILE minus CC.  FIXME: Really pass *_CFLAGS to CPP?
-COMPILE_FLAGS =	\
-	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 
-SUFFIXES = .s .S .asm
-
-# *.s are not preprocessed at all.
-.s.o:
-	$(CCAS) $(COMPILE_FLAGS) $<
-.s.obj:
-	$(CCAS) $(COMPILE_FLAGS) `cygpath -w $<`
-.s.lo:
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) $<
-
-# *.S are preprocessed with CPP.
-.S.o:
-	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
-.S.obj:
-	$(CPP) $(COMPILE_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
-
-# We have to rebuild the static object file without passing -DPIC to
-# preprocessor.  The overhead cost is one extra assemblation.  FIXME:
-# Teach libtool how to assemble with a preprocessor pass (CPP or m4).
-
-.S.lo:
-	$(CPP) $(COMPILE_FLAGS) -DPIC $< | grep -v '^#' >tmp-$*.s
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	rm -f tmp-$*.s
-
-# *.m4 are preprocessed with m4.
-.asm.o:
-	$(M4) -DOPERATION_$* $< >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
-.asm.obj:
-	$(M4) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
-.asm.lo:
-	$(M4) -DPIC -DOPERATION_$* $< >tmp-$*.s
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	$(M4) -DOPERATION_$* $< >tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	rm -f tmp-$*.s
+include Makeasm.am
