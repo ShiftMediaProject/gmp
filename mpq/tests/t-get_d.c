@@ -1,6 +1,6 @@
-/* Test mpq_get_d
+/* Test mpq_get_d and mpq_set_d
 
-Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,6 +33,21 @@ MA 02111-1307, USA. */
 #define SIZE 4
 #endif
 
+void
+MPQ_CHECK_FORMAT (q)
+     mpq_t q;
+{
+  mp_size_t n;
+
+  n = ABSIZ (mpq_numref (q));
+  if (n != 0)
+    ASSERT_ALWAYS (PTR(mpq_numref(q))[n - 1] != 0);
+
+  n = ABSIZ (mpq_denref (q));
+  if (n != 0)
+    ASSERT_ALWAYS (PTR(mpq_denref(q))[n - 1] != 0);
+}
+
 main (argc, argv)
      int argc;
      char **argv;
@@ -42,7 +57,8 @@ main (argc, argv)
   int reps = 10000;
   int i, j;
   double last_d, new_d;
-  mpz_t eps;
+  mpq_t qlast_d, qnew_d;
+  mpq_t eps;
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -51,7 +67,9 @@ main (argc, argv)
      numbers to the numerator and denominator.  */
 
   mpq_init (a);
-  mpz_init (eps);
+  mpq_init (eps);
+  mpq_init (qlast_d);
+  mpq_init (qnew_d);
 
   for (i = 0; i < reps; i++)
     {
@@ -67,16 +85,37 @@ main (argc, argv)
       mpq_canonicalize (a);
 
       last_d = mpq_get_d (a);
+      mpq_set_d (qlast_d, last_d);
       for (j = 0; j < 10; j++)
 	{
-	  size = urandom () % SIZE;
-	  mpz_random2 (eps, size);
-	  mpz_add (mpq_numref (a), mpq_numref (a), eps);
+	  size = urandom () % SIZE + 1;
+	  mpz_random2 (mpq_numref (eps), size);
+	  size = urandom () % SIZE + 1;
+	  mpz_random2 (mpq_denref (eps), size);
+	  mpq_canonicalize (eps);
+
+	  mpq_add (a, a, eps);
 	  mpq_canonicalize (a);
 	  new_d = mpq_get_d (a);
 	  if (last_d > new_d)
-	    abort ();
+	    {
+	      fprintf (stderr, "ERROR (test %d/%d): bad mpq_get_d results\n", i, j);
+	      printf ("\nlast: %f\n      ", last_d);
+	      printf (" new: %f\n      ", new_d); dump (a);
+	      abort ();
+	    }
+	  mpq_set_d (qnew_d, new_d);
+	  MPQ_CHECK_FORMAT (qnew_d);
+	  if (mpq_cmp (qlast_d, qnew_d) > 0)
+	    {
+	      fprintf (stderr,
+		       "ERROR (test %d/%d): bad mpq_set_d results\n", i, j);
+	      printf ("\nlast: %f\n      ", last_d); dump (qlast_d);
+	      printf (" new: %f\n      ", new_d); dump (qnew_d);
+	      abort ();
+	    }
 	  last_d = new_d;
+	  mpq_set (qlast_d, qnew_d);
 	}
     }
 
