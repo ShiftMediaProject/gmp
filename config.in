@@ -231,9 +231,6 @@ MA 02111-1307, USA.
 /* Define if you have the `read_real_time' function. */
 #undef HAVE_READ_REAL_TIME
 
-/* Define if you have the `snprintf' function. */
-#undef HAVE_SNPRINTF
-
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
@@ -300,7 +297,7 @@ MA 02111-1307, USA.
 /* Define if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define if you have the `vsnprintf' function. */
+/* Define if you have vsnprintf and it works properly. */
 #undef HAVE_VSNPRINTF
 
 /* Assembler local label prefix */
