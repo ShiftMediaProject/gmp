@@ -1451,6 +1451,20 @@ GMP_C_ATTRIBUTE_NORETURN
 GMP_C_ATTRIBUTE_CONST
 
 
+# Exclude the mpn random functions from mpbsd since that would drag in the
+# top-level rand things, all of which are unnecessary for libmp.  There's
+# other unnecessary objects there too actually, if we could be bothered
+# figuring out exactly what.
+#
+mpn_objs_in_libmp=
+for i in $mpn_objs_in_libgmp; do
+  case $i in
+  *random*) ;;
+  *) mpn_objs_in_libmp="$mpn_objs_in_libmp $i" ;;
+  esac
+done
+AC_SUBST(mpn_objs_in_libmp)
+
 AC_SUBST(mpn_objects)
 AC_SUBST(mpn_objs_in_libgmp)
 AC_SUBST(gmp_srclinks)
