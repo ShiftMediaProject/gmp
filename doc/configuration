@@ -280,10 +280,6 @@ During development:
     aclocal.m4   |
     acconfig.h   /
 
-When configured with --enable-maintainer-mode the necessary tools are
-re-run on changing the input files.  This can end up running a lot
-more things than are really necessary, but that's too bad.
-
 At build time:
 
     Input files        Tool       Output files
@@ -294,6 +290,19 @@ At build time:
     gmp-h.in     |                | config.m4
     mp-h.in      /                | gmp.h
                                   \ mp.h
+
+When configured with --enable-maintainer-mode the Makefiles include
+rules to re-run the necessary tools are re-run if the input files are
+changed.  This can end up running a lot more things than are really
+necessary.
+
+If a build tree is in too much of a mess for those rules to work
+properly then a bootstrap can be done from the source directory with
+
+	aclocal -I mpfr
+	autoconf
+	automake
+	autoheader
 
 ** C++ configuration
 
