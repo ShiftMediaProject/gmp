@@ -216,10 +216,24 @@ double speed_umul_ppmm _PROTO ((struct speed_params *s));
 
 /* Prototypes for other routines */
 
+/* struct timeval *end, *start */
+#define TIMEVAL_DIFF_USEC(end, start)                           \
+  ((end)->tv_usec - (start)->tv_usec                            \
+   + 1000000L * ((end)->tv_sec - (start)->tv_sec                \
+                 + ((end)->tv_usec < (start)->tv_usec)))
+#define TIMEVAL_DIFF_SEC(end, start)            \
+  (TIMEVAL_DIFF_USEC (end, start) * 1e-6)
+
 /* low 32-bits in p[0], high 32-bits in p[1] */
 void speed_cyclecounter _PROTO ((unsigned p[2]));
+double speed_cyclecounter_diff _PROTO ((const unsigned end[2],
+                                        const unsigned start[2]));
+int gettimeofday_microseconds_p _PROTO ((void));
+int getrusage_microseconds_p _PROTO ((void));
 
+int double_cmp_ptr _PROTO ((const double *p, const double *q));
 void pentium_wbinvd _PROTO ((void));
+typedef int (*qsort_function_t) _PROTO ((const void *, const void *));
 
 void noop _PROTO ((void));
 void noop_1 _PROTO ((mp_limb_t n));
@@ -801,7 +815,8 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
     (function (wp, wp2, xp, yp, s->size, 0));
 
 
-#define SPEED_ROUTINE_MPN_GCD_1xN(function)     \
+/* Doing an Nx1 gcd with the given r. */
+#define SPEED_ROUTINE_MPN_GCD_1N(function)      \
   {                                             \
     unsigned  i;                                \
     double    t;                                \
