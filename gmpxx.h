@@ -928,7 +928,7 @@ struct __gmp_binary_equal
     mpq_t temp;
     mpq_init(temp);
     mpq_set_d(temp, d);
-    b = (mpq_equal(q, temp) == 0);
+    b = (mpq_equal(q, temp) != 0);
     mpq_clear(temp);
     return b;
   }
@@ -938,7 +938,7 @@ struct __gmp_binary_equal
     mpq_t temp;
     mpq_init(temp);
     mpq_set_d(temp, d);
-    b = (mpq_equal(temp, q) == 0);
+    b = (mpq_equal(temp, q) != 0);
     mpq_clear(temp);
     return b;
   }
@@ -1073,7 +1073,7 @@ struct __gmp_binary_not_equal
     mpq_t temp;
     mpq_init(temp);
     mpq_set_d(temp, d);
-    b = (mpq_equal(q, temp) != 0);
+    b = (mpq_equal(q, temp) == 0);
     mpq_clear(temp);
     return b;
   }
@@ -1083,7 +1083,7 @@ struct __gmp_binary_not_equal
     mpq_t temp;
     mpq_init(temp);
     mpq_set_d(temp, d);
-    b = (mpq_equal(temp, q) != 0);
+    b = (mpq_equal(temp, q) == 0);
     mpq_clear(temp);
     return b;
   }
