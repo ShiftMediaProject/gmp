@@ -24,22 +24,27 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la \
-  $(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+  $(top_builddir)/libgmpxx.la $(LIBMPFR) $(top_builddir)/libgmp.la
+if WANT_MPFR
+LIBMPFR = $(top_builddir)/mpfr/libmpfr.a
+endif
 
 if WANT_CXX
-check_PROGRAMS = t-allfuns t-assign t-binary t-constr t-expr t-headers \
-  t-locale t-ostream t-ternary t-unary
+check_PROGRAMS = t-assign t-binary t-constr t-headers t-locale t-misc t-ops \
+  t-ostream t-prec t-rand t-ternary t-unary
 TESTS = $(check_PROGRAMS)
 endif
 
-t_allfuns_SOURCES = t-allfuns.cc
 t_assign_SOURCES  = t-assign.cc
 t_binary_SOURCES  = t-binary.cc
 t_constr_SOURCES  = t-constr.cc
-t_expr_SOURCES    = t-expr.cc
 t_headers_SOURCES = t-headers.cc
 t_locale_SOURCES  = t-locale.cc
+t_misc_SOURCES    = t-misc.cc
+t_ops_SOURCES     = t-ops.cc
 t_ostream_SOURCES = t-ostream.cc
+t_prec_SOURCES    = t-prec.cc
+t_rand_SOURCES    = t-rand.cc
 t_ternary_SOURCES = t-ternary.cc
 t_unary_SOURCES   = t-unary.cc
 
