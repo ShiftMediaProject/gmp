@@ -823,7 +823,7 @@ tune_mul (void)
 
   param.name = "MUL_KARATSUBA_THRESHOLD";
   param.min_size = MAX (4, MPN_KARA_MUL_N_MINSIZE);
-  param.max_size = MUL_TOOM3_THRESHOLD_LIMIT-1;
+  param.max_size = MUL_KARATSUBA_THRESHOLD_LIMIT-1;
   one (&mul_karatsuba_threshold, &param);
 
   param.name = "MUL_TOOM3_THRESHOLD";
@@ -906,7 +906,6 @@ tune_sqr (void)
                            SQR_KARATSUBA_THRESHOLD, SQR_BASECASE_THRESHOLD);
     one (&sqr_toom3_threshold, &param);
   }
-
 }
 
 
