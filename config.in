@@ -119,6 +119,12 @@ MA 02111-1307, USA.
 /* Version number of package */
 #undef VERSION
 
+/* Define if you have the `getopt_long' function. */
+#undef HAVE_GETOPT_LONG
+
+/* Define if you have the <getopt.h> header file. */
+#undef HAVE_GETOPT_H
+
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
