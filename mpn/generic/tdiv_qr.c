@@ -12,15 +12,6 @@
    The time complexity of this is O(qn*qn+M(dn,qn)), where M(m,n) is the time
    complexity of multiplication.
 
-   THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
-   SAFE TO CALL THIS FUNCTION THROUGH DOCUMENTED INTERFACES.  IN FACT,
-   IT IS ALMOST GUARANTEED THAT THIS FUNCTION WILL CHANGE INCOMPATIBLY
-   OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
-
-   (We're considering to:
-     1. Make it return the most significant quotient limb instead of store it
-     2. Change the name to mpn_tdiv_qr_mn.)
-
 Copyright (C) 1997, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
