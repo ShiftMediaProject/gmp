@@ -1,55 +1,54 @@
-; HP-PA 7100/7200 __gmpn_submul_1 -- Multiply a limb vector with a limb and
-; subtract the result from a second limb vector.
+dnl  HP-PA 7100/7200 mpn_submul_1 -- Multiply a limb vector with a limb and
+dnl  subtract the result from a second limb vector.
 
-; Copyright 1995, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1995, 2000, 2001 Free Software Foundation, Inc.
 
-; This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-; The GNU MP Library is free software; you can redistribute it and/or modify
-; it under the terms of the GNU Lesser General Public License as published by
-; the Free Software Foundation; either version 2.1 of the License, or (at your
-; option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
 
-; The GNU MP Library is distributed in the hope that it will be useful, but
-; WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-; or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-; License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
 
-; You should have received a copy of the GNU Lesser General Public License
-; along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-; the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-; MA 02111-1307, USA.
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
-; INPUT PARAMETERS
-#define res_ptr	%r26
-#define s1_ptr	%r25
-#define size	%r24
-#define s2_limb	%r23
+include(`../config.m4')
 
-#define cylimb	%r28
-#define s0	%r19
-#define s1	%r20
-#define s2	%r3
-#define s3	%r4
-#define lo0	%r21
-#define lo1	%r5
-#define lo2	%r6
-#define lo3	%r7
-#define hi0	%r22
-#define hi1	%r23				/* safe to reuse */
-#define hi2	%r29
-#define hi3	%r1
+C INPUT PARAMETERS
+define(`res_ptr',`%r26')
+define(`s1_ptr',`%r25')
+define(`size',`%r24')
+define(`s2_limb',`%r23')
 
-	.code
-	.export		__gmpn_submul_1
-	.label		__gmpn_submul_1
-	.proc
-	.callinfo	frame=128,no_calls
-	.entry
+define(`cylimb',`%r28')
+define(`s0',`%r19')
+define(`s1',`%r20')
+define(`s2',`%r3')
+define(`s3',`%r4')
+define(`lo0',`%r21')
+define(`lo1',`%r5')
+define(`lo2',`%r6')
+define(`lo3',`%r7')
+define(`hi0',`%r22')
+define(`hi1',`%r23')				C safe to reuse
+define(`hi2',`%r29')
+define(`hi3',`%r1')
+
+ASM_START()
+PROLOGUE(mpn_submul_1)
+C	.callinfo	frame=128,no_calls
 
 	ldo	128(%r30),%r30
 	stws	s2_limb,-16(%r30)
-	add	 %r0,%r0,cylimb			; clear cy and cylimb
+	add	 %r0,%r0,cylimb			C clear cy and cylimb
 	addib,<	-4,size,L$few_limbs
 	fldws	-16(%r30),%fr31R
 
@@ -69,11 +68,11 @@
 	ldws	-16(%r31),cylimb
 	ldws	-12(%r31),lo0
 	sub	 s0,lo0,s0
-	add	 s0,lo0,%r0			; invert cy
+	add	 s0,lo0,%r0			C invert cy
 	addib,< -1,size,L$few_limbs
 	stws,ma	 s0,4(res_ptr)
 
-; start software pipeline ----------------------------------------------------
+C start software pipeline ----------------------------------------------------
 	.label	L$0
 	fldds,ma 8(s1_ptr),%fr4
 	fldds,ma 8(s1_ptr),%fr8
@@ -103,8 +102,8 @@
 	addc	 lo3,hi2,lo3
 
 	addib,<	 -4,size,L$end
-	addc	 %r0,hi3,cylimb			; propagate carry into cylimb
-; main loop ------------------------------------------------------------------
+	addc	 %r0,hi3,cylimb			C propagate carry into cylimb
+C main loop ------------------------------------------------------------------
 	.label	L$loop
 	fldds,ma 8(s1_ptr),%fr4
 	fldds,ma 8(s1_ptr),%fr8
@@ -126,8 +125,8 @@
 	subb	 s2,lo2,s2
 	fstds	 %fr10,8(%r31)
 	subb	 s3,lo3,s3
-	subb	 %r0,%r0,lo0			; these two insns ...
-	add	 lo0,lo0,%r0			; ... just invert cy
+	subb	 %r0,%r0,lo0			C these two insns ...
+	add	 lo0,lo0,%r0			C ... just invert cy
 
 	ldws   -16(%r31),hi0
 	ldws   -12(%r31),lo0
@@ -148,8 +147,8 @@
 	stws,ma	 s3,4(res_ptr)
 
 	addib,>= -4,size,L$loop
-	addc	 %r0,hi3,cylimb			; propagate carry into cylimb
-; finish software pipeline ---------------------------------------------------
+	addc	 %r0,hi3,cylimb			C propagate carry into cylimb
+C finish software pipeline ---------------------------------------------------
 	.label	L$end
 	ldws	 0(res_ptr),s0
 	ldws	 4(res_ptr),s1
@@ -164,10 +163,10 @@
 	stws,ma	 s2,4(res_ptr)
 	subb	 s3,lo3,s3
 	stws,ma	 s3,4(res_ptr)
-	subb	 %r0,%r0,lo0			; these two insns ...
-	add	 lo0,lo0,%r0			; ... invert cy
+	subb	 %r0,%r0,lo0			C these two insns ...
+	add	 lo0,lo0,%r0			C ... invert cy
 
-; restore callee-saves registers ---------------------------------------------
+C restore callee-saves registers ---------------------------------------------
 	ldw	-96(%r30),%r3
 	ldw	-92(%r30),%r4
 	ldw	-88(%r30),%r5
@@ -187,7 +186,7 @@
 	addc	 lo0,cylimb,lo0
 	addc	 %r0,hi0,cylimb
 	sub	 s0,lo0,s0
-	add	 s0,lo0,%r0			; invert cy
+	add	 s0,lo0,%r0			C invert cy
 	stws,ma	 s0,4(res_ptr)
 	addib,<> -1,size,L$loop2
 	nop
@@ -196,6 +195,4 @@
 	addc	 %r0,cylimb,cylimb
 	bv	 0(%r2)
 	ldo	 -128(%r30),%r30
-
-	.exit
-	.procend
+EPILOGUE(mpn_submul_1)
