@@ -100,8 +100,8 @@ double_cmp_ptr (const double *p, const double *q)
    speed_precision * speed_unittime.  This aims to minimize the effects of a
    limited accuracy time base and the overhead of the measuring itself.
 
-   Measurements are made looking for 3 results within TOLERANCE of each
-   other (or 2 for routines taking longer than 2 seconds).  This aims to get
+   Measurements are made looking for 4 results within TOLERANCE of each
+   other (or 3 for routines taking longer than 2 seconds).  This aims to get
    an accurate reading even if some runs are bloated by interrupts or task
    switches or whatever.
 
@@ -157,11 +157,11 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
       if (speed_precision == 0)
         return t[i];
 
-      /* require 2 values within TOLERANCE when >= 2 secs, 3 when below */
+      /* require 3 values within TOLERANCE when >= 2 secs, 4 when below */
       if (t[0] >= 2.0)
-        e = 2;
-      else
         e = 3;
+      else
+        e = 4;
 
       /* Look for e many t[]'s within TOLERANCE of each other to consider a
          valid measurement.  Return smallest among them.  */
@@ -452,6 +452,11 @@ speed_mpn_popcount (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_POPCOUNT (mpn_popcount);
 }
+double
+speed_mpn_hamdist (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_HAMDIST (mpn_hamdist);
+}
 
 
 
@@ -522,18 +527,6 @@ speed_mpn_xnor_n (struct speed_params *s)
 
 
 double
-speed_mpz_fac_ui (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPZ_UI (mpz_fac_ui);
-}
-double
-speed_mpz_fib_ui (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPZ_UI (mpz_fib_ui);
-}
-
-
-double
 speed_mpn_mul_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MUL_N (mpn_mul_n);
@@ -587,6 +580,30 @@ double
 speed_mpn_toom3_sqr_n (struct speed_params *s)
 {
   SPEED_ROUTINE_GMPN_TOOM3_SQR_N (mpn_toom3_sqr_n);
+}
+
+
+double
+speed_mpn_gcd (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCD (mpn_gcd);
+}
+double
+speed_mpn_gcdext (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCDEXT (mpn_gcdext);
+}
+
+
+double
+speed_mpz_fac_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_UI (mpz_fac_ui);
+}
+double
+speed_mpz_fib_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_UI (mpz_fib_ui);
 }
 
 
