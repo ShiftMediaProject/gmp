@@ -42,7 +42,7 @@ PROLOGUE(mpn_mul_1)
 	ands	r12, n, #1
 	beq	L(skip1)
 	ldr	lr, [up], #4
-	umull	r9, r12, lr, v
+	umull	r9, r12, lr, vl
 	str	r9, [rp], #4
 L(skip1):
 	tst	n, #2
@@ -50,9 +50,9 @@ L(skip1):
 	mov	r8, r12
 	ldmia	up!, { r12, lr }
 	mov	r9, #0
-	umlal	r8, r9, r12, v
+	umlal	r8, r9, r12, vl
 	mov	r12, #0
-	umlal	r9, r12, lr, v
+	umlal	r9, r12, lr, vl
 	stmia	rp!, { r8, r9 }
 L(skip2):
 	bics	n, n, #3
@@ -63,13 +63,13 @@ L(loop):
 	ldmia	up!, { r8, r9, r12, lr }
 	ldr	r7, [rp, #12]			C cache allocate
 	mov	r7, #0
-	umlal	r6, r7, r8, v
+	umlal	r6, r7, r8, vl
 	mov	r8, #0
-	umlal	r7, r8, r9, v
+	umlal	r7, r8, r9, vl
 	mov	r9, #0
-	umlal	r8, r9, r12, v
+	umlal	r8, r9, r12, vl
 	mov	r12, #0
-	umlal	r9, r12, lr, v
+	umlal	r9, r12, lr, vl
 	subs	n, n, #4
 	stmia	rp!, { r6, r7, r8, r9 }
 	bne	L(loop)
