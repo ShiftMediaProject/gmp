@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 23 Apr 2002.  An up-to-date version is available at
+  This file current as of 27 Apr 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -710,6 +710,7 @@ MA 02111-1307, USA.
      native compile, but needs a reliable way to examine object files when
      cross-compiling.  Falling back on a run-time test would be reasonable, if
      build time tests fail.
+<li> a29k: umul.s and udiv.s exist but don't get used.
 <li> ARM: <code>umul_ppmm</code> in longlong.h always uses <code>umull</code>,
      but is that available only for M series chips or some such?  Perhaps it
      should be configured in some way.
@@ -790,6 +791,9 @@ MA 02111-1307, USA.
      <code>-mno-cygwin</code>.  For <code>--host=*-*-mingw32*</code> it might
      be convenient to automatically use that option, if it works.  Needs
      someone with a dual cygwin/mingw setup to test.
+<li> Automake: Latest automake has a <code>CCAS</code>, <code>CCASFLAGS</code>
+     scheme.  Though we probably wouldn't be using its assembler support we
+     could do use those variables in compatible ways.
 </ul>
 
 
