@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-18  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/alpha/unicos.m4 (ALIGN): Add comments on what GCC does.
+
+	* configure.in (fat setups), acinclude.m4 (GMP_INIT): Obscure
+	include() from automake 1.8 aclocal.
+	* acinclude.m4: Quote names in AC_DEFUN, for automake 1.8 aclocal.
+
 2003-12-17  Niels Möller  <nisse@harpo.hack.org>
 
 	* tune/common.c (speed_mpn_hgcd, speed_mpn_hgcd_lehmer) [nails]:
