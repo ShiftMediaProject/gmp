@@ -36,22 +36,21 @@ int
 mpz_probab_prime_p (mpz_srcptr n, int reps)
 {
   mp_limb_t r;
-  mpz_t     nabs;
-
-  if (UNLIKELY (SIZ(n) < 0))
-    {
-      SIZ(nabs) = - SIZ(n);
-      PTR(nabs) = PTR(n);
-      ASSERT_CODE (ALLOC(nabs) = ALLOC(n));
-      n = nabs;
-    }
+  mpz_t n2;
 
   /* Handle small and negative n.  */
   if (mpz_cmp_ui (n, 1000000L) <= 0)
     {
       int is_prime;
-      is_prime = isprime (mpz_get_ui (n));
-      return is_prime ? 2 : 0;
+      if (SIZ(n) >= 0)
+	{
+	  is_prime = isprime (mpz_get_ui (n));
+	  return is_prime ? 2 : 0;
+	}
+      /* Negative number.  Negate and fall out.  */
+      PTR(n2) = PTR(n);
+      SIZ(n2) = -SIZ(n);
+      n = n2;
     }
 
   /* If n is now even, it is not a prime.  */
