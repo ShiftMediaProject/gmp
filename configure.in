@@ -2274,6 +2274,10 @@ if test "$gmp_asm_syntax_testing" != no; then
   GMP_ASM_ALIGN_LOG
 
   case $host in
+    hppa*-*-*)
+      # for both pa32 and pa64
+      GMP_INCLUDE_MPN(pa32/pa-defs.m4)
+      ;;
     m68*-*-*)
       GMP_ASM_M68K_INSTRUCTION
       GMP_ASM_M68K_ADDRESSING
