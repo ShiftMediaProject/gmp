@@ -248,6 +248,8 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
     {
       k++;
       K *= 2;
+      if (k == 10)			/* cap allocation */
+	break;
     }
 
   tp = TMP_ALLOC_LIMBS (2 * mn + 1);
@@ -450,7 +452,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 
   if ((ep[0] & 1) && SIZ(b) < 0 && xn != 0)
     {
-      mp = PTR(m);                    /* want original, unnormalized m */
+      mp = PTR(m);			/* want original, unnormalized m */
       mpn_sub (xp, mp, mn, xp, xn);
       xn = mn;
       MPN_NORMALIZE (xp, xn);
