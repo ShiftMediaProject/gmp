@@ -48,10 +48,10 @@ digit_value_in_base (c, base)
 
 size_t
 #if __STDC__
-mpz_inp_str (mpz_ptr dest, FILE *stream, int base)
+mpz_inp_str (mpz_ptr x, FILE *stream, int base)
 #else
-mpz_inp_str (dest, stream, base)
-     mpz_ptr dest;
+mpz_inp_str (x, stream, base)
+     mpz_ptr x;
      FILE *stream;
      int base;
 #endif
@@ -60,7 +60,7 @@ mpz_inp_str (dest, stream, base)
   size_t alloc_size, str_size;
   int c;
   int negative;
-  mp_size_t dest_size;
+  mp_size_t xsize;
   size_t nread;
 
   if (stream == 0)
@@ -84,6 +84,7 @@ mpz_inp_str (dest, stream, base)
     {
       negative = 1;
       c = getc (stream);
+      nread++;
     }
 
   if (digit_value_in_base (c, base == 0 ? 10 : base) < 0)
@@ -105,7 +106,20 @@ mpz_inp_str (dest, stream, base)
 	      c = getc (stream);
 	      nread++;
 	    }
+	  else if (c == 'b' || c == 'B')
+	    {
+	      base = 2;
+	      c = getc (stream);
+	      nread++;
+	    }
 	}
+    }
+
+  /* Skip leading zeros.  */
+  while (c == '0')
+    {
+      c = getc (stream);
+      nread++;
     }
 
   for (;;)
@@ -126,12 +140,21 @@ mpz_inp_str (dest, stream, base)
 
   ungetc (c, stream);
 
-  dest_size = str_size / __mp_bases[base].chars_per_limb + 1;
-  if (dest->_mp_alloc < dest_size)
-    _mpz_realloc (dest, dest_size);
+  /* Make sure the string is not empty, mpn_set_str would fail.  */
+  if (str_size == 0)
+    {
+      x->_mp_size = 0;
+      return nread;
+    }
 
-  dest_size = mpn_set_str (dest->_mp_d, (unsigned char *) str, str_size, base);
-  dest->_mp_size = negative ? -dest_size : dest_size;
+  xsize = (((mp_size_t) (str_size / __mp_bases[base].chars_per_bit_exactly))
+	   / BITS_PER_MP_LIMB + 2);
+  if (x->_mp_alloc < xsize)
+    _mpz_realloc (x, xsize);
+
+  /* Convert the byte array in base BASE to our bignum format.  */
+  xsize = mpn_set_str (x->_mp_d, (unsigned char *) str, str_size, base);
+  x->_mp_size = negative ? -xsize : xsize;
 
   (*_mp_free_func) (str, alloc_size);
   return str_size + nread;
