@@ -99,7 +99,7 @@ fi
 
 case "$guess_full" in
 
-alpha*-*-netbsd* | alpha*-*-freebsd*)
+alpha*-*-netbsd* | alpha*-*-freebsd* | alpha*-*-openbsd*)
   # configfsf.guess has a block of code not unlike this for OSF and linsux.
   # Perhaps it'll support *BSD too some time, in which case the code here
   # can be removed.
@@ -208,18 +208,13 @@ main ()
       switch (family)
 	{
 	case 5:
-	  if (model <= 2)
-	    modelstr = "pentium";
-	  else if (model >= 4)
-	    modelstr = "pentiummmx";
+	  if (model <= 2)	modelstr = "pentium";
+	  else if (model >= 4)	modelstr = "pentiummmx";
 	  break;
 	case 6:
-	  if (model == 1)
-	    modelstr = "pentiumpro";
-	  else if (model <= 6)
-	    modelstr = "pentium2";
-	  else
-	    modelstr = "pentium3";
+	  if (model == 1)	modelstr = "pentiumpro";
+	  else if (model <= 6)	modelstr = "pentium2";
+	  else			modelstr = "pentium3";
 	  break;
 	}
     }
@@ -228,14 +223,10 @@ main ()
       switch (family)
 	{
 	case 5:
-	  if (model <= 3)
-	    modelstr = "k5";
-	  else if (model <= 7)
-	    modelstr = "k6";
-	  else if (model <= 8)
-	    modelstr = "k62";
-	  else if (model <= 9)
-	    modelstr = "k63";
+	  if (model <= 3)	modelstr = "k5";
+	  else if (model <= 7)	modelstr = "k6";
+	  else if (model <= 8)	modelstr = "k62";
+	  else if (model <= 9)	modelstr = "k63";
 	  break;
 	case 6:
 	  modelstr = "athlon";
