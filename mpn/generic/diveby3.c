@@ -33,47 +33,45 @@ MA 02111-1307, USA.
 #define INVERSE_3      ((MP_LIMB_T_MAX / 3) * 2 + 1)
 
 
-/* Divide src,size by 3 and store the quotient in dst,size.  If src,size
-   isn't exactly divisible by 3 the result in dst,size won't be very useful.
-   The return value is 0 if src,size was divisible by 3, or non-zero if not.
+/* The "c += ..."s are adding the high limb of 3*l to c.  That high limb
+   will be 0, 1 or 2.  Doing two separate "+="s seems to turn out better
+   code on gcc (as of 2.95.2 at least).
 
-   This code will be better than the equivalent mpn_divmod_1 for any CPUs
-   with a fast mul but slowish div.
-
-   The c += is adding the high word of 3*l to c.  That high word will be 0,
-   1 or 2.
-
-   The quotient q and return value r satisfy r*b^n+a == 3*q, where a is the
-   dividend, n is the size of a and q, and b is the limb size, 2^32 or 2^64.
-   Clearly when r==0 this gives q==a/3, but the actual result when r!=0
-   isn't documented at the moment.  */
+   When a subtraction of a 0,1,2 carry value causes a borrow, that leaves a
+   limb value of either 0xFF...FF or 0xFF...FE and the multiply by INVERSE_3
+   gives 0x55...55 or 0xAA...AA respectively, producing a further borrow of
+   only 0 or 1 respectively.  Hence the carry out of each stage and for the
+   return value is always only 0, 1 or 2.  */
 
 mp_limb_t
 #if __STDC__
-mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size)
+mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
 #else
-mpn_divexact_by3 (dst, src, size)
+mpn_divexact_by3c (dst, src, size, c)
      mp_ptr    dst;
      mp_srcptr src;
      mp_size_t size;
+     mp_limb_t carry;
 #endif
 {
   mp_size_t  i;
-  mp_limb_t  c, l;
 
   ASSERT (size >= 1);
 
-  c = 0;
   i = 0;
   do
     {
-      l = src[i] - c;
-      c = (l > src[i]);
+      mp_limb_t  l, s;
+
+      s = src[i];
+      l = s - c;
+      c = (l > s);
 
       l *= INVERSE_3;
       dst[i] = l;
 
-      c += (l > MP_LIMB_T_MAX/3) + (l > (MP_LIMB_T_MAX/3)*2);
+      c += (l > MP_LIMB_T_MAX/3);
+      c += (l > (MP_LIMB_T_MAX/3)*2);
     }
   while (++i < size);
 
