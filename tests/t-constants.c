@@ -150,17 +150,10 @@ char *shrt_max_def = "not defined";
   } while (0)
 
 
-/* gcc 2.95.2 -mpowerpc64 -maix64 needs "static" on maxval and minval or it
-   thinks LONG_MAX<=LONG_MIN, at least when those values are decimal
-   constants without "L"s as provided by the AIX 4.3 headers.  Presumably
-   some gremlin in the constant folding, or the type of big constants.  (A
-   constant bigger than an int should be interpreted as an unsigned or a
-   long or an unsigned long, as necessary.)  */
-
 #define CHECK_MAX_S(max_val, max_name, min_val, min_name, type, format) \
   do {                                                                  \
-    static type  maxval = max_val;                                      \
-    static type  minval = min_val;                                      \
+    type  maxval = max_val;                                             \
+    type  minval = min_val;                                             \
     type  n = maxval;                                                   \
     n++;                                                                \
     if (n != minval)                                                    \
@@ -215,16 +208,22 @@ main (int argc, char *argv[])
   CHECK_HIGHBIT (UINT_HIGHBIT,      unsigned int,   "0x%X");
   CHECK_HIGHBIT (USHRT_HIGHBIT,     unsigned short, "0x%hX");
   CHECK_HIGHBIT (LONG_HIGHBIT,      long,           "0x%lX");
+#if 0 /* These are undefined! */
   CHECK_HIGHBIT (INT_HIGHBIT,       int,            "0x%X");
   CHECK_HIGHBIT (SHRT_HIGHBIT,      short,          "0x%hX");
+#endif
 
+#if 0 /* These are undefined! */
   CHECK_MAX (LONG_MAX,      LONG_MIN,      long,           "%ld");
   CHECK_MAX (INT_MAX,       INT_MIN,       int,            "%d");
   CHECK_MAX (SHRT_MAX,      SHRT_MIN,      short,          "%hd");
+#endif
   CHECK_MAX (ULONG_MAX,     0,             unsigned long,  "%lu");
   CHECK_MAX (UINT_MAX,      0,             unsigned int,   "%u");
   CHECK_MAX (USHRT_MAX,     0,             unsigned short, "%hu");
+#if 0 /* This is undefined! */
   CHECK_MAX (MP_SIZE_T_MAX, MP_SIZE_T_MIN, mp_size_t,      SS("%d","%ld"));
+#endif
 
   /* UHWtype should have at least enough bits for half a UWtype */
   {
