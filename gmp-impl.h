@@ -27,10 +27,7 @@ MA 02111-1307, USA. */
 #ifndef __GMP_IMPL_H__
 #define __GMP_IMPL_H__
 
-/* When used from the GMP_FUNC_ALLOC test, config.h doesn't exist, but the
-   equivalent definitions will have come from confdefs.h included at the
-   start of the test program.  */
-#if ! GMP_FUNC_ALLOCA_TEST
+#if ! __GMP_WITHIN_CONFIGURE
 #include "config.h"
 #include "gmp-mparam.h"
 #endif
