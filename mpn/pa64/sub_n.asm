@@ -78,7 +78,7 @@ LDEF(2)	ldd		48(up), %r20
 	std		%r20, 48(rp)
 LDEF(1)	ldd		56(up), %r21
 	ldd		56(vp),%r19
-	sub, db		%r21, %r19, %r21
+	sub,db		%r21, %r19, %r21
 	ldo		64(up), up
 	std		%r21, 56(rp)
 	ldo		64(vp), vp
