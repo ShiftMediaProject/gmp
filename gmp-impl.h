@@ -97,7 +97,7 @@ MA 02111-1307, USA. */
 #define TMP_ALLOC_MP_PTRS(n)   TMP_ALLOC_TYPE(n,mp_ptr)
 
 
-#define ABS(x) (x >= 0 ? x : -x)
+#define ABS(x) ((x) >= 0 ? (x) : -(x))
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
 #define MAX(h,i) ((h) > (i) ? (h) : (i))
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
