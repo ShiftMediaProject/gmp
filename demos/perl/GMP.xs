@@ -293,10 +293,10 @@ typedef __gmp_randstate_struct *randstate;
 #define SvPOKorp(sv)  (SvPOK(sv) || SvPOKp(sv))
 
 static void
-class_or_croak (SV *sv, classconst char *class)
+class_or_croak (SV *sv, classconst char *cl)
 {
-  if (! sv_derived_from (sv, class))
-    croak("not type %s", class);
+  if (! sv_derived_from (sv, cl))
+    croak("not type %s", cl);
 }
 
 
@@ -567,20 +567,14 @@ coerce_ulong (SV *sv)
       n = SvIVX(sv);
     negative_check:
       if (n < 0)
-        {
-        range_error:
-          croak ("out of range for ulong");
-        }
+        goto range_error;
       return n;
     }
   if (SvNOK(sv))
     {
       double d = SvNVX(sv);
       if (! double_integer_p (d))
-        {
-        integer_error:
-          croak ("not an integer");
-        }
+        goto integer_error;
       n = SvIV(sv);
       goto negative_check;
     }
@@ -618,6 +612,12 @@ coerce_ulong (SV *sv)
         }
     }
   croak ("cannot coerce to ulong");
+
+ integer_error:
+  croak ("not an integer");
+
+ range_error:
+  croak ("out of range for ulong");
 }
 
 
@@ -631,10 +631,7 @@ coerce_long (SV *sv)
     {
       double d = SvNVX(sv);
       if (! double_integer_p (d))
-        {
-        integer_error:
-          croak ("not an integer");
-        }
+        goto integer_error;
       return SvIV(sv);
     }
 
@@ -647,10 +644,7 @@ coerce_long (SV *sv)
         {
           mpz z = SvMPZ(sv);
           if (! mpz_fits_slong_p (z->m))
-            {
-            range_error:
-              croak ("out of range for ulong");
-            }
+            goto range_error;
           return mpz_get_si (z->m);
         }
       if (sv_derived_from (sv, mpq_class))
@@ -673,6 +667,12 @@ coerce_long (SV *sv)
         }
     }
   croak ("cannot coerce to long");
+
+ integer_error:
+  croak ("not an integer");
+
+ range_error:
+  croak ("out of range for ulong");
 }
 
 
