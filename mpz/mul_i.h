@@ -60,31 +60,39 @@ FUNCTION (mpz_ptr prod, mpz_srcptr mult,
 
   size = ABS (size);
 
-  if (small_mult > GMP_NUMB_MAX)
-    MPZ_REALLOC (prod, size + 2);
-  else
-    MPZ_REALLOC (prod, size + 1);
-
-  pp = PTR(prod);
-
   sml = MULTIPLICAND_ABS (small_mult);
 
-  cy = mpn_mul_1 (pp, PTR(mult), size, sml & GMP_NUMB_MASK);
-#if GMP_NAIL_BITS != 0	/* this conditional just shuts of compiler warnings */
-  if (small_mult > GMP_NUMB_MAX)
+  if (small_mult <= GMP_NUMB_MAX)
     {
-      pp[size] = cy;
-      cy = mpn_addmul_1 (pp + 1, PTR(mult), size, sml >> GMP_NUMB_BITS);
-      pp[size + 1] = cy;
-      size += 2;
-      MPN_NORMALIZE_NOT_ZERO (pp, size);
-    }
-  else
-#endif
-    {
+      MPZ_REALLOC (prod, size + 1);
+      pp = PTR(prod);
+      cy = mpn_mul_1 (pp, PTR(mult), size, sml & GMP_NUMB_MASK);
       pp[size] = cy;
       size += cy != 0;
     }
+#if GMP_NAIL_BITS != 0
+  else
+    {
+      /* Operand too large for the current nails size.  Use temporary for
+	 intermediate products, to allow prod and mult being identical.  */
+      mp_ptr tp;
+      TMP_DECL (mark);
+      TMP_MARK (mark);
+
+      tp = TMP_ALLOC_LIMBS (size + 2);
+
+      cy = mpn_mul_1 (tp, PTR(mult), size, sml & GMP_NUMB_MASK);
+      tp[size] = cy;
+      cy = mpn_addmul_1 (tp + 1, PTR(mult), size, sml >> GMP_NUMB_BITS);
+      tp[size + 1] = cy;
+      size += 2;
+      MPN_NORMALIZE_NOT_ZERO (tp, size); /* too general, need to trim one or two limb */
+      MPZ_REALLOC (prod, size);
+      pp = PTR(prod);
+      MPN_COPY (pp, tp, size);
+      TMP_FREE (mark);
+    }
+#endif
 
   SIZ(prod) = ((sign_product < 0) ^ (small_mult < 0)) ? -size : size;
 }
