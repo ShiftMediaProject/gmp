@@ -23,6 +23,18 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
+/* Avoid reallocs by rounding up any new size */
+#define ROUNDUP_MASK  15
+
+/* Enhancement: use mpn_divexact_1 when it exists */
+#define MULDIV()                                                \
+  MPZ_REALLOC (r, (SIZ(r)+1)|ROUNDUP_MASK);                     \
+  PTR(r)[SIZ(r)] = mpn_mul_1 (PTR(r), PTR(r), SIZ(r), nacc);    \
+  ASSERT_NOCARRY (mpn_divrem_1 (PTR(r), (mp_size_t) 0,          \
+                                PTR(r), SIZ(r)+1, kacc));       \
+  SIZ(r) += (PTR(r)[SIZ(r)] != 0);
+
 void
 #if __STDC__
 mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
@@ -90,9 +102,8 @@ mpz_bin_uiui (r, n, k)
       if (n1 != 0)
         {
           /* Accumulator overflow.  Perform bignum step.  */
-          mpz_mul_ui (r, r, nacc);
+          MULDIV ();
           nacc = j;
-          mpz_tdiv_q_ui (r, r, kacc);
           kacc = i;
         }
       else
@@ -105,6 +116,5 @@ mpz_bin_uiui (r, n, k)
     }
 
   /* Take care of whatever is left in accumulators.  */
-  mpz_mul_ui (r, r, nacc);
-  mpz_tdiv_q_ui (r, r, kacc);
+  MULDIV ();
 }
