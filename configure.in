@@ -1817,6 +1817,7 @@ AC_HEADER_STDC
 AC_HEADER_TIME
 
 # Reasons for testing:
+#   float.h - not in SunOS bundled cc
 #   sys/param.h - not in mingw
 #   sys/processor.h - solaris specific, though also present in macos
 #   sys/resource.h - not in mingw
@@ -1828,7 +1829,7 @@ AC_HEADER_TIME
 # inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
 # default tests
 #
-AC_CHECK_HEADERS(fcntl.h locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(fcntl.h float.h locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # Reasons for testing:
 #   optarg - not declared in mingw
