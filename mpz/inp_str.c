@@ -30,24 +30,8 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-static int
-digit_value_in_base (int c, int base)
-{
-  int digit;
-
-  if (isdigit (c))
-    digit = c - '0';
-  else if (islower (c))
-    digit = c - 'a' + 10;
-  else if (isupper (c))
-    digit = c - 'A' + 10;
-  else
-    return -1;
-
-  if (digit < base)
-    return digit;
-  return -1;
-}
+extern const unsigned char __gmp_digit_value_tab[];
+#define digit_value_tab __gmp_digit_value_tab
 
 size_t
 mpz_inp_str (mpz_ptr x, FILE *stream, int base)
@@ -79,6 +63,21 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
   size_t alloc_size, str_size;
   int negative;
   mp_size_t xsize;
+  const unsigned char *digit_value;
+
+  if (EOF != -1)		/* FIXME: handle this by adding explicit */
+    abort ();			/* comparisons of c and EOF before each  */
+				/* read of digit_value[].  */
+
+  digit_value = digit_value_tab;
+  if (base > 36)
+    {
+      /* For bases > 36, use the collating sequence
+	 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.  */
+      digit_value += 224;
+      if (base > 62)
+	return 0;		/* too large base */
+    }
 
   negative = 0;
   if (c == '-')
@@ -88,7 +87,7 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
       nread++;
     }
 
-  if (digit_value_in_base (c, base == 0 ? 10 : base) < 0)
+  if (c == EOF || digit_value[c] >= (base == 0 ? 10 : base))
     return 0;			/* error if no digits */
 
   /* If BASE is 0, try to find out the base by looking at the initial
@@ -127,18 +126,18 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
   str = (char *) (*__gmp_allocate_func) (alloc_size);
   str_size = 0;
 
-  for (;;)
+  while (c != EOF)
     {
       int dig;
+      dig = digit_value[c];
+      if (dig >= base)
+	break;
       if (str_size >= alloc_size)
 	{
 	  size_t old_alloc_size = alloc_size;
 	  alloc_size = alloc_size * 3 / 2;
 	  str = (char *) (*__gmp_reallocate_func) (str, old_alloc_size, alloc_size);
 	}
-      dig = digit_value_in_base (c, base);
-      if (dig < 0)
-	break;
       str[str_size++] = dig;
       c = getc (stream);
     }
@@ -157,8 +156,7 @@ mpz_inp_str_nowhite (mpz_ptr x, FILE *stream, int base, int c, size_t nread)
       xsize = (((mp_size_t)
                 (str_size / __mp_bases[base].chars_per_bit_exactly))
                / GMP_NUMB_BITS + 2);
-      if (x->_mp_alloc < xsize)
-        _mpz_realloc (x, xsize);
+      MPZ_REALLOC (x, xsize);
 
       /* Convert the byte array in base BASE to our bignum format.  */
       xsize = mpn_set_str (x->_mp_d, (unsigned char *) str, str_size, base);
