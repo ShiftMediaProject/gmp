@@ -82,6 +82,9 @@ extern double  speed_cycletime;
 extern int     speed_precision;
 extern const char *speed_time_string;
 void speed_time_init _PROTO ((void));
+void speed_cycletime_init _PROTO ((void));
+void speed_cycletime_need_cycles _PROTO ((void));
+void speed_cycletime_need_seconds _PROTO ((void));
 void speed_starttime _PROTO ((void));
 double speed_endtime _PROTO ((void));
 
@@ -237,6 +240,7 @@ void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 void mpz_init_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 
 extern int  speed_option_addrs;
+extern int  speed_option_verbose;
 void speed_option_set _PROTO((const char *s));
 
 void mpn_toom3_mul_n_open _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
@@ -245,6 +249,21 @@ void mpn_toom3_sqr_n_open _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 void mpn_toom3_mul_n_mpn _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
                                   mp_ptr));
 void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+
+/* The measuring routines use these big macros to save duplication for
+   similar forms.  They also get used for some automatically generated
+   measuring of new implementations of functions.
+
+   Having something like SPEED_ROUTINE_BINARY_N as a subroutine accepting a
+   function pointer is considered undesirable since it's not the way a
+   normal application will be calling, and some processors might do
+   different things with an indirect call, like not branch predicting, or
+   doing a full pipe flush.  At least some of the "functions" measured are
+   actually macros too.
+
+   The net effect is to bloat the object code, possibly in a big way, but
+   only what's being measured is being run, so that doesn't matter.  */
 
 
 #define SPEED_RESTRICT_COND(cond)   if (!(cond)) return -1.0;

@@ -976,14 +976,10 @@ main (int argc, char *argv[])
     }
 
   speed_time_init ();
-
-  if ((option_unit == UNIT_CYCLES || option_unit == UNIT_CYCLESPERLIMB)
-      && speed_cycletime == 1.0)
-    {
-      fprintf (stderr, "Times in cycles requested, but CPU frequency unknown.\n");
-      fprintf (stderr, "Use environment variable GMP_CPU_FREQUENCY in Hertz, eg. 450e6\n");
-      exit (1);
-    }
+  if (option_unit == UNIT_CYCLES || option_unit == UNIT_CYCLESPERLIMB)
+    speed_cycletime_need_cycles ();
+  else
+    speed_cycletime_need_seconds ();
 
   if (option_gnuplot)
     {
