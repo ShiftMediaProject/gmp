@@ -57,6 +57,9 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
+/* Autoconf notes that AIX 4.3 has a broken strnlen, but fortunately it
+   doesn't affect us since __gmp_replacement_vsnprintf is not required on
+   that system.  */
 #if ! HAVE_STRNLEN
 static size_t
 strnlen (const char *s, size_t n)
