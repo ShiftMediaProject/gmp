@@ -1119,7 +1119,7 @@ tune_preinv_divrem_1 (void)
     printf ("size=%ld, mpn_preinv_divrem_1 %.9f, mpn_divrem_1 %.9f\n",
             s.size, t1, t2);
 
-  print_define ("USE_PREINV_DIVREM_1", (mp_size_t) (t1 < t2));
+  print_define_remark ("USE_PREINV_DIVREM_1", (mp_size_t) (t1 < t2), NULL);
 }
 
 
@@ -1170,7 +1170,7 @@ tune_preinv_mod_1 (void)
     printf ("size=%ld, mpn_preinv_mod_1 %.9f, mpn_mod_1_div %.9f\n",
             s.size, t1, t2);
 
-  print_define ("USE_PREINV_MOD_1", (mp_size_t) (t1 < t2));
+  print_define_remark ("USE_PREINV_MOD_1", (mp_size_t) (t1 < t2), NULL);
 }
 
 
