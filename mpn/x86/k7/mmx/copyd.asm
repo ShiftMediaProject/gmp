@@ -50,9 +50,12 @@ FRAME_pushl()
 
 	movl	PARAM_SRC, %eax
 	movl	PARAM_DST, %edx
-	cmpl	$UNROLL_THRESHOLD, %ecx
 
+	cmpl	$UNROLL_THRESHOLD, %ecx
 	jae	L(unroll)
+
+	orl	%ecx, %ecx
+	jz	L(simple_done)
 
 L(simple):
 	# eax	src
@@ -67,6 +70,7 @@ L(simple):
 	decl	%ecx
 	jnz	L(simple)
 
+L(simple_done):
 	popl	%ebx
 	ret
 
@@ -90,6 +94,7 @@ L(unroll):
 L(aligned):
 
 
+	ALIGN(32)	# avoid 0x3e
 L(top):
 	# eax	src
 	# ebx

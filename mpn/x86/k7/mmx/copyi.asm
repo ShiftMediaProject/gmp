@@ -64,6 +64,9 @@ FRAME_pushl()
 	cmpl	$UNROLL_THRESHOLD, %ecx
 	jae	L(unroll)
 
+	orl	%ecx, %ecx
+	jz	L(simple_done)
+
 L(simple):
 	# eax	src, incrementing
 	# ebx	scratch
@@ -79,6 +82,7 @@ L(simple):
 	leal	4(%edx), %edx
 	jnz	L(simple)
 
+L(simple_done):
 	popl	%ebx
 	ret
 
@@ -102,6 +106,7 @@ L(unroll):
 L(aligned):
 
 
+	# this is 0x41, close enough to aligned
 L(top):
 	# eax	src end - 12
 	# ebx
