@@ -25,5 +25,5 @@ MA 02111-1307, USA. */
 void
 gmp_randclear (gmp_randstate_t rstate)
 {
-  (*RNG_FNPTR (rstate)->randclear_fn) (rstate);
+  (*((gmp_randfnptr_t *) RNG_FNPTR (rstate))->randclear_fn) (rstate);
 }

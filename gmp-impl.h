@@ -704,17 +704,20 @@ typedef struct {
   void (*randclear_fn) (gmp_randstate_t rstate);
 } gmp_randfnptr_t;
 
-/* Macro to obtain a pointer to the function pointers structure.  */
-#define RNG_FNPTR(rstate) ((gmp_randfnptr_t *)((rstate)->_mp_algdata._mp_lc))
+/* Macro to obtain a void pointer to the function pointers structure.
+   When used as a lvalue the rvalue needs to be cast to void *.  */
+#define RNG_FNPTR(rstate) ((rstate)->_mp_algdata._mp_lc)
 
-/* Macro to obtain a void pointer to the generator's state */
-#define RNG_STATE(rstate) ((void *)((rstate)->_mp_seed->_mp_d))
+/* Macro to obtain a pointer to the generator's state.
+   When used as a lvalue the rvalue needs to be cast to mp_ptr.  */
+#define RNG_STATE(rstate) ((rstate)->_mp_seed->_mp_d)
 
-/* Write a given number of random bits to rp. */
+/* Write a given number of random bits to rp.  */
 #define _gmp_rand(rp, state, bits)                              \
   do {                                                          \
     gmp_randstate_ptr  __rstate = (state);                      \
-    (*RNG_FNPTR (__rstate)->randget_fn) (__rstate, rp, bits);   \
+    (*((gmp_randfnptr_t *) RNG_FNPTR (__rstate))->randget_fn)   \
+       (__rstate, rp, bits);                                    \
   } while (0)
 
 
