@@ -1,6 +1,6 @@
-dnl  PowerPC-64 mpn_lshift -- Shift a number left.
+dnl  PowerPC-64 mpn_lshift -- rp[] = up[] << cnt
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,141 +22,87 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     1.6375
+C POWER3/PPC630:     1.5
 C POWER4/PPC970:     ?
 
 C INPUT PARAMETERS
-C res_ptr	r3
-C s1_ptr	r4
-C size		r5
-C cnt		r6
+C rp	r3
+C up	r4
+C vp	r5
+C n	r6
+
+define(`rp',`r3')
+define(`up',`r4')
+define(`n',`r5')
+define(`cnt',`r6')
+
+define(`tnc',`r5')
+define(`v0',`r0')
+define(`v1',`r7')
+define(`u0',`r8')
+define(`u1',`r9')
+define(`h0',`r10')
+define(`h1',`r11')
+
 
 ASM_START()
 PROLOGUE(mpn_lshift)
-	cmpdi	cr0,r5,20	C more than 20 limbs?
-	sldi	r0,r5,3
-	add	r4,r4,r0	C make r4 point at end of s1
-	add	r7,r3,r0	C make r7 point at end of res
-	bgt	.LBIG		C branch if more than 12 limbs
+	mtctr	n		C copy n to count register
+	sldi	r0, n, 3	C byte count corresponding to n
+	add	rp, rp, r0	C rp = rp + n
+	add	up, up, r0	C up = up + n
+	addi	rp, rp, 8	C rp now points 16 beyond end
+	addi	up, up, -8	C up now points to last limb
+	subfic	tnc, cnt, 64	C reverse shift count
 
-	mtctr	r5		C copy size into CTR
-	subfic	r8,r6,64
-	ldu	r11,-8(r4)	C load first s1 limb
-	srd	r3,r11,r8	C compute function return value
-	bdz	.Lend1
+	ld	u0, 0(up)
+	sld	h0, u0, cnt
+	srd	r12, u0, tnc	C return value
+	bdz	.L1		C jump for n = 1
 
-.Loop:	ldu	r10,-8(r4)
-	sld	r9,r11,r6
-	srd	r12,r10,r8
-	or	r9,r9,r12
-	stdu	r9,-8(r7)
-	bdz	.Lend2
-	ldu	r11,-8(r4)
-	sld	r9,r10,r6
-	srd	r12,r11,r8
-	or	r9,r9,r12
-	stdu	r9,-8(r7)
+	ld	u1, -8(up)
+	bdz	.L2		C jump for n = 2
+
+	ldu	u0, -16(up)
+	bdz	.Lend		C jump for n = 3
+
+.Loop:	srd	v1, u1, tnc
+	sld	h1, u1, cnt
+	ld	u1, -8(up)
+	or	h0, v1, h0
+	stdu	h0, -16(rp)
+
+	bdz	.Lexit
+
+	srd	v0, u0, tnc
+	sld	h0, u0, cnt
+	ldu	u0, -16(up)
+	or	h1, v0, h1
+	std	h1, -8(rp)
+
 	bdnz	.Loop
 
-.Lend1:	sld	r0,r11,r6
-	std	r0,-8(r7)
+.Lend:	srd	v1, u1, tnc
+	sld	h1, u1, cnt
+	or	h0, v1, h0
+	stdu	h0, -16(rp)
+	srd	v0, u0, tnc
+	sld	h0, u0, cnt
+	or	h1, v0, h1
+	std	h1, -8(rp)
+.L1:	std	h0, -16(rp)
+	mr	r3, r12
 	blr
-.Lend2:	sld	r0,r10,r6
-	std	r0,-8(r7)
+
+.Lexit:	srd	v0, u0, tnc
+	sld	h0, u0, cnt
+	or	h1, v0, h1
+	std	h1, -8(rp)
+.L2:	srd	v1, u1, tnc
+	sld	h1, u1, cnt
+	or	h0, v1, h0
+	stdu	h0, -16(rp)
+	std	h1, -8(rp)
+	mr	r3, r12
 	blr
-
-.LBIG:
-	std	r24,-64(r1)
-	std	r25,-56(r1)
-	std	r26,-48(r1)
-	std	r27,-40(r1)
-	std	r28,-32(r1)
-	std	r29,-24(r1)
-	std	r30,-16(r1)
-	std	r31,-8(r1)
-	ldu	r9,-8(r4)
-	subfic	r8,r6,64
-	srd	r3,r9,r8	C compute function return value
-	sld	r0,r9,r6
-	addi	r5,r5,-1
-
-	andi.	r10,r5,3	C count for spill loop
-	beq	.Le
-	mtctr	r10
-	ldu	r28,-8(r4)
-	bdz	.Lxe0
-
-.Loop0:	sld	r12,r28,r6
-	srd	r24,r28,r8
-	ldu	r28,-8(r4)
-	or	r24,r0,r24
-	stdu	r24,-8(r7)
-	mr	r0,r12
-	bdnz	.Loop0		C taken at most once!
-
-.Lxe0:	sld	r12,r28,r6
-	srd	r24,r28,r8
-	or	r24,r0,r24
-	stdu	r24,-8(r7)
-	mr	r0,r12
-
-.Le:	srdi	r5,r5,2		C count for unrolled loop
-	addi	r5,r5,-1
-	mtctr	r5
-	ld	r28,-8(r4)
-	ld	r29,-16(r4)
-	ld	r30,-24(r4)
-	ldu	r31,-32(r4)
-
-.LoopU:	sld	r9,r28,r6
-	srd	r24,r28,r8
-	ld	r28,-8(r4)
-	sld	r10,r29,r6
-	srd	r25,r29,r8
-	ld	r29,-16(r4)
-	sld	r11,r30,r6
-	srd	r26,r30,r8
-	ld	r30,-24(r4)
-	sld	r12,r31,r6
-	srd	r27,r31,r8
-	ldu	r31,-32(r4)
-	or	r24,r0,r24
-	std	r24,-8(r7)
-	or	r25,r9,r25
-	std	r25,-16(r7)
-	or	r26,r10,r26
-	std	r26,-24(r7)
-	or	r27,r11,r27
-	stdu	r27,-32(r7)
-	mr	r0,r12
-	bdnz	.LoopU
-
-	sld	r9,r28,r6
-	srd	r24,r28,r8
-	sld	r10,r29,r6
-	srd	r25,r29,r8
-	sld	r11,r30,r6
-	srd	r26,r30,r8
-	sld	r12,r31,r6
-	srd	r27,r31,r8
-	or	r24,r0,r24
-	std	r24,-8(r7)
-	or	r25,r9,r25
-	std	r25,-16(r7)
-	or	r26,r10,r26
-	std	r26,-24(r7)
-	or	r27,r11,r27
-	stdu	r27,-32(r7)
-	mr	r0,r12
-
-	std	r0,-8(r7)
-	ld	r24,-64(r1)
-	ld	r25,-56(r1)
-	ld	r26,-48(r1)
-	ld	r27,-40(r1)
-	ld	r28,-32(r1)
-	ld	r29,-24(r1)
-	ld	r30,-16(r1)
-	ld	r31,-8(r1)
-	blr
-EPILOGUE(mpn_lshift)
+EPILOGUE()

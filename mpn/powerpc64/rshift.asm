@@ -1,6 +1,6 @@
-dnl  PowerPC-64 mpn_rshift -- Shift a number right.
+dnl  PowerPC-64 mpn_rshift -- rp[] = up[] >> cnt
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,42 +22,83 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     2.25
+C POWER3/PPC630:     1.5
 C POWER4/PPC970:     ?
 
 C INPUT PARAMETERS
-C res_ptr	r3
-C s1_ptr	r4
-C size		r5
-C cnt		r6
+C rp	r3
+C up	r4
+C vp	r5
+C n	r6
+
+define(`rp',`r3')
+define(`up',`r4')
+define(`n',`r5')
+define(`cnt',`r6')
+
+define(`tnc',`r5')
+define(`v0',`r0')
+define(`v1',`r7')
+define(`u0',`r8')
+define(`u1',`r9')
+define(`h0',`r10')
+define(`h1',`r11')
+
 
 ASM_START()
 PROLOGUE(mpn_rshift)
-	mtctr	r5		C copy size into CTR
-	addi	r7,r3,-8	C move adjusted res_ptr to free return reg
-	subfic	r8,r6,64
-	ld	r11,0(r4)	C load first s1 limb
-	sld	r3,r11,r8	C compute function return value
-	bdz	.Lend1
+	mtctr	n		C copy n to count register
+	addi	rp, rp, -16
+	subfic	tnc, cnt, 64	C reverse shift count
 
-.Loop:	ldu	r10,8(r4)
-	srd	r9,r11,r6
-	sld	r12,r10,r8
-	or	r9,r9,r12
-	stdu	r9,8(r7)
-	bdz	.Lend2
-	ldu	r11,8(r4)
-	srd	r9,r10,r6
-	sld	r12,r11,r8
-	or	r9,r9,r12
-	stdu	r9,8(r7)
+	ld	u0, 0(up)
+	srd	h0, u0, cnt
+	sld	r12, u0, tnc	C return value
+	bdz	.L1		C jump for n = 1
+
+	ld	u1, 8(up)
+	bdz	.L2		C jump for n = 2
+
+	ldu	u0, 16(up)
+	bdz	.Lend		C jump for n = 3
+
+.Loop:	sld	v1, u1, tnc
+	srd	h1, u1, cnt
+	ld	u1, 8(up)
+	or	h0, v1, h0
+	stdu	h0, 16(rp)
+
+	bdz	.Lexit
+
+	sld	v0, u0, tnc
+	srd	h0, u0, cnt
+	ldu	u0, 16(up)
+	or	h1, v0, h1
+	std	h1, 8(rp)
+
 	bdnz	.Loop
 
-.Lend1:	srd	r0,r11,r6
-	std	r0,8(r7)
+.Lend:	sld	v1, u1, tnc
+	srd	h1, u1, cnt
+	or	h0, v1, h0
+	stdu	h0, 16(rp)
+	sld	v0, u0, tnc
+	srd	h0, u0, cnt
+	or	h1, v0, h1
+	std	h1, 8(rp)
+.L1:	std	h0, 16(rp)
+	mr	r3, r12
 	blr
 
-.Lend2:	srd	r0,r10,r6
-	std	r0,8(r7)
+.Lexit:	sld	v0, u0, tnc
+	srd	h0, u0, cnt
+	or	h1, v0, h1
+	std	h1, 8(rp)
+.L2:	sld	v1, u1, tnc
+	srd	h1, u1, cnt
+	or	h0, v1, h0
+	stdu	h0, 16(rp)
+	std	h1, 8(rp)
+	mr	r3, r12
 	blr
-EPILOGUE(mpn_rshift)
+EPILOGUE()
