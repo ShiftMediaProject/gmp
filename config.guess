@@ -62,8 +62,7 @@ if test x"$CC_FOR_BUILD" = x; then
     else
       echo 'dummy(){}' >$dummy.c
       for c in cc c89 gcc; do 
-	  type $c >/dev/null 2>&1 && \
-	  $c $dummy.c -c >/dev/null 2>&1
+	  ($c $dummy.c -c) >/dev/null 2>&1
 	  if test $? = 0; then
 	      CC_FOR_BUILD="$c"; break
 	  fi
