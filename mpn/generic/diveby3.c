@@ -26,20 +26,15 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 
 
-/* Multiplicative inverse of 3, modulo 2^BITS_PER_MP_LIMB.
-   0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
-#define INVERSE_3      ((MP_LIMB_T_MAX / 3) * 2 + 1)
-
-
 /* The "c += ..."s are adding the high limb of 3*l to c.  That high limb
    will be 0, 1 or 2.  Doing two separate "+="s seems to turn out better
    code on gcc (as of 2.95.2 at least).
 
    When a subtraction of a 0,1,2 carry value causes a borrow, that leaves a
-   limb value of either 0xFF...FF or 0xFF...FE and the multiply by INVERSE_3
-   gives 0x55...55 or 0xAA...AA respectively, producing a further borrow of
-   only 0 or 1 respectively.  Hence the carry out of each stage and for the
-   return value is always only 0, 1 or 2.  */
+   limb value of either 0xFF...FF or 0xFF...FE and the multiply by
+   MODLIMB_INVERSE_3 gives 0x55...55 or 0xAA...AA respectively, producing a
+   further borrow of only 0 or 1 respectively.  Hence the carry out of each
+   stage and for the return value is always only 0, 1 or 2.  */
 
 mp_limb_t
 #if __STDC__
@@ -65,7 +60,7 @@ mpn_divexact_by3c (dst, src, size, c)
       l = s - c;
       c = (l > s);
 
-      l *= INVERSE_3;
+      l *= MODLIMB_INVERSE_3;
       dst[i] = l;
 
       c += (l > MP_LIMB_T_MAX/3);
