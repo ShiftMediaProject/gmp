@@ -21,11 +21,9 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 #include "tests.h"
 
 #define NUM(x) (&((x)->_mp_num))
