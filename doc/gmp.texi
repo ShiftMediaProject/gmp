@@ -3618,15 +3618,15 @@ sign-magnitude is the actual implementation).  The least significant bit is
 number 0.
 
 @deftypefun void mpz_and (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-Set @var{rop} to @var{op1} logical-and @var{op2}.
+Set @var{rop} to @var{op1} bitwise-and @var{op2}.
 @end deftypefun
 
 @deftypefun void mpz_ior (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-Set @var{rop} to @var{op1} inclusive-or @var{op2}.
+Set @var{rop} to @var{op1} bitwise inclusive-or @var{op2}.
 @end deftypefun
 
 @deftypefun void mpz_xor (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-Set @var{rop} to @var{op1} exclusive-or @var{op2}.
+Set @var{rop} to @var{op1} bitwise exclusive-or @var{op2}.
 @end deftypefun
 
 @deftypefun void mpz_com (mpz_t @var{rop}, mpz_t @var{op})
