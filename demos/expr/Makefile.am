@@ -22,6 +22,13 @@
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 
+# FIXME: This is a workaround for a bug in automake 1.8.4.  When the only
+# library is in EXTRA_LIBRARIES, $(ARFLAGS) is used but no default setting
+# for that variable is established.  We give an explicit ARFLAGS=cru the
+# same as generated for lib_LIBRARIES or noinst_LIBRARIES.
+#
+ARFLAGS = cru
+
 EXTRA_LIBRARIES = libexpr.a
 libexpr_a_SOURCES = expr.h expr-impl.h \
   expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c
