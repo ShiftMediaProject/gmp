@@ -30,13 +30,13 @@ SHELL = /bin/sh
 #### host and target specific makefile fragments come in here.
 ###
 
-MPF_SRCS = init.c init2.c set.c set_ui.c set_si.c set_str.c set_d.c \
+MPF_SRCS = init.c init2.c set.c set_ui.c set_si.c set_str.c set_d.c set_z.c \
   iset.c iset_ui.c iset_si.c iset_str.c iset_d.c clear.c get_str.c \
   dump.c size.c eq.c reldiff.c sqrt.c random2.c inp_str.c out_str.c \
   add.c add_ui.c sub.c sub_ui.c ui_sub.c mul.c mul_ui.c div.c div_ui.c \
   cmp.c cmp_ui.c cmp_si.c mul_2exp.c div_2exp.c abs.c neg.c set_q.c \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_prc.c ui_div.c sqrt_ui.c
-MPF_OBJS = init.o init2.o set.o set_ui.o set_si.o set_str.o set_d.o \
+MPF_OBJS = init.o init2.o set.o set_ui.o set_si.o set_str.o set_d.o set_z.o \
   iset.o iset_ui.o iset_si.o iset_str.o iset_d.o clear.o get_str.o \
   dump.o size.o eq.o reldiff.o sqrt.o random2.o inp_str.o out_str.o \
   add.o add_ui.o sub.o sub_ui.o ui_sub.o mul.o mul_ui.o div.o div_ui.o \
@@ -107,6 +107,7 @@ set_q.o: $(srcdir)/set_q.c $(H)
 set_si.o: $(srcdir)/set_si.c $(H)
 set_str.o: $(srcdir)/set_str.c $(H) $(srcdir)/../longlong.h
 set_ui.o: $(srcdir)/set_ui.c $(H)
+set_z.o: $(srcdir)/set_z.c $(H)
 size.o: $(srcdir)/size.c $(H)
 sqrt.o: $(srcdir)/sqrt.c $(H)
 sqrt_ui.o: $(srcdir)/sqrt_ui.c $(H)

@@ -338,6 +338,7 @@ void mpf_set_q _PROTO ((mpf_ptr, mpq_srcptr));
 void mpf_set_si _PROTO ((mpf_ptr, signed long int));
 int mpf_set_str _PROTO ((mpf_ptr, const char *, int));
 void mpf_set_ui _PROTO ((mpf_ptr, unsigned long int));
+void mpf_set_z _PROTO ((mpf_ptr, mpz_srcptr));
 size_t mpf_size _PROTO ((mpf_srcptr));
 void mpf_sqrt _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_sqrt_ui _PROTO ((mpf_ptr, unsigned long int));

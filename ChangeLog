@@ -1,3 +1,9 @@
+Sun May 12 22:24:36 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* mpf/set_z.c: New file.
+	* mpf/Makefile.in: Compile it.
+	* gmp.h: Declare mpf_set_z.
+
 Sat May 11 19:26:25 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* gmp.h: Declare mpf_set_q.
