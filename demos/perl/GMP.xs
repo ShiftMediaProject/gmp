@@ -769,7 +769,8 @@ CODE:
     else if (SvNOK(sv))
       {
         double  d = SvNVX(sv);
-        RETVAL = (d >= LONG_MIN && d <= LONG_MAX);
+        RETVAL = (d >= (double) LONG_MIN
+                  && d < (double) ((unsigned long) LONG_MAX + 1));
       }
     else if (SvPOKorp(sv))
       {
