@@ -5335,8 +5335,8 @@ and the C library for the output.
 @item @nicode{hh} @tab @nicode{char}
 @item @nicode{j}  @tab @nicode{intmax_t} or @nicode{uintmax_t}
 @item @nicode{l}  @tab @nicode{long} or @nicode{wchar_t}
-@item @nicode{ll} @tab same as @nicode{L}
-@item @nicode{L}  @tab @nicode{long long} or @nicode{long double}
+@item @nicode{ll} @tab @nicode{long long}
+@item @nicode{L}  @tab @nicode{long double}
 @item @nicode{q}  @tab @nicode{quad_t} or @nicode{u_quad_t}
 @item @nicode{t}  @tab @nicode{ptrdiff_t}
 @item @nicode{z}  @tab @nicode{size_t}
