@@ -1,6 +1,6 @@
 /* Test file for mpfr_get_str.
 
-Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -23,10 +23,10 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
-#ifdef TEST
+#ifdef HAVE_FENV_H
 #include "mpfr-test.h"
 #endif
 
@@ -105,10 +105,11 @@ check_small (void)
 int
 main (int argc, char *argv[])
 {
-#ifdef TEST
-  int i; double d;
+#ifdef HAVE_FENV_H
+  int i;
+  double d;
 
-  srand(getpid());
+  SEED_RAND (time(NULL));
   for (i=0;i<100000;i++) {
     do { d = drand(); } while (isnan(d));
     check(d, GMP_RNDN);

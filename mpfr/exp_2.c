@@ -1,7 +1,7 @@
 /* mpfr_exp_2 -- exponential of a floating-point number 
                 using Brent's algorithms in O(n^(1/2)*M(n)) and O(n^(1/3)*M(n))
 
-Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -108,17 +108,13 @@ mpz_normalize2 (mpz_t rop, mpz_t z, int expz, int target)
 int 
 mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode) 
 {
-  int n, expx, K, precy, q, k, l, err, exps, inexact;
+  int n, K, precy, q, k, l, err, exps, inexact;
   mpfr_t r, s, t; mpz_t ss;
   TMP_DECL(marker);
 
-  expx = MPFR_EXP(x);
   precy = MPFR_PREC(y);
-#ifdef DEBUG
-  printf("MPFR_EXP(x)=%d\n",expx);
-#endif
 
-  n = (int) (mpfr_get_d(x) / LOG2);
+  n = (int) (mpfr_get_d1 (x) / LOG2);
 
   /* for the O(n^(1/2)*M(n)) method, the Taylor series computation of
      n/K terms costs about n/(2K) multiplications when computed in fixed
@@ -150,9 +146,9 @@ mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   /* r = floor(n*log(2)) */
 
 #ifdef DEBUG
-  printf("x=%1.20e\n",mpfr_get_d(x));
+  printf("x=%1.20e\n", mpfr_get_d1 (x));
   printf(" ="); mpfr_print_binary(x); putchar('\n');
-  printf("r=%1.20e\n",mpfr_get_d(r));
+  printf("r=%1.20e\n", mpfr_get_d1 (r));
   printf(" ="); mpfr_print_binary(r); putchar('\n');
 #endif
   mpfr_sub(r, x, r, GMP_RNDU);
@@ -163,7 +159,7 @@ mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     mpfr_sub(r, x, r, GMP_RNDU);
   }
 #ifdef DEBUG
-  printf("x-r=%1.20e\n",mpfr_get_d(r));
+  printf("x-r=%1.20e\n", mpfr_get_d1 (r));
   printf(" ="); mpfr_print_binary(r); putchar('\n');
   if (MPFR_SIGN(r)<0) { fprintf(stderr,"Error in mpfr_exp: r<0\n"); exit(1); }
 #endif
@@ -198,7 +194,8 @@ mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   K += k;
 #ifdef DEBUG
     printf("after mult. by 2^n:\n");
-    if (MPFR_EXP(s)>-1024) printf("s=%1.20e\n",mpfr_get_d(s)); 
+    if (MPFR_EXP(s) > -1024)
+      printf("s=%1.20e\n", mpfr_get_d1 (s));
     printf(" ="); mpfr_print_binary(s); putchar('\n');
     printf("err=%d bits\n", K);
 #endif

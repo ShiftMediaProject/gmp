@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_f.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,15 +15,15 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
-#include "time.h"
 #include "mpfr-test.h"
 
 int
@@ -43,9 +43,9 @@ main (void)
   mpfr_set_prec (x, 100);
   mpfr_set_f (x, y, GMP_RNDN);
 
-  srandom((int)time(NULL));
+  SEED_RAND (time(NULL));
   mpf_random2(y, 10, 0); 
-  mpfr_set_f(x, y, rand() & 3);
+  mpfr_set_f(x, y, LONG_RAND() & 3);
 
   /* bug found by Jean-Pierre Merlet */
   mpfr_set_prec(x, 256);
@@ -71,7 +71,7 @@ main (void)
 
   for (k = 1; k <= 100000; k++)
     {
-      pr = 2 + (rand()&255);
+      pr = 2 + (LONG_RAND()&255);
       mpf_set_prec (z, pr);
       mpf_random2 (z, z->_mp_prec, 0);
       mpfr_init2 (x, pr);

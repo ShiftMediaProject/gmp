@@ -1,6 +1,6 @@
 /* Test file for mpfr_cmp.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -26,9 +26,6 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
-
-#define Infp 1/0.
-#define Infm -1/0.
 
 int
 main (void)
@@ -103,7 +100,7 @@ main (void)
     exit(1);
   }
 
-  mpfr_set_d(xx, Infp, GMP_RNDN); 
+  mpfr_set_inf (xx, 1);
   mpfr_set_d(yy, -23489745.0329, GMP_RNDN); 
   if (mpfr_cmp(xx, yy) <= 0) { 
     fprintf(stderr,
@@ -111,39 +108,39 @@ main (void)
     exit(1);
   }
 
-  mpfr_set_d(xx, Infp, GMP_RNDN); 
-  mpfr_set_d(yy, Infm, GMP_RNDN); 
+  mpfr_set_inf (xx, 1);
+  mpfr_set_inf (yy, -1);
   if (mpfr_cmp(xx, yy) <= 0) { 
     fprintf(stderr,
 	    "Error in mpfr_cmp(Infp, Infm), gives %d\n", mpfr_cmp(xx, yy));
     exit(1);
   }
 
-  mpfr_set_d(xx, Infm, GMP_RNDN); 
-  mpfr_set_d(yy, Infp, GMP_RNDN); 
+  mpfr_set_inf (xx, -1);
+  mpfr_set_inf (yy, 1);
   if (mpfr_cmp(xx, yy) >= 0) { 
     fprintf(stderr,
 	    "Error in mpfr_cmp(Infm, Infp), gives %d\n", mpfr_cmp(xx, yy));
     exit(1);
   }
 
-  mpfr_set_d(xx, Infp, GMP_RNDN); 
-  mpfr_set_d(yy, Infp, GMP_RNDN); 
+  mpfr_set_inf (xx, 1);
+  mpfr_set_inf (yy, 1);
   if (mpfr_cmp(xx, yy) != 0) { 
     fprintf(stderr,
 	    "Error in mpfr_cmp(Infp, Infp), gives %d\n", mpfr_cmp(xx, yy));
     exit(1);
   }
 
-  mpfr_set_d(xx, Infm, GMP_RNDN); 
-  mpfr_set_d(yy, Infm, GMP_RNDN); 
+  mpfr_set_inf (xx, -1);
+  mpfr_set_inf (yy, -1);
   if (mpfr_cmp(xx, yy) != 0) { 
     fprintf(stderr,
 	    "Error in mpfr_cmp(Infm, Infm), gives %d\n", mpfr_cmp(xx, yy));
     exit(1);
   }
 
-  mpfr_set_d(xx, Infm, GMP_RNDN); 
+  mpfr_set_inf (xx, -1);
   mpfr_set_d(yy, 2346.09234, GMP_RNDN); 
   if (mpfr_cmp(xx, yy) >= 0) { 
     fprintf(stderr,

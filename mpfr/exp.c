@@ -1,6 +1,6 @@
 /* mpfr_exp -- exponential of a floating-point number
 
-Copyright (C) 1999-2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 Contributed by the Spaces project.
 
 This file is part of the MPFR Library.
@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -74,7 +74,7 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   /* result is +Inf when exp(x) >= 2^(__mpfr_emax), i.e.
      x >= __mpfr_emax * log(2) */
-  d = mpfr_get_d (x);
+  d = mpfr_get_d1 (x);
   if (d >= (double) __mpfr_emax * LOG2)
     return mpfr_set_overflow(y, rnd_mode, 1);
 

@@ -1,6 +1,5 @@
 The MPFR distribution contains the following files:
 
-
 AUTHORS     - the authors of the library
 BUGS        - bugs in MPFR - please read this file!
 COPYING     - the license under which the MPFR library is distributed
@@ -9,7 +8,9 @@ INSTALL     - how to install MPFR (see also mpfr.texi)
 Makefile*   - files for building the library
 NEWS        - new features with respect to previous versions
 README      - this file
+README.dev  - notes for the MPFR developers
 TODO        - what remains to do (any help is welcome!)
+VERSION     - version of MPFR (next release version if taken from CVS)
 ac*         - automatic configuration files
 *.c         - source files
 config*     - configuration files
@@ -23,5 +24,6 @@ mpfr.h      - external header file for MPFR
 mpfr-test.h - header file for test files
 mpfr.info   - info file for MPFR
 mpfr.texi   - texinfo documentation for MPFR
+prepare     - configuration script for CVS users
 tests/      - test directory
 texinfo.tex - TeX macros to handle mpfr.texi

@@ -1,6 +1,6 @@
 /* mpfr_extract -- bit-extraction function for the binary splitting algorithm
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -23,7 +23,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
-
 
 /* given 0 <= |p| < 1, this function extracts limbs of p and puts them in y.
    It is mainly designed for the "binary splitting" algorithm together with
@@ -33,6 +32,7 @@ MA 02111-1307, USA. */
    - for i=0, y = floor(p * B)
    - for i>0, y = (p * B^(2^i)) mod B^(2^(i-1))
  */
+
 void
 mpfr_extract (mpz_ptr y, mpfr_srcptr p, unsigned int i)
 {
@@ -43,17 +43,15 @@ mpfr_extract (mpz_ptr y, mpfr_srcptr p, unsigned int i)
   /* as 0 <= |p| < 1, we don't have to care with infinities, NaN, ... */
   
   _mpz_realloc (y, two_i_2);
-  if (size_p < two_i) {
-    MPN_ZERO (PTR(y), two_i_2);
-    if (size_p >= two_i_2)
-      MPN_COPY (PTR(y) + two_i - size_p, MPFR_MANT(p), size_p - two_i_2);
-  }
+  if (size_p < two_i)
+    {
+      MPN_ZERO (PTR(y), two_i_2);
+      if (size_p >= two_i_2)
+        MPN_COPY (PTR(y) + two_i - size_p, MPFR_MANT(p), size_p - two_i_2);
+    }
   else
     MPN_COPY (PTR(y), MPFR_MANT(p) + size_p - two_i, two_i_2);
 
   MPN_NORMALIZE (PTR(y), two_i_2);
   SIZ(y) = (MPFR_ISNEG(p)) ? -two_i_2 : two_i_2;
 }
-
-
-

@@ -1,6 +1,6 @@
 /* mpfr.h -- Include file for mpfr.
 
-Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -143,9 +143,12 @@ int mpfr_can_round _PROTO ((mpfr_ptr, mp_exp_t, mp_rnd_t, mp_rnd_t,
 			    mp_prec_t));
 int mpfr_set_d _PROTO ((mpfr_ptr, double, mp_rnd_t)); 
 int mpfr_set_z _PROTO ((mpfr_ptr, mpz_srcptr, mp_rnd_t)); 
+void mpfr_set_nan _PROTO ((mpfr_ptr));
+void mpfr_set_inf _PROTO ((mpfr_ptr, int));
 mp_exp_t mpfr_get_z_exp _PROTO ((mpz_ptr, mpfr_srcptr)); 
 int mpfr_set_q _PROTO ((mpfr_ptr, mpq_srcptr, mp_rnd_t)); 
-double mpfr_get_d _PROTO ((mpfr_srcptr)); 
+double mpfr_get_d1 _PROTO ((mpfr_srcptr));
+double mpfr_get_d _PROTO ((mpfr_srcptr, mp_rnd_t));
 int mpfr_set_f _PROTO ((mpfr_ptr, mpf_srcptr, mp_rnd_t));
 int mpfr_set_si _PROTO ((mpfr_ptr, long, mp_rnd_t));
 int mpfr_set_ui _PROTO ((mpfr_ptr, unsigned long, mp_rnd_t));

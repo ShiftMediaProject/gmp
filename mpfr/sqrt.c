@@ -1,6 +1,6 @@
 /* mpfr_sqrt -- square root of a floating-point number
 
-Copyright (C) 1999-2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -40,9 +40,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
   unsigned long cc = 0; 
   int can_round = 0;
 
-  TMP_DECL(marker0);
-  {
-    TMP_DECL (marker);
+  TMP_DECL(marker);
 
     if (MPFR_IS_NAN(u))
       {
@@ -107,7 +105,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
        to shift then.
     */
 
-    TMP_MARK(marker0);
+    TMP_MARK(marker);
     if (odd_exp_u) /* Shift u one bit to the right */
       {
         if (MPFR_PREC(u) & (BITS_PER_MP_LIMB - 1))
@@ -132,7 +130,6 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
 
     do
       {
-        TMP_MARK (marker);
 
         err = rsize * BITS_PER_MP_LIMB;
         if (rsize < usize)
@@ -184,7 +181,6 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
 #ifdef DEBUG
             printf("Increasing the precision.\n");
 #endif
-            TMP_FREE(marker);
           }
       }
     while (!can_round && (rsize < 2*usize) && (rsize += 2) && (rrsize++));
@@ -271,7 +267,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
         MPFR_EXP(r)++;
       }
 
-  fin:
+ fin:
     rsize = rrsize;
     rrsize = (MPFR_PREC(r) - 1)/BITS_PER_MP_LIMB + 1;
     MPN_COPY(MPFR_MANT(r), rp + rsize - rrsize, rrsize);
@@ -281,8 +277,6 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
                             (BITS_PER_MP_LIMB - 
                              (MPFR_PREC(r) & (BITS_PER_MP_LIMB - 1)))) - 1);
 
-    TMP_FREE (marker);
-  }
-  TMP_FREE(marker0);
+  TMP_FREE(marker);
   return inexact;
 }

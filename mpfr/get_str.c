@@ -1,6 +1,6 @@
 /* mpfr_get_str -- output a floating-point number to a string
 
-Copyright (C) 1999-2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -138,7 +138,7 @@ mpfr_get_str (char *str, mp_exp_t *expptr, int base, size_t n,
         {
           double d;
 
-          d = mpfr_get_d2(op, 0);
+          d = mpfr_get_d3(op, 0, GMP_RNDN);
           d = ((double) e + (double) _mpfr_floor_log2 (ABS(d)))
             * __mp_bases[base].chars_per_bit_exactly;
           MPFR_ASSERTN(d >= MP_EXP_T_MIN);

@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_q.
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,15 +15,16 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-test.h"
 
 void check _PROTO((long int, long int, mp_rnd_t, double)); 
 
@@ -39,12 +40,12 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
   mpfr_init2 (t, mpfr_get_prec (x) + mp_bits_per_limb);
   mpq_init (q);
   mpq_set_si (q, n, d);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode (rnd);
   y = (double) n / d;
 #endif
   inexact = mpfr_set_q (x, q, rnd);
-  z = mpfr_get_d (x);
+  z = mpfr_get_d1 (x);
 
   /* check values */
   if (y != z)
@@ -79,18 +80,20 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
 int
 main (void)
 {
-#ifdef TEST
+#ifdef HAVE_FENV_H
   long int i, n;
   unsigned long int d;
   double y;
   unsigned char rnd;
 
-  srand48(getpid());
+  mpfr_test_init ();
+
+  SEED_RAND(time(NULL));
   for (i=0;i<1000000;i++) {
-    n = lrand48();
-    d = lrand48();
-    if (lrand48()%2) n = -n;
-    rnd = lrand48() % 4;
+    n = LONG_RAND();
+    d = LONG_RAND();
+    if (LONG_RAND()%2) n = -n;
+    rnd = LONG_RAND() % 4;
     y = (double) n / d;
     check(n, d, rnd, y);
   }

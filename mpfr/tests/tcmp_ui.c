@@ -1,6 +1,6 @@
 /* Test file for mpfr_cmp_ui.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -34,41 +34,41 @@ main (void)
 
   mpfr_set_ui(x, 3, GMP_RNDZ);
   if (mpfr_cmp_ui(x, i=3)!=0) {    
-    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d(x), i); 
+    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d1 (x), i); 
     mpfr_clear(x); 
     exit(1);
   }
   if (mpfr_cmp_ui(x, i=2)<=0) {
-    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d(x), i);
+    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d1 (x), i);
     mpfr_clear(x); 
     exit(1);
   }
   if (mpfr_cmp_ui(x, i=4)>=0) {
-    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d(x), i);
+    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d1 (x), i);
     mpfr_clear(x); 
     exit(1);
   }
   mpfr_set_ui (x, 0, GMP_RNDZ);
   mpfr_neg (x, x, GMP_RNDZ);
   if (mpfr_cmp_ui (x, i=0)) {
-    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d(x), i);
+    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d1 (x), i);
     mpfr_clear(x);
     exit(1);
   }
 
   mpfr_set_si(x, -3, GMP_RNDZ);
   if (mpfr_cmp_si(x, s=-3)!=0) {
-    printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d(x), s);
+    printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d1 (x), s);
     mpfr_clear(x); 
     exit(1);
   }
   if (mpfr_cmp_si(x, s=-4)<=0) {
-    printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d(x), s);
+    printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d1 (x), s);
     mpfr_clear(x); 
     exit(1);
   }
   if (mpfr_cmp_si(x, s=1)>=0) {
-    printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d(x), s);
+    printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d1 (x), s);
     mpfr_clear(x); 
     exit(1);
   }

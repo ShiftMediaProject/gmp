@@ -1,6 +1,6 @@
 /* mpfr_log10 -- logarithm in base 10.
 
-Copyright (C) 2001-2002 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -66,8 +66,8 @@ mpfr_log10 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
   if (MPFR_IS_ZERO(a))
     {
       MPFR_SET_INF(r);
-      MPFR_SET_POS(r);
-      MPFR_RET(0); /* log10(0) is an exact +infinity */
+      MPFR_SET_NEG(r);
+      MPFR_RET(0); /* log10(0) is an exact -infinity */
     }
 
   /* If a is negative, the result is NaN */
@@ -128,7 +128,7 @@ mpfr_log10 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
 
       /* log10(10^n) is exact */
       if ((MPFR_SIGN(t) > 0) && mpfr_isinteger(t))
-        if (mpfr_ui_pow_ui (tt, 10, (unsigned long int) mpfr_get_d (t) + 0.5,
+        if (mpfr_ui_pow_ui (tt, 10, (unsigned long int) mpfr_get_d1 (t) + 0.5,
                             GMP_RNDN) == 0)
           if (mpfr_cmp (a, tt) == 0)
             ok = 1;

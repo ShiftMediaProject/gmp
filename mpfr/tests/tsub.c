@@ -1,6 +1,6 @@
 /* Test file for mpfr_sub.
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright 2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -169,7 +169,7 @@ check_diverse (void)
   /* check in-place operations */
   mpfr_set_d (x, 1.0, GMP_RNDN);
   mpfr_sub (x, x, x, GMP_RNDN);
-  if (mpfr_get_d (x) != 0.0)
+  if (mpfr_get_d1 (x) != 0.0)
     {
       fprintf (stderr, "Error for mpfr_add (x, x, x, GMP_RNDN) with x=1.0\n");
       exit (1);
@@ -182,7 +182,7 @@ check_diverse (void)
   mpfr_set_d (y, 2.32221184180698677665e+05, GMP_RNDN);
   mpfr_sub (z, x, y, GMP_RNDN);
   res = 1229085880.815819263458251953125;
-  got = mpfr_get_d (z);
+  got = mpfr_get_d1 (z);
   if (got != res)
     {
       fprintf (stderr, "Error in mpfr_sub (1.22e9 - 2.32e5)\n");
@@ -306,7 +306,7 @@ check_two_sum (mp_prec_t p)
   mpfr_random (y);
   if (mpfr_cmp_abs (x, y) < 0)
     mpfr_swap (x, y);
-  rnd = rand() % 4;
+  rnd = LONG_RAND() % 4;
   rnd = GMP_RNDN;
   inexact = mpfr_sub (u, x, y, GMP_RNDN);
   mpfr_sub (v, u, x, GMP_RNDN);
@@ -363,7 +363,7 @@ check_inexact (void)
 		: MPFR_EXP(u)-MPFR_EXP(x);
 	      pz = pz + MAX(MPFR_PREC(x), MPFR_PREC(u));
 	      mpfr_set_prec (z, pz);
-	      rnd = rand () % 4;
+	      rnd = LONG_RAND () % 4;
 	      if (mpfr_sub (z, x, u, rnd))
 		{
 		  fprintf (stderr, "z <- x - u should be exact\n");

@@ -563,17 +563,17 @@ The precision @var{prec} can be any integer between @code{MPFR_PREC_MIN} and
 @code{MPFR_PREC_MAX}.
 @end deftypefun
 
-@c @deftypefun void mpfr_set_machine_rnd_mode (mp_rnd_t @var{rnd})
-@c Set the machine rounding mode to @var{rnd}.
-@c This function is useful for debugging purpose, but
-@c also as a common interface to all different ways of setting the
-@c rounding mode, which unfortunately differ from one operating system to
-@c another one.
-@c @end deftypefun
+@deftypefun void mpfr_set_machine_rnd_mode (mp_rnd_t @var{rnd})
+Set the machine rounding mode to @var{rnd}.
+This function is provided only when the operating system supports the
+ISOC9X standard interface for setting rounding modes (i.e. through the
+header file <fenv.h>).
+@end deftypefun
 
 @deftypefun {char *} mpfr_print_rnd_mode (mp_rnd_t @var{rnd})
 Returns the input string (GMP_RNDD, GMP_RNDU, GMP_RNDN, GMP_RNDZ)
-corresponding to the rounding mode @var{rnd}.
+corresponding to the rounding mode @var{rnd} or a null pointer if
+@var{rnd} is an invalid rounding mode.
 @end deftypefun
 
 @node Exceptions, Initializing Floats, Rounding Modes, Floating-point Functions
@@ -701,6 +701,7 @@ a call to @code{mpfr_clear(x)} followed by a call to
 case the current allocated space for the mantissa of @var{x} is enough.
 The precision @var{prec} can be any integer between @code{MPFR_PREC_MIN} and
 @code{MPFR_PREC_MAX}.
+It returns a non-zero value iff the memory allocation failed.
 
 In case you want to keep the previous value stored in @var{x},
 use @code{mpfr_round_prec} instead.
@@ -776,6 +777,13 @@ The returned value is zero when @var{x}=@var{y}, positive when @var{x}>@var{y},
 and negative when @var{x}<@var{y}.
 @end deftypefun
 
+@deftypefun void mpfr_set_inf (mpfr_t @var{x}, int @var{sign})
+@deftypefunx void mpfr_set_nan (mpfr_t @var{x})
+Set the variable @var{x} to infinity or NaN (Not-a-Number) respectively.
+In @code{mpfr_set_inf}, @var{x} is set to plus infinity iff @var{sign} is
+positive.
+@end deftypefun
+
 @deftypefun void mpfr_swap (mpfr_t @var{x}, mpfr_t @var{y})
 Swap the values @var{x} and @var{y} efficiently. Warning: the
 precisions are exchanged too; in case the precisions are different,
@@ -792,7 +800,7 @@ using a third auxiliary variable.
 @deftypefnx Macro int mpfr_init_set_ui (mpfr_t @var{rop}, unsigned long int @var{op}, mp_rnd_t @var{rnd})
 @deftypefnx Macro int mpfr_init_set_si (mpfr_t @var{rop}, signed long int @var{op}, mp_rnd_t @var{rnd})
 @deftypefnx Macro int mpfr_init_set_d (mpfr_t @var{rop}, double @var{op}, mp_rnd_t @var{rnd})
-@deftypefnx Macro int mpfr_init_set_f (mpfr_t @var{rop}, double @var{op}, mp_rnd_t @var{rnd})
+@deftypefnx Macro int mpfr_init_set_f (mpfr_t @var{rop}, mpf_t @var{op}, mp_rnd_t @var{rnd})
 @deftypefnx Macro int mpfr_init_set_z (mpfr_t @var{rop}, mpz_t @var{op}, mp_rnd_t @var{rnd})
 @deftypefnx Macro int mpfr_init_set_q (mpfr_t @var{rop}, mpq_t @var{op}, mp_rnd_t @var{rnd})
 Initialize @var{rop} and set its value from @var{op}, rounded to direction
@@ -815,8 +823,13 @@ See @code{mpfr_set_str}.
 @section Conversion Functions
 @cindex Conversion functions
 
-@deftypefun double mpfr_get_d (mpfr_t @var{op})
-Convert @var{op} to a double, using the current @emph{machine} rounding mode.
+@deftypefun double mpfr_get_d (mpfr_t @var{op}, mp_rnd_t @var{rnd})
+Convert @var{op} to a double, using the rounding mode @var{rnd}.
+@end deftypefun
+
+@deftypefun double mpfr_get_d1 (mpfr_t @var{op})
+Convert @var{op} to a double, using the default MPFR rounding mode
+(see function @code{mpfr_set_default_rounding_mode}).
 @end deftypefun
 
 @deftypefun mp_exp_t mpfr_get_z_exp (mpz_t @var{z}, mpfr_t @var{op})
@@ -1132,6 +1145,14 @@ rounded to the direction @var{rnd} with their corresponding precisions.
 Return 0 iff both results are exact.
 @end deftypefun
 
+@deftypefun int mpfr_acos (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_asin (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_atan (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+Set @var{rop} to the arc-cosine, arc-sine or arc-tangent of @var{op},
+rounded to the direction @var{rnd} with the precision of @var{rop}.
+Return 0 iff the result is exact.
+@end deftypefun
+
 @deftypefun int mpfr_cosh (mpfr_t @var{cop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_sinh (mpfr_t @var{sop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_tanh (mpfr_t @var{top}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
@@ -1186,14 +1207,6 @@ and a negative value otherwise.
 @deftypefun void mpfr_agm (mpfr_t @var{rop}, mpfr_t @var{op1}, mpfr_t @var{op2}, mp_rnd_t @var{rnd})
 Set @var{rop} to the arithmetic-geometric mean of @var{op1} and @var{op2},
 rounded to the direction @var{rnd} with the precision of @var{rop}.
-@end deftypefun
-
-@deftypefun int mpfr_acos (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
-@deftypefunx int mpfr_asin (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
-@deftypefunx int mpfr_atan (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
-Set @var{rop} to the arc-cosine, arc-sine or arc-tangent of @var{op},
-rounded to the direction @var{rnd} with the precision of @var{rop}.
-Return 0 iff the result is exact.
 @end deftypefun
 
 @deftypefun void mpfr_const_log2 (mpfr_t @var{rop}, mp_rnd_t @var{rnd})
@@ -1315,8 +1328,7 @@ Generate a uniformly distributed random float in the interval 0 <= X < 1.
 @end deftypefun
 
 @deftypefun void mpfr_random (mpfr_t @var{rop})
-Put in @var{rop} a random float in the interval [0,1[.
-Random limbs are generated using the @code{random} system function.
+Generate a uniformly distributed random float in the interval 0 <= X < 1.
 @end deftypefun
 
 @deftypefun void mpfr_random2 (mpfr_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{max_exp})
@@ -1338,11 +1350,53 @@ Negative random numbers are generated when @var{max_size} is negative.
 @c releases.}
 @c @end deftypefun
 
-@section Internal Functions
+@section Internals
 
-These functions were mainly designed for the implementation of @code{mpfr},
+These types and 
+functions were mainly designed for the implementation of @code{mpfr},
 but may be useful for users too.
+However no upward compatibility is guaranteed.
 You need to include @code{mpfr-impl.h} to use them.
+
+The @code{mpfr_t} type consists of four fields.
+The @code{_mpfr_prec} field is used to store the precision of
+the variable (in bits); this is not less than 2.
+
+The @code{_mpfr_size} field is used to store the number of
+allocated limbs, with the high bits reserved to store
+the sign (bit 31), the NaN flag (bit 30),
+and the Infinity flag (bit 29);
+thus bits 0 to 28 remain for the number of allocated limbs, with a maximal
+value of 536870911.
+A NaN is indicated by the NaN flag set, and no other fields are
+relevant.
+An Infinity is indicated by the NaN flag clear and the Inf flag set;
+the sign bit of an Infinity indicates the sign, the limb data 
+and the exponent are not relevant.
+
+The @code{_mpfr_exp} field stores the exponent.
+An exponent of 0 means a radix point just above the most significant
+limb.  Non-zero values are a multiplier @math{2^n} relative to that
+point.
+
+Finally, the @code{_mpfr_d} is a pointer to the limbs, least
+significant limbs stored first.
+The number zero is represented with its most significant limb set to zero,
+i.e. @code{_mpfr_d[n-1]} where 
+n=ceil(@code{_mpfr_prec}/@code{BITS_PER_MP_LIMB}).
+The number of limbs in use is controlled by @code{_mpfr_prec}, namely
+ceil(@code{_mpfr_prec}/@code{BITS_PER_MP_LIMB}).
+Zero is represented by the most significant limb being zero, other
+limb data and the exponent are not relevant 
+("not relevant" implies that the corresponding objects may contain
+invalid values, thus should not be evaluated even if
+they are not taken into account).
+Non-zero values always have the most significant bit of the most
+significant limb set to 1.  When the precision is not a whole number
+of limbs, the excess bits at the low end of the data are zero.
+When the precision has been lowered by @code{mpfr_set_prec}, the space
+allocated at @code{_mpfr_d} remains as given by @code{_mpfr_size}, but
+@code{_mpfr_prec} indicates how much of that space is actually used.
 
 @deftypefun int mpfr_add_one_ulp (mpfr_t @var{x}, mp_rnd_t @var{rnd})
 Add one unit in last place (ulp) to @var{x} if @var{x} is finite

@@ -1,6 +1,6 @@
 /* Test file for mpfr_trunc, mpfr_ceil, mpfr_floor.
 
-Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -42,23 +42,23 @@ main (void)
 
   mpfr_set_d(x, 0.5, GMP_RNDN);
   mpfr_ceil(y, x);
-  if (mpfr_get_d(y) != 1.0) {
+  if (mpfr_get_d1 (y) != 1.0) {
     fprintf(stderr, "Error in mpfr_ceil for x=0.5: expected 1.0, got %f\n",
-	    mpfr_get_d(y)); exit(1); 
+	    mpfr_get_d1 (y)); exit(1); 
   }
 
   mpfr_set_d(x, 0.0, GMP_RNDN);
   mpfr_ceil(y, x);
-  if (mpfr_get_d(y) != 0.0) {
+  if (mpfr_get_d1 (y) != 0.0) {
     fprintf(stderr, "Error in mpfr_ceil for x=0.0: expected 0.0, got %f\n",
-	    mpfr_get_d(y)); exit(1); 
+	    mpfr_get_d1 (y)); exit(1); 
   }
 
   mpfr_set_d(x, 1.0, GMP_RNDN);
   mpfr_ceil(y, x);
-  if (mpfr_get_d(y) != 1.0) {
+  if (mpfr_get_d1 (y) != 1.0) {
     fprintf(stderr, "Error in mpfr_ceil for x=1.0: expected 1.0, got %f\n",
-	    mpfr_get_d(y)); exit(1); 
+	    mpfr_get_d1 (y)); exit(1); 
   }
 
   for (j=0;j<1000;j++) {

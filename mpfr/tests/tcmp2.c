@@ -1,6 +1,6 @@
 /* Test file for mpfr_cmp2.
 
-Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -280,13 +280,8 @@ int
 main (void)
 {
   int i,j; double x=1.0, y, z;
-#ifdef __mips
-    /* to get denormalized numbers on IRIX64 */
-    union fpc_csr exp;
-    exp.fc_word = get_fpc_csr();
-    exp.fc_struct.flush = 0;
-    set_fpc_csr(exp.fc_word);
-#endif
+
+  mpfr_test_init ();
 
   worst_cases ();
   special ();
@@ -302,8 +297,8 @@ main (void)
     x /= 2.0;
   }
   for (j=0; j<100000; j++) {
-    x = drand48();
-    y = drand48();
+    x = DBL_RAND ();
+    y = DBL_RAND ();
     if (x<y) { z=x; x=y; y=z; }
     if (y != 0.0 && y != -0.0) tcmp2(x, y, -1);
   }

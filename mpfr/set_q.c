@@ -1,6 +1,6 @@
 /* mpfr_set_q -- set a floating-point number from a multiple-precision rational
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,14 +15,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include "gmp.h"
-#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "gmp-impl.h"
 #include "longlong.h"
 
 /* set f to the rational q */
@@ -51,3 +51,6 @@ mpfr_set_q (mpfr_ptr f, mpq_srcptr q, mp_rnd_t rnd)
   mpfr_clear (d);
   MPFR_RET(inexact);
 }
+
+
+

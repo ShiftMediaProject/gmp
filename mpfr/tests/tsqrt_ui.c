@@ -1,6 +1,6 @@
 /* Test file for mpfr_sqrt_ui.
 
-Copyright (C) 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,13 +15,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-test.h"
@@ -36,13 +37,13 @@ check (unsigned long a, mp_rnd_t rnd_mode, double Q)
   mpfr_t q; double Q2; int u, ck;
 
   mpfr_init2(q, 53);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   mpfr_sqrt_ui(q, a, rnd_mode);
   ck = (Q >= 0.0);
   if (!ck) Q = sqrt(1.0 * a);
-  Q2 = mpfr_get_d(q);
+  Q2 = mpfr_get_d1 (q);
   if (Q!=Q2 && (!isnan(Q) || !isnan(Q2))) {
     u = ulp(Q2,Q);
     if (ck) printf("mpfr_sqrt_ui failed");
@@ -58,25 +59,23 @@ check (unsigned long a, mp_rnd_t rnd_mode, double Q)
 int
 main (void)
 {
-#ifdef TEST
-  int i; unsigned long a;
-#ifdef __mips
-    /* to get denormalized numbers on IRIX64 */
-    union fpc_csr exp;
-    exp.fc_word = get_fpc_csr();
-    exp.fc_struct.flush = 0;
-    set_fpc_csr(exp.fc_word);
-#endif
+#ifdef HAVE_FENV_H
+  int i;
+  unsigned long a;
 
-  srand(getpid());
-  for (i=0;i<1000000;i++) {
-    a = lrand48();
-    /* machine arithmetic must agree if a <= 2.0^53 */
-    if (1.0*a < 9007199254872064.0) check(a, rand() % 4, -1.0);
-  }
+  mpfr_test_init ();
+
+  SEED_RAND (time(NULL));
+  for (i=0;i<1000000;i++)
+    {
+      a = LONG_RAND();
+      /* machine arithmetic must agree if a <= 2.0^53 */
+      if (1.0*a < 9007199254872064.0)
+        check(a, LONG_RAND() % 4, -1.0);
+    }
 #endif
-  check(0, GMP_RNDN, 0.0);
-  check(2116118, GMP_RNDU, 1.45468828276026215e3);
+  check (0, GMP_RNDN, 0.0);
+  check (2116118, GMP_RNDU, 1.45468828276026215e3);
 
   return 0;
 }

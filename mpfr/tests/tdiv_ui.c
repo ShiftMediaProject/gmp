@@ -1,6 +1,6 @@
 /* Test file for mpfr_div_ui.
 
-Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,13 +15,13 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-test.h"
@@ -37,13 +37,13 @@ check (double d, unsigned long u, mp_rnd_t rnd, double e)
   double f;
 
   mpfr_init2(x, 53); mpfr_init2(y, 53);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd);
 #endif
   if (e==0.0) e = d / u;
   mpfr_set_d(x, d, rnd); 
   mpfr_div_ui(y, x, u, rnd); 
-  f = mpfr_get_d(y);
+  f = mpfr_get_d1 (y);
   if (f != e && (!isnan(f) || !isnan(e))) {
     printf("mpfr_div_ui failed for x=%1.20e, u=%lu, rnd=%s\n", d, u,
 	   mpfr_print_rnd_mode(rnd));
@@ -104,7 +104,7 @@ special (void)
 	{
 	  mpfr_set_prec (y, yprec);
 	  mpfr_div_ui (y, x, 1, GMP_RNDN);
-	  if (mpfr_get_d (x) != mpfr_get_d (y))
+	  if (mpfr_get_d1 (x) != mpfr_get_d1 (y))
 	    {
 	      fprintf (stderr, "division by 1.0 fails for xprec=%u, yprec=%u\n", xprec, yprec);
 	      printf ("expected "); mpfr_print_binary (x); putchar ('\n');
@@ -135,7 +135,7 @@ check_inexact (void)
     {
       mpfr_set_prec (x, px);
       mpfr_random (x);
-      do { u = lrand48 (); } while (u == 0);
+      do { u = LONG_RAND (); } while (u == 0);
       for (py=2; py<300; py++)
 	{
 	  mpfr_set_prec (y, py);
@@ -174,15 +174,20 @@ int
 main (int argc, char **argv)
 {
   mpfr_t x;
-#ifdef TEST
-  int i; unsigned long u; double d;
+#ifdef HAVE_FENV_H
+  int i;
+  unsigned long u;
+  double d;
 
-  srand(getpid());
-  for (i=0;i<1000000;i++) {
-    do { u = lrand48(); } while (u==0);
-    do { d = drand(); } while (ABS(d/u)<2.2e-307);
-    check(d, u, rand() % 4, 0.0);
-  }
+  mpfr_test_init ();
+
+  SEED_RAND (time(NULL));
+  for (i=0;i<1000000;i++)
+    {
+      do { u = LONG_RAND(); } while (u==0);
+      do { d = drand(); } while (ABS(d/u)<2.2e-307);
+      check (d, u, LONG_RAND() % 4, 0.0);
+    }
 #endif
 
   check_inexact ();
@@ -201,7 +206,7 @@ main (int argc, char **argv)
   mpfr_set_ui(x, 3, GMP_RNDD);
   mpfr_log(x, x, GMP_RNDD);
   mpfr_div_ui(x, x, 5, GMP_RNDD);
-  if (mpfr_get_d(x) != 0.21972245773362189536) {
+  if (mpfr_get_d1 (x) != 0.21972245773362189536) {
     fprintf(stderr, "Error in mpfr_div_ui for x=ln(3), u=5\n"); exit(1);
   }
   mpfr_clear(x);

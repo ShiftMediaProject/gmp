@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_z.
 
-Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,15 +15,16 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-test.h"
 
 void check _PROTO((long, unsigned char)); 
 void check_large _PROTO((void)); 
@@ -36,7 +37,7 @@ check(long i, unsigned char rnd)
   mpfr_init2(f, 53); mpz_init(z);
   mpz_set_ui(z, i);
   mpfr_set_z(f, z, rnd);
-  if ((long)mpfr_get_d(f) != i) {
+  if ((long)mpfr_get_d1 (f) != i) {
     printf("Error in mpfr_set_z for i=%ld rnd_mode=%d\n",i,rnd);
     exit(1);
   }
@@ -66,10 +67,10 @@ main (int argc, char *argv[])
   long j; 
 
   check_large();
-  srand(getpid());
+  SEED_RAND (time(NULL));
   check(0, 0);
   for (j=0; j<1000000; j++)
-    check(lrand48(), rand()%4);
+    check(LONG_RAND(), LONG_RAND()%4);
 
   return 0;
 }

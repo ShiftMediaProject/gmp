@@ -1,6 +1,6 @@
 /* Test file for mpfr_round_prec.
 
-Copyright (C) 1999-2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -36,7 +36,7 @@ main (void)
    if (mpfr_cmp_ui(x, 4))
      {
        fprintf (stderr, "Error in tround: got %1.1f instead of 4\n",
-		mpfr_get_d (x));
+		mpfr_get_d1 (x));
        exit (1);
      }
 
@@ -47,7 +47,7 @@ main (void)
    if (mpfr_cmp_ui(x, 5))
      {
        fprintf (stderr, "Error in tround: got %1.1f instead of 5\n",
-		mpfr_get_d (x));
+		mpfr_get_d1 (x));
        exit (1);
      }
 
@@ -58,7 +58,7 @@ main (void)
    if (mpfr_cmp_si(x, -5))
      {
        fprintf (stderr, "Error in tround: got %1.1f instead of -5\n",
-		mpfr_get_d (x));
+		mpfr_get_d1 (x));
        exit (1);
      }
 
@@ -69,7 +69,7 @@ main (void)
    if (mpfr_cmp_ui(x, 5))
      {
        fprintf (stderr, "Error in tround: got %1.1f instead of 5\n",
-		mpfr_get_d (x));
+		mpfr_get_d1 (x));
        exit (1);
      }
 

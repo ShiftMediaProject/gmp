@@ -1,6 +1,6 @@
 /* Test file for mpfr_agm.
 
-Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,15 +15,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-test.h"
@@ -35,16 +34,14 @@ void check_large _PROTO((void));
 void slave _PROTO((int, int)); 
 
 double
-drand_agm(void)
+drand_agm (void)
 {
   double d; long int *i;
 
   i = (long int*) &d;
   do {
-    i[0] = lrand48();
-    i[1] = lrand48();
-  /*if (lrand48()%2) d=-d; */ /* generates negative numbers */
-                              /* useless here */
+    i[0] = LONG_RAND();
+    i[1] = LONG_RAND();
   } while ((d<1e-153)||(d>1e153));    /* to avoid underflow or overflow
 					 in double calculus in sqrt(u*v) */
 
@@ -92,13 +89,13 @@ check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
   mpfr_set_d(tb, b, rnd_mode);
 
   mpfr_agm(tres, ta, tb, rnd_mode);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   
   if (res1==0.0) res1=dagm(a,b); else ck=1;
 if (ck==0) printf("%1.20e\n", res1);
-  res2 = mpfr_get_d(tres);
+  res2 = mpfr_get_d1 (tres);
 
   if (ck && res1!=res2 && (!isnan(res1) || !isnan(res2))) {
     printf("mpfr_agm failed for a=%1.20e, b=%1.20e, rnd_mode=%d\n",a,b,rnd_mode);
@@ -132,16 +129,15 @@ slave (int N, int p)
   double a,b;
   mpfr_t ta, tb, tres;
 
-  srand48(getpid());
   mpfr_init2(ta, 53);
   mpfr_init2(tb, 53);
   mpfr_init2(tres, p);
   for(i=0;i<N;i++) {
-    a=drand_agm();
-    b=drand_agm();
+    a = drand_agm();
+    b = drand_agm();
     mpfr_set_d(ta, a, GMP_RNDN);
     mpfr_set_d(tb, b, GMP_RNDN);
-    mpfr_agm(tres, ta, tb, rand() % 4 );
+    mpfr_agm(tres, ta, tb, LONG_RAND() % 4 );
   }
     mpfr_clear(ta); mpfr_clear(ta); mpfr_clear(tres); 
     printf("fin\n");
@@ -153,6 +149,8 @@ main (int argc, char* argv[])
 {
    int N;
 
+   SEED_RAND (time(NULL));
+
    if (argc==3) {   /* tagm N p : N calculus with precision p*/
      printf("Doing %d random tests in %d precision\n",atoi(argv[1]),atoi(argv[2]));
      slave(atoi(argv[1]),atoi(argv[2]));
@@ -163,12 +161,11 @@ main (int argc, char* argv[])
      int i;
      double a,b;
 
-     srand48(getpid()); 
      N = atoi(argv[1]);
      for (i=0;i<N;i++) {
        a = drand(); 
        b = drand();
-       check(a, b, rand() % 4);
+       check(a, b, LONG_RAND() % 4);
      } 
      return 0;
    }

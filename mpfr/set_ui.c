@@ -1,6 +1,6 @@
 /* mpfr_set_ui -- set a MPFR number from a machine unsigned integer
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright 1999, 2000, 2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 

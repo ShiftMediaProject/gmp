@@ -1,6 +1,6 @@
 /* mpfr_set_str_raw -- set a floating-point number from a binary string
 
-Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -40,8 +40,8 @@ mpfr_set_str_raw (mpfr_ptr x, char *str)
   long expn = 0, e; char *endstr2;
 
   xp = MPFR_MANT(x);
-  xsize = 1 + (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
-  alloc = (strlen(str)+1) * sizeof(char);
+  xsize = 1 + (MPFR_PREC(x) - 1) / BITS_PER_MP_LIMB;
+  alloc = (strlen(str) + 1) * sizeof(char);
 
   if (*str == '-')
     {
@@ -102,7 +102,7 @@ mpfr_set_str_raw (mpfr_ptr x, char *str)
     MPFR_SET_ZERO(x);
   }
   else {
-    l = (l-1) / BITS_PER_MP_LIMB + 1;
+    l = (l - 1) / BITS_PER_MP_LIMB + 1;
     str2 = str0;
 
     if (l > xsize) {
@@ -115,7 +115,7 @@ mpfr_set_str_raw (mpfr_ptr x, char *str)
       {
 	j = 0; 
 	xp[xsize - k] = 0; 
-	while (str2<endstr2 && j < BITS_PER_MP_LIMB)
+	while ((str2 < endstr2) && (j < BITS_PER_MP_LIMB))
 	  {
 	    xp[xsize - k] = (xp[xsize - k] << 1) + (*str2 - '0'); 
 	    str2++; j++; 
@@ -129,7 +129,8 @@ mpfr_set_str_raw (mpfr_ptr x, char *str)
     if (cnt) mpn_lshift(xp, xp, xsize, cnt); 
 
     MPFR_EXP(x) = expn - cnt; 
-    MPFR_SIZE(x) = xsize; if (negative) MPFR_CHANGE_SIGN(x);
+    if (MPFR_ISNEG(x) != negative)
+      MPFR_CHANGE_SIGN(x);
   }
 
   (*__gmp_free_func) (str0, alloc);

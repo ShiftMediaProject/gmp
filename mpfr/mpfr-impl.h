@@ -1,6 +1,6 @@
 /* Utilities for MPFR developers, not exported.
 
-Copyright (C) 1999-2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -80,6 +80,10 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define DOUBLE_ISNAN(x) (DOUBLE_ISNANorINF(x) && \
 			 ((((Ieee_double_extract *)&(x))->s.manl != 0) || \
                          (((Ieee_double_extract *)&(x))->s.manh != 0)))
+
+#define DBL_POS_INF (1.0/0.0)
+#define DBL_NEG_INF (-1.0/0.0)
+#define DBL_NAN (0.0/0.0)
 
 /* bit 31 of _mpfr_size is used for sign,
    bit 30 of _mpfr_size is used for Nan flag,
@@ -180,8 +184,7 @@ int mpfr_round_raw_generic _PROTO ((mp_limb_t *, mp_limb_t *, mp_prec_t, int,
 				    mp_prec_t, mp_rnd_t, int *, int));
 int mpfr_can_round_raw _PROTO ((mp_limb_t *, mp_size_t, int, mp_exp_t,
 				mp_rnd_t, mp_rnd_t, mp_prec_t));
-double mpfr_get_d2 _PROTO ((mpfr_srcptr, mp_exp_t));
-mp_size_t mpn_sqrtrem_new _PROTO ((mp_limb_t *, mp_limb_t *, mp_limb_t *, mp_size_t));
+double mpfr_get_d3 _PROTO ((mpfr_srcptr, mp_exp_t, mp_rnd_t));
 int mpfr_cmp_abs _PROTO ((mpfr_srcptr, mpfr_srcptr));
 int mpfr_cmp2 _PROTO ((mpfr_srcptr, mpfr_srcptr, mp_prec_t *));
 long _mpfr_ceil_log2 _PROTO ((double));

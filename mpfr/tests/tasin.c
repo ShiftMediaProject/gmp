@@ -1,7 +1,7 @@
 /* Test file for mpfr_asin.
 
-Copyright (C) 2001 Free Software Foundation.
-Contributed by Mathieu Dutour.
+Copyright 2001, 2002 Free Software Foundation.
+Original version by Mathieu Dutour.
 
 This file is part of the MPFR Library.
 
@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -36,6 +36,19 @@ main (void)
   mpfr_init (x);
   mpfr_init (y);
   mpfr_init (z);
+
+  /* check that sin(-1) = -Pi/2 */
+  mpfr_set_si (x, -1, GMP_RNDN);
+  mpfr_asin (y, x, GMP_RNDN);
+  mpfr_const_pi (z, GMP_RNDN);
+  mpfr_div_2exp (z, z, 1, GMP_RNDN);
+  mpfr_neg (z, z, GMP_RNDN);
+  if (mpfr_cmp (y, z))
+    {
+      fprintf (stderr, "sin(-1) is wrong, expected %.20e, got %.20e\n",
+               mpfr_get_d1 (z), mpfr_get_d1 (y));
+      exit (1);
+    }
 
   for (prec = 2; prec <= 100; prec++)
     {

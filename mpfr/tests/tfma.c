@@ -1,6 +1,6 @@
 /* Test file for mpfr_fma.
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright 2001 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -48,6 +48,19 @@ main (int argc, char *argv[])
   mpfr_set_d (y, 0.5, GMP_RNDN);
   mpfr_set_d (z, 0.375, GMP_RNDN);
   mpfr_fma (s, x, y, z, GMP_RNDU); /* result is 0 */
+
+  mpfr_set_prec (x, 27);
+  mpfr_set_prec (y, 27);
+  mpfr_set_prec (z, 27);
+  mpfr_set_prec (s, 27);
+  mpfr_set_str_raw (x, "1.11111111111111111111111111e-1");
+  mpfr_set (y, x, GMP_RNDN);
+  mpfr_set_str_raw (z, "-1.00011110100011001011001001e-1");
+  if (mpfr_fma (s, x, y, z, GMP_RNDN) >= 0)
+    {
+      fprintf (stderr, "Wrong inexact flag for x=y=1-2^(-27)\n");
+      exit (1);
+    }
 
   MPFR_SET_NAN(x);
   mpfr_random(y);
@@ -294,6 +307,13 @@ main (int argc, char *argv[])
           {
             fprintf (stderr, "Wrong inexact flag for rnd=%s: expected %d, got %d\n",
 		       mpfr_print_rnd_mode (rnd), compare, inexact);
+            fprintf (stderr, "x="); mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
+            fprintf (stderr, " y="); mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
+            fprintf (stderr, " z="); mpfr_out_str (stderr, 2, 0, z, GMP_RNDN);
+            fprintf (stderr, " s="); mpfr_out_str (stderr, 2, 0, s, GMP_RNDN);
+            fprintf (stderr, "\n");
+            fprintf (stderr, "z=%1.20e s=%1.20e\n", mpfr_get_d1 (z),
+                     mpfr_get_d1 (s));
             exit (1);
 	    }
 	}

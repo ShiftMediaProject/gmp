@@ -1,6 +1,6 @@
 /* Test file for mpfr_div.
 
-Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,20 +15,18 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <time.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
-
-#define NaN (0./0.)
 
 #define check53(n, d, rnd, res) check4(n, d, rnd, 53, res)
 
@@ -38,6 +36,7 @@ void check_float _PROTO((void));
 void check_convergence _PROTO((void)); 
 void check_lowr _PROTO((void));
 void check_inexact _PROTO((void));
+void check_nan _PROTO((void));
 
 void
 check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
@@ -48,11 +47,11 @@ check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
   mpfr_set_d(n, N, rnd_mode);
   mpfr_set_d(d, D, rnd_mode);
   mpfr_div(q, n, d, rnd_mode);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   if (Q==0.0) Q = N/D;
-  Q2 = mpfr_get_d(q);
+  Q2 = mpfr_get_d1 (q);
   if (p==53 && Q!=Q2 && (!isnan(Q) || !isnan(Q2))) {
     printf("mpfr_div failed for n=%1.20e, d=%1.20e, rnd_mode=%s\n",
 	   N, D, mpfr_print_rnd_mode(rnd_mode));
@@ -72,7 +71,7 @@ check24 (float N, float D, mp_rnd_t rnd_mode, float Q)
   mpfr_set_d(n, N, rnd_mode);
   mpfr_set_d(d, D, rnd_mode);
   mpfr_div(q, n, d, rnd_mode);
-  Q2 = mpfr_get_d(q);
+  Q2 = mpfr_get_d1 (q);
   if (Q!=Q2) {
     printf("mpfr_div failed for n=%1.10e, d=%1.10e, prec=24, rnd_mode=%s\n",
 	   N, D, mpfr_print_rnd_mode(rnd_mode));
@@ -451,20 +450,14 @@ int
 main (int argc, char *argv[])
 {
   mpfr_t x, y, z; 
-  int N;
 
-#ifdef TEST
-  int i; double n, d, e;
-#ifdef __mips
-    /* to get denormalized numbers on IRIX64 */
-    union fpc_csr exp;
-    exp.fc_word = get_fpc_csr();
-    exp.fc_struct.flush = 0;
-    set_fpc_csr(exp.fc_word);
-#endif
+#ifdef HAVE_FENV_H
+  int N, i;
+  double n, d, e;
+
+  mpfr_test_init ();
 #endif
 
-  N = (argc>1) ? atoi(argv[1]) : 100000;
   check_inexact(); 
 
   mpfr_init2 (x, 64);
@@ -501,14 +494,16 @@ main (int argc, char *argv[])
   check53(1.04636807108079349236e-189, 3.72295730823253012954e-292, GMP_RNDZ,
 	  2.810583051186143125e102);
 
-#ifdef TEST
-  srand48(getpid());
-  for (i=0;i<N;i++) {
-    do { n = drand(); d = drand(); e = ABS(n)/ABS(d); }
-    /* smallest normalized is 2^(-1022), largest is 2^(1023)*(2-2^(-52)) */
-    while (e>=MAXNORM || e<MINNORM);
-    check4(n, d, rand() % 4, 53, 0.0);
-  }
+#ifdef HAVE_FENV_H
+  N = (argc>1) ? atoi(argv[1]) : 100000;
+  SEED_RAND (time(NULL));
+  for (i=0;i<N;i++)
+    {
+      do { n = drand(); d = drand(); e = ABS(n)/ABS(d); }
+      /* smallest normalized is 2^(-1022), largest is 2^(1023)*(2-2^(-52)) */
+      while (e>=MAXNORM || e<MINNORM);
+      check4 (n, d, LONG_RAND() % 4, 53, 0.0);
+    }
 #endif
 
   mpfr_clear (x);

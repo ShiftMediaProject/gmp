@@ -1,6 +1,6 @@
 /* Test file for mpfr_out_str.
 
-Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -24,7 +24,6 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-test.h"
@@ -130,22 +129,18 @@ main (int argc, char *argv[])
   check(2.14478198760196000000e+16, GMP_RNDN, 10);
   check(7.02293374921793516813e-84, GMP_RNDN, 10);
 
-  /* This bombs on alphaev56-unknown-freebsd4.1 due to attempting to printf
-     denormlaized numbers.  */
-#if 0
   /* random tests */
-  srand(getpid());
+  SEED_RAND (time(NULL));
   for (i=0;i<N;i++)
     {
       do
         {
-          d = drand();
+          d = drand ();
         } while (isnan(d));
-      r = rand() % 4;
-      p = 2 + rand() % 35;
+      r = LONG_RAND() % 4;
+      p = 2 + LONG_RAND() % 35;
       check (d, r, p);
     }
-#endif
 
   return 0;
 }

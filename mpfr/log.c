@@ -1,6 +1,6 @@
 /* mpfr_log -- natural logarithm of a floating-point number
 
-Copyright (C) 1999-2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -82,8 +82,8 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
   if (MPFR_IS_ZERO(a))
     {
       MPFR_SET_INF(r);
-      MPFR_SET_POS(r);
-      MPFR_RET(0); /* log(0) is an exact infinity */
+      MPFR_SET_NEG(r);
+      MPFR_RET(0); /* log(0) is an exact -infinity */
     }
 
   /* If a is negative, the result is NaN */
@@ -103,7 +103,7 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
 
   q=MPFR_PREC(r);
   
-  ref=mpfr_get_d(a)-1.0;
+  ref = mpfr_get_d1 (a) - 1.0;
   if (ref<0)
     ref=-ref;
 

@@ -1,6 +1,6 @@
 /* Test file for mpfr_add and mpfr_sub.
 
-Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -23,12 +23,12 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-extern int getpid();
 void check _PROTO((double, double, mp_rnd_t, unsigned int, unsigned int, unsigned int, double)); 
 void checknan _PROTO((double, double, mp_rnd_t, unsigned int, unsigned int, unsigned int)); 
 void check3 _PROTO((double, double, mp_rnd_t));
@@ -56,12 +56,12 @@ check (double x, double y, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_add(zz, xx, yy, rnd_mode);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd_mode);
   if (px==53 && py==53 && pz==53) cert=1;
 #endif
   if (z1==0.0) z1=x+y; else cert=1;
-  z2 = mpfr_get_d(zz);
+  z2 = mpfr_get_d1 (zz);
   mpfr_set_d (yy, z2, GMP_RNDN);
   if (!mpfr_cmp (zz, yy) && cert && z1!=z2 && !(isnan(z1) && isnan(z2))) {
     printf("expected sum is %1.20e, got %1.20e\n",z1,z2);
@@ -84,24 +84,24 @@ checknan (double x, double y, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_add(zz, xx, yy, rnd_mode);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   if (MPFR_IS_NAN(zz) == 0) { printf("Error, not an MPFR_NAN for xx = %1.20e, y = %1.20e\n", x, y); exit(1); }
-  z2 = mpfr_get_d(zz);
-  if (!isnan(z2)) { printf("Error, not a NaN after conversion, xx = %1.20e yy = %1.20e\n", x, y); exit(1); }
+  z2 = mpfr_get_d1 (zz);
+  if (!isnan(z2)) { printf("Error, not a NaN after conversion, xx = %1.20e yy = %1.20e, got %1.20e\n", x, y, z2); exit(1); }
 
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
 
-#ifdef TEST
+#ifdef HAVE_FENV_H
 /* idem than check for mpfr_add(x, x, y) */
 void
 check3 (double x, double y, mp_rnd_t rnd_mode)
 {
   double z1,z2; mpfr_t xx,yy; int neg;
 
-  neg = rand() % 2;
+  neg = LONG_RAND() % 2;
   mpfr_init2(xx, 53);
   mpfr_init2(yy, 53);
   mpfr_set_d(xx, x, rnd_mode);
@@ -110,7 +110,7 @@ check3 (double x, double y, mp_rnd_t rnd_mode)
   else mpfr_add(xx, xx, yy, rnd_mode);
   mpfr_set_machine_rnd_mode(rnd_mode);
   z1 = (neg) ? x-y : x+y;
-  z2 = mpfr_get_d(xx);
+  z2 = mpfr_get_d1 (xx);
   mpfr_set_d (yy, z2, GMP_RNDN);
   if (!mpfr_cmp (xx, yy) && z1!=z2 && !(isnan(z1) && isnan(z2))) {
     printf("expected result is %1.20e, got %1.20e\n",z1,z2);
@@ -129,7 +129,7 @@ check4 (double x, double y, mp_rnd_t rnd_mode)
   mpfr_t xx, yy;
   int neg;
 
-  neg = rand() % 2;
+  neg = LONG_RAND() % 2;
   mpfr_init2(xx, 53);
   mpfr_init2(yy, 53);
   mpfr_set_d(xx, x, rnd_mode);
@@ -138,7 +138,7 @@ check4 (double x, double y, mp_rnd_t rnd_mode)
   else mpfr_add(xx, yy, xx, rnd_mode);
   mpfr_set_machine_rnd_mode(rnd_mode);
   z1 = (neg) ? y-x : x+y;
-  z2 = mpfr_get_d(xx);
+  z2 = mpfr_get_d1 (xx);
   mpfr_set_d (yy, z2, GMP_RNDN);
   /* check that xx is representable as a double and no overflow occurred */
   if ((mpfr_cmp (xx, yy) == 0) && (z1 != z2)) {
@@ -158,13 +158,13 @@ check5 (double x, mp_rnd_t rnd_mode)
 
   mpfr_init2(xx, 53);
   mpfr_init2(yy, 53);
-  neg = rand() % 2;
+  neg = LONG_RAND() % 2;
   mpfr_set_d(xx, x, rnd_mode);
   if (neg) mpfr_sub(xx, xx, xx, rnd_mode);
   else mpfr_add(xx, xx, xx, rnd_mode);
   mpfr_set_machine_rnd_mode(rnd_mode);
   z1 = (neg) ? x-x : x+x;
-  z2 = mpfr_get_d(xx);
+  z2 = mpfr_get_d1 (xx);
   mpfr_set_d (yy, z2, GMP_RNDN);
   /* check NaNs first since mpfr_cmp does not like them */
   if (!(isnan(z1) && isnan(z2)) && !mpfr_cmp (xx, yy) && z1!=z2)
@@ -188,7 +188,7 @@ check2 (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode)
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_add(zz, xx, yy, rnd_mode);
   mpfr_set_machine_rnd_mode(rnd_mode);
-  z = x+y; z2=mpfr_get_d(zz); u=ulp(z,z2);
+  z = x+y; z2=mpfr_get_d1 (zz); u=ulp(z,z2);
   /* one ulp difference is possible due to composed rounding */
   if (px>=53 && py>=53 && pz>=53 && ABS(u)>1) { 
     printf("x=%1.20e,%d y=%1.20e,%d pz=%d,rnd=%s\n",
@@ -300,7 +300,7 @@ check64 (void)
   mpfr_set_d (x, -5.03525136761487735093e-74, GMP_RNDN);
   mpfr_set_d (t, 8.51539046314262304109e-91, GMP_RNDN);
   mpfr_add (u, x, t, GMP_RNDN);
-  if (mpfr_get_d (u) != -5.0352513676148773509283672e-74) {
+  if (mpfr_get_d1 (u) != -5.0352513676148773509283672e-74) {
     fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=92, prec(t)=86\n");
     exit (1);
   }
@@ -356,7 +356,7 @@ check64 (void)
   mpfr_set_str_raw(x, "0.10011010101000110101010000000011001001001110001011101011111011101E623");
   mpfr_set_str_raw(t, "0.10011010101000110101010000000011001001001110001011101011111011100E623");
   mpfr_sub(u, x, t, GMP_RNDU);
-  if (mpfr_get_d(u) != 9.4349060620538533806e167) { /* 2^558 */
+  if (mpfr_get_d1 (u) != 9.4349060620538533806e167) { /* 2^558 */
     printf("Error (1) in mpfr_sub\n"); exit(1);
   }
 
@@ -435,10 +435,10 @@ check64 (void)
   /* checks that NaN flag is correctly reset */
   mpfr_set_d (t, 1.0, GMP_RNDN);
   mpfr_set_d (u, 1.0, GMP_RNDN);
-  MPFR_SET_NAN(x);
+  mpfr_set_nan (x);
   mpfr_add (x, t, u, GMP_RNDN);
   if (mpfr_cmp_ui (x, 2)) {
-    fprintf (stderr, "Error in mpfr_add: 1+1 gives %e\n", mpfr_get_d (x));
+    fprintf (stderr, "Error in mpfr_add: 1+1 gives %e\n", mpfr_get_d1 (x));
     exit (1);
   }
 
@@ -537,7 +537,7 @@ check_same (void)
 
   mpfr_init(x); mpfr_set_d(x, 1.0, GMP_RNDZ);
   mpfr_add(x, x, x, GMP_RNDZ);
-  if (mpfr_get_d(x) != 2.0) {
+  if (mpfr_get_d1 (x) != 2.0) {
     printf("Error when all 3 operands are equal\n"); exit(1);
   }
   mpfr_clear(x);
@@ -600,7 +600,7 @@ check_inexact (void)
 		 abs(EXP(x)-EXP(u)) + max(prec(x), prec(u)) + 1 */
 	      pz = pz + MAX(MPFR_PREC(x), MPFR_PREC(u)) + 1;
 	      mpfr_set_prec (z, pz);
-	      rnd = rand () % 4;
+	      rnd = LONG_RAND () % 4;
 	      if (mpfr_add (z, x, u, rnd))
 		{
 		  fprintf (stderr, "z <- x + u should be exact\n");
@@ -640,19 +640,15 @@ check_inexact (void)
 int
 main (int argc, char *argv[])
 {
+#ifdef HAVE_FENV_H
   int prec, rnd_mode;
-#ifdef TEST
-  int i, rnd;
-  double x, y; 
+  int rnd;
+  double y;
 #endif
-#ifdef __mips
-    /* to get denormalized numbers on IRIX64 */
-    union fpc_csr exp;
-    exp.fc_word = get_fpc_csr();
-    exp.fc_struct.flush = 0;
-    set_fpc_csr(exp.fc_word);
-#endif
+  double x;
+  int i;
 
+  mpfr_test_init ();
   check_inexact ();
   check_case_1b ();
   check_case_2 ();
@@ -704,7 +700,8 @@ main (int argc, char *argv[])
 	  9.0969267746123943065e196);
   check53(3.14553393112021279444e-67, 3.14553401015952024126e-67, GMP_RNDU,
 	  6.2910679412797336946e-67);
-  srand(getpid());
+
+  SEED_RAND (time(NULL));
   check53(5.43885304644369509058e+185,-1.87427265794105342763e-57,GMP_RNDN,
 	  5.4388530464436950905e185);
   check53(5.43885304644369509058e+185,-1.87427265794105342763e-57, GMP_RNDZ,
@@ -737,8 +734,9 @@ main (int argc, char *argv[])
 	  GMP_RNDD, "-b.eae2643497ff6286b@-108");
   check2a(-3.31624349995221499866e-22,107,-8.20150212714204839621e+156,79,99,
 	 GMP_RNDD, "-2.63b22b55697e8000000000008@130");
-  check2a(-1.08007920352320089721e+150,63,1.77607317509426332389e+73,64,64,
-	  GMP_RNDN, "-5.4781549356e1c@124");
+  x = -5943982715394951.0; for (i=0; i<446; i++) x *= 2.0;
+  check2a(x, 63, 1.77607317509426332389e+73, 64, 64, GMP_RNDN,
+	  "-5.4781549356e1c@124");
   check2a(4.49465557237618783128e+53,108,-2.45103927353799477871e+48,60,105,
 	  GMP_RNDN, "4.b14f230f909dc803e@44");
   check2a(2.26531902208967707071e+168,99,-2.67795218510613988524e+168,67,94,
@@ -772,8 +770,6 @@ main (int argc, char *argv[])
   check2a(2.72046257722708717791e+243,97,-1.62158447436486437113e+243,83,96,
 	  GMP_RNDN, "a.4cc63e002d2e8@201");
   /* Checking double precision (53 bits) */
-  prec = (argc<2) ? 53 : atoi(argv[1]);
-  rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
   check53(-8.22183238641455905806e-19, 7.42227178769761587878e-19, GMP_RNDD, 
 	  -7.9956059871694317927e-20);
   check53(5.82106394662028628236e+234, -5.21514064202368477230e+89, GMP_RNDD,
@@ -786,18 +782,17 @@ main (int argc, char *argv[])
 	  -2.96695924471135255027e27);
   check53(1.74693641655743793422e-227, -7.71776956366861843469e-229, GMP_RNDN,
 	  1.669758720920751867e-227);
+  x = -7883040437021647.0; for (i=0; i<468; i++) x = x / 2.0;
   check53(-1.03432206392780011159e-125, 1.30127034799251347548e-133, GMP_RNDN,
-	  -1.0343220509150965661e-125);
+	  x);
   check53(1.05824655795525779205e+71, -1.06022698059744327881e+71, GMP_RNDZ,
 	  -1.9804226421854867632e68);
   check53(-5.84204911040921732219e+240, 7.26658169050749590763e+240, GMP_RNDD,
 	  1.4245325800982785854e240);
-  /* the following check double overflow */
-  check53(6.27557402141211962228e+307, 1.32141396570101687757e+308,
-     GMP_RNDZ, 1.0/0.0);
   check53(1.00944884131046636376e+221, 2.33809162651471520268e+215, GMP_RNDN,
 	  1.0094511794020929787e221);
-  check53(4.29232078932667367325e-278, 1.07735250473897938332e-281, GMP_RNDU,
+  x = 7045852550057985.0; for (i=0; i<986; i++) x = x / 2.0;
+  check53(4.29232078932667367325e-278, x, GMP_RNDU,
 	  4.2933981418314132787e-278);
   check53(5.27584773801377058681e-80, 8.91207657803547196421e-91, GMP_RNDN,
 	  5.2758477381028917269e-80);
@@ -819,14 +814,19 @@ main (int argc, char *argv[])
   /* test denormalized numbers too */
   check53(8.06294740693074521573e-310, 6.95250701071929654575e-310, GMP_RNDU,
 	  1.5015454417650041761e-309);
-  check53(1/0., 6.95250701071929654575e-310, GMP_RNDU, 1/0.); 
-  check53(-1/0., 6.95250701071929654575e-310, GMP_RNDU, -1/0.); 
-  check53(6.95250701071929654575e-310, 1/0., GMP_RNDU, 1/0.);
-  check53(6.95250701071929654575e-310, -1/0., GMP_RNDU, -1/0.);
+#ifdef HAVE_INFS
+  /* the following check double overflow */
+  check53(6.27557402141211962228e+307, 1.32141396570101687757e+308,
+     GMP_RNDZ, DBL_POS_INF);
+  check53(DBL_POS_INF, 6.95250701071929654575e-310, GMP_RNDU, DBL_POS_INF);
+  check53(DBL_NEG_INF, 6.95250701071929654575e-310, GMP_RNDU, DBL_NEG_INF);
+  check53(6.95250701071929654575e-310, DBL_POS_INF, GMP_RNDU, DBL_POS_INF);
+  check53(6.95250701071929654575e-310, DBL_NEG_INF, GMP_RNDU, DBL_NEG_INF);
+  check53nan (DBL_POS_INF, DBL_NEG_INF, GMP_RNDN);
+#endif
   check53(1.44791789689198883921e-140, -1.90982880222349071284e-121,
 	  GMP_RNDN, -1.90982880222349071e-121);
 
-  check53nan(1/0., -1/0., GMP_RNDN);
 
   /* tests for particular cases (Vincent Lefevre, 22 Aug 2001) */
   check53(9007199254740992.0, 1.0, GMP_RNDN, 9007199254740992.0);
@@ -835,27 +835,29 @@ main (int argc, char *argv[])
   check53(9007199254740994.0, -1.0, GMP_RNDN, 9007199254740992.0);
   check53(9007199254740996.0, -1.0, GMP_RNDN, 9007199254740996.0);
   
-#ifdef TEST
+#ifdef HAVE_FENV_H
+  prec = (argc<2) ? 53 : atoi(argv[1]);
+  rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
   /* Comparing to double precision using machine arithmetic */
   for (i=0;i<N;i++) {
     x = drand(); 
     y = drand();
     if (ABS(x)>2.2e-307 && ABS(y)>2.2e-307 && x+y<1.7e+308 && x+y>-1.7e308) {
       /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? lrand48()%4 : rnd_mode;
+      rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
       check(x, y, rnd, prec, prec, prec, 0.0);
     }
   } 
   /* tests with random precisions */
   for (i=0;i<N;i++) {
     int px, py, pz;
-    px = 53 + (rand() % 64); 
-    py = 53 + (rand() % 64); 
-    pz = 53 + (rand() % 64); 
-    rnd_mode = rand() % 4;
+    px = 53 + (LONG_RAND() % 64); 
+    py = 53 + (LONG_RAND() % 64); 
+    pz = 53 + (LONG_RAND() % 64); 
+    rnd_mode = LONG_RAND() % 4;
     do { x = drand(); } while (isnan(x));
     do { y = drand(); } while (isnan(y));
-    check2(x,px,y,py,pz,rnd_mode);
+    check2 (x, px, y, py, pz, rnd_mode);
   }
   /* Checking mpfr_add(x, x, y) with prec=53 */
   for (i=0;i<N;i++) {
@@ -863,7 +865,7 @@ main (int argc, char *argv[])
     y = drand();
     if (ABS(x)>2.2e-307 && ABS(y)>2.2e-307 && x+y<1.7e+308 && x+y>-1.7e308) {
       /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? lrand48()%4 : rnd_mode;
+      rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
       check3(x, y, rnd);
     }
   }
@@ -873,7 +875,7 @@ main (int argc, char *argv[])
     y = drand();
     if (ABS(x)>2.2e-307 && ABS(y)>2.2e-307 && x+y<1.7e+308 && x+y>-1.7e308) {
       /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? lrand48()%4 : rnd_mode;
+      rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
       check4(x, y, rnd);
     }
   }
@@ -881,7 +883,7 @@ main (int argc, char *argv[])
   for (i=0;i<N;i++) {
     do { x = drand(); } while ((ABS(x)<2.2e-307) || (ABS(x)>0.8e308));
     /* avoid denormalized numbers and overflows */
-    rnd = (rnd_mode==-1) ? lrand48()%4 : rnd_mode;
+    rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
     check5(x, rnd);
   }
 #endif

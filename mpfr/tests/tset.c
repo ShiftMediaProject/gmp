@@ -1,6 +1,6 @@
 /* Test file for mpfr_set.
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright 2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-test.h"
 
 int
 main (void)
@@ -54,7 +55,7 @@ main (void)
     {
       mpfr_set_prec (x, p);
       mpfr_random (x);
-      if (rand () % 2)
+      if (LONG_RAND () % 2)
 	mpfr_neg (x, x, GMP_RNDN);
       for (q=2; q<2*p; q++)
 	{

@@ -1,6 +1,6 @@
 /* Test file for mpfr_sqrt.
 
-Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,13 +15,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -38,6 +39,7 @@ void check24 _PROTO((float, mp_rnd_t, float));
 void check_float _PROTO((void)); 
 void special _PROTO((void));
 void check_inexact _PROTO((mp_prec_t));
+void check_nan _PROTO((void));
 
 void
 check3 (double a, mp_rnd_t rnd_mode, double Q)
@@ -47,7 +49,7 @@ check3 (double a, mp_rnd_t rnd_mode, double Q)
   ck = (Q!=-1.0); /* if ck=1, then Q is certified correct */
   mpfr_init2(q, 53);
   mpfr_set_d(q, a, rnd_mode);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   mpfr_sqrt(q, q, rnd_mode);
@@ -60,7 +62,7 @@ check3 (double a, mp_rnd_t rnd_mode, double Q)
 
     }
   }
-  Q2 = mpfr_get_d(q);
+  Q2 = mpfr_get_d1 (q);
   if (Q!=Q2 && (!isnan(Q) || !isnan(Q2))) {
     u = ulp(Q2,Q);
     if (ck) {
@@ -109,7 +111,7 @@ check24 (float a, mp_rnd_t rnd_mode, float Q)
   mpfr_init2(q, 24);
   mpfr_set_d(q, a, rnd_mode);
   mpfr_sqrt(q, q, rnd_mode);
-  Q2 = mpfr_get_d(q);
+  Q2 = mpfr_get_d1 (q);
   if (Q!=Q2) {
     printf("mpfr_sqrt failed for a=%1.10e, prec=24, rnd_mode=%s\n",
 	   a, mpfr_print_rnd_mode(rnd_mode));
@@ -196,7 +198,7 @@ special (void)
       mpfr_set_ui (z, 1, GMP_RNDN);
       mpfr_add_one_ulp (z, GMP_RNDN);
       mpfr_sqrt (x, z, GMP_RNDU);
-      if (mpfr_get_d (x) != 1.5)
+      if (mpfr_get_d1 (x) != 1.5)
 	{
 	  fprintf (stderr, "Error: sqrt(1+ulp(1), up) should give 1.5 (prec=%u)\n", (unsigned) p);
 	  printf ("got "); mpfr_print_binary (x); putchar ('\n');
@@ -222,7 +224,7 @@ special (void)
   mpfr_sqrt (z, x, GMP_RNDN);
   if (mpfr_cmp_ui (z, 0) < 0) {
     fprintf (stderr, "Error: square root of %e gives %e\n", 
-	     mpfr_get_d (x), mpfr_get_d (z));
+	     mpfr_get_d1 (x), mpfr_get_d1 (z));
     exit (1);
   }
 
@@ -248,7 +250,7 @@ check_inexact (mp_prec_t p)
   mpfr_init2 (y, p);
   mpfr_init2 (z, 2*p);
   mpfr_random (x);
-  rnd = rand() % 4;
+  rnd = LONG_RAND() % 4;
   inexact = mpfr_sqrt (y, x, rnd);
   if (mpfr_mul (z, y, y, rnd)) /* exact since prec(z) = 2*prec(y) */
     {
@@ -324,31 +326,33 @@ main (void)
   double a;
   mp_prec_t p;
   int k;
+#ifdef HAVE_FENV_H
+  int i;
 
+  mpfr_test_init ();
+
+  SEED_RAND (time(NULL));
+  for (i=0;i<100000;i++)
+    {
+      a = drand();
+      if (a < 0.0) a = -a; /* ensures a is positive */
+      check (a, LONG_RAND() % 4);
+    }
+#endif
   check_nan ();
 
-#ifdef TEST
-  int i; 
-#ifdef __mips
-    /* to get denormalized numbers on IRIX64 */
-    union fpc_csr exp;
-    exp.fc_word = get_fpc_csr();
-    exp.fc_struct.flush = 0;
-    set_fpc_csr(exp.fc_word);
-#endif
-
-  srand(getpid());
-  for (i=0;i<100000;i++) {
-    a = drand();
-    if (a < 0.0) a = -a; /* ensures a is positive */
-    check(a, rand() % 4);
-  }
-#endif
   for (p=2; p<200; p++)
     for (k=0; k<200; k++)
       check_inexact (p);
   special ();
   check_float();
+#ifdef HAVE_INFS
+  check3 (DBL_NAN, GMP_RNDN, DBL_NAN); 
+  check3 (-1.0, GMP_RNDN, DBL_NAN); 
+  check3 (DBL_POS_INF, GMP_RNDN, DBL_POS_INF); 
+  check3 (DBL_NEG_INF, GMP_RNDN, DBL_NAN);
+#endif
+  check3(-0.0, GMP_RNDN, 0.0); 
   check4(6.37983013646045901440e+32, GMP_RNDN, "5.9bc5036d09e0c@13");
   check4(1.0, GMP_RNDN, "1");
   check4(1.0, GMP_RNDZ, "1");

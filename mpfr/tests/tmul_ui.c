@@ -1,6 +1,6 @@
 /* Test file for mpfr_mul_ui.
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 void check_inexact _PROTO((mp_prec_t));
 
@@ -42,7 +43,7 @@ check_inexact (mp_prec_t p)
   mpfr_init (y);
   mpfr_init2 (z, p + mp_bits_per_limb);
   mpfr_random (x);
-  u = lrand48();
+  u = LONG_RAND();
   if (mpfr_mul_ui (z, x, u, GMP_RNDN))
     {
       fprintf (stderr, "Error: result should be exact\n");
@@ -109,25 +110,25 @@ main (int argc, char *argv[])
   }
 
 
-  mpfr_set_d (x, 1.0/0.0, GMP_RNDZ);
+  mpfr_set_inf (x, 1);
   mpfr_mul_ui (x, x, 3, GMP_RNDU);
-  if (mpfr_get_d (x) != 1.0/0.0)
+  if (!mpfr_inf_p (x) || (mpfr_sgn (x) <= 0))
     {
-      fprintf (stderr, "Error in mpfr_mul_ui: Inf*3 does not give Inf\n");
+      fprintf (stderr, "Error in mpfr_mul_ui: +Inf*3 does not give +Inf\n");
       exit (1);
     }
 
-  mpfr_set_d (x, -1.0/0.0, GMP_RNDZ);
+  mpfr_set_inf (x, -1);
   mpfr_mul_ui (x, x, 3, GMP_RNDU);
-  if (mpfr_get_d (x) != -1.0/0.0)
+  if (!mpfr_inf_p (x) || (mpfr_sgn (x) >= 0))
     {
       fprintf (stderr, "Error in mpfr_mul_ui: -Inf*3 does not give -Inf\n");
       exit (1);
     }
 
-  mpfr_set_d (x, 0.0/0.0, GMP_RNDZ);
+  mpfr_set_nan (x);
   mpfr_mul_ui (x, x, 3, GMP_RNDU);
-  if (!isnan(mpfr_get_d(x)))
+  if (!mpfr_nan_p(x))
     {
       fprintf (stderr, "Error in mpfr_mul_ui: NaN*3 does not give NaN\n");
       exit (1);
@@ -135,7 +136,7 @@ main (int argc, char *argv[])
 
   mpfr_set_d (x, 1.0/3.0, GMP_RNDZ);
   mpfr_mul_ui (x, x, 3, GMP_RNDU);
-  if (mpfr_get_d (x) != 1.0)
+  if (mpfr_get_d1 (x) != 1.0)
     {
       fprintf (stderr, "Error in mpfr_mul_ui: U(Z(1/3)*3) does not give 1\n");
       exit (1);
@@ -214,7 +215,7 @@ main (int argc, char *argv[])
 	{
 	  mpfr_set_prec (y, yprec);
 	  mpfr_mul_ui (y, x, 1, GMP_RNDN);
-	  if (mpfr_get_d (x) != mpfr_get_d (y))
+	  if (mpfr_get_d1 (x) != mpfr_get_d1 (y))
 	    {
 	      fprintf (stderr, "multiplication by 1.0 fails for xprec=%u, yprec=%u\n", xprec, yprec);
 	      printf ("expected "); mpfr_print_binary (x); putchar ('\n');
@@ -226,13 +227,13 @@ main (int argc, char *argv[])
 
   mpfr_set_prec (x, 128);
   mpfr_set_ui (x, 17, GMP_RNDN);
-  mpfr_mul_ui (x, x, MP_LIMB_T_HIGHBIT, GMP_RNDN);
+  mpfr_mul_ui (x, x, ULONG_HIGHBIT, GMP_RNDN);
   mpfr_set_prec (y, 128);
-  mpfr_set_ui (y, MP_LIMB_T_HIGHBIT, GMP_RNDN);
+  mpfr_set_ui (y, ULONG_HIGHBIT, GMP_RNDN);
   mpfr_mul_ui (y, y, 17, GMP_RNDN);
   if (mpfr_cmp (x, y))
     {
-      printf ("Error for 17 * 2^MP_LIMB_T_HIGHBIT\n");
+      printf ("Error for 17 * ULONG_HIGHBIT\n");
       exit (1);
     }
   

@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_str.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -48,20 +48,20 @@ main (int argc, char *argv[])
       return 0;
     }
 
-  srandom (time (NULL)); 
+  SEED_RAND (time(NULL));
   
   nc = (argc > 1) ? atoi(argv[1]) : 53;
   if (nc < 100)
     nc = 100;
 
-  bd = random() & 8;
+  bd = LONG_RAND() & 8;
   
   str2 = str = (char *) malloc (nc * sizeof(char));
 
   if (bd)
     {
       for(k = 1; k <= bd; k++)
-	*(str2++) = (random() & 1) + '0';
+	*(str2++) = (LONG_RAND() & 1) + '0';
     }
   else
     *(str2++) = '0';
@@ -69,10 +69,10 @@ main (int argc, char *argv[])
   *(str2++) = '.'; 
 
   for (k = 1; k < nc - 17 - bd; k++)
-    *(str2++) = '0' + (random() & 1);
+    *(str2++) = '0' + (LONG_RAND() & 1);
 
   *(str2++) = 'e'; 
-  sprintf (str2, "%d", (int) random() - (1 << 30)); 
+  sprintf (str2, "%d", (int) LONG_RAND() - (1 << 30)); 
 
   mpfr_init2 (x, nc + 10); 
   mpfr_set_str_raw (x, str);
@@ -99,7 +99,7 @@ main (int argc, char *argv[])
   mpfr_set_str_raw (x, "+110101100.01010000101101000000100111001000101011101110E00");
 
   mpfr_set_str_raw (x, "1.0");
-  if (mpfr_get_d (x) != 1.0)
+  if (mpfr_get_d1 (x) != 1.0)
     {
       fprintf (stderr, "Error in mpfr_set_str_raw for s=1.0\n"); 
       mpfr_clear(x);
@@ -110,7 +110,7 @@ main (int argc, char *argv[])
   mpfr_set_str_raw (x, "+0000");
   mpfr_set_str_raw (x, "+0000E0");
   mpfr_set_str_raw (x, "0000E0");
-  if (mpfr_get_d (x) != 0.0)
+  if (mpfr_get_d1 (x) != 0.0)
     {
       fprintf (stderr, "Error in mpfr_set_str_raw for s=0.0\n"); 
       mpfr_clear (x);
@@ -131,8 +131,8 @@ main (int argc, char *argv[])
   for (i=0;i<100000;i++)
     {
       mpfr_random (x);
-      k = rand() % 4;
-      logbase = (rand() % 5) + 1;
+      k = LONG_RAND() % 4;
+      logbase = (LONG_RAND() % 5) + 1;
       base = 1 << logbase;
       /* Warning: the number of bits needed to print exactly a number of 
 	 'prec' bits in base 2^logbase may be greater than ceil(prec/logbase),

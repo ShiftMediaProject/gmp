@@ -1,6 +1,5 @@
 Documentation:
 
-- update AUTHORS
 - add a description of the algorithms used + proof of correctness
 
 Installation:
@@ -14,6 +13,8 @@ Installation:
 New functions to implement:
 
 - those from LIA: missing secant, cosecant, cotangent (trigo/hyperbolic)
+- nextafter/nextforward : X + epsilon if X < Y, X - epsilon if X > Y
+- nextabove/nextbelow ?
 
 Rounding:
 
@@ -21,15 +22,7 @@ Efficiency:
 
 Miscellaneous:
 
-- initialize variables to signalling NaN (TG)
-
-- change Library GPL to Lesser GPL, and mention INRIA and/or SPACES
-
 - rename mpf2mpfr.h to gmp-mpf2mpfr.h?
-
-- detect overflow/underflow in exponent (from Ben Hinkle <bhinkle4@juno.com>)
-
-- specify exponent size (suggestion from Ben Hinkle <bhinkle4@juno.com>)
 
 - add mpfr_get_ld for 'long double' [asked by J-C Fauge`re] ?
   (exists since K&R, but has not necessarily a greater precision than double)
@@ -54,16 +47,15 @@ i.e.0.10101011100001010011001101100101110011101110010001011000000000000000000000
 	to generate a NaN (for example under freebsd by default,
 	invalid, zerodivide and overflow generate exceptions)
 
-- detect overflows/underflows in addition/multiplication of ordinary numbers
-	(PUTOT Sylvie <sputot@aigle.saclay.cea.fr>, Tue, 20 Mar 2001)
-
-- check correctness of +/-0 - +/-0 with different rounding modes.
-
-- rename mpz_set_fr to mpfr_get_mantissa_exp.
-	(Kevin Ryde <user42@zip.com.au>, 22 Jan 2002)
-	(Vincent Lefevre, 03 Feb 2002)
-
 - rewrite mpfr_get_str and mpfr_set_str to use mpn_get_str and mpn_set_str.
 	(Torbjorn Granlund <tege@swox.com>, 30 Jan 2002)
 
 - mpfr_pow isn't completely specified (concerning signed zeros).
+
+- use AC_CHECK_FUNCS for __setfpucw rather than grepping a header file.
+	(Kevin Ryde, 05 Mar 2002)
+
+- rename mpfr_isinteger to mpfr_integer_p.
+	(Kevin Ryde, 05 Mar 2002)
+
+- update mpfr_get_d3 to support the denormalized numbers.

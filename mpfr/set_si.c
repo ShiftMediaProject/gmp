@@ -1,6 +1,6 @@
 /* mpfr_set_si -- set a MPFR number from a machine signed integer
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright 1999, 2000, 2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -49,6 +49,9 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
   xp[xn] = ai << cnt;
   /* don't forget to put zero in lower limbs */
   MPN_ZERO(xp, xn);
+  /* set sign */
+  if ((i < 0) ^ (MPFR_SIGN(x) < 0))
+    MPFR_CHANGE_SIGN(x);
 
   MPFR_EXP(x) = nbits = BITS_PER_MP_LIMB - cnt;
   inex = mpfr_check_range(x, rnd_mode);
@@ -67,15 +70,12 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
           mp_exp_t exp = MPFR_EXP(x);
 
           if (exp == __mpfr_emax)
-            return mpfr_set_overflow(x, rnd_mode, (ai < 0 ? -1 : 1));
+            return mpfr_set_overflow(x, rnd_mode, (i < 0 ? -1 : 1));
 
           MPFR_EXP(x)++;
           xp[xn] = MP_LIMB_T_HIGHBIT;
         }
     }
-
-  if ((i < 0) ^ (MPFR_SIGN(x) < 0))
-    MPFR_CHANGE_SIGN(x);
 
   MPFR_RET(inex);
 }

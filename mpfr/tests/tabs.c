@@ -1,6 +1,6 @@
 /* Test file for mpfr_abs.
 
-Copyright (C) 2000-2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -23,9 +23,8 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
-
-#define Infp (1/0.)
 
 void check_inexact _PROTO((void));
 
@@ -46,7 +45,7 @@ check_inexact (void)
       mpfr_set_prec (x, p);
       mpfr_set_prec (absx, p);
       mpfr_random (x);
-      if (rand () % 2)
+      if (LONG_RAND () % 2)
 	{
 	  mpfr_set (absx, x, GMP_RNDN);
 	  mpfr_neg (x, x, GMP_RNDN);
@@ -82,14 +81,11 @@ check_inexact (void)
 int
 main (int argc, char *argv[])
 {
-   mpfr_t x; int n, k, rnd; double d, dd;
-#ifdef __mips
-   /* to get denormalized numbers on IRIX64 */
-   union fpc_csr exp;
-   exp.fc_word = get_fpc_csr();
-   exp.fc_struct.flush = 0;
-   set_fpc_csr(exp.fc_word);
-#endif
+   mpfr_t x;
+   int n, k, rnd;
+   double d, absd, dd;
+
+   mpfr_test_init ();
 
    check_inexact ();
 
@@ -97,41 +93,54 @@ main (int argc, char *argv[])
 
    mpfr_set_d(x, 1.0, GMP_RNDN);
    mpfr_abs(x, x, GMP_RNDN);
-   if (mpfr_get_d(x) != 1.0) {
+   if (mpfr_get_d1 (x) != 1.0) {
      fprintf(stderr, "Error in mpfr_abs(1.0)\n"); exit(1);
    }
 
    mpfr_set_d(x, -1.0, GMP_RNDN);
    mpfr_abs(x, x, GMP_RNDN);
-   if (mpfr_get_d(x) != 1.0) {
+   if (mpfr_get_d1 (x) != 1.0) {
      fprintf(stderr, "Error in mpfr_abs(-1.0)\n"); exit(1);
    }
 
-   mpfr_set_d(x, -6/-0., GMP_RNDN); 
-   mpfr_abs(x, x, GMP_RNDN); 
-   if (mpfr_get_d(x) != Infp) { 
-     fprintf(stderr, "Error in mpfr_abs(Inf).\n"); exit(1); 
-   }
+   mpfr_set_inf (x, 1);
+   mpfr_abs (x, x, GMP_RNDN);
+   if (!mpfr_inf_p(x) || (mpfr_sgn(x) <= 0))
+     {
+       fprintf (stderr, "Error in mpfr_abs(Inf).\n");
+       exit (1);
+     }
 
-   mpfr_set_d(x, 2/-0., GMP_RNDN); 
-   mpfr_abs(x, x, GMP_RNDN); 
-   if (mpfr_get_d(x) != Infp) { 
-     fprintf(stderr, "Error in mpfr_abs(-Inf).\n"); exit(1); 
-   }
-
+   mpfr_set_inf (x, -1);
+   mpfr_abs (x, x, GMP_RNDN);
+   if (!mpfr_inf_p(x) || (mpfr_sgn(x) <= 0))
+     {
+       fprintf (stderr, "Error in mpfr_abs(-Inf).\n");
+       exit (1);
+     }
 
    n = (argc==1) ? 1000000 : atoi(argv[1]);
    for (k = 1; k <= n; k++)
-     {      
-       d = drand();
-       rnd = rand() % 4;
-       mpfr_set_d(x, d, 0);
-       mpfr_abs(x, x, rnd);
-       dd = mpfr_get_d(x);
-       if (!isnan(d) && dd != ABS(d))
+     {
+       do
+	 {
+	   d = drand ();
+	   absd = ABS(d);
+	 }
+#ifdef HAVE_DENORMS
+       while (0);
+#else
+       while (absd <= 2.2e-307);
+#endif
+       rnd = LONG_RAND() % 4;
+       mpfr_set_d (x, d, 0);
+       mpfr_abs (x, x, rnd);
+       dd = mpfr_get_d1 (x);
+       if (!isnan(d) && (dd != absd))
 	 { 
 	   fprintf(stderr, 
-		   "Mismatch on d = %1.18g\n", d); 
+		   "Mismatch on d = %.20e\n", d);
+	   fprintf(stderr, "dd=%.20e\n", dd);
 	   mpfr_print_binary(x); putchar('\n');
 	   exit(1);
 	 } 

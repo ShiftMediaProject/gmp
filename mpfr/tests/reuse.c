@@ -1,6 +1,6 @@
 /* Test file for in-place operations.
 
-Copyright (C) 2000, 2001, 2002 Free Software Foundation.
+Copyright 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -25,7 +25,9 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void (*testfunc) _PROTO (()) = NULL;
+typedef void (*fct_t)();
+fct_t testfunc;
+
 void test3 _PROTO ((char *, mp_prec_t, mp_rnd_t));
 void test4 _PROTO ((char *, mp_prec_t, mp_rnd_t));
 void test3a _PROTO ((char *, mp_prec_t, mp_rnd_t));
@@ -61,16 +63,16 @@ test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   /* for each variable, consider each of the following 6 possibilities:
      NaN, +Infinity, -Infinity, +0, -0 or a random number */
   for (i=0; i<36; i++) {
-    if (i%6==0) MPFR_SET_NAN(ref2);
-    if (i%6==1) mpfr_set_d (ref2, 1.0/0.0, GMP_RNDN);
-    if (i%6==2) mpfr_set_d (ref2, -1.0/0.0, GMP_RNDN);
+    if (i%6==0) mpfr_set_nan (ref2);
+    if (i%6==1) mpfr_set_inf (ref2, 1);
+    if (i%6==2) mpfr_set_inf (ref2, -1);
     if (i%6==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
     if (i%6==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
     if (i%6==5) mpfr_random (ref2);
 
-    if (i/6==0) MPFR_SET_NAN(ref3);
-    if (i/6==1) mpfr_set_d (ref3, 1.0/0.0, GMP_RNDN);
-    if (i/6==2) mpfr_set_d (ref3, -1.0/0.0, GMP_RNDN);
+    if (i/6==0) mpfr_set_nan (ref3);
+    if (i/6==1) mpfr_set_inf (ref3, 1);
+    if (i/6==2) mpfr_set_inf (ref3, -1);
     if (i/6==3) mpfr_set_d (ref3, 0.0, GMP_RNDN);
     if (i/6==4) mpfr_set_d (ref3, -0.0, GMP_RNDN);
     if (i/6==5) mpfr_random (ref3);
@@ -84,9 +86,9 @@ test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
  
     if (mpfr_compare (res1, ref1)) {
       fprintf (stderr, "Error for %s(a, a, c) for a=%e, c=%e\n", foo,
-	       mpfr_get_d (ref2), mpfr_get_d (ref3));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref1),
-	       mpfr_get_d (res1));
+	       mpfr_get_d1 (ref2), mpfr_get_d1 (ref3));
+      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
+	       mpfr_get_d1 (res1));
       exit (1);
     }
 
@@ -95,9 +97,9 @@ test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
     testfunc (res1, ref2, res1, rnd);
     if (mpfr_compare (res1, ref1)) {
       fprintf (stderr, "Error for %s(a, b, a) for b=%e, a=%e\n", foo,
-	       mpfr_get_d (ref2), mpfr_get_d (ref3));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref1),
-	       mpfr_get_d (res1));
+	       mpfr_get_d1 (ref2), mpfr_get_d1 (ref3));
+      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
+	       mpfr_get_d1 (res1));
       exit (1);
     }
 
@@ -109,9 +111,9 @@ test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 
    if (mpfr_compare (res1, ref1)) {
       fprintf (stderr, "Error for %s(a, a, a) for a=%e\n", foo,
-	       mpfr_get_d (ref2));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref1),
-	       mpfr_get_d (res1));
+	       mpfr_get_d1 (ref2));
+      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
+	       mpfr_get_d1 (res1));
       exit (1);
     }
   }
@@ -145,9 +147,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
     {
 
       MPFR_CLEAR_FLAGS(op1);
-      if (i==0) MPFR_SET_NAN(op1);
-      if (i==1) mpfr_set_d (op1, 1.0/0.0, GMP_RNDN);
-      if (i==2) mpfr_set_d (op1, -1.0/0.0, GMP_RNDN);
+      if (i==0) mpfr_set_nan (op1);
+      if (i==1) mpfr_set_inf (op1, 1);
+      if (i==2) mpfr_set_inf (op1, -1);
       if (i==3) mpfr_set_d (op1, 0.0, GMP_RNDN);
       if (i==4) mpfr_set_d (op1, -0.0, GMP_RNDN);
       if (i==5) mpfr_random (op1);
@@ -156,9 +158,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
         {
 
           MPFR_CLEAR_FLAGS(op2);
-          if (j==0) MPFR_SET_NAN(op2);
-          if (j==1) mpfr_set_d (op2, 1.0/0.0, GMP_RNDN);
-          if (j==2) mpfr_set_d (op2, -1.0/0.0, GMP_RNDN);
+          if (j==0) mpfr_set_nan (op2);
+          if (j==1) mpfr_set_inf (op2, 1);
+          if (j==2) mpfr_set_inf (op2, -1);
           if (j==3) mpfr_set_d (op2, 0.0, GMP_RNDN);
           if (j==4) mpfr_set_d (op2, -0.0, GMP_RNDN);
           if (j==5) mpfr_random (op2);
@@ -167,9 +169,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
             {
 
               MPFR_CLEAR_FLAGS(op3);
-              if (k==0) MPFR_SET_NAN(op3);
-              if (k==1) mpfr_set_d (op3, 1.0/0.0, GMP_RNDN);
-              if (k==2) mpfr_set_d (op3, -1.0/0.0, GMP_RNDN);
+              if (k==0) mpfr_set_nan (op3);
+              if (k==1) mpfr_set_inf (op3, 1);
+              if (k==2) mpfr_set_inf (op3, -1);
               if (k==3) mpfr_set_d (op3, 0.0, GMP_RNDN);
               if (k==4) mpfr_set_d (op3, -0.0, GMP_RNDN);
               if (k==5) mpfr_random (op3);
@@ -186,9 +188,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
                 fprintf (stderr, 
                          "Error for %s(a, a, b, c) for a=%e, b=%e, c=%e\n", 
                          foo,
-                         mpfr_get_d (op1), mpfr_get_d (op2), mpfr_get_d (op3));
-                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref),
-                         mpfr_get_d (res));
+                         mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
+                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+                         mpfr_get_d1 (res));
                 exit (1);
               }
 
@@ -201,9 +203,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
                 fprintf (stderr, 
                          "Error for %s(b, a, b, c) for a=%e, b=%e, c=%e\n", 
                          foo,
-                         mpfr_get_d (op1), mpfr_get_d (op2), mpfr_get_d (op3));
-                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref),
-                         mpfr_get_d (res));
+                         mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
+                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+                         mpfr_get_d1 (res));
                 exit (1);
               }
 
@@ -216,9 +218,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
                 fprintf (stderr, 
                          "Error for %s(c, a, b, c) for a=%e, b=%e, c=%e\n",
                          foo,
-                         mpfr_get_d (op1), mpfr_get_d (op2), mpfr_get_d (op3));
-                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref),
-                         mpfr_get_d (res));
+                         mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
+                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+                         mpfr_get_d1 (res));
                 exit (1);
               }
 
@@ -231,9 +233,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
                 fprintf (stderr, 
                          "Error for %s(a, a, a, c) for a=%e, a=%e, c=%e\n",
                          foo,
-                         mpfr_get_d (op1), mpfr_get_d (op2), mpfr_get_d (op3));
-                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref),
-                         mpfr_get_d (res));
+                         mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
+                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+                         mpfr_get_d1 (res));
                 exit (1);
               }
 
@@ -246,9 +248,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
                  fprintf (stderr, 
                           "Error for %s(a, a, b, a) for a=%e, a=%e, c=%e\n",
                           foo,
-                       mpfr_get_d (op1), mpfr_get_d (op2), mpfr_get_d (op3));
-                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref),
-                          mpfr_get_d (res));
+                       mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
+                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+                          mpfr_get_d1 (res));
                  exit (1);
                }
 
@@ -261,9 +263,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
                  fprintf (stderr, 
                           "Error for %s(b, a, b, b) for a=%e, a=%e, c=%e\n", 
                           foo,
-                        mpfr_get_d (op1), mpfr_get_d (op2), mpfr_get_d (op3));
-                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref),
-                          mpfr_get_d (res));
+                        mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
+                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+                          mpfr_get_d1 (res));
                  exit (1);
                }
 
@@ -275,9 +277,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
                {
                  fprintf (stderr,
                           "Error for %s(a, a, a, a) for a=%e\n", foo,
-                          mpfr_get_d (op1));
-                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref),
-                          mpfr_get_d (res));
+                          mpfr_get_d1 (op1));
+                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+                          mpfr_get_d1 (res));
                  exit (1);
                }
             }
@@ -314,9 +316,9 @@ test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
      ref3 can be 0 or any number */
   for (i=0; i<12; i++)
     {
-      if (i%6==0) MPFR_SET_NAN(ref2);
-      if (i%6==1) mpfr_set_d (ref2, 1.0/0.0, GMP_RNDN);
-      if (i%6==2) mpfr_set_d (ref2, -1.0/0.0, GMP_RNDN);
+      if (i%6==0) mpfr_set_nan (ref2);
+      if (i%6==1) mpfr_set_inf (ref2, 1);
+      if (i%6==2) mpfr_set_inf (ref2, -1);
       if (i%6==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
       if (i%6==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
       if (i%6==5) mpfr_random (ref2);
@@ -339,9 +341,9 @@ test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
       if (mpfr_compare (res1, ref1))
 	{
 	  fprintf (stderr, "Error for %s(a, a, c) for a=%e c=%u\n", foo,
-	       mpfr_get_d (ref2), ref3);
-	  fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref1),
-	       mpfr_get_d (res1));
+	       mpfr_get_d1 (ref2), ref3);
+	  fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
+	       mpfr_get_d1 (res1));
 	  exit (1);
 	}
     }
@@ -371,9 +373,9 @@ testui2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   ref2 = (unsigned int) c[0];
 
   for (i=0; i<12; i++) {
-    if (i%6==0) MPFR_SET_NAN(ref3);
-    if (i%6==1) mpfr_set_d (ref3, 1.0/0.0, GMP_RNDN);
-    if (i%6==2) mpfr_set_d (ref3, -1.0/0.0, GMP_RNDN);
+    if (i%6==0) mpfr_set_nan (ref3);
+    if (i%6==1) mpfr_set_inf (ref3, 1);
+    if (i%6==2) mpfr_set_inf (ref3, -1);
     if (i%6==3) mpfr_set_d (ref3, 0.0, GMP_RNDN);
     if (i%6==4) mpfr_set_d (ref3, -0.0, GMP_RNDN);
     if (i%6==5) mpfr_random (ref3);
@@ -392,9 +394,9 @@ testui2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
     testfunc (res1, ref2, res1, rnd);
     if (mpfr_compare (res1, ref1)) {
       fprintf (stderr, "Error for %s(a, b, a) for b=%u a=%e\n", foo,
-	       ref2, mpfr_get_d (ref3));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref1),
-	       mpfr_get_d (res1));
+	       ref2, mpfr_get_d1 (ref3));
+      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
+	       mpfr_get_d1 (res1));
       exit (1);
     }
   }
@@ -421,9 +423,9 @@ test2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_random (ref2);
 
   for (i=0; i<6; i++) {
-    if (i==0) MPFR_SET_NAN(ref2);
-    if (i==1) mpfr_set_d (ref2, 1.0/0.0, GMP_RNDN);
-    if (i==2) mpfr_set_d (ref2, -1.0/0.0, GMP_RNDN);
+    if (i==0) mpfr_set_nan (ref2);
+    if (i==1) mpfr_set_inf (ref2, 1);
+    if (i==2) mpfr_set_inf (ref2, -1);
     if (i==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
     if (i==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
     if (i==5) mpfr_random (ref2);
@@ -435,9 +437,9 @@ test2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
     mpfr_set (res1, ref2, rnd); /* exact operation */
     testfunc (res1, res1, rnd);
     if (mpfr_compare (res1, ref1)) {
-      fprintf (stderr, "Error for %s(a, a) for a=%e\n", foo, mpfr_get_d (ref2));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref1),
-	       mpfr_get_d (res1));
+      fprintf (stderr, "Error for %s(a, a) for a=%e\n", foo, mpfr_get_d1 (ref2));
+      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
+	       mpfr_get_d1 (res1));
       exit (1);
     }
   }
@@ -464,9 +466,9 @@ test2a (char *foo, mp_prec_t prec)
   mpfr_random (ref2);
 
   for (i=0; i<6; i++) {
-    if (i==0) MPFR_SET_NAN(ref2);
-    if (i==1) mpfr_set_d (ref2, 1.0/0.0, GMP_RNDN);
-    if (i==2) mpfr_set_d (ref2, -1.0/0.0, GMP_RNDN);
+    if (i==0) mpfr_set_nan (ref2);
+    if (i==1) mpfr_set_inf (ref2, 1);
+    if (i==2) mpfr_set_inf (ref2, -1);
     if (i==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
     if (i==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
     if (i==5) mpfr_random (ref2);
@@ -478,9 +480,9 @@ test2a (char *foo, mp_prec_t prec)
     mpfr_set (res1, ref2, GMP_RNDN); /* exact operation */
     testfunc (res1, res1);
     if (mpfr_compare (res1, ref1)) {
-      fprintf (stderr, "Error for %s(a, a) for a=%e\n", foo, mpfr_get_d (ref2));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d (ref1),
-	       mpfr_get_d (res1));
+      fprintf (stderr, "Error for %s(a, a) for a=%e\n", foo, mpfr_get_d1 (ref2));
+      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
+	       mpfr_get_d1 (res1));
       exit (1);
     }
   }
@@ -509,9 +511,9 @@ test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_random (ref3);
 
   for (i=0; i<6; i++) {
-    if (i==0) MPFR_SET_NAN(ref3);
-    if (i==1) mpfr_set_d (ref3, 1.0/0.0, GMP_RNDN);
-    if (i==2) mpfr_set_d (ref3, -1.0/0.0, GMP_RNDN);
+    if (i==0) mpfr_set_nan (ref3);
+    if (i==1) mpfr_set_inf (ref3, 1);
+    if (i==2) mpfr_set_inf (ref3, -1);
     if (i==3) mpfr_set_d (ref3, 0.0, GMP_RNDN);
     if (i==4) mpfr_set_d (ref3, -0.0, GMP_RNDN);
     if (i==5) mpfr_random (ref3);
@@ -523,9 +525,9 @@ test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
      mpfr_set (res1, ref3, rnd); /* exact operation */
      testfunc (res1, res2, res1, rnd);
      if (mpfr_compare (res1, ref1) || mpfr_compare (res2, ref2)) {
-       fprintf (stderr, "Error for %s(a, b, a) for a=%e\n", foo, mpfr_get_d (ref3));
-       fprintf (stderr, "expected (%e,%e), got (%e,%e)\n", mpfr_get_d (ref1),
-		mpfr_get_d (ref2), mpfr_get_d (res1), mpfr_get_d (res2));
+       fprintf (stderr, "Error for %s(a, b, a) for a=%e\n", foo, mpfr_get_d1 (ref3));
+       fprintf (stderr, "expected (%e,%e), got (%e,%e)\n", mpfr_get_d1 (ref1),
+		mpfr_get_d1 (ref2), mpfr_get_d1 (res1), mpfr_get_d1 (res2));
        exit (1);
      }
 
@@ -533,9 +535,9 @@ test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
      mpfr_set (res2, ref3, rnd); /* exact operation */
      testfunc (res1, res2, res2, rnd);
      if (mpfr_compare (res1, ref1) || mpfr_compare (res2, ref2)) {
-       fprintf (stderr, "Error for %s(a, b, b) for b=%e\n", foo, mpfr_get_d (ref3));
-       fprintf (stderr, "expected (%e,%e), got (%e,%e)\n", mpfr_get_d (ref1),
-		mpfr_get_d (ref2), mpfr_get_d (res1), mpfr_get_d (res2));
+       fprintf (stderr, "Error for %s(a, b, b) for b=%e\n", foo, mpfr_get_d1 (ref3));
+       fprintf (stderr, "expected (%e,%e), got (%e,%e)\n", mpfr_get_d1 (ref1),
+		mpfr_get_d1 (ref2), mpfr_get_d1 (res1), mpfr_get_d1 (res2));
        exit (1);
      }
   }
@@ -550,45 +552,44 @@ test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 int
 main (void)
 {
-  testfunc = (void*) mpfr_add; test3 ("mpfr_add", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_add_ui; test2ui ("mpfr_add_ui", 53, GMP_RNDN);
-  testfunc = mpfr_agm; test3 ("mpfr_agm", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_ceil; test2 ("mpfr_ceil", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_div; test3 ("mpfr_div", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_div_2exp; test2ui ("mpfr_div_2exp", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_div_ui; test2ui ("mpfr_div_ui", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_exp; test2 ("mpfr_exp", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_floor; test2 ("mpfr_floor", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_log; test2 ("mpfr_log", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_mul; test3 ("mpfr_mul", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_mul_2exp; test2ui ("mpfr_mul_2exp", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_mul_ui; test2ui ("mpfr_mul_ui", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_neg; test2 ("mpfr_neg", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_pow_ui; test2ui ("mpfr_pow_ui", 53, GMP_RNDN);
-  testfunc = mpfr_reldiff; test3 ("mpfr_reldiff", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_sub; test3 ("mpfr_sub", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_sub_ui; test2ui ("mpfr_sub_ui", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_sqrt; test2 ("mpfr_sqrt", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_ui_div; testui2 ("mpfr_ui_div", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_ui_sub; testui2 ("mpfr_ui_sub", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_trunc; test2 ("mpfr_trunc", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_asin; test2 ("mpfr_asin", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_acos; test2 ("mpfr_acos", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_atan; test2 ("mpfr_atan", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_sinh; test2 ("mpfr_sinh", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_cosh; test2 ("mpfr_cosh", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_tanh; test2 ("mpfr_tanh", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_asinh; test2 ("mpfr_asinh", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_acosh; test2 ("mpfr_acosh", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_atanh; test2 ("mpfr_atanh", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_exp2; test2 ("mpfr_exp2", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_cos; test2 ("mpfr_cos", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_sin; test2 ("mpfr_sin", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_tan; test2 ("mpfr_tan", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_log10; test2 ("mpfr_log10", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_log2; test2 ("mpfr_log2", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_pow; test3 ("mpfr_pow", 53, GMP_RNDN);
-  testfunc = (void*) mpfr_fma; test4 ("mpfr_fma", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_add; test3 ("mpfr_add", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_add_ui; test2ui ("mpfr_add_ui", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_agm; test3 ("mpfr_agm", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_ceil; test2 ("mpfr_ceil", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_div; test3 ("mpfr_div", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_div_2exp; test2ui ("mpfr_div_2exp", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_div_ui; test2ui ("mpfr_div_ui", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_exp; test2 ("mpfr_exp", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_floor; test2 ("mpfr_floor", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_log; test2 ("mpfr_log", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_mul; test3 ("mpfr_mul", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_mul_2exp; test2ui ("mpfr_mul_2exp", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_mul_ui; test2ui ("mpfr_mul_ui", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_neg; test2 ("mpfr_neg", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_pow_ui; test2ui ("mpfr_pow_ui", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_reldiff; test3 ("mpfr_reldiff", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_sub; test3 ("mpfr_sub", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_sub_ui; test2ui ("mpfr_sub_ui", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_sqrt; test2 ("mpfr_sqrt", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_ui_div; testui2 ("mpfr_ui_div", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_ui_sub; testui2 ("mpfr_ui_sub", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_trunc; test2 ("mpfr_trunc", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_asin; test2 ("mpfr_asin", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_acos; test2 ("mpfr_acos", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_atan; test2 ("mpfr_atan", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_sinh; test2 ("mpfr_sinh", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_cosh; test2 ("mpfr_cosh", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_tanh; test2 ("mpfr_tanh", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_asinh; test2 ("mpfr_asinh", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_acosh; test2 ("mpfr_acosh", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_atanh; test2 ("mpfr_atanh", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_exp2; test2 ("mpfr_exp2", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_cos; test2 ("mpfr_cos", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_sin; test2 ("mpfr_sin", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_tan; test2 ("mpfr_tan", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_log10; test2 ("mpfr_log10", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_log2; test2 ("mpfr_log2", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_pow; test3 ("mpfr_pow", 53, GMP_RNDN);
+  testfunc = (fct_t) mpfr_fma; test4 ("mpfr_fma", 53, GMP_RNDN);
   return 0;
 }
-

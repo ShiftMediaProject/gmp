@@ -1,6 +1,6 @@
 /* Test file for mpfr_exp2.
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright 2001 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -16,7 +16,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -39,12 +39,23 @@ main (int argc, char *argv[])
   mpfr_init (x);
   mpfr_init (y);
 
+  mpfr_set_prec (x, 53);
+  mpfr_set_prec (y, 53);
+  mpfr_set_d (x, -1683977482443233.0 / 2199023255552.0, GMP_RNDN);
+  mpfr_exp2 (y, x, GMP_RNDN);
+  if (mpfr_get_d1 (y) != 2.991959870867646566478e-231)
+    {
+      fprintf (stderr, "Error for x=-1683977482443233/2^41\n");
+      exit (1);
+    }
+
   MPFR_CLEAR_NAN(x);
   MPFR_SET_INF(x);
+  MPFR_SET_POS(x);
   mpfr_exp2 (y, x, GMP_RNDN);
   if(!MPFR_IS_INF(y))
     {
-      printf ("evaluation of function in INF does not return INF");
+      fprintf (stderr, "evaluation of function in INF does not return INF\n");
       exit (1);
     }
 
@@ -52,7 +63,7 @@ main (int argc, char *argv[])
   mpfr_exp2 (y, x, GMP_RNDN);
   if(!MPFR_IS_ZERO(y))
     {
-      printf ("evaluation of function in -INF does not return 0");
+      fprintf (stderr, "evaluation of function in -INF does not return 0\n");
       exit (1);
     }
 
@@ -60,7 +71,7 @@ main (int argc, char *argv[])
   mpfr_exp2 (y, x, GMP_RNDN);
   if(!MPFR_IS_NAN(y))
     {
-      printf ("evaluation of function in NAN does not return NAN");
+      fprintf (stderr, "evaluation of function in NaN does not return NaN\n");
       exit (1);
     }
 

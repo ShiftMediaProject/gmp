@@ -1,6 +1,6 @@
 /* auxiliary functions for MPFR tests.
 
-Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -24,11 +24,42 @@ MA 02111-1307, USA. */
 #include <sys/fpu.h>
 #endif
 
+/* set precision control to double on x86 */
+#if (defined (__i386__) || defined (__i486__))
+#ifdef __CYGWIN32__ /* no fpu_control.h under Cygnus */
+#define _FPU_EXTENDED 0x300
+#define _FPU_DOUBLE   0x200
+#define _FPU_DEFAULT  0x137f
+#define HAVE_SETFPUCW
+#else
+#ifdef HAVE_FPU_CONTROL_H
+#include <fpu_control.h>
+#define HAVE_SETFPUCW
+#endif
+#endif /* ifdef __CYGWIN32__ */
+#ifndef __setfpucw
+#define __setfpucw(cw) __asm__ ("fldcw %0" : : "m" (cw))
+#endif /* ifndef __setfpucw */
+#endif /* __i386__ */
+
+/* generates a random long int, a random double,
+   and corresponding seed initializing */
+#ifdef HAVE_LRAND48
+#define LONG_RAND lrand48
+#define DBL_RAND  drand48
+#define SEED_RAND srand48
+#else
+#define LONG_RAND random
+#define DBL_RAND() ((double) random() / (double) RAND_MAX)
+#define SEED_RAND srandom
+#endif
+
 #if defined (__hpux)
 #define srandom srand48
 #define random() (mrand48() & 0x7fffffff)
 #endif
 
+void mpfr_test_init _PROTO ((void));
 double drand _PROTO ((void)); 
 int ulp _PROTO ((double, double)); 
 double dbl _PROTO ((double, int)); 
@@ -48,6 +79,25 @@ double Ulp _PROTO ((double));
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define ABS(x) (((x)>0) ? (x) : -(x))
 
+/* initialization function for tests using the hardware floats */
+void
+mpfr_test_init ()
+{
+#ifdef __mips
+  /* to get denormalized numbers on IRIX64 */
+  union fpc_csr exp;
+
+  exp.fc_word = get_fpc_csr();
+  exp.fc_struct.flush = 0;
+  set_fpc_csr(exp.fc_word);
+#endif
+
+#ifdef HAVE_SETFPUCW
+  /* sets the precision to double */
+  __setfpucw((_FPU_DEFAULT & (~_FPU_EXTENDED)) | _FPU_DOUBLE);
+#endif
+}
+
 /* generate a random double using the whole range of possible values,
    including denormalized numbers, NaN, infinities, ... */
 double
@@ -57,12 +107,16 @@ drand (void)
 
   i = (int*) &d;
   d = 1.0;
-  if (i[0]==0) expo=1; /* little endian, exponent in i[1] */
-  else expo=0;
-  i[0] = lrand48();
-  i[1] = lrand48();
-  while (i[expo]>=2146435072) i[expo] = lrand48(); /* avoids NaNs */
-  if (lrand48()%2 && !isnan(d)) d=-d; /* generates negative numbers */
+  if (i[0] == 0)
+    expo = 1; /* little endian, exponent in i[1] */
+  else
+    expo = 0;
+  i[0] = LONG_RAND();
+  i[1] = LONG_RAND();
+  while (i[expo] >= 2146435072)
+    i[expo] = LONG_RAND(); /* avoids NaNs */
+  if ((LONG_RAND() % 2) && !isnan (d))
+    d = -d; /* generates negative numbers */
   return d;
 }
 

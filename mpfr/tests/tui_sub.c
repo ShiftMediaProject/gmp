@@ -1,6 +1,6 @@
 /* Test file for mpfr_ui_sub.
 
-Copyright (C) 2000-2001 Free Software Foundation.
+Copyright 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,18 +15,18 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
-#ifdef TEST
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
-#endif
 
 void special _PROTO ((void));
 void check _PROTO ((unsigned long, double, mp_rnd_t, double));
@@ -140,11 +140,11 @@ check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
   mpfr_init2(zz, 53);
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_ui_sub(zz, y, xx, rnd_mode);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   if (z1==0.0) z1 = y-x;
-  z2 = mpfr_get_d(zz);
+  z2 = mpfr_get_d1 (zz);
   if (z1!=z2 && !(isnan(z1) && isnan(z2))) {
     printf("expected difference is %1.20e, got %1.20e\n",z1,z2);
     printf("mpfr_ui_sub failed for y=%lu x=%1.20e with rnd_mode=%s\n",
@@ -169,11 +169,11 @@ check_two_sum (mp_prec_t p)
   mpfr_init2 (w, p);
   do
     {
-      x = lrand48 ();
+      x = LONG_RAND ();
     }
   while (x < 1);
   mpfr_random (y);
-  rnd = rand() % 4;
+  rnd = LONG_RAND() % 4;
   rnd = GMP_RNDN;
   inexact = mpfr_ui_sub (u, x, y, GMP_RNDN);
   mpfr_sub_ui (v, u, x, GMP_RNDN);
@@ -204,27 +204,22 @@ main (int argc, char *argv[])
 {
   mp_prec_t p;
   unsigned k;
-#ifdef TEST
+#ifdef HAVE_FENV_H
   double x;
   unsigned long y, N;
   int i, rnd_mode, rnd;
-#ifdef __mips
-    /* to get denormalized numbers on IRIX64 */
-    union fpc_csr exp;
-    exp.fc_word = get_fpc_csr();
-    exp.fc_struct.flush = 0;
-    set_fpc_csr(exp.fc_word);
-#endif
 
-  srand48(getpid());
+  mpfr_test_init ();
+
+  SEED_RAND (time(NULL));
   N = (argc<2) ? 1000000 : atoi(argv[1]);
   rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
   for (i=0;i<1000000;i++) {
-    x = drand(); 
-    y = lrand48();
+    x = drand ();
+    y = LONG_RAND ();
     if (ABS(x)>2.2e-307) {
       /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? lrand48()%4 : rnd_mode;
+      rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
       check(y, x, rnd, 0.0);
     }
   }
@@ -233,9 +228,11 @@ main (int argc, char *argv[])
   for (p=2; p<100; p++)
     for (k=0; k<100; k++)
       check_two_sum (p);
-  check(1, 1.0/0.0, GMP_RNDN, -1.0/0.0); 
-  check(1, -1.0/0.0, GMP_RNDN, 1.0/0.0); 
-  check(1, 0.0/0.0, GMP_RNDN, 0.0/0.0); 
+#ifdef HAVE_INFS
+  check (1, DBL_POS_INF, GMP_RNDN, DBL_NEG_INF);
+  check (1, DBL_NEG_INF, GMP_RNDN, DBL_POS_INF);
+  check (1, DBL_NAN, GMP_RNDN, DBL_NAN);
+#endif
   check(1196426492, 1.4218093058435347e-3, GMP_RNDN, 1.1964264919985781e9);
   check(1092583421, -1.0880649218158844e9, GMP_RNDN, 2.1806483428158845901e9);
   check(948002822, 1.22191250737771397120e+20, GMP_RNDN,

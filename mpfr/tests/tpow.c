@@ -1,6 +1,6 @@
 /* Test file for mpfr_pow and mpfr_pow_ui.
 
-Copyright (C) 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -23,6 +23,8 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 void check_pow_ui _PROTO ((void));
 void check_inexact _PROTO ((mp_prec_t));
@@ -45,19 +47,23 @@ check_pow_ui (void)
 
   /* check large exponents */
   mpfr_set_d (b, 1, GMP_RNDN);
-  mpfr_pow_ui (a, b, (unsigned long) 4294967295, GMP_RNDN);
+  mpfr_pow_ui (a, b, 4294967295UL, GMP_RNDN);
 
-  mpfr_set_d (a, -1.0/0.0, GMP_RNDN);
-  mpfr_pow_ui (a, a, (unsigned long) 4049053855, GMP_RNDN);
-  if (mpfr_get_d (a) != -1.0/0.0) {
-    fprintf (stderr, "Error for (-Inf)^4049053855\n"); exit (1);
-  }
+  mpfr_set_inf (a, -1);
+  mpfr_pow_ui (a, a, 4049053855UL, GMP_RNDN);
+  if (!mpfr_inf_p (a) || (mpfr_sgn (a) >= 0))
+    {
+      fprintf (stderr, "Error for (-Inf)^4049053855\n");
+      exit (1);
+    }
 
-  mpfr_set_d (a, -1.0/0.0, GMP_RNDN);
+  mpfr_set_inf (a, -1);
   mpfr_pow_ui (a, a, (unsigned long) 30002752, GMP_RNDN);
-  if (mpfr_get_d (a) != 1.0/0.0) {
-    fprintf (stderr, "Error for (-Inf)^30002752\n"); exit (1);
-  }
+  if (!mpfr_inf_p (a) || (mpfr_sgn (a) <= 0))
+    {
+      fprintf (stderr, "Error for (-Inf)^30002752\n");
+      exit (1);
+    }
 
   mpfr_clear (a);
   mpfr_clear (b);
@@ -77,7 +83,7 @@ check_inexact (mp_prec_t p)
   mpfr_init (z);
   mpfr_init (t);
   mpfr_random (x);
-  u = lrand48() % 2;
+  u = LONG_RAND() % 2;
   for (q=2; q<=p; q++)
     for (rnd=0; rnd<4; rnd++)
       {

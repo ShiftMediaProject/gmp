@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_si and mpfr_set_ui.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -37,7 +37,7 @@ main (int argc, char *argv[])
   
   mpfr_init2(x, 100);
 
-  srandom(time(NULL)); 
+  SEED_RAND (time(NULL));
 
   N = (argc==1) ? 1000000 : atoi(argv[1]);
 
@@ -45,7 +45,7 @@ main (int argc, char *argv[])
     {
       z = random() - (1 << 30);      
       inex = mpfr_set_si(x, z, GMP_RNDZ);
-      d = (long) mpfr_get_d(x);
+      d = (long) mpfr_get_d1 (x);
       if (d != z) {
 	fprintf(stderr, "Error in mpfr_set_si: expected %ld got %ld\n", z, d); exit(1);
       }
@@ -62,7 +62,7 @@ main (int argc, char *argv[])
     {
       zl = random();
       inex = mpfr_set_ui (x, zl, GMP_RNDZ);
-      dl = (unsigned long) mpfr_get_d (x);
+      dl = (unsigned long) mpfr_get_d1 (x);
       if (dl != zl) {
 	fprintf(stderr, "Error in mpfr_set_ui: expected %lu got %lu\n", zl, dl); exit(1);
       }
@@ -109,17 +109,17 @@ main (int argc, char *argv[])
 
   mpfr_set_prec(x, 2);
   inex = mpfr_set_si(x, 33096, GMP_RNDU);
-  if (mpfr_get_d(x) != 49152.0 || inex <= 0)
+  if (mpfr_get_d1 (x) != 49152.0 || inex <= 0)
   {
     fprintf(stderr, "Error in mpfr_set_si, expected 49152, got %lu, inex %d\n",
-	    (unsigned long) mpfr_get_d(x), inex);
+	    (unsigned long) mpfr_get_d1 (x), inex);
     exit(1);
   }
   inex = mpfr_set_ui(x, 33096, GMP_RNDU);
-  if (mpfr_get_d(x) != 49152.0)
+  if (mpfr_get_d1 (x) != 49152.0)
   {
     fprintf(stderr, "Error in mpfr_set_ui, expected 49152, got %lu, inex %d\n",
-	    (unsigned long) mpfr_get_d(x), inex);
+	    (unsigned long) mpfr_get_d1 (x), inex);
     exit(1);
   }
 
@@ -136,6 +136,24 @@ main (int argc, char *argv[])
   if (MPFR_SIGN (x) < 0)
     {
       fprintf (stderr, "mpfr_set_si (x, 0) gives -0\n");
+      exit (1);
+    }
+
+  /* check potential bug in case mp_limb_t is unsigned */
+  mpfr_set_emax (0);
+  mpfr_set_si (x, -1, GMP_RNDN);
+  if (mpfr_sgn (x) >= 0)
+    {
+      fprintf (stderr, "mpfr_set_si (x, -1) fails\n");
+      exit (1);
+    }
+
+  mpfr_set_emax (5);
+  mpfr_set_prec (x, 2);
+  mpfr_set_si (x, -31, GMP_RNDN);
+  if (mpfr_sgn (x) >= 0)
+    {
+      fprintf (stderr, "mpfr_set_si (x, -31) fails\n");
       exit (1);
     }
 

@@ -1,6 +1,6 @@
 /* Test file for mpfr_mul_2exp.
 
-Copyright (C) 1999, 2001 Free Software Foundation.
+Copyright 1999, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -15,7 +15,7 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
@@ -25,6 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 /* checks that x*y gives the same results in double
    and with mpfr with 53 bits of precision */
@@ -36,20 +37,20 @@ main (int argc, char *argv[])
 
   mpfr_init2(w, 53); 
 
-  mpfr_set_d(w, 1.0/0.0, 0); 
-  mpfr_mul_2exp(w, w, 10, GMP_RNDZ); 
+  mpfr_set_inf (w, 1);
+  mpfr_mul_2exp (w, w, 10, GMP_RNDZ); 
   if (!MPFR_IS_INF(w)) { fprintf(stderr, "Inf != Inf"); exit(-1); }
   
-  mpfr_set_d(w, 0.0/0.0, 0); 
-  mpfr_mul_2exp(w, w, 10, GMP_RNDZ); 
+  mpfr_set_nan (w);
+  mpfr_mul_2exp (w, w, 10, GMP_RNDZ); 
   if (!MPFR_IS_NAN(w)) { fprintf(stderr, "NaN != NaN"); exit(-1); }
 
+  SEED_RAND (time(NULL));
   for (k = 0; k < 100000; k++) {
-    srand48(time(NULL)); 
-    x = drand48(); 
-    mpfr_set_d(w, x, 0);
-    mpfr_mul_2exp(w, w, 10, GMP_RNDZ); 
-    if (x != (z = mpfr_get_d(w)/1024))
+    x = DBL_RAND ();
+    mpfr_set_d (w, x, 0);
+    mpfr_mul_2exp (w, w, 10, GMP_RNDZ);
+    if (x != (z = mpfr_get_d1 (w)/1024))
       {
 	fprintf(stderr, "%f != %f\n", x, z); 
 	return -1;
@@ -57,7 +58,7 @@ main (int argc, char *argv[])
 
     mpfr_set_d(w, x, 0);
     mpfr_div_2exp(w, w, 10, GMP_RNDZ);
-    if (x != (z = mpfr_get_d(w)*1024))
+    if (x != (z = mpfr_get_d1 (w)*1024))
       {
 	fprintf(stderr, "%f != %f\n", x, z);
 	mpfr_clear(w);

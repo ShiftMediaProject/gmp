@@ -1,6 +1,6 @@
 /* Test file for mpfr_ui_div.
 
-Copyright (C) 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -15,13 +15,14 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+along with the MPFR Library; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -30,6 +31,7 @@ MA 02111-1307, USA. */
 
 void check _PROTO((unsigned long, double, mp_rnd_t, double)); 
 void check_inexact _PROTO((void));
+void check_nan _PROTO((void));
 
 /* checks that y/x gives the same results in double
    and with mpfr with 53 bits of precision */
@@ -42,11 +44,11 @@ check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
   mpfr_init2(zz, 53);
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_ui_div(zz, y, xx, rnd_mode);
-#ifdef TEST
+#ifdef HAVE_FENV_H
   mpfr_set_machine_rnd_mode(rnd_mode);
 #endif
   if (z1==0.0) z1 = y/x;
-  z2 = mpfr_get_d(zz);
+  z2 = mpfr_get_d1 (zz);
   if (z1!=z2 && !(isnan(z1) && isnan(z2))) {
     printf("expected quotient is %1.20e, got %1.20e\n",z1,z2);
     printf("mpfr_ui_div failed for y=%lu x=%1.20e with rnd_mode=%s\n",
@@ -74,7 +76,7 @@ check_inexact (void)
     {
       mpfr_set_prec (x, px);
       mpfr_random (x);
-      u = lrand48 ();
+      u = LONG_RAND ();
       for (py=2; py<300; py++)
 	{
 	  mpfr_set_prec (y, py);
@@ -150,33 +152,29 @@ check_nan (void)
 int
 main (int argc, char *argv[])
 {
-#ifdef TEST
-  {
-  double x; unsigned long y, N; int i,rnd_mode,rnd;
-#ifdef __mips
-    /* to get denormalized numbers on IRIX64 */
-    union fpc_csr exp;
-    exp.fc_word = get_fpc_csr();
-    exp.fc_struct.flush = 0;
-    set_fpc_csr(exp.fc_word);
-#endif
+#ifdef HAVE_FENV_H
+  double x;
+  unsigned long y, N;
+  int i, rnd_mode, rnd;
 
-  srand48(getpid());
+  mpfr_test_init ();
+
+  SEED_RAND(time(NULL));
   N = (argc<2) ? 1000000 : atoi(argv[1]);
   rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
-  for (i=0;i<1000000;i++) {
-    x = drand(); 
-    y = lrand48();
-    if (ABS(x)>4e-286) {
-      /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? lrand48()%4 : rnd_mode;
-      check(y, x, rnd, 0.0);
+  for (i=0;i<1000000;i++)
+    {
+      x = drand(); 
+      y = LONG_RAND();
+      if (ABS(x)>4e-286)
+        {
+          /* avoid denormalized numbers and overflows */
+          rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
+          check(y, x, rnd, 0.0);
+        }
     }
-  }
-  }
 #endif
   check_inexact ();
-  check_nan ();
   check(948002822, 1.22191250737771397120e+20, GMP_RNDN,
 	7.758352715731357946e-12);
   check(1976245324, 1.25296395864546893357e+232, GMP_RNDZ,
