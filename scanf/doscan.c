@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -132,16 +132,16 @@ struct gmp_doscan_params_t {
   } while (0)
 
 /* store into "s", extending if necessary */
-#define STORE(c)                                                \
-  do {                                                          \
-    ASSERT (s_upto <= s_alloc);                                 \
-    if (s_upto >= s_alloc)                                      \
-      {                                                         \
-        size_t  s_alloc_new = s_alloc + S_ALLOC_STEP;           \
-        s = (*__gmp_reallocate_func) (s, s_alloc, s_alloc_new); \
-        s_alloc = s_alloc_new;                                  \
-      }                                                         \
-    s[s_upto++] = c;                                            \
+#define STORE(c)                                                        \
+  do {                                                                  \
+    ASSERT (s_upto <= s_alloc);                                         \
+    if (s_upto >= s_alloc)                                              \
+      {                                                                 \
+        size_t  s_alloc_new = s_alloc + S_ALLOC_STEP;                   \
+        s = __GMP_REALLOCATE_FUNC_TYPE (s, s_alloc, s_alloc_new, char); \
+        s_alloc = s_alloc_new;                                          \
+      }                                                                 \
+    s[s_upto++] = c;                                                    \
   } while (0)
 
 #define S_ALLOC_STEP  512
@@ -170,7 +170,7 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
   width = (p->width == 0 ? INT_MAX-1 : p->width);
   base = p->base;
   s_alloc = S_ALLOC_STEP;
-  s = (*__gmp_allocate_func) (s_alloc);
+  s = __GMP_ALLOCATE_FUNC_TYPE (s_alloc, char);
   s_upto = 0;
 
  another:
@@ -312,13 +312,13 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
       switch (p->type) {
       case 'F':
         ASSERT (p->base == 10);
-        ASSERT_NOCARRY (mpf_set_str (dst, s, 10));
+        ASSERT_NOCARRY (mpf_set_str ((mpf_ptr) dst, s, 10));
         break;
       case 'Q':
-        ASSERT_NOCARRY (mpq_set_str (dst, s, p->base));
+        ASSERT_NOCARRY (mpq_set_str ((mpq_ptr) dst, s, p->base));
         break;
       case 'Z':
-        ASSERT_NOCARRY (mpz_set_str (dst, s, p->base));
+        ASSERT_NOCARRY (mpz_set_str ((mpz_ptr) dst, s, p->base));
         break;
       default:
         ASSERT (0);
@@ -405,7 +405,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
      __gmp_allocate_func rather than TMP_ALLOC.  */
   orig_fmt_len = strlen (orig_fmt);
   alloc_fmt_size = orig_fmt_len + 4;
-  alloc_fmt = (*__gmp_allocate_func) (alloc_fmt_size);
+  alloc_fmt = __GMP_ALLOCATE_FUNC_TYPE (alloc_fmt_size, char);
 
   fmt = orig_fmt;
   end_fmt = orig_fmt + orig_fmt_len;
