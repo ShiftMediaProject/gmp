@@ -1185,7 +1185,11 @@ extern const mp_limb_t __gmp_fib_table[];
 /* ASSERT() is a private assertion checking scheme, similar to <assert.h>.
    ASSERT() does the check only if WANT_ASSERT is selected, ASSERT_ALWAYS()
    does it always.  Generally assertions are meant for development, but
-   might help when looking for a problem later too.  */
+   might help when looking for a problem later too.
+
+   Note that strings shouldn't be used within the ASSERT expression,
+   eg. ASSERT(strcmp(s,"notgood")!=0), since the quotes upset the "expr"
+   used in the !HAVE_STRINGIZE case (ie. K&R).  */
 
 #ifdef __LINE__
 #define ASSERT_LINE  __LINE__
@@ -1694,36 +1698,20 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     (q) = _xh - _q1;							\
   } while (0)
 
-/* Two dependent multiplies, plus about 6 cycles of other dependent
-   calculations. */
-#ifndef UDIV_NORM_PREINV_TIME
-#define UDIV_NORM_PREINV_TIME    (2*UMUL_TIME + 6)
-#endif
-
-/* When divisor was unnormalized there's going to be some shifting, so
-   assume a couple of extra cycles.  (The shifting isn't on the dependent
-   chain, but on some chips it seems to upset the code generation a bit.)  */
-#ifndef UDIV_UNNORM_PREINV_TIME
-#define UDIV_UNNORM_PREINV_TIME  (UDIV_NORM_PREINV_TIME + 2)
-#endif
-
 
 #define mpn_preinv_divrem_1  __MPN(preinv_divrem_1)
 mp_limb_t mpn_preinv_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int));
 
 
-/* USE_PREINV_DIVREM_1 is whether to use mpn_preinv_divrem_1, or to just use
-   plain mpn_divrem_1.  If there's a native mpn_preinv_divrem_1 then it's
-   assumed to be fast.  If preinv is the only division method, then
-   mpn_preinv_divrem_1 will naturally want to be used.  Otherwise see which
-   of udiv_qrnnd or udiv_qrnnd_preinv is faster.  */
-
+/* USE_PREINV_DIVREM_1 is whether to use mpn_preinv_divrem_1, as opposed to
+   the plain mpn_divrem_1.  Likewise USE_PREINV_MOD_1 chooses between
+   mpn_preinv_mod_1 and plain mpn_mod_1.  The default for both is yes, since
+   the few CISC chips where preinv is not good have defines saying so.  */
 #ifndef USE_PREINV_DIVREM_1
-#if HAVE_NATIVE_mpn_preinv_divrem_1 || UDIV_PREINV_ALWAYS
 #define USE_PREINV_DIVREM_1   1
-#else
-#define USE_PREINV_DIVREM_1   (UDIV_TIME > UDIV_NORM_PREINV_TIME)
 #endif
+#ifndef USE_PREINV_MOD_1
+#define USE_PREINV_MOD_1   1
 #endif
 
 #if USE_PREINV_DIVREM_1
@@ -1734,20 +1722,6 @@ mp_limb_t mpn_preinv_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, 
   mpn_divrem_1 (qp, xsize, ap, size, d)
 #endif
 
-
-/* USE_PREINV_MOD_1 is whether to use mpn_preinv_mod_1, or to just use plain
-   mpn_mod_1.  If there's a native mpn_preinv_mod_1 then it's assumed to be
-   fast.  If preinv is the only division method, then mpn_preinv_mod_1 will
-   naturally want to be used.  Otherwise see which of udiv_qrnnd or
-   udiv_qrnnd_preinv is faster.  */
-#ifndef USE_PREINV_MOD_1
-#if HAVE_NATIVE_mpn_preinv_mod_1 || UDIV_PREINV_ALWAYS
-#define USE_PREINV_MOD_1   1
-#else
-#define USE_PREINV_MOD_1   (UDIV_TIME > UDIV_NORM_PREINV_TIME)
-#endif
-#endif
-
 #if USE_PREINV_MOD_1
 #define MPN_MOD_OR_PREINV_MOD_1(src,size,divisor,inverse)       \
   mpn_preinv_mod_1 (src, size, divisor, inverse)
@@ -1756,23 +1730,25 @@ mp_limb_t mpn_preinv_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, 
   mpn_mod_1 (src, size, divisor)
 #endif
 
+
 #define mpn_mod_34lsub1 __MPN(mod_34lsub1)
 mp_limb_t mpn_mod_34lsub1 _PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 
 
+/* DIVEXACT_1_THRESHOLD is at what size to use mpn_divexact_1, as opposed to
+   plain mpn_divrem_1.  Likewise MODEXACT_1_ODD_THRESHOLD for
+   mpn_modexact_1_odd against plain mpn_mod_1.  On most CPUs divexact and
+   modexact are faster at all sizes, so the defaults are 0.  Those CPUs
+   where this is not right have a tuned threshold.  */
+#ifndef DIVEXACT_1_THRESHOLD
+#define DIVEXACT_1_THRESHOLD  0
+#endif
+#ifndef MODEXACT_1_ODD_THRESHOLD
+#define MODEXACT_1_ODD_THRESHOLD  0
+#endif
+
 #define mpn_divexact_1 __MPN(divexact_1)
 void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
-
-/* mpn_divexact_1 takes roughly 2 multiplies, so don't bother unless that's
-   faster than a division.  On most processors where mul is twice as fast as
-   division the threshold comes out as 0, so make that the default.  */
-#ifndef DIVEXACT_1_THRESHOLD
-#if 2*UMUL_TIME < UDIV_TIME
-#define DIVEXACT_1_THRESHOLD  0
-#else
-#define DIVEXACT_1_THRESHOLD  MP_SIZE_T_MAX
-#endif
-#endif
 
 #define MPN_DIVREM_OR_DIVEXACT_1(dst, src, size, divisor)                     \
   do {                                                                        \
@@ -1785,7 +1761,6 @@ void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
       }                                                                       \
   } while (0)
 
-
 #define mpn_modexact_1c_odd  __MPN(modexact_1c_odd)
 mp_limb_t mpn_modexact_1c_odd _PROTO ((mp_srcptr src, mp_size_t size,
                                        mp_limb_t divisor, mp_limb_t c)) __GMP_ATTRIBUTE_PURE;
@@ -1797,18 +1772,6 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
 #else
 #define mpn_modexact_1_odd(src,size,divisor) \
   mpn_modexact_1c_odd (src, size, divisor, CNST_LIMB(0))
-#endif
-
-/* mpn_modexact_1_odd takes roughly 2 multiplies, so don't bother unless
-   that's faster than a division.  When modexact is worth doing it has to
-   calculate a modular inverse, so it's probably only above a certain size
-   it'll be best, choose 5 as an guess for that.  */
-#ifndef MODEXACT_1_ODD_THRESHOLD
-#if 2*UMUL_TIME < UDIV_TIME
-#define MODEXACT_1_ODD_THRESHOLD  5
-#else
-#define MODEXACT_1_ODD_THRESHOLD  MP_SIZE_T_MAX
-#endif
 #endif
 
 #define MPN_MOD_OR_MODEXACT_1_ODD(src,size,divisor)     \
