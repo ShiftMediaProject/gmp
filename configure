@@ -24442,7 +24442,7 @@ MPFR_LIBM=''
 
 case $host in
   *-*-beos* | *-*-cygwin* | *-*-pw32*)
-    # According to libtool AC_CHECK_LIBM, these systems don't have libm
+    # According to libtool AC CHECK LIBM, these systems don't have libm
     ;;
   *-*-hpux*)
     # -lM means something subtly different to -lm, SVID style error handling
@@ -24609,7 +24609,7 @@ fi
 
     ;;
   *-ncr-sysv4.3*)
-    # FIXME: What does -lmw mean?  Libtool AC_CHECK_LIBM does it this way.
+    # FIXME: What does -lmw mean?  Libtool AC CHECK LIBM does it this way.
     echo "$as_me:$LINENO: checking for _mwvalidcheckl in -lmw" >&5
 echo $ECHO_N "checking for _mwvalidcheckl in -lmw... $ECHO_C" >&6
 if test "${ac_cv_lib_mw__mwvalidcheckl+set}" = set; then
@@ -25488,13 +25488,72 @@ fi
 
 
 
+echo "$as_me:$LINENO: checking for long double" >&5
+echo $ECHO_N "checking for long double... $ECHO_C" >&6
+if test "${ac_cv_type_long_double+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+if ((long double *) 0)
+  return 0;
+if (sizeof (long double))
+  return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_type_long_double=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_type_long_double=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_type_long_double" >&5
+echo "${ECHO_T}$ac_cv_type_long_double" >&6
+if test $ac_cv_type_long_double = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_LONG_DOUBLE 1
+_ACEOF
+
+
+fi
+
 echo "$as_me:$LINENO: checking format of \`long double' floating point" >&5
 echo $ECHO_N "checking format of \`long double' floating point... $ECHO_C" >&6
 if test "${mpfr_cv_c_long_double_format+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   mpfr_cv_c_long_double_format=unknown
-cat >conftest.c <<\EOF
+if test "$ac_cv_type_long_double" != yes; then
+  mpfr_cv_c_long_double_format="not available"
+else
+  cat >conftest.c <<\EOF
 
 /* "before" is 16 bytes to ensure there's no padding between it and "x".
    We're not expecting any "long double" bigger than 16 bytes or with
@@ -25511,13 +25570,13 @@ struct {
 };
 
 EOF
-mpfr_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&5 2>&1"
-if { (eval echo "$as_me:$LINENO: \"$mpfr_compile\"") >&5
+  mpfr_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&5 2>&1"
+  if { (eval echo "$as_me:$LINENO: \"$mpfr_compile\"") >&5
   (eval $mpfr_compile) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; then
-cat >conftest.awk <<\EOF
+    cat >conftest.awk <<\EOF
 
 BEGIN {
   found = 0
@@ -25627,6 +25686,28 @@ BEGIN {
               found = 1
               exit
             }
+
+          if (got[23] == "300" && \
+	      got[22] == "031" && \
+	      got[21] == "326" && \
+	      got[20] == "363" && \
+	      got[19] == "105" && \
+	      got[18] == "100" && \
+	      got[17] == "000" && \
+	      got[16] == "000" && \
+	      got[15] == "000" && \
+	      got[14] == "000" && \
+	      got[13] == "000" && \
+	      got[12] == "000" && \
+	      got[11] == "000" && \
+	      got[10] == "000" && \
+	      got[9]  == "000" && \
+	      got[8]  == "000")
+            {
+              print "IEEE quad, big endian"
+              found = 1
+              exit
+            }
         }
     }
 }
@@ -25637,16 +25718,17 @@ END {
 }
 
 EOF
-  mpfr_cv_c_long_double_format=`od -b conftest.$OBJEXT | $AWK -f conftest.awk`
-  case $mpfr_cv_c_long_double_format in
-  unknown*)
-    echo "cannot match anything, conftest.$OBJEXT contains" >&5
-    od -b conftest.$OBJEXT >&5
-    ;;
-  esac
-else
-  { echo "$as_me:$LINENO: WARNING: oops, cannot compile test program" >&5
+    mpfr_cv_c_long_double_format=`od -b conftest.$OBJEXT | $AWK -f conftest.awk`
+    case $mpfr_cv_c_long_double_format in
+    unknown*)
+      echo "cannot match anything, conftest.$OBJEXT contains" >&5
+      od -b conftest.$OBJEXT >&5
+      ;;
+    esac
+  else
+    { echo "$as_me:$LINENO: WARNING: oops, cannot compile test program" >&5
 echo "$as_me: WARNING: oops, cannot compile test program" >&2;}
+  fi
 fi
 
 fi
@@ -25663,7 +25745,13 @@ case $mpfr_cv_c_long_double_format in
 _ACEOF
 
     ;;
-  unknown*)
+  "IEEE quad, big endian")
+    cat >>confdefs.h <<\_ACEOF
+#define HAVE_LDOUBLE_IEEE_QUAD_BIG 1
+_ACEOF
+
+    ;;
+  unknown* | "not available")
     ;;
   *)
     { echo "$as_me:$LINENO: WARNING: oops, unrecognised float format: $mpfr_cv_c_long_double_format" >&5
