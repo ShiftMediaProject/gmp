@@ -298,9 +298,10 @@
 <li> There's a few filenames that don't fit in 14 chars, if this
      matters.
 <li> Enable support for FORTRAN versions of mpn files (eg. for
-     mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
-     AC_PROG_F77 if such a file is found.  Hopefully automake will
-     generate everything needed in the makefiles.
+     mpn/cray/mulww.f).  Add "f" to the mpn path searching, run AC_PROG_F77 if
+     such a file is found.  Automake will generate some of what's needed in the
+     makefiles, but libtool doesn't know fortran and so rules like the current
+     ".asm.lo" will be needed.
 <li> Only run GMP_PROG_M4 if it's needed, ie. if there's .asm files
      selected from the mpn path.  This might help say a generic C
      build on weird systems.
