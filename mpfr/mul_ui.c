@@ -29,7 +29,7 @@ void
 #if __STDC__
 mpfr_mul_ui(mpfr_ptr y, mpfr_srcptr x, unsigned long u, unsigned char RND_MODE)
 #else
-mpfr_mul_ui()
+mpfr_mul_ui(y, x, u, RND_MODE)
      mpfr_ptr y; 
      mpfr_srcptr x; 
      unsigned long u; 
