@@ -627,7 +627,6 @@ mpz_cmp_ui (mpz_t a, unsigned long b)
 void
 mpz_tdiv_qr (mpz_t q, mpz_t r, mpz_t a, mpz_t b)
 {
-  int            bn;
   mpz_t          tmpr, tmpb;
   unsigned long  cnt;
 
@@ -678,6 +677,15 @@ mpz_tdiv_q (mpz_t q, mpz_t a, mpz_t b)
   mpz_init (r);
   mpz_tdiv_qr (q, r, a, b);
   mpz_clear (r);
+}
+
+void
+mpz_tdiv_q_ui (mpz_t q, mpz_t n, unsigned long d)
+{
+  mpz_t  dz;
+  mpz_init_set_ui (dz, d);
+  mpz_tdiv_q (q, n, dz);
+  mpz_clear (dz);
 }
 
 /* Set inv to the inverse of d, in the style of invert_limb, ie. for
