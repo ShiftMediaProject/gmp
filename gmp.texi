@@ -560,11 +560,6 @@ Alpha:
 @samp{alphaev67}
 
 @item
-Hitachi:
-@samp{sh},
-@samp{sh2}
-
-@item
 HPPA:
 @samp{hppa1.0},
 @samp{hppa1.1},
@@ -628,6 +623,8 @@ Other:
 @samp{i960},
 @samp{ns32k},
 @samp{pyramid},
+@samp{sh},
+@samp{sh2},
 @samp{vax},
 @samp{z8k}
 @end itemize
