@@ -667,9 +667,8 @@ case $host in
   M68K_PATTERN)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_m68k)
     GMP_INCLUDE_MPN(m68k/m68k-defs.m4)
-    gcc_cflags="$fomit_frame_pointer"
-    gcc_cflags_optlist="optimize arch"
-    gcc_cflags_optimize="-O2"   # munged below on gcc 2.95.x
+    gcc_cflags="-O2 $fomit_frame_pointer"
+    gcc_cflags_optlist="arch"
 
     # gcc 2.7.2 knows -m68000, -m68020, -m68030, -m68040.
     # gcc 2.95 adds -mcpu32, -m68060.
@@ -1490,10 +1489,6 @@ if test $found_compiler = yes; then
         flag=`echo "$flag" | tr '~' ' '`
 
         case $flag in
-          -O*)
-            # ease back to just -O on m68k gcc 2.95.x
-            GMP_GCC_M68K_OPTIMIZE($ccbase,$cc,flag)
-            ;;
           -no-cpp-precomp)
             # special check, avoiding a warning
             GMP_GCC_NO_CPP_PRECOMP($ccbase,$cc,$cflags,
@@ -1946,7 +1941,16 @@ AC_CHECK_DECLS([sys_errlist, sys_nerr], , ,
 
 AC_TYPE_SIGNAL
 
+# Reasons for testing:
+#   intmax_t       - C99
+#   long double    - not in the HP bundled K&R cc
+#   long long      - only in reasonably recent compilers
+#   ptrdiff_t      - seems to be everywhere, maybe don't need to check this
+#   quad_t         - BSD specific
+#   uint_least32_t - C99
+#
 # the default includes are sufficient for all these types
+#
 AC_CHECK_TYPES([intmax_t, long double, long long, ptrdiff_t, quad_t, uint_least32_t])
 
 AC_C_STRINGIZE
