@@ -176,6 +176,10 @@ typedef __mpq_struct *mpq_ptr;
 #define _GMP_H_HAVE_FILE 1
 #endif
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 #define mp_set_memory_functions __gmp_set_memory_functions
 void mp_set_memory_functions _PROTO ((void *(*) (size_t),
 				      void *(*) (void *, size_t, size_t),
@@ -183,6 +187,11 @@ void mp_set_memory_functions _PROTO ((void *(*) (size_t),
 
 #define mp_bits_per_limb __gmp_bits_per_limb
 extern __gmp_const int mp_bits_per_limb;
+
+#if defined (__cplusplus)
+}
+#endif
+
 
 /**************** Random number routines.  ****************/
 
@@ -1045,6 +1054,7 @@ enum
   GMP_ERROR_UNUSED_ERROR
 };
 
+/* Note: major version number is in mp.h too */
 #define __GNU_MP_VERSION 3
 #define __GNU_MP_VERSION_MINOR 0
 #define __GNU_MP_VERSION_PATCHLEVEL 0
