@@ -1,5 +1,10 @@
 Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpq/set_z.c: New file.
+	* mpq/Makefile.in: Compile it.
+	* make.bat: Likewise.
+	* gmp.h: Declare mpq_set_z.
+
 	* mp?/Makefile.in (libmp?.a): Depend on Makefile, not Makefile.in.
 	* mpf/Makefile.in (test): Delete spurious target.
 	* mpq/Makefile.in (test): Likewise.

@@ -1355,7 +1355,7 @@ Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
 @var{op2}.
 
-To determine if two rationals are equal, @code{mpq_equal} is faster than this
+To determine if two rationals are equal, @code{mpq_equal} is faster than
 @code{mpq_cmp}.
 @end deftypefun
 
