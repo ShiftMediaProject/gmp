@@ -51,17 +51,17 @@ mpz_si_kronecker (long a, mpz_srcptr b)
   /* account for the effect of the sign of b, then ignore it */
   result_bit1 = JACOBI_BSGN_SS_BIT1 (a, b_size);
 
-  if (! (b_low & 1))
+  if ((b_low & 1) == 0)
     {
       /* (even/even)=0, and (0/b)=0 for b!=+/-1 */
-      if (! (a & 1))
+      if ((a & 1) == 0)
         return 0;
 
       /* a odd, b even */
 
       /* establish shifted b_low for use with reciprocity below */
       MPN_STRIP_LOW_ZEROS_NOT_ZERO (b_ptr, b_abs_size, b_low);
-      if (! (b_low & 1))
+      if ((b_low & 1) == 0)
         {
           if (b_low == MP_LIMB_T_HIGHBIT)
             {
@@ -90,10 +90,17 @@ mpz_si_kronecker (long a, mpz_srcptr b)
       if (a == 0)
         return (b_abs_size == 1 && b_low == 1);
 
-      if (! (a & 1))
+      if ((a & 1) == 0)
         {
           /* a even, b odd */
           count_trailing_zeros (twos, a);
+#if defined (_CRAY) && ! defined (_CRAYMPP)
+	  if (a < 0)
+	    {
+	      a = (a >> twos) | (~((~(mp_limb_t) 0) >> twos));
+	    }
+	  else
+#endif
           a >>= twos;
           /* (a*2^n/b) = (a/b) * twos(n,a) */
           result_bit1 ^= JACOBI_TWOS_U_BIT1 (twos, b_low);
