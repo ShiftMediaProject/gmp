@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 2 Apr 2001.  An up-to-date version is available at
+  This file current as of 15 Apr 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -60,6 +60,12 @@
      updated, but from user code it should probably refuse to go below the
      size of the current value.  Could switch internal uses across to a new
      function, and tighten up <code>_mpz_realloc</code>.
+<li> <code>mpf_set_str</code> doesn't validate it's exponent, for instance
+     123.456eX789X is accepted (and an exponent 0 used).
+<li> <code>mpf_set_str</code> and <code>mpf_inp_str</code> could usefully
+     accept 0x, 0b etc when base==0.  Perhaps the exponent could default to
+     decimal in this case, with a further 0x, 0b etc allowed there.
+     Eg. 0xFFAA@0x5A.
 </ul>
 
 
@@ -247,6 +253,10 @@
      into four 16-bit chunks for fast fp operations.  Should easily reach 9
      cycles/limb (using one int + one fp), but perhaps even 7 cycles/limb
      (using one int + two fp).
+<li> PPC630: <code>mpn_rshift</code> could do the same sort of unrolled loop
+     as <code>mpn_lshift</code>.  Some judicious use of m4 might let the two
+     share source code, or with a register to control the loop direction
+     perhaps even share object code.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
      for important machines.  Helping the generic sqr_basecase.c with an
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
@@ -302,7 +312,7 @@
      nth limb).
 <li> <code>mpf_getlimbn</code> similar to <code>mpz_getlimbn</code> and
      accepting negative N for fraction limbs.  Functions to get the range of
-     limbs would be wanted before this would be useful.
+     limbs available would be wanted before this would be useful.
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
 <li> <code>mpz_init</code> and <code>mpq_init</code> could do lazy allocation.
@@ -485,7 +495,6 @@ near future, but are at least worth thinking about.
      the makefiles, but libtool doesn't know fortran and so rules like the
      current ".asm.lo" will be needed (the multi-language branch of libtool
      doesn't look like it's got fortran yet either).
-<li> There are a few filenames that don't fit in 14 chars, if this matters.
 <li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000, whereas it's
      sort of supposed to return the low 31 (or 63) bits.  But this is
      undocumented, and perhaps not too important.
@@ -498,6 +507,11 @@ near future, but are at least worth thinking about.
      having to do a reallocate if the <code>mpz_t</code> grows a bit more.
      This could only be an option, since it'd badly bloat memory usage in
      applications using many small values.
+<li> DLLs on cygwin, mingw and os2 would be possible, but the couple of global
+     variables (<code>gmp_version</code>, <code>__gmp_allocate_func</code>
+     used by GMP++, etc) would require the <code>__declspec</code> nonsense
+     described in the Goat book.  Or maybe since <code>gmp_version</code> is a
+     constant it can avoid that stuff.
 </ul>
 
 
