@@ -34,10 +34,12 @@ C only for really huge operands.  See README for possible improvements.
 ASM_START()
 PROLOGUE(mpn_mul_1)
 	.prologue
-	.save	ar.lc, r2
+	.save	ar.pfs, r21
 		alloc		r21 = ar.pfs, 4, 12, 0, 16
+	.save	ar.lc, r2
 		mov		r2 = ar.lc
 		mov		r20 = ar.ec
+	.save	pr, r22
 		mov		r22 = pr
 	.body
 ifdef(`HAVE_ABI_32',
