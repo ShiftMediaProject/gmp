@@ -1335,29 +1335,31 @@ extern
 #if __STDC__
 const
 #endif
-unsigned char __clz_tab[];
+unsigned char __clz_tab[128];
 #define count_leading_zeros(count, x) \
   do {									\
     UWtype __xr = (x);							\
     UWtype __a;								\
 									\
-    if (W_TYPE_SIZE <= 32)						\
+    if (W_TYPE_SIZE == 32)						\
       {									\
 	__a = __xr < ((UWtype) 1 << 2*__BITS4)				\
-	  ? (__xr < ((UWtype) 1 << __BITS4) ? 0 : __BITS4)		\
-	  : (__xr < ((UWtype) 1 << 3*__BITS4) ?  2*__BITS4 : 3*__BITS4);\
+	  ? (__xr < ((UWtype) 1 << __BITS4) ? 1 : __BITS4 + 1)		\
+	  : (__xr < ((UWtype) 1 << 3*__BITS4) ? 2*__BITS4 + 1		\
+	  : 3*__BITS4 + 1);						\
       }									\
     else								\
       {									\
 	for (__a = W_TYPE_SIZE - 8; __a > 0; __a -= 8)			\
 	  if (((__xr >> __a) & 0xff) != 0)				\
 	    break;							\
+	++__a;								\
       }									\
 									\
-    (count) = W_TYPE_SIZE - (__clz_tab[__xr >> __a] + __a);		\
+    (count) = W_TYPE_SIZE - __a - __clz_tab[__xr >> __a];		\
   } while (0)
 /* This version gives a well-defined value for zero. */
-#define COUNT_LEADING_ZEROS_0 W_TYPE_SIZE
+#define COUNT_LEADING_ZEROS_0 (W_TYPE_SIZE - 1)
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #endif
 
