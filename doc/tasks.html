@@ -60,6 +60,10 @@
      make it so by default and leave a --enable-alloca=malloc-nonreentrant with
      the current code.  A reentrant version will probably be slower since it
      can't share malloced blocks across function calls.
+<li> <code>mpz_scan0</code> and <code>mpz_scan1</code> only work in quite
+     limited circumstances and could be improved.  Supporting twos complement
+     like the other bitwise functions would be good.  A defined return value
+     for no 0 or 1 found would be good too, perhaps <code>ULONG_MAX</code>.
 </ul>
 
 
