@@ -245,6 +245,49 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 }
 
 
+/* Calculate (b^e) mod (2^n-k) for e=1074888996, n=19937 and k=20023,
+   needed by the seeding function below.  */
+static void
+mangle_seed (mpz_ptr r, mpz_srcptr b_orig)
+{
+  mpz_t          t, b;
+  unsigned long  e = 0x40118124;
+  unsigned long  bit = 0x20000000;
+
+  mpz_init (t);
+  mpz_init_set (b, b_orig);  /* in case r==b_orig */
+
+  mpz_set (r, b);
+  do
+    {
+      mpz_mul (r, r, r);
+
+    reduce:
+      for (;;)
+        {
+          mpz_tdiv_q_2exp (t, r, 19937L);
+          if (mpz_sgn (t) == 0)
+            break;
+          mpz_tdiv_r_2exp (r, r, 19937L);
+          mpz_addmul_ui (r, t, 20023L);
+        }
+
+      if ((e & bit) != 0)
+        {
+          e &= ~bit;
+          mpz_mul (r, r, b);
+          goto reduce;
+        }
+
+      bit >>= 1;
+    }
+  while (bit != 0);
+
+  mpz_clear (t);
+  mpz_clear (b);
+}
+
+
 /* Seeding function.  Uses powering modulo a non-Mersenne prime to obtain
    a permutation of the input seed space.  The modulus is 2^19937-20023,
    which is probably prime.  The power is 1074888996.  In order to avoid
@@ -275,7 +318,7 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
    produces the same sequence as seed 2^19937-20028, etc.
  */
 
-static int
+static void
 randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
 {
   int i;
@@ -295,18 +338,9 @@ randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
   mpz_sub_ui (mod, mod, 20027L);
   mpz_mod (seed1, seed, mod);	/* Reduce `seed' modulo `mod'.  */
   mpz_add_ui (seed1, seed1, 2L);	/* seed1 is now ready.  */
-  mpz_add_ui (mod, mod, 4L);	/* Prepare modulus for powering.  */
-  mpz_powm_ui (seed1, seed1, 1074888996L, mod);
+  mangle_seed (seed1, seed1);	/* Perform the mangling by powering.  */
 
   /* Split seed1 into N 32-bit chunks.  */
-  /*FIXME: Remove or reenable:
-  for (i = 0; i < N; i++)
-    {
-      p->mt[i] = mpz_get_ui (seed1) & 0xFFFFFFFF;
-      mpz_tdiv_q_2exp (seed1, seed1, 32L);
-    }
-  */
-
   mpz_export ((void *) p->mt, &cnt, -1, sizeof (unsigned long int), 0, 0,
 	      seed1);
   while (cnt < N)
@@ -329,8 +363,6 @@ randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
     }
   else
     p->mti = N;
-
-  return 0;
 }
 
 
