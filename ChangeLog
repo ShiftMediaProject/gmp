@@ -1,3 +1,12 @@
+2000-05-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64w: New directory, contents based on corresponding mpn/pa64
+	files.
+	* configure.in (hppa2.0w-*-*): New.
+	* mpz/tests/io.c (_INCLUDE_POSIX_SOURCE): Define when __hpux before
+	including stdio.h.
+	* gmp-impl.h: Always define DItype and UDItype.
+
 2000-05-27  Kevin Ryde  <kevin@swox.se>
 
 	* tune/common.c (speed_measure): Correction to array sorting,
