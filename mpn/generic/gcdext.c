@@ -202,7 +202,7 @@ mpn_gcd (gp, up, size, vp, vsize)
 
   TMP_MARK (mark);
 
-  use_double_flag = (size >= GCDEXT_THRESHOLD);
+  use_double_flag = ABOVE_THRESHOLD (size, GCDEXT_THRESHOLD);
 
   tp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
   wp = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
