@@ -35,8 +35,8 @@ MA 02111-1307, USA. */
 #define SQR_KARATSUBA_THRESHOLD          22
 #define SQR_TOOM3_THRESHOLD              77
 
-#define DIV_SB_PREINV_THRESHOLD               0  /* preinv always */
-#define DIV_DC_THRESHOLD                     41
+#define DIV_SB_PREINV_THRESHOLD           0  /* preinv always */
+#define DIV_DC_THRESHOLD                 41
 #define POWM_THRESHOLD                   54
 
 #define GCD_ACCEL_THRESHOLD               3
