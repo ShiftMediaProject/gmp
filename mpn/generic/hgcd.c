@@ -266,8 +266,8 @@ wrap_mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
    one non-zero nail bit. */
 static mp_limb_t
 mpn_addmul2_n_1 (mp_ptr rp, mp_size_t n,
-		 mp_ptr ap, mp_limb_t u,
-		 mp_ptr bp, mp_limb_t v)
+		 mp_srcptr ap, mp_limb_t u,
+		 mp_srcptr bp, mp_limb_t v)
 {
   mp_limb_t h;
   mp_limb_t cy;
@@ -285,7 +285,7 @@ mpn_addmul2_n_1 (mp_ptr rp, mp_size_t n,
 }
 
 
-static void
+static inline void
 qstack_drop (struct qstack *stack)
 {
   ASSERT (stack->size_next);
@@ -293,9 +293,9 @@ qstack_drop (struct qstack *stack)
 }
 
 /* Get top element */
-static mp_size_t
-qstack_get_0 (struct qstack *stack,
-			    mp_srcptr *qp)
+static inline mp_size_t
+qstack_get_0 (const struct qstack *stack,
+	      mp_srcptr *qp)
 {
   mp_size_t qsize;
   ASSERT (stack->size_next);
@@ -307,9 +307,9 @@ qstack_get_0 (struct qstack *stack,
 }
 
 /* Get element just below the top */
-static mp_size_t
-qstack_get_1 (struct qstack *stack,
-			    mp_srcptr *qp)
+static inline mp_size_t
+qstack_get_1 (const struct qstack *stack,
+	      mp_srcptr *qp)
 {
   mp_size_t qsize;
   ASSERT (stack->size_next >= 2);
@@ -1270,7 +1270,7 @@ hgcd_small_1 (struct hgcd *hgcd, mp_size_t M,
    steps are needed. */
 static int
 hgcd_small_2 (struct hgcd *hgcd, mp_size_t M,
-	      struct qstack *quotients,
+	      const struct qstack *quotients,
 	      mp_ptr tp, mp_size_t talloc)
 {
   mp_srcptr qp;
