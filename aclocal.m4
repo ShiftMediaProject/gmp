@@ -101,6 +101,43 @@ ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp-h.in) > 0),1,
 [.GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp-h.in)])])
 
 
+dnl  GMP_SUBST_CHECK_FUNCS(func,...)
+dnl  ------------------------------
+dnl  Setup an AC_SUBST of HAVE_FUNC_01 for each argument.
+
+AC_DEFUN(GMP_SUBST_CHECK_FUNCS,
+[m4_if([$1],,,
+[_GMP_SUBST_CHECK_FUNCS(ac_cv_func_[$1],HAVE_[]m4_translit([$1],[a-z],[A-Z])_01)
+GMP_SUBST_CHECK_FUNCS(m4_shift($@))])])
+
+dnl  Called: _GMP_SUBST_CHECK_FUNCS(cachvar,substvar)
+AC_DEFUN(_GMP_SUBST_CHECK_FUNCS,
+[case $[$1] in
+yes) AC_SUBST([$2],1) ;;
+no)  [$2]=0 ;;
+esac
+])
+
+
+dnl  GMP_SUBST_CHECK_HEADERS(foo.h,...)
+dnl  ----------------------------------
+dnl  Setup an AC_SUBST of HAVE_FOO_H_01 for each argument.
+
+AC_DEFUN(GMP_SUBST_CHECK_HEADERS,
+[m4_if([$1],,,
+[_GMP_SUBST_CHECK_HEADERS(ac_cv_header_[]m4_translit([$1],[./],[__]),
+HAVE_[]m4_translit([$1],[a-z./],[A-Z__])_01)
+GMP_SUBST_CHECK_HEADERS(m4_shift($@))])])
+
+dnl  Called: _GMP_SUBST_CHECK_HEADERS(cachvar,substvar)
+AC_DEFUN(_GMP_SUBST_CHECK_HEADERS,
+[case $[$1] in
+yes) AC_SUBST([$2],1) ;;
+no)  [$2]=0 ;;
+esac
+])
+
+
 dnl  GMP_COMPARE_GE(A1,B1, A2,B2, ...)
 dnl  ---------------------------------
 dnl  Compare two version numbers A1.A2.etc and B1.B2.etc.  Set
@@ -464,7 +501,7 @@ AC_DEFUN(GMP_HPC_HPPA_2_0,
 #   ccom: HP92453-01 A.10.32.30 HP C Compiler
 # Let A.10.32.30 or higher be ok.
 echo >conftest.c
-gmp_tmp_vs=`$1 $2 -V -c -o conftest.o conftest.c 2>&1 | grep "^ccom:"`
+gmp_tmp_vs=`$1 $2 -V -c -o conftest.$ac_objext conftest.c 2>&1 | grep "^ccom:"`
 echo "Version string: $gmp_tmp_vs" >&AC_FD_CC
 rm conftest*
 gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
@@ -871,7 +908,7 @@ EOF
 EOF
     ;;
   esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s >&AC_FD_CC"
+  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS conftes1.$ac_objext conftes2.$ac_objext >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
@@ -921,7 +958,7 @@ AC_CACHE_CHECK([if .align assembly directive is logarithmic],
 	.align	4
 foo$gmp_cv_asm_label_suffix
 	.byte	2],
-  [gmp_tmp_val=[`$NM conftest.o | grep foo | \
+  [gmp_tmp_val=[`$NM conftest.$ac_objext | grep foo | \
      sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
     gmp_cv_asm_align_log=yes
@@ -1193,13 +1230,13 @@ for gmp_tmp_pre in L .L $ L$; do
 [dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
 	.byte 0],
-  [$NM conftest.o >&AC_FD_CC 2>&AC_FD_CC
+  [$NM conftest.$ac_objext >&AC_FD_CC 2>&AC_FD_CC
   if test $? != 0; then
     AC_MSG_WARN([NM failure, using default local label $gmp_cv_asm_lsym_prefix])
     gmp_found=yes
     break
   fi
-  if $NM conftest.o | grep gurkmacka >/dev/null; then : ; else
+  if $NM conftest.$ac_objext | grep gurkmacka >/dev/null; then : ; else
     gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
     gmp_found=yes
     break
@@ -1245,7 +1282,7 @@ AC_CACHE_CHECK([how to define a 32-bit word],
 	$gmp_tmp_op	0
 foo$gmp_cv_asm_label_suffix
 	.byte	0],
-        [gmp_tmp_val=[`$NM conftest.o | grep foo | \
+        [gmp_tmp_val=[`$NM conftest.$ac_objext | grep foo | \
           sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
         if test "$gmp_tmp_val" = 4; then
           gmp_cv_asm_w32="$gmp_tmp_op"
@@ -1286,7 +1323,7 @@ AC_DEFUN(GMP_ASM_X86_MMX,
 [gmp_cv_asm_x86_mmx=yes
 case $host in
 *-*-solaris*)
-  if (dis conftest.o >conftest.out) 2>/dev/null; then
+  if (dis conftest.$ac_objext >conftest.out) 2>/dev/null; then
     if grep "0f 6f c1" conftest.out >/dev/null; then
       gmp_cv_asm_x86_mmx=movq-bug
     fi
