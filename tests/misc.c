@@ -252,9 +252,6 @@ mpf_set_str_or_abort (mpf_ptr f, const char *str, int base)
 }
 
 
-/* requires n!=0 */
-#define POW2_P(n)  (((n)&-(n)) == (n))
-
 /* Whether the absolute value of z is a power of 2. */
 int
 mpz_pow2abs_p (mpz_srcptr z)
