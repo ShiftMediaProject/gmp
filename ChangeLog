@@ -1,3 +1,9 @@
+2000-05-29  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/power/mul_1.s: Remove [PR] from first word in function descriptor.
+	* mpn/power/addmul_1.s: Likewise.
+	* mpn/power/submul_1.s: Likewise.
+	
 2000-05-28  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in, tune/*: Change pentium rdtsc cycle scheme to
