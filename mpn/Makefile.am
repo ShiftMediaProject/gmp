@@ -29,13 +29,12 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
 OFILES = @mpn_objects@
 
 
-# All possible mpn normal and optional function files are listed here as C
-# sources for a dummy library, to get automake to generate ansi2knr rules
-# for each.  Such rules will be ignored for any that are instead implemented
-# with a .asm (or whatever) for a particular target.
+# All possible mpn normal and optional function files are listed here, to
+# get automake to generate ansi2knr rules for each.  Such rules will be
+# ignored for any that are instead implemented with a .asm (or whatever) for
+# a particular target.
 #
-EXTRA_LTLIBRARIES = libdummy.la
-nodist_libdummy_la_SOURCES =						    \
+nodist_EXTRA_libmpn_la_SOURCES =					    \
   add.c add_1.c add_n.c							    \
   addmul_1.c addmul_2.c addmul_3.c addmul_4.c addmul_5.c addmul_6.c	    \
   addmul_7.c addmul_8.c							    \
@@ -52,7 +51,6 @@ nodist_libdummy_la_SOURCES =						    \
   sqr_basecase.c sqr_diagonal.c						    \
   sqrtrem.c sub.c sub_1.c sub_n.c submul_1.c				    \
   tdiv_qr.c udiv_qrnnd.c udiv_w_sdiv.c xor_n.c xnor_n.c
-
 
 noinst_LTLIBRARIES = libmpn.la
 nodist_libmpn_la_SOURCES = fib_table.c mp_bases.c
