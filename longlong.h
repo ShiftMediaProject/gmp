@@ -1478,7 +1478,7 @@ extern UWtype mpn_udiv_qrnnd_r _PROTO ((UWtype, UWtype, UWtype, UWtype *));
 #define udiv_qrnnd(q, r, n1, n0, d)                                     \
   do {                                                                  \
     UWtype __udiv_qrnnd__r;                                             \
-    (q) = mpn_udiv_qrnnd ((UWtype) (n1), (UWtype) (n0), (UWtype) d,     \
+    (q) = mpn_udiv_qrnnd_r ((UWtype) (n1), (UWtype) (n0), (UWtype) d,   \
 			  &__udiv_qrnnd__r);                            \
     (r) = __udiv_qrnnd__r;                                              \
   } while (0)
