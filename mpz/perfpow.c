@@ -47,7 +47,7 @@ MA 02111-1307, USA. */
 static unsigned long int gcd _PROTO ((unsigned long int a, unsigned long int b));
 static int isprime _PROTO ((unsigned long int t));
 
-static unsigned short primes[] =
+static const unsigned short primes[] =
 {  2,  3,  5,  7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,
   59, 61, 67, 71, 73, 79, 83, 89, 97,101,103,107,109,113,127,131,
  137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,
@@ -77,6 +77,8 @@ mpz_perfect_power_p (u)
   unsigned long int rem;
   mpz_t u2, q;
   int exact;
+  mp_size_t uns;
+  TMP_DECL (marker);
 
   if (mpz_cmp_ui (u, 1) <= 0)
     return 0;
@@ -85,8 +87,11 @@ mpz_perfect_power_p (u)
   if (n2 == 1)
     return 0;
 
-  mpz_init (q);
-  mpz_init (u2);
+  TMP_MARK (marker);
+
+  uns = ABSIZ (u) - n2 / BITS_PER_MP_LIMB;
+  MPZ_TMP_INIT (q, uns);
+  MPZ_TMP_INIT (u2, uns);
 
   mpz_tdiv_q_2exp (u2, u, n2);
 
@@ -102,8 +107,7 @@ mpz_perfect_power_p (u)
 	  rem = mpz_tdiv_q_ui (q, u2, prime * prime);
 	  if (rem != 0)
 	    {
-	      mpz_clear (q);
-	      mpz_clear (u2);
+	      TMP_FREE (marker);
 	      return 0;
 	    }
 	  mpz_swap (q, u2);
@@ -119,8 +123,7 @@ mpz_perfect_power_p (u)
 	  n2 = gcd (n2, n);
 	  if (n2 == 1)
 	    {
-	      mpz_clear (q);
-	      mpz_clear (u2);
+	      TMP_FREE (marker);
 	      return 0;
 	    }
 
@@ -133,8 +136,7 @@ mpz_perfect_power_p (u)
 
   if (mpz_cmp_ui (u2, 1) == 0)
     {
-      mpz_clear (q);
-      mpz_clear (u2);
+      TMP_FREE (marker);
       return 1;
     }
 
@@ -154,14 +156,12 @@ mpz_perfect_power_p (u)
 	    exact = mpz_root (q, u2, nth);
 	  if (exact)
 	    {
-	      mpz_clear (q);
-	      mpz_clear (u2);
+	      TMP_FREE (marker);
 	      return 1;
 	    }
 	  if (mpz_cmp_ui (q, SMALLEST_OMITTED_PRIME) < 0)
 	    {
-	      mpz_clear (q);
-	      mpz_clear (u2);
+	      TMP_FREE (marker);
 	      return 0;
 	    }
 	}
@@ -184,27 +184,23 @@ mpz_perfect_power_p (u)
 	    exact = mpz_root (q, u2, nth);
 	  if (exact)
 	    {
-	      mpz_clear (q);
-	      mpz_clear (u2);
+	      TMP_FREE (marker);
 	      return 1;
 	    }
 	  if (mpz_cmp_ui (q, SMALLEST_OMITTED_PRIME) < 0)
 	    {
-	      mpz_clear (q);
-	      mpz_clear (u2);
+	      TMP_FREE (marker);
 	      return 0;
 	    }
 	}
 
-      mpz_clear (q);
-      mpz_clear (u2);
+      TMP_FREE (marker);
       return 0;
     }
 
 n2prime:
   exact = mpz_root (NULL, u2, n2);
-  mpz_clear (q);
-  mpz_clear (u2);
+  TMP_FREE (marker);
   return exact;
 }
 
