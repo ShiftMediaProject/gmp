@@ -1,6 +1,6 @@
 /* mpz_out_raw -- write an mpz_t in raw format.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -96,7 +96,7 @@ mpz_out_raw (FILE *fp, mpz_srcptr x)
   bytes = BYTES_PER_MP_LIMB * abs_xsize;
   tsize = ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB) + bytes;
 
-  tp = (*__gmp_allocate_func) (tsize);
+  tp = __GMP_ALLOCATE_FUNC_TYPE (tsize, char);
   bp = tp + ROUND_UP_MULTIPLE ((unsigned) 4, BYTES_PER_MP_LIMB);
 
   if (bytes != 0)
