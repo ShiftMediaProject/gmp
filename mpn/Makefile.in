@@ -197,7 +197,7 @@ nodist_libdummy_la_SOURCES = \
 
 
 noinst_LTLIBRARIES = libmpn.la
-libmpn_la_SOURCES = mp_bases.c
+nodist_libmpn_la_SOURCES = mp_bases.c
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
@@ -261,8 +261,8 @@ nodist_libdummy_la_OBJECTS = add$U.lo add_1$U.lo add_n$U.lo \
 	udiv_qrnnd$U.lo udiv_w_sdiv$U.lo xor_n$U.lo xnor_n$U.lo
 libdummy_la_OBJECTS = $(nodist_libdummy_la_OBJECTS)
 libmpn_la_LDFLAGS =
-am_libmpn_la_OBJECTS = mp_bases$U.lo
-libmpn_la_OBJECTS = $(am_libmpn_la_OBJECTS)
+nodist_libmpn_la_OBJECTS = mp_bases$U.lo
+libmpn_la_OBJECTS = $(nodist_libmpn_la_OBJECTS)
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -279,9 +279,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(libmpn_la_SOURCES)
+DIST_SOURCES =
 DIST_COMMON = README Makefile.am Makefile.in
-SOURCES = $(nodist_libdummy_la_SOURCES) $(libmpn_la_SOURCES)
+SOURCES = $(nodist_libdummy_la_SOURCES) $(nodist_libmpn_la_SOURCES)
 
 all: all-am
 
