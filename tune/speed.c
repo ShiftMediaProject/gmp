@@ -1,6 +1,6 @@
 /* Speed measuring program.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -484,7 +484,8 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
       s->r = choice[i].r;
       choice[i].time = speed_measure (choice[i].p->fun, s);
       choice[i].no_time = (choice[i].time == -1.0);
-      choice[i].time *= choice[i].scale;
+      if (! choice[i].no_time)
+        choice[i].time *= choice[i].scale;
 
       /* Apply the effect of CMP_DIFFPREV, but the new choice[i].prev_time
          is before any differences.  */
@@ -585,19 +586,23 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
           int   decimals;
 
           if (choice[i].no_time)
-            decimals = 0, choice[i].time = 0.0;
-          else if (option_unit == UNIT_CYCLESPERLIMB
-                   || (option_cmp == CMP_RATIO && i > 0))
-            decimals = 4;
-          else if (option_unit == UNIT_CYCLES)
-            decimals = 2;
+            {
+              fprintf (fp, " %*s", COLUMN_WIDTH, "n/a");
+            }
           else
-            decimals = 9;
+            {if (option_unit == UNIT_CYCLESPERLIMB
+                 || (option_cmp == CMP_RATIO && i > 0))
+                decimals = 4;
+              else if (option_unit == UNIT_CYCLES)
+                decimals = 2;
+              else
+                decimals = 9;
 
-          sprintf (buf, "%s%.*f%s",
-                   i == fastest ? first_open_fastest : first_open_notfastest,
-                   decimals, choice[i].time, first_close);
-          fprintf (fp, " %*s", COLUMN_WIDTH, buf);
+              sprintf (buf, "%s%.*f%s",
+                       i == fastest ? first_open_fastest : first_open_notfastest,
+                       decimals, choice[i].time, first_close);
+              fprintf (fp, " %*s", COLUMN_WIDTH, buf);
+            }
         }
       fprintf (fp, "\n");
     }
