@@ -1,4 +1,4 @@
-/* mpn_hamdist --
+/* mpn_popcount, mpn_hamdist -- population count and hamming distance.
 
 Copyright (C) 1994, 1996, 2000 Free Software Foundation, Inc.
 
@@ -22,8 +22,26 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+
+#ifdef OPERATION_popcount
+#define FUNCTION   mpn_popcount
+#define ARGUMENTS  register mp_srcptr p, register mp_size_t size
+#define OPERAND    (p[i])
+#endif
+
+#ifdef OPERATION_hamdist
+#define FUNCTION   mpn_hamdist
+#define ARGUMENTS  mp_srcptr up, mp_srcptr vp, mp_size_t size
+#define OPERAND    (up[i] ^ vp[i])
+#endif
+
+#ifndef FUNCTION
+Error, need OPERATION_popcount or OPERATION_hamdist
+#endif
+
+
 #if defined __GNUC__
-/* No processor claiming to be SPARC v9 compliant seem to
+/* No processor claiming to be SPARC v9 compliant seems to
    implement the POPC instruction.  Disable pattern for now.  */
 #if 0 && defined __sparc_v9__ && BITS_PER_MP_LIMB == 64
 #define popc_limb(a) \
@@ -34,6 +52,7 @@ MA 02111-1307, USA. */
   })
 #endif
 #endif
+
 
 #ifndef popc_limb
 
@@ -73,22 +92,15 @@ popc_limb (x)
 }
 #endif
 
+
 unsigned long int
-#if __STDC__
-mpn_hamdist (mp_srcptr up, mp_srcptr vp, mp_size_t size)
-#else
-mpn_hamdist (up, vp, size)
-     register mp_srcptr up;
-     register mp_srcptr vp;
-     register mp_size_t size;
-#endif
+FUNCTION (ARGUMENTS)
 {
-  unsigned long int hamdist;
-  mp_size_t i;
+  unsigned long int  result = 0;
+  mp_size_t  i;
 
-  hamdist = 0;
   for (i = 0; i < size; i++)
-    hamdist += popc_limb (up[i] ^ vp[i]);
+    result += popc_limb (OPERAND);
 
-  return hamdist;
+  return result;
 }
