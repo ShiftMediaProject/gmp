@@ -19,6 +19,22 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium/com_n.asm, mpn/x86/pentium/logops_n.asm,
+	mpn/x86/k6/mmx/com_n.asm: Add nails support.	
+
+	* texinfo.tex: Update to 2002-03-01.06 (per texinfo 4.1).
+	* gmp.texi (@ma): Remove, @math does this now.
+
+	* mpfr/tests/reuse.c: Clear op1 and op2 flags only in their respective
+	outer loops.
+
+	* configure.in (--enable-cxx): Correction to the default stated in the
+	help string.
+	(power*-*-aix*, not powerpc): Use aix.m4, don't run
+	GMP_ASM_POWERPC_R_REGISTERS or use powerpc-defs.m4.
+
 2002-03-13  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc32/gmp-mparam.h: New file.
