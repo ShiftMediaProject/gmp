@@ -101,31 +101,31 @@ MPN_OBJECTS = @mpn_objs_in_libgmp@
 
 MPBSD_OBJECTS = mpbsd/add.lo mpbsd/mdiv.lo mpbsd/move.lo mpbsd/powm.lo	  \
   mpbsd/sub.lo mpbsd/cmp.lo mpbsd/mfree.lo mpbsd/mtox.lo mpbsd/realloc.lo \
-  mpbsd/assert.lo mpbsd/errno.lo mpbsd/memory.lo mpbsd/mp_bpl.lo	  \
   mpbsd/gcd.lo mpbsd/itom.lo mpbsd/min.lo mpbsd/mul.lo mpbsd/mout.lo	  \
   mpbsd/pow_ui.lo mpbsd/sdiv.lo mpbsd/sqrtrem.lo mpbsd/xtom.lo 
 
 
-# -lgmp needs -lm for floor() and sqrt() used by mpn/generic/sqrtrem.c.
+# libgmp needs -lm for floor() and sqrt() used by mpn/generic/sqrtrem.c.
 # Some compilers (eg. gcc on i386) might in-line these, making -lm
 # unnecessary, but we don't try to detect that.
 #
 libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c randsdui.c \
   version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
-libgmp_la_LIBADD = \
-	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) -lm
 libgmp_la_DEPENDENCIES = \
-	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
+  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
+libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES) -lm
 libgmp_la_LDFLAGS = -release @VERSION@
 
 
+# -lm wanted on libmp_la_LIBADD for the same reason as libgmp
 if WANT_MPBSD
 MPBSD_HEADERS_OPTION = mp.h
 MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
-libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)
-libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
+libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS) \
+  assert.lo errno.lo memory.lo mp_bpl.lo stack-alloc.lo
+libmp_la_LIBADD = $(libmp_la_DEPENDENCIES) -lm
 libmp_la_SOURCES =
 libmp_la_LDFLAGS = -release @VERSION@
 
