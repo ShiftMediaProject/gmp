@@ -22,13 +22,7 @@ MA 02111-1307, USA. */
 
 /* These routines are in a separate file so that the mpz_t, mpq_t and mpf_t
    operator<< routines can avoid dragging vsnprintf into the link (via
-   __gmp_asprintf_format).
-
-   These routines are only needed to support gmp_asprintf if vsnprintf
-   exists, or to support mpz_out_ostream if C++ has been enabled, and could
-   therefore be under "#if HAVE_VSNPRINTF || WANT_CXX".  But they're
-   provided unconditionally so that the contents of libgmp don't depend on
-   the setting of --enable-cxx.  */
+   __gmp_asprintf_format).  */
 
 #include "config.h"
 
