@@ -195,9 +195,13 @@ dnl
 dnl  A user-selected $AR is always left unchanged.  AC_CHECK_TOOL is still
 dnl  run to get the "checking" message printed though.
 dnl
-dnl  Extra flags are added to ac_cv_prog_AR as well as AR, since libtool
-dnl  (cvs 2003-03-31 at least) does an AC_CHECK_TOOL and that sets AR from
-dnl  the cached ac_cv_prog_AR.
+dnl  If extra flags are added to AR, then ac_cv_prog_AR and
+dnl  ac_cv_prog_ac_ct_AR are set too, since libtool (cvs 2003-03-31 at
+dnl  least) will do an AC_CHECK_TOOL and that will AR from one of those two
+dnl  cached variables.  (ac_cv_prog_AR is used if there's an ac_tool_prefix,
+dnl  or ac_cv_prog_ac_ct_AR is used otherwise.)  FIXME: This is highly
+dnl  dependent on autoconf internals, perhaps it'd work to put our extra
+dnl  flags into AR_FLAGS instead.
 dnl
 dnl  $AR_FLAGS is set to "cq" rather than leaving it to libtool "cru".  The
 dnl  latter fails when libtool goes into piecewise mode and is unlucky
@@ -216,7 +220,8 @@ if test -z "$gmp_user_AR"; then
   if test -n "$arflags"; then
     AC_MSG_CHECKING([for extra ar flags])
     AR="$AR $arflags"
-    ac_cv_prog_AR="$ac_cv_prog_AR $arflags"
+    ac_cv_prog_AR="$AR $arflags"
+    ac_cv_prog_ac_ct_AR="$AR $arflags"
     AC_MSG_RESULT([$arflags])
   fi
 fi
