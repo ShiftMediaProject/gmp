@@ -5660,8 +5660,8 @@ MA 02111-1307, USA.
 
 2000-04-23  Kevin Ryde  <kevin@swox.se>
 
-	* tune/Makefile.am, README, common.c, rdtsc.asm, speed.c, speed.h,
-	time.c, tuneup.c: New files.
+	* tune/Makefile.am, tune/README, tune/common.c, tune/rdtsc.asm,
+	tune/speed.c, tune/speed.h, tune/time.c, tune/tuneup.c: New files.
 	* tune/Makefile.in: New file, generated from Makefile.am.
 
 	* gmp-impl.h (ASSERT_NOREALLOC,TMP_ALLOC_LIMBS): New macros.
