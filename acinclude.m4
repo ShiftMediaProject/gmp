@@ -1089,17 +1089,15 @@ GMP_PROG_CXX_WORKS_PART([$1], [namespace],
 using namespace foo;
 ])
 
+# GMP requires the standard C++ iostream classes
 GMP_PROG_CXX_WORKS_PART([$1], [std iostream],
-[/* GMP requires the standard C++ iostream classes.  This test rejects g++
-   2.7.2 which has only a pre-standard iostream.h.  */
+[/* This test rejects g++ 2.7.2 which doesn't have <iostream>, only a
+    pre-standard iostream.h. */
 #include <iostream>
-using namespace std;
-void
-foo (void)
-{
-  cout.setf (ios::hex);
-  cout << 123;
-}
+
+/* This test rejects OSF 5.1 Compaq C++ in its default pre-standard iostream
+   mode, since that mode puts cout in the global namespace, not "std".  */
+void someoutput (void) { std::cout << 123; }
 ])
 
 AC_MSG_RESULT($gmp_prog_cxx_works)
