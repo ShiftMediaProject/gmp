@@ -46,7 +46,8 @@ C feed-in phase 1
 	beq	$6,$0,$LC1
 	ld	$8,0($5)	C load new s1 limb as early as possible
 
-Loop:	mflo	$10
+Loop:	nop
+	mflo	$10
 	mfhi	$9
 	daddiu	$5,$5,8
 	daddu	$10,$10,$2	C add old carry limb to low product limb
@@ -54,6 +55,8 @@ Loop:	mflo	$10
 	ld	$8,0($5)	C load new s1 limb as early as possible
 	daddiu	$6,$6,-1	C decrement loop counter
 	sltu	$2,$10,$2	C carry from previous addition -> $2
+	nop
+	nop
 	sd	$10,0($4)
 	daddiu	$4,$4,8
 	bne	$6,$0,Loop
