@@ -817,6 +817,7 @@ case $host in
   powerpc*-*-*)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_powerpc)
     HAVE_HOST_CPU_FAMILY_powerpc=1
+    abilist="32"
     cclist="gcc cc"
     cc_cflags="-O2"
     gcc_cflags="-O2 -mpowerpc"
