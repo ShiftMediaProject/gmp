@@ -237,15 +237,26 @@ dnl  A user-selected $AR is always left unchanged.  AC_CHECK_TOOL is still
 dnl  run to get the "checking" message printed though.
 dnl
 dnl  If extra flags are added to AR, then ac_cv_prog_AR and
-dnl  ac_cv_prog_ac_ct_AR are set too, since libtool 1.5.2 AC_LIBTOOL_SETUP
-dnl  does an AC_CHECK_TOOL and that will set AR from one of those two cached
-dnl  variables.  (ac_cv_prog_AR is used if there's an ac_tool_prefix, or
-dnl  ac_cv_prog_ac_ct_AR is used otherwise.)
+dnl  ac_cv_prog_ac_ct_AR are set too, since libtool (cvs 2003-03-31 at
+dnl  least) will do an AC_CHECK_TOOL and that will AR from one of those two
+dnl  cached variables.  (ac_cv_prog_AR is used if there's an ac_tool_prefix,
+dnl  or ac_cv_prog_ac_ct_AR is used otherwise.)  FIXME: This is highly
+dnl  dependent on autoconf internals, perhaps it'd work to put our extra
+dnl  flags into AR_FLAGS instead.
 dnl
-dnl  FIXME: This variable munging is highly dependent on autoconf internals.
-dnl  It might work to put our extra flags into AR_FLAGS, but note that
-dnl  libtool will change those to cq when it goes into piecewise linking
-dnl  mode.
+dnl  $AR_FLAGS is set to "cq" rather than leaving it to libtool "cru".  The
+dnl  latter fails when libtool goes into piecewise mode and is unlucky
+dnl  enough to have two same-named objects in separate pieces, as happens
+dnl  for instance to random.o (and others) on vax-dec-ultrix4.5.  Naturally
+dnl  a user-selected $AR_FLAGS is left unchanged.
+dnl
+dnl  For reference, $ARFLAGS is used by automake (1.8) for its ".a" archive
+dnl  file rules.  This doesn't get used by the piecewise linking, so we
+dnl  leave it at the default "cru".
+dnl
+dnl  FIXME: Libtool 1.5.2 has its own arrangments for "cq", but that version
+dnl  is broken in other ways.  When we can upgrade, remove the forcible
+dnl  AR_FLAGS=cq.
 
 AC_DEFUN([GMP_PROG_AR],
 [dnl  Want to establish $AR before libtool initialization.
@@ -262,6 +273,9 @@ if test -z "$gmp_user_AR"; then
     ac_cv_prog_ac_ct_AR="$AR $arflags"
     AC_MSG_RESULT([$arflags])
   fi
+fi
+if test -z "$AR_FLAGS"; then
+  AR_FLAGS=cq
 fi
 ])
 
