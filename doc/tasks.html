@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 22 Apr 2001.  An up-to-date version is available at
+  This file current as of 30 Apr 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -66,6 +66,9 @@
      accept 0x, 0b etc when base==0.  Perhaps the exponent could default to
      decimal in this case, with a further 0x, 0b etc allowed there.
      Eg. 0xFFAA@0x5A.
+<li> <code>DIVIDE_BY_ZERO</code> on powerpc does nothing, because division by
+     zero in the basic "divu" instruction isn't an exception.  Does falling
+     though to subsequent code in the gmp routines upset anything?
 </ul>
 
 
