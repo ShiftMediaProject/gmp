@@ -21,6 +21,7 @@ MA 02111-1307, USA. */
 
 #include <iostream.h>
 #include <stdarg.h>    /* for va_list and hence doprnt_funs_t */
+#include <string.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
