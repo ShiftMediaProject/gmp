@@ -42,24 +42,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-static int
-digit_value_in_base (int c, int base)
-{
-  int digit;
-
-  if (isdigit (c))
-    digit = c - '0';
-  else if (islower (c))
-    digit = c - 'a' + 10;
-  else if (isupper (c))
-    digit = c - 'A' + 10;
-  else
-    return -1;
-
-  if (digit < base)
-    return digit;
-  return -1;
-}
+extern const unsigned char __gmp_digit_value_tab[];
+#define digit_value_tab __gmp_digit_value_tab
 
 /* Avoid memcmp for the usual case that point is one character.  Don't
    bother with str+1,point+1,pointlen-1 since those offsets would add to the
@@ -80,9 +64,8 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   const char  *point = GMP_DECIMAL_POINT;
   size_t      pointlen = strlen (point);
   int         point0 = (unsigned char) point[0];
+  const unsigned char *digit_value;
   TMP_DECL (marker);
-
-  TMP_MARK (marker);
 
   c = (unsigned char) *str;
 
@@ -100,12 +83,22 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   decimal_exponent_flag = base < 0;
   base = ABS (base);
 
+  digit_value = digit_value_tab;
+  if (base > 36)
+    {
+      /* For bases > 36, use the collating sequence
+	 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.  */
+      digit_value += 224;
+      if (base > 62)
+	return -1;		/* too large base */
+    }
+
   /* require at least one digit, possibly after an initial decimal point */
-  if (digit_value_in_base (c, base == 0 ? 10 : base) < 0)
+  if (digit_value[c] >= (base == 0 ? 10 : base))
     {
       if (memcmp (str, point, pointlen) != 0)
         return -1;
-      if (digit_value_in_base (str[pointlen], base == 0 ? 10 : base) < 0)
+      if (digit_value[str[pointlen]] >= (base == 0 ? 10 : base))
         return -1;
     }
 
@@ -142,6 +135,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 
     }
 
+  TMP_MARK (marker);
   s = begs = (char *) TMP_ALLOC (str_size + 1);
 
   for (i = 0; i < str_size; i++)
@@ -166,8 +160,8 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	    }
 	  else
 	    {
-	      dig = digit_value_in_base (c, base);
-	      if (dig < 0)
+	      dig = digit_value[c];
+	      if (dig >= base)
 		{
 		  TMP_FREE (marker);
 		  return -1;
