@@ -38,7 +38,8 @@
 	* configure.in: Update configs for speed_cyclecounter.
 
 	* gmp-impl.h (MP_LIMB_T_MAX, MP_LIMB_T_HIGHBIT): New macros.
-	* mpn/generic/{diveby3,mul_n,gcd}, tune/speed.c: Use them.
+	* mpn/generic/{diveby3,mul_n,gcd}, tune/speed.c, mpn/tests/ref.c:
+	Use them.
 	
 	* mpn/tests/spinner.c: Remove setitimer, just alarm is enough.
 	* configure.in (AC_CHECK_FUNCS): Remove setitimer.
