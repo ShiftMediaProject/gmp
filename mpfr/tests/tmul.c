@@ -28,8 +28,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void check _PROTO((double, double, mp_rnd_t, unsigned int,
-		   unsigned int, unsigned int, double));
 void check53 _PROTO((double, double, mp_rnd_t, double));
 void check24 _PROTO((float, float, mp_rnd_t, float));
 void check_float _PROTO((void));
@@ -38,11 +36,15 @@ void check_exact _PROTO((void));
 void check_max _PROTO((void));
 void check_min _PROTO((void));
 
+
+/* Workaround for sparc gcc 2.95.x bug, see notes in tadd.c. */
+#define check(x,y,rnd_mode,px,py,pz,res)  _check(x,y,res,rnd_mode,px,py,pz)
+
 /* checks that x*y gives the same results in double
    and with mpfr with 53 bits of precision */
 void
-check (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
-       unsigned int py, unsigned int pz, double res)
+_check (double x, double y, double res, mp_rnd_t rnd_mode, unsigned int px, 
+        unsigned int py, unsigned int pz)
 {
   double z1, z2; mpfr_t xx, yy, zz;
 

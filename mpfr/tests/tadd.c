@@ -29,7 +29,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void check _PROTO((double, double, mp_rnd_t, unsigned int, unsigned int, unsigned int, double)); 
 void checknan _PROTO((double, double, mp_rnd_t, unsigned int, unsigned int, unsigned int)); 
 void check3 _PROTO((double, double, mp_rnd_t));
 void check4 _PROTO((double, double, mp_rnd_t));
@@ -42,11 +41,22 @@ void check_case_1b _PROTO((void));
 void check_case_2 _PROTO((void));
 void check_inexact _PROTO((void));
 
+
+/* Parameter "z1" of check() used to be last in the argument list, but that
+   tickled a bug in 32-bit sparc gcc 2.95.2.  A "double" in that position is
+   passed on the stack at an address which is 4mod8, but the generated code
+   didn't take into account that alignment, resulting in bus errors.  The
+   easiest workaround is to move it to the start of the arg list (where it's
+   passed in registers), this macro does that.  FIXME: Change the actual
+   calls to check(), rather than using a macro.  */
+
+#define check(x,y,rnd_mode,px,py,pz,z1)  _check(x,y,z1,rnd_mode,px,py,pz)
+
 /* checks that x+y gives the same results in double
    and with mpfr with 53 bits of precision */
 void
-check (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
-       unsigned int py, unsigned int pz, double z1)
+_check (double x, double y, double z1, mp_rnd_t rnd_mode, unsigned int px, 
+        unsigned int py, unsigned int pz)
 {
   double z2; mpfr_t xx,yy,zz; int cert=0;
 
