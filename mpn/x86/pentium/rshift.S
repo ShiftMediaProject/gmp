@@ -1,6 +1,6 @@
-/* Pentium optimized __mpn_rshift -- 
+/* Pentium optimized __mpn_rshift -- mpn right shift.
 
-Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1992, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -144,7 +144,7 @@ Lspecial:
 	pushl	%ebp
 	shrl	$3,%ebp
 
-	shrl	$1,%edx
+	shrl	%edx
 	incl	%ebp
 	decl	%ebp
 	jz	LLend
@@ -157,30 +157,30 @@ LLoop:	movl	-28(%edi),%eax		/* fetch destination cache line */
 
 	movl	(%esi),%eax
 	movl	-4(%esi),%edx
-	rcrl	$1,%eax
+	rcrl	%eax
 	movl	%ebx,(%edi)
-	rcrl	$1,%edx
+	rcrl	%edx
 	movl	%eax,-4(%edi)
 
 	movl	-8(%esi),%ebx
 	movl	-12(%esi),%eax
-	rcrl	$1,%ebx
+	rcrl	%ebx
 	movl	%edx,-8(%edi)
-	rcrl	$1,%eax
+	rcrl	%eax
 	movl	%ebx,-12(%edi)
 
 	movl	-16(%esi),%edx
 	movl	-20(%esi),%ebx
-	rcrl	$1,%edx
+	rcrl	%edx
 	movl	%eax,-16(%edi)
-	rcrl	$1,%ebx
+	rcrl	%ebx
 	movl	%edx,-20(%edi)
 
 	movl	-24(%esi),%eax
 	movl	-28(%esi),%edx
-	rcrl	$1,%eax
+	rcrl	%eax
 	movl	%ebx,-24(%edi)
-	rcrl	$1,%edx
+	rcrl	%edx
 	movl	%eax,-28(%edi)
 
 	leal	-32(%esi),%esi		/* use leal not to clobber carry */
@@ -195,7 +195,7 @@ LLend:	popl	%ebp
 	addl	%eax,%eax		/* restore carry from eax */
 LLoop2:	movl	%edx,%ebx
 	movl	(%esi),%edx
-	rcrl	$1,%edx
+	rcrl	%edx
 	movl	%ebx,(%edi)
 
 	leal	-4(%esi),%esi		/* use leal not to clobber carry */
@@ -208,7 +208,7 @@ LLend2:	addl	%eax,%eax		/* restore carry from eax */
 LL1:	movl	%edx,(%edi)		/* store last limb */
 
 	movl	$0,%eax
-	rcrl	$1,%eax
+	rcrl	%eax
 
 	popl	%ebp
 	popl	%ebx
