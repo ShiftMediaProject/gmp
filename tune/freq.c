@@ -55,6 +55,15 @@ MA 02111-1307, USA. */
 #include <sys/processor.h>  /* for solaris processor_info_t */
 #endif
 
+#if HAVE_SYS_SYSINFO_H
+#include <sys/sysinfo.h>  /* for OSF getsysinfo */
+#endif
+
+#if HAVE_MACHINE_HAL_SYSINFO_H
+#include <machine/hal_sysinfo.h>  /* for OSF GSI_CPU_INFO, struct cpu_info */
+#endif
+
+
 /* Remove definitions from NetBSD <sys/param.h>, to avoid conflicts with
    gmp-impl.h. */
 #ifdef MIN
@@ -101,6 +110,33 @@ freq_environment (int help)
 }
 
 
+/* getsysinfo is available on OSF, or 4.0 and up at least.
+   The man page (on 4.0) suggests a 0 return indicates information not
+   available, but that seems to be the normal return for GSI_CPU_INFO.  */
+static int
+freq_getsysinfo (int help)
+{
+#if HAVE_GETSYSINFO
+  struct cpu_info  c;
+  int              start;
+
+  HELP ("getsysinfo() GSI_CPU_INFO");
+
+  start = 0;
+  if (getsysinfo (GSI_CPU_INFO, (caddr_t) &c, sizeof (c),
+                  &start, NULL, NULL) != -1)
+    {
+      speed_cycletime = 1.0 / (double) c.mhz;
+      if (speed_option_verbose)
+        printf ("Using getsysinfo() GSI_CPU_INFO %u for cycle time %.3g\n",
+                c.mhz, speed_cycletime);
+      return 1;
+    }
+#endif
+  return 0;
+}
+
+
 /* i386 FreeBSD 2.2.8 sysctlbyname machdep.i586_freq is in Hertz.
    There's no obvious defines available to get this from plain sysctl.  */
 static int
@@ -116,10 +152,10 @@ freq_sysctlbyname_i586_freq (int help)
   if (sysctlbyname ("machdep.i586_freq", &val, &size, NULL, 0) == 0
       && size == sizeof(val))
     {
+      speed_cycletime = 1.0 / (double) val;
       if (speed_option_verbose)
         printf ("Using sysctlbyname() machdep.i586_freq %u for cycle time %.3g\n",
                 val, speed_cycletime);
-      speed_cycletime = 1.0 / (double) val;
       return 1;
     }
 #endif
@@ -143,10 +179,10 @@ freq_sysctlbyname_tsc_freq (int help)
   if (sysctlbyname ("machdep.tsc_freq", &val, &size, NULL, 0) == 0
       && size == sizeof(val))
     {
+      speed_cycletime = 1.0 / (double) val;
       if (speed_option_verbose)
         printf ("Using sysctlbyname() machdep.tsc_freq %u for cycle time %.3g\n",
                 val, speed_cycletime);
-      speed_cycletime = 1.0 / (double) val;
       return 1;
     }
 #endif
@@ -172,10 +208,10 @@ freq_sysctl_hw_cpufrequency (int help)
   size = sizeof(val);
   if (sysctl (mib, 2, &val, &size, NULL, 0) == 0)
     {
+      speed_cycletime = 1.0 / (double) val;
       if (speed_option_verbose)
         printf ("Using sysctl() hw.cpufrequency %u for cycle time %.3g\n",
                 val, speed_cycletime);
-      speed_cycletime = 1.0 / (double) val;
       return 1;
     }
 #endif
@@ -222,10 +258,10 @@ freq_sysctl_hw_model (int help)
       if (sscanf (p, "%u MHz", &val) != 1)
         return 0;
 
+      speed_cycletime = 1e-6 / (double) val;
       if (speed_option_verbose)
         printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
                 val, speed_cycletime);
-      speed_cycletime = 1e-6 / (double) val;
       return 1;
     }
 #endif
@@ -644,6 +680,7 @@ freq_all (int help)
        anything the system gives. */
     freq_environment (help)
 
+    || freq_getsysinfo (help)
     || freq_sysctl_hw_model (help)
     || freq_sysctl_hw_cpufrequency (help)
     || freq_sysctlbyname_i586_freq (help)
