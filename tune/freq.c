@@ -307,14 +307,14 @@ freq_sysctl_hw_model (int help)
         }
 
       end = 0;
-      if (sscanf (p, "%u MHz%n", &val, &end) != 1 && end != 0)
-        return 0;
-
-      speed_cycletime = 1e-6 / (double) val;
-      if (speed_option_verbose)
-        printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
-                val, speed_cycletime);
-      return 1;
+      if (sscanf (p, "%u MHz%n", &val, &end) == 1 && end != 0)
+        {
+          speed_cycletime = 1e-6 / (double) val;
+          if (speed_option_verbose)
+            printf ("Using sysctl() hw.model %u for cycle time %.3g\n",
+                    val, speed_cycletime);
+          return 1;
+        }
     }
 #endif
   return 0;
