@@ -77,7 +77,7 @@ MA 02111-1307, USA. */
 
 */
 
-#define TUNE_PROGRAM_BUILD  1
+#define TUNE_PROGRAM_BUILD  1   /* for gmp-impl.h */
 
 #include "config.h"
 
@@ -102,8 +102,8 @@ extern int optind, opterr;
 #endif
 
 
-#define MAX_SIZE        1000  /* limbs */
-#define MAX_TABLE       5
+#define DEFAULT_MAX_SIZE   1000  /* limbs */
+#define MAX_TABLE             5  /* entries */
 
 #if WANT_FFT
 mp_size_t  option_fft_max_size = 50000;  /* limbs */
@@ -140,6 +140,7 @@ mp_size_t  divrem_2_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_norm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  mod_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  modexact_1_odd_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  set_str_threshold[2] = { MP_SIZE_T_MAX };
 
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
 mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
@@ -374,7 +375,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
   for (i = 0; i < max_table; i++)
     DEFAULT (min_size[i], 10);
   for (i = 0; i < max_table; i++)
-    DEFAULT (max_size[i], MAX_SIZE);
+    DEFAULT (max_size[i], DEFAULT_MAX_SIZE);
 
   if (param->check_size != 0)
     {
@@ -382,7 +383,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
       s.size = param->check_size;
 
       table[0] = s.size+1;
-      table[1] = MAX_SIZE;
+      table[1] = param->max_size[0];
       t1 = tuneup_measure (param->function, param, &s);
 
       table[0] = s.size;
@@ -411,7 +412,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
                 s.size, t1, t2);
     }
 
-  for (i = 0, s.size = 1; i < max_table && s.size < MAX_SIZE; i++)
+  for (i = 0, s.size = 1; i < max_table && s.size < param->max_size[i]; i++)
     {
       if (i == 1 && param->second_start_min)
         s.size = 1;
@@ -434,7 +435,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
         }
 
       for (;
-           s.size < MAX_SIZE;
+           s.size < param->max_size[i];
            s.size += MAX ((mp_size_t) floor (s.size * param->step_factor), 1))
         {
           double   ti, tiplus1, d;
@@ -461,7 +462,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
 
           /* using method i at this size */
           table[i] = s.size+1;
-          table[i+1] = MAX_SIZE;
+          table[i+1] = param->max_size[i];
           ti = tuneup_measure (param->function, param, &s);
           if (ti == -1.0)
             abort ();
@@ -542,8 +543,11 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
         }
 
       /* Stop when the size limit is reached before the end of the
-         crossover, without a specified param->max_size[i]. */
-      if (s.size >= MAX_SIZE)
+         crossover, but only show this as an error for >= the default max
+         size.  FIXME: Maybe should make it a param choice whether this is
+         an error.  */
+      if (s.size >= param->max_size[i]
+          && param->max_size[i] >= DEFAULT_MAX_SIZE)
         {
           fprintf (stderr, "%s\n", param->name[i]);
           fprintf (stderr, "i=%d sizes %ld to %ld total %d measurements\n",
@@ -1319,6 +1323,22 @@ tune_jacobi_base (void)
 
 
 void
+tune_set_str (void)
+{
+  static struct param_t  param;
+
+  s.r = 10;
+  param.step_factor = 0.04;
+  param.name[0] = "SET_STR_THRESHOLD";
+  param.function = speed_mpn_set_str_basecase;
+  param.function2 = speed_mpn_set_str_subquad;
+  param.min_size[0] = 100;
+  param.max_size[0] = 50000;
+  one (set_str_threshold, 1, &param);
+}
+
+
+void
 tune_fft_mul (void)
 {
   static struct fft_param_t  param;
@@ -1390,8 +1410,8 @@ all (void)
   else
     fprintf (stderr, ", CPU freq %.2f MHz\n", 1e-6/speed_cycletime);
 
-  fprintf (stderr, "MAX_SIZE %d, fft_max_size %ld\n",
-           MAX_SIZE, option_fft_max_size);
+  fprintf (stderr, "DEFAULT_MAX_SIZE %d, fft_max_size %ld\n",
+           DEFAULT_MAX_SIZE, option_fft_max_size);
   fprintf (stderr, "\n");
 
   time (&start_time);
@@ -1450,6 +1470,9 @@ all (void)
   tune_divrem_2 ();
   tune_divexact_1 ();
   tune_modexact_1_odd ();
+  printf("\n");
+
+  tune_set_str ();
   printf("\n");
 
   tune_fft_mul ();
