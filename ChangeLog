@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-09-18  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-mul.c (main): Check environment for GMP_CHECK_FFT, run
+	extra FFT tests if set.
+	(ref_mpn_mul): Use library code for kara and toom, but skewded so that
+	we never use the same algorithm that we're testing.
+	(mul_kara): Delete.
+	
 2004-09-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/mul_2.asm: For HAVE_ABI_32, convert vp.
