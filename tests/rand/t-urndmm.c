@@ -107,10 +107,10 @@ check_params (void)
 	      break;
 	    }
 	  mpz_urandomm (a, r1, b);
-	  if (mpz_cmp_si (a, -5) <= 0 || mpz_sgn (a) > 0)
+	  if (mpz_cmp_ui (a, 5) >= 0 || mpz_sgn (a) < 0)
 	    {
 	      result = FALSE;
-	      gmp_printf ("Out-of-range or non-negative value: %Zd\n", a);
+	      gmp_printf ("Out-of-range or non-positive value (from negative modulus): %Zd\n", a);
               break;
 	    }
 	}
