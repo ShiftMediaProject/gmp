@@ -1098,14 +1098,17 @@ void __gmp_assert_fail _PROTO ((const char *filename, int linenum,
 #endif
 
 
-/* ASSERT_NOCARRY() uses ASSERT() to check the expression is zero, but if
-   assertion checking is disabled, the expression is still evaluated.  This
-   is meant for use with routines like mpn_add_n() where the return value
-   represents a carry or whatever that shouldn't occur.  For example,
+/* ASSERT_CARRY checks the expression is non-zero, and ASSERT_NOCARRY checks
+   that it's zero.  In both cases if assertion checking is disabled the
+   expression is still evaluated.  These macros are meant for use with
+   routines like mpn_add_n() where the return value represents a carry or
+   whatever that should or shouldn't occur in some context.  For example,
    ASSERT_NOCARRY (mpn_add_n (rp, s1p, s2p, size)); */
 #if WANT_ASSERT
+#define ASSERT_CARRY(expr)     ASSERT_ALWAYS ((expr) != 0)
 #define ASSERT_NOCARRY(expr)   ASSERT_ALWAYS ((expr) == 0)
 #else
+#define ASSERT_CARRY(expr)     (expr)
 #define ASSERT_NOCARRY(expr)   (expr)
 #endif
 
