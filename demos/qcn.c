@@ -1,9 +1,8 @@
 /* Use mpz_kronecker_ui() to calculate an estimate for the quadratic
    class number h(d), for a given negative fundamental discriminant, using
-   Dirichlet's analytic formula. */
+   Dirichlet's analytic formula.
 
-/*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -43,6 +42,10 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include <stdio.h>
 
 #include "gmp.h"
+
+#ifndef M_PI
+#define M_PI  3.14159265358979323846
+#endif
 
 
 /* A simple but slow primality test.  */
