@@ -20,6 +20,13 @@ MA 02111-1307, USA.
 
 2004-02-22  Kevin Ryde  <kevin@swox.se>
 
+	* acinclude.m4 (GMP_PROG_CC_WORKS, GMP_OS_X86_XMM, GMP_PROG_CXX_WORKS):
+	Remove files that might look like compiler output, so our "||"
+	alternatives are not fooled.
+
+	* acinclude.m4 (GMP_PROG_CC_WORKS): Add test for lshift_com code
+	mis-compiled by certain IA-64 HP cc at +O3.
+
 	* gmp-impl.h (USE_LEADING_REGPARM): Disable under prof or gprof, for
 	the benefit of freebsd where .mcount clobbers registers.
 	* configure.in (WANT_PROFILING_PROF, WANT_PROFILING_GPROF): New
