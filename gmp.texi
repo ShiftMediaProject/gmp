@@ -106,7 +106,7 @@ by the Foundation.
 @end titlepage
 @headings double
 
-@ifinfo
+@ifnottex
 @node Top, Copying, (dir), (dir)
 
 @top GNU MP
@@ -114,7 +114,7 @@ by the Foundation.
 This manual documents how to install and use the GNU multiple precision
 arithmetic library, version @value{VERSION}.
 
-@end ifinfo
+@end ifnottex
 
 @menu
 * Copying::                   GMP Copying Conditions (LGPL).
@@ -394,6 +394,12 @@ probably be slightly slower.
 Depending on your system, the only indication of stack overflow might be a
 segmentation violation.  @code{setrlimit}, @command{ulimit} or @command{limit}
 might be able to increase the stack space available to programs.
+
+@item @option{--enable-mpbsd}
+
+The optional Berkley MP compability library (@file{libmp.a}) and header file
+(@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
+@xref{BSD Compatible Functions}.
 
 @item Documentation
 
@@ -3094,7 +3100,9 @@ them.
 @cindex BSD MP compatible functions
 
 These functions are intended to be fully compatible with the Berkeley MP
-library which is available on many BSD derived U*ix systems.
+library which is available on many BSD derived U*ix systems.  The
+@samp{--enable-mpbsd} option must be used when building GNU MP to make these
+available (@pxref{Installing MP}).
 
 The original Berkeley MP library has a usage restriction: you cannot use the
 same variable as both source and destination in a single function call.  The
@@ -3109,7 +3117,7 @@ with @code{pow} in @file{libm.a}.
 @cindex @file{mp.h}
 Include the header @file{mp.h} to get the definition of the necessary types
 and functions.  If you are on a BSD derived system, make sure to include GNU
-@file{mp.h} if you are going to link the GNU @file{libmp.a} to you program.
+@file{mp.h} if you are going to link the GNU @file{libmp.a} to your program.
 This means that you probably need to give the -I<dir> option to the compiler,
 where <dir> is the directory where you have GNU @file{mp.h}.
 
