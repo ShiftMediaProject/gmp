@@ -25,8 +25,6 @@ MA 02111-1307, USA. */
 
 #include "config.h"
 
-#if HAVE_VSNPRINTF
-
 #if HAVE_STDARG
 #include <stdarg.h>
 #else
@@ -38,6 +36,11 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+
+
+#if ! HAVE_VSNPRINTF
+#define vsnprintf  __gmp_replacement_vsnprintf
+#endif
 
 
 /* glibc 2.0.x vsnprintf returns either -1 or size-1 for an overflow, with
@@ -153,5 +156,3 @@ const struct doprnt_funs_t  __gmp_snprintf_funs = {
   (doprnt_reps_t)   gmp_snprintf_reps,
   (doprnt_final_t)  gmp_snprintf_final
 };
-
-#endif /* HAVE_VSNPRINTF */
