@@ -20,9 +20,6 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 
-#include "expr-config.h"
-
-
 /* Same tests as gmp.h. */
 #if  defined (__STDC__)                                 \
   || defined (__cplusplus)                              \
