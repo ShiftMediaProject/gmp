@@ -854,13 +854,16 @@ Convert @var{op} to a string of digits in base @var{base}.  The base may vary
 from 2 to 36.
 
 If @var{str} is NULL, space for the result string is allocated using the
-default allocation function, and a pointer to the string is returned.
+default allocation function.
 
 If @var{str} is not NULL, it should point to a block of storage enough large
 for the result.  To find out the right amount of space to provide for
 @var{str}, use @code{mpz_sizeinbase (@var{op}, @var{base}) + 2}.  The two
 extra bytes are for a possible minus sign, and for the terminating null
 character.
+
+A pointer to the result string is returned.  This pointer will will either
+equal @var{str}, or if that is NULL, will point to the allocated storage.
 @end deftypefun
 
 
@@ -2125,7 +2128,7 @@ from 2 to 36.  Generate at most @var{n_digits} significant digits, or if
 @var{op}.
 
 If @var{str} is NULL, space for the mantissa is allocated using the default
-allocation function, and a pointer to the string is returned.
+allocation function.
 
 If @var{str} is not NULL, it should point to a block of storage enough large
 for the mantissa, i.e., @var{n_digits} + 2.  The two extra bytes are for a
@@ -2142,6 +2145,9 @@ whenever @var{n_digits} is 0.
 The generated string is a fraction, with an implicit radix point immediately
 to the left of the first digit.  For example, the number 3.1416 would be
 returned as "31416" in the string and 1 written at @var{expptr}.
+
+A pointer to the result string is returned.  This pointer will will either
+equal @var{str}, or if that is NULL, will point to the allocated storage.
 @end deftypefun
 
 
