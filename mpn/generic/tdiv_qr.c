@@ -35,9 +35,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef DC_THRESHOLD
-#define DC_THRESHOLD (7 * KARATSUBA_MUL_THRESHOLD)
-#endif
 
 /* Extract the middle limb from ((h,,l) << cnt) */
 #define SHL(h,l,cnt) \

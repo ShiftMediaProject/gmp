@@ -39,13 +39,6 @@ static mp_limb_t mpn_dc_div_3_halves_by_2
   _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n));
 
 
-/* mpn_dc_divrem_n(n) calls 2*mul(n/2)+2*div(n/2), thus to be faster than
-   div(n) = 4*div(n/2), we need mul(n/2) to be faster than the classic way,
-   i.e. n/2 >= KARATSUBA_MUL_THRESHOLD */
-#ifndef DC_THRESHOLD
-#define DC_THRESHOLD (7 * KARATSUBA_MUL_THRESHOLD)
-#endif
-
 #if 0
 static
 unused_mpn_divrem (qp, qxn, np, nn, dp, dn)

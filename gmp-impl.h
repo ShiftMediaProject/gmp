@@ -519,6 +519,18 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
 #define MPN_FFT_TABLE_SIZE  16
 
 
+/* mpn_dc_divrem_n(n) calls 2*mul(n/2)+2*div(n/2), thus to be faster than
+   div(n) = 4*div(n/2), we need mul(n/2) to be faster than the classic way,
+   i.e. n/2 >= KARATSUBA_MUL_THRESHOLD
+
+   Measured values are between 2 and 4 times KARATSUBA_MUL_THRESHOLD, so go
+   for 3 as an average.  */
+
+#ifndef DC_THRESHOLD
+#define DC_THRESHOLD    (3 * KARATSUBA_MUL_THRESHOLD)
+#endif
+
+
 /* Return non-zero if xp,xsize and yp,ysize overlap.
    If xp+xsize<=yp there's no overlap, or if yp+ysize<=xp there's no
    overlap.  If both these are false, there's an overlap. */
