@@ -8144,6 +8144,8 @@ MA 02111-1307, USA.
 
 	* mpn/m68k/*: Don't include sysdep.h.
 
+	* mpn/pa64/README: New file.
+
 1999-03-11  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpn/powerpc32/add_n.S: Add support for both AIX and ELF syntax.
