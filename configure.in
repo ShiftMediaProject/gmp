@@ -1049,7 +1049,7 @@ case $host in
     # gcc 3.0 adds nothing.
     # gcc 3.1 adds nothing.
     # gcc 3.2 adds nothing.
-    # gcc pre-release 3.3 adds ultrasparc3.
+    # gcc 3.3 adds ultrasparc3.
     #
     case $host_cpu in
       supersparc)           gcc_cflags_cpu="-mcpu=supersparc -msupersparc" ;;
