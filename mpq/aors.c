@@ -24,23 +24,12 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-#ifdef OPERATION_add
-#define FUNCTION     mpq_add
-#define ADD_OR_SUB   mpz_add
-#endif
+static void __gmpq_aors _PROTO ((REGPARM_3_1 (mpq_ptr w, mpq_srcptr x, mpq_srcptr y, void (*fun) _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr))))) REGPARM_ATTR (1);
+#define mpq_aors(w,x,y,fun)  __gmpq_aors (REGPARM_3_1 (w, x, y, fun))
 
-#ifdef OPERATION_sub
-#define FUNCTION     mpq_sub
-#define ADD_OR_SUB   mpz_sub
-#endif
-
-#ifndef FUNCTION
-Error, need OPERATION_add or OPERATION_sub
-#endif
-
-
-void
-FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
+static void
+mpq_aors (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2,
+          void (*fun) _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr)))
 {
   mpz_t gcd;
   mpz_t tmp1, tmp2;
@@ -73,7 +62,7 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
 
       MPZ_TMP_INIT (t, MAX (ABS (tmp1->_mp_size), ABS (tmp2->_mp_size)) + 1);
 
-      ADD_OR_SUB (t, tmp1, tmp2);
+      (*fun) (t, tmp1, tmp2);
       mpz_divexact_gcd (tmp2, &(op1->_mp_den), gcd);
 
       mpz_gcd (gcd, t, gcd);
@@ -92,11 +81,24 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
   else
     {
       /* The common divisor is 1.  This is the case (for random input) with
-	 probability 6/(pi**2).  */
+	 probability 6/(pi**2), which is about 60.8%.  */
       mpz_mul (tmp1, &(op1->_mp_num), &(op2->_mp_den));
       mpz_mul (tmp2, &(op2->_mp_num), &(op1->_mp_den));
-      ADD_OR_SUB (&(rop->_mp_num), tmp1, tmp2);
+      (*fun) (&(rop->_mp_num), tmp1, tmp2);
       mpz_mul (&(rop->_mp_den), &(op1->_mp_den), &(op2->_mp_den));
     }
   TMP_FREE (marker);
+}
+
+
+void
+mpq_add (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
+{
+  mpq_aors (rop, op1, op2, mpz_add);
+}
+
+void
+mpq_sub (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
+{
+  mpq_aors (rop, op1, op2, mpz_sub);
 }
