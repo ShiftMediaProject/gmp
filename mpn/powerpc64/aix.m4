@@ -28,10 +28,10 @@ define(`PROLOGUE',
 	`
 	.globl	$1
 	.globl	.$1
-	.csect	$1[DS],3
+	.csect	[DS],3
 $1:
 	.llong	.$1, TOC[tc0], 0
-	.csect	.text[PR]
+	.csect	[PR]
 	.align	2
 .$1:')
 
