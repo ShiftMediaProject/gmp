@@ -52,7 +52,7 @@ nodist_libdummy_la_SOURCES =						    \
 
 
 noinst_LTLIBRARIES = libmpn.la
-libmpn_la_SOURCES = mp_bases.c
+nodist_libmpn_la_SOURCES = mp_bases.c
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
