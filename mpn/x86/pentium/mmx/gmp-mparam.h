@@ -35,8 +35,8 @@ MA 02111-1307, USA. */
    practice it's not that good due to using up registers.  For instance
    sb_divrem_mn is about the same speed using plain or preinv, so pretend
    preinv is a touch slower than plain.  */
-#ifndef UDIV_PREINV_TIME
-#define UDIV_PREINV_TIME   42 /* cycles */
+#ifndef UDIV_NORM_PREINV_TIME
+#define UDIV_NORM_PREINV_TIME   42 /* cycles */
 #endif
 
 /* bsf takes 18-42 cycles, put an average for uniform random numbers */
