@@ -142,12 +142,19 @@ struct dat_t {
 int  ndat = 0;
 int  allocdat = 0;
 
+/* This is not defined if mpn_sqr_basecase doesn't declare a limit.  In that
+   case use zero here, which for params.max_size means no limit.  */
+#ifndef TUNE_SQR_KARATSUBA_MAX
+#define TUNE_SQR_KARATSUBA_MAX  0
+#endif
+
 mp_size_t  mul_karatsuba_threshold      = MP_SIZE_T_MAX;
 mp_size_t  mul_toom3_threshold          = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  mul_fft_modf_threshold       = MP_SIZE_T_MAX;
 mp_size_t  sqr_basecase_threshold       = MP_SIZE_T_MAX;
-mp_size_t  sqr_karatsuba_threshold      = TUNE_SQR_KARATSUBA_MAX;
+mp_size_t  sqr_karatsuba_threshold
+  = (TUNE_SQR_KARATSUBA_MAX == 0 ? MP_SIZE_T_MAX : TUNE_SQR_KARATSUBA_MAX);
 mp_size_t  sqr_toom3_threshold          = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
@@ -190,12 +197,6 @@ struct param_t {
 
   int               noprint;
 };
-
-/* This is not defined if mpn_sqr_basecase doesn't declare a limit.  In that
-   case use zero here, which for params.max_size means no limit.  */
-#ifndef TUNE_SQR_KARATSUBA_MAX
-#define TUNE_SQR_KARATSUBA_MAX  0
-#endif
 
 
 /* These are normally undefined when false, which suits "#if" fine.
