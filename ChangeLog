@@ -5,6 +5,9 @@
 
 2000-05-26  Torbjorn Granlund  <tege@swox.com>
 
+	* tune/tuneup.c (SIGNED_TYPE_MAX): Shift `-1' instead of `1' to
+	avoid signed overflow.
+
 	* demos/pexpr.c (setup_error_handler): Don't call sigaltstack on
 	Unicos.
 
