@@ -1,3 +1,11 @@
+2000-02-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc32/add_n.asm: Rename `size' -> `n'.
+	* mpn/sparc32/sub_n.asm: Likewise.
+
+	* sparc32: Rename `.s' and `.S' files to `.asm'.
+	* sparc64: Rename `.s' and `.S' files to `.asm'.
+	
 2000-02-11  Torbjorn Granlund  <tege@swox.com>
 
 	* config.sub: Adopt to new config.guess sparc naming conventions.
