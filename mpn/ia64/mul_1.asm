@@ -1,7 +1,7 @@
 dnl  IA-64 mpn_mul_1 -- Multiply a limb vector with a limb and store the result
 dnl  in a second limb vector.
 
-dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl  Copyright (C) 2000, 2001 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -20,91 +20,61 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
-dnl  This code runs at 10 cycles/limb on the Itanium.  That's pretty poor, and
-dnl  very far from the peak execution speed of the Itanium pipeline.  With
-dnl  n-way unrolling we should be able to get close to 2 cycles/limb.  See
-dnl  README.
-
 include(`../config.m4')
 
 C INPUT PARAMETERS
 C rp = r32
-C s1p = r33
+C up = r33
 C n = r34
-C s2limb = r35
+C v = r35
+
+C This code runs at 3.7 cycles/limb on the Itanium, but that speed is reached
+C only for really huge operands.  See README for possible improvements.
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
 	.prologue
 	.save	ar.lc, r2
-		mov	r2 = ar.lc
+		alloc		r21 = ar.pfs, 4, 12, 0, 16
+		mov		r2 = ar.lc
+		mov		r20 = ar.ec
+		mov		r22 = pr
 	.body
-		cmp.eq	p8, p9 = 1, r34
-		cmp.eq	p10, p11 = 2, r34
-		add	r34 = -3, r34
-		setf.sig f97 = r35
-		add	r8 = 0, r0
-		cmp.ne	p6, p7 = r0, r0
-		mov	r20 = r32
-		ldf8	f96 = [r33], 8;;
-		xma.l	f98 = f96, f97, f0
-		xma.hu	f99 = f96, f97, f0
-	(p8)	br	.Lend1
-		ldf8	f96 = [r33], 8
-	(p10)	br	.Lend2
-		mov	ar.lc = r34
-	.align 16
-.Loop:		getf.sig r14 = f98
-		getf.sig r15 = f99;;
-		xma.l	f98 = f96, f97, f0
-		xma.hu	f99 = f96, f97, f0;;
-		ldf8	f96 = [r33], 8;;
-	(p6)	add	r14 = r14, r8, 1
-	(p7)	add	r14 = r14, r8;;
-	(p6)	cmp.leu	p6, p7 = r14, r8
-	(p7)	cmp.ltu	p6, p7 = r14, r8
-		mov	r8 = r15
-		st8	[r20] = r14, 8
-		br.cloop.dptk	.Loop
-
-		getf.sig r14 = f98
-		getf.sig r15 = f99;;
-		xma.l	f98 = f96, f97, f0
-		xma.hu	f99 = f96, f97, f0;;
-	(p6)	add	r14 = r14, r8, 1
-	(p7)	add	r14 = r14, r8;;
-	(p6)	cmp.leu	p6, p7 = r14, r8
-	(p7)	cmp.ltu	p6, p7 = r14, r8
-		mov	r8 = r15
-		st8	[r20] = r14, 8
-		getf.sig r14 = f98
-		getf.sig r15 = f99;;
-	(p6)	add	r14 = r14, r8, 1
-	(p7)	add	r14 = r14, r8;;
-	(p6)	cmp.leu	p6, p7 = r14, r8
-	(p7)	cmp.ltu	p6, p7 = r14, r8
-		mov	r8 = r15
-		st8	[r20] = r14;;
-	(p6)	add	r8 = 1, r8
-		mov	ar.lc = r2
-		br.ret.sptk.many b0
-.Lend2:
-		stf8	[r20] = f98, 8
-		xma.l	f100 = f96, f97, f0
-		getf.sig r14 = f99
-		xma.hu	f101 = f96, f97, f0;;
-		getf.sig r16 = f100
-		getf.sig r8 = f101;;
-		add	r14 = r14, r16;;
-		cmp.ltu	p6, p7 = r14, r16
-		st8	[r20] = r14;;
-	(p6)	add	r8 = 1, r8
-		mov	ar.lc = r2
-		br.ret.sptk.many b0
-.Lend1:
-		stf8	[r20] = f98
-		getf.sig r8 = f99
-		mov	ar.lc = r2
+  { .mfi	setf.sig	f16 = r35
+		nop.f		0
+		adds		r19 = -1, r34		C n - 1
+} { .mfi	cmp.ne		p6, p7 = r0, r0
+		nop.f		0
+		mov		r18 = r32	;;
+} { .mfi	mov		r16 = r32
+		nop.f		0
+		mov		ar.lc = r19
+} { .mfi	mov		r17 = r33
+		nop.f		0
+		mov		ar.ec = 7
+} { .mii	cmp.ne		p6, p7 = r0, r0
+		mov		pr.rot = 1<<16
+		add		r32 = 0, r0		C clear "carry in"
+}		;;
+		.align	32
+.Loop:
+  { .mfi  (p16)	ldf8		f32 = [r17], 8		C  *0,3,6,9,12,15,18
+	  (p19)	xma.l		f40 = f35, f16, f0	C  0,3,6,*9,12,15,18
+	   (p6) add		r14 = r33, r38, 1	C  0,3,6,9,12,15,*18
+} { .mfi  (p16)	nop.m		0
+	  (p19)	xma.hu		f44 = f35, f16, f0	C  0,3,6,*9,12,15,18
+	   (p7) add		r14 = r33, r38	;;	C  0,3,6,9,12,15,*18
+} { .mii  (p21)	getf.sig	r32 = f42		C  1,4,7,10,13,*16,19
+	   (p6) cmp.leu		p6, p7 = r14, r33	C  1,4,7,10,13,16,*19
+	   (p7) cmp.ltu		p6, p7 = r14, r33;;	C  1,4,7,10,13,16,*19
+} { .mmb  (p21)	getf.sig	r36 = f46		C  2,5,8,11,14,*17,20
+	  (p22)	st8		[r18] = r14, 8		C  2,5,8,11,14,17,*20
+		br.ctop.sptk	.Loop		;;
+}
+		mov		pr = r22,0xfffffffffffffffe
+		mov		ar.lc = r2
+		mov		ar.ec = r20
+		mov		ar.pfs = r21;;
 		br.ret.sptk.many b0
 EPILOGUE(mpn_mul_1)
 ASM_END()
