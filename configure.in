@@ -1139,7 +1139,7 @@ AC_SUBST(ASMFLAGS_PIC)
 # Using the compiler is a lot easier than figuring out how to invoke the
 # assembler directly.
 #
-CCAS="$CC -c"
+test -n "$CCAS" || CCAS="$CC -c"
 AC_SUBST(CCAS)
 
 case $host in
