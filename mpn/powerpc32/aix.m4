@@ -17,8 +17,8 @@ dnl  Library General Public License for more details.
 dnl
 dnl  You should have received a copy of the GNU Library General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
-dnl  not, write to the Free Software Foundation, Inc., 675 Mass Ave,
-dnl  Cambridge, MA 02139, USA.
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 define(`ASM_START',
 	`.toc')

@@ -9,7 +9,7 @@
 # K6   1.75   2.0    2.0    2.0    2.0    2.0    2.0    1.75  nand,nior
 
 
-# Copyright (C) 1999-2000 Free Software Foundation, Inc.
+# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -25,7 +25,8 @@
 #
 # You should have received a copy of the GNU Library General Public License
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
 
 
 include(`../config.m4')
