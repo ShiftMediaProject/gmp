@@ -63,17 +63,21 @@ LIBMP_LT_AGE =      1
 
 AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
 
-# FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
-# conditionalized.  We want mpfr/mpfr.info only installed under
-# --enable-mpfr, but it and the rest of mpfr always included in a "make
-# dist".
-if WANT_MPFR
-MPFR_DIR = mpfr
-else
-if MAINTAINER_MODE
-MPFR_DIR = mpfr
-endif
-endif
+# mpfr temporarily removed from the distribution
+MPFR_DIR =
+#
+# # FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
+# # conditionalized.  We want mpfr/mpfr.info only installed under
+# # --enable-mpfr, but it and the rest of mpfr always included in a "make
+# # dist".
+# if WANT_MPFR
+# MPFR_DIR = mpfr
+# else
+# if MAINTAINER_MODE
+# MPFR_DIR = mpfr
+# endif
+# endif
+
 
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
@@ -92,7 +96,7 @@ lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTI
 
 EXTRA_DIST = doc macos \
   configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf libmp.sym \
-  gmpxx.h mpfrxx.h
+  gmpxx.h mpfrxx.h mpfr/README
 
 DISTCLEANFILES = $(nodist_include_HEADERS) config.m4 @gmp_srclinks@
 
