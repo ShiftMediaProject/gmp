@@ -1,5 +1,8 @@
 2000-11-04  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in [path switch]: Don't match rs6000-*-*, in
+	particular don't assume POWER.
+
 	* tune/tuneup.c (fft): Remove usleep calls.
 
 	* config.guess: Don't pass "$@" when it is known to be empty.
@@ -40,7 +43,7 @@
 	* configure.in (srandom): New test.
 	* mpn/tests/try.c: Use it.
 	* tune/speed.c: Ditto, and conditionalize getrusage and headers.
-	
+
 2000-11-02  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Add udiv_qrnnd.c
