@@ -1,6 +1,6 @@
 dnl  AMD64 logops.
 
-dnl  Copyright 2004 Free Software Foundation, Inc.
+dnl  Copyright 2004, 2005 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -60,6 +60,9 @@ ifdef(`OPERATION_xnor_n',`
   define(`func',`mpn_xnor_n')
   define(`VARIANT_3')
   define(`LOGOP',`xorq')')
+
+
+MULFUNC_PROLOGUE(mpn_and_n mpn_andn_n mpn_nand_n mpn_ior_n mpn_iorn_n mpn_nior_n mpn_xor_n mpn_xnor_n)
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')
