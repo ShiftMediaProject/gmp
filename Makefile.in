@@ -178,7 +178,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
 #
-SUBDIRS = tests mpn mpz mpq mpf printf cxx mpbsd $(MPFR_DIR) demos tune
+SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) demos tune
 
 @WANT_CXX_TRUE@GMPXX_HEADERS_OPTION = gmpxx.h
 @WANT_CXX_TRUE@@WANT_MPFR_TRUE@MPFRXX_HEADERS_OPTION = mpfrxx.h
@@ -294,6 +294,12 @@ PRINTF_OBJECTS = \
   @REPL_VSNPRINTF_PRINTF_OBJ@
 
 
+SCANF_OBJECTS = \
+  scanf/doscan$U.lo scanf/fscanf$U.lo scanf/fscanffuns$U.lo	\
+  scanf/scanf$U.lo scanf/sscanf$U.lo scanf/sscanffuns$U.lo	\
+  scanf/vfscanf$U.lo scanf/vscanf$U.lo scanf/vsscanf$U.lo
+
+
 CXX_OBJECTS = \
    cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo		\
    cxx/osdoprnti$U.lo cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
@@ -326,7 +332,8 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   version.c
 
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
-  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) $(PRINTF_OBJECTS)
+  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) \
+  $(PRINTF_OBJECTS)  $(SCANF_OBJECTS)
 
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
@@ -440,7 +447,8 @@ DIST_COMMON = README $(gmp_TEXINFOS) $(include_HEADERS) ./stamp-h1.in \
 	ansi2knr.c config.guess config.in config.sub configure \
 	configure.in gmp-h.in install-sh ltmain.sh mdate-sh missing \
 	mkinstalldirs mp-h.in stamp-vti texinfo.tex version.texi
-DIST_SUBDIRS = tests mpn mpz mpq mpf printf cxx mpbsd mpfr demos tune
+DIST_SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd mpfr demos \
+	tune
 SOURCES = $(libdummy_la_SOURCES) $(libgmp_la_SOURCES) $(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
 
 all: config.h
