@@ -971,16 +971,9 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif /* __ns32000__ */
 
 /* FIXME: We should test _IBMR2 here when we add assembly support for the
-   system vendor compilers.
-   FIXME: What's needed for gcc PowerPC VxWorks?  __vxworks__ is not good
-   enough, since that hits ARM and m68k too.  */
-#if (defined (_ARCH_PPC)	/* AIX */				\
-     || defined (_ARCH_PWR)	/* AIX */				\
-     || defined (__powerpc__)	/* gcc */				\
-     || defined (__POWERPC__)	/* BEOS */				\
-     || defined (__ppc__)	/* Darwin */				\
-     || defined (PPC)		/* GNU/Linux, SysV */			\
-     ) && W_TYPE_SIZE == 32
+   system vendor compilers.  */
+#if (HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc)        \
+  && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
@@ -1016,8 +1009,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define count_leading_zeros(count, x) \
   __asm__ ("{cntlz|cntlzw} %0,%1" : "=r" (count) : "r" (x))
 #define COUNT_LEADING_ZEROS_0 32
-#if defined (_ARCH_PPC) || defined (__powerpc__) || defined (__POWERPC__) \
-  || defined (__ppc__) || defined (PPC)
+#if HAVE_HOST_CPU_FAMILY_powerpc
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
     USItype __m0 = (m0), __m1 = (m1);					\
@@ -1046,8 +1038,10 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 
 /* We should test _IBMR2 here when we add assembly support for the system
    vendor compilers.  */
-#if (defined (_ARCH_PPC) || defined (__powerpc__)) && W_TYPE_SIZE == 64
-#if !defined (_LONG_LONG_LIMB) /* <- assume cpu in 32-bit mode */
+#if HAVE_HOST_CPU_FAMILY_powerpc && W_TYPE_SIZE == 64
+#if !defined (_LONG_LONG_LIMB)
+/* _LONG_LONG_LIMB is ABI=mode32 where adde operates on 32-bit values.  So
+   use adde etc only when not _LONG_LONG_LIMB.  */
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
     if (__builtin_constant_p (bh) && (bh) == 0)				\
