@@ -213,7 +213,7 @@ main (argc, argv)
   int omitoutput = 0;
   int realinput = -1;		/* 1: input is real numbers 0<=R<1;
 				   0: input is integers 0 <= Z <= MAX. */
-  long l1runs,			/* 1st level runs */
+  long l1runs = 0,		/* 1st level runs */
     l2runs = 1;			/* 2nd level runs */
   mpf_t f_temp;
   mpz_t z_imax;			/* max value when converting between
