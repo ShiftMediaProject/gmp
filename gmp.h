@@ -181,7 +181,8 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 
 #ifndef __MPN
-#if (__STDC__-0) || defined (__cplusplus)
+/* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
+#if defined (__STDC__) || defined (__cplusplus)
 #define __MPN(x) __mpn_##x
 #else
 #define __MPN(x) __mpn_/**/x
