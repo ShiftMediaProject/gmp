@@ -1,6 +1,6 @@
 /* operator<< -- mpf formatted output to an ostream.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,6 +19,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <clocale>
 #include <iostream>
 #include <stdarg.h>    /* for va_list and hence doprnt_funs_t */
 #include <string.h>
@@ -43,8 +44,16 @@ operator<< (ostream &o, mpf_srcptr f)
 
   __gmp_doprnt_params_from_ios (&param, o);
 
+#if HAVE_STD__LOCALE
+  char  point[2];
+  point[0] = use_facet< numpunct<char> >(o.getloc()).decimal_point();
+  point[1] = '\0';
+#else
+  const char *point = localeconv()->decimal_point;
+#endif
+
   GMP_ASPRINTF_T_INIT (d, &result);
-  ret = __gmp_doprnt_mpf (&__gmp_asprintf_funs_noformat, &d, &param, f);
+  ret = __gmp_doprnt_mpf (&__gmp_asprintf_funs_noformat, &d, &param, point, f);
   ASSERT (ret != -1);
   __gmp_asprintf_final (&d);
 
