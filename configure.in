@@ -12,7 +12,7 @@ srcname="GNU Multi-Precision library"
 
 case "${target}" in
   sparc*-*-none | supersparc*-*-none | ultrasparc*-*-none | microsparc*-*-none | \
-  i[56]86*-*-none | pentium-*-none | pentiumpro-*-none)
+  i[3456]86*-*-none | pentium-*-none | pentiumpro-*-none)
     echo "*** Operating system specification required for this cpu." 1>&2
     exit 1;;
   sparc9-*-* | sparc64*-*-* | ultrasparc*-*-* | sparc8-*-* | microsparc*-*-*)
@@ -27,12 +27,17 @@ case "${target}" in
       target_makefile_frag=config/mt-supspc-gcc
     fi
     ;;
-  m888110*)
+  m88110*)
     if [ x$with_gcc != xno ]
     then
       target_makefile_frag=config/mt-m88110
     fi
     ;;
+  i[3456]86*-*-* | pentium-*-* | pentiumpro-*-*)
+    target_makefile_frag=config/mt-x86
+    ;;
   *-*-linux*)
     target_makefile_frag=config/mt-linux ;;
+  f30[01]-fujitsu-sysv*)
+    CC=${CC-vcc}; export CC
 esac
