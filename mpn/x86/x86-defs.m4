@@ -422,6 +422,7 @@ define(cmov_available_p,
 	`HAVE_HOST_CPU_pentiumpro',
 	`HAVE_HOST_CPU_pentium2',
 	`HAVE_HOST_CPU_pentium3',
+	`HAVE_HOST_CPU_pentium4',
 	`HAVE_HOST_CPU_athlon')')
 
 
