@@ -167,7 +167,7 @@ mpn_sb_divrem_mn (qp, np, nsize, dp, dsize)
 
 	  cy_limb = mpn_submul_1 (np, dp, dsize - 2, q);
 
-	  { 
+	  {
 	    mp_limb_t cy1, cy2;
 	    cy1 = r0 < cy_limb;
 	    r0 -= cy_limb;

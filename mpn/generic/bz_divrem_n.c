@@ -160,7 +160,7 @@ mpn_bz_divrem_aux (qp, np, dp, n, tmp)
 	    }
 	}
       /* now divide (np, n + 1) by (dp, n) */
-      qhl += mpn_add_1 (qp + 1, qp + 1, n - 1, 
+      qhl += mpn_add_1 (qp + 1, qp + 1, n - 1,
 			mpn_sb_divrem_mn (qp, np, n + 1, dp, n));
     }
   else
