@@ -1,3 +1,13 @@
+2001-08-12  Kevin Ryde  <kevin@swox.se>
+
+	* printf/sprintffuns.c, printf/doprntf.c: Don't use sprintf return
+	value (it's a pointer on SunOS 4).
+
+	* acinclude.m4 (GMP_ASM_X86_SSE2, GMP_STRIP_PATH): New macros.
+	* configure.in: Add pentium4 support.
+	* mpn/x86/pentium4, mpn/x86/pentium4/mmx, mpn/x86/pentium4/sse2: New
+	directories.
+
 2001-08-10  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (setup_error_handler): Catch also SIGABRT.
