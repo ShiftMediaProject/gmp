@@ -28,7 +28,7 @@ C It should be possible to avoid the xmpy.hu and the following tests by
 C explicitly chopping in the last fma.  That would save about 10 cycles.
 
 ASM_START()
-	RODATA
+	.rodata
 	.align 16
 ifdef(`HAVE_DOUBLE_IEEE_LITTLE_ENDIAN',`
 .LC0:	data4 0x00000000, 0x80000000, 0x0000403f, 0x00000000	C 2^64
