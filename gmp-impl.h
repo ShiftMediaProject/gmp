@@ -2134,16 +2134,18 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
 /* Apparently lwbrx might be slow on some PowerPC chips, so restrict it to
    those we know are fast.  */
-#if defined (__GNUC__) && ! defined (NO_ASM) && BITS_PER_MP_LIMB == 32  \
+#if defined (__GNUC__) && ! defined (NO_ASM)                            \
+  && BITS_PER_MP_LIMB == 32 && HAVE_LIMB_BIG_ENDIAN                     \
   && (HAVE_HOST_CPU_powerpc604                                          \
       || HAVE_HOST_CPU_powerpc604e                                      \
       || HAVE_HOST_CPU_powerpc750                                       \
       || HAVE_HOST_CPU_powerpc7400)
-#define BSWAP_LIMB_FETCH(limb, src)     \
-  do {                                  \
-    asm ("lwbrx %0, 0, %1"              \
-         : "=r" (limb)                  \
-         : "r" (src));                  \
+#define BSWAP_LIMB_FETCH(limb, src)             \
+  do {                                          \
+    __asm__ __volatile__ ("lwbrx %0, 0, %1"     \
+                          : "=r" (limb)         \
+                          : "r" (src)           \
+                          : "memory");          \
   } while (0)
 #endif
 
@@ -2154,18 +2156,19 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
 /* On the same basis that lwbrx might be slow, restrict stwbrx to those we
    know are fast.  FIXME: Is this necessary?  */
-#if defined (__GNUC__) && ! defined (NO_ASM) && BITS_PER_MP_LIMB == 32  \
+#if defined (__GNUC__) && ! defined (NO_ASM)                            \
+  && BITS_PER_MP_LIMB == 32 && HAVE_LIMB_BIG_ENDIAN                     \
   && (HAVE_HOST_CPU_powerpc604                                          \
       || HAVE_HOST_CPU_powerpc604e                                      \
       || HAVE_HOST_CPU_powerpc750                                       \
       || HAVE_HOST_CPU_powerpc7400)
-#define BSWAP_LIMB_STORE(dst, limb)     \
-  do {                                  \
-    asm ("stwbrx %0, 0, %1"             \
-         :                              \
-         : "r" (limb),                  \
-           "r" (dst)                    \
-         : "memory");                   \
+#define BSWAP_LIMB_STORE(dst, limb)             \
+  do {                                          \
+    __asm__ __volatile__ ("stwbrx %0, 0, %1"    \
+                          :                     \
+                          : "r" (limb),         \
+                            "r" (dst)           \
+                          : "memory");          \
   } while (0)
 #endif
 
