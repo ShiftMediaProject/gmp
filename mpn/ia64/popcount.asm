@@ -79,7 +79,7 @@ PROLOGUE(mpn_popcount)
 		add	r8 = r8, r23
 		popcnt	r23 = r19
 		ld8	r19 = [r32], 8
-		br.cloop.dptk	.Loop
+		br.cloop.dptk	.Loop	;;
 
 .Ldone0:
 		add	r8 = r8, r20
