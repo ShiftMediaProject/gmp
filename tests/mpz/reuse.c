@@ -5,6 +5,7 @@
 	mpz_nextprime
 	mpz_mul_si
 	mpz_addmul_ui (should this really allow a+=a*c?)
+
 Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -26,6 +27,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -71,6 +73,7 @@ dsi_func dsi_funcs[] =
   /* Don't change order here without changing the code in main(). */
   mpz_add_ui, mpz_mul_ui, mpz_sub_ui,
   mpz_fdiv_q_2exp, mpz_fdiv_r_2exp,
+  mpz_cdiv_q_2exp, mpz_cdiv_r_2exp,
   mpz_tdiv_q_2exp, mpz_tdiv_r_2exp,
   mpz_mul_2exp,
   mpz_pow_ui
