@@ -66,15 +66,10 @@ fi
 AC_ARG_ENABLE(alloca,
 AC_HELP_STRING([--enable-alloca],[use alloca for temp space [default=detect]]),
 [case $enableval in
-yes|no|detect) ;;
-*) AC_MSG_ERROR([bad value $enableval for --enable-alloca, need yes/no/detect]) ;;
+yes|no|detect|debug) ;;
+*) AC_MSG_ERROR([bad value $enableval for --enable-alloca, need yes/no/detect/debug]) ;;
 esac],
 [enable_alloca=detect])
-
-if test "$enable_alloca" = "no"; then
-  AC_DEFINE(USE_STACK_ALLOC,1,
-  [./configure --disable-alloca option, to use stack-alloc.c, not alloca])
-fi
 
 
 AC_ARG_ENABLE(fft,
@@ -1262,9 +1257,32 @@ AC_CHECK_LIBM
 AC_SUBST(LIBM)
 
 GMP_FUNC_ALLOCA
-if test "$enable_alloca" = yes && test "$gmp_cv_func_alloca" = no; then
-  AC_MSG_ERROR([--enable-alloca=yes specified, but alloca not available])
-fi
+
+case $enable_alloca in
+detect) enable_alloca=$gmp_cv_func_alloca ;;
+esac
+
+case $enable_alloca in
+yes)
+  if test $gmp_cv_func_alloca = no; then
+    AC_MSG_ERROR([--enable-alloca=yes specified, but alloca not available])
+  fi
+  AC_DEFINE(WANT_TMP_ALLOCA, 1, [temporary memory using alloca])
+  ;;
+no)
+  AC_DEFINE(WANT_TMP_MALLOC, 1, [temporary memory using malloc (or custom allocation function)])
+  TAL_OBJECT=stack_alloc$U.lo
+  ;;
+debug)
+  AC_DEFINE(WANT_TMP_DEBUG, 1,  [temporary memory for debugging])
+  TAL_OBJECT=tal-debug$U.lo
+  ;;
+*)
+  AC_MSG_ERROR([oops, unrecognised --enable-alloca=$enable_alloca])
+  ;;
+esac
+AC_SUBST(TAL_OBJECT)
+
 
 # On m68k NetBSD 1.4.1 getrusage() is doubtful.  ru_utime looks microsecond
 # accurate but has been seen remaining unchanged after many microseconds
