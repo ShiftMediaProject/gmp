@@ -656,7 +656,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif
 #endif /* 80x86 */
 
-#if defined (__x86_64) && W_TYPE_SIZE == 64
+#if defined (__x86_64__) && W_TYPE_SIZE == 64
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ ("addq %5,%1\n\tadcq %3,%0"					\
 	   : "=r" ((UDItype)(sh)), "=&r" ((UDItype)(sl))		\
