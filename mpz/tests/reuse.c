@@ -4,7 +4,7 @@
 	mpz_bin_ui
 	mpz_nextprime
 	mpz_mul_si
-
+	mpz_addmul_ui (should this really allow a+=a*c?)
 Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -85,7 +85,7 @@ char dss_func_division[] = {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
 dsi_func dsi_funcs[] =
 {
   /* Don't change order here without changing the code in main(). */
-  mpz_add_ui, mpz_mul_ui, mpz_sub_ui, mpz_addmul_ui,
+  mpz_add_ui, mpz_mul_ui, mpz_sub_ui,
   mpz_fdiv_q_2exp, mpz_fdiv_r_2exp,
   mpz_tdiv_q_2exp, mpz_tdiv_r_2exp,
   mpz_mul_2exp,
@@ -93,7 +93,7 @@ dsi_func dsi_funcs[] =
 };
 char *dsi_func_names[] =
 {
-  "mpz_add_ui", "mpz_mul_ui", "mpz_sub_ui", "mpz_addmul_ui",
+  "mpz_add_ui", "mpz_mul_ui", "mpz_sub_ui",
   "mpz_fdiv_q_2exp", "mpz_fdiv_r_2exp",
   "mpz_tdiv_q_2exp", "mpz_tdiv_r_2exp",
   "mpz_mul_2exp",
