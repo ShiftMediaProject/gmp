@@ -48,6 +48,7 @@ MA 02111-1307, USA. */
 mp_limb_t
 mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
 {
+  mp_limb_t  l, q, s;
   mp_size_t  i;
 
   ASSERT (size >= 1);
@@ -57,16 +58,14 @@ mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
   i = 0;
   do
     {
-      mp_limb_t  l, s;
-
       s = src[i];
       SUBC_LIMB (c, l, s, c);
 
-      l = (l * MODLIMB_INVERSE_3) & GMP_NUMB_MASK;
-      dst[i] = l;
+      q = (l * MODLIMB_INVERSE_3) & GMP_NUMB_MASK;
+      dst[i] = q;
 
-      c += (l >= GMP_NUMB_CEIL_MAX_DIV3);
-      c += (l >= GMP_NUMB_CEIL_2MAX_DIV3);
+      c += (q >= GMP_NUMB_CEIL_MAX_DIV3);
+      c += (q >= GMP_NUMB_CEIL_2MAX_DIV3);
     }
   while (++i < size);
 
