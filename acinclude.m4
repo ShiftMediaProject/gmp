@@ -59,20 +59,17 @@ dnl  Expand to the right way to #include gmp-h.in.  This must be used
 dnl  instead of gmp.h, since that file isn't generated until the end of the
 dnl  configure.
 dnl
-dnl  GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB starts as a dummy, but gets
-dnl  redefined in GMP_C_SIZES when the right value is known.
+dnl  Dummy values for __GMP_BITS_PER_MP_LIMB and GMP_LIMB_BITS are enough
+dnl  for all current configure-time uses of gmp.h.
 
 define(GMP_INCLUDE_GMP_H,
 [[#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
-#define GMP_NAIL_BITS $GMP_NAIL_BITS]
-GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB
-[$DEFN_LONG_LONG_LIMB
+#define GMP_NAIL_BITS $GMP_NAIL_BITS
+#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+#define GMP_LIMB_BITS 123
+$DEFN_LONG_LONG_LIMB
 #include "$srcdir/gmp-h.in"]
 ])
-
-define(GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB,
-[[#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
-#define GMP_LIMB_BITS 123]])
 
 
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
@@ -2032,6 +2029,8 @@ case $gmp_cv_c_double_format in
   "Cray CFP")
     AC_DEFINE(HAVE_DOUBLE_CRAY_CFP, 1) ;;
   unknown*)
+    AC_MSG_WARN([Could not determine float format.])
+    AC_MSG_WARN([Conversions to and from "double" may be slow.])
     ;;
   *) 
     AC_MSG_WARN([oops, unrecognised float format: $gmp_cv_c_double_format])
@@ -2431,44 +2430,6 @@ die die die
 #endif
 ],,,
   [AC_MSG_WARN([gmp.h doesnt recognise <stdio.h>, FILE prototypes will be unavailable])])
-])
-
-
-dnl  GMP_IMPL_H_IEEE_FLOATS
-dnl  ----------------------
-dnl  Check whether the #ifdef's in gmp-impl.h recognise IEEE format and
-dnl  endianness.
-
-AC_DEFUN(GMP_IMPL_H_IEEE_FLOATS,
-[case $host in
-  vax*-*-*)
-    # not IEEE (neither D nor G formats are IEEE)
-    ;;
-  none-*-*)
-    # don't worry about this when CPU "none"
-    ;;
-  *)
-    case $path in
-      *cray/cfp*)
-        # not IEEE
-        ;;
-      *)
-        AC_TRY_COMPILE(
-[#include <stdio.h>]
-GMP_INCLUDE_GMP_H
-[#include "$srcdir/gmp-impl.h"
-#ifndef _GMP_IEEE_FLOATS
-die die die
-#endif
-],,,[
-          AC_MSG_WARN([gmp-impl.h doesnt recognise "double" as IEEE.])
-          AC_MSG_WARN([If your CPU floats are in fact IEEE then you])
-	  AC_MSG_WARN([might like to augment the tests there.])
-        ])
-        ;;
-    esac
-    ;;
-esac
 ])
 
 
