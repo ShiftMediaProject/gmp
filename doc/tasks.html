@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 24 Oct 2001.  An up-to-date version is available at
+  This file current as of 25 Oct 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -170,6 +170,14 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      must be odd.  Divisibility by powers of 2 should be tested with
      <code>mpz_scan1</code> or similar.  Divisibility by other primes should
      be tested by grouping into a limb like <code>PP</code>.
+<li> <code>mpz_perfect_power_p</code> might like to use <code>mpn_gcd_1</code>
+     instead of a private GCD routine.  The use it's put to isn't
+     time-critcal, and it might help be ensure correctness to use the main GCD
+     routine.
+<li> <code>mpz_perfect_power_p</code> could use
+     <code>mpz_divisible_ui_p</code> instead of <code>mpz_tdiv_ui</code> for
+     divisibility testing, the former is faster on a number of systems.  (But
+     all that prime test stuff is going to be rewritten some time.)
 <li> Change <code>PP</code>/<code>PP_INVERTED</code> into an array of such
      pairs, listing several hundred primes.  Perhaps actually make the
      products larger than one limb each.
@@ -206,6 +214,26 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      technique works for any odd modulus, and with some tweaks for even moduli
      too.  See Granlund and Montgomery "Division By Invariant Integers"
      section 9.
+<li> <code>mpz_probab_prime_p</code> and <code>mpz_nextprime</code> could
+     offer certainty for primes up to 2^32 by using a one limb miller-rabin
+     test to base 2, combined with a table of actual strong pseudoprimes in
+     that range (2314 of them).  If that table is too big then both base 2 and
+     base 3 tests could be done, leaving a table of 104.  The test could use
+     REDC and therefore be a <code>modlimb_invert</code> a remainder (maybe)
+     then two multiplies per bit (successively dependent).  Processors with
+     pipelined multipliers could do base 2 and 3 in parallel.  Vector systems
+     could do a whole bunch of bases in parallel, and perhaps offer near
+     certainty up to 64-bits (certainty might depend on an exhaustive search
+     of pseudoprimes up to that limit).  Obviously 2^32 is not a big number,
+     but an efficient and certain calculation is attractive.  It might find
+     other uses internally, and could even be offered as a one limb prime test
+     <code>mpn_probab_prime_1_p</code> or <code>gmp_probab_prime_ui_p</code>
+     perhaps.
+<li> <code>mpz_probab_prime_p</code> doesn't need to make a copy of
+     <code>n</code> when the input is negative, it can setup an
+     <code>mpz_t</code> alias, same data pointer but a positive size.  With no
+     need to clear before returning, the recursive function call could be
+     dispensed with too.
 <li> <code>mpf_set_str</code> produces low zero limbs when a string has a
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
@@ -776,6 +804,13 @@ near future, but are at least worth thinking about.
      <code>mpz_set_ui</code> etc since the current code assumes limb&gt;=long,
      but 2-limb operand forms would find a use for <code>long long</code> on
      other processors too.
+<li> <code>throw()</code> could be added to the C function prototypes to
+     declare that they don't throw exceptions.  This might let the C++
+     compiler avoid generating frame info in application code (when it knows
+     no called function throws an exception).  But this would prevent any
+     future scheme for allowing out-of-memory or divide-by-zero exceptions.
+     Though such things may or may not be feasible, it seems wisest not to
+     close the door on them yet.
 </ul>
 <hr>
 
