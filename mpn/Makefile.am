@@ -36,7 +36,10 @@ OFILES = @mpn_objects@
 #
 EXTRA_LTLIBRARIES = libdummy.la
 nodist_libdummy_la_SOURCES =						    \
-  add.c add_1.c add_n.c addmul_1.c and_n.c andn_n.c bdivmod.c		    \
+  add.c add_1.c add_n.c							    \
+  addmul_1.c addmul_2.c addmul_3.c addmul_4.c addmul_5.c addmul_6.c	    \
+  addmul_7.c addmul_8.c							    \
+  and_n.c andn_n.c bdivmod.c						    \
   cmp.c com_n.c copyd.c copyi.c						    \
   dc_divrem_n.c dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c   \
   dump.c fib2_ui.c gcd.c						    \
@@ -60,7 +63,7 @@ TARG_DIST = a29k alpha arm clipper cray generic i960 ia64 lisp m68k m88k \
   mips32 mips64 ns32k pa32 pa64 power powerpc32 powerpc64 pyr s390 sh \
   sparc32 sparc64 thumb vax x86 z8000 z8000x
 
-EXTRA_DIST = Makeasm.am asm-defs.m4 cpp-ccas m4-ccas $(TARG_DIST)
+EXTRA_DIST = asm-defs.m4 cpp-ccas m4-ccas $(TARG_DIST)
 
 
 # These are BUILT_SOURCES at the top-level, so normally they're built before
