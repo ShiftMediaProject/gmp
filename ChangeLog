@@ -19,6 +19,44 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-16  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in, gmp-impl.h (GMP_NAIL_MASK): Move to gmp.h.
+
+	* gmp.texi: Use @documentdescription and @copying, per texinfo 4.2.
+	(Low-level Functions): Clarify mpn_gcd overlap requirements, rewrite
+	mpn_set_str description, add nails section.
+	(C++ Interface General): Remove bool from types that mix with classes.
+	(Language Bindings): Add STklos, GNU Smalltalk, Regina.
+	(Binary to Radix, Radix to Binary): Describe new code.
+	(Assembler Cache Handling): More notes, mostly by Torbjorn.
+
+	* macos/configure (%vars): Remove __GMP from substitutions, per change
+	to main configure.
+
+	* mpn/generic/dive_1.c: Nailify.
+	* mpn/generic/mode1o.c: Nailify, remove bogus ASSERT in commented-out
+	alternate implementation.
+	* gmp-impl.h (SUBC_LIMB): New macro.
+
+	* tests/devel/try.c (validate_divexact_1): Correction to compare.
+	(udiv_qrnnd): New testing.
+	(SHIFT_LIMIT): Nailify.
+	(-b): New option, remove spurious "H" from getopt string.
+
+	* mpz/clrbit.c: Nailify.
+	* tests/mpz/t-hamdist.c: Nailify.
+	* gmp-impl.h (MPN_FIB2_SIZE): Nailify.
+	(PP): Nailify conditionals.
+	* tests/mpz/t-fib_ui.c (MPZ_FIB_SIZE_FLOAT): Nailify.
+
+	* configure.in, acinclude.m4: Establish GMP_NAIL_BITS and
+	GMP_LIMB_BITS for gmp-h.in configure tests.
+
+	* mpfr/*, configure.in: Update to final mpfr 2.0.1.
+	* mpfr/acinclude.m4 (MPFR_CONFIGS): Use $host, not uname stuff.
+	* mpfr/tests/tout_str.c: Patch from Paul for denorm fprintf tests.
+
 2002-04-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/divrem_1.c (EXTRACT): Remove.
