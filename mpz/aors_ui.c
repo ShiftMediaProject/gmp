@@ -1,6 +1,7 @@
 /* mpz_add_ui -- Add an mpz_t and an unsigned one-word integer.
 
-Copyright (C) 1991, 1993, 1994, 1996, 1999 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1996, 1999, 2000 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,15 +23,28 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void
-#if __STDC__
-mpz_add_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
-#else
-mpz_add_ui (w, u, v)
-     mpz_ptr w;
-     mpz_srcptr u;
-     unsigned long int v;
+
+#ifdef OPERATION_add_ui
+#define FUNCTION          mpz_add_ui
+#define VARIATION_CMP     >=
+#define VARIATION_NEG
+#define VARIATION_UNNEG   -
 #endif
+
+#ifdef OPERATION_sub_ui
+#define FUNCTION          mpz_sub_ui
+#define VARIATION_CMP     <
+#define VARIATION_NEG     -
+#define VARIATION_UNNEG
+#endif
+
+#ifndef FUNCTION
+Error, need OPERATION_add_ui or OPERATION_sub_ui
+#endif
+
+
+void
+FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int v)
 {
   mp_srcptr up;
   mp_ptr wp;
@@ -52,16 +66,16 @@ mpz_add_ui (w, u, v)
   if (abs_usize == 0)
     {
       wp[0] = v;
-      w->_mp_size = v != 0;
+      w->_mp_size = VARIATION_NEG (v != 0);
       return;
     }
 
-  if (usize >= 0)
+  if (usize VARIATION_CMP 0)
     {
       mp_limb_t cy;
       cy = mpn_add_1 (wp, up, abs_usize, (mp_limb_t) v);
       wp[abs_usize] = cy;
-      wsize = abs_usize + cy;
+      wsize = VARIATION_NEG (abs_usize + cy);
     }
   else
     {
@@ -70,13 +84,13 @@ mpz_add_ui (w, u, v)
       if (abs_usize == 1 && up[0] < v)
 	{
 	  wp[0] = v - up[0];
-	  wsize = 1;
+	  wsize = VARIATION_NEG 1;
 	}
       else
 	{
 	  mpn_sub_1 (wp, up, abs_usize, (mp_limb_t) v);
 	  /* Size can decrease with at most one limb.  */
-	  wsize = -(abs_usize - (wp[abs_usize - 1] == 0));
+	  wsize = VARIATION_UNNEG (abs_usize - (wp[abs_usize - 1] == 0));
 	}
     }
 
