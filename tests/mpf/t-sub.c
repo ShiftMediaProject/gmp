@@ -1,6 +1,6 @@
 /* Test mpf_sub.
 
-Copyright 1996, 2001 Free Software Foundation, Inc.
+Copyright 1996, 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,8 +30,8 @@ MA 02111-1307, USA. */
 #define SIZE 16
 #endif
 
-int
-main (int argc, char **argv)
+void
+check_rand (int argc, char **argv)
 {
   mp_size_t size;
   mp_exp_t exp;
@@ -40,8 +40,6 @@ main (int argc, char **argv)
   mpf_t u, v, w, wref;
   mp_size_t bprec = 100;
   mpf_t rerr, max_rerr, limit_rerr;
-
-  tests_start ();
 
   if (argc > 1)
     {
@@ -109,6 +107,101 @@ main (int argc, char **argv)
   mpf_clear (v);
   mpf_clear (w);
   mpf_clear (wref);
+}
+
+
+void
+check_data (void)
+{
+  static const struct {
+    struct {
+      int        exp, size;
+      mp_limb_t  d[10];
+    } x, y, want;
+
+  } data[] = {
+    { { 123, 2, { 8, 9 } },             { 123, 1, { 9 } }, { 122, 1, { 8 } } },
+
+    /* f - f == 0, various sizes.
+       These exercise a past problem (gmp 4.1.3 and earlier) where the
+       result exponent was not zeroed on a zero result like this.  */
+    { { 0, 0 }, { 0, 0 }, { 0, 0 } },
+    { { 99, 1, { 1 } },             { 99, 1, { 1 } },             { 0, 0 } },
+    { { 99, 2, { 123, 456 } },      { 99, 2, { 123, 456 } },      { 0, 0 } },
+    { { 99, 3, { 123, 456, 789 } }, { 99, 3, { 123, 456, 789 } }, { 0, 0 } },
+
+    /* High limbs cancel, leaving just the low limbs of the longer operand.
+       This exercises a past problem (gmp 4.1.3 and earlier) where high zero
+       limbs on the remainder were not stripped before truncating to the
+       destination, causing loss of precision.  */
+    { { 123, 2, { 8, 9 } },             { 123, 1, { 9 } }, { 122, 1, { 8 } } },
+    { { 123, 3, { 8, 0, 9 } },          { 123, 1, { 9 } }, { 121, 1, { 8 } } },
+    { { 123, 4, { 8, 0, 0, 9 } },       { 123, 1, { 9 } }, { 120, 1, { 8 } } },
+    { { 123, 5, { 8, 0, 0, 0, 9 } },    { 123, 1, { 9 } }, { 119, 1, { 8 } } },
+    { { 123, 6, { 8, 0, 0, 0, 0, 9 } }, { 123, 1, { 9 } }, { 118, 1, { 8 } } },
+
+  };
+
+  mpf_t  x, y, got, want;
+  int  i, swap;
+
+  mp_trace_base = 16;
+  mpf_init (got);
+
+  for (i = 0; i < numberof (data); i++)
+    {
+      for (swap = 0; swap <= 1; swap++)
+        {
+          PTR(x) = (mp_ptr) data[i].x.d;
+          SIZ(x) = data[i].x.size;
+          EXP(x) = data[i].x.exp;
+          PREC(x) = numberof (data[i].x.d);
+          MPF_CHECK_FORMAT (x);
+
+          PTR(y) = (mp_ptr) data[i].y.d;
+          SIZ(y) = data[i].y.size;
+          EXP(y) = data[i].y.exp;
+          PREC(y) = numberof (data[i].y.d);
+          MPF_CHECK_FORMAT (y);
+
+          PTR(want) = (mp_ptr) data[i].want.d;
+          SIZ(want) = data[i].want.size;
+          EXP(want) = data[i].want.exp;
+          PREC(want) = numberof (data[i].want.d);
+          MPF_CHECK_FORMAT (want);
+
+          if (swap)
+            {
+              mpf_swap (x, y);
+              SIZ(want) = - SIZ(want);
+            }
+
+          mpf_sub (got, x, y);
+/*           MPF_CHECK_FORMAT (got); */
+
+          if (mpf_cmp (got, want) != 0)
+            {
+              printf ("check_data() wrong reault at data[%d] (operands%s swapped)\n", i, swap ? "" : " not");
+              mpf_trace ("x   ", x);
+              mpf_trace ("y   ", y);
+              mpf_trace ("got ", got);
+              mpf_trace ("want", want);
+              abort ();
+            }
+        }
+    }
+
+  mpf_clear (got);
+}
+
+
+int
+main (int argc, char **argv)
+{
+  tests_start ();
+
+  check_data ();
+  check_rand (argc, argv);
 
   tests_end ();
   exit (0);
