@@ -1,3 +1,10 @@
+2000-05-20  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/asm-defs.m4: Note &,|,^ aren't bitwise in BSD m4 eval().
+	* mpn/x86/k6/sqr_basecase.asm: Use "%" not "&" in m4 eval()s.
+
+	* mpn/x86/x86-defs.m4 (Zdisp): Yet more instruction forms.
+
 2000-05-19  Linus Nordberg  <linus@swox.se>
 
 	* acinclude.m4 (GMP_CHECK_CC_64BIT): Don't use shell variable
@@ -43,7 +50,7 @@
 	* mpn/tests/trace.c: New file.
 	* mpn/tests/x86call.asm: New file.
 	* mpn/tests/x86check.c: New file.
-	* mpn/tests/ref.c (refmpn_hamdist): Allow size==0;
+	* mpn/tests/ref.c (refmpn_hamdist): Allow size==0.
 	(refmpn_gcd): New function, and other additions supporting it.
 	* mpn/tests/ref.h: More prototypes.
 	* mpn/tests/Makefile.am: Add try program, use ansi2knr.
@@ -70,9 +77,9 @@
 	Change MP -> GMP.
 
 	* configure.in (WANT_ASSERT, USE_STACK_ALLOC, HAVE_PENTIUM_RDTSC):
-	Put description here, not in acconfig.h.
+	Put descriptions here, not in acconfig.h.
 	(CALLING_CONVENTIONS_OBJS): New AC_SUBST (for mpn/tests/try).
-	(HAVE_CALLING_CONVENTIONS): New AM_CONDITIONAL.
+	(HAVE_CALLING_CONVENTIONS): New AC_DEFINE.
 	(AC_CHECK_HEADERS): Add sys/time.h.
 	(AC_CHECK_FUNCS): Add getpagesize, setitimer.
 	(KARATSUBA_SQR_THRESHOLD): Strip trailing comments from the
