@@ -92,10 +92,14 @@ m4_assert_numargs(2)
 	lalm	$1,  $2($1)
 	lal	$1,  $2($1)')
 
+dnl  Need some stuff for extwl just for bigend systems, like Unicos.
+define(`bigend',
+m4_assert_numargs(1)
+`$1')
+
 dnl  Unicos assembler seems to align using garbage, so disable aligning
 define(`ALIGN',
 m4_assert_numargs(1)
 )
 
 divert
-
