@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 void debug_mp ();
 
 #ifndef SIZE
-#define SIZE 16
+#define SIZE 200
 #endif
 
 main (argc, argv)
