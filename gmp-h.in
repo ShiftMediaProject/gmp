@@ -567,13 +567,13 @@ int __GMP_DECLSPEC mpz_cmpabs_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_
 void __GMP_DECLSPEC mpz_com _PROTO ((mpz_ptr, mpz_srcptr));
 
 #define mpz_congruent_p __gmpz_congruent_p
-int __GMP_DECLSPEC mpz_congruent_p _PROTO ((mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)) __GMP_ATTRIBUTE_PURE;
+int __GMP_DECLSPEC mpz_congruent_p _PROTO ((mpz_srcptr, mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 #define mpz_congruent_2exp_p __gmpz_congruent_2exp_p
-int __GMP_DECLSPEC mpz_congruent_2exp_p _PROTO ((mpz_srcptr a, mpz_srcptr c, unsigned long d)) __GMP_ATTRIBUTE_PURE;
+int __GMP_DECLSPEC mpz_congruent_2exp_p _PROTO ((mpz_srcptr, mpz_srcptr, unsigned long)) __GMP_ATTRIBUTE_PURE;
 
 #define mpz_congruent_ui_p __gmpz_congruent_ui_p
-int __GMP_DECLSPEC mpz_congruent_ui_p _PROTO ((mpz_srcptr a, unsigned long c, unsigned long d)) __GMP_ATTRIBUTE_PURE;
+int __GMP_DECLSPEC mpz_congruent_ui_p _PROTO ((mpz_srcptr, unsigned long, unsigned long)) __GMP_ATTRIBUTE_PURE;
 
 #define mpz_divexact __gmpz_divexact
 void __GMP_DECLSPEC mpz_divexact _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
@@ -974,14 +974,14 @@ void __GMP_DECLSPEC mpq_get_den _PROTO ((mpz_ptr, mpq_srcptr));
 double __GMP_DECLSPEC mpq_get_d _PROTO ((mpq_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 #define mpq_get_str __gmpq_get_str
-char * __GMP_DECLSPEC mpq_get_str _PROTO ((char *str, int base, mpq_srcptr q));
+char * __GMP_DECLSPEC mpq_get_str _PROTO ((char *, int, mpq_srcptr));
 
 #define mpq_init __gmpq_init
 void __GMP_DECLSPEC mpq_init _PROTO ((mpq_ptr));
 
 #define mpq_inp_str __gmpq_inp_str
 #ifdef _GMP_H_HAVE_FILE
-size_t mpq_inp_str _PROTO ((mpq_ptr q, FILE *fp, int base));
+size_t mpq_inp_str _PROTO ((mpq_ptr, FILE *, int));
 #endif
 
 #define mpq_inv __gmpq_inv
@@ -1022,7 +1022,7 @@ void __GMP_DECLSPEC mpq_set_num _PROTO ((mpq_ptr, mpz_srcptr));
 void __GMP_DECLSPEC mpq_set_si _PROTO ((mpq_ptr, signed long int, unsigned long int));
 
 #define mpq_set_str __gmpq_set_str
-int __GMP_DECLSPEC mpq_set_str _PROTO ((mpq_ptr q, const char *str, int base));
+int __GMP_DECLSPEC mpq_set_str _PROTO ((mpq_ptr, const char *, int));
 
 #define mpq_set_ui __gmpq_set_ui
 void __GMP_DECLSPEC mpq_set_ui _PROTO ((mpq_ptr, unsigned long int, unsigned long int));
