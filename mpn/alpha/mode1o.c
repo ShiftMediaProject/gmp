@@ -1,4 +1,8 @@
-/* Alpha EV5 mpn_modexact_1c_odd -- mpn by limb exact style remainder.
+/* Alpha mpn_modexact_1c_odd -- mpn by limb exact style remainder.
+
+   THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
+   CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
+   FUTURE GNU MP RELEASES.
 
 Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
@@ -26,6 +30,7 @@ MA 02111-1307, USA. */
 
 /*
         cycles/limb
+   EV4:    49
    EV5:    30.0
    EV6:    15.0
 */
@@ -34,16 +39,18 @@ MA 02111-1307, USA. */
 /* modlimb_invert is already faster than invert_limb or a "%", so the
    modexact style can be used even at size==1.
 
-   On ev5, the dependent chain is as follows, and is what the code runs as.
+   The dependent chain is as follows,
 
-        3  sub    y = x - h
-       13  mulq   q = y * inverse
-       14  umulh  h = high (q * d)
-       --
-       30
+       ev4    ev5   ev6
+        1      3     1    sub    y = x - h
+       23     13     7    mulq   q = y * inverse
+       23     14     7    umulh  h = high (q * d)
+       --     --    --
+       47     30    15
 
-   For reference, ev6 runs this code at 15 cycles, which is 1 faster than
-   the generic loop at 16.  But maybe something better is possible.  */
+   On ev4, gcc (3.2) puts a couple of instructions in between the sub and
+   the mulq, costing extra cycles.  ev5 and ev6 run as per the dependent
+   chain though.  */
 
 mp_limb_t
 mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d,

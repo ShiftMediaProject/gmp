@@ -29,17 +29,21 @@ MA 02111-1307, USA. */
 
 
 /*      cycles/limb
+   EV4:    47.0
    EV5:    30.0
+   EV6:    15.0
 */
 
 
-/* For ev5, the dependent chain here is the same as in mode1o.c, namely
+/* The dependent chain is as follows (the same as modexact), and this is
+   what the code runs as.
 
-        3  sub    y = x - h
-       13  mulq   q = y * inverse
-       14  umulh  h = high (q * d)
-       --
-       30
+       ev4    ev5   ev6
+        1      3     1    sub    y = x - h
+       23     13     7    mulq   q = y * inverse
+       23     14     7    umulh  h = high (q * d)
+       --     --    --
+       47     30    15
 
    The time to load src[i+1] and establish x hides under under the umulh
    latency.  */
