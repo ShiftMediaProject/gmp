@@ -1131,7 +1131,7 @@ case $host in
   # on relevant systems.
   #
   *-*-sco3.2v5*)
-    ac_cv_archive_cmds_need_lc=no ;;
+    lt_cv_archive_cmds_need_lc=no ;;
 
   # FIXME: Shared libraries aren't supported on unicos, but as of Dec 2000
   # libtool doesn't seem to detect this correctly, so forcibly disable them.
@@ -1159,9 +1159,6 @@ if test "$enable_shared" = yes && test "$enable_static" = yes; then
   esac
 fi
 
-
-# temporary fudge until swox libtool update
-if test -n "$ac_cv_prog_cc_pic"; then lt_cv_prog_cc_pic=$ac_cv_prog_cc_pic; fi
 
 # libtool $pic_flag for use by mpn/Makeasm.am.
 #
