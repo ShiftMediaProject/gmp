@@ -22,6 +22,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#if GENERATE_TABLE
+/* This is for the code at the end, for generating these tables.  */
+#include <stdio.h>
+#include <math.h>
+#endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -1330,3 +1336,83 @@ const struct bases __mp_bases[256] =
   /* 255 */ {8, 0.1250882898658681, CNST_LIMB(0xf81bc845c81bf801), CNST_LIMB(0x824794d1ec1814f)},
 };
 #endif /* 64 */
+
+
+#if GENERATE_TABLE
+
+unsigned int
+ulog2 (x)
+     unsigned int x;
+{
+  unsigned int i;
+  for (i = 0;  x != 0;  i++)
+    x >>= 1;
+  return i;
+}
+
+main (int argc, char **argv)
+{
+  int i;
+  unsigned int idig;
+  mpz_t big_base, big_base_inverted, t;
+  double fdig;
+  int dummy;
+  int normalization_steps;
+  int bits_per_mp_limb;
+  char *cnst_limb_str1, *cnst_limb_str2;
+
+  mpz_init (big_base);
+  mpz_init (big_base_inverted);
+  mpz_init (t);
+
+  bits_per_mp_limb = 8 * sizeof (long);
+  if (argc == 2)
+    bits_per_mp_limb = atoi (argv[1]);
+
+  if (bits_per_mp_limb >= 64)
+    {
+      cnst_limb_str1 = "CNST_LIMB(";
+      cnst_limb_str2 = ")";
+    }
+  else
+    {
+      cnst_limb_str1 = "";
+      cnst_limb_str2 = "";
+    }
+
+  printf ("#if BITS_PER_MP_LIMB == %d\n", bits_per_mp_limb);
+  puts ("const struct bases __mp_bases[256] =\n{");
+  puts ("  /*  0 */ {0, 0.0, 0, 0},");
+  puts ("  /*  1 */ {0, 1e37, 0, 0},");
+  for (i = 2; i < 256; i++)
+    {
+      fdig = 0.69314718055994530942 / log ((double) i);
+      idig = floor (bits_per_mp_limb * fdig);
+      if ((i & (i - 1)) == 0)
+	{
+	  printf ("  /* %2u */ {%u, %.16f, 0x%lx, 0x0},\n",
+		  i, idig, fdig, ulog2 (i) - 1);
+	}
+      else
+	{
+	  mpz_ui_pow_ui (big_base,
+			 (unsigned long int) i, (unsigned long int) idig);
+	  normalization_steps = bits_per_mp_limb - mpz_sizeinbase (big_base, 2);
+	  mpz_set_ui (t, 1L);
+	  mpz_mul_2exp (t, t, 2 * bits_per_mp_limb - normalization_steps);
+	  mpz_tdiv_q (big_base_inverted, t, big_base);
+	  mpz_set_ui (t, 1L);
+	  mpz_mul_2exp (t, t, bits_per_mp_limb);
+	  mpz_sub (big_base_inverted, big_base_inverted, t);
+	  printf ("  /* %2u */ {%u, %.16f, %s0x", i, idig, fdig, cnst_limb_str1);
+	  mpz_out_str (0, 16, big_base); printf ("%s, %s0x", cnst_limb_str2, cnst_limb_str1);
+	  mpz_out_str (0, 16, big_base_inverted); printf ("%s},\n", cnst_limb_str2);
+	}
+    }
+
+  puts ("};");
+  printf ("#endif /* %d */\n", bits_per_mp_limb);
+
+  exit (0);
+}
+#endif
