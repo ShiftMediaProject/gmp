@@ -32,6 +32,49 @@ void debug_mp __GMP_PROTO ((mpz_t, int));
 
 static int gcdext_valid_p __GMP_PROTO ((const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s));
 
+void
+check_data (void)
+{
+  static const struct {
+    const char *a;
+    const char *b;
+    const char *want;
+  } data[] = {
+    /* This tickled a bug in gmp 4.1.2 mpn/x86/k6/gcd_finda.asm. */
+    { "0x3FFC000007FFFFFFFFFF00000000003F83FFFFFFFFFFFFFFF80000000000000001",
+      "0x1FFE0007FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC000000000000000000000001",
+      "5" }
+  };
+
+  mpz_t  a, b, got, want;
+  int    i;
+
+  mpz_init (a);
+  mpz_init (b);
+  mpz_init (got);
+  mpz_init (want);
+
+  for (i = 0; i < numberof (data); i++)
+    {
+      mpz_set_str_or_abort (a, data[i].a, 0);
+      mpz_set_str_or_abort (b, data[i].b, 0);
+      mpz_set_str_or_abort (want, data[i].want, 0);
+      mpz_gcd (got, a, b);
+      MPZ_CHECK_FORMAT (got);
+      if (mpz_cmp (got, want) != 0)
+        {
+          printf    ("mpz_gcd wrong on data[%d]\n", i);
+          printf    (" a  %s\n", data[i].a);
+          printf    (" b  %s\n", data[i].b);
+          mpz_trace (" a", a);
+          mpz_trace (" b", b);
+          mpz_trace (" want", want);
+          mpz_trace (" got ", got);
+          abort ();
+        }
+    }
+}
+
 /* Keep one_test's variables global, so that we don't need
    to reinitialize them for each test.  */
 mpz_t gcd1, gcd2, s, t, temp1, temp2;
@@ -59,6 +102,8 @@ main (int argc, char **argv)
 
   tests_start ();
   rands = RANDS;
+
+  check_data ();
 
   mpz_init (bs);
   mpz_init (op1);
