@@ -6,7 +6,7 @@ dnl  K6-2  1.0   1.18  1.18  1.18  cycles/limb
 dnl  K6    1.5   1.85  1.75  1.85
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
