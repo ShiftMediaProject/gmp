@@ -992,7 +992,7 @@ if test "$enable_static" = yes; then
 fi
 
 if test "$enable_shared" = yes; then
-  gmp_asmout_compile="$CC $CFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&AC_FD_CC"
+  gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&AC_FD_CC"
   if AC_TRY_EVAL(gmp_asmout_compile); then
     if grep '\.data' conftest.s >/dev/null; then
       mcount_pic_reg="`sed -n ['s/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
