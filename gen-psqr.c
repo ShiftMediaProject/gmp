@@ -1,6 +1,6 @@
 /* Generate perfect square testing data.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -504,7 +504,7 @@ print (int limb_bits, int nail_bits)
       printf ("    /* %5.2f%% */                    \\\n",
               (1.0 - factor[i].fraction) * 100.0);
 
-      printf ("    PERFSQR_MOD_%d (r, %2d, CNST_LIMB(0x",
+      printf ("    PERFSQR_MOD_%d (r, CNST_LIMB(%2d), CNST_LIMB(0x",
               factor[i].divisor <= limb_bits ? 1 : 2,
               factor[i].divisor);
       mpz_out_str (0, 16, factor[i].inverse);
