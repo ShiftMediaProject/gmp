@@ -32,11 +32,11 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-__gmpn_mul_basecase (mp_ptr prodp,
+mpn_mul_basecase (mp_ptr prodp,
 		     mp_srcptr up, mp_size_t usize,
 		     mp_srcptr vp, mp_size_t vsize)
 #else
-__gmpn_mul_basecase (prodp, up, usize, vp, vsize)
+mpn_mul_basecase (prodp, up, usize, vp, vsize)
      mp_ptr prodp;
      mp_srcptr up;
      mp_size_t usize;
