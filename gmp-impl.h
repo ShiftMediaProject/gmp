@@ -96,6 +96,18 @@ MA 02111-1307, USA. */
 # endif
 #endif
 
+
+/* if not provided by gmp-mparam.h */
+#ifndef BYTES_PER_MP_LIMB
+#define BYTES_PER_MP_LIMB  SIZEOF_MP_LIMB_T
+#endif
+#ifndef BITS_PER_MP_LIMB
+#define BITS_PER_MP_LIMB  (8 * SIZEOF_MP_LIMB_T)
+#endif
+
+#define BITS_PER_ULONG  (8 * SIZEOF_UNSIGNED_LONG)
+
+
 /* const and signed must match __gmp_const and __gmp_signed, so follow the
    decision made for those in gmp.h.    */
 #if ! __GMP_HAVE_CONST
@@ -345,12 +357,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
    then that lowest one bit must have been the only bit set.  n==0 will
    return true though, so avoid that.  */
 #define POW2_P(n)  (((n) & ((n) - 1)) == 0)
-
-
-/* Might be already defined by gmp-mparam.h, otherwise use what's in gmp.h. */
-#ifndef BITS_PER_MP_LIMB
-#define BITS_PER_MP_LIMB  __GMP_BITS_PER_MP_LIMB
-#endif
 
 
 /* The "short" defines are a bit different because shorts are promoted to
