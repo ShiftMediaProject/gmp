@@ -25,7 +25,7 @@ dnl void speed_cyclecounter (unsigned p[2]);
 dnl
 dnl Get the HPPA interval timer.
 
-	.level 2.0n
+	.level 2.0
 PROLOGUE(speed_cyclecounter)
 	mfctl	%cr16,%r28
 	stw	%r28,0(0,%r26)		; low word
