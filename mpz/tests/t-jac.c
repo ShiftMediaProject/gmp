@@ -44,8 +44,6 @@ MA 02111-1307, USA.
 
 int option_pari = 0;
 
-#define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
-
 
 unsigned long
 mpz_mod4 (mpz_srcptr z)

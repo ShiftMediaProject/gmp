@@ -25,8 +25,6 @@ MA 02111-1307, USA.
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
-
 
 void
 try_mpz_bin_ui (mpz_srcptr want, mpz_srcptr n, unsigned long k)
