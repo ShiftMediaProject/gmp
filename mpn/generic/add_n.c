@@ -23,23 +23,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-#ifdef OPERATION_add_n
-#define FUNCTION   mpn_add_n
-#define VARIATION  y = x + y; cy += (y < x);
-#endif
-
-#ifdef OPERATION_sub_n
-#define FUNCTION   mpn_sub_n
-#define VARIATION  y = x - y; cy += (y > x);
-#endif
-
-#ifndef FUNCTION
-Error, error, need OPERATION_add_n or OPERATION_sub_n
-#endif
-
-
 mp_limb_t
-FUNCTION (mp_ptr res_ptr, mp_srcptr s1_ptr, mp_srcptr s2_ptr, mp_size_t size)
+mpn_add_n (mp_ptr res_ptr, mp_srcptr s1_ptr, mp_srcptr s2_ptr, mp_size_t size)
 {
   register mp_limb_t x, y, cy;
   register mp_size_t j;
@@ -63,8 +48,9 @@ FUNCTION (mp_ptr res_ptr, mp_srcptr s1_ptr, mp_srcptr s2_ptr, mp_size_t size)
       y = s2_ptr[j];
       x = s1_ptr[j];
       y += cy;	     	/* previous carry/borrow into second operand */
-      cy = (y < cy);	/* new carry from that                       */
-      VARIATION;        /* this add or sub, and its carry            */
+      cy = y < cy;	/* new carry from that                       */
+      y = x + y;
+      cy += y < x;
       res_ptr[j] = y;
     }
   while (++j != 0);
