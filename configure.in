@@ -29,4 +29,7 @@ case "${target}" in
       target_makefile_frag=config/mt-m88110
     fi
     ;;
+  *-*-linux*)
+    target_makefile_frag=config/mt-linux ;;
+    
 esac
