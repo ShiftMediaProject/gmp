@@ -171,16 +171,16 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t orig_
   ASSERT_LIMB (d);
   ASSERT_LIMB (c);
 
+  /* udivx is faster than 5 or 7 mulx's needed for one limb with an inverse */
+  if (size == 1)
+    return src[0] % d;
+
   modlimb_invert (inverse, d);
 
   if (d <= 0xFFFFFFFF)
     {
       s = *src++;
       size--;
-      /* use the loop code when size==1, to cope with c>d */
-      if (size == 0)
-        goto once_more_32bits;
-
       do
         {
           SUBC_LIMB (c, l, s, c);
@@ -208,7 +208,6 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t orig_
       else
         {
           /* Can't skip a divide, just do the loop code once more. */
-        once_more_32bits:
           SUBC_LIMB (c, l, s, c);
           q = l * inverse;
           umul_ppmm_half_lowequal (h, q, d, l);
@@ -226,10 +225,6 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t orig_
 
       s = *src++;
       size--;
-      /* use the loop code when size==1, to cope with c>d */
-      if (size == 0)
-        goto once_more_64bits;
-
       do
         {
           SUBC_LIMB (c, l, s, c);
@@ -257,7 +252,6 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t orig_
       else
         {
           /* Can't skip a divide, just do the loop code once more. */
-        once_more_64bits:
           SUBC_LIMB (c, l, s, c);
           q = l * inverse;
           umul_ppmm_lowequal (h, q, d, dh, dl, l);
