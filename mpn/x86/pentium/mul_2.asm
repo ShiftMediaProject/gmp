@@ -1,4 +1,4 @@
-dnl  Intel Pentium mpn_mul_2 -- mpn by limb multiplication.
+dnl  Intel Pentium mpn_mul_2 -- mpn by 2-limb multiplication.
 dnl
 dnl  P5: 24.0 cycles/limb
 
