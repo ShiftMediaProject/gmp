@@ -4977,7 +4977,7 @@ main ()
 }
 EOF
 found=no
-for i in "$CC_FOR_BUILD" "$HOST_CC" "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89; do
+for i in "$CC_FOR_BUILD" "$HOST_CC" "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89 c99; do
   if test -z "$i"; then
     continue
   fi
