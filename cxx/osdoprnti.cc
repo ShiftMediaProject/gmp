@@ -36,17 +36,20 @@ using namespace std;
 
 
 /* The gmp_asprintf support routines never give an error, so
-   __gmp_doprnt_mpf shouldn't fail and it's return can just be checked with
-   an ASSERT.  */
+   __gmp_doprnt_integer shouldn't fail and it's return can just be checked
+   with an ASSERT.  */
 
 ostream&
-__gmp_doprnt_integer_ostream (ostream &o, const struct doprnt_params_t *p,
+__gmp_doprnt_integer_ostream (ostream &o, struct doprnt_params_t *p,
                               char *s)
 {
   struct gmp_asprintf_t   d;
   char  *result;
   int   ret;
 
+  /* don't show leading zeros the way printf does */
+  p->prec = -1;
+  
   GMP_ASPRINTF_T_INIT (d, &result);
   ret = __gmp_doprnt_integer (&__gmp_asprintf_funs_noformat, &d, p, s);
   ASSERT (ret != -1);
