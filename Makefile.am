@@ -22,6 +22,14 @@
 # MA 02111-1307, USA.
 
 
+# The following options are the same as AM_INIT_AUTOMAKE in configure.in,
+# except no $(top_builddir) on ansi2knr.  That directory is wanted for the
+# Makefiles in subdirectories, but here we must omit it so automake gives
+# the actual ansi2knr build rule, not "cd $(top_builddir) && make ansi2knr".
+#
+AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
+
+
 # Libtool -version-info for libgmp.la and libmp.la.  See "Versioning" in the
 # libtool manual.
 #
