@@ -4369,83 +4369,73 @@ Return non-zero iff @{@var{s1p}, @var{n}@} is a perfect square.
 @chapter Random Number Functions
 @cindex Random number functions
 
-Sequences of pseudo-random numbers in GMP are generated using a
-@code{gmp_randstate_t} variable, which holds an algorithm to use and a current
+Sequences of pseudo-random numbers in GMP are generated using a variable of
+type @code{gmp_randstate_t}, which holds an algorithm selection and a current
 state.  Such a variable must be initialized by a call to one of the
 @code{gmp_randinit} functions, and can be seeded with one of the
-@code{gmp_randseed} functions (@ref{Random State Initialization}).
+@code{gmp_randseed} functions.
 
-The functions actually generating random numbers are described in
-@ref{Miscellaneous Integer Functions}, and @ref{Miscellaneous Float
-Functions}.
+The functions actually generating random numbers are described in @ref{Integer
+Random Numbers}, and @ref{Miscellaneous Float Functions}.
 
 The older style random number functions don't accept a @code{gmp_randstate_t}
-parameter but instead share a private variable of that type, using a default
-algorithm, and currently not seeded (perhaps this will change in the future).
-The new functions accepting a @code{gmp_randstate_t} are recommended for
-applications that care about randomness.
-
-The size of a seed determines how many different sequences of random numbers
-that it's possible to generate.  The ``quality'' of the seed is the randomness
-of a given seed compared to the previous seed used, and this affects the
-randomness of separate number sequences.  The method for choosing a seed is
-critical if the generated numbers are to be used for important applications,
-such as generating cryptographic keys.
-
-Traditionally the system time is used to seed, but care needs to be taken.  If
-an application seeds very often and the resolution of the system clock is low,
-then the same sequence of numbers might be repeated, until the clock ticks
-over.  Furthermore, the current system time is quite easy to guess, so if
-unpredictability is required then the time should definitely not be the only
-source for seed values.  On some systems there's a special device
-@file{/dev/random} which provides random data better suited for use as a seed.
+parameter but instead share a global variable of that type.  They use a
+default algorithm and are currently not seeded (though perhaps that will
+change in the future).  The new functions accepting a @code{gmp_randstate_t}
+are recommended for applications that care about randomness.
 
 @menu
-* Random State Initialization::  How to initialize a random state.
+* Random State Initialization::
+* Random State Seeding::
 @end menu
 
-@node Random State Initialization,  , Random Number Functions, Random Number Functions
+@node Random State Initialization, Random State Seeding, Random Number Functions, Random Number Functions
 @section Random State Initialization
 @cindex Random number state
 
-@deftypefun void gmp_randinit (gmp_randstate_t @var{state}, gmp_randalg_t @var{alg}, ...)
-Initialize @var{state}, for the algorithm indicated by @var{alg}.  Currently
-only one algorithm is supported:
-
-@itemize @minus
-@item @code{GMP_RAND_ALG_LC} --- Linear congruential.
-
-A fast generator defined by @ma{X = (aX + c) @bmod m}.
-
-A third argument @var{size} of type @code{unsigned long int} is required.
-This is the size of the largest good quality random number to be generated,
-expressed in number of bits.  If the random generation functions are asked for
-a bigger random number then two or more numbers of @var{size} bits will be
-generated and concatenated, resulting in a ``bad'' random number.  But this
-can be used to generate big random numbers relatively cheaply if the quality
-of randomness isn't of great importance.
-
-Parameters @ma{a}, @ma{c}, and @ma{m} are chosen from a table where the
-modulus @ma{m} is a power of 2 and the multiplier is congruent to 5 (mod 8).
-The choice is based on the @var{size} parameter.  The maximum @var{size}
-supported by the table is 128.  If you need bigger random numbers, use your
-own scheme and call one of the other @code{gmp_randinit} functions.
-@ignore
-@item @code{GMP_RAND_ALG_BBS} --- Blum, Blum, and Shub.
-@end ignore
-@end itemize
-
-If @var{alg} is 0 or @code{GMP_RAND_ALG_DEFAULT}, the default algorithm is
-used, this being @code{GMP_RAND_ALG_LC} described above.
-
-@code{gmp_randinit} may set the following bits in @code{gmp_errno}:
-
-@itemize
-@item @code{GMP_ERROR_UNSUPPORTED_ARGUMENT} --- @var{alg} is unsupported
-@item @code{GMP_ERROR_INVALID_ARGUMENT} --- @var{size} is too big
-@end itemize
+@deftypefun void gmp_randinit_default (gmp_randstate_t @var{state})
+Initialize @var{state} with a default algorithm.  This will be a compromise
+between speed and randomness, and is recommended for applications with no
+special requirements.
 @end deftypefun
 
+@deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a}, @w{unsigned long @var{c}}, @w{unsigned long @var{m2exp}})
+Initialize @var{state} with a linear congruential algorithm @m{X = (@var{a}X +
+@var{c}) @bmod 2^{m2exp}, X = (@var{a}*X + @var{c}) mod 2^@var{m2exp}}.
+
+The low bits of @ma{X} in this algorithm are not very random.  The least
+significant bit will have a period no more than 2, and the second bit no more
+than 4, etc.  For this reason only the high half of each @ma{X} is actually
+used.
+
+When a random number of more than @ma{@var{m2exp}/2} bits is to be generated,
+multiple iterations of the recurrence are used and the results concatenated.
+@end deftypefun
+
+@deftypefun int gmp_randinit_lc_2exp_size (gmp_randstate_t @var{state}, unsigned long @var{size})
+Initialize @var{state} for a linear congruential algorithm as per
+@code{gmp_randinit_lc_2exp}.  @var{a}, @var{c} and @var{m2exp} are selected
+from a table, chosen so that @var{size} bits (or more) of each @ma{X} will be
+used, ie. @ma{@var{m2exp} @ge{} @var{size}/2}.
+
+If successful the return value is non-zero.  If @var{size} is bigger than the
+table data provides then the return value is zero.  The maximum @var{size}
+currently supported is 128.
+@end deftypefun
+
+@deftypefun void gmp_randinit (gmp_randstate_t @var{state}, @w{gmp_randalg_t @var{alg}}, ...)
+@strong{This function is obsolete.}
+
+Initialize @var{state} with an algorithm selected by @var{alg}.  The only
+choice is @code{GMP_RAND_ALG_LC}, which is @code{gmp_randinit_lc_2exp_size}.
+A third parameter of type @code{unsigned long} is required, this is the
+@var{size} for that function.  @code{GMP_RAND_ALG_DEFAULT} or 0 are the same
+as @code{GMP_RAND_ALG_LC}.
+
+@code{gmp_randinit} sets bits in @code{gmp_errno} to indicate an error.
+@code{GMP_ERROR_UNSUPPORTED_ARGUMENT} if @var{alg} is unsupported, or
+@code{GMP_ERROR_INVALID_ARGUMENT} if the @var{size} parameter is too big.
+@end deftypefun
 
 @c  Not yet in the library.
 @ignore
@@ -4455,23 +4445,33 @@ Initialize @var{state} for a linear congruential scheme @m{X = (@var{a}X +
 @end deftypefun
 @end ignore
 
-
-@deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a}, @w{unsigned long int @var{c}}, @w{unsigned long int @var{m2exp}})
-Initialize @var{state} for a linear congruential scheme @m{X = (@var{a}X +
-@var{c}) @bmod 2^{m2exp}, X = (@var{a}*X + @var{c}) mod 2^@var{m2exp}}.
-
-The low bits of random numbers from this scheme are not very random, so the
-only the high half of each number generated is used.  This should be taken
-into account when choosing @var{m2exp}.
+@deftypefun void gmp_randclear (gmp_randstate_t @var{state})
+Free all memory occupied by @var{state}.
 @end deftypefun
+
+
+@node Random State Seeding,  , Random State Initialization, Random Number Functions
+@section Random State Seeding
+@cindex Random number seeding
 
 @deftypefun void gmp_randseed (gmp_randstate_t @var{state}, mpz_t @var{seed})
 @deftypefunx void gmp_randseed_ui (gmp_randstate_t @var{state}, @w{unsigned long int @var{seed}})
 Set an initial seed value into @var{state}.
-@end deftypefun
 
-@deftypefun void gmp_randclear (gmp_randstate_t @var{state})
-Free all memory occupied by @var{state}.
+The size of a seed determines how many different sequences of random numbers
+that it's possible to generate.  The ``quality'' of the seed is the randomness
+of a given seed compared to the previous seed used, and this affects the
+randomness of separate number sequences.  The method for choosing a seed is
+critical if the generated numbers are to be used for important applications,
+such as generating cryptographic keys.
+
+Traditionally the system time has been used to seed, but care needs to be
+taken with this.  If an application seeds often and the resolution of the
+system clock is low, then the same sequence of numbers might be repeated.
+Also, the system time is quite easy to guess, so if unpredictability is
+required then it should definitely not be the only source for the seed value.
+On some systems there's a special device @file{/dev/random} which provides
+random data better suited for use as a seed.
 @end deftypefun
 
 
@@ -4954,10 +4954,13 @@ The return value from each of these functions is the same as the standard C
 @samp{%n} fields and fields read but suppressed by @samp{*} don't count
 towards the return value.
 
-If end of file or file error, or end of string, is reached before any
-characters are read for the first non-suppressed field, then the return value
-is @ma{-1} instead of 0.  Leading whitespace read and discarded is not
-considered part of the field.
+If end of file or file error, or end of string, is reached when a match is
+required, and when no previous non-suppressed fields have matched, then the
+return value is EOF instead of 0.  A match is required for a literal character
+in the format string or a field other than @samp{%n}.  Whitespace in the
+format string is only an optional match and won't induce an EOF in this
+fashion.  Leading whitespace read and discarded for a field doesn't count as a
+match.
 
 
 @node C++ Formatted Input,  , Formatted Input Functions, Formatted Input
