@@ -3,8 +3,8 @@
    THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND ARE ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002 Free
-Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -751,12 +751,14 @@ __GMP_DECLSPEC mp_limb_t mpn_submul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_
 
 
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
+typedef const __gmp_randstate_struct *gmp_randstate_srcptr;
 
 /* Pseudo-random number generator function pointers structure.  */
 typedef struct {
   void (*randseed_fn) __GMP_PROTO ((gmp_randstate_t rstate, mpz_srcptr seed));
   void (*randget_fn) __GMP_PROTO ((gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits));
   void (*randclear_fn) __GMP_PROTO ((gmp_randstate_t rstate));
+  void (*randiset_fn) __GMP_PROTO ((gmp_randstate_ptr, gmp_randstate_srcptr));
 } gmp_randfnptr_t;
 
 /* Macro to obtain a void pointer to the function pointers structure.  */
