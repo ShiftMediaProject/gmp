@@ -291,7 +291,7 @@ mpn_kara_sqr_n (p, a, n, ws)
      mp_ptr    ws;
 #endif
 {
-  mp_limb_t i, sign, w, w0, w1;
+  mp_limb_t i, w, w0, w1;
   mp_size_t n2;
   mp_srcptr x, y;
 
@@ -305,7 +305,6 @@ mpn_kara_sqr_n (p, a, n, ws)
 
       n3 = n - n2;
 
-      sign = 0;
       w = a[n2];
       if (w != 0)
 	w -= mpn_sub_n (p, a, a + n3, n2);
@@ -323,7 +322,6 @@ mpn_kara_sqr_n (p, a, n, ws)
 	    {
 	      x = a + n3;
 	      y = a;
-	      sign = 1;
 	    }
 	  else
 	    {
@@ -333,34 +331,6 @@ mpn_kara_sqr_n (p, a, n, ws)
 	  mpn_sub_n (p, x, y, n2);
 	}
       p[n2] = w;
-
-      w = a[n2];
-      if (w != 0)
-	w -= mpn_sub_n (p + n3, a, a + n3, n2);
-      else
-	{
-	  i = n2;
-	  do 
-	    {
-	      --i;
-	      w0 = a[i]; 
-	      w1 = a[n3+i];
-	    }
-	  while (w0 == w1 && i != 0);
-	  if (w0 < w1)
-	    {
-	      x = a + n3;
-	      y = a;
-	      sign ^= 1;
-	    }
-	  else
-	    {
-	      x = a;
-	      y = a + n3;
-	    }
-	  mpn_sub_n (p + n3, x, y, n2);
-	}
-      p[n] = w;
 
       n1 = n + 1;
       if (n2 < KARATSUBA_SQR_THRESHOLD)
@@ -384,10 +354,7 @@ mpn_kara_sqr_n (p, a, n, ws)
 	  mpn_kara_sqr_n (p + n1, a + n3, n2, ws + n1);
 	}
 
-      if (sign)
-	mpn_add_n (ws, p, ws, n1);
-      else
-	mpn_sub_n (ws, p, ws, n1);
+      mpn_sub_n (ws, p, ws, n1);
 
       nm1 = n - 1;
       if (mpn_add_n (ws, p + n1, ws, nm1))
@@ -422,12 +389,10 @@ mpn_kara_sqr_n (p, a, n, ws)
 	  w1 = a[n2+i];
 	}
       while (w0 == w1 && i != 0);
-      sign = 0;
       if (w0 < w1)
 	{
 	  x = a + n2;
 	  y = a;
-	  sign = 1;
 	}
       else
 	{
@@ -435,27 +400,6 @@ mpn_kara_sqr_n (p, a, n, ws)
 	  y = a + n2;
 	}
       mpn_sub_n (p, x, y, n2);
-
-      i = n2;
-      do 
-	{
-	  --i;
-	  w0 = a[i];
-	  w1 = a[n2+i];
-	}
-      while (w0 == w1 && i != 0);
-      if (w0 < w1)
-	{
-	  x = a + n2;
-	  y = a;
-	  sign ^= 1;
-	}
-      else
-	{
-	  x = a;
-	  y = a + n2;
-	}
-      mpn_sub_n (p + n2, x, y, n2);
 
       /* Pointwise products. */
       if (n2 < KARATSUBA_SQR_THRESHOLD)
@@ -472,10 +416,7 @@ mpn_kara_sqr_n (p, a, n, ws)
 	}
 
       /* Interpolate. */
-      if (sign)
-	w = mpn_add_n (ws, p, ws, n);
-      else
-	w = -mpn_sub_n (ws, p, ws, n);
+      w = -mpn_sub_n (ws, p, ws, n);
       w += mpn_add_n (ws, p + n, ws, n);
       w += mpn_add_n (p + n2, p + n2, ws, n);
       /* TO DO: could put "if (w) { ... }" here.
