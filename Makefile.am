@@ -84,7 +84,8 @@ EXTRA_HEADERS = mp.h
 
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
-EXTRA_DIST = gmp-impl.h longlong.h stack-alloc.h urandom.h projects macos
+EXTRA_DIST = .gdbinit gmp-impl.h longlong.h stack-alloc.h urandom.h projects \
+  macos
 DISTCLEANFILES = asm-syntax.h config.m4 @gmp_srclinks@
 
 
