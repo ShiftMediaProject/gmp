@@ -180,6 +180,36 @@
 
   <p> Partially done by Linus Nordberg.  Ask for the current code.
 
+
+<p> <li> <strong>Test Suite</strong>
+
+  <p> Add a testsuite for old bugs.  These tests wouldn't loop or use
+      random numbers, but just test for specific bugs found in the
+      past.
+
+  <p> More importantly, improve the random number controls for test
+      collections:
+
+      <ol>
+        <li> Use the new random number framework.
+        <li> Have every test accept a seed parameter.
+        <li> Allow `make check' to set the seed parameter.
+        <li> Add more tests for important, now untested functions.
+      </ol>
+
+  <p> With this in place, it should be possible to rid GMP of
+      practically all bugs by having some dedicated GMP test machines
+      running "make check" with ever increasing seeds (and
+      periodically updating to the latest GMP).
+
+  <p> If a few more ASSERTs were sprinkled through the code, running
+      some tests with --enable-assert might be useful, though not a
+      substitute for tests on the normal build.
+
+  <p> An important feature of any random tests will be to record the
+      seeds used, and perhaps to snapshot operands before performing
+      each test, so any problem exposed can be reproduced.
+
 </ul>
 
 <hr>
