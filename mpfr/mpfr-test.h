@@ -37,15 +37,16 @@ double Ulp _PROTO ((double));
 #define MINNORM 2.2250738585072013831e-308 /* 2^(-1022), smallest normalized */
 #define MAXNORM 1.7976931348623157081e308 /* 2^(1023)*(2-2^(-52)) */
 
-#ifndef MAX
+/* The MAX, MIN and ABS macros may already be defined if gmp-impl.h has
+   been included. They have the same semantics as in gmp-impl.h, but the
+   expressions may be slightly different. So, it's better to undefine
+   them first, as required by the ISO C standard. */
+#undef MAX
+#undef MIN
+#undef ABS
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-#ifndef ABS
-#define ABS(x) (((x)>0) ? (x) : (-x))
-#endif
+#define ABS(x) (((x)>0) ? (x) : -(x))
 
 /* generate a random double using the whole range of possible values,
    including denormalized numbers, NaN, infinities, ... */
