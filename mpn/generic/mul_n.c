@@ -379,7 +379,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
    + B^(3k) * [{t1, 2k+1} - {t2, 2k+1}]
    + B^(4k) * {vinf,2r} (high 2r-1 limbs already in place)
    where {t1, 2k+1} = (3*{v0,2k}+2*sa*{vm1,2k+1}+{v2,2k+1})/6-2*{vinf,2r}
-         {t2, 2k+1} = ({v1, 2k+1} + sa * {vm1, 2k+1})/2
+	 {t2, 2k+1} = ({v1, 2k+1} + sa * {vm1, 2k+1})/2
    (sa is the sign of {vm1, 2k+1}).
 
    {vinf, 2r} stores the content of {v0, 2r} + {vinf, 2r}, with carry in cinf0.
@@ -389,8 +389,8 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
 */
 static void
 toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
-                   mp_ptr vinf, mp_size_t k, mp_size_t r, int sa,
-                   mp_limb_t vinf0, mp_limb_t cinf0, mp_ptr ws)
+		   mp_ptr vinf, mp_size_t k, mp_size_t r, int sa,
+		   mp_limb_t vinf0, mp_limb_t cinf0, mp_ptr ws)
 {
   mp_limb_t cy, saved;
   unsigned long twok = k + k;
@@ -408,7 +408,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 #define v0 (c)
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
        v0      |vm1|       hi(vinf)       v1       v2+2vm1      vinf
-                                                              +lo(v0) */
+							      +lo(v0) */
 
   ASSERT_NOCARRY (mpn_divexact_by3 (v2, v2, kk1));    /* v2 <- v2 / 3 */
 #ifdef HAVE_NATIVE_mpn_rsh1add_n
@@ -419,7 +419,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 #else
   v2[twok] += mpn_add_n (v2, v2, v0, twok);
   mpn_rshift (v2, v2, kk1, 1);
-#endif  
+#endif
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
        v0      |vm1|      hi(vinf)       v1    (3v0+2vm1+v2)    vinf
