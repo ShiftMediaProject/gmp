@@ -860,22 +860,22 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 
 /* kara uses n+1 limbs of temporary space and then recurses with the
    balance, so need (n+1) + (ceil(n/2)+1) + (ceil(n/4)+1) + ... */
-#define MPN_KARA_MUL_N_TSIZE(n)   (2*((n)+BITS_PER_MP_LIMB))
-#define MPN_KARA_SQR_N_TSIZE(n)   (2*((n)+BITS_PER_MP_LIMB))
+#define MPN_KARA_MUL_N_TSIZE(n)   (2*(n) + 2*GMP_LIMB_BITS)
+#define MPN_KARA_SQR_N_TSIZE(n)   (2*(n) + 2*GMP_LIMB_BITS)
 
 /* toom3 uses 4*(ceil(n/3)) of temporary space and then recurses with the
    balance either into itself or kara.  The following might be
    overestimates. */
-#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 3*BITS_PER_MP_LIMB)
-#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 3*BITS_PER_MP_LIMB)
+#define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 8*GMP_LIMB_BITS)
+#define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 8*GMP_LIMB_BITS)
 
 /* need 2 so that n2>=1 */
 #define MPN_KARA_MUL_N_MINSIZE    2
 #define MPN_KARA_SQR_N_MINSIZE    2
 
 /* Need l>=1, ls>=1, and 2*ls > l (the latter for the tD MPN_INCR_U) */
-#define MPN_TOOM3_MUL_N_MINSIZE   11
-#define MPN_TOOM3_SQR_N_MINSIZE   11
+#define MPN_TOOM3_MUL_N_MINSIZE   17
+#define MPN_TOOM3_SQR_N_MINSIZE   17
 
 #define mpn_sqr_diagonal __MPN(sqr_diagonal)
 void mpn_sqr_diagonal _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
