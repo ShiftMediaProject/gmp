@@ -468,6 +468,7 @@ define(Zdisp,
 `define(`Zdisp_found',0)dnl
 Zdisp_match( movl, %eax, 0,(%edi), `137,71,0',    $@)`'dnl
 Zdisp_match( movl, %ebx, 0,(%edi), `137,95,0',    $@)`'dnl
+Zdisp_match( movl, %esi, 0,(%edi), `137,119,0',   $@)`'dnl
 Zdisp_match( movl, 0,(%ebx), %eax, `139,67,0',    $@)`'dnl
 Zdisp_match( movl, 0,(%ebx), %esi, `139,115,0',   $@)`'dnl
 Zdisp_match( movl, 0,(%esi), %eax, `139,70,0',    $@)`'dnl
