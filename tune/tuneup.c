@@ -797,7 +797,7 @@ all (void)
   printf("\n");
 
 #if UDIV_PREINV_ALWAYS
-  printf ("#define SB_PREINV_THRESHOLD        0  /* (preinv always) */\n");
+  printf ("#define SB_PREINV_THRESHOLD            0  /* (preinv always) */\n");
 #else
   {
     static struct param_t  param;
@@ -891,10 +891,10 @@ all (void)
   printf("\n");
 
 #if UDIV_PREINV_ALWAYS
-  printf ("#define DIVREM_1_NORM_THRESHOLD    0  /* (preinv always) */\n");
-  printf ("#define DIVREM_1_UNNORM_THRESHOLD  0\n");
-  printf ("#define MOD_1_NORM_THRESHOLD       0\n");
-  printf ("#define MOD_1_UNNORM_THRESHOLD     0\n");
+  printf ("#define DIVREM_1_NORM_THRESHOLD        0  /* (preinv always) */\n");
+  printf ("#define DIVREM_1_UNNORM_THRESHOLD      0\n");
+  printf ("#define MOD_1_NORM_THRESHOLD           0\n");
+  printf ("#define MOD_1_UNNORM_THRESHOLD         0\n");
 
 #else
   /* size_extra==1 reflects the fact that with high<divisor one division is
@@ -968,12 +968,12 @@ all (void)
 #if HAVE_NATIVE_mpn_preinv_mod_1
   /* Any native version of mpn_preinv_mod_1 is assumed to exist because it's
      faster than mpn_mod_1.  */
-  printf ("#define USE_PREINV_MOD_1               1   /* (native) */\n");
+  printf ("#define USE_PREINV_MOD_1               1  /* (native) */\n");
 #else
 #if UDIV_PREINV_ALWAYS
   /* If udiv_qrnnd_preinv is the only division method then of course
      mpn_preinv_mod_1 should be used.  */
-  printf ("#define USE_PREINV_MOD_1               1   /* (preinv always) */\n");
+  printf ("#define USE_PREINV_MOD_1               1  /* (preinv always) */\n");
 #else
   {
     static struct param_t  param;
@@ -1002,7 +1002,7 @@ all (void)
 
 
 #if UDIV_PREINV_ALWAYS
-  printf ("#define DIVREM_2_THRESHOLD         0  /* (preinv always) */\n");
+  printf ("#define DIVREM_2_THRESHOLD             0  /* (preinv always) */\n");
 #else
 
   /* No support for tuning native assembler code, do that by hand and put
