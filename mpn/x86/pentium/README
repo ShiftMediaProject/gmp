@@ -2,7 +2,7 @@
                    INTEL PENTIUM P5 MPN SUBROUTINES
 
 
-This directory contains mpn functions optimized for Intel Pentium (P5)
+This directory contains mpn functions optimized for Intel Pentium (P5,P54)
 processors.  The mmx subdirectory has code for Pentium with MMX (P55).
 
 
@@ -16,12 +16,14 @@ STATUS
 	mpn_divrem_1              44.0
 	mpn_mod_1                 44.0
 
-	mpn_l/rshift               5.375-6.0
+	mpn_l/rshift               5.375-6.0 normal
+				   1.875 special shift by 1 bit
 
 	mpn_mul_1                 13.0
 	mpn_add/submul_1          14.0
 
 	mpn_mul_basecase          14.2 cycles/crossproduct (approx)
+
 	mpn_sqr_basecase           8 cycles/crossproduct (approx)
                                    or 15.5 cycles/triangleproduct (approx)
 
