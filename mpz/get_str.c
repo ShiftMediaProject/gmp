@@ -33,7 +33,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
 {
   mp_ptr xp;
   mp_size_t x_size = x->_mp_size;
-  unsigned char *str;
+  char *str;
   char *return_str;
   size_t str_size;
   size_t alloc_size = 0;
@@ -41,7 +41,6 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   int i;
   TMP_DECL (marker);
 
-  TMP_MARK (marker);
   if (base >= 0)
     {
       if (base == 0)
@@ -54,71 +53,51 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
       num_to_text = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
 
-  /* We allways allocate space for the string.  If the caller passed a
-     NULL pointer for RES_STR, we allocate permanent space and return
-     a pointer to that to the caller.  */
-  MPN_GET_STR_SIZE (str_size, base, ABS (x_size));
-  str_size += 2; /* '\0' and possible '-' */
-  if (res_str == 0)
+  /* allocate string for the user if necessary */
+  if (res_str == NULL)
     {
-      /* We didn't get a string from the user.  Allocate one (and return
-	 a pointer to it).  */
-      alloc_size = str_size;
-      res_str = (char *) (*__gmp_allocate_func) (str_size);
-      /* Make str, the variable used for raw result from mpn_get_str,
-	 point to the same string, but just after a possible minus sign.  */
-      str = (unsigned char *) res_str + 1;
+      /* digits, null terminator, possible minus sign */
+      alloc_size = mpn_sizeinbase (PTR(x), ABS(x_size), base) + 1 + (x_size<0);
+      res_str = (char *) (*__gmp_allocate_func) (alloc_size);
     }
-  else
-    {
-      /* Use TMP_ALLOC to get temporary space, since we need a few extra bytes
-	 that we can't expect to caller to supply us with.  */
-      str = (unsigned char *) TMP_ALLOC (str_size);
-    }
-
   return_str = res_str;
 
-  if (x_size == 0)
-    {
-      res_str[0] = '0';
-      res_str[1] = 0;
-      str_size = 1;
-      goto done;
-    }
   if (x_size < 0)
     {
       *res_str++ = '-';
       x_size = -x_size;
     }
 
-  /* Move the number to convert into temporary space, since mpn_get_str
-     clobbers its argument, except on power of 2 bases.  */
+  /* mpn_get_str clobbers its input on non power-of-2 bases */
+  TMP_MARK (marker);
   xp = x->_mp_d;
   if (! POW2_P (base))
     {
-      xp = TMP_ALLOC_LIMBS (x_size);
+      xp = TMP_ALLOC_LIMBS (x_size + 1);  /* +1 in case x_size==0 */
       MPN_COPY (xp, x->_mp_d, x_size);
     }
 
-  str_size = mpn_get_str (str, base, xp, x_size);
+  str_size = mpn_get_str ((unsigned char *) res_str, base, xp, x_size);
+  ASSERT (alloc_size == 0 || str_size <= alloc_size - (SIZ(x) < 0));
 
-  /* mpn_get_str might make some leading zeros.  Skip them.  */
-  while (*str == 0)
+  /* might have a leading zero, skip it */
+  str = res_str;
+  if (*res_str == 0 && str_size != 1)
     {
       str_size--;
       str++;
+      ASSERT (*str != 0);  /* at most one leading zero */
     }
 
-  /* Translate result to printable chars and move result to RES_STR.  */
+  /* Convert result to printable chars, and move down if there was a leading
+     zero.  */
   for (i = 0; i < str_size; i++)
     res_str[i] = num_to_text[str[i]];
   res_str[str_size] = 0;
 
- done:
   TMP_FREE (marker);
 
-  /* If the string was alloced then resize it down to the actual space
-     required.  */
+  /* if allocated then resize down to the actual space required */
   if (alloc_size != 0)
     {
       size_t  actual_size = str_size + 1 + (res_str - return_str);
