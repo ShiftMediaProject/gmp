@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 7 May 2002.  An up-to-date version is available at
+  This file current as of 8 May 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -537,6 +537,11 @@ MA 02111-1307, USA.
      on suitable machines.  This ends up happening for decimal by presenting
      the compiler with a run-time constant, but the same for other bases would
      be good.  Perhaps use could be made of the fact base&lt;256.
+<li> <code>mpn_umul_ppmm</code>, <code>mpn_udiv_qrnnd</code>: Return a
+     structure like <code>div_t</code> to avoid going through memory, in
+     particular helping RISCs that don't do store-to-load forwarding.  Clearly
+     this is only possible if the ABI returns a structure of two
+     <code>mp_limb_t</code>s in registers.
 </ul>
 
 <h4>New Functionality</h4>
