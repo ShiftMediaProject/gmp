@@ -809,9 +809,6 @@ mp_limb_t mpn_mod_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
 #define mpn_mod_1c  __MPN(mod_1c)
 mp_limb_t mpn_mod_1c _PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 
-#define mpn_mod_1_rshift __MPN(mod_1_rshift)
-mp_limb_t mpn_mod_1_rshift _PROTO ((mp_srcptr, mp_size_t, unsigned,mp_limb_t));
-
 mp_limb_t mpn_mul _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_mul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
