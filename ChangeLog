@@ -18,6 +18,25 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-09-24  Pedro Gimeno  <pggimeno@wanadoo.es>
+
+	* randlc2x.c: Prepare for nails by changing type of _mp_c to mpz_t,
+	make _mp_seed fixed-size, disallow SIZ(a)==0 to optimize comparisons
+	for mpn_mul.
+	* gmp-impl.h (MPZ_FAKE_UI): New macro.
+
+	* randmt.c: Some constants made long for K&R compliance; remove UL at
+	the end of other constants; use mp_size_t where appropriate; use
+	mpz_export to split the seed.
+	
+	* gmp-impl.h: Remove type cast in RNG_FNPTR and RNG_STATE, to allow
+	them to be used as lvalues.
+	* randclr.c, randlc2x.c, randmt.c, randsd.c: All callers changed.
+
+	* mpz/urandomm.c: Replace mpn_cmp with MPN_CMP.
+	
+	* tests/rand/gen.c: Get rid of gmp_errno.
+
 2002-09-24  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Custom Allocation): Keep allocate_function etc out of the
