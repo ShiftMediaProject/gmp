@@ -1,3 +1,16 @@
+2000-10-04  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_CHECK_ASM_UNDERSCORE): Use LABEL_SUFFIX, not a
+	hard-coded ":".
+
+	* config.sub: Don't demand "86" in CPU name for SCO.
+
+	* configure.in (supersparc-*-*): Remove -DSUPERSPARC.
+	* longlong.h: Use HAVE_TARGET_CPU_supersparc.
+
+	* configure.in (HAVE_TARGET_CPU_*): AC_DEFINE from $target_cpu.
+	* acconfig.h: Add #undefs, but only for targets of interest.
+
 2000-10-03  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/cntlz.asm: Rewrite.
