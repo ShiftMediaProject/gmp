@@ -1,4 +1,4 @@
-@ ARM mpn_add -- Add two limb vectors of the same length > 0 and store sum in
+@ ARM mpn_add_n -- Add two limb vectors of the same length > 0 and store sum in
 @ a third limb vector.
 @ Contributed by Robert Harley.
 
