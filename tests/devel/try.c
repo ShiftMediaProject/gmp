@@ -57,6 +57,12 @@ MA 02111-1307, USA.
    fields.
 
 
+   Bugs:
+
+   umul_ppmm support is not very good, lots of source data is generated
+   whereas only two limbs are needed.
+
+
    Future:
 
    When a validate function detects a problem and there's also a reference
@@ -117,6 +123,7 @@ MA 02111-1307, USA.
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 #include "tests.h"
 
 
@@ -273,17 +280,18 @@ struct try_t {
   char  dst[2];
 
 #define SIZE_ALLOW_ZERO   1
-#define SIZE_2            2  /* 2 limbs */
-#define SIZE_3            3  /* 3 limbs */
-#define SIZE_YES          4
-#define SIZE_FRACTION     5  /* size2 is fraction for divrem etc */
-#define SIZE_SIZE2        6
-#define SIZE_PLUS_1       7
-#define SIZE_SUM          8
-#define SIZE_DIFF         9
-#define SIZE_DIFF_PLUS_1 10
-#define SIZE_RETVAL      11
-#define SIZE_CEIL_HALF   12
+#define SIZE_1            2  /* 1 limb  */
+#define SIZE_2            3  /* 2 limbs */
+#define SIZE_3            4  /* 3 limbs */
+#define SIZE_YES          5
+#define SIZE_FRACTION     6  /* size2 is fraction for divrem etc */
+#define SIZE_SIZE2        7
+#define SIZE_PLUS_1       8
+#define SIZE_SUM          9
+#define SIZE_DIFF        10
+#define SIZE_DIFF_PLUS_1 11
+#define SIZE_RETVAL      12
+#define SIZE_CEIL_HALF   13
   char  size;
   char  size2;
   char  dst_size[2];
@@ -543,13 +551,14 @@ validate_sqrtrem (void)
 #define TYPE_MUL_BASECASE     60
 #define TYPE_MUL_N            61
 #define TYPE_SQR              62
+#define TYPE_UMUL_PPMM        63
 
-#define TYPE_SB_DIVREM_MN     63
-#define TYPE_TDIV_QR          64
+#define TYPE_SB_DIVREM_MN     70
+#define TYPE_TDIV_QR          71
 
-#define TYPE_SQRTREM          65
+#define TYPE_SQRTREM          80
 
-#define TYPE_EXTRA            70
+#define TYPE_EXTRA            90
 
 struct try_t  param[100];
 
@@ -864,6 +873,14 @@ param_init (void)
   p->size2 = 1;
   REFERENCE (refmpn_mul_basecase);
 
+  p = &param[TYPE_UMUL_PPMM];
+  p->retval = 1;
+  p->src[0] = 1;
+  p->dst[0] = 1;
+  p->dst_size[0] = SIZE_1;
+  p->overlap = OVERLAP_NONE;
+  REFERENCE (refmpn_umul_ppmm);
+
 
   p = &param[TYPE_RSHIFT];
   p->retval = 1;
@@ -1023,6 +1040,21 @@ mpn_toom3_sqr_n_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
   mpn_toom3_sqr_n (dst, src, size, tspace);
   TMP_FREE (marker);
 }
+mp_limb_t
+umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
+{
+  mp_limb_t  high;
+  umul_ppmm (high, *lowptr, m1, m2);
+  return high;
+}
+mp_limb_t
+mpn_umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
+{
+
+  mp_limb_t  high;
+  umul_ppmm (high, *lowptr, m1, m2);
+  return high;
+}
 
 
 struct choice_t {
@@ -1111,6 +1143,8 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_mul),    TYPE_MUL_BASECASE },
   { TRY(mpn_mul_n),  TYPE_MUL_N },
   { TRY(mpn_sqr_n),  TYPE_SQR },
+
+  { TRY_FUNFUN(umul_ppmm), TYPE_UMUL_PPMM, 2 },
 
   { TRY_FUNFUN(mpn_kara_mul_n),  TYPE_MUL_N, MPN_KARA_MUL_N_MINSIZE },
   { TRY_FUNFUN(mpn_kara_sqr_n),  TYPE_SQR,   MPN_KARA_SQR_N_MINSIZE },
@@ -1724,6 +1758,11 @@ call (struct each_t *e, tryfun_t function)
     CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size);
     break;
 
+  case TYPE_UMUL_PPMM:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p[0], e->s[0].p[1]);
+    break;
+
   case TYPE_LSHIFT:
   case TYPE_RSHIFT:
     e->retval = CALLING_CONVENTIONS (function)
@@ -1769,10 +1808,12 @@ pointer_setup (struct each_t *e)
         d[i].size = size;
         break;
 
+      case SIZE_1:
+        d[i].size = 1;
+        break;
       case SIZE_2:
         d[i].size = 2;
         break;
-        
       case SIZE_3:
         d[i].size = 3;
         break;

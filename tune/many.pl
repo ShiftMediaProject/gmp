@@ -516,6 +516,16 @@ my @table =
        'args'  => 'mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size',
        'rename'=> ['kara_mul_n','kara_sqr_n','toom3_mul_n','toom3_sqr_n'],
      },
+     {
+       # not for use with hppa reversed argument versions of mpn_umul_ppmm
+       'regexp'=> 'umul',
+       'funs'  => ['umul_ppmm'],
+       'ret'   => 'mp_limb_t',
+       'args'  => 'mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2',
+       'speed' => 'none',
+       'try-minsize' => 3,
+     },
+       
 
      {
        'regexp'=> 'popham',
