@@ -77,10 +77,7 @@ e_mpfr_const_pi (mpfr_ptr dst)
 static void
 e_mpfr_cos (mpfr_ptr c, mpfr_srcptr a)
 {
-  mpfr_t s;
-  mpfr_init2 (s, 1);
-  mpfr_sin_cos (s, c, a, ROUND);
-  mpfr_clear (s);
+  mpfr_sin_cos (NULL, c, a, ROUND);
 }
 
 static void
@@ -141,10 +138,7 @@ e_mpfr_sgn (mpfr_srcptr x)
 static void
 e_mpfr_sin (mpfr_ptr s, mpfr_srcptr a)
 {
-  mpfr_t c;
-  mpfr_init2 (c, 1);
-  mpfr_sin_cos (s, c, a, ROUND);
-  mpfr_clear (c);
+  mpfr_sin_cos (s, NULL, a, ROUND);
 }
 
 static void
