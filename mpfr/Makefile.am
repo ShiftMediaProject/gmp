@@ -39,6 +39,9 @@ endif
 info_TEXINFOS = mpfr.texi
 TEXINFO_TEX = ../texinfo.tex
 
+# Override automake default AR=ar with the value from GMP_PROG_AR.
+AR = @AR@
+
 libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h sin_cos.c extract.c	     \
   add.c add_ui.c add_ulp.c agm.c clear.c cmp.c cmp_ui.c div_2exp.c	     \
   div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_str.c init.c	     \
