@@ -1062,8 +1062,6 @@ AM_C_PROTOTYPES
 GMP_PROG_AR
 GMP_PROG_NM
 
-# FIXME: Find good ld?  /usr/ucb/ld on Solaris won't work.
-
 case $host in
   # FIXME: On AIX 3 and 4, $libname.a is included in libtool
   # $library_names_spec, so libgmp.a becomes a symlink to libgmp.so, making
