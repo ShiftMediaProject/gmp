@@ -288,9 +288,9 @@ void mpz_powm_redc _PROTO ((mpz_ptr res, mpz_srcptr base, mpz_srcptr e,
 void redc _PROTO ((mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim,
                    mp_ptr tp));
 
-void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
-                                              mp_ptr xp, int leading,
-                                              int zero));
+int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
+                                             mp_ptr xp, int leading,
+                                             int zero));
 
 /* The measuring routines use these big macros to save duplication for
    similar forms.  They also get used for some automatically generated
@@ -858,49 +858,48 @@ void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   }  
 
 
-#define SPEED_ROUTINE_MPN_ADDSUB_CALL(call)                               \
-  {                                                                       \
-    mp_ptr    wp, wp2, xp, yp;                                            \
-    unsigned  i;                                                          \
-    double    t;                                                          \
-    TMP_DECL (marker);                                                    \
-                                                                          \
-    SPEED_RESTRICT_COND (s->size >= 0);                                   \
-                                                                          \
-    TMP_MARK (marker);                                                    \
-    wp  = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);                   \
-    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);                  \
-    xp = s->xp;                                                           \
-    yp = s->yp;                                                           \
-                                                                          \
-    switch (s->r) {                                                       \
-    case 0:                           break;                              \
-    case 1: xp =    wp;               break;                              \
-    case 2:              yp =    wp2; break;                              \
-    case 3: xp =    wp;  yp =    wp2; break;                              \
-    case 4: xp =    wp2; yp =    wp;  break;                              \
-    default:                                                              \
-      fprintf (stderr, "Unrecognised r=%ld in addsub measuring\n", s->r); \
-      abort ();                                                           \
-    }                                                                     \
-    if (xp != s->xp) MPN_COPY (xp, s->xp, s->size);                       \
-    if (yp != s->yp) MPN_COPY (yp, s->yp, s->size);                       \
-                                                                          \
-    speed_operand_src (s, xp, s->size);                                   \
-    speed_operand_src (s, yp, s->size);                                   \
-    speed_operand_dst (s, wp, s->size);                                   \
-    speed_operand_dst (s, wp2, s->size);                                  \
-    speed_cache_fill (s);                                                 \
-                                                                          \
-    speed_starttime ();                                                   \
-    i = s->reps;                                                          \
-    do                                                                    \
-      call;                                                               \
-    while (--i != 0);                                                     \
-    t = speed_endtime ();                                                 \
-                                                                          \
-    TMP_FREE (marker);                                                    \
-    return t;                                                             \
+#define SPEED_ROUTINE_MPN_ADDSUB_CALL(call)                     \
+  {                                                             \
+    mp_ptr    wp, wp2, xp, yp;                                  \
+    unsigned  i;                                                \
+    double    t;                                                \
+    TMP_DECL (marker);                                          \
+                                                                \
+    SPEED_RESTRICT_COND (s->size >= 0);                         \
+                                                                \
+    TMP_MARK (marker);                                          \
+    wp  = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);         \
+    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);        \
+    xp = s->xp;                                                 \
+    yp = s->yp;                                                 \
+                                                                \
+    if (s->r == 0)      ;                                       \
+    else if (s->r == 1) { xp = wp;            }                 \
+    else if (s->r == 2) {           yp = wp2; }                 \
+    else if (s->r == 3) { xp = wp;  yp = wp2; }                 \
+    else if (s->r == 4) { xp = wp2; yp = wp;  }                 \
+    else {                                                      \
+      TMP_FREE (marker);                                        \
+      return -1.0;                                              \
+    }                                                           \
+    if (xp != s->xp) MPN_COPY (xp, s->xp, s->size);             \
+    if (yp != s->yp) MPN_COPY (yp, s->yp, s->size);             \
+                                                                \
+    speed_operand_src (s, xp, s->size);                         \
+    speed_operand_src (s, yp, s->size);                         \
+    speed_operand_dst (s, wp, s->size);                         \
+    speed_operand_dst (s, wp2, s->size);                        \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      call;                                                     \
+    while (--i != 0);                                           \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+    return t;                                                   \
   }
 
 #define SPEED_ROUTINE_MPN_ADDSUB_N(function)    \
@@ -1423,7 +1422,8 @@ void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     mp_limb_t  n;                                                          \
     double     t;                                                          \
                                                                            \
-    speed_routine_count_zeros_setup (s, xp, leading, zero);                \
+    if (! speed_routine_count_zeros_setup (s, xp, leading, zero))          \
+      return -1.0;                                                         \
     speed_operand_src (s, xp, SPEED_BLOCK_SIZE);                           \
     speed_cache_fill (s);                                                  \
                                                                            \
