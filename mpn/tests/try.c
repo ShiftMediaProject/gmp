@@ -162,7 +162,8 @@ mp_size_t  pagesize;
 #define TRY_SIZE2            (1<<1)
 #define TRY_SHIFT            (1<<2)
 #define TRY_CARRYBIT         (1<<3)
-#define TRY_CARRYTRIT        (1<<4)
+#define TRY_CARRY3           (1<<4)
+#define TRY_CARRY4           (1<<4)
 #define TRY_CARRYLIMB        (1<<5)
 #define TRY_MULTIPLIER       (1<<6)
 #define TRY_DIVISOR          (1<<7)
@@ -188,7 +189,7 @@ mp_size_t  pagesize;
 #define TRY_SRC(n)      (TRY_SRC0 << (n))
 #define TRY_DST(n)      (TRY_DST0 << (n))
 
-#define TRY_CARRYANY  (TRY_CARRYBIT | TRY_CARRYTRIT | TRY_CARRYLIMB)
+#define TRY_CARRYANY  (TRY_CARRYBIT | TRY_CARRY3 | TRY_CARRY4 | TRY_CARRYLIMB)
 
 
 #define TRY_TYPE_AORS_N      (TRY_RETVAL | TRY_DST0 | TRY_SRC0 | TRY_SRC1)
@@ -201,6 +202,8 @@ mp_size_t  pagesize;
 
 #define TRY_TYPE_ADDSUB_N \
   (TRY_RETVAL | TRY_DST0 | TRY_DST1 | TRY_SRC0 | TRY_SRC1)
+#define TRY_TYPE_ADDSUB_NC \
+  (TRY_TYPE_ADDSUB_N | TRY_CARRY4)
 
 #define TRY_TYPE_COPYI \
   (TRY_DST0 | TRY_SRC0 | TRY_OVERLAP_LOW_TO_HIGH | TRY_SIZE_ZERO)
@@ -217,7 +220,7 @@ mp_size_t  pagesize;
 #define TRY_TYPE_MOD_1_RSHIFT (TRY_RETVAL | TRY_SRC0 | TRY_SHIFT | TRY_DIVISOR)
 
 #define TRY_TYPE_DIVEXACT_BY3   (TRY_RETVAL | TRY_DST0 | TRY_SRC0)
-#define TRY_TYPE_DIVEXACT_BY3C  (TRY_TYPE_DIVEXACT_BY3 | TRY_CARRYTRIT)
+#define TRY_TYPE_DIVEXACT_BY3C  (TRY_TYPE_DIVEXACT_BY3 | TRY_CARRY3)
 
 #define TRY_TYPE_GCD_1   (TRY_RETVAL | TRY_SRC0 | TRY_DIVISOR)
 #define TRY_TYPE_GCD                                            \
@@ -555,7 +558,7 @@ struct each_t  fun = { "Fun" };
   ((n) == 1 && (tr->flag & (TRY_SIZE2|TRY_XSIZE)) ? size2 : size)
 
 
-/* First three entries must be 0, 1, 2, for TRY_CARRYBIT and TRY_CARRYTRIT */
+/* First three entries must be 0, 1, 2, for TRY_CARRYBIT and TRY_CARRY3 */
 mp_limb_t  carry_array[] = {
   0, 1, 2,
   3, 4,
@@ -568,7 +571,8 @@ int        carry_index;
 
 #define CARRY_COUNT                                                     \
   ((tr->flag & TRY_CARRYBIT) ? 2                                        \
-   : (tr->flag & TRY_CARRYTRIT) ? 3                                     \
+   : (tr->flag & TRY_CARRY3) ? 3                                        \
+   : (tr->flag & TRY_CARRY4) ? 4                                        \
    : (tr->flag & TRY_CARRYLIMB) ? numberof(carry_array) + CARRY_RANDOMS \
    : 1)
 
@@ -858,6 +862,10 @@ call (struct each_t *e, tryfun_t function)
   case TRY_TYPE_ADDSUB_N:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->d[1].p, e->s[0].p, e->s[1].p, size);
+    break;
+  case TRY_TYPE_ADDSUB_NC:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->d[1].p, e->s[0].p, e->s[1].p, size, carry);
     break;
 
   case TRY_TYPE_COPYI:
