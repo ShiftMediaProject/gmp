@@ -1,3 +1,14 @@
+2001-02-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64/sqr_diagonal.asm: New file.
+	* mpn/pa64w/sqr_diagonal.asm: New file.
+	* mpn/hppa/hppa1_1/sqr_diagonal.asm: New file.
+	* mpn/hppa/hppa2_0/sqr_diagonal.asm: New file.
+
+	* mpn/sparc32/v9/add_n.asm: Use `fitod' instead of `fxtod' for dummy
+	FA-pipeline insns.
+	* mpn/sparc32/v9/sub_n.asm: Likewise.
+
 2001-02-18  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Known Build Problems): Notes on make, $* and K&R, misc
