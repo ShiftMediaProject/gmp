@@ -164,8 +164,10 @@ MA 02111-1307, USA. */
 
 #if __GMP_MP_SIZE_T_INT
 #define MP_SIZE_T_MAX      INT_MAX
+#define MP_SIZE_T_MIN      INT_MIN
 #else
 #define MP_SIZE_T_MAX      LONG_MAX
+#define MP_SIZE_T_MIN      LONG_MIN
 #endif
 
 #define LONG_HIGHBIT       LONG_MIN
