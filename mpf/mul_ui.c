@@ -28,14 +28,20 @@ mpf_mul_ui (mpf_ptr r, mpf_srcptr u, unsigned long int v)
   mp_srcptr up;
   mp_size_t usize;
   mp_size_t size;
-  mp_size_t prec = r->_mp_prec;
+  mp_size_t prec;
   mp_limb_t cy_limb;
   mp_ptr rp;
 
   usize = u->_mp_size;
-  size = ABS (usize);
+  if (usize == 0 || v == 0)
+    {
+      r->_mp_size = 0;
+      r->_mp_exp = 0;
+      return;
+    }
 
-  rp = r->_mp_d;
+  size = ABS (usize);
+  prec = r->_mp_prec;
   up = u->_mp_d;
   if (size > prec)
     {
@@ -50,18 +56,11 @@ mpf_mul_ui (mpf_ptr r, mpf_srcptr u, unsigned long int v)
     up++, size--;
 #endif
 
-  if (size == 0 || v == 0)
-    {
-      r->_mp_size = 0;
-      r->_mp_exp = 0;		/* ??? */
-    }
-  else
-    {
-      cy_limb = mpn_mul_1 (rp, up, size, (mp_limb_t) v);
-      rp[size] = cy_limb;
-      cy_limb = cy_limb != 0;
-      r->_mp_exp = u->_mp_exp + cy_limb;
-      size += cy_limb;
-      r->_mp_size = usize >= 0 ? size : -size;
-    }
+  rp = r->_mp_d;
+  cy_limb = mpn_mul_1 (rp, up, size, (mp_limb_t) v);
+  rp[size] = cy_limb;
+  cy_limb = cy_limb != 0;
+  r->_mp_exp = u->_mp_exp + cy_limb;
+  size += cy_limb;
+  r->_mp_size = usize >= 0 ? size : -size;
 }
