@@ -86,6 +86,6 @@ On Mingw or Cygwin with a DLL build of GMP, the array initializers in
 GMP.xs fail to compile, due to being function pointers coming from a
 DLL and hence not constants.  This is a problem for all such code,
 perhaps GCC will address this itself one day.  For now the suggestion
-is to build the main libgmp static, or to compile GMP.xs as C++ using
-for instance "make CC=g++".  (In C++, non-constant initializers are
-allowed.)
+is to build the main libgmp static, or it might work to compile GMP.xs
+as C++ using for instance "make CC=g++".  (In C++, non-constant
+initializers are allowed.)
