@@ -68,7 +68,7 @@ MA 02111-1307, USA.
 
 
    In terms of efficiency, this function is similar to a mul-by-inverse
-   mpn_mod_1.  Both are essentially of two multiplies and are best suited to
+   mpn_mod_1.  Both are essentially two multiplies and are best suited to
    CPUs with low latency multipliers (in comparison to a divide instruction
    at least.)  But modexact has a few less supplementary operations, only
    needs low part and high part multiplies, and has fewer working quantities
