@@ -23,6 +23,8 @@ MA 02111-1307, USA.
 
 	* Version 4.0 released.
 
+	* mpfr/README: Replace contents with explanation of why mpfr is gone.
+
 2001-12-01  Kevin Ryde  <kevin@swox.se>
 
 	* Makefile.am, configure.in: Temporarily remove mpfr, just leave a
