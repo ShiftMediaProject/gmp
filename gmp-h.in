@@ -1287,10 +1287,14 @@ __GMP_DECLSPEC void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long 
 /* This is ugly, but we need to make user calls reach the prefixed function. */
 
 #define mpn_add __MPN(add)
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpn_add
 __GMP_DECLSPEC mp_limb_t mpn_add _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t));
+#endif
 
 #define mpn_add_1 __MPN(add_1)
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpn_add_1
 __GMP_DECLSPEC mp_limb_t mpn_add_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+#endif
 
 #define mpn_add_n __MPN(add_n)
 __GMP_DECLSPEC mp_limb_t mpn_add_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
@@ -1314,7 +1318,9 @@ __GMP_DECLSPEC mp_limb_t mpn_addsub_nc _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_sr
 __GMP_DECLSPEC mp_limb_t mpn_bdivmod _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, unsigned long int));
 
 #define mpn_cmp __MPN(cmp)
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpn_cmp
 __GMP_DECLSPEC int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #define mpn_divexact_by3(dst,src,size) \
   mpn_divexact_by3c (dst, src, size, (mp_limb_t) 0)
@@ -1419,10 +1425,14 @@ __GMP_DECLSPEC void mpn_sqr_basecase _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 __GMP_DECLSPEC mp_size_t mpn_sqrtrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 
 #define mpn_sub __MPN(sub)
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpn_sub
 __GMP_DECLSPEC mp_limb_t mpn_sub _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t));
+#endif
 
 #define mpn_sub_1 __MPN(sub_1)
+#if __GMP_INLINE_PROTOTYPES || __GMP_FORCE_mpn_sub_1
 __GMP_DECLSPEC mp_limb_t mpn_sub_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+#endif
 
 #define mpn_sub_n __MPN(sub_n)
 __GMP_DECLSPEC mp_limb_t mpn_sub_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
