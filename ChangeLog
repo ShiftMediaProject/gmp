@@ -1,3 +1,12 @@
+2000-12-29  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Detect T90-ieee systems; move Cray path
+	selection to after AC_PROG_CC.  Invoke AC_PROG_CPP.
+	* mpn/cray/cfp: New directory.  Move cfp specific files here.
+	* mpn/cray/cfp/mulwwc90.s: New file.
+	* mpn/cray/cfp/mulwwj90.s: New file.
+	* mpn/cray/mulww.s: Delete.
+
 2000-12-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/ieee/mul_1.c: New file.
@@ -28,7 +37,7 @@
 	* mpn/generic/mul_fft.c: Reformat.
 	(mpn_fft_neg_modF): Remove.
 	(mpn_fft_mul_2exp_modF): Inline mpn_fft_neg_modF.
-	
+
 	* mpn/cray/gmp-mparam.h: Retune.
 
 	* configure.in (*-cray-unicos*): Pass `-O3 -htask0'.
