@@ -24,5 +24,5 @@ MA 02111-1307, USA. */
 int
 main (void)
 {
-  exit (0);
+  return 0;
 }
