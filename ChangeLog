@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-05  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Integer Special Functions): In mpz_array_init, fix type
+	shown for integer_array and give an example use.
+
 2003-06-04  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/set_str.c (mpf_set_str): Work around gcc 2 bug triggered on
