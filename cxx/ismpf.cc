@@ -22,13 +22,21 @@ MA 02111-1307, USA. */
 #include <cctype>
 #include <iostream>
 #include <string>
-#include <clocale>    /* for localeconv */
+#include <clocale>    // for localeconv
 
 #include "gmp.h"
 #include "gmp-impl.h"
 
 using namespace std;
 
+
+// For g++ libstdc++ parsing see num_get<chartype,initer>::_M_extract_float
+// in include/bits/locale_facets.tcc.
+//
+// There are no plans to accept hex or octal floats, not unless the standard
+// C++ library does so.  Although such formats might be of use, it's
+// considered more important to be compatible with what the normal
+// operator>> does on "double"s etc.
 
 istream &
 operator>> (istream &i, mpf_ptr f)
@@ -38,12 +46,13 @@ operator>> (istream &i, mpf_ptr f)
   string s;
   bool ok = false;
 
-  /* C decimal point, as expected by mpf_set_str */
+  // C decimal point, as expected by mpf_set_str
   const char *lconv_point = localeconv()->decimal_point;
 
-  /* C++ decimal point */
+  // C++ decimal point
 #if HAVE_STD__LOCALE
-  char point_char = use_facet< numpunct<char> >(i.getloc()).decimal_point();
+  const locale& loc = i.getloc();
+  char point_char = use_facet< numpunct<char> >(loc).decimal_point();
 #else
   const char *point = lconv_point;
   char point_char = *point;
@@ -52,8 +61,18 @@ operator>> (istream &i, mpf_ptr f)
   i.get(c); // start reading
 
   if (i.flags() & ios::skipws) // skip initial whitespace
-    while (isspace(c) && i.get(c))
-      ;
+    {
+      // C++ isspace
+#if HAVE_STD__LOCALE
+      const ctype<char>& ct = use_facet< ctype<char> >(loc);
+#define cxx_isspace(c)  (ct.is(ctype_base::space,(c)))
+#else
+#define cxx_isspace(c)  isspace(c)
+#endif
+
+      while (cxx_isspace(c) && i.get(c))
+        ;
+    }
 
   if (c == '-' || c == '+') // sign
     {
@@ -62,10 +81,7 @@ operator>> (istream &i, mpf_ptr f)
       i.get(c);
     }
 
-  while (isspace(c) && i.get(c)) // skip whitespace
-    ;
-
-  base = 10; // octal/hex floats currently unsupported
+  base = 10;
   __gmp_istream_set_digits(s, i, c, ok, base); // read the number
 
   // look for the C++ radix point, but put the C one in for mpf_set_str
@@ -88,7 +104,7 @@ operator>> (istream &i, mpf_ptr f)
       __gmp_istream_set_digits(s, i, c, ok, base); // read the mantissa
     }
 
-  if (ok && (c == 'e' || c == 'E' || c == '@')) // exponent
+  if (ok && (c == 'e' || c == 'E')) // exponent
     {
       s += c;
       i.get(c);
@@ -100,9 +116,6 @@ operator>> (istream &i, mpf_ptr f)
 	  i.get(c);
 	}
 
-      while (isspace(c) && i.get(c)) // skip whitespace
-	;
-
       __gmp_istream_set_digits(s, i, c, ok, base); // read the exponent
     }
 
@@ -112,7 +125,7 @@ operator>> (istream &i, mpf_ptr f)
     i.clear();
 
   if (ok)
-    mpf_set_str(f, s.c_str(), base); // extract the number
+    ASSERT_NOCARRY (mpf_set_str(f, s.c_str(), base)); // extract the number
   else
     {
     fail:
