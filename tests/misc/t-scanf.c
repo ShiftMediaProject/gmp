@@ -51,11 +51,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-/* SunOS 4 stdio.h doesn't provide a prototype for this */
-#if ! HAVE_DECL_SSCANF
-int sscanf _PROTO ((const char *input, const char *fmt, ...));
-#endif
-
 
 #define TEMPFILE  "t-scanf.tmp"
 
@@ -170,6 +165,43 @@ fromstring_fscanf2 (const char *input, const char *fmt, void *a1, void *a2)
   fromstring_next_c = getc (fp);
 
   ASSERT_ALWAYS (fclose (fp) == 0);
+  return ret;
+}
+
+
+/* On various old systems, for instance HP-UX 9, the C library sscanf needs
+   to be able to write into the input string.  Ensure that this is possible,
+   when gcc is putting the test data into a read-only section.
+
+   Actually we ought to only need this under SSCANF_WRITABLE_INPUT, but it's
+   just as easy to do it unconditionally, and in any case this code is only
+   executed under the -s option.  */
+
+int
+wrap_sscanf1 (const char *input, const char *fmt, void *a1)
+{
+  char    *input_writable;
+  size_t  size;
+  int     ret;
+  size = strlen (input) + 1;
+  input_writable = (*__gmp_allocate_func) (size);
+  memcpy (input_writable, input, size);
+  ret = sscanf (input_writable, fmt, a1);
+  (*__gmp_free_func) (input_writable, size);
+  return ret;
+}
+
+int
+wrap_sscanf2 (const char *input, const char *fmt, void *a1, void *a2)
+{
+  char    *input_writable;
+  size_t  size;
+  int     ret;
+  size = strlen (input) + 1;
+  input_writable = (*__gmp_allocate_func) (size);
+  memcpy (input_writable, input, size);
+  ret = sscanf (input_writable, fmt, a1, a2);
+  (*__gmp_free_func) (input_writable, size);
   return ret;
 }
 
@@ -457,8 +489,8 @@ check_z (void)
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard sscanf";
-            fun1 = (fun1_t) sscanf;
-            fun2 = (fun2_t) sscanf;
+            fun1 = (fun1_t) wrap_sscanf1;
+            fun2 = (fun2_t) wrap_sscanf2;
             break;
           case 3:
 #ifdef __GLIBC__
@@ -844,8 +876,8 @@ check_q (void)
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard sscanf";
-            fun1 = (fun1_t) sscanf;
-            fun2 = (fun2_t) sscanf;
+            fun1 = (fun1_t) wrap_sscanf1;
+            fun2 = (fun2_t) wrap_sscanf2;
             break;
           case 3:
             if (strchr (data[i].input, '/') != NULL)
@@ -1098,8 +1130,8 @@ check_f (void)
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard sscanf";
-            fun1 = (fun1_t) sscanf;
-            fun2 = (fun2_t) sscanf;
+            fun1 = (fun1_t) wrap_sscanf1;
+            fun2 = (fun2_t) wrap_sscanf2;
             break;
           case 3:
             if (! libc_scanf_convert (fmt))
