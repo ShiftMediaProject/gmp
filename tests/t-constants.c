@@ -77,11 +77,13 @@ main (void)
     CHECK_CONDITION (MODLIMB_INVERSE_3 * CNST_LIMB(3) == CNST_LIMB(1));
   }
 
+#ifdef PP_INVERTED
   {
     mp_limb_t  pp_inverted_calc;
     invert_limb (pp_inverted_calc, PP);
     CHECK_CONSTANT (PP_INVERTED, pp_inverted_calc);
   }
+#endif
 
   exit (0);
 }
