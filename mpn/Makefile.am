@@ -20,19 +20,21 @@ libmpn_la_SOURCES = $(GENERIC_SOURCES)
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
-## FIXME: --version-info is on the form `current[:revision[:age]]' (see libtool doc)
-## Hint: See binutils/bfd/Makefile.am
-## libmpn_la_LDFLAGS = -version-info @VERSION@
-
 TARG_DIST = a29k alpha arm clipper cray generic hppa i960 m68k mips2 mips3 \
   ns32k pa64 power powerpc32 powerpc64 pyr sh sparc32 sparc64 thumb vax x86 \
   z8000 z8000x
 
-EXTRA_DIST = tests underscore.h $(TARG_DIST)
+EXTRA_DIST = tests underscore.h asm-defs.m4 $(TARG_DIST)
 
-## FIXME: Add `.asm'.
-SUFFIXES = .s .S
+# COMPILE minus CC.  FIXME: Really pass *_CFLAGS to CPP?
+COMPILE_FLAGS =	\
+	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 
+SUFFIXES = .s .S .asm
+
+# FIXME: Use `$(CCAS) $(COMPILE_FLAGS)' instead of $(COMPILE).
+
+# *.s are not preprocessed at all.
 .s.o:
 	$(COMPILE) -c $<
 .s.obj:
@@ -40,10 +42,7 @@ SUFFIXES = .s .S
 .s.lo:
 	$(LTCOMPILE) -c $<
 
-# COMPILE minus CC:
-COMPILE_FLAGS =	\
-	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-
+# *.S are preprocessed with CPP.
 .S.o:
 	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
 	$(COMPILE) -c tmp-$*.s -o $@
@@ -53,12 +52,27 @@ COMPILE_FLAGS =	\
 	$(COMPILE) -c tmp-$*.s -o $@
 	rm -f tmp-$*.s
 
-# We have to rebuild the static object file without -DPIC to CPP.
-# FIXME: Teach libtool how to assemble with a preprocessor pass (CPP
-# or m4).
+# We have to rebuild the static object file without passing -DPIC to
+# preprocessor.  The overhead cost is one extra assemblation.  FIXME:
+# Teach libtool how to assemble with a preprocessor pass (CPP or m4).
+
 .S.lo:
 	$(CPP) $(COMPILE_FLAGS) -DPIC $< | grep -v '^#' >tmp-$*.s
 	$(LTCOMPILE) -c tmp-$*.s -o $@
 	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
+	$(COMPILE) -c tmp-$*.s -o $*.o
+	rm -f tmp-$*.s
+
+# *.m4 are preprocessed with m4.
+.asm.o:
+	$(M4) $< >tmp-$*.s
+	$(COMPILE) -c tmp-$*.s -o $@
+	rm -f tmp-$*.s
+.asm.obj:
+	@echo NIY: Can't build .obj from .asm.  FIXME.
+.asm.lo:
+	$(M4) -DPIC $< >tmp-$*.s
+	$(LTCOMPILE) -c tmp-$*.s -o $@
+	$(M4) $< >tmp-$*.s
 	$(COMPILE) -c tmp-$*.s -o $*.o
 	rm -f tmp-$*.s
