@@ -1,6 +1,6 @@
 dnl  Intel Pentium-4 mpn_addlsh1_n -- mpn x+2*y.
 
-dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -39,7 +39,6 @@ C then psrlq to get the new carry.  That makes 4 c/l the target speed, which
 C is almost achieved for separate src/dst but when src==dst the write
 C combining anomalies slow it down.
 
-defframe(PARAM_CARRY,20)
 defframe(PARAM_SIZE, 16)
 defframe(PARAM_SRC2, 12)
 defframe(PARAM_SRC1, 8)
