@@ -80,6 +80,8 @@ dnl                        FIXME: Rename to `check_64bit_compiler'!
 dnl  cclist		   List of compilers, best first.
 dnl  gmp_cflags_{cc}	   Flags for compiler named {cc}.
 dnl  gmp_cflags64_{cc}     Flags for compiler named {cc} for 64-bit code.
+dnl  gmp_optcflags_{cc}	   Optional compiler flags.
+dnl  gmp_xoptcflags_{cc}   Exclusive optional compiler flags.
 dnl
 os_64bit="no"
 cclist="gcc cc"		# FIXME: Prefer c89 to cc.
@@ -96,11 +98,21 @@ case "$target" in
     cclist=cc
     gmp_cflags_cc="$gmp_cflags_cc -O"
     ;;
-  alpha*-*-*)
+  alpha*-*-osf*)
     flavour=`echo $target_cpu | sed 's/^alpha//g'`
     if test -n "$flavour"; then
       gmp_optcflags_gcc="-mcpu=$flavour"
+      # FIXME: We shouldn't fail fatally if none of these work, but that's
+      # how xoptcflags work and we don't have any other mechanism right now.
+      gmp_xoptcflags_gcc="-Wa,-arch,${flavour} -Wa,-m${flavour}"
       gmp_cflags_cc="$gmp_cflags_cc -arch $flavour -tune $flavour"
+    fi
+    ;;
+  alpha*-*-*)
+    cclist="gcc"
+    flavour=`echo $target_cpu | sed 's/^alpha//g'`
+    if test -n "$flavour"; then
+      gmp_optcflags_gcc="-mcpu=$flavour"
     fi
     ;;
 
@@ -509,7 +521,7 @@ case ${target} in
 
   m88k*-*-* | m88k*-*-*) path="m88k";;
   m88110*-*-*) path="m88k/mc88110 m88k";;
-  ns32k*-*-*) path="n32k";;
+  ns32k*-*-*) path="ns32k";;
 
   pyramid-*-*) path="pyr";;
 
