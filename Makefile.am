@@ -186,7 +186,7 @@ MPQ_OBJECTS = mpq/abs$U.lo mpq/aors$U.lo				\
   mpq/equal$U.lo mpq/set_z$U.lo mpq/set_d$U.lo				\
   mpq/set_f$U.lo mpq/swap$U.lo
 
-MPN_OBJECTS = @mpn_objs_in_libgmp@
+MPN_OBJECTS = mpn/mp_bases$U.lo
 
 PRINTF_OBJECTS =							\
   printf/asprintf$U.lo printf/asprntffuns$U.lo				\
@@ -235,8 +235,9 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
   rand.c randclr.c randdef.c randlc.c randlc2s.c randlc2x.c randraw.c	\
   rands.c randsd.c randsdui.c version.c
-libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
-  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) \
+libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
+  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPQ_OBJECTS)	\
+  $(MPN_OBJECTS) @mpn_objs_in_libgmp@		\
   $(PRINTF_OBJECTS)  $(SCANF_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
@@ -267,9 +268,8 @@ MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
 libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
   mp_minv_tab.c mp_set_fns.c
-MPN_OBJS_IN_LIBMP = @mpn_objs_in_libmp@
 libmp_la_DEPENDENCIES = $(srcdir)/libmp.sym				\
-  @TAL_OBJECT@ $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP)			\
+  @TAL_OBJECT@ $(MPBSD_OBJECTS) $(MPN_OBJECTS) @mpn_objs_in_libmp@	\
   mpz/add$U.lo mpz/gcdext$U.lo mpz/invert$U.lo mpz/mul$U.lo		\
   mpz/n_pow_ui$U.lo mpz/realloc$U.lo mpz/set$U.lo mpz/sub$U.lo		\
   mpz/tdiv_q$U.lo

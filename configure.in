@@ -1766,7 +1766,7 @@ gmp_mpn_functions="$extra_functions					   \
 # the list of all object files used by mpn/Makefile.in and the
 # top-level Makefile.in, respectively
 mpn_objects=
-mpn_objs_in_libgmp="mpn/mp_bases.lo"
+mpn_objs_in_libgmp=
 
 # links from the sources, to be removed by "make distclean"
 gmp_srclinks=
