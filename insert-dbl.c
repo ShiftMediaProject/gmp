@@ -1,6 +1,6 @@
 /* __gmp_insert_double -- convert from array of mp_limb_t to double.
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright (C) 1996, 1997, 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
