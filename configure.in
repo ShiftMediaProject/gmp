@@ -377,7 +377,19 @@ case $host in
       *)                      path="alpha" ;;
     esac
     extra_functions="cntlz umul"
-    gcc_cflags_optlist="cpu asm"
+    gcc_cflags_optlist="cpu asm oldas"
+
+    # Apparently there's a newish Compaq "as" which doesn't work with
+    # gcc mips-tfile.  Compiling an empty file "gcc -c foo.c" produces
+    #     mips-tfile, /tmp/ccaqUNnF.s:7 Segmentation fault
+    # The fix is to pass "-oldas" to that assembler, as noted by
+    #     http://gcc.gnu.org/install/specific.html#alpha*-dec-osf*
+    # We make this flag only optional, in case an older or newer assembler
+    # doesn't accept it.  Maybe we should test whether an empty file will
+    # compile, and restrict it just to cases where that fails.  Seems ok for
+    # now to use it unconditionally if it works.
+    #
+    gcc_cflags_oldas="-Wa,-oldas"
 
     # gcc 2.7.2.3 doesn't know any -mcpu= for alpha, apparently.
     # gcc 2.95 knows -mcpu= ev4, ev5, ev56, pca56, ev6.
