@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2003 Free Software Foundation, Inc.
+Copyright 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -108,7 +108,14 @@ static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
    and so probably won't trigger them, the generic code works by float
    operations and so probably will.  This difference might be thought less
    than ideal, but again its felt straightforward code is better than trying
-   to get intimate with hardware exceptions (of perhaps unknown nature).  */
+   to get intimate with hardware exceptions (of perhaps unknown nature).
+
+
+   For reference, note that HPPA 8000, 8200, 8500 and 8600 trap FCNV,UDW,DBL
+   to the kernel for values >= 2^63.  This makes it slow, and worse the
+   Linux kernel (what versions?) apparently uses untested code in its trap
+   handling routines, and gets the sign wrong.  We don't use such a limb to
+   double cast, neither in the IEEE or generic code.  */
 
 
 double
