@@ -96,6 +96,7 @@ int main (argc, argv)
   mpf_init (f1);
   mpz_init (z1);
   mpz_init (z_seed);
+  mpz_init_set_ui (z_mmax, 0);
 
 
   while ((c = getopt (argc, argv, "a:bc:C:f:g:hm:n:ps:z:x:")) != -1)
@@ -173,7 +174,7 @@ int main (argc, argv)
 	break;
 
       case 'm':			/* max for mpz_urandomm() */
-	if (mpz_init_set_str (z_mmax, optarg, 0))
+	if (mpz_set_str (z_mmax, optarg, 0))
 	  {
 	    fprintf (stderr, "gen: bad max value: %s\n", optarg);
 	    exit (1);
@@ -345,7 +346,7 @@ int main (argc, argv)
 	  break;
 
 	case RFUNC_mpf_urandomb:
-	  mpf_urandomb (f1, s, 0);
+	  mpf_urandomb (f1, s);
 	  if (do_exclude)
 	    if (mpf_cmp (f1, f_xf) >= 0 && mpf_cmp (f1, f_xt) <= 0)
 		break;
@@ -419,16 +420,5 @@ int main (argc, argv)
   return 0;
 }
 
-void 
-debug_foo()
-{
-  if (0)
-    {
-      mpz_dump (0);
-      mpf_dump (0);
-    }
-}
-
-
-
-
+static void *debug_dummyz = mpz_dump;
+static void *debug_dummyf = mpf_dump;

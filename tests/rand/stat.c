@@ -360,11 +360,13 @@ main (argc, argv)
       if (n % l1runs)
 	printf (" (discarding %ld entr%s)", n % l1runs,
 		n % l1runs == 1 ? "y" : "ies");
-      puts ("");
+      puts (".");
       n = l1runs;
     }
 
+#ifndef DONT_FFREQ
   f_freq (l1runs, l2runs, fvec, n);
+#endif
 #ifdef DO_ZFREQ
   z_freq (l1runs, l2runs, zvec, n, mpz_get_ui (z_imax));
 #endif
