@@ -320,8 +320,8 @@ case ${target} in
   alphaev6*-*-*) path="alpha/ev6 alpha"; extra_functions="invert_limb cntlz";;
   alphaev5*-*-*) path="alpha/ev5 alpha"; extra_functions="invert_limb cntlz";;
   alpha*-*-*) path="alpha"; extra_functions="invert_limb cntlz";;
-  am29000*-*-*) path="am29000";;
-  a29k*-*-*) path="am29000";;
+  am29000*-*-*) path="a29k";;
+  a29k*-*-*) path="a29k";;
 
 # Amd and Intel x86 configurations
   [i[34]86*-*-*])
