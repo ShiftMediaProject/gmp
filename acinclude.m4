@@ -1005,8 +1005,8 @@ if test $gmp_found = no; then
 fi
 ])
 echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
-__GMP_LSYM_PREFIX="\"$gmp_cv_asm_lsym_prefix\""
-AC_SUBST(__GMP_LSYM_PREFIX)
+AC_DEFINE_UNQUOTED(LSYM_PREFIX, "$gmp_cv_asm_lsym_prefix",
+                   [Assembler local label prefix])
 ])
 
 

@@ -250,7 +250,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, struct tmp_debug_t **));
 
 /* From gmp.h, nicer names for internal use. */
 #define MPN_CMP(result, xp, yp, size)  __GMPN_CMP(result, xp, yp, size)
-#define ASM_L(name)  __GMP_ASM_L(name)
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
@@ -434,6 +433,19 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #define REGPARM_3_1(a,b,c,x)  a,b,c,x
 #define REGPARM_ATTR(n)
 #endif
+
+
+/* ASM_L gives a local label for a gcc asm block, for use when temporary
+   local labels like "1:" might not be available, which is the case for
+   instance on the x86s (the SCO assembler doesn't support them).
+
+   The label generated is made unique by including "%=" which is a unique
+   number for each insn.  This ensures the same name can be used in multiple
+   asm blocks, perhaps via a macro.  Since jumps between asm blocks are not
+   allowed there's no need for a label to be usable outside a single
+   block.  */
+
+#define ASM_L(name)  LSYM_PREFIX "asm_%=_" #name
 
 
 #if defined (__GNUC__) && defined (__i386__)
