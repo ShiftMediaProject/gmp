@@ -209,6 +209,7 @@ MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/get_ui.lo mpz/getlimbn.lo mpz/hamdist.lo mpz/init.lo mpz/inp_raw.lo \
   mpz/inp_str.lo mpz/invert.lo mpz/ior.lo mpz/iset.lo mpz/iset_d.lo \
   mpz/iset_si.lo mpz/iset_str.lo mpz/iset_ui.lo mpz/jacobi.lo \
+  mpz/kronsz.lo mpz/kronuz.lo mpz/kronzs.lo mpz/kronzu.lo \
   mpz/lcm.lo mpz/legendre.lo \
   mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo mpz/mul_si.lo mpz/mul_ui.lo \
   mpz/neg.lo mpz/nextprime.lo mpz/out_raw.lo mpz/out_str.lo mpz/perfpow.lo mpz/perfsqr.lo \
