@@ -886,8 +886,8 @@ void speed_option_set _PROTO((const char *s));
     wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);        \
                                                                 \
     pieces = SPEED_BLOCK_SIZE * datafactor / s->size / s->size; \
-    pieces = MAX (pieces, 1);                                   \
     pieces = MIN (pieces, SPEED_BLOCK_SIZE / s->size);          \
+    pieces = MAX (pieces, 1);                                   \
                                                                 \
     psize = pieces * s->size;                                   \
     px = TMP_ALLOC_LIMBS (psize);                               \
