@@ -24,4 +24,4 @@ MA 02111-1307, USA. */
 #define MAXIMUM    SHRT_MAX
 #define MINIMUM    SHRT_MIN
 
-#include "fits_s.i"
+#include "fits_s.h"
