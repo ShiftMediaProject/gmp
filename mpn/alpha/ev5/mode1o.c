@@ -38,7 +38,7 @@ MA 02111-1307, USA. */
 
         3  sub    y = x - h
        13  mulq   q = y * inverse
-       14  umulh  h = q * d
+       14  umulh  h = high (q * d)
        --
        30
 
