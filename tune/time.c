@@ -104,7 +104,12 @@ MA 02111-1307, USA. */
 
    Maybe getrusage (or times) should be used as a supplement for any
    wall-clock measuring method.  Currently a wall clock with a good range
-   (eg. a 64-bit cycle counter) is used without a supplement.  */
+   (eg. a 64-bit cycle counter) is used without a supplement.
+
+   On PowerPC the timebase registers could be used, but would have to do
+   something to find out the speed.  On 6xx chips it's normally 1/4 bus
+   speed, on 4xx chips it's wither that or an external clock.  Measuring
+   against gettimeofday might be ok.  */
 
 
 #include "config.h"
