@@ -1,3 +1,14 @@
+2000-11-26  Kevin Ryde  <kevin@swox.se>
+
+	* tune/tuneup.c (FIB_THRESHOLD): Cope better with different speeds of
+	odd and even sizes.
+
+	* longlong.h (alpha): Use udiv_qrnnd and count_leading_zeros on all
+	compilers, not just gcc.
+
+	* pre_mod_1.c: Use conditional subtract to always skip a division.
+	(UMUL_TIME, UDIV_TIME): Remove defaults, now in longlong.h.
+
 2000-11-22  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (ABOVE_THRESHOLD, BELOW_THRESHOLD): New macros.
