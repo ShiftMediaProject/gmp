@@ -111,6 +111,14 @@
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
      <code>count_leading_zeros</code>.
+<li> Implement a cache localized evaluate and interpolate for the
+     toom3 <code>USE_MORE_MPN</code> code.  The necessary
+     right-to-left <code>mpn_divexact_by3c</code> exists.
+<li> <code>mpn_mul_basecase</code> doing an NxM with big N but small M
+     could try for better cache locality by taking N piece by piece.
+     The current code could be left available for CPUs without
+     caching.  Depending how karatsuba etc is applied to unequal size
+     operands it might be possible to assume M is always smallish.
 </ul>
 
 
@@ -228,30 +236,33 @@
 
 <h4>Configuration</h4>
 
-  <p> For example, "sparc" is not very useful as a machine architecture
-  denotation.  We want to distinguish old 32-bit SPARC without multiply support
-  from newer 32-bit SPARC with such support.  We want to recognize a
-  SuperSPARC, since its implementation of the UDIV instruction is not complete,
-  and will trap to the OS kernel for certain operands.  And we want to
-  recognize 64-bit capable SPARC processors as such.  While the assembly
-  routines can use 64-bit operations on all 64-bit SPARC processors, one can
-  not use 64-bit limbs under all operating system.  E.g., Solaris 2.5 and 2.6
-  doesn't preserve the upper 32 bits of most processor registers.  For SPARC we
-  therefore sometimes need to choose GMP configuration depending both on
-  processor and operating system.
-
 <ul>
+<li> Improve config.guess.  We want to recognize the processor very
+     accurately, more accurately than other GNU packages.
+     config.guess does not currently make the distinctions we would
+     like it to do and a --target often needs to be set explicitly.
+
+     For example, "sparc" is not very useful as a machine architecture
+     denotation.  We want to distinguish old 32-bit SPARC without
+     multiply support from newer 32-bit SPARC with such support.  We
+     want to recognize a SuperSPARC, since its implementation of the
+     UDIV instruction is not complete, and will trap to the OS kernel
+     for certain operands.  And we want to recognize 64-bit capable
+     SPARC processors as such.  While the assembly routines can use
+     64-bit operations on all 64-bit SPARC processors, one can not use
+     64-bit limbs under all operating system.  E.g., Solaris 2.5 and
+     2.6 doesn't preserve the upper 32 bits of most processor
+     registers.  For SPARC we therefore sometimes need to choose GMP
+     configuration depending both on processor and operating system.
+
+     (Remember to make sure config.sub accepts any guess.)
+
 <li> Find out whether there's an alloca available and how to use it.
      AC_FUNC_ALLOCA has various system dependencies covered, but we
      don't want its alloca.c replacement.  (One thing current cpp
      tests don't cover: HPUX 10 C compiler supports alloca, but
      cannot find any symbol to test in order to know if we're on
      HPUX 10.  Damn.)
-<li> Improve config.guess.  We want to recognize the processor very
-     accurately, more accurately than other GNU packages.
-     config.guess does not currently make the distinctions we would
-     like it to do and a --target often needs to be set explicitly.
-     Remember to make sure config.sub accepts the guesses.
 <li> Identify Mips processor under Irix: `hinv -c processor'.
      config.guess should say mips2, mips3, and mips4.
 <li> Identify Alpha processor under OSF: "/usr/sbin/sizer -c".
