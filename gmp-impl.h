@@ -1192,6 +1192,15 @@ void __gmp_assert_fail _PROTO ((const char *filename, int linenum,
 #endif
 
 
+/* ASSERT_CODE includes code when assertion checking is wanted.  This is the
+   same as writing "#if WANT_ASSERT", but more compact.  */
+#if WANT_ASSERT
+#define ASSERT_CODE(expr)  expr
+#else
+#define ASSERT_CODE(expr)
+#endif
+
+
 /* Test that an mpq_t is in fully canonical form.  This can be used as
    protection on routines like mpq_equal which give wrong results on
    non-canonical inputs.  */
