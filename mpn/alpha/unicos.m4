@@ -26,6 +26,8 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 dnl  Note that none of the standard GMP_ASM_ autoconf tests are done for
 dnl  unicos, so none of the config.m4 results can be used here.
 
+dnl  No underscores on unicos
+define(`GSYM_PREFIX')
 
 define(`ASM_START',
 m4_assert_numargs(0)
