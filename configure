@@ -3916,12 +3916,6 @@ for f in $gmp_links; do
   gmp_srclinks="$gmp_srclinks `echo $f | sed 's/\(.*\):.*/\1/'`"
 done
 
-echo "***DEBUG*** target=$target"
-echo "***DEBUG*** CC=$CC, CFLAGS=$CFLAGS"
-echo "***DEBUG*** CC64=$CC64, CFLAGS64=$CFLAGS64"
-echo "***DEBUG*** path=$path"
-echo "***DEBUG*** mpn_objects=$mpn_objects"
-
 echo "creating $gmp_configm4"
 echo "dnl $gmp_configm4.  Generated automatically by configure." > $gmp_configm4
 if test -f $gmp_tmpconfigm4; then
