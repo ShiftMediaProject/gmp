@@ -1188,6 +1188,12 @@ speed_mpn_sqrtrem (struct speed_params *s)
   SPEED_ROUTINE_MPN_SQRTREM (mpn_sqrtrem);
 }
 
+double
+speed_mpn_rootrem (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ROOTREM (mpn_rootrem);
+}
+
 
 double
 speed_mpz_fac_ui (struct speed_params *s)
