@@ -150,15 +150,6 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           if (t[i] == -1.0)
             return -1.0;
 
-          if (t[i] < 0.0)
-            {
-              fprintf (stderr, "Fatal error: negative time measured: %.9f\n",
-                       t[i]);
-              fprintf (stderr, "  (size=%ld reps=%u r=%ld attempt=%d)\n", 
-                       s->size, s->reps, s->r, i);
-              abort ();
-            }
-
           if (t[i] >= speed_unittime * speed_precision)
             break;
 
