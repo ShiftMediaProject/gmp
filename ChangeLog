@@ -1,3 +1,41 @@
+2001-04-30  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpz/t-lcm.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpz/lcm.c: Add one limb special case.
+
+	* mpz/lcm_ui.c: New file.
+	* Makefile.am, mpz/Makefile.am: Add it.
+	* gmp-h.in (mpz_lcm_ui): Add prototype.
+	* gmp.texi (Number Theoretic Functions): Add mpz_lcm_ui, document lcm
+	now always positive.
+
+	* mp-h.in (mp_size_t, mp_exp_t): Fix typedefs to match gmp-h.in.
+
+	* gmp-h.in (mpn_add_1, mpn_add, mpn_sub_1, mpn_sub): Remove K&R
+	function defines (ansi2knr will handle mpn/inline.c, and just ansi is
+	enough for gcc extern inline).
+
+	* gmp-h.in (__GMP_HAVE_TOKEN_PASTE): New macro.
+	(__MPN): Use it.
+	* gmp-impl.h (CNST_LIMB): Ditto.
+
+	* gmp-h.in, mp-h.in (__gmp_const, __gmp_signed, _PROTO, __MPN): Use
+	ANSI forms on Microsoft C.
+	(__GMP_HAVE_CONST): New define.
+	* gmp-impl.h (const, signed): Use it.
+
+	* demos/expr/expr-impl-h.in (<stdarg.h>): Use this with Microsoft C.
+	(HAVE_STDARG): New define.
+	* demos/expr/expr.c,exprz.c,exprq.c,exprf.c,exprfr.c: Use it.
+
+	* acinclude.m4 (GMP_C_STDARG): New macro.
+	* configure.in: Call it.
+	* rand.c: Use it.
+
+	* configure.in (AC_PROG_CC_STDC): New test.
+
 2001-04-25  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k6/mmx/dive_1.asm: New file.
