@@ -2483,7 +2483,7 @@ Convert @var{op} to a double.
 @end deftypefun
 
 @deftypefun double mpq_set_d (mpq_t @var{rop}, double @var{op})
-@deftypefun double mpq_set_f (mpq_t @var{rop}, double @var{op})
+@deftypefunx double mpq_set_f (mpq_t @var{rop}, double @var{op})
 Set @var{rop} to the value of @var{op}, without rounding.
 @end deftypefun
 
