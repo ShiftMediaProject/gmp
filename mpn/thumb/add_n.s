@@ -1,4 +1,4 @@
-@ ARM/Thumb __gmpn_add -- Add two limb vectors of the same length > 0 and store
+@ ARM/Thumb mpn_add_n -- Add two limb vectors of the same length > 0 and store
 @ sum in a third limb vector.
 
 @ Copyright 1997, 2000 Free Software Foundation, Inc.
