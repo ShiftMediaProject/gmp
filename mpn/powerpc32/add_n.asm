@@ -30,7 +30,7 @@ C 750:      4.0
 C mp_limb_t mpn_add_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
 C                      mp_size_t size);
 C
-C The use of offsets xp-wp and yp-wp is necessary for 4.0 c/l.
+C The use of offsets xp-wp and yp-wp is necessary for 4.0 c/l on 750.
 
 ASM_START()
 PROLOGUE(mpn_add_n)
