@@ -1,4 +1,23 @@
-#include <stdlib.h>
+/* __gmp_extract_double -- convert from double to array of mp_limb_t.
+
+Copyright (C) 1996 Free Software Foundation, Inc.
+
+This file is part of the GNU MP Library.
+
+The GNU MP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+The GNU MP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -10,7 +29,6 @@
 #ifndef _GMP_IEEE_FLOATS
 #define _GMP_IEEE_FLOATS 0
 #endif
-
 
 #define MP_BASE_AS_DOUBLE (2.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1)))
 
@@ -133,33 +151,3 @@ __gmp_extract_double (mp_ptr rp, double d)
 
   return exp;
 }
-
-
-#ifdef MAIN
-main (argc, argv)
-     char **argv;
-{
-  double d = strtod (argv[1], 0);
-  int exp;
-  mp_limb_t rp[3];
-  int i;
-
-  MPN_ZERO (rp, 3);
-
-#ifdef TIMES
-  {
-    int i;
-    long t0 = cputime ();
-    for (i = 0; i < TIMES; i++)
-      exp = __gmp_extract_double (rp, d);
-    printf ("[%lf microsec]\n", (double) (cputime () - t0) / TIMES * 1000);
-  }
-#endif
-
-  exp = __gmp_extract_double (rp, d);
-  for (i = 2; i >= 0; i--)
-    printf ("%0*lX ", 2 * sizeof (mp_limb_t), rp[i]);
-  printf ("\n");
-  printf ("%d\n", exp);
-}
-#endif
