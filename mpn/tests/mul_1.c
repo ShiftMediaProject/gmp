@@ -55,7 +55,7 @@ cputime ()
 #endif
 
 #ifndef OPS
-#define OPS 20000000
+#define OPS (CLOCK/5)
 #endif
 #ifndef SIZE
 #define SIZE 496
@@ -127,7 +127,7 @@ main (argc, argv)
 #endif
 
 #ifdef RANDOM
-      size = (random () % SIZE + 1);
+      size = random () % SIZE + 1;
 #else
       size = SIZE;
 #endif

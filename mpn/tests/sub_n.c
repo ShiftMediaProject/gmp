@@ -54,7 +54,7 @@ cputime ()
 #endif
 
 #ifndef OPS
-#define OPS 10000000
+#define OPS (CLOCK/5)
 #endif
 #ifndef SIZE
 #define SIZE 328
@@ -132,7 +132,7 @@ main (argc, argv)
 #endif
 
 #ifdef RANDOM
-      size = (random () % SIZE + 1);
+      size = random () % SIZE + 1;
 #else
       size = SIZE;
 #endif
@@ -151,7 +151,7 @@ main (argc, argv)
       for (i = 0; i < TIMES; i++)
 	refmpn_sub_n (dx+1, s1, s2, size);
       t = cputime() - t0;
-      printf ("refmpn_sub_n:   %ldms (%.2f cycles/limb)\n",
+      printf ("refmpn_sub_n: %5ldms (%.2f cycles/limb)\n",
 	      t, ((double) t * CLOCK) / (OPS * 1000.0));
 #endif
 
@@ -159,7 +159,7 @@ main (argc, argv)
       for (i = 0; i < TIMES; i++)
 	mpn_sub_n (dx+1, s1, s2, size);
       t = cputime() - t0;
-      printf ("mpn_sub_n:   %ldms (%.2f cycles/limb)\n",
+      printf ("mpn_sub_n:    %5ldms (%.2f cycles/limb)\n",
 	      t, ((double) t * CLOCK) / (OPS * 1000.0));
 #endif
 
