@@ -98,8 +98,8 @@
 	* tune/Makefile.am: Eliminate empty TUNE_MPZ_SRCS.
 
 	* configure, config.in, INSTALL.autoconf: Update to autoconf 2.52.
-	* */Makefile.in, missing, aclocal.m4, configure: Update to automake
-	1.5.
+	* */Makefile.in, mdate-sh, missing, aclocal.m4, configure: Update to
+	automake 1.5.
 	* configfsf.guess, configfsf.sub: Update to 2001-08-23.
 
 2001-08-24  Torbjorn Granlund  <tege@swox.com>
