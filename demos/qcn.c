@@ -103,7 +103,7 @@ qcn_estimate (mpz_t d)
 
 
 void
-qcn_str (const char *num)
+qcn_str (char *num)
 {
   mpz_t  z;
 
