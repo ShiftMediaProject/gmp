@@ -46,88 +46,27 @@ ObjDirs		= {MpfObjDir} {MpnObjDir} {MpqObjDir} {MpzObjDir} @c@
 
 ###########################################################################
 
-MpfObjs = @c@
-	{MpfObjDir}init.o {MpfObjDir}init2.o {MpfObjDir}set.o @c@
-	{MpfObjDir}set_ui.o {MpfObjDir}set_si.o {MpfObjDir}set_str.o @c@
-	{MpfObjDir}set_d.o {MpfObjDir}set_z.o {MpfObjDir}set_q.o @c@
-	{MpfObjDir}iset.o {MpfObjDir}iset_ui.o {MpfObjDir}iset_si.o @c@
-	{MpfObjDir}iset_str.o {MpfObjDir}iset_d.o {MpfObjDir}clear.o @c@
-	{MpfObjDir}get_str.o {MpfObjDir}dump.o {MpfObjDir}size.o @c@
-	{MpfObjDir}eq.o {MpfObjDir}reldiff.o {MpfObjDir}sqrt.o @c@
-	{MpfObjDir}random2.o {MpfObjDir}inp_str.o {MpfObjDir}out_str.o @c@
-	{MpfObjDir}add.o {MpfObjDir}add_ui.o {MpfObjDir}sub.o @c@
-	{MpfObjDir}sub_ui.o {MpfObjDir}ui_sub.o {MpfObjDir}mul.o @c@
-	{MpfObjDir}mul_ui.o {MpfObjDir}div.o {MpfObjDir}div_ui.o @c@
-	{MpfObjDir}cmp.o {MpfObjDir}cmp_ui.o {MpfObjDir}cmp_si.o @c@
-	{MpfObjDir}mul_2exp.o {MpfObjDir}div_2exp.o {MpfObjDir}abs.o @c@
-	{MpfObjDir}neg.o {MpfObjDir}get_d.o {MpfObjDir}set_dfl_prec.o @c@
-	{MpfObjDir}set_prc.o {MpfObjDir}set_prc_raw.o {MpfObjDir}get_prc.o @c@
-	{MpfObjDir}ui_div.o {MpfObjDir}sqrt_ui.o {MpfObjDir}pow_ui.o @c@
-	{MpfObjDir}urandom.o
-
-MpnObjs = @c@
-	@mpn_objects@
-
-MpqObjs = @c@
-	{MpqObjDir}add.o {MpqObjDir}canonicalize.o {MpqObjDir}clear.o @c@
-	{MpqObjDir}cmp.o {MpqObjDir}cmp_ui.o {MpqObjDir}div.o @c@
-	{MpqObjDir}get_d.o {MpqObjDir}get_den.o {MpqObjDir}get_num.o @c@
-	{MpqObjDir}init.o {MpqObjDir}inv.o {MpqObjDir}mul.o @c@
-	{MpqObjDir}neg.o {MpqObjDir}set.o {MpqObjDir}set_den.o @c@
-	{MpqObjDir}set_num.o {MpqObjDir}set_si.o {MpqObjDir}set_ui.o @c@
-	{MpqObjDir}sub.o {MpqObjDir}equal.o {MpqObjDir}set_z.o
-
-MpzObjs = @c@
-	{MpzObjDir}abs.o {MpzObjDir}add.o {MpzObjDir}add_ui.o @c@
-	{MpzObjDir}addmul_ui.o {MpzObjDir}and.o {MpzObjDir}array_init.o @c@
-	{MpzObjDir}bin_ui.o {MpzObjDir}bin_uiui.o {MpzObjDir}cdiv_q.o @c@
-	{MpzObjDir}cdiv_q_ui.o {MpzObjDir}cdiv_qr.o {MpzObjDir}cdiv_qr_ui.o @c@
-	{MpzObjDir}cdiv_r.o {MpzObjDir}cdiv_r_ui.o {MpzObjDir}cdiv_ui.o @c@
-	{MpzObjDir}clear.o {MpzObjDir}clrbit.o {MpzObjDir}cmp.o @c@
-	{MpzObjDir}cmp_si.o {MpzObjDir}cmp_ui.o {MpzObjDir}cmp_abs.o @c@
-	{MpzObjDir}cmp_abs_ui.o {MpzObjDir}com.o {MpzObjDir}divexact.o @c@
-	{MpzObjDir}dump.o {MpzObjDir}fac_ui.o {MpzObjDir}fdiv_q.o @c@
-	{MpzObjDir}fdiv_q_2exp.o {MpzObjDir}fdiv_q_ui.o {MpzObjDir}fdiv_qr.o @c@
-	{MpzObjDir}fdiv_qr_ui.o {MpzObjDir}fdiv_r.o {MpzObjDir}fdiv_r_2exp.o @c@
-	{MpzObjDir}fdiv_r_ui.o {MpzObjDir}fdiv_ui.o {MpzObjDir}fib_ui.o @c@
-	{MpzObjDir}gcd.o {MpzObjDir}gcd_ui.o {MpzObjDir}gcdext.o @c@
-	{MpzObjDir}get_d.o {MpzObjDir}get_si.o {MpzObjDir}get_str.o @c@
-	{MpzObjDir}get_ui.o {MpzObjDir}getlimbn.o {MpzObjDir}hamdist.o @c@
-	{MpzObjDir}init.o {MpzObjDir}inp_raw.o {MpzObjDir}inp_str.o @c@
-	{MpzObjDir}invert.o {MpzObjDir}ior.o {MpzObjDir}iset.o @c@
-	{MpzObjDir}iset_d.o {MpzObjDir}iset_si.o {MpzObjDir}iset_str.o @c@
-	{MpzObjDir}iset_ui.o {MpzObjDir}jacobi.o {MpzObjDir}lcm.o @c@
-	{MpzObjDir}legendre.o {MpzObjDir}mod.o {MpzObjDir}mul.o @c@
-	{MpzObjDir}mul_2exp.o {MpzObjDir}mul_ui.o {MpzObjDir}neg.o @c@
-	{MpzObjDir}out_raw.o {MpzObjDir}out_str.o {MpzObjDir}perfpow.o @c@
-	{MpzObjDir}perfsqr.o {MpzObjDir}popcount.o {MpzObjDir}pow_ui.o @c@
-	{MpzObjDir}powm.o {MpzObjDir}powm_ui.o {MpzObjDir}pprime_p.o @c@
-	{MpzObjDir}random.o {MpzObjDir}random2.o {MpzObjDir}realloc.o @c@
-	{MpzObjDir}remove.o {MpzObjDir}root.o {MpzObjDir}scan0.o @c@
-	{MpzObjDir}scan1.o {MpzObjDir}set.o {MpzObjDir}set_d.o @c@
-	{MpzObjDir}set_f.o {MpzObjDir}set_q.o {MpzObjDir}set_si.o @c@
-	{MpzObjDir}set_str.o {MpzObjDir}set_ui.o {MpzObjDir}setbit.o @c@
-	{MpzObjDir}size.o {MpzObjDir}sizeinbase.o {MpzObjDir}sqrt.o @c@
-	{MpzObjDir}sqrtrem.o {MpzObjDir}sub.o {MpzObjDir}sub_ui.o @c@
-	{MpzObjDir}swap.o {MpzObjDir}tdiv_ui.o {MpzObjDir}tdiv_q.o @c@
-	{MpzObjDir}tdiv_q_2exp.o {MpzObjDir}tdiv_q_ui.o {MpzObjDir}tdiv_qr.o @c@
-	{MpzObjDir}tdiv_qr_ui.o {MpzObjDir}tdiv_r.o {MpzObjDir}tdiv_r_2exp.o @c@
-	{MpzObjDir}tdiv_r_ui.o {MpzObjDir}tstbit.o {MpzObjDir}ui_pow_ui.o @c@
-	{MpzObjDir}urandom.o {MpzObjDir}xor.o
-
-CmnObjs = @c@
-	{CmnObjDir}assert.o {CmnObjDir}memory.o {CmnObjDir}mp_set_fns.o @c@
-	{CmnObjDir}mp_clz_tab.o {CmnObjDir}rand.o {CmnObjDir}randui.o @c@
-	{CmnObjDir}randclr.o {CmnObjDir}randlc.o {CmnObjDir}randlcui.o @c@
-	{CmnObjDir}version.o {CmnObjDir}stack-alloc.o {CmnObjDir}mp_bpl.o @c@
-	{CmnObjDir}extract-dbl.o {CmnObjDir}insert-dbl.o
-
 AsmObjs = @asm_objects@
 
 AsmSrc = @asm_sources@
 
+MpnObjs = @c@
+	@mpn_objects@
+
+MpfObjs = @c@
+	@mpf_objects@
+
+MpqObjs = @c@
+	@mpq_objects@
+
+MpzObjs = @c@
+	@mpz_objects@
+
+CmnObjs = @c@
+	@gmp_objects@
 
 Objs = {AsmObjs} {MpfObjs} {MpnObjs} {MpqObjs} {MpzObjs} {CmnObjs}
+
 
 
 ###########################################################################
@@ -136,6 +75,26 @@ all	@dep@ {Lib}
 
 {Lib} @dep@ {Objs} Makefile
 	{Link} {LinkOptions} -o {Lib} {Objs}
+
+
+###########################################################################
+# Special rules, got them from "mp[fqz]/Makefile.am"
+
+{MpzObjDir}mul_si.o @dep@ ::mpz:mul_siui.c Makefile
+	{C} ::mpz:mul_siui.c -o {Targ} {COptions} -d OPERATION_mul_si
+
+{MpzObjDir}mul_ui.o @dep@ ::mpz:mul_siui.c Makefile
+	{C} ::mpz:mul_siui.c -o {Targ} {COptions} -d OPERATION_mul_ui
+
+
+{MpfObjDir}floor.o @dep@ ::mpf:integer.c Makefile
+	{C} ::mpf:integer.c -o {Targ} {COptions} -d OPERATION_floor
+
+{MpfObjDir}ceil.o @dep@ ::mpf:integer.c Makefile
+	{C} ::mpf:integer.c -o {Targ} {COptions} -d OPERATION_ceil
+
+{MpfObjDir}trunc.o @dep@ ::mpf:integer.c Makefile
+	{C} ::mpf:integer.c -o {Targ} {COptions} -d OPERATION_trunc
 
 
 ###########################################################################
@@ -194,7 +153,8 @@ TestObj = test.o
 # or some MPW tool.
 
 .exe @dep@ .o
-	{Link} {ToolOptions} -o {TargDir}{default}.exe {DepDir}{default}.o {Lib} {SysLibs}
+	{Link} {ToolOptions} -o {TargDir}{default}.exe {DepDir}{default}.o  @c@
+	{Lib} {SysLibs}
 
 
 check @dep@ check-mpz check-mpq check-mpf
