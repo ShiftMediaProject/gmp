@@ -1,5 +1,6 @@
 divert(-1)
 
+
 dnl  m4 macros for x86 assembler.
 
 
@@ -269,6 +270,21 @@ m4_assert_numargs(-1)
 L(instrument_exit_`'instrument_current_function):
 call_instrument(exit)
 	ret_internal')')
+
+
+dnl  Usage: _GLOBAL_OFFSET_TABLE_
+dnl
+dnl  Expand to _GLOBAL_OFFSET_TABLE_ plus any necessary underscore prefix.
+dnl  This lets us write plain _GLOBAL_OFFSET_TABLE_ in SVR4 style, but still
+dnl  work with systems requiring an extra underscore such as OpenBSD.
+dnl
+dnl  deflit is used so "leal _GLOBAL_OFFSET_TABLE_(%eax), %ebx" will come
+dnl  out right, though that form doesn't work properly in gas (see
+dnl  mpn/x86/README).
+
+deflit(_GLOBAL_OFFSET_TABLE_,
+m4_assert_defined(`GOT_GSYM_PREFIX')
+`GOT_GSYM_PREFIX`_GLOBAL_OFFSET_TABLE_'')
 
 
 dnl  --------------------------------------------------------------------------
