@@ -19,6 +19,21 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*, configure.in: Update to mpfr 2.0.1.
+
+	* tests/refmpn.c (refmpn_mul_1c, lshift_make): Corrections for nails.
+	* tssts/refmpn.c, tests/tests.h (refmpn_cmp_allowzero): New function.
+
+	* mpn/generic/mul_1.c [nails]: Fix vl assert, add {up,n} assert.
+
+	* mpn/pa32/hppa1_1/pa7100/addmul_1.asm,
+	mpn/pa32/hppa1_1/pa7100/submul_1.asm: Rename "size" define, to avoid
+	ELF .size directive.  Reported by LaMont Jones.
+
+	* tests/mpz/t-set_si.c: Add nails support.
+
 2002-04-05  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h: Replace nail mpn_incr_u, mpn_decr_u with faster versions.
