@@ -531,6 +531,12 @@ case ${target} in
           path="x86/p6/p3mmx x86/p6/mmx x86/pentium/mmx $path"
         fi
         ;;
+      k6[23]*-*-*)
+	path="x86/k6 x86"
+	if test "$tmp_mmx" = yes; then
+          path="x86/k6/k62mmx x86/k6/mmx $path"
+        fi
+        ;;
       k6*-*-*)
 	path="x86/k6 x86"
 	if test "$tmp_mmx" = yes; then
