@@ -1414,6 +1414,13 @@ if test -z "$MPN_PATH"; then
 fi
 
 
+# TEMPORARY HACK
+case $enable_nails in
+  no | 0)  ;;
+  *)       extra_functions="" ;;
+  esac
+
+
 # Automake ansi2knr support.
 AM_C_PROTOTYPES
 
