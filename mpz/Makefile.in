@@ -89,6 +89,7 @@ OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 STRIP = @STRIP@
+U = @U@
 VERSION = @VERSION@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
@@ -119,7 +120,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies
 
 SUBDIRS = tests
 
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir) -DOPERATION_$*
 
 noinst_LTLIBRARIES = libmpz.la
 libmpz_la_SOURCES = \
@@ -133,7 +134,7 @@ libmpz_la_SOURCES = \
   fits_ulong_p.c fits_ushort_p.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
-  jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c mul_ui.c neg.c nextprime.c \
+  jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c neg.c nextprime.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
@@ -142,6 +143,10 @@ libmpz_la_SOURCES = \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
 
+
+EXTRA_DIST = mul_siui.c
+nodist_libmpz_la_SOURCES = mul_si.c mul_ui.c
+CLEANFILES = $(nodist_libmpz_la_SOURCES)
 subdir = mpz
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -166,16 +171,16 @@ fits_uint_p.lo fits_ulong_p.lo fits_ushort_p.lo gcd.lo gcd_ui.lo \
 gcdext.lo get_d.lo get_si.lo get_str.lo get_ui.lo getlimbn.lo \
 hamdist.lo init.lo inp_raw.lo inp_str.lo invert.lo ior.lo iset.lo \
 iset_d.lo iset_si.lo iset_str.lo iset_ui.lo jacobi.lo lcm.lo \
-legendre.lo mod.lo mul.lo mul_2exp.lo mul_ui.lo neg.lo nextprime.lo \
-out_raw.lo out_str.lo perfpow.lo perfsqr.lo popcount.lo pow_ui.lo \
-powm.lo powm_ui.lo pprime_p.lo random.lo random2.lo realloc.lo \
-remove.lo root.lo rrandomb.lo scan0.lo scan1.lo set.lo set_d.lo \
-set_f.lo set_q.lo set_si.lo set_str.lo set_ui.lo setbit.lo size.lo \
-sizeinbase.lo sqrt.lo sqrtrem.lo sub.lo sub_ui.lo swap.lo tdiv_ui.lo \
-tdiv_q.lo tdiv_q_2exp.lo tdiv_q_ui.lo tdiv_qr.lo tdiv_qr_ui.lo \
-tdiv_r.lo tdiv_r_2exp.lo tdiv_r_ui.lo tstbit.lo ui_pow_ui.lo \
-urandomb.lo urandomm.lo xor.lo
-libmpz_la_OBJECTS =  $(am_libmpz_la_OBJECTS)
+legendre.lo mod.lo mul.lo mul_2exp.lo neg.lo nextprime.lo out_raw.lo \
+out_str.lo perfpow.lo perfsqr.lo popcount.lo pow_ui.lo powm.lo \
+powm_ui.lo pprime_p.lo random.lo random2.lo realloc.lo remove.lo \
+root.lo rrandomb.lo scan0.lo scan1.lo set.lo set_d.lo set_f.lo set_q.lo \
+set_si.lo set_str.lo set_ui.lo setbit.lo size.lo sizeinbase.lo sqrt.lo \
+sqrtrem.lo sub.lo sub_ui.lo swap.lo tdiv_ui.lo tdiv_q.lo tdiv_q_2exp.lo \
+tdiv_q_ui.lo tdiv_qr.lo tdiv_qr_ui.lo tdiv_r.lo tdiv_r_2exp.lo \
+tdiv_r_ui.lo tstbit.lo ui_pow_ui.lo urandomb.lo urandomm.lo xor.lo
+nodist_libmpz_la_OBJECTS =  mul_si.lo mul_ui.lo
+libmpz_la_OBJECTS =  $(am_libmpz_la_OBJECTS) $(nodist_libmpz_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
@@ -189,8 +194,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = $(libmpz_la_SOURCES)
-OBJECTS = $(am_libmpz_la_OBJECTS)
+SOURCES = $(libmpz_la_SOURCES) $(nodist_libmpz_la_SOURCES)
+OBJECTS = $(am_libmpz_la_OBJECTS) $(nodist_libmpz_la_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -384,6 +389,7 @@ installdirs-am:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
@@ -437,6 +443,11 @@ installdirs-am installdirs mostlyclean-generic distclean-generic \
 clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean
 
+
+mul_si.c: $(srcdir)/mul_siui.c
+	cp $(srcdir)/mul_siui.c mul_si.c
+mul_ui.c: $(srcdir)/mul_siui.c
+	cp $(srcdir)/mul_siui.c mul_ui.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
