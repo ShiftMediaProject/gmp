@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-02-14  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_C_RIGHT_SHIFT): Note that it's "long"s which we're
+	concerned about.
+
+	* mpn/generic/mul_n.c: Add some remarks about toom3 high zero
+	stripping.
+ 
+	* mpn/generic/scan0.c, mpn/generic/scan1.c: Remove design issue
+	remarks.  What to do about going outside `up' space is a problem, but
+	anything to address it would be an incompatible change.
+
 2004-02-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/hamdist.asm: Remove bundling incompatible with HP-UX
