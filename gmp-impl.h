@@ -2424,79 +2424,25 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
    You have to figure out how this works, We won't tell you!
 
    The constants could also be expressed as:
-     0xAA... = [2^(N+1) / 3] = [(2^N-1)/3*2]
+     0x55... = [2^N / 3]     = [(2^N-1)/3]
      0x33... = [2^N / 5]     = [(2^N-1)/5]
      0x0f... = [2^N / 17]    = [(2^N-1)/17]
-     (N is BITS_PER_MP_LIMB, [] denotes truncation.) */
-
-#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 64
-#define popc_limb(result, input)                                \
-  do {                                                          \
-    mp_limb_t  __x = (input);                                   \
-    __x -= (__x & CNST_LIMB(0xaaaaaaaaaaaaaaaa)) >> 1;          \
-    __x = ((__x >> 2) & CNST_LIMB(0x3333333333333333))          \
-      +    (__x       & CNST_LIMB(0x3333333333333333));         \
-    __x = ((__x >> 4) + __x) & CNST_LIMB(0x0f0f0f0f0f0f0f0f);   \
-    __x = ((__x >> 8) + __x);                                   \
-    __x = ((__x >> 16) + __x);                                  \
-    __x = ((__x >> 32) + __x) & 0xff;                           \
-    (result) = __x;                                             \
-  } while (0)
-#endif
-#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 32
-#define popc_limb(result, input)                                \
-  do {                                                          \
-    mp_limb_t  __x = (input);                                   \
-    __x -= (__x & 0xaaaaaaaaL) >> 1;                            \
-    __x = ((__x >> 2) & 0x33333333L) + (__x & 0x33333333L);     \
-    __x = ((__x >> 4) + __x) & 0x0f0f0f0fL;                     \
-    __x = ((__x >> 8) + __x);                                   \
-    __x = ((__x >> 16) + __x) & 0xff;                           \
-    (result) = __x;                                             \
-  } while (0)
-#endif
-#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 16
-#define popc_limb(result, input)                        \
-  do {                                                  \
-    mp_limb_t  __x = (input);                           \
-    __x -= (__x & 0xaaaa) >> 1;                         \
-    __x = ((__x >> 2) & 0x3333) + (__x & 0x3333);       \
-    __x = ((__x >> 4) + __x) & 0x0f0f;                  \
-    __x = ((__x >> 8) + __x) & 0xff;                    \
-    (result) = __x;                                     \
-  } while (0)
-#endif
-#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 8
-#define popc_limb(result, input)                \
-  do {                                          \
-    mp_limb_t  __x = (input);                   \
-    __x -= (__x & 0xaa) >> 1;                   \
-    __x = ((__x >> 2) & 0x33) + (__x & 0x33);   \
-    __x = ((__x >> 4) + __x) & 0xf;             \
-    (result) = __x;                             \
-  } while (0)
-#endif
-#if ! defined (popc_limb) && BITS_PER_MP_LIMB == 4
-#define popc_limb(result, input)                                              \
-  do {                                                                        \
-    mp_limb_t  __x = (input);                                                 \
-    __x = (__x & 1) + ((__x >> 1) & 1) + ((__x >> 2) & 1) + ((__x >> 3) & 1); \
-    (result) = __x;                                                           \
-  } while (0)
-#endif
+     (N is GMP_LIMB_BITS, [] denotes truncation.) */
 
 #if ! defined (popc_limb)
-#define popc_limb(result, input)                \
-  do {                                          \
-    mp_limb_t  __x = (input);                   \
-    int        __result = 0;                    \
-    int        __i;                             \
-    for (__i = 0; __i < GMP_LIMB_BITS; __i++)   \
-      {                                         \
-        __result += (int) (__x & 1);            \
-        __x >>= 1;                              \
-      }                                         \
-    (result) = __result;                        \
+#define popc_limb(result, input)					\
+  do {									\
+    mp_limb_t  __x = (input);						\
+    __x -= (__x >> 1) & MP_LIMB_T_MAX/3;				\
+    __x = ((__x >> 2) & MP_LIMB_T_MAX/5) + (__x & MP_LIMB_T_MAX/5);	\
+    __x = ((__x >> 4) + __x) & MP_LIMB_T_MAX/17;			\
+    if (GMP_LIMB_BITS > 8)						\
+      __x = ((__x >> 8) + __x);						\
+    if (GMP_LIMB_BITS > 16)						\
+      __x = ((__x >> 16) + __x);					\
+    if (GMP_LIMB_BITS > 32)						\
+      __x = ((__x >> 32) + __x);					\
+    (result) = __x & 0xff;						\
   } while (0)
 #endif
 
