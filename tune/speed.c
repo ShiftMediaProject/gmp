@@ -35,10 +35,6 @@ MA 02111-1307, USA.
 
 #include "config.h"
 
-#if HAVE_GETOPT_H
-#include <getopt.h>
-#endif
-
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -200,7 +196,10 @@ const struct routine_t {
 
   { "mpn_gcd",           speed_mpn_gcd              },
   { "mpn_gcd_binary",    speed_mpn_gcd_binary       },
-  { "find_a",            speed_find_a, FLAG_NODATA  },
+  { "find_a",            speed_find_a,        FLAG_NODATA  },
+#if HAVE_NATIVE_mpn_gcd_finda
+  { "mpn_gcd_finda",     speed_mpn_gcd_finda, FLAG_NODATA  },
+#endif
 
   { "mpn_gcdext",            speed_mpn_gcdext            },
   { "mpn_gcdext_single",     speed_mpn_gcdext_single     },
