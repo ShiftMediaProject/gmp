@@ -96,7 +96,7 @@ install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 
-# Copyright 2000 Free Software Foundation, Inc.
+# Copyright 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -117,38 +117,31 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
+SUBDIRS = calc
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
-EXTRA_DIST = calc.y calclex.l
-
-calc_SOURCES = calc.c calclex.c calc.h
 qcn_LDADD = $(LDADD) $(LIBM)
 
 # None of these programs are built by default, but "make <whatever>" will
 # build them once libgmp.la is built.
 #
-EXTRA_PROGRAMS = calc factorize isprime pexpr primes qcn
+EXTRA_PROGRAMS = factorize isprime pexpr primes qcn
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 subdir = demos
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
-EXTRA_PROGRAMS =  calc$(EXEEXT) factorize$(EXEEXT) isprime$(EXEEXT) \
-pexpr$(EXEEXT) primes$(EXEEXT) qcn$(EXEEXT)
+EXTRA_PROGRAMS =  factorize$(EXEEXT) isprime$(EXEEXT) pexpr$(EXEEXT) \
+primes$(EXEEXT) qcn$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 ANSI2KNR = $(top_builddir)/ansi2knr
-am_calc_OBJECTS =  calc$U.$(OBJEXT) calclex$U.$(OBJEXT)
-calc_OBJECTS =  $(am_calc_OBJECTS)
-calc_LDADD = $(LDADD)
-calc_DEPENDENCIES =  $(top_builddir)/libgmp.la
-calc_LDFLAGS = 
 factorize_SOURCES = factorize.c
 factorize_OBJECTS =  factorize$U.$(OBJEXT)
 factorize_LDADD = $(LDADD)
@@ -178,8 +171,7 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(calc_SOURCES) factorize.c isprime.c pexpr.c primes.c \
-qcn.c
+DIST_SOURCES =  factorize.c isprime.c pexpr.c primes.c qcn.c
 depcomp = 
 DIST_COMMON =  Makefile.am Makefile.in
 
@@ -187,12 +179,12 @@ DIST_COMMON =  Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = $(calc_SOURCES) factorize.c isprime.c pexpr.c primes.c qcn.c
-OBJECTS = $(am_calc_OBJECTS) factorize$U.$(OBJEXT) isprime$U.$(OBJEXT) pexpr$U.$(OBJEXT) primes$U.$(OBJEXT) qcn$U.$(OBJEXT)
+SOURCES = factorize.c isprime.c pexpr.c primes.c qcn.c
+OBJECTS = factorize$U.$(OBJEXT) isprime$U.$(OBJEXT) pexpr$U.$(OBJEXT) primes$U.$(OBJEXT) qcn$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .c .h .lo .o .obj
+.SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu demos/Makefile
 
@@ -237,10 +229,6 @@ distclean-kr:
 
 maintainer-clean-kr:
 
-calc$(EXEEXT): $(calc_OBJECTS) $(calc_DEPENDENCIES)
-	@rm -f calc$(EXEEXT)
-	$(LINK) $(calc_LDFLAGS) $(calc_OBJECTS) $(calc_LDADD) $(LIBS)
-
 factorize$(EXEEXT): $(factorize_OBJECTS) $(factorize_DEPENDENCIES)
 	@rm -f factorize$(EXEEXT)
 	$(LINK) $(factorize_LDFLAGS) $(factorize_OBJECTS) $(factorize_LDADD) $(LIBS)
@@ -266,10 +254,6 @@ qcn$(EXEEXT): $(qcn_OBJECTS) $(qcn_DEPENDENCIES)
 	$(COMPILE) -c `cygpath -w $<`
 .c.lo:
 	$(LTCOMPILE) -c -o $@ $<
-calc_.c: calc.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/calc.c; then echo $(srcdir)/calc.c; else echo calc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > calc_.c
-calclex_.c: calclex.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/calclex.c; then echo $(srcdir)/calclex.c; else echo calclex.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > calclex_.c
 factorize_.c: factorize.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/factorize.c; then echo $(srcdir)/factorize.c; else echo factorize.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > factorize_.c
 isprime_.c: isprime.c $(ANSI2KNR)
@@ -280,10 +264,63 @@ primes_.c: primes.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/primes.c; then echo $(srcdir)/primes.c; else echo primes.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > primes_.c
 qcn_.c: qcn.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/qcn.c; then echo $(srcdir)/qcn.c; else echo qcn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > qcn_.c
-calc_.$(OBJEXT) calc_.lo calclex_.$(OBJEXT) calclex_.lo \
 factorize_.$(OBJEXT) factorize_.lo isprime_.$(OBJEXT) isprime_.lo \
 pexpr_.$(OBJEXT) pexpr_.lo primes_.$(OBJEXT) primes_.lo qcn_.$(OBJEXT) \
 qcn_.lo : $(ANSI2KNR)
+
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run `make' without going through this Makefile.
+# To change the values of `make' variables: instead of editing Makefiles,
+# (1) if the variable is set in `config.status', edit `config.status'
+#     (which will cause the Makefiles to be regenerated when you run `make');
+# (2) otherwise, pass the desired values on the `make' command line.
+
+all-recursive install-data-recursive install-exec-recursive \
+installdirs-recursive install-recursive uninstall-recursive  \
+check-recursive installcheck-recursive info-recursive dvi-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	dot_seen=no; \
+	target=`echo $@ | sed s/-recursive//`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    dot_seen=yes; \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done; \
+	if test "$$dot_seen" = "no"; then \
+	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
+	fi; test -z "$$fail"
+
+mostlyclean-recursive clean-recursive distclean-recursive \
+maintainer-clean-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	dot_seen=no; \
+	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = "."; then :; else \
+	    rev="$$subdir $$rev"; \
+	  fi; \
+	done; \
+	rev="$$rev ."; \
+	target=`echo $@ | sed s/-recursive//`; \
+	for subdir in $$rev; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
+tags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
+	done
 
 tags: TAGS
 
@@ -296,10 +333,15 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+   if test "$$subdir" = .; then :; else \
+	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
+   fi; \
+	done; \
 	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
@@ -332,30 +374,40 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	for subdir in $(SUBDIRS); do \
+	  if test "$$subdir" = .; then :; else \
+	    test -d $(distdir)/$$subdir \
+	    || mkdir $(distdir)/$$subdir \
+	    || exit 1; \
+	    (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir=../$(top_distdir) distdir=../$(distdir)/$$subdir distdir) \
+	      || exit 1; \
+	  fi; \
+	done
 info-am:
-info: info-am
+info: info-recursive
 dvi-am:
-dvi: dvi-am
+dvi: dvi-recursive
 check-am: all-am
-check: check-am
+check: check-recursive
 installcheck-am:
-installcheck: installcheck-am
+installcheck: installcheck-recursive
 install-exec-am:
-install-exec: install-exec-am
+install-exec: install-exec-recursive
 
 install-data-am:
-install-data: install-data-am
+install-data: install-data-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-am
+install: install-recursive
 uninstall-am:
-uninstall: uninstall-am
+uninstall: uninstall-recursive
 all-am: Makefile
-all-redirect: all-am
+all-redirect: all-recursive
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
-installdirs:
+installdirs: installdirs-recursive
+installdirs-am:
 
 
 mostlyclean-generic:
@@ -372,18 +424,18 @@ maintainer-clean-generic:
 mostlyclean-am:  mostlyclean-compile mostlyclean-libtool mostlyclean-kr \
 		mostlyclean-tags mostlyclean-generic
 
-mostlyclean: mostlyclean-am
+mostlyclean: mostlyclean-recursive
 
 clean-am:  clean-compile clean-libtool clean-kr clean-tags clean-generic \
 		mostlyclean-am
 
-clean: clean-am
+clean: clean-recursive
 
 distclean-am:  distclean-compile distclean-libtool distclean-kr \
 		distclean-tags distclean-generic clean-am
 	-rm -f libtool
 
-distclean: distclean-am
+distclean: distclean-recursive
 
 maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
 		maintainer-clean-kr maintainer-clean-tags \
@@ -391,42 +443,28 @@ maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
-maintainer-clean: maintainer-clean-am
+maintainer-clean: maintainer-clean-recursive
 
 .PHONY: mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-libtool distclean-libtool \
 clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
-clean-kr maintainer-clean-kr tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
-check-am installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+clean-kr maintainer-clean-kr install-recursive uninstall-recursive \
+install-data-recursive uninstall-data-recursive install-exec-recursive \
+uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
+all-recursive check-recursive installcheck-recursive info-recursive \
+dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
+maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs-am installdirs mostlyclean-generic distclean-generic \
+clean-generic maintainer-clean-generic clean mostlyclean distclean \
+maintainer-clean
 
 
 allprogs: $(EXTRA_PROGRAMS)
-
-# The distribution includes calc.c, calc.h and calclex.c, generated with
-# bison and flex, so the calc program will build even if yacc and lex aren't
-# available.  The rules below regenerate those files if you modify calc.y or
-# calclex.l.
-#
-# Using "cd"s instead of a $(srcdir) path ensures $(srcdir) doesn't get into
-# the "#line"s in the generated files.
-#
-# FIXME: Automake yacc handling isn't quite right when building in a
-# separate object directory, hence the explicit rules used for now.
-#
-# FIXME: With ansi2knr and no-dependencies, there doesn't seem any easy way
-# to manually express that calclex$U.lo depends on calc.h.  Making calclex.c
-# depend on calc.h gets the right result, but the extra lex runs are
-# unnecessary.
-
-$(srcdir)/calclex.c: calclex.l calc.h
-	cd $(srcdir); lex -ocalclex.c calclex.l
-$(srcdir)/calc.c $(srcdir)/calc.h: calc.y
-	cd $(srcdir); yacc -d -ocalc.c calc.y
+	cd calc; $(MAKE) $(AM_MAKEFLAGS) allprogs
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
