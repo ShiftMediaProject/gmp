@@ -1234,7 +1234,7 @@ case $host in
     # If there's any sse2 or mmx in the path, check whether the assembler
     # supports it, and remove if not.
     case "$path" in
-      *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(mmx)]) ;;
+      *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(*mmx*)]) ;;
     esac
     case "$path" in
       *sse2*)  GMP_ASM_X86_SSE2( , [GMP_STRIP_PATH(sse2)]) ;;
