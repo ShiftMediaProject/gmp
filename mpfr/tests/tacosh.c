@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-test.h"
 
 #define TEST_FUNCTION mpfr_acosh
 #define RAND_FUNCTION(x) (mpfr_random (x), mpfr_ui_div (x, 1, x, GMP_RNDN))
