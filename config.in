@@ -475,7 +475,7 @@ MA 02111-1307, USA.
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define if compiler has function prototypes */
+/* Define to 1 if the C compiler supports function prototypes. */
 #undef PROTOTYPES
 
 /* Define as the return type of signal handlers (`int' or `void'). */
@@ -533,6 +533,9 @@ MA 02111-1307, USA.
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
 #undef YYTEXT_POINTER
+
+/* Define like PROTOTYPES; this can be used by system headers. */
+#undef __PROTOTYPES
 
 /* Define as `__inline' if that's what the C compiler calls it, or to nothing
    if it is not supported. */
