@@ -3525,7 +3525,8 @@
 
 	* gmp-impl.h (MPZ_FITS_{S,U}TYPE_SDT): New macros.
 	* mpz/fits.c: New file merging six separate fits*.c.
-	* mpz/fits_{s,u}{short,int,long}_p.c: Remove files.
+	* mpz/fits_sshort_p.c, fits_sint_p.c, fits_slong_p.c, fits_ushort_p.c,
+	fits_uint_p.c, fits_ulong_p.c: Remove files
 	* mpz/Makefile.am: Use new fits.c, change object names from
 	fits_*_p.lo to fits_*.lo to avoid SunOS 4 native "ar" warnings.
 	* Makefile.am (MPZ_OBJECTS): Change from fits_*_p.lo to fits_*.lo.
