@@ -38,6 +38,8 @@ ifdef(`OPERATION_add_n', `
 ',`m4_error(`Need OPERATION_add_n or OPERATION_sub_n
 ')')')
 
+MULFUNC_PROLOGUE(mpn_add_n mpn_add_nc mpn_sub_n mpn_sub_nc)
+
 
 `#' mp_limb_t M4_function_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
 `#'                          mp_size_t size);
@@ -105,15 +107,17 @@ L(simple):
 	# edi	dst
 	# ebp
 	#
-	# stosl here is the same speed as a separate movl and leal, and it
-        # takes fewer code bytes.
+	# The store to (%edi) could be done with a stosl; it'd be smaller
+	# code, but there's no speed gain and a cld would have to be added
+	# (per mpn/x86/README.family).
 
 	movl	(%ebx), %eax
 	leal	4(%ebx), %ebx
 	
 	M4_inst	(%edx), %eax
 
-	stosl
+	movl	%eax, (%edi)
+	leal	4(%edi), %edi
 
 	leal	4(%edx), %edx
 	loop	L(simple)
@@ -129,7 +133,6 @@ L(simple):
 
 
 #------------------------------------------------------------------------------
-
 L(unroll):
 	# eax	carry
 	# ebx	src1
@@ -146,6 +149,7 @@ L(unroll):
 
 ifdef(`OPERATION_add_n',`
 	cmpl	%edi, %edx
+
 	je	L(inplace_reverse)
 ')
 
