@@ -171,9 +171,24 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t orig_
   ASSERT_LIMB (d);
   ASSERT_LIMB (c);
 
-  /* udivx is faster than 5 or 7 mulx's needed for one limb with an inverse */
+  /* udivx is faster than 10 or 12 mulx's for one limb via an inverse */
   if (size == 1)
-    return src[0] % d;
+    {
+      s = src[0];
+      if (s > c)
+	{
+	  l = s-c;
+	  h = l % d;
+	  if (h != 0)
+	    h = d - h;
+	}
+      else
+	{
+	  l = c-s;
+	  h = l % d;
+	}
+      return h;
+    }
 
   modlimb_invert (inverse, d);
 
