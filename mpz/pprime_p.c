@@ -79,6 +79,47 @@ mpz_probab_prime_p (m, reps)
       return 0;
     }
 
+#if 1
+  /* Do more dividing.  */
+  {
+    unsigned long int ln2;
+    unsigned long int q;
+    mp_limb_t p1, p0, p;
+    unsigned int primes[15];
+    int nprimes;
+
+    nprimes = 0;
+    p = 1;
+    ln2 = SIZ(n)*BITS_PER_MP_LIMB/30; ln2 = ln2 * ln2;
+    for (q = BITS_PER_MP_LIMB == 64 ? 59 : 31; q < ln2; q += 2)
+      {
+	if (isprime (q))
+	  {
+	    umul_ppmm (p1, p0, p, q);
+	    if (p1 != 0)
+	      {
+		r = mpn_mod_1 (PTR(n), SIZ(n), p);
+		while (--nprimes >= 0)
+		  if (r % primes[nprimes] == 0)
+		    {
+		      if (mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) primes[nprimes]) != 0)
+			abort ();
+		      mpz_clear (n);
+		      return 0;
+		    }
+		p = q;
+		nprimes = 0;
+	      }
+	    else
+	      {
+		p = p0;
+	      }
+	    primes[nprimes++] = q;
+	  }
+      }
+  }
+#endif
+
   mpz_init (tmp);
   mpz_init (n_minus_1);
   mpz_sub_ui (n_minus_1, n, 1L);
@@ -87,7 +128,7 @@ mpz_probab_prime_p (m, reps)
   mpz_init_set_ui (two, 210L);
   mpz_powm (tmp, two, n_minus_1, n);
   mpz_clear (two);
-  if (mpz_cmp_ui (tmp, 1) != 0)
+  if (mpz_cmp_ui (tmp, 1L) != 0)
     {
       mpz_clear (n_minus_1);
       mpz_clear (tmp);
