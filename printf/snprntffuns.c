@@ -140,7 +140,7 @@ gmp_snprintf_reps (struct gmp_snprintf_t *d, int c, int reps)
 }
 
 static int
-gmp_snprintf_final (struct gmp_snprintf_t *d, int c, int reps)
+gmp_snprintf_final (struct gmp_snprintf_t *d)
 {
   if (d->size >= 1)
     d->buf[0] = '\0';
