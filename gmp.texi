@@ -524,9 +524,9 @@ trying to run anything on the build system, and this can be important when
 creating binaries for a newer CPU, since they might not run on the build
 system.
 
-Currently autoconf requires an explicit @samp{--build} whenever
-cross-compiling.  It can simply be the output from running
-@samp{./config.guess}.  In the future that might be the default.
+Currently a warning is given unless an explicit @samp{--build} is used when
+cross-compiling, because it may not be possible to correctly guess the build
+system type if the @env{PATH} has only a cross-compiling @command{cc}.
 
 Note that the @samp{--target} option is not appropriate for GMP.  It's for use
 when building compiler tools, with @samp{--host} being where they will run,
@@ -576,6 +576,7 @@ HPPA:
 MIPS:
 @samp{mips},
 @samp{mips3},
+@samp{mips64}
 
 @item
 Motorola:
@@ -649,7 +650,8 @@ should make it possible to at least get something running if all else fails.
 On some systems GMP supports multiple ABIs (application binary interfaces),
 meaning data type sizes and calling conventions.  By default GMP chooses the
 best ABI available, but a particular ABI can be selected.  See @ref{ABI and
-ISA}, for the available choices and relevant CPUs.
+ISA}, for the available choices on relevant CPUs, and what applications need
+to do.
 
 @item @option{CC}, @option{CFLAGS}
 
@@ -785,7 +787,7 @@ registers a CPU has available.
 
 Some 64-bit ISA CPUs have both a 64-bit ABI and a 32-bit ABI defined, the
 latter for compatibility with older CPUs in the family.  GMP supports some
-CPUs like this in both ABIs.  In fact within GMP the @samp{ABI} means both the
+CPUs like this in both ABIs.  In fact within GMP @samp{ABI} a combination of
 chip ABI, plus how GMP chooses to use it.  For example in some 32-bit ABIs,
 GMP has support for a limb as either a 32-bit @code{long} or a 64-bit
 @code{long long}.
@@ -793,8 +795,8 @@ GMP has support for a limb as either a 32-bit @code{long} or a 64-bit
 By default GMP chooses the best ABI available for a given system, and this
 generally gives significantly greater speed.  But an ABI can be chosen
 explicitly to make GMP compatible with other libraries, or particular
-application requirements.  In all cases it's important that applications and
-cooperating libraries are compiled with the same ABI.
+application requirements.  In all cases it's vital that all object code used
+in a given program is compiled for the same ABI.
 
 Usually a limb is implemented as a @code{long}.  When a @code{long long} limb
 is used, this is encoded in a generated @file{gmp.h}.  This is convenient for
@@ -839,23 +841,36 @@ CPU type @samp{hppa2.0w} or @samp{hppa2.0} will use any of the above ABIs,
 @samp{hppa2.0n} uses only 2.0n or 1.0.
 
 @need 1000
-@item MIPS 3 and 4 (@samp{mips[34]})
+@item MIPS 3 and up (@samp{mips3*}, @samp{mips64*})
+
+The n32 and 64 ABIs are available on IRIX 6 and up.  GNU/Linux, as of kernel
+version 2.2, doesn't have the necessary support.
 
 @table @asis
+@item @samp{ABI=64}
+
+The 64-bit ABI is 64-bit pointers and integers.  Applications must be compiled
+with
+
+@example
+gcc  -mabi=64
+cc   -64
+@end example
+
 @item @samp{ABI=n32}
 
-The n32 ABI with a 64-bit limb is available on systems @samp{mips*-*-irix6*}.
-Applications must be compiled with
+The n32 ABI is 32-bit pointers and integers, but with a 64-bit limb using a
+@code{long long} in the 64-bit registers.  Applications must be compiled with
 
 @example
 gcc  -mabi=n32
 cc   -n32
 @end example
 
-@item @samp{ABI=32}
+@item @samp{ABI=o32}
 
-The plain 32-bit MIPS ABI with a 32-bit limb can also be used on newer CPUs,
-and no special compiler options are required.
+This is the plain 32-bit ABI with a 32-bit limb, and can be used on newer
+CPUs.  No special compiler options are required.
 @end table
 
 @need 1000
@@ -2110,8 +2125,11 @@ Currently @code{cdiv} @code{2exp} forms are not available.
 @deftypefun void mpz_mod (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_mod_ui (mpz_t @var{r}, mpz_t @var{n}, @w{unsigned long int @var{d}})
 Set @var{r} to @var{n} @code{mod} @var{d}.  The sign of the divisor is
-ignored; the result is always non-negative.  @code{mpz_mod_ui} also returns
-the remainder.
+ignored; the result is always non-negative.
+
+@code{mpz_mod_ui} is identical to @code{mpz_fdiv_r_ui} above, returning the
+remainder as well as setting @var{r}.  See @code{mpz_fdiv_ui} above if only
+the return value is wanted.
 @end deftypefun
 
 @deftypefun void mpz_divexact (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
@@ -3486,8 +3504,9 @@ return value @ma{c} satisfy @m{cb^n+a-i=3q, c*b^n + a-i = 3*q}, where
 @m{b=2\GMPraise{@code{mp\_bits\_per\_limb}}, b=2^mp_bits_per_limb}.  The
 return @ma{c} is always 0, 1 or 2, and the initial carry @ma{i} must also be
 0, 1 or 2 (these are both borrows really).  When @ma{c=0} clearly
-@ma{q=(a-i)/3}.  When @m{c \neq 0, c!=0}, the remainder @ma{(a-i) @bmod{} 3} is
-given by @ma{3-c}, because @ma{b @equiv{} 1 @bmod{} 3}.
+@ma{q=(a-i)/3}.  When @m{c \neq 0, c!=0}, the remainder @ma{(a-i) @bmod{} 3}
+is given by @ma{3-c}, because @ma{b @equiv{} 1 @bmod{} 3} (when
+@code{mp_bits_per_limb} is even, which is always so currently).
 @end deftypefn
 
 @deftypefun mp_limb_t mpn_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb})
