@@ -18,6 +18,17 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-01-14  Niels Möller  <niels@s3.kth.se>
+
+	* mpn/generic/hgcd2.c (mpn_hgcd2): Interface change. Return 1
+	instead of 2, in the no progress case r0=A, r1=B.
+
+	* mpn/generic/hgcd.c (hgcd_adjust): Changed arguments and return
+	value. Now takes a struct hgcd_row * and the uv size, and returns
+	updated uvsize.
+	(hgcd_final): Special handling of the case hgcd2 returning 1. Now
+	uses hgcd_adjust, instead of a full Euclid division.
+
 2004-01-13  Niels Möller  <nisse@harpo.hack.org>
 
 	* mpn/generic/hgcd.c (euclid_step, hgcd_case0): Merged into a
