@@ -18,6 +18,23 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-04-07  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k6/gcd_finda.asm: Correction jbe -> jb in initial setups.
+	Zero flag is wrong here, it relects only the high limb of the compare,
+	leading to n1>=n2 not satisfied and wrong results.  cp[1]==0x7FFFFFFF
+	with cp[0]>=0x80000001 provokes this.
+
+	* doc/gmp.texi (BSD Compatible Functions): Note "pow" name clash under
+	the pow function description too.
+	(Language Bindings): Add XEmacs (betas at this stage).
+
+	* tests/refmpn.c (refmpn_mod2): Correction to ASSERTs, r==a is allowed.
+
+	* gen-psqr.c (generate_mod): Cast mpz_invert_ui_2exp args, for K&R.
+	* gen-bases.c, gen-fib.c, gen-psqr.c: For mpz_out_str, use stdout
+	instead of 0, in case a K&R treats int and FILE* params differently.
+
 2004-04-04  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (BSWAP_LIMB) [amd64]: New macro.
