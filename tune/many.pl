@@ -526,6 +526,8 @@ my @table =
        'regexp'=> 'hamdist',
        'ret'   => 'void',
        'args'  => 'mp_srcptr xp, mp_srcptr yp, mp_size_t size',
+       # extra renaming to support sharing a data table with mpn_popcount
+       'rename'=> ['popcount'],
      },
 
      {
@@ -802,8 +804,6 @@ foreach my $file_full (@files) {
     $seen_obj{$obj_with_suffix} = $file_full;
 
     my $funs = $t->{'funs'};
-    print "funs @$funs\n" if $opt{'t'};
-
     $funs = [$obj] if ! defined $funs;
     print "funs @$funs\n" if $opt{'t'};
 
@@ -841,7 +841,7 @@ foreach my $file_full (@files) {
   	    "$renaming" .
 	    "		$file_full >tmp-$objbase.s\n" .
             "	\$(CCAS) \$(COMPILE_FLAGS) $pic->{'cflags'} tmp-$objbase.s -o $objbase.o\n" .
-            "	\$(RM_TMP_S) tmp-$objbase.s\n";
+            "	\$(RM_TMP) tmp-$objbase.s\n";
 	$MANY_OBJS .= " $objbase.o";
 
       } elsif ($lang eq '.c') {
@@ -1108,7 +1108,7 @@ print_ansi2knr("try-many",
 	       "-I\$(top_srcdir)/tests/devel");
 
 print MAKEFILE <<EOF;
-RM_TMP_S = rm -f
+RM_TMP = rm -f
 CFLAGS_TESTS = -DSIZE=50 -DTIMES=1 -DRANDOM -DCLOCK=333000000
 CFLAGS_TESTS_SP = -DSIZE=1024 -DNOCHECK -DOPS=200000000 -DCLOCK=333000000
 EOF
