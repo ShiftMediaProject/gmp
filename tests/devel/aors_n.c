@@ -104,7 +104,7 @@ main (int argc, char **argv)
 #if TIMES == 1 && ! defined (PRINT)
       if (test % (SIZE > 100000 ? 1 : 100000 / SIZE) == 0)
 	{
-	  printf ("\r%d", test);
+	  printf ("\r%u", test);
 	  fflush (stdout);
 	}
 #endif
@@ -129,7 +129,7 @@ main (int argc, char **argv)
 	func (dx+1, s1, s2, size);
       t = cputime() - t0;
       printf (funcname ":    %5ldms (%.3f cycles/limb)\n",
-	      t, ((double) t * CLOCK) / (TIMES * SIZE * 1000.0));
+	      t, ((double) t * CLOCK) / (TIMES * size * 1000.0));
 #endif
 
 #ifndef NOCHECK
@@ -150,12 +150,14 @@ main (int argc, char **argv)
 
       cyx = reffunc (dx+1, s1, s2, size);
       cyy = func (dy+1, s1, s2, size);
+
 #ifdef PRINT
       mpn_print (&cyx, 1);
       mpn_print (dx+1, size);
       mpn_print (&cyy, 1);
       mpn_print (dy+1, size);
 #endif
+
       if (cyx != cyy || mpn_cmp (dx, dy, size+2) != 0
 	  || dx[0] != 0x87654321 || dx[size+1] != 0x12345678)
 	{
