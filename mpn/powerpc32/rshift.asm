@@ -143,10 +143,9 @@ L(oopU):
 	or	r26, r10, r26
 	stw	r26, 12(r7)
 	or	r27, r11, r27
-	stwu	r27, 16(r7)
-	mr	r0, r12
+	stw	r27, 16(r7)
 
-	stw	r0, 4(r7)
+	stw	r12, 20(r7)
 	lmw	r24, -32(r1)	C restore registers
 	blr
 
