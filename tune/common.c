@@ -256,8 +256,7 @@ align_pointer (void *p, size_t align)
   unsigned  d;
   d = ((unsigned) p) & (align-1);
   d = (d != 0 ? align-d : 0);
-  p = (void *) (((char *) p) + d);
-  return p;
+  return (void *) (((char *) p) + d);
 }
 
 /* Note that memory allocated with this function can never be freed, because
