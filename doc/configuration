@@ -1,0 +1,104 @@
+/* doc/configuration (in Emacs -*-outline-*- format). */
+
+* How to add a new file
+** A file in the `mpn' subdirectory
+The way we build libmpn (in the `mpn' subdirectory) is quite special.
+
+There is (currently) only one ``generic'' file, one that is truly
+target indepentant.  That is `mp_bases.c'.  All other files are kept
+in subdirectories of `mpn' with the subdirectory names indicating
+target processor.  For example, in the `alpha' subdirectory, code
+specific to the Alpha processor is found.
+
+When running `configure', a bunch of symbolic links (if the build host
+supports that, otherwise there will be hard links) is made in the
+`mpn' subdirectory.
+
+There are four types of mpn source files.
+
+  .asm	  Assembly code preprocessed with m4
+  .S	  Assembly code preprocessed with CPP
+  .s	  Assembly code not preprocessed at all
+  .c	  C code
+
+There are two types of .asm files.
+
+  i) ``Normal'' files containg one function, possibly with more than
+     one entry point.
+
+  ii) Multi-function files containing more than one function.
+
+When adding a new mpn function, you'll have to 
+
+  i) Implement it in an .asm file with one PROLOGUE(func) per *entry
+      point*.
+
+  ii) Add the function name to the `gmp_mpn_functions' variable in
+      configure.in.  If its existant is depending on target, add it to
+      `extra_functions'.
+
+  iii) If you want `HAVE_NATIVE_func' defined in config.h, add 
+       `#undef <func>' to acconfig.h.
+
+  iv) If you have created a multi-function .asm file:
+
+    a) Make sure that your .asm file has one MULFUNC_PROLOGUE(func)
+       per *entry point*.  This is needed because the PROLOGUE()
+       macros in a multi-function file are normally supposed to be
+       expanded by m4, and configure grep's the source file without
+       invoking m4.
+
+    b) Add the file name without the .asm extension to the
+       `gmp_mulfunc_files' variable in configure.in.
+
+    c) List all functions that the file implements in the
+       `gmp_mf_<file>' variable.
+
+** Add a file in any other directory
+FIXME
+
+* Selecting compiler and its flags by hand
+Specifying CC on the configure command line, will result in a default
+set of compiler flags, CFLAGS; `-g' for all compilers plus `-O2' for
+gcc.  Specify CFLAGS to set better flags.
+
+Example
+
+  $ configure CC=my-gcc
+
+will give 
+
+  CFLAGS = -g -O2
+
+Specifying CC on the configure command line will make configure
+believe it's a 32-bit compiler and not choose a source path with
+64-bit assembly code.  Specify CC64 as well as CC to make configure
+pick 64-bit assembly code.
+
+  $ configure CC=my64bit-cc CC64=my64bit-cc CFLAGS="-my -flags"
+
+* The configure system
+** What we use
+We use the tools in <ftp://ftp.swox.com/pub/gmp/infrastructure/>.
+** How to install new versions of Autoconf / Automake / Libtool
+*** Build Libtool
+With a fresh CVS checkout, run the bootstrap script with released
+versions (not CVS versions) of Autoconf and Automake in PATH.
+*** Update gmp directory
+gmp$ rm ltconfig ltmain.sh
+gmp$ libtoolize --copy
+gmp$ automake --add-missing --copy
+
+** How it works
+Input file	Extra input	Tool		Output
+----------------------------------------------------------
+acinclude.m4			aclocal		aclocal.m4
+configure.in	aclocal.m4	autoconf	configure
+Makefile.am+configure.in	automake	Makefile.in
+configure.in+acconfig.h		autoheader	config.in
+
+		Makefile.in	configure	Makefile
+		config.in	configure	config.h
+				configure	config.m4
+
+/* eof doc/configuration */
