@@ -908,12 +908,19 @@ case $host in
             # Must indicate object type to ar and nm
 	    ar_aix64_flags="-X64"
 	    nm_aix64_flags="-X64"
-            path_aix64="powerpc64"
+            path_aix64="powerpc64/mode64 powerpc64"
             extra_functions_aix64="umul"
             # grab this object, though it's not a true cycle counter routine
             SPEED_CYCLECOUNTER_OBJ_aix64=powerpc64.lo
             cyclecounter_size_aix64=0
             ;;
+          *-*-darwin*)
+	    abilist="mode32 mode64"
+	    cclist_mode32="gcc"
+	    gcc_mode32_cflags="-O3 -mpowerpc64"
+	    path_mode32="powerpc64/mode32 powerpc64"
+	    limb_mode32=longlong
+	    ;;
         esac
         ;;
     esac
@@ -2822,7 +2829,7 @@ if test $enable_mpfr = yes; then
   gmp_LIBS=$LIBS
   LIBS="$LIBS $LIBM"
 
-  MPFR_CONFIGS
+
 
   AC_SUBST(MPFR_CFLAGS,$CFLAGS)
   AC_SUBST(MPFR_LIBS,  $LIBS)
