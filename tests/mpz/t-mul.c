@@ -31,7 +31,7 @@ MA 02111-1307, USA. */
 void debug_mp _PROTO ((mpz_t, int));
 static void base_mul _PROTO ((mp_ptr,mp_srcptr,mp_size_t,mp_srcptr,mp_size_t));
 static void ref_mpz_mul _PROTO ((mpz_t, const mpz_t, const mpz_t));
-void dump_abort _PROTO ((char *, mpz_t, mpz_t, mpz_t, mpz_t));
+void dump_abort _PROTO ((int, char *, mpz_t, mpz_t, mpz_t, mpz_t));
 
 int
 main (int argc, char **argv)
@@ -65,6 +65,7 @@ main (int argc, char **argv)
     {
       mpz_urandomb (bs, rands, 32);
       size_range = mpz_get_ui (bs) % 18 + 2;
+
       mpz_urandomb (bs, rands, size_range);
       multiplier_size = mpz_get_ui (bs);
       mpz_rrandomb (multiplier, rands, multiplier_size);
@@ -86,10 +87,9 @@ main (int argc, char **argv)
 
       if (size_range <= 16)  /* avoid calling ref_mpz_mul for huge operands */
 	{
-
 	  ref_mpz_mul (ref_product, multiplier, multiplicand);
 	  if (mpz_cmp (product, ref_product))
-	    dump_abort ("incorrect plain product",
+	    dump_abort (i, "incorrect plain product",
 			multiplier, multiplicand, product, ref_product);
 	}
 
@@ -100,21 +100,27 @@ main (int argc, char **argv)
 	    {
 	      debug_mp (quotient, -16);
 	      debug_mp (remainder, -16);
-	      dump_abort ("incorrect quotient or remainder",
+	      dump_abort (i, "incorrect quotient or remainder",
 			  multiplier, multiplicand, product, ref_product);
 	    }
 	}
 
+      /* Test squaring.  */
       if (size_range <= 16)  /* avoid calling ref_mpz_mul for huge operands */
 	{
-	  /* Test squaring.  */
 	  mpz_mul (product, multiplier, multiplier);
 	  ref_mpz_mul (ref_product, multiplier, multiplier);
-
-	  if (mpz_cmp (product, ref_product))
-	    dump_abort ("incorrect square product",
-			multiplier, multiplier, product, ref_product);
 	}
+      else
+	{
+	  mpz_mul (product, multiplier, multiplier);
+	  mpz_set (multiplicand, multiplier);
+	  mpz_mul (ref_product, multiplier, multiplicand);
+	}
+
+      if (mpz_cmp (product, ref_product))
+	dump_abort (i, "incorrect square product",
+		    multiplier, multiplier, product, ref_product);
     }
 
   mpz_clear (bs);
@@ -228,9 +234,9 @@ base_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
     {
       mp_limb_t u_limb, w_limb;
       u_limb = *up++;
-      umul_ppmm (prod_high, prod_low, u_limb, v_limb);
-      add_ssaaaa (cy_dig, w_limb, prod_high, prod_low, 0, cy_dig);
-      *wp++ = w_limb;
+      umul_ppmm (prod_high, prod_low, u_limb, v_limb << GMP_NAIL_BITS);
+      add_ssaaaa (cy_dig, w_limb, prod_high, prod_low, 0, cy_dig << GMP_NAIL_BITS);
+      *wp++ = w_limb >> GMP_NAIL_BITS;
     }
 
   *wp++ = cy_dig;
@@ -248,12 +254,18 @@ base_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 	{
 	  mp_limb_t u_limb, w_limb;
 	  u_limb = *up++;
-	  umul_ppmm (prod_high, prod_low, u_limb, v_limb);
+	  umul_ppmm (prod_high, prod_low, u_limb, v_limb << GMP_NAIL_BITS);
 	  w_limb = *wp;
-	  add_ssaaaa (prod_high, prod_low, prod_high, prod_low, 0, w_limb);
+	  add_ssaaaa (prod_high, prod_low, prod_high, prod_low, 0, w_limb << GMP_NAIL_BITS);
+	  prod_low >>= GMP_NAIL_BITS;
 	  prod_low += cy_dig;
+#if GMP_NAIL_BITS == 0
 	  cy_dig = prod_high + (prod_low < cy_dig);
-	  *wp++ = prod_low;
+#else
+	  cy_dig = prod_high;
+	  cy_dig += prod_low >> GMP_NUMB_BITS;
+#endif
+	  *wp++ = prod_low & GMP_NUMB_MASK;
 	}
 
       *wp++ = cy_dig;
@@ -263,14 +275,18 @@ base_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 }
 
 void
-dump_abort (char *s, 
+dump_abort (int i, char *s, 
 	    mpz_t multiplier, mpz_t multiplicand, mpz_t product, mpz_t ref_product)
 {
-  fprintf (stderr, "ERROR: %s\n", s);
+  mpz_t diff;
+  fprintf (stderr, "ERROR: %s in test %d\n", s, i);
   fprintf (stderr, "multiplier   = "); debug_mp (multiplier, -16);
   fprintf (stderr, "multiplicand = "); debug_mp (multiplicand, -16);
   fprintf (stderr, "    product  = "); debug_mp (product, -16);
   fprintf (stderr, "ref_product  = "); debug_mp (ref_product, -16);
+  mpz_init (diff);
+  mpz_sub (diff, ref_product, product);
+  fprintf (stderr, "diff:         "); debug_mp (diff, -16);
   abort();
 }
 
