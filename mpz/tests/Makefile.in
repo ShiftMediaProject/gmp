@@ -117,14 +117,14 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse \
-  t-root
+  t-root t-mod2 t-jac
 
 
 TESTS = $(check_PROGRAMS)
@@ -136,99 +136,111 @@ check_PROGRAMS =  t-mul$(EXEEXT) t-tdiv$(EXEEXT) t-tdiv_ui$(EXEEXT) \
 t-fdiv$(EXEEXT) t-fdiv_ui$(EXEEXT) t-gcd$(EXEEXT) dive$(EXEEXT) \
 t-sqrtrem$(EXEEXT) convert$(EXEEXT) io$(EXEEXT) logic$(EXEEXT) \
 bit$(EXEEXT) t-powm$(EXEEXT) t-powm_ui$(EXEEXT) t-pow_ui$(EXEEXT) \
-t-2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT)
+t-2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT) t-mod2$(EXEEXT) \
+t-jac$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
+ANSI2KNR = $(top_builddir)/ansi2knr
 bit_SOURCES = bit.c
-bit_OBJECTS =  bit.$(OBJEXT)
+bit_OBJECTS =  bit$U.$(OBJEXT)
 bit_LDADD = $(LDADD)
 bit_DEPENDENCIES =  $(top_builddir)/libgmp.la
 bit_LDFLAGS = 
 convert_SOURCES = convert.c
-convert_OBJECTS =  convert.$(OBJEXT)
+convert_OBJECTS =  convert$U.$(OBJEXT)
 convert_LDADD = $(LDADD)
 convert_DEPENDENCIES =  $(top_builddir)/libgmp.la
 convert_LDFLAGS = 
 dive_SOURCES = dive.c
-dive_OBJECTS =  dive.$(OBJEXT)
+dive_OBJECTS =  dive$U.$(OBJEXT)
 dive_LDADD = $(LDADD)
 dive_DEPENDENCIES =  $(top_builddir)/libgmp.la
 dive_LDFLAGS = 
 io_SOURCES = io.c
-io_OBJECTS =  io.$(OBJEXT)
+io_OBJECTS =  io$U.$(OBJEXT)
 io_LDADD = $(LDADD)
 io_DEPENDENCIES =  $(top_builddir)/libgmp.la
 io_LDFLAGS = 
 logic_SOURCES = logic.c
-logic_OBJECTS =  logic.$(OBJEXT)
+logic_OBJECTS =  logic$U.$(OBJEXT)
 logic_LDADD = $(LDADD)
 logic_DEPENDENCIES =  $(top_builddir)/libgmp.la
 logic_LDFLAGS = 
 reuse_SOURCES = reuse.c
-reuse_OBJECTS =  reuse.$(OBJEXT)
+reuse_OBJECTS =  reuse$U.$(OBJEXT)
 reuse_LDADD = $(LDADD)
 reuse_DEPENDENCIES =  $(top_builddir)/libgmp.la
 reuse_LDFLAGS = 
 t_2exp_SOURCES = t-2exp.c
-t_2exp_OBJECTS =  t-2exp.$(OBJEXT)
+t_2exp_OBJECTS =  t-2exp$U.$(OBJEXT)
 t_2exp_LDADD = $(LDADD)
 t_2exp_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_2exp_LDFLAGS = 
 t_fdiv_SOURCES = t-fdiv.c
-t_fdiv_OBJECTS =  t-fdiv.$(OBJEXT)
+t_fdiv_OBJECTS =  t-fdiv$U.$(OBJEXT)
 t_fdiv_LDADD = $(LDADD)
 t_fdiv_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_fdiv_LDFLAGS = 
 t_fdiv_ui_SOURCES = t-fdiv_ui.c
-t_fdiv_ui_OBJECTS =  t-fdiv_ui.$(OBJEXT)
+t_fdiv_ui_OBJECTS =  t-fdiv_ui$U.$(OBJEXT)
 t_fdiv_ui_LDADD = $(LDADD)
 t_fdiv_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_fdiv_ui_LDFLAGS = 
 t_gcd_SOURCES = t-gcd.c
-t_gcd_OBJECTS =  t-gcd.$(OBJEXT)
+t_gcd_OBJECTS =  t-gcd$U.$(OBJEXT)
 t_gcd_LDADD = $(LDADD)
 t_gcd_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_gcd_LDFLAGS = 
+t_jac_SOURCES = t-jac.c
+t_jac_OBJECTS =  t-jac$U.$(OBJEXT)
+t_jac_LDADD = $(LDADD)
+t_jac_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_jac_LDFLAGS = 
+t_mod2_SOURCES = t-mod2.c
+t_mod2_OBJECTS =  t-mod2$U.$(OBJEXT)
+t_mod2_LDADD = $(LDADD)
+t_mod2_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_mod2_LDFLAGS = 
 t_mul_SOURCES = t-mul.c
-t_mul_OBJECTS =  t-mul.$(OBJEXT)
+t_mul_OBJECTS =  t-mul$U.$(OBJEXT)
 t_mul_LDADD = $(LDADD)
 t_mul_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_mul_LDFLAGS = 
 t_pow_ui_SOURCES = t-pow_ui.c
-t_pow_ui_OBJECTS =  t-pow_ui.$(OBJEXT)
+t_pow_ui_OBJECTS =  t-pow_ui$U.$(OBJEXT)
 t_pow_ui_LDADD = $(LDADD)
 t_pow_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_pow_ui_LDFLAGS = 
 t_powm_SOURCES = t-powm.c
-t_powm_OBJECTS =  t-powm.$(OBJEXT)
+t_powm_OBJECTS =  t-powm$U.$(OBJEXT)
 t_powm_LDADD = $(LDADD)
 t_powm_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_powm_LDFLAGS = 
 t_powm_ui_SOURCES = t-powm_ui.c
-t_powm_ui_OBJECTS =  t-powm_ui.$(OBJEXT)
+t_powm_ui_OBJECTS =  t-powm_ui$U.$(OBJEXT)
 t_powm_ui_LDADD = $(LDADD)
 t_powm_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_powm_ui_LDFLAGS = 
 t_root_SOURCES = t-root.c
-t_root_OBJECTS =  t-root.$(OBJEXT)
+t_root_OBJECTS =  t-root$U.$(OBJEXT)
 t_root_LDADD = $(LDADD)
 t_root_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_root_LDFLAGS = 
 t_sqrtrem_SOURCES = t-sqrtrem.c
-t_sqrtrem_OBJECTS =  t-sqrtrem.$(OBJEXT)
+t_sqrtrem_OBJECTS =  t-sqrtrem$U.$(OBJEXT)
 t_sqrtrem_LDADD = $(LDADD)
 t_sqrtrem_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_sqrtrem_LDFLAGS = 
 t_tdiv_SOURCES = t-tdiv.c
-t_tdiv_OBJECTS =  t-tdiv.$(OBJEXT)
+t_tdiv_OBJECTS =  t-tdiv$U.$(OBJEXT)
 t_tdiv_LDADD = $(LDADD)
 t_tdiv_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_tdiv_LDFLAGS = 
 t_tdiv_ui_SOURCES = t-tdiv_ui.c
-t_tdiv_ui_OBJECTS =  t-tdiv_ui.$(OBJEXT)
+t_tdiv_ui_OBJECTS =  t-tdiv_ui$U.$(OBJEXT)
 t_tdiv_ui_LDADD = $(LDADD)
 t_tdiv_ui_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_tdiv_ui_LDFLAGS = 
@@ -238,8 +250,8 @@ CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c \
-t-fdiv.c t-fdiv_ui.c t-gcd.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c \
-t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+t-fdiv.c t-fdiv_ui.c t-gcd.c t-jac.c t-mod2.c t-mul.c t-pow_ui.c \
+t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -247,8 +259,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-fdiv.c t-fdiv_ui.c t-gcd.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
-OBJECTS = bit.$(OBJEXT) convert.$(OBJEXT) dive.$(OBJEXT) io.$(OBJEXT) logic.$(OBJEXT) reuse.$(OBJEXT) t-2exp.$(OBJEXT) t-fdiv.$(OBJEXT) t-fdiv_ui.$(OBJEXT) t-gcd.$(OBJEXT) t-mul.$(OBJEXT) t-pow_ui.$(OBJEXT) t-powm.$(OBJEXT) t-powm_ui.$(OBJEXT) t-root.$(OBJEXT) t-sqrtrem.$(OBJEXT) t-tdiv.$(OBJEXT) t-tdiv_ui.$(OBJEXT)
+SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-fdiv.c t-fdiv_ui.c t-gcd.c t-jac.c t-mod2.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+OBJECTS = bit$U.$(OBJEXT) convert$U.$(OBJEXT) dive$U.$(OBJEXT) io$U.$(OBJEXT) logic$U.$(OBJEXT) reuse$U.$(OBJEXT) t-2exp$U.$(OBJEXT) t-fdiv$U.$(OBJEXT) t-fdiv_ui$U.$(OBJEXT) t-gcd$U.$(OBJEXT) t-jac$U.$(OBJEXT) t-mod2$U.$(OBJEXT) t-mul$U.$(OBJEXT) t-pow_ui$U.$(OBJEXT) t-powm$U.$(OBJEXT) t-powm_ui$U.$(OBJEXT) t-root$U.$(OBJEXT) t-sqrtrem$U.$(OBJEXT) t-tdiv$U.$(OBJEXT) t-tdiv_ui$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -290,6 +302,21 @@ clean-libtool:
 distclean-libtool:
 
 maintainer-clean-libtool:
+$(top_builddir)/ansi2knr: $(top_builddir)/ansi2knr.$(OBJEXT)
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
+
+$(top_builddir)/ansi2knr.$(OBJEXT):
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr.$(OBJEXT)
+
+
+mostlyclean-kr:
+	-rm -f *_.c
+
+clean-kr:
+
+distclean-kr:
+
+maintainer-clean-kr:
 
 bit$(EXEEXT): $(bit_OBJECTS) $(bit_DEPENDENCIES)
 	@rm -f bit$(EXEEXT)
@@ -331,6 +358,14 @@ t-gcd$(EXEEXT): $(t_gcd_OBJECTS) $(t_gcd_DEPENDENCIES)
 	@rm -f t-gcd$(EXEEXT)
 	$(LINK) $(t_gcd_LDFLAGS) $(t_gcd_OBJECTS) $(t_gcd_LDADD) $(LIBS)
 
+t-jac$(EXEEXT): $(t_jac_OBJECTS) $(t_jac_DEPENDENCIES)
+	@rm -f t-jac$(EXEEXT)
+	$(LINK) $(t_jac_LDFLAGS) $(t_jac_OBJECTS) $(t_jac_LDADD) $(LIBS)
+
+t-mod2$(EXEEXT): $(t_mod2_OBJECTS) $(t_mod2_DEPENDENCIES)
+	@rm -f t-mod2$(EXEEXT)
+	$(LINK) $(t_mod2_LDFLAGS) $(t_mod2_OBJECTS) $(t_mod2_LDADD) $(LIBS)
+
 t-mul$(EXEEXT): $(t_mul_OBJECTS) $(t_mul_DEPENDENCIES)
 	@rm -f t-mul$(EXEEXT)
 	$(LINK) $(t_mul_LDFLAGS) $(t_mul_OBJECTS) $(t_mul_LDADD) $(LIBS)
@@ -368,6 +403,56 @@ t-tdiv_ui$(EXEEXT): $(t_tdiv_ui_OBJECTS) $(t_tdiv_ui_DEPENDENCIES)
 	$(COMPILE) -c `cygpath -w $<`
 .c.lo:
 	$(LTCOMPILE) -c -o $@ $<
+bit_.c: bit.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/bit.c; then echo $(srcdir)/bit.c; else echo bit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > bit_.c
+convert_.c: convert.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/convert.c; then echo $(srcdir)/convert.c; else echo convert.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > convert_.c
+dive_.c: dive.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dive.c; then echo $(srcdir)/dive.c; else echo dive.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dive_.c
+io_.c: io.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/io.c; then echo $(srcdir)/io.c; else echo io.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > io_.c
+logic_.c: logic.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/logic.c; then echo $(srcdir)/logic.c; else echo logic.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > logic_.c
+reuse_.c: reuse.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/reuse.c; then echo $(srcdir)/reuse.c; else echo reuse.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > reuse_.c
+t-2exp_.c: t-2exp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-2exp.c; then echo $(srcdir)/t-2exp.c; else echo t-2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-2exp_.c
+t-fdiv_.c: t-fdiv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fdiv.c; then echo $(srcdir)/t-fdiv.c; else echo t-fdiv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-fdiv_.c
+t-fdiv_ui_.c: t-fdiv_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fdiv_ui.c; then echo $(srcdir)/t-fdiv_ui.c; else echo t-fdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-fdiv_ui_.c
+t-gcd_.c: t-gcd.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gcd.c; then echo $(srcdir)/t-gcd.c; else echo t-gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-gcd_.c
+t-jac_.c: t-jac.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-jac.c; then echo $(srcdir)/t-jac.c; else echo t-jac.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-jac_.c
+t-mod2_.c: t-mod2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-mod2.c; then echo $(srcdir)/t-mod2.c; else echo t-mod2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-mod2_.c
+t-mul_.c: t-mul.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-mul.c; then echo $(srcdir)/t-mul.c; else echo t-mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-mul_.c
+t-pow_ui_.c: t-pow_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-pow_ui.c; then echo $(srcdir)/t-pow_ui.c; else echo t-pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-pow_ui_.c
+t-powm_.c: t-powm.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-powm.c; then echo $(srcdir)/t-powm.c; else echo t-powm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-powm_.c
+t-powm_ui_.c: t-powm_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-powm_ui.c; then echo $(srcdir)/t-powm_ui.c; else echo t-powm_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-powm_ui_.c
+t-root_.c: t-root.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-root.c; then echo $(srcdir)/t-root.c; else echo t-root.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-root_.c
+t-sqrtrem_.c: t-sqrtrem.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sqrtrem.c; then echo $(srcdir)/t-sqrtrem.c; else echo t-sqrtrem.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-sqrtrem_.c
+t-tdiv_.c: t-tdiv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-tdiv.c; then echo $(srcdir)/t-tdiv.c; else echo t-tdiv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-tdiv_.c
+t-tdiv_ui_.c: t-tdiv_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-tdiv_ui.c; then echo $(srcdir)/t-tdiv_ui.c; else echo t-tdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-tdiv_ui_.c
+bit_.$(OBJEXT) bit_.lo convert_.$(OBJEXT) convert_.lo dive_.$(OBJEXT) \
+dive_.lo io_.$(OBJEXT) io_.lo logic_.$(OBJEXT) logic_.lo \
+reuse_.$(OBJEXT) reuse_.lo t-2exp_.$(OBJEXT) t-2exp_.lo \
+t-fdiv_.$(OBJEXT) t-fdiv_.lo t-fdiv_ui_.$(OBJEXT) t-fdiv_ui_.lo \
+t-gcd_.$(OBJEXT) t-gcd_.lo t-jac_.$(OBJEXT) t-jac_.lo t-mod2_.$(OBJEXT) \
+t-mod2_.lo t-mul_.$(OBJEXT) t-mul_.lo t-pow_ui_.$(OBJEXT) t-pow_ui_.lo \
+t-powm_.$(OBJEXT) t-powm_.lo t-powm_ui_.$(OBJEXT) t-powm_ui_.lo \
+t-root_.$(OBJEXT) t-root_.lo t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo \
+t-tdiv_.$(OBJEXT) t-tdiv_.lo t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : \
+$(ANSI2KNR)
 
 tags: TAGS
 
@@ -504,27 +589,27 @@ distclean-generic:
 maintainer-clean-generic:
 	-rm -f Makefile.in
 mostlyclean-am:  mostlyclean-checkPROGRAMS mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-tags \
+		mostlyclean-libtool mostlyclean-kr mostlyclean-tags \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
-clean-am:  clean-checkPROGRAMS clean-compile clean-libtool clean-tags \
-		clean-generic mostlyclean-am
+clean-am:  clean-checkPROGRAMS clean-compile clean-libtool clean-kr \
+		clean-tags clean-generic mostlyclean-am
 
 clean: clean-am
 
 distclean-am:  distclean-checkPROGRAMS distclean-compile \
-		distclean-libtool distclean-tags distclean-generic \
-		clean-am
+		distclean-libtool distclean-kr distclean-tags \
+		distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
 maintainer-clean-am:  maintainer-clean-checkPROGRAMS \
 		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-tags maintainer-clean-generic \
-		distclean-am
+		maintainer-clean-kr maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -534,13 +619,14 @@ maintainer-clean: maintainer-clean-am
 clean-checkPROGRAMS maintainer-clean-checkPROGRAMS mostlyclean-compile \
 distclean-compile clean-compile maintainer-clean-compile \
 mostlyclean-libtool distclean-libtool clean-libtool \
-maintainer-clean-libtool tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir check-TESTS info-am info \
-dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
-install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all install-strip \
-installdirs mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+maintainer-clean-libtool mostlyclean-kr distclean-kr clean-kr \
+maintainer-clean-kr tags mostlyclean-tags distclean-tags clean-tags \
+maintainer-clean-tags distdir check-TESTS info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all install-strip installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
