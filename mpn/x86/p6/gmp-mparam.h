@@ -24,19 +24,6 @@ MA 02111-1307, USA. */
 #define BYTES_PER_MP_LIMB 4
 
 
-#ifndef UMUL_TIME
-#define UMUL_TIME   5   /* cycles */
-#endif
-#ifndef UDIV_TIME
-#define UDIV_TIME   39  /* cycles */
-#endif
-
-/* A test with gcc 2.95.2 on mpn_sb_divrem_mn suggests that in practice
-   udiv_qrnnd_preinv is about 10 cycles faster than plain udiv_qrnnd. */
-#ifndef UDIV_NORM_PREINV_TIME
-#define UDIV_NORM_PREINV_TIME   31 /* cycles */
-#endif
-
 #ifndef COUNT_TRAILING_ZEROS_TIME
 #define COUNT_TRAILING_ZEROS_TIME   2  /* cycles */
 #endif

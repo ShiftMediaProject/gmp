@@ -23,20 +23,6 @@ MA 02111-1307, USA. */
 #define BYTES_PER_MP_LIMB 4
 
 
-#ifndef UMUL_TIME
-#define UMUL_TIME   3   /* cycles */
-#endif
-
-#ifndef UDIV_TIME
-#define UDIV_TIME   20  /* cycles */
-#endif
-
-/* udiv_qrnnd_preinv measures about 22 and haven't found any assembler that
-   can get much under 20.  Plain divisions are preferred.  */
-#ifndef UDIV_NORM_PREINV_TIME
-#define UDIV_NORM_PREINV_TIME   22 /* cycles */
-#endif
-
 /* bsfl takes 12-27 cycles, put an average for uniform random numbers */
 #ifndef COUNT_TRAILING_ZEROS_TIME
 #define COUNT_TRAILING_ZEROS_TIME   14  /* cycles */

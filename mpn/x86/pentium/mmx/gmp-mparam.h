@@ -1,6 +1,7 @@
 /* Intel P55 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,21 +24,6 @@ MA 02111-1307, USA. */
 #define BITS_PER_MP_LIMB 32
 #define BYTES_PER_MP_LIMB 4
 
-
-#ifndef UMUL_TIME
-#define UMUL_TIME   9 /* cycles */
-#endif
-#ifndef UDIV_TIME
-#define UDIV_TIME   41 /* cycles */
-#endif
-
-/* In an isolated test udiv_qrnnd_preinv can measure about 32 cycles, but in
-   practice it's not that good due to using up registers.  For instance
-   sb_divrem_mn is about the same speed using plain or preinv, so pretend
-   preinv is a touch slower than plain.  */
-#ifndef UDIV_NORM_PREINV_TIME
-#define UDIV_NORM_PREINV_TIME   42 /* cycles */
-#endif
 
 /* bsf takes 18-42 cycles, put an average for uniform random numbers */
 #ifndef COUNT_TRAILING_ZEROS_TIME
