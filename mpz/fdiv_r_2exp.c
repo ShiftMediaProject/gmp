@@ -80,9 +80,74 @@ mpz_fdiv_r_2exp (res, in, cnt)
     {
       /* Result should be 2^CNT - RES */
       mpz_t tmp;
-      MPZ_TMP_INIT (tmp, limb_cnt + 1);
+      MPZ_TMP_INIT (tmp, cnt/BITS_PER_MP_LIMB + 2);
       mpz_set_ui (tmp, 1L);
       mpz_mul_2exp (tmp, tmp, cnt);
       mpz_sub (res, tmp, res);
     }
 }
+
+/* This is an alternative ending of the above function using just low-level
+   functions.  Tested, but perhaps excessive?  */
+#if 0
+  if (res != in)
+    MPN_COPY (res->_mp_d, in->_mp_d, limb_cnt);
+
+  if (in->_mp_size < 0 && res_size != 0)
+    {
+      /* Result should be 2^CNT - RES */
+
+      mp_ptr rp;
+
+      limb_cnt = cnt / BITS_PER_MP_LIMB;
+
+      if (res->_mp_alloc <= limb_cnt)
+	_mpz_realloc (res, limb_cnt + 1);
+      rp = PTR(res);
+      if (res_size > limb_cnt)
+	{
+	  mpn_nz_neg (rp, rp, res_size);
+	  rp[limb_cnt] &= ~(~(mp_limb_t) 0 << cnt % BITS_PER_MP_LIMB);
+	  MPN_NORMALIZE_NOT_ZERO (rp, res_size);
+	}
+      else
+	{
+	  mp_size_t i;
+	  mpn_nz_neg (rp, rp, res_size);
+	  for (i = res_size; i < limb_cnt; i++)
+	    rp[i] = ~ (mp_limb_t) 0;
+	  res_size = limb_cnt;
+	  if (cnt % BITS_PER_MP_LIMB != 0)
+	    {
+	      rp[res_size] = ((mp_limb_t) 1 << (cnt % BITS_PER_MP_LIMB)) - 1;
+	      res_size++;
+	    }
+	  else
+	    MPN_NORMALIZE_NOT_ZERO (rp, res_size);
+	}
+    }
+  SIZ(res) = res_size;
+}
+
+static void
+mpn_nz_neg (rp, sp, n)
+     mp_ptr rp, sp;
+     mp_size_t n;
+{
+  mp_size_t i;
+  mp_limb_t x;
+
+  x = sp[0];
+  rp[0] = -x;
+  for (i = 1; x == 0; i++)
+    {
+      x = sp[i];
+      rp[i] = -x;
+    }
+
+  for (; i < n; i++)
+    {
+      rp[i] = ~sp[i];
+    }
+}
+#endif
