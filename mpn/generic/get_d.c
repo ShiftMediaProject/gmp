@@ -46,6 +46,25 @@ union ieee_double_extract {
 
 
 
+/* In alpha gcc prior to 3.4, signed DI comparisons involving constants are
+   rearranged from "x < n" to "x+(-n) < 0", which is of course hopelessly
+   wrong if that addition overflows.
+
+   The workaround here avoids this bug by ensuring n is not a literal
+   constant.  Note that this is alpha specific, the offending transformation
+   is/was in alpha.c alpha_emit_conditional_branch() under "We want to use
+   cmpcc/bcc".  */
+
+#if defined (__GNUC__) && defined (__alpha) && ! __GMP_GNUC_PREREQ(3,4)
+#define ALPHA_WORKAROUND(n)                             \
+  ({static const volatile long __workaround = (n);      \
+    __workaround; })
+#else
+#define ALPHA_WORKAROUND(n)  (n)
+#endif
+
+
+
 /* Return the value {ptr,size}*2^exp, and negative if sign<0.
    Must have size>=1, and a non-zero high limb ptr[size-1].
 
@@ -158,7 +177,7 @@ mpn_get_d (mp_srcptr ptr, mp_size_t size, mp_size_t sign, long exp)
           m0 >>= 11;
         }
 
-      if (UNLIKELY (exp >= 1024))
+      if (UNLIKELY (exp >= ALPHA_WORKAROUND (1024)))
         {
           /* overflow, return infinity */
         ieee_infinity:
@@ -166,9 +185,9 @@ mpn_get_d (mp_srcptr ptr, mp_size_t size, mp_size_t sign, long exp)
           m1 = 0;
           exp = 1024;
         }
-      else if (UNLIKELY (exp <= -1023))
+      else if (UNLIKELY (exp <= ALPHA_WORKAROUND (-1023)))
         {
-          if (LIKELY (exp <= -1022-53))
+          if (LIKELY (exp <= ALPHA_WORKAROUND (-1022-53)))
             return 0.0;  /* denorm underflows to zero */
 
           rshift = -1022 - exp;
