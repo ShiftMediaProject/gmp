@@ -230,7 +230,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
-  rand.c randclr.c randdef.c randlc.c randlc2s.c randlc2x.c randraw.c	\
+  rand.c randclr.c randdef.c randlc2s.c randlc2x.c randmt.c		\
   rands.c randsd.c randsdui.c version.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPQ_OBJECTS)	\
