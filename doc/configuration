@@ -181,53 +181,50 @@ Configure:
 
 ** Installing tools
 
-We use the tools in <ftp://ftp.swox.com/pub/gmp/infrastructure/>.
+The current versions of automake, autoconf and libtool in use can be
+checked in the ChangeLog.  Look for "Update to ...".
 
-It seems that multiple versions of autoconf/automake/libtool might not
-coexist well.  The suggestion is to remove any versions from /usr and
-/usr/local or anywhere else in $PATH, and do a fresh install to some
-separate directory which can be added to $PATH as needed.
+Libtool 1.4.1 will want the following patch to libtool.m4, for the
+benefit of DLLs on old cygwin and mingw systems.
 
-For autoconf and automake simply use the usual
-
-	./configure --prefix=/my/special/directory
-	make
-	make install
-
-For libtool, snapshot versions may need to have their configure
-updated first with the following.  This might only matter for libltdl
-dynamic loading (not used by gmp).
-
-	sh bootstrap
-
-The correct order to do all this is autoconf, automake then libtool.
+--- libtool.m4.old	Thu Sep  6 15:45:43 2001
++++ libtool.m4	Thu Sep  6 15:45:58 2001
+@@ -1303,7 +1303,7 @@
+     # can override, but on older systems we have to supply one (in ltdll.c)
+     if test "x$lt_cv_need_dllmain" = "xyes"; then
+       ltdll_obj='$output_objdir/$soname-ltdll.'"$ac_objext "
+-      ltdll_cmds='test -f $output_objdir/$soname-ltdll.c || sed -e "/^# \/\* ltdll\.c starts here \*\//,/^# \/\* ltdll.c ends here \*\// { s/^# //; p; }" -e d < [$]0 > $output_objdir/$soname-ltdll.c~
++      ltdll_cmds='test -f $output_objdir/$soname-ltdll.c || sed -e "/^# \/\* ltdll\.c starts here \*\//,/^# \/\* ltdll.c ends here \*\// { s/^# //; p; }" -e d < $''0 > $output_objdir/$soname-ltdll.c~
+ 	test -f $output_objdir/$soname-ltdll.$ac_objext || (cd $output_objdir && $CC -c $soname-ltdll.c)~'
+     else
+       ltdll_obj=
 
 ** Updating gmp
 
-INSTALL.autoconf can be copied from INSTALL in autoconf.  Be sure that
-file is up-to-date with its doc/install.texi source.
+The GMP configure is a bit involved, but it ought to be reasonably
+easy to update to newer versions of the tools.
 
-ltmain.sh comes from libtool.  Removing it and running "libtoolize
---copy" is one way to get it, but it's not clear what else that script
-does, and it's enough just to copy the file.
+aclocal.m4 is updated by running "aclocal" in the usual way.
 
-ltconfig is obsolete, but an empty file is necessary for current
-automake.
+INSTALL.autoconf can be copied from INSTALL in autoconf.
+
+ltmain.sh comes from libtool.  Remove it and run "libtoolize --copy",
+or just copy the file by hand.
 
 ansi2knr.c, ansi2knr.1, install.sh, mdate-sh and mkinstalldirs come
-from automake and can be updated by copying or probably by removing
-and running "automake --add-missing --copy".
+from automake and can be updated by copying or by removing and running
+"automake --add-missing --copy".
 
-texinfo.tex can be updated from ftp.gnu.org.  Check that gmp.texi
-still works, with "make gmp.dvi" and "texi2pdf gmp.texi".
+texinfo.tex can be updated from ftp.gnu.org.  Check it still works
+with "make gmp.dvi" and "texi2pdf gmp.texi".
 
 configfsf.guess and configfsf.sub can be updated from ftp.gnu.org (or
 from the "config" cvs module at subversions.gnu.org).  The gmp
 config.guess and config.sub wrappers are supposed to make such an
 update fairly painless.
 
-Note that depcomp from automake is not needed because all Makefile.am
-files specify "no-dependencies".
+depcomp from automake is not needed because all Makefile.am files
+specify "no-dependencies".
 
 ** How it works
 
@@ -285,23 +282,6 @@ In all cases a "make install" is good to see that the right things are
 copied to the right places.  The usual --prefix should be used into a
 clean test tree to look at this.
 
-** K&R testing
-
-Proper testing of the K&R support requires a compiler which gives an
-error for ANSI-isms.  Trying --host=none is a good idea, to test all
-the generic C code.
-
-When using an ANSI compiler, the ansi2knr setups can be partially
-tested with
-
-	./configure am_cv_prog_cc_stdc=no
-
-This will test the use of $U and the like in the makefiles, but not
-much else.
-
-am_cv_prog_cc_stdc=no can be used with a compiler like HP C which is
-K&R by default but to which configure normally adds ANSI mode flags.
-This then should be a good full K&R test.
 
 ** Long long limb testing
 
@@ -331,4 +311,36 @@ used in such cases, for the benefit of those (perhaps rare) systems
 where int!=long under a K&R compiler and where the difference matters
 in function calls.
 
+
+* K&R support
+
+K&R compilers are still supported, via automake ansi2knr.  Function
+definitions must be in a stylized form for this to work (see the
+ansi2knr.1 man page).
+
+_PROTO is used for function prototypes, other ANSI / K&R differences
+are conditionalized in various places.
+
+Proper testing of the K&R support requires a compiler which gives an
+error for ANSI-isms.  Configuring with --host=none is a good idea, to
+test all the generic C code.
+
+When using an ANSI compiler, the ansi2knr setups can be partially
+tested with
+
+	./configure am_cv_prog_cc_stdc=no
+
+This will test the use of $U and the like in the makefiles, but not
+much else.
+
+am_cv_prog_cc_stdc=no can be used with a compiler like HP C which is
+K&R by default but to which configure normally adds ANSI mode flags.
+This then should be a good full K&R test.
+
+
+
+Local variables:
+mode: outline
+fill-column: 70
+End:
 /* eof doc/configuration */
