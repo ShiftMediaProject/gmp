@@ -10095,7 +10095,7 @@ Applied Cryptography'', @uref{http://www.cacr.math.uwaterloo.ca/hac/}
 
 @item
 Richard M. Stallman, ``Using and Porting GCC'', Free Software Foundation, 1999,
-available online @uref{http://www.gnu.org/software/gcc/onlinedocs/}, and in
+available online @uref{http://gcc.gnu.org/onlinedocs/}, and in
 the GCC package @uref{ftp://ftp.gnu.org/gnu/gcc/}
 @end itemize
 
