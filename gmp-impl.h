@@ -926,6 +926,28 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
 }
 #endif
 
+/* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
+   negative.  */
+#define MPN_CMP(result, xp, yp, size)           \
+  do {                                          \
+    mp_size_t  __i;                             \
+    mp_limb_t  __x, __y;                        \
+                                                \
+    ASSERT ((size) >= 0);                       \
+                                                \
+    (result) = 0;                               \
+    for (__i = (size) - 1; __i >= 0; __i--)     \
+      {                                         \
+        __x = (xp)[__i];                        \
+        __y = (yp)[__i];                        \
+        if (__x != __y)                         \
+          {                                     \
+            (result) = (__x > __y ? 1 : -1);    \
+            break;                              \
+          }                                     \
+      }                                         \
+  } while (0)
+
 
 /* Structure for conversion between internal binary format and
    strings in base 2..36.  */
