@@ -1648,7 +1648,7 @@ extern const struct bases mp_bases[257];
       {                                                                 \
         /* Calculate the total number of significant bits of X.  */     \
         count_leading_zeros (__cnt, (ptr)[(size)-1]);                   \
-        __totbits = (size) * GMP_NUMB_BITS - __cnt;                     \
+        __totbits = (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);   \
                                                                         \
         if (POW2_P (base))                                              \
           {                                                             \
@@ -1676,7 +1676,7 @@ extern const struct bases mp_bases[257];
       {                                                                 \
         /* Calculate the total number of significant bits of X.  */     \
         count_leading_zeros (__cnt, (ptr)[(size)-1]);                   \
-        __totbits = (size) * GMP_NUMB_BITS - __cnt;                     \
+        __totbits = (size) * GMP_NUMB_BITS - (__cnt - GMP_NAIL_BITS);   \
         (result) = (__totbits + 4 - 1) / 4;                             \
       }                                                                 \
   } while (0)
