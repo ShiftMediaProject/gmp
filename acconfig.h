@@ -1,5 +1,5 @@
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -99,6 +99,8 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_lshift              
 #undef HAVE_NATIVE_mpn_mod_1               
 #undef HAVE_NATIVE_mpn_mod_1c
+#undef HAVE_NATIVE_mpn_modexact_1_odd
+#undef HAVE_NATIVE_mpn_modexact_1c_odd
 #undef HAVE_NATIVE_mpn_mul                 
 #undef HAVE_NATIVE_mpn_mul_1               
 #undef HAVE_NATIVE_mpn_mul_1c
