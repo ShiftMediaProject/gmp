@@ -1023,6 +1023,7 @@ param_init (void)
   p->dst_size[1] = SIZE_RETVAL;
   p->overlap = OVERLAP_NONE;
   VALIDATE (validate_sqrtrem);
+  REFERENCE (refmpn_sqrtrem);
 
   p = &param[TYPE_ZERO];
   p->dst[0] = 1;
@@ -1702,7 +1703,7 @@ compare (void)
 
   for (i = 0; i < NUM_DESTS; i++)
     {
-      switch (tr->dst_size[0]) {
+      switch (tr->dst_size[i]) {
       case SIZE_RETVAL:
         d[i].size = ref.retval;
         break;
@@ -2614,24 +2615,23 @@ usage (const char *prog)
   int  col = 0;
   int  i;
 
-  printf ("Usage: %s [options] function...\n\
-    -1        use limb data 1,2,3,etc\n\
-    -9        use limb data all 0xFF..FFs\n\
-    -a zeros  use limb data all zeros\n\
-    -a ffs    use limb data all 0xFF..FFs (same as -9)\n\
-    -a 2fd    use data 0x2FFF...FFFD\n\
-    -p        print each case tried (try this if seg faulting)\n\
-    -R        seed random numbers from time()\n\
-    -r reps   set repetitions (default %d)\n\
-    -s size   starting size to test\n\
-    -S size2  starting size2 to test\n\
-    -s s1-s2  range of sizes to test\n\
-    -W        don't show the spinner (use this in gdb)\n\
-    -z        disable mprotect() redzones\n\
-Default data is refmpn_random() and refmpn_random2().\n\
-\n\
-Functions that can be tested:\n\
-", prog, DEFAULT_REPETITIONS);
+  printf ("Usage: %s [options] function...\n", prog);
+  printf ("    -1        use limb data 1,2,3,etc\n");
+  printf ("    -9        use limb data all 0xFF..FFs\n");
+  printf ("    -a zeros  use limb data all zeros\n");
+  printf ("    -a ffs    use limb data all 0xFF..FFs (same as -9)\n");
+  printf ("    -a 2fd    use data 0x2FFF...FFFD\n");
+  printf ("    -p        print each case tried (try this if seg faulting)\n");
+  printf ("    -R        seed random numbers from time()\n");
+  printf ("    -r reps   set repetitions (default %d)\n", DEFAULT_REPETITIONS);
+  printf ("    -s size   starting size to test\n");
+  printf ("    -S size2  starting size2 to test\n");
+  printf ("    -s s1-s2  range of sizes to test\n");
+  printf ("    -W        don't show the spinner (use this in gdb)\n");
+  printf ("    -z        disable mprotect() redzones\n");
+  printf ("Default data is refmpn_random() and refmpn_random2().\n");
+  printf ("\n");
+  printf ("Functions that can be tested:\n");
 
   for (i = 0; i < numberof (choice_array); i++)
     {
