@@ -19,11 +19,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include "config.h"
+
 #include <stdio.h> /* for NULL */
-#if __STDC__
-# include <stdarg.h>
+#if HAVE_STDARG
+#include <stdarg.h>
 #else
-# include <varargs.h>
+#include <varargs.h>
 #endif
 
 #include "gmp.h"
@@ -68,7 +70,7 @@ const struct __gmp_rand_lc_scheme_struct __gmp_rand_lc_scheme[] =
 };
 
 void
-#if __STDC__
+#if HAVE_STDARG
 gmp_randinit (gmp_randstate_t rstate,
 	      gmp_randalg_t alg,
 	      ...)
@@ -78,17 +80,15 @@ gmp_randinit (va_alist)
 #endif
 {
   va_list ap;
-#if __STDC__
+
+#if HAVE_STDARG
+  va_start (ap, alg);
+
 #else
   __gmp_randstate_struct *rstate;
   gmp_randalg_t alg;
-#endif
 
-#if __STDC__
-  va_start (ap, alg);
-#else
   va_start (ap);
-
   rstate = va_arg (ap, __gmp_randstate_struct *);
   alg = va_arg (ap, gmp_randalg_t);
 #endif
