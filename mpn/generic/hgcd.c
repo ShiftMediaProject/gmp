@@ -1060,23 +1060,6 @@ hgcd_normalize (struct hgcd *hgcd)
   hgcd->size = size;
 }
 
-static mp_size_t
-euclid_step (struct hgcd_row *r, mp_size_t usize,
-	     struct qstack *quotients,
-	     /* For sanity checking only */
-	     mp_size_t alloc)
-{
-  mp_size_t qsize;
-  mp_ptr qp;
-
-  qsize = qstack_push_quotient (quotients, &qp,
-				r[2].rp, &r[2].rsize,
-				r[0].rp, r[0].rsize,
-				r[1].rp, r[1].rsize);
-  ASSERT (usize + qsize <= alloc);
-  return hgcd_update_uv (r, usize, qp, qsize);
-}
-
 int
 mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
 		       mp_srcptr ap, mp_size_t asize,
@@ -1410,11 +1393,20 @@ hgcd_start (struct hgcd *hgcd,
    terminated, -1 if we should go on */
 /* FIXME: Rename function */
 static int
-hgcd_case0 (struct hgcd *hgcd, mp_size_t M,
-	    struct qstack *quotients,
-	    mp_ptr tp, mp_size_t talloc)
+euclid_step (struct hgcd *hgcd, mp_size_t M,
+	     struct qstack *quotients,
+	     mp_ptr tp, mp_size_t talloc)
 {
-  hgcd->size = euclid_step (hgcd->row, hgcd->size, quotients, hgcd->alloc);
+  mp_size_t qsize;
+  mp_ptr qp;
+
+  qsize = qstack_push_quotient (quotients, &qp,
+				hgcd->row[2].rp, &hgcd->row[2].rsize,
+				hgcd->row[0].rp,  hgcd->row[0].rsize,
+				hgcd->row[1].rp,  hgcd->row[1].rsize);
+
+  ASSERT (hgcd->size + qsize <= hgcd->alloc);
+  hgcd->size = hgcd_update_uv (hgcd->row, hgcd->size, qp, qsize);
   ASSERT (hgcd->size < hgcd->alloc);
 
   if (hgcd->row[2].rsize <= M)
@@ -1532,7 +1524,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	{
 	euclid_1:
 	  /* We must divide to make progress */
-	  res = hgcd_case0 (hgcd, M, quotients, tp, talloc);
+	  res = euclid_step (hgcd, M, quotients, tp, talloc);
 
 	  if (res >= 0)
 	    return res;
@@ -1656,7 +1648,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	{
 	euclid_2:
 	  /* We must divide to make progress */
-	  res = hgcd_case0 (hgcd, M, quotients, tp, talloc);
+	  res = euclid_step (hgcd, M, quotients, tp, talloc);
 
 	  if (res >= 0)
 	    return res;
@@ -1900,11 +1892,11 @@ mpn_hgcd (struct hgcd *hgcd,
 	  ASSERT_FAIL (1);
 
 	case 0:
-	euclid:
+	euclid_1:
 	  {
 	    /* The first remainder was small. Then there's a good chance
 	       that the remainder A % B is also small. */
-	    int res = hgcd_case0 (hgcd, M, quotients, tp, talloc);
+	    int res = euclid_step (hgcd, M, quotients, tp, talloc);
 
 	    if (res > 0)
 	      ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
@@ -1922,7 +1914,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	  if (hgcd_start_row_p (&R.row[0], R.size))
 	    /* It might be cheaper to compute r1 and r2, and adjust
 	     * r3. To do that, we need the most recent quotient */
-	    goto euclid;
+	    goto euclid_1;
 	  
 	  /* Store new values in rows 2 and 3, to avoid overlap */
 	  hgcd->row[2].rsize
@@ -2061,9 +2053,8 @@ mpn_hgcd (struct hgcd *hgcd,
   if (hgcd->row[0].rsize > M + m + 1)
     {
       /* One euclid step to reduce size. */
-      /* FIXME: Rename hgcd_case0 */
-      int res = hgcd_case0 (hgcd, M, quotients,
-			    tp, talloc);
+      /* FIXME: Rename euclid_step */
+      int res = euclid_step (hgcd, M, quotients, tp, talloc);
 
       if (res > 0)
 	ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
@@ -2083,6 +2074,8 @@ mpn_hgcd (struct hgcd *hgcd,
     {
       mp_size_t k = 2*M - hgcd->row[0].rsize;
       mp_size_t n1 = hgcd->row[0].rsize - k;
+      mp_size_t qsize;
+      mp_srcptr qp;
       int res;
 
       ASSERT (k + (n1 + 1)/2 == M);
@@ -2100,9 +2093,8 @@ mpn_hgcd (struct hgcd *hgcd,
 	{
 	  /* The first remainder was small. Then there's a good chance
 	     that the remainder A % B is also small. */
-
-	  res = hgcd_case0 (hgcd, M, quotients,
-			    tp, talloc);
+	euclid_2:
+	  res = euclid_step (hgcd, M, quotients, tp, talloc);
 
 	  if (res > 0)
 	    ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 4);
@@ -2115,6 +2107,14 @@ mpn_hgcd (struct hgcd *hgcd,
 
       /* Now r0 and r1 are always correct. */
 
+      if (res == 2 && hgcd_start_row_p(&R.row[0], R.size))
+	{
+	  qstack_drop (quotients);
+	  qstack_drop (quotients);
+	  
+	  goto euclid_2;
+	}
+	  
       /* Store new values in rows 2 and 3, to avoid overlap */
       hgcd->row[2].rsize
 	= mpn_hgcd_fix (k, hgcd->row[2].rp, hgcd->row[0].rsize + 1,
@@ -2158,70 +2158,55 @@ mpn_hgcd (struct hgcd *hgcd,
 
       HGCD_SWAP4_2 (hgcd->row);
 
-      if (res >= 3)
+      if (res == 2)
 	{
-	  /* We already know the correct q */
-	  mp_size_t qsize;
-	  mp_srcptr qp;
+	  qstack_drop (quotients);
+	  qstack_drop (quotients);
 
-	  qsize = qstack_get_1 (quotients, &qp);
-
-	  ASSERT (qsize + hgcd->size <= hgcd->alloc);
-	  hgcd_update_r (hgcd->row, qp, qsize);
-	  hgcd->size = hgcd_update_uv (hgcd->row, hgcd->size,
-				       qp, qsize);
-	  ASSERT (hgcd->size < hgcd->alloc);
-
-	  ASSERT (hgcd->row[2].rsize > k);
-	  if (hgcd->row[2].rsize <= M)
-	    {
-	      /* Discard r3 */
-	      qstack_drop (quotients);
-	      return hgcd_small_1 (hgcd, M, quotients,
-				   tp, talloc);
-	    }
-	  if (res == 3)
-	    /* Drop quotient for r3 */
-	    qstack_drop (quotients);
+	  continue;
 	}
-      else
+
+      ASSERT (res >= 3);
+
+      /* We already know the correct q */
+      qsize = qstack_get_1 (quotients, &qp);
+
+      ASSERT (qsize + hgcd->size <= hgcd->alloc);
+      hgcd_update_r (hgcd->row, qp, qsize);
+      hgcd->size = hgcd_update_uv (hgcd->row, hgcd->size,
+				   qp, qsize);
+      ASSERT (hgcd->size < hgcd->alloc);
+
+      ASSERT (hgcd->row[2].rsize > k);
+      if (hgcd->row[2].rsize <= M)
 	{
-	  /* Discard r2 and r3, compute new r2 */
+	  /* Discard r3 */
 	  qstack_drop (quotients);
+	  return hgcd_small_1 (hgcd, M, quotients,
+			       tp, talloc);
+	}
+      if (res == 3)
+	{
+	  /* Drop quotient for r3 */
 	  qstack_drop (quotients);
-
-	  hgcd->size = euclid_step (hgcd->row, hgcd->size,
-				    quotients, hgcd->alloc);
-	  ASSERT (hgcd->size < hgcd->alloc);
-
-	  if (hgcd->row[2].rsize <= M)
-	    return hgcd_small_1 (hgcd, M, quotients,
-				 tp, talloc);
+	  hgcd->sign = ~hgcd->sign;
+	  HGCD_SWAP4_LEFT (hgcd->row);
+	  
+	  continue;
 	}
 
       ASSERT (hgcd->row[2].rsize > M);
+      ASSERT (res == 4);
 
-      if (res == 4)
-	{
-	  /* We already know the correct q */
-	  mp_size_t qsize;
-	  mp_srcptr qp;
+      /* We already know the correct q */
+      qsize = qstack_get_0 (quotients, &qp);
 
-	  qsize = qstack_get_0 (quotients, &qp);
-
-	  ASSERT (qsize + hgcd->size <= hgcd->alloc);
-	  hgcd_update_r (hgcd->row + 1, qp, qsize);
-	  hgcd->size = hgcd_update_uv (hgcd->row + 1, hgcd->size,
-				       qp, qsize);
-	  ASSERT (hgcd->size < hgcd->alloc);
-	  ASSERT (hgcd->row[3].rsize <= M + 1);
-	}
-      else
-	/* At this point, we have already dropped the old quotient. */
-	hgcd->size = euclid_step (hgcd->row + 1, hgcd->size,
-				  quotients, hgcd->alloc);
-
+      ASSERT (qsize + hgcd->size <= hgcd->alloc);
+      hgcd_update_r (hgcd->row + 1, qp, qsize);
+      hgcd->size = hgcd_update_uv (hgcd->row + 1, hgcd->size,
+				   qp, qsize);
       ASSERT (hgcd->size < hgcd->alloc);
+      ASSERT (hgcd->row[3].rsize <= M + 1);
 
       if (hgcd->row[3].rsize <= M)
 	{
