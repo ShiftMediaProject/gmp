@@ -3,6 +3,11 @@
 	* mpn/alpha/cntlz.asm: Don't use `ldbu', use slightly slower
 	`ldq_u' + `extbl' instead.
 
+	* mpn/alpha/unicos.m4: Define EXTERN.
+	* mpn/alpha/default.m4: Define EXTERN (to expand to nothing).
+	* mpn/alpha/cntlz.asm: Declare __clz_tab usign `EXTERN' (for the
+	benefit of Unicos).
+
 2000-12-21  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/alpha/unicos.m4 (GSYM_PREFIX): Define for the benefit of
