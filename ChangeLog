@@ -21,6 +21,9 @@ MA 02111-1307, USA.
 
 2002-02-01  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz/convert.c: Increase operand size.  Add (yet disabled) code
+	for testing with random strings.
+
 	* mpn/generic/get_str.c (mpn_get_str): Rewrite to become sub-quadratic.
 	(mpn_dc_get_str, mpn_sb_get_str): New functions.
 
