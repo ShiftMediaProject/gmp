@@ -718,9 +718,9 @@ case $host in
     ;;
 
 
-  # Special cpu "none" selects generic C.  -DNO_ASM is used to disable gcc
+  # Special CPU "none" selects generic C.  -DNO_ASM is used to disable gcc
   # asm blocks in longlong.h (since they're driven by cpp pre-defined
-  # symbols like "__alpha__" rather than from the configured cpu.
+  # symbols like __alpha rather than the configured $host_cpu).
   #
   none-*-*)
     gcc_cppflags="-DNO_ASM"
@@ -1457,8 +1457,12 @@ GMP_FINISH
 # FIXME: Upcoming version of autoconf/automake may not like broken lines.
 #        Right now automake isn't accepting the new AC_CONFIG_FILES scheme.
 
-AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
-  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile mpn/tests/Makefile \
-  tests/Makefile tests/rand/Makefile
-  demos/Makefile demos/calc/Makefile tune/Makefile \
-  mpbsd/Makefile mpbsd/tests/Makefile mpfr/Makefile mpfr/tests/Makefile)
+AC_OUTPUT(Makefile							\
+  mpbsd/Makefile mpf/Makefile mpfr/Makefile mpn/Makefile mpq/Makefile	\
+  mpz/Makefile								\
+  mpfr/tests/Makefile							\
+  tests/Makefile tests/devel/Makefile tests/mpbsd/Makefile		\
+  tests/mpf/Makefile tests/mpq/Makefile tests/mpz/Makefile		\
+  tests/rand/Makefile							\
+  tune/Makefile								\
+  demos/Makefile demos/calc/Makefile)
