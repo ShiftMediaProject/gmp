@@ -243,7 +243,8 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/fits_ulong$U.lo mpz/fits_ushort$U.lo mpz/gcd$U.lo			\
   mpz/gcd_ui$U.lo mpz/gcdext$U.lo mpz/get_d$U.lo mpz/get_si$U.lo	\
   mpz/get_str$U.lo mpz/get_ui$U.lo mpz/getlimbn$U.lo mpz/hamdist$U.lo	\
-  mpz/init$U.lo mpz/inp_raw$U.lo mpz/inp_str$U.lo mpz/invert$U.lo	\
+  mpz/init$U.lo mpz/init2$U.lo mpz/inp_raw$U.lo mpz/inp_str$U.lo	\
+  mpz/invert$U.lo							\
   mpz/ior$U.lo mpz/iset$U.lo mpz/iset_d$U.lo mpz/iset_si$U.lo		\
   mpz/iset_str$U.lo mpz/iset_ui$U.lo mpz/jacobi$U.lo mpz/kronsz$U.lo	\
   mpz/kronuz$U.lo mpz/kronzs$U.lo mpz/kronzu$U.lo			\
@@ -253,7 +254,8 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/n_pow_ui$U.lo mpz/neg$U.lo mpz/nextprime$U.lo			\
   mpz/out_raw$U.lo mpz/out_str$U.lo mpz/perfpow$U.lo mpz/perfsqr$U.lo	\
   mpz/popcount$U.lo mpz/pow_ui$U.lo mpz/powm$U.lo mpz/powm_ui$U.lo	\
-  mpz/pprime_p$U.lo mpz/random$U.lo mpz/random2$U.lo mpz/realloc$U.lo	\
+  mpz/pprime_p$U.lo mpz/random$U.lo mpz/random2$U.lo			\
+  mpz/realloc$U.lo mpz/realloc2$U.lo					\
   mpz/remove$U.lo mpz/root$U.lo mpz/rrandomb$U.lo mpz/scan0$U.lo	\
   mpz/scan1$U.lo mpz/set$U.lo mpz/set_d$U.lo mpz/set_f$U.lo		\
   mpz/set_q$U.lo mpz/set_si$U.lo mpz/set_str$U.lo mpz/set_ui$U.lo	\
