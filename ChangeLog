@@ -18,6 +18,25 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-05-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mullow_n.c, mpn/generic/mullow_basecase.c: New files.
+	* configure.in, mpn/Makefile.am: Add them.
+
+	* gmp-impl.h (MULLOW_BASECASE_THRESHOLD, MULLOW_DC_THRESHOLD,
+	MULLOW_MUL_N_THRESHOLD): Override for TUNE_PROGRAM_BUILD.
+
+	* tune/Makefile.am: Compile mullow_n.c.
+	* tune/common.c (speed_mpn_mullow_n, speed_mpn_mullow_basecase):
+	New functions.
+	* tune/speed.c (routine): Add entries for mpn_mullow_n and
+	mpn_mullow_basecase.
+	* tune/speed.h (SPEED_ROUTINE_MPN_MULLOW_N_CALL,
+	SPEED_ROUTINE_MPN_MULLOW_BASECASE): New #defines.
+	* tune/tuneup.c (tune_mullow): New function.
+
+	* gmp-impl.h (invert_limb): Compute branch-freely.
+
 2004-05-02  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/amd64/mode1o.asm: Use movabsq to support large model non-PIC.
@@ -119,7 +138,7 @@ MA 02111-1307, USA.
 	* tune/speed.c (routine): Add entry for mpn_rootrem.
 
 2004-04-16  Kevin Ryde  <kevin@swox.se>
-	
+
 	* doc/fdl.texi: Update from FSF, just fixing a couple of typos.
 
 	* macos/configure, macos/Makefile.in: Add printf and scanf directories.
