@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 24 Mar 2001.  An up-to-date version is available at
+  This file current as of 30 Mar 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -174,6 +174,15 @@
      a (brief) description.  This will benefit <code>mpz_divexact</code>
      immediately, and <code>mpn_gcd</code> on large unequal size operands.
      REDC should be able to use it too.
+<li> <code>restrict</code>'ed pointers: Does the C99 definition of restrict
+     (one writer many readers, or whatever it is) suit the GMP style "same or
+     separate" function parameters?  If so, judicious use might improve the
+     code generated a bit.  Do any compilers have their own flavour of
+     restrict as "completely unaliased", and is that still usable?
+<li> GCC 3 <code>__attribute__ ((malloc))</code> could be used on
+     <code>__gmp_allocate_func</code> and on the stack-alloc.c
+     <code>TMP_ALLOC</code>.  Don't know if it'd do much, maybe
+     <code>restrict</code> pointers are enough.
 </ul>
 
 
@@ -275,11 +284,6 @@
      duplicating code under each conditional.  Don't really want to turn
      everything into a dog's dinner just because Cray don't offer an
      <code>alloca</code>.
-<li> Restricted pointers: DEC and Cray C support <code>restrict</code>
-     attributes for pointers.  Maybe judicious use of this could improve the
-     code generated.  Can it be used on the GMP style "same or separate"
-     function parameters, or would it have to be confined to things like
-     <code>TMP_ALLOC</code>ed blocks known to be completely unaliased?
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
   <pre>
 	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
