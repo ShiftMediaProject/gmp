@@ -24,6 +24,9 @@ include(`../config.m4')
 
 C void speed_cyclecounter (unsigned int p[2]);
 C
+C rpcc measures cycles elapsed in the user program and hence should be very
+C accurate even on a busy system.  Losing cache contents due to task
+C switching may have an effect though.
 
 ASM_START()
 PROLOGUE(speed_cyclecounter)
