@@ -215,14 +215,14 @@ const struct routine_t {
   { "modlimb_invert_cond",  speed_modlimb_invert_cond,  FLAG_NODATA },
   { "modlimb_invert_arith", speed_modlimb_invert_arith, FLAG_NODATA },
 
-  { "malloc_free",                 speed_malloc_free                 },
-  { "malloc_realloc_free",         speed_malloc_realloc_free         },
-  { "mp_allocate_free",            speed__gmp_allocate_free            },
-  { "mp_allocate_reallocate_free", speed__gmp_allocate_reallocate_free },
-  { "mpz_init_clear",              speed_mpz_init_clear              },
-  { "mpq_init_clear",              speed_mpq_init_clear              },
-  { "mpf_init_clear",              speed_mpf_init_clear              },
-  { "mpz_init_realloc_clear",      speed_mpz_init_realloc_clear      },
+  { "malloc_free",                  speed_malloc_free                  },
+  { "malloc_realloc_free",          speed_malloc_realloc_free          },
+  { "gmp_allocate_free",            speed_gmp_allocate_free            },
+  { "gmp_allocate_reallocate_free", speed_gmp_allocate_reallocate_free },
+  { "mpz_init_clear",               speed_mpz_init_clear               },
+  { "mpq_init_clear",               speed_mpq_init_clear               },
+  { "mpf_init_clear",               speed_mpf_init_clear               },
+  { "mpz_init_realloc_clear",       speed_mpz_init_realloc_clear       },
 
   { "umul_ppmm",         speed_umul_ppmm,     FLAG_R_OPTIONAL },
 #if HAVE_NATIVE_mpn_umul_ppmm
