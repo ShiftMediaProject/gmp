@@ -27,7 +27,7 @@ MA 02111-1307, USA.
 int
 mpz_divisible_p (mpz_srcptr a, mpz_srcptr d)
 {
-  int  dsize;
+  mp_size_t dsize;
 
   dsize = SIZ(d);
   if (dsize == 0)

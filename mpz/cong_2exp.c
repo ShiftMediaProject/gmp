@@ -29,7 +29,7 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, unsigned long d)
   unsigned long  i, dlimbs, dbits;
   mp_ptr         ap, cp;
   mp_limb_t      dmask, alimb, climb, sum;
-  int            asize_signed, csize_signed, asize, csize;
+  mp_size_t      asize_signed, csize_signed, asize, csize;
 
   if (ABSIZ(a) < ABSIZ(c))
     MPZ_SRCPTR_SWAP (a, c);
