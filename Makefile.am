@@ -38,7 +38,8 @@ MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/sizeinbase.lo mpz/sqrt.lo mpz/sqrtrem.lo mpz/sub.lo mpz/sub_ui.lo \
   mpz/swap.lo mpz/tdiv_ui.lo mpz/tdiv_q.lo mpz/tdiv_q_2exp.lo mpz/tdiv_q_ui.lo \
   mpz/tdiv_qr.lo mpz/tdiv_qr_ui.lo mpz/tdiv_r.lo mpz/tdiv_r_2exp.lo \
-  mpz/tdiv_r_ui.lo mpz/tstbit.lo mpz/ui_pow_ui.lo mpz/urandom.lo mpz/xor.lo
+  mpz/tdiv_r_ui.lo mpz/tstbit.lo mpz/ui_pow_ui.lo mpz/urandomb.lo \
+  mpz/urandomn.lo mpz/xor.lo
 MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
   mpq/cmp_ui.lo mpq/div.lo mpq/get_d.lo mpq/get_den.lo mpq/get_num.lo \
   mpq/init.lo mpq/inv.lo mpq/mul.lo mpq/neg.lo mpq/set.lo mpq/set_den.lo \
@@ -55,9 +56,9 @@ DISTCLEANFILES = @gmp_srclinks@
 info_TEXINFOS = gmp.texi
 
 lib_LTLIBRARIES = libgmp.la
-libgmp_la_SOURCES = assert.c memory.c mp_set_fns.c mp_clz_tab.c rand.c \
-  randui.c randclr.c randlc.c randlcui.c version.c stack-alloc.c mp_bpl.c \
-  extract-dbl.c insert-dbl.c
+libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
+  rand.c randclr.c randlc.c randlc2x.c randsd.c randsdui.c version.c \
+  stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 libgmp_la_LIBADD = \
 	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 libgmp_la_DEPENDENCIES = \
