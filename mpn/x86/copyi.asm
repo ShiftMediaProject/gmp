@@ -65,6 +65,8 @@ PROLOGUE(mpn_copyi)
 
 	movl	PARAM_DST, %edi
 
+	cld	# better safe than sorry, see mpn/x86/README.family
+
 	rep
 	movsl
 

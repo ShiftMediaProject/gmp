@@ -1,12 +1,11 @@
 # x86 mpn_divrem_1 -- mpn by limb division extending to fractional quotient.
 #
 #       cycles/limb
-# K7
+# K7        42
 # K6        20
-# P6
+# P6        40
 # P5        44
 # 486   approx 43 maybe
-
 
 
 # Copyright (C) 1999-2000 Free Software Foundation, Inc.
@@ -217,6 +216,8 @@ deflit(`FRAME',8)
 	xorl	%eax, %eax
 
 	movl	PARAM_DST, %edi
+
+	cld	# better safe than sorry, see mpn/x86/README.family
 
 	rep
 	stosl
