@@ -1,6 +1,6 @@
 /* __gmp_extract_double -- convert from double to array of mp_limb_t.
 
-Copyright (C) 1996, 1999 Free Software Foundation, Inc.
+Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
