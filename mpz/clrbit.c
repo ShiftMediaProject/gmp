@@ -78,14 +78,15 @@ mpz_clrbit (mpz_ptr d, unsigned long int bit_index)
 	}
       else if (limb_index == zero_bound)
 	{
-	  dp[limb_index] = ((dp[limb_index] - 1)
-			    | ((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS))) + 1;
+	  dp[limb_index] = ((((dp[limb_index] - 1)
+			      | ((mp_limb_t) 1 << (bit_index % GMP_NUMB_BITS))) + 1)
+			    & GMP_NUMB_MASK);
 	  if (dp[limb_index] == 0)
 	    {
 	      mp_size_t i;
 	      for (i = limb_index + 1; i < dsize; i++)
 		{
-		  dp[i] += 1;
+		  dp[i] = (dp[i] + 1) & GMP_NUMB_MASK;
 		  if (dp[i] != 0)
 		    goto fin;
 		}
