@@ -65,7 +65,7 @@ arithmetic library, version @value{VERSION}.
 @c  Ensure copyright stuff gets into info and html output.
 @end iftex
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002
 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
@@ -1996,6 +1996,16 @@ mpz_submul (mpq_numref(q), mpq_denref(q), z);
 Functions like @code{mpz_fac_ui}, @code{mpz_fib_ui} and @code{mpz_bin_uiui}
 are designed for calculating isolated values.  If a range of values is wanted
 it's probably best to call to get a starting point and iterate from there.
+
+@item Text Input/Output
+Hexadecimal or octal are suggested for input or output in text form.
+Power-of-2 bases like these can be converted much more efficiently than other
+bases, like decimal.  For big numbers there's usually nothing of particular
+interest to be seen in the digits, so the base doesn't matter much.
+
+Maybe we can hope octal will one day become the normal base for everyday use,
+as proposed by King Charles XII of Sweden and later reformers.
+@c Reference: Knuth volume 2 section 4.1, page 184 of second edition.  :-)
 @end table
 
 
@@ -4662,6 +4672,10 @@ standard C types (not the GMP types), and only if the C library supports it.
 @end multitable
 @end quotation
 
+The (optional) width and precision can be given as a number within the format
+string, or as a @samp{*} to take an extra parameter of type @code{int}, the
+same as the standard @code{printf}.
+
 The standard types accepted are as follows.  @samp{h} and @samp{l} are
 portable, the rest will depend on the compiler (or include files) for the type
 and the C library for the output.
@@ -4706,7 +4720,7 @@ types.  @samp{m} and @samp{p} depend on the C library.
 @item @nicode{i}            @tab same as @nicode{d}
 @item @nicode{g} @nicode{G} @tab fixed or scientific float
 @item @nicode{m}            @tab @code{strerror} string, GLIBC style
-@item @nicode{n}            @tab characters written so far
+@item @nicode{n}            @tab store characters written so far
 @item @nicode{o}            @tab octal integer
 @item @nicode{p}            @tab pointer
 @item @nicode{s}            @tab string
