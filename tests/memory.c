@@ -64,6 +64,12 @@ tests_allocate (size_t size)
 {
   struct header  *h;
 
+  if (size == 0)
+    {
+      printf ("tests_allocate(): attempt to allocate 0 bytes\n");
+      abort ();
+    }
+
   h = (struct header *) __gmp_default_allocate (sizeof (*h));
   h->next = tests_memory_list;
   tests_memory_list = h;
@@ -77,6 +83,13 @@ void *
 tests_reallocate (void *ptr, size_t old_size, size_t new_size)
 {
   struct header  **hp, *h;
+
+  if (new_size == 0)
+    {
+      printf ("tests_reallocate(): attempt to reallocate 0x%lX to 0 bytes\n",
+              (unsigned long) ptr);
+      abort ();
+    }
 
   hp = tests_memory_find (ptr);
   if (hp == NULL)
