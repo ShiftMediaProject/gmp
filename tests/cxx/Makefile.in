@@ -134,17 +134,32 @@ LDADD = $(top_builddir)/tests/libtests.la \
   $(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
 
 
-@WANT_CXX_TRUE@check_PROGRAMS = t-ostream t-locale
+@WANT_CXX_TRUE@check_PROGRAMS = t-ostream t-locale t-constr t-expr
 @WANT_CXX_TRUE@TESTS = $(check_PROGRAMS)
 
 t_ostream_SOURCES = t-ostream.cc
 t_locale_SOURCES = t-locale.cc
+t_constr_SOURCES = t-constr.cc
+t_expr_SOURCES = t-expr.cc
 subdir = tests/cxx
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-@WANT_CXX_TRUE@check_PROGRAMS = t-ostream$(EXEEXT) t-locale$(EXEEXT)
+@WANT_CXX_TRUE@check_PROGRAMS = t-ostream$(EXEEXT) t-locale$(EXEEXT) \
+@WANT_CXX_TRUE@	t-constr$(EXEEXT) t-expr$(EXEEXT)
 @WANT_CXX_FALSE@check_PROGRAMS =
+am_t_constr_OBJECTS = t-constr.$(OBJEXT)
+t_constr_OBJECTS = $(am_t_constr_OBJECTS)
+t_constr_LDADD = $(LDADD)
+t_constr_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+t_constr_LDFLAGS =
+am_t_expr_OBJECTS = t-expr.$(OBJEXT)
+t_expr_OBJECTS = $(am_t_expr_OBJECTS)
+t_expr_LDADD = $(LDADD)
+t_expr_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
+t_expr_LDFLAGS =
 am_t_locale_OBJECTS = t-locale.$(OBJEXT)
 t_locale_OBJECTS = $(am_t_locale_OBJECTS)
 t_locale_LDADD = $(LDADD)
@@ -173,9 +188,10 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(t_locale_SOURCES) $(t_ostream_SOURCES)
+DIST_SOURCES = $(t_constr_SOURCES) $(t_expr_SOURCES) $(t_locale_SOURCES) \
+	$(t_ostream_SOURCES)
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(t_locale_SOURCES) $(t_ostream_SOURCES)
+SOURCES = $(t_constr_SOURCES) $(t_expr_SOURCES) $(t_locale_SOURCES) $(t_ostream_SOURCES)
 
 all: all-am
 
@@ -200,6 +216,12 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+t-constr$(EXEEXT): $(t_constr_OBJECTS) $(t_constr_DEPENDENCIES) 
+	@rm -f t-constr$(EXEEXT)
+	$(CXXLINK) $(t_constr_LDFLAGS) $(t_constr_OBJECTS) $(t_constr_LDADD) $(LIBS)
+t-expr$(EXEEXT): $(t_expr_OBJECTS) $(t_expr_DEPENDENCIES) 
+	@rm -f t-expr$(EXEEXT)
+	$(CXXLINK) $(t_expr_LDFLAGS) $(t_expr_OBJECTS) $(t_expr_LDADD) $(LIBS)
 t-locale$(EXEEXT): $(t_locale_OBJECTS) $(t_locale_DEPENDENCIES) 
 	@rm -f t-locale$(EXEEXT)
 	$(CXXLINK) $(t_locale_LDFLAGS) $(t_locale_OBJECTS) $(t_locale_LDADD) $(LIBS)
