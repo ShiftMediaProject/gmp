@@ -30,7 +30,8 @@ MA 02111-1307, USA. */
 
    This is done in a C file since if it was in a C++ file then we'd have to
    match the "throw" or lack thereof declared for localeconv in <locale.h>.
-   g++ 3.2 for instance is picky about this.  */
+   g++ 3.2 gives an error about mismatched throws under "-pedantic", other
+   C++ compilers very possibly do so too.  */
 
 #if HAVE_LOCALECONV
 
