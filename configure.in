@@ -1408,8 +1408,8 @@ if test "$gmp_asm_syntax_testing" != no; then
   GMP_ASM_SIZE
   GMP_ASM_LSYM_PREFIX
   GMP_ASM_W32
-  GMP_ASM_UNDERSCORE(underscore=yes, underscore=no)
-  GMP_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
+  GMP_ASM_UNDERSCORE
+  GMP_ASM_ALIGN_LOG
 
   case $host in
     m68*-*-*)
