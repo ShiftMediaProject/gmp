@@ -36,7 +36,7 @@ MA 02111-1307, USA.
 #include "config.h"
 
 #if HAVE_GETOPT_H
-#include <getopt.h>  /* for getopt_long() */
+#include <getopt.h>
 #endif
 
 #include <limits.h>
@@ -66,6 +66,7 @@ MA 02111-1307, USA.
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"  /* for the benefit of speed-many.c */
 
 #include "speed.h"
 
@@ -80,6 +81,9 @@ extern int optind, opterr;
 
 #ifdef SPEED_EXTRA_PROTOS
 SPEED_EXTRA_PROTOS
+#endif
+#ifdef SPEED_EXTRA_PROTOS2
+SPEED_EXTRA_PROTOS2
 #endif
 
 
@@ -161,6 +165,14 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_mod_1c
   { "mpn_mod_1c",        speed_mpn_mod_1c,    FLAG_R },
 #endif
+  { "mpn_preinv_mod_1",  speed_mpn_preinv_mod_1, FLAG_R },
+
+  { "mpn_divrem_1_div",  speed_mpn_divrem_1_div,  FLAG_R },
+  { "mpn_divrem_1_mul",  speed_mpn_divrem_1_mul,  FLAG_R },
+  { "mpn_divrem_1f_div", speed_mpn_divrem_1f_div, FLAG_R },
+  { "mpn_divrem_1f_mul", speed_mpn_divrem_1f_mul, FLAG_R },
+  { "mpn_mod_1_div",     speed_mpn_mod_1_div,     FLAG_R },
+  { "mpn_mod_1_mul",     speed_mpn_mod_1_mul,     FLAG_R },
 
   { "mpn_divrem_2",      speed_mpn_divrem_2,        },
   { "mpn_divexact_by3",  speed_mpn_divexact_by3     },
@@ -184,16 +196,19 @@ const struct routine_t {
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
+  { "mpn_gcd_1",         speed_mpn_gcd_1, FLAG_R_OPTIONAL },
+
   { "mpn_gcd",           speed_mpn_gcd              },
   { "mpn_gcd_binary",    speed_mpn_gcd_binary       },
   { "find_a",            speed_find_a, FLAG_NODATA  },
 
   { "mpn_gcdext",            speed_mpn_gcdext            },
   { "mpn_gcdext_single",     speed_mpn_gcdext_single     },
-  { "mpn_gcdext_one_double", speed_mpn_gcdext_one_double },
+  { "mpn_gcdext_double",     speed_mpn_gcdext_double     },
   { "mpn_gcdext_one_single", speed_mpn_gcdext_one_single },
+  { "mpn_gcdext_one_double", speed_mpn_gcdext_one_double },
 
-  { "mpn_gcd_1",         speed_mpn_gcd_1, FLAG_R_OPTIONAL },
+  { "mpz_jacobi",        speed_mpz_jacobi           },
   { "mpn_jacobi_base",   speed_mpn_jacobi_base      },
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R_OPTIONAL },
@@ -229,6 +244,7 @@ const struct routine_t {
   { "mpz_powm",          speed_mpz_powm             },
   { "mpz_powm_mod",      speed_mpz_powm_mod         },
   { "mpz_powm_redc",     speed_mpz_powm_redc        },
+  { "mpz_powm_ui",       speed_mpz_powm_ui          },
 
   { "mpz_mod",           speed_mpz_mod              },
   { "redc",              speed_redc                 },
@@ -272,6 +288,9 @@ const struct routine_t {
 
 #ifdef SPEED_EXTRA_ROUTINES
   SPEED_EXTRA_ROUTINES
+#endif
+#ifdef SPEED_EXTRA_ROUTINES2
+  SPEED_EXTRA_ROUTINES2
 #endif
 };
 
@@ -834,186 +853,154 @@ Quickplot home page http://www.kachinatech.com/~quickplot\n\
 int
 main (int argc, char *argv[])
 {
-#define OPTION_ALIGN     1000
-#if HAVE_GETOPT_LONG
-  static const struct option  longopts[] = {
-    { "align",           required_argument, NULL, OPTION_ALIGN    },
-    { "align-x",         required_argument, NULL, 'x' },
-    { "align-y",         required_argument, NULL, 'y' },
-    { "align-w",         required_argument, NULL, 'w' },
-    { "align-w2",        required_argument, NULL, 'W' },
-    { "data",            required_argument, NULL, 'a' },
-    { "cycles",          no_argument,       NULL, 'c' },
-    { "cycles-per-limb", no_argument,       NULL, 'C' },
-    { "diff",            no_argument,       NULL, 'd' },
-    { "diff-prev",       no_argument,       NULL, 'D' },
-    { "difference",      no_argument,       NULL, 'd' },
-    { "difference-prev", no_argument,       NULL, 'D' },
-    { "factor",          required_argument, NULL, 'f' },
-    { "plot",            no_argument,       NULL, 'P' },
-    { "precision",       required_argument, NULL, 'p' },
-    { "ratio",           no_argument,       NULL, 'r' },
-    { "randomize",       no_argument,       NULL, 'R' },
-    { "sizes",           required_argument, NULL, 's' },
-    { "step",            required_argument, NULL, 't' },
-    { "resources",       required_argument, NULL, 'u' },
-    { "uncached",        no_argument,       NULL, 'z' },
-    { NULL }
-  };
-#endif
-
   int  i;
   int  opt;
 
   /* Unbuffered so output goes straight out when directed to a pipe or file
-     and isn't lost if you kill the program half way.  */
+     and isn't lost on killing the program half way.  */
   setbuf (stdout, NULL);
 
-#define OPTSTRING  "a:CcDdEFf:o:p:P:rRs:t:ux:y:w:W:z"
-#if HAVE_GETOPT_LONG
-  while ((opt = getopt_long(argc, argv, OPTSTRING, longopts, NULL))
-         != EOF)
-#else
-    while ((opt = getopt(argc, argv, OPTSTRING)) != EOF)
-#endif
-      {
-        switch (opt) {
-        case 'a':
-          if (strcmp (optarg, "random") == 0)       option_data = DATA_RANDOM;
-          else if (strcmp (optarg, "random2") == 0) option_data = DATA_RANDOM2;
-          else if (strcmp (optarg, "zeros") == 0)   option_data = DATA_ZEROS;
-          else if (strcmp (optarg, "ffs") == 0)     option_data = DATA_FFS;
-          else if (strcmp (optarg, "2fd") == 0)     option_data = DATA_2FD;
-          else
-            {
-              fprintf (stderr, "unrecognised data option: %s\n", optarg);
-              exit (1);
-            }
-          break;
-        case 'C':
-          if (option_unit  != UNIT_SECONDS) goto bad_unit;
-          option_unit = UNIT_CYCLESPERLIMB;
-          break;
-        case 'c':
-          if (option_unit != UNIT_SECONDS)
-            {
-            bad_unit:
-              fprintf (stderr, "cannot use more than one of -c, -C\n");
-              exit (1);
-            }
-          option_unit = UNIT_CYCLES;
-          break;
-        case 'D':
-          if (option_cmp != CMP_ABSOLUTE) goto bad_cmp;
-          option_cmp = CMP_DIFFPREV;
-          break;
-        case 'd':
-          if (option_cmp != CMP_ABSOLUTE)
-            {
-            bad_cmp:
-              fprintf (stderr, "cannot use more than one of -d, -D, -r\n");
-              exit (1);
-            }
-          option_cmp = CMP_DIFFERENCE;
-          break;
-        case 'E':
-          option_square = 1;
-          break;
-        case 'F':
-          option_square = 2;
-          break;
-        case 'f':
-          option_factor = atof (optarg);
-          if (option_factor <= 1.0)
-            {
-              fprintf (stderr, "-f factor must be > 1.0\n");
-              exit (1);
-            }
-          break;
-        case 'o':
-          speed_option_set (optarg);
-          break;
-        case 'P':
-          option_gnuplot = 1;
-          option_gnuplot_basename = optarg;
-          break;
-        case 'p':
-          speed_precision = atoi (optarg);
-          break;
-        case 'R':
-          option_seed = time (NULL);
-          break;
-        case 'r':
-          if (option_cmp != CMP_ABSOLUTE)
-            goto bad_cmp;
-          option_cmp = CMP_RATIO;
-          break;
-        case 's':
+  for (;;)
+    {
+      opt = getopt(argc, argv, "a:CcDdEFf:o:p:P:rRs:t:ux:y:w:W:z");
+      if (opt == EOF)
+        break;
+
+      switch (opt) {
+      case 'a':
+        if (strcmp (optarg, "random") == 0)       option_data = DATA_RANDOM;
+        else if (strcmp (optarg, "random2") == 0) option_data = DATA_RANDOM2;
+        else if (strcmp (optarg, "zeros") == 0)   option_data = DATA_ZEROS;
+        else if (strcmp (optarg, "ffs") == 0)     option_data = DATA_FFS;
+        else if (strcmp (optarg, "2fd") == 0)     option_data = DATA_2FD;
+        else
           {
-            char  *s;
-            for (s = strtok (optarg, ","); s != NULL; s = strtok (NULL, ","))
-              {
-                if (size_num == size_allocnum)
-                  {
-                    size_array = (struct size_array_t *)
-                      __gmp_allocate_or_reallocate
-                      (size_array,
-                       size_allocnum * sizeof(size_array[0]),
-                       (size_allocnum+10) * sizeof(size_array[0]));
-                    size_allocnum += 10;
-                  }
-                if (sscanf (s, "%ld-%ld",
-                            &size_array[size_num].start,
-                            &size_array[size_num].end) != 2)
-                  {
-                    size_array[size_num].start = size_array[size_num].end
-                      = atol (s);
-                  }
-
-                if (size_array[size_num].start < 1
-                    || size_array[size_num].end < 1
-                    || size_array[size_num].start > size_array[size_num].end)
-                  {
-                    fprintf (stderr, "invalid size parameter: %s\n", s);
-                    exit (1);
-                  }
-
-                size_num++;
-              }
+            fprintf (stderr, "unrecognised data option: %s\n", optarg);
+            exit (1);
           }
-          break;
-        case 't':
-          option_step = atol (optarg);
-          if (option_step < 1)
+        break;
+      case 'C':
+        if (option_unit  != UNIT_SECONDS) goto bad_unit;
+        option_unit = UNIT_CYCLESPERLIMB;
+        break;
+      case 'c':
+        if (option_unit != UNIT_SECONDS)
+          {
+          bad_unit:
+            fprintf (stderr, "cannot use more than one of -c, -C\n");
+            exit (1);
+          }
+        option_unit = UNIT_CYCLES;
+        break;
+      case 'D':
+        if (option_cmp != CMP_ABSOLUTE) goto bad_cmp;
+        option_cmp = CMP_DIFFPREV;
+        break;
+      case 'd':
+        if (option_cmp != CMP_ABSOLUTE)
+          {
+          bad_cmp:
+            fprintf (stderr, "cannot use more than one of -d, -D, -r\n");
+            exit (1);
+          }
+        option_cmp = CMP_DIFFERENCE;
+        break;
+      case 'E':
+        option_square = 1;
+        break;
+      case 'F':
+        option_square = 2;
+        break;
+      case 'f':
+        option_factor = atof (optarg);
+        if (option_factor <= 1.0)
+          {
+            fprintf (stderr, "-f factor must be > 1.0\n");
+            exit (1);
+          }
+        break;
+      case 'o':
+        speed_option_set (optarg);
+        break;
+      case 'P':
+        option_gnuplot = 1;
+        option_gnuplot_basename = optarg;
+        break;
+      case 'p':
+        speed_precision = atoi (optarg);
+        break;
+      case 'R':
+        option_seed = time (NULL);
+        break;
+      case 'r':
+        if (option_cmp != CMP_ABSOLUTE)
+          goto bad_cmp;
+        option_cmp = CMP_RATIO;
+        break;
+      case 's':
+        {
+          char  *s;
+          for (s = strtok (optarg, ","); s != NULL; s = strtok (NULL, ","))
             {
-              fprintf (stderr, "-t step must be >= 1\n");
-              exit (1);
+              if (size_num == size_allocnum)
+                {
+                  size_array = (struct size_array_t *)
+                    __gmp_allocate_or_reallocate
+                    (size_array,
+                     size_allocnum * sizeof(size_array[0]),
+                     (size_allocnum+10) * sizeof(size_array[0]));
+                  size_allocnum += 10;
+                }
+              if (sscanf (s, "%ld-%ld",
+                          &size_array[size_num].start,
+                          &size_array[size_num].end) != 2)
+                {
+                  size_array[size_num].start = size_array[size_num].end
+                    = atol (s);
+                }
+
+              if (size_array[size_num].start < 0
+                  || size_array[size_num].end < 0
+                  || size_array[size_num].start > size_array[size_num].end)
+                {
+                  fprintf (stderr, "invalid size parameter: %s\n", s);
+                  exit (1);
+                }
+
+              size_num++;
             }
-          break;
-        case 'u':
-          option_resource_usage = 1;
-          break;
-        case 'z':
-          sp.cache = 1;
-          break;
-        case OPTION_ALIGN:
-          abort();
-        case 'x':
-          sp.align_xp = atol (optarg);
-          break;
-        case 'y':
-          sp.align_yp = atol (optarg);
-          break;
-        case 'w':
-          sp.align_wp = atol (optarg);
-          break;
-        case 'W':
-          sp.align_wp2 = atol (optarg);
-          break;
-        case '?':
-          exit(1);
         }
+        break;
+      case 't':
+        option_step = atol (optarg);
+        if (option_step < 1)
+          {
+            fprintf (stderr, "-t step must be >= 1\n");
+            exit (1);
+          }
+        break;
+      case 'u':
+        option_resource_usage = 1;
+        break;
+      case 'z':
+        sp.cache = 1;
+        break;
+      case 'x':
+        sp.align_xp = atol (optarg);
+        break;
+      case 'y':
+        sp.align_yp = atol (optarg);
+        break;
+      case 'w':
+        sp.align_wp = atol (optarg);
+        break;
+      case 'W':
+        sp.align_wp2 = atol (optarg);
+        break;
+      case '?':
+        exit(1);
       }
+    }
 
   if (optind >= argc)
     {
@@ -1066,7 +1053,7 @@ main (int argc, char *argv[])
       else
         printf ("overhead %.2f cycles",
                 speed_measure (speed_noop, NULL) / speed_cycletime);
-      printf (", precision %d units of %.2e secs, cycle %.1e\n",
+      printf (", precision %d units of %.2e secs, cycle %.3e\n",
               speed_precision, speed_unittime, speed_cycletime);
 
       printf ("       ");
