@@ -13,6 +13,16 @@ int g_debug = 0;
    Then run a spectral test on the generator and discard any
    multipliers not passing.  */
 
+/* TODO:
+
+   1) catch signals and print current 'a'.
+
+   2) print low_merit and high_merit on startup.
+
+   3) print "done" on exit.
+
+*/
+
 int
 main (int argc, char *argv[])
 {
@@ -143,5 +153,6 @@ main (int argc, char *argv[])
   mpf_clear (low_merit);
   mpf_clear (high_merit);
 
+  printf ("done.\n");
   return 0;
 }
