@@ -1023,7 +1023,7 @@ mp_limb_t __GMP_DECLSPEC mpn_addmul_1c _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp
 
 mp_limb_t __GMP_DECLSPEC mpn_addsub_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t __GMP_DECLSPEC mpn_bdivmod _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, unsigned long int));
-int __GMP_DECLSPEC mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
+int __GMP_DECLSPEC mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_divexact_by3(dst,src,size) \
   mpn_divexact_by3c (dst, src, size, (mp_limb_t) 0)
