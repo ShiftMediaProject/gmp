@@ -54,17 +54,15 @@ extern int optind, opterr;
 #endif
 
 #include "gmp.h"
-
-#define MIN(a, b) (a < b ? a : b)
-#define MAX(a, b) (a > b ? a : b)
+#include "gmp-impl.h"
 
 int main (argc, argv)
      int argc;
      char *argv[];
 {
   const char usage[] =
-    "usage: gen [-bhp] [-a n] [-c a,c,m2exp] [-C a,c,m] [-f func] [-g alg] [-m n] [-s n] " \
-    "[-x f,t] [-z n] n\n" \
+    "usage: gen [-bhpq] [-a n] [-c a,c,m2exp] [-C a,c,m] [-f func] [-g alg] [-m n] [-s n] " \
+    "[-x f,t] [-z n] [n]\n" \
     "  n        number of random numbers to generate\n" \
     "  -a n     ASCII output in radix n (default, with n=10)\n" \
     "  -b       binary output\n" \
@@ -76,13 +74,14 @@ int main (argc, argv)
     "  -h       print this text and exit\n" \
     "  -m n     maximum size of generated number plus 1 (0<= X < n) for mpz_urandomm\n" \
     "  -p       print used seed on stderr\n" \
+    "  -q	quiet, no output\n" \
     "  -s n     initial seed (default: output from time(3))\n" \
     "  -x f,t   exclude all numbers f <= x <= t\n" \
     "  -z n     size in bits of generated numbers (0<= X <2^n) (default 32)\n" \
     "";
 
   unsigned long int f;
-  unsigned long int n;
+  unsigned long int n = 0;
   unsigned long int seed;
   unsigned long int m2exp = 0;
   unsigned int size = 32;
@@ -90,6 +89,7 @@ int main (argc, argv)
   int ascout = 1, binout = 0, printseed = 0;
   int output_radix = 10;
   int lc_scheme_from_user = 0;
+  int quiet_flag = 0;
   mpz_t z_seed;
   mpz_t z1;
   mpf_t f1;
@@ -125,7 +125,7 @@ int main (argc, argv)
   mpz_init_set_ui (z_mmax, 0);
 
 
-  while ((c = getopt (argc, argv, "a:bc:C:f:g:hm:n:ps:z:x:")) != -1)
+  while ((c = getopt (argc, argv, "a:bc:C:f:g:hm:n:pqs:z:x:")) != -1)
     switch (c)
       {
       case 'a':
@@ -218,6 +218,10 @@ int main (argc, argv)
 	printseed = 1;
 	break;
 
+      case 'q':			/* quiet */
+	quiet_flag = 1;
+	break;
+
       case 's':			/* user provided seed */
 	if (mpz_set_str (z_seed, optarg, 0))
 	  {
@@ -257,12 +261,6 @@ int main (argc, argv)
   argc -= optind;
   argv += optind;
 
-  if (argc < 1)
-    {
-      fputs (usage, stderr);
-      exit (1);
-    }
-
   if (! seed_from_user)
     mpz_set_ui (z_seed, (unsigned long int) time (NULL));
   seed = mpz_get_ui (z_seed);
@@ -272,7 +270,6 @@ int main (argc, argv)
       mpz_out_str (stderr, output_radix, z_seed);
       fprintf (stderr, "\n");
     }
-  
 
   mpf_set_prec (f1, size);
   
@@ -280,6 +277,11 @@ int main (argc, argv)
   switch (rfunc)
     {
     case RFUNC_mpf_urandomb:
+#if 0
+      /* Don't init a too small generator.  */
+      size = PREC (f1) * BITS_PER_MP_LIMB;
+      /* Fall through.  */
+#endif
     case RFUNC_mpz_urandomb:
     case RFUNC_mpz_urandomm:
       if (! lc_scheme_from_user)
@@ -347,19 +349,25 @@ int main (argc, argv)
       }
   
   /* generate and print */
-#ifdef HAVE_STRTOUL
-  n = strtoul (argv[0], (char **) NULL, 10);
+  if (argc > 0)
+    {
+#if HAVE_STRTOUL
+      n = strtoul (argv[0], (char **) NULL, 10);
 #elif HAVE_STRTOL
-  n = (unsigned long int) strtoul (argv[0], (char **) NULL, 10);
+      n = (unsigned long int) strtol (argv[0], (char **) NULL, 10);
 #else
-  n = (unsigned long int) atoi (argv[0]);
+      n = (unsigned long int) atoi (argv[0]);
 #endif
-  for (f = 0; f < n; f++)
+    }
+
+  for (f = 0; n == 0 || f < n; f++)
     {
       switch (rfunc)
 	{
 	case RFUNC_mpz_urandomb:
 	  mpz_urandomb (z1, rstate, size);
+	  if (quiet_flag)
+	    break;
 	  if (binout)
 	    {
 	      /*fwrite ((unsigned int *) z1->_mp_d, 4, 1, stdout);*/
@@ -375,6 +383,8 @@ int main (argc, argv)
 
 	case RFUNC_mpz_urandomm:
 	  mpz_urandomm (z1, rstate, z_mmax);
+	  if (quiet_flag)
+	    break;
 	  if (binout)
 	    {
 	      /*fwrite ((unsigned int *) z1->_mp_d, 4, 1, stdout);*/
@@ -389,10 +399,12 @@ int main (argc, argv)
 	  break;
 
 	case RFUNC_mpf_urandomb:
-	  mpf_urandomb (f1, rstate);
+	  mpf_urandomb (f1, rstate, size);
 	  if (do_exclude)
 	    if (mpf_cmp (f1, f_xf) >= 0 && mpf_cmp (f1, f_xt) <= 0)
 		break;
+	  if (quiet_flag)
+	    break;
 	  if (binout)
 	    {
 	      fprintf (stderr, "gen: binary output for floating point numbers "\
@@ -413,11 +425,15 @@ int main (argc, argv)
 	    drand = (double) i / (double) RAND_MAX;
 	  else
 	    drand = 0.0;
+	  if (quiet_flag)
+	    break;
 	  if (binout)
 	    fwrite (&drand, sizeof (drand), 1, stdout);
 	  else
 	    printf ("%e\n", drand);
 #else
+	  if (quiet_flag)
+	    break;
 	  if (binout)
 	    fwrite (&i, sizeof (i), 1, stdout);
 	  else
@@ -431,6 +447,8 @@ int main (argc, argv)
 	    drand = (double) lrand / (double) 0x7fffffff;
 	  else
 	    drand = 0;
+	  if (quiet_flag)
+	    break;
 	  if (binout)
 	    fwrite (&drand, sizeof (drand), 1, stdout);
 	  else
