@@ -695,7 +695,7 @@ case $host in
     case $host in
       *-*-aix*)
         cclist="gcc xlc cc"
-        xlc_cflags="-g -O2 -qarch=ppc -qmaxmem=20000"
+        xlc_cflags="-g -O2 -qmaxmem=20000"
         xlc_cflags_optlist="arch"
 
         # xlc (what version?) knows -qarch=ppc, ppcgr, 601, 602, 603, 604,
@@ -709,6 +709,7 @@ case $host in
 	  powerpc603e)  xlc_cflags_arch="-qarch=603" ;;
 	  powerpc604)   xlc_cflags_arch="-qarch=604" ;;
 	  powerpc604e)  xlc_cflags_arch="-qarch=604" ;;
+	  *)            xlc_cflags_arch="-qarch=ppc" ;;
         esac
         ;;
     esac
