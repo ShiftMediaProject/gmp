@@ -33,6 +33,11 @@ and at what offset in the frame.
 
 Cray T3 code is very very different...
 
+"not" as an alias for "ornot r31, ..." is available in gas and DEC as, but not
+in the Cray Unicos assembler.  "ornot" must be used.
+
+
+
 
 RELEVANT OPTIMIZATION ISSUES
 
