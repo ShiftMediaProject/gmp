@@ -491,6 +491,10 @@ if AC_TRY_EVAL(gmp_compile); then
     gmp_prog_cc_works=yes
   fi
 fi
+if test $gmp_prog_cc_works = no; then
+  echo "failed program was:" >&AC_FD_CC
+  cat conftest.c >&AC_FD_CC
+fi
 rm -f conftest* a.out b.out a.exe a_out.exe
 AC_MSG_RESULT($gmp_prog_cc_works)
 if test $gmp_prog_cc_works = yes; then
@@ -519,6 +523,9 @@ gmp_prog_cc_works=no
 gmp_compile="$1 -c conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
   gmp_prog_cc_works=yes
+else
+  echo "failed program was:" >&AC_FD_CC
+  cat conftest.c >&AC_FD_CC
 fi
 rm -f conftest* a.out b.out a.exe a_out.exe
 AC_MSG_RESULT($gmp_prog_cc_works)
