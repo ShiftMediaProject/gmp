@@ -37,6 +37,12 @@ noop (void)
 
 /*ARGSUSED*/
 void
+noop_1 (mp_limb_t n)
+{
+}
+
+/*ARGSUSED*/
+void
 noop_wxs (mp_ptr wp, mp_srcptr xp, mp_size_t size)
 {
 }
