@@ -5018,6 +5018,8 @@ class gmp_randclass
 {
 private:
   gmp_randstate_t state;
+  gmp_randclass(const gmp_randclass &);  // copy constructor not allowed
+  void operator=(const gmp_randclass &); // copying with assignment not allowed
 public:
   // constructors and destructor
   gmp_randclass(gmp_randalg_t alg, unsigned long int size)
