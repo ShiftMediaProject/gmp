@@ -1381,7 +1381,7 @@ t_random (mp_ptr ptr, mp_size_t n)
     }
     break;
   case DATA_ZEROS:
-    refmpn_fill (ptr, n, (mp_limb_t) 0);
+    refmpn_zero (ptr, n);
     break;
   case DATA_FFS:
     refmpn_fill (ptr, n, (mp_limb_t) -1);
@@ -1650,7 +1650,7 @@ call (struct each_t *e, tryfun_t function)
     refmpn_fill (e->d[0].p, size-size2, 0x98765432);  /* quotient */
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->d[1].p, size, e->s[1].p, size2);
-    refmpn_fill (e->d[1].p+size2, size-size2, CNST_LIMB(0)); /* remainder */
+    refmpn_zero (e->d[1].p+size2, size-size2);    /* excess over remainder */
     break;
   case TYPE_TDIV_QR:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->d[1].p, 0,
