@@ -21,14 +21,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
-/* All time measuring methods will need an otherwise idle system to
-   guarantee accurate measurements.  The only exception might be times()
-   tms_utime, and only then if you know the kernel accurately accounts for
-   task switches and interrupts, and in that case you'd expect some other
-   accurate time base to be available too.
-
-
-   speed_time_init() - initialize timing things.  speed_starttime() calls
+/* speed_time_init() - initialize timing things.  speed_starttime() calls
    this if it hasn't been done yet, so you only need to call this explicitly
    if you want to use the global variables before the first measurement.
   
@@ -55,8 +48,7 @@ MA 02111-1307, USA.
 
    Add support for accurate timing on more CPUs, machines and systems.
 
-   Extend automatic CPU frequency determination to kernels/systems other
-   than FreeBSD and Linux.
+   Extend automatic CPU frequency determination to more kernels and systems.
 
  */
 
@@ -82,8 +74,8 @@ MA 02111-1307, USA.
 #if HAVE_SPEED_CYCLECOUNTER
 #define SPEED_USE_CYCLECOUNTER               1
 #else
-#define SPEED_USE_MICROSECOND_GETRUSAGE      1
-#define SPEED_USE_MICROSECOND_GETTIMEOFDAY   0
+#define SPEED_USE_MICROSECOND_GETRUSAGE      0
+#define SPEED_USE_MICROSECOND_GETTIMEOFDAY   1
 #define SPEED_USE_TMS_UTIME                  0
 #endif
 
@@ -143,7 +135,7 @@ speed_cpu_frequency_sysctlbyname (void)
 
 
 /* Linux doesn't seem to have any system call to get the CPU frequency, at
-   least not in 2.0.36 or 2.2.13, so it's necessary to read /proc/cpuinfo.
+   least not in 2.0.x or 2.2.x, so it's necessary to read /proc/cpuinfo.
 
    Kernel 2.0.36 has "bogomips", and it's the CPU frequency.  Kernel 2.2.13
    has both a "cpu MHz" and "bogomips", and it's "cpu MHz" which is the
@@ -182,6 +174,8 @@ speed_cpu_frequency_proc_cpuinfo (void)
 
 /* SunOS /bin/sysinfo prints a line like:
        cpu0 is a "75 MHz TI,TMS390Z55" CPU */
+
+#if HAVE_POPEN
 int
 speed_cpu_frequency_sunos_sysinfo (void)
 {
@@ -190,7 +184,8 @@ speed_cpu_frequency_sunos_sysinfo (void)
   double  val;
   int     ret = 0;
 
-  /* /dev/null suppresses error messages if /bin/sysinfo doesn't exist */
+  /* Error messages are sent to /dev/null in case /bin/sysinfo doesn't
+     exist.  The brackets are necessary for some shells (eg. ash). */
   if ((fp = popen ("(/bin/sysinfo) 2>/dev/null", "r")) != NULL)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
@@ -206,10 +201,11 @@ speed_cpu_frequency_sunos_sysinfo (void)
     }
   return ret;
 }
+#endif
 
 
-/* This is for SunOS 5.7.  The psrinfo command in the command-line interface
-   to processor_info().  "prtconf -vp" gives similar information.  */
+/* This is for Solaris.  "psrinfo" is the command-line interface to
+   processor_info().  "prtconf -vp" gives similar information.  */
 
 #if HAVE_PROCESSOR_INFO
 #include <sys/unistd.h>     /* for _SC_NPROCESSORS_CONF */
@@ -248,8 +244,8 @@ speed_cpu_frequency_processor_info (void)
    if not.  */
 
 static const struct {
-  int (*fun) _PROTO ((void));
-  const char *description;
+  int         (*fun) _PROTO ((void));
+  const char  *description;
 
 } speed_cpu_frequency_table[] = {
 
@@ -271,8 +267,10 @@ static const struct {
   { speed_cpu_frequency_proc_cpuinfo,
     "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
 
+#if HAVE_POPEN
   { speed_cpu_frequency_sunos_sysinfo,
     "SunOS /bin/sysinfo program cpu0 output" },
+#endif
 };
 
 
@@ -309,8 +307,8 @@ double speed_cycletime;
 static int  speed_time_initialized = 0;
 static unsigned  speed_starttime_save[2];
 
-/* Knowing the CPU frequency is mandatory because it's needed to convert
-   cycles into seconds.  */
+/* Knowing the CPU frequency is mandatory, so cycles can be converted to
+   seconds.  */
 void
 speed_time_init (void)
 {
@@ -346,7 +344,7 @@ speed_endtime (void)
 
   speed_cyclecounter (endtime);
 
-  /* This still works if speed_cyclecounter() puts a value bigger than
+  /* This still works even if speed_cyclecounter() puts a value bigger than
      32-bits in the low word.  The start and end values are allowed to
      cancel in uints in case a uint is more than the 53 bits that will
      normally fit in a double. */
