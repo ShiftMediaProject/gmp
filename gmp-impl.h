@@ -127,6 +127,16 @@ MA 02111-1307, USA. */
 #endif
 
 
+#define MPZ_FITS_STYPE_SDT(size,data,type)                               \
+  ((size) == 0                                                           \
+   || ((size) == 1  && (data) <  UNSIGNED_TYPE_HIGHBIT (unsigned type))  \
+   || ((size) == -1 && (data) <= UNSIGNED_TYPE_HIGHBIT (unsigned type)))
+
+#define MPZ_FITS_UTYPE_SDT(size,data,type)                              \
+  ((size) == 0                                                          \
+   || ((size) == 1  && (data) <  UNSIGNED_TYPE_MAX (type)))
+
+
 /* Swap macros. */
 
 #define MP_LIMB_T_SWAP(x, y)                    \
