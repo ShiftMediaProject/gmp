@@ -85,6 +85,7 @@ AWK = @AWK@
 CALLING_CONVENTIONS_OBJS = @CALLING_CONVENTIONS_OBJS@
 CC = @CC@
 CCAS = @CCAS@
+CFLAGS_IEEE_WITH_INEXACT = @CFLAGS_IEEE_WITH_INEXACT@
 CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
@@ -141,6 +142,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
 
 INCLUDES = -I$(top_srcdir)
+CFLAGS = @CFLAGS@ $(CFLAGS_IEEE_WITH_INEXACT)
 
 @WANT_MPFR_TRUE@lib_LIBRARIES = libmpfr.a
 @WANT_MPFR_TRUE@include_HEADERS = mpfr.h
@@ -213,7 +215,6 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libmpfr_a_SOURCES)
 INFO_DEPS = mpfr.info
 DVIS = mpfr.dvi
