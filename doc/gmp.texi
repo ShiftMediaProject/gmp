@@ -28,8 +28,6 @@ License}.
 
 @c  Texinfo version 4.2 or up will be needed to process this file.
 @c
-@c  A suitable texinfo.tex is supplied, a newer one should work equally well.
-@c
 @c  The version number and edition number are taken from version.texi provided
 @c  by automake (note that it's regenerated only if you configure with
 @c  --enable-maintainer-mode).
@@ -51,24 +49,24 @@ License}.
 @c  since the latter come out with quotes in TeX, which are nice in the text
 @c  but don't look so good in index columns.
 @c
-@c  By default HTML output gets external URLs to relevant web sites.  These
-@c  have to be kept up-to-date manually.  GLIBC for instance unfortunately
-@c  includes its version number.
+@c  Tex:
 @c
-@c  Texinfo flag LOCALHTML can be set to instead select the default makeinfo
-@c  handling of HTML external references, namely either "../foo/Section.html"
-@c  or "foo.html#Section", for split or no-split mode.  This can be good if a
-@c  complete collection of manuals is being prepared.  For instance,
+@c  A suitable texinfo.tex is supplied, a newer one should work equally well.
 @c
-@c          makeinfo -DLOCALHTML --html --no-split gmp.texi
-
+@c  HTML:
+@c
+@c  Nothing special is done for links to external manuals, they just come out
+@c  in the usual makeinfo style, eg. "../libc/Locales.html".  If you have
+@c  local copies of such manuals then this is a good thing, if not then you
+@c  may want to search-and-replace to some online source.
+@c
 
 @dircategory GNU libraries
 @direntry
 * gmp: (gmp).                   GNU Multiple Precision Arithmetic Library.
 @end direntry
 
-@c  html <meta name=description content="...">
+@c  html <meta name="description" content="...">
 @documentdescription
 How to install and use the GNU multiple precision arithmetic library, version @value{VERSION}.
 @end documentdescription
@@ -382,56 +380,31 @@ x
 @end macro
 @end ifnottex
 
-@c  Usage: GMPrefu{node,name,topic,info,title,url}
-@c  Usage: GMPpxrefu{node,name,topic,info,title,url}
+@c  Usage: @GMPreftop{info,title}
+@c  Usage: @GMPpxreftop{info,title}
 @c
-@c  Like ref{} and pxref{}, but taking an extra parameter which is a URL to
-@c  use for HTML output with external references.
+@c  Like @ref{} and @pxref{}, but designed for a reference to the top of a
+@c  document, not a particular section.  The TeX output for plain @ref insists
+@c  on printing a particular section, GMPreftop gives just the title.
 @c
-@ifhtml
-@ifclear LOCALHTML
-@macro GMPrefu{node,name,topic,info,title,url}
-@uref{\url\,\topic\}
-@end macro
-@macro GMPpxrefu{node,name,topic,info,title,url}
-@uref{\url\,\topic\}
-@end macro
-@set GotGMPrefu
-@end ifclear
-@end ifhtml
-@c
-@ifclear GotGMPrefu
-@macro GMPrefu{node,name,topic,info,title,url}
-@ref{\node\,\name\,\topic\,\info\,\title\}
-@end macro
-@macro GMPpxrefu{node,name,topic,info,title,url}
-@pxref{\node\,\name\,\topic\,\info\,\title\}
-@end macro
-@end ifclear
-
-
-@c  Usage: GMPreftopu{info,title,url}
-@c  Usage: GMPpxreftopu{info,title,url}
-@c
-@c  Like GMPrefu{} and GMPpxref{u}, but designed for a reference to the top of
-@c  a document, not a particular section.  The TeX output for plain @ref
-@c  insists on printing a particular section, GMPreftopu gives just the title.
+@c  The texinfo manual recommends putting a likely section name in references
+@c  like this, eg. "Introduction", but it seems better to just give the title.
 @c
 @iftex
-@macro GMPreftopu{info,title,url}
+@macro GMPreftop{info,title}
 @i{\title\}
 @end macro
-@macro GMPpxreftopu{info,title,url}
+@macro GMPpxreftop{info,title}
 see @i{\title\}
 @end macro
 @end iftex
 @c
 @ifnottex
-@macro GMPreftopu{info,title,url}
-@GMPrefu{Top,\title\,\title\,\info\,\title\,\url\}
+@macro GMPreftop{info,title}
+@ref{Top,\title\,\title\,\info\,\title\}
 @end macro
-@macro GMPpxreftopu{info,title,url}
-@GMPpxrefu{Top,\title\,\title\,\info\,\title\,\url\}
+@macro GMPpxreftop{info,title}
+@pxref{Top,\title\,\title\,\info\,\title\}
 @end macro
 @end ifnottex
 
@@ -1108,8 +1081,7 @@ can specify a different path.  Normally this is completely unnecessary.
 @cindex Documentation formats
 @cindex Texinfo
 The source for the document you're now reading is @file{doc/gmp.texi}, in
-Texinfo format, see @GMPreftopu{texinfo, Texinfo,
-http://www.gnu.org/manual/texinfo}.
+Texinfo format, see @GMPreftop{texinfo, Texinfo}.
 
 @cindex Postscript
 @cindex DVI
@@ -1120,17 +1092,14 @@ automake targets are available to make PostScript @file{gmp.ps}, DVI
 Texinfo tools).
 
 @cindex HTML
-HTML can be produced with @samp{makeinfo --html}, see @GMPrefu{Generating
-HTML,,, texinfo, Texinfo,
-http://www.gnu.org/manual/texinfo/html_node/Generating-HTML.html}.  Or
-alternately with @samp{texi2html}, see @GMPreftopu{texi2html, Texinfo To HTML,
-http://www.mathematik.uni-kl.de/~obachman/Texi2html}.
+HTML can be produced with @samp{makeinfo --html}, see @ref{Generating HTML,,,
+texinfo, Texinfo}.  Or alternately with @samp{texi2html}, see
+@GMPreftop{texi2html, Texinfo To HTML}.
 
 @cindex DocBook
 @cindex XML
-DocBook and XML can be generated by @command{makeinfo} too, see
-@GMPrefu{makeinfo options,, Options for @command{makeinfo}, texinfo, Texinfo,
-http://www.gnu.org/manual/texinfo/html_node/makeinfo-options.html}.
+DocBook and XML can be generated by @command{makeinfo} too, see @ref{makeinfo
+options,, Options for @command{makeinfo}, texinfo, Texinfo}.
 
 Some supplementary notes can also be found in the @file{doc} subdirectory.
 
@@ -1415,10 +1384,9 @@ distribution.
 @cindex Libtool versioning
 @cindex Shared library versioning
 Libtool is used to build the library and @samp{-version-info} is set
-appropriately, having started from @samp{3:0:0} in GMP 3.0
-(@GMPpxrefu{Versioning, Library interface versions, Library interface
-versions, libtool, GNU Libtool,
-http://www.gnu.org/manual/libtool/html_node/libtool_32.html}).
+appropriately, having started from @samp{3:0:0} in GMP 3.0 (@pxref{Versioning,
+Library interface versions, Library interface versions, libtool, GNU
+Libtool}).
 
 The GMP 4 series will be upwardly binary compatible in each release and will
 be upwardly binary compatible with all of the GMP 3 series.  Additional
@@ -1621,9 +1589,8 @@ significant performance increase over the V7 code.
 @cindex Sparc
 The GMP assembler code for both 32-bit and 64-bit Sparc clobbers the
 ``application registers'' @code{g2}, @code{g3} and @code{g4}, the same way
-that the GCC default @samp{-mapp-regs} does (@GMPpxrefu{SPARC Options,, SPARC
-Options, gcc, Using the GNU Compiler Collection (GCC),
-http://gcc.gnu.org/onlinedocs/gcc/SPARC-Options.html}).
+that the GCC default @samp{-mapp-regs} does (@pxref{SPARC Options,, SPARC
+Options, gcc, Using the GNU Compiler Collection (GCC)}).
 
 This makes that code unsuitable for use with the special V9
 @samp{-mcmodel=embmedany} (which uses @code{g4} as a data segment pointer),
@@ -1849,8 +1816,7 @@ g++ mycxxprog.cc -lgmpxx -lgmp
 
 @cindex Libtool
 GMP is built using Libtool and an application can use that to link if desired,
-@GMPpxreftopu{libtool, GNU Libtool,
-http://www.gnu.org/manual/libtool/html_node/libtool_toc.html}
+@GMPpxreftop{libtool, GNU Libtool}
 
 If GMP has been installed to a non-standard location then it may be necessary
 to use @samp{-I} and @samp{-L} compiler options to point to the right
@@ -2490,13 +2456,12 @@ only indication of stack overflow.  See @samp{--enable-alloca} choices in
 In new enough versions of GCC, @samp{-fstack-check} may be able to ensure an
 overflow is recognised by the system before too much damage is done, or
 @samp{-fstack-limit-symbol} or @samp{-fstack-limit-register} may be able to
-add checking if the system itself doesn't do any (@GMPpxrefu{Code Gen
-Options,, Options for Code Generation, gcc, Using the GNU Compiler Collection
-(GCC), http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html}).  These
-options must be added to the @samp{CFLAGS} used in the GMP build (@pxref{Build
-Options}), adding them just to an application will have no effect.  Note also
-they're a slowdown, adding overhead to each function call and each stack
-allocation.
+add checking if the system itself doesn't do any (@pxref{Code Gen Options,,
+Options for Code Generation, gcc, Using the GNU Compiler Collection (GCC)}).
+These options must be added to the @samp{CFLAGS} used in the GMP build
+(@pxref{Build Options}), adding them just to an application will have no
+effect.  Note also they're a slowdown, adding overhead to each function call
+and each stack allocation.
 
 @item Heap Problems
 @cindex Heap problems
@@ -2509,10 +2474,9 @@ GMP variables more than once or failing to clear them will cause memory leaks.
 @cindex Malloc debugger
 In all such cases a @code{malloc} debugger is recommended.  On a GNU or BSD
 system the standard C library @code{malloc} has some diagnostic facilities,
-see @GMPrefu{Allocation Debugging,, Allocation Debugging, libc, The GNU C
-Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Allocation-Debugging.html}, or
-@samp{man 3 malloc}.  Other possibilities, in no particular order, include
+see @ref{Allocation Debugging,, Allocation Debugging, libc, The GNU C Library
+Reference Manual}, or @samp{man 3 malloc}.  Other possibilities, in no
+particular order, include
 
 @display
 @uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc/}
@@ -2675,8 +2639,7 @@ instead.
 
 @item @samp{--enable-profiling=gprof}
 @cindex @code{gprof}
-Build with support for @command{gprof} (@GMPpxreftopu{gprof, GNU gprof,
-http://sources.redhat.com/binutils/docs-2.12/gprof.info/index.html}), which
+Build with support for @command{gprof} (@GMPpxreftop{gprof, GNU gprof}), which
 means @samp{-pg} added to the @samp{CFLAGS}.
 
 This provides call graph construction in addition to call counting and program
@@ -2703,9 +2666,8 @@ the @samp{gprof -q} call graph.
 @cindex @code{-finstrument-functions}
 @cindex @code{instrument-functions}
 Build with the GCC option @samp{-finstrument-functions} added to the
-@samp{CFLAGS} (@GMPpxrefu{Code Gen Options,, Options for Code Generation, gcc,
-Using the GNU Compiler Collection (GCC),
-http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html}).
+@samp{CFLAGS} (@pxref{Code Gen Options,, Options for Code Generation, gcc,
+Using the GNU Compiler Collection (GCC)}).
 
 This inserts special instrumenting calls at the start and end of each
 function, allowing exact timing and full call graph construction.
@@ -2809,9 +2771,8 @@ See http://www.mpfr.org/ or http://swox.com/gmp/])
 @cindex @code{info-lookup-symbol}
 
 @key{C-h C-i} (@code{info-lookup-symbol}) is a good way to find documentation
-on C functions while editing (@GMPpxrefu{Info Lookup, , Info Documentation
-Lookup, emacs, The Emacs Editor,
-http://www.gnu.org/manual/emacs/html_node/emacs_290.html}).
+on C functions while editing (@pxref{Info Lookup, , Info Documentation Lookup,
+emacs, The Emacs Editor}).
 
 The GMP manual can be included in such lookups by putting the following in
 your @file{.emacs},
@@ -5561,10 +5522,8 @@ Return a uniformly distributed random number in the range 0 to
 @section Format Strings
 
 @code{gmp_printf} and friends accept format strings similar to the standard C
-@code{printf} (@GMPpxrefu{Formatted Output,, Formatted Output, libc, The GNU C
-Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Formatted-Output.html}).  A
-format specification is of the form
+@code{printf} (@pxref{Formatted Output,, Formatted Output, libc, The GNU C
+Library Reference Manual}).  A format specification is of the form
 
 @example
 % [flags] [width] [.[precision]] [type] conv
@@ -5706,10 +5665,9 @@ decimal point.  An empty precision field like @samp{%.Fe} or @samp{%.Ff} can
 be used to specifically request just the significant digits.
 
 The decimal point character (or string) is taken from the current locale
-settings on systems which provide @code{localeconv} (@GMPpxrefu{Locales,,
-Locales and Internationalization, libc, The GNU C Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Locales.html}).
-The C library will normally do the same for standard float output.
+settings on systems which provide @code{localeconv} (@pxref{Locales,, Locales
+and Internationalization, libc, The GNU C Library Reference Manual}).  The C
+library will normally do the same for standard float output.
 
 The format string is only interpreted as plain @code{char}s, multibyte
 characters are not recognised.  Perhaps this will change in the future.
@@ -5721,10 +5679,9 @@ characters are not recognised.  Perhaps this will change in the future.
 
 Each of the following functions is similar to the corresponding C library
 function.  The basic @code{printf} forms take a variable argument list.  The
-@code{vprintf} forms take an argument pointer, see @GMPrefu{Variadic
-Functions,, Variadic Functions, libc, The GNU C Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Variadic-Functions.html}, or
-@samp{man 3 va_start}.
+@code{vprintf} forms take an argument pointer, see @ref{Variadic Functions,,
+Variadic Functions, libc, The GNU C Library Reference Manual}, or @samp{man 3
+va_start}.
 
 It should be emphasised that if a format string is invalid, or the arguments
 don't match what the format specifies, then the behaviour of any of these
@@ -5802,9 +5759,8 @@ characters written.  A null-terminator is not written.
 might move as it grows.
 
 These functions are available only when the C library provides the obstack
-feature, which probably means only on GNU systems, see @GMPrefu{Obstacks,,
-Obstacks, libc, The GNU C Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Obstacks.html}.
+feature, which probably means only on GNU systems, see @ref{Obstacks,,
+Obstacks, libc, The GNU C Library Reference Manual}.
 @end deftypefun
 
 
@@ -5891,10 +5847,8 @@ results.  For classes with overloading, see @ref{C++ Class Interface}.
 @section Formatted Input Strings
 
 @code{gmp_scanf} and friends accept format strings similar to the standard C
-@code{scanf} (@GMPpxrefu{Formatted Input,, Formatted Input, libc, The GNU C
-Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Formatted-Input.html}).  A
-format specification is of the form
+@code{scanf} (@pxref{Formatted Input,, Formatted Input, libc, The GNU C
+Library Reference Manual}).  A format specification is of the form
 
 @example
 % [flags] [width] [type] conv
@@ -6002,10 +5956,9 @@ hexadecimal.
 @samp{o}, @samp{u}, @samp{x} and @samp{X} all read positive or negative
 values.  For the standard C types these are described as ``unsigned''
 conversions, but that merely affects certain overflow handling, negatives are
-still allowed (per @code{strtoul}, @GMPpxrefu{Parsing of Integers,, Parsing of
-Integers, libc, The GNU C Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Parsing-of-Integers.html}).
-For GMP types there are no overflows, so @samp{d} and @samp{u} are identical.
+still allowed (per @code{strtoul}, @pxref{Parsing of Integers,, Parsing of
+Integers, libc, The GNU C Library Reference Manual}).  For GMP types there are
+no overflows, so @samp{d} and @samp{u} are identical.
 
 @samp{Q} type reads the numerator and (optional) denominator as given.  If the
 value might not be in canonical form then @code{mpq_canonicalize} must be
@@ -6028,10 +5981,9 @@ Whitespace is read and discarded before a field, except for @samp{c} and
 
 For float conversions, the decimal point character (or string) expected is
 taken from the current locale settings on systems which provide
-@code{localeconv} (@GMPpxrefu{Locales,, Locales and Internationalization,
-libc, The GNU C Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Locales.html}).  The C library
-will normally do the same for standard float input.
+@code{localeconv} (@pxref{Locales,, Locales and Internationalization, libc,
+The GNU C Library Reference Manual}).  The C library will normally do the same
+for standard float input.
 
 The format string is only interpreted as plain @code{char}s, multibyte
 characters are not recognised.  Perhaps this will change in the future.
@@ -6043,10 +5995,9 @@ characters are not recognised.  Perhaps this will change in the future.
 
 Each of the following functions is similar to the corresponding C library
 function.  The plain @code{scanf} forms take a variable argument list.  The
-@code{vscanf} forms take an argument pointer, see @GMPrefu{Variadic
-Functions,, Variadic Functions, libc, The GNU C Library Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Variadic-Functions.html}, or
-@samp{man 3 va_start}.
+@code{vscanf} forms take an argument pointer, see @ref{Variadic Functions,,
+Variadic Functions, libc, The GNU C Library Reference Manual}, or @samp{man 3
+va_start}.
 
 It should be emphasised that if a format string is invalid, or the arguments
 don't match what the format specifies, then the behaviour of any of these
