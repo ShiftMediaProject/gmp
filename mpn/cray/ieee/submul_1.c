@@ -40,7 +40,8 @@ mpn_submul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
     }
   cyl = mpn_sub_n (tp, rp, p0, n);
   rp[0] = tp[0];
-  cyl += mpn_sub_n (rp + 1, tp + 1, p1, n - 1);
+  if (n != 1)
+    cyl += mpn_sub_n (rp + 1, tp + 1, p1, n - 1);
   cyl += p1[n - 1];
 
   return cyl;
