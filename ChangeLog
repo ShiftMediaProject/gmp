@@ -1,5 +1,10 @@
 2000-05-25  Torbjorn Granlund  <tege@swox.com>
 
+	* insert-dbl.c: Work around GCC 2.8 bug.
+	* extract-dbl.c: Likewise.
+
+	* config.sub: Allow i586, i686, i786 again.
+
 	* config.guess: Use X86CPU for lots more systems.
 
 2000-05-25  Linus Nordberg  <linus@swox.se>
