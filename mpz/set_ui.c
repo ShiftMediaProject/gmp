@@ -1,6 +1,6 @@
 /* mpz_set_ui(integer, val) -- Assign INTEGER with a small value VAL.
 
-Copyright 1991, 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,8 +25,19 @@ MA 02111-1307, USA. */
 void
 mpz_set_ui (mpz_ptr dest, unsigned long int val)
 {
-  /* We don't check if the allocation is enough, since the rest of the
-     package ensures it's at least 1, which is what we need here.  */
-  dest->_mp_d[0] = val;
-  dest->_mp_size = (val != 0);
+  mp_size_t size;
+
+  dest->_mp_d[0] = val & GMP_NUMB_MASK;
+  size = val != 0;
+
+#if GMP_NAIL_BITS != 0
+  if (val > GMP_NUMB_MAX)
+    {
+      MPZ_REALLOC (dest, 2);
+      dest->_mp_d[1] = val >> GMP_NUMB_BITS;
+      size = 2;
+    }
+#endif
+
+  dest->_mp_size = size;
 }

@@ -26,6 +26,22 @@ MA 02111-1307, USA. */
 void
 mpz_set_si (mpz_ptr dest, signed long int val)
 {
-  dest->_mp_d[0] = (unsigned long) (val >= 0 ? val : -val);
-  dest->_mp_size = (val > 0 ? 1 : val == 0 ? 0 : -1);
+  mp_size_t size;
+  mp_limb_t vl;
+
+  vl = val >= 0 ? val : -val;
+
+  dest->_mp_d[0] = vl & GMP_NUMB_MASK;
+  size = vl != 0;
+
+#if GMP_NAIL_BITS != 0
+  if (vl > GMP_NUMB_MAX)
+    {
+      MPZ_REALLOC (dest, 2);
+      dest->_mp_d[1] = vl >> GMP_NUMB_BITS;
+      size = 2;
+    }
+#endif
+
+  dest->_mp_size = val >= 0 ? size : -size;
 }
