@@ -79,8 +79,6 @@
      on more or less uniformly distributed numbers.  For some CPUs
      <code>count_trailing_zeros</code> is slow and it's probably worth
      handling the frequently occurring 0 to 2 trailing zeros cases specially.
-<li> Change all places that use <code>udiv_qrnnd</code> for inverting limbs to
-     instead use <code>invert_limb</code>.  (Is this already done?)
 <li> Reorganize longlong.h so that we can inline the operations even for the
      system compiler.  When there is no such compiler feature, make calls to
      stub functions.  Write such stub functions for as many machines as
