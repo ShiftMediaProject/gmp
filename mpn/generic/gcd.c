@@ -534,6 +534,10 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
   return gsize + zero_words;  
 }
 
+#define MPN_LEQ_P(ap, asize, bp, bsize)				\
+((asize) < (bsize) || ((asize) == (bsize)			\
+		       && mpn_cmp ((ap), (bp), (asize)) <= 0))
+
 /* Sets (a, b, c, d)  <--  (c, d, a, b) */
 #define NHGCD_SWAP4_2(row)			\
 do {						\
