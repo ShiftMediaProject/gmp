@@ -19,6 +19,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_n.c: Finish nailifying toom3 code.
+
 2002-04-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr/*: Update to another new mpfr 2.0.1.
