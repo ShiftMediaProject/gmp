@@ -14,7 +14,7 @@
 </center>
 
 <font size=-1>
-Copyright 2000, 2001 Free Software Foundation, Inc. <br><br>
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc. <br><br>
 This file is part of the GNU MP Library. <br><br>
 The GNU MP Library is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published
@@ -33,11 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-<<<<<<< tasks.html
-  This file current as of 29 Dec 2001.  An up-to-date version is available at
-=======
-  This file current as of 22 Dec 2001.  An up-to-date version is available at
->>>>>>> 1.120
+  This file current as of 6 Jan 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -115,12 +111,6 @@ MA 02111-1307, USA.
 <li> Write new <code>mpn_get_str</code> and <code>mpn_set_str</code> running in
      the sub O(n^2) range, using some divide-and-conquer approach, preferably
      without using division.
-<li> <code>mpn_get_str</code> should use a native <code>mpn_divrem_1</code>
-     when available (athlon, p6mmx).  A new <code>mpn_preinv_divrem_1</code>
-     entrypoint would suit, since the inverse and shift are known from
-     <code>mp_bases</code>.  Don't do an <code>mpn_lshift</code> in
-     <code>mpn_get_str</code>, leave it up to <code>mpn_divrem_1</code> to
-     either make that call or do it on-the-fly.
 <li> Copy tricky code for converting a limb from development version of
      <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
 <li> Consider inlining <code>mpz_set_ui</code>.  This would be both small and
@@ -335,6 +325,10 @@ MA 02111-1307, USA.
      false.)  Measuring with the tuneup program would be possible, but perhaps
      a bit messy.  In any case maybe the default should be the branch-free
      version.
+     <br>
+     Note that the current <code>udiv_qrnnd_preinv2norm</code> implementation
+     assumes a right shift will sign extend, which is not guaranteed by the C
+     standards, and doesn't happen on Cray vector systems.
 <li> Run the `tune' utility for more compiler/CPU combinations.  We would like
      to have gmp-mparam.h files in practically every implementation specific
      mpn subdirectory, and repeat each *_THRESHOLD for gcc and the system
@@ -506,6 +500,11 @@ MA 02111-1307, USA.
      and maybe in <code>mpz_get_d</code>, rather than falling back on the
      generic code.  GCC defines <code>__GFLOAT</code> when -mg has selected G
      format (which would be possible via a user <code>CFLAGS</code>).
+<li> <code>mpn_get_str</code> final divisions by the base with
+     <code>udiv_qrnd_unnorm</code> could use some sort of multiply-by-inverse
+     on suitable machines.  This ends up happening for decimal by presenting
+     the compiler with a run-time constant, but the same for other bases would
+     be good.  Perhaps use could be made of the fact base&lt;256.
 </ul>
 
 <h4>New Functionality</h4>
@@ -772,6 +771,14 @@ MA 02111-1307, USA.
      by switching to <code>mpn_tdiv_qr</code> perhaps making them small enough
      not to bother with sharing (especially since <code>mpf_set_q</code>
      wouldn't need to watch out for overlaps).
+<li> PowerPC: The cpu time base registers (per <code>mftb</code> and
+     <code>mftbu</code>) could be used for the speed and tune programs.  Would
+     need to know its frequency though, for instance it seemed to be 25 MHz on
+     a couple of Apples (compared to the CPU speed of 350 or 450 MHz).
+<li> <code>FFT_MUL_THRESHOLD</code> etc: the FFT thresholds should allow a
+     return to a previous k at certain sizes.  This arises basically due to
+     the step effect caused by size multiples effectively used for each k.
+     Looking at a graph makes it fairly clear.
 </ul>
 
 
