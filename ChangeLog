@@ -1,4 +1,4 @@
-1999-11-05  Torbjorn Granlund  <tege@swox.com>
+1999-11-05  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpn/generic/addsub_n.c: New file.
 
