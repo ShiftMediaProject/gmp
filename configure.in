@@ -696,13 +696,9 @@ case $host in
       i586*-*-* | pentium-*-*)    path="x86/pentium x86" ;;
       pentiummmx-*-*)             path="x86/pentium/mmx x86/pentium x86" ;;
       i686*-*-* | pentiumpro-*-*) path="x86/p6 x86" ;;
-
-      # pentium/mmx lshift and rshift are good on p6mmx and can be used
-      # until there's something specific.
-      pentium2-*-*) path="x86/p6/mmx x86/pentium/mmx x86/p6 x86" ;;
-      pentium3-*-*) path="x86/p6/p3mmx x86/p6/mmx x86/pentium/mmx x86/p6 x86";;
-
-      [k6[23]*-*-*])  path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86"  ;;
+      pentium2-*-*)   path="x86/p6/mmx x86/p6 x86" ;;
+      pentium3-*-*)   path="x86/p6/p3mmx x86/p6/mmx x86/p6 x86";;
+      [k6[23]*-*-*])  path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6*-*-*)        path="x86/k6/mmx x86/k6 x86" ;;
       athlon-*-*)     path="x86/k7/mmx x86/k7 x86" ;;
     esac
