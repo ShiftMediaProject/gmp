@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-11-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/sqr_diagonal.asm: New file.
+
+	* mpn/ia64/submul_1.asm: Handle vl == 0 specially.
+
 2002-11-20  Kevin Ryde  <kevin@swox.se>
 
 	* tests/cxx/t-locale.cc: Test with locales imbued into stream, use
