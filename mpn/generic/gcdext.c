@@ -572,6 +572,7 @@ mpn_gcd (mp_ptr gp,
 	}
 
 #if WANT_GCDEXT_ONE_STEP
+      TMP_FREE (mark);
       return 0;
 #endif
     }
