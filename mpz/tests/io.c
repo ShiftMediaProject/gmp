@@ -75,7 +75,10 @@ main (int argc, char **argv)
       rewind (fp);  
       if (mpz_inp_str (op2, fp, base) == 0)
         {
-	  fprintf (stderr, "mpz_inp_str read error\n");
+          if (ferror (fp))
+            fprintf (stderr, "mpz_inp_str stream read error\n");
+          else
+            fprintf (stderr, "mpz_inp_str data conversion error\n");
 	  abort ();
 	}
 
