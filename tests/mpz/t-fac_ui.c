@@ -1,6 +1,6 @@
 /* Exercise mpz_fac_ui.
 
-Copyright (C) 2000 Free Software Foundation, Inc.
+Copyright (C) 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 
 /* Usage: t-fac_ui [x|num]
@@ -33,27 +34,14 @@ MA 02111-1307, USA. */
    purposes).  */
 
 
-unsigned long  allocate_count = 0;
-void *
-allocate (size_t size)
-{
-  allocate_count++;
-  return __gmp_default_allocate (size);
-}
-void
-release (void *ptr, size_t size)
-{
-  allocate_count--;
-  __gmp_default_free (ptr, size);
-}
-
-
 int
 main (int argc, char *argv[])
 {
   unsigned long  n;
   unsigned long  limit = 1500;
   mpz_t          f, r;
+
+  tests_start ();
 
   if (argc > 1 && argv[1][0] == 'x')
     limit = ULONG_MAX;
@@ -62,8 +50,6 @@ main (int argc, char *argv[])
 
   if (BITS_PER_MP_LIMB < BITS_PER_LONGINT)
     limit = MIN (limit, MP_LIMB_T_MAX);
-
-  mp_set_memory_functions (allocate, NULL, release);
 
   mpz_init_set_ui (f, 1);  /* 0! = 1 */
   mpz_init (r);
@@ -87,7 +73,7 @@ main (int argc, char *argv[])
   mpz_clear (f);
   mpz_clear (r);
 
-  ASSERT_ALWAYS (allocate_count == 0);
+  tests_end ();
 
   exit (0);
 }
