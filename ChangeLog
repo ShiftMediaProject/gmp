@@ -8,6 +8,9 @@
 	impression that we know how to cross compile.)
 	(CCAS): Remove spurious comment.
 
+	* gmp.texi (Notes for Particular Systems): Remove comment about
+	using GNU `nm' on AIX since system nm now works.
+
 2000-05-29  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/power/mul_1.s: Remove [PR] from first word in function descriptor.
