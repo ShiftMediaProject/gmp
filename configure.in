@@ -2044,8 +2044,40 @@ if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
   GMP_DEFINE_RAW(["define(<SQR_KARATSUBA_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
 fi
 
-# This must come after gmp-mparam.h has been chosen.
-GMP_C_SIZES
+
+# Sizes of some types, needed at preprocessing time.
+#
+# FIXME: The assumption that BITS_PER_MP_LIMB is 8*sizeof(mp_limb_t) might
+# be slightly rash, but it's true everwhere we know of and ought to be true
+# of any sensible system.  In a generic C build, grepping LONG_BIT out of
+# <limits.h> might be an alternative, for maximum portability.
+#
+AC_CHECK_SIZEOF(unsigned long)
+AC_CHECK_SIZEOF(mp_limb_t, , GMP_INCLUDE_GMP_H)
+if test "$ac_cv_sizeof_mp_limb_t" = 0; then
+  AC_MSG_ERROR([Oops, mp_limb_t doesn't seem to work])
+fi
+AC_SUBST(BITS_PER_MP_LIMB, `expr 8 \* $ac_cv_sizeof_mp_limb_t`)
+
+# Check compiler limb size matches gmp-mparam.h
+#
+# FIXME: Some of the cycle counter objects in the tune directory depend on
+# the size of ulong, it'd be possible to check that here, though a mismatch
+# probably wouldn't want to be fatal, none of the libgmp assembler code
+# depends on ulong.
+#
+mparam_bits=[`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`]
+if test "$mparam_bits" -ne $BITS_PER_MP_LIMB; then
+  if test "$test_CFLAGS" = set; then
+    AC_MSG_ERROR([Oops, mp_limb_t is $BITS_PER_MP_LIMB bits, but the assembler code
+in this configuration expects $mparam_bits bits.
+You appear to have set \$CFLAGS, perhaps you also need to tell GMP the
+intended ABI, see "ABI and ISA" in the manual.])
+  else
+    AC_MSG_ERROR([Oops, mp_limb_t is $BITS_PER_MP_LIMB bits, but the assembler code
+in this configuration expects $mparam_bits bits.])
+  fi
+fi
 
 GMP_DEFINE_RAW(["define(<GMP_LIMB_BITS>,$BITS_PER_MP_LIMB)"])
 GMP_DEFINE_RAW(["define(<GMP_NAIL_BITS>,$GMP_NAIL_BITS)"])
