@@ -1,3 +1,8 @@
+2000-12-24  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/sqrtrem.c, mpz/pow_ui.c, mpz/powm_ui.c, mpf/get_str.c,
+	mpf/set_str.c: Use mpn_sqr_n when applicable, not mpn_mul_n.
+
 2000-12-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mul_fft.c: Reformat.
