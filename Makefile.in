@@ -363,7 +363,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
-  rand.c randclr.c randdef.c randlc.c randlc2s.c randlc2x.c randraw.c	\
+  rand.c randclr.c randdef.c randlc2s.c randlc2x.c randmt.c		\
   rands.c randsd.c randsdui.c version.c
 
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
@@ -431,9 +431,8 @@ libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 am_libgmp_la_OBJECTS = assert$U.lo compat$U.lo errno$U.lo \
 	extract-dbl$U.lo insert-dbl$U.lo memory$U.lo mp_bpl$U.lo \
 	mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo rand$U.lo \
-	randclr$U.lo randdef$U.lo randlc$U.lo randlc2s$U.lo \
-	randlc2x$U.lo randraw$U.lo rands$U.lo randsd$U.lo randsdui$U.lo \
-	version$U.lo
+	randclr$U.lo randdef$U.lo randlc2s$U.lo randlc2x$U.lo \
+	randmt$U.lo rands$U.lo randsd$U.lo randsdui$U.lo version$U.lo
 libgmp_la_OBJECTS = $(am_libgmp_la_OBJECTS)
 am_libgmpxx_la_OBJECTS = dummy.lo
 libgmpxx_la_OBJECTS = $(am_libgmpxx_la_OBJECTS)
@@ -617,14 +616,12 @@ randclr_.c: randclr.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randclr.c; then echo $(srcdir)/randclr.c; else echo randclr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randclr_.c || rm -f randclr_.c
 randdef_.c: randdef.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randdef.c; then echo $(srcdir)/randdef.c; else echo randdef.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randdef_.c || rm -f randdef_.c
-randlc_.c: randlc.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randlc.c; then echo $(srcdir)/randlc.c; else echo randlc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randlc_.c || rm -f randlc_.c
 randlc2s_.c: randlc2s.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randlc2s.c; then echo $(srcdir)/randlc2s.c; else echo randlc2s.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randlc2s_.c || rm -f randlc2s_.c
 randlc2x_.c: randlc2x.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randlc2x.c; then echo $(srcdir)/randlc2x.c; else echo randlc2x.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randlc2x_.c || rm -f randlc2x_.c
-randraw_.c: randraw.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randraw.c; then echo $(srcdir)/randraw.c; else echo randraw.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randraw_.c || rm -f randraw_.c
+randmt_.c: randmt.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randmt.c; then echo $(srcdir)/randmt.c; else echo randmt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randmt_.c || rm -f randmt_.c
 rands_.c: rands.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rands.c; then echo $(srcdir)/rands.c; else echo rands.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rands_.c || rm -f rands_.c
 randsd_.c: randsd.c $(ANSI2KNR)
@@ -645,13 +642,12 @@ insert-dbl_.$(OBJEXT) insert-dbl_.lo memory_.$(OBJEXT) memory_.lo \
 mp_bpl_.$(OBJEXT) mp_bpl_.lo mp_clz_tab_.$(OBJEXT) mp_clz_tab_.lo \
 mp_minv_tab_.$(OBJEXT) mp_minv_tab_.lo mp_set_fns_.$(OBJEXT) \
 mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo randclr_.$(OBJEXT) randclr_.lo \
-randdef_.$(OBJEXT) randdef_.lo randlc_.$(OBJEXT) randlc_.lo \
-randlc2s_.$(OBJEXT) randlc2s_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
-randraw_.$(OBJEXT) randraw_.lo rands_.$(OBJEXT) rands_.lo \
-randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
-tal-debug_.$(OBJEXT) tal-debug_.lo tal-notreent_.$(OBJEXT) \
-tal-notreent_.lo tal-reent_.$(OBJEXT) tal-reent_.lo version_.$(OBJEXT) \
-version_.lo : $(ANSI2KNR)
+randdef_.$(OBJEXT) randdef_.lo randlc2s_.$(OBJEXT) randlc2s_.lo \
+randlc2x_.$(OBJEXT) randlc2x_.lo randmt_.$(OBJEXT) randmt_.lo \
+rands_.$(OBJEXT) rands_.lo randsd_.$(OBJEXT) randsd_.lo \
+randsdui_.$(OBJEXT) randsdui_.lo tal-debug_.$(OBJEXT) tal-debug_.lo \
+tal-notreent_.$(OBJEXT) tal-notreent_.lo tal-reent_.$(OBJEXT) \
+tal-reent_.lo version_.$(OBJEXT) version_.lo : $(ANSI2KNR)
 
 .cc.o:
 	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
