@@ -507,7 +507,8 @@ case $host in
     # gcc for hppa 2.0 can be built either for 2.0n (32-bit) or 2.0w
     # (64-bit), but not both, so there's no option to choose the desired
     # mode, we must instead detect which of the two it is.  This is done by
-    # checking sizeof(long), either 4 or 8 bytes respectively.
+    # checking sizeof(long), either 4 or 8 bytes respectively.  Do this in
+    # ABI=1.0 too, in case someone tries to build that with a 2.0w gcc.
     #
     gcc_cflags="-O2"
     gcc_cflags_optlist="arch"
