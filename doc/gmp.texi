@@ -6990,6 +6990,9 @@ library for computational number theory.
 Linbox @spaceuref{http://www.linalg.org/} @* Sparse vectors and matrices.
 @item
 NTL @spaceuref{http://www.shoup.net/ntl/} @* A C++ number theory library.
+@item
+Purenum @spaceuref{http://www.nailstorm.com/products/purenum/} @* Integers
+optionally using GMP.
 @end itemize
 
 @item Fortran
