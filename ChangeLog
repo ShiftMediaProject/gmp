@@ -20,6 +20,11 @@ MA 02111-1307, USA.
 
 2002-07-01  Kevin Ryde  <kevin@swox.se>
 
+	* tune/tuneup.c, gmp-impl.h: Eliminate the array of thresholds in
+	one(), tune just one at a time and let the callers hand dependencies.
+	Eliminate the second_start_min hack, handle SQR_KARATSUBA_THRESHOLD
+	oddities in tune_sqr() instead.
+
 	* mpn/pa64/umul.asm, mpn/pa64/udiv.asm, mpn/asm-defs.m4, acconfig.h,
 	longlong.h, tune/speed.c, tune/speed.h, tune/common.c, tune/many.pl,
 	tests/devel/try.c: Introduce mpn_umul_ppmm_r and mpn_udiv_qrnnd_r
