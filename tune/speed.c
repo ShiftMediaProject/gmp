@@ -178,7 +178,8 @@ const struct routine_t {
   { "mpn_divrem_2_div",  speed_mpn_divrem_2_div,    },
   { "mpn_divrem_2_inv",  speed_mpn_divrem_2_inv,    },
 
-  { "mpn_divexact_by3",  speed_mpn_divexact_by3     },
+  { "mpn_divexact_1",    speed_mpn_divexact_1,    FLAG_R },
+  { "mpn_divexact_by3",  speed_mpn_divexact_by3          },
 
 #if HAVE_NATIVE_mpn_modexact_1c_odd
   { "mpn_modexact_1_odd",  speed_mpn_modexact_1_odd,  FLAG_R },
@@ -275,6 +276,12 @@ const struct routine_t {
   { "MPN_COPY_INCR",     speed_MPN_COPY_INCR        },
   { "MPN_COPY_DECR",     speed_MPN_COPY_DECR        },
   { "memcpy",            speed_memcpy               },
+#if HAVE_NATIVE_mpn_copyi
+  { "mpn_copyi",         speed_mpn_copyi            },
+#endif
+#if HAVE_NATIVE_mpn_copyd
+  { "mpn_copyd",         speed_mpn_copyd            },
+#endif
 
   { "modlimb_invert",       speed_modlimb_invert,       FLAG_NODATA },
   { "modlimb_invert_mul1",  speed_modlimb_invert_mul1,  FLAG_NODATA },
