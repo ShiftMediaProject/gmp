@@ -66,6 +66,7 @@ by the Foundation.
 @subtitle August 1996
 
 @author by Torbj@"orn Granlund, TMG Datakonsult
+tege@@gnu.ai.mit.edu
 
 @c Include the Distribution inside the titlepage so
 @c that headings are turned off.
@@ -219,7 +220,7 @@ You need a C compiler, preferably GCC, but any reasonable compiler should
 work.  And you need a standard Unix @samp{make} program, plus some other
 standard Unix utility programs.
 
-(If you're on an MS-DOS machine, your can build MP using @file{make.bat}.  It
+(If you're on an MS-DOS machine, you can build MP using @file{make.bat}.  It
 requires that djgpp is installed.  It does not require configuration, nor is
 @samp{make} needed; @file{make.bat} both configures and builds the library.)
 
@@ -233,9 +234,10 @@ not be supported.
 
 If you want to compile in a separate object directory, cd to that directory,
 and prefix the configure command with the path to the MP source directory.
-Not all @samp{make} programs have the necessary features to support this.  In
-particular, SunOS and Slowaris @samp{make} have bugs that makes them unable to
-build from a separate object directory.  Use GNU @samp{make} instead.
+Not all @samp{make} programs have the necessary features (VPATH) to support
+this.  In particular, SunOS and Slowaris @samp{make} have bugs that makes them
+unable to build from a separate object directory.  Use GNU @samp{make}
+instead.
 
 In addition to the standard cpu-vendor-os tuples, MP recognizes sparc8 and
 supersparc as valid CPU names.  Specifying these CPU names for relevant
@@ -313,21 +315,17 @@ Delete all files copied by @samp{make install}.
 (You might find more up-to-date information at
 @samp{http://www.nada.kth.se/~tege/gmp/}.)
 
-GCC 2.7.2 (as well as 2.6.3) for the POWER and PowerPC can not be used to
-compile MP, due to a bug in GCC.  If you want to use GCC for these machines,
-get GCC 2.7.2.1 (or later), or apply the patch below to GCC and recompile GCC.
+GCC 2.7.2 (or 2.6.3) for the POWER and PowerPC can not be used to compile MP,
+due to a bug in GCC.  If you want to use GCC for these machines, get GCC
+2.7.2.1 (or later), or apply the patch below to GCC and recompile GCC.
 
 If you are on a Sequent Symmetry, use the GNU assembler instead of the system
 assembler, since the latter has serious bugs.
 
-If you are on a VAX running Ultrix, you need to build and install the GNU
-assembler before you compile MP.  The VAX assembly in MP uses an instruction
-(@samp{jsobgtr}) that cannot be assembled by the Ultrix assembler.
-
 The system compiler on NeXT is a massacred and old GCC, even if the compiler
 calls itself @file{cc}.  This compiler cannot be used to build MP.  You need
-to get a real GCC, and install that before you compile MP.  (NeXT might have
-fixed this in newer releases of their system.)
+to get a real GCC, and install that before you compile MP.  (NeXT have fixed
+this in release 3.3 of their system.)
 
 The system C compiler under SunOS 4 has a bug that makes it miscompile
 mpq/get_d.c.  Use GCC instead if plan to use the function @code{mpq_get_d}.
@@ -485,6 +483,25 @@ space when a smaller number is stored in the object.  Most of the time, this
 policy is best, since it avoids frequent re-allocation.
 
 
+@section MP and reentrancy
+
+The MP code is reentrant and thred-safe, with some exceptions:
+
+@itemize @bullet
+@item
+The function @code{mpf_set_default_prec} saves the selected precision in
+a global variable.
+
+@item
+The function @code{mp_set_memory_functions} uses several global
+variables for storing the selected memory allocation functions.
+@end itemize
+
+If the memory allocation functions (@code{malloc} and friends, or
+whatever functions set by a call to @code{mp_set_memory_functions}),
+are not reentrant, MP will not be reentrant either.
+
+
 @section Useful Macros and Constants
 
 @deftypevr {Global Constant} {const int} mp_bits_per_limb
@@ -495,6 +512,13 @@ The number of bits per limb.
 @defmacx __GNU_MP_VERSION_MINOR
 The major and minor MP version, respectively, as integers.
 @end defmac
+
+@defmac GMP_SMALL
+Define this symbol if your computations will not require more than
+315600 decimal digits.  By defining this symbol, the space requirements
+for the various variable types will be smaller.
+@end defmac
+
 
 @section Compatibility with Version 1.x
 
@@ -1057,7 +1081,7 @@ This operation can also be defined as masking of the @var{op2} least
 significant bits.
 @end deftypefun
 
-@subsection Exponentialization Functions
+@subsection Exponentiation Functions
 
 @deftypefun void mpz_powm (mpz_t @var{rop}, mpz_t @var{base}, mpz_t @var{exp}, mpz_t @var{mod})
 @deftypefunx void mpz_powm_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp}, mpz_t @var{mod})
@@ -1131,14 +1155,15 @@ If this function returns 0, @var{op} is definitely not prime.  If it returns
 $(1/4)^{{reps}}$.
 @end tex
 @end iftex
-A reasonable value of reps is 25.
+A reasonable value of reps is 10.
 
-An implementation of the probabilistic primality test found in Seminumerical
-Algorithms (@pxref{References} Knuth).
+The function uses the Miller-Rabin test.
 @end deftypefun
 
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}.
+The result is always positive even if either of or both input operands
+are negative.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_gcd_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
@@ -1155,6 +1180,10 @@ is non-zero.
 Compute @var{g}, @var{s}, and @var{t}, such that @var{a}@var{s} +
 @var{b}@var{t} = @var{g} = @code{gcd} (@var{a}, @var{b}).  If @var{t} is
 NULL, that argument is not computed.
+@end deftypefun
+
+@deftypefun void mpz_lcm (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
 @end deftypefun
 
 @deftypefun int mpz_invert (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -1238,9 +1267,9 @@ Set @var{rop} to @var{op1} logical-and @var{op2}.
 Set @var{rop} to @var{op1} inclusive-or @var{op2}.
 @end deftypefun
 
-@c @deftypefun void mpz_xor (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
-@c Set @var{rop} to @var{op1} exclusive-or @var{op2}.
-@c @end deftypefun
+@deftypefun void mpz_xor (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+Set @var{rop} to @var{op1} exclusive-or @var{op2}.
+@end deftypefun
 
 @deftypefun void mpz_com (mpz_t @var{rop}, mpz_t @var{op})
 Set @var{rop} to the one's complement of @var{op}.
@@ -2344,12 +2373,16 @@ must be different from 0.
 @deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2size}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
 Puts at @var{r1p} the greatest common divisor of @{@var{s1p}, @var{s1size}@}
 and @{@var{s2p}, @var{s2size}@}.  The first cofactor is written at @var{r2p}.
-Both source operands are destroyed by the operation.  The size of the first
-cofactor is written through @var{r2size}.  The size in limbs of the greatest
-common divisor is returned.
+Both source operands are destroyed.
 
-@strong{This interface is preliminary.  It might change incompatibly in
-future revisions.}
+@{@var{s1p}, @var{s1size}@} must be greater or equal to @{@var{s2p},
+@var{s2size}@}.  Neither operand may equal 0.
+
+The size and sign of the first cofactor are written at *@var{r2size}; the
+actual size of the cofactor is the absolute value of *@var{r2size}; the sign
+of the cofactor is negative iff *@var{r2size} is negative.
+
+The size in limbs of the greatest common divisor is returned.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{size})
@@ -2621,10 +2654,18 @@ the size of an object, normally an 8 bit byte.)
 @comment  node-name,  next,  previous,  up
 @unnumbered Contributors
 
-I would like to thank Gunnar Sjoedin and Hans Riesel for their help with
-mathematical problems, Richard Stallman for his help with design issues and
-for revising the first version of this manual, Brian Beuning and Doug Lea for
-their testing of early versions of the library.
+Torbjorn Granlund authored the original GMP library and keeps maintaining
+it.  But several other individuals and organizations have contributed to GMP
+in various ways.
+
+Gunnar Sjoedin and Hans Riesel helped with mathematical problems in early
+versions of the library.
+
+Richard Stallman contributed to the interface design and revised the first
+version of this manual.
+
+Brian Beuning and Doug Lea helped with testing of early versions of the
+library and made creative suggestions.
 
 John Amanatides of York University in Canada contributed the function
 @code{mpz_probab_prime_p}.
@@ -2653,10 +2694,19 @@ The development of floating point functions of GNU MP 2, were supported in
 part by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO
 (POlynomial System SOlving).
 
-GNU MP 2 was finished and released by TMG Datakonsult, Sodermannagatan 5, 116
-23 STOCKHOLM, SWEDEN, in cooperation with the IDA Center for Computing
+GNU MP 2 was finished and released by TMG Datakonsult, Sodermannagatan 5,
+116 23 STOCKHOLM, SWEDEN, in cooperation with the IDA Center for Computing
 Sciences, USA.
 
+Robert Harley of Inria, France and David Seal of ARM, England, suggested
+clever improvements for population count.
+
+Robert Harley also suggested how to greatly improve Karatsuba multiplication
+for GMP 2.1.
+
+(This list is chronological, not ordered after significance.  If you have
+contributed to GMP but are not listed above, please tell tege@@nada.kth.se
+about the omission!)
 
 @node References, , Contributors, Top
 @comment  node-name,  next,  previous,  up
