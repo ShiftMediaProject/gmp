@@ -1095,6 +1095,14 @@ see the GMP 2 manual for details.
 @c @item The functions @code{mpz_pow_ui} and @code{mpz_ui_pow_ui} now yield 1
 @c for 0^0.  (In version 1, they yielded 0.)
 
+@c In version 1 of the library, @code{mpq_set_den} handled negative
+@c denominators by copying the sign to the numerator.  That is no longer done.
+
+@c Pure assignment functions do not canonicalize the assigned variable.  It is
+@c the responsibility of the user to canonicalize the assigned variable before
+@c any arithmetic operations are performed on that variable.  
+@c Note that this is an incompatible change from version 1 of the library.
+
 @c @end enumerate
 
 
@@ -2291,8 +2299,7 @@ Zero has the unique representation 0/1.
 
 Pure assignment functions do not canonicalize the assigned variable.  It is
 the responsibility of the user to canonicalize the assigned variable before
-any arithmetic operations are performed on that variable.  @strong{Note that
-this is an incompatible change from version 1 of the library.}
+any arithmetic operations are performed on that variable.
 
 @deftypefun void mpq_canonicalize (mpq_t @var{op})
 Remove any factors that are common to the numerator and denominator of
@@ -2521,9 +2528,6 @@ Note that there's no need to copy a numerator or denominator to an
 @code{mpz_t} just to operate on it, all the @code{mpz} functions can be used
 with an @code{mpq_numref} or @code{mpq_denref}.  When modifying a rational
 that way the rule about canonicalizing still applies of course.
-
-@strong{In version 1 of the library, @code{mpq_set_den} handled negative
-denominators by copying the sign to the numerator.  That is no longer done.}
 @end deftypefun
 
 
