@@ -530,7 +530,7 @@ case $host in
     cc_n32_ldflags="-Wc,-n32"
     limb_n32=longlong
     path_n32="mips64"
-    extra_functions="umul"
+    extra_functions_n32="umul"
 
     cclist_64="gcc cc"
     gcc_64_cflags="-g -O2 -mabi=64"
