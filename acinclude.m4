@@ -24,6 +24,9 @@ dnl  MA 02111-1307, USA.
 define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
+define(POWERPC64_PATTERN,
+[[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-*]])
+
 
 dnl  GMP_STRIP_PATH(subdir)
 dnl  ----------------------
@@ -420,11 +423,11 @@ void *f() { return g(); }
 int n;
 int cmov () { return (n >= 0 ? n : 0); }
 
-/* The following provokes a linker problem with gcc 3.0.3 on AIX 4.3
-   under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630 option causes
-   gcc to incorrectly invoke the linker with the 32-bit version of
-   libgcc.a, not the 64-bit one, meaning it misses out on __fixunsdfdi
-   helper (double to unsigned 64bit conversion).  */
+/* The following provokes a linker invocation problem with gcc 3.0.3
+   on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
+   option causes gcc to incorrectly select the 32-bit libgcc.a, not
+   the 64-bit one, and consequently it misses out on the __fixunsdfdi
+   helper (double -> uint64 conversion).  */
 double d;
 unsigned long gcc303 () { return (unsigned long) d; }
 
