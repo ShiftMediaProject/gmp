@@ -427,9 +427,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
   if (alloc_size != 0)
     {
       size_t  actual_size = strlen (digit_ptr) + 1;
-      if (actual_size != alloc_size)
-        digit_ptr = (*__gmp_reallocate_func) (digit_ptr,
-                                              alloc_size, actual_size);
+      __GMP_REALLOCATE_FUNC_MAYBE (digit_ptr, alloc_size, actual_size);
     }
 
   return digit_ptr;

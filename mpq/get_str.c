@@ -1,4 +1,4 @@
-/* mpn_get_str -- mpq to string conversion.
+/* mpq_get_str -- mpq to string conversion.
 
 Copyright 2001 Free Software Foundation, Inc.
 
@@ -17,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <string.h>
@@ -61,8 +60,8 @@ mpq_get_str (char *str, int base, mpq_srcptr q)
           mpz_sizeinbase (mpq_numref(q), ABS(base)) +
           mpz_sizeinbase (mpq_denref(q), ABS(base)) + 3);
 
-  if (str_alloc != 0 && str_alloc != len+1)
-    str = (char *) (*__gmp_reallocate_func) (str, str_alloc, len+1);
-
+  if (str_alloc != 0)
+    __GMP_REALLOCATE_FUNC_MAYBE (str, str_alloc, len+1);
+    
   return str;
 }

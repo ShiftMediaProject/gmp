@@ -116,9 +116,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   if (alloc_size != 0)
     {
       size_t  actual_size = strlen (return_str) + 1;
-      if (actual_size != alloc_size)
-        return_str = (*__gmp_reallocate_func) (return_str,
-                                               alloc_size, actual_size);
+      __GMP_REALLOCATE_FUNC_MAYBE (return_str, alloc_size, actual_size);
     }
   return return_str;
 }
