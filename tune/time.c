@@ -130,7 +130,6 @@ MA 02111-1307, USA.
 
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "longlong.h"
 
 #include "speed.h"
 
@@ -761,6 +760,35 @@ speed_endtime (void)
   if (use_gtod)    gettimeofday (&end_gtod, NULL);
   if (use_grus)    getrusage (0, &end_grus);
   if (use_times)   times (&end_times);
+
+
+  if (speed_option_verbose >= 4)
+    {
+      printf ("speed_endtime():\n");
+      if (use_cycles)
+        printf ("   cycles  0x%X,0x%X -> 0x%X,0x%X\n",
+                start_cycles[1], start_cycles[0],
+                end_cycles[1], end_cycles[0]);
+
+      if (use_rrt)
+        printf ("   read_real_time  (%d)%u,%u (%d)%u,%u\n",
+                start_rrt.flag, start_rrt.tb_high, start_rrt.tb_low,
+                end_rrt.flag, end_rrt.tb_high, end_rrt.tb_low);
+
+      if (use_gtod)
+        printf ("   gettimeofday  %ld.%06ld -> %ld.%06ld\n",
+                start_gtod.tv_sec, start_gtod.tv_usec,
+                end_gtod.tv_sec, end_gtod.tv_usec);
+
+      if (use_grus)
+        printf ("   getrusage  %ld.%06ld -> %ld.%06ld\n",
+                start_grus.ru_utime.tv_sec, start_grus.ru_utime.tv_usec,
+                end_grus.ru_utime.tv_sec, end_grus.ru_utime.tv_usec);
+
+      if (use_times)
+        printf ("   times  %ld -> %ld\n",
+                start_times.tms_utime, end_times.tms_utime);
+    }
 
   if (use_rrt)
     {
