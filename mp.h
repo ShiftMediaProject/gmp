@@ -23,7 +23,7 @@ MA 02111-1307, USA. */
 #ifndef __MP_H__
 
 #ifndef __GNU_MP__		/* to allow inclusion of both gmp.h and mp.h */
-#define __GNU_MP__ 2
+#define __GNU_MP__ 3
 #define __need_size_t
 #include <stddef.h>
 #undef __need_size_t
