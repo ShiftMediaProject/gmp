@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 12 Dec 2001.  An up-to-date version is available at
+  This file current as of 16 Dec 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -355,10 +355,13 @@ MA 02111-1307, USA.
      current <code>mpn_popcount</code>.
 <li> Itanium: <code>popc_limb</code> in gmp-impl.h could use the
      <code>popcnt</code> insn.
-<li> UltraSPARC/64: Rewrite <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
-     and <code>mpn_submul_1</code>.  Should use floating-point operations, and
-     split the invariant single-limb multiplier into 16-bit chunks.  Will give
-     14 cycles/limb, but with a deep pipeline.
+<li> UltraSPARC/64: Optimize <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
+     for s2 &lt; 2^32 (or perhaps for any zero 16-bit s2 chunk).  Not sure how
+     much this can improve the speed, though, since the symmetry that we rely
+     on is lost.  Perhaps we can just gain cycles when s2 &lt; 2^16, or more
+     accurately, when two 16-bit s2 chunks which are 16 bits apart are zero.
+<li> UltraSPARC/64: Write native <code>mpn_submul_1</code>, analogous to
+     <code>mpn_addmul_1</code>.
 <li> UltraSPARC/64: Write <code>umul_ppmm</code>.  Using four
      "<code>mulx</code>"s either with an asm block or via the generic C code is
      about 90 cycles.  Try using fp operations, and also try using karatsuba
