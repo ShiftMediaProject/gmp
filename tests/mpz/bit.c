@@ -38,6 +38,109 @@ debug_mp (mpz_srcptr x, int base)
 }
 
 
+/* exercise the case where mpz_clrbit or mpz_combit ends up extending a
+   value like -2^(k*GMP_NUMB_BITS-1) when clearing bit k*GMP_NUMB_BITS-1.  */
+void
+check_clr_extend (void)
+{
+  mpz_t          got, want;
+  unsigned long  i;
+  int            f;
+
+  mpz_init (got);
+  mpz_init (want);
+
+  for (i = 1; i < 5; i++)
+    {
+      for (f = 0; f <= 1; f++)
+        {
+          /* lots of 1 bits in _mp_d */
+          mpz_set_ui (got, 1L);
+          mpz_mul_2exp (got, got, 10*GMP_NUMB_BITS);
+          mpz_sub_ui (got, got, 1L);
+
+          /* value -2^(n-1) representing ..11100..00 */
+          mpz_set_si (got, -1L);
+          mpz_mul_2exp (got, got, i*GMP_NUMB_BITS-1);
+
+          /* complement bit n, giving ..11000..00 which is -2^n */
+          if (f == 0)
+            mpz_clrbit (got, i*GMP_NUMB_BITS-1);
+          else
+            mpz_combit (got, i*GMP_NUMB_BITS-1);
+          MPZ_CHECK_FORMAT (got);
+
+          mpz_set_si (want, -1L);
+          mpz_mul_2exp (want, want, i*GMP_NUMB_BITS);
+
+          if (mpz_cmp (got, want) != 0)
+            {
+              if (f == 0)
+                printf ("mpz_clrbit: ");
+              else
+                printf ("mpz_combit: ");
+              printf ("wrong after extension\n");
+              mpz_trace ("got ", got);
+              mpz_trace ("want", want);
+              abort ();
+            }
+        }
+    }
+
+  mpz_clear (got);
+  mpz_clear (want);
+}
+
+void
+check_com_negs (void)
+{
+  static const struct {
+    unsigned long  bit;
+    mp_size_t      inp_size;
+    mp_limb_t      inp_n[5];
+    mp_size_t      want_size;
+    mp_limb_t      want_n[5];
+  } data[] = {
+    { GMP_NUMB_BITS,   2, { 1, 1 },  1, { 1 } },
+    { GMP_NUMB_BITS+1, 2, { 1, 1 },  2, { 1, 3 } },
+
+    { GMP_NUMB_BITS,   2, { 0, 1 },  2, { 0, 2 } },
+    { GMP_NUMB_BITS+1, 2, { 0, 1 },  2, { 0, 3 } },
+  };
+  mpz_t  inp, got, want;
+  int    i;
+
+  mpz_init (got);
+  mpz_init (want);
+  mpz_init (inp);
+
+  for (i = 0; i < numberof (data); i++)
+    {
+      mpz_set_n (inp, data[i].inp_n, data[i].inp_size);
+      mpz_neg (inp, inp);
+
+      mpz_set_n (want, data[i].want_n, data[i].want_size);
+      mpz_neg (want, want);
+
+      mpz_set (got, inp);
+      mpz_combit (got, data[i].bit);
+
+      if (mpz_cmp (got, want) != 0)
+        {
+          printf ("mpz_combit: wrong on neg data[%d]\n", i);
+          mpz_trace ("inp ", inp);
+          printf    ("bit %lu\n", data[i].bit);
+          mpz_trace ("got ", got);
+          mpz_trace ("want", want);
+          abort ();
+        }
+    }
+
+  mpz_clear (inp);
+  mpz_clear (got);
+  mpz_clear (want);
+}
+
 /* See that mpz_tstbit matches a twos complement calculated explicitly, for
    various low zeros.  */
 void
@@ -259,7 +362,10 @@ int
 main (int argc, char *argv[])
 {
   tests_start ();
+  mp_trace_base = -16;
 
+  check_clr_extend ();
+  check_com_negs ();
   check_tstbit ();
   check_random (argc, argv);
   check_single ();
