@@ -195,7 +195,9 @@ MPQ_OBJECTS = \
   mpq/set_z.lo
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
-EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h
+## FIXME: Remove config.in when AM_CONFIG_HEADER is used in configure.in.
+EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h \
+  config.in
 
 info_TEXINFOS = gmp.texi
 
