@@ -99,7 +99,7 @@ ifdef(`HAVE_ABI_32',
 	.pred.rel "mutex",p6,p7
 	   (p6)	add		r8 = 1, r38
 	   (p7)	mov		r8 = r38
-		mov		pr = r22,0x1fffe
+		mov		pr = r22, 0x1fffe
 		mov		ar.lc = r2
 		mov		ar.ec = r20
 		mov		ar.pfs = r21;;
