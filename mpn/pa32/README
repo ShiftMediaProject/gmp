@@ -1,4 +1,4 @@
-Copyright 1996, 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1996, 1999, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -136,6 +136,13 @@ to use ".label" which is accepted by both,
 but that's not as nice to look at, not if you're used to assembler code
 having labels in column 0.
 
+
+
+
+REFERENCES
+
+Hewlett Packard, "HP Assembler Reference Manual", 9th edition, June 1998,
+part number 92432-90012.
 
 
 

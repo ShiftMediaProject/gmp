@@ -1,4 +1,4 @@
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -61,3 +61,9 @@ STATUS
 * mpn_mul_1, mpn_addmul_1, and mpn_submul_1 run at between 5.625 and 6.375
   on PA8500 and later, and about a cycle/limb slower on older chips.  The
   code uses ADD,DC for adjacent limbs, and relies heavily on reordering.
+
+
+REFERENCES
+
+Hewlett Packard, "64-Bit Runtime Architecture for PA-RISC 2.0", version 3.3,
+October 1997.
