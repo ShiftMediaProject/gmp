@@ -26,6 +26,11 @@ MA 02111-1307, USA. */
 #include "tests.h"
 
 
+#if 0
+  /* Disabled due to the bogosity of trying to fake an _mp_d pointer to
+     below an object.  Has been seen to fail on a hppa system and on ia64.  */
+
+
 /* Create a fake mpz consisting of just a single 1 bit, with totbits being
    the total number of bits, inclusive of that 1 bit.  */
 void
@@ -73,15 +78,12 @@ check_sample (void)
       abort ();
     }
 }
-
+#endif
 
 int
 main (void)
 {
   tests_start ();
-
-  /* Disabled due to the bogosity of trying to fake an _mp_d pointer to
-     below an object.  Has been seen to fail on a hppa system.  */
 
   /* check_sample (); */
 
