@@ -140,10 +140,11 @@ main (argc, argv)
      char *argv[];
 #endif
 {
-  char usage[] = "usage: t-rand [function nbits]\n" \
-    "  function is one of z, f\n" \
-    "  nbits is number of bits\n" \
-    "";
+  static char usage[] = "\
+usage: t-rand [function nbits]\n\
+  function is one of z, f\n\
+  nbits is number of bits\n\
+";
   gmp_randstate_t rstate;
   mpz_t z, rz;
   mpf_t f, rf;
