@@ -30,7 +30,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#define MP_LIMB_T_MAX  (~((mp_limb_t) 0))
 
 /* Multiplicative inverse of 3, modulo 2^BITS_PER_MP_LIMB.
    0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */

@@ -63,8 +63,6 @@ enum
     BMOD_THRESHOLD = BITS_PER_MP_LIMB/2
   };
 
-#define SIGN_BIT  (~(~(mp_limb_t)0 >> 1))
-
 
 /* Use binary algorithm to compute V <-- GCD (V, U) for usize, vsize == 2.
    Both U and V must be odd.  */
@@ -149,7 +147,7 @@ find_a (cp)
   while (n2_h)			/* While N2 >= 2^BITS_PER_MP_LIMB.  */
     {
       /* N1 <-- N1 % N2.  */
-      if ((SIGN_BIT >> leading_zero_bits & n2_h) == 0)
+      if ((MP_LIMB_T_HIGHBIT >> leading_zero_bits & n2_h) == 0)
 	{
 	  unsigned long int i;
 	  count_leading_zeros (i, n2_h);
@@ -230,7 +228,7 @@ mpn_gcd (gp, up, usize, vp, vsize)
 	{
           /* mpn_com_n can't be used here because anchor_up and up may
              partially overlap */
-	  if (up[usize-1] & SIGN_BIT)		/* U < 0; take twos' compl. */
+	  if (up[usize-1] & MP_LIMB_T_HIGHBIT)  /* U < 0; take twos' compl. */
 	    {
 	      mp_size_t i;
 	      anchor_up[0] = -up[0];
