@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -36,6 +36,7 @@ MA 02111-1307, USA. */
 #include <ctype.h>
 #include <stddef.h>    /* for ptrdiff_t */
 #include <stdio.h>
+#include <stdlib.h>    /* for strtol */
 #include <string.h>
 
 #if HAVE_LANGINFO_H
