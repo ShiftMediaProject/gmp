@@ -784,7 +784,7 @@ used to enable C++ support only if a C++ compiler is in fact available.  The
 C++ support consists of a library @file{libgmpxx.la} and header file
 @file{gmpxx.h}.
 
-Note that in general @file{libgmpxx} will be usuable only with the C++
+Note that in general @file{libgmpxx} will be usable only with the C++
 compiler that built it, since name mangling and runtime support are usually
 incompatible between different compilers.
 
@@ -1907,6 +1907,7 @@ the standard C library @code{malloc} has some diagnostic facilities, see
 @uref{http://packages.debian.org/fda}
 @uref{http://www.gnupdate.org/components/leakbug}
 @uref{http://people.redhat.com/~otaylor/memprof}
+@uref{http://www.cbmamiga.demon.co.uk/mpatrol}
 @end display
 
 @item Stack Backtraces
@@ -2847,6 +2848,8 @@ than once.
 @end deftypefn
 
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
+@cindex Sign tests
+@cindex Integer sign tests
 Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
 @ma{@var{op} < 0}.
 
@@ -3292,6 +3295,8 @@ multiple times.
 @end deftypefn
 
 @deftypefn Macro int mpq_sgn (mpq_t @var{op})
+@cindex Sign tests
+@cindex Rational sign tests
 Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
 @ma{@var{op} < 0}.
 
@@ -3771,6 +3776,8 @@ result in @var{rop}.  This is @ma{@GMPabs{@var{op1}-@var{op2}}/@var{op1}}.
 @end deftypefun
 
 @deftypefn Macro int mpf_sgn (mpf_t @var{op})
+@cindex Sign tests
+@cindex Float sign tests
 Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
 @ma{@var{op} < 0}.
 
@@ -3796,16 +3803,17 @@ before @file{gmp.h}, since that will allow @file{gmp.h} to define prototypes
 for these functions.
 
 @deftypefun size_t mpf_out_str (FILE *@var{stream}, int @var{base}, size_t @var{n_digits}, mpf_t @var{op})
-Output @var{op} on stdio stream @var{stream}, as a string of digits in base
-@var{base}.  The base may vary from 2 to 36.  Print at most @var{n_digits}
-significant digits, or if @var{n_digits} is 0, the maximum number of digits
-accurately representable by @var{op}.
+Print @var{op} to @var{stream}, as a string of digits.  Return the number of
+bytes written, or if an error occurred, return 0.
 
-In addition to the significant digits, a leading @samp{0.} and a trailing
-exponent, in the form @samp{eNNN}, are printed.  If @var{base} is greater than
-10, @samp{@@} will be used instead of @samp{e} as exponent delimiter.
+The mantissa is prefixed with an @samp{0.} and is in the given @var{base},
+which may vary from 2 to 36.  An exponent then printed, separated by an
+@samp{e}, or if @var{base} is greater than 10 then by an @samp{@@}.  The
+exponent is always in decimal.
 
-Return the number of bytes written, or if an error occurred, return 0.
+Up to @var{n_digits} will be printed from the mantissa, except that no more
+digits than are accurately representable by @var{op} will be printed.
+@var{n_digits} can be 0 to select that accurate maximum.
 @end deftypefun
 
 @deftypefun size_t mpf_inp_str (mpf_t @var{rop}, FILE *@var{stream}, int @var{base})
@@ -4641,6 +4649,8 @@ feature, which probably means only on GNU systems, see
 
 @node C++ Formatted Output,  , Formatted Output Functions, Formatted Output
 @section C++ Formatted Output
+@cindex C++ ostream output
+@cindex ostream output
 
 The following functions are provided in @file{libgmpxx}, which is built if C++
 support is enabled (@pxref{Build Options}).  Prototypes are available from
@@ -4648,8 +4658,6 @@ support is enabled (@pxref{Build Options}).  Prototypes are available from
 
 @deftypefun ostream& operator<< (ostream& @var{stream}, mpz_t @var{op})
 @deftypefunx ostream& operator<< (ostream& @var{stream}, mpq_t @var{op})
-@cindex C++ ostream output
-@cindex ostream output
 Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
 @code{ios::width()} is reset to 0 after output, the same as the standard
 @code{ostream operator<<} routines do.
@@ -4665,11 +4673,11 @@ Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
 @code{ios::width()} is reset to 0 after output, the same as the standard
 @code{ostream operator<<} routines do.
 
-@code{ios::hex} and @code{ios::oct} are accepted, unlike the standard
-@code{operator<<} routines on @code{double} etc.  Both mantissa and exponent
-will be in hex or octal, and for hex the exponent delimiter is an @samp{@@},
-as per @code{mpf_out_str}.  @code{ios::showbase} is accepted, and will put a
-base on both mantissa and exponent.
+@code{ios::hex} and @code{ios::oct} are supported, unlike the standard
+@code{operator<<} routines on @code{double} etc.  The mantissa will be in hex
+or octal and the exponent is always in decimal.  For hex the exponent
+delimiter is an @samp{@@}.  This is as per @code{mpf_out_str}.
+@code{ios::showbase} is supported, and will put a base on the mantissa.
 @end deftypefun
 
 These operators mean that GMP types can be output in the usual C++ way, for
@@ -5706,8 +5714,10 @@ $$ w_n = \sum_{{i+j = b2^k+n}\atop{b=0,1}} (-1)^b x_i y_j $$
 @ifnottex
 
 @example
-                         b
-w[n] =     sum       (-1) * x[i] * y[j]
+           ---
+           \         b
+w[n] =     /     (-1) * x[i] * y[j]
+           ---
        i+j==b*2^k+n
           b=0,1
 @end example
@@ -5868,7 +5878,7 @@ The multiply by inverse can be done two limbs at a time.  The calculation is
 basically the same, but the inverse is two limbs and the divisor treated as if
 padded with a low zero limb.  This means more work, since the inverse will
 need a 2@cross{}2 multiply, but the four 1@cross{}1s to do that are
-independent and can therefore be done partly or wholely in parallel.  Likewise
+independent and can therefore be done partly or wholly in parallel.  Likewise
 for a 2@cross{}1 calculating @m{qd,q*d}.  The net effect is to process two
 limbs with roughly the same two multiplies worth of latency that one limb at a
 time gives.  This extends to 3 or 4 limbs at a time, though the extra work to
@@ -7247,6 +7257,9 @@ algorithms chapter in the manual, gmpasm-mode.el, and various miscellaneous
 improvements elsewhere.
 
 Steve Root helped write the optimized alpha 21264 assembly code.
+
+Gerardo Ballabio wrote the gmpxx.h C++ class interface and the C++ istream
+input routines.
 
 GNU MP 3.1 was finished and released by Torbjorn Granlund and Kevin Ryde.
 Torbjorn's work was partially funded by the IDA Center for Computing Sciences,
