@@ -2007,6 +2007,10 @@ The @code{mpz} functions can be used on the result of these macros.
 Convert @var{op} to a double.
 @end deftypefun
 
+@deftypefun double mpq_set_d (mpq_t @var{rop}, double @var{d})
+Set @var{rop} to the value of d, without rounding.
+@end deftypefun
+
 These functions assign between either the numerator or denominator of a
 rational, and an integer.  Instead of using these functions, it is preferable
 to use the more general mechanisms @code{mpq_numref} and @code{mpq_denref},
