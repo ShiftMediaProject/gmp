@@ -2584,13 +2584,10 @@ dnl  CC_FOR_BUILD.
 
 AC_DEFUN(GMP_PROG_CPP_FOR_BUILD,
 [AC_REQUIRE([GMP_PROG_CC_FOR_BUILD])
-AC_CACHE_CHECK([for build system preprocessor],
-               gmp_cv_prog_cpp_for_build,
-[gmp_cv_prog_cpp_for_build="no"
-if test -n "$CPP_FOR_BUILD"; then
-  gmp_cv_prog_cpp_for_build=$CPP_FOR_BUILD
-else
-  cat >conftest.c <<EOF
+AC_MSG_CHECKING([for build system preprocessor])
+if test -z "$CPP_FOR_BUILD"; then
+  AC_CACHE_VAL(gmp_cv_prog_cpp_for_build,
+  [cat >conftest.c <<EOF
 #define FOO BAR
 EOF
   for i in "$CC_FOR_BUILD -E" "$CC_FOR_BUILD -E -traditional-cpp" "/lib/cpp"; do
@@ -2601,17 +2598,17 @@ EOF
     fi
   done
   rm -f conftest* a.out a.exe a_out.exe
+  if test -z "$gmp_cv_prog_cpp_for_build"; then
+    AC_MSG_ERROR([Cannot find build system C preprocessor.])
+  fi
+  ])
+  CPP_FOR_BUILD=$gmp_cv_prog_cpp_for_build
 fi
-])
-if test "$gmp_cv_prog_cpp_for_build" = "no"; then
-  AC_MSG_ERROR([Cannot find build system C preprocessor.])
-fi
-AC_ARG_VAR(CPP_FOR_BUILD,[build system C preprocessor])
-if test -z "$CPP_FOR_BUILD"; then
-  AC_SUBST(CPP_FOR_BUILD,$gmp_cv_prog_cpp_for_build)
-fi
-])
+AC_MSG_RESULT([$CPP_FOR_BUILD])
 
+AC_ARG_VAR(CPP_FOR_BUILD,[build system C preprocessor])
+AC_SUBST(CPP_FOR_BUILD)
+])
 
 
 dnl  GMP_PROG_EXEEXT_FOR_BUILD
