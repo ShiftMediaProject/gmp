@@ -24,9 +24,10 @@ MA 02111-1307, USA. */
 
 /* State structure for LC.  */
 typedef struct {
-  mpz_t _mp_seed;		/* Current value.  */
+  mpz_t _mp_seed;		/* Current value.  Fixed size.  */
   mpz_t _mp_a;			/* Multiplier.  */
-  mp_limb_t _mp_c;		/* Adder.  */
+  mpz_t _mp_c;			/* Adder.  */
+  mp_limb_t _mp_c_limbs[2];	/* Limbs of the adder.  */
   unsigned long int _mp_m2exp;	/* Modulus is 2 ^ m2exp.  */
 } gmp_rand_lc_struct;
 
@@ -42,8 +43,8 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
   mp_size_t ta;
   mp_size_t tn, seedn, an;
   unsigned long int m2exp;
-  mp_limb_t c;
   unsigned long int bits;
+  int cy;
   mp_size_t xn;
   gmp_rand_lc_struct *p;
   TMP_DECL (mark);
@@ -51,7 +52,6 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
   p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
 
   m2exp = p->_mp_m2exp;
-  c = p->_mp_c;
 
   seedp = PTR (p->_mp_seed);
   seedn = SIZ (p->_mp_seed);
@@ -77,26 +77,19 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
     tp = (mp_ptr) TMP_ALLOC (ta * BYTES_PER_MP_LIMB);
 
   /* t = a * seed */
-  if (seedn > an && an != 0)
+  if (seedn > an)
     mpn_mul (tp, seedp, seedn, ap, an);
-  else if (seedn != 0 && an != 0)
-    mpn_mul (tp, ap, an, seedp, seedn);
   else
-    MPN_ZERO (tp, tn);
-
-  /* MPN_INCR_U assumes there's no carry.  Make sure of that by clearing
-     the first unused limb.  */
-  tp[tn] = 0;
+    mpn_mul (tp, ap, an, seedp, seedn);
 
   /* t = t + c */
-  MPN_INCR_U (tp, tn+1, c);
+  __GMPN_ADD (cy, tp, tp, tn, p->_mp_c_limbs, SIZ (p->_mp_c));
 
   /* t = t % m */
   tp[m2exp / GMP_NUMB_BITS] &= (CNST_LIMB (1) << m2exp % GMP_NUMB_BITS) - 1;
 
   /* Save result as next seed.  */
   MPN_COPY (PTR (p->_mp_seed), tp, tn);
-  SIZ (p->_mp_seed) = tn;
 
   /* Discard the lower m2exp/2 of the result.  */
   bits = m2exp / 2;
@@ -208,7 +201,13 @@ randget_lc (gmp_randstate_t rstate, mp_ptr rp, unsigned long int nbits)
 static int
 randseed_lc (gmp_randstate_t rstate, mpz_srcptr seed)
 {
-  mpz_set (((gmp_rand_lc_struct *) RNG_STATE (rstate))->_mp_seed, seed);
+  gmp_rand_lc_struct *p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
+  mpz_ptr seedp = p->_mp_seed;
+  mp_size_t seedn = BITS_TO_LIMBS (p->_mp_m2exp);
+
+  mpz_set (seedp, seed);
+  MPN_ZERO (&PTR (seedp)[SIZ (seedp)], seedn - SIZ (seedp));
+  SIZ (seedp) = seedn;
   return 0;
 }
 
@@ -216,19 +215,17 @@ randseed_lc (gmp_randstate_t rstate, mpz_srcptr seed)
 static void
 randclear_lc (gmp_randstate_t rstate)
 {
-  gmp_rand_lc_struct *p;
-
-  p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
+  gmp_rand_lc_struct *p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
 
   mpz_clear (p->_mp_seed);
   mpz_clear (p->_mp_a);
   (*__gmp_free_func) (p, sizeof (gmp_rand_lc_struct));
 }
 
-static __gmp_const gmp_randfnptr_t Linear_Congruential_Generator = {
+static const gmp_randfnptr_t Linear_Congruential_Generator = {
   randseed_lc,
   randget_lc,
-  randclear_lc,
+  randclear_lc
 };
 
 /* Initialize LC-specific data.  */
@@ -239,25 +236,42 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
 		      unsigned long int m2exp)
 {
   gmp_rand_lc_struct *p;
+  mp_size_t seedn = BITS_TO_LIMBS (m2exp);
 
   ASSERT_ALWAYS (m2exp != 0);
 
-  RNG_FNPTR (rstate) = &Linear_Congruential_Generator;
-  RNG_STATE (rstate) = (*__gmp_allocate_func) (sizeof (gmp_rand_lc_struct));
+  RNG_FNPTR (rstate) = (void *) &Linear_Congruential_Generator;
+  RNG_STATE (rstate) =
+    (mp_ptr) (*__gmp_allocate_func) (sizeof (gmp_rand_lc_struct));
 
   p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
   mpz_init2 (p->_mp_seed, m2exp);
 
   /* Set parameters and default seed.  */
+  MPN_ZERO (PTR (p->_mp_seed), seedn);
+  SIZ (p->_mp_seed) = seedn;
+  PTR (p->_mp_seed)[0] = 1;
+
   mpz_init_set (p->_mp_a, a);
   /* Avoid negative a.  */
   mpz_fdiv_r_2exp (p->_mp_a, p->_mp_a, m2exp);
-  p->_mp_c = c;
 
-  /* Internally c < 2^m2exp.  */
-  if (m2exp < GMP_LIMB_BITS)
-    p->_mp_c &= ~(~CNST_LIMB (0) << m2exp);
+  /* Avoid SIZ(a) == 0 to avoid checking for special case in lc().  */
+  if (SIZ (p->_mp_a) == 0)
+    {
+      SIZ (p->_mp_a) = 1;
+      PTR (p->_mp_a)[0] = CNST_LIMB (0);
+    }
+
+  MPZ_FAKE_UI (p->_mp_c, p->_mp_c_limbs, c);
+
+  /* Internally we may discard any bits of c above m2exp.  The following
+     code ensures that __GMPN_ADD in lc() will always work.  */
+  if (seedn == 1 && SIZ (p->_mp_c) == 2)
+    {
+      p->_mp_c_limbs[1] = CNST_LIMB (0);
+      SIZ (p->_mp_c) = (p->_mp_c_limbs[0] != 0);
+    }
+
   p->_mp_m2exp = m2exp;
-
-  mpz_set_ui (p->_mp_seed, 1);
 }
