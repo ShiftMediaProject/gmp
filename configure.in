@@ -942,7 +942,7 @@ case $host in
     GMP_INCLUDE_MPN(sparc32/sparc-defs.m4)
 
     case $host_cpu in
-      sparcv8 | microsparc)
+      sparcv8 | microsparc | turbosparc)
         path="sparc32/v8 sparc32" ;;
       supersparc)
         path="sparc32/v8/supersparc sparc32/v8 sparc32" ;;
@@ -976,7 +976,8 @@ case $host in
     #
     case $host_cpu in
       supersparc)           gcc_cflags_cpu="-mcpu=supersparc -msupersparc" ;;
-      sparcv8 | microsparc) gcc_cflags_cpu="-mcpu=v8 -mv8" ;;
+      sparcv8 | microsparc | turbosparc)
+			    gcc_cflags_cpu="-mcpu=v8 -mv8" ;;
       sparc64 | sparcv9*)   gcc_cflags_cpu="-mcpu=v9 -mv8" ;;
       ultrasparc3)          gcc_cflags_cpu="-mcpu=ultrasparc3 -mcpu=ultrasparc -mv8" ;;
       ultrasparc*)          gcc_cflags_cpu="-mcpu=ultrasparc -mv8" ;;
@@ -996,7 +997,8 @@ case $host in
         # SunOS cc doesn't know -xarch, apparently always generating v7
         # code, so make this optional
     	case $host_cpu in
-    	  sparcv8 | microsparc | supersparc)  cc_cflags_arch="-xarch=v8" ;;
+    	  sparcv8 | microsparc | supersparc | turbosparc)
+					      cc_cflags_arch="-xarch=v8" ;;
     	  sparc64 | sparcv9* | ultrasparc*)   cc_cflags_arch="-xarch=v8plus" ;;
     	  *)                                  cc_cflags_arch="-xarch=v7" ;;
     	esac
@@ -1012,6 +1014,7 @@ case $host in
     	case $host_cpu in
     	  supersparc)   cc_cflags_cpu="-xchip=super" ;;
     	  microsparc)   cc_cflags_cpu="-xchip=micro" ;;
+    	  turbosparc)   cc_cflags_cpu="-xchip=micro2" ;;
     	  ultrasparc)   cc_cflags_cpu="-xchip=ultra" ;;
     	  ultrasparc2)  cc_cflags_cpu="-xchip=ultra2" ;;
     	  ultrasparc2i) cc_cflags_cpu="-xchip=ultra2i" ;;
@@ -1041,6 +1044,7 @@ case $host in
         case $host in
           [*-*-solaris2.[7-9]*])
             abilist="64 32"
+            extra_functions_64=udiv
             path_64="sparc64"
             cclist_64="gcc cc"
             gcc_64_cflags="-O2 -m64 -mptr64"
@@ -1064,7 +1068,6 @@ case $host in
           *-*-*bsd*)
             # NetBSD and OpenBSD sparc64
             abilist="64"
-            extra_functions=
             path="sparc64"
             gcc_cflags="-O2"
             cyclecounter_size=2
