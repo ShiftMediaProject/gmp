@@ -23,4 +23,4 @@ MA 02111-1307, USA.  */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-static const char *gmp_version = VERSION;
+const char *gmp_version = VERSION;
