@@ -225,8 +225,8 @@ void gmp_rand_clear _PROTO ((gmp_rand_state));
 #define mpz_cmp __gmpz_cmp
 #define _mpz_cmp_si __gmpz_cmp_si
 #define _mpz_cmp_ui __gmpz_cmp_ui
-#define mpz_cmp_abs __gmpz_cmp_abs
-#define mpz_cmp_abs_ui __gmpz_cmp_abs_ui
+#define mpz_cmpabs __gmpz_cmpabs
+#define mpz_cmpabs_ui __gmpz_cmpabs_ui
 #define mpz_com __gmpz_com
 #define mpz_divexact __gmpz_divexact
 #define mpz_dump __gmpz_dump
@@ -347,8 +347,8 @@ void mpz_clrbit _PROTO ((mpz_ptr, unsigned long int));
 int mpz_cmp _PROTO ((mpz_srcptr, mpz_srcptr));
 int _mpz_cmp_si _PROTO ((mpz_srcptr, signed long int));
 int _mpz_cmp_ui _PROTO ((mpz_srcptr, unsigned long int));
-int mpz_cmp_abs _PROTO ((mpz_srcptr, mpz_srcptr));
-int mpz_cmp_abs_ui _PROTO ((mpz_srcptr, unsigned long int));
+int mpz_cmpabs _PROTO ((mpz_srcptr, mpz_srcptr));
+int mpz_cmpabs_ui _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_com _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_divexact _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_dump _PROTO ((mpz_srcptr));
