@@ -1,8 +1,6 @@
 # AMD K7 mpn_rshift -- mpn right shift.
 #
 # K7: 1.21 cycles/limb (at 16 limbs/loop).
-#
-# Future: The simple loop can probably benefit from MMX too.
 
 
 # Copyright (C) 1999-2000 Free Software Foundation, Inc.
@@ -50,14 +48,10 @@ deflit(UNROLL_COUNT, 16)
 # running at 3 cycles back-to-back.
 #
 # Full speed depends on source and destination being aligned, and some hairy
-# setups and finish-ups are done to arrange this for the loop.  To
-# understand these bits, draw some pictures to see four cases at the start
-# and another four at the end.  Within the loop mm1 or mm2 is a carry,
-# meaning the previous two limbs from src.  At the end it's mm2 and because
-# the size was decremented the last dst is yet to be written.
+# setups and finish-ups are done to arrange this for the loop.
 
 ifdef(`PIC',`
-deflit(UNROLL_THRESHOLD, 12)
+deflit(UNROLL_THRESHOLD, 10)
 ',`
 deflit(UNROLL_THRESHOLD, 10)
 ')
@@ -72,9 +66,6 @@ defframe(SAVE_ESI, -8)
 defframe(SAVE_EBX, -12)
 deflit(SAVE_SIZE, 12)
 
-dnl  overlaps shift once it's been fetched
-define(VAR_RETVAL,`PARAM_SHIFT')
-
 	.text
 	ALIGN(32)
 
@@ -82,119 +73,128 @@ PROLOGUE(mpn_rshift)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %eax
-	movl	PARAM_SHIFT, %ecx
+	movl	PARAM_SRC, %edx
 	subl	$SAVE_SIZE, %esp
 deflit(`FRAME',SAVE_SIZE)
 
-	movl	%esi, SAVE_ESI
-	movl	PARAM_SRC, %esi
-
+	movl	PARAM_SHIFT, %ecx
 	movl	%edi, SAVE_EDI
+
 	movl	PARAM_DST, %edi
 	decl	%eax
-
-	movl	(%esi), %edx		# src low limb
 	jnz	L(more_than_one_limb)
+
+	movl	(%edx), %edx		# src limb
 
 	shrdl	%cl, %edx, %eax		# eax was decremented to zero
 
  	shrl	%cl, %edx
-	movl	SAVE_ESI, %esi
 
-	movl	%edx, (%edi)		# store low limb
+	movl	%edx, (%edi)		# dst limb
 	movl	SAVE_EDI, %edi
 	addl	$SAVE_SIZE, %esp
 
 	ret
 
 
-# -----------------------------------------------------
+#------------------------------------------------------------------------------
 L(more_than_one_limb):
 	# eax	size-1
 	# ebx
 	# ecx	shift
-	# edx	src low limb
-	# esi	src
+	# edx	src
+	# esi
 	# edi	dst
 	# ebp
 
-	movl	%ebx, SAVE_EBX
-	cmp	$UNROLL_THRESHOLD, %eax
+	movd	PARAM_SHIFT, %mm6	# rshift
+	movd	(%edx), %mm5		# src low limb
+	cmp	$UNROLL_THRESHOLD-1, %eax
 
 	jae	L(unroll)
+	leal	(%edx,%eax,4), %edx	# &src[size-1]
+	leal	-4(%edi,%eax,4), %edi	# &dst[size-2]
 
-	movl	%eax, %ebx
-	xorl	%eax, %eax
-
-	shrdl	%cl, %edx, %eax
-
-	leal	4(%esi,%ebx,4), %esi
-	leal	(%edi,%ebx,4), %edi
-	negl	%ebx
-
-	movl	%eax, VAR_RETVAL
+	movd	(%edx), %mm4		# src high limb
+	negl	%eax
 
 
-L(simple):
-	# eax	result
-	# ebx	loop counter (negative)
+L(simple_top):
+	# eax	loop counter, limbs, negative
+	# ebx
 	# ecx	shift
 	# edx	carry
-	# esi	src
-	# edi	dst
+	# edx	&src[size-1]
+	# edi	&dst[size-2]
 	# ebp
+	#
+	# mm0	scratch
+	# mm4	src high limb
+	# mm5	src low limb
+	# mm6	shift
 
-	movl	%edx, %eax
-	movl	(%esi,%ebx,4), %edx
+	movq	(%edx,%eax,4), %mm0
+	incl	%eax
 
-	shrdl	%cl, %edx, %eax
+ 	psrlq	%mm6, %mm0
 
-	movl	%eax, (%edi,%ebx,4)
-	incl	%ebx
-
-	jnz	L(simple)
+	movd	%mm0, (%edi,%eax,4)
+	jnz	L(simple_top)
 
 
-	shrl	%cl, %edx
-	movl	SAVE_ESI, %esi
-	movl	SAVE_EBX, %ebx
+	psllq	$32, %mm5
+ 	psrlq	%mm6, %mm4
 
-	movl	%edx, (%edi)
+	psrlq	%mm6, %mm5
+	movd	%mm4, 4(%edi)		# dst high limb
+
+	movd	%mm5, %eax		# return value
+
 	movl	SAVE_EDI, %edi
-
-	movl	VAR_RETVAL, %eax
 	addl	$SAVE_SIZE, %esp
+	emms
 
 	ret
 
 
 #--------------------------------------------------------------------------
-	# aligning here saves a couple of cycles
 	ALIGN(16)
 L(unroll):
 	# eax	size-1
-	# ebx	(saved)
+	# ebx
 	# ecx	shift
-	# edx	src low limb
-	# esi	src
+	# edx	src
+	# esi
 	# edi	dst
 	# ebp
+	#
+	# mm5	src low limb
+	# mm6	rshift
 
-	xorl	%ebx, %ebx
-	movd	PARAM_SHIFT, %mm6  # directpath, whereas reg->mmx is vectorpath
+	testb	$4, %dl
+	movl	%esi, SAVE_ESI
+	movl	%ebx, SAVE_EBX
 
-	shrdl	%cl, %edx, %ebx
-
-	testl	$4, %esi
-	movl	%ebx, VAR_RETVAL
-
+	psllq	$32, %mm5
 	jz	L(start_src_aligned)
 
 
-	# src isn't aligned, process one limb to make it so
+	# src isn't aligned, process low limb separately (marked xxx) and
+	# step src and dst by one limb, making src aligned.
+	#
+	# source                  edx
+	# --+-------+-------+-------+
+	#           |          xxx  |
+	# --+-------+-------+-------+
+	#         4mod8   0mod8   4mod8
+	#
+	#         dest            edi
+	#         --+-------+-------+
+	#           |       |  xxx  |  
+	#         --+-------+-------+
 
-	movq	(%esi), %mm0		# src low two limbs
-	addl	$4, %esi
+	movq	(%edx), %mm0		# src low two limbs
+	addl	$4, %edx
 	movl	%eax, PARAM_SIZE	# size-1
 
 	addl	$4, %edi
@@ -207,15 +207,28 @@ L(unroll):
 L(start_src_aligned):
 
 
-	movq	(%esi), %mm1		# src low two limbs
+	movq	(%edx), %mm1		# src low two limbs
 	decl	%eax			# size-2, two last limbs handled at end
 	testl	$4, %edi
 
+	psrlq	%mm6, %mm5
 	jz	L(start_dst_aligned)
 
 
-	# dst isn't aligned, step edi to make it so, and pretend the shift
-	# is 32 bits extra.  Low limb of dst handled here separately.
+	# dst isn't aligned, add 4 to make it so, and pretend the shift is
+	# 32 bits extra.  Low limb of dst (marked xxx) handled here separately.
+	#
+	#          source          edx
+	#          --+-------+-------+
+	#            |      mm1      |
+	#          --+-------+-------+
+	#                  4mod8   0mod8
+	#
+	#  dest                    edi
+	#  --+-------+-------+-------+
+	#                    |  xxx  |        
+	#  --+-------+-------+-------+
+	#          4mod8   0mod8   4mod8
 
 	movq	%mm1, %mm0
 	psrlq	%mm6, %mm1
@@ -228,9 +241,10 @@ L(start_src_aligned):
 	movd	%ecx, %mm6
 L(start_dst_aligned):
 
-	movq	%mm1, %mm2	# copy of src low two limbs
+
+	movq	%mm1, %mm2		# copy of src low two limbs
 	negl	%ecx
-	andl	$~1, %eax	# round size down to even
+	andl	$~1, %eax		# round size down to even
 
 	movl	%eax, %ebx
 	negl	%eax
@@ -241,42 +255,44 @@ L(start_dst_aligned):
 
 	shll	%eax
 
+	movd	%ecx, %mm7		# lshift = 64-rshift
+
 ifdef(`PIC',`
 	call	L(pic_calc)
 L(here):
 ',`
-	leal	L(entry) (%eax,%eax,4), %edx
+	leal	L(entry) (%eax,%eax,4), %esi
 	negl	%eax
 ')
 	shrl	$UNROLL_LOG2, %ebx	# loop counter
 
-	movd	%ecx, %mm7	# lshift = 64-rshift
-
-	leal	ifelse(UNROLL_BYTES,256,128+) 8(%esi,%eax,2), %esi
+	leal	ifelse(UNROLL_BYTES,256,128+) 8(%edx,%eax,2), %edx
 	leal	ifelse(UNROLL_BYTES,256,128) (%edi,%eax,2), %edi
-	jmp	*%edx
+	movl	PARAM_SIZE, %eax	# for use at end
+
+	jmp	*%esi
 
 
 ifdef(`PIC',`
 L(pic_calc):
 	# See README.family about old gas bugs
-	leal	(%eax,%eax,4), %edx
-	addl	$L(entry)-L(here), %edx
-	addl	(%esp), %edx
+	leal	(%eax,%eax,4), %esi
+	addl	$L(entry)-L(here), %esi
+	addl	(%esp), %esi
 	negl	%eax
 
 	ret
 ')
 
 
-#--------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 	ALIGN(64)
 L(top):
-	# eax	
-	# esi	src
-	# ecx	shift
-	# edx	was computed jump	
+	# eax	size, for use at end
 	# ebx	loop counter
+	# ecx	lshift
+	# edx	src
+	# esi	was computed jump
 	# edi	dst
 	# ebp
 	#
@@ -296,10 +312,8 @@ deflit(CHUNK_COUNT, 4)
 forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 	deflit(`disp0', eval(i*CHUNK_COUNT*4 ifelse(UNROLL_BYTES,256,-128)))
 	deflit(`disp1', eval(disp0 + 8))
-	deflit(`disp2', eval(disp1 + 8))
-	deflit(`disp3', eval(disp2 + 8))
 
- 	movq	disp0(%esi), %mm0
+ 	movq	disp0(%edx), %mm0
  	psrlq	%mm6, %mm2
 
  	movq	%mm0, %mm1
@@ -309,7 +323,7 @@ forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
  	movq	%mm0, disp0(%edi)
 
 
- 	movq	disp1(%esi), %mm0
+ 	movq	disp1(%edx), %mm0
  	psrlq	%mm6, %mm1
 
  	movq	%mm0, %mm2
@@ -319,7 +333,7 @@ forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
  	movq	%mm0, disp1(%edi)
 ')
 
-	addl	$UNROLL_BYTES, %esi
+	addl	$UNROLL_BYTES, %edx
 	addl	$UNROLL_BYTES, %edi
 	decl	%ebx
 
@@ -329,34 +343,69 @@ forloop(i, 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 deflit(`disp0', ifelse(UNROLL_BYTES,256,-128))
 deflit(`disp1', eval(disp0-0 + 8))
 
-	testb	$1, PARAM_SIZE
-	psrlq	%mm6, %mm2
-	movl	VAR_RETVAL, %eax
+	testb	$1, %al
+	psrlq	%mm6, %mm2	# wanted rshifted in all cases below
+	movl	SAVE_ESI, %esi
 
+	movd	%mm5, %eax		# return value
+
+	movl	SAVE_EBX, %ebx
 	jz	L(end_even)
 
 	
-	# size is odd, one extra limb on src
-	
-	movd	disp0(%esi), %mm0
+	# Size odd, destination was aligned.
+	#
+	# source
+	#       edx
+	# +-------+---------------+--
+	# |       |      mm2      |
+	# +-------+---------------+--
+	#
+	# dest                  edi
+	# +-------+---------------+---------------+--
+	# |       |               |    written    |
+	# +-------+---------------+---------------+--
+	#
+	# mm6 = shift
+	# mm7 = ecx = 64-shift
+
+
+	# Size odd, destination was unaligned.
+	#
+	# source
+	#       edx
+	# +-------+---------------+--
+	# |       |      mm2      |
+	# +-------+---------------+--
+	#
+	# dest          edi
+	# +---------------+---------------+--
+	# |               |    written    |
+	# +---------------+---------------+--
+	#
+	# mm6 = shift+32
+	# mm7 = ecx = 64-(shift+32)
+
+
+	# In both cases there's one extra limb of src to fetch and combine
+	# with mm2 to make a qword to store, and in the aligned case there's
+	# a further extra limb of dst to be formed.
+
+
+	movd	disp0(%edx), %mm0
 	movq	%mm0, %mm1
 
 	psllq	%mm7, %mm0
-	testb	$4, PARAM_DST
+	testb	$32, %cl
 
  	por	%mm2, %mm0
+	psrlq	%mm6, %mm1
 
 	movq	%mm0, disp0(%edi)
-	jnz	L(done)
+	jz	L(finish_odd_unaligned)
 
-	# dst was aligned, must store one extra limb
-
-	psrlq	%mm6, %mm1
 	movd	%mm1, disp1(%edi)
-L(done):
-
-	movl	SAVE_ESI, %esi
-	movl	SAVE_EBX, %ebx
+L(finish_odd_unaligned):
 
 	movl	SAVE_EDI, %edi
 	addl	$SAVE_SIZE, %esp
@@ -366,23 +415,54 @@ L(done):
 
 
 L(end_even):
-	# size even
 
-	testb	$4, PARAM_DST
-	jnz	L(end_even_unaligned)
+	# Size even, destination was aligned.
+	#
+	# source
+	# +---------------+--
+	# |      mm2      |
+	# +---------------+--
+	#
+	# dest          edi
+	# +---------------+---------------+--
+	# |               |      mm3      |
+	# +---------------+---------------+--
+	#
+	# mm6 = shift
+	# mm7 = ecx = 64-shift
 
-	# dst was aligned, must store two limbs
-	movq	%mm2, disp0(%edi)
 
-L(end_even_unaligned):
-	# dst was unaligned, must store one limb
+	# Size even, destination was unaligned.
+	#
+	# source
+	# +---------------+--
+	# |      mm2      |
+	# +---------------+--
+	#
+	# dest  edi
+	# +-------+---------------+--
+	# |       |      mm3      |
+	# +-------+---------------+--
+	#
+	# mm6 = shift+32
+	# mm7 = 64-(shift+32)
+
+
+	# The movd for the unaligned case is the same data as the movq for
+	# the aligned case, it's just a choice between whether one or two
+	# limbs should be written.
+
+
+	testb	$32, %cl
 	movd	%mm2, disp0(%edi)
-	movl	SAVE_ESI, %esi
 
-	movl	SAVE_EBX, %ebx
+	jz	L(end_even_unaligned)
+
+	movq	%mm2, disp0(%edi)
+L(end_even_unaligned):
+
 	movl	SAVE_EDI, %edi
 	addl	$SAVE_SIZE, %esp
-
 	emms
 
 	ret
