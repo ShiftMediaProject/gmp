@@ -1,5 +1,8 @@
 2001-01-19  Kevin Ryde  <kevin@swox.se>
 
+	* assert.c, gmp-impl.h (__gmp_assert_fail): Change return type to
+	void, since it's no longer used in expressions.
+
 	* mpn/x86/addsub_n.S: Remove file, since it doesn't work and it upsets
 	tune/many.pl.
 
