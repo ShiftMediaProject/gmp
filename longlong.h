@@ -168,6 +168,20 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
     (pl) = __m0 * __m1;							\
   } while (0)
 #endif
+#define count_leading_zeros(count, x) \
+  do {									\
+    UWtype _x = (x), _y, _a, _c;					\
+    __asm__ ("mux1 %0 = %1, @rev" : "=r" (_y) : "r" (_x));		\
+    __asm__ ("czx1.l %0 = %1" : "=r" (_a) : "r" (-_y | _y));		\
+    _c = (_a - 1) << 3;							\
+    _x >>= _c;								\
+    if (_x >= 1 << 4)							\
+      _x >>= 4, _c += 4;						\
+    if (_x >= 1 << 2)							\
+      _x >>= 2, _c += 2;						\
+    _c += _x >> 1;							\
+    (count) =  W_TYPE_SIZE - 1 - _c;					\
+  } while (0)
 #endif
 
 
@@ -1351,5 +1365,3 @@ unsigned char __clz_tab[];
 #ifndef COUNT_TRAILING_ZEROS_TIME
 #define COUNT_TRAILING_ZEROS_TIME  15  /* cycles */
 #endif
-
-
