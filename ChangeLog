@@ -1,3 +1,58 @@
+2001-03-18  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium/logops_n.asm: New file.
+
+	* mpn/x86/k6/k62mmx/copyd.asm: Rewrite, smaller and simpler, faster on
+	small sizes, slower on big sizes (about half the time).
+	* mpn/x86/k6/k62mmx/copyi.asm: Remove file, in favour of generic x86.
+	* mpn/x86/copyi.asm: Add some comments.
+	* mpn/x86/k6/README: Update.
+
+	* mpn/x86/k6/gcd_1.asm: New file.
+
+	* gmp-impl.h (NEG_MOD): Fix type of __dnorm.
+
+	* acinclude.m4 (GMP_C_SIZES): Fix use of __GMP_WITHIN_CONFIGURE.
+
+2001-03-15  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (GMPabs): New macro.
+	(Float Comparison - mpf_reldiff): Use it.
+	(Integer Comparisons - mpz_cmpabs): Ditto, puts "abs" in info.
+	(Reentrancy): Update notes on old random functions.
+	(Karatsuba Multiplication): Better characterize the effect of basecase
+	speedups on the thresholds, pointed out by Torbjorn.
+
+	* tune/README: Notes on the 1x1 div threshold for mpn_gcd_1.
+
+	* tests/misc.c (mpz_pow2abs_p, mpz_flipbit, mpz_errandomb,
+	mpz_errandomb_nonzero, mpz_negrandom): New functions.
+	(mpz_erandomb, mpz_erandomb_nonzero): Use urandom().
+	* tests/spinner.c (spinner_wanted, spinner_tick): Make global.
+	* tests/tests.h: Update prototypes.
+
+	* tests/mpz/t-cong.c, tests/mpz/t-cong_2exp.c: New files.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add them.
+
+	* mpz/cong.c, mpz/cong_2exp.c, mpz/cong_ui.c: New files.
+	* Makefile.am, mpz/Makefile.am: Add them.
+	* gmp-impl.h (NEG_MOD): New macro.
+	* gmp-h.in (mpn_congruent{,_2exp,_ui}_p): Add prototypes.
+	* gmp.texi (Integer Division, Efficiency): Add documentation.
+
+	* mpq/aors.c: No need for ABS on denominator sizes.
+
+	* gmp-impl.h (mpn_divisible_p): Use __MPN.
+
+	* gmp-impl.h (LOW_ZEROS_MASK): New macro.
+	* mpz/divis_ui.c, mpn/generic/divis.c: Use it.
+
+	* mpz/setbit.c: Fix normalization for case of a negative ending up
+	with a zero high limb.
+	* tests/mpz/bit.c (check_single): New test for this problem.
+
+	* configure.in (none-*-*): Fix cclist for default ABI=long.
+
 2001-03-10  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/cfdiv_q_2exp.c: Don't scan for non-zero limbs if they don't
