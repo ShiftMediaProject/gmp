@@ -62,7 +62,8 @@ GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB
 ])
 
 define(GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB,
-[[#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for mpf_get_prec etc inlines */]])
+[[#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for GMP_NUMB_BITS etc */
+#define GMP_LIMB_BITS 123]])
 
 
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
@@ -2142,7 +2143,8 @@ GMP_INCLUDE_GMP_H)
 fi
 AC_SUBST(BITS_PER_MP_LIMB)
 define([GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB],
-[[#define __GMP_BITS_PER_MP_LIMB $BITS_PER_MP_LIMB]])
+[[#define __GMP_BITS_PER_MP_LIMB $BITS_PER_MP_LIMB
+#define GMP_LIMB_BITS $BITS_PER_MP_LIMB]])
 
 if grep "^#define BITS_PER_ULONG" $gmp_mparam_source >/dev/null; then : ;
 else
