@@ -884,7 +884,6 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
       mp_ptr ws;
       TMP_DECL (marker);
       TMP_MARK (marker);
-
       /* Allocate workspace with TMP_ALLOC interface: fast. */
       ws = TMP_ALLOC_LIMBS (MPN_TOOM3_MUL_N_TSIZE (n));
       mpn_toom3_mul_n (p, a, b, n, ws);
@@ -899,14 +898,78 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
     }
 #else
     {
-      /* Toom3 for large operands.  Use workspace of unknown size in heap, as
-      stack space may be limited.  Since n is at least MUL_TOOM3_THRESHOLD, the
-      multiplication will take much longer than malloc()/free().  */
-      mp_ptr ws; mp_size_t ws_size
+      /* Toom3 for large operands.  Use workspace from the heap, as stack space
+      may be limited.  Since n is at least MUL_TOOM3_THRESHOLD, multiplication
+      will take much longer than malloc()/free().  */
+      mp_ptr ws;  mp_size_t ws_size;
       ws_size = MPN_TOOM3_MUL_N_TSIZE (n);
       ws = __GMP_ALLOCATE_FUNC_LIMBS ((size_t) ws_size);
       mpn_toom3_mul_n (p, a, b, n, ws);
       __GMP_FREE_FUNC_LIMBS (ws, (size_t) ws_size);
+    }
+#endif
+}
+
+void
+mpn_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n)
+{
+  ASSERT (n >= 1);
+  ASSERT (! MPN_OVERLAP_P (p, 2 * n, a, n));
+
+#if 0
+  /* FIXME: Can this be removed? */
+  if (n == 0)
+    return;
+#endif
+
+  if (BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))
+    { /* mul_basecase is faster than sqr_basecase on small sizes sometimes */
+      mpn_mul_basecase (p, a, n, a, n);
+    }
+  else if (BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))
+    { /* plain schoolbook multiplication */
+      mpn_sqr_basecase (p, a, n);
+    }
+  else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))
+    { /* karatsuba multiplication */
+      mp_ptr ws;
+      TMP_DECL (marker);
+      TMP_MARK (marker);
+      ws = TMP_ALLOC_LIMBS (MPN_KARA_SQR_N_TSIZE (n));
+      mpn_kara_sqr_n (p, a, n, ws);
+      TMP_FREE (marker);
+    }
+#if WANT_FFT || TUNE_PROGRAM_BUILD
+  else if (BELOW_THRESHOLD (n, SQR_FFT_THRESHOLD))
+#else
+  else if (n < MPN_TOOM3_MAX_N)
+#endif
+    {
+      mp_ptr ws;
+      TMP_DECL (marker);
+      TMP_MARK (marker);
+      /* Allocate workspace with TMP_ALLOC interface: fast. */
+      ws = TMP_ALLOC_LIMBS (MPN_TOOM3_SQR_N_TSIZE (n));
+      mpn_toom3_sqr_n (p, a, n, ws);
+      TMP_FREE (marker);
+    }
+  else
+#if WANT_FFT || TUNE_PROGRAM_BUILD
+    {
+      /* The current FFT code allocates its own space.  That should probably
+	 change.  */
+      mpn_mul_fft_full (p, a, n, a, n);
+    }
+#else
+    {
+      /* Toom3 for large operands.  Use workspace from the heap, as stack space
+      may be limited.  Since n is at least MUL_TOOM3_THRESHOLD, multiplication
+      will take much longer than malloc()/free().  */
+      mp_ptr ws;  mp_size_t ws_size;
+      ws_size = MPN_TOOM3_SQR_N_TSIZE (n);
+      ws = __GMP_ALLOCATE_FUNC_LIMBS (ws_size);
+      mpn_toom3_sqr_n (p, a, n, ws);
+      __GMP_FREE_FUNC_LIMBS (ws, ws_size);
     }
 #endif
 }
