@@ -818,7 +818,7 @@ AC_DEFUN(GMP_TRY_ASSEMBLE,
 [cat >conftest.s <<EOF
 [$1]
 EOF
-gmp_assemble="$CCAS $CFLAGS conftest.s >conftest.out 2>&1"
+gmp_assemble="$CCAS $CFLAGS $CPPFLAGS conftest.s >conftest.out 2>&1"
 if AC_TRY_EVAL(gmp_assemble); then
   cat conftest.out >&AC_FD_CC
   ifelse([$2],,:,[$2])
@@ -900,7 +900,7 @@ EOF
 EOF
     ;;
   esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&AC_FD_CC"
+  gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&AC_FD_CC && $CCAS $CFLAGS $CPPFLAGS conftes2.s >&AC_FD_CC && $CC $CFLAGS $CPPFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
@@ -1424,7 +1424,7 @@ movq-bug)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Host CPU has MMX code, but the assembler])
-  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
   AC_MSG_WARN([| has the Solaris 2.6 and 2.7 bug where register to register])
   AC_MSG_WARN([| movq operands are reversed.])
   AC_MSG_WARN([| Non-MMX replacements will be used.])
@@ -1435,7 +1435,7 @@ no)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Host CPU has MMX code, but it can't be assembled by])
-  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
   AC_MSG_WARN([| Non-MMX replacements will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
   AC_MSG_WARN([+----------------------------------------------------------])
@@ -1496,7 +1496,7 @@ yes)
   AC_MSG_WARN([+----------------------------------------------------------])
   AC_MSG_WARN([| WARNING WARNING WARNING])
   AC_MSG_WARN([| Host CPU has SSE2 code, but it can't be assembled by])
-  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([|     $CCAS $CFLAGS $CPPFLAGS])
   AC_MSG_WARN([| Non-SSE2 replacements will be used.])
   AC_MSG_WARN([| This will be an inferior build.])
   AC_MSG_WARN([+----------------------------------------------------------])
