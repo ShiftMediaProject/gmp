@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:     13
-C POWER4/PPC970:     10?
+C POWER4/PPC970:     17
 
 
 C void mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
