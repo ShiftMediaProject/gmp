@@ -153,9 +153,8 @@
      longlong.h umul_ppmm is suspected to be causing sqr_basecase to
      be slower than mul_basecase.
 <li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
-     <code>mpn_sqr_basecase</code>.  The generic C code turns into sensible
-     enough "<code>mulx</code>"s, but it's about 90 cycles and something better
-     should be possible, maybe with floating point.
+     <code>mpn_sqr_basecase</code>.  Using four "<code>mulx</code>"s either
+     with an asm block or via the generic C code is about 90 cycles.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
      for important machines.  Helping the generic sqr_basecase.c with an
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
