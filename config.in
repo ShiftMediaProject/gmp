@@ -170,6 +170,10 @@ MA 02111-1307, USA.
    */
 #undef HAVE_DECL_OPTARG
 
+/* Define to 1 if you have the declaration of `vfprintf', and to 0 if you
+   don't. */
+#undef HAVE_DECL_VFPRINTF
+
 /* Define if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
