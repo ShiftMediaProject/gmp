@@ -26,6 +26,10 @@ MA 02111-1307, USA.
 
 2001-11-30  Kevin Ryde  <kevin@swox.se>
 
+	* mpfr: Update to 2001-11-16.  Patch TMP handling of agm.c and sqrt.c,
+	use plain mpn_sqrtrem in sqrt.c, separate .c files for floor and ceil,
+	disable an expression style assert in add1.c.
+
 	* mpn/s370: Rename to s390.
 	* configure.in (s3[6-9]0*-*-*): Update.
 	* mpn/Makefile.am (TARG_DIST): Add s390.
