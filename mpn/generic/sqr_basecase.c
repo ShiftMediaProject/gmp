@@ -122,7 +122,7 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 /* mpn_sqr_basecase using plain mpn_addmul_2.
 
    This is tricky, since we have to let mpn_addmul_2 make some undesirable
-   multiplied, u[k]*u[k], that we would like to let mpn_sqr_diagonal handle.
+   multiplies, u[k]*u[k], that we would like to let mpn_sqr_diagonal handle.
    This forces us to conditionally add or subtract the mpn_sqr_diagonal
    results.  Examples of the product we form:
 
@@ -241,8 +241,8 @@ mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 #else
   cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
   cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
-  rp[2 * n - 1] += cy;
 #endif
+  rp[2 * n - 1] += cy;
 }
 #define READY_WITH_mpn_sqr_basecase
 #endif
