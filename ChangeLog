@@ -1,6 +1,58 @@
-1999-11-05  Torbjorn Granlund  <tege@matematik.su.se>
+1999-11-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc64/add_n.s: Rewrite.
+
+1999-11-17  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/gmp-mparam.h
+	(KARATSUBA_MUL_THRESHOLD): Only #define #ifndef.
+	(KARATSUBA_SQR_THRESHOLD): Likewise.
+
+1999-11-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/mul_1.S: Unroll and optimize for P6 and K7.
+
+1999-11-09  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/p6/gmp-mparam.h
+	(KARATSUBA_MUL_THRESHOLD): Only #define #ifndef.
+	(KARATSUBA_SQR_THRESHOLD): Likewise.
+	
+1999-11-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/addsub_n.c: New file.
+
+1999-11-02  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Handle alpha:FreeBSD with alpha:NetBSD.
+
+	* configure.in (vax*-*-*): New case.
+	* config/mt-vax: New file.
+	* mpn/vax/add_n.s: Rewrite.
+	* mpn/vax/sub_n.s: Rewrite.
+
+1999-10-31  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/vax/rshift.s: New file.
+	* mpn/vax/lshift.s: New file.
+
+1999-10-29  Torbjorn Granlund  <tege@swox.com>
+
+	* config.sub: Handle k5 and k6.
+	* mpn/configure.in: Recognize k6.
+	
+	* mpf/tests/t-get_d.c (LOW_BOUND, HIGH_BOUND): New #defines.
+	(main): Tighten error bounds to 14 digits.
+	
+	* longlong.h (default umul_ppmm, when smul_ppmm exists):
+	Rename __m0 => __xm0, __m1 => __xm1.
+	(default smul_ppmm): Likewise.
+
+1999-10-11  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Reverse the test for POWER vs PowerPC.
+	* config.guess (sun4m:SunOS:5.*:*): New case.
+	* config.guess (sun4u:SunOS:5.*:*): New case.
 
 1999-09-29  Torbjorn Granlund  <tege@swox.com>
 
@@ -286,7 +338,7 @@
 
 1999-03-15  Linus Nordberg  <linus.nordberg@canit.se>
 
-	* mpz/urandom.c	(gmp_rand_init): New function.
+	* mpz/urandom.c (gmp_rand_init): New function.
 	(gmp_rand_clear): New function.
 	(mpz_urandomb): New function.
 
@@ -3314,7 +3366,7 @@ Thu Jun 30 03:59:33 1994  Torbjorn Granlund  (tege@tiny.cygnus.com)
 
 	* mpz/perfsqr.c: Define PP, etc, for machines with 64 bit limbs.
 	Use __mpn_mod_1.
-	* mpz/perfsqr.c: Don't clobber REM in quadratic	residue check loop.
+	* mpz/perfsqr.c: Don't clobber REM in quadratic residue check loop.
 
 Wed Jun 29 18:45:41 1994  Torbjorn Granlund  (tege@adder.cygnus.com)
 
