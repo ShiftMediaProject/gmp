@@ -9724,9 +9724,9 @@ significant inspiration during several phases of the GMP development.  His
 mathematical expertise helped improve several algorithms.
 
 Paul Zimmermann wrote the Divide and Conquer division code, the REDC code, the
-REDC-based mpz_powm code, the FFT multiply code, and the Karatsuba square
-root.  The ECMNET project Paul is organizing was a driving force behind many
-of the optimizations in GMP 3.
+REDC-based mpz_powm code, the FFT multiply code, and the Karatsuba square root
+code.  He also rewrote the Toom3 code for GMP 5.  The ECMNET project Paul is
+organizing was a driving force behind many of the optimizations in GMP 3.
 
 Linus Nordberg wrote the new configure system based on autoconf and
 implemented the new random functions.
