@@ -1,5 +1,7 @@
 2000-04-08  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/perfpow.c: De-ANSI-fy.  Add copyright notice.
+
 	* mpz/set_d.c: Misc cleanups.
 
 	* mpq/set_d: New file.
