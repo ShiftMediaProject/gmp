@@ -329,7 +329,15 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 	   : "r0", "r1", "r2")
 #define UMUL_TIME 20
 #endif
-#define UDIV_TIME 100
+#ifndef LONGLONG_STANDALONE
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do { USItype __r;							\
+    (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
+    (r) = __r;								\
+  } while (0)
+extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype));
+#define UDIV_TIME 140
+#endif /* LONGLONG_STANDALONE */
 #endif /* __arm__ */
 
 #if defined (__clipper__) && W_TYPE_SIZE == 32
