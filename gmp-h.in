@@ -157,19 +157,6 @@ MA 02111-1307, USA. */
 #define __GMP_DECLSPEC
 #endif
 
-#if __GMP_WITHIN_GMPXX
-#ifdef DLL_EXPORT
-#define __GMP_DECLSPEC_XX  __GMP_DECLSPEC_EXPORT
-#endif
-#else
-#if defined (_WIN32) && __GMP_LIBGMP_SHARED
-#define __GMP_DECLSPEC_XX  __GMP_DECLSPEC_IMPORT
-#endif
-#endif
-#ifndef __GMP_DECLSPEC_XX
-#define __GMP_DECLSPEC_XX
-#endif
-
 
 #ifdef _SHORT_LIMB
 typedef unsigned int		mp_limb_t;
@@ -270,6 +257,23 @@ typedef __gmp_const __mpf_struct *mpf_srcptr;
 typedef __mpf_struct *mpf_ptr;
 typedef __gmp_const __mpq_struct *mpq_srcptr;
 typedef __mpq_struct *mpq_ptr;
+
+
+/* This is not wanted in mp.h, so put it outside the __GNU_MP__ common
+   section. */
+#if __GMP_WITHIN_GMPXX
+#ifdef DLL_EXPORT
+#define __GMP_DECLSPEC_XX  __GMP_DECLSPEC_EXPORT
+#endif
+#else
+#if defined (_WIN32) && __GMP_LIBGMP_SHARED
+#define __GMP_DECLSPEC_XX  __GMP_DECLSPEC_IMPORT
+#endif
+#endif
+#ifndef __GMP_DECLSPEC_XX
+#define __GMP_DECLSPEC_XX
+#endif
+
 
 #if __GMP_HAVE_PROTOTYPES
 #define __GMP_PROTO(x) x
