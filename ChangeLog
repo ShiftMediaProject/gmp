@@ -18,9 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
-2005-03-17  Torbjorn Granlund  <tege@swox.com>
+2005-03-17  Niels Möller  <nisse@lysator.liu.se>
 
-	* mpn/amd64/mode1o.asm: Change ASSERT to not clobber needed register.
+	* mpn/generic/hgcd.c (qstack_adjust): New argument d, saying how
+	much to adjust the top quotient.
+	(hgcd_adjust): The quotient can be off by either 1 or 2.
 
 2005-03-16  Torbjorn Granlund  <tege@swox.com>
 
