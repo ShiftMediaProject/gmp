@@ -1,7 +1,7 @@
 ## Process this file with automake to generate Makefile.in
 
 
-# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002 Free
+# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003 Free
 # Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
@@ -239,7 +239,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_dv_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c \
-  rand.c randclr.c randdef.c randlc2s.c randlc2x.c randmt.c		\
+  rand.c randclr.c randdef.c randiset.c randlc2s.c randlc2x.c randmt.c	\
   rands.c randsd.c randsdui.c version.c
 EXTRA_libgmp_la_SOURCES = tal-debug.c tal-notreent.c tal-reent.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@		\
