@@ -64,6 +64,9 @@ could be optimized substantially.  For example,
 * On 68000, mpn_mul_1, mpn_addmul_1 and mpn_submul_1 could check for a
   16-bit multiplier and use two multiplies per limb, not four.
 
+  Similarly various other _1 operations like mpn_mod_1, mpn_divrem_1,
+  mpn_divexact_1, mpn_modexact_1c_odd.
+
 * On 68000, mpn_lshift and mpn_rshift could use a roll and mask instead of
   lsrl and lsll.  This promises to be a speedup, effectively trading a 6+2*n
   shift for one or two 4 cycle masks.  Suggested by Jean-Charles Meyrignac.
