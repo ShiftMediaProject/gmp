@@ -75,7 +75,7 @@ MA 02111-1307, USA.
     mp_limb_t  __two_i = 1;                     \
     mp_limb_t  __v_inv = 0;                     \
                                                 \
-    ASSERT ((__n & 1) == 1);                    \
+    ASSERT ((__v & 1) == 1);                    \
                                                 \
     do                                          \
       {                                         \
