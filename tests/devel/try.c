@@ -88,6 +88,10 @@ MA 02111-1307, USA.
    Try to make the looping code a bit less horrible.  Right now it's pretty
    hard to see what iterations are actually done.
 
+   When there's no overlap, run with both src>dst and src<dst.  A subtle
+   calling-conventions violation occured in a P6 copy which depended on the
+   relative location of src and dst.
+
 */
 
 
