@@ -18,6 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-12  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (--enable-assert): Emit WANT_ASSERT to config.m4.
+	* mpn/powerpc32/powerpc-defs.m4, mpn/x86/x86-defs.m4 (ASSERT): Check
+	WANT_ASSERT is defined.
+
+	* mpn/sparc32/v9/udiv.asm: Amend heading, this file is for sparc v9.
+
+	* tests/cxx/Makefile.am (TESTS_ENVIRONMENT): In libtool openbsd hack,
+	disard error messages from cp, for the benefit of --disable-shared or
+	systems not using names libgmp.so.*.
+
+	* tests/devel/try.c (try_one): When overlapping, copy source data
+	after filling dst.  Previously probably used only DEADVAL in
+	overlapping cases.
+
 2003-06-11  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/random2.c: Rewrite.  Ignore sign of exp parameter.
