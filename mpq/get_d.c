@@ -65,7 +65,8 @@ mpq_get_d (src)
   unsigned normalization_steps;
   mp_limb_t qlimb;
 #define N_QLIMBS (1 + (sizeof (double) + BYTES_PER_MP_LIMB-1) / BYTES_PER_MP_LIMB)
-  mp_limb_t qp[N_QLIMBS + 1];
+  mp_limb_t qarr[N_QLIMBS + 1];
+  mp_ptr qp = qarr;
   TMP_DECL (marker);
 
   if (nsize == 0)
@@ -138,12 +139,25 @@ mpq_get_d (src)
   {
     double res;
     mp_size_t i;
+    int scale = nsize - dsize - N_QLIMBS;
+
+#if defined (__vax__)
+    /* Ignore excess quotient limbs.  This is necessary on a vax
+       with its small double exponent, since we'd otherwise get
+       exponent overflow while forming RES.  */
+    if (qsize > N_QLIMBS)
+      {
+	qp += qsize - N_QLIMBS;
+	scale += qsize - N_QLIMBS;
+	qsize = N_QLIMBS;
+      }
+#endif
 
     res = qp[qsize - 1];
     for (i = qsize - 2; i >= 0; i--)
       res = res * MP_BASE_AS_DOUBLE + qp[i];
 
-    res = __gmp_scale2 (res, BITS_PER_MP_LIMB * (nsize - dsize - N_QLIMBS));
+    res = __gmp_scale2 (res, BITS_PER_MP_LIMB * scale);
 
     TMP_FREE (marker);
     return sign_quotient >= 0 ? res : -res;
