@@ -1,3 +1,38 @@
+2000-11-04  Kevin Ryde  <kevin@swox.se>
+
+	* configfsf.guess, configfsf.sub: Moved from config.guess and
+	config.sub.
+	* config.guess, config.sub: New files, wrappers around around
+	configfsf versions.
+	* configfsf.guess: Update to FSF 2000-10-23.
+	* configfsf.sub: Update to FSF 2000-10-25.
+
+	* acinclude.m4 (GMP_ASM_POWERPC_REGISTERS): New macro.
+	* mpn/powerpc32/powerpc-defs.m4: New file, regmap.m4 r0 etc macros
+	conditionalized by GMP_ASM_POWERPC_REGISTERS.
+	* mpn/powerpc32/regmap.m4: Remove file.
+	* configure.in (powerpc*-*-*): Use all this.
+
+	* mpz/divegcd.c: New file, providing mpz_divexact_gcd.
+	* Makefile.am, mpz/Makefile.am: Add it.
+	* gmp-impl.h (mpz_divexact_gcd): Add prototype.
+	* mpq/aors.c,canonicalize.c,div.c,mul.c: Use it.
+
+	* longlong.h [pentium] (count_leading_zeros): New macro.
+	(__clz_tab): Always provide prototype.
+	* acconfig.h (HAVE_TARGET_CPU_): Add x86s.
+
+	* tune/speed.[ch],common.c (count_leading_zeros,
+	count_trailing_zeros, __udiv_qrnnd_c): Add measuring.
+
+	* configure.in (X86_PATTERN): Move from here ...
+	* acinclude.m4 (X86_PATTERN): ... to here.
+	(GMP_ASM_RODATA): Use it.
+
+	* configure.in (srandom): New test.
+	* mpn/tests/try.c: Use it.
+	* tune/speed.c: Ditto, and conditionalize getrusage and headers.
+	
 2000-11-02  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Add udiv_qrnnd.c
