@@ -283,7 +283,6 @@ void gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_abs __gmpz_abs
 #define mpz_add __gmpz_add
 #define mpz_add_ui __gmpz_add_ui
-#define mpz_addmul_ui __gmpz_addmul_ui
 #define mpz_and __gmpz_and
 #define mpz_array_init __gmpz_array_init
 #define mpz_bin_ui __gmpz_bin_ui
@@ -404,7 +403,13 @@ void *_mpz_realloc _PROTO ((mpz_ptr, mp_size_t));
 void mpz_abs _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_add _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_add_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
-void mpz_addmul_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+
+#define mpz_addmul __gmpz_addmul
+void    mpz_addmul _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#define mpz_addmul_ui __gmpz_addmul_ui
+void    mpz_addmul_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+
 void mpz_and _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_array_init _PROTO ((mpz_ptr, mp_size_t, mp_size_t));
 void mpz_bin_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
@@ -574,6 +579,13 @@ void mpz_sqrt _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_sqrtrem _PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr));
 void mpz_sub _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_sub_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+
+#define mpz_submul __gmpz_submul
+void    mpz_submul _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#define mpz_submul_ui __gmpz_submul_ui
+void    mpz_submul_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+
 void mpz_swap _PROTO ((mpz_ptr, mpz_ptr));
 void mpz_tdiv_q _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_tdiv_q_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
@@ -662,6 +674,9 @@ void mpq_canonicalize _PROTO ((mpq_ptr));
 
 #define mpq_set_f __gmpq_set_f
 void mpq_set_f _PROTO ((mpq_ptr, mpf_srcptr));
+
+#define mpq_set_str __gmpq_set_str
+int     mpq_set_str _PROTO ((mpq_ptr q, const char *str, int base));
 
 #define mpq_swap __gmpq_swap
 void mpq_swap _PROTO ((mpq_ptr, mpq_ptr));
@@ -983,24 +998,6 @@ void mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_sr
 #if defined (__cplusplus)
 }
 #endif
-
-#define mpn_incr_u(p,incr) \
-  do { mp_limb_t __x; mp_ptr __p = (p);			\
-    __x = *__p + (incr);				\
-    *__p = __x;						\
-    if (__x < (incr))					\
-      while (++(*(++__p)) == 0)				\
-        ;						\
-  } while (0)
-
-#define mpn_decr_u(p,incr) \
-  do { mp_limb_t __x; mp_ptr __p = (p);			\
-    __x = *__p;						\
-    *__p = __x - (incr);				\
-    if (__x < (incr))					\
-      while ((*(++__p))-- == 0)				\
-        ;						\
-  } while (0)
 
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
 _EXTERN_INLINE mp_limb_t
