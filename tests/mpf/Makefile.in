@@ -14,8 +14,8 @@
 
 @SET_MAKE@
 
-# Copyright 1996, 1999, 2000, 2001, 2002, 2003 Free Software Foundation,
-# Inc.
+# Copyright 1996, 1999, 2000, 2001, 2002, 2003, 2004 Free Software
+# Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -33,7 +33,7 @@
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
-SOURCES = reuse.c t-add.c t-cmp_d.c t-cmp_si.c t-conv.c t-dm2exp.c t-fits.c t-get_d.c t-get_d_2exp.c t-get_si.c t-gsprec.c t-inp_str.c t-int_p.c t-muldiv.c t-set_si.c t-set_ui.c t-sqrt.c t-sub.c t-trunc.c
+SOURCES = reuse.c t-add.c t-cmp_d.c t-cmp_si.c t-conv.c t-dm2exp.c t-fits.c t-get_d.c t-get_d_2exp.c t-get_si.c t-gsprec.c t-inp_str.c t-int_p.c t-muldiv.c t-set_si.c t-set_ui.c t-sqrt.c t-sqrt_ui.c t-sub.c t-trunc.c
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -58,12 +58,12 @@ POST_UNINSTALL = :
 host_triplet = @host@
 ANSI2KNR = $(top_builddir)/ansi2knr
 check_PROGRAMS = t-add$(EXEEXT) t-sub$(EXEEXT) t-conv$(EXEEXT) \
-	t-sqrt$(EXEEXT) t-muldiv$(EXEEXT) t-dm2exp$(EXEEXT) \
-	reuse$(EXEEXT) t-cmp_d$(EXEEXT) t-cmp_si$(EXEEXT) \
-	t-fits$(EXEEXT) t-get_d$(EXEEXT) t-get_d_2exp$(EXEEXT) \
-	t-get_si$(EXEEXT) t-gsprec$(EXEEXT) t-inp_str$(EXEEXT) \
-	t-int_p$(EXEEXT) t-set_si$(EXEEXT) t-set_ui$(EXEEXT) \
-	t-trunc$(EXEEXT)
+	t-sqrt$(EXEEXT) t-sqrt_ui$(EXEEXT) t-muldiv$(EXEEXT) \
+	t-dm2exp$(EXEEXT) reuse$(EXEEXT) t-cmp_d$(EXEEXT) \
+	t-cmp_si$(EXEEXT) t-fits$(EXEEXT) t-get_d$(EXEEXT) \
+	t-get_d_2exp$(EXEEXT) t-get_si$(EXEEXT) t-gsprec$(EXEEXT) \
+	t-inp_str$(EXEEXT) t-int_p$(EXEEXT) t-set_si$(EXEEXT) \
+	t-set_ui$(EXEEXT) t-trunc$(EXEEXT)
 subdir = tests/mpf
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -159,6 +159,11 @@ t_sqrt_OBJECTS = t-sqrt$U.$(OBJEXT)
 t_sqrt_LDADD = $(LDADD)
 t_sqrt_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
+t_sqrt_ui_SOURCES = t-sqrt_ui.c
+t_sqrt_ui_OBJECTS = t-sqrt_ui$U.$(OBJEXT)
+t_sqrt_ui_LDADD = $(LDADD)
+t_sqrt_ui_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
 t_sub_SOURCES = t-sub.c
 t_sub_OBJECTS = t-sub$U.$(OBJEXT)
 t_sub_LDADD = $(LDADD)
@@ -183,11 +188,11 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 SOURCES = reuse.c t-add.c t-cmp_d.c t-cmp_si.c t-conv.c t-dm2exp.c \
 	t-fits.c t-get_d.c t-get_d_2exp.c t-get_si.c t-gsprec.c \
 	t-inp_str.c t-int_p.c t-muldiv.c t-set_si.c t-set_ui.c \
-	t-sqrt.c t-sub.c t-trunc.c
+	t-sqrt.c t-sqrt_ui.c t-sub.c t-trunc.c
 DIST_SOURCES = reuse.c t-add.c t-cmp_d.c t-cmp_si.c t-conv.c \
 	t-dm2exp.c t-fits.c t-get_d.c t-get_d_2exp.c t-get_si.c \
 	t-gsprec.c t-inp_str.c t-int_p.c t-muldiv.c t-set_si.c \
-	t-set_ui.c t-sqrt.c t-sub.c t-trunc.c
+	t-set_ui.c t-sqrt.c t-sqrt_ui.c t-sub.c t-trunc.c
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -431,6 +436,9 @@ t-set_ui$(EXEEXT): $(t_set_ui_OBJECTS) $(t_set_ui_DEPENDENCIES)
 t-sqrt$(EXEEXT): $(t_sqrt_OBJECTS) $(t_sqrt_DEPENDENCIES) 
 	@rm -f t-sqrt$(EXEEXT)
 	$(LINK) $(t_sqrt_LDFLAGS) $(t_sqrt_OBJECTS) $(t_sqrt_LDADD) $(LIBS)
+t-sqrt_ui$(EXEEXT): $(t_sqrt_ui_OBJECTS) $(t_sqrt_ui_DEPENDENCIES) 
+	@rm -f t-sqrt_ui$(EXEEXT)
+	$(LINK) $(t_sqrt_ui_LDFLAGS) $(t_sqrt_ui_OBJECTS) $(t_sqrt_ui_LDADD) $(LIBS)
 t-sub$(EXEEXT): $(t_sub_OBJECTS) $(t_sub_DEPENDENCIES) 
 	@rm -f t-sub$(EXEEXT)
 	$(LINK) $(t_sub_LDFLAGS) $(t_sub_OBJECTS) $(t_sub_LDADD) $(LIBS)
@@ -491,6 +499,8 @@ t-set_ui_.c: t-set_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-set_ui.c; then echo $(srcdir)/t-set_ui.c; else echo t-set_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-sqrt_.c: t-sqrt.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sqrt.c; then echo $(srcdir)/t-sqrt.c; else echo t-sqrt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-sqrt_ui_.c: t-sqrt_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sqrt_ui.c; then echo $(srcdir)/t-sqrt_ui.c; else echo t-sqrt_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-sub_.c: t-sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-sub.c; then echo $(srcdir)/t-sub.c; else echo t-sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-trunc_.c: t-trunc.c $(ANSI2KNR)
@@ -503,8 +513,9 @@ t-get_d_2exp_.$(OBJEXT) t-get_d_2exp_.lo t-get_si_.$(OBJEXT) \
 t-get_si_.lo t-gsprec_.$(OBJEXT) t-gsprec_.lo t-inp_str_.$(OBJEXT) \
 t-inp_str_.lo t-int_p_.$(OBJEXT) t-int_p_.lo t-muldiv_.$(OBJEXT) \
 t-muldiv_.lo t-set_si_.$(OBJEXT) t-set_si_.lo t-set_ui_.$(OBJEXT) \
-t-set_ui_.lo t-sqrt_.$(OBJEXT) t-sqrt_.lo t-sub_.$(OBJEXT) t-sub_.lo \
-t-trunc_.$(OBJEXT) t-trunc_.lo : $(ANSI2KNR)
+t-set_ui_.lo t-sqrt_.$(OBJEXT) t-sqrt_.lo t-sqrt_ui_.$(OBJEXT) \
+t-sqrt_ui_.lo t-sub_.$(OBJEXT) t-sub_.lo t-trunc_.$(OBJEXT) \
+t-trunc_.lo : $(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo
