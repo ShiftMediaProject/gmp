@@ -1,7 +1,6 @@
-/* mpf_get_si -- mpf to long conversion */
+/* mpf_get_si -- mpf to long conversion
 
-/*
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,35 +29,45 @@ MA 02111-1307, USA.
    For values bigger than a long, the low bits are returned, like
    mpz_get_si, but this isn't documented.
 
-   Notice this is equivalent to mpz_set_f + mpz_get_si.  */
+   Notice this is equivalent to mpz_set_f + mpz_get_si.
+
+
+   Implementation:
+
+   fl is established in basically the same way as for mpf_get_ui, see that
+   code for explanations of the conditions.
+
+   However unlike mpf_get_ui we need an explicit return 0 for exp<=0.  When
+   f is a negative fraction (ie. size<0 and exp<=0) we can't let fl==0 go
+   through to the zany final "~ ((fl - 1) & LONG_MAX)", that would give
+   -0x80000000 instead of the desired 0.  */
 
 long
 mpf_get_si (mpf_srcptr f)
 {
   mp_exp_t exp;
   mp_size_t size, abs_size;
-  mp_ptr fp;
+  mp_srcptr fp;
   mp_limb_t fl;
 
-  size = SIZ (f);
-  if (size == 0)
-    return 0L;
-
-  /* fraction alone truncates to zero */
   exp = EXP (f);
+  size = SIZ (f);
+  fp = PTR (f);
+
+  /* fraction alone truncates to zero
+     this also covers zero, since we have exp==0 for zero */
   if (exp <= 0)
     return 0L;
 
-  /* exponent bigger than available data means low limb zero */
+  /* there are some limbs above the radix point */
+
+  fl = 0;
   abs_size = ABS (size);
-  if (exp > abs_size)
-    return 0L;
+  if (abs_size >= exp)
+    fl = fp[abs_size-exp];
 
-  fp = PTR(f);
-  fl = fp[abs_size - exp];
-
-#if GMP_NAIL_BITS != 0
-  if (ULONG_MAX > GMP_NUMB_MAX != 0 && exp > 1)
+#if BITS_PER_ULONG > GMP_NUMB_BITS
+  if (exp > 1 && abs_size+1 >= exp)
     fl |= fp[abs_size - exp + 1] << GMP_NUMB_BITS;
 #endif
 
