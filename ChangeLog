@@ -6,7 +6,22 @@
 	(__gmp_rand_data_lc): Add `m2exp' as another way of representing
 	the modulus.
 	(__gmp_rand_state_struct): Remove unused `size'.
+	
+	* rand.c (__gmp_rand_scheme): Use better multipliers.  Remove test
+	schemes.  Replace `m' with `m2exp'.
+	(gmp_rand_init): Change parameters and return type.  Use `m2exp'
+	instead of `m'.  Set `gmp_errno' on error.  Disable BBS algorithm.
 
+	* randlc.c (gmp_rand_init_lc): Don't use malloc().  Change
+	parameters.
+	
+	* randclr.c (gmp_rand_clear): Don't use free().  Disable BBS
+	algorithm.  Set `gmp_errno' on error.
+
+	* randlc2x.c: New file.
+	* randsd.c: New file.
+	* randsdui.c: New file.
+	
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Rewrite.
 	(mpn_lc): New static function.
 
