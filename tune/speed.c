@@ -24,12 +24,12 @@ MA 02111-1307, USA.
 /* Usage message is in the code below, run with no arguments to print it.
    See README for interesting applications.
 
-   To add a new routine foo() to measure, create a speed_foo() function in
-   the style of the existing ones and add an entry in the routine[] array.
-   Put FLAG_R if the routine needs an "r" parameter.
+   To add a new routine foo(), create a speed_foo() function in the style of
+   the existing ones and add an entry in the routine[] array.  Put FLAG_R if
+   speed_foo() wants an "r" parameter.
 
    The routines don't have help messages or descriptions, but most have
-   pretty suggestive names.  See the source code for full details.
+   suggestive names.  See the source code for full details.
 
 */
 
@@ -66,10 +66,6 @@ extern int optind, opterr;
 SPEED_EXTRA_PROTOS
 #endif
 
-
-#ifndef LONG_BIT
-#define LONG_BIT  (8 * sizeof(long))
-#endif
 
 #define numberof(x)    (sizeof (x) / sizeof ((x)[0]))
 
@@ -109,6 +105,7 @@ struct size_array_t {
 mp_size_t  size_num = 0;
 mp_size_t  size_allocnum = 0;
 int        option_resource_usage = 0;
+long       option_seed = 123456789;
 
 struct speed_params  sp;
 
@@ -172,10 +169,6 @@ const struct routine_t {
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
-  { "mpz_fac_ui",        speed_mpz_fac_ui           },
-  { "mpz_fib_ui",        speed_mpz_fib_ui           },
-  { "mpz_powm",          speed_mpz_powm             },
-
   { "mpn_gcdext",        speed_mpn_gcdext           },
   { "mpn_gcd",           speed_mpn_gcd              },
   { "mpn_gcd_1",         speed_mpn_gcd_1, FLAG_R_OPTIONAL },
@@ -193,12 +186,27 @@ const struct routine_t {
   { "mpn_toom3_mul_n",   speed_mpn_toom3_mul_n      },
   { "mpn_toom3_sqr_n",   speed_mpn_toom3_sqr_n      },
 
+  { "mpz_add",           speed_mpz_add              },
+  { "mpz_bin_uiui",      speed_mpz_bin_uiui, FLAG_R_OPTIONAL },
+  { "mpz_fac_ui",        speed_mpz_fac_ui           },
+  { "mpz_fib_ui",        speed_mpz_fib_ui           },
+  { "mpz_powm",          speed_mpz_powm             },
+
   { "MPN_COPY",          speed_MPN_COPY             },
   { "MPN_COPY_INCR",     speed_MPN_COPY_INCR        },
   { "MPN_COPY_DECR",     speed_MPN_COPY_DECR        },
   { "memcpy",            speed_memcpy               },
 
   { "modlimb_invert",    speed_modlimb_invert       },
+
+  { "malloc_free",                 speed_malloc_free                 },
+  { "malloc_realloc_free",         speed_malloc_realloc_free         },
+  { "mp_allocate_free",            speed_mp_allocate_free            },
+  { "mp_allocate_reallocate_free", speed_mp_allocate_reallocate_free },
+  { "mpz_init_clear",              speed_mpz_init_clear              },
+  { "mpq_init_clear",              speed_mpq_init_clear              },
+  { "mpf_init_clear",              speed_mpf_init_clear              },
+  { "mpz_init_realloc_clear",      speed_mpz_init_realloc_clear      },
 
 #ifdef SPEED_EXTRA_ROUTINES
   SPEED_EXTRA_ROUTINES
@@ -218,6 +226,32 @@ struct choice_t  *choice;
 int  num_choices = 0;
 
 
+void
+data_fill (mp_ptr ptr, mp_size_t size)
+{
+  switch (option_data) {
+  case DATA_RANDOM:
+    mpn_random (ptr, size);
+    break;
+  case DATA_RANDOM2:
+    mpn_random2 (ptr, size);
+    break;
+  case DATA_ZEROS:
+    MPN_ZERO (ptr, size);
+    break;
+  case DATA_FFS:
+    MPN_FILL (ptr, size, MP_LIMB_T_MAX);
+    break;
+  case DATA_2FD:
+    MPN_FILL (ptr, size, MP_LIMB_T_MAX);
+    ptr[0] -= 2;
+    break;
+  default:
+    abort();
+    /*NOTREACHED*/
+  }
+}
+
 /* The code here handling the various combinations of output options isn't
    too attractive, but it works and is fairly clean.  */
 
@@ -230,8 +264,16 @@ void
 run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
 {
   const char  *first_open_fastest, *first_open_notfastest, *first_close;
-  int     i, fastest;
-  double  fastest_time;
+  int         i, fastest;
+  double      fastest_time;
+  TMP_DECL (marker);
+
+  TMP_MARK (marker);
+  sp.xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);
+  sp.yp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_yp);
+
+  data_fill (s->xp, s->size);
+  data_fill (s->yp, s->size);
 
   if (prev_size == -1 && option_cmp == CMP_DIFFPREV)
     {
@@ -370,55 +412,23 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
         }
       fprintf (fp, "\n");
     }
-}
 
-void
-data_fill (mp_ptr ptr, mp_size_t size)
-{
-  switch (option_data) {
-  case DATA_RANDOM:
-    mpn_random (ptr, size);
-    break;
-  case DATA_RANDOM2:
-    mpn_random2 (ptr, size);
-    break;
-  case DATA_ZEROS:
-    MPN_ZERO (ptr, size);
-    break;
-  case DATA_FFS:
-    MPN_FILL (ptr, size, MP_LIMB_T_MAX);
-    break;
-  case DATA_2FD:
-    MPN_FILL (ptr, size, MP_LIMB_T_MAX);
-    ptr[0] -= 2;
-    break;
-  default:
-    abort();
-    /*NOTREACHED*/
-  }
+  TMP_FREE (marker);
 }
 
 void
 run_all (FILE *fp)
 {
-  mp_size_t  prev_size, max_size;
+  mp_size_t  prev_size;
   int        i;
   TMP_DECL (marker);
 
-  max_size = SPEED_DATA_SIZE;
-  for (i = 0; i < size_num; i++)
-    max_size = MAX (max_size, size_array[i].end);
-
-  for (i = 0; i < num_choices; i++)
-    if (choice[i].p->flag & FLAG_RSIZE)
-      max_size = MAX (max_size, choice[i].r);
-
   TMP_MARK (marker);
-  sp.xp = SPEED_TMP_ALLOC (max_size, sp.align_xp);
-  sp.yp = SPEED_TMP_ALLOC (max_size, sp.align_yp);
+  sp.xp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, sp.align_xp);
+  sp.yp_block = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, sp.align_yp);
 
-  data_fill (sp.xp, max_size);
-  data_fill (sp.yp, max_size);
+  data_fill (sp.xp_block, SPEED_BLOCK_SIZE);
+  data_fill (sp.yp_block, SPEED_BLOCK_SIZE);
 
   for (i = 0; i < size_num; i++)
     {
@@ -538,7 +548,7 @@ run_gnuplot (void)
 
 /* Return a long with n many one bits (starting from the least significant) */
 #define LONG_ONES(n) \
-  ((n) == LONG_BIT ? -1L : (n) == 0 ? 0L : (1L << (n)) - 1)
+  ((n) == BITS_PER_LONGINT ? -1L : (n) == 0 ? 0L : (1L << (n)) - 1)
 
 long
 r_string (const char *s)
@@ -554,10 +564,10 @@ r_string (const char *s)
   if (strcmp (s, "bits") == 0)
     {
       mp_limb_t  l;
-      if (n > LONG_BIT)
+      if (n > BITS_PER_LONGINT)
         {
           fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n", 
-                   n, LONG_BIT);
+                   n, BITS_PER_LONGINT);
           exit (1);
         }
       mpn_random (&l, 1);
@@ -565,10 +575,10 @@ r_string (const char *s)
     }
   else  if (strcmp (s, "ones") == 0)
     {
-      if (n > LONG_BIT)
+      if (n > BITS_PER_LONGINT)
         {
           fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n", 
-                   n, LONG_BIT);
+                   n, BITS_PER_LONGINT);
           exit (1);
         }
       return LONG_ONES (n);
@@ -657,6 +667,7 @@ Times are in seconds, accuracy is shown.\n\
    -P name    output plot files \"name.gnuplot\" and \"name.data\"\n\
    -a <type>  use given data: random(default), random2, zeros, ffs\n\
    -x, -y, -w, -W <align>  specify data alignments, sources and dests\n\
+   -o addrs   print addresses of data blocks
 \n\
 If both -t and -f are used, it means step by the factor or the step, whichever\n\
 is greater.\n\
@@ -735,7 +746,7 @@ main (int argc, char *argv[])
      and isn't lost if you kill the program half way.  */
   setbuf (stdout, NULL);
 
-#define OPTSTRING  "a:CcDdEFf:p:P:rRs:t:ux:y:w:W:z"
+#define OPTSTRING  "a:CcDdEFf:o:p:P:rRs:t:ux:y:w:W:z"
 #if HAVE_GETOPT_LONG
   while ((opt = getopt_long(argc, argv, OPTSTRING, longopts, NULL))
          != EOF)
@@ -796,6 +807,9 @@ main (int argc, char *argv[])
               exit (1);
             }
           break;
+        case 'o':
+          speed_option_set (optarg);
+          break;
         case 'P':
           option_gnuplot = 1;
           option_gnuplot_basename = optarg;
@@ -804,9 +818,7 @@ main (int argc, char *argv[])
           speed_precision = atoi (optarg);
           break;
         case 'R':
-          srand (time (NULL));
-          srandom (time (NULL));
-          srand48 (time (NULL));
+          option_seed = time (NULL);
           break;
         case 'r':
           if (option_cmp != CMP_ABSOLUTE)
@@ -891,6 +903,10 @@ main (int argc, char *argv[])
       fprintf (stderr, "-s <size> must be specified\n");
       exit (1);
     }
+
+  srand (option_seed);
+  srandom (option_seed);
+  srand48 (option_seed);
 
   choice = (struct choice_t *) (*_mp_allocate_func)
     ((argc - optind) * sizeof(choice[0]));

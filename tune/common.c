@@ -43,6 +43,10 @@ MA 02111-1307, USA.
 #define numberof(x)   (sizeof (x) / sizeof ((x)[0]))
 typedef int (*qsort_function_t) _PROTO ((const void *, const void *));
 
+
+int   speed_option_addrs = 0;
+
+
 void
 pentium_wbinvd(void)
 {
@@ -128,7 +132,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
       memset (&s_dummy, '\0', sizeof (s_dummy));
       s = &s_dummy;
     }
-    
+  
   s->reps = 1;
   s->time_divisor = 1.0;
   for (i = 0; i < numberof (t); i++)
@@ -229,16 +233,74 @@ mpn_cache_fill_write (mp_ptr ptr, mp_size_t size)
 
 
 void
+speed_operand_src (struct speed_params *s, mp_ptr ptr, mp_size_t size)
+{
+  if (s->src_num >= numberof (s->src))
+    {
+      fprintf (stderr, "speed_operand_src: no room left in s->src[]\n");
+      abort ();
+    }
+  s->src[s->src_num].ptr = ptr;
+  s->src[s->src_num].size = size;
+  s->src_num++;
+}
+
+
+void
+speed_operand_dst (struct speed_params *s, mp_ptr ptr, mp_size_t size)
+{
+  if (s->dst_num >= numberof (s->dst))
+    {
+      fprintf (stderr, "speed_operand_dst: no room left in s->dst[]\n");
+      abort ();
+    }
+  s->dst[s->dst_num].ptr = ptr;
+  s->dst[s->dst_num].size = size;
+  s->dst_num++;
+}
+
+
+void
 speed_cache_fill (struct speed_params *s)
 {
+  static struct speed_params  prev;
   int  i;
 
-#if 0
-  for (i = 0; i < s->dst_num; i++)
-    printf ("dst %p  %ld\n", s->dst[i].ptr, s->dst[i].size);
-  for (i = 0; i < s->src_num; i++)
-    printf ("src %p  %ld\n", s->src[i].ptr, s->src[i].size);
-#endif
+  /* FIXME: need a better way to get the format string for a pointer */
+
+  if (speed_option_addrs)
+    {
+      int  different;
+
+      different = (s->dst_num != prev.dst_num || s->src_num != prev.src_num);
+      for (i = 0; i < s->dst_num; i++)
+        different |= (s->dst[i].ptr != prev.dst[i].ptr);
+      for (i = 0; i < s->src_num; i++)
+        different |= (s->src[i].ptr != prev.src[i].ptr);
+
+      if (different) 
+        {
+          if (s->dst_num != 0)
+            {
+              printf ("dst");
+              for (i = 0; i < s->dst_num; i++)
+                printf (" %08lX", (unsigned long) s->dst[i].ptr);
+              printf (" ");
+            }
+
+          if (s->src_num != 0)
+            {
+              printf ("src");
+              for (i = 0; i < s->src_num; i++)
+                printf (" %08lX", (unsigned long) s->src[i].ptr);
+              printf (" ");
+            }
+          printf ("  (cf sp approx %08lX)\n", (unsigned long) &different);
+
+        }
+
+      memcpy (&prev, s, sizeof(prev));
+    }
 
   switch (s->cache) {
   case 0:
@@ -285,8 +347,8 @@ _mp_allocate_or_reallocate (void *ptr, size_t oldsize, size_t newsize)
 }
 
 
-/* Adjust ptr to align to CACHE_LINE_SIZE plus "align".  ptr needs to have
-   room for up to CACHE_LINE_SIZE-4 extra bytes.  */
+/* Adjust ptr to align to CACHE_LINE_SIZE bytes plus "align" limbs.  ptr
+   needs to have room for up to CACHE_LINE_SIZE-4 extra bytes.  */
 
 mp_ptr
 speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
@@ -316,6 +378,20 @@ mpz_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
 }
 
 
+/* Miscellanous options accepted by tune and speed programs under -o. */
+
+void
+speed_option_set (const char *s)
+{
+  if (strcmp (s, "addrs") == 0)  speed_option_addrs = 1;
+  else 
+    {
+      printf ("Unrecognised -o option: %s\n", s);
+      exit (1);
+    }
+}
+
+
 /* The following are basic speed running routines for various gmp functions.
    Many are very similar and use speed.h macros.
 
@@ -338,7 +414,7 @@ mpz_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
    using the routines will ensure s->xp and s->yp are aligned.  Aligning
    onto a CACHE_LINE_SIZE boundary is suggested.  s->align_wp and
    s->align_wp2 should be respected where it makes sense to do so.
-   SPEED_TMP_ALLOC is a good way to do this.
+   SPEED_TMP_ALLOC_LIMBS is a good way to do this.
 
    A loop of the following form can be expected to turn into good assembler
    code on most CPUs, thereby minimizing overhead in the measurement.  It
@@ -585,7 +661,7 @@ speed_mpn_sqr_n (struct speed_params *s)
 double
 speed_mpn_mul_n_sqr (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_SQR_CALL (mpn_mul_n (wp, s->xp, s->xp, s->size), 1);
+  SPEED_ROUTINE_MPN_SQR_CALL (mpn_mul_n (wp, s->xp, s->xp, s->size));
 }
 
 double
@@ -600,32 +676,26 @@ speed_mpn_sqr_basecase (struct speed_params *s)
   SPEED_ROUTINE_MPN_SQR (mpn_sqr_basecase);
 }
 
-/* FIXME: size restrictions on kara */
 double
 speed_mpn_kara_mul_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_MUL_N_CALL
-    (mpn_kara_mul_n (wp, s->xp, s->xp, s->size, tspace),
-     MPN_KARA_MUL_N_TSIZE (s->size));
+  SPEED_ROUTINE_MPN_KARA_MUL_N (mpn_kara_mul_n);
 }
 double
 speed_mpn_kara_sqr_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_SQR_CALL
-    (mpn_kara_sqr_n (wp, s->xp, s->size, tspace),
-     MPN_KARA_SQR_N_TSIZE (s->size));
+  SPEED_ROUTINE_MPN_KARA_SQR_N (mpn_kara_sqr_n);
 }
 
-/* FIXME: size restrictions on toom3 */
 double
 speed_mpn_toom3_mul_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_GMPN_TOOM3_MUL_N (mpn_toom3_mul_n);
+  SPEED_ROUTINE_MPN_TOOM3_MUL_N (mpn_toom3_mul_n);
 }
 double
 speed_mpn_toom3_sqr_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_GMPN_TOOM3_SQR_N (mpn_toom3_sqr_n);
+  SPEED_ROUTINE_MPN_TOOM3_SQR_N (mpn_toom3_sqr_n);
 }
 
 
@@ -736,3 +806,162 @@ speed_noop_wxys (struct speed_params *s)
   return t;
 }  
 
+
+#define SPEED_ROUTINE_ALLOC_FREE(variables, calls)      \
+  {                                                     \
+    unsigned  i;                                        \
+    variables;                                          \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      {                                                 \
+        calls;                                          \
+      }                                                 \
+    while (--i != 0);                                   \
+    return speed_endtime ();                            \
+  }
+
+
+/* Compare these to see how much malloc/free costs and then how much
+   _mp_default_allocate/free and mpz_init/clear add.  mpz_init/clear or
+   mpq_init/clear will be doing a 1 limb allocate, so use that as the size
+   when including them in comparisons.  */
+
+double
+speed_malloc_free (struct speed_params *s)
+{
+  size_t  bytes = s->size * BYTES_PER_MP_LIMB;
+  SPEED_ROUTINE_ALLOC_FREE (void *p,
+                            p = malloc (bytes);
+                            free (p));
+}  
+
+double
+speed_malloc_realloc_free (struct speed_params *s)
+{
+  size_t  bytes = s->size * BYTES_PER_MP_LIMB;
+  SPEED_ROUTINE_ALLOC_FREE (void *p,
+                            p = malloc (BYTES_PER_MP_LIMB);
+                            p = realloc (p, bytes);
+                            free (p));
+}  
+
+double
+speed_mp_allocate_free (struct speed_params *s)
+{
+  size_t  bytes = s->size * BYTES_PER_MP_LIMB;
+  SPEED_ROUTINE_ALLOC_FREE (void *p,
+                            p = (*_mp_allocate_func) (bytes);
+                            (*_mp_free_func) (p, bytes));
+}  
+
+double
+speed_mp_allocate_reallocate_free (struct speed_params *s)
+{
+  size_t  bytes = s->size * BYTES_PER_MP_LIMB;
+  SPEED_ROUTINE_ALLOC_FREE
+    (void *p,
+     p = (*_mp_allocate_func) (BYTES_PER_MP_LIMB);
+     p = (*_mp_reallocate_func) (p, bytes, BYTES_PER_MP_LIMB);
+     (*_mp_free_func) (p, bytes));
+}  
+
+double
+speed_mpz_init_clear (struct speed_params *s)
+{
+  SPEED_ROUTINE_ALLOC_FREE (mpz_t z,
+                            mpz_init (z);
+                            mpz_clear (z));
+}  
+
+double
+speed_mpz_init_realloc_clear (struct speed_params *s)
+{
+  SPEED_ROUTINE_ALLOC_FREE (mpz_t z,
+                            mpz_init (z);
+                            _mpz_realloc (z, s->size);
+                            mpz_clear (z));
+}  
+
+double
+speed_mpq_init_clear (struct speed_params *s)
+{
+  SPEED_ROUTINE_ALLOC_FREE (mpq_t q,
+                            mpq_init (q);
+                            mpq_clear (q));
+}  
+
+double
+speed_mpf_init_clear (struct speed_params *s)
+{
+  SPEED_ROUTINE_ALLOC_FREE (mpf_t f,
+                            mpf_init (f);
+                            mpf_clear (f));
+}  
+
+
+/* Compare this to mpn_add_n to see how much overhead mpz_add adds.  Note
+   that repeatedly calling mpz_add with the same data gives branch predition
+   in it an advantage.  */
+
+double
+speed_mpz_add (struct speed_params *s)
+{
+  mpz_t     w, x, y;
+  unsigned  i;
+  double    t;
+
+  mpz_init (w);
+  mpz_init (x);
+  mpz_init (y);
+
+  mpz_set_n (x, s->xp, s->size);
+  mpz_set_n (y, s->yp, s->size);
+  mpz_add (w, x, y);
+
+  speed_starttime ();
+  i = s->reps;
+  do 
+    {
+      mpz_add (w, x, y);
+    }
+  while (--i != 0);
+  t = speed_endtime ();
+
+  mpz_clear (w);
+  mpz_clear (x);
+  mpz_clear (y);
+  return t;
+}  
+
+
+/* If r==0, calculate (size,size/2),
+   otherwise calculate (size,r). */
+
+double
+speed_mpz_bin_uiui (struct speed_params *s)
+{
+  mpz_t          w;
+  unsigned long  k;
+  unsigned  i;
+  double    t;
+
+  mpz_init (w);
+  if (s->r != 0)
+    k = s->r;
+  else
+    k = s->size/2;
+
+  speed_starttime ();
+  i = s->reps;
+  do 
+    {
+      mpz_bin_uiui (w, s->size, k);
+    }
+  while (--i != 0);
+  t = speed_endtime ();
+
+  mpz_clear (w);
+  return t;
+}  
