@@ -31,13 +31,6 @@ MA 02111-1307, USA.
    The routines don't have help messages or descriptions, but most have
    pretty suggestive names.  See the source code for full details.
 
-
-   Enhancements:
-
-   Don't print .r when a routine is not found.
-
-   Better error message when a routine is used wrongly with/without .r.
-
 */
 
 #if HAVE_CONFIG_H
@@ -57,7 +50,6 @@ MA 02111-1307, USA.
 
 #include "gmp.h"
 #include "gmp-impl.h"
-/* #include "urandom.h" */
 
 #include "speed.h"
 
@@ -75,15 +67,10 @@ SPEED_EXTRA_PROTOS
 #endif
 
 
-/* want to use urandom.h, but it conflicts with stdlib.h */
-#define urandom mrand48
-
-
 #ifndef LONG_BIT
 #define LONG_BIT  (8 * sizeof(long))
 #endif
 
-#define MP_LIMB_T_MAX  (~((mp_limb_t) 0))
 #define numberof(x)    (sizeof (x) / sizeof ((x)[0]))
 
 #define MPN_FILL(ptr, size, n)                  \
@@ -127,8 +114,9 @@ struct speed_params  sp;
 
 #define COLUMN_WIDTH  13  /* for the free-form output */
 
-#define FLAG_R      1
-#define FLAG_RSIZE  2
+#define FLAG_R            (1<<0)
+#define FLAG_R_OPTIONAL   (1<<1)
+#define FLAG_RSIZE        (1<<2)
 
 const struct routine_t {
   /* constants */
@@ -162,6 +150,7 @@ const struct routine_t {
   { "mpn_mod_1c",        speed_mpn_mod_1c,    FLAG_R },
 #endif
 
+  { "mpn_divrem_2",      speed_mpn_divrem_2,        },
   { "mpn_divexact_by3",  speed_mpn_divexact_by3     },
 
   { "mpn_bz_divrem_n",   speed_mpn_bz_divrem_n      },
@@ -189,11 +178,11 @@ const struct routine_t {
 
   { "mpn_gcdext",        speed_mpn_gcdext           },
   { "mpn_gcd",           speed_mpn_gcd              },
-  { "mpn_gcd_1",         speed_mpn_gcd_1            },
+  { "mpn_gcd_1",         speed_mpn_gcd_1, FLAG_R_OPTIONAL },
 
   { "mpn_jacobi_base",   speed_mpn_jacobi_base      },
 
-  { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R },
+  { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R_OPTIONAL },
   { "mpn_sqr_basecase",  speed_mpn_sqr_basecase     },
 
   { "mpn_mul_n",         speed_mpn_mul_n            },
@@ -208,6 +197,8 @@ const struct routine_t {
   { "MPN_COPY_INCR",     speed_MPN_COPY_INCR        },
   { "MPN_COPY_DECR",     speed_MPN_COPY_DECR        },
   { "memcpy",            speed_memcpy               },
+
+  { "modlimb_invert",    speed_modlimb_invert       },
 
 #ifdef SPEED_EXTRA_ROUTINES
   SPEED_EXTRA_ROUTINES
@@ -562,13 +553,15 @@ r_string (const char *s)
 
   if (strcmp (s, "bits") == 0)
     {
+      mp_limb_t  l;
       if (n > LONG_BIT)
         {
           fprintf (stderr, "%ld bit parameter invalid (max %d bits)\n", 
                    n, LONG_BIT);
           exit (1);
         }
-      return (urandom() | (1 << (n-1))) & LONG_ONES(n);
+      mpn_random (&l, 1);
+      return (l | (1 << (n-1))) & LONG_ONES(n);
     }
   else  if (strcmp (s, "ones") == 0)
     {
@@ -590,55 +583,52 @@ r_string (const char *s)
 }
 
 
-/* Note routine[] is allowed to have entries with the same name but with and
-   without FLAG_R.  */
 void
 routine_find (struct choice_t *c, const char *s)
 {
-  const char *mistake = NULL;
   int     i;
   size_t  nlen;
 
   for (i = 0; i < numberof (routine); i++)
     {
       nlen = strlen (routine[i].name);
+      if (memcmp (s, routine[i].name, nlen) != 0)
+        continue;
 
-      if (memcmp (s, routine[i].name, nlen) == 0)
+      if (s[nlen] == '.')
         {
+          /* match, with a .r parameter */
+
+          if (! (routine[i].flag & (FLAG_R|FLAG_R_OPTIONAL)))
+            {
+              fprintf (stderr, "Choice %s bad: doesn't take a \".<r>\" paramater\n", s);
+              exit (1);
+            }
+
+          c->p = &routine[i];
+          c->r = r_string (s + nlen + 1);
+          c->name = s;
+          return;
+        }
+
+      if (s[nlen] == '\0')
+        {
+          /* match, with no parameter */
+
           if (routine[i].flag & FLAG_R)
             {
-              if (s[nlen] != '.')
-                {
-                  if (s[nlen] == '\0')
-                    mistake = "needs a \".<r>\" paramater";
-                  continue;
-                }
-
-              c->p = &routine[i];
-              c->r = r_string (s + nlen + 1);
-            }
-          else
-            {
-              if (s[nlen] != '\0')
-                {
-                  if (s[nlen] == '.')
-                    mistake = "doesn't take a \".<r>\" paramater";
-                  continue;
-                }
-
-              c->p = &routine[i];
-              c->r = 0;
+              fprintf (stderr, "Choice %s bad: needs a \".<r>\" paramater\n", s);
+              exit (1);
             }
 
+          c->p = &routine[i];
+          c->r = 0;
           c->name = s;
           return;
         }
     }
 
-  if (mistake)
-    fprintf (stderr, "Routine %s bad: %s\n", s, mistake);
-  else
-    fprintf (stderr, "Routine %s unknown\n", s);
+  fprintf (stderr, "Choice %s unrecognised\n", s);
   exit (1);
 }
 
