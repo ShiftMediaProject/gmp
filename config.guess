@@ -995,7 +995,7 @@ EOF
 	  # If ld does not provide *any* "supported emulations:"
 	  # that means it is gnuoldld.
 	  echo "$ld_help_string" | grep >/dev/null 2>&1 "supported emulations:"
-	  test $? != 0 && echo "${UNAME_MACHINE}-pc-linux-gnuoldld" && exit 0
+	  test $? != 0 && echo "${X86CPU}-pc-linux-gnuoldld" && exit 0
 
 	  case "${UNAME_MACHINE}" in
 	  i?86)
