@@ -510,7 +510,7 @@ esac
 dnl  Called: GMP_PROG_CC_WORKS_PART(CC+CFLAGS,FAIL-MESSAGE [,CODE])
 dnl
 AC_DEFUN(GMP_PROG_CC_WORKS_PART,
-[if test $gmp_prog_cc_works = yes; then
+[if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 [$3]
 int main () { return 0; }
@@ -1115,7 +1115,7 @@ esac
 dnl  Called: GMP_PROG_CXX_WORKS_PART(CXX+CXXFLAGS, FAIL-MESSAGE [,CODE])
 dnl
 AC_DEFUN(GMP_PROG_CXX_WORKS_PART,
-[if test $gmp_prog_cxx_works = yes; then
+[if test "$gmp_prog_cxx_works" = yes; then
   cat >conftest.c <<EOF
 [$3]
 int main (void) { return 0; }
