@@ -1,6 +1,5 @@
-/* Shared speed subroutines.  */
+/* Shared speed subroutines.
 
-/*
 Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include <errno.h>
 #include <fcntl.h>
@@ -1752,4 +1750,11 @@ double
 speed_mpn_set_str (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_SET_STR (mpn_set_str);
+}  
+
+
+double
+speed_MPN_ZERO (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_ZERO_CALL (MPN_ZERO (wp, s->size));
 }  
