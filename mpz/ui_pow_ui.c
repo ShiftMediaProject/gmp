@@ -41,15 +41,15 @@ mpz_ui_pow_ui (r, b, e)
 
   /* Single out cases that give result == 0 or 1.  These tests are here
      to simplify the general code below, not to optimize.  */
-  if (blimb == 0)
-    {
-      r->_mp_size = 0;
-      return;
-    }
   if (e == 0)
     {
       r->_mp_d[0] = 1;
       r->_mp_size = 1;
+      return;
+    }
+  if (blimb == 0)
+    {
+      r->_mp_size = 0;
       return;
     }
 
