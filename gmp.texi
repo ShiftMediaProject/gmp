@@ -11,6 +11,9 @@
 
 @c  Texinfo version 4 or up will be needed to process this into .info files.
 @c
+@c  The supplied texinfo.tex (or newer) should be used when processing into
+@c  .dvi etc.
+@c
 @c  The edition number is in three places and the month/year in one, all taken
 @c  from version.texi.  version.texi is created when you configure with
 @c  --enable-maintainer-mode, and is included in a distribution made with
@@ -129,19 +132,6 @@ License}.
 @macro C {}
 ,
 @end macro
-
-@c  @ma{E} is $E$ for tex or @math{E} otherwise.  This suits expressions which
-@c  want $$ rather than @math{} in tex, for example @ma{N^2}.
-@iftex
-@macro ma {E}
-@tex$\E\$@end tex
-@end macro
-@end iftex
-@ifnottex
-@macro ma {E}
-@math{\E\}
-@end macro
-@end ifnottex
 
 @c  @ms{V,N} is $V_N$ in tex or just vn otherwise.  This suits simple
 @c  subscripts like @ms{x,0}.
@@ -1988,7 +1978,7 @@ it's zero (or a particular value).
 However when testing divisibility by several small integers, it's best to take
 a remainder modulo their product, to save multi-precision operations.  For
 instance to test whether a number is divisible by any of 23, 29 or 31 take a
-remainder modulo @ma{23@times{}29@times{}31 = 20677} and then test that.
+remainder modulo @math{23@times{}29@times{}31 = 20677} and then test that.
 
 The division functions like @code{mpz_tdiv_q_ui} which give a quotient as well
 as a remainder are generally a little slower than the remainder-only functions
@@ -2609,7 +2599,7 @@ Convert @var{op} to a @code{double}.
 
 @deftypefun double mpz_get_d_2exp (signed long int @var{exp}, mpz_t @var{op})
 Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
-raised to @var{exp}}, with @ma{0.5@le{}@GMPabs{@var{d}}<1}, is a good
+raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1}, is a good
 approximation to @var{op}.
 @end deftypefun
 
@@ -2650,7 +2640,7 @@ just the absolute value is used.  The least significant limb is number 0.
 
 @deftypefun void mpz_add (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_add_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @ma{@var{op1} + @var{op2}}.
+Set @var{rop} to @math{@var{op1} + @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpz_sub (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -2661,17 +2651,17 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 @deftypefun void mpz_mul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_mul_si (mpz_t @var{rop}, mpz_t @var{op1}, long int @var{op2})
 @deftypefunx void mpz_mul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @ma{@var{op1} @GMPtimes{} @var{op2}}.
+Set @var{rop} to @math{@var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpz_addmul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_addmul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @ma{@var{rop} + @var{op1} @GMPtimes{} @var{op2}}.
+Set @var{rop} to @math{@var{rop} + @var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpz_submul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_submul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @ma{@var{rop} - @var{op1} @GMPtimes{} @var{op2}}.
+Set @var{rop} to @math{@var{rop} - @var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpz_mul_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
@@ -2767,7 +2757,7 @@ as @var{n}.  The @code{t} stands for ``truncate''.
 
 In all cases @var{q} and @var{r} will satisfy
 @m{@var{n}=@var{q}@var{d}+@var{r}, @var{n}=@var{q}*@var{d}+@var{r}}, and
-@var{r} will satisfy @ma{0@le{}@GMPabs{@var{r}}<@GMPabs{@var{d}}}.
+@var{r} will satisfy @math{0@le{}@GMPabs{@var{r}}<@GMPabs{@var{d}}}.
 
 The @code{q} functions calculate only the quotient, the @code{r} functions
 only the remainder, and the @code{qr} functions calculate both.  Note that for
@@ -2836,7 +2826,7 @@ case of @code{mpz_congruent_2exp_p} modulo @m{2^b,2^@var{b}}.
 Set @var{rop} to @m{base^{exp} \bmod mod, (@var{base} raised to @var{exp})
 modulo @var{mod}}.
 
-Negative @var{exp} is supported if an inverse @ma{@var{base}^@W{-1} @bmod
+Negative @var{exp} is supported if an inverse @math{@var{base}^@W{-1} @bmod
 @var{mod}} exists (see @code{mpz_invert} in @ref{Number Theoretic Functions}).
 If an inverse doesn't exist then a divide by zero is raised.
 @end deftypefun
@@ -2844,7 +2834,7 @@ If an inverse doesn't exist then a divide by zero is raised.
 @deftypefun void mpz_pow_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp})
 @deftypefunx void mpz_ui_pow_ui (mpz_t @var{rop}, unsigned long int @var{base}, unsigned long int @var{exp})
 Set @var{rop} to @m{base^{exp}, @var{base} raised to @var{exp}}.  The case
-@ma{0^0} yields 1.
+@math{0^0} yields 1.
 @end deftypefun
 
 
@@ -2956,7 +2946,7 @@ is non-zero.
 @deftypefun void mpz_gcdext (mpz_t @var{g}, mpz_t @var{s}, mpz_t @var{t}, mpz_t @var{a}, mpz_t @var{b})
 @cindex Extended GCD
 Compute @var{g}, @var{s}, and @var{t}, such that
-@ma{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g} =
+@math{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g} =
 @gcd{}(@var{a}, @var{b})}.  If @var{t} is @code{NULL}, that argument is
 not computed.
 @end deftypefun
@@ -2973,7 +2963,7 @@ Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
 @cindex Modular inverse functions
 Compute the inverse of @var{op1} modulo @var{op2} and put the result in
 @var{rop}.  If the inverse exists, the return value is non-zero and @var{rop}
-will satisfy @ma{0 @le{} @var{rop} < @var{op2}}.  If an inverse doesn't exist
+will satisfy @math{0 @le{} @var{rop} < @var{op2}}.  If an inverse doesn't exist
 the return value is zero and @var{rop} is undefined.
 @end deftypefun
 
@@ -2997,8 +2987,8 @@ prime, and for such @var{p} it's identical to the Jacobi symbol.
 @cindex Kronecker symbol functions
 Calculate the Jacobi symbol @m{\left(a \over b\right),
 (@var{a}/@var{b})} with the Kronecker extension @m{\left(a \over
-2\right) = \left(2 \over a\right), (a/2)=(2/a)} when @ma{a} odd, or
-@m{\left(a \over 2\right) = 0, (a/2)=0} when @ma{a} even.
+2\right) = \left(2 \over a\right), (a/2)=(2/a)} when @math{a} odd, or
+@m{\left(a \over 2\right) = 0, (a/2)=0} when @math{a} even.
 
 When @var{b} is odd the Jacobi symbol and Kronecker symbol are
 identical, so @code{mpz_kronecker_ui} etc can be used for mixed
@@ -3072,9 +3062,9 @@ Algorithm}, the reverse is straightforward too.
 @deftypefnx Function int mpz_cmp_d (mpz_t @var{op1}, double @var{op2})
 @deftypefnx Macro int mpz_cmp_si (mpz_t @var{op1}, signed long int @var{op2})
 @deftypefnx Macro int mpz_cmp_ui (mpz_t @var{op1}, unsigned long int @var{op2})
-Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
-@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, or a negative value if
-@ma{@var{op1} < @var{op2}}.
+Compare @var{op1} and @var{op2}.  Return a positive value if @math{@var{op1} >
+@var{op2}}, zero if @math{@var{op1} = @var{op2}}, or a negative value if
+@math{@var{op1} < @var{op2}}.
 
 Note that @code{mpz_cmp_ui} and @code{mpz_cmp_si} are macros and will evaluate
 their arguments more than once.
@@ -3084,9 +3074,9 @@ their arguments more than once.
 @deftypefnx Function int mpz_cmpabs_d (mpz_t @var{op1}, double @var{op2})
 @deftypefnx Function int mpz_cmpabs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
 Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
-value if @ma{@GMPabs{@var{op1}} > @GMPabs{@var{op2}}}, zero if
-@ma{@GMPabs{@var{op1}} = @GMPabs{@var{op2}}}, or a negative value if
-@ma{@GMPabs{@var{op1}} < @GMPabs{@var{op2}}}.
+value if @math{@GMPabs{@var{op1}} > @GMPabs{@var{op2}}}, zero if
+@math{@GMPabs{@var{op1}} = @GMPabs{@var{op2}}}, or a negative value if
+@math{@GMPabs{@var{op1}} < @GMPabs{@var{op2}}}.
 
 Note that @code{mpz_cmpabs_si} is a macro and will evaluate its arguments more
 than once.
@@ -3095,8 +3085,8 @@ than once.
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
 @cindex Sign tests
 @cindex Integer sign tests
-Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
-@ma{@var{op} < 0}.
+Return @math{+1} if @math{@var{op} > 0}, 0 if @math{@var{op} = 0}, and
+@math{-1} if @math{@var{op} < 0}.
 
 This function is actually implemented as a macro.  It evaluates its argument
 multiple times.
@@ -3131,19 +3121,19 @@ Set @var{rop} to the one's complement of @var{op}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_popcount (mpz_t @var{op})
-If @ma{@var{op}@ge{}0}, return the population count of @var{op}, which is the
-number of 1 bits in the binary representation.  If @ma{@var{op}<0}, the number
-of 1s is infinite, and the return value is @var{MAX_ULONG}, the largest
+If @math{@var{op}@ge{}0}, return the population count of @var{op}, which is
+the number of 1 bits in the binary representation.  If @math{@var{op}<0}, the
+number of 1s is infinite, and the return value is @var{MAX_ULONG}, the largest
 possible @code{unsigned long}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_hamdist (mpz_t @var{op1}, mpz_t @var{op2})
-If @var{op1} and @var{op2} are both @ma{@ge{}0} or both @ma{<0}, return the
-hamming distance between the two operands, which is the number of bit
+If @var{op1} and @var{op2} are both @math{@ge{}0} or both @math{<0}, return
+the hamming distance between the two operands, which is the number of bit
 positions where @var{op1} and @var{op2} have different bit values.  If one
-operand is @ma{@ge{}0} and the other @ma{<0} then the number of bits different
-is infinite, and the return value is @var{MAX_ULONG}, the largest possible
-@code{unsigned long}.
+operand is @math{@ge{}0} and the other @math{<0} then the number of bits
+different is infinite, and the return value is @var{MAX_ULONG}, the largest
+possible @code{unsigned long}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_scan0 (mpz_t @var{op}, unsigned long int @var{starting_bit})
@@ -3255,7 +3245,8 @@ invoking this function.
 @end deftypefun
 
 @deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_randstate_t @var{state}, mpz_t @var{n})
-Generate a uniform random integer in the range 0 to @ma{@var{n}-1}, inclusive.
+Generate a uniform random integer in the range 0 to @math{@var{n}-1},
+inclusive.
 
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization})
@@ -3480,7 +3471,7 @@ Set @var{difference} to @var{minuend} @minus{} @var{subtrahend}.
 @end deftypefun
 
 @deftypefun void mpq_mul (mpq_t @var{product}, mpq_t @var{multiplier}, mpq_t @var{multiplicand})
-Set @var{product} to @ma{@var{multiplier} @GMPtimes{} @var{multiplicand}}.
+Set @var{product} to @math{@var{multiplier} @GMPtimes{} @var{multiplicand}}.
 @end deftypefun
 
 @deftypefun void mpq_mul_2exp (mpq_t @var{rop}, mpq_t @var{op1}, unsigned long int @var{op2})
@@ -3518,9 +3509,9 @@ zero, this routine will divide by zero.
 @cindex Comparison functions
 
 @deftypefun int mpq_cmp (mpq_t @var{op1}, mpq_t @var{op2})
-Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
-@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, and a negative value if
-@ma{@var{op1} < @var{op2}}.
+Compare @var{op1} and @var{op2}.  Return a positive value if @math{@var{op1} >
+@var{op2}}, zero if @math{@var{op1} = @var{op2}}, and a negative value if
+@math{@var{op1} < @var{op2}}.
 
 To determine if two rationals are equal, @code{mpq_equal} is faster than
 @code{mpq_cmp}.
@@ -3529,8 +3520,8 @@ To determine if two rationals are equal, @code{mpq_equal} is faster than
 @deftypefn Macro int mpq_cmp_ui (mpq_t @var{op1}, unsigned long int @var{num2}, unsigned long int @var{den2})
 @deftypefnx Macro int mpq_cmp_si (mpq_t @var{op1}, long int @var{num2}, unsigned long int @var{den2})
 Compare @var{op1} and @var{num2}/@var{den2}.  Return a positive value if
-@ma{@var{op1} > @var{num2}/@var{den2}}, zero if @ma{@var{op1} =
-@var{num2}/@var{den2}}, and a negative value if @ma{@var{op1} <
+@math{@var{op1} > @var{num2}/@var{den2}}, zero if @math{@var{op1} =
+@var{num2}/@var{den2}}, and a negative value if @math{@var{op1} <
 @var{num2}/@var{den2}}.
 
 @var{num2} and @var{den2} are allowed to have common factors.
@@ -3542,8 +3533,8 @@ multiple times.
 @deftypefn Macro int mpq_sgn (mpq_t @var{op})
 @cindex Sign tests
 @cindex Rational sign tests
-Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
-@ma{@var{op} < 0}.
+Return @math{+1} if @math{@var{op} > 0}, 0 if @math{@var{op} = 0}, and
+@math{-1} if @math{@var{op} < 0}.
 
 This function is actually implemented as a macro.  It evaluates its
 arguments multiple times.
@@ -3650,10 +3641,10 @@ increased or decreased at any time.
 The exponent of each float is a fixed precision, one machine word on most
 systems.  In the current implementation the exponent is a count of limbs, so
 for example on a 32-bit system this means a range of roughly
-@ma{2^@W{-68719476768}} to @ma{2^@W{68719476736}}, or on a 64-bit system this
-will be greater.  Note however @code{mpf_get_str} can only return an exponent
-which fits an @code{mp_exp_t} and currently @code{mpf_set_str} doesn't accept
-exponents bigger than a @code{long}.
+@math{2^@W{-68719476768}} to @math{2^@W{68719476736}}, or on a 64-bit system
+this will be greater.  Note however @code{mpf_get_str} can only return an
+exponent which fits an @code{mp_exp_t} and currently @code{mpf_set_str}
+doesn't accept exponents bigger than a @code{long}.
 
 Each variable keeps a size for the mantissa data actually in use.  This means
 that if a float is exactly represented in only a few bits then only those bits
@@ -3888,7 +3879,7 @@ Convert @var{op} to a @code{double}.
 
 @deftypefun double mpf_get_d_2exp (signed long int @var{exp}, mpf_t @var{op})
 Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
-raised to @var{exp}}, with @ma{0.5@le{}@GMPabs{@var{d}}<1}, is a good
+raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1}, is a good
 approximation to @var{op}.  This is similar to the standard C function
 @code{frexp}.
 @end deftypefun
@@ -3916,10 +3907,10 @@ allocation function (@pxref{Custom Allocation}).  The block will be
 null-terminator.
 
 If @var{str} is not @code{NULL}, it should point to a block of
-@ma{@var{n\_digits} + 2} bytes, that being enough for the mantissa, a possible
-minus sign, and a null-terminator.  When @var{n_digits} is 0 to get all
-significant digits, an application won't be able to know the space required,
-and @var{str} should be @code{NULL} in that case.
+@math{@var{n\_digits} + 2} bytes, that being enough for the mantissa, a
+possible minus sign, and a null-terminator.  When @var{n_digits} is 0 to get
+all significant digits, an application won't be able to know the space
+required, and @var{str} should be @code{NULL} in that case.
 
 The generated string is a fraction, with an implicit radix point immediately
 to the left of the first digit.  The applicable exponent is written through
@@ -3942,7 +3933,7 @@ or the given @var{str}.
 
 @deftypefun void mpf_add (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_add_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @ma{@var{op1} + @var{op2}}.
+Set @var{rop} to @math{@var{op1} + @var{op2}}.
 @end deftypefun
 
 @deftypefun void mpf_sub (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
@@ -3953,7 +3944,7 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 
 @deftypefun void mpf_mul (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_mul_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-Set @var{rop} to @ma{@var{op1} @GMPtimes{} @var{op2}}.
+Set @var{rop} to @math{@var{op1} @GMPtimes{} @var{op2}}.
 @end deftypefun
 
 Division is undefined if the divisor is zero, and passing a zero divisor to the
@@ -4008,9 +3999,9 @@ Set @var{rop} to @m{@var{op1}/2^{op2}, @var{op1} divided by 2 raised to
 @deftypefunx int mpf_cmp_d (mpf_t @var{op1}, double @var{op2})
 @deftypefunx int mpf_cmp_ui (mpf_t @var{op1}, unsigned long int @var{op2})
 @deftypefunx int mpf_cmp_si (mpf_t @var{op1}, signed long int @var{op2})
-Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
-@var{op2}}, zero if @ma{@var{op1} = @var{op2}}, and a negative value if
-@ma{@var{op1} < @var{op2}}.
+Compare @var{op1} and @var{op2}.  Return a positive value if @math{@var{op1} >
+@var{op2}}, zero if @math{@var{op1} = @var{op2}}, and a negative value if
+@math{@var{op1} < @var{op2}}.
 @end deftypefun
 
 @deftypefun int mpf_eq (mpf_t @var{op1}, mpf_t @var{op2}, unsigned long int op3)
@@ -4025,14 +4016,14 @@ to 3 bits (on the basis that their difference is that small).
 
 @deftypefun void mpf_reldiff (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 Compute the relative difference between @var{op1} and @var{op2} and store the
-result in @var{rop}.  This is @ma{@GMPabs{@var{op1}-@var{op2}}/@var{op1}}.
+result in @var{rop}.  This is @math{@GMPabs{@var{op1}-@var{op2}}/@var{op1}}.
 @end deftypefun
 
 @deftypefn Macro int mpf_sgn (mpf_t @var{op})
 @cindex Sign tests
 @cindex Float sign tests
-Return @ma{+1} if @ma{@var{op} > 0}, 0 if @ma{@var{op} = 0}, and @ma{-1} if
-@ma{@var{op} < 0}.
+Return @math{+1} if @math{@var{op} > 0}, 0 if @math{@var{op} = 0}, and
+@math{-1} if @math{@var{op} < 0}.
 
 This function is actually implemented as a macro.  It evaluates its arguments
 multiple times.
@@ -4132,7 +4123,7 @@ truncated to an integer.
 @end deftypefun
 
 @deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{nbits})
-Generate a uniformly distributed random float in @var{rop}, such that @ma{0
+Generate a uniformly distributed random float in @var{rop}, such that @math{0
 @le{} @var{rop} < 1}, with @var{nbits} significant bits in the mantissa.
 
 The variable @var{state} must be initialized by calling one of the
@@ -4266,7 +4257,7 @@ most significant limb is zero.
 Multiply @{@var{s1p}, @var{n}@} by @var{s2limb}, and write the @var{n} least
 significant limbs of the product to @var{rp}.  Return the most significant
 limb of the product.  @{@var{s1p}, @var{n}@} and @{@var{rp}, @var{n}@} are
-allowed to overlap provided @ma{@var{rp} @le{} @var{s1p}}.
+allowed to overlap provided @math{@var{rp} @le{} @var{s1p}}.
 
 This is a low-level function that is a building block for general
 multiplication as well as other operations in GMP.  It is written in assembly
@@ -4381,13 +4372,13 @@ piece from low to high.  @code{mpn_divexact_by3} is simply a macro calling
 These routines use a multiply-by-inverse and will be faster than
 @code{mpn_divrem_1} on CPUs with fast multiplication but slow division.
 
-The source @ma{a}, result @ma{q}, size @ma{n}, initial carry @ma{i}, and
-return value @ma{c} satisfy @m{cb^n+a-i=3q, c*b^n + a-i = 3*q}, where
+The source @math{a}, result @math{q}, size @math{n}, initial carry @math{i},
+and return value @math{c} satisfy @m{cb^n+a-i=3q, c*b^n + a-i = 3*q}, where
 @m{b=2\GMPraise{@code{mp\_bits\_per\_limb}}, b=2^mp_bits_per_limb}.  The
-return @ma{c} is always 0, 1 or 2, and the initial carry @ma{i} must also be
-0, 1 or 2 (these are both borrows really).  When @ma{c=0} clearly
-@ma{q=(a-i)/3}.  When @m{c \neq 0, c!=0}, the remainder @ma{(a-i) @bmod{} 3}
-is given by @ma{3-c}, because @ma{b @equiv{} 1 @bmod{} 3} (when
+return @math{c} is always 0, 1 or 2, and the initial carry @math{i} must also
+be 0, 1 or 2 (these are both borrows really).  When @math{c=0} clearly
+@math{q=(a-i)/3}.  When @m{c \neq 0, c!=0}, the remainder @math{(a-i) @bmod{}
+3} is given by @math{3-c}, because @math{b @equiv{} 1 @bmod{} 3} (when
 @code{mp_bits_per_limb} is even, which is always so currently).
 @end deftypefn
 
@@ -4398,7 +4389,7 @@ Divide @{@var{s1p}, @var{s1n}@} by @var{s2limb}, and return the remainder.
 
 @deftypefun mp_limb_t mpn_bdivmod (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n}, unsigned long int @var{d})
 This function puts the low
-@ma{@GMPfloor{@var{d}/@nicode{mp\_bits\_per\_limb}}} limbs of @var{q} =
+@math{@GMPfloor{@var{d}/@nicode{mp\_bits\_per\_limb}}} limbs of @var{q} =
 @{@var{s1p}, @var{s1n}@}/@{@var{s2p}, @var{s2n}@} mod @m{2^d,2^@var{d}} at
 @var{rp}, and returns the high @var{d} mod @code{mp_bits_per_limb} bits of
 @var{q}.
@@ -4406,11 +4397,11 @@ This function puts the low
 @{@var{s1p}, @var{s1n}@} - @var{q} * @{@var{s2p}, @var{s2n}@} mod @m{2
 \GMPraise{@var{s1n}*@code{mp\_bits\_per\_limb}},
 2^(@var{s1n}*@nicode{mp\_bits\_per\_limb})} is placed at @var{s1p}.  Since the
-low @ma{@GMPfloor{@var{d}/@nicode{mp\_bits\_per\_limb}}} limbs of this
+low @math{@GMPfloor{@var{d}/@nicode{mp\_bits\_per\_limb}}} limbs of this
 difference are zero, it is possible to overwrite the low limbs at @var{s1p}
-with this difference, provided @ma{@var{rp} @le{} @var{s1p}}.
+with this difference, provided @math{@var{rp} @le{} @var{s1p}}.
 
-This function requires that @ma{@var{s1n} * @nicode{mp\_bits\_per\_limb}
+This function requires that @math{@var{s1n} * @nicode{mp\_bits\_per\_limb}
 @ge{} @var{D}}, and that @{@var{s2p}, @var{s2n}@} is odd.
 
 @strong{This interface is preliminary.  It might change incompatibly in future
@@ -4425,7 +4416,7 @@ value is zero).
 
 @var{count} must be in the range 1 to @nicode{mp_bits_per_limb}@minus{}1.  The
 regions @{@var{sp}, @var{n}@} and @{@var{rp}, @var{n}@} may overlap, provided
-@ma{@var{rp} @ge{} @var{sp}}.
+@math{@var{rp} @ge{} @var{sp}}.
 
 This function is written in assembly for most CPUs.
 @end deftypefun
@@ -4438,15 +4429,15 @@ value is zero).
 
 @var{count} must be in the range 1 to @nicode{mp_bits_per_limb}@minus{}1.  The
 regions @{@var{sp}, @var{n}@} and @{@var{rp}, @var{n}@} may overlap, provided
-@ma{@var{rp} @le{} @var{sp}}.
+@math{@var{rp} @le{} @var{sp}}.
 
 This function is written in assembly for most CPUs.
 @end deftypefun
 
 @deftypefun int mpn_cmp (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
 Compare @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@} and return a
-positive value if @ma{@var{s1} > @var{s2}}, 0 if they are equal, or a negative
-value if @ma{@var{s1} < @var{s2}}.
+positive value if @math{@var{s1} > @var{s2}}, 0 if they are equal, or a
+negative value if @math{@var{s1} < @var{s2}}.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_gcd (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
@@ -4470,13 +4461,13 @@ Calculate the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
 @{@var{s2p}, @var{s2n}@}.  Store the gcd at @{@var{r1p}, @var{retval}@} and
 the first cofactor at @{@var{r2p}, *@var{r2n}@}, with *@var{r2n} negative if
 the cofactor is negative.  @var{r1p} and @var{r2p} should each have room for
-@ma{@var{s1n}+1} limbs, but the return value and value stored through
+@math{@var{s1n}+1} limbs, but the return value and value stored through
 @var{r2n} indicate the actual number produced.
 
-@ma{@{@var{s1p}, @var{s1n}@} @ge{} @{@var{s2p}, @var{s2n}@}} is required, and
-both must be non-zero.  The regions @{@var{s1p}, @ma{@var{s1n}+1}@} and
-@{@var{s2p}, @ma{@var{s2n}+1}@} are destroyed (i.e. the operands plus an extra
-limb past the end of each).
+@math{@{@var{s1p}, @var{s1n}@} @ge{} @{@var{s2p}, @var{s2n}@}} is required,
+and both must be non-zero.  The regions @{@var{s1p}, @math{@var{s1n}+1}@} and
+@{@var{s2p}, @math{@var{s2n}+1}@} are destroyed (i.e. the operands plus an
+extra limb past the end of each).
 
 The cofactor @var{r1} will satisfy @m{r_2 s_1 + k s_2 = r_1, @var{r2}*@var{s1}
 + @var{k}*@var{s2} = @var{r1}}.  The second cofactor @var{k} is not calculated
@@ -4486,12 +4477,12 @@ but can easily be obtained from @m{(r_1 - r_2 s_1) / s_2, (@var{r1} -
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
 Compute the square root of @{@var{sp}, @var{n}@} and put the result at
-@{@var{r1p}, @ma{@GMPceil{@var{n}/2}}@} and the remainder at @{@var{r2p},
+@{@var{r1p}, @math{@GMPceil{@var{n}/2}}@} and the remainder at @{@var{r2p},
 @var{retval}@}.  @var{r2p} needs space for @var{n} limbs, but the return value
 indicates how many are produced.
 
 The most significant limb of @{@var{sp}, @var{n}@} must be non-zero.  The
-areas @{@var{r1p}, @ma{@GMPceil{@var{n}/2}}@} and @{@var{sp}, @var{n}@} must
+areas @{@var{r1p}, @math{@GMPceil{@var{n}/2}}@} and @{@var{sp}, @var{n}@} must
 be completely separate.  The areas @{@var{r2p}, @var{n}@} and @{@var{sp},
 @var{n}@} must be either identical or completely separate.
 
@@ -4603,20 +4594,21 @@ special requirements.
 Initialize @var{state} with a linear congruential algorithm @m{X = (@var{a}X +
 @var{c}) @bmod 2^{m2exp}, X = (@var{a}*X + @var{c}) mod 2^@var{m2exp}}.
 
-The low bits of @ma{X} in this algorithm are not very random.  The least
+The low bits of @math{X} in this algorithm are not very random.  The least
 significant bit will have a period no more than 2, and the second bit no more
-than 4, etc.  For this reason only the high half of each @ma{X} is actually
+than 4, etc.  For this reason only the high half of each @math{X} is actually
 used.
 
-When a random number of more than @ma{@var{m2exp}/2} bits is to be generated,
-multiple iterations of the recurrence are used and the results concatenated.
+When a random number of more than @math{@var{m2exp}/2} bits is to be
+generated, multiple iterations of the recurrence are used and the results
+concatenated.
 @end deftypefun
 
 @deftypefun int gmp_randinit_lc_2exp_size (gmp_randstate_t @var{state}, unsigned long @var{size})
 Initialize @var{state} for a linear congruential algorithm as per
 @code{gmp_randinit_lc_2exp}.  @var{a}, @var{c} and @var{m2exp} are selected
-from a table, chosen so that @var{size} bits (or more) of each @ma{X} will be
-used, ie. @ma{@var{m2exp} @ge{} @var{size}/2}.
+from a table, chosen so that @var{size} bits (or more) of each @math{X} will
+be used, ie. @math{@var{m2exp} @ge{} @var{size}/2}.
 
 If successful the return value is non-zero.  If @var{size} is bigger than the
 table data provides then the return value is zero.  The maximum @var{size}
@@ -4818,10 +4810,10 @@ with that.
 accurately represented by the operand, the same as @code{mpf_get_str} does.
 Zeros will be used if necessary to pad to the requested precision.  This
 happens even for an @samp{f} conversion of an @code{mpf_t} which is an
-integer, for instance @ma{2^@W{1024}} in an @code{mpf_t} of 128 bits precision
-will only produce about 20 digits, then pad with zeros to the decimal point.
-An empty precision field like @samp{%.Fe} or @samp{%.Ff} can be used to
-specifically request just the significant digits.
+integer, for instance @math{2^@W{1024}} in an @code{mpf_t} of 128 bits
+precision will only produce about 20 digits, then pad with zeros to the
+decimal point.  An empty precision field like @samp{%.Fe} or @samp{%.Ff} can
+be used to specifically request just the significant digits.
 
 The decimal point character (or string) is taken from the current locale
 settings on systems which provide @code{localeconv} (@pxref{Locales,,Locales
@@ -4844,20 +4836,20 @@ functions will be unpredictable.  GCC format string checking is not available,
 since it doesn't recognise the GMP extensions.
 
 The file based functions @code{gmp_printf} and @code{gmp_fprintf} will return
-@ma{-1} to indicate a write error.  All the functions can return @ma{-1} if
-the C library @code{printf} variant in use returns @ma{-1}, but this shouldn't
-normally occur.
+@math{-1} to indicate a write error.  All the functions can return @math{-1}
+if the C library @code{printf} variant in use returns @math{-1}, but this
+shouldn't normally occur.
 
 @deftypefun int gmp_printf (const char *@var{fmt}, ...)
 @deftypefunx int gmp_vprintf (const char *@var{fmt}, va_list @var{ap})
 Print to the standard output @code{stdout}.  Return the number of characters
-written, or @ma{-1} if an error occurred.
+written, or @math{-1} if an error occurred.
 @end deftypefun
 
 @deftypefun int gmp_fprintf (FILE *@var{fp}, const char *@var{fmt}, ...)
 @deftypefunx int gmp_vfprintf (FILE *@var{fp}, const char *@var{fmt}, va_list @var{ap})
 Print to the stream @var{fp}.  Return the number of characters written, or
-@ma{-1} if an error occurred.
+@math{-1} if an error occurred.
 @end deftypefun
 
 @deftypefun int gmp_sprintf (char *@var{buf}, const char *@var{fmt}, ...)
@@ -4879,9 +4871,9 @@ will be written.  To get the full output, @var{size} must be enough for the
 string and null-terminator.
 
 The return value is the total number of characters which ought to have been
-produced, excluding the terminating null.  If @ma{@var{retval} @ge{} @var{size}}
-then the actual output has been truncated to the first @ma{@var{size}-1}
-characters, and a null appended.
+produced, excluding the terminating null.  If @math{@var{retval} @ge{}
+@var{size}} then the actual output has been truncated to the first
+@math{@var{size}-1} characters, and a null appended.
 
 No overlap is permitted between the region @{@var{buf},@var{size}@} and the
 @var{fmt} string.
@@ -4899,7 +4891,7 @@ size of the string and null-terminator.  Put the address of the block in
 null-terminator.
 
 Unlike the C library @code{asprintf}, @code{gmp_asprintf} doesn't return
-@ma{-1} if there's no more memory available, it lets the current allocation
+@math{-1} if there's no more memory available, it lets the current allocation
 function handle that.
 @end deftypefun
 
@@ -5641,12 +5633,12 @@ Generate a random integer with a specified number of bits.
 @end deftypefun
 
 @deftypefun mpz_class gmp_randclass::get_z_range (mpz_class @var{n})
-Generate a random integer in the range 0 to @ma{@var{n}-1} inclusive.
+Generate a random integer in the range 0 to @math{@var{n}-1} inclusive.
 @end deftypefun
 
 @deftypefun mpf_class gmp_randclass::get_f ()
 @deftypefunx mpf_class gmp_randclass::get_f (unsigned long @var{prec})
-Generate a random float @var{f} in the range @ma{0 <= @var{f} < 1}.  @var{f}
+Generate a random float @var{f} in the range @math{0 <= @var{f} < 1}.  @var{f}
 will be to @var{prec} bits precision, or if @var{prec} is not given then to
 the precision of the destination.  For example,
 
@@ -6261,8 +6253,8 @@ used always.
 The Karatsuba multiplication algorithm is described in Knuth section 4.3.3
 part A, and various other textbooks.  A brief description is given here.
 
-The inputs @ma{x} and @ma{y} are treated as each split into two parts of equal
-length (or the most significant part one limb shorter if N is odd).
+The inputs @math{x} and @math{y} are treated as each split into two parts of
+equal length (or the most significant part one limb shorter if N is odd).
 
 @tex
 % GMPboxwidth used for all the multiplication pictures
@@ -6301,8 +6293,8 @@ length (or the most significant part one limb shorter if N is odd).
 @end example
 @end ifnottex
 
-Let @ma{b} be the power of 2 where the split occurs, ie.@: if @ms{x,0} is
-@ma{k} limbs (@ms{y,0} the same) then
+Let @math{b} be the power of 2 where the split occurs, ie.@: if @ms{x,0} is
+@math{k} limbs (@ms{y,0} the same) then
 @m{b=2\GMPraise{$k*$@code{mp\_bits\_per\_limb}}, b=2^(k*mp_bits_per_limb)}.
 With that @m{x=x_1b+x_0,x=x1*b+x0} and @m{y=y_1b+y_0,y=y1*b+y0}, and the
 following holds,
@@ -6314,8 +6306,8 @@ following holds,
 
 This formula means doing only three multiplies of (N/2)@cross{}(N/2) limbs,
 whereas a basecase multiply of N@cross{}N limbs is equivalent to four
-multiplies of (N/2)@cross{}(N/2).  The factors @ma{(b^2+b)} etc represent the
-positions where the three products must be added.
+multiplies of (N/2)@cross{}(N/2).  The factors @math{(b^2+b)} etc represent
+the positions where the three products must be added.
 
 @tex
 \def\GMPboxA#1#2{%
@@ -6378,7 +6370,7 @@ high(x0*y0)+low(x1*y1)} occurs twice, so it's possible to do @m{5k,5*k} limb
 additions, rather than @m{6k,6*k}, but in GMP extra function call overheads
 outweigh the saving.
 
-Squaring is similar to multiplying, but with @ma{x=y} the formula reduces to
+Squaring is similar to multiplying, but with @math{x=y} the formula reduces to
 an equivalent with three squares,
 
 @display
@@ -6392,21 +6384,21 @@ always positive.
 
 A similar formula for both multiplying and squaring can be constructed with a
 middle term @m{(x_1+x_0)(y_1+y_0),(x1+x0)*(y1+y0)}.  But those sums can exceed
-@ma{k} limbs, leading to more carry handling and additions than the form
+@math{k} limbs, leading to more carry handling and additions than the form
 above.
 
-Karatsuba multiplication is asymptotically an @ma{O(N^@W{1.585})} algorithm,
+Karatsuba multiplication is asymptotically an @math{O(N^@W{1.585})} algorithm,
 the exponent being @m{\log3/\log2,log(3)/log(2)}, representing 3 multiplies
 each 1/2 the size of the inputs.  This is a big improvement over the basecase
-multiply at @ma{O(N^2)} and the advantage soon overcomes the extra additions
+multiply at @math{O(N^2)} and the advantage soon overcomes the extra additions
 Karatsuba performs.
 
 @code{MUL_KARATSUBA_THRESHOLD} can be as little as 10 limbs.  The @code{SQR}
 threshold is usually about twice the @code{MUL}.  The basecase algorithm will
 take a time of the form @m{M(N) = aN^2 + bN + c, M(N) = a*N^2 + b*N + c} and
 the Karatsuba algorithm @m{K(N) = 3M(N/2) + dN + e, K(N) = 3*M(N/2) + d*N +
-e}.  Clearly per-crossproduct speedups in the basecase code reduce @ma{a} and
-decrease the threshold, but linear style speedups reducing @ma{b} will
+e}.  Clearly per-crossproduct speedups in the basecase code reduce @math{a}
+and decrease the threshold, but linear style speedups reducing @math{b} will
 actually increase the threshold.  The latter can be seen for instance when
 adding an optimized @code{mpn_sqr_diagonal} to @code{mpn_sqr_basecase}.  Of
 course all speedups reduce total time, and in that sense the algorithm
@@ -6475,10 +6467,10 @@ These parts are treated as the coefficients of two polynomials
 @end group
 @end display
 
-Again let @ma{b} equal the power of 2 which is the size of the @ms{x,0},
-@ms{x,1}, @ms{y,0} and @ms{y,1} pieces, ie.@: if they're @ma{k} limbs each
+Again let @math{b} equal the power of 2 which is the size of the @ms{x,0},
+@ms{x,1}, @ms{y,0} and @ms{y,1} pieces, ie.@: if they're @math{k} limbs each
 then @m{b=2\GMPraise{$k*$@code{mp\_bits\_per\_limb}},
-b=2^(k*mp_bits_per_limb)}.  With this @ma{x=X(b)} and @ma{y=Y(b)}.
+b=2^(k*mp_bits_per_limb)}.  With this @math{x=X(b)} and @math{y=Y(b)}.
 
 Let a polynomial @m{W(t)=X(t)Y(t),W(t)=X(t)*Y(t)} and suppose its coefficients
 are
@@ -6490,9 +6482,9 @@ are
 
 @noindent
 The @m{w_i,w[i]} are going to be determined, and when they are they'll give
-the final result using @ma{w=W(b)}, since @m{xy=X(b)Y(b),x*y=X(b)*Y(b)=W(b)}.
-The coefficients will be roughly @ma{b^2} each, and the final @ma{W(b)} will
-be an addition like,
+the final result using @math{w=W(b)}, since
+@m{xy=X(b)Y(b),x*y=X(b)*Y(b)=W(b)}.  The coefficients will be roughly
+@math{b^2} each, and the final @math{W(b)} will be an addition like,
 
 @tex
 \def\GMPbox#1#2{%
@@ -6546,19 +6538,19 @@ be an addition like,
 The @m{w_i,w[i]} coefficients could be formed by a simple set of cross
 products, like @m{w_4=x_2y_2,w4=x2*y2}, @m{w_3=x_2y_1+x_1y_2,w3=x2*y1+x1*y2},
 @m{w_2=x_2y_0+x_1y_1+x_0y_2,w2=x2*y0+x1*y1+x0*y2} etc, but this would need all
-nine @m{x_iy_j,x[i]*y[j]} for @ma{i,j=0,1,2}, and would be equivalent merely
+nine @m{x_iy_j,x[i]*y[j]} for @math{i,j=0,1,2}, and would be equivalent merely
 to a basecase multiply.  Instead the following approach is used.
 
-@ma{X(t)} and @ma{Y(t)} are evaluated and multiplied at 5 points, giving
-values of @ma{W(t)} at those points.  The points used can be chosen in
+@math{X(t)} and @math{Y(t)} are evaluated and multiplied at 5 points, giving
+values of @math{W(t)} at those points.  The points used can be chosen in
 various ways, but in GMP the following are used
 
 @quotation
 @multitable {@m{t=\infty,t=inf}M} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
 @item Point                 @tab Value
-@item @ma{t=0}              @tab @m{x_0y_0,x0*y0}, which gives @ms{w,0} immediately
-@item @ma{t=2}              @tab @m{(4x_2+2x_1+x_0)(4y_2+2y_1+y_0),(4*x2+2*x1+x0)*(4*y2+2*y1+y0)}
-@item @ma{t=1}              @tab @m{(x_2+x_1+x_0)(y_2+y_1+y_0),(x2+x1+x0)*(y2+y1+y0)}
+@item @math{t=0}            @tab @m{x_0y_0,x0*y0}, which gives @ms{w,0} immediately
+@item @math{t=2}            @tab @m{(4x_2+2x_1+x_0)(4y_2+2y_1+y_0),(4*x2+2*x1+x0)*(4*y2+2*y1+y0)}
+@item @math{t=1}            @tab @m{(x_2+x_1+x_0)(y_2+y_1+y_0),(x2+x1+x0)*(y2+y1+y0)}
 @item @m{t={1\over2},t=1/2} @tab @m{(x_2+2x_1+4x_0)(y_2+2y_1+4y_0),(x2+2*x1+4*x0)*(y2+2*y1+4*y0)}
 @item @m{t=\infty,t=inf}    @tab @m{x_2y_2,x2*y2}, which gives @ms{w,4} immediately
 @end multitable
@@ -6570,7 +6562,7 @@ At @m{t={1\over2},t=1/2} the value calculated is actually
 @m{t=\infty,t=inf} the value is actually @m{\lim_{t\to\infty} {X(t)Y(t)\over
 t^4}, X(t)*Y(t)/t^4 in the limit as t approaches infinity}, but it's much
 easier to think of as simply @m{x_2y_2,x2*y2} giving @ms{w,4} immediately
-(much like @m{x_0y_0,x0*y0} at @ma{t=0} gives @ms{w,0} immediately).
+(much like @m{x_0y_0,x0*y0} at @math{t=0} gives @ms{w,0} immediately).
 
 Now each of the points substituted into
 @m{W(t)=w_4t^4+\cdots+w_0,W(t)=w4*t^4+@dots{}+w0} gives a linear combination
@@ -6603,9 +6595,9 @@ This is a set of five equations in five unknowns, and some elementary linear
 algebra quickly isolates each @m{w_i,w[i]}, by subtracting multiples of one
 equation from another.
 
-In the code the set of five values @ma{W(0)},@dots{},@m{W(\infty),W(inf)} will
-represent those certain linear combinations.  By adding or subtracting one
-from another as necessary, values which are each @m{w_i,w[i]} alone are
+In the code the set of five values @math{W(0)},@dots{},@m{W(\infty),W(inf)}
+will represent those certain linear combinations.  By adding or subtracting
+one from another as necessary, values which are each @m{w_i,w[i]} alone are
 arrived at.  This involves only a few subtractions of small multiples (some of
 which are powers of 2), and so is fast.  A couple of divisions remain by
 powers of 2 and one division by 3 (or by 6 rather), and that last uses the
@@ -6672,8 +6664,8 @@ addition then is as follows.
 @end example
 @end ifnottex
 
-The conversion of @ma{W(t)} values to the coefficients is interpolation.  A
-polynomial of degree 4 like @ma{W(t)} is uniquely determined by values known
+The conversion of @math{W(t)} values to the coefficients is interpolation.  A
+polynomial of degree 4 like @math{W(t)} is uniquely determined by values known
 at 5 different points.  The points can be chosen to make the linear equations
 come out with a convenient set of steps for isolating the @m{w_i,w[i]}.
 
@@ -6683,13 +6675,13 @@ understand, the steps performed can be better seen in the @code{USE_MORE_MPN}
 version.
 
 Squaring follows the same procedure as multiplication, but there's only one
-@ma{X(t)} and it's evaluated at 5 points, and those values squared to give
-values of @ma{W(t)}.  The interpolation is then identical, and in fact the
+@math{X(t)} and it's evaluated at 5 points, and those values squared to give
+values of @math{W(t)}.  The interpolation is then identical, and in fact the
 same @code{interpolate3} subroutine is used for both squaring and multiplying.
 
-Toom-3 is asymptotically @ma{O(N^@W{1.465})}, the exponent being
+Toom-3 is asymptotically @math{O(N^@W{1.465})}, the exponent being
 @m{\log5/\log3,log(5)/log(3)}, representing 5 recursive multiplies of 1/3 the
-original size.  This is an improvement over Karatsuba at @ma{O(N^@W{1.585})},
+original size.  This is an improvement over Karatsuba at @math{O(N^@W{1.585})},
 though Toom-Cook does more work in the evaluation and interpolation and so it
 only realizes its advantage above a certain size.
 
@@ -6713,12 +6705,13 @@ Toom-3 involving only five multiplies, but this would be complicated and
 unenlightening.
 
 An alternate view of Toom-3 can be found in Zuras (@pxref{References}), using
-a vector to represent the @ma{x} and @ma{y} splits and a matrix multiplication
-for the evaluation and interpolation stages.  The matrix inverses are not
-meant to be actually used, and they have elements with values much greater
-than in fact arise in the interpolation steps.  The diagram shown for the
-3-way is attractive, but again doesn't have to be implemented that way and for
-example with a bit of rearrangement just one division by 6 can be done.
+a vector to represent the @math{x} and @math{y} splits and a matrix
+multiplication for the evaluation and interpolation stages.  The matrix
+inverses are not meant to be actually used, and they have elements with values
+much greater than in fact arise in the interpolation steps.  The diagram shown
+for the 3-way is attractive, but again doesn't have to be implemented that way
+and for example with a bit of rearrangement just one division by 6 can be
+done.
 
 
 @node FFT Multiplication, Other Multiplication, Toom-Cook 3-Way Multiplication, Multiplication Algorithms
@@ -6731,24 +6724,24 @@ in various forms can be found in many textbooks, for instance Knuth section
 GMP is given here.
 
 The multiplication done is @m{xy \bmod 2^N+1, x*y mod 2^N+1}, for a given
-@ma{N}.  A full product @m{xy,x*y} is obtained by choosing @m{N \ge
+@math{N}.  A full product @m{xy,x*y} is obtained by choosing @m{N \ge
 \mathop{\rm bits}(x)+\mathop{\rm bits}(y), N>=bits(x)+bits(y)} and padding
-@ma{x} and @ma{y} with high zero limbs.  The modular product is the native
+@math{x} and @math{y} with high zero limbs.  The modular product is the native
 form for the algorithm, so padding to get a full product is unavoidable.
 
 The algorithm follows a split, evaluate, pointwise multiply, interpolate and
-combine similar to that described above for Karatsuba and Toom-3.  A @ma{k}
-parameter controls the split, with an FFT-@ma{k} splitting into @ma{2^k}
-pieces of @ma{M=N/2^k} bits each.  @ma{N} must be a multiple of
+combine similar to that described above for Karatsuba and Toom-3.  A @math{k}
+parameter controls the split, with an FFT-@math{k} splitting into @math{2^k}
+pieces of @math{M=N/2^k} bits each.  @math{N} must be a multiple of
 @m{2^k\times@code{mp\_bits\_per\_limb}, (2^k)*@nicode{mp_bits_per_limb}} so
 the split falls on limb boundaries, avoiding bit shifts in the split and
 combine stages.
 
 The evaluations, pointwise multiplications, and interpolation, are all done
-modulo @m{2^{N'}+1, 2^N'+1} where @ma{N'} is @ma{2M+k+3} rounded up to a
-multiple of @ma{2^k} and of @code{mp_bits_per_limb}.  The results of
+modulo @m{2^{N'}+1, 2^N'+1} where @math{N'} is @math{2M+k+3} rounded up to a
+multiple of @math{2^k} and of @code{mp_bits_per_limb}.  The results of
 interpolation will be the following negacyclic convolution of the input
-pieces, and the choice of @ma{N'} ensures these sums aren't truncated.
+pieces, and the choice of @math{N'} ensures these sums aren't truncated.
 @tex
 $$ w_n = \sum_{{i+j = b2^k+n}\atop{b=0,1}} (-1)^b x_i y_j $$
 @end tex
@@ -6764,69 +6757,72 @@ w[n] =     /     (-1) * x[i] * y[j]
 @end example
 
 @end ifnottex
-The points used for the evaluation are @ma{g^i} for @ma{i=0} to @ma{2^k-1}
-where @m{g=2^{2N'/2^k}, g=2^(2N'/2^k)}.  @ma{g} is a @m{2^k,2^k'}th root of
-unity mod @m{2^{N'}+1,2^N'+1}, which produces necessary cancellations at the
-interpolation stage, and it's also a power of 2 so the fast fourier transforms
-used for the evaluation and interpolation do only shifts, adds and negations.
+The points used for the evaluation are @math{g^i} for @math{i=0} to
+@math{2^k-1} where @m{g=2^{2N'/2^k}, g=2^(2N'/2^k)}.  @math{g} is a
+@m{2^k,2^k'}th root of unity mod @m{2^{N'}+1,2^N'+1}, which produces necessary
+cancellations at the interpolation stage, and it's also a power of 2 so the
+fast fourier transforms used for the evaluation and interpolation do only
+shifts, adds and negations.
 
 The pointwise multiplications are done modulo @m{2^{N'}+1, 2^N'+1} and either
 recurse into a further FFT or use a plain multiplication (Toom-3, Karatsuba or
-basecase), whichever is optimal at the size @ma{N'}.  The interpolation is an
-inverse fast fourier transform.  The resulting set of sums of @m{x_iy_j,
+basecase), whichever is optimal at the size @math{N'}.  The interpolation is
+an inverse fast fourier transform.  The resulting set of sums of @m{x_iy_j,
 x[i]*y[j]} are added at appropriate offsets to give the final result.
 
-Squaring is the same, but @ma{x} is the only input so it's one transform at
+Squaring is the same, but @math{x} is the only input so it's one transform at
 the evaluate stage and the pointwise multiplies are squares.  The
 interpolation is the same.
 
-For a mod @ma{2^N+1} product, an FFT-@ma{k} is an @m{O(N^{k/(k-1)}),
-O(N^(k/(k-1)))} algorithm, the exponent representing @ma{2^k} recursed modular
-multiplies each @m{1/2^{k-1},1/2^(k-1)} the size of the original.  Each
-successive @ma{k} is an asymptotic improvement, but overheads mean each is
-only faster at bigger and bigger sizes.  In the code, @code{MUL_FFT_TABLE} and
-@code{SQR_FFT_TABLE} are the thresholds where each @ma{k} is used.  Each new
-@ma{k} effectively swaps some multiplying for some shifts, adds and overheads.
+For a mod @math{2^N+1} product, an FFT-@math{k} is an @m{O(N^{k/(k-1)}),
+O(N^(k/(k-1)))} algorithm, the exponent representing @math{2^k} recursed
+modular multiplies each @m{1/2^{k-1},1/2^(k-1)} the size of the original.
+Each successive @math{k} is an asymptotic improvement, but overheads mean each
+is only faster at bigger and bigger sizes.  In the code, @code{MUL_FFT_TABLE}
+and @code{SQR_FFT_TABLE} are the thresholds where each @math{k} is used.  Each
+new @math{k} effectively swaps some multiplying for some shifts, adds and
+overheads.
 
-A mod @ma{2^N+1} product can be formed with a normal
-@ma{N@cross{}N@rightarrow{}2N} bit multiply plus a subtraction, so an FFT and
-Toom-3 etc can be compared directly.  A @ma{k=4} FFT at @ma{O(N^@W{1.333})}
-can be expected to be the first faster than Toom-3 at @ma{O(N^@W{1.465})}.  In
-practice this is what's found, with @code{MUL_FFT_MODF_THRESHOLD} and
-@code{SQR_FFT_MODF_THRESHOLD} being between 300 and 1000 limbs, depending on
-the CPU.  So far it's been found that only very large FFTs recurse into
-pointwise multiplies above these sizes.
+A mod @math{2^N+1} product can be formed with a normal
+@math{N@cross{}N@rightarrow{}2N} bit multiply plus a subtraction, so an FFT
+and Toom-3 etc can be compared directly.  A @math{k=4} FFT at
+@math{O(N^@W{1.333})} can be expected to be the first faster than Toom-3 at
+@math{O(N^@W{1.465})}.  In practice this is what's found, with
+@code{MUL_FFT_MODF_THRESHOLD} and @code{SQR_FFT_MODF_THRESHOLD} being between
+300 and 1000 limbs, depending on the CPU.  So far it's been found that only
+very large FFTs recurse into pointwise multiplies above these sizes.
 
-When an FFT is to give a full product, the change of @ma{N} to @ma{2N} doesn't
-alter the theoretical complexity for a given @ma{k}, but for the purposes of
-considering where an FFT might be first used it can be assumed that the FFT is
-recursing into a normal multiply and that on that basis it's doing @ma{2^k}
-recursed multiplies each @m{1/2^{k-2},1/2^(k-2)} the size of the inputs,
-making it @m{O(N^{k/(k-2)}), O(N^(k/(k-2)))}.  This would mean @ma{k=7} at
-@ma{O(N^@W{1.4})} would be the first FFT faster than Toom-3.  In practice
-@code{MUL_FFT_THRESHOLD} and @code{SQR_FFT_THRESHOLD} have been found to be in
-the @ma{k=8} range, somewhere between 3000 and 10000 limbs.
+When an FFT is to give a full product, the change of @math{N} to @math{2N}
+doesn't alter the theoretical complexity for a given @math{k}, but for the
+purposes of considering where an FFT might be first used it can be assumed
+that the FFT is recursing into a normal multiply and that on that basis it's
+doing @math{2^k} recursed multiplies each @m{1/2^{k-2},1/2^(k-2)} the size of
+the inputs, making it @m{O(N^{k/(k-2)}), O(N^(k/(k-2)))}.  This would mean
+@math{k=7} at @math{O(N^@W{1.4})} would be the first FFT faster than Toom-3.
+In practice @code{MUL_FFT_THRESHOLD} and @code{SQR_FFT_THRESHOLD} have been
+found to be in the @math{k=8} range, somewhere between 3000 and 10000 limbs.
 
-The way @ma{N} is split into @ma{2^k} pieces and then @ma{2M+k+3} is rounded
-up to a multiple of @ma{2^k} and @code{mp_bits_per_limb} means that when
-@ma{2^k@ge{}@nicode{mp\_bits\_per\_limb}} the effective @ma{N} is a multiple
-of @m{2^{2k-1},2^(2k-1)} bits.  The @ma{+k+3} means some values of @ma{N} just
-under such a multiple will be rounded to the next.  The complexity
-calculations above assume that a favourable size is used, meaning one which
-isn't padded through rounding, and it's also assumed that the extra @ma{+k+3}
-bits are negligible at typical FFT sizes.
+The way @math{N} is split into @math{2^k} pieces and then @math{2M+k+3} is
+rounded up to a multiple of @math{2^k} and @code{mp_bits_per_limb} means that
+when @math{2^k@ge{}@nicode{mp\_bits\_per\_limb}} the effective @math{N} is a
+multiple of @m{2^{2k-1},2^(2k-1)} bits.  The @math{+k+3} means some values of
+@math{N} just under such a multiple will be rounded to the next.  The
+complexity calculations above assume that a favourable size is used, meaning
+one which isn't padded through rounding, and it's also assumed that the extra
+@math{+k+3} bits are negligible at typical FFT sizes.
 
 The practical effect of the @m{2^{2k-1},2^(2k-1)} constraint is to introduce a
-step-effect into measured speeds.  For example @ma{k=8} will round @ma{N} up
-to a multiple of 32768 bits, so for a 32-bit limb there'll be 512 limb groups
-of sizes for which @code{mpn_mul_n} runs at the same speed.  Or for @ma{k=9}
-groups of 2048 limbs, @ma{k=10} groups of 8192 limbs, etc.  In practice it's
-been found each @ma{k} is used at quite small multiples of its size constraint
-and so the step effect is quite noticeable in a time versus size graph.
+step-effect into measured speeds.  For example @math{k=8} will round @math{N}
+up to a multiple of 32768 bits, so for a 32-bit limb there'll be 512 limb
+groups of sizes for which @code{mpn_mul_n} runs at the same speed.  Or for
+@math{k=9} groups of 2048 limbs, @math{k=10} groups of 8192 limbs, etc.  In
+practice it's been found each @math{k} is used at quite small multiples of its
+size constraint and so the step effect is quite noticeable in a time versus
+size graph.
 
 The threshold determinations currently measure at the mid-points of size
 steps, but this is sub-optimal since at the start of a new step it can happen
-that it's better to go back to the previous @ma{k} for a while.  Something
+that it's better to go back to the previous @math{k} for a while.  Something
 more sophisticated for @code{MUL_FFT_TABLE} and @code{SQR_FFT_TABLE} will be
 needed.
 
@@ -6840,28 +6836,29 @@ per Knuth section 4.3.3 algorithm C.  This is not currently used, though it's
 possible a Toom-4 might fit in between Toom-3 and the FFTs.  The notes here
 are merely for interest.
 
-In general a split into @ma{r+1} pieces is made, and evaluations and pointwise
-multiplications done at @m{2r+1,2*r+1} points.  A 4-way split does 7 pointwise
-multiplies, 5-way does 9, etc.  Asymptotically an @ma{(r+1)}-way algorithm is
-@m{O(N^{log(2r+1)/log(r+1)}, O(N^(log(2*r+1)/log(r+1)))}.  Only the pointwise
-multiplications count towards big-@ma{O} complexity, but the time spent in the
-evaluate and interpolate stages grows with @ma{r} and has a significant
-practical impact, with the asymptotic advantage of each @ma{r} realized only
-at bigger and bigger sizes.  The overheads grow as @m{O(Nr),O(N*r)}, whereas
-in an @ma{r=2^k} FFT they grow only as @m{O(N \log r), O(N*log(r))}.
+In general a split into @math{r+1} pieces is made, and evaluations and
+pointwise multiplications done at @m{2r+1,2*r+1} points.  A 4-way split does 7
+pointwise multiplies, 5-way does 9, etc.  Asymptotically an @math{(r+1)}-way
+algorithm is @m{O(N^{log(2r+1)/log(r+1)}, O(N^(log(2*r+1)/log(r+1)))}.  Only
+the pointwise multiplications count towards big-@math{O} complexity, but the
+time spent in the evaluate and interpolate stages grows with @math{r} and has
+a significant practical impact, with the asymptotic advantage of each @math{r}
+realized only at bigger and bigger sizes.  The overheads grow as
+@m{O(Nr),O(N*r)}, whereas in an @math{r=2^k} FFT they grow only as @m{O(N \log
+r), O(N*log(r))}.
 
 Knuth algorithm C evaluates at points 0,1,2,@dots{},@m{2r,2*r}, but exercise 4
-uses @ma{-r},@dots{},0,@dots{},@ma{r} and the latter saves some small
+uses @math{-r},@dots{},0,@dots{},@math{r} and the latter saves some small
 multiplies in the evaluate stage (or rather trades them for additions), and
 has a further saving of nearly half the interpolate steps.  The idea is to
 separate odd and even final coefficients and then perform algorithm C steps C7
-and C8 on them separately.  The divisors at step C7 become @ma{j^2} and the
+and C8 on them separately.  The divisors at step C7 become @math{j^2} and the
 multipliers at C8 become @m{2tj-j^2,2*t*j-j^2}.
 
 Splitting odd and even parts through positive and negative points can be
-thought of as using @ma{-1} as a square root of unity.  If a 4th root of unity
-was available then a further split and speedup would be possible, but no such
-root exists for plain integers.  Going to complex integers with
+thought of as using @math{-1} as a square root of unity.  If a 4th root of
+unity was available then a further split and speedup would be possible, but no
+such root exists for plain integers.  Going to complex integers with
 @m{i=\sqrt{-1}, i=sqrt(-1)} doesn't help, essentially because in cartesian
 form it takes three real multiplies to do a complex multiply.  The existence
 of @m{2^k,2^k'}th roots of unity in a suitable ring or field lets the fast
@@ -6899,11 +6896,11 @@ inverse, whichever is best on a given CPU.
 The multiply by inverse follows section 8 of ``Division by Invariant Integers
 using Multiplication'' by Granlund and Montgomery (@pxref{References}) and is
 implemented as @code{udiv_qrnnd_preinv} in @file{gmp-impl.h}.  The idea is to
-have a fixed-point approximation to @ma{1/d} (see @code{invert_limb}) and then
-multiply by the high limb (plus one bit) of the dividend to get a quotient
-@ma{q}.  With @ma{d} normalized (high bit set), @ma{q} is no more than 1 too
-small.  Subtracting @m{qd,q*d} from the dividend gives a remainder, and
-reveals whether @ma{q} or @ma{q-1} is correct.
+have a fixed-point approximation to @math{1/d} (see @code{invert_limb}) and
+then multiply by the high limb (plus one bit) of the dividend to get a
+quotient @math{q}.  With @math{d} normalized (high bit set), @math{q} is no
+more than 1 too small.  Subtracting @m{qd,q*d} from the dividend gives a
+remainder, and reveals whether @math{q} or @math{q-1} is correct.
 
 The result is a division done with two multiplications and four or five
 arithmetic operations.  On CPUs with low latency multipliers this can be much
@@ -6912,15 +6909,15 @@ the start may mean it's only better on inputs bigger than say 4 or 5 limbs.
 
 When a divisor must be normalized, either for the generic C
 @code{__udiv_qrnnd_c} or the multiply by inverse, the division performed is
-actually @m{a2^k,a*2^k} by @m{d2^k,d*2^k} where @ma{a} is the dividend and
-@ma{k} is the power necessary to have the high bit of @m{d2^k,d*2^k} set.  The
-bit shifts for the dividend are usually accomplished ``on the fly'' meaning by
-extracting the appropriate bits at each step.  Done this way the quotient
-limbs come out aligned ready to store.  When only the remainder is wanted, an
-alternative is to take the dividend limbs unshifted and calculate @m{r = a
-\bmod d2^k, r = a mod d*2^k} followed by an extra final step @m{r2^k \bmod
-d2^k, r*2^k mod d*2^k}.  This can help on CPUs with poor bit shifts or few
-registers.
+actually @m{a2^k,a*2^k} by @m{d2^k,d*2^k} where @math{a} is the dividend and
+@math{k} is the power necessary to have the high bit of @m{d2^k,d*2^k} set.
+The bit shifts for the dividend are usually accomplished ``on the fly''
+meaning by extracting the appropriate bits at each step.  Done this way the
+quotient limbs come out aligned ready to store.  When only the remainder is
+wanted, an alternative is to take the dividend limbs unshifted and calculate
+@m{r = a \bmod d2^k, r = a mod d*2^k} followed by an extra final step @m{r2^k
+\bmod d2^k, r*2^k mod d*2^k}.  This can help on CPUs with poor bit shifts or
+few registers.
 
 The multiply by inverse can be done two limbs at a time.  The calculation is
 basically the same, but the inverse is two limbs and the divisor treated as if
@@ -6991,15 +6988,15 @@ little by offering a ready-made advantage over repeated @code{mpn_submul_1}
 calls.
 
 Divide and conquer is asymptotically @m{O(M(N)\log N),O(M(N)*log(N))} where
-@ma{M(N)} is the time for an N@cross{}N multiplication done with FFTs.  The
+@math{M(N)} is the time for an N@cross{}N multiplication done with FFTs.  The
 actual time is a sum over multiplications of the recursed sizes, as can be
 seen near the end of section 2.2 of Burnikel and Ziegler.  For example, within
 the Toom-3 range, divide and conquer is @m{2.63M(N), 2.63*M(N)}.  With higher
-algorithms the @ma{M(N)} term improves and the multiplier tends to @m{\log N,
-log(N)}.  In practice, at moderate to large sizes, a 2N@cross{}N division is
-about 2 to 4 times slower than an N@cross{}N multiplication.
+algorithms the @math{M(N)} term improves and the multiplier tends to @m{\log
+N, log(N)}.  In practice, at moderate to large sizes, a 2N@cross{}N division
+is about 2 to 4 times slower than an N@cross{}N multiplication.
 
-Newton's method used for division is asymptotically @ma{O(M(N))} and should
+Newton's method used for division is asymptotically @math{O(M(N))} and should
 therefore be superior to divide and conquer, but it's believed this would only
 be for large to very large N.
 
@@ -7036,8 +7033,8 @@ a normal basecase division is necessary.
 For an N@cross{}M exact division producing Q=N@minus{}M quotient limbs, the
 saving over a normal basecase division is in two parts.  Firstly, each of the
 Q quotient limbs needs only one multiply, not a 2@cross{}1 divide and
-multiply.  Secondly, the crossproducts are reduced when @ma{Q>M} to
-@m{QM-M(M+1)/2,Q*M-M*(M+1)/2}, or when @ma{Q@le{}M} to @m{Q(Q-1)/2,
+multiply.  Secondly, the crossproducts are reduced when @math{Q>M} to
+@m{QM-M(M+1)/2,Q*M-M*(M+1)/2}, or when @math{Q@le{}M} to @m{Q(Q-1)/2,
 Q*(Q-1)/2}.  Notice the savings are complementary.  If Q is big then many
 divisions are saved, or if Q is small then the crossproducts reduce to a small
 number.
@@ -7070,9 +7067,10 @@ implementations currently exist.
 
 If the exact division algorithm is done with a full subtraction at each stage
 and the dividend isn't a multiple of the divisor, then low zero limbs are
-produced but with a remainder in the high limbs.  For dividend @ma{a}, divisor
-@ma{d}, quotient @ma{q}, and @m{b = 2 \GMPraise{@code{mp\_bits\_per\_limb}}, b
-= 2^mp_bits_per_limb}, then this remainder @ma{r} is of the form
+produced but with a remainder in the high limbs.  For dividend @math{a},
+divisor @math{d}, quotient @math{q}, and @m{b = 2
+\GMPraise{@code{mp\_bits\_per\_limb}}, b = 2^mp_bits_per_limb}, then this
+remainder @math{r} is of the form
 @tex
 $$ a = qd + r b^n $$
 @end tex
@@ -7083,42 +7081,42 @@ a = q*d + r*b^n
 @end example
 
 @end ifnottex
-@ma{n} represents the number of zero limbs produced by the subtractions, that
-being the number of limbs produced for @ma{q}.  @ma{r} will be in the range
-@ma{0@le{}r<d} and can be viewed as a remainder, but one shifted up by a
-factor of @ma{b^n}.
+@math{n} represents the number of zero limbs produced by the subtractions,
+that being the number of limbs produced for @math{q}.  @math{r} will be in the
+range @math{0@le{}r<d} and can be viewed as a remainder, but one shifted up by
+a factor of @math{b^n}.
 
 Carrying out full subtractions at each stage means the same number of cross
 products must be done as a normal division, but there's still some single limb
-divisions saved.  When @ma{d} is a single limb some simplifications arise,
+divisions saved.  When @math{d} is a single limb some simplifications arise,
 providing good speedups on a number of processors.
 
 @code{mpn_bdivmod}, @code{mpn_divexact_by3}, @code{mpn_modexact_1_odd} and the
 @code{redc} function in @code{mpz_powm} differ subtly in how they return
-@ma{r}, leading to some negations in the above formula, but all are
+@math{r}, leading to some negations in the above formula, but all are
 essentially the same.
 
-Clearly @ma{r} is zero when @ma{a} is a multiple of @ma{d}, and this leads to
-divisibility or congruence tests which are potentially more efficient than a
-normal division.
+Clearly @math{r} is zero when @math{a} is a multiple of @math{d}, and this
+leads to divisibility or congruence tests which are potentially more efficient
+than a normal division.
 
-The factor of @ma{b^n} on @ma{r} can be ignored in a GCD when @ma{d} is odd,
-hence the use of @code{mpn_bdivmod} in @code{mpn_gcd}, and the use of
+The factor of @math{b^n} on @math{r} can be ignored in a GCD when @math{d} is
+odd, hence the use of @code{mpn_bdivmod} in @code{mpn_gcd}, and the use of
 @code{mpn_modexact_1_odd} by @code{mpn_gcd_1} and @code{mpz_kronecker_ui} etc
 (@pxref{Greatest Common Divisor Algorithms}).
 
 Montgomery's REDC method for modular multiplications uses operands of the form
 of @m{xb^{-n}, x*b^-n} and @m{yb^{-n}, y*b^-n} and on calculating @m{(xb^{-n})
-(yb^{-n}), (x*b^-n)*(y*b^-n)} uses the factor of @ma{b^n} in the exact
-remainder to reach a product in the same form @m{(xy)b^{-n},
-(x*y)*b^-n} (@pxref{Modular Powering Algorithm}).
+(yb^{-n}), (x*b^-n)*(y*b^-n)} uses the factor of @math{b^n} in the exact
+remainder to reach a product in the same form @m{(xy)b^{-n}, (x*y)*b^-n}
+(@pxref{Modular Powering Algorithm}).
 
-Notice that @ma{r} generally gives no useful information about the ordinary
-remainder @ma{a @bmod d} since @ma{b^n @bmod d} could be anything.  If however
-@ma{b^n @equiv{} 1 @bmod d}, then @ma{r} is the negative of the ordinary
-remainder.  This occurs whenever @ma{d} is a factor of @ma{b^n-1}, as for
-example with 3 in @code{mpn_divexact_by3}.  Other such factors include 5, 17
-and 257, but no particular use has been found for this.
+Notice that @math{r} generally gives no useful information about the ordinary
+remainder @math{a @bmod d} since @math{b^n @bmod d} could be anything.  If
+however @math{b^n @equiv{} 1 @bmod d}, then @math{r} is the negative of the
+ordinary remainder.  This occurs whenever @math{d} is a factor of
+@math{b^n-1}, as for example with 3 in @code{mpn_divexact_by3}.  Other such
+factors include 5, 17 and 257, but no particular use has been found for this.
 
 
 @node Small Quotient Division,  , Exact Remainder, Division Algorithms
@@ -7167,27 +7165,27 @@ section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
 @node Binary GCD, Accelerated GCD, Greatest Common Divisor Algorithms, Greatest Common Divisor Algorithms
 @subsection Binary GCD
 
-At small sizes GMP uses an @ma{O(N^2)} binary style GCD.  This is described in
-many textbooks, for example Knuth section 4.5.2 algorithm B.  It simply
-consists of successively reducing operands @ma{a} and @ma{b} using
-@ma{@gcd{}(a,b) = @gcd{}(@min{}(a,b),@abs{}(a-b))}, and also that if @ma{a}
-and @ma{b} are first made odd then @ma{@abs{}(a-b)} is even and factors of two
-can be discarded.
+At small sizes GMP uses an @math{O(N^2)} binary style GCD.  This is described
+in many textbooks, for example Knuth section 4.5.2 algorithm B.  It simply
+consists of successively reducing operands @math{a} and @math{b} using
+@math{@gcd{}(a,b) = @gcd{}(@min{}(a,b),@abs{}(a-b))}, and also that if
+@math{a} and @math{b} are first made odd then @math{@abs{}(a-b)} is even and
+factors of two can be discarded.
 
-Variants like letting @ma{a-b} become negative and doing a different next step
-are of interest only as far as they suit particular CPUs, since on small
+Variants like letting @math{a-b} become negative and doing a different next
+step are of interest only as far as they suit particular CPUs, since on small
 operands it's machine dependent factors that determine performance.
 
 The Euclidean GCD algorithm, as per Knuth algorithms E and A, reduces using
-@ma{a @bmod b} but this has so far been found to be slower everywhere.  One
+@math{a @bmod b} but this has so far been found to be slower everywhere.  One
 reason the binary method does well is that the implied quotient at each step
 is usually small, so often only one or two subtractions are needed to get the
 same effect as a division.  Quotients 1, 2 and 3 for example occur 67.7% of
 the time, see Knuth section 4.5.3 Theorem E.
 
-When the implied quotient is large, meaning @ma{b} is much smaller than
-@ma{a}, then a division is worthwhile.  This is the basis for the initial
-@ma{a @bmod b} reductions in @code{mpn_gcd} and @code{mpn_gcd_1} (the latter
+When the implied quotient is large, meaning @math{b} is much smaller than
+@math{a}, then a division is worthwhile.  This is the basis for the initial
+@math{a @bmod b} reductions in @code{mpn_gcd} and @code{mpn_gcd_1} (the latter
 for both N@cross{}1 and 1@cross{}1 cases).  But after that initial reduction,
 big quotients occur too rarely to make it worth checking for them.
 
@@ -7198,41 +7196,42 @@ big quotients occur too rarely to make it worth checking for them.
 For sizes above @code{GCD_ACCEL_THRESHOLD}, GMP uses the Accelerated GCD
 algorithm described independently by Weber and Jebelean (the latter as the
 ``Generalized Binary'' algorithm), @pxref{References}.  This algorithm is
-still @ma{O(N^2)}, but is much faster than the binary algorithm since it does
-fewer multi-precision operations.  It consists of alternating the @ma{k}-ary
-reduction by Sorenson, and a ``dmod'' exact remainder reduction.
+still @math{O(N^2)}, but is much faster than the binary algorithm since it
+does fewer multi-precision operations.  It consists of alternating the
+@math{k}-ary reduction by Sorenson, and a ``dmod'' exact remainder reduction.
 
-For operands @ma{u} and @ma{v} the @ma{k}-ary reduction replaces @ma{u} with
-@m{nv-du,n*v-d*u} where @ma{n} and @ma{d} are single limb values chosen to
-give two trailing zero limbs on that value, which can be stripped.  @ma{n} and
-@ma{d} are calculated using an algorithm similar to half of a two limb GCD
-(see @code{find_a} in @file{mpn/generic/gcd.c}).
+For operands @math{u} and @math{v} the @math{k}-ary reduction replaces
+@math{u} with @m{nv-du,n*v-d*u} where @math{n} and @math{d} are single limb
+values chosen to give two trailing zero limbs on that value, which can be
+stripped.  @math{n} and @math{d} are calculated using an algorithm similar to
+half of a two limb GCD (see @code{find_a} in @file{mpn/generic/gcd.c}).
 
-When @ma{u} and @ma{v} differ in size by more than a certain number of bits, a
-dmod is performed to zero out bits at the low end of the larger.  It consists
-of an exact remainder style division applied to an appropriate number of bits
-(@pxref{Exact Division}, and @pxref{Exact Remainder}).  This is faster than a
-@ma{k}-ary reduction but useful only when the operands differ in size.
-There's a dmod after each @ma{k}-ary reduction, and if the dmod leaves the
-operands still differing in size then it's repeated.
+When @math{u} and @math{v} differ in size by more than a certain number of
+bits, a dmod is performed to zero out bits at the low end of the larger.  It
+consists of an exact remainder style division applied to an appropriate number
+of bits (@pxref{Exact Division}, and @pxref{Exact Remainder}).  This is faster
+than a @math{k}-ary reduction but useful only when the operands differ in
+size.  There's a dmod after each @math{k}-ary reduction, and if the dmod
+leaves the operands still differing in size then it's repeated.
 
-The @ma{k}-ary reduction step can introduce spurious factors into the GCD
+The @math{k}-ary reduction step can introduce spurious factors into the GCD
 calculated, and these are eliminated at the end by taking GCDs with the
-original inputs @ma{@gcd{}(u,@gcd{}(v,g))} using the binary algorithm.  Since
-@ma{g} is almost always small this takes very little time.
+original inputs @math{@gcd{}(u,@gcd{}(v,g))} using the binary algorithm.
+Since @math{g} is almost always small this takes very little time.
 
 At small sizes the algorithm needs a good implementation of @code{find_a}.  At
-larger sizes it's dominated by @code{mpn_addmul_1} applying @ma{n} and @ma{d}.
+larger sizes it's dominated by @code{mpn_addmul_1} applying @math{n} and
+@math{d}.
 
 
 @node Extended GCD, Jacobi Symbol, Accelerated GCD, Greatest Common Divisor Algorithms
 @subsection Extended GCD
 
-The extended GCD calculates @ma{@gcd{}(a,b)} and also cofactors @ma{x} and
-@ma{y} satisfying @m{ax+by=\gcd(a@C{}b), a*x+b*y=gcd(a@C{}b)}.  Lehmer's
+The extended GCD calculates @math{@gcd{}(a,b)} and also cofactors @math{x} and
+@math{y} satisfying @m{ax+by=\gcd(a@C{}b), a*x+b*y=gcd(a@C{}b)}.  Lehmer's
 multi-step improvement of the extended Euclidean algorithm is used.  See Knuth
 section 4.5.2 algorithm L, and @file{mpn/generic/gcdext.c}.  This is an
-@ma{O(N^2)} algorithm.
+@math{O(N^2)} algorithm.
 
 The multipliers at each step are found using single limb calculations for
 sizes up to @code{GCDEXT_THRESHOLD}, or double limb calculations above that.
@@ -7253,9 +7252,9 @@ was developed independently.
 
 It should be noted that when a double limb calculation is used, it's used for
 the whole of that GCD, it doesn't fall back to single limb part way through.
-This is because as the algorithm proceeds, the inputs @ma{a} and @ma{b} are
-reduced, but the cofactors @ma{x} and @ma{y} grow, so the multipliers at each
-step are applied to a roughly constant total number of limbs.
+This is because as the algorithm proceeds, the inputs @math{a} and @math{b}
+are reduced, but the cofactors @math{x} and @math{y} grow, so the multipliers
+at each step are applied to a roughly constant total number of limbs.
 
 
 @node Jacobi Symbol,  , Extended GCD, Greatest Common Divisor Algorithms
@@ -7300,18 +7299,18 @@ easy and can be done with somewhat less temporary memory.
 @node Modular Powering Algorithm,  , Normal Powering Algorithm, Powering Algorithms
 @subsection Modular Powering
 
-Modular powering is implemented using a @ma{2^k}-ary sliding window algorithm,
-as per ``Handbook of Applied Cryptography'' algorithm 14.85
-(@pxref{References}).  @ma{k} is chosen according to the size of the exponent.
-Larger exponents use larger values of @ma{k}, the choice being made to
-minimize the average number of multiplications that must supplement the
-squaring.
+Modular powering is implemented using a @math{2^k}-ary sliding window
+algorithm, as per ``Handbook of Applied Cryptography'' algorithm 14.85
+(@pxref{References}).  @math{k} is chosen according to the size of the
+exponent.  Larger exponents use larger values of @math{k}, the choice being
+made to minimize the average number of multiplications that must supplement
+the squaring.
 
 The modular multiplies and squares use either a simple division or the REDC
 method by Montgomery (@pxref{References}).  REDC is a little faster,
 essentially saving N single limb divisions in a fashion similar to an exact
 remainder (@pxref{Exact Remainder}).  The current REDC has some limitations.
-It's only @ma{O(N^2)} so above @code{POWM_THRESHOLD} division becomes faster
+It's only @math{O(N^2)} so above @code{POWM_THRESHOLD} division becomes faster
 and is used.  It doesn't attempt to detect small bases, but rather always uses
 a REDC form, which is usually a full size operand.  And lastly it's only
 applied to odd moduli.
@@ -7338,9 +7337,9 @@ form, but as noted in the paper it can also be viewed as a discrete variant of
 Newton's method.
 
 In the Karatsuba multiplication range this is an @m{O({3\over2}
-M(N/2)),O(1.5*M(N/2))} algorithm, where @ma{M(n)} is the time to multiply two
-numbers of @ma{n} limbs.  In the FFT multiplication range this grows to a
-bound of @m{O(6 M(N/2)),O(6*M(N/2))}.  In practice a factor of about 1.5 to
+M(N/2)),O(1.5*M(N/2))} algorithm, where @math{M(n)} is the time to multiply
+two numbers of @math{n} limbs.  In the FFT multiplication range this grows to
+a bound of @m{O(6 M(N/2)),O(6*M(N/2))}.  In practice a factor of about 1.5 to
 1.8 is found in the Karatsuba and Toom-3 ranges, growing to 2 or 3 in the FFT
 range.
 
@@ -7354,7 +7353,7 @@ padding with zero limbs.
 @subsection Nth Root
 
 Integer Nth roots are taken using Newton's method with the following
-iteration, where @ma{A} is the input and @ma{n} is the root to be taken.
+iteration, where @math{A} is the input and @math{n} is the root to be taken.
 @tex
 $$a_{i+1} = {1\over n} \left({A \over a_i^{n-1}} + (n-1)a_i \right)$$
 @end tex
@@ -7370,8 +7369,9 @@ a[i+1] = - * ( --------- + (n-1)*a[i] )
 The initial approximation @m{a_1,a[1]} is generated bitwise by successively
 powering a trial root with or without new 1 bits, aiming to be just above the
 true root.  The iteration converges quadratically when started from a good
-approximation.  When @ma{n} is large more initial bits are needed to get good
-convergence.  The current implementation is not particularly well optimized.
+approximation.  When @math{n} is large more initial bits are needed to get
+good convergence.  The current implementation is not particularly well
+optimized.
 
 
 @node Perfect Square Algorithm, Perfect Power Algorithm, Nth Root Algorithm, Root Extraction Algorithms
@@ -7401,8 +7401,8 @@ Currently @code{mpz_perfect_power_p} is implemented using repeated Nth root
 extractions, though naturally only prime roots need to be considered.
 (@xref{Nth Root Algorithm}.)
 
-If a prime divisor @ma{p} with multiplicity @ma{e} can be found, then only
-roots which are divisors of @ma{e} need to be considered, much reducing the
+If a prime divisor @math{p} with multiplicity @math{e} can be found, then only
+roots which are divisors of @math{e} need to be considered, much reducing the
 work necessary.  To this end divisibility by a set of small primes is checked.
 
 
@@ -7422,12 +7422,12 @@ dominated by conversions should probably use a different data representation.
 @node Binary to Radix, Radix to Binary, Radix Conversion Algorithms, Radix Conversion Algorithms
 @subsection Binary to Radix
 
-Conversions from binary to a power-of-2 radix use a simple and fast @ma{O(N)}
-bit extraction algorithm.
+Conversions from binary to a power-of-2 radix use a simple and fast
+@math{O(N)} bit extraction algorithm.
 
 Conversions from binary to other radices use repeated divisions, first by the
 biggest power of the radix that fits in a single limb, then by the radix on
-the remainders.  This is an @ma{O(N^2)} algorithm and can be quite
+the remainders.  This is an @math{O(N^2)} algorithm and can be quite
 time-consuming on large inputs.
 
 
@@ -7435,11 +7435,11 @@ time-consuming on large inputs.
 @subsection Radix to Binary
 
 Conversions from a power-of-2 radix into binary use a simple and fast
-@ma{O(N)} bitwise concatenation algorithm.
+@math{O(N)} bitwise concatenation algorithm.
 
 Conversions from other radices use repeated multiplications, first
 accumulating as many digits as fit in a limb, then doing an N@cross{}1
-multi-precision multiplication.  This is @ma{O(N^2)} and is certainly
+multi-precision multiplication.  This is @math{O(N^2)} and is certainly
 sub-optimal on sizes above the Karatsuba multiply threshold.
 
 
@@ -7458,8 +7458,8 @@ sub-optimal on sizes above the Karatsuba multiply threshold.
 @node Factorial Algorithm, Binomial Coefficients Algorithm, Other Algorithms, Other Algorithms
 @subsection Factorial
 
-Factorials @ma{n!} are calculated by a simple product from @ma{1} to @ma{n},
-but arranged into certain sub-products.
+Factorials @math{n!} are calculated by a simple product from @math{1} to
+@math{n}, but arranged into certain sub-products.
 
 First as many factors as fit in a limb are accumulated, then two of those
 multiplied to give a 2-limb product.  When two 2-limb products are ready
@@ -7484,9 +7484,9 @@ advantage would be some multiplies turned into squares.
 @subsection Binomial Coefficients
 
 Binomial coefficients @m{\left({n}\atop{k}\right), C(n@C{}k)} are calculated
-by first arranging @ma{k @le{} n/2} using @m{\left({n}\atop{k}\right) =
+by first arranging @math{k @le{} n/2} using @m{\left({n}\atop{k}\right) =
 \left({n}\atop{n-k}\right), C(n@C{}k) = C(n@C{}n-k)} if necessary, and then
-evaluating the following product simply from @ma{i=2} to @ma{i=k}.
+evaluating the following product simply from @math{i=2} to @math{i=k}.
 @tex
 $$ \left({n}\atop{k}\right) = (n-k+1) \prod_{i=2}^{k} {{n-k+i} \over i} $$
 @end tex
@@ -7499,21 +7499,21 @@ C(n,k) =  (n-k+1) * prod -------
 @end example
 
 @end ifnottex
-It's easy to show that each denominator @ma{i} will divide the product so far,
-so the exact division algorithm is used (@pxref{Exact Division}).
+It's easy to show that each denominator @math{i} will divide the product so
+far, so the exact division algorithm is used (@pxref{Exact Division}).
 
-The numerators @ma{n-k+i} and denominators @ma{i} are first accumulated into
-as many fit a limb, to save multi-precision operations, though for
-@code{mpz_bin_ui} this applies only to the divisors, since @ma{n} is an
-@code{mpz_t} and @ma{n-k+i} in general won't fit in a limb at all.
+The numerators @math{n-k+i} and denominators @math{i} are first accumulated
+into as many fit a limb, to save multi-precision operations, though for
+@code{mpz_bin_ui} this applies only to the divisors, since @math{n} is an
+@code{mpz_t} and @math{n-k+i} in general won't fit in a limb at all.
 
 An obvious improvement would be to strip factors of 2 from each multiplier and
 divisor and count them separately, to be applied with a bit shift at the end.
 Factors of 3 and perhaps 5 could even be handled similarly.  Another
-possibility, if @ma{n} is not too big, would be to determine the prime
+possibility, if @math{n} is not too big, would be to determine the prime
 factorization of the result based on the factorials involved, and power up
-those primes appropriately.  This would help most when @ma{k} is near
-@ma{n/2}.
+those primes appropriately.  This would help most when @math{k} is near
+@math{n/2}.
 
 
 @node Fibonacci Numbers Algorithm, Lucas Numbers Algorithm, Binomial Coefficients Algorithm, Other Algorithms
@@ -7523,13 +7523,13 @@ The Fibonacci functions @code{mpz_fib_ui} and @code{mpz_fib2_ui} are designed
 for calculating isolated @m{F_n,F[n]} or @m{F_n,F[n]},@m{F_{n-1},F[n-1]}
 values efficiently.
 
-For small @ma{n}, a table of single limb values in @code{__gmp_fib_table} is
+For small @math{n}, a table of single limb values in @code{__gmp_fib_table} is
 used.  On a 32-bit limb this goes up to @m{F_{47},F[47]}, or on a 64-bit limb
 up to @m{F_{93},F[93]}.  For convenience the table starts at @m{F_{-1},F[-1]}.
 
 Beyond the table, values are generated with a binary powering algorithm,
 calculating a pair @m{F_n,F[n]} and @m{F_{n-1},F[n-1]} working from high to
-low across the bits of @ma{n}.  The formulas used are
+low across the bits of @math{n}.  The formulas used are
 @tex
 $$\eqalign{
   F_{2k+1} &= 4F_k^2 - F_{k-1}^2 + 2(-1)^k \cr
@@ -7547,28 +7547,28 @@ F[2k] = F[2k+1] - F[2k-1]
 @end example
 
 @end ifnottex
-At each step, @ma{k} is the high @ma{b} bits of @ma{n}.  If the next bit of
-@ma{n} is 0 then @m{F_{2k},F[2k]},@m{F_{2k-1},F[2k-1]} is used, or if it's a 1
-then @m{F_{2k+1},F[2k+1]},@m{F_{2k},F[2k]} is used, and the process repeated
-until all bits of @ma{n} are incorporated.  Notice these formulas require just
-two squares per bit of @ma{n}.
+At each step, @math{k} is the high @math{b} bits of @math{n}.  If the next bit
+of @math{n} is 0 then @m{F_{2k},F[2k]},@m{F_{2k-1},F[2k-1]} is used, or if
+it's a 1 then @m{F_{2k+1},F[2k+1]},@m{F_{2k},F[2k]} is used, and the process
+repeated until all bits of @math{n} are incorporated.  Notice these formulas
+require just two squares per bit of @math{n}.
 
-It'd be possible to handle the first few @ma{n} above the single limb table
+It'd be possible to handle the first few @math{n} above the single limb table
 with simple additions, using the defining Fibonacci recurrence @m{F_{k+1} =
 F_k + F_{k-1}, F[k+1]=F[k]+F[k-1]}, but this is not done since it usually
-turns out to be faster for only about 10 or 20 values of @ma{n}, and including
-a block of code for just those doesn't seem worthwhile.  If they really
-mattered it'd be better to extend the data table.
+turns out to be faster for only about 10 or 20 values of @math{n}, and
+including a block of code for just those doesn't seem worthwhile.  If they
+really mattered it'd be better to extend the data table.
 
 Using a table avoids lots of calculations on small numbers, and makes small
-@ma{n} go fast.  A bigger table would make more small @ma{n} go fast, it's
+@math{n} go fast.  A bigger table would make more small @math{n} go fast, it's
 just a question of balancing size against desired speed.  For GMP the code is
 kept compact, with the emphasis primarily on a good powering algorithm.
 
 @code{mpz_fib2_ui} returns both @m{F_n,F[n]} and @m{F_{n-1},F[n-1]}, but
 @code{mpz_fib_ui} is only interested in @m{F_n,F[n]}.  In this case the last
 step of the algorithm can become one multiply instead of two squares.  One of
-the following two formulas is used, according as @ma{n} is odd or even.
+the following two formulas is used, according as @math{n} is odd or even.
 @tex
 $$\eqalign{
   F_{2k}   &= F_k (F_k + 2F_{k-1}) \cr
@@ -7611,7 +7611,8 @@ L[k-1] = 2*F[k] -   F[k-1]
 
 @end ifnottex
 @code{mpz_lucnum_ui} is only interested in @m{L_n,L[n]}, and some work can be
-saved.  Trailing zero bits on @ma{n} can be handled with a single square each.
+saved.  Trailing zero bits on @math{n} can be handled with a single square
+each.
 @tex
 $$ L_{2k} = L_k^2 - 2(-1)^k $$
 @end tex
@@ -7766,8 +7767,8 @@ integer multipliers.  It's mostly useful for @code{mpn_mul_1},
 
 With IEEE 53-bit double precision floats, integer multiplications producing up
 to 53 bits will give exact results.  Breaking a 64@cross{}64 multiplication
-into eight 16@cross{}@ma{32@rightarrow{}48} bit pieces is convenient.  With
-some care though six 21@cross{}@ma{32@rightarrow{}53} bit products can be
+into eight 16@cross{}@math{32@rightarrow{}48} bit pieces is convenient.  With
+some care though six 21@cross{}@math{32@rightarrow{}53} bit products can be
 used, if one of the lower two 21-bit pieces also uses the sign bit.
 
 For the @code{mpn_mul_1} family of functions on a 64-bit machine, the
@@ -7887,9 +7888,9 @@ two 32-bit parts.
 @end example
 @end ifnottex
 
-@ma{p32} and @ma{r32} can be summed using floating-point addition, and
-likewise @ma{p48} and @ma{r48}.  @ma{p00} and @ma{p16} can be summed with
-@ma{r64} and @ma{r80} from the previous iteration.
+@math{p32} and @math{r32} can be summed using floating-point addition, and
+likewise @math{p48} and @math{r48}.  @math{p00} and @math{p16} can be summed
+with @math{r64} and @math{r80} from the previous iteration.
 
 For each loop then, four 49-bit quantities are transfered to the integer unit,
 aligned as follows,
@@ -7956,7 +7957,7 @@ aligned as follows,
 @end ifnottex
 
 The challenge then is to sum these efficiently and add in a carry limb,
-generating a low 64-bit result limb and a high 33-bit carry limb (@ma{i48}
+generating a low 64-bit result limb and a high 33-bit carry limb (@math{i48}
 extends 33 bits into the high half).
 
 
@@ -8123,8 +8124,8 @@ factors between numerator and denominator, and zero uniquely represented as
 0/1.
 
 It's believed that casting out common factors at each stage of a calculation
-is best in general.  A GCD is an @ma{O(N^2)} operation so it's better to do a
-few small ones immediately than to delay and have to do a big one later.
+is best in general.  A GCD is an @math{O(N^2)} operation so it's better to do
+a few small ones immediately than to delay and have to do a big one later.
 Knowing the numerator and denominator have no common factors can be used for
 example in @code{mpq_mul} to make only two cross GCDs necessary, not four.
 
@@ -8264,8 +8265,8 @@ only in a change of precision with @code{mpf_set_prec}.
 The exponent, in limbs, determining the location of the implied radix point.
 Zero means the radix point is just above the most significant limb.  Positive
 values mean a radix point offset towards the lower limbs and hence a value
-@ma{@ge{} 1}, as for example in the diagram above.  Negative exponents mean a
-radix point further above the highest limb.
+@math{@ge{} 1}, as for example in the diagram above.  Negative exponents mean
+a radix point further above the highest limb.
 
 Naturally the exponent can be any value, it doesn't have to fall within the
 limbs as the diagram shows, it can be a long way above or a long way below.
