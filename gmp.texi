@@ -1302,10 +1302,11 @@ cp libgmp-3.lib /my/inst/dir/lib
 cp _libs/libgmp-3.dll-exp /my/inst/dir/lib/libgmp-3.exp
 @end example
 
-MINGW uses @samp{msvcrt.dll} for I/O, so applications wanting to use the GMP
-I/O routines must be compiled with @samp{cl /MD} to do the same.  If one of
-the other I/O choices provided by MS C is desired then the suggestion is to
-use the GMP string functions and confine I/O to the application.
+MINGW uses the C runtime library @samp{msvcrt.dll} for I/O, so applications
+wanting to use the GMP I/O routines must be compiled with @samp{cl /MD} to do
+the same.  If one of the other C runtime library choices provided by MS C is
+desired then the suggestion is to use the GMP string functions and confine I/O
+to the application.
 
 @item Motorola 68k CPU Types
 @samp{m68k} is taken to mean 68000.  @samp{m68020} or higher will give a
