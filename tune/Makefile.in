@@ -219,6 +219,9 @@ COMPILE_FLAGS = \
 
 SUFFIXES = .s .S .asm
 
+# can be overridden during development, eg. "make RM_TMP=: mul_1.lo"
+RM_TMP = rm -f
+
 MTS = -s 50-150 -c
 
 STS = -s 50-150 -c
@@ -590,11 +593,11 @@ sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 .S.o:
 	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
+	$(RM_TMP) tmp-$*.s
 .S.obj:
 	$(CPP) $(COMPILE_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
+	$(RM_TMP) tmp-$*.s
 
 # We have to rebuild the static object file without passing -DPIC to
 # preprocessor.  The overhead cost is one extra assemblation.
@@ -605,23 +608,23 @@ sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	rm -f tmp-$*.s
+	$(RM_TMP) tmp-$*.s
 
 # *.asm preprocessed with m4.
 .asm.o:
 	$(M4) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
+	$(RM_TMP) tmp-$*.s
 .asm.obj:
 	$(M4) -DOPERATION_$* `cygpath -w $<` >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
+	$(RM_TMP) tmp-$*.s
 .asm.lo:
 	$(M4) -DPIC -DOPERATION_$* $< >tmp-$*.s
 	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(M4) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	rm -f tmp-$*.s
+	$(RM_TMP) tmp-$*.s
 
 # "mk" is multiplication in the karatsuba range
 # "st" is squaring in the toom-cook range, etc
