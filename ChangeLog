@@ -28,6 +28,7 @@ MA 02111-1307, USA.
 	we never use the same algorithm that we're testing.
 	(mul_kara): Delete.
 	(debug_mp): Print just one line of large numbers.
+	(ref_mpn_mul): Rework usage of tp temporary space.
 
 2004-09-15  Torbjorn Granlund  <tege@swox.com>
 
