@@ -1,3 +1,21 @@
+2001-09-26  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium4/sse2/dive_1.asm: New file.
+	* mpn/x86/pentium4/sse2/submul_1.asm: New file.
+	* mpn/x86/pentium4/sse2/sqr_basecase.asm: New file.
+
+	* mpn/x86/pentium/copyi.asm: New file, based on past work by Torbjorn.
+	* mpn/x86/pentium/copyi.asm: New file, ditto.
+	* mpn/x86/pentium/com_n.asm: Rewrite, ditto.
+
+	* printf/snprntffuns.c (gmp_snprintf_format): Copy va_list in case
+	vsnprintf trashes it.
+	* printf/vasprintf.c (gmp_asprintf_format): Ditto.
+	* gmp-impl.h, doprnt.c (va_copy): Move to gmp-impl.h.
+
+	* tests/mpz/t-cmp_d.c (check_low_z_one): Patch by Torbjorn for vax
+	limited float range.
+
 2001-09-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/vax/lshift.s: Change `jsob*' to `sob*'.
@@ -25,7 +43,6 @@
 	SPEED_ROUTINE_MPN_GCD_1_CALL, SPEED_ROUTINE_MPZ_JACOBI): Use return
 	values so gcc 3 won't discard calls to pure or const functions.
 	(mpn_mod_1_div, mpn_mod_1_inv): Add __GMP_ATTRIBUTE_PURE.
-
 
 2001-09-22  Torbjorn Granlund  <tege@swox.com>
 
