@@ -28,6 +28,8 @@
 ! size		%o3
 
 .section	".text"
+	.register	%g2,#scratch
+	.register	%g3,#scratch
 	.align 4
 	.global __mpn_sub_n
 	.type	 __mpn_sub_n,#function
@@ -46,7 +48,7 @@ __mpn_sub_n:
 	ldx [%o1+%o5],%g2		! load s1 limb
 	addcc %g1,%o4,%g1		! add s2 limb and carry variable
 	movcc %xcc,0,%o4		! if carry-out, o4 was 1; clear it
-	subcc %g1,%g2,%g1		! subtract s1 limb from sum
+	subcc %g2,%g1,%g1		! subtract s1 limb from sum
 	stx %g1,[%o0+%o5]		! store result
 	add %o5,8,%o5			! increment address index
 	brnz,pt %g3,.Loop
