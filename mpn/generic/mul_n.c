@@ -408,7 +408,6 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
 {
   mp_size_t k, k1, kk1, r, twok, twor;
   mp_limb_t cy, cc, saved;
-  int cout;
   mp_ptr trec;
   int sa, sb;
   mp_ptr c1, c2, c3, c4, c5;
@@ -645,7 +644,7 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   MPN_DECR_U (v2 + twor, kk1 - twor, cy);
   /* subtract t1 in {c+k, ...} */
   cy = mpn_sub_n (c1, c1, v2, kk1);
-  MPN_DECR_U (c3 + 2, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
+  MPN_DECR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0       t2          vinf      v1  t1      vinf
@@ -681,8 +680,7 @@ void
 mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 {
   mp_size_t k, k1, kk1, r, twok, twor;
-  mp_limb_t cy, cc, saved;
-  int cout;
+  mp_limb_t cy, saved;
   mp_ptr trec;
   int sa;
   mp_ptr c1, c2, c3, c4, c5;
@@ -790,7 +788,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
   cy += mpn_sub_n (v2, v2, vinf, twor);
   MPN_DECR_U (v2 + twor, kk1 - twor, cy);
   cy = mpn_sub_n (c1, c1, v2, kk1);
-  MPN_DECR_U (c3 + 2, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
+  MPN_DECR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
 
   cy = mpn_add_n (c3, c3, v2, kk1);
   MPN_INCR_U (c5 + 1, twor - k - 1, cy); /* 2n-5k = 2r-k */
