@@ -33,7 +33,7 @@ EXTRA_LTLIBRARIES = libdummy.la
 check_LTLIBRARIES = libtests.la
 
 libtests_la_SOURCES = tests.h \
-  memory.c misc.c refmpf.c refmpn.c refmpz.c spinner.c trace.c
+  memory.c misc.c refmpf.c refmpn.c refmpq.c refmpz.c spinner.c trace.c
 libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
 libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
 
