@@ -1,6 +1,6 @@
 dnl  Alpha mpn_invert_limb -- Invert a normalized limb.
 
-dnl  Copyright 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1996, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -19,14 +19,14 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
-
-dnl  This is based on ideas of Peter L. Montgomery.
-dnl
-dnl  The table below uses 4096 bytes.  The file mentioned above has an
-dnl  alternative function that doesn't require the table, but it runs 50%
-dnl  slower than this.
-
 include(`../config.m4')
+
+C      cycles/limb
+C EV4:    ???
+C EV5:    125
+C EV6:     67
+
+C  This is based on ideas of Peter L. Montgomery.
 
 ASM_START()
 
@@ -44,8 +44,8 @@ $73:
 	ldt	f11,0(r30)
 	cvtqt	f11,f1
 	LEA(r1,$C36)
-	ldt	f10,0(r1)
-	divt	f10,f1,f10
+	ldt	f10,0(r1)		C f10 = 2^63
+	divt	f10,f1,f10		C f10 = 2^63 / (u / 2)
 	LEA(r2,$invtab-4096)
 	srl	r16,52,r1		C extract high 8 bits
 	addq	r1,r1,r1		C align ...0000bbbbbbbb0
