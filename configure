@@ -9376,7 +9376,7 @@ AR=$lt_AR
 AR_FLAGS=$lt_AR_FLAGS
 
 # A C compiler.
-LTCC=$LTCC
+LTCC="$LTCC"
 
 # A language-specific compiler.
 CC=$lt_compiler
@@ -12427,7 +12427,7 @@ AR=$lt_AR
 AR_FLAGS=$lt_AR_FLAGS
 
 # A C compiler.
-LTCC=$LTCC
+LTCC="$LTCC"
 
 # A language-specific compiler.
 CC=$lt_compiler_CXX
@@ -15082,7 +15082,7 @@ AR=$lt_AR
 AR_FLAGS=$lt_AR_FLAGS
 
 # A C compiler.
-LTCC=$LTCC
+LTCC="$LTCC"
 
 # A language-specific compiler.
 CC=$lt_compiler_GCJ
@@ -15483,7 +15483,7 @@ AR=$lt_AR
 AR_FLAGS=$lt_AR_FLAGS
 
 # A C compiler.
-LTCC=$LTCC
+LTCC="$LTCC"
 
 # A language-specific compiler.
 CC=$lt_compiler_RC
