@@ -437,7 +437,7 @@ void __gmp_default_free _PROTO ((void *, size_t));
    stack usage is compatible.  __attribute__ ((regparm (N))) helps by
    putting leading parameters in registers, avoiding extra stack.  */
 
-#if (defined (__i386__) || defined (__i486__)) && __GMP_GNUC_PREREQ (2,96)
+#if HAVE_HOST_CPU_FAMILY_x86 && __GMP_GNUC_PREREQ (2,96)
 #define USE_LEADING_REGPARM 1
 #else
 #define USE_LEADING_REGPARM 0
@@ -468,7 +468,7 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #define ASM_L(name)  LSYM_PREFIX "asm_%=_" #name
 
 
-#if defined (__GNUC__) && defined (__i386__)
+#if defined (__GNUC__) && HAVE_HOST_CPU_FAMILY_x86
 #if 0
 /* FIXME: Check that these actually improve things.
    FIXME: Need a cld after each std.
@@ -608,13 +608,18 @@ mp_limb_t mpn_dc_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 #define mpz_divexact_gcd  __gmpz_divexact_gcd
 void mpz_divexact_gcd _PROTO ((mpz_ptr q, mpz_srcptr a, mpz_srcptr d));
 
+#define mpz_inp_str_nowhite __gmpz_inp_str_nowhite
+#ifdef _GMP_H_HAVE_FILE
+size_t mpz_inp_str_nowhite _PROTO ((mpz_ptr x, FILE *stream, int base, int c, size_t nread));
+#endif
+
 #define mpn_divisible_p __MPN(divisible_p)
 int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
                                  mp_srcptr dp, mp_size_t dsize)) __GMP_ATTRIBUTE_PURE;
 
 
 /* from gmp.h */
-#if defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)
+#if HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc
 #define MPN_COPY_INCR(dst, src, size)                   \
   do {                                                  \
     ASSERT ((size) >= 0);                               \
@@ -649,7 +654,7 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
 
 /* As per __GMPN_COPY_INCR in gmp.h. */
-#if defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)
+#if HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc
 #define MPN_COPY_DECR(dst, src, size)                   \
   do {                                                  \
     ASSERT ((size) >= 0);                               \
@@ -727,9 +732,14 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
    applies here as to __GMPN_COPY_INCR in gmp.h.
 
    xlc 3.1 already generates stu/bdnz from the generic C, and does so from
-   this loop too.  */
+   this loop too.
 
-#if defined (_ARCH_PPC) || defined (_ARCH_PWR) || defined (__powerpc__)
+   Enhancement: GLIBC does some trickery with dcbz to zero whole cache lines
+   at a time.  MPN_ZERO isn't all that important in GMP, so it might be more
+   trouble than it's worth to do the same, though perhaps a call to memset
+   would be good when on a GNU system.  */
+
+#if HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc
 #define MPN_ZERO(dst, size)             \
   do {                                  \
     ASSERT ((size) >= 0);               \
@@ -1230,7 +1240,7 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
    declaring their operand sizes, then remove the former.  This is purely
    for the benefit of assertion checking.  */
 
-#if defined (__GNUC__) && (defined (__i386__) || defined (__i486__))    \
+#if defined (__GNUC__) && HAVE_HOST_CPU_FAMILY_x86                      \
   && BITS_PER_MP_LIMB == 32 && ! defined (NO_ASM) && ! WANT_ASSERT
 /* Better flags handling than the generic C gives on i386, saving a few
    bytes of code and maybe a cycle or two.  aors is an add or sub, iord is
@@ -1367,7 +1377,7 @@ struct bases
 extern const struct bases __mp_bases[256];
 
 
-#if defined (__i386__)
+#if HAVE_HOST_CPU_FAMILY_x86
 #define TARGET_REGISTER_STARVED 1
 #else
 #define TARGET_REGISTER_STARVED 0
@@ -1664,8 +1674,7 @@ extern const unsigned char  modlimb_invert_table[128];
 /* Set "p" to 1 if there's an odd number of 1 bits in "n", or to 0 if
    there's an even number.  */
 
-#if defined (__GNUC__) && ! defined (NO_ASM) \
-  && (defined (__i386__) || defined (__i486__))
+#if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_FAMILY_x86
 #define ULONG_PARITY(p, n)              \
   do {                                  \
     char           __p;                 \
