@@ -693,4 +693,5 @@ GMP_FINISH
 dnl  Create Makefiles
 dnl  FIXME: Upcoming version of autoconf/automake may not like broken lines.
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
-  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile)
+  mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile \
+  tests/Makefile tests/rand/Makefile)
