@@ -119,7 +119,9 @@ check_sqrt (int reps)
       if (res != (mpz_cmp (x2, x2t) == 0))
         {
           printf    ("mpz_perfect_square_p and mpz_sqrt differ\n");
-          mpz_trace ("   x", x);
+          mpz_trace ("   x  ", x);
+          mpz_trace ("   x2 ", x2);
+          mpz_trace ("   x2t", x2t);
           printf    ("   mpz_perfect_square_p %d\n", res);
           printf    ("   mpz_sqrt             %d\n", mpz_cmp (x2, x2t) == 0);
           abort ();
