@@ -37,6 +37,11 @@ Changes between MP version 4.1.2 and 4.2
 * Conversions mpz_get_d, mpq_get_d, mpf_get_d truncate towards zero,
   previously their behaviour was unspecified.
 
+Changes between MP version 4.1.2 and 4.1.3
+
+* Bug fixes.
+* mpz_export allows NULL for countp parameter.
+
 Changes between MP version 4.1.1 and 4.1.2
 
 * Bug fixes.
