@@ -398,6 +398,12 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #define __GMP_FREE_FUNC_TYPE(p,n,type) (*__gmp_free_func) (p, (n) * sizeof (type))
 #define __GMP_FREE_FUNC_LIMBS(p,n)     __GMP_FREE_FUNC_TYPE (p, n, mp_limb_t)
 
+#define __GMP_REALLOCATE_FUNC_MAYBE(ptr, oldsize, newsize)      \
+  do {                                                          \
+    if ((oldsize) != (newsize))                                 \
+      (ptr) = (*__gmp_reallocate_func) (ptr, oldsize, newsize); \
+  } while (0)
+
 
 /* const and signed must match __gmp_const and __gmp_signed, so follow the
    decision made for those in gmp.h.    */
@@ -468,7 +474,7 @@ void __gmp_default_free _PROTO ((void *, size_t));
 void __gmpz_aorsmul_1 _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr u, mp_limb_t v, mp_size_t sub))) REGPARM_ATTR(1);
 #define mpz_aorsmul_1(w,u,v,sub)  __gmpz_aorsmul_1 (REGPARM_3_1 (w, u, v, sub))
 
-#define mpn_fib2_ui __gmpn_fib2_ui
+#define mpn_fib2_ui __MPN(fib2_ui)
 mp_size_t mpn_fib2_ui _PROTO ((mp_ptr, mp_ptr, unsigned long));
 
 /* Remap names of internal mpn functions.  */
@@ -637,14 +643,13 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define MPN_COPY_DECR(dst, src, size)                   \
   do {                                                  \
     ASSERT ((size) >= 0);                               \
-    ASSERT (MPN_SAME_OR_INCR_P (dst, src, size));       \
+    ASSERT (MPN_SAME_OR_DECR_P (dst, src, size));       \
     mpn_copyd (dst, src, size);                         \
   } while (0)
-#else
-
+#endif
 
 /* NLIMBS==0 allowed */
-#ifndef MPN_COPY_DECR
+#if ! defined (MPN_COPY_DECR)
 #define MPN_COPY_DECR(DST, SRC, NLIMBS)                 \
   do {                                                  \
     mp_size_t __i;                                      \
@@ -654,7 +659,7 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
       (DST)[__i] = (SRC)[__i];                          \
   } while (0)
 #endif
-#endif
+
 
 /* Define MPN_COPY for vector computers.  Since #pragma cannot be in a macro,
    rely on function inlining.
@@ -994,13 +999,6 @@ extern const mp_limb_t __gmp_fib_table[];
   ((dst) >= (src) || ! MPN_OVERLAP_P (dst, dsize, src, ssize))
 #define MPN_SAME_OR_DECR_P(dst, src, size)      \
   MPN_SAME_OR_DECR2_P(dst, size, src, size)
-
-
-#if HAVE_VOID
-#define CAST_TO_VOID        (void)
-#else
-#define CAST_TO_VOID
-#endif
 
 
 /* ASSERT() is a private assertion checking scheme, similar to <assert.h>.
