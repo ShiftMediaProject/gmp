@@ -1029,11 +1029,6 @@ all (void)
   }
 #endif /* ! HAVE_NATIVE_mpn_divrem_1 */
 
-  /* use the regular mpn_divrem_1 if there's no tuned version */
-#ifndef SPEED_MPN_DIVREM_1
-#define SPEED_MPN_DIVREM_1  speed_mpn_divrem_1
-#endif
-
 #if ! HAVE_NATIVE_mpn_mod_1
 #define SPEED_MPN_MOD_1  speed_mpn_mod_1_tune
   {
@@ -1055,7 +1050,10 @@ all (void)
 #endif /* ! HAVE_NATIVE_mpn_mod_1 */
 #endif /* ! UDIV_PREINV_ALWAYS */
 
-  /* use the regular mpn_mod_1 if there's no tuned version */
+  /* use the regular versions if there's no tuned version */
+#ifndef SPEED_MPN_DIVREM_1
+#define SPEED_MPN_DIVREM_1  speed_mpn_divrem_1
+#endif
 #ifndef SPEED_MPN_MOD_1
 #define SPEED_MPN_MOD_1  speed_mpn_mod_1
 #endif
