@@ -194,6 +194,16 @@ char *shrt_max_def = "not defined";
 #endif
 
 
+/* The tests below marked "Bad!" fail on Cray T90 systems, where int, short
+   and mp_size_t are 48 bits or some such but don't wraparound in a plain
+   twos complement fashion.  In particular,
+
+       INT_HIGHBIT << 1 = 0xFFFFC00000000000 != 0
+       INT_MAX + 1 = 35184372088832 != INT_MIN = -35184372088832
+
+   This is a bit bizarre, but doesn't matter because GMP doesn't rely on any
+   particular overflow behaviour for int or short, only for mp_limb_t.  */
+
 int
 main (int argc, char *argv[])
 {
@@ -201,19 +211,21 @@ main (int argc, char *argv[])
 
   CHECK_INT (BYTES_PER_MP_LIMB, sizeof(mp_limb_t));
   CHECK_INT (mp_bits_per_limb, BITS_PER_MP_LIMB);
+
   CHECK_BITS (BITS_PER_MP_LIMB, mp_limb_t);
+  CHECK_BITS (BITS_PER_ULONG, unsigned long);
 
   CHECK_HIGHBIT (MP_LIMB_T_HIGHBIT, mp_limb_t,      LL("0x%lX","0x%lX"));
   CHECK_HIGHBIT (ULONG_HIGHBIT,     unsigned long,  "0x%lX");
   CHECK_HIGHBIT (UINT_HIGHBIT,      unsigned int,   "0x%X");
   CHECK_HIGHBIT (USHRT_HIGHBIT,     unsigned short, "0x%hX");
   CHECK_HIGHBIT (LONG_HIGHBIT,      long,           "0x%lX");
-#if 0 /* These are undefined! */
+#if 0 /* Bad! */
   CHECK_HIGHBIT (INT_HIGHBIT,       int,            "0x%X");
   CHECK_HIGHBIT (SHRT_HIGHBIT,      short,          "0x%hX");
 #endif
 
-#if 0 /* These are undefined! */
+#if 0 /* Bad! */
   CHECK_MAX (LONG_MAX,      LONG_MIN,      long,           "%ld");
   CHECK_MAX (INT_MAX,       INT_MIN,       int,            "%d");
   CHECK_MAX (SHRT_MAX,      SHRT_MIN,      short,          "%hd");
@@ -221,7 +233,7 @@ main (int argc, char *argv[])
   CHECK_MAX (ULONG_MAX,     0,             unsigned long,  "%lu");
   CHECK_MAX (UINT_MAX,      0,             unsigned int,   "%u");
   CHECK_MAX (USHRT_MAX,     0,             unsigned short, "%hu");
-#if 0 /* This is undefined! */
+#if 0 /* Bad! */
   CHECK_MAX (MP_SIZE_T_MAX, MP_SIZE_T_MIN, mp_size_t,      SS("%d","%ld"));
 #endif
 
