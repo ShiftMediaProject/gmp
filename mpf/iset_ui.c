@@ -29,8 +29,8 @@ mpf_init_set_ui (mpf_ptr r, unsigned long int val)
   mp_size_t prec = __gmp_default_fp_limb_precision;
   mp_size_t size;
 
-  r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);
   r->_mp_prec = prec;
+  r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);
   r->_mp_d[0] = val & GMP_NUMB_MASK;
   size = (val != 0);
 
