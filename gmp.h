@@ -194,6 +194,10 @@ extern __gmp_const int mp_bits_per_limb;
 #define gmp_randseed_ui __gmp_randseed_ui
 #define gmp_randclear __gmp_randclear
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 void _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long int));
 void gmp_randinit _PROTO ((gmp_randstate_t, gmp_randalg_t, ...));
 void gmp_randinit_lc _PROTO ((gmp_randstate_t, mpz_t, unsigned long int,
@@ -203,6 +207,10 @@ void gmp_randinit_lc_2exp _PROTO ((gmp_randstate_t, mpz_t, unsigned long int,
 void gmp_randseed _PROTO ((gmp_randstate_t, mpz_t));
 void gmp_randseed_ui _PROTO ((gmp_randstate_t, unsigned long int));
 void gmp_randclear _PROTO ((gmp_randstate_t));
+
+#if defined (__cplusplus)
+}
+#endif
 
 /**************** Integer (i.e. Z) routines.  ****************/
 
@@ -502,7 +510,7 @@ void mpq_mul _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 void mpq_div _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 void mpq_neg _PROTO ((mpq_ptr, mpq_srcptr));
 int mpq_cmp _PROTO ((mpq_srcptr, mpq_srcptr));
-int mpq_cmp_ui _PROTO ((mpq_srcptr, unsigned long int, unsigned long int));
+int _mpq_cmp_ui _PROTO ((mpq_srcptr, unsigned long int, unsigned long int));
 int mpq_equal _PROTO ((mpq_srcptr, mpq_srcptr));
 void mpq_inv _PROTO ((mpq_ptr, mpq_srcptr));
 void mpq_set_num _PROTO ((mpq_ptr, mpz_srcptr));
@@ -652,7 +660,6 @@ void mpf_urandomb _PROTO ((mpf_t, gmp_randstate_t, unsigned long int));
 /* #define mpn_com_n		__MPN(com_n) */
 #define mpn_copyd		__MPN(copyd)
 #define mpn_copyi		__MPN(copyi)
-#define mpn_divexact_by3        __MPN(divexact_by3)
 #define mpn_divmod_1		__MPN(divmod_1)
 #define mpn_divmod_1c		__MPN(divmod_1c)
 #define mpn_divrem		__MPN(divrem)
@@ -716,7 +723,13 @@ mp_limb_t mpn_addmul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_addsub_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_bdivmod _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, unsigned long int));
 int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
-mp_limb_t mpn_divexact_by3 _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
+
+#define mpn_divexact_by3(dst, src, size)  mpn_divexact_by3c (dst, src, size, 0)
+
+#define mpn_divexact_by3c  __MPN(divexact_by3c)
+mp_limb_t mpn_divexact_by3c _PROTO ((mp_ptr dst, mp_srcptr src,
+                                     mp_size_t size, mp_limb_t carry));
+
 mp_limb_t mpn_divmod_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_divrem _PROTO((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
