@@ -89,6 +89,14 @@ pentium | pentiummmx | pentiumpro | pentium[234] | k[56] | k6[23] | athlon)
   test_cpu=i386 ;;
 power[12] | power2sc)
   test_cpu=power ;;
+powerpc401 | powerpc403 | powerpc405 | \
+powerpc505 | \
+powerpc601 | powerpc602  | \
+powerpc603 | powerpc603e | \
+powerpc604 | powerpc604e | \
+powerpc620 | powerpc630  | \
+powerpc740 | powerpc7400 | powerpc7450 | powerpc750  | \
+powerpc801 | powerpc821 | powerpc823  | powerpc860 | \
 powerpc64)
   test_cpu=powerpc ;;
 sparcv8 | supersparc | microsparc | ultrasparc | ultrasparc[123])

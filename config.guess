@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000, 2001 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -254,29 +254,100 @@ EOF
   fi
   ;;
 
-rs6000-*-aix4* | powerpc-*-aix4*)
-  cat >$dummy.c <<EOF
-#include <stdio.h>
-#include <sys/systemcfg.h>
+
+rs6000-*-* | powerpc-*-*)
+  # Try to read the PVR.  mfpvr is a protected instruction, the linux kernel
+  # allows it in user mode, but MacOS and AIX don't.
+  cat >$dummy.c <<\EOF
+/* this is a bit nasty, but saves worrying about the assembler syntax */
+const unsigned char  getpvr[] = {
+   0x7c, 0x7f, 0x42, 0xa6,  /* mfpvr r3 */
+   0x4e, 0x80, 0x00, 0x20,  /* blr      */
+};
+int
 main ()
 {
-  if (_system_configuration.architecture == POWER_RS
-      || _system_configuration.implementation == POWER_601)
-    puts ("power");
-  else
-    {
-      if (_system_configuration.width == 64)
-        puts ("powerpc64");
-      else
-        puts ("powerpc");
-    }
-  exit (0);
+  unsigned  (*fun)();
+  unsigned  pvr;
+  /* a separate "fun" variable is necessary for the gcc 2.95.2 on MacOS,
+     it gets a compiler error on a combined cast and call */
+  fun = (unsigned (*)()) getpvr;
+  pvr = (*fun) ();
+  switch (pvr >> 16) {
+  case 1:  puts ("601");    break;
+  case 3:  puts ("603");    break;
+  case 4:  puts ("604");    break;
+  case 6:  puts ("603e");   break;
+  case 7:  puts ("603ev");  break;
+  case 8:  puts ("750");    break;
+  case 9:  puts ("604e");   break;
+  case 10: puts ("604e");   break;  /* 604ev5 */
+  case 50: puts ("821");    break;
+  case 80: puts ("860");    break;
+  }
+  return 0;
 }
 EOF
   if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
-    exact_cpu=`./$dummy`
+    x=`(./$dummy) >/dev/null 2>&1`
+    if test -n "$x"; then
+      exact_cpu=powerpc$x
+    fi
   fi
   rm -f $dummy.c $dummy
+
+  # Grep the linux kernel /proc/cpuinfo pseudo-file.
+  # Anything unrecognised is ignored, since of course we mustn't spit out
+  # a cpu type config.sub doesn't know.
+  if test -z "$exact_cpu" && test -f /proc/cpuinfo; then
+    x=`sed -n 's/^cpu[ 	]*:[ 	]*\([a-z0-9]*\).*/\1/p' /proc/cpuinfo`
+    case $x in
+      601)     exact_cpu="power" ;;
+      604ev5)  exact_cpu="powerpc604e" ;;
+      603 | 603e | 603ev | 604 | 604e | 750 | 821 | 860)
+        exact_cpu="powerpc$x" ;;
+    esac
+  fi
+
+  if test -z "$exact_cpu"; then
+    # On AIX, try looking at _system_configuration.  This is present in
+    # version 4 at least.
+    cat >$dummy.c <<EOF
+#include <stdio.h>
+#include <sys/systemcfg.h>
+int
+main ()
+{
+  switch (_system_configuration.implementation) {
+  case POWER_601:    puts ("power");      break;
+  case POWER_603:    puts ("powerpc603"); break;
+  case POWER_604:    puts ("powerpc604"); break;
+  case POWER_620:    puts ("powerpc620"); break;
+  case POWER_630:    puts ("powerpc630"); break;
+  /* Dunno what this is, leave it out for now. 
+  case POWER_A35:    puts ("powerpca35"); break;
+  */
+  /* This is waiting on a bit more info.
+  case POWER_RS64II: puts ("powerpcrs64ii"); break;
+  */
+  default:
+    if (_system_configuration.architecture == POWER_RS)
+      puts ("power");
+    else if (_system_configuration.width == 64)
+      puts ("powerpc64");
+  }
+  return 0;
+}
+EOF
+    if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
+      x=`./$dummy`
+echo $x
+      if test -n "$x"; then
+        exact_cpu=$x
+      fi
+    fi
+    rm -f $dummy.c $dummy
+  fi
   ;;
 
 sparc-*-*)
