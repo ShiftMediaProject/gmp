@@ -1,5 +1,7 @@
 2001-04-24  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/lcm.c (mpz_lcm): Make result always positive.
+
 	* gmp-h.in (mpz_inp_binary, mpz_out_binary): Remove declarations.
 
 2001-04-22  Kevin Ryde  <kevin@swox.se>
