@@ -567,7 +567,7 @@ dnl  selections, so the result is not cached.
 AC_DEFUN(GMP_PROG_CXX_WORKS,
 [AC_MSG_CHECKING([C++ compiler $1])
 cat >conftest.cc <<EOF
-#include <iostream.h>
+#include <iostream>
 int
 main (void)
 {
