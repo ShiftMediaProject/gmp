@@ -101,6 +101,8 @@ MA 02111-1307, USA. */
    Please add support for more CPUs here, or improve the current support
    for the CPUs below!  */
 
+/* FIXME: The macros using external routines like __MPN(count_leading_zeros)
+   don't need to be under !NO_ASM */
 #if ! defined (NO_ASM)
 
 #if defined (__alpha) && W_TYPE_SIZE == 64
