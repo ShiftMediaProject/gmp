@@ -1,8 +1,17 @@
 1999-05-20  Linus Nordberg  <linus@swox.se>
 
 	* Makefile.in: Rename randi.c --> rand.c, randi_lc.c --> randlc.c,
-	randicom.c --> randcm.c.  
+	randicom.c --> randcm.c.  Add randui.c, randcmui.c, randlcui.c.
 	* make.bat: Ditto.
+	
+	* gmp.h: Add prototypes for gmp_rand_init_ui() and
+	gmp_rand_init_lc_ui().
+
+	* gmp-impl.h: Add prototypes for __gmp_rand_init_common() and
+	__gmp_rand_init_common_ui().
+
+	* randlc.c, randcm.c, randclr.c, rand.c: Change #include of
+	<gmp.h> to "gmp.h".
 
 1999-05-12  Torbjorn Granlund  <tege@swox.com>
 

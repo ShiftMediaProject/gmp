@@ -20,7 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdlib.h>		/* FIXME: For malloc(). */
-#include <gmp.h>
+#include "gmp.h"
 
 /* Array of CL-schemes, ordered in increasing order for the first
    member (the 'bits' value).  The 'm' entry is converted by
@@ -45,9 +45,6 @@ static __gmp_rand_lc_scheme_struct __gmp_rand_scheme[] =
    "1103515245",		/* a (multiplier) */
    12345,			/* c (adder) */
    "0x80000000"},	/* m (modulo) = 2^31 */
-
-  /* Testing. FIXME: Remove. */
-  /*  {32, "2",  1, "10"},*/
 
   /* The multipliers are all between 0.01m and 0.99m, and are
      congruent to 5 (mod 8). */

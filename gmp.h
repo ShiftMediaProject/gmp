@@ -209,12 +209,22 @@ int gmp_rand_init _PROTO ((gmp_rand_state *s,
 			   gmp_rand_algorithm alg,
 			   unsigned long int size,
 			   mpz_t seed));
+int gmp_rand_init_ui _PROTO ((gmp_rand_state *s,
+			      gmp_rand_algorithm alg,
+			      unsigned long int size,
+			      unsigned long int seed));
 void gmp_rand_init_lc _PROTO ((gmp_rand_state *s,
 			       unsigned long int size,
 			       mpz_t seed,
 			       mpz_t a,
 			       unsigned long int c,
 			       mpz_t m));
+void gmp_rand_init_lc_ui _PROTO ((gmp_rand_state *s,
+				  unsigned long int size,
+				  unsigned long int seed,
+				  unsigned long int a,
+				  unsigned long int c,
+				  unsigned long int m));
 void gmp_rand_clear _PROTO ((gmp_rand_state *s));
 
 /**************** Integer (i.e. Z) routines.  ****************/

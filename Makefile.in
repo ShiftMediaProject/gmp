@@ -47,12 +47,12 @@ LN = ln -s
 #### host and target specific makefile fragments come in here.
 ###
 
-SRCS = memory.c mp_set_fns.c mp_clz_tab.c rand.c randclr.c randcm.c \
-  randlc.c version.c stack-alloc.c mp_bpl.c extract-dbl.c \
-  insert-dbl.c
-OBJS = memory.o mp_set_fns.o mp_clz_tab.o rand.o randclr.o randcm.o \
-  randlc.o version.o stack-alloc.o mp_bpl.o extract-dbl.o \
-  insert-dbl.o
+SRCS = memory.c mp_set_fns.c mp_clz_tab.c rand.c randui.c randclr.c randcm.c \
+  randcmui.c randlc.c randlcui.c version.c stack-alloc.c mp_bpl.c \
+  extract-dbl.c insert-dbl.c
+OBJS = memory.o mp_set_fns.o mp_clz_tab.o rand.o randui.o randclr.o randcm.o \
+  randcmui.o randlc.o randlcui.o version.o stack-alloc.o mp_bpl.o \
+  extract-dbl.o insert-dbl.o
 FILES = gmp.h mp.h gmp-impl.h longlong.h urandom.h move-if-change \
  mkinstalldirs INSTALL COPYING.LIB ChangeLog Makefile.in \
  NEWS README SPEED TODO config.guess config.sub configure configure.in \
@@ -205,9 +205,12 @@ mp_bpl.o: $(srcdir)/mp_bpl.c
 mp_clz_tab.o: $(srcdir)/mp_clz_tab.c
 mp_set_fns.o: $(srcdir)/mp_set_fns.c $(H)
 rand.o: $(srcdir)/rand.c $(H)
+randui.o: $(srcdir)/randui.c $(H)
 randclr.o: $(srcdir)/randclr.c $(H)
 randcm.o: $(srcdir)/randcm.c $(H)
+randcmui.o: $(srcdir)/randcmui.c $(H)
 randlc.o: $(srcdir)/randlc.c $(H)
+randlcui.o: $(srcdir)/randlcui.c $(H)
 stack-alloc.o: $(srcdir)/stack-alloc.c $(srcdir)/stack-alloc.h
 version.o: $(srcdir)/version.c
 
