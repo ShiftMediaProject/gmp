@@ -1,4 +1,4 @@
-/* mpn_mod_34lsub1 -- remainder modulo 2^(BITS_PER_MP_LIMB*3/4)-1.
+/* mpn_mod_34lsub1 -- remainder modulo 2^(GMP_NUMB_BITS*3/4)-1.
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
@@ -28,16 +28,36 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-/* Calculate a remainder from {p,n} divided by 2^(BITS_PER_MP_LIMB*3/4)-1.
+/* Calculate a remainder from {p,n} divided by 2^(GMP_NUMB_BITS*3/4)-1.
    The remainder is not fully reduced, it's any limb value congruent to
    {p,n} modulo that divisor.
 
-   This implementation is only correct when BITS_PER_MP_LIMB is a multiple
-   of 4, but that suffices for all current uses.  */
+   This implementation is only correct when GMP_NUMB_BITS is a multiple of
+   4.
 
-#if BITS_PER_MP_LIMB % 4 == 0
+   FIXME: If GMP_NAIL_BITS is some silly big value during development then
+   it's possible the carry accumulators c0,c1,c2 could overflow.
 
-#define B1  (BITS_PER_MP_LIMB / 4)
+   General notes:
+
+   The basic idea is to use a set of N accumulators (N=3 in this case) to
+   effectively get a remainder mod 2^(GMP_NUMB_BITS*N)-1 followed at the end
+   by a reduction to GMP_NUMB_BITS*N/M bits (M=4 in this case) for a
+   remainder mod 2^(GMP_NUMB_BITS*N/M)-1.  N and M are chosen to give a good
+   set of small prime factors in 2^(GMP_NUMB_BITS*N/M)-1.
+
+   N=3 M=4 suits GMP_NUMB_BITS==32 and GMP_NUMB_BITS==64 quite well, giving
+   a few more primes than a single accumulator N=1 does, and for no extra
+   cost (assuming the processor has a decent number of registers).
+
+   For strange nailified values of GMP_NUMB_BITS the idea would be to look
+   for what N and M give good primes.  With GMP_NUMB_BITS not a power of 2
+   the choices for M may be opened up a bit.  But such things are probably
+   best done in separate code, not grafted on here.  */
+
+#if GMP_NUMB_BITS % 4 == 0
+
+#define B1  (GMP_NUMB_BITS / 4)
 #define B2  (B1 * 2)
 #define B3  (B1 * 3)
 
@@ -58,11 +78,11 @@ MA 02111-1307, USA. */
 #define PARTS1(n)    (LOW1(n) + HIGH1(n))
 #define PARTS2(n)    (LOW2(n) + HIGH2(n))
 
-#define ADD(c,a,val)    \
-  do {                  \
-    mp_limb_t  l = val; \
-    a += l;             \
-    c += (a < l);       \
+#define ADD(c,a,val)                    \
+  do {                                  \
+    mp_limb_t  new_c;                   \
+    ADDC_LIMB (new_c, a, a, val);       \
+    (c) += new_c;                       \
   } while (0)
 
 mp_limb_t
@@ -74,6 +94,7 @@ mpn_mod_34lsub1 (mp_srcptr p, mp_size_t n)
   mp_limb_t  a0, a1, a2;
 
   ASSERT (n >= 1);
+  ASSERT (n/3 < GMP_NUMB_MAX);
 
   a0 = a1 = a2 = 0;
   c0 = c1 = c2 = 0;
