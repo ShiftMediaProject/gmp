@@ -954,7 +954,11 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("umul %2,%3,%1;rd %%y,%0" : "=r" (w1), "=r" (w0) : "r" (u), "r" (v))
 #define UMUL_TIME 5
-#ifndef SUPERSPARC	/* SuperSPARC's udiv only handles 53 bit dividends */
+#if HAVE_TARGET_CPU_supersparc
+#define UDIV_TIME 60		/* SuperSPARC timing */
+#else
+/* Don't use this on SuperSPARC because its udiv only handles 53 bit
+   dividends and will trap to the kernel for the rest. */
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do {									\
     USItype __q;							\
@@ -964,9 +968,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
     (q) = __q;								\
   } while (0)
 #define UDIV_TIME 25
-#else
-#define UDIV_TIME 60		/* SuperSPARC timing */
-#endif /* SUPERSPARC */
+#endif /* HAVE_TARGET_CPU_supersparc */
 #else /* ! __sparc_v8__ */
 #if defined (__sparclite__)
 /* This has hardware multiply but not divide.  It also has two additional
