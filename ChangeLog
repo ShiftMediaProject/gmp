@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-01-17  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp.texi: Canonicalize URLs.
+
 2003-01-15  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Notes for Particular Systems): Add hardware floating point
