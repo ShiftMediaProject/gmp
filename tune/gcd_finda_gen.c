@@ -21,7 +21,14 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
+#include "gmp.h"
+#include "gmp-impl.h"
+
+#ifdef HAVE_NATIVE_mpn_gcd_finda
+#undef HAVE_NATIVE_mpn_gcd_finda
+#endif
 #define __gmpn_gcd  __UNWANTED_gcd
+
 #include "mpn/generic/gcd.c"
 
 
