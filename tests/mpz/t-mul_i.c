@@ -66,7 +66,6 @@ check_samples (void)
     mpz_set_ui (x, 1L);
     y = LONG_MIN;
     mpz_mul_si (got, x, y);
-    mpz_trace ("x", got);
     mpz_set_si (want, y);
     compare_si (y);
 
