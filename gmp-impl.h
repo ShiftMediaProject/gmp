@@ -1691,9 +1691,12 @@ int __gmp_extract_double _PROTO ((mp_ptr, double));
 
 extern int __gmp_junk;
 extern const int __gmp_0;
-#define GMP_ERROR(code)   (gmp_errno |= (code), __gmp_junk = 10/__gmp_0)
-#define DIVIDE_BY_ZERO    GMP_ERROR(GMP_ERROR_DIVISION_BY_ZERO)
-#define SQRT_OF_NEGATIVE  GMP_ERROR(GMP_ERROR_SQRT_OF_NEGATIVE)
+void __gmp_exception _PROTO ((int)) ATTRIBUTE_NORETURN;
+void __gmp_divide_by_zero _PROTO ((void)) ATTRIBUTE_NORETURN;
+void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
+#define GMP_ERROR(code)   __gmp_exception (code)
+#define DIVIDE_BY_ZERO    __gmp_divide_by_zero ()
+#define SQRT_OF_NEGATIVE  __gmp_sqrt_of_negative ()
 
 #if defined _LONG_LONG_LIMB
 #if __GMP_HAVE_TOKEN_PASTE
