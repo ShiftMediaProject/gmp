@@ -496,6 +496,14 @@ ok (fib(4) == 3);
 ok (fib(5) == 5);
 ok (fib(6) == 8);
 
+{ my ($a, $b) = fib2(0); ok($a==0); ok($b==1); }
+{ my ($a, $b) = fib2(1); ok($a==1); ok($b==0); }
+{ my ($a, $b) = fib2(2); ok($a==1); ok($b==1); }
+{ my ($a, $b) = fib2(3); ok($a==2); ok($b==1); }
+{ my ($a, $b) = fib2(4); ok($a==3); ok($b==2); }
+{ my ($a, $b) = fib2(5); ok($a==5); ok($b==3); }
+{ my ($a, $b) = fib2(6); ok($a==8); ok($b==5); }
+
 ok (gcd (21) == 21);
 ok (gcd (21,15) == 3);
 ok (gcd (21,15,30,57) == 3);
@@ -567,6 +575,22 @@ ok (lcm (mpz(2)**512,mpz(2)**512) == mpz(2)**512);
 ok (lcm (mpz(2)**512,-mpz(2)**512) == mpz(2)**512);
 ok (lcm (-mpz(2)**512,mpz(2)**512) == mpz(2)**512);
 ok (lcm (-mpz(2)**512,-mpz(2)**512) == mpz(2)**512);
+
+ok (lucnum(0) == 2);
+ok (lucnum(1) == 1);
+ok (lucnum(2) == 3);
+ok (lucnum(3) == 4);
+ok (lucnum(4) == 7);
+ok (lucnum(5) == 11);
+ok (lucnum(6) == 18);
+
+{ my ($a, $b) = lucnum2(0); ok($a==2);  ok($b==-1); }
+{ my ($a, $b) = lucnum2(1); ok($a==1);  ok($b==2); }
+{ my ($a, $b) = lucnum2(2); ok($a==3);  ok($b==1); }
+{ my ($a, $b) = lucnum2(3); ok($a==4);  ok($b==3); }
+{ my ($a, $b) = lucnum2(4); ok($a==7);  ok($b==4); }
+{ my ($a, $b) = lucnum2(5); ok($a==11); ok($b==7); }
+{ my ($a, $b) = lucnum2(6); ok($a==18); ok($b==11); }
 
 ok (nextprime(2) == 3);
 ok (nextprime(3) == 5);
