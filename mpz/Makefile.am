@@ -1,7 +1,7 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 1996, 1998, 1999, 2000, 2001, 2002 Free Software Foundation,
-# Inc.
+# Copyright 1996, 1998, 1999, 2000, 2001, 2002, 2003 Free Software
+# Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -31,7 +31,7 @@ libmpz_la_SOURCES = aors.h aors_ui.h fits_s.h mul_i.h \
   cfdiv_q_2exp.c cfdiv_r_2exp.c \
   clear.c clrbit.c \
   cmp.c cmp_d.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_d.c cmpabs_ui.c \
-  com.c \
+  com.c combit.c \
   cong.c cong_2exp.c cong_ui.c \
   divexact.c divegcd.c dive_ui.c divis.c divis_ui.c divis_2exp.c \
   dump.c export.c fac_ui.c fdiv_q.c fdiv_q_ui.c \

@@ -145,7 +145,7 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/clear$U.lo mpz/clrbit$U.lo					\
   mpz/cmp$U.lo mpz/cmp_d$U.lo mpz/cmp_si$U.lo mpz/cmp_ui$U.lo		\
   mpz/cmpabs$U.lo mpz/cmpabs_d$U.lo mpz/cmpabs_ui$U.lo			\
-  mpz/com$U.lo								\
+  mpz/com$U.lo mpz/combit$U.lo						\
   mpz/cong$U.lo mpz/cong_2exp$U.lo mpz/cong_ui$U.lo			\
   mpz/divexact$U.lo mpz/divegcd$U.lo mpz/dive_ui$U.lo			\
   mpz/divis$U.lo mpz/divis_ui$U.lo mpz/divis_2exp$U.lo mpz/dump$U.lo	\
