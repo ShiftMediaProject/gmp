@@ -349,6 +349,29 @@ optimize some multiplications by 10.
 
 
 
+EXAMPLE COMPARISONS - GCDs
+
+mpn_gcd_1 has a threshold for when to reduce using an initial x%y when both
+x and y are single limbs.  This isn't tuned currently, but a value can be
+established by a measurement like
+
+	./speed -s 10-32 mpn_gcd_1.10
+
+This runs src[0] from 10 to 32 bits, and y fixed at 10 bits.  If the div
+threshold is high, say 31 so it's effectively disabled then a 32x10 bit gcd
+is done by nibbling away at the 32-bit operands bit-by-bit.  When the
+threshold is small, say 1 bit, then an initial x%y is done to reduce it to a
+10x10 bit operation.
+
+The threshold in mpn/generic/gcd_1.c or the various assembler
+implementations can be tweaked up or down until there's no more speedups on
+interesting combinations of sizes.  Note that this affects only a 1x1 limb
+operation and so isn't very important.  (An Nx1 limb operation always does
+an initial modular reduction, using mpn_mod_1 or mpn_modexact_1_odd.)
+
+
+
+
 SPEED PROGRAM EXTENSIONS
 
 Potentially lots of things could be made available in the program, but it's
