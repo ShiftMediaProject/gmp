@@ -177,6 +177,7 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
 #define UDIV_NEEDS_NORMALIZATION 1
+#endif
 #define UDIV_TIME 220
 #define count_leading_zeros(count, x) \
   do {									\
