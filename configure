@@ -4872,7 +4872,7 @@ for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
   # Don't redirect the output to AC_FILE directly: use `mv' so that updating
   # is atomic, and doesn't need trapping.
   ac_file_inputs=`echo "$ac_file_in" |
-                  sed -e "s%^%$ac_given_srcdir/%;s%:% $ac_given_srcdir/%g"`
+                  sed -e "s%:% $ac_given_srcdir/%g;s%^%$ac_given_srcdir/%"`
   for ac_file_input in $ac_file_inputs;
   do
     test -f "$ac_file_input" ||
@@ -4929,7 +4929,7 @@ for ac_file in .. $CONFIG_HEADERS; do if test "x$ac_file" != x..; then
 
   rm -f $ac_cs_root.frag $ac_cs_root.in $ac_cs_root.out
   ac_file_inputs=`echo "$ac_file_in" |
-                  sed -e "s%^%$ac_given_srcdir/%;s%:% $ac_given_srcdir/%g"`
+                  sed -e "s%:% $ac_given_srcdir/%g;s%^%$ac_given_srcdir/%"`
     for ac_file_input in $ac_file_inputs;
   do
     test -f "$ac_file_input" ||
@@ -4948,6 +4948,7 @@ EOF
 # config.status.  Protect against being in an unquoted here document
 # in config.status.
 rm -f conftest.defines conftest.undefs
+ac_cs_root=conftest
 cat >$ac_cs_root.hdr <<\EOF
 s/[\\&%]/\\&/g
 s%[\\$`]%\\&%g
