@@ -44,17 +44,7 @@ tmp_host=`echo $host_cpu | sed 's/\./_/'`
 AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_$tmp_host)
 GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_HOST_CPU_$tmp_host')", POST)
 
-dnl  FIXME: AM_INIT_AUTOMAKE appends AM_DEPENDENCIES(CXX) to AC_PROG_CXX
-dnl  which has the effect of running AC_PROG_CXXCPP first in AC_PROG_CXX,
-dnl  which is both a bad thing (since it means "$CXX -E" won't work) and it
-dnl  also upsets GMP_PROG_CXX which would like to allow AC_PROG_CXX to fail
-dnl  (whereas AC_PROG_CXXCPP aborts if it fails).  For now avoid automake's
-dnl  redefine.
-dnl
-define(save_AC_PROG_CXX,defn([AC_PROG_CXX]))
 AM_INIT_AUTOMAKE(gmp, GMP_VERSION)
-define([AC_PROG_CXX],defn([save_AC_PROG_CXX]))
-
 AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
 
@@ -84,17 +74,6 @@ debug) ;;
 yes no reentrant notreentrant alloca malloc-reentrant malloc-notreentrant debug]) ;;
 esac],
 [enable_alloca=reentrant])
-
-
-AC_ARG_ENABLE(cxx,
-AC_HELP_STRING([--enable-cxx],[enable C++ support [default=no]]),
-[case $enableval in
-yes|no|detect) ;;
-*)
-  AC_MSG_ERROR([bad value $enableval for --enable-alloca, need yes/no/detect])
-  ;;
-esac],
-[enable_cxx=no])
 
 
 AC_ARG_ENABLE(fft,
@@ -754,9 +733,10 @@ case $host in
         ;;
       pentium4-*-*)
         # pentium4 is known to gcc 3.1 and up, not sure what cpu choice
-        # would best suit previous versions, let's just go with i486.
-        gcc_cflags_cpu="-mcpu=pentium4 -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=pentium4 -march=i486"
+        # would best suit previous versions, pentiumpro will get us cmov
+        # from gcc 2.95.4 up, otherwise let's just try i486.
+        gcc_cflags_cpu="-mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=pentium4 -march=pentiumpro -march=i486"
         ;;
     esac
 
@@ -998,7 +978,7 @@ if test $found_compiler = yes; then
 
         case $flag in
           -march=pentiumpro)
-            # buggy on some versions of gcc, exclude as necessary
+            # tickles stack slot bugs on some gcc, exclude as necessary
             GMP_GCC_MARCH_PENTIUMPRO($cc,,continue)
             ;;
           -O*)
@@ -1108,25 +1088,6 @@ echo using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
 AC_PROG_CC
 AC_PROG_CC_STDC
 AC_PROG_CPP
-
-# The C++ compiler, if required
-have_cxx=no
-if test $enable_cxx != no; then
-  GMP_PROG_CXX
-fi
-AM_CONDITIONAL(HAVE_CXX, test $have_cxx = yes)
-
-# FIXME: These hacks work around a couple of places automake 1.4f doesn't
-# like AM_CONDITIONALs.
-if test $have_cxx = yes; then
-  PRINTF_CXX_OBJECTS='$(PRINTF_CXX_OBJECTS)'
-  LIBCXXPRINTF_LA='libcxxprintf.la'
-else
-  PRINTF_CXX_OBJECTS=
-  LIBCXXPRINTF_LA=
-fi
-AC_SUBST(PRINTF_CXX_OBJECTS)
-AC_SUBST(LIBCXXPRINTF_LA)
 
 
 case $host_cpu in
