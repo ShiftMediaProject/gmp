@@ -170,17 +170,11 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 	  mp_limb_t x = (ws[nm1] + 1) & GMP_NUMB_MASK;
 	  ws[nm1] = x;
 	  if (x == 0)
-	    ++ws[n];
+	    ws[n] = (ws[n] + 1) & GMP_NUMB_MASK;
 	}
       if (mpn_add_n (p + n3, p + n3, ws, n1))
 	{
-	  mp_limb_t x;
-	  i = n1 + n3;
-	  do {
-	    x = (p[i] + 1) & GMP_NUMB_MASK;
-	    p[i] = x;
-	    ++i;
-	  } while (x == 0);
+	  mpn_incr_u (p + n1 + n3, 1);
 	}
     }
   else
@@ -326,7 +320,6 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       else
 	mpn_kara_sqr_n   (p + n1, a + n3, n2, ws + n1);	 /* y^2	    */
 
-
       /* Since x^2+y^2-(x-y)^2 = 2xy >= 0 there's no need to track the
 	 borrow from mpn_sub_n.	 If it occurs then it'll be cancelled by a
 	 carry from ws[n].  Further, since 2xy fits in n1 limbs there won't
@@ -340,17 +333,11 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
 	  mp_limb_t x = (ws[nm1] + 1) & GMP_NUMB_MASK;
 	  ws[nm1] = x;
 	  if (x == 0)
-	    ++ws[n];
+	    ws[n] = (ws[n] + 1) & GMP_NUMB_MASK;
 	}
       if (mpn_add_n (p + n3, p + n3, ws, n1))
 	{
-	  mp_limb_t x;
-	  i = n1 + n3;
-	  do {
-	    x = (p[i] + 1) & GMP_NUMB_MASK;
-	    p[i] = x;
-	    ++i;
-	  } while (x == 0);
+	  mpn_incr_u (p + n1 + n3, 1);
 	}
     }
   else
