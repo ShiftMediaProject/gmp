@@ -1,5 +1,7 @@
 Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpf/out_str.c: Use `e' to separate exponent when base <= 10.
+
 	* mpn/configure.in: Treat ultrasparc just like sparc v8,
 	until 64-bit compilers are ready.
 

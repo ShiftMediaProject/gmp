@@ -74,7 +74,7 @@ by the Foundation.
 
 @tex
 \global\parindent=0pt
-\global\parskip=6pt
+\global\parskip=8pt
 \global\baselineskip=13pt
 @end tex
 
@@ -1216,6 +1216,7 @@ machines.
 @end deftypefun
 
 
+@need 2000
 @node Miscellaneous Integer Functions,, I/O of Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
@@ -1776,8 +1777,10 @@ base @var{base}.  The base may vary from 2 to 36.  Print at most
 @var{n_digits} significant digits, or if @var{n_digits} is 0, the maximum
 number of digits accurately representable by @var{op}.
 
-In addition to the significant digits, a leading @samp{0.} and a trailing
-exponent, in the form @samp{@@NNN}, are printed.
+In addition to the significant digits, a leading @samp{0.} and a
+trailing exponent, in the form @samp{eNNN}, are printed.  If @var{base}
+is greater than 10, @samp{@@} will be used instead of @samp{e} as
+exponent delimiter.
 
 Return the number of bytes written, or if an error occurred, return 0.
 @end deftypefun
@@ -2413,8 +2416,8 @@ the @code{mpz} design revisions for version 2.
 Bennet Yee contributed the functions @code{mpz_jacobi} and
 @code{mpz_legendre}.
 
-Andreas Schwab contributed the files @code{m68k/lshift.S} and
-@code{m68k/rshift.S}.
+Andreas Schwab contributed the files @file{mpn/m68k/lshift.S} and
+@file{mpn/m68k/rshift.S}.
 
 The development of floating point functions of GNU MP 2, were supported in
 part by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO
