@@ -736,6 +736,8 @@ hgcd_update_r (struct hgcd_row *r, mp_srcptr qp, mp_size_t qsize)
 
   MPN_NORMALIZE (r[2].rp, r0size);
   r[2].rsize = r0size;
+
+  ASSERT (MPN_LESS_P (r2p, r0size, r1p, r1size));
 }
 
 /* Computes (u2, v2) = (u0, v0) + q (u1, v1)
@@ -1000,6 +1002,12 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
   if (bsize < 2)
     return 0;
 
+#if WANT_TRACE
+  trace ("lehmer_step:\n"
+	 "  a = %Nd\n"
+	 "  b = %Nd\n",
+	 ap, asize, bp, bsize);
+#endif
   /* The case asize == 2 is needed to take care of values that are
      between one and two *full* limbs in size. */
   if (asize == 2 || (ap[asize-1] & GMP_NUMB_HIGHBIT))
@@ -1024,6 +1032,9 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
       ASSERT (asize > 2);
 
       count_leading_zeros (shift, ap[asize-1]);
+#if WANT_TRACE
+      trace("shift = %d\n", shift);
+#endif
       if (bsize == asize)
 	bh = MPN_EXTRACT_LIMB (shift, bp[asize - 1], bp[asize - 2]);
       else
@@ -2008,7 +2019,7 @@ mpn_hgcd (struct hgcd *hgcd,
       HGCD_SWAP4_2 (hgcd->row);
 
       /* It's crucial that we drop quotients that we don't use, and
-	 it's get a little complicated because we don't use the top
+	 it gets a little complicated because we don't use the top
 	 quotient first. */
 
       if (res >= 3)
