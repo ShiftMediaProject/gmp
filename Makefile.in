@@ -276,8 +276,18 @@ EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf g
 
 @WANT_CXX_TRUE@GMPXX_HEADERS_OPTION = gmpxx.h
 
+# gmp.h and mp.h are architecture dependent, mainly since they encode the
+# limb size used in libgmp.  For that reason they belong under $exec_prefix
+# not $prefix, strictly speaking.
+#
+# $exec_prefix/include is not in the default include path for gcc built to
+# the same $prefix and $exec_prefix, which might mean gmp.h is not found,
+# but anyone knowledgable enough to be playing with exec_prefix will be able
+# to address that.
+#
+includeexecdir = $(exec_prefix)/include
 include_HEADERS = $(GMPXX_HEADERS_OPTION)
-nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
+nodist_includeexec_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
 BUILT_SOURCES = gmp.h mp.h mpz/fac_ui.h fib_table.h mpn/fib_table.c mp_bases.h mpn/mp_bases.c mpn/perfsqr.h
@@ -524,7 +534,7 @@ DVIS = gmp.dvi
 PDFS = gmp.pdf
 PSS = gmp.ps
 TEXINFOS = gmp.texi
-HEADERS = $(include_HEADERS) $(nodist_include_HEADERS)
+HEADERS = $(include_HEADERS) $(nodist_includeexec_HEADERS)
 
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
@@ -827,23 +837,23 @@ uninstall-includeHEADERS:
 	  echo " rm -f $(DESTDIR)$(includedir)/$$f"; \
 	  rm -f $(DESTDIR)$(includedir)/$$f; \
 	done
-nodist_includeHEADERS_INSTALL = $(INSTALL_HEADER)
-install-nodist_includeHEADERS: $(nodist_include_HEADERS)
+nodist_includeexecHEADERS_INSTALL = $(INSTALL_HEADER)
+install-nodist_includeexecHEADERS: $(nodist_includeexec_HEADERS)
 	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(includedir)
-	@list='$(nodist_include_HEADERS)'; for p in $$list; do \
+	$(mkinstalldirs) $(DESTDIR)$(includeexecdir)
+	@list='$(nodist_includeexec_HEADERS)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(nodist_includeHEADERS_INSTALL) $$d$$p $(DESTDIR)$(includedir)/$$f"; \
-	  $(nodist_includeHEADERS_INSTALL) $$d$$p $(DESTDIR)$(includedir)/$$f; \
+	  echo " $(nodist_includeexecHEADERS_INSTALL) $$d$$p $(DESTDIR)$(includeexecdir)/$$f"; \
+	  $(nodist_includeexecHEADERS_INSTALL) $$d$$p $(DESTDIR)$(includeexecdir)/$$f; \
 	done
 
-uninstall-nodist_includeHEADERS:
+uninstall-nodist_includeexecHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_include_HEADERS)'; for p in $$list; do \
+	@list='$(nodist_includeexec_HEADERS)'; for p in $$list; do \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " rm -f $(DESTDIR)$(includedir)/$$f"; \
-	  rm -f $(DESTDIR)$(includedir)/$$f; \
+	  echo " rm -f $(DESTDIR)$(includeexecdir)/$$f"; \
+	  rm -f $(DESTDIR)$(includeexecdir)/$$f; \
 	done
 
 # This directory's subdirectories are mostly independent; you can cd
@@ -1098,7 +1108,7 @@ check: $(BUILT_SOURCES)
 all-am: Makefile $(INFO_DEPS) $(LTLIBRARIES) $(HEADERS) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(infodir) $(DESTDIR)$(includedir) $(DESTDIR)$(includedir)
+	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(infodir) $(DESTDIR)$(includedir) $(DESTDIR)$(includeexecdir)
 
 install: install-recursive
 install-exec: install-exec-recursive
@@ -1144,10 +1154,10 @@ info: info-recursive
 
 info-am: $(INFO_DEPS)
 
-install-data-am: install-includeHEADERS install-info-am \
-	install-nodist_includeHEADERS
+install-data-am: install-includeHEADERS install-info-am
 
-install-exec-am: install-libLTLIBRARIES
+install-exec-am: install-libLTLIBRARIES \
+	install-nodist_includeexecHEADERS
 
 install-info: install-info-recursive
 
@@ -1200,7 +1210,7 @@ ps: ps-recursive
 ps-am: $(PSS)
 
 uninstall-am: uninstall-includeHEADERS uninstall-info-am \
-	uninstall-libLTLIBRARIES uninstall-nodist_includeHEADERS
+	uninstall-libLTLIBRARIES uninstall-nodist_includeexecHEADERS
 
 uninstall-info: uninstall-info-recursive
 
@@ -1215,7 +1225,7 @@ uninstall-info: uninstall-info-recursive
 	install-data-recursive install-exec install-exec-am \
 	install-exec-recursive install-includeHEADERS install-info \
 	install-info-am install-info-recursive install-libLTLIBRARIES \
-	install-man install-nodist_includeHEADERS install-recursive \
+	install-man install-nodist_includeexecHEADERS install-recursive \
 	install-strip installcheck installcheck-am installdirs \
 	installdirs-am installdirs-recursive maintainer-clean \
 	maintainer-clean-aminfo maintainer-clean-generic \
@@ -1226,7 +1236,7 @@ uninstall-info: uninstall-info-recursive
 	tags tags-recursive uninstall uninstall-am \
 	uninstall-includeHEADERS uninstall-info-am \
 	uninstall-info-recursive uninstall-libLTLIBRARIES \
-	uninstall-nodist_includeHEADERS uninstall-recursive
+	uninstall-nodist_includeexecHEADERS uninstall-recursive
 
 
 mpz/fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
