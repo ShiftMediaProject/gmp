@@ -752,6 +752,12 @@ case $host in
         gcc_cflags_cpu="-mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=athlon -march=pentiumpro -march=i486"
         ;;
+      pentium4-*-*)
+        # pentium4 is known to gcc 3.1 and up, not sure what cpu choice
+        # would best suit previous versions, let's just go with i486.
+        gcc_cflags_cpu="-mcpu=pentium4 -mcpu=i486 -m486"
+        gcc_cflags_arch="-march=pentium4 -march=i486"
+        ;;
     esac
 
     case $host in
@@ -764,6 +770,7 @@ case $host in
       [k6[23]*-*-*])  path="x86/k6/k62mmx x86/k6/mmx x86/k6 x86" ;;
       k6*-*-*)        path="x86/k6/mmx x86/k6 x86" ;;
       athlon-*-*)     path="x86/k7/mmx x86/k7 x86" ;;
+      pentium4-*-*)   path="x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 x86" ;;
     esac
     ;;
 
@@ -1263,21 +1270,13 @@ AC_SUBST(CCAS)
 
 case $host in
   X86_PATTERN)
-    # If there's any mmx in the path, check whether the assembler supports
-    # it, and remove if not.
+    # If there's any sse2 or mmx in the path, check whether the assembler
+    # supports it, and remove if not.
     case "$path" in
-      *mmx*)
-        GMP_ASM_X86_MMX(,[
-          new_path=
-          for i in $path; do
-            case $i in
-            *mmx*) ;;
-            *) new_path="$new_path $i" ;;
-            esac
-          done
-          path="$new_path"
-        ])
-      ;;
+      *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(mmx)]) ;;
+    esac
+    case "$path" in
+      *sse2*)  GMP_ASM_X86_SSE2( , [GMP_STRIP_PATH(sse2)]) ;;
     esac
   ;;
 esac
