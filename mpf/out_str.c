@@ -21,10 +21,16 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#define _GNU_SOURCE    /* for DECIMAL_POINT in langinfo.h */
+
 #include "config.h"
 
 #include <stdio.h>
 #include <string.h>
+
+#if HAVE_LANGINFO_H
+#include <langinfo.h>  /* for nl_langinfo */
+#endif
 
 #if HAVE_LOCALE_H
 #include <locale.h>    /* for localeconv */
@@ -32,6 +38,7 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+
 
 size_t
 mpf_out_str (FILE *stream, int base, size_t n_digits, mpf_srcptr op)
@@ -67,18 +74,13 @@ mpf_out_str (FILE *stream, int base, size_t n_digits, mpf_srcptr op)
       n_digits--;
     }
 
-#if HAVE_LOCALECONV
   {
-    const char  *point = localeconv()->decimal_point;
+    const char  *point = GMP_DECIMAL_POINT;
     size_t      pointlen = strlen (point);
     putc ('0', stream);
     fwrite (point, 1, pointlen, stream);
     written += pointlen + 1;
   }
-#else
-  fwrite ("0.", 1, 2, stream);
-  written += 2;
-#endif
 
   /* Write mantissa */
   {
