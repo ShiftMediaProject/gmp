@@ -22,7 +22,7 @@
 # the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 
-include(`asm-incl.m4')
+include(`../config.m4')
 
 
 dnl  K7: UNROLL_COUNT cycles/limb
