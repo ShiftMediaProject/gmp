@@ -1,6 +1,6 @@
 /* Test mpz_cmp_d and mpz_cmpabs_d.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -226,11 +226,11 @@ check_one_2exp (void)
 
       mpz_set_ui (x, 1L);
       check_one ("check_one_2exp", x,  y, -1, -1);
-      check_one ("check_oen_2exp", x, -y,  1, -1);
+      check_one ("check_one_2exp", x, -y,  1, -1);
 
       mpz_set_si (x, -1L);
       check_one ("check_one_2exp", x,  y, -1, -1);
-      check_one ("check_oen_2exp", x, -y,  1, -1);
+      check_one ("check_one_2exp", x, -y,  1, -1);
     }
 
   mpz_clear (x);
