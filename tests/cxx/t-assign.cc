@@ -445,6 +445,27 @@ check_mpfr (void)
 {
 #ifdef WANT_MPFR
 
+  // operator=(const mpz_class &)
+  {
+    mpz_class a(123);
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS (b == 123);
+  }
+
+  // operator=(const mpq_class &)
+  {
+    mpq_class a(123);
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS (b == 123);
+  }
+
+  // operator=(const mpf_class &)
+  {
+    mpf_class a(123);
+    mpfr_class b;
+    b = a; ASSERT_ALWAYS (b == 123);
+  }
+
   // operator=(const mpfr_class &)
   {
     mpfr_class a(123), b;
