@@ -1,3 +1,44 @@
+2001-05-11  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium/dive_1.asm: New file.
+
+	* mpn/powerpc32/umul.asm: Use r on registers.
+	* mpn/powerpc64/umul.asm: New file.
+	* configure.in (powerpc*-*-*): Enable umul in extra_functions.
+
+	* tests/refmpn.c, tests/tests.h (refmpn_umul_ppmm): Use same arguments
+	as normal mpn_umul_ppmm.
+	(refmpn_mul_1c): Update.
+	* tests/devel/try.c, tune/many.pl: Add some umul_ppmm testing support.
+
+	* mpn/x86/k6/mmx/popham.asm, mpn/x86/k7/mmx/popham.asm: Don't support
+	size==0.
+	* mpn/x86/pentium/popcount.asm, mpn/x86/pentium/hamdist.asm: Ditto,
+	and shave a couple of cycles from the PIC entry code.
+
+	* mpz/mul.c: Use mpn_mul_1 for size==1 and mpn_mul_2 (if available)
+	for size==2, to avoid copying; do vsize==0 test earlier.
+
+	* mpf/sub.c: Test r!=u before calling mpf_set.
+	* mpf/add.c: Ditto, and share mpf_set between usize==0 and vsize==0.
+
+	* mpn/generic/tdiv_qr.c, mpq/get_d.c, mpf/div.c, mpf/set_q.c,
+	mpf/set_str.c, mpf/ui_div.c: Test for high bit set, not for
+	count_leading_zeros zero.
+
+	* acinclude.m4 (GMP_PROG_AR, GMP_PROG_NM): Print a message if extra
+	flags are added.
+
+	* tests/mpz/t-mul_i.c: New file.
+	* tests/mpz/Makefile.am: Add it.
+	
+	* mpz/mul_siui.c (mpz_mul_si): Fix for -0x80..00 on long long limb.
+
+	* gmp-h.in (mpf_set_si, mpf_set_ui): Revert last change, set exp to 0
+	when n==0.
+	* mpf/ceilfloor.c, mpf/trunc.c: Fix exp to 0 when setting r to 0.
+	* gmp-impl.h (MPF_CHECK_FORMAT): Check exp==0 when size==0.
+
 2001-05-07  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in (mpf_set_si, mpf_set_ui): Don't bother setting _mp_exp to 0
