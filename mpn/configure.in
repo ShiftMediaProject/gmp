@@ -11,9 +11,11 @@ srcname="GNU Multi-Precision library/mpn"
 # per-target:
 
 case "${target}" in
-  sparc9*-*-* | sparc64*-*-* | ultrasparc*-*-*) path="sparc64" ;;
+  sparc9*-*-* | sparc64*-*-* | ultrasparc*-*-*)
+	#path="sparc64" ;;	Don't use this until compilers are ready
+	path="sparc32/v8 sparc" ;;
   sparc8*-*-* | microsparc*-*-*)
-	path="sparc32/v8 sparc"; ;;
+	path="sparc32/v8 sparc" ;;
   supersparc*-*-*)
 	path="sparc32/v8/supersparc sparc32/v8 sparc"
 	extra_functions="udiv" ;;
