@@ -308,7 +308,7 @@ C *** MAIN LOOP END ***
 	;;
    (p7)	add		cy = 1, cy
 	;;
-.Lret:	mov	r8 = cy
-	mov.i	ar.lc = r2
-	br.ret.sptk.many `rp'
+.Lret:	mov		r8 = cy
+	mov.i		ar.lc = r2
+	br.ret.sptk.many b0
 EPILOGUE()
