@@ -191,7 +191,7 @@ code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
 
 There is carefully optimized assembly code for these CPUs: ARM, DEC Alpha
-21064, 21164, and 21264, AMD 29000, K6, and Athlon, HPPA 1.0 and 1.1, Intel
+21064, 21164, and 21264, AMD 29000, K6 and Athlon, HPPA 1.0 and 1.1, Intel
 Pentium, Pentium Pro/Pentium II, generic x86, Intel i960, Motorola MC68000,
 MC68020, MC88100, and MC88110, Motorola/IBM PowerPC 32 and 64, National
 NS32000, IBM POWER, MIPS R3000, R4000, SPARCv7, SuperSPARC, generic SPARCv8,
@@ -236,7 +236,7 @@ Some self-tests can be run with
 make check
 @end example
 
-And you can install (under @samp{/usr/local} by default) with
+And you can install (under @file{/usr/local} by default) with
 
 @example
 make install
@@ -383,7 +383,7 @@ problems, the generic C code can be selected with CPU @samp{none}.
 
 The C compiler used is chosen from among some likely candidates, with GCC
 normally preferred if it's present.  The usual @samp{CC=whatever} can be passed
-to @samp{./configure} to choose something different.
+to @command{configure} to choose something different.
 
 For some configurations specific compiler flags are set based on the target CPU
 and compiler, for others @samp{CFLAGS="-whatever"} can be used to choose the
@@ -475,14 +475,14 @@ Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
 
 @item SunOS 4
-The system C compiler has a bug that makes it miscompile @file{mpq/get_d.c}.
-Use GCC instead if plan to use the function @code{mpq_get_d}.
+In the past the system C compiler had a bug that made it miscompile
+@file{mpq/get_d.c}.  If this is still true then use GCC instead if plan to use
+the function @code{mpq_get_d}.
 
-@item SunOS 4.1.4 m4
-The SunOS system m4 fails when processing @file{mpn/asm-defs.m4} with the
-message "m4: arg stack overflow".  It's not known what's causing this, but for
-now GNU m4 is recommended instead.  Pass @samp{M4=/usr/local/bin/m4} (or
-wherever GNU m4 is) on the @samp{configure} command line.
+@command{/usr/bin/m4} lacks features needed to process @file{.asm} files.
+Either the optional SysV @command{/usr/5bin/m4} or GNU @command{m4} should be
+used instead.  On the @samp{configure} command line use @samp{M4=/usr/5bin/m4},
+or the equivalent for wherever GNU @command{m4} is installed.
 
 @item VAX running Ultrix
 You need to build and install the GNU assembler before you compile MP.  The VAX
@@ -1073,9 +1073,8 @@ Set @var{rop} to the absolute value of @var{op}.
 Division is undefined if the divisor is zero, and passing a zero divisor to the
 divide or modulo functions, as well passing a zero mod argument to the
 @code{mpz_powm} and @code{mpz_powm_ui} functions, will make these functions
-intentionally divide by zero.  This gives the user the possibility to handle
-arithmetic exceptions in these functions in the same manner as other arithmetic
-exceptions.
+intentionally divide by zero.  This lets the user handle arithmetic exceptions
+in these functions in the same manner as other arithmetic exceptions.
 
 There are three main groups of division functions:
 @itemize @bullet
@@ -1447,16 +1446,18 @@ higher value lowers the probability for a non-prime to pass as a
 The function uses Miller-Rabin's probabilistic test.
 @end deftypefun
 
-@deftypefun int mpz_prime_p (mpz_t @var{n})
-Return non-zero if @var{n} is prime and zero if @var{n} is a non-prime.
-This function is far slower than @code{mpz_probab_prime_p}, but then it
-never returns non-zero for composite numbers.
+@c Not implemented as of gmp 3.0.
 
-(For practical purposes, using @code{mpz_probab_prime_p} is adequate.
-The likelyhood of a programming error or hardware malfunction is orders
-of magnitudes greater than the likelyhood for a composite to pass as a
-prime, if the @var{reps} argument is in the suggested range.)
-@end deftypefun
+@c @deftypefun int mpz_prime_p (mpz_t @var{n})
+@c Return non-zero if @var{n} is prime and zero if @var{n} is a non-prime.
+@c This function is far slower than @code{mpz_probab_prime_p}, but then it
+@c never returns non-zero for composite numbers.
+
+@c (For practical purposes, using @code{mpz_probab_prime_p} is adequate.
+@c The likelyhood of a programming error or hardware malfunction is orders
+@c of magnitudes greater than the likelyhood for a composite to pass as a
+@c prime, if the @var{reps} argument is in the suggested range.)
+@c @end deftypefun
 
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}.
@@ -1561,8 +1562,8 @@ arguments multiple times.
 @end deftypefn
 
 
-@deftypefun int mpz_cmp_abs (mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx int mpz_cmp_abs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
+@deftypefun int mpz_cmpabs (mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefunx int mpz_cmpabs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
 @ifinfo
 Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
 value if @var{op1} > @var{op2}, zero if @var{op1} = @var{op2}, and a negative
@@ -2345,8 +2346,8 @@ Set @var{rop} to $@var{op1} \times @var{op2}$.
 
 Division is undefined if the divisor is zero, and passing a zero divisor to
 the divide functions will make these functions intentionally divide by zero.
-This gives the user the possibility to handle arithmetic exceptions in these
-functions in the same manner as other arithmetic exceptions.
+This lets the user handle arithmetic exceptions in these functions in the same
+manner as other arithmetic exceptions.
 
 @deftypefun void mpf_div (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_ui_div (mpf_t @var{rop}, unsigned long int @var{op1}, mpf_t @var{op2})
@@ -2366,9 +2367,14 @@ Set @var{rop} to $\sqrt{@var{op}}$.
 @end iftex
 @end deftypefun
 
-@c @deftypefun void mpf_pow_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@c Set @var{rop} to @var{op1} raised to @var{op2}.
-@c @end deftypefun
+@deftypefun void mpf_pow_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
+@ifnottex
+Set @var{rop} to @var{op1} raised to the power @var{op2}.
+@end ifnottex
+@tex
+Set @var{rop} to $@var{op1}^{op2}$.
+@end tex
+@end deftypefun
 
 @deftypefun void mpf_neg (mpf_t @var{rop}, mpf_t @var{op})
 Set @var{rop} to @minus{}@var{op}.
@@ -2515,6 +2521,14 @@ Return the number of bytes read, or if an error occurred, return 0.
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 @cindex Miscellaneous float functions
+
+@deftypefun void mpf_ceil (mpf_t @var{rop}, mp_size_t @var{op})
+@deftypefunx void mpf_floor (mpf_t @var{rop}, mp_size_t @var{op})
+@deftypefunx void mpf_trunc (mpf_t @var{rop}, mp_size_t @var{op})
+Set @var{rop} to @var{op} rounded to an integer.  @code{mpf_ceil} rounds to
+the next higher integer, @code{mpf_floor} to the next lower, and
+@code{mpf_trunc} to the integer towards zero.
+@end deftypefun
 
 @deftypefun void mpf_random2 (mpf_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{max_exp})
 Generate a random float of at most @var{max_size} limbs, with long strings of
@@ -2919,12 +2933,15 @@ beyond bit position @var{bit}, so that the function has something to return.
 future revisions.}
 @end deftypefun
 
-@deftypefun void mpn_random2 (mp_limb_t *@var{r1p}, mp_size_t @var{r1size})
-Generate a random number of length @var{r1size} with long strings of zeros
-and ones in the binary representation, and store it at @var{r1p}.
+@deftypefun void mpn_random (mp_limb_t *@var{r1p}, mp_size_t @var{r1size})
+@deftypefunx void mpn_random2 (mp_limb_t *@var{r1p}, mp_size_t @var{r1size})
+Generate a random number of length @var{r1size} and store it at @var{r1p}.
+The most significant limb is always non-zero.  @code{mpn_random} generates
+uniformly distributed limb data, @code{mpn_random2} generates long strings of
+zeros and ones in the binary representation.
 
-The generated random numbers are intended for testing the correctness of the
-implementation of the @code{mpn} routines.
+@code{mpn_random2} is intended for testing the correctness of the @code{mpn}
+routines.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, unsigned long int @var{size})
@@ -3392,5 +3409,5 @@ v. 21 (March), 1995, pp. 111-122.
 @bye
 
 @c Local variables:
-@c fill-column: 79
+@c fill-column: 78
 @c End:
