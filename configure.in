@@ -503,43 +503,47 @@ case $host in
   hppa*-*-*)
     # HP cc is K&R by default, but AM_C_PROTOTYPES will add "-Ae", or "-Aa
     # -D_HPUX_SOURCE", to put it into ansi mode, if possible.
-
-    # default to pa7100
+    #
     gcc_cflags="-g -O2"
     gcc_cflags_optlist="arch"
-    gcc_cflags_arch="-mpa-risc-1-1"
-    cc_cflags="+DA1.1 +O2"
-    path="pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32"
     extra_functions="udiv"
-
     SPEED_CYCLECOUNTER_OBJ=hppa.lo
     cyclecounter_size=1
 
-    case $host in
-      hppa1.0*-*-*)
-        # override back to plain 1.0
-        gcc_cflags_optlist=
-        cc_cflags="+O2"
-        path="pa32"
-        ;;
-      hppa7000*-*-*)
-        path="pa32/hppa1_1 pa32"
-        ;;
+    # FIXME: For hppa2.0*, path should be "pa32/hppa2_0 pa32/hppa1_1 pa32".
+    #
+    case $host_cpu in
+      hppa1.0*)    path="pa32" ;;
+      hppa7000*)   path="pa32/hppa1_1 pa32" ;;
+      hppa2.0*)    path="pa32/hppa2_0 pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32" ;;
+      *)           # default to 7100
+                   path="pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32" ;;
+    esac
 
+    # gcc 2.7.2.3 knows -mpa-risc-1-0 and -mpa-risc-1-1
+    # gcc 2.95 adds -mpa-risc-2-0, plus synonyms -march=1.0, 1.1 and 2.0
+    #
+    # The gcc manual notes that -mpa-risc-2-0 needs a new enough assemble.
+    # We believe gcc always emits a ".level 2.0" directive under this
+    # option, so that should kill an unsuitable assembler, letting us fall
+    # back on 1.1.
+    #
+    case $host_cpu in
+      hppa1.0*)    gcc_cflags_arch="-mpa-risc-1-0" ;;
+      hppa2.0*)    gcc_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1" ;;
+      *)           # default to 7100
+                   gcc_cflags_arch="-mpa-risc-1-1" ;;
+    esac
+
+    case $host_cpu in
+      hppa1.0*)    cc_cflags="+O2" ;;
+      *)           # default to 7100
+                   cc_cflags="+DA1.1 +O2" ;;
+    esac
+
+    case $host in
       hppa2.0*-*-*)
         abilist="2.0n 1.0"
-
-        # FIXME: It's suspected that an assembler feature test might be
-        # necessary before -mpa-risc-2-0 can be enabled, since it's not
-        # clear (as of gcc 2.95.2) whether that option always gives an
-        # explicit ".level 2.0" or whatever to the assembler.  In any case,
-        # under gcc 2.95.2 it only enables a few extra floating point insns,
-        # so it's not very important.
-        #
-        # gmp_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1"
-
-        # FIXME: path should be "pa32/hppa2_0 pa32/hppa1_1 pa32"
-        path="pa32/hppa2_0 pa32/hppa1_1/pa7100 pa32/hppa1_1 pa32"
 
         # no gcc support for long long in 2.0n
 	cclist_20n="cc"
@@ -552,20 +556,21 @@ case $host in
         SPEED_CYCLECOUNTER_OBJ_20n=hppa2.lo
         cyclecounter_size_20n=2
 
-	# ABI=2.0w is available for hppa2.0w and hppa2.0, but not for hppa2.0n.
+	# ABI=2.0w is available for hppa2.0w and hppa2.0, but not for
+	# hppa2.0n, on the assumption that that the latter indicates a
+	# desire for ABI=2.0n.
 	case $host in
         hppa2.0n-*-*) ;;
         *)
-          # HPUX 11 or up is required to run 2.0w.  Not sure about other
+          # HPUX 10 and earlier cannot run 2.0w.  Not sure about other
           # systems (GNU/Linux for instance), but lets assume they're ok.
           case $host in
-          [*-*-hpux1[1-9]*]) abilist="2.0w $abilist" ;;
-	  *-*-hpux*)                                 ;;
-          *)                 abilist="2.0w $abilist" ;;
+            [*-*-hpux[1-9] | *-*-hpux[1-9].* | *-*-hpux10 | *-*-hpux10.*]) ;;
+            *)    abilist="2.0w $abilist" ;;
           esac
 
-          # gcc support for 2.0w is in progress
-          cclist_20w="cc"
+          cclist_20w="gcc cc"
+	  gcc_20w_cflags="-mpa-risc-2-0"
           cc_20w_cflags="+DD64 +O3"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
