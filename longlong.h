@@ -202,7 +202,7 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
    that situation we waste an instruction, but not any cycles.  */ 
 #define umul_ppmm(ph, pl, m0, m1) \
     __asm__ ("xma.hu %0 = %2, %3, f0\n\txma.l %1 = %2, %3, f0"		\
-	     : "=f" (ph), "=f" (pl)					\
+	     : "=&f" (ph), "=f" (pl)					\
 	     : "f" (m0), "f" (m1))
 #define UMUL_TIME 14
 #define count_leading_zeros(count, x) \
