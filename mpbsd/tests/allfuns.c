@@ -26,7 +26,9 @@ MA 02111-1307, USA.
 #include "mp.h"
 
 int
-main (int argc, char *argv[])
+main (argc, argv)
+int argc;
+char *argv[];
 {
   MINT *a, *b, *c, *d;
   short  h;
