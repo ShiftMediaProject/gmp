@@ -29,10 +29,11 @@ libmpz_la_SOURCES = \
   abs.c addmul_ui.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
+  cfdiv_q_2exp.c cfdiv_r_2exp.c \
   clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_ui.c com.c \
   divexact.c divegcd.c divis.c divis_ui.c divis_2exp.c \
-  dump.c fac_ui.c fdiv_q.c fdiv_q_2exp.c fdiv_q_ui.c \
-  fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_2exp.c fdiv_r_ui.c fdiv_ui.c \
+  dump.c fac_ui.c fdiv_q.c fdiv_q_ui.c \
+  fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_ui.c fdiv_ui.c \
   fib_ui.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
