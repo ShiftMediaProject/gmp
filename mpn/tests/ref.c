@@ -77,7 +77,7 @@ refmpn_malloc_limbs (mp_size_t size)
   ASSERT (size >= 0);
   if (size == 0)
     size = 1;
-  p = malloc (size * BYTES_PER_MP_LIMB);
+  p = (mp_ptr) malloc (size * BYTES_PER_MP_LIMB);
   ASSERT (p != NULL);
   return p;
 }
@@ -110,6 +110,29 @@ refmpn_zero_p (mp_srcptr ptr, mp_size_t size)
   return 1;
 }
 
+mp_limb_t
+refmpn_msbone (mp_limb_t x)
+{
+  mp_limb_t  n = (mp_limb_t) 1 << (BITS_PER_MP_LIMB-1);
+
+  while (n != 0)
+    {
+      if (x & n)
+        break;
+      n >>= 1;
+    }
+  return n;
+}
+
+/* a mask of the MSB one bit and all bits below */
+mp_limb_t
+refmpn_msbone_mask (mp_limb_t x)
+{
+  if (x == 0)
+    return 0;
+
+  return (refmpn_msbone (x) << 1) - 1;
+}
 
 void
 refmpn_copyi (mp_ptr rp, mp_srcptr sp, mp_size_t size)
@@ -148,8 +171,8 @@ refmpn_com_n (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 }
 
 
-mp_limb_t
-refmpn_cmp (mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
+int
+refmpn_cmp (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
 {
   mp_size_t  i;
 
@@ -157,10 +180,28 @@ refmpn_cmp (mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 
   for (i = size-1; i >= 0; i--)
     {
-      if (s1p[i] > s2p[i])  return 1;
-      if (s1p[i] < s2p[i])  return -1;
+      if (xp[i] > yp[i])  return 1;
+      if (xp[i] < yp[i])  return -1;
     }
   return 0;
+}
+
+int
+refmpn_cmp_twosizes (mp_srcptr xp, mp_size_t xsize,
+                     mp_srcptr yp, mp_size_t ysize)
+{
+  int  opp, cmp;
+
+  opp = (xsize < ysize);
+  if (opp)
+    MPN_SRCPTR_SWAP (xp,xsize, yp,ysize);
+  
+  if (! refmpn_zero_p (xp+ysize, xsize-ysize))
+    cmp = 1;
+  else
+    cmp = refmpn_cmp (xp, yp, ysize);
+
+  return (opp ? -cmp : cmp);
 }
 
 
@@ -312,6 +353,32 @@ mp_limb_t
 refmpn_sub_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
   return refmpn_sub_nc (rp, s1p, s2p, size, 0);
+}
+
+
+#define AORS(aors_n, aors_1)                                    \
+  {                                                             \
+    mp_limb_t  c;                                               \
+    ASSERT (s1size >= s2size);                                  \
+    ASSERT (s2size >= 1);                                       \
+    c = aors_n (rp, s1p, s2p, s2size);                          \
+    if (s1size-s2size != 0)                                     \
+      c = aors_1 (rp+s2size, s1p+s2size, s1size-s2size, c);     \
+    return c;                                                   \
+  }
+mp_limb_t
+refmpn_add (mp_ptr rp,
+            mp_srcptr s1p, mp_size_t s1size,
+            mp_srcptr s2p, mp_size_t s2size)
+{
+  AORS (refmpn_add_n, refmpn_add_1);
+}
+mp_limb_t
+refmpn_sub (mp_ptr rp,
+            mp_srcptr s1p, mp_size_t s1size,
+            mp_srcptr s2p, mp_size_t s2size)
+{
+  AORS (refmpn_sub_n, refmpn_sub_1);
 }
 
 
@@ -743,6 +810,82 @@ refmpn_gcd_1 (mp_srcptr xp, mp_size_t xsize, mp_limb_t y)
 }
 
 
+unsigned
+refmpn_count_trailing_zeros (mp_limb_t x)
+{
+  unsigned  n = 0;
+
+  ASSERT (x != 0);
+  while ((x & 1) == 0)
+    {
+      x >>= 1;
+      n++;
+    }
+  return n;
+}
+
+mp_size_t
+refmpn_strip_twos (mp_ptr p, mp_size_t size)
+{
+  mp_size_t  limbs;
+  unsigned   shift;
+
+  ASSERT (size >= 1);
+  ASSERT (! refmpn_zero_p (p, size));
+
+  for (limbs = 0; p[0] == 0; limbs++)
+    {
+      mpn_copyi (p, p+1, size-1);
+      p[size-1] = 0;
+    }
+
+  shift = refmpn_count_trailing_zeros (p[0]);
+  if (shift)
+    refmpn_rshift (p, p, size, shift);
+
+  return limbs*BITS_PER_MP_LIMB + shift;
+}
+
+mp_limb_t
+refmpn_gcd (mp_ptr gp, mp_ptr xp, mp_size_t xsize, mp_ptr yp, mp_size_t ysize)
+{
+  int       cmp;
+
+  ASSERT (ysize >= 1);
+  ASSERT (xsize >= ysize);
+  ASSERT ((xp[0] & 1) != 0);
+  ASSERT ((yp[0] & 1) != 0);
+  ASSERT (xp[xsize-1] != 0);
+  ASSERT (yp[ysize-1] != 0);
+  ASSERT (refmpn_overlap_fullonly_p (gp, xp, xsize));
+  ASSERT (refmpn_overlap_fullonly_p (gp, yp, ysize));
+  ASSERT (! MPN_OVERLAP_P (xp, xsize, yp, ysize));
+  if (xsize == ysize)
+    ASSERT (refmpn_msbone (xp[xsize-1]) >= refmpn_msbone (yp[ysize-1]));
+
+  refmpn_strip_twos (xp, xsize);
+  MPN_NORMALIZE (xp, xsize);
+  MPN_NORMALIZE (yp, ysize);
+
+  for (;;)
+    {
+      cmp = refmpn_cmp_twosizes (xp, xsize, yp, ysize);
+      if (cmp == 0)
+        break;
+      if (cmp < 0)
+        MPN_PTR_SWAP (xp,xsize, yp,ysize);
+
+      ASSERT_NOCARRY (refmpn_sub (xp, xp, xsize, yp, ysize));
+
+      refmpn_strip_twos (xp, xsize);
+      MPN_NORMALIZE (xp, xsize);
+    }
+
+  refmpn_copyi (gp, xp, xsize);
+  return xsize;
+}
+
+
 unsigned long
 refmpn_popcount (mp_srcptr sp, mp_size_t size)
 {
@@ -769,6 +912,9 @@ refmpn_hamdist (mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
   mp_ptr  d;
   unsigned long  count;
+
+  if (size == 0)
+    return 0;
 
   d = refmpn_malloc_limbs (size);
   refmpn_xor_n (d, s1p, s2p, size);
