@@ -26,17 +26,18 @@ MA 02111-1307, USA. */
 int
 _mpz_cmp_ui (mpz_srcptr u, unsigned long int v_digit)
 {
-  mp_size_t un;
   mp_ptr up;
+  mp_size_t un;
   mp_limb_t ul;
 
+  up = PTR(u);
   un = SIZ(u);
+
   if (un == 0)
     return -(v_digit != 0);
 
   if (un == 1)
     {
-      up = PTR(u);
       ul = up[0];
       if (ul > v_digit)
 	return 1;
@@ -50,7 +51,6 @@ _mpz_cmp_ui (mpz_srcptr u, unsigned long int v_digit)
     {
       if (un == 2)
 	{
-	  up = PTR(u);
 	  ul = up[0] + (up[1] << GMP_NUMB_BITS);
 
 	  if (ul > v_digit)
