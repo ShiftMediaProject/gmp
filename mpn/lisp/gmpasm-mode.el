@@ -79,9 +79,10 @@
 See `gmpasm-mode' docstring for how this is used.
 
 Commenting styles within GMP include
-  #   - i386, traditional unix
-  ;   - a29k, clipper, m68k, m88k
+  #   - alpha, i386, i960, vax, traditional unix
+  ;   - a29k, clipper, hppa, m88k, ppc
   !   - sh, sparc, z8000
+  |   - m68k
   @   - arm
   *   - cray
   C   - GMP m4, see mpn/asm-defs.m4
@@ -297,6 +298,12 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 	 (concat "[ \t\f]*\\(\\(" comment-regexp "\\|dnl\\)[ \t]*\\)*$"))
     (set (make-local-variable 'paragraph-start)
 	 (concat "\f\\|" paragraph-separate))
+
+    ;; Some sort of "def...(" m4 define, possibly with ` for quoting.
+    ;; Could do something with PROLOGUE here, but in GMP the filename is
+    ;; enough, it's not normally necessary to say the function name.
+    (set (make-local-variable 'add-log-current-defun-header-regexp)
+	 "^def[a-z0-9_]+(`?\\([a-zA-Z0-9_]+\\)")
 
     ;; Adaptive fill gets dnl and comment-start as comment style prefixes on
     ;; top of the standard regexp (which has # and ; already actually).
