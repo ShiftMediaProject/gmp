@@ -702,12 +702,14 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
     SPEED_RESTRICT_COND (s->size >= 1);         \
                                                 \
     mpz_init (r);                               \
-    mpz_init_set_ui (b, 2);                     \
+    mpz_init (b);                               \
+    mpz_set_n (b, s->xp, s->size);              \
+    mpz_sub_ui (b, b, 123L);                    \
                                                 \
     /* force m to odd */                        \
     mpz_init (m);                               \
     mpz_set_n (m, s->xp, s->size);              \
-    PTR(m)[0] |= 1;                             \
+    mpz_setbit (m, 0);                          \
                                                 \
     mpz_init_set (e, m);                        \
     mpz_sub_ui (e, e, 1);                       \
