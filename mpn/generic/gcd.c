@@ -59,7 +59,7 @@ MA 02111-1307, USA. */
    is used.  0 <= BMOD_THRESHOLD < BITS_PER_MP_LIMB.  */
 enum
   {
-    BMOD_THRESHOLD = BITS_PER_MP_LIMB/2,
+    BMOD_THRESHOLD = BITS_PER_MP_LIMB/2
   };
 
 #define SIGN_BIT  (~(~(mp_limb_t)0 >> 1))
