@@ -493,7 +493,8 @@ If @option{--target} isn't given, @samp{./configure} builds for the host
 system as determined by @samp{./config.guess}.  On some systems this can't
 distinguish between different CPUs in a family, and you should check the
 guess.  Running @samp{./config.guess} on the target system will also show the
-relevant @samp{VENDOR-OS}, if you don't already know what it should be.
+relevant @samp{VENDOR-OS}, if you don't already know what it should be.  The
+@samp{OS} part is important for libtool.
 
 In general, if you want a library that runs as fast as possible, you should
 configure GMP for the exact CPU type your system uses.  However, this may mean
@@ -836,6 +837,17 @@ to fail on AIX 4.3.
 unsuitable for @file{.asm} file processing.  @samp{./configure} will detect
 the problem and either abort or choose another m4 in the @env{PATH}.  The bug
 is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
+
+@item Power Variants
+
+CPU targets @samp{power} and @samp{powerpc} will each use instructions not
+available on the other, so it's important to choose the right one for the CPU
+that will be used.  Currently GMP has no assembler code support for using just
+the common instruction subset.  To get executables that run on both, the
+current suggestion is to use the generic C code (CPU target @samp{none}),
+possibly with appropriate compiler options (like @samp{-mcpu=common} for
+@command{gcc}).  CPU target @samp{rs6000} is accepted by @file{config.sub},
+but is currently equivalent to @samp{none}.
 
 @item Sparc V8
 
@@ -1249,6 +1261,13 @@ If @code{alloca} is not available, or GMP is configured with
 implementation of @file{stack-alloc.c}.
 
 @item
+It's safe for two threads to read from the same GMP variable simultaneously,
+but it's not safe for one to read while the another might be writing, nor for
+two threads to write simultaneously.  Note that this also applies to the seed
+variables when generating random numbers (@pxref{Random Number Functions}),
+since the seed is updated when a number is generated.
+
+@item
 On SCO systems the default @code{<ctype.h>} macros use per-file static
 variables and may not be reentrant, depending whether the compiler optimizes
 away fetches from them.  The GMP functions affected are @code{mpz_set_str},
@@ -1561,7 +1580,8 @@ with @samp{gcc -v}, otherwise perhaps @samp{what `which cc`}, or similar.
 The output from running @samp{uname -a}.
 
 @item
-The output from running @samp{./config.guess}.
+The output from running @samp{./config.guess}, and from running
+@samp{./configfsf.guess} (might be the same).
 
 @item
 If the bug is related to @samp{configure}, then the contents of
@@ -3549,7 +3569,7 @@ product's most significant limb is zero.
 @end ignore
 
 
-@node  Random Number Functions, BSD Compatible Functions, Low-level Functions, Top
+@node Random Number Functions, BSD Compatible Functions, Low-level Functions, Top
 @chapter Random Number Functions
 @cindex Random number functions
 
