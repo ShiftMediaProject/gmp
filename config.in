@@ -75,6 +75,14 @@ MA 02111-1307, USA.
    */
 #undef HAVE_DECL_OPTARG
 
+/* Define to 1 if you have the declaration of `sys_errlist', and to 0 if you
+   don't. */
+#undef HAVE_DECL_SYS_ERRLIST
+
+/* Define to 1 if you have the declaration of `sys_nerr', and to 0 if you
+   don't. */
+#undef HAVE_DECL_SYS_NERR
+
 /* Define to 1 if you have the declaration of `ungetc', and to 0 if you don't.
    */
 #undef HAVE_DECL_UNGETC
@@ -285,6 +293,9 @@ MA 02111-1307, USA.
 
 /* Define to 1 if you have the `strchr' function. */
 #undef HAVE_STRCHR
+
+/* Define to 1 if you have the `strerror' function. */
+#undef HAVE_STRERROR
 
 /* Define to 1 if cpp supports the ANSI # stringizing operator. */
 #undef HAVE_STRINGIZE
