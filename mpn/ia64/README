@@ -218,8 +218,9 @@ load-use delays might help.
 Using 63 separate loops, we could use the double-word shrp instruction.
 That instruction has a plain single-cycle latency.  We need 63 loops
 since this instruction only accept immediate count.  That would lead to
-a somewhat silly code size, but the speed would be 1 c/l on both
-itanium and itanium2.  (itanium2 shrp can only issue to port I0.)
+a somewhat silly code size, but the speed would be 1 c/l on itanium,
+and 0.75 c/l on itanium2 (by using shrp each cycle plus shl/shr going
+down I1 for a further limb every second cycle).
 
 ================================================================
 mpn_copyi, mpn_copyd
