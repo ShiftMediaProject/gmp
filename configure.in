@@ -2829,7 +2829,7 @@ if test $enable_mpfr = yes; then
   gmp_LIBS=$LIBS
   LIBS="$LIBS $LIBM"
 
-
+  MPFR_CONFIGS
 
   AC_SUBST(MPFR_CFLAGS,$CFLAGS)
   AC_SUBST(MPFR_LIBS,  $LIBS)
