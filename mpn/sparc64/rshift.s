@@ -28,6 +28,8 @@
 
 .section	".text"
 	.align	4
+	.register	%g2,#scratch
+	.register	%g3,#scratch
 	.global	__mpn_rshift
 	.type	__mpn_rshift,#function
 	.proc	04
@@ -38,7 +40,7 @@ __mpn_rshift:
 	and	%o2,4-1,%g4	! number of limbs in first loop
 	sllx	%g2,%o5,%g1	! compute function result
 	brz,pn	%g4,.L0		! if multiple of 4 limbs, skip first loop
-	stx	%g1,[%sp+80]
+	stx	%g1,[%sp+79]
 
 	sub	%o2,%g4,%o2	! adjust count for main loop
 
@@ -88,6 +90,6 @@ __mpn_rshift:
 .Lend:	srlx	%g2,%o3,%g2
 	stx	%g2,[%o0-0]
 	retl
-	ldx	[%sp+80],%o0
+	ldx	[%sp+79],%o0
 .LLfe1:
 	.size	__mpn_rshift,.LLfe1-__mpn_rshift
