@@ -118,6 +118,20 @@ The current code runs at 2 c/l on Itanium 1 and 1.25 c/l on Itanium 2.
 (Neeed to verify Itanium 1 time.)
 
 ================================================================
+mpn_mul_1:
+
+The current code runs at 2.5 c/l on Itanium 1 and 2 c/l on Itanium 2.
+
+Using a blocked approach, working off of 4 separate places in the operands,
+one could make use of the xma accumulation, and approach 1 c/l.
+
+	ldf8 [up]
+	xma.l
+	xma.hu
+	stf8  [wrp]
+
+
+================================================================
 mpn_addmul_1:
 
 The current code runs at 3 c/l on Itanium 1 and 2 c/l on Itanium 2.
@@ -125,6 +139,20 @@ The current code runs at 3 c/l on Itanium 1 and 2 c/l on Itanium 2.
 We could do even better on Itanium 2 using ldfp8 and the carry propagation
 scheme of mpn_add_n, 1.67 c/l.  But that would probably give very little
 actual speedup.
+
+It seems possible to use a blocked approach, as with mpn_mul_1.  We should
+read rp[] to integer registers, allowing for just one getf.sig per cycle.
+
+	ld8  [rp]
+	ldf8 [up]
+	xma.l
+	xma.hu
+	getf.sig
+	add+cmp+add
+	st8  [wrp]
+
+These 9 instructions can be scheduled in 1.5 cycles, and with the 4
+cycle latency of xma, this means we need at least 3 blocks.
 
 ================================================================
 mpn_submul_1:
@@ -134,14 +162,6 @@ to 2 c/l requires ldfp8 with all alignment overhead that implies.  Getting
 to 2.25 c/l would be straightforward with 4x unrolling.
 
 The current code uses modulo scheduled loops.  Not good.
-
-================================================================
-mpn_mul_1:
-
-The current code runs at 2.5 c/l on Itanium 1 and 2 c/l on Itanium 2.
-
-Using a blocked approach, working off of 4 separate places in the operands,
-one could make use of the xma accumulation, and approach 1 c/l.
 
 ================================================================
 mpn_addmul_N
@@ -165,7 +185,7 @@ better.
 /* In the inner loop, get a new U limb and store a result limb. */
 	mov		lc = un
 Loop:	ldf8		u0 = [r33], 8
-	ldf8		r0 = [r32]
+	ld8		r0 = [r32]
 	xma.l		lp0 = v0, u0, hp0
 	xma.hu		hp0 = v0, u0, hp0
 	xma.l		lp1 = v1, u0, hp1
