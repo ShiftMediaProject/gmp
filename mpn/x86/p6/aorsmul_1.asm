@@ -270,12 +270,23 @@ forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT-1, `
 	deflit(`disp0', eval(i*4*CHUNK_COUNT ifelse(UNROLL_BYTES,256,-128)))
 	deflit(`disp1', eval(disp0 + 4))
 
+ifelse(disp0,0,`
+	# force 0(%esi) and 0(%edi) not (%esi) and (%edi)
+	.byte	0x8b, 0x46, 0x00	# movl 0(%esi), %eax
+	mull	%ebp
+ifelse(M4_inst,addl,`	.byte	0x01, 0x4f, 0x00	# addl %ecx, 0(%edi)')
+ifelse(M4_inst,subl,`	.byte	0x29, 0x4f, 0x00	# subl %ecx, 0(%edi)')
+	adcl	%eax, %ebx
+	movl	%edx, %ecx
+	adcl	$0, %ecx
+',`
 	movl	disp0(%esi), %eax
 	mull	%ebp
 	M4_inst	%ecx, disp0(%edi)
 	adcl	%eax, %ebx
 	movl	%edx, %ecx
 	adcl	$0, %ecx
+')
 
 	movl	disp1(%esi), %eax
 	mull	%ebp
