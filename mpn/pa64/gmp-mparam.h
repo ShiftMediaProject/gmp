@@ -28,5 +28,9 @@ MA 02111-1307, USA. */
 
 /* These values are for the PA8000.  Presumably the PA8200 and PA8500 have the
    same timing characteristic.  */
+#ifndef KARATSUBA_MUL_THRESHOLD
 #define KARATSUBA_MUL_THRESHOLD 16
+#endif
+#ifndef KARATSUBA_SQR_THRESHOLD
 #define KARATSUBA_SQR_THRESHOLD 46
+#endif
