@@ -1,7 +1,7 @@
 dnl  HP-PA 7100/7200 mpn_submul_1 -- Multiply a limb vector with a limb and
 dnl  subtract the result from a second limb vector.
 
-dnl  Copyright 1995, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1995, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -73,7 +73,7 @@ C	.callinfo	frame=128,no_calls
 	stws,ma	 s0,4(res_ptr)
 
 C start software pipeline ----------------------------------------------------
-	.label	L(0)
+LDEF(0)
 	fldds,ma 8(s1_ptr),%fr4
 	fldds,ma 8(s1_ptr),%fr8
 
@@ -104,7 +104,7 @@ C start software pipeline ----------------------------------------------------
 	addib,<	 -4,size_param,L(end)
 	addc	 %r0,hi3,cylimb			C propagate carry into cylimb
 C main loop ------------------------------------------------------------------
-	.label	L(loop)
+LDEF(loop)
 	fldds,ma 8(s1_ptr),%fr4
 	fldds,ma 8(s1_ptr),%fr8
 
@@ -149,7 +149,7 @@ C main loop ------------------------------------------------------------------
 	addib,>= -4,size_param,L(loop)
 	addc	 %r0,hi3,cylimb			C propagate carry into cylimb
 C finish software pipeline ---------------------------------------------------
-	.label	L(end)
+LDEF(end)
 	ldws	 0(res_ptr),s0
 	ldws	 4(res_ptr),s1
 	ldws	 8(res_ptr),s2
@@ -173,10 +173,10 @@ C restore callee-saves registers ---------------------------------------------
 	ldw	-84(%r30),%r6
 	ldw	-80(%r30),%r7
 
-	.label	L(few_limbs)
+LDEF(few_limbs)
 	addib,=,n 4,size_param,L(ret)
 
-	.label	L(loop2)
+LDEF(loop2)
 	fldws,ma 4(s1_ptr),%fr4
 	ldws	 0(res_ptr),s0
 	xmpyu	 %fr4,%fr31R,%fr5
@@ -191,7 +191,7 @@ C restore callee-saves registers ---------------------------------------------
 	addib,<> -1,size_param,L(loop2)
 	nop
 
-	.label	L(ret)
+LDEF(ret)
 	addc	 %r0,cylimb,cylimb
 	bv	 0(%r2)
 	ldo	 -128(%r30),%r30
