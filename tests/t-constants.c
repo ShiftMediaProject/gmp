@@ -35,6 +35,28 @@ char *long_max_def = "defined";
 char *long_max_def = "not defined";
 #endif
 
+#ifdef UINT_MAX
+char *uint_max_def = "defined";
+#else
+char *uint_max_def = "not defined";
+#endif
+#ifdef INT_MAX
+char *int_max_def = "defined";
+#else
+char *int_max_def = "not defined";
+#endif
+
+#ifdef USHRT_MAX
+char *ushrt_max_def = "defined";
+#else
+char *ushrt_max_def = "not defined";
+#endif
+#ifdef SHRT_MAX
+char *shrt_max_def = "defined";
+#else
+char *shrt_max_def = "not defined";
+#endif
+
 #include "gmp-impl.h"
 #include "longlong.h"
 
@@ -182,23 +204,6 @@ main (int argc, char *argv[])
 {
   int  error = 0;
 
-  if (argc >= 2)
-    {
-      printf ("After gmp.h,\n");
-      printf ("   ULONG_MAX  %s\n", ulong_max_def);
-      printf ("   LONG_MAX   %s\n", long_max_def);
-      printf ("\n");
-
-#ifdef _CRAY
-      printf ("_CRAY is defined, so limits.h is being used\n");
-#endif
-
-      printf ("ULONG_MAX     %lX\n", ULONG_MAX);
-      printf ("ULONG_HIGHBIT %lX\n", ULONG_HIGHBIT);
-      printf ("LONG_MAX      %lX\n", LONG_MAX);
-      printf ("LONG_MIN      %lX\n", LONG_MIN);
-    }
-
   CHECK_INT (BYTES_PER_MP_LIMB, sizeof(mp_limb_t));
   CHECK_INT (mp_bits_per_limb, BITS_PER_MP_LIMB);
   CHECK_BITS (BITS_PER_MP_LIMB, mp_limb_t);
@@ -245,6 +250,50 @@ main (int argc, char *argv[])
     CHECK_LIMB (PP_INVERTED, pp_inverted_calc);
   }
 #endif
+
+  if (argc >= 2 || error)
+    {
+      int  bits;
+
+      printf ("\n");
+      printf ("After gmp.h,\n");
+      printf ("  ULONG_MAX  %s\n", ulong_max_def);
+      printf ("  LONG_MAX   %s\n", long_max_def);
+      printf ("  UINT_MAX   %s\n", uint_max_def);
+      printf ("  INT_MAX    %s\n", int_max_def);
+      printf ("  USHRT_MAX  %s\n", ushrt_max_def);
+      printf ("  SHRT_MAX   %s\n", shrt_max_def);
+      printf ("\n");
+
+#ifdef _CRAY
+      printf ("_CRAY is defined, so limits.h is being used\n");
+#endif
+
+      printf ("ULONG_MAX      %lX\n", ULONG_MAX);
+      printf ("ULONG_HIGHBIT  %lX\n", ULONG_HIGHBIT);
+      printf ("LONG_MAX       %lX\n", LONG_MAX);
+      printf ("LONG_MIN       %lX\n", LONG_MIN);
+
+      printf ("UINT_MAX       %X\n", UINT_MAX);
+      printf ("UINT_HIGHBIT   %X\n", UINT_HIGHBIT);
+      printf ("INT_MAX        %X\n", INT_MAX);
+      printf ("INT_MIN        %X\n", INT_MIN);
+
+      printf ("USHRT_MAX      %hX\n", USHRT_MAX);
+      printf ("USHRT_HIGHBIT  %hX\n", USHRT_HIGHBIT);
+      printf ("SHRT_MAX       %hX\n", SHRT_MAX);
+      printf ("SHRT_MIN       %hX\n", SHRT_MIN);
+
+      printf ("\n");
+      printf ("Bits\n");
+      CALC_BITS (bits, long);           printf ("  long           %d\n", bits);
+      CALC_BITS (bits, int);            printf ("  int            %d\n", bits);
+      CALC_BITS (bits, short);          printf ("  short          %d\n", bits);
+      CALC_BITS (bits, unsigned long);  printf ("  unsigned long  %d\n", bits);
+      CALC_BITS (bits, unsigned int);   printf ("  unsigned int   %d\n", bits);
+      CALC_BITS (bits, unsigned short); printf ("  unsigned short %d\n", bits);
+      CALC_BITS (bits, mp_size_t);      printf ("  mp_size_t      %d\n", bits);
+    }
 
   if (error)
     abort ();
