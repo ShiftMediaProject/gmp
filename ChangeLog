@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2004-03-04  Kevin Ryde  <kevin@swox.se>
 
+	* gen-psqr.c (print): Add CNST_LIMB in PERFSQR_MOD_TEST, for benefit
+	of K&R.
+
 	* doc/configuration (Configure): Remove mkinstalldirs, no longer used.
 
 	* acinclude.m4 (GMP_PROG_AR): Remove AR_FLAGS=cq, libtool 1.5.2 now
