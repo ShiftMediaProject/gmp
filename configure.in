@@ -245,32 +245,33 @@ case "$target" in
   athlon-*-*)   gmp_optcflags_gcc="-mcpu=pentiumpro -march=pentiumpro";;
 esac
 
+if test -z "$CC"; then
+  # Find compiler.
+  dnl  NOTE: This is our own [AC_PROG_CC].  See acinclude.m4.
+  GMP_PROG_CC_FIND($cclist, $os_64bit)
 
-# Find compiler.
-dnl  NOTE: This is our own AC_PROG_CC.  See acinclude.m4.
-GMP_PROG_CC_FIND($cclist, $os_64bit)
-
-# If 64-bit OS and we have a 64-bit compiler, use it.
-if test -n "$os_64bit" && test -n "$CC64"; then
-  CC=$CC64
-  CFLAGS=$CFLAGS64
-else
-  eval CFLAGS=\$gmp_cflags_$CC  
-fi
-
-# Try compiler flags that may work with only some compiler versions.
-eval optcflags=\$gmp_optcflags_$CC
-if test -n "$optcflags"; then
-  CFLAGS_save="$CFLAGS"
-  CFLAGS="$CFLAGS $optcflags"
-  AC_MSG_CHECKING([whether $CC accepts $optcflags])
-  AC_LANG_C
-  AC_TRY_COMPILER([int main(){return(0);}], optok, cross)
-  if test "$optok" = "yes"; then
-    AC_MSG_RESULT([yes])
+  # If 64-bit OS and we have a 64-bit compiler, use it.
+  if test -n "$os_64bit" && test -n "$CC64"; then
+    CC=$CC64
+    CFLAGS=$CFLAGS64
   else
-    AC_MSG_RESULT([no])
-    CFLAGS="$CFLAGS_save"
+    eval CFLAGS=\$gmp_cflags_$CC  
+  fi
+
+  # Try compiler flags that may work with only some compiler versions.
+  eval optcflags=\$gmp_optcflags_$CC
+  if test -n "$optcflags"; then
+    CFLAGS_save="$CFLAGS"
+    CFLAGS="$CFLAGS $optcflags"
+    AC_MSG_CHECKING([whether $CC accepts $optcflags])
+    AC_LANG_C
+    AC_TRY_COMPILER([int main(){return(0);}], optok, cross)
+    if test "$optok" = "yes"; then
+      AC_MSG_RESULT([yes])
+    else
+      AC_MSG_RESULT([no])
+      CFLAGS="$CFLAGS_save"
+    fi
   fi
 fi
 
