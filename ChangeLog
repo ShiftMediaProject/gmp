@@ -1,3 +1,7 @@
+2001-03-24  Kevin Ryde  <kevin@swox.se>
+
+	* demos/expr/exprz.c,t-expr.c,README: Add congruent_p and divisible_p.
+
 2001-03-23  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (GMPceil, GMPfloor, ge, le): New macros.
