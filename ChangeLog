@@ -18,6 +18,20 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-09-10  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Multiplication Algorithms): FFT is now enabled by default.
+
+2002-09-10  Pedro Gimeno  <pggimeno@wanadoo.es>
+
+	* mpz/urandomm.c: Use mpn level functions, avoid an infinite loop if
+	_gmp_rand forever returns all "1" bits.
+	* tests/rand/t-urndmm.c: New file
+	* tests/rand/Makefile.am (check_PROGRAMS): Add it.
+
+	* gmp-impl.h (BITS_TO_LIMBS): New macro.
+	* mpz/urandomb.c: Use it, and use MPZ_REALLOC.
+
 2002-09-08  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_GCC_WA_MCPU): New macro.
