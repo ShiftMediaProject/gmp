@@ -159,7 +159,6 @@ double speed_mpn_divrem_2_div _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_2_inv _PROTO ((struct speed_params *s));
 double speed_mpn_fib2_ui _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
-double speed_mpn_gcd_finda _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1N _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_binary _PROTO ((struct speed_params *s));
@@ -1993,6 +1992,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     while (--i != 0);                                           \
     t = speed_endtime ();                                       \
                                                                 \
+    noop_1 (dummy); /* don't let the calls go dead */           \
     TMP_FREE (marker);                                          \
                                                                 \
     s->time_divisor = SPEED_BLOCK_SIZE;                         \
