@@ -3,9 +3,9 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{1999-03-31.13}%
+\def\texinfoversion{2000-11-09.08}
 %
-% Copyright (C) 1985, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99
+% Copyright (C) 1985, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 2000
 % Free Software Foundation, Inc.
 %
 % This texinfo.tex file is free software; you can redistribute it and/or
@@ -29,15 +29,15 @@
 %
 % Please try the latest version of texinfo.tex before submitting bug
 % reports; you can get the latest version from:
-%   ftp://ftp.gnu.org/pub/gnu/texinfo.tex
+%   ftp://ftp.gnu.org/gnu/texinfo.tex
 %   (and all GNU mirrors, see http://www.gnu.org/order/ftp.html)
-%   ftp://tug.org/tex/texinfo.tex
-%   ftp://ctan.org/macros/texinfo/texinfo.tex
-%   (and all CTAN mirrors, finger ctan@ctan.org for a list).
+%   ftp://texinfo.org/tex/texinfo.tex
+%   ftp://us.ctan.org/macros/texinfo/texinfo.tex
+%   (and all CTAN mirrors, finger ctan@us.ctan.org for a list).
 %   /home/gd/gnu/doc/texinfo.tex on the GNU machines.
 % The texinfo.tex in any given Texinfo distribution could well be out
 % of date, so if that's what you're using, please check.
-% There is a small home page for Texinfo at http://texinfo.org/.
+% Texinfo has a small home page at http://texinfo.org/.
 %
 % Send bug reports to bug-texinfo@gnu.org.  Please include including a
 % complete document in each bug report with which we can reproduce the
@@ -67,7 +67,6 @@
   \catcode`+=\active \catcode`\_=\active}
 
 % Save some parts of plain tex whose names we will redefine.
-
 \let\ptexb=\b
 \let\ptexbullet=\bullet
 \let\ptexc=\c
@@ -86,7 +85,6 @@
 % We never want plain's outer \+ definition in Texinfo.
 % For @tex, we can use \tabalign.
 \let\+ = \relax
-
 
 \message{Basics,}
 \chardef\other=12
@@ -216,6 +214,9 @@
     \normalturnoffactive  % \ in index entries must not stay \, e.g., if
                    % the page break happens to be in the middle of an example.
     \shipout\vbox{%
+      % Do this early so pdf references go to the beginning of the page.
+      \ifpdfmakepagedest \pdfmkdest{\the\pageno} \fi
+      %
       \ifcropmarks \vbox to \outervsize\bgroup
         \hsize = \outerhsize
         \vskip-\topandbottommargin
@@ -599,36 +600,42 @@ where each line of input produces a line of output.}
 %}}
 
 \def\needx#1{%
-  % Go into vertical mode, so we don't make a big box in the middle of a
+  % Ensure vertical mode, so we don't make a big box in the middle of a
   % paragraph.
   \par
   %
-  % Don't add any leading before our big empty box, but allow a page
-  % break, since the best break might be right here.
-  \allowbreak
-  \nointerlineskip
-  \vtop to #1\mil{\vfil}%
-  %
-  % TeX does not even consider page breaks if a penalty added to the
-  % main vertical list is 10000 or more.  But in order to see if the
-  % empty box we just added fits on the page, we must make it consider
-  % page breaks.  On the other hand, we don't want to actually break the
-  % page after the empty box.  So we use a penalty of 9999.
-  %
-  % There is an extremely small chance that TeX will actually break the
-  % page at this \penalty, if there are no other feasible breakpoints in
-  % sight.  (If the user is using lots of big @group commands, which
-  % almost-but-not-quite fill up a page, TeX will have a hard time doing
-  % good page breaking, for example.)  However, I could not construct an
-  % example where a page broke at this \penalty; if it happens in a real
-  % document, then we can reconsider our strategy.
-  \penalty9999
-  %
-  % Back up by the size of the box, whether we did a page break or not.
-  \kern -#1\mil
-  %
-  % Do not allow a page break right after this kern.
-  \nobreak
+  % If the @need value is less than one line space, it's useless.
+  \dimen0 = #1\mil
+  \dimen2 = \ht\strutbox
+  \advance\dimen2 by \dp\strutbox
+  \ifdim\dimen0 > \dimen2
+    %
+    % Do a \strut just to make the height of this box be normal, so the
+    % normal leading is inserted relative to the preceding line.
+    % And a page break here is fine.
+    \vtop to #1\mil{\strut\vfil}%
+    %
+    % TeX does not even consider page breaks if a penalty added to the
+    % main vertical list is 10000 or more.  But in order to see if the
+    % empty box we just added fits on the page, we must make it consider
+    % page breaks.  On the other hand, we don't want to actually break the
+    % page after the empty box.  So we use a penalty of 9999.
+    %
+    % There is an extremely small chance that TeX will actually break the
+    % page at this \penalty, if there are no other feasible breakpoints in
+    % sight.  (If the user is using lots of big @group commands, which
+    % almost-but-not-quite fill up a page, TeX will have a hard time doing
+    % good page breaking, for example.)  However, I could not construct an
+    % example where a page broke at this \penalty; if it happens in a real
+    % document, then we can reconsider our strategy.
+    \penalty9999
+    %
+    % Back up by the size of the box, whether we did a page break or not.
+    \kern -#1\mil
+    %
+    % Do not allow a page break right after this kern.
+    \nobreak
+  \fi
 }
 
 % @br   forces paragraph break
@@ -681,16 +688,39 @@ where each line of input produces a line of output.}
 \def\nofillexdentyyy #1{{\advance \leftskip by -\exdentamount
 \leftline{\hskip\leftskip{\rm#1}}}}
 
-% @inmargin{TEXT} puts TEXT in the margin next to the current paragraph.
-
-\def\inmargin#1{%
-\strut\vadjust{\nobreak\kern-\strutdepth
-  \vtop to \strutdepth{\baselineskip\strutdepth\vss
-  \llap{\rightskip=\inmarginspacing \vbox{\noindent #1}}\null}}}
+% @inmargin{WHICH}{TEXT} puts TEXT in the WHICH margin next to the current
+% paragraph.  For more general purposes, use the \margin insertion
+% class.  WHICH is `l' or `r'.
+%
 \newskip\inmarginspacing \inmarginspacing=1cm
 \def\strutdepth{\dp\strutbox}
-
-%\hbox{{\rm#1}}\hfil\break}}
+%
+\def\doinmargin#1#2{\strut\vadjust{%
+  \nobreak
+  \kern-\strutdepth
+  \vtop to \strutdepth{%
+    \baselineskip=\strutdepth
+    \vss
+    % if you have multiple lines of stuff to put here, you'll need to
+    % make the vbox yourself of the appropriate size.
+    \ifx#1l%
+      \llap{#2\hskip\inmarginspacing}%
+    \else
+      \rlap{\hskip\hsize\hskip\inmarginspacing#2}%
+    \fi
+    \null
+  }%
+}}
+\def\inleftmargin{\doinmargin l}
+\def\inrightmargin{\doinmargin r}
+\def\inmargin{% not perfect, but better than nothing.
+  \ifodd\pageno
+    \let\temp=\inleftmargin
+  \else
+    \let\temp=\inrightmargin
+  \fi
+  \temp
+}
 
 % @include file    insert text of that file as input.
 % Allow normal characters that  we make active in the argument (a file name).
@@ -842,6 +872,179 @@ where each line of input produces a line of output.}
 \outer\def\bye{\pagealignmacro\tracingstats=1\ptexend}
 
 
+\message{pdf,}
+% adobe `portable' document format
+\newcount\tempnum
+\newcount\lnkcount
+\newtoks\filename
+\newcount\filenamelength
+\newcount\pgn
+\newtoks\toksA
+\newtoks\toksB
+\newtoks\toksC
+\newtoks\toksD
+\newbox\boxA
+\newcount\countA
+\newif\ifpdf
+\newif\ifpdfmakepagedest
+
+\ifx\pdfoutput\undefined
+  \pdffalse
+  \let\pdfmkdest = \gobble
+  \let\pdfurl = \gobble
+  \let\endlink = \relax
+  \let\linkcolor = \relax
+  \let\pdfmakeoutlines = \relax
+\else
+  \pdftrue
+  \pdfoutput = 1
+  \input pdfcolor
+  \def\dopdfimage#1#2#3{%
+    \def\imagewidth{#2}%
+    \def\imageheight{#3}%
+    \ifnum\pdftexversion < 14
+      \pdfimage
+    \else
+      \pdfximage
+    \fi
+      \ifx\empty\imagewidth\else width \imagewidth \fi
+      \ifx\empty\imageheight\else height \imageheight \fi
+      {#1.pdf}%
+    \ifnum\pdftexversion < 14 \else
+      \pdfrefximage \pdflastximage
+    \fi}
+  \def\pdfmkdest#1{\pdfdest name{#1@} xyz}
+  \def\pdfmkpgn#1{#1@}
+  \let\linkcolor = \Blue  % was Cyan, but that seems light?
+  \def\endlink{\Black\pdfendlink}
+  % Adding outlines to PDF; macros for calculating structure of outlines
+  % come from Petr Olsak
+  \def\expnumber#1{\expandafter\ifx\csname#1\endcsname\relax 0%
+    \else \csname#1\endcsname \fi}
+  \def\advancenumber#1{\tempnum=\expnumber{#1}\relax
+    \advance\tempnum by1
+    \expandafter\xdef\csname#1\endcsname{\the\tempnum}}
+  \def\pdfmakeoutlines{{%
+    \openin 1 \jobname.toc
+    \ifeof 1\else\bgroup
+      \closein 1 
+      \indexnofonts
+      \def\tt{}
+      \let\_ = \normalunderscore
+      % Thanh's hack / proper braces in bookmarks  
+      \edef\mylbrace{\iftrue \string{\else}\fi}\let\{=\mylbrace
+      \edef\myrbrace{\iffalse{\else\string}\fi}\let\}=\myrbrace
+      %
+      \def\chapentry ##1##2##3{}
+      \def\unnumbchapentry ##1##2{}
+      \def\secentry ##1##2##3##4{\advancenumber{chap##2}}
+      \def\unnumbsecentry ##1##2{}
+      \def\subsecentry ##1##2##3##4##5{\advancenumber{sec##2.##3}}
+      \def\unnumbsubsecentry ##1##2{}
+      \def\subsubsecentry ##1##2##3##4##5##6{\advancenumber{subsec##2.##3.##4}}
+      \def\unnumbsubsubsecentry ##1##2{}
+      \input \jobname.toc
+      \def\chapentry ##1##2##3{%
+        \pdfoutline goto name{\pdfmkpgn{##3}}count-\expnumber{chap##2}{##1}}
+      \def\unnumbchapentry ##1##2{%
+        \pdfoutline goto name{\pdfmkpgn{##2}}{##1}}
+      \def\secentry ##1##2##3##4{%
+        \pdfoutline goto name{\pdfmkpgn{##4}}count-\expnumber{sec##2.##3}{##1}}
+      \def\unnumbsecentry ##1##2{%
+        \pdfoutline goto name{\pdfmkpgn{##2}}{##1}}
+      \def\subsecentry ##1##2##3##4##5{%
+        \pdfoutline goto name{\pdfmkpgn{##5}}count-\expnumber{subsec##2.##3.##4}{##1}}
+      \def\unnumbsubsecentry ##1##2{%
+        \pdfoutline goto name{\pdfmkpgn{##2}}{##1}}
+      \def\subsubsecentry ##1##2##3##4##5##6{%
+        \pdfoutline goto name{\pdfmkpgn{##6}}{##1}}
+      \def\unnumbsubsubsecentry ##1##2{%
+        \pdfoutline goto name{\pdfmkpgn{##2}}{##1}}
+      \input \jobname.toc
+    \egroup\fi
+  }}
+  \def\makelinks #1,{%
+    \def\params{#1}\def\E{END}%
+    \ifx\params\E
+      \let\nextmakelinks=\relax
+    \else
+      \let\nextmakelinks=\makelinks
+      \ifnum\lnkcount>0,\fi
+      \picknum{#1}%
+      \startlink attr{/Border [0 0 0]} 
+        goto name{\pdfmkpgn{\the\pgn}}%
+      \linkcolor #1%
+      \advance\lnkcount by 1%
+      \endlink
+    \fi
+    \nextmakelinks
+  }
+  \def\picknum#1{\expandafter\pn#1}
+  \def\pn#1{%
+    \def\p{#1}%
+    \ifx\p\lbrace
+      \let\nextpn=\ppn
+    \else
+      \let\nextpn=\ppnn
+      \def\first{#1}
+    \fi
+    \nextpn
+  }
+  \def\ppn#1{\pgn=#1\gobble}
+  \def\ppnn{\pgn=\first}
+  \def\pdfmklnk#1{\lnkcount=0\makelinks #1,END,}
+  \def\addtokens#1#2{\edef\addtoks{\noexpand#1={\the#1#2}}\addtoks}
+  \def\skipspaces#1{\def\PP{#1}\def\D{|}%
+    \ifx\PP\D\let\nextsp\relax
+    \else\let\nextsp\skipspaces
+      \ifx\p\space\else\addtokens{\filename}{\PP}%
+        \advance\filenamelength by 1
+      \fi
+    \fi
+    \nextsp}
+  \def\getfilename#1{\filenamelength=0\expandafter\skipspaces#1|\relax}
+  \ifnum\pdftexversion < 14
+    \let \startlink \pdfannotlink
+  \else
+    \let \startlink \pdfstartlink
+  \fi
+  \def\pdfurl#1{%
+    \begingroup
+      \normalturnoffactive\def\@{@}%
+      \leavevmode\Red
+      \startlink attr{/Border [0 0 0]}%
+        user{/Subtype /Link /A << /S /URI /URI (#1) >>}%
+        % #1
+    \endgroup}
+  \def\pdfgettoks#1.{\setbox\boxA=\hbox{\toksA={#1.}\toksB={}\maketoks}}
+  \def\addtokens#1#2{\edef\addtoks{\noexpand#1={\the#1#2}}\addtoks}
+  \def\adn#1{\addtokens{\toksC}{#1}\global\countA=1\let\next=\maketoks}
+  \def\poptoks#1#2|ENDTOKS|{\let\first=#1\toksD={#1}\toksA={#2}}
+  \def\maketoks{%
+    \expandafter\poptoks\the\toksA|ENDTOKS|
+    \ifx\first0\adn0
+    \else\ifx\first1\adn1 \else\ifx\first2\adn2 \else\ifx\first3\adn3
+    \else\ifx\first4\adn4 \else\ifx\first5\adn5 \else\ifx\first6\adn6
+    \else\ifx\first7\adn7 \else\ifx\first8\adn8 \else\ifx\first9\adn9 
+    \else
+      \ifnum0=\countA\else\makelink\fi
+      \ifx\first.\let\next=\done\else
+        \let\next=\maketoks
+        \addtokens{\toksB}{\the\toksD}
+        \ifx\first,\addtokens{\toksB}{\space}\fi
+      \fi
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+    \next}
+  \def\makelink{\addtokens{\toksB}%
+    {\noexpand\pdflink{\the\toksC}}\toksC={}\global\countA=0}
+  \def\pdflink#1{%
+    \startlink attr{/Border [0 0 0]} goto name{\mkpgn{#1}}
+    \linkcolor #1\endlink}
+  \def\mkpgn#1{#1@} 
+  \def\done{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
+\fi % \ifx\pdfoutput
+
+
 \message{fonts,}
 % Font-change commands.
 
@@ -911,23 +1114,17 @@ where each line of input produces a line of output.}
 \setfont\deftt\ttshape{10}{\magstep1}
 \def\df{\let\tentt=\deftt \let\tenbf = \defbf \bf}
 
-% Fonts for indices and small examples (9pt).
-% We actually use the slanted font rather than the italic,
-% because texinfo normally uses the slanted fonts for that.
-% Do not make many font distinctions in general in the index, since they
-% aren't very useful.
-\setfont\ninett\ttshape{9}{1000}
-\setfont\ninettsl\ttslshape{10}{900}
-\setfont\indrm\rmshape{9}{1000}
-\setfont\indit\itshape{9}{1000}
-\setfont\indsl\slshape{9}{1000}
-\let\indtt=\ninett
-\let\indttsl=\ninettsl
-\let\indsf=\indrm
-\let\indbf=\indrm
-\setfont\indsc\scshape{10}{900}
-\font\indi=cmmi9
-\font\indsy=cmsy9
+% Fonts for indices, footnotes, small examples (9pt).
+\setfont\smallrm\rmshape{9}{1000}
+\setfont\smalltt\ttshape{9}{1000}
+\setfont\smallbf\bfshape{10}{900}
+\setfont\smallit\itshape{9}{1000}
+\setfont\smallsl\slshape{9}{1000}
+\setfont\smallsf\sfshape{9}{1000}
+\setfont\smallsc\scshape{10}{900}
+\setfont\smallttsl\ttslshape{10}{900}
+\font\smalli=cmmi9
+\font\smallsy=cmsy9
 
 % Fonts for title page:
 \setfont\titlerm\rmbshape{12}{\magstep3}
@@ -1041,11 +1238,12 @@ where each line of input produces a line of output.}
   \let\tensf=\ssecsf \let\teni=\sseci \let\tensy=\ssecsy \let\tenttsl=\ssecttsl
   \resetmathfonts \setleading{15pt}}
 \let\subsubsecfonts = \subsecfonts % Maybe make sssec fonts scaled magstephalf?
-\def\indexfonts{%
-  \let\tenrm=\indrm \let\tenit=\indit \let\tensl=\indsl
-  \let\tenbf=\indbf \let\tentt=\indtt \let\smallcaps=\indsc
-  \let\tensf=\indsf \let\teni=\indi \let\tensy=\indsy \let\tenttsl=\indttsl
-  \resetmathfonts \setleading{12pt}}
+\def\smallfonts{%
+  \let\tenrm=\smallrm \let\tenit=\smallit \let\tensl=\smallsl
+  \let\tenbf=\smallbf \let\tentt=\smalltt \let\smallcaps=\smallsc
+  \let\tensf=\smallsf \let\teni=\smalli \let\tensy=\smallsy
+  \let\tenttsl=\smallttsl
+  \resetmathfonts \setleading{11pt}}
 
 % Set up the default fonts, so we can use them for creating boxes.
 %
@@ -1094,9 +1292,9 @@ where each line of input produces a line of output.}
 }
 \let\ttfont=\t
 \def\samp#1{`\tclose{#1}'\null}
-\setfont\smallrm\rmshape{8}{1000}
-\font\smallsy=cmsy9
-\def\key#1{{\smallrm\textfont2=\smallsy \leavevmode\hbox{%
+\setfont\keyrm\rmshape{8}{1000}
+\font\keysy=cmsy9
+\def\key#1{{\keyrm\textfont2=\keysy \leavevmode\hbox{%
   \raise0.4pt\hbox{\angleleft}\kern-.08em\vtop{%
     \vbox{\hrule\kern-0.4pt
      \hbox{\raise0.4pt\hbox{\vphantom{\angleleft}}#1}}%
@@ -1207,24 +1405,43 @@ where each line of input produces a line of output.}
 % a hypertex \special here.
 %
 \def\uref#1{\douref #1,,,\finish}
-\def\douref#1,#2,#3,#4\finish{%
+\def\douref#1,#2,#3,#4\finish{\begingroup
+  \unsepspaces
+  \pdfurl{#1}%
   \setbox0 = \hbox{\ignorespaces #3}%
   \ifdim\wd0 > 0pt
     \unhbox0 % third arg given, show only that
   \else
     \setbox0 = \hbox{\ignorespaces #2}%
     \ifdim\wd0 > 0pt
-      \unhbox0\ (\code{#1})% second arg given, show both it and url
+      \ifpdf
+        \unhbox0             % PDF: 2nd arg given, show only it
+      \else
+        \unhbox0\ (\code{#1})% DVI: 2nd arg given, show both it and url
+      \fi
     \else
       \code{#1}% only url given, so show it
     \fi
   \fi
-}
+  \endlink
+\endgroup}
 
-% rms does not like the angle brackets --karl, 17may97.
-% So now @email is just like @uref.
+% rms does not like angle brackets --karl, 17may97.
+% So now @email is just like @uref, unless we are pdf.
+% 
 %\def\email#1{\angleleft{\tt #1}\angleright}
-\let\email=\uref
+\ifpdf
+  \def\email#1{\doemail#1,,\finish}
+  \def\doemail#1,#2,#3\finish{\begingroup
+    \unsepspaces
+    \pdfurl{mailto:#1}%
+    \setbox0 = \hbox{\ignorespaces #2}%
+    \ifdim\wd0>0pt\unhbox0\else\code{#1}\fi
+    \endlink
+  \endgroup}
+\else
+  \let\email=\uref
+\fi
 
 % Check if we are currently using a typewriter font.  Since all the
 % Computer Modern typewriter fonts have zero interword stretch (and
@@ -1342,6 +1559,8 @@ where each line of input produces a line of output.}
      \global\let\contents = \relax
      \global\let\shortcontents = \relax
    \fi
+   %
+   \ifpdf \pdfmakepagedesttrue \fi
    %
    \HEADINGSon
 }
@@ -1476,7 +1695,10 @@ where each line of input produces a line of output.}
 }
 
 % Subroutines used in generating headings
-% Produces Day Month Year style of output.
+% This produces Day Month Year style of output.
+% Only define if not already defined, in case a txi-??.tex file has set
+% up a different format (e.g., txi-cs.tex does this).
+\ifx\today\undefined
 \def\today{%
   \number\day\space
   \ifcase\month
@@ -1485,6 +1707,7 @@ where each line of input produces a line of output.}
   \or\putwordMSep\or\putwordMOct\or\putwordMNov\or\putwordMDec
   \fi
   \space\number\year}
+\fi
 
 % @settitle line...  specifies the title of the document, for headings.
 % It generates no output of its own.
@@ -1908,10 +2131,11 @@ where each line of input produces a line of output.}
   \go
 }
 
-% multitable syntax
-\def\tab{&\hskip1sp\relax} % 2/2/96
-                           % tiny skip here makes sure this column space is
-                           % maintained, even if it is never used.
+% This used to have \hskip1sp.  But then the space in a template line is
+% not enough.  That is bad.  So let's go back to just & until we
+% encounter the problem it was intended to solve again.
+% --karl, nathan@acm.org, 20apr99.
+\def\tab{&}
 
 % @multitable ... @end multitable definitions:
 %
@@ -1992,15 +2216,18 @@ where each line of input produces a line of output.}
 % If so, do nothing. If not, give it an appropriate dimension based on
 % current baselineskip.
 \ifdim\multitablelinespace=0pt
+\setbox0=\vbox{X}\global\multitablelinespace=\the\baselineskip
+\global\advance\multitablelinespace by-\ht0
 %% strut to put in table in case some entry doesn't have descenders,
 %% to keep lines equally spaced
 \let\multistrut = \strut
+\else
+%% FIXME: what is \box0 supposed to be?
+\gdef\multistrut{\vrule height\multitablelinespace depth\dp0
+width0pt\relax} \fi
 %% Test to see if parskip is larger than space between lines of
 %% table. If not, do nothing.
 %%        If so, set to same dimension as multitablelinespace.
-\else
-\gdef\multistrut{\vrule height\multitablelinespace depth\dp0
-width0pt\relax} \fi
 \ifdim\multitableparskip>\multitablelinespace
 \global\multitableparskip=\multitablelinespace
 \global\advance\multitableparskip-7pt %% to keep parskip somewhat smaller
@@ -2063,6 +2290,7 @@ width0pt\relax} \fi
   \let\deftypefn = \relax
   \let\deftypefun = \relax
   \let\deftypeivar = \relax
+  \let\deftypeop = \relax
   \let\deftypevar = \relax
   \let\deftypevr = \relax
   \let\defun = \relax
@@ -2206,14 +2434,13 @@ width0pt\relax} \fi
     % stuff compared to the main input.
     %
     \nullfont
-    \let\tenrm = \nullfont  \let\tenit = \nullfont  \let\tensl = \nullfont
-    \let\tenbf = \nullfont  \let\tentt = \nullfont  \let\smallcaps = \nullfont
-    \let\tensf = \nullfont
-    % Similarly for index fonts (mostly for their use in
-    % smallexample)
-    \let\indrm = \nullfont  \let\indit = \nullfont  \let\indsl = \nullfont
-    \let\indbf = \nullfont  \let\indtt = \nullfont  \let\indsc = \nullfont
-    \let\indsf = \nullfont
+    \let\tenrm=\nullfont \let\tenit=\nullfont \let\tensl=\nullfont
+    \let\tenbf=\nullfont \let\tentt=\nullfont \let\smallcaps=\nullfont
+    \let\tensf=\nullfont
+    % Similarly for index fonts (mostly for their use in smallexample).
+    \let\smallrm=\nullfont \let\smallit=\nullfont \let\smallsl=\nullfont
+    \let\smallbf=\nullfont \let\smalltt=\nullfont \let\smallsc=\nullfont
+    \let\smallsf=\nullfont
     %
     % Don't complain when characters are missing from the fonts.
     \tracinglostchars = 0
@@ -2389,42 +2616,48 @@ width0pt\relax} \fi
 }
 
 % @defindex foo  ==  \newindex{foo}
-
+%
 \def\defindex{\parsearg\newindex}
 
 % Define @defcodeindex, like @defindex except put all entries in @code.
-
+%
+\def\defcodeindex{\parsearg\newcodeindex}
+%
 \def\newcodeindex#1{%
   \iflinks
     \expandafter\newwrite \csname#1indfile\endcsname
     \openout \csname#1indfile\endcsname \jobname.#1
   \fi
   \expandafter\xdef\csname#1index\endcsname{%
-    \noexpand\docodeindex{#1}}
+    \noexpand\docodeindex{#1}}%
 }
 
-\def\defcodeindex{\parsearg\newcodeindex}
 
 % @synindex foo bar    makes index foo feed into index bar.
 % Do this instead of @defindex foo if you don't want it as a separate index.
-% The \closeout helps reduce unnecessary open files; the limit on the
-% Acorn RISC OS is a mere 16 files.
-\def\synindex#1 #2 {%
-  \expandafter\let\expandafter\synindexfoo\expandafter=\csname#2indfile\endcsname
-  \expandafter\closeout\csname#1indfile\endcsname
-  \expandafter\let\csname#1indfile\endcsname=\synindexfoo
-  \expandafter\xdef\csname#1index\endcsname{% define \xxxindex
-    \noexpand\doindex{#2}}%
-}
-
+% 
 % @syncodeindex foo bar   similar, but put all entries made for index foo
 % inside @code.
-\def\syncodeindex#1 #2 {%
-  \expandafter\let\expandafter\synindexfoo\expandafter=\csname#2indfile\endcsname
-  \expandafter\closeout\csname#1indfile\endcsname
-  \expandafter\let\csname#1indfile\endcsname=\synindexfoo
-  \expandafter\xdef\csname#1index\endcsname{% define \xxxindex
-    \noexpand\docodeindex{#2}}%
+% 
+\def\synindex#1 #2 {\dosynindex\doindex{#1}{#2}}
+\def\syncodeindex#1 #2 {\dosynindex\docodeindex{#1}{#2}}
+
+% #1 is \doindex or \docodeindex, #2 the index getting redefined (foo),
+% #3 the target index (bar).
+\def\dosynindex#1#2#3{%
+  % Only do \closeout if we haven't already done it, else we'll end up
+  % closing the target index.
+  \expandafter \ifx\csname donesynindex#2\endcsname \undefined
+    % The \closeout helps reduce unnecessary open files; the limit on the
+    % Acorn RISC OS is a mere 16 files.
+    \expandafter\closeout\csname#2indfile\endcsname
+    \expandafter\let\csname\donesynindex#2\endcsname = 1
+  \fi
+  % redefine \fooindfile:
+  \expandafter\let\expandafter\temp\expandafter=\csname#3indfile\endcsname
+  \expandafter\let\csname#2indfile\endcsname=\temp
+  % redefine \fooindex:
+  \expandafter\xdef\csname#2index\endcsname{\noexpand#1{#3}}%
 }
 
 % Define \doindex, the driver for all \fooindex macros.
@@ -2477,7 +2710,7 @@ width0pt\relax} \fi
 \def\@{@}% will be @@ when we switch to @ as escape char.
 % Need these in case \tex is in effect and \{ is a \delimiter again.
 % But can't use \lbracecmd and \rbracecmd because texindex assumes
-% braces and backslashes are used only as delimiters.
+% braces and backslashes are used only as delimiters.  
 \let\{ = \mylbrace
 \let\} = \myrbrace
 \def\_{{\realbackslash _}}%
@@ -2590,6 +2823,7 @@ width0pt\relax} \fi
 \let\url=\indexdummyfont
 \let\uref=\indexdummyfont
 \let\env=\indexdummyfont
+\let\acronym=\indexdummyfont
 \let\command=\indexdummyfont
 \let\option=\indexdummyfont
 \let\file=\indexdummyfont
@@ -2743,7 +2977,7 @@ width0pt\relax} \fi
 \def\doprintindex#1{\begingroup
   \dobreak \chapheadingskip{10000}%
   %
-  \indexfonts \rm
+  \smallfonts \rm
   \tolerance = 9500
   \indexbreaks
   %
@@ -2870,7 +3104,11 @@ width0pt\relax} \fi
     % The `\ ' here is removed by the implicit \unskip that TeX does as
     % part of (the primitive) \par.  Without it, a spurious underfull
     % \hbox ensues.
-    \ #2% The page number ends the paragraph.
+    \ifpdf
+      \pdfgettoks#2.\ \the\toksA % The page number ends the paragraph.
+    \else
+      \ #2% The page number ends the paragraph.
+    \fi
   \fi%
   \par
 \endgroup}
@@ -2946,7 +3184,6 @@ width0pt\relax} \fi
   %
   % Double the \vsize as well.  (We don't need a separate register here,
   % since nobody clobbers \vsize.)
-  \advance\vsize by -\ht\partialpage
   \vsize = 2\vsize
 }
 
@@ -2960,6 +3197,7 @@ width0pt\relax} \fi
   % previous page.
   \dimen@ = \vsize
   \divide\dimen@ by 2
+  \advance\dimen@ by -\ht\partialpage
   %
   % box0 will be the left-hand column, box2 the right.
   \setbox0=\vsplit255 to\dimen@ \setbox2=\vsplit255 to\dimen@
@@ -2967,15 +3205,18 @@ width0pt\relax} \fi
   \unvbox255
   \penalty\outputpenalty
 }
+%
+% Re-output the contents of the output page -- any previous material,
+% followed by the two boxes we just split, in box0 and box2.
 \def\pagesofar{%
-  % Re-output the contents of the output page -- any previous material,
-  % followed by the two boxes we just split, in box0 and box2.
   \unvbox\partialpage
   %
   \hsize = \doublecolumnhsize
   \wd0=\hsize \wd2=\hsize
   \hbox to\pagewidth{\box0\hfil\box2}%
 }
+% 
+% All done with double columns.
 \def\enddoublecolumns{%
   \output = {%
     % Split the last of the double-column material.  Leave it on the
@@ -3000,8 +3241,9 @@ width0pt\relax} \fi
   % \endgroup where \vsize got restored).
   \pagegoal = \vsize
 }
+%
+% Called at the end of the double column material.
 \def\balancecolumns{%
-  % Called at the end of the double column material.
   \setbox0 = \vbox{\unvbox255}% like \box255 but more efficient, see p.120.
   \dimen@ = \ht0
   \advance\dimen@ by \topskip
@@ -3029,7 +3271,7 @@ width0pt\relax} \fi
 
 
 \message{sectioning,}
-% Define chapters, sections, etc.
+% Chapters, sections, etc.
 
 \newcount\chapno
 \newcount\secno        \secno=0
@@ -3038,7 +3280,43 @@ width0pt\relax} \fi
 
 % This counter is funny since it counts through charcodes of letters A, B, ...
 \newcount\appendixno  \appendixno = `\@
-\def\appendixletter{\char\appendixno}
+% \def\appendixletter{\char\the\appendixno}
+% We do the following for the sake of pdftex, which needs the actual
+% letter in the expansion, not just typeset.
+\def\appendixletter{%
+  \ifnum\appendixno=`A A%
+  \else\ifnum\appendixno=`B B%
+  \else\ifnum\appendixno=`C C%
+  \else\ifnum\appendixno=`D D%
+  \else\ifnum\appendixno=`E E%
+  \else\ifnum\appendixno=`F F%
+  \else\ifnum\appendixno=`G G%
+  \else\ifnum\appendixno=`H H%
+  \else\ifnum\appendixno=`I I%
+  \else\ifnum\appendixno=`J J%
+  \else\ifnum\appendixno=`K K%
+  \else\ifnum\appendixno=`L L%
+  \else\ifnum\appendixno=`M M%
+  \else\ifnum\appendixno=`N N%
+  \else\ifnum\appendixno=`O O%
+  \else\ifnum\appendixno=`P P%
+  \else\ifnum\appendixno=`Q Q%
+  \else\ifnum\appendixno=`R R%
+  \else\ifnum\appendixno=`S S%
+  \else\ifnum\appendixno=`T T%
+  \else\ifnum\appendixno=`U U%
+  \else\ifnum\appendixno=`V V%
+  \else\ifnum\appendixno=`W W%
+  \else\ifnum\appendixno=`X X%
+  \else\ifnum\appendixno=`Y Y%
+  \else\ifnum\appendixno=`Z Z%
+  % The \the is necessary, despite appearances, because \appendixletter is
+  % expanded while writing the .toc file.  \char\appendixno is not
+  % expandable, thus it is written literally, thus all appendixes come out
+  % with the same letter (or @) in the toc without it.
+  \else\char\the\appendixno
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi}
 
 % Each @chapter defines this as the name of the chapter.
 % page headings and footings can use it.  @section does likewise.
@@ -3511,6 +3789,7 @@ width0pt\relax} \fi
 
 
 \message{toc,}
+% Table of contents.
 \newwrite\tocfile
 
 % Write an entry to the toc file, opening it if necessary.
@@ -3571,6 +3850,7 @@ width0pt\relax} \fi
      \fi
      \vfill \eject
      \contentsalignmacro % in case @setchapternewpage odd is in effect
+     \pdfmakeoutlines
    \endgroup
    \lastnegativepageno = \pageno
    \pageno = \savepageno
@@ -3607,6 +3887,10 @@ width0pt\relax} \fi
 }
 \let\shortcontents = \summarycontents
 
+\ifpdf
+  \pdfcatalog{/PageMode /UseOutlines}%
+\fi
+
 % These macros generate individual entries in the table of contents.
 % The first argument is the chapter or section name.
 % The last argument is the page number.
@@ -3617,7 +3901,7 @@ width0pt\relax} \fi
 
 % See comments in \dochapentry re vbox and related settings
 \def\shortchapentry#1#2#3{%
-  \tocentry{\shortchaplabel{#2}\labelspace #1}{\doshortpageno{#3}}%
+  \tocentry{\shortchaplabel{#2}\labelspace #1}{\doshortpageno\bgroup#3\egroup}%
 }
 
 % Typeset the label for a chapter or appendix for the short contents.
@@ -3625,10 +3909,14 @@ width0pt\relax} \fi
 % We could simplify the code here by writing out an \appendixentry
 % command in the toc file for appendices, instead of using \chapentry
 % for both, but it doesn't seem worth it.
-\setbox0 = \hbox{\shortcontrm \putwordAppendix }
-\newdimen\shortappendixwidth \shortappendixwidth = \wd0
-
+%
+\newdimen\shortappendixwidth
+%
 \def\shortchaplabel#1{%
+  % Compute width of word "Appendix", may change with language.
+  \setbox0 = \hbox{\shortcontrm \putwordAppendix}%
+  \shortappendixwidth = \wd0
+  %
   % We typeset #1 in a box of constant width, regardless of the text of
   % #1, so the chapter titles will come out aligned.
   \setbox0 = \hbox{#1}%
@@ -3643,7 +3931,7 @@ width0pt\relax} \fi
 }
 
 \def\unnumbchapentry#1#2{\dochapentry{#1}{#2}}
-\def\shortunnumberedentry#1#2{\tocentry{#1}{\doshortpageno{#2}}}
+\def\shortunnumberedentry#1#2{\tocentry{#1}{\doshortpageno\bgroup#2\egroup}}
 
 % Sections.
 \def\secentry#1#2#3#4{\dosecentry{#2.#3\labelspace#1}{#4}}
@@ -3670,24 +3958,24 @@ width0pt\relax} \fi
    \penalty-300 \vskip1\baselineskip plus.33\baselineskip minus.25\baselineskip
    \begingroup
      \chapentryfonts
-     \tocentry{#1}{\dopageno{#2}}%
+     \tocentry{#1}{\dopageno\bgroup#2\egroup}%
    \endgroup
    \nobreak\vskip .25\baselineskip plus.1\baselineskip
 }
 
 \def\dosecentry#1#2{\begingroup
   \secentryfonts \leftskip=\tocindent
-  \tocentry{#1}{\dopageno{#2}}%
+  \tocentry{#1}{\dopageno\bgroup#2\egroup}%
 \endgroup}
 
 \def\dosubsecentry#1#2{\begingroup
   \subsecentryfonts \leftskip=2\tocindent
-  \tocentry{#1}{\dopageno{#2}}%
+  \tocentry{#1}{\dopageno\bgroup#2\egroup}%
 \endgroup}
 
 \def\dosubsubsecentry#1#2{\begingroup
   \subsubsecentryfonts \leftskip=3\tocindent
-  \tocentry{#1}{\dopageno{#2}}%
+  \tocentry{#1}{\dopageno\bgroup#2\egroup}%
 \endgroup}
 
 % Final typesetting of a toc entry; we use the same \entry macro as for
@@ -3715,6 +4003,7 @@ width0pt\relax} \fi
 
 
 \message{environments,}
+% @foo ... @end foo.
 
 % Since these characters are used in examples, it should be an even number of
 % \tt widths. Each \tt character is 1en, so two makes it 1em.
@@ -3964,7 +4253,7 @@ width0pt\relax} \fi
 \def\smalllispx{\begingroup
   \def\Esmalllisp{\nonfillfinish\endgroup}%
   \def\Esmallexample{\nonfillfinish\endgroup}%
-  \indexfonts
+  \smallfonts
   \lisp
 }
 
@@ -3980,7 +4269,7 @@ width0pt\relax} \fi
 %
 \def\smalldisplayx{\begingroup
   \def\Esmalldisplay{\nonfillfinish\endgroup}%
-  \indexfonts \rm
+  \smallfonts \rm
   \display
 }
 
@@ -3997,7 +4286,7 @@ width0pt\relax} \fi
 %
 \def\smallformatx{\begingroup
   \def\Esmallformat{\nonfillfinish\endgroup}%
-  \indexfonts \rm
+  \smallfonts \rm
   \format
 }
 
@@ -4038,8 +4327,9 @@ width0pt\relax} \fi
 
 
 \message{defuns,}
-% Define formatter for defuns
-% First, allow user to change definition object font (\df) internally
+% @defun etc.
+
+% Allow user to change definition object font (\df) internally
 \def\setdeffont #1 {\csname DEF#1\endcsname}
 
 \newskip\defbodyindent \defbodyindent=.4in
@@ -4166,23 +4456,39 @@ width0pt\relax} \fi
 \exdentamount=\defbodyindent
 \begingroup\obeylines\activeparens\spacesplit{#3{#4}}}
 
-% @deftypemethod has an extra argument that nothing else does.  Sigh.
+% Used for @deftypemethod and @deftypeivar.
 % #1 is the \E... control sequence to end the definition (which we define).
 % #2 is the \...x control sequence for consecutive fns (which we define).
 % #3 is the control sequence to call to resume processing.
-% #4, delimited by the space, is the class name.
+% #4, delimited by a space, is the class name.
 % #5 is the method's return type.
 %
-\def\deftypemethparsebody#1#2#3#4 #5 {\begingroup\inENV %
-\medbreak %
-% Define the end token that this defining construct specifies
-% so that it will exit this group.
-\def#1{\endgraf\endgroup\medbreak}%
-\def#2##1 ##2 {\begingroup\obeylines\activeparens\spacesplit{#3{##1}{##2}}}%
-\parindent=0in
-\advance\leftskip by \defbodyindent
-\exdentamount=\defbodyindent
-\begingroup\obeylines\activeparens\spacesplit{#3{#4}{#5}}}
+\def\deftypemethparsebody#1#2#3#4 #5 {\begingroup\inENV
+  \medbreak
+  \def#1{\endgraf\endgroup\medbreak}%
+  \def#2##1 ##2 {\begingroup\obeylines\activeparens\spacesplit{#3{##1}{##2}}}%
+  \parindent=0in
+  \advance\leftskip by \defbodyindent
+  \exdentamount=\defbodyindent
+  \begingroup\obeylines\activeparens\spacesplit{#3{#4}{#5}}}
+
+% Used for @deftypeop.  The change from \deftypemethparsebody is an
+% extra argument at the beginning which is the `category', instead of it
+% being the hardwired string `Method' or `Instance Variable'.  We have
+% to account for this both in the \...x definition and in parsing the
+% input at hand.  Thus also need a control sequence (passed as #5) for
+% the \E... definition to assign the category name to.
+% 
+\def\deftypeopparsebody#1#2#3#4#5 #6 {\begingroup\inENV
+  \medbreak
+  \def#1{\endgraf\endgroup\medbreak}%
+  \def#2##1 ##2 ##3 {%
+    \def#4{##1}%
+    \begingroup\obeylines\activeparens\spacesplit{#3{##2}{##3}}}%
+  \parindent=0in
+  \advance\leftskip by \defbodyindent
+  \exdentamount=\defbodyindent
+  \begingroup\obeylines\activeparens\spacesplit{#3{#5}{#6}}}
 
 \def\defopparsebody #1#2#3#4#5 {\begingroup\inENV %
 \medbreak %
@@ -4293,12 +4599,13 @@ width0pt\relax} \fi
 % First, define the processing that is wanted for arguments of \defun
 % Use this to expand the args and terminate the paragraph they make up
 
-\def\defunargs #1{\functionparens \sl
+\def\defunargs#1{\functionparens \sl
 % Expand, preventing hyphenation at `-' chars.
 % Note that groups don't affect changes in \hyphenchar.
-\hyphenchar\tensl=0
+% Set the font temporarily and use \font in case \setfont made \tensl a macro.
+{\tensl\hyphenchar\font=0}%
 #1%
-\hyphenchar\tensl=45
+{\tensl\hyphenchar\font=45}%
 \ifnum\parencount=0 \else \errmessage{Unbalanced parentheses in @def}\fi%
 \interlinepenalty=10000
 \advance\rightskip by 0pt plus 1fil
@@ -4397,13 +4704,29 @@ width0pt\relax} \fi
 \def\defop #1 {\def\defoptype{#1}%
 \defopparsebody\Edefop\defopx\defopheader\defoptype}
 %
-\def\defopheader #1#2#3{%
+\def\defopheader#1#2#3{%
 \dosubind {fn}{\code{#2}}{\putwordon\ #1}% Make entry in function index
 \begingroup\defname {#2}{\defoptype\ \putwordon\ #1}%
 \defunargs {#3}\endgroup %
 }
 
-% @deftypemethod CLASS RETURN-TYPE METHOD ARG...
+% @deftypeop CATEGORY CLASS TYPE OPERATION ARG...
+%
+\def\deftypeop #1 {\def\deftypeopcategory{#1}%
+  \deftypeopparsebody\Edeftypeop\deftypeopx\deftypeopheader
+                       \deftypeopcategory}
+%
+% #1 is the class name, #2 the data type, #3 the operation name, #4 the args.
+\def\deftypeopheader#1#2#3#4{%
+  \dosubind{fn}{\code{#3}}{\putwordon\ \code{#1}}% entry in function index
+  \begingroup
+    \defname{\defheaderxcond#2\relax$$$#3}
+            {\deftypeopcategory\ \putwordon\ \code{#1}}%
+    \deftypefunargs{#4}%
+  \endgroup
+}
+
+% @deftypemethod CLASS TYPE METHOD ARG...
 %
 \def\deftypemethod{%
   \deftypemethparsebody\Edeftypemethod\deftypemethodx\deftypemethodheader}
@@ -4426,7 +4749,8 @@ width0pt\relax} \fi
 \def\deftypeivarheader#1#2#3{%
   \dosubind{vr}{\code{#3}}{\putwordof\ \code{#1}}% entry in variable index
   \begingroup
-    \defname{#3}{\putwordInstanceVariableof\ \code{#1}}%
+    \defname{\defheaderxcond#2\relax$$$#3}
+            {\putwordInstanceVariableof\ \code{#1}}%
     \defvarargs{#3}%
   \endgroup
 }
@@ -4552,6 +4876,7 @@ width0pt\relax} \fi
 \def\deftypefunx#1 {\errmessage{@deftypefunx in invalid context}}
 \def\deftypeivarx#1 {\errmessage{@deftypeivarx in invalid context}}
 \def\deftypemethodx#1 {\errmessage{@deftypemethodx in invalid context}}
+\def\deftypeopx#1 {\errmessage{@deftypeopx in invalid context}}
 \def\deftypevarx#1 {\errmessage{@deftypevarx in invalid context}}
 \def\deftypevrx#1 {\errmessage{@deftypevrx in invalid context}}
 \def\defunx#1 {\errmessage{@defunx in invalid context}}
@@ -4839,10 +5164,19 @@ width0pt\relax} \fi
 
 
 % @alias.
-\def\alias#1=#2{\gdef#1{#2}}
+% We need some trickery to remove the optional spaces around the equal
+% sign.  Just make them active and then expand them all to nothing.
+\def\alias{\begingroup\obeyspaces\parsearg\aliasxxx}
+\def\aliasxxx #1{\aliasyyy#1\relax}
+\def\aliasyyy #1=#2\relax{\ignoreactivespaces
+\edef\next{\global\let\expandafter\noexpand\csname#1\endcsname=%
+           \expandafter\noexpand\csname#2\endcsname}%
+\expandafter\endgroup\next}
 
 
 \message{cross references,}
+% @xref etc.
+
 \newwrite\auxfile
 
 \newif\ifhavexrefs    % True if xref values are known.
@@ -4885,20 +5219,10 @@ width0pt\relax} \fi
 
 % @anchor{NAME} -- define xref target at arbitrary point.
 %
-{ \catcode`\@ = 11
-% From latex.ltx, to make @anchor truely invisible.
-\newdimen\@savsk
-\newcount\@savsf
-\gdef\@bsphack{\relax
-  \ifhmode \@savsk\lastskip \@savsf\spacefactor \fi
-}
-\gdef\@esphack{\relax
-  \ifhmode \spacefactor\@savsf
-    \ifdim\@savsk>\z@ \ignorespaces \fi
-  \fi
-}
-\gdef\anchor#1{\@bsphack \setref{#1}{Ynothing}\@esphack}
-}
+\newcount\savesfregister
+\gdef\savesf{\relax \ifhmode \savesfregister=\spacefactor \fi}
+\gdef\restoresf{\relax \ifhmode \spacefactor=\savesfregister \fi}
+\gdef\anchor#1{\savesf \setref{#1}{Ynothing}\restoresf \ignorespaces}
 
 % \setref{NAME}{SNT} defines a cross-reference point NAME, namely
 % NAME-title, NAME-pg, and NAME-SNT.  Called from \foonoderef.  We have
@@ -4908,6 +5232,7 @@ width0pt\relax} \fi
 %
 \def\setref#1#2{{%
   \indexdummies
+  \pdfmkdest{#1}%
   \dosetq{#1-title}{Ytitle}%
   \dosetq{#1-pg}{Ypagenumber}%
   \dosetq{#1-snt}{#2}%
@@ -4922,6 +5247,7 @@ width0pt\relax} \fi
 \def\xref#1{\putwordSee{} \xrefX[#1,,,,,,,]}
 \def\ref#1{\xrefX[#1,,,,,,,]}
 \def\xrefX[#1,#2,#3,#4,#5,#6]{\begingroup
+  \unsepspaces
   \def\printedmanual{\ignorespaces #5}%
   \def\printednodename{\ignorespaces #3}%
   \setbox1=\hbox{\printedmanual}%
@@ -4955,6 +5281,19 @@ width0pt\relax} \fi
   % are best written with fairly long node names, containing hyphens, this
   % is a loss.  Therefore, we give the text of the node name again, so it
   % is as if TeX is seeing it for the first time.
+  \ifpdf
+    \leavevmode
+    \getfilename{#4}%
+    \ifnum\filenamelength>0
+      \startlink attr{/Border [0 0 0]}%
+        goto file{\the\filename.pdf} name{#1@}%
+    \else
+      \startlink attr{/Border [0 0 0]}%
+        goto name{#1@}%
+    \fi
+    \linkcolor
+  \fi
+  %
   \ifdim \wd1 > 0pt
     \putwordsection{} ``\printednodename'' \putwordin{} \cite{\printedmanual}%
   \else
@@ -4974,6 +5313,7 @@ width0pt\relax} \fi
     % page 3
     \turnoffactive \putwordpage\tie\refx{#1-pg}{}%
   \fi
+  \endlink
 \endgroup}
 
 % \dosetq is the interface for calls from other macros
@@ -5210,6 +5550,8 @@ width0pt\relax} \fi
   \xspaceskip\z@skip
   \parindent\defaultparindent
   %
+  \smallfonts \rm
+  %
   % Hang the footnote text off the number.
   \hang
   \textindent{\thisfootno}%
@@ -5224,7 +5566,7 @@ width0pt\relax} \fi
   \else\let\next\f@t\fi \next}
 \def\f@@t{\bgroup\aftergroup\@foot\let\next}
 \def\f@t#1{#1\@foot}
-\def\@foot{\strut\egroup}
+\def\@foot{\strut\par\egroup}
 
 }%end \catcode `\@=11
 
@@ -5319,7 +5661,9 @@ width0pt\relax} \fi
 % #2 is (optional) width, #3 is (optional) height.
 % #4 is just the usual extra ignored arg for parsing this stuff.
 \def\imagexxx#1,#2,#3,#4\finish{%
-  \ifx\pdfoutput\undefined
+  \ifpdf
+    \centerline{\dopdfimage{#1}{#2}{#3}}%
+  \else
     % \epsfbox itself resets \epsf?size at each figure.
     \setbox0 = \hbox{\ignorespaces #2}\ifdim\wd0 > 0pt \epsfxsize=#2\relax \fi
     \setbox0 = \hbox{\ignorespaces #3}\ifdim\wd0 > 0pt \epsfysize=#3\relax \fi
@@ -5340,13 +5684,12 @@ width0pt\relax} \fi
         \epsfbox{#1.eps}%
       \fi
     \endgroup
-  \else
-    \centerline{\pdfimage #1.pdf}%
   \fi
 }
 
 
 \message{localization,}
+% and i18n.
 
 % @documentlanguage is usually given very early, just after
 % @setfilename.  If done too late, it may not override everything
@@ -5406,8 +5749,7 @@ should work if nowhere else does.}
     % Allow us to assign to \emergencystretch anyway.
     \def\emergencystretch{\dimen0}%
   \else
-    \emergencystretch = \hsize
-    \divide\emergencystretch by 40
+    \emergencystretch = .15\hsize
   \fi
 }
 
@@ -5492,7 +5834,7 @@ should work if nowhere else does.}
 % Use @afourwide to print on European A4 paper in wide format.
 \def\afourwide{%
   \afourpaper
-  \internalpagesizes{9.5in}{6.5in}{\hoffset}{\normaloffset}{\bindingoffset}{7mm}%
+  \internalpagesizes{6.5in}{9.5in}{\hoffset}{\normaloffset}{\bindingoffset}{7mm}%
   %
   \globaldefs = 0
 }
@@ -5516,6 +5858,7 @@ should work if nowhere else does.}
 % Set default to letter.
 %
 \letterpaper
+
 
 \message{and turning on texinfo input format.}
 
@@ -5684,6 +6027,6 @@ should work if nowhere else does.}
 @c eval: (add-hook 'write-file-hooks 'time-stamp)
 @c page-delimiter: "^\\\\message"
 @c time-stamp-start: "def\\\\texinfoversion{"
-@c time-stamp-format: "%:y-%02m-%02d.%H"
+@c time-stamp-format: "%:y-%02m-%02d.%02H"
 @c time-stamp-end: "}"
 @c End:
