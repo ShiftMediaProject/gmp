@@ -19,6 +19,19 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-23  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/asm-defs.m4 (GMP_NUMB_MASK): New macro.
+	(PROLOGUE, EPILOGUE): Relax quoting for the benefit of tune/many.pl
+	when GSYM_PREFIX non-empty.
+
+        * tune/time.c, tune/speed.h (speed_time_init): Include clock tick
+        period in speed_time_string.
+	* tune/time.c, configure.in (clock_gettime): New measuring method.
+
+	* tune/many.pl: Add -DHAVE_NATIVE_mpn_foo to C objects, to avoid
+	conflicts with a macro version in gmp-impl.h, eg. mpn_com_n.
+
 2002-02-22  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c: Increase RLIMIT_STACK to 4Mibyte.
