@@ -760,6 +760,9 @@ void __GMP_DECLSPEC mpz_lucnum_ui _PROTO ((mpz_ptr, unsigned long int));
 #define mpz_lucnum2_ui __gmpz_lucnum2_ui
 void __GMP_DECLSPEC mpz_lucnum2_ui _PROTO ((mpz_ptr, mpz_ptr, unsigned long int));
 
+#define mpz_millerrabin __gmpz_millerrabin
+int  __GMP_DECLSPEC mpz_millerrabin _PROTO ((mpz_srcptr, int)) __GMP_ATTRIBUTE_PURE;
+
 #define mpz_mod __gmpz_mod
 void __GMP_DECLSPEC mpz_mod _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 
