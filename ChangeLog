@@ -1,3 +1,9 @@
+2000-06-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/Makefile.am (TARG_DIST): Add pa64w.
+
+	* longlong.h: Wrap 64-bit hppa code in #ifndef LONGLONG_STANDALONE.
+
 2000-06-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/remove.c: Fail for `src' being zero.
