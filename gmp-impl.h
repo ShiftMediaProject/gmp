@@ -267,12 +267,6 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define TOOM3_MUL_THRESHOLD 256
 #endif
 
-/* We can't handle KARATSUBA_MUL_THRESHOLD smaller than 2.  */
-#if KARATSUBA_MUL_THRESHOLD < 2
-#undef KARATSUBA_MUL_THRESHOLD
-#define KARATSUBA_MUL_THRESHOLD 2
-#endif
-
 #ifndef KARATSUBA_SQR_THRESHOLD
 #define KARATSUBA_SQR_THRESHOLD (2*KARATSUBA_MUL_THRESHOLD)
 #endif
@@ -682,3 +676,7 @@ extern const int __gmp_0;
    ASSERT_ALWAYS (ALLOC(z) >= ABSIZ(z)))
 #define MPZ_PROVOKE_REALLOC(z)						\
   do { ALLOC(z) = ABSIZ(z); } while (0)
+
+/* From tune program, not present in a normal build. */
+extern mp_size_t  tune_mul_threshold[];
+extern mp_size_t  tune_sqr_threshold[];
