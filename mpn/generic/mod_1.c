@@ -26,155 +26,152 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef UMUL_TIME
-#define UMUL_TIME 1
+
+/* udiv_qrnnd_preinv takes UDIV_NORM_PREINV_TIME (or UDIV_UNNORM_PREINV_TIME),
+   but requires roughly UDIV_TIME to calculate the inverse, so the default
+   threshold is wherever the saving would overcome that extra, if ever.  */
+
+#ifndef MOD_1_NORM_THRESHOLD
+# if UDIV_PREINV_ALWAYS
+#  define MOD_1_NORM_THRESHOLD    0
+# else
+#  if UDIV_TIME <= UDIV_NORM_PREINV_TIME
+#   define MOD_1_NORM_THRESHOLD   MP_LIMB_T_MAX
+#  else
+#   define MOD_1_NORM_THRESHOLD \
+      (1 + UDIV_TIME / (UDIV_TIME - UDIV_NORM_PREINV_TIME))
+#  endif
+# endif
 #endif
 
-#ifndef UDIV_TIME
-#define UDIV_TIME UMUL_TIME
+#ifndef MOD_1_UNNORM_THRESHOLD
+# if UDIV_PREINV_ALWAYS
+#  define MOD_1_UNNORM_THRESHOLD    0
+# else
+#  if UDIV_TIME <= UDIV_UNNORM_PREINV_TIME
+#   define MOD_1_UNNORM_THRESHOLD   MP_LIMB_T_MAX
+#  else
+#   define MOD_1_UNNORM_THRESHOLD \
+      (1 + UDIV_TIME / (UDIV_TIME - UDIV_UNNORM_PREINV_TIME))
+#  endif
+# endif
 #endif
+
+
+/* The comments in mpn/generic/divrem_1.c apply here too.
+
+   As noted in the algorithms section of the manual, the shifts in the loop
+   for the unnorm case can be avoided by calculating r = a%(d*2^n), followed
+   by a final (r*2^n)%(d*2^n).  In fact if it happens that a%(d*2^n) can
+   skip a division where (a*2^n)%(d*2^n) can't then there's the same number
+   of divide steps, though how often that happens depends on the assumed
+   distributions of dividend and divisor.  In any case this idea is left to
+   CPU specific implementations to consider.  */
 
 mp_limb_t
-#if __STDC__
-mpn_mod_1 (mp_srcptr dividend_ptr, mp_size_t dividend_size,
-	   mp_limb_t divisor_limb)
-#else
-mpn_mod_1 (dividend_ptr, dividend_size, divisor_limb)
-     mp_srcptr dividend_ptr;
-     mp_size_t dividend_size;
-     mp_limb_t divisor_limb;
-#endif
+mpn_mod_1 (mp_srcptr ap, mp_size_t size, mp_limb_t d)
 {
-  mp_size_t i;
-  mp_limb_t n1, n0, r;
-  int dummy;
+  mp_size_t  i;
+  mp_limb_t  n1, n0, r;
+  mp_limb_t  dummy;
 
-  ASSERT (dividend_size >= 0);
-  ASSERT (divisor_limb != 0);
+  ASSERT (size >= 0);
+  ASSERT (d != 0);
 
   /* Botch: Should this be handled at all?  Rely on callers?
-     Note size==0 is currently required by mpz/fdiv_r_ui.c and possibly
+     But note size==0 is currently required by mpz/fdiv_r_ui.c and possibly
      other places.  */
-  if (dividend_size == 0)
+  if (size == 0)
     return 0;
 
-  /* If multiplication is much faster than division, and the
-     dividend is large, pre-invert the divisor, and use
-     only multiplications in the inner loop.  */
-
-  /* This test should be read:
-       Does it ever help to use udiv_qrnnd_preinv?
-	 && Does what we save compensate for the inversion overhead?  */
-  if (UDIV_TIME > (2 * UMUL_TIME + 6)
-      && (UDIV_TIME - (2 * UMUL_TIME + 6)) * dividend_size > UDIV_TIME)
+  if (d & MP_LIMB_T_HIGHBIT)
     {
-      int normalization_steps;
+      /* High limb is initial remainder, possibly with one subtract of
+         d to get r<d.  */
+      r = ap[size-1];
+      if (r >= d)
+        r -= d;
+      size--;
+      if (size == 0)
+        return r;
 
-      count_leading_zeros (normalization_steps, divisor_limb);
-      if (normalization_steps != 0)
-	{
-	  mp_limb_t divisor_limb_inverted;
-
-	  divisor_limb <<= normalization_steps;
-	  invert_limb (divisor_limb_inverted, divisor_limb);
-
-	  n1 = dividend_ptr[dividend_size - 1];
-	  r = n1 >> (BITS_PER_MP_LIMB - normalization_steps);
-
-	  /* Possible optimization:
-	     if (r == 0
-	     && divisor_limb > ((n1 << normalization_steps)
-			     | (dividend_ptr[dividend_size - 2] >> ...)))
-	     ...one division less... */
-
-	  for (i = dividend_size - 2; i >= 0; i--)
-	    {
-	      n0 = dividend_ptr[i];
-	      udiv_qrnnd_preinv (dummy, r, r,
-				 ((n1 << normalization_steps)
-				  | (n0 >> (BITS_PER_MP_LIMB - normalization_steps))),
-				 divisor_limb, divisor_limb_inverted);
-	      n1 = n0;
-	    }
-	  udiv_qrnnd_preinv (dummy, r, r,
-			     n1 << normalization_steps,
-			     divisor_limb, divisor_limb_inverted);
-	  return r >> normalization_steps;
-	}
+      if (BELOW_THRESHOLD (size, MOD_1_NORM_THRESHOLD))
+        {
+        plain:
+          for (i = size-1; i >= 0; i--)
+            {
+              n0 = ap[i];
+              udiv_qrnnd (dummy, r, r, n0, d);
+            }
+          return r;
+        }
       else
-	{
-	  mp_limb_t divisor_limb_inverted;
-
-	  invert_limb (divisor_limb_inverted, divisor_limb);
-
-	  i = dividend_size - 1;
-	  r = dividend_ptr[i];
-
-	  if (r >= divisor_limb)
-	    r = 0;
-	  else
-	    i--;
-
-	  for (; i >= 0; i--)
-	    {
-	      n0 = dividend_ptr[i];
-	      udiv_qrnnd_preinv (dummy, r, r,
-				 n0, divisor_limb, divisor_limb_inverted);
-	    }
-	  return r;
-	}
+        {
+          mp_limb_t  inv;
+          invert_limb (inv, d);
+          for (i = size-1; i >= 0; i--)
+            {
+              n0 = ap[i];
+              udiv_qrnnd_preinv (dummy, r, r, n0, d, inv);
+            }
+          return r;
+        }
     }
   else
     {
-      if (UDIV_NEEDS_NORMALIZATION)
-	{
-	  int normalization_steps;
+      int norm;
 
-	  count_leading_zeros (normalization_steps, divisor_limb);
-	  if (normalization_steps != 0)
-	    {
-	      divisor_limb <<= normalization_steps;
-
-	      n1 = dividend_ptr[dividend_size - 1];
-	      r = n1 >> (BITS_PER_MP_LIMB - normalization_steps);
-
-	      /* Possible optimization:
-		 if (r == 0
-		 && divisor_limb > ((n1 << normalization_steps)
-				 | (dividend_ptr[dividend_size - 2] >> ...)))
-		 ...one division less... */
-
-	      for (i = dividend_size - 2; i >= 0; i--)
-		{
-		  n0 = dividend_ptr[i];
-		  udiv_qrnnd (dummy, r, r,
-			      ((n1 << normalization_steps)
-			       | (n0 >> (BITS_PER_MP_LIMB - normalization_steps))),
-			      divisor_limb);
-		  n1 = n0;
-		}
-	      udiv_qrnnd (dummy, r, r,
-			  n1 << normalization_steps,
-			  divisor_limb);
-	      return r >> normalization_steps;
-	    }
-	}
-      /* No normalization needed, either because udiv_qrnnd doesn't require
-	 it, or because DIVISOR_LIMB is already normalized.  */
-
-      i = dividend_size - 1;
-      r = dividend_ptr[i];
-
-      if (r >= divisor_limb)
-	r = 0;
+      /* Skip a division if high < divisor.  Having the test here before
+         normalizing will still skip as often as possible.  */
+      r = ap[size-1];
+      if (r < d)
+        {
+          size--;
+          if (size == 0)
+            return r;
+        }
       else
-	i--;
+        r = 0;
 
-      for (; i >= 0; i--)
-	{
-	  n0 = dividend_ptr[i];
-	  udiv_qrnnd (dummy, r, r, n0, divisor_limb);
-	}
-      return r;
+      /* If udiv_qrnnd doesn't need a normalized divisor, can use the simple
+         code above. */
+      if (! UDIV_NEEDS_NORMALIZATION
+          && BELOW_THRESHOLD (size, MOD_1_UNNORM_THRESHOLD))
+        goto plain;
+
+      count_leading_zeros (norm, d);
+      d <<= norm;
+
+      n1 = ap[size-1];
+      r = (r << norm) | (n1 >> (BITS_PER_MP_LIMB - norm));
+
+#define EXTRACT   ((n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm)))
+
+      if (UDIV_NEEDS_NORMALIZATION
+          && BELOW_THRESHOLD (size, MOD_1_UNNORM_THRESHOLD))
+        {
+          for (i = size-2; i >= 0; i--)
+            {
+              n0 = ap[i];
+              udiv_qrnnd (dummy, r, r, EXTRACT, d);
+              n1 = n0;
+            }
+          udiv_qrnnd (dummy, r, r, n1 << norm, d);
+          return r >> norm;
+        }
+      else
+        {
+          mp_limb_t inv;
+          invert_limb (inv, d);
+
+          for (i = size-2; i >= 0; i--)
+            {
+              n0 = ap[i];
+              udiv_qrnnd_preinv (dummy, r, r, EXTRACT, d, inv);
+              n1 = n0;
+            }
+          udiv_qrnnd_preinv (dummy, r, r, n1 << norm, d, inv);
+          return r >> norm;
+        }
     }
 }
