@@ -1,4 +1,4 @@
-/* mpfrxx.h -- C++ class wrapper for MPFR.
+/* mpfrxx.h -- C++ class wrapper for MPFR.  -*- C++ -*-
 
 Copyright 2001 Free Software Foundation, Inc.
 
@@ -24,18 +24,21 @@ MA 02111-1307, USA. */
 
 #include <iostream>
 #include <string>
+#include <strstream>
 #include <gmp.h>
 #include <mpfr.h>
 #include "gmpxx.h"
 
-template <class T, class U>
-void __gmp_set_expr(mpfr_ptr, const __gmp_expr<T, U> &);
 
 class __gmpfr_value { };
 
+template <class T, class U>
+void __gmp_set_expr(mpfr_ptr, const __gmp_expr<T, U> &);
+
 const int mpfr_default_base = 10;
 
-// class wrapper for mpfr_t
+
+/**************** Macros for in-class declarations ****************/
 
 #define __GMPFRR_DECLARE_COMPOUND_OPERATOR(fun)                             \
   template <class T, class U>                                               \
@@ -66,6 +69,9 @@ __GMPFRN_DECLARE_COMPOUND_OPERATOR(fun)
   inline __gmp_expr & fun();                    \
   inline __gmp_expr fun(int);
 
+
+/**************** mpfr_class -- wrapper for mpfr_t ****************/
+
 template <>
 class __gmp_expr<__gmpfr_value, __gmpfr_value>
 {
@@ -73,101 +79,101 @@ private:
   mpfr_t mp;
 public:
   // size information
-  unsigned long int precision() const { return mpfr_get_prec(mp); }
+  unsigned long int get_prec() const { return mpfr_get_prec(mp); }
 
   // constructors and destructor
   __gmp_expr() { mpfr_init(mp); }
 
   __gmp_expr(const __gmp_expr &f)
   {
-    mpfr_init2(mp, f.precision());
+    mpfr_init2(mp, f.get_prec());
     mpfr_set(mp, f.mp, __gmp_default_rounding_mode);
   }
-  __gmp_expr(const __gmp_expr &f, unsigned long int precision,
+  __gmp_expr(const __gmp_expr &f, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set(mp, f.mp, mode); }
+  { mpfr_init2(mp, prec); mpfr_set(mp, f.mp, mode); }
   template <class T, class U>
   __gmp_expr(const __gmp_expr<T, U> &expr)
-  { mpfr_init2(mp, expr.precision()); __gmp_set_expr(mp, expr); }
+  { mpfr_init2(mp, expr.get_prec()); __gmp_set_expr(mp, expr); }
   template <class T, class U>
-  __gmp_expr(const __gmp_expr<T, U> &expr, unsigned long int precision)
-  { mpfr_init2(mp, precision); __gmp_set_expr(mp, expr); }
+  __gmp_expr(const __gmp_expr<T, U> &expr, unsigned long int prec)
+  { mpfr_init2(mp, prec); __gmp_set_expr(mp, expr); }
 
   __gmp_expr(bool b)
   { mpfr_init(mp); mpfr_set_ui(mp, b, __gmp_default_rounding_mode); }
-  __gmp_expr(bool b, unsigned long int precision,
+  __gmp_expr(bool b, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_ui(mp, b, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_ui(mp, b, mode); }
 
   __gmp_expr(signed char c)
   { mpfr_init(mp); mpfr_set_si(mp, c, __gmp_default_rounding_mode); }
-  __gmp_expr(signed char c, unsigned long int precision,
+  __gmp_expr(signed char c, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_si(mp, c, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_si(mp, c, mode); }
   __gmp_expr(unsigned char c)
   { mpfr_init(mp); mpfr_set_ui(mp, c, __gmp_default_rounding_mode); }
-  __gmp_expr(unsigned char c, unsigned long int precision,
+  __gmp_expr(unsigned char c, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_ui(mp, c, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_ui(mp, c, mode); }
 
   __gmp_expr(signed int i)
   { mpfr_init(mp); mpfr_set_si(mp, i, __gmp_default_rounding_mode); }
-  __gmp_expr(signed int i, unsigned long int precision,
+  __gmp_expr(signed int i, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_si(mp, i, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_si(mp, i, mode); }
   __gmp_expr(unsigned int i)
   { mpfr_init(mp); mpfr_set_ui(mp, i, __gmp_default_rounding_mode); }
-  __gmp_expr(unsigned int i, unsigned long int precision,
+  __gmp_expr(unsigned int i, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_ui(mp, i, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_ui(mp, i, mode); }
 
   __gmp_expr(signed short int s)
   { mpfr_init(mp); mpfr_set_si(mp, s, __gmp_default_rounding_mode); }
-  __gmp_expr(signed short int s, unsigned long int precision,
+  __gmp_expr(signed short int s, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_si(mp, s, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_si(mp, s, mode); }
   __gmp_expr(unsigned short int s)
   { mpfr_init(mp); mpfr_set_ui(mp, s, __gmp_default_rounding_mode); }
-  __gmp_expr(unsigned short int s, unsigned long int precision,
+  __gmp_expr(unsigned short int s, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_ui(mp, s, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_ui(mp, s, mode); }
 
   __gmp_expr(signed long int l)
   { mpfr_init(mp); mpfr_set_si(mp, l, __gmp_default_rounding_mode); }
-  __gmp_expr(signed long int l, unsigned long int precision,
+  __gmp_expr(signed long int l, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_si(mp, l, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_si(mp, l, mode); }
   __gmp_expr(unsigned long int l)
   { mpfr_init(mp); mpfr_set_ui(mp, l, __gmp_default_rounding_mode); }
-  __gmp_expr(unsigned long int l, unsigned long int precision,
+  __gmp_expr(unsigned long int l, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_ui(mp, l, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_ui(mp, l, mode); }
 
   __gmp_expr(float f)
   { mpfr_init(mp); mpfr_set_d(mp, f, __gmp_default_rounding_mode); }
-  __gmp_expr(float f, unsigned long int precision,
+  __gmp_expr(float f, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_d(mp, f, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_d(mp, f, mode); }
   __gmp_expr(double d)
   { mpfr_init(mp); mpfr_set_d(mp, d, __gmp_default_rounding_mode); }
-  __gmp_expr(double d, unsigned long int precision,
+  __gmp_expr(double d, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_d(mp, d, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_d(mp, d, mode); }
   /*
   __gmp_expr(long double ld)
   { mpfr_init(mp); mpfr_set_d(mp, ld, __gmp_default_rounding_mode); }
-  __gmp_expr(long double ld, unsigned long int precision,
+  __gmp_expr(long double ld, unsigned long int prec,
 	     char mode = __gmp_default_rounding_mode)
-  { mpfr_init2(mp, precision); mpfr_set_d(mp, ld, mode); }
+  { mpfr_init2(mp, prec); mpfr_set_d(mp, ld, mode); }
   */
 
   /*
   explicit __gmp_expr(const char *s)
   { mpfr_init_set_str(mp, s, mpfr_default_base); }
   __gmp_expr(const char *s, int base) { mpfr_init_set_str(mp, s, base); }
-  explicit __gmp_expr(const string &s)
+  explicit __gmp_expr(const std::string &s)
   { mpfr_init_set_str(mp, s.c_str(), mpfr_default_base); }
-  __gmp_expr(const string &s, int base)
+  __gmp_expr(const std::string &s, int base)
   { mpfr_init_set_str(mp, s.c_str(), base); }
   */
 
@@ -176,9 +182,9 @@ public:
     mpfr_init2(mp, mpfr_get_prec(f));
     mpfr_set(mp, f, __gmp_default_rounding_mode);
   }
-  explicit __gmp_expr(mpfr_srcptr f, unsigned long int precision)
+  explicit __gmp_expr(mpfr_srcptr f, unsigned long int prec)
   {
-    mpfr_init2(mp, precision);
+    mpfr_init2(mp, prec);
     mpfr_set(mp, f, __gmp_default_rounding_mode);
   }
 
@@ -227,27 +233,37 @@ public:
   /*
   __gmp_expr & operator=(const char *s)
   { mpfr_set_str(mp, s, mpfr_default_base); return *this; }
-  __gmp_expr & operator=(const string &s)
+  __gmp_expr & operator=(const std::string &s)
   { mpfr_set_str(mp, s.c_str(), mpfr_default_base); return *this; }
 
   // string input/output functions
-  void set_str_base(const string &s, int base)
-  { mpfr_set_str(mp, s.c_str(), base); }
+  int set_str(const std::string &s, int base)
+  { return mpfr_set_str(mp, s.c_str(), base); }
   */
-  string get_str_base(int base) const
+  std::string get_str(mp_exp_t *expo, int base, size_t size,
+		      mp_rnd_t rmode = __gmp_default_rounding_mode) const
   {
+    __gmp_alloc_cstring temp(mpfr_get_str(0, expo, base, size, mp, rmode));
+    return std::string(temp.str);
+  }
+  std::string get_str2(int base = 10,
+		       mp_rnd_t rmode = __gmp_default_rounding_mode) const
+  {
+    std::ostrstream o;
     mp_exp_t expo;
-    __gmp_alloc_cstring temp(mpfr_get_str(0, &expo, base, 0, mp,
-					  __gmp_default_rounding_mode));
+    std::string temp(mpfr_get_str(0, &expo, base, 0, mp, rmode));
 
-    // cancel terminating zeros
-    for (size_t i=strlen(temp.str)-1; temp.str[i]=='0' && i>0; --i)
-      temp.str[i] = '\0';
-
-    if (*temp.str == '-')
-      return "-0." + string(temp.str+1) + "e"; // the exponent?
+    if (temp[0] == '-')
+      o << "-0." << temp.substr(1);
     else
-      return "0." + string(temp.str) + "e"; // the exponent?
+      o << "0." << temp;
+
+    if (base <= 10)
+      o << "e" << expo << '\0';
+    else
+      o << "@" << expo << '\0';
+
+    return o.str();
   }
 
   // conversion functions
@@ -273,204 +289,51 @@ public:
 
 typedef __gmp_expr<__gmpfr_value, __gmpfr_value> mpfr_class;
 
-// unary expressions
 
-template <class Op>
-class __gmp_expr<__gmpfr_value, __gmp_unary_expr<mpfr_class, Op> >
+inline std::ostream & operator<<(std::ostream &o, const mpfr_class &f)
 {
-private:
-  __gmp_unary_expr<mpfr_class, Op> expr;
-public:
-  __gmp_expr(const mpfr_class &val) : expr(val) { }
-  void eval(mpfr_ptr f, unsigned long int) const
-  { Op::eval(f, expr.val.get_mpfr_t(), __gmp_default_rounding_mode); }
-  unsigned long int precision() const
-  { return mpfr_get_prec(expr.val.get_mpfr_t()); }
-};
+  mp_exp_t expo;
+  int base = 10;
+  __gmp_alloc_cstring temp(mpfr_get_str(0, &expo, base, 0, f.get_mpfr_t(),
+					__gmp_default_rounding_mode));
 
-template <class T, class U, class Op>
-class __gmp_expr<__gmpfr_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+  // cancel terminating zeros
+  for (size_t i=strlen(temp.str)-1; temp.str[i]=='0' && i>0; --i)
+    temp.str[i] = '\0';
+
+  if (*temp.str == '-')
+    o << "-0." << temp.str+1;
+  else
+    o << "0." << temp.str;
+
+  if (base <= 10)
+    o << "e" << expo;
+  else
+    o << "@" << expo;
+
+  return o;
+}
+
+template <class T>
+inline std::ostream & operator<<
+(std::ostream &o, const __gmp_expr<__gmpfr_value, T> &expr)
 {
-private:
-  __gmp_unary_expr<__gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val) : expr(val) { }
-  void eval(mpfr_ptr f, unsigned long int precision) const
-  {
-    mpfr_class temp(expr.val, precision);
-    Op::eval(f, temp.get_mpfr_t(), __gmp_default_rounding_mode);
-  }
-  unsigned long int precision() const { return expr.val.precision(); }
-};
+  mpfr_class temp(expr);
+  return o << temp;
+}
 
-// binary expressions
-
-template <class Op>
-class __gmp_expr
-<__gmpfr_value, __gmp_binary_expr<mpfr_class, mpfr_class, Op> >
+inline std::istream & operator>>(std::istream &i, mpfr_class &f)
 {
-private:
-  __gmp_binary_expr<mpfr_class, mpfr_class, Op> expr;
-public:
-  __gmp_expr(const mpfr_class &val1, const mpfr_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpfr_ptr f, unsigned long int) const
-  { Op::eval(f, expr.val1.get_mpfr_t(), expr.val2.get_mpfr_t(),
-	     __gmp_default_rounding_mode); }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
+  mpf_t temp;
+  mpf_init2(temp, f.get_prec());
+  i >> temp;
+  mpfr_set_f(f.get_mpfr_t(), temp, __gmp_default_rounding_mode);
+  mpf_clear(temp);
+  return i;
+}
 
-template <class T, class Op>
-class __gmp_expr<__gmpfr_value, __gmp_binary_expr<mpfr_class, T, Op> >
-{
-private:
-  __gmp_binary_expr<mpfr_class, T, Op> expr;
-public:
-  __gmp_expr(const mpfr_class &val1, T val2) : expr(val1, val2) { }
-  void eval(mpfr_ptr f, unsigned long int) const
-  { Op::eval(f, expr.val1.get_mpfr_t(), expr.val2,
-	     __gmp_default_rounding_mode); }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = mpf_get_default_prec();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
 
-template <class T, class Op>
-class __gmp_expr<__gmpfr_value, __gmp_binary_expr<T, mpfr_class, Op> >
-{
-private:
-  __gmp_binary_expr<T, mpfr_class, Op> expr;
-public:
-  __gmp_expr(T val1, const mpfr_class &val2) : expr(val1, val2) { }
-  void eval(mpfr_ptr f, unsigned long int) const
-  { Op::eval(f, expr.val1, expr.val2.get_mpfr_t(),
-	     __gmp_default_rounding_mode); }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = mpf_get_default_prec(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpfr_value, __gmp_binary_expr<mpfr_class, __gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_binary_expr<mpfr_class, __gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const mpfr_class &val1, const __gmp_expr<T, U> &val2)
-    : expr(val1, val2) { }
-  void eval(mpfr_ptr f, unsigned long int precision) const
-  {
-    mpfr_class temp(expr.val2, precision);
-    Op::eval(f, expr.val1.get_mpfr_t(), temp.get_mpfr_t(),
-	     __gmp_default_rounding_mode);
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpfr_value, __gmp_binary_expr<__gmp_expr<T, U>, mpfr_class, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, mpfr_class, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const mpfr_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpfr_ptr f, unsigned long int precision) const
-  {
-    mpfr_class temp(expr.val1, precision);
-    Op::eval(f, temp.get_mpfr_t(), expr.val2.get_mpfr_t(),
-	     __gmp_default_rounding_mode);
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class V, class Op>
-class __gmp_expr<__gmpfr_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, V, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, V val2) : expr(val1, val2) { }
-  void eval(mpfr_ptr f, unsigned long int precision) const
-  {
-    mpfr_class temp(expr.val1, precision);
-    Op::eval(f, temp.get_mpfr_t(), expr.val2, __gmp_default_rounding_mode);
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = mpf_get_default_prec();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class V, class Op>
-class __gmp_expr<__gmpfr_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op> >
-{
-private:
-  __gmp_binary_expr<T, __gmp_expr<U, V>, Op> expr;
-public:
-  __gmp_expr(T val1, const __gmp_expr<U, V> &val2) : expr(val1, val2) { }
-  void eval(mpfr_ptr f, unsigned long int precision) const
-  {
-    mpfr_class temp(expr.val2, precision);
-    Op::eval(f, expr.val1, temp.get_mpfr_t(), __gmp_default_rounding_mode);
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = mpf_get_default_prec(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class V, class W, class Op>
-class __gmp_expr
-<__gmpfr_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const __gmp_expr<V, W> &val2)
-    : expr(val1, val2) { }
-  void eval(mpfr_ptr f, unsigned long int precision) const
-  {
-    mpfr_class temp1(expr.val1, precision), temp2(expr.val2, precision);
-    Op::eval(f, temp1.get_mpfr_t(), temp2.get_mpfr_t(),
-	     __gmp_default_rounding_mode);
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-// type conversions
+/**************** Classes for type conversion ****************/
 
 class __gmpfr_temp
 {
@@ -489,15 +352,15 @@ public:
   template <class T, class U>
   __gmpfr_temp(const __gmp_expr<T, U> &expr)
   {
-    mpfr_init2(temp, expr.precision());
+    mpfr_init2(temp, expr.get_prec());
     __gmp_set_expr(temp, expr);
     mp = temp;
     is_temp = true;
   }
   template <class T, class U>
-  __gmpfr_temp(const __gmp_expr<T, U> &expr, unsigned long int precision)
+  __gmpfr_temp(const __gmp_expr<T, U> &expr, unsigned long int prec)
   {
-    mpfr_init2(temp, precision);
+    mpfr_init2(temp, prec);
     __gmp_set_expr(temp, expr);
     mp = temp;
     is_temp = true;
@@ -507,12 +370,148 @@ public:
   mpfr_srcptr get_mp() const { return mp; }
 };
 
+
+template <>
+struct __gmp_resolve_expr<__gmpz_value, __gmpfr_value>
+{
+  typedef __gmpfr_value value_type;
+  typedef __gmpfr_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpfr_value, __gmpz_value>
+{
+  typedef __gmpfr_value value_type;
+  typedef __gmpfr_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpq_value, __gmpfr_value>
+{
+  typedef __gmpfr_value value_type;
+  typedef __gmpfr_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpfr_value, __gmpq_value>
+{
+  typedef __gmpfr_value value_type;
+  typedef __gmpfr_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpf_value, __gmpfr_value>
+{
+  typedef __gmpfr_value value_type;
+  typedef __gmpfr_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpfr_value, __gmpf_value>
+{
+  typedef __gmpfr_value value_type;
+  typedef __gmpfr_temp temp_type;
+};
+
 template <>
 struct __gmp_resolve_expr<__gmpfr_value, __gmpfr_value>
 {
   typedef __gmpfr_value value_type;
   typedef __gmpfr_temp temp_type;
 };
+
+
+/*
+template <class T>
+inline void __gmp_set_expr(mpz_ptr z, const mpfr_class &f)
+{
+  mpz_set_fr(z, f.get_mpfr_t());
+}
+
+template <class T>
+inline void __gmp_set_expr
+(mpz_ptr z, const __gmp_expr<__gmpfr_value, T> &expr)
+{
+  mpfr_class temp(expr);
+  mpz_set_fr(z, temp.get_mpfr_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpq_ptr q, const mpfr_class &f)
+{
+  mpq_set_fr(q, f.get_mpfr_t());
+}
+
+template <class T>
+inline void __gmp_set_expr
+(mpq_ptr q, const __gmp_expr<__gmpfr_value, T> &expr)
+{
+  mpfr_class temp(expr);
+  mpq_set_fr(q, temp.get_mpfr_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpf_ptr f, const mpfr_class &g)
+{
+  mpf_set_fr(f, g.get_mpfr_t());
+}
+
+template <class T>
+inline void __gmp_set_expr
+(mpf_ptr f, const __gmp_expr<__gmpfr_value, T> &expr)
+{
+  mpfr_class temp(expr);
+  mpf_set_fr(f, temp.get_mpfr_t());
+}
+*/
+
+template <class T>
+inline void __gmp_set_expr(mpfr_ptr f, const mpz_class &z)
+{
+  mpfr_set_z(f, z.get_mpz_t(), __gmp_default_rounding_mode);
+}
+
+template <class T>
+inline void __gmp_set_expr(mpfr_ptr f, const mpz_classref &z)
+{
+  mpfr_set_z(f, z.get_mpz_t(), __gmp_default_rounding_mode);
+}
+
+template <class T>
+inline void __gmp_set_expr
+(mpfr_ptr f, const __gmp_expr<__gmpz_value, T> &expr)
+{
+  mpz_class temp(expr);
+  mpfr_set_z(f, temp.get_mpz_t(), __gmp_default_rounding_mode);
+}
+
+template <class T>
+inline void __gmp_set_expr(mpfr_ptr f, const mpq_class &q)
+{
+  mpfr_set_q(f, q.get_mpq_t(), __gmp_default_rounding_mode);
+}
+
+template <class T>
+inline void __gmp_set_expr
+(mpfr_ptr f, const __gmp_expr<__gmpq_value, T> &expr)
+{
+  mpq_class temp(expr);
+  mpfr_set_q(f, temp.get_mpq_t(), __gmp_default_rounding_mode);
+}
+
+template <class T>
+inline void __gmp_set_expr(mpfr_ptr f, const mpf_class &g)
+{
+  mpfr_set_f(f, g.get_mpf_t(), __gmp_default_rounding_mode);
+}
+
+template <class T>
+inline void __gmp_set_expr
+(mpfr_ptr f, const __gmp_expr<__gmpf_value, T> &expr)
+{
+  mpq_class temp(expr);
+  mpfr_set_f(f, temp.get_mpf_t(), __gmp_default_rounding_mode);
+}
 
 template <>
 inline void __gmp_set_expr(mpfr_ptr f, const mpfr_class &g)
@@ -527,114 +526,216 @@ inline void __gmp_set_expr
   expr.eval(f, mpfr_get_prec(f));
 }
 
-// functions
 
-inline ostream & operator<<(ostream &o, const mpfr_class &f)
+/**************** Specializations of __gmp_expr ****************/
+
+// unary expressions
+
+template <class Op>
+class __gmp_expr<__gmpfr_value, __gmp_unary_expr<mpfr_class, Op> >
 {
-  // handle the case f == 0
-  if (mpfr_cmp_ui(f.get_mpfr_t(), 0) == 0)
-    return o << "0";
+private:
+  __gmp_unary_expr<mpfr_class, Op> expr;
+public:
+  __gmp_expr(const mpfr_class &val) : expr(val) { }
+  void eval(mpfr_ptr f, unsigned long int) const
+  { Op::eval(f, expr.val.get_mpfr_t(), __gmp_default_rounding_mode); }
+  unsigned long int get_prec() const
+  { return mpfr_get_prec(expr.val.get_mpfr_t()); }
+};
 
-  // else
-  mp_exp_t expo;
-  size_t o_prec = o.precision();
-  __gmp_alloc_cstring temp
-    (mpfr_get_str(0, &expo, mpfr_default_base, o_prec,
-		  f.get_mpfr_t(), __gmp_default_rounding_mode));
-  char *temp2 = temp.str;
-  size_t length = strlen(temp2)+1;
-  --expo;
-
-  // cancel terminating zeros
-  for (int i=length-2; temp2[i]=='0' && i>=0; --i)
-    temp2[i] = '\0';
-
-  // print trailing minus if number is negative
-  if (temp2[0] == '-')
-    {
-      o << "-";
-      ++temp2;
-    }
-
-  if (expo < -4 || expo > 5)
-    {
-      // scientific notation
-      o << temp2[0] << "." << temp2+1 << "e";
-      if (expo >= 10)
-	o << "+" << expo;
-      else if (expo > 0)
-	o << "+0" << expo;
-      else if (expo > -10)
-	o << "-0" << -expo;
-      else
-	o << expo;
-    }
-  else if (expo < 0)
-    {
-      // number less than 1
-      o << "0.";
-      for (int i=-1; i>expo; --i)
-	o << "0";
-      o << temp2;
-    }
-  else
-    {
-      // number greater or equal to 1
-      int i;
-      for (i=0; i<=expo && *temp2!='\0'; ++i, ++temp2)
-	o << *temp2;
-      for (; i<=expo; ++i)
-	o << "0";
-      if (strlen(temp2) > 0)
-	o << "." << temp2;
-    }
-
-  return o;
-}
-
-/*
-inline ostream & operator<<(ostream &o, const mpfr_class &f)
+template <class T, class U, class Op>
+class __gmp_expr<__gmpfr_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
 {
-  mp_exp_t expo;
-  __gmp_alloc_cstring temp
-    (mpfr_get_str(0, &expo, mpfr_default_base, o.precision(),
-		  f.get_mpfr_t(), __gmp_default_rounding_mode));
+private:
+  __gmp_unary_expr<__gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val) : expr(val) { }
+  void eval(mpfr_ptr f, unsigned long int prec) const
+  {
+    mpfr_class temp(expr.val, prec);
+    Op::eval(f, temp.get_mpfr_t(), __gmp_default_rounding_mode);
+  }
+  unsigned long int get_prec() const { return expr.val.get_prec(); }
+};
 
-  // cancel terminating zeros
-  for (size_t i=strlen(temp.str)-1; temp.str[i]=='0' && i>0; --i)
-    temp.str[i] = '\0';
 
-  if (*temp.str == '-')
-    return o << "-0." << temp.str+1 << "e" << expo;
-  else
-    return o << "0." << temp.str << "e" << expo;
-}
-*/
+// binary expressions
 
-template <class T>
-inline ostream & operator<<
-(ostream &o, const __gmp_expr<__gmpfr_value, T> &expr)
+template <class Op>
+class __gmp_expr
+<__gmpfr_value, __gmp_binary_expr<mpfr_class, mpfr_class, Op> >
 {
-  mpfr_class temp(expr);
-  return o << temp;
-}
+private:
+  __gmp_binary_expr<mpfr_class, mpfr_class, Op> expr;
+public:
+  __gmp_expr(const mpfr_class &val1, const mpfr_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpfr_ptr f, unsigned long int) const
+  { Op::eval(f, expr.val1.get_mpfr_t(), expr.val2.get_mpfr_t(),
+	     __gmp_default_rounding_mode); }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
 
-inline istream & operator>>(istream &i, mpfr_class &f)
+template <class T, class Op>
+class __gmp_expr<__gmpfr_value, __gmp_binary_expr<mpfr_class, T, Op> >
 {
-  mpf_t temp;
-  mpf_init2(temp, f.precision());
-  i >> temp;
-  mpfr_set_f(f.get_mpfr_t(), temp, __gmp_default_rounding_mode);
-  mpf_clear(temp);
-  return i;
-}
+private:
+  __gmp_binary_expr<mpfr_class, T, Op> expr;
+public:
+  __gmp_expr(const mpfr_class &val1, T val2) : expr(val1, val2) { }
+  void eval(mpfr_ptr f, unsigned long int) const
+  { Op::eval(f, expr.val1.get_mpfr_t(), expr.val2,
+	     __gmp_default_rounding_mode); }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = mpf_get_default_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class Op>
+class __gmp_expr<__gmpfr_value, __gmp_binary_expr<T, mpfr_class, Op> >
+{
+private:
+  __gmp_binary_expr<T, mpfr_class, Op> expr;
+public:
+  __gmp_expr(T val1, const mpfr_class &val2) : expr(val1, val2) { }
+  void eval(mpfr_ptr f, unsigned long int) const
+  { Op::eval(f, expr.val1, expr.val2.get_mpfr_t(),
+	     __gmp_default_rounding_mode); }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = mpf_get_default_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpfr_value, __gmp_binary_expr<mpfr_class, __gmp_expr<T, U>, Op> >
+{
+private:
+  __gmp_binary_expr<mpfr_class, __gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const mpfr_class &val1, const __gmp_expr<T, U> &val2)
+    : expr(val1, val2) { }
+  void eval(mpfr_ptr f, unsigned long int prec) const
+  {
+    mpfr_class temp(expr.val2, prec);
+    Op::eval(f, expr.val1.get_mpfr_t(), temp.get_mpfr_t(),
+	     __gmp_default_rounding_mode);
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpfr_value, __gmp_binary_expr<__gmp_expr<T, U>, mpfr_class, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, mpfr_class, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const mpfr_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpfr_ptr f, unsigned long int prec) const
+  {
+    mpfr_class temp(expr.val1, prec);
+    Op::eval(f, temp.get_mpfr_t(), expr.val2.get_mpfr_t(),
+	     __gmp_default_rounding_mode);
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class U, class V, class Op>
+class __gmp_expr<__gmpfr_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, V, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, V val2) : expr(val1, val2) { }
+  void eval(mpfr_ptr f, unsigned long int prec) const
+  {
+    mpfr_class temp(expr.val1, prec);
+    Op::eval(f, temp.get_mpfr_t(), expr.val2, __gmp_default_rounding_mode);
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = mpf_get_default_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class U, class V, class Op>
+class __gmp_expr<__gmpfr_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op> >
+{
+private:
+  __gmp_binary_expr<T, __gmp_expr<U, V>, Op> expr;
+public:
+  __gmp_expr(T val1, const __gmp_expr<U, V> &val2) : expr(val1, val2) { }
+  void eval(mpfr_ptr f, unsigned long int prec) const
+  {
+    mpfr_class temp(expr.val2, prec);
+    Op::eval(f, expr.val1, temp.get_mpfr_t(), __gmp_default_rounding_mode);
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = mpf_get_default_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class U, class V, class W, class Op>
+class __gmp_expr
+<__gmpfr_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const __gmp_expr<V, W> &val2)
+    : expr(val1, val2) { }
+  void eval(mpfr_ptr f, unsigned long int prec) const
+  {
+    mpfr_class temp1(expr.val1, prec), temp2(expr.val2, prec);
+    Op::eval(f, temp1.get_mpfr_t(), temp2.get_mpfr_t(),
+	     __gmp_default_rounding_mode);
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+
+/**************** Macros for defining functions ****************/
 
 #define __GMPFRR_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)              \
                                                                       \
 template <class T, class U>                                           \
 inline mpfr_class & mpfr_class::fun(const __gmp_expr<T, U> &expr)     \
 {                                                                     \
-  __gmpfr_temp temp(expr, precision());                               \
+  __gmpfr_temp temp(expr, get_prec());                                \
   eval_fun::eval(mp, mp, temp.get_mp(), __gmp_default_rounding_mode); \
   return *this;                                                       \
 }
@@ -748,7 +849,8 @@ inline mpfr_class mpfr_class::fun(int)                   \
   return temp;                                           \
 }
 
-// define operators and functions
+
+/**************** Arithmetic operators and functions ****************/
 
 __GMPFR_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
 __GMPFR_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
@@ -761,140 +863,20 @@ __GMPFR_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
 __GMPFR_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
 __GMPFR_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
 
-// type conversions
 
-template <>
-struct __gmp_resolve_expr<__gmpz_value, __gmpfr_value>
-{
-  typedef __gmpfr_value value_type;
-  typedef __gmpfr_temp temp_type;
-};
+/**************** #undef all private macros ****************/
 
-template <>
-struct __gmp_resolve_expr<__gmpfr_value, __gmpz_value>
-{
-  typedef __gmpfr_value value_type;
-  typedef __gmpfr_temp temp_type;
-};
+#undef __GMPFRR_DECLARE_COMPOUND_OPERATOR
+#undef __GMPFRN_DECLARE_COMPOUND_OPERATOR
+#undef __GMPFR_DECLARE_COMPOUND_OPERATOR
+#undef __GMPFR_DECLARE_COMPOUND_OPERATOR_UI
+#undef __GMPFR_DECLARE_INCREMENT_OPERATOR
 
-template <>
-struct __gmp_resolve_expr<__gmpq_value, __gmpfr_value>
-{
-  typedef __gmpfr_value value_type;
-  typedef __gmpfr_temp temp_type;
-};
+#undef __GMPFRR_DEFINE_COMPOUND_OPERATOR
+#undef __GMPFRN_DEFINE_COMPOUND_OPERATOR
+#undef __GMPFR_DEFINE_COMPOUND_OPERATOR
+#undef __GMPFR_DEFINE_COMPOUND_OPERATOR_UI
+#undef __GMPFR_DEFINE_INCREMENT_OPERATOR
 
-template <>
-struct __gmp_resolve_expr<__gmpfr_value, __gmpq_value>
-{
-  typedef __gmpfr_value value_type;
-  typedef __gmpfr_temp temp_type;
-};
 
-template <>
-struct __gmp_resolve_expr<__gmpf_value, __gmpfr_value>
-{
-  typedef __gmpfr_value value_type;
-  typedef __gmpfr_temp temp_type;
-};
-
-template <>
-struct __gmp_resolve_expr<__gmpfr_value, __gmpf_value>
-{
-  typedef __gmpfr_value value_type;
-  typedef __gmpfr_temp temp_type;
-};
-
-/*
-template <class T>
-inline void __gmp_set_expr(mpz_ptr z, const mpfr_class &f)
-{
-  mpz_set_fr(z, f.get_mpfr_t());
-}
-
-template <class T>
-inline void __gmp_set_expr
-(mpz_ptr z, const __gmp_expr<__gmpfr_value, T> &expr)
-{
-  mpfr_class temp(expr);
-  mpz_set_fr(z, temp.get_mpfr_t());
-}
-
-template <class T>
-inline void __gmp_set_expr(mpq_ptr q, const mpfr_class &f)
-{
-  mpq_set_fr(q, f.get_mpfr_t());
-}
-
-template <class T>
-inline void __gmp_set_expr
-(mpq_ptr q, const __gmp_expr<__gmpfr_value, T> &expr)
-{
-  mpfr_class temp(expr);
-  mpq_set_fr(q, temp.get_mpfr_t());
-}
-
-template <class T>
-inline void __gmp_set_expr(mpf_ptr f, const mpfr_class &g)
-{
-  mpf_set_fr(f, g.get_mpfr_t());
-}
-
-template <class T>
-inline void __gmp_set_expr
-(mpf_ptr f, const __gmp_expr<__gmpfr_value, T> &expr)
-{
-  mpfr_class temp(expr);
-  mpf_set_fr(f, temp.get_mpfr_t());
-}
-*/
-
-template <class T>
-inline void __gmp_set_expr(mpfr_ptr f, const mpz_class &z)
-{
-  mpfr_set_z(f, z.get_mpz_t(), __gmp_default_rounding_mode);
-}
-
-template <class T>
-inline void __gmp_set_expr(mpfr_ptr f, const mpz_classref &z)
-{
-  mpfr_set_z(f, z.get_mpz_t(), __gmp_default_rounding_mode);
-}
-
-template <class T>
-inline void __gmp_set_expr
-(mpfr_ptr f, const __gmp_expr<__gmpz_value, T> &expr)
-{
-  mpz_class temp(expr);
-  mpfr_set_z(f, temp.get_mpz_t(), __gmp_default_rounding_mode);
-}
-
-template <class T>
-inline void __gmp_set_expr(mpfr_ptr f, const mpq_class &q)
-{
-  mpfr_set_q(f, q.get_mpq_t(), __gmp_default_rounding_mode);
-}
-
-template <class T>
-inline void __gmp_set_expr
-(mpfr_ptr f, const __gmp_expr<__gmpq_value, T> &expr)
-{
-  mpq_class temp(expr);
-  mpfr_set_q(f, temp.get_mpq_t(), __gmp_default_rounding_mode);
-}
-
-template <class T>
-inline void __gmp_set_expr(mpfr_ptr f, const mpf_class &g)
-{
-  mpfr_set_f(f, g.get_mpf_t(), __gmp_default_rounding_mode);
-}
-
-template <class T>
-inline void __gmp_set_expr
-(mpfr_ptr f, const __gmp_expr<__gmpf_value, T> &expr)
-{
-  mpq_class temp(expr);
-  mpfr_set_f(f, temp.get_mpf_t(), __gmp_default_rounding_mode);
-}
-
-#endif
+#endif /* __GMPFR_PLUSPLUS__ */

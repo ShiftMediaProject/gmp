@@ -1,4 +1,4 @@
-/* gmpxx.h -- C++ class wrapper for GMP types.
+/* gmpxx.h -- C++ class wrapper for GMP types.  -*- C++ -*-
 
 Copyright 2001 Free Software Foundation, Inc.
 
@@ -19,19 +19,34 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+/* the C++ compiler must implement the following features:
+   - member templates
+   - partial specialization of templates
+   - namespace support
+   for g++, this means version 2.91 or higher
+   for other compilers, I don't know */
 #ifdef __GNUC__
-#if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8)
-#error gmp++.h requires g++ version 2.8 or higher
+#if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 91)
+#error gmp++.h requires g++ version 2.91 (egcs 1.1.2) or higher
 #endif
 #endif
 
 #ifndef __GMP_PLUSPLUS__
 #define __GMP_PLUSPLUS__
 
-#include <cctype>
-#include <iosfwd>
+#include <iostream>
 #include <string>
+// #include <strstream>
 #include <gmp.h>
+
+
+/**************** Function objects ****************/
+/* Any evaluation of a __gmp_expr ends up calling one of these functions
+   all intermediate functions being inline, the evaluation should optimize
+   to a direct call to the relevant function, thus yielding no overhead
+   over the C interface.
+   Functions with mpfr_t arguments are wrapped by an #ifdef test because
+   mpfr isn't installed by default */
 
 struct __gmp_unary_plus
 {
@@ -148,6 +163,17 @@ struct __gmp_binary_plus
     mpq_set_d(temp, d);
     mpq_add(q, temp, r);
     mpq_clear(temp);
+  }
+
+  static void eval(mpq_ptr q, mpq_srcptr r, mpz_srcptr z)
+  {
+    mpq_set(q, r);
+    mpz_addmul(mpq_numref(q), mpq_denref(q), z);
+  }
+  static void eval(mpq_ptr q, mpz_srcptr z, mpq_srcptr r)
+  {
+    mpq_set(q, r);
+    mpz_addmul(mpq_numref(q), mpq_denref(q), z);
   }
 
   static void eval(mpf_ptr f, mpf_srcptr g, mpf_srcptr h)
@@ -317,6 +343,17 @@ struct __gmp_binary_minus
     mpq_set_d(temp, d);
     mpq_sub(q, temp, r);
     mpq_clear(temp);
+  }
+
+  static void eval(mpq_ptr q, mpq_srcptr r, mpz_srcptr z)
+  {
+    mpq_set(q, r);
+    mpz_submul(mpq_numref(q), mpq_denref(q), z);
+  }
+  static void eval(mpq_ptr q, mpz_srcptr z, mpq_srcptr r)
+  {
+    mpq_neg(q, r);
+    mpz_addmul(mpq_numref(q), mpq_denref(q), z);
   }
 
   static void eval(mpf_ptr f, mpf_srcptr g, mpf_srcptr h)
@@ -813,7 +850,7 @@ struct __gmp_binary_modulus
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
   {
     if (mpz_fits_slong_p(w))
-      mpz_set_si(z, l / mpz_get_si(w));
+      mpz_set_si(z, l % mpz_get_si(w));
     else
       mpz_set_si(z, l);
   }
@@ -1993,12 +2030,19 @@ struct __gmp_rand_function
   { mpf_urandomb(f, s, prec); }
 };
 
+
+/**************** Auxiliary classes ****************/
+
+/* this is the same as gmp_allocated_string in gmp-impl.h
+   since gmp-impl.h is not publicly available, I redefine it here
+   I use a different name to avoid possible clashes */
 struct __gmp_alloc_cstring
 {
   char *str;
-  __gmp_alloc_cstring(char *s = 0) { str = s; }
+  __gmp_alloc_cstring(char *s) { str = s; }
   ~__gmp_alloc_cstring() { __gmp_free_func(str, strlen(str)+1); }
 };
+
 
 template <class T, class U>
 class __gmp_expr;
@@ -2034,10 +2078,1891 @@ private:
   __gmp_binary_expr();
 };
 
+
+class __gmpz_value { };
+class __gmpzref_value { };
+class __gmpq_value { };
+class __gmpf_value { };
+
+
+template <class T, class U>
+void __gmp_set_expr(mpz_ptr, const __gmp_expr<T, U> &);
+template <class T, class U>
+void __gmp_set_expr(mpq_ptr, const __gmp_expr<T, U> &);
+template <class T, class U>
+void __gmp_set_expr(mpf_ptr, const __gmp_expr<T, U> &);
+
+
+/**************** Macros for in-class declarations ****************/
+/* This is just repetitive code that is easier to maintain if it's written
+   only once */
+
+#define __GMPZZ_DECLARE_COMPOUND_OPERATOR(fun)                            \
+  template <class T, class U>                                             \
+  __gmp_expr<__gmpz_value, __gmpz_value> & fun(const __gmp_expr<T, U> &);
+
+#define __GMPZN_DECLARE_COMPOUND_OPERATOR(fun) \
+  __gmp_expr & fun(bool);                      \
+  __gmp_expr & fun(signed char);               \
+  __gmp_expr & fun(unsigned char);             \
+  __gmp_expr & fun(signed int);                \
+  __gmp_expr & fun(unsigned int);              \
+  __gmp_expr & fun(signed short int);          \
+  __gmp_expr & fun(unsigned short int);        \
+  __gmp_expr & fun(signed long int);           \
+  __gmp_expr & fun(unsigned long int);         \
+  __gmp_expr & fun(float);                     \
+  __gmp_expr & fun(double);                    \
+  __gmp_expr & fun(long double);
+
+#define __GMPZ_DECLARE_COMPOUND_OPERATOR(fun) \
+__GMPZZ_DECLARE_COMPOUND_OPERATOR(fun)        \
+__GMPZN_DECLARE_COMPOUND_OPERATOR(fun)
+
+#define __GMPZ_DECLARE_COMPOUND_OPERATOR_UI(fun) \
+  __gmp_expr & fun(unsigned long int);
+
+#define __GMPZ_DECLARE_INCREMENT_OPERATOR(fun) \
+  inline __gmp_expr & fun();                   \
+  inline __gmp_expr fun(int);
+
+#define __GMPZRR_DECLARE_COMPOUND_OPERATOR(fun)                              \
+  template <class T, class U>                                                \
+  __gmp_expr<__gmpz_value, __gmpzref_value> & fun(const __gmp_expr<T, U> &);
+
+#define __GMPZRN_DECLARE_COMPOUND_OPERATOR(fun) \
+  __gmp_expr & fun(bool);                       \
+  __gmp_expr & fun(signed char);                \
+  __gmp_expr & fun(unsigned char);              \
+  __gmp_expr & fun(signed int);                 \
+  __gmp_expr & fun(unsigned int);               \
+  __gmp_expr & fun(signed short int);           \
+  __gmp_expr & fun(unsigned short int);         \
+  __gmp_expr & fun(signed long int);            \
+  __gmp_expr & fun(unsigned long int);          \
+  __gmp_expr & fun(float);                      \
+  __gmp_expr & fun(double);                     \
+  __gmp_expr & fun(long double);
+
+#define __GMPZR_DECLARE_COMPOUND_OPERATOR(fun) \
+__GMPZRR_DECLARE_COMPOUND_OPERATOR(fun)        \
+__GMPZRN_DECLARE_COMPOUND_OPERATOR(fun)
+
+#define __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(fun) \
+  __gmp_expr & fun(unsigned long int);
+
+#define __GMPZR_DECLARE_INCREMENT_OPERATOR(fun) \
+  inline __gmp_expr & fun();                    \
+  inline mpz_class fun(int);
+
+#define __GMPQQ_DECLARE_COMPOUND_OPERATOR(fun)                            \
+  template <class T, class U>                                             \
+  __gmp_expr<__gmpq_value, __gmpq_value> & fun(const __gmp_expr<T, U> &);
+
+#define __GMPQN_DECLARE_COMPOUND_OPERATOR(fun) \
+  __gmp_expr & fun(bool);                      \
+  __gmp_expr & fun(signed char);               \
+  __gmp_expr & fun(unsigned char);             \
+  __gmp_expr & fun(signed int);                \
+  __gmp_expr & fun(unsigned int);              \
+  __gmp_expr & fun(signed short int);          \
+  __gmp_expr & fun(unsigned short int);        \
+  __gmp_expr & fun(signed long int);           \
+  __gmp_expr & fun(unsigned long int);         \
+  __gmp_expr & fun(float);                     \
+  __gmp_expr & fun(double);                    \
+  __gmp_expr & fun(long double);
+
+#define __GMPQ_DECLARE_COMPOUND_OPERATOR(fun) \
+__GMPQQ_DECLARE_COMPOUND_OPERATOR(fun)        \
+__GMPQN_DECLARE_COMPOUND_OPERATOR(fun)
+
+#define __GMPQ_DECLARE_COMPOUND_OPERATOR_UI(fun) \
+  __gmp_expr & fun(unsigned long int);
+
+#define __GMPQ_DECLARE_INCREMENT_OPERATOR(fun) \
+  inline __gmp_expr & fun();                   \
+  inline __gmp_expr fun(int);
+
+#define __GMPFF_DECLARE_COMPOUND_OPERATOR(fun)                            \
+  template <class T, class U>                                             \
+  __gmp_expr<__gmpf_value, __gmpf_value> & fun(const __gmp_expr<T, U> &);
+
+#define __GMPFN_DECLARE_COMPOUND_OPERATOR(fun) \
+  __gmp_expr & fun(bool);                      \
+  __gmp_expr & fun(signed char);               \
+  __gmp_expr & fun(unsigned char);             \
+  __gmp_expr & fun(signed int);                \
+  __gmp_expr & fun(unsigned int);              \
+  __gmp_expr & fun(signed short int);          \
+  __gmp_expr & fun(unsigned short int);        \
+  __gmp_expr & fun(signed long int);           \
+  __gmp_expr & fun(unsigned long int);         \
+  __gmp_expr & fun(float);                     \
+  __gmp_expr & fun(double);                    \
+  __gmp_expr & fun(long double);
+
+#define __GMPF_DECLARE_COMPOUND_OPERATOR(fun) \
+__GMPFF_DECLARE_COMPOUND_OPERATOR(fun)        \
+__GMPFN_DECLARE_COMPOUND_OPERATOR(fun)
+
+#define __GMPF_DECLARE_COMPOUND_OPERATOR_UI(fun) \
+  __gmp_expr & fun(unsigned long int);
+
+#define __GMPF_DECLARE_INCREMENT_OPERATOR(fun) \
+  inline __gmp_expr & fun();                   \
+  inline __gmp_expr fun(int);
+
+
+/**************** mpz_class -- wrapper for mpz_t ****************/
+
+template <>
+class __gmp_expr<__gmpz_value, __gmpz_value>
+{
+private:
+  mpz_t mp;
+public:
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+
+  // constructors and destructor
+  __gmp_expr() { mpz_init(mp); }
+
+  __gmp_expr(const __gmp_expr &z) { mpz_init_set(mp, z.mp); }
+  template <class T, class U>
+  __gmp_expr(const __gmp_expr<T, U> &expr)
+  { mpz_init(mp); __gmp_set_expr(mp, expr); }
+
+  __gmp_expr(bool b) { mpz_init_set_ui(mp, b); }
+
+  __gmp_expr(signed char c) { mpz_init_set_si(mp, c); }
+  __gmp_expr(unsigned char c) { mpz_init_set_ui(mp, c); }
+
+  __gmp_expr(signed int i) { mpz_init_set_si(mp, i); }
+  __gmp_expr(unsigned int i) { mpz_init_set_ui(mp, i); }
+
+  __gmp_expr(signed short int s) { mpz_init_set_si(mp, s); }
+  __gmp_expr(unsigned short int s) { mpz_init_set_ui(mp, s); }
+
+  __gmp_expr(signed long int l) { mpz_init_set_si(mp, l); }
+  __gmp_expr(unsigned long int l) { mpz_init_set_ui(mp, l); }
+
+  __gmp_expr(float f) { mpz_init_set_d(mp, f); }
+  __gmp_expr(double d) { mpz_init_set_d(mp, d); }
+  // __gmp_expr(long double ld) { mpz_init_set_d(mp, ld); }
+
+  explicit __gmp_expr(const char *s)
+
+  { mpz_init_set_str(mp, s, 0); }
+  __gmp_expr(const char *s, int base)
+  { mpz_init_set_str(mp, s, base); }
+  explicit __gmp_expr(const std::string &s)
+  { mpz_init_set_str(mp, s.c_str(), 0); }
+  __gmp_expr(const std::string &s, int base)
+  { mpz_init_set_str(mp, s.c_str(), base); }
+
+  explicit __gmp_expr(mpz_srcptr z) { mpz_init_set(mp, z); }
+
+  ~__gmp_expr() { mpz_clear(mp); }
+
+  // assignment operators
+  __gmp_expr & operator=(const __gmp_expr &z)
+  { mpz_set(mp, z.mp); return *this; }
+  template <class T, class U>
+  __gmp_expr<__gmpz_value, __gmpz_value> & operator=
+  (const __gmp_expr<T, U> &expr)
+  { __gmp_set_expr(mp, expr); return *this; }
+
+  __gmp_expr & operator=(bool b) { mpz_set_ui(mp, b); return *this; }
+
+  __gmp_expr & operator=(signed char c) { mpz_set_si(mp, c); return *this; }
+  __gmp_expr & operator=(unsigned char c) { mpz_set_ui(mp, c); return *this; }
+
+  __gmp_expr & operator=(signed int i) { mpz_set_si(mp, i); return *this; }
+  __gmp_expr & operator=(unsigned int i) { mpz_set_ui(mp, i); return *this; }
+
+  __gmp_expr & operator=(signed short int s)
+  { mpz_set_si(mp, s); return *this; }
+  __gmp_expr & operator=(unsigned short int s)
+  { mpz_set_ui(mp, s); return *this; }
+
+  __gmp_expr & operator=(signed long int l)
+  { mpz_set_si(mp, l); return *this; }
+  __gmp_expr & operator=(unsigned long int l)
+  { mpz_set_ui(mp, l); return *this; }
+
+  __gmp_expr & operator=(float f) { mpz_set_d(mp, f); return *this; }
+  __gmp_expr & operator=(double d) { mpz_set_d(mp, d); return *this; }
+  /*
+  __gmp_expr & operator=(long double ld) { mpz_set_ld(mp, ld); return *this; }
+  */
+
+  __gmp_expr & operator=(const char *s)
+  { mpz_set_str(mp, s, 0); return *this; }
+  __gmp_expr & operator=(const std::string &s)
+  { mpz_set_str(mp, s.c_str(), 0); return *this; }
+
+  // string input/output functions
+  int set_str(const std::string &s, int base)
+  { return mpz_set_str(mp, s.c_str(), base); }
+  std::string get_str(int base = 10) const
+  {
+    __gmp_alloc_cstring temp(mpz_get_str(0, base, mp));
+    return std::string(temp.str);
+  }
+
+  // conversion functions
+  mpz_srcptr get_mpz_t() const { return mp; }
+  mpz_ptr get_mpz_t() { return mp; }
+
+  signed long int get_si() const { return mpz_get_si(mp); }
+  unsigned long int get_ui() const { return mpz_get_ui(mp); }
+  double get_d() const { return mpz_get_d(mp); } // should be long double
+
+  // bool fits_schar_p() const { return mpz_fits_schar_p(mp); }
+  // bool fits_uchar_p() const { return mpz_fits_uchar_p(mp); }
+  bool fits_sint_p() const { return mpz_fits_sint_p(mp); }
+  bool fits_uint_p() const { return mpz_fits_uint_p(mp); }
+  bool fits_sshort_p() const { return mpz_fits_sshort_p(mp); }
+  bool fits_ushort_p() const { return mpz_fits_ushort_p(mp); }
+  bool fits_slong_p() const { return mpz_fits_slong_p(mp); }
+  bool fits_ulong_p() const { return mpz_fits_ulong_p(mp); }
+  // bool fits_float_p() const { return mpz_fits_float_p(mp); }
+  // bool fits_double_p() const { return mpz_fits_double_p(mp); }
+  // bool fits_ldouble_p() const { return mpz_fits_ldouble_p(mp); }
+
+  // member operators
+  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator+=)
+  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator-=)
+  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator*=)
+  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator/=)
+  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator%=)
+
+  __GMPZZ_DECLARE_COMPOUND_OPERATOR(operator&=)
+  __GMPZZ_DECLARE_COMPOUND_OPERATOR(operator|=)
+  __GMPZZ_DECLARE_COMPOUND_OPERATOR(operator^=)
+
+  __GMPZ_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
+  __GMPZ_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
+
+  __GMPZ_DECLARE_INCREMENT_OPERATOR(operator++)
+  __GMPZ_DECLARE_INCREMENT_OPERATOR(operator--)
+};
+
+typedef __gmp_expr<__gmpz_value, __gmpz_value> mpz_class;
+
+
+inline std::ostream & operator<<(std::ostream &o, const mpz_class &z)
+{
+  return o << z.get_mpz_t();
+}
+
+template <class T>
+inline std::ostream & operator<<
+(std::ostream &o, const __gmp_expr<__gmpz_value, T> &expr)
+{
+  mpz_class temp(expr);
+  return o << temp.get_mpz_t();
+}
+
+inline std::istream & operator>>(std::istream &i, mpz_class &z)
+{
+  return i >> z.get_mpz_t();
+}
+
+
+/**************** mpz_classref -- num/den of mpq_t ****************/
+
+template <>
+class __gmp_expr<__gmpz_value, __gmpzref_value>
+{
+  friend class __gmp_expr<__gmpq_value, __gmpq_value>;
+private:
+  mpz_ptr ref;
+
+  __gmp_expr();
+  // __gmp_expr(const __gmp_expr &);
+  __gmp_expr(mpz_ptr z) : ref(z) { }
+  __gmp_expr(mpz_srcptr z) : ref((mpz_ptr) z) { }
+public:
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+
+  // assignment operators
+  __gmp_expr & operator=(const __gmp_expr &z)
+  { mpz_set(ref, z.ref); return *this; }
+  __gmp_expr & operator=(const mpz_class &z)
+  { mpz_set(ref, z.get_mpz_t()); return *this; }
+  template <class T, class U>
+  __gmp_expr<__gmpz_value, __gmpzref_value> & operator=
+  (const __gmp_expr<T, U> &expr)
+  { __gmp_set_expr(ref, expr); return *this; }
+
+  __gmp_expr & operator=(bool b) { mpz_set_ui(ref, b); return *this; }
+
+  __gmp_expr & operator=(signed char c) { mpz_set_si(ref, c); return *this; }
+  __gmp_expr & operator=(unsigned char c)
+  { mpz_set_ui(ref, c); return *this; }
+
+  __gmp_expr & operator=(signed int i) { mpz_set_si(ref, i); return *this; }
+  __gmp_expr & operator=(unsigned int i) { mpz_set_ui(ref, i); return *this; }
+
+  __gmp_expr & operator=(signed short int s)
+  { mpz_set_si(ref, s); return *this; }
+  __gmp_expr & operator=(unsigned short int s)
+  { mpz_set_ui(ref, s); return *this; }
+
+  __gmp_expr & operator=(signed long int l)
+  { mpz_set_si(ref, l); return *this; }
+  __gmp_expr & operator=(unsigned long int l)
+  { mpz_set_ui(ref, l); return *this; }
+
+  __gmp_expr & operator=(float f) { mpz_set_d(ref, f); return *this; }
+  __gmp_expr & operator=(double d) { mpz_set_d(ref, d); return *this; }
+  /*
+  __gmp_expr & operator=(long double ld)
+  { mpz_set_ld(ref, ld); return *this; }
+  */
+
+  __gmp_expr & operator=(const char *s)
+  { mpz_set_str(ref, s, 0); return *this; }
+  __gmp_expr & operator=(const std::string &s)
+  { mpz_set_str(ref, s.c_str(), 0); return *this; }
+
+  // string input/output functions
+  int set_str(const std::string &s, int base)
+  { return mpz_set_str(ref, s.c_str(), base); }
+  std::string get_str(int base = 10) const
+  {
+    __gmp_alloc_cstring temp(mpz_get_str(0, base, ref));
+    return std::string(temp.str);
+  }
+
+  // conversion functions
+  mpz_srcptr get_mpz_t() const { return ref; }
+  mpz_ptr get_mpz_t() { return ref; }
+
+  signed long int get_si() const { return mpz_get_si(ref); }
+  unsigned long int get_ui() const { return mpz_get_ui(ref); }
+  double get_d() const { return mpz_get_d(ref); } // should be long double
+
+  // bool fits_bool_p() const { return mpz_fits_bool_p(ref); }
+  // bool fits_schar_p() const { return mpz_fits_schar_p(ref); }
+  // bool fits_uchar_p() const { return mpz_fits_uchar_p(ref); }
+  bool fits_sint_p() const { return mpz_fits_sint_p(ref); }
+  bool fits_uint_p() const { return mpz_fits_uint_p(ref); }
+  bool fits_sshort_p() const { return mpz_fits_sshort_p(ref); }
+  bool fits_ushort_p() const { return mpz_fits_ushort_p(ref); }
+  bool fits_slong_p() const { return mpz_fits_slong_p(ref); }
+  bool fits_ulong_p() const { return mpz_fits_ulong_p(ref); }
+  // bool fits_float_p() const { return mpz_fits_float_p(ref); }
+  // bool fits_double_p() const { return mpz_fits_double_p(ref); }
+  // bool fits_ldouble_p() const { return mpz_fits_ldouble_p(ref); }
+
+  // member operators
+  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator+=)
+  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator-=)
+  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator*=)
+  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator/=)
+  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator%=)
+
+  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator&=)
+  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator|=)
+  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator^=)
+
+  __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
+  __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
+
+  __GMPZR_DECLARE_INCREMENT_OPERATOR(operator++)
+  __GMPZR_DECLARE_INCREMENT_OPERATOR(operator--)
+};
+
+typedef __gmp_expr<__gmpz_value, __gmpzref_value> mpz_classref;
+
+
+inline std::ostream & operator<<(std::ostream &o, const mpz_classref &z)
+{
+  return o << z.get_mpz_t();
+}
+
+inline std::istream & operator>>(std::istream &i, mpz_classref &z)
+{
+  return i >> z.get_mpz_t();
+}
+
+/**************** mpq_class -- wrapper for mpq_t ****************/
+
+template <>
+class __gmp_expr<__gmpq_value, __gmpq_value>
+{
+private:
+  mpq_t mp;
+public:
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+  void canonicalize() { mpq_canonicalize(mp); }
+
+  // constructors and destructor
+  __gmp_expr() { mpq_init(mp); }
+
+  __gmp_expr(const __gmp_expr &q) { mpq_init(mp); mpq_set(mp, q.mp); }
+  template <class T, class U>
+  __gmp_expr(const __gmp_expr<T, U> &expr)
+  { mpq_init(mp); __gmp_set_expr(mp, expr); }
+
+  __gmp_expr(bool b) { mpq_init(mp); mpq_set_ui(mp, b, 1); }
+
+  __gmp_expr(signed char c) { mpq_init(mp); mpq_set_si(mp, c, 1); }
+  __gmp_expr(unsigned char c) { mpq_init(mp); mpq_set_ui(mp, c, 1); }
+
+  __gmp_expr(signed int i) { mpq_init(mp); mpq_set_si(mp, i, 1); }
+  __gmp_expr(unsigned int i) { mpq_init(mp); mpq_set_ui(mp, i, 1); }
+
+  __gmp_expr(signed short int s) { mpq_init(mp); mpq_set_si(mp, s, 1); }
+  __gmp_expr(unsigned short int s) { mpq_init(mp); mpq_set_ui(mp, s, 1); }
+
+  __gmp_expr(signed long int l) { mpq_init(mp); mpq_set_si(mp, l, 1); }
+  __gmp_expr(unsigned long int l) { mpq_init(mp); mpq_set_ui(mp, l, 1); }
+
+  __gmp_expr(float f) { mpq_init(mp); mpq_set_d(mp, f); }
+  __gmp_expr(double d) { mpq_init(mp); mpq_set_d(mp, d); }
+  // __gmp_expr(long double ld) { mpq_init(mp); mpq_set_ld(mp, ld); }
+
+  explicit __gmp_expr(const char *s)
+  { mpq_init(mp); mpq_set_str(mp, s, 0); }
+  __gmp_expr(const char *s, unsigned long int base)
+  { mpq_init(mp); mpq_set_str(mp, s, base); }
+  explicit __gmp_expr(const std::string &s)
+  { mpq_init(mp); mpq_set_str(mp, s.c_str(), 0); }
+  __gmp_expr(const std::string &s, unsigned long int base)
+  { mpq_init(mp); mpq_set_str(mp, s.c_str(), base); }
+
+  explicit __gmp_expr(mpq_srcptr q) { mpq_init(mp); mpq_set(mp, q); }
+
+  __gmp_expr(const mpz_class &num, const mpz_class &den)
+  {
+    mpq_init(mp);
+    mpz_set(mpq_numref(mp), num.get_mpz_t());
+    mpz_set(mpq_denref(mp), den.get_mpz_t());
+  }
+  // this is defined later (after __gmpz_temp)
+  template <class T, class U>
+  __gmp_expr(const __gmp_expr<__gmpz_value, T> &,
+	     const __gmp_expr<__gmpz_value, U> &);
+
+  ~__gmp_expr() { mpq_clear(mp); }
+
+  // assignment operators
+  __gmp_expr & operator=(const __gmp_expr &q)
+  { mpq_set(mp, q.mp); return *this; }
+  template <class T, class U>
+  __gmp_expr<__gmpq_value, __gmpq_value> & operator=
+  (const __gmp_expr<T, U> &expr)
+  { __gmp_set_expr(mp, expr); return *this; }
+
+  __gmp_expr & operator=(bool b) { mpq_set_ui(mp, b, 1); return *this; }
+
+  __gmp_expr & operator=(signed char c)
+  { mpq_set_si(mp, c, 1); return *this; }
+  __gmp_expr & operator=(unsigned char c)
+  { mpq_set_ui(mp, c, 1); return *this; }
+
+  __gmp_expr & operator=(signed int i) { mpq_set_si(mp, i, 1); return *this; }
+  __gmp_expr & operator=(unsigned int i)
+  { mpq_set_ui(mp, i, 1); return *this; }
+
+  __gmp_expr & operator=(signed short int s)
+  { mpq_set_si(mp, s, 1); return *this; }
+  __gmp_expr & operator=(unsigned short int s)
+  { mpq_set_ui(mp, s, 1); return *this; }
+
+  __gmp_expr & operator=(signed long int l)
+  { mpq_set_si(mp, l, 1); return *this; }
+  __gmp_expr & operator=(unsigned long int l)
+  { mpq_set_ui(mp, l, 1); return *this; }
+
+  __gmp_expr & operator=(float f) { mpq_set_d(mp, f); return *this; }
+  __gmp_expr & operator=(double d) { mpq_set_d(mp, d); return *this; }
+  /*
+  __gmp_expr & operator=(long double ld) { mpq_set_ld(mp, ld); return *this; }
+  */
+
+  __gmp_expr & operator=(const char *s)
+  { mpq_set_str(mp, s, 0); return *this; }
+  __gmp_expr & operator=(const std::string &s)
+  { mpq_set_str(mp, s.c_str(), 0); return *this; }
+
+  // string input/output functions
+  int set_str(const std::string &s, int base)
+  { return mpq_set_str(mp, s.c_str(), base); }
+  std::string get_str(int base = 10) const
+  {
+    __gmp_alloc_cstring temp(mpq_get_str(0, base, mp));
+    return std::string(temp.str);
+  }
+
+  // conversion functions
+  const mpz_classref get_num() const { return mpz_classref(mpq_numref(mp)); }
+  mpz_classref get_num() { return mpz_classref(mpq_numref(mp)); }
+  const mpz_classref get_den() const { return mpz_classref(mpq_denref(mp)); }
+  mpz_classref get_den() { return mpz_classref(mpq_denref(mp)); }
+
+  mpq_srcptr get_mpq_t() const { return mp; }
+  mpq_ptr get_mpq_t() { return mp; }
+
+  mpz_srcptr get_num_mpz_t() const { return mpq_numref(mp); }
+  mpz_ptr get_num_mpz_t() { return mpq_numref(mp); }
+  mpz_srcptr get_den_mpz_t() const { return mpq_denref(mp); }
+  mpz_ptr get_den_mpz_t() { return mpq_denref(mp); }
+
+  double get_d() const { return mpq_get_d(mp); } // should be long double
+
+  // compound assignments
+  __GMPQ_DECLARE_COMPOUND_OPERATOR(operator+=)
+  __GMPQ_DECLARE_COMPOUND_OPERATOR(operator-=)
+  __GMPQ_DECLARE_COMPOUND_OPERATOR(operator*=)
+  __GMPQ_DECLARE_COMPOUND_OPERATOR(operator/=)
+
+  __GMPQ_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
+  __GMPQ_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
+
+  __GMPQ_DECLARE_INCREMENT_OPERATOR(operator++)
+  __GMPQ_DECLARE_INCREMENT_OPERATOR(operator--)
+};
+
+typedef __gmp_expr<__gmpq_value, __gmpq_value> mpq_class;
+
+
+inline std::ostream & operator<<(std::ostream &o, const mpq_class &q)
+{
+  return o << q.get_mpq_t();
+}
+
+template <class T>
+inline std::ostream & operator<<
+(std::ostream &o, const __gmp_expr<__gmpq_value, T> &expr)
+{
+  mpq_class temp(expr);
+  return o << temp.get_mpq_t();
+}
+
+inline std::istream & operator>>(std::istream &i, mpq_class &q)
+{
+  i >> q.get_mpq_t();
+  // q.canonicalize();
+  return i;
+}
+
+
+/**************** mpf_class -- wrapper for mpf_t ****************/
+
+template <>
+class __gmp_expr<__gmpf_value, __gmpf_value>
+{
+private:
+  mpf_t mp;
+public:
+  // size information
+  unsigned long int get_prec() const { return mpf_get_prec(mp); }
+
+  void set_prec(unsigned long int prec) { mpf_set_prec(mp, prec); }
+  void set_prec_raw(unsigned long int prec) { mpf_set_prec_raw(mp, prec); }
+
+  // constructors and destructor
+  __gmp_expr() { mpf_init(mp); }
+
+  __gmp_expr(const __gmp_expr &f)
+  { mpf_init2(mp, f.get_prec()); mpf_set(mp, f.mp); }
+  __gmp_expr(const __gmp_expr &f, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set(mp, f.mp); }
+  template <class T, class U>
+  __gmp_expr(const __gmp_expr<T, U> &expr)
+  { mpf_init2(mp, expr.get_prec()); __gmp_set_expr(mp, expr); }
+  template <class T, class U>
+  __gmp_expr(const __gmp_expr<T, U> &expr, unsigned long int prec)
+  { mpf_init2(mp, prec); __gmp_set_expr(mp, expr); }
+
+  __gmp_expr(bool b) { mpf_init_set_ui(mp, b); }
+  __gmp_expr(bool b, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_ui(mp, b); }
+
+  __gmp_expr(signed char c) { mpf_init_set_si(mp, c); }
+  __gmp_expr(signed char c, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_si(mp, c); }
+  __gmp_expr(unsigned char c) { mpf_init_set_ui(mp, c); }
+  __gmp_expr(unsigned char c, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_ui(mp, c); }
+
+  __gmp_expr(signed int i) { mpf_init_set_si(mp, i); }
+  __gmp_expr(signed int i, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_si(mp, i); }
+  __gmp_expr(unsigned int i) { mpf_init_set_ui(mp, i); }
+  __gmp_expr(unsigned int i, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_ui(mp, i); }
+
+  __gmp_expr(signed short int s) { mpf_init_set_si(mp, s); }
+  __gmp_expr(signed short int s, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_si(mp, s); }
+  __gmp_expr(unsigned short int s) { mpf_init_set_ui(mp, s); }
+  __gmp_expr(unsigned short int s, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_ui(mp, s); }
+
+  __gmp_expr(signed long int l) { mpf_init_set_si(mp, l); }
+  __gmp_expr(signed long int l, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_si(mp, l); }
+  __gmp_expr(unsigned long int l) { mpf_init_set_ui(mp, l); }
+  __gmp_expr(unsigned long int l, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_ui(mp, l); }
+
+  __gmp_expr(float f) { mpf_init_set_d(mp, f); }
+  __gmp_expr(float f, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_d(mp, f); }
+  __gmp_expr(double d) { mpf_init_set_d(mp, d); }
+  __gmp_expr(double d, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_d(mp, d); }
+  /*
+  __gmp_expr(long double ld) { mpf_init_set_d(mp, ld); }
+  __gmp_expr(long double ld, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_d(mp, ld); }
+  */
+
+  explicit __gmp_expr(const char *s) { mpf_init_set_str(mp, s, 0); }
+  __gmp_expr(const char *s, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_str(mp, s, 0); }
+  explicit __gmp_expr(const std::string &s)
+  { mpf_init_set_str(mp, s.c_str(), 0); }
+  __gmp_expr(const std::string &s, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set_str(mp, s.c_str(), 0); }
+
+  explicit __gmp_expr(mpf_srcptr f)
+  { mpf_init2(mp, mpf_get_prec(f)); mpf_set(mp, f); }
+  __gmp_expr(mpf_srcptr f, unsigned long int prec)
+  { mpf_init2(mp, prec); mpf_set(mp, f); }
+
+  ~__gmp_expr() { mpf_clear(mp); }
+
+  // assignment operators
+  __gmp_expr & operator=(const __gmp_expr &f)
+  { mpf_set(mp, f.mp); return *this; }
+  template <class T, class U>
+  __gmp_expr<__gmpf_value, __gmpf_value> & operator=
+  (const __gmp_expr<T, U> &expr)
+  { __gmp_set_expr(mp, expr); return *this; }
+
+  __gmp_expr & operator=(bool b) { mpf_set_ui(mp, b); return *this; }
+
+  __gmp_expr & operator=(signed char c) { mpf_set_si(mp, c); return *this; }
+  __gmp_expr & operator=(unsigned char c) { mpf_set_ui(mp, c); return *this; }
+
+  __gmp_expr & operator=(signed int i) { mpf_set_si(mp, i); return *this; }
+  __gmp_expr & operator=(unsigned int i) { mpf_set_ui(mp, i); return *this; }
+
+  __gmp_expr & operator=(signed short int s)
+  { mpf_set_si(mp, s); return *this; }
+  __gmp_expr & operator=(unsigned short int s)
+  { mpf_set_ui(mp, s); return *this; }
+
+  __gmp_expr & operator=(signed long int l)
+  { mpf_set_si(mp, l); return *this; }
+  __gmp_expr & operator=(unsigned long int l)
+  { mpf_set_ui(mp, l); return *this; }
+
+  __gmp_expr & operator=(float f) { mpf_set_d(mp, f); return *this; }
+  __gmp_expr & operator=(double d) { mpf_set_d(mp, d); return *this; }
+  /*
+  __gmp_expr & operator=(long double ld) { mpf_set_ld(mp, ld); return *this; }
+  */
+
+  __gmp_expr & operator=(const char *s)
+  { mpf_set_str(mp, s, 0); return *this; }
+  __gmp_expr & operator=(const std::string &s)
+  { mpf_set_str(mp, s.c_str(), 0); return *this; }
+
+  // string input/output functions
+  int set_str(const std::string &s, int base)
+  { return mpf_set_str(mp, s.c_str(), base); }
+  std::string get_str(mp_exp_t *expo, int base, size_t size) const
+  {
+    __gmp_alloc_cstring temp(mpf_get_str(0, expo, base, size, mp));
+    return std::string(temp.str);
+  }
+  std::string get_str2(int base = 10) const
+  {
+    std::ostrstream o;
+    mp_exp_t expo;
+    std::string temp(mpf_get_str(0, &expo, base, 0, mp));
+
+    if (temp[0] == '-')
+      o << "-0." << temp.substr(1);
+    else
+      o << "0." << temp;
+
+    if (base <= 10)
+      o << "e" << expo << '\0';
+    else
+      o << "@" << expo << '\0';
+
+    return o.str();
+  }
+
+  // conversion functions
+  mpf_srcptr get_mpf_t() const { return mp; }
+  mpf_ptr get_mpf_t() { return mp; }
+
+  signed long int get_si() const { return mpf_get_si(mp); }
+  unsigned long int get_ui() const { return mpf_get_ui(mp); }
+  double get_d() const { return mpf_get_d(mp); } // should be long double
+
+  // bool fits_schar_p() const { return mpf_fits_schar_p(mp); }
+  // bool fits_uchar_p() const { return mpf_fits_uchar_p(mp); }
+  bool fits_sint_p() const { return mpf_fits_sint_p(mp); }
+  bool fits_uint_p() const { return mpf_fits_uint_p(mp); }
+  bool fits_sshort_p() const { return mpf_fits_sshort_p(mp); }
+  bool fits_ushort_p() const { return mpf_fits_ushort_p(mp); }
+  bool fits_slong_p() const { return mpf_fits_slong_p(mp); }
+  bool fits_ulong_p() const { return mpf_fits_ulong_p(mp); }
+  // bool fits_float_p() const { return mpf_fits_float_p(mp); }
+  // bool fits_double_p() const { return mpf_fits_double_p(mp); }
+  // bool fits_ldouble_p() const { return mpf_fits_ldouble_p(mp); }
+
+  // compound assignments
+  __GMPF_DECLARE_COMPOUND_OPERATOR(operator+=)
+  __GMPF_DECLARE_COMPOUND_OPERATOR(operator-=)
+  __GMPF_DECLARE_COMPOUND_OPERATOR(operator*=)
+  __GMPF_DECLARE_COMPOUND_OPERATOR(operator/=)
+
+  __GMPF_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
+  __GMPF_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
+
+  __GMPF_DECLARE_INCREMENT_OPERATOR(operator++)
+  __GMPF_DECLARE_INCREMENT_OPERATOR(operator--)
+};
+
+typedef __gmp_expr<__gmpf_value, __gmpf_value> mpf_class;
+
+
+inline std::ostream & operator<<(std::ostream &o, const mpf_class &f)
+{
+  return o << f.get_mpf_t();
+}
+
+template <class T>
+inline std::ostream & operator<<
+(std::ostream &o, const __gmp_expr<__gmpf_value, T> &expr)
+{
+  mpf_class temp(expr);
+  return o << temp.get_mpf_t();
+}
+
+inline std::istream & operator>>(std::istream &i, mpf_class &f)
+{
+  return i >> f.get_mpf_t();
+}
+
+
+/**************** Classes for type conversion ****************/
+/* If the expression to be converted is a plain mp[zqf]_class, a direct
+   reference to its mp[zqf]_t internal yields optimal efficiency.
+   If it's a compound expression, a temporary must be used */
+
+class __gmpz_temp
+{
+private:
+  mpz_srcptr mp;
+  bool is_temp;
+  mpz_t temp;
+
+  __gmpz_temp();
+  __gmpz_temp(const __gmpz_temp &);
+  void operator=(const __gmpz_temp &);
+public:
+  __gmpz_temp(const mpz_class &z) : mp(z.get_mpz_t()), is_temp(false) { }
+  __gmpz_temp(const mpz_classref &z) : mp(z.get_mpz_t()), is_temp(false) { }
+  template <class T, class U>
+  __gmpz_temp(const __gmp_expr<T, U> &expr)
+  {
+    mpz_init(temp);
+    __gmp_set_expr(temp, expr);
+    mp = temp;
+    is_temp = true;
+  }
+  ~__gmpz_temp() { if (is_temp) mpz_clear(temp); }
+
+  mpz_srcptr get_mp() const { return mp; }
+};
+
+class __gmpq_temp
+{
+private:
+  mpq_srcptr mp;
+  bool is_temp;
+  mpq_t temp;
+
+  __gmpq_temp();
+  __gmpq_temp(const __gmpq_temp &);
+  void operator=(const __gmpq_temp &);
+public:
+  __gmpq_temp(const mpq_class &q) : mp(q.get_mpq_t()), is_temp(false) { }
+  template <class T, class U>
+  __gmpq_temp(const __gmp_expr<T, U> &expr)
+  {
+    mpq_init(temp);
+    __gmp_set_expr(temp, expr);
+    mp = temp;
+    is_temp = true;
+  }
+  ~__gmpq_temp() { if (is_temp) mpq_clear(temp); }
+
+  mpq_srcptr get_mp() const { return mp; }
+};
+
+class __gmpf_temp
+{
+private:
+  mpf_srcptr mp;
+  bool is_temp;
+  mpf_t temp;
+
+  __gmpf_temp();
+  __gmpf_temp(const __gmpf_temp &);
+  void operator=(const __gmpf_temp &);
+public:
+  __gmpf_temp(const mpf_class &f) : mp(f.get_mpf_t()), is_temp(false) { }
+  __gmpf_temp(const mpf_class &f, unsigned long int)
+    : mp(f.get_mpf_t()), is_temp(false) { }
+  template <class T, class U>
+  __gmpf_temp(const __gmp_expr<T, U> &expr)
+  {
+    mpf_init2(temp, expr.get_prec());
+    __gmp_set_expr(temp, expr);
+    mp = temp;
+    is_temp = true;
+  }
+  template <class T, class U>
+  __gmpf_temp(const __gmp_expr<T, U> &expr, unsigned long int prec)
+  {
+    mpf_init2(temp, prec);
+    __gmp_set_expr(temp, expr);
+    mp = temp;
+    is_temp = true;
+  }
+  ~__gmpf_temp() { if (is_temp) mpf_clear(temp); }
+
+  mpf_srcptr get_mp() const { return mp; }
+};
+
+
+// this function must be defined after __gmpz_temp
+template <class T, class U>
+inline mpq_class::__gmp_expr(const __gmp_expr<__gmpz_value, T> &num,
+			     const __gmp_expr<__gmpz_value, U> &den)
+{
+  __gmpz_temp temp1(num), temp2(den);
+  mpq_init(mp);
+  mpz_set(mpq_numref(mp), temp1.get_mp());
+  mpz_set(mpq_denref(mp), temp2.get_mp());
+}
+
+
+// type of mixed-type expressions
 template <class T, class U>
 struct __gmp_resolve_expr;
 
-// function definition macros
+template <>
+struct __gmp_resolve_expr<__gmpz_value, __gmpz_value>
+{
+  typedef __gmpz_value value_type;
+  typedef __gmpz_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpq_value, __gmpq_value>
+{
+  typedef __gmpq_value value_type;
+  typedef __gmpq_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpz_value, __gmpq_value>
+{
+  typedef __gmpq_value value_type;
+  typedef __gmpq_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpq_value, __gmpz_value>
+{
+  typedef __gmpq_value value_type;
+  typedef __gmpq_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpf_value, __gmpf_value>
+{
+  typedef __gmpf_value value_type;
+  typedef __gmpf_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpz_value, __gmpf_value>
+{
+  typedef __gmpf_value value_type;
+  typedef __gmpf_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpf_value, __gmpz_value>
+{
+  typedef __gmpf_value value_type;
+  typedef __gmpf_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpq_value, __gmpf_value>
+{
+  typedef __gmpf_value value_type;
+  typedef __gmpf_temp temp_type;
+};
+
+template <>
+struct __gmp_resolve_expr<__gmpf_value, __gmpq_value>
+{
+  typedef __gmpf_value value_type;
+  typedef __gmpf_temp temp_type;
+};
+
+
+// perform type conversions
+
+template <>
+inline void __gmp_set_expr(mpz_ptr z, const mpz_class &w)
+{
+  mpz_set(z, w.get_mpz_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<__gmpz_value, T> &expr)
+{
+  expr.eval(z);
+}
+
+template <>
+inline void __gmp_set_expr(mpz_ptr z, const mpz_classref &w)
+{
+  mpz_set(z, w.get_mpz_t());
+}
+
+template <>
+inline void __gmp_set_expr(mpz_ptr z, const mpq_class &q)
+{
+  mpz_set_q(z, q.get_mpq_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<__gmpq_value, T> &expr)
+{
+  mpq_class temp(expr);
+  mpz_set_q(z, temp.get_mpq_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpz_ptr z, const mpf_class &f)
+{
+  mpz_set_f(z, f.get_mpf_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<__gmpf_value, T> &expr)
+{
+  mpf_class temp(expr);
+  mpz_set_f(z, temp.get_mpf_t());
+}
+
+template <>
+inline void __gmp_set_expr(mpq_ptr q, const mpz_class &z)
+{
+  mpq_set_z(q, z.get_mpz_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<__gmpz_value, T> &expr)
+{
+  mpz_class temp(expr);
+  mpq_set_z(q, temp.get_mpz_t());
+}
+
+template <>
+inline void __gmp_set_expr(mpq_ptr q, const mpz_classref &z)
+{
+  mpq_set_z(q, z.get_mpz_t());
+}
+
+template <>
+inline void __gmp_set_expr(mpq_ptr q, const mpq_class &r)
+{
+  mpq_set(q, r.get_mpq_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<__gmpq_value, T> &expr)
+{
+  expr.eval(q);
+}
+
+template <class T>
+inline void __gmp_set_expr(mpq_ptr q, const mpf_class &f)
+{
+  mpq_set_f(q, f.get_mpf_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<__gmpf_value, T> &expr)
+{
+  mpf_class temp(expr);
+  mpq_set_f(q, temp.get_mpf_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpf_ptr f, const mpz_class &z)
+{
+  mpf_set_z(f, z.get_mpz_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpz_value, T> &expr)
+{
+  mpz_class temp(expr);
+  mpf_set_z(f, temp.get_mpz_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpf_ptr f, const mpz_classref &z)
+{
+  mpf_set_z(f, z.get_mpz_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpf_ptr f, const mpq_class &q)
+{
+  mpf_set_q(f, q.get_mpq_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpq_value, T> &expr)
+{
+  mpq_class temp(expr);
+  mpf_set_q(f, temp.get_mpq_t());
+}
+
+template <>
+inline void __gmp_set_expr(mpf_ptr f, const mpf_class &g)
+{
+  mpf_set(f, g.get_mpf_t());
+}
+
+template <class T>
+inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpf_value, T> &expr)
+{
+  expr.eval(f, mpf_get_prec(f));
+}
+
+
+/**************** Specializations of __gmp_expr ****************/
+/* The eval() method of __gmp_expr<T, U> evaluates the corresponding
+   expression assigning the result to its argument, which is either an
+   mpz_t, mpq_t, or mpf_t -- this depends on the T argument, which is
+   either __gmpz_value, __gmpq_value, or __gmpf_value, respectively.
+   Compound expressions are evaluated recursively (temporaries are created
+   to hold intermediate values), while for simple expressions the eval()
+   method of the appropriate function object (available as the Op argument
+   of either __gmp_unary_expr<T, Op> or __gmp_binary_expr<T, U, Op>) is
+   called. */
+
+/**************** Unary expressions ****************/
+/* cases:
+   - simple:   argument is mp[zqf]_class, or mpz_classref
+   - compound: argument is __gmp_expr<...> */
+
+
+// simple expressions
+
+template <class Op>
+class __gmp_expr<__gmpz_value, __gmp_unary_expr<mpz_class, Op> >
+{
+private:
+  __gmp_unary_expr<mpz_class, Op> expr;
+public:
+  __gmp_expr(const mpz_class &val) : expr(val) { }
+  void eval(mpz_ptr z) const { Op::eval(z, expr.val.get_mpz_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class Op>
+class __gmp_expr<__gmpz_value, __gmp_unary_expr<mpz_classref, Op> >
+{
+private:
+  __gmp_unary_expr<mpz_classref, Op> expr;
+public:
+  __gmp_expr(const mpz_classref &val) : expr(val) { }
+  void eval(mpz_ptr z) const { Op::eval(z, expr.val.get_mpz_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class Op>
+class __gmp_expr<__gmpq_value, __gmp_unary_expr<mpq_class, Op> >
+{
+private:
+  __gmp_unary_expr<mpq_class, Op> expr;
+public:
+  __gmp_expr(const mpq_class &val) : expr(val) { }
+  void eval(mpq_ptr q) const { Op::eval(q, expr.val.get_mpq_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class Op>
+class __gmp_expr<__gmpf_value, __gmp_unary_expr<mpf_class, Op> >
+{
+private:
+  __gmp_unary_expr<mpf_class, Op> expr;
+public:
+  __gmp_expr(const mpf_class &val) : expr(val) { }
+  void eval(mpf_ptr f, unsigned long int) const
+  { Op::eval(f, expr.val.get_mpf_t()); }
+  unsigned long int get_prec() const
+  { return mpf_get_prec(expr.val.get_mpf_t()); }
+};
+
+
+// compound expressions
+
+template <class T, class U, class Op>
+class __gmp_expr<__gmpz_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+{
+private:
+  __gmp_unary_expr<__gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val) : expr(val) { }
+  void eval(mpz_ptr z) const
+  {
+    mpz_class temp(expr.val);
+    Op::eval(z, temp.get_mpz_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr<__gmpq_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+{
+private:
+  __gmp_unary_expr<__gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val) : expr(val) { }
+  void eval(mpq_ptr q) const
+  {
+    mpq_class temp(expr.val);
+    Op::eval(q, temp.get_mpq_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr<__gmpf_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+{
+private:
+  __gmp_unary_expr<__gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val) : expr(val) { }
+  void eval(mpf_ptr f, unsigned long int prec) const
+  {
+    mpf_class temp(expr.val, prec);
+    Op::eval(f, temp.get_mpf_t());
+  }
+  unsigned long int get_prec() const { return expr.val.get_prec(); }
+};
+
+
+/**************** Binary expressions ****************/
+/* simple:
+   - arguments are both mp[zqf]_class, or mpz_classref
+   - one argument is mp[zqf]_class(ref), one is a built-in type
+   compound:
+   - one is mp[zqf]_class(ref), one is __gmp_expr<...>
+   - one is __gmp_expr<...>, one is built-in
+   - both arguments are __gmp_expr<...> */
+
+
+// simple expressions
+
+template <class Op>
+class __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, mpz_class, Op> >
+{
+private:
+  __gmp_binary_expr<mpz_class, mpz_class, Op> expr;
+public:
+  __gmp_expr(const mpz_class &val1, const mpz_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class Op>
+class __gmp_expr
+<__gmpz_value, __gmp_binary_expr<mpz_class, mpz_classref, Op> >
+{
+private:
+  __gmp_binary_expr<mpz_class, mpz_classref, Op> expr;
+public:
+  __gmp_expr(const mpz_class &val1, const mpz_classref &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class Op>
+class __gmp_expr
+<__gmpz_value, __gmp_binary_expr<mpz_classref, mpz_class, Op> >
+{
+private:
+  __gmp_binary_expr<mpz_classref, mpz_class, Op> expr;
+public:
+  __gmp_expr(const mpz_classref &val1, const mpz_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class Op>
+class __gmp_expr
+<__gmpz_value, __gmp_binary_expr<mpz_classref, mpz_classref, Op> >
+{
+private:
+  __gmp_binary_expr<mpz_classref, mpz_classref, Op> expr;
+public:
+  __gmp_expr(const mpz_classref &val1, const mpz_classref &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class Op>
+class __gmp_expr<__gmpq_value, __gmp_binary_expr<mpq_class, mpq_class, Op> >
+{
+private:
+  __gmp_binary_expr<mpq_class, mpq_class, Op> expr;
+public:
+  __gmp_expr(const mpq_class &val1, const mpq_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpq_ptr q) const
+  { Op::eval(q, expr.val1.get_mpq_t(), expr.val2.get_mpq_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class Op>
+class __gmp_expr<__gmpf_value, __gmp_binary_expr<mpf_class, mpf_class, Op> >
+{
+private:
+  __gmp_binary_expr<mpf_class, mpf_class, Op> expr;
+public:
+  __gmp_expr(const mpf_class &val1, const mpf_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpf_ptr f, unsigned long int) const
+  { Op::eval(f, expr.val1.get_mpf_t(), expr.val2.get_mpf_t()); }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+
+// simple expressions, T is a built-in numerical type
+
+template <class T, class Op>
+class __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, T, Op> >
+{
+private:
+  __gmp_binary_expr<mpz_class, T, Op> expr;
+public:
+  __gmp_expr(const mpz_class &val1, T val2) : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class Op>
+class __gmp_expr<__gmpz_value, __gmp_binary_expr<T, mpz_class, Op> >
+{
+private:
+  __gmp_binary_expr<T, mpz_class, Op> expr;
+public:
+  __gmp_expr(T val1, const mpz_class &val2) : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  { Op::eval(z, expr.val1, expr.val2.get_mpz_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class Op>
+class __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_classref, T, Op> >
+{
+private:
+  __gmp_binary_expr<mpz_classref, T, Op> expr;
+public:
+  __gmp_expr(const mpz_classref &val1, T val2) : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class Op>
+class __gmp_expr<__gmpz_value, __gmp_binary_expr<T, mpz_classref, Op> >
+{
+private:
+  __gmp_binary_expr<T, mpz_classref, Op> expr;
+public:
+  __gmp_expr(T val1, const mpz_classref &val2) : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  { Op::eval(z, expr.val1, expr.val2.get_mpz_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class Op>
+class __gmp_expr<__gmpq_value, __gmp_binary_expr<mpq_class, T, Op> >
+{
+private:
+  __gmp_binary_expr<mpq_class, T, Op> expr;
+public:
+  __gmp_expr(const mpq_class &val1, T val2) : expr(val1, val2) { }
+  void eval(mpq_ptr q) const
+  { Op::eval(q, expr.val1.get_mpq_t(), expr.val2); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class Op>
+class __gmp_expr<__gmpq_value, __gmp_binary_expr<T, mpq_class, Op> >
+{
+private:
+  __gmp_binary_expr<T, mpq_class, Op> expr;
+public:
+  __gmp_expr(T val1, const mpq_class &val2) : expr(val1, val2) { }
+  void eval(mpq_ptr q) const
+  { Op::eval(q, expr.val1, expr.val2.get_mpq_t()); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class Op>
+class __gmp_expr<__gmpf_value, __gmp_binary_expr<mpf_class, T, Op> >
+{
+private:
+  __gmp_binary_expr<mpf_class, T, Op> expr;
+public:
+  __gmp_expr(const mpf_class &val1, T val2) : expr(val1, val2) { }
+  void eval(mpf_ptr f, unsigned long int) const
+  { Op::eval(f, expr.val1.get_mpf_t(), expr.val2); }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = mpf_get_default_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class Op>
+class __gmp_expr<__gmpf_value, __gmp_binary_expr<T, mpf_class, Op> >
+{
+private:
+  __gmp_binary_expr<T, mpf_class, Op> expr;
+public:
+  __gmp_expr(T val1, const mpf_class &val2) : expr(val1, val2) { }
+  void eval(mpf_ptr f, unsigned long int) const
+  { Op::eval(f, expr.val1, expr.val2.get_mpf_t()); }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = mpf_get_default_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+
+// compound expressions, one argument is a subexpression
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpz_value, __gmp_binary_expr<mpz_class, __gmp_expr<T, U>, Op> >
+{
+private:
+  __gmp_binary_expr<mpz_class, __gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const mpz_class &val1, const __gmp_expr<T, U> &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  {
+    mpz_class temp(expr.val2);
+    Op::eval(z, expr.val1.get_mpz_t(), temp.get_mpz_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, mpz_class, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, mpz_class, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const mpz_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  {
+    mpz_class temp(expr.val1);
+    Op::eval(z, temp.get_mpz_t(), expr.val2.get_mpz_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpz_value, __gmp_binary_expr<mpz_classref, __gmp_expr<T, U>, Op> >
+{
+private:
+  __gmp_binary_expr<mpz_classref, __gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const mpz_classref &val1, const __gmp_expr<T, U> &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  {
+    mpz_class temp(expr.val2);
+    Op::eval(z, expr.val1.get_mpz_t(), temp.get_mpz_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, mpz_classref, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, mpz_classref, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const mpz_classref &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  {
+    mpz_class temp(expr.val1);
+    Op::eval(z, temp.get_mpz_t(), expr.val2.get_mpz_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpq_value, __gmp_binary_expr<mpq_class, __gmp_expr<T, U>, Op> >
+{
+private:
+  __gmp_binary_expr<mpq_class, __gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const mpq_class &val1, const __gmp_expr<T, U> &val2)
+    : expr(val1, val2) { }
+  void eval(mpq_ptr q) const
+  {
+    mpq_class temp(expr.val2);
+    Op::eval(q, expr.val1.get_mpq_t(), temp.get_mpq_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpq_value, __gmp_binary_expr<__gmp_expr<T, U>, mpq_class, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, mpq_class, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const mpq_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpq_ptr q) const
+  {
+    mpq_class temp(expr.val1);
+    Op::eval(q, temp.get_mpq_t(), expr.val2.get_mpq_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpf_value, __gmp_binary_expr<mpf_class, __gmp_expr<T, U>, Op> >
+{
+private:
+  __gmp_binary_expr<mpf_class, __gmp_expr<T, U>, Op> expr;
+public:
+  __gmp_expr(const mpf_class &val1, const __gmp_expr<T, U> &val2)
+    : expr(val1, val2) { }
+  void eval(mpf_ptr f, unsigned long int prec) const
+  {
+    mpf_class temp(expr.val2, prec);
+    Op::eval(f, expr.val1.get_mpf_t(), temp.get_mpf_t());
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class U, class Op>
+class __gmp_expr
+<__gmpf_value, __gmp_binary_expr<__gmp_expr<T, U>, mpf_class, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, mpf_class, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const mpf_class &val2)
+    : expr(val1, val2) { }
+  void eval(mpf_ptr f, unsigned long int prec) const
+  {
+    mpf_class temp(expr.val1, prec);
+    Op::eval(f, temp.get_mpf_t(), expr.val2.get_mpf_t());
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+
+// one argument is a subexpression, one is a built-in
+
+template <class T, class U, class V, class Op>
+class __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, V, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, V val2) : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  {
+    mpz_class temp(expr.val1);
+    Op::eval(z, temp.get_mpz_t(), expr.val2);
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class V, class Op>
+class __gmp_expr<__gmpz_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op> >
+{
+private:
+  __gmp_binary_expr<T, __gmp_expr<U, V>, Op> expr;
+public:
+  __gmp_expr(T val1, const __gmp_expr<U, V> &val2) : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  {
+    mpz_class temp(expr.val2);
+    Op::eval(z, expr.val1, temp.get_mpz_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class V, class Op>
+class __gmp_expr<__gmpq_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, V, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, V val2) : expr(val1, val2) { }
+  void eval(mpq_ptr q) const
+  {
+    mpq_class temp(expr.val1);
+    Op::eval(q, temp.get_mpq_t(), expr.val2);
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class V, class Op>
+class __gmp_expr<__gmpq_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op> >
+{
+private:
+  __gmp_binary_expr<T, __gmp_expr<U, V>, Op> expr;
+public:
+  __gmp_expr(T val1, const __gmp_expr<U, V> &val2) : expr(val1, val2) { }
+  void eval(mpq_ptr q) const
+  {
+    mpq_class temp(expr.val2);
+    Op::eval(q, expr.val1, temp.get_mpq_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class V, class Op>
+class __gmp_expr<__gmpf_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, V, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, V val2) : expr(val1, val2) { }
+  void eval(mpf_ptr f, unsigned long int prec) const
+  {
+    mpf_class temp(expr.val1, prec);
+    Op::eval(f, temp.get_mpf_t(), expr.val2);
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = mpf_get_default_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+template <class T, class U, class V, class Op>
+class __gmp_expr<__gmpf_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op> >
+{
+private:
+  __gmp_binary_expr<T, __gmp_expr<U, V>, Op> expr;
+public:
+  __gmp_expr(T val1, const __gmp_expr<U, V> &val2) : expr(val1, val2) { }
+  void eval(mpf_ptr f, unsigned long int prec) const
+  {
+    mpf_class temp(expr.val2, prec);
+    Op::eval(f, expr.val1, temp.get_mpf_t());
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = mpf_get_default_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+
+// both arguments are subexpressions
+
+template <class T, class U, class V, class W, class Op>
+class __gmp_expr
+<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
+{
+private:
+  __gmp_binary_expr
+  <__gmp_expr<T, U>, __gmp_expr<V, W>, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const __gmp_expr<V, W> &val2)
+    : expr(val1, val2) { }
+  void eval(mpz_ptr z) const
+  {
+    mpz_class temp1(expr.val1), temp2(expr.val2);
+    Op::eval(z, temp1.get_mpz_t(), temp2.get_mpz_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class V, class W, class Op>
+class __gmp_expr
+<__gmpq_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const __gmp_expr<V, W> &val2)
+    : expr(val1, val2) { }
+  void eval(mpq_ptr q) const
+  {
+    mpq_class temp1(expr.val1), temp2(expr.val2);
+    Op::eval(q, temp1.get_mpq_t(), temp2.get_mpq_t());
+  }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
+};
+
+template <class T, class U, class V, class W, class Op>
+class __gmp_expr
+<__gmpf_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
+{
+private:
+  __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> expr;
+public:
+  __gmp_expr(const __gmp_expr<T, U> &val1, const __gmp_expr<V, W> &val2)
+    : expr(val1, val2) { }
+  void eval(mpf_ptr f, unsigned long int prec) const
+  {
+    mpf_class temp1(expr.val1, prec), temp2(expr.val2, prec);
+    Op::eval(f, temp1.get_mpf_t(), temp2.get_mpf_t());
+  }
+  unsigned long int get_prec() const
+  {
+    unsigned long int prec1 = expr.val1.get_prec(),
+      prec2 = expr.val2.get_prec();
+    return (prec1 > prec2) ? prec1 : prec2;
+  }
+};
+
+
+/**************** Special cases ****************/
+/* Some operations (i.e., add and subtract) with mixed mpz/mpq arguments
+   can be done directly without first converting the mpz to mpq.
+   Appropriate specializations are required. */
+
+
+#define __GMPZQ_DEFINE_EXPR(eval_fun)                                        \
+                                                                             \
+template <>                                                                  \
+class __gmp_expr                                                             \
+<__gmpq_value, __gmp_binary_expr<mpz_class, mpq_class, eval_fun> >           \
+{                                                                            \
+private:                                                                     \
+  __gmp_binary_expr<mpz_class, mpq_class, eval_fun> expr;                    \
+public:                                                                      \
+  __gmp_expr(const mpz_class &val1, const mpq_class &val2)                   \
+    : expr(val1, val2) { }                                                   \
+  void eval(mpq_ptr q) const                                                 \
+  { eval_fun::eval(q, expr.val1.get_mpz_t(), expr.val2.get_mpq_t()); }       \
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }      \
+};                                                                           \
+                                                                             \
+template <>                                                                  \
+class __gmp_expr                                                             \
+<__gmpq_value, __gmp_binary_expr<mpq_class, mpz_class, eval_fun> >           \
+{                                                                            \
+private:                                                                     \
+  __gmp_binary_expr<mpq_class, mpz_class, eval_fun> expr;                    \
+public:                                                                      \
+  __gmp_expr(const mpq_class &val1, const mpz_class &val2)                   \
+    : expr(val1, val2) { }                                                   \
+  void eval(mpq_ptr q) const                                                 \
+  { eval_fun::eval(q, expr.val1.get_mpq_t(), expr.val2.get_mpz_t()); }       \
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }      \
+};                                                                           \
+                                                                             \
+template <class T>                                                           \
+class __gmp_expr<__gmpq_value,                                               \
+  __gmp_binary_expr<mpz_class, __gmp_expr<__gmpq_value, T>, eval_fun> >      \
+{                                                                            \
+private:                                                                     \
+  __gmp_binary_expr<mpz_class, __gmp_expr<__gmpq_value, T>, eval_fun> expr;  \
+public:                                                                      \
+  __gmp_expr(const mpz_class &val1, const __gmp_expr<__gmpq_value, T> &val2) \
+    : expr(val1, val2) { }                                                   \
+  void eval(mpq_ptr q) const                                                 \
+  {                                                                          \
+    mpq_class temp(expr.val2);                                               \
+    eval_fun::eval(q, expr.val1.get_mpz_t(), temp.get_mpq_t());              \
+  }                                                                          \
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }      \
+};                                                                           \
+                                                                             \
+template <class T>                                                           \
+class __gmp_expr<__gmpq_value,                                               \
+  __gmp_binary_expr<mpq_class, __gmp_expr<__gmpz_value, T>, eval_fun> >      \
+{                                                                            \
+private:                                                                     \
+  __gmp_binary_expr<mpq_class, __gmp_expr<__gmpz_value, T>, eval_fun> expr;  \
+public:                                                                      \
+  __gmp_expr(const mpq_class &val1, const __gmp_expr<__gmpz_value, T> &val2) \
+    : expr(val1, val2) { }                                                   \
+  void eval(mpq_ptr q) const                                                 \
+  {                                                                          \
+    mpz_class temp(expr.val2);                                               \
+    eval_fun::eval(q, expr.val1.get_mpq_t(), temp.get_mpz_t());              \
+  }                                                                          \
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }      \
+};                                                                           \
+                                                                             \
+template <class T>                                                           \
+class __gmp_expr<__gmpq_value,                                               \
+  __gmp_binary_expr<__gmp_expr<__gmpz_value, T>, mpq_class, eval_fun> >      \
+{                                                                            \
+private:                                                                     \
+  __gmp_binary_expr<__gmp_expr<__gmpz_value, T>, mpq_class, eval_fun> expr;  \
+public:                                                                      \
+  __gmp_expr(const __gmp_expr<__gmpz_value, T> &val1, const mpq_class &val2) \
+    : expr(val1, val2) { }                                                   \
+  void eval(mpq_ptr q) const                                                 \
+  {                                                                          \
+    mpz_class temp(expr.val1);                                               \
+    eval_fun::eval(q, temp.get_mpz_t(), expr.val2.get_mpq_t());              \
+  }                                                                          \
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }      \
+};                                                                           \
+                                                                             \
+template <class T>                                                           \
+class __gmp_expr<__gmpq_value,                                               \
+  __gmp_binary_expr<__gmp_expr<__gmpq_value, T>, mpz_class, eval_fun> >      \
+{                                                                            \
+private:                                                                     \
+  __gmp_binary_expr<__gmp_expr<__gmpq_value, T>, mpz_class, eval_fun> expr;  \
+public:                                                                      \
+  __gmp_expr(const __gmp_expr<__gmpq_value, T> &val1, const mpz_class &val2) \
+    : expr(val1, val2) { }                                                   \
+  void eval(mpq_ptr q) const                                                 \
+  {                                                                          \
+    mpq_class temp(expr.val1);                                               \
+    eval_fun::eval(q, temp.get_mpq_t(), expr.val2.get_mpz_t());              \
+  }                                                                          \
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }      \
+};                                                                           \
+                                                                             \
+template <class T, class U>                                                  \
+class __gmp_expr<__gmpq_value, __gmp_binary_expr                             \
+<__gmp_expr<__gmpz_value, T>, __gmp_expr<__gmpq_value, U>, eval_fun> >       \
+{                                                                            \
+private:                                                                     \
+  __gmp_binary_expr                                                          \
+  <__gmp_expr<__gmpz_value, T>, __gmp_expr<__gmpq_value, U>, eval_fun> expr; \
+public:                                                                      \
+  __gmp_expr(const __gmp_expr<__gmpz_value, T> &val1,                        \
+	     const __gmp_expr<__gmpq_value, U> &val2)                        \
+    : expr(val1, val2) { }                                                   \
+  void eval(mpq_ptr q) const                                                 \
+  {                                                                          \
+    mpz_class temp1(expr.val1);                                              \
+    mpq_class temp2(expr.val2);                                              \
+    eval_fun::eval(q, temp1.get_mpz_t(), temp2.get_mpq_t());                 \
+  }                                                                          \
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }      \
+};                                                                           \
+                                                                             \
+template <class T, class U>                                                  \
+class __gmp_expr<__gmpq_value, __gmp_binary_expr                             \
+<__gmp_expr<__gmpq_value, T>, __gmp_expr<__gmpz_value, U>, eval_fun> >       \
+{                                                                            \
+private:                                                                     \
+  __gmp_binary_expr                                                          \
+  <__gmp_expr<__gmpq_value, T>, __gmp_expr<__gmpz_value, U>, eval_fun> expr; \
+public:                                                                      \
+  __gmp_expr(const __gmp_expr<__gmpq_value, T> &val1,                        \
+	     const __gmp_expr<__gmpz_value, U> &val2)                        \
+    : expr(val1, val2) { }                                                   \
+  void eval(mpq_ptr q) const                                                 \
+  {                                                                          \
+    mpq_class temp1(expr.val1);                                              \
+    mpz_class temp2(expr.val2);                                              \
+    eval_fun::eval(q, temp1.get_mpq_t(), temp2.get_mpz_t());                 \
+  }                                                                          \
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }      \
+};
+
+
+__GMPZQ_DEFINE_EXPR(__gmp_binary_plus)
+__GMPZQ_DEFINE_EXPR(__gmp_binary_minus)
+
+
+/**************** Macros for defining functions ****************/
+/* Results of operators and functions are __gmp_expr<T, U> objects.
+   T determines the numerical type of the expression: it can be either
+   __gmpz_value, __gmpq_value, or __gmpf_value.
+   U is either __gmp_unary_expr<V, Op> or __gmp_binary_expr<V, W, Op>,
+   where V and W are the arguments' types -- they can in turn be
+   expressions, thus allowing to build compound expressions to any
+   degree of complexity.  Op is a function object that must have an
+   eval() method accepting appropriate arguments.
+   When the arguments of a binary expression have different numerical
+   types, __gmp_resolve_expr is used to determine the "larger" type.
+   Actual evaluation of a __gmp_expr<T, U> object is done when it gets
+   assigned to an mp[zqf]_class: this is done by calling its eval()
+   method. */
+
+// non-member operators and functions
 
 #define __GMP_DEFINE_UNARY_FUNCTION(fun, eval_fun)                           \
                                                                              \
@@ -2478,419 +4403,8 @@ inline type fun(long double ld, const __gmp_expr<T, U> &expr)              \
   return eval_fun::eval(ld, temp.get_mp());                                \
 }
 
-// define operators and functions
 
-__GMP_DEFINE_UNARY_FUNCTION(operator+, __gmp_unary_plus)
-__GMP_DEFINE_UNARY_FUNCTION(operator-, __gmp_unary_minus)
-
-__GMP_DEFINE_BINARY_FUNCTION(operator+, __gmp_binary_plus)
-__GMP_DEFINE_BINARY_FUNCTION(operator-, __gmp_binary_minus)
-__GMP_DEFINE_BINARY_FUNCTION(operator*, __gmp_binary_multiplies)
-__GMP_DEFINE_BINARY_FUNCTION(operator/, __gmp_binary_divides)
-
-__GMP_DEFINE_BINARY_FUNCTION_UI(operator<<, __gmp_binary_lshift)
-__GMP_DEFINE_BINARY_FUNCTION_UI(operator>>, __gmp_binary_rshift)
-
-__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator==, __gmp_binary_equal)
-__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator!=, __gmp_binary_not_equal)
-__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator<, __gmp_binary_less)
-__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator<=, __gmp_binary_less_equal)
-__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator>, __gmp_binary_greater)
-__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator>=, \
-                                  __gmp_binary_greater_equal)
-
-__GMP_DEFINE_UNARY_FUNCTION(abs, __gmp_abs_function)
-__GMP_DEFINE_UNARY_FUNCTION(trunc, __gmp_trunc_function)
-__GMP_DEFINE_UNARY_FUNCTION(floor, __gmp_floor_function)
-__GMP_DEFINE_UNARY_FUNCTION(ceil, __gmp_ceil_function)
-__GMP_DEFINE_UNARY_FUNCTION(sqrt, __gmp_sqrt_function)
-__GMP_DEFINE_BINARY_FUNCTION(hypot, __gmp_hypot_function)
-
-__GMP_DEFINE_UNARY_TYPE_FUNCTION(int, sgn, __gmp_sgn_function)
-__GMP_DEFINE_BINARY_TYPE_FUNCTION(int, compare, __gmp_cmp_function)
-
-template <class T, class U>
-void __gmp_set_expr(mpz_ptr, const __gmp_expr<T, U> &);
-
-class __gmpz_value { };
-class __gmpzref_value { };
-
-// class wrapper for mpz_t
-
-#define __GMPZZ_DECLARE_COMPOUND_OPERATOR(fun)                            \
-  template <class T, class U>                                             \
-  __gmp_expr<__gmpz_value, __gmpz_value> & fun(const __gmp_expr<T, U> &);
-
-#define __GMPZN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                      \
-  __gmp_expr & fun(signed char);               \
-  __gmp_expr & fun(unsigned char);             \
-  __gmp_expr & fun(signed int);                \
-  __gmp_expr & fun(unsigned int);              \
-  __gmp_expr & fun(signed short int);          \
-  __gmp_expr & fun(unsigned short int);        \
-  __gmp_expr & fun(signed long int);           \
-  __gmp_expr & fun(unsigned long int);         \
-  __gmp_expr & fun(float);                     \
-  __gmp_expr & fun(double);                    \
-  __gmp_expr & fun(long double);
-
-#define __GMPZ_DECLARE_COMPOUND_OPERATOR(fun) \
-__GMPZZ_DECLARE_COMPOUND_OPERATOR(fun)        \
-__GMPZN_DECLARE_COMPOUND_OPERATOR(fun)
-
-#define __GMPZ_DECLARE_COMPOUND_OPERATOR_UI(fun) \
-  __gmp_expr & fun(unsigned long int);
-
-#define __GMPZ_DECLARE_INCREMENT_OPERATOR(fun) \
-  inline __gmp_expr & fun();                   \
-  inline __gmp_expr fun(int);
-
-template <>
-class __gmp_expr<__gmpz_value, __gmpz_value>
-{
-private:
-  mpz_t mp;
-public:
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-
-  // constructors and destructor
-  __gmp_expr() { mpz_init(mp); }
-
-  __gmp_expr(const __gmp_expr &z) { mpz_init_set(mp, z.mp); }
-  template <class T, class U>
-  __gmp_expr(const __gmp_expr<T, U> &expr)
-  { mpz_init(mp); __gmp_set_expr(mp, expr); }
-
-  __gmp_expr(bool b) { mpz_init_set_ui(mp, b); }
-
-  __gmp_expr(signed char c) { mpz_init_set_si(mp, c); }
-  __gmp_expr(unsigned char c) { mpz_init_set_ui(mp, c); }
-
-  __gmp_expr(signed int i) { mpz_init_set_si(mp, i); }
-  __gmp_expr(unsigned int i) { mpz_init_set_ui(mp, i); }
-
-  __gmp_expr(signed short int s) { mpz_init_set_si(mp, s); }
-  __gmp_expr(unsigned short int s) { mpz_init_set_ui(mp, s); }
-
-  __gmp_expr(signed long int l) { mpz_init_set_si(mp, l); }
-  __gmp_expr(unsigned long int l) { mpz_init_set_ui(mp, l); }
-
-  __gmp_expr(float f) { mpz_init_set_d(mp, f); }
-  __gmp_expr(double d) { mpz_init_set_d(mp, d); }
-  // __gmp_expr(long double ld) { mpz_init_set_d(mp, ld); }
-
-  explicit __gmp_expr(const char *s) { mpz_init_set_str(mp, s, 0); }
-  __gmp_expr(const char *s, int base) { mpz_init_set_str(mp, s, base); }
-  explicit __gmp_expr(const string &s) { mpz_init_set_str(mp, s.c_str(), 0); }
-  __gmp_expr(const string &s, int base)
-  { mpz_init_set_str(mp, s.c_str(), base); }
-
-  explicit __gmp_expr(mpz_srcptr z) { mpz_init_set(mp, z); }
-
-  ~__gmp_expr() { mpz_clear(mp); }
-
-  // assignment operators
-  __gmp_expr & operator=(const __gmp_expr &z)
-  { mpz_set(mp, z.mp); return *this; }
-  template <class T, class U>
-  __gmp_expr<__gmpz_value, __gmpz_value> & operator=
-  (const __gmp_expr<T, U> &expr)
-  { __gmp_set_expr(mp, expr); return *this; }
-
-  __gmp_expr & operator=(bool b) { mpz_set_ui(mp, b); return *this; }
-
-  __gmp_expr & operator=(signed char c) { mpz_set_si(mp, c); return *this; }
-  __gmp_expr & operator=(unsigned char c) { mpz_set_ui(mp, c); return *this; }
-
-  __gmp_expr & operator=(signed int i) { mpz_set_si(mp, i); return *this; }
-  __gmp_expr & operator=(unsigned int i) { mpz_set_ui(mp, i); return *this; }
-
-  __gmp_expr & operator=(signed short int s)
-  { mpz_set_si(mp, s); return *this; }
-  __gmp_expr & operator=(unsigned short int s)
-  { mpz_set_ui(mp, s); return *this; }
-
-  __gmp_expr & operator=(signed long int l)
-  { mpz_set_si(mp, l); return *this; }
-  __gmp_expr & operator=(unsigned long int l)
-  { mpz_set_ui(mp, l); return *this; }
-
-  __gmp_expr & operator=(float f) { mpz_set_d(mp, f); return *this; }
-  __gmp_expr & operator=(double d) { mpz_set_d(mp, d); return *this; }
-  /*
-  __gmp_expr & operator=(long double ld) { mpz_set_ld(mp, ld); return *this; }
-  */
-
-  __gmp_expr & operator=(const char *s)
-  { mpz_set_str(mp, s, 0); return *this; }
-  __gmp_expr & operator=(const string &s)
-  { mpz_set_str(mp, s.c_str(), 0); return *this; }
-
-  // string input/output functions
-  void set_str_base(const string &s, int base)
-  { mpz_set_str(mp, s.c_str(), base); }
-  string get_str_base(int base) const
-  {
-    __gmp_alloc_cstring temp(mpz_get_str(0, base, mp));
-    return string(temp.str);
-  }
-
-  // conversion functions
-  mpz_srcptr get_mpz_t() const { return mp; }
-  mpz_ptr get_mpz_t() { return mp; }
-
-  signed long int get_si() const { return mpz_get_si(mp); }
-  unsigned long int get_ui() const { return mpz_get_ui(mp); }
-  double get_d() const { return mpz_get_d(mp); } // should be long double
-
-  // bool fits_schar_p() const { return mpz_fits_schar_p(mp); }
-  // bool fits_uchar_p() const { return mpz_fits_uchar_p(mp); }
-  bool fits_sint_p() const { return mpz_fits_sint_p(mp); }
-  bool fits_uint_p() const { return mpz_fits_uint_p(mp); }
-  bool fits_sshort_p() const { return mpz_fits_sshort_p(mp); }
-  bool fits_ushort_p() const { return mpz_fits_ushort_p(mp); }
-  bool fits_slong_p() const { return mpz_fits_slong_p(mp); }
-  bool fits_ulong_p() const { return mpz_fits_ulong_p(mp); }
-  // bool fits_float_p() const { return mpz_fits_float_p(mp); }
-  // bool fits_double_p() const { return mpz_fits_double_p(mp); }
-  // bool fits_ldouble_p() const { return mpz_fits_ldouble_p(mp); }
-
-  // member operators
-  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator+=)
-  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator-=)
-  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator*=)
-  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator/=)
-  __GMPZ_DECLARE_COMPOUND_OPERATOR(operator%=)
-
-  __GMPZZ_DECLARE_COMPOUND_OPERATOR(operator&=)
-  __GMPZZ_DECLARE_COMPOUND_OPERATOR(operator|=)
-  __GMPZZ_DECLARE_COMPOUND_OPERATOR(operator^=)
-
-  __GMPZ_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
-  __GMPZ_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
-
-  __GMPZ_DECLARE_INCREMENT_OPERATOR(operator++)
-  __GMPZ_DECLARE_INCREMENT_OPERATOR(operator--)
-};
-
-typedef __gmp_expr<__gmpz_value, __gmpz_value> mpz_class;
-
-// unary expressions
-
-template <class Op>
-class __gmp_expr<__gmpz_value, __gmp_unary_expr<mpz_class, Op> >
-{
-private:
-  __gmp_unary_expr<mpz_class, Op> expr;
-public:
-  __gmp_expr(const mpz_class &val) : expr(val) { }
-  void eval(mpz_ptr z) const { Op::eval(z, expr.val.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr<__gmpz_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_unary_expr<__gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val) : expr(val) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val);
-    Op::eval(z, temp.get_mpz_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-// binary expressions
-
-template <class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, mpz_class, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_class, mpz_class, Op> expr;
-public:
-  __gmp_expr(const mpz_class &val1, const mpz_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_class, T, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_class, T, Op> expr;
-public:
-  __gmp_expr(const mpz_class &val1, T val2) : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<T, mpz_class, Op> >
-{
-private:
-  __gmp_binary_expr<T, mpz_class, Op> expr;
-public:
-  __gmp_expr(T val1, const mpz_class &val2) : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1, expr.val2.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_class, __gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_class, __gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const mpz_class &val1, const __gmp_expr<T, U> &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val2);
-    Op::eval(z, expr.val1.get_mpz_t(), temp.get_mpz_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, mpz_class, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, mpz_class, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const mpz_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val1);
-    Op::eval(z, temp.get_mpz_t(), expr.val2.get_mpz_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class V, class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, V, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, V val2) : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val1);
-    Op::eval(z, temp.get_mpz_t(), expr.val2);
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class V, class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op> >
-{
-private:
-  __gmp_binary_expr<T, __gmp_expr<U, V>, Op> expr;
-public:
-  __gmp_expr(T val1, const __gmp_expr<U, V> &val2) : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val2);
-    Op::eval(z, expr.val1, temp.get_mpz_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class V, class W, class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
-{
-private:
-  __gmp_binary_expr
-  <__gmp_expr<T, U>, __gmp_expr<V, W>, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const __gmp_expr<V, W> &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp1(expr.val1), temp2(expr.val2);
-    Op::eval(z, temp1.get_mpz_t(), temp2.get_mpz_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-// type conversions
-
-class __gmpz_temp
-{
-private:
-  mpz_srcptr mp;
-  bool is_temp;
-  mpz_t temp;
-
-  __gmpz_temp();
-  __gmpz_temp(const __gmpz_temp &);
-  void operator=(const __gmpz_temp &);
-public:
-  __gmpz_temp(const mpz_class &z) : mp(z.get_mpz_t()), is_temp(false) { }
-  __gmpz_temp(const __gmp_expr<__gmpz_value, __gmpzref_value> &);
-  template <class T, class U>
-  __gmpz_temp(const __gmp_expr<T, U> &expr)
-  {
-    mpz_init(temp);
-    __gmp_set_expr(temp, expr);
-    mp = temp;
-    is_temp = true;
-  }
-  ~__gmpz_temp() { if (is_temp) mpz_clear(temp); }
-
-  mpz_srcptr get_mp() const { return mp; }
-};
-
-template <>
-struct __gmp_resolve_expr<__gmpz_value, __gmpz_value>
-{
-  typedef __gmpz_value value_type;
-  typedef __gmpz_temp temp_type;
-};
-
-template <>
-inline void __gmp_set_expr(mpz_ptr z, const mpz_class &w)
-{
-  mpz_set(z, w.get_mpz_t());
-}
-
-template <class T>
-inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<__gmpz_value, T> &expr)
-{
-  expr.eval(z);
-}
-
-// functions
-
-inline ostream & operator<<(ostream &o, const mpz_class &z)
-{
-  return o << z.get_mpz_t();
-}
-
-template <class T>
-inline ostream & operator<<
-(ostream &o, const __gmp_expr<__gmpz_value, T> &expr)
-{
-  mpz_class temp(expr);
-  return o << temp.get_mpz_t();
-}
-
-inline istream & operator>>(istream &i, mpz_class &z)
-{
-  return i >> z.get_mpz_t();
-}
+// member operators for mpz_class
 
 #define __GMPZZ_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)         \
                                                                 \
@@ -3004,757 +4518,8 @@ inline mpz_class mpz_class::fun(int)                    \
   return temp;                                          \
 }
 
-// define operators and functions
 
-__GMP_DEFINE_UNARY_FUNCTION(operator~, __gmp_unary_com)
-__GMP_DEFINE_BINARY_FUNCTION(operator%, __gmp_binary_modulus)
-__GMP_DEFINE_BINARY_FUNCTION(operator&, __gmp_binary_and)
-__GMP_DEFINE_BINARY_FUNCTION(operator|, __gmp_binary_ior)
-__GMP_DEFINE_BINARY_FUNCTION(operator^, __gmp_binary_xor)
-
-__GMPZ_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
-__GMPZ_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
-__GMPZ_DEFINE_COMPOUND_OPERATOR(operator*=, __gmp_binary_multiplies)
-__GMPZ_DEFINE_COMPOUND_OPERATOR(operator/=, __gmp_binary_divides)
-__GMPZ_DEFINE_COMPOUND_OPERATOR(operator%=, __gmp_binary_modulus)
-
-__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator&=, __gmp_binary_and)
-__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator|=, __gmp_binary_ior)
-__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator^=, __gmp_binary_xor)
-
-__GMPZ_DEFINE_COMPOUND_OPERATOR_UI(operator<<=, __gmp_binary_lshift)
-__GMPZ_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
-
-__GMPZ_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
-__GMPZ_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
-
-template <class T, class U>
-void __gmp_set_expr(mpq_ptr, const __gmp_expr<T, U> &);
-
-class __gmpq_value { };
-
-// reference class for numerator/denominator of mpq_t
-
-#define __GMPZRR_DECLARE_COMPOUND_OPERATOR(fun)                              \
-  template <class T, class U>                                                \
-  __gmp_expr<__gmpz_value, __gmpzref_value> & fun(const __gmp_expr<T, U> &);
-
-#define __GMPZRN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                       \
-  __gmp_expr & fun(signed char);                \
-  __gmp_expr & fun(unsigned char);              \
-  __gmp_expr & fun(signed int);                 \
-  __gmp_expr & fun(unsigned int);               \
-  __gmp_expr & fun(signed short int);           \
-  __gmp_expr & fun(unsigned short int);         \
-  __gmp_expr & fun(signed long int);            \
-  __gmp_expr & fun(unsigned long int);          \
-  __gmp_expr & fun(float);                      \
-  __gmp_expr & fun(double);                     \
-  __gmp_expr & fun(long double);
-
-#define __GMPZR_DECLARE_COMPOUND_OPERATOR(fun) \
-__GMPZRR_DECLARE_COMPOUND_OPERATOR(fun)        \
-__GMPZRN_DECLARE_COMPOUND_OPERATOR(fun)
-
-#define __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(fun) \
-  __gmp_expr & fun(unsigned long int);
-
-#define __GMPZR_DECLARE_INCREMENT_OPERATOR(fun) \
-  inline __gmp_expr & fun();                    \
-  inline mpz_class fun(int);
-
-template <>
-class __gmp_expr<__gmpz_value, __gmpzref_value>
-{
-  friend class __gmp_expr<__gmpq_value, __gmpq_value>;
-private:
-  mpz_ptr ref;
-
-  __gmp_expr();
-  // __gmp_expr(const __gmp_expr &);
-  __gmp_expr(mpz_ptr z) : ref(z) { }
-  __gmp_expr(mpz_srcptr z) : ref((mpz_ptr) z) { }
-public:
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-
-  // assignment operators
-  __gmp_expr & operator=(const __gmp_expr &z)
-  { mpz_set(ref, z.ref); return *this; }
-  __gmp_expr & operator=(const mpz_class &z)
-  { mpz_set(ref, z.get_mpz_t()); return *this; }
-  template <class T, class U>
-  __gmp_expr<__gmpz_value, __gmpzref_value> & operator=
-  (const __gmp_expr<T, U> &expr)
-  { __gmp_set_expr(ref, expr); return *this; }
-
-  __gmp_expr & operator=(bool b) { mpz_set_ui(ref, b); return *this; }
-
-  __gmp_expr & operator=(signed char c) { mpz_set_si(ref, c); return *this; }
-  __gmp_expr & operator=(unsigned char c)
-  { mpz_set_ui(ref, c); return *this; }
-
-  __gmp_expr & operator=(signed int i) { mpz_set_si(ref, i); return *this; }
-  __gmp_expr & operator=(unsigned int i) { mpz_set_ui(ref, i); return *this; }
-
-  __gmp_expr & operator=(signed short int s)
-  { mpz_set_si(ref, s); return *this; }
-  __gmp_expr & operator=(unsigned short int s)
-  { mpz_set_ui(ref, s); return *this; }
-
-  __gmp_expr & operator=(signed long int l)
-  { mpz_set_si(ref, l); return *this; }
-  __gmp_expr & operator=(unsigned long int l)
-  { mpz_set_ui(ref, l); return *this; }
-
-  __gmp_expr & operator=(float f) { mpz_set_d(ref, f); return *this; }
-  __gmp_expr & operator=(double d) { mpz_set_d(ref, d); return *this; }
-  /*
-  __gmp_expr & operator=(long double ld)
-  { mpz_set_ld(ref, ld); return *this; }
-  */
-
-  __gmp_expr & operator=(const char *s)
-  { mpz_set_str(ref, s, 0); return *this; }
-  __gmp_expr & operator=(const string &s)
-  { mpz_set_str(ref, s.c_str(), 0); return *this; }
-
-  // string input/output functions
-  void set_str_base(const string &s, int base)
-  { mpz_set_str(ref, s.c_str(), base); }
-  string get_str_base(int base) const
-  {
-    __gmp_alloc_cstring temp(mpz_get_str(0, base, ref));
-    return string(temp.str);
-  }
-
-  // conversion functions
-  mpz_srcptr get_mpz_t() const { return ref; }
-  mpz_ptr get_mpz_t() { return ref; }
-
-  signed long int get_si() const { return mpz_get_si(ref); }
-  unsigned long int get_ui() const { return mpz_get_ui(ref); }
-  double get_d() const { return mpz_get_d(ref); } // should be long double
-
-  // bool fits_bool_p() const { return mpz_fits_bool_p(ref); }
-  // bool fits_schar_p() const { return mpz_fits_schar_p(ref); }
-  // bool fits_uchar_p() const { return mpz_fits_uchar_p(ref); }
-  bool fits_sint_p() const { return mpz_fits_sint_p(ref); }
-  bool fits_uint_p() const { return mpz_fits_uint_p(ref); }
-  bool fits_sshort_p() const { return mpz_fits_sshort_p(ref); }
-  bool fits_ushort_p() const { return mpz_fits_ushort_p(ref); }
-  bool fits_slong_p() const { return mpz_fits_slong_p(ref); }
-  bool fits_ulong_p() const { return mpz_fits_ulong_p(ref); }
-  // bool fits_float_p() const { return mpz_fits_float_p(ref); }
-  // bool fits_double_p() const { return mpz_fits_double_p(ref); }
-  // bool fits_ldouble_p() const { return mpz_fits_ldouble_p(ref); }
-
-  // member operators
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator+=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator-=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator*=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator/=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR(operator%=)
-
-  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator&=)
-  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator|=)
-  __GMPZRR_DECLARE_COMPOUND_OPERATOR(operator^=)
-
-  __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
-  __GMPZR_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
-
-  __GMPZR_DECLARE_INCREMENT_OPERATOR(operator++)
-  __GMPZR_DECLARE_INCREMENT_OPERATOR(operator--)
-};
-
-typedef __gmp_expr<__gmpz_value, __gmpzref_value> mpz_classref;
-
-// unary expressions
-
-template <class Op>
-class __gmp_expr<__gmpz_value, __gmp_unary_expr<mpz_classref, Op> >
-{
-private:
-  __gmp_unary_expr<mpz_classref, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val) : expr(val) { }
-  void eval(mpz_ptr z) const { Op::eval(z, expr.val.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-// binary expressions
-
-template <class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_classref, mpz_classref, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_classref, mpz_classref, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val1, const mpz_classref &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_class, mpz_classref, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_class, mpz_classref, Op> expr;
-public:
-  __gmp_expr(const mpz_class &val1, const mpz_classref &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_classref, mpz_class, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_classref, mpz_class, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val1, const mpz_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<mpz_classref, T, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_classref, T, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val1, T val2) : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1.get_mpz_t(), expr.val2); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpz_value, __gmp_binary_expr<T, mpz_classref, Op> >
-{
-private:
-  __gmp_binary_expr<T, mpz_classref, Op> expr;
-public:
-  __gmp_expr(T val1, const mpz_classref &val2) : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  { Op::eval(z, expr.val1, expr.val2.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<mpz_classref, __gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_binary_expr<mpz_classref, __gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const mpz_classref &val1, const __gmp_expr<T, U> &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val2);
-    Op::eval(z, expr.val1.get_mpz_t(), temp.get_mpz_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpz_value, __gmp_binary_expr<__gmp_expr<T, U>, mpz_classref, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, mpz_classref, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const mpz_classref &val2)
-    : expr(val1, val2) { }
-  void eval(mpz_ptr z) const
-  {
-    mpz_class temp(expr.val1);
-    Op::eval(z, temp.get_mpz_t(), expr.val2.get_mpz_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-// type conversions
-
-inline __gmpz_temp::__gmpz_temp(const mpz_classref &z)
-  : mp(z.get_mpz_t()), is_temp(false) { }
-
-template <>
-inline void __gmp_set_expr(mpz_ptr z, const mpz_classref &w)
-{
-  mpz_set(z, w.get_mpz_t());
-}
-
-// functions
-
-inline ostream & operator<<(ostream &o, const mpz_classref &z)
-{
-  return o << z.get_mpz_t();
-}
-
-inline istream & operator>>(istream &i, mpz_classref &z)
-{
-  return i >> z.get_mpz_t();
-}
-
-// class wrapper for mpq_t
-
-#define __GMPQQ_DECLARE_COMPOUND_OPERATOR(fun)                            \
-  template <class T, class U>                                             \
-  __gmp_expr<__gmpq_value, __gmpq_value> & fun(const __gmp_expr<T, U> &);
-
-#define __GMPQN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                      \
-  __gmp_expr & fun(signed char);               \
-  __gmp_expr & fun(unsigned char);             \
-  __gmp_expr & fun(signed int);                \
-  __gmp_expr & fun(unsigned int);              \
-  __gmp_expr & fun(signed short int);          \
-  __gmp_expr & fun(unsigned short int);        \
-  __gmp_expr & fun(signed long int);           \
-  __gmp_expr & fun(unsigned long int);         \
-  __gmp_expr & fun(float);                     \
-  __gmp_expr & fun(double);                    \
-  __gmp_expr & fun(long double);
-
-#define __GMPQ_DECLARE_COMPOUND_OPERATOR(fun) \
-__GMPQQ_DECLARE_COMPOUND_OPERATOR(fun)        \
-__GMPQN_DECLARE_COMPOUND_OPERATOR(fun)
-
-#define __GMPQ_DECLARE_COMPOUND_OPERATOR_UI(fun) \
-  __gmp_expr & fun(unsigned long int);
-
-#define __GMPQ_DECLARE_INCREMENT_OPERATOR(fun) \
-  inline __gmp_expr & fun();                   \
-  inline __gmp_expr fun(int);
-
-template <>
-class __gmp_expr<__gmpq_value, __gmpq_value>
-{
-private:
-  mpq_t mp;
-public:
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-  void canonicalize() { mpq_canonicalize(mp); }
-
-  // constructors and destructor
-  __gmp_expr() { mpq_init(mp); }
-
-  __gmp_expr(const __gmp_expr &q) { mpq_init(mp); mpq_set(mp, q.mp); }
-  template <class T, class U>
-  __gmp_expr(const __gmp_expr<T, U> &expr)
-  { mpq_init(mp); __gmp_set_expr(mp, expr); }
-
-  __gmp_expr(bool b) { mpq_init(mp); mpq_set_ui(mp, b, 1); }
-
-  __gmp_expr(signed char c) { mpq_init(mp); mpq_set_si(mp, c, 1); }
-  __gmp_expr(unsigned char c) { mpq_init(mp); mpq_set_ui(mp, c, 1); }
-
-  __gmp_expr(signed int i) { mpq_init(mp); mpq_set_si(mp, i, 1); }
-  __gmp_expr(unsigned int i) { mpq_init(mp); mpq_set_ui(mp, i, 1); }
-
-  __gmp_expr(signed short int s) { mpq_init(mp); mpq_set_si(mp, s, 1); }
-  __gmp_expr(unsigned short int s) { mpq_init(mp); mpq_set_ui(mp, s, 1); }
-
-  __gmp_expr(signed long int l) { mpq_init(mp); mpq_set_si(mp, l, 1); }
-  __gmp_expr(unsigned long int l) { mpq_init(mp); mpq_set_ui(mp, l, 1); }
-
-  __gmp_expr(float f) { mpq_init(mp); mpq_set_d(mp, f); }
-  __gmp_expr(double d) { mpq_init(mp); mpq_set_d(mp, d); }
-  // __gmp_expr(long double ld) { mpq_init(mp); mpq_set_ld(mp, ld); }
-
-  explicit __gmp_expr(const char *s) { mpq_init(mp); mpq_set_str(mp, s, 0); }
-  __gmp_expr(const char *s, unsigned long int base)
-  { mpq_init(mp); mpq_set_str(mp, s, base); }
-  explicit __gmp_expr(const string &s)
-  { mpq_init(mp); mpq_set_str(mp, s.c_str(), 0); }
-  __gmp_expr(const string &s, unsigned long int base)
-  { mpq_init(mp); mpq_set_str(mp, s.c_str(), base); }
-
-  explicit __gmp_expr(mpq_srcptr q) { mpq_init(mp); mpq_set(mp, q); }
-
-  __gmp_expr(const mpz_class &, const mpz_class &);
-  template <class T, class U>
-  __gmp_expr(const __gmp_expr<__gmpz_value, T> &,
-	     const __gmp_expr<__gmpz_value, U> &);
-
-  ~__gmp_expr() { mpq_clear(mp); }
-
-  // assignment operators
-  __gmp_expr & operator=(const __gmp_expr &q)
-  { mpq_set(mp, q.mp); return *this; }
-  template <class T, class U>
-  __gmp_expr<__gmpq_value, __gmpq_value> & operator=
-  (const __gmp_expr<T, U> &expr)
-  { __gmp_set_expr(mp, expr); return *this; }
-
-  __gmp_expr & operator=(bool b) { mpq_set_ui(mp, b, 1); return *this; }
-
-  __gmp_expr & operator=(signed char c)
-  { mpq_set_si(mp, c, 1); return *this; }
-  __gmp_expr & operator=(unsigned char c)
-  { mpq_set_ui(mp, c, 1); return *this; }
-
-  __gmp_expr & operator=(signed int i) { mpq_set_si(mp, i, 1); return *this; }
-  __gmp_expr & operator=(unsigned int i)
-  { mpq_set_ui(mp, i, 1); return *this; }
-
-  __gmp_expr & operator=(signed short int s)
-  { mpq_set_si(mp, s, 1); return *this; }
-  __gmp_expr & operator=(unsigned short int s)
-  { mpq_set_ui(mp, s, 1); return *this; }
-
-  __gmp_expr & operator=(signed long int l)
-  { mpq_set_si(mp, l, 1); return *this; }
-  __gmp_expr & operator=(unsigned long int l)
-  { mpq_set_ui(mp, l, 1); return *this; }
-
-  __gmp_expr & operator=(float f) { mpq_set_d(mp, f); return *this; }
-  __gmp_expr & operator=(double d) { mpq_set_d(mp, d); return *this; }
-  /*
-  __gmp_expr & operator=(long double ld) { mpq_set_ld(mp, ld); return *this; }
-  */
-
-  __gmp_expr & operator=(const char *s)
-  { mpq_set_str(mp, s, 0); return *this; }
-  __gmp_expr & operator=(const string &s)
-  { mpq_set_str(mp, s.c_str(), 0); return *this; }
-
-  // string input/output functions
-  void set_str_base(const string &s, int base)
-  { mpq_set_str(mp, s.c_str(), base); }
-  string get_str_base(int base) const
-  {
-    __gmp_alloc_cstring temp(mpq_get_str(0, base, mp));
-    return string(temp.str);
-  }
-
-  // conversion functions
-  const mpz_classref get_num() const { return mpz_classref(mpq_numref(mp)); }
-  mpz_classref get_num() { return mpz_classref(mpq_numref(mp)); }
-  const mpz_classref get_den() const { return mpz_classref(mpq_denref(mp)); }
-  mpz_classref get_den() { return mpz_classref(mpq_denref(mp)); }
-
-  mpq_srcptr get_mpq_t() const { return mp; }
-  mpq_ptr get_mpq_t() { return mp; }
-
-  mpz_srcptr get_num_mpz_t() const { return mpq_numref(mp); }
-  mpz_ptr get_num_mpz_t() { return mpq_numref(mp); }
-  mpz_srcptr get_den_mpz_t() const { return mpq_denref(mp); }
-  mpz_ptr get_den_mpz_t() { return mpq_denref(mp); }
-
-  double get_d() const { return mpq_get_d(mp); } // should be long double
-
-  // compound assignments
-  __GMPQ_DECLARE_COMPOUND_OPERATOR(operator+=)
-  __GMPQ_DECLARE_COMPOUND_OPERATOR(operator-=)
-  __GMPQ_DECLARE_COMPOUND_OPERATOR(operator*=)
-  __GMPQ_DECLARE_COMPOUND_OPERATOR(operator/=)
-
-  __GMPQ_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
-  __GMPQ_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
-
-  __GMPQ_DECLARE_INCREMENT_OPERATOR(operator++)
-  __GMPQ_DECLARE_INCREMENT_OPERATOR(operator--)
-};
-
-typedef __gmp_expr<__gmpq_value, __gmpq_value> mpq_class;
-
-// unary expressions
-
-template <class Op>
-class __gmp_expr<__gmpq_value, __gmp_unary_expr<mpq_class, Op> >
-{
-private:
-  __gmp_unary_expr<mpq_class, Op> expr;
-public:
-  __gmp_expr(const mpq_class &val) : expr(val) { }
-  void eval(mpq_ptr q) const { Op::eval(q, expr.val.get_mpq_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr<__gmpq_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_unary_expr<__gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val) : expr(val) { }
-  void eval(mpq_ptr q) const
-  {
-    mpq_class temp(expr.val);
-    Op::eval(q, temp.get_mpq_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-// binary expressions
-
-template <class Op>
-class __gmp_expr<__gmpq_value, __gmp_binary_expr<mpq_class, mpq_class, Op> >
-{
-private:
-  __gmp_binary_expr<mpq_class, mpq_class, Op> expr;
-public:
-  __gmp_expr(const mpq_class &val1, const mpq_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpq_ptr q) const
-  { Op::eval(q, expr.val1.get_mpq_t(), expr.val2.get_mpq_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpq_value, __gmp_binary_expr<mpq_class, T, Op> >
-{
-private:
-  __gmp_binary_expr<mpq_class, T, Op> expr;
-public:
-  __gmp_expr(const mpq_class &val1, T val2) : expr(val1, val2) { }
-  void eval(mpq_ptr q) const
-  { Op::eval(q, expr.val1.get_mpq_t(), expr.val2); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpq_value, __gmp_binary_expr<T, mpq_class, Op> >
-{
-private:
-  __gmp_binary_expr<T, mpq_class, Op> expr;
-public:
-  __gmp_expr(T val1, const mpq_class &val2) : expr(val1, val2) { }
-  void eval(mpq_ptr q) const
-  { Op::eval(q, expr.val1, expr.val2.get_mpq_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpq_value, __gmp_binary_expr<mpq_class, __gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_binary_expr<mpq_class, __gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const mpq_class &val1, const __gmp_expr<T, U> &val2)
-    : expr(val1, val2) { }
-  void eval(mpq_ptr q) const
-  {
-    mpq_class temp(expr.val2);
-    Op::eval(q, expr.val1.get_mpq_t(), temp.get_mpq_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpq_value, __gmp_binary_expr<__gmp_expr<T, U>, mpq_class, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, mpq_class, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const mpq_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpq_ptr q) const
-  {
-    mpq_class temp(expr.val1);
-    Op::eval(q, temp.get_mpq_t(), expr.val2.get_mpq_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class V, class Op>
-class __gmp_expr<__gmpq_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, V, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, V val2) : expr(val1, val2) { }
-  void eval(mpq_ptr q) const
-  {
-    mpq_class temp(expr.val1);
-    Op::eval(q, temp.get_mpq_t(), expr.val2);
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class V, class Op>
-class __gmp_expr<__gmpq_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op> >
-{
-private:
-  __gmp_binary_expr<T, __gmp_expr<U, V>, Op> expr;
-public:
-  __gmp_expr(T val1, const __gmp_expr<U, V> &val2) : expr(val1, val2) { }
-  void eval(mpq_ptr q) const
-  {
-    mpq_class temp(expr.val2);
-    Op::eval(q, expr.val1, temp.get_mpq_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-template <class T, class U, class V, class W, class Op>
-class __gmp_expr
-<__gmpq_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const __gmp_expr<V, W> &val2)
-    : expr(val1, val2) { }
-  void eval(mpq_ptr q) const
-  {
-    mpq_class temp1(expr.val1), temp2(expr.val2);
-    Op::eval(q, temp1.get_mpq_t(), temp2.get_mpq_t());
-  }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
-};
-
-// type conversions
-
-class __gmpq_temp
-{
-private:
-  mpq_srcptr mp;
-  bool is_temp;
-  mpq_t temp;
-
-  __gmpq_temp();
-  __gmpq_temp(const __gmpq_temp &);
-  void operator=(const __gmpq_temp &);
-public:
-  __gmpq_temp(const mpq_class &q) : mp(q.get_mpq_t()), is_temp(false) { }
-  template <class T, class U>
-  __gmpq_temp(const __gmp_expr<T, U> &expr)
-  {
-    mpq_init(temp);
-    __gmp_set_expr(temp, expr);
-    mp = temp;
-    is_temp = true;
-  }
-  ~__gmpq_temp() { if (is_temp) mpq_clear(temp); }
-
-  mpq_srcptr get_mp() const { return mp; }
-};
-
-template <>
-struct __gmp_resolve_expr<__gmpq_value, __gmpq_value>
-{
-  typedef __gmpq_value value_type;
-  typedef __gmpq_temp temp_type;
-};
-
-template <>
-inline void __gmp_set_expr(mpq_ptr q, const mpq_class &r)
-{
-  mpq_set(q, r.get_mpq_t());
-}
-
-template <class T>
-inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<__gmpq_value, T> &expr)
-{
-  expr.eval(q);
-}
-
-// functions
-
-inline ostream & operator<<(ostream &o, const mpq_class &q)
-{
-  return o << q.get_mpq_t();
-}
-
-template <class T>
-inline ostream & operator<<
-(ostream &o, const __gmp_expr<__gmpq_value, T> &expr)
-{
-  mpq_class temp(expr);
-  return o << temp.get_mpq_t();
-}
-
-inline istream & operator>>(istream &i, mpq_class &q)
-{
-  i >> q.get_mpq_t();
-  q.canonicalize();
-  return i;
-}
-
-// mixed-arguments functions
-
-// type conversions
-
-template <>
-struct __gmp_resolve_expr<__gmpz_value, __gmpq_value>
-{
-  typedef __gmpq_value value_type;
-  typedef __gmpq_temp temp_type;
-};
-
-template <>
-struct __gmp_resolve_expr<__gmpq_value, __gmpz_value>
-{
-  typedef __gmpq_value value_type;
-  typedef __gmpq_temp temp_type;
-};
-
-template <>
-inline void __gmp_set_expr(mpz_ptr z, const mpq_class &q)
-{
-  mpz_set_q(z, q.get_mpq_t());
-}
-
-template <class T>
-inline void __gmp_set_expr
-(mpz_ptr z, const __gmp_expr<__gmpq_value, T> &expr)
-{
-  mpq_class temp(expr);
-  mpz_set_q(z, temp.get_mpq_t());
-}
-
-template <>
-inline void __gmp_set_expr(mpq_ptr q, const mpz_class &z)
-{
-  mpq_set_z(q, z.get_mpz_t());
-}
-
-template <>
-inline void __gmp_set_expr(mpq_ptr q, const mpz_classref &z)
-{
-  mpq_set_z(q, z.get_mpz_t());
-}
-
-template <class T>
-inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<__gmpz_value, T> &expr)
-{
-  mpz_class temp(expr);
-  mpq_set_z(q, temp.get_mpz_t());
-}
-
-// functions
-
-inline mpq_class::__gmp_expr(const mpz_class &num, const mpz_class &den)
-{
-  mpq_init(mp);
-  mpz_set(mpq_numref(mp), num.get_mpz_t());
-  mpz_set(mpq_denref(mp), den.get_mpz_t());
-}
-
-template <class T, class U>
-inline mpq_class::__gmp_expr(const __gmp_expr<__gmpz_value, T> &num,
-			     const __gmp_expr<__gmpz_value, U> &den)
-{
-  __gmpz_temp temp1(num), temp2(den);
-  mpq_init(mp);
-  mpz_set(mpq_numref(mp), temp1.get_mp());
-  mpz_set(mpq_denref(mp), temp2.get_mp());
-}
+// member operators for mpz_classref
 
 #define __GMPZRR_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)              \
                                                                       \
@@ -3845,6 +4610,32 @@ inline mpz_classref & mpz_classref::fun(long double ld)       \
 __GMPZRR_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)        \
 __GMPZRN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)
 
+#define __GMPZR_DEFINE_COMPOUND_OPERATOR_UI(fun, eval_fun)   \
+                                                             \
+inline mpz_classref & mpz_classref::fun(unsigned long int l) \
+{                                                            \
+  eval_fun::eval(ref, ref, l);                               \
+  return *this;                                              \
+}
+
+#define __GMPZR_DEFINE_INCREMENT_OPERATOR(fun, eval_fun) \
+                                                         \
+inline mpz_classref & mpz_classref::fun()                \
+{                                                        \
+  eval_fun::eval(ref, ref);                              \
+  return *this;                                          \
+}                                                        \
+                                                         \
+inline mpz_class mpz_classref::fun(int)                  \
+{                                                        \
+  mpz_class temp(*this);                                 \
+  eval_fun::eval(ref, ref);                              \
+  return temp;                                           \
+}
+
+
+// member operators for mpq_class
+
 #define __GMPQQ_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)         \
                                                                 \
 template <class T, class U>                                     \
@@ -3934,35 +4725,12 @@ inline mpq_class & mpq_class::fun(long double ld)       \
 __GMPQQ_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)        \
 __GMPQN_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)
 
-#define __GMPZR_DEFINE_COMPOUND_OPERATOR_UI(fun, eval_fun)   \
-                                                             \
-inline mpz_classref & mpz_classref::fun(unsigned long int l) \
-{                                                            \
-  eval_fun::eval(ref, ref, l);                               \
-  return *this;                                              \
-}
-
 #define __GMPQ_DEFINE_COMPOUND_OPERATOR_UI(fun, eval_fun) \
                                                           \
 inline mpq_class & mpq_class::fun(unsigned long int l)    \
 {                                                         \
   eval_fun::eval(mp, mp, l);                              \
   return *this;                                           \
-}
-
-#define __GMPZR_DEFINE_INCREMENT_OPERATOR(fun, eval_fun) \
-                                                         \
-inline mpz_classref & mpz_classref::fun()                \
-{                                                        \
-  eval_fun::eval(ref, ref);                              \
-  return *this;                                          \
-}                                                        \
-                                                         \
-inline mpz_class mpz_classref::fun(int)                  \
-{                                                        \
-  mpz_class temp(*this);                                 \
-  eval_fun::eval(ref, ref);                              \
-  return temp;                                           \
 }
 
 #define __GMPQ_DEFINE_INCREMENT_OPERATOR(fun, eval_fun) \
@@ -3980,502 +4748,15 @@ inline mpq_class mpq_class::fun(int)                    \
   return temp;                                          \
 }
 
-// define operators and functions
 
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator*=, __gmp_binary_multiplies)
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator/=, __gmp_binary_divides)
-__GMPZR_DEFINE_COMPOUND_OPERATOR(operator%=, __gmp_binary_modulus)
-
-__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator&=, __gmp_binary_and)
-__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator|=, __gmp_binary_ior)
-__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator^=, __gmp_binary_xor)
-
-__GMPZR_DEFINE_COMPOUND_OPERATOR_UI(operator<<=, __gmp_binary_lshift)
-__GMPZR_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
-
-__GMPZR_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
-__GMPZR_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
-
-__GMPQ_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
-__GMPQ_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
-__GMPQ_DEFINE_COMPOUND_OPERATOR(operator*=, __gmp_binary_multiplies)
-__GMPQ_DEFINE_COMPOUND_OPERATOR(operator/=, __gmp_binary_divides)
-
-__GMPQ_DEFINE_COMPOUND_OPERATOR_UI(operator<<=, __gmp_binary_lshift)
-__GMPQ_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
-
-__GMPQ_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
-__GMPQ_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
-
-template <class T, class U>
-void __gmp_set_expr(mpf_ptr, const __gmp_expr<T, U> &);
-
-class __gmpf_value { };
-
-// class wrapper for mpf_t
-
-#define __GMPFF_DECLARE_COMPOUND_OPERATOR(fun)                            \
-  template <class T, class U>                                             \
-  __gmp_expr<__gmpf_value, __gmpf_value> & fun(const __gmp_expr<T, U> &);
-
-#define __GMPFN_DECLARE_COMPOUND_OPERATOR(fun) \
-  __gmp_expr & fun(bool);                      \
-  __gmp_expr & fun(signed char);               \
-  __gmp_expr & fun(unsigned char);             \
-  __gmp_expr & fun(signed int);                \
-  __gmp_expr & fun(unsigned int);              \
-  __gmp_expr & fun(signed short int);          \
-  __gmp_expr & fun(unsigned short int);        \
-  __gmp_expr & fun(signed long int);           \
-  __gmp_expr & fun(unsigned long int);         \
-  __gmp_expr & fun(float);                     \
-  __gmp_expr & fun(double);                    \
-  __gmp_expr & fun(long double);
-
-#define __GMPF_DECLARE_COMPOUND_OPERATOR(fun) \
-__GMPFF_DECLARE_COMPOUND_OPERATOR(fun)        \
-__GMPFN_DECLARE_COMPOUND_OPERATOR(fun)
-
-#define __GMPF_DECLARE_COMPOUND_OPERATOR_UI(fun) \
-  __gmp_expr & fun(unsigned long int);
-
-#define __GMPF_DECLARE_INCREMENT_OPERATOR(fun) \
-  inline __gmp_expr & fun();                   \
-  inline __gmp_expr fun(int);
-
-template <>
-class __gmp_expr<__gmpf_value, __gmpf_value>
-{
-private:
-  mpf_t mp;
-public:
-  // size information
-  unsigned long int precision() const { return mpf_get_prec(mp); }
-
-  // constructors and destructor
-  __gmp_expr() { mpf_init(mp); }
-
-  __gmp_expr(const __gmp_expr &f)
-  { mpf_init2(mp, f.precision()); mpf_set(mp, f.mp); }
-  __gmp_expr(const __gmp_expr &f, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set(mp, f.mp); }
-  template <class T, class U>
-  __gmp_expr(const __gmp_expr<T, U> &expr)
-  { mpf_init2(mp, expr.precision()); __gmp_set_expr(mp, expr); }
-  template <class T, class U>
-  __gmp_expr(const __gmp_expr<T, U> &expr, unsigned long int precision)
-  { mpf_init2(mp, precision); __gmp_set_expr(mp, expr); }
-
-  __gmp_expr(bool b) { mpf_init_set_ui(mp, b); }
-  __gmp_expr(bool b, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_ui(mp, b); }
-
-  __gmp_expr(signed char c) { mpf_init_set_si(mp, c); }
-  __gmp_expr(signed char c, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_si(mp, c); }
-  __gmp_expr(unsigned char c) { mpf_init_set_ui(mp, c); }
-  __gmp_expr(unsigned char c, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_ui(mp, c); }
-
-  __gmp_expr(signed int i) { mpf_init_set_si(mp, i); }
-  __gmp_expr(signed int i, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_si(mp, i); }
-  __gmp_expr(unsigned int i) { mpf_init_set_ui(mp, i); }
-  __gmp_expr(unsigned int i, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_ui(mp, i); }
-
-  __gmp_expr(signed short int s) { mpf_init_set_si(mp, s); }
-  __gmp_expr(signed short int s, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_si(mp, s); }
-  __gmp_expr(unsigned short int s) { mpf_init_set_ui(mp, s); }
-  __gmp_expr(unsigned short int s, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_ui(mp, s); }
-
-  __gmp_expr(signed long int l) { mpf_init_set_si(mp, l); }
-  __gmp_expr(signed long int l, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_si(mp, l); }
-  __gmp_expr(unsigned long int l) { mpf_init_set_ui(mp, l); }
-  __gmp_expr(unsigned long int l, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_ui(mp, l); }
-
-  __gmp_expr(float f) { mpf_init_set_d(mp, f); }
-  __gmp_expr(float f, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_d(mp, f); }
-  __gmp_expr(double d) { mpf_init_set_d(mp, d); }
-  __gmp_expr(double d, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_d(mp, d); }
-  /*
-  __gmp_expr(long double ld) { mpf_init_set_d(mp, ld); }
-  __gmp_expr(long double ld, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_d(mp, ld); }
-  */
-
-  explicit __gmp_expr(const char *s) { mpf_init_set_str(mp, s, 0); }
-  __gmp_expr(const char *s, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_str(mp, s, 0); }
-  explicit __gmp_expr(const string &s) { mpf_init_set_str(mp, s.c_str(), 0); }
-  __gmp_expr(const string &s, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set_str(mp, s.c_str(), 0); }
-
-  explicit __gmp_expr(mpf_srcptr f)
-  { mpf_init2(mp, mpf_get_prec(f)); mpf_set(mp, f); }
-  __gmp_expr(mpf_srcptr f, unsigned long int precision)
-  { mpf_init2(mp, precision); mpf_set(mp, f); }
-
-  ~__gmp_expr() { mpf_clear(mp); }
-
-  // assignment operators
-  __gmp_expr & operator=(const __gmp_expr &f)
-  { mpf_set(mp, f.mp); return *this; }
-  template <class T, class U>
-  __gmp_expr<__gmpf_value, __gmpf_value> & operator=
-  (const __gmp_expr<T, U> &expr)
-  { __gmp_set_expr(mp, expr); return *this; }
-
-  __gmp_expr & operator=(bool b) { mpf_set_ui(mp, b); return *this; }
-
-  __gmp_expr & operator=(signed char c) { mpf_set_si(mp, c); return *this; }
-  __gmp_expr & operator=(unsigned char c) { mpf_set_ui(mp, c); return *this; }
-
-  __gmp_expr & operator=(signed int i) { mpf_set_si(mp, i); return *this; }
-  __gmp_expr & operator=(unsigned int i) { mpf_set_ui(mp, i); return *this; }
-
-  __gmp_expr & operator=(signed short int s)
-  { mpf_set_si(mp, s); return *this; }
-  __gmp_expr & operator=(unsigned short int s)
-  { mpf_set_ui(mp, s); return *this; }
-
-  __gmp_expr & operator=(signed long int l)
-  { mpf_set_si(mp, l); return *this; }
-  __gmp_expr & operator=(unsigned long int l)
-  { mpf_set_ui(mp, l); return *this; }
-
-  __gmp_expr & operator=(float f) { mpf_set_d(mp, f); return *this; }
-  __gmp_expr & operator=(double d) { mpf_set_d(mp, d); return *this; }
-  /*
-  __gmp_expr & operator=(long double ld) { mpf_set_ld(mp, ld); return *this; }
-  */
-
-  __gmp_expr & operator=(const char *s)
-  { mpf_set_str(mp, s, 0); return *this; }
-  __gmp_expr & operator=(const string &s)
-  { mpf_set_str(mp, s.c_str(), 0); return *this; }
-
-  // string input/output functions
-  void set_str_base(const string &s, int base)
-  { mpf_set_str(mp, s.c_str(), base); }
-  string get_str_base(int base) const
-  {
-    mp_exp_t expo;
-    __gmp_alloc_cstring temp(mpf_get_str(0, &expo, base, 0, mp));
-
-    // cancel terminating zeros
-    for (size_t i=strlen(temp.str)-1; temp.str[i]=='0' && i>0; --i)
-      temp.str[i] = '\0';
-
-    if (*temp.str == '-')
-      return "-0." + string(temp.str+1) + "e"; // the exponent?
-    else
-      return "0." + string(temp.str) + "e"; // the exponent?
-  }
-
-  // conversion functions
-  mpf_srcptr get_mpf_t() const { return mp; }
-  mpf_ptr get_mpf_t() { return mp; }
-
-  // signed long int get_si() const { return mpf_get_si(mp); }
-  // unsigned long int get_ui() const { return mpf_get_ui(mp); }
-  double get_d() const { return mpf_get_d(mp); } // should be long double
-
-  // compound assignments
-  __GMPF_DECLARE_COMPOUND_OPERATOR(operator+=)
-  __GMPF_DECLARE_COMPOUND_OPERATOR(operator-=)
-  __GMPF_DECLARE_COMPOUND_OPERATOR(operator*=)
-  __GMPF_DECLARE_COMPOUND_OPERATOR(operator/=)
-
-  __GMPF_DECLARE_COMPOUND_OPERATOR_UI(operator<<=)
-  __GMPF_DECLARE_COMPOUND_OPERATOR_UI(operator>>=)
-
-  __GMPF_DECLARE_INCREMENT_OPERATOR(operator++)
-  __GMPF_DECLARE_INCREMENT_OPERATOR(operator--)
-};
-
-typedef __gmp_expr<__gmpf_value, __gmpf_value> mpf_class;
-
-// unary expressions
-
-template <class Op>
-class __gmp_expr<__gmpf_value, __gmp_unary_expr<mpf_class, Op> >
-{
-private:
-  __gmp_unary_expr<mpf_class, Op> expr;
-public:
-  __gmp_expr(const mpf_class &val) : expr(val) { }
-  void eval(mpf_ptr f, unsigned long int) const
-  { Op::eval(f, expr.val.get_mpf_t()); }
-  unsigned long int precision() const
-  { return mpf_get_prec(expr.val.get_mpf_t()); }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr<__gmpf_value, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_unary_expr<__gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val) : expr(val) { }
-  void eval(mpf_ptr f, unsigned long int precision) const
-  {
-    mpf_class temp(expr.val, precision);
-    Op::eval(f, temp.get_mpf_t());
-  }
-  unsigned long int precision() const { return expr.val.precision(); }
-};
-
-// binary expressions
-
-template <class Op>
-class __gmp_expr<__gmpf_value, __gmp_binary_expr<mpf_class, mpf_class, Op> >
-{
-private:
-  __gmp_binary_expr<mpf_class, mpf_class, Op> expr;
-public:
-  __gmp_expr(const mpf_class &val1, const mpf_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpf_ptr f, unsigned long int) const
-  { Op::eval(f, expr.val1.get_mpf_t(), expr.val2.get_mpf_t()); }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpf_value, __gmp_binary_expr<mpf_class, T, Op> >
-{
-private:
-  __gmp_binary_expr<mpf_class, T, Op> expr;
-public:
-  __gmp_expr(const mpf_class &val1, T val2) : expr(val1, val2) { }
-  void eval(mpf_ptr f, unsigned long int) const
-  { Op::eval(f, expr.val1.get_mpf_t(), expr.val2); }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = mpf_get_default_prec();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class Op>
-class __gmp_expr<__gmpf_value, __gmp_binary_expr<T, mpf_class, Op> >
-{
-private:
-  __gmp_binary_expr<T, mpf_class, Op> expr;
-public:
-  __gmp_expr(T val1, const mpf_class &val2) : expr(val1, val2) { }
-  void eval(mpf_ptr f, unsigned long int) const
-  { Op::eval(f, expr.val1, expr.val2.get_mpf_t()); }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = mpf_get_default_prec(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpf_value, __gmp_binary_expr<mpf_class, __gmp_expr<T, U>, Op> >
-{
-private:
-  __gmp_binary_expr<mpf_class, __gmp_expr<T, U>, Op> expr;
-public:
-  __gmp_expr(const mpf_class &val1, const __gmp_expr<T, U> &val2)
-    : expr(val1, val2) { }
-  void eval(mpf_ptr f, unsigned long int precision) const
-  {
-    mpf_class temp(expr.val2, precision);
-    Op::eval(f, expr.val1.get_mpf_t(), temp.get_mpf_t());
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class Op>
-class __gmp_expr
-<__gmpf_value, __gmp_binary_expr<__gmp_expr<T, U>, mpf_class, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, mpf_class, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const mpf_class &val2)
-    : expr(val1, val2) { }
-  void eval(mpf_ptr f, unsigned long int precision) const
-  {
-    mpf_class temp(expr.val1, precision);
-    Op::eval(f, temp.get_mpf_t(), expr.val2.get_mpf_t());
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class V, class Op>
-class __gmp_expr<__gmpf_value, __gmp_binary_expr<__gmp_expr<T, U>, V, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, V, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, V val2) : expr(val1, val2) { }
-  void eval(mpf_ptr f, unsigned long int precision) const
-  {
-    mpf_class temp(expr.val1, precision);
-    Op::eval(f, temp.get_mpf_t(), expr.val2);
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = mpf_get_default_prec();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class V, class Op>
-class __gmp_expr<__gmpf_value, __gmp_binary_expr<T, __gmp_expr<U, V>, Op> >
-{
-private:
-  __gmp_binary_expr<T, __gmp_expr<U, V>, Op> expr;
-public:
-  __gmp_expr(T val1, const __gmp_expr<U, V> &val2) : expr(val1, val2) { }
-  void eval(mpf_ptr f, unsigned long int precision) const
-  {
-    mpf_class temp(expr.val2, precision);
-    Op::eval(f, expr.val1, temp.get_mpf_t());
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = mpf_get_default_prec(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-template <class T, class U, class V, class W, class Op>
-class __gmp_expr
-<__gmpf_value, __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> >
-{
-private:
-  __gmp_binary_expr<__gmp_expr<T, U>, __gmp_expr<V, W>, Op> expr;
-public:
-  __gmp_expr(const __gmp_expr<T, U> &val1, const __gmp_expr<V, W> &val2)
-    : expr(val1, val2) { }
-  void eval(mpf_ptr f, unsigned long int precision) const
-  {
-    mpf_class temp1(expr.val1, precision), temp2(expr.val2, precision);
-    Op::eval(f, temp1.get_mpf_t(), temp2.get_mpf_t());
-  }
-  unsigned long int precision() const
-  {
-    unsigned long int prec1 = expr.val1.precision(),
-      prec2 = expr.val2.precision();
-    return (prec1 > prec2) ? prec1 : prec2;
-  }
-};
-
-// type conversions
-
-class __gmpf_temp
-{
-private:
-  mpf_srcptr mp;
-  bool is_temp;
-  mpf_t temp;
-
-  __gmpf_temp();
-  __gmpf_temp(const __gmpf_temp &);
-  void operator=(const __gmpf_temp &);
-public:
-  __gmpf_temp(const mpf_class &f) : mp(f.get_mpf_t()), is_temp(false) { }
-  __gmpf_temp(const mpf_class &f, unsigned long int)
-    : mp(f.get_mpf_t()), is_temp(false) { }
-  template <class T, class U>
-  __gmpf_temp(const __gmp_expr<T, U> &expr)
-  {
-    mpf_init2(temp, expr.precision());
-    __gmp_set_expr(temp, expr);
-    mp = temp;
-    is_temp = true;
-  }
-  template <class T, class U>
-  __gmpf_temp(const __gmp_expr<T, U> &expr, unsigned long int precision)
-  {
-    mpf_init2(temp, precision);
-    __gmp_set_expr(temp, expr);
-    mp = temp;
-    is_temp = true;
-  }
-  ~__gmpf_temp() { if (is_temp) mpf_clear(temp); }
-
-  mpf_srcptr get_mp() const { return mp; }
-};
-
-template <>
-struct __gmp_resolve_expr<__gmpf_value, __gmpf_value>
-{
-  typedef __gmpf_value value_type;
-  typedef __gmpf_temp temp_type;
-};
-
-template <>
-inline void __gmp_set_expr(mpf_ptr f, const mpf_class &g)
-{
-  mpf_set(f, g.get_mpf_t());
-}
-
-template <class T>
-inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpf_value, T> &expr)
-{
-  expr.eval(f, mpf_get_prec(f));
-}
-
-// functions
-
-inline ostream & operator<<(ostream &o, const mpf_class &f)
-{
-  return o << f.get_mpf_t();
-}
-
-template <class T>
-inline ostream & operator<<
-(ostream &o, const __gmp_expr<__gmpf_value, T> &expr)
-{
-  mpf_class temp(expr);
-  return o << temp.get_mpf_t();
-}
-
-inline istream & operator>>(istream &i, mpf_class &f)
-{
-  return i >> f.get_mpf_t();
-}
+// member operators for mpf_class
 
 #define __GMPFF_DEFINE_COMPOUND_OPERATOR(fun, eval_fun)         \
                                                                 \
 template <class T, class U>                                     \
 inline mpf_class & mpf_class::fun(const __gmp_expr<T, U> &expr) \
 {                                                               \
-  __gmpf_temp temp(expr, precision());                          \
+  __gmpf_temp temp(expr, get_prec());                           \
   eval_fun::eval(mp, mp, temp.get_mp());                        \
   return *this;                                                 \
 }
@@ -4582,7 +4863,95 @@ inline mpf_class mpf_class::fun(int)                    \
   return temp;                                          \
 }
 
-// define operators and functions
+
+/**************** Arithmetic operators and functions ****************/
+
+// non-member operators and functions
+
+__GMP_DEFINE_UNARY_FUNCTION(operator+, __gmp_unary_plus)
+__GMP_DEFINE_UNARY_FUNCTION(operator-, __gmp_unary_minus)
+__GMP_DEFINE_UNARY_FUNCTION(operator~, __gmp_unary_com)
+
+__GMP_DEFINE_BINARY_FUNCTION(operator+, __gmp_binary_plus)
+__GMP_DEFINE_BINARY_FUNCTION(operator-, __gmp_binary_minus)
+__GMP_DEFINE_BINARY_FUNCTION(operator*, __gmp_binary_multiplies)
+__GMP_DEFINE_BINARY_FUNCTION(operator/, __gmp_binary_divides)
+__GMP_DEFINE_BINARY_FUNCTION(operator%, __gmp_binary_modulus)
+__GMP_DEFINE_BINARY_FUNCTION(operator&, __gmp_binary_and)
+__GMP_DEFINE_BINARY_FUNCTION(operator|, __gmp_binary_ior)
+__GMP_DEFINE_BINARY_FUNCTION(operator^, __gmp_binary_xor)
+
+__GMP_DEFINE_BINARY_FUNCTION_UI(operator<<, __gmp_binary_lshift)
+__GMP_DEFINE_BINARY_FUNCTION_UI(operator>>, __gmp_binary_rshift)
+
+__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator==, __gmp_binary_equal)
+__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator!=, __gmp_binary_not_equal)
+__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator<, __gmp_binary_less)
+__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator<=, __gmp_binary_less_equal)
+__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator>, __gmp_binary_greater)
+__GMP_DEFINE_BINARY_TYPE_FUNCTION(bool, operator>=, \
+                                  __gmp_binary_greater_equal)
+
+__GMP_DEFINE_UNARY_FUNCTION(abs, __gmp_abs_function)
+__GMP_DEFINE_UNARY_FUNCTION(trunc, __gmp_trunc_function)
+__GMP_DEFINE_UNARY_FUNCTION(floor, __gmp_floor_function)
+__GMP_DEFINE_UNARY_FUNCTION(ceil, __gmp_ceil_function)
+__GMP_DEFINE_UNARY_FUNCTION(sqrt, __gmp_sqrt_function)
+__GMP_DEFINE_BINARY_FUNCTION(hypot, __gmp_hypot_function)
+
+__GMP_DEFINE_UNARY_TYPE_FUNCTION(int, sgn, __gmp_sgn_function)
+__GMP_DEFINE_BINARY_TYPE_FUNCTION(int, compare, __gmp_cmp_function)
+
+// member operators for mpz_class
+
+__GMPZ_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
+__GMPZ_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
+__GMPZ_DEFINE_COMPOUND_OPERATOR(operator*=, __gmp_binary_multiplies)
+__GMPZ_DEFINE_COMPOUND_OPERATOR(operator/=, __gmp_binary_divides)
+__GMPZ_DEFINE_COMPOUND_OPERATOR(operator%=, __gmp_binary_modulus)
+
+__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator&=, __gmp_binary_and)
+__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator|=, __gmp_binary_ior)
+__GMPZZ_DEFINE_COMPOUND_OPERATOR(operator^=, __gmp_binary_xor)
+
+__GMPZ_DEFINE_COMPOUND_OPERATOR_UI(operator<<=, __gmp_binary_lshift)
+__GMPZ_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
+
+__GMPZ_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
+__GMPZ_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
+
+// member operators for mpz_classref
+
+__GMPZR_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
+__GMPZR_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
+__GMPZR_DEFINE_COMPOUND_OPERATOR(operator*=, __gmp_binary_multiplies)
+__GMPZR_DEFINE_COMPOUND_OPERATOR(operator/=, __gmp_binary_divides)
+__GMPZR_DEFINE_COMPOUND_OPERATOR(operator%=, __gmp_binary_modulus)
+
+__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator&=, __gmp_binary_and)
+__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator|=, __gmp_binary_ior)
+__GMPZRR_DEFINE_COMPOUND_OPERATOR(operator^=, __gmp_binary_xor)
+
+__GMPZR_DEFINE_COMPOUND_OPERATOR_UI(operator<<=, __gmp_binary_lshift)
+__GMPZR_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
+
+__GMPZR_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
+__GMPZR_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
+
+// member operators for mpq_class
+
+__GMPQ_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
+__GMPQ_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
+__GMPQ_DEFINE_COMPOUND_OPERATOR(operator*=, __gmp_binary_multiplies)
+__GMPQ_DEFINE_COMPOUND_OPERATOR(operator/=, __gmp_binary_divides)
+
+__GMPQ_DEFINE_COMPOUND_OPERATOR_UI(operator<<=, __gmp_binary_lshift)
+__GMPQ_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
+
+__GMPQ_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
+__GMPQ_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
+
+// member operators for mpf_class
 
 __GMPF_DEFINE_COMPOUND_OPERATOR(operator+=, __gmp_binary_plus)
 __GMPF_DEFINE_COMPOUND_OPERATOR(operator-=, __gmp_binary_minus)
@@ -4594,6 +4963,9 @@ __GMPF_DEFINE_COMPOUND_OPERATOR_UI(operator>>=, __gmp_binary_rshift)
 
 __GMPF_DEFINE_INCREMENT_OPERATOR(operator++, __gmp_unary_increment)
 __GMPF_DEFINE_INCREMENT_OPERATOR(operator--, __gmp_unary_decrement)
+
+
+/**************** Class wrapper for gmp_randstate_t ****************/
 
 class __gmp_urandomb_value { };
 class __gmp_urandomm_value { };
@@ -4607,7 +4979,7 @@ private:
 public:
   __gmp_expr(gmp_randstate_t s, unsigned long int l) : state(s), bits(l) { }
   void eval(mpz_ptr z) const { __gmp_rand_function::eval(z, state, bits); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
 };
 
 template <>
@@ -4620,7 +4992,7 @@ public:
   __gmp_expr(gmp_randstate_t s, const mpz_class &z) : state(s), range(z) { }
   void eval(mpz_ptr z) const
   { __gmp_rand_function::eval(z, state, range.get_mpz_t()); }
-  unsigned long int precision() const { return mpf_get_default_prec(); }
+  unsigned long int get_prec() const { return mpf_get_default_prec(); }
 };
 
 template <>
@@ -4632,8 +5004,8 @@ private:
 public:
   __gmp_expr(gmp_randstate_t s, unsigned long int l) : state(s), bits(l) { }
   void eval(mpf_ptr f, unsigned long int prec) const
-  { __gmp_rand_function::eval(f, state, (bits>0) ? precision() : prec); }
-  unsigned long int precision() const
+  { __gmp_rand_function::eval(f, state, (bits>0) ? get_prec() : prec); }
+  unsigned long int get_prec() const
   {
     if (bits == 0)
       return mpf_get_default_prec();
@@ -4641,8 +5013,6 @@ public:
       return bits;
   }
 };
-
-// class wrapper for gmp_randstate_t
 
 class gmp_randclass
 {
@@ -4652,10 +5022,18 @@ public:
   // constructors and destructor
   gmp_randclass(gmp_randalg_t alg, unsigned long int size)
   {
-    if (alg != GMP_RAND_ALG_LC)
-      ; // complain
-    gmp_randinit(state, alg, size);
+    switch (alg)
+      {
+      case GMP_RAND_ALG_LC: // no other cases for now
+      default:
+	gmp_randinit(state, alg, size);
+	break;
+      }
   }
+  gmp_randclass(void (*f)(gmp_randstate_t, mpz_srcptr,
+			  unsigned long int, unsigned long int),
+		mpz_class z, unsigned long int l1, unsigned long int l2)
+  { f(state, z.get_mpz_t(), l1, l2); }
 
   ~gmp_randclass() { gmp_randclear(state); }
 
@@ -4676,96 +5054,68 @@ public:
   get_z_range(const mpz_class &z)
   { return __gmp_expr<__gmpz_value, __gmp_urandomm_value>(state, z); }
   __gmp_expr<__gmpf_value, __gmp_urandomb_value>
-  get_f(unsigned long int precision = 0)
-  { return __gmp_expr<__gmpf_value, __gmp_urandomb_value>(state, precision); }
+  get_f(unsigned long int prec = 0)
+  { return __gmp_expr<__gmpf_value, __gmp_urandomb_value>(state, prec); }
 };
 
-// type conversions
 
-template <>
-struct __gmp_resolve_expr<__gmpz_value, __gmpf_value>
-{
-  typedef __gmpf_value value_type;
-  typedef __gmpf_temp temp_type;
-};
+/**************** #undef all private macros ****************/
 
-template <>
-struct __gmp_resolve_expr<__gmpf_value, __gmpz_value>
-{
-  typedef __gmpf_value value_type;
-  typedef __gmpf_temp temp_type;
-};
+#undef __GMPZQ_DEFINE_EXPR
 
-template <>
-struct __gmp_resolve_expr<__gmpq_value, __gmpf_value>
-{
-  typedef __gmpf_value value_type;
-  typedef __gmpf_temp temp_type;
-};
+#undef __GMP_DEFINE_UNARY_FUNCTION
+#undef __GMP_DEFINE_BINARY_FUNCTION
+#undef __GMP_DEFINE_BINARY_FUNCTION_UI
+#undef __GMP_DEFINE_UNARY_TYPE_FUNCTION
+#undef __GMP_DEFINE_BINARY_TYPE_FUNCTION
 
-template <>
-struct __gmp_resolve_expr<__gmpf_value, __gmpq_value>
-{
-  typedef __gmpf_value value_type;
-  typedef __gmpf_temp temp_type;
-};
+#undef __GMPZZ_DECLARE_COMPOUND_OPERATOR
+#undef __GMPZN_DECLARE_COMPOUND_OPERATOR
+#undef __GMPZ_DECLARE_COMPOUND_OPERATOR
+#undef __GMPZ_DECLARE_COMPOUND_OPERATOR_UI
+#undef __GMPZ_DECLARE_INCREMENT_OPERATOR
 
-template <class T>
-inline void __gmp_set_expr(mpz_ptr z, const mpf_class &f)
-{
-  mpz_set_f(z, f.get_mpf_t());
-}
+#undef __GMPZZ_DEFINE_COMPOUND_OPERATOR
+#undef __GMPZN_DEFINE_COMPOUND_OPERATOR
+#undef __GMPZ_DEFINE_COMPOUND_OPERATOR
+#undef __GMPZ_DEFINE_COMPOUND_OPERATOR_UI
+#undef __GMPZ_DEFINE_INCREMENT_OPERATOR
 
-template <class T>
-inline void __gmp_set_expr(mpz_ptr z, const __gmp_expr<__gmpf_value, T> &expr)
-{
-  mpf_class temp(expr);
-  mpz_set_f(z, temp.get_mpf_t());
-}
+#undef __GMPZRR_DECLARE_COMPOUND_OPERATOR
+#undef __GMPZRN_DECLARE_COMPOUND_OPERATOR
+#undef __GMPZR_DECLARE_COMPOUND_OPERATOR
+#undef __GMPZR_DECLARE_COMPOUND_OPERATOR_UI
+#undef __GMPZR_DECLARE_INCREMENT_OPERATOR
 
-template <class T>
-inline void __gmp_set_expr(mpq_ptr q, const mpf_class &f)
-{
-  mpq_set_f(q, f.get_mpf_t());
-}
+#undef __GMPZRR_DEFINE_COMPOUND_OPERATOR
+#undef __GMPZRN_DEFINE_COMPOUND_OPERATOR
+#undef __GMPZR_DEFINE_COMPOUND_OPERATOR
+#undef __GMPZR_DEFINE_COMPOUND_OPERATOR_UI
+#undef __GMPZR_DEFINE_INCREMENT_OPERATOR
 
-template <class T>
-inline void __gmp_set_expr(mpq_ptr q, const __gmp_expr<__gmpf_value, T> &expr)
-{
-  mpf_class temp(expr);
-  mpq_set_f(q, temp.get_mpf_t());
-}
+#undef __GMPQQ_DECLARE_COMPOUND_OPERATOR
+#undef __GMPQN_DECLARE_COMPOUND_OPERATOR
+#undef __GMPQ_DECLARE_COMPOUND_OPERATOR
+#undef __GMPQ_DECLARE_COMPOUND_OPERATOR_UI
+#undef __GMPQ_DECLARE_INCREMENT_OPERATOR
 
-template <class T>
-inline void __gmp_set_expr(mpf_ptr f, const mpz_class &z)
-{
-  mpf_set_z(f, z.get_mpz_t());
-}
+#undef __GMPQQ_DEFINE_COMPOUND_OPERATOR
+#undef __GMPQN_DEFINE_COMPOUND_OPERATOR
+#undef __GMPQ_DEFINE_COMPOUND_OPERATOR
+#undef __GMPQ_DEFINE_COMPOUND_OPERATOR_UI
+#undef __GMPQ_DEFINE_INCREMENT_OPERATOR
 
-template <class T>
-inline void __gmp_set_expr(mpf_ptr f, const mpz_classref &z)
-{
-  mpf_set_z(f, z.get_mpz_t());
-}
+#undef __GMPFF_DECLARE_COMPOUND_OPERATOR
+#undef __GMPFN_DECLARE_COMPOUND_OPERATOR
+#undef __GMPF_DECLARE_COMPOUND_OPERATOR
+#undef __GMPF_DECLARE_COMPOUND_OPERATOR_UI
+#undef __GMPF_DECLARE_INCREMENT_OPERATOR
 
-template <class T>
-inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpz_value, T> &expr)
-{
-  mpz_class temp(expr);
-  mpf_set_z(f, temp.get_mpz_t());
-}
+#undef __GMPFF_DEFINE_COMPOUND_OPERATOR
+#undef __GMPFN_DEFINE_COMPOUND_OPERATOR
+#undef __GMPF_DEFINE_COMPOUND_OPERATOR
+#undef __GMPF_DEFINE_COMPOUND_OPERATOR_UI
+#undef __GMPF_DEFINE_INCREMENT_OPERATOR
 
-template <class T>
-inline void __gmp_set_expr(mpf_ptr f, const mpq_class &q)
-{
-  mpf_set_q(f, q.get_mpq_t());
-}
-
-template <class T>
-inline void __gmp_set_expr(mpf_ptr f, const __gmp_expr<__gmpq_value, T> &expr)
-{
-  mpq_class temp(expr);
-  mpf_set_q(f, temp.get_mpq_t());
-}
 
 #endif /* __GMP_PLUSPLUS__ */
