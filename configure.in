@@ -348,15 +348,12 @@ for tmp_cc in $cclist; do
   esac
 done
 
+
 dnl  Check for programs needed by macros for finding compiler.
 dnl  More programs are checked for below, when a compiler is found.
-AC_PROG_NM	dnl  Macro from Libtool.
-# nm on 64-bit AIX needs to know the object file format 
-case "$target" in
-  powerpc64*-*-aix*)
-    NM="$NM -X 64"
-    ;;
-esac   
+
+GMP_PROG_NM
+
 
 # Save CFLAGS given on command line.
 gmp_user_CFLAGS="$CFLAGS"
