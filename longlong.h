@@ -323,6 +323,15 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 	     : "r" ((__ctz_x-1) & ~__ctz_x));				\
   } while (0)
 #endif
+#if defined (__INTEL_COMPILER)
+#include <ia64intrin.h>
+#define umul_ppmm(ph, pl, m0, m1)					\
+  do {									\
+    UWtype _m0 = (m0), _m1 = (m1);					\
+    ph = _m64_xmahu (_m0, _m1, 0);					\
+    pl = _m0 * _m1;							\
+  } while (0)
+#endif
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { UWtype __di;							\
