@@ -87,61 +87,6 @@ all	@dep@ {Lib}
 
 
 ###########################################################################
-# Special rules, got them from "mp[fqz]/Makefile.am", and configure.in
-# mulfunc declarations
-
-
-{MpzObjDir}add.o @dep@ ::mpz:aors.c Makefile
-	{C} ::mpz:aors.c -o {Targ} {COptions} -d OPERATION_add
-
-{MpzObjDir}sub.o @dep@ ::mpz:aors.c Makefile
-	{C} ::mpz:aors.c -o {Targ} {COptions} -d OPERATION_sub
-
-
-{MpzObjDir}add_ui.o @dep@ ::mpz:aors_ui.c Makefile
-	{C} ::mpz:aors_ui.c -o {Targ} {COptions} -d OPERATION_add_ui
-
-{MpzObjDir}sub_ui.o @dep@ ::mpz:aors_ui.c Makefile
-	{C} ::mpz:aors_ui.c -o {Targ} {COptions} -d OPERATION_sub_ui
-
-
-{MpzObjDir}fits_sint.o @dep@ ::mpz:fits_s.c Makefile
-	{C} ::mpz:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_sint
-
-{MpzObjDir}fits_slong.o @dep@ ::mpz:fits_s.c Makefile
-	{C} ::mpz:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_slong
-
-{MpzObjDir}fits_sshort.o @dep@ ::mpz:fits_s.c Makefile
-	{C} ::mpz:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_sshort
-
-
-{MpzObjDir}mul_si.o @dep@ ::mpz:mul_siui.c Makefile
-	{C} ::mpz:mul_siui.c -o {Targ} {COptions} -d OPERATION_mul_si
-
-{MpzObjDir}mul_ui.o @dep@ ::mpz:mul_siui.c Makefile
-	{C} ::mpz:mul_siui.c -o {Targ} {COptions} -d OPERATION_mul_ui
-
-
-{MpfObjDir}fits_sint.o @dep@ ::mpf:fits_s.c Makefile
-	{C} ::mpf:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_sint
-
-{MpfObjDir}fits_slong.o @dep@ ::mpf:fits_s.c Makefile
-	{C} ::mpf:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_slong
-
-{MpfObjDir}fits_sshort.o @dep@ ::mpf:fits_s.c Makefile
-	{C} ::mpf:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_sshort
-
-{MpfObjDir}fits_uint.o @dep@ ::mpf:fits_u.c Makefile
-	{C} ::mpf:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_uint
-
-{MpfObjDir}fits_ulong.o @dep@ ::mpf:fits_u.c Makefile
-	{C} ::mpf:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_ulong
-
-{MpfObjDir}fits_ushort.o @dep@ ::mpf:fits_u.c Makefile
-	{C} ::mpf:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_ushort
-
-
-###########################################################################
 # Default rules/ directory rules
 
 {MpfObjDir} @dep@ ::mpf:
