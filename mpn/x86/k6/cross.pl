@@ -103,7 +103,7 @@ sub disassemble {
 	if ($prefix =~ /0f/
 	    && $opcode !~ /^8/         # jcond disp32
 	    && $modrm =~ /^[0-3][4c]/) {
-	    print "ZZ ($file) >3 bytes to determine instruction length\n";
+	    print "ZZ ($file) >3 bytes to determine instruction length [K6]\n";
 	}
 
 	# with just an opcode, starting 1f mod 20h
