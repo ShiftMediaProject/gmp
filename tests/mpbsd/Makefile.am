@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000, 2001 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -26,8 +26,11 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libmp.la
 
 if WANT_MPBSD
-MPBSD_check_OPTION = allfuns t-itom
+MPBSD_check_OPTION = allfuns t-itom t-mtox
 endif
 
 check_PROGRAMS = $(MPBSD_check_OPTION)
 TESTS = $(check_PROGRAMS)
+
+# check linking only against libmp
+allfuns_LDADD = $(top_builddir)/libmp.la
