@@ -57,6 +57,6 @@ operator<< (ostream &o, mpf_srcptr f)
   ASSERT (ret != -1);
   __gmp_asprintf_final (&d);
 
-  gmp_allocated_string alloc = result;
-  return o.write (result, strlen (result));
+  gmp_allocated_string  t (result);
+  return o.write (t.str, t.len);
 }

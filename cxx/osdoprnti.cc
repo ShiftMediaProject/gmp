@@ -56,6 +56,6 @@ __gmp_doprnt_integer_ostream (ostream &o, struct doprnt_params_t *p,
   __gmp_asprintf_final (&d);
   (*__gmp_free_func) (s, strlen(s)+1);
 
-  gmp_allocated_string alloc = result;
-  return o.write (result, strlen (result));
+  gmp_allocated_string  t (result);
+  return o.write (t.str, t.len);
 }
