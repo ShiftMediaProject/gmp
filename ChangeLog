@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2004-02-18  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h (MPN_TOOM3_MAX_N): Move to !WANT_FFT section.
+
 	* tests/mpz/t-mul.c: Exclude special huge operands unless WANT_FFT.
 
 	* mpz/rrandomb.c (gmp_rrandomb): Rewrite.
