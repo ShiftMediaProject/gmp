@@ -119,6 +119,54 @@ MA 02111-1307, USA. */
    Please add support for more CPUs here, or improve the current support
    for the CPUs below!  */
 
+
+/* count_leading_zeros_gcc_clz is count_leading_zeros implemented with gcc
+   3.4 __builtin_clzl or __builtin_clzll, according to our limb size.
+   Similarly count_trailing_zeros_gcc_ctz using __builtin_ctzl or
+   __builtin_ctzll.
+
+   These builtins are only used when we check what code comes out, on some
+   chips they're merely libgcc calls, where we will instead want an inline
+   in that case (either asm or generic C).
+
+   These builtins are better than an asm block of the same insn, since an
+   asm block doesn't give gcc any information about scheduling or resource
+   usage.  We keep an asm block for use on prior versions of gcc though.
+
+   For reference, __builtin_ffs existed in gcc prior to __builtin_clz, but
+   it's not used (for count_leading_zeros) because it generally gives extra
+   code to ensure the result is 0 when the input is 0, which we don't need
+   or want.  */
+
+#ifdef _LONG_LONG_LIMB
+#define count_leading_zeros_gcc_clz(count,x)    \
+  do {                                          \
+    ASSERT ((x) != 0);                          \
+    (count) = __builtin_clzll (x);              \
+  } while (0)
+#else
+#define count_leading_zeros_gcc_clz(count,x)    \
+  do {                                          \
+    ASSERT ((x) != 0);                          \
+    (count) = __builtin_clzl (x);               \
+  } while (0)
+#endif
+
+#ifdef _LONG_LONG_LIMB
+#define count_trailing_zeros_gcc_ctz(count,x)   \
+  do {                                          \
+    ASSERT ((x) != 0);                          \
+    (count) = __builtin_ctzll (x);              \
+  } while (0)
+#else
+#define count_trailing_zeros_gcc_ctz(count,x)   \
+  do {                                          \
+    ASSERT ((x) != 0);                          \
+    (count) = __builtin_ctzl (x);               \
+  } while (0)
+#endif
+
+
 /* FIXME: The macros using external routines like __MPN(count_leading_zeros)
    don't need to be under !NO_ASM */
 #if ! defined (NO_ASM)
@@ -681,12 +729,17 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif /* pentiummx */
 
 #else /* ! pentium */
+
+#if __GMP_GNUC_PREREQ (3,4)  /* using bsrl */
+#define count_leading_zeros(count,x)  count_leading_zeros_gcc_clz(count,x)
+#endif /* gcc clz */
+
 /* On P6, gcc prior to 3.0 generates a partial register stall for
    __cbtmp^31, due to using "xorb $31" instead of "xorl $31", the former
    being 1 code byte smaller.  "31-__cbtmp" is a workaround, probably at the
    cost of one extra instruction.  Do this for "i386" too, since that means
    generic x86.  */
-#if __GNUC__ < 3							\
+#if ! defined (count_leading_zeros) && __GNUC__ < 3                     \
   && (HAVE_HOST_CPU_i386						\
       || HAVE_HOST_CPU_i686						\
       || HAVE_HOST_CPU_pentiumpro					\
@@ -699,7 +752,9 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));	\
     (count) = 31 - __cbtmp;						\
   } while (0)
-#else
+#endif /* gcc<3 asm bsrl */
+
+#ifndef count_leading_zeros
 #define count_leading_zeros(count, x)					\
   do {									\
     USItype __cbtmp;							\
@@ -707,13 +762,20 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));	\
     (count) = __cbtmp ^ 31;						\
   } while (0)
-#endif
+#endif /* asm bsrl */
 
+#if __GMP_GNUC_PREREQ (3,4)  /* using bsfl */
+#define count_trailing_zeros(count,x)  count_trailing_zeros_gcc_ctz(count,x)
+#endif /* gcc ctz */
+
+#ifndef count_trailing_zeros
 #define count_trailing_zeros(count, x)					\
   do {									\
     ASSERT ((x) != 0);							\
     __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));	\
   } while (0)
+#endif /* asm bsfl */
+
 #endif /* ! pentium */
 
 #ifndef UMUL_TIME
