@@ -1121,6 +1121,36 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
     ((UDWtype) __hi << W_TYPE_SIZE) | __lo; })
 #endif
 
+
+/* Note the prototypes are under !define(umul_ppmm) etc too, since the HPPA
+   versions above are different and we don't want to conflict.  */
+
+#if ! defined (umul_ppmm) && HAVE_NATIVE_mpn_umul_ppmm
+#define mpn_umul_ppmm  __MPN(umul_ppmm)
+extern mp_limb_t mpn_umul_ppmm _PROTO ((mp_limb_t *, mp_limb_t, mp_limb_t));
+#define umul_ppmm(wh, wl, u, v)                                 \
+  do {                                                          \
+    mp_limb_t __umul_ppmm__p0;                                  \
+    (wh) = __MPN(umul_ppmm) (&__umul_ppmm__p0,                  \
+                             (mp_limb_t) (u), (mp_limb_t) (v)); \
+    (wl) = __umul_ppmm__p0;                                     \
+  } while (0)
+#endif
+
+#if ! defined (udiv_qrnnd) && HAVE_NATIVE_mpn_udiv_qrnnd
+#define mpn_udiv_qrnnd  __MPN(udiv_qrnnd)
+extern mp_limb_t mpn_udiv_qrnnd _PROTO ((mp_limb_t *,
+                                         mp_limb_t, mp_limb_t, mp_limb_t));
+#define udiv_qrnnd(q, r, n1, n0, d)                                           \
+  do {                                                                        \
+    mp_limb_t __udiv_qrnnd__r;                                                \
+    (q) = mpn_udiv_qrnnd (&__udiv_qrnnd__r,                                   \
+                          (mp_limb_t) (n1), (mp_limb_t) (n0), (mp_limb_t) d); \
+    (r) = __udiv_qrnnd__r;                                                    \
+  } while (0)
+#endif
+
+
 /* If this machine has no inline assembler, use C macros.  */
 
 #if !defined (add_ssaaaa)
