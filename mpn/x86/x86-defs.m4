@@ -183,7 +183,7 @@ ifelse(WANT_PROFILING,`gprof',
 ')dnl
 ifdef(`PIC',
 `	pushl	%ebx
-	movl_GOT_ebx
+	mcount_movl_GOT_ebx
 ifelse(MCOUNT_PIC_REG,,,
 `	leal	L(mcount_data)@GOTOFF(%ebx), MCOUNT_PIC_REG')
 MCOUNT_PIC_CALL
@@ -198,24 +198,24 @@ ifelse(WANT_PROFILING,`gprof',
 `	popl	%ebp
 ')')
 
-dnl  Called: movl_GOT_ebx
+dnl  Called: mcount_movl_GOT_ebx
 dnl  Label H is "here", the %eip obtained from the call.  C is the called
 dnl  subroutine.  J is the jump across that subroutine.  A fetch and "ret"
 dnl  is always done so calls and returns are balanced for the benefit of the
 dnl  various x86s that have return stack branch prediction.
-define(movl_GOT_ebx,
+define(mcount_movl_GOT_ebx,
 m4_assert_numargs(-1)
-`	call	L(movl_GOT_ebx_C`'movl_GOT_ebx_counter)
-L(movl_GOT_ebx_H`'movl_GOT_ebx_counter):
-	jmp	L(movl_GOT_ebx_J`'movl_GOT_ebx_counter)
-L(movl_GOT_ebx_C`'movl_GOT_ebx_counter):
+`	call	L(mcount_movl_GOT_ebx_C`'mcount_movl_GOT_ebx_counter)
+L(mcount_movl_GOT_ebx_H`'mcount_movl_GOT_ebx_counter):
+	jmp	L(mcount_movl_GOT_ebx_J`'mcount_movl_GOT_ebx_counter)
+L(mcount_movl_GOT_ebx_C`'mcount_movl_GOT_ebx_counter):
 	movl	(%esp), %ebx
 	ret
-L(movl_GOT_ebx_J`'movl_GOT_ebx_counter):
-	addl	$GSYM_PREFIX`'_GLOBAL_OFFSET_TABLE_+[.-L(movl_GOT_ebx_H`'movl_GOT_ebx_counter)], %ebx
-define(`movl_GOT_ebx_counter',incr(movl_GOT_ebx_counter))')
+L(mcount_movl_GOT_ebx_J`'mcount_movl_GOT_ebx_counter):
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(mcount_movl_GOT_ebx_H`'mcount_movl_GOT_ebx_counter)], %ebx
+define(`mcount_movl_GOT_ebx_counter',incr(mcount_movl_GOT_ebx_counter))')
 
-define(movl_GOT_ebx_counter,1)
+define(mcount_movl_GOT_ebx_counter,1)
 
 
 dnl  --------------------------------------------------------------------------
