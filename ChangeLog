@@ -1,3 +1,22 @@
+2000-10-20  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (HAVE_TARGET_CPU_*): Support hppa1.0, hppa1.1, hppa2.0
+	by sed'ing the period into `_'.
+
+	* acconfig.h: Add #undefs for hppa targets.
+
+	* longlong.h (udiv_qrnnd): Fix typo in last change.
+
+	* mpz/tstbit.c: Rewrite (partly to work around GCC 2.95.2 HPPA bug).
+
+	* configure.in, path switch:
+	(hppa2.0*-*-*): For non-CC64 case, update path.
+
+	* configure.in, compiler switch:
+	(hppa2.0w-*-*): Match with same regexp in both places.
+	(hppa*-*-*): New case.
+	(all hppa alternatives): Don't inherit default gmp_cflags_{cc,c89}.
+	
 2000-10-18  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (alpha*-*-*): Define gmp_xoptcflags_gcc like for
