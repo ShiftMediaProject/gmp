@@ -30,8 +30,7 @@ INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
 	-I$(top_srcdir) -I$(top_srcdir)/mpz
 
 nodist_libmpbsd_la_SOURCES = \
-	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c \
-	assert.c errno.c memory.c mp_bpl.c
+	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c
 libmpbsd_la_SOURCES = \
 	itom.c mdiv.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c
 
@@ -68,16 +67,3 @@ sqrtrem.c: $(top_srcdir)/mpz/sqrtrem.c
 
 sub.c: $(top_srcdir)/mpz/sub.c
 	cp $(top_srcdir)/mpz/sub.c sub.c
-
-
-assert.c: $(top_srcdir)/assert.c
-	cp $(top_srcdir)/assert.c assert.c
-
-errno.c: $(top_srcdir)/errno.c
-	cp $(top_srcdir)/errno.c errno.c
-
-memory.c: $(top_srcdir)/memory.c
-	cp $(top_srcdir)/memory.c memory.c
-
-mp_bpl.c: $(top_srcdir)/mp_bpl.c
-	cp $(top_srcdir)/mp_bpl.c mp_bpl.c
