@@ -184,7 +184,7 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
   return 1;
 }
 
-/* Compute au + bv. u and v are simgle limbs, a and b are n limbs each.
+/* Compute au + bv. u and v are single limbs, a and b are n limbs each.
    Stores n+1 limbs in rp, and returns the (n+2)'nd limb. */
 /* FIXME: With nails, we can instead return limb n+1, possibly including
    one non-zero nail bit. */
@@ -451,7 +451,9 @@ __gmpn_hgcd_sanity (const struct hgcd *hgcd,
   ASSERT (L <= asize);
   ASSERT (L <= bsize);
 
-  t1p = alloca ( (asize + bsize + 2*L) * sizeof (mp_limb_t));
+  /* NOTE: We really need only asize + bsize + 2*L, but since we're
+   * swapping the pointers around, we allocate 2*(asize + L). */
+  t1p = alloca (2*(asize + L) * sizeof (mp_limb_t));
   t2p = t1p + (asize + L);
 
   sign = hgcd->sign;
@@ -598,8 +600,8 @@ hgcd_mul (struct hgcd_row *P, mp_size_t alloc,
     return psize - (h == 0);
 }
 
-/* Computes R = 2^k H + u A' - v B', which must be non-negative.
-   Temporary space needed is k + uvsize.
+/* Computes R = W^k H + u A' - v B', which must be non-negative. W
+   denotes 2^(GMP_NUMB_BITS). Temporary space needed is k + uvsize.
 
    H and R must not overlap. */
 
@@ -1031,6 +1033,16 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
    all terms are at most floor (asize/2) limbs. */
 #define HGCD_JEBELEAN_ITCH(asize) ((asize)/2 + 1)
 
+/* Called when r[0, 1, 2] >= W^M, r[3] < W^M. Returns the number of
+   the remainders that satisfy Jebelean's criterion, i.e. find the
+   largest k such that
+
+     r[k+1] >= max (-u[k+1], - v[k+1])
+
+     r[k] - r[k-1] >= max (u[k+1] - u[k], v[k+1] - v[k])
+
+   Returns 2, 3 or 4.
+ */
 static int
 hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
 	       mp_ptr tp, mp_size_t talloc)
@@ -1404,6 +1416,15 @@ mpn_hgcd_lehmer_itch (mp_size_t asize)
   return HGCD_JEBELEAN_ITCH (asize);
 }
 
+/* Repeatedly divides A by B, until the remainder fits in M =
+   ceil(asize / 2) limbs. Stores cofactors in HGCD, and pushes the
+   quotients on STACK. On success, HGCD->row[0, 1, 2] correspond to
+   remainders that are larger than M limbs, while HGCD->row[3]
+   correspond to a remainder that fit in M limbs.
+  
+   Returns 0 on failure (if B or A mod B fits in M limbs), otherwise
+   returns 2, 3 or 4 depending on how many of the r:s that satisfy
+   Jebelean's criterion. */
 int
 mpn_hgcd_lehmer (struct hgcd *hgcd,
 		 mp_srcptr ap, mp_size_t asize,
@@ -1602,7 +1623,9 @@ mpn_hgcd_itch (mp_size_t asize)
   return asize + mpn_hgcd_init_itch (asize + k * (6 + 12));
 }
 
-/* Computes hgcd using Schönhage's algorithm */
+/* Computes hgcd using Schönhage's algorithm. Should return the same
+   numbers as mpn_hgcd_lehmer, but computes them asymptotically
+   faster. */
 int
 mpn_hgcd (struct hgcd *hgcd,
 	  mp_srcptr ap, mp_size_t asize,
