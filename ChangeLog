@@ -1,5 +1,7 @@
 2000-04-21  Torbjorn Granlund  <tege@swox.com>
 
+	* rand.c: Call mpz_clear for otherwise leaking mpz_t.
+
 	* mpz/pprime_p2.c (mpz_probab_prime_p): Merge handling of negative
 	n into code for handling small positive n.  Merge variables m and n.
 	After dividing, simply call mpz_millerrabin.
