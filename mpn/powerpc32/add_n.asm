@@ -1,67 +1,82 @@
-dnl PowerPC-32 mpn_add_n -- Add two limb vectors of the same length > 0 and
-dnl store sum in a third limb vector.
+dnl  PowerPC 750 mpn_add_n -- add mpn limb vectors.
 dnl
-dnl      cycles/limb
-dnl 604e:   2.67
-dnl 750:    4.5
+dnl        cycles/limb
+dnl  604e:     2.67
+dnl  750:      4.0
 
-dnl Copyright 1995, 1997, 2000, 2002 Free Software Foundation, Inc.
-
-dnl This file is part of the GNU MP Library.
-
-dnl The GNU MP Library is free software; you can redistribute it and/or modify
-dnl it under the terms of the GNU Lesser General Public License as published by
-dnl the Free Software Foundation; either version 2.1 of the License, or (at your
-dnl option) any later version.
-
-dnl The GNU MP Library is distributed in the hope that it will be useful, but
-dnl WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-dnl or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-dnl License for more details.
-
-dnl You should have received a copy of the GNU Lesser General Public License
-dnl along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-dnl the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-dnl MA 02111-1307, USA.
-
-
-dnl INPUT PARAMETERS
-dnl res_ptr	r3
-dnl s1_ptr	r4
-dnl s2_ptr	r5
-dnl size	r6
+dnl  Copyright 2002 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Lesser General Public License as
+dnl  published by the Free Software Foundation; either version 2.1 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Lesser General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Lesser General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
 
+
+C mp_limb_t mpn_add_n (mp_ptr dst, mp_srcptr src1, mp_srcptr src2,
+C                      mp_size_t size);
+C
+C The use of offsets xp-wp and yp-wp is necessary for 4.0 c/l.
+
 ASM_START()
 PROLOGUE(mpn_add_n)
-	mtctr	r6		C copy size into CTR
-	addic	r0,r0,0		C clear cy
-	lwz	r8,0(r4)	C load least significant s1 limb
-	lwz	r0,0(r5)	C load least significant s2 limb
-	addi	r3,r3,-4	C offset res_ptr, it's updated before it's used
-	bdz	L(end)		C If done, skip loop
 
-L(oop):	lwz	r9,4(r4)	C load s1 limb
-	lwz	r10,4(r5)	C load s2 limb
-	adde	r7,r0,r8	C add limbs with cy, set cy
-	stw	r7,4(r3)	C store result limb
-	bdz	L(exit)		C decrement CTR and exit if done
-	lwzu	r8,8(r4)	C load s1 limb and update s1_ptr
-	lwzu	r0,8(r5)	C load s2 limb and update s2_ptr
-	adde	r7,r10,r9	C add limbs with cy, set cy
-	stwu	r7,8(r3)	C store result limb and update res_ptr
-	bdnz	L(oop)		C decrement CTR and loop back
+	C r3	wp
+	C r4	xp
+	C r5	yp
+	C r6	size
 
-L(end):	adde	r7,r0,r8
-	stw	r7,4(r3)	C store ultimate result limb
-	li	r3,0		C load cy into ...
-	addze	r3,r3		C ... return value register
+	mtctr	r6		C size
+	lwz	r6, 0(r4)	C xp[0]
+
+	lwz	r7, 0(r5)	C yp[0]
+	sub	r4, r4, r3	C xp-wp
+
+	sub	r5, r5, r3	C yp-wp
+	addi	r4, r4, 4	C xp-wp-4
+
+	addi	r5, r5, 4	C yp-wp-4
+	addc	r6, r6, r7
+
+	stw	r6, 0(r3)	C wp[0]
+	bdz	L(done)
+
+
+L(top):
+	C r3	wp, incrementing
+	C r4	xp-wp+4
+	C r5	yp-wp+4
+	C r6	scratch
+	C r7	scratch
+
+	lwzx	r6, r4,r3	C xp[i]
+
+	lwzx	r7, r5,r3	C yp[i]
+
+	C serialize
+	adde	r6, r6, r7
+
+	stwu	r6, 4(r3)	C wp[i]
+	bdnz	L(top)
+
+
+L(done):
+	li	r3, 0
+
+	addze	r3, r3		C carry out
 	blr
-L(exit):
-	adde	r7,r10,r9
-	stw	r7,8(r3)
-	li	r3,0		C load cy into ...
-	addze	r3,r3		C ... return value register
-	blr
-EPILOGUE(mpn_add_n)
+
+EPILOGUE()
