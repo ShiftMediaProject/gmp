@@ -3,7 +3,7 @@
    THIS IS A TEST PROGRAM USED ONLY FOR DEVELOPMENT.  IT'S ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -807,6 +807,7 @@ param_init (void)
 
   p = &param[TYPE_PREINV_DIVREM_1];
   COPY (TYPE_DIVREM_1);
+  p->size = SIZE_YES; /* ie. no size==0 */
   REFERENCE (refmpn_preinv_divrem_1);
 
   p = &param[TYPE_PREINV_MOD_1];
