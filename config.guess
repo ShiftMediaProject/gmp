@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -155,7 +155,7 @@ EOF
   ;;
 
 ia64*-*-*)
-  # CPUID[3] bits 24 to 31 ais the processor family.  itanium2 is documented
+  # CPUID[3] bits 24 to 31 is the processor family.  itanium2 is documented
   # as 0x1f, plain itanium has been seen returning 0x07 on two systems, but
   # haven't found any documentation on it as such.
   #
