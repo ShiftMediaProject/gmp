@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
+#include "tests.h"
 
 #ifndef SIZE
 #define SIZE 4
@@ -36,31 +37,6 @@ void
 debug_mp (mpz_srcptr x, int base)
 {
   mpz_out_str (stdout, base, x); fputc ('\n', stdout);
-}
-
-/* twos complement, return borrow */
-mp_limb_t
-mpn_neg (mp_ptr dst, mp_srcptr src, mp_size_t size)
-{
-  mpn_com_n (dst, src, size);
-  return mpn_add_1 (dst, dst, size, 1) ^ 1;
-}
-
-mp_limb_t
-mpn_tstbit (mp_srcptr ptr, mp_size_t size)
-{
-  return (ptr[size/BITS_PER_MP_LIMB]
-          & (CNST_LIMB(1) << size%BITS_PER_MP_LIMB)) != 0;
-}
-
-void
-mpz_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
-{
-  ASSERT (size >= 0);
-  MPN_NORMALIZE (p, size);
-  MPZ_REALLOC (z, size);
-  MPN_COPY (PTR(z), p, size);
-  SIZ(z) = size;
 }
 
 
@@ -90,14 +66,14 @@ check_tstbit (void)
           if (low1)
             pos[0] |= 1;
 
-          mpn_neg (neg, pos, numberof(neg));
+          refmpn_neg (neg, pos, numberof(neg));
           mpz_set_n (z, neg, numberof(neg));
           mpz_neg (z, z);
 
           for (i = 0; i < numberof(pos)*BITS_PER_MP_LIMB; i++)
             {
               got = mpz_tstbit (z, i);
-              want = mpn_tstbit (pos, i);
+              want = refmpn_tstbit (pos, i);
               if (got != want)
                 {
                   printf ("wrong at bit %lu, with %d zeros\n", i, zeros);
