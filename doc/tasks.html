@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 15 Apr 2001.  An up-to-date version is available at
+  This file current as of 22 Apr 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -365,9 +365,6 @@
      (base and modulus have common factors)?  Throw a divide by zero maybe, or
      return a flag like <code>mpz_invert</code> does.
 <li> <code>mpz_nthprime</code>.
-<li> <code>mpn_divexact_1</code> could be created and used for an
-     <code>mpz_divexact_ui</code> and perhaps other purposes.  Work on this is
-     in progress.
 <li> Perhaps <code>mpz_init2</code>, initializing and making initial room for
      N bits.  The actual size would be rounded up to a limb, and perhaps an
      extra limb added since so many <code>mpz</code> routines need that on
@@ -397,10 +394,9 @@
 <li> Sparc32: floating point or integer <code>udiv</code> should be selected
      according to the CPU target.  Currently floating point ends up being
      used on all sparcs, which is probably not right for generic V7 and V8.
-<li> m68k: config.guess should say <code>m68040</code> etc, currently it just
-     gives <code>m68k</code> for everything.  In particular detect
-     <code>m68000</code> or <code>m68010</code> since they won't like the
-     68020 instructions we use under an <code>m68k</code> config.
+<li> m68k: config.guess can detect 68000, cpu32 and 68020, but relies on
+     system information for 030, 040 and 060.  Can they be identified by
+     running some code?
 <li> demos/pexpr.c: is becoming the usual *nix mess of nested ifdefs.  Instead
      use the results of configure tests.  pexpr.c could be generated from a
      pexpr.in with a set of #undef's.
@@ -512,6 +508,11 @@ near future, but are at least worth thinking about.
      used by GMP++, etc) would require the <code>__declspec</code> nonsense
      described in the Goat book.  Or maybe since <code>gmp_version</code> is a
      constant it can avoid that stuff.
+<li> m68k: configure could accept <code>m68020fp</code> or similar to select
+     68881 floating point.  config.guess could try to detect that too.  This
+     would only be to add -m68881 to gcc, there's no gmp asm code using float,
+     so perhaps it's just as easily left to the user to set
+     <code>CFLAGS</code>.
 </ul>
 
 
