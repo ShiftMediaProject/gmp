@@ -229,6 +229,18 @@ x
 \gdef\GMPraise#1{\mskip0.5\thinmuskip\hbox{\raise0.8ex\hbox{#1}}}
 @end tex
 
+@c  Usage: @texlinebreak{}
+@c  A line break as per @*, but only in tex.
+@iftex
+@macro texlinebreak
+@*
+@end macro
+@end iftex
+@ifnottex
+@macro texlinebreak
+@end macro
+@end ifnottex
+
 
 @ifnottex
 This file documents GNU MP, a library for arbitrary-precision arithmetic.
@@ -596,7 +608,7 @@ other members, older or newer.  The best idea is always to build GMP for the
 exact machine type you intend to run it on.
 
 The following CPUs have specific support.  See @file{configure.in} for details
-of which code and what compiler options they select.
+of what code and compiler options they select.
 
 @itemize @bullet
 
@@ -637,7 +649,14 @@ MIPS:
 Motorola:
 @samp{m68k},
 @samp{m68000},
+@samp{m68010},
 @samp{m68020},
+@samp{m68030},
+@samp{m68040},
+@samp{m68060},
+@samp{m68302},
+@samp{m68360},
+@samp{m5200},
 @samp{m88k},
 @samp{m88110}
 
@@ -786,7 +805,7 @@ check the algorithm thresholds for their system.
 @item @option{--enable-mpbsd}
 
 The Berkeley MP compatibility library (@file{libmp}) and header file
-(@file{mp.h}) are built and installed if @option{--enable-mpbsd} is used.
+(@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
 @item @option{--enable-mpfr}
@@ -835,11 +854,15 @@ make pexpr
 @item Documentation
 
 The document you're now reading is @file{gmp.texi}.  The usual automake
-targets are available to make @file{gmp.ps} and/or @file{gmp.dvi}.  HTML can
-be made with @samp{makeinfo --html} (@pxref{makeinfo html,Generating
-HTML,Generating HTML,texinfo,Texinfo}) or @samp{texi2html}.  PDF can be made
-with @samp{pdftex} or @samp{texi2dvi --pdf} (@pxref{PDF
-Output,PDF,,texinfo,Texinfo}).
+targets are available to make PostScript @file{gmp.ps} and/or DVI
+@file{gmp.dvi}.
+
+HTML can be made with @samp{makeinfo --html} (@pxref{makeinfo html,Generating
+HTML,Generating HTML,texinfo,Texinfo}) or @samp{texi2html}
+(@pxref{Top,Texinfo to HTML,About,texi2html,Texinfo To HTML}).
+
+PDF can be made with @samp{texi2dvi --pdf} (@pxref{PDF
+Output,PDF,,texinfo,Texinfo}) or with @samp{pdftex}.
 
 Some supplementary notes can be found in the @file{doc} subdirectory.
 
@@ -859,9 +882,9 @@ registers a CPU has available.
 
 Some 64-bit ISA CPUs have both a 64-bit ABI and a 32-bit ABI defined, the
 latter for compatibility with older CPUs in the family.  GMP supports some
-CPUs like this in both ABIs.  In fact within GMP @samp{ABI} a combination of
-chip ABI, plus how GMP chooses to use it.  For example in some 32-bit ABIs,
-GMP has support for a limb as either a 32-bit @code{long} or a 64-bit
+CPUs like this in both ABIs.  In fact within GMP @samp{ABI} means a
+combination of chip ABI, plus how GMP chooses to use it.  For example in some
+32-bit ABIs, GMP may support a limb as either a 32-bit @code{long} or a 64-bit
 @code{long long}.
 
 By default GMP chooses the best ABI available for a given system, and this
@@ -923,9 +946,9 @@ CPU type @samp{hppa2.0w} or @samp{hppa2.0} will use any of the above ABIs,
 
 IRIX 6 and up supports the n32 and 64 ABIs, and always has a MIPS 3 or better
 CPU, so a 64-bit limb is used on that system.  A new enough @command{gcc} is
-required (2.95 for instance).  Note that GNU/Linux, as of kernel version 2.2,
-doesn't have the necessary support for n32 or 64 and so only uses a 32-bit
-limb.
+required (2.95 for instance).  Note that MIPS GNU/Linux, as of kernel version
+2.2, doesn't have the necessary support for n32 or 64 and so only uses a
+32-bit limb.
 
 @table @asis
 @item @samp{ABI=64}
@@ -984,9 +1007,8 @@ for applications.
 @table @asis
 @item @samp{ABI=64}
 
-The 64-bit V9 ABI is available on Solaris 2.7 and up, and on GNU/Linux, when
-using @command{gcc} 2.95 or up, or Sun @command{cc}.  Applications must be
-compiled with
+The 64-bit V9 ABI is available on Solaris 2.7 and up and GNU/Linux.  GCC 2.95
+or up, or Sun @command{cc} is required.  Applications must be compiled with
 
 @example
 gcc  -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9
@@ -1078,6 +1100,12 @@ available.
 On systems @samp{arm*-*-*}, versions of GCC up to and including 2.95.3 have a
 bug in unsigned division, giving wrong results for some operands.  GMP
 @samp{./configure} will demand GCC 2.95.4 or later.
+
+@item Motorola 68k Family
+
+CPU @samp{m68k} is taken to mean 68020 or better since that's what most
+systems are.  Use @samp{m68000} or @samp{m68010} if GMP must run on those
+earlier CPUs.
 
 @item OpenBSD 2.6
 
@@ -2861,14 +2889,14 @@ Remove any factors that are common to the numerator and denominator of
 
 @menu
 * Initializing Rationals::      
+* Rational Conversions::        
 * Rational Arithmetic::         
 * Comparing Rationals::         
 * Applying Integer Functions::  
 * I/O of Rationals::            
-* Miscellaneous Rational Functions::  
 @end menu
 
-@node Initializing Rationals, Rational Arithmetic, Rational Number Functions, Rational Number Functions
+@node Initializing Rationals, Rational Conversions, Rational Number Functions, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Initialization and Assignment Functions
 @cindex Initialization and assignment functions
@@ -2902,7 +2930,49 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @end deftypefun
 
 
-@node Rational Arithmetic, Comparing Rationals, Initializing Rationals, Rational Number Functions
+@need 2000
+@node Rational Conversions, Rational Arithmetic, Initializing Rationals, Rational Number Functions
+@comment  node-name,  next,  previous,  up
+@section Conversion Functions
+@cindex Rational conversion functions
+@cindex Conversion functions
+
+@deftypefun double mpq_get_d (mpq_t @var{op})
+Convert @var{op} to a @code{double}.
+@end deftypefun
+
+@deftypefun void mpq_set_d (mpq_t @var{rop}, double @var{op})
+@deftypefunx void mpq_set_f (mpq_t @var{rop}, mpf_t @var{op})
+Set @var{rop} to the value of @var{op}, without rounding.
+@end deftypefun
+
+@deftypefun {char *} mpq_get_str (char *@var{str}, int @var{base}, mpq_t @var{op})
+Convert @var{op} to a string of digits in base @var{base}.  The base may vary
+from 2 to 36.  The string will be of the form @samp{num/den}, or if the
+denominator is 1 then just @samp{num}.
+
+If @var{str} is @code{NULL}, the result string is allocated using the current
+allocation function (@pxref{Custom Allocation}).  The block will be
+@code{strlen(str)+1} bytes, that being exactly enough for the string and
+null-terminator.
+
+If @var{str} is not @code{NULL}, it should point to a block of storage large
+enough for the result, that being
+
+@example
+mpz_sizeinbase (mpq_numref(@var{op}), @var{base})
++ mpz_sizeinbase (mpq_denref(@var{op}), @var{base}) + 3
+@end example
+
+The three extra bytes are for a possible minus sign, possible slash, and the
+null-terminator.
+
+A pointer to the result string is returned, being either the allocated block,
+or the given @var{str}.
+@end deftypefun
+
+
+@node Rational Arithmetic, Comparing Rationals, Rational Conversions, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Arithmetic Functions
 @cindex Rational arithmetic functions
@@ -2996,10 +3066,13 @@ function is much faster.
 @cindex Numerator and denominator
 
 The set of @code{mpq} functions is quite small.  In particular, there are few
-functions for either input or output.  But there are two macros that allow us
-to apply any @code{mpz} function on the numerator or denominator of a rational
-number.  If these macros are used to assign to the rational number,
-@code{mpq_canonicalize} normally need to be called afterwards.
+functions for either input or output.  The following functions give direct
+access to the numerator and denominator of an @code{mpq_t}.
+
+Note that if an assignment to the numerator and/or denominator could take an
+@code{mpq_t} out of the canonical form described at the start of this chapter
+(@pxref{Rational Number Functions}) then @code{mpq_canonicalize} must be
+called before any other @code{mpq} functions are applied to that @code{mpq_t}.
 
 @deftypefn Macro mpz_t mpq_numref (mpq_t @var{op})
 @deftypefnx Macro mpz_t mpq_denref (mpq_t @var{op})
@@ -3007,9 +3080,19 @@ Return a reference to the numerator and denominator of @var{op}, respectively.
 The @code{mpz} functions can be used on the result of these macros.
 @end deftypefn
 
+@deftypefun void mpq_get_num (mpz_t @var{numerator}, mpq_t @var{rational})
+@deftypefunx void mpq_get_den (mpz_t @var{denominator}, mpq_t @var{rational})
+@deftypefunx void mpq_set_num (mpq_t @var{rational}, mpz_t @var{numerator})
+@deftypefunx void mpq_set_den (mpq_t @var{rational}, mpz_t @var{denominator})
+Get or set the numerator or denominator of a rational.  These functions are
+equivalent to calling @code{mpz_set} with an appropriate @code{mpq_numref} or
+@code{mpq_denref}.  Direct use of @code{mpq_numref} or @code{mpq_denref} is
+recommended instead of these functions.
+@end deftypefun
+
 
 @need 2000
-@node I/O of Rationals, Miscellaneous Rational Functions, Applying Integer Functions, Rational Number Functions
+@node I/O of Rationals,  , Applying Integer Functions, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Input and Output Functions
 @cindex Rational input and output functions
@@ -3032,42 +3115,6 @@ Output @var{op} on stdio stream @var{stream}, as a string of digits in base
 @samp{num/den} or if the denominator is 1 then just @samp{num}.
 
 Return the number of bytes written, or if an error occurred, return 0.
-@end deftypefun
-
-
-@need 2000
-@node Miscellaneous Rational Functions,  , I/O of Rationals, Rational Number Functions
-@comment  node-name,  next,  previous,  up
-@section Miscellaneous Functions
-@cindex Rational miscellaneous functions
-@cindex Miscellaneous rational functions
-
-@deftypefun double mpq_get_d (mpq_t @var{op})
-Convert @var{op} to a @code{double}.
-@end deftypefun
-
-@deftypefun void mpq_set_d (mpq_t @var{rop}, double @var{op})
-@deftypefunx void mpq_set_f (mpq_t @var{rop}, mpf_t @var{op})
-Set @var{rop} to the value of @var{op}, without rounding.
-@end deftypefun
-
-@deftypefun void mpq_get_num (mpz_t @var{numerator}, mpq_t @var{rational})
-@deftypefunx void mpq_get_den (mpz_t @var{denominator}, mpq_t @var{rational})
-@deftypefunx void mpq_set_num (mpq_t @var{rational}, mpz_t @var{numerator})
-@deftypefunx void mpq_set_den (mpq_t @var{rational}, mpz_t @var{denominator})
-Get or set the numerator or denominator of a rational.  These functions are
-equivalent to calling @code{mpz_set} with an appropriate @code{mpq_numref} or
-@code{mpq_denref}.
-
-When an assignment to the numerator and/or denominator could introduce common
-factors or if the denominator could become negative, the value must be put
-into canonical form using @code{mpq_canonicalize} before any other operations
-on that rational.
-
-Note that there's no need to copy a numerator or denominator to an
-@code{mpz_t} just to operate on it, all the @code{mpz} functions can be used
-with an @code{mpq_numref} or @code{mpq_denref}.  When modifying a rational
-that way the rule about canonicalizing still applies of course.
 @end deftypefun
 
 
@@ -4189,64 +4236,84 @@ passed a value returned by @code{itom} or @code{xtom}.}
 @cindex Allocation of memory
 
 By default GMP uses @code{malloc}, @code{realloc} and @code{free} for memory
-allocation.  If @code{malloc} or @code{realloc} fails, GMP prints a message to
-the standard error output and terminates the program.
+allocation, and if they fail GMP prints a message to the standard error output
+and terminates the program.
 
-Some applications might want to allocate memory in other ways, or might not
-want a fatal error when no more is available.  To accomplish this you can
-specify alternative memory allocation functions.
+Alternate functions can be specified to allocate memory in a different way or
+to have a different error action on running out of memory.
 
-This feature is available in the Berkeley compatibility library as well as the
-main GMP library.
+This feature is available in the Berkeley compatibility library (@pxref{BSD
+Compatible Functions}) as well as the main GMP library.
 
 @deftypefun void mp_set_memory_functions (@* void *(*@var{alloc_func_ptr}) (size_t), @* void *(*@var{realloc_func_ptr}) (void *, size_t, size_t), @* void (*@var{free_func_ptr}) (void *, size_t))
 Replace the current allocation functions from the arguments.  If an argument
-is @code{NULL}, the corresponding default function is retained.
+is @code{NULL}, the corresponding default function is used.
 
-@strong{Be sure to call this function only when there are no active GMP
-objects allocated using the previous memory functions!  Usually that means
-calling this before any other GMP function.}
+These functions will be used for all memory allocation done by GMP, apart from
+temporary space from @code{alloca} if that function is available and GMP is
+configured to use it (@pxref{Build Options}).
+
+@strong{Be sure to call @code{mp_set_memory_functions} only when there are no
+active GMP objects allocated using the previous memory functions!  Usually
+that means calling it before any other GMP function.}
 @end deftypefun
 
-The functions you supply should fit the following declarations:
+The functions supplied should fit the following declarations:
 
 @deftypefun {void *} allocate_function (size_t @var{alloc_size})
-This function should return a pointer to newly allocated space with at least
-@var{alloc_size} storage units.
+Return a pointer to newly allocated space with at least @var{alloc_size}
+bytes.
 @end deftypefun
 
 @deftypefun {void *} reallocate_function (void *@var{ptr}, size_t @var{old_size}, size_t @var{new_size})
-This function should return a pointer to newly allocated space of at least
-@var{new_size} storage units, after copying at least the smaller of
-@var{old_size} and @var{new_size} storage units from @var{ptr}.  It should
-also de-allocate the space at @var{ptr}.
+Resize a previously allocated block @var{ptr} of @var{old_size} bytes to be
+@var{new_size} bytes.
 
-You can assume that the space at @var{ptr} was formerly returned from
-@code{allocate_function} or @code{reallocate_function}, for a request for
-@var{old_size} storage units.  It's possible @var{new_size} will be smaller
-than @var{old_size}.  @var{ptr} will never be @code{NULL}.
+The block may be moved if necessary or if desired, and in that case the
+smaller of @var{old_size} and @var{new_size} bytes must be copied to the new
+location.  The return value is a pointer to the resized block, that being the
+new location if moved or just @var{ptr} if not.
+
+@var{ptr} is never @code{NULL}, it's always a previously allocated block.
+@var{new_size} may be bigger or smaller than @var{old_size}.
 @end deftypefun
 
 @deftypefun void deallocate_function (void *@var{ptr}, size_t @var{size})
 De-allocate the space pointed to by @var{ptr}.
 
-You can assume that the space at @var{ptr} was formerly returned from
-@code{allocate_function} or @code{reallocate_function}, from a request for
-@var{size} storage units.
+@var{ptr} is never @code{NULL}, it's always a previously allocated block of
+@var{size} bytes.
 @end deftypefun
 
-A @dfn{storage unit} is the unit used by the @code{sizeof} operator, normally
-an 8 bit byte.
+A @dfn{byte} here means the unit used by the @code{sizeof} operator.
 
-Note that no error return is allowed from these functions.  They must perform
-the specified operation, or take their own fatal error action (possibly after
-attempting a garbage collect or whatever).  Getting a different fatal error
-action is one good use for setting new allocation functions.
+The @var{old_size} parameters to @var{reallocate_function} and
+@var{deallocate_function} are passed for convenience, but of course can be
+ignored if not needed.  The default functions using @code{malloc} and friends
+for instance don't use them.
 
-The @var{old_size} parameters to @code{reallocate_function} and
-@code{deallocate_function} are passed for convenience, but of course can be
-ignored if not needed.  The default functions using @code{malloc} for instance
-don't use them.
+No error return is allowed from any of these functions, if they return then
+they must have performed the specified operation.  In particular note that
+@var{allocate_function} or @var{reallocate_function} mustn't return
+@code{NULL}.
+
+Getting a different fatal error action is a good use for custom allocation
+functions, for example giving a graphical dialog rather than the default print
+to @code{stderr}.  How much is possible when genuinely out of memory is
+another question though.
+
+There's currently no defined way for the allocation functions to recover from
+an error such as out of memory, they must terminate program execution.  A
+@code{longjmp} or throwing a C++ exception will have undefined results.  This
+may change in the future.
+
+GMP may use allocated blocks to hold pointers to other allocated blocks.  This
+will limit the assumptions a conservative garbage collection scheme can make.
+
+Since the default GMP allocation uses @code{malloc} and friends, those
+functions will be linked in even if the first thing a program does is an
+@code{mp_set_memory_functions}.  It's necessary to change the GMP sources if
+this is a problem.
 
 
 @node Algorithms, Contributors, Custom Allocation, Top
@@ -5996,18 +6063,25 @@ about the omission!)
 @unnumbered References
 @cindex References
 
+@c  FIXME: In tex, the @uref's are unhyphenated, which is good for clarity,
+@c  but being long words they upset paragraph formatting (the preceding line
+@c  can get badly stretched).  Would like an conditional @* style line break
+@c  if the uref is too long to fit on the last line of the paragraph, but it's
+@c  not clear how to do that.  For now explicit @texlinebreak{}s are used on
+@c  paragraphs that come out bad.
+
 @section Books
 
 @itemize @bullet
 @item
 Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
 Texts in Mathematics number 138, Springer-Verlag, 1993.
-@* @uref{http://www.math.u-bordeaux.fr/~cohen}
+@texlinebreak{} @uref{http://www.math.u-bordeaux.fr/~cohen}
 
 @item
 Donald E. Knuth, ``The Art of Computer Programming'', volume 2,
 ``Seminumerical Algorithms'', 3rd edition, Addison-Wesley, 1988.
-@* @uref{http://www-cs-faculty.stanford.edu/~knuth/taocp.html}
+@texlinebreak{} @uref{http://www-cs-faculty.stanford.edu/~knuth/taocp.html}
 
 @item
 John D. Lipson, ``Elements of Algebra and Algebraic Computing'',
@@ -6015,7 +6089,7 @@ The Benjamin Cummings Publishing Company Inc, 1981.
 
 @item
 Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, ``Handbook of
-Applied Cryptography'', @* @uref{http://www.cacr.math.uwaterloo.ca/hac/}
+Applied Cryptography'', @uref{http://www.cacr.math.uwaterloo.ca/hac/}
 
 @item
 Richard M. Stallman, ``Using and Porting GCC'', Free Software Foundation, 1999,
@@ -6028,7 +6102,7 @@ the GCC package @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}
 @itemize @bullet
 @item
 Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
-Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @*
+Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @texlinebreak{}
 @uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}
 
 @item
@@ -6046,28 +6120,28 @@ Tudor Jebelean,
 ``An algorithm for exact division'',
 Journal of Symbolic Computation,
 volume 15, 1993, pp. 169-180.
-Research report version available @*
+Research report version available @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-35.ps.gz}
 
 @item
 Tudor Jebelean, ``Exact Division with Karatsuba Complexity - Extended
-Abstract'', RISC-Linz technical report 96-31, @*
+Abstract'', RISC-Linz technical report 96-31, @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1996/96-31.ps.gz}
 
 @item
 Tudor Jebelean, ``Practical Integer Division with Karatsuba Complexity'',
-ISSAC 97, pp. 339-341.  Technical report available @*
+ISSAC 97, pp. 339-341.  Technical report available @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1996/96-29.ps.gz}
 
 @item
 Tudor Jebelean, ``A Generalization of the Binary GCD Algorithm'', ISSAC 93,
-pp. 111-116.  Technical report version available @*
+pp. 111-116.  Technical report version available @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1993/93-01.ps.gz}
 
 @item
 Tudor Jebelean, ``A Double-Digit Lehmer-Euclid Algorithm for Finding the GCD
 of Long Integers'', Journal of Symbolic Computation, volume 19, 1995,
-pp. 145-157.  Technical report version also available @*
+pp. 145-157.  Technical report version also available @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-69.ps.gz}
 
 @item
@@ -6098,7 +6172,7 @@ November 1999, @uref{http://www.inria.fr/RRRT/RR-3805.html}
 
 @item
 Paul Zimmermann, ``A Proof of GMP Fast Division and Square Root
-Implementations'', @*
+Implementations'', @texlinebreak{}
 @uref{http://www.loria.fr/~zimmerma/papers/proof-div-sqrt.ps.gz}
 
 @item
