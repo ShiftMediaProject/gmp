@@ -117,6 +117,8 @@ int main (argc, argv)
     RNG_LC
   };
   gmp_randalg_t ralg = RNG_MT;
+  /* Texts for the algorithms.  The index of each must match the
+     corresponding algorithm in the enum above.  */
   char *ralg_str[] = { "mt", "lc" };
 
   mpf_init (f_xf);
@@ -296,17 +298,10 @@ int main (argc, argv)
 	  break;
 
 	default:
-	  gmp_errno = GMP_ERROR_UNSUPPORTED_ARGUMENT;
-	}
-
-      if (gmp_errno != GMP_ERROR_NONE)
-	{
-	  if (gmp_errno & GMP_ERROR_INVALID_ARGUMENT)
-	    fprintf (stderr, "gen: asking for too big random state\n");
-	  if (gmp_errno & GMP_ERROR_UNSUPPORTED_ARGUMENT)
-	    fprintf (stderr, "gen: unsupported algorithm\n");
+	  fprintf (stderr, "gen: unsupported algorithm\n");
 	  exit (1);
 	}
+
       gmp_randseed (rstate, z_seed);
       break;
 
