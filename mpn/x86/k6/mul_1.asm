@@ -126,7 +126,7 @@ L(simple):
 #
 # The secret ingredient to get 6.25 is to start the loop with the mul and
 # have the load/store pair at the end.  Rotating the load/store to the top
-# is an 0.5 c/l slowdown.  (Don't quite know why.)
+# is an 0.5 c/l slowdown.  (Some address generation effect probably.)
 #
 # The whole unrolled loop fits nicely in exactly 80 bytes.
 
