@@ -67,7 +67,7 @@ MA 02111-1307, USA.
 
 #include <math.h>
 #include <stdio.h>
-/* #include <stdlib.h> */
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "gmp.h"
@@ -87,6 +87,11 @@ extern int optind, opterr;
 #define STEP_FACTOR     0.01  /* how much to step sizes by (rounded down) */
 
 
+#ifndef KARATSUBA_SQR_THRESHOLD_MAX
+#define KARATSUBA_SQR_THRESHOLD_MAX  0 /* meaning no limit */
+#endif
+
+
 #define numberof(x)            (sizeof (x) / sizeof ((x)[0]))
 #define SIGNED_TYPE_MAX(type)  (~(((type) 1) << (8*sizeof(type)-1)))
 #define MP_SIZE_T_MAX          SIGNED_TYPE_MAX (mp_size_t)
@@ -95,7 +100,7 @@ extern int optind, opterr;
 int     option_trace = 0;
 struct speed_params  s;
 
-struct {
+struct dat_t {
   mp_size_t  size;
   double     d;
 } *dat = NULL;
@@ -106,6 +111,7 @@ int  allocdat = 0;
 mp_size_t  tune_mul_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
 mp_size_t  tune_sqr_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
 mp_size_t  bz_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  fib_threshold[2] = { MP_SIZE_T_MAX };
 
 
 /* Add an entry to the end of the dat[] array, reallocing to make it bigger
@@ -119,7 +125,7 @@ add_dat (mp_size_t size, double d)
 
   if (ndat == allocdat)
     {
-      dat = _mp_allocate_or_reallocate
+      dat = (struct dat_t *) _mp_allocate_or_reallocate
         (dat, allocdat * sizeof(dat[0]),
          (allocdat+ALLOCDAT_STEP) * sizeof(dat[0]));
       allocdat += ALLOCDAT_STEP;
@@ -176,7 +182,7 @@ analyze_dat (int i, int final)
 
 void
 one (speed_function_t function, mp_size_t table[], size_t max_table,
-     const char *name)
+     mp_size_t max_first_size, const char *name)
 {
   int  i;
 
@@ -192,12 +198,15 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
       thresh_idx = 0;
 
       for ( ; s.size < MAX_SIZE; 
-            s.size += MAX (floor (s.size * STEP_FACTOR), 1))
+            s.size += MAX ((mp_size_t) floor (s.size * STEP_FACTOR), 1))
         {
           double   ti, tiplus1, d;
 
-          if (max_table != 1 && i == 0 && s.size > 63)
-            break;
+          if (i == 0 && max_first_size != 0 && s.size > max_first_size)
+            {
+              fprintf (stderr, "Exceeded maximum first size (%ld) without finding a threshold\n", max_first_size);
+              abort ();
+            }
 
           /*
             FIXME: check minimum size requirements are met, possibly by just
@@ -211,14 +220,14 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
           table[i+1] = MAX_SIZE;
           ti = speed_measure (function, &s);
           if (ti == -1.0)
-            abort();
+            abort ();
 
           /* using method i+1 at this size */
           table[i] = s.size;
           table[i+1] = s.size+1;
           tiplus1 = speed_measure (function, &s);
           if (tiplus1 == -1.0)
-            abort();
+            abort ();
 
           /* Calculate the fraction by which the one or the other routine is
              slower.  */
@@ -292,12 +301,10 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
          crossover. */
       if (s.size >= MAX_SIZE)
         {
-          if (option_trace >= 1)
-            {
-              printf ("i=%d sizes %ld to %ld total %d measurements\n",
-                      i, dat[0].size, dat[ndat-1].size, ndat);
-              printf ("    max size reached before end of crossover\n");
-            }
+          fprintf (stderr, "%s\n", name);
+          fprintf (stderr, "i=%d sizes %ld to %ld total %d measurements\n",
+                   i, dat[0].size, dat[ndat-1].size, ndat);
+          fprintf (stderr, "    max size reached before end of crossover\n");
           break;
         }
 
@@ -341,9 +348,9 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
 void
 all (void)
 {
-  s.xp = _mp_allocate_func_aligned
+  s.xp = (mp_ptr) _mp_allocate_func_aligned
     (MAX_SIZE * sizeof (mp_limb_t), CACHE_LINE_SIZE);
-  s.yp = _mp_allocate_func_aligned
+  s.yp = (mp_ptr) _mp_allocate_func_aligned
     (MAX_SIZE * sizeof (mp_limb_t), CACHE_LINE_SIZE);
   mpn_random (s.xp, MAX_SIZE);
   mpn_random (s.yp, MAX_SIZE);
@@ -359,14 +366,18 @@ all (void)
          MAX_SIZE, STEP_FACTOR);
 
   one (speed_mpn_mul_n, tune_mul_threshold, numberof(tune_mul_threshold)-1,
-       "MUL");
+       0, "MUL");
   printf("\n");
 
   one (speed_mpn_sqr_n, tune_sqr_threshold, numberof(tune_sqr_threshold)-1,
-       "SQR");
+       KARATSUBA_SQR_THRESHOLD_MAX, "SQR");
   printf("\n");
   
-  one (speed_mpn_bz_tdiv_qr, bz_threshold, 1, "BZ");
+  one (speed_mpn_bz_tdiv_qr, bz_threshold, 1, 0, "BZ");
+  printf("\n");
+
+  one (speed_mpz_fib_ui, fib_threshold, 1, 0, "FIB");
+  printf("\n");
 }
 
 
