@@ -1,12 +1,4 @@
 dnl  x86 mpn_divrem_1 -- mpn by limb division extending to fractional quotient.
-dnl 
-dnl        cycles/limb
-dnl  K7        42
-dnl  K6        20
-dnl  P6        40
-dnl  P5        44
-dnl  486   approx 43 maybe
-
 
 dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 dnl 
@@ -26,6 +18,21 @@ dnl  You should have received a copy of the GNU Library General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
+
+
+dnl        cycles/limb
+dnl  K6        20
+dnl  P5        44
+dnl  P6        39
+dnl  486   approx 43 maybe
+dnl
+dnl
+dnl  The following have their own optimized divrem_1 implementations, but
+dnl  for reference the code here runs as follows.
+dnl
+dnl        cycles/limb
+dnl  P6MMX     39
+dnl  K7        42
 
 
 include(`../config.m4')
@@ -52,7 +59,7 @@ C - If gcc isn't being used then divrem_1.c will get the generic C
 C   udiv_qrnnd() and be rather slow.
 C
 C - On K6, using the loop instruction is a 10% speedup, but gcc doesn't
-C   generate that instruction (as of 2.95 at least).
+C   generate that instruction (as of gcc 2.95.2 at least).
 C
 C A test is done to see if the high limb is less the the divisor, and if so
 C one less div is done.  A div is between 20 and 40 cycles on the various
@@ -69,15 +76,18 @@ C
 C     With a "decl/jnz" rather than a "loop" this code runs at 22 cycles.
 C     The loop_or_decljnz macro is an easy way to get a 10% speedup.
 C
+C     The fast K6 multiply might be thought to suit a multiply-by-inverse,
+C     but that algorithm has been found to suffer from the releatively poor
+C     carry handling on K6 and too many auxiliary instructions.  The
+C     fractional part however could be done at about 13 c/l.
+C
 C P5: Moving the load down to pair with the store might save 1 cycle, but
 C     that doesn't seem worth bothering with, since it'd be only a 2.2%
 C     saving.
 C
-C K7: New code doing a multiply by inverse is in progress and promises to
-C     run at about 25 cycles.  The code here is just something reasonable to
-C     use for now.
-C
-C P6: Multiply by inverse is going to be looked at for this too.
+C     Again here the auxiliary instructions hinder a multiply-by-inverse,
+C     though there might be a 10-15% speedup available
+
 
 defframe(PARAM_CARRY,  24)
 defframe(PARAM_DIVISOR,20)
@@ -93,20 +103,16 @@ PROLOGUE(mpn_divrem_1c)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	pushl	%edi
-FRAME_pushl()
+	pushl	%edi		FRAME_pushl()
 	
 	movl	PARAM_SRC, %edi
-	pushl	%esi
-FRAME_pushl()
+	pushl	%esi		FRAME_pushl()
 
 	movl	PARAM_DIVISOR, %esi
-	pushl	%ebx
-FRAME_pushl()
+	pushl	%ebx		FRAME_pushl()
 
 	movl	PARAM_DST, %ebx
-	pushl	%ebp
-FRAME_pushl()
+	pushl	%ebp		FRAME_pushl()
 
 	movl	PARAM_XSIZE, %ebp
 	orl	%ecx, %ecx
@@ -124,26 +130,22 @@ PROLOGUE(mpn_divrem_1)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	pushl	%edi
-FRAME_pushl()
+	pushl	%edi		FRAME_pushl()
 	
 	movl	PARAM_SRC, %edi
-	pushl	%esi
-FRAME_pushl()
+	pushl	%esi		FRAME_pushl()
 
 	movl	PARAM_DIVISOR, %esi
 	orl	%ecx,%ecx
 
 	jz	L(size_zero)
-	pushl	%ebx
-FRAME_pushl()
+	pushl	%ebx		FRAME_pushl()
 
 	movl	-4(%edi,%ecx,4), %eax	C src high limb
 	xorl	%edx, %edx
 
 	movl	PARAM_DST, %ebx
-	pushl	%ebp
-FRAME_pushl()
+	pushl	%ebp		FRAME_pushl()
 
 	movl	PARAM_XSIZE, %ebp
 	cmpl	%esi, %eax
@@ -172,6 +174,7 @@ L(integer_top):
 
 	movl	-4(%edi,%ecx,4), %eax
 L(integer_entry):
+
 	divl	%esi
 
 	movl	%eax, (%ebx,%ecx,4)
