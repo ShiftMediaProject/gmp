@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1996, 1998 Free Software Foundation, Inc.
+Copyright (C) 1996, 1998, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -54,7 +54,7 @@ cputime ()
 #if defined (__m88k__)
 #define CLOCK 20 M
 #elif defined (__i386__)
-#define CLOCK (16.666667 M)
+#define CLOCK (16666667)
 #elif defined (__m68k__)
 #define CLOCK (20 M)
 #elif defined (_IBMR2)
