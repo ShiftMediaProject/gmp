@@ -417,6 +417,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
   unsigned long kk1 = twok + 1;
   unsigned long twor = r + r;
   mp_ptr c1, c2, c3, c4, c5;
+  mp_limb_t cout; /* final carry, should be zero at the end */
 
   c1 = c + k;
   c2 = c1 + k;
@@ -426,7 +427,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
 #define v0 (c)
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       vm1       hi(vinf)       v1       v2+2vm1      vinf
+       v0      |vm1|       hi(vinf)       v1       v2+2vm1      vinf
                                                               +lo(v0) */
 
   ASSERT_NOCARRY (mpn_divexact_by3 (v2, v2, kk1));    /* v2 <- v2 / 3 */
@@ -441,7 +442,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 #endif  
 
   /* {c,2k} {c+2k,2k+1} {c+4k+1,2r-1} {t,2k+1} {t+2k+1,2k+1} {t+4k+2,2r}
-       v0       vm1       hi(vinf)       v1    (3v0+2vm1+v2)    vinf
+       v0      |vm1|      hi(vinf)       v1    (3v0+2vm1+v2)    vinf
 						    /6         +lo(v0) */
 
   /* vm1 <- t2 := (v1 + sa*vm1) / 2
@@ -486,19 +487,22 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
   /* subtract {t2, 2k+1} in {c+3k, 2k+1} i.e. in {t2+k, 2k+1}:
      by chunks of k limbs from right to left to avoid overlap */
 #define t2 (vm1)
-  MPN_DECR_U (c5, twor - k, t2[twok]);
+  /* a borrow may occur in one of the 3 following mpn_sub_1 calls,
+     but since the final result is nonnegative, it will be compensated
+     later on */
+  cout = -mpn_sub_1 (c5, c5, twor - k, t2[twok]);
   cy = mpn_sub_n (c4, c4, t2 + k, k);
-  MPN_DECR_U (c5, twor - k, cy);
+  cout -= mpn_sub_1 (c5, c5, twor - k, cy);
   cy = mpn_sub_n (c3, c3, t2, k);
-  MPN_DECR_U (c4, twor, cy);
+  cout -= mpn_sub_1 (c4, c4, twor, cy);
+
+  /* don't forget to add vinf0 in {c+4k, ...} */
+  cout += mpn_add_1 (c4, c4, twor, vinf0);
 
   /* c  c+k c+2k c+3k c+4k+1   t  t+2k+1 t+4k+2
      v0     t2        hi(vinf) v1 t1     vinf
 		 -t2                    +lo(v0)
   */
-
-  /* don't forget to add vinf0 in {c+4k, ...} */
-  MPN_INCR_U (c4, twor, vinf0);
 
   /* c  c+k c+2k c+3k c+4k     t  t+2k+1 t+4k+2
      v0     t2        vinf     v1 t1     vinf
@@ -510,7 +514,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
   if (twor < twok)
     cy = mpn_sub_1 (c2 + twor, c2 + twor, twok - twor, cy)
       + mpn_sub_n (c2 + twor, c2 + twor, v0 + twor, twok - twor);
-  MPN_DECR_U (c4, twor, cy); /* 2n-4k = 2r */
+  cout -= mpn_sub_1 (c4, c4, twor, cy); /* 2n-4k = 2r */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0       t2          vinf      v1  t1      vinf
@@ -519,7 +523,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
   /* subtract t1 in {c+k, ...} */
   cy = mpn_sub_n (c1, c1, v2, kk1);
-  MPN_DECR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
+  cout -= mpn_sub_1 (c3 + 1, c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0       t2          vinf      v1  t1      vinf
@@ -528,7 +532,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
   /* add t1 in {c+3k, ...} */
   cy = mpn_add_n (c3, c3, v2, kk1);
-  MPN_INCR_U (c5 + 1, twor - k - 1, cy); /* 2n-(5k+1) = 2r-k-1 */
+  cout += mpn_add_1 (c5 + 1, c5 + 1, twor - k - 1, cy); /* 2n-(5k+1) = 2r-k-1 */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0       t2    t1    vinf      v1  t1      vinf
@@ -537,7 +541,9 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
   /* add v1 in {c+k, ...} */
   cy = mpn_add_n (c1, c1, v1, kk1);
-  MPN_INCR_U (c3 + 1, twor + k - 1, cy); /* 2n-(3k+1) = 2r+k-1 */
+  cout += mpn_add_1 (c3 + 1, c3 + 1, twor + k - 1, cy); /* 2n-(3k+1) = 2r+k-1 */
+
+  ASSERT(cout == 0);
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0  v1   t2    t1    vinf      v1  t1      vinf
