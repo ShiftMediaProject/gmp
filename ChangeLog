@@ -18,9 +18,10 @@
 	* randclr.c (gmp_rand_clear): Don't use free().  Disable BBS
 	algorithm.  Set `gmp_errno' on error.
 
-	* randlc2x.c: New file.
-	* randsd.c: New file.
-	* randsdui.c: New file.
+	* randlc2x.c (gmp_rand_init_lc_2exp): New function.
+	* randsd.c (gmp_rand_seed): New function.
+	* randsdui.c (gmp_rand_seed_ui): New function.
+	* randlcui.c: Remove unused file.
 	
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Rewrite.
 	(mpn_lc): New static function.

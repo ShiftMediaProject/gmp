@@ -1,3 +1,13 @@
+2000-04-01  Linus Nordberg  <linus@swox.se>
+
+	* Makefile.am (noinst_PROGRAMS): Change findcl --> findlc.  Add
+	gen.static.
+	* Makefile.in: Regenerate.
+
+	* gen.c (main): Add mpz_urandomm.  Add command line options `-C',
+	`-m', extend `-a'.  Use *mp*_*rand*() with new parameters.  Call
+	gmp_rand_seed().
+
 1999-05-26  Linus Nordberg  <linus@swox.se>
 
 	* Makefile (test, bigtest): Add 33-bit tests.
