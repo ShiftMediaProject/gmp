@@ -82,6 +82,7 @@ char *dsi_func_names[] =
 {
   "mpz_add_ui", "mpz_mul_ui", "mpz_sub_ui",
   "mpz_fdiv_q_2exp", "mpz_fdiv_r_2exp",
+  "mpz_cdiv_q_2exp", "mpz_cdiv_r_2exp",
   "mpz_tdiv_q_2exp", "mpz_tdiv_r_2exp",
   "mpz_mul_2exp",
   "mpz_pow_ui"
