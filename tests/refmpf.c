@@ -139,6 +139,7 @@ refmpf_add_ulp (mpf_ptr f)
       fp[abs_fsize] = c;
       abs_fsize++;
       SIZ(f) = (fsize > 0 ? abs_fsize : - abs_fsize);
+      EXP(f)++;
     }
 }
 
