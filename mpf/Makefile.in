@@ -130,12 +130,15 @@ libmpf_la_SOURCES = \
   add.c add_ui.c sub.c sub_ui.c ui_sub.c mul.c mul_ui.c div.c div_ui.c \
   cmp.c cmp_ui.c cmp_si.c mul_2exp.c div_2exp.c abs.c neg.c get_d.c \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_prc.c ui_div.c sqrt_ui.c \
-  pow_ui.c urandomb.c swap.c
+  pow_ui.c urandomb.c swap.c get_si.c get_ui.c int_p.c
 
 
-nodist_libmpf_la_SOURCES = floor.c ceil.c trunc.c
+nodist_libmpf_la_SOURCES = floor.c ceil.c trunc.c	\
+  fits_sint.c fits_slong.c fits_sshort.c		\
+  fits_uint.c fits_ulong.c fits_ushort.c
 
-EXTRA_DIST = integer.c
+
+EXTRA_DIST = integer.c fits_s.c fits_u.c
 CLEANFILES = $(nodist_libmpf_la_SOURCES)
 subdir = mpf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -160,8 +163,10 @@ sub_ui$U.lo ui_sub$U.lo mul$U.lo mul_ui$U.lo div$U.lo div_ui$U.lo \
 cmp$U.lo cmp_ui$U.lo cmp_si$U.lo mul_2exp$U.lo div_2exp$U.lo abs$U.lo \
 neg$U.lo get_d$U.lo set_dfl_prec$U.lo set_prc$U.lo set_prc_raw$U.lo \
 get_prc$U.lo ui_div$U.lo sqrt_ui$U.lo pow_ui$U.lo urandomb$U.lo \
-swap$U.lo
-nodist_libmpf_la_OBJECTS =  floor$U.lo ceil$U.lo trunc$U.lo
+swap$U.lo get_si$U.lo get_ui$U.lo int_p$U.lo
+nodist_libmpf_la_OBJECTS =  floor$U.lo ceil$U.lo trunc$U.lo \
+fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo \
+fits_ulong$U.lo fits_ushort$U.lo
 libmpf_la_OBJECTS =  $(am_libmpf_la_OBJECTS) $(nodist_libmpf_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -269,20 +274,38 @@ dump_.c: dump.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dump.c; then echo $(srcdir)/dump.c; else echo dump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dump_.c
 eq_.c: eq.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/eq.c; then echo $(srcdir)/eq.c; else echo eq.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > eq_.c
+fits_sint_.c: fits_sint.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_sint.c; then echo $(srcdir)/fits_sint.c; else echo fits_sint.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_sint_.c
+fits_slong_.c: fits_slong.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_slong.c; then echo $(srcdir)/fits_slong.c; else echo fits_slong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_slong_.c
+fits_sshort_.c: fits_sshort.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_sshort.c; then echo $(srcdir)/fits_sshort.c; else echo fits_sshort.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_sshort_.c
+fits_uint_.c: fits_uint.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_uint.c; then echo $(srcdir)/fits_uint.c; else echo fits_uint.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_uint_.c
+fits_ulong_.c: fits_ulong.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_ulong.c; then echo $(srcdir)/fits_ulong.c; else echo fits_ulong.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_ulong_.c
+fits_ushort_.c: fits_ushort.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fits_ushort.c; then echo $(srcdir)/fits_ushort.c; else echo fits_ushort.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fits_ushort_.c
 floor_.c: floor.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/floor.c; then echo $(srcdir)/floor.c; else echo floor.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > floor_.c
 get_d_.c: get_d.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_d.c; then echo $(srcdir)/get_d.c; else echo get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_d_.c
 get_prc_.c: get_prc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_prc.c; then echo $(srcdir)/get_prc.c; else echo get_prc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_prc_.c
+get_si_.c: get_si.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_si.c; then echo $(srcdir)/get_si.c; else echo get_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_si_.c
 get_str_.c: get_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_str.c; then echo $(srcdir)/get_str.c; else echo get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_str_.c
+get_ui_.c: get_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_ui.c; then echo $(srcdir)/get_ui.c; else echo get_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_ui_.c
 init_.c: init.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/init.c; then echo $(srcdir)/init.c; else echo init.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > init_.c
 init2_.c: init2.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/init2.c; then echo $(srcdir)/init2.c; else echo init2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > init2_.c
 inp_str_.c: inp_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/inp_str.c; then echo $(srcdir)/inp_str.c; else echo inp_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > inp_str_.c
+int_p_.c: int_p.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/int_p.c; then echo $(srcdir)/int_p.c; else echo int_p.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > int_p_.c
 iset_.c: iset.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/iset.c; then echo $(srcdir)/iset.c; else echo iset.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > iset_.c
 iset_d_.c: iset_d.c $(ANSI2KNR)
@@ -354,10 +377,15 @@ add_ui_.lo ceil_.$(OBJEXT) ceil_.lo clear_.$(OBJEXT) clear_.lo \
 cmp_.$(OBJEXT) cmp_.lo cmp_si_.$(OBJEXT) cmp_si_.lo cmp_ui_.$(OBJEXT) \
 cmp_ui_.lo div_.$(OBJEXT) div_.lo div_2exp_.$(OBJEXT) div_2exp_.lo \
 div_ui_.$(OBJEXT) div_ui_.lo dump_.$(OBJEXT) dump_.lo eq_.$(OBJEXT) \
-eq_.lo floor_.$(OBJEXT) floor_.lo get_d_.$(OBJEXT) get_d_.lo \
-get_prc_.$(OBJEXT) get_prc_.lo get_str_.$(OBJEXT) get_str_.lo \
-init_.$(OBJEXT) init_.lo init2_.$(OBJEXT) init2_.lo inp_str_.$(OBJEXT) \
-inp_str_.lo iset_.$(OBJEXT) iset_.lo iset_d_.$(OBJEXT) iset_d_.lo \
+eq_.lo fits_sint_.$(OBJEXT) fits_sint_.lo fits_slong_.$(OBJEXT) \
+fits_slong_.lo fits_sshort_.$(OBJEXT) fits_sshort_.lo \
+fits_uint_.$(OBJEXT) fits_uint_.lo fits_ulong_.$(OBJEXT) fits_ulong_.lo \
+fits_ushort_.$(OBJEXT) fits_ushort_.lo floor_.$(OBJEXT) floor_.lo \
+get_d_.$(OBJEXT) get_d_.lo get_prc_.$(OBJEXT) get_prc_.lo \
+get_si_.$(OBJEXT) get_si_.lo get_str_.$(OBJEXT) get_str_.lo \
+get_ui_.$(OBJEXT) get_ui_.lo init_.$(OBJEXT) init_.lo init2_.$(OBJEXT) \
+init2_.lo inp_str_.$(OBJEXT) inp_str_.lo int_p_.$(OBJEXT) int_p_.lo \
+iset_.$(OBJEXT) iset_.lo iset_d_.$(OBJEXT) iset_d_.lo \
 iset_si_.$(OBJEXT) iset_si_.lo iset_str_.$(OBJEXT) iset_str_.lo \
 iset_ui_.$(OBJEXT) iset_ui_.lo mul_.$(OBJEXT) mul_.lo \
 mul_2exp_.$(OBJEXT) mul_2exp_.lo mul_ui_.$(OBJEXT) mul_ui_.lo \
@@ -505,6 +533,20 @@ ceil.c: $(srcdir)/integer.c
 	cp $(srcdir)/integer.c ceil.c
 trunc.c: $(srcdir)/integer.c
 	cp $(srcdir)/integer.c trunc.c
+
+fits_sint.c: $(srcdir)/fits_s.c
+	cp $(srcdir)/fits_s.c fits_sint.c
+fits_slong.c: $(srcdir)/fits_s.c
+	cp $(srcdir)/fits_s.c fits_slong.c
+fits_sshort.c: $(srcdir)/fits_s.c
+	cp $(srcdir)/fits_s.c fits_sshort.c
+
+fits_uint.c: $(srcdir)/fits_u.c
+	cp $(srcdir)/fits_u.c fits_uint.c
+fits_ulong.c: $(srcdir)/fits_u.c
+	cp $(srcdir)/fits_u.c fits_ulong.c
+fits_ushort.c: $(srcdir)/fits_u.c
+	cp $(srcdir)/fits_u.c fits_ushort.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
