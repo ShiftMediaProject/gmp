@@ -131,7 +131,7 @@ mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 mpn_objs_in_libmp = @mpn_objs_in_libmp@
 
-AUTOMAKE_OPTIONS = gnu no-dependencies
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mpfr
 LDADD = ../libmpfr.a $(top_builddir)/libgmp.la $(LIBM)
@@ -171,332 +171,332 @@ CONFIG_CLEAN_FILES =
 @WANT_MPFR_TRUE@	tfma$(EXEEXT) thypot$(EXEEXT)
 @WANT_MPFR_FALSE@check_PROGRAMS =
 reuse_SOURCES = reuse.c
-reuse_OBJECTS = reuse.$(OBJEXT)
+reuse_OBJECTS = reuse$U.$(OBJEXT)
 reuse_LDADD = $(LDADD)
 reuse_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 reuse_LDFLAGS =
 tabs_SOURCES = tabs.c
-tabs_OBJECTS = tabs.$(OBJEXT)
+tabs_OBJECTS = tabs$U.$(OBJEXT)
 tabs_LDADD = $(LDADD)
 tabs_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tabs_LDFLAGS =
 tacosh_SOURCES = tacosh.c
-tacosh_OBJECTS = tacosh.$(OBJEXT)
+tacosh_OBJECTS = tacosh$U.$(OBJEXT)
 tacosh_LDADD = $(LDADD)
 tacosh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tacosh_LDFLAGS =
 tadd_SOURCES = tadd.c
-tadd_OBJECTS = tadd.$(OBJEXT)
+tadd_OBJECTS = tadd$U.$(OBJEXT)
 tadd_LDADD = $(LDADD)
 tadd_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tadd_LDFLAGS =
 tadd_ui_SOURCES = tadd_ui.c
-tadd_ui_OBJECTS = tadd_ui.$(OBJEXT)
+tadd_ui_OBJECTS = tadd_ui$U.$(OBJEXT)
 tadd_ui_LDADD = $(LDADD)
 tadd_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tadd_ui_LDFLAGS =
 tagm_SOURCES = tagm.c
-tagm_OBJECTS = tagm.$(OBJEXT)
+tagm_OBJECTS = tagm$U.$(OBJEXT)
 tagm_LDADD = $(LDADD)
 tagm_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tagm_LDFLAGS =
 tasin_SOURCES = tasin.c
-tasin_OBJECTS = tasin.$(OBJEXT)
+tasin_OBJECTS = tasin$U.$(OBJEXT)
 tasin_LDADD = $(LDADD)
 tasin_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tasin_LDFLAGS =
 tasinh_SOURCES = tasinh.c
-tasinh_OBJECTS = tasinh.$(OBJEXT)
+tasinh_OBJECTS = tasinh$U.$(OBJEXT)
 tasinh_LDADD = $(LDADD)
 tasinh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tasinh_LDFLAGS =
 tatan_SOURCES = tatan.c
-tatan_OBJECTS = tatan.$(OBJEXT)
+tatan_OBJECTS = tatan$U.$(OBJEXT)
 tatan_LDADD = $(LDADD)
 tatan_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tatan_LDFLAGS =
 tatanh_SOURCES = tatanh.c
-tatanh_OBJECTS = tatanh.$(OBJEXT)
+tatanh_OBJECTS = tatanh$U.$(OBJEXT)
 tatanh_LDADD = $(LDADD)
 tatanh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tatanh_LDFLAGS =
 tcan_round_SOURCES = tcan_round.c
-tcan_round_OBJECTS = tcan_round.$(OBJEXT)
+tcan_round_OBJECTS = tcan_round$U.$(OBJEXT)
 tcan_round_LDADD = $(LDADD)
 tcan_round_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tcan_round_LDFLAGS =
 tcmp_SOURCES = tcmp.c
-tcmp_OBJECTS = tcmp.$(OBJEXT)
+tcmp_OBJECTS = tcmp$U.$(OBJEXT)
 tcmp_LDADD = $(LDADD)
 tcmp_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tcmp_LDFLAGS =
 tcmp2_SOURCES = tcmp2.c
-tcmp2_OBJECTS = tcmp2.$(OBJEXT)
+tcmp2_OBJECTS = tcmp2$U.$(OBJEXT)
 tcmp2_LDADD = $(LDADD)
 tcmp2_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tcmp2_LDFLAGS =
 tcmp_ui_SOURCES = tcmp_ui.c
-tcmp_ui_OBJECTS = tcmp_ui.$(OBJEXT)
+tcmp_ui_OBJECTS = tcmp_ui$U.$(OBJEXT)
 tcmp_ui_LDADD = $(LDADD)
 tcmp_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tcmp_ui_LDFLAGS =
 tcos_SOURCES = tcos.c
-tcos_OBJECTS = tcos.$(OBJEXT)
+tcos_OBJECTS = tcos$U.$(OBJEXT)
 tcos_LDADD = $(LDADD)
 tcos_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tcos_LDFLAGS =
 tcosh_SOURCES = tcosh.c
-tcosh_OBJECTS = tcosh.$(OBJEXT)
+tcosh_OBJECTS = tcosh$U.$(OBJEXT)
 tcosh_LDADD = $(LDADD)
 tcosh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tcosh_LDFLAGS =
 tdiv_SOURCES = tdiv.c
-tdiv_OBJECTS = tdiv.$(OBJEXT)
+tdiv_OBJECTS = tdiv$U.$(OBJEXT)
 tdiv_LDADD = $(LDADD)
 tdiv_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tdiv_LDFLAGS =
 tdiv_ui_SOURCES = tdiv_ui.c
-tdiv_ui_OBJECTS = tdiv_ui.$(OBJEXT)
+tdiv_ui_OBJECTS = tdiv_ui$U.$(OBJEXT)
 tdiv_ui_LDADD = $(LDADD)
 tdiv_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tdiv_ui_LDFLAGS =
 tdump_SOURCES = tdump.c
-tdump_OBJECTS = tdump.$(OBJEXT)
+tdump_OBJECTS = tdump$U.$(OBJEXT)
 tdump_LDADD = $(LDADD)
 tdump_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tdump_LDFLAGS =
 teq_SOURCES = teq.c
-teq_OBJECTS = teq.$(OBJEXT)
+teq_OBJECTS = teq$U.$(OBJEXT)
 teq_LDADD = $(LDADD)
 teq_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 teq_LDFLAGS =
 teuler_SOURCES = teuler.c
-teuler_OBJECTS = teuler.$(OBJEXT)
+teuler_OBJECTS = teuler$U.$(OBJEXT)
 teuler_LDADD = $(LDADD)
 teuler_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 teuler_LDFLAGS =
 texceptions_SOURCES = texceptions.c
-texceptions_OBJECTS = texceptions.$(OBJEXT)
+texceptions_OBJECTS = texceptions$U.$(OBJEXT)
 texceptions_LDADD = $(LDADD)
 texceptions_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 texceptions_LDFLAGS =
 texp_SOURCES = texp.c
-texp_OBJECTS = texp.$(OBJEXT)
+texp_OBJECTS = texp$U.$(OBJEXT)
 texp_LDADD = $(LDADD)
 texp_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 texp_LDFLAGS =
 texp2_SOURCES = texp2.c
-texp2_OBJECTS = texp2.$(OBJEXT)
+texp2_OBJECTS = texp2$U.$(OBJEXT)
 texp2_LDADD = $(LDADD)
 texp2_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 texp2_LDFLAGS =
 texpm1_SOURCES = texpm1.c
-texpm1_OBJECTS = texpm1.$(OBJEXT)
+texpm1_OBJECTS = texpm1$U.$(OBJEXT)
 texpm1_LDADD = $(LDADD)
 texpm1_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 texpm1_LDFLAGS =
 tfactorial_SOURCES = tfactorial.c
-tfactorial_OBJECTS = tfactorial.$(OBJEXT)
+tfactorial_OBJECTS = tfactorial$U.$(OBJEXT)
 tfactorial_LDADD = $(LDADD)
 tfactorial_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tfactorial_LDFLAGS =
 tfma_SOURCES = tfma.c
-tfma_OBJECTS = tfma.$(OBJEXT)
+tfma_OBJECTS = tfma$U.$(OBJEXT)
 tfma_LDADD = $(LDADD)
 tfma_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tfma_LDFLAGS =
 tget_d_SOURCES = tget_d.c
-tget_d_OBJECTS = tget_d.$(OBJEXT)
+tget_d_OBJECTS = tget_d$U.$(OBJEXT)
 tget_d_LDADD = $(LDADD)
 tget_d_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tget_d_LDFLAGS =
 tget_str_SOURCES = tget_str.c
-tget_str_OBJECTS = tget_str.$(OBJEXT)
+tget_str_OBJECTS = tget_str$U.$(OBJEXT)
 tget_str_LDADD = $(LDADD)
 tget_str_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tget_str_LDFLAGS =
 thyperbolic_SOURCES = thyperbolic.c
-thyperbolic_OBJECTS = thyperbolic.$(OBJEXT)
+thyperbolic_OBJECTS = thyperbolic$U.$(OBJEXT)
 thyperbolic_LDADD = $(LDADD)
 thyperbolic_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 thyperbolic_LDFLAGS =
 thypot_SOURCES = thypot.c
-thypot_OBJECTS = thypot.$(OBJEXT)
+thypot_OBJECTS = thypot$U.$(OBJEXT)
 thypot_LDADD = $(LDADD)
 thypot_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 thypot_LDFLAGS =
 tisnan_SOURCES = tisnan.c
-tisnan_OBJECTS = tisnan.$(OBJEXT)
+tisnan_OBJECTS = tisnan$U.$(OBJEXT)
 tisnan_LDADD = $(LDADD)
 tisnan_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tisnan_LDFLAGS =
 tlog_SOURCES = tlog.c
-tlog_OBJECTS = tlog.$(OBJEXT)
+tlog_OBJECTS = tlog$U.$(OBJEXT)
 tlog_LDADD = $(LDADD)
 tlog_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tlog_LDFLAGS =
 tlog1p_SOURCES = tlog1p.c
-tlog1p_OBJECTS = tlog1p.$(OBJEXT)
+tlog1p_OBJECTS = tlog1p$U.$(OBJEXT)
 tlog1p_LDADD = $(LDADD)
 tlog1p_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tlog1p_LDFLAGS =
 tlog2_SOURCES = tlog2.c
-tlog2_OBJECTS = tlog2.$(OBJEXT)
+tlog2_OBJECTS = tlog2$U.$(OBJEXT)
 tlog2_LDADD = $(LDADD)
 tlog2_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tlog2_LDFLAGS =
 tlog_base_10_SOURCES = tlog_base_10.c
-tlog_base_10_OBJECTS = tlog_base_10.$(OBJEXT)
+tlog_base_10_OBJECTS = tlog_base_10$U.$(OBJEXT)
 tlog_base_10_LDADD = $(LDADD)
 tlog_base_10_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tlog_base_10_LDFLAGS =
 tlog_base_2_SOURCES = tlog_base_2.c
-tlog_base_2_OBJECTS = tlog_base_2.$(OBJEXT)
+tlog_base_2_OBJECTS = tlog_base_2$U.$(OBJEXT)
 tlog_base_2_LDADD = $(LDADD)
 tlog_base_2_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tlog_base_2_LDFLAGS =
 tmul_SOURCES = tmul.c
-tmul_OBJECTS = tmul.$(OBJEXT)
+tmul_OBJECTS = tmul$U.$(OBJEXT)
 tmul_LDADD = $(LDADD)
 tmul_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tmul_LDFLAGS =
 tmul_2exp_SOURCES = tmul_2exp.c
-tmul_2exp_OBJECTS = tmul_2exp.$(OBJEXT)
+tmul_2exp_OBJECTS = tmul_2exp$U.$(OBJEXT)
 tmul_2exp_LDADD = $(LDADD)
 tmul_2exp_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tmul_2exp_LDFLAGS =
 tmul_ui_SOURCES = tmul_ui.c
-tmul_ui_OBJECTS = tmul_ui.$(OBJEXT)
+tmul_ui_OBJECTS = tmul_ui$U.$(OBJEXT)
 tmul_ui_LDADD = $(LDADD)
 tmul_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tmul_ui_LDFLAGS =
 tout_str_SOURCES = tout_str.c
-tout_str_OBJECTS = tout_str.$(OBJEXT)
+tout_str_OBJECTS = tout_str$U.$(OBJEXT)
 tout_str_LDADD = $(LDADD)
 tout_str_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tout_str_LDFLAGS =
 tpi_SOURCES = tpi.c
-tpi_OBJECTS = tpi.$(OBJEXT)
+tpi_OBJECTS = tpi$U.$(OBJEXT)
 tpi_LDADD = $(LDADD)
 tpi_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tpi_LDFLAGS =
 tpow_SOURCES = tpow.c
-tpow_OBJECTS = tpow.$(OBJEXT)
+tpow_OBJECTS = tpow$U.$(OBJEXT)
 tpow_LDADD = $(LDADD)
 tpow_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tpow_LDFLAGS =
 tpow3_SOURCES = tpow3.c
-tpow3_OBJECTS = tpow3.$(OBJEXT)
+tpow3_OBJECTS = tpow3$U.$(OBJEXT)
 tpow3_LDADD = $(LDADD)
 tpow3_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tpow3_LDFLAGS =
 trandom_SOURCES = trandom.c
-trandom_OBJECTS = trandom.$(OBJEXT)
+trandom_OBJECTS = trandom$U.$(OBJEXT)
 trandom_LDADD = $(LDADD)
 trandom_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 trandom_LDFLAGS =
 tround_SOURCES = tround.c
-tround_OBJECTS = tround.$(OBJEXT)
+tround_OBJECTS = tround$U.$(OBJEXT)
 tround_LDADD = $(LDADD)
 tround_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tround_LDFLAGS =
 tset_SOURCES = tset.c
-tset_OBJECTS = tset.$(OBJEXT)
+tset_OBJECTS = tset$U.$(OBJEXT)
 tset_LDADD = $(LDADD)
 tset_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tset_LDFLAGS =
 tset_d_SOURCES = tset_d.c
-tset_d_OBJECTS = tset_d.$(OBJEXT)
+tset_d_OBJECTS = tset_d$U.$(OBJEXT)
 tset_d_LDADD = $(LDADD)
 tset_d_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tset_d_LDFLAGS =
 tset_f_SOURCES = tset_f.c
-tset_f_OBJECTS = tset_f.$(OBJEXT)
+tset_f_OBJECTS = tset_f$U.$(OBJEXT)
 tset_f_LDADD = $(LDADD)
 tset_f_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tset_f_LDFLAGS =
 tset_q_SOURCES = tset_q.c
-tset_q_OBJECTS = tset_q.$(OBJEXT)
+tset_q_OBJECTS = tset_q$U.$(OBJEXT)
 tset_q_LDADD = $(LDADD)
 tset_q_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tset_q_LDFLAGS =
 tset_si_SOURCES = tset_si.c
-tset_si_OBJECTS = tset_si.$(OBJEXT)
+tset_si_OBJECTS = tset_si$U.$(OBJEXT)
 tset_si_LDADD = $(LDADD)
 tset_si_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tset_si_LDFLAGS =
 tset_str_SOURCES = tset_str.c
-tset_str_OBJECTS = tset_str.$(OBJEXT)
+tset_str_OBJECTS = tset_str$U.$(OBJEXT)
 tset_str_LDADD = $(LDADD)
 tset_str_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tset_str_LDFLAGS =
 tset_z_SOURCES = tset_z.c
-tset_z_OBJECTS = tset_z.$(OBJEXT)
+tset_z_OBJECTS = tset_z$U.$(OBJEXT)
 tset_z_LDADD = $(LDADD)
 tset_z_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tset_z_LDFLAGS =
 tsin_SOURCES = tsin.c
-tsin_OBJECTS = tsin.$(OBJEXT)
+tsin_OBJECTS = tsin$U.$(OBJEXT)
 tsin_LDADD = $(LDADD)
 tsin_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tsin_LDFLAGS =
 tsinh_SOURCES = tsinh.c
-tsinh_OBJECTS = tsinh.$(OBJEXT)
+tsinh_OBJECTS = tsinh$U.$(OBJEXT)
 tsinh_LDADD = $(LDADD)
 tsinh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tsinh_LDFLAGS =
 tsqrt_SOURCES = tsqrt.c
-tsqrt_OBJECTS = tsqrt.$(OBJEXT)
+tsqrt_OBJECTS = tsqrt$U.$(OBJEXT)
 tsqrt_LDADD = $(LDADD)
 tsqrt_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tsqrt_LDFLAGS =
 tsqrt_ui_SOURCES = tsqrt_ui.c
-tsqrt_ui_OBJECTS = tsqrt_ui.$(OBJEXT)
+tsqrt_ui_OBJECTS = tsqrt_ui$U.$(OBJEXT)
 tsqrt_ui_LDADD = $(LDADD)
 tsqrt_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tsqrt_ui_LDFLAGS =
 tsub_SOURCES = tsub.c
-tsub_OBJECTS = tsub.$(OBJEXT)
+tsub_OBJECTS = tsub$U.$(OBJEXT)
 tsub_LDADD = $(LDADD)
 tsub_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tsub_LDFLAGS =
 tsub_ui_SOURCES = tsub_ui.c
-tsub_ui_OBJECTS = tsub_ui.$(OBJEXT)
+tsub_ui_OBJECTS = tsub_ui$U.$(OBJEXT)
 tsub_ui_LDADD = $(LDADD)
 tsub_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tsub_ui_LDFLAGS =
 tswap_SOURCES = tswap.c
-tswap_OBJECTS = tswap.$(OBJEXT)
+tswap_OBJECTS = tswap$U.$(OBJEXT)
 tswap_LDADD = $(LDADD)
 tswap_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tswap_LDFLAGS =
 ttan_SOURCES = ttan.c
-ttan_OBJECTS = ttan.$(OBJEXT)
+ttan_OBJECTS = ttan$U.$(OBJEXT)
 ttan_LDADD = $(LDADD)
 ttan_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 ttan_LDFLAGS =
 ttanh_SOURCES = ttanh.c
-ttanh_OBJECTS = ttanh.$(OBJEXT)
+ttanh_OBJECTS = ttanh$U.$(OBJEXT)
 ttanh_LDADD = $(LDADD)
 ttanh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 ttanh_LDFLAGS =
 ttrunc_SOURCES = ttrunc.c
-ttrunc_OBJECTS = ttrunc.$(OBJEXT)
+ttrunc_OBJECTS = ttrunc$U.$(OBJEXT)
 ttrunc_LDADD = $(LDADD)
 ttrunc_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 ttrunc_LDFLAGS =
 tui_div_SOURCES = tui_div.c
-tui_div_OBJECTS = tui_div.$(OBJEXT)
+tui_div_OBJECTS = tui_div$U.$(OBJEXT)
 tui_div_LDADD = $(LDADD)
 tui_div_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tui_div_LDFLAGS =
 tui_pow_SOURCES = tui_pow.c
-tui_pow_OBJECTS = tui_pow.$(OBJEXT)
+tui_pow_OBJECTS = tui_pow$U.$(OBJEXT)
 tui_pow_LDADD = $(LDADD)
 tui_pow_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tui_pow_LDFLAGS =
 tui_sub_SOURCES = tui_sub.c
-tui_sub_OBJECTS = tui_sub.$(OBJEXT)
+tui_sub_OBJECTS = tui_sub$U.$(OBJEXT)
 tui_sub_LDADD = $(LDADD)
 tui_sub_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
 tui_sub_LDFLAGS =
@@ -756,6 +756,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+ANSI2KNR = $(top_builddir)/ansi2knr
+$(top_builddir)/ansi2knr:
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
+
+mostlyclean-kr:
+	-test "$U" = "" || rm -f *_.c
+
 .c.o:
 	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
 
@@ -764,6 +771,168 @@ distclean-compile:
 
 .c.lo:
 	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+reuse_.c: reuse.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/reuse.c; then echo $(srcdir)/reuse.c; else echo reuse.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > reuse_.c || rm -f reuse_.c
+tabs_.c: tabs.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tabs.c; then echo $(srcdir)/tabs.c; else echo tabs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tabs_.c || rm -f tabs_.c
+tacosh_.c: tacosh.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tacosh.c; then echo $(srcdir)/tacosh.c; else echo tacosh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tacosh_.c || rm -f tacosh_.c
+tadd_.c: tadd.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tadd.c; then echo $(srcdir)/tadd.c; else echo tadd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tadd_.c || rm -f tadd_.c
+tadd_ui_.c: tadd_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tadd_ui.c; then echo $(srcdir)/tadd_ui.c; else echo tadd_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tadd_ui_.c || rm -f tadd_ui_.c
+tagm_.c: tagm.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tagm.c; then echo $(srcdir)/tagm.c; else echo tagm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tagm_.c || rm -f tagm_.c
+tasin_.c: tasin.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tasin.c; then echo $(srcdir)/tasin.c; else echo tasin.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tasin_.c || rm -f tasin_.c
+tasinh_.c: tasinh.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tasinh.c; then echo $(srcdir)/tasinh.c; else echo tasinh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tasinh_.c || rm -f tasinh_.c
+tatan_.c: tatan.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tatan.c; then echo $(srcdir)/tatan.c; else echo tatan.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tatan_.c || rm -f tatan_.c
+tatanh_.c: tatanh.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tatanh.c; then echo $(srcdir)/tatanh.c; else echo tatanh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tatanh_.c || rm -f tatanh_.c
+tcan_round_.c: tcan_round.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcan_round.c; then echo $(srcdir)/tcan_round.c; else echo tcan_round.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tcan_round_.c || rm -f tcan_round_.c
+tcmp_.c: tcmp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcmp.c; then echo $(srcdir)/tcmp.c; else echo tcmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tcmp_.c || rm -f tcmp_.c
+tcmp2_.c: tcmp2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcmp2.c; then echo $(srcdir)/tcmp2.c; else echo tcmp2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tcmp2_.c || rm -f tcmp2_.c
+tcmp_ui_.c: tcmp_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcmp_ui.c; then echo $(srcdir)/tcmp_ui.c; else echo tcmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tcmp_ui_.c || rm -f tcmp_ui_.c
+tcos_.c: tcos.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcos.c; then echo $(srcdir)/tcos.c; else echo tcos.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tcos_.c || rm -f tcos_.c
+tcosh_.c: tcosh.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcosh.c; then echo $(srcdir)/tcosh.c; else echo tcosh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tcosh_.c || rm -f tcosh_.c
+tdiv_.c: tdiv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv.c; then echo $(srcdir)/tdiv.c; else echo tdiv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_.c || rm -f tdiv_.c
+tdiv_ui_.c: tdiv_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_ui.c; then echo $(srcdir)/tdiv_ui.c; else echo tdiv_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_ui_.c || rm -f tdiv_ui_.c
+tdump_.c: tdump.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdump.c; then echo $(srcdir)/tdump.c; else echo tdump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdump_.c || rm -f tdump_.c
+teq_.c: teq.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/teq.c; then echo $(srcdir)/teq.c; else echo teq.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > teq_.c || rm -f teq_.c
+teuler_.c: teuler.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/teuler.c; then echo $(srcdir)/teuler.c; else echo teuler.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > teuler_.c || rm -f teuler_.c
+texceptions_.c: texceptions.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/texceptions.c; then echo $(srcdir)/texceptions.c; else echo texceptions.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > texceptions_.c || rm -f texceptions_.c
+texp_.c: texp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/texp.c; then echo $(srcdir)/texp.c; else echo texp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > texp_.c || rm -f texp_.c
+texp2_.c: texp2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/texp2.c; then echo $(srcdir)/texp2.c; else echo texp2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > texp2_.c || rm -f texp2_.c
+texpm1_.c: texpm1.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/texpm1.c; then echo $(srcdir)/texpm1.c; else echo texpm1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > texpm1_.c || rm -f texpm1_.c
+tfactorial_.c: tfactorial.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tfactorial.c; then echo $(srcdir)/tfactorial.c; else echo tfactorial.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tfactorial_.c || rm -f tfactorial_.c
+tfma_.c: tfma.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tfma.c; then echo $(srcdir)/tfma.c; else echo tfma.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tfma_.c || rm -f tfma_.c
+tget_d_.c: tget_d.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tget_d.c; then echo $(srcdir)/tget_d.c; else echo tget_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tget_d_.c || rm -f tget_d_.c
+tget_str_.c: tget_str.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tget_str.c; then echo $(srcdir)/tget_str.c; else echo tget_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tget_str_.c || rm -f tget_str_.c
+thyperbolic_.c: thyperbolic.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/thyperbolic.c; then echo $(srcdir)/thyperbolic.c; else echo thyperbolic.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > thyperbolic_.c || rm -f thyperbolic_.c
+thypot_.c: thypot.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/thypot.c; then echo $(srcdir)/thypot.c; else echo thypot.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > thypot_.c || rm -f thypot_.c
+tisnan_.c: tisnan.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tisnan.c; then echo $(srcdir)/tisnan.c; else echo tisnan.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tisnan_.c || rm -f tisnan_.c
+tlog_.c: tlog.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tlog.c; then echo $(srcdir)/tlog.c; else echo tlog.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tlog_.c || rm -f tlog_.c
+tlog1p_.c: tlog1p.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tlog1p.c; then echo $(srcdir)/tlog1p.c; else echo tlog1p.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tlog1p_.c || rm -f tlog1p_.c
+tlog2_.c: tlog2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tlog2.c; then echo $(srcdir)/tlog2.c; else echo tlog2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tlog2_.c || rm -f tlog2_.c
+tlog_base_10_.c: tlog_base_10.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tlog_base_10.c; then echo $(srcdir)/tlog_base_10.c; else echo tlog_base_10.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tlog_base_10_.c || rm -f tlog_base_10_.c
+tlog_base_2_.c: tlog_base_2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tlog_base_2.c; then echo $(srcdir)/tlog_base_2.c; else echo tlog_base_2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tlog_base_2_.c || rm -f tlog_base_2_.c
+tmul_.c: tmul.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tmul.c; then echo $(srcdir)/tmul.c; else echo tmul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tmul_.c || rm -f tmul_.c
+tmul_2exp_.c: tmul_2exp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tmul_2exp.c; then echo $(srcdir)/tmul_2exp.c; else echo tmul_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tmul_2exp_.c || rm -f tmul_2exp_.c
+tmul_ui_.c: tmul_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tmul_ui.c; then echo $(srcdir)/tmul_ui.c; else echo tmul_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tmul_ui_.c || rm -f tmul_ui_.c
+tout_str_.c: tout_str.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tout_str.c; then echo $(srcdir)/tout_str.c; else echo tout_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tout_str_.c || rm -f tout_str_.c
+tpi_.c: tpi.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tpi.c; then echo $(srcdir)/tpi.c; else echo tpi.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tpi_.c || rm -f tpi_.c
+tpow_.c: tpow.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tpow.c; then echo $(srcdir)/tpow.c; else echo tpow.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tpow_.c || rm -f tpow_.c
+tpow3_.c: tpow3.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tpow3.c; then echo $(srcdir)/tpow3.c; else echo tpow3.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tpow3_.c || rm -f tpow3_.c
+trandom_.c: trandom.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/trandom.c; then echo $(srcdir)/trandom.c; else echo trandom.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > trandom_.c || rm -f trandom_.c
+tround_.c: tround.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tround.c; then echo $(srcdir)/tround.c; else echo tround.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tround_.c || rm -f tround_.c
+tset_.c: tset.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tset.c; then echo $(srcdir)/tset.c; else echo tset.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tset_.c || rm -f tset_.c
+tset_d_.c: tset_d.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tset_d.c; then echo $(srcdir)/tset_d.c; else echo tset_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tset_d_.c || rm -f tset_d_.c
+tset_f_.c: tset_f.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tset_f.c; then echo $(srcdir)/tset_f.c; else echo tset_f.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tset_f_.c || rm -f tset_f_.c
+tset_q_.c: tset_q.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tset_q.c; then echo $(srcdir)/tset_q.c; else echo tset_q.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tset_q_.c || rm -f tset_q_.c
+tset_si_.c: tset_si.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tset_si.c; then echo $(srcdir)/tset_si.c; else echo tset_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tset_si_.c || rm -f tset_si_.c
+tset_str_.c: tset_str.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tset_str.c; then echo $(srcdir)/tset_str.c; else echo tset_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tset_str_.c || rm -f tset_str_.c
+tset_z_.c: tset_z.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tset_z.c; then echo $(srcdir)/tset_z.c; else echo tset_z.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tset_z_.c || rm -f tset_z_.c
+tsin_.c: tsin.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tsin.c; then echo $(srcdir)/tsin.c; else echo tsin.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tsin_.c || rm -f tsin_.c
+tsinh_.c: tsinh.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tsinh.c; then echo $(srcdir)/tsinh.c; else echo tsinh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tsinh_.c || rm -f tsinh_.c
+tsqrt_.c: tsqrt.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tsqrt.c; then echo $(srcdir)/tsqrt.c; else echo tsqrt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tsqrt_.c || rm -f tsqrt_.c
+tsqrt_ui_.c: tsqrt_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tsqrt_ui.c; then echo $(srcdir)/tsqrt_ui.c; else echo tsqrt_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tsqrt_ui_.c || rm -f tsqrt_ui_.c
+tsub_.c: tsub.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tsub.c; then echo $(srcdir)/tsub.c; else echo tsub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tsub_.c || rm -f tsub_.c
+tsub_ui_.c: tsub_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tsub_ui.c; then echo $(srcdir)/tsub_ui.c; else echo tsub_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tsub_ui_.c || rm -f tsub_ui_.c
+tswap_.c: tswap.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tswap.c; then echo $(srcdir)/tswap.c; else echo tswap.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tswap_.c || rm -f tswap_.c
+ttan_.c: ttan.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ttan.c; then echo $(srcdir)/ttan.c; else echo ttan.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ttan_.c || rm -f ttan_.c
+ttanh_.c: ttanh.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ttanh.c; then echo $(srcdir)/ttanh.c; else echo ttanh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ttanh_.c || rm -f ttanh_.c
+ttrunc_.c: ttrunc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ttrunc.c; then echo $(srcdir)/ttrunc.c; else echo ttrunc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ttrunc_.c || rm -f ttrunc_.c
+tui_div_.c: tui_div.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tui_div.c; then echo $(srcdir)/tui_div.c; else echo tui_div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tui_div_.c || rm -f tui_div_.c
+tui_pow_.c: tui_pow.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tui_pow.c; then echo $(srcdir)/tui_pow.c; else echo tui_pow.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tui_pow_.c || rm -f tui_pow_.c
+tui_sub_.c: tui_sub.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tui_sub.c; then echo $(srcdir)/tui_sub.c; else echo tui_sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tui_sub_.c || rm -f tui_sub_.c
+reuse_.$(OBJEXT) reuse_.lo tabs_.$(OBJEXT) tabs_.lo tacosh_.$(OBJEXT) \
+tacosh_.lo tadd_.$(OBJEXT) tadd_.lo tadd_ui_.$(OBJEXT) tadd_ui_.lo \
+tagm_.$(OBJEXT) tagm_.lo tasin_.$(OBJEXT) tasin_.lo tasinh_.$(OBJEXT) \
+tasinh_.lo tatan_.$(OBJEXT) tatan_.lo tatanh_.$(OBJEXT) tatanh_.lo \
+tcan_round_.$(OBJEXT) tcan_round_.lo tcmp_.$(OBJEXT) tcmp_.lo \
+tcmp2_.$(OBJEXT) tcmp2_.lo tcmp_ui_.$(OBJEXT) tcmp_ui_.lo \
+tcos_.$(OBJEXT) tcos_.lo tcosh_.$(OBJEXT) tcosh_.lo tdiv_.$(OBJEXT) \
+tdiv_.lo tdiv_ui_.$(OBJEXT) tdiv_ui_.lo tdump_.$(OBJEXT) tdump_.lo \
+teq_.$(OBJEXT) teq_.lo teuler_.$(OBJEXT) teuler_.lo \
+texceptions_.$(OBJEXT) texceptions_.lo texp_.$(OBJEXT) texp_.lo \
+texp2_.$(OBJEXT) texp2_.lo texpm1_.$(OBJEXT) texpm1_.lo \
+tfactorial_.$(OBJEXT) tfactorial_.lo tfma_.$(OBJEXT) tfma_.lo \
+tget_d_.$(OBJEXT) tget_d_.lo tget_str_.$(OBJEXT) tget_str_.lo \
+thyperbolic_.$(OBJEXT) thyperbolic_.lo thypot_.$(OBJEXT) thypot_.lo \
+tisnan_.$(OBJEXT) tisnan_.lo tlog_.$(OBJEXT) tlog_.lo tlog1p_.$(OBJEXT) \
+tlog1p_.lo tlog2_.$(OBJEXT) tlog2_.lo tlog_base_10_.$(OBJEXT) \
+tlog_base_10_.lo tlog_base_2_.$(OBJEXT) tlog_base_2_.lo tmul_.$(OBJEXT) \
+tmul_.lo tmul_2exp_.$(OBJEXT) tmul_2exp_.lo tmul_ui_.$(OBJEXT) \
+tmul_ui_.lo tout_str_.$(OBJEXT) tout_str_.lo tpi_.$(OBJEXT) tpi_.lo \
+tpow_.$(OBJEXT) tpow_.lo tpow3_.$(OBJEXT) tpow3_.lo trandom_.$(OBJEXT) \
+trandom_.lo tround_.$(OBJEXT) tround_.lo tset_.$(OBJEXT) tset_.lo \
+tset_d_.$(OBJEXT) tset_d_.lo tset_f_.$(OBJEXT) tset_f_.lo \
+tset_q_.$(OBJEXT) tset_q_.lo tset_si_.$(OBJEXT) tset_si_.lo \
+tset_str_.$(OBJEXT) tset_str_.lo tset_z_.$(OBJEXT) tset_z_.lo \
+tsin_.$(OBJEXT) tsin_.lo tsinh_.$(OBJEXT) tsinh_.lo tsqrt_.$(OBJEXT) \
+tsqrt_.lo tsqrt_ui_.$(OBJEXT) tsqrt_ui_.lo tsub_.$(OBJEXT) tsub_.lo \
+tsub_ui_.$(OBJEXT) tsub_ui_.lo tswap_.$(OBJEXT) tswap_.lo \
+ttan_.$(OBJEXT) ttan_.lo ttanh_.$(OBJEXT) ttanh_.lo ttrunc_.$(OBJEXT) \
+ttrunc_.lo tui_div_.$(OBJEXT) tui_div_.lo tui_pow_.$(OBJEXT) \
+tui_pow_.lo tui_sub_.$(OBJEXT) tui_sub_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
@@ -940,7 +1109,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
+mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
 	mostlyclean-libtool
 
 uninstall-am: uninstall-info-am
@@ -953,8 +1122,9 @@ uninstall-am: uninstall-info-am
 	install-exec-am install-info install-info-am install-man \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	tags uninstall uninstall-am uninstall-info-am
+	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool tags uninstall uninstall-am \
+	uninstall-info-am
 
 
 ../libmpfr.a:
