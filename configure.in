@@ -615,6 +615,12 @@ case ${target} in
   sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
     SPEED_CYCLECOUNTER_OBJS=sparcv9.lo
     ;;
+  hppa2*-*-*)
+    SPEED_CYCLECOUNTER_OBJS=hppa2.lo
+    ;;
+  hppa*-*-*)
+    SPEED_CYCLECOUNTER_OBJS=hppa.lo
+    ;;
 esac
 
 AC_SUBST(SPEED_CYCLECOUNTER_OBJS)
