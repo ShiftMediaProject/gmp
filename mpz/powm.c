@@ -31,7 +31,6 @@ MA 02111-1307, USA. */
 
 /* Set c <- tp/R^n mod m.
    tp should have space for 2*n+1 limbs; clobber its most significant limb. */
-
 #if ! WANT_REDC_GLOBAL
 static
 #endif
@@ -40,7 +39,7 @@ redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
 {
   mp_limb_t cy;
   mp_limb_t q;
-  size_t j;
+  mp_size_t j;
 
   tp[2 * n] = 0;		/* carry guard */
 
@@ -58,6 +57,64 @@ redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
     MPN_COPY (cp, tp, n);
 }
 
+/* Compute t = a mod m, a is defined by (ap,an), m is defined by (mp,mn), and
+   t is defined by (tp,mn).  */
+static void
+reduce (mp_ptr tp, mp_srcptr ap, mp_size_t an, mp_srcptr mp, mp_size_t mn)
+{
+  mp_ptr qp;
+  TMP_DECL (marker);
+
+  TMP_MARK (marker);
+  qp = TMP_ALLOC_LIMBS (an - mn + 1);
+
+  mpn_tdiv_qr (qp, tp, 0L, ap, an, mp, mn);
+
+  TMP_FREE (marker);
+}
+
+#if REDUCE_EXPONENT
+/* Return the group order of the ring mod m.  */
+static mp_limb_t
+phi (mp_limb_t t)
+{
+  mp_limb_t d, m, go;
+
+  go = 1;
+
+  if (t % 2 == 0)
+    {
+      t = t / 2;
+      while (t % 2 == 0)
+	{
+	  go *= 2;
+	  t = t / 2;
+	}
+    }
+  for (d = 3;; d += 2)
+    {
+      m = d - 1;
+      for (;;)
+	{
+	  unsigned long int q = t / d;
+	  if (q < d)
+	    {
+	      if (t <= 1)
+		return go;
+	      if (t == d)
+		return go * m;
+	      return go * (t - 1);
+	    }
+	  if (t != q * d)
+	    break;
+	  go *= m;
+	  m = d;
+	  t = q;
+	}
+    }
+}
+#endif
+
 /* average number of calls to redc for an exponent of n bits
    with the sliding window algorithm of base 2^k: the optimal is
    obtained for the value of k which minimizes 2^(k-1)+n/(k+1):
@@ -71,158 +128,205 @@ redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
    4096   4918  4787  4707  4665* 4670
 */
 
-void
-#ifndef BERKELEY_MP
-mpz_powm (mpz_ptr res, mpz_srcptr base, mpz_srcptr e, mpz_srcptr mod)
-#else /* BERKELEY_MP */
-pow (mpz_srcptr base, mpz_srcptr e, mpz_srcptr mod, mpz_ptr res)
-#endif /* BERKELEY_MP */
-{
-  mp_limb_t invm, *ep, c, mask;
-  mpz_t xx, *g;
-  mp_size_t n, i, K, j, l, k;
-  int sh;
-  int use_redc;
-  mp_ptr tp;
-  TMP_DECL (marker);
 
-  TMP_MARK (marker);
-
-  n = ABSIZ (mod);
-  if (n == 0)
-    DIVIDE_BY_ZERO;
-
-  if (SIZ (e) <= 0)
-    {
-      /* Exponent is zero, result is 1 mod MOD, i.e., 1 or 0
-         depending on if MOD equals 1.  */
-      SIZ(res) = (ABSIZ (mod) == 1 && (PTR(mod))[0] == 1) ? 0 : 1;
-      PTR(res)[0] = 1;
-      return;
-    }
-
-  /* Use REDC instead of usual reduction for sizes < POWM_THRESHOLD.
-     In REDC each modular multiplication costs about 2*n^2 limbs operations,
-     whereas using usual reduction it costs 3*K(n), where K(n) is the cost of a
-     multiplication using Karatsuba, and a division is assumed to cost 2*K(n),
-     for example using Burnikel-Ziegler's algorithm. This gives a theoretical
-     threshold of a*KARATSUBA_SQR_THRESHOLD, with a=(3/2)^(1/(2-ln(3)/ln(2))) ~
-     2.66.  */
-  /* For now, also disable REDC when MOD is even, as the inverse can't
-     handle that.  */
-  /* For use_redc, we use an ugly mixture of mpn and mpz.  The variables
-     are in mpz, but we don't keep them normalized as mpz requires,
-     except in a few places.  */
+/* Use REDC instead of usual reduction for sizes < POWM_THRESHOLD.  In REDC
+   each modular multiplication costs about 2*n^2 limbs operations, whereas
+   using usual reduction it costs 3*K(n), where K(n) is the cost of a
+   multiplication using Karatsuba, and a division is assumed to cost 2*K(n),
+   for example using Burnikel-Ziegler's algorithm. This gives a theoretical
+   threshold of a*KARATSUBA_SQR_THRESHOLD, with a=(3/2)^(1/(2-ln(3)/ln(2))) ~
+   2.66.  */
+/* For now, also disable REDC when MOD is even, as the inverse can't handle
+   that.  At some point, we might want to make the code faster for that case,
+   perhaps using CRR.  */
 
 #ifndef POWM_THRESHOLD
 #define POWM_THRESHOLD  ((8 * KARATSUBA_SQR_THRESHOLD) / 3)
 #endif
 
-  use_redc = n < POWM_THRESHOLD && PTR(mod)[0] % 2 != 0;
+void
+#ifndef BERKELEY_MP
+mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
+#else /* BERKELEY_MP */
+pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
+#endif /* BERKELEY_MP */
+{
+  mp_limb_t invm, c;
+  mp_size_t bn, mn, xn;
+  unsigned long int enb;
+  mp_ptr xp, tp, qp, gp, this_gp;
+  mp_srcptr bp, ep, mp;
+  mp_size_t i, K, j, l, k;
+  int m_zero_cnt, e_zero_cnt;
+  int sh;
+  int use_redc;
+#if REDUCE_EXPONENT
+  mpz_t new_e;
+#endif
+  TMP_DECL (marker);
+
+  mp = PTR(m);
+  mn = ABSIZ (m);
+  if (mn == 0)
+    DIVIDE_BY_ZERO;
+
+  if (SIZ (e) <= 0)
+    {
+      /* Exponent is zero, result is 1 mod m, i.e., 1 or 0 depending on if m
+	 equals 1.  */
+      SIZ(r) = (mn == 1 && mp[0] == 1) ? 0 : 1;
+      PTR(r)[0] = 1;
+      return;
+    }
+
+#if REDUCE_EXPONENT
+  /* Reduce exponent by dividing it by phi(m) when m small.  */
+  if (mn == 1 && mp[0] < 0xffffffffL && SIZ (e) * BITS_PER_MP_LIMB > 150)
+    {
+      MPZ_TMP_INIT (new_e, 2);
+      mpz_mod_ui (new_e, e, phi (mp[0]));
+      e = new_e;
+    }
+#endif
+
+  TMP_MARK (marker);
+
+  use_redc = mn < POWM_THRESHOLD && mp[0] % 2 != 0;
   if (use_redc)
     {
       /* invm = -1/m mod 2^BITS_PER_MP_LIMB, must have m odd */
-      modlimb_invert (invm, PTR(mod)[0]);
+      modlimb_invert (invm, mp[0]);
       invm = -invm;
+    }
+  else
+    {
+      count_leading_zeros (m_zero_cnt, mp[mn - 1]);
+      if (m_zero_cnt != 0)
+	{
+	  mp_ptr new_mp;
+	  new_mp = TMP_ALLOC_LIMBS (mn);
+	  mpn_lshift (new_mp, mp, mn, m_zero_cnt);
+	  mp = new_mp;
+	}
     }
 
   /* Determine optimal value of k, the number of exponent bits we look at
      at a time.  */
-  count_leading_zeros (sh, PTR(e)[SIZ(e)-1]);
-  l = SIZ (e) * BITS_PER_MP_LIMB - sh; /* number of bits of exponent */
+  count_leading_zeros (e_zero_cnt, PTR(e)[SIZ(e) - 1]);
+  enb = SIZ (e) * BITS_PER_MP_LIMB - e_zero_cnt; /* number of bits of exponent */
   k = 1;
   K = 2;
-  while (2 * l > K * (2 + k * (3 + k)))
+  while (2 * enb > K * (2 + k * (3 + k)))
     {
       k++;
       K *= 2;
     }
 
-  tp = TMP_ALLOC_LIMBS (2 * n + 1);
+  tp = TMP_ALLOC_LIMBS (2 * mn + 1);
+  qp = TMP_ALLOC_LIMBS (mn + 1);
 
-  g = TMP_ALLOC_TYPE (K / 2, mpz_t);
+  gp = __GMP_ALLOCATE_FUNC_TYPE (K / 2 * mn, mp_limb_t);
+
   /* Compute x*R^n where R=2^BITS_PER_MP_LIMB.  */
-  mpz_init (g[0]);
-  mpz_mod (g[0], base, mod);
-  if (use_redc)
+  bn = ABSIZ (b);
+  bp = PTR(b);
+  /* Handle |b| >= m by computing b mod m.  While it is not strictly necessary
+     for speed or correctness to do this when b and m have the same number of
+     limbs, it simplifies the "else" clause's handling of b < 0.  */
+  if (bn > mn || (bn == mn && mpn_cmp (bp, mp, mn) >= 0))
     {
-      mpz_mul_2exp (g[0], g[0], n * BITS_PER_MP_LIMB);
-      mpz_mod (g[0], g[0], mod);
-      _mpz_realloc (g[0], n);
-      MPN_ZERO (PTR(g[0]) + SIZ(g[0]), n - SIZ(g[0]));
-      SIZ(g[0]) = n;
-    }
-
-  /* Compute xx^i for odd g < 2^i.  */
-  mpz_init (xx);
-  _mpz_realloc (xx, n);
-
-  if (use_redc)
-    {
-      mpn_sqr_n (tp, PTR(g[0]), n);
-      redc (PTR(xx), PTR(mod), n, invm, tp); /* xx = x^2*R^n */
-    }
-  else
-    {
-      mpz_mul (xx, g[0], g[0]);
-      mpz_mod (xx, xx, mod);
-    }
-  for (i = 1; i < K / 2; i++)
-    {
-      mpz_init (g[i]);
+      /* Reduce possibly huge base while moving it to gp[0].  */
       if (use_redc)
 	{
-	  _mpz_realloc (g[i], n);
-	  mpn_mul_n (tp, PTR(g[i - 1]), PTR(xx), n);
-	  redc (PTR(g[i]), PTR(mod), n, invm, tp); /* g[i] = x^(2i+1)*R^n */
-	  SIZ(g[i]) = n;
+	  reduce (tp + mn, bp, bn, mp, mn);	/* b mod m */
+	  if (SIZ (b) < 0)
+	    mpn_sub_n (tp + mn, mp, tp + mn, mn);
+	  MPN_ZERO (tp, mn);
+	  mpn_tdiv_qr (qp, gp, 0L, tp, 2 * mn, mp, mn); /* unnormnalized! */
 	}
       else
 	{
-	  mpz_mul (g[i], g[i - 1], xx);
-	  mpz_mod (g[i], g[i], mod);
+	  reduce (gp, bp, bn, mp, mn);
+	  if (SIZ (b) < 0)
+	    mpn_sub_n (gp, mp, gp, mn);
+	}
+    }
+  else
+    {
+      /* |b| < m.  Possibly, |b| << m.  */
+      if (use_redc)
+	{
+	  MPN_ZERO (tp, mn);
+	  if (SIZ (b) < 0)
+	    mpn_sub (tp + mn, mp, mn, bp, bn);
+	  else
+	    {
+	      MPN_COPY (tp + mn, bp, bn);
+	      MPN_ZERO (tp + mn + bn, mn - bn);
+	    }
+	  mpn_tdiv_qr (qp, gp, 0L, tp, 2 * mn, mp, mn);
+	}
+      else
+	{
+	  if (SIZ (b) < 0)
+	    mpn_sub (gp, mp, mn, bp, bn);
+	  else
+	    {
+	      MPN_COPY (gp, bp, bn);
+	      MPN_ZERO (gp + bn, mn - bn);
+	    }
 	}
     }
 
+  /* Compute xx^i for odd g < 2^i.  */
+
+  xp = TMP_ALLOC_LIMBS (mn);
+  mpn_sqr_n (tp, gp, mn);
+  if (use_redc)
+    redc (xp, mp, mn, invm, tp);		/* xx = x^2*R^n */
+  else
+    mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
+  this_gp = gp;
+  for (i = 1; i < K / 2; i++)
+    {
+      mpn_mul_n (tp, this_gp, xp, mn);
+      this_gp += mn;
+      if (use_redc)
+	redc (this_gp, mp, mn, invm, tp);	/* g[i] = x^(2i+1)*R^n */
+      else
+	mpn_tdiv_qr (qp, this_gp, 0L, tp, 2 * mn, mp, mn);
+    }
+
   /* Start the real stuff.  */
-  mask = ((mp_limb_t) 1 << k) - 1;
   ep = PTR (e);
   i = SIZ (e) - 1;			/* current index */
   c = ep[i];				/* current limb */
-  count_leading_zeros (sh, c);
-  sh = BITS_PER_MP_LIMB - sh;		/* significant bits in ep[i] */
+  sh = BITS_PER_MP_LIMB - e_zero_cnt;	/* significant bits in ep[i] */
   sh -= k;				/* index of lower bit of ep[i] to take into account */
   if (sh < 0)
     {					/* k-sh extra bits are needed */
       if (i > 0)
 	{
 	  i--;
-	  c = (c << (-sh)) | (ep[i] >> (BITS_PER_MP_LIMB + sh));
+	  c <<= (-sh);
 	  sh += BITS_PER_MP_LIMB;
+	  c |= ep[i] >> sh;
 	}
     }
   else
-    c = c >> sh;
+    c >>= sh;
 
-  j = 0;
-  while (c % 2 == 0)
-    {
-      j++;
-      c = c >> 1;
-    }
-  mpz_set (xx, g[c >> 1]);
+  for (j = 0; c % 2 == 0; j++)
+    c >>= 1;
+
+  MPN_COPY (xp, gp + mn * (c >> 1), mn);
   while (--j >= 0)
     {
+      mpn_sqr_n (tp, xp, mn);
       if (use_redc)
-	{
-	  mpn_sqr_n (tp, PTR(xx), n);
-	  redc (PTR(xx), PTR(mod), n, invm, tp);
-	}
+	redc (xp, mp, mn, invm, tp);
       else
-	{
-	  mpz_mul (xx, xx, xx);
-	  mpz_mod (xx, xx, mod);
-	}
+	mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
     }
 
   while (i > 0 || sh > 0)
@@ -235,32 +339,28 @@ pow (mpz_srcptr base, mpz_srcptr e, mpz_srcptr mod, mpz_ptr res)
 	  if (i > 0)
 	    {
 	      i--;
-	      c = (c << (-sh)) | (ep[i] >> (BITS_PER_MP_LIMB + sh));
+	      c <<= (-sh);
 	      sh += BITS_PER_MP_LIMB;
+	      c |= ep[i] >> sh;
 	    }
 	  else
 	    {
-	      l += sh;			/* may be less bits than k here */
-	      c = c & (((mp_limb_t) 1 << l) - 1);
+	      l += sh;			/* last chunk of bits from e; l < k */
 	    }
 	}
       else
-	c = c >> sh;
-      c = c & mask;
+	c >>= sh;
+      c &= ((mp_limb_t) 1 << l) - 1;
 
-      /* This while loop implements the sliding window improvement.  */
-      while ((c & ((mp_limb_t) 1 << (k - 1))) == 0 && (i > 0 || sh > 0))
+      /* This while loop implements the sliding window improvement--loop while
+	 the most significant bit of c is zero, squaring xx as we go. */
+      while ((c >> (l - 1)) == 0 && (i > 0 || sh > 0))
 	{
+	  mpn_sqr_n (tp, xp, mn);
 	  if (use_redc)
-	    {
-	      mpn_sqr_n (tp, PTR(xx), n);
-	      redc (PTR(xx), PTR(mod), n, invm, tp);
-	    }
+	    redc (xp, mp, mn, invm, tp);
 	  else
-	    {
-	      mpz_mul (xx, xx, xx);
-	      mpz_mod (xx, xx, mod);
-	    }
+	    mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
 	  if (sh != 0)
 	    {
 	      sh--;
@@ -277,70 +377,63 @@ pow (mpz_srcptr base, mpz_srcptr e, mpz_srcptr mod, mpz_ptr res)
       /* Replace xx by xx^(2^k)*x^c.  */
       if (c != 0)
 	{
-	  j = 0;
-	  while (c % 2 == 0)
-	    {
-	      j++;
-	      c = c >> 1;
-	    }
+	  for (j = 0; c % 2 == 0; j++)
+	    c >>= 1;
+
 	  /* c0 = c * 2^j, i.e. xx^(2^k)*x^c = (A^(2^(k - j))*c)^(2^j) */
 	  l -= j;
 	  while (--l >= 0)
 	    {
+	      mpn_sqr_n (tp, xp, mn);
 	      if (use_redc)
-		{
-		  mpn_sqr_n (tp, PTR(xx), n);
-		  redc (PTR(xx), PTR(mod), n, invm, tp);
-		}
+		redc (xp, mp, mn, invm, tp);
 	      else
-		{
-		  mpz_mul (xx, xx, xx);
-		  mpz_mod (xx, xx, mod);
-		}
+		mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
 	    }
+	  mpn_mul_n (tp, xp, gp + mn * (c >> 1), mn);
 	  if (use_redc)
-	    {
-	      mpn_mul_n (tp, PTR(xx), PTR(g[c >> 1]), n);
-	      redc (PTR(xx), PTR(mod), n, invm, tp);
-	    }
+	    redc (xp, mp, mn, invm, tp);
 	  else
-	    {
-	      mpz_mul (xx, xx, g[c >> 1]);
-	      mpz_mod (xx, xx, mod);
-	    }
+	    mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
 	}
       else
 	j = l;				/* case c=0 */
       while (--j >= 0)
 	{
+	  mpn_sqr_n (tp, xp, mn);
 	  if (use_redc)
-	    {
-	      mpn_sqr_n (tp, PTR(xx), n);
-	      redc (PTR(xx), PTR(mod), n, invm, tp);
-	    }
+	    redc (xp, mp, mn, invm, tp);
 	  else
-	    {
-	      mpz_mul (xx, xx, xx);
-	      mpz_mod (xx, xx, mod);
-	    }
+	    mpn_tdiv_qr (qp, xp, 0L, tp, 2 * mn, mp, mn);
 	}
     }
 
-  /* Convert back xx to xx/R^n.  */
   if (use_redc)
     {
-      MPN_COPY (tp, PTR(xx), n);
-      MPN_ZERO (tp + n, n);
-      redc (PTR(xx), PTR(mod), n, invm, tp);
-      SIZ(xx) = n;
-      MPN_NORMALIZE (PTR(xx), SIZ(xx));
-      if (mpz_cmp (xx, mod) >= 0)
-	mpz_sub (xx, xx, mod);
+      /* Convert back xx to xx/R^n.  */
+      MPN_COPY (tp, xp, mn);
+      MPN_ZERO (tp + mn, mn);
+      redc (xp, mp, mn, invm, tp);
+      if (mpn_cmp (xp, mp, mn) >= 0)
+	mpn_sub_n (xp, xp, mp, mn);
     }
-  mpz_set (res, xx);
+  else
+    {
+      if (m_zero_cnt != 0)
+	{
+	  mp_limb_t cy;
+	  cy = mpn_lshift (tp, xp, mn, m_zero_cnt);
+	  tp[mn] = cy;
+	  mpn_tdiv_qr (qp, xp, 0L, tp, mn + (cy != 0), mp, mn);
+	  mpn_rshift (xp, xp, mn, m_zero_cnt);
+	}
+    }
+  xn = mn;
+  MPN_NORMALIZE (xp, xn);
+  MPZ_REALLOC (r, xn);
+  SIZ (r) = xn;
+  MPN_COPY (PTR(r), xp, xn);
 
-  mpz_clear (xx);
-  for (i = 0; i < K / 2; i++)
-    mpz_clear (g[i]);
+  __GMP_FREE_FUNC_TYPE (gp, K / 2 * mn, mp_limb_t);
   TMP_FREE (marker);
 }
