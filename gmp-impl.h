@@ -82,14 +82,48 @@ MA 02111-1307, USA. */
 #endif
 
 
-#if ! HAVE_ALLOCA || USE_STACK_ALLOC
-#include "stack-alloc.h"
-#else
+#if WANT_TMP_ALLOCA
+/* Each TMP_ALLOC is simply an alloca(), and nothing else is needed.
+   This is the preferred method.  */
 #define TMP_DECL(m)
 #define TMP_ALLOC(x) alloca(x)
 #define TMP_MARK(m)
 #define TMP_FREE(m)
 #endif
+
+#if WANT_TMP_MALLOC
+#include "stack-alloc.h"
+#endif
+
+#if WANT_TMP_DEBUG
+/* See tal-debug.c for some comments. */
+struct tmp_debug_t {
+  struct tmp_debug_entry_t  *list;
+  const char                *file;
+  int                       line;
+};
+struct tmp_debug_entry_t {
+  struct tmp_debug_entry_t  *next;
+  char                      *block;
+  size_t                    size;
+};
+void  __gmp_tmp_debug_mark  _PROTO ((const char *, int,
+                                     struct tmp_debug_t **));
+void *__gmp_tmp_debug_alloc _PROTO ((const char *, int,
+                                     struct tmp_debug_t **, size_t));
+void  __gmp_tmp_debug_free  _PROTO ((const char *, int,
+                                     struct tmp_debug_t **));
+/* don't demand NULL, just cast a zero */
+#define TMP_DECL(marker)                                        \
+  struct tmp_debug_t  *__tmp_marker = (struct tmp_debug_t *) 0
+#define TMP_MARK(marker)                                                \
+  __gmp_tmp_debug_mark  (ASSERT_FILE, ASSERT_LINE, &__tmp_marker)
+#define TMP_ALLOC(size)                                                 \
+  __gmp_tmp_debug_alloc (ASSERT_FILE, ASSERT_LINE, &__tmp_marker, size)
+#define TMP_FREE(marker)                                                \
+  __gmp_tmp_debug_free  (ASSERT_FILE, ASSERT_LINE, &__tmp_marker)
+#endif
+
 
 /* Allocating various types. */
 #define TMP_ALLOC_TYPE(n,type) ((type *) TMP_ALLOC ((n) * sizeof (type)))
@@ -234,16 +268,15 @@ MA 02111-1307, USA. */
   } while (0)
 
 
-/* ASM_L(foo) gives a local label for use in a gcc asm statement, for use
-   when temporary local labels like "1:" might not be available, which is
-   the case for instance on the x86s (the SCO assembler doesn't support
-   them).
+/* ASM_L gives a local label for a gcc asm block, for use when temporary
+   local labels like "1:" might not be available, which is the case for
+   instance on the x86s (the SCO assembler doesn't support them).
 
    The label generated is made unique by including "%=" which is a unique
-   number for each insn gcc.  This ensures the same name can be used in
-   multiple asm blocks, perhaps via a macro.  Since jumps between asm blocks
-   are not allowed there's no need for a label to be usable outside of a
-   single asm block.  */
+   number for each insn.  This ensures the same name can be used in multiple
+   asm blocks, perhaps via a macro.  Since jumps between asm blocks are not
+   allowed there's no need for a label to be usable outside a single
+   block.  */
 
 #define ASM_L(name)  LSYM_PREFIX "asm_%=_" #name
 
@@ -840,6 +873,7 @@ extern const mp_limb_t __gmp_fib_table[];
 #define ASSERT_FILE  ""
 #endif
 
+void __gmp_assert_header _PROTO ((const char *filename, int linenum));
 void __gmp_assert_fail _PROTO ((const char *filename, int linenum,
                                const char *expr)) ATTRIBUTE_NORETURN;
 
