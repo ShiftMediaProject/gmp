@@ -37,6 +37,11 @@ dnl  Maximum possible with the current code is 64.
 deflit(UNROLL_COUNT, 16)
 
 
+MULFUNC_PROLOGUE(mpn_add_n)
+MULFUNC_PROLOGUE(mpn_add_nc)
+MULFUNC_PROLOGUE(mpn_sub_n)
+MULFUNC_PROLOGUE(mpn_sub_nc)
+
 ifdef(`OPERATION_add_n', `
 	define(M4_inst,        adcl)
 	define(M4_function_n,  mpn_add_n)
@@ -192,7 +197,8 @@ L(pic_ret):
 	jmp	*%esi
 
 
-#------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------
 # This is within range of a short jump for the above tests.
 
 	ALIGN(16)
