@@ -1529,6 +1529,7 @@ esac
 
 # Reasons for testing:
 #   alarm - not in mingw
+#   clock_gettime - not in glibc 2.2.4, only very recent systems
 #   cputime - not in glibc
 #   gettimeofday - not in mingw
 #   mmap - not in mingw, djgpp
@@ -1541,7 +1542,7 @@ esac
 #   strnlen - glibc extension
 #   times - not in mingw
 #
-AC_CHECK_FUNCS(alarm clock cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack strchr strnlen strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack strchr strnlen strtoul sysconf sysctl sysctlbyname times)
 
 # FIXME: Would have done this with an AM_CONDITIONAL, but automake 1.5
 # doesn't like that under libgmp_la_DEPENDENCIES.
