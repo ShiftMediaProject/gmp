@@ -921,7 +921,8 @@ AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([for assembler label suffix],
                 gmp_cv_asm_label_suffix,
-[for i in "" ":"; do
+[gmp_cv_asm_label_suffix=unknown
+for i in "" ":"; do
   echo "trying $i" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
@@ -931,7 +932,7 @@ somelabel$i],
      break],
     [cat conftest.out >&AC_FD_CC])
 done
-if test -z "$gmp_cv_asm_label_suffix"; then
+if test "$gmp_cv_asm_label_suffix" = "unknown"; then
   AC_MSG_ERROR([Cannot determine label suffix])
 fi
 ])
