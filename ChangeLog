@@ -21,6 +21,15 @@
 	* mpn/cray/add_n.c: New file.
 	* mpn/cray/sub_n.c: New file.
 
+2000-06-26  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_CHECK_ASM_ALIGN_FILL_0x90): Fix so it actually
+	detects solaris 2.6, and also suppress warning on solaris 2.8.
+	* configure.in (SPEED_CYCLECOUNTER): Remove spurious "athlon" from
+	sparc case.
+	
+	* mpn/lisp/gmpasm-mode.el: Move keymap to the top of the docstring.
+
 2000-06-21  Kevin Ryde  <kevin@swox.se>
 	
 	* mpn/generic/mul_n.c (mpn_kara_mul_n, mpn_kara_sqr_n): Use
@@ -30,7 +39,7 @@
 	* gmp-impl.h (mpn_toom3_mul_n, mpn_toom3_sqr_n): Update prototypes.
 	
 	* mpbsd/{itom,sdiv}.c: Add casts for correct handling of -0x80...00
-	in the unlikely event that sizeof(short)==sizeof(int).
+	on systems with sizeof(short)==sizeof(int).
 	
 	* mpz/tests/t-misc.c: Move "bin" test from here ...
 	* mpz/tests/t-bin.c: ... to here, and add a new (2k,k) test too.
@@ -303,7 +312,7 @@
 
 	* gmp.texi (Integer Functions): Flatten @subsections into @sections.
 	(Floating-point Functions): Ditto.
-	(Integer Random Numbers): Split from miscelaneous as a sep section.
+	(Integer Random Numbers): Split from miscellaneous as a sep section.
 	(Installing GMP): Make nodes for the sections.
 	Add more "@cindex"s.
 	(Known Build Problems): Remove SunOS get_d problem, believed fixed.
