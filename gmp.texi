@@ -486,7 +486,6 @@ probably a good idea to glance through it.
 @cindex Configuring GMP
 @cindex Building GMP
 
-@noindent
 GMP has an autoconf/automake/libtool based configuration system.  On a
 Unix-like system a basic build can be done with
 
@@ -509,7 +508,6 @@ And you can install (under @file{/usr/local} by default) with
 make install
 @end example
 
-@noindent
 If you experience problems, please report them to @email{bug-gmp@@gnu.org}.
 See @ref{Reporting Bugs}, for information on what to include in useful bug
 reports.
@@ -534,8 +532,8 @@ installation information too.
 @table @asis
 @item Non-Unix Systems
 
-@samp{configure} requires various Unix-like tools.  On an MS-DOS system
-Cygwin, DJGPP or MINGW can be used.  See
+@samp{configure} requires various Unix-like tools.  On an MS-DOS system DJGPP
+can be used, and on MS Windows Cygwin or MINGW can be used,
 
 @display
 @uref{http://www.cygnus.com/cygwin}
@@ -544,8 +542,8 @@ Cygwin, DJGPP or MINGW can be used.  See
 @end display
 
 The @file{macos} directory contains an unsupported port to MacOS 9 on Power
-Macintosh.  Note that MacOS X ``Darwin'' can use the normal
-@samp{./configure}.
+Macintosh, see @file{macos/README}.  Note that MacOS X ``Darwin'' should use
+the normal Unix-style @samp{./configure}.
 
 It might be possible to build without the help of @samp{configure}, certainly
 all the code is there, but unfortunately you'll be on your own.
@@ -600,7 +598,7 @@ example when using a FreeBSD Athlon system to build GNU/Linux m68k binaries,
 @end example
 
 Compiler tools are sought first with the host system type as a prefix.  For
-example @command{m68k-mac-linux-gnu-ranlib} is checked for, then plain
+example @command{m68k-mac-linux-gnu-ranlib} is tried, then plain
 @command{ranlib}.  This makes it possible for a set of cross-compiling tools
 to co-exist with native tools.  The prefix is the argument to @samp{--host},
 and this can be an alias, such as @samp{m68k-linux}.  But note that tools
@@ -608,11 +606,16 @@ don't have to be setup this way, it's enough to just have a @env{PATH} with a
 suitable cross-compiling @command{cc} etc.
 
 Compiling for a different CPU in the same family as the build system is a form
-of cross-compilation, though very possibly this would merely be with special
+of cross-compilation, though very possibly this would merely be special
 options on a native compiler.  In any case @samp{./configure} avoids depending
 on being able to run code on the build system, which is important when
 creating binaries for a newer CPU since they very possibly won't run on the
 build system.
+
+In all cases the compiler must be able to produce an executable (of whatever
+format) from a standard C @code{main}.  Although only object files will go to
+make up @file{libgmp}, @samp{./configure} uses linking tests for various
+purposes, such as determining what functions are available on the host system.
 
 Currently a warning is given unless an explicit @samp{--build} is used when
 cross-compiling, because it may not be possible to correctly guess the build
@@ -646,8 +649,10 @@ Alpha:
 @nisamp{alphaev5},
 @nisamp{alphaev56},
 @nisamp{alphapca56},
+@nisamp{alphapca57},
 @nisamp{alphaev6},
-@nisamp{alphaev67}
+@nisamp{alphaev67},
+@nisamp{alphaev68}
 
 @item
 Cray:
@@ -949,13 +954,17 @@ systems adds corresponding @code{mcount} calls to the assembler code.
 
 @item @option{MPN_PATH}
 
-Various assembler versions of mpn subroutines are provided, and, for a given
+Various assembler versions of each mpn subroutines are provided.  For a given
 CPU, a search is made though a path to choose a version of each.  For example
-@samp{sparcv8} has path @samp{sparc32/v8 sparc32 generic}, which means it
-looks first for v8 code, then plain sparc32, and finally falls back on generic
-C.  Knowledgeable users with special requirements can specify a path with
-@samp{MPN_PATH="dir list"}.  This will normally be unnecessary because all
-sensible paths should be available under one or other CPU.
+@samp{sparcv8} has
+
+@example
+MPN_PATH="sparc32/v8 sparc32 generic"
+@end example
+
+which means look first for v8 code, then plain sparc32 (which is v7), and
+finally fall back on generic C.  Knowledgeable users with special requirements
+can specify a different path.  Normally this is completely unnecessary.
 
 @item Demonstration Programs
 @cindex Demonstration programs
@@ -2141,6 +2150,15 @@ very very slowly.  Configure with
 the checking scheme.  The GMP C++ features cannot be used, since current
 versions of checker (0.9.9.1) don't yet support the standard C++ library.
 
+@item Valgrind
+The valgrind program (@uref{http://devel-home.kde.org/~sewardj}) is a memory
+checker for x86s.  It translates and emulates machine instructions to do
+strong checks for uninitialized data (at the level of individual bits), memory
+accesses through bad pointers, and memory leaks.
+
+Current versions (20020226 snapshot) don't support MMX or SSE, so GMP must be
+configured for an x86 without those (eg. plain @samp{i386}), or with a special
+@code{MPN_PATH} that excludes those subdirectories (@pxref{Build Options}).
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -4720,7 +4738,7 @@ standard C types (not the GMP types), and only if the C library supports it.
 @end multitable
 @end quotation
 
-The (optional) width and precision can be given as a number within the format
+The optional width and precision can be given as a number within the format
 string, or as a @samp{*} to take an extra parameter of type @code{int}, the
 same as the standard @code{printf}.
 
@@ -4935,11 +4953,15 @@ Print @var{op} to @var{stream}, using its @code{ios} formatting settings.
 @code{ostream operator<<} routines do.  The decimal point follows the current
 locale, on systems providing @code{localeconv}.
 
-Hex and octal are supported, unlike the standard @code{operator<<} routines on
-@code{double} etc.  The mantissa will be in hex or octal, the exponent will be
-in decimal.  For hex the exponent delimiter is an @samp{@@}.  This is as per
-@code{mpf_out_str}.  @code{ios::showbase} is supported, and will put a base on
-the mantissa.
+Hex and octal are supported, unlike the standard @code{operator<<} on
+@code{double}.  The mantissa will be in hex or octal, the exponent will be in
+decimal.  For hex the exponent delimiter is an @samp{@@}.  This is as per
+@code{mpf_out_str}.
+
+@code{ios::showbase} is supported, and will put a base on the mantissa, for
+example hex @samp{0x1.8} or @samp{0x0.8}, or octal @samp{01.4} or @samp{00.4}.
+This last form is slightly strange, but at least differentiates itself from
+decimal.
 @end deftypefun
 
 These operators mean that GMP types can be printed in the usual C++ way, for
