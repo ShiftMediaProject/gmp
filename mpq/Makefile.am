@@ -22,8 +22,7 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
-  -DOPERATION_`echo $* | sed 's/_$$//'`
+INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES =							\
