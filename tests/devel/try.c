@@ -1649,7 +1649,7 @@ call (struct each_t *e, tryfun_t function)
 
   case TYPE_SB_DIVREM_MN:
     refmpn_copyi (e->d[1].p, e->s[0].p, size);
-    refmpn_fill (e->d[0].p, size, 0x98765432);
+    refmpn_fill (e->d[0].p, size-size2, 0x98765432);
     e->retval = CALLING_CONVENTIONS (function) (e->d[0].p,
                                                 e->d[1].p, size,
                                                 e->s[1].p, size2);
