@@ -28,15 +28,15 @@ MA 02111-1307, USA. */
 #endif
 
 #define KARATSUBA_MUL_THRESHOLD      130
-#define TOOM3_MUL_THRESHOLD          260
+#define TOOM3_MUL_THRESHOLD          520
 
-#define BASECASE_SQR_THRESHOLD       130
-#define KARATSUBA_SQR_THRESHOLD        0
-#define TOOM3_SQR_THRESHOLD          258
+#define BASECASE_SQR_THRESHOLD         0
+#define KARATSUBA_SQR_THRESHOLD      130
+#define TOOM3_SQR_THRESHOLD          260
 
 #define SB_PREINV_THRESHOLD            0  /* (preinv always) */
 #define DC_THRESHOLD                 330
-#define POWM_THRESHOLD              2000 /* mpn_submul_1 should lower this */
+#define POWM_THRESHOLD               656
 
 #define GCD_ACCEL_THRESHOLD            3
 #define GCDEXT_THRESHOLD              46
