@@ -354,7 +354,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
   rp[0] = initial_approx;
   rsize = 1;
 
-#ifdef DEBUG
+#ifdef SQRT_DEBUG
 	  printf ("\n\nT = ");
 	  mpn_dump (tp, tsize);
 #endif
@@ -403,7 +403,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
       while (--i >= 0)
 	{
 	  mp_limb_t cy;
-#ifdef DEBUG
+#ifdef SQRT_DEBUG
 	  mp_limb_t old_least_sign_r = rp[0];
 	  mp_size_t old_rsize = rsize;
 
@@ -419,7 +419,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
 	  cy = mpn_divmod (xp, ttp, tsize, rp, rsize);
 	  xsize = tsize - rsize;
 
-#ifdef DEBUG
+#ifdef SQRT_DEBUG
 	  printf ("X =%d ", cy);
 	  mpn_dump (xp, xsize);
 #endif
@@ -446,7 +446,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
 	  mpn_rshift (rp, xp, xsize, 1);
 	  rp[xsize - 1] |= ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1));
 	  rsize = xsize;
-#ifdef DEBUG
+#ifdef SQRT_DEBUG
 	  if (old_least_sign_r != rp[rsize - old_rsize])
 	    printf (">>>>>>>> %d: %0*lX, %0*lX <<<<<<<<\n",
 		    i, 2 * BYTES_PER_MP_LIMB, old_least_sign_r,
@@ -455,7 +455,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
 	}
     }
 
-#ifdef DEBUG
+#ifdef SQRT_DEBUG
   printf ("(final) R = ");
   mpn_dump (rp, rsize);
 #endif
@@ -486,7 +486,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
 
       mpn_decr_u (rp, (mp_limb_t) 1);
 
-#ifdef DEBUG
+#ifdef SQRT_DEBUG
       printf ("(adjusted) R = ");
       mpn_dump (rp, rsize);
 #endif
