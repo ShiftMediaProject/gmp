@@ -50,10 +50,14 @@ static tmp_stack *current = &xxx;
 /* Allocate a block of exactly <size> bytes.  This should only be called
    through the TMP_ALLOC macro, which takes care of rounding/alignment.  */
 void *
+#if __STDC__
+__gmp_tmp_alloc (unsigned long size)
+#else
 __gmp_tmp_alloc (size)
      unsigned long size;
+#endif
 {
-  void *this;
+  void *that;
 
   if (size > (char *) current->end - (char *) current->alloc_point)
     {
@@ -83,24 +87,28 @@ __gmp_tmp_alloc (size)
 	}
 
       chunk = (*__gmp_allocate_func) (chunk_size);
-      header = chunk;
+      header = (tmp_stack *) chunk;
       header->end = (char *) chunk + chunk_size;
       header->alloc_point = (char *) chunk + HSIZ;
       header->prev = current;
       current = header;
     }
 
-  this = current->alloc_point;
-  current->alloc_point = (char *) this + size;
-  return this;
+  that = current->alloc_point;
+  current->alloc_point = (char *) that + size;
+  return that;
 }
 
 /* Typically called at function entry.  <mark> is assigned so that
    __gmp_tmp_free can later be used to reclaim all subsequently allocated
    storage.  */
 void
+#if __STDC__
+__gmp_tmp_mark (tmp_marker *mark)
+#else
 __gmp_tmp_mark (mark)
      tmp_marker *mark;
+#endif
 {
   mark->which_chunk = current;
   mark->alloc_point = current->alloc_point;
@@ -108,8 +116,12 @@ __gmp_tmp_mark (mark)
 
 /* Free everything allocated since <mark> was assigned by __gmp_tmp_mark */
 void
+#if __STDC__
+__gmp_tmp_free (tmp_marker *mark)
+#else
 __gmp_tmp_free (mark)
      tmp_marker *mark;
+#endif
 {
   while (mark->which_chunk != current)
     {
