@@ -154,6 +154,7 @@ void refmpn_andn_n __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 
 mp_limb_t refmpn_bswap_limb __GMP_PROTO ((mp_limb_t src));
 
+void refmpn_clrbit __GMP_PROTO ((mp_ptr, unsigned long));
 int refmpn_cmp __GMP_PROTO ((mp_srcptr s1p, mp_srcptr s2p, mp_size_t size));
 int refmpn_cmp_allowzero __GMP_PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
 int refmpn_cmp_twosizes __GMP_PROTO ((mp_srcptr xp, mp_size_t xsize,
@@ -265,6 +266,9 @@ mp_limb_t refmpn_rshift_or_copy __GMP_PROTO ((mp_ptr wp,
 mp_limb_t refmpn_sb_divrem_mn __GMP_PROTO ((mp_ptr qp,
                                        mp_ptr np, mp_size_t nsize,
                                        mp_srcptr dp, mp_size_t dsize));
+unsigned long refmpn_scan0 __GMP_PROTO ((mp_srcptr, unsigned long));
+unsigned long refmpn_scan1 __GMP_PROTO ((mp_srcptr, unsigned long));
+void refmpn_setbit __GMP_PROTO ((mp_ptr, unsigned long));
 void refmpn_sqr __GMP_PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
 
 mp_limb_t refmpn_sub __GMP_PROTO ((mp_ptr rp,
@@ -284,7 +288,7 @@ mp_limb_t refmpn_submul_1c __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size
 void refmpn_tdiv_qr __GMP_PROTO ((mp_ptr qp, mp_ptr rp, mp_size_t qxn,
                              mp_ptr np, mp_size_t nsize,
                              mp_srcptr dp, mp_size_t dsize));
-int refmpn_tstbit __GMP_PROTO ((mp_srcptr ptr, mp_size_t size));
+int refmpn_tstbit __GMP_PROTO ((mp_srcptr, unsigned long));
 
 mp_limb_t refmpn_udiv_qrnnd __GMP_PROTO ((mp_limb_t *, mp_limb_t, mp_limb_t, mp_limb_t));
 mp_limb_t refmpn_udiv_qrnnd_r __GMP_PROTO ((mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t *));

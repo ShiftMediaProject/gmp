@@ -184,13 +184,42 @@ refmpn_msbone_mask (mp_limb_t x)
 }
 
 
-int
-refmpn_tstbit (mp_srcptr ptr, mp_size_t size)
+void
+refmpn_setbit (mp_ptr ptr, unsigned long bit)
 {
-  return (ptr[size/GMP_NUMB_BITS]
-          & (CNST_LIMB(1) << (size%GMP_NUMB_BITS))) != 0;
+  ptr[bit/GMP_NUMB_BITS] |= CNST_LIMB(1) << (bit%GMP_NUMB_BITS);
 }
 
+void
+refmpn_clrbit (mp_ptr ptr, unsigned long bit)
+{
+  ptr[bit/GMP_NUMB_BITS] &= ~ (CNST_LIMB(1) << (bit%GMP_NUMB_BITS));
+}
+
+#define REFMPN_TSTBIT(ptr,bit) \
+  (((ptr)[(bit)/GMP_NUMB_BITS] & (CNST_LIMB(1) << ((bit)%GMP_NUMB_BITS))) != 0)
+
+int
+refmpn_tstbit (mp_srcptr ptr, unsigned long bit)
+{
+  return REFMPN_TSTBIT (ptr, bit);
+}
+
+unsigned long
+refmpn_scan0 (mp_srcptr ptr, unsigned long bit)
+{
+  while (REFMPN_TSTBIT (ptr, bit) != 0)
+    bit++;
+  return bit;
+}
+
+unsigned long
+refmpn_scan1 (mp_srcptr ptr, unsigned long bit)
+{
+  while (REFMPN_TSTBIT (ptr, bit) == 0)
+    bit++;
+  return bit;
+}
 
 void
 refmpn_copy (mp_ptr rp, mp_srcptr sp, mp_size_t size)
