@@ -55,19 +55,14 @@ MA 02111-1307, USA. */
 #endif
 
 
-/* Convert the limb vector pointed to by MPTR and MSIZE long to a
-   char array, using base BASE for the result array.  Store the
-   result in the character array STR.  STR must point to an array with
-   space for the largest possible number represented by a MSIZE long
-   limb vector + 1 extra character.
+/* The actual behaviour here is somewhat tighter than currently documented.
 
-   The result is NOT in Ascii, to convert it to printable format, add
-   '0' or 'A' depending on the base and range.
+   The space required at str only needs to follow mpn_sizeinbase, which
+   means it's based on the actual value in {mptr,msize}, not the biggest
+   value that can be in msize limbs.
 
-   Return the number of digits in the result string.
-   This may include some leading zeros.
-
-   The limb vector pointed to by MPTR is clobbered.  */
+   Note also that per mpn_sizeinbase, when base is a power of 2, the number
+   of digits produced is exact, there's no leading zero.  */
 
 size_t
 mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
@@ -148,7 +143,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 	 from least significant end.  */
       mp_limb_t n1, c;
 
-      MPN_GET_STR_SIZE (out_len, base, msize);
+      out_len = mpn_sizeinbase (mptr, msize, base);
       s += out_len;
 
       if (base == 10)

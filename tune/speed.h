@@ -1789,7 +1789,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     TMP_MARK (marker);                                                  \
     xp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);              \
                                                                         \
-    MPN_GET_STR_SIZE (wsize, base, s->size);                            \
+    wsize = mpn_sizeinbase (s->xp, s->size, base);                      \
     wp = TMP_ALLOC (wsize);                                             \
                                                                         \
     /* use this during development to guard against overflowing wp */   \

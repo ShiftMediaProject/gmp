@@ -2,7 +2,7 @@
    character the integer X would have printed in base BASE.  The
    approximation is never too small.
 
-Copyright 1991, 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,27 +28,5 @@ MA 02111-1307, USA. */
 size_t
 mpz_sizeinbase (mpz_srcptr x, int base)
 {
-  mp_size_t size = ABS (x->_mp_size);
-  int lb_base, cnt;
-  size_t totbits;
-
-  /* Special case for X == 0.  */
-  if (size == 0)
-    return 1;
-
-  /* Calculate the total number of significant bits of X.  */
-  count_leading_zeros (cnt, x->_mp_d[size - 1]);
-  totbits = size * BITS_PER_MP_LIMB - cnt;
-
-  if ((base & (base - 1)) == 0)
-    {
-      /* Special case for powers of 2, giving exact result.  */
-
-      count_leading_zeros (lb_base, base);
-      lb_base = BITS_PER_MP_LIMB - lb_base - 1;
-
-      return (totbits + lb_base - 1) / lb_base;
-    }
-  else
-    return (size_t) (totbits * __mp_bases[base].chars_per_bit_exactly) + 1;
+  return mpn_sizeinbase (PTR(x), ABSIZ(x), base);
 }
