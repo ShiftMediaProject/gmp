@@ -22,7 +22,9 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C K7: 1.0 cycles/limb
+C         cycles/limb
+C Athlon:     1.0
+C Opteron:    1.0
 
 
 C mp_limb_t mpn_mod_34lsub1 (mp_srcptr src, mp_size_t size)
