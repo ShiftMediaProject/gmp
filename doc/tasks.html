@@ -240,7 +240,9 @@
      Documented online in "Migration to CRAY T90 IEEE Floating Point".
 <li> Cray with CFP (all vector systems except T90 IEEE): i24mult no longer
      works.  It is "outmoded".  What else can we use for reasonable speed?
-     What makes current assembly mulww.s fail?
+<li> Cray T3E: Experiment with optimization options.  In particular,
+     -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
+
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
   <pre>
 	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
