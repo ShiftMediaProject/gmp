@@ -23,7 +23,7 @@ mpn_rawrandom (rp, nbits, s)
   mp_size_t tsize, rpsize, seedsize, asize, msize, sumsize, n;
   unsigned shiftcount;		/* FIXME: type? */
   unsigned genbits;
-  mp_size_t limbstocopy, nlimbs;
+  mp_size_t nlimbs;
   mp_limb_t tlimb;		/* temp */
   
 
