@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_addmul_1 -- Multiply a limb vector with a limb and add
 dnl  the result to a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,37 +23,164 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     6-18
-C POWER4/PPC970:     10
+C POWER3/PPC630:     6-18?
+C POWER4/PPC970:     8
+
+C TODO
+C  * Reduce the number of registers used.  Some mul destination registers could
+C    be coalesced.
+C  * Delay std for presering registers, and suppress them for n=1.
+C  * Write faster feed-in code.  If nothing else, avoid one or two up updates.
 
 C INPUT PARAMETERS
-C res_ptr	r3
-C s1_ptr	r4
-C size		r5
-C s2_limb	r6
-C cy_limb	r7
+define(`rp', `r3')
+define(`up', `r4')
+define(`n', `r5')
+define(`vl', `r6')
 
 ASM_START()
 PROLOGUE(mpn_addmul_1)
-	li	r7,0			C cy_limb = 0
+	std	r31, -8(r1)
+	std	r30, -16(r1)
+	std	r29, -24(r1)
+	std	r28, -32(r1)
+	std	r27, -40(r1)
+	std	r26, -48(r1)
 
-PROLOGUE(mpn_addmul_1c)
-	mtctr	r5
-	addic	r0,r0,0
-	addi	r3, r3, -8
-	addi	r4, r4, -8
-.Loop:
-	ldu	r0,8(r4)
-	ld	r10,8(r3)
-	mulld	r9,r0,r6
-	adde	r9,r9,r7
-	mulhdu	r7,r0,r6
-	addze	r7,r7
-	addc	r9,r9,r10
-	stdu	r9,8(r3)
-	bdnz	.Loop
+	rldicl.	r0, n, 0,62	C r0 = n & 3, set cr0
+	cmpdi	cr6, r0, 2
+	addi	n, n, 3		C compute count...
+	srdi	n, n, 2		C ...for ctr
+	mtctr	n		C copy count into ctr
+	beq	cr0, .Lb00
+	blt	cr6, .Lb01
+	beq	cr6, .Lb10
 
-	addze	r3,r7
+.Lb11:	ld	r26, 0(up)
+	ld	r28, 0(rp)
+	addi	up, up, 8
+	nop
+	mulld	r0, r26, r6
+	mulhdu	r12, r26, r6
+	addc	r0, r0, r28
+	std	r0, 0(rp)
+	addi	rp, rp, 8
+	b	.Lfic
+
+.Lb00:	ld	r26, 0(up)
+	ld	r27, 8(up)
+	ld	r28, 0(rp)
+	ld	r29, 8(rp)
+	addi	up, up, 16
+	nop
+	mulld	r0, r26, r6
+	mulhdu	r5, r26, r6
+	mulld	r7, r27, r6
+	mulhdu	r8, r27, r6
+	addc	r7, r7, r5
+	addze	r12, r8
+	addc	r0, r0, r28
+	std	r0, 0(rp)
+	adde	r7, r7, r29
+	std	r7, 8(rp)
+	addi	rp, rp, 16
+	b	.Lfic
+
+.Lb01:	bdnz	.Lgrt1
+	ld	r26, 0(up)
+	ld	r28, 0(rp)
+	mulld	r0, r26, r6
+	mulhdu	r8, r26, r6
+	addc	r0, r0, r28
+	std	r0, 0(rp)
+	b	.Lret
+.Lgrt1:	ld	r26, 0(up)
+	ld	r27, 8(up)
+	mulld	r0, r26, r6
+	mulhdu	r5, r26, r6
+	ld	r26, 16(up)
+	ld	r28, 0(rp)
+	mulld	r7, r27, r6
+	mulhdu	r8, r27, r6
+	ld	r29, 8(rp)
+	ld	r30, 16(rp)
+	mulld	r9, r26, r6
+	mulhdu	r10, r26, r6
+	addc	r7, r7, r5
+	adde	r9, r9, r8
+	addze	r12, r10
+	addc	r0, r0, r28
+	std	r0, 0(rp)
+	adde	r7, r7, r29
+	std	r7, 8(rp)
+	adde	r9, r9, r30
+	std	r9, 16(rp)
+	addi	up, up, 24
+	addi	rp, rp, 24
+	b	.Lfic
+
+.Lb10:	addic	r0, r0, 0
+	li	r12, 0		C cy_limb = 0
+.Lfic:	ld	r26, 0(up)
+	ld	r27, 8(up)
+	addi	up, up, 16
+	bdz	.Lend
+
+				C registers dying
+.Loop:	mulld	r0, r26, r6	C
+	mulhdu	r5, r26, r6	C 26
+	ld	r26, 0(up)	C
+	ld	r28, 0(rp)	C
+	mulld	r7, r27, r6	C
+	mulhdu	r8, r27, r6	C 27
+	ld	r27, 8(up)	C
+	ld	r29, 8(rp)	C
+	adde	r0, r0, r12	C 0 12
+	adde	r7, r7, r5	C 5 7
+	mulld	r9, r26, r6	C
+	mulhdu	r10, r26, r6	C 26
+	ld	r26, 16(up)	C
+	ld	r30, 16(rp)	C
+	mulld	r11, r27, r6	C
+	mulhdu	r12, r27, r6	C 27
+	ld	r27, 24(up)	C
+	ld	r31, 24(rp)	C
+	adde	r9, r9, r8	C 8 9
+	adde	r11, r11, r10	C 10 11
+	addze	r12, r12	C 12
+	addc	r0, r0, r28	C 0 28
+	std	r0, 0(rp)	C 0
+	adde	r7, r7, r29	C 7 29
+	std	r7, 8(rp)	C 7
+	adde	r9, r9, r30	C 9 30
+	std	r9, 16(rp)	C 0
+	adde	r11, r11, r31	C 11 31
+	std	r11, 24(rp)	C 11
+	addi	up, up, 32	C
+	addi	rp, rp, 32	C
+	bdnz	.Loop		C
+
+.Lend:	mulld	r0, r26, r6
+	mulhdu	r5, r26, r6
+	ld	r28, 0(rp)
+	nop
+	mulld	r7, r27, r6
+	mulhdu	r8, r27, r6
+	ld	r29, 8(rp)
+	nop
+	adde	r0, r0, r12
+	adde	r7, r7, r5
+	addze	r8, r8
+	addc	r0, r0, r28
+	std	r0, 0(rp)
+	adde	r7, r7, r29
+	std	r7, 8(rp)
+.Lret:	addze	r3, r8
+	ld	r31, -8(r1)
+	ld	r30, -16(r1)
+	ld	r29, -24(r1)
+	ld	r28, -32(r1)
+	ld	r27, -40(r1)
+	ld	r26, -48(r1)
 	blr
-EPILOGUE(mpn_addmul_1)
-EPILOGUE(mpn_addmul_1c)
+EPILOGUE()
