@@ -468,7 +468,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 	   : "=a" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "rm" ((USItype)(dx)))
 
-#if HAVE_TARGET_CPU_i586 || HAVE_TARGET_CPU_pentium || HAVE_TARGET_CPU_pentiummmx
+#if HAVE_HOST_CPU_i586 || HAVE_HOST_CPU_pentium || HAVE_HOST_CPU_pentiummmx
 /* This code should be a fixed 14 or 15 cycles, but possibly plus an L1
    cache miss reading from __clz_tab.  P5 "bsrl" on the other hand takes
    between 10 and 72 cycles depending where the most significant 1 bit is.
@@ -1005,7 +1005,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("umul %2,%3,%1;rd %%y,%0" : "=r" (w1), "=r" (w0) : "r" (u), "r" (v))
 #define UMUL_TIME 5
-#if HAVE_TARGET_CPU_supersparc
+#if HAVE_HOST_CPU_supersparc
 #define UDIV_TIME 60		/* SuperSPARC timing */
 #else
 /* Don't use this on SuperSPARC because its udiv only handles 53 bit
@@ -1019,7 +1019,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
     (q) = __q;								\
   } while (0)
 #define UDIV_TIME 25
-#endif /* HAVE_TARGET_CPU_supersparc */
+#endif /* HAVE_HOST_CPU_supersparc */
 #else /* ! __sparc_v8__ */
 #if defined (__sparclite__)
 /* This has hardware multiply but not divide.  It also has two additional
