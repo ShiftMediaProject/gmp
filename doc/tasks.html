@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 17 Jan 2002.  An up-to-date version is available at
+  This file current as of 19 Jan 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -585,6 +585,8 @@ MA 02111-1307, USA.
      <code>mpz_nior</code>, <code>mpz_xnor</code> might be useful additions,
      if they could share code with the current such functions (which should be
      possible).
+<li> <code>mpz_and_ui</code> etc might be of use sometimes.  Suggested by
+     Niels Möller.
 <li> <code>mpf_set_str</code> and <code>mpf_inp_str</code> could usefully
      accept 0x, 0b etc when base==0.  Perhaps the exponent could default to
      decimal in this case, with a further 0x, 0b etc allowed there.
@@ -612,6 +614,18 @@ MA 02111-1307, USA.
 <li> <code>gmp_printf</code> could perhaps have a type code for an
      <code>mp_limb_t</code>.  That would save an application from having to
      worry whether it's a long or a long long.
+<li> <code>mpz_togglebit</code> or <code>mpz_chgbit</code> or some such might
+     be a good companion to <code>mpz_setbit</code> and
+     <code>mpz_clrbit</code>.  Suggested by Niels Möller.
+<li> <code>mpz_scan0_reverse</code> or <code>mpz_scan0low</code> or some such
+     searching towards the low end of an integer might match
+     <code>mpz_scan0</code> nicely.  Likewise for <code>scan1</code>.
+     Suggested by Roberto Bagnara.
+<li> <code>mpz_bit_subset</code> or some such to test whether one integer is a
+     bitwise subset of another might be of use.  Some sort of return value
+     indicating whether it's a proper or non-proper subset would be good and
+     wouldn't cost anything in the implementation.  Suggested by Roberto
+     Bagnara.
 </ul>
 
 
