@@ -3263,7 +3263,7 @@ The variable @var{state} must be initialized by calling one of the
 invoking this function.
 @end deftypefun
 
-@deftypefun void mpf_random2 (mpf_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{max_exp})
+@deftypefun void mpf_random2 (mpf_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{exp})
 Generate a random float of at most @var{max_size} limbs, with long strings of
 zeros and ones in the binary representation.  The exponent of the number is in
 the interval @minus{}@var{exp} to @var{exp}.  This function is useful for
