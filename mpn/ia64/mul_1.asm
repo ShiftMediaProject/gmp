@@ -31,6 +31,10 @@ C  * Optimize feed-in and wind-down code, both for speed and code density.
 C  * Could greatly reduce code size by using conditional execution of ldf8
 C    instructions and thereby allow code sharing between feed-in code and code
 C    for small n.  (This is true for all similar ia64 functions.)
+C  * Load first limbs in prologue, this saves insn space and cycles.
+C  * Clear predicate registers in prologue (use p10,p11,p12 for switching)
+C  * Use 1 c/l carry propagation scheme in wind-down code.  Will save 1 c/l for
+C    n < 9, and 9 cycles for n >= 9.
 
 C INPUT PARAMETERS
 define(`rp', `r32')
