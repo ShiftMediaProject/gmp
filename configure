@@ -2518,7 +2518,7 @@ for abi in $abilist; do
   choke me
 #endif
 EOF
-gmp_compile="$cc -c conftest.c"
+gmp_compile="$cc -c conftest.c >&5"
 if { (eval echo "$as_me:2522: \"$gmp_compile\"") >&5
   (eval $gmp_compile) 2>&5
   ac_status=$?
@@ -4525,7 +4525,7 @@ main (void)
 }
 EOF
 
-gmp_cxxcompile="$CXX $CXXFLAGS conftest.cc -o conftest"
+gmp_cxxcompile="$CXX $CXXFLAGS conftest.cc -o conftest >&5"
 if { (eval echo "$as_me:4529: \"$gmp_cxxcompile\"") >&5
   (eval $gmp_cxxcompile) 2>&5
   ac_status=$?
@@ -17975,7 +17975,7 @@ EOF
 EOF
     ;;
   esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s 1>&5"
+  gmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s >&5"
   if { (eval echo "$as_me:17979: \"$gmp_compile\"") >&5
   (eval $gmp_compile) 2>&5
   ac_status=$?

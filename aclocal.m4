@@ -339,7 +339,7 @@ AC_DEFUN(GMP_PROG_CC_IS_GNU,
   choke me
 #endif
 EOF
-gmp_compile="$1 -c conftest.c"
+gmp_compile="$1 -c conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
   rm -f conftest*
   AC_MSG_CHECKING([whether $1 is gcc])
@@ -577,7 +577,7 @@ main (void)
 }
 EOF
 
-gmp_cxxcompile="$1 conftest.cc -o conftest"
+gmp_cxxcompile="$1 conftest.cc -o conftest >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_cxxcompile); then
   rm -f conftest*
   AC_MSG_RESULT(yes)
@@ -790,7 +790,7 @@ EOF
 EOF
     ;;
   esac
-  gmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s 1>&AC_FD_CC"
+  gmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
