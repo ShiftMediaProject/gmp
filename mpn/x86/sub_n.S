@@ -34,6 +34,7 @@ MA 02111-1307, USA. */
 	ALIGN (3)
 	.globl C_SYMBOL_NAME(__mpn_sub_nc)
 C_SYMBOL_NAME(__mpn_sub_nc:)
+	PROLOGUE(C_SYMBOL_NAME(__mpn_sub_nc))
 	pushl %edi
 	pushl %esi
 
@@ -77,6 +78,7 @@ L0a:	leal	(%eax,%eax,8),%eax
 	ALIGN (3)
 	.globl C_SYMBOL_NAME(__mpn_sub_n)
 C_SYMBOL_NAME(__mpn_sub_n:)
+	PROLOGUE(C_SYMBOL_NAME(__mpn_sub_n))
 	pushl %edi
 	pushl %esi
 
@@ -152,3 +154,5 @@ Loop:	movl	(%esi),%eax
 	popl %esi
 	popl %edi
 	ret
+	EPILOGUE(C_SYMBOL_NAME(__mpn_sub_nc))
+	EPILOGUE(C_SYMBOL_NAME(__mpn_sub_n))
