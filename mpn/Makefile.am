@@ -23,8 +23,6 @@
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
 
-CPP	= @CPP@
-
 INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 GENERIC_SOURCES = mp_bases.c
