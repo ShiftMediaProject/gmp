@@ -24,6 +24,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 
+#ifndef __GMP_IMPL_H__
+#define __GMP_IMPL_H__
+
 /* When used from the GMP_FUNC_ALLOC test, config.h doesn't exist, but the
    equivalent definitions will have come from confdefs.h included at the
    start of the test program.  */
@@ -1273,4 +1276,6 @@ extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 
 #if defined (__cplusplus)
 }
+#endif
+
 #endif
