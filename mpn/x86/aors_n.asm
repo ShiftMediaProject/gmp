@@ -25,7 +25,7 @@ include(`../config.m4')
 
 C     cycles/limb
 C P5:   3.375
-C P6:   3.7
+C P6:   3.125
 C K6:   3.5
 C K7:   2.25
 C P4:   8.75
@@ -109,7 +109,7 @@ L(0a):	leal	(%eax,%eax,8),%eax
 EPILOGUE()
 
 
-	ALIGN(8)
+	ALIGN(16)
 PROLOGUE(M4_function_n)
 deflit(`FRAME',0)
 
@@ -153,7 +153,7 @@ L(oopgo):
 	shrl	$1,%ebp			C shift bit 0 into carry
 	popl	%ebp		FRAME_popl()
 
-	ALIGN(8)
+	ALIGN(16)
 L(oop):	movl	(%esi),%eax
 	M4_inst	(%edx),%eax
 	movl	%eax,(%edi)
