@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-05  Niels Möller  <niels@s3.kth.se>
+
+	* mpn/generic/gcd.c (gcd_schoenhage): TMP_DECL must be the final
+	declaration in the declaration section of a block.
+
 2003-12-05  Niels Möller  <nisse@harpo.hack.org>
 
 	* tune/speed.h (mpn_gcd_accel): Added prototype.
