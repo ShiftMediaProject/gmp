@@ -86,10 +86,7 @@ mpz_tdiv_q (quot, num, den)
       np = tp;
     }
 
-  {mp_limb_t x=rp[-1], y=rp[dl];
   mpn_tdiv_qr (qp, rp, 0L, np, nl, dp, dl);
-  if (x != rp[-1] || y != rp[dl])
-    abort ();}
 
   ql -=  qp[ql - 1] == 0;
 
