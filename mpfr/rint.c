@@ -36,30 +36,29 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
   int rnd_away;
   mp_exp_t exp;
 
-  if (MPFR_IS_NAN(u))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(u) ))
     {
-      MPFR_SET_NAN(r);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(u))
+	{
+	  MPFR_SET_NAN(r);
+	  MPFR_RET_NAN;
+	}
+      MPFR_SET_SAME_SIGN(r, u);
+      if (MPFR_IS_INF(u))
+	{
+	  MPFR_SET_INF(r);
+	  MPFR_RET(0);  /* infinity is exact */
+	}
+      if (MPFR_IS_ZERO(u))
+	{
+	  MPFR_SET_ZERO(r);
+	  MPFR_RET(0);  /* zero is exact */
+	}
+      MPFR_ASSERTN(0);
     }
-
-  MPFR_CLEAR_NAN(r);
   MPFR_SET_SAME_SIGN(r, u);
-
-  if (MPFR_IS_INF(u))
-    {
-      MPFR_SET_INF(r);
-      MPFR_RET(0);  /* infinity is exact */
-    }
-
-  MPFR_CLEAR_INF(r);
-
-  if (MPFR_IS_ZERO(u))
-    {
-      MPFR_SET_ZERO(r);
-      MPFR_RET(0);  /* zero is exact */
-    }
-
-  sign = MPFR_SIGN(u);
+ 
+  sign = MPFR_INT_SIGN(u);
   exp = MPFR_GET_EXP (u);
 
   rnd_away =
@@ -114,8 +113,8 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
       up = MPFR_MANT(u);
       rp = MPFR_MANT(r);
 
-      un = MPFR_ESIZE(u);
-      rn = MPFR_ESIZE(r);
+      un = MPFR_LIMB_SIZE(u);
+      rn = MPFR_LIMB_SIZE(r);
       sh = (mp_prec_t) rn * BITS_PER_MP_LIMB - MPFR_PREC(r);
 
       MPFR_SET_EXP (r, exp);

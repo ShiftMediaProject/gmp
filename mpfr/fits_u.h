@@ -20,6 +20,7 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <limits.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -54,11 +55,11 @@ FUNCTION (mpfr_srcptr f, mp_rnd_t rnd)
   /* MAXIMUM needs prec bits, i.e. 2^(prec-1) <= |MAXIMUM| < 2^prec */
 
    /* if exp < prec - 1, then f < 2^(prec-1) < |MAXIMUM| */
-  if (exp < prec - 1)
+  if ((mpfr_prec_t) exp < prec - 1)
     return 1;
 
   /* if exp > prec + 1, then f >= 2^prec > MAXIMUM */
-  if (exp > prec + 1)
+  if ((mpfr_prec_t) exp > prec + 1)
     return 0;
 
   /* remains cases exp = prec-1 to prec+1 */

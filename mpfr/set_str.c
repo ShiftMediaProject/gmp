@@ -30,8 +30,8 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "log_b2.h"
 
-static double __gmpfr_ceil _PROTO((double));
-static int digit_value_in_base _PROTO ((int, int));
+static double __gmpfr_ceil _MPFR_PROTO((double));
+static int digit_value_in_base _MPFR_PROTO ((int, int));
 
 static double
 __gmpfr_ceil (double x)
@@ -115,7 +115,6 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
   if (strncasecmp (str, "@Inf@", 5) == 0 ||
       (base <= 16 && strcasecmp (str, "Inf") == 0))
     {
-      MPFR_CLEAR_NAN (x);
       MPFR_SET_INF (x);
       (negative) ? MPFR_SET_NEG (x) : MPFR_SET_POS (x);
       return 0;
@@ -214,7 +213,7 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
 	(((double) (n * BITS_PER_MP_LIMB) - 1.0) * log_b2[base-2]) + 1;
 
       /* check is there are enough digits in str */
-      if (pr >= prec_s)
+      if ((mpfr_prec_t) pr >= prec_s)
 	pr = prec_s;
 
       /* convert str into binary */
@@ -352,11 +351,11 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
 
   /* round y */
 
-  if (mpfr_round_raw_generic (MPFR_MANT(x), result + n, n * BITS_PER_MP_LIMB,
-			      negative, MPFR_PREC(x), rnd, NULL, (int) 0))
+  if (mpfr_round_raw_4 (MPFR_MANT(x), result + n, n * BITS_PER_MP_LIMB,
+			negative, MPFR_PREC(x), rnd ))
     {
       /* overflaw when rounding y */
-      MPFR_MANT(x)[MPFR_ESIZE(x) - 1] 
+      MPFR_MANT(x)[MPFR_LIMB_SIZE(x) - 1] 
 	= MPFR_LIMB_HIGHBIT;
       exp_y ++;
     }

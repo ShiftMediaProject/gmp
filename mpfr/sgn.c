@@ -1,6 +1,7 @@
-/* Test file for mpfr_dump.
+/* mpfr_sgn -- Sign of a floating point number.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2003 Free Software Foundation.
+Contributed by the Spaces project, INRIA Lorraine.
 
 This file is part of the MPFR Library.
 
@@ -19,25 +20,21 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
-#include "mpfr-test.h"
+#include "mpfr-impl.h"
 
 int
-main (void)
+mpfr_sgn (mpfr_srcptr a)
 {
-  mpfr_t z;
-
-  tests_start_mpfr ();
-
-  mpfr_init2 (z, 2);
-  mpfr_set_ui (z, 0, GMP_RNDN);
-  mpfr_dump (z, GMP_RNDD);
-  printf ("   ^--- 0.00e0 printed above is ok\n");
-  mpfr_clear (z);
-
-  tests_end_mpfr ();
-  return 0;
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(a) ))
+    {
+      /* Only infinite is signed */
+      if (MPFR_IS_INF(a))
+	return MPFR_INT_SIGN(a);
+      else
+	return 0;
+    }
+  return MPFR_INT_SIGN(a);
 }

@@ -34,16 +34,6 @@ MA 02111-1307, USA. */
 #error "Unsupported value of BITS_PER_MP_LIMB"
 #endif
 
-/* Included from gmp-2.0.2, patched to support denorms */
-
-#ifdef XDEBUG
-#undef _GMP_IEEE_FLOATS
-#endif
-
-#ifndef _GMP_IEEE_FLOATS
-#define _GMP_IEEE_FLOATS 0
-#endif
-
 static int
 __mpfr_extract_double (mp_ptr rp, double d)
      /* e=0 iff BITS_PER_MP_LIMB=32 and rp has only one limb */
@@ -188,8 +178,10 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
   else if (DOUBLE_ISINF(d))
     {
       MPFR_SET_INF(r);
-      if ((d > 0 && (MPFR_SIGN(r) == -1)) || (d < 0 && (MPFR_SIGN(r) == 1)))
-	MPFR_CHANGE_SIGN(r);
+      if (d > 0)
+	MPFR_SET_POS(r);
+      else
+	MPFR_SET_NEG(r);
       return 0; /* infinity is exact */
     }
 
@@ -198,9 +190,9 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
      would have same precision in the mpfr_set4 call below. */
   MPFR_MANT(tmp) = tmpmant;
   MPFR_PREC(tmp) = IEEE_DBL_MANT_DIG;
-  MPFR_SIZE(tmp) = MPFR_LIMBS_PER_DOUBLE;
+  /*MPFR_SIZE(tmp) = MPFR_LIMBS_PER_DOUBLE;*/
 
-  signd = (d < 0) ? -1 : 1;
+  signd = (d < 0) ? MPFR_SIGN_NEG : MPFR_SIGN_POS;
   d = ABS (d);
 
   MPFR_SET_EXP(tmp, __mpfr_extract_double (tmpmant, d));

@@ -22,10 +22,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 #define TEST_FUNCTION mpfr_fac_ui
@@ -73,7 +70,8 @@ main (int argc, char *argv[])
 		/* fact(n) ends with floor(n/2)+floor(n/4)+... zeros */
 		for (k=n/2, zeros=0; k; k >>= 1)
 		  zeros += k;
-		if (MPFR_EXP(y) <= prec + zeros) /* result should be exact */
+		if (MPFR_EXP(y) <= (mp_exp_t) (prec + zeros))
+		  /* result should be exact */
 		  {
 		    if (inexact)
 		      {

@@ -90,18 +90,21 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int precy, m, ok, e, inexact, sign;
   mpfr_t c;
 
-  if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
-    }
-
-  if (MPFR_IS_ZERO(x))
-    {
-      MPFR_CLEAR_FLAGS(y);
-      MPFR_SET_ZERO(y);
-      MPFR_SET_SAME_SIGN(y, x);
-      MPFR_RET(0);
+      if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_ZERO(x))
+	{
+	  MPFR_CLEAR_FLAGS(y);
+	  MPFR_SET_ZERO(y);
+	  MPFR_SET_SAME_SIGN(y, x);
+	  MPFR_RET(0);
+	}
+      MPFR_ASSERTN(0);
     }
 
   precy = MPFR_PREC(y);
@@ -119,8 +122,8 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_ui_sub (c, 1, c, GMP_RNDN);
       e = 2 + (- MPFR_GET_EXP (c)) / 2;
       mpfr_sqrt (c, c, GMP_RNDN);
-      if (sign < 0)
-	mpfr_neg (c, c, GMP_RNDN);
+      if (MPFR_IS_NEG_SIGN(sign))
+	MPFR_CHANGE_SIGN(c);
 
       /* the absolute error on c is at most 2^(e-m) = 2^(EXP(c)-err) */
       e = MPFR_GET_EXP (c) + m - e;

@@ -24,10 +24,7 @@ MA 02111-1307, USA. */
 #include <string.h>
 #include <limits.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 #define N 30000
@@ -120,7 +117,7 @@ main (int argc, char *argv[])
   mpfr_set_str_binary (x, "+110101100.01010000101101000000100111001000101011101110E00");
 
   mpfr_set_str_binary (x, "1.0");
-  if (mpfr_get_d1 (x) != 1.0)
+  if (mpfr_cmp_ui (x, 1))
     {
       printf ("Error in mpfr_set_str_binary for s=1.0\n");
       mpfr_clear(x);
@@ -131,7 +128,7 @@ main (int argc, char *argv[])
   mpfr_set_str_binary (x, "+0000");
   mpfr_set_str_binary (x, "+0000E0");
   mpfr_set_str_binary (x, "0000E0");
-  if (mpfr_get_d1 (x) != 0.0)
+  if (mpfr_cmp_ui (x, 0))
     {
       printf ("Error in mpfr_set_str_binary for s=0.0\n");
       mpfr_clear (x);

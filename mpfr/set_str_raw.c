@@ -42,7 +42,7 @@ mpfr_set_str_binary (mpfr_ptr x, const char *str)
   char *endstr2;
 
   xp = MPFR_MANT(x);
-  xsize = 1 + (MPFR_PREC(x) - 1) / BITS_PER_MP_LIMB;
+  xsize = MPFR_LIMB_SIZE(x);
   alloc = strlen(str) + 1;
 
   if (*str == '-')
@@ -62,10 +62,13 @@ mpfr_set_str_binary (mpfr_ptr x, const char *str)
 
   if (*str == 'I')
     {
-      MPFR_CLEAR_NAN(x);
       MPFR_SET_INF(x);
-      if (MPFR_ISNEG(x) != negative)
-	MPFR_CHANGE_SIGN(x);
+      if (negative)
+	MPFR_SET_NEG(x);
+      else
+	MPFR_SET_POS(x);
+      /*if (MPFR_IS_STRICTNEG(x) != negative)
+	MPFR_CHANGE_SIGN(x);*/
       return;
     }
 
@@ -145,8 +148,10 @@ mpfr_set_str_binary (mpfr_ptr x, const char *str)
         mpn_lshift(xp, xp, xsize, cnt);
 
       MPFR_SET_EXP (x, expn - cnt);
-      if (MPFR_ISNEG(x) != negative)
-        MPFR_CHANGE_SIGN(x);
+      if (negative)
+	MPFR_SET_NEG(x);
+      else
+	MPFR_SET_POS(x);
     }
 
   (*__gmp_free_func) (str0, alloc);

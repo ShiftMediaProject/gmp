@@ -25,8 +25,8 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-static int mpfr_aux_pi _PROTO ((mpfr_ptr, mpz_srcptr, long, int));
-static int mpfr_pi_machin3 _PROTO ((mpfr_ptr, mp_rnd_t));
+static int mpfr_aux_pi _MPFR_PROTO ((mpfr_ptr, mpz_srcptr, long, int));
+static int mpfr_pi_machin3 _MPFR_PROTO ((mpfr_ptr, mp_rnd_t));
 
 #define A
 #define A1 1
@@ -157,7 +157,8 @@ static mp_rnd_t __mpfr_const_pi_rnd; /* rounding mode of stored value */
 int
 mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
 {
-  int N, oldN, n, prec;
+  int N, oldN, n;
+  mpfr_prec_t prec;
   mpz_t pi, num, den, d3, d2, tmp;
   mpfr_t y;
   int inex;

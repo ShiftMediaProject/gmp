@@ -22,10 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 /* Workaround for sparc gcc 2.95.x bug, see notes in tadd.c. */
@@ -167,10 +164,10 @@ check_sign (void)
 
   mpfr_init2 (a, 53);
   mpfr_init2 (b, 53);
-  mpfr_set_d(a, -1.0, GMP_RNDN);
-  mpfr_set_d(b, 2.0, GMP_RNDN);
+  mpfr_set_si (a, -1, GMP_RNDN);
+  mpfr_set_ui (b, 2, GMP_RNDN);
   mpfr_mul(a, b, b, GMP_RNDN);
-  if (mpfr_get_d1 (a) != 4.0)
+  if (mpfr_cmp_ui (a, 4) )
     {
       printf ("2.0*2.0 gives %1.20e\n", mpfr_get_d1 (a));
       exit (1);
@@ -257,9 +254,9 @@ check_max(void)
   mpfr_init2(xx, 4);
   mpfr_init2(yy, 4);
   mpfr_init2(zz, 4);
-  mpfr_set_d(xx, 11.0/16, GMP_RNDN);
+  mpfr_set_str (xx, /*11.0/16*/ "0.68750", 10, GMP_RNDN);
   mpfr_mul_2si(xx, xx, MPFR_EMAX_DEFAULT/2, GMP_RNDN);
-  mpfr_set_d(yy, 11.0/16, GMP_RNDN);
+  mpfr_set_str (yy, /*11.0/16*/ "0.68750", 10, GMP_RNDN);
   mpfr_mul_2si(yy, yy, MPFR_EMAX_DEFAULT - MPFR_EMAX_DEFAULT/2 + 1, GMP_RNDN);
   mpfr_clear_flags();
   mpfr_mul(zz, xx, yy, GMP_RNDU);
@@ -276,7 +273,7 @@ check_max(void)
       printf("check_max failed (should NOT be an overflow)\n");
       exit(1);
     }
-  mpfr_set_d(xx, 15.0/16, GMP_RNDN);
+  mpfr_set_str (xx, /*15.0/16*/ "0.93750", 10, GMP_RNDN);
   mpfr_mul_2si(xx, xx, MPFR_EMAX_DEFAULT, GMP_RNDN);
   if (!(MPFR_IS_FP(xx) && MPFR_IS_FP(zz)))
     {
@@ -306,9 +303,9 @@ check_min(void)
   mpfr_init2(xx, 4);
   mpfr_init2(yy, 4);
   mpfr_init2(zz, 3);
-  mpfr_set_d(xx, 15.0/16, GMP_RNDN);
+  mpfr_set_str(xx, /*15.0/16*/ "0.9375", 10, GMP_RNDN);
   mpfr_mul_2si(xx, xx, MPFR_EMIN_DEFAULT/2, GMP_RNDN);
-  mpfr_set_d(yy, 15.0/16, GMP_RNDN);
+  mpfr_set_str(yy, /*15.0/16*/ "0.9375", 10, GMP_RNDN);
   mpfr_mul_2si(yy, yy, MPFR_EMIN_DEFAULT - MPFR_EMIN_DEFAULT/2 - 1, GMP_RNDN);
   mpfr_mul(zz, xx, yy, GMP_RNDD);
   if (mpfr_sgn(zz) != 0)
@@ -320,7 +317,7 @@ check_min(void)
     }
 
   mpfr_mul(zz, xx, yy, GMP_RNDU);
-  mpfr_set_d(xx, 0.5, GMP_RNDN);
+  mpfr_set_str (xx, "0.5", 10, GMP_RNDN);
   mpfr_mul_2si(xx, xx, MPFR_EMIN_DEFAULT, GMP_RNDN);
   if (mpfr_sgn(xx) <= 0)
     {

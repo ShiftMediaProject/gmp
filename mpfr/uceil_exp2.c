@@ -37,6 +37,25 @@ __gmpfr_ceil_exp2 (double d)
     exp++;
   /* now exp = ceil(d) */
   x.d = 1.0;
+#if _GMP_IEEE_FLOATS
   x.s.exp = exp <= -1022 ? 1 : 1023 + exp;
+#else
+  if (exp >= 0)
+    {
+      while (exp != 0)
+	{
+	  x.d *= 2.0;
+	  exp--;
+	}
+    }
+  else
+    {
+      while (exp != 0)
+	{
+	x.d *= (1.0 / 2.0);
+	exp++;
+	}
+    }
+#endif
   return x.d;
 }

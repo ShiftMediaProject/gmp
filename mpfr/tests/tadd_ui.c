@@ -23,10 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <float.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 #define check(x,y,r) check3(x,y,r,0.0)

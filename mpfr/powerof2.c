@@ -32,7 +32,10 @@ mpfr_powerof2_raw (mpfr_srcptr x)
   mp_limb_t *xp;
   mp_size_t xn;
 
-  MPFR_ASSERTN(MPFR_IS_FP(x));
+  /* This is an internal function, and we may call it with some
+     wrong numbers (ie good mantissa but wrong flags or exp)
+     So we don't want to test if it is a pure FP.
+     MPFR_ASSERTN(MPFR_IS_PURE_FP(x)); */
   xp = MPFR_MANT(x);
   xn = (MPFR_PREC(x) - 1) / BITS_PER_MP_LIMB;
   if (NOT_POW2(xp[xn]))

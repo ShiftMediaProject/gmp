@@ -24,11 +24,14 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-/* returns ceil(log(d)/log(2)) */
+/* returns ceil(log(d)/log(2)) if d > 0,
+   -1023 if d = +0,
+   and floor(log(-d)/log(2))+1 if d < 0*/
 long
 __gmpfr_ceil_log2 (double d)
 {
   long exp;
+#if _GMP_IEEE_FLOATS
   union ieee_double_extract x;
 
   x.d = d;
@@ -37,4 +40,26 @@ __gmpfr_ceil_log2 (double d)
   if (x.d != 1.0) /* d: not a power of two? */
     exp++;
   return exp;
+#else
+  double m;
+
+  if (d < 0.0)
+    return __gmpfr_floor_log2(-d)+1;
+  else if (d == 0.0)
+    return -1023;
+  else if (d >= 1.0)
+    {
+      exp = 0;
+      for( m= 1.0 ; m < d ; m *=2.0 )
+	exp++;
+    }
+  else
+    {
+      exp = 1;
+      for( m= 1.0 ; m >= d ; m *= (1.0/2.0) )
+        exp--;      
+    }
+#endif
+  return exp;
 }
+

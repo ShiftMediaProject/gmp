@@ -21,10 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 /* Generic tests for mpfr_nextabove and mpfr_nextbelow */
@@ -81,7 +78,7 @@ inverse_test (void)
   int i, neg, below;
   mp_prec_t prec;
 
-  for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
+  for (i = 0; i < (int) (sizeof(tests) / sizeof(tests[0])); i++)
     for (neg = 0; neg <= 1; neg++)
       for (below = 0; below <= 1; below++)
         for (prec = MPFR_PREC_MIN; prec < 200; prec += 3)

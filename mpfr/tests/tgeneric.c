@@ -20,7 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 static void
-test_generic (int p0, int p1, int N)
+test_generic (mp_prec_t p0, mp_prec_t p1, unsigned int N)
 {
   mp_prec_t prec, yprec;
   mpfr_t x, y, z, t;

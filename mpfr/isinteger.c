@@ -32,18 +32,20 @@ mpfr_integer_p (mpfr_srcptr x)
   mp_size_t xn;
   mp_limb_t *xp;
 
-  if (!MPFR_IS_FP(x))
-    return 0;
-
-  if (MPFR_IS_ZERO(x))
-    return 1;
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
+    {
+      if (MPFR_IS_ZERO(x))
+	return 1;
+      else
+	return 0;
+    }
 
   expo = MPFR_GET_EXP (x);
   if (expo <= 0)
     return 0;
 
   prec = MPFR_PREC(x);
-  if (expo >= prec)
+  if ((mpfr_prec_t) expo >= prec)
     return 1;
 
   /* 0 < expo < prec */

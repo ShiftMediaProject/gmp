@@ -23,10 +23,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <limits.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 
@@ -41,9 +38,8 @@ main (int argc, char *argv[])
   int inexact, compare, compare2;
   unsigned int n, err;
 
-  int p0=2;
-  int p1=100;
-  int N=25;
+  mp_prec_t p0=2, p1=100;
+  unsigned int N=25;
 
   tests_start_mpfr ();
 

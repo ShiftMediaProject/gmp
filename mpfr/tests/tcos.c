@@ -21,9 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
@@ -100,7 +98,7 @@ main (int argc, char *argv[])
 
   mpfr_set_prec (x, 53);
   mpfr_set_prec (y, 2);
-  mpfr_set_d (x, 9.81333845856942e-1, GMP_RNDN);
+  mpfr_set_str (x, "9.81333845856942e-1", 10, GMP_RNDN);
   mpfr_cos (y, x, GMP_RNDN);
 
   mpfr_set_prec (x, 30);

@@ -38,33 +38,28 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int expx, precy;
   double d;
 
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
-    }
-
-  MPFR_CLEAR_NAN(y);
-
-  if (MPFR_IS_INF(x))
-    {
-      if (MPFR_SIGN(x) > 0)
+      if (MPFR_IS_NAN(x))
 	{
-	  MPFR_SET_INF(y);
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
 	}
+      else if (MPFR_IS_INF(x))
+	{
+	  if (MPFR_IS_POS(x))
+	    MPFR_SET_INF(y);
+	  else
+	    MPFR_SET_ZERO(y);
+	  MPFR_SET_POS(y);
+	  MPFR_RET(0);
+	}
+      else if (MPFR_IS_ZERO(x))
+	return mpfr_set_ui (y, 1, GMP_RNDN);
       else
-	{
-	  MPFR_CLEAR_INF(y);
-	  MPFR_SET_ZERO(y);
-	}
-      MPFR_SET_POS(y);
-      MPFR_RET(0);
+	MPFR_ASSERTN(0);
     }
-
-  MPFR_CLEAR_INF(y);
-
-  if (MPFR_IS_ZERO(x))
-    return mpfr_set_ui (y, 1, GMP_RNDN);
+  MPFR_CLEAR_FLAGS(y);
 
   expx = MPFR_GET_EXP (x);
   precy = MPFR_PREC(y);
@@ -85,15 +80,14 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     {
       int signx = MPFR_SIGN(x);
 
-      if (signx < 0 && (rnd_mode == GMP_RNDD || rnd_mode == GMP_RNDZ))
+      if (MPFR_IS_NEG_SIGN(signx) && (rnd_mode == GMP_RNDD || rnd_mode == GMP_RNDZ))
         {
-          MPFR_CLEAR_FLAGS(y);
           MPFR_SET_POS(y);
           mpfr_setmax (y, 0);  /* y = 1 - epsilon */
           return -1;
         }
       mpfr_setmin (y, 1);  /* y = 1 */
-      if (signx > 0 && rnd_mode == GMP_RNDU)
+      if (MPFR_IS_POS_SIGN(signx) && rnd_mode == GMP_RNDU)
         {
           mp_size_t yn;
           int sh;
@@ -103,7 +97,7 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
           MPFR_MANT(y)[0] += MP_LIMB_T_ONE << sh;
           return 1;
         }
-      return -signx;
+      return -MPFR_FROM_SIGN_TO_INT(signx);
     }
 
   if (precy > 13000)

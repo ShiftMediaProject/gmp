@@ -61,11 +61,11 @@ FUNCTION (mpfr_srcptr f, mp_rnd_t rnd)
   /* EXTREMUM needs prec bits, i.e. 2^(prec-1) <= |EXTREMUM| < 2^prec */
 
    /* if exp < prec - 1, then f < 2^(prec-1) < |EXTREMUM| */
-  if (exp < prec - 1)
+  if ((mpfr_prec_t) exp < prec - 1)
     return 1;
 
   /* if exp > prec + 1, then f >= 2^prec > EXTREMUM */
-  if (exp > prec + 1)
+  if ((mpfr_prec_t) exp > prec + 1)
     return 0;
 
   /* remains cases exp = prec-1 to prec+1 */

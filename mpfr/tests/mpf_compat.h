@@ -61,6 +61,8 @@ main ()
   if (prec2 < prec)
     {
       printf ("Error in get_prec: %lu < %lu\n", prec2, prec);
+      mpf_clear (y);
+      mpf_clear (x);
       exit (1);
     }
 
@@ -69,6 +71,8 @@ main ()
   if (prec2 < 2 * prec)
     {
       printf ("Error in set_prec: %lu < %lu\n", prec2, 2 * prec);
+      mpf_clear (y);
+      mpf_clear (x);
       exit (1);
     }
 
@@ -77,6 +81,8 @@ main ()
   if (prec2 < prec)
     {
       printf ("Error in set_prec_raw: %lu < %lu\n", prec2, prec);
+      mpf_clear (y);
+      mpf_clear (x);
       exit (1);
     }
 
@@ -183,7 +189,6 @@ main ()
   mpf_random2 (x, 17, 17);
 
   /* clear all variables */
-
   mpf_clear (y);
   mpf_clear (x);
 

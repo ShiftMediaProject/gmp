@@ -22,30 +22,26 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 
 /* FIXME: Comparing against mpfr_get_si/ui is not ideal, it'd be better to
    have all tests examine the bits in mpfr_t for what should come out.  */
 
-
 int
 main (int argc, char *argv[])
 {
   mpfr_t x;
-  long k, z, d;
-  unsigned long zl, dl, N;
+  long k, z, d, N;
+  unsigned long zl, dl;
   int inex;
 
   tests_start_mpfr ();
 
   mpfr_init2 (x, 100);
 
-  N = (argc==1) ? 200000 : atoi (argv[1]);
+  N = (argc==1) ? 200000 : atol (argv[1]);
 
   for (k = 1; k <= N; k++)
     {

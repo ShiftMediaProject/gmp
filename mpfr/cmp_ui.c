@@ -35,15 +35,17 @@ MA 02111-1307, USA. */
 int 
 mpfr_cmp_ui_2exp (mpfr_srcptr b, unsigned long int i, mp_exp_t f)
 {
-  MPFR_ASSERTN(!MPFR_IS_NAN(b));
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(b) ))
+    {
+      if (MPFR_IS_INF(b))
+	return MPFR_SIGN(b);
+      else if (MPFR_IS_ZERO(b))
+	return i != 0 ? -1 : 0;
+      else
+	MPFR_ASSERTN(0);
+    }
 
-  if (MPFR_IS_INF(b))
-    return MPFR_SIGN(b);
-
-  /* now b is neither NaN nor +/-Infinity */
-  if (MPFR_IS_ZERO(b))
-    return i != 0 ? -1 : 0;
-  else if (MPFR_SIGN(b) < 0)
+  if (MPFR_IS_NEG(b))
     return -1;
   /* now b > 0 */
   else if (i == 0)

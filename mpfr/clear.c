@@ -29,5 +29,7 @@ void
 mpfr_clear (mpfr_ptr m)
 {
   /* be careful to always free an entire number of limbs */
-  (*__gmp_free_func) (MPFR_MANT(m), MPFR_ABSSIZE(m) * BYTES_PER_MP_LIMB);
+  (*__gmp_free_func) 
+    (MPFR_GET_REAL_PTR(m), MPFR_MALLOC_SIZE(MPFR_GET_ALLOC_SIZE(m)));
+  MPFR_MANT(m) = NULL;
 }

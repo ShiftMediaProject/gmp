@@ -23,10 +23,7 @@ MA 02111-1307, USA. */
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 #define TEST_FUNCTION mpfr_erf
@@ -86,7 +83,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  mpfr_set_d (x, 1.0, GMP_RNDN);
+  mpfr_set_ui (x, 1, GMP_RNDN);
   mpfr_erf (x, x, GMP_RNDN);
   mpfr_set_str_binary (y, "0.11010111101110110011110100111010000010000100010001011");
   if (mpfr_cmp (x, y))
@@ -101,7 +98,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  mpfr_set_d (x, 6.6, GMP_RNDN);
+  mpfr_set_str (x, "6.6", 10, GMP_RNDN);
   mpfr_erf (x, x, GMP_RNDN);
   if (mpfr_cmp_ui (x, 1))
     {
@@ -113,7 +110,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  mpfr_set_d (x, 6.6, GMP_RNDN);
+  mpfr_set_str (x, "6.6", 10, GMP_RNDN);
   mpfr_erf (x, x, GMP_RNDZ);
   mpfr_set_str_binary (y, "0.11111111111111111111111111111111111111111111111111111");
   if (mpfr_cmp (x, y))
@@ -128,7 +125,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  mpfr_set_d (x, 4.5, GMP_RNDN);
+  mpfr_set_str (x, "4.5", 10, GMP_RNDN);
   mpfr_erf (x, x, GMP_RNDN);
   mpfr_set_str_binary (y, "0.1111111111111111111111111111111100100111110100011");
   if (mpfr_cmp (x, y))

@@ -36,48 +36,53 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
   int inexact, middle = 1;
   TMP_DECL(marker);
 
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(x)) 
+	{ 
+	  MPFR_SET_INF(y);
+	  MPFR_SET_SAME_SIGN(y, x);
+	  MPFR_RET(0);
+	}
+      else if (MPFR_IS_ZERO(x))
+	{
+	  if (u == 0)/* 0/0 is NaN */
+	    {
+	      MPFR_SET_NAN(y);
+	      MPFR_RET_NAN;
+	    }
+	  else
+	    {
+	      MPFR_SET_ZERO(y);
+	      MPFR_RET(0);
+	    }
+	}
+      else
+	MPFR_ASSERTN(0);
     }
 
-  MPFR_CLEAR_NAN(y); /* clear NaN flag */
-
-  if (MPFR_IS_INF(x)) 
-    { 
+  if (MPFR_UNLIKELY(u == 0))
+    {
+      /* x/0 is Inf */
       MPFR_SET_INF(y);
       MPFR_SET_SAME_SIGN(y, x);
       MPFR_RET(0);
     }
 
-  if (u == 0)
-    {
-      if (MPFR_IS_ZERO(x)) /* 0/0 is NaN */
-	{
-	  MPFR_SET_NAN(y);
-	  MPFR_RET_NAN;
-	}
-      else /* x/0 is Inf */
-	{
-	  MPFR_SET_INF(y);
-	  MPFR_SET_SAME_SIGN(y, x);
-          MPFR_RET(0);
-	}
-    }
+  MPFR_CLEAR_FLAGS(y);
 
-  MPFR_CLEAR_INF(y);
   MPFR_SET_SAME_SIGN(y, x);
 
-  if (MPFR_IS_ZERO(x))
-    {
-      MPFR_SET_ZERO(y);
-      MPFR_RET(0);
-    }
-
   TMP_MARK(marker);
-  xn = (MPFR_PREC(x) - 1)/BITS_PER_MP_LIMB + 1;
-  yn = (MPFR_PREC(y) - 1)/BITS_PER_MP_LIMB + 1;
+  xn = MPFR_LIMB_SIZE(x);
+  /*(MPFR_PREC(x) - 1)/BITS_PER_MP_LIMB + 1;*/
+  yn = MPFR_LIMB_SIZE(y);
+  /*(MPFR_PREC(y) - 1)/BITS_PER_MP_LIMB + 1;*/
 
   xp = MPFR_MANT(x);
   yp = MPFR_MANT(y);
@@ -147,41 +152,42 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
   switch (rnd_mode)
     {
     case GMP_RNDZ:
-      MPFR_RET(-MPFR_SIGN(x)); /* result is inexact */
+      MPFR_RET(-MPFR_INT_SIGN(x)); /* result is inexact */
 
     case GMP_RNDU:
-      if (MPFR_SIGN(y) > 0)
+      if (MPFR_IS_POS(y))
 	mpfr_add_one_ulp (y, rnd_mode);
       MPFR_RET(1); /* result is inexact */
 
     case GMP_RNDD:
-      if (MPFR_SIGN(y) < 0)
+      if (MPFR_IS_NEG(y))
 	mpfr_add_one_ulp (y, rnd_mode);
       MPFR_RET(-1); /* result is inexact */
 
     case GMP_RNDN:
       if (sh && d < (MP_LIMB_T_ONE << (sh - 1)))
-	MPFR_RET(-MPFR_SIGN(x));
+	MPFR_RET(-MPFR_INT_SIGN(x));
       else if (sh && d > (MP_LIMB_T_ONE << (sh - 1)))
 	{
 	  mpfr_add_one_ulp (y, rnd_mode);
-	  MPFR_RET(MPFR_SIGN(x));
+	  MPFR_RET(MPFR_INT_SIGN(x));
 	}
-    else /* sh = 0 or d = 1 << (sh-1) */
-      {
-	/* we are in the middle if:
-	   (a) sh > 0 and inexact == 0
-	   (b) sh=0 and middle=1
-	 */
-	if ((sh && inexact) || (!sh && (middle > 0)) ||
-            (*yp & (MP_LIMB_T_ONE << sh)))
-	  {
-	    mpfr_add_one_ulp (y, rnd_mode);
-	    MPFR_RET(MPFR_SIGN(x));
-	  }
-	    else
-	      MPFR_RET(-MPFR_SIGN(x));
-      }
+      else /* sh = 0 or d = 1 << (sh-1) */
+	{
+	  /* we are in the middle if:
+	     (a) sh > 0 and inexact == 0
+	     (b) sh=0 and middle=1
+	  */
+	  if ((sh && inexact) || (!sh && (middle > 0)) ||
+	      (*yp & (MP_LIMB_T_ONE << sh)))
+	    {
+	      mpfr_add_one_ulp (y, rnd_mode);
+	      MPFR_RET(MPFR_INT_SIGN(x));
+	    }
+	  else
+	    MPFR_RET(-MPFR_INT_SIGN(x));
+	}
     }
-  MPFR_RET(inexact); /* should never go here */
+  MPFR_ASSERTN(0); /* should never go here */
+  return 0; /* To avoid warning*/
 }

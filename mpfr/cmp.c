@@ -36,25 +36,29 @@ mpfr_cmp3 (mpfr_srcptr b, mpfr_srcptr c, int s)
   mp_size_t bn, cn;
   mp_limb_t *bp, *cp;
 
-  MPFR_ASSERTN(!MPFR_IS_NAN(b));
-  MPFR_ASSERTN(!MPFR_IS_NAN(c));
-  s *= MPFR_SIGN(c);
+  s = MPFR_MULT_SIGN( s , MPFR_SIGN(c) );
 
-  if (MPFR_IS_INF(b))
-    return (MPFR_IS_INF(c) && s * MPFR_SIGN(b) > 0) ? 0 : MPFR_SIGN(b);
-
-  if (MPFR_IS_INF(c))
-    return -s;
-
+  if (MPFR_ARE_SINGULAR(b,c))
+    {
+      if (MPFR_IS_INF(b))
+	{
+	  if (MPFR_IS_INF(c) && s == MPFR_SIGN(b) )
+	    return 0;
+	  else
+	    return MPFR_SIGN(b);
+	}
+      else if (MPFR_IS_INF(c))
+	return -s;
+      else if (MPFR_IS_ZERO(b))
+	return MPFR_IS_ZERO(c) ? 0 : -s;
+      else if (MPFR_IS_ZERO(c))
+	return MPFR_SIGN(b);
+      else
+	/* Should never reach here */
+	MPFR_ASSERTN(0);
+    }
   /* b and c are real numbers */
-
-  if (MPFR_IS_ZERO(b))
-    return MPFR_IS_ZERO(c) ? 0 : -s;
-
-  if (MPFR_IS_ZERO(c))
-    return MPFR_SIGN(b);
-
-  if (s * MPFR_SIGN(b) < 0)
+  if (s != MPFR_SIGN(b))
     return MPFR_SIGN(b);
 
   /* now signs are equal */
@@ -77,15 +81,13 @@ mpfr_cmp3 (mpfr_srcptr b, mpfr_srcptr c, int s)
   for ( ; bn >= 0 && cn >= 0; bn--, cn--)
     {
       if (bp[bn] > cp[cn])
-        return s;
+	return s;
       if (bp[bn] < cp[cn])
-        return -s;
+	return -s;
     }
-
   for ( ; bn >= 0; bn--)
     if (bp[bn])
-      return s;
-
+      return s;      
   for ( ; cn >= 0; cn--)
     if (cp[cn])
       return -s;

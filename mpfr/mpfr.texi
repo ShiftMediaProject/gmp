@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename mpfr.info
 @documentencoding ISO-8859-1
-@set VERSION 2.0.2
+@set VERSION 2.1.0
 @set UPDATED-MONTH October 2003
 @settitle MPFR @value{VERSION}
 @synindex tp fn
@@ -1205,6 +1205,11 @@ rounded in the direction @var{rnd}.
 
 @deftypefun int mpfr_exp2 (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 Set @var{rop} to @m{2^{op}, 2 power of @var{op}},
+rounded in the direction @var{rnd}.
+@end deftypefun
+
+@deftypefun int mpfr_exp10 (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+Set @var{rop} to @m{10^{op}, 10 power of @var{op}},
 rounded in the direction @var{rnd}.
 @end deftypefun
 

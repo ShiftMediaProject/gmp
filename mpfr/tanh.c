@@ -30,14 +30,7 @@ MA 02111-1307, USA. */
  */
 
 int
-#if __STDC__
 mpfr_tanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode) 
-#else
-mpfr_tanh (y, xt, rnd_mode)
-     mpfr_ptr y;
-     mpfr_srcptr xt;
-     mp_rnd_t rnd_mode;
-#endif
 {
 
     /****** Declaration ******/
@@ -46,35 +39,36 @@ mpfr_tanh (y, xt, rnd_mode)
     int flag_neg=0, inexact=0;
     
     /* Special value checking */
-
-    if (MPFR_IS_NAN(xt)) 
+    if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(xt)))
       {
-        MPFR_SET_NAN(y); 
-        MPFR_RET_NAN;
-      }
-    MPFR_CLEAR_NAN(y);
-
-    if (MPFR_IS_INF(xt))
-      {
-        if (MPFR_SIGN(xt) > 0)
-          return mpfr_set_si(y,1,rnd_mode); /* tanh(inf) = 1 */
-        else
-          return mpfr_set_si(y,-1,rnd_mode); /* tanh(-inf) = -1 */
-      }
-    MPFR_CLEAR_INF(y);
-
-    /* tanh(0) = 0 */
-    if (MPFR_IS_ZERO(xt))
-      {              
-        MPFR_SET_ZERO(y);
-        MPFR_SET_SAME_SIGN(y,xt);
-        MPFR_RET(0);
+	if (MPFR_IS_NAN(xt)) 
+	  {
+	    MPFR_SET_NAN(y); 
+	    MPFR_RET_NAN;
+	  }
+	else if (MPFR_IS_INF(xt))
+	  {
+	    if (MPFR_IS_POS(xt))
+	      return mpfr_set_si(y,1,rnd_mode); /* tanh(inf) = 1 */
+	    else
+	      return mpfr_set_si(y,-1,rnd_mode); /* tanh(-inf) = -1 */
+	  }
+	/* tanh(0) = 0 */
+	else if (MPFR_IS_ZERO(xt))
+	  {              
+	    MPFR_SET_ZERO(y);
+	    MPFR_SET_SAME_SIGN(y,xt);
+	    MPFR_RET(0);
+	  }
+	/* Should never reach this point */
+	else
+	  MPFR_ASSERTN(0);
       }
 
     mpfr_init2(x,Nxt);
     mpfr_set(x,xt,GMP_RNDN);
 
-    if (MPFR_SIGN(x) < 0)
+    if (MPFR_IS_NEG(x))
       {
         MPFR_CHANGE_SIGN(x);
         flag_neg=1;

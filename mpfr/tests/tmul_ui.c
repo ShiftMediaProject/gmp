@@ -21,10 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
@@ -94,7 +91,7 @@ main (int argc, char *argv[])
   mpfr_init2 (y, 53);
 
   /* checks that result is normalized */
-  mpfr_set_d (y, 6.93147180559945286227e-01, GMP_RNDZ);
+  mpfr_set_str (y, "6.93147180559945286227e-01", 10, GMP_RNDZ);
   mpfr_mul_ui (x, y, 1, GMP_RNDZ);
   if (MPFR_MANT(x)[MPFR_PREC(x)/mp_bits_per_limb] >> (mp_bits_per_limb-1) == 0)
     {
@@ -133,17 +130,18 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  mpfr_set_d (x, 1.0/3.0, GMP_RNDZ);
+  mpfr_set_str (x, /*1.0/3.0*/ 
+		"0.333333333333333333333333333333333", 10, GMP_RNDZ);
   mpfr_mul_ui (x, x, 3, GMP_RNDU);
-  if (mpfr_get_d1 (x) != 1.0)
+  if (mpfr_cmp_ui (x, 1))
     {
       printf ("Error in mpfr_mul_ui: U(Z(1/3)*3) does not give 1\n");
       exit (1);
     }
 
   /* checks sign is correct */
-  mpfr_set_d(x, -2.0, GMP_RNDZ);
-  mpfr_set_d(y, 3.0, GMP_RNDZ);
+  mpfr_set_si (x, -2, GMP_RNDZ);
+  mpfr_set_si (y, 3, GMP_RNDZ);
   mpfr_mul_ui(x, y, 4, GMP_RNDZ);
   if (mpfr_cmp_ui(x, 0) <= 0)
     {
@@ -196,7 +194,7 @@ main (int argc, char *argv[])
 
   mpfr_set_prec (x, 68);
   mpfr_set_prec (y, 64);
-  mpfr_set_d (x, 2143861251406875.0, GMP_RNDN);
+  mpfr_set_str (x, "2143861251406875.0", 10, GMP_RNDN);
   mpfr_mul_ui (y, x, 23, GMP_RNDN);
   mpfr_set_str_binary (x, "10101111001011100001100110101111110001010010011001101101.0");
   if (mpfr_cmp (x, y))
@@ -216,7 +214,7 @@ main (int argc, char *argv[])
         {
           mpfr_set_prec (y, yprec);
           mpfr_mul_ui (y, x, 1, GMP_RNDN);
-          if (mpfr_get_d1 (x) != mpfr_get_d1 (y))
+          if (mpfr_cmp(x,y))
             {
               printf ("multiplication by 1.0 fails for xprec=%u, yprec=%u\n",
                       xprec, yprec);

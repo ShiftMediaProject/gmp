@@ -31,15 +31,15 @@ mpfr_mul_2si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
 
   inexact = y != x ? mpfr_set (y, x, rnd_mode) : 0;
 
-  if (MPFR_IS_FP(y) && MPFR_NOTZERO(y))
+  if (MPFR_LIKELY( MPFR_IS_PURE_FP(y)) )
     {
       mp_exp_t exp = MPFR_GET_EXP (y);
-      if (n > 0 && (__gmpfr_emax < MPFR_EMIN_MIN + n ||
-                    exp > __gmpfr_emax - n))
+      if (MPFR_UNLIKELY( n > 0 && (__gmpfr_emax < MPFR_EMIN_MIN + n ||
+				   exp > __gmpfr_emax - n)))
         return mpfr_set_overflow (y, rnd_mode, MPFR_SIGN(y));
 
-      if (n < 0 && (__gmpfr_emin > MPFR_EMAX_MAX + n ||
-                    exp < __gmpfr_emin - n))
+      else if (MPFR_UNLIKELY(n < 0 && (__gmpfr_emin > MPFR_EMAX_MAX + n ||
+				       exp < __gmpfr_emin - n)))
         {
           if (rnd_mode == GMP_RNDN &&
               (__gmpfr_emin > MPFR_EMAX_MAX + (n + 1) ||
@@ -47,7 +47,6 @@ mpfr_mul_2si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
             rnd_mode = GMP_RNDZ;
           return mpfr_set_underflow (y, rnd_mode, MPFR_SIGN(y));
         }
-
       MPFR_SET_EXP (y, exp + n);
     }
 

@@ -24,10 +24,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 FILE *fout;
@@ -61,7 +58,7 @@ check_large (void)
 
   /* checks rounding of negative numbers */
   mpfr_set_prec (x, 7);
-  mpfr_set_d (x, -11.5, GMP_RNDN);
+  mpfr_set_str (x, "-11.5", 10, GMP_RNDN);
   s = mpfr_get_str (NULL, &e, 10, 2, x, GMP_RNDD);
   if (strcmp (s, "-12"))
     {

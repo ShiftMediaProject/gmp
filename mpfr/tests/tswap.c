@@ -21,8 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "mpfr.h"
+
 #include "mpfr-test.h"
 
 int
@@ -35,7 +34,7 @@ main (void)
   mpfr_init2 (u, 24);
   mpfr_init2 (v, 53);
   mpfr_set_ui (u, 16777215, GMP_RNDN); /* 2^24 - 1 */
-  mpfr_set_d (v, 9007199254740991.0, GMP_RNDN); /* 2^53 - 1 */
+  mpfr_set_str (v, "9007199254740991.0", 10, GMP_RNDN); /* 2^53 - 1 */
   mpfr_swap (u, v);
   mpfr_swap (u, v);
   if (mpfr_cmp_ui (u, 16777215) || (mpfr_get_d1 (v) != 9007199254740991.0))

@@ -32,25 +32,30 @@ mpfr_ui_sub (mpfr_ptr y, unsigned long int u, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mp_limb_t up[1];
   unsigned long cnt;
   
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(x)))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(x))
+	{
+	  /*  u - Inf = -Inf and u - -Inf = +Inf  */
+	  MPFR_SET_INF(y);
+	  MPFR_SET_OPPOSITE_SIGN(y,x);
+	  MPFR_RET(0); /* +/-infinity is exact */
+	}
+      else if (MPFR_IS_ZERO(x))
+	/* u - 0 = u */
+	return mpfr_set_ui(y, u, rnd_mode);
+      /* Should never reach this code */
+      else
+	MPFR_RET_NEVER_GO_HERE();
     }
-
-  MPFR_CLEAR_NAN(y);
-
-  if (MPFR_IS_INF(x))
+  else if (u)
     {
-      MPFR_SET_INF(y);
-      if (MPFR_SIGN(x) == MPFR_SIGN(y))
-	MPFR_CHANGE_SIGN(y);
-      MPFR_RET(0); /* +/-infinity is exact */
-    }
-
-  if (u)
-    {
-      MPFR_INIT1 (up, uu, BITS_PER_MP_LIMB, 1);
+      MPFR_TMP_INIT1 (up, uu, BITS_PER_MP_LIMB);
       MPFR_ASSERTN(u == (mp_limb_t) u);
       count_leading_zeros (cnt, (mp_limb_t) u);
       *up = (mp_limb_t) u << cnt;

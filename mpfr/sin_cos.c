@@ -31,23 +31,27 @@ mpfr_sin_cos (mpfr_ptr y, mpfr_ptr z, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int prec, m, ok, e, inexact, neg;
   mpfr_t c, k;
 
-  if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_NAN(y);
-      MPFR_SET_NAN(z);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_SET_NAN(z);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_ZERO(x))
+	{
+	  MPFR_SET_ZERO(y);
+	  MPFR_SET_SAME_SIGN(y, x);
+	  mpfr_set_ui (z, 1, GMP_RNDN);
+	  MPFR_RET(0);
+	}
+      else
+	MPFR_ASSERTN(0);
     }
+  /* MPFR_CLEAR_FLAGS is useless since we use mpfr_set to set y and z */
 
-  if (MPFR_IS_ZERO(x))
-    {
-      MPFR_CLEAR_FLAGS(y);
-      MPFR_SET_ZERO(y);
-      MPFR_SET_SAME_SIGN(y, x);
-      mpfr_set_ui (z, 1, GMP_RNDN);
-      MPFR_RET(0);
-    }
-
-  prec = MAX(MPFR_PREC(y), MPFR_PREC(z));
+  prec = MAX(MPFR_PREC(y), MPFR_PREC(z)); 
   m = prec + __gmpfr_ceil_log2 ((double) prec) + ABS (MPFR_GET_EXP (x)) + 13;
 
   mpfr_init2 (c, m);

@@ -52,40 +52,39 @@ mpfr_cbrt (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpz_t m;
   mp_exp_t e, r, sh;
   mp_prec_t n, size_m;
-  int inexact, sign_x;
+  int inexact, x_neg;
 
   /* special values */
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(x))
+	{
+	  MPFR_SET_INF(y);
+	  MPFR_SET_SAME_SIGN (y, x);
+	  return 0;
+	}
+      /* case 0: cbrt(+/- 0) = +/- 0 */
+      else if (MPFR_IS_ZERO(x))
+	{
+	  MPFR_SET_ZERO(y);
+	  MPFR_SET_SAME_SIGN (y, x);
+	  return 0;
+	}
+      else
+	MPFR_ASSERTN(0);
     }
-
-  MPFR_CLEAR_NAN(y);
-
-  if (MPFR_IS_INF(x))
-    {
-      MPFR_SET_INF(y);
-      MPFR_SET_SAME_SIGN (y, x);
-      return 0;
-    }
-
-  MPFR_CLEAR_INF(y);
-
-  /* case 0: cbrt(+/- 0) = +/- 0 */
-  if (MPFR_IS_ZERO(x))
-    {
-      MPFR_SET_ZERO(y);
-      MPFR_SET_SAME_SIGN (y, x);
-      return 0;
-    }
-
-  sign_x = MPFR_SIGN(x);
+  /* Useless due to mpz_init 
+     MPFR_CLEAR_FLAGS(y);*/
 
   mpz_init (m);
 
   e = mpfr_get_z_exp (m, x); /* x = m * 2^e */
-  if (sign_x < 0)
+  if ((x_neg = MPFR_IS_NEG(x)))
     mpz_neg (m, m);
   r = e % 3;
   if (r < 0)
@@ -116,7 +115,7 @@ mpfr_cbrt (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   sh = mpz_sizeinbase (m, 2) - n;
   if (sh > 0) /* we have to flush to 0 the last sh bits from m */
     {
-      inexact = inexact || (mpz_scan1 (m, 0) < sh);
+      inexact = inexact || ((mp_exp_t) mpz_scan1 (m, 0) < sh);
       mpz_div_2exp (m, m, sh);
       e += 3 * sh;
     }
@@ -136,9 +135,9 @@ mpfr_cbrt (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   inexact += mpfr_set_z (y, m, GMP_RNDN);
   MPFR_SET_EXP (y, MPFR_GET_EXP (y) + e / 3);
 
-  if (sign_x < 0)
+  if (x_neg)
     {
-      mpfr_neg (y, y, GMP_RNDN);
+      MPFR_CHANGE_SIGN(y);
       inexact = -inexact;
     }
 

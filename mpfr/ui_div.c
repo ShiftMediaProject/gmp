@@ -33,45 +33,50 @@ mpfr_ui_div (mpfr_ptr y, unsigned long int u, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mp_limb_t up[1];
   unsigned long cnt;
 
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(x)))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(x)) /* u/Inf = 0 */
+	{
+	  MPFR_SET_ZERO(y);
+	  MPFR_SET_SAME_SIGN(y,x);
+	  MPFR_RET(0);
+	}
+      else if (MPFR_IS_ZERO(x)) /* u / 0 */
+	{
+	  if (u)
+	    {
+	      /* u > 0, so y = sign(x) * Inf */
+	      MPFR_SET_SAME_SIGN(y, x);
+	      MPFR_SET_INF(y);
+	      MPFR_RET(0);
+	    }
+	  else
+	    {
+	      /* 0 / 0 */
+	      MPFR_SET_NAN(y);
+	      MPFR_RET_NAN; 
+	    }
+	}
+      else
+	MPFR_RET_NEVER_GO_HERE();
     }
-  
-  MPFR_CLEAR_NAN(y);
-
-  if (MPFR_IS_INF(x)) /* u/Inf = 0 */
+  else if (u)
     {
-      MPFR_CLEAR_INF(y);
-      MPFR_SET_ZERO(y);
-      if (MPFR_SIGN(x) != MPFR_SIGN(y))
-	MPFR_CHANGE_SIGN(y);
-      MPFR_RET(0);
-    }
-
-  MPFR_CLEAR_INF(y);
-
-  if (u)
-    {
-      MPFR_INIT1(up, uu, BITS_PER_MP_LIMB, 1);
+      MPFR_TMP_INIT1(up, uu, BITS_PER_MP_LIMB);
       MPFR_ASSERTN(u == (mp_limb_t) u);
       count_leading_zeros(cnt, (mp_limb_t) u);
       *up = (mp_limb_t) u << cnt;
       MPFR_SET_EXP (uu, BITS_PER_MP_LIMB - cnt);
       return mpfr_div (y, uu, x, rnd_mode);
     }
-  else /* u = 0 */
+  else /* u = 0, and x != 0 */
     {
-      if (MPFR_IS_ZERO(x)) /* 0/0 */
-	{
-	  MPFR_SET_NAN(y);
-	  MPFR_RET_NAN; 
-	}
-      else
-	{
-	  MPFR_SET_ZERO(y); /* if u=0, then set y to 0 */
-	  MPFR_RET(0);
-	}
+      MPFR_SET_ZERO(y); /* if u=0, then set y to 0 */
+      MPFR_RET(0);
     }
 }

@@ -25,13 +25,14 @@ Documentation:
 
 - add a description of the algorithms used + proof of correctness
 
-- web page: add a html version of the documentation
-
 - mpfr_set_prec: add an explanation of how to speed up calculations
   which increase their precision at each step.
 
 - add macros/variables to check the version of mpfr
   (suggestion from Andreas Enge <enge@lix.polytechnique.fr>)
+
+- solve the problem with @pxref{Custom Allocation,,, gmp,GNU MP}
+	[gives broken link on the html version]
 
 Installation:
 
@@ -114,10 +115,19 @@ New functions to implement:
 - atan2
 - implement accurate summation algorithms from Demmel
 	(http://www.cs.berkeley.edu/~demmel/AccurateSummation.ps)
-- mpfr_root to compute x^(1/n) for n integer [suggested by Damien Fisher,
-	damien@maths.usyd.edu.au, 20 Jul 2003]
+- mpfr_root to compute x^(1/n) for n integer, similar to mpz_root
+	[suggested by Damien Fisher, damien@maths.usyd.edu.au, 20 Jul 2003,
+	and Mark Watkins <watkins@maths.usyd.edu.au>, 23 Jul 2003]
 - a function to free the cache used by constants (and possibly other
   functions).
+- mpfr_fmod (mpfr_t, mpfr_srcptr, mpfr_srcptr, mp_rnd_t)
+  [suggested by Tomas Zahradnicky <tomas@24uSoftware.com>, 29 Nov 2003]
+  Kevin: Might want to be called mpfr_mod, to match mpz_mod.
+  -> we probably want to allow both mpfr_fmod and mpfr_mod.
+- mpfr_fms for a-b*c
+  [suggested by Tomas Zahradnicky <tomas@24uSoftware.com>, 29 Nov 2003]
+  Kevin: Might want to be called mpfr_submul, and mpfr_fma -> mpfr_addmul.
+  -> we probably want to allow both names.
 
 Efficiency:
 
@@ -179,6 +189,8 @@ Miscellaneous:
 
 - add tests of the ternary value for constants
 
+- replace all mpfr_set_d calls in tests (except when testing it)
+
 Reentrancy / Thread-Safety:
 
 - Temporary changes to emin/emax are not safe (all uses of
@@ -201,6 +213,8 @@ Portability:
   introduce a "tests_strdupcat" or something to concatenate literal
   strings into newly allocated memory.  I thought I'd done that in a
   couple of places already.  Arrays of chars are not much fun.
+
+- replace "if (mpfr_get_d1 (x) != ...)" in tests
 
 Possible future MPF / MPFR integration:
 

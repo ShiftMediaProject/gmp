@@ -36,13 +36,13 @@ mpfr_frac (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
   mpfr_t tmp;
   mpfr_ptr t;
 
-  if (MPFR_IS_NAN(u))
+  /* Special cases */
+  if (MPFR_UNLIKELY(MPFR_IS_NAN(u)))
     {
       MPFR_SET_NAN(r);
       MPFR_RET_NAN;
     }
-
-  if (MPFR_IS_INF(u) || mpfr_integer_p (u))
+  else if (MPFR_UNLIKELY(MPFR_IS_INF(u) || mpfr_integer_p (u)))
     {
       MPFR_CLEAR_FLAGS(r);
       MPFR_SET_SAME_SIGN(r, u);

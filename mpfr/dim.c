@@ -33,13 +33,14 @@ MA 02111-1307, USA. */
 int
 mpfr_dim (mpfr_ptr z, mpfr_srcptr x ,mpfr_srcptr y , mp_rnd_t rnd_mode)
 {
-  if (MPFR_IS_NAN(x) || MPFR_IS_NAN(y))
+  if (MPFR_ARE_SINGULAR(x,y))
     {
-      MPFR_SET_NAN(z);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(x) || MPFR_IS_NAN(y))
+	{
+	  MPFR_SET_NAN(z);
+	  MPFR_RET_NAN;
+	}
     }
-
-  MPFR_CLEAR_NAN(z);
 
   if (mpfr_cmp(x,y) > 0)
     return mpfr_sub(z, x, y, rnd_mode);

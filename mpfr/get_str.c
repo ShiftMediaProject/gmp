@@ -30,10 +30,10 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-static double _mpfr_ceil _PROTO ((double));
-static int mpfr_get_str_aux _PROTO ((char *, mp_exp_t *, mp_limb_t *,
+static double _mpfr_ceil _MPFR_PROTO ((double));
+static int mpfr_get_str_aux _MPFR_PROTO ((char *, mp_exp_t *, mp_limb_t *,
 		       mp_size_t, mp_exp_t, long, int, size_t, mp_rnd_t));
-static mp_exp_t mpfr_get_str_compute_g _PROTO ((int, mp_exp_t));
+static mp_exp_t mpfr_get_str_compute_g _MPFR_PROTO ((int, mp_exp_t));
 
 static char num_to_text[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -377,8 +377,8 @@ mpfr_get_str_aux (char *str, mp_exp_t *exp, mp_limb_t *r, mp_size_t n,
       i0 = (-f) / BITS_PER_MP_LIMB;
       j0 = (-f) % BITS_PER_MP_LIMB;
 
-      ret = mpfr_round_raw_generic (r + i0, r, n * BITS_PER_MP_LIMB, 0,
-				     n * BITS_PER_MP_LIMB + f, rnd, &dir, 0);
+      ret = mpfr_round_raw (r + i0, r, n * BITS_PER_MP_LIMB, 0,
+			    n * BITS_PER_MP_LIMB + f, rnd, &dir);
 
       /* warning: mpfr_round_raw_generic returns 2 or -2 in case of even
          rounding */
@@ -595,8 +595,12 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
     {
       switch (rnd)
 	{
-	case GMP_RNDU : rnd = GMP_RNDD; break;
-	case GMP_RNDD : rnd = GMP_RNDU; break;
+	case GMP_RNDU :
+	  rnd = GMP_RNDD; break;
+	case GMP_RNDD :
+	  rnd = GMP_RNDU; break;
+	default:
+	  break;
 	}
     }
 
@@ -637,8 +641,9 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
       nb = n * BITS_PER_MP_LIMB - prec;
       /* round xp to the precision prec, and put it into x1
 	 put the carry into x1[n] */
-      if ((x1[n] = mpfr_round_raw_generic (x1, xp, MPFR_PREC(x), MPFR_ISNEG(x),
-                                           prec, rnd, &inexp, 0)))
+      if ((x1[n] = mpfr_round_raw (x1, xp, MPFR_PREC(x), 
+				  MPFR_IS_STRICTNEG(x),
+				   prec, rnd, &inexp)))
         {
 	  /* overflow when rounding x: x1 = 2^prec */
 	  if (r == pow2)    /* prec = m * pow2,

@@ -32,11 +32,15 @@ mpfr_add_one_ulp (mpfr_ptr x, mp_rnd_t rnd_mode)
   int sh;
   mp_limb_t *xp;
 
-  if (MPFR_IS_NAN(x))
-    MPFR_RET_NAN;
-
-  if (MPFR_IS_INF(x) || MPFR_IS_ZERO(x))
-    return 0;
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
+    {
+      if (MPFR_IS_NAN(x))
+	MPFR_RET_NAN;
+      else if (MPFR_IS_INF(x) || MPFR_IS_ZERO(x))
+	MPFR_RET(0);
+      else
+	MPFR_ASSERTN(0);
+    }
 
   xn = 1 + (MPFR_PREC(x) - 1) / BITS_PER_MP_LIMB;
   sh = (mp_prec_t) xn * BITS_PER_MP_LIMB - MPFR_PREC(x);
@@ -44,7 +48,7 @@ mpfr_add_one_ulp (mpfr_ptr x, mp_rnd_t rnd_mode)
   if (mpn_add_1 (xp, xp, xn, MP_LIMB_T_ONE << sh)) /* got 1.0000... */
     {
       mp_exp_t exp = MPFR_EXP (x);
-      if (exp == __gmpfr_emax)
+      if (MPFR_UNLIKELY(exp == __gmpfr_emax))
         return mpfr_set_overflow(x, rnd_mode, MPFR_SIGN(x));
       else
         {

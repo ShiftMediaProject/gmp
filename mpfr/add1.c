@@ -25,47 +25,45 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-/* compute sign(b) * (|b| + |c|)
-   diff_exp is the difference between the exponents of b and c,
-   which is >= 0 */
-
+/* compute sign(b) * (|b| + |c|) */
 int
-mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
-	   mp_rnd_t rnd_mode, mp_exp_unsigned_t diff_exp)
+mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
 {
   mp_limb_t *ap, *bp, *cp;
   mp_prec_t aq, bq, cq, aq2;
   mp_size_t an, bn, cn;
   mp_exp_t difw, exp;
   int sh, rb, fb, inex;
+  mp_exp_unsigned_t diff_exp;
   TMP_DECL(marker);
 
-  MPFR_ASSERTN(MPFR_IS_FP(b) && MPFR_NOTZERO(b));
-  MPFR_ASSERTN(MPFR_IS_FP(c) && MPFR_NOTZERO(c));
+  MPFR_ASSERTD(MPFR_IS_PURE_FP(b) && MPFR_IS_PURE_FP(c));
 
   TMP_MARK(marker);
-  ap = MPFR_MANT(a);
-  bp = MPFR_MANT(b);
-  cp = MPFR_MANT(c);
 
   aq = MPFR_PREC(a);
   bq = MPFR_PREC(b);
   cq = MPFR_PREC(c);
 
-  an = (aq-1)/BITS_PER_MP_LIMB + 1; /* number of significant limbs of a */
+  an = (aq-1)/BITS_PER_MP_LIMB+1; /* number of limbs of a */
   aq2 = (mp_prec_t) an * BITS_PER_MP_LIMB;
-  sh = aq2 - aq;                    /* non-significant bits in low limb */
-  bn = (bq-1)/BITS_PER_MP_LIMB + 1; /* number of significant limbs of b */
-  cn = (cq-1)/BITS_PER_MP_LIMB + 1; /* number of significant limbs of c */
+  sh = aq2 - aq;                    /* non-significant bits in low lim */
 
-  if (ap == bp)
+  bn = (bq-1)/BITS_PER_MP_LIMB+1; /* number of limbs of b */
+  cn = (cq-1)/BITS_PER_MP_LIMB+1; /* number of limbs of c */
+
+  ap = MPFR_MANT(a); 
+  bp = MPFR_MANT(b);
+  cp = MPFR_MANT(c);
+
+  if (MPFR_UNLIKELY(ap == bp))
     {
       bp = (mp_ptr) TMP_ALLOC (bn * BYTES_PER_MP_LIMB);
       MPN_COPY (bp, ap, bn);
       if (ap == cp)
         { cp = bp; }
     }
-  else if (ap == cp)
+  else if (MPFR_UNLIKELY(ap == cp))
     {
       cp = (mp_ptr) TMP_ALLOC (cn * BYTES_PER_MP_LIMB);
       MPN_COPY(cp, ap, cn);
@@ -73,6 +71,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
   exp = MPFR_GET_EXP (b);
   MPFR_SET_SAME_SIGN(a, b);
+  diff_exp = (mp_exp_unsigned_t) exp - MPFR_GET_EXP(c);
 
   /*
    * 1. Compute the significant part A', the non-significant bits of A
@@ -94,9 +93,9 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
   rb = fb = -1; /* means: not initialized */
 
-  if (aq2 <= diff_exp)
+  if (MPFR_UNLIKELY(aq2 <= diff_exp))
     { /* c does not overlap with a' */
-      if (an > bn)
+      if (MPFR_UNLIKELY(an > bn))
         { /* a has more limbs than b */
           /* copy b to the most significant limbs of a */
           MPN_COPY(ap + (an - bn), bp, bn);
@@ -124,15 +123,14 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
       difn = (dif-1)/BITS_PER_MP_LIMB + 1;
       /* only the highest difn limbs from c have to be considered */
-      if (difn > cn)
+      if (MPFR_UNLIKELY(difn > cn))
         {
           /* c doesn't have enough limbs; take into account the virtual
              zero limbs now by zeroing the least significant limbs of a' */
-          MPFR_ASSERTN(difn - cn <= an);
+          MPFR_ASSERTD(difn - cn <= an);
           MPN_ZERO(ap, difn - cn);
           difn = cn;
         }
-
       k = diff_exp / BITS_PER_MP_LIMB;
 
       /* zero the most significant k limbs of a */
@@ -141,32 +139,31 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
       shift = diff_exp % BITS_PER_MP_LIMB;
 
-      if (shift)
+      if (MPFR_LIKELY(shift))
         {
-          MPFR_ASSERTN(a2p - difn >= ap);
+          MPFR_ASSERTD(a2p - difn >= ap);
           cc = mpn_rshift(a2p - difn, cp + (cn - difn), difn, shift);
-          if (a2p - difn > ap)
+          if (MPFR_UNLIKELY(a2p - difn > ap))
             *(a2p - difn - 1) = cc;
         }
       else
         MPN_COPY(a2p - difn, cp + (cn - difn), difn);
 
       /* add b to a */
-
-      cc = an > bn
+      cc = MPFR_UNLIKELY(an > bn)
         ? mpn_add_n(ap + (an - bn), ap + (an - bn), bp, bn)
         : mpn_add_n(ap, ap, bp + (bn - an), an);
-
-      if (cc) /* carry */
+      
+      if (MPFR_UNLIKELY(cc)) /* carry */
         {
-          if (exp == __gmpfr_emax)
+          if (MPFR_UNLIKELY(exp == __gmpfr_emax))
             {
               inex = mpfr_set_overflow(a, rnd_mode, MPFR_SIGN(a));
               goto end_of_add;
             }
           exp++;
           rb = (ap[0] >> sh) & 1; /* LSB(a) --> rounding bit after the shift */
-          if (sh)
+          if (MPFR_LIKELY(sh))
             {
               mp_limb_t mask, bb;
 
@@ -186,7 +183,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
     } /* aq2 > diff_exp */
 
   /* non-significant bits of a */
-  if (rb < 0 && sh)
+  if (MPFR_LIKELY(rb < 0 && sh))
     {
       mp_limb_t mask, bb;
 
@@ -194,7 +191,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
       bb = ap[0] & mask;
       ap[0] &= ~mask;
       rb = bb >> (sh - 1);
-      if (sh > 1)
+      if (MPFR_LIKELY(sh > 1))
         {
           mask >>= 1;
           bb &= mask;
@@ -214,7 +211,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
      precision) that have already been combined with c; -n if the next
      n limbs from b won't be combined with c. */
 
-  if (bn > an)
+  if (MPFR_UNLIKELY(bn > an))
     { /* there are still limbs from b that haven't been taken into account */
       mp_size_t bk;
 
@@ -262,7 +259,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
           difw++;
         } /* while */
-      MPFR_ASSERTN(bk > 0 && difw >= 0);
+      MPFR_ASSERTD(bk > 0 && difw >= 0);
 
       if (difw <= cn)
         {
@@ -353,7 +350,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
                   rb ^= 1;
                   if (rb == 0 && mpn_add_1(ap, ap, an, MP_LIMB_T_ONE << sh))
                     {
-                      if (exp == __gmpfr_emax)
+                      if (MPFR_UNLIKELY(exp == __gmpfr_emax))
                         {
                           inex = mpfr_set_overflow(a, rnd_mode, MPFR_SIGN(a));
                           goto end_of_add;
@@ -397,7 +394,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
             {
               mp_limb_t bb;
 
-              MPFR_ASSERTN(bk > 0);
+              MPFR_ASSERTD(bk > 0);
               bb = bp[--bk];
               if (rb < 0) /* rb not initialized yet */
                 {
@@ -437,7 +434,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
           mp_size_t ck;
           int difs;
 
-          MPFR_ASSERTN(difw >= 0 && cn >= difw);
+          MPFR_ASSERTD(difw >= 0 && cn >= difw);
           ck = cn - difw;
           difs = diff_exp % BITS_PER_MP_LIMB;
 
@@ -451,7 +448,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
             {
               mp_limb_t cc;
 
-              cc = difs ? (MPFR_ASSERTN(ck < cn),
+              cc = difs ? (MPFR_ASSERTD(ck < cn),
                            cp[ck] << (BITS_PER_MP_LIMB - difs)) : cp[--ck];
               if (rb < 0)
                 {
@@ -492,30 +489,30 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
       if (rb == 0)
         {
         rndn_zero:
-          inex = MPFR_ISNEG(a) ? 1 : -1;
+          inex = MPFR_IS_NEG(a) ? 1 : -1;
           goto set_exponent;
         }
       else
         {
         rndn_away:
-          inex = MPFR_ISNONNEG(a) ? 1 : -1;
+          inex = MPFR_IS_POS(a) ? 1 : -1;
           goto add_one_ulp;
         }
 
     case GMP_RNDZ:
-      inex = rb || fb ? (MPFR_ISNEG(a) ? 1 : -1) : 0;
+      inex = rb || fb ? (MPFR_IS_NEG(a) ? 1 : -1) : 0;
       goto set_exponent;
 
     case GMP_RNDU:
       inex = rb || fb;
-      if (inex && MPFR_ISNONNEG(a))
+      if (inex && MPFR_IS_POS(a))
         goto add_one_ulp;
       else
         goto set_exponent;
 
     case GMP_RNDD:
       inex = - (rb || fb);
-      if (inex && MPFR_ISNEG(a))
+      if (inex && MPFR_IS_NEG(a))
         goto add_one_ulp;
       else
         goto set_exponent;
@@ -527,9 +524,10 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
     }
 
  add_one_ulp: /* add one unit in last place to a */
-  if (mpn_add_1(ap, ap, an, MP_LIMB_T_ONE << sh))
+  if (MPFR_UNLIKELY(mpn_add_1(ap, ap, an, MP_LIMB_T_ONE << sh)))
     {
-      if (exp == __gmpfr_emax)
+      /* Case 100000x0 + 1*/
+      if (MPFR_UNLIKELY(exp == __gmpfr_emax))
         inex = mpfr_set_overflow(a, rnd_mode, MPFR_SIGN(a));
       else
         {

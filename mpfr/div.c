@@ -35,11 +35,9 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
   mp_size_t asize, bsize, qsize, rsize; 
   mp_exp_t qexp;
 
-  mp_rnd_t rnd_mode1, rnd_mode2; 
-
   mp_size_t err, k;
   mp_limb_t near; 
-  int inex, sh, can_round = 0, can_round2 = 0, sign_quotient;
+  int inex, sh, can_round = 0, sign_quotient;
   unsigned int cc = 0, rw; 
 
   TMP_DECL (marker);
@@ -51,74 +49,71 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
    *                                                                        *
    **************************************************************************/
 
-  if (MPFR_IS_NAN(u) || MPFR_IS_NAN(v))
+  if (MPFR_ARE_SINGULAR(u,v))
     {
-      MPFR_SET_NAN(q);
-      MPFR_RET_NAN;
-    }
-
-  MPFR_CLEAR_NAN(q);
-
-  sign_quotient = MPFR_SIGN(u) * MPFR_SIGN(v);
-  if (MPFR_SIGN(q) != sign_quotient)
-    MPFR_CHANGE_SIGN(q);
-
-  if (MPFR_IS_INF(u))
-    {
-      if (MPFR_IS_INF(v))
+      if (MPFR_IS_NAN(u) || MPFR_IS_NAN(v))
 	{
 	  MPFR_SET_NAN(q);
-          MPFR_RET_NAN;
+	  MPFR_RET_NAN;
+	}
+      sign_quotient = MPFR_MULT_SIGN( MPFR_SIGN(u) , MPFR_SIGN(v) );
+      MPFR_SET_SIGN(q, sign_quotient);
+      if (MPFR_IS_INF(u))
+	{
+	  if (MPFR_IS_INF(v))
+	    {
+	      MPFR_SET_NAN(q);
+	      MPFR_RET_NAN;
+	    }
+	  else
+	    {
+	      MPFR_SET_INF(q);
+	      MPFR_RET(0);
+	    }
+	}
+      else if (MPFR_IS_INF(v)) 
+	{
+	  MPFR_SET_ZERO(q);
+	  MPFR_RET(0);
+	}
+      else if (MPFR_IS_ZERO(v))
+	{
+	  if (MPFR_IS_ZERO(u))
+	    {
+	      MPFR_SET_NAN(q);
+	      MPFR_RET_NAN;
+	    }
+	  else
+	    {
+	      MPFR_SET_INF(q);
+	      MPFR_RET(0);
+	    }
+	}
+      else if (MPFR_IS_ZERO(u))
+	{
+	  MPFR_SET_ZERO(q);
+	  MPFR_RET(0);
 	}
       else
-	{
-          MPFR_SET_INF(q);
-          MPFR_RET(0);
-	}
+	/* Never reach this !*/
+	MPFR_ASSERTN(0);
     }
-  else 
-    if (MPFR_IS_INF(v)) 
-      {
-        MPFR_CLEAR_INF(q);
-        MPFR_SET_ZERO(q);
-        MPFR_RET(0);
-      }
-
-  MPFR_CLEAR_INF(q); /* clear Inf flag */
-
-  if (MPFR_IS_ZERO(v))
-    {
-      if (MPFR_IS_ZERO(u))
-	{
-          MPFR_SET_NAN(q);
-          MPFR_RET_NAN;
-	}
-      else
-	{
-          MPFR_SET_INF(q);
-          MPFR_RET(0);
-	}
-    }
-
-  if (MPFR_IS_ZERO(u))
-    {
-      MPFR_SET_ZERO(q);
-      MPFR_RET(0);
-    }
-
+  MPFR_CLEAR_FLAGS(q);
+ 
   /**************************************************************************
    *                                                                        *
    *              End of the part concerning special values.                *
    *                                                                        *
    **************************************************************************/
 
-
+  sign_quotient = MPFR_MULT_SIGN( MPFR_SIGN(u) , MPFR_SIGN(v) );
   up = MPFR_MANT(u);
   vp = MPFR_MANT(v);
+  MPFR_SET_SIGN(q, sign_quotient);
 
   TMP_MARK (marker);
-  usize = MPFR_ESIZE(u); 
-  vsize = MPFR_ESIZE(v); 
+  usize = MPFR_LIMB_SIZE(u); 
+  vsize = MPFR_LIMB_SIZE(v); 
 
   /**************************************************************************
    *                                                                        *
@@ -144,7 +139,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
   
   asize = bsize + qsize; 
   ap = (mp_ptr) TMP_ALLOC(asize * BYTES_PER_MP_LIMB); 
-  if (asize > usize)
+  if (MPFR_LIKELY(asize > usize))
     {
       MPN_COPY(ap + asize - usize, up, usize); 
       MPN_ZERO(ap, asize - usize); 
@@ -162,14 +157,19 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
   /* Estimate number of correct bits. */
 
   err = qsize * BITS_PER_MP_LIMB; 
-  if (bsize < vsize) err -= 2; else if (asize < usize) err --; 
+  if (bsize < vsize) 
+    err -= 2; 
+  else if (asize < usize) 
+    err --; 
 
   /* We want to check if rounding is possible, but without normalizing
      because we might have to divide again if rounding is impossible, or
      if the result might be exact. We have however to mimic normalization */
 
-  if (qp[qsize] != 0) { sh = -1; } 
-  else { count_leading_zeros(sh, qp[qsize - 1]); } 
+  if (qp[qsize] != 0)
+    { sh = -1; } 
+  else 
+    { count_leading_zeros(sh, qp[qsize - 1]); } 
   
   /* 
      To detect asap if the result is inexact, so as to avoid doing the 
@@ -188,43 +188,51 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
 
   if (asize < usize || bsize < vsize) 
     {
-      if (rnd_mode == GMP_RNDN)
-	{ 
-	  rnd_mode1 = GMP_RNDZ; 
-	  near = 1; 
-	}
-      else 
-	{ 
-	  rnd_mode1 = rnd_mode; 
-	  near = 0; 
-	}
+      {
+	mp_rnd_t  rnd_mode1, rnd_mode2;
+	mp_exp_t  tmp_exp;
+	mp_prec_t tmp_prec;
+
+	if (MPFR_LIKELY(rnd_mode == GMP_RNDN))
+	  { 
+	    rnd_mode1 = GMP_RNDZ; 
+	    rnd_mode2 = MPFR_IS_POS_SIGN(sign_quotient) ? GMP_RNDU : GMP_RNDD;
+	    sh++;
+	  }
+	else 
+	  { 
+	    rnd_mode1 = rnd_mode; 
+	    switch (rnd_mode)
+	      {
+	      case GMP_RNDU:
+		rnd_mode2 = GMP_RNDD; break;
+	      case GMP_RNDD:
+		rnd_mode2 = GMP_RNDU; break;
+	      default:
+		rnd_mode2 = MPFR_IS_POS_SIGN(sign_quotient) ?
+		  GMP_RNDU : GMP_RNDD;
+		break;
+	      }
+	  }
+
+	tmp_exp  = err + sh + BITS_PER_MP_LIMB;
+	tmp_prec = MPFR_PREC(q) + sh + BITS_PER_MP_LIMB;
+	
+	can_round = 
+	  mpfr_can_round_raw(qp, qsize + 1, sign_quotient, tmp_exp,
+			     GMP_RNDN, rnd_mode1, tmp_prec)
+	  & mpfr_can_round_raw(qp, qsize + 1, sign_quotient, tmp_exp,
+			       GMP_RNDN, rnd_mode2, tmp_prec);
+
+	sh -= (rnd_mode == GMP_RNDN);
+      }
       
-      sh += near; 
-      can_round = mpfr_can_round_raw(qp, qsize + 1, sign_quotient, err + sh + 
-				     BITS_PER_MP_LIMB, GMP_RNDN, rnd_mode1, 
-				     MPFR_PREC(q) + sh + BITS_PER_MP_LIMB); 
-      
-      switch (rnd_mode1) 
-	{
-	case GMP_RNDU : rnd_mode2 = GMP_RNDD; break; 
-	case GMP_RNDD : rnd_mode2 = GMP_RNDU; break; 
-	case GMP_RNDZ : rnd_mode2 = sign_quotient == 1 ? GMP_RNDU : GMP_RNDD; 
-	  break;
-	default : rnd_mode2 = GMP_RNDZ; 
-	}
-      
-      can_round2 = mpfr_can_round_raw(qp, qsize + 1, sign_quotient, err + sh + 
-				      BITS_PER_MP_LIMB, GMP_RNDN, rnd_mode2, 
-				      MPFR_PREC(q) + sh + BITS_PER_MP_LIMB); 
-      
-      sh -= near; 
-      
-      /* If either can_round or can_round2 is 0, either we cannot round or
+      /* If can_round is 0, either we cannot round or
 	 the result might be exact. If asize >= usize and bsize >= vsize, we
 	 can just check this by looking at the remainder. Otherwise, we
 	 have to correct our first approximation. */
       
-      if (!can_round || !can_round2)
+      if (MPFR_UNLIKELY(!can_round))
 	{
 	  int b = 0; 
 	  mp_ptr rem, rem2; 
@@ -340,7 +348,8 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
     /* Hack : qp[qsize] is 0, 1 or 2, hence if not 0, = 2^(qp[qsize] - 1). */
     {
       near = mpn_rshift(qp, qp, qsize, qp[qsize]);
-      qp[qsize - 1] |= MPFR_LIMB_HIGHBIT; qexp += qp[qsize]; 
+      qp[qsize - 1] |= MPFR_LIMB_HIGHBIT; 
+      qexp += qp[qsize]; 
     }
   else
     {
@@ -352,11 +361,12 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
 	}
     }
   
-  cc = mpfr_round_raw_generic(qp, qp, err, (sign_quotient == -1 ? 1 : 0),
-			      MPFR_PREC(q), rnd_mode, &inex, 1);      
+  cc = mpfr_round_raw_3(qp, qp, err, 
+			(MPFR_IS_NEG_SIGN(sign_quotient) ? 1 : 0),
+			MPFR_PREC(q), rnd_mode, &inex);
 
-  qp += qsize - MPFR_ESIZE(q); /* 0 or 1 */
-  qsize = MPFR_ESIZE(q); 
+  qp += qsize - MPFR_LIMB_SIZE(q); /* 0 or 1 */
+  qsize = MPFR_LIMB_SIZE(q); 
 
   /* 
      At that point, either we were able to round from the beginning, 
@@ -371,7 +381,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
      except when rounding to nearest (the nasty case of even rounding again).
   */
   
-  if (!can_round || !can_round2) /* Lazy case. */
+  if (MPFR_UNLIKELY(!can_round)) /* Lazy case. */
     {
       if (inex == 0) 
 	{
@@ -380,19 +390,20 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
 	  /* If a bit has been shifted out during normalization, then
 	     the remainder is nonzero. */
 	  if (near == 0) 
-	    while (k >= 0) { if (rp[k]) break; k--; }
+	    while ((k >= 0) && !(rp[k]))
+	      k--;
 
 	  if (k >= 0) /* Remainder is nonzero. */ 
 	    {
-	      if ((rnd_mode == GMP_RNDD && sign_quotient == -1) 
-		  || (rnd_mode == GMP_RNDU && sign_quotient == 1))
+	      if (MPFR_IS_RNDUTEST_OR_RNDDNOTTEST(rnd_mode,
+						  MPFR_IS_POS_SIGN(sign_quotient)))
 		/* Rounding to infinity. */
 		{
-		  inex = sign_quotient; 
+		  inex = MPFR_FROM_SIGN_TO_INT( sign_quotient ); 
 		  cc = 1; 
 		}
 	      /* rounding to zero. */
-	      else inex = -sign_quotient; 
+	      else inex = -MPFR_FROM_SIGN_TO_INT( sign_quotient ); 
 	    }
 	}
       else /* We might have to correct an even rounding if remainder
@@ -405,16 +416,13 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
 	  /* If a bit has been shifted out during normalization, hence 
 	     the remainder is nonzero. */
 	    if (near == 0)
-	      while (k >= 0) 
-		{ 
-		  if (rp[k]) 
-		    break; 
-		  k--; 
-		}
+	      while ((k >= 0) && !(rp[k]))
+		k--;
 	    
 	    if (k >= 0) /* In fact the quotient is larger than expected */
 	      {
-		inex = sign_quotient; /* To infinity, finally. */
+		inex = MPFR_FROM_SIGN_TO_INT( sign_quotient );
+		/* To infinity, finally. */
 		cc = 1; 
 	      }
 	  }
@@ -423,14 +431,9 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
   /* Final modification due to rounding */
   if (cc) 
     {
-      sh = MPFR_PREC(q) & (BITS_PER_MP_LIMB - 1); 
-      if (sh)
-	cc = mpn_add_1 (qp, qp, qsize, 
-                        MP_LIMB_T_ONE << (BITS_PER_MP_LIMB - sh));
-      else
-	cc = mpn_add_1 (qp, qp, qsize, MP_LIMB_T_ONE);
-  
-      if (cc)
+      MPFR_UNSIGNED_MINUS_MODULO(sh, MPFR_PREC(q));
+      cc = mpn_add_1 (qp, qp, qsize, MPFR_LIMB_ONE << sh);
+      if (MPFR_UNLIKELY(cc))
         {
           mpn_rshift (qp, qp, qsize, 1);
           qp[qsize-1] |= MPFR_LIMB_HIGHBIT;
@@ -442,8 +445,8 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
   MPN_COPY(MPFR_MANT(q), qp, qsize); 
   TMP_FREE (marker);
 
-  MPFR_MANT(q)[0] &= ~((MP_LIMB_T_ONE << rw) - MP_LIMB_T_ONE);
+  MPFR_MANT(q)[0] &= ~((MPFR_LIMB_ONE << rw) - MPFR_LIMB_ONE);
   MPFR_SET_EXP (q, qexp);
 
-  MPFR_RET(inex); 
+  MPFR_RET(inex);
 }

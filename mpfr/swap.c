@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 #include <string.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 
 /*
  * We now use memcpy instead of copying the structure field by field.
@@ -34,9 +35,34 @@ MA 02111-1307, USA. */
 void
 mpfr_swap (mpfr_ptr u, mpfr_ptr v)
 {
-  mpfr_t tmp;
+  /*mpfr_t tmp;
 
   memcpy (tmp, u, sizeof (mpfr_t));
   memcpy (u, v, sizeof (mpfr_t));
-  memcpy (v, tmp, sizeof (mpfr_t));
+  memcpy (v, tmp, sizeof (mpfr_t));*/
+  
+  mpfr_prec_t p1, p2;
+  mpfr_sign_t s1, s2;
+  mp_exp_t e1, e2;
+  mp_limb_t *m1, *m2;
+   
+  p1 = MPFR_PREC(u);
+  p2 = MPFR_PREC(v);
+  MPFR_PREC(v) = p1;
+  MPFR_PREC(u) = p2;
+
+  s1 = MPFR_SIGN(u);
+  s2 = MPFR_SIGN(v);
+  MPFR_SIGN(v) = s1;
+  MPFR_SIGN(u) = s2;
+
+  e1 = MPFR_EXP(u);
+  e2 = MPFR_EXP(v);
+  MPFR_EXP(v) = e1;
+  MPFR_EXP(u) = e2;
+
+  m1 = MPFR_MANT(u);
+  m2 = MPFR_MANT(v);
+  MPFR_MANT(v) = m1;
+  MPFR_MANT(u) = m2;
 }

@@ -29,14 +29,13 @@ MA 02111-1307, USA. */
 static void
 mpfr_nexttozero (mpfr_ptr x)
 {
-  if (MPFR_IS_INF(x))
+  if (MPFR_UNLIKELY(MPFR_IS_INF(x)))
     {
       MPFR_CLEAR_FLAGS(x);
       mpfr_setmax (x, __gmpfr_emax);
       return;
     }
-
-  if (MPFR_IS_ZERO(x))
+  else if (MPFR_UNLIKELY( MPFR_IS_ZERO(x) ))
     {
       MPFR_CHANGE_SIGN(x);
       mpfr_setmin (x, __gmpfr_emin);
@@ -54,7 +53,7 @@ mpfr_nexttozero (mpfr_ptr x)
       if (xp[xn-1] >> (BITS_PER_MP_LIMB - 1) == 0)
         { /* was an exact power of two: not normalized any more */
           mp_exp_t exp = MPFR_EXP (x);
-          if (exp == __gmpfr_emin)
+          if (MPFR_UNLIKELY(exp == __gmpfr_emin))
             MPFR_SET_ZERO(x);
           else
             {
@@ -71,10 +70,9 @@ mpfr_nexttozero (mpfr_ptr x)
 static void
 mpfr_nexttoinf (mpfr_ptr x)
 {
-  if (MPFR_IS_INF(x))
+  if (MPFR_UNLIKELY(MPFR_IS_INF(x)))
     return;
-
-  if (MPFR_IS_ZERO(x))
+  else if (MPFR_UNLIKELY(MPFR_IS_ZERO(x)))
     mpfr_setmin (x, __gmpfr_emin);
   else
     {
@@ -88,7 +86,7 @@ mpfr_nexttoinf (mpfr_ptr x)
       if (mpn_add_1 (xp, xp, xn, MP_LIMB_T_ONE << sh)) /* got 1.0000... */
         {
           mp_exp_t exp = MPFR_EXP (x);
-          if (exp == __gmpfr_emax)
+          if (MPFR_UNLIKELY(exp == __gmpfr_emax))
             MPFR_SET_INF(x);
           else
             {
@@ -102,13 +100,12 @@ mpfr_nexttoinf (mpfr_ptr x)
 void
 mpfr_nextabove (mpfr_ptr x)
 {
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY(MPFR_IS_NAN(x)))
     {
       __gmpfr_flags |= MPFR_FLAGS_NAN;
       return;
     }
-
-  if (MPFR_SIGN(x) < 0)
+  if (MPFR_IS_NEG(x))
     mpfr_nexttozero (x);
   else
     mpfr_nexttoinf (x);
@@ -117,13 +114,13 @@ mpfr_nextabove (mpfr_ptr x)
 void
 mpfr_nextbelow (mpfr_ptr x)
 {
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY(MPFR_IS_NAN(x)))
     {
       __gmpfr_flags |= MPFR_FLAGS_NAN;
       return;
     }
 
-  if (MPFR_SIGN(x) < 0)
+  if (MPFR_IS_NEG(x))
     mpfr_nexttoinf (x);
   else
     mpfr_nexttozero (x);
@@ -134,7 +131,7 @@ mpfr_nexttoward (mpfr_ptr x, mpfr_srcptr y)
 {
   int s;
 
-  if (MPFR_IS_NAN(x) || MPFR_IS_NAN(y))
+  if (MPFR_UNLIKELY(MPFR_IS_NAN(x) || MPFR_IS_NAN(y)))
     {
       __gmpfr_flags |= MPFR_FLAGS_NAN;
       return;
@@ -143,7 +140,7 @@ mpfr_nexttoward (mpfr_ptr x, mpfr_srcptr y)
   s = mpfr_cmp (x, y);
   if (s == 0)
     return;
-  if (s < 0)
+  else if (s < 0)
     mpfr_nextabove (x);
   else
     mpfr_nextbelow (x);

@@ -51,7 +51,7 @@ mpfr_get_z_exp (mpz_ptr z, mpfr_srcptr f)
       return __gmpfr_emin;
     }
 
-  fn = 1 + (MPFR_PREC(f) - 1) / BITS_PER_MP_LIMB;
+  fn = MPFR_LIMB_SIZE(f);
 
   /* check whether allocated space for z is enough */
   if (ALLOC(z) < fn)
@@ -66,9 +66,9 @@ mpfr_get_z_exp (mpz_ptr z, mpfr_srcptr f)
   SIZ(z) = MPFR_SIGN(f) < 0 ? -fn : fn;
 
   /* Test if the result is representable. Later, we could choose
-     to return MP_EXP_T_MIN if it isn't, or perhaps MP_EXP_T_MAX
+     to return MPFR_EXP_MIN if it isn't, or perhaps MPFR_EXP_MAX
      to signal an error. The mantissa would still be meaningful. */
-  MPFR_ASSERTN((mp_exp_unsigned_t) MPFR_GET_EXP (f) - MP_EXP_T_MIN
+  MPFR_ASSERTN((mp_exp_unsigned_t) MPFR_GET_EXP (f) - MPFR_EXP_MIN
                >= (mp_exp_unsigned_t) MPFR_PREC(f));
 
   return MPFR_GET_EXP (f) - MPFR_PREC (f);

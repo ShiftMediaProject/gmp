@@ -29,10 +29,10 @@ MA 02111-1307, USA. */
 
 #define EXP1 2.71828182845904523536 /* exp(1) */
 
-int mpfr_erf_0 _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_erf_0 _MPFR_PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 #if 0
-int mpfr_erf_inf _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
-int mpfr_erfc_inf _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_erf_inf _MPFR_PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_erfc_inf _MPFR_PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 #endif
 
 int
@@ -44,26 +44,28 @@ mpfr_erf (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   double n = (double) MPFR_PREC(y);
   int inex;
 
-  if (MPFR_IS_NAN(x))
-    {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
-    }
-
   sign_x = MPFR_SIGN (x);
-
-  if (MPFR_IS_INF(x)) /* erf(+inf) = +1, erf(-inf) = -1 */
-    return mpfr_set_si (y, sign_x, GMP_RNDN);
-
-  if (MPFR_IS_ZERO(x)) /* erf(+0) = +0, erf(-0) = -0 */
-    return mpfr_set (y, x, GMP_RNDN); /* should keep the sign of x */
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
+    {
+      if (MPFR_IS_NAN(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(x)) /* erf(+inf) = +1, erf(-inf) = -1 */
+	return mpfr_set_si (y, MPFR_FROM_SIGN_TO_INT(sign_x), GMP_RNDN);
+      else if (MPFR_IS_ZERO(x)) /* erf(+0) = +0, erf(-0) = -0 */
+	return mpfr_set (y, x, GMP_RNDN); /* should keep the sign of x */
+      else
+	MPFR_ASSERTN(0);
+    }
 
   /* now x is neither NaN, Inf nor 0 */
 
   xf = mpfr_get_d (x, GMP_RNDN);
   xf = xf * xf; /* xf ~ x^2 */
 
-  if (sign_x > 0)
+  if (MPFR_IS_POS_SIGN(sign_x))
     rnd2 = rnd_mode;
   else
     {
@@ -96,7 +98,7 @@ mpfr_erf (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       inex = mpfr_erf_0 (y, x, rnd2);
     }
 
-  if (sign_x < 0)
+  if (MPFR_IS_NEG_SIGN(sign_x))
     {
       MPFR_CHANGE_SIGN (y);
       return - inex;

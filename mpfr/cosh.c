@@ -39,28 +39,28 @@ mpfr_cosh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
     mp_prec_t Nxt = MPFR_PREC(xt);
     int inexact =0;
 
-    if (MPFR_IS_NAN(xt)) 
+    if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(xt)))
       {
-        MPFR_SET_NAN(y); 
-        MPFR_RET_NAN;
+	if (MPFR_IS_NAN(xt)) 
+	  {
+	    MPFR_SET_NAN(y); 
+	    MPFR_RET_NAN;
+	  }
+	else if (MPFR_IS_INF(xt))
+	  { 
+	    MPFR_SET_INF(y);
+	    MPFR_SET_POS(y);
+	    MPFR_RET(0);
+	  }
+	else if (MPFR_IS_ZERO(xt))
+	  return mpfr_set_ui(y, 1, rnd_mode); /* cosh(0) = 1 */
+	/* Should never reach this code */
+	else
+	  MPFR_ASSERTN(0);
       }
-    MPFR_CLEAR_NAN(y);
-
-    if (MPFR_IS_INF(xt))
-      { 
-        MPFR_SET_INF(y);
-        if (MPFR_SIGN(y) < 0) 
-          MPFR_CHANGE_SIGN(y);
-        MPFR_RET(0);
-      }   
-    
-    MPFR_CLEAR_INF(y);
-
-    if (MPFR_IS_ZERO(xt))
-      return mpfr_set_ui(y,1,rnd_mode); /* cosh(0) = 1 */
 
     mpfr_init2(x,Nxt);
-    mpfr_set4(x, xt, GMP_RNDN, 1);
+    mpfr_abs(x, xt, GMP_RNDN);
 
     /* General case */
     {
@@ -84,7 +84,6 @@ mpfr_cosh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
       mpfr_init (t);
       mpfr_init (te);
       mpfr_init (ti);
-
 
       /* First computation of cosh */
       do

@@ -26,22 +26,26 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 void
-mpfr_set_prec (mpfr_ptr x, mp_prec_t p)
+mpfr_set_prec (mpfr_ptr x, mpfr_prec_t p)
 {
-  mp_size_t xsize;
+  mp_size_t xsize, xoldsize;
+  mp_ptr tmp;
 
+  /* first, check if p is correct */
   MPFR_ASSERTN(p >= MPFR_PREC_MIN && p <= MPFR_PREC_MAX);
 
-  xsize = (p - 1) / BITS_PER_MP_LIMB + 1; /* new limb size */
+  /* Calculate the new number of limbs */ 
+  xsize = (p - 1) / BITS_PER_MP_LIMB + 1;
 
-  if (xsize > MPFR_ABSSIZE(x))
+  /* Realloc only if the new size is greater than the old */
+  xoldsize = MPFR_GET_ALLOC_SIZE(x);
+  if (xsize > xoldsize)
     {
-      MPFR_MANT(x) = (mp_ptr) (*__gmp_reallocate_func)
-        (MPFR_MANT(x), (size_t) MPFR_ABSSIZE(x) * BYTES_PER_MP_LIMB,
-         (size_t) xsize * BYTES_PER_MP_LIMB);
-      MPFR_SIZE(x) = xsize; /* new number of allocated limbs */
+      tmp = (mp_ptr) (*__gmp_reallocate_func)
+        (MPFR_GET_REAL_PTR(x), MPFR_MALLOC_SIZE(xoldsize), MPFR_MALLOC_SIZE(xsize));
+      MPFR_SET_MANT_PTR(x, tmp);
+      MPFR_SET_ALLOC_SIZE(x, xsize);
     }
-
   MPFR_PREC(x) = p;
   MPFR_SET_NAN(x); /* initializes to NaN */
 }

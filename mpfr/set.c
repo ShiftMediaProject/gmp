@@ -29,56 +29,68 @@ int
 mpfr_set4 (mpfr_ptr a, mpfr_srcptr b, mp_rnd_t rnd_mode, int signb)
 {
   int inex;
-
-  if (MPFR_IS_NAN(b))
+  
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(b) ))
     {
-      MPFR_CLEAR_FLAGS(a);
-      MPFR_SET_NAN(a);
-      MPFR_RET_NAN;
-    }
-
-  if (MPFR_IS_INF(b))
-    {
-      MPFR_CLEAR_FLAGS(a);
-      MPFR_SET_INF(a);
-      inex = 0;
-    }
-  else
-    {
-      MPFR_CLEAR_FLAGS(a);
-      if (MPFR_IS_ZERO(b))
-        {
+      if (MPFR_IS_NAN(b))
+	{
+	  MPFR_SET_NAN(a);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(b))
+	{
+	  MPFR_CLEAR_FLAGS(a);
+	  MPFR_SET_INF(a);
+	  inex = 0;
+	}
+      else if (MPFR_IS_ZERO(b))
+	{
           MPFR_SET_ZERO(a);
           inex = 0;
         }
       else
-        {
-          mp_limb_t *ap;
-          mp_prec_t aq;
-          int carry;
+	/* Should never reach this code */
+	MPFR_ASSERTN(0);
+    }
+  else if (MPFR_LIKELY(MPFR_PREC(b) == MPFR_PREC(a)))
+    {
+      /* Same precision and b is not special: 
+       * just copy the mantissa, and set the exponent and the sign */
+      MPFR_CLEAR_FLAGS(a);
+      MPN_COPY(MPFR_MANT(a), MPFR_MANT(b), MPFR_LIMB_SIZE(b));
+      MPFR_SET_SIGN(a, signb);
+      MPFR_SET_EXP(a, MPFR_GET_EXP(b));
+      MPFR_RET(0);
+    }
+  else
+    {
+      mp_limb_t *ap;
+      mp_prec_t aq;
+      int carry;
+      
+      MPFR_CLEAR_FLAGS(a);
 
-          ap = MPFR_MANT(a);
-          aq = MPFR_PREC(a);
-
-          carry = mpfr_round_raw(ap, MPFR_MANT(b), MPFR_PREC(b), (signb < 0),
-                                 aq, rnd_mode, &inex);
-
-          if (carry)
-            {
-              mp_exp_t exp = MPFR_GET_EXP (b);
-
-              if (exp == __gmpfr_emax)
-                return mpfr_set_overflow(a, rnd_mode, signb);
-
-              MPFR_SET_EXP(a, exp + 1);
-              ap[(MPFR_PREC(a)-1)/BITS_PER_MP_LIMB] = MPFR_LIMB_HIGHBIT;
-            }
-          else
-            MPFR_SET_EXP (a, MPFR_GET_EXP (b));
-        }
+      ap = MPFR_MANT(a);
+      aq = MPFR_PREC(a);
+      
+      carry = mpfr_round_raw(ap, MPFR_MANT(b), MPFR_PREC(b),
+			     MPFR_IS_NEG_SIGN(signb),
+			     aq, rnd_mode, &inex);
+      /* FIXME: Carry is likely or not ? */
+      if (MPFR_UNLIKELY(carry))
+	{
+	  mp_exp_t exp = MPFR_GET_EXP (b);
+	  
+	  if (MPFR_UNLIKELY(exp == __gmpfr_emax))
+	    return mpfr_set_overflow(a, rnd_mode, signb);
+	  
+	  MPFR_SET_EXP(a, exp + 1);
+	  ap[(MPFR_PREC(a)-1)/BITS_PER_MP_LIMB] = MPFR_LIMB_HIGHBIT;
+	}
+      else
+	MPFR_SET_EXP (a, MPFR_GET_EXP (b));
     }
 
-  if (MPFR_SIGN(a) * signb < 0)
-    MPFR_CHANGE_SIGN(a);
+  MPFR_SET_SIGN(a, signb);
   MPFR_RET(inex);
 }

@@ -21,10 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 /* set bit n of x to b, where bit 0 is the most significant one */
@@ -169,13 +166,13 @@ tcmp2 (double x, double y, int i)
           exit (1);
         }
     }
-  else if (j != i)
+  else if (j != (unsigned) i)
     {
       printf ("Error in mpfr_cmp2 for\nx=");
       mpfr_out_str (stdout, 2, 0, xx, GMP_RNDN);
       printf ("\ny=");
       mpfr_out_str (stdout, 2, 0, yy, GMP_RNDN);
-      printf ("\ngot %lu instead of %u\n", j, i);
+      printf ("\ngot %lu instead of %d\n", j, i);
       exit (1);
     }
   mpfr_clear(xx); mpfr_clear(yy);

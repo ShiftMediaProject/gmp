@@ -27,6 +27,6 @@ MA 02111-1307, USA. */
 mp_exp_t
 mpfr_get_exp (mpfr_srcptr x)
 {
-  MPFR_ASSERTN(MPFR_IS_FP(x) && MPFR_NOTZERO(x));
+  MPFR_ASSERTN(MPFR_IS_PURE_FP(x));
   return MPFR_EXP(x);  /* do not use MPFR_GET_EXP of course... */
 }

@@ -21,9 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
@@ -159,19 +157,19 @@ check_diverse (void)
     }
 
   /* check in-place operations */
-  mpfr_set_d (x, 1.0, GMP_RNDN);
+  mpfr_set_ui (x, 1, GMP_RNDN);
   mpfr_sub (x, x, x, GMP_RNDN);
-  if (mpfr_get_d1 (x) != 0.0)
+  if (mpfr_cmp_ui(x, 0))
     {
-      printf ("Error for mpfr_add (x, x, x, GMP_RNDN) with x=1.0\n");
+      printf ("Error for mpfr_sub (x, x, x, GMP_RNDN) with x=1.0\n");
       exit (1);
     }
 
   mpfr_set_prec (x, 53);
   mpfr_set_prec (y, 53);
   mpfr_set_prec (z, 53);
-  mpfr_set_d (x, 1.229318102e+09, GMP_RNDN);
-  mpfr_set_d (y, 2.32221184180698677665e+05, GMP_RNDN);
+  mpfr_set_str (x, "1.229318102e+09", 10, GMP_RNDN);
+  mpfr_set_str (y, "2.32221184180698677665e+05", 10, GMP_RNDN);
   mpfr_sub (z, x, y, GMP_RNDN);
   res = 1229085880.815819263458251953125;
   got = mpfr_get_d1 (z);

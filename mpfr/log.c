@@ -51,55 +51,56 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
   double ref;
   TMP_DECL(marker);
 
-  /* If a is NaN, the result is NaN */
-  if (MPFR_IS_NAN(a))
+  /* Special cases */
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(a) ))
     {
-      MPFR_SET_NAN(r);
-      MPFR_RET_NAN;
-    }
-
-  MPFR_CLEAR_NAN(r);
-
-  /* check for infinity before zero */
-  if (MPFR_IS_INF(a))
-    {
-      if (MPFR_SIGN(a) < 0) /* log(-Inf) = NaN */
+      /* If a is NaN, the result is NaN */
+      if (MPFR_IS_NAN(a))
 	{
 	  MPFR_SET_NAN(r);
-          MPFR_RET_NAN;
+	  MPFR_RET_NAN;
 	}
-      else /* log(+Inf) = +Inf */
+      /* check for infinity before zero */
+      else if (MPFR_IS_INF(a))
+	{
+	  if (MPFR_IS_NEG(a)) 
+	    /* log(-Inf) = NaN */
+	    {
+	      MPFR_SET_NAN(r);
+	      MPFR_RET_NAN;
+	    }
+	  else /* log(+Inf) = +Inf */
+	    {
+	      MPFR_SET_INF(r);
+	      MPFR_SET_POS(r);
+	      MPFR_RET(0);
+	    }
+	}      
+      else if (MPFR_IS_ZERO(a))
 	{
 	  MPFR_SET_INF(r);
-          MPFR_SET_POS(r);
-          MPFR_RET(0);
+	  MPFR_SET_NEG(r);
+	  MPFR_RET(0); /* log(0) is an exact -infinity */
 	}
+      else
+	MPFR_ASSERTN(0);
     }
-
-  /* Now we can clear the flags without damage even if r == a */
-  MPFR_CLEAR_INF(r);
-
-  if (MPFR_IS_ZERO(a))
-    {
-      MPFR_SET_INF(r);
-      MPFR_SET_NEG(r);
-      MPFR_RET(0); /* log(0) is an exact -infinity */
-    }
-
+  
   /* If a is negative, the result is NaN */
-  if (MPFR_SIGN(a) < 0)
+  if (MPFR_UNLIKELY( MPFR_IS_NEG(a) ))
     {
       MPFR_SET_NAN(r);
       MPFR_RET_NAN;
     }
 
   /* If a is 1, the result is 0 */
-  if (mpfr_cmp_ui (a, 1) == 0)
+  if (MPFR_UNLIKELY( mpfr_cmp_ui (a, 1) == 0) )
     {
       MPFR_SET_ZERO(r);
       MPFR_SET_POS(r);
       MPFR_RET(0); /* only "normal" case where the result is exact */
     }
+  MPFR_CLEAR_FLAGS(r);
 
   q=MPFR_PREC(r);
   
@@ -126,13 +127,13 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
     /* All the mpfr_t needed have a precision of p */
     TMP_MARK(marker);
     size=(p-1)/BITS_PER_MP_LIMB+1;
-    MPFR_INIT(cstp, cst, p, size);  
-    MPFR_INIT(rapportp, rapport, p, size);
-    MPFR_INIT(agmp, agm, p, size);
-    MPFR_INIT(tmp1p, tmp1, p, size);  
-    MPFR_INIT(tmp2p, tmp2, p, size);  
-    MPFR_INIT(sp, s, p, size);
-    MPFR_INIT(mmp, mm, p, size);
+    MPFR_TMP_INIT(cstp, cst, p, size);  
+    MPFR_TMP_INIT(rapportp, rapport, p, size);
+    MPFR_TMP_INIT(agmp, agm, p, size);
+    MPFR_TMP_INIT(tmp1p, tmp1, p, size);  
+    MPFR_TMP_INIT(tmp2p, tmp2, p, size);  
+    MPFR_TMP_INIT(sp, s, p, size);
+    MPFR_TMP_INIT(mmp, mm, p, size);
 
     mpfr_set_si (mm, m, GMP_RNDN);        /* I have m, supposed exact */
     mpfr_set_si (tmp1, 1, GMP_RNDN);      /* I have 1, exact */

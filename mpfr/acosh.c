@@ -30,47 +30,56 @@ MA 02111-1307, USA. */
  */
 
 int
-mpfr_acosh (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
+mpfr_acosh (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode) 
 {
-
+    
   int inexact = 0;
   int comp;
 
-  if (MPFR_IS_NAN (x) || (comp = mpfr_cmp_ui (x, 1)) < 0)
+  /* Deal with special cases */
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_NAN (y);
+      /* Nan, or zero or -Inf */
+      if (MPFR_IS_NAN(x) || MPFR_IS_ZERO(x) || MPFR_IS_NEG(x) )
+	{
+	  MPFR_SET_NAN(y); 
+	  MPFR_RET_NAN;
+	}    
+      else if (MPFR_IS_INF(x))
+	{ 
+	  MPFR_SET_INF(y);
+	  MPFR_SET_POS(y);
+	  MPFR_RET(0);
+	}
+      else
+	MPFR_ASSERTN(0);
+    }
+  comp = mpfr_cmp_ui (x, 1);
+  if (MPFR_UNLIKELY( comp < 0 ))
+    {
+      MPFR_SET_NAN(y); 
       MPFR_RET_NAN;
-    }
-
-  MPFR_SET_POS (y);
-
-  if (MPFR_IS_INF (x))
+    }    
+  else if (MPFR_UNLIKELY( comp == 0 ))
     {
-      MPFR_CLEAR_FLAGS (y);
-      MPFR_SET_INF (y);
-      MPFR_RET (0);
+      MPFR_SET_ZERO(y); /* acosh(1) = 0 */
+      MPFR_SET_POS(y);
+      MPFR_RET(0);
     }
-
-  MPFR_CLEAR_FLAGS (y);
-
-  if (comp == 0)
-    {
-      MPFR_SET_ZERO (y); /* acosh(1) = 0 */
-      MPFR_RET (0);
-    }
-
+  MPFR_CLEAR_FLAGS(y);
+ 
   /* General case */
   {
     /* Declaration of the intermediary variables */
     mpfr_t t, te, ti;
-
+    
     /* Declaration of the size variables */
     mp_prec_t Nx = MPFR_PREC(x);   /* Precision of input variable */
     mp_prec_t Ny = MPFR_PREC(y);   /* Precision of output variable */
-
+    
     mp_prec_t Nt;   /* Precision of the intermediary variable */
     int err;  /* Precision of error */
-
+                
     /* compute the precision of intermediary variable */
     Nt = MAX(Nx, Ny);
     /* the optimal number of bits : see algorithms.ps */
@@ -109,7 +118,7 @@ mpfr_acosh (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       }
     while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
                                          Ny + (rnd_mode == GMP_RNDN)));
-
+ 
     inexact = mpfr_set (y, t, rnd_mode);
 
     mpfr_clear (t);
@@ -121,3 +130,14 @@ mpfr_acosh (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   return mpfr_check_range (y, inexact, rnd_mode);
 }
+
+
+
+
+
+
+
+
+
+
+

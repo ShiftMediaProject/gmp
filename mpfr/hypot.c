@@ -44,29 +44,27 @@ mpfr_hypot (mpfr_ptr z, mpfr_srcptr x , mpfr_srcptr y , mp_rnd_t rnd_mode)
   mp_exp_unsigned_t diff_exp;
 
   /* particular cases */
-
-  if (MPFR_IS_NAN(x) || MPFR_IS_NAN(y))
+  if (MPFR_ARE_SINGULAR(x,y))
     {
-      MPFR_SET_NAN(z);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(x) || MPFR_IS_NAN(y))
+	{
+	  MPFR_SET_NAN(z);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(x) || MPFR_IS_INF(y))
+	{
+	  MPFR_SET_INF(z);
+	  MPFR_SET_POS(z);
+	  MPFR_RET(0);
+	}
+      else if (MPFR_IS_ZERO(x))
+	return mpfr_abs (z, y, rnd_mode);      
+      else if (MPFR_IS_ZERO(y))
+	return mpfr_abs (z, x, rnd_mode);
+      else
+	MPFR_ASSERTN(0);
     }
-
-  MPFR_CLEAR_NAN(z);
-
-  if (MPFR_IS_INF(x) || MPFR_IS_INF(y))
-    {
-      MPFR_SET_INF(z);
-      MPFR_SET_POS(z);
-      MPFR_RET(0);
-    }
-
-  MPFR_CLEAR_INF(z);
-
-  if (MPFR_IS_ZERO(x))
-    return mpfr_abs (z, y, rnd_mode);
-
-  if (MPFR_IS_ZERO(y))
-    return mpfr_abs (z, x, rnd_mode);
+  MPFR_CLEAR_FLAGS(z);
 
   if (mpfr_cmpabs (x, y) < 0)
     {

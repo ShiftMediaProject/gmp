@@ -32,7 +32,7 @@ libfrtests_a_DEPENDENCIES = $(TESTS_ASM_OBJECTS)
 libfrtests_a_LIBADD = $(libfrtests_a_DEPENDENCIES)
 
 if WANT_MPFR
-check_PROGRAMS = tinits reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui teq texp tfrac tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tget_d_2exp tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos tgamma tset_ld tcbrt tsin_cos mpf_compat mpfr_compat tzeta tcmp_d terf tnext tcomparisons
+check_PROGRAMS = tinits tsgn tcheck tisnan texceptions tset tabs tset_d tset_f tset_q tset_si tset_str tset_z tset_ld tadd tsub tmul tdiv tcmp tcmp2 tcan_round tround_prec tswap reuse tsqrt tnext tcomparisons teq tadd_ui tsub_ui tcmp_ui tdiv_ui tmul_ui tsqrt_ui tui_div tui_sub tcmp_d tmul_2exp tfma tfrac tget_str tout_str tget_d tget_d_2exp tconst_log2 tconst_pi tconst_euler trandom ttrunc trint texp texp2 texpm1 tlog tlog2 tlog10 tlog1p tpow tui_pow tpow3 tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic tasin tacos tcos tatan tsin ttan tsin_cos tagm thypot tfactorial tgamma terf tcbrt mpf_compat mpfr_compat tzeta tsub1sp
 check_LIBRARIES = libfrtests.a
 TESTS = $(check_PROGRAMS)
 endif

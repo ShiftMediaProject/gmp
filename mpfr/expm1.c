@@ -34,35 +34,36 @@ mpfr_expm1 (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode)
 {
   int inexact = 0;
 
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
-    }
-
-  MPFR_CLEAR_NAN(y);
-
-  /* check for inf or -inf (expm1(-inf)=-1) */
-  if (MPFR_IS_INF(x))
-    { 
-      if (MPFR_SIGN(x) > 0)
-        {
-          MPFR_SET_INF(y);
-          MPFR_SET_POS(y);
-          return 0;
-        }
+      if (MPFR_IS_NAN(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      /* check for inf or -inf (expm1(-inf)=-1) */
+      else if (MPFR_IS_INF(x))
+	{ 
+	  if (MPFR_IS_POS(x))
+	    {
+	      MPFR_SET_INF(y);
+	      MPFR_SET_POS(y);
+	      return 0;
+	    }
+	  else
+	    return mpfr_set_si(y, -1, rnd_mode);
+	}
+      else if(MPFR_IS_ZERO(x))
+	{
+	  MPFR_SET_ZERO(y);   /* expm1(+/- 0) = +/- 0 */
+	  MPFR_SET_SAME_SIGN(y,x);
+	  MPFR_RET(0);
+	}
       else
-        return mpfr_set_si(y, -1, rnd_mode);
+	MPFR_ASSERTN(0);
     }
-
-  MPFR_CLEAR_INF(y);
-
-  if(MPFR_IS_ZERO(x))
-    {
-      MPFR_SET_ZERO(y);   /* expm1(+/- 0) = +/- 0 */
-      MPFR_SET_SAME_SIGN(y,x);
-      MPFR_RET(0);
-    }
+  /* Useless due to mpfr_set
+     MPFR_CLEAR_FLAGS(y);*/
 
   /* General case */
   {

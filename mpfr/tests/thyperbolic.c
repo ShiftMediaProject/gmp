@@ -18,11 +18,9 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdlib.h>
 #include <stdio.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static int
@@ -218,7 +216,6 @@ check_INF (void)
   mpfr_init2(ash,200);
   mpfr_init2(ath,200);
 
-  MPFR_CLEAR_NAN(t);
   MPFR_SET_INF(t);
 
   if(MPFR_SIGN(t)<0)

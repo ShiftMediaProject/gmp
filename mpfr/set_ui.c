@@ -28,19 +28,24 @@ MA 02111-1307, USA. */
 int
 mpfr_set_ui (mpfr_ptr x, unsigned long i, mp_rnd_t rnd_mode)
 {
-  int inex = 0;
+  int inex;
 
-  MPFR_CLEAR_FLAGS(x);
+  MPFR_SET_POS(x);
   if (i == 0)
-    MPFR_SET_ZERO(x);  /* the sign will be set later */
+    {
+      MPFR_SET_ZERO(x);
+      MPFR_RET(0);
+    }
   else
     {
       mp_size_t xn;
       unsigned int cnt, nbits;
       mp_limb_t *xp;
 
+      MPFR_CLEAR_FLAGS(x);
+
       xn = (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
-      MPFR_ASSERTN(i == (mp_limb_t) i);
+      MPFR_ASSERTD(i == (mp_limb_t) i);
       count_leading_zeros(cnt, (mp_limb_t) i);
 
       xp = MPFR_MANT(x);
@@ -55,15 +60,15 @@ mpfr_set_ui (mpfr_ptr x, unsigned long i, mp_rnd_t rnd_mode)
         return inex; /* underflow or overflow */
 
       /* round if MPFR_PREC(x) smaller than length of i */
-      if (MPFR_PREC(x) < nbits)
+      if (MPFR_UNLIKELY( MPFR_PREC(x) < nbits) )
         {
           int carry;
           carry = mpfr_round_raw(xp+xn, xp+xn, nbits, 0, MPFR_PREC(x),
                                  rnd_mode, &inex);
-          if (carry)
+          if (MPFR_UNLIKELY(carry))
             {
               /* nbits is the current exponent */
-              if (nbits == __gmpfr_emax)
+              if (MPFR_UNLIKELY((mp_exp_t) nbits == __gmpfr_emax))
                 return mpfr_set_overflow(x, rnd_mode, 1);
 
               MPFR_SET_EXP (x, nbits + 1);
@@ -71,8 +76,5 @@ mpfr_set_ui (mpfr_ptr x, unsigned long i, mp_rnd_t rnd_mode)
             }
         }
     }
-
-  MPFR_SET_POS(x);
-
   MPFR_RET(inex);
 }

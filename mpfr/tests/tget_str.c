@@ -22,10 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
@@ -103,7 +100,7 @@ check_small (void)
   for (p=4; p<=200; p++)
     {
       mpfr_set_prec (x, p);
-      mpfr_set_d (x, 6.5, GMP_RNDN);
+      mpfr_set_str (x, "6.5", 10, GMP_RNDN);
 
       s = mpfr_get_str (NULL, &e, 6, 2, x, GMP_RNDN);
       if (strcmp (s, "10") || (e != 2))
@@ -125,7 +122,7 @@ check_small (void)
         }
       (*__gmp_free_func) (s, strlen (s) + 1);
 
-      mpfr_set_d (x, 6.5, GMP_RNDN);
+      mpfr_set_str (x, "6.5", 10, GMP_RNDN);
       mpfr_sub_one_ulp (x, GMP_RNDU);
       s = mpfr_get_str (NULL, &e, 6, 2, x, GMP_RNDN);
       if (strcmp (s, "10") || (e != 2))
@@ -150,13 +147,13 @@ check_small (void)
 
   /* problem found by Fabrice Rouillier */
   mpfr_set_prec (x, 63);
-  mpfr_set_d (x, 5e14, GMP_RNDN);
+  mpfr_set_str (x, "5e14", 10, GMP_RNDN);
   s = mpfr_get_str (NULL, &e, 10, 18, x, GMP_RNDU);
   (*__gmp_free_func) (s, strlen (s) + 1);
 
   /* bug found by Johan Vervloet */
   mpfr_set_prec (x, 6);
-  mpfr_set_d (x, 688.0, GMP_RNDN);
+  mpfr_set_str (x, "688.0", 10, GMP_RNDN);
   s = mpfr_get_str (NULL, &e, 2, 4, x, GMP_RNDU);
   if (strcmp (s, "1011") || (e != 10))
     {
@@ -400,7 +397,7 @@ check_special (int b, mp_prec_t p)
     {
       /* x = b^i (exact) */
       for (r=0; r<4; r++)
-        for (m=(i < 3) ? 2 : i-1; m<=i+1; m++)
+        for (m= (i<3)? 2 : i-1 ; (int) m <= i+1 ; m++)
           {
             mpfr_get_str (s, &e, b, m, x, r);
             /* s should be 1 followed by (m-1) zeros, and e should be i+1 */

@@ -33,39 +33,48 @@ mpfr_mul_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
   int cnt, c, inexact;
   TMP_DECL(marker);
 
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(x)))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
-    }
-
-  if (MPFR_IS_INF(x)) 
-    {
-      if (u != 0)
-	{
-          MPFR_CLEAR_FLAGS(y);
-          MPFR_SET_INF(y);
-          MPFR_SET_SAME_SIGN(y, x);
-          MPFR_RET(0); /* infinity is exact */
-	}
-      else /* 0 * infinity */
+      if (MPFR_IS_NAN(x))
 	{
 	  MPFR_SET_NAN(y);
-          MPFR_RET_NAN;
+	  MPFR_RET_NAN;
 	}
+      else if (MPFR_IS_INF(x)) 
+	{
+	  if (u != 0)
+	    {
+	      MPFR_CLEAR_FLAGS(y);
+	      MPFR_SET_INF(y);
+	      MPFR_SET_SAME_SIGN(y, x);
+	      MPFR_RET(0); /* infinity is exact */
+	    }
+	  else /* 0 * infinity */
+	    {
+	      MPFR_SET_NAN(y);
+	      MPFR_RET_NAN;
+	    }
+	}
+      else if (MPFR_IS_ZERO(x))
+	{
+	  MPFR_SET_ZERO(y);
+	  MPFR_SET_SAME_SIGN(y, x);
+	  MPFR_RET(0); /* zero is exact */
+	}
+      else
+	MPFR_ASSERTN(0);
     }
-
-  MPFR_CLEAR_FLAGS(y);
-
-  if (u == 0 || MPFR_IS_ZERO(x))
+  else if (MPFR_UNLIKELY(u <= 1))
     {
-      MPFR_SET_ZERO(y);
-      MPFR_SET_SAME_SIGN(y, x);
-      MPFR_RET(0); /* zero is exact */
+      if (u == 0)
+	{
+	  MPFR_SET_ZERO(y);
+	  MPFR_SET_SAME_SIGN(y, x);
+	  MPFR_RET(0); /* zero is exact */
+	}
+      else
+	return mpfr_set (y, x, rnd_mode);
     }
-
-  if (u == 1)
-    return mpfr_set (y, x, rnd_mode);
 
   TMP_MARK(marker);
   yp = MPFR_MANT(y);
@@ -112,8 +121,8 @@ mpfr_mul_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 
   TMP_FREE(marker);
 
-  if (__gmpfr_emax < MPFR_EMAX_MIN + cnt ||
-      MPFR_GET_EXP (x) > __gmpfr_emax - cnt)
+  if (MPFR_UNLIKELY(__gmpfr_emax < MPFR_EMAX_MIN + cnt ||
+		    MPFR_GET_EXP (x) > __gmpfr_emax - cnt))
     return mpfr_set_overflow(y, rnd_mode, MPFR_SIGN(x));
 
   MPFR_SET_EXP (y, MPFR_GET_EXP (x) + cnt);

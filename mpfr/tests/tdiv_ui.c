@@ -23,10 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <float.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
@@ -103,7 +100,7 @@ special (void)
 	{
 	  mpfr_set_prec (y, yprec);
 	  mpfr_div_ui (y, x, 1, GMP_RNDN);
-	  if (mpfr_get_d1 (x) != mpfr_get_d1 (y))
+	  if (mpfr_cmp(x,y))
 	    {
 	      printf ("division by 1.0 fails for xprec=%u, yprec=%u\n", xprec, yprec);
 	      printf ("expected "); mpfr_print_binary (x); puts ("");

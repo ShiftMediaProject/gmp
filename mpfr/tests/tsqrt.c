@@ -22,10 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 #define check(a,r) check3(a,r,-1.0)
@@ -172,7 +169,7 @@ special (void)
       mpfr_set_ui (z, 1, GMP_RNDN);
       mpfr_add_one_ulp (z, GMP_RNDN);
       mpfr_sqrt (x, z, GMP_RNDU);
-      if (mpfr_get_d1 (x) != 1.5)
+      if (mpfr_cmp_ui_2exp(x, 3, -1))
 	{
 	  printf ("Error: sqrt(1+ulp(1), up) should give 1.5 (prec=%u)\n",
                   (unsigned int) p);
@@ -194,8 +191,8 @@ special (void)
   mpfr_set_prec (z, 2);
 
   /* checks the sign is correctly set */
-  mpfr_set_d (x, 1.0, GMP_RNDN);
-  mpfr_set_d (z, -1.0, GMP_RNDN);
+  mpfr_set_si (x, 1,  GMP_RNDN);
+  mpfr_set_si (z, -1, GMP_RNDN);
   mpfr_sqrt (z, x, GMP_RNDN);
   if (mpfr_cmp_ui (z, 0) < 0)
     {

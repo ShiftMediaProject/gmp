@@ -51,9 +51,11 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
   /* don't forget to put zero in lower limbs */
   MPN_ZERO(xp, xn);
   /* set sign */
-  if ((i < 0) ^ (MPFR_SIGN(x) < 0))
-    MPFR_CHANGE_SIGN(x);
-
+  if (i < 0)
+    MPFR_SET_NEG(x);
+  else
+    MPFR_SET_POS(x);
+  
   nbits = BITS_PER_MP_LIMB - cnt;
   MPFR_EXP (x) = nbits;  /* may be out-of-range, check range below */
   inex = mpfr_check_range(x, 0, rnd_mode);
@@ -61,18 +63,17 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
     return inex; /* underflow or overflow */
 
   /* round if MPFR_PREC(x) smaller than length of i */
-  if (MPFR_PREC(x) < nbits)
+  if (MPFR_UNLIKELY(MPFR_PREC(x) < nbits))
     {
       int carry;
 
       carry = mpfr_round_raw(xp+xn, xp+xn, nbits, (i < 0), MPFR_PREC(x),
                              rnd_mode, &inex);
-      if (carry)
+      if (MPFR_UNLIKELY(carry))
         {
           /* nbits is the current exponent */
-          if (nbits == __gmpfr_emax)
+          if (MPFR_UNLIKELY((mp_exp_t) nbits == __gmpfr_emax))
             return mpfr_set_overflow(x, rnd_mode, (i < 0 ? -1 : 1));
-
           MPFR_SET_EXP (x, nbits + 1);
           xp[xn] = MPFR_LIMB_HIGHBIT;
         }

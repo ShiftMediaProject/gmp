@@ -40,12 +40,24 @@ mpfr_acos (mpfr_ptr acos, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int compared;
   int inexact = 0;
 
-  /* Trivial cases */
-  if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
+  /* Special cases */
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_NAN(acos);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
+	{
+	  MPFR_SET_NAN(acos);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_ZERO(x))
+	{
+	  /* acos(0)=Pi/2 */
+	  mpfr_const_pi (acos, rnd_mode);
+	  MPFR_SET_EXP (acos, MPFR_GET_EXP (acos) - 1);
+	  return 1; /* inexact */
+	}
+      MPFR_ASSERTN(0);
     }
+  MPFR_CLEAR_FLAGS(x);
 
   /* Set x_p=|x| */
   signe = MPFR_SIGN(x);
@@ -64,7 +76,7 @@ mpfr_acos (mpfr_ptr acos, mpfr_srcptr x, mp_rnd_t rnd_mode)
   if (compared == 0)
     {
       mpfr_clear (xp);
-      if (signe > 0) /* acos(+1) = 0 */
+      if (MPFR_IS_POS_SIGN(signe)) /* acos(+1) = 0 */
 	return mpfr_set_ui (acos, 0, rnd_mode);
       else /* acos(-1) = Pi */
         {
@@ -73,18 +85,10 @@ mpfr_acos (mpfr_ptr acos, mpfr_srcptr x, mp_rnd_t rnd_mode)
         }
     }
 
-  if (MPFR_IS_ZERO(x)) /* acos(0)=Pi/2 */
-    {
-      mpfr_clear (xp);
-      mpfr_const_pi (acos, rnd_mode);
-      MPFR_SET_EXP (acos, MPFR_GET_EXP (acos) - 1);
-      return 1; /* inexact */
-    }
-
   prec_acos = MPFR_PREC(acos);
   mpfr_ui_sub (xp, 1, xp, GMP_RNDD);
 
-  if (signe > 0)
+  if (MPFR_IS_POS_SIGN(signe))
     supplement = 2 - 2 * MPFR_GET_EXP (xp);
   else
     supplement = 2 - MPFR_GET_EXP(xp);

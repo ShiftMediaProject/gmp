@@ -29,9 +29,9 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void mpfr_zeta_part_b _PROTO ((mpfr_t, mpfr_srcptr, int, int, mpfr_t *));
-void mpfr_zeta_c      _PROTO ((int, mpfr_t *));
-void mpfr_zeta_part_a _PROTO ((mpfr_t, mpfr_srcptr, int));
+void mpfr_zeta_part_b _MPFR_PROTO ((mpfr_t, mpfr_srcptr, int, int, mpfr_t *));
+void mpfr_zeta_c      _MPFR_PROTO ((int, mpfr_t *));
+void mpfr_zeta_part_a _MPFR_PROTO ((mpfr_t, mpfr_srcptr, int));
 
 /*
    Parameters:
@@ -159,11 +159,11 @@ mpfr_zeta_part_a (mpfr_t sum, mpfr_srcptr s, int n)
 static int
 mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
 {
-  int p, n, l, dint, add, d, can_round;
+  int p, n, l, add, can_round;
   double beta, sd, dnep;
-  mpfr_t a,b,c,z_pre,f,g,s1;
+  mpfr_t a, b, c, z_pre, f, g, s1;
   mpfr_t *tc1;
-  mp_prec_t precz, precs;
+  mp_prec_t precz, precs, d, dint;
   int inex;
 
   precz = mpfr_get_prec (z);
@@ -195,7 +195,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
           inex = 0;
           goto clear_and_return;
         }
-      else if (MPFR_GET_EXP (s1) <= -(d-3)/2)
+      else if (MPFR_GET_EXP (s1) <= -(mp_exp_t) ((mpfr_prec_t) (d-3)/2))
 	/* Branch 1: when s-1 is very small, one
 	  uses the approximation Zeta(s)=1/(s-1)+gamma,
 	  where gamma is Euler's constant */
@@ -332,37 +332,42 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
   mp_prec_t precz, prec1, precs, precs1;
   int inex;
 
-  if (mpfr_nan_p (s))
+  /* Zero, Nan or Inf ? */
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(s) ))
     {
-      MPFR_SET_NAN (z);
-      MPFR_RET_NAN;
+      if (MPFR_IS_NAN(s))
+	{
+	  MPFR_SET_NAN (z);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(s))
+	{
+	  if (MPFR_SIGN(s) > 0)
+	    return mpfr_set_ui (z, 1, GMP_RNDN); /* Zeta(+Inf) = 1 */
+	  MPFR_SET_NAN (z); /* Zeta(-Inf) = NaN */
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_ZERO(s))
+	{
+	  mpfr_set_ui (z, 1, rnd_mode);
+	  mpfr_div_2ui (z, z, 1, rnd_mode);
+	  MPFR_CHANGE_SIGN(z);
+	  MPFR_RET(0);
+	}
+      else
+	MPFR_ASSERTN(0);
     }
+  MPFR_CLEAR_FLAGS(z);
 
-  if (mpfr_inf_p (s))
-    {
-      if (MPFR_SIGN(s) > 0)
-        return mpfr_set_ui (z, 1, GMP_RNDN); /* Zeta(+Inf) = 1 */
-      MPFR_SET_NAN (z); /* Zeta(-Inf) = NaN */
-      MPFR_RET_NAN;
-    }
-
-  /* now s is neither NaN nor Infinite */
-
-  if (mpfr_cmp_ui(s,0) == 0) /* Case s = 0 */
-    {
-      mpfr_set_ui (z, 1, rnd_mode);
-      mpfr_div_2ui (z, z, 1, rnd_mode);
-      return mpfr_neg (z, z, rnd_mode);
-    }
-
-  mpfr_init2(s2, mpfr_get_prec(s));
-  mpfr_div_2ui(s2, s, 1, rnd_mode);
-  if ((MPFR_SIGN(s) == -1) && (mpfr_floor(s2, s2) == 0)) /* Case s = -2n */
+  /* s is neither Nan, nor Inf, nor Zero */
+  mpfr_init2 (s2, mpfr_get_prec (s));
+  mpfr_div_2ui (s2, s, 1, rnd_mode);
+  if (MPFR_IS_NEG(s) && mpfr_floor(s2, s2) == 0) /* Case s = -2n */
     {
       mpfr_clear (s2);
       return mpfr_set_ui (z, 0, rnd_mode);
     }
-  mpfr_clear(s2);
+  mpfr_clear (s2);
   precz = mpfr_get_prec (z);
   precs = mpfr_get_prec (s);
   /* Precision precs1 needed to represent 1 - s, and s + 2,

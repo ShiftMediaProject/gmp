@@ -27,7 +27,6 @@ MA 02111-1307, USA. */
 void
 mpfr_set_inf (mpfr_ptr x, int sign)
 {
-  MPFR_CLEAR_NAN(x);
   MPFR_SET_INF(x);
   if (sign >= 0)
     MPFR_SET_POS(x);

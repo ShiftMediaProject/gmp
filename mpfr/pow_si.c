@@ -34,42 +34,39 @@ MA 02111-1307, USA. */
 int
 mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
 {
-  if (n > 0)
+  if (n >= 0)
     return mpfr_pow_ui (y, x, n, rnd_mode);
   else
     {
-      if (MPFR_IS_NAN(x))
-        {
-          MPFR_SET_NAN(y);
-          MPFR_RET_NAN;
-        }
-
-      MPFR_CLEAR_NAN(y);
-
-      if (n == 0)
-        return mpfr_set_ui (y, 1, GMP_RNDN);
-
-      if (MPFR_IS_INF(x))
-        {
-          MPFR_SET_ZERO(y);
-          if (MPFR_SIGN(x) > 0 || ((unsigned) n & 1) == 0)
-            MPFR_SET_POS(y);
-          else
-            MPFR_SET_NEG(y);
-          MPFR_RET(0);
-        }
-
-      if (MPFR_IS_ZERO(x))
-        {
-          MPFR_SET_INF(y);
-          if (MPFR_SIGN(x) > 0 || ((unsigned) n & 1) == 0)
-            MPFR_SET_POS(y);
-          else
-            MPFR_SET_NEG(y);
-          MPFR_RET(0);
-        }
-
-      MPFR_CLEAR_INF(y);
+      if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
+	{
+	  if (MPFR_IS_NAN(x))
+	    {
+	      MPFR_SET_NAN(y);
+	      MPFR_RET_NAN;
+	    }
+	  else if (MPFR_IS_INF(x))
+	    {
+	      MPFR_SET_ZERO(y);
+	      if (MPFR_IS_POS(x) || ((unsigned) n & 1) == 0)
+		MPFR_SET_POS(y);
+	      else
+		MPFR_SET_NEG(y);
+	      MPFR_RET(0);
+	    }
+	  else if (MPFR_IS_ZERO(x))
+	    {
+	      MPFR_SET_INF(y);
+	      if (MPFR_IS_POS(x) || ((unsigned) n & 1) == 0)
+		MPFR_SET_POS(y);
+	      else
+		MPFR_SET_NEG(y);
+	      MPFR_RET(0);
+	    }
+	  else
+	    MPFR_ASSERTN(0);
+	}
+      MPFR_CLEAR_FLAGS(y);
 
       /* detect exact powers: x^(-n) is exact iff x is a power of 2 */
       if (mpfr_cmp_si_2exp (x, MPFR_SIGN(x), MPFR_EXP(x) - 1) == 0)
@@ -134,3 +131,7 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
       }
     }
 }
+
+
+
+

@@ -31,12 +31,14 @@ mpfr_sub_one_ulp(mpfr_ptr x, mp_rnd_t rnd_mode)
   mp_size_t xn;
   int sh;
   mp_limb_t *xp;
-
-  if (MPFR_IS_NAN(x))
-    MPFR_RET_NAN;
-
-  if (MPFR_IS_INF(x) || MPFR_IS_ZERO(x))
-    return 0;
+  
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
+    {
+      if (MPFR_IS_NAN(x))
+	MPFR_RET_NAN;
+      if (MPFR_IS_INF(x) || MPFR_IS_ZERO(x))
+	return 0;
+    }
 
   MPFR_ASSERTN(MPFR_PREC_MIN > 1);
 
@@ -49,7 +51,7 @@ mpfr_sub_one_ulp(mpfr_ptr x, mp_rnd_t rnd_mode)
       mp_exp_t exp = MPFR_EXP (x);
       /* Note: In case of underflow and rounding to the nearest mode,
          x won't be changed. Beware of infinite loops! */
-      if (exp == __gmpfr_emin)
+      if (MPFR_UNLIKELY( exp == __gmpfr_emin ))
         return mpfr_set_underflow(x, rnd_mode, MPFR_SIGN(x));
       else
         {

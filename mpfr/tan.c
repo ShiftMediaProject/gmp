@@ -31,18 +31,22 @@ mpfr_tan (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int precy, m, ok, inexact;
   mpfr_t s, c;
 
-  if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
+  if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(x)))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
-    }
-
-  if (MPFR_IS_ZERO(x))
-    {
-      MPFR_CLEAR_FLAGS(y);
-      MPFR_SET_ZERO(y);
-      MPFR_SET_SAME_SIGN(y, x);
-      MPFR_RET(0);
+      if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
+	{
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_ZERO(x))
+	{
+	  MPFR_CLEAR_FLAGS(y);
+	  MPFR_SET_ZERO(y);
+	  MPFR_SET_SAME_SIGN(y, x);
+	  MPFR_RET(0);
+	}
+      /* Should never reach this point */
+      MPFR_ASSERTN(0);
     }
 
   precy = MPFR_PREC(y);

@@ -23,10 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <float.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 int
@@ -62,20 +59,20 @@ main (int argc, char *argv[])
    /* checks that rounds to nearest sets the last
      bit to zero in case of equal distance */
    mpfr_set_d (x, 5.0, GMP_RNDN);
-   if (mpfr_get_d1 (x) != 4.0)
+   if (mpfr_cmp_ui (x, 4))
      {
        printf ("Error in tset_d: got %g instead of 4.0\n", mpfr_get_d1 (x));
        exit (1);
      }
    mpfr_set_d (x, -5.0, GMP_RNDN);
-   if (mpfr_get_d1 (x) != -4.0)
+   if (mpfr_cmp_si (x, -4))
      {
        printf ("Error in tset_d: got %g instead of -4.0\n", mpfr_get_d1 (x));
        exit (1);
      }
 
    mpfr_set_d (x, 9.84891017624509146344e-01, GMP_RNDU);
-   if (mpfr_get_d1 (x) != 1.0)
+   if (mpfr_cmp_ui (x, 1))
      {
        printf ("Error in tset_d: got %g instead of 1.0\n", mpfr_get_d1 (x));
        exit (1);
@@ -83,7 +80,7 @@ main (int argc, char *argv[])
 
   mpfr_init2(z, 32);
   mpfr_set_d(z, 1.0, 0);
-  if (mpfr_get_d1 (z) != 1.0)
+  if (mpfr_cmp_ui (z, 1))
     {
       mpfr_print_binary (z); puts ("");
       printf ("Error: 1.0 != 1.0\n");

@@ -34,18 +34,19 @@ mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)
   mp_size_t bn, cn;
   mp_limb_t *bp, *cp;
 
-  MPFR_ASSERTN (! MPFR_IS_NAN (b));
-  MPFR_ASSERTN (! MPFR_IS_NAN (c));
-
-  if (MPFR_IS_INF (b))
-    return ! MPFR_IS_INF (c);
-  if (MPFR_IS_INF (c))
-    return -1;
-
-  if (MPFR_IS_ZERO (c))
-    return ! MPFR_IS_ZERO (b);
-  if (MPFR_IS_ZERO (b))
-    return -1;
+  if (MPFR_ARE_SINGULAR (b, c))
+    {
+      if (MPFR_IS_INF (b))
+	return ! MPFR_IS_INF (c);
+      else if (MPFR_IS_INF (c))
+	return -1;
+      else if (MPFR_IS_ZERO (c))
+	return ! MPFR_IS_ZERO (b);
+      else if (MPFR_IS_ZERO (b))
+	return -1;
+      else
+	MPFR_ASSERTN(0);
+    }
 
   be = MPFR_GET_EXP (b);
   ce = MPFR_GET_EXP (c);
@@ -56,8 +57,8 @@ mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)
 
   /* exponents are equal */
 
-  bn = (MPFR_PREC(b)-1)/BITS_PER_MP_LIMB;
-  cn = (MPFR_PREC(c)-1)/BITS_PER_MP_LIMB;
+  bn = MPFR_LIMB_SIZE(b)-1;
+  cn = MPFR_LIMB_SIZE(c)-1;
 
   bp = MPFR_MANT(b);
   cp = MPFR_MANT(c);

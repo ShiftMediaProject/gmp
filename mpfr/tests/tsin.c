@@ -21,9 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
@@ -150,9 +148,9 @@ main (int argc, char *argv[])
 
   mpfr_init2 (x, 2);
 
-  mpfr_set_d (x, 0.5, GMP_RNDN);
+  mpfr_set_str (x, "0.5", 10, GMP_RNDN);
   mpfr_sin (x, x, GMP_RNDD);
-  if (mpfr_get_d1 (x) != 0.375)
+  if (mpfr_cmp_ui_2exp (x, 3, -3)) /* x != 0.375 = 3/8 */
     {
       printf ("mpfr_sin(0.5, GMP_RNDD) failed with precision=2\n");
       exit (1);

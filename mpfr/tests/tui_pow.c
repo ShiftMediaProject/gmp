@@ -23,10 +23,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
@@ -135,7 +132,6 @@ main (int argc, char *argv[])
 
   n = randlimb ();
 
-  MPFR_CLEAR_NAN(x);
   MPFR_SET_INF(x);
   mpfr_ui_pow (y, n, x, GMP_RNDN);
   if(!MPFR_IS_INF(y))
@@ -168,9 +164,8 @@ main (int argc, char *argv[])
   mp_rnd_t rnd;
   unsigned int n;
 
-  int p0=2;
-  int p1=100;
-  int N=20;
+  mp_prec_t p0=2, p1=100;
+  unsigned int N=20;
 
   mpfr_init2 (z, 38);
   mpfr_init2 (t, 6);
@@ -181,9 +176,9 @@ main (int argc, char *argv[])
 
   mpfr_set_prec (x, 2);
   mpfr_set_prec (y, 2);
-  mpfr_set_d (x, -0.5, GMP_RNDZ);
+  mpfr_set_str (x, "-0.5", 10, GMP_RNDZ);
   mpfr_ui_pow (y, 4, x, GMP_RNDD);
-  if (mpfr_get_d1 (y) != 0.5)
+  if (mpfr_cmp_ui_2exp(y, 1, -1))
     {
       fprintf (stderr, "Error for 4^(-0.5), prec=2, GMP_RNDD\n");
       fprintf (stderr, "expected 0.5, got ");
@@ -196,9 +191,9 @@ main (int argc, char *argv[])
      (03 Sep 2003) */
   mpfr_set_prec (x, 2);
   mpfr_set_prec (y, 2);
-  mpfr_set_d (x, 0.5, GMP_RNDN);
+  mpfr_set_str (x, "0.5", 10, GMP_RNDN);
   mpfr_ui_pow (y, 398441521, x, GMP_RNDN);
-  if (mpfr_get_d1 (y) != 16384.0)
+  if (mpfr_cmp_ui_2exp(y, 1, 14))
     {
       fprintf (stderr, "Error for 398441521^(0.5), prec=2, GMP_RNDN\n");
       fprintf (stderr, "expected 1.0e14, got ");
@@ -211,7 +206,7 @@ main (int argc, char *argv[])
   mpfr_clear (t);
 
   mpfr_set_prec (x, 2);
-  mpfr_set_d (x, 0.5, GMP_RNDN);
+  mpfr_set_str (x, "0.5", 10, GMP_RNDN);
   check1 (x, 2, 398441521, GMP_RNDN);  /* 398441521 = 19961^2 */
 
   /* generic test */

@@ -38,33 +38,34 @@ mpfr_sinh (mpfr_ptr y, mpfr_srcptr xt, mp_rnd_t rnd_mode)
     mp_prec_t Nxt = MPFR_PREC(xt);
     int flag_neg=0, inexact =0;
 
-    if (MPFR_IS_NAN(xt))
+    if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(xt)))
       {
-        MPFR_SET_NAN(y); 
-        MPFR_RET_NAN;
-      }
-    MPFR_CLEAR_NAN(y);
-
-    if (MPFR_IS_INF(xt))
-      { 
-        MPFR_SET_INF(y);
-        MPFR_SET_SAME_SIGN(y, xt);
-        MPFR_RET(0);
-      }
-
-    MPFR_CLEAR_INF(y);
-  
-    if (MPFR_IS_ZERO(xt))
-      {
-        MPFR_SET_ZERO(y);   /* sinh(0) = 0 */
-        MPFR_SET_SAME_SIGN(y, xt);
-        MPFR_RET(0);
+	if (MPFR_IS_NAN(xt))
+	  {
+	    MPFR_SET_NAN(y); 
+	    MPFR_RET_NAN;
+	  }
+	else if (MPFR_IS_INF(xt))
+	  { 
+	    MPFR_SET_INF(y);
+	    MPFR_SET_SAME_SIGN(y, xt);
+	    MPFR_RET(0);
+	  }
+	else if (MPFR_IS_ZERO(xt))
+	  {
+	    MPFR_SET_ZERO(y);   /* sinh(0) = 0 */
+	    MPFR_SET_SAME_SIGN(y, xt);
+	    MPFR_RET(0);
+	  }
+	/* Should never reach this */
+	else
+	  MPFR_ASSERTN(0);
       }
 
     mpfr_init2 (x, Nxt);
     mpfr_set (x, xt, GMP_RNDN);
 
-    if(MPFR_SIGN(x)<0)
+    if (MPFR_IS_NEG(x))
       {
         MPFR_CHANGE_SIGN(x);
         flag_neg=1;

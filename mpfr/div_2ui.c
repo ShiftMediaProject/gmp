@@ -31,7 +31,7 @@ mpfr_div_2ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int n, mp_rnd_t rnd_mode)
 
   inexact = y != x ? mpfr_set (y, x, rnd_mode) : 0;
 
-  if (MPFR_IS_FP(y) && MPFR_NOTZERO(y))
+  if (MPFR_LIKELY( MPFR_IS_PURE_FP(y)) )
     {
       /* n will have to be casted to long to make sure that the addition
          and subtraction below (for overflow detection) are signed */
@@ -50,8 +50,8 @@ mpfr_div_2ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int n, mp_rnd_t rnd_mode)
          to an integer overflow. */
       {
         mp_exp_t exp = MPFR_GET_EXP (y);
-        if (__gmpfr_emin > MPFR_EMAX_MAX - (long) n ||
-            exp < __gmpfr_emin + (long) n)
+        if (MPFR_UNLIKELY( __gmpfr_emin > MPFR_EMAX_MAX - (long) n ||
+			   exp < __gmpfr_emin + (long) n) )
           {
             if (rnd_mode == GMP_RNDN &&
                 (__gmpfr_emin > MPFR_EMAX_MAX - (long) (n - 1) ||

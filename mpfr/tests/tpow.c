@@ -21,9 +21,9 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+#include <float.h>
+#include <math.h>
+
 #include "mpfr-test.h"
 
 static void
@@ -35,7 +35,7 @@ check_pow_ui (void)
   mpfr_init2 (b, 53);
 
   /* check in-place operations */
-  mpfr_set_d (b, 0.6926773, GMP_RNDN);
+  mpfr_set_str (b, "0.6926773", 10, GMP_RNDN);
   mpfr_pow_ui (a, b, 10, GMP_RNDN);
   mpfr_pow_ui (b, b, 10, GMP_RNDN);
   if (mpfr_cmp (a, b))
@@ -45,7 +45,7 @@ check_pow_ui (void)
     }
 
   /* check large exponents */
-  mpfr_set_d (b, 1, GMP_RNDN);
+  mpfr_set_ui (b, 1, GMP_RNDN);
   mpfr_pow_ui (a, b, 4294967295UL, GMP_RNDN);
 
   mpfr_set_inf (a, -1);
@@ -122,8 +122,8 @@ check_inexact (mp_prec_t p)
   mpfr_set_prec (x, p);
   mpfr_set_prec (y, p);
   mpfr_set_prec (z, p);
-  mpfr_set_d (x, 4.0, GMP_RNDN);
-  mpfr_set_d (y, 0.5, GMP_RNDN);
+  mpfr_set_ui (x, 4, GMP_RNDN);
+  mpfr_set_str (y, "0.5", 10, GMP_RNDN);
   mpfr_pow (z, x, y, GMP_RNDZ);
 
   mpfr_clear (x);
@@ -165,7 +165,7 @@ special ()
   mpfr_set_str_binary (x, "0.111011000111100000111010000101010100110011010000011");
   mpfr_set_str_binary (y, "0.111110010100110000011101100011010111000010000100101");
   mpfr_set_str_binary (t, "0.1110110011110110001000110100100001001111010011111000010000011001");
-    ;
+  
   mpfr_pow (z, x, y, GMP_RNDN);
   if (mpfr_cmp (z, t))
     {
@@ -176,10 +176,10 @@ special ()
   mpfr_set_prec (x, 53);
   mpfr_set_prec (y, 53);
   mpfr_set_prec (z, 53);
-  mpfr_set_d (x, 5.68824667828621954868e-01, GMP_RNDN);
-  mpfr_set_d (y, 9.03327850535952658895e-01, GMP_RNDN);
+  mpfr_set_str (x, "5.68824667828621954868e-01", 10, GMP_RNDN);
+  mpfr_set_str (y, "9.03327850535952658895e-01", 10, GMP_RNDN);
   mpfr_pow (z, x, y, GMP_RNDZ);
-  if (mpfr_get_d1 (z) != 0.60071044650456473235)
+  if (mpfr_cmp_d(z, 0.60071044650456473235))
     {
       printf ("Error in mpfr_pow for prec=53, rnd=GMP_RNDZ\n");
       exit (1);
@@ -190,7 +190,7 @@ special ()
   mpfr_set_prec (y, 30);
   mpfr_set_prec (z, 30);
   mpfr_set_str (x, "1.00000000001010111110001111011e1", 2, GMP_RNDN);
-  mpfr_set_d (t, -0.5, GMP_RNDN);
+  mpfr_set_str (t, "-0.5", 10, GMP_RNDN);
   mpfr_pow (z, x, t, GMP_RNDN);
   mpfr_set_str (y, "1.01101001111010101110000101111e-1", 2, GMP_RNDN);
   if (mpfr_cmp (z, y))
@@ -222,10 +222,14 @@ special ()
   mpfr_clear (t);
 }
 
+void f(void);
+
 static void
 particular_cases (void)
 {
   mpfr_t t[11], r;
+  static const char *name[11] = {
+    "NaN", "+inf", "-inf", "+0", "-0", "+1", "-1", "+2", "-2", "+0.5", "-0.5"};
   int i, j;
   int error = 0;
 
@@ -260,6 +264,8 @@ particular_cases (void)
           /* +0.5 */ { 0,   2,   1,  128, 128,  64, 256,  32, 512,  90, 180 },
           /* -0.5 */ { 0,   2,   1,  128, 128, -64,-256,  32, 512,  0,   0  }
         };
+	if (i == 5 && j == 1)
+	  f();
 
         mpfr_pow (r, t[i], t[j], GMP_RNDN);
         p = mpfr_nan_p (r) ? 0 : mpfr_inf_p (r) ? 1 :
@@ -269,8 +275,8 @@ particular_cases (void)
           p = -p;
         if (p != q[i][j])
           {
-            printf ("Error in mpfr_pow for particular case (%d,%d):\n"
-                    "got %d instead of %d\n", i, j, p, q[i][j]);
+            printf ("Error in mpfr_pow for particular case (%s)^(%s) (%d,%d):\n"
+                    "got %d instead of %d\n", name[i], name[j], i,j,p, q[i][j]);
             error = 1;
           }
       }
@@ -283,7 +289,13 @@ particular_cases (void)
     exit (1);
 }
 
-static void
+void f (void)
+{
+}
+
+void underflows (void);
+
+void
 underflows (void)
 {
   mpfr_t x, y;
@@ -322,7 +334,7 @@ overflows (void)
 
   /* bug found by Ming J. Tsai <mingjt@delvron.us>, 4 Oct 2003 */
   
-  mpfr_init_set_d (a, 5.1e32, GMP_RNDN);
+  mpfr_init_set_str (a, "5.1e32", 10, GMP_RNDN);
   mpfr_init (b);
 
   mpfr_pow (b, a, a, GMP_RNDN);
@@ -355,7 +367,7 @@ main (void)
   for (p=2; p<100; p++)
     check_inexact (p);
 
-  /* underflows (); */
+  /*underflows ();*/
 
   overflows ();
 

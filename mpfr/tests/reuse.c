@@ -21,29 +21,43 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 typedef void (*fct_t)();
 fct_t testfunc;
 
-void test3 _PROTO ((char *, mp_prec_t, mp_rnd_t));
-void test4 _PROTO ((char *, mp_prec_t, mp_rnd_t));
-void test3a _PROTO ((char *, mp_prec_t, mp_rnd_t));
-void test2ui _PROTO ((char *, mp_prec_t, mp_rnd_t));
-void testui2 _PROTO ((char *, mp_prec_t, mp_rnd_t));
-void test2 _PROTO ((char *, mp_prec_t, mp_rnd_t));
-void test2a _PROTO ((char *, mp_prec_t));
-int mpfr_compare _PROTO ((mpfr_t, mpfr_t));
+void test3 _MPFR_PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test4 _MPFR_PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test3a _MPFR_PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test2ui _MPFR_PROTO ((char *, mp_prec_t, mp_rnd_t));
+void testui2 _MPFR_PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test2 _MPFR_PROTO ((char *, mp_prec_t, mp_rnd_t));
+void test2a _MPFR_PROTO ((char *, mp_prec_t));
+int mpfr_compare _MPFR_PROTO ((mpfr_srcptr, mpfr_srcptr));
+void mpfr_set_pos_zero _MPFR_PROTO ((mpfr_t));
+void mpfr_set_neg_zero _MPFR_PROTO ((mpfr_t));
 
 /* same than mpfr_cmp, but returns 0 for both NaN's */
 int
-mpfr_compare (mpfr_t a, mpfr_t b)
+mpfr_compare (mpfr_srcptr a, mpfr_srcptr b)
 {
   return (MPFR_IS_NAN(a)) ? !MPFR_IS_NAN(b) :
     (MPFR_IS_NAN(b) || mpfr_cmp(a, b));
+}
+
+void
+mpfr_set_pos_zero(mpfr_t a)
+{
+  MPFR_SET_ZERO(a);
+  MPFR_SET_POS(a);
+}
+
+void
+mpfr_set_neg_zero(mpfr_t a)
+{
+  MPFR_SET_ZERO(a);
+  MPFR_SET_NEG(a);
 }
 
 void
@@ -67,15 +81,15 @@ test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
     if (i%6==0) mpfr_set_nan (ref2);
     if (i%6==1) mpfr_set_inf (ref2, 1);
     if (i%6==2) mpfr_set_inf (ref2, -1);
-    if (i%6==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
-    if (i%6==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
+    if (i%6==3) mpfr_set_pos_zero (ref2);
+    if (i%6==4) mpfr_set_neg_zero (ref2);
     if (i%6==5) mpfr_random (ref2);
 
     if (i/6==0) mpfr_set_nan (ref3);
     if (i/6==1) mpfr_set_inf (ref3, 1);
     if (i/6==2) mpfr_set_inf (ref3, -1);
-    if (i/6==3) mpfr_set_d (ref3, 0.0, GMP_RNDN);
-    if (i/6==4) mpfr_set_d (ref3, -0.0, GMP_RNDN);
+    if (i/6==3) mpfr_set_pos_zero (ref3);
+    if (i/6==4) mpfr_set_neg_zero (ref3);
     if (i/6==5) mpfr_random (ref3);
 
     /* reference call: foo(a, b, c) */
@@ -153,8 +167,8 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
       if (i==0) mpfr_set_nan (op1);
       if (i==1) mpfr_set_inf (op1, 1);
       if (i==2) mpfr_set_inf (op1, -1);
-      if (i==3) mpfr_set_d (op1, 0.0, GMP_RNDN);
-      if (i==4) mpfr_set_d (op1, -0.0, GMP_RNDN);
+      if (i==3) mpfr_set_pos_zero (op1);
+      if (i==4) mpfr_set_neg_zero (op1);
       if (i==5) mpfr_random (op1);
 
       for (j=0; j<6; j++)
@@ -163,8 +177,8 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
           if (j==0) mpfr_set_nan (op2);
           if (j==1) mpfr_set_inf (op2, 1);
           if (j==2) mpfr_set_inf (op2, -1);
-          if (j==3) mpfr_set_d (op2, 0.0, GMP_RNDN);
-          if (j==4) mpfr_set_d (op2, -0.0, GMP_RNDN);
+          if (j==3) mpfr_set_pos_zero (op2);
+          if (j==4) mpfr_set_neg_zero (op2);
           if (j==5) mpfr_random (op2);
 
           for (k=0; k<6; k++)
@@ -173,8 +187,8 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
               if (k==0) mpfr_set_nan (op3);
               if (k==1) mpfr_set_inf (op3, 1);
               if (k==2) mpfr_set_inf (op3, -1);
-              if (k==3) mpfr_set_d (op3, 0.0, GMP_RNDN);
-              if (k==4) mpfr_set_d (op3, -0.0, GMP_RNDN);
+              if (k==3) mpfr_set_pos_zero (op3);
+              if (k==4) mpfr_set_neg_zero (op3);
               if (k==5) mpfr_random (op3);
 
               /* reference call: foo(s, a, b, c) */
@@ -313,8 +327,8 @@ test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
       if (i%6==0) mpfr_set_nan (ref2);
       if (i%6==1) mpfr_set_inf (ref2, 1);
       if (i%6==2) mpfr_set_inf (ref2, -1);
-      if (i%6==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
-      if (i%6==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
+      if (i%6==3) mpfr_set_pos_zero (ref2);
+      if (i%6==4) mpfr_set_neg_zero (ref2);
       if (i%6==5) mpfr_random (ref2);
 
       if (i/6==0)
@@ -370,8 +384,8 @@ testui2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
     if (i%6==0) mpfr_set_nan (ref3);
     if (i%6==1) mpfr_set_inf (ref3, 1);
     if (i%6==2) mpfr_set_inf (ref3, -1);
-    if (i%6==3) mpfr_set_d (ref3, 0.0, GMP_RNDN);
-    if (i%6==4) mpfr_set_d (ref3, -0.0, GMP_RNDN);
+    if (i%6==3) mpfr_set_pos_zero (ref3);
+    if (i%6==4) mpfr_set_neg_zero (ref3);
     if (i%6==5) mpfr_random (ref3);
 
     if (i/6==0) ref2=0;
@@ -422,8 +436,8 @@ test2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
       if (i==0) mpfr_set_nan (ref2);
       if (i==1) mpfr_set_inf (ref2, 1);
       if (i==2) mpfr_set_inf (ref2, -1);
-      if (i==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
-      if (i==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
+      if (i==3) mpfr_set_pos_zero (ref2);
+      if (i==4) mpfr_set_neg_zero (ref2);
       if (i==5) mpfr_random (ref2);
 
       /* reference call: foo(a, b) */
@@ -467,8 +481,8 @@ test2a (char *foo, mp_prec_t prec)
       if (i==0) mpfr_set_nan (ref2);
       if (i==1) mpfr_set_inf (ref2, 1);
       if (i==2) mpfr_set_inf (ref2, -1);
-      if (i==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
-      if (i==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
+      if (i==3) mpfr_set_pos_zero (ref2);
+      if (i==4) mpfr_set_neg_zero (ref2);
       if (i==5) mpfr_random (ref2);
 
       /* reference call: foo(a, b) */
@@ -514,8 +528,8 @@ test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
       if (i==0) mpfr_set_nan (ref3);
       if (i==1) mpfr_set_inf (ref3, 1);
       if (i==2) mpfr_set_inf (ref3, -1);
-      if (i==3) mpfr_set_d (ref3, 0.0, GMP_RNDN);
-      if (i==4) mpfr_set_d (ref3, -0.0, GMP_RNDN);
+      if (i==3) mpfr_set_pos_zero (ref3);
+      if (i==4) mpfr_set_neg_zero (ref3);
       if (i==5) mpfr_random (ref3);
 
       /* reference call: foo(a, b, c) */

@@ -25,10 +25,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <float.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 /* Parameter "z1" of check() used to be last in the argument list, but that
@@ -61,10 +58,19 @@ _check (double x, double y, double z1, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d (yy, z2, GMP_RNDN);
   if (!mpfr_cmp (zz, yy) && cert && z1!=z2 && !(Isnan(z1) && Isnan(z2)))
     {
+      /* If the format is not IEEE, we can't really check if it fails
+	 (The mantissa could be != 53 bits and the base could be 10)*/
+#if _GMP_IEEE_FLOATS
       printf ("expected sum is %1.20e, got %1.20e\n", z1, z2);
       printf ("mpfr_add failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
               x, y, mpfr_print_rnd_mode (rnd_mode));
       exit (1);
+#else
+      printf ("Warning: expected sum is %1.20e, got %1.20e\n", z1, z2);
+      printf ("mpfr_add could have failed for x=%1.20e y=%1.20e"
+	      "with rnd_mode=%s\n",
+              x, y, mpfr_print_rnd_mode (rnd_mode));
+#endif
     }
   mpfr_clear (xx);
   mpfr_clear (yy);
@@ -168,8 +174,8 @@ check64 (void)
     }
 
   mpfr_set_prec (x, 92); mpfr_set_prec (t, 86); mpfr_set_prec (u, 53);
-  mpfr_set_d (x, -5.03525136761487735093e-74, GMP_RNDN);
-  mpfr_set_d (t, 8.51539046314262304109e-91, GMP_RNDN);
+  mpfr_set_str (x, "-5.03525136761487735093e-74", 10, GMP_RNDN);
+  mpfr_set_str (t, "8.51539046314262304109e-91", 10, GMP_RNDN);
   mpfr_add (u, x, t, GMP_RNDN);
   if (mpfr_get_d1 (u) != -5.0352513676148773509283672e-74)
     {
@@ -237,7 +243,7 @@ check64 (void)
   mpfr_set_str_binary(x, "0.10011010101000110101010000000011001001001110001011101011111011101E623");
   mpfr_set_str_binary(t, "0.10011010101000110101010000000011001001001110001011101011111011100E623");
   mpfr_sub(u, x, t, GMP_RNDU);
-  if (mpfr_get_d1 (u) != 9.4349060620538533806e167)
+  if (mpfr_cmp_ui_2exp(u, 1, 558))
     { /* 2^558 */
       printf ("Error (1) in mpfr_sub\n");
       exit (1);
@@ -321,8 +327,8 @@ check64 (void)
     }
 
   /* checks that NaN flag is correctly reset */
-  mpfr_set_d (t, 1.0, GMP_RNDN);
-  mpfr_set_d (u, 1.0, GMP_RNDN);
+  mpfr_set_ui (t, 1, GMP_RNDN);
+  mpfr_set_ui (u, 1, GMP_RNDN);
   mpfr_set_nan (x);
   mpfr_add (x, t, u, GMP_RNDN);
   if (mpfr_cmp_ui (x, 2))
@@ -425,9 +431,9 @@ check_same (void)
 {
   mpfr_t x;
 
-  mpfr_init(x); mpfr_set_d(x, 1.0, GMP_RNDZ);
+  mpfr_init(x); mpfr_set_ui(x, 1, GMP_RNDZ);
   mpfr_add(x, x, x, GMP_RNDZ);
-  if (mpfr_get_d1 (x) != 2.0)
+  if (mpfr_cmp_ui (x, 2)) 
     {
       printf ("Error when all 3 operands are equal\n");
       exit (1);

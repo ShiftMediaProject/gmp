@@ -19,10 +19,7 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdlib.h>
-#include <limits.h>
-#include <float.h>
-#include <math.h>
+#include "mpfr-impl.h"
 
 #if HAVE_CONFIG_H
 #include "config.h"
@@ -46,25 +43,25 @@ MA 02111-1307, USA. */
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define ABS(x) (((x)>0) ? (x) : -(x))
 
-void tests_memory_start _PROTO ((void));
-void tests_memory_end _PROTO ((void));
+void tests_memory_start _MPFR_PROTO ((void));
+void tests_memory_end _MPFR_PROTO ((void));
 
-void tests_start_mpfr _PROTO ((void));
-void tests_end_mpfr _PROTO ((void));
+void tests_start_mpfr _MPFR_PROTO ((void));
+void tests_end_mpfr _MPFR_PROTO ((void));
 
-void tests_machine_prec_double _PROTO ((void));
-void tests_machine_prec_long_double _PROTO ((void));
+void tests_machine_prec_double _MPFR_PROTO ((void));
+void tests_machine_prec_long_double _MPFR_PROTO ((void));
 
-unsigned short x86_fstcw _PROTO ((void));
-void x86_fldcw _PROTO ((unsigned short cw));
+unsigned short x86_fstcw _MPFR_PROTO ((void));
+void x86_fldcw _MPFR_PROTO ((unsigned short cw));
 
-int mpfr_set_machine_rnd_mode _PROTO ((mp_rnd_t));
-void mpfr_test_init _PROTO ((void));
-mp_limb_t randlimb _PROTO ((void));
-void randseed _PROTO ((unsigned int));
-int ulp _PROTO ((double, double));
-double dbl _PROTO ((double, int));
-double Ulp _PROTO ((double));
-int Isnan _PROTO ((double));
-void d_trace _PROTO ((const char *, double));
-void ld_trace _PROTO ((const char *, long double));
+int mpfr_set_machine_rnd_mode _MPFR_PROTO ((mp_rnd_t));
+void mpfr_test_init _MPFR_PROTO ((void));
+mp_limb_t randlimb _MPFR_PROTO ((void));
+void randseed _MPFR_PROTO ((unsigned int));
+int ulp _MPFR_PROTO ((double, double));
+double dbl _MPFR_PROTO ((double, int));
+double Ulp _MPFR_PROTO ((double));
+int Isnan _MPFR_PROTO ((double));
+void d_trace _MPFR_PROTO ((const char *, double));
+void ld_trace _MPFR_PROTO ((const char *, long double));

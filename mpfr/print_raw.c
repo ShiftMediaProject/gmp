@@ -23,9 +23,6 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <limits.h>
 
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
 #include "mpfr-impl.h"
 
 void
@@ -75,4 +72,27 @@ mpfr_print_binary (mpfr_srcptr x)
             }
         }
     }
+}
+
+void 
+mpfr_print_mant_binary(const char *str, const mp_limb_t *p, mp_prec_t r)
+{
+  int i;
+  mp_prec_t count = 0;
+  char c;
+  mp_size_t n = (r - 1) / BITS_PER_MP_LIMB + 1;
+
+  printf("%s ", str);
+  for(n-- ; n>=0 ; n--)
+    {
+      for(i = BITS_PER_MP_LIMB-1 ; i >=0 ; i--)
+        {
+          c = (p[n] & (1L<<i)) ? '1' : '0';
+          putchar(c);
+          count++;
+          if (count == r)
+            putchar('[');
+        }
+    }
+  putchar('\n');
 }

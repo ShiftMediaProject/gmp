@@ -38,7 +38,7 @@ mpfr_extract (mpz_ptr y, mpfr_srcptr p, unsigned int i)
 {
   int two_i = 1 << i;
   int two_i_2 = i ? two_i / 2 : 1;
-  mp_size_t size_p = MPFR_ESIZE(p);
+  mp_size_t size_p = MPFR_LIMB_SIZE(p);
 
   /* as 0 <= |p| < 1, we don't have to care with infinities, NaN, ... */
   
@@ -53,5 +53,5 @@ mpfr_extract (mpz_ptr y, mpfr_srcptr p, unsigned int i)
     MPN_COPY (PTR(y), MPFR_MANT(p) + size_p - two_i, two_i_2);
 
   MPN_NORMALIZE (PTR(y), two_i_2);
-  SIZ(y) = (MPFR_ISNEG(p)) ? -two_i_2 : two_i_2;
+  SIZ(y) = (MPFR_IS_STRICTNEG(p)) ? -two_i_2 : two_i_2;
 }

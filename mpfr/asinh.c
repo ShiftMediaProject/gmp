@@ -37,34 +37,34 @@ mpfr_asinh (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_t t, te, ti; /* auxiliary variables */
   long int err;
 
-  if (MPFR_IS_NAN(x))
-    {  
-      MPFR_SET_NAN(y); 
-      MPFR_RET_NAN;
-    }
-
-  MPFR_CLEAR_NAN(y);
-
-  if (MPFR_IS_INF(x))
-    { 
-      MPFR_SET_INF(y);
-      MPFR_SET_SAME_SIGN(y, x);
-      MPFR_RET(0);
-    }
-
-  MPFR_CLEAR_INF(y);
-
-  if (MPFR_IS_ZERO(x))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x) ))
     {
-      MPFR_SET_ZERO(y);   /* asinh(0) = 0 */
-      MPFR_SET_SAME_SIGN(y, x);
-      MPFR_RET(0);
+      if (MPFR_IS_NAN(x))
+	{  
+	  MPFR_SET_NAN(y); 
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(x))
+	{ 
+	  MPFR_SET_INF(y);
+	  MPFR_SET_SAME_SIGN(y, x);
+	  MPFR_RET(0);
+	}
+      else if (MPFR_IS_ZERO(x))
+	{
+	  MPFR_SET_ZERO(y);   /* asinh(0) = 0 */
+	  MPFR_SET_SAME_SIGN(y, x);
+	  MPFR_RET(0);
+	}
+      else
+	MPFR_ASSERTN(0);
     }
+  MPFR_CLEAR_FLAGS(y);
 
   Nx = MPFR_PREC(x);   /* Precision of input variable */
   Ny = MPFR_PREC(y);   /* Precision of output variable */
 
-  neg = MPFR_SIGN(x) < 0;
+  neg = MPFR_IS_NEG(x);
 
   /* General case */
     

@@ -22,10 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 #define check53(n, d, rnd, res) check4(n, d, rnd, 53, res)
@@ -160,10 +157,10 @@ check_convergence (void)
     {
       mpfr_set_prec(x, i);
       mpfr_set_prec(y, i);
-      mpfr_set_d(x, 1.0, GMP_RNDN);
+      mpfr_set_ui(x, 1, GMP_RNDN);
       for (j=0;j<4;j++)
         {
-          mpfr_set_d(y, 1.0, GMP_RNDN);
+          mpfr_set_ui (y, 1, GMP_RNDN);
           mpfr_div(y, x, y, j);
           if (mpfr_cmp_ui(y, 1))
             {

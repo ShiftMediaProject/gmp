@@ -22,17 +22,13 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
-#define check2(a,rnd,res) check1(a,rnd,res,1,0)
 #define check(a,r) check2(a,r,0.0)
 
 static int
-check1 (double a, mp_rnd_t rnd_mode, double res1, int ck, int max_ulp)
+check2 (double a, mp_rnd_t rnd_mode, double res1)
 {
   mpfr_t ta, tres;
   double res2;
@@ -185,7 +181,7 @@ special (void)
   /* check large precision */
   mpfr_set_prec (x, 3322);
   mpfr_set_prec (y, 3322);
-  mpfr_set_d (x, 3.0, GMP_RNDN);
+  mpfr_set_ui (x, 3, GMP_RNDN);
   mpfr_sqrt (x, x, GMP_RNDN);
   mpfr_log (y, x, GMP_RNDN);
 

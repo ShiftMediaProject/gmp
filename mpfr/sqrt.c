@@ -42,48 +42,44 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
 
   TMP_DECL(marker);
 
-    if (MPFR_IS_NAN(u))
-      {
-        MPFR_SET_NAN(r);
-        MPFR_RET_NAN;
-      }
+  if (MPFR_UNLIKELY(MPFR_IS_SINGULAR(u)))
+    {
+      if (MPFR_IS_NAN(u))
+	{
+	  MPFR_SET_NAN(r);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_ZERO(u))
+	{
+	  /* 0+ or 0- */
+	  MPFR_SET_SAME_SIGN(r, u);
+	  MPFR_SET_ZERO(r);
+	  MPFR_RET(0); /* zero is exact */
+	}
+      else if (MPFR_IS_INF(u))
+	{ 
+	  /* sqrt(-Inf) = NAN */
+	  if (MPFR_IS_NEG(u))
+	    {
+	      MPFR_SET_NAN(r);
+	      MPFR_RET_NAN;
+	    }
+	  MPFR_SET_POS(r);
+	  MPFR_SET_INF(r);
+	  MPFR_RET(0);
+	}
+    }
+  if (MPFR_UNLIKELY(MPFR_IS_NEG(u)))
+    {
+      MPFR_SET_NAN(r);
+      MPFR_RET_NAN;
+    }
+  MPFR_CLEAR_FLAGS(r);
+  MPFR_SET_POS(r);
 
-    if (MPFR_SIGN(u) < 0)
-      {
-        if (MPFR_IS_INF(u) || MPFR_NOTZERO(u))
-          {
-            MPFR_SET_NAN(r);
-            MPFR_RET_NAN;
-          }
-        else
-          { /* sqrt(-0) = -0 */
-            MPFR_CLEAR_FLAGS(r);
-            MPFR_SET_ZERO(r);
-            MPFR_SET_NEG(r);
-            MPFR_RET(0);
-          }
-      }
-
-    MPFR_CLEAR_NAN(r);
-    MPFR_SET_POS(r);
-
-    if (MPFR_IS_INF(u))
-      { 
-        MPFR_SET_INF(r);
-        MPFR_RET(0);
-      }
-
-    MPFR_CLEAR_INF(r);
-
-    if (MPFR_IS_ZERO(u))
-      {
-        MPFR_SET_ZERO(r);
-        MPFR_RET(0); /* zero is exact */
-      }
-
-    up = MPFR_MANT(u);
-    usize = (MPFR_PREC(u) - 1)/BITS_PER_MP_LIMB + 1;
-
+  up = MPFR_MANT(u);
+  usize = MPFR_LIMB_SIZE(u);
+  
 #ifdef DEBUG
     printf("Entering square root : ");
     for(k = usize - 1; k >= 0; k--) { printf("%lu ", up[k]); }

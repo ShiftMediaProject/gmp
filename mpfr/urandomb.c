@@ -42,7 +42,8 @@ mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
 
   rp = MPFR_MANT(rop);
   nbits = MPFR_PREC(rop);
-  nlimbs = (nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
+  nlimbs = MPFR_LIMB_SIZE(rop);
+  /*(nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;*/
 
   _gmp_rand (rp, rstate, nlimbs * BITS_PER_MP_LIMB);
 
@@ -74,6 +75,8 @@ mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
       if (k)
         MPN_ZERO (rp, k);
     }
+  else
+    MPFR_SET_ZERO(rop);
 
   MPFR_SET_POS (rop);
   return 0;

@@ -28,14 +28,6 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-#ifdef XDEBUG
-#undef _GMP_IEEE_FLOATS
-#endif
-
-#ifndef _GMP_IEEE_FLOATS
-#define _GMP_IEEE_FLOATS 0
-#endif
-
 /* "double" NaN and infinities are written as explicit bytes to be sure of
    getting what we want, and to be sure of not depending on libm.
 
@@ -59,19 +51,28 @@ struct dbl_bytes {
 #define MPFR_DBL_NAN   (* (const double *) dbl_nan.b)
 
 #if HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
-static const struct dbl_bytes dbl_infp = { { 0, 0, 0, 0, 0, 0, 0xF0, 0x7F } };
-static const struct dbl_bytes dbl_infm = { { 0, 0, 0, 0, 0, 0, 0xF0, 0xFF } };
-static const struct dbl_bytes dbl_nan  = { { 0, 0, 0, 0, 0, 0, 0xF8, 0x7F } };
+static const struct dbl_bytes dbl_infp = 
+  { { 0, 0, 0, 0, 0, 0, 0xF0, 0x7F }, 0.0 };
+static const struct dbl_bytes dbl_infm = 
+  { { 0, 0, 0, 0, 0, 0, 0xF0, 0xFF }, 0.0 };
+static const struct dbl_bytes dbl_nan  = 
+  { { 0, 0, 0, 0, 0, 0, 0xF8, 0x7F }, 0.0 };
 #endif
 #if HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
-static const struct dbl_bytes dbl_infp = { { 0, 0, 0xF0, 0x7F, 0, 0, 0, 0 } };
-static const struct dbl_bytes dbl_infm = { { 0, 0, 0xF0, 0xFF, 0, 0, 0, 0 } };
-static const struct dbl_bytes dbl_nan  = { { 0, 0, 0xF8, 0x7F, 0, 0, 0, 0 } };
+static const struct dbl_bytes dbl_infp = 
+  { { 0, 0, 0xF0, 0x7F, 0, 0, 0, 0 }, 0.0 };
+static const struct dbl_bytes dbl_infm = 
+  { { 0, 0, 0xF0, 0xFF, 0, 0, 0, 0 }, 0.0 };
+static const struct dbl_bytes dbl_nan  = 
+  { { 0, 0, 0xF8, 0x7F, 0, 0, 0, 0 }, 0.0 };
 #endif
 #if HAVE_DOUBLE_IEEE_BIG_ENDIAN
-static const struct dbl_bytes dbl_infp = { { 0x7F, 0xF0, 0, 0, 0, 0, 0, 0 } };
-static const struct dbl_bytes dbl_infm = { { 0xFF, 0xF0, 0, 0, 0, 0, 0, 0 } };
-static const struct dbl_bytes dbl_nan  = { { 0x7F, 0xF8, 0, 0, 0, 0, 0, 0 } };
+static const struct dbl_bytes dbl_infp = 
+  { { 0x7F, 0xF0, 0, 0, 0, 0, 0, 0 }, 0.0 };
+static const struct dbl_bytes dbl_infm = 
+  { { 0xFF, 0xF0, 0, 0, 0, 0, 0, 0 }, 0.0 };
+static const struct dbl_bytes dbl_nan  = 
+  { { 0x7F, 0xF8, 0, 0, 0, 0, 0, 0 }, 0.0 };
 #endif
 
 #else /* _GMP_IEEE_FLOATS */
@@ -201,9 +202,9 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
           MPFR_ASSERTN(nbits >= 1);
         }
       np = (nbits - 1) / BITS_PER_MP_LIMB;
-      tp = (mp_ptr) (*__gmp_allocate_func) ((np + 1) * BYTES_PER_MP_LIMB);
-      carry = mpfr_round_raw (tp, MPFR_MANT(src), MPFR_PREC(src), negative,
-                             nbits, rnd_mode, (int *) 0);
+      tp = (mp_ptr) (*__gmp_allocate_func)((np+1) * BYTES_PER_MP_LIMB);
+      carry = mpfr_round_raw_4 (tp, MPFR_MANT(src), MPFR_PREC(src), negative,
+				nbits, rnd_mode);
       if (carry)
         d = 1.0;
       else
@@ -232,14 +233,14 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
 double
 mpfr_get_d (mpfr_srcptr src, mp_rnd_t rnd_mode)
 {
-  return mpfr_get_d3 (src, MPFR_IS_FP(src) && MPFR_NOTZERO(src) ?
+  return mpfr_get_d3 (src, MPFR_IS_PURE_FP(src) ?
                       MPFR_GET_EXP (src) : 0, rnd_mode);
 }
 
 double
 mpfr_get_d1 (mpfr_srcptr src)
 {
-  return mpfr_get_d3 (src, MPFR_IS_FP(src) && MPFR_NOTZERO(src) ?
+  return mpfr_get_d3 (src, MPFR_IS_PURE_FP(src) ?
                       MPFR_GET_EXP (src) : 0, __gmpfr_default_rounding_mode);
 }
 
@@ -251,7 +252,7 @@ mpfr_get_d_2exp (long *expptr, mpfr_srcptr src, mp_rnd_t rnd_mode)
 
   ret = mpfr_get_d3 (src, 0, rnd_mode);
 
-  if (MPFR_IS_FP(src) && MPFR_NOTZERO(src))
+  if (MPFR_IS_PURE_FP(src))
     {
       exp = MPFR_GET_EXP (src);
 

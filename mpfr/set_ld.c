@@ -39,7 +39,7 @@ static const struct {
 } ldbl_max_struct = {
   { '\377','\377','\377','\377',
     '\377','\377','\377','\377',
-    '\376','\177' }
+    '\376','\177' }, 0.0
 };
 #define MPFR_LDBL_MAX   (* (const long double *) ldbl_max_struct.bytes)
 #else
@@ -120,35 +120,35 @@ mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
           /* since -DBL_MAX <= d <= DBL_MAX, the cast to double should not
              overflow here */
           mpfr_set_d (u, (double) d, GMP_RNDN);
-      /* warning: using MPFR_IS_ZERO will cause a READ_UNINIT_MEM if u=Inf */
-      if (mpfr_cmp_ui (u, 0) == 0 && (d != (long double) 0.0)) /* underflow */
-        {
-          long double div10, div11, div12, div13;
-          div10 = (long double) (double) 5.5626846462680034577255e-309; /* 2^(-2^10) */
-          div11 = div10 * div10; /* 2^(-2^11) */
-          div12 = div11 * div11; /* 2^(-2^12) */
-          div13 = div12 * div12; /* 2^(-2^13) */
-          if (ABS(d) <= div13)
-            {
-              d = d / div13; /* exact */
-              shift_exp -= 8192;
-            }
-          if (ABS(d) <= div12)
-            {
-              d = d / div12; /* exact */
-              shift_exp -= 4096;
-            }
-          if (ABS(d) <= div11)
-            {
-              d = d / div11; /* exact */
-              shift_exp -= 2048;
-            }
-          if (ABS(d) <= div10)
-            {
-              d = d / div10; /* exact */
-              shift_exp -= 1024;
-            }
-        }
+	  /* warning: using MPFR_IS_ZERO will cause a READ_UNINIT_MEM if u=Inf */
+	  if (mpfr_cmp_ui (u, 0) == 0 && (d != (long double) 0.0)) /* underflow */
+	    {
+	      long double div10, div11, div12, div13;
+	      div10 = (long double) (double) 5.5626846462680034577255e-309; /* 2^(-2^10) */
+	      div11 = div10 * div10; /* 2^(-2^11) */
+	      div12 = div11 * div11; /* 2^(-2^12) */
+	      div13 = div12 * div12; /* 2^(-2^13) */
+	      if (ABS(d) <= div13)
+		{
+		  d = d / div13; /* exact */
+		  shift_exp -= 8192;
+		}
+	      if (ABS(d) <= div12)
+		{
+		  d = d / div12; /* exact */
+		  shift_exp -= 4096;
+		}
+	      if (ABS(d) <= div11)
+		{
+		  d = d / div11; /* exact */
+		  shift_exp -= 2048;
+		}
+	      if (ABS(d) <= div10)
+		{
+		  d = d / div10; /* exact */
+		  shift_exp -= 1024;
+		}
+	    }
         }
       mpfr_add (t, t, u, GMP_RNDN); /* exact */
       if (!mpfr_number_p (t))

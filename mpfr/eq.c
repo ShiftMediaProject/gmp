@@ -34,34 +34,23 @@ mpfr_eq (mpfr_srcptr u, mpfr_srcptr v, unsigned long int n_bits)
   mp_srcptr up, vp;
   mp_size_t usize, vsize, size, i;
   mp_exp_t uexp, vexp;
-  int usign, k;
+  int k;
 
-  if (MPFR_IS_NAN(u) || MPFR_IS_NAN(v))
-    return 0; /* non equal */
-
-  usign = MPFR_SIGN(u);
-
-  if (MPFR_IS_INF(u))
-    return MPFR_IS_INF(v) && usign == MPFR_SIGN(v); /* +Inf = +Inf */
-  else if (MPFR_IS_INF(v))
-    return 0; /* +Inf != -Inf */
+  if (MPFR_ARE_SINGULAR(u, v))
+    {
+      if (MPFR_IS_NAN(u) || MPFR_IS_NAN(v))
+	return 0; /* non equal */
+      else if (MPFR_IS_INF(u) && MPFR_IS_INF(v))
+	return (MPFR_SIGN(u) == MPFR_SIGN(v));
+      else if (MPFR_IS_ZERO(u) && MPFR_IS_ZERO(v))
+	return 1;
+      else
+	return 0;
+    }
 
   /* 1. Are the signs different?  */
-  if (usign == MPFR_SIGN(v))
-    {
-      /* U and V are both non-negative or both negative.  */
-      if (MPFR_IS_ZERO(u))
-        return MPFR_IS_ZERO(v); /* 0 = 0 */
-      if (MPFR_IS_ZERO(v))
-        return MPFR_IS_ZERO(u); /* 0 = 0 */
-
-      /* Fall out.  */
-    }
-  else
-    {
-      /* Either U or V is negative, but not both.  */
-      return MPFR_IS_ZERO(u) && MPFR_IS_ZERO(v);
-    }
+  if (MPFR_SIGN(u) != MPFR_SIGN(v))
+    return 0;
 
   uexp = MPFR_GET_EXP (u);
   vexp = MPFR_GET_EXP (v);
@@ -78,7 +67,7 @@ mpfr_eq (mpfr_srcptr u, mpfr_srcptr v, unsigned long int n_bits)
 
   if (usize > vsize)
     {
-      if (vsize * BITS_PER_MP_LIMB < n_bits)
+      if ((unsigned long) vsize * BITS_PER_MP_LIMB < n_bits)
 	{
 	  k = usize - vsize - 1; 
 	  while (k >= 0 && !up[k]) --k; 
@@ -89,7 +78,7 @@ mpfr_eq (mpfr_srcptr u, mpfr_srcptr v, unsigned long int n_bits)
     }
   else if (vsize > usize)
     {
-      if (usize * BITS_PER_MP_LIMB < n_bits)
+      if ((unsigned long) usize * BITS_PER_MP_LIMB < n_bits)
 	{
 	  k = vsize - usize - 1; 
 	  while (k >= 0 && !vp[k]) --k; 
@@ -105,8 +94,8 @@ mpfr_eq (mpfr_srcptr u, mpfr_srcptr v, unsigned long int n_bits)
 
   /* now size = min (usize, vsize) */
 
-  if (size > (n_bits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB)
-    size = (n_bits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
+  if ((unsigned long)size > (n_bits + BITS_PER_MP_LIMB-1) / BITS_PER_MP_LIMB)
+    size = (n_bits + BITS_PER_MP_LIMB-1) / BITS_PER_MP_LIMB;
 
   up += usize - size;
   vp += vsize - size;

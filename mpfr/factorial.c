@@ -36,7 +36,7 @@ mpfr_fac_ui (mpfr_ptr y, unsigned long int x , mp_rnd_t rnd_mode)
   /****** Declaration ******/
 
     mpfr_t t;       /* Variable of Intermediary Calculation*/
-    int i;
+    unsigned long i;
     int round, inexact = 0;
     int boucle = 1;
 

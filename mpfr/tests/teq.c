@@ -21,16 +21,14 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
 teq (mpfr_t x)
 {
   mpfr_t y;
-  long k, px, mx;
+  unsigned long k, px, mx;
 
   mpfr_init2(y, MPFR_PREC(x));
 

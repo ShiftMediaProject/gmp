@@ -1,6 +1,6 @@
 /* mpfr_init2 -- initialize a floating-point number with given precision
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -29,6 +29,7 @@ void
 mpfr_init2 (mpfr_ptr x, mp_prec_t p)
 {
   mp_size_t xsize;
+  mp_ptr tmp;
 
   /* p=1 is not allowed since the rounding to nearest even rule requires at
      least two bits of mantissa: the neighbours of 3/2 are 1*2^0 and 1*2^1,
@@ -36,10 +37,13 @@ mpfr_init2 (mpfr_ptr x, mp_prec_t p)
   MPFR_ASSERTN(p >= MPFR_PREC_MIN && p <= MPFR_PREC_MAX);
 
   xsize = (mp_size_t) ((p - 1) / BITS_PER_MP_LIMB) + 1;
+  tmp   = (mp_ptr) (*__gmp_allocate_func)(MPFR_MALLOC_SIZE(xsize));
 
   MPFR_PREC(x) = p;
-  MPFR_MANT(x) = (mp_ptr)
-    (*__gmp_allocate_func) ((size_t) xsize * BYTES_PER_MP_LIMB);
-  MPFR_SIZE(x) = xsize;
+  MPFR_EXP (x) = MPFR_EXP_INVALID; /* make sure that the exp field has a
+                                      valid value in the C point of view */
+  MPFR_SET_POS(x);   /* Set a sign */
+  MPFR_SET_MANT_PTR(x, tmp);
+  MPFR_SET_ALLOC_SIZE(x, xsize);
   MPFR_SET_NAN(x); /* initializes to NaN */
 }

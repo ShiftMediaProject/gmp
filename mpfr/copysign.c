@@ -1,6 +1,6 @@
 /* mpfr_copysign -- Produce a value with the magnitude of x and sign of y
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 int
 mpfr_copysign (mpfr_ptr z, mpfr_srcptr x ,mpfr_srcptr y , mp_rnd_t rnd_mode)
 {
-  if (MPFR_IS_NAN(y))
+  if (MPFR_UNLIKELY( MPFR_IS_NAN(y)))
     {
       MPFR_SET_NAN(z);
       MPFR_RET_NAN;

@@ -22,10 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 int maxu=0;
@@ -78,7 +75,7 @@ check_large (double d, int n, mp_rnd_t rnd)
   mpfr_init2 (y, n);
   if (d == 0.0)
     { /* try exp(Pi*sqrt(163)/3)-640320 */
-      mpfr_set_d (x, 163.0, rnd);
+      mpfr_set_ui (x, 163, rnd);
       mpfr_sqrt (x, x, rnd);
       mpfr_const_pi (y, rnd);
       mpfr_mul (x, x, y, rnd);
@@ -89,7 +86,7 @@ check_large (double d, int n, mp_rnd_t rnd)
   mpfr_exp (y, x, rnd);
   if (d == 0.0)
     {
-      mpfr_set_d (x, 640320.0, rnd);
+      mpfr_set_ui (x, 640320, rnd);
       mpfr_sub (y, y, x, rnd);
       printf ("exp(Pi*sqrt(163)/3)-640320=");
     }

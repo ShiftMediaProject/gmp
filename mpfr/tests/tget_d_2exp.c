@@ -22,10 +22,7 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 
@@ -44,7 +41,7 @@ check_round (void)
 
   for (rnd_mode = 0; rnd_mode < 4; rnd_mode++)
     {
-      for (i = 0; i < numberof (data); i++)
+      for (i = 0; i < (int) numberof (data); i++)
         {
           mpfr_set_ui (f, 1L, GMP_RNDZ);
           mpfr_mul_2exp (f, f, data[i], GMP_RNDZ);

@@ -27,7 +27,7 @@ dnl  The following line allows the autoconf wrapper (when installed)
 dnl  to work as expected.
 AC_PREREQ(2.50)
 
-AC_DEFUN(AC_MY_LIBS,
+AC_DEFUN([AC_MY_LIBS],
 [
 if ` test "$1" `
 then  
@@ -45,7 +45,7 @@ fi
 ]
 )
 
-AC_DEFUN(AC_MY_HEADERS, 
+AC_DEFUN([AC_MY_HEADERS], 
 [
 if  test "$1" 
 then  
@@ -55,7 +55,7 @@ else
 fi
 ])
 
-AC_DEFUN(AC_CHECK_OS, 
+AC_DEFUN([AC_CHECK_OS], 
 [
 AC_CACHE_CHECK([OS type], mpfr_cv_os_type, [
   mpfr_cv_os_type=`uname -s`
@@ -63,7 +63,7 @@ AC_CACHE_CHECK([OS type], mpfr_cv_os_type, [
 OS_TYPE=$mpfr_cv_os_type
 ])
 
-AC_DEFUN(AC_CHECK_MACHTYPE,
+AC_DEFUN([AC_CHECK_MACHTYPE],
 [
 AC_CACHE_CHECK([Mach type], mpfr_cv_mach_type, [
   mpfr_cv_mach_type=`uname -m`
@@ -73,7 +73,7 @@ MACHTYPE=$mpfr_cv_mach_type
 
 dnl ------------------------------------------------------------
 
-AC_DEFUN(MPFR_CONFIGS,
+AC_DEFUN([MPFR_CONFIGS],
 [
 AC_REQUIRE([AC_OBJEXT])
 AC_REQUIRE([MPFR_CHECK_LIBM])
@@ -255,7 +255,7 @@ dnl  perhaps we should merge with that macro, to match data formats
 dnl  irrespective of the C type in question.  Or perhaps just let the code
 dnl  use DOUBLE macros when sizeof(double)==sizeof(long double).
 
-AC_DEFUN(MPFR_C_LONG_DOUBLE_FORMAT,
+AC_DEFUN([MPFR_C_LONG_DOUBLE_FORMAT],
 [AC_REQUIRE([AC_PROG_CC])
 AC_REQUIRE([AC_PROG_AWK])
 AC_REQUIRE([AC_OBJEXT])
@@ -471,7 +471,7 @@ dnl  MPFR_CHECK_LIBM
 dnl  ---------------
 dnl  Determine a math library -lm to use.
 
-AC_DEFUN(MPFR_CHECK_LIBM,
+AC_DEFUN([MPFR_CHECK_LIBM],
 [AC_REQUIRE([AC_CANONICAL_HOST])
 AC_SUBST(MPFR_LIBM,'')
 case $host in

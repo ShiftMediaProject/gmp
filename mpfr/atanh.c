@@ -34,48 +34,36 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
 {
   int inexact =0;
   mpfr_t x;
-  int flag_neg=0;
-
   mp_prec_t Nx=MPFR_PREC(xt);   /* Precision of input variable */
-  mpfr_init2(x,Nx);
-  mpfr_set(x,xt,GMP_RNDN); 
- 
-  if (MPFR_SIGN(x) < 0)
-    {
-      MPFR_CHANGE_SIGN(x);
-      flag_neg=1;
-    }
 
-  if (MPFR_IS_NAN(x)) 
-    {  
-      MPFR_SET_NAN(y); 
-      mpfr_clear(x);
-      MPFR_RET_NAN;
+  /* Special cases */
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(xt) ))
+    {
+      if (MPFR_IS_NAN(xt)) 
+	{  
+	  MPFR_SET_NAN(y);
+	  MPFR_RET_NAN;
+	}
+      else if (MPFR_IS_INF(xt))
+	{ 
+	  MPFR_SET_INF(y);
+	  MPFR_SET_SAME_SIGN(y, xt);
+	  MPFR_RET(0);
+	}
+      else if (MPFR_IS_ZERO(xt))
+	{
+	  MPFR_SET_ZERO(y);   /* atanh(0) = 0 */
+	  MPFR_SET_SAME_SIGN(y,xt);
+	  MPFR_RET(0);
+	}
+      else
+	MPFR_ASSERTN(0);
     }
-  MPFR_CLEAR_NAN(y);
+  /* Useless due to final mpfr_set
+     MPFR_CLEAR_FLAGS(y);*/
   
-
-  if (MPFR_IS_INF(x))
-    { 
-      MPFR_SET_INF(y);
-      MPFR_SET_SAME_SIGN(y,x);
-      if(flag_neg)
-	MPFR_CHANGE_SIGN(y);
-      mpfr_clear(x);
-      MPFR_RET(0);
-    }
-
-  MPFR_CLEAR_INF(y);
-
-  if (MPFR_IS_ZERO(x))
-    {
-      MPFR_SET_ZERO(y);   /* atanh(0) = 0 */
-      MPFR_SET_SAME_SIGN(y,x);
-      if(flag_neg)
-	MPFR_CHANGE_SIGN(y);
-      mpfr_clear(x); 
-      MPFR_RET(0);
-    }
+  mpfr_init2(x,Nx);
+  mpfr_abs(x, xt, GMP_RNDN); 
 
   /* General case */
   {
@@ -126,7 +114,7 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
                                           Ny + (rnd_mode == GMP_RNDN))
                          || MPFR_IS_ZERO(t)));
 
-    if(flag_neg)
+    if (MPFR_IS_NEG(xt))
       MPFR_CHANGE_SIGN(t);
 
     inexact = mpfr_set (y, t, rnd_mode);
@@ -138,3 +126,4 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
   mpfr_clear(x);
   return inexact;
 }
+

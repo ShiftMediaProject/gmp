@@ -27,11 +27,11 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 void
-mpfr_set_prec_raw (mpfr_ptr x, mp_prec_t p)
+mpfr_set_prec_raw (mpfr_ptr x, mpfr_prec_t p)
 {
   MPFR_ASSERTN(p >= MPFR_PREC_MIN && p <= MPFR_PREC_MAX);
 
-  if (p > (mp_prec_t) MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB)
+  if (p > (mpfr_prec_t) MPFR_GET_ALLOC_SIZE(x) * BITS_PER_MP_LIMB)
     {
       fprintf (stderr, "*** precision too large for allocated space\n");
       exit (1);

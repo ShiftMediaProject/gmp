@@ -27,7 +27,7 @@ MA 02111-1307, USA. */
 int
 mpfr_neg (mpfr_ptr a, mpfr_srcptr b, mp_rnd_t rnd_mode)
 {
-  if (a != b)
+  if (MPFR_UNLIKELY(a != b))
     return mpfr_set4 (a, b, rnd_mode, -MPFR_SIGN(b));
   else
     {

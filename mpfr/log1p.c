@@ -34,53 +34,54 @@ mpfr_log1p (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 {
   int comp, inexact = 0;
 
-  if (MPFR_IS_NAN(x))
+  if (MPFR_UNLIKELY( MPFR_IS_SINGULAR(x)))
     {
-      MPFR_SET_NAN(y);
-      MPFR_RET_NAN;
-    }
-
-  MPFR_CLEAR_NAN(y);
-
-  /* check for inf or -inf (result is not defined) */
-  if (MPFR_IS_INF(x))
-    {
-      if (MPFR_SIGN(x) > 0)
-        {
-          MPFR_SET_INF(y);
-          MPFR_SET_POS(y);
-          MPFR_RET(0);
-        }
+      if (MPFR_IS_NAN(x)) 
+	{
+	  MPFR_SET_NAN(y); 
+	  MPFR_RET_NAN;
+	}
+      /* check for inf or -inf (result is not defined) */
+      else if (MPFR_IS_INF(x))
+	{
+	  if (MPFR_IS_POS(x))
+	    {
+	      MPFR_SET_INF(y);
+	      MPFR_SET_POS(y);
+	      MPFR_RET(0);
+	    }
+	  else
+	    {
+	      MPFR_SET_NAN(y);
+	      MPFR_RET_NAN;
+	    }
+	}
+      else if (MPFR_IS_ZERO(x))
+	{
+	  MPFR_SET_ZERO(y);   /* log1p(+/- 0) = +/- 0 */
+	  MPFR_SET_SAME_SIGN(y, x);
+	  MPFR_RET(0);
+	}
       else
-        {
-          MPFR_SET_NAN(y);
-          MPFR_RET_NAN;
-        }
+	MPFR_ASSERTN(0);
     }
-
+  
   comp = mpfr_cmp_si(x,-1);
   /* x<-1 undefined */
-  if (comp < 0)
+  if (MPFR_UNLIKELY(comp <= 0)) 
     {
+      if (comp == 0)
+	/* x=0: log1p(-1)=-inf (division by zero) */
+	{
+	  MPFR_SET_INF(y);
+	  MPFR_SET_POS(y);
+	  MPFR_RET(0);
+	}
       MPFR_SET_NAN(y);
       MPFR_RET_NAN;
     }
-  /* x=0: log1p(-1)=-inf (division by zero) */
-  if (comp == 0)
-    {
-      MPFR_SET_INF(y);
-      MPFR_SET_POS(y);
-      MPFR_RET(0);
-    }
 
-  MPFR_CLEAR_INF(y);
-
-  if (MPFR_IS_ZERO(x))
-    {
-      MPFR_SET_ZERO(y);   /* log1p(+/- 0) = +/- 0 */
-      MPFR_SET_SAME_SIGN(y, x);
-      MPFR_RET(0);
-    }
+  MPFR_CLEAR_FLAGS(y);
 
   /* General case */
   {
@@ -90,10 +91,10 @@ mpfr_log1p (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     /* Declaration of the size variable */
     mp_prec_t Nx = MPFR_PREC(x);   /* Precision of input variable */
     mp_prec_t Ny = MPFR_PREC(y);   /* Precision of input variable */
-
+    
     mp_prec_t Nt;   /* Precision of the intermediary variable */
     long int err;  /* Precision of error */
-
+                
     /* compute the precision of intermediary variable */
     Nt = MAX(Nx,Ny);
     /* the optimal number of bits : see algorithms.ps */
@@ -107,7 +108,7 @@ mpfr_log1p (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       {
         /* reactualisation of the precision */
         mpfr_set_prec (t, Nt);
-
+      
         /* compute log1p */
         mpfr_add_ui (t, x, 1, GMP_RNDN);   /* 1+x */
         mpfr_log (t, t, GMP_RNDN);        /* log(1+x)*/

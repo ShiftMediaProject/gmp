@@ -22,13 +22,11 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "gmp.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 static void
-test_random (unsigned long nbtests, unsigned long prec, int verbose)
+test_random (long nbtests, mp_prec_t prec, int verbose)
 {
   mpfr_t x; 
   int *tab, size_tab, k; 
@@ -82,7 +80,7 @@ test_random (unsigned long nbtests, unsigned long prec, int verbose)
 }
 
 static void
-test_random2 (unsigned long nbtests, unsigned long prec, int verbose)
+test_random2 (long nbtests, mp_prec_t prec, int verbose)
 {
   mpfr_t x;
   int *tab, size_tab, k, sh, xn;
@@ -150,7 +148,7 @@ test_random2 (unsigned long nbtests, unsigned long prec, int verbose)
 }
 
 static void
-test_urandomb (unsigned long nbtests, unsigned long prec, int verbose)
+test_urandomb (long nbtests, mp_prec_t prec, int verbose)
 {
   mpfr_t x; 
   int *tab, size_tab, k, sh, xn;
@@ -217,7 +215,9 @@ test_urandomb (unsigned long nbtests, unsigned long prec, int verbose)
 int
 main (int argc, char *argv[])
 {
-  unsigned long nbtests, prec; int verbose = 0; 
+  long nbtests;
+  mp_prec_t prec; 
+  int verbose = 0; 
   
   tests_start_mpfr ();
 
@@ -227,7 +227,7 @@ main (int argc, char *argv[])
   nbtests = 10000;
   if (argc > 1)
     {
-      int a = atoi(argv[1]);
+      long a = atol(argv[1]);
       if (a != 0)
         nbtests = a;
     }
@@ -235,7 +235,7 @@ main (int argc, char *argv[])
   if (argc <= 2)
     prec = 1000;
   else
-    prec = atoi(argv[2]);
+    prec = atol(argv[2]);
 
   test_random (nbtests, prec, verbose);
   test_random2 (nbtests, prec, verbose); 

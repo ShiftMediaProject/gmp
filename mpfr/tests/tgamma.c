@@ -21,10 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gmp.h"
-#include "gmp-impl.h"
-#include "mpfr.h"
-#include "mpfr-impl.h"
+
 #include "mpfr-test.h"
 
 int mpfr_gamma (mpfr_ptr, mpfr_srcptr, mp_rnd_t);
@@ -36,7 +33,6 @@ int
 main (void)
 {
   mpfr_t x, y;
-  double xd, yd;
 
   tests_start_mpfr ();
 
@@ -46,22 +42,26 @@ main (void)
   mpfr_set_prec (x, 53);
   mpfr_set_prec (y, 53);
 
-  mpfr_set_d (x, xd = 1.0762904832837976166, GMP_RNDN);
+#define CHECK_X1 "1.0762904832837976166"
+#define CHECK_Y1 0.96134843256452096050
+
+  mpfr_set_str (x, CHECK_X1, 10, GMP_RNDN);
   mpfr_gamma (y, x, GMP_RNDN);
-  if (mpfr_get_d (y, GMP_RNDN) != (yd = 0.96134843256452096050))
+  if (mpfr_get_d (y, GMP_RNDN) != CHECK_Y1 )
     {
-      printf ("mpfr_gamma(%1.20e) is wrong: expected %1.20e, got %1.20e\n",
-              xd, yd, mpfr_get_d (y, GMP_RNDN));
+      printf ("mpfr_gamma("CHECK_X1") is wrong: expected %1.20e, got %1.20e\n",
+              CHECK_Y1, mpfr_get_d (y, GMP_RNDN));
       exit (1);
     }
 
-
-  mpfr_set_d (x, xd = 9.23709516716202383435e-01, GMP_RNDN);
+#define CHECK_X2 "9.23709516716202383435e-01"
+#define CHECK_Y2 1.0502315560291053398
+  mpfr_set_str (x, CHECK_X2, 10, GMP_RNDN);
   mpfr_gamma (y, x, GMP_RNDN);
-  if (mpfr_get_d (y, GMP_RNDN) != (yd = 1.0502315560291053398))
+  if (mpfr_get_d (y, GMP_RNDN) != CHECK_Y2)
     {
-      printf ("mpfr_gamma(%1.20e) is wrong: expected %1.20e, got %1.20e\n",
-              xd, yd, mpfr_get_d (y, GMP_RNDN));
+      printf ("mpfr_gamma("CHECK_X2") is wrong: expected %1.20e, got %1.20e\n",
+              CHECK_Y2, mpfr_get_d (y, GMP_RNDN));
       exit (1);
     }
 
