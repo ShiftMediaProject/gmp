@@ -1644,8 +1644,9 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 	  MP_LIMB_T_SWAP (x[s->size-1], y[s->size-1]);		\
 	else if (mpn_cmp (x, y, s->size) < 0)			\
 	  {							\
-	    if (y[s->size - 1] > 1)				\
-	      y[s->size - 1]--;					\
+	    if (y[s->size - 1] > 2)				\
+	      /* Subtract 2 to keep y odd even when s->size = 1.  */	\
+	      y[s->size - 1] -= 2;				\
 	    else						\
 	      x[s->size - 1]++;					\
 	  }							\
