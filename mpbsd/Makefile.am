@@ -23,47 +23,17 @@
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -DBERKELEY_MP -D__GMP_WITHIN_GMP -D__gmpz_realloc=_mp_realloc \
-	-I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
+	-I$(top_srcdir)
 
-nodist_libmpbsd_la_SOURCES = \
-	add.c cmp.c gcd.c mul.c powm.c realloc.c \
-	set.c sqrtrem.c sub.c tdiv_qr.c
-libmpbsd_la_SOURCES = \
-	itom.c mfree.c min.c mout.c mtox.c rpow.c sdiv.c xtom.c
+# The mpz sources here all know to look for -DBERKELEY_MP to compile to in
+# mpbsd form.
+#
+libmpbsd_la_SOURCES =							  \
+	itom.c mfree.c min.c mout.c mtox.c rpow.c sdiv.c xtom.c		  \
+	../mpz/add.c ../mpz/cmp.c ../mpz/gcd.c ../mpz/mul.c ../mpz/powm.c \
+	../mpz/realloc.c ../mpz/set.c ../mpz/sqrtrem.c ../mpz/sub.c	  \
+	../mpz/tdiv_qr.c
 
 if WANT_MPBSD
 noinst_LTLIBRARIES = libmpbsd.la
 endif
-
-CLEANFILES = $(nodist_libmpbsd_la_SOURCES)
-
-
-add.c: $(top_srcdir)/mpz/aors.c
-	cp $(top_srcdir)/mpz/aors.c add.c
-
-cmp.c: $(top_srcdir)/mpz/cmp.c
-	cp $(top_srcdir)/mpz/cmp.c cmp.c
-
-gcd.c: $(top_srcdir)/mpz/gcd.c
-	cp $(top_srcdir)/mpz/gcd.c gcd.c
-
-mul.c: $(top_srcdir)/mpz/mul.c
-	cp $(top_srcdir)/mpz/mul.c mul.c
-
-powm.c: $(top_srcdir)/mpz/powm.c
-	cp $(top_srcdir)/mpz/powm.c powm.c
-
-realloc.c: $(top_srcdir)/mpz/realloc.c
-	cp $(top_srcdir)/mpz/realloc.c realloc.c
-
-set.c: $(top_srcdir)/mpz/set.c
-	cp $(top_srcdir)/mpz/set.c set.c
-
-sqrtrem.c: $(top_srcdir)/mpz/sqrtrem.c
-	cp $(top_srcdir)/mpz/sqrtrem.c sqrtrem.c
-
-sub.c: $(top_srcdir)/mpz/aors.c
-	cp $(top_srcdir)/mpz/aors.c sub.c
-
-tdiv_qr.c: $(top_srcdir)/mpz/tdiv_qr.c
-	cp $(top_srcdir)/mpz/tdiv_qr.c tdiv_qr.c
