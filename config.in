@@ -482,6 +482,9 @@ MA 02111-1307, USA. */
 /* Define to 1 to enable FFTs for multiplication, per --enable-fft */
 #undef WANT_FFT
 
+/* Define to 1 if --enable-profiling=instrument */
+#undef WANT_PROFILING_INSTRUMENT
+
 /* Define one of these to 1 for the desired temporary memory allocation
    method, per --enable-alloca. */
 #undef WANT_TMP_ALLOCA
