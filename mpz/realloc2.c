@@ -23,17 +23,22 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-mpz_realloc2 (mpz_ptr x, unsigned long bits)
+mpz_realloc2 (mpz_ptr m, unsigned long bits)
 {
-  mp_size_t  new_limbs, old_limbs;
+  mp_ptr mp;
+  mp_size_t new_alloc;
 
-  new_limbs = (bits + BITS_PER_MP_LIMB-1) / BITS_PER_MP_LIMB;
-  new_limbs = MAX (new_limbs, 1);
+  new_alloc = (bits + BITS_PER_MP_LIMB-1) / BITS_PER_MP_LIMB;
 
-  if (ABSIZ(m) > new_limbs)
+  /* Never allocate zero space. */
+  new_alloc = MAX (new_alloc, 1);
+
+  mp = __GMP_REALLOCATE_FUNC_LIMBS (PTR(m), ALLOC(m), new_alloc);
+  PTR(m) = mp;
+  ALLOC(m) = new_alloc;
+
+  /* Don't create an invalid number; if the current value doesn't fit after
+     reallocation, clear it to 0.  */
+  if (ABSIZ(m) > new_alloc)
     SIZ(m) = 0;
-
-  old_limbs = ALLOC(x);
-  ALLOC(x) = new_limbs;
-  PTR(x) = __GMP_REALLOCATE_FUNC_LIMBS (PTR(x), old_limbs, new_limbs);
 }
