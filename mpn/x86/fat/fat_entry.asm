@@ -62,10 +62,10 @@ ifdef(`PIC',
 `	call	L(movl_eip_edx)
 L(entry_here$2):
 	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(entry_here$2)], %edx
-	movl	__gmpn_cpuvec@GOT(%edx), %edx
+	movl	GSYM_PREFIX`'__gmpn_cpuvec@GOT(%edx), %edx
 	jmp	*m4_empty_if_zero($2)(%edx)
 ',`dnl non-PIC
-	jmp	*__gmpn_cpuvec+$2
+	jmp	*GSYM_PREFIX`'__gmpn_cpuvec+$2
 ')
 EPILOGUE()
 ')
@@ -129,7 +129,7 @@ ifdef(`PIC',`
 L(init_here):
 	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(init_here)], %ebx
 	call	GSYM_PREFIX`'__gmpn_cpuvec_init@PLT
-	movl	__gmpn_cpuvec@GOT(%ebx), %edx
+	movl	GSYM_PREFIX`'__gmpn_cpuvec@GOT(%ebx), %edx
 	popl	%ebx
 	popl	%eax
 	jmp	*(%edx,%eax)
@@ -141,7 +141,7 @@ L(movl_eip_ebx):
 ',`dnl non-PIC
 	call	GSYM_PREFIX`'__gmpn_cpuvec_init
 	popl	%eax
-	jmp	*__gmpn_cpuvec(%eax)
+	jmp	*GSYM_PREFIX`'__gmpn_cpuvec(%eax)
 ')
 
 dnl  FAT_INIT for each CPUVEC_FUNCS_LIST
