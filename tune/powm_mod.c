@@ -21,7 +21,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
-#define POWM_THRESHOLD  1
-#define __gmpn_redc  __gmpn_redc_mod
+/* The WANT_GLOBAL_REDC here makes redc() available, both for speed and tune
+   program use.  */
+
+#define POWM_THRESHOLD    1
+#define WANT_REDC_GLOBAL  1
 #define __gmpz_powm  mpz_powm_mod
 #include "../mpz/powm.c"
