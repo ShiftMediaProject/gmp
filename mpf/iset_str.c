@@ -1,6 +1,6 @@
 /* mpf_init_set_str -- Initialize a float and assign it from a string.
 
-Copyright 1995, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1995, 1996, 2000, 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,10 +26,10 @@ int
 mpf_init_set_str (mpf_ptr r, const char *s, int base)
 {
   mp_size_t prec = __gmp_default_fp_limb_precision;
-  r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);
-  r->_mp_prec = prec;
   r->_mp_size = 0;
   r->_mp_exp = 0;
+  r->_mp_prec = prec;
+  r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);
 
   return mpf_set_str (r, s, base);
 }
