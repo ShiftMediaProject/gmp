@@ -135,10 +135,18 @@ mpn_sb_divrem_mn (qp, np, nsize, dp, dsize)
 	{
 	  mp_limb_t rx, r1, r0, p1, p0;
 
-	  if (PREINVERT_VIABLE && have_preinv)
-	    udiv_qrnnd_preinv (q, r1, nx, np[dsize - 1], dx, dxinv);
-	  else
-	    udiv_qrnnd (q, r1, nx, np[dsize - 1], dx);
+          /* "workaround" avoids a problem with gcc 2.7.2.3 i386 register
+             usage when np[dsize-1] is used in an asm statement like
+             umul_ppmm in udiv_qrnnd_preinv.  The symptom is seg faults due
+             to registers being clobbered.  gcc 2.95 i386 doesn't have the
+             problem. */
+          {
+            mp_limb_t  workaround = np[dsize - 1];
+            if (PREINVERT_VIABLE && have_preinv)
+              udiv_qrnnd_preinv (q, r1, nx, workaround, dx, dxinv);
+            else
+              udiv_qrnnd (q, r1, nx, workaround, dx);
+          }
 	  umul_ppmm (p1, p0, d1, q);
 
 	  r0 = np[dsize - 2];
