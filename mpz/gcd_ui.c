@@ -49,10 +49,13 @@ mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
     res = v;
   else if (v == 0)
     {
-      if (w != NULL && u != w)
+      if (w != NULL)
 	{
-	  MPZ_REALLOC (w, un);
-	  MPN_COPY (PTR(w), PTR(u), un);
+	  if (u != w)
+	    {
+	      MPZ_REALLOC (w, un);
+	      MPN_COPY (PTR(w), PTR(u), un);
+	    }
 	  SIZ(w) = un;
 	}
       /* We can't return any useful result for gcd(big,0).  */
