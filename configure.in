@@ -670,7 +670,7 @@ case $host in
 
   # Motorola 68k
   #
-  m68*-*-*)
+  M68K_PATTERN)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_m68k)
     GMP_INCLUDE_MPN(m68k/m68k-defs.m4)
     gcc_cflags="$fomit_frame_pointer"
@@ -2314,7 +2314,7 @@ if test "$gmp_asm_syntax_testing" != no; then
       # for both pa32 and pa64
       GMP_INCLUDE_MPN(pa32/pa-defs.m4)
       ;;
-    m68*-*-*)
+    M68K_PATTERN)
       GMP_ASM_M68K_INSTRUCTION
       GMP_ASM_M68K_ADDRESSING
       GMP_ASM_M68K_BRANCHES
