@@ -108,7 +108,6 @@ check_inexact (void)
   mpfr_clear (z);
 }
 
-#if 0
 static void
 check_nan (void)
 {
@@ -146,13 +145,13 @@ check_nan (void)
   mpfr_clear (d);
   mpfr_clear (q);
 }
-#endif
 
 int
 main (int argc, char *argv[])
 {
   tests_start_mpfr ();
 
+  check_nan ();
   check_inexact ();
   check(948002822, 1.22191250737771397120e+20, GMP_RNDN,
 	7.758352715731357946e-12);

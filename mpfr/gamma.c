@@ -47,7 +47,6 @@ mpfr_gamma (mpfr_ptr gamma, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_t the_pi;
   mpfr_t GammaTrial;
   mpfr_t tmp, tmp2;
-
   mp_prec_t Prec;
   mp_prec_t prec_gamma;
   mp_prec_t prec_nec;
@@ -58,6 +57,7 @@ mpfr_gamma (mpfr_ptr gamma, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int compared;
   int k;
   int sign;
+  int inex;
 
   /* Trivial cases */
   if (MPFR_IS_NAN(x))
@@ -194,10 +194,10 @@ mpfr_gamma (mpfr_ptr gamma, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_out_str (stdout, 10, 0, GammaTrial, GMP_RNDD);
       printf ("\n");
 #endif
-      if (mpfr_can_round (GammaTrial, realprec, GMP_RNDD, rnd_mode,
-                          MPFR_PREC(gamma)))
+      if (mpfr_can_round (GammaTrial, realprec, GMP_RNDD, GMP_RNDZ,
+                          MPFR_PREC(gamma) + (rnd_mode == GMP_RNDN)))
         {
-          mpfr_set (gamma, GammaTrial, rnd_mode);
+          inex = mpfr_set (gamma, GammaTrial, rnd_mode);
           good = 1;
         }
       else
@@ -216,5 +216,5 @@ mpfr_gamma (mpfr_ptr gamma, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   mpfr_clear (xp);
 
-  return 1; /* inexact result */
+  return inex; /* inexact result */
 }

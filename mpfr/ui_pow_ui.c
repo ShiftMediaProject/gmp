@@ -72,8 +72,8 @@ mpfr_ui_pow_ui (mpfr_ptr x, unsigned long int y, unsigned long int n,
       if (err < 0)
 	err = 0;
     }
-  while (inexact && (mpfr_can_round (res, err,
-          MPFR_SIGN(res) > 0 ? GMP_RNDU : GMP_RNDD, rnd, MPFR_PREC(x)) == 0));
+  while (inexact && !mpfr_can_round (res, err, GMP_RNDN, GMP_RNDZ,
+                                     MPFR_PREC(x) + (rnd == GMP_RNDN)));
 
   if (mpfr_set (x, res, rnd))
     inexact = 1;

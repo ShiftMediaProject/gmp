@@ -251,12 +251,36 @@ check_special ()
   mpfr_clear (z);
 }
 
+/* check sign of inexact flag */
+static void
+check_inexact (void)
+{
+  mpfr_t x, y;
+  int inexact;
+
+  mpfr_init2 (x, 53);
+  mpfr_init2 (y, 53);
+
+  mpfr_set_str_binary (x, "1.0000000000001001000110100100101000001101101011100101e2");
+  inexact = mpfr_exp (y, x, GMP_RNDN);
+  if (inexact <= 0)
+    {
+      printf ("Wrong inexact flag\n");
+      exit (1);
+    }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 int
 main (int argc, char *argv[])
 {
   double d;
 
   tests_start_mpfr ();
+
+  check_inexact ();
 
   check_special ();
 

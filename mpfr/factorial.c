@@ -76,26 +76,26 @@ mpfr_fac_ui (mpfr_ptr y, unsigned long int x , mp_rnd_t rnd_mode)
 	    
             err = Nt - 1 - (int) __gmpfr_ceil_log2 ((double) Nt);
 
-            round = !inexact || mpfr_can_round (t,err,GMP_RNDZ,rnd_mode,Ny);
+            round = !inexact || mpfr_can_round (t, err, GMP_RNDZ, GMP_RNDZ,
+                                                Ny + (rnd_mode == GMP_RNDN));
             
             if (round)
               {
                 round = mpfr_set (y, t, rnd_mode);
 		  if (inexact == 0)
                     inexact = round;
-		  boucle=0;
+		  boucle = 0;
 		}
 	      else
 		{
-		  Nt=Nt+10;
+		  Nt = Nt + 10;
 		  /*initialise of intermediary variable */
-		  mpfr_set_prec(t, Nt);
+		  mpfr_set_prec (t, Nt);
 		}
 	  }
    
-	  mpfr_clear(t);
+	  mpfr_clear (t);
           return inexact;
-      
     }
 }
 

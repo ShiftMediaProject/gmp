@@ -102,7 +102,8 @@ mpfr_asinh (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       /* actualisation of the precision */
       Nt += 10;
     }
-  while ((err < 0) || (!mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny)
+  while ((err < 0) || (!mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                        Ny + (rnd_mode == GMP_RNDN))
                        || MPFR_IS_ZERO(t)));
 
   mpfr_restore_emin_emax ();

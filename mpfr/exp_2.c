@@ -215,7 +215,8 @@ mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     printf("err=%d bits\n", K);
 #endif
 
-  l = mpfr_can_round(s, q-K, GMP_RNDN, rnd_mode, precy);
+  l = mpfr_can_round (s, q - K, GMP_RNDN, GMP_RNDZ,
+                      precy + (rnd_mode == GMP_RNDN));
   if (l==0) {
 #ifdef DEBUG
      printf("not enough precision, use %d\n", q+BITS_PER_MP_LIMB);

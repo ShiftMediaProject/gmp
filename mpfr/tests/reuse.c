@@ -46,6 +46,8 @@ mpfr_compare (mpfr_t a, mpfr_t b)
     (MPFR_IS_NAN(b) || mpfr_cmp(a, b));
 }
 
+#define DEBUG
+
 void
 test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 {
@@ -89,8 +91,8 @@ test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
       {
         printf ("Error for %s(a, a, c) for a=%e, c=%e\n", foo,
                 mpfr_get_d1 (ref2), mpfr_get_d1 (ref3));
-        printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
-                mpfr_get_d1 (res1));
+        printf ("expected "); mpfr_print_binary (ref1); puts ("");
+        printf ("got      "); mpfr_print_binary (res1); puts ("");
         exit (1);
       }
 
@@ -336,8 +338,8 @@ test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 	{
 	  printf ("Error for %s(a, a, c) for a=%e c=%u\n", foo,
                   mpfr_get_d1 (ref2), ref3);
-	  printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
-                  mpfr_get_d1 (res1));
+          printf ("expected "); mpfr_print_binary (ref1); puts ("");
+          printf ("got      "); mpfr_print_binary (res1); puts ("");
 	  exit (1);
 	}
     }

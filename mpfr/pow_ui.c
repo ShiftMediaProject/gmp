@@ -44,7 +44,7 @@ mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
 
   MPFR_CLEAR_NAN(x);
 
-  if (n == 0) /* x^0 = 1 for any x */
+  if (n == 0) /* y^0 = 1 for any y */
     {
       /* The return mpfr_set_ui is important as 1 isn't necessarily
          in the exponent range. */
@@ -63,6 +63,12 @@ mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
     }
 
   MPFR_CLEAR_INF(x);
+
+  if (MPFR_IS_ZERO(y)) /* 0^n = 0 for any n */
+    {
+      MPFR_SET_ZERO(x);
+      MPFR_RET(0);
+    }
 
   mpfr_save_emin_emax ();
   mpfr_init (res);
@@ -88,16 +94,23 @@ mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
 	    if (mpfr_mul (res, res, y, rnd1))
 	      inexact = 1;
 	}
+
+      /* check underflow */
+      if (MPFR_EXP(res) <= (double) __gmpfr_emin)
+        {
+          mpfr_clear (res);
+          mpfr_restore_emin_emax ();
+          return mpfr_set_underflow (x, rnd, (n % 2) ? MPFR_SIGN(y) : 1);
+        }
+
       err = prec - err;
       if (err < 0)
 	err = 0;
     }
-  while (inexact &&
-         mpfr_can_round (res, err, MPFR_SIGN(res) > 0 ? GMP_RNDU : GMP_RNDD,
-                         rnd, MPFR_PREC(x)) == 0);
+  while (inexact && !mpfr_can_round (res, err, GMP_RNDN, GMP_RNDZ,
+                                     MPFR_PREC(x) + (rnd == GMP_RNDN)));
 
-  if (mpfr_set (x, res, rnd))
-    inexact = 1;
+  inexact = mpfr_set (x, res, rnd);
   mpfr_clear (res);
   mpfr_restore_emin_emax ();
   return mpfr_check_range (x, inexact, rnd);

@@ -151,7 +151,8 @@ mpfr_hypot (mpfr_ptr z, mpfr_srcptr x , mpfr_srcptr y , mp_rnd_t rnd_mode)
         not_exact = 1;
  
     }
-  while (not_exact && mpfr_can_round (t, Nt - 2, GMP_RNDZ, rnd_mode, Nz) == 0);
+  while (not_exact && !mpfr_can_round (t, Nt - 2, GMP_RNDN, GMP_RNDZ,
+                                       Nz + (rnd_mode == GMP_RNDN)));
 
   inexact = mpfr_mul_2ui (z, t, sh, rnd_mode);
 

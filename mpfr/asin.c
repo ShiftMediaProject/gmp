@@ -108,7 +108,8 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_sqrt (tmp, tmp, GMP_RNDN);
       mpfr_div (tmp, x, tmp, GMP_RNDN);
       mpfr_atan (arcs, tmp, GMP_RNDN);
-      if (mpfr_can_round (arcs, realprec, GMP_RNDN, rnd_mode, MPFR_PREC(asin)))
+      if (mpfr_can_round (arcs, realprec, GMP_RNDN, GMP_RNDZ,
+                          MPFR_PREC(asin) + (rnd_mode == GMP_RNDN)))
 	{
 	  inexact = mpfr_set (asin, arcs, rnd_mode);
 	  good = 1;

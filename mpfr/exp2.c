@@ -113,24 +113,27 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_init (te);
 
       /* First computation */
-      do {
+      do
+        {
 
-	/* reactualisation of the precision */
-	mpfr_set_prec (t, Nt);             
-	mpfr_set_prec (te, Nt);             
+          /* reactualisation of the precision */
+          mpfr_set_prec (t, Nt);             
+          mpfr_set_prec (te, Nt);             
 
-	/* compute   exp(x*ln(2))*/
-        mpfr_const_log2 (t, GMP_RNDU);    /* ln(2) */
-        mpfr_mul (te, x, t, GMP_RNDU);    /* x*ln(2) */
-        mpfr_exp (t, te, GMP_RNDN);       /* exp(x*ln(2))*/
+          /* compute   exp(x*ln(2))*/
+          mpfr_const_log2 (t, GMP_RNDU);    /* ln(2) */
+          mpfr_mul (te, x, t, GMP_RNDU);    /* x*ln(2) */
+          mpfr_exp (t, te, GMP_RNDN);       /* exp(x*ln(2))*/
 
-	/* estimate of the error -- see pow function in algorithms.ps*/
-	err = Nt - (MPFR_GET_EXP (te) + 2);
+          /* estimate of the error -- see pow function in algorithms.ps*/
+          err = Nt - (MPFR_GET_EXP (te) + 2);
 
-	/* actualisation of the precision */
-	Nt += __gmpfr_isqrt (Nt) + 10;
+          /* actualisation of the precision */
+          Nt += __gmpfr_isqrt (Nt) + 10;
 
-      } while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny));
+        }
+      while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                           Ny + (rnd_mode == GMP_RNDN)));
  
       inexact = mpfr_set (y, t, rnd_mode);
 

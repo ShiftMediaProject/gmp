@@ -32,7 +32,6 @@ MA 02111-1307, USA. */
 void mpfr_zeta_part_b _PROTO ((mpfr_t, mpfr_srcptr, int, int, mpfr_t *));
 void mpfr_zeta_c      _PROTO ((int, mpfr_t *));
 void mpfr_zeta_part_a _PROTO ((mpfr_t, mpfr_srcptr, int));
-void mpfr_zeta_pos    _PROTO ((mpfr_t, mpfr_srcptr, mp_rnd_t));
 
 /*
    Parameters:
@@ -157,7 +156,7 @@ mpfr_zeta_part_a (mpfr_t sum, mpfr_srcptr s, int n)
           Assumes s is neither NaN nor Infinite.
    Output: z - Zeta(s) rounded to the precision of z with direction rnd_mode
 */
-void
+static int
 mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
 {
   int p, n, l, dint, add, d, can_round;
@@ -165,6 +164,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
   mpfr_t a,b,c,z_pre,f,g,s1;
   mpfr_t *tc1;
   mp_prec_t precz, precs;
+  int inex;
 
   precz = mpfr_get_prec (z);
   precs = mpfr_get_prec (s);
@@ -192,6 +192,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
       if (MPFR_IS_ZERO (s1))
         {
           mpfr_set_inf (z, 1);
+          inex = 0;
           goto clear_and_return;
         }
       else if (MPFR_GET_EXP (s1) <= -(d-3)/2)
@@ -285,7 +286,8 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
       printf ("\nZeta(s) before rounding=");
       mpfr_print_binary (z_pre);
 #endif
-      can_round = mpfr_can_round (z_pre, d - 3, GMP_RNDN, rnd_mode, precz);
+      can_round = mpfr_can_round (z_pre, d - 3, GMP_RNDN, GMP_RNDZ,
+                                  precz + (rnd_mode == GMP_RNDN));
       if (can_round)
 	{
 #ifdef DEBUG
@@ -302,7 +304,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
     }
   while (can_round == 0);
 
-  mpfr_set (z, z_pre, rnd_mode);
+  inex = mpfr_set (z, z_pre, rnd_mode);
 #ifdef DEBUG
   printf ("\nZeta(s) after rounding=");
   mpfr_print_binary (z);
@@ -316,6 +318,8 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
   mpfr_clear (f);
   mpfr_clear (g);
   mpfr_clear (s1);
+
+  return inex;
 }
 
 int
@@ -326,6 +330,7 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
   long add;
   mpfr_t z_pre, s1, s2, y, sfrac, sint, p;
   mp_prec_t precz, prec1, precs, precs1;
+  int inex;
 
   if (mpfr_nan_p (s))
     {
@@ -377,7 +382,7 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
   prec1 = precz + add; /* Note that prec1 is still incremented by  10 at the first  entry of loop below */
   prec1 = MAX(prec1, precs1);
   if (MPFR_SIGN (s) != -1 && MPFR_GET_EXP (s) >= 0) /* Case s >= 1/2 */
-    mpfr_zeta_pos (z, s, rnd_mode);
+    inex = mpfr_zeta_pos (z, s, rnd_mode);
   else
     {
       mpfr_init2(z_pre, MPFR_PREC_MIN);
@@ -422,11 +427,11 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
           mpfr_pow (y, y, s1, GMP_RNDN);
           mpfr_mul (z_pre, z_pre, y, GMP_RNDN);
           mpfr_mul_2ui (z_pre, z_pre, 1, GMP_RNDN);
-          can_round = mpfr_can_round (z_pre, prec1 - add, GMP_RNDN,
-                                      rnd_mode, precz);
+          can_round = mpfr_can_round (z_pre, prec1 - add, GMP_RNDN, GMP_RNDZ,
+                                      precz + (rnd_mode == GMP_RNDN));
         }
       while (can_round == 0);
-      mpfr_set (z, z_pre, rnd_mode);
+      inex = mpfr_set (z, z_pre, rnd_mode);
       mpfr_clear(z_pre);
       mpfr_clear(s1);
       mpfr_clear(y);
@@ -434,5 +439,5 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
       mpfr_clear(sint);
       mpfr_clear(sfrac);
     }
-  return 1;
+  return inex;
 }

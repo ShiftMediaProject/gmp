@@ -51,6 +51,7 @@ mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
   int good = 0;
   mpfr_t tmp1, tmp2, result,tmp3,tmp4,tmp5,tmp6;
   mpz_t cst;
+  int inex;
 
   MPFR_CLEAR_FLAGS(mylog);
   logn = __gmpfr_ceil_log2 ((double) MPFR_PREC(mylog));
@@ -105,20 +106,20 @@ mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
       mpfr_clear(tmp4);
       mpfr_clear(tmp5);
       mpfr_clear(tmp6);
-      if (mpfr_can_round(result, prec_x - 5, GMP_RNDD, rnd_mode, prec_i_want))
+      if (mpfr_can_round (result, prec_x - 5, GMP_RNDD, GMP_RNDZ,
+                          prec_i_want + (rnd_mode == GMP_RNDN)))
         {
-          mpfr_set(mylog, result, rnd_mode);
-          mpfr_clear(result);
+          inex = mpfr_set (mylog, result, rnd_mode);
           good = 1;
         }
       else
         {
-          mpfr_clear(result);
           prec_x += logn;
         }
+      mpfr_clear (result);
     }
-  mpz_clear(cst);
-  return 0;
+  mpz_clear (cst);
+  return inex;
 }
 
 /*
@@ -161,6 +162,7 @@ mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
   int N, oldN, n, prec;
   mpz_t pi, num, den, d3, d2, tmp;
   mpfr_t y;
+  int inex;
 
   prec=MPFR_PREC(x);
 
@@ -168,9 +170,10 @@ mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
   if ((prec==__gmpfr_const_pi_prec && rnd_mode==__mpfr_const_pi_rnd) ||
       (prec<=__gmpfr_const_pi_prec &&
        mpfr_can_round(__mpfr_const_pi, __gmpfr_const_pi_prec,
-                      __mpfr_const_pi_rnd, rnd_mode, prec)))
+                      __mpfr_const_pi_rnd, GMP_RNDZ,
+                      prec + (rnd_mode == GMP_RNDN))))
     {
-      return mpfr_set(x, __mpfr_const_pi, rnd_mode);
+      return mpfr_set (x, __mpfr_const_pi, rnd_mode);
     }
 
   if (prec < 20000)
@@ -215,11 +218,11 @@ mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
           mpz_fdiv_q(tmp, tmp, den);
           mpz_add(pi, pi, tmp);
         }
-      mpfr_set_z(x, pi, rnd_mode);
-      mpfr_init2(y, mpfr_get_prec(x));
-      mpz_add_ui(pi, pi, N+1);
-      mpfr_set_z(y, pi, rnd_mode);
-      if (mpfr_cmp(x, y) != 0)
+      mpfr_set_z (x, pi, rnd_mode);
+      mpfr_init2 (y, mpfr_get_prec(x));
+      mpz_add_ui (pi, pi, N+1);
+      mpfr_set_z (y, pi, rnd_mode);
+      if (mpfr_cmp (x, y) != 0)
         {
           fprintf(stderr, "does not converge\n");
           exit(1);
@@ -234,7 +237,8 @@ mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
       mpfr_clear(y);
     }
   else
-    mpfr_pi_machin3(x, rnd_mode);
+    inex = mpfr_pi_machin3 (x, rnd_mode);
+
   /* store computed value */
   if (__gmpfr_const_pi_prec==0)
     mpfr_init2(__mpfr_const_pi, prec);
@@ -243,5 +247,6 @@ mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
   mpfr_set(__mpfr_const_pi, x, rnd_mode);
   __gmpfr_const_pi_prec=prec;
   __mpfr_const_pi_rnd=rnd_mode;
-  return 1;
+
+  return inex;
 }

@@ -113,29 +113,31 @@ mpfr_log2 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
 
     
     /* First computation of log2 */
-    do {
-
-      /* reactualisation of the precision */
-      mpfr_set_prec(t,Nt);             
-      mpfr_set_prec(tt,Nt);             
+    do
+      {
+        /* reactualisation of the precision */
+        mpfr_set_prec(t,Nt);             
+        mpfr_set_prec(tt,Nt);             
       
-      /* compute log2 */
-      mpfr_const_log2(t,GMP_RNDD); /* log(2) */
-      mpfr_log(tt,a,GMP_RNDN);     /* log(a) */
-      mpfr_div(t,tt,t,GMP_RNDN); /* log(a)/log(2) */
+        /* compute log2 */
+        mpfr_const_log2(t,GMP_RNDD); /* log(2) */
+        mpfr_log(tt,a,GMP_RNDN);     /* log(a) */
+        mpfr_div(t,tt,t,GMP_RNDN); /* log(a)/log(2) */
+        
+        /* estimation of the error */
+        err=Nt-3;
 
-
-      /* estimation of the error */
-      err=Nt-3;
-
-      /* actualisation of the precision */
-      Nt += 10;
-    } while ((err<0) || !mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
+        /* actualisation of the precision */
+        Nt += 10;
+      }
+    while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                         Ny + (rnd_mode == GMP_RNDN)));
  
-      inexact = mpfr_set(r,t,rnd_mode);
+    inexact = mpfr_set (r, t, rnd_mode);
 
-      mpfr_clear(t);
-      mpfr_clear(tt);
+    mpfr_clear (t);
+    mpfr_clear (tt);
   }
+
   return inexact;
 }

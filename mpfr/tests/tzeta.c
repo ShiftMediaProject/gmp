@@ -28,9 +28,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-#define PREC_MAX 70
-#define N 1
-
 static void
 test1 (void)
 {
@@ -44,64 +41,8 @@ test1 (void)
   mpfr_clear (y);
 }
 
-static void
-test_generic (void)
-{
-  mp_prec_t prec, yprec;
-  int n, err;
-  mp_rnd_t rnd;
-  mpfr_t x, y, z;
-  mp_exp_t e;
-
-  mpfr_init2 (x, MPFR_PREC_MIN);
-  mpfr_init2 (y, MPFR_PREC_MIN);
-  mpfr_init2 (z, MPFR_PREC_MIN);
-
-  for (prec = 2; prec <= PREC_MAX; prec++)
-    {
-      mpfr_set_prec (x, prec);
-      mpfr_set_prec (z, prec);
-      yprec = prec + 10;
-
-      for (n = 0; n < N; n++)
-	{
-	  mpfr_random (x); /* x is in [0, 1[ */
-	  mpfr_add_ui (x, x, 1, GMP_RNDN);
-	  e = randlimb () % 5;
-	  mpfr_div_2exp (x, x, 1, GMP_RNDN); /* now in [1/2, 1[ */
-	  mpfr_mul_2exp (x, x, e, GMP_RNDN); /* now in [2^(e-1), 2^e[ */
-          if (randlimb () % 2)
-            mpfr_ui_sub (x, 1, x, GMP_RNDN); /* now less or equal to 1/2 */
-	  rnd = randlimb () % 4;
-	  mpfr_set_prec (y, yprec);
-	  mpfr_zeta (y, x, rnd);
-	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
-	  if (mpfr_can_round (y, err, rnd, rnd, prec))
-	    {
-	      mpfr_prec_round (y, prec, rnd);
-	      mpfr_zeta (z, x, rnd);
-	      if (mpfr_cmp (y, z))
-		{
-		  printf ("results differ for x=");
-		  mpfr_out_str (stdout, 2, prec, x, GMP_RNDN);
-		  printf (" prec=%lu rnd_mode=%s\n", prec,
-			  mpfr_print_rnd_mode (rnd));
-		  printf ("   got ");
-		  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
-		  puts ("");
-		  printf ("   expected ");
-		  mpfr_out_str (stdout, 2, prec, y, GMP_RNDN);
-		  puts ("");
-		  exit (1);
-		}
-	    }
-	}
-    }
-
-  mpfr_clear (x);
-  mpfr_clear (y);
-  mpfr_clear (z);
-}
+#define TEST_FUNCTION mpfr_zeta
+#include "tgeneric.c"
 
 /* Usage: tzeta - generic tests
           tzeta s prec rnd_mode - compute zeta(s) with precision 'prec'
@@ -250,7 +191,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  test_generic ();
+  test_generic (2, 70, 1);
 
   mpfr_clear (s);
   mpfr_clear (y);

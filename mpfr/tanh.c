@@ -106,45 +106,48 @@ mpfr_tanh (y, xt, rnd_mode)
 
 
       /* First computation of cosh */
-      do {
+      do
+        {
 
-	/* reactualisation of the precision */
-	mpfr_set_prec(t,Nt);
-	mpfr_set_prec(te,Nt);             
-	mpfr_set_prec(ta,Nt);             
-	mpfr_set_prec(tb,Nt);             
+          /* reactualisation of the precision */
+          mpfr_set_prec (t, Nt);
+          mpfr_set_prec (te, Nt);
+          mpfr_set_prec (ta, Nt);
+          mpfr_set_prec (tb, Nt);
 
-        /* compute tanh */
-        mpfr_mul_2ui(te,x,1,GMP_RNDN);  /* 2x */
-        mpfr_exp(te,te,GMP_RNDN);       /* exp(2x) */
-        mpfr_add_ui(ta,te,1,GMP_RNDD);  /* exp(2x) + 1*/
-        mpfr_sub_ui(tb,te,1,GMP_RNDU);  /* exp(2x) - 1*/
-        mpfr_div(t,tb,ta,GMP_RNDN);     /* (exp(2x)-1)/(exp(2x)+1)*/
+          /* compute tanh */
+          mpfr_mul_2ui (te, x, 1, GMP_RNDN);  /* 2x */
+          mpfr_exp (te, te, GMP_RNDN);       /* exp(2x) */
+          mpfr_add_ui (ta, te, 1, GMP_RNDD);  /* exp(2x) + 1*/
+          mpfr_sub_ui (tb, te, 1, GMP_RNDU);  /* exp(2x) - 1*/
+          mpfr_div (t, tb, ta, GMP_RNDN);     /* (exp(2x)-1)/(exp(2x)+1)*/
 
 
-        /* calculation of the error*/
-        d = MPFR_GET_EXP (te) - MPFR_GET_EXP (t);
+          /* calculation of the error*/
+          d = MPFR_GET_EXP (te) - MPFR_GET_EXP (t);
 
-	/* estimation of the error */
-        /*err = Nt-(__gmpfr_ceil_log2(7+pow(2,d+1)));*/
-        err = Nt-(MAX(d+1,3)+1);
+          /* estimation of the error */
+          /*err = Nt-(__gmpfr_ceil_log2(7+pow(2,d+1)));*/
+          err = Nt - (MAX(d + 1, 3) + 1);
 
-	/* actualisation of the precision */
-        Nt += 10; 
+          /* actualisation of the precision */
+          Nt += 10; 
 
-      } while ((err <0)||!mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
+        }
+      while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                           Ny + (rnd_mode == GMP_RNDN)));
  
       if (flag_neg==1)
-          MPFR_CHANGE_SIGN(t);
+        MPFR_CHANGE_SIGN(t);
  
-      inexact = mpfr_set(y,t,rnd_mode);
-      mpfr_clear(t);
-      mpfr_clear(te);
-      mpfr_clear(ta);
-      mpfr_clear(tb);
+      inexact = mpfr_set (y, t, rnd_mode);
+      mpfr_clear (t);
+      mpfr_clear (te);
+      mpfr_clear (ta);
+      mpfr_clear (tb);
     }
-    mpfr_clear(x);
-    return inexact;
+    mpfr_clear (x);
 
+    return inexact;
 }
 

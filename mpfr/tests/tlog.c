@@ -28,31 +28,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-#if (BITS_PER_LONGINT == 32)
-#define INT32 long int
-#else
-#define INT32 int
-#endif
-
-#if 0
-/* The following function is buggy and must not be used any longer. */
-static double
-drand_log (void)
-{
-  double d; INT32 *i;
-
-  i = (INT32*) &d;
-  do
-    {
-      i[0] = LONG_RAND();
-      i[1] = LONG_RAND();
-    }
-  while ((d<1e-153) || (d>1e153));    /* to avoid underflow or overflow
-					 in double calculus in sqrt(u*v) */
-  return d;
-}
-#endif
-
 #define check2(a,rnd,res) check1(a,rnd,res,1,0)
 #define check(a,r) check2(a,r,0.0)
 
@@ -103,49 +78,6 @@ check3 (double d, unsigned long prec, mp_rnd_t rnd)
   mpfr_clear (x);
   mpfr_clear (y);
 }
-
-#if 0
-static void
-check4 (int N)
-{
-  int i, max=0, sum=0, cur;
-  double d;
-  mp_rnd_t rnd;
-
-  for(i=0;i<N;i++)
-    {
-      d = drand_log ();
-      rnd = randlimb () % 4;
-      cur = check1 (d, rnd, 0.0, 0, max);
-      if (cur < 0)
-        cur = -cur;
-      if (cur > max)
-        max = cur;
-      sum += cur;
-    }
-  d = (double)sum / (double)N;
-  printf ("max error : %i \t mean error : %f   (in ulps)\n", max, d);
-}
-
-static void
-slave (int N, int p)
-{
-  int i;
-  double d;
-  mpfr_t ta, tres;
-
-  mpfr_init2(ta, 53);
-  mpfr_init2(tres, p);
-  for(i=0;i<N;i++)
-    {
-      d = drand_log();
-      mpfr_set_d (ta, d, GMP_RNDN);
-      mpfr_log (tres, ta, randlimb () % 4 );
-    }
-  mpfr_clear(ta); mpfr_clear(tres);
-  printf("fin\n");
-}
-#endif
 
 /* examples from Jean-Michel Muller and Vincent Lefevre
    Cf http://www.ens-lyon.fr/~jmmuller/Intro-to-TMD.htm
@@ -277,24 +209,6 @@ main (int argc, char *argv[])
       goto done;
     }
 
-  if (argc==3)
-    {   /* tlog N p : N calculus with precision p*/
-      printf ("Doing %d random tests in %d precision\n",
-             atoi(argv[1]),atoi(argv[2]));
-      /* slave(atoi(argv[1]),atoi(argv[2])); */
-      goto done;
-    }
-
-  if (argc==2)
-    { /* tlog N: N tests with random double's */
-      /*
-      N=atoi(argv[1]);
-      printf("Doing %d random tests in double precision\n", N);
-      check4(N);
-      */
-    }
-  else
-    {
       special ();
       check_worst_cases();
 
@@ -360,7 +274,6 @@ main (int argc, char *argv[])
       d = 7107588635148285.0 / 70368744177664.0;
       check2 (7.34302197248998461006e+43, GMP_RNDZ, d);
       check2(6.09969788341579732815e+00,GMP_RNDD,1.80823924264386204363e+00);
-    }
 
   test_generic (2, 100, 40);
 

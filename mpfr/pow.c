@@ -240,7 +240,7 @@ mpfr_pow (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mp_rnd_t rnd_mode)
     {
       int negative;
       /* Determine the sign now, in case y and z are the same object */
-      negative = MPFR_SIGN(x) < 0 && is_odd(y);
+      negative = MPFR_SIGN(x) < 0 && is_odd (y);
       MPFR_CLEAR_FLAGS(z);
       if (MPFR_SIGN(y) < 0)
         MPFR_SET_INF(z);
@@ -257,6 +257,21 @@ mpfr_pow (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mp_rnd_t rnd_mode)
       mpfr_set_ui (z, 1, GMP_RNDN);
       MPFR_RET(0);
     }
+
+  /* detect overflows: |x^y| >= 2^EMAX when (EXP(x)-1) * y >= EMAX for y > 0,
+                                       or   EXP(x) * y     >= EMAX for y < 0 */
+  {
+    double exy;
+    int negative;
+
+    exy = (double) (mpfr_sgn (y) > 0) ? MPFR_EXP(x) - 1 : MPFR_EXP(x);
+    exy *= mpfr_get_d (y, GMP_RNDZ);
+    if (exy >= (double) __gmpfr_emax)
+      {
+        negative = MPFR_SIGN(x) < 0 && is_odd (y);
+        return mpfr_set_overflow (z, rnd_mode, negative ? -1 : 1);
+      }
+  }  
 
   if (mpfr_integer_p (y))
     {
@@ -334,7 +349,8 @@ mpfr_pow (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mp_rnd_t rnd_mode)
 	/* actualisation of the precision */
         Nt += 10;
 
-        ok = mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Nz);
+        ok = mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                             Nz + (rnd_mode == GMP_RNDN));
 
         /* check exact power */
         if (ok == 0 && loop == 1)

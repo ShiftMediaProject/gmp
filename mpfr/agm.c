@@ -145,13 +145,14 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
     while (mpfr_cmp2(u, v, &eq) != 0 && eq <= p - 2);
 
     /* Roundability of the result */
-      can_round=mpfr_can_round(v,p-err-3,GMP_RNDN,rnd_mode,q);
+      can_round = mpfr_can_round (v, p - err - 3, GMP_RNDN, GMP_RNDZ, 
+                                  q + (rnd_mode == GMP_RNDN));
     
       if (can_round)
-	go_on=0;
+	go_on = 0;
 
       else {
-	  go_on=1;
+	  go_on = 1;
 	  p+=5;
 	  s=(p-1)/BITS_PER_MP_LIMB+1;
 	  MPFR_INIT(up, u, p, s);

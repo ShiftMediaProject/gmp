@@ -94,39 +94,41 @@ mpfr_sinh (mpfr_ptr y, mpfr_srcptr xt, mp_rnd_t rnd_mode)
       mpfr_init (ti);
 
       /* First computation of sinh */
-      do {
+      do
+        {
 
-	/* reactualisation of the precision */
+          /* reactualisation of the precision */
 
-	mpfr_set_prec (t, Nt);
-	mpfr_set_prec (te, Nt);
-	mpfr_set_prec (ti, Nt);
+          mpfr_set_prec (t, Nt);
+          mpfr_set_prec (te, Nt);
+          mpfr_set_prec (ti, Nt);
 
-	/* compute sinh */
-	mpfr_exp (te, x, GMP_RNDD);        /* exp(x) */
-	mpfr_ui_div (ti, 1, te, GMP_RNDU); /* 1/exp(x) */
-        mpfr_sub (t, te, ti, GMP_RNDN);    /* exp(x) - 1/exp(x) */
-	mpfr_div_2ui (t, t, 1, GMP_RNDN);  /* 1/2(exp(x) - 1/exp(x)) */
+          /* compute sinh */
+          mpfr_exp (te, x, GMP_RNDD);        /* exp(x) */
+          mpfr_ui_div (ti, 1, te, GMP_RNDU); /* 1/exp(x) */
+          mpfr_sub (t, te, ti, GMP_RNDN);    /* exp(x) - 1/exp(x) */
+          mpfr_div_2ui (t, t, 1, GMP_RNDN);  /* 1/2(exp(x) - 1/exp(x)) */
 
-        /* it may be that t is zero (in fact, it can only occur when te=1,
-           and thus ti=1 too) */
+          /* it may be that t is zero (in fact, it can only occur when te=1,
+             and thus ti=1 too) */
 
-        if (MPFR_IS_ZERO(t))
-          err = -1;
-        else
-          {
-            /* calculation of the error */
-            d = MPFR_GET_EXP (te) - MPFR_GET_EXP (t) + 2;
+          if (MPFR_IS_ZERO(t))
+            err = -1;
+          else
+            {
+              /* calculation of the error */
+              d = MPFR_GET_EXP (te) - MPFR_GET_EXP (t) + 2;
 
-            /* error estimate */
-            /* err = Nt-(__gmpfr_ceil_log2(1+pow(2,d)));*/
-            err = Nt - (MAX(d,0) + 1);
-          }
+              /* error estimate */
+              /* err = Nt-(__gmpfr_ceil_log2(1+pow(2,d)));*/
+              err = Nt - (MAX(d,0) + 1);
+            }
 
-	/* actualisation of the precision */
-        Nt += 10; 
+          /* actualisation of the precision */
+          Nt += 10; 
 
-      } while ((err < 0) || !mpfr_can_round(t, err, GMP_RNDN, rnd_mode, Ny));
+        } while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                               Ny + (rnd_mode == GMP_RNDN)));
 
       if (flag_neg == 1)
           MPFR_CHANGE_SIGN(t);

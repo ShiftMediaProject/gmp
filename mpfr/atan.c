@@ -222,10 +222,10 @@ mpfr_atan (mpfr_ptr arctangent, mpfr_srcptr x, mp_rnd_t rnd_mode)
 	    MPFR_CHANGE_SIGN(arctgt);
         }
 
-      if (mpfr_can_round (arctgt, realprec, GMP_RNDN, rnd_mode,
-                          MPFR_PREC (arctangent)))
+      if (mpfr_can_round (arctgt, realprec, GMP_RNDN, GMP_RNDZ,
+                          MPFR_PREC (arctangent) + (rnd_mode == GMP_RNDN)))
         {
-          inexact = mpfr_set(arctangent, arctgt, rnd_mode);
+          inexact = mpfr_set (arctangent, arctgt, rnd_mode);
           good = 1;
           realprec += 1;
         }

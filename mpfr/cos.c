@@ -78,7 +78,7 @@ mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       /* now the error is bounded by 2^(k-m) = 2^(EXP(s)-err) */
 
       l = mpfr_can_round (s, MPFR_GET_EXP (s) + m - k,
-                          GMP_RNDN, rnd_mode, precy);
+                          GMP_RNDN, GMP_RNDZ, precy + (rnd_mode == GMP_RNDN));
 
       if (l == 0)
 	{

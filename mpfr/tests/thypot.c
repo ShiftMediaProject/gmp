@@ -125,7 +125,7 @@ main (int argc, char *argv[])
                 {
                   printf ("results differ for x1=");
                   mpfr_out_str (stdout, 2, prec, x1, GMP_RNDN);
-                  printf ("\n et x2=");
+                  printf ("\n and x2=");
                   mpfr_out_str (stdout, 2, prec, x2, GMP_RNDN);
                   printf (" \n prec=%u rnd_mode=%s\n", prec,
                           mpfr_print_rnd_mode (rnd));

@@ -26,11 +26,12 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
+#define TEST_FUNCTION mpfr_asin
+#include "tgeneric.c"
+
 int
 main (void)
 {
-  unsigned int prec, err, yprec, n;
-  mp_rnd_t rnd;
   mpfr_t x, y, z;
 
   tests_start_mpfr ();
@@ -52,44 +53,13 @@ main (void)
       exit (1);
     }
 
-  for (prec = 2; prec <= 100; prec++)
-    {
-      mpfr_set_prec (x, prec);
-      mpfr_set_prec (z, prec);
-      yprec = prec + 10;
-
-      for (n = 0; n < 7; n++)
-	{
-	  mpfr_random (x);
-	  rnd = randlimb () % 4;
-	  mpfr_set_prec (y, yprec);
-	  mpfr_asin (y, x, rnd);
-	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
-	  if (mpfr_can_round (y, err, rnd, rnd, prec))
-	    {
-	      mpfr_prec_round (y, prec, rnd);
-	      mpfr_asin (z, x, rnd);
-	      if (mpfr_cmp (y, z))
-		{
-		  printf ("results differ for x=");
-		  mpfr_out_str (stdout, 2, prec, x, GMP_RNDN);
-		  printf (" prec=%u rnd_mode=%s\n", prec,
-			  mpfr_print_rnd_mode (rnd));
-		  printf ("   got ");
-		  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
-		  puts ("");
-		  printf ("   expected ");
-		  mpfr_out_str (stdout, 2, prec, y, GMP_RNDN);
-		  puts ("");
-		}
-	    }
-	}
-    }
+  test_generic (2, 100, 7);
 
   mpfr_clear (x);
   mpfr_clear (y);
   mpfr_clear (z);
 
   tests_end_mpfr ();
+
   return 0;
 }

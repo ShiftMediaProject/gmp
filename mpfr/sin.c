@@ -124,7 +124,8 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
       /* the absolute error on c is at most 2^(e-m) = 2^(EXP(c)-err) */
       e = MPFR_GET_EXP (c) + m - e;
-      ok = (e >= 0) && mpfr_can_round (c, e, GMP_RNDN, rnd_mode, precy);
+      ok = (e >= 0) && mpfr_can_round (c, e, GMP_RNDN, GMP_RNDZ,
+                                       precy + (rnd_mode == GMP_RNDN));
 
       if (ok == 0)
 	{

@@ -1176,6 +1176,10 @@ compared), zero otherwise.
 @section Special Functions
 @cindex Special functions
 
+All those functions, except explicitely stated, return zero for an
+exact return value, a positive value for a return value larger than the 
+exact result, and a negative value otherwise.
+
 @deftypefun int mpfr_log (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_log2 (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_log10 (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})

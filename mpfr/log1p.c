@@ -95,35 +95,37 @@ mpfr_log1p (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     long int err;  /* Precision of error */
                 
     /* compute the precision of intermediary variable */
-    Nt=MAX(Nx,Ny);
+    Nt = MAX(Nx,Ny);
     /* the optimal number of bits : see algorithms.ps */
-    Nt=Nt+5+__gmpfr_ceil_log2(Nt);
+    Nt = Nt + 5 + __gmpfr_ceil_log2 (Nt);
 
     /* initialise of intermediary variable */
-    mpfr_init(t);             
+    mpfr_init (t);
 
     /* First computation of cosh */
-    do {
-
-      /* reactualisation of the precision */
-      mpfr_set_prec(t, Nt);
+    do
+      {
+        /* reactualisation of the precision */
+        mpfr_set_prec (t, Nt);
       
-      /* compute log1p */
-      mpfr_add_ui (t, x, 1, GMP_RNDN);   /* 1+x */
-      mpfr_log (t, t, GMP_RNDN);        /* log(1+x)*/
+        /* compute log1p */
+        mpfr_add_ui (t, x, 1, GMP_RNDN);   /* 1+x */
+        mpfr_log (t, t, GMP_RNDN);        /* log(1+x)*/
 
-      /* estimation of the error */
-      /*err=Nt-(__gmpfr_ceil_log2(1+pow(2,1-MPFR_GET_EXP(t))));*/
-      err = Nt - (MAX (1 - MPFR_GET_EXP (t), 0) + 1);
+        /* estimation of the error */
+        /*err=Nt-(__gmpfr_ceil_log2(1+pow(2,1-MPFR_GET_EXP(t))));*/
+        err = Nt - (MAX (1 - MPFR_GET_EXP (t), 0) + 1);
 
-      /* actualisation of the precision */
-      Nt += 10;
-
-    } while ((err<0) || !mpfr_can_round(t, err, GMP_RNDN, rnd_mode, Ny));
+        /* actualisation of the precision */
+        Nt += 10;
+      }
+    while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                         Ny + (rnd_mode == GMP_RNDN)));
 
     inexact = mpfr_set (y, t, rnd_mode);
 
-    mpfr_clear(t);
+    mpfr_clear (t);
   }
+
   return inexact;
 }

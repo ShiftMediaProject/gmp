@@ -170,7 +170,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
         printf ("(inexact = %lu)\n", q_limb);
 #endif
 
-        can_round = mpfr_can_round_raw(rp, rrsize, 1, err,
+        can_round = mpfr_can_round_raw (rp, rrsize, 1, err,
                                        GMP_RNDZ, rnd_mode, MPFR_PREC(r));
 
         /* If we used all the limbs of both the dividend and the divisor,

@@ -124,7 +124,8 @@ mpfr_log10 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
       /* estimation of the error */
       err = Nt - 4;
 
-      ok = mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny);
+      ok = mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                           Ny + (rnd_mode == GMP_RNDN));
 
       /* log10(10^n) is exact */
       if ((MPFR_SIGN(t) > 0) && mpfr_integer_p (t))

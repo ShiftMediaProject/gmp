@@ -30,6 +30,9 @@ Documentation:
 - mpfr_set_prec: add an explanation of how to speed up calculations
   which increase their precision at each step.
 
+- add macros/variables to check the version of mpfr
+  (suggestion from Andreas Enge <enge@lix.polytechnique.fr>)
+
 Installation:
 
 - from Kevin Ryde <user42@zip.com.au>:
@@ -165,6 +168,14 @@ Miscellaneous:
 - problem when reading a float followed by a character, for example 1.5*x
 	[from Fabrice.Rouillier@loria.fr, Mon, 04 Dec 2000]
 
+- add a new rounding mode: rounding away from 0. This can be easily
+  implemented as follows: round to zero, and if the result is inexact,
+	add one ulp to the mantissa.
+
+- add a new rounding mode: round to nearest, with ties away from zero
+  (will be in 754r)
+
+- check/define the sign of infinity for gamma(-integer)
 
 Reentrancy / Thread-Safety:
 

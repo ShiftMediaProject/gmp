@@ -193,7 +193,8 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_clear (t);
       for (loop = 0 ; loop < shift_x; loop++)
 	mpfr_mul (tmp, tmp, tmp, GMP_RNDD);
-      if (mpfr_can_round (tmp, realprec, GMP_RNDD, rnd_mode, MPFR_PREC(y)))
+      if (mpfr_can_round (tmp, realprec, GMP_RNDD, GMP_RNDZ,
+                          MPFR_PREC(y) + (rnd_mode == GMP_RNDN)))
 	{
 	  inexact = mpfr_set (y, tmp, rnd_mode);
 	  good = 1;

@@ -75,47 +75,51 @@ mpfr_cosh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
       long int err;  /* Precision of error */
                 
       /* compute the precision of intermediary variable */
-      Nt=MAX(Nx,Ny);
+      Nt = MAX(Nx, Ny);
       /* the optimal number of bits : see algorithms.ps */
-      Nt=Nt+3+__gmpfr_ceil_log2(Nt);
+      Nt = Nt + 3 + __gmpfr_ceil_log2 (Nt);
 
 
       /* initialise of intermediary	variable */
-      mpfr_init(t);             
-      mpfr_init(te);             
-      mpfr_init(ti);                    
+      mpfr_init (t);
+      mpfr_init (te);
+      mpfr_init (ti);
 
 
       /* First computation of cosh */
-      do {
+      do
+        {
 
-	/* reactualisation of the precision */
+          /* reactualisation of the precision */
 
-	mpfr_set_prec(t,Nt);             
-	mpfr_set_prec(te,Nt);             
-	mpfr_set_prec(ti,Nt);             
+          mpfr_set_prec (t, Nt);
+          mpfr_set_prec (te, Nt);
+          mpfr_set_prec (ti, Nt);
 
-	/* compute cosh */
-	mpfr_exp(te,x,GMP_RNDD);         /* exp(x) */
-	mpfr_ui_div(ti,1,te,GMP_RNDU);   /* 1/exp(x) */
-	mpfr_add(t,te,ti,GMP_RNDN);      /* exp(x) + 1/exp(x)*/
-	mpfr_div_2ui(t,t,1,GMP_RNDN);    /* 1/2(exp(x) + 1/exp(x))*/
+          /* compute cosh */
+          mpfr_exp (te, x, GMP_RNDD);         /* exp(x) */
+          mpfr_ui_div (ti, 1, te, GMP_RNDU);   /* 1/exp(x) */
+          mpfr_add (t, te, ti, GMP_RNDN);      /* exp(x) + 1/exp(x)*/
+          mpfr_div_2ui (t, t, 1, GMP_RNDN);    /* 1/2(exp(x) + 1/exp(x))*/
 
-	/* estimation of the error */
-	err=Nt-3;
+          /* estimation of the error */
+          err = Nt - 3;
 
-	/* actualisation of the precision */
-	Nt += 10;
+          /* actualisation of the precision */
+          Nt += 10;
 
-      } while ((err <0) || !mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
+        }
+      while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                           Ny + (rnd_mode == GMP_RNDN)));
  
-      inexact = mpfr_set(y,t,rnd_mode);
+      inexact = mpfr_set (y, t, rnd_mode);
 
-      mpfr_clear(t);
-      mpfr_clear(ti);
-      mpfr_clear(te);
+      mpfr_clear (t);
+      mpfr_clear (ti);
+      mpfr_clear (te);
     }
-    mpfr_clear(x);
-    return inexact;
 
+    mpfr_clear (x);
+
+    return inexact;
 }

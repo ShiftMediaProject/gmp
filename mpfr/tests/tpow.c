@@ -268,7 +268,7 @@ particular_cases (void)
 }
 
 static void
-underflows(void)
+underflows (void)
 {
   mpfr_t x, y;
   int i;
@@ -299,6 +299,30 @@ underflows(void)
   mpfr_clear (y);
 }
 
+static void
+overflows (void)
+{
+  mpfr_t a, b;
+
+  /* bug found by Ming J. Tsai <mingjt@delvron.us>, 4 Oct 2003 */
+  
+  mpfr_init_set_d (a, 5.1e32, GMP_RNDN);
+  mpfr_init (b);
+
+  mpfr_pow (b, a, a, GMP_RNDN);
+  if (!(mpfr_inf_p (b) && mpfr_sgn (b) > 0))
+    {
+      printf ("Error for a^a for a=5.1e32\n");
+      printf ("Expected +Inf, got ");
+      mpfr_out_str (stdout, 10, 0, b, GMP_RNDN);
+      printf ("\n");
+      exit (1);
+    }
+
+  mpfr_clear(a);
+  mpfr_clear(b);
+}
+
 int
 main (void)
 {
@@ -316,6 +340,8 @@ main (void)
     check_inexact (p);
 
   /* underflows (); */
+
+  overflows ();
 
   tests_end_mpfr ();
   return 0;

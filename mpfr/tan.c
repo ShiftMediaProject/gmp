@@ -56,7 +56,8 @@ mpfr_tan (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     {
       mpfr_sin_cos (s, c, x, GMP_RNDN); /* err <= 1/2 ulp on s and c */
       mpfr_div (c, s, c, GMP_RNDN);     /* err <= 2 ulps */
-      ok = mpfr_can_round (c, m - 1, GMP_RNDN, rnd_mode, precy);
+      ok = mpfr_can_round (c, m - 1, GMP_RNDN, GMP_RNDZ,
+                           precy + (rnd_mode == GMP_RNDN));
 
       if (ok == 0)
 	{

@@ -47,7 +47,7 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
       MPFR_CLEAR_NAN(y);
 
       if (n == 0)
-        return mpfr_set_ui(y, 1, GMP_RNDN);
+        return mpfr_set_ui (y, 1, GMP_RNDN);
 
       if (MPFR_IS_INF(x))
         {
@@ -71,6 +71,14 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
 
       MPFR_CLEAR_INF(y);
 
+      /* detect exact powers: x^(-n) is exact iff x is a power of 2 */
+      if (mpfr_cmp_si_2exp (x, MPFR_SIGN(x), MPFR_EXP(x) - 1) == 0)
+        {
+          mpfr_set_si (y, (n % 2) ? MPFR_SIGN(x) : 1, rnd_mode);
+          MPFR_EXP(y) += n * (MPFR_EXP(x) - 1);
+          return 0;
+        }
+
       n = -n;
 
       /* General case */
@@ -87,15 +95,15 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
         int inexact;
 
         /* compute the precision of intermediary variable */
-        Nt=MAX(Nx,Ny);
+        Nt = MAX(Nx,Ny);
         /* the optimal number of bits : see algorithms.ps */
-        Nt=Nt+3+__gmpfr_ceil_log2(Nt);
+        Nt = Nt + 3 + __gmpfr_ceil_log2 (Nt);
 
         mpfr_save_emin_emax ();
 
         /* initialise of intermediary	variable */
-        mpfr_init(t);
-        mpfr_init(ti);
+        mpfr_init (t);
+        mpfr_init (ti);
 
         do
           {
@@ -113,7 +121,8 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
             /* actualisation of the precision */
             Nt += 10;
           }
-        while (err < 0 || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny));
+        while (err < 0 || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                           Ny + (rnd_mode == GMP_RNDN)));
 
         inexact = mpfr_set (y, t, rnd_mode);
         mpfr_clear (t);

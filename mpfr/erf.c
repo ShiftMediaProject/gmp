@@ -42,6 +42,7 @@ mpfr_erf (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int sign_x;
   mp_rnd_t rnd2;
   double n = (double) MPFR_PREC(y);
+  int inex;
 
   if (MPFR_IS_NAN(x))
     {
@@ -88,13 +89,13 @@ mpfr_erf (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     }
   else  /* use Taylor */
     {
-      mpfr_erf_0 (y, x, rnd2);
+      inex = mpfr_erf_0 (y, x, rnd2);
     }
 
   if (sign_x < 0)
     MPFR_CHANGE_SIGN(y);
 
-  return 1;
+  return inex;
 }
 
 /* return x*2^e */
@@ -132,6 +133,7 @@ mpfr_erf_0 (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd_mode)
   unsigned int k;
   long log2tauk;
   int ok;
+  int inex;
 
   n = MPFR_PREC(res); /* target precision */
   xf = mpfr_get_d (x, GMP_RNDN);
@@ -189,7 +191,8 @@ mpfr_erf_0 (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd_mode)
       tauk = 4.0 * tauk + 11.0; /* final ulp-error on s */
       log2tauk = __gmpfr_ceil_log2 (tauk);
 
-      ok = mpfr_can_round (s, m - log2tauk, GMP_RNDN, rnd_mode, n);
+      ok = mpfr_can_round (s, m - log2tauk, GMP_RNDN, GMP_RNDZ,
+                           n + (rnd_mode == GMP_RNDN));
 
       if (ok == 0)
         {
@@ -199,14 +202,14 @@ mpfr_erf_0 (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd_mode)
     }
   while (ok == 0);
 
-  mpfr_set (res, s, rnd_mode);
+  inex = mpfr_set (res, s, rnd_mode);
 
   mpfr_clear (y);
   mpfr_clear (t);
   mpfr_clear (u);
   mpfr_clear (s);
 
-  return 1;
+  return inex;
 }
 
 #if 0

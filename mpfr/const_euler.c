@@ -36,6 +36,7 @@ mpfr_const_euler (mpfr_t x, mp_rnd_t rnd)
   mp_prec_t prec = MPFR_PREC(x), m, log2m;
   mpfr_t y, z;
   unsigned long n;
+  int inexact;
 
   log2m = __gmpfr_ceil_log2 ((double) prec);
   m = prec + log2m;
@@ -60,14 +61,15 @@ mpfr_const_euler (mpfr_t x, mp_rnd_t rnd)
       mpfr_const_euler_R (z, n);
       mpfr_sub (y, y, z, GMP_RNDN);
     }
-  while (!mpfr_can_round (y, m - 3, GMP_RNDN, rnd, prec));
+  while (!mpfr_can_round (y, m - 3, GMP_RNDN, GMP_RNDZ,
+                          prec + (rnd == GMP_RNDN)));
 
-  mpfr_set (x, y, rnd);
+  inexact = mpfr_set (x, y, rnd);
 
   mpfr_clear (y);
   mpfr_clear (z);
 
-  return 1; /* always inexact */
+  return inexact; /* always inexact */
 }
 
 /* computes S(n) = sum(n^k*(-1)^(k-1)/k!/k, k=1..ceil(4.319136566 * n))

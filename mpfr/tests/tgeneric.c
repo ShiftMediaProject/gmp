@@ -75,7 +75,7 @@ test_generic (int p0, int p1, int N)
               compare2 = mpfr_cmp (t, y);
               /* if rounding to nearest, cannot know the sign of t - f(x)
                  because of composed rounding: y = o(f(x)) and t = o(y) */
-              if ((rnd != GMP_RNDN) && (compare * compare2 >= 0))
+              if (compare * compare2 >= 0)
                 compare = compare + compare2;
               else
                 compare = inexact; /* cannot determine sign(t-f(x)) */

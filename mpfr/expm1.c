@@ -104,12 +104,13 @@ mpfr_expm1 (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode)
         /* actualisation of the precision */
         Nt += 10;
       }
-    while ((err <0) || !mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
+    while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                         Ny + (rnd_mode == GMP_RNDN)));
  
-    inexact = mpfr_set(y,t,rnd_mode);
+    inexact = mpfr_set (y, t, rnd_mode);
 
-    mpfr_clear(t);
-    mpfr_clear(te);
+    mpfr_clear (t);
+    mpfr_clear (te);
   }
 
   return inexact;

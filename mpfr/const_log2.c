@@ -63,6 +63,7 @@ mpfr_const_aux_log2 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
   int logn;
   mp_prec_t prec_i_want = MPFR_PREC(mylog);
   mp_prec_t prec_x;
+  int inexact;
 
   mpz_init(cst);
   logn =  __gmpfr_ceil_log2 ((double) MPFR_PREC(mylog));
@@ -93,17 +94,20 @@ mpfr_const_aux_log2 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
     mpfr_clear(tmp1);
     mpfr_clear(tmp2);
     mpfr_clear(tmp3);
-    if (mpfr_can_round(result, prec_x, GMP_RNDD, rnd_mode, prec_i_want)){
-      mpfr_set(mylog, result, rnd_mode);
-      good = 1;
-    } else
+    if (mpfr_can_round (result, prec_x, GMP_RNDD, GMP_RNDZ,
+                        prec_i_want + (rnd_mode == GMP_RNDN)))
+      {
+        inexact = mpfr_set (mylog, result, rnd_mode);
+        good = 1;
+      }
+    else
       {
 	prec_x += logn;
       }
-    mpfr_clear(result);
+    mpfr_clear (result);
   }
-  mpz_clear(cst);
-  return 0;
+  mpz_clear (cst);
+  return inexact;
 }
 
 /* Cross-over point from nai"ve Taylor series to binary splitting,
@@ -129,6 +133,7 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
 {
   mp_prec_t N, k, precx;
   mpz_t s, t, u;
+  int inexact;
 
   precx = MPFR_PREC(x);
   MPFR_CLEAR_FLAGS(x);
@@ -138,7 +143,7 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
     {
       if ((rnd_mode == __mpfr_const_log2_rnd) ||
           mpfr_can_round (__mpfr_const_log2, __gmpfr_const_log2_prec - 1,
-                          __mpfr_const_log2_rnd, rnd_mode, precx))
+                          __mpfr_const_log2_rnd, GMP_RNDZ, precx + (rnd_mode == GMP_RNDN)))
         {
           return mpfr_set (x, __mpfr_const_log2, rnd_mode);
         }
@@ -172,7 +177,7 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
       mpz_clear (u);
     }
   else /* use binary splitting method */
-    mpfr_const_aux_log2(x, rnd_mode);
+    inexact = mpfr_const_aux_log2 (x, rnd_mode);
 
   /* store computed value */
   if (__gmpfr_const_log2_prec == 0)
@@ -183,5 +188,6 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
   mpfr_set (__mpfr_const_log2, x, rnd_mode);
   __gmpfr_const_log2_prec = precx;
   __mpfr_const_log2_rnd = rnd_mode;
-  return 1;
+
+  return inexact;
 }

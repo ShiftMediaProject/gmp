@@ -28,24 +28,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-#if 0
-/* The following function is buggy and must not be used any longer. */
-static double
-drand_agm (void)
-{
-  double d; long int *i;
-
-  i = (long int*) &d;
-  do {
-    i[0] = LONG_RAND();
-    i[1] = LONG_RAND();
-  } while ((d<1e-153)||(d>1e153));    /* to avoid underflow or overflow
-					 in double calculus in sqrt(u*v) */
-
-  return d;
-}
-#endif
-
 #define check(a,b,r) check4(a,b,r,0.0)
 
 static void
@@ -110,29 +92,6 @@ check_large (void)
   mpfr_clear (agm);
 }
 
-#if 0
-static void
-slave (int N, int p)
-{
-  int i;
-  double a,b;
-  mpfr_t ta, tb, tres;
-
-  mpfr_init2(ta, 53);
-  mpfr_init2(tb, 53);
-  mpfr_init2(tres, p);
-  for(i=0;i<N;i++) {
-    a = drand_agm();
-    b = drand_agm();
-    mpfr_set_d(ta, a, GMP_RNDN);
-    mpfr_set_d(tb, b, GMP_RNDN);
-    mpfr_agm(tres, ta, tb, randlimb () % 4 );
-  }
-    mpfr_clear(ta); mpfr_clear(ta); mpfr_clear(tres);
-    printf("fin\n");
-}
-#endif
-
 static void
 check_nans (void)
 {
@@ -179,16 +138,6 @@ main (int argc, char* argv[])
    tests_start_mpfr ();
 
    check_nans ();
-
-   if (argc == 3) /* tagm N p : N calculus with precision p*/
-     {
-       /*
-       printf ("Doing %d random tests in %d precision\n", atoi (argv[1]),
-               atoi (argv[2]));
-       slave (atoi (argv[1]), atoi (argv[2]));
-       */
-       return 0;
-     }
 
    if (argc == 2) /* tagm N: N tests with random double's */
      {

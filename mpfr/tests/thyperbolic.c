@@ -141,7 +141,6 @@ check_NAN (void)
   return(0);
 }
 
-#if 0
 static int
 check_zero (void)
 {
@@ -160,8 +159,8 @@ check_zero (void)
 
   /******cosh********/
 
-  tester=mpfr_cosh(ch,t,GMP_RNDD);
-  if (!mpfr_cmp_ui(ch,1) || !tester)
+  tester = mpfr_cosh (ch, t, GMP_RNDD);
+  if (mpfr_cmp_ui(ch, 1) || tester)
     {
       printf("cosh(0) \n");
       mpfr_clear(t);
@@ -176,8 +175,8 @@ check_zero (void)
 
   /******sinh********/
 
-  tester=mpfr_sinh(sh,t,GMP_RNDD);
-  if (!MPFR_IS_ZERO(sh) || !tester)
+  tester = mpfr_sinh (sh, t, GMP_RNDD);
+  if (!MPFR_IS_ZERO(sh) || tester)
     {
       printf("sinh(0) \n");
       mpfr_clear(t);
@@ -192,8 +191,8 @@ check_zero (void)
 
   /******tanh********/
 
-  tester=mpfr_tanh(th,t,GMP_RNDD);
-  if (!MPFR_IS_ZERO(th) || !tester)
+  tester = mpfr_tanh (th, t, GMP_RNDD);
+  if (!MPFR_IS_ZERO(th) || tester)
     {
       printf("tanh(0) \n");
       mpfr_clear(t);
@@ -209,7 +208,7 @@ check_zero (void)
   /******acosh********/
 
   tester=mpfr_acosh(ach,t,GMP_RNDD);
-  if (!MPFR_IS_NAN(ach) || tester != -1)
+  if (!MPFR_IS_NAN(ach) || tester)
     {
       printf("acosh(0) \n");
       mpfr_clear(t);
@@ -225,7 +224,7 @@ check_zero (void)
   /******asinh********/
 
   tester=mpfr_asinh(ash,t,GMP_RNDD);
-  if (!MPFR_IS_ZERO(ash) || !tester)
+  if (!MPFR_IS_ZERO(ash) || tester)
     {
       printf("asinh(0) \n");
       mpfr_clear(t);
@@ -241,7 +240,7 @@ check_zero (void)
   /******atanh********/
 
   tester=mpfr_atanh(ath,t,GMP_RNDD);
-  if (!MPFR_IS_ZERO(ath) || !tester)
+  if (!MPFR_IS_ZERO(ath) || tester)
     {
       printf("atanh(0) \n");
       mpfr_clear(t);
@@ -264,7 +263,6 @@ check_zero (void)
 
   return(0);
 }
-#endif
 
 static int
 check_INF (void)
@@ -491,106 +489,19 @@ check_INF (void)
   return(0);
 }
 
-#if 0
-static int
-check_O (void)
-{
-  mpfr_t t, ch,sh,th,ach,ash,ath;
-
-  mpfr_init2(t,20);
-  mpfr_init2(ch,40);
-  mpfr_init2(sh,40);
-  mpfr_init2(th,40);
-  mpfr_init2(ach,40);
-  mpfr_init2(ash,40);
-  mpfr_init2(ath,40);
-
-  mpfr_set_ui(t,2,GMP_RNDD);
-
- /******acosh o cosh********/
-
-  mpfr_cosh(ch,t,GMP_RNDN);
-  mpfr_acosh(ach,ch,GMP_RNDN);
-  if(mpfr_cmp_ui(ach,2)!=0)
-    {
-      printf("cosh o acosh \n");
-      mpfr_clear(t);
-      mpfr_clear(ch);
-      mpfr_clear(sh);
-      mpfr_clear(th);
-      mpfr_clear(ach);
-      mpfr_clear(ash);
-      mpfr_clear(ath);
-      return(1);
-    }
-
-  /******asinh o sinh********/
-
-  mpfr_sinh(sh,t,GMP_RNDN);
-  mpfr_asinh(ash,sh,GMP_RNDN);
-  if(mpfr_cmp_ui(ash,2)!=0)
-    {
-      printf("sinh o asinh \n");
-      mpfr_clear(t);
-      mpfr_clear(ch);
-      mpfr_clear(sh);
-      mpfr_clear(th);
-      mpfr_clear(ach);
-      mpfr_clear(ash);
-      mpfr_clear(ath);
-      return(1);
-    }
-
-  /******atanh o tanh********/
-
-  mpfr_tanh(th,t,GMP_RNDN);
-  mpfr_atanh(ath,th,GMP_RNDU);
-
-  /*
-  mpfr_out_str(stdout, 2,40,th,GMP_RNDN);
-  puts ("");
-
-  mpfr_out_str(stdout, 2,40,ath,GMP_RNDU);
-  puts ("");
-  */
-
-  if(mpfr_cmp_ui(ath,2)!=0)
-    {
-      printf("tanh o atanh \n");
-      mpfr_clear(t);
-      mpfr_clear(ch);
-      mpfr_clear(sh);
-      mpfr_clear(th);
-      mpfr_clear(ach);
-      mpfr_clear(ash);
-      mpfr_clear(ath);
-      return(1);
-    }
-
-  mpfr_clear(t);
-  mpfr_clear(ch);
-  mpfr_clear(sh);
-  mpfr_clear(th);
-  mpfr_clear(ach);
-  mpfr_clear(ash);
-  mpfr_clear(ath);
-
-  return(0);
-}
-#endif
-
 int
 main(void)
 {
   tests_start_mpfr ();
+
+  if (check_zero())
+    printf("Error in evaluation at 0\n");
 
   if (check_INF())
     printf("Error in evaluation of INF\n");
 
   if (check_NAN())
     printf("Error in evaluation of NAN\n");
-
-/*if (check_O())printf("Error in evaluation of composition hyperbolic function\n");*/
 
   tests_end_mpfr ();
   return(0);

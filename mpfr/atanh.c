@@ -122,13 +122,14 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
         Nt += 10;
 
       }
-    while ((err < 0) ||
-           (!mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny) || MPFR_IS_ZERO(t)));
+    while ((err < 0) || (!mpfr_can_round (t, err, GMP_RNDN, GMP_RNDZ,
+                                          Ny + (rnd_mode == GMP_RNDN))
+                         || MPFR_IS_ZERO(t)));
 
     if(flag_neg)
       MPFR_CHANGE_SIGN(t);
 
-    inexact = mpfr_set(y,t,rnd_mode);
+    inexact = mpfr_set (y, t, rnd_mode);
 
     mpfr_clear(t);
     mpfr_clear(ti);
