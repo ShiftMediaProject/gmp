@@ -130,9 +130,9 @@ dnl
 dnl  Generate a local label in the current or given function.  For LF(),
 dnl  functionname gets GSYM_PREFIX added, the same as with PROLOGUE().
 dnl
-dnl  For example, in a function mpn_add_n (and with MPN_PREFIX __mpn),
+dnl  For example, in a function mpn_add_n (and with MPN_PREFIX __gmpn),
 dnl
-dnl         L(bar)          => L__mpn_add_n__bar
+dnl         L(bar)          => L__gmpn_add_n__bar
 dnl         LF(somefun,bar) => Lsomefun__bar
 dnl
 dnl  The funtion name and label name get two underscores between them rather
