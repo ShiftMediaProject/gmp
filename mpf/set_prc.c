@@ -26,12 +26,18 @@ void
 mpf_set_prec (mpf_ptr x, unsigned long int prec_in_bits)
 {
   mp_size_t prec;
-  mp_size_t size = ABS (x->_mp_size);
+  mp_size_t size;
 
-  prec = (MAX (53, prec_in_bits) + 2 * BITS_PER_MP_LIMB - 1)/BITS_PER_MP_LIMB;
+  /* Do nothing if we're already the right precision.  This can arise if an
+     application is gradually increasing or decreasing its requested minimum
+     precision.  */
+  prec = MPF_PREC_TO_BITS (prec_in_bits);
+  if (prec == PREC(x))
+    return;
 
   /* We want the most significant limbs, so move the limbs down if we are
      about to truncate the value.  */
+  size = ABS (x->_mp_size);
   if (size > prec + 1)
     {
       mp_size_t offset = size - (prec + 1);
