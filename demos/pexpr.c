@@ -889,6 +889,20 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
     case POW:
       mpz_init (lhs); mpz_init (rhs);
       mpz_eval_expr (lhs, e->operands.ops.lhs);
+      if (mpz_cmpabs_ui (lhs, 1) <= 0)
+	{
+	  /* For 0^rhs and 1^rhs, we just need to verify that
+	     rhs is well-defined.  For (-1)^rhs we need to
+	     determine (rhs mod 2).  For simplicity, compute
+	     (rhs mod 2) for all three cases.  */
+	  expr_t two, et;
+	  two = malloc (sizeof (struct expr));
+	  two -> op = LIT;
+	  mpz_init_set_ui (two->operands.val, 2L);
+	  makeexp (&et, MOD, e->operands.ops.rhs, two);
+	  e->operands.ops.rhs = et;
+	}
+
       mpz_eval_expr (rhs, e->operands.ops.rhs);
       if (mpz_cmp_si (rhs, 0L) == 0)
 	/* x^0 is 1 */
@@ -1241,7 +1255,7 @@ cleanup_and_exit (int sig)
 {
 #ifdef LIMIT_RESOURCE_USAGE
   if (sig == SIGXCPU)
-    printf ("expression took too long time to evaluate%s\n", newline);
+    printf ("expression took too long to evaluate%s\n", newline);
   else if (sig == SIGFPE)
     printf ("divide by zero%s\n", newline);
   else
