@@ -4,8 +4,8 @@
 
 
 This directory contains code optimized for Intel P6 class CPUs, meaning
-PentiumPro, Pentium II and Pentium III.  The mmx subdirectory contains
-routines using MMX instructions.
+PentiumPro, Pentium II and Pentium III.  The mmx and p3mmx subdirectories
+have routines using MMX instructions.
 
 
 
