@@ -294,7 +294,6 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 static mp_size_t
 convert_blocks (mp_ptr dp, const unsigned char *str, size_t str_len, int base)
 {
-  mp_limb_t big_base;
   int chars_per_limb;
   mp_size_t i;
   int j;
@@ -302,7 +301,6 @@ convert_blocks (mp_ptr dp, const unsigned char *str, size_t str_len, int base)
   mp_size_t dsize;
   mp_limb_t res_digit;
 
-  big_base = __mp_bases[base].big_base;
   chars_per_limb = __mp_bases[base].chars_per_limb;
 
   dsize = str_len / chars_per_limb;
