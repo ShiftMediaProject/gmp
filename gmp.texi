@@ -148,7 +148,7 @@ mod
 gcd
 @end macro
 @macro ge
-<=
+>=
 @end macro
 @macro le
 <=
@@ -1106,7 +1106,9 @@ bug in unsigned division, giving wrong results for some operands.  GMP
 
 CPU @samp{m68k} is taken to mean 68020 or better since that's what most
 systems are.  Use @samp{m68000} or @samp{m68010} if GMP must run on those
-earlier CPUs.
+earlier CPUs.  @samp{m68302} can be used for the ``Dragonball'' series chips,
+but this is merely a synonym for @samp{m68000}.  @samp{m68360} can be used for
+CPU32 series chips.
 
 @item OpenBSD 2.6
 
@@ -1637,6 +1639,13 @@ can be significant in comparison to actual calculation.  This is unavoidable
 in a general purpose variable precision library, although GMP attempts to be
 as efficient as it can on both large and small operands.
 
+@item Static Linking
+On some CPUs, in particular the x86s, the static @file{libgmp.a} should be
+used for maximum speed, since the PIC code in the shared @file{libgmp.so} will
+have a small overhead on each function call and global data addressing.  For
+many programs this will be insignificant, but for long calculations there's a
+gain to be had.
+
 @item Initializing and clearing
 Avoid excessive initializing and clearing of variables, since this can be
 quite time consuming, especially in comparison to otherwise fast operations
@@ -1644,7 +1653,7 @@ like addition.
 
 A language interpreter might want to keep a free list or stack of
 initialized variables ready for use.  It should be possible to integrate
-something like that with a garbage collector.
+something like that with a garbage collector too.
 
 @item Reallocations
 An @code{mpz_t} or @code{mpq_t} variable used to hold successively increasing
@@ -1658,6 +1667,53 @@ It doesn't matter if a size set with @code{@w{_mpz}_realloc} is too small,
 since all functions will do a further reallocation if necessary.  Badly
 overestimating memory required will waste space though.
 
+@item @code{2exp} functions
+It's up to an application to call functions like @code{mpz_mul_2exp} when
+appropriate.  General purpose functions like @code{mpz_mul} make no attempt to
+identify powers of two or other special forms, because such inputs will
+usually be very rare and testing every time would be wasteful.
+
+@item @code{ui} and @code{si} functions
+The @code{ui} functions and the small number of @code{si} functions exist for
+convenience and should be used where applicable.  But if for example an
+@code{mpz_t} contains a value that fits in an @code{unsigned long} there's no
+need extract it and call a @code{ui} function, just use the regular @code{mpz}
+function.
+
+@item In-Place Operations
+@code{mpz_abs}, @code{mpq_abs}, @code{mpf_abs}, @code{mpz_neg}, @code{mpq_neg}
+and @code{mpf_neg} are fast when used for in-place operations like
+@code{mpz_abs(x,x)}, since in the current implementation only a single field
+of @code{x} needs changing.  On suitable compilers (GCC for instance) this is
+inlined too.
+
+@code{mpz_add_ui}, @code{mpz_sub_ui}, @code{mpf_add_ui} and @code{mpf_sub_ui}
+benefit from an in-place operation like @code{mpz_add_ui(x,x,y)}, since
+usually only one or two limbs of @code{x} will need to be changed.  The same
+applies to the full precision @code{mpz_add} etc if @code{y} is small.  If
+@code{y} is big then cache locality may be helped, but that's all.
+
+@code{mpz_mul} is currently the opposite, a separate destination is slightly
+better.  A call like @code{mpz_mul(x,x,y)} will, unless @code{y} is only one
+limb, make a temporary copy of @code{x} before forming the result.  Normally
+that copying will only be a tiny fraction of the time for the multiply, so
+this is not a particularly important consideration.
+
+@code{mpz_set}, @code{mpq_set}, @code{mpq_set_num}, @code{mpf_set}, etc, make
+no attempt to recognise in-place operations, so a call like
+@code{mpz_set(x,x)} will be wasteful.  Naturally that would never be written
+deliberately, but if it might arise from two pointers to the same object then
+a test to avoid it might be desirable.
+
+@example
+if (x != y)
+  mpz_set (x, y);
+@end example
+
+Note that it's never worth introducing extra @code{mpz_set} calls just to get
+in-place operations.  If a result should go to a particular variable then just
+direct it there and let GMP take care of data movement.
+
 @item Divisibility Testing (Small Integers)
 
 @code{mpz_divisible_ui_p} and @code{mpz_congruent_ui_p} are the best functions
@@ -1667,10 +1723,9 @@ which gives no useful information about the actual remainder, only whether
 it's zero (or a particular value).
 
 However when testing divisibility by several small integers, it's best to take
-a remainder modulo their product, in order to save multi-precision operations.
-For instance to test whether a number is divisible by any of 23, 29 and 31,
-take a remainder modulo @ma{23@times{}29@times{}31 = 20677} and then test
-that.
+a remainder modulo their product, to save multi-precision operations.  For
+instance to test whether a number is divisible by any of 23, 29 and 31 take a
+remainder modulo @ma{23@times{}29@times{}31 = 20677} and then test that.
 
 The division functions like @code{mpz_tdiv_q_ui} which give a quotient as well
 as a remainder are generally a little slower than the remainder-only functions
@@ -1687,19 +1742,18 @@ since it minimizes the sizes for subsequent operations.
 However, applications that know something about the factorization of the
 values they're working with might be able to avoid some of the GCDs used for
 canonicalization, or swap them for divisions.  For example when multiplying by
-a prime it's enough to check for factors of it in the denominator rather than
-do a full GCD.  Or when forming a big product it might be known that very
+a prime it's enough to check for factors of it in the denominator instead of
+doing a full GCD.  Or when forming a big product it might be known that very
 little cancellation will be possible, and so canonicalization can be left to
 the end.
 
 The @code{mpq_numref} and @code{mpq_denref} macros give access to the
-numerator and denominator to do things outside the scope of the @code{mpq}
-functions.  @xref{Applying Integer Functions}.
+numerator and denominator to do things outside the scope of the supplied
+@code{mpq} functions.  @xref{Applying Integer Functions}.
 
-It will be noted that the canonical form for rationals allows mixed-type
-@code{mpq_t} and integer additions or subtractions to be done directly with
-multiples of the denominator.  This will somewhat touch faster than using
-@code{mpq_add}.  For example,
+The canonical form for rationals allows mixed-type @code{mpq_t} and integer
+additions or subtractions to be done directly with multiples of the
+denominator.  This will be somewhat faster than @code{mpq_add}.  For example,
 
 @example
 /* mpq increment */
@@ -1712,30 +1766,10 @@ mpz_addmul_ui (mpq_numref(q), mpq_denref(q), 123UL);
 mpz_submul (mpq_numref(q), mpq_denref(q), z);
 @end example
 
-@item @code{2exp} functions
-It's up to an application to call functions like @code{mpz_mul_2exp} when
-appropriate.  General purpose functions like @code{mpz_mul} make no attempt to
-identify powers of two or other special forms, because such inputs will
-usually be very rare and testing every time would be wasteful.
-
-@item @code{si} and @code{ui} functions
-The @code{ui} functions and the small number of @code{si} functions exist for
-convenience and should be used where applicable.  But if for example an
-@code{mpz_t} contains a value that fits in an @code{unsigned long} there's no
-need extract it and call a @code{ui} function, just use the regular @code{mpz}
-function.
-
-@item In-Place Operations
-@code{mpz_abs}, @code{mpq_abs}, @code{mpf_abs}, @code{mpz_neg}, @code{mpq_neg}
-and @code{mpf_neg} are fast when used for an in-place operation like
-@code{mpz_abs(x,x)}, in the current implementation only a single field of
-@code{x} needs changing.  On suitable compilers (GCC for instance) this is
-inlined too.
-
 @item Number Sequences
 Functions like @code{mpz_fac_ui}, @code{mpz_fib_ui} and @code{mpz_bin_uiui}
 are designed for calculating isolated values.  If a range of values is wanted
-it's probably better to call to get a starting point and iterate from there.
+it's probably best to call to get a starting point and iterate from there.
 @end table
 
 
@@ -1979,8 +2013,13 @@ If the bug is related to @samp{configure}, then the contents of
 
 @item
 If the bug is related to an @file{asm} file not assembling, then the contents
-of @file{config.m4}.
+of @file{config.m4} and the offending line or lines from the temporary
+@file{mpn/tmp-<file>.s}.
 @end itemize
+
+Please make an effort to produce a self-contained report, with something
+definite that can be tested or debugged.  Vague queries or piecemeal messages
+are difficult to act on and don't help the development effort.
 
 It is not uncommon that an observed problem is actually due to a bug in the
 compiler; the GMP code tends to explore interesting corners in compilers.
@@ -3194,8 +3233,10 @@ or decreased at any time.
 The exponent of each float is a fixed precision, one machine word on most
 systems.  In the current implementation the exponent is a count of limbs, so
 for example on a 32-bit system this means a range of roughly
-@ma{2^@W{-68719476768}} to @ma{2^@W{68719476736}}.  On a 64-bit system this
-will be greater.
+@ma{2^@W{-68719476768}} to @ma{2^@W{68719476736}}, or on a 64-bit system this
+will be greater.  However @code{mpf_get_str} can only return an exponent which
+fits an @code{mp_exp_t} and currently <code>mpf_set_str</code> doesn't accept
+exponents bigger than a @code{long}.
 
 In each variable the current size of the mantissa data is maintained.  This
 means that if the mantissa is exactly represented in only a few bits then only
@@ -3290,23 +3331,43 @@ calculation.  A typical use would be for adjusting the precision gradually in
 iterative algorithms like Newton-Raphson, making the computation precision
 closely match the actual accurate part of the numbers.
 
-@deftypefun void mpf_set_prec (mpf_t @var{rop}, unsigned long int @var{prec})
-Set the precision of @var{rop} to be @strong{at least} @var{prec} bits.
-Since changing the precision involves calls to @code{realloc}, this routine
-should not be called in a tight loop.
+@deftypefun {unsigned long int} mpf_get_prec (mpf_t @var{op})
+Return the current precision of @var{op}, in bits.
 @end deftypefun
 
-@deftypefun {unsigned long int} mpf_get_prec (mpf_t @var{op})
-Return the precision actually used for assignments of @var{op}.
+@deftypefun void mpf_set_prec (mpf_t @var{rop}, unsigned long int @var{prec})
+Set the precision of @var{rop} to be @strong{at least} @var{prec} bits.  The
+value in @var{rop} will be truncated to the new precision.
+
+This function requires a call to @code{realloc}, and so should not be used in
+a tight loop.
 @end deftypefun
 
 @deftypefun void mpf_set_prec_raw (mpf_t @var{rop}, unsigned long int @var{prec})
-Set the precision of @var{rop} to be @strong{at least} @var{prec} bits.  This
-is a low-level function that does not change the allocation.  The @var{prec}
-argument must not be larger that the precision previously returned by
-@code{mpf_get_prec}.  It is crucial that the precision of @var{rop} is
-ultimately reset to exactly the value returned by @code{mpf_get_prec} before
-the first call to @code{mpf_set_prec_raw}.
+Set the precision of @var{rop} to be @strong{at least} @var{prec} bits,
+without changing the memory allocated.
+
+@var{prec} must be no more than the allocated precision for @var{rop}, that
+being the precision when @var{rop} was initialized, or in the most recent
+@code{mpf_set_prec}.
+
+The value in @var{rop} is unchanged, and in particular if it had a higher
+precision than @var{prec} it will retain that higher precision.  New values
+written to @var{rop} will use the new @var{prec}.
+
+Before calling @code{mpf_clear}, or using the full @code{mpf_set_prec},
+another @code{mpf_set_prec_raw} call must be used to restore @var{rop} to its
+original allocated precision.  Failing to do so will have unpredictable
+results.
+
+@code{mpf_get_prec} can be used before @code{mpf_set_prec_raw} to get the
+original allocated precision.  After @code{mpf_set_prec_raw} it reflects the
+@var{prec} value set.
+
+@code{mpf_set_prec_raw} is an efficient way to use an @code{mpf_t} variable at
+different precisions during a calculation, perhaps to gradually increase
+precision in an iteration, or just to use various different precisions for
+different purposes during a calculation.
 @end deftypefun
 
 
@@ -3534,6 +3595,10 @@ Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
 Return non-zero if the first @var{op3} bits of @var{op1} and @var{op2} are
 equal, zero otherwise.  I.e., test of @var{op1} and @var{op2} are approximately
 equal.
+
+Caution: Currently only whole limbs are compared, and only in an exact
+fashion.  In the future values like 1000 and 0111 may be considered the same
+to 3 bits (on the basis that their difference is that small).
 @end deftypefun
 
 @deftypefun void mpf_reldiff (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
