@@ -338,6 +338,34 @@ struct try_t  *tr;
 
 
 void
+validate_mod_34lsub1 (void)
+{
+#define CNST_34LSUB1   ((CNST_LIMB(1) << (3 * (BITS_PER_MP_LIMB / 4))) - 1)
+  
+  mp_srcptr  ptr = s[0].p;
+  int        error = 0;
+  mp_limb_t  got, got_mod, want, want_mod;
+
+  ASSERT (size >= 1);
+
+  got = fun.retval;
+  got_mod = got % CNST_34LSUB1;
+  
+  want = refmpn_mod_34lsub1 (ptr, size);
+  want_mod = want % CNST_34LSUB1;
+
+  if (got_mod != want_mod)
+    {
+      printf ("got   0x%lX reduced from 0x%lX\n", got_mod, got);
+      printf ("want  0x%lX reduced from 0x%lX\n", want_mod, want);
+      error = 1;
+    }
+  
+  if (error)
+    validate_fail ();
+}
+
+void
 validate_divexact_1 (void)
 {
   mp_srcptr  src = s[0].p;
@@ -517,13 +545,14 @@ validate_sqrtrem (void)
 #define TYPE_DIVREM_1         29
 #define TYPE_DIVREM_1C        30
 #define TYPE_PREINV_MOD_1     31
+#define TYPE_MOD_34LSUB1      32
 
-#define TYPE_DIVEXACT_1       32
-#define TYPE_DIVEXACT_BY3     33
-#define TYPE_DIVEXACT_BY3C    34
+#define TYPE_DIVEXACT_1       33
+#define TYPE_DIVEXACT_BY3     34
+#define TYPE_DIVEXACT_BY3C    35
 
-#define TYPE_MODEXACT_1_ODD   35
-#define TYPE_MODEXACT_1C_ODD  36
+#define TYPE_MODEXACT_1_ODD   36
+#define TYPE_MODEXACT_1C_ODD  37
 
 #define TYPE_GCD              40
 #define TYPE_GCD_1            41
@@ -779,7 +808,12 @@ param_init (void)
   p->divisor = DIVISOR_NORM;
   REFERENCE (refmpn_preinv_mod_1);
 
+  p = &param[TYPE_MOD_34LSUB1];
+  p->retval = 1;
+  p->src[0] = 1;
+  VALIDATE (validate_mod_34lsub1);
 
+  
   p = &param[TYPE_DIVEXACT_1];
   p->dst[0] = 1;
   p->src[0] = 1;
@@ -1164,6 +1198,7 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_mod_1c
   { TRY(mpn_mod_1c),       TYPE_MOD_1C },
 #endif
+  { TRY(mpn_mod_34lsub1),  TYPE_MOD_34LSUB1 },
   { TRY(mpn_divexact_1),          TYPE_DIVEXACT_1 },
   { TRY_FUNFUN(mpn_divexact_by3), TYPE_DIVEXACT_BY3 },
   { TRY(mpn_divexact_by3c),       TYPE_DIVEXACT_BY3C },
@@ -1732,6 +1767,9 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_PREINV_MOD_1:
     e->retval = CALLING_CONVENTIONS (function)
       (e->s[0].p, size, divisor, refmpn_invert_limb (divisor));
+    break;
+  case TYPE_MOD_34LSUB1:
+    e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, size);
     break;
 
   case TYPE_SB_DIVREM_MN:
