@@ -1,3 +1,17 @@
+2000-07-28  Kent Boortz  <kent@swox.se>
+
+	* macos/Asm*, macos/CmnObj, macos/Mp*: Delete directories.
+	* macos/Makefile: Delete file.
+	* macos/Makefile.cw: Delete file.
+	* macos/config.h: Delete file.
+	* macos/Asm/*.s: Delete files.
+	* macos/configure: Create target directories. Don't transform
+	'(C)' to '(;)' in a 'dnl' line comment in .asm file.
+	* Makefile.am: Delete macos targets.
+	* macos/README: Reflect that we reverted back to a build
+	process that require ""macos/configure" to run on MacOS.
+	This imply that MacPerl is needed for a build in MacOS.
+
 2000-07-27  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/mul_fft.c: New file, by Paul Zimmermann, minor mods
@@ -99,7 +113,7 @@
 	* tune/speed.h: Decrease the amount of data used for gcd and powm
 	measuring, to make the tune go a bit faster.
 
-2000-07-21  Kent Boortz  <kent@erix.ericsson.se>
+2000-07-21  Kent Boortz  <kent@swox.se>
 
 	* macos/Asm*, macos/CmnObj, macos/Mp*: Directories no longer created
 	from configure script, now part of dist.
