@@ -42,9 +42,9 @@ mord_2exp (mpz_ptr ldst, mpz_ptr rdst, mpz_srcptr lsrc, mpz_srcptr rsrc,
 
   p = rsrc_ptr;
   plow = *p;
-  while (n >= BITS_PER_MP_LIMB && plow == 0)
+  while (n >= GMP_NUMB_BITS && plow == 0)
     {
-      n -= BITS_PER_MP_LIMB;
+      n -= GMP_NUMB_BITS;
       p++;
       plow = *p;
     }
