@@ -5,6 +5,11 @@
 #include "gmp.h"
 #include "gmpstat.h"
 
+#define RCSID(msg) \
+static /**/const char *const rcsid[] = { (char *)rcsid, "\100(#)" msg }
+
+RCSID("$Id$");
+
 int g_debug = 0;
 
 static mpz_t a;
