@@ -1,3 +1,26 @@
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
+Contributed by the Spaces project, INRIA Lorraine.
+
+This file is part of the MPFR Library.
+
+The MPFR Library is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License (either version 2.1
+of the License, or, at your option, any later version) and the GNU General
+Public License as published by the Free Software Foundation (most of MPFR is
+under the former, some under the latter).
+
+The MPFR Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+02111-1307, USA.
+
+##############################################################################
+
 Documentation:
 
 - add a description of the algorithms used + proof of correctness
@@ -60,8 +83,6 @@ Changes in existing functions:
   and @NaN@ instead of the possibly ambiguous Inf and NaN in bases > 10.
   Modify the other functions to make them consistent with this choice.
   Possibly accept other strings, like those accepted by strtod.
-- implement ternary flag for mpfr_agm: result is exact when u=v, or u=0,
-  or v=0.
 
 New functions to implement:
 
@@ -122,10 +143,7 @@ Miscellaneous:
 - problem when reading a float followed by a character, for example 1.5*x
 	[from Fabrice.Rouillier@loria.fr, Mon, 04 Dec 2000]
 
-- rewrite mpfr_set_str to use mpn_set_str.
-	(Torbjorn Granlund <tege@swox.com>, 30 Jan 2002)
-
-- mpfr_pow isn't completely specified (concerning signed zeros).
+- use AC_CHECK_FUNCS for __setfpucw rather than grepping a header file.
 
 - rename (and rewrite) mpfr_isinteger to mpfr_integer_p.
 	(Kevin Ryde, 05 Mar 2002)

@@ -1,6 +1,6 @@
 /* Test file for mpfr_eq.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -21,7 +21,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"

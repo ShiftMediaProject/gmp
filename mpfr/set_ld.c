@@ -36,6 +36,8 @@ MA 02111-1307, USA. */
 #define CHAR_BIT 8
 #endif
 
+#define LONGDOUBLE_ISNAN(x) ((x) != (x))
+
 
 /* Various i386 systems have been seen with float.h LDBL constants equal to
    the DBL ones, whereas they ought to be bigger, reflecting the 10-byte

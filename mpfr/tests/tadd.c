@@ -1,6 +1,6 @@
 /* Test file for mpfr_add and mpfr_sub.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -71,32 +71,46 @@ _check (double x, double y, double z1, mp_rnd_t rnd_mode, unsigned int px,
     cert = 1;
   z2 = mpfr_get_d1 (zz);
   mpfr_set_d (yy, z2, GMP_RNDN);
-  if (!mpfr_cmp (zz, yy) && cert && z1!=z2 && !(isnan(z1) && isnan(z2))) {
-    printf("expected sum is %1.20e, got %1.20e\n",z1,z2);
-    printf("mpfr_add failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
-	   x, y, mpfr_print_rnd_mode(rnd_mode));
-    exit(1);
-  }
-  mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
+  if (!mpfr_cmp (zz, yy) && cert && z1!=z2 && !(Isnan(z1) && Isnan(z2)))
+    {
+      printf ("expected sum is %1.20e, got %1.20e\n", z1, z2);
+      printf ("mpfr_add failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
+              x, y, mpfr_print_rnd_mode (rnd_mode));
+      exit (1);
+    }
+  mpfr_clear (xx);
+  mpfr_clear (yy);
+  mpfr_clear (zz);
 }
 
 void
 checknan (double x, double y, mp_rnd_t rnd_mode, unsigned int px, 
           unsigned int py, unsigned int pz)
 {
-  double z2; mpfr_t xx, yy, zz;
+  double z2;
+  mpfr_t xx, yy, zz;
 
-  mpfr_init2(xx, px);
-  mpfr_init2(yy, py);
-  mpfr_init2(zz, pz);
-  mpfr_set_d(xx, x, rnd_mode);
-  mpfr_set_d(yy, y, rnd_mode);
-  mpfr_add(zz, xx, yy, rnd_mode);
-  if (MPFR_IS_NAN(zz) == 0) { printf("Error, not an MPFR_NAN for xx = %1.20e, y = %1.20e\n", x, y); exit(1); }
+  mpfr_init2 (xx, px);
+  mpfr_init2 (yy, py);
+  mpfr_init2 (zz, pz);
+  mpfr_set_d (xx, x, rnd_mode);
+  mpfr_set_d (yy, y, rnd_mode);
+  mpfr_add (zz, xx, yy, rnd_mode);
+  if (MPFR_IS_NAN(zz) == 0)
+    {
+      printf ("Error, not an MPFR_NAN for xx = %1.20e, y = %1.20e\n", x, y);
+      exit (1);
+    }
   z2 = mpfr_get_d1 (zz);
-  if (!isnan(z2)) { printf("Error, not a NaN after conversion, xx = %1.20e yy = %1.20e, got %1.20e\n", x, y, z2); exit(1); }
+  if (!Isnan(z2))
+    {
+      printf ("Error, not a NaN after conversion, xx = %1.20e yy = %1.20e, got %1.20e\n", x, y, z2);
+      exit (1);
+    }
 
-  mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
+  mpfr_clear (xx);
+  mpfr_clear (yy);
+  mpfr_clear (zz);
 }
 
 void
@@ -705,10 +719,12 @@ main (int argc, char *argv[])
   check53(5.76707395945001907217e-58, 4.74752971449827687074e-51, GMP_RNDD,
 	  4.747530291205672325e-51);
   check53(277363943109.0, 11.0, GMP_RNDN, 277363943120.0);
+#ifdef HAVE_DENORMS
   /* test denormalized numbers too */
   x = 70360154255223.0; for (i=0; i<1073; i++) x = x / 2.0;
   check53(8.06294740693074521573e-310, x, GMP_RNDU,
-	  1.5015454417650041761e-309);
+          1.5015454417650041761e-309);
+#endif
 #ifdef HAVE_INFS
   /* the following check double overflow */
   check53(6.27557402141211962228e+307, 1.32141396570101687757e+308,

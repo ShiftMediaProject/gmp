@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_d and mpfr_get_d.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -118,16 +118,19 @@ main (int argc, char *argv[])
 #endif
       mpfr_set_d (x, d, 0);
       dd = mpfr_get_d1 (x);
-      if (d != dd && (!isnan(d) || !isnan(dd)))
+      if (d != dd && !(Isnan(d) && Isnan(dd)))
 	{ 
-	  fprintf(stderr, 
-		  "Mismatch on : %1.18g != %1.18g\n", d, mpfr_get_d1 (x)); 
-	  mpfr_print_binary(x); putchar('\n');
-	  exit(1);
+	  fprintf (stderr, 
+                   "Mismatch on : %1.18g != %1.18g\n", d, mpfr_get_d1 (x)); 
+	  mpfr_print_binary (x);
+          putchar ('\n');
+	  exit (1);
 	}
     }
 
-  mpfr_clear(x); mpfr_clear(y); mpfr_clear(z);
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (z);
 
   tests_end_mpfr ();
   return 0; 

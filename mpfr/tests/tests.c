@@ -87,8 +87,8 @@ mpfr_test_init ()
 
   tests_machine_prec_double ();
 
-  /* generate DBL_EPSILON with a loop to avoid that the preprocessor
-     optimizes the code below in non-IEEE 754 mode, deciding that 
+  /* generate DBL_EPSILON with a loop to avoid that the compiler
+     optimizes the code below in non-IEEE 754 mode, deciding that
      c = d is always false. */
   for (eps = 1.0; eps != DBL_EPSILON; eps /= 2.0);
   c = 1.0 + eps;
@@ -100,6 +100,7 @@ mpfr_test_init ()
       fprintf (stderr, "         (maybe extended precision not disabled)\n");
       fprintf (stderr, "         Some tests may fail\n");
     }
+  
 }
 
 
@@ -145,7 +146,7 @@ drand (void)
   i[1] = LONG_RAND();
   while (i[expo] >= 2146435072)
     i[expo] = LONG_RAND(); /* avoids NaNs */
-  if ((LONG_RAND() % 2) && !isnan (d))
+  if ((LONG_RAND() % 2) && !Isnan(d))
     d = -d; /* generates negative numbers */
   return d;
 }
@@ -200,10 +201,8 @@ dbl (double m, int e)
   return m;
 }
 
-#ifndef HAVE_ISNAN
 int
 Isnan (double d)
 {
   return (d) != (d);
 }
-#endif

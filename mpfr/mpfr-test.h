@@ -83,7 +83,5 @@ int ulp _PROTO ((double, double));
 double dbl _PROTO ((double, int)); 
 double Ulp _PROTO ((double));
 
-#if !defined(HAVE_ISNAN) && !defined(isnan)
 int Isnan _PROTO ((double));
-#define isnan(d) Isnan(d)
-#endif
+#define LONGDOUBLE_ISNAN(x) ((x) != (x))

@@ -1,6 +1,6 @@
 /* Test file for mpfr_cmp.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -21,7 +21,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
@@ -161,20 +160,27 @@ main (void)
     exit (1);
   }
 
-  for (i=0;i<1000000;) {    x=drand(); y=drand();
-    if (!isnan(x) && !isnan(y)) {
-      i++;
-      mpfr_set_d(xx, x, 0);
-      mpfr_set_d(yy, y, 0);
-      c = mpfr_cmp(xx,yy);
-      if ((c>0 && x<=y) || (c==0 && x!=y) || (c<0 && x>=y)) {
-	printf("Error in mpfr_cmp with x=%1.20e, y=%1.20e mpfr_cmp(x,y)=%d\n",
-	       x,y,c); exit(1);
-      }
+  for (i=0; i<1000000; )
+    {
+      x = drand();
+      y = drand();
+      if (!Isnan(x) && !Isnan(y))
+        {
+          i++;
+          mpfr_set_d (xx, x, 0);
+          mpfr_set_d (yy, y, 0);
+          c = mpfr_cmp (xx,yy);
+          if ((c>0 && x<=y) || (c==0 && x!=y) || (c<0 && x>=y))
+            {
+              printf ("Error in mpfr_cmp with x=%1.20e, y=%1.20e mpfr_cmp(x,y)=%d\n",
+                      x, y, c);
+              exit (1);
+            }
+        }
     }
-  }
 
-  mpfr_clear(xx); mpfr_clear(yy);
+  mpfr_clear (xx);
+  mpfr_clear (yy);
 
   tests_end_mpfr ();
   return 0;

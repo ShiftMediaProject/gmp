@@ -1,6 +1,6 @@
 /* Test file for mpfr_cmp2.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -21,7 +21,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
@@ -153,9 +152,12 @@ tcmp2 (double x, double y, int i)
   mpfr_t xx, yy;
   mp_prec_t j;
 
-  if (i==-1) {
-    if (x==y) i=53;
-    else i = (int) floor(log(x)/log(2.0)) - (int) floor(log(x-y)/log(2.0));
+  if (i == -1)
+    {
+      if (x == y)
+        i = 53;
+      else
+        i = (int) (__gmpfr_floor_log2 (x) - __gmpfr_floor_log2 (x - y));
   }
   mpfr_init2(xx, 53); mpfr_init2(yy, 53);
   mpfr_set_d (xx, x, GMP_RNDN);
@@ -279,31 +281,42 @@ special (void)
 int
 main (void)
 {
-  int i,j; double x=1.0, y, z;
+  int i, j;
+  double x = 1.0, y, z;
 
   tests_start_mpfr ();
   mpfr_test_init ();
 
   worst_cases ();
   special ();
-  tcmp2(5.43885304644369510000e+185, -1.87427265794105340000e-57, 1);
-  tcmp2(1.06022698059744327881e+71, 1.05824655795525779205e+71, -1);
-  tcmp2(1.0, 1.0, 53);
-  for (i=0;i<54;i++) {
-    tcmp2 (1.0, 1.0-x, i);
-    x /= 2.0;
-  }
-  for (x=0.5, i=1; i<100; i++) {
-    tcmp2 (1.0, x, 1);
-    x /= 2.0;
-  }
-  for (j=0; j<100000; j++) {
-    x = DBL_RAND ();
-    y = DBL_RAND ();
-    if (x<y) { z=x; x=y; y=z; }
-    if (y != 0.0 && y != -0.0) tcmp2(x, y, -1);
+  tcmp2 (5.43885304644369510000e+185, -1.87427265794105340000e-57, 1);
+  tcmp2 (1.06022698059744327881e+71, 1.05824655795525779205e+71, -1);
+  tcmp2 (1.0, 1.0, 53);
+  for (i = 0; i < 54; i++)
+    {
+      tcmp2 (1.0, 1.0-x, i);
+      x /= 2.0;
+    }
+  for (x = 0.5, i = 1; i < 100; i++)
+    {
+      tcmp2 (1.0, x, 1);
+      x /= 2.0;
+    }
+  for (j = 0; j < 100000; j++)
+    {
+      x = DBL_RAND ();
+      y = DBL_RAND ();
+      if (x < y)
+        {
+          z = x;
+          x = y;
+          y = z;
+        }
+      if (y != 0.0 && y != -0.0)
+        tcmp2 (x, y, -1);
   }
 
   tests_end_mpfr ();
+
   return 0;
 }

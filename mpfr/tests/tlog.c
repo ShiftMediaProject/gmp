@@ -1,6 +1,6 @@
 /* Test file for mpfr_log.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -21,7 +21,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h> 
-#include <math.h>
 #include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
@@ -64,24 +63,27 @@ check1 (double a, mp_rnd_t rnd_mode, double res1, int ck, int max_ulp)
 {
   mpfr_t ta, tres;
   double res2;
-  int diff=0;
+  int diff = 0;
   /* ck=1 iff res1 is certified correct */
 
-  mpfr_init2(ta, 53);
-  mpfr_init2(tres, 53);
-  mpfr_set_d(ta, a, GMP_RNDN);
-  mpfr_log(tres, ta, rnd_mode);
-  res2=mpfr_get_d1 (tres);
-  mpfr_clear(ta); mpfr_clear(tres); 
+  mpfr_init2 (ta, 53);
+  mpfr_init2 (tres, 53);
+  mpfr_set_d (ta, a, GMP_RNDN);
+  mpfr_log (tres, ta, rnd_mode);
+  res2 = mpfr_get_d1 (tres);
+  mpfr_clear (ta);
+  mpfr_clear (tres); 
 
-  if (res1!=res2 && (!isnan(res1) || !isnan(res2))) {
-      diff = ulp(res1,res2);
-      printf("mpfr_log failed for    a=%1.20e, rnd_mode=%s\n", a,
-             mpfr_print_rnd_mode(rnd_mode));
-      printf("correct result is        %1.20e\n mpfr_log gives          %1.20e (%d ulp)\n",res1,res2,ulp(res1,res2));
-      exit(1);
-  }
-  if (!isnan(res1) || !isnan(res2))
+  if (res1 != res2 && !(Isnan(res1) && Isnan(res2)))
+    {
+      diff = ulp (res1,res2);
+      printf ("mpfr_log failed for    a=%1.20e, rnd_mode=%s\n", a,
+              mpfr_print_rnd_mode (rnd_mode));
+      printf ("correct result is        %1.20e\n mpfr_log gives          %1.20e (%d ulp)\n",
+              res1, res2, ulp (res1,res2));
+      exit (1);
+    }
+  if (!Isnan(res1) || !Isnan(res2))
     return diff;
   else
     return 0;

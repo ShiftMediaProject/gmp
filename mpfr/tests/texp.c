@@ -1,6 +1,6 @@
 /* Test file for mpfr_exp.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,7 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -43,26 +42,35 @@ int maxu=0;
 int
 check3 (double d, mp_rnd_t rnd, double e)
 {
-  mpfr_t x, y; double f; int u=0;
+  mpfr_t x, y;
+  double f;
+  int u = 0;
 
-  mpfr_init2(x, 53); mpfr_init2(y, 53);
-  mpfr_set_d(x, d, rnd); 
-  mpfr_exp(y, x, rnd); 
+  mpfr_init2 (x, 53);
+  mpfr_init2 (y, 53);
+  mpfr_set_d (x, d, rnd); 
+  mpfr_exp (y, x, rnd); 
   f = mpfr_get_d1 (y);
-  if (f != e && (!isnan(f) || !isnan(e))) {
-    u = ulp(e, f);
-    if (u<0) {
-      if (u == (mp_limb_t) 1 << (mp_bits_per_limb-1)) u += 1;
-      u=-u;
+  if (f != e && !(Isnan(f) && Isnan(e)))
+    {
+      u = ulp (e, f);
+      if (u < 0)
+        {
+          if (u == (mp_limb_t) 1 << (mp_bits_per_limb-1))
+            u += 1;
+          u = -u;
+        }
+      if (u != 0)
+        {
+          printf ("mpfr_exp failed for x=%1.20e, rnd=%s\n", d,
+                  mpfr_print_rnd_mode (rnd));
+          printf ("expected result is %1.20e, got %1.20e, dif=%d ulp\n",
+                  e, f, u);
+          exit (1);
+        }
     }
-    if (u!=0) {
-      printf ("mpfr_exp failed for x=%1.20e, rnd=%s\n", d,
-             mpfr_print_rnd_mode(rnd));
-      printf ("expected result is %1.20e, got %1.20e, dif=%d ulp\n",e,f,u);
-      exit (1);
-    }
-  }
-  mpfr_clear(x); mpfr_clear(y);
+  mpfr_clear (x);
+  mpfr_clear (y);
   return u;
 }
 

@@ -31,7 +31,6 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 static double _mpfr_ceil _PROTO ((double));
-static long mpn_exp _PROTO ((mp_limb_t *, mp_exp_t *, int, mp_exp_t, size_t));
 static int mpfr_get_str_aux _PROTO ((char *, mp_exp_t *, mp_limb_t *,
 		       mp_size_t, mp_exp_t, long, int, size_t, mp_rnd_t));
 static mp_exp_t mpfr_get_str_compute_g _PROTO ((int, mp_exp_t));
@@ -191,7 +190,7 @@ _mpfr_ceil (double x)
    a*2^exp_r <= b^e <= 2^exp_r (a + 2^f),
    where a represents {a, n}, i.e. the integer 
    a[0] + a[1]*B + ... + a[n-1]*B^(n-1) where B=2^BITS_PER_MP_LIMB */
-static long
+long
 mpn_exp (mp_limb_t *a, mp_exp_t *exp_r, int b, mp_exp_t e, size_t n)
 {
   mp_limb_t *c, B;

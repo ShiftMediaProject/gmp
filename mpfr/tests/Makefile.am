@@ -24,7 +24,7 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mpfr
 CFLAGS = @MPFR_CFLAGS@
 LIBS = @MPFR_LIBS@
 
-LDADD = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
+LDADD = libfrtests.a $(MPFR_LIBM) ../libmpfr.a $(top_builddir)/libgmp.la
 
 libfrtests_a_SOURCES = memory.c rnd_mode.c tests.c
 EXTRA_libfrtests_a_SOURCES = x86.asm
@@ -32,7 +32,7 @@ libfrtests_a_DEPENDENCIES = $(TESTS_ASM_OBJECTS)
 libfrtests_a_LIBADD = $(libfrtests_a_DEPENDENCIES)
 
 if WANT_MPFR
-check_PROGRAMS = reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui tdump teq texp tfrac tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos tgamma tset_ld tcbrt
+check_PROGRAMS = reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui tdump teq texp tfrac tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos tgamma tset_ld tcbrt tsin_cos
 check_LIBRARIES = libfrtests.a
 TESTS = $(check_PROGRAMS)
 endif

@@ -94,6 +94,7 @@ typedef unsigned long int       mp_size_unsigned_t;
 
 typedef union ieee_double_extract Ieee_double_extract;
 
+/* for x of type ieee_double_extract */
 #define DOUBLE_ISNANorINF(x) (((Ieee_double_extract *)&(x))->s.exp == 0x7ff)
 #define DOUBLE_ISINF(x) (DOUBLE_ISNANorINF(x) && \
 			 (((Ieee_double_extract *)&(x))->s.manl == 0) && \
@@ -101,8 +102,6 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define DOUBLE_ISNAN(x) (DOUBLE_ISNANorINF(x) && \
 			 ((((Ieee_double_extract *)&(x))->s.manl != 0) || \
                          (((Ieee_double_extract *)&(x))->s.manh != 0)))
-
-#define LONGDOUBLE_ISNAN(x) ((x) != (x))
 
 #define DBL_POS_INF (1.0/0.0)
 #define DBL_NEG_INF (-1.0/0.0)
@@ -145,7 +144,7 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define MPFR_SET_ZERO(x) \
   (MPFR_MANT(x)[(MPFR_PREC(x)-1)/BITS_PER_MP_LIMB] = (mp_limb_t) 0)
 #define MPFR_ESIZE(x) \
-  ((MPFR_PREC((x)) - 1) / BITS_PER_MP_LIMB + 1); 
+  ((MPFR_PREC((x)) - 1) / BITS_PER_MP_LIMB + 1)
 #define MPFR_EVEN_INEX 2
 
 /* When returning the ternary inexact value, ALWAYS use one of the
@@ -218,6 +217,7 @@ int mpfr_exp3 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_powerof2_raw _PROTO ((mpfr_srcptr));
 void mpfr_setmax _PROTO ((mpfr_ptr, mp_exp_t));
 void mpfr_setmin _PROTO ((mpfr_ptr, mp_exp_t));
+long mpn_exp _PROTO ((mp_limb_t *, mp_exp_t *, int, mp_exp_t, size_t));
 
 #define mpfr_round_raw(yp, xp, xprec, neg, yprec, r, inexp) \
   mpfr_round_raw_generic((yp), (xp), (xprec), (neg), (yprec), (r), (inexp), 0)

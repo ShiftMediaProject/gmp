@@ -1,6 +1,6 @@
 /* Test file for mpfr_mul.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -68,7 +68,8 @@ _check (double x, double y, double res, mp_rnd_t rnd_mode, unsigned int px,
 void
 check53 (double x, double y, mp_rnd_t rnd_mode, double z1)
 {
-  double z2; mpfr_t xx, yy, zz;
+  double z2;
+  mpfr_t xx, yy, zz;
 
   mpfr_init2 (xx, 53);
   mpfr_init2 (yy, 53);
@@ -77,13 +78,16 @@ check53 (double x, double y, mp_rnd_t rnd_mode, double z1)
   mpfr_set_d (yy, y, rnd_mode);
   mpfr_mul (zz, xx, yy, rnd_mode);
   z2 = mpfr_get_d1 (zz);
-  if (z1!=z2 && (!isnan(z1) || !isnan(z2))) {
-    printf("mpfr_mul failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
-	   x, y, mpfr_print_rnd_mode(rnd_mode));
-    printf("correct result is %1.20e, mpfr_mul gives %1.20e\n", z1, z2);
-    exit(1);
-  }
-  mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
+  if (z1 != z2 && !(Isnan(z1) && Isnan(z2)))
+    {
+      printf ("mpfr_mul failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
+              x, y, mpfr_print_rnd_mode(rnd_mode));
+      printf ("correct result is %1.20e, mpfr_mul gives %1.20e\n", z1, z2);
+      exit (1);
+    }
+  mpfr_clear (xx);
+  mpfr_clear (yy);
+  mpfr_clear (zz);
 }
 
 /* checks that x*y gives the same results in double

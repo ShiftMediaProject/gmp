@@ -47,7 +47,7 @@ check_set_get (long double d, mpfr_t x)
           exit (1);
         }
       e = mpfr_get_ld (x, r);
-      if (e != d && !(isnan(e) && isnan(d)))
+      if (e != d && !(LONGDOUBLE_ISNAN(e) && LONGDOUBLE_ISNAN(d)))
         {
           fprintf (stderr, "Error: mpfr_get_ld o mpfr_set_ld <> Id\n");
           fprintf (stderr, "d=%1.30Le get_ld(set_ld(d))=%1.30Le\n", d, e);

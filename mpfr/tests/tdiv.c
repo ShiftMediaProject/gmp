@@ -1,6 +1,6 @@
 /* Test file for mpfr_div.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -52,10 +52,10 @@ check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
   mpfr_set_d(d, D, rnd_mode);
   mpfr_div(q, n, d, rnd_mode);
   Q2 = mpfr_get_d1 (q);
-  if (p == 53 && Q != Q2 && (!isnan(Q) || !isnan(Q2)))
+  if (p == 53 && Q != Q2 && !(Isnan(Q) && Isnan(Q2)))
     {
       printf ("mpfr_div failed for n=%1.20e, d=%1.20e, rnd_mode=%s\n",
-              N, D, mpfr_print_rnd_mode(rnd_mode));
+              N, D, mpfr_print_rnd_mode (rnd_mode));
       printf ("correct quotient is %1.20e, mpfr_div gives %1.20e (%d ulp)\n",
               Q, Q2, ulp (Q2, Q));
       exit (1);

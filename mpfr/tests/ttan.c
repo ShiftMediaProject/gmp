@@ -1,6 +1,6 @@
 /* Test file for mpfr_tan.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -21,7 +21,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
@@ -38,13 +37,14 @@ check53 (double x, double tan_x, mp_rnd_t rnd_mode)
   mpfr_init2 (s, 53);
   mpfr_set_d (xx, x, rnd_mode); /* should be exact */
   mpfr_tan (s, xx, rnd_mode);
-  if (mpfr_get_d1 (s) != tan_x && (!isnan(tan_x) || !mpfr_nan_p(s))) {
-    fprintf (stderr, "mpfr_tan failed for x=%1.20e, rnd=%s\n", x,
-	     mpfr_print_rnd_mode (rnd_mode));
-    fprintf (stderr, "mpfr_tan gives tan(x)=%1.20e, expected %1.20e\n",
-	     mpfr_get_d1 (s), tan_x);
-    exit(1);
-  }
+  if (mpfr_get_d1 (s) != tan_x && !(Isnan(tan_x) && mpfr_nan_p(s)))
+    {
+      fprintf (stderr, "mpfr_tan failed for x=%1.20e, rnd=%s\n", x,
+               mpfr_print_rnd_mode (rnd_mode));
+      fprintf (stderr, "mpfr_tan gives tan(x)=%1.20e, expected %1.20e\n",
+               mpfr_get_d1 (s), tan_x);
+      exit (1);
+    }
   mpfr_clear (xx);
   mpfr_clear (s);
 }

@@ -1,6 +1,6 @@
 /* Test file for mpfr_div_ui.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -37,17 +37,21 @@ check (double d, unsigned long u, mp_rnd_t rnd, double e)
   mpfr_t x, y;
   double f;
 
-  mpfr_init2(x, 53); mpfr_init2(y, 53);
-  mpfr_set_d(x, d, rnd); 
-  mpfr_div_ui(y, x, u, rnd); 
+  mpfr_init2 (x, 53);
+  mpfr_init2 (y, 53);
+  mpfr_set_d (x, d, rnd); 
+  mpfr_div_ui (y, x, u, rnd); 
   f = mpfr_get_d1 (y);
-  if (f != e && (!isnan(f) || !isnan(e))) {
-    printf("mpfr_div_ui failed for x=%1.20e, u=%lu, rnd=%s\n", d, u,
-	   mpfr_print_rnd_mode(rnd));
-    printf("expected result is %1.20e, got %1.20e, dif=%d ulp\n",e,f,ulp(e,f));
-    exit(1);
+  if (f != e && !(Isnan(f) && Isnan(e)))
+    {
+      printf ("mpfr_div_ui failed for x=%1.20e, u=%lu, rnd=%s\n", d, u,
+              mpfr_print_rnd_mode (rnd));
+      printf ("expected result is %1.20e, got %1.20e, dif=%d ulp\n",
+              e, f, ulp (e,f));
+      exit (1);
   }
-  mpfr_clear(x); mpfr_clear(y); 
+  mpfr_clear (x);
+  mpfr_clear (y);
 }
 
 void

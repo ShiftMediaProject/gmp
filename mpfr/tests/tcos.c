@@ -1,6 +1,6 @@
 /* Test file for mpfr_cos.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -21,7 +21,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
@@ -38,7 +37,7 @@ check53 (double x, double cos_x, mp_rnd_t rnd_mode)
   mpfr_init2 (c, 53);
   mpfr_set_d (xx, x, rnd_mode); /* should be exact */
   mpfr_cos (c, xx, rnd_mode);
-  if (mpfr_get_d1 (c) != cos_x && (!isnan(cos_x) || !mpfr_nan_p(c)))
+  if (mpfr_get_d1 (c) != cos_x && !(Isnan(cos_x) && mpfr_nan_p(c)))
     {
       fprintf (stderr, "mpfr_cos failed for x=%1.20e, rnd=%s\n", x,
 	       mpfr_print_rnd_mode (rnd_mode));

@@ -1,6 +1,6 @@
 /* Test file for mpfr_sin.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -21,7 +21,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
@@ -36,7 +35,7 @@ check53 (double x, double sin_x, mp_rnd_t rnd_mode)
   mpfr_init2 (s, 53);
   mpfr_set_d (xx, x, rnd_mode); /* should be exact */
   mpfr_sin (s, xx, rnd_mode);
-  if (mpfr_get_d1 (s) != sin_x && (!isnan(sin_x) || !mpfr_nan_p(s)))
+  if (mpfr_get_d1 (s) != sin_x && !(Isnan(sin_x) && mpfr_nan_p(s)))
     {
       fprintf (stderr, "mpfr_sin failed for x=%1.20e, rnd=%s\n", x,
 	       mpfr_print_rnd_mode (rnd_mode));
