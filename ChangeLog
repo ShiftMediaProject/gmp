@@ -1,3 +1,7 @@
+1999-03-16  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* make.bat: Compile mpz/urandomc and mpf/urandom.c
+
 1999-03-15  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* mpz/urandom.c	(gmp_rand_init): New function.

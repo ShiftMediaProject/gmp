@@ -207,6 +207,7 @@ gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O tdiv_r_2exp.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O tdiv_r_ui.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O tstbit.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O ui_pow_ui.c
+gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O urandom.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O xor.c
 del libmpz.a
 ar rc libmpz.a *.o
@@ -261,6 +262,7 @@ gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O sub.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O sub_ui.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O ui_div.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O ui_sub.c
+gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O urandom.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O -DMPF_FLOOR integer.c
 move/y integer.o floor.o
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O -DMPF_CEIL integer.c
