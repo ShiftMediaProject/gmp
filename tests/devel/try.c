@@ -374,6 +374,11 @@ validate_sqrtrem (void)
 }
 
 
+#if HAVE_TRY_NEW_C
+#include "try-new.c"
+#endif
+
+
 typedef mp_limb_t (*tryfun_t) _PROTO ((ANYARGS));
 
 struct try_t {
@@ -388,11 +393,12 @@ struct try_t {
 #define SIZE_YES          4
 #define SIZE_FRACTION     5  /* size2 is fraction for divrem etc */
 #define SIZE_SIZE2        6
-#define SIZE_SUM          7
-#define SIZE_DIFF         8
-#define SIZE_DIFF_PLUS_1  9
-#define SIZE_RETVAL      10
-#define SIZE_CEIL_HALF   11
+#define SIZE_PLUS_1       7
+#define SIZE_SUM          8
+#define SIZE_DIFF         9
+#define SIZE_DIFF_PLUS_1 10
+#define SIZE_RETVAL      11
+#define SIZE_CEIL_HALF   12
   char  size;
   char  size2;
   char  dst_size[2];
@@ -417,10 +423,11 @@ struct try_t {
 #define DIVISOR_ODD   3
   char  divisor;
 
-#define DATA_NON_ZERO     1
-#define DATA_GCD          2
-#define DATA_SRC1_ODD     3
-#define DATA_SRC1_HIGHBIT 4
+#define DATA_NON_ZERO         1
+#define DATA_GCD              2
+#define DATA_SRC1_ODD         3
+#define DATA_SRC1_HIGHBIT     4
+#define DATA_MULTIPLE_DIVISOR 5
   char  data;
 
 /* Default is allow full overlap. */
@@ -452,34 +459,36 @@ struct try_t  *tr;
 #define TYPE_MUL_1             5
 #define TYPE_MUL_1C            6
 
-#define TYPE_ADDMUL_1          7
-#define TYPE_ADDMUL_1C         8
-#define TYPE_SUBMUL_1          9
-#define TYPE_SUBMUL_1C        10
+#define TYPE_MUL_2             7
 
-#define TYPE_ADDSUB_N         11
-#define TYPE_ADDSUB_NC        12
+#define TYPE_ADDMUL_1          8
+#define TYPE_ADDMUL_1C         9
+#define TYPE_SUBMUL_1         10
+#define TYPE_SUBMUL_1C        11
 
-#define TYPE_RSHIFT           13
-#define TYPE_LSHIFT           14
+#define TYPE_ADDSUB_N         12
+#define TYPE_ADDSUB_NC        13
 
-#define TYPE_COPYI            15
-#define TYPE_COPYD            16
-#define TYPE_COM_N            17
+#define TYPE_RSHIFT           14
+#define TYPE_LSHIFT           15
 
-#define TYPE_MOD_1              20
-#define TYPE_MOD_1C             21
-#define TYPE_DIVMOD_1           22
-#define TYPE_DIVMOD_1C          23
-#define TYPE_DIVREM_1           24
-#define TYPE_DIVREM_1C          25
-#define TYPE_PREINV_MOD_1       26
+#define TYPE_COPYI            16
+#define TYPE_COPYD            17
+#define TYPE_COM_N            18
 
-#define TYPE_DIVEXACT_BY3       27
-#define TYPE_DIVEXACT_BY3C      28
+#define TYPE_MOD_1            20
+#define TYPE_MOD_1C           21
+#define TYPE_DIVMOD_1         22
+#define TYPE_DIVMOD_1C        23
+#define TYPE_DIVREM_1         24
+#define TYPE_DIVREM_1C        25
+#define TYPE_PREINV_MOD_1     26
 
-#define TYPE_MODEXACT_1_ODD     29
-#define TYPE_MODEXACT_1C_ODD    30
+#define TYPE_DIVEXACT_BY3     27
+#define TYPE_DIVEXACT_BY3C    28
+
+#define TYPE_MODEXACT_1_ODD   29
+#define TYPE_MODEXACT_1C_ODD  30
 
 #define TYPE_GCD              40
 #define TYPE_GCD_1            41
@@ -575,6 +584,16 @@ param_init (void)
   COPY (TYPE_MUL_1);
   p->carry = CARRY_LIMB;
   REFERENCE (refmpn_mul_1c);
+
+
+  p = &param[TYPE_MUL_2];
+  p->retval = 1;
+  p->dst[0] = 1;
+  p->dst_size[0] = SIZE_PLUS_1;
+  p->src[0] = 1;
+  p->src[1] = 1;
+  p->size2 = SIZE_2;
+  REFERENCE (refmpn_mul_2);
 
 
   p = &param[TYPE_ADDMUL_1];
@@ -1042,6 +1061,9 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_mul_1c
   { TRY(mpn_mul_1c),     TYPE_MUL_1C },
 #endif
+#if HAVE_NATIVE_mpn_mul_2
+  { TRY(mpn_mul_2),      TYPE_MUL_2 },
+#endif
 
   { TRY(mpn_rshift),     TYPE_RSHIFT },
   { TRY(mpn_lshift),     TYPE_LSHIFT },
@@ -1476,6 +1498,11 @@ call (struct each_t *e, tryfun_t function)
       (e->d[0].p, e->s[0].p, size, multiplier, carry);
     break;
 
+  case TYPE_MUL_2:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, size, e->s[1].p[0], e->s[1].p[1]);
+    break;
+
   case TYPE_AND_N:
   case TYPE_ANDN_N:
   case TYPE_NAND_N:
@@ -1711,6 +1738,10 @@ pointer_setup (struct each_t *e)
         d[i].size = 3;
         break;
         
+      case SIZE_PLUS_1:
+        d[i].size = size+1;
+        break;
+
       case SIZE_SUM:
         if (tr->size2)
           d[i].size = size + size2;
@@ -1856,6 +1887,13 @@ try_one (void)
           s[i].p[0] = 1;
         break;
 
+      case DATA_MULTIPLE_DIVISOR:
+        /* same number of low zero bits as divisor */
+        s[i].p[0] &= ~ LOW_ZEROS_MASK (divisor);
+        refmpn_sub_1 (s[i].p, s[i].p, size,
+                      refmpn_mod_1 (s[i].p, size, divisor));
+        break;
+
       case DATA_GCD:
         /* s[1] no more bits than s[0] */
         if (i == 1 && size2 == size)
@@ -1936,13 +1974,17 @@ try_one (void)
        size <= option_lastsize;                                 \
        size++)
 
-#define SIZE2_FIRST                                                        \
-  (tr->size2 ?                                                             \
-   MAX (choice->minsize, (option_firstsize2 != 0 ? option_firstsize2 : 1)) \
-   : tr->size2 == SIZE_FRACTION ? 0                                        \
+#define SIZE2_FIRST                                     \
+  (tr->size2 == SIZE_2 ? 2                              \
+   : tr->size2 == SIZE_FRACTION ? 0                     \
+   : tr->size2 ?                                        \
+   MAX (choice->minsize, (option_firstsize2 != 0        \
+                          ? option_firstsize2 : 1))     \
    : 0)
+
 #define SIZE2_LAST                                      \
-  (tr->size2 == SIZE_FRACTION ? FRACTION_COUNT-1        \
+  (tr->size2 == SIZE_2 ? 2                              \
+   : tr->size2 == SIZE_FRACTION ? FRACTION_COUNT-1      \
    : tr->size2 ? size                                   \
    : 0)
 
