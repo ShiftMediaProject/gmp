@@ -997,9 +997,9 @@ if test $gmp_found = no; then
   AC_MSG_WARN([cannot determine local label, using default $gmp_cv_asm_lsym_prefix])
 fi
 ])
-AC_DEFINE_UNQUOTED(LSYM_PREFIX, "$gmp_cv_asm_lsym_prefix",
-  [Assembler local label prefix])
 echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
+__GMP_LSYM_PREFIX="\"$gmp_cv_asm_lsym_prefix\""
+AC_SUBST(__GMP_LSYM_PREFIX)
 ])
 
 
@@ -1365,12 +1365,28 @@ fi
 
 dnl  GMP_C_ATTRIBUTE_MALLOC
 dnl  ----------------------
+dnl  gcc 2.95.x accepts __attribute__ ((malloc)) but with a warning that
+dnl  it's ignored.  Pretend it doesn't exist in this case, to avoid that
+dnl  warning.
 
 AC_DEFUN(GMP_C_ATTRIBUTE_MALLOC,
 [AC_CACHE_CHECK([whether gcc __attribute__ ((malloc)) works],
                 gmp_cv_c_attribute_malloc,
-[AC_TRY_COMPILE([void *foo (int x) __attribute__ ((malloc));], ,
-  gmp_cv_c_attribute_malloc=yes, gmp_cv_c_attribute_malloc=no)
+[cat >conftest.c <<EOF
+void *foo (int x) __attribute__ ((malloc));
+EOF
+gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >conftest.out 2>&1"
+if AC_TRY_EVAL(gmp_compile); then
+  if grep "attribute directive ignored" conftest.out >/dev/null; then
+    gmp_cv_c_attribute_malloc=no
+  else
+    gmp_cv_c_attribute_malloc=yes
+  fi
+else
+  gmp_cv_c_attribute_malloc=no
+fi
+cat conftest.out >&AC_FD_CC
+rm -f conftest*
 ])
 if test $gmp_cv_c_attribute_malloc = yes; then
   AC_DEFINE(HAVE_ATTRIBUTE_MALLOC, 1,
