@@ -21,13 +21,8 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
-/* Future: Bitwise "&", "|" and "&" could be done.  Not sure those functions
-   would be much value though.  */
-
-
 #include <ctype.h>
 #include <stdio.h>
-
 #include "gmp.h"
 #include "expr-impl.h"
 
@@ -49,10 +44,11 @@ e_mpfr_init2 (mpfr_ptr f, unsigned long prec)
 static void
 e_mpfr_set (mpfr_ptr dst, mpfr_srcptr src)
 {
-  return mpfr_set (dst, src, ROUND);
+  mpfr_set (dst, src, ROUND);
 }
 
-/* fits and is an integer */
+/* Test whether fits and is an integer.  FIXME: Use mpfr_integer_p and
+   mpfr_fits_ulong_p (or just mpfr_cmp_ui), if/when these exist. */
 static int
 e_mpfr_ulong_p (mpfr_srcptr f)
 {
@@ -87,6 +83,7 @@ e_mpfr_ulong_p (mpfr_srcptr f)
   return (high >> (mp_bits_per_limb - exp)) <= ULONG_MAX;
 }
 
+/* FIXME: Use mpfr_get_ui if/when it exists. */
 static unsigned long
 e_mpfr_get_ui_fits (mpfr_srcptr f)
 {
@@ -98,12 +95,11 @@ e_mpfr_get_ui_fits (mpfr_srcptr f)
   return high >> (mp_bits_per_limb - exp);
 }
 
-
 static size_t
 e_mpfr_number (mpfr_ptr res, __gmp_const char *e, size_t elen, int base)
 {
   char    *edup;
-  size_t  i, ret, extra=0;
+  size_t  i, j, ret, extra=0;
 
   TRACE (printf ("mpfr_number prec=%lu, base=%d, \"%.*s\"\n",
                  mpfr_get_prec (res), base, (int) elen, e));
@@ -168,8 +164,12 @@ e_mpfr_number (mpfr_ptr res, __gmp_const char *e, size_t elen, int base)
  parsed:
   TRACE (printf ("  parsed i=%d \"%.*s\"\n", i, i, e));
 
+  /* mpfr_set_str doesn't currently accept upper case for hex, so convert to
+     lower here instead.  FIXME: Would prefer to let mpfr_set_str handle
+     this.  */
   edup = (*__gmp_allocate_func) (i+1);
-  memcpy (edup, e, i);
+  for (j = 0; j < i; j++)
+    edup[j] = tolower (e[j]);
   edup[i] = '\0';
 
   TRACE (printf ("   attempt base=%d, len=%d, \"%s\"\n", base, i, edup));
@@ -181,6 +181,17 @@ e_mpfr_number (mpfr_ptr res, __gmp_const char *e, size_t elen, int base)
 
   (*__gmp_free_func) (edup, i+1);
   return ret;
+}
+
+/* Don't want to change the precision of w, can only do an actual swap when
+   w and x have the same precision.  */
+static void
+e_mpfr_set_or_swap (mpfr_ptr w, mpfr_ptr x)
+{
+  if (mpfr_get_prec (w) == mpfr_get_prec (x))
+    mpfr_swap (w, x);
+  else
+    mpfr_set (w, x, ROUND);
 }
 
 int
@@ -205,8 +216,8 @@ mpfr_expr_a (__gmp_const struct mpexpr_operator_t *table,
   p.mpX_init        = (mpexpr_fun_unary_ui_t) e_mpfr_init2;
   p.mpX_number      = (mpexpr_fun_number_t)   e_mpfr_number;
   p.mpX_set         = (mpexpr_fun_unary_t)    e_mpfr_set;
-  p.mpX_set_or_swap = (mpexpr_fun_unary_t)    e_mpfr_set;
-  p.mpX_set_si      = (mpexpr_fun_unary_ui_t) mpfr_set_si;
+  p.mpX_set_or_swap = (mpexpr_fun_unary_t)    e_mpfr_set_or_swap;
+  p.mpX_set_si      = (mpexpr_fun_set_si_t)   mpfr_set_si;
   p.mpX_swap        = (mpexpr_fun_swap_t)     mpfr_swap;
 
   return mpexpr_evaluate (&p);

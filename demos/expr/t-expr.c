@@ -47,6 +47,9 @@ struct data_t {
 };
 
 
+/* These data_xxx[] arrays are tables to be tested with one or more of the
+   mp?_t types.  z=mpz_t, q=mpz_t, f=mpf_t, r=mpfr_t.  */
+
 struct data_t  data_zqfr[] = {
 
   /* various deliberately wrong expressions */
@@ -117,6 +120,10 @@ struct data_t  data_zqfr[] = {
   { 0, " max ( 1, 9, 2, 3, 4, 5, 6, 7, 8)", "9" },
   { 0, " min ( 1, 9, 2, 3, 4, 5, 6, 7, 8)", "1" },
 
+  { 10, "abs(123)",  "123" },
+  { 10, "abs(-123)", "123" },
+  { 10, "abs(0)",    "0" },
+
   /* filling data stack */
   { 0, "1+(1+(1+(1+(1+(1+(1+(1+(1+(1+(1+(1+(1+(1+(1+1))))))))))))))", "16" },
 
@@ -153,6 +160,16 @@ const struct data_t  data_z[] = {
 
   /* filling control stack */
   { 0, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~1", "1" },
+
+  { 0, "fib(10)", "55" },
+  { 0, "fac(10)", "3628800" },
+
+  { 0, "setbit(0,5)", "32" },
+  { 0, "clrbit(32,5)", "0" },
+  { 0, "tstbit(32,5)", "1" },
+  { 0, "tstbit(32,4)", "0" },
+  { 0, "scan0(7,0)", "3" },
+  { 0, "scan1(7,0)", "0" },
 };
 
 const struct data_t  data_zq[] = {
@@ -162,6 +179,8 @@ const struct data_t  data_zq[] = {
 
 const struct data_t  data_q[] = {
   { 10,  "(1/2 + 1/3 + 1/4 + 1/5 + 1/6)*20", "29" },
+  { 0, "num(5/9)", "5" },
+  { 0, "den(5/9)", "9" },
 };
 
 const struct data_t  data_zfr[] = {
@@ -183,11 +202,18 @@ const struct data_t  data_fr[] = {
   { 0, "10.00e-1", "1" },
 
   { 16, "1@9",  "68719476736" },
+
+  /* only simple cases because mpf_eq currently only works on whole limbs */
+  { 0, "eq(0xFFFFFFFFFFFFFFFF1111111111111111,0xFFFFFFFFFFFFFFFF2222222222222222,64)", "1" },
+  { 0, "eq(0xFFFFFFFFFFFFFFFF1111111111111111,0xFFFFFFFFFFFFFFFF2222222222222222,128)", "0" },
 };
 
 const struct data_t  data_f[] = {
   { 16,  "1@10", "18446744073709551616" },
   { -16, "1@10", "1099511627776" },
+
+  { 0, "integer_p(1)",   "1" },
+  { 0, "integer_p(0.5)", "0" },
 };
 
 const struct data_t  data_r[] = {
@@ -212,6 +238,25 @@ const struct data_t  data_r[] = {
   { 0, "cos(pi)",    "~-1" },
   { 0, "cos(3*pi/2)","~0" },
   { 0, "cos(2*pi)",  "~1" },
+
+  { 0, "inf_p(1/0)",    "1" },
+  { 0, "nan_p(1/0)",    "0" },
+  { 0, "number_p(1/0)", "0" },
+
+  { 0, "inf_p(sqrt(-1))",    "0" },
+  { 0, "nan_p(sqrt(-1))",    "1" },
+  { 0, "number_p(sqrt(-1))", "0" },
+
+  { 0, "inf_p(1)",    "0" },
+  { 0, "nan_p(1)",    "0" },
+  { 0, "number_p(1)", "1" },
+
+  { 0, "inf_p(-1)",    "0" },
+  { 0, "nan_p(-1)",    "0" },
+  { 0, "number_p(-1)", "1" },
+
+  { 0, "eq(0xFF,0xF0,4)", "1" },
+  { 0, "eq(0xFF,0xF0,5)", "0" },
 };
 
 struct datalist_t {
@@ -540,6 +585,7 @@ check_r (void)
                       if (mpfr_cmp (diff, tolerance) >= 0)
                         {
                           printf ("mpfr_expr result outside tolerance\n");
+                          printf ("   \"%s\"\n", data[i].expr);
                           printf ("   got  ");
                           mpfr_out_str (stdout, 10, 0, got, GMP_RNDZ);
                           printf ("\n");
@@ -557,6 +603,7 @@ check_r (void)
                       if (mpfr_cmp (got, want) != 0)
                         {
                           printf ("mpfr_expr wrong result\n");
+                          printf ("   \"%s\"\n", data[i].expr);
                           printf ("   got  ");
                           mpfr_out_str (stdout, 10, 20, got, GMP_RNDZ);
                           printf ("\n");

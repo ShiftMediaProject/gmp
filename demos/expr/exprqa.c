@@ -79,7 +79,7 @@ mpq_expr_a (__gmp_const struct mpexpr_operator_t *table,
   p.mpX_number      = (mpexpr_fun_number_t)   e_mpq_number;
   p.mpX_set         = (mpexpr_fun_unary_t)    mpq_set;
   p.mpX_set_or_swap = (mpexpr_fun_unary_t)    mpq_swap;
-  p.mpX_set_si      = (mpexpr_fun_unary_ui_t) e_mpq_set_si1;
+  p.mpX_set_si      = (mpexpr_fun_set_si_t)   e_mpq_set_si1;
   p.mpX_swap        = (mpexpr_fun_swap_t)     mpq_swap;
 
   return mpexpr_evaluate (&p);

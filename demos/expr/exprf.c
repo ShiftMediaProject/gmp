@@ -22,7 +22,6 @@ MA 02111-1307, USA.
 */
 
 #include <stdio.h>
-
 #include "gmp.h"
 #include "expr-impl.h"
 
@@ -76,16 +75,18 @@ static __gmp_const struct mpexpr_operator_t  _mpf_expr_standard_table[] = {
   { ",",   NULL,                             MPEXPR_TYPE_ARGSEP,        2 },
   { "$",   NULL,                             MPEXPR_TYPE_VARIABLE,      1 },
 
-  { "abs",     (mpexpr_fun_t) mpf_abs,          MPEXPR_TYPE_UNARY        },
-  { "ceil",    (mpexpr_fun_t) mpf_ceil,         MPEXPR_TYPE_UNARY        },
-  { "cmp",     (mpexpr_fun_t) mpf_cmp,          MPEXPR_TYPE_I_BINARY     },
-  { "floor",   (mpexpr_fun_t) mpf_floor,        MPEXPR_TYPE_UNARY        },
+  { "abs",      (mpexpr_fun_t) mpf_abs,          MPEXPR_TYPE_UNARY        },
+  { "ceil",     (mpexpr_fun_t) mpf_ceil,         MPEXPR_TYPE_UNARY        },
+  { "cmp",      (mpexpr_fun_t) mpf_cmp,          MPEXPR_TYPE_I_BINARY     },
+  { "eq",       (mpexpr_fun_t) mpf_eq,           MPEXPR_TYPE_I_TERNARY_UI },
+  { "floor",    (mpexpr_fun_t) mpf_floor,        MPEXPR_TYPE_UNARY        },
+  { "integer_p",(mpexpr_fun_t) mpf_integer_p,    MPEXPR_TYPE_I_UNARY      },
   { "max",   (mpexpr_fun_t) mpf_cmp, MPEXPR_TYPE_MAX | MPEXPR_TYPE_PAIRWISE },
   { "min",   (mpexpr_fun_t) mpf_cmp, MPEXPR_TYPE_MIN | MPEXPR_TYPE_PAIRWISE },
-  { "reldiff", (mpexpr_fun_t) mpf_reldiff,      MPEXPR_TYPE_BINARY       },
-  { "sgn",     (mpexpr_fun_t) e_mpf_sgn,        MPEXPR_TYPE_I_UNARY      },
-  { "sqrt",    (mpexpr_fun_t) mpf_sqrt,         MPEXPR_TYPE_UNARY        },
-  { "trunc",   (mpexpr_fun_t) mpf_trunc,        MPEXPR_TYPE_UNARY        },
+  { "reldiff",  (mpexpr_fun_t) mpf_reldiff,      MPEXPR_TYPE_BINARY       },
+  { "sgn",      (mpexpr_fun_t) e_mpf_sgn,        MPEXPR_TYPE_I_UNARY      },
+  { "sqrt",     (mpexpr_fun_t) mpf_sqrt,         MPEXPR_TYPE_UNARY        },
+  { "trunc",    (mpexpr_fun_t) mpf_trunc,        MPEXPR_TYPE_UNARY        },
 
   { NULL }
 };

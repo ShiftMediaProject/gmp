@@ -38,10 +38,41 @@ e_mpq_pow_ui (mpq_ptr r, mpq_srcptr b, unsigned long e)
   mpz_pow_ui (mpq_denref(r), mpq_denref(b), e);
 }
 
+/* Wrapped because mpq_sgn is a macro. */
 static int
 e_mpq_sgn (mpq_srcptr x)
 {
   return mpq_sgn (x);
+}
+
+/* Wrapped because mpq_equal only guarantees a non-zero return, whereas we
+   want 1 or 0 for == and !=. */
+static int
+e_mpq_equal (mpq_srcptr x, mpq_srcptr y)
+{
+  return mpq_equal (x, y) != 0;
+}
+static int
+e_mpq_notequal (mpq_srcptr x, mpq_srcptr y)
+{
+  return ! mpq_equal (x, y);
+}
+
+static void
+e_mpq_num (mpq_ptr w, mpq_srcptr x)
+{
+  if (w != x)
+    mpz_set (mpq_numref(w), mpq_numref(x));
+  mpz_set_ui (mpq_denref(w), 1L);
+}
+static void
+e_mpq_den (mpq_ptr w, mpq_srcptr x)
+{
+  if (w == x)
+    mpz_swap (mpq_numref(w), mpq_denref(w));
+  else
+    mpz_set (mpq_numref(w), mpq_denref(x));
+  mpz_set_ui (mpq_denref(w), 1L);
 }
 
 
@@ -69,8 +100,8 @@ static __gmp_const struct mpexpr_operator_t  _mpq_expr_standard_table[] = {
   { ">=",  (mpexpr_fun_t) mpq_cmp,           MPEXPR_TYPE_CMP_GE,      170 },
   { ">",   (mpexpr_fun_t) mpq_cmp,           MPEXPR_TYPE_CMP_GT,      170 },
 
-  { "==",  (mpexpr_fun_t) mpq_cmp,           MPEXPR_TYPE_CMP_EQ,      160 },
-  { "!=",  (mpexpr_fun_t) mpq_cmp,           MPEXPR_TYPE_CMP_NE,      160 },
+  { "==",  (mpexpr_fun_t) e_mpq_equal,       MPEXPR_TYPE_I_BINARY,    160 },
+  { "!=",  (mpexpr_fun_t) e_mpq_notequal,    MPEXPR_TYPE_I_BINARY,    160 },
 
   { "&&",  (mpexpr_fun_t) e_mpq_sgn,         MPEXPR_TYPE_LOGICAL_AND, 120 },
   { "||",  (mpexpr_fun_t) e_mpq_sgn,         MPEXPR_TYPE_LOGICAL_OR,  110 },
@@ -83,11 +114,13 @@ static __gmp_const struct mpexpr_operator_t  _mpq_expr_standard_table[] = {
   { ",",   (mpexpr_fun_t) e_mpq_sgn,         MPEXPR_TYPE_ARGSEP,        2 },
   { "$",   NULL,                             MPEXPR_TYPE_VARIABLE,      1 },
 
-  { "abs",  (mpexpr_fun_t) mpq_abs,          MPEXPR_TYPE_UNARY           },
-  { "cmp",  (mpexpr_fun_t) mpq_cmp,          MPEXPR_TYPE_I_BINARY        },
+  { "abs",  (mpexpr_fun_t) mpq_abs,          MPEXPR_TYPE_UNARY            },
+  { "cmp",  (mpexpr_fun_t) mpq_cmp,          MPEXPR_TYPE_I_BINARY         },
+  { "den",  (mpexpr_fun_t) e_mpq_den,        MPEXPR_TYPE_UNARY            },
   { "max",  (mpexpr_fun_t) mpq_cmp,  MPEXPR_TYPE_MAX | MPEXPR_TYPE_PAIRWISE },
   { "min",  (mpexpr_fun_t) mpq_cmp,  MPEXPR_TYPE_MIN | MPEXPR_TYPE_PAIRWISE },
-  { "sgn",  (mpexpr_fun_t) e_mpq_sgn, MPEXPR_TYPE_I_UNARY         },
+  { "num",  (mpexpr_fun_t) e_mpq_num,        MPEXPR_TYPE_UNARY            },
+  { "sgn",  (mpexpr_fun_t) e_mpq_sgn,        MPEXPR_TYPE_I_UNARY          },
 
   { NULL }
 };

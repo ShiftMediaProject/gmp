@@ -84,7 +84,7 @@ mpz_expr_a (__gmp_const struct mpexpr_operator_t *table,
   p.mpX_number      = (mpexpr_fun_number_t)   mpexpr_mpz_number;
   p.mpX_set         = (mpexpr_fun_unary_t)    mpz_set;
   p.mpX_set_or_swap = (mpexpr_fun_unary_t)    mpz_swap;
-  p.mpX_set_si      = (mpexpr_fun_unary_ui_t) mpz_set_si;
+  p.mpX_set_si      = (mpexpr_fun_set_si_t)   mpz_set_si;
   p.mpX_swap        = (mpexpr_fun_swap_t)     mpz_swap;
 
   return mpexpr_evaluate (&p);

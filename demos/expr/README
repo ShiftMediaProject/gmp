@@ -13,7 +13,7 @@ FUTURE VERSIONS OF GMP.
 The files in this directory implement a simple scheme of string based
 expression parsing and evaluation, supporting mpz, mpq, mpf and mpfr.
 
-This will be slower than direct GMP library calls, but can be convenient in
+This will be slower than direct GMP library calls, but may be convenient in
 various circumstances, such as while prototyping, or for letting a user
 enter values in symbolic form.  "2**5723-7" for example is a lot easier to
 enter or maintain than the equivalent written out in decimal.
@@ -24,16 +24,16 @@ BUILDING
 
 Nothing in this directory is a normal part of libgmp, and nothing is built
 or installed, but various Makefile rules are available to compile
-everything.  All the functions are available through a little library.
+everything.
 
-	make libexpr.la
+All the functions are available through a little library (there's no shared
+library since upward binary compatibility is not guaranteed).
 
-In a program, use
+	make libexpr.a
+
+In a program, prototypes are available using
 
 	#include "expr.h"
-
-and then link either to libexpr.la using libtool, or to .libs/libexpr.a
-directly.
 
 run-expr.c is a sample program doing evaluations from the command line.
 
@@ -49,22 +49,13 @@ The expr*.c sources don't depend on gmp-impl.h and can be compiled with just
 a standard installed GMP.  This isn't true of t-expr though, since it uses
 some of the internal tests/libtests.la.
 
-If GMP is configured with --disable-static then only .libs/libexpr.al will
-exist, being an "ar" archive of PIC objects.  This can probably be used
-directly, but a static build to get .libs/libexpr.a would be recommended.
-
-A libexpr.so shared library is not built, because libexpr.la is only a
-libtool convenience library.  In any case it's strongly recommended that
-applications don't use a shared library, since future releases of this code
-will almost certainly be incompatible.
-
 
 
 OPTIONAL MPFR
 
-The mpfr support in libexpr is build if GMP is configured with
---enable-mpfr.  Programs must include mpfr.h before expr.h to get the
-extra prototypes,
+The mpfr support in libexpr.a is build if GMP is configured with
+--enable-mpfr.  Programs must include mpfr.h before expr.h to get the extra
+prototypes,
 
 	 #include "mpfr.h"
 	 #include "expr.h"
@@ -141,29 +132,32 @@ Various functions are available too.  For example,
 
         mpz_expr (res, 10, "gcd(123,456,789) * abs(a)", var, NULL);
 
-The following is the full set of functions available,
+The following is the full set of functions,
 
         mpz_expr
-            abs bin cmp cmpabs even_p fib fac gcd jacobi kronecker lcm max
-            min nextprime odd_p powm probab_prime_p root sgn sqrt
+            abs bin clrbit cmp cmpabs even_p fib fac gcd hamdist invert
+            jacobi kronecker lcm max min nextprime odd_p perfect_power_p
+            perfect_square_p popcount powm probab_prime_p root scan0 scan1
+            setbit sgn sqrt
 
         mpq_expr
-            abs, cmp, max, min, sgn
+            abs, cmp, den, max, min, num, sgn
 
         mpf_expr
-            abs, ceil, cmp, floor, max, min, reldiff, sgn, sqrt, trunc
+            abs, ceil, cmp, eq, floor, integer_p, max, min, reldiff, sgn,
+            sqrt, trunc
 
         mpfr_expr
-            abs, ceil, cmp, cos, exp, floor, log, max, min, reldiff, sgn,
-            sin, sqrt, trunc
+            abs, agm, ceil, cmp, cos, eq, exp, floor, inf_p, log, max, min,
+            nan_p, number_p, reldiff, sgn, sin, sqrt, trunc
 
 In addition mpfr_expr has constants "log2" and "pi".  For example,
 
 	mpfr_expr (res, 0, "2 * pi - log2", NULL);
 
-All these are the same as the GMP library functions, except for min and max
-which don't exist in the library, and except that min, max, gcd and lcm
-accept any number of arguments, not just two.
+All these are the same as the GMP library functions, except that min and max
+don't exist in the library.  Note also that min, max, gcd and lcm take any
+number of arguments, not just two.
 
 
 mpf_expr and mpfr_expr do all calculations to the precision of the
@@ -326,11 +320,11 @@ parsing the context determines which style is sought.  But note that the
 same operator can't be both a postfix unary and a binary, since the parser
 doesn't try to look ahead to decide which ought to be used.
 
-When there's two entries for an operator, with both entries indicating the
-same type (prefix or binary/postfix), then the first in the table will be
-used.  This makes it possible to override an entry in a standard table, for
-example to change the function it calls, or perhaps its precedence level.
-The following would change mpz division from tdiv to cdiv,
+When there's two entries for an operator, with both prefix or both postfix
+(or binary), then the first in the table will be used.  This makes it
+possible to override an entry in a standard table, for example to change the
+function it calls, or perhaps its precedence level.  The following would
+change mpz division from tdiv to cdiv,
 
         struct mpexpr_operator_t  table[] = {
           { "/", (mpexpr_fun_t) mpz_cdiv_q, MPEXPR_TYPE_BINARY, 200 },
@@ -340,23 +334,32 @@ The following would change mpz division from tdiv to cdiv,
 
 
 The type field indicates what parameters the given function expects.  The
-following styles of functions are supported.
+following styles of functions are supported.  mpz_t is shown, but of course
+this is mpq_t for mpq_expr_a, mpf_t for mpf_expr_a, etc.
 
-    MPEXPR_TYPE_CONSTANT    void zeroary (mpz_t result);
+    MPEXPR_TYPE_CONSTANT     void zeroary (mpz_t result);
 
-    MPEXPR_TYPE_0ARY        void zeroary (mpz_t result);
-    MPEXPR_TYPE_I_0ARY      int zeroary (void);
+    MPEXPR_TYPE_0ARY         void zeroary (mpz_t result);
+    MPEXPR_TYPE_I_0ARY       int zeroary (void);
 
-    MPEXPR_TYPE_UNARY       void unary (mpz_t result, mpz_t src);
-    MPEXPR_TYPE_UNARY_UI    void unary (mpz_t result, unsigned long src);
-    MPEXPR_TYPE_I_UNARY     int unary (mpz_t src);
-    MPEXPR_TYPE_I_UNARY_UI  int unary (unsigned long src);
+    MPEXPR_TYPE_UNARY        void unary (mpz_t result, mpz_t op);
+    MPEXPR_TYPE_UNARY_UI     void unary (mpz_t result, unsigned long op);
+    MPEXPR_TYPE_I_UNARY      int unary (mpz_t op);
+    MPEXPR_TYPE_I_UNARY_UI   int unary (unsigned long op);
 
-    MPEXPR_TYPE_BINARY      void binary (mpz_t result, mpz_t src1, mpz_t src2);
-    MPEXPR_TYPE_BINARY_UI   void binary (mpz_t result, mpz_t src1,
-                                       unsigned long src2);
-    MPEXPR_TYPE_I_BINARY    int binary (mpz_t src1, mpz_t src2);
-    MPEXPR_TYPE_I_BINARY_UI int binary (mpz_t src1, unsigned long src2);
+    MPEXPR_TYPE_BINARY       void binary (mpz_t result, mpz_t op1, mpz_t op2);
+    MPEXPR_TYPE_BINARY_UI    void binary (mpz_t result, mpz_t op1,
+                                          unsigned long op2);
+    MPEXPR_TYPE_I_BINARY     int binary (mpz_t op1, mpz_t op2);
+    MPEXPR_TYPE_I_BINARY_UI  int binary (mpz_t op1, unsigned long op2);
+
+    MPEXPR_TYPE_TERNARY      void ternary (mpz_t result,
+                                           mpz_t op1, mpz_t op2, mpz_t op3);
+    MPEXPR_TYPE_TERNARY_UI   void ternary (mpz_t result, mpz_t op1, mpz_t op2,
+                                           unsigned long op3);
+    MPEXPR_TYPE_I_TERNARY    int ternary (mpz_t op1, mpz_t op2, mpz_t op3);
+    MPEXPR_TYPE_I_TERNARY_UI int ternary (mpz_t op1, mpz_t op2,
+                                          unsigned long op3);
 
 Notice the pattern of "UI" for the last parameter as an unsigned long, or
 "I" for the result as an "int" return value.
@@ -372,16 +375,19 @@ lcm, min and max.  For example the standard mpz gcd is
 	{ "gcd", (mpexpr_fun_t) mpz_gcd,
 	  MPEXPR_TYPE_BINARY | MPEXPR_TYPE_PAIRWISE },
 
-Comparison operators (or functions) have special handling.  Types
-MPEXPR_TYPE_CMP_LT through MPEXPR_TYPE_CMP_GE exist and all expect an
-MPEXPR_TYPE_I_BINARY function, returning positive, negative or zero like
-mpz_cmp and similar.  For example the standard mpf "!=" operator is
+Some special types exist for comparison operators (or functions).
+MPEXPR_TYPE_CMP_LT through MPEXPR_TYPE_CMP_GE expect an MPEXPR_TYPE_I_BINARY
+function, returning positive, negative or zero like mpz_cmp and similar.
+For example the standard mpf "!=" operator is
 
 	{ "!=", (mpexpr_fun_t) mpf_cmp, MPEXPR_TYPE_CMP_NE, 160 },
 
-Special types MPEXPR_TYPE_MIN and MPEXPR_TYPE_MAX exist to implement the min
-and max functions, and they take a function like mpf_cmp similarly.  The
-standard mpf max function is
+But there's no obligation to use these types, for instance the standard mpq
+table just uses a plain MPEXPR_TYPE_I_BINARY and mpq_equal for "==".
+
+Further special types MPEXPR_TYPE_MIN and MPEXPR_TYPE_MAX exist to implement
+the min and max functions, and they take a function like mpf_cmp similarly.
+The standard mpf max function is
 
 	{ "max",  (mpexpr_fun_t) mpf_cmp,
           MPEXPR_TYPE_MAX | MPEXPR_TYPE_PAIRWISE },
@@ -391,7 +397,7 @@ These can be used as operators too, for instance the following would be the
 
 	{ ">?", (mpexpr_fun_t) mpf_cmp, MPEXPR_TYPE_MAX, 175 },
 
-Other special types exist to define "(" ")" parentheses, "," function
+Other special types are used to define "(" ")" parentheses, "," function
 argument separator, "!" through "||" logical booleans, ternary "?"  ":", and
 the "$" which introduces variables.  See the sources for how they should be
 used.
@@ -416,7 +422,6 @@ preserve the standard precedence values, anything can be used so long as
 they're in the desired relation to each other.  There's also no need to have
 entries in precedence order, but it's convenient to do so to show what comes
 where.
-
 
         static const struct mpexpr_operator_t  table[] = {
 	  { "^",   (mpexpr_fun_t) mpz_pow_ui,
@@ -482,14 +487,14 @@ return.
 Could have assignments like "a = b*c" modifying the input variables.
 Assignment could be an operator attribute, making it expect an lvalue.
 There would want to be a standard table without assignments available
-though, so that user input can be safely parsed.
+though, so user input could be safely parsed.
 
 The closing parethesis table entry could specify the type of open paren it
 expects, so that "(" and ")" could match and "[" and "]" match but not a
-mixture.  Currently "[" and "]" can be added, but there's no error on
-writing a mixed expression like "2*(3+4]".  Maybe also there could be a way
-to say that functions can only be written with one or the other style of
-parens.
+mixture of the two.  Currently "[" and "]" can be added, but there's no
+error on writing a mixed expression like "2*(3+4]".  Maybe also there could
+be a way to say that functions can only be written with one or the other
+style of parens.
 
 
 

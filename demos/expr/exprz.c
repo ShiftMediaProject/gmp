@@ -48,6 +48,46 @@ e_mpz_even_p (mpz_srcptr x)
   return mpz_even_p (x);
 }
 
+/* These wrapped because MPEXPR_TYPE_I_ functions are expected to return
+   "int" whereas these return "unsigned long".  */
+static void
+e_mpz_hamdist (mpz_ptr w, mpz_srcptr x, mpz_srcptr y)
+{
+  mpz_set_ui (w, mpz_hamdist (x, y));
+}
+static void
+e_mpz_popcount (mpz_ptr w, mpz_srcptr x)
+{
+  mpz_set_ui (w, mpz_popcount (x));
+}
+static void
+e_mpz_scan0 (mpz_ptr w, mpz_srcptr x, unsigned long start)
+{
+  mpz_set_ui (w, mpz_scan0 (x, start));
+}
+static void
+e_mpz_scan1 (mpz_ptr w, mpz_srcptr x, unsigned long start)
+{
+  mpz_set_ui (w, mpz_scan1 (x, start));
+}
+
+/* These wrapped because they're in-place whereas MPEXPR_TYPE_BINARY_UI
+   expects a separate source and destination.  Actually the parser will
+   normally pass w==x anyway.  */
+static void
+e_mpz_setbit (mpz_ptr w, mpz_srcptr x, unsigned long n)
+{
+  if (w != x)
+    mpz_set (w, x);
+  mpz_setbit (w, n);
+}
+static void
+e_mpz_clrbit (mpz_ptr w, mpz_srcptr x, unsigned long n)
+{
+  if (w != x)
+    mpz_set (w, x);
+  mpz_clrbit (w, n);
+}
 
 static __gmp_const struct mpexpr_operator_t  _mpz_expr_standard_table[] = {
 
@@ -93,26 +133,40 @@ static __gmp_const struct mpexpr_operator_t  _mpz_expr_standard_table[] = {
   { ",",   NULL,                            MPEXPR_TYPE_ARGSEP,       2 },
   { "$",   NULL,                            MPEXPR_TYPE_VARIABLE,     1 },
 
-  { "abs",    (mpexpr_fun_t) mpz_abs,             MPEXPR_TYPE_UNARY          },
-  { "bin",    (mpexpr_fun_t) mpz_bin_ui,          MPEXPR_TYPE_BINARY_UI      },
-  { "cmp",    (mpexpr_fun_t) mpz_cmp,             MPEXPR_TYPE_I_BINARY       },
-  { "cmpabs", (mpexpr_fun_t) mpz_cmpabs,          MPEXPR_TYPE_I_BINARY       },
-  { "even_p", (mpexpr_fun_t) e_mpz_even_p,        MPEXPR_TYPE_I_UNARY        },
-  { "fib",    (mpexpr_fun_t) mpz_fib_ui,          MPEXPR_TYPE_UNARY_UI       },
-  { "fac",    (mpexpr_fun_t) mpz_fac_ui,          MPEXPR_TYPE_UNARY_UI       },
-  { "gcd", (mpexpr_fun_t) mpz_gcd, MPEXPR_TYPE_BINARY | MPEXPR_TYPE_PAIRWISE },
-  { "jacobi",    (mpexpr_fun_t) mpz_jacobi,       MPEXPR_TYPE_I_BINARY       },
-  { "kronecker", (mpexpr_fun_t) mpz_kronecker,    MPEXPR_TYPE_I_BINARY       },
-  { "lcm", (mpexpr_fun_t) mpz_lcm, MPEXPR_TYPE_BINARY | MPEXPR_TYPE_PAIRWISE },
-  { "max",    (mpexpr_fun_t) mpz_cmp, MPEXPR_TYPE_MAX | MPEXPR_TYPE_PAIRWISE },
-  { "min",    (mpexpr_fun_t) mpz_cmp, MPEXPR_TYPE_MIN | MPEXPR_TYPE_PAIRWISE },
-  { "nextprime", (mpexpr_fun_t) mpz_nextprime,    MPEXPR_TYPE_UNARY          },
-  { "odd_p",  (mpexpr_fun_t) e_mpz_odd_p,         MPEXPR_TYPE_I_UNARY        },
-  { "powm",   (mpexpr_fun_t) mpz_powm,            MPEXPR_TYPE_TERNARY        },
-  { "probab_prime_p", (mpexpr_fun_t) mpz_probab_prime_p, MPEXPR_TYPE_I_UNARY },
-  { "root",   (mpexpr_fun_t) mpz_root,            MPEXPR_TYPE_BINARY_UI      },
-  { "sgn",    (mpexpr_fun_t) e_mpz_sgn,           MPEXPR_TYPE_I_UNARY        },
-  { "sqrt",   (mpexpr_fun_t) mpz_sqrt,            MPEXPR_TYPE_UNARY          },
+  { "abs",       (mpexpr_fun_t) mpz_abs,           MPEXPR_TYPE_UNARY         },
+  { "bin",       (mpexpr_fun_t) mpz_bin_ui,        MPEXPR_TYPE_BINARY_UI     },
+  { "clrbit",    (mpexpr_fun_t) e_mpz_clrbit,      MPEXPR_TYPE_BINARY_UI     },
+  { "cmp",       (mpexpr_fun_t) mpz_cmp,           MPEXPR_TYPE_I_BINARY      },
+  { "cmpabs",    (mpexpr_fun_t) mpz_cmpabs,        MPEXPR_TYPE_I_BINARY      },
+  { "even_p",    (mpexpr_fun_t) e_mpz_even_p,      MPEXPR_TYPE_I_UNARY       },
+  { "fib",       (mpexpr_fun_t) mpz_fib_ui,        MPEXPR_TYPE_UNARY_UI      },
+  { "fac",       (mpexpr_fun_t) mpz_fac_ui,        MPEXPR_TYPE_UNARY_UI      },
+  { "gcd",       (mpexpr_fun_t) mpz_gcd,           MPEXPR_TYPE_BINARY
+                                                   | MPEXPR_TYPE_PAIRWISE    },
+  { "hamdist",   (mpexpr_fun_t) e_mpz_hamdist,     MPEXPR_TYPE_BINARY        },
+  { "invert",    (mpexpr_fun_t) mpz_invert,        MPEXPR_TYPE_BINARY        },
+  { "jacobi",    (mpexpr_fun_t) mpz_jacobi,        MPEXPR_TYPE_I_BINARY      },
+  { "kronecker", (mpexpr_fun_t) mpz_kronecker,     MPEXPR_TYPE_I_BINARY      },
+  { "lcm",       (mpexpr_fun_t) mpz_lcm,           MPEXPR_TYPE_BINARY
+                                                   | MPEXPR_TYPE_PAIRWISE    },
+  { "max",       (mpexpr_fun_t) mpz_cmp,           MPEXPR_TYPE_MAX
+                                                   | MPEXPR_TYPE_PAIRWISE    },
+  { "min",       (mpexpr_fun_t) mpz_cmp,           MPEXPR_TYPE_MIN
+                                                   | MPEXPR_TYPE_PAIRWISE    },
+  { "nextprime", (mpexpr_fun_t) mpz_nextprime,     MPEXPR_TYPE_UNARY         },
+  { "odd_p",     (mpexpr_fun_t) e_mpz_odd_p,       MPEXPR_TYPE_I_UNARY       },
+  { "perfect_power_p", (mpexpr_fun_t)mpz_perfect_power_p, MPEXPR_TYPE_I_UNARY},
+  { "perfect_square_p",(mpexpr_fun_t)mpz_perfect_square_p,MPEXPR_TYPE_I_UNARY},
+  { "popcount",  (mpexpr_fun_t) e_mpz_popcount,    MPEXPR_TYPE_UNARY         },
+  { "powm",      (mpexpr_fun_t) mpz_powm,          MPEXPR_TYPE_TERNARY       },
+  { "probab_prime_p",  (mpexpr_fun_t)mpz_probab_prime_p,  MPEXPR_TYPE_I_UNARY},
+  { "root",      (mpexpr_fun_t) mpz_root,          MPEXPR_TYPE_BINARY_UI     },
+  { "scan0",     (mpexpr_fun_t) e_mpz_scan0,       MPEXPR_TYPE_BINARY_UI     },
+  { "scan1",     (mpexpr_fun_t) e_mpz_scan1,       MPEXPR_TYPE_BINARY_UI     },
+  { "setbit",    (mpexpr_fun_t) e_mpz_setbit,      MPEXPR_TYPE_BINARY_UI     },
+  { "tstbit",    (mpexpr_fun_t) mpz_tstbit,        MPEXPR_TYPE_I_BINARY_UI   },
+  { "sgn",       (mpexpr_fun_t) e_mpz_sgn,         MPEXPR_TYPE_I_UNARY       },
+  { "sqrt",      (mpexpr_fun_t) mpz_sqrt,          MPEXPR_TYPE_UNARY         },
   { NULL }
 };
 

@@ -124,21 +124,20 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests -I$(top_srcdir)/mpfr
 
 @WANT_MPFR_TRUE@MPFR_SOURCES_OPTION = @WANT_MPFR_TRUE@exprfr.c exprfra.c
-@WANT_MPFR_TRUE@MPFR_LIBADD_OPTION = @WANT_MPFR_TRUE@-L$(top_builddir)/mpfr -lmpfr
+@WANT_MPFR_TRUE@MPFR_LIBADD_OPTION = @WANT_MPFR_TRUE@$(top_builddir)/mpfr/libmpfr.a
 
-EXTRA_LTLIBRARIES = libexpr.la
-libexpr_la_SOURCES = expr.h \
+EXTRA_LIBRARIES = libexpr.a
+libexpr_a_SOURCES = expr.h \
   expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c \
   $(MPFR_SOURCES_OPTION)
 
-nodist_libexpr_la_SOURCES = expr-impl.h
-libexpr_la_LIBADD = $(top_builddir)/libgmp.la
+nodist_libexpr_a_SOURCES = expr-impl.h
 
 EXTRA_PROGRAMS = run-expr t-expr
-LDADD = libexpr.la $(MPFR_LIBADD_OPTION) $(top_builddir)/libgmp.la
+LDADD = libexpr.a $(MPFR_LIBADD_OPTION) $(top_builddir)/libgmp.la
 t_expr_LDADD = $(top_builddir)/tests/libtests.la $(LDADD)
 
-CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES)
+CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES)
 subdir = demos/expr
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
@@ -149,40 +148,44 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 ANSI2KNR = $(top_builddir)/ansi2knr
-libexpr_la_LDFLAGS = 
-libexpr_la_DEPENDENCIES =  $(top_builddir)/libgmp.la
-@WANT_MPFR_FALSE@am_libexpr_la_OBJECTS =  expr$U.lo exprv$U.lo \
-@WANT_MPFR_FALSE@exprz$U.lo exprza$U.lo exprq$U.lo exprqa$U.lo \
-@WANT_MPFR_FALSE@exprf$U.lo exprfa$U.lo
-@WANT_MPFR_TRUE@am_libexpr_la_OBJECTS =  expr$U.lo exprv$U.lo exprz$U.lo \
-@WANT_MPFR_TRUE@exprza$U.lo exprq$U.lo exprqa$U.lo exprf$U.lo \
-@WANT_MPFR_TRUE@exprfa$U.lo exprfr$U.lo exprfra$U.lo
-nodist_libexpr_la_OBJECTS = 
-libexpr_la_OBJECTS =  $(am_libexpr_la_OBJECTS) \
-$(nodist_libexpr_la_OBJECTS)
+libexpr_a_AR = $(AR) cru
+libexpr_a_LIBADD = 
+@WANT_MPFR_FALSE@am_libexpr_a_OBJECTS =  expr$U.$(OBJEXT) \
+@WANT_MPFR_FALSE@exprv$U.$(OBJEXT) exprz$U.$(OBJEXT) exprza$U.$(OBJEXT) \
+@WANT_MPFR_FALSE@exprq$U.$(OBJEXT) exprqa$U.$(OBJEXT) exprf$U.$(OBJEXT) \
+@WANT_MPFR_FALSE@exprfa$U.$(OBJEXT)
+@WANT_MPFR_TRUE@am_libexpr_a_OBJECTS =  expr$U.$(OBJEXT) \
+@WANT_MPFR_TRUE@exprv$U.$(OBJEXT) exprz$U.$(OBJEXT) exprza$U.$(OBJEXT) \
+@WANT_MPFR_TRUE@exprq$U.$(OBJEXT) exprqa$U.$(OBJEXT) exprf$U.$(OBJEXT) \
+@WANT_MPFR_TRUE@exprfa$U.$(OBJEXT) exprfr$U.$(OBJEXT) \
+@WANT_MPFR_TRUE@exprfra$U.$(OBJEXT)
+nodist_libexpr_a_OBJECTS = 
+libexpr_a_OBJECTS =  $(am_libexpr_a_OBJECTS) $(nodist_libexpr_a_OBJECTS)
 EXTRA_PROGRAMS =  run-expr$(EXEEXT) t-expr$(EXEEXT)
 run_expr_SOURCES = run-expr.c
 run_expr_OBJECTS =  run-expr$U.$(OBJEXT)
 run_expr_LDADD = $(LDADD)
-@WANT_MPFR_FALSE@run_expr_DEPENDENCIES =  libexpr.la \
+@WANT_MPFR_FALSE@run_expr_DEPENDENCIES =  libexpr.a \
 @WANT_MPFR_FALSE@$(top_builddir)/libgmp.la
-@WANT_MPFR_TRUE@run_expr_DEPENDENCIES =  libexpr.la \
+@WANT_MPFR_TRUE@run_expr_DEPENDENCIES =  libexpr.a \
+@WANT_MPFR_TRUE@$(top_builddir)/mpfr/libmpfr.a \
 @WANT_MPFR_TRUE@$(top_builddir)/libgmp.la
 run_expr_LDFLAGS = 
 t_expr_SOURCES = t-expr.c
 t_expr_OBJECTS =  t-expr$U.$(OBJEXT)
 @WANT_MPFR_FALSE@t_expr_DEPENDENCIES =  \
-@WANT_MPFR_FALSE@$(top_builddir)/tests/libtests.la libexpr.la \
+@WANT_MPFR_FALSE@$(top_builddir)/tests/libtests.la libexpr.a \
 @WANT_MPFR_FALSE@$(top_builddir)/libgmp.la
 @WANT_MPFR_TRUE@t_expr_DEPENDENCIES =  $(top_builddir)/tests/libtests.la \
-@WANT_MPFR_TRUE@libexpr.la $(top_builddir)/libgmp.la
+@WANT_MPFR_TRUE@libexpr.a $(top_builddir)/mpfr/libmpfr.a \
+@WANT_MPFR_TRUE@$(top_builddir)/libgmp.la
 t_expr_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libexpr_la_SOURCES) run-expr.c t-expr.c
+DIST_SOURCES =  $(libexpr_a_SOURCES) run-expr.c t-expr.c
 depcomp = 
 DIST_COMMON =  README Makefile.am Makefile.in expr-impl-h.in
 
@@ -190,8 +193,8 @@ DIST_COMMON =  README Makefile.am Makefile.in expr-impl-h.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-SOURCES = $(libexpr_la_SOURCES) $(nodist_libexpr_la_SOURCES) run-expr.c t-expr.c
-OBJECTS = $(am_libexpr_la_OBJECTS) $(nodist_libexpr_la_OBJECTS) run-expr$U.$(OBJEXT) t-expr$U.$(OBJEXT)
+SOURCES = $(libexpr_a_SOURCES) $(nodist_libexpr_a_SOURCES) run-expr.c t-expr.c
+OBJECTS = $(am_libexpr_a_OBJECTS) $(nodist_libexpr_a_OBJECTS) run-expr$U.$(OBJEXT) t-expr$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -242,8 +245,10 @@ distclean-kr:
 
 maintainer-clean-kr:
 
-libexpr.la: $(libexpr_la_OBJECTS) $(libexpr_la_DEPENDENCIES)
-	$(LINK)  $(libexpr_la_LDFLAGS) $(libexpr_la_OBJECTS) $(libexpr_la_LIBADD) $(LIBS)
+libexpr.a: $(libexpr_a_OBJECTS) $(libexpr_a_DEPENDENCIES)
+	-rm -f libexpr.a
+	$(libexpr_a_AR) libexpr.a $(libexpr_a_OBJECTS) $(libexpr_a_LIBADD)
+	$(RANLIB) libexpr.a
 
 run-expr$(EXEEXT): $(run_expr_OBJECTS) $(run_expr_DEPENDENCIES)
 	@rm -f run-expr$(EXEEXT)

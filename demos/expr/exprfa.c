@@ -137,6 +137,17 @@ e_mpf_ulong_p (mpf_srcptr f)
   return mpf_integer_p (f) && mpf_fits_ulong_p (f);
 }
 
+/* Don't want to change the precision of w, can only do an actual swap when
+   w and x have the same precision.  */
+static void
+e_mpf_set_or_swap (mpf_ptr w, mpf_ptr x)
+{
+  if (mpf_get_prec (w) == mpf_get_prec (x))
+    mpf_swap (w, x);
+  else
+    mpf_set (w, x);
+}
+
 
 int
 mpf_expr_a (__gmp_const struct mpexpr_operator_t *table,
@@ -160,8 +171,8 @@ mpf_expr_a (__gmp_const struct mpexpr_operator_t *table,
   p.mpX_init        = (mpexpr_fun_unary_ui_t) mpf_init;
   p.mpX_number      = (mpexpr_fun_number_t)   e_mpf_number;
   p.mpX_set         = (mpexpr_fun_unary_t)    mpf_set;
-  p.mpX_set_or_swap = (mpexpr_fun_unary_t)    mpf_set;
-  p.mpX_set_si      = (mpexpr_fun_unary_ui_t) mpf_set_si;
+  p.mpX_set_or_swap = (mpexpr_fun_unary_t)    e_mpf_set_or_swap;
+  p.mpX_set_si      = (mpexpr_fun_set_si_t)   mpf_set_si;
   p.mpX_swap        = (mpexpr_fun_swap_t)     mpf_swap;
 
   return mpexpr_evaluate (&p);

@@ -21,12 +21,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
-/* Future: Bitwise "&", "|" and "&" could be done.  Not sure those functions
-   would be much value though.  */
-
-
 #include <stdio.h>
-
 #include "gmp.h"
 #include "expr-impl.h"
 
@@ -38,16 +33,22 @@ MA 02111-1307, USA.
 /* This set of functions makes it possible to add the ROUND parameter, and a
    few of the mpfr's are macros and need a wrapper anyway.
 
-   A whole new set of functions just like this is a bit horrible, but it's
-   the easiest way.  There doesn't seem much use having a rounding parameter
-   passed down through mpfr_expr_a, since a single rounding for all
-   operations in an expression doesn't give close enough control to be
-   useful.  */
+   A whole new set of functions like this just to add a rounding parameter
+   is a bit horrible, but it's the easiest way.  There doesn't seem much use
+   having rounding passed down through mpfr_expr_a, since a single rounding
+   for all operations in an expression doesn't give close enough control to
+   be useful.  */
 
 static void
 e_mpfr_abs (mpfr_ptr dst, mpfr_srcptr src)
 {
   return mpfr_abs (dst, src, ROUND);
+}
+
+static void
+e_mpfr_agm (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
+{
+  return mpfr_agm (dst, src1, src2, ROUND);
 }
 
 static void
@@ -131,8 +132,7 @@ e_mpfr_reldiff (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
 static int
 e_mpfr_sgn (mpfr_srcptr x)
 {
-  /* return mpfr_sgn (x); */
-  return mpfr_cmp_ui (x, 0L);
+  return mpfr_sgn (x);
 }
 
 static void
@@ -198,25 +198,30 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { ",",   NULL,                             MPEXPR_TYPE_ARGSEP,        2 },
   { "$",   NULL,                             MPEXPR_TYPE_VARIABLE,      1 },
 
-  { "abs",     (mpexpr_fun_t) e_mpfr_abs,     MPEXPR_TYPE_UNARY       },
-  { "ceil",    (mpexpr_fun_t) mpfr_ceil,      MPEXPR_TYPE_UNARY       },
-  { "cmp",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_I_BINARY    },
-  { "cos",     (mpexpr_fun_t) e_mpfr_cos,     MPEXPR_TYPE_UNARY       },
-  { "exp",     (mpexpr_fun_t) e_mpfr_exp,     MPEXPR_TYPE_UNARY       },
-  { "floor",   (mpexpr_fun_t) mpfr_floor,     MPEXPR_TYPE_UNARY       },
-  { "log",     (mpexpr_fun_t) e_mpfr_log,     MPEXPR_TYPE_UNARY       },
+  { "abs",     (mpexpr_fun_t) e_mpfr_abs,     MPEXPR_TYPE_UNARY        },
+  { "agm",     (mpexpr_fun_t) e_mpfr_agm,     MPEXPR_TYPE_UNARY        },
+  { "ceil",    (mpexpr_fun_t) mpfr_ceil,      MPEXPR_TYPE_UNARY        },
+  { "cmp",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_I_BINARY     },
+  { "cos",     (mpexpr_fun_t) e_mpfr_cos,     MPEXPR_TYPE_UNARY        },
+  { "eq",      (mpexpr_fun_t) mpfr_eq,        MPEXPR_TYPE_I_TERNARY_UI },
+  { "exp",     (mpexpr_fun_t) e_mpfr_exp,     MPEXPR_TYPE_UNARY        },
+  { "floor",   (mpexpr_fun_t) mpfr_floor,     MPEXPR_TYPE_UNARY        },
+  { "inf_p",   (mpexpr_fun_t) mpfr_inf_p,     MPEXPR_TYPE_I_UNARY      },
+  { "log",     (mpexpr_fun_t) e_mpfr_log,     MPEXPR_TYPE_UNARY        },
   { "max",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_MAX
-                                              | MPEXPR_TYPE_PAIRWISE  },
+                                              | MPEXPR_TYPE_PAIRWISE   },
   { "min",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_MIN
-                                              | MPEXPR_TYPE_PAIRWISE  },
-  { "reldiff", (mpexpr_fun_t) e_mpfr_reldiff, MPEXPR_TYPE_BINARY      },
-  { "sgn",     (mpexpr_fun_t) e_mpfr_sgn,     MPEXPR_TYPE_I_UNARY     },
-  { "sin",     (mpexpr_fun_t) e_mpfr_sin,     MPEXPR_TYPE_UNARY       },
-  { "sqrt",    (mpexpr_fun_t) e_mpfr_sqrt,    MPEXPR_TYPE_UNARY       },
-  { "trunc",   (mpexpr_fun_t) mpfr_trunc,     MPEXPR_TYPE_UNARY       },
+                                              | MPEXPR_TYPE_PAIRWISE   },
+  { "nan_p",   (mpexpr_fun_t) mpfr_nan_p,     MPEXPR_TYPE_I_UNARY      },
+  { "number_p",(mpexpr_fun_t) mpfr_number_p,  MPEXPR_TYPE_I_UNARY      },
+  { "reldiff", (mpexpr_fun_t) e_mpfr_reldiff, MPEXPR_TYPE_BINARY       },
+  { "sgn",     (mpexpr_fun_t) e_mpfr_sgn,     MPEXPR_TYPE_I_UNARY      },
+  { "sin",     (mpexpr_fun_t) e_mpfr_sin,     MPEXPR_TYPE_UNARY        },
+  { "sqrt",    (mpexpr_fun_t) e_mpfr_sqrt,    MPEXPR_TYPE_UNARY        },
+  { "trunc",   (mpexpr_fun_t) mpfr_trunc,     MPEXPR_TYPE_UNARY        },
 
-  { "log2",    (mpexpr_fun_t) e_mpfr_const_log2, MPEXPR_TYPE_CONSTANT },
-  { "pi",      (mpexpr_fun_t) e_mpfr_const_pi,   MPEXPR_TYPE_CONSTANT },
+  { "log2",    (mpexpr_fun_t) e_mpfr_const_log2, MPEXPR_TYPE_CONSTANT  },
+  { "pi",      (mpexpr_fun_t) e_mpfr_const_pi,   MPEXPR_TYPE_CONSTANT  },
 
   { NULL }
 };

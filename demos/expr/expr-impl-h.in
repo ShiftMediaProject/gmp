@@ -41,9 +41,7 @@ MA 02111-1307, USA.
 
 
 /* Rouding mode for mpfr_expr.  Change as desired.  */
-
 #define ROUND  GMP_RNDZ
-
 
 
 #define isasciidigit(c)   (isascii (c) && isdigit (c))
@@ -97,6 +95,7 @@ typedef size_t (*mpexpr_fun_number_t)
      _PROTO ((mpX_ptr, __gmp_const char *str, size_t len, int base));
 typedef void (*mpexpr_fun_swap_t) _PROTO ((mpX_ptr, mpX_ptr));
 typedef unsigned long (*mpexpr_fun_get_ui_t) _PROTO ((mpX_srcptr));
+typedef void (*mpexpr_fun_set_si_t) _PROTO ((mpX_srcptr, long));
 
 struct mpexpr_control_t {
   __gmp_const struct mpexpr_operator_t  *op;
@@ -136,7 +135,7 @@ struct mpexpr_parse_t {
   mpexpr_fun_number_t                   mpX_number;
   mpexpr_fun_unary_t                    mpX_set;
   mpexpr_fun_unary_t                    mpX_set_or_swap;
-  mpexpr_fun_unary_ui_t                 mpX_set_si;
+  mpexpr_fun_set_si_t                   mpX_set_si;
   mpexpr_fun_swap_t                     mpX_swap;
 };
 

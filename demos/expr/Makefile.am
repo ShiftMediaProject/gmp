@@ -26,21 +26,20 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests -I$(top_srcdir)/mpfr
 
 if WANT_MPFR
 MPFR_SOURCES_OPTION = exprfr.c exprfra.c
-MPFR_LIBADD_OPTION = -L$(top_builddir)/mpfr -lmpfr
+MPFR_LIBADD_OPTION = $(top_builddir)/mpfr/libmpfr.a
 endif
 
-EXTRA_LTLIBRARIES = libexpr.la
-libexpr_la_SOURCES = expr.h \
+EXTRA_LIBRARIES = libexpr.a
+libexpr_a_SOURCES = expr.h \
   expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c \
   $(MPFR_SOURCES_OPTION)
-nodist_libexpr_la_SOURCES = expr-impl.h
-libexpr_la_LIBADD = $(top_builddir)/libgmp.la
+nodist_libexpr_a_SOURCES = expr-impl.h
 
 EXTRA_PROGRAMS = run-expr t-expr
-LDADD = libexpr.la $(MPFR_LIBADD_OPTION) $(top_builddir)/libgmp.la
+LDADD = libexpr.a $(MPFR_LIBADD_OPTION) $(top_builddir)/libgmp.la
 t_expr_LDADD = $(top_builddir)/tests/libtests.la $(LDADD)
 
-CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES)
+CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES)
 
 allprogs: $(EXTRA_PROGRAMS)
 
