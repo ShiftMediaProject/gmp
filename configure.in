@@ -428,16 +428,37 @@ case $host in
 
 
   # Motorola 68k
-  m68*-*-*)
+  #
+  # "m68k" is taken to mean 68020 or better, since that's what most systems
+  # are.  Nexts in particular are certainly at least 68020.
+  #
+  m68*-*-* | m5200-*-*)
     family=m68k
-    path="m68k"
-    gcc_cflags="$gcc_cflags $fomit_frame_pointer"
+    gcc_cflags="-g $fomit_frame_pointer"
+    gcc_cflags_optlist="optimize arch"
+    gcc_cflags_optimize="-O2"   # changed below on gcc 2.95.x
 
+    # gcc 2.7.2 doesn't know -m68060, -mcpu32 or -m5200, so let them fall
+    # back appropriately.
+    # FIXME: Maybe "-m68020 -mnobitfield" would suit cpu32 on 2.7.2.
+    #
     case $host in
-    # Nexts are at least '020, and let m68k mean 68020-68040.
-    [m680[234]0*-*-* | m68k*-*-* | m68*-next-nextstep*])
-      path="m68k/mc68020 m68k"
-      ;;
+    [m680[01]0-*-*])     gcc_cflags_arch="-m68000" ;;
+    m68020-*-*|m68k-*-*) gcc_cflags_arch="-m68020" ;;
+    m68030-*-*)          gcc_cflags_arch="-m68030" ;;
+    m68040-*-*)          gcc_cflags_arch="-m68040" ;;
+    m68060-*-*)          gcc_cflags_arch="-m68060 -m68040" ;;
+    m683??-*-*)          gcc_cflags_arch="-mcpu32 -m68000" ;;
+    m5200-*-*)           gcc_cflags_arch="-m5200 -m68000" ;;
+    *)                   gcc_cflags_arch="-m68000" ;;
+    esac
+
+    # FIXME: m68k/mc68020 looks like it's ok for cpu32, but this wants to be
+    # tested.  Will need to introduce an m68k/cpu32 if m68/mc62020 ever uses
+    # the bitfield instructions.
+    case $host in
+    [m680[01]0-*-* | m5200-*-*]) path="m68k" ;; 
+    *)                           path="m68k/mc68020 m68k" ;;
     esac
     ;;
 
@@ -955,6 +976,10 @@ if test $found_compiler = yes; then
             # buggy on some versions of gcc, exclude as necessary
             GMP_GCC_MARCH_PENTIUMPRO($cc,,continue)
             ;;
+          -O*)
+            # ease back to just -O on m68k gcc 2.95.x
+            GMP_GCC_M68K_OPTIMIZE($ccbase,$cc,flag)
+            ;;
         esac
 
         GMP_PROG_CC_WORKS($cc $cflags $cppflags $flag,
@@ -1183,7 +1208,7 @@ esac
 
 
 # The library and header checks are mostly for the benefit of supplementary
-# programs.  The library itself doesn't use anything weird.
+# programs.  libgmp doesn't use anything weird.
 
 AC_HEADER_STDC
 AC_HEADER_TIME
