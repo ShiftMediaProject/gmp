@@ -1350,6 +1350,23 @@ fi
 ])
 
 
+dnl  GMP_C_ATTRIBUTE_MODE
+dnl  --------------------
+dnl  Introduced in gcc 2.2, but perhaps not in all Apple derived versions.
+
+AC_DEFUN(GMP_C_ATTRIBUTE_MODE,
+[AC_CACHE_CHECK([whether gcc __attribute__ ((mode (XX))) works],
+                gmp_cv_c_attribute_mode,
+[AC_TRY_COMPILE([typedef int SItype __attribute__ ((mode (SI)));], ,
+  gmp_cv_c_attribute_mode=yes, gmp_cv_c_attribute_mode=no)
+])
+if test $gmp_cv_c_attribute_mode = yes; then
+  AC_DEFINE(HAVE_ATTRIBUTE_MODE, 1,
+  [Define if the compiler accepts gcc style __attribute__ ((mode (XX)))])
+fi
+])
+
+
 dnl  GMP_C_ATTRIBUTE_NORETURN
 dnl  ------------------------
 
