@@ -332,8 +332,75 @@ fi
 ])
 
 
-dnl  GMP_GCC_MARCH_PENTIUMPRO(CCBASE,CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
-dnl  ----------------------------------------------------------------------
+dnl  GMP_GCC_VERSION_GE(CC,MAJOR[,MINOR[,SUBMINOR]])
+dnl  -----------------------------------------------
+dnl
+dnl  Test whether the version of CC (which must be GNU C) is >=
+dnl  MAJOR.MINOR.SUBMINOR.  Set $gmp_compare_ge to "yes" or "no"
+dnl  accordingly, or to "error" if the version number string can't be
+dnl  parsed.
+dnl
+dnl  gcc --version is normally just "2.7.2.3" or "2.95.3" or whatever, but
+dnl  egcs gives something like "egcs-2.91".  sed doesn't support "?" so a
+dnl  pattern "(egcs-)*" is used.
+dnl
+dnl  There's no caching here, so that different CC's can be tested.
+
+AC_DEFUN(GMP_GCC_VERSION_GE,
+[tmp_version=`($1 --version) 2>&AC_FD_CC`
+echo "$1 --version '$tmp_version'" >&AC_FD_CC
+
+major=`(echo "$tmp_version" | sed -n ['s/^\(egcs-\)*\([0-9][0-9]*\).*/\2/p']) 2>&AC_FD_CC`
+echo "    major '$major'" >&AC_FD_CC
+
+ifelse([$3],,,
+[minor=`(echo "$tmp_version" | sed -n ['s/^\(egcs-\)*[0-9][0-9]*\.\([0-9][0-9]*\).*/\2/p']) 2>&AC_FD_CC`
+echo "    minor '$minor'" >&AC_FD_CC])
+
+ifelse([$4],,,
+[subminor=`(echo "$tmp_version" | sed -n ['s/^\(egcs-\)*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\2/p']) 2>&AC_FD_CC`
+echo "    subminor '$subminor'" >&AC_FD_CC])
+
+if test -z "$major"; then
+  AC_MSG_WARN([unrecognised gcc version string: $tmp_version])
+  gmp_compare_ge=error
+else
+  ifelse([$3],, [GMP_COMPARE_GE($major, $2)],
+  [ifelse([$4],,[GMP_COMPARE_GE($major, $2, $minor, $3)],
+                [GMP_COMPARE_GE($major, $2, $minor, $3, $subminor, $4)])])
+fi
+])
+
+
+dnl  GMP_GCC_ARM_UMODSI(CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
+dnl  ---------------------------------------------------------
+dnl
+dnl  gcc 2.95.3 and earlier on arm has a bug in the libgcc __umodsi routine
+dnl  making "%" give wrong results for some operands, eg. "0x90000000 % 3".
+dnl  We're hoping it'll be fixed in 2.95.4, and we know it'll be fixed in
+dnl  gcc 3.
+dnl
+dnl  There's only a couple of places gmp cares about this, one is the
+dnl  size==1 case in mpn/generic/mode1o.c, and this shows up in
+dnl  tests/mpz/t-jac.c as a wrong result from mpz_kronecker_ui.
+
+AC_DEFUN(GMP_GCC_ARM_UMODSI,
+[AC_MSG_CHECKING([whether gcc unsigned division works])
+GMP_GCC_VERSION_GE([$1], 2,95,4)
+case $gmp_compare_ge in
+yes)
+  ifelse([$2],,:,[$2])
+  gmp_gcc_arm_umodsi_result=yes ;;
+*)
+  ifelse([$3],,:,[$3])
+  gmp_gcc_arm_umodsi_result="no, gcc <= 2.95.3" ;;
+esac
+AC_MSG_RESULT([$gmp_gcc_arm_umodsi_result])
+])
+
+
+dnl  GMP_GCC_MARCH_PENTIUMPRO(CC,[ACTIONS-IF-GOOD][,ACTIONS-IF-BAD])
+dnl  ---------------------------------------------------------------
 dnl
 dnl  mpz/powm.c swox cvs rev 1.4 tickled a bug in gcc 2.95.2 when
 dnl  -march=pentiumpro was used.  The problem appears to be fixed in 2.96,
@@ -345,33 +412,21 @@ dnl  obvious reason for this, and there's many similar or identical
 dnl  expressions throughout the library, so it seems wisest to disable
 dnl  -march=pentiumpro until 2.96.
 dnl
-dnl  This macro is used only once, after finalizing a choice of CC, so it's
-dnl  ok to cache the result.
-dnl
-dnl  egcs 2.91 --version gives "egcs-2.91".
+dnl  This macro is used only once, after finalizing a choice of CC, so the
+dnl  result is cached.
 
 AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
-[AC_CACHE_CHECK([whether $1 -march=pentiumpro is good],
+[AC_CACHE_CHECK([whether gcc -march=pentiumpro is good],
                 gmp_cv_gcc_march_pentiumpro,
-[if test $1 = gcc; then
-  tmp_version=`($2 --version) 2>&AC_FD_CC`
-  major=`(echo "$tmp_version" | sed -n ['s/^\(egcs-\)*\([0-9][0-9]*\).*/\2/p']) 2>&AC_FD_CC`
-  minor=`(echo "$tmp_version" | sed -n ['s/^\(egcs-\)*[0-9][0-9]*\.\([0-9][0-9]*\).*/\2/p']) 2>&AC_FD_CC`
-  echo "$2 --version '$tmp_version' is major '$major' minor '$minor'" >&AC_FD_CC
-  if test -z "$major"; then
-    AC_MSG_WARN([unrecognised gcc version string: $tmp_version])
-    gmp_cv_gcc_march_pentiumpro=no
-  else
-    GMP_COMPARE_GE($major, 2, $minor, 96)
-    gmp_cv_gcc_march_pentiumpro=$gmp_compare_ge
-  fi
-else
-  gmp_cv_gcc_march_pentiumpro=not-applicable
-fi])
+[GMP_GCC_VERSION_GE([$1], 2,96)
+case $gmp_compare_ge in
+yes|no)  gmp_cv_gcc_march_pentiumpro=$gmp_compare_ge ;;
+error|*) gmp_cv_gcc_march_pentiumpro=no ;;
+esac])
 if test $gmp_cv_gcc_march_pentiumpro = yes; then
-  ifelse([$3],,:,[$3])
+  ifelse([$2],,:,[$2])
 else
-  ifelse([$4],,:,[$4])
+  ifelse([$3],,:,[$3])
 fi
 ])
 
