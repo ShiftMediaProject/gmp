@@ -35,15 +35,16 @@ OFILES = @mpn_objects@
 #
 EXTRA_LTLIBRARIES = libdummy.la
 nodist_libdummy_la_SOURCES =						    \
-  add_n.c addmul_1.c and_n.c andn_n.c bdivmod.c com_n.c copyd.c copyi.c	    \
-  dc_divrem_n.c cmp.c                                                       \
-  dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c		    \
+  add_1.c add_n.c addmul_1.c and_n.c andn_n.c bdivmod.c			    \
+  cmp.c com_n.c copyd.c copyi.c						    \
+  dc_divrem_n.c dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c   \
   dump.c fib2_ui.c gcd.c						    \
   gcd_finda.c gcd_1.c gcdext.c get_str.c hamdist.c inlines.c invert_limb.c  \
   ior_n.c iorn_n.c jacbase.c lshift.c mod_1.c mode1o.c mul.c mul_1.c	    \
   mul_fft.c mul_n.c mul_basecase.c nand_n.c nior_n.c perfsqr.c popcount.c   \
-  pre_mod_1.c random.c random2.c rshift.c sb_divrem_mn.c scan0.c scan1.c    \
-  set_str.c sqr_basecase.c sqr_diagonal.c sqrtrem.c sub_n.c submul_1.c	    \
+  pre_mod_1.c random.c random2.c rshift.c				    \
+  sb_divrem_mn.c scan0.c scan1.c set_str.c sqr_basecase.c sqr_diagonal.c    \
+  sqrtrem.c sub_1.c sub_n.c submul_1.c					    \
   tdiv_qr.c udiv_qrnnd.c udiv_w_sdiv.c xor_n.c xnor_n.c
 
 
