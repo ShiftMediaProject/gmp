@@ -76,12 +76,6 @@ define(`i00',`%l0') define(`i16',`%l1') define(`i32',`%l2') define(`i48',`%l3')
 define(`xffffffff',`%l7')
 define(`xffff',`%o0')
 
-	TEXT
-	.align 4
-L(noll):
-	.word	0
-
-	.align 16
 PROLOGUE(mpn_mul_1)
 
 C Initialization.  (1) Split v operand into four 16-bit chunks and store them
@@ -90,7 +84,6 @@ C f2 and f4.  (3) Store masks in registers aliased to `xffff' and `xffffffff'.
 
 	save	%sp, -256, %sp
 	mov	-1, %g4
-L(pc):	rd	%pc,%o7
 	srlx	%g4, 48, xffff		C store mask in register `xffff'
 	and	%i3, xffff, %g2
 	stx	%g2, [%sp+2223+0]
@@ -102,9 +95,7 @@ L(pc):	rd	%pc,%o7
 	stx	%g2, [%sp+2223+16]
 	srlx	%i3, 48, %g3
 	stx	%g3, [%sp+2223+24]
-	ld	[%o7+L(noll)-L(pc)],%f2
 	srlx	%g4, 32, xffffffff	C store mask in register `xffffffff'
-	ld	[%o7+L(noll)-L(pc)],%f4
 
 	sllx	%i2, 3, %i2
 	mov	0, cy			C clear cy
@@ -119,6 +110,8 @@ L(pc):	rd	%pc,%o7
 	ldd	[%sp+2223+8], v16
 	ldd	[%sp+2223+16], v32
 	ldd	[%sp+2223+24], v48
+	ld	[%sp+2223+0],%f2	C zero f2
+	ld	[%sp+2223+0],%f4	C zero f4
 	ld	[%i5+%i2], %f3		C read low 32 bits of up[i]
 	ld	[%i1+%i2], %f5		C read high 32 bits of up[i]
 	fxtod	v00, v00
