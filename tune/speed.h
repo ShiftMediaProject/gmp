@@ -1031,6 +1031,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     mp_ptr     fp, f1p;                                 \
     mp_size_t  alloc;                                   \
     unsigned   i;                                       \
+    double     t;                                       \
+    TMP_DECL (marker);                                  \
                                                         \
     SPEED_RESTRICT_COND (s->size >= 0);                 \
                                                         \
@@ -1044,7 +1046,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     do                                                  \
       function (fp, f1p, s->size);                      \
     while (--i != 0);                                   \
-    return speed_endtime ();                            \
+    t = speed_endtime ();                               \
+                                                        \
+    TMP_FREE (marker);                                  \
+    return t;                                           \
   }  
 
 
@@ -1734,37 +1739,44 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
    Give leading=1 if foo is leading zeros, leading=0 for trailing.
    Give zero=1 if n=0 is allowed in the call, zero=0 if not.  */
 
-#define SPEED_ROUTINE_COUNT_ZEROS_C(call, leading, zero)                   \
-  {                                                                        \
-    mp_ptr     xp = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, s->align_xp); \
-    int        i, c;                                                       \
-    unsigned   j;                                                          \
-    mp_limb_t  n;                                                          \
-    double     t;                                                          \
-                                                                           \
-    if (! speed_routine_count_zeros_setup (s, xp, leading, zero))          \
-      return -1.0;                                                         \
-    speed_operand_src (s, xp, SPEED_BLOCK_SIZE);                           \
-    speed_cache_fill (s);                                                  \
-                                                                           \
-    c = 0;                                                                 \
-    speed_starttime ();                                                    \
-    j = s->reps;                                                           \
-    do {                                                                   \
-      for (i = 0; i < SPEED_BLOCK_SIZE; i++)                               \
-        {                                                                  \
-          n = xp[i];                                                       \
-          n ^= c;                                                          \
-          call;                                                            \
-        }                                                                  \
-    } while (--j != 0);                                                    \
-    t = speed_endtime ();                                                  \
-                                                                           \
-    noop_1 (c);                                                            \
-                                                                           \
-    s->time_divisor = SPEED_BLOCK_SIZE;                                    \
-    return t;                                                              \
-  }                                                                        \
+#define SPEED_ROUTINE_COUNT_ZEROS_C(call, leading, zero)                \
+  {                                                                     \
+    mp_ptr     xp;                                                      \
+    int        i, c;                                                    \
+    unsigned   j;                                                       \
+    mp_limb_t  n;                                                       \
+    double     t;                                                       \
+    TMP_DECL (marker);                                                  \
+                                                                        \
+    TMP_MARK (marker);                                                  \
+    xp = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, s->align_xp);         \
+                                                                        \
+    if (! speed_routine_count_zeros_setup (s, xp, leading, zero))       \
+      return -1.0;                                                      \
+    speed_operand_src (s, xp, SPEED_BLOCK_SIZE);                        \
+    speed_cache_fill (s);                                               \
+                                                                        \
+    c = 0;                                                              \
+    speed_starttime ();                                                 \
+    j = s->reps;                                                        \
+    do {                                                                \
+      for (i = 0; i < SPEED_BLOCK_SIZE; i++)                            \
+        {                                                               \
+          n = xp[i];                                                    \
+          n ^= c;                                                       \
+          call;                                                         \
+        }                                                               \
+    } while (--j != 0);                                                 \
+    t = speed_endtime ();                                               \
+                                                                        \
+    /* don't let c go dead */                                           \
+    noop_1 (c);                                                         \
+                                                                        \
+    s->time_divisor = SPEED_BLOCK_SIZE;                                 \
+                                                                        \
+    TMP_FREE (marker);                                                  \
+    return t;                                                           \
+  }                                                                     \
   
 #define SPEED_ROUTINE_COUNT_LEADING_ZEROS_C(call,zero)  \
   SPEED_ROUTINE_COUNT_ZEROS_C (call, 1, zero)
