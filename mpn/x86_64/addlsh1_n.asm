@@ -49,6 +49,8 @@ define(`vp',`%rdx')
 define(`n',`%rcx')
 
 ASM_START()
+	TEXT
+	ALIGN(16)
 PROLOGUE(mpn_addlsh1_n)
 	pushq	%rbx			C				1
 	pushq	%rbp			C				1
