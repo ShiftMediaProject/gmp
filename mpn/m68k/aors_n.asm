@@ -41,8 +41,8 @@ MULFUNC_PROLOGUE(mpn_addmul_1 mpn_submul_1)
 C INPUT PARAMETERS
 C res_ptr	(sp + 4)
 C s1_ptr	(sp + 8)
-C s2_ptr	(sp + 16)
-C size		(sp + 12)
+C s2_ptr	(sp + 12)
+C size		(sp + 16)
 
 
 PROLOGUE(M4_function_n)

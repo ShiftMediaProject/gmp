@@ -30,8 +30,8 @@ C 68040:    5         12
 C INPUT PARAMETERS
 C res_ptr	(sp + 4)
 C s_ptr		(sp + 8)
-C s_size	(sp + 16)
-C cnt		(sp + 12)
+C s_size	(sp + 12)
+C cnt		(sp + 16)
 
 define(res_ptr, `a1')
 define(s_ptr,   `a0')
