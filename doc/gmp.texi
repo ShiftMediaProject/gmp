@@ -7045,6 +7045,15 @@ an arbitrary precision @code{mpeval}.
 MLton compiler @spaceuref{http://www.mlton.org/}
 @end itemize
 
+@item Objective Caml
+@itemize @bullet
+@item
+MLGMP @spaceuref{http://www.di.ens.fr/~monniaux/programmes.html.en}
+@item
+Numerix @spaceuref{http://pauillac.inria.fr/~quercia/} @* Optionally using
+GMP.
+@end itemize
+
 @item Oz
 @itemize @bullet
 @item
@@ -7055,6 +7064,9 @@ Mozart @spaceuref{http://www.mozart-oz.org/}
 @itemize @bullet
 @item
 GNU Pascal Compiler @spaceuref{http://www.gnu-pascal.de/} @* GMP unit.
+@item
+Numerix @spaceuref{http://pauillac.inria.fr/~quercia/} @* For Free Pascal,
+optionally using GMP.
 @end itemize
 
 @item Perl
@@ -7124,6 +7136,9 @@ DrGenius @spaceuref{http://drgenius.seul.org/} @* Geometry system and
 mathematical programming language.
 @item
 GiNaC @spaceuref{http://www.ginac.de/} @* C++ computer algebra using CLN.
+@item
+GOO @spaceuref{http://www.googoogaga.org/} @* Dynamic object oriented
+language.
 @item
 Maxima @uref{http://www.ma.utexas.edu/users/wfs/maxima.html} @* Macsyma
 computer algebra using GCL.
