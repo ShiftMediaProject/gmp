@@ -1182,8 +1182,18 @@ case $host in
         # pentium4 is known to gcc 3.1 and up, not sure what cpu choice
         # would best suit previous versions, pentiumpro will get us cmov
         # from gcc 2.95.4 up, otherwise let's just try i486.
+        #
+        # FIXME: SSE2 is disabled firstly because it sometimes makes gcc
+        # 3.2.1 generate incorrect code for ieee_double_extract accesses,
+        # and secondly because sse2 is only supported by new enough kernels
+        # (ones which know to save the xmm registers).  It's also possible
+        # an old assembler won't know sse2 instructions.  In current
+        # versions of gcc, -mno-sse2 seems to be no great loss, but the plan
+        # is to address these issues at some stage and use a full
+        # -march=pentium4 when possible.
+        #
         gcc_cflags_cpu="-mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=pentium4 -march=pentiumpro -march=pentium"
+        gcc_cflags_arch="-march=pentium4~-mno-sse2 -march=pentiumpro -march=pentium"
         ;;
       *)
         gcc_cflags_cpu="-mcpu=i486 -m486"
