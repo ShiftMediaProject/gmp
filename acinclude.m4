@@ -313,8 +313,7 @@ dnl
 dnl  A separate ifdef on the angle bracket quoted part ensures the quoting
 dnl  style there is respected.  The basic defines from gmp_tmpconfigm4 are
 dnl  fully quoted but are still put under an ifdef in case any have been
-dnl  redefined by one of the m4 include files (eg. x86-defs.m4 appends to
-dnl  the definition of ALIGN).
+dnl  redefined by one of the m4 include files.
 dnl
 dnl  Doing a big ifdef within asm-defs.m4 and/or other macro files wouldn't
 dnl  work, since it'd interpret parentheses and quotes in dnl comments, and
@@ -466,14 +465,47 @@ else
 fi
 rm -f conftest*
 ])
+GMP_DEFINE_RAW(["define(<ALIGN_LOGARITHMIC>,<$gmp_cv_check_asm_align_log>)"])
 if test "$gmp_cv_check_asm_align_log" = "yes"; then
-  GMP_DEFINE(ALIGN, [.align m4_log2($][1)])
   ifelse([$1], , :, [$1])
 else
-  GMP_DEFINE(ALIGN, [.align $][1])
   ifelse([$2], , :, [$2])
 fi  
 ])dnl
+
+
+dnl  GMP_CHECK_ASM_ALIGN_FILL_0x90
+dnl  -----------------------------
+dnl  Determine whether a ",0x90" suffix works on a .align directive.
+dnl  This is only meant for use on x86, where 0x90 is a "nop".
+dnl
+dnl  Old gas, eg. 1.92.3 - needs ",0x90" or else the fill is an invalid 0x00.
+dnl  New gas, eg. 2.91 - generates the good multibyte nop fills even when
+dnl      ",0x90" is given.
+dnl  Solaris 2.6 as - doesn't allow ",0x90".
+dnl  Solaris 2.8 as - gives a warning for ",0x90", but we are just ignoring
+dnl      that for the moment.
+
+AC_DEFUN(GMP_CHECK_ASM_ALIGN_FILL_0x90,
+[AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
+                gmp_cv_check_asm_align_fill_0x90,
+[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
+cat > conftest.s <<EOF
+      	$gmp_cv_check_asm_text
+      	.align  4, 0x90
+EOF
+ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+if AC_TRY_EVAL(ac_assemble); then
+  gmp_cv_check_asm_align_fill_0x90=yes
+else 
+  gmp_cv_check_asm_align_fill_0x90=no
+fi
+rm -f conftest*
+])
+GMP_DEFINE_RAW(
+["define(<ALIGN_FILL_0x90>,<$gmp_cv_check_asm_align_fill_0x90>)"])
+])
+
 
 dnl  GMP_CHECK_ASM_TEXT
 AC_DEFUN(GMP_CHECK_ASM_TEXT,
