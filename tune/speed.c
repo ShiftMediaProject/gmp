@@ -1075,8 +1075,13 @@ main (int argc, char *argv[])
       else
         printf ("overhead %.2f cycles",
                 speed_measure (speed_noop, NULL) / speed_cycletime);
-      printf (", precision %d units of %.2e secs, cycle %.3e\n",
-              speed_precision, speed_unittime, speed_cycletime);
+      printf (", precision %d units of %.2e secs",
+              speed_precision, speed_unittime);
+      
+      if (speed_cycletime == 1.0)
+        printf (", CPU freq unknown\n");
+      else
+        printf (", CPU freq %.2f MHz\n", 1e-6/speed_cycletime);
 
       printf ("       ");
       for (i = 0; i < num_choices; i++)
