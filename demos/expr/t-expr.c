@@ -139,6 +139,9 @@ const struct data_t  data_z[] = {
   { 0, "cmpabs(-1,0)", "1" },
   { 0, "cmpabs(0,-1)", "-1" },
 
+  { 0, "divisible_p(333,3)", "1" },
+  { 0, "congruent_p(7,1,3)", "1" },
+
   { 0, "odd_p(1)", "1" },
   { 0, "odd_p(0)", "0" },
   { 0, "odd_p(-1)", "1" },
