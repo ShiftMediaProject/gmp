@@ -29,10 +29,9 @@ MA 02111-1307, USA. */
 int
 mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
 {
-  long int i, err;
   unsigned long m;
   mpfr_t res;
-  mp_prec_t prec;
+  mp_prec_t prec, err;
   int inexact;
   mp_rnd_t rnd1;
 
@@ -79,33 +78,35 @@ mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
 
   do
     {
+      int i;
+
       prec += 3;
-      for (m=n, i=0; m; i++, m>>=1, prec++);
+      for (m = n, i = 0; m; i++, m >>= 1, prec++)
+        ;
       mpfr_set_prec (res, prec);
       inexact = mpfr_set (res, y, rnd1);
-      err = 1;
+      err = prec <= i ? 0 : prec - i;
+      MPFR_ASSERTD (i >= 1);
       /* now 2^(i-1) <= n < 2^i */
-      for (i-=2; i>=0; i--)
-	{
-	  if (mpfr_mul (res, res, res, GMP_RNDU))
-	    inexact = 1;
-	  err++;
-	  if (n & (1UL << i))
-	    if (mpfr_mul (res, res, y, rnd1))
-	      inexact = 1;
-	}
+      for (i -= 2; i >= 0; i--)
+        {
+          if (mpfr_mul (res, res, res, GMP_RNDU))
+            inexact = 1;
+          if (n & (1UL << i))
+            if (mpfr_mul (res, res, y, rnd1))
+              inexact = 1;
+        }
 
+      /* FIXME: infinity and 0 should be checked too. */
+      MPFR_ASSERTN (MPFR_IS_FP (res));
+      MPFR_ASSERTN (MPFR_NOTZERO (res));
       /* check underflow */
-      if (MPFR_EXP(res) <= (double) __gmpfr_emin)
+      if (MPFR_GET_EXP (res) <= __gmpfr_emin)
         {
           mpfr_clear (res);
           mpfr_restore_emin_emax ();
           return mpfr_set_underflow (x, rnd, (n % 2) ? MPFR_SIGN(y) : 1);
         }
-
-      err = prec - err;
-      if (err < 0)
-	err = 0;
     }
   while (inexact && !mpfr_can_round (res, err, GMP_RNDN, GMP_RNDZ,
                                      MPFR_PREC(x) + (rnd == GMP_RNDN)));
