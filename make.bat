@@ -126,6 +126,7 @@ gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O cmp_abs.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O cmp_abs_ui.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O com.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O divexact.c
+gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O dump.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O fac_ui.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O fdiv_q.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O fdiv_q_2exp.c
