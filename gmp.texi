@@ -262,7 +262,7 @@ build from a separate object directory.  Use GNU @samp{make} instead.
 By default both shared and static libraries are built (where possible), but one
 or other can be disabled.  Shared libraries are very slightly slower, having a
 small cost on each function call, so the static library is best if you're not
-in fact sharing code.
+sharing code.
 
 @item @option{--target=CPU-VENDOR-OS}
 
@@ -280,62 +280,54 @@ If you need to create binaries that will run on several processors in a family,
 MP should be configured for the lowest common denominator among them, something
 with which all the desired processors are upwardly compatible.
 
-The following CPUs have specific assembly code support.  Some of the names are
-aliases provided for convenience.  See @file{configure.in} for which @file{mpn}
-subdirectories get used by each.
+The following CPUs have specific assembly code support.  See
+@file{configure.in} for which @file{mpn} subdirectories get used by each.
 
 @itemize @bullet
 @item
 Alpha:
 @samp{alpha},
-@samp{alphaev5}
+@samp{alphaev5},
 @samp{alphaev6}
 
 @item
 Cray:
 @samp{cray2},
 @samp{xmp},
-@samp{ymp},
-@samp{c90},
-@samp{j90},
-@samp{t90}
+@samp{ymp}
 
 @item
 Fujitsu:
-@samp{f300},
 @samp{f301}
+
+@item
+Hitachi:
+@samp{sh},
+@samp{sh2}
 
 @item
 HPPA:
 @samp{hppa1.0},
 @samp{hppa1.1},
-@samp{hppa7000},
-@samp{hppa7100},
 @samp{hppa2.0}
 
 @item
 MIPS:
 @samp{mips},
 @samp{mips3},
-@samp{mips4}
 
 @item
 Motorola:
+@samp{m68000},
 @samp{m68k},
-@samp{68000},
-@samp{68020},
-@samp{68030},
-@samp{68040},
 @samp{m88k},
-@samp{m88110},
+@samp{m88110}
 
 @item
 POWER: 
 @samp{power},
-@samp{power2},
 @samp{rs6000},
 @samp{powerpc},
-@samp{ppc601},
 @samp{powerpc64}
 
 @item
@@ -345,16 +337,16 @@ Sparc:
 @samp{microsparc},
 @samp{supersparc},
 @samp{sparcv9},
-@samp{ultrasparc}
+@samp{ultrasparc},
+@samp{sparc64}
 
 @item
-x86 family:
+80x86 family:
 @samp{i386},
 @samp{i486},
 @samp{i586},
 @samp{pentium},
 @samp{pentiummmx},
-@samp{i686},
 @samp{pentiumpro},
 @samp{pentium2},
 @samp{pentium3},
@@ -364,26 +356,19 @@ x86 family:
 @samp{athlon}
 
 @item
-Zilog:
-@samp{z8000},
-@samp{z8000x}
-
-@item
 Other:
-@samp{a29k}
-@samp{am29000},
+@samp{a29k},
 @samp{arm},
 @samp{clipper},
 @samp{i960},
 @samp{ns32k},
 @samp{pyramid},
-@samp{sh},
-@samp{sh2},
-@samp{vax}
+@samp{vax},
+@samp{z8k}
 @end itemize
 
-CPUs not listed use generic C code.  If you have trouble with the assembly code
-for some target, the generic C code can be selected with CPU @samp{unknown}.
+CPUs not listed use generic C code.  If some of the assembly code causes
+problems, the generic C code can be selected with CPU @samp{none}.
 
 @item @option{CC}, @option{CFLAGS}
 
@@ -392,14 +377,14 @@ normally preferred if it's present.  The usual @samp{CC=whatever} can be passed
 to @samp{./configure} to choose something different.
 
 For some configurations specific compiler flags are set based on the target CPU
-and compiler, for others there may be an advantage to using
-@samp{CFLAGS="-whatever"} to choose the best flags for your compiler.
+and compiler, for others @samp{CFLAGS="-whatever"} can be used to choose the
+best flags.
 
 @item @option{--disable-alloca}
 
 By default, MP allocates temporary workspace using @code{alloca} if that
 function is available, or @code{malloc} if not.  If you're working with large
-numbers and @code{alloca} overflows the available stack space you can build
+numbers and @code{alloca} overflows the available stack space, you can build
 with @option{--disable-alloca} to use @code{malloc}.  Using @code{malloc} will
 probably be slightly slower.
 
@@ -436,9 +421,10 @@ on Intel P6 class chips (PPro, P-II, P-III).  @samp{i386} is a better choice if
 you're making binaries that must run on both.
 
 @item x86 MMX and old GAS
+
 Old versions of GAS don't support MMX instructions, in particular version
 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately there's no
-newer assembler available for FreeBSD 2.2.8).
+newer assembler for FreeBSD 2.2.8).
 
 If the target CPU has MMX code but the assembler doesn't support it, a warning
 is given and non-MMX code is used instead.  This will be an inferior build,
