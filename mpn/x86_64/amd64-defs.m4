@@ -2,7 +2,8 @@ divert(-1)
 
 dnl  m4 macros for amd64 assembler.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation,
+dnl  Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -20,6 +21,13 @@ dnl  You should have received a copy of the GNU Lesser General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
+
+
+dnl  Notes:
+dnl
+dnl  The 32-bit mode x86/x86-defs.m4 has various 32bit-isms, like the
+dnl  profiling calls, so it seems cleanest to start a fresh set of defines
+dnl  for 64-bit mode.
 
 
 dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
