@@ -127,16 +127,16 @@ typedef enum
 
 typedef struct 
 {
-  unsigned int bits;		/* Generate 0 <= Z <= 2^bits - 1 */
+  unsigned long int m2exp;	/* Modulus is 2 ^ m2exp. */
   char *astr;			/* Multiplier in string form. */
   unsigned long int c;		/* Adder. */
-  char *mstr;			/* Modulus in string form. */
 } __gmp_rand_lc_scheme_struct;
 
 typedef struct {
   mpz_t a;			/* Multiplier. */
   unsigned long int c;		/* Adder. */
-  mpz_t m;			/* Modulus. */
+  mpz_t m;			/* Modulus (valid only if m2exp == 0).  */
+  unsigned long int m2exp;	/* If != 0, modulus is 2 ^ m2exp.  */
 } __gmp_rand_data_lc;
 
 typedef struct {
@@ -147,14 +147,6 @@ typedef struct
 {
   gmp_rand_algorithm alg;	/* Algorithm used. */
   mpz_t seed;			/* Current seed. */
-  unsigned int size;		/* Requested maximum size of result,
-                                   in bits. */
-#if 0
-  /* FIXME: Remove. */
-  mpz_t maxval;			/* Largest generated number (plus
-				   one). */
-#endif
-
   union {			/* Algorithm specific data. */
     __gmp_rand_data_lc *lc;	/* LC */
     __gmp_rand_data_bbs *bbs;	/* BBS */
@@ -200,26 +192,19 @@ void mp_set_memory_functions _PROTO ((void *(*) (size_t),
 				      void (*) (void *, size_t)));
 extern __gmp_const int mp_bits_per_limb;
 
-int gmp_rand_init _PROTO ((gmp_rand_state s,
-			   gmp_rand_algorithm alg,
-			   unsigned long int size,
-			   mpz_t seed));
-int gmp_rand_init_ui _PROTO ((gmp_rand_state s,
-			      gmp_rand_algorithm alg,
-			      unsigned long int size,
-			      unsigned long int seed));
+void gmp_rand_init _PROTO ((gmp_rand_state s,
+			    unsigned long int size,
+			    gmp_rand_algorithm alg));
 void gmp_rand_init_lc _PROTO ((gmp_rand_state s,
-			       unsigned long int size,
-			       mpz_t seed,
 			       mpz_t a,
 			       unsigned long int c,
 			       mpz_t m));
-void gmp_rand_init_lc_ui _PROTO ((gmp_rand_state s,
-				  unsigned long int size,
-				  unsigned long int seed,
-				  unsigned long int a,
-				  unsigned long int c,
-				  unsigned long int m));
+void gmp_rand_init_lc_2exp _PROTO ((gmp_rand_state s,
+				    mpz_t a,
+				    unsigned long int c,
+				    unsigned long int m2exp));
+void gmp_rand_seed _PROTO ((gmp_rand_state s, mpz_t seed));
+void gmp_rand_seed_ui _PROTO ((gmp_rand_state s, unsigned long int seed));
 void gmp_rand_clear _PROTO ((gmp_rand_state s));
 
 /**************** Integer (i.e. Z) routines.  ****************/
@@ -333,6 +318,7 @@ void gmp_rand_clear _PROTO ((gmp_rand_state s));
 #define mpz_tstbit __gmpz_tstbit
 #define mpz_ui_pow_ui __gmpz_ui_pow_ui
 #define mpz_urandomb __gmpz_urandomb
+#define mpz_urandomm __gmpz_urandomm
 #define mpz_xor __gmpz_xor
 #define mpz_eor __gmpz_xor
 
@@ -451,7 +437,8 @@ void mpz_tdiv_r_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int mpz_tdiv_r_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 int mpz_tstbit _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_ui_pow_ui _PROTO ((mpz_ptr, unsigned long int, unsigned long int));
-void mpz_urandomb _PROTO ((mpz_t rop, unsigned long int nbits, gmp_rand_state s));
+void mpz_urandomb _PROTO ((mpz_t rop, gmp_rand_state s, unsigned long int nbits));
+void mpz_urandomm _PROTO ((mpz_t rop, gmp_rand_state s, mpz_t n));
 void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #if defined (__cplusplus)
 }
@@ -622,7 +609,9 @@ void mpf_sub_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_trunc _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_ui_div _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 void mpf_ui_sub _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
-void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state s));
+void mpf_urandomb _PROTO ((mpf_t rop,
+			   gmp_rand_state s,
+			   unsigned long int nbits));
 #if defined (__cplusplus)
 }
 #endif
@@ -710,7 +699,7 @@ unsigned long int mpn_popcount _PROTO ((mp_srcptr, mp_size_t));
 mp_limb_t mpn_preinv_mod_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 void mpn_random _PROTO ((mp_ptr, mp_size_t));
 void mpn_random2 _PROTO ((mp_ptr, mp_size_t));
-void mpn_rawrandom _PROTO ((mp_ptr, unsigned long int, gmp_rand_state));
+void mpn_rawrandom _PROTO ((mp_ptr, gmp_rand_state, unsigned long int));
 mp_limb_t mpn_rshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
 unsigned long int mpn_scan0 _PROTO ((mp_srcptr, unsigned long int));
 unsigned long int mpn_scan1 _PROTO ((mp_srcptr, unsigned long int));
