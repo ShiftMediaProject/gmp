@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-01-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/get_str.c: Update to mpfr cvs 2003-01-09.
+
+	* doc/configuration: Various updates.
+
 2003-01-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/copyi.asm: Avoid `nop' mnemonic, unsupported on Cray.
