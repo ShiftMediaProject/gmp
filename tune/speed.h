@@ -1604,82 +1604,79 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
    SPEED_ROUTINE_MPN_GCD runs more times than SPEED_ROUTINE_MPN_GCDEXT
    though, because the plain gcd is about twice as fast as gcdext.  */
 
-#define SPEED_ROUTINE_MPN_GCD_CALL(datafactor, call)            \
-  {                                                             \
-    unsigned  i;                                                \
-    mp_size_t j, pieces, psize;                                 \
-    mp_ptr    wp, wp2, xtmp, ytmp, px, py;                      \
-    double    t;                                                \
-    TMP_DECL (marker);                                          \
-                                                                \
-    SPEED_RESTRICT_COND (s->size >= 1);                         \
-                                                                \
-    TMP_MARK (marker);                                          \
-    SPEED_TMP_ALLOC_LIMBS (xtmp, s->size+1, s->align_xp);       \
-    SPEED_TMP_ALLOC_LIMBS (ytmp, s->size+1, s->align_yp);       \
-    SPEED_TMP_ALLOC_LIMBS (wp,   s->size+1, s->align_wp);       \
-    SPEED_TMP_ALLOC_LIMBS (wp2,  s->size+1, s->align_wp2);      \
-                                                                \
-    pieces = SPEED_BLOCK_SIZE * datafactor / s->size / s->size; \
-    pieces = MIN (pieces, SPEED_BLOCK_SIZE / s->size);          \
-    pieces = MAX (pieces, 1);                                   \
-                                                                \
-    psize = pieces * s->size;                                   \
-    px = TMP_ALLOC_LIMBS (psize);                               \
-    py = TMP_ALLOC_LIMBS (psize);                               \
-    MPN_COPY (px, pieces==1 ? s->xp : s->xp_block, psize);      \
-    MPN_COPY (py, pieces==1 ? s->yp : s->yp_block, psize);      \
-                                                                \
-    /* y must be odd, x must have at least as many bits as y,   \
-       high limbs must be non-zero */                           \
-    for (j = 0; j < pieces; j++)                                \
-      {                                                         \
-        mp_ptr  x = px+j*s->size;                               \
-        mp_ptr  y = py+j*s->size;                               \
-        y[0] |= 1;                                              \
-        if (x[s->size-1] == 0) x[s->size-1] = 1;                \
-        if (y[s->size-1] == 0) y[s->size-1] = 1;                \
-								\
-	if (x[s->size-1] < y[s->size-1])			\
-	  MP_LIMB_T_SWAP (x[s->size-1], y[s->size-1]);		\
-	else if (mpn_cmp (x, y, s->size) < 0)			\
-	  {							\
-	    if (y[s->size - 1] > 2)				\
-	      /* Subtract 2 to keep y odd even when s->size = 1.  */	\
-	      y[s->size - 1] -= 2;				\
-	    else						\
-	      x[s->size - 1]++;					\
-	  }							\
-      }                                                         \
-                                                                \
-    speed_operand_src (s, px, psize);                           \
-    speed_operand_src (s, py, psize);                           \
-    speed_operand_dst (s, xtmp, s->size);                       \
-    speed_operand_dst (s, ytmp, s->size);                       \
-    speed_operand_dst (s, wp, s->size);                         \
-    speed_cache_fill (s);                                       \
-                                                                \
-    speed_starttime ();                                         \
-    i = s->reps;                                                \
-    do                                                          \
-      {                                                         \
-        j = pieces;                                             \
-        do                                                      \
-          {                                                     \
-            MPN_COPY (xtmp, px+(j-1)*s->size, s->size);         \
-            MPN_COPY (ytmp, py+(j-1)*s->size, s->size);         \
-            call;                                               \
-          }                                                     \
-        while (--j != 0);                                       \
-      }                                                         \
-    while (--i != 0);                                           \
-    t = speed_endtime ();                                       \
-                                                                \
-    TMP_FREE (marker);                                          \
-                                                                \
-    s->time_divisor = pieces;                                   \
-    return t;                                                   \
-  }  
+#define SPEED_ROUTINE_MPN_GCD_CALL(datafactor, call)			\
+  {									\
+    unsigned  i;							\
+    mp_size_t j, pieces, psize;						\
+    mp_ptr    wp, wp2, xtmp, ytmp, px, py;				\
+    double    t;							\
+    TMP_DECL (marker);							\
+									\
+    SPEED_RESTRICT_COND (s->size >= 1);					\
+									\
+    TMP_MARK (marker);							\
+    SPEED_TMP_ALLOC_LIMBS (xtmp, s->size+1, s->align_xp);		\
+    SPEED_TMP_ALLOC_LIMBS (ytmp, s->size+1, s->align_yp);		\
+    SPEED_TMP_ALLOC_LIMBS (wp,	 s->size+1, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (wp2,	 s->size+1, s->align_wp2);		\
+									\
+    pieces = SPEED_BLOCK_SIZE * datafactor / s->size / s->size;		\
+    pieces = MIN (pieces, SPEED_BLOCK_SIZE / s->size);			\
+    pieces = MAX (pieces, 1);						\
+									\
+    psize = pieces * s->size;						\
+    px = TMP_ALLOC_LIMBS (psize);					\
+    py = TMP_ALLOC_LIMBS (psize);					\
+    MPN_COPY (px, pieces==1 ? s->xp : s->xp_block, psize);		\
+    MPN_COPY (py, pieces==1 ? s->yp : s->yp_block, psize);		\
+									\
+    /* Requirements: x >= y, y must be odd, high limbs != 0.		\
+       No need to ensure random numbers are really great.  */		\
+    for (j = 0; j < pieces; j++)					\
+      {									\
+	mp_ptr	x = px + j * s->size;					\
+	mp_ptr	y = py + j * s->size;					\
+	if (x[s->size - 1] == 0) x[s->size - 1] = 1;			\
+	if (y[s->size - 1] == 0) y[s->size - 1] = 1;			\
+									\
+	if (x[s->size - 1] < y[s->size - 1])				\
+	  MP_LIMB_T_SWAP (x[s->size - 1], y[s->size - 1]);		\
+	else if (x[s->size - 1] == y[s->size - 1])			\
+	  {								\
+	    x[s->size - 1] = 2;						\
+	    y[s->size - 1] = 1;						\
+	  }								\
+	y[0] |= 1;							\
+      }									\
+									\
+    speed_operand_src (s, px, psize);					\
+    speed_operand_src (s, py, psize);					\
+    speed_operand_dst (s, xtmp, s->size);				\
+    speed_operand_dst (s, ytmp, s->size);				\
+    speed_operand_dst (s, wp, s->size);					\
+    speed_cache_fill (s);						\
+									\
+    speed_starttime ();							\
+    i = s->reps;							\
+    do									\
+      {									\
+	j = pieces;							\
+	do								\
+	  {								\
+	    MPN_COPY (xtmp, px+(j - 1)*s->size, s->size);		\
+	    MPN_COPY (ytmp, py+(j - 1)*s->size, s->size);		\
+	    call;							\
+	  }								\
+	while (--j != 0);						\
+      }									\
+    while (--i != 0);							\
+    t = speed_endtime ();						\
+									\
+    TMP_FREE (marker);							\
+									\
+    s->time_divisor = pieces;						\
+    return t;								\
+  }
 
 #define SPEED_ROUTINE_MPN_GCD(function) \
   SPEED_ROUTINE_MPN_GCD_CALL (8, function (wp, xtmp, s->size, ytmp, s->size))
