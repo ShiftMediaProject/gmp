@@ -183,6 +183,12 @@ e_mpfr_hypot (mpfr_ptr dst, mpfr_srcptr src1, mpfr_srcptr src2)
   mpfr_hypot (dst, src1, src2, ROUND);
 }
 
+static int
+e_mpfr_inf_p (mpfr_srcptr f)
+{
+  return (mpfr_inf_p (f) != 0);
+}
+
 static void
 e_mpfr_log (mpfr_ptr dst, mpfr_srcptr src)
 {
@@ -219,10 +225,22 @@ e_mpfr_mul_2exp (mpfr_ptr dst, mpfr_srcptr src, unsigned long n)
   mpfr_mul_2exp (dst, src, n, ROUND);
 }
 
+static int
+e_mpfr_nan_p (mpfr_srcptr f)
+{
+  return (mpfr_nan_p (f) != 0);
+}
+
 static void
 e_mpfr_neg (mpfr_ptr dst, mpfr_srcptr src)
 {
   mpfr_neg (dst, src, ROUND);
+}
+
+static int
+e_mpfr_number_p (mpfr_srcptr f)
+{
+  return (mpfr_number_p (f) != 0);
 }
 
 static void
@@ -352,7 +370,7 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
   { "fma",     (mpexpr_fun_t) e_mpfr_fma,     MPEXPR_TYPE_TERNARY      },
   { "gamma",   (mpexpr_fun_t) e_mpfr_gamma,   MPEXPR_TYPE_UNARY        },
   { "hypot",   (mpexpr_fun_t) e_mpfr_hypot,   MPEXPR_TYPE_BINARY       },
-  { "inf_p",   (mpexpr_fun_t) mpfr_inf_p,     MPEXPR_TYPE_I_UNARY      },
+  { "inf_p",   (mpexpr_fun_t) e_mpfr_inf_p,   MPEXPR_TYPE_I_UNARY      },
   { "log",     (mpexpr_fun_t) e_mpfr_log,     MPEXPR_TYPE_UNARY        },
   { "log2",    (mpexpr_fun_t) e_mpfr_log2,    MPEXPR_TYPE_UNARY        },
   { "log10",   (mpexpr_fun_t) e_mpfr_log10,   MPEXPR_TYPE_UNARY        },
@@ -361,11 +379,11 @@ static __gmp_const struct mpexpr_operator_t  _mpfr_expr_standard_table[] = {
                                               | MPEXPR_TYPE_PAIRWISE   },
   { "min",     (mpexpr_fun_t) e_mpfr_cmp,     MPEXPR_TYPE_MIN
                                               | MPEXPR_TYPE_PAIRWISE   },
-  { "nan_p",   (mpexpr_fun_t) mpfr_nan_p,     MPEXPR_TYPE_I_UNARY      },
+  { "nan_p",   (mpexpr_fun_t) e_mpfr_nan_p,   MPEXPR_TYPE_I_UNARY      },
   { "nextabove",  (mpexpr_fun_t) mpfr_nextabove,  MPEXPR_TYPE_UNARY    },
   { "nextbelow",  (mpexpr_fun_t) mpfr_nextbelow,  MPEXPR_TYPE_UNARY    },
   { "nexttoward", (mpexpr_fun_t) mpfr_nexttoward, MPEXPR_TYPE_BINARY   },
-  { "number_p",(mpexpr_fun_t) mpfr_number_p,  MPEXPR_TYPE_I_UNARY      },
+  { "number_p",(mpexpr_fun_t) e_mpfr_number_p,MPEXPR_TYPE_I_UNARY      },
   { "reldiff", (mpexpr_fun_t) e_mpfr_reldiff, MPEXPR_TYPE_BINARY       },
   { "round",   (mpexpr_fun_t) mpfr_round,     MPEXPR_TYPE_UNARY        },
   { "sgn",     (mpexpr_fun_t) e_mpfr_sgn,     MPEXPR_TYPE_I_UNARY      },
