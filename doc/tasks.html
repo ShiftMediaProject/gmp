@@ -188,6 +188,11 @@ MA 02111-1307, USA.
      When r==u and is prec+1 limbs, then it's an in-place division.  If r==u
      and not prec+1 limbs, then move the available limbs up to prec+1 and do
      an in-place there.
+<li> <code>mpf_div_ui</code>: Whether the high quotient limb is zero can be
+     determined by testing the dividend for high<divisor.  When non-zero, the
+     divison can be done on prec dividend limbs instead of prec+1.  The result
+     size is also known before the division, so that can be a tail call (once
+     the <code>TMP_ALLOC</code> is eliminated).
 <li> <code>mpn_divrem_2</code> could usefully accept unnormalized divisors and
      shift the dividend on-the-fly, since this should cost nothing on
      superscalar processors and avoid the need for temporary copying in
