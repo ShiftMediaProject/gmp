@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2002-12-04  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/pa32/hppa1_1/udiv.asm: Don't wrap symbol to INT64 in L() stuff. 
+
 	* longlong.h (mpn_udiv_qrnnd_r based udiv_qrnnd): Fix typo.
 
 	* mpn/powerpc32/powerpc-defs.m4: Define float registers with `f'
