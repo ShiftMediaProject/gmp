@@ -66,7 +66,7 @@ MA 02111-1307, USA.
 2002-06-15  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_GCC_VERSION_GE): Correction to recognising mingw
-	gcc 3.1 version number.
+	gcc 3.1 version number.  Reported by Jim Fougeron.
 
 	* configure.in (AC_PROVIDE_AC_LIBTOOL_WIN32_DLL): New define, to make
 	AC_LIBTOOL_WIN32_DLL work with autoconf 2.53.
