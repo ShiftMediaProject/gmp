@@ -290,9 +290,6 @@ MA 02111-1307, USA.
 /* Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD */
 #undef TUNE_KARATSUBA_SQR_MAX
 
-/* ./configure --disable-alloca option, to use stack-alloc.c, not alloca */
-#undef USE_STACK_ALLOC
-
 /* Version number of package */
 #undef VERSION
 
@@ -301,6 +298,15 @@ MA 02111-1307, USA.
 
 /* ./configure --enable-fft option, to enable FFTs for multiplication */
 #undef WANT_FFT
+
+/* temporary memory using alloca */
+#undef WANT_TMP_ALLOCA
+
+/* temporary memory for debugging */
+#undef WANT_TMP_DEBUG
+
+/* temporary memory using malloc (or custom allocation function) */
+#undef WANT_TMP_MALLOC
 
 /* Define as `__inline' if that's what the C compiler calls it, or to nothing
    if it is not supported. */
