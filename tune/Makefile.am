@@ -48,7 +48,7 @@ libspeed_la_SOURCES = \
   common.c freq.c gcd_bin.c gcd_finda_gen.c modlinv.c \
   mul_n_mpn.c mul_n_open.c noop.c powm_mod.c powm_redc.c time.c
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
-libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la -lm
+libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la $(LIBM)
 
 # create an ansi2knr rule for sqr_basecase.c in case it's recompiled
 nodist_libdummy_la_SOURCES = sqr_basecase.c
