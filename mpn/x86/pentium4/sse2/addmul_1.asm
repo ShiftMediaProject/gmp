@@ -72,8 +72,8 @@ L(loop):
 	leal	4(%eax), %eax
 	movd	(%edx),%mm2		C dst
 	pmuludq	%mm7, %mm1
-	paddq	%mm2, %mm1		C prod
-	paddq	%mm1, %mm0		C carry
+	paddq	%mm1, %mm2		C prod
+	paddq	%mm2, %mm0		C carry
 	subl	$1, %ecx
 	movd	%mm0, (%edx)		C result
 	psrlq	$32, %mm0
