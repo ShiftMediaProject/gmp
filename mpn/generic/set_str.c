@@ -132,7 +132,7 @@ mpn_set_str (xp, str, str_len, base)
 	      big_base *= base;
 	    }
 	}
-      
+
       if (size == 0)
 	{
 	  if (res_digit != 0)

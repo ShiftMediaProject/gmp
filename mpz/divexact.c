@@ -22,12 +22,12 @@ MA 02111-1307, USA.  */
 /*  Ken Weber (kweber@mat.ufrgs.br, kweber@mcs.kent.edu)
 
     Funding for this work has been partially provided by Conselho Nacional
-    de Desenvolvimento Cienti'fico e Tecnolo'gico (CNPq) do Brazil, Grant 
+    de Desenvolvimento Cienti'fico e Tecnolo'gico (CNPq) do Brazil, Grant
     301314194-2, and was done while I was a visiting reseacher in the Instituto
     de Matema'tica at Universidade Federal do Rio Grande do Sul (UFRGS).
 
     References:
-        T. Jebelean, An algorithm for exact division, Journal of Symbolic 
+        T. Jebelean, An algorithm for exact division, Journal of Symbolic
         Computation, v. 15, 1993, pp. 169-180.  */
 
 #include "gmp.h"
@@ -46,7 +46,7 @@ mpz_divexact (quot, num, den)
 {
   mp_ptr qp, tp;
   mp_size_t qsize, tsize;
-  
+
   mp_srcptr np = num->_mp_d;
   mp_srcptr dp = den->_mp_d;
   mp_size_t nsize = ABS (num->_mp_size);
@@ -107,6 +107,6 @@ mpz_divexact (quot, num, den)
   MPN_NORMALIZE (qp, qsize);
 
   quot->_mp_size = (num->_mp_size < 0) == (den->_mp_size < 0) ? qsize : -qsize;
-		       
+
   TMP_FREE (marker);
 }

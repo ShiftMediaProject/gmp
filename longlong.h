@@ -477,7 +477,7 @@ extern USItype __udiv_qrnnd ();
 	     : "=d" (__w)						\
 	     : "%dI" ((USItype)(u)),					\
 	       "dI" ((USItype)(v)));					\
-    __w; })  
+    __w; })
 #define udiv_qrnnd(q, r, nh, nl, d) \
   do {									\
     union {UDItype __ll;						\

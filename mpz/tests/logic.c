@@ -77,7 +77,7 @@ main (argc, argv)
       mpz_ior (r2, x, y);
       if (mpz_cmp (r1, r2) != 0)
 	dump_abort ();
-      
+
       mpz_com (t1, x);
       mpz_com (t2, y);
       mpz_ior (t3, t1, t2);

@@ -1,4 +1,4 @@
-/*  mpn/gcd.c: mpn_gcd for gcd of two odd integers.
+/* mpn/gcd.c: mpn_gcd for gcd of two odd integers.
 
 Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
 
@@ -19,44 +19,44 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-/*  Integer greatest common divisor of two unsigned integers, using
-    the accelerated algorithm (see reference below).
+/* Integer greatest common divisor of two unsigned integers, using
+   the accelerated algorithm (see reference below).
 
-    mp_size_t mpn_gcd (vp, vsize, up, usize).
- 
-    Preconditions [U = (up, usize) and V = (vp, vsize)]:
+   mp_size_t mpn_gcd (vp, vsize, up, usize).
 
-    1.  V is odd.
-    2.  numbits(U) >= numbits(V).
+   Preconditions [U = (up, usize) and V = (vp, vsize)]:
 
-    Both U and V are destroyed by the operation.  The result is left at vp,
-    and its size is returned.
+   1.  V is odd.
+   2.  numbits(U) >= numbits(V).
 
-    Ken Weber (kweber@mat.ufrgs.br, kweber@mcs.kent.edu)
+   Both U and V are destroyed by the operation.  The result is left at vp,
+   and its size is returned.
 
-    Funding for this work has been partially provided by Conselho Nacional
-    de Desenvolvimento Cienti'fico e Tecnolo'gico (CNPq) do Brazil, Grant 
-    301314194-2, and was done while I was a visiting reseacher in the Instituto
-    de Matema'tica at Universidade Federal do Rio Grande do Sul (UFRGS).
+   Ken Weber (kweber@mat.ufrgs.br, kweber@mcs.kent.edu)
 
-    Refer to
-        K. Weber, The accelerated integer GCD algorithm, ACM Transactions on 
-        Mathematical Software, v. 21 (March), 1995, pp. 111-122.  */
+   Funding for this work has been partially provided by Conselho Nacional
+   de Desenvolvimento Cienti'fico e Tecnolo'gico (CNPq) do Brazil, Grant
+   301314194-2, and was done while I was a visiting reseacher in the Instituto
+   de Matema'tica at Universidade Federal do Rio Grande do Sul (UFRGS).
+
+   Refer to
+       K. Weber, The accelerated integer GCD algorithm, ACM Transactions on
+       Mathematical Software, v. 21 (March), 1995, pp. 111-122.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/*  If MIN (usize, vsize) > ACCEL_THRESHOLD, then the accelerated algorithm is
-    used, otherwise the binary algorithm is used.  This may be adjusted for
-    different architectures.  */
+/* If MIN (usize, vsize) > ACCEL_THRESHOLD, then the accelerated algorithm is
+   used, otherwise the binary algorithm is used.  This may be adjusted for
+   different architectures.  */
 #ifndef ACCEL_THRESHOLD
 #define ACCEL_THRESHOLD 4
 #endif
 
-/*  When U and V differ in size by more than BMOD_THRESHOLD, the accelerated
-    algorithm reduces using the bmod operation.  Otherwise, the k-ary reduction
-    is used.  0 <= BMOD_THRESHOLD < BITS_PER_MP_LIMB.  */
+/* When U and V differ in size by more than BMOD_THRESHOLD, the accelerated
+   algorithm reduces using the bmod operation.  Otherwise, the k-ary reduction
+   is used.  0 <= BMOD_THRESHOLD < BITS_PER_MP_LIMB.  */
 enum
   {
     BMOD_THRESHOLD = BITS_PER_MP_LIMB/2,
@@ -70,8 +70,8 @@ enum
 #define SWAP_SZ(US, VS) do{mp_size_t __s=(US);(US)=(VS);(VS)=__s;}while(0)
 #define SWAP_MPN(UP, US, VP, VS) do{SWAP_PTR(UP,VP);SWAP_SZ(US,VS);}while(0)
 
-/*  Use binary algorithm to compute V <-- GCD (V, U) for usize, vsize == 2.
-    Both U and V must be odd.  */
+/* Use binary algorithm to compute V <-- GCD (V, U) for usize, vsize == 2.
+   Both U and V must be odd.  */
 static __gmp_inline mp_size_t
 #if __STDC__
 gcd_2 (mp_ptr vp, mp_srcptr up)
@@ -96,7 +96,7 @@ gcd_2 (vp, up)
 	  u0 = u1 << (BITS_PER_MP_LIMB - r) | u0 >> r;
 	  u1 >>= r;
 	}
-      else  /*  u1 < v1.  */
+      else  /* u1 < v1.  */
 	{
 	  v1 -= u1 + (v0 < u0), v0 -= u0;
 	  count_trailing_zeros (r, v0);
@@ -107,7 +107,7 @@ gcd_2 (vp, up)
 
   vp[0] = v0, vp[1] = v1, vsize = 1 + (v1 != 0);
 
-  /*  If U == V == GCD, done.  Otherwise, compute GCD (V, |U - V|).  */
+  /* If U == V == GCD, done.  Otherwise, compute GCD (V, |U - V|).  */
   if (u1 == v1 && u0 == v0)
     return vsize;
 
@@ -117,17 +117,17 @@ gcd_2 (vp, up)
   return 1;
 }
 
-/*  The function find_a finds 0 < N < 2^BITS_PER_MP_LIMB such that there exists
-    0 < |D| < 2^BITS_PER_MP_LIMB, and N == D * C mod 2^(2*BITS_PER_MP_LIMB).
-    In the reference article, D was computed along with N, but it is better to
-    compute D separately as D <-- N / C mod 2^(BITS_PER_MP_LIMB + 1), treating
-    the result as a twos' complement signed integer.
+/* The function find_a finds 0 < N < 2^BITS_PER_MP_LIMB such that there exists
+   0 < |D| < 2^BITS_PER_MP_LIMB, and N == D * C mod 2^(2*BITS_PER_MP_LIMB).
+   In the reference article, D was computed along with N, but it is better to
+   compute D separately as D <-- N / C mod 2^(BITS_PER_MP_LIMB + 1), treating
+   the result as a twos' complement signed integer.
 
-    Initialize N1 to C mod 2^(2*BITS_PER_MP_LIMB).  According to the reference
-    article, N2 should be initialized to 2^(2*BITS_PER_MP_LIMB), but we use
-    2^(2*BITS_PER_MP_LIMB) - N1 to start the calculations within double 
-    precision.  If N2 > N1 initially, the first iteration of the while loop 
-    will swap them.  In all other situations, N1 >= N2 is maintained.   */
+   Initialize N1 to C mod 2^(2*BITS_PER_MP_LIMB).  According to the reference
+   article, N2 should be initialized to 2^(2*BITS_PER_MP_LIMB), but we use
+   2^(2*BITS_PER_MP_LIMB) - N1 to start the calculations within double
+   precision.  If N2 > N1 initially, the first iteration of the while loop
+   will swap them.  In all other situations, N1 >= N2 is maintained.  */
 
 static __gmp_inline mp_limb_t
 #if __STDC__
@@ -139,35 +139,35 @@ find_a (cp)
 {
   unsigned long int leading_zero_bits = 0;
 
-  mp_limb_t n1_l = cp[0];         /*  N1 == n1_h * 2^BITS_PER_MP_LIMB + n1_l.  */
+  mp_limb_t n1_l = cp[0];	/* N1 == n1_h * 2^BITS_PER_MP_LIMB + n1_l.  */
   mp_limb_t n1_h = cp[1];
 
-  mp_limb_t n2_l = -n1_l;         /*  N2 == n2_h * 2^BITS_PER_MP_LIMB + n2_l.  */
+  mp_limb_t n2_l = -n1_l;	/* N2 == n2_h * 2^BITS_PER_MP_LIMB + n2_l.  */
   mp_limb_t n2_h = ~n1_h;
 
-  /*  Main loop.  */
-  while (n2_h)                  /*  While N2 >= 2^BITS_PER_MP_LIMB.  */
+  /* Main loop.  */
+  while (n2_h)			/* While N2 >= 2^BITS_PER_MP_LIMB.  */
     {
-      /*  N1 <-- N1 % N2.  */
+      /* N1 <-- N1 % N2.  */
       if ((SIGN_BIT >> leading_zero_bits & n2_h) == 0)
-        {
-          unsigned long int i;
-          count_leading_zeros (i, n2_h);
-          i -= leading_zero_bits, leading_zero_bits += i;
-          n2_h = n2_h<<i | n2_l>>(BITS_PER_MP_LIMB - i), n2_l <<= i;
-          do
-            {
-              if (n1_h > n2_h || (n1_h == n2_h && n1_l >= n2_l))
-                n1_h -= n2_h + (n1_l < n2_l), n1_l -= n2_l;
-              n2_l = n2_l>>1 | n2_h<<(BITS_PER_MP_LIMB - 1), n2_h >>= 1;
-              i -= 1;
-            }
-          while (i);
-        }
+	{
+	  unsigned long int i;
+	  count_leading_zeros (i, n2_h);
+	  i -= leading_zero_bits, leading_zero_bits += i;
+	  n2_h = n2_h<<i | n2_l>>(BITS_PER_MP_LIMB - i), n2_l <<= i;
+	  do
+	    {
+	      if (n1_h > n2_h || (n1_h == n2_h && n1_l >= n2_l))
+		n1_h -= n2_h + (n1_l < n2_l), n1_l -= n2_l;
+	      n2_l = n2_l>>1 | n2_h<<(BITS_PER_MP_LIMB - 1), n2_h >>= 1;
+	      i -= 1;
+	    }
+	  while (i);
+	}
       if (n1_h > n2_h || (n1_h == n2_h && n1_l >= n2_l))
-        n1_h -= n2_h + (n1_l < n2_l), n1_l -= n2_l;
+	n1_h -= n2_h + (n1_l < n2_l), n1_l -= n2_l;
 
-      SWAP_LIMB (n1_h, n2_h); 
+      SWAP_LIMB (n1_h, n2_h);
       SWAP_LIMB (n1_l, n2_l);
     }
 
@@ -188,13 +188,13 @@ mpn_gcd (gp, vp, vsize, up, usize)
 {
   mp_ptr orig_vp = vp;
   mp_size_t orig_vsize = vsize;
-  int binary_gcd_ctr;		/*  Number of times binary gcd will execute.  */
+  int binary_gcd_ctr;		/* Number of times binary gcd will execute.  */
   TMP_DECL (marker);
 
   TMP_MARK (marker);
 
-  /*  Use accelerated algorithm if vsize is over ACCEL_THRESHOLD.
-      Two EXTRA limbs for U and V are required for kary reduction.  */
+  /* Use accelerated algorithm if vsize is over ACCEL_THRESHOLD.
+     Two EXTRA limbs for U and V are required for kary reduction.  */
   if (vsize > ACCEL_THRESHOLD)
     {
       unsigned long int vbitsize, d;
@@ -211,24 +211,24 @@ mpn_gcd (gp, vp, vsize, up, usize)
       vbitsize = vsize * BITS_PER_MP_LIMB - vbitsize;
       d = d - vbitsize + 1;
 
-      /*  Use bmod reduction to quickly discover whether V divides U.  */
-      up[usize++] = 0;                  	/*  Insert leading zero.  */
+      /* Use bmod reduction to quickly discover whether V divides U.  */
+      up[usize++] = 0;				/* Insert leading zero.  */
       mpn_bdivmod (up, up, usize, vp, vsize, d);
 
-      /*  Now skip U/V mod 2^d and any low zero limbs.  */
+      /* Now skip U/V mod 2^d and any low zero limbs.  */
       d /= BITS_PER_MP_LIMB, up += d, usize -= d;
       while (usize != 0 && up[0] == 0)
 	up++, usize--;
 
-      if (usize == 0)				/*  GCD == ORIG_V.  */
+      if (usize == 0)				/* GCD == ORIG_V.  */
 	goto done;
 
       vp = (mp_ptr) TMP_ALLOC ((vsize + 2) * BYTES_PER_MP_LIMB);
       MPN_COPY (vp, orig_vp, vsize);
 
-      do 					/*  Main loop.  */
+      do					/* Main loop.  */
 	{
-	  if (up[usize-1] & SIGN_BIT)		/*  U < 0; take twos' compl. */
+	  if (up[usize-1] & SIGN_BIT)		/* U < 0; take twos' compl. */
 	    {
 	      mp_size_t i;
 	      anchor_up[0] = -up[0];
@@ -239,7 +239,7 @@ mpn_gcd (gp, vp, vsize, up, usize)
 
 	  MPN_NORMALIZE_NOT_ZERO (up, usize);
 
-	  if ((up[0] & 1) == 0)			/*  Result even; remove twos. */
+	  if ((up[0] & 1) == 0)			/* Result even; remove twos. */
 	    {
 	      unsigned long int r;
 	      count_trailing_zeros (r, up[0]);
@@ -252,71 +252,71 @@ mpn_gcd (gp, vp, vsize, up, usize)
 	  SWAP_MPN (anchor_up, usize, vp, vsize);
 	  up = anchor_up;
 
-	  if (vsize <= 2)		/*  Kary can't handle < 2 limbs and  */
-	    break;			/*  isn't efficient for == 2 limbs.  */
+	  if (vsize <= 2)		/* Kary can't handle < 2 limbs and  */
+	    break;			/* isn't efficient for == 2 limbs.  */
 
 	  d = vbitsize;
 	  count_leading_zeros (vbitsize, vp[vsize-1]);
 	  vbitsize = vsize * BITS_PER_MP_LIMB - vbitsize;
 	  d = d - vbitsize + 1;
 
-	  if (d > BMOD_THRESHOLD)       /*  Bmod reduction.  */
+	  if (d > BMOD_THRESHOLD)	/* Bmod reduction.  */
 	    {
 	      up[usize++] = 0;
 	      mpn_bdivmod (up, up, usize, vp, vsize, d);
 	      d /= BITS_PER_MP_LIMB, up += d, usize -= d;
 	    }
-	  else                          /*  Kary reduction.  */
+	  else				/* Kary reduction.  */
 	    {
 	      mp_limb_t bp[2], cp[2];
 
-	      /*  C <-- V/U mod 2^(2*BITS_PER_MP_LIMB).  */
+	      /* C <-- V/U mod 2^(2*BITS_PER_MP_LIMB).  /
 	      cp[0] = vp[0], cp[1] = vp[1];
 	      mpn_bdivmod (cp, cp, 2, up, 2, 2*BITS_PER_MP_LIMB);
 
-	      /*  U <-- find_a (C)  *  U.  */
+	      /* U <-- find_a (C)  *  U.  */
 	      up[usize] = mpn_mul_1 (up, up, usize, find_a (cp));
 	      usize++;
 
-	      /*  B <-- A/C == U/V mod 2^(BITS_PER_MP_LIMB + 1).
+	      /* B <-- A/C == U/V mod 2^(BITS_PER_MP_LIMB + 1).
 		  bp[0] <-- U/V mod 2^BITS_PER_MP_LIMB and
-		  bp[1] <-- ( (U - bp[0] * V)/2^BITS_PER_MP_LIMB ) / V mod 2. */
+		  bp[1] <-- ( (U - bp[0] * V)/2^BITS_PER_MP_LIMB ) / V mod 2 */
 	      bp[0] = up[0], bp[1] = up[1];
 	      mpn_bdivmod (bp, bp, 2, vp, 2, BITS_PER_MP_LIMB);
-	      bp[1] &= 1;	/*  Since V is odd, division is unnecessary.  */
+	      bp[1] &= 1;	/* Since V is odd, division is unnecessary.  */
 
 	      up[usize++] = 0;
-	      if (bp[1])	/*  B < 0: U <-- U + (-B)  * V.  */
+	      if (bp[1])	/* B < 0: U <-- U + (-B)  * V.  */
 		{
 		   mp_limb_t c = mpn_addmul_1 (up, vp, vsize, -bp[0]);
 		   mpn_add_1 (up + vsize, up + vsize, usize - vsize, c);
 		}
-	      else		/*  B >= 0:  U <-- U - B * V.  */
+	      else		/* B >= 0:  U <-- U - B * V.  */
 		{
 		  mp_limb_t b = mpn_submul_1 (up, vp, vsize, bp[0]);
 		  mpn_sub_1 (up + vsize, up + vsize, usize - vsize, b);
 		}
 
-	      up += 2, usize -= 2;  /*  At least two low limbs are zero.  */
+	      up += 2, usize -= 2;  /* At least two low limbs are zero.  */
 	    }
 
-	  /*  Must remove low zero limbs before complementing.  */
+	  /* Must remove low zero limbs before complementing.  */
 	  while (usize != 0 && up[0] == 0)
 	    up++, usize--;
 	}
       while (usize);
 
-      /*  Compute GCD (ORIG_V, GCD (ORIG_U, V)).  Binary will execute twice.  */
+      /* Compute GCD (ORIG_V, GCD (ORIG_U, V)).  Binary will execute twice.  */
       up = orig_up, usize = orig_usize;
       binary_gcd_ctr = 2;
     }
   else
     binary_gcd_ctr = 1;
 
-  /*  Finish up with the binary algorithm.  Executes once or twice.  */
+  /* Finish up with the binary algorithm.  Executes once or twice.  */
   for ( ; binary_gcd_ctr--; up = orig_vp, usize = orig_vsize)
     {
-      if (usize > 2)		/*  First make U close to V in size.  */
+      if (usize > 2)		/* First make U close to V in size.  */
 	{
 	  unsigned long int vbitsize, d;
 	  count_leading_zeros (d, up[usize-1]);
@@ -326,17 +326,17 @@ mpn_gcd (gp, vp, vsize, up, usize)
 	  d = d - vbitsize - 1;
 	  if (d != -(unsigned long int)1 && d > 2)
 	    {
-	      mpn_bdivmod (up, up, usize, vp, vsize, d);  /*  Result > 0.  */
+	      mpn_bdivmod (up, up, usize, vp, vsize, d);  /* Result > 0.  */
 	      d /= (unsigned long int)BITS_PER_MP_LIMB, up += d, usize -= d;
 	    }
 	}
 
-      /*  Start binary GCD.  */
+      /* Start binary GCD.  */
       do
 	{
 	  mp_size_t zeros;
 
-	  /*  Make sure U is odd.  */
+	  /* Make sure U is odd.  */
 	  MPN_NORMALIZE (up, usize);
 	  while (up[0] == 0)
 	    up += 1, usize -= 1;
@@ -348,25 +348,25 @@ mpn_gcd (gp, vp, vsize, up, usize)
 	      usize -= (up[usize-1] == 0);
 	    }
 
-	  /*  Keep usize >= vsize.  */
+	  /* Keep usize >= vsize.  */
 	  if (usize < vsize)
 	    SWAP_MPN (up, usize, vp, vsize);
 
-	  if (usize <= 2)               		/*  Double precision. */
+	  if (usize <= 2)				/* Double precision. */
 	    {
-              if (vsize == 1)
+	      if (vsize == 1)
 		vp[0] = mpn_gcd_1 (up, usize, vp[0]);
 	      else
 		vsize = gcd_2 (vp, up);
-              break;					/*  Binary GCD done.  */
+	      break;					/* Binary GCD done.  */
 	    }
 
-	  /*  Count number of low zero limbs of U - V.  */
+	  /* Count number of low zero limbs of U - V.  */
 	  for (zeros = 0; up[zeros] == vp[zeros] && ++zeros != vsize; )
-	    continue;					
+	    continue;
 
-	  /*  If U < V, swap U and V; in any case, subtract V from U.  */
-	  if (zeros == vsize)				/*  Subtract done.  */
+	  /* If U < V, swap U and V; in any case, subtract V from U.  */
+	  if (zeros == vsize)				/* Subtract done.  */
 	    up += zeros, usize -= zeros;
 	  else if (usize == vsize)
 	    {
@@ -374,7 +374,7 @@ mpn_gcd (gp, vp, vsize, up, usize)
 	      do
 		size--;
 	      while (up[size] == vp[size]);
-	      if (up[size] < vp[size])          	/*  usize == vsize.  */
+	      if (up[size] < vp[size])			/* usize == vsize.  */
 		SWAP_PTR (up, vp);
 	      up += zeros, usize = size + 1 - zeros;
 	      mpn_sub_n (up, up, vp + zeros, usize);
@@ -382,16 +382,16 @@ mpn_gcd (gp, vp, vsize, up, usize)
 	  else
 	    {
 	      mp_size_t size = vsize - zeros;
-	      up += zeros, usize -= zeros; 
-	      if (mpn_sub_n (up, up, vp + zeros, size))       
+	      up += zeros, usize -= zeros;
+	      if (mpn_sub_n (up, up, vp + zeros, size))
 		{
-		  while (up[size] == 0)         	/*  Propagate borrow. */
+		  while (up[size] == 0)			/* Propagate borrow. */
 		    up[size++] = -(mp_limb_t)1;
 		  up[size] -= 1;
 		}
 	    }
 	}
-      while (usize);					/*  End binary GCD.  */
+      while (usize);					/* End binary GCD.  */
     }
 
 done:

@@ -71,7 +71,7 @@ L(Lnormal:)
 	movel	MEM_POSTINC(s_ptr),R(d2)
 	movel	R(d2),R(d0)
 	lsll	R(d5),R(d0)		/* compute carry limb */
-   
+
 	lsrl	R(cnt),R(d2)
 	movel	R(d2),R(d1)
 	subql	#1,R(s_size)

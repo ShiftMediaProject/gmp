@@ -389,7 +389,7 @@ mpn_gcd (mp_ptr gp,
 	  mp_limb_t q, cy;
 	  q = ul / vl;
 	  t = ul - q*vl;
-	  
+
 	  MPN_COPY (tp, s0p, ssize);
 	  cy = mpn_addmul_1 (tp, s1p, ssize, q);
 	  if (cy != 0)

@@ -126,9 +126,9 @@ Computational Number Theory, 1990.
 * Peter Montgomery: If 0 <= a, b < p < 2^31 and I want a modular product
   a*b modulo p and the long long type is unavailable, then I can write
 
-	  typedef   signed long slong;	
+	  typedef   signed long slong;
 	  typedef unsigned long ulong;
-	  slong a, b, p, quot, rem;	
+	  slong a, b, p, quot, rem;
 
 	  quot = (slong) (0.5 + (double)a * (double)b / (double)p);
 	  rem =  (slong)((ulong)a * (ulong)b - (ulong)p * (ulong)quot);

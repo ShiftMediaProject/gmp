@@ -60,7 +60,7 @@ C_SYMBOL_NAME(__mpn_add_n:)
 	call	L0
 L0:	leal	(%eax,%eax,8),%eax
 	addl	(%esp),%eax
-	addl	$(Loop-L0-3),%eax 
+	addl	$(Loop-L0-3),%eax
 	addl	$4,%esp
 #else
 /* Calculate start address in loop for non-PIC.  */

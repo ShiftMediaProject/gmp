@@ -50,7 +50,7 @@ libmpbsd.a: Makefile.in $(MPBSD_OBJS)
 .c.o:
 	$(CC) -c $(INCLUDES) -DBERKELEY_MP $(CFLAGS) $(XCFLAGS) $<
 
-check: 
+check:
 	true
 
 clean mostlyclean:

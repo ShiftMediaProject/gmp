@@ -165,6 +165,6 @@ mpf_set_q (r, q)
 
   EXP (r) = exp;
   SIZ (r) = qsize;
-  
+
   TMP_FREE (marker);
 }

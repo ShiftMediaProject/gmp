@@ -76,7 +76,7 @@ mpf_mul (r, u, v)
       cy_limb = (usize >= vsize
 		 ? mpn_mul (tp, up, usize, vp, vsize)
 		 : mpn_mul (tp, vp, vsize, up, usize));
-      
+
       adj = cy_limb == 0;
       rsize -= adj;
       prec++;
