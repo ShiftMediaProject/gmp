@@ -26,7 +26,15 @@ MA 02111-1307, USA.
 #define TWO64 18446744073709551616.0
 
 mp_limb_t
+#if __STDC__
 __udiv_qrnnd64 (mp_limb_t n1, mp_limb_t n0, mp_limb_t d, mp_limb_t *r)
+#else
+__udiv_qrnnd64 (n1, n0, d, r)
+     mp_limb_t n1;
+     mp_limb_t n0;
+     mp_limb_t d;
+     mp_limb_t *r;
+#endif
 {
   mp_limb_t q1, q2, q;
   mp_limb_t p1, p0;
