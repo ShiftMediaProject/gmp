@@ -34,6 +34,7 @@ int
 mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
 {
   mpz_t x, t0, t1, t2;
+  __mpz_struct ccs, *cc = &ccs;
   unsigned long int nbits;
   int bit;
   int exact;
@@ -43,21 +44,32 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
 
   if (mpz_sgn (c) == 0)
     {
-      mpz_set_ui (r, 0);
+      if (r != NULL)
+	mpz_set_ui (r, 0);
       return 1;			/* exact result */
+    }
+
+  PTR(cc) = PTR(c);
+  SIZ(cc) = ABSIZ(c);
+
+  nbits = (mpz_sizeinbase (cc, 2) - 1) / nth;
+  if (nbits == 0)
+    {
+      if (r != NULL)
+	mpz_set_ui (r, 1);
+      if (mpz_sgn (c) < 0)
+	{
+	  if (r != NULL)
+	    SIZ(r) = -SIZ(r);
+	  return mpz_cmp_si (c, -1L);
+	}
+      return mpz_cmp_ui (c, 1L);
     }
 
   mpz_init (x);
   mpz_init (t0);
   mpz_init (t1);
   mpz_init (t2);
-
-  nbits = (mpz_sizeinbase (c, 2) - 1) / nth;
-  if (nbits == 0)
-    {
-      mpz_set_ui (r, 1);
-      return 0;			/* inexact result FIXME */
-    }
 
   /* Create a one-bit approximation.  */
   mpz_set_ui (x, 0);
@@ -73,7 +85,7 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
       mpz_tdiv_q_2exp (t0, x, bit);
       mpz_pow_ui (t1, t0, nth);
       mpz_mul_2exp (t1, t1, bit * nth);
-      if (mpz_cmp (c, t1) < 0)
+      if (mpz_cmp (cc, t1) < 0)
 	mpz_clrbit (x, bit);
 
       bit--;			/* check/set next bit */
@@ -90,7 +102,7 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
 #if DEBUG
   /* Check that the starting approximation is >= than the root.  */
   mpz_pow_ui (t1, x, nth);
-  if (mpz_cmp (c, t1) >= 0)
+  if (mpz_cmp (cc, t1) >= 0)
     abort ();
 #endif
 
@@ -103,7 +115,7 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
       mpz_tdiv_q_2exp (t0, x, lowz);
       mpz_pow_ui (t1, t0, nth - 1);
       mpz_mul_2exp (t1, t1, lowz * (nth - 1));
-      mpz_tdiv_q (t2, c, t1);
+      mpz_tdiv_q (t2, cc, t1);
       mpz_sub (t2, x, t2);
       rl = mpz_tdiv_q_ui (t2, t2, nth);
       mpz_sub (x, x, t2);
@@ -122,7 +134,7 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
     mpz_tdiv_q_2exp (t0, x, lowz);
     mpz_pow_ui (t1, t0, nth);
     mpz_mul_2exp (t1, t1, lowz * nth);
-    while (mpz_cmp (c, t1) < 0)
+    while (mpz_cmp (cc, t1) < 0)
       {
 	bad++;
 	if (bad > 2)
@@ -136,10 +148,14 @@ mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
   }
 
  done:
-  exact = mpz_cmp (t1, c) == 0;
+  exact = mpz_cmp (t1, cc) == 0;
 
   if (r != NULL)
-    mpz_set (r, x);
+    {
+      mpz_set (r, x);
+      if (mpz_sgn (c) < 0)
+	SIZ(r) = -SIZ(r);
+    }
 
   mpz_clear (t2);
   mpz_clear (t1);
