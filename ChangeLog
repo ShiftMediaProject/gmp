@@ -3873,6 +3873,7 @@ MA 02111-1307, USA.
 	* mpn/ia64/add_n.asm: New file.
 	* mpn/ia64/sub_n.asm: New file.
 	* mpn/ia64/popcount.asm: New file.
+	* mpn/ia64/README: New file.
 
 	* mpn/alpha/cntlz.asm: Override `.set noat' from ASM_START.
 
@@ -4756,6 +4757,8 @@ MA 02111-1307, USA.
 	* demos/factorize.c (random): New function, defined conditionally.
 	(factor_using_pollard_rho): Use it, not mrand48.
 
+	* mpn/cray/README: New file.
+	
 2000-06-30  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/aorsmul_1.asm: Add MULFUNC_PROLOGUE.
@@ -5070,6 +5073,10 @@ MA 02111-1307, USA.
 	* tune/alpha.asm: New file, by Torbjorn.
 	* tune/Makefile.am (EXTRA_DIST): Add it.
 	* configure.in (alpha*-*-*): Use it.
+
+2000-05-31  Linus Nordberg  <linus@swox.se>
+
+	* doc/configuration: New file.
 
 2000-05-30  Torbjorn Granlund  <tege@swox.com>
 
