@@ -7634,6 +7634,7 @@ done.
 @node FFT Multiplication, Other Multiplication, Toom 3-Way Multiplication, Multiplication Algorithms
 @subsection FFT Multiplication
 @cindex FFT multiplication
+@cindex Fast Fourier Transform
 
 At large to very large sizes a Fermat style FFT multiplication is used,
 following Sch@"onhage and Strassen (@pxref{References}).  Descriptions of FFTs
@@ -8210,6 +8211,7 @@ at each step are applied to a roughly constant total number of limbs.
 
 @node Jacobi Symbol,  , Extended GCD, Greatest Common Divisor Algorithms
 @subsection Jacobi Symbol
+@cindex Jacobi symbol algorithm
 
 @code{mpz_jacobi} and @code{mpz_kronecker} are currently implemented with a
 simple binary algorithm similar to that described for the GCDs (@pxref{Binary
@@ -8281,18 +8283,82 @@ applied to odd moduli.
 
 @node Square Root Algorithm, Nth Root Algorithm, Root Extraction Algorithms, Root Extraction Algorithms
 @subsection Square Root
+@cindex Square root algorithm
+@cindex Karatsuba square root algorithm
 
 Square roots are taken using the ``Karatsuba Square Root'' algorithm by Paul
-Zimmermann (@pxref{References}).  This is expressed in a divide and conquer
-form, but as noted in the paper it can also be viewed as a discrete variant of
-Newton's method.
+Zimmermann (@pxref{References}).
 
-In the Karatsuba multiplication range this is an @m{O({3\over2}
-M(N/2)),O(1.5*M(N/2))} algorithm, where @math{M(n)} is the time to multiply
-two numbers of @math{n} limbs.  In the FFT multiplication range this grows to
-a bound of @m{O(6 M(N/2)),O(6*M(N/2))}.  In practice a factor of about 1.5 to
-1.8 is found in the Karatsuba and Toom-3 ranges, growing to 2 or 3 in the FFT
-range.
+An input @math{n} is split into four parts of @math{k} bits each, so with
+@math{b=2^k} we have @m{n = a_3b^3 + a_2b^2 + a_1b + a_0, n = a3*b^3 + a2*b^2
++ a1*b + a0}.  Part @ms{a,3} must be ``normalized'' so that either the high or
+second highest bit is set.  In GMP, @math{k} is kept on a limb boundary and
+the input is left shifted (by an even number of bits) to normalize.
+
+The square root of the high two parts is taken, by recursive application of
+the algorithm (bottoming out in a one-limb Newton's method),
+@tex
+$$ s',r' = \mathop{\rm sqrtrem} \> (a_3b + a_2) $$
+@end tex
+@ifnottex
+
+@example
+s1,r1 = sqrtrem (a3*b + a2)
+@end example
+
+@end ifnottex
+@noindent
+This is an approximation to the desired root and is extended by a division to
+give @math{s},@math{r},
+@tex
+$$\eqalign{
+q,u &= \mathop{\rm divrem} \> (r'b + a_1, 2s') \cr
+s &= s'b + q \cr
+r &= ub + a_0 - q^2
+}$$
+@end tex
+@ifnottex
+
+@example
+q,u = divrem (r1*b + a1, 2*s1)
+s = s1*b + q
+r = u*b + a0 - q^2
+@end example
+
+@end ifnottex
+The normalization requirement on @ms{a,3} means at this point @math{s} is
+either correct or 1 too big.  @math{r} is negative in the latter case, so
+@tex
+$$\eqalign{
+\mathop{\rm if} \; r &< 0 \; \mathop{\rm then} \cr
+r &\leftarrow r + 2s - 1 \cr
+s &\leftarrow s - 1
+}$$
+@end tex
+@ifnottex
+
+@example
+if r < 0 then
+  r = r + 2*s - 1
+  s = s - 1
+@end example
+
+@end ifnottex
+The algorithm is expressed in a divide and conquer form, but as noted in the
+paper it can also be viewed as a discrete variant of Newton's method, or as a
+variation on the schoolboy method (no longer taught) for square roots two
+digits at a time.
+
+If the remainder @math{r} is not required then usually only a few high limbs
+of @math{r} and @math{u} need to be calculated to determine whether an
+adjustment to @math{s} is required.  This optimization is not currently
+implemented.
+
+In the Karatsuba multiplication range this algorithm is @m{O({3\over2}
+M(N/2)),O(1.5*M(N/2))}, where @math{M(n)} is the time to multiply two numbers
+of @math{n} limbs.  In the FFT multiplication range this grows to a bound of
+@m{O(6 M(N/2)),O(6*M(N/2))}.  In practice a factor of about 1.5 to 1.8 is
+found in the Karatsuba and Toom-3 ranges, growing to 2 or 3 in the FFT range.
 
 The algorithm does all its calculations in integers and the resulting
 @code{mpn_sqrtrem} is used for both @code{mpz_sqrt} and @code{mpf_sqrt}.
@@ -8302,6 +8368,8 @@ padding with zero limbs.
 
 @node Nth Root Algorithm, Perfect Square Algorithm, Square Root Algorithm, Root Extraction Algorithms
 @subsection Nth Root
+@cindex Root extraction algorithm
+@cindex Nth root algorithm
 
 Integer Nth roots are taken using Newton's method with the following
 iteration, where @math{A} is the input and @math{n} is the root to be taken.
@@ -8587,6 +8655,7 @@ efficient for the current multiply implementation.
 
 @node Binomial Coefficients Algorithm, Fibonacci Numbers Algorithm, Factorial Algorithm, Other Algorithms
 @subsection Binomial Coefficients
+@cindex Binomial coefficient algorithm
 
 Binomial coefficients @m{\left({n}\atop{k}\right), C(n@C{}k)} are calculated
 by first arranging @math{k @le{} n/2} using @m{\left({n}\atop{k}\right) =
@@ -8615,6 +8684,7 @@ into as many fit a limb, to save multi-precision operations, though for
 
 @node Fibonacci Numbers Algorithm, Lucas Numbers Algorithm, Binomial Coefficients Algorithm, Other Algorithms
 @subsection Fibonacci Numbers
+@cindex Fibonacci number algorithm
 
 The Fibonacci functions @code{mpz_fib_ui} and @code{mpz_fib2_ui} are designed
 for calculating isolated @m{F_n,F[n]} or @m{F_n,F[n]},@m{F_{n-1},F[n-1]}
@@ -8690,6 +8760,7 @@ borrow into further limbs, which saves some code size.  See comments with
 
 @node Lucas Numbers Algorithm, Random Number Algorithms, Fibonacci Numbers Algorithm, Other Algorithms
 @subsection Lucas Numbers
+@cindex Lucas number algorithm
 
 @code{mpz_lucnum2_ui} derives a pair of Lucas numbers from a pair of Fibonacci
 numbers with the following simple formulas.
@@ -9320,6 +9391,7 @@ the documented interfaces described in previous chapters.}
 
 @node Integer Internals, Rational Internals, Internals, Internals
 @section Integer Internals
+@cindex Integer internals
 
 @code{mpz_t} variables represent integers using sign and magnitude, in space
 dynamically allocated and reallocated.  The fields are as follows.
@@ -9369,6 +9441,7 @@ providing plenty of range.
 
 @node Rational Internals, Float Internals, Integer Internals, Internals
 @section Rational Internals
+@cindex Rational internals
 
 @code{mpq_t} variables represent rationals using an @code{mpz_t} numerator and
 denominator (@pxref{Integer Internals}).
@@ -9393,6 +9466,7 @@ denominator, or of course @code{mpz_t} variables can be used directly.
 
 @node Float Internals, Raw Output Internals, Rational Internals, Internals
 @section Float Internals
+@cindex Float internals
 
 Efficient calculation is the primary aim of GMP floats and the use of whole
 limbs and simple rounding facilitates this.
@@ -9627,6 +9701,7 @@ multiple of the limb size.
 
 @node Raw Output Internals, C++ Interface Internals, Float Internals, Internals
 @section Raw Output Internals
+@cindex Raw output internals
 
 @noindent
 @code{mpz_out_raw} uses the following format.
@@ -9677,6 +9752,7 @@ a big endian nor little endian system can just read and write @code{_mp_d}.
 
 @node C++ Interface Internals,  , Raw Output Internals, Internals
 @section C++ Interface Internals
+@cindex C++ interface internals
 
 A system of expression templates is used to ensure something like @code{a=b+c}
 turns into a simple call to @code{mpz_add} etc.  For @code{mpf_class} and
@@ -9930,8 +10006,7 @@ available online as INRIA Research Report 4475, June 2001,
 @item
 Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
 Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022,
-@texlinebreak{}
-@uref{http://data.mpi-sb.mpg.de/internet/reports.nsf/NumberView/1998-1-022}
+@texlinebreak{} @uref{http://data.mpi-sb.mpg.de/internet/reports.nsf/NumberView/1998-1-022}
 
 @item
 Torbjorn Granlund and Peter L. Montgomery, ``Division by Invariant Integers
