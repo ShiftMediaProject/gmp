@@ -32,7 +32,6 @@ dnl  FreeBSD 3.3 and 3.4 doesn't recognise it.
 
 define(psadbw_mm4_mm0,
 `ifelse(m4_ifdef_anyof_p(`HAVE_TARGET_CPU_athlon',
-                         `HAVE_TARGET_CPU_pentium2',
                          `HAVE_TARGET_CPU_pentium3'),1,
 	`.byte 0x0f,0xf6,0xc4	C psadbw %mm4, %mm0',
 
@@ -57,10 +56,10 @@ forloop(i,1,7,
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C unsigned long mpn_hamdist (mp_srcptr src, mp_srcptr src2, mp_size_t size);
 C
-C The code here isn't optimal, but is already a 3x speedup over the generic
-C C code.  The main improvement would be to interleave processing of two
-C qwords in the loop so as to fully exploit the available execution units,
-C possibly leading to 3.25 c/l (13 cycles for 4 limbs).
+C The code here is almost certainly not optimal, but is already a 3x speedup
+C over the generic C code.  The main improvement would be to interleave
+C processing of two qwords in the loop so as to fully exploit the available
+C execution units, possibly leading to 3.25 c/l (13 cycles for 4 limbs).
 C
 C The loop is based on the example "Efficient 64-bit population count using
 C MMX instructions" in the Athlon Optimization Guide, AMD document 22007,
