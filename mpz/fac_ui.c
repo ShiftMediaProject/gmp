@@ -35,37 +35,36 @@ static void ap_product_small _PROTO ((mpz_t ret, mp_limb_t start, mp_limb_t step
 #define APCONST	5
 
 /* for single non-zero limb */
-#define MPZ_SET_1_NZ(z,n)       \
-  do {                          \
-    mpz_ptr  __z = (z);         \
-    ASSERT ((n) != 0);          \
-    PTR(__z)[0] = (n);          \
-    SIZ(__z) = 1;               \
+#define MPZ_SET_1_NZ(z,n)	\
+  do {				\
+    mpz_ptr  __z = (z);		\
+    ASSERT ((n) != 0);		\
+    PTR(__z)[0] = (n);		\
+    SIZ(__z) = 1;		\
   } while (0)
 
 /* for src>0 and n>0 */
-#define MPZ_MUL_1_POS(dst,src,n)                        \
-  do {                                                  \
-    mpz_ptr    __dst = (dst);                           \
-    mpz_srcptr __src = (src);                           \
-    mp_size_t  __size = SIZ(__src);                     \
-    mp_ptr     __dst_p;                                 \
-    mp_limb_t  __c;                                     \
-                                                        \
-    ASSERT (__size > 0);                                \
-    ASSERT ((n) != 0);                                  \
-                                                        \
-    MPZ_REALLOC (__dst, __size+1);                      \
-    __dst_p = PTR(__dst);                               \
-                                                        \
-    __c = mpn_mul_1 (__dst_p, PTR(__src), __size, n);   \
-    __dst_p[__size] = __c;                              \
-    SIZ(__dst) = __size + (__c != 0);                   \
-                                                        \
+#define MPZ_MUL_1_POS(dst,src,n)			\
+  do {							\
+    mpz_ptr    __dst = (dst);				\
+    mpz_srcptr __src = (src);				\
+    mp_size_t  __size = SIZ(__src);			\
+    mp_ptr     __dst_p;					\
+    mp_limb_t  __c;					\
+							\
+    ASSERT (__size > 0);				\
+    ASSERT ((n) != 0);					\
+							\
+    MPZ_REALLOC (__dst, __size+1);			\
+    __dst_p = PTR(__dst);				\
+							\
+    __c = mpn_mul_1 (__dst_p, PTR(__src), __size, n);	\
+    __dst_p[__size] = __c;				\
+    SIZ(__dst) = __size + (__c != 0);			\
   } while (0)
 
 
-#if BITS_PER_ULONG==BITS_PER_MP_LIMB
+#if BITS_PER_ULONG == BITS_PER_MP_LIMB
 #define BSWAP_ULONG(x,y)	BSWAP_LIMB(x,y)
 #endif
 
@@ -76,39 +75,39 @@ static void ap_product_small _PROTO ((mpz_t ret, mp_limb_t start, mp_limb_t step
    can get that directly muxing a 4-byte ulong if it matters enough.  */
 
 #if ! defined (BSWAP_ULONG)
-#define BSWAP_ULONG(dst, src)                                           \
-  do {                                                                  \
-    unsigned long  __bswapl_src = (src);                                \
-    unsigned long  __bswapl_dst = 0;                                    \
-    int        __i;                                                     \
-    for (__i = 0; __i < sizeof(unsigned long); __i++)                   \
-      {                                                                 \
-        __bswapl_dst = (__bswapl_dst << 8) | (__bswapl_src & 0xFF);     \
-        __bswapl_src >>= 8;                                             \
-      }                                                                 \
-    (dst) = __bswapl_dst;                                               \
+#define BSWAP_ULONG(dst, src)						\
+  do {									\
+    unsigned long  __bswapl_src = (src);				\
+    unsigned long  __bswapl_dst = 0;					\
+    int	       __i;							\
+    for (__i = 0; __i < sizeof(unsigned long); __i++)			\
+      {									\
+	__bswapl_dst = (__bswapl_dst << 8) | (__bswapl_src & 0xFF);	\
+	__bswapl_src >>= 8;						\
+      }									\
+    (dst) = __bswapl_dst;						\
   } while (0)
 #endif
 
 /* x is bit reverse of y */
 /* Note the divides below are all exact */
-#define BITREV_ULONG(x,y)							\
-do{unsigned long __dst;								\
-   BSWAP_ULONG(__dst,y);							\
-   __dst=(( (__dst>>4)&(ULONG_MAX/17) )|( (__dst<<4)&((ULONG_MAX/17)*16) ));	\
-   __dst=(( (__dst>>2)&(ULONG_MAX/5)  )|( (__dst<<2)&((ULONG_MAX/5)*4)   ));	\
-   __dst=(( (__dst>>1)&(ULONG_MAX/3)  )|( (__dst<<1)&((ULONG_MAX/3)*2)   ));	\
-   (x)=__dst;									\
-  }while(0)
+#define BITREV_ULONG(x,y)						   \
+  do {									   \
+   unsigned long __dst;							   \
+   BSWAP_ULONG(__dst,y);						   \
+   __dst = ((__dst>>4)&(ULONG_MAX/17)) | ((__dst<<4)&((ULONG_MAX/17)*16)); \
+   __dst = ((__dst>>2)&(ULONG_MAX/5) ) | ((__dst<<2)&((ULONG_MAX/5)*4)  ); \
+   __dst = ((__dst>>1)&(ULONG_MAX/3) ) | ((__dst<<1)&((ULONG_MAX/3)*2)  ); \
+   (x) = __dst;								   \
+  } while(0)
 /* above could be improved if cpu has a nibble/bit swap/muxing instruction */
-/* above code is serialized , possible to write as a big parallel expression */
+/* above code is serialized, possible to write as a big parallel expression */
 
 
 
 void
 mpz_fac_ui (mpz_ptr x, unsigned long n)
 {
-
   unsigned long z, stt;
   int i, j;
   mpz_t t1, st[8 * sizeof (unsigned long) + 1 - APCONST];
@@ -125,16 +124,16 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
   /*  NOTE : MUST have n>=3 here */
   ASSERT (n >= 3);
   /* for estimating the alloc sizes the calculation of these formula's is not
-     exact and also the formulars are only approxiamtions , also we ignore
-     the few "side" calculuations , corect allocation seems to speed up the
-     small sizes better , having very little effect on the large sizes */
+     exact and also the formulas are only approximations, also we ignore
+     the few "side" calculations, correct allocation seems to speed up the
+     small sizes better, having very little effect on the large sizes */
 
-  /* estimate space for stack entrys see below 
-     number of bits for n! is 
+  /* estimate space for stack entries see below
+     number of bits for n! is
      (1+log_2(2*pi)/2)-n*log_2(exp(1))+(n+1/2)*log_2(n)=
      2.325748065-n*1.442695041+(n+0.5)*log_2(n)  */
   umul_ppmm (d[1], d[0], (mp_limb_t) n, (mp_limb_t) FAC2OVERE);
-  /* d[1] is 2n/e , d[0] ignored        */
+  /* d[1] is 2n/e, d[0] ignored        */
   count_leading_zeros (z, d[1]);
   z = GMP_LIMB_BITS - z - 1;	/* z=floor(log_2(2n/e))   */
   umul_ppmm (d[1], d[0], (mp_limb_t) n, (mp_limb_t) z);
@@ -166,7 +165,7 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
   if (n <= ((unsigned long) 1) << (APCONST + 2))
     {
       /* use n!=C_2(1,n/2)^2*C_2(n/2,n)*(n/4)!*2^(n/2+n/4) all int divs
-         so need (BITS_IN_N-APCONST+1)=(APCONST+3-APCONST+1)=4 stack entrys */
+	 so need (BITS_IN_N-APCONST+1)=(APCONST+3-APCONST+1)=4 stack entries */
       mpz_init2 (t1, 2 * z);
       mpz_realloc2 (x, 4 * z);
       for (i = 0; i < 4; i++)
@@ -204,7 +203,7 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
   z = GMP_LIMB_BITS - z;
 
   /*
-     n! = 2^e * PRODUCT_{i=0}^{i=z-1} C_2( n/2^{i+1} , n/2^i )^{i+1}
+     n! = 2^e * PRODUCT_{i=0}^{i=z-1} C_2( n/2^{i+1}, n/2^i )^{i+1}
      where 2^e || n!   3.2^z>n   C_2(a,b)=PRODUCT of odd z such that a<z<=b
    */
 
@@ -217,8 +216,8 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
 	if ((signed long) z >= i)
 	  {
 	    odd_product (n >> i, n >> (i - 1), st);
-	    /* largest odd product when j=i=1 then we have 
-	       odd_product(n/2,n,st) which is approx (2n/e)^(n/4) 
+	    /* largest odd product when j=i=1 then we have
+	       odd_product(n/2,n,st) which is approx (2n/e)^(n/4)
 	       so log_base2(largest oddproduct)=n*log_base2(2n/e)/4
 	       number of bits is n*log_base2(2n/e)/4+1  */
 	    if (i != j)
@@ -326,8 +325,8 @@ ap_product_small (mpz_t ret, mp_limb_t start, mp_limb_t step,
 }
 
 /* return value in st[0]
-   odd_product(l,h)=sqrt((h/e)^h/(l/e)^l) using stirling approx and e=exp(1)
-   so st[0] needs enough bits for above , st[1] needs half these bits and 
+   odd_product(l,h)=sqrt((h/e)^h/(l/e)^l) using Stirling approx and e=exp(1)
+   so st[0] needs enough bits for above, st[1] needs half these bits and
    st[2] needs 1/4 of these bits etc	*/
 static void
 odd_product (unsigned long low, unsigned long high, mpz_t * st)
@@ -375,15 +374,15 @@ odd_product (unsigned long low, unsigned long high, mpz_t * st)
   mask = (((unsigned long) 1) << n);
   a = mask << 1;
   mask--;
-/* have 2^(BITS_IN_N-APCONST) iterations so need 
-   (BITS_IN_N-APCONST+1) stack entrys	*/
+/* have 2^(BITS_IN_N-APCONST) iterations so need
+   (BITS_IN_N-APCONST+1) stack entries	*/
   for (z = mask; z >= 0; z--)
     {
       BITREV_ULONG (y, z);
       y >>= (BITS_PER_ULONG - n);
       ap_product_small (st[stn],
-                        (mp_limb_t) (low + 2 * ((~y) & mask)), (mp_limb_t) a,
-                        (high + y) >> n, nm);
+			(mp_limb_t) (low + 2 * ((~y) & mask)), (mp_limb_t) a,
+			(high + y) >> n, nm);
       ASSERT (((high + y) >> n) <= (((unsigned long) 1) << APCONST));
       stn++;
       y = stc++;
