@@ -533,6 +533,17 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
   return gsize + zero_words;
 }
 
+mp_size_t
+mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
+{
+  return gcd_binary_odd (gp, up, usize, vp, vsize);
+}
+
+/* The rest of this file is disabled since the schoenhage code does not work
+   yet.  */
+
+#if 0
+
 #define MPN_LEQ_P(ap, asize, bp, bsize)				\
 ((asize) < (bsize) || ((asize) == (bsize)			\
 		       && mpn_cmp ((ap), (bp), (asize)) <= 0))
@@ -922,3 +933,4 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
       return gsize;
     }
 }
+#endif
