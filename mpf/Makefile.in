@@ -129,7 +129,7 @@ libmpf_la_SOURCES = \
   add.c add_ui.c sub.c sub_ui.c ui_sub.c mul.c mul_ui.c div.c div_ui.c \
   cmp.c cmp_ui.c cmp_si.c mul_2exp.c div_2exp.c abs.c neg.c get_d.c \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_prc.c ui_div.c sqrt_ui.c \
-  pow_ui.c urandom.c
+  pow_ui.c urandomb.c
 
 nodist_libmpf_la_SOURCES = floor.c ceil.c trunc.c
 
@@ -158,7 +158,7 @@ reldiff.lo sqrt.lo random2.lo inp_str.lo out_str.lo add.lo add_ui.lo \
 sub.lo sub_ui.lo ui_sub.lo mul.lo mul_ui.lo div.lo div_ui.lo cmp.lo \
 cmp_ui.lo cmp_si.lo mul_2exp.lo div_2exp.lo abs.lo neg.lo get_d.lo \
 set_dfl_prec.lo set_prc.lo set_prc_raw.lo get_prc.lo ui_div.lo \
-sqrt_ui.lo pow_ui.lo urandom.lo
+sqrt_ui.lo pow_ui.lo urandomb.lo
 nodist_libmpf_la_OBJECTS =  floor.lo ceil.lo trunc.lo
 libmpf_la_OBJECTS =  $(am_libmpf_la_OBJECTS) $(nodist_libmpf_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -191,7 +191,7 @@ $(DEPDIR)/set_prc_raw.Plo $(DEPDIR)/set_q.Plo $(DEPDIR)/set_si.Plo \
 $(DEPDIR)/set_str.Plo $(DEPDIR)/set_ui.Plo $(DEPDIR)/set_z.Plo \
 $(DEPDIR)/size.Plo $(DEPDIR)/sqrt.Plo $(DEPDIR)/sqrt_ui.Plo \
 $(DEPDIR)/sub.Plo $(DEPDIR)/sub_ui.Plo $(DEPDIR)/trunc.Plo \
-$(DEPDIR)/ui_div.Plo $(DEPDIR)/ui_sub.Plo $(DEPDIR)/urandom.Plo
+$(DEPDIR)/ui_div.Plo $(DEPDIR)/ui_sub.Plo $(DEPDIR)/urandomb.Plo
 SOURCES = $(libmpf_la_SOURCES) $(nodist_libmpf_la_SOURCES)
 OBJECTS = $(am_libmpf_la_OBJECTS) $(nodist_libmpf_la_OBJECTS)
 
@@ -403,7 +403,7 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/trunc.Plo
 @AMDEP@include $(DEPDIR)/ui_div.Plo
 @AMDEP@include $(DEPDIR)/ui_sub.Plo
-@AMDEP@include $(DEPDIR)/urandom.Plo
+@AMDEP@include $(DEPDIR)/urandomb.Plo
 
 mostlyclean-depend:
 
