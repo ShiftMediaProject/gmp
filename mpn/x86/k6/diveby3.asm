@@ -34,8 +34,8 @@ include(`../config.m4')
 # Using fixed .rodata locations for the multipliers 3 and INVERSE_3 is 1
 # cycle slower than with them pushed on the stack (don't know why).
 #
-# Using %esi in the (%esi,%ecx,4) addressing mode doesn't lead to vector
-# decoding, unlike plain (%esi) does.
+# Using %esi in the (%esi,%ecx,4) or 0(%esi,%ecx,4) addressing mode doesn't
+# lead to vector decoding, unlike plain (%esi) does.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
@@ -62,12 +62,10 @@ PROLOGUE(mpn_divexact_by3)
 	leal	(%esi,%ecx,4), %esi
 	xorl	%ebx, %ebx
 
-	leal	(%edi,%ecx,4), %edi
-	negl	%ecx
-
 	pushl	$3		defframe_pushl(VAR_THREE)
+	leal	(%edi,%ecx,4), %edi
 
-	pushl	$INVERSE_3	defframe_pushl(VAR_INVERSE)
+	negl	%ecx
 
 
 	ALIGN(32)	# need 32 for claimed speed
@@ -79,13 +77,17 @@ L(top):
 	# esi	&src[size]
 	# edi	&dst[size]
 	# ebp
+	#
+	# The 0(%esi,%ecx,4) pads so the finishup instructions are on a 32
+	# byte boundary, saving a couple of cycles (that's a fixed couple,
+	# not per loop).
 
-	movl	(%esi,%ecx,4), %eax
+	movl	0(%esi,%ecx,4), %eax
 	subl	%ebx, %eax
 
 	setc	%bl
 
-	mull	VAR_INVERSE
+	imull	$INVERSE_3, %eax
 
 	movl	%eax, (%edi,%ecx,4)
 	addl	$2, %ecx
