@@ -71,7 +71,7 @@ speed_LDFLAGS = -static
 
 speed_dynamic_SOURCES = speed.c
 
-speed_ext_SOURCES = speed.c
+speed_ext_SOURCES = speed-ext.c
 speed_ext_LDFLAGS = -static
 
 tuneup_SOURCES = tuneup.c
