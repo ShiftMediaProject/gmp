@@ -905,27 +905,6 @@ speed_mpn_toom3_sqr_n (struct speed_params *s)
 }
 
 double
-speed_mpn_toom3_mul_n_mpn (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_TOOM3_MUL_N (mpn_toom3_mul_n_mpn);
-}
-double
-speed_mpn_toom3_mul_n_open (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_TOOM3_MUL_N (mpn_toom3_mul_n_open);
-}
-double
-speed_mpn_toom3_sqr_n_mpn (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_TOOM3_SQR_N (mpn_toom3_sqr_n_mpn);
-}
-double
-speed_mpn_toom3_sqr_n_open (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_TOOM3_SQR_N (mpn_toom3_sqr_n_open);
-}
-
-double
 speed_mpn_mul_fft_full (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_MUL_N_CALL

@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -46,7 +46,7 @@ libspeed_la_SOURCES =							\
   freq.c gcd_bin.c gcd_finda_gen.c					\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   jacbase1.c jacbase2.c jacbase3.c					\
-  mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
+  mod_1_div.c mod_1_inv.c modlinv.c					\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c				\
   set_strb.c set_strs.c time.c						\
   sb_div.c sb_inv.c
