@@ -181,9 +181,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
            e, (TOLERANCE-1.0)*100.0);
   fprintf (stderr, "  %.12f is about 0.5%%\n", t[0]*(TOLERANCE-1.0));
   for (i = 0; i < numberof (t); i++)
-    {
-      fprintf (stderr, "  %.09lf\n", t_unsorted[i]);
-    }
+    fprintf (stderr, "  %.09f\n", t_unsorted[i]);
 
   return -1.0;
 }
