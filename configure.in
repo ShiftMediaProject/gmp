@@ -676,6 +676,14 @@ case $host in
     esac
 
     case $host in
+      *-*-linux*)
+	cclist="gcc icc"
+	icc_cflags_optlist="opt"
+	# FIXME: Check if -O3 is really right.  The manual wanrs it is for
+	# large data sets, for which GMP uses assembly loops.
+	icc_cflags_opt="-O3 -O2 -O1"
+	;;
+
       *-*-hpux*)
         # HP cc sometimes gets internal errors if the optimization level is
         # too high.  GMP_PROG_CC_WORKS detects this, the "_opt" fallbacks
