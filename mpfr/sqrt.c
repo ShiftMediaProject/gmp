@@ -159,7 +159,7 @@ mpfr_sqrt (r, u, rnd_mode)
       printf(".\n"); 
 #endif
 
-      q_limb = mpn_sqrtrem_new (rp, remp, tmp, rsize);
+      q_limb = mpn_sqrtrem (rp, remp, tmp, rsize);
 
 #ifdef DEBUG
       printf("The result is : \n"); 
