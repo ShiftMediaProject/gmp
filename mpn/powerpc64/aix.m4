@@ -34,7 +34,7 @@ m4_assert_numargs(1)
 	`
 	.globl	$1
 	.globl	.$1
-	.csect	[DS],3
+	.csect	[DS], 3
 $1:
 	.llong	.$1, TOC[tc0], 0
 	.csect	[PR]
@@ -44,5 +44,21 @@ $1:
 define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
 `')
+
+define(`TOCREF',
+m4_assert_numargs(1)
+`$1')
+
+define(`DEF_OBJECT',
+m4_assert_numargs(2)
+`	.toc
+$2:	.tc	$1[TC], $1
+
+	.csect [RO], 3
+	ALIGN(2)
+$1:
+')
+
+define(`END_OBJECT',`')
 
 divert

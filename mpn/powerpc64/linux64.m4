@@ -34,15 +34,34 @@ m4_assert_numargs(1)
 	.section	".opd","aw"
 	.align	3
 $1:
-	.llong	.$1,.TOC.@tocbase,0
-	.size	$1,24
-	.type	.$1,@function
+	.llong	.$1, .TOC.@tocbase, 0
+	.size	$1, 24
+	.type	.$1, @function
 	.section	".text"
 	.align	3
 .$1:')
 
 define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
-`	.size	.$1,.-.$1')
+`	.size	.$1, .-.$1')
+
+define(`TOCREF',
+m4_assert_numargs(1)
+`$1@toc')
+
+define(`DEF_OBJECT',
+m4_assert_numargs(2)
+`	.section	".toc", "aw"
+$2:	.tc	$1[TC], $1
+
+	.section	.rodata
+	ALIGN(2)
+	.type	$1, @object
+$1:
+')
+
+define(`END_OBJECT',
+m4_assert_numargs(1)
+`	.size	$1, .-$1')
 
 divert
