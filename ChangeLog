@@ -1,3 +1,37 @@
+2000-04-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/cdiv_q.c: Change temp allocation for new requirements of
+	mpz_tdiv_qr.
+	* mpz/fdiv_q.c: Likewise.
+
+	* mpn/sparc64/gmp-mparam.h: Set up parameters for TOOM3.
+
+	* mpz/dmincl.c: Delete file.
+	* mpz/tdiv_qr.c: Rewrite using mpn_tdiv_qr.
+	* mpz/tdiv_r.c: Likewise.
+	* mpz/tdiv_q.c: Likewise.
+
+	* mpn/generic/tdiv_qr.c: New file.
+	* mpn/generic/bz_divrem_n.c: New file.
+	* mpn/generic/sb_divrem_mn.c: New file.
+
+	* gmp-impl.h (MPZ_REALLOC): New macro.
+	(mpn_sb_divrem_mn): Declare.
+	(mpn_bz_divrem_n): Declare.
+	(mpn_tdiv_qr): Declare.
+	
+	* configure.in (gmp_mpn_functions): Delete divrem_newt and divrem_1n;
+	add tdiv_qr, bz_divrem_n, and sb_divrem_mn.
+	* mpn/generic/divrem_newt.c: Delete file.
+	* mpn/generic/divrem_1n.c: Delete file.
+
+	* gmp.h (mpn_divrem_newton): Remove declaration.
+	(mpn_divrem_classic): Remove declaration.
+
+	* gmp.h (mpn_divrem): Remove function definition.
+	* mpn/generic/divrem.c: Replace mpn_divrem_classic with a
+	mpn_divrem wrapper.
+
 2000-04-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpf/dump.c, mpz/dump.c, mpn/generic/dump.c,
@@ -71,7 +105,7 @@
 	mpn/Makefile.in, mpq/Makefile.in, mpq/tests/Makefile.in,
 	mpz/Makefile.in, mpz/tests/Makefile.in, tests/Makefile.in,
 	tests/rand/Makefile.in: Regenerate.
-	
+
 2000-04-12  Linus Nordberg  <linus@swox.se>
 
 	* randlc.c (gmp_randinit_lc): Disable function.
@@ -89,7 +123,7 @@
 	* mpf/urandomb.c (mpf_urandomb): Add third parameter 'nbits'.  If
 	'nbits' doesn't make even limbs, shift up result before
 	normalizing.
-	
+
 	* gmp.h (mpf_urandomb): Add parameter to prototype.
 
 	* mpf/urandom.c: Rename file to ...
@@ -182,7 +216,7 @@
 	* rand.c (gmp_randinit): Change parameter list to (rstate, alg, ...).
 	* gmp.h: Change prototype accordingly.
 	* mpz/pprime_p.c (millerrabin): Change call accordingly.
-	
+
 	* configure.in: Check for `optarg'.
 	* configure: Regenerate.
 
@@ -200,7 +234,7 @@
 	* randsd.c (gmp_randseed): Likewise.
 	* randsdui.c (gmp_randseed_ui): Likewise.
 	* gmp.texi: Likewise.
-	
+
 	* gmp.texi: Use three hyphens for a dash.
 	(Low-level Functions): Remove documentation for gmp_rand_getraw.
 	(Random Number Functions): Add info on where to find documentation
