@@ -19,6 +19,23 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-19  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4, configure.in (GMP_PROG_LEX): New macro.
+
+	* tune/tuneup.c (one): Start next threshold at a max of previous ones,
+	in order to get a good starting point for TOOM3_SQR_THRESHOLD if
+	KARATSUBA_SQR_THRESHOLD is 0 (ie. using mpn_mul_basecase only).
+
+	* configure.in, tune/tuneup.c (GMP_MPARAM_H_SUGGEST): New AC_DEFINE
+	replacing GMP_MPARAM_H_FILENAME.  Suggest a new file in a cpu specific
+	subdirectory rather than mpn/generic.
+
+	* acinclude.m4 (POWERPC64_PATTERN): New macro.
+	* configure.in (powerpc*-*-*): Use it.
+	(powerpc*-*-*): Use umul in 32L and aix64.
+	(mips*-*-*): Use umul, 32 and 64 bit versions.
+
 2002-02-18  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h: Add basic x86-64 support.
