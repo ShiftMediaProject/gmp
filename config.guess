@@ -427,19 +427,36 @@ EOF
   ;;
 
 sparc-*-* | sparc64-*-*)
+  # If we can recognise an actual v7 then $exact_cpu is set to "sparc" so as
+  # to short-circuit subsequent tests.
 
   # Grep the linux kernel /proc/cpuinfo pseudo-file.
   # A typical line is "cpu\t\t: TI UltraSparc II  (BlackBird)"
-  # Anything unrecognised is ignored, since of course we mustn't spit out
-  # a cpu type config.sub doesn't know.
+  # See arch/sparc/kernel/cpu.c and arch/sparc64/kernel/cpu.c.
+  #
   if test -f /proc/cpuinfo; then
-    x=`sed -n 's/^cpu[ 	]*:[ 	]*(TI )?\([a-z0-9 ]*\).*/\1/p' /proc/cpuinfo`
-    case $x in
-      "UltraSparc I")    exact_cpu="ultrasparc1"  ;;
-      "UltraSparc II")   exact_cpu="ultrasparc2"  ;;
-      "UltraSparc IIi")  exact_cpu="ultrasparc2i" ;;
-      "UltraSparc III")  exact_cpu="ultrasparc3"  ;;
-    esac
+    if grep 'cpu.*Cypress' /proc/cpuinfo >/dev/null; then
+      exact_cpu="sparc"   # ie. v7
+    elif grep 'cpu.*Power-UP' /proc/cpuinfo >/dev/null; then
+      exact_cpu="sparc"   # ie. v7
+    elif grep 'cpu.*HyperSparc' /proc/cpuinfo >/dev/null; then
+      exact_cpu="sparcv8"
+    elif grep 'cpu.*SuperSparc' /proc/cpuinfo >/dev/null; then
+      exact_cpu="supersparc"
+    elif grep 'cpu.*MicroSparc' /proc/cpuinfo >/dev/null; then
+      exact_cpu="microsparc"
+    elif grep 'cpu.*MB86904' /proc/cpuinfo >/dev/null; then
+      # actually MicroSPARC-II
+      exact_cpu=microsparc
+    elif grep 'cpu.*UltraSparc III' /proc/cpuinfo >/dev/null; then
+      exact_cpu="ultrasparc3"
+    elif grep 'cpu.*UltraSparc IIi' /proc/cpuinfo >/dev/null; then
+      exact_cpu="ultrasparc2i"
+    elif grep 'cpu.*UltraSparc II' /proc/cpuinfo >/dev/null; then
+      exact_cpu="ultrasparc2"
+    elif grep 'cpu.*UltraSparc' /proc/cpuinfo >/dev/null; then
+      exact_cpu="ultrasparc"
+    fi
   fi
 
   # Grep the output from sysinfo on SunOS.
