@@ -6310,8 +6310,8 @@ else
     # If test is not a shell built-in, we'll probably end up computing a
     # maximum length that is only half of the actual maximum length, but
     # we can't tell.
-    while test "X"`$CONFIG_SHELL $0 --fallback-echo "X$testring" 2>/dev/null` \
-	       = "XX$testring" &&
+    while (test "X"`$CONFIG_SHELL $0 --fallback-echo "X$testring" 2>/dev/null` \
+	       = "XX$testring") >/dev/null 2>&1 &&
 	    new_result=`expr "X$testring" : ".*" 2>&1` &&
 	    lt_cv_sys_max_cmd_len=$new_result &&
 	    test $i != 17 # 1/2 MB should be enough
