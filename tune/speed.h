@@ -1846,7 +1846,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
    Give leading=1 if foo is leading zeros, leading=0 for trailing.
    Give zero=1 if n=0 is allowed in the call, zero=0 if not.  */
 
-#define SPEED_ROUTINE_COUNT_ZEROS_C(call, leading, zero)                \
+#define SPEED_ROUTINE_COUNT_ZEROS_A(leading, zero)                      \
   {                                                                     \
     mp_ptr     xp;                                                      \
     int        i, c;                                                    \
@@ -1871,7 +1871,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
         {                                                               \
           n = xp[i];                                                    \
           n ^= c;                                                       \
-          call;                                                         \
+
+#define SPEED_ROUTINE_COUNT_ZEROS_B()                                   \
         }                                                               \
     } while (--j != 0);                                                 \
     t = speed_endtime ();                                               \
@@ -1884,7 +1885,14 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     TMP_FREE (marker);                                                  \
     return t;                                                           \
   }                                                                     \
-  
+
+#define SPEED_ROUTINE_COUNT_ZEROS_C(call, leading, zero)        \
+  do {                                                          \
+    SPEED_ROUTINE_COUNT_ZEROS_A (leading, zero);                \
+    call;                                                       \
+    SPEED_ROUTINE_COUNT_ZEROS_B ();                             \
+  } while (0)                                                   \
+
 #define SPEED_ROUTINE_COUNT_LEADING_ZEROS_C(call,zero)  \
   SPEED_ROUTINE_COUNT_ZEROS_C (call, 1, zero)
 #define SPEED_ROUTINE_COUNT_LEADING_ZEROS(fun)          \
