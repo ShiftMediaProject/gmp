@@ -1,6 +1,6 @@
 /* mpn/bdivmod.c: mpn_bdivmod for computing U/V mod 2^d.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1999, 2000, 2001 Free Software
+Copyright 1991, 1993, 1994, 1995, 1996, 1999, 2000, 2001, 2002 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -61,36 +61,44 @@ mpn_bdivmod (mp_ptr qp, mp_ptr up, mp_size_t usize,
 
   ASSERT (usize >= 1);
   ASSERT (vsize >= 1);
-  ASSERT (usize * BITS_PER_MP_LIMB >= d);
+  ASSERT (usize * GMP_NUMB_BITS >= d);
   ASSERT (! MPN_OVERLAP_P (up, usize, vp, vsize));
-  ASSERT (! MPN_OVERLAP_P (qp, d/BITS_PER_MP_LIMB, vp, vsize));
-  ASSERT (MPN_SAME_OR_INCR2_P (qp, d/BITS_PER_MP_LIMB, up, usize));
+  ASSERT (! MPN_OVERLAP_P (qp, d/GMP_NUMB_BITS, vp, vsize));
+  ASSERT (MPN_SAME_OR_INCR2_P (qp, d/GMP_NUMB_BITS, up, usize));
+  ASSERT_MPN (up, usize);
+  ASSERT_MPN (vp, vsize);
 
-  /* 1/V mod 2^BITS_PER_MP_LIMB. */
+  /* 1/V mod 2^GMP_NUMB_BITS. */
   modlimb_invert (v_inv, vp[0]);
 
   /* Fast code for two cases previously used by the accel part of mpn_gcd.
      (Could probably remove this now it's inlined there.) */
   if (usize == 2 && vsize == 2 &&
-      (d == BITS_PER_MP_LIMB || d == 2*BITS_PER_MP_LIMB))
+      (d == GMP_NUMB_BITS || d == 2*GMP_NUMB_BITS))
     {
       mp_limb_t hi, lo;
-      mp_limb_t q = up[0] * v_inv;
-      umul_ppmm (hi, lo, q, vp[0]);
-      up[0] = 0, up[1] -= hi + q*vp[1], qp[0] = q;
-      if (d == 2*BITS_PER_MP_LIMB)
-	q = up[1] * v_inv, up[1] = 0, qp[1] = q;
+      mp_limb_t q = (up[0] * v_inv) & GMP_NUMB_MASK;
+      umul_ppmm (hi, lo, q, vp[0] << GMP_NAIL_BITS);
+      up[0] = 0;
+      up[1] -= hi + q*vp[1];
+      qp[0] = q;
+      if (d == 2*GMP_NUMB_BITS)
+        {
+          q = (up[1] * v_inv) & GMP_NUMB_MASK;
+          up[1] = 0;
+          qp[1] = q;
+        }
       return 0;
     }
 
   /* Main loop.  */
-  while (d >= BITS_PER_MP_LIMB)
+  while (d >= GMP_NUMB_BITS)
     {
-      mp_limb_t q = up[0] * v_inv;
+      mp_limb_t q = (up[0] * v_inv) & GMP_NUMB_MASK;
       mp_limb_t b = mpn_submul_1 (up, vp, MIN (usize, vsize), q);
       if (usize > vsize)
 	mpn_sub_1 (up + vsize, up + vsize, usize - vsize, b);
-      d -= BITS_PER_MP_LIMB;
+      d -= GMP_NUMB_BITS;
       up += 1, usize -= 1;
       *qp++ = q;
     }

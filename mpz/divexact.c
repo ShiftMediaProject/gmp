@@ -1,7 +1,7 @@
 /* mpz_divexact -- finds quotient when known that quot * den == num && den != 0.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001, 2002 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -102,14 +102,14 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
       count_trailing_zeros (r, dp[0]);
       mpn_rshift (tp, dp, tsize, r);
       if (dsize > tsize)
-	tp[tsize - 1] |= dp[tsize] << (BITS_PER_MP_LIMB - r);
+	tp[tsize - 1] |= (dp[tsize] << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK;
       mpn_rshift (qp, np, qsize, r);
       if (nsize > qsize)
-	qp[qsize - 1] |= np[qsize] << (BITS_PER_MP_LIMB - r);
+	qp[qsize - 1] |= (np[qsize] << (GMP_NUMB_BITS - r)) & GMP_NUMB_MASK;
     }
 
   /*  Now QUOT <-- QUOT/T.  */
-  mpn_bdivmod (qp, qp, qsize, tp, tsize, qsize * BITS_PER_MP_LIMB);
+  mpn_bdivmod (qp, qp, qsize, tp, tsize, qsize * GMP_NUMB_BITS);
   MPN_NORMALIZE (qp, qsize);
 
   quot->_mp_size = (num->_mp_size ^ den->_mp_size) >= 0 ? qsize : -qsize;
