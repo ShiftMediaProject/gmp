@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-09-20  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/misc.c (tests_rand_start): Default to strtoul for re-seeding.
+
+	* tests/mpz/t-mul.c (ref_mpn_mul): Fudge tmp allocation for toom3.
+
 2004-09-19  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/misc.c (tests_rand_start): Shift tv_usec for better seeding.

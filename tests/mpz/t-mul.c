@@ -43,9 +43,6 @@ one (int i, mpz_t multiplicand, mpz_t multiplier)
   mpz_t product, ref_product;
   mpz_t quotient;
 
-  if (i != 62)
-    return;
-
   mpz_init (product);
   mpz_init (ref_product);
   mpz_init (quotient);
