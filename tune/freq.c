@@ -30,8 +30,20 @@ MA 02111-1307, USA.
 #endif
 
 #include <sys/types.h>
+#if HAVE_SYS_PARAM_H
+#include <sys/param.h>   /* for constants needed by NetBSD <sys/sysctl.h> */
+#endif
 #if HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>  /* for sysctlbyname() */
+#endif
+
+/* Remove definitions from NetBSD <sys/param.h>, to avoid conflicts with
+   gmp-impl.h. */
+#ifdef MIN
+#undef MIN
+#endif
+#ifdef MAX
+#undef MAX
 #endif
 
 #include "gmp.h"
@@ -61,20 +73,22 @@ speed_cpu_frequency_environment (void)
 }
 
 
-/* sysctlbyname() for BSD flavours.  The "sysctl -a" command prints
-   everything available.
+/* sysctl() and sysctlbyname() for BSD flavours.  The "sysctl -a" command
+   prints everything available.
+
+   FreeBSD 2.2.8 i386 - machdep.i586_freq is frequency in hertz
+
+   FreeBSD 3.3 i368 - machdep.tsc_freq is frequency in hertz
+
+   FreeBSD 4.1 and NetBSD 1.4 alpha - hw.model string "Digital AlphaPC 164LX
+   599 MHz"
 
    On FreeBSD 3.3 the headers have #defines like CPU_WALLCLOCK under
    CTL_MACHDEP but don't seem to have anything for machdep.tsc_freq or
    machdep.i586_freq.  Using the string forms with sysctlbyname() works
    though, and lets libc worry about the defines and headers.
 
-   FreeBSD 2.2.8 i386 - machdep.i586_freq is frequency in hertz
-
-   FreeBSD 3.3 i368 - machdep.tsc_freq is frequency in hertz
-
-   FreeBSD 4.1 alpha - hw.model string "Digital AlphaPC 164LX 599 MHz"
-
+   NetBSD 1.4 doesn't have sysctlbyname, so sysctl() is used instead.
 */
 
 #if HAVE_SYSCTLBYNAME
@@ -107,6 +121,56 @@ speed_cpu_frequency_sysctlbyname (void)
 
   size = sizeof(str);
   if (sysctlbyname ("hw.model", str, &size, NULL, 0) == 0)
+    {
+      char  *p = &str[size-1];
+      int   i;
+
+      /* find the second last space */
+      for (i = 0; i < 2; i++)
+        {
+          for (;;)
+            {
+              if (p <= str)
+                goto hw_model_fail;
+              p--;
+              if (*p == ' ')
+                break;
+            }
+        }
+
+      if (sscanf (p, "%u MHz", &val) != 1)
+        goto hw_model_fail;
+
+      if (speed_option_verbose)
+        printf ("Using sysctlbyname() hw.model");
+      speed_cycletime = 1e-6 / (double) val;
+      goto success;
+    }
+ hw_model_fail:
+
+  return 0;
+
+ success:
+  if (speed_option_verbose)
+    printf (" %u for cycle time %.3g\n", val, speed_cycletime);
+
+  return 1;
+}
+#endif
+
+#if HAVE_SYSCTL
+int
+speed_cpu_frequency_sysctl (void)
+{
+  int       mib[2];
+  unsigned  val;
+  char      str[128];
+  size_t    size;
+
+  mib[0] = CTL_HW;
+  mib[1] = HW_MODEL;
+  size = sizeof(str);
+  if (sysctl (mib, 2, str, &size, NULL, 0) == 0)
     {
       char  *p = &str[size-1];
       int   i;
@@ -288,6 +352,11 @@ const struct {
      the system gives. */
   { speed_cpu_frequency_environment,
     "environment variable GMP_CPU_FREQUENCY (in Hertz)" },
+
+#if HAVE_SYSCTL
+  { speed_cpu_frequency_sysctl,
+    "sysctl() hw.model" },
+#endif
 
 #if HAVE_SYSCTLBYNAME
   { speed_cpu_frequency_sysctlbyname,
