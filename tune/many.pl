@@ -633,6 +633,8 @@ my @table =
        'regexp'=> 'mul_2',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_ptr wp, mp_srcptr xp, mp_size_t size, mp_srcptr mult',
+       'speed' => 'SPEED_ROUTINE_MPN_UNARY_2',
+       'speed_flags'=> 'FLAG_R',
      },
      
      {
@@ -792,7 +794,8 @@ my $top_builddir = "${builddir}/..";
 
 
 open(MAKEFILE, "<${builddir}/Makefile")
-    or die "Cannot open Makefile: $!\nIs this a tune build directory?";
+  or die "Cannot open ${builddir}/Makefile: $!\n"
+       . "Is this a tune build directory?";
 my ($srcdir, $top_srcdir);
 while (<MAKEFILE>) {
   if (/^srcdir = (.*)/) {     $srcdir = $1;     }
@@ -1320,6 +1323,7 @@ CFLAGS_TESTS = -DSIZE=50 -DTIMES=1 -DRANDOM -DCLOCK=333000000
 CFLAGS_TESTS_SP = -DSIZE=1024 -DNOCHECK -DOPS=200000000 -DCLOCK=333000000
 EOF
 
+close MAKEFILE or die;
 
 print "Total $count_files files, $count_functions functions\n";    
 
