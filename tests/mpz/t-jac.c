@@ -91,7 +91,7 @@ try_base (mp_limb_t a, mp_limb_t b, int answer)
     {
       printf ("mpn_jacobi_base (%lu, %lu) is %d should be %d\n",
               a, b, got, answer);
-      exit (1);
+      abort ();
     }
 }
 
@@ -107,7 +107,7 @@ try_zi_ui (mpz_srcptr a, unsigned long b, int answer)
       printf ("mpz_kronecker_ui (");
       mpz_out_str (stdout, 10, a);
       printf (", %lu) is %d should be %d\n", b, got, answer);
-      exit (1);
+      abort ();
     }
 }
 
@@ -123,7 +123,7 @@ try_zi_si (mpz_srcptr a, long b, int answer)
       printf ("mpz_kronecker_si (");
       mpz_out_str (stdout, 10, a);
       printf (", %ld) is %d should be %d\n", b, got, answer);
-      exit (1);
+      abort ();
     }
 }
 
@@ -139,7 +139,7 @@ try_ui_zi (unsigned long a, mpz_srcptr b, int answer)
       printf ("mpz_ui_kronecker (%lu, ", a);
       mpz_out_str (stdout, 10, b);
       printf (") is %d should be %d\n", got, answer);
-      exit (1);
+      abort ();
     }
 }
 
@@ -155,7 +155,7 @@ try_si_zi (int a, mpz_srcptr b, int answer)
       printf ("mpz_si_kronecker (%d, ", a);
       mpz_out_str (stdout, 10, b);
       printf (") is %d should be %d\n", got, answer);
-      exit (1);
+      abort ();
     }
 }
 
@@ -177,7 +177,7 @@ try_zi_zi (mpz_srcptr a, mpz_srcptr b, int answer)
       printf (", ");
       mpz_out_str (stdout, 10, b);
       printf (") is %d should be %d\n", got, answer);
-      exit (1);
+      abort ();
     }
 }
 
@@ -337,8 +337,7 @@ try_periodic_den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 }
 
 
-/* Try (a/b*2^k) for various k.  If it happens mpz_ui_kronecker() gets (a/2)
-   wrong it will show up as wrong answers demanded. */
+/* Try (a/b*2^k) for various k. */
 void
 try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 {
@@ -351,7 +350,22 @@ try_2den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
     return;
 
   mpz_init_set (b, b_orig);
-  answer_two = mpz_kronecker_ui (a, 2);
+
+  /* answer_two = (a/2) */
+  switch (mpz_fdiv_ui (a, 8)) {
+  case 1:
+  case 7:
+    answer_two = 1;
+    break;
+  case 3:
+  case 5:
+    answer_two = -1;
+    break;
+  default:
+    /* 0, 2, 4, 6 */
+    answer_two = 0;
+    break;
+  }    
 
   for (i = 0; i < 3 * BITS_PER_MP_LIMB; i++)
     {
@@ -600,7 +614,8 @@ check_data (void)
 }
 
 
-/* (a^2/b)=1 if gcd(a,b)=1, or (a^2/b)=0 if gcd(a,b)!=1. */
+/* (a^2/b)=1 if gcd(a,b)=1, or (a^2/b)=0 if gcd(a,b)!=1.
+   This includes when a=0 or b=0. */
 void
 check_squares_zi (void)
 {
@@ -623,22 +638,18 @@ check_squares_zi (void)
       mpz_urandomb (bs, rands, size_range);
       an = mpz_get_ui (bs);
       mpz_rrandomb (a, rands, an);
-      if (mpz_sgn (a) == 0)
-        mpz_set_ui (a, 1L);
 
       mpz_urandomb (bs, rands, size_range);
       bn = mpz_get_ui (bs);
       mpz_rrandomb (b, rands, bn);
-      if (mpz_sgn (b) == 0)
-        mpz_set_ui (b, 1L);
-
-      mpz_mul (a, a, b);
 
       mpz_gcd (g, a, b);
-      if (mpz_cmp_ui (g, 1) == 0)
+      if (mpz_cmp_ui (g, 1L) == 0)
 	answer = 1;
       else
 	answer = 0;
+
+      mpz_mul (a, a, a);
 
       try_all (a, b, answer);
     }
@@ -646,6 +657,43 @@ check_squares_zi (void)
   mpz_clear (a);
   mpz_clear (b);
   mpz_clear (g);
+}
+
+
+/* Check the handling of asize==0, make sure it isn't affected by the low
+   limb. */
+void
+check_a_zero (void)
+{
+  mpz_t  a, b;
+  mpz_init_set_ui (a, 0);
+  mpz_init (b);
+
+  mpz_set_ui (b, 1L);
+  PTR(a)[0] = 0;
+  try_all (a, b, 1);   /* (0/1)=1 */
+  PTR(a)[0] = 1;
+  try_all (a, b, 1);   /* (0/1)=1 */
+
+  mpz_set_si (b, -1L);
+  PTR(a)[0] = 0;
+  try_all (a, b, 1);   /* (0/-1)=1 */
+  PTR(a)[0] = 1;
+  try_all (a, b, 1);   /* (0/-1)=1 */
+
+  mpz_set_ui (b, 0);
+  PTR(a)[0] = 0;
+  try_all (a, b, 0);   /* (0/0)=0 */
+  PTR(a)[0] = 1;
+  try_all (a, b, 0);   /* (0/0)=0 */
+
+  mpz_set_ui (b, 2);
+  PTR(a)[0] = 0;
+  try_all (a, b, 0);   /* (0/2)=0 */
+  PTR(a)[0] = 1;
+  try_all (a, b, 0);   /* (0/2)=0 */
+
+  mpz_clear (a);
 }
 
 
@@ -683,6 +731,7 @@ try(a,b,answer) =\n\
 
   check_data ();
   check_squares_zi ();
+  check_a_zero ();
 
   exit (0);
 }
