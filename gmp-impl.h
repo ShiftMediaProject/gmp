@@ -840,7 +840,7 @@ void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 #endif
 
-#define MPN_LOGOPS_N_INLINE(d,s1,s2,n,dop,op,s2op)      \
+#define MPN_LOGOPS_N_INLINE(d, s1, s2, n, operation)    \
   do {                                                  \
     mp_ptr	 __d = (d);                             \
     mp_srcptr	 __s1 = (s1);                           \
@@ -850,7 +850,7 @@ void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
     ASSERT (MPN_SAME_OR_SEPARATE_P (__d, __s1, __n));   \
     ASSERT (MPN_SAME_OR_SEPARATE_P (__d, __s2, __n));   \
     do                                                  \
-      *__d++ = dop (*__s1++ op s2op *__s2++);           \
+      operation;                                        \
     while (--__n);                                      \
   } while (0)
 
@@ -858,56 +858,64 @@ void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_and_n __MPN(and_n)
 void mpn_and_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_and_n(d,s1,s2,n)  MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,&, )
+#define mpn_and_n(d, s1, s2, n) \
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ & *__s2++)
 #endif
 
 #if HAVE_NATIVE_mpn_andn_n
 #define mpn_andn_n __MPN(andn_n)
 void mpn_andn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_andn_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,&,~)
+#define mpn_andn_n(d, s1, s2, n) \
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ & ~*__s2++)
 #endif
 
 #if HAVE_NATIVE_mpn_nand_n
 #define mpn_nand_n __MPN(nand_n)
 void mpn_nand_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_nand_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n,~,&, )
+#define mpn_nand_n(d, s1, s2, n) \
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~ (*__s1++ & *__s2++))
 #endif
 
 #if HAVE_NATIVE_mpn_ior_n
 #define mpn_ior_n __MPN(ior_n)
 void mpn_ior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_ior_n(d,s1,s2,n)  MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,|, )
+#define mpn_ior_n(d, s1, s2, n) \
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ | *__s2++)
 #endif
 
 #if HAVE_NATIVE_mpn_iorn_n
 #define mpn_iorn_n __MPN(iorn_n)
 void mpn_iorn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_iorn_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,|,~)
+#define mpn_iorn_n(d, s1, s2, n) \
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ | ~*__s2++)
 #endif
 
 #if HAVE_NATIVE_mpn_nior_n
 #define mpn_nior_n __MPN(nior_n)
 void mpn_nior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_nior_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n,~,|, )
+#define mpn_nior_n(d, s1, s2, n) \
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~ (*__s1++ | *__s2++))
 #endif
 
 #if HAVE_NATIVE_mpn_xor_n
 #define mpn_xor_n __MPN(xor_n)
 void mpn_xor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_xor_n(d,s1,s2,n)  MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,^, )
+#define mpn_xor_n(d, s1, s2, n) \
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = *__s1++ ^ *__s2++)
 #endif
 
 #if HAVE_NATIVE_mpn_xnor_n
 #define mpn_xnor_n __MPN(xnor_n)
 void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_xnor_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n,~,^, )
+#define mpn_xnor_n(d, s1, s2, n) \
+  MPN_LOGOPS_N_INLINE (d, s1, s2, n, *__d++ = ~ (*__s1++ ^ *__s2++))
 #endif
 
 /* n==0 is allowed and is considered a zero value.  */
