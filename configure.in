@@ -1698,13 +1698,19 @@ esac
 #   sigaction - not in mingw
 #   sigaltstack - not in mingw, old AIX (reputedly)
 #   sigstack - not in mingw
-#   strnlen - glibc extension
+#   strnlen - glibc extension (some other systems too)
 #   syssgi - IRIX specific
 #   times - not in mingw
 #
 # clock_gettime is in librt on *-*-osf5.1.  We could look for it
 # there, but that's not worth bothering with unless it has a decent
 # resolution (in a quick test clock_getres said only 1 millisecond).
+#
+# AC_FUNC_STRNLEN is not used because we don't want the AC_LIBOBJ
+# replacement setups it gives.  It detects a faulty strnlen on AIX, but
+# missing out on that test is ok since our only use of strnlen is in
+# __gmp_replacement_vsnprintf which is not required on AIX since it has a
+# vsnprintf.
 #
 AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time sigaction sigaltstack sigstack syssgi strchr strnlen strtoul sysconf sysctl sysctlbyname times)
 
