@@ -8672,7 +8672,7 @@ the GCC package @uref{ftp://ftp.gnu.org/gnu/gcc/}
 @item
 Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
 Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @texlinebreak{}
-@uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}
+@uref{http://data.mpi-sb.mpg.de/internet/reports.nsf/NumberView/1998-1-022}
 
 @item
 Torbjorn Granlund and Peter L. Montgomery, ``Division by Invariant Integers
