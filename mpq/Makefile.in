@@ -125,7 +125,7 @@ INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
-  canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
+  abs.c canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
   get_den.c get_num.c init.c inv.c mul.c neg.c out_str.c set.c set_den.c \
   set_num.c set_si.c set_ui.c equal.c set_z.c set_d.c set_f.c swap.c
 
@@ -149,7 +149,7 @@ LIBS = @LIBS@
 ANSI2KNR = $(top_builddir)/ansi2knr
 libmpq_la_LDFLAGS = 
 libmpq_la_LIBADD = 
-am_libmpq_la_OBJECTS =  canonicalize$U.lo clear$U.lo cmp$U.lo \
+am_libmpq_la_OBJECTS =  abs$U.lo canonicalize$U.lo clear$U.lo cmp$U.lo \
 cmp_ui$U.lo div$U.lo get_d$U.lo get_den$U.lo get_num$U.lo init$U.lo \
 inv$U.lo mul$U.lo neg$U.lo out_str$U.lo set$U.lo set_den$U.lo \
 set_num$U.lo set_si$U.lo set_ui$U.lo equal$U.lo set_z$U.lo set_d$U.lo \
@@ -236,6 +236,8 @@ libmpq.la: $(libmpq_la_OBJECTS) $(libmpq_la_DEPENDENCIES)
 	$(COMPILE) -c `cygpath -w $<`
 .c.lo:
 	$(LTCOMPILE) -c -o $@ $<
+abs_.c: abs.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/abs.c; then echo $(srcdir)/abs.c; else echo abs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > abs_.c
 add_.c: add.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c
 canonicalize_.c: canonicalize.c $(ANSI2KNR)
@@ -286,10 +288,10 @@ sub_.c: sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c
 swap_.c: swap.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/swap.c; then echo $(srcdir)/swap.c; else echo swap.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > swap_.c
-add_.$(OBJEXT) add_.lo canonicalize_.$(OBJEXT) canonicalize_.lo \
-clear_.$(OBJEXT) clear_.lo cmp_.$(OBJEXT) cmp_.lo cmp_ui_.$(OBJEXT) \
-cmp_ui_.lo div_.$(OBJEXT) div_.lo equal_.$(OBJEXT) equal_.lo \
-get_d_.$(OBJEXT) get_d_.lo get_den_.$(OBJEXT) get_den_.lo \
+abs_.$(OBJEXT) abs_.lo add_.$(OBJEXT) add_.lo canonicalize_.$(OBJEXT) \
+canonicalize_.lo clear_.$(OBJEXT) clear_.lo cmp_.$(OBJEXT) cmp_.lo \
+cmp_ui_.$(OBJEXT) cmp_ui_.lo div_.$(OBJEXT) div_.lo equal_.$(OBJEXT) \
+equal_.lo get_d_.$(OBJEXT) get_d_.lo get_den_.$(OBJEXT) get_den_.lo \
 get_num_.$(OBJEXT) get_num_.lo init_.$(OBJEXT) init_.lo inv_.$(OBJEXT) \
 inv_.lo mul_.$(OBJEXT) mul_.lo neg_.$(OBJEXT) neg_.lo \
 out_str_.$(OBJEXT) out_str_.lo set_.$(OBJEXT) set_.lo set_d_.$(OBJEXT) \
