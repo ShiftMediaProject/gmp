@@ -1,3 +1,8 @@
+2000-07-26  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/isprime.c: Handle any number of arguments and print
+	classification for each.  Add `-q' option for old behaviour.
+
 2000-07-26  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options): Mention djgpp stack size.
