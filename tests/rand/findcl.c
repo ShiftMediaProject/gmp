@@ -79,6 +79,7 @@ main (int argc, char *argv[])
 	{
 	  mpz_out_str (stdout, 10, a);
 	  puts ("");
+	  fflush (stdout);
 	}
 
       if (lose < best)
@@ -87,6 +88,7 @@ main (int argc, char *argv[])
 	  printf ("best (lose=%d): ", lose);
 	  mpz_out_str (stdout, 10, a);
 	  puts ("");
+	  fflush (stdout);
 	}
     }
 
