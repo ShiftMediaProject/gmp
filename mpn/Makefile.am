@@ -52,7 +52,13 @@ COMPILE_FLAGS =	\
 	$(CPP) $(COMPILE_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
 	$(COMPILE) -c tmp-$*.s -o $@
 	rm -f tmp-$*.s
+
+# We have to rebuild the static object file without -DPIC to CPP.
+# FIXME: Teach libtool how to assemble with a preprocessor pass (CPP
+# or m4).
 .S.lo:
 	$(CPP) $(COMPILE_FLAGS) -DPIC $< | grep -v '^#' >tmp-$*.s
 	$(LTCOMPILE) -c tmp-$*.s -o $@
+	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
+	$(COMPILE) -c tmp-$*.s -o $*.o
 	rm -f tmp-$*.s
