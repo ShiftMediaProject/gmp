@@ -13,7 +13,7 @@
 	* mpn/generic/popham.c: Handle limb bitsizes of 4, 8, 16.
 	Suffix all 32-bit constant with `L'.
 	Use CNST_LIMB for 64-bit constants.
-	
+
 2000-12-13  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (FIB_THRESHOLD): Defaults for 4,8,16 bits per limb, and
@@ -54,6 +54,10 @@
 	* mpn/generic/perfsqr.c: Generalize PP handling for machines with
 	limbs of < 32 bits.  Allow PP_INVERTED to be undefined.
 	* mpz/pprime_p.c: Likewise.
+
+2000-12-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_1.c: Declare parameters in C89 style.
 
 2000-12-10  Kevin Ryde  <kevin@swox.se>
 
