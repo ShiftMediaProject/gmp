@@ -1786,35 +1786,35 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 /* Better flags handling than the generic C gives on i386, saving a few
    bytes of code and maybe a cycle or two.  */
 
-#define MPN_IORD_U(ptr, incr, aors)                     \
-  do {                                                  \
-    mp_ptr  __ptr_dummy;                                \
-    if (__builtin_constant_p (incr) && (incr) == 1)     \
-      {                                                 \
-        __asm__ __volatile__                            \
-          ("\n" ASM_L(top) ":\n"                        \
-           "\t" aors " $1, (%0)\n"                      \
-           "\tleal 4(%0),%0\n"                          \
-           "\tjc " ASM_L(top)                           \
-           : "=r" (__ptr_dummy)                         \
-           : "0"  (ptr)                                 \
-           : "memory");                                 \
-      }                                                 \
-    else                                                \
-      {                                                 \
-        __asm__ __volatile__                            \
-          (   aors  " %2,(%0)\n"                        \
-           "\tjnc " ASM_L(done) "\n"                    \
-           ASM_L(top) ":\n"                             \
-           "\t" aors " $1,4(%0)\n"                      \
-           "\tleal 4(%0),%0\n"                          \
-           "\tjc " ASM_L(top) "\n"                      \
-           ASM_L(done) ":\n"                            \
-           : "=r" (__ptr_dummy)                         \
-           : "0"  (ptr),                                \
-             "ri" (incr)                                \
-           : "memory");                                 \
-      }                                                 \
+#define MPN_IORD_U(ptr, incr, aors)					\
+  do {									\
+    mp_ptr  __ptr_dummy;						\
+    if (__builtin_constant_p (incr) && (incr) == 1)			\
+      {									\
+        __asm__ __volatile__						\
+          ("\n" ASM_L(top) ":\n"					\
+           "\t" aors " $1, (%0)\n"					\
+           "\tleal 4(%0),%0\n"						\
+           "\tjc " ASM_L(top)						\
+           : "=r" (__ptr_dummy)						\
+           : "0"  (ptr)							\
+           : "memory");							\
+      }									\
+    else								\
+      {									\
+        __asm__ __volatile__						\
+          (   aors  " %2,(%0)\n"					\
+           "\tjnc " ASM_L(done) "\n"					\
+           ASM_L(top) ":\n"						\
+           "\t" aors " $1,4(%0)\n"					\
+           "\tleal 4(%0),%0\n"						\
+           "\tjc " ASM_L(top) "\n"					\
+           ASM_L(done) ":\n"						\
+           : "=r" (__ptr_dummy)						\
+           : "0"  (ptr),						\
+             "ri" (incr)						\
+           : "memory");							\
+      }									\
   } while (0)
 
 #define MPN_INCR_U(ptr, size, incr)  MPN_IORD_U (ptr, incr, "addl")
@@ -2278,9 +2278,9 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
   mpn_modexact_1c_odd (src, size, divisor, CNST_LIMB(0))
 #endif
 
-#define MPN_MOD_OR_MODEXACT_1_ODD(src,size,divisor)     \
-  (ABOVE_THRESHOLD (size, MODEXACT_1_ODD_THRESHOLD)     \
-   ? mpn_modexact_1_odd (src, size, divisor)            \
+#define MPN_MOD_OR_MODEXACT_1_ODD(src,size,divisor)			\
+  (ABOVE_THRESHOLD (size, MODEXACT_1_ODD_THRESHOLD)			\
+   ? mpn_modexact_1_odd (src, size, divisor)				\
    : mpn_mod_1 (src, size, divisor))
 
 
@@ -2307,28 +2307,28 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
 #define modlimb_invert_table  __gmp_modlimb_invert_table
 __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
-#define modlimb_invert(inv,n)                                           \
-  do {                                                                  \
-    mp_limb_t  __n = (n);                                               \
-    mp_limb_t  __inv;                                                   \
-    ASSERT ((__n & 1) == 1);                                            \
-                                                                        \
-    __inv = modlimb_invert_table[(__n/2) & 0x7F]; /*  8 */              \
-    if (GMP_NUMB_BITS > 8)   __inv = 2 * __inv - __inv * __inv * __n;   \
-    if (GMP_NUMB_BITS > 16)  __inv = 2 * __inv - __inv * __inv * __n;   \
-    if (GMP_NUMB_BITS > 32)  __inv = 2 * __inv - __inv * __inv * __n;   \
-                                                                        \
-    if (GMP_NUMB_BITS > 64)                                             \
-      {                                                                 \
-        int  __invbits = 64;                                            \
-        do {                                                            \
-          __inv = 2 * __inv - __inv * __inv * __n;                      \
-          __invbits *= 2;                                               \
-        } while (__invbits < GMP_NUMB_BITS);                            \
-      }                                                                 \
-                                                                        \
-    ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);                        \
-    (inv) = __inv & GMP_NUMB_MASK;                                      \
+#define modlimb_invert(inv,n)						\
+  do {									\
+    mp_limb_t  __n = (n);						\
+    mp_limb_t  __inv;							\
+    ASSERT ((__n & 1) == 1);						\
+									\
+    __inv = modlimb_invert_table[(__n/2) & 0x7F]; /*  8 */		\
+    if (GMP_NUMB_BITS > 8)   __inv = 2 * __inv - __inv * __inv * __n;	\
+    if (GMP_NUMB_BITS > 16)  __inv = 2 * __inv - __inv * __inv * __n;	\
+    if (GMP_NUMB_BITS > 32)  __inv = 2 * __inv - __inv * __inv * __n;	\
+									\
+    if (GMP_NUMB_BITS > 64)						\
+      {									\
+	int  __invbits = 64;						\
+	do {								\
+	  __inv = 2 * __inv - __inv * __inv * __n;			\
+	  __invbits *= 2;						\
+	} while (__invbits < GMP_NUMB_BITS);				\
+      }									\
+									\
+    ASSERT ((__inv * __n & GMP_NUMB_MASK) == 1);			\
+    (inv) = __inv & GMP_NUMB_MASK;					\
   } while (0)
 
 /* Multiplicative inverse of 3, modulo 2^GMP_NUMB_BITS.
@@ -2349,28 +2349,28 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
    Anything congruent to -a would be fine for the one limb congruence
    tests.  */ 
 
-#define NEG_MOD(r, a, d)                                        \
-  do {                                                          \
-    ASSERT ((d) != 0);                                          \
-    ASSERT_LIMB (a);                                            \
-    ASSERT_LIMB (d);                                            \
-                                                                \
-    if ((a) <= (d))                                             \
-      {                                                         \
-        /* small a is reasonably likely */                      \
-        (r) = (d) - (a);                                        \
-      }                                                         \
-    else                                                        \
-      {                                                         \
-        unsigned   __twos;                                      \
-        mp_limb_t  __dnorm;                                     \
-        count_leading_zeros (__twos, d);                        \
-        __twos -= GMP_NAIL_BITS;                                \
-        __dnorm = (d) << __twos;                                \
-        (r) = ((a) <= __dnorm ? __dnorm : 2*__dnorm) - (a);     \
-      }                                                         \
-                                                                \
-    ASSERT_LIMB (r);                                            \
+#define NEG_MOD(r, a, d)						\
+  do {									\
+    ASSERT ((d) != 0);							\
+    ASSERT_LIMB (a);							\
+    ASSERT_LIMB (d);							\
+									\
+    if ((a) <= (d))							\
+      {									\
+        /* small a is reasonably likely */				\
+        (r) = (d) - (a);						\
+      }									\
+    else								\
+      {									\
+        unsigned   __twos;						\
+        mp_limb_t  __dnorm;						\
+        count_leading_zeros (__twos, d);				\
+        __twos -= GMP_NAIL_BITS;					\
+        __dnorm = (d) << __twos;					\
+        (r) = ((a) <= __dnorm ? __dnorm : 2*__dnorm) - (a);		\
+      }									\
+									\
+    ASSERT_LIMB (r);							\
   } while (0)
 
 /* A bit mask of all the least significant zero bits of n, or -1 if n==0. */
@@ -2382,11 +2382,11 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
    an int.  */
 
 #if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_alpha_CIX
-#define ULONG_PARITY(p, n)                              \
-  do {                                                  \
-    int __p;                                            \
-    __asm__ ("ctpop %1, %0" : "=r" (__p) : "r" (n));    \
-    (p) = __p & 1;                                      \
+#define ULONG_PARITY(p, n)						\
+  do {									\
+    int __p;								\
+    __asm__ ("ctpop %1, %0" : "=r" (__p) : "r" (n));			\
+    (p) = __p & 1;							\
   } while (0)
 #endif
 
@@ -2401,42 +2401,42 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #if defined (__GNUC__) && ! defined (NO_ASM) && defined (__ia64)
 /* unsigned long is either 32 or 64 bits depending on the ABI, zero extend
    to a 64 bit unsigned long long for popcnt */
-#define ULONG_PARITY(p, n)                              \
-  do {                                                  \
-    unsigned long long  __n = (unsigned long) (n);      \
-    int  __p;                                           \
-    asm ("popcnt %0 = %1" : "=r" (__p) : "r" (__n));    \
-    (p) = __p & 1;                                      \
+#define ULONG_PARITY(p, n)						\
+  do {									\
+    unsigned long long  __n = (unsigned long) (n);			\
+    int  __p;								\
+    __asm__ ("popcnt %0 = %1" : "=r" (__p) : "r" (__n));		\
+    (p) = __p & 1;							\
   } while (0)
 #endif
 
 #if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_FAMILY_x86
-#define ULONG_PARITY(p, n)              \
-  do {                                  \
-    char           __p;                 \
-    unsigned long  __n = (n);           \
-    __n ^= (__n >> 16);                 \
-    asm ("xorb   %h1, %b1\n"            \
-         "setpo  %0\n"                  \
-         : "=qm" (__p), "=q" (__n)      \
-         : "1" (__n));                  \
-    (p) = __p;                          \
+#define ULONG_PARITY(p, n)						\
+  do {									\
+    char	   __p;							\
+    unsigned long  __n = (n);						\
+    __n ^= (__n >> 16);							\
+    __asm__ ("xorb %h1, %b1\n\t"					\
+	     "setpo %0"							\
+	 : "=qm" (__p), "=q" (__n)					\
+	 : "1" (__n));							\
+    (p) = __p;								\
   } while (0)
 #endif
 
 #if ! defined (ULONG_PARITY)
-#define ULONG_PARITY(p, n)                      \
-  do {                                          \
-    unsigned long  __n = (n);                   \
-    int  __p = 0;                               \
-    do                                          \
-      {                                         \
-        __p ^= 0x96696996L >> (__n & 0x1F);     \
-        __n >>= 5;                              \
-      }                                         \
-    while (__n != 0);                           \
-                                                \
-    (p) = __p & 1;                              \
+#define ULONG_PARITY(p, n)						\
+  do {									\
+    unsigned long  __n = (n);						\
+    int  __p = 0;							\
+    do									\
+      {									\
+        __p ^= 0x96696996L >> (__n & 0x1F);				\
+        __n >>= 5;							\
+      }									\
+    while (__n != 0);							\
+									\
+    (p) = __p & 1;							\
   } while (0)
 #endif
 
@@ -2446,16 +2446,16 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
    anything other than bit-fields, so use "asm".  */
 #if defined (__GNUC__) && ! defined (NO_ASM)                    \
   && HAVE_HOST_CPU_FAMILY_powerpc && BITS_PER_MP_LIMB == 32
-#define BSWAP_LIMB(dst, src)                                            \
-  do {                                                                  \
-    mp_limb_t  __bswapl_src = (src);                                    \
-    mp_limb_t  __tmp1 = __bswapl_src >> 24;            /* low byte */   \
-    mp_limb_t  __tmp2 = __bswapl_src << 24;            /* high byte */  \
-    asm ("rlwimi %0, %2, 24, 16, 23"                   /* 2nd low */    \
-         : "=r" (__tmp1) : "0" (__tmp1), "r" (__bswapl_src));           \
-    asm ("rlwimi %0, %2,  8,  8, 15"                   /* 3nd high */   \
-         : "=r" (__tmp2) : "0" (__tmp2), "r" (__bswapl_src));           \
-    (dst) = __tmp1 | __tmp2;                           /* whole */      \
+#define BSWAP_LIMB(dst, src)						\
+  do {									\
+    mp_limb_t  __bswapl_src = (src);					\
+    mp_limb_t  __tmp1 = __bswapl_src >> 24;		/* low byte */	\
+    mp_limb_t  __tmp2 = __bswapl_src << 24;		/* high byte */	\
+    __asm__ ("rlwimi %0, %2, 24, 16, 23"		/* 2nd low */	\
+	 : "=r" (__tmp1) : "0" (__tmp1), "r" (__bswapl_src));		\
+    __asm__ ("rlwimi %0, %2,  8,  8, 15"		/* 3nd high */	\
+	 : "=r" (__tmp2) : "0" (__tmp2), "r" (__bswapl_src));		\
+    (dst) = __tmp1 | __tmp2;				/* whole */	\
   } while (0)
 #endif
 
@@ -2467,31 +2467,31 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #if defined (__GNUC__) && ! defined (NO_ASM)            \
   && HAVE_HOST_CPU_FAMILY_x86 && ! HAVE_HOST_CPU_i386   \
   && BITS_PER_MP_LIMB == 32
-#define BSWAP_LIMB(dst, src)                    \
-  do {                                          \
-    asm ("bswap %0" : "=r" (dst) : "0" (src));  \
+#define BSWAP_LIMB(dst, src)						\
+  do {									\
+    __asm__ ("bswap %0" : "=r" (dst) : "0" (src));			\
   } while (0)
 #endif
 
 #if defined (__GNUC__) && ! defined (NO_ASM)    \
   && defined (__ia64) && BITS_PER_MP_LIMB == 64
-#define BSWAP_LIMB(dst, src)                                    \
-  do {                                                          \
-    asm ("mux1 %0 = %1, @rev" : "=r" (dst) :  "r" (src));       \
+#define BSWAP_LIMB(dst, src)						\
+  do {									\
+    __asm__ ("mux1 %0 = %1, @rev" : "=r" (dst) :  "r" (src));		\
   } while (0)
 #endif
 
 /* As per glibc. */
 #if defined (__GNUC__) && ! defined (NO_ASM)                    \
   && HAVE_HOST_CPU_FAMILY_m68k && BITS_PER_MP_LIMB == 32
-#define BSWAP_LIMB(dst, src)            \
-  do {                                  \
-    mp_limb_t  __bswapl_src = (src);    \
-    asm ("ror%.w %#8, %0\n"             \
-         "swap   %0\n"                  \
-         "ror%.w %#8, %0"               \
-         : "=d" (dst)                   \
-         : "0" (__bswapl_src));         \
+#define BSWAP_LIMB(dst, src)						\
+  do {									\
+    mp_limb_t  __bswapl_src = (src);					\
+    __asm__ ("ror%.w %#8, %0\n\t"					\
+	     "swap   %0\n\t"						\
+	     "ror%.w %#8, %0"						\
+	     : "=d" (dst)						\
+	     : "0" (__bswapl_src));					\
   } while (0)
 #endif
 
@@ -2556,15 +2556,15 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
       || HAVE_HOST_CPU_powerpc604e                                      \
       || HAVE_HOST_CPU_powerpc750                                       \
       || HAVE_HOST_CPU_powerpc7400)
-#define BSWAP_LIMB_FETCH(limb, src)     \
-  do {                                  \
-    mp_srcptr  __blf_src = (src);       \
-    mp_limb_t  __limb;                  \
-    __asm__ ("lwbrx %0, 0, %1"          \
-             : "=r" (__limb)            \
-             : "r" (__blf_src),         \
-               "m" (*__blf_src));       \
-    (limb) = __limb;                    \
+#define BSWAP_LIMB_FETCH(limb, src)					\
+  do {									\
+    mp_srcptr  __blf_src = (src);					\
+    mp_limb_t  __limb;							\
+    __asm__ ("lwbrx %0, 0, %1"						\
+	     : "=r" (__limb)						\
+	     : "r" (__blf_src),						\
+	       "m" (*__blf_src));					\
+    (limb) = __limb;							\
   } while (0)
 #endif
 
@@ -2581,14 +2581,14 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
       || HAVE_HOST_CPU_powerpc604e                                      \
       || HAVE_HOST_CPU_powerpc750                                       \
       || HAVE_HOST_CPU_powerpc7400)
-#define BSWAP_LIMB_STORE(dst, limb)     \
-  do {                                  \
-    mp_ptr     __dst = (dst);           \
-    mp_limb_t  __limb = (limb);         \
-    __asm__ ("stwbrx %1, 0, %2"         \
-             : "=m" (*__dst)            \
-             : "r" (__limb),            \
-               "r" (__dst));            \
+#define BSWAP_LIMB_STORE(dst, limb)					\
+  do {									\
+    mp_ptr     __dst = (dst);						\
+    mp_limb_t  __limb = (limb);						\
+    __asm__ ("stwbrx %1, 0, %2"						\
+	     : "=m" (*__dst)						\
+	     : "r" (__limb),						\
+	       "r" (__dst));						\
   } while (0)
 #endif
 
@@ -2638,18 +2638,18 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
    implement the POPC instruction.  Disable pattern for now.  */
 #if 0
 #if defined __GNUC__ && defined __sparc_v9__ && BITS_PER_MP_LIMB == 64
-#define popc_limb(result, input)                        \
-  do {                                                  \
-    DItype __res;                                       \
-    asm ("popc %1,%0" : "=r" (result) : "rI" (input));  \
+#define popc_limb(result, input)					\
+  do {									\
+    DItype __res;							\
+    __asm__ ("popc %1,%0" : "=r" (result) : "rI" (input));		\
   } while (0)
 #endif
 #endif
 
 #if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_alpha_CIX
-#define popc_limb(result, input)                                \
-  do {                                                          \
-    __asm__ ("ctpop %1, %0" : "=r" (result) : "r" (input));     \
+#define popc_limb(result, input)					\
+  do {									\
+    __asm__ ("ctpop %1, %0" : "=r" (result) : "r" (input));		\
   } while (0)
 #endif
 
@@ -2663,9 +2663,9 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
 #if defined (__GNUC__) && defined (__ia64) && GMP_LIMB_BITS == 64       \
   && ! defined (NO_ASM)
-#define popc_limb(result, input)                                \
-  do {                                                          \
-    asm ("popcnt %0 = %1" : "=r" (result) : "r" (input));       \
+#define popc_limb(result, input)					\
+  do {									\
+    __asm__ ("popcnt %0 = %1" : "=r" (result) : "r" (input));		\
   } while (0)
 #endif
 
@@ -2878,7 +2878,7 @@ double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATT
    overflows to occur.  */
 #if (HAVE_HOST_CPU_FAMILY_m68k || HAVE_HOST_CPU_FAMILY_x86)
 #ifdef __GNUC__
-#define FORCE_DOUBLE(d)  do { asm ("" : "=m" (d) : "0" (d)); } while (0)
+#define FORCE_DOUBLE(d)  do { __asm__ ("" : "=m" (d) : "0" (d)); } while (0)
 #else
 /* FIXME: Not sure if an automatic volatile will use memory, it seems to in
    gcc, so give it a try for other compilers.  */
