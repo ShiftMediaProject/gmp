@@ -640,7 +640,7 @@ case $host in
     gcc_cflags="-g -O2 $fomit_frame_pointer"
     GMP_INCLUDE_MPN(x86/x86-defs.m4)
     extra_functions="udiv umul"
-    CALLING_CONVENTIONS_OBJS="x86call.o x86check.o"
+    CALLING_CONVENTIONS_OBJS='x86call.lo x86check$U.lo'
 
     # Availability of rdtsc is checked at run-time.
     SPEED_CYCLECOUNTER_OBJ=pentium.lo
