@@ -29,9 +29,9 @@ CODE ORGANIZATION
 
 	mpn/ia64          itanium-2, and generic ia64
 
-The code here has been optimized primarily for itanium-2.  Very few
-itanium-1 chips were ever sold, and itanium-2 is more powerful, so the
-latter is what we concentrate on.
+The code here has been optimized primarily for Itanium 2.  Very few Itanium 1
+chips were ever sold, and Itanium 2 is more powerful, so the latter is what
+we concentrate on.
 
 
 
@@ -40,8 +40,8 @@ CHIP NOTES
 The IA-64 ISA keeps instructions three and three in 128 bit bundles.
 Programmers/compilers need to put explicit breaks `;;' when there are WAW or
 RAW dependencies, with some notable exceptions.  Such "breaks" are typically
-be at the end of a bundle, but can be put between operations within a bundle
-too.
+at the end of a bundle, but can be put between operations within some bundle
+types too.
 
 The Itanium 1 and Itanium 2 implementations can under ideal conditions
 execute two bundles per cycle.  The Itanium 2 allows 4 of these instructions
@@ -56,8 +56,8 @@ latencies, 9 cycles on the Itanium 1 and 6 cycles on the Itanium 2.
 
 The software pipeline stuff using br.ctop instruction causes delays, since
 many issue slots are taken up by instructions with zero predicates, and
-since about many extra instructions are needed to set things up.  These
-features are designed for code density, not maximum speed.
+since many extra instructions are needed to set things up.  These features
+are clearly designed for code density, speed.
 
 Misc pipeline limitations (Itanium 1):
 * The getf.sig instruction can only execute in M0.
@@ -98,7 +98,6 @@ gas is happy with it, and past versions of HP had seemed ok.
 macro expansion.  See comments in ia64-defs.m4.
 
 
-
 REGISTER USAGE
 
 Special:
@@ -107,20 +106,19 @@ Special:
    r8: return value
    r12: stack pointer (sp)
    r13: thread pointer (tp)
-Caller-saves: r8-r11 r14-r31 f6-f15
-Caller-saves but rotating: r32- f32-
+Caller-saves: r8-r11 r14-r31 f6-f15 f32-f127
+Caller-saves but rotating: r32-
 
 
 ================================================================
 mpn_add_n, mpn_sub_n:
 
-The current code runs at 2 c/l on Itanium 1 and 1.25 c/l on Itanium 2.
-(Neeed to verify Itanium 1 time.)
+The current code runs at 1.25 c/l on Itanium 2.
 
 ================================================================
 mpn_mul_1:
 
-The current code runs at 2.5 c/l on Itanium 1 and 2 c/l on Itanium 2.
+The current code runs at 2 c/l on Itanium 2.
 
 Using a blocked approach, working off of 4 separate places in the operands,
 one could make use of the xma accumulation, and approach 1 c/l.
@@ -130,15 +128,10 @@ one could make use of the xma accumulation, and approach 1 c/l.
 	xma.hu
 	stf8  [wrp]
 
-
 ================================================================
 mpn_addmul_1:
 
-The current code runs at 3 c/l on Itanium 1 and 2 c/l on Itanium 2.
-
-We could do even better on Itanium 2 using ldfp8 and the carry propagation
-scheme of mpn_add_n, 1.67 c/l.  But that would probably give very little
-actual speedup.
+The current code runs at 2 c/l on Itanium 2.
 
 It seems possible to use a blocked approach, as with mpn_mul_1.  We should
 read rp[] to integer registers, allowing for just one getf.sig per cycle.
@@ -148,20 +141,18 @@ read rp[] to integer registers, allowing for just one getf.sig per cycle.
 	xma.l
 	xma.hu
 	getf.sig
-	add+cmp+add
+	add+add+cmp+cmp
 	st8  [wrp]
 
-These 9 instructions can be scheduled in 1.5 cycles, and with the 4
-cycle latency of xma, this means we need at least 3 blocks.
+These 10 instructions can be scheduled to approach 1.667 cycles, and with
+the 4 cycle latency of xma, this means we need at least 3 blocks.  Using
+ldfp8 we could approach 1.583 c/l.
 
 ================================================================
 mpn_submul_1:
 
-The current code runs at 4 c/l on Itanium 1 and 3 c/l on Itanium 2.  Getting
-to 2 c/l requires ldfp8 with all alignment overhead that implies.  Getting
-to 2.25 c/l would be straightforward with 4x unrolling.
-
-The current code uses modulo scheduled loops.  Not good.
+The current code runs at 2.25 c/l on Itanium 2.  Getting to 2 c/l requires
+ldfp8 with all alignment headache that implies.
 
 ================================================================
 mpn_addmul_N
@@ -229,23 +220,23 @@ Loop:	ldf8		u0 = [r33], 8
 ================================================================
 mpn_lshift, mpn_rshift
 
-The current code runs at 2 c/l on Itanium 1 and 1 cycle/limb on Itanium 2.
+The current code runs at 1 cycle/limb on Itanium 2.
 
 Using 63 separate loops, we could use the double-word shrp instruction.
 That instruction has a plain single-cycle latency.  We need 63 loops since
 this instruction only accept immediate count.  That would lead to a somewhat
-silly code size, but the speed would be 1 c/l on itanium, and 0.75 c/l on
-itanium2 (by using shrp each cycle plus shl/shr going down I1 for a further
-limb every second cycle).
+silly code size, but the speed would be 0.75 c/l on Itanium 2 (by using shrp
+each cycle plus shl/shr going down I1 for a further limb every second
+cycle).
 
 ================================================================
 mpn_copyi, mpn_copyd
 
-The current code runs at 1 cycle/limb on Itanium 1 and 0.5 c/l on Itanium 2.
-But that is just for L1 cache hit.  On Itanium 2, the 4-way unrolled loop
-takes just 2 cycles, and thus load-use scheduling isn't great.  It might be
-best to use modulo scheduled loops, since that will allow us to do better
-load-use scheduling without too much unrolling.
+The current code runs at 0.5 c/l on Itanium 2.  But that is just for L1
+cache hit.  The 4-way unrolled loop takes just 2 cycles, and thus load-use
+scheduling isn't great.  It might be best to actually use modulo scheduled
+loops, since that will allow us to do better load-use scheduling without too
+much unrolling.
 
 Depending on size or operand alignment, we get 1 c/l or 0.5 c/l on Itanium
 2, according to tests/devel/try.  Cache bank conflicts?
