@@ -1420,7 +1420,7 @@ tune_set_str (void)
   param.function = speed_mpn_set_str_basecase;
   param.function2 = speed_mpn_set_str_subquad;
   param.min_size[0] = 100;
-  param.max_size[0] = 50000;
+  param.max_size[0] = 150000;
   one (set_str_threshold, 1, &param);
 }
 
