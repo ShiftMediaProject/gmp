@@ -720,7 +720,7 @@ space for @var{x}. Otherwise an error will occur.
 
 @node Assigning Floats, Simultaneous Float Init & Assign, Initializing Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
-@subsection Assignment Functions
+@section Assignment Functions
 @cindex Float assignment functions
 
 These functions assign new values to already initialized floats
@@ -785,7 +785,7 @@ using a third auxiliary variable.
 
 @node Simultaneous Float Init & Assign, Converting Floats, Assigning Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
-@subsection Combined Initialization and Assignment Functions
+@section Combined Initialization and Assignment Functions
 @cindex Initialization and assignment functions
 
 @deftypefn Macro int mpfr_init_set (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
@@ -1279,7 +1279,7 @@ they should always be zero.
 @c @end deftypefun
 
 
-@node Miscellaneous Float Functions, , I/O of Floats, Floating-point Functions
+@node Miscellaneous Float Functions,  , I/O of Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 @cindex Miscellaneous float functions
@@ -1384,7 +1384,7 @@ Mathieu Dutour contributed the functions @code{mpfr_atan} and @code{mpfr_asin},
 David Daney contributed the hyperbolic and inverse hyperbolic functions,
 the base-2 exponential, and the factorial function.
 
-@node References, , Contributors, Top
+@node References, Concept Index, Contributors, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered References
 
@@ -1406,12 +1406,12 @@ Donald E. Knuth, "The Art of Computer Programming", vol 2,
 
 @end itemize
 
-@node Concept Index, , , Top
+@node Concept Index, Function Index, References, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered Concept Index
 @printindex cp
 
-@node Function Index, , , Top
+@node Function Index,  , Concept Index, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered Function and Type Index
 @printindex fn
