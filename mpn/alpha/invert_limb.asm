@@ -31,7 +31,7 @@ include(`../config.m4')
 
 ASM_START()
 
-INT64($C36,X(43e0000000000000))		C 2^63
+FLOAT64($C36,9223372036854775808.0)		C 2^63
 
 PROLOGUE_GP(mpn_invert_normalized_limb)
 	lda	r30,-16(r30)

@@ -6,10 +6,10 @@ define(`ASM_START',
 	.set noat')
 
 define(`X',`0x$1')
-define(`INT64',
+define(`FLOAT64',
 	`
 	.align	3
-$1:	.quad	$2')
+$1:	.t_floating $2')
 
 define(`PROLOGUE',
 	`

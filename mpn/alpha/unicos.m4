@@ -4,10 +4,10 @@ define(`ASM_START',
 	`.ident	dummy')
 
 define(`X',`^X$1')
-define(`INT64',
+define(`FLOAT64',
 	`dnl
 	.psect	$1@crud,data
-$1:	.quad	$2
+$1:	.t_floating $2
 	.endp')
 
 define(`PROLOGUE',
