@@ -1,3 +1,9 @@
+2001-05-13  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in, gmp.texi, Makefile.am, mpz/Makefile.am, tests/mpz/t-pow.c:
+	Remove mpz_si_pow_ui, pending full si support.
+	* mpz/si_pow_ui.c: Remove file.
+
 2001-05-11  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/dive_1.asm: New file.
