@@ -650,6 +650,18 @@ __GMP_DECLSPEC mp_limb_t mpn_addmul_3 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_
 #define mpn_addmul_4 __MPN(addmul_4)
 __GMP_DECLSPEC mp_limb_t mpn_addmul_4 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
+#define mpn_addmul_5 __MPN(addmul_5)
+__GMP_DECLSPEC mp_limb_t mpn_addmul_5 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
+#define mpn_addmul_6 __MPN(addmul_6)
+__GMP_DECLSPEC mp_limb_t mpn_addmul_6 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
+#define mpn_addmul_7 __MPN(addmul_7)
+__GMP_DECLSPEC mp_limb_t mpn_addmul_7 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
+#define mpn_addmul_8 __MPN(addmul_8)
+__GMP_DECLSPEC mp_limb_t mpn_addmul_8 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
+
 #define mpn_addsub_n __MPN(addsub_n)
 __GMP_DECLSPEC mp_limb_t mpn_addsub_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
