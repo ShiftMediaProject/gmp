@@ -1,6 +1,6 @@
 /* mpz_cdiv_q_2exp, mpz_fdiv_q_2exp -- quotient from mpz divided by 2^n.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2001, 2002 Free Software
+Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2001, 2002, 2004 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 static void __gmpz_cfdiv_q_2exp _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir))) REGPARM_ATTR (1);
 #define cfdiv_q_2exp(w,u,cnt,dir)  __gmpz_cfdiv_q_2exp (REGPARM_3_1 (w,u,cnt,dir))
 
-static void
+REGPARM_ATTR (1) static void
 cfdiv_q_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
 {
   mp_size_t  wsize, usize, abs_usize, limb_cnt, i;
