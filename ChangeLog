@@ -19,6 +19,27 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-04  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Build Options): Add --enable-cxx.
+	(Notes for Particular Systems): Mention pentium4 performance and SSE2.
+	(Known Build Problems): Remove vax jsobgtr note, no longer needed.
+	(Converting Floats): Tweak mpf_get_str description.
+	(Low-level Functions): Correction to mpn_gcdext destination space
+	requiremeents.
+	(C++ Formatted Output): New section.
+	(Language Bindings): Add ALP
+	(Contributors): Add Paul Zimmermann's square root, update my things.
+
+	* acinclude.m4 (GMP_PROG_CC_IS_GNU, GMP_PROG_CXX_WORKS): Send compiler
+	errors to config.log.
+
+	* mpq/Makefile.am (INCLUDES): Remove -DOPERATION_$*, not needed.
+
+	* mpn/x86/*.asm: Change references to old README.family to just README.
+
+	* mpz/README: Remove file, now adequately covered in the manual.
+
 2001-10-03  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/copyi.asm: New file.
