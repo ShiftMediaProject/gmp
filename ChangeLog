@@ -1,5 +1,9 @@
 2000-05-24  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/divexact.c: Read pointers after reallocation.
+	Compare `quot' and `den' instead of `qp' and `dp' in overlap check.
+	Use MPN_COPY_INCR for copying from `np'.
+
 	(*-*-aix4.[3-9]*): Disable shared libs just for problematic AIX
 	versions.
 	* configure.in (*-cray-unicos*): Disable asm syntax checking; set
