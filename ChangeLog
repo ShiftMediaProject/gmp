@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2004-01-12  Niels Möller  <niels@s3.kth.se>
 
+	* tests/tests.h: Added refmpn_free_limbs prototype.
+	* tests/refmpn.c (refmpn_free_limbs): New function.
+
 	* tests/mpn/t-hgcd.c: Try the same kind of random inputs as for
 	mpz/t-gcd.
 
