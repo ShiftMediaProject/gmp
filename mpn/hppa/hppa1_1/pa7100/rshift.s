@@ -1,7 +1,7 @@
 ; HP-PA  __gmpn_rshift --
 ; This is optimized for the PA7100, where is runs at 3.25 cycles/limb
 
-; Copyright 1992, 1994, 2000 Free Software Foundation, Inc.
+; Copyright 1992, 1994, 2000, 2001 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 
@@ -29,7 +29,7 @@
 
 	.code
 	.export		__gmpn_rshift
-__gmpn_rshift
+	.label		__gmpn_rshift
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry
@@ -42,7 +42,8 @@ __gmpn_rshift
 	addib,<=	-5,%r24,L$rest
 	vshd		%r29,%r22,%r20
 
-L$loop	ldws,ma		4(0,%r25),%r22
+	.label	L$loop
+	ldws,ma		4(0,%r25),%r22
 	stws,ma		%r20,4(0,%r26)
 	vshd		%r22,%r29,%r20
 	ldws,ma		4(0,%r25),%r29
@@ -56,9 +57,12 @@ L$loop	ldws,ma		4(0,%r25),%r22
 	addib,>		-4,%r24,L$loop
 	vshd		%r29,%r22,%r20
 
-L$rest	addib,=		4,%r24,L$end1
+	.label	L$rest
+	addib,=		4,%r24,L$end1
 	nop
-L$eloop	ldws,ma		4(0,%r25),%r22
+
+	.label	L$eloop
+	ldws,ma		4(0,%r25),%r22
 	stws,ma		%r20,4(0,%r26)
 	addib,<=	-1,%r24,L$end2
 	vshd		%r22,%r29,%r20
@@ -67,12 +71,17 @@ L$eloop	ldws,ma		4(0,%r25),%r22
 	addib,>		-1,%r24,L$eloop
 	vshd		%r29,%r22,%r20
 
-L$end1	stws,ma		%r20,4(0,%r26)
+	.label	L$end1
+	stws,ma		%r20,4(0,%r26)
 	vshd		%r0,%r29,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)
-L$end2	stws,ma		%r20,4(0,%r26)
-L$0004	vshd		%r0,%r22,%r20
+
+	.label	L$end2
+	stws,ma		%r20,4(0,%r26)
+
+	.label	L$0004
+	vshd		%r0,%r22,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)
 
