@@ -26,9 +26,8 @@ LDADD = ../libmpfr.a $(top_builddir)/libgmp.la $(LIBM)
 
 if WANT_MPFR
 check_PROGRAMS= reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui tdump teq texp tget_str tlog tlog2 tmul tmul_2exp tmul_ui tout_str tpi tpow trandom tround tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tsin_cos tswap ttrunc
+TESTS = $(check_PROGRAMS)
 endif
 
-TESTS = $(check_PROGRAMS)
- 
 ../libmpfr.a:
 	cd $(top_srcdir)/mpfr; make libmpfr.a  
