@@ -124,9 +124,9 @@
 # giving mpn_lshift_generic etc.
 #
 #
-# MPN/TESTS PROGRAMS
+# TESTS/DEVEL PROGRAMS
 #
-# Makefile.many also has rules to build the mpn/tests programs with suitable
+# Makefile.many also has rules to build the tests/devel programs with suitable
 # renaming, and with some parameters for correctness or speed.  This is less
 # convenient than the speed and try programs, but provides an independent
 # check.  For example,
@@ -220,16 +220,22 @@
 # Try to detect duplicate function names here, rather than leaving it to
 # link errors.
 #
+# Follow #include or include_mpn's when checking for PROLOGUE's to recognise
+# entrypoints.
+#
+# Make a way to measure alternate versions of longlong.h macros.
+#
+# Add mpn_invert_limb and mpn_count_leading_zeros.
+#
 #
 # LIMITATIONS
 #
-# No attempt is made to support ansi2knr-ification, so an ANSI capable
-# compiler will be needed.
+# Not sure if ansi2knr works, an ANSI capable compiler is probably needed.
 #
 # Some of the command lines can become very long when a lot of files are
 # included.  If this is a problem on a given system the only suggestion is
-# to just run many.pl for just those that are actually wanted at a
-# particular time.
+# to run many.pl for just those that are actually wanted at a particular
+# time.
 
 
 use strict;
@@ -459,6 +465,15 @@ my @table =
      },
 
      {
+       'regexp'=> 'mode1o',
+       'funs'  => ['modexact_1_odd'],
+       'ret'   => 'mp_limb_t',
+       'args'  => 'mp_srcptr src, mp_size_t size, unsigned divisor',
+       'try'   => 'none',
+       'speed_flags'=> 'FLAG_R',
+     },
+
+     {
        'regexp'=> 'sb_divrem_mn',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_ptr qp, mp_ptr np, mp_size_t nsize, mp_srcptr dp, mp_size_t dsize',
@@ -536,7 +551,11 @@ my @table =
      },
      );
 
-if (defined $ENV{table2}) { push @table, @{$ENV{table2}}; }
+if (defined $ENV{table2}) {
+  my @newtable = @{$ENV{table2}};
+  push @newtable, @table;
+  @table = @newtable;
+}
 
 
 my %pictable = 
@@ -677,7 +696,7 @@ foreach my $file_full (@files) {
   my $objs;
   if (defined $t->{'mulfunc'}) { $objs = $t->{'mulfunc'}; }
   else                         { $objs = [$file_match]; }
-  print "objs $objs @$objs\n" if $opt{'t'};
+  print "objs @$objs\n" if $opt{'t'};
 
   my $ret = $t->{'ret'};
   die "$FILE return type not defined\n" if ! defined $ret;
@@ -685,10 +704,10 @@ foreach my $file_full (@files) {
 
   my $mpX = $t->{'mpX'};
   $mpX = "mpn" if ! defined $mpX;
+  print "mpX $mpX\n" if $opt{'t'};
 
   my $carrys;
   if (defined $t->{'carrys'}) { $carrys = $t->{'carrys'}; }
-  elsif ($lang eq '.c')       { $carrys = [''];           }
   else                        { $carrys = ['','c'];       }
   print "carrys $carrys @$carrys\n" if $opt{'t'};
   
@@ -720,10 +739,11 @@ foreach my $file_full (@files) {
   foreach my $obj (@{$objs}) {
     print "obj $obj\n" if $opt{'t'};
 
-    my $funs;
-    if (defined $t->{'funs'}) { $funs = $t->{'funs'}; }
-    else                      { $funs = [$obj]; }
-    print "funs $funs @$funs\n" if $opt{'t'};
+    my $funs = $t->{'funs'};
+    print "funs @$funs\n" if $opt{'t'};
+
+    $funs = [$obj] if ! defined $funs;
+    print "funs @$funs\n" if $opt{'t'};
 
     foreach my $pic (map {$pictable{$_}} @pic_choices) {
       print "pic $pic->{'suffix'}\n" if $opt{'t'};
@@ -773,9 +793,9 @@ foreach my $file_full (@files) {
       }
       $MANY_OBJS .= " $objbase.o";
       
-      my $tests_program = "$top_srcdir/mpn/tests/$obj.c";
+      my $tests_program = "$top_srcdir/tests/devel/$obj.c";
       if (-f $tests_program) {
-	$tests_program = "\$(top_srcdir)/mpn/tests/$obj.c";
+	$tests_program = "\$(top_srcdir)/tests/devel/$obj.c";
 	print_ansi2knr("tests_${objbase}",
 		       $tests_program,
 		       "\\\n$renaming\t\t\$(CFLAGS_TESTS_SP)");
@@ -926,28 +946,21 @@ MANY_OBJS = $MANY_OBJS
 
 CLEAN = $CLEAN
 
-TRY_TESTS_OBJS = ref\$(U).o spinner\$(U).o trace\$(U).o \\
-	\$(CALLING_CONVENTIONS_OBJS)
-
-\$(TRY_TESTS_OBJS):
-	cd \$(top_builddir)/mpn/tests; \$(MAKE) \$(TRY_TESTS_OBJS)
-	for i in \$(TRY_TESTS_OBJS); do cp \$(top_builddir)/mpn/tests/\$\$i .; done
-
 speed-many: \$(MANY_OBJS) speed-many\$(U).o libspeed.la $extra_libraries
 	\$(LINK) \$(LDFLAGS) speed-many\$(U).o \$(MANY_OBJS) \$(LDADD) \$(LIBS) $extra_libraries
 
-try-many: \$(MANY_OBJS) \$(TRY_TESTS_OBJS) try-many\$(U).o libspeed.la $extra_libraries
-	\$(LINK) \$(LDFLAGS) try-many\$(U).o \$(MANY_OBJS) \$(TRY_TESTS_OBJS) \$(LDADD) \$(LIBS) $extra_libraries
+try-many: \$(MANY_OBJS) try-many\$(U).o libspeed.la $extra_libraries
+	\$(LINK) \$(LDFLAGS) try-many\$(U).o \$(MANY_OBJS)  \$(LDADD) \$(LIBS) $extra_libraries
 
-try-many.o: try-many.c \$(top_srcdir)/mpn/tests/try.c $tryinc
-	\$(COMPILE) -I\$(top_srcdir)/mpn/tests -c try-many.c
+try-many.o: try-many.c \$(top_srcdir)/tests/devel/try.c $tryinc
+	\$(COMPILE) -I\$(top_srcdir)/tests/devel -c try-many.c
 
 EOF
 
 print_ansi2knr("speed-many");
 print_ansi2knr("try-many",
-	       "$(top_srcdir)/mpn/tests/try-many",
-	       "-I\$(top_srcdir)/mpn/tests");
+	       "$(top_srcdir)/tests/devel/try-many",
+	       "-I\$(top_srcdir)/tests/devel");
 
 print MAKEFILE <<EOF;
 RM_TMP_S = rm -f
