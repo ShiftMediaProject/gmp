@@ -1,3 +1,8 @@
+2001-09-16  Kevin Ryde  <kevin@swox.se>
+
+	* printf/doprnt.c: '#' means showpoint and showtrailing for %e, %f, %g.
+	* tests/printf/t-printf.c (check_f): More test cases.
+
 2001-09-14  Kevin Ryde  <kevin@swox.se>
 	
 	* ChangeLog: Merge in tests/rand/ChangeLog.
