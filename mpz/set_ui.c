@@ -1,6 +1,6 @@
 /* mpz_set_ui(integer, val) -- Assign INTEGER with a small value VAL.
 
-Copyright 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_set_ui (mpz_ptr dest, unsigned long int val)
-#else
-mpz_set_ui (dest, val)
-     mpz_ptr dest;
-     unsigned long int val;
-#endif
 {
   /* We don't check if the allocation is enough, since the rest of the
      package ensures it's at least 1, which is what we need here.  */

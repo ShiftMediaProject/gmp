@@ -1,7 +1,7 @@
 /* mpz_popcount(mpz_ptr op) -- Population count of OP.  If the operand is
    negative, return ~0 (a novel representation of infinity).
 
-Copyright 1994, 1996 Free Software Foundation, Inc.
+Copyright 1994, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,12 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 unsigned long int
-#if __STDC__
 mpz_popcount (mpz_srcptr u)
-#else
-mpz_popcount (u)
-     mpz_srcptr u;
-#endif
 {
   mp_size_t usize;
 

@@ -2,7 +2,7 @@
    long runs of consecutive ones and zeros in the binary representation.
    Meant for testing of other MP routines.
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,14 +27,7 @@ MA 02111-1307, USA. */
 static void gmp_rrandomb _PROTO ((mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits));
 
 void
-#if __STDC__
 mpz_rrandomb (mpz_ptr x, gmp_randstate_t rstate, unsigned long int nbits)
-#else
-mpz_rrandomb (x, rstate, nbits)
-     mpz_ptr x;
-     gmp_randstate_t rstate;
-     unsigned long int nbits;
-#endif
 {
   mp_size_t nl = 0;
 
@@ -56,14 +49,7 @@ mpz_rrandomb (x, rstate, nbits)
 #define BITS_PER_CHUNK 4
 
 static void
-#if __STDC__
 gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
-#else
-gmp_rrandomb (rp, rstate, nbits)
-     mp_ptr rp;
-     gmp_randstate_t rstate;
-     unsigned long int nbits;
-#endif
 {
   int nb;
   int bit_pos;

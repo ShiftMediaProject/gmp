@@ -1,7 +1,7 @@
 /* mpz_sqrtrem(root,rem,x) -- Set ROOT to floor(sqrt(X)) and REM
    to the remainder, i.e. X - ROOT**2.
 
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,26 +27,11 @@ MA 02111-1307, USA. */
 #include "mp.h"
 #endif
 
+void
 #ifndef BERKELEY_MP
-void
-#if __STDC__
 mpz_sqrtrem (mpz_ptr root, mpz_ptr rem, mpz_srcptr op)
-#else
-mpz_sqrtrem (root, rem, op)
-     mpz_ptr root;
-     mpz_ptr rem;
-     mpz_srcptr op;
-#endif
 #else /* BERKELEY_MP */
-void
-#if __STDC__
 msqrt (mpz_srcptr op, mpz_ptr root, mpz_ptr rem)
-#else
-msqrt (op, root, rem)
-     mpz_srcptr op;
-     mpz_ptr root;
-     mpz_ptr rem;
-#endif
 #endif /* BERKELEY_MP */
 {
   mp_size_t op_size, root_size, rem_size;

@@ -2,7 +2,7 @@
    If X has an inverse, return non-zero and store inverse in INVERSE,
    otherwise, return 0 and put garbage in INVERSE.
 
-Copyright 1996, 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,13 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 int
-#if __STDC__
 mpz_invert (mpz_ptr inverse, mpz_srcptr x, mpz_srcptr n)
-#else
-mpz_invert (inverse, x, n)
-     mpz_ptr inverse;
-     mpz_srcptr x, n;
-#endif
 {
   mpz_t gcd, tmp;
   mp_size_t xsize, nsize, size;

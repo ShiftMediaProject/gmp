@@ -1,6 +1,6 @@
 /* mpz_powm_ui(res,base,exp,mod) -- Set RES to (base**exp) mod MOD.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.
@@ -26,15 +26,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 void
-#if __STDC__
 mpz_powm_ui (mpz_ptr res, mpz_srcptr base, unsigned long int exp, mpz_srcptr mod)
-#else
-mpz_powm_ui (res, base, exp, mod)
-     mpz_ptr res;
-     mpz_srcptr base;
-     unsigned long int exp;
-     mpz_srcptr mod;
-#endif
 {
   mp_ptr rp, mp, bp;
   mp_size_t msize, bsize, rsize;

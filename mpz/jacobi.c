@@ -1,7 +1,7 @@
 /* mpz_jacobi (op1, op2).
    Contributed by Bennet Yee (bsy) at Carnegie-Mellon University
 
-Copyright 1991, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,12 +25,7 @@ MA 02111-1307, USA. */
 /* Precondition:  both p and q are positive */
 
 int
-#if	__STDC__
 mpz_jacobi (mpz_srcptr pi, mpz_srcptr qi)
-#else
-mpz_jacobi (pi, qi)
-     mpz_srcptr pi, qi;
-#endif
 {
 #if GCDCHECK
   int retval;

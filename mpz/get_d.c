@@ -1,6 +1,6 @@
 /* double mpz_get_d (mpz_t src) -- Return the double approximation to SRC.
 
-Copyright 1996, 1997, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,12 +25,7 @@ MA 02111-1307, USA. */
 
 
 double
-#if __STDC__
 mpz_get_d (mpz_srcptr src)
-#else
-mpz_get_d (src)
-     mpz_srcptr src;
-#endif
 {
   double res;
   mp_size_t size;

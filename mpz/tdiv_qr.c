@@ -1,7 +1,7 @@
 /* mpz_tdiv_qr(quot,rem,dividend,divisor) -- Set QUOT to DIVIDEND/DIVISOR,
    and REM to DIVIDEND mod DIVISOR.
 
-Copyright 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,33 +27,11 @@ MA 02111-1307, USA. */
 #include "mp.h"
 #endif
 
-
+void
 #ifndef BERKELEY_MP
-
-void
-#if __STDC__
 mpz_tdiv_qr (mpz_ptr quot, mpz_ptr rem, mpz_srcptr num, mpz_srcptr den)
-#else
-mpz_tdiv_qr (quot, rem, num, den)
-     mpz_ptr quot;
-     mpz_ptr rem;
-     mpz_srcptr num;
-     mpz_srcptr den;
-#endif
-
 #else /* BERKELEY_MP */
-
-void
-#if __STDC__
 mdiv (mpz_srcptr num, mpz_srcptr den, mpz_ptr quot, mpz_ptr rem)
-#else
-mdiv (num, den, quot, rem)
-     mpz_srcptr num;
-     mpz_srcptr den;
-     mpz_ptr    quot;
-     mpz_ptr    rem;
-#endif
-
 #endif /* BERKELEY_MP */
 {
   mp_size_t ql;

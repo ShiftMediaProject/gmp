@@ -1,7 +1,7 @@
 /* mpz_kronecker_ui -- Kronecker/Jacobi symbol. */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,13 +30,7 @@ MA 02111-1307, USA.
    code for odd b is nice and short. */
 
 int
-#if __STDC__
 mpz_kronecker_ui (mpz_srcptr a, unsigned long b)
-#else
-mpz_kronecker_ui (a, b)
-     mpz_srcptr    a;
-     unsigned long b;
-#endif
 {
   int  twos;
 

@@ -1,6 +1,6 @@
 /* mpz_ui_pow_ui(res, base, exp) -- Set RES to BASE**EXP.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.
@@ -28,14 +28,7 @@ MA 02111-1307, USA. */
 static void mpz_pow2 _PROTO ((mpz_ptr r, mp_limb_t blimb, unsigned long int e, mp_limb_t rl));
 
 void
-#if __STDC__
 mpz_ui_pow_ui (mpz_ptr r, unsigned long int b, unsigned long int e)
-#else
-mpz_ui_pow_ui (r, b, e)
-     mpz_ptr r;
-     unsigned long int b;
-     unsigned long int e;
-#endif
 {
   mp_limb_t blimb = b;
   mp_limb_t rl;
@@ -74,15 +67,7 @@ mpz_ui_pow_ui (r, b, e)
 
 /* Multi-precision part of expontialization code.  */
 static void
-#if __STDC__
 mpz_pow2 (mpz_ptr r, mp_limb_t blimb, unsigned long int e, mp_limb_t rl)
-#else
-mpz_pow2 (r, blimb, e, rl)
-     mpz_ptr r;
-     mp_limb_t blimb;
-     unsigned long int e;
-     mp_limb_t rl;
-#endif
 {
   mp_ptr rp, tp;
   mp_size_t ralloc, rsize;

@@ -1,6 +1,6 @@
 /* mpz_tdiv_q -- divide two integers and produce a quotient.
 
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,14 +24,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 void
-#if __STDC__
 mpz_tdiv_q (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
-#else
-mpz_tdiv_q (quot, num, den)
-     mpz_ptr quot;
-     mpz_srcptr num;
-     mpz_srcptr den;
-#endif
 {
   mp_size_t ql;
   mp_size_t ns, ds, nl, dl;

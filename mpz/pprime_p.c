@@ -6,7 +6,7 @@
    positive is (1/4)**reps, where reps is the number of internal passes of the
    probabilistic algorithm.  Knuth indicates that 25 passes are reasonable.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001 Free Software
 Foundation, Inc.  Miller-Rabin code contributed by John Amanatides.
 
 This file is part of the GNU MP Library.
@@ -34,13 +34,7 @@ static int isprime _PROTO ((unsigned long int t));
 static int mpz_millerrabin _PROTO ((mpz_srcptr n, int reps));
 
 int
-#if __STDC__
 mpz_probab_prime_p (mpz_srcptr n, int reps)
-#else
-mpz_probab_prime_p (n, reps)
-     mpz_srcptr n;
-     int reps;
-#endif
 {
   mp_limb_t r;
 
@@ -142,12 +136,7 @@ mpz_probab_prime_p (n, reps)
 }
 
 static int
-#if __STDC__
 isprime (unsigned long int t)
-#else
-isprime (t)
-     unsigned long int t;
-#endif
 {
   unsigned long int q, r, d;
 
@@ -169,13 +158,7 @@ static int millerrabin _PROTO ((mpz_srcptr n, mpz_srcptr nm1,
                                 mpz_srcptr q, unsigned long int k));
 
 static int
-#if __STDC__
 mpz_millerrabin (mpz_srcptr n, int reps)
-#else
-mpz_millerrabin (n, reps)
-     mpz_srcptr n;
-     int reps;
-#endif
 {
   int r;
   mpz_t nm1, x, y, q;
@@ -225,18 +208,8 @@ mpz_millerrabin (n, reps)
 }
 
 static int
-#if __STDC__
 millerrabin (mpz_srcptr n, mpz_srcptr nm1, mpz_ptr x, mpz_ptr y,
              mpz_srcptr q, unsigned long int k)
-#else
-millerrabin (n, nm1, x, y, q, k)
-     mpz_srcptr n;
-     mpz_srcptr nm1;
-     mpz_ptr x;
-     mpz_ptr y;
-     mpz_srcptr q;
-     unsigned long int k;
-#endif
 {
   unsigned long int i;
 

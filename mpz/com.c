@@ -1,7 +1,7 @@
 /* mpz_com(mpz_ptr dst, mpz_ptr src) -- Assign the bit-complemented value of
    SRC to DST.
 
-Copyright 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_com (mpz_ptr dst, mpz_srcptr src)
-#else
-mpz_com (dst, src)
-     mpz_ptr dst;
-     mpz_srcptr src;
-#endif
 {
   mp_size_t size = src->_mp_size;
   mp_srcptr src_ptr;

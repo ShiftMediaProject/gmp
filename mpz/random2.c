@@ -2,7 +2,7 @@
    long runs of consecutive ones and zeros in the binary representation.
    Meant for testing of other MP routines.
 
-Copyright 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,13 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_random2 (mpz_ptr x, mp_size_t size)
-#else
-mpz_random2 (x, size)
-     mpz_ptr x;
-     mp_size_t size;
-#endif
 {
   mp_size_t abs_size;
 

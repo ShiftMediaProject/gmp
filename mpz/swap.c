@@ -1,6 +1,6 @@
 /* mpz_swap (dest_integer, src_integer) -- Swap U and V.
 
-Copyright 1997, 1998 Free Software Foundation, Inc.
+Copyright 1997, 1998, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_swap (mpz_ptr u, mpz_ptr v)
-#else
-mpz_swap (u, v)
-     mpz_ptr u;
-     mpz_ptr v;
-#endif
 {
   mp_ptr up, vp;
   mp_size_t usize, vsize;

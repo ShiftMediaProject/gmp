@@ -1,6 +1,6 @@
 /* mpz_set_d(integer, val) -- Assign INTEGER with a double value VAL.
 
-Copyright 1995, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1995, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_set_d (mpz_ptr r, double d)
-#else
-mpz_set_d (r, d)
-     mpz_ptr r;
-     double d;
-#endif
 {
   int negative;
   mp_limb_t tp[3];

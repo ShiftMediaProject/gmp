@@ -1,7 +1,7 @@
 /* mpz_root(root, u, nth) --  Set ROOT to floor(U^(1/nth)).
    Return an indication if the result is exact.
 
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -32,14 +32,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 int
-#if __STDC__
 mpz_root (mpz_ptr r, mpz_srcptr c, unsigned long int nth)
-#else
-mpz_root (r, c, nth)
-     mpz_ptr r;
-     mpz_srcptr c;
-     unsigned long int nth;
-#endif
 {
   mpz_t x, t0, t1, t2;
   __mpz_struct ccs, *cc = &ccs;

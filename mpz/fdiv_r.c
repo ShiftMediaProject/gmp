@@ -1,7 +1,7 @@
 /* mpz_fdiv_r -- Division rounding the quotient towards -infinity.
    The remainder gets the same sign as the denominator.
 
-Copyright 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright 1994, 1995, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,14 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_fdiv_r (mpz_ptr rem, mpz_srcptr dividend, mpz_srcptr divisor)
-#else
-mpz_fdiv_r (rem, dividend, divisor)
-     mpz_ptr rem;
-     mpz_srcptr dividend;
-     mpz_srcptr divisor;
-#endif
 {
   mp_size_t divisor_size = divisor->_mp_size;
   mpz_t temp_divisor;		/* N.B.: lives until function returns! */

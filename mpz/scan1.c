@@ -1,6 +1,6 @@
 /* mpz_scan1(op, startbit) -- Scan for the next set bit, starting at startbit.
 
-Copyright 1996 Free Software Foundation, Inc.
+Copyright 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 unsigned long int
-#if __STDC__
 mpz_scan1 (mpz_srcptr u, unsigned long int starting_bit)
-#else
-mpz_scan1 (u, starting_bit)
-     mpz_srcptr u;
-     unsigned long int starting_bit;
-#endif
 {
   return mpn_scan1 (u->_mp_d, starting_bit);
 }

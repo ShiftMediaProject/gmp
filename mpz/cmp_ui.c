@@ -1,7 +1,7 @@
 /* mpz_cmp_ui.c -- Compare a mpz_t a with an mp_limb_t b.  Return positive,
   zero, or negative based on if a > b, a == b, or a < b.
 
-Copyright 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 int
-#if __STDC__
 _mpz_cmp_ui (mpz_srcptr u, unsigned long int v_digit)
-#else
-_mpz_cmp_ui (u, v_digit)
-     mpz_srcptr u;
-     unsigned long int v_digit;
-#endif
 {
   mp_size_t usize = u->_mp_size;
 

@@ -4,7 +4,7 @@
    result.  If STRING is not NULL, the caller must ensure enough space is
    available to store the result.
 
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,14 +27,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 char *
-#if __STDC__
 mpz_get_str (char *res_str, int base, mpz_srcptr x)
-#else
-mpz_get_str (res_str, base, x)
-     char *res_str;
-     int base;
-     mpz_srcptr x;
-#endif
 {
   mp_ptr xp;
   mp_size_t x_size = x->_mp_size;

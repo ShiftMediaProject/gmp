@@ -1,7 +1,7 @@
 /* mpz_out_str(stream, base, integer) -- Output to STREAM the multi prec.
    integer INTEGER in base BASE.
 
-Copyright 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,14 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 size_t
-#if __STDC__
 mpz_out_str (FILE *stream, int base, mpz_srcptr x)
-#else
-mpz_out_str (stream, base, x)
-     FILE *stream;
-     int base;
-     mpz_srcptr x;
-#endif
 {
   mp_ptr xp;
   mp_size_t x_size = x->_mp_size;

@@ -1,7 +1,7 @@
 /* mpz_kronecker_si -- Kronecker/Jacobi symbol. */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,13 +33,7 @@ MA 02111-1307, USA.
    long, because 0x80..00 doesn't fit in a signed long. */
 
 int
-#if __STDC__
 mpz_kronecker_si (mpz_srcptr a, long b)
-#else
-mpz_kronecker_si (a, b)
-     mpz_srcptr a;
-     long       b;
-#endif
 {
   int  result_bit1;
   int  twos;

@@ -1,6 +1,6 @@
 /* mpz_and -- Logical and.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.
@@ -24,14 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_and (mpz_ptr res, mpz_srcptr op1, mpz_srcptr op2)
-#else
-mpz_and (res, op1, op2)
-     mpz_ptr res;
-     mpz_srcptr op1;
-     mpz_srcptr op2;
-#endif
 {
   mp_srcptr op1_ptr, op2_ptr;
   mp_size_t op1_size, op2_size;

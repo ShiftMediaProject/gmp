@@ -1,7 +1,7 @@
 /* mpz_perfect_power_p(arg) -- Return non-zero if ARG is a perfect power,
    zero otherwise.
 
-Copyright 1998, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -64,12 +64,7 @@ static const unsigned short primes[] =
 
 
 int
-#if __STDC__
 mpz_perfect_power_p (mpz_srcptr u)
-#else
-mpz_perfect_power_p (u)
-     mpz_srcptr u;
-#endif
 {
   unsigned long int prime;
   unsigned long int n, n2;
@@ -205,12 +200,7 @@ n2prime:
 }
 
 static unsigned long int
-#if __STDC__
 gcd (unsigned long int a, unsigned long int b)
-#else
-gcd (a, b)
-     unsigned long int a, b;
-#endif
 {
   int an2, bn2, n2;
 
@@ -249,12 +239,7 @@ gcd (a, b)
 }
 
 static int
-#if __STDC__
 isprime (unsigned long int t)
-#else
-isprime (t)
-     unsigned long int t;
-#endif
 {
   unsigned long int q, r, d;
 

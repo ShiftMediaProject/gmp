@@ -1,7 +1,7 @@
 /* mpz_legendre (op1, op2).
    Contributed by Bennet Yee (bsy) at Carnegie-Mellon University
 
-Copyright 1992, 1996 Free Software Foundation, Inc.
+Copyright 1992, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,12 +29,7 @@ MA 02111-1307, USA. */
 /* Precondition:  both p and q are positive */
 
 int
-#if __STDC__
 mpz_legendre (mpz_srcptr pi, mpz_srcptr qi)
-#else
-mpz_legendre (pi, qi)
-mpz_srcptr pi, qi;
-#endif
 {
   mpz_t p, q, qdiv2;
 #ifdef Q_MINUS_1

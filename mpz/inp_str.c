@@ -1,7 +1,8 @@
 /* mpz_inp_str(dest_integer, stream, base) -- Input a number in base
    BASE from stdio stream STREAM and store the result in DEST_INTEGER.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1998, 2000, 2001 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,13 +27,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 static int
-#if __STDC__
 digit_value_in_base (int c, int base)
-#else
-digit_value_in_base (c, base)
-     int c;
-     int base;
-#endif
 {
   int digit;
 
@@ -51,14 +46,7 @@ digit_value_in_base (c, base)
 }
 
 size_t
-#if __STDC__
 mpz_inp_str (mpz_ptr x, FILE *stream, int base)
-#else
-mpz_inp_str (x, stream, base)
-     mpz_ptr x;
-     FILE *stream;
-     int base;
-#endif
 {
   char *str;
   size_t alloc_size, str_size;

@@ -1,7 +1,7 @@
 /* mpz_random -- Generate a random mpz_t of specified size.
    This function is non-portable and generates poor random numbers.
 
-Copyright 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,13 +25,7 @@ MA 02111-1307, USA. */
 #include "urandom.h"
 
 void
-#if __STDC__
 mpz_random (mpz_ptr x, mp_size_t size)
-#else
-mpz_random (x, size)
-     mpz_ptr x;
-     mp_size_t size;
-#endif
 {
   mp_size_t i;
   mp_limb_t ran;

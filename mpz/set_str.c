@@ -4,7 +4,7 @@
    the base in the C standard way, i.e.  0xhh...h means base 16,
    0oo...o means base 8, otherwise assume base 10.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2000 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2000, 2001 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -31,13 +31,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 static int
-#if __STDC__
 digit_value_in_base (int c, int base)
-#else
-digit_value_in_base (c, base)
-     int c;
-     int base;
-#endif
 {
   int digit;
 
@@ -56,14 +50,7 @@ digit_value_in_base (c, base)
 }
 
 int
-#if __STDC__
 mpz_set_str (mpz_ptr x, const char *str, int base)
-#else
-mpz_set_str (x, str, base)
-     mpz_ptr x;
-     const char *str;
-     int base;
-#endif
 {
   size_t str_size;
   char *s, *begs;

@@ -1,6 +1,6 @@
 /* mpz_bin_uiui - compute n over k.
 
-Copyright 1998, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -40,14 +40,7 @@ MA 02111-1307, USA. */
   SIZ(r) -= (PTR(r)[SIZ(r)-1] == 0);
 
 void
-#if __STDC__
 mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
-#else
-mpz_bin_ui (r, n, k)
-     mpz_ptr r;
-     mpz_srcptr n;
-     unsigned long int k;
-#endif
 {
   mpz_t      ni;
   mp_limb_t  i;

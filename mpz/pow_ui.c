@@ -1,6 +1,7 @@
 /* mpz_pow_ui(res, base, exp) -- Set RES to BASE**EXP.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,26 +27,11 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+void
 #ifndef BERKELEY_MP
-void
-#if __STDC__
 mpz_pow_ui (mpz_ptr r, mpz_srcptr b, unsigned long int e)
-#else
-mpz_pow_ui (r, b, e)
-     mpz_ptr r;
-     mpz_srcptr b;
-     unsigned long int e;
-#endif
 #else /* BERKELEY_MP */
-void
-#if __STDC__
 rpow (const MINT *b, signed short int e, MINT *r)
-#else
-rpow (b, e, r)
-     const MINT *b;
-     signed short int e;
-     MINT *r;
-#endif
 #endif /* BERKELEY_MP */
 {
   mp_ptr rp, bp, tp, xp;

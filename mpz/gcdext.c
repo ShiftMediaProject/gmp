@@ -1,7 +1,7 @@
 /* mpz_gcdext(g, s, t, a, b) -- Set G to gcd(a, b), and S and T such that
    g = as + bt.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 2000 Free Software
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 2000, 2001 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -26,16 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_gcdext (mpz_ptr g, mpz_ptr s, mpz_ptr t, mpz_srcptr a, mpz_srcptr b)
-#else
-mpz_gcdext (g, s, t, a, b)
-     mpz_ptr g;
-     mpz_ptr s;
-     mpz_ptr t;
-     mpz_srcptr a;
-     mpz_srcptr b;
-#endif
 {
   mp_size_t asize, bsize, usize, vsize;
   mp_srcptr ap, bp;

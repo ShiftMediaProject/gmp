@@ -5,7 +5,7 @@
    i.e.  0xhh...h means base 16, 0oo...o means base 8, otherwise
    assume base 10.
 
-Copyright 1991, 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,14 +28,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 int
-#if __STDC__
 mpz_init_set_str (mpz_ptr x, const char *str, int base)
-#else
-mpz_init_set_str (x, str, base)
-     mpz_ptr x;
-     const char *str;
-     int base;
-#endif
 {
   x->_mp_alloc = 1;
   x->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);

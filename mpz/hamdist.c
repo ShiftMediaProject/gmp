@@ -3,7 +3,7 @@
    could make the function well-defined when both operands are negative, but
    that would probably not be worth the trouble.
 
-Copyright 1994, 1996 Free Software Foundation, Inc.
+Copyright 1994, 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,13 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 unsigned long int
-#if __STDC__
 mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
-#else
-mpz_hamdist (u, v)
-     mpz_srcptr u;
-     mpz_srcptr v;
-#endif
 {
   mp_srcptr up, vp;
   mp_size_t usize, vsize, size;

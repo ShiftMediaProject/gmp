@@ -1,7 +1,7 @@
 /* mpz_tdiv_ui(dividend, divisor_limb)
    -- Return DIVDEND mod DIVISOR_LIMB.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998 Free Software Foundation,
+Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.
@@ -25,13 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 unsigned long int
-#if __STDC__
 mpz_tdiv_ui (mpz_srcptr dividend, unsigned long int divisor)
-#else
-mpz_tdiv_ui (dividend, divisor)
-     mpz_srcptr dividend;
-     unsigned long int divisor;
-#endif
 {
   mp_size_t dividend_size;
   mp_size_t size;

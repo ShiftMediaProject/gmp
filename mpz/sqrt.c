@@ -1,6 +1,6 @@
 /* mpz_sqrt(root, u) --  Set ROOT to floor(sqrt(U)).
 
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_sqrt (mpz_ptr root, mpz_srcptr op)
-#else
-mpz_sqrt (root, op)
-     mpz_ptr root;
-     mpz_srcptr op;
-#endif
 {
   mp_size_t op_size, root_size;
   mp_ptr root_ptr, op_ptr;

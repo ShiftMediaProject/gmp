@@ -1,6 +1,6 @@
 /* _mpz_realloc -- make the mpz_t have NEW_SIZE digits allocated.
 
-Copyright 1991, 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void *
-#if __STDC__
 _mpz_realloc (mpz_ptr m, mp_size_t new_size)
-#else
-_mpz_realloc (m, new_size)
-     mpz_ptr m;
-     mp_size_t new_size;
-#endif
 {
   /* Never allocate zero space. */
   if (new_size == 0)

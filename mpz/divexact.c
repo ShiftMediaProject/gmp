@@ -1,6 +1,6 @@
 /* mpz_divexact -- finds quotient when known that quot * den == num && den != 0.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000 Free Software
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 2000, 2001 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -36,14 +36,7 @@ MA 02111-1307, USA.  */
 #include "longlong.h"
 
 void
-#if __STDC__
 mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
-#else
-mpz_divexact (quot, num, den)
-     mpz_ptr quot;
-     mpz_srcptr num;
-     mpz_srcptr den;
-#endif
 {
   mp_ptr qp, tp;
   mp_size_t qsize, tsize;

@@ -1,7 +1,7 @@
 /* mpz_powm(res,base,exp,mod) -- Set RES to (base**exp) mod MOD.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation, Inc.
-Contributed by Paul Zimmermann.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
+Inc.  Contributed by Paul Zimmermann.
 
 This file is part of the GNU MP Library.
 
@@ -71,28 +71,11 @@ redc (mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim, mp_ptr tp)
    4096   4918  4787  4707  4665* 4670
 */
 
+void
 #ifndef BERKELEY_MP
-void
-#if __STDC__
 mpz_powm (mpz_ptr res, mpz_srcptr base, mpz_srcptr e, mpz_srcptr mod)
-#else
-mpz_powm (res, base, e, mod)
-     mpz_ptr res;
-     mpz_srcptr base;
-     mpz_srcptr e;
-     mpz_srcptr mod;
-#endif
 #else /* BERKELEY_MP */
-void
-#if __STDC__
 pow (mpz_srcptr base, mpz_srcptr e, mpz_srcptr mod, mpz_ptr res)
-#else
-pow (base, e, mod, res)
-     mpz_srcptr base;
-     mpz_srcptr e;
-     mpz_srcptr mod;
-     mpz_ptr res;
-#endif
 #endif /* BERKELEY_MP */
 {
   mp_limb_t invm, *ep, c, mask;

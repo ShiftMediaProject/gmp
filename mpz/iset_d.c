@@ -1,7 +1,7 @@
 /* mpz_init_set_d(integer, val) -- Initialize and assign INTEGER with a double
    value VAL.
 
-Copyright 1996, 2000 Free Software Foundation, Inc.
+Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_init_set_d (mpz_ptr dest, double val)
-#else
-mpz_init_set_d (dest, val)
-     mpz_ptr dest;
-     double val;
-#endif
 {
   dest->_mp_alloc = 1;
   dest->_mp_d = (mp_ptr) (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);

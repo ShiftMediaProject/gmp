@@ -3,7 +3,7 @@
    always fit into the return type, the negative of the true remainder is
    returned.
 
-Copyright 1994, 1995, 1996, 1999 Free Software Foundation, Inc.
+Copyright 1994, 1995, 1996, 1999, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,15 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 unsigned long int
-#if __STDC__
 mpz_cdiv_qr_ui (mpz_ptr quot, mpz_ptr rem, mpz_srcptr dividend, unsigned long int divisor)
-#else
-mpz_cdiv_qr_ui (quot, rem, dividend, divisor)
-     mpz_ptr quot;
-     mpz_ptr rem;
-     mpz_srcptr dividend;
-     unsigned long int divisor;
-#endif
 {
   mp_size_t dividend_size;
   mp_size_t size;

@@ -1,7 +1,7 @@
 /* mpz_addmul_ui(prodsum, multiplier, small_multiplicand) --
    Add MULTIPLICATOR times SMALL_MULTIPLICAND to PRODSUM.
 
-Copyright 1997, 2000 Free Software Foundation, Inc.
+Copyright 1997, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -43,14 +43,7 @@ static mp_limb_t mpn_neg1 _PROTO ((mp_ptr, mp_size_t));
 #endif
 
 void
-#if __STDC__
 mpz_addmul_ui (mpz_ptr rz, mpz_srcptr az, unsigned long int bu)
-#else
-mpz_addmul_ui (rz, az, bu)
-     mpz_ptr rz;
-     mpz_srcptr az;
-     unsigned long int bu;
-#endif
 {
   mp_size_t rn, an;
   mp_ptr rp, ap;
@@ -190,13 +183,7 @@ mpz_addmul_ui (rz, az, bu)
 }
 
 static mp_limb_t
-#if __STDC__
 mpn_neg1 (mp_ptr rp, mp_size_t rn)
-#else
-mpn_neg1 (rp, rn)
-     mp_ptr rp;
-     mp_size_t rn;
-#endif
 {
   mp_size_t i;
 

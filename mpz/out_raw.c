@@ -1,7 +1,7 @@
 /* mpz_out_raw -- Output a mpz_t in binary.  Use an endianess and word size
    independent format.
 
-Copyright 1995 Free Software Foundation, Inc.
+Copyright 1995, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,13 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 size_t
-#if __STDC__
 mpz_out_raw (FILE *stream, mpz_srcptr x)
-#else
-mpz_out_raw (stream, x)
-     FILE *stream;
-     mpz_srcptr x;
-#endif
 {
   int i;
   mp_size_t s;

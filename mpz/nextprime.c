@@ -1,6 +1,6 @@
 /* mpz_nextprime(p,t) - compute the next prime > t and store that in p.
 
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpz_nextprime (mpz_ptr p, mpz_srcptr t)
-#else
-mpz_nextprime (p, t)
-     mpz_ptr    p;
-     mpz_srcptr t;
-#endif
 {
   mpz_add_ui (p, t, 1L);
   while (! mpz_probab_prime_p (p, 5))
@@ -56,13 +50,7 @@ status unsigned short primes[] =
 #define NUMBER_OF_PRIMES 167
 
 void
-#if __STDC__
 mpz_nextprime (mpz_ptr p, mpz_srcptr n)
-#else
-mpz_nextprime (p, n)
-     mpz_ptr p;
-     mpz_srcptr n;
-#endif
 {
   mpz_t tmp;
   unsigned short *moduli;

@@ -1,7 +1,7 @@
 /* mpz_tdiv_q_ui(quot, dividend, divisor_limb)
    -- Divide DIVIDEND by DIVISOR_LIMB and store the result in QUOT.
 
-Copyright 1991, 1993, 1994, 1996, 1998 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1998, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,14 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 unsigned long int
-#if __STDC__
 mpz_tdiv_q_ui (mpz_ptr quot, mpz_srcptr dividend, unsigned long int divisor)
-#else
-mpz_tdiv_q_ui (quot, dividend, divisor)
-     mpz_ptr quot;
-     mpz_srcptr dividend;
-     unsigned long int divisor;
-#endif
 {
   mp_size_t dividend_size;
   mp_size_t size;

@@ -1,7 +1,7 @@
 /* mpz_mul_ui/si (product, multiplier, small_multiplicand) -- Set PRODUCT to
    MULTIPLICATOR times SMALL_MULTIPLICAND.
 
-Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -42,15 +42,8 @@ Error, error, unrecognised OPERATION
 
 
 void
-#if __STDC__
 FUNCTION (mpz_ptr prod, mpz_srcptr mult,
           MULTIPLICAND_UNSIGNED long int small_mult)
-#else
-FUNCTION (prod, mult, small_mult)
-     mpz_ptr prod;
-     mpz_srcptr mult;
-     MULTIPLICAND_UNSIGNED long int small_mult;
-#endif
 {
   mp_size_t size = mult->_mp_size;
   mp_size_t sign_product = size;
