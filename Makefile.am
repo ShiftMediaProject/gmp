@@ -89,13 +89,10 @@ EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf
 
 if WANT_CXX
 GMPXX_HEADERS_OPTION = gmpxx.h
-if WANT_MPFR
-MPFRXX_HEADERS_OPTION = mpfrxx.h
 endif
-endif
-EXTRA_DIST += gmpxx.h mpfrxx.h
+EXTRA_DIST += gmpxx.h
 
-include_HEADERS = $(GMPXX_HEADERS_OPTION) $(MPFRXX_HEADERS_OPTION)
+include_HEADERS = $(GMPXX_HEADERS_OPTION)
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
