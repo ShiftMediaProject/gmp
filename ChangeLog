@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2002-12-20  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz/t-perfsqr.c (check_sqrt): Print more variables upon
+	failure.
+
 	* mpn/generic/rootrem.c: In Newton loop, pad qp with leading zero.
 
 2002-12-19  Torbjorn Granlund  <tege@swox.com>
