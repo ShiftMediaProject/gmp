@@ -124,8 +124,9 @@
      be left available for CPUs without caching.  Depending how karatsuba etc
      is applied to unequal size operands it might be possible to assume M is
      always smallish.
-<li> <code>mpz_probab_prime_p</code> could take a remainder mod 2^24-1 to
-     quickly check divisibility by 3, 5, 7, 13 and 17 (factors of 2^24-1).
+<li> <code>mpz_probab_prime_p</code> and <code>mpn_perfect_square_p</code>
+     could take a remainder mod 2^24-1 to quickly get remainders mod 3, 5, 7,
+     13 and 17 (factors of 2^24-1).
 <li> <code>mpf_set_str</code> produces low zero limbs when a string has a
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
@@ -174,10 +175,12 @@
 <li> POWER2/POWER2SC: Schedule <code>mpn_lshift</code>/<code>mpn_rshift</code>.
      Will bring time from 1.75 to 1.25 cycles/limb.
 <li> X86: Optimize non-MMX <code>mpn_lshift</code> for shifts by 1.  (See Pentium code.)
-<li> PentiumPro: Do a mul-by-inverse <code>mpn_mod_1</code> the same as for
+<li> PentiumPro: <code>mpn_mod_1</code> can use a mul-by-inverse the same as
      P-II but without the shifts inside the loop and hence without MMX.  The
      same might speed up the loop for P-II also, but maybe at the cost of one
      extra division step.
+<li> PentiumPro: <code>mpn_divrem_1</code> might be able to use a
+     mul-by-inverse, hoping for maybe 30 c/l.
 <li> P6: <code>mpn_add_n</code> and <code>mpn_sub_n</code> should be able to go
      faster than the generic x86 code at 3.5 c/l.  The athlon code for instance
      runs at about 2.7.
@@ -360,6 +363,9 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
      <code>mp?_init</code>ed.  This might catch elementary mistakes in
      user programs.  Care would need to be taken over
      <code>MPZ_TMP_INIT</code>ed variables used internally.
+<li> The test programs could use <code>mp_set_memory_functions</code> and a
+     check at program end to guard against memory leaks.  This could also check
+     that the sizes passed to allocate and free are the same.
 </ul>
 
 
