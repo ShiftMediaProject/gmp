@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 size_t
 mpq_inp_str (mpq_ptr q, FILE *fp, int base)
 {
-  size_t  nread, ret;
+  size_t  nread;
   int     c;
 
   if (fp == NULL)
