@@ -1,3 +1,21 @@
+2001-06-10  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Number Theoretic Functions): mpz_jacobi only defined for b
+	odd.  Separate the jacobi/legendre/kronecker descriptions.
+	(Low-level Functions): Document mpn_mul_1 "incr" overlaps.
+	(Language Bindings): New chapter.
+
+	* mpz/jacobi.c: Don't retaining old behaviour of mpz_jacobi on even b
+	(it wasn't documented in 3.1.1).
+	* mpz/jacobi.c, gmp-h.in (mpz_kronecker, mpz_legendre): Remove
+	separate entrypoints, just #define to mpz_jacobi.
+	* compat.c (__gmpz_legendre): Add compatibility entrypoint.
+	
+	* mpn/generic/mul_1.c: Allow "incr" style overlaps.
+	* tests/devel/try.c (param_init): Test this.
+
+	* mpf/mul_ui.c: Do size==0 test earlier.
+
 2001-06-08  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (ULONG_HIGHBIT, UINT_HIGHBIT, USHRT_HIGHBIT): Cast
