@@ -135,6 +135,14 @@ main (argc, argv)
 
   for (test = 0; ; test++)
     {
+#if TIMES == 1 && ! defined (PRINT)
+      if (test % (SIZE > 10000 ? 1 : 10000 / SIZE) == 0)
+	{
+	  printf ("\r%d", test);
+	  fflush (stdout);
+	}
+#endif
+
 #ifdef RANDOM
       size = (random () % SIZE + 1);
 #else
