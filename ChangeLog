@@ -1,3 +1,13 @@
+2000-04-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/pprime_p2.c (mpz_probab_prime_p): Merge handling of negative
+	n into code for handling small positive n.  Merge variables m and n.
+	After dividing, simply call mpz_millerrabin.
+	(isprime): Local variables now use attribute `long'.
+	(mpz_millerrabin): New static function, based on code from
+	mpz_probab_prime_p.
+	(millerrabin): Now simple workhorse for mpz_millerrabin.
+
 2000-04-18  Linus Nordberg  <linus@swox.se>
 
 	* NEWS: Add info about shared libraries.  Remove reference to
