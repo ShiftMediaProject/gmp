@@ -1413,7 +1413,7 @@ OUTPUT:
     RETVAL
 
 
-mpz
+void
 cdiv (a, d)
     mpz_coerce a
     mpz_coerce d
@@ -1440,7 +1440,7 @@ PPCODE:
     sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, r); PUSHs(sv);
 
 
-mpz
+void
 cdiv_2exp (a, d)
     mpz_coerce   a
     ulong_coerce d
@@ -1561,13 +1561,15 @@ mpz
 fac (n)
     ulong_coerce n
 ALIAS:
-    GMP::Mpz::fib = 1
+    GMP::Mpz::fib    = 1
+    GMP::Mpz::lucnum = 2
 PREINIT:
     static const struct {
       void (*op) (mpz_ptr r, unsigned long n);
     } table[] = {
-      { mpz_fac_ui }, /* 0 */
-      { mpz_fib_ui }, /* 1 */
+      { mpz_fac_ui },    /* 0 */
+      { mpz_fib_ui },    /* 1 */
+      { mpz_lucnum_ui }, /* 2 */
     };
 CODE:
     assert_table (ix);
@@ -1575,6 +1577,30 @@ CODE:
     (*table[ix].op) (RETVAL->m, n);
 OUTPUT:
     RETVAL
+
+
+void
+fib2 (n)
+    ulong_coerce n
+ALIAS:
+    GMP::Mpz::lucnum2 = 1
+PREINIT:
+    static const struct {
+      void (*op) (mpz_ptr r, mpz_ptr r2, unsigned long n);
+    } table[] = {
+      { mpz_fib2_ui },    /* 0 */
+      { mpz_lucnum2_ui }, /* 1 */
+    };
+    mpz  r, r2;
+    SV   *sv;
+PPCODE:
+    assert_table (ix);
+    r = new_mpz();
+    r2 = new_mpz();
+    (*table[ix].op) (r->m, r2->m, n);
+    EXTEND (SP, 2);
+    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, r);  PUSHs(sv);
+    sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, r2); PUSHs(sv);
 
 
 mpz
@@ -1615,7 +1641,7 @@ OUTPUT:
     RETVAL
 
 
-mpz
+void
 gcdext (a, b)
     mpz_coerce a
     mpz_coerce b
