@@ -6491,7 +6491,7 @@ If the string is not a valid float, an @code{std::invalid_argument} exception
 is thrown.  The same applies to @code{operator=}.
 @end deftypefun
 
-@deftypefun void mpf_class::operator= (type @var{op})
+@deftypefun {mpf_class&} mpf_class::operator= (type @var{op})
 Convert and store the given @var{op} value to an @code{mpf_class} object.  The
 same types are accepted as for the constructors above.
 
@@ -6504,7 +6504,7 @@ plus assignment.
 @example
 mpf_class x (y);   // x created with precision of y
 
-mpf_class x;       // x default precision
+mpf_class x;       // x created with default precision
 x = y;             // value truncated to that precision
 @end example
 
