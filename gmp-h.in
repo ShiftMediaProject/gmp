@@ -544,6 +544,9 @@ __GMP_DECLSPEC int gmp_randinit_lc_2exp_size __GMP_PROTO ((gmp_randstate_t, unsi
 #define gmp_randinit_mt __gmp_randinit_mt
 __GMP_DECLSPEC void gmp_randinit_mt __GMP_PROTO ((gmp_randstate_t));
 
+#define gmp_randinit_set __gmp_randinit_set
+void gmp_randinit_set __GMP_PROTO ((gmp_randstate_t, const __gmp_randstate_struct *));
+
 #define gmp_randseed __gmp_randseed
 __GMP_DECLSPEC void gmp_randseed __GMP_PROTO ((gmp_randstate_t, mpz_srcptr));
 
@@ -552,6 +555,12 @@ __GMP_DECLSPEC void gmp_randseed_ui __GMP_PROTO ((gmp_randstate_t, unsigned long
 
 #define gmp_randclear __gmp_randclear
 __GMP_DECLSPEC void gmp_randclear __GMP_PROTO ((gmp_randstate_t));
+
+#define gmp_urandomb_ui __gmp_urandomb_ui
+unsigned long gmp_urandomb_ui __GMP_PROTO ((gmp_randstate_t, unsigned long));
+
+#define gmp_urandomm_ui __gmp_urandomm_ui
+unsigned long gmp_urandomm_ui __GMP_PROTO ((gmp_randstate_t, unsigned long));
 
 
 /**************** Formatted output routines.  ****************/
