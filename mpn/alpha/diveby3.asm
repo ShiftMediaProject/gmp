@@ -56,7 +56,7 @@ define(`t0',	`r23')	define(`t1',	`r24')
 define(`cymask',`r28')
 
 
-PROLOGUE(mpn_divexact_by3c)
+PROLOGUE(mpn_divexact_by3c,gp)
 
 	ldq	r28, 0(up)			C load first limb early
 
