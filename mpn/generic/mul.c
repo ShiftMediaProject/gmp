@@ -6,8 +6,8 @@
    THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -131,8 +131,8 @@ mpn_mul (mp_ptr prodp,
 	     multiplication (but the last) we copy the most significant vn
 	     limbs into a temporary buffer since that part would otherwise be
 	     overwritten by the next multiplication.  After the next
-	     multiplication, we that it back from where it was copied.
-	     Picture:
+	     multiplication, we add it back.  This illustrates the situation:
+
                                                     -->vn<--
                                                       |  |<------- un ------->|
                                                          _____________________|
@@ -146,10 +146,14 @@ mpn_mul (mp_ptr prodp,
             /____________________/                                            |
 	    ==================================================================
 
-	    The parts marked with X are the parts whose product are copied into
+	    The parts marked with X are the parts whose sums are copied into
 	    the temporary buffer.  */
 
+#if TUNE_PROGRAM_BUILD
+	  mp_limb_t tp[MUL_TOOM3_THRESHOLD_LIMIT];
+#else
 	  mp_limb_t tp[MUL_KARATSUBA_THRESHOLD];
+#endif
 	  mp_limb_t cy;
 
 	  mpn_mul_basecase (prodp, up, MUL_BASECASE_MAX_UN, vp, vn);
