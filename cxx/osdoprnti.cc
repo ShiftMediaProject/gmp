@@ -23,7 +23,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <iostream.h>
+#include <iostream>
 #include <stdarg.h>    /* for va_list and hence doprnt_funs_t */
 #include <string.h>
 
