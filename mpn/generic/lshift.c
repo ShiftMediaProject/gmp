@@ -22,45 +22,43 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Shift U (pointed to by UP and USIZE digits long) CNT bits to the left
-   and store the USIZE least significant digits of the result at WP.
-   Return the bits shifted out from the most significant digit.
+/* Shift U (pointed to by UP and USIZE limbs long) CNT bits to the left
+   and store the USIZE least significant limbs of the result at WP.
+   Return the bits shifted out from the most significant limb.
 
    Argument constraints:
    1. 0 < CNT < BITS_PER_MP_LIMB
-   2. If the result is to be written over the input, WP must be >= UP.
+   2. If the result is to be written over the input, RP must be >= UP.
 */
 
 mp_limb_t
-mpn_lshift (register mp_ptr wp,
-	    register mp_srcptr up, mp_size_t usize,
-	    register unsigned int cnt)
+mpn_lshift (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
 {
-  register mp_limb_t high_limb, low_limb;
-  register unsigned sh_1, sh_2;
-  register mp_size_t i;
+  mp_limb_t high_limb, low_limb;
+  unsigned tnc;
+  mp_size_t i;
   mp_limb_t retval;
 
-  ASSERT (usize >= 1);
+  ASSERT (n >= 1);
   ASSERT (cnt >= 1);
   ASSERT (cnt < BITS_PER_MP_LIMB);
-  ASSERT (MPN_SAME_OR_DECR_P (wp, up, usize));
+  ASSERT (MPN_SAME_OR_DECR_P (rp, up, n));
 
-  sh_1 = cnt;
+  up += n - 1;
+  rp += n - 1;
 
-  wp += 1;
-  sh_2 = BITS_PER_MP_LIMB - sh_1;
-  i = usize - 1;
-  low_limb = up[i];
-  retval = low_limb >> sh_2;
-  high_limb = low_limb;
-  while (--i >= 0)
+  tnc = BITS_PER_MP_LIMB - cnt;
+  low_limb = *up--;
+  retval = low_limb >> tnc;
+  high_limb = low_limb << cnt;
+
+  for (i = n - 1; i != 0; i--)
     {
-      low_limb = up[i];
-      wp[i] = (high_limb << sh_1) | (low_limb >> sh_2);
-      high_limb = low_limb;
+      low_limb = *up--;
+      *rp-- = high_limb | (low_limb >> tnc);
+      high_limb = low_limb << cnt;
     }
-  wp[i] = high_limb << sh_1;
+  *rp = high_limb;
 
   return retval;
 }
