@@ -1858,10 +1858,13 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 #endif
 
 /* Use a library function for invert_limb, if available. */
-#if ! defined (invert_limb) && HAVE_NATIVE_mpn_invert_limb
 #define mpn_invert_limb  __MPN(invert_limb)
 mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
-#define invert_limb(invxl,xl)  (invxl = mpn_invert_limb (xl))
+#if ! defined (invert_limb) && HAVE_NATIVE_mpn_invert_limb
+#define invert_limb(invxl,xl)           \
+  do {                                  \
+    (invxl) = mpn_invert_limb (xl);     \
+  } while (0)
 #endif
 
 #ifndef invert_limb
@@ -1869,10 +1872,10 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   do {                                          \
     mp_limb_t dummy;                            \
     ASSERT ((xl) != 0);                         \
-    if (xl << 1 == 0)                           \
-      invxl = ~(mp_limb_t) 0;                   \
+    if ((xl) << 1 == 0)                         \
+      (invxl) = ~(mp_limb_t) 0;                 \
     else                                        \
-      udiv_qrnnd (invxl, dummy, -xl, 0, xl);    \
+      udiv_qrnnd (invxl, dummy, -(xl), 0, xl);  \
   } while (0)
 #endif
 
