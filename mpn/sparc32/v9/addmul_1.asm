@@ -1,4 +1,4 @@
-dnl  SPARC v9 32-bit __mpn_addmul_1 -- Multiply a limb vector with a limb and
+dnl  SPARC v9 32-bit mpn_addmul_1 -- Multiply a limb vector with a limb and
 dnl  add the result to a second limb vector.
 
 dnl  Copyright (C) 1998, 2000 Free Software Foundation, Inc.
@@ -46,7 +46,7 @@ ifdef(`PIC',
 	ld	[%g1+%lo(L(noll))],%f10')
 
 	sethi	%hi(0xffff0000),%o0
-	andn	 %i3,%o0,%o0
+	andn	%i3,%o0,%o0
 	st	%o0,[%fp-16]
 	ld	[%fp-16],%f11
 	fxtod	%f10,%f6
@@ -84,7 +84,7 @@ ifdef(`PIC',
 	std	%f14,[%fp-40]
 	fdtox	%f4,%f12
 	subcc	%i2,1,%i2
-	be,pt	%icc,L(end3)
+	be,pn	%icc,L(end3)
 	std	%f12,[%fp-32]
 
 	fxtod	%f10,%f2
