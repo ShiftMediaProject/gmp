@@ -144,6 +144,9 @@ phi (mp_limb_t t)
 #define POWM_THRESHOLD  ((8 * KARATSUBA_SQR_THRESHOLD) / 3)
 #endif
 
+#undef HANDLE_NEGATIVE_EXPONENT
+#undef REDUCE_EXPONENT
+
 void
 #ifndef BERKELEY_MP
 mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
@@ -151,15 +154,18 @@ mpz_powm (mpz_ptr r, mpz_srcptr b, mpz_srcptr e, mpz_srcptr m)
 pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 #endif /* BERKELEY_MP */
 {
-  mp_limb_t invm, c;
-  mp_size_t bn, mn, xn;
-  unsigned long int enb;
   mp_ptr xp, tp, qp, gp, this_gp;
   mp_srcptr bp, ep, mp;
+  mp_size_t bn, es, en, mn, xn;
+  mp_limb_t invm, c;
+  unsigned long int enb;
   mp_size_t i, K, j, l, k;
   int m_zero_cnt, e_zero_cnt;
   int sh;
   int use_redc;
+#if HANDLE_NEGATIVE_EXPONENT
+  mpz_t new_b;
+#endif
 #if REDUCE_EXPONENT
   mpz_t new_e;
 #endif
@@ -170,18 +176,33 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   if (mn == 0)
     DIVIDE_BY_ZERO;
 
-  if (SIZ (e) <= 0)
+  es = SIZ (e);
+  if (es <= 0)
     {
-      /* Exponent is zero, result is 1 mod m, i.e., 1 or 0 depending on if m
-	 equals 1.  */
-      SIZ(r) = (mn == 1 && mp[0] == 1) ? 0 : 1;
-      PTR(r)[0] = 1;
-      return;
+      if (es == 0)
+	{
+	  /* Exponent is zero, result is 1 mod m, i.e., 1 or 0 depending on if
+	     m equals 1.  */
+	  SIZ(r) = (mn == 1 && mp[0] == 1) ? 0 : 1;
+	  PTR(r)[0] = 1;
+	  return;
+	}
+#if HANDLE_NEGATIVE_EXPONENT
+      MPZ_TMP_INIT (new_b, ABSIZ (b) + 1);
+
+      if (! mpz_invert (new_b, b, m))
+	DIVIDE_BY_ZERO;
+      b = new_b;
+      es = -es;
+#else
+      DIVIDE_BY_ZERO;
+#endif
     }
+  en = es;
 
 #if REDUCE_EXPONENT
   /* Reduce exponent by dividing it by phi(m) when m small.  */
-  if (mn == 1 && mp[0] < 0xffffffffL && SIZ (e) * BITS_PER_MP_LIMB > 150)
+  if (mn == 1 && mp[0] < 0x7fffffffL && en * BITS_PER_MP_LIMB > 150)
     {
       MPZ_TMP_INIT (new_e, 2);
       mpz_mod_ui (new_e, e, phi (mp[0]));
@@ -200,6 +221,8 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
     }
   else
     {
+      /* Normalize m (i.e. make its most significant bit set) as required by
+	 division functions below.  */
       count_leading_zeros (m_zero_cnt, mp[mn - 1]);
       if (m_zero_cnt != 0)
 	{
@@ -212,8 +235,8 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 
   /* Determine optimal value of k, the number of exponent bits we look at
      at a time.  */
-  count_leading_zeros (e_zero_cnt, PTR(e)[SIZ(e) - 1]);
-  enb = SIZ (e) * BITS_PER_MP_LIMB - e_zero_cnt; /* number of bits of exponent */
+  count_leading_zeros (e_zero_cnt, PTR(e)[en - 1]);
+  enb = en * BITS_PER_MP_LIMB - e_zero_cnt; /* number of bits of exponent */
   k = 1;
   K = 2;
   while (2 * enb > K * (2 + k * (3 + k)))
@@ -225,56 +248,45 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   tp = TMP_ALLOC_LIMBS (2 * mn + 1);
   qp = TMP_ALLOC_LIMBS (mn + 1);
 
-  gp = __GMP_ALLOCATE_FUNC_TYPE (K / 2 * mn, mp_limb_t);
+  gp = __GMP_ALLOCATE_FUNC_LIMBS (K / 2 * mn);
 
   /* Compute x*R^n where R=2^BITS_PER_MP_LIMB.  */
   bn = ABSIZ (b);
   bp = PTR(b);
-  /* Handle |b| >= m by computing b mod m.  While it is not strictly necessary
+  /* Handle |b| >= m by computing b mod m.  FIXME: It is not strictly necessary
      for speed or correctness to do this when b and m have the same number of
-     limbs, it simplifies the "else" clause's handling of b < 0.  */
+     limbs, perhaps remove mpn_cmp call.  */
   if (bn > mn || (bn == mn && mpn_cmp (bp, mp, mn) >= 0))
     {
-      /* Reduce possibly huge base while moving it to gp[0].  */
+      /* Reduce possibly huge base while moving it to gp[0].  Use a function
+	 call to reduce, since we don't want the quotient allocation to
+	 live until function return.  */
       if (use_redc)
 	{
 	  reduce (tp + mn, bp, bn, mp, mn);	/* b mod m */
-	  if (SIZ (b) < 0)
-	    mpn_sub_n (tp + mn, mp, tp + mn, mn);
 	  MPN_ZERO (tp, mn);
 	  mpn_tdiv_qr (qp, gp, 0L, tp, 2 * mn, mp, mn); /* unnormnalized! */
 	}
       else
 	{
 	  reduce (gp, bp, bn, mp, mn);
-	  if (SIZ (b) < 0)
-	    mpn_sub_n (gp, mp, gp, mn);
 	}
     }
   else
     {
-      /* |b| < m.  Possibly, |b| << m.  */
+      /* |b| < m.  We pad out operands to become mn limbs,  which simplifies
+	 the rest of the function, but slows things down when the |b| << m.  */
       if (use_redc)
 	{
 	  MPN_ZERO (tp, mn);
-	  if (SIZ (b) < 0)
-	    mpn_sub (tp + mn, mp, mn, bp, bn);
-	  else
-	    {
-	      MPN_COPY (tp + mn, bp, bn);
-	      MPN_ZERO (tp + mn + bn, mn - bn);
-	    }
+	  MPN_COPY (tp + mn, bp, bn);
+	  MPN_ZERO (tp + mn + bn, mn - bn);
 	  mpn_tdiv_qr (qp, gp, 0L, tp, 2 * mn, mp, mn);
 	}
       else
 	{
-	  if (SIZ (b) < 0)
-	    mpn_sub (gp, mp, mn, bp, bn);
-	  else
-	    {
-	      MPN_COPY (gp, bp, bn);
-	      MPN_ZERO (gp + bn, mn - bn);
-	    }
+	  MPN_COPY (gp, bp, bn);
+	  MPN_ZERO (gp + bn, mn - bn);
 	}
     }
 
@@ -299,7 +311,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 
   /* Start the real stuff.  */
   ep = PTR (e);
-  i = SIZ (e) - 1;			/* current index */
+  i = en - 1;				/* current index */
   c = ep[i];				/* current limb */
   sh = BITS_PER_MP_LIMB - e_zero_cnt;	/* significant bits in ep[i] */
   sh -= k;				/* index of lower bit of ep[i] to take into account */
@@ -430,10 +442,18 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
     }
   xn = mn;
   MPN_NORMALIZE (xp, xn);
+
+  if ((ep[0] & 1) && SIZ(b) < 0 && xn != 0)
+    {
+      mp = PTR(m);                    /* want original, unnormalized m */
+      mpn_sub (xp, mp, mn, xp, xn);
+      xn = mn;
+      MPN_NORMALIZE (xp, xn);
+    }
   MPZ_REALLOC (r, xn);
   SIZ (r) = xn;
   MPN_COPY (PTR(r), xp, xn);
 
-  __GMP_FREE_FUNC_TYPE (gp, K / 2 * mn, mp_limb_t);
+  __GMP_FREE_FUNC_LIMBS (gp, K / 2 * mn);
   TMP_FREE (marker);
 }
