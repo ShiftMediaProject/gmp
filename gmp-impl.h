@@ -2232,8 +2232,29 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #define LOW_ZEROS_MASK(n)  (((n) & -(n)) - 1)
 
 
-/* Set "p" to 1 if there's an odd number of 1 bits in "n", or to 0 if
-   there's an even number.  */
+/* ULONG_PARITY sets "p" to 1 if there's an odd number of 1 bits in "n", or
+   to 0 if there's an even number.  "n" should be an unsigned long and "p"
+   an int.  */
+
+/* Cray intrinsic _popcnt. */
+#ifdef _CRAY
+#define ULONG_PARITY(p, n)      \
+  do {                          \
+    (p) = _popcnt (n) & 1;      \
+  } while (0)
+#endif
+
+#if defined (__GNUC__) && ! defined (NO_ASM) && defined (__ia64)
+/* unsigned long is either 32 or 64 bits depending on the ABI, zero extend
+   to a 64 bit unsigned long long for popcnt */
+#define ULONG_PARITY(p, n)                              \
+  do {                                                  \
+    unsigned long long  __n = (unsigned long) (n);      \
+    int  __p;                                           \
+    asm ("popcnt %0 = %1" : "=r" (__p) : "r" (__n));    \
+    (p) = __p & 1;                                      \
+  } while (0)
+#endif
 
 #if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_FAMILY_x86
 #define ULONG_PARITY(p, n)              \
@@ -2247,7 +2268,9 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
          : "1" (__n));                  \
     (p) = __p;                          \
   } while (0)
-#else
+#endif
+
+#if ! defined (ULONG_PARITY)
 #define ULONG_PARITY(p, n)                      \
   do {                                          \
     unsigned long  __n = (n);                   \
