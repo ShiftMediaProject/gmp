@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for alpha assembler (everywhere except unicos).
 
 
-dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -98,11 +98,6 @@ dnl  Load a symbolic address into a register
 define(`LEA',
 m4_assert_numargs(2)
 `lda   $1,  $2')
-
-dnl  Need some stuff for extwl just for bigend systems.  Define to empty.
-define(`bigend',
-m4_assert_numargs(1)
-`')
 
 dnl  Usage: ASM_END()
 define(`ASM_END',
