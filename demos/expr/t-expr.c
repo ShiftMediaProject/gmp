@@ -23,7 +23,6 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 
 #include "gmp.h"
-#include "gmp-impl.h"
 #include "tests.h"
 #include "expr-impl.h"
 
@@ -43,6 +42,8 @@ struct data_t {
   const char  *expr;
   const char  *want;
 };
+
+#define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
 
 
 /* These data_xxx[] arrays are tables to be tested with one or more of the
