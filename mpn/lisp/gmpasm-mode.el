@@ -156,7 +156,7 @@ the code.
   since then emacs detects invalid apostrophes in comments inside quotes.
 
 - Assembler comment characters like *, ! or | are not set in m4 changecom()
-  since that would prevent eval() expressions from using them, but they're
+  since that would prevent eval() expressions from using them, and they're
   not wanted in the syntax table since there's no way to know if they're an
   operator or an actual assembler comment.")
 
