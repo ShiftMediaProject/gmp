@@ -46,6 +46,13 @@ MA 02111-1307, USA.
 #include "tests.h"
 
 
+#ifdef _LONG_LONG_LIMB
+#define LL(l,ll)  ll
+#else
+#define LL(l,ll)  l
+#endif
+
+
 int option_pari = 0;
 gmp_randstate_t rands;
 
@@ -90,7 +97,8 @@ try_base (mp_limb_t a, mp_limb_t b, int answer)
   got = mpn_jacobi_base (a, b, 0);
   if (got != answer)
     {
-      printf ("mpn_jacobi_base (%lu, %lu) is %d should be %d\n",
+      printf (LL("mpn_jacobi_base (%lu, %lu) is %d should be %d\n",
+                 "mpn_jacobi_base (%llu, %llu) is %d should be %d\n"),
               a, b, got, answer);
       abort ();
     }
