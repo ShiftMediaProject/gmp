@@ -614,6 +614,8 @@ sparc-*-* | sparc64-*-*)
       elif grep 'MB86904' conftest.dat >/dev/null; then
         # actually MicroSPARC-II
         exact_cpu=microsparc
+      elif grep 'MB86907' conftest.dat >/dev/null; then
+        exact_cpu=turbosparc
       fi
     fi
     rm -f conftest.dat
