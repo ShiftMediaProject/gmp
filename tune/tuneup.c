@@ -1042,6 +1042,47 @@ all (void)
 #define SPEED_MPN_MOD_1  speed_mpn_mod_1
 #endif
 
+
+#if HAVE_NATIVE_mpn_preinv_divrem_1
+  /* Any native version of mpn_preinv_divrem_1 is assumed to exist because
+     it's faster than mpn_divrem_1.  */
+  printf ("#define USE_PREINV_DIVREM_1            1  /* (native) */\n");
+#else
+#if UDIV_PREINV_ALWAYS
+  /* If udiv_qrnnd_preinv is the only division method then of course
+     mpn_preinv_divrem_1 should be used.  */
+  printf ("#define USE_PREINV_DIVREM_1            1  /* (preinv always) */\n");
+#else
+  {
+    static struct param_t  param;
+    double   t1, t2;
+
+    param.data_high = DATA_HIGH_LT_R; /* allow skip one division */
+    s.size = 200;                     /* generous but not too big */
+    /* Divisor, nonzero.  Unnormalized so as to exercise the shift!=0 case,
+       since in general that's probably most common, though in fact for a
+       64-bit limb mp_bases[10].big_base is normalized.  */
+    s.r = urandom() & (MP_LIMB_T_MAX >> 4);
+    if (s.r == 0) s.r = 123;
+
+    t1 = tuneup_measure (speed_mpn_preinv_divrem_1, &param, &s);
+    t2 = tuneup_measure (SPEED_MPN_DIVREM_1, &param, &s);
+    if (t1 == -1.0 || t2 == -1.0)
+      {
+        printf ("Oops, can't measure mpn_preinv_divrem_1 and mpn_divrem_1 at %ld\n",
+                s.size);
+        abort ();
+      }
+    if (option_trace >= 1)
+      printf ("size=%ld, mpn_preinv_divrem_1 %.9f, mpn_divrem_1 %.9f\n",
+              s.size, t1, t2);
+
+    printf ("#define USE_PREINV_DIVREM_1            %d\n", t1 < t2);
+  }
+#endif /* ! UDIV_PREINV_ALWAYS */
+#endif /* ! HAVE_NATIVE_mpn_preinv_divrem_1 */
+
+
 #if HAVE_NATIVE_mpn_preinv_mod_1
   /* Any native version of mpn_preinv_mod_1 is assumed to exist because it's
      faster than mpn_mod_1.  */
