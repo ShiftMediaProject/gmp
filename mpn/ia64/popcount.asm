@@ -19,15 +19,16 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
-dnl  Runs at 1 cycle/limb on the Itanium.  That is the peak performance for the
-dnl  popcnt instruction, so this is optimal code.  It should be straightforward
-dnl  to write mpn_hamdist with the same awesome performance.
-
 include(`../config.m4')
 
 C INPUT PARAMETERS
 C sp = r32
 C n = r33
+
+C         cycles/limb
+C Itanium:    1
+C Itanium 2:  1
+
 
 ASM_START()
 PROLOGUE(mpn_popcount)

@@ -26,6 +26,11 @@ C rp = r32
 C sp = r33
 C n = r34
 
+C         cycles/limb
+C Itanium:    1
+C Itanium 2:  1
+
+
 ASM_START()
 PROLOGUE(mpn_copyi)
 	.prologue

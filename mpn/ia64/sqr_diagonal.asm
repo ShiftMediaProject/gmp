@@ -28,7 +28,7 @@ C n = r34
 
 C         cycles/limb
 C Itanium:    3
-C Itanium 2:  ?
+C Itanium 2:  2
 
 
 ASM_START()

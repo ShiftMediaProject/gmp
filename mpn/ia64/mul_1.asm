@@ -30,7 +30,7 @@ C v = r35
 
 C         cycles/limb
 C Itanium:    4
-C Itanium 2:  ?
+C Itanium 2:  6
 
 C The full speed is reached C only for really huge operands.  See README for
 C possible improvements.
