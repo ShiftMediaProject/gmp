@@ -109,10 +109,13 @@ fi
 case "$guess_full" in
 
 alpha-*-*)
-  # configfsf.guess has a block of code not unlike this for OSF and linsux.
-  # Perhaps it'll support *BSD too some time, in which case the code here
-  # can be removed.
-
+  # configfsf.guess detects exact alpha cpu types for OSF and GNU/Linux, but
+  # not for *BSD and other systems.  We try to get an exact type for any
+  # plain "alpha" it leaves.
+  #
+  # configfsf.guess used to have a block of code not unlike this, but these
+  # days does its thing with Linux kernel /proc/cpuinfo or OSF psrinfo.
+  #
   cat <<EOF >$dummy.s
 	.data
 Lformat:
