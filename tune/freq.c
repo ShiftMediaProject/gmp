@@ -29,9 +29,15 @@ MA 02111-1307, USA. */
 #endif
 
 #include <sys/types.h>
-#if HAVE_SYS_PARAM_H
-#include <sys/param.h>   /* for constants needed by NetBSD <sys/sysctl.h> */
+
+#if HAVE_SYS_PARAM_H     /* for constants needed by NetBSD <sys/sysctl.h> */
+#include <sys/param.h>   /* and needed by HPUX <sys/pstat.h> */
 #endif
+
+#if HAVE_SYS_PSTAT_H
+#include <sys/pstat.h>   /* for HPUX pstat_getprocessor() */
+#endif
+
 #if HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>  /* for sysctlbyname() */
 #endif
@@ -135,6 +141,34 @@ freq_getsysinfo (int help)
       if (speed_option_verbose)
         printf ("Using getsysinfo() GSI_CPU_INFO %u for cycle time %.3g\n",
                 c.mhz, speed_cycletime);
+      return 1;
+    }
+#endif
+  return 0;
+}
+
+
+/* In HPUX 10 and up, pstat_getprocessor() psp_iticksperclktick is the
+   number of CPU cycles (ie. the CR16 register) per CLK_TCK.  HPUX 9 has
+   similar pstat functions (see /usr/include/sys/pstat.h), but doesn't have
+   pstat_getprocessor or any apparent equivalent.  */
+
+static int
+freq_pstat_getprocessor (int help)
+{
+#if HAVE_PSTAT_GETPROCESSOR
+  struct pst_processor  p;
+
+  HELP ("pstat_getprocessor() psp_iticksperclktick");
+
+  if (pstat_getprocessor (&p, sizeof(p), 1, 0) != -1)
+    {
+      long  c = clk_tck();
+      speed_cycletime = 1.0 / (c * p.psp_iticksperclktick);
+      if (speed_option_verbose)
+        printf ("Using pstat_getprocessor() psp_iticksperclktick %lu and clk_tck %ld for cycle time %.3g\n",
+                (unsigned long) p.psp_iticksperclktick, c,
+                speed_cycletime);
       return 1;
     }
 #endif
@@ -686,6 +720,7 @@ freq_all (int help)
     freq_environment (help)
 
     || freq_getsysinfo (help)
+    || freq_pstat_getprocessor (help)
     || freq_sysctl_hw_model (help)
     || freq_sysctl_hw_cpufrequency (help)
     || freq_sysctlbyname_i586_freq (help)
