@@ -759,10 +759,6 @@ case $host in
 
   # Darwin (powerpc-apple-darwin1.3) has gcc installed as cc.
   #
-  # The darwin assembler doesn't accept "-mppc", so gcc_cflags_asm is
-  # optional.  The right flag would be "-arch ppc" or some such, but that's
-  # already the default.
-  #
   # The darwin pre-compiling preprocessor is disabled with -no-cpp-precomp
   # since it doesn't like "__attribute__ ((mode (SI)))" etc in gmp-impl.h,
   # and so always ends up running the plain preprocessor anyway.  This could
@@ -770,14 +766,24 @@ case $host in
   # preprocessing is done separately, and this is only a speedup, the normal
   # preprocessor gets run if there's any problems.
   #
+  # We used to use -Wa,-mppc with gcc, but can't remember exactly why.
+  # Presumably it was for old versions of gcc where -mpowerpc doesn't put
+  # the assembler in the right mode.  In any case -Wa,-mppc is not good, for
+  # instance -mcpu=604 makes recent gcc use -m604 to get access to the
+  # "fsel" instruction, but a -Wa,-mppc overrides that, making code that
+  # comes out with fsel fail.
+  #
+  # (Note also that the darwin assembler doesn't accept "-mppc", so any
+  # -Wa,-mppc was used only if it worked.  The right flag on darwin would be
+  # "-arch ppc" or some such, but that's already the default.)
+  #
   powerpc*-*-*)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_powerpc)
     HAVE_HOST_CPU_FAMILY_powerpc=1
     cclist="gcc cc"
     cc_cflags="-O2"
     gcc_cflags="-O2 -mpowerpc"
-    gcc_cflags_optlist="asm precomp cpu"
-    gcc_cflags_asm="-Wa,-mppc"
+    gcc_cflags_optlist="precomp cpu"
     gcc_cflags_precomp="-no-cpp-precomp"
     extra_functions="umul"
 
