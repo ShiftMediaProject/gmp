@@ -72,14 +72,14 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 
     case 2:
       {
-	int cnt;
 	mp_ptr n2p, d2p;
 	mp_limb_t qhl, cy;
 	TMP_DECL (marker);
 	TMP_MARK (marker);
-	count_leading_zeros (cnt, dp[dn - 1]);
-	if (cnt != 0)
+	if (! (dp[dn-1] & MP_LIMB_T_HIGHBIT))
 	  {
+            int cnt;
+            count_leading_zeros (cnt, dp[dn - 1]);
 	    d2p = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
 	    mpn_lshift (d2p, dp, dn, cnt);
 	    n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
@@ -88,6 +88,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    qhl = mpn_divrem_2 (qp, 0L, n2p, nn + (cy != 0), d2p);
 	    if (cy == 0)
 	      qp[nn - 2] = qhl;	/* always store nn-dn+1 quotient limbs */
+            mpn_rshift (rp, n2p, dn, cnt);
 	  }
 	else
 	  {
@@ -96,12 +97,8 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    MPN_COPY (n2p, np, nn);
 	    qhl = mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
 	    qp[nn - 2] = qhl;	/* always store nn-dn+1 quotient limbs */
+            MPN_COPY (rp, n2p, dn);
 	  }
-
-	if (cnt != 0)
-	  mpn_rshift (rp, n2p, dn, cnt);
-	else
-	  MPN_COPY (rp, n2p, dn);
 	TMP_FREE (marker);
 	return;
       }
@@ -117,11 +114,11 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    mp_ptr n2p, d2p;
 	    mp_limb_t cy;
 	    int cnt;
-	    count_leading_zeros (cnt, dp[dn - 1]);
 
-	    qp[nn - dn] = 0;			/* zero high quotient limb */
-	    if (cnt != 0)			/* normalize divisor if needed */
+	    qp[nn - dn] = 0;			  /* zero high quotient limb */
+	    if (! (dp[dn-1] & MP_LIMB_T_HIGHBIT)) /* normalize divisor */
 	      {
+                count_leading_zeros (cnt, dp[dn - 1]);
 		d2p = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
 		mpn_lshift (d2p, dp, dn, cnt);
 		n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
@@ -131,6 +128,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      }
 	    else
 	      {
+                cnt = 0;
 		d2p = (mp_ptr) dp;
 		n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
 		MPN_COPY (n2p, np, nn);
@@ -243,9 +241,9 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    /* Normalize denominator by shifting it to the left such that its
 	       most significant bit is set.  Then shift the numerator the same
 	       amount, to mathematically preserve quotient.  */
-	    count_leading_zeros (cnt, dp[dn - 1]);
-	    if (cnt != 0)
+	    if (! (dp[dn - 1] & MP_LIMB_T_HIGHBIT))
 	      {
+                count_leading_zeros (cnt, dp[dn - 1]);
 		d2p = (mp_ptr) TMP_ALLOC (qn * BYTES_PER_MP_LIMB);
 
 		mpn_lshift (d2p, dp + in, qn, cnt);
@@ -265,6 +263,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      }
 	    else
 	      {
+                cnt = 0;
 		d2p = (mp_ptr) dp + in;
 
 		n2p = (mp_ptr) TMP_ALLOC ((2 * qn + 1) * BYTES_PER_MP_LIMB);
