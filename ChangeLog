@@ -1,3 +1,46 @@
+1999-03-14  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpz/tests/reuse.c: Also test mpz_invert and mpz_divexact.
+
+	* mpz/tests/convert.c: Update to GMP 2 variable syntax.
+
+1999-03-13  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpf/README: New file.
+	* mpz/README: New file.
+
+	* mpf/pow_ui.c: New file.
+	* mpf/Makefile.in: Compile pow_ui.c.
+	* make.bat: Likewise.
+	* gmp.h (mpf_pow_ui): Declare.
+
+1999-03-12  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/configure.in: Stage 1 of rewrite.
+	* mpn/underscore.h: New name for bsd.h.
+	* mpn/sysv.h: Deleted.
+
+	* mpn/m68k/*: Don't include sysdep.h.
+
+1999-03-11  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* mpn/powerpc32/add_n.S: Add support for both AIX and ELF syntax.
+	Renamed from `.s'.
+	* mpn/powerpc32/sub_n.S: Likewise.
+	* mpn/powerpc32/lshift.S: Likewise.
+	* mpn/powerpc32/rshift.S: Likewise.
+	* mpn/powerpc32/mul_1.S: Likewise.
+	* mpn/powerpc32/addmul_1.S: Likewise.
+	* mpn/powerpc32/submul_1.S: Likewise.
+
+	* mpn/powerpc32/umul.S: New file.
+	* mpn/sparc32/v8/umul.S: New file.
+	* mpn/sparc32/umul.S: New file.
+	* mpn/x86/umul.S: New file.
+	* mpn/x86/udiv.S: New file.
+
+	* mpn/Makefile.in (mul_basecase.o): Delete rule.
+
 1999-02-22  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* configure.in (hppa2.0*-*-*): Force use of GCC.
@@ -13,7 +56,7 @@
 	* mpn/Makefile.in (mul_basecase.o): Add dependency.
 	(sqr_basecase.o): Likewise.
 	(mod_1.o): Likewise.
-	
+
 	* demos/pexpr.c (cputime): Test also __hpux.
 	(cleanup_and_exit): Check SIGXCPU only #ifdef LIMIT_RESOURCE_USAGE.
 
@@ -37,17 +80,39 @@
 	* mpn/mips3/gmp-mparam.h (KARATSUBA_MUL_THRESHOLD): #define.
 	(KARATSUBA_SQR_THRESHOLD): #define.
 
+	* mpn/sparc32/v9/README: New file.
+
 1998-11-20  Torbjorn Granlund  <tege@matematik.su.se>
 
-	* mpn/sparc32/v9/gmp-mparam.h: New file.
+	* mpn/x86/README: New file.
 
+	* mpn/arm/gmp-mparam.h: New file.
+	* mpn/pa64/gmp-mparam.h: New file.
+	* mpn/hppa/gmp-mparam.h: New file.
+	* mpn/x86/pentium/gmp-mparam.h: New file.
+	* mpn/sparc32/v9/gmp-mparam.h: New file.
 	* mpn/powerpc32/gmp-mparam.h: New file.
+	* mpn/x86/p6/gmp-mparam.h: New file.
 
 	* mpn/alpha/gmp-mparam.h (KARATSUBA_MUL_THRESHOLD): #define.
 	(KARATSUBA_SQR_THRESHOLD): #define.
 
-	* mpn/x86/p6/gmp-mparam.h: New file.
 	* mpn/configure.in: Point to x86/p6 when appropriate.
+
+	* mpn/power/umul.s: New file.
+	* mpn/power/sdiv.s: New file.
+	* mpn/pa64/addmul_1.S: New file.
+	* mpn/pa64/submul_1.S: New file.
+	* mpn/pa64/mul_1.S: New file.
+	* mpn/pa64/udiv_qrnnd.c: New file.
+	* mpn/pa64/umul_ppmm.S: New file.
+	* mpn/mips2/umul.s: New file.
+	* mpn/m68k/mc68020/umul.s: New file.
+	* mpn/m68k/mc68020/udiv.s: New file.
+	* mpn/hppa/hppa1_1/umul.s: New file.
+	* mpn/alpha/umul.s: New file.
+	* mpn/a29k/udiv.s: New file.
+	* mpn/a29k/umul.s: New file.
 
 1998-11-17  Torbjorn Granlund  <tege@matematik.su.se>
 
@@ -76,9 +141,9 @@
 
 1998-10-28  Torbjorn Granlund  <tege@matematik.su.se>
 
-	* mpn/powerpc32/submul_1.s: Rewrite.
-	* mpn/powerpc32/addmul_1.s: Rewrite.
-	* mpn/powerpc32/lshift.s: Rewrite.
+	* mpn/powerpc32/submul_1.s: Rewrite, optimizing for PPC604.
+	* mpn/powerpc32/addmul_1.s: Likewise.
+	* mpn/powerpc32/lshift.s: Likewise.
 
 1998-10-23  Torbjorn Granlund  <tege@matematik.su.se>
 
@@ -122,6 +187,9 @@
 
 	* mpn/tests/{add,sub,}mul_1.c: Print xlimb using mpn_print.
 
+	* mpz/tests/t-powm.c (SIZE): Increase to 50.
+	(EXP_SIZE): New parameter; use it for computing exp_size.
+
 1998-10-15  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpn/generic/divrem_newt.c: Use TMP_ALLOC interface.
@@ -136,7 +204,7 @@
 	(mpn_print): Handle printing when _LONG_LONG_LIMB.
 	* mpn/tests/{add,sub,}mul_1.c: Generate xlimb with mpn_random2
 	and do it whether TIMES != 1 or not.
-	
+
 	* mpn/generic/mul_n.c: Delay assignment of `sign' for lower
 	register pressure.
 
@@ -243,7 +311,9 @@ Tue May 26 11:24:18 1998  Torbjorn Granlund  <tege@matematik.su.se>
 	* demos/factorize.c (factor_using_pollard_rho): Pass correct
 	parameters in recursive calls; join the two recursion arms.
 
-	* mpf/set_q.c: [ Insert log from tunnis here ]
+	* mpf/set_q.c: Set result sign.
+	When normalizing the numerator, don't allow it to increase in size
+	beyond prec.
 
 Tue May 19 17:28:14 1998  Torbjorn Granlund  <tege@matematik.su.se>
 
@@ -379,7 +449,9 @@ Fri Nov  7 04:21:15 1997  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpf/integer.c (FUNC_NAME): Fix bogus test for mpf_trunc.
 
-Sat Nov  1 19:32:25 1997  Torbjorn Granlund  <tege@matematik.su.se>
+	* demos/isprime.c: New file.
+
+	Sat Nov  1 19:32:25 1997  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* mpz/cmp_abs.c: New file.
 	* mpz/Makefile.in: Compile it.
@@ -397,6 +469,9 @@ Sat Sep 27 04:49:52 1997  Torbjorn Granlund  <tege@tunnis.tmg.se>
 
 	* mpz/fdiv_q_2exp.c: In final result adjustment code, handle
 	that intermediate result is zero.
+
+	* mpz/tests/t-2exp.c: New file.
+	* mpz/tests/Makefile.in: Handle t-2exp.c.
 
 Fri Sep 26 16:29:21 1997  Torbjorn Granlund  <tege@tunnis.tmg.se>
 
@@ -499,6 +574,8 @@ Thu May 29 11:51:07 1997  Torbjorn Granlund  <tege@pro.tmg.se>
 	* mpq/sub.c: Likewise.
 
 Wed Apr 16 02:24:25 1997  Torbjorn Granlund  <tege@pro.tmg.se>
+
+	* demos/pexpr.c: New file.
 
 	* mpn/generic/mul_n.c: Misc optimizations from Robert Harley.
 
