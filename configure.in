@@ -756,10 +756,9 @@ case $host in
   # Linux kernel 2.2.13 arch/mips/kernel/irixelf.c has a comment about not
   # supporting n32 or 64.
   #
-  # FIXME: It's necessary to pass -mabi or -n32 to the compiler when
-  # linking.  Libtool used to strip them, hence the ldflags here.  It
-  # looks like it has something equivalent itself now, so perhaps
-  # these can be removed.
+  # For reference, libtool (eg. 1.5.6) recognises the n32 ABI and knows the
+  # right options to use when linking (both cc and gcc), so no need for
+  # anything special from us.
   #
   mips*-*-*)
     abilist="o32"
@@ -777,9 +776,7 @@ case $host in
 
         cclist_n32="gcc cc"
         gcc_n32_cflags="-O2 -mabi=n32"
-        gcc_n32_ldflags="-Wc,-mabi=n32"
         cc_n32_cflags="-O2 -n32"	# no -g, it disables all optimizations
-        cc_n32_ldflags="-Wc,-n32"
         limb_n32=longlong
         path_n32="mips64"
 
