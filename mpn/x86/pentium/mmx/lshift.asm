@@ -3,7 +3,7 @@ dnl
 dnl  P5: 1.75 cycles/limb.
 
 
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -263,8 +263,8 @@ L(unroll_loop):
 	C
 	C mm0
 	C mm1
-	C mm2	src qword from 48(%ebx,%eax,4)
-	C mm3	dst qword ready to store to 56(%edx,%eax,4)
+	C mm2	src qword from 16(%ebx,%eax,4)
+	C mm3	dst qword ready to store to 24(%edx,%eax,4)
 	C
 	C mm5	return value
 	C mm6	lshift
@@ -318,8 +318,8 @@ L(finish_no_two):
 
 	C eax	-4 or -3 representing respectively 0 or 1 limbs remaining
 	C
-	C mm2	src prev qword, from 48(%ebx,%eax,4)
-	C mm3	dst qword, for 56(%edx,%eax,4)
+	C mm2	src prev qword, from 16(%ebx,%eax,4)
+	C mm3	dst qword, for 24(%edx,%eax,4)
 
 	testb	$1, %al
 	movd	%mm5, %eax	C retval
