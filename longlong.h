@@ -218,11 +218,6 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
     _c += _x >> 1;							\
     (count) =  W_TYPE_SIZE - 1 - _c;					\
   } while (0)
-/* __builtin_ffs comes out as popcnt(x^(x-1)), or something like that */
-#define count_trailing_zeros(count, x) \
-  do {                                 \
-    (count) = __builtin_ffs (x) - 1;   \
-  } while (0)
 #endif
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
