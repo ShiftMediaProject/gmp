@@ -56,6 +56,11 @@
 <li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
      mp?/tests/*.c.
 <li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000.
+<li> <code>TMP_ALLOC</code> is not reentrant when using stack-alloc.c.  Either
+     document or make it reentrant, possibly leaving a config option
+     --enable-alloca=malloc-nonreentrant with the current code.  A reentrant
+     version will probably be slower since it can't share malloced blocks
+     across function calls.
 </ul>
 
 
@@ -72,7 +77,7 @@
      <code>count_trailing_zeros</code> is slow and it's probably worth
      handling the frequently occurring 0 to 2 trailing zeros cases specially.
 <li> Change all places that use <code>udiv_qrnnd</code> for inverting limbs to
-     instead use <code>invert_limb</code>.
+     instead use <code>invert_limb</code>.  (Is this already done?)
 <li> Reorganize longlong.h so that we can inline the operations even for the
      system compiler.  When there is no such compiler feature, make calls to
      stub functions.  Write such stub functions for as many machines as
@@ -159,6 +164,10 @@
 <li> POWER2/POWER2SC: Schedule <code>mpn_lshift</code>/<code>mpn_rshift</code>.
      Will bring time from 1.75 to 1.25 cycles/limb.
 <li> X86: Optimize non-MMX <code>mpn_lshift</code> for shifts by 1.  (See Pentium code.)
+<li> PentiumPro: Do a mul-by-inverse <code>mpn_mod_1</code> the same as for
+     P-II but without the shifts inside the loop and hence without MMX.  The
+     same might speed up the loop for P-II also, but maybe at the cost of one
+     extra division step.
 <li> Alpha: Optimize <code>count_leading_zeros</code>.
 <li> Alpha: Optimize <code>udiv_qrnnd</code>.  (Ask Torbjörn for the file
      test-udiv-preinv.c as a starting point.)
@@ -338,9 +347,9 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 
 <h4>Aids to Debugging</h4>
 <ul>
-<li> Make an option for stack-alloc.c to call <code>malloc</code>
-     separately for each <code>TMP_ALLOC</code> block, so a redzoning
-     malloc debugger could be used during development.
+<li> <code>TMP_ALLOC</code> could do a separate <code>malloc</code> for each
+     allocated block, to help a redzoning malloc debugger.  Perhaps a config
+     option --enable-alloca=debug.
 <li> Add <code>ASSERT</code>s at the start of each user-visible
      mpz/mpq/mpf function to check the validity of each
      <code>mp?_t</code> parameter, in particular to check they've been
