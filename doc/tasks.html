@@ -162,14 +162,6 @@
      a (brief) description.  This will benefit <code>mpz_divexact</code>
      immediately, and <code>mpn_gcd</code> on large unequal size operands.
      REDC should be able to use it too.
-<li> <code>mpn_gcd_1</code>, <code>mpz_kronecker_ui</code> etc should be able
-     to do an exact division style reduction initially, rather than
-     <code>mpn_mod_1</code>.  This would be the same as <code>mpn_gcd</code>
-     does using <code>mpn_bdivmod</code>.  This is still two multiplies per
-     limb, but is simpler and should be faster than mul by inverse division.
-     Perhaps a function <code>mpn_modexact_1</code>, being the remainder part
-     of an <code>mpn_divexact_1</code>.  Creating the modular inverse will take
-     a few cycles, so it might be only for say 4 limbs and up.
 </ul>
 
 
@@ -293,8 +285,6 @@
      around <code>printf</code> so it and its several variants don't
      have to be completely reimplemented.
 <li> Implement some <code>mpq</code> input and output functions.
-<li> Implement a full precision <code>mpz_kronecker</code>, leave
-     <code>mpz_jacobi</code> for compatibility.
 <li> Make the mpn logops and copys available in gmp.h, either as library
      functions or inlines, with the availability of library functions
      instantiated in the generated gmp.h at build time.
@@ -386,9 +376,6 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
      else then consistency checks like size&lt;=alloc, ptr not
      <code>NULL</code> and ptr+size not wrapping around the address space,
      would be possible.
-<li> The test programs could use <code>mp_set_memory_functions</code> and a
-     check at program end to guard against memory leaks.  This could also check
-     that the sizes passed to allocate and free are the same.
 </ul>
 
 
