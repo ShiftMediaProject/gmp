@@ -32,7 +32,7 @@ dnl  This code runs at 42 cycles/limb on EV4, 18 cycles/limb on EV5, and
 dnl  exactly 3.5 cycles/limb on EV6...
 
 dnl This code was written in close cooperation with ev6 pipeline expert
-dnl Steve Root (root@toober.hlo.dec.com).  Any errors are tege's fault, though.
+dnl Steve Root.  Any errors are tege's fault, though.
 dnl
 dnl   Register usages for unrolled loop:
 dnl	  0-3     mul's
