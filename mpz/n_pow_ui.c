@@ -1,6 +1,6 @@
 /* mpz_n_pow_ui -- mpn raised to ulong.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -133,12 +133,16 @@ MA 02111-1307, USA. */
   } while (0)
 
 
-/* We're only interested in ralloc and talloc for assertions and tracing.
-   gcc 2.95 recognises those variables are dead in a normal build and
-   eliminates them.  Something explicit could be done to avoid touching them
-   if other compilers don't manage this.  */
+/* ralloc and talloc are only wanted for ASSERTs, after the initial space
+   allocations.  Avoid writing values to them in a normal build, to ensure
+   the compiler lets them go dead.  gcc already figures this out itself
+   actually.  */
 
-#define SWAP_RP_TP   MPN_PTR_SWAP (rp,ralloc, tp,talloc)
+#define SWAP_RP_TP                                      \
+  do {                                                  \
+    MP_PTR_SWAP (rp, tp);                               \
+    ASSERT_CODE (MP_SIZE_T_SWAP (ralloc, talloc));      \
+  } while (0)
 
 
 void
