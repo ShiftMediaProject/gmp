@@ -121,6 +121,7 @@ EXEEXT = @EXEEXT@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 GMP_LDFLAGS = @GMP_LDFLAGS@
+HAVE_MPFR_01 = @HAVE_MPFR_01@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LEX = @LEX@
 LIBM = @LIBM@
@@ -142,6 +143,7 @@ TAL_OBJECT = @TAL_OBJECT@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+WITH_READLINE_01 = @WITH_READLINE_01@
 YACC = @YACC@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_HAVE_HOST_CPU_FAMILY_power = @__GMP_HAVE_HOST_CPU_FAMILY_power@
@@ -389,8 +391,7 @@ gmp_TEXINFOS = fdl.texi
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = config.h $(top_builddir)/demos/calc/calc-config.h \
-	$(top_builddir)/demos/expr/expr-config.h
+CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = gmp.h mp.h
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
@@ -412,7 +413,7 @@ am_libmp_la_OBJECTS = assert$U.lo errno$U.lo memory$U.lo mp_bpl$U.lo \
 libmp_la_OBJECTS = $(am_libmp_la_OBJECTS)
 
 DEFS = @DEFS@
-DEFAULT_INCLUDES =  -I. -I$(srcdir) -I. -I$(top_builddir)/demos/calc -I$(top_builddir)/demos/expr
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I.
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -873,7 +874,7 @@ GZIP_ENV = --best
 distdir: $(DISTFILES)
 	-chmod -R a+w $(distdir) >/dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/mpfr
+	$(mkinstalldirs) $(distdir)/. $(distdir)/demos/calc $(distdir)/demos/expr $(distdir)/mpfr
 	@for file in $(DISTFILES); do \
 	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
 	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \

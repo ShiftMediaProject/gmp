@@ -117,6 +117,7 @@ EXEEXT = @EXEEXT@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 GMP_LDFLAGS = @GMP_LDFLAGS@
+HAVE_MPFR_01 = @HAVE_MPFR_01@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LEX = @LEX@
 LIBM = @LIBM@
@@ -138,6 +139,7 @@ TAL_OBJECT = @TAL_OBJECT@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+WITH_READLINE_01 = @WITH_READLINE_01@
 YACC = @YACC@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_HAVE_HOST_CPU_FAMILY_power = @__GMP_HAVE_HOST_CPU_FAMILY_power@
@@ -202,9 +204,7 @@ check_PROGRAMS = t-constants t-count_zeros t-gmpmax t-modlinv
 TESTS = $(check_PROGRAMS)
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/config.h \
-	$(top_builddir)/demos/calc/calc-config.h \
-	$(top_builddir)/demos/expr/expr-config.h
+CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 libdummy_la_LDFLAGS =
 libdummy_la_LIBADD =
@@ -238,7 +238,7 @@ t_modlinv_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
 t_modlinv_LDFLAGS =
 
 DEFS = @DEFS@
-DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/demos/calc -I$(top_builddir)/demos/expr
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@

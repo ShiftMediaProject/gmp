@@ -94,6 +94,7 @@ EXEEXT = @EXEEXT@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 GMP_LDFLAGS = @GMP_LDFLAGS@
+HAVE_MPFR_01 = @HAVE_MPFR_01@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LEX = @LEX@
 LIBM = @LIBM@
@@ -115,6 +116,7 @@ TAL_OBJECT = @TAL_OBJECT@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+WITH_READLINE_01 = @WITH_READLINE_01@
 YACC = @YACC@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_HAVE_HOST_CPU_FAMILY_power = @__GMP_HAVE_HOST_CPU_FAMILY_power@
@@ -140,9 +142,7 @@ check_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d \
 TESTS = $(check_PROGRAMS)
 subdir = tests/mpf
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/config.h \
-	$(top_builddir)/demos/calc/calc-config.h \
-	$(top_builddir)/demos/expr/expr-config.h
+CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 check_PROGRAMS = t-add$(EXEEXT) t-sub$(EXEEXT) t-conv$(EXEEXT) \
 	t-sqrt$(EXEEXT) t-muldiv$(EXEEXT) t-dm2exp$(EXEEXT) \
@@ -241,7 +241,7 @@ t_trunc_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 t_trunc_LDFLAGS =
 
 DEFS = @DEFS@
-DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/demos/calc -I$(top_builddir)/demos/expr
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
