@@ -19,6 +19,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/powm_ui.c: Rewrite along the lines of mpz/powm.c (except still no
+	redc).
+	* mpz/powm.c: Adjust for negative b, efter exponentiation done.  Add
+	(still disabled) code for handling negative exponents.  Misc cleanups.
+
 2001-11-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpf/out_str.c: Use localeconv for the decimal point.
@@ -9193,7 +9200,7 @@ Fri Oct 18 03:13:54 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 Wed Oct 16 03:50:34 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 
 	* mpf/set_str.c: Let `prec' determine precision used in
-	exponentialization code; decrease allocation accordingly.
+	exponentiation code; decrease allocation accordingly.
 
 	* mpn/vax: Change `jsob*' to `sob*' in all files.
 
@@ -9212,7 +9219,7 @@ Tue Oct 15 03:54:06 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 	field.
 
 	* mpf/get_str.c: Let `prec' determine precision used in
-	exponentialization code; decrease allocation accordingly.
+	exponentiation code; decrease allocation accordingly.
 
 Sun Oct 13 03:31:53 1996  Torbjorn Granlund  <tege@quiet.matematik.su.se>
 
@@ -10084,7 +10091,7 @@ Mon Mar  4 15:13:28 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
 Sun Mar  3 07:45:46 1996  Torbjorn Granlund  <tege@matematik.su.se>
 
-	* mpf/set_str.c: In exponentialization code, allocate 3 extra
+	* mpf/set_str.c: In exponentiation code, allocate 3 extra
 	limbs, not just 2.
 
 	* mpf/get_str.c: Allocate sufficient space for tstr.

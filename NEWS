@@ -24,14 +24,16 @@ Changes between MP version 3.1.1 and 4.0
 * Still upwardly binary compatible with 3.x versions.
 * New CPU support: IA-64, Pentium 4.
 * Improved CPU support: 21264, Cray vector systems.
+* Support for the MIPS ABIs: o32, n32, 64.
 * New systems supported: Darwin, SCO, Windows DLLs.
-* New Karatsuba Square Root algorithm.
+* New divide-and-conquer square root algorithm.
 * New algorithms chapter in the manual.
 * New reentrant malloc temporary memory method.
 * New C++ class interface by Gerardo Ballabio (preliminary).
 * Revamped configure, featuring ABI selection.
-* Updated mpfr.
-* Speed improvements for mpz_powm.
+* Updated mpfr (floating-point function set).
+* Speed improvements for mpz_powm and mpz_powm_ui (mainly affecting small
+  operands).
 * New gmp_printf and related functions.
 * New integer functions: mpz_cmp_d, mpz_cmpabs_d, mpz_lcm_ui.
 * New division functions: mpz_cdiv_q_2exp, mpz_cdiv_r_2exp, mpz_divexact_ui.
