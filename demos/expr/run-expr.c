@@ -22,7 +22,7 @@ MA 02111-1307, USA.
 */
 
 
-/* Usage: ./run [-z] [-q] [-f] [-r] [-p prec] [-b base] expression...
+/* Usage: ./run-expr [-z] [-q] [-f] [-r] [-p prec] [-b base] expression...
 
    Evaluate each argument as a simple expression.  By default this is in mpz
    integers, but -q selects mpq, -f selects mpf or -r selects mpfr (if
