@@ -4122,11 +4122,11 @@ done
 case "$srcdir" in
 [/\\]* | ?:[/\\]* )
 
-echo "define(\`CONFIG_SRCDIR',\`\`$srcdir'')" >> $gmp_tmpconfigm4
+echo "define(<CONFIG_SRCDIR>,<\`$srcdir'>)" >> $gmp_tmpconfigm4
     ;;
 *)
 
-echo "define(\`CONFIG_SRCDIR',\`\`../$srcdir'')" >> $gmp_tmpconfigm4
+echo "define(<CONFIG_SRCDIR>,<\`../$srcdir'>)" >> $gmp_tmpconfigm4
  ;;
 esac
 
