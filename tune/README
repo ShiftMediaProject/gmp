@@ -24,9 +24,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
                GMP SPEED MEASURING AND PARAMETER TUNING
 
 
-The programs in this directory are for knowledgeable users who want to make
-measurements of the speed of GMP routines on their machine, and perhaps
-tweak some settings or identify things that can be improved.
+The programs in this directory are for knowledgeable users who want to
+measure GMP routines on their machine, and perhaps tweak some settings or
+identify things that can be improved.
 
 The programs here are tools, not ready to run solutions.  Nothing is built
 in a normal "make all", but various Makefile targets described below exist.
@@ -51,19 +51,13 @@ Direct mapped caches
     will depend on TMP_ALLOC using alloca, and even then it may or may not
     be enough.
 
-sparc32/v9 (eg. ultrasparc under solaris 2.6)
-
-    The sparc32/v9 addmul_1 code runs at noticeably different speeds on
-    successive sizes (mod 4), and this has a bad effect on the tune program
-    determinations of multiply and square thresholds.
-
 FreeBSD 4.2 i486 getrusage
 
     This getrusage seems to be a bit doubtful, it looks like it's
     microsecond accurate, but sometimes ru_utime remains unchanged after a
     time of many microseconds has elapsed.  It'd be good to detect this in
-    the time.c initializations, but for now the suggestion is to pretend
-    getrusage doesn't exist.
+    the time.c initializations, but for now the suggestion is to pretend it
+    doesn't exist.
 
         ./configure ac_cv_func_getrusage=no
 
@@ -81,6 +75,12 @@ SCO OpenUNIX 8 /etc/hw
     running the speed program repeatedly then set a GMP_CPU_FREQUENCY
     environment variable (see TIME BASE section below).
 
+Low resolution timebase
+
+    Parameter tuning can be very time consuming if the only timebase
+    available is a 10 millisecond clock tick, to the point of being
+    unusable.  This is currently the case on VAX and ARM systems.
+
 
 
 
@@ -93,17 +93,17 @@ into gmp-mparam.h.  The program is built and run with
         make tune
 
 If the thresholds indicated are grossly different from the values in the
-selected gmp-mparam.h then there may be a performance boost in relevant size
-ranges by changing gmp-mparam.h accordingly.
+selected gmp-mparam.h then there may be a performance boost in applicable
+size ranges by changing gmp-mparam.h accordingly.
 
-Be sure to do a full reconfigure and rebuild to get new thresholds to take
-effect (a partial rebuild is enough sometimes, but a fresh configure and
-make is certain to be correct).
+Be sure to do a full reconfigure and rebuild to get any newly set thresholds
+to take effect.  A partial rebuild is enough sometimes, but a fresh
+configure and make is certain to be correct.
 
 If a CPU has specific tuned parameters coming from a gmp-mparam.h in one of
 the mpn subdirectories then the values from "make tune" should be similar.
-Check though that the configured CPU is right and there are no machine
-specific effects causing a difference.
+But check that the configured CPU is right and there are no machine specific
+effects causing a difference.
 
 It's hoped the compiler and options used won't have too much effect on
 thresholds, since for most CPUs they ultimately come down to comparisons
@@ -135,8 +135,8 @@ Draw a graph of mpn_mul_n, stepping through sizes by 10 or a factor of 1.05
         ./speed -s 10-5000 -t 10 -f 1.05 -P foo mpn_mul_n
 	gnuplot foo.gnuplot
 
-Compare mpn_add_n and mpn_lshift by 1, showing times in cycles and showing
-under mpn_lshift the difference between it and mpn_add_n.
+Compare mpn_add_n and an mpn_lshift by 1, showing times in cycles and
+showing under mpn_lshift the difference between it and mpn_add_n.
 
 	./speed -s 1-40 -c -d mpn_add_n mpn_lshift.1
 
@@ -156,9 +156,9 @@ don't get this since it would upset gnuplot or other data viewers.
 TIME BASE
 
 The time measuring method is determined in time.c, based on what the
-configured target has available.  A cycle counter is preferred, possibly
+configured host has available.  A cycle counter is preferred, possibly
 supplemented by another method if the counter has a limited range.  A
-microsecond accurate getrusage() or gettimeofday() will work well.
+microsecond accurate getrusage() or gettimeofday() will work quite well too.
 
 The cycle counters (except possibly on alpha) and gettimeofday() will depend
 on the machine being otherwise idle, or rather on other jobs not stealing
@@ -176,9 +176,9 @@ will convert as necessary according to the output format requested.  The
 tune program will work with either cycles or seconds.
 
 freq.c knows how to get the frequency on some systems, or can measure a
-cycle counter against gettimeofday(), but when that fails, or needs to be
-overridden, an environment variable GMP_CPU_FREQUENCY can be used (in
-Hertz).  For example in "bash" on a 650 MHz machine,
+cycle counter against gettimeofday() or getrusage(), but when that fails, or
+needs to be overridden, an environment variable GMP_CPU_FREQUENCY can be
+used (in Hertz).  For example in "bash" on a 650 MHz machine,
 
 	export GMP_CPU_FREQUENCY=650e6
 
@@ -249,14 +249,15 @@ if the lshift isn't faster there's an obvious improvement that's possible.
 
 On some CPUs (AMD K6 for example) an "in-place" mpn_add_n where the
 destination is one of the sources is faster than a separate destination.
-Here's an example to see this.  (mpn_add_n_inplace is a special measuring
-routine, not available for other operations.)
+Here's an example to see this.  ".1" selects dst==src1 for mpn_add_n (and
+mpn_sub_n), for other values see speed.h SPEED_ROUTINE_MPN_BINARY_N_CALL.
 
-        ./speed -s 1-200 -c mpn_add_n mpn_add_n_inplace
+        ./speed -s 1-200 -c mpn_add_n mpn_add_n.1
 
-The gmp manual recommends divisions by powers of two should be done using a
-right shift because it'll be significantly faster.  The following shows by
-what factor mpn_rshift is faster, using division by 32 as an example.
+The gmp manual points out that divisions by powers of two should be done
+using a right shift because it'll be significantly faster than an actual
+division.  The following shows by what factor mpn_rshift is faster than
+mpn_divrem_1, using division by 32 as an example.
 
         ./speed -s 10-20 -r mpn_rshift.5 mpn_divrem_1.32
 
@@ -460,20 +461,9 @@ Make a program to check the time base is working properly, for small and
 large measurements.  Make it able to test each available method, including
 perhaps the apparent resolution of each.
 
-Make an option in struct speed_parameters to specify operand overlap,
-perhaps 0 for none, 1 for dst=src1, 2 for dst=src2, 3 for dst1=src1
-dst2=src2, 4 for dst1=src2 dst2=src1.  This is done for addsub_n with the r
-parameter (though addsub_n isn't yet enabled), and could be done for add_n,
-xor_n, etc too.
-
-When speed_measure() divides the total time measured by repetitions
-performed, it divides the fixed overheads imposed by speed_starttime() and
-speed_endtime().  When different routines are run with different repetitions
-the overhead will then be differently counted.  It would improve precision
-to try to avoid this.  Currently the idea is just to set speed_precision big
-enough that the effect is insignificant compared to the routines being
-measured.
-
+Make a general mechanism for specifying operand overlap, and a syntax like
+maybe "mpn_add_n.dst=src2" to select it.  Some measuring routines do this
+sort of thing with the "r" parameter currently.
 
 
 
