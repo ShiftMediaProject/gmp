@@ -31,7 +31,7 @@ dnl  size	r19
 dnl  This code runs at 5.4 cycles/limb on EV5, and 2.1 cycles/limb on EV6.
 
 dnl This code was written in close cooperation with ev6 pipeline expert
-dnl Steve Root (root@toober.hlo.dec.com).  Any errors are tege's fault, though.
+dnl Steve Root.  Any errors are tege's fault, though.
 
 dnl  work triplet  0-2
 dnl  work triplet  3-5
@@ -248,29 +248,28 @@ $ret3c:
 	stq	r11,	-8(r16)		C L0 store pair
 
 
-
 $Lsmall:
-	addq	r19,	8,	r19
+	lda	r19,	8(r19)
 	beq	r19,	$Lret
 
 	ldq	r0,	0(r17)
 	ldq	r1,	0(r18)
-	subq	r19,	1,	r19
+	lda	r19,	-1(r19)
 	beq	r19,	$Lend0
 
-	ALIGN(16)
+	ALIGN(8)
 $Loop0:	addq	r0,	r1,	r2	C main add
 	ldq	r0,	8(r17)
 	cmpult	r2,	r1,	r8	C compute cy from last add
 	ldq	r1,	8(r18)
 	addq	r2,	r23,	r20	C carry add
-	addq	r17,	8,	r17
-	addq	r18,	8,	r18
+	lda	r17,	8(r17)
+	lda	r18,	8(r18)
 	stq	r20,	0(r16)
 	cmpult	r20,	r2,	r23	C compute cy from last add
-	subq	r19,	1,	r19	C decr loop cnt
+	lda	r19,	-1(r19)		C decr loop cnt
 	bis	r8,	r23,	r23	C combine cy from the two adds
-	addq	r16,	8,	r16
+	lda	r16,	8(r16)
 	bne	r19,	$Loop0
 $Lend0:	addq	r0,	r1,	r2	C main add
 	addq	r2,	r23,	r20	C carry add
