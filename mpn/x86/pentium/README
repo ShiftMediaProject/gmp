@@ -1,4 +1,4 @@
-Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1996, 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -56,11 +56,14 @@ Pentium MMX gets the following improvements
 
 	mpn_l/rshift               1.75
 
+	mpn_mul_1                 12.0 normal, 7.0 for 16-bit multiplier
 
-1. mpn_add_n and mpn_sub_n run at asymptotically 2 cycles/limb.  Due to loop
-overhead and other delays (cache refill?), they run at or near 2.5 cycles/limb.
 
-1. mpn_mul_1, mpn_addmul_1, mpn_submul_1 all run 1 cycle faster than they
+mpn_add_n and mpn_sub_n run at asymptotically 2 cycles/limb.  Due to loop
+overhead and other delays (cache refill?), they run at or near 2.5
+cycles/limb.
+
+mpn_mul_1, mpn_addmul_1, mpn_submul_1 all run 1 cycle faster than they
 should.  Intel documentation says a mul instruction is 10 cycles, but it
 measures 9 and the routines using it run as 9.
 
@@ -73,8 +76,8 @@ cycles (fld1/por/emms for instance).  In order to avoid that the two aren't
 mixed and currently that means using MMX and not x87.
 
 MMX offers a big speedup for lshift and rshift, and a nice speedup for
-16-bit multipliers in mul_1.  If fast code using x87 is found then perhaps
-the preference for MMX will be reversed.
+16-bit multipliers in mpn_mul_1.  If fast code using x87 is found then
+perhaps the preference for MMX will be reversed.
 
 
 
@@ -101,8 +104,8 @@ cycles, whereas 6 would be expected (and is achieved on P55),
 	xorl	%edi, %edi
 	xorl	%ebp, %ebp
 
-Three xorls run at 7 cycles too, so it doesn't seem to be pairing inhibited
-only in the second following cycle.
+Three xorls run at 7 cycles too, so it doesn't seem to be just that pairing
+inhibited is only in the second following cycle (or something like that).
 
 Avoiding this problem would bring P54 shifts down from 6.0 c/l to 5.5 with a
 pattern of shift, 2 loads, shift, 2 stores, shift, etc.  A start has been
