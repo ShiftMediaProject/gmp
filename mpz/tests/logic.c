@@ -1,4 +1,4 @@
-/* Test mpz_com, mpz_and, and mpz_ior.
+/* Test mpz_com, mpz_and, mpz_ior, and mpz_xor.
 
 Copyright (C) 1993, 1994, 1996 Free Software Foundation, Inc.
 
@@ -61,28 +61,55 @@ main (argc, argv)
       mpz_random2 (y, ysize);
 
       mpz_com (r1, x);
+      MPZ_CHECK_FORMAT (r1);
       mpz_com (r1, r1);
+      MPZ_CHECK_FORMAT (r1);
       if (mpz_cmp (r1, x) != 0)
 	dump_abort ();
 
       mpz_com (r1, y);
+      MPZ_CHECK_FORMAT (r1);
       mpz_com (r2, r1);
+      MPZ_CHECK_FORMAT (r2);
       if (mpz_cmp (r2, y) != 0)
 	dump_abort ();
 
       mpz_com (t1, x);
+      MPZ_CHECK_FORMAT (t1);
       mpz_com (t2, y);
+      MPZ_CHECK_FORMAT (t2);
       mpz_and (t3, t1, t2);
+      MPZ_CHECK_FORMAT (t3);
       mpz_com (r1, t3);
+      MPZ_CHECK_FORMAT (r1);
       mpz_ior (r2, x, y);
+      MPZ_CHECK_FORMAT (r2);
       if (mpz_cmp (r1, r2) != 0)
 	dump_abort ();
 
       mpz_com (t1, x);
+      MPZ_CHECK_FORMAT (t1);
       mpz_com (t2, y);
+      MPZ_CHECK_FORMAT (t2);
       mpz_ior (t3, t1, t2);
+      MPZ_CHECK_FORMAT (t3);
       mpz_com (r1, t3);
+      MPZ_CHECK_FORMAT (r1);
       mpz_and (r2, x, y);
+      MPZ_CHECK_FORMAT (r2);
+      if (mpz_cmp (r1, r2) != 0)
+	dump_abort ();
+
+      mpz_ior (t1, x, y);
+      MPZ_CHECK_FORMAT (t1);
+      mpz_and (t2, x, y);
+      MPZ_CHECK_FORMAT (t2);
+      mpz_com (t3, t2);
+      MPZ_CHECK_FORMAT (t3);
+      mpz_and (r1, t1, t3);
+      MPZ_CHECK_FORMAT (r1);
+      mpz_xor (r2, x, y);
+      MPZ_CHECK_FORMAT (r2);
       if (mpz_cmp (r1, r2) != 0)
 	dump_abort ();
     }
