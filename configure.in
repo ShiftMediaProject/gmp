@@ -46,7 +46,8 @@ esac],
 [enable_assert=no])
 
 if test "$enable_assert" = "yes"; then
-  AC_DEFINE(WANT_ASSERT)
+  AC_DEFINE(WANT_ASSERT,1,
+  [./configure --enable-assert option, to enable some ASSERT()s])
 fi
 
 
@@ -59,7 +60,8 @@ esac],
 [enable_alloca=yes])
 
 if test "$enable_alloca" = "no"; then
-  AC_DEFINE(USE_STACK_ALLOC)
+  AC_DEFINE(USE_STACK_ALLOC,1,
+  [./configure --disable-alloca option, to use stack-alloc.c, not alloca])
 fi
 
 
@@ -453,6 +455,8 @@ case ${target} in
     gmp_mf_aors_n="add_n sub_n"
     gmp_mf_aorsmul_1="addmul_1 submul_1"
 
+    CALLING_CONVENTIONS_OBJS="x86call.o x86check.o"
+
     GMP_CHECK_ASM_SHLDL_CL(
       [GMP_DEFINE(WANT_SHLDL_CL,1)],
       [GMP_DEFINE(WANT_SHLDL_CL,0)])
@@ -460,13 +464,15 @@ case ${target} in
     # rdtsc is in pentium and up, but not in i386 and i486
     case ${target} in
       [i[34]86*-*-*])
-         ;;
-      *) AC_DEFINE(HAVE_PENTIUM_RDTSC)
-         gmp_have_pentium_rdtsc=yes
-         ;;
+        ;;
+      *)
+        AC_DEFINE(HAVE_PENTIUM_RDTSC,1,
+        [Define if the 80x86 rdtsc instruction is available (pentium and up).])
+        gmp_have_pentium_rdtsc=yes
+        ;;
     esac
 
-    # all the CPUs below wanting to know about mmx
+    # the CPUs below wanting to know about mmx
     case ${target} in
       [pentiummmx-*-* | pentium[23]-*-* | k6*-*-* | athlon-*-*])
 	GMP_CHECK_ASM_MMX(tmp_mmx=yes, tmp_mmx=no)
@@ -560,6 +566,12 @@ esac
 
 AM_CONDITIONAL(HAVE_PENTIUM_RDTSC, test "$gmp_have_pentium_rdtsc" = yes)
 
+AC_SUBST(CALLING_CONVENTIONS_OBJS)
+if test -n "$CALLING_CONVENTIONS_OBJS"; then
+  AC_DEFINE(HAVE_CALLING_CONVENTIONS,1,
+  [Define if mpn/tests has calling conventions checking for the CPU])
+fi
+
 
 dnl Extensions for executable and object files.
 dnl -------------------------------------------
@@ -584,7 +596,7 @@ AC_CHECK_DECLS((optarg))
 dnl Checks for header files.
 dnl ------------------------
 AC_HEADER_STDC
-AC_CHECK_HEADERS(getopt.h unistd.h sys/sysctl.h)
+AC_CHECK_HEADERS(getopt.h unistd.h sys/sysctl.h sys/time.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl --------------------------------------------------------------
@@ -596,13 +608,14 @@ dnl -----------------------------
 dnl AC_FUNC_MEMCMP
 dnl AC_TYPE_SIGNAL
 dnl AC_CHECK_FUNCS(strtol)
-AC_CHECK_FUNCS(getopt_long strtoul sysconf sysctlbyname)
+AC_CHECK_FUNCS(getopt_long getpagesize setitimer strtoul sysconf sysctlbyname)
 
-dnl Trick automake into thinking we've run the AM_C_PROTOTYPES it wants for
-dnl the ansi2knr option (it's only a warning it prints)
+dnl Trick automake into thinking we've run AM_C_PROTOTYPES which it wants
+dnl for ansi2knr, and instead use our own test.  (It's only a warning
+dnl automake prints, but it's good to suppress it.)
 ifelse(0,1,[
 AM_C_PROTOTYPES
-]) dnl ... and instead use our own test
+])
 GMP_C_ANSI2KNR
 
 
@@ -653,12 +666,13 @@ esac
  
 GMP_DEFINE_RAW(["include(CONFIG_TOP_SRCDIR\`/mpn/asm-defs.m4')"], POST)
 
-# Must be after including asm-defs.m4.
+# Must be after asm-defs.m4
 GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')", POST)
 
 
 dnl  config.m4 post-includes
 dnl  -----------------------
+dnl  (Note x86 post include set with $path above.)
 changequote(,)dnl
 case "$target" in
   alpha*-cray-unicos*)
@@ -791,7 +805,7 @@ for tmp_dir in $path ; do
 
     # Copy any KARATSUBA_SQR_THRESHOLD in gmp-mparam.h to config.m4.
     # Some versions of sqr_basecase.asm use this.
-    tmp_gmp_karatsuba_sqr_threshold="`sed -n 's/^#define KARATSUBA_SQR_THRESHOLD[ 	]*\([0-9]*\)/\1/p' $srcdir/mpn/${tmp_dir}/gmp-mparam.h`"
+    tmp_gmp_karatsuba_sqr_threshold="`sed -n 's/^#define KARATSUBA_SQR_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $srcdir/mpn/${tmp_dir}/gmp-mparam.h`"
     if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
       GMP_DEFINE_RAW(["define(<KARATSUBA_SQR_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
     fi
