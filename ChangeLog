@@ -18,6 +18,53 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-08-02  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/asm-defs.m4: Tweak some comments, add hpux11 to m4wrap 0xFF
+	problem systems.
+
+	* configure.in (*-*-sco3.2v5*): Remove lt_cv_archive_cmds_need_lc=no,
+	since libtool no longer uses it.  This was a workaround fixing ctype.h
+	in SCO 5 shared libraries; not sure if libtool now gets it right on
+	its own, let's hope so.
+
+	* configure.in, acinclude.m4 (GMP_PROG_HOST_CC): Remove, libtool no
+	longer demands HOST_CC.
+
+	* configure.in: When C or C++ compiler not found, refer user to
+	config.log.
+	
+	* configure.in (i386-*-*): Turn i386 into a fat binary build.
+	* mpn/x86/fat/fat.c, mpn/x86/fat/fat_entry.asm,
+	mpn/x86/fat/gmp-mparam.h, mpn/x86/fat/gcd_1.c, mpn/x86/fat/mode1o.c:
+	New files.
+	* gmp-impl.h (struct cpuvec_t) [x86 fat]: New structure.
+	* longlong.h (COUNT_LEADING_ZEROS_NEED_CLZ_TAB) [x86 fat]: Define.
+	* mpn/asm-defs.m4 (foreach): New macro.
+	* mpn/x86/x86-defs.m4 (CPUVEC_FUNCS_LIST): New define.
+	* mpn/x86/sqr_basecase.asm: New file, primarily as a fallback for fat
+	binaries.
+
+	* configure.in: Add various supports for fat binaries, via fat_path,
+	fat_functions and fat_thresholds variables.
+	* acinclude.m4 (GMP_STRIP_PATH): Mung $fat_path too.
+	(GMP_FAT_SUFFIX, GMP_REMOVE_FROM_LIST): New macros.
+	* gmp-impl.h: Add various supports for fat binaries.
+	(DECL_add_n etc): New macros.
+	(mpn_mul_basecase etc): Define only if not already defined.
+	* mpn/asm-defs.m4 (m4_config_gmp_mparam): Mention fat binary.
+	(MPN): Use m4_unquote, for the benefit of fat binary name expansion.
+	* doc/configuration: Notes on fat binaries.
+	* gmp-impl.h (MUL_TOOM3_THRESHOLD_LIMIT): Define always.
+	(MUL_KARATSUBA_THRESHOLD_LIMIT): New define.
+	* mpn/generic/mul.c, mpn/generic/mul_n.c: Use these.
+	* tune/divrem1div.c, tune/divrem1inv.c, tune/mod_1_div.c,
+	tune/mod_1_inv.c: Define OPERATION_divrem_1 and OPERATION_mod_1, to
+	tell fat.h what's being done.
+
+	* config.guess (alpha-*-*): Update comments on what configfsf.guess
+	does and doesn't do for us.
+
 2003-07-31  Kevin Ryde  <kevin@swox.se>
 
 	* config.guess: Remove $dummy.o files everywhere, in case vendor
