@@ -206,9 +206,21 @@ and mpn_copyb), the calculations change as follows.
 
 
 
-OLD GAS
+OLD GAS 2.9.1
 
-The gas 1.92.3 that comes with FreeBSD 2.2.8 has a couple of gremlins that
+This version, which comes with RedHat Linux 6.1, doesn't support divisions
+in constants, for example the following gives an error
+
+	addl	$32/2, %eax
+
+gas 2.91 and up support divisions, but to work everywhere expressions with
+divisions should be done with m4 eval() instead.
+
+
+
+OLD GAS 1.92.3
+
+This version, which comes with FreeBSD 2.2.8, has a couple of gremlins that
 affect gmp code.
 
 Firstly, an expression involving two forward references to labels comes out
