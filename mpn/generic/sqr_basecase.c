@@ -1,5 +1,5 @@
-/* mpn_sqr_basecase -- Internal routine to square two natural numbers
-   of length m and n.
+/* mpn_sqr_basecase -- Internal routine to square a natural number
+   of length n.
 
    THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
@@ -28,10 +28,6 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
-
-#ifdef HAVE_NATIVE_mpn_sqr_diagonal
-void mpn_sqr_diagonal (mp_ptr, mp_srcptr, mp_size_t);
-#endif
 
 void
 mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
