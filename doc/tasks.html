@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 17 May 2001.  An up-to-date version is available at
+  This file current as of 20 May 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -80,10 +80,11 @@
 
 <h4>Machine Independent Optimization</h4>
 <ul>
-<li> <code>mpn_gcdext</code>, <code>mpz_get_d</code>: Don't test
-     <code>count_leading_zeros</code> for zero, instead check the high bit of
-     the operand and avoid invoking <code>count_leading_zeros</code>.  This is
-     an optimization on all machines, and significant on machines with slow
+<li> <code>mpn_gcdext</code>, <code>mpz_get_d</code>,
+     <code>mpf_get_str</code>: Don't test <code>count_leading_zeros</code> for
+     zero, instead check the high bit of the operand and avoid invoking
+     <code>count_leading_zeros</code>.  This is an optimization on all
+     machines, and significant on machines with slow
      <code>count_leading_zeros</code>, though it's possible an already
      normalized operand might not be encountered very often.
 <li> Rewrite <code>umul_ppmm</code> to use floating-point for generating the
@@ -189,12 +190,6 @@
      separate" function parameters?  If so, judicious use might improve the
      code generated a bit.  Do any compilers have their own flavour of
      restrict as "completely unaliased", and is that still usable?
-<li> GCC <code>__attribute__ ((malloc))</code> could be used on
-     <code>__gmp_allocate_func</code> and on the stack-alloc.c
-     <code>TMP_ALLOC</code>.  Don't know if it'd do much.  Current pre-release
-     gcc 3 doesn't like attaching function attributes to function pointers
-     like <code>__gmp_allocate_func</code> (see "(gcc)Attribute Syntax"), this
-     has to wait for the future.
 <li> <code>mpf_add</code>: Don't do a copy to avoid overlapping operands
      unless it's really necessary (currently only sizes are tested, not
      whether r really is u or v).
@@ -460,8 +455,8 @@
      <code>libgmp</code>.  This establishes good cross-checks, but it might be
      better to use simple reference routines where possible.  Where it's not
      possible some attention could be paid to the order of the tests, so a
-     main <code>libgmp</code> is only used to construct tests once it seems to
-     be good.
+     main <code>libgmp</code> routine is only used to construct tests once it
+     seems to be good.
 <li> <code>mpf_set_q</code> is very similar to <code>mpf_div</code>, it'd be
      good for the two to share code.  Perhaps <code>mpf_set_q</code> should
      make some <code>mpf_t</code> aliases for its numerator and denominator
@@ -561,6 +556,12 @@ near future, but are at least worth thinking about.
      which avoids some tedium but is otherwise perhaps not too important.
      Currently <code>mpz_set_f</code> and <code>mpf_cmp_ui</code> depend on
      exp==0, maybe elsewhere too.
+<li> GCC <code>__attribute__ ((malloc))</code> could be used on
+     <code>__gmp_allocate_func</code> and on the stack-alloc.c
+     <code>TMP_ALLOC</code>.  Don't know if it'd do much.  Current pre-release
+     gcc 3 doesn't like attaching function attributes to function pointers
+     like <code>__gmp_allocate_func</code> (see "(gcc)Attribute Syntax"), this
+     has to wait for the future.
 </ul>
 
 
