@@ -122,33 +122,40 @@ case "$target" in
   # Sparc
   [ultrasparc*-*-solaris2.[7-9] | sparcv9-*-solaris2.[7-9]])
     os_64bit=yes
-    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v8plus"
-    gmp_cflags64_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v9"
+    gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
+    gmp_optcflags_gcc="-mcpu=v9"
+    gmp_cflags64_gcc="$gmp_cflags_gcc -Wa,-xarch=v9"
+    gmp_optcflags64_gcc="-mcpu=v9"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
   ultrasparc*-*-* | sparcv9-*-*)
     ## FIXME: path=sparc32/v9
-    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v8plus"
+    gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
+    gmp_optcflags_gcc="-mcpu=v9"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
   sparcv8*-*-solaris2.* | microsparc*-*-solaris2.*)
-    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8"
+    gmp_cflags_gcc="$gmp_cflags_gcc"
+    gmp_optcflags_gcc="-mcpu=v8"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
   sparcv8*-*-* | microsparc*-*-*)		# SunOS, Linux, *BSD
     cclist="gcc acc cc"
-    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8"
+    gmp_cflags_gcc="$gmp_cflags_gcc"
+    gmp_optcflags_gcc="-mcpu=v8"
     gmp_cflags_acc="-g -O2 -cg92"
     gmp_cflags_cc="-O2"		# FIXME: Flag for v8?
     ;;
   supersparc*-*-solaris2.*)
-    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8 -DSUPERSPARC"
+    gmp_cflags_gcc="$gmp_cflags_gcc -DSUPERSPARC"
+    gmp_optcflags_gcc="-mcpu=v8"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4 -DSUPERSPARC"
     ;;
   supersparc*-*-*)		# SunOS, Linux, *BSD
     cclist="gcc acc cc"
-    gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v8 -DSUPERSPARC"
+    gmp_cflags_gcc="$gmp_cflags_gcc -DSUPERSPARC"
+    gmp_optcflags_gcc="-mcpu=v8"
     gmp_cflags_acc="-g -O2 -cg92 -DSUPERSPARC"
     gmp_cflags_cc="-O2 -DSUPERSPARC"	# FIXME: Flag for v8?
     ;;
