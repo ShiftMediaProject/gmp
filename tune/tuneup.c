@@ -1,6 +1,6 @@
 /* Create tuned thresholds for various algorithms.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -1280,6 +1280,45 @@ tune_modexact_1_odd (void)
 
 
 void
+tune_jacobi_base (void)
+{
+  static struct param_t  param;
+  double   t1, t2, t3;
+  int      method;
+
+  s.size = BITS_PER_MP_LIMB * 3 / 4;
+
+  t1 = tuneup_measure (speed_mpn_jacobi_base_1, &param, &s);
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_jacobi_base_1 %.9f\n", s.size, t1);
+
+  t2 = tuneup_measure (speed_mpn_jacobi_base_2, &param, &s);
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_jacobi_base_2 %.9f\n", s.size, t2);
+
+  t3 = tuneup_measure (speed_mpn_jacobi_base_3, &param, &s);
+  if (option_trace >= 1)
+    printf ("size=%ld, mpn_jacobi_base_3 %.9f\n", s.size, t3);
+
+  if (t1 == -1.0 || t2 == -1.0 || t3 == -1.0)
+    {
+      printf ("Oops, can't measure all mpn_jacobi_base methods at %ld\n",
+              s.size);
+      abort ();
+    }
+
+  if (t1 < t2 && t1 < t3)
+    method = 1;
+  else if (t2 < t3)
+    method = 2;
+  else
+    method = 3;
+
+  printf ("#define JACOBI_BASE_METHOD             %d\n", method);
+}
+
+
+void
 tune_fft_mul (void)
 {
   static struct fft_param_t  param;
@@ -1401,6 +1440,7 @@ all (void)
 
   tune_gcd_accel ();
   tune_gcdext ();
+  tune_jacobi_base ();
   printf("\n");
 
   tune_divrem_1 ();
