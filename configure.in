@@ -316,6 +316,7 @@ case $host in
   arm*-*-*)
     path="arm"
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
+    gcc_testlist="gcc-arm-umodsi"
     extra_functions="udiv"
     GMP_INCLUDE_MPN(arm/arm-defs.m4)
     ;;
@@ -897,7 +898,8 @@ for abi in $abilist; do
       testlist_pass=yes
       for tst in $testlist; do
         case $tst in
-        hpc-hppa-2-0) GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
+        hpc-hppa-2-0)   GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
+        gcc-arm-umodsi) GMP_GCC_ARM_UMODSI($cc,,testlist_pass=no) ;;
         esac
         if test $testlist_pass = no; then break; fi
       done
@@ -951,7 +953,7 @@ if test $found_compiler = yes; then
         case $flag in
           -march=pentiumpro)
             # buggy on some versions of gcc, exclude as necessary
-            GMP_GCC_MARCH_PENTIUMPRO($ccbase,$cc,,continue)
+            GMP_GCC_MARCH_PENTIUMPRO($cc,,continue)
             ;;
         esac
 
