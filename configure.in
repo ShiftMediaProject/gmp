@@ -313,12 +313,14 @@ case $host in
 
 
   hppa*-*-*)
+    # HP cc is K&R by default, but AM_C_PROTOTYPES will add "-Ae", or "-Aa
+    # -D_HPUX_SOURCE", to put it into ansi mode, if possible.
+
     # default to pa7100
     gcc_cflags="-g -O2"
     gcc_cflags_optlist="arch"
     gcc_cflags_arch="-mpa-risc-1-1"
-    cc_cflags="+DA1.1 +O2 -Aa"
-    cc_cppflags="-D_HPUX_SOURCE"
+    cc_cflags="+DA1.1 +O2"
     path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
     extra_functions="udiv_qrnnd"
 
@@ -329,7 +331,7 @@ case $host in
       hppa1.0*-*-*)
         # override back to plain 1.0
         gcc_cflags_optlist=
-        cc_cflags="+O2 -Aa"
+        cc_cflags="+O2"
         path="hppa"
         ;;
       hppa7000*-*-*)
@@ -354,8 +356,7 @@ case $host in
         # no gcc support for long long in 2.0n
 	cclist_20n="cc"
         # +O2 to cc triggers bug in mpz/powm.c (cvs version 1.4)
-        cc_20n_cflags="+DA2.0 +e +O3 -Aa"
-        cc_20n_cppflags="-D_HPUX_SOURCE"
+        cc_20n_cflags="+DA2.0 +e +O3"
         cc_20n_testlist="hpc-hppa-2-0"
         path_20n="pa64"
 	limb_20n=longlong
@@ -377,8 +378,7 @@ case $host in
 
           # gcc support for 2.0w is in progress
           cclist_20w="cc"
-          cc_20w_cflags="+DD64 +O3 -Aa"
-          cc_20w_cppflags="-D_HPUX_SOURCE"
+          cc_20w_cflags="+DD64 +O3"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64w"
           extra_functions_20w="umul_ppmm udiv_qrnnd"
