@@ -246,9 +246,6 @@ MA 02111-1307, USA. */
 /* Define if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
-/* Define if `fesetround' and <fenv.h> exist. */
-#undef HAVE_FESETROUND
-
 /* Define if you have the <fpu_control.h> header file. */
 #undef HAVE_FPU_CONTROL_H
 
@@ -261,7 +258,7 @@ MA 02111-1307, USA. */
 /* Define if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
-/* Define if 0/0, 1/0, -1/0 and sqrt(-1) work to generate infinities */
+/* Define if 0/0, 1/0, -1/0 and sqrt(-1) work to generate NaN/infinities. */
 #undef HAVE_INFS
 
 /* Define if the system has the type `intmax_t'. */
@@ -419,6 +416,10 @@ MA 02111-1307, USA. */
 
 /* Assembler local label prefix */
 #undef LSYM_PREFIX
+
+/* Define if you have the `fesetround' function via the <fenv.h> header file.
+   */
+#undef MPFR_HAVE_FESETROUND
 
 /* Name of package */
 #undef PACKAGE
