@@ -20,6 +20,25 @@ MA 02111-1307, USA.
 
 2004-01-14  Niels Möller  <niels@s3.kth.se>
 
+	* mpn/generic/gcd.c (gcd_schoenhage): Updated for changes to
+	mpn_hgcd and mpn_hgcd_fix. (Schoenhage code is still disabled).
+
+	* gmp-impl.h (mpn_hgcd_fix): Updated prototype.
+
+	* mpn/generic/hgcd.c (mpn_hgcd_fix): Replaced a bunch of arguments
+	by a pointer const struct hgcd_row *s. Updated callers.
+
+	* mpn/generic/hgcd.c (hgcd_start_row_p): Use const for the input.
+	Moved function definition before hgcd_jebelean.
+	(hgcd_jebelean): Interface change, analogous to hgcd2.
+	(mpn_hgcd_fix): Normalize v. Require that v > 0.
+	(hgcd_adjust): Fix bug in carry update.
+	(mpn_hgcd): Reorganized again, to adapt to mpn_hgcd/hgcd_jebelean
+	now sometimes returning 1. Reintroduced hgcd_adjust.
+
+	* mpn/generic/hgcd.c (hgcd_final): Streamlined logic for the first
+	hgcd2 call.
+
 	* mpn/generic/hgcd2.c (mpn_hgcd2): Interface change. Return 1
 	instead of 2, in the no progress case r0=A, r1=B.
 
