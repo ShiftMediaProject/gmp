@@ -43,13 +43,15 @@ m4_assert_numargs(2)
 $1:	.t_floating $2
 	.endp')
 
-dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo[,gp])
+dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo[,gp|noalign])
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
 
 define(`PROLOGUE_cpu',
 m4_assert_numargs_range(1,2)
-`ifelse(`$2',gp,,`ifelse(`$2',,,`m4_error(`Unrecognised PROLOGUE parameter
-')')')dnl
+`ifelse(`$2',gp,,
+`ifelse(`$2',noalign,,
+`ifelse(`$2',,,`m4_error(`Unrecognised PROLOGUE parameter
+')')')')dnl
 	.stack	192		; What does this mean?  Only Cray knows.
 	.psect	$1@code,code,cache
 $1::')
