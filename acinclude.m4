@@ -1167,8 +1167,8 @@ dnl  In the test program, .text and .globl are hard coded because this macro
 dnl  is wanted before GMP_ASM_TEXT and GMP_ASM_GLOBL are run.  A .byte
 dnl  sequence is used (for xorps %xmm0, %xmm0) to make us independent of
 dnl  tests for whether the assembler supports sse2/xmm.  Obviously we need
-dnl  both assembler and OS support, but no need for force the order in which
-dnl  we test.
+dnl  both assembler and OS support, but this means we don't force the order
+dnl  in which we test.
 dnl
 dnl  FIXME: Maybe we should use $CCAS to assemble, if it's set.  (Would
 dnl  still want $CC/$CFLAGS for the link.)  But this test is used before
