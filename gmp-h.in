@@ -145,9 +145,21 @@ MA 02111-1307, USA. */
 #define __GMP_DECLSPEC  __GMP_DECLSPEC_IMPORT
 #endif
 #endif
-
 #ifndef __GMP_DECLSPEC
 #define __GMP_DECLSPEC
+#endif
+
+#if __GMP_WITHIN_GMPXX
+#ifdef DLL_EXPORT
+#define __GMP_DECLSPEC_XX  __GMP_DECLSPEC_EXPORT
+#endif
+#else
+#if defined (_WIN32) && __GMP_LIBGMP_SHARED
+#define __GMP_DECLSPEC_XX  __GMP_DECLSPEC_IMPORT
+#endif
+#endif
+#ifndef __GMP_DECLSPEC_XX
+#define __GMP_DECLSPEC_XX
 #endif
 
 
@@ -1956,12 +1968,12 @@ mpn_sub_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_
 
 #ifdef __cplusplus
 #include <iosfwd>
-__GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpz_srcptr);
-__GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpq_srcptr);
-__GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpf_srcptr);
-__GMP_DECLSPEC std::istream& operator>> (std::istream &, mpz_ptr);
-__GMP_DECLSPEC std::istream& operator>> (std::istream &, mpq_ptr);
-__GMP_DECLSPEC std::istream& operator>> (std::istream &, mpf_ptr);
+__GMP_DECLSPEC_XX std::ostream& operator<< (std::ostream &, mpz_srcptr);
+__GMP_DECLSPEC_XX std::ostream& operator<< (std::ostream &, mpq_srcptr);
+__GMP_DECLSPEC_XX std::ostream& operator<< (std::ostream &, mpf_srcptr);
+__GMP_DECLSPEC_XX std::istream& operator>> (std::istream &, mpz_ptr);
+__GMP_DECLSPEC_XX std::istream& operator>> (std::istream &, mpq_ptr);
+__GMP_DECLSPEC_XX std::istream& operator>> (std::istream &, mpf_ptr);
 #endif
 
 
