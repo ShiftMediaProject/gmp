@@ -21,6 +21,14 @@
 
 #include "gmp.h"
 
+#ifdef __vax__
+#define LOW_BOUND 1e-38
+#define HIGH_BOUND 8e37
+#else
+#define LOW_BOUND 1e-300
+#define HIGH_BOUND 1e300
+#endif
+
 main (int argc, char **argv)
 {
   double d, e, r;
@@ -29,15 +37,15 @@ main (int argc, char **argv)
   mpf_init (u);
   mpf_init (v);
 
-  mpf_set_d (u, 1e-201);
-  for (d = 1e-200; d < 1e200; d *= 1.01)
+  mpf_set_d (u, LOW_BOUND);
+  for (d = 2.0 * LOW_BOUND; d < HIGH_BOUND; d *= 1.01)
     {
       mpf_set_d (v, d);
       if (mpf_cmp (u, v) >= 0)
 	abort ();
       e = mpf_get_d (v);
       r = e/d;
-      if (r < 0.9999999999 | r > 1.00000000001)
+      if (r < 0.999999999999999 | r > 1.000000000000001)
 	abort ();
       mpf_set (u, v);
     }
