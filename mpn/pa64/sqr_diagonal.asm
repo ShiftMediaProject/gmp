@@ -35,15 +35,9 @@ define(`p64',`%r31')
 define(`t0',`%r19')
 define(`t1',`%r20')
 
-define(`PROLOGUE')
-PROLOGUE(mpn_sqr_diagonal)	C make configure happy...
-
-	.level		`2.0n'
-	.code
-	.export mpn_sqr_diagonal,entry
-mpn_sqr_diagonal
+	.level	2.0N
+PROLOGUE(mpn_sqr_diagonal)
 	.proc
-	.callinfo frame=128,no_calls
 	.entry
 	ldo		128(%r30),%r30
 
@@ -179,5 +173,5 @@ L$end1	xmpyu		%fr8l,%fr8r,%fr10
 	std		p64,-8(rp)
 	bve		(%r2)
 	ldo		-128(%r30),%r30
-
 	.procend
+EPILOGUE(mpn_sqr_diagonal)
