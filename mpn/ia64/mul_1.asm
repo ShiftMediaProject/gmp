@@ -1,7 +1,7 @@
 dnl  IA-64 mpn_mul_1 -- Multiply a limb vector with a limb and store the result
 dnl  in a second limb vector.
 
-dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,128 +22,509 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-C INPUT PARAMETERS
-C rp = r32
-C up = r33
-C n = r34
-C v = r35
-
 C         cycles/limb
-C Itanium:    2.5
-C Itanium 2:  2.0
+C Itanium:    ?
+C Itanium 2:  2
 
-C Further optimization ideas:
-C  * Put the prologue and epilogue insns in proper, well-issuing bundles.
-C  * Put the initial ldf8 right at function entry, and additional (predicated)
-C    ldf8 in the prologue.  This would shave off many overhead cycles.
-C  * Unroll the inner loop more, to save branch overhead on Itanium 1.  Could
-C    get closer to 2 c/l that way.
+C TODO
+C  * Optimize feed-in and wind-down code, both for speed and code density.
+C  * Could greatly reduce code size by using conditional execution of ldf8
+C    instructions and thereby allow code sharing between feed-in code and code
+C    for small n.  (This is true for all similar ia64 functions.)
+
+C INPUT PARAMETERS
+define(`rp', `r32')
+define(`up', `r33')
+define(`n', `r34')
+define(`vl', `r35')
 
 ASM_START()
 PROLOGUE(mpn_mul_1)
 	.prologue
-	.save	ar.pfs, r21
-					C    in loc out rot
-		alloc		r21 = ar.pfs, 4, 12, 0, 16
 	.save	ar.lc, r2
-		mov		r2 = ar.lc
-		mov		r20 = ar.ec
-	.save	pr, r22
-		mov		r22 = pr
+	mov		r2 = ar.lc
 	.body
 ifdef(`HAVE_ABI_32',
-`		addp4		r14 = 0, r32
-		addp4		r15 = 0, r33
-		addp4		r19 = -1, r34
-',
-`		mov		r14 = r32
-		mov		r15 = r33
-		adds		r19 = -1, r34		C n - 1
+`	addp4	rp = 0, rp
+	addp4	up = 0, up
+	zxt4	n = n
+	;;
 ')
-		;;
-  { .mib;	setf.sig	f6 = r35
-		mov		ar.lc = r19
-		nop.b		0
-} { .mib;	mov		r44 = 0
-		mov		r45 = 0
-		nop.b		0
-} { .mib;	nop.m		0
-		mov		ar.ec = 13
-		nop.b		0
-} { .mib;	cmp.ne		p6, p7 = r0, r0
-		mov		pr.rot = 1<<16
-		nop.b		0
-} { .mib;	mov		r46 = 0
-		mov		r47 = 0
-		nop.b		0
-		;;
-}
+	adds		r15 = -1, n
+	;;
+	setf.sig	f6 = vl
+	shr.u		r31 = r15, 2
+	and		r14 = 3, n
+	;;
+	mov		ar.lc = r31
+	cmp.eq		p6, p0 = 0, r14
+	cmp.eq		p7, p0 = 2, r14
+	cmp.eq		p8, p0 = 3, r14
+	;;
+   (p6)	br.dptk		.Lb00
+   (p7)	br.dptk		.Lb10
+   (p8)	br.dptk		.Lb11
 
-C Rotating register use:
-C f32...f37 ldf8 data in progress
-C f38...f41 xma.l results
-C f42...f46 xma.hu results
-C r32...r35 getf.sig low product results
-C r36...r40 getf.sig high product results
 
-							C insn	fed by
-		.align	32				C name	insn
-.Loop:
-		.pred.rel "mutex",p6,p7
-  { .mfi; (p25)	getf.sig	r36 = f46		C i0	i4	hi
-	  (p21)	xma.l		f38 = f37, f6, f0	C i1	i18
-	   (p6)	cmp.leu		p8, p9 = r23, r40	C i2	i17,i0
-} { .mfi; (p28)	st8		[r14] =	r23, 8		C i3	i17/i19
-	  (p21)	xma.hu		f42 = f37, f6, f0	C i4	i18
-	   (p7)	cmp.ltu		p8, p9 = r23, r40	C i5	i17,i0
-		;;
-}
-		.pred.rel "mutex",p8,p9
-  { .mib; (p24)	getf.sig	r32 = f41		C i6	i11	lo
-	   (p8)	add		r23 = r35, r39, 1	C i7	i16,i10
-		nop.b		0			C
-} { .mib; (p16)	ldf8		f32 = [r15], 8		C i8	-
-	   (p9)	add		r23 = r35, r39		C i9	i16,i10
-		br.cexit.dpnt.few	.Lend_odd
-		;;
-}
-		.pred.rel "mutex",p8,p9
-  { .mfi; (p25)	getf.sig	r36 = f46		C i10	i14	hi
-	  (p21)	xma.l		f38 = f37, f6, f0	C i11	i8
-	   (p8)	cmp.leu		p6, p7 = r23, r40	C i12	i7,i10
-} { .mfi; (p28)	st8		[r14] = r23, 8		C i13	i7/i9
-	  (p21)	xma.hu		f42 = f37, f6, f0	C i14	i8
-	   (p9)	cmp.ltu		p6, p7 = r23, r40	C i15	i7,i10
-		;;
-}
-		.pred.rel "mutex",p6,p7
-  { .mib; (p24)	getf.sig	r32 = f41		C i16	i1	lo
-	   (p6)	add		r23 = r35, r39, 1	C i17	i6,i0
-		nop.b		0			C
-} { .mib; (p16)	ldf8		f32 = [r15], 8		C i18	-
-	   (p7)	add		r23 = r35, r39		C i19	i6,i0
-		br.ctop.dptk.few	.Loop
-		;;
-}
-.Lend_even:
-	.pred.rel "mutex",p6,p7
-	   (p6)	adds		r8 = 1, r40
-	   (p7)	mov		r8 = r40
-		mov		pr = r22, 0x1fffe
-		mov		ar.lc = r2
-		mov		ar.ec = r20
-		mov		ar.pfs = r21
-		;;
-		br.ret.sptk.many b0
-.Lend_odd:
+.Lb01:	ldf8		f35 = [up], 8
+	cmp.ne		p6, p7 = r0, r0
+	mov		r20 = 0
+	br.cloop.dptk	.grt1
+
+	xma.l		f39 = f35, f6, f0
+	xma.hu		f43 = f35, f6, f0
+	;;
+	getf.sig	r8 = f43
+	stf8		[rp] = f39
+	mov		ar.lc = r2
+	br.ret.sptk.many b0
+
+.grt1:	ldf8		f32 = [up], 8
+	cmp.ne		p8, p9 = r0, r0
+	;;
+	ldf8		f33 = [up], 8
+	;;
+	ldf8		f34 = [up], 8
+	xma.l		f39 = f35, f6, f0
+	xma.hu		f43 = f35, f6, f0
+	;;
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt5
+
+	xma.l		f36 = f32, f6, f0
+	xma.hu		f40 = f32, f6, f0
+	;;
+	stf8		[rp] = f39, 8
+	xma.l		f37 = f33, f6, f0
+	xma.hu		f41 = f33, f6, f0
+	;;
+	getf.sig	r21 = f43
+	getf.sig	r18 = f36
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	;;
+	getf.sig	r22 = f40
+	getf.sig	r19 = f37
+	xma.l		f39 = f35, f6, f0
+	xma.hu		f43 = f35, f6, f0
+	;;
+	getf.sig	r23 = f41
+	getf.sig	r16 = f38
+	add		r24 = r17, r20
+	br		.Lcj5
+
+.grt5:	xma.l		f36 = f32, f6, f0
+	xma.hu		f40 = f32, f6, f0
+	;;
+	getf.sig	r17 = f39
+	ldf8		f32 = [up], 8
+	xma.l		f37 = f33, f6, f0
+	xma.hu		f41 = f33, f6, f0
+	;;
+	getf.sig	r21 = f43
+	ldf8		f33 = [up], 8
+	xma.l		f38 = f34, f6, f0
+	;;
+	getf.sig	r18 = f36
+	xma.hu		f42 = f34, f6, f0
+	;;
+	getf.sig	r22 = f40
+	ldf8		f34 = [up], 8
+	xma.l		f39 = f35, f6, f0
+	;;
+	getf.sig	r19 = f37
+	xma.hu		f43 = f35, f6, f0
+	br		.LL01
+
+
+.Lb10:	ldf8		f34 = [up], 8
+	cmp.ne		p8, p9 = r0, r0
+	mov		r23 = 0
+	;;
+	ldf8		f35 = [up], 8
+	cmp.ne		p6, p7 = r0, r0
+	br.cloop.dptk	.grt2
+
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	;;
+	stf8		[rp] = f38, 8
+	xma.l		f39 = f35, f6, f42
+	xma.hu		f43 = f35, f6, f42
+	;;
+	getf.sig	r8 = f43
+	stf8		[rp] = f39
+	mov		ar.lc = r2
+	br.ret.sptk.many b0
+
+
+.grt2:	ldf8		f32 = [up], 8
+	;;
+	ldf8		f33 = [up], 8
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	;;
+	ldf8		f34 = [up], 8
+	xma.l		f39 = f35, f6, f0
+	xma.hu		f43 = f35, f6, f0
+	;;
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt6
+
+	stf8		[rp] = f38, 8
+	xma.l		f36 = f32, f6, f0
+	xma.hu		f40 = f32, f6, f0
+	;;
+	getf.sig	r20 = f42
+	getf.sig	r17 = f39
+	xma.l		f37 = f33, f6, f0
+	xma.hu		f41 = f33, f6, f0
+	;;
+	getf.sig	r21 = f43
+	getf.sig	r18 = f36
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	;;
+	getf.sig	r22 = f40
+	getf.sig	r19 = f37
+	xma.l		f39 = f35, f6, f0
+	xma.hu		f43 = f35, f6, f0
+	br		.Lcj6
+
+.grt6:	getf.sig	r16 = f38
+	xma.l		f36 = f32, f6, f0
+	xma.hu		f40 = f32, f6, f0
+	;;
+	getf.sig	r20 = f42
+	ldf8		f32 = [up], 8
+	xma.l		f37 = f33, f6, f0
+	;;
+	getf.sig	r17 = f39
+	xma.hu		f41 = f33, f6, f0
+	;;
+	getf.sig	r21 = f43
+	ldf8		f33 = [up], 8
+	xma.l		f38 = f34, f6, f0
+	;;
+	getf.sig	r18 = f36
+	xma.hu		f42 = f34, f6, f0
+	br		.LL10
+
+
+.Lb11:	ldf8		f33 = [up], 8
+	cmp.ne		p6, p7 = r0, r0
+	mov		r22 = 0
+	;;
+	ldf8		f34 = [up], 8
+	cmp.ne		p8, p9 = r0, r0
+	;;
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt3
+
+	xma.l		f37 = f33, f6, f0
+	xma.hu		f41 = f33, f6, f0
+	;;
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	;;
+	getf.sig	r23 = f41
+	stf8		[rp] = f37, 8
+	xma.l		f39 = f35, f6, f0
+	getf.sig	r16 = f38
+	xma.hu		f43 = f35, f6, f0
+	;;
+	getf.sig	r20 = f42
+	getf.sig	r17 = f39
+	getf.sig	r21 = f43
+	add		r24 = r16, r23
+	br		.Lcj3
+
+.grt3:	ldf8		f32 = [up], 8
+	xma.l		f37 = f33, f6, f0
+	xma.hu		f41 = f33, f6, f0
+	;;
+	ldf8		f33 = [up], 8
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	;;
+	getf.sig	r19 = f37
+	ldf8		f34 = [up], 8
+	xma.l		f39 = f35, f6, f0
+	xma.hu		f43 = f35, f6, f0
+	;;
+	getf.sig	r23 = f41
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt7
+
+	getf.sig	r16 = f38
+	xma.l		f36 = f32, f6, f0
+	getf.sig	r20 = f42
+	xma.hu		f40 = f32, f6, f0
+	;;
+	getf.sig	r17 = f39
+	xma.l		f37 = f33, f6, f0
+	getf.sig	r21 = f43
+	xma.hu		f41 = f33, f6, f0
+	;;
+	getf.sig	r18 = f36
+	st8		[rp] = r19, 8
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	br		.Lcj7
+
+.grt7:	getf.sig	r16 = f38
+	xma.l		f36 = f32, f6, f0
+	xma.hu		f40 = f32, f6, f0
+	;;
+	getf.sig	r20 = f42
+	ldf8		f32 = [up], 8
+	xma.l		f37 = f33, f6, f0
+	;;
+	getf.sig	r17 = f39
+	xma.hu		f41 = f33, f6, f0
+	br		.LL11
+
+
+.Lb00:	ldf8		f32 = [up], 8
+	cmp.ne		p8, p9 = r0, r0
+	mov		r21 = 0
+	;;
+	ldf8		f33 = [up], 8
+	cmp.ne		p6, p7 = r0, r0
+	;;
+	ldf8		f34 = [up], 8
+	;;
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt4
+
+	xma.l		f36 = f32, f6, f0
+	xma.hu		f40 = f32, f6, f0
+	;;
+	xma.l		f37 = f33, f6, f0
+	xma.hu		f41 = f33, f6, f0
+	;;
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	;;
+	getf.sig	r22 = f40
+	stf8		[rp] = f36, 8
+	xma.l		f39 = f35, f6, f0
+	getf.sig	r19 = f37
+	xma.hu		f43 = f35, f6, f0
+	;;
+	getf.sig	r23 = f41
+	getf.sig	r16 = f38
+	getf.sig	r20 = f42
+	getf.sig	r17 = f39
+	br		.Lcj4
+
+.grt4:	xma.l		f36 = f32, f6, f0
+	xma.hu		f40 = f32, f6, f0
+	;;
+	ldf8		f32 = [up], 8
+	xma.l		f37 = f33, f6, f0
+	xma.hu		f41 = f33, f6, f0
+	;;
+	getf.sig	r18 = f36
+	ldf8		f33 = [up], 8
+	xma.l		f38 = f34, f6, f0
+	xma.hu		f42 = f34, f6, f0
+	;;
+	getf.sig	r22 = f40
+	ldf8		f34 = [up], 8
+	xma.l		f39 = f35, f6, f0
+	;;
+	getf.sig	r19 = f37
+	getf.sig	r23 = f41
+	xma.hu		f43 = f35, f6, f0
+	ldf8		f35 = [up], 8
+	br.cloop.dptk	.grt8
+
+	getf.sig	r16 = f38
+	xma.l		f36 = f32, f6, f0
+	getf.sig	r20 = f42
+	xma.hu		f40 = f32, f6, f0
+	;;
+	getf.sig	r17 = f39
+	st8		[rp] = r18, 8
+	xma.l		f37 = f33, f6, f0
+	xma.hu		f41 = f33, f6, f0
+	br		.Lcj8
+
+.grt8:	getf.sig	r16 = f38
+	xma.l		f36 = f32, f6, f0
+	xma.hu		f40 = f32, f6, f0
+	br		.LL00
+
+
+C *** MAIN LOOP START ***
+	ALIGN(32)
+.Loop:	.pred.rel "mutex",p6,p7
+	getf.sig	r16 = f38
+	xma.l		f36 = f32, f6, f0
+   (p6)	cmp.leu		p8, p9 = r24, r17
+	st8		[rp] = r24, 8
+	xma.hu		f40 = f32, f6, f0
+   (p7)	cmp.ltu		p8, p9 = r24, r17
+	;;
+.LL00:	.pred.rel "mutex",p8,p9
+	getf.sig	r20 = f42
+   (p8)	add		r24 = r18, r21, 1
+	nop.b		0
+	ldf8		f32 = [up], 8
+   (p9)	add		r24 = r18, r21
+	nop.b		0
+	;;
 	.pred.rel "mutex",p8,p9
-	   (p8)	adds		r8 = 1, r40
-	   (p9)	mov		r8 = r40
-		mov		pr = r22, 0x1fffe
-		mov		ar.lc = r2
-		mov		ar.ec = r20
-		mov		ar.pfs = r21
-		;;
-		br.ret.sptk.many b0
-EPILOGUE(mpn_mul_1)
+	getf.sig	r17 = f39
+	xma.l		f37 = f33, f6, f0
+   (p8)	cmp.leu		p6, p7 = r24, r18
+	st8		[rp] = r24, 8
+	xma.hu		f41 = f33, f6, f0
+   (p9)	cmp.ltu		p6, p7 = r24, r18
+	;;
+.LL11:	.pred.rel "mutex",p6,p7
+	getf.sig	r21 = f43
+   (p6)	add		r24 = r19, r22, 1
+	nop.b		0
+	ldf8		f33 = [up], 8
+   (p7)	add		r24 = r19, r22
+	nop.b		0
+	;;
+	.pred.rel "mutex",p6,p7
+	getf.sig	r18 = f36
+	xma.l		f38 = f34, f6, f0
+   (p6)	cmp.leu		p8, p9 = r24, r19
+	st8		[rp] = r24, 8
+	xma.hu		f42 = f34, f6, f0
+   (p7)	cmp.ltu		p8, p9 = r24, r19
+	;;
+.LL10:	.pred.rel "mutex",p8,p9
+	getf.sig	r22 = f40
+   (p8)	add		r24 = r16, r23, 1
+	nop.b		0
+	ldf8		f34 = [up], 8
+   (p9)	add		r24 = r16, r23
+	nop.b		0
+	;;
+	.pred.rel "mutex",p8,p9
+	getf.sig	r19 = f37
+	xma.l		f39 = f35, f6, f0
+   (p8)	cmp.leu		p6, p7 = r24, r16
+	st8		[rp] = r24, 8
+	xma.hu		f43 = f35, f6, f0
+   (p9)	cmp.ltu		p6, p7 = r24, r16
+	;;
+.LL01:	.pred.rel "mutex",p6,p7
+	getf.sig	r23 = f41
+   (p6)	add		r24 = r17, r20, 1
+	nop.b		0
+	ldf8		f35 = [up], 8
+   (p7)	add		r24 = r17, r20
+	br.cloop.dptk	.Loop
+C *** MAIN LOOP END ***
+
+.Lcj9:	.pred.rel "mutex",p6,p7
+	getf.sig	r16 = f38
+	xma.l		f36 = f32, f6, f0
+   (p6)	cmp.leu		p8, p9 = r24, r17
+	st8		[rp] = r24, 8
+	xma.hu		f40 = f32, f6, f0
+   (p7)	cmp.ltu		p8, p9 = r24, r17
+	;;
+	.pred.rel "mutex",p8,p9
+	getf.sig	r20 = f42
+   (p8)	add		r24 = r18, r21, 1
+   (p9)	add		r24 = r18, r21
+	;;
+	.pred.rel "mutex",p8,p9
+	getf.sig	r17 = f39
+	xma.l		f37 = f33, f6, f0
+   (p8)	cmp.leu		p6, p7 = r24, r18
+	st8		[rp] = r24, 8
+	xma.hu		f41 = f33, f6, f0
+   (p9)	cmp.ltu		p6, p7 = r24, r18
+	;;
+.Lcj8:	.pred.rel "mutex",p6,p7
+	getf.sig	r21 = f43
+   (p6)	add		r24 = r19, r22, 1
+   (p7)	add		r24 = r19, r22
+	;;
+	.pred.rel "mutex",p6,p7
+	getf.sig	r18 = f36
+	xma.l		f38 = f34, f6, f0
+   (p6)	cmp.leu		p8, p9 = r24, r19
+	st8		[rp] = r24, 8
+	xma.hu		f42 = f34, f6, f0
+   (p7)	cmp.ltu		p8, p9 = r24, r19
+	;;
+.Lcj7:	.pred.rel "mutex",p8,p9
+	getf.sig	r22 = f40
+   (p8)	add		r24 = r16, r23, 1
+   (p9)	add		r24 = r16, r23
+	;;
+	.pred.rel "mutex",p8,p9
+	getf.sig	r19 = f37
+	xma.l		f39 = f35, f6, f0
+   (p8)	cmp.leu		p6, p7 = r24, r16
+	st8		[rp] = r24, 8
+	xma.hu		f43 = f35, f6, f0
+   (p9)	cmp.ltu		p6, p7 = r24, r16
+	;;
+.Lcj6:	.pred.rel "mutex",p6,p7
+	getf.sig	r23 = f41
+   (p6)	add		r24 = r17, r20, 1
+   (p7)	add		r24 = r17, r20
+	;;
+	.pred.rel "mutex",p6,p7
+	getf.sig	r16 = f38
+   (p6)	cmp.leu		p8, p9 = r24, r17
+	st8		[rp] = r24, 8
+   (p7)	cmp.ltu		p8, p9 = r24, r17
+	;;
+.Lcj5:	.pred.rel "mutex",p8,p9
+	getf.sig	r20 = f42
+   (p8)	add		r24 = r18, r21, 1
+   (p9)	add		r24 = r18, r21
+	;;
+	.pred.rel "mutex",p8,p9
+	getf.sig	r17 = f39
+   (p8)	cmp.leu		p6, p7 = r24, r18
+	st8		[rp] = r24, 8
+   (p9)	cmp.ltu		p6, p7 = r24, r18
+	;;
+.Lcj4:	.pred.rel "mutex",p6,p7
+	getf.sig	r21 = f43
+   (p6)	add		r24 = r19, r22, 1
+   (p7)	add		r24 = r19, r22
+	;;
+	.pred.rel "mutex",p6,p7
+   (p6)	cmp.leu		p8, p9 = r24, r19
+	st8		[rp] = r24, 8
+   (p7)	cmp.ltu		p8, p9 = r24, r19
+	;;
+	.pred.rel "mutex",p8,p9
+   (p8)	add		r24 = r16, r23, 1
+   (p9)	add		r24 = r16, r23
+	;;
+.Lcj3:	.pred.rel "mutex",p8,p9
+   (p8)	cmp.leu		p6, p7 = r24, r16
+	st8		[rp] = r24, 8
+   (p9)	cmp.ltu		p6, p7 = r24, r16
+	;;
+	.pred.rel "mutex",p6,p7
+   (p6)	add		r24 = r17, r20, 1
+   (p7)	add		r24 = r17, r20
+	;;
+.Lcj2:	.pred.rel "mutex",p6,p7
+   (p6)	cmp.leu		p8, p9 = r24, r17
+	st8		[rp] = r24, 8
+   (p7)	cmp.ltu		p8, p9 = r24, r17
+	;;
+	.pred.rel "mutex",p8,p9
+   (p8)	add		r8 = r0, r21, 1
+   (p9)	add		r8 = r0, r21
+	mov		ar.lc = r2
+	br.ret.sptk.many b0
+EPILOGUE()
 ASM_END()
