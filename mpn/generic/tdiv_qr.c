@@ -113,7 +113,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	adjust = np[nn - 1] >= dp[dn - 1];	/* conservative tests for quotient size */
 	if (nn + adjust >= 2 * dn)
 	  {
-	    mp_ptr n2p, d2p;
+	    mp_ptr n2p, d2p, q2p;
 	    mp_limb_t cy;
 	    int cnt;
 
@@ -145,32 +145,41 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      mpn_sb_divrem_mn (qp, n2p, nn, d2p, dn);
 	    else
 	      {
-		/* Perform 2*dn / dn limb divisions as long as the limbs
-		   in np last.  */
-		mp_ptr q2p = qp + nn - 2 * dn;
-		n2p += nn - 2 * dn;
-		mpn_dc_divrem_n (q2p, n2p, d2p, dn);
-		nn -= dn;
-		while (nn >= 2 * dn)
+		/* Divide 2*dn / dn limbs as long as the limbs in np last.  */
+		q2p = qp + nn - dn;
+		n2p += nn - dn;
+		do
 		  {
-		    mp_limb_t c;
 		    q2p -= dn;  n2p -= dn;
-		    c = mpn_dc_divrem_n (q2p, n2p, d2p, dn);
-		    ASSERT_ALWAYS (c == 0);
+		    mpn_dc_divrem_n (q2p, n2p, d2p, dn);
 		    nn -= dn;
 		  }
+		while (nn >= 2 * dn);
 
 		if (nn != dn)
 		  {
 		    n2p -= nn - dn;
-		    /* In theory, we could fall out to the cute code below
-		       since we now have exactly the situation that code
-		       is designed to handle.  We botch this badly and call
-		       the basic mpn_sb_divrem_mn!  */
 		    if (dn == 2)
 		      mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
 		    else
-		      mpn_sb_divrem_mn (qp, n2p, nn, d2p, dn);
+		      {
+			/* We have now dn < nn - dn < 2dn.  Make a recursive
+			   call, since falling out to the code below isn't
+			   pretty.  Unfortunately, mpn_tdiv_qr returns nn-dn+1
+			   quotient limbs, which would overwrite one already
+			   generated quotient limbs.  Preserve it with an ugly
+			   hack.  */
+			/* FIXME: This suggests that we should have an
+			   mpn_tdiv_qr_internal that instead returns the most
+			   significant quotient limb and move the meat of this
+			   function there.  */
+			/* FIXME: Perhaps call mpn_sb_divrem_mn here for
+			   certain operand ranges, to decrease overhead for
+			   small operands?  */
+			mp_limb_t ql = qp[nn - dn];
+			mpn_tdiv_qr (qp, n2p, 0L, n2p, nn, d2p, dn);
+			qp[nn - dn] = ql;
+		      }
 		  }
 	      }
 
@@ -190,12 +199,10 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	    /* Problem:
 
 	       Divide a numerator N with nn limbs by a denominator D with dn
-	       limbs forming a quotient of nn-dn+1 limbs.  When qn is small
+	       limbs forming a quotient of qn=nn-dn+1 limbs.  When qn is small
 	       compared to dn, conventional division algorithms perform poorly.
 	       We want an algorithm that has an expected running time that is
-	       dependent only on qn.  It is assumed that the most significant
-	       limb of the numerator is smaller than the most significant limb
-	       of the denominator.
+	       dependent only on qn.
 
 	       Algorithm (very informally stated):
 
