@@ -37,10 +37,9 @@ dnl  K7        41
 include(`../config.m4')
 
 
-C mp_limb_t mpn_mod_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
-C                      mp_limb_t divisor);
-C mp_limb_t mpn_mod_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
-C                       mp_limb_t divisor, mp_limb_t carry);
+C mp_limb_t mpn_mod_1 (mp_srcptr src, mp_size_t size, mp_limb_t divisor);
+C mp_limb_t mpn_mod_1c (mp_srcptr src, mp_size_t size, mp_limb_t divisor,
+C                       mp_limb_t carry);
 C
 C Divide src,size by divisor and return the remainder.  The quotient is
 C discarded.
