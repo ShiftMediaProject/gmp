@@ -28,8 +28,9 @@ MA 02111-1307, USA.
 
 	* mpn/alpha/ev5/com_n.asm: New file.
 	
-	* doc/gmp.texi (Assembler Functional Units, Assembler Writing Guide):
-	New sections by Torbjorn, tweaked by me.
+	* doc/gmp.texi (Language Bindings): Add Purenum.
+	(Assembler Functional Units, Assembler Writing Guide): New sections by
+	Torbjorn, tweaked by me.
 
 2003-11-17  Torbjorn Granlund  <tege@swox.com>
 
