@@ -1688,8 +1688,8 @@ dnl  GMP_FUNC_VSNPRINTF
 dnl  ------------------
 dnl  Check whether vsnprintf exists, and works properly.
 dnl
-dnl  SunOS 4 (or some versions at least) have vsnprintf as an alias for
-dnl  vsprintf, which is completely useless.
+dnl  Sparc Solaris 2.7 in 64-bit mode doesn't truncate, so vsnprintf is just
+dnl  like vsprintf, which is completely useless.
 dnl
 dnl  glibc 2.0.x returns either -1 or bufsize-1 for an overflow (both seen,
 dnl  not sure which 2.0.x does which), but still puts the correct null
