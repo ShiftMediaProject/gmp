@@ -1,6 +1,11 @@
+2000-08-28  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_CHECK_ASM_ALIGN_FILL_0x90): Fix Solaris 2.8
+	warning message supression, add notes about SCO.
+
 2000-08-25  Kevin Ryde  <kevin@swox.se>
 
-	* mpz/pprime_p.c (mpz_millerrabin): Fix TMP_FREE location.
+	* mpz/pprime_p.c (mpz_millerrabin): Fix a TMP_FREE.
 
 	* gmp.texi (Copying): Refer to Lesser not Library GPL.
 	(GMP and Reentrancy): Note stack-alloc.c is not reentrant, and
@@ -80,9 +85,9 @@
 	* Makefile.am (MPBSD_OBJECTS): Corresponding change.
 	* mpbsd/move.c: Remove file.
 
-	* mp{n,z,q,f,mpbsd}/Makefile.am (-DOPERATION): Use "foo" even for
-	ansi2knr "foo_" objects.  Do this with the makefiles to keep the
-	sources cleaner.
+	* mp{n,z,q,f,mpbsd}/Makefile.am (-DOPERATION_foo): Use "foo" even
+	for ansi2knr "foo_" objects.  Do this with the makefiles to keep
+	the sources cleaner.
 	* mpz/mul_siui.c, mpf/integer.c: Revert to plain OPERATION_* forms.
 
 	* mpn/lisp/gmpasm-mode.el (gmpasm-remove-from-list): Renamed from
@@ -105,7 +110,7 @@
 
 	* mpz/get_si.c: Use LONG_MAX, not BITS_PER_MP_LIMB, so the result
 	doesn't depend on limb size when outside the range of a long
-	(though such such results are not actually documented).
+	(though such results are not actually documented).
 	* mpz/tests/t-get_si.c: New file.
 	* mpz/tests/Makefile.am (check_PROGRAMS): Add it.
 
