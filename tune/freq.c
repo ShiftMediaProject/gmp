@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h> /* for getenv, qsort */
+#include <string.h> /* for memcmp */
 #if HAVE_UNISTD_H
 #include <unistd.h> /* for sysconf */
 #endif
