@@ -10546,7 +10546,11 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
+}
+int
+conftest_shl_load ()
+{
+ /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_shl_load) || defined (__stub___shl_load)
@@ -10671,7 +10675,11 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
+}
+int
+conftest_dlopen ()
+{
+ /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_dlopen) || defined (__stub___dlopen)
@@ -10930,7 +10938,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10933 "configure"
+#line 10941 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11028,7 +11036,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11031 "configure"
+#line 11039 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14133,7 +14141,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14136 "configure"
+#line 14144 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14231,7 +14239,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 14234 "configure"
+#line 14242 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16473,7 +16481,11 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
+}
+int
+conftest_shl_load ()
+{
+ /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_shl_load) || defined (__stub___shl_load)
@@ -16598,7 +16610,11 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
+}
+int
+conftest_dlopen ()
+{
+ /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_dlopen) || defined (__stub___dlopen)
@@ -16857,7 +16873,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16860 "configure"
+#line 16876 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16955,7 +16971,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16958 "configure"
+#line 16974 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -20579,7 +20595,11 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
+}
+int
+conftest_$ac_func ()
+{
+ /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
@@ -20655,7 +20675,11 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
+}
+int
+conftest_vsnprintf ()
+{
+ /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_vsnprintf) || defined (__stub___vsnprintf)
@@ -23507,7 +23531,11 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
+}
+int
+conftest_$ac_func ()
+{
+ /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
@@ -23824,7 +23852,11 @@ char (*f) ();
 int
 main ()
 {
-/* The GNU C library defines this for functions which it implements
+}
+int
+conftest_$ac_func ()
+{
+ /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
 #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
