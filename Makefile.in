@@ -29,7 +29,7 @@ includedir = $(prefix)/include
 
 CC = gcc
 LOCAL_CC = $(CC)
-CFLAGS = -g -O
+CFLAGS = -g
 XCFLAGS = 
 AR = ar
 AR_FLAGS = rc
@@ -93,20 +93,20 @@ libmp.a: mpn/libmpn.a mpbsd/libmpbsd.a $(OBJS)
 	rm -rf tmpdir
 
 mpn/libmpn.a: force
-	cd mpn; $(MAKE) $(FLAGS_TO_PASS) libmpn.a
+	cd mpn && $(MAKE) $(FLAGS_TO_PASS) libmpn.a
 mpz/libmpz.a: force
-	cd mpz; $(MAKE) $(FLAGS_TO_PASS) libmpz.a
+	cd mpz && $(MAKE) $(FLAGS_TO_PASS) libmpz.a
 mpf/libmpf.a: force
-	cd mpf; $(MAKE) $(FLAGS_TO_PASS) libmpf.a
+	cd mpf && $(MAKE) $(FLAGS_TO_PASS) libmpf.a
 mpq/libmpq.a: force
-	cd mpq; $(MAKE) $(FLAGS_TO_PASS) libmpq.a
+	cd mpq && $(MAKE) $(FLAGS_TO_PASS) libmpq.a
 mpbsd/libmpbsd.a: force
-	cd mpbsd; $(MAKE) $(FLAGS_TO_PASS) libmpbsd.a
+	cd mpbsd && $(MAKE) $(FLAGS_TO_PASS) libmpbsd.a
 
 check: libgmp.a
-	cd mpz/tests; $(MAKE) $(FLAGS_TO_PASS) check
-	cd mpq/tests; $(MAKE) $(FLAGS_TO_PASS) check
-	cd mpf/tests; $(MAKE) $(FLAGS_TO_PASS) check
+	cd mpz/tests && $(MAKE) $(FLAGS_TO_PASS) check
+	cd mpq/tests && $(MAKE) $(FLAGS_TO_PASS) check
+	cd mpf/tests && $(MAKE) $(FLAGS_TO_PASS) check
 
 doc: gmp.dvi gmp.info
 
