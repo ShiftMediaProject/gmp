@@ -72,7 +72,6 @@ AS = @AS@
 AWK = @AWK@
 CC = @CC@
 CCAS = @CCAS@
-CC_TEST = @CC_TEST@
 CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
