@@ -1,3 +1,20 @@
+2000-08-20  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/set.c [BERKELEY_MP] (move): Add conditionals to build as
+	"move" for libmp.
+	* mpbsd/Makefile.am: Use mpz/set.c, not move.c.
+	* Makefile.am (MPBSD_OBJECTS): Corresponding change.
+	* mpbsd/move.c: Remove file.
+
+	* mp{z,q,f,mpbsd}/Makefile.am (-DOPERATION): Use "foo" even for
+	ansi2knr "foo_" objects.  Do this with the makefiles to keep the
+	sources cleaner.
+	* mpz/mul_siui.c, mpf/integer.c: Revert to plain OPERATION_* forms.
+
+	* mpn/lisp/gmpasm-mode.el (gmpasm-remove-from-list): Renamed from
+	gmpasm-delete-from-list, because it's non-destructive.
+	(gmpasm-font-lock-keywords): Add some more keywords.
+
 2000-08-16  Kevin Ryde  <kevin@swox.se>
 
 	* tune/mul_n_{mpn,open}.c: New files, being forced open-coded and
@@ -41,7 +58,7 @@
 
 	* mpn/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr.
 	(libdummy.la): Add this, not built, to create ansi2knr style rules
-	for all .c files.
+	for all potential .c files.
 	* mp{z,q,f,fr,bsd}/Makefile.am, mpq/tests/Makefile.am,
 	tests/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr (now everywhere).
 	* Makefile.am (MP{Z,Q,F,FR,BSD}_OBJECTS, libmp_la_DEPENDENCIES):
