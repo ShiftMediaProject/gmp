@@ -1,3 +1,33 @@
+2000-04-10  Kevin Ryde  <kevin@swox.se>
+
+	* move-if-change: Removed, no longer used.
+	* mp{z,q,f}/tests/move-if-change: Ditto.
+
+	* Makefile.am (SUBDIRS): Add tests, demos, mpbsd.
+	(libmp.la): New target, conditional on WANT_MPBSD.
+	(libgmp_la_LIBADD): Add -lm.
+	(AUTOMAKE_OPTIONS): Add check-news.
+	(include_HEADERS): Setup to install gmp.h and possibly mp.h.
+	(DISTCLEANFILES): Add generated files.
+	(check): Remove explicit target (now uses check-recursive).
+
+	* configure.in: Use AM_CONFIG_HEADER, add --enable-mpbsd setting
+	WANT_MPBSD, output demos/Makefile and mpbsd/Makefile.
+
+	* mpz/Makefile.am: Add SUBDIRS=tests, shorten INCLUDES since now
+	using AM_CONFIG_HEADER.
+	* mpq/Makefile.am: Ditto.
+	* mpf/Makefile.am: Ditto, and add DISTCLEANFILES.
+	* mpn/Makefile.am: Shorten INCLUDES, amend some comments.
+	* mpz/tests/Makefile.am: Use TESTS and $(top_builddir).
+	* mpf/tests/Makefile.am: Ditto.
+	* mpq/tests/Makefile.am: Ditto.
+	* demos/Makefile.am: New file.
+	* mpbsd/Makefile.am: New file, derived from old mpbsd/Makefile.in.
+
+	* gmp.texi (Top): Use @ifnottex, to help makeinfo --html.
+	(Installing MP): Describe --enable-mpbsd.
+
 2000-04-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/urandomm.c: Get type of count right.
