@@ -101,38 +101,6 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
   AC_MSG_RESULT($gmp_cv_cc_64bit)
 ])dnl
 
-dnl  GMP_PROG_CCAS
-dnl  Find C compiler invoking an assembler.
-dnl  Set CCAS and [AC_SUBST] it.
-AC_DEFUN(GMP_PROG_CCAS,
-[AC_REQUIRE([GMP_PROG_CC_SELECT])
-AC_CACHE_CHECK([for CC ($CC) invoking assembler],
-               gmp_cv_prog_ccas,
-[ac_assemble="$CC -c $CFLAGS conftest.s 1>&AC_FD_CC"
-echo "	.byte	1" > conftest.s
-if AC_TRY_EVAL(ac_assemble); then
-  if test -f conftest.o; then
-    gmp_cv_prog_ccas="$CC -c $CFLAGS"
-  else
-    dnl  FIXME: Disable all assembly code instead of fatal exit.
-    dnl  FIXME: Better fatal exit.
-    echo "configure: can't find a C compiler able to assemble"
-    exit 1
-  fi
-else
-  echo "configure: failed program was:" >&AC_FD_CC
-  cat conftest.s >&AC_FD_CC
-  dnl  FIXME: Disable all assembly code instead of fatal exit.
-  dnl  FIXME: Better fatal exit.
-  echo "configure: can't find a C compiler able to assemble"
-  exit 1
-fi
-rm -f conftest*
-])
-CCAS="$gmp_cv_prog_ccas"
-AC_SUBST(CCAS)
-])dnl
-
 dnl  GMP_PROG_LIBTOOL
 dnl  Wrap [AC_PROG_LIBTOOL] to avoid the [AC_PROG_CC] problems.
 AC_DEFUN(GMP_PROG_LIBTOOL, [
@@ -229,7 +197,7 @@ echo [$1] >> ifelse([$2], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
 dnl  GMP_CHECK_ASM_LABEL_SUFFIX
 dnl  Should a label have a colon or not?
 AC_DEFUN(GMP_CHECK_ASM_LABEL_SUFFIX,
-[AC_CACHE_CHECK([if assembly label needs a suffix],
+[AC_CACHE_CHECK([what assembly label suffix to use],
                gmp_cv_check_asm_label_suffix,
 [case "$target" in 
   *-*-hpux*) gmp_cv_check_asm_label_suffix=[""] ;;
@@ -277,8 +245,7 @@ dnl  GMP_CHECK_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl  Is parameter to `.align' logarithmic?
 dnl  Requires NM to be set to nm for target.
 AC_DEFUN(GMP_CHECK_ASM_ALIGN_LOG,
-[AC_REQUIRE([GMP_PROG_CCAS])
-AC_REQUIRE([GMP_CHECK_ASM_GLOBL])
+[AC_REQUIRE([GMP_CHECK_ASM_GLOBL])
 AC_REQUIRE([GMP_CHECK_ASM_DATA])
 AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([if .align assembly directive is logarithmic],
@@ -370,8 +337,7 @@ echo ["define(<GLOBL>, <$gmp_cv_check_asm_globl>)"] >> $gmp_tmpconfigm4
 dnl  GMP_CHECK_ASM_TYPE
 dnl  Can we say `.type'?
 AC_DEFUN(GMP_CHECK_ASM_TYPE,
-[AC_REQUIRE([GMP_PROG_CCAS])
-AC_CACHE_CHECK([how the .type assembly directive should be used],
+[AC_CACHE_CHECK([how the .type assembly directive should be used],
 gmp_cv_check_asm_type,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 for gmp_tmp_prefix in @ \# %; do
@@ -391,8 +357,7 @@ echo ["define(<TYPE>, <$gmp_cv_check_asm_type>)"] >> $gmp_tmpconfigm4
 dnl  GMP_CHECK_ASM_SIZE
 dnl  Can we say `.size'?
 AC_DEFUN(GMP_CHECK_ASM_SIZE,
-[AC_REQUIRE([GMP_PROG_CCAS])
-AC_CACHE_CHECK([if the .size assembly directive works], gmp_cv_check_asm_size,
+[AC_CACHE_CHECK([if the .size assembly directive works], gmp_cv_check_asm_size,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 echo '	.size	sym,1' > conftest.s
 if AC_TRY_EVAL(ac_assemble); then
@@ -408,8 +373,7 @@ dnl  GMP_CHECK_ASM_LSYM_PREFIX
 dnl  What is the prefix for a local label?
 dnl  Requires NM to be set to nm for target.
 AC_DEFUN(GMP_CHECK_ASM_LSYM_PREFIX,
-[AC_REQUIRE([GMP_PROG_CCAS])
-AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
+[AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([what prefix to use for a local label], 
 gmp_cv_check_asm_lsym_prefix,
 [if test -z "$NM"; then
@@ -450,8 +414,7 @@ dnl  GMP_CHECK_ASM_W32
 dnl  How to [define] a 32-bit word.
 dnl  Requires NM to be set to nm for target.
 AC_DEFUN(GMP_CHECK_ASM_W32,
-[AC_REQUIRE([GMP_PROG_CCAS])
-AC_REQUIRE([GMP_CHECK_ASM_DATA])
+[AC_REQUIRE([GMP_CHECK_ASM_DATA])
 AC_REQUIRE([GMP_CHECK_ASM_GLOBL])
 AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([how to [define] a 32-bit word],
@@ -492,8 +455,7 @@ echo ["define(<W32>, <$gmp_cv_check_asm_w32>)"] >> $gmp_tmpconfigm4
 dnl  GMP_CHECK_ASM_MMX([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
 dnl  Can we assemble MMX insns?
 AC_DEFUN(GMP_CHECK_ASM_MMX,
-[AC_REQUIRE([GMP_PROG_CCAS])
-AC_REQUIRE([GMP_CHECK_ASM_TEXT])
+[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler knows about MMX instructions],
 		gmp_cv_check_asm_mmx,
 [cat > conftest.s <<EOF
