@@ -69,9 +69,11 @@ mpn_submul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
 {
   mp_limb_t shifted_vl, ul, rl, lpl, hpl, prev_hpl, xw, cl, xl;
 
-  ASSERT (vl >> GMP_NAIL_BITS == 0);
   ASSERT (n >= 1);
   ASSERT (MPN_SAME_OR_SEPARATE_P (rp, up, n));
+  ASSERT_MPN (rp, n);
+  ASSERT_MPN (up, n);
+  ASSERT_LIMB (vl);
 
   shifted_vl = vl << GMP_NAIL_BITS;
   cl = 0;
