@@ -66,6 +66,7 @@ mpf_out_str (stream, base, n_digits, op)
       str++;
       fputc ('-', stream);
       written = 1;
+      n_digits--;
     }
 
   fwrite ("0.", 1, 2, stream);
