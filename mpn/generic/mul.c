@@ -101,8 +101,7 @@ mpn_mul (prodp, up, un, vp, vn)
      mp_size_t vn;
 #endif
 {
-  mp_srcptr wp;
-  mp_size_t l, wn;
+  mp_size_t l;
   mp_limb_t c;
 
   if (up == vp && un == vn)
@@ -132,8 +131,7 @@ mpn_mul (prodp, up, un, vp, vn)
       if (un < vn) 
 	{
 	  /* Swap u's and v's. */
-	  wp = up; up = vp; vp = wp;
-	  wn = un; un = vn; vn = wn;
+          MPN_SRCPTR_SWAP (up,un, vp,vn);
 	}
 
       ws = (mp_ptr) TMP_ALLOC (((vn >= KARATSUBA_MUL_THRESHOLD ? vn : un) + vn)
@@ -164,8 +162,7 @@ mpn_mul (prodp, up, un, vp, vn)
 	  if (un < vn) 
 	    {
 	      /* Swap u's and v's. */
-	      wp = up; up = vp; vp = wp;
-	      wn = un; un = vn; vn = wn;
+              MPN_SRCPTR_SWAP (up,un, vp,vn);
 	    }
 	}
 
