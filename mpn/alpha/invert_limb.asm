@@ -22,7 +22,7 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C      cycles/limb
-C EV4:    ???
+C EV4:    175
 C EV5:    125
 C EV6:     67
 

@@ -24,6 +24,10 @@ include(`../config.m4')
 C INPUT PARAMETERS
 C d = r32
 
+C           cycles
+C Itanium:    87  (revision 4 chips need 100 cycles)
+C Itanium 2:  66
+
 C It should be possible to avoid the xmpy.hu and the following tests by
 C explicitly chopping in the last fma.  That would save about 10 cycles.
 
