@@ -19,11 +19,15 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-23  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/fits_s.h: Rewrite.
+
 2002-04-22  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c: Handle "binomial" operator.
 
-	* mpz/cmp_ui.c: Move assignments of up out of conditionals.
+	* mpz/cmp_ui.c: Move assignments of `up' out of conditionals.
 
 	* mpn/generic/gcdext.c: Fix fencepost error in STAT code.
 
