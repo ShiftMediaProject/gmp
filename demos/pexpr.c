@@ -131,7 +131,7 @@ setup_error_handler ()
 
   /* Initialize structure for sigaction (called below).  */
   act.sa_handler = cleanup_and_exit;
-  act.sa_mask = 0;
+  sigemptyset (&(act.sa_mask));
   act.sa_flags = SA_ONSTACK;
 
 #ifdef LIMIT_RESOURCE_USAGE
@@ -614,7 +614,7 @@ factor (char *str, expr_t *e)
 		  if (str[0] != ')')
 		    {
 		      error = "expected `)'";
-		      longjmp (errjmpbuf, (int) str);
+		      longjmp (errjmpbuf, (int) (long) str);
 		    }
 		  makeexp (e, fns[i].op, e1, NULL);
 		  return str + 1;
@@ -635,7 +635,7 @@ factor (char *str, expr_t *e)
 		  if (str[0] != ',')
 		    {
 		      error = "expected `,' and another operand";
-		      longjmp (errjmpbuf, (int) str);
+		      longjmp (errjmpbuf, (int) (long) str);
 		    }
 
 		  str = skipspace (str + 1);
@@ -656,7 +656,7 @@ factor (char *str, expr_t *e)
 		  if (str[0] != ')')
 		    {
 		      error = "expected `)'";
-		      longjmp (errjmpbuf, (int) str);
+		      longjmp (errjmpbuf, (int) (long) str);
 		    }
 
 		  makeexp (e, fns[i].op, e1, e2);
@@ -673,7 +673,7 @@ factor (char *str, expr_t *e)
       if (str[0] != ')')
 	{
 	  error = "expected `)'";
-	  longjmp (errjmpbuf, (int) str);
+	  longjmp (errjmpbuf, (int) (long) str);
 	}
       str++;
     }
@@ -699,7 +699,7 @@ factor (char *str, expr_t *e)
   else
     {
       error = "operand expected";
-      longjmp (errjmpbuf, (int) str);
+      longjmp (errjmpbuf, (int) (long) str);
     }
   if (str[0] == '!')
     {
