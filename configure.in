@@ -334,8 +334,6 @@ case $host in
         ;;
 
       hppa2.0*-*-*)
-        abilist="2.0w 2.0n 1.0"
-
         # FIXME: 2.0 code generation disabled: we need an assembler feature
         # test checking if 2.0 operations work
         #   gmp_cflags_cpu="-mpa-risc-2-0 -mpa-risc-1-1"
@@ -366,10 +364,9 @@ case $host in
         SPEED_CYCLECOUNTER_OBJ_20w=hppa2.lo
         cyclecounter_size_20w=2
 
-	# these force the abi, unadorned "hppa2.0" will guess it
         case $host in
-          hppa2.0w-*-*) abilist="2.0w" ;;
-          hppa2.0n-*-*) abilist="2.0n" ;;
+          hppa2.0n-*-*) abilist="2.0n 1.0" ;;
+          *)            abilist="2.0w 2.0n 1.0"
         esac
         ;;
     esac
