@@ -1808,25 +1808,6 @@ parameter that is read and modified.  Please see the @ref{Random Number
 Functions} for more information on how to use and not to use random
 number functions.
 
-@deftypefun void mpz_random (mpz_t @var{rop}, mp_size_t @var{max_size})
-Generate a random integer of at most @var{max_size} limbs.  The generated
-random number doesn't satisfy any particular requirements of randomness.
-Negative random numbers are generated when @var{max_size} is negative.
-
-This function is obsolete.  Use @code{mpz_urandomb} or
-@code{mpz_urandomm} instead.
-@end deftypefun
-
-@deftypefun void mpz_random2 (mpz_t @var{rop}, mp_size_t @var{max_size})
-Generate a random integer of at most @var{max_size} limbs, with long strings
-of zeros and ones in the binary representation.  Useful for testing functions
-and algorithms, since this kind of random numbers have proven to be more
-likely to trigger corner-case bugs.  Negative random numbers are generated
-when @var{max_size} is negative.
-
-This function is obsolete.  Use @code{mpz_rrandomb} instead.
-@end deftypefun
-
 @deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_randstate_t @var{state}, 
 unsigned long int @var{n})
 Generate a uniform random integer in the range
@@ -1898,6 +1879,25 @@ This function is useful in order to allocate the right amount of space before
 converting @var{op} to a string.  The right amount of allocation is normally
 two more than the value returned by @code{mpz_sizeinbase} (one extra for a
 minus sign and one for the terminating '\0').
+@end deftypefun
+
+@deftypefun void mpz_random (mpz_t @var{rop}, mp_size_t @var{max_size})
+Generate a random integer of at most @var{max_size} limbs.  The generated
+random number doesn't satisfy any particular requirements of randomness.
+Negative random numbers are generated when @var{max_size} is negative.
+
+This function is obsolete.  Use @code{mpz_urandomb} or
+@code{mpz_urandomm} instead.
+@end deftypefun
+
+@deftypefun void mpz_random2 (mpz_t @var{rop}, mp_size_t @var{max_size})
+Generate a random integer of at most @var{max_size} limbs, with long strings
+of zeros and ones in the binary representation.  Useful for testing functions
+and algorithms, since this kind of random numbers have proven to be more
+likely to trigger corner-case bugs.  Negative random numbers are generated
+when @var{max_size} is negative.
+
+This function is obsolete.  Use @code{mpz_rrandomb} instead.
 @end deftypefun
 
 
@@ -2589,15 +2589,6 @@ the next higher integer, @code{mpf_floor} to the next lower, and
 @code{mpf_trunc} to the integer towards zero.
 @end deftypefun
 
-@deftypefun void mpf_random2 (mpf_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{max_exp})
-Generate a random float of at most @var{max_size} limbs, with long strings of
-zeros and ones in the binary representation.  The exponent of the number is in
-the interval @minus{}@var{exp} to @var{exp}.  This function is useful for
-testing functions and algorithms, since this kind of random numbers have
-proven to be more likely to trigger corner-case bugs.  Negative random numbers
-are generated when @var{max_size} is negative.
-@end deftypefun
-
 @deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state})
 Generate a universally distributed random float in the interval 
 0 <= X < 1.
@@ -2605,6 +2596,15 @@ Generate a universally distributed random float in the interval
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization})
 before invoking this function.
+@end deftypefun
+
+@deftypefun void mpf_random2 (mpf_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{max_exp})
+Generate a random float of at most @var{max_size} limbs, with long strings of
+zeros and ones in the binary representation.  The exponent of the number is in
+the interval @minus{}@var{exp} to @var{exp}.  This function is useful for
+testing functions and algorithms, since this kind of random numbers have
+proven to be more likely to trigger corner-case bugs.  Negative random numbers
+are generated when @var{max_size} is negative.
 @end deftypefun
 
 
