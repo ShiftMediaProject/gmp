@@ -2285,13 +2285,7 @@ main (int argc, char *argv[])
         }
       }
 
-    srand (seed);
-#if HAVE_SRAND48
-    srand48 (seed);
-#endif
-#if HAVE_SRANDOM
-    srandom (seed);
-#endif
+    gmp_randseed_ui (RANDS, seed);
   }
 
   try_init();
