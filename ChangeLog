@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-19  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/get_d.c: Make ONE_LIMB case actually work for nails.
+
 2003-12-19  Niels Möller  <nisse@harpo.hack.org>
 
 	* mpn/generic/hgcd.c (mpn_addmul2_n_1) [nails]: Fixed carry handling.
