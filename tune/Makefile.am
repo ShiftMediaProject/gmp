@@ -107,7 +107,7 @@ TUNE_MPN_SRCS_BASIC = dc_divrem_n.c gcd.c mul_n.c mul_fft.c mul.c tdiv_qr.c
 TUNE_MPZ_SRCS = fib_ui.c
 
 $(TUNE_MPN_SRCS_BASIC):
-	for i in $(TUNE_MPN_SRCS); do \
+	for i in $(TUNE_MPN_SRCS_BASIC); do \
 	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
 	  echo "#include \"mpn/generic/$$i\"" >>$$i; \
 	done
