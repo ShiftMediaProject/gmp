@@ -198,9 +198,12 @@ dnl  GMP_M4_M4WRAP_SPURIOUS
 dnl  ----------------------
 dnl  Check for the spurious output from m4wrap(), noted in mpn/asm-defs.m4.
 dnl
-dnl  Alpha Unicos has the problem, but its assembler doesn't seem to mind.
-dnl  MacOS X has been seen with the problem too, and its assembler ends up
-dnl  failing.
+dnl  The following systems have been seen with the problem.
+dnl
+dnl  - Alpha Unicos, but its assembler doesn't seem to mind.
+dnl  - MacOS X (darwin), its assembler fails.
+dnl  - NetBSD 1.4.1 m68k, and gas 1.92.3 on that system gives a warning and
+dnl    ignores the last line since it doesn't have a newline.
 dnl
 dnl  Enhancement: Maybe this could be in GMP_PROG_M4, and attempt to prefer
 dnl  an m4 with a working m4wrap, if it can be found.
@@ -212,7 +215,7 @@ AC_CACHE_CHECK([if m4wrap produces spurious output],
 [# hide the d-n-l from autoconf's error checking
 tmp_d_n_l=d""nl
 cat >conftest.m4 <<EOF
-[changequote({,})m4wrap({{}})$tmp_d_n_l]
+[changequote({,})define(x,)m4wrap({x})$tmp_d_n_l]
 EOF
 echo test input is >&AC_FD_CC
 cat conftest.m4 >&AC_FD_CC

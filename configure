@@ -8584,7 +8584,7 @@ else
   # hide the d-n-l from autoconf's error checking
 tmp_d_n_l=d""nl
 cat >conftest.m4 <<EOF
-changequote({,})m4wrap({{}})$tmp_d_n_l
+changequote({,})define(x,)m4wrap({x})$tmp_d_n_l
 EOF
 echo test input is >&5
 cat conftest.m4 >&5
