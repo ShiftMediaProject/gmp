@@ -736,7 +736,7 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define ASSERT_FILE  ""
 #endif
 
-int __gmp_assert_fail _PROTO ((const char *filename, int linenum,
+void __gmp_assert_fail _PROTO ((const char *filename, int linenum,
                                const char *expr)) ATTRIBUTE_NORETURN;
 
 #if HAVE_STRINGIZE

@@ -26,7 +26,7 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 
 
-int
+void
 __gmp_assert_fail (const char *filename, int linenum,
                    const char *expr)
 {
@@ -39,7 +39,4 @@ __gmp_assert_fail (const char *filename, int linenum,
 
   fprintf (stderr, "GNU MP assertion failed: %s\n", expr);
   abort();
-
-  /*NOTREACHED*/
-  return 0;
 }
