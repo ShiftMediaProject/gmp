@@ -42,7 +42,7 @@
 
 	.code
 	.export		__gmpn_submul_1
-__gmpn_submul_1
+	.label		__gmpn_submul_1
 	.proc
 	.callinfo	frame=128,no_calls
 	.entry
@@ -74,7 +74,8 @@ __gmpn_submul_1
 	stws,ma	 s0,4(res_ptr)
 
 ; start software pipeline ----------------------------------------------------
-L$0	fldds,ma 8(s1_ptr),%fr4
+	.label	L$0
+	fldds,ma 8(s1_ptr),%fr4
 	fldds,ma 8(s1_ptr),%fr8
 
 	xmpyu	 %fr4L,%fr31R,%fr5
@@ -104,7 +105,8 @@ L$0	fldds,ma 8(s1_ptr),%fr4
 	addib,<	 -4,size,L$end
 	addc	 %r0,hi3,cylimb			; propagate carry into cylimb
 ; main loop ------------------------------------------------------------------
-L$loop	fldds,ma 8(s1_ptr),%fr4
+	.label	L$loop
+	fldds,ma 8(s1_ptr),%fr4
 	fldds,ma 8(s1_ptr),%fr8
 
 	ldws	 0(res_ptr),s0
@@ -148,7 +150,8 @@ L$loop	fldds,ma 8(s1_ptr),%fr4
 	addib,>= -4,size,L$loop
 	addc	 %r0,hi3,cylimb			; propagate carry into cylimb
 ; finish software pipeline ---------------------------------------------------
-L$end	ldws	 0(res_ptr),s0
+	.label	L$end
+	ldws	 0(res_ptr),s0
 	ldws	 4(res_ptr),s1
 	ldws	 8(res_ptr),s2
 	ldws	12(res_ptr),s3
@@ -171,9 +174,11 @@ L$end	ldws	 0(res_ptr),s0
 	ldw	-84(%r30),%r6
 	ldw	-80(%r30),%r7
 
-L$few_limbs
+	.label	L$few_limbs
 	addib,=,n 4,size,L$ret
-L$loop2	fldws,ma 4(s1_ptr),%fr4
+
+	.label	L$loop2
+	fldws,ma 4(s1_ptr),%fr4
 	ldws	 0(res_ptr),s0
 	xmpyu	 %fr4,%fr31R,%fr5
 	fstds	 %fr5,-16(%r30)
@@ -187,7 +192,8 @@ L$loop2	fldws,ma 4(s1_ptr),%fr4
 	addib,<> -1,size,L$loop2
 	nop
 
-L$ret	addc	 %r0,cylimb,cylimb
+	.label	L$ret
+	addc	 %r0,cylimb,cylimb
 	bv	 0(%r2)
 	ldo	 -128(%r30),%r30
 

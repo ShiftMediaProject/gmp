@@ -37,12 +37,15 @@ PROLOGUE(mpn_sqr_diagonal)
 	addib,=		-1,n,L$exit
 	xmpyu		%fr4r,%fr4r,%fr5
 
-L$loop	fldws,ma	4(up),%fr4r
+	.label	L$loop
+	fldws,ma	4(up),%fr4r
 	fstws		%fr5r,-4(rp)
 	fstws,ma	%fr5l,8(rp)
 	addib,<>	-1,n,L$loop
 	xmpyu		%fr4r,%fr4r,%fr5
-L$exit	fstws		%fr5r,-4(rp)
+
+	.label	L$exit
+	fstws		%fr5r,-4(rp)
 	bv		0(%r2)
 	fstws		%fr5l,0(rp)
 EPILOGUE(mpn_sqr_diagonal)

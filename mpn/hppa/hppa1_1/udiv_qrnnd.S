@@ -1,7 +1,7 @@
 ; HP-PA  __udiv_qrnnd division support, used from longlong.h.
 ; This version runs fast on PA 7000 and later.
 
-; Copyright 1993, 1994, 2000 Free Software Foundation, Inc.
+; Copyright 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
 
 ; This file is part of the GNU MP Library.
 
@@ -29,11 +29,12 @@
 
 	.code
 	.align		8
-L$0000	.word		0x43f00000		; 2^64
+	.label	L$0000
+	.word		0x43f00000		; 2^64
 	.word		0x0
 
 	.export		__gmpn_udiv_qrnnd
-__gmpn_udiv_qrnnd
+	.label		__gmpn_udiv_qrnnd
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry
@@ -44,7 +45,9 @@ __gmpn_udiv_qrnnd
 #ifdef PIC
 	bl		L$0,%r31
 	dep		%r0,31,2,%r31
-L$0	addil		LR%L$0000-L$0,%r31
+
+	.label	L$0
+	addil		LR%L$0000-L$0,%r31
 	ldo		RR%L$0000-L$0(%r1),%r31
 #else
 	ldil		L%L$0000,%r31
@@ -56,7 +59,8 @@ L$0	addil		LR%L$0000-L$0,%r31
 	fcnvxf,dbl,dbl	%fr5,%fr5
 	fldds		0(0,%r31),%fr4
 	fadd,dbl	%fr4,%fr5,%fr5
-L$1
+
+	.label	L$1
 	fcpy,sgl	%fr0,%fr6L
 	fldws		-12(0,%r30),%fr6R
 	fcnvxf,dbl,dbl	%fr6,%fr4
@@ -77,7 +81,9 @@ L$1
 
 	add		%r22,%r23,%r22
 	ldo		-1(%r28),%r28
-L$2	bv		0(%r2)
+
+	.label	L$2
+	bv		0(%r2)
 	stws		%r22,0(0,%r26)
 
 	.exit

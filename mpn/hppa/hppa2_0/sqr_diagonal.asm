@@ -45,7 +45,8 @@ PROLOGUE(mpn_sqr_diagonal)
 	xmpyu		%fr6r,%fr6r,%fr7
 
 
-L$loop	fldws,ma	4(up),%fr6r
+	.label	L$loop
+	fldws,ma	4(up),%fr6r
 	fstws		%fr5r,-4(rp)
 	fstws,ma	%fr5l,8(rp)
 	addib,=		-1,n,L$exite
@@ -56,7 +57,8 @@ L$loop	fldws,ma	4(up),%fr6r
 	addib,<>	-1,n,L$loop
 	xmpyu		%fr6r,%fr6r,%fr7
 
-L$exito	fstws		%fr5r,-4(rp)
+	.label	L$exito
+	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
 	xmpyu		%fr4r,%fr4r,%fr5
 	fstws		%fr7r,4(rp)
@@ -65,7 +67,8 @@ L$exito	fstws		%fr5r,-4(rp)
 	bv		0(%r2)
 	fstws		%fr5l,4(rp)
 
-L$exite	fstws		%fr7r,-4(rp)
+	.label	L$exite
+	fstws		%fr7r,-4(rp)
 	fstws		%fr7l,0(rp)
 	xmpyu		%fr6r,%fr6r,%fr7
 	fstws		%fr5r,4(rp)
@@ -74,19 +77,22 @@ L$exite	fstws		%fr7r,-4(rp)
 	bv		0(%r2)
 	fstws		%fr7l,4(rp)
 
-L$end1	xmpyu		%fr4r,%fr4r,%fr5
+	.label	L$end1
+	xmpyu		%fr4r,%fr4r,%fr5
 	fstws		%fr5r,-4(rp)
 	bv		0(%r2)
 	fstws,ma	%fr5l,8(rp)
 
-L$end2	xmpyu		%fr6r,%fr6r,%fr7
+	.label	L$end2
+	xmpyu		%fr6r,%fr6r,%fr7
 	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
 	fstws		%fr7r,4(rp)
 	bv		0(%r2)
 	fstws		%fr7l,8(rp)
 
-L$end3	fstws		%fr5r,-4(rp)
+	.label	L$end3
+	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
 	xmpyu		%fr4r,%fr4r,%fr5
 	fstws		%fr7r,4(rp)
