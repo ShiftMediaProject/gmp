@@ -518,8 +518,6 @@ GMP_PROG_LIBTOOL
 
 dnl Checks for libraries.
 dnl ---------------------
-dnl FIXME: need libm?
-dnl [AC_CHECK_LIB(m, acos)]
 AC_CHECK_DECLS((optarg))
 
 dnl Checks for header files.
@@ -529,9 +527,6 @@ AC_HEADER_STDC
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_TYPES((void))
 AC_C_STRINGIZE
-dnl FIXME: If we need [AC_C_CONST], call [AC_PROGCC_STDC] first
-dnl FIXME: If we need [AC_C_INLINE], call [AC_PROGCC_STDC] first
-dnl FIXME: If we need [AC_TYPE_SIZE_T], call [AC_PROGCC_STDC] first
 
 dnl Checks for library functions.
 dnl AC_FUNC_MEMCMP
@@ -759,17 +754,6 @@ done
 AC_SUBST(mpn_objects)
 AC_SUBST(mpn_objs_in_libgmp)
 AC_SUBST(gmp_srclinks)
-
-dnl  ----------------------------------------
-dnl  Debugging.
-dnl
-[echo "***DEBUG*** target=$target"]
-[echo "***DEBUG*** CC=$CC, CFLAGS=$CFLAGS"]
-[echo "***DEBUG*** CC64=$CC64, CFLAGS64=$CFLAGS64"]
-[echo "***DEBUG*** path=$path"]
-[echo "***DEBUG*** mpn_objects=$mpn_objects"]
-dnl [echo "***DEBUG*** gmp_links=$gmp_links"]
-dnl [echo "***DEBUG*** gmp_srclinks=$gmp_srclinks"]
 
 dnl  ----------------------------------------
 dnl  Make links.
