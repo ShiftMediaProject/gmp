@@ -30,7 +30,7 @@ END-INFO-DIR-ENTRY
 @c ==> following paragraph; update date, too.
 
 
-@ifinfo
+@ifnottex
 This file documents GNU MP, a library for arbitrary-precision arithmetic.
 
 Copyright (C) 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000 Free
@@ -45,8 +45,8 @@ Permission is granted to process this file through TeX and print the
 results, provided the printed document carries copying permission
 notice identical to this one except for the removal of this paragraph
 (this paragraph not being relevant to the printed manual).
-
 @end ignore
+
 Permission is granted to copy and distribute modified versions of this
 manual under the conditions for verbatim copying, provided that the entire
 resulting derived work is distributed under the terms of a permission
@@ -56,7 +56,7 @@ Permission is granted to copy and distribute translations of this manual
 into another language, under the above conditions for modified versions,
 except that this permission notice may be stated in a translation approved
 by the Foundation.
-@end ifinfo
+@end ifnottex
 
 @setchapternewpage on
 @titlepage
@@ -704,6 +704,7 @@ whatever functions set by a call to @code{mp_set_memory_functions}),
 are not reentrant, GMP will not be reentrant either.
 
 
+@need 2000
 @node Useful Macros and Constants, Compatibility with older versions, GMP and reentrancy, GMP Basics
 @section Useful Macros and Constants
 
@@ -728,7 +729,7 @@ the source level, with the exception of @code{mpn_gcd} which has had its
 source arguments swapped.
 
 There are a number of compatibility issues between GMP 1 and GMP 2 that of
-course also applies when porting applications from GMP 1 to GMP 3.  Please
+course also apply when porting applications from GMP 1 to GMP 3.  Please
 see the GMP 2 manual for details.
 
 @c @enumerate
@@ -787,35 +788,50 @@ The latest version of the GMP library is available by at
 @chapter Reporting Bugs
 @cindex Reporting bugs
 
-If you think you have found a bug in the GMP library, please investigate it and
-report it.  We have made this library available to you, and it is not too much
-to ask you to report the bugs that you find.
+If you think you have found a bug in the GMP library, please investigate it
+and report it.  We have made this library available to you, and it is not too
+much to ask you to report the bugs you find.  Before you report a bug, you may
+want to check @uref{http://www.swox.com/gmp/} for patches for this release.
 
-Before you report a bug, you may want to check @uref{http://www.swox.com/gmp/}
-for patches for this release.
+Please include the following in any report,
 
-There are a few things you should think about when you put your bug report
-together.
+@itemize @bullet
+@item
+A test program that makes it possible for us to reproduce the bug.  Include
+instructions on how to run the program.
 
-You have to send us a test case that makes it possible for us to reproduce the
-bug.  Include instructions on how to run the test case.
+@item
+A description of what is wrong.  If the results are incorrect, in what way.
+If you get a crash, say so.  If a stack backtrace from the debugger is
+informative (@samp{where} in @command{gdb}), include that.
 
-You also have to explain what is wrong; if you get a crash, or if the results
-printed are incorrect and in that case, in what way.
+@item
+@strong{Don't send core dumps, executables or @command{strace}s.}
 
-It is not uncommon that an observed problem is actually due to a bug in the
-compiler used when building GMP; the GMP code tends to explore interesting
-corners in compilers.  Therefore, please include compiler version information
-in your bug report.  This can be extracted using @samp{what `which cc`}, or,
-if you're using gcc, @samp{gcc -v}.  Also, include the output from @samp{uname
--a}.
+@item
+The configuration options you used when building GMP, if any.
 
-If the bug is related to @samp{configure}, please include the file
-@file{config.log} in the bug report.
+@item
+The name of the compiler you're using, and its version.  If this is
+@command{gcc} then get the version with @samp{gcc -v}, otherwise @samp{what
+`which cc`}, or similar.  (It is not uncommon that an observed problem is
+actually due to a bug in the compiler; the GMP code tends to explore
+interesting corners in compilers.)
 
-If your bug report is good, we will do our best to help you to get a corrected
+@item
+The output from @samp{uname -a}.
+
+@item
+The output from @samp{./config.guess}.
+
+@item
+If the bug is related to @samp{configure}, include the file @file{config.log}.
+
+@end itemize
+
+If your bug report is good, we will do our best to help you get a corrected
 version of the library; if the bug report is poor, we won't do anything about
-it (apart from chiding you to send better bug reports).
+it (except maybe to ask you to send a better report).
 
 Send your bug report to: @email{bug-gmp@@gnu.org}.
 
@@ -1050,14 +1066,12 @@ equal @var{str}, or if that is NULL, will point to the allocated storage.
 
 @deftypefun void mpz_add (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_add_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Set @var{rop} to @var{op1} + @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $@var{op1} + @var{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpz_sub (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -1067,38 +1081,32 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 
 @deftypefun void mpz_mul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx void mpz_mul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Set @var{rop} to @var{op1} times @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $@var{op1} \times @var{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpz_addmul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Add @var{op1} times @var{op2} to @var{rop}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $@var{rop} + @var{op1} \times @var{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpz_mul_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Set @var{rop} to @var{op1} times 2 raised to @var{op2}.  This operation can
 also be defined as a left shift, @var{op2} steps.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $@var{op1} \times 2^{op2}$.  This operation can also be
 defined as a left shift, @var{op2} steps.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpz_neg (mpz_t @var{rop}, mpz_t @var{op})
@@ -1125,26 +1133,22 @@ start with @code{mpz_tdiv}.  The @samp{t} in the name is short for
 @samp{truncate}.
 @item
 Functions that round the quotient towards
-@ifinfo
+@ifnottex
 @minus{}infinity).
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 $-\infty$
 @end tex
-@end iftex
 The names of these routines start with @code{mpz_fdiv}.  The @samp{f} in the
 name is short for @samp{floor}.
 @item
 Functions that round the quotient towards
-@ifinfo
+@ifnottex
 +infinity.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 $+\infty$
 @end tex
-@end iftex
 The names of these routines start with @code{mpz_cdiv}.  The @samp{c} in the
 name is short for @samp{ceil}.
 @end itemize
@@ -1164,38 +1168,34 @@ remainder.
 
 @deftypefun void mpz_tdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_tdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{r} to (@var{n} - [@var{n}/@var{d}] * @var{d}), where the quotient is
 truncated towards 0.  Unless @var{r} becomes zero, it will get the same sign as
 @var{n}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{r} to $(@var{n} - [@var{n}/@var{d}] \times @var{d})$, where the
 quotient is truncated towards 0.  Unless @var{r} becomes zero, it will get the
 same sign as @var{n}.
 @end tex
-@end iftex
 
 The function @code{mpz_tdiv_r_ui} returns the absolute value of the remainder.
 @end deftypefun
 
 @deftypefun void mpz_tdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_tdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{q} to [@var{n}/@var{d}], truncated towards 0.  Set @var{r} to (@var{n}
 - [@var{n}/@var{d}] * @var{d}).  Unless @var{r} becomes zero, it will get the
 same sign as @var{n}.  If @var{q} and @var{r} are the same variable, the
 results are undefined.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{q} to [@var{n}/@var{d}], truncated towards 0.  Set @var{r} to $(@var{n}
 - [@var{n}/@var{d}] \times @var{d})$.  Unless @var{r} becomes zero, it will get the
 same sign as @var{n}.  If @var{q} and @var{r} are the same variable, the
 results are undefined.
 @end tex
-@end iftex
 
 The function @code{mpz_tdiv_qr_ui} returns the absolute value of the remainder.
 @end deftypefun
@@ -1207,51 +1207,45 @@ absolute value is just returned.
 
 @deftypefun void mpz_fdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_fdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{q} to @var{n}/@var{d}, rounded towards @minus{}infinity.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{q} to $\lfloor@var{n}/@var{d}\rfloor$.
 @end tex
-@end iftex
 
 The function @code{mpz_fdiv_q_ui} returns the remainder.
 @end deftypefun
 
 @deftypefun void mpz_fdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_fdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{r} to (@var{n} - @var{n}/@var{d} * @var{d}), where the quotient is
 rounded towards @minus{}infinity.  Unless @var{r} becomes zero, it will get the
 same sign as @var{d}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{r} to $(@var{n} - \lfloor@var{n}/@var{d}\rfloor \times @var{d})$.
 Unless @var{r} becomes zero, it will get the same sign as @var{d}.
 @end tex
-@end iftex
 
 The function @code{mpz_fdiv_r_ui} returns the remainder.
 @end deftypefun
 
 @deftypefun void mpz_fdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_fdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{q} to @var{n}/@var{d}, rounded towards @minus{}infinity.  Set @var{r}
 to (@var{n} - @var{n}/@var{d} * @var{d}).  Unless @var{r} becomes zero, it
 will get the same sign as @var{d}.  If @var{q} and @var{r} are the same
 variable, the results are undefined.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{q} to $\lfloor@var{n}/@var{d}\rfloor$.  Set @var{r} to $(@var{n} -
 \lfloor@var{n}/@var{d}\rfloor \times @var{d})$.  Unless @var{r} becomes zero,
 it will get the same sign as @var{d}.  If @var{q} and @var{r} are the same
 variable, the results are undefined.
 @end tex
-@end iftex
 
 The function @code{mpz_fdiv_qr_ui} returns the remainder.
 @end deftypefun
@@ -1263,51 +1257,45 @@ returned.
 
 @deftypefun void mpz_cdiv_q (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_cdiv_q_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{q} to @var{n}/@var{d}, rounded towards +infinity.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{q} to $\lceil@var{n}/@var{d}\rceil$.
 @end tex
-@end iftex
 
 The function @code{mpz_cdiv_q_ui} returns the negated remainder.
 @end deftypefun
 
 @deftypefun void mpz_cdiv_r (mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_cdiv_r_ui (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{r} to (@var{n} - @var{n}/@var{d} * @var{d}), where the quotient is
 rounded towards +infinity.  Unless @var{r} becomes zero, it will get the
 opposite sign as @var{d}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{r} to $(@var{n} - \lceil@var{n}/@var{d}\rceil \times @var{d})$.  Unless
 @var{r} becomes zero, it will get the opposite sign as @var{d}.
 @end tex
-@end iftex
 
 The function @code{mpz_cdiv_r_ui} returns the negated remainder.
 @end deftypefun
 
 @deftypefun void mpz_cdiv_qr (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, mpz_t @var{d})
 @deftypefunx {unsigned long int} mpz_cdiv_qr_ui (mpz_t @var{q}, mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{q} to @var{n}/@var{d}, rounded towards +infinity.  Set @var{r}
 to (@var{n} - @var{n}/@var{d} * @var{d}).  Unless @var{r} becomes zero, it
 will get the opposite sign as @var{d}.  If @var{q} and @var{r} are the same
 variable, the results are undefined.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{q} to $\lceil@var{n}/@var{d}\rceil$.  Set @var{r} to $(@var{n} -
 \lceil@var{n}/@var{d}\rceil \times @var{d})$.  Unless @var{r} becomes zero, it will
 get the opposite sign as @var{d}.  If @var{q} and @var{r} are the same
 variable, the results are undefined.
 @end tex
-@end iftex
 
 The function @code{mpz_cdiv_qr_ui} returns the negated remainder.
 @end deftypefun
@@ -1336,53 +1324,45 @@ lowest terms.
 @end deftypefun
 
 @deftypefun void mpz_tdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{q} to @var{n} divided by 2 raised to @var{d}.  The quotient is truncated
 towards 0.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{q} to $@var{n}/2^{d}$.  The quotient is truncated towards 0.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpz_tdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Divide @var{n} by (2 raised to @var{d}) and put the remainder in @var{r}.
 Unless it is zero, @var{r} will have the same sign as @var{n}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Divide @var{n} by $2^{d}$ and put the remainder in @var{r}.  Unless it is zero,
 @var{r} will have the same sign as @var{n}.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpz_fdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Set @var{q} to @var{n} divided by 2 raised to @var{d}, rounded towards
 @minus{}infinity.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{q} to $\lfloor@var{n}/2^{d}\rfloor$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpz_fdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
-@ifinfo
+@ifnottex
 Divide @var{n} by (2 raised to @var{d}) and put the remainder in @var{r}.  The
 sign of @var{r} will always be positive.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Divide @var{n} by $2^{d}$ and put the remainder in @var{r}.  The sign of
 @var{r} will always be positive.
 @end tex
-@end iftex
 
 This operation can also be defined as masking of the @var{d} least significant
 bits.
@@ -1399,56 +1379,48 @@ Set @var{rop} to (@var{base} raised to @var{exp}) @code{mod} @var{mod}.  If
 @deftypefun void mpz_pow_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp})
 @deftypefunx void mpz_ui_pow_ui (mpz_t @var{rop}, unsigned long int @var{base}, unsigned long int @var{exp})
 Set @var{rop} to @var{base} raised to @var{exp}.
-@ifinfo
+@ifnottex
 The case of 0^0 yields 1.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 The case of $0^0$ yields 1.
 @end tex
-@end iftex
 @end deftypefun
 
 @subsection Root Functions
 
 @deftypefun int mpz_root (mpz_t @var{rop}, mpz_t @var{op}, unsigned long int @var{n})
-@ifinfo
+@ifnottex
 Set @var{rop} to the truncated integer part of the @var{n}th root of @var{op}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $\lfloor\root n \of {op}\rfloor$, the truncated integer
 part of the @var{n}th root of @var{op}.
 @end tex
-@end iftex
 Return non-zero if the computation was exact, i.e., if @var{op} is
 @var{rop} to the @var{n}th power.
 @end deftypefun
 
 @deftypefun void mpz_sqrt (mpz_t @var{rop}, mpz_t @var{op})
-@ifinfo
+@ifnottex
 Set @var{rop} to the truncated integer part of the square root of @var{op}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $\lfloor\sqrt{@var{op}}\rfloor$, the truncated integer part of
 the square root of @var{op}.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpz_sqrtrem (mpz_t @var{rop1}, mpz_t @var{rop2}, mpz_t @var{op})
-@ifinfo
+@ifnottex
 Set @var{rop1} to the truncated integer part of the square root of @var{op},
 like @code{mpz_sqrt}.  Set @var{rop2} to
 @var{op}@minus{}@var{rop1}*@var{rop1},
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop1} to $\lfloor\sqrt{@var{op}}\rfloor$, like @code{mpz_sqrt}.
 Set @var{rop2} to $(@var{op} - @var{rop1}^2)$,
 @end tex
-@end iftex
 (i.e., zero if @var{op} is a perfect square).
 
 If @var{rop1} and @var{rop2} are the same variable, the results are
@@ -1456,17 +1428,15 @@ undefined.
 @end deftypefun
 
 @deftypefun int mpz_perfect_power_p (mpz_t @var{op})
-@ifinfo
+@ifnottex
 Return non-zero if @var{op} is a perfect power, i.e., if there exist integers
 @var{a} and @var{b}, with @var{b} > 1, such that @var{op} equals a raised to
 b.  Return zero otherwise.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Return non-zero if @var{op} is a perfect power, i.e., if there exist integers
 $a$ and $b$, with $b>1$, such that $@var{op}=a^b$.  Return zero otherwise.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun int mpz_perfect_square_p (mpz_t @var{op})
@@ -1556,14 +1526,12 @@ Set @var{rop} to @var{op}!, the factorial of @var{op}.
 
 @deftypefun void mpz_bin_ui (mpz_t @var{rop}, mpz_t @var{n}, unsigned long int @var{k})
 @deftypefunx void mpz_bin_uiui (mpz_t @var{rop}, unsigned long int @var{n}, unsigned long int @var{k})
-@ifinfo
+@ifnottex
 Compute the binomial coefficient @var{n} over @var{k} and store the result in
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Compute the binomial coefficient $\left({n}\atop{k}\right)$ and store the result in
 @end tex
-@end iftex
 @var{rop}.
 @end deftypefun
 
@@ -1577,34 +1545,30 @@ Compute the @var{n}th Fibonacci number and store the result in @var{rop}.
 @section Comparison Functions
 
 @deftypefun int mpz_cmp (mpz_t @var{op1}, mpz_t @var{op2})
-@ifinfo
+@ifnottex
 Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
 @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
 @var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
 < @var{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefn Macro int mpz_cmp_ui (mpz_t @var{op1}, unsigned long int @var{op2})
 @deftypefnx Macro int mpz_cmp_si (mpz_t @var{op1}, signed long int @var{op2})
-@ifinfo
+@ifnottex
 Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
 @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
 @var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
 < @var{op2}$.
 @end tex
-@end iftex
 
 These functions are actually implemented as macros.  They evaluate their
 arguments multiple times.
@@ -1613,29 +1577,25 @@ arguments multiple times.
 
 @deftypefun int mpz_cmpabs (mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx int mpz_cmpabs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
 value if @var{op1} > @var{op2}, zero if @var{op1} = @var{op2}, and a negative
 value if @var{op1} < @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
 value if $|@var{op1}| > |@var{op2}|$, zero if $|@var{op1}| = |@var{op2}|$, and a
 negative value if $|@var{op1}| < |@var{op2}|$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
-@ifinfo
+@ifnottex
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
 @end tex
-@end iftex
 
 This function is actually implemented as a macro.  It evaluates its
 arguments multiple times.
@@ -1791,14 +1751,12 @@ number functions.
 @deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_randstate_t @var{state},
 unsigned long int @var{n})
 Generate a uniform random integer in the range
-@ifinfo
+@ifnottex
 0 to 2^@var{n} @minus{} 1,
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 0 to $2^n-1$,
 @end tex
-@end iftex
 inclusive.
 
 The variable @var{state} must be initialized by calling one of the
@@ -1810,14 +1768,12 @@ invoking this function.
 @deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_randstate_t @var{state},
 mpz_t @var{n})
 Generate a uniform random integer in the range 0 to
-@ifinfo
+@ifnottex
 @var{n} @minus{} 1, inclusive.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 $n-1$, inclusive.
 @end tex
-@end iftex
 
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization})
@@ -1829,14 +1785,12 @@ Generate a random integer with long strings of zeros and ones in the
 binary representation.  Useful for testing functions and algorithms,
 since this kind of random numbers have proven to be more likely to
 trigger corner-case bugs.  The random number will be in the range
-@ifinfo
+@ifnottex
 0 to 2^@var{n} @minus{} 1,
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 0 to $2^n-1$,
 @end tex
-@end iftex
 inclusive.
 
 The variable @var{state} must be initialized by calling one of the
@@ -1955,14 +1909,12 @@ Set @var{difference} to @var{minuend} @minus{} @var{subtrahend}.
 @end deftypefun
 
 @deftypefun void mpq_mul (mpq_t @var{product}, mpq_t @var{multiplier}, mpq_t @var{multiplicand})
-@ifinfo
+@ifnottex
 Set @var{product} to @var{multiplier} times @var{multiplicand}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{product} to $@var{multiplier} \times @var{multiplicand}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpq_div (mpq_t @var{quotient}, mpq_t @var{dividend}, mpq_t @var{divisor})
@@ -1983,37 +1935,33 @@ zero, this routine will divide by zero.
 @section Comparison Functions
 
 @deftypefun int mpq_cmp (mpq_t @var{op1}, mpq_t @var{op2})
-@ifinfo
+@ifnottex
 Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
 @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
 @var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
 < @var{op2}$.
 @end tex
-@end iftex
 
 To determine if two rationals are equal, @code{mpq_equal} is faster than
 @code{mpq_cmp}.
 @end deftypefun
 
 @deftypefn Macro int mpq_cmp_ui (mpq_t @var{op1}, unsigned long int @var{num2}, unsigned long int @var{den2})
-@ifinfo
+@ifnottex
 Compare @var{op1} and @var{num2}/@var{den2}.  Return a positive value if
 @var{op1} > @var{num2}/@var{den2}, zero if @var{op1} = @var{num2}/@var{den2},
 and a negative value if @var{op1} < @var{num2}/@var{den2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Compare @var{op1} and @var{num2}/@var{den2}.  Return a positive value if
 $@var{op1} > @var{num2}/@var{den2}$, zero if $@var{op1} =
 @var{num2}/@var{den2}$, and a negative value if $@var{op1} <
 @var{num2}/@var{den2}$.
 @end tex
-@end iftex
 
 This routine allows that @var{num2} and @var{den2} have common factors.
 
@@ -2022,14 +1970,12 @@ arguments multiple times.
 @end deftypefn
 
 @deftypefn Macro int mpq_sgn (mpq_t @var{op})
-@ifinfo
+@ifnottex
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
 @end tex
-@end iftex
 
 This function is actually implemented as a macro.  It evaluates its
 arguments multiple times.
@@ -2355,14 +2301,12 @@ equal @var{str}, or if that is NULL, will point to the allocated storage.
 
 @deftypefun void mpf_add (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_add_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Set @var{rop} to @var{op1} + @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $@var{op1} + @var{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpf_sub (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
@@ -2373,14 +2317,12 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 
 @deftypefun void mpf_mul (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_mul_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Set @var{rop} to @var{op1} times @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $@var{op1} \times @var{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 Division is undefined if the divisor is zero, and passing a zero divisor to
@@ -2396,14 +2338,12 @@ Set @var{rop} to @var{op1}/@var{op2}.
 
 @deftypefun void mpf_sqrt (mpf_t @var{rop}, mpf_t @var{op})
 @deftypefunx void mpf_sqrt_ui (mpf_t @var{rop}, unsigned long int @var{op})
-@ifinfo
+@ifnottex
 Set @var{rop} to the square root of @var{op}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $\sqrt{@var{op}}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpf_pow_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
@@ -2424,25 +2364,21 @@ Set @var{rop} to the absolute value of @var{op}.
 @end deftypefun
 
 @deftypefun void mpf_mul_2exp (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Set @var{rop} to @var{op1} times 2 raised to @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $@var{op1} \times 2^{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun void mpf_div_2exp (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
-@ifinfo
+@ifnottex
 Set @var{rop} to @var{op1} divided by 2 raised to @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{rop} to $@var{op1}/2^{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @node Float Comparison, I/O of Floats, Float Arithmetic, Floating-point Functions
@@ -2454,18 +2390,16 @@ Set @var{rop} to $@var{op1}/2^{op2}$.
 @deftypefun int mpf_cmp (mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx int mpf_cmp_ui (mpf_t @var{op1}, unsigned long int @var{op2})
 @deftypefunx int mpf_cmp_si (mpf_t @var{op1}, signed long int @var{op2})
-@ifinfo
+@ifnottex
 Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
 @var{op2}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
 @var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
 < @var{op2}$.
 @end tex
-@end iftex
 @end deftypefun
 
 @deftypefun int mpf_eq (mpf_t @var{op1}, mpf_t @var{op2}, unsigned long int op3)
@@ -2480,14 +2414,12 @@ result in @var{rop}.
 @end deftypefun
 
 @deftypefn Macro int mpf_sgn (mpf_t @var{op})
-@ifinfo
+@ifnottex
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
 @end tex
-@end iftex
 
 This function is actually implemented as a macro.  It evaluates its
 arguments multiple times.
@@ -2561,9 +2493,9 @@ Return the number of bytes read, or if an error occurred, return 0.
 @section Miscellaneous Functions
 @cindex Miscellaneous float functions
 
-@deftypefun void mpf_ceil (mpf_t @var{rop}, mp_size_t @var{op})
-@deftypefunx void mpf_floor (mpf_t @var{rop}, mp_size_t @var{op})
-@deftypefunx void mpf_trunc (mpf_t @var{rop}, mp_size_t @var{op})
+@deftypefun void mpf_ceil (mpf_t @var{rop}, mpf_t @var{op})
+@deftypefunx void mpf_floor (mpf_t @var{rop}, mpf_t @var{op})
+@deftypefunx void mpf_trunc (mpf_t @var{rop}, mpf_t @var{op})
 Set @var{rop} to @var{op} rounded to an integer.  @code{mpf_ceil} rounds to
 the next higher integer, @code{mpf_floor} to the next lower, and
 @code{mpf_trunc} to the integer towards zero.
@@ -2913,14 +2845,12 @@ The areas at @var{r1p} and @var{sp} have to be distinct.  The areas at
 @var{r2p} and @var{sp} have to be identical or completely separate, not
 partially overlapping.
 
-@ifinfo
+@ifnottex
 The area at @var{r1p} needs to have space for ceil(@var{size}/2) limbs.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 The area at @var{r1p} needs to have space for $\lceil@var{size}/2\rceil$ limbs.
 @end tex
-@end iftex
 The area at @var{r2p} needs to be @var{size} limbs large.
 @end deftypefun
 
@@ -3109,14 +3039,12 @@ scheme.
 Parameters @var{a}, @var{c}, and @var{m2exp} are the multiplier, adder, and
 modulus for the linear congruential scheme to use, respectively.  The modulus
 is expressed as a power of 2, so that
-@ifinfo
+@ifnottex
 @var{m} = 2^@var{m2exp}.
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 $m = 2^{m2exp}$.
 @end tex
-@end iftex
 
 The least significant bits of a random number generated by the linear
 congruential algorithm where the modulus is a power of two are not very random.
@@ -3214,17 +3142,15 @@ negative arguments.
 @end deftypefun
 
 @deftypefun void msqrt (MINT *@var{operand}, MINT *@var{root}, MINT *@var{remainder})
-@ifinfo
+@ifnottex
 Set @var{root} to the truncated integer part of the square root of
 @var{operand}.  Set @var{remainder} to
 @var{operand}@minus{}@var{root}*@var{root},
-@end ifinfo
-@iftex
+@end ifnottex
 @tex
 Set @var{root} to $\lfloor\sqrt{@var{operand}}\rfloor$, like
 @code{mpz_sqrt}.  Set @var{remainder} to $(operand - root^2)$,
 @end tex
-@end iftex
 (i.e., zero if @var{operand} is a perfect square).
 
 If @var{root} and @var{remainder} are the same variable, the results are
@@ -3443,11 +3369,11 @@ v. 21 (March), 1995, pp. 111-122.
 Christoph Burnikel and Joachim Ziegler, "Fast Recursive Division",
 Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022,
 @uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}.
-@end itemize
 
 @item
 Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, "Handbook of
 Applied Cryptography", @uref{http://cacr.math.uwaterloo.ca/hac/}.
+@end itemize
 
 @node Concept Index, , , Top
 @comment  node-name,  next,  previous,  up
