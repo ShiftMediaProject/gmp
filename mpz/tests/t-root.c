@@ -52,18 +52,16 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      mp_size_t mask;
-
-      mask = 1L << (urandom() % BITS_PER_MP_LIMB);
       x2_size = urandom () % SIZE + 1;
       mpz_random2 (x2, x2_size);
-      nth = urandom () % mask + 1;
+      nth = urandom () % mpz_sizeinbase (x2, 2) + 1;
       if ((urandom() & 1) == 0)
 	{
+	  /* With 50% probability, set x2 just below a perfect power.  */
 	  mpz_root (x, x2, nth);
 	  mpz_pow_ui (x2, x, nth);
 	  if (mpz_sgn (x2) != 0)
-	    mpz_sub_ui (x2, x2, 1);
+	    mpz_sub_ui (x2, x2, 1L);
 	}
 
       mpz_root (x, x2, nth);
@@ -79,10 +77,19 @@ main (argc, argv)
 	  abort ();
 	}
 
+      if (nth > 1 && mpz_cmp_ui (temp, 1L) > 0 && ! mpz_perfect_power_p (temp))
+	{
+	  fprintf (stderr, "ERROR in mpz_perfect_power_p after test %d\n", i);
+	  debug_mp (temp, 10);
+	  debug_mp (x, 10);
+	  fprintf (stderr, "nth: %lu\n", nth);
+	  abort ();
+	}
+
       if (nth > 10000)
 	continue;		/* skip too expensive test */
 
-      mpz_add_ui (temp2, x, 1);
+      mpz_add_ui (temp2, x, 1L);
       mpz_pow_ui (temp2, temp2, nth);
 
       /* Is square of (result + 1) <= argument?  */
