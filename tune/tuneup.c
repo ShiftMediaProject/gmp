@@ -853,7 +853,7 @@ all (void)
 #if UDIV_PREINV_ALWAYS
   /* When udiv_qrnnd is implemented using udiv_qrnnd_preinv there's no need
      to tune, just always use the latter.  */
-  printf ("#define DIVREM_1_NORM_THRESHOLD    0\n");
+  printf ("#define DIVREM_1_NORM_THRESHOLD    0  /* (preinv always) */\n");
   printf ("#define DIVREM_1_UNNORM_THRESHOLD  0\n");
   printf ("#define MOD_1_NORM_THRESHOLD       0\n");
   printf ("#define MOD_1_UNNORM_THRESHOLD     0\n");
