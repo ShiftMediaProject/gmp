@@ -1,5 +1,9 @@
 2000-04-10  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/bin_uiui.c: Delete several unused variables.
+	Add copyright notice.
+	* mpz/bin_ui.c: Add copyright notice.
+
 	* longlong.h: Declare __count_leading_zeros for alpha.
 
 2000-04-10  Linus Nordberg  <linus@swox.se>
