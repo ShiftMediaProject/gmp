@@ -386,7 +386,8 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
           if (option_trace)
             printf ("function2 never enough faster: t1=%.9f t2=%.9f\n", t1, t2);
           table[0] = MP_SIZE_T_MAX;
-          print_define (param->name[0], table[0]);
+          if (! param->noprint)
+            print_define (param->name[0], table[0]);
           return;
         }
 
