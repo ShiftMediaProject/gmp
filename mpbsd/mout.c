@@ -1,6 +1,6 @@
 /* mout(MINT) -- Do decimal output of MINT to standard output.
 
-Copyright (C) 1991, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -76,7 +76,7 @@ mout (x)
     str[i] = "0123456789"[str[i]];
   str[str_size] = 0;
 
-  str_size = strlen (str);
+  str_size = strlen ((char *) str);
   if (str_size % 10 != 0)
     {
       fwrite (str, 1, str_size % 10, stdout);
