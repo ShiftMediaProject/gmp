@@ -744,7 +744,7 @@ are not reentrant, GMP will not be reentrant either.
 @need 2000
 @node Useful Macros and Constants, Compatibility with older versions, GMP and Reentrancy, GMP Basics
 @section Useful Macros and Constants
-@cindex Useful Macros and Constants
+@cindex Useful macros and constants
 @cindex Constants
 
 @deftypevr {Global Constant} {const int} mp_bits_per_limb
@@ -1591,7 +1591,7 @@ Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
 @deftypefun int mpz_invert (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @cindex Modular inverse functions
 Compute the inverse of @var{op1} modulo @var{op2} and put the result in
-@var{rop}.  Return non-zero if an inverse exist, zero otherwise.  When the
+@var{rop}.  Return non-zero if an inverse exists, zero otherwise.  When the
 function returns zero, @var{rop} is undefined.
 @end deftypefun
 
@@ -1631,15 +1631,24 @@ Set @var{rop} to @var{op}!, the factorial of @var{op}.
 @end deftypefun
 
 @deftypefun void mpz_bin_ui (mpz_t @var{rop}, mpz_t @var{n}, unsigned long int @var{k})
-@deftypefunx void mpz_bin_uiui (mpz_t @var{rop}, unsigned long int @var{n}, unsigned long int @var{k})
+@deftypefunx void mpz_bin_uiui (mpz_t @var{rop}, unsigned long int @var{n}, @w{unsigned long int @var{k}})
 @cindex Binomial coefficient functions
+Compute the binomial coefficient
 @ifnottex
-Compute the binomial coefficient @var{n} over @var{k} and store the result in
+@var{n} over @var{k}
 @end ifnottex
 @tex
-Compute the binomial coefficient $\left({n}\atop{k}\right)$ and store the result in
+$\left({n}\atop{k}\right)$
 @end tex
-@var{rop}.
+and store the result in @var{rop}.  Negative values of @var{n} are supported
+by @code{mpz_bin_ui}, using the identity
+@ifnottex
+bin(-n,k) = (-1)^k * bin(n+k-1,k)
+@end ifnottex
+@tex
+$\left({-n}\atop{k}\right) = (-1)^k \left({n+k-1}\atop{k}\right)$
+@end tex
+(see Knuth volume 1 section 1.2.6 part G).
 @end deftypefun
 
 @deftypefun void mpz_fib_ui (mpz_t @var{rop}, unsigned long int @var{n})
