@@ -155,9 +155,9 @@ MA 02111-1307, USA. */
 #define UDIV_TIME 220
 #endif /* LONGLONG_STANDALONE */
 /* clz_tab is required by mpn/alpha/cntlz.asm, and that file is built for
-   all alphas, even though ev67 and ev68 don't need it. */
+   all alphas, even though CIX chips don't need it. */
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
-#if defined (__GNUC__) && (HAVE_HOST_CPU_alphaev67 || HAVE_HOST_CPU_alphaev68)
+#if defined (__GNUC__) && HAVE_HOST_CPU_alpha_CIX
 #define count_leading_zeros(COUNT,X) \
   __asm__("ctlz %1,%0" : "=r"(COUNT) : "r"(X))
 #define count_trailing_zeros(COUNT,X) \
