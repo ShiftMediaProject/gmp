@@ -1251,7 +1251,9 @@ trap (int sig)
 
   switch (sig) {
   case SIGILL:  name = "SIGILL";  break;
+#ifdef SIGBUS
   case SIGBUS:  name = "SIGBUS";  break;
+#endif
   case SIGSEGV: name = "SIGSEGV"; break;
   case SIGFPE:  name = "SIGFPE";  break;
   }
@@ -1297,7 +1299,9 @@ Error, error, cannot get page size
   printf ("pagesize is 0x%lX bytes\n", pagesize);
 
   signal (SIGILL,  trap);
+#ifdef SIGBUS
   signal (SIGBUS,  trap);
+#endif
   signal (SIGSEGV, trap);
   signal (SIGFPE,  trap);
 
