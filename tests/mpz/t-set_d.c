@@ -60,8 +60,8 @@ check_data (void)
           d_trace   ("  d  ", data[i].d);
           printf    ("  got  size %ld\n", (long) z->_mp_size);
           printf    ("  want size %ld\n", (long) data[i].want_size);
-          mpn_trace ("  got  d", z->_mp_d, z->_mp_size);
-          mpn_trace ("  want d", data[i].want_data, data[i].want_size);
+          mpn_trace ("  got  z", z->_mp_d, z->_mp_size);
+          mpn_trace ("  want z", data[i].want_data, data[i].want_size);
           abort();
         }
       mpz_clear (z);
