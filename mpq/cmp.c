@@ -37,6 +37,10 @@ mpq_cmp (const MP_RAT *op1, const MP_RAT *op2)
   int cc;
   TMP_DECL (marker);
 
+  /* need canonical signs to get right result */
+  ASSERT (den1_size > 0);
+  ASSERT (den2_size > 0);
+
   if (num1_size == 0)
     return -num2_size;
   if (num2_size == 0)

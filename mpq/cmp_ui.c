@@ -35,6 +35,9 @@ _mpq_cmp_ui (const MP_RAT *op1, unsigned long int num2, unsigned long int den2)
   int cc;
   TMP_DECL (marker);
 
+  /* need canonical sign to get right result */
+  ASSERT (den1_size > 0);
+
   if (den2 == 0)
     DIVIDE_BY_ZERO;
 

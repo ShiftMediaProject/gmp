@@ -30,6 +30,9 @@ MA 02111-1307, USA. */
 int
 _mpq_cmp_si (mpq_srcptr q, long n, unsigned long d)
 {
+  /* need canonical sign to get right result */
+  ASSERT (q->_mp_den._mp_size > 0);
+
   if (q->_mp_num._mp_size >= 0)
     {
       if (n >= 0)
