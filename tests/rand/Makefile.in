@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4f from Makefile.am.
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -10,6 +10,27 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
+@SET_MAKE@
+
+# Copyright 2000 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
 
 SHELL = @SHELL@
 
@@ -31,11 +52,9 @@ infodir = @infodir@
 mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
-
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-
 top_builddir = ../..
 
 ACLOCAL = @ACLOCAL@
@@ -47,17 +66,14 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
+INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
-
 NORMAL_INSTALL = :
 PRE_INSTALL = :
 POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
 host_alias = @host_alias@
 host_triplet = @host@
 AMDEP = @AMDEP@
@@ -85,7 +101,6 @@ LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 M4 = @M4@
 MAINT = @MAINT@
-MAKEINFO = @MAKEINFO@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -95,31 +110,12 @@ STRIP = @STRIP@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+__GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 mpn_objs_in_libmp = @mpn_objs_in_libmp@
-
-# Copyright 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2.1 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
-
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
@@ -145,85 +141,101 @@ EXTRA_DIST = gmpstat.h
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES)
 subdir = tests/rand
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../config.h
-CONFIG_CLEAN_FILES = 
+CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_CLEAN_FILES =
+libstat_la_LDFLAGS =
+libstat_la_DEPENDENCIES = $(top_builddir)/libgmp.la
+am_libstat_la_OBJECTS = statlib$U.lo zdiv_round$U.lo
+libstat_la_OBJECTS = $(am_libstat_la_OBJECTS)
+EXTRA_PROGRAMS = findlc$(EXEEXT) gen$(EXEEXT) gen.static spect$(EXEEXT) \
+	stat$(EXEEXT)
+check_PROGRAMS = t-rand$(EXEEXT)
+findlc_SOURCES = findlc.c
+findlc_OBJECTS = findlc$U.$(OBJEXT)
+findlc_DEPENDENCIES = libstat.la
+findlc_LDFLAGS =
+gen_SOURCES = gen.c
+gen_OBJECTS = gen$U.$(OBJEXT)
+gen_LDADD = $(LDADD)
+gen_DEPENDENCIES = $(top_builddir)/libgmp.la
+gen_LDFLAGS =
+am_gen_static_OBJECTS = gen$U.$(OBJEXT)
+gen_static_OBJECTS = $(am_gen_static_OBJECTS)
+gen_static_LDADD = $(LDADD)
+gen_static_DEPENDENCIES = $(top_builddir)/libgmp.la
+spect_SOURCES = spect.c
+spect_OBJECTS = spect$U.$(OBJEXT)
+spect_DEPENDENCIES = libstat.la
+spect_LDFLAGS =
+stat_SOURCES = stat.c
+stat_OBJECTS = stat$U.$(OBJEXT)
+stat_DEPENDENCIES = libstat.la
+stat_LDFLAGS =
+t_rand_SOURCES = t-rand.c
+t_rand_OBJECTS = t-rand$U.$(OBJEXT)
+t_rand_LDADD = $(LDADD)
+t_rand_DEPENDENCIES = $(top_builddir)/libgmp.la
+t_rand_LDFLAGS =
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../..
+DEFS = @DEFS@
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-ANSI2KNR = $(top_builddir)/ansi2knr
-libstat_la_LDFLAGS = 
-libstat_la_DEPENDENCIES =  $(top_builddir)/libgmp.la
-am_libstat_la_OBJECTS =  statlib$U.lo zdiv_round$U.lo
-libstat_la_OBJECTS =  $(am_libstat_la_OBJECTS)
-EXTRA_PROGRAMS =  findlc$(EXEEXT) gen$(EXEEXT) gen.static spect$(EXEEXT) \
-stat$(EXEEXT)
-check_PROGRAMS =  t-rand$(EXEEXT)
-findlc_SOURCES = findlc.c
-findlc_OBJECTS =  findlc$U.$(OBJEXT)
-findlc_DEPENDENCIES =  libstat.la
-findlc_LDFLAGS = 
-gen_SOURCES = gen.c
-gen_OBJECTS =  gen$U.$(OBJEXT)
-gen_LDADD = $(LDADD)
-gen_DEPENDENCIES =  $(top_builddir)/libgmp.la
-gen_LDFLAGS = 
-am_gen_static_OBJECTS =  gen$U.$(OBJEXT)
-gen_static_OBJECTS =  $(am_gen_static_OBJECTS)
-gen_static_LDADD = $(LDADD)
-gen_static_DEPENDENCIES =  $(top_builddir)/libgmp.la
-spect_SOURCES = spect.c
-spect_OBJECTS =  spect$U.$(OBJEXT)
-spect_DEPENDENCIES =  libstat.la
-spect_LDFLAGS = 
-stat_SOURCES = stat.c
-stat_OBJECTS =  stat$U.$(OBJEXT)
-stat_DEPENDENCIES =  libstat.la
-stat_LDFLAGS = 
-t_rand_SOURCES = t-rand.c
-t_rand_OBJECTS =  t-rand$U.$(OBJEXT)
-t_rand_LDADD = $(LDADD)
-t_rand_DEPENDENCIES =  $(top_builddir)/libgmp.la
-t_rand_LDFLAGS = 
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
+depcomp =
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
+	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libstat_la_SOURCES) findlc.c gen.c \
-$(gen_static_SOURCES) spect.c stat.c t-rand.c
-depcomp = 
-DIST_COMMON =  ChangeLog Makefile.am Makefile.in
-
-
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-
-GZIP_ENV = --best
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CFLAGS = @CFLAGS@
+DIST_SOURCES = $(libstat_la_SOURCES) findlc.c gen.c \
+	$(gen_static_SOURCES) spect.c stat.c t-rand.c
+DIST_COMMON = ChangeLog Makefile.am Makefile.in
 SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-rand.c
-OBJECTS = $(am_libstat_la_OBJECTS) findlc$U.$(OBJEXT) gen$U.$(OBJEXT) $(am_gen_static_OBJECTS) spect$U.$(OBJEXT) stat$U.$(OBJEXT) t-rand$U.$(OBJEXT)
 
-all: all-redirect
+all: all-am
+
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/rand/Makefile
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  tests/rand/Makefile
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+libstat.la: $(libstat_la_OBJECTS) $(libstat_la_DEPENDENCIES)
+	$(LINK)  $(libstat_la_LDFLAGS) $(libstat_la_OBJECTS) $(libstat_la_LIBADD) $(LIBS)
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
-
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+findlc$(EXEEXT): $(findlc_OBJECTS) $(findlc_DEPENDENCIES)
+	@rm -f findlc$(EXEEXT)
+	$(LINK) $(findlc_LDFLAGS) $(findlc_OBJECTS) $(findlc_LDADD) $(LIBS)
+gen$(EXEEXT): $(gen_OBJECTS) $(gen_DEPENDENCIES)
+	@rm -f gen$(EXEEXT)
+	$(LINK) $(gen_LDFLAGS) $(gen_OBJECTS) $(gen_LDADD) $(LIBS)
+gen.static$(EXEEXT): $(gen_static_OBJECTS) $(gen_static_DEPENDENCIES)
+	@rm -f gen.static$(EXEEXT)
+	$(LINK) $(gen_static_LDFLAGS) $(gen_static_OBJECTS) $(gen_static_LDADD) $(LIBS)
+spect$(EXEEXT): $(spect_OBJECTS) $(spect_DEPENDENCIES)
+	@rm -f spect$(EXEEXT)
+	$(LINK) $(spect_LDFLAGS) $(spect_OBJECTS) $(spect_LDADD) $(LIBS)
+stat$(EXEEXT): $(stat_OBJECTS) $(stat_DEPENDENCIES)
+	@rm -f stat$(EXEEXT)
+	$(LINK) $(stat_LDFLAGS) $(stat_OBJECTS) $(stat_LDADD) $(LIBS)
+t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES)
+	@rm -f t-rand$(EXEEXT)
+	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
 
 mostlyclean-compile:
-	-rm -f *.o core *.core
-	-rm -f *.$(OBJEXT)
-
-clean-compile:
+	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
-
-maintainer-clean-compile:
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -232,83 +244,42 @@ clean-libtool:
 	-rm -rf .libs _libs
 
 distclean-libtool:
+	-rm -f libtool
 
-maintainer-clean-libtool:
-$(top_builddir)/ansi2knr: $(top_builddir)/ansi2knr.$(OBJEXT)
+ANSI2KNR = $(top_builddir)/ansi2knr
+$(top_builddir)/ansi2knr:
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
-
-$(top_builddir)/ansi2knr.$(OBJEXT):
-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr.$(OBJEXT)
-
 
 mostlyclean-kr:
 	-rm -f *_.c
 
-clean-kr:
-
-distclean-kr:
-
-maintainer-clean-kr:
-
-libstat.la: $(libstat_la_OBJECTS) $(libstat_la_DEPENDENCIES)
-	$(LINK)  $(libstat_la_LDFLAGS) $(libstat_la_OBJECTS) $(libstat_la_LIBADD) $(LIBS)
-
-mostlyclean-checkPROGRAMS:
-
-clean-checkPROGRAMS:
-	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-
-distclean-checkPROGRAMS:
-
-maintainer-clean-checkPROGRAMS:
-
-findlc$(EXEEXT): $(findlc_OBJECTS) $(findlc_DEPENDENCIES)
-	@rm -f findlc$(EXEEXT)
-	$(LINK) $(findlc_LDFLAGS) $(findlc_OBJECTS) $(findlc_LDADD) $(LIBS)
-
-gen$(EXEEXT): $(gen_OBJECTS) $(gen_DEPENDENCIES)
-	@rm -f gen$(EXEEXT)
-	$(LINK) $(gen_LDFLAGS) $(gen_OBJECTS) $(gen_LDADD) $(LIBS)
-
-gen.static: $(gen_static_OBJECTS) $(gen_static_DEPENDENCIES)
-	@rm -f gen.static
-	$(LINK) $(gen_static_LDFLAGS) $(gen_static_OBJECTS) $(gen_static_LDADD) $(LIBS)
-
-spect$(EXEEXT): $(spect_OBJECTS) $(spect_DEPENDENCIES)
-	@rm -f spect$(EXEEXT)
-	$(LINK) $(spect_LDFLAGS) $(spect_OBJECTS) $(spect_LDADD) $(LIBS)
-
-stat$(EXEEXT): $(stat_OBJECTS) $(stat_DEPENDENCIES)
-	@rm -f stat$(EXEEXT)
-	$(LINK) $(stat_LDFLAGS) $(stat_OBJECTS) $(stat_LDADD) $(LIBS)
-
-t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES)
-	@rm -f t-rand$(EXEEXT)
-	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
 .c.o:
-	$(COMPILE) -c $<
+	$(COMPILE) -c `test -f $< || echo '$(srcdir)/'`$<
+
 .c.obj:
 	$(COMPILE) -c `cygpath -w $<`
+
 .c.lo:
-	$(LTCOMPILE) -c -o $@ $<
+	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 findlc_.c: findlc.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/findlc.c; then echo $(srcdir)/findlc.c; else echo findlc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > findlc_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/findlc.c; then echo $(srcdir)/findlc.c; else echo findlc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > findlc_.c || rm -f findlc_.c
 gen_.c: gen.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gen.c; then echo $(srcdir)/gen.c; else echo gen.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gen.c; then echo $(srcdir)/gen.c; else echo gen.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen_.c || rm -f gen_.c
 spect_.c: spect.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/spect.c; then echo $(srcdir)/spect.c; else echo spect.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > spect_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/spect.c; then echo $(srcdir)/spect.c; else echo spect.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > spect_.c || rm -f spect_.c
 stat_.c: stat.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stat.c; then echo $(srcdir)/stat.c; else echo stat.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stat_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stat.c; then echo $(srcdir)/stat.c; else echo stat.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stat_.c || rm -f stat_.c
 statlib_.c: statlib.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/statlib.c; then echo $(srcdir)/statlib.c; else echo statlib.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > statlib_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/statlib.c; then echo $(srcdir)/statlib.c; else echo statlib.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > statlib_.c || rm -f statlib_.c
 t-rand_.c: t-rand.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-rand.c; then echo $(srcdir)/t-rand.c; else echo t-rand.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-rand_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-rand.c; then echo $(srcdir)/t-rand.c; else echo t-rand.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-rand_.c || rm -f t-rand_.c
 zdiv_round_.c: zdiv_round.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/zdiv_round.c; then echo $(srcdir)/zdiv_round.c; else echo zdiv_round.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > zdiv_round_.c
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/zdiv_round.c; then echo $(srcdir)/zdiv_round.c; else echo zdiv_round.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > zdiv_round_.c || rm -f zdiv_round_.c
 findlc_.$(OBJEXT) findlc_.lo gen_.$(OBJEXT) gen_.lo spect_.$(OBJEXT) \
 spect_.lo stat_.$(OBJEXT) stat_.lo statlib_.$(OBJEXT) statlib_.lo \
 t-rand_.$(OBJEXT) t-rand_.lo zdiv_round_.$(OBJEXT) zdiv_round_.lo : \
 $(ANSI2KNR)
+uninstall-info-am:
 
 tags: TAGS
 
@@ -334,14 +305,14 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
 	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
 
-mostlyclean-tags:
-
-clean-tags:
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
 
 distclean-tags:
 	-rm -f TAGS ID
 
-maintainer-clean-tags:
 check-TESTS: $(TESTS)
 	@failed=0; all=0; xfail=0; xpass=0; \
 	srcdir=$(srcdir); export srcdir; \
@@ -397,11 +368,18 @@ check-TESTS: $(TESTS)
 	  test "$$failed" -eq 0; \
 	fi
 
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+top_distdir = ../..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
-	  d=$(srcdir); \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    $(mkinstalldirs) "$(distdir)/$$dir"; \
+	  fi; \
 	  if test -d $$d/$$file; then \
 	    cp -pR $$d/$$file $(distdir) \
 	    || exit 1; \
@@ -411,84 +389,88 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-info-am:
-info: info-am
-dvi-am:
-dvi: dvi-am
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-installcheck-am:
-installcheck: installcheck-am
-install-exec-am:
-install-exec: install-exec-am
+all-am: Makefile
 
-install-data-am:
+installdirs:
+
+install: install-am
+install-exec: install-exec-am
 install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-am
-uninstall-am:
-uninstall: uninstall-am
-all-am: Makefile
-all-redirect: all-am
+
+installcheck: installcheck-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
-installdirs:
-
-
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  `test -z '$(STRIP)' || \
+	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
 
 clean-generic:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
-	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
-	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-compile mostlyclean-libtool mostlyclean-kr \
-		mostlyclean-checkPROGRAMS mostlyclean-tags \
-		mostlyclean-generic
-
-mostlyclean: mostlyclean-am
-
-clean-am:  clean-compile clean-libtool clean-kr clean-checkPROGRAMS \
-		clean-tags clean-generic mostlyclean-am
-
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-distclean-am:  distclean-compile distclean-libtool distclean-kr \
-		distclean-checkPROGRAMS distclean-tags \
-		distclean-generic clean-am
-	-rm -f libtool
+clean-am: clean-checkPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-kr maintainer-clean-checkPROGRAMS \
-		maintainer-clean-tags maintainer-clean-generic \
-		distclean-am
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-libtool distclean-tags
+
+dvi: dvi-am
+
+dvi-am:
+
+info: info-am
+
+info-am:
+
+install-data-am:
+
+install-exec-am:
+
+install-info: install-info-am
+
+install-man:
+
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
-clean-kr maintainer-clean-kr mostlyclean-checkPROGRAMS \
-distclean-checkPROGRAMS clean-checkPROGRAMS \
-maintainer-clean-checkPROGRAMS tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags check-TESTS distdir info-am info \
-dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
-install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all install-strip \
-installdirs mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool
+
+uninstall-am: uninstall-info-am
+
+uninstall-info: uninstall-info-am
+
+.PHONY: all all-am check check-TESTS check-am clean clean-checkPROGRAMS \
+	clean-generic clean-libtool distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-kr mostlyclean-libtool tags \
+	uninstall uninstall-am uninstall-info-am
 
 
 allprogs: $(EXTRA_PROGRAMS)
@@ -538,7 +520,6 @@ manual-bigtest: gen$(EXEEXT) stat$(EXEEXT)
 		| ./stat -2 1000 | grep '^K[mp]')
 	@(echo '128f: '; ./gen -f mpf_urandomb -z 128 50000 \
 		| ./stat -2 1000 | grep '^K[mp]')
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
