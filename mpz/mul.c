@@ -22,6 +22,9 @@ MA 02111-1307, USA. */
 #include <stdio.h> /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
+#ifdef BERKELEY_MP
+#include "mp.h"
+#endif
 
 #ifndef BERKELEY_MP
 void
