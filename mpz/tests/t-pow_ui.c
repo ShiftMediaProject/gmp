@@ -70,18 +70,14 @@ main (argc, argv)
   for (i = 0; i < reps; i++)
     {
       mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 13 + 2;
+      size_range = mpz_get_ui (bs) % 12 + 2;
 
-      do  /* Loop until mathematically well-defined.  */
-	{
-	  mpz_urandomb (bs, rands, size_range);
-	  base_size = mpz_get_ui (bs);
-	  mpz_rrandomb (base, rands, base_size);
+      mpz_urandomb (bs, rands, size_range);
+      base_size = mpz_get_ui (bs);
+      mpz_rrandomb (base, rands, base_size);
 
-	  mpz_urandomb (exp, rands, 5L);
-	  exp2 = mpz_getlimbn (exp, 0);
-	}
-      while (mpz_cmp_ui (base, 0) == 0 && exp2 == 0);
+      mpz_urandomb (exp, rands, 5L);
+      exp2 = mpz_getlimbn (exp, 0);
 
       mpz_urandomb (bs, rands, 2);
       bsi = mpz_get_ui (bs);
@@ -136,7 +132,7 @@ ref_mpz_pow_ui (w, u, e)
 
   if ((e & 1) != 0)
     mpz_mul (t, t, s);
-      
+
   for (i = 2; i <= e; i <<= 1)
     {
       mpz_mul (s, s, s);
