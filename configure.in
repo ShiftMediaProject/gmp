@@ -458,7 +458,8 @@ case ${target} in
     path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
     extra_functions="udiv_qrnnd";;
   [cray2-cray-unicos* | [xy]mp-cray-unicos* | [ctj]90-cray-unicos*])
-    path="cray";;
+    path="cray"
+    extra_functions="mulww";;
   [f30[01]-fujitsu-sysv*])
     path=fujitsu;;
   alphaev6*-*-*) path="alpha/ev6 alpha"; extra_functions="invert_limb cntlz";;
