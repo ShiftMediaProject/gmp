@@ -1,7 +1,6 @@
 # AMD K6 mpn_mul_1 -- mpn by limb multiply.
 #
-# K6: 6.4 cycles/limb in the loop (at 16 limbs/loop), PIC adds 4 cycles at
-# the start of the unrolled loop.
+# K6: 6.25 cycles/limb.
 
 
 # Copyright (C) 1999-2000 Free Software Foundation, Inc.
@@ -26,24 +25,6 @@
 include(`../config.m4')
 
 
-dnl  Unrolling to 8 pushes the code size for the loop just just over a 32
-dnl  byte boundary, so perhaps extra code fetching explains the poorer speed
-dnl  on this unrolling.  Unrolling to 16 gets the loop code nicely in a 256
-dnl  byte block, which might explain why it's as good as 32 or 64.
-dnl
-dnl  K6 UNROLL_COUNT cycles/limb
-dnl           4          6.8
-dnl           8          7.5
-dnl          16          6.4
-dnl          32          6.4
-dnl          64          6.4
-dnl
-dnl  Cf. simple loop is 8.0.
-dnl  Maximum unrolling possible with the current code is 64.
-
-deflit(UNROLL_COUNT, 16)
-
-
 # mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 #                      mp_limb_t multiplier);
 # mp_limb_t mpn_mul_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
@@ -54,24 +35,15 @@ deflit(UNROLL_COUNT, 16)
 #
 # mpn_mul_1c() accepts an initial carry for the calculation, it's added into
 # the low limb of the result.
-#
-# In the unrolled loop it's 6 cycles/limb, with instruction decoding being
-# the limiting factor.
-#
-# The jacdl0() technique used in mpn_add/submul_1 doesn't help in the
-# unrolled loop here, using it comes out a touch slower than adcl.
-
-ifdef(`PIC',`
-deflit(UNROLL_THRESHOLD, 11)
-',`
-deflit(UNROLL_THRESHOLD, 9)
-')
 
 defframe(PARAM_CARRY,     20)
 defframe(PARAM_MULTIPLIER,16)
 defframe(PARAM_SIZE,      12)
 defframe(PARAM_SRC,       8)
 defframe(PARAM_DST,       4)
+
+dnl  minimum 5 because the unrolled code can't handle less
+deflit(UNROLL_THRESHOLD, 5)
 
 	.text
 	ALIGN(32)
@@ -92,23 +64,23 @@ deflit(`FRAME',4)
 L(start_nc):
 	mov	PARAM_SIZE, %ecx
 	push	%ebx
-deflit(`FRAME',8)
+FRAME_pushl()
 
 	movl	PARAM_SRC, %ebx
 	push	%edi
-deflit(`FRAME',12)
+FRAME_pushl()
 
 	movl	PARAM_DST, %edi
 	pushl	%ebp
-deflit(`FRAME',16)
+FRAME_pushl()
 
+	cmpl	$UNROLL_THRESHOLD, %ecx
 	movl	PARAM_MULTIPLIER, %ebp
-	cmp	$UNROLL_THRESHOLD, %ecx
 
 	jae	L(unroll)
 
 
-	# this is offset 0x22, which is close enough to aligned
+	# code offset 0x22 here, close enough to aligned
 L(simple):
 	# eax	scratch
 	# ebx	src
@@ -117,6 +89,8 @@ L(simple):
 	# esi	carry
 	# edi	dst
 	# ebp	multiplier
+	#
+	# this loop 8 cycles/limb
 
 	movl	(%ebx), %eax
 	addl	$4, %ebx
@@ -145,87 +119,153 @@ L(simple):
 	ret
 
 
-#-----------------------------------------------------------------------------
-	ALIGN(16)
+#------------------------------------------------------------------------------
+# The code for each limb is 6 cycles, with instruction decoding being the
+# limiting factor.  At 4 limbs/loop and 1 cycle/loop of overhead it's 6.25
+# cycles/limb in total.
+#
+# The secret ingredient to get 6.25 is to start the loop with the mul and
+# have the load/store pair at the end.  Rotating the load/store to the top
+# is an 0.5 c/l slowdown.  (Don't quite know why.)
+#
+# The whole unrolled loop fits nicely in exactly 80 bytes.
+
+
+	ALIGN(16)	# already aligned to 16 here actually
 L(unroll):
-	movl	%ecx, %eax
+	movl	(%ebx), %eax
+	leal	-16(%ebx,%ecx,4), %ebx
+
+	leal	-16(%edi,%ecx,4), %edi
+	subl	$4, %ecx
+
 	negl	%ecx
 
-	andl	$UNROLL_MASK, %ecx
-	movl	$0, %edx
 
-	subl	%ecx, %edx
-	shll	$4, %ecx
-
-	leal	ifelse(UNROLL_BYTES,256,128) (%ebx,%edx,4), %ebx
-	decl	%eax
-
-	shrl	$UNROLL_LOG2, %eax
-	leal	ifelse(UNROLL_BYTES,256,128) (%edi,%edx,4), %edi
-
-	# 15 code bytes/limb
-ifdef(`PIC',`
-	call	L(pic_calc)
-L(here):
-',`
-	leal	L(entry) (%edx,%ecx), %edx
-')
-	mov	%eax, %ecx
-	
-	jmp	*%edx
-
-
-ifdef(`PIC',`
-L(pic_calc):
-	# See README.family about old gas bugs
-	leal	(%edx,%ecx), %edx
-	addl	$L(entry)-L(here), %edx
-	addl	(%esp), %edx
-	ret
-')
-
-
-#----------------------------------------------------------------------------
-# need 32 byte alignment here to get the claimed speed
-	ALIGN(32)
+	ALIGN(16)	# one byte nop for this alignment
 L(top):
 	# eax	scratch
-	# ebx	src
-	# ecx	loop counter
+	# ebx	&src[size-4]
+	# ecx	counter
 	# edx	scratch
 	# esi	carry
-	# edi	dst
+	# edi	&dst[size-4]
 	# ebp	multiplier
-	#
-	# 15 code bytes/limb
 
-	leal	UNROLL_BYTES(%edi), %edi
-
-L(entry):
-forloop(i, 0, UNROLL_COUNT-1, `
-	deflit(`disp', eval(i*4 ifelse(UNROLL_BYTES,256,-128)))
-
-Zdisp(	movl,	disp,(%ebx), %eax)
 	mull	%ebp
+
 	addl	%esi, %eax
-	movl	%edx, %esi
-	adcl	$0, %esi
-Zdisp(	movl,	%eax, disp,(%edi))
-')
+	movl	$0, %esi
 
-	decl	%ecx
-	leal	UNROLL_BYTES(%ebx), %ebx
+	adcl	%edx, %esi
 
-	jns	L(top)
+	movl	%eax, (%edi,%ecx,4)
+	movl	4(%ebx,%ecx,4), %eax
 
 
+	mull	%ebp
+
+	addl	%esi, %eax
+	movl	$0, %esi
+
+	adcl	%edx, %esi
+
+	movl	%eax, 4(%edi,%ecx,4)
+	movl	8(%ebx,%ecx,4), %eax
+
+
+	mull	%ebp
+
+	addl	%esi, %eax
+	movl	$0, %esi
+
+	adcl	%edx, %esi
+
+	movl	%eax, 8(%edi,%ecx,4)
+	movl	12(%ebx,%ecx,4), %eax
+
+
+	mull	%ebp
+
+	addl	%esi, %eax
+	movl	$0, %esi
+
+	adcl	%edx, %esi
+
+	movl	%eax, 12(%edi,%ecx,4)
+	movl	16(%ebx,%ecx,4), %eax
+
+
+	addl	$4, %ecx
+	js	L(top)
+
+
+
+	# eax	next src limb
+	# ebx	&src[size-4]
+	# ecx	0 to 3 representing respectively 4 to 1 further limbs
+	# edx
+	# esi	carry
+	# edi	&dst[size-4]
+
+	testb	$2, %cl
+	jnz	L(finish_not_two)
+
+	mull	%ebp
+
+	addl	%esi, %eax
+	movl	$0, %esi
+
+	adcl	%edx, %esi
+
+	movl	%eax, (%edi,%ecx,4)
+	movl	4(%ebx,%ecx,4), %eax
+
+
+	mull	%ebp
+
+	addl	%esi, %eax
+	movl	$0, %esi
+
+	adcl	%edx, %esi
+
+	movl	%eax, 4(%edi,%ecx,4)
+	movl	8(%ebx,%ecx,4), %eax
+
+	addl	$2, %ecx
+L(finish_not_two):
+
+
+	testb	$1, %cl
+	jnz	L(finish_not_one)
+
+	mull	%ebp
+
+	addl	%esi, %eax
+	movl	$0, %esi
+
+	adcl	%edx, %esi
+
+	movl	%eax, 8(%edi)
+	movl	12(%ebx), %eax
+L(finish_not_one):
+
+
+	mull	%ebp
+
+	addl	%esi, %eax
 	popl	%ebp
+
+	adcl	$0, %edx
+
+	movl	%eax, 12(%edi)
 	popl	%edi
 
 	popl	%ebx
-	movl	%esi, %eax
+	movl	%edx, %eax
 
 	popl	%esi
+
 	ret
 
 EPILOGUE()
