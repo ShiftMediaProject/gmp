@@ -186,7 +186,7 @@ void refmpn_nand_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 void refmpn_nior_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
-mp_limb_t refmpn_neg _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
+mp_limb_t refmpn_neg_n _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
 
 unsigned long refmpn_popcount _PROTO ((mp_srcptr sp, mp_size_t size));
 mp_limb_t refmpn_preinv_mod_1 _PROTO ((mp_srcptr sp, mp_size_t size,
