@@ -1640,6 +1640,8 @@ done
 if test -z "$gmp_mparam_source"; then
   AC_MSG_ERROR([no version of gmp-mparam.h found in path: $path])
 fi
+AC_DEFINE_UNQUOTED(GMP_MPARAM_H_FILENAME, "$gmp_mparam_source",
+                   [The gmp-mparam.h file compiled-in.])
 
 # Copy any KARATSUBA_SQR_THRESHOLD from gmp-mparam.h to config.m4.
 # Some versions of sqr_basecase.asm use this.
