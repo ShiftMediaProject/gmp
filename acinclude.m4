@@ -106,7 +106,7 @@ AC_DEFUN(GMP_PROG_AR,
 AC_BEFORE([$0],[AC_PROG_LIBTOOL])
 gmp_user_AR=$AR
 AC_CHECK_TOOL(AR, ar, ar)
-if test -n "$gmp_user_AR"; then
+if test -z "$gmp_user_AR"; then
                         eval arflags=\"\$ar${abi1}_flags\"
   test -n "$arflags" || eval arflags=\"\$ar${abi2}_flags\"
   if test -n "$arflags"; then
@@ -194,7 +194,7 @@ AC_DEFUN(GMP_PROG_NM,
 AC_BEFORE([$0],[AC_PROG_NM])
 gmp_user_NM=$NM
 AC_PROG_NM
-if test -n "$gmp_user_NM"; then
+if test -z "$gmp_user_NM"; then
                         eval nmflags=\"\$nm${abi1}_flags\"
   test -n "$nmflags" || eval nmflags=\"\$nm${abi2}_flags\"
   if test -n "$nmflags"; then
