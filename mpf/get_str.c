@@ -28,31 +28,20 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 /*
-   New algorithm for converting fractions (951019):
-   0. Call the fraction to convert F.
-   1. Compute [exp * log(2^BITS_PER_MP_LIMB)/log(B)], i.e.,
-      [exp * BITS_PER_MP_LIMB * __mp_bases[B].chars_per_bit_exactly].  Exp is
-      the number of limbs between the limb point and the most significant
-      non-zero limb.  Call this result n.
-   2. Compute B^n.
-   3. F*B^n will now be just below 1, which can be converted easily.  (Just
-      multiply by B repeatedly, and see the digits fall out as integers.)
-   We should interrupt the conversion process of F*B^n as soon as the number
-   of digits requested have been generated.
+  The conversion routine works like this:
 
-   New algorithm for converting integers (951019):
-   0. Call the integer to convert I.
-   1. Compute [exp * log(2^BITS_PER_MP_LIMB)/log(B)], i.e.,
-      [exp BITS_PER_MP_LIMB * __mp_bases[B].chars_per_bit_exactly].  Exp is
-      the number of limbs between the limb point and the least significant
-      non-zero limb.  Call this result n.
-   2. Compute B^n.
-   3. I/B^n can be converted easily.  (Just divide by B repeatedly.  In GMP,
-      this is best done by calling mpn_get_str.)
-   Note that converting I/B^n could yield more digits than requested.  For
-   efficiency, the variable n above should be set larger in such cases, to
-   kill all undesired digits in the division in step 3.
+  1. If U >= 1, compute U' = U / base**n, where n is chosen such that U' is
+     the largest number smaller than 1.
+  2. Else, if U < 1, compute U' = U * base**n, where n is chosen such that U'
+     is the largest number smaller than 1.
+  3. Convert U' (by repeatedly multiplying it by base).  This process can
+     easily be interrupted when the needed number of digits are generated.
 */
+
+#define assert(true) do { if (!(true)) abort (); } while (0)
+
+#define swapptr(xp,yp) \
+do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
 
 char *
 #if __STDC__
@@ -66,24 +55,26 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
      mpf_srcptr u;
 #endif
 {
+  mp_ptr up;
   mp_size_t usize;
   mp_exp_t uexp;
+  mp_size_t prec;
   unsigned char *str;
-  size_t str_size;
   char *num_to_text;
-  long i;			/* should be size_t */
   mp_ptr rp;
+  mp_size_t rsize;
   mp_limb_t big_base;
   size_t digits_computed_so_far;
   int dig_per_u;
-  mp_srcptr up;
   unsigned char *tstr;
   mp_exp_t exp_in_base;
+  int cnt;
   TMP_DECL (marker);
 
   TMP_MARK (marker);
   usize = u->_mp_size;
   uexp = u->_mp_exp;
+  prec = u->_mp_prec;
 
   if (base >= 0)
     {
@@ -101,8 +92,8 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
      Also, if 0 digits were requested, give *exactly* as many digits
      as can be accurately represented.  */
   {
-    size_t max_digits = (((u->_mp_prec - 1) * BITS_PER_MP_LIMB)
-			 * __mp_bases[base].chars_per_bit_exactly);
+    size_t max_digits = 2 + (size_t) (((prec - 1) * BITS_PER_MP_LIMB)
+				      * __mp_bases[base].chars_per_bit_exactly);
     if (n_digits == 0 || n_digits > max_digits)
       n_digits = max_digits;
   }
@@ -123,10 +114,6 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 
   str = (unsigned char *) digit_ptr;
 
-  /* Allocate temporary digit space.  We can't put digits directly in the user
-     area, since we almost always generate more digits than requested.  */
-  tstr = (unsigned char *) TMP_ALLOC (n_digits + 3 * BITS_PER_MP_LIMB);
-
   if (usize < 0)
     {
       *digit_ptr = '-';
@@ -134,384 +121,288 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
       usize = -usize;
     }
 
-  digits_computed_so_far = 0;
+  up = PTR (u);
 
-  /* See if we are to convert only part of a the entire integral part of the
-     number, i.e., no fractional digits.  */
-  if (uexp > usize)
+  if (uexp > 0)
     {
-      /* The number has just an integral part.  */
-      mp_size_t rsize;
-      mp_size_t exp_in_limbs;
-      mp_size_t msize;
-      mp_ptr tp, xp, mp;
-      int cnt;
-      mp_limb_t cy;
-      mp_size_t start_str;
-      mp_size_t n_limbs;
+      /* U >= 1.  Compute U' = U / base**n, where n is chosen such that U' < 1.  */
+      mp_size_t ralloc;
+      mp_ptr tp;
+      int i;
 
-      n_limbs = 2 + ((mp_size_t) (n_digits / __mp_bases[base].chars_per_bit_exactly)
-		     / BITS_PER_MP_LIMB);
+      /* Limit the number of digits to develop for small integers.  */
+#if 0
+      if (exp_in_base < n_digits)
+	n_digits = exp_in_base;
+#endif
 
-      /* Compute n such that [u/B^n] contains (somewhat) more than n_digits
-	 digits.  (We compute less than that only if that is an exact number,
-	 i.e., exp is small enough.)  */
+      count_leading_zeros (cnt, up[usize - 1]);
+      exp_in_base = ((uexp * BITS_PER_MP_LIMB - cnt)
+		     * __mp_bases[base].chars_per_bit_exactly);
+      exp_in_base += 1;
 
-      exp_in_limbs = uexp;
+      ralloc = uexp + 2;
+      rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
+      tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 
-      if (n_limbs >= exp_in_limbs)
+      rp[0] = base;
+      rsize = 1;
+      count_leading_zeros (cnt, exp_in_base);
+      for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
 	{
-	  /* The number is so small that we convert the entire number.  */
-	  exp_in_base = 0;
-	  rp = (mp_ptr) TMP_ALLOC (exp_in_limbs * BYTES_PER_MP_LIMB);
-	  MPN_ZERO (rp, exp_in_limbs - usize);
-	  MPN_COPY (rp + (exp_in_limbs - usize), u->_mp_d, usize);
-	  rsize = exp_in_limbs;
+	  mpn_mul_n (tp, rp, rp, rsize);
+	  rsize = 2 * rsize;
+	  rsize -= tp[rsize - 1] == 0;
+	  swapptr (rp, tp);
+
+	  if (((exp_in_base >> i) & 1) != 0)
+	    {
+	      mp_limb_t cy;
+	      cy = mpn_mul_1 (rp, rp, rsize, (mp_limb_t) base);
+	      rp[rsize] = cy;
+	      rsize += cy != 0;
+	    }
+	}
+
+      count_leading_zeros (cnt, rp[rsize - 1]);
+      if (cnt != 0)
+	{
+	  mpn_lshift (rp, rp, rsize, cnt);
+
+	  if (usize < rsize)
+	    {
+	      /* Pad out U to the size of R while shifting it.
+		 (Reuse temporary space at tp.)  */
+	      mp_limb_t cy;
+
+	      MPN_ZERO (tp, rsize - usize);
+	      cy = mpn_lshift (tp + rsize - usize, up, usize, cnt);
+	      up = tp;
+	      usize = rsize;
+	      if (cy)
+		up[usize++] = cy;
+	      assert (usize <= ralloc);	/* sufficient space? */
+	    }
+	  else
+	    {
+	      /* Copy U to temporary space.  */
+	      /* FIXME: Allocate more space for tp above, and reuse it here.  */
+	      mp_limb_t cy;
+	      mp_ptr tup = (mp_ptr) TMP_ALLOC ((usize + 1) * BYTES_PER_MP_LIMB);
+
+	      cy = mpn_lshift (tup, up, usize, cnt);
+	      up = tup;
+	      if (cy)
+		up[usize++] = cy;
+	    }
 	}
       else
 	{
-	  exp_in_limbs -= n_limbs;
-	  exp_in_base = (((exp_in_limbs * BITS_PER_MP_LIMB - 1))
-			 * __mp_bases[base].chars_per_bit_exactly);
+	  if (usize < rsize)
+	    {
+	      /* Pad out U to the size of R.  (Reuse temporary space at tp.)  */
+	      MPN_ZERO (tp, rsize - usize);
+	      MPN_COPY (tp + rsize - usize, up, usize);
+	      up = tp;
+	      usize = rsize;
+	    }
+	  else
+	    {
+	      /* Copy U to temporary space.  */
+	      mp_ptr tmp = (mp_ptr) TMP_ALLOC (usize * BYTES_PER_MP_LIMB);
+	      MPN_COPY (tmp, up, usize);
+	      up = tmp;
+	    }
+	}
 
-	  rsize = exp_in_limbs + 1;
-	  rp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
-	  tp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
+      {
+	mp_ptr qp;
+	qp = (mp_ptr) TMP_ALLOC ((prec + 1) * BYTES_PER_MP_LIMB);
+	mpn_divrem (qp, prec + 1 - (usize - rsize), up, usize, rp, rsize);
+	rsize = prec + 1;
+	rp = qp;
+      }
+    }
+  else
+    {
+      /* U < 1.  Compute U' = U * base**n, where n is chosen such that U' is
+	 the greatest number that still satisfies U' < 1.  */
+      mp_size_t ralloc;
+      mp_ptr tp;
+      int i;
+
+      uexp = -uexp;
+      count_leading_zeros (cnt, up[usize - 1]);
+      exp_in_base = ((uexp * BITS_PER_MP_LIMB + cnt - 1)
+		     * __mp_bases[base].chars_per_bit_exactly);
+      if (exp_in_base < 0)
+	exp_in_base = 0;
+
+      if (exp_in_base != 0)
+	{
+	  ralloc = uexp + 2;
+	  rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
+	  tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 
 	  rp[0] = base;
 	  rsize = 1;
-
 	  count_leading_zeros (cnt, exp_in_base);
 	  for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
 	    {
 	      mpn_mul_n (tp, rp, rp, rsize);
 	      rsize = 2 * rsize;
 	      rsize -= tp[rsize - 1] == 0;
-	      xp = tp; tp = rp; rp = xp;
+	      swapptr (rp, tp);
 
 	      if (((exp_in_base >> i) & 1) != 0)
 		{
+		  mp_limb_t cy;
 		  cy = mpn_mul_1 (rp, rp, rsize, (mp_limb_t) base);
 		  rp[rsize] = cy;
 		  rsize += cy != 0;
 		}
 	    }
 
-	  mp = u->_mp_d;
-	  msize = usize;
-
 	  {
-	    mp_ptr qp;
-	    mp_limb_t qflag;
-	    mp_size_t xtra;
-	    if (msize < rsize)
-	      {
-		mp_ptr tmp = (mp_ptr) TMP_ALLOC ((rsize+1)* BYTES_PER_MP_LIMB);
-		MPN_ZERO (tmp, rsize - msize);
-		MPN_COPY (tmp + rsize - msize, mp, msize);
-		mp = tmp;
-		msize = rsize;
-	      }
+	    mp_limb_t cy;
+	    tp = (mp_ptr) TMP_ALLOC ((rsize + usize) * BYTES_PER_MP_LIMB);
+	    if (rsize > usize)
+	      cy = mpn_mul (tp, rp, rsize, up, usize);
 	    else
-	      {
-		mp_ptr tmp = (mp_ptr) TMP_ALLOC ((msize+1)* BYTES_PER_MP_LIMB);
-		MPN_COPY (tmp, mp, msize);
-		mp = tmp;
-	      }
-	    count_leading_zeros (cnt, rp[rsize - 1]);
-	    cy = 0;
-	    if (cnt != 0)
-	      {
-		mpn_lshift (rp, rp, rsize, cnt);
-		cy = mpn_lshift (mp, mp, msize, cnt);
-		if (cy)
-		  mp[msize++] = cy;
-	      }
-
-	    {
-	      mp_size_t qsize = n_limbs + (cy != 0);
-	      qp = (mp_ptr) TMP_ALLOC ((qsize + 1) * BYTES_PER_MP_LIMB);
-	      xtra = qsize - (msize - rsize);
-	      qflag = mpn_divrem (qp, xtra, mp, msize, rp, rsize);
-	      qp[qsize] = qflag;
-	      rsize = qsize + qflag;
-	      rp = qp;
-	    }
+	      cy = mpn_mul (tp, up, usize, rp, rsize);
+	    rsize += usize;
+	    rsize -= cy == 0;
+	    rp = tp;
 	  }
+	  exp_in_base = -exp_in_base;
 	}
-
-      str_size = mpn_get_str (tstr, base, rp, rsize);
-
-      if (str_size > n_digits + 3 * BITS_PER_MP_LIMB)
-	abort ();
-
-      start_str = 0;
-      while (tstr[start_str] == 0)
-	start_str++;
-
-      for (i = start_str; i < str_size; i++)
+      else
 	{
-	  tstr[digits_computed_so_far++] = tstr[i];
-	  if (digits_computed_so_far > n_digits)
-	    break;
+	  rp = (mp_ptr) TMP_ALLOC (usize * BYTES_PER_MP_LIMB);
+	  MPN_COPY (rp, up, usize);
+	  rsize = usize;
 	}
-      exp_in_base = exp_in_base + str_size - start_str;
-      goto finish_up;
     }
 
-  exp_in_base = 0;
+  big_base = __mp_bases[base].big_base;
+  dig_per_u = __mp_bases[base].chars_per_limb;
 
-  if (uexp > 0)
+  /* Hack for correctly (although not optimally) converting to bases that are
+     powers of 2.  If we deem it important, we could handle powers of 2 by
+     shifting and masking (just like mpn_get_str).  */
+  if (big_base < 10)		/* logarithm of base when power of two */
     {
-      /* The number has an integral part, convert that first.
-	 If there is a fractional part too, it will be handled later.  */
-      mp_size_t start_str;
-
-      rp = (mp_ptr) TMP_ALLOC (uexp * BYTES_PER_MP_LIMB);
-      up = u->_mp_d + usize - uexp;
-      MPN_COPY (rp, up, uexp);
-
-      /* There is a bug in that too many digits are generated here.  We
-	 should really only generate somewhat more than n_digits digits, by
-	 first dividing rp,uexp by 10^n, where n is chosen to make the quotient
-	 have just enough limbs to generate n_digits digits.  */
-      /* For now, we make a gross hack: Allocate lots of temp space,
-	 and convert to that, and then chop off the excessive digits...  */
-      {
-	unsigned char *tmpstr;
-	size_t tmpstr_size
-	  = 2 + (size_t) uexp * BITS_PER_MP_LIMB * __mp_bases[base].chars_per_bit_exactly;
-	tmpstr = (unsigned char *) TMP_ALLOC (tmpstr_size);
-
-	str_size = mpn_get_str (tmpstr, base, rp, uexp);
-
-	/* mpn_get_str might return some initial \0 characters.  Skip them.  */
-	start_str = 0;
-	while (tmpstr[start_str] == 0)
-	  start_str++;
-
-	exp_in_base = str_size - start_str;
-	str_size -= start_str;
-
-	if (str_size > n_digits + 1)
-	  str_size = n_digits + 1;
-	for (i = 0; i < str_size; i++)
-	  tstr[i] = tmpstr[start_str + i];
-	digits_computed_so_far = str_size;
-      }
-
-      if (digits_computed_so_far > n_digits)
-	goto finish_up;
-
-      /* Modify somewhat and fall out to convert fraction... */
-      usize -= uexp;
-      uexp = 0;
+      int logbase = big_base;
+      if (dig_per_u * logbase == BITS_PER_MP_LIMB)
+	dig_per_u--;
+      big_base = (mp_limb_t) 1 << (dig_per_u * logbase);
+      /* fall out to general code... */
     }
 
-  if (usize <= 0)
-    goto finish_up;
+  /* Allocate temporary digit space.  We can't put digits directly in the user
+     area, since we generate more digits than requested.  (We allocate
+     BITS_PER_MP_LIMB + 1 extra bytes because of the digit block nature of the
+     conversion.)  */
+  tstr = (unsigned char *) TMP_ALLOC (n_digits + BITS_PER_MP_LIMB + 1);
 
-  /* Convert the fraction.  */
-  {
-    mp_size_t rsize, msize;
-    mp_ptr rp, tp, xp, mp;
-    int cnt;
-    mp_limb_t cy;
-    mp_exp_t nexp;
-
-    big_base = __mp_bases[base].big_base;
-    dig_per_u = __mp_bases[base].chars_per_limb;
-
-    /* Hack for correctly (although not efficiently) converting to bases that
-       are powers of 2.  If we deem it important, we could handle powers of 2
-       by shifting and masking (just like mpn_get_str).  */
-    if (big_base < 10)		/* logarithm of base when power of two */
-      {
-	int logbase = big_base;
-	if (dig_per_u * logbase == BITS_PER_MP_LIMB)
-	  dig_per_u--;
-	big_base = (mp_limb_t) 1 << (dig_per_u * logbase);
-	/* fall out to general code... */
-      }
-
-#if 0
-    if (0 && uexp == 0)
-      {
-	rp = (mp_ptr) TMP_ALLOC (usize * BYTES_PER_MP_LIMB);
-	up = u->_mp_d;
-	MPN_COPY (rp, up, usize);
-	rsize = usize;
-	nexp = 0;
-      }
-    else
-      {}
-#endif
-    uexp = -uexp;
-    if (u->_mp_d[usize - 1] == 0)
-      cnt = 0;
-    else
-      count_leading_zeros (cnt, u->_mp_d[usize - 1]);
-
-    nexp = ((uexp * BITS_PER_MP_LIMB) + cnt)
-      * __mp_bases[base].chars_per_bit_exactly;
-
-    if (nexp == 0)
-      {
-	rp = (mp_ptr) TMP_ALLOC (usize * BYTES_PER_MP_LIMB);
-	up = u->_mp_d;
-	MPN_COPY (rp, up, usize);
-	rsize = usize;
-      }
-    else
-      {
-	rsize = uexp + 2;
-	rp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
-	tp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
-
-	rp[0] = base;
-	rsize = 1;
-
-	count_leading_zeros (cnt, nexp);
-	for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
-	  {
-	    mpn_mul_n (tp, rp, rp, rsize);
-	    rsize = 2 * rsize;
-	    rsize -= tp[rsize - 1] == 0;
-	    xp = tp; tp = rp; rp = xp;
-
-	    if (((nexp >> i) & 1) != 0)
-	      {
-		cy = mpn_mul_1 (rp, rp, rsize, (mp_limb_t) base);
-		rp[rsize] = cy;
-		rsize += cy != 0;
-	      }
-	  }
-
-	/* Did our multiplier (base^nexp) cancel with uexp?  */
-#if 0
-	if (uexp != rsize)
-	  {
-	    do
-	      {
-		cy = mpn_mul_1 (rp, rp, rsize, big_base);
-		nexp += dig_per_u;
-	      }
-	    while (cy == 0);
-	    rp[rsize++] = cy;
-	  }
-#endif
-	mp = u->_mp_d;
-	msize = usize;
-
-	tp = (mp_ptr) TMP_ALLOC ((rsize + msize) * BYTES_PER_MP_LIMB);
-	if (rsize > msize)
-	  cy = mpn_mul (tp, rp, rsize, mp, msize);
-	else
-	  cy = mpn_mul (tp, mp, msize, rp, rsize);
-	rsize += msize;
-	rsize -= cy == 0;
-	rp = tp;
-
-	/* If we already output digits (for an integral part) pad
-	   leading zeros.  */
-	if (digits_computed_so_far != 0)
-	  for (i = 0; i < nexp; i++)
-	    tstr[digits_computed_so_far++] = 0;
-      }
-
-    while (digits_computed_so_far <= n_digits)
-      {
-	/* For speed: skip trailing zeroes.  */
-	if (rp[0] == 0)
-	  {
-	    rp++;
-	    rsize--;
-	    if (rsize == 0)
-	      {
-		n_digits = digits_computed_so_far;
-		break;
-	      }
-	  }
-
-	cy = mpn_mul_1 (rp, rp, rsize, big_base);
-	if (digits_computed_so_far == 0 && cy == 0)
-	  {
-	    abort ();
-	    nexp += dig_per_u;
-	    continue;
-	  }
-	/* Convert N1 from BIG_BASE to a string of digits in BASE
-	   using single precision operations.  */
+  for (digits_computed_so_far = 0; digits_computed_so_far <= n_digits;
+       digits_computed_so_far += dig_per_u)
+    {
+      mp_limb_t cy;
+      /* For speed: skip trailing zeroes.  */
+      if (rp[0] == 0)
 	{
-	  unsigned char *s = tstr + digits_computed_so_far + dig_per_u;
-	  for (i = dig_per_u - 1; i >= 0; i--)
+	  rp++;
+	  rsize--;
+	  if (rsize == 0)
 	    {
-	      *--s = cy % base;
-	      cy /= base;
+	      n_digits = digits_computed_so_far;
+	      break;
 	    }
 	}
-	digits_computed_so_far += dig_per_u;
+
+      cy = mpn_mul_1 (rp, rp, rsize, big_base);
+
+      assert (! (digits_computed_so_far == 0 && cy == 0));
+
+      /* Convert N1 from BIG_BASE to a string of digits in BASE
+	 using single precision operations.  */
+      {
+	int i;
+	unsigned char *s = tstr + digits_computed_so_far + dig_per_u;
+	for (i = dig_per_u - 1; i >= 0; i--)
+	  {
+	    *--s = cy % base;
+	    cy /= base;
+	  }
       }
-    if (exp_in_base == 0)
-      exp_in_base = -nexp;
-  }
+    }
 
- finish_up:
-
-  /* We can have at most one leading 0.  Remove it.  */
+  /* We can have at most two leading 0.  Remove them.  */
   if (tstr[0] == 0)
     {
       tstr++;
       digits_computed_so_far--;
       exp_in_base--;
-    }
 
-  /* We should normally have computed too many digits.  Round the result
-     at the point indicated by n_digits.  */
-  if (digits_computed_so_far > n_digits)
-    {
-      /* Round the result.  */
-      if (tstr[n_digits] * 2 >= base)
+      if (tstr[0] == 0)
 	{
-	  digits_computed_so_far = n_digits;
-	  for (i = n_digits - 1; i >= 0; i--)
-	    {
-	      unsigned int x;
-	      x = ++(tstr[i]);
-	      if (x < base)
-		goto rounded_ok;
-	      digits_computed_so_far--;
-	    }
-	  tstr[0] = 1;
-	  digits_computed_so_far = 1;
-	  exp_in_base++;
-	rounded_ok:;
+	  tstr++;
+	  digits_computed_so_far--;
+	  exp_in_base--;
+
+	  if (tstr[0] == 0)
+	    abort ();
 	}
     }
 
-  /* We might have fewer digits than requested as a result of rounding above,
-     (i.e. 0.999999 => 1.0) or because we have a number that simply doesn't
-     need many digits in this base (i.e., 0.125 in base 10).  */
-  if (n_digits > digits_computed_so_far)
-    n_digits = digits_computed_so_far;
+  {
+    size_t i;
 
-  /* Remove trailing 0.  There can be many zeros. */
-  while (n_digits != 0 && tstr[n_digits - 1] == 0)
-    n_digits--;
+    /* We should normally have computed too many digits.  Round the result
+       at the point indicated by n_digits.  */
+    if (digits_computed_so_far > n_digits)
+      {
+	/* Round the result.  */
+	if (tstr[n_digits] * 2 >= base)
+	  {
+	    digits_computed_so_far = n_digits;
+	    for (i = n_digits - 1;; i--)
+	      {
+		unsigned int x;
+		x = ++(tstr[i]);
+		if (x != base)
+		  break;
+		digits_computed_so_far--;
+		if (i == 0)
+		  {
+		    /* We had something like `9999999...9d', where 2*d >= base.
+		       This rounds up to `1', increasing the exponent.  */
+		    tstr[0] = 1;
+		    digits_computed_so_far = 1;
+		    exp_in_base++;
+		    break;
+		  }
+	      }
+	  }
+      }
 
-  /* Translate to ascii and null-terminate.  */
-  for (i = 0; i < n_digits; i++)
-    *str++ = num_to_text[tstr[i]];
+    /* We might have fewer digits than requested as a result of rounding above,
+       (i.e. 0.999999 => 1.0) or because we have a number that simply doesn't
+       need many digits in this base (i.e., 0.125 in base 10).  */
+    if (n_digits > digits_computed_so_far)
+      n_digits = digits_computed_so_far;
+
+    /* Remove trailing 0.  There can be many zeros.  */
+    while (n_digits != 0 && tstr[n_digits - 1] == 0)
+      n_digits--;
+
+    /* Translate to ascii and null-terminate.  */
+    for (i = 0; i < n_digits; i++)
+      *str++ = num_to_text[tstr[i]];
+  }
   *str = 0;
   *exp = exp_in_base;
   TMP_FREE (marker);
   return digit_ptr;
 }
-
-#if COPY_THIS_TO_OTHER_PLACES
-      /* Use this expression in lots of places in the library instead of the
-	 count_leading_zeros+expression that is used currently.  This expression
-	 is much more accurate and will save odles of memory.  */
-      rsize = ((mp_size_t) (exp_in_base / __mp_bases[base].chars_per_bit_exactly)
-	       + BITS_PER_MP_LIMB) / BITS_PER_MP_LIMB;
-#endif
