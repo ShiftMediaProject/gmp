@@ -18,6 +18,23 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-07-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/get_d.c, mpz/get_d_2exp.c, mpf/get_d.c, mpf/get_d_2exp.c: Use
+	mpn_get_d.
+
+	* mpn/generic/get_d.c: New file, based on mpz/get_d.c and insert-dbl.c.
+	* configure.in, mpn/Makefile.am: Add it.
+	* gmp-impl.h (mpn_get_d): Add prototype.
+
+	* tests/mpn/t-get_d.c: New file.
+	* tests/mpn/Makefile.am: Add it.
+
+	* tests/mpz/t-get_d_2exp.c (check_onebit, check_round): Test negatives.
+	(check_onebit): Add a few more bit sizes.
+
+	* tests/misc.c, tests/tests.h (tests_isinf): New function.
+
 2003-07-12  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (GMP_PROG_CXX_WORKS): Include $CPPFLAGS, same as
