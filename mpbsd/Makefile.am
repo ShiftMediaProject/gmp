@@ -25,14 +25,13 @@ AUTOMAKE_OPTIONS = gnu no-dependencies
 SUBDIRS = tests
 
 
-# $(top_srcdir)/mpz is for #include "dmincl.c" in mdiv.c
-INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
-	-I$(top_srcdir) -I$(top_srcdir)/mpz
+INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc -I$(top_srcdir)
 
 nodist_libmpbsd_la_SOURCES = \
-	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c
+	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c \
+	tdiv_qr.c
 libmpbsd_la_SOURCES = \
-	itom.c mdiv.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c
+	itom.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c
 
 if WANT_MPBSD
 noinst_LTLIBRARIES = libmpbsd.la
@@ -67,3 +66,6 @@ sqrtrem.c: $(top_srcdir)/mpz/sqrtrem.c
 
 sub.c: $(top_srcdir)/mpz/sub.c
 	cp $(top_srcdir)/mpz/sub.c sub.c
+
+tdiv_qr.c: $(top_srcdir)/mpz/tdiv_qr.c
+	cp $(top_srcdir)/mpz/tdiv_qr.c tdiv_qr.c
