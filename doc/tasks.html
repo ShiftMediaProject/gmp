@@ -299,6 +299,19 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      <code>TMP</code> is called.  Would need
      <code>mp_set_memory_functions</code> to tell tal-notreent.c to release
      any cached memory when changing allocation functions though.
+<li> <code>__gmp_tmp_alloc</code> from tal-notreent.c could be partially
+     inlined.  If the current chunk has enough room then a couple of pointers
+     can be updated.  Only if more space is required then a call to some sort
+     of <code>__gmp_tmp_increase</code> would be needed.  The requirement that
+     <code>TMP_ALLOC</code> is an expression might make the implementation a
+     bit ugly and/or a bit sub-optimal.
+<pre>
+#define TMP_ALLOC(n)
+  ((ROUND_UP(n) > current->end - current->point ?
+     __gmp_tmp_increase (ROUND_UP (n)) : 0),
+     current->point += ROUND_UP (n),
+     current->point - ROUND_UP (n))
+</pre>
 </ul>
 
 
