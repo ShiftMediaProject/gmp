@@ -57,6 +57,11 @@ define(`EPILOGUE',
 m4_assert_numargs(1)
 `	.endp')
 
+dnl  Usage: EXTERN(variable_name)
+define(`EXTERN',
+m4_assert_numargs(1)
+`	.extern	$1')
+
 define(`DATASTART',
 m4_assert_numargs(1)
 `	.psect	$1@crud,data
