@@ -722,7 +722,7 @@ __GMP_DECLSPEC int mpz_divisible_2exp_p __GMP_PROTO ((mpz_srcptr, unsigned long)
 __GMP_DECLSPEC void mpz_dump __GMP_PROTO ((mpz_srcptr));
 
 #define mpz_export __gmpz_export
-__GMP_DECLSPEC void *mpz_export __GMP_PROTO ((void *, size_t *, int, size_t, int, size_t, mpz_srcptr z));
+__GMP_DECLSPEC void *mpz_export __GMP_PROTO ((void *, size_t *, int, size_t, int, size_t, mpz_srcptr));
 
 #define mpz_fac_ui __gmpz_fac_ui
 __GMP_DECLSPEC void mpz_fac_ui __GMP_PROTO ((mpz_ptr, unsigned long int));
