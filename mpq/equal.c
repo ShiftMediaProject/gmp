@@ -25,11 +25,11 @@ MA 02111-1307, USA. */
 
 int
 #if __STDC__
-mpq_equal (const mpq_t op1, const mpq_t op2)
+mpq_equal (mpq_srcptr op1, mpq_srcptr op2)
 #else
 mpq_equal (op1, op2)
-     const mpq_t op1;
-     const mpq_t op2;
+     mpq_srcptr op1;
+     mpq_srcptr op2;
 #endif
 {
   mp_size_t num1_size = op1->_mp_num._mp_size;
