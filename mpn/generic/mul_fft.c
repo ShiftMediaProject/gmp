@@ -87,7 +87,6 @@ mpn_fft_best_k (n, sqr)
      int       sqr;
 #endif
 {
-  mp_size_t  t;
   int        i;
 
   for (i = 0; mpn_fft_table[sqr][i] != 0; i++)
