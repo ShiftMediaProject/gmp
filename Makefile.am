@@ -61,7 +61,7 @@ LIBMP_LT_REVISION = 2
 LIBMP_LT_AGE =      1
 
 
-AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
+AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
 
 # FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
 # conditionalized.  We want mpfr/mpfr.info only installed under
@@ -270,5 +270,5 @@ gmp_TEXINFOS = fdl.texi
 
 # Don't ship CVS directories or emacs backups.
 dist-hook:
-	-find $(distdir) \( -name CVS -type d \) -o -name "*.~*" \
+	-find $(distdir) \( -name CVS -type d \) -o -name "*~" \
 		| xargs rm -rf
