@@ -38,7 +38,7 @@ dnl  MUL_THRESHOLD is the size at which the multiply by inverse method is
 dnl  used, rather than plain "divl"s.  Minimum value 2.
 dnl
 dnl  The inverse takes about 50 cycles to calculate, but after that the
-dnl  multiply is 17 c/l versus division at 39 c/l.
+dnl  multiply is 17 c/l versus division at 41 c/l.
 dnl
 dnl  Using mul or div is about the same speed at 3 limbs, so the threshold
 dnl  is set to 4 to get the smaller div code used at 3.
