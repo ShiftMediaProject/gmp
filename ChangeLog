@@ -1,3 +1,8 @@
+2001-09-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/pentium4/sse2/mul_basecase.asm: New file, placeholder
+	for real code, hiding the default x86 mul_basecase.asm.
+
 2001-09-22  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (AC_PREREQ): Bump to 2.52.
