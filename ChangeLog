@@ -1,3 +1,7 @@
+1999-12-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/pow_ui.c: Avoid final squaring in loop.
+
 1999-12-07  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (udiv_qrnnd_preinv2gen): Prefix local variables with `_'.
