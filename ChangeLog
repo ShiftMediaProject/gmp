@@ -1,3 +1,7 @@
+2000-12-15  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (mips*-*-irix[6789]*): Define *_ldflags.
+
 2000-12-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/pre_mod_1.c: Use proper type for udiv_qrnnd
