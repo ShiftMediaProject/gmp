@@ -68,7 +68,7 @@ MA 02111-1307, USA. */
 #define TMP_FREE(m)
 #endif
 
-/* Allocating mp_limb_t's, not bytes. */
+/* Allocating "mp_limb_t"s, not bytes. */
 #define TMP_ALLOC_LIMBS(n)  ((mp_ptr) TMP_ALLOC ((n) * sizeof (mp_limb_t)))
 
 
@@ -90,6 +90,60 @@ MA 02111-1307, USA. */
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+
+/* Swap macros. */
+
+#define MP_LIMB_T_SWAP(x, y)                    \
+  do {                                          \
+    mp_limb_t __mp_limb_t_swap__tmp = (x);      \
+    (x) = (y);                                  \
+    (y) = __mp_limb_t_swap__tmp;                \
+  } while (0)
+#define MP_SIZE_T_SWAP(x, y)                    \
+  do {                                          \
+    mp_size_t __mp_size_t_swap__tmp = (x);      \
+    (x) = (y);                                  \
+    (y) = __mp_size_t_swap__tmp;                \
+  } while (0)
+
+#define MP_PTR_SWAP(x, y)               \
+  do {                                  \
+    mp_ptr __mp_ptr_swap__tmp = (x);    \
+    (x) = (y);                          \
+    (y) = __mp_ptr_swap__tmp;           \
+  } while (0)
+#define MP_SRCPTR_SWAP(x, y)                    \
+  do {                                          \
+    mp_srcptr __mp_srcptr_swap__tmp = (x);      \
+    (x) = (y);                                  \
+    (y) = __mp_srcptr_swap__tmp;                \
+  } while (0)
+
+#define MPN_PTR_SWAP(xp, xs, yp, ys)    \
+  do {                                  \
+    MP_PTR_SWAP (xp, yp);               \
+    MP_SIZE_T_SWAP (xs, ys);            \
+  } while(0)
+#define MPN_SRCPTR_SWAP(xp, xs, yp, ys) \
+  do {                                  \
+    MP_SRCPTR_SWAP (xp, yp);            \
+    MP_SIZE_T_SWAP (xs, ys);            \
+  } while(0)
+
+#define MPZ_PTR_SWAP(x, y)              \
+  do {                                  \
+    mpz_ptr __mpz_ptr_swap__tmp = (x);  \
+    (x) = (y);                          \
+    (y) = __mpz_ptr_swap__tmp;          \
+  } while (0)
+#define MPZ_SRCPTR_SWAP(x, y)                   \
+  do {                                          \
+    mpz_srcptr __mpz_srcptr_swap__tmp = (x);    \
+    (x) = (y);                                  \
+    (y) = __mpz_srcptr_swap__tmp;               \
+  } while (0)
+
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -103,28 +157,22 @@ extern "C" {
 #define _mp_default_reallocate __gmp_default_reallocate
 #define _mp_default_free       __gmp_default_free
 
+extern void *	(*_mp_allocate_func) _PROTO ((size_t));
+extern void *	(*_mp_reallocate_func) _PROTO ((void *, size_t, size_t));
+extern void	(*_mp_free_func) _PROTO ((void *, size_t));
+
+void *_mp_default_allocate _PROTO ((size_t));
+void *_mp_default_reallocate _PROTO ((void *, size_t, size_t));
+void _mp_default_free _PROTO ((void *, size_t));
+
+
 #if (__STDC__-0) || defined (__cplusplus)
-
-extern void *	(*_mp_allocate_func) (size_t);
-extern void *	(*_mp_reallocate_func) (void *, size_t, size_t);
-extern void	(*_mp_free_func) (void *, size_t);
-
-void *_mp_default_allocate (size_t);
-void *_mp_default_reallocate (void *, size_t, size_t);
-void _mp_default_free (void *, size_t);
 
 #else
 
 #define const			/* Empty */
 #define signed			/* Empty */
 
-extern void *	(*_mp_allocate_func) ();
-extern void *	(*_mp_reallocate_func) ();
-extern void	(*_mp_free_func) ();
-
-void *_mp_default_allocate ();
-void *_mp_default_reallocate ();
-void _mp_default_free ();
 #endif
 
 #if defined (__GNUC__) && defined (__i386__)
@@ -716,10 +764,12 @@ extern const int __gmp_0;
 /* Some extras wanted when recompiling some .c files for use by the tune
    program.  Not part of a normal build. */
 
-extern mp_size_t  tune_mul_threshold[];
-extern mp_size_t  tune_sqr_threshold[];
+extern mp_size_t  mul_threshold[];
+extern mp_size_t  sqr_threshold[];
 extern mp_size_t  bz_threshold[];
 extern mp_size_t  fib_threshold[];
+extern mp_size_t  gcd_accel_threshold[];
+extern mp_size_t  gcdext_threshold[];
 
 #undef KARATSUBA_MUL_THRESHOLD
 #undef TOOM3_MUL_THRESHOLD
@@ -729,15 +779,19 @@ extern mp_size_t  fib_threshold[];
 #undef FFT_SQR_THRESHOLD
 #undef BZ_THRESHOLD
 #undef FIB_THRESHOLD
+#undef GCD_ACCEL_THRESHOLD
+#undef GCDEXT_THRESHOLD
 
-#define KARATSUBA_MUL_THRESHOLD  tune_mul_threshold[0]
-#define TOOM3_MUL_THRESHOLD      tune_mul_threshold[1]
-#define FFT_MUL_THRESHOLD        tune_mul_threshold[2]
-#define KARATSUBA_SQR_THRESHOLD  tune_sqr_threshold[0]
-#define TOOM3_SQR_THRESHOLD      tune_sqr_threshold[1]
-#define FFT_SQR_THRESHOLD        tune_sqr_threshold[2]
+#define KARATSUBA_MUL_THRESHOLD  mul_threshold[0]
+#define TOOM3_MUL_THRESHOLD      mul_threshold[1]
+#define FFT_MUL_THRESHOLD        mul_threshold[2]
+#define KARATSUBA_SQR_THRESHOLD  sqr_threshold[0]
+#define TOOM3_SQR_THRESHOLD      sqr_threshold[1]
+#define FFT_SQR_THRESHOLD        sqr_threshold[2]
 #define BZ_THRESHOLD             bz_threshold[0]
 #define FIB_THRESHOLD            fib_threshold[0]
+#define GCD_ACCEL_THRESHOLD      gcd_accel_threshold[0]
+#define GCDEXT_THRESHOLD         gcdext_threshold[0]
 
 #define TOOM3_MUL_THRESHOLD_LIMIT  700
 
