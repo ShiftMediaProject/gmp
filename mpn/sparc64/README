@@ -110,6 +110,7 @@ STATUS
   UltraSPARC-3.  It would be possible to either match the mpn_addmul_1
   performance, or in the worst case use one more instruction group.
 
-* mpn_Xmul_2: Could be made to run at 9 cycles/limb.  Straightforward
-  generalization of mpn_Xmul_1.  This means that we could double the
-  UltraSPARC-3 multiply performance by implementing mpn_addmul_2.
+* US1/US2 cache conflict resolving.  The direct mapped L1 date cache of US1/US2
+  is a problem for mul_1, addmul_1 (and a prospective submul_1).  We should
+  allocate a larger cache area, and put the stack temp area in a place that
+  doesn't cause cache conflicts.
