@@ -3072,7 +3072,25 @@ This function requires that @var{s1size} is greater than or equal to
 @var{s2size}.  The destination must be distinct from either input operands.
 @end deftypefun
 
+@deftypefun mp_limb_t mpn_tdiv_qr (mp_limb_t *@var{qp}, mp_limb_t *@var{rp}, mp_size_t @var{qxn}, const mp_limb_t *@var{np}, mp_size_t @var{nn}, const mp_limb_t *@var{dp}, mp_size_t @var{dn})
+Divide @{@var{np}, @var{nn}@} by @{@var{dp}, @var{dn}@}.  Write the quotient
+at @var{qp} and the remainder at @var{rp}.
+
+The quotient written at @var{qp} will be @var{nn} @minus{} @var{dn} + 1 limbs.
+The remainder written at @var{rp} will be @var{dn} limbs.
+
+It is required that @var{nn} is greater than or equal to @var{dn}.  The
+@var{qxn} operand must be zero.
+
+The quotient is rounded towards 0.
+
+No overlap between arguments is permitted.
+@end deftypefun
+
 @deftypefun mp_limb_t mpn_divrem (mp_limb_t *@var{r1p}, mp_size_t @var{xsize}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2size}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3size})
+[This function is obsolete.  Please call @code{mpn_tdiv_qr} instead for
+best performance.]
+
 Divide @{@var{rs2p}, @var{rs2size}@} by @{@var{s3p}, @var{s3size}@}, and write
 the quotient at @var{r1p}, with the exception of the most significant limb,
 which is returned.  The remainder replaces the dividend at @var{rs2p}; it will
