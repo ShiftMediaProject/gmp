@@ -265,6 +265,7 @@ void refmpn_xnor_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 void refmpn_xor_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                             mp_size_t size));
 
+void refmpn_zero _PROTO ((mp_ptr p, mp_size_t s));
 int refmpn_zero_p _PROTO ((mp_srcptr ptr, mp_size_t size));
 
 
