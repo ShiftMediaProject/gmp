@@ -133,10 +133,10 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
 
       pn = mpn_pow_1 (pp, xp, xn, nth - 1, qp);
       ASSERT_ALWAYS (pn < PP_ALLOC);
+      qp[xn - 1] = 0;		/* pad quotient to make it always xn limbs */
       mpn_tdiv_qr (qp, pp, (mp_size_t) 0, up, un, pp, pn); /* junk remainder */
-      qn = un - pn + 1;
       cy = mpn_addmul_1 (qp, xp, xn, nth - 1);
-      if (qn == xn + 1)
+      if (un - pn == xn)
 	{
 	  cy += qp[xn];
 	  if (cy == nth)
