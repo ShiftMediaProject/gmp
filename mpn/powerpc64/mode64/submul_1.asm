@@ -1,7 +1,7 @@
 dnl  PowerPC-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
 dnl  the result from a second limb vector.
 
-dnl  Copyright 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -24,7 +24,7 @@ include(`../config.m4')
 
 C		cycles/limb
 C POWER3/PPC630:     6-18
-C POWER4/PPC970:     12
+C POWER4/PPC970:     10
 
 C INPUT PARAMETERS
 C res_ptr	r3
@@ -49,10 +49,9 @@ PROLOGUE(mpn_submul_1c)
 	adde	r9,r9,r7
 	mulhdu	r7,r0,r6
 	addze	r7,r7
-	subfc	r9,r9,r10
-	subfe	r11,r11,r11		C invert ...
-	stdu	r9,8(r3)
-	addic	r11,r11,1		C ... carry
+	subf	r12,r9,r10
+	addc	r11,r9,r12		C invert carry from subf
+	stdu	r12,8(r3)
 	bdnz	.Loop
 
 	addze	r3,r7
