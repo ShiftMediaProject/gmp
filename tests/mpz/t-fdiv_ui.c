@@ -44,7 +44,7 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
-  unsigned long r_rq, r_q, r_r;
+  unsigned long r_rq, r_q, r_r, r;
 
   tests_start ();
   rands = RANDS;
@@ -87,6 +87,7 @@ main (int argc, char **argv)
       r_rq = mpz_fdiv_qr_ui (quotient, remainder, dividend, divisor);
       r_q = mpz_fdiv_q_ui (quotient2, dividend, divisor);
       r_r = mpz_fdiv_r_ui (remainder2, dividend, divisor);
+      r = mpz_fdiv_ui (dividend, divisor);
 
       /* First determine that the quotients and remainders computed
 	 with different functions are equal.  */
@@ -126,6 +127,9 @@ main (int argc, char **argv)
 		    dividend, divisor);
       if (mpz_cmp_ui (remainder, r_r) != 0)
 	dump_abort ("remainder returned from mpz_fdiv_r_ui is wrong",
+		    dividend, divisor);
+      if (mpz_cmp_ui (remainder, r) != 0)
+	dump_abort ("remainder returned from mpz_fdiv_ui is wrong",
 		    dividend, divisor);
     }
 
