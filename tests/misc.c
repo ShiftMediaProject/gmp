@@ -21,7 +21,22 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
+#include "config.h"
+
 #include <stdio.h>
+#include <stdlib.h>     /* for getenv */
+
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>  /* for struct timeval */
+# include <time.h>
+#else
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -32,11 +47,51 @@ void
 tests_start (void)
 {
   tests_memory_start ();
+  tests_rand_start ();
 }
 void
 tests_end (void)
 {
+  tests_rand_end ();
   tests_memory_end ();
+}
+
+
+void
+tests_rand_start (void)
+{
+  char           *perform_seed;
+  unsigned long  seed;
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != NULL)
+    {
+      seed = atoi (perform_seed);
+      if (! (seed == 0 || seed == 1))
+        {
+          printf ("GMP_CHECK_RANDOMIZE re-seeding with %ld\n", seed);
+          gmp_randseed_ui (RANDS, seed);
+        }
+      else
+        {
+#if HAVE_GETTIMEOFDAY
+          struct timeval  tv;
+          gettimeofday (&tv, NULL);
+          gmp_randseed_ui (RANDS, tv.tv_sec + tv.tv_usec);
+          printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+          printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+                  tv.tv_sec + tv.tv_usec);
+#else
+          printf ("Oops, gettimeofday() not available, use something else\n");
+          abort ();
+#endif
+        }
+    }
+}
+void
+tests_rand_end (void)
+{
+  RANDS_CLEAR ();
 }
 
 
@@ -175,4 +230,12 @@ mpz_erandomb_nonzero (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
   mpz_erandomb (rop, rstate, nbits);
   if (mpz_sgn (rop) == 0)
     mpz_set_ui (rop, 1L);
+}
+
+mp_limb_t
+urandom (void)
+{
+  mp_limb_t  n;
+  _gmp_rand (&n, RANDS, BITS_PER_MP_LIMB);
+  return n;
 }
