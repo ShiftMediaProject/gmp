@@ -18,6 +18,20 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-28  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/get_d_2exp.c, mpf/get_d_2exp.c: Avoid res==1.0 when floats round
+	upwards.
+
+	* tests/mpz/t-get_d_2exp.c: New file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add it.
+	* tests/mpf/t-get_d_2exp.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+	* tests/x86call.asm, test/tests.h (x86_fldcw, x86_fstcw): New
+	functions.
+	* tests/misc.c, tests/tests.h (tests_hardware_getround,
+	tests_hardware_setround): New functions.
+
 2003-06-25  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/sparc64/dive_1.c: New file.
