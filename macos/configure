@@ -23,8 +23,8 @@
 
 # ***************************** NOTE **************************************
 # This script try to figure out things about this release but has a hard
-# time doing it. So it reads some lines in "configure", "Makefile.am" and
-# "mp*/Makefile.am" and try to guess things. So with every new release
+# time doing it. It reads some lines in "configure", "Makefile.am" and
+# "mp*/Makefile.am" and try to guess things. With every new release
 # this script has to be tested.
 # ***************************** NOTE **************************************
 
@@ -39,38 +39,27 @@ use strict;
 $/ = "\012"			# Input files use Unix end-of-line chars
   if $^O eq 'MacOS';
 
-sub mf {
-  my $path = shift;
-
-  return $path unless $^O eq 'MacOS';
-
-  $path =~ /:/ and die "File name already converted to mac format: $path\n";
-
-  if ($path =~ s&^/&&) {
-    # Absolute path
-    unless ($path =~ s&/&:&g) {
-      # This is a drive name
-      $path .= ':';
-    }
-  } else {
-    # Relative path
-    if ($path =~ s&/&:&g) {
-      # Contains slash
-      $path = ":$path";
-      $path =~ s&\.\.:&:&g;
-    } else {
-      # Plain file name, no directory part
-    }
-  }
-  return $path;
-}
-
-
 ###########################################################################
 #
 #  Constants
 #
 ###########################################################################
+
+# Directories to create
+
+my @dirs =
+  (
+   'MpfObj',
+   'MpnObj',
+   'MpqObj',
+   'MpzObj',
+   'CmnObj',
+   'AsmObj',
+   'Asm',
+   'MpfBin',
+   'MpqBin',
+   'MpzBin',
+  );
 
 my $cfg;			# Will point to %cfg_apple or %cfg_cw
 
@@ -188,6 +177,17 @@ while (<CONFIG_IN>) {
 
 close CONFIG_H;
 close CONFIG_IN;
+
+###########################################################################
+#
+#  Create directories
+#
+###########################################################################
+
+foreach (@dirs) {
+  -d $_ or mkdir $_, 0775
+    or die "Can't create directory \"$_\"\n";
+}
 
 ###########################################################################
 #
@@ -418,4 +418,37 @@ sub asm_prologue {
 	FUNCTION .__g$func\[PR]	
 HERE
     return $asm;
+}
+
+
+###########################################################################
+#
+#  Platform dependent filename conversion
+#
+###########################################################################
+
+sub mf {
+  my $path = shift;
+
+  return $path unless $^O eq 'MacOS';
+
+  $path =~ /:/ and die "File name already converted to mac format: $path\n";
+
+  if ($path =~ s&^/&&) {
+    # Absolute path
+    unless ($path =~ s&/&:&g) {
+      # This is a drive name
+      $path .= ':';
+    }
+  } else {
+    # Relative path
+    if ($path =~ s&/&:&g) {
+      # Contains slash
+      $path = ":$path";
+      $path =~ s&\.\.:&:&g;
+    } else {
+      # Plain file name, no directory part
+    }
+  }
+  return $path;
 }
