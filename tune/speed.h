@@ -164,6 +164,9 @@ double speed_noop _PROTO ((struct speed_params *s));
 double speed_noop_wxs _PROTO ((struct speed_params *s));
 double speed_noop_wxys _PROTO ((struct speed_params *s));
 
+mp_limb_t speed_cyclecounter_1 _PROTO ((void));
+void speed_cyclecounter_2 _PROTO ((mp_limb_t p[2]));
+
 void pentium_wbinvd _PROTO ((void));
 
 void noop _PROTO ((void));
@@ -180,14 +183,6 @@ void *_mp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
 void speed_cache_fill _PROTO ((struct speed_params *s));
 void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 
-
-#if defined(__GNUC__)
-#define pentium_rdtsc(_p)                                       \
-  __asm__ ("cpuid; rdtsc" : "=a" ((_p)[0]), "=d" ((_p)[1])      \
-    : : "ebx", "ecx" )
-#else
-void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
-#endif
 
 
 #define SPEED_OPERAND_SRC(s,p,sz)       \
@@ -672,7 +667,7 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
   {                                                             \
     unsigned  i, j;                                             \
     mp_ptr    px, py;                                           \
-    mp_limb_t mask;                                             \
+    mp_limb_t x_mask, y_mask;                                   \
     double    t;                                                \
     TMP_DECL (marker);                                          \
                                                                 \
@@ -685,11 +680,12 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
     MPN_COPY (px, s->xp, SPEED_DATA_SIZE);                      \
     MPN_COPY (py, s->yp, SPEED_DATA_SIZE);                      \
                                                                 \
-    mask = MP_LIMB_T_LOWBITMASK (s->size);                      \
+    x_mask = MP_LIMB_T_LOWBITMASK (s->size);                    \
+    y_mask = MP_LIMB_T_LOWBITMASK (s->r != 0 ? s->r : s->size); \
     for (i = 0; i < SPEED_DATA_SIZE; i++)                       \
       {                                                         \
-        px[i] &= mask; px[i] += (px[i] == 0);                   \
-        py[i] &= mask; py[i] += (py[i] == 0);                   \
+        px[i] &= x_mask; px[i] += (px[i] == 0);                 \
+        py[i] &= y_mask; py[i] += (py[i] == 0);                 \
         setup;                                                  \
       }                                                         \
                                                                 \
