@@ -79,10 +79,10 @@ LIBMP_LT_AGE =      1
 
 AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
 
-SUBDIRS = mpn mpz mpq mpf mpbsd tests demos tune
+SUBDIRS = mpn mpz mpq mpf mpbsd mpfr tests demos tune
 
-include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
-EXTRA_HEADERS = mp.h
+include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION) $(MPFR_HEADERS_OPTION)
+EXTRA_HEADERS = mp.h $(MPFR_HEADERS_OPTION)
 
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
@@ -143,14 +143,31 @@ MPBSD_OBJECTS = mpbsd/add.lo mpbsd/tdiv_qr.lo mpbsd/move.lo mpbsd/powm.lo \
   mpbsd/gcd.lo mpbsd/itom.lo mpbsd/min.lo mpbsd/mul.lo mpbsd/mout.lo	  \
   mpbsd/pow_ui.lo mpbsd/sdiv.lo mpbsd/sqrtrem.lo mpbsd/xtom.lo 
 
+# FIXME: Add mpfr/rnd_mode.lo when it's clean.
+MPFR_OBJECTS = mpfr/add.lo mpfr/div_2exp.lo mpfr/neg.lo mpfr/set_dfl_prec.lo \
+  mpfr/set_str_raw.lo mpfr/agm.lo mpfr/get_str.lo mpfr/print_raw.lo \
+  mpfr/set_dfl_rnd.lo mpfr/sqrt.lo mpfr/clear.lo mpfr/init.lo \
+  mpfr/set_f.lo mpfr/sub.lo mpfr/cmp.lo mpfr/mul.lo mpfr/round.lo \
+  mpfr/set_prec.lo mpfr/cmp_ui.lo mpfr/mul_2exp.lo mpfr/set.lo mpfr/set_si.lo \
+  mpfr/div.lo mpfr/mul_ui.lo mpfr/set_d.lo mpfr/pow.lo mpfr/out_str.lo \
+  mpfr/pi.lo mpfr/set_z.lo mpfr/add_ulp.lo mpfr/log2.lo mpfr/random.lo \
+  mpfr/log.lo mpfr/exp.lo mpfr/div_ui.lo mpfr/zeta.lo mpfr/karadiv.lo \
+  mpfr/karasqrt.lo mpfr/print_rnd_mode.lo
 
+
+if WANT_MPFR
+MPFR_HEADERS_OPTION = mpfr/mpfr.h
+MPFR_OBJECTS_OPTION = $(MPFR_OBJECTS)
+MPFR_LIBADD_OPTION = -lm
+endif
 libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
   mp_clz_tab.c mp_minv_tab.c						 \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c		 \
   randsdui.c version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 libgmp_la_DEPENDENCIES = \
-  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
-libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
+  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) \
+  $(MPFR_OBJECTS_OPTION)
+libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES) $(MPFR_LIBADD_OPTION)
 libgmp_la_LDFLAGS = \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
