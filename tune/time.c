@@ -79,8 +79,8 @@ MA 02111-1307, USA.
 #include "speed.h"
 
 
-#if HAVE_PENTIUM_RDTSC
-#define SPEED_USE_PENTIUM_RDTSC              1
+#if HAVE_SPEED_CYCLECOUNTER
+#define SPEED_USE_CYCLECOUNTER               1
 #else
 #define SPEED_USE_MICROSECOND_GETRUSAGE      1
 #define SPEED_USE_MICROSECOND_GETTIMEOFDAY   0
@@ -295,17 +295,10 @@ speed_cycletime_init (void)
 
 
 /* ---------------------------------------------------------------------- */
-#if SPEED_USE_PENTIUM_RDTSC
-/* This method is for Intel pentium and higher processors with an RDTSC
-   instruction.
-
-   mp_limb_t is the declared type for pentium_rdtsc() since sub_ddmmss()
-   needs "unsigned long" not just "unsigned" when in g++.  (g++ thinks a
-   cast unsigned long -> unsigned stops the destinations being lvalues in
-   sub_ddmmss().)  */
+#if SPEED_USE_CYCLECOUNTER
 
 const char *speed_time_string 
-  = "Time measurements using pentium rdtsc cycle counter.\n";
+  = "Time measurements using CPU cycle counter.\n";
 
 /* bigish value because we have a fast timer */
 int speed_precision = 10000;
@@ -313,11 +306,10 @@ int speed_precision = 10000;
 double speed_unittime;
 double speed_cycletime;
 
-static mp_limb_t speed_starttime_save[2];
 static int  speed_time_initialized = 0;
 
 /* Knowing the CPU frequency is mandatory because it's needed to convert
-   RDTSC cycles into seconds.  */
+   cycles into seconds.  */
 void
 speed_time_init (void)
 {
@@ -331,25 +323,54 @@ speed_time_init (void)
   speed_unittime = speed_cycletime;
 }
 
+
+#if HAVE_SPEED_CYCLECOUNTER == 1
+static mp_limb_t speed_starttime_save;
+
 void
 speed_starttime (void)
 {
   if (!speed_time_initialized)
     speed_time_init ();
-  pentium_rdtsc (speed_starttime_save);
+  speed_starttime_save = speed_cyclecounter_1 ();
+}
+
+double
+speed_endtime (void)
+{
+  return (double) (speed_cyclecounter_1 () - speed_starttime_save)
+    * speed_unittime;
+}
+
+
+#else
+#if HAVE_SPEED_CYCLECOUNTER == 2
+static mp_limb_t speed_starttime_save[2];
+
+void
+speed_starttime (void)
+{
+  if (!speed_time_initialized)
+    speed_time_init ();
+  speed_cyclecounter_2 (speed_starttime_save);
 }
 
 double
 speed_endtime (void)
 {
   mp_limb_t  endtime[2];
-  pentium_rdtsc (endtime);
+  speed_cyclecounter_2 (endtime);
 
   sub_ddmmss (endtime[1], endtime[0], endtime[1], endtime[0], 
               speed_starttime_save[1], speed_starttime_save[0]);
-  return (double) (endtime[1] * 65536.0 * 65536.0 + endtime[0])
+  return (MP_BASE_AS_DOUBLE * endtime[1] + endtime[0])
     * speed_unittime;
 }
+
+#else
+Error, unrecognised value for HAVE_SPEED_CYCLECOUNTER
+#endif
+#endif
 
 #endif
 
