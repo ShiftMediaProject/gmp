@@ -1,3 +1,11 @@
+1999-04-27  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/configure.in: Fix typo, "sparc-*)" was "sparc)".
+
+1999-04-21  Torbjorn Granlund  <tege@swox.com>
+
+	* config.sub: Recognize ev6.
+
 1999-04-12  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* urandom.c: Split up into randclr.c, randi.c, randi_lc.c,
@@ -6,6 +14,11 @@
 	* Makefile.in: Remove urandom.  Add randclr, randi, randi_lc,
 	randicom.
 	* make.bat: Ditto
+
+1999-03-31  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* configure.in (sparc9-*-solaris2.[789]*, etc): New alternative.
+	* mpn/configure.in: Use mt-sprc9 also for ultrasparc*-*-solaris2*.
 
 1999-03-30  Linus Nordberg  <linus.nordberg@canit.se>
 
