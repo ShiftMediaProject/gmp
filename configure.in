@@ -163,6 +163,20 @@ else
   eval CFLAGS=\$gmp_cflags_$CC  
 fi
 
+AC_ARG_ENABLE(assert,
+AC_HELP_STRING([--enable-assert],[enable assert() checking [default=no]]),
+[case "${enableval}" in
+yes|no) ;;
+*) AC_MSG_ERROR(bad value ${enableval} for --enable-assert) ;;
+esac],
+[enable_assert=no])
+
+if test $enable_assert = no
+then
+  CFLAGS="$CFLAGS -DNDEBUG"
+fi
+
+
 AR=ar		dnl  FIXME: Move.
 
 dnl  FIXME: Check for FPU and set `floating_point' appropriately.
@@ -254,7 +268,7 @@ case ${target} in
 	family=x86;;
   k6*-*-*)
 	path="x86/k6/mmx x86/k6 x86/mmx x86"
-	extra_functions="com_n"
+	extra_functions="com_n and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n"
 	gmp_mulfunc_files="aors_n aorsmul_1 logops_n"
 	gmp_mf_aors_n="add_n sub_n"
 	gmp_mf_aorsmul_1="addmul_1 submul_1"
