@@ -18,6 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-09  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/lshift.asm: Add more cycle counts.
+	* mpn/powerpc32/rshift.asm: Add more cycle counts.
+
+	* mpn/ia64/addmul_1.asm: Reformat commsnts for 80 columns.
+
+	* gmp-impl.h (udiv_qrnnd_preinv1): New name for udiv_qrnnd_preinv.
+	(udiv_qrnnd_preinv2): New name for udiv_qrnnd_preinv2norm.
+	(udiv_qrnnd_preinv): New #define, making udiv_qrnnd_preinv2
+	the default.
+
+	* mpf/get_str.c: Simplify `off' computation.
+
+	* longlong.h: Tabify.
+
 2003-06-09  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr/*: Update to mpfr cvs 2003-06-09.
