@@ -65,10 +65,9 @@ MA 02111-1307, USA.
 
 */
 
-#include <limits.h>
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
+/* #include <stdlib.h> */
 #include <unistd.h>
 
 #include "gmp.h"
@@ -76,6 +75,11 @@ MA 02111-1307, USA.
 
 #include "speed.h"
 #include "sqr_basecase.h"
+
+#if !HAVE_DECL_OPTARG
+extern char *optarg;
+extern int optind, opterr;
+#endif
 
 
 #define MAX_SIZE        1000  /* limbs */
@@ -289,9 +293,11 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
       if (s.size >= MAX_SIZE)
         {
           if (option_trace >= 1)
-            printf ("i=%d sizes %ld to %ld total %d measurements\n"
-                    "    max size reached before end of crossover\n",
-                    i, dat[0].size, dat[ndat-1].size, ndat);
+            {
+              printf ("i=%d sizes %ld to %ld total %d measurements\n",
+                      i, dat[0].size, dat[ndat-1].size, ndat);
+              printf ("    max size reached before end of crossover\n");
+            }
           break;
         }
 
