@@ -216,8 +216,8 @@ There is a mailing list for GMP users.  To join it, send a mail to
 
 @cindex Home page
 @cindex Web page
-For up-to-date information on GMP, please see the GMP Home Pages at
-@uref{http://www.swox.com/gmp/}.
+For up-to-date information on GMP, please see the GMP web pages at
+@uref{http://swox.com/gmp/}.
 
 
 @section How to use this Manual
@@ -690,7 +690,7 @@ CPUs.  The problem is believed to be fixed in GCC 2.96.
 @c This section is more or less meant for known build problems that are not
 @c otherwise worked around and require some sort of manual intervention.
 
-You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
+You might find more up-to-date information at @uref{http://swox.com/gmp/}.
 
 @table @asis
 
@@ -1127,7 +1127,7 @@ The latest version of the GMP library is available at
 If you think you have found a bug in the GMP library, please investigate it
 and report it.  We have made this library available to you, and it is not too
 much to ask you to report the bugs you find.  Before you report a bug, you may
-want to check @uref{http://www.swox.com/gmp/} for patches for this release.
+want to check @uref{http://swox.com/gmp/} for patches for this release.
 
 Please include the following in any report,
 
@@ -2171,8 +2171,7 @@ parameter that is read and modified.  Please see the @ref{Random Number
 Functions} for more information on how to use and not to use random
 number functions.
 
-@deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_randstate_t @var{state},
-unsigned long int @var{n})
+@deftypefun void mpz_urandomb (mpz_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{n})
 Generate a uniformly distributed random integer in the range
 @ifnottex
 0 to 2^@var{n} @minus{} 1,
@@ -2812,9 +2811,9 @@ Set @var{rop} to $@var{op1} \times @var{op2}$.
 @end tex
 @end deftypefun
 
-Division is undefined if the divisor is zero, and passing a zero divisor to
-the divide functions will make these functions intentionally divide by zero.
-This lets the user handle arithmetic exceptions in these functions in the same
+Division is undefined if the divisor is zero, and passing a zero divisor to the
+divide functions will make these functions intentionally divide by zero.  This
+lets the user handle arithmetic exceptions in these functions in the same
 manner as other arithmetic exceptions.
 
 @deftypefun void mpf_div (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
@@ -2894,8 +2893,8 @@ Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
 
 @deftypefun int mpf_eq (mpf_t @var{op1}, mpf_t @var{op2}, unsigned long int op3)
 Return non-zero if the first @var{op3} bits of @var{op1} and @var{op2} are
-equal, zero otherwise.  I.e., test of @var{op1} and @var{op2} are
-approximately equal.
+equal, zero otherwise.  I.e., test of @var{op1} and @var{op2} are approximately
+equal.
 @end deftypefun
 
 @deftypefun void mpf_reldiff (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
@@ -2911,8 +2910,8 @@ Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
 Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
 @end tex
 
-This function is actually implemented as a macro.  It evaluates its
-arguments multiple times.
+This function is actually implemented as a macro.  It evaluates its arguments
+multiple times.
 @end deftypefn
 
 @node I/O of Floats, Miscellaneous Float Functions, Float Comparison, Floating-point Functions
@@ -2924,8 +2923,8 @@ arguments multiple times.
 @cindex I/O functions
 
 Functions that perform input from a stdio stream, and functions that output to
-a stdio stream.  Passing a @code{NULL} pointer for a @var{stream} argument to any of
-these functions will make them read from @code{stdin} and write to
+a stdio stream.  Passing a @code{NULL} pointer for a @var{stream} argument to
+any of these functions will make them read from @code{stdin} and write to
 @code{stdout}, respectively.
 
 When using any of these functions, it is a good idea to include @file{stdio.h}
@@ -2933,26 +2932,24 @@ before @file{gmp.h}, since that will allow @file{gmp.h} to define prototypes
 for these functions.
 
 @deftypefun size_t mpf_out_str (FILE *@var{stream}, int @var{base}, size_t @var{n_digits}, mpf_t @var{op})
-Output @var{op} on stdio stream @var{stream}, as a string of digits in
-base @var{base}.  The base may vary from 2 to 36.  Print at most
-@var{n_digits} significant digits, or if @var{n_digits} is 0, the maximum
-number of digits accurately representable by @var{op}.
+Output @var{op} on stdio stream @var{stream}, as a string of digits in base
+@var{base}.  The base may vary from 2 to 36.  Print at most @var{n_digits}
+significant digits, or if @var{n_digits} is 0, the maximum number of digits
+accurately representable by @var{op}.
 
-In addition to the significant digits, a leading @samp{0.} and a
-trailing exponent, in the form @samp{eNNN}, are printed.  If @var{base}
-is greater than 10, @samp{@@} will be used instead of @samp{e} as
-exponent delimiter.
+In addition to the significant digits, a leading @samp{0.} and a trailing
+exponent, in the form @samp{eNNN}, are printed.  If @var{base} is greater than
+10, @samp{@@} will be used instead of @samp{e} as exponent delimiter.
 
 Return the number of bytes written, or if an error occurred, return 0.
 @end deftypefun
 
 @deftypefun size_t mpf_inp_str (mpf_t @var{rop}, FILE *@var{stream}, int @var{base})
 Input a string in base @var{base} from stdio stream @var{stream}, and put the
-read float in @var{rop}.  The string is of the form @samp{M@@N} or, if the
-base is 10 or less, alternatively @samp{MeN}.  @samp{M} is the mantissa and
-@samp{N} is the exponent.  The mantissa is always in the specified base.  The
-exponent is either in the specified base or, if @var{base} is negative, in
-decimal.
+read float in @var{rop}.  The string is of the form @samp{M@@N} or, if the base
+is 10 or less, alternatively @samp{MeN}.  @samp{M} is the mantissa and @samp{N}
+is the exponent.  The mantissa is always in the specified base.  The exponent
+is either in the specified base or, if @var{base} is negative, in decimal.
 
 The argument @var{base} may be in the ranges 2 to 36, or @minus{}36 to
 @minus{}2.  Negative values are used to specify that the exponent is in
@@ -2987,9 +2984,9 @@ Return the number of bytes read, or if an error occurred, return 0.
 @deftypefun void mpf_ceil (mpf_t @var{rop}, mpf_t @var{op})
 @deftypefunx void mpf_floor (mpf_t @var{rop}, mpf_t @var{op})
 @deftypefunx void mpf_trunc (mpf_t @var{rop}, mpf_t @var{op})
-Set @var{rop} to @var{op} rounded to an integer.  @code{mpf_ceil} rounds to
-the next higher integer, @code{mpf_floor} to the next lower, and
-@code{mpf_trunc} to the integer towards zero.
+Set @var{rop} to @var{op} rounded to an integer.  @code{mpf_ceil} rounds to the
+next higher integer, @code{mpf_floor} to the next lower, and @code{mpf_trunc}
+to the integer towards zero.
 @end deftypefun
 
 @deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{nbits}) 
@@ -2997,17 +2994,17 @@ Generate a uniformly distributed random float in @var{rop}, such that 0 <=
 @var{rop} < 1, with @var{nbits} significant bits in the mantissa.
 
 The variable @var{state} must be initialized by calling one of the
-@code{gmp_randinit} functions (@ref{Random State Initialization})
-before invoking this function.
+@code{gmp_randinit} functions (@ref{Random State Initialization}) before
+invoking this function.
 @end deftypefun
 
 @deftypefun void mpf_random2 (mpf_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{max_exp})
 Generate a random float of at most @var{max_size} limbs, with long strings of
 zeros and ones in the binary representation.  The exponent of the number is in
 the interval @minus{}@var{exp} to @var{exp}.  This function is useful for
-testing functions and algorithms, since this kind of random numbers have
-proven to be more likely to trigger corner-case bugs.  Negative random numbers
-are generated when @var{max_size} is negative.
+testing functions and algorithms, since this kind of random numbers have proven
+to be more likely to trigger corner-case bugs.  Negative random numbers are
+generated when @var{max_size} is negative.
 @end deftypefun
 
 
@@ -3026,8 +3023,8 @@ are generated when @var{max_size} is negative.
 @chapter Low-level Functions
 @cindex Low-level functions
 
-This chapter describes low-level GMP functions, used to implement the high-level
-GMP functions, but also intended for time-critical user code.
+This chapter describes low-level GMP functions, used to implement the
+high-level GMP functions, but also intended for time-critical user code.
 
 These functions start with the prefix @code{mpn_}.
 
@@ -3045,35 +3042,34 @@ limb count.  A destination operand is specified by just a pointer.  It is the
 responsibility of the caller to ensure that the destination has enough space
 for storing the result.
 
-With this way of specifying operands, it is possible to perform computations
-on subranges of an argument, and store the result into a subrange of a
+With this way of specifying operands, it is possible to perform computations on
+subranges of an argument, and store the result into a subrange of a
 destination.
 
-A common requirement for all functions is that each source area needs at
-least one limb.  No size argument may be zero.  Unless otherwise stated,
-in-place operations are allowed where source and destination are the
-same, but not where they only partly overlap.
+A common requirement for all functions is that each source area needs at least
+one limb.  No size argument may be zero.  Unless otherwise stated, in-place
+operations are allowed where source and destination are the same, but not where
+they only partly overlap.
 
 The @code{mpn} functions are the base for the implementation of the
 @code{mpz_}, @code{mpf_}, and @code{mpq_} functions.
 
-This example adds the number beginning at @var{s1p} and the number
-beginning at @var{s2p} and writes the sum at @var{destp}.  All areas
-have @var{size} limbs.
+This example adds the number beginning at @var{s1p} and the number beginning at
+@var{s2p} and writes the sum at @var{destp}.  All areas have @var{n} limbs.
 
 @example
-cy = mpn_add_n (destp, s1p, s2p, size)
+cy = mpn_add_n (destp, s1p, s2p, n)
 @end example
 
 @noindent
-In the notation used here, a source operand is identified by the pointer to
-the least significant limb, and the limb count in braces.  For example,
-@{s1p, s1size@}.
+In the notation used here, a source operand is identified by the pointer to the
+least significant limb, and the limb count in braces.  For example, @{s1p,
+s1n@}.
 
-@deftypefun mp_limb_t mpn_add_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{size})
-Add @{@var{s1p}, @var{size}@} and @{@var{s2p}, @var{size}@}, and
-write the @var{size} least significant limbs of the result to @var{rp}.
-Return carry, either 0 or 1.
+@deftypefun mp_limb_t mpn_add_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Add @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@}, and write the @var{n}
+least significant limbs of the result to @var{rp}.  Return carry, either 0 or
+1.
 
 This is the lowest-level function for addition.  It is the preferred function
 for addition, since it is written in assembly for most targets.  For addition
@@ -3081,104 +3077,99 @@ of a variable to itself (i.e., @var{s1p} equals @var{s2p}, use
 @code{mpn_lshift} with a count of 1 for optimal speed.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_add_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
-Add @{@var{s1p}, @var{size}@} and @var{s2limb}, and write the
-@var{size} least significant limbs of the result to @var{rp}.  Return
-carry, either 0 or 1.
+@deftypefun mp_limb_t mpn_add_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
+Add @{@var{s1p}, @var{n}@} and @var{s2limb}, and write the @var{n} least
+significant limbs of the result to @var{rp}.  Return carry, either 0 or 1.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_add (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
-Add @{@var{s1p}, @var{s1size}@} and @{@var{s2p},
-@var{s2size}@}, and write the @var{s1size} least significant limbs of
-the result to @var{rp}.  Return carry, either 0 or 1.
+@deftypefun mp_limb_t mpn_add (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
+Add @{@var{s1p}, @var{s1n}@} and @{@var{s2p}, @var{s2n}@}, and write the
+@var{s1n} least significant limbs of the result to @var{rp}.  Return carry,
+either 0 or 1.
 
-This function requires that @var{s1size} is greater than or equal to
-@var{s2size}.
+This function requires that @var{s1n} is greater than or equal to @var{s2n}.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_sub_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{size})
-Subtract @{@var{s2p}, @var{s2size}@} from @{@var{s1p},
-@var{size}@}, and write the @var{size} least significant limbs of the result
-to @var{rp}.  Return borrow, either 0 or 1.
+@deftypefun mp_limb_t mpn_sub_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Subtract @{@var{s2p}, @var{n}@} from @{@var{s1p}, @var{n}@}, and write the
+@var{n} least significant limbs of the result to @var{rp}.  Return borrow,
+either 0 or 1.
 
 This is the lowest-level function for subtraction.  It is the preferred
 function for subtraction, since it is written in assembly for most targets.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_sub_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
-Subtract @var{s2limb} from @{@var{s1p}, @var{size}@}, and write the
-@var{size} least significant limbs of the result to @var{rp}.  Return
-borrow, either 0 or 1.
+@deftypefun mp_limb_t mpn_sub_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
+Subtract @var{s2limb} from @{@var{s1p}, @var{n}@}, and write the @var{n} least
+significant limbs of the result to @var{rp}.  Return borrow, either 0 or 1.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_sub (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
-Subtract @{@var{s2p}, @var{s2size}@} from @{@var{s1p},
-@var{s1size}@}, and write the @var{s1size} least significant limbs of
-the result to @var{rp}.  Return borrow, either 0 or 1.
+@deftypefun mp_limb_t mpn_sub (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
+Subtract @{@var{s2p}, @var{s2n}@} from @{@var{s1p}, @var{s1n}@}, and write the
+@var{s1n} least significant limbs of the result to @var{rp}.  Return borrow,
+either 0 or 1.
 
-This function requires that @var{s1size} is greater than or equal to
-@var{s2size}.
+This function requires that @var{s1n} is greater than or equal to
+@var{s2n}.
 @end deftypefun
 
-@deftypefun void mpn_mul_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{size})
-Multiply @{@var{s1p}, @var{size}@} and @{@var{s2p}, @var{size}@},
-and write the @strong{entire} result to @var{rp}.
+@deftypefun void mpn_mul_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Multiply @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@}, and write the
+2*@var{n}-limb result to @var{rp}.
 
-The destination has to have space for 2*@var{size} limbs, even if the
-significant result might be one limb smaller.
+The destination has to have space for 2*@var{n} limbs, even if the product's
+most significant limb is zero.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_mul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
-Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and write the
-@var{size} least significant limbs of the product to @var{rp}.  Return
-the most significant limb of the product.
+@deftypefun mp_limb_t mpn_mul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
+Multiply @{@var{s1p}, @var{n}@} and @var{s2limb}, and write the @var{n} least
+significant limbs of the product to @var{rp}.  Return the most significant limb
+of the product.
 
 This is a low-level function that is a building block for general
 multiplication as well as other operations in GMP.  It is written in assembly
 for most targets.
 
-Don't call this function if @var{s2limb} is a power of 2; use
-@code{mpn_lshift} with a count equal to the logarithm of @var{s2limb}
-instead, for optimal speed.
+Don't call this function if @var{s2limb} is a power of 2; use @code{mpn_lshift}
+with a count equal to the logarithm of @var{s2limb} instead, for optimal speed.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_addmul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
-Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and add the
-@var{size} least significant limbs of the product to @{@var{rp},
-@var{size}@} and write the result to @var{rp}.  Return
-the most significant limb of the product, plus carry-out from the addition.
+@deftypefun mp_limb_t mpn_addmul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
+Multiply @{@var{s1p}, @var{n}@} and @var{s2limb}, and add the @var{n} least
+significant limbs of the product to @{@var{rp}, @var{n}@} and write the result
+to @var{rp}.  Return the most significant limb of the product, plus carry-out
+from the addition.
 
 This is a low-level function that is a building block for general
 multiplication as well as other operations in GMP.  It is written in assembly
 for most targets.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_submul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
-Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and subtract the
-@var{size} least significant limbs of the product from @{@var{rp},
-@var{size}@} and write the result to @var{rp}.  Return the most
-significant limb of the product, minus borrow-out from the subtraction.
+@deftypefun mp_limb_t mpn_submul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
+Multiply @{@var{s1p}, @var{n}@} and @var{s2limb}, and subtract the @var{n}
+least significant limbs of the product from @{@var{rp}, @var{n}@} and write the
+result to @var{rp}.  Return the most significant limb of the product, minus
+borrow-out from the subtraction.
 
 This is a low-level function that is a building block for general
 multiplication and division as well as other operations in GMP.  It is written
 in assembly for most targets.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
-Multiply @{@var{s1p}, @var{s1size}@} and @{@var{s2p},
-@var{s2size}@}, and write the result to @var{rp}.  Return the most
-significant limb of the result.
+@deftypefun mp_limb_t mpn_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
+Multiply @{@var{s1p}, @var{s1n}@} and @{@var{s2p}, @var{s2n}@}, and write the
+result to @var{rp}.  Return the most significant limb of the result.
 
-The destination has to have space for @var{s1size} + @var{s2size}
-limbs, even if the result might be one limb smaller.
+The destination has to have space for @var{s1n} + @var{s2n} limbs, even if the
+result might be one limb smaller.
 
-This function requires that @var{s1size} is greater than or equal to
-@var{s2size}.  The destination must be distinct from either input operands.
+This function requires that @var{s1n} is greater than or equal to
+@var{s2n}.  The destination must be distinct from both input operands.
 @end deftypefun
 
 @deftypefun void mpn_tdiv_qr (mp_limb_t *@var{qp}, mp_limb_t *@var{rp}, mp_size_t @var{qxn}, const mp_limb_t *@var{np}, mp_size_t @var{nn}, const mp_limb_t *@var{dp}, mp_size_t @var{dn})
-Divide @{@var{np}, @var{nn}@} by @{@var{dp}, @var{dn}@}.  Write the quotient
-at @var{qp} and the remainder at @var{rp}.
+Divide @{@var{np}, @var{nn}@} by @{@var{dp}, @var{dn}@}.  Write the quotient at
+@var{qp} and the remainder at @var{rp}.
 
 The quotient written at @var{qp} will be @var{nn} @minus{} @var{dn} + 1 limbs.
 The remainder written at @var{rp} will be @var{dn} limbs.
@@ -3189,61 +3180,61 @@ It is required that @var{nn} is greater than or equal to @var{dn}.  The
 The quotient is rounded towards 0.
 
 No overlap between arguments is permitted.
+@comment RELAX THIS!
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_divrem (mp_limb_t *@var{r1p}, mp_size_t @var{xsize}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2size}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3size})
-[This function is obsolete.  Please call @code{mpn_tdiv_qr} instead for
-best performance.]
+@deftypefun mp_limb_t mpn_divrem (mp_limb_t *@var{r1p}, mp_size_t @var{qxn}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2n}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3n})
+[This function is obsolete.  Please call @code{mpn_tdiv_qr} instead for best
+performance.]
 
-Divide @{@var{rs2p}, @var{rs2size}@} by @{@var{s3p}, @var{s3size}@}, and write
-the quotient at @var{r1p}, with the exception of the most significant limb,
-which is returned.  The remainder replaces the dividend at @var{rs2p}; it will
-be @var{s3size} limbs long (i.e., as many limbs as the divisor).
+Divide @{@var{rs2p}, @var{rs2n}@} by @{@var{s3p}, @var{s3n}@}, and write the
+quotient at @var{r1p}, with the exception of the most significant limb, which
+is returned.  The remainder replaces the dividend at @var{rs2p}; it will be
+@var{s3n} limbs long (i.e., as many limbs as the divisor).
 
-In addition to an integer quotient, @var{xsize} fraction limbs are developed,
-and stored after the integral limbs.  For most usages, @var{xsize} will be
-zero.
+In addition to an integer quotient, @var{qxn} fraction limbs are developed, and
+stored after the integral limbs.  For most usages, @var{qxn} will be zero.
 
-It is required that @var{rs2size} is greater than or equal to @var{s3size}.
-It is required that the most significant bit of the divisor is set.
+It is required that @var{rs2n} is greater than or equal to @var{s3n}.  It is
+required that the most significant bit of the divisor is set.
 
-If the quotient is not needed, pass @var{rs2p} + @var{s3size} as @var{r1p}.
-Aside from that special case, no overlap between arguments is permitted.
+If the quotient is not needed, pass @var{rs2p} + @var{s3n} as @var{r1p}.  Aside
+from that special case, no overlap between arguments is permitted.
 
 Return the most significant limb of the quotient, either 0 or 1.
 
-The area at @var{r1p} needs to be @var{rs2size} @minus{} @var{s3size} +
-@var{xsize} limbs large.
+The area at @var{r1p} needs to be @var{rs2n} @minus{} @var{s3n} + @var{qxn}
+limbs large.
 @end deftypefun
 
-@deftypefn Function mp_limb_t mpn_divrem_1 (mp_limb_t *@var{r1p}, mp_size_t @var{xsize}, @w{mp_limb_t *@var{s2p}}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
-@deftypefnx Macro mp_limb_t mpn_divmod_1 (mp_limb_t *@var{r1p}, mp_limb_t *@var{s2p}, @w{mp_size_t @var{s2size}}, @w{mp_limb_t @var{s3limb}})
-Divide @{@var{s2p}, @var{s2size}@} by @var{s3limb}, and write the quotient
-at @var{r1p}.  Return the remainder.
+@deftypefn Function mp_limb_t mpn_divrem_1 (mp_limb_t *@var{r1p}, mp_size_t @var{qxn}, @w{mp_limb_t *@var{s2p}}, mp_size_t @var{s2n}, mp_limb_t @var{s3limb})
+@deftypefnx Macro mp_limb_t mpn_divmod_1 (mp_limb_t *@var{r1p}, mp_limb_t *@var{s2p}, @w{mp_size_t @var{s2n}}, @w{mp_limb_t @var{s3limb}})
+Divide @{@var{s2p}, @var{s2n}@} by @var{s3limb}, and write the quotient at
+@var{r1p}.  Return the remainder.
 
-The integer quotient is written to @{@var{r1p}+@var{xsize}, @var{s2size}@} and
-in addition @var{xsize} fraction limbs are developed and written to
-@{@var{r1p}, @var{xsize}@}.  Either or both @var{s2size} and @var{xsize} can
-be zero.  For most usages, @var{xsize} will be zero.
+The integer quotient is written to @{@var{r1p}+@var{qxn}, @var{s2n}@} and in
+addition @var{qxn} fraction limbs are developed and written to @{@var{r1p},
+@var{qxn}@}.  Either or both @var{s2n} and @var{qxn} can be zero.  For most
+usages, @var{qxn} will be zero.
 
 @code{mpn_divmod_1} exists for upward source compatibility and is simply a
-macro calling @code{mpn_divrem_1} with an @var{xsize} of 0.
+macro calling @code{mpn_divrem_1} with an @var{qxn} of 0.
 
 The areas at @var{r1p} and @var{s2p} have to be identical or completely
 separate, not partially overlapping.
 @end deftypefn
 
-@deftypefun mp_limb_t mpn_divmod (mp_limb_t *@var{r1p}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2size}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3size})
-@strong{This interface is obsolete.  It will disappear from future releases.
-Use @code{mpn_divrem} in its stead.}
+@deftypefun mp_limb_t mpn_divmod (mp_limb_t *@var{r1p}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2n}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3n})
+[This function is obsolete.  Please call @code{mpn_tdiv_qr} instead for best
+performance.]
 @end deftypefun
 
-@deftypefn Macro mp_limb_t mpn_divexact_by3 (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{size}})
-@deftypefnx Function mp_limb_t mpn_divexact_by3c (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{size}}, mp_limb_t @var{carry})
-Divide @{@var{sp}, @var{size}@} by 3, expecting it to divide exactly, and
-writing the result to @{@var{rp}, @var{size}@}.  If 3 divides exactly, the
-return value is zero and the result is the quotient.  If not, the return value
-is non-zero and the result won't be anything useful.
+@deftypefn Macro mp_limb_t mpn_divexact_by3 (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{n}})
+@deftypefnx Function mp_limb_t mpn_divexact_by3c (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{n}}, mp_limb_t @var{carry})
+Divide @{@var{sp}, @var{n}@} by 3, expecting it to divide exactly, and writing
+the result to @{@var{rp}, @var{n}@}.  If 3 divides exactly, the return value is
+zero and the result is the quotient.  If not, the return value is non-zero and
+the result won't be anything useful.
 
 @code{mpn_divexact_by3c} takes an initial carry parameter, which can be the
 return value from a previous call, so a large calculation can be done piece by
@@ -3287,100 +3278,93 @@ $b \equiv 1 \, mod \, 3$.
 @end ifnottex
 @end deftypefn
 
-@deftypefun mp_limb_t mpn_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb})
-Divide @{@var{s1p}, @var{s1size}@} by @var{s2limb}, and return the remainder.
-@var{s1size} can be zero.
+@deftypefun mp_limb_t mpn_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb})
+Divide @{@var{s1p}, @var{s1n}@} by @var{s2limb}, and return the remainder.
+@var{s1n} can be zero.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_preinv_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb}, mp_limb_t @var{s3limb})
+@deftypefun mp_limb_t mpn_preinv_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb}, mp_limb_t @var{s3limb})
 @strong{This interface is obsolete.  It will disappear from future releases.
 Use @code{mpn_mod_1} in its stead.}
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_bdivmod (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2size}, unsigned long int @var{d})
-The function puts the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of
-@var{q} =
-@{@var{s1p}, @var{s1size}@}/@{@var{s2p}, @var{s2size}@}
-mod 2^@var{d}
-at @var{rp},
+@deftypefun mp_limb_t mpn_bdivmod (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n}, unsigned long int @var{d})
+The function puts the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of @var{q} =
+@{@var{s1p}, @var{s1n}@}/@{@var{s2p}, @var{s2n}@} mod 2^@var{d} at @var{rp},
 and returns the high @var{d} mod @var{BITS_PER_MP_LIMB} bits of @var{q}.
 
-@{@var{s1p}, @var{s1size}@} - @var{q} * @{@var{s2p}, @var{s2size}@}
-mod 2^(@var{s1size}*@var{BITS_PER_MP_LIMB})
-is placed at @var{s1p}.
-Since the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of
-this difference are zero, it is possible to overwrite the low limbs at
-@var{s1p} with this difference,
-provided @var{rp} <= @var{s1p}.
+@{@var{s1p}, @var{s1n}@} - @var{q} * @{@var{s2p}, @var{s2n}@} mod
+2^(@var{s1n}*@var{BITS_PER_MP_LIMB}) is placed at @var{s1p}.  Since the low
+[@var{d}/@var{BITS_PER_MP_LIMB}] limbs of this difference are zero, it is
+possible to overwrite the low limbs at @var{s1p} with this difference, provided
+@var{rp} <= @var{s1p}.
 
-This function requires that @var{s1size} * @var{BITS_PER_MP_LIMB} >= @var{D},
-and that @{@var{s2p}, @var{s2size}@} is odd.
+This function requires that @var{s1n} * @var{BITS_PER_MP_LIMB} >= @var{D}, and
+that @{@var{s2p}, @var{s2n}@} is odd.
 
-@strong{This interface is preliminary.  It might change incompatibly in
-future revisions.}
+@strong{This interface is preliminary.  It might change incompatibly in future
+revisions.}
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_lshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{src_ptr}, mp_size_t @var{src_size}, unsigned long int @var{count})
-Shift @{@var{src_ptr}, @var{src_size}@} @var{count} bits to the left, and
-write the @var{src_size} least significant limbs of the result to
-@var{rp}.  @var{count} might be in the range 1 to n @minus{} 1, on an
-n-bit machine. The bits shifted out to the left are returned.
+@deftypefun mp_limb_t mpn_lshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
+Shift @{@var{sp}, @var{n}@} @var{count} bits to the left, and write the @var{n}
+least significant limbs of the result to @var{rp}.  @var{count} might be in the
+range 1 to n @minus{} 1, on an n-bit machine. The bits shifted out to the left
+are returned.
 
 Overlapping of the destination space and the source space is allowed in this
-function, provided @var{rp} >= @var{src_ptr}.
+function, provided @var{rp} >= @var{sp}.
 
 This function is written in assembly for most targets.
 @end deftypefun
 
-@deftypefun mp_limp_t mpn_rshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{src_ptr}, mp_size_t @var{src_size}, unsigned long int @var{count})
-Shift @{@var{src_ptr}, @var{src_size}@} @var{count} bits to the right, and
-write the @var{src_size} most significant limbs of the result to
-@var{rp}.  @var{count} might be in the range 1 to n @minus{} 1, on an
-n-bit machine.  The bits shifted out to the right are returned.
+@deftypefun mp_limp_t mpn_rshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
+Shift @{@var{sp}, @var{n}@} @var{count} bits to the right, and write the
+@var{n} most significant limbs of the result to @var{rp}.  @var{count} might be
+in the range 1 to n @minus{} 1, on an n-bit machine.  The bits shifted out to
+the right are returned.
 
 Overlapping of the destination space and the source space is allowed in this
-function, provided @var{rp} <= @var{src_ptr}.
+function, provided @var{rp} <= @var{sp}.
 
 This function is written in assembly for most targets.
 @end deftypefun
 
-@deftypefun int mpn_cmp (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{size})
-Compare @{@var{s1p}, @var{size}@} and @{@var{s2p}, @var{size}@} and
-return a positive value if s1 > src2, 0 of they are equal, and a negative
-value if s1 < src2.
+@deftypefun int mpn_cmp (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
+Compare @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@} and return a positive
+value if s1 > src2, 0 of they are equal, and a negative value if s1 < src2.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_gcd (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
-Puts at @var{rp} the greatest common divisor of @{@var{s1p},
-@var{s1size}@} and @{@var{s2p}, @var{s2size}@}; both source
-operands are destroyed by the operation.  The size in limbs of the greatest
-common divisor is returned.
+@deftypefun mp_size_t mpn_gcd (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
+Puts at @var{rp} the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
+@{@var{s2p}, @var{s2n}@}; both source operands are destroyed by the operation.
+The size in limbs of the greatest common divisor is returned.
 
-@{@var{s1p}, @var{s1size}@} must have at least as many bits as
-@{@var{s2p}, @var{s2size}@}, and @{@var{s2p}, @var{s2size}@} must be odd.
+@{@var{s1p}, @var{s1n}@} must have at least as many bits as @{@var{s2p},
+@var{s2n}@}, and @{@var{s2p}, @var{s2n}@} must be odd.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_gcd_1 (const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb})
-Return the greatest common divisor of @{@var{s1p}, @var{s1size}@}
-and @var{s2limb}, where @var{s2limb} (as well as @var{s1size})
-must be different from 0.
+@deftypefun mp_limb_t mpn_gcd_1 (const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb})
+Return the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
+@var{s2limb}, where @var{s2limb} (as well as @var{s1n}) must be different from
+0.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2size}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
-Compute the greatest common divisor of @{@var{s1p}, @var{s1size}@} and
-@{@var{s2p}, @var{s2size}@}.  Store the gcd at @var{r1p} and return its size
-in limbs.  Write the first cofactor at @var{r2p} and store its size in
-*@var{r2size}.  If the cofactor is negative, *@var{r2size} is negative and
-@var{r2p} is the absolute value of the cofactor.
+@deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2n}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
+Compute the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
+@{@var{s2p}, @var{s2n}@}.  Store the gcd at @var{r1p} and return its size in
+limbs.  Write the first cofactor at @var{r2p} and store its size in *@var{r2n}.
+If the cofactor is negative, *@var{r2n} is negative and @var{r2p} is the
+absolute value of the cofactor.
 
-@{@var{s1p}, @var{s1size}@} must be greater than or equal to @{@var{s2p},
-@var{s2size}@}.  Neither operand may equal 0.  Both source operands are
-destroyed, plus one limb past the end of each, ie. @{@var{s1p},
-@var{s1size}+1@} and @{@var{s2p}, @var{s2size}+1@}.
+@{@var{s1p}, @var{s1n}@} must be greater than or equal to @{@var{s2p},
+@var{s2n}@}.  Neither operand may equal 0.  Both source operands are destroyed,
+plus one limb past the end of each, ie. @{@var{s1p}, @var{s1n}+1@} and
+@{@var{s2p}, @var{s2n}+1@}.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{size})
-Compute the square root of @{@var{sp}, @var{size}@} and put the result at
+@deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
+Compute the square root of @{@var{sp}, @var{n}@} and put the result at
 @var{r1p}.
 
 If @var{r2p} is not NULL, write the remainder there and return its size.  If
@@ -3396,32 +3380,31 @@ The areas at @var{r1p} and @var{sp} have to be distinct.  The areas at
 partially overlapping.
 
 @ifnottex
-The area at @var{r1p} needs to have space for ceil(@var{size}/2) limbs.
+The area at @var{r1p} needs to have space for ceil(@var{n}/2) limbs.
 @end ifnottex
 @tex
-The area at @var{r1p} needs to have space for $\lceil@var{size}/2\rceil$ limbs.
+The area at @var{r1p} needs to have space for $\lceil@var{n}/2\rceil$ limbs.
 @end tex
-The area at @var{r2p} needs to be @var{size} limbs large.
+The area at @var{r2p} needs to be @var{n} limbs large.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size})
-Convert @{@var{s1p}, @var{s1size}@} to a raw unsigned char array in base
-@var{base}.  The string is not in ASCII; to convert it to printable format,
-add the ASCII codes for @samp{0} or @samp{A}, depending on the base and
-range.  There may be leading zeros in the string.
+@deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n})
+Convert @{@var{s1p}, @var{s1n}@} to a raw unsigned char array in base
+@var{base}.  There may be leading zeros in the string.  The string is not in
+ASCII; to convert it to printable format, add the ASCII codes for @samp{0} or
+@samp{A}, depending on the base and range.
 
 The area at @var{s1p} is clobbered.
 
 Return the number of characters in @var{str}.
 
 The area at @var{str} has to have space for the largest possible number
-represented by a @var{s1size} long limb array, plus one extra character.
+represented by a @var{s1n} long limb array, plus one extra character.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_set_str (mp_limb_t *@var{r1p}, const char *@var{str}, size_t @var{strsize}, int @var{base})
-Convert the raw unsigned char array at @var{str} of length @var{strsize} to
-a limb array @{@var{s1p}, @var{s1size}@}.  The base of @var{str} is
-@var{base}.
+Convert the raw unsigned char array at @var{str} of length @var{strsize} to a
+limb array.  The base of @var{str} is @var{base}.
 
 Return the number of limbs stored in @var{r1p}.
 @end deftypefun
@@ -3440,10 +3423,10 @@ It is required that there be a set bit within the area at @var{s1p} at or
 beyond bit position @var{bit}, so that the function has something to return.
 @end deftypefun
 
-@deftypefun void mpn_random (mp_limb_t *@var{r1p}, mp_size_t @var{r1size})
-@deftypefunx void mpn_random2 (mp_limb_t *@var{r1p}, mp_size_t @var{r1size})
-Generate a random number of length @var{r1size} and store it at @var{r1p}.
-The most significant limb is always non-zero.  @code{mpn_random} generates
+@deftypefun void mpn_random (mp_limb_t *@var{r1p}, mp_size_t @var{r1n})
+@deftypefunx void mpn_random2 (mp_limb_t *@var{r1p}, mp_size_t @var{r1n})
+Generate a random number of length @var{r1n} and store it at @var{r1p}.  The
+most significant limb is always non-zero.  @code{mpn_random} generates
 uniformly distributed limb data, @code{mpn_random2} generates long strings of
 zeros and ones in the binary representation.
 
@@ -3451,40 +3434,66 @@ zeros and ones in the binary representation.
 routines.
 @end deftypefun
 
-@deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, unsigned long int @var{size})
-Count the number of set bits in @{@var{s1p}, @var{size}@}.
+@deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, unsigned long int @var{n})
+Count the number of set bits in @{@var{s1p}, @var{n}@}.
 @end deftypefun
 
-@deftypefun {unsigned long int} mpn_hamdist (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, unsigned long int @var{size})
-Compute the hamming distance between @{@var{s1p}, @var{size}@} and
-@{@var{s2p}, @var{size}@}.
+@deftypefun {unsigned long int} mpn_hamdist (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, unsigned long int @var{n})
+Compute the hamming distance between @{@var{s1p}, @var{n}@} and @{@var{s2p},
+@var{n}@}.
 @end deftypefun
 
-@deftypefun int mpn_perfect_square_p (const mp_limb_t *@var{s1p}, mp_size_t @var{size})
-Return non-zero iff @{@var{s1p}, @var{size}@} is a perfect square.
+@deftypefun int mpn_perfect_square_p (const mp_limb_t *@var{s1p}, mp_size_t @var{n})
+Return non-zero iff @{@var{s1p}, @var{n}@} is a perfect square.
 @end deftypefun
+
+
+@ignore
+The rest of the this chapter documents some internal functions.  This section
+is only relevant to implementors.
+
+@comment this should be put into an "implementor's" section.
+@deftypefun void mpn_mul_basecase (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
+Multiply @{@var{s1p}, @var{s1n}@} and @{@var{s2p}, @var{s2n}@}, and write the
+(@var{s1n}+@var{s2n})-limb result to @var{rp}.  It is required that @var{s1n}
+>= @var{s2n}.  
+
+The allowed size of the @{@var{s1p},@var{s1n}@} operand varies; @var{s1n}
+greater than KARATSUBA_MUL_THRESHOLD will give unpredictable results.
+
+This is an internal low-level routine that is implemented in assembly for some
+targets.  If it is not provided in assembly, a default version is provided
+that uses @code{mpn_addmul_1} and @code{mpn_mul_1}.  For high-performance
+microarchitectures, implementing @code{mpn_mul_basecase} can provide a very
+significant performance advantage, since it will allow for more
+micro-parallelism and less recurrences than @code{mpn_addmul_1}.
+
+The destination has to have space for (@var{s1n}+@var{s2n}) limbs, even if the
+product's most significant limb is zero.
+@end deftypefun
+
+@end ignore
 
 
 @node  Random Number Functions, BSD Compatible Functions, Low-level Functions, Top
 @chapter Random Number Functions
 @cindex Random number functions
 
-There are two groups of random number functions in GNU MP; older
-functions that call C library random number generators, rely on a global
-state, and aren't very random; and newer functions that don't have these
-problems.  The newer functions are self-contained, they accept a random
-state parameter that supplants global state, and generate good random
-numbers.
+There are two groups of random number functions in GNU MP; older functions that
+call C library random number generators, rely on a global state, and aren't
+very random; and newer functions that don't have these problems.  The newer
+functions are self-contained, they accept a random state parameter that
+supplants global state, and generate good random numbers.
 
 The random state parameter is of the type @code{gmp_randstate_t}.  It must be
 initialized by a call to one of the @code{gmp_randinit} functions (@ref{Random
 State Initialization}).  The initial seed is set using one of the
 @code{gmp_randseed} functions (@ref{Random State Initialization}).
 
-The size of the seed determines the number of different sequences of
-random numbers that is possible to generate.  The ``quality'' of the
-seed is the randomness of a given seed compared to the previous seed
-used and affects the randomness of separate number sequences.
+The size of the seed determines the number of different sequences of random
+numbers that is possible to generate.  The ``quality'' of the seed is the
+randomness of a given seed compared to the previous seed used and affects the
+randomness of separate number sequences.
 
 The algorithm for assigning seed is critical if the generated random numbers
 are to be used for important applications, such as generating cryptographic
@@ -3500,7 +3509,7 @@ unpredictability of the random number sequence should absolutely not use that
 as its only source for a seed value.
 
 On some systems there is a special device, often called @code{/dev/random},
-which provides a source of somewhat random numbers more usable as seed.
+which provides a randomness source more usable seed.
 
 The functions actually generating random functions are documented under
 ``Miscellaneous Functions'' in their respective function class:
@@ -3521,7 +3530,7 @@ initial seed value passed to these functions.
 Initialize random state variable @var{state}.
 
 @var{alg} denotes what algorithm to use for random number generation.
-Use one of
+Currently only one algorithm is supported:
 @itemize @minus
 @item GMP_RAND_ALG_LC --- Linear congruential.
 
@@ -3530,8 +3539,8 @@ A fast generator defined by @math{X = (aX + c) mod m}.
 A third argument @var{size} of type unsigned long int is required.  @var{size}
 is the size of the largest good quality random number to be generated,
 expressed in number of bits.  If the random generation functions are asked for
-a bigger random number than indicated by this parameter, two or more numbers
-of @var{size} bits will be generated and concatenated, resulting in a ``bad''
+a bigger random number than indicated by this parameter, two or more numbers of
+@var{size} bits will be generated and concatenated, resulting in a ``bad''
 random number.  This can be used to generate big random numbers relatively
 cheap if the quality of randomness isn't of great importance.
 
@@ -3547,11 +3556,11 @@ the other @code{gmp_randinit} functions.
 @end itemize
 
 If @var{alg} is 0 or GMP_RAND_ALG_DEFAULT, the default algorithm is used.  The
-default algorithm is typically a fast algorithm like the linear congruential
-and requires a third @var{size} argument (see GMP_RAND_ALG_LC).
+default algorithm is the linear congruential and requires a third @var{size}
+argument (see GMP_RAND_ALG_LC).
 
-When you're done with a @var{state} variable, call @code{gmp_randclear}
-to deallocate any memory allocated by this function.
+When you're done with a @var{state} variable, call @code{gmp_randclear} to
+deallocate any memory allocated by this function.
 
 @code{gmp_randinit} may set the following bits in @var{gmp_errno}:
 @c FIXME: gmp_errno is printed in uppercase.  That's wrong.
@@ -3572,8 +3581,8 @@ scheme.
 Parameters @var{a}, @var{c}, and @var{m} are the multiplier, adder, and modulus
 for the linear congruential scheme to use, respectively.
 
-When you're done with a @var{state} variable, call @code{gmp_randclear}
-to deallocate any memory allocated by this function.
+When you're done with a @var{state} variable, call @code{gmp_randclear} to
+deallocate any memory allocated by this function.
 @end deftypefun
 @end ignore
 
@@ -3600,8 +3609,8 @@ initialized with this function is discarded.  Thus, the size of a random number
 is @var{m2exp} / 2 (rounded upwards) bits when this function has been used for
 initializing the random state.
 
-When you're done with a @var{state} variable, call @code{gmp_randclear}
-to deallocate any memory allocated by this function.
+When you're done with a @var{state} variable, call @code{gmp_randclear} to
+deallocate any memory allocated by this function.
 @end deftypefun
 
 @deftypefun void gmp_randseed (gmp_randstate_t @var{state}, mpz_t @var{seed})
@@ -3610,14 +3619,13 @@ to deallocate any memory allocated by this function.
 Set the initial seed value.
 
 Parameter @var{seed} is the initial random seed.  The function
-@code{gmp_randseed_ui} takes the @var{seed} as an unsigned long int rather
-than as an mpz_t.
+@code{gmp_randseed_ui} takes the @var{seed} as an unsigned long int rather than
+as an mpz_t.
 @end deftypefun
 
 @deftypefun void gmp_randclear (gmp_randstate_t @var{state})
-Free all memory occupied by @var{state}.  Make sure to call this
-function for all @code{gmp_randstate_t} variables when you are done with
-them.
+Free all memory occupied by @var{state}.  Make sure to call this function for
+all @code{gmp_randstate_t} variables when you are done with them.
 @end deftypefun
 
 @node BSD Compatible Functions, Custom Allocation, Random Number Functions, Top
@@ -3642,8 +3650,8 @@ Apart from the incomplete set of functions, the interface for initializing
 with @code{pow} in @file{libm.a}.
 
 @cindex @file{mp.h}
-Include the header @file{mp.h} to get the definition of the necessary types
-and functions.  If you are on a BSD derived system, make sure to include GNU
+Include the header @file{mp.h} to get the definition of the necessary types and
+functions.  If you are on a BSD derived system, make sure to include GNU
 @file{mp.h} if you are going to link the GNU @file{libmp.a} to your program.
 This means that you probably need to give the @samp{-I<dir>} option to the
 compiler, where @samp{<dir>} is the directory where you have GNU @file{mp.h}.
@@ -3675,8 +3683,7 @@ Subtract @var{src_2} from @var{src_1} and put the difference in
 @end deftypefun
 
 @deftypefun void mult (MINT *@var{src_1}, MINT *@var{src_2}, MINT *@var{destination})
-Multiply @var{src_1} and @var{src_2} and put the product in
-@var{destination}.
+Multiply @var{src_1} and @var{src_2} and put the product in @var{destination}.
 @end deftypefun
 
 @deftypefun void mdiv (MINT *@var{dividend}, MINT *@var{divisor}, MINT *@var{quotient}, MINT *@var{remainder})
@@ -3689,17 +3696,16 @@ Some implementations of these functions work differently---or not at all---for
 negative arguments.
 @end deftypefun
 
-@deftypefun void msqrt (MINT *@var{operand}, MINT *@var{root}, MINT *@var{remainder})
+@deftypefun void msqrt (MINT *@var{op}, MINT *@var{root}, MINT *@var{remainder})
 @ifnottex
-Set @var{root} to the truncated integer part of the square root of
-@var{operand}.  Set @var{remainder} to
-@var{operand}@minus{}@var{root}*@var{root},
+Set @var{root} to the truncated integer part of the square root of @var{op}.
+Set @var{remainder} to @var{op}@minus{}@var{root}*@var{root},
 @end ifnottex
 @tex
-Set @var{root} to $\lfloor\sqrt{@var{operand}}\rfloor$, like
-@code{mpz_sqrt}.  Set @var{remainder} to $(operand - root^2)$,
+Set @var{root} to $\lfloor\sqrt{@var{op}}\rfloor$, like @code{mpz_sqrt}.  Set
+@var{remainder} to $(op - root^2)$,
 @end tex
-(i.e., zero if @var{operand} is a perfect square).
+(i.e., zero if @var{op} is a perfect square).
 
 If @var{root} and @var{remainder} are the same variable, the results are
 undefined.
@@ -3713,15 +3719,14 @@ Set @var{dest} to (@var{base} raised to @var{exp}) modulo @var{mod}.
 Set @var{dest} to @var{base} raised to @var{exp}.
 @end deftypefun
 
-@deftypefun void gcd (MINT *@var{operand1}, MINT *@var{operand2}, MINT *@var{res})
-Set @var{res} to the greatest common divisor of @var{operand1} and
-@var{operand2}.
+@deftypefun void gcd (MINT *@var{op1}, MINT *@var{op2}, MINT *@var{res})
+Set @var{res} to the greatest common divisor of @var{op1} and @var{op2}.
 @end deftypefun
 
-@deftypefun int mcmp (MINT *@var{operand1}, MINT *@var{operand2})
-Compare @var{operand1} and @var{operand2}.  Return a positive value if
-@var{operand1} > @var{operand2}, zero if @var{operand1} =
-@var{operand2}, and a negative value if @var{operand1} < @var{operand2}.
+@deftypefun int mcmp (MINT *@var{op1}, MINT *@var{op2})
+Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
+@var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
+@var{op2}.
 @end deftypefun
 
 @deftypefun void min (MINT *@var{dest})
@@ -3733,15 +3738,15 @@ Input a decimal string from @code{stdin}, and put the read integer in
 Output @var{src} to @code{stdout}, as a decimal string.  Also output a newline.
 @end deftypefun
 
-@deftypefun {char *} mtox (MINT *@var{operand})
-Convert @var{operand} to a hexadecimal string, and return a pointer to the
-string.  The returned string is allocated using the default memory allocation
-function, @code{malloc} by default.
+@deftypefun {char *} mtox (MINT *@var{op})
+Convert @var{op} to a hexadecimal string, and return a pointer to the string.
+The returned string is allocated using the default memory allocation function,
+@code{malloc} by default.
 @end deftypefun
 
-@deftypefun void mfree (MINT *@var{operand})
-De-allocate, the space used by @var{operand}.  @strong{This function should
-only be passed a value returned by @code{itom} or @code{xtom}.}
+@deftypefun void mfree (MINT *@var{op})
+De-allocate, the space used by @var{op}.  @strong{This function should only be
+passed a value returned by @code{itom} or @code{xtom}.}
 @end deftypefun
 
 
@@ -3796,6 +3801,11 @@ De-allocate the space pointed to by @var{ptr}.
 You can assume that the space at @var{ptr} was formerly returned from
 @code{allocate_function} or @code{reallocate_function}, for a request for
 @var{size} storage units.
+
+Sometimes GMP will call @code{deallocate_function} with a size argument of 0,
+because it was unable to determine the amount allocated.  This is a flaw in
+GMP, which will be hard to fix.  Please tell @email{bug-gmp@@gnu.org} if this
+is a problem in your application.
 @end deftypefun
 
 (A @dfn{storage unit} is the unit in which the @code{sizeof} operator returns
@@ -3846,9 +3856,8 @@ The development of floating point functions of GNU MP 2, were supported in part
 by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO (POlynomial
 System SOlving).
 
-GNU MP 2 was finished and released by SWOX AB (formerly known as TMG
-Datakonsult), Swedenborgsgatan 23, SE-118 27 STOCKHOLM, SWEDEN, in
-cooperation with the IDA Center for Computing Sciences, USA.
+GNU MP 2 was finished and released by SWOX AB, SWEDEN, in cooperation with the
+IDA Center for Computing Sciences, USA.
 
 Robert Harley of Inria, France and David Seal of ARM, England, suggested clever
 improvements for population count.
