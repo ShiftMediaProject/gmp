@@ -114,9 +114,10 @@ case "${target}" in
 esac
 
 case "${target}" in
-  i[3456]86*-*-freebsd* | pentium-*-freebsd* | pentiumpro-*-freebsd* | \
-  i[3456]86*-*-netbsd* | pentium-*-netbsd* | pentiumpro-*-netbsd*)
-	target_makefile_frag=config/t-freebsd ;;
+  i[3456]86*-*-*bsd* | i[3456]86*-*-linuxaout* | i[3456]86*-*-linuxoldld* | \
+  pentium-*-*bsd* | pentium-*-linuxaout* | pentium-*-linuxoldld* | \
+  pentiumpro-*-*bsd* | pentiumpro-*-linuxaout* | pentiumpro-*-linuxoldld*)
+    target_makefile_frag=config/t-oldgas ;;
   rs6000-*-aix[456789]* | rs6000-*-aix3.2.[456789])
     target_makefile_frag=config/t-pwr-aix ;;
   ppc601-*-aix[456789]* | ppc601-*-aix3.2.[456789] | \
