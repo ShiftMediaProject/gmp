@@ -2069,7 +2069,7 @@ AC_SUBST(BITS_PER_MP_LIMB, `expr 8 \* $ac_cv_sizeof_mp_limb_t`)
 # depends on ulong.
 #
 mparam_bits=[`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`]
-if test "$mparam_bits" -ne $BITS_PER_MP_LIMB; then
+if test -n "$mparam_bits" && test "$mparam_bits" -ne $BITS_PER_MP_LIMB; then
   if test "$test_CFLAGS" = set; then
     AC_MSG_ERROR([Oops, mp_limb_t is $BITS_PER_MP_LIMB bits, but the assembler code
 in this configuration expects $mparam_bits bits.
