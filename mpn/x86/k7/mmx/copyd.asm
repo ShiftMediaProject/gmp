@@ -114,14 +114,14 @@ L(top):
 
 	C now %ecx is -4 to -1 representing respectively 0 to 3 limbs remaining
 
-	test	$2, %cl
+	testb	$2, %cl
 	jz	L(finish_not_two)
 
 	movq	8(%eax,%ecx,4), %mm0
 	movq	%mm0, 8(%edx,%ecx,4)
 L(finish_not_two):
 
-	test	$1, %cl
+	testb	$1, %cl
 	jz	L(done)
 
 	movl	(%eax), %ebx
