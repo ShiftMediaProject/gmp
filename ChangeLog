@@ -19,6 +19,14 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-17  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: As a temporary hack, clear extra_functions for nails
+	builds.
+
+	* gmp-h.in (mpz_get_ui): #if ... #endif else code block to shut up gcc
+	warnings.
+
 2002-04-17  Kevin Ryde  <kevin@swox.se>
 
 	* texinfo.tex: Update to 2002-03-26.08 per texinfo 4.2.
@@ -38,7 +46,7 @@ MA 02111-1307, USA.
 	* mpfr/cmp_ui.c (mpfr_cmp_si_2exp): Fix b==0 i!=0 case.
 
 2002-04-17  Gerardo Ballabio <gerardo.ballabio@unimib.it>
-	
+
 	* gmpxx.h, mpfrxx.h: Remove mpfr_class bool combinations, remove
 	mpfr_class::get_str2, use mp_rnd_t for rounding modes, use
 	8*sizeof(double) for mpfr_t's holding doubles.
@@ -715,8 +723,8 @@ MA 02111-1307, USA.
 	(PROLOGUE, EPILOGUE): Relax quoting for the benefit of tune/many.pl
 	when GSYM_PREFIX non-empty.
 
-        * tune/time.c, tune/speed.h (speed_time_init): Include clock tick
-        period in speed_time_string.
+	* tune/time.c, tune/speed.h (speed_time_init): Include clock tick
+	period in speed_time_string.
 	* tune/time.c, configure.in (clock_gettime): New measuring method.
 
 	* tune/many.pl: Add -DHAVE_NATIVE_mpn_foo to C objects, to avoid
@@ -2353,7 +2361,7 @@ MA 02111-1307, USA.
 	* tune/freq.c (speed_cpu_frequency_bsd_dmesg): New function.
 	(speed_cpu_frequency_table): Use it.
 
-        * tune/many.pl (popcount, hamdist): Fix declared return value.
+	* tune/many.pl (popcount, hamdist): Fix declared return value.
 	(sb_divrem_mn): Remove a spurious duplicate entry.
 	(CLEAN): Add tmp-$objbase.c when using that for .h files.
 	(macro_speed): Give a default for .h files.
@@ -2761,7 +2769,7 @@ MA 02111-1307, USA.
 
 	* gmp-h.in (__GMPN_ADD_1 etc) [x86]: Don't use this on egcs 2.91.
 
-        * mpz/fits_uint.c, fits_ulong.c, mpz/fits_ushort.c: Split up fits_u.c.
+	* mpz/fits_uint.c, fits_ulong.c, mpz/fits_ushort.c: Split up fits_u.c.
 	* mpz/fits_u.c: Remove file.
 	* mpz/Makefile.am, macos/Makefile.in: Update.
 
@@ -3662,13 +3670,13 @@ MA 02111-1307, USA.
 	* mpf/integer.c: Remove file.
 	* Makefile.am, mpf/Makefile.am, macos/Makefile.in: Update.
 
-        * acinclude.m4 (GMP_GCC_VERSION_GE): New macro.
-        (GMP_GCC_MARCH_PENTIUMPRO): Use it, remove CCBASE parameter (don't
+	* acinclude.m4 (GMP_GCC_VERSION_GE): New macro.
+	(GMP_GCC_MARCH_PENTIUMPRO): Use it, remove CCBASE parameter (don't
 	bother checking it's gcc).
 	(GMP_GCC_ARM_UMODSI): New macro.
 	* configure.in (GMP_GCC_MARCH_PENTIUMPRO): Update parameters.
 	(arm*-*-*): Use GMP_GCC_ARM_UMODSI.
-        * gmp.texi (Notes for Particular Systems): Add arm gcc requirements.
+	* gmp.texi (Notes for Particular Systems): Add arm gcc requirements.
 
 2001-03-28  Kevin Ryde  <kevin@swox.se>
 
