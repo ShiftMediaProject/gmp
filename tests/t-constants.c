@@ -24,6 +24,7 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 
 #if HAVE_STRINGIZE
@@ -68,6 +69,19 @@ main (void)
   CHECK_CONSTANT (BITS_PER_CHAR,     8*sizeof(char));
 
   CHECK_CONDITION (2*sizeof(UHWtype) >= sizeof(UWtype));
+
+  {
+    mp_limb_t  modlimb_inverse_3_calc;
+    modlimb_invert (modlimb_inverse_3_calc, CNST_LIMB(3));
+    CHECK_CONSTANT (MODLIMB_INVERSE_3, modlimb_inverse_3_calc);
+    CHECK_CONDITION (MODLIMB_INVERSE_3 * CNST_LIMB(3) == CNST_LIMB(1));
+  }
+
+  {
+    mp_limb_t  pp_inverted_calc;
+    invert_limb (pp_inverted_calc, PP);
+    CHECK_CONSTANT (PP_INVERTED, pp_inverted_calc);
+  }
 
   exit (0);
 }
