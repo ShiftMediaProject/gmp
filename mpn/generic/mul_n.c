@@ -31,6 +31,11 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
+#if GMP_NAIL_BITS != 0
+/* The open-coded interpolate3 stuff has not been generalized for nails.  */
+#define USE_MORE_MPN 1
+#endif
+
 #ifndef USE_MORE_MPN
 #if !defined (__alpha) && !defined (__mips)
 /* For all other machines, we want to call mpn functions for the compund
@@ -397,6 +402,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
    Note that z and x might point to the same vectors.
    FIXME: gcc won't inline this because it uses alloca. */
 #if USE_MORE_MPN
+
 static inline mp_limb_t
 add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
 {
@@ -410,6 +416,7 @@ add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
   TMP_FREE (marker);
   return c;
 }
+
 #else
 
 static mp_limb_t
@@ -455,6 +462,7 @@ add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
  * Returns top words (overflow) at pth, pt1 and pt2 respectively.
  */
 #if USE_MORE_MPN
+
 static void
 evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 	   mp_srcptr A, mp_srcptr B, mp_srcptr C, mp_size_t len,mp_size_t len2)
@@ -589,6 +597,7 @@ evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
  */
 
 #if USE_MORE_MPN
+
 static void
 interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 	      mp_ptr ptb, mp_ptr ptc, mp_ptr ptd, mp_size_t len,mp_size_t len2)
@@ -662,7 +671,7 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
   tc -= tb + mpn_sub_n (C, C, B, len);
 
   /* d := d/3 */
-  td = (td - mpn_divexact_by3 (D, D, len)) * MODLIMB_INVERSE_3;
+  td = ((td - mpn_divexact_by3 (D, D, len)) * MODLIMB_INVERSE_3) & GMP_NUMB_MASK;
 
   /* b, d := b + d, b - d */
 #ifdef HAVE_MPN_ADD_SUB_N
@@ -682,19 +691,19 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 
   ASSERT(!(*B & 3));
   mpn_rshift (B, B, len, 2);
-  B[len-1] |= tb<<(BITS_PER_MP_LIMB-2);
+  B[len-1] |= tb << (GMP_NUMB_BITS - 2);
   ASSERT((mp_limb_signed_t)tb >= 0);
   tb >>= 2;
 
   ASSERT(!(*C & 1));
   mpn_rshift (C, C, len, 1);
-  C[len-1] |= tc<<(BITS_PER_MP_LIMB-1);
+  C[len-1] |= tc << (GMP_NUMB_BITS - 1);
   ASSERT((mp_limb_signed_t)tc >= 0);
   tc >>= 1;
 
   ASSERT(!(*D & 3));
   mpn_rshift (D, D, len, 2);
-  D[len-1] |= td<<(BITS_PER_MP_LIMB-2);
+  D[len-1] |= td << (GMP_NUMB_BITS - 2);
   ASSERT((mp_limb_signed_t)td >= 0);
   td >>= 2;
 
