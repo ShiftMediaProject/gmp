@@ -1326,8 +1326,8 @@ EOF
   # MIPS
   mips-sgi-irix6.*)
     os_64bit=yes
-    gmp_cflags64_gcc="-g -O2 -mabi=n32"
-    gmp_cflags64_cc="$gmp_cflags64_cc -O2 -n32"
+    gmp_cflags64_gcc="-g -O2 -mabi=n32 -mips3"
+    gmp_cflags64_cc="$gmp_cflags64_cc -O2 -n32 -mips3"
     ;;
 
   # Motorola 68k family
@@ -5318,4 +5318,3 @@ rm -fr confdefs* $ac_clean_files
 trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
-
