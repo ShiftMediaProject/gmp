@@ -66,20 +66,11 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 
 #define TIME(t,func)							\
-  do { int __t0, __times, __t, __tmp;					\
-    __times = 1;							\
+  do { int __t0, __t, __tmp;						\
     __t0 = cputime ();							\
     {func;}								\
     __tmp = cputime () - __t0;						\
-    while (__tmp < 100)							\
-      {									\
-	__times <<= 1;							\
-	__t0 = cputime ();						\
-	for (__t = 0; __t < __times; __t++)				\
-	  {func;}							\
-	__tmp = cputime () - __t0;					\
-      }									\
-    (t) = (double) __tmp / __times;					\
+    (t) = (double) __tmp;						\
   } while (0)
 
 /* GMP version 1.x compatibility.  */
