@@ -105,6 +105,50 @@
 	* mpn/x86/p6/aorsmul_1.asm: Ditto.
 	* mpn/x86/README.family: Describe problem.
 
+2000-02-24  Linus Nordberg  <linus@swox.se>
+
+	* acinclude.m4 (GMP_CHECK_ASM_LSYM_PREFIX): Add dummy symbol to
+	testcase to avoid nm failure.  Try nm before piping to grep.
+
+	* acconfig.h: Undef HAVE_NATIVE_func for every mpn function found
+	in gmp.h.
+
+	* configure.in: Invoke AC_CONFIG_HEADERS.
+	Don't invoke AM_CONFIG_HEADER; it makes autoconf confused.
+	Dig out entry points declared in assembly code and AC_DEFINE proper
+	HAVE_NATIVE_func.
+	
+	* mpn/asm-defs.m4 (MULFUNC_PROLOGUE): New macro.
+
+	* mpn/x86/p6/aorsmul_1.asm: Use MULFUNC_PROLOGUE.
+	* mpn/x86/k6/aors_n.asm: Likewise.
+
+	* Makefile.am (EXTRA_DIST): Add config.in; needed when we don't
+	use AM_CONFIG_HEADER in configure.in.
+
+	* mpn/Makefile.am (INCLUDES): Add `-I..' for config.h and
+	gmp-mparam.h.
+	* mpf/Makefile.am: Likewise.
+	* mpq/Makefile.am: Likewise.
+	* mpz/Makefile.am: Likewise.
+
+	* mpf/tests/Makefile.am (INCLUDES): Add `-I../..' for config.h and
+	gmp-mparam.h.
+	* mpq/tests/Makefile.am: Likewise.
+	* mpz/tests/Makefile.am: Likewise.
+	
+	* configure: Regenerate.
+	* aclocal.m4: Regenerate.
+	* config.in: Regenerate.
+	* Makefile.in: Regenerate.
+	* mpf/Makefile.in: Regenerate.
+	* mpn/Makefile.in: Regenerate.
+	* mpq/Makefile.in: Regenerate.
+	* mpz/Makefile.in: Regenerate.
+	* mpf/tests/Makefile.in: Regenerate.
+	* mpq/tests/Makefile.in: Regenerate.
+	* mpz/tests/Makefile.in: Regenerate.
+
 2000-02-23  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/addmul_1.S: Amend comments, this code no longer used by
