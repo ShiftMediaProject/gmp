@@ -21,7 +21,7 @@ MA 02111-1307, USA. */
 
 #include "config.h"
 
-#include <strstream>
+#include <strstream.h>
 
 #include <stdio.h>
 #include <stdlib.h>
