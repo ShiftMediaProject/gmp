@@ -1,5 +1,7 @@
 2001-02-10  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in (gmp_mpn_functions_optional): List sqr_diagonal.
+
 	* mpn/powerpc32/aix.m4: Use unnamed csects.
 	* mpn/powerpc64/aix.m4: Likewise.
 
