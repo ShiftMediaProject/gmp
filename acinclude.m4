@@ -109,7 +109,9 @@ if test -z "$gmp_user_AR"; then
                         eval arflags=\"\$ar${abi1}_flags\"
   test -n "$arflags" || eval arflags=\"\$ar${abi2}_flags\"
   if test -n "$arflags"; then
+    AC_MSG_CHECKING([for extra ar flags])
     AR="$AR $arflags"
+    AC_MSG_RESULT([$arflags])
   fi
 fi
 ])
@@ -236,7 +238,9 @@ if test -z "$gmp_user_NM"; then
                         eval nmflags=\"\$nm${abi1}_flags\"
   test -n "$nmflags" || eval nmflags=\"\$nm${abi2}_flags\"
   if test -n "$nmflags"; then
+    AC_MSG_CHECKING([for extra nm flags])
     NM="$NM $nmflags"
+    AC_MSG_RESULT([$nmflags])
   fi
 fi
 ])
