@@ -682,6 +682,39 @@ esac
 ])
 
 
+dnl  GMP_GCC_MIPS_O32(gcc,[actions-yes][,[actions-no]])
+dnl  -------------------------------------------------
+dnl  Test whether gcc supports o32.
+dnl
+dnl  gcc 2.7.2.2 only does o32, and doesn't accept -mabi=32.
+dnl
+dnl  gcc 2.95 accepts -mabi=32 but it only works on irix5, on irix6 it gives
+dnl  "cc1: The -mabi=32 support does not work yet".
+
+AC_DEFUN(GMP_GCC_MIPS_O32,
+[AC_MSG_CHECKING([whether gcc supports o32])
+echo 'int x;' >conftest.c
+echo "$1 -mabi=32 -c conftest.c" >&AC_FD_CC
+if $1 -mabi=32 -c conftest.c >conftest.out 2>&1; then
+  result=yes
+else
+  cat conftest.out >&AC_FD_CC
+  if grep "cc1: Invalid option \`abi=32'" conftest.out >/dev/null; then
+    result=yes
+  else
+    result=no
+  fi
+fi
+rm -f conftest.*
+AC_MSG_RESULT($result)
+if test $result = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
 dnl  GMP_GCC_NO_CPP_PRECOMP(CCBASE,CC,CFLAGS,[ACTIONS-YES][,ACTIONS-NO])
 dnl  -------------------------------------------------------------------
 dnl  Check whether -no-cpp-precomp should be used on this compiler, and
