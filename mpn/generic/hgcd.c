@@ -471,7 +471,6 @@ hgcd2_mul (struct hgcd_row *P, mp_size_t alloc,
     return n + (h != 0);
 }
 
-
 unsigned
 mpn_hgcd_max_recursion (mp_size_t n)
 {
@@ -589,7 +588,7 @@ __gmpn_hgcd_sanity (const struct hgcd *hgcd,
 			 hgcd->row[i].rp, hgcd->row[i].rsize));
     }
 }
-#endif
+#endif /* WANT_ASSERT */
 
 /* Helper functions for hgcd */
 /* Sets (a, b, c, d)  <--  (b, c, d, a) */
@@ -1811,52 +1810,6 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
     }
 }
 
-
-mp_size_t
-mpn_hgcd_lehmer_itch (mp_size_t asize)
-{
-  /* Scratch space is needed for calling hgcd_lehmer. */
-  return HGCD_JEBELEAN_ITCH (asize);
-}
-
-/* FIXME: This function is not needed anymore. */
-/* Repeatedly divides A by B, until the remainder fits in M =
-   ceil(asize / 2) limbs. Stores cofactors in HGCD, and pushes the
-   quotients on STACK. On success, HGCD->row[0, 1, 2] correspond to
-   remainders that are larger than M limbs, while HGCD->row[3]
-   correspond to a remainder that fit in M limbs.
-
-   Returns 0 on failure (if B or A mod B fits in M limbs), otherwise
-   returns 2, 3 or 4 depending on how many of the r:s that satisfy
-   Jebelean's criterion. */
-int
-mpn_hgcd_lehmer (struct hgcd *hgcd,
-		 mp_srcptr ap, mp_size_t asize,
-		 mp_srcptr bp, mp_size_t bsize,
-		 struct qstack *quotients,
-		 mp_ptr tp, mp_size_t talloc)
-{
-  mp_size_t N = asize;
-  mp_size_t M = (N + 1)/2;
-
-  ASSERT (M);
-
-#if WANT_TRACE
-  trace ("hgcd_lehmer: asize = %d, bsize = %d, HGCD_SCHOENHAGE_THRESHOLD = %d\n",
-	 asize, bsize, HGCD_SCHOENHAGE_THRESHOLD);
-#endif
-
-  if (bsize <= M)
-    return 0;
-
-  ASSERT (asize >= 2);
-
-  /* Initialize, we keep r0 and r1 as the reduced numbers (so far). */
-  hgcd_start (hgcd, ap, asize, bp, bsize);
-
-  return hgcd_final (hgcd, M, quotients, tp, talloc);
-}
-
 mp_size_t
 mpn_hgcd_itch (mp_size_t asize)
 {
@@ -2313,6 +2266,7 @@ mpn_hgcd (struct hgcd *hgcd,
   return hgcd_final (hgcd, M, quotients, tp, talloc);
 }
 
+#if 0
 int
 mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B)
 {
@@ -2340,3 +2294,4 @@ mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B)
 
   return 1;
 }
+#endif
