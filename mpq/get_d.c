@@ -65,6 +65,7 @@ MA 02111-1307, USA. */
 double
 mpq_get_d (const MP_RAT *src)
 {
+  double res;
   mp_ptr np, dp;
   mp_ptr rp;
   mp_size_t nsize = src->_mp_num._mp_size;
@@ -146,30 +147,9 @@ mpq_get_d (const MP_RAT *src)
       qsize++;
     }
 
-  {
-    double res;
-    mp_size_t i;
-    mp_size_t scale = nsize - dsize - N_QLIMBS;
-
-#if defined (__vax__)
-    /* Ignore excess quotient limbs.  This is necessary on a vax
-       with its small double exponent, since we'd otherwise get
-       exponent overflow while forming RES.  */
-    if (qsize > N_QLIMBS)
-      {
-	qp += qsize - N_QLIMBS;
-	scale += qsize - N_QLIMBS;
-	qsize = N_QLIMBS;
-      }
-#endif
-
-    res = limb2dbl (qp[qsize - 1]);
-    for (i = qsize - 2; i >= 0; i--)
-      res = res * MP_BASE_AS_DOUBLE + limb2dbl (qp[i]);
-
-    res = __gmp_scale2 (res, GMP_NUMB_BITS * scale);
-
-    TMP_FREE (marker);
-    return sign_quotient >= 0 ? res : -res;
-  }
+  MPN_NORMALIZE (qp, qsize);
+  res = mpn_get_d (qp, qsize, sign_quotient,
+                   (long) (nsize - dsize - N_QLIMBS) * GMP_NUMB_BITS);
+  TMP_FREE (marker);
+  return res;
 }
