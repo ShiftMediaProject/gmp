@@ -1,3 +1,9 @@
+2000-04-16  Torbjorn Granlund  <tege@swox.com>
+
+	* Version 3.0 released.
+
+	* gmp.h (__GNU_MP_VERSION_PATCHLEVEL): Now 0.
+
 2000-04-16  Linus Nordberg  <linus@swox.se>
 
 	* configure.in (*-*-cygwin*): Select BSD_SYNTAX to avoid
