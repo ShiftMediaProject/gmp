@@ -1,4 +1,13 @@
 dnl  x86 mpn_lshift -- mpn left shift.
+dnl
+dnl      cycles/limb
+dnl  P54:   7.5
+dnl  P55:   7.0
+dnl  P6:    2.5
+dnl  K6:    4.5
+dnl  K7:    5.0
+dnl  P4:   14.5
+
 
 dnl  Copyright 1992, 1994, 1996, 1999, 2000 Free Software Foundation,
 dnl  Inc.

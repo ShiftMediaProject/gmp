@@ -2,18 +2,14 @@ dnl  x86 mpn_mul_1 (for 386, 486, and Pentium Pro) -- Multiply a limb vector
 dnl  with a limb and store the result in a second limb vector.
 dnl 
 dnl      cycles/limb
-dnl  P6:     5.5
-dnl
-dnl  The following CPUs have their own optimized code, but for reference the
-dnl  code here runs as follows.
-dnl
-dnl      cycles/limb
 dnl  P5:    12.5
+dnl  P6:     5.5
 dnl  K6:    10.5
 dnl  K7:     4.5
+dnl  P4:    19
 
 
-dnl  Copyright 1992, 1994, 1997, 1998, 1999, 2000 Free Software
+dnl  Copyright 1992, 1994, 1997, 1998, 1999, 2000, 2001 Free Software
 dnl  Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.

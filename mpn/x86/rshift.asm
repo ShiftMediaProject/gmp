@@ -1,6 +1,14 @@
 dnl  x86 mpn_rshift -- mpn right shift.
+dnl
+dnl      cycles/limb
+dnl  P54:   7.5
+dnl  P55:   7.0
+dnl  P6:    2.5
+dnl  K6:    4.5
+dnl  K7:    5.0
+dnl  P4:   16.5
 
-dnl  Copyright 1992, 1994, 1996, 1999, 2000 Free Software Foundation,
+dnl  Copyright 1992, 1994, 1996, 1999, 2000, 2001 Free Software Foundation,
 dnl  Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
