@@ -34,11 +34,13 @@ MA 02111-1307, USA.
 
 /* Define one (and only one) of these for the CPU target.
    Only targets that are going to be tested for need to be in this list,
-   not everything that can possibly be selected. */
+   not everything that can possibly be selected.
+ */
 #undef HAVE_TARGET_CPU_alpha
 #undef HAVE_TARGET_CPU_alphaev5
 #undef HAVE_TARGET_CPU_alphaev6
 #undef HAVE_TARGET_CPU_alphaev67
+
 #undef HAVE_TARGET_CPU_sparc
 #undef HAVE_TARGET_CPU_sparcv8
 #undef HAVE_TARGET_CPU_supersparc
@@ -47,10 +49,26 @@ MA 02111-1307, USA.
 #undef HAVE_TARGET_CPU_ultrasparc1
 #undef HAVE_TARGET_CPU_ultrasparc2
 #undef HAVE_TARGET_CPU_sparc64
+
 #undef HAVE_TARGET_CPU_hppa1_0
 #undef HAVE_TARGET_CPU_hppa1_1
 #undef HAVE_TARGET_CPU_hppa2_0n
 #undef HAVE_TARGET_CPU_hppa2_0w
+
+#undef HAVE_TARGET_CPU_i386
+#undef HAVE_TARGET_CPU_i486
+#undef HAVE_TARGET_CPU_i586
+#undef HAVE_TARGET_CPU_i686
+#undef HAVE_TARGET_CPU_pentium
+#undef HAVE_TARGET_CPU_pentiummmx
+#undef HAVE_TARGET_CPU_pentiumpro
+#undef HAVE_TARGET_CPU_pentium2
+#undef HAVE_TARGET_CPU_pentium3
+#undef HAVE_TARGET_CPU_k5
+#undef HAVE_TARGET_CPU_k6
+#undef HAVE_TARGET_CPU_k62
+#undef HAVE_TARGET_CPU_k63
+#undef HAVE_TARGET_CPU_athlon
 
 /* a dummy to make autoheader happy */
 #undef HAVE_TARGET_CPU_
@@ -140,6 +158,9 @@ MA 02111-1307, USA.
 /* Define if you have the <sys/sysctl.h> header file. */
 #undef HAVE_SYS_SYSCTL_H
 
+/* Define if you have the `srandom' function. */
+#undef HAVE_SRANDOM
+
 /* Define if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
 
@@ -203,7 +224,7 @@ MA 02111-1307, USA.
 /* Define if you have the <getopt.h> header file. */
 #undef HAVE_GETOPT_H
 
-/* Tune directory speed_cyclecounter, 0=none, 1=32bits, 2=64bits) */
+/* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
 /* Define if you have the ANSI C header files. */
