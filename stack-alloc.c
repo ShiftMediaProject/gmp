@@ -80,7 +80,7 @@ __tmp_alloc (size)
 }
 
 /* Typically called at function entry.  <mark> is assigned so that __tmp_free
-   can later be used to reclaim all subsecuently allocated storage.  */
+   can later be used to reclaim all subsequently allocated storage.  */
 void
 __tmp_mark (mark)
      tmp_marker *mark;
