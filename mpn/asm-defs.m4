@@ -362,12 +362,15 @@ m4_assert_numargs(2)
 ')')')
 
 
-dnl  Usage: m4_not_for_expansion(`symbol')
+dnl  Usage: m4_not_for_expansion(`SYMBOL')
+dnl         define_not_for_expansion(`SYMBOL')
 dnl
-dnl  Turn symbol, if defined, into something which will give an error if
-dnl  expanded.  For example,
+dnl  m4_not_for_expansion turns SYMBOL, if defined, into something which
+dnl  will give an error if expanded.  For example,
 dnl
 dnl         m4_not_for_expansion(`PIC')
+dnl
+dnl  define_not_for_expansion is the similar, but always makes a definition.
 dnl
 dnl  This is for symbols that should be tested with ifdef(`FOO',...) rather
 dnl  than be expanded as such.  It stops you accidentally omitting the
@@ -377,11 +380,14 @@ dnl  definition.
 
 define(m4_not_for_expansion,
 m4_assert_numargs(1)
-`ifdef(`$1',
+`ifdef(`$1',`define_not_for_expansion(`$1')')')
+
+define(define_not_for_expansion,
+m4_assert_numargs(1)
 `ifelse(defn(`$1'),,,
 `m4_error(``$1' has a non-empty value, maybe it shouldnt be munged with m4_not_for_expansion()
 ')')dnl
-define(`$1',`m4_not_for_expansion_internal(`$1')')')')
+define(`$1',`m4_not_for_expansion_internal(`$1')')')
 
 define(m4_not_for_expansion_internal,
 `m4_error(``$1' is not meant to be expanded, perhaps you mean `ifdef(`$1',...)'
