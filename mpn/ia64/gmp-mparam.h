@@ -43,11 +43,21 @@ MA 02111-1307, USA. */
 #endif
 
 #ifndef DC_THRESHOLD
-#define DC_THRESHOLD                10
+#define DC_THRESHOLD                38
 #endif
 
 #ifndef FIB_THRESHOLD
 #define FIB_THRESHOLD              198
 #endif
 
-/* When it had come here, juju.redhat.com crashed again... */
+#ifndef POWM_THRESHOLD
+#define POWM_THRESHOLD             184
+#endif
+
+#ifndef GCD_ACCEL_THRESHOLD
+#define GCD_ACCEL_THRESHOLD          3
+#endif
+#ifndef GCDEXT_THRESHOLD
+#define GCDEXT_THRESHOLD            33
+#endif
+
