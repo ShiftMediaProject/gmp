@@ -53,7 +53,7 @@ ifdef(`HAVE_ABI_32',
 		sxt4	r34 = r34
 		;;
 ')
-  { .mfi;	setf.sig	f16 = r35
+  { .mfi;	setf.sig	f6 = r35
 		nop.f		0
 		adds		r19 = -1, r34		C n - 1
 } { .mfi;	cmp.ne		p6, p7 = r0, r0
@@ -79,10 +79,10 @@ ifdef(`HAVE_ABI_32',
 .Loop:
 	.pred.rel "mutex",p6,p7
   { .mfi; (p16)	ldf8		f32 = [r17], 8		C  *0,3,6,9,12,15,18
-	  (p19)	xma.l		f40 = f35, f16, f39	C  0,3,6,*9,12,15,18
+	  (p19)	xma.l		f40 = f35, f6, f39	C  0,3,6,*9,12,15,18
 	   (p6) add		r14 = r33, r38, 1	C  0,3,6,9,12,15,*18
 } { .mfi; (p16)	ldf8		f36 = [r16], 8		C  *0,3,6,9,12,15,18
-	  (p19)	xma.hu		f44 = f35, f16, f39	C  0,3,6,*9,12,15,18
+	  (p19)	xma.hu		f44 = f35, f6, f39	C  0,3,6,*9,12,15,18
 	   (p7) add		r14 = r33, r38	;;	C  0,3,6,9,12,15,*18
 } { .mii; (p21)	getf.sig	r32 = f42		C  1,4,7,10,13,*16,19
 	   (p6) cmp.leu		p8, p9 = r14, r33	C  1,4,7,10,13,16,*19
