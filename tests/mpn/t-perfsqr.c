@@ -80,7 +80,7 @@ check_mod (void)
 {
 #define PERFSQR_MOD_34(r, up, usize)       { r = 0; } /* so r isn't unused */
 #define PERFSQR_MOD_PP(r, up, usize)       { r = 0; }
-#define PERFSQR_MOD_1(r, d, inv, mask)     check_mod_2 (d, inv, 0, mask)
+#define PERFSQR_MOD_1(r, d, inv, mask)     check_mod_2 (d, inv, CNST_LIMB(0), mask)
 #define PERFSQR_MOD_2(r, d, inv, mhi, mlo) check_mod_2 (d, inv, mhi, mlo)
 
   PERFSQR_MOD_TEST (dummy, dummy);
