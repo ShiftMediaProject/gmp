@@ -550,8 +550,13 @@ case $host in
         SPEED_CYCLECOUNTER_OBJ_32=ia64.lo
         cyclecounter_size_32=2
 
-        # must have +DD64 in CPPFLAGS to get right __LP64__ for headers
-        cc_64_cflags="+O3"
+        # Must have +DD64 in CPPFLAGS to get the right __LP64__ for headers,
+        # but also need it in CFLAGS for linking programs, since automake
+        # only uses CFLAGS when linking, not CPPFLAGS.
+        # FIXME: Maybe should use cc_64_ldflags for this, but that would
+        # need GMP_LDFLAGS used consistently by all the programs.
+        #
+        cc_64_cflags="+O3 +DD64"
         cc_64_cppflags="+DD64"
         gcc_64_cflags="-mlp64 -O2"
         ;;
