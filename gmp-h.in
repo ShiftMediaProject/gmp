@@ -389,6 +389,18 @@ typedef __mpq_struct *mpq_ptr;
 #define __GMP_INLINE_PROTOTYPES  1
 #endif
 
+/* DEC C (eg. version 5.9) supports "static __inline foo()", even in -std1
+   strict ANSI mode.  Inlining is done even when not optimizing (ie. -O0
+   mode, which is the default), but an unnecessary local copy of foo is
+   emitted unless -O is used.  "extern __inline" is accepted, but the
+   "extern" appears to be ignored, ie. it becomes a plain global function
+   but which is inlined within its file.  Don't know if all old versions of
+   DEC C supported __inline, but as a start let's do the right thing for
+   current versions.  */
+#ifdef __DECC
+#define __GMP_EXTERN_INLINE  static __inline
+#endif
+
 /* SCO OpenUNIX 8 cc supports "static inline foo()" but not in -Xc strict
    ANSI mode (__STDC__ is 1 in that mode).  Inlining only actually takes
    place under -O.  Without -O "foo" seems to be emitted whether it's used
