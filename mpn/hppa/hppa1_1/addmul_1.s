@@ -1,4 +1,4 @@
-; HP-PA-1.1 __mpn_addmul_1 -- Multiply a limb vector with a limb and
+; HP-PA-1.1 __gmpn_addmul_1 -- Multiply a limb vector with a limb and
 ; add the result to a second limb vector.
 
 ; Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
@@ -37,8 +37,8 @@
 ; There are some ideas described in mul_1.s that applies to this code too.
 
 	.code
-	.export		__mpn_addmul_1
-__mpn_addmul_1
+	.export		__gmpn_addmul_1
+__gmpn_addmul_1
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry

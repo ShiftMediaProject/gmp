@@ -1,4 +1,4 @@
-! SH2 __mpn_addmul_1 -- Multiply a limb vector with a limb and add
+! SH2 __gmpn_addmul_1 -- Multiply a limb vector with a limb and add
 ! the result to a second limb vector.
 
 ! Copyright (C) 1995 Free Software Foundation, Inc.
@@ -29,8 +29,8 @@
 
 	.text
 	.align 1
-	.global	___mpn_addmul_1
-___mpn_addmul_1:
+	.global	___gmpn_addmul_1
+___gmpn_addmul_1:
 	mov	#0,r2		! cy_limb = 0
 	mov	#0,r0		! Keep r0 = 0 for entire loop
 	clrt

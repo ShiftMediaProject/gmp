@@ -1,4 +1,4 @@
-/* x86 __mpn_submul_1 (for 386 and 486) -- Multiply a limb vector
+/* x86 __gmpn_submul_1 (for 386 and 486) -- Multiply a limb vector
    with a limb and store the result in a second limb vector.
 
 Copyright (C) 1992, 1994, 1997, 1999, 2000 Free Software Foundation, Inc.
@@ -37,9 +37,9 @@ MA 02111-1307, USA. */
 
 	TEXT
 	ALIGN (3)
-PROLOGUE(C_SYMBOL_NAME(__mpn_submul_1))
-	GLOBL	C_SYMBOL_NAME(__mpn_submul_1)
-C_SYMBOL_NAME(__mpn_submul_1:)
+PROLOGUE(C_SYMBOL_NAME(__gmpn_submul_1))
+	GLOBL	C_SYMBOL_NAME(__gmpn_submul_1)
+C_SYMBOL_NAME(__gmpn_submul_1:)
 
 	INSN1(push,l	,R(edi))
 	INSN1(push,l	,R(esi))
@@ -115,4 +115,4 @@ Lend:	movl	%ebx,%eax
 	INSN1(pop,l	,R(edi))
 	ret
 
-EPILOGUE(C_SYMBOL_NAME(__mpn_submul_1))
+EPILOGUE(C_SYMBOL_NAME(__gmpn_submul_1))

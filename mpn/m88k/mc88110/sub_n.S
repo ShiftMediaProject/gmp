@@ -1,4 +1,4 @@
-; mc88110 __mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
+; mc88110 __gmpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 ; store difference in a third limb vector.
 
 ; Copyright (C) 1995, 1996 Free Software Foundation, Inc.
@@ -31,8 +31,8 @@
 
 	text
 	align	16
-	global	C_SYMBOL_NAME(__mpn_sub_n)
-C_SYMBOL_NAME(__mpn_sub_n):
+	global	C_SYMBOL_NAME(__gmpn_sub_n)
+C_SYMBOL_NAME(__gmpn_sub_n):
 	subu.co	 r0,r0,r0		; set cy flag
 	xor	 r12,s2_ptr,res_ptr
 	bb1	 2,r12,L1

@@ -1,4 +1,4 @@
-/* mc68020 __mpn_add_n -- Add two limb vectors of the same length > 0 and store
+/* mc68020 __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
    sum in a third limb vector.
 
 Copyright (C) 1992, 1994, 1996, 1999 Free Software Foundation, Inc.
@@ -32,10 +32,10 @@ MA 02111-1307, USA. */
 
 	TEXT
 	ALIGN
-	GLOBL	C_SYMBOL_NAME(__mpn_add_n)
+	GLOBL	C_SYMBOL_NAME(__gmpn_add_n)
 
-C_SYMBOL_NAME(__mpn_add_n:)
-PROLOG(__mpn_add_n)
+C_SYMBOL_NAME(__gmpn_add_n:)
+PROLOG(__gmpn_add_n)
 /* Save used registers on the stack.  */
 	movel	R(d2),MEM_PREDEC(sp)
 	movel	R(a2),MEM_PREDEC(sp)
@@ -76,4 +76,4 @@ L(L2:)
 	movel	MEM_POSTINC(sp),R(d2)
 
 	rts
-EPILOG(__mpn_add_n)
+EPILOG(__gmpn_add_n)

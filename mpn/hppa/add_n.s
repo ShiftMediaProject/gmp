@@ -1,4 +1,4 @@
-; HP-PA  __mpn_add_n -- Add two limb vectors of the same length > 0 and store
+; HP-PA  __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
 ; sum in a third limb vector.
 
 ; Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -32,8 +32,8 @@
 ; unrolling useless.  We can't come under 5 cycles/limb anyway.
 
 	.code
-	.export		__mpn_add_n
-__mpn_add_n
+	.export		__gmpn_add_n
+__gmpn_add_n
 	.proc
 	.callinfo	frame=0,no_calls
 	.entry

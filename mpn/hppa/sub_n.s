@@ -1,4 +1,4 @@
-; HP-PA  __mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
+; HP-PA  __gmpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 ; store difference in a third limb vector.
 
 ; Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -32,8 +32,8 @@
 ; unrolling useless.  We can't come under 5 cycles/limb anyway.
 
 	.code
-	.export		__mpn_sub_n
-__mpn_sub_n
+	.export		__gmpn_sub_n
+__gmpn_sub_n
 	.proc
 	.callinfo	frame=0,no_calls
 	.entry

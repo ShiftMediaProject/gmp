@@ -1,4 +1,4 @@
-/* i80386 __mpn_lshift -- 
+/* i80386 __gmpn_lshift -- 
 
 Copyright (C) 1992, 1994, 1996, 1999, 2000 Free Software Foundation, Inc.
 
@@ -31,9 +31,9 @@ MA 02111-1307, USA. */
 
 .text
 	ALIGN (3)
-PROLOGUE(C_SYMBOL_NAME(__mpn_lshift))
-	.globl C_SYMBOL_NAME(__mpn_lshift)
-C_SYMBOL_NAME(__mpn_lshift:)
+PROLOGUE(C_SYMBOL_NAME(__gmpn_lshift))
+	.globl C_SYMBOL_NAME(__gmpn_lshift)
+C_SYMBOL_NAME(__gmpn_lshift:)
 	pushl	%edi
 	pushl	%esi
 	pushl	%ebx
@@ -84,4 +84,4 @@ Lend:	shll	%cl,%ebx		/* compute least significant limb */
 	popl	%edi
 	ret
 
-EPILOGUE(C_SYMBOL_NAME(__mpn_lshift))
+EPILOGUE(C_SYMBOL_NAME(__gmpn_lshift))

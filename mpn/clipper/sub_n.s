@@ -1,4 +1,4 @@
-; Clipper __mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
+; Clipper __gmpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 ; store difference in a third limb vector.
 
 ; Copyright (C) 1995 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 .text
 	.align 16
-.globl ___mpn_sub_n
-___mpn_sub_n:
+.globl ___gmpn_sub_n
+___gmpn_sub_n:
 	subq	$8,sp
 	storw	r6,(sp)
 	loadw	12(sp),r2

@@ -1,4 +1,4 @@
-; HP-PA 7100/7200 __mpn_submul_1 -- Multiply a limb vector with a limb and
+; HP-PA 7100/7200 __gmpn_submul_1 -- Multiply a limb vector with a limb and
 ; subtract the result from a second limb vector.
 
 ; Copyright (C) 1995 Free Software Foundation, Inc.
@@ -41,8 +41,8 @@
 #define hi3	%r1
 
 	.code
-	.export		__mpn_submul_1
-__mpn_submul_1
+	.export		__gmpn_submul_1
+__gmpn_submul_1
 	.proc
 	.callinfo	frame=128,no_calls
 	.entry

@@ -1,4 +1,4 @@
-; Clipper __mpn_add_n -- Add two limb vectors of the same length > 0 and store
+; Clipper __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
 ; sum in a third limb vector.
 
 ; Copyright (C) 1995 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 .text
 	.align 16
-.globl ___mpn_add_n
-___mpn_add_n:
+.globl ___gmpn_add_n
+___gmpn_add_n:
 	subq	$8,sp
 	storw	r6,(sp)
 	loadw	12(sp),r2

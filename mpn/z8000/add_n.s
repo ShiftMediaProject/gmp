@@ -1,4 +1,4 @@
-! Z8000 __mpn_add_n -- Add two limb vectors of equal, non-zero length.
+! Z8000 __gmpn_add_n -- Add two limb vectors of equal, non-zero length.
 
 ! Copyright (C) 1993, 1994 Free Software Foundation, Inc.
 
@@ -33,8 +33,8 @@
 	unseg
 	.text
 	even
-	global ___mpn_add_n
-___mpn_add_n:
+	global ___gmpn_add_n
+___gmpn_add_n:
 	pop	r0,@r6
 	pop	r1,@r5
 	add	r0,r1

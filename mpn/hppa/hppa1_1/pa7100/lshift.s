@@ -1,4 +1,4 @@
-; HP-PA  __mpn_lshift --
+; HP-PA  __gmpn_lshift --
 ; This is optimized for the PA7100, where is runs at 3.25 cycles/limb
 
 ; Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -28,8 +28,8 @@
 ; cnt		gr23
 
 	.code
-	.export		__mpn_lshift
-__mpn_lshift
+	.export		__gmpn_lshift
+__gmpn_lshift
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry

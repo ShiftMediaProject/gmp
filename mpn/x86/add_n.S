@@ -1,4 +1,4 @@
-/* i80386 __mpn_add_n -- Add two limb vectors of the same length > 0 and store
+/* i80386 __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
 sum in a third limb vector.
 
 Copyright (C) 1992, 1994, 1995, 1996, 1999, 2000 Free Software Foundation,
@@ -33,9 +33,9 @@ MA 02111-1307, USA. */
 
 .text
 	ALIGN (3)
-	.globl C_SYMBOL_NAME(__mpn_add_nc)
-C_SYMBOL_NAME(__mpn_add_nc:)
-	PROLOGUE(C_SYMBOL_NAME(__mpn_add_nc))
+	.globl C_SYMBOL_NAME(__gmpn_add_nc)
+C_SYMBOL_NAME(__gmpn_add_nc:)
+	PROLOGUE(C_SYMBOL_NAME(__gmpn_add_nc))
 	pushl %edi
 	pushl %esi
 
@@ -77,9 +77,9 @@ L0a:	leal	(%eax,%eax,8),%eax
 	jmp	*%eax			/* jump into loop */
 
 	ALIGN (3)
-	.globl C_SYMBOL_NAME(__mpn_add_n)
-C_SYMBOL_NAME(__mpn_add_n:)
-	PROLOGUE(C_SYMBOL_NAME(__mpn_add_n))
+	.globl C_SYMBOL_NAME(__gmpn_add_n)
+C_SYMBOL_NAME(__gmpn_add_n:)
+	PROLOGUE(C_SYMBOL_NAME(__gmpn_add_n))
 	pushl %edi
 	pushl %esi
 
@@ -155,5 +155,5 @@ Loop:	movl	(%esi),%eax
 	popl %esi
 	popl %edi
 	ret
-	EPILOGUE(C_SYMBOL_NAME(__mpn_add_nc))
-	EPILOGUE(C_SYMBOL_NAME(__mpn_add_n))
+	EPILOGUE(C_SYMBOL_NAME(__gmpn_add_nc))
+	EPILOGUE(C_SYMBOL_NAME(__gmpn_add_n))

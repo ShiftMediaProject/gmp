@@ -1,4 +1,4 @@
-dnl  Alpha EV5 __mpn_sub_n -- Subtract two limb vectors of the same length > 0
+dnl  Alpha EV5 __gmpn_sub_n -- Subtract two limb vectors of the same length > 0
 dnl  and store difference in a third limb vector.
 
 dnl  Copyright (C) 1995, 1999, 2000 Free Software Foundation, Inc.

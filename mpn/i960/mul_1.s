@@ -1,4 +1,4 @@
-# I960 __mpn_mul_1 -- Multiply a limb vector with a limb and store
+# I960 __gmpn_mul_1 -- Multiply a limb vector with a limb and store
 # the result in a second limb vector.
 
 # Copyright (C) 1995 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 .text
 	.align	4
-	.globl	___mpn_mul_1
-___mpn_mul_1:
+	.globl	___gmpn_mul_1
+___gmpn_mul_1:
 	subo	g2,0,g2
 	shlo	2,g2,g4
 	subo	g4,g1,g1

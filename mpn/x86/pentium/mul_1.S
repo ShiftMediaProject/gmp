@@ -1,4 +1,4 @@
-/* Pentium __mpn_mul_1 -- Multiply a limb vector with a limb and store
+/* Pentium __gmpn_mul_1 -- Multiply a limb vector with a limb and store
    the result in a second limb vector.
 
 Copyright (C) 1992, 1994, 1996, 1999, 2000 Free Software Foundation, Inc.
@@ -37,9 +37,9 @@ MA 02111-1307, USA. */
 
 	TEXT
 	ALIGN (3)
-PROLOGUE(C_SYMBOL_NAME(__mpn_mul_1))
-	GLOBL	C_SYMBOL_NAME(__mpn_mul_1)
-C_SYMBOL_NAME(__mpn_mul_1:)
+PROLOGUE(C_SYMBOL_NAME(__gmpn_mul_1))
+	GLOBL	C_SYMBOL_NAME(__gmpn_mul_1)
+C_SYMBOL_NAME(__gmpn_mul_1:)
 
 	INSN1(push,l	,R(edi))
 	INSN1(push,l	,R(esi))
@@ -78,4 +78,4 @@ Loop:	INSN2(adc,l	,R(ebx),$0)
 	INSN1(pop,l	,R(edi))
 	ret
 
-EPILOGUE(C_SYMBOL_NAME(__mpn_mul_1))
+EPILOGUE(C_SYMBOL_NAME(__gmpn_mul_1))

@@ -38,9 +38,9 @@ sp =>	saved reg
 
 .text
 	ALIGN (3)
-PROLOGUE(C_SYMBOL_NAME(__mpn_mul_basecase))
-	.globl C_SYMBOL_NAME(__mpn_mul_basecase)
-C_SYMBOL_NAME(__mpn_mul_basecase:)
+PROLOGUE(C_SYMBOL_NAME(__gmpn_mul_basecase))
+	.globl C_SYMBOL_NAME(__gmpn_mul_basecase)
+C_SYMBOL_NAME(__gmpn_mul_basecase:)
 	pushl	%eax		   /* dummy push for allocating stack slot */
 	pushl	%esi
 	pushl	%ebp
@@ -123,4 +123,4 @@ Ldone:	movl	%edx,4(%edi)	   /* store to rptr[1] */
 	popl	%eax		   /* dummy pop for deallocating stack slot */
 	ret
 
-EPILOGUE(C_SYMBOL_NAME(__mpn_mul_basecase))
+EPILOGUE(C_SYMBOL_NAME(__gmpn_mul_basecase))

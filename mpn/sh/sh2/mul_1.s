@@ -1,4 +1,4 @@
-! SH2 __mpn_mul_1 -- Multiply a limb vector with a limb and store
+! SH2 __gmpn_mul_1 -- Multiply a limb vector with a limb and store
 ! the result in a second limb vector.
 
 ! Copyright (C) 1995 Free Software Foundation, Inc.
@@ -29,8 +29,8 @@
 
 	.text
 	.align 1
-	.global	___mpn_mul_1
-___mpn_mul_1:
+	.global	___gmpn_mul_1
+___gmpn_mul_1:
 	mov	#0,r2		! cy_limb = 0
 	mov	#0,r0		! Keep r0 = 0 for entire loop
 	clrt

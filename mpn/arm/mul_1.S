@@ -35,9 +35,9 @@
 
 .text
 	.align	0
-	.global	__mpn_mul_1
-	.type	__mpn_mul_1,%function
-__mpn_mul_1:
+	.global	__gmpn_mul_1
+	.type	__gmpn_mul_1,%function
+__gmpn_mul_1:
 	stmfd	sp!, { r7, r8, r9, lr }
 	mov	lr, #0
 	movs	n, n, lsr #1
@@ -79,4 +79,4 @@ Lreturn:
 	mov	r0, lr
 	ldmfd	sp!, { r7, r8, r9, pc }^
 Lend:
-	.size	__mpn_mul_1, Lend - __mpn_mul_1
+	.size	__gmpn_mul_1, Lend - __gmpn_mul_1

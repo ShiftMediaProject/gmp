@@ -1,4 +1,4 @@
-; mc88110 __mpn_addmul_1 -- Multiply a limb vector with a single limb and
+; mc88110 __gmpn_addmul_1 -- Multiply a limb vector with a single limb and
 ; store the product in a second limb vector.
 
 ; Copyright (C) 1996 Free Software Foundation, Inc.
@@ -29,8 +29,8 @@
 
 	text
 	align	16
-	global	___mpn_addmul_1
-___mpn_addmul_1:
+	global	___gmpn_addmul_1
+___gmpn_addmul_1:
 	lda	 r3,r3[r4]
 	lda	 r8,r2[r4]		; RES_PTR in r8 since r2 is retval
 	subu	 r4,r0,r4

@@ -1,4 +1,4 @@
-! Z8000 __mpn_mul_1 -- Multiply a limb vector with a limb and store
+! Z8000 __gmpn_mul_1 -- Multiply a limb vector with a limb and store
 ! the result in a second limb vector.
 
 ! Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
@@ -30,8 +30,8 @@
 	unseg
 	.text
 	even
-	global ___mpn_mul_1
-___mpn_mul_1:
+	global ___gmpn_mul_1
+___gmpn_mul_1:
 	sub	r2,r2		! zero carry limb
 	and	r4,r4
 	jr	mi,Lneg

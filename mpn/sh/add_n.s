@@ -1,4 +1,4 @@
-! SH __mpn_add_n -- Add two limb vectors of the same length > 0 and store
+! SH __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
 ! sum in a third limb vector.
 
 ! Copyright (C) 1995, 1997 Free Software Foundation, Inc.
@@ -29,8 +29,8 @@
 
 	.text
 	.align 2
-	.global	___mpn_add_n
-___mpn_add_n:
+	.global	___gmpn_add_n
+___gmpn_add_n:
 	mov	#0,r3		! clear cy save reg
 
 Loop:	mov.l	@r5+,r1

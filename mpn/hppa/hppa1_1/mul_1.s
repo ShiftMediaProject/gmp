@@ -1,4 +1,4 @@
-; HP-PA-1.1 __mpn_mul_1 -- Multiply a limb vector with a limb and store
+; HP-PA-1.1 __gmpn_mul_1 -- Multiply a limb vector with a limb and store
 ; the result in a second limb vector.
 
 ; Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
@@ -45,8 +45,8 @@
 ; in the cache.)
 
 	.code
-	.export		__mpn_mul_1
-__mpn_mul_1
+	.export		__gmpn_mul_1
+__gmpn_mul_1
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry

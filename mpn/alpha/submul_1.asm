@@ -1,4 +1,4 @@
-dnl  Alpha __mpn_submul_1 -- Multiply a limb vector with a limb and
+dnl  Alpha __gmpn_submul_1 -- Multiply a limb vector with a limb and
 dnl  subtract the result from a second limb vector.
 
 dnl  Copyright (C) 1992, 1994, 1995, 2000 Free Software Foundation, Inc.

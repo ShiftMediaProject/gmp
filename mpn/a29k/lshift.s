@@ -1,4 +1,4 @@
-; 29000 __mpn_lshift --
+; 29000 __gmpn_lshift --
 
 ; Copyright (C) 1992, 1994 Free Software Foundation, Inc.
 
@@ -32,9 +32,9 @@
 	.sect .lit,lit
 	.text
 	.align	4
-	.global	___mpn_lshift
+	.global	___gmpn_lshift
 	.word	0x60000
-___mpn_lshift:
+___gmpn_lshift:
 	sll	gr116,lr4,2
 	add	lr3,gr116,lr3
 	add	lr2,gr116,lr2

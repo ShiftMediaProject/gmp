@@ -1,4 +1,4 @@
-; 29000 __mpn_add -- Add two limb vectors of the same length > 0 and store
+; 29000 __gmpn_add -- Add two limb vectors of the same length > 0 and store
 ; sum in a third limb vector.
 
 ; Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -38,9 +38,9 @@
 	.sect .lit,lit
 	.text
 	.align	4
-	.global	___mpn_add_n
+	.global	___gmpn_add_n
 	.word	0x60000
-___mpn_add_n:
+___gmpn_add_n:
 	srl	gr117,lr5,3
 	sub	gr118,gr117,1
 	jmpt	gr118,Ltail

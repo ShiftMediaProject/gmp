@@ -35,9 +35,9 @@
 
 .text
 	.align	0
-	.global	__mpn_sub_n
-	.type	__mpn_sub_n,%function
-__mpn_sub_n:
+	.global	__gmpn_sub_n
+	.type	__gmpn_sub_n,%function
+__gmpn_sub_n:
 	stmfd	sp!, { r8, r9, lr }
 	subs	ip, ip, ip
 	tst	n, #1
@@ -75,4 +75,4 @@ Lreturn:
 	and	r0, r0, #1
 	ldmfd	sp!, { r8, r9, pc }^
 Lend:
-	.size	__mpn_sub_n, Lend - __mpn_sub_n
+	.size	__gmpn_sub_n, Lend - __gmpn_sub_n

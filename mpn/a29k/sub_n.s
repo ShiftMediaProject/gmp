@@ -1,4 +1,4 @@
-; 29000 __mpn_sub -- Subtract two limb vectors of the same length > 0 and
+; 29000 __gmpn_sub -- Subtract two limb vectors of the same length > 0 and
 ; store difference in a third limb vector.
 
 ; Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -38,9 +38,9 @@
 	.sect .lit,lit
 	.text
 	.align	4
-	.global	___mpn_sub_n
+	.global	___gmpn_sub_n
 	.word	0x60000
-___mpn_sub_n:
+___gmpn_sub_n:
 	srl	gr117,lr5,3
 	sub	gr118,gr117,1
 	jmpt	gr118,Ltail

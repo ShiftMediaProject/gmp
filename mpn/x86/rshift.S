@@ -1,4 +1,4 @@
-/* i80386 __mpn_rshift -- 
+/* i80386 __gmpn_rshift -- 
 
 Copyright (C) 1992, 1994, 1996, 1999, 2000 Free Software Foundation, Inc.
 
@@ -31,9 +31,9 @@ MA 02111-1307, USA. */
 
 .text
 	ALIGN (3)
-PROLOGUE(C_SYMBOL_NAME(__mpn_rshift))
-	.globl C_SYMBOL_NAME(__mpn_rshift)
-C_SYMBOL_NAME(__mpn_rshift:)
+PROLOGUE(C_SYMBOL_NAME(__gmpn_rshift))
+	.globl C_SYMBOL_NAME(__gmpn_rshift)
+C_SYMBOL_NAME(__gmpn_rshift:)
 	pushl	%edi
 	pushl	%esi
 	pushl	%ebx
@@ -86,4 +86,4 @@ Lend:	shrl	%cl,%ebx		/* compute most significant limb */
 	popl	%edi
 	ret
 
-EPILOGUE(C_SYMBOL_NAME(__mpn_rshift))
+EPILOGUE(C_SYMBOL_NAME(__gmpn_rshift))

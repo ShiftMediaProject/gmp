@@ -1,4 +1,4 @@
-; HP-PA 2.0 32-bit __mpn_sub_n -- Subtract two limb vectors of the same
+; HP-PA 2.0 32-bit __gmpn_sub_n -- Subtract two limb vectors of the same
 ; length > 0 and store difference in a third limb vector.
 
 ; Copyright (C) 1997, 1998 Free Software Foundation, Inc.
@@ -30,8 +30,8 @@
 ; This runs at 2 cycles/limb on PA8000.
 
 	.code
-	.export	__mpn_sub_n
-__mpn_sub_n
+	.export	__gmpn_sub_n
+__gmpn_sub_n
 	.proc
 	.callinfo frame=0,no_calls
 	.entry

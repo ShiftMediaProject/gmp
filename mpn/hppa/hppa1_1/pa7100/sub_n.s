@@ -1,4 +1,4 @@
-; HP-PA  __mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
+; HP-PA  __gmpn_sub_n -- Subtract two limb vectors of the same length > 0 and
 ; store difference in a third limb vector.
 ; This is optimized for the PA7100, where is runs at 4.25 cycles/limb
 
@@ -29,8 +29,8 @@
 ; size		gr23
 
 	.code
-	.export		__mpn_sub_n
-__mpn_sub_n
+	.export		__gmpn_sub_n
+__gmpn_sub_n
 	.proc
 	.callinfo	frame=0,no_calls
 	.entry

@@ -1,4 +1,4 @@
-/* Pentium __mpn_sub_n -- Subtract two limb vectors of the same length > 0
+/* Pentium __gmpn_sub_n -- Subtract two limb vectors of the same length > 0
    and store difference in a third limb vector.
 
 Copyright (C) 1992, 1994, 1995, 1996, 1999, 2000 Free Software Foundation,
@@ -33,9 +33,9 @@ MA 02111-1307, USA. */
 
 .text
 	ALIGN (3)
-PROLOGUE(C_SYMBOL_NAME(__mpn_sub_nc))
-	.globl C_SYMBOL_NAME(__mpn_sub_nc)
-C_SYMBOL_NAME(__mpn_sub_nc:)
+PROLOGUE(C_SYMBOL_NAME(__gmpn_sub_nc))
+	.globl C_SYMBOL_NAME(__gmpn_sub_nc)
+C_SYMBOL_NAME(__gmpn_sub_nc:)
 	pushl	%edi
 	pushl	%esi
 	pushl	%ebx
@@ -64,13 +64,13 @@ Lendgo:	movl	36(%esp),%eax
 	shrl	$1,%eax			/* shift bit 0 into carry */
 	jmp	Lend
 
-EPILOGUE(C_SYMBOL_NAME(__mpn_sub_nc))
+EPILOGUE(C_SYMBOL_NAME(__gmpn_sub_nc))
 
 
 	ALIGN (3)
-PROLOGUE(C_SYMBOL_NAME(__mpn_sub_n))
-	.globl C_SYMBOL_NAME(__mpn_sub_n)
-C_SYMBOL_NAME(__mpn_sub_n:)
+PROLOGUE(C_SYMBOL_NAME(__gmpn_sub_n))
+	.globl C_SYMBOL_NAME(__gmpn_sub_n)
+C_SYMBOL_NAME(__gmpn_sub_n:)
 	pushl	%edi
 	pushl	%esi
 	pushl	%ebx
@@ -165,4 +165,4 @@ Lend2:
 	popl	%edi
 	ret
 
-EPILOGUE(C_SYMBOL_NAME(__mpn_sub_n))
+EPILOGUE(C_SYMBOL_NAME(__gmpn_sub_n))

@@ -35,9 +35,9 @@
 
 .text
 	.align	0
-	.global	__mpn_add_n
-	.type	__mpn_add_n,%function
-__mpn_add_n:
+	.global	__gmpn_add_n
+	.type	__gmpn_add_n,%function
+__gmpn_add_n:
 	stmfd	sp!, { r8, r9, lr }
 	movs	n, n, lsr #1
 	bcc	Lskip1
@@ -73,4 +73,4 @@ Lreturn:
 	adc	r0, n, #0
 	ldmfd	sp!, { r8, r9, pc }^
 Lend:
-	.size	__mpn_add_n, Lend - __mpn_add_n
+	.size	__gmpn_add_n, Lend - __gmpn_add_n

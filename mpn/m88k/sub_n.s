@@ -1,4 +1,4 @@
-; mc88100 __mpn_sub -- Subtract two limb vectors of the same length > 0 and
+; mc88100 __gmpn_sub -- Subtract two limb vectors of the same length > 0 and
 ; store difference in a third limb vector.
 
 ; Copyright (C) 1992, 1994, 1996 Free Software Foundation, Inc.
@@ -36,8 +36,8 @@
 
 	text
 	align	 16
-	global	 ___mpn_sub_n
-___mpn_sub_n:
+	global	 ___gmpn_sub_n
+___gmpn_sub_n:
 	ld	r6,r3,0			; read first limb from s1_ptr
 	extu	r10,r5,3
 	ld	r7,r4,0			; read first limb from s2_ptr

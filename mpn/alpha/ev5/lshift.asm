@@ -1,4 +1,4 @@
-dnl  Alpha EV5 __mpn_lshift -- Shift a number left.
+dnl  Alpha EV5 __gmpn_lshift -- Shift a number left.
 
 dnl  Copyright (C) 1994, 1995, 2000 Free Software Foundation, Inc.
 

@@ -1,4 +1,4 @@
-; HP-PA-1.1 __mpn_submul_1 -- Multiply a limb vector with a limb and
+; HP-PA-1.1 __gmpn_submul_1 -- Multiply a limb vector with a limb and
 ; subtract the result from a second limb vector.
 
 ; Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
@@ -36,14 +36,14 @@
 
 ; There are some ideas described in mul_1.s that applies to this code too.
 
-; It seems possible to make this run as fast as __mpn_addmul_1, if we use
+; It seems possible to make this run as fast as __gmpn_addmul_1, if we use
 ; 	sub,>>=	%r29,%r19,%r22
 ;	addi	1,%r28,%r28
 ; but that requires reworking the hairy software pipeline...
 
 	.code
-	.export		__mpn_submul_1
-__mpn_submul_1
+	.export		__gmpn_submul_1
+__gmpn_submul_1
 	.proc
 	.callinfo	frame=64,no_calls
 	.entry

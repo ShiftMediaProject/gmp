@@ -1,4 +1,4 @@
-! SPARC v9 __mpn_copy -- Copy a limb vector.
+! SPARC v9 __gmpn_copy -- Copy a limb vector.
 
 ! Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 

@@ -1,4 +1,4 @@
-# I960 __mpn_add_n -- Add two limb vectors of the same length > 0 and store
+# I960 __gmpn_add_n -- Add two limb vectors of the same length > 0 and store
 # sum in a third limb vector.
 
 # Copyright (C) 1995 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 .text
 	.align 4
-	.globl ___mpn_add_n
-___mpn_add_n:
+	.globl ___gmpn_add_n
+___gmpn_add_n:
 	mov	0,g6		# clear carry-save register
 	cmpo	1,0		# clear cy
 

@@ -1,4 +1,4 @@
-! SPARC v9 __mpn_rshift --
+! SPARC v9 __gmpn_rshift --
 
 ! Copyright (C) 1996, 2000 Free Software Foundation, Inc.
 

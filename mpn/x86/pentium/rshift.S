@@ -1,4 +1,4 @@
-/* Pentium optimized __mpn_rshift -- mpn right shift.
+/* Pentium optimized __gmpn_rshift -- mpn right shift.
 
 Copyright (C) 1992, 1994, 1995, 1996, 1999, 2000 Free Software Foundation,
 Inc.
@@ -32,9 +32,9 @@ MA 02111-1307, USA. */
 
 .text
 	ALIGN (3)
-PROLOGUE(C_SYMBOL_NAME(__mpn_rshift))
-	.globl C_SYMBOL_NAME(__mpn_rshift)
-C_SYMBOL_NAME(__mpn_rshift:)
+PROLOGUE(C_SYMBOL_NAME(__gmpn_rshift))
+	.globl C_SYMBOL_NAME(__gmpn_rshift)
+C_SYMBOL_NAME(__gmpn_rshift:)
 	pushl	%edi
 	pushl	%esi
 	pushl	%ebx
@@ -217,4 +217,4 @@ LL1:	movl	%edx,(%edi)		/* store last limb */
 	popl	%edi
 	ret
 
-EPILOGUE(C_SYMBOL_NAME(__mpn_rshift))
+EPILOGUE(C_SYMBOL_NAME(__gmpn_rshift))

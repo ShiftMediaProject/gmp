@@ -1,4 +1,4 @@
-; mc88100 __mpn_add -- Add two limb vectors of the same length > 0 and store
+; mc88100 __gmpn_add -- Add two limb vectors of the same length > 0 and store
 ; sum in a third limb vector.
 
 ; Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
@@ -36,8 +36,8 @@
 
 	text
 	align	 16
-	global	 ___mpn_add_n
-___mpn_add_n:
+	global	 ___gmpn_add_n
+___gmpn_add_n:
 	ld	r6,r3,0			; read first limb from s1_ptr
 	extu	r10,r5,3
 	ld	r7,r4,0			; read first limb from s2_ptr

@@ -1,4 +1,4 @@
-dnl  Alpha EV5 __mpn_add_n -- Add two limb vectors of the same length > 0 and
+dnl  Alpha EV5 __gmpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl  store sum in a third limb vector.
 
 dnl  Copyright (C) 1995, 1999, 2000 Free Software Foundation, Inc.

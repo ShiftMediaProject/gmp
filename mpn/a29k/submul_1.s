@@ -1,4 +1,4 @@
-; 29000 __mpn_submul_1 -- Multiply a limb vector with a single limb and
+; 29000 __gmpn_submul_1 -- Multiply a limb vector with a single limb and
 ; subtract the product from a second limb vector.
 
 ; Copyright (C) 1992, 1994 Free Software Foundation, Inc.
@@ -31,9 +31,9 @@
 	.sect .lit,lit
 	.text
 	.align	4
-	.global	___mpn_submul_1
+	.global	___gmpn_submul_1
 	.word	0x60000
-___mpn_submul_1:
+___gmpn_submul_1:
 	sub	lr4,lr4,8
 	jmpt	lr4,Ltail
 	 const	gr120,0			; init cylimb reg

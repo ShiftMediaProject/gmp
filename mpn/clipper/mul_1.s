@@ -1,4 +1,4 @@
-; Clipper __mpn_mul_1 -- Multiply a limb vector with a limb and store
+; Clipper __gmpn_mul_1 -- Multiply a limb vector with a limb and store
 ; the result in a second limb vector.
 
 ; Copyright (C) 1995 Free Software Foundation, Inc.
@@ -22,8 +22,8 @@
 
 .text
 	.align	16
-.globl	___mpn_mul_1
-___mpn_mul_1:
+.globl	___gmpn_mul_1
+___gmpn_mul_1:
 	subq	$8,sp
 	storw	r6,(sp)
 	loadw	12(sp),r2
