@@ -1,3 +1,8 @@
+2000-05-11  Torbjorn Granlund  <tege@swox.com>
+
+	* randraw.c (lc): Major overhaul (pending rewrite).
+	(_gmp_rand): Rewrite.
+
 2000-05-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/convert.c: Call free via _mp_free_func.
