@@ -836,6 +836,46 @@ m4_assert_numargs(1)
 ')')')
 
 
+dnl  Usage: m4_repeat(count,text)
+dnl
+dnl  Expand to the given repetitions of the given text.  A zero count is
+dnl  allowed, and expands to nothing.
+
+define(m4_repeat,
+m4_assert_numargs(2)
+`m4_repeat_internal(eval($1),`$2')')
+
+define(m4_repeat_internal,
+m4_assert_numargs(2)
+`ifelse(`$1',0,,
+`forloop(m4_repeat_internal_counter,1,$1,``$2'')')')
+
+
+dnl  Usage: m4_hex_lowmask(bits)
+dnl
+dnl  Generate a hex constant which is a low mask of the given number of
+dnl  bits.  For example m4_hex_lowmask(10) would give 0x3ff.
+
+define(m4_hex_lowmask,
+m4_assert_numargs(1)
+`m4_cpu_hex_constant(m4_hex_lowmask_internal1(eval(`$1')))')
+
+dnl  Called: m4_hex_lowmask_internal1(bits)
+define(m4_hex_lowmask_internal1,
+m4_assert_numargs(1)
+`ifelse($1,0,`0',
+`m4_hex_lowmask_internal2(eval(($1)%4),eval(($1)/4))')')
+
+dnl  Called: m4_hex_lowmask_internal(remainder,digits)
+define(m4_hex_lowmask_internal2,
+m4_assert_numargs(2)
+`ifelse($1,1,`1',
+`ifelse($1,2,`3',
+`ifelse($1,3,`7')')')dnl
+m4_repeat($2,`f')')
+
+
+dnl  --------------------------------------------------------------------------
 dnl  The following m4_list functions take a list as multiple arguments.
 dnl  Arguments are evaluated multiple times, there's no attempt at strict
 dnl  quoting.  Empty list elements are not allowed, since an empty final
@@ -1078,6 +1118,16 @@ define(m4_instruction_wrapper_internal,
 ')')')
 
 
+dnl  Usage: m4_cpu_hex_constant(string)
+dnl
+dnl  Expand to the string prefixed by a suitable `0x' hex marker.  This
+dnl  should be redefined as necessary for CPUs with different conventions.
+
+define(m4_cpu_hex_constant,
+m4_assert_numargs(1)
+`0x`$1'')
+
+
 dnl  Usage: UNROLL_LOG2, UNROLL_MASK, UNROLL_BYTES
 dnl         CHUNK_LOG2, CHUNK_MASK, CHUNK_BYTES
 dnl
@@ -1301,13 +1351,18 @@ dnl
 dnl  If only one PROLOGUE is open then the name can be omitted from
 dnl  EPILOGUE.  This is encouraged, since it means the name only has to
 dnl  appear in one place, not two.
+dnl
+dnl  The given name "foo" is not fully quoted here, it will be macro
+dnl  expanded more than once.  This is the way the m4_list macros work, and
+dnl  it also helps the tune/many.pl program do a renaming like
+dnl  -D__gmpn_add_n=mpn_add_n_foo when GSYM_PREFIX is not empty.
 
 define(PROLOGUE,
 m4_assert_numargs_range(1,2)
 `define(`PROLOGUE_list',m4_list_quote($1,PROLOGUE_list))dnl
 ifelse(`$2',,
-`PROLOGUE_cpu(GSYM_PREFIX`$1')',
-`PROLOGUE_cpu(GSYM_PREFIX`$1',`$2')')')
+`PROLOGUE_cpu(GSYM_PREFIX`'$1)',
+`PROLOGUE_cpu(GSYM_PREFIX`'$1,`$2')')')
 
 define(EPILOGUE,
 m4_assert_numargs_range(0,1)
@@ -1328,7 +1383,7 @@ m4_assert_defined(`EPILOGUE_cpu')
 `m4_error(`EPILOGUE without PROLOGUE: $1
 ')')dnl
 define(`PROLOGUE_list',m4_list_quote(m4_list_remove($1,PROLOGUE_list)))dnl
-EPILOGUE_cpu(GSYM_PREFIX`'$1)')
+EPILOGUE_cpu(GSYM_PREFIX`$1')')
 
 dnl  Currently open PROLOGUEs, as a comma-separated list.
 define(PROLOGUE_list)
@@ -1438,6 +1493,17 @@ dnl  names separated by spaces.
 define(`MULFUNC_PROLOGUE',
 m4_assert_numargs(1)
 )
+
+
+dnl  Usage: GMP_NUMB_MASK
+dnl
+dnl  A bit masks for the number part of a limb.  Eg.  with 6 bit nails in a
+dnl  32 bit limb, GMP_NUMB_MASK would be 0x3ffffff.
+
+define(GMP_NUMB_MASK,
+m4_assert_numargs(-1)
+m4_assert_defined(`GMP_NUMB_BITS')
+`m4_hex_lowmask(GMP_NUMB_BITS)')
 
 
 divert`'dnl
