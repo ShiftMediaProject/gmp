@@ -3,6 +3,7 @@
 	* mpn/asm-defs.m4: invert_normalized_limb => invert_limb.
 	* mpn/alpha/invert_limb.asm: mpn_invert_normalized_limb =>
 	mpn_invert_limb.
+	* gmp.h: Likewise.
 	* gmp-impl.h (alpha specific): invert_normalized_limb => invert_limb;
 	wrap with __MPN.
 	* longlong.h (alpha udiv_qrnnd): Likewise.
