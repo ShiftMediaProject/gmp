@@ -77,7 +77,7 @@ ifdef(`HAVE_ABI_32',`
 	adds		n = -1, n
 	mov.i		r2 = ar.lc
 	;;
-	shr		r15 = n, 2
+	shr.u		r15 = n, 2
 	cmp.eq		p6, p0 = 0, r14
 	cmp.eq		p7, p0 = 1, r14
 	cmp.eq		p8, p0 = 3, r14
@@ -95,13 +95,13 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u2 = [up], 8
 	br.cloop.dptk	.Lb10_grt2
 					C n = 2
-	shrp		x1 = v1, r0, 63
+	shl		x1 = v1, 1
 	;;
 	ADDSUB		w1 = u1, x1
 	shrp		x2 = v2, v1, 63
 	;;
 	cmp.PRED	p8, p9 = w1, u1
-	shrp		x3 = r0, v2, 63
+	shr.u		x3 = v2, 63
 	ADDSUB		w2 = u2, x2
 	;;
 	cmp.PRED	p6, p7 = w2, u2
@@ -110,7 +110,7 @@ ifdef(`HAVE_ABI_32',`
 .Lb10_grt2:				C n = 6, 10, 14, ...
 	ld8		v3 = [vp], 8
 	ld8		u3 = [up], 8
-	shrp		x1 = v1, r0, 63
+	shl		x1 = v1, 1
 	;;
 	ld8		v0 = [vp], 8
 	ld8		u0 = [up], 8
@@ -142,7 +142,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u2 = [up], 8
 	br.cloop.dptk	.Lb11_grt3
 					C n = 3
-	shrp		x0 = v0, r0, 63
+	shl		x0 = v0, 1
 	;;
 	shrp		x1 = v1, v0, 63
 	ADDSUB		w0 = u0, x0
@@ -155,7 +155,7 @@ ifdef(`HAVE_ABI_32',`
 	br		.Lcj3
 
 .Lb11_grt3:				C n = 7, 11, 15, ...
-	shrp		x0 = v0, r0, 63
+	shl		x0 = v0, 1
 	ld8		v3 = [vp], 8
 	;;
 	ld8		u3 = [up], 8
@@ -181,7 +181,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	ld8		v1 = [vp], 8
 	ld8		u1 = [up], 8
-	shrp		x3 = v3, r0, 63
+	shl		x3 = v3, 1
 	;;
 	ld8		v2 = [vp], 8
 	ld8		u2 = [up], 8
@@ -218,10 +218,10 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u2 = [up], 8
 	br.cloop.dptk	.Lb01_grt1
 					C n = 1
-	shrp		x2 = v2, r0, 63
+	shl		x2 = v2, 1
 	;;
 	ADDSUB		w2 = u2, x2
-	shrp		x3 = r0, v2, 63
+	shr.u		x3 = v2, 63
 	;;
 	cmp.PRED	p6, p7 = w2, u2
 	br		.Lcj1
@@ -232,7 +232,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	ld8		v0 = [vp], 8
 	ld8		u0 = [up], 8
-	shrp		x2 = v2, r0, 63
+	shl		x2 = v2, 1
 	;;
 	ld8		v1 = [vp], 8
 	ld8		u1 = [up], 8
@@ -319,7 +319,7 @@ C *** MAIN LOOP END ***
    (p8)	add		w0 = INCR, w0
 	cmp.PRED	p8, p9 = w1, u1
 	;;
-.Lcj3:	shrp		x3 = r0, v2, 63
+.Lcj3:	shr.u		x3 = v2, 63
    (p6)	cmp.eq.or	p8, p9 = LIM, w1
    (p6)	add		w1 = INCR, w1
 	ADDSUB		w2 = u2, x2
