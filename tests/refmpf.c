@@ -21,17 +21,11 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
-#if __STDC__
-void ref_mpf_add (mpf_t, const mpf_t, const mpf_t);
-void ref_mpf_sub (mpf_t, const mpf_t, const mpf_t);
-#else
-void ref_mpf_add ();
-void ref_mpf_sub ();
-#endif
 
 void
-ref_mpf_add (mpf_t w, const mpf_t u, const mpf_t v)
+refmpf_add (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
 {
   mp_size_t hi, lo, size;
   mp_ptr ut, vt, wt;
@@ -66,7 +60,7 @@ ref_mpf_add (mpf_t w, const mpf_t u, const mpf_t v)
       SIZ (tmp) = -SIZ (v);
       EXP (tmp) = EXP (v);
       PTR (tmp) = PTR (v);
-      ref_mpf_sub (w, u, tmp);
+      refmpf_sub (w, u, tmp);
       return;
     }
   neg = SIZ (u) < 0;
@@ -105,7 +99,7 @@ done:
 }
 
 void
-ref_mpf_sub (mpf_t w, const mpf_t u, const mpf_t v)
+refmpf_sub (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
 {
   mp_size_t hi, lo, size;
   mp_ptr ut, vt, wt;
@@ -139,7 +133,7 @@ ref_mpf_sub (mpf_t w, const mpf_t u, const mpf_t v)
       SIZ (tmp) = -SIZ (v);
       EXP (tmp) = EXP (v);
       PTR (tmp) = PTR (v);
-      ref_mpf_add (w, u, tmp);
+      refmpf_add (w, u, tmp);
       if (SIZ (u) < 0)
 	mpf_neg (w, w);
       return;
