@@ -1,2 +1,0 @@
-XCFLAGS = -mpowerpc64 -maix64
-AR = ar -X64

@@ -1,1 +1,0 @@
-XCFLAGS = -mcpu=v9 -Wa,-xarch=v8plus

@@ -1,3 +1,0 @@
-# We need to use the system compiler, or actually the system assembler,
-# since GAS has not been ported to understand the 2.0 instructions.
-CCAS = cc
