@@ -78,7 +78,7 @@ mpf_div_2exp (mpf_ptr r, mpf_srcptr u, unsigned long int exp)
 
   usize = u->_mp_size;
 
-  if (usize == 0)
+  if (UNLIKELY (usize == 0))
     {
       r->_mp_size = 0;
       r->_mp_exp = 0;
