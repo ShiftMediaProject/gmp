@@ -19,6 +19,24 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-25  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (alpha*-*-*): Rearrange -mcpu selection for gcc,
+	provide an ev67 -> ev6 fallback.  Fix -arch,-tune selection for DEC C.
+	Allow ~ for space in optional options lists.
+	
+	* tune/tuneup.c (tune_preinv_divrem_1): Compare against an assembler
+	mpn_divrem_1 if it exists, not the generic C mpn_divrem_1_div.
+	(tune_preinv_mod_1): Ditto with mpn_mod_1.
+
+	* tune/time.c (DIFF_SECS_ROUTINE): Eliminate the unused "type"
+	parameter, try to make the code a bit clearer.
+
+	* tune/freq.c: Reduce the period measured for cycles versus
+	gettimeofday, add cycles versus microsecond getrusage.
+
+	* mpz/array_init.c: "i" should be mp_size_t, noticed by E. Khong.
+
 2002-02-24  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: For sparc under solaris2.[7-9], pass -fast instead of
