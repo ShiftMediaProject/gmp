@@ -671,7 +671,7 @@ mpn_mul_fft (op, pl, n, nl, m, ml, k)
     nprime = Nprime/BITS_PER_MP_LIMB; 
     TRACE (printf ("N=%d K=%d, M=%d, l=%d, maxLK=%d, Np=%d, np=%d\n",
                    N, K, M, l, maxLK, Nprime, nprime));
-    if (nprime >= (sqr ? FFT_SQR_THRESHOLD : FFT_MUL_THRESHOLD)) {
+    if (nprime >= (sqr ? FFT_MODF_SQR_THRESHOLD : FFT_MODF_MUL_THRESHOLD)) {
       maxLK = (1<<mpn_fft_best_k(nprime,n==m))*BITS_PER_MP_LIMB;
       if (Nprime % maxLK) {
 	Nprime=((Nprime/maxLK)+1)*maxLK;
@@ -684,7 +684,8 @@ mpn_mul_fft (op, pl, n, nl, m, ml, k)
     Mp = Nprime/K;
 
     TRACE (printf("%dx%d limbs -> %d times %dx%d limbs (%1.2f)\n",
-                  pl,pl,K,nprime,nprime,2.0*(double)N/Nprime/K));
+                  pl,pl,K,nprime,nprime,2.0*(double)N/Nprime/K);
+           printf("   temp space %ld\n", 2*K*(nprime+1)));
 
     A = _MP_ALLOCATE_FUNC_LIMBS (2*K*(nprime+1));
     B = A+K*(nprime+1);
