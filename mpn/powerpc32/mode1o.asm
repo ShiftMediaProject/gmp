@@ -91,9 +91,7 @@ ifdef(`PIC',`
 	mullw	r7, r4, r4	C i*i
 	slwi	r4, r4, 1	C 2*i
 
-	rlwinm	r8, r5, 0,16,31	C divisor low 16 bits, speedup mullw
-
-	mullw	r7, r7, r8	C i*i*d
+	mullw	r7, r5, r7	C i*i*d   [i*i is 16 bits, so second operand]
 
 	C
 
