@@ -40,25 +40,44 @@ MA 02111-1307, USA. */
 #include "tests.h"
 
 
+int
+refmpn_overlap_p (mp_srcptr xp, mp_size_t xsize, mp_srcptr yp, mp_size_t ysize)
+{
+  ASSERT (xsize >= 0);
+  ASSERT (ysize >= 0);
+
+  /* no wraparounds */
+  ASSERT (xp+xsize >= xp);
+  ASSERT (yp+ysize >= yp);
+
+  if (xp + xsize <= yp)
+    return 1;
+  
+  if (yp + ysize <= xp)
+    return 1;
+
+  return 0;
+}
+
 /* Check overlap for a routine defined to work low to high. */
 int
 refmpn_overlap_low_to_high_p (mp_srcptr dst, mp_srcptr src, mp_size_t size)
 {
-  return (!MPN_OVERLAP_P (dst, size, src, size) || dst <= src);
+  return (! refmpn_overlap_p (dst, size, src, size) || dst <= src);
 }
 
 /* Check overlap for a routine defined to work high to low. */
 int
 refmpn_overlap_high_to_low_p (mp_srcptr dst, mp_srcptr src, mp_size_t size)
 {
-  return (!MPN_OVERLAP_P (dst, size, src, size) || dst >= src);
+  return (! refmpn_overlap_p (dst, size, src, size) || dst >= src);
 }
 
 /* Check overlap for a standard routine requiring equal or separate. */
 int
 refmpn_overlap_fullonly_p (mp_srcptr dst, mp_srcptr src, mp_size_t size)
 {
-  return (dst == src || !MPN_OVERLAP_P (dst, size, src, size));
+  return (dst == src || ! refmpn_overlap_p (dst, size, src, size));
 }
 int
 refmpn_overlap_fullonly_two_p (mp_srcptr dst, mp_srcptr src1, mp_srcptr src2,
@@ -554,7 +573,7 @@ refmpn_addsub_nc (mp_ptr r1p, mp_ptr r2p,
   mp_limb_t acy, scy;
 
   /* Destinations can't overlap. */
-  ASSERT (! MPN_OVERLAP_P (r1p, size, r2p, size));
+  ASSERT (! refmpn_overlap_p (r1p, size, r2p, size));
   ASSERT (refmpn_overlap_fullonly_two_p (r1p, s1p, s2p, size));
   ASSERT (refmpn_overlap_fullonly_two_p (r2p, s1p, s2p, size));
   ASSERT (size >= 1);
@@ -883,8 +902,8 @@ refmpn_mul_basecase (mp_ptr prodp,
 {
   mp_size_t i;
 
-  ASSERT (! MPN_OVERLAP_P (prodp, usize+vsize, up, usize));
-  ASSERT (! MPN_OVERLAP_P (prodp, usize+vsize, vp, vsize));
+  ASSERT (! refmpn_overlap_p (prodp, usize+vsize, up, usize));
+  ASSERT (! refmpn_overlap_p (prodp, usize+vsize, vp, vsize));
   ASSERT (usize >= vsize);
   ASSERT (vsize >= 1);
 
@@ -1031,7 +1050,7 @@ refmpn_gcd (mp_ptr gp, mp_ptr xp, mp_size_t xsize, mp_ptr yp, mp_size_t ysize)
   ASSERT (yp[ysize-1] != 0);
   ASSERT (refmpn_overlap_fullonly_p (gp, xp, xsize));
   ASSERT (refmpn_overlap_fullonly_p (gp, yp, ysize));
-  ASSERT (! MPN_OVERLAP_P (xp, xsize, yp, ysize));
+  ASSERT (! refmpn_overlap_p (xp, xsize, yp, ysize));
   if (xsize == ysize)
     ASSERT (refmpn_msbone (xp[xsize-1]) >= refmpn_msbone (yp[ysize-1]));
 
@@ -1173,7 +1192,7 @@ refmpn_sb_divrem_mn (mp_ptr qp,
   /* ASSERT (dsize > 2); */
   ASSERT (dsize >= 2);
   ASSERT (dp[dsize-1] & MP_LIMB_T_HIGHBIT);
-  ASSERT (!MPN_OVERLAP_P (qp, nsize-dsize, np, nsize) || qp+dsize >= np);
+  ASSERT (! refmpn_overlap_p (qp, nsize-dsize, np, nsize) || qp+dsize >= np);
 
   i = nsize-dsize;
   if (refmpn_cmp (np+i, dp, dsize) >= 0)
