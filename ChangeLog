@@ -1,3 +1,23 @@
+2000-04-08  Linus Nordberg  <linus@swox.se>
+
+	* acinclude.m4 (GMP_CHECK_CC_64BIT): Add special handling for
+	HPUX.
+	(GMP_CHECK_ASM_W32): Ditto.
+	* aclocal.m4: Regenerate.
+
+	* mpn/Makefile.am: Use $(CCAS) for assembling.
+	(.asm.obj): Add rule.
+	* mpn/Makefile.in: Regenerate.	
+
+	* gmp.texi (Miscellaneous Integer Functions): Fix typos.
+
+	* configure.in: Never pass `-h' to grep.
+	(mips-sgi-irix6.[2-9]*): Try to find 64-bit compiler.
+	(hppa1.0*-*-*): New flag for cc.
+	(hppa2.0*-*-*): Try to find 64-bit compiler.  Chose path, set
+	CCAS.
+	* configure: Regenerate.
+
 2000-04-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/bin_ui.c: Don't depend on ANSI C features.
