@@ -1,7 +1,6 @@
-/* Exercise mpz_*_kronecker_*() and mpz_jacobi() functions. */
+/* Exercise mpz_*_kronecker_*() and mpz_jacobi() functions.
 
-/*
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,15 +17,14 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 /* With no arguments the various Kronecker/Jacobi symbol routines are
    checked against some test data and a lot of derived data.
 
    To check the test data against PARI-GP, run
-   
+
            t-jac -p | gp -q
 
    It takes a while because the output from "t-jac -p" is big.
@@ -153,7 +151,7 @@ try_ui_zi (unsigned long a, mpz_srcptr b, int answer)
 
 
 void
-try_si_zi (int a, mpz_srcptr b, int answer)
+try_si_zi (long a, mpz_srcptr b, int answer)
 {
   int  got;
 
@@ -316,9 +314,9 @@ try_periodic_den (mpz_srcptr a, mpz_srcptr b_orig, int answer)
 
   mpz_init_set (b_period, a);
   if (mpz_mod4 (a) == 3 && mpz_even_p (b))
-    mpz_mul_ui (b_period, b_period, 8);
+    mpz_mul_ui (b_period, b_period, 8L);
   else if (mpz_mod4 (a) >= 2)
-    mpz_mul_ui (b_period, b_period, 4);
+    mpz_mul_ui (b_period, b_period, 4L);
 
   /* don't bother with these tests if they're only going to produce
      even/even */
