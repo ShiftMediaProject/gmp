@@ -821,7 +821,7 @@ SPARC:
 @nisamp{sparc64}
 
 @item
-80x86 family:
+x86 family:
 @nisamp{i386},
 @nisamp{i486},
 @nisamp{i586},
@@ -9351,10 +9351,10 @@ work as one 32@cross{}32 from GMP's point of view, and need some shifts and
 adds besides.  But of course if say the SIMD form is fully pipelined and uses
 less instruction decoding then it may still be worthwhile.
 
-On the 80x86 chips, MMX has so far found a use in @code{mpn_rshift} and
-@code{mpn_lshift} since it allows 64-bit operations, and is used in a special
-case for 16-bit multipliers in the P55 @code{mpn_mul_1}.  3DNow and SSE
-haven't found a use so far.
+On the x86 chips, MMX has so far found a use in @code{mpn_rshift} and
+@code{mpn_lshift}, and is used in a special case for 16-bit multipliers in the
+P55 @code{mpn_mul_1}.  SSE2 is used for Pentium 4 @code{mpn_mul_1},
+@code{mpn_addmul_1}, and @code{mpn_submul_1}.
 
 
 @node Assembler Software Pipelining, Assembler Loop Unrolling, Assembler SIMD Instructions, Assembler Coding
