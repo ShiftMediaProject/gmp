@@ -1,6 +1,6 @@
 /* AMD K7 gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright (C) 1991, 1993, 1994 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,14 +26,25 @@ MA 02111-1307, USA. */
 #define BITS_PER_SHORTINT 16
 #define BITS_PER_CHAR 8
 
+
+/* %eax is ready after 4 cycles, but it's %edx coming out after 6 cycles
+   that's normally of interest for umul_ppmm() */
+#define UMUL_TIME   6
+
+/* AMD doco says 40, but it measures 39 back-to-back */
+#define UDIV_TIME   39
+
+
 #ifndef KARATSUBA_MUL_THRESHOLD
-#define KARATSUBA_MUL_THRESHOLD 28
+#define KARATSUBA_MUL_THRESHOLD   26
+#endif
+#ifndef TOOM3_MUL_THRESHOLD
+#define TOOM3_MUL_THRESHOLD      202
 #endif
 
-/* mpn/generic/sqr_basecase.c, gcc -O2, and no K7 specific lshift yet */
 #ifndef KARATSUBA_SQR_THRESHOLD
-#define KARATSUBA_SQR_THRESHOLD 88
+#define KARATSUBA_SQR_THRESHOLD   18
 #endif
-
-#define UMUL_TIME   4   /* cycles back-to-back */
-#define UDIV_TIME   39  /* cycles back-to-back */
+#ifndef TOOM3_SQR_THRESHOLD
+#define TOOM3_SQR_THRESHOLD      162
+#endif
