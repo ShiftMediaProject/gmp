@@ -307,6 +307,7 @@ double speed_unittime;
 double speed_cycletime;
 
 static int  speed_time_initialized = 0;
+static unsigned long  speed_starttime_save[2];
 
 /* Knowing the CPU frequency is mandatory because it's needed to convert
    cycles into seconds.  */
@@ -323,54 +324,27 @@ speed_time_init (void)
   speed_unittime = speed_cycletime;
 }
 
-
-#if HAVE_SPEED_CYCLECOUNTER == 1
-static mp_limb_t speed_starttime_save;
-
 void
 speed_starttime (void)
 {
   if (!speed_time_initialized)
     speed_time_init ();
-  speed_starttime_save = speed_cyclecounter_1 ();
+  speed_cyclecounter (speed_starttime_save);
 }
+
+#define M_2POW32  4294967296.0
 
 double
 speed_endtime (void)
 {
-  return (double) (speed_cyclecounter_1 () - speed_starttime_save)
-    * speed_unittime;
-}
-
-
-#else
-#if HAVE_SPEED_CYCLECOUNTER == 2
-static mp_limb_t speed_starttime_save[2];
-
-void
-speed_starttime (void)
-{
-  if (!speed_time_initialized)
-    speed_time_init ();
-  speed_cyclecounter_2 (speed_starttime_save);
-}
-
-double
-speed_endtime (void)
-{
-  mp_limb_t  endtime[2];
-  speed_cyclecounter_2 (endtime);
+  unsigned long  endtime[2];
+  speed_cyclecounter (endtime);
 
   sub_ddmmss (endtime[1], endtime[0], endtime[1], endtime[0], 
               speed_starttime_save[1], speed_starttime_save[0]);
-  return (MP_BASE_AS_DOUBLE * endtime[1] + endtime[0])
+  return (M_2POW32 * endtime[1] + endtime[0])
     * speed_unittime;
 }
-
-#else
-Error, unrecognised value for HAVE_SPEED_CYCLECOUNTER
-#endif
-#endif
 
 #endif
 
