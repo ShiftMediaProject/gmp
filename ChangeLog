@@ -1,3 +1,59 @@
+2001-06-20  Kevin Ryde  <kevin@swox.se>
+
+	* config.guess (rs6000-*-aix4* | powerpc-*-aix4*): Suppress error
+	messages if $CC_FOR_BUILD or program don't work.
+
+	* mpz/sqrt.c,sqrtrem.c: Special case for op==0, to avoid TMP_ALLOC(0).
+	* tests/refmpf.c (refmpf_add, refmpf_sub): Avoid TMP_ALLOC(0).
+
+	* tests/mpn/t-aors_1.c: New file.
+	* tests/mpn/Makefile.am: Add it.
+
+	* gmp-h.in (__GMPN_ADD_1, __GMPN_SUB_1): New macros, rewrite of
+	mpn_add_1 and mpn_sub_1, better code for src==dst and/or n==1,
+	separate versions for gcc x86, gcc generic, and non-gcc.
+	(mpn_add_1, mpn_sub_1): Use them.
+	(mpn_add, mpn_sub): Ditto, to get inlines on all compilers.
+	(extern "C") [__cplusplus]: Let this encompass the extern inlines too.
+	* mpn/generic/add_1.c,sub_1.c: New files, force code from gmp.h.
+	* configure.in, mpn/Makefile.am: Add them.
+
+	* acinclude.m4 (GMP_ASM_LSYM_PREFIX): AC_SUBST __GMP_LSYM_PREFIX
+	rather than AC_DEFINE LSYM_PREFIX.
+	* gmp-h.in (__GMP_LSYM_PREFIX): New substitution.
+	(__GMP_ASM_L): New macro.
+	* gmp-impl.h (ASM_L): Use it.
+
+	* acinclude.m4, configure.in (GMP_C_ATTRIBUTE_MALLOC): New macro.
+	* gmp-impl.h: Use it for all the malloc based TMP_ALLOCs.
+
+	* stack-alloc.h: Remove file.
+	* tal-reent.c: New file.
+	* Makefile.am: Update.
+
+	* acinclude.m4, configure.in (GMP_OPTION_ALLOCA): New macro, add
+	malloc-reentrant method, use stack-alloc.c as malloc-notreentrant,
+	make "reentrant" the default.
+	* gmp-impl.h (__TMP_ALIGN): Moved from stack-alloc.c, use a union to
+	determine the value, and demand only 4 bytes align on 32-bit systems.
+	* gmp-impl.h (WANT_TMP_NOTREENTRANT): Move global parts of
+	stack-alloc.h to here, allow non power-of-2 __TMP_ALIGN in TMP_ALLOC.
+	* gmp-impl.h: Extend extern "C" to TMP_ALLOC declarations.
+	* stack-alloc.c (tmp_stack): Move private parts of stack-alloc.h to
+	here, use gmp-impl.h.
+	
+	* gmp-impl.h (TMP_ALLOC_LIMBS_2): New macro.
+	* mpz/fib_ui.c, mpz/jacobi.c, mpq/cmp.c, mpn/generic/fib2_ui.c: Use it.
+
+	* mpfr/exp2.c: Patch by Paul to match TMP_MARK and TMP_FREE in loop.
+	* mpfr/sqrt.c: Scope nested TMP_DECL into nested { } block, patch by
+	Paul, tweaked by me.
+	* mpfr/agm.c: Ditto, and add a final TMP_FREE(marker2).
+
+	* gmp-h.in (mpn_cmp): Add __GMP_ATTRIBUTE_PURE.
+
+	* INSTALL: Clarify "make install", tweak formatting a bit.
+
 2001-06-17  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in, Makefile.am, gmp-impl.h: Add a debugging TMP_ALLOC,
