@@ -4,6 +4,10 @@
 # Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000
 # Free Software Foundation, Inc.
 #
+# NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+# NOTE: This is a modified version of config.guess for the neeed of GNU MP
+# NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+#
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -185,7 +189,9 @@ EOF
 	then
 	    X86CPU="$UNAME_MACHINE"
 	fi
-	rm -f ${dummy}1.s ${dummy}2.c $dummy
+	# We need to remove some .o files here since lame C compilers
+	# generate these even when not asked.
+	rm -f ${dummy}1.s ${dummy}1.o ${dummy}2.c ${dummy}2.o $dummy
   ;;
 esac
 
