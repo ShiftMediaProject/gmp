@@ -19,6 +19,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-16  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (mp_bases[10] values): Add versions for GMP_NUMB_BITS
+	being 28, 60, and 63.
+	* mpn/mp_bases.c: Add tables for GMP_NUMB_BITS being 28, 60, and 63.
+
+	* mpz/iset_si.c: Nailify.
+	* mpz/iset_ui.c: Nailify
+
+	* tests/mpz/convert.c (main): Print test number in error message.
+
+	* mpn/generic/get_str.c (mpn_sb_get_str): Shift up `frac' into nails
+	field after bignum division.
+
 2002-04-16  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in, gmp-impl.h (GMP_NAIL_MASK): Move to gmp.h.
@@ -186,7 +200,7 @@ MA 02111-1307, USA.
 	(__gmp_doprnt, etc): Remove parameter names.
 
 	* mpn/generic/mul_n.c: Nailify Karatsuba code.
-	* mpn/generic/get_str.c: Nailify for non power-of-two bases.
+	* mpn/generic/get_str.c: Nailify.
 	* mpn/generic/sqr_basecase.c: Nailify.
 	* mpn/generic/lshift.c: Nailify.
 	* mpn/generic/rshift.c: Likewise.
