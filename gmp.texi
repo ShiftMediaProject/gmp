@@ -718,7 +718,25 @@ later).
 Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
 
-@item SunOS 4
+@item Stripped Libraries
+@cindex Stripped libraries
+
+GNU binutils @samp{strip} should not be used on the static libraries
+@file{libgmp.a} and @file{libmp.a}, neither directly nor via @samp{make
+install-strip}.  It can be used on the shared libraries @file{libgmp.so} and
+@file{libmp.so} though.
+
+Currently (binutils 2.10.0), @samp{strip} extracts archives into a single
+directory, but GMP contains multiple object files of the same name (eg. three
+versions of @file{init.o}), and they overwrite each other, leaving only the
+one that happens to be last.
+
+If stripped static libraries are wanted, the suggested workaround is to build
+normally, strip the separate object files, and do another @samp{make all} to
+rebuild.  Alternately @samp{CFLAGS} with @samp{-g} omitted can always be used
+if it's just debugging which is unwanted.
+
+@item SunOS 4 Native Tools
 
 The setting for @code{GSYM_PREFIX} in @file{config.m4} may be incorrectly
 determined when using the native @command{grep}, leading at link-time to
