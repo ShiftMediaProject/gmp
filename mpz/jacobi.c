@@ -41,11 +41,23 @@ MA 02111-1307, USA. */
   } while (0)
 
 
-/* After some setups this is just a simple binary GCD with the jacobi symbol
-   result tracked during the reduction.
+/* This code does triple duty as mpz_jacobi, mpz_legendre and mpz_kronecker.
+
+   mpz_jacobi could assume b is odd, but the improvements from that seem
+   small compared to other operations, and anything significant should be
+   checked at run-time since we'd like odd b to go fast in mpz_kronecker
+   too.
+
+   mpz_legendre could assume b is an odd prime, but knowing that doesn't
+   present any obvious benefits.  Result 0 wouldn't arise (unless "a" is a
+   multiple of b), but the checking for that takes little time compared to
+   other operations.
+
+   The main loop is just a simple binary GCD with the jacobi symbol result
+   tracked during the reduction.
 
    The special cases for a or b fitting in one limb let mod_1 or modexact_1
-   get used without any copying, and end up just as efficient as the mixed
+   get used, without any copying, and end up just as efficient as the mixed
    precision mpz_kronecker_ui etc.
 
    When tdiv_qr is called it's not necessary to make "a" odd or make a
@@ -76,11 +88,8 @@ Error, error, need BITS_PER_MP_LIMB even
 #endif
 
 
-static int __gmpz_jac_or_kron _PROTO ((REGPARM_2_1 (mpz_srcptr a, mpz_srcptr b, int kronecker))) REGPARM_ATTR (1);
-#define jac_or_kron(a,b,k)  __gmpz_jac_or_kron (REGPARM_2_1 (a,b,k))
-
-static int
-jac_or_kron (mpz_srcptr a, mpz_srcptr b, int kronecker)
+int
+mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 {
   mp_srcptr  asrcp, bsrcp;
   mp_size_t  asize, bsize;
@@ -108,8 +117,8 @@ jac_or_kron (mpz_srcptr a, mpz_srcptr b, int kronecker)
   if (asize == 0)
     return JACOBI_0LS (blow, bsize);  /* (0/b) */
 
-  /* for mpz_kronecker, (even/even)=0 */
-  if (kronecker && ((alow | blow) & 1) == 0)
+  /* (even/even)=0 */
+  if (((alow | blow) & 1) == 0)
     return 0;
 
   /* account for effect of sign of b, then ignore it */
@@ -137,11 +146,10 @@ jac_or_kron (mpz_srcptr a, mpz_srcptr b, int kronecker)
           
   if (bsize == 1 || (bsize == 2 && (bsecond >> btwos) == 0))
     {
-      /* special case handled with modexact and no copying */
+      /* special case one limb b, use modexact and no copying */
 
-      /* for mpz_kronecker, (a/2)=(2/a) with a odd, and if b is even then a
-         is odd here */
-      result_bit1 ^= kronecker & JACOBI_TWOS_U_BIT1 (btwos, alow);
+      /* (a/2)=(2/a) with a odd, and if b is even then a is odd here */
+      result_bit1 ^= JACOBI_TWOS_U_BIT1 (btwos, alow);
 
       if (blow == 1)   /* (a/1)=1 always */
         return JACOBI_BIT1_TO_PN (result_bit1);
@@ -152,8 +160,8 @@ jac_or_kron (mpz_srcptr a, mpz_srcptr b, int kronecker)
       return mpn_jacobi_base (alow, blow, result_bit1);
     }
 
-  /* Low zero limbs on a can be discarded.  No need to do this for bsize==1,
-     as it's expected to strip anything only very rarely.  */
+  /* Discard low zero limbs of a.  Usually there won't be anything to
+     strip, hence not bothering with it for the bsize==1 case.  */
   MPN_STRIP_LOW_ZEROS_NOT_ZERO (asrcp, asize, alow);
 
   count_trailing_zeros (atwos, alow);
@@ -169,9 +177,8 @@ jac_or_kron (mpz_srcptr a, mpz_srcptr b, int kronecker)
         alow |= asecond << (BITS_PER_MP_LIMB-atwos);
     }
   
-  /* for mpz_kronecker, (a/2)=(2/a) with a odd
-     for mpz_jacobi, ignore btwos */
-  result_bit1 ^= kronecker & JACOBI_TWOS_U_BIT1 (btwos, alow);
+  /* (a/2)=(2/a) with a odd */
+  result_bit1 ^= JACOBI_TWOS_U_BIT1 (btwos, alow);
 
   if (asize == 1 || (asize == 2 && (asecond >> atwos) == 0))
     {
@@ -313,23 +320,4 @@ jac_or_kron (mpz_srcptr a, mpz_srcptr b, int kronecker)
  zero:
   TMP_FREE (marker);
   return 0;
-}
-
-
-int
-mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
-{
-  return jac_or_kron (a, b, 0);
-}
-
-int
-mpz_legendre (mpz_srcptr a, mpz_srcptr b)
-{
-  return jac_or_kron (a, b, 0);
-}
-
-int
-mpz_kronecker (mpz_srcptr a, mpz_srcptr b)
-{
-  return jac_or_kron (a, b, -1);
 }
