@@ -129,6 +129,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
     }
     
   s->reps = 1;
+  s->time_divisor = 1.0;
   for (i = 0; i < numberof (t); i++)
     {
       for (;;)
@@ -170,7 +171,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           qsort (t, i, sizeof(t[0]), (qsort_function_t) double_cmp_ptr);
           for (j = e-1; j < i; j++)
             if (t[j] <= t[j-e+1] * TOLERANCE)
-              return t[j-e+1];
+              return t[j-e+1] / s->time_divisor;
         }
     } 
 
@@ -592,6 +593,11 @@ double
 speed_mpn_gcdext (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCDEXT (mpn_gcdext);
+}
+double
+speed_mpn_gcd_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCD_1 (mpn_gcd_1);
 }
 
 
