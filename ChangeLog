@@ -1,5 +1,8 @@
 Fri May 10 17:37:38 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpf/set_q.c: New file.
+	* mpf/Makefile.in: Compile it.
+	
 	* config.sub: Recognize sparc8.
 
 Wed May  8 09:19:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
