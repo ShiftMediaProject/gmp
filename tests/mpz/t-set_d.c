@@ -79,6 +79,46 @@ check_data (void)
     }
 }
 
+/* Try mpz_set_d on values 2^i+1, while such a value fits a double. */
+void
+check_2n_plus_1 (void)
+{
+  volatile double  p, d, diff;
+  mpz_t  want, got;
+  int    i;
+
+  mpz_init (want);
+  mpz_init (got);
+
+  p = 1.0;
+  mpz_set_ui (want, 2L);  /* gives 3 on first step */
+
+  for (i = 1; i < 500; i++)
+    {
+      mpz_mul_2exp (want, want, 1L);
+      mpz_sub_ui (want, want, 1L);   /* want = 2^i+1 */
+
+      p *= 2.0;  /* p = 2^i */
+      d = p + 1.0;
+      diff = d - p;
+      if (diff != 1.0)
+        break;   /* rounding occurred, stop now */
+
+      mpz_set_d (got, d);
+      MPZ_CHECK_FORMAT (got);
+      if (mpz_cmp (got, want) != 0)
+        {
+          printf ("mpz_set_d wrong on 2^%d+1\n", i);
+          d_trace   ("  d ", d);
+          mpz_trace ("  got  ", got);
+          mpz_trace ("  want ", want);
+          abort ();
+        }
+    }
+
+  mpz_clear (want);
+  mpz_clear (got);
+}
 
 int
 main (void)
@@ -86,6 +126,7 @@ main (void)
   tests_start ();
 
   check_data ();
+  check_2n_plus_1 ();
 
   tests_end ();
   exit (0);
