@@ -34,9 +34,11 @@ PROLOGUE(mpn_copyi)
 	add	%o2,-8,%o2
 	brlz,pn	%o2,L(skip)
 	nop
+	b,a	L(loop1)
+	nop
 
 	ALIGN(16)
-L(Loop1):
+L(loop1):
 	ldx	[%o1+0],%g1
 	ldx	[%o1+8],%g2
 	ldx	[%o1+16],%g3
@@ -55,7 +57,7 @@ L(Loop1):
 	stx	%o4,[%o0+48]
 	stx	%o5,[%o0+56]
 	add	%o2,-8,%o2
-	brgez,pt	%o2,L(Loop1)
+	brgez,pt	%o2,L(loop1)
 	add	%o0,64,%o0
 
 L(skip):
