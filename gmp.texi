@@ -2116,10 +2116,10 @@ Compute the Jacobi and Legendre symbols, respectively.  @var{op2} should be
 odd and must be positive.
 @end deftypefun
 
-@deftypefun int mpz_si_kronecker (long @var{a}, mpz_t @var{b});
-@deftypefunx int mpz_ui_kronecker (unsigned long @var{a}, mpz_t @var{b});
-@deftypefunx int mpz_kronecker_si (mpz_t @var{a}, long @var{b});
-@deftypefunx int mpz_kronecker_ui (mpz_t @var{a}, unsigned long @var{b});
+@deftypefun int mpz_si_kronecker (long @var{a}, mpz_t @var{b})
+@deftypefunx int mpz_ui_kronecker (unsigned long @var{a}, mpz_t @var{b})
+@deftypefunx int mpz_kronecker_si (mpz_t @var{a}, long @var{b})
+@deftypefunx int mpz_kronecker_ui (mpz_t @var{a}, unsigned long @var{b})
 @cindex Kronecker symbol functions
 Calculate the value of the Jacobi symbol @m{\left(a \over b\right),
 (@var{a}/@var{b})}, with the Kronecker extension @m{\left(a \over 2\right) =
@@ -3082,7 +3082,7 @@ next higher integer, @code{mpf_floor} to the next lower, and @code{mpf_trunc}
 to the integer towards zero.
 @end deftypefun
 
-@deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{nbits}) 
+@deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{nbits})
 Generate a uniformly distributed random float in @var{rop}, such that 0 <=
 @var{rop} < 1, with @var{nbits} significant bits in the mantissa.
 
@@ -4663,7 +4663,7 @@ The multiply by inverse used follows Granlund and Montgomery section 8
 @ma{1/d} (see @code{invert_limb}) and then multiply by the high limb (plus one
 bit) of the dividend to get a quotient @ma{q}.  With @ma{d} normalized (high
 bit set), @ma{q} is no more than 1 too small.  Subtracting @m{qd,q*d} from the
-dividend gives a remainder, and lets the quotient be corrected if necessary.
+dividend gives a remainder, and reveals whether a correction is necessary.
 
 The result is a division done with two multiplications and four or five
 arithmetic operations.  On CPUs with low latency multipliers this can be much
@@ -4677,8 +4677,8 @@ the power necessary to have the high bit of @m{d2^k,d*2^k} set.  The shift for
 the dividend is usually accomplished ``on the fly'' meaning by extracting the
 appropriate bits at each step.  Done this way the quotient limbs come out
 aligned ready to store.  An alternative for @code{mpn_mod_1}, which doesn't
-want the quotients, is to do just one shift at the end and an extra divide
-step.
+want the quotients, is to take the dividend limbs unshifted and do one shift
+and an extra divide step at the end.
 
 N@cross{}1 division isn't used to construct N@cross{}M divisions, it's only
 for small divisors (which are fairly common), and for radix conversion.
@@ -4825,7 +4825,7 @@ algorithm done in a Q limb base, though with the trial quotient test done only
 with the high limbs, not an entire Q limb ``digit'' product.  The correctness
 of this weaker test can be established by following the argument of Knuth
 section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
-+ u_2, v2*q>br+u2} condition appropriately relaxed.
++ u_2, v2*q>b*r+u2} condition appropriately relaxed.
 
 
 @node Greatest Common Divisor Algorithms, Powering Algorithms, Division Algorithms, Algorithms
@@ -4875,7 +4875,7 @@ similar to an exact division.
 
 For operands @ma{u} and @ma{v} the @ma{k}-ary reduction replaces @ma{u} with
 @m{nv-du,n*v-d*u} where @ma{n} and @ma{d} are single limb values chosen to
-give a trailing zero limb on that value, which can be stripped.  @ma{n} and
+give two trailing zero limbs on that value, which can be stripped.  @ma{n} and
 @ma{d} are calculated using an algorithm similar to half of a two limb GCD
 (see @code{find_a} in @file{mpn/generic/gcd.c}).
 
@@ -5140,8 +5140,9 @@ in C or assembler.  The @file{mpn/generic} subdirectory contains default code,
 used when there's no machine-specific version of a particular file.
 
 Each @file{mpn} subdirectory is for an ISA family.  Generally 32-bit and
-64-bit variants in a family cannot share code and have separate directories.
-Within a family further subdirectories may exist for CPU variants.
+64-bit variants in a family cannot share code and will have separate
+directories.  Within a family further subdirectories may exist for CPU
+variants.
 
 
 @node Assembler Basics, Assembler Carry Propagation, Assembler Code Organisation, Assembler Coding
@@ -5157,9 +5158,9 @@ On some CPUs assembler versions of the internal functions
 mainly through avoiding function call overheads.  They can also potentially
 make better use of a wide superscalar processor.
 
-The restrictions on overlaps between sources and destinations (described in
-@ref{Low-level Functions}) are designed to facilitate a variety of
-implementations.  For example knowing @code{mpn_add_n} won't have partly
+The restrictions on overlaps between sources and destinations
+(@pxref{Low-level Functions}) are designed to facilitate a variety of
+implementations.  For example, knowing @code{mpn_add_n} won't have partly
 overlapping sources and destination means reading can be done far ahead of
 writing on superscalar processors, and loops can be vectorized on a vector
 processor, depending on the carry handling.
@@ -5416,7 +5417,7 @@ about the omission!)
 @unnumbered References
 @cindex References
 
-Books.
+@section Books
 
 @itemize @bullet
 @item
@@ -5443,7 +5444,7 @@ available online @uref{http://www.gnu.org/software/gcc/onlinedocs/}, and in
 the GCC package @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}
 @end itemize
 
-Papers.
+@section Papers
 
 @itemize @bullet
 @item
