@@ -1,3 +1,32 @@
+1999-09-29  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/divrem_2.c: Clean up comments.
+
+1999-09-23  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/Makefile.in: Use move-if-change when generating binaries.
+	* mpf/tests/Makefile.in: Likewise.
+	* mpq/tests/Makefile.in: Likewise.
+	* mpz/tests/move-if-change: New file.
+	* mpf/tests/move-if-change: New file.
+	* mpq/tests/move-if-change: New file.
+	
+	* gmp.h (mpn_incr_u): New macro (from mpn/generic/mul_n.c).
+	(mpn_decr_u): New macro.
+
+	* mpn/generic/mul_n.c (mpn_incr): Delete.
+	* mpn/generic/mul_n.c: Update usages mpn_incr => mpn_incr_u.
+	* mpn/generic/divrem_newt.c: Use mpn_incr_u and mpn_decr_u instead of
+	mpn_add_1 and mpn_sub_1.
+	* mpn/generic/sqrtrem.c: Likewise.
+	* mpz/cdiv_q_ui.c: Likewise.
+	* mpz/cdiv_qr_ui.c: Likewise.
+	* mpz/fdiv_q_ui.c: Likewise.
+	* mpz/fdiv_qr_ui.c: Likewise.
+
+	* mpn/generic/sqrtrem.c: Start single-limb Newton iteration from 18
+	bits.
+
 1999-07-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/divrem_1.c (__gmpn_divrem_1n): New function.
