@@ -57,14 +57,24 @@ mpn_perfect_square_p (up, usize)
 
   ASSERT (usize >= 1);
 
-  /* The first test excludes 55/64 (85.9%) of the perfect square candidates
+  /* The first test excludes 212/256 (82.8%) of the perfect square candidates
      in O(1) time.  */
   if ((sq_res_0x100[(unsigned int) up[0] % 0x100] & 1) == 0)
     return 0;
 
 #if defined (PP)
-  /* The second test excludes 30652543/30808063 (99.5%) of the remaining
-     perfect square candidates in O(n) time.  */
+  /* The second test excludes a further 30652543/30808063 (99.5%) of the
+     remaining perfect square candidates in O(n) time.
+
+     Each residue tested keeps (p+1)/2 out of p, and with no common factors
+     the tests are independent so the total passed is
+
+              p=29    (p+1)/2
+             product  -------
+              p=3        p
+
+     which is 16329600/30808063 and "1-" this is the 99.5% excluded.  This
+     is even more on continuing up to p=53 in the 64-bit case.  */
 
   /* Firstly, compute REM = A mod PP.  */
   if (UDIV_TIME > UDIV_PREINV_TIME)
