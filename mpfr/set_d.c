@@ -162,10 +162,9 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
 {
   int signd, sizetmp, inexact;
   unsigned int cnt, k;
-  mpfr_ptr tmp;
-  TMP_DECL(marker);
+  mpfr_t tmp;
+  mp_limb_t tmpmant[MPFR_LIMBS_PER_DOUBLE];
 
-  TMP_MARK(marker);
   MPFR_CLEAR_FLAGS(r);
 
   if (d == 0)
@@ -196,8 +195,7 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
   /* warning: don't use tmp=r here, even if SIZE(r) >= MPFR_LIMBS_PER_DOUBLE,
      since PREC(r) may be different from PREC(tmp), and then both variables
      would have same precision in the mpfr_set4 call below. */
-  tmp = (mpfr_ptr) TMP_ALLOC(sizeof(mpfr_t));
-  MPFR_MANT(tmp) = TMP_ALLOC(MPFR_LIMBS_PER_DOUBLE * BYTES_PER_MP_LIMB);
+  MPFR_MANT(tmp) = tmpmant;
   MPFR_PREC(tmp) = 53;
   MPFR_SIZE(tmp) = MPFR_LIMBS_PER_DOUBLE;
   sizetmp = MPFR_LIMBS_PER_DOUBLE;
@@ -205,25 +203,24 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
   signd = (d < 0) ? -1 : 1;
   d = ABS (d);
 
-  MPFR_EXP(tmp) = __mpfr_extract_double (MPFR_MANT(tmp), d);
+  MPFR_EXP(tmp) = __mpfr_extract_double (tmpmant, d);
 
   /* determine number k of zero high limbs */
-  for (k = 0; k < sizetmp && MPFR_MANT(tmp)[sizetmp - 1 - k] == 0; k++);
+  for (k = 0; k < sizetmp && tmpmant[sizetmp - k - 1] == 0; k++);
 
-  count_leading_zeros (cnt, MPFR_MANT(tmp)[sizetmp - 1 - k]);
+  count_leading_zeros (cnt, tmpmant[sizetmp - k - 1]);
 
   if (cnt)
-    mpn_lshift (MPFR_MANT(tmp) + k, MPFR_MANT(tmp), sizetmp - k, cnt);
+    mpn_lshift (tmpmant + k, tmpmant, sizetmp - k, cnt);
   else if (k)
-    MPN_COPY (MPFR_MANT(tmp) + k, MPFR_MANT(tmp), sizetmp - k);
+    MPN_COPY (tmpmant + k, tmpmant, sizetmp - k);
   if (k)
-    MPN_ZERO (MPFR_MANT(tmp), k);
+    MPN_ZERO (tmpmant, k);
 
   MPFR_EXP(tmp) -= cnt + k * BITS_PER_MP_LIMB;
 
   /* tmp is exact since PREC(tmp)=53 */
   inexact = mpfr_set4 (r, tmp, rnd_mode, signd);
 
-  TMP_FREE(marker);
   return inexact;
 }
