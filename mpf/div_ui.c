@@ -34,45 +34,58 @@ mpf_div_ui (r, u, v)
 #endif
 {
   mp_srcptr up;
-  mp_ptr qp, rp, rrp;
-  mp_size_t usize = u->_mp_size;
-  mp_size_t qsize, rsize;
-  mp_size_t sign_quotient = usize;
-  mp_limb_t q_limb;
+  mp_ptr rp, tp, rtp;
+  mp_size_t usize;
+  mp_size_t rsize, tsize;
+  mp_size_t sign_quotient;
   mp_size_t prec;
+  mp_limb_t q_limb;
   mp_exp_t rexp;
   TMP_DECL (marker);
 
-  TMP_MARK (marker);
-  prec = r->_mp_prec;
+  usize = u->_mp_size;
+  sign_quotient = usize;
   usize = ABS (usize);
+  prec = r->_mp_prec;
 
-  rsize = prec;
-
-  qp = r->_mp_d;
-  up = u->_mp_d;
-  rp = (mp_ptr) TMP_ALLOC ((rsize + 1) * BYTES_PER_MP_LIMB);
-  if (usize > rsize)
+  if (v == 0)
+    v = 1 / v;			/* divide by zero as directed */
+  if (usize == 0)
     {
-      up += usize - rsize;
-      usize = rsize;
-      rrp = rp;
+      r->_mp_size = 0;
+      r->_mp_exp = 0;
+      return;
+    }
+
+  TMP_MARK (marker);
+
+  rp = r->_mp_d;
+  up = u->_mp_d;
+
+  tsize = 1 + prec;
+  tp = (mp_ptr) TMP_ALLOC ((tsize + 1) * BYTES_PER_MP_LIMB);
+
+  if (usize > tsize)
+    {
+      up += usize - tsize;
+      usize = tsize;
+      rtp = tp;
     }
   else
     {
-      MPN_ZERO (rp, rsize - usize);
-      rrp = rp + (rsize - usize);
+      MPN_ZERO (tp, tsize - usize);
+      rtp = tp + (tsize - usize);
     }
 
   /* Move the dividend to the remainder.  */
-  MPN_COPY (rrp, up, usize);
+  MPN_COPY (rtp, up, usize);
 
-  mpn_divmod_1 (qp, rp, rsize, v);
-  q_limb = qp[rsize - 1];
+  mpn_divmod_1 (rp, tp, tsize, (mp_limb_t) v);
+  q_limb = rp[tsize - 1];
 
-  qsize = rsize - (q_limb == 0);
+  rsize = tsize - (q_limb == 0);
   rexp = u->_mp_exp - (q_limb == 0);
-  r->_mp_size = sign_quotient >= 0 ? qsize : -qsize;
+  r->_mp_size = sign_quotient >= 0 ? rsize : -rsize;
   r->_mp_exp = rexp;
   TMP_FREE (marker);
 }

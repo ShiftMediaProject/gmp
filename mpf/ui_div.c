@@ -25,92 +25,107 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-mpf_ui_div (mpf_ptr r, unsigned long int dividend, mpf_srcptr v)
+mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
 #else
-mpf_ui_div (r, dividend, v)
+mpf_ui_div (r, u, v)
      mpf_ptr r;
-     unsigned long int dividend;
+     unsigned long int u;
      mpf_srcptr v;
 #endif
 {
-  mp_ptr up, vp;
-  mp_ptr rp;
-  mp_size_t usize, vsize, rsize;
-  mp_size_t abs_vsize;
+  mp_srcptr vp;
+  mp_ptr rp, tp;
+  mp_size_t vsize;
+  mp_size_t rsize, tsize;
+  mp_size_t sign_quotient;
   mp_size_t prec;
   unsigned normalization_steps;
-  mp_limb_t qlimb;
+  mp_limb_t q_limb;
   mp_exp_t rexp;
   TMP_DECL (marker);
 
-  TMP_MARK (marker);
-  prec = r->_mp_prec;
-  rp = r->_mp_d;
-
-  vp = v->_mp_d;
-  rexp = 1 - v->_mp_exp;
   vsize = v->_mp_size;
-  abs_vsize = ABS (vsize);
+  sign_quotient = vsize;
+  vsize = ABS (vsize);
+  prec = r->_mp_prec;
 
-  usize = abs_vsize + prec;
-  up = (mp_ptr) TMP_ALLOC ((usize + 1) * BYTES_PER_MP_LIMB);
-  MPN_ZERO (up, usize);
+  if (vsize == 0)
+    vsize = 1 / vsize;		/* divide by zero as directed */
+  if (u == 0)
+    {
+      r->_mp_size = 0;
+      r->_mp_exp = 0;
+      return;
+    }
 
-  count_leading_zeros (normalization_steps, vp[abs_vsize - 1]);
+  TMP_MARK (marker);
+  rexp = 1 - v->_mp_exp;
 
-  /* Normalize the denominator and the numerator.  */
+  rp = r->_mp_d;
+  vp = v->_mp_d;
+
+  if (vsize > prec)
+    {
+      vp += vsize - prec;
+      vsize = prec;
+    }
+
+  tsize = vsize + prec;
+  tp = (mp_ptr) TMP_ALLOC ((tsize + 1) * BYTES_PER_MP_LIMB);
+  MPN_ZERO (tp, tsize);
+
+  count_leading_zeros (normalization_steps, vp[vsize - 1]);
+
+  /* Normalize the divisor and the dividend.  */
   if (normalization_steps != 0)
     {
-      mp_ptr tp;
+      mp_ptr tmp;
       mp_limb_t dividend_high, dividend_low;
 
       /* Shift up the divisor setting the most significant bit of
 	 the most significant limb.  Use temporary storage not to clobber
 	 the original contents of the divisor.  */
-      tp = (mp_ptr) TMP_ALLOC (abs_vsize * BYTES_PER_MP_LIMB);
-      mpn_lshift (tp, vp, abs_vsize, normalization_steps);
-      vp = tp;
+      tmp = (mp_ptr) TMP_ALLOC (vsize * BYTES_PER_MP_LIMB);
+      mpn_lshift (tmp, vp, vsize, normalization_steps);
+      vp = tmp;
 
       /* Shift up the dividend, possibly introducing a new most
 	 significant word.  */
-      dividend_high = (mp_limb_t) dividend >> (BITS_PER_MP_LIMB - normalization_steps);
-      dividend_low = (mp_limb_t) dividend << normalization_steps;
+      dividend_high = (mp_limb_t) u >> (BITS_PER_MP_LIMB - normalization_steps);
+      dividend_low = (mp_limb_t) u << normalization_steps;
 
+      tp[tsize - 1] = dividend_low;
       if (dividend_high != 0)
 	{
-	  up[usize] = dividend_high;
-	  up[usize - 1] = dividend_low;
+	  tp[tsize] = dividend_high;
+	  tsize++;
 	  rexp++;
-	}
-      else
-	{
-	  usize--;
-	  up[usize] = dividend_low;
 	}
     }
   else
     {
       /* The divisor is already normalized, as required.
 	 Copy it to temporary space if it overlaps with the quotient.  */
-      if (vp == rp)
+      if (vp - rp <= tsize - vsize)
 	{
-	  vp = (mp_ptr) TMP_ALLOC (abs_vsize * BYTES_PER_MP_LIMB);
-	  MPN_COPY (vp, rp, abs_vsize);
+	  mp_ptr tmp = (mp_ptr) TMP_ALLOC (vsize * BYTES_PER_MP_LIMB);
+	  MPN_COPY (tmp, vp, vsize);
+	  vp = (mp_srcptr) tmp;
 	}
 
-      usize--;
-      up[usize] = dividend;
+      tp[tsize - 1] = u;
     }
 
-  qlimb = mpn_divmod (rp, up, usize + 1, vp, abs_vsize);
-  rsize = usize + 1 - abs_vsize;
-  if (qlimb)
+  q_limb = mpn_divmod (rp, tp, tsize, vp, vsize);
+  rsize = tsize - vsize;
+  if (q_limb)
     {
-      rp[rsize] = qlimb;
+      rp[rsize] = q_limb;
       rsize++;
       rexp++;
     }
-  r->_mp_size = vsize >= 0 ? rsize : -rsize;
+
+  r->_mp_size = sign_quotient >= 0 ? rsize : -rsize;
   r->_mp_exp = rexp;
   TMP_FREE (marker);
 }

@@ -1,4 +1,4 @@
-/* Test mpf_neg, mpf_sub.
+/* Test mpf_add.
 
 Copyright (C) 1996 Free Software Foundation, Inc.
 

@@ -29,12 +29,17 @@ char dss_func_division[] = {0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1};
 mpz_divexact /* requires special operands */
 #endif
 
-main ()
+main (argc, argv)
+     int argc;
+     char **argv;
 {
   int i;
   int pass, reps = 10000;
   mpz_t in1, in2, out1;
   mpz_t res1, res2, res3;
+
+  if (argc == 2)
+     reps = atoi (argv[1]);
 
   mpz_init (in1);
   mpz_init (in2);

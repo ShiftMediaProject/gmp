@@ -1,4 +1,4 @@
-/* Test mpf_neg, mpf_sub.
+/* Test mpf_sub.
 
 Copyright (C) 1996 Free Software Foundation, Inc.
 
@@ -35,7 +35,7 @@ main (int argc, char **argv)
 {
   mp_size_t size;
   mp_exp_t exp;
-  int reps = 1000000;
+  int reps = 500000;
   int i;
   mpf_t u, v, w, wref;
   mp_size_t bprec = 100;

@@ -19,10 +19,6 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-/* This code is just correct if "unsigned char" has at least 8 bits.  It
-   doesn't help to use CHAR_BIT from limits.h, as the real problem is
-   the static arrays.  */
-
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -44,8 +40,8 @@ mpf_sqrt (r, u)
   usize = u->_mp_size;
   if (usize <= 0)
     {
-      usize = 1 / usize > 0;	/* Divide by zero for negative OP.  */
-      r->_mp_size = 0;
+      usize = 1 - 1 / (usize == 0);	/* Divide by zero for negative OP.  */
+      r->_mp_size = usize;	/* cheat flow by using usize here */
       r->_mp_exp = 0;
       return;
     }

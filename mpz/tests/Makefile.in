@@ -20,7 +20,7 @@ TEST_OBJS = t-mul.o t-tdiv.o t-tdiv_ui.o t-fdiv.o t-fdiv_ui.o t-gcd.o \
 TESTS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd t-gcd2 \
  dive t-sqrtrem convert io logic t-powm t-powm_ui reuse
 
-check: st-mul st-tdiv st-tdiv_ui st-fdiv st-fdiv_ui st-gcd st-gcd2 st-dive \
+check: Makefile st-mul st-tdiv st-tdiv_ui st-fdiv st-fdiv_ui st-gcd st-gcd2 st-dive \
   st-sqrtrem st-convert st-io st-logic st-powm st-powm_ui st-reuse
 	@echo "The tests passed."
 

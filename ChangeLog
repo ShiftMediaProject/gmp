@@ -1,5 +1,42 @@
 Wed May  8 09:19:11 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpf/tets/t-dm2exp.c: New file.
+
+	* mpf/tests/t-add.c: Correct header comment.
+	* mpf/tests/t-sub.c: Likewise.
+	* mpf/tests/t-sqrt.c: Likewise.
+
+	* mpf/div.c: Misc variable name cleanups.
+	* mpf/div_ui.c: Base more closely on mpf/div.c.
+	* mpf/ui_div.c: Likewise.
+
+	* mpz/tests/Makefile.in (check): Depend on Makefile.
+	* mpq/tests/Makefile.in (check): Likewise.
+	* mpf/tests/Makefile.in (check): Likewise.
+
+	* mpf/tests/t-muldiv.c: New file.
+	* mpf/tests/Makefile.in: Compile and run `t-muldiv'.
+	(t-ref.o): Delete spurious rule.
+
+	* mpf/sqrt.c: Properly detect negative input operand.
+
+	* mpf/sqrt_ui.c: Delete spurious header comment.
+	* mpf/sqrt.c: Likewise.
+	* mpz/sqrt.c: Likewise.
+
+	* mpz/tests/reuse.c (main): Read `reps' from command line.
+
+	* mpf/tests/reuse.c: New file.
+	* mpf/tests/Makefile.in: Compile and run `reuse'.
+
+	* mpf/mul_ui.c: Disable code for removing low zero limbs.
+
+	* mpf/div.c: Fix condition for when vp and qp overlaps.
+
+	* mpf/add_ui.c: When sum equals u, copy up to prec+1 limbs.
+
+	* mpf/out_str.c: Don't output '\n' after exponent.
+
 	* mpf/add_ui.c: New special case for when U is completely cancelled.
 
 Wed Apr 24 05:33:28 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
@@ -26,7 +63,7 @@ Fri Apr 19 14:03:15 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 Thu Apr 18 01:22:05 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* mpf/set_str.c: If parameter `base' is negative, expect exponent
- 	to be decimal, otherwise in the same base as the mantissa.
+	to be decimal, otherwise in the same base as the mantissa.
 
 Wed Apr 17 17:28:36 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 

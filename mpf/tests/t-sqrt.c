@@ -1,4 +1,4 @@
-/* Test mpf_sqrt, mpf_neg, mpf_sub.
+/* Test mpf_sqrt, mpf_mul.
 
 Copyright (C) 1996 Free Software Foundation, Inc.
 

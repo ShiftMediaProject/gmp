@@ -50,10 +50,12 @@ mpf_mul_ui (r, u, v)
       size = prec;
     }
 
+#if 0
   /* Since we can do it at almost no cost, remove zero limbs at low end of
      result. */
   if (up[0] == 0)
     up++, size--;
+#endif
 
   if (size == 0 || v == 0)
     {
