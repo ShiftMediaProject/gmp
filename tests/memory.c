@@ -1,6 +1,5 @@
-/* Memory allocation used during tests. */
+/* Memory allocation used during tests.
 
-/*
 Copyright 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>  /* for abort */
@@ -113,20 +111,36 @@ tests_reallocate (void *ptr, size_t old_size, size_t new_size)
   return h->ptr;
 }
 
-void
-tests_free (void *ptr, size_t size)
+struct header **
+tests_free_find (void *ptr)
 {
-  struct header  **hp, *h;
-
-  hp = tests_memory_find (ptr);
+  struct header  **hp = tests_memory_find (ptr);
   if (hp == NULL)
     {
       printf ("tests_free(): attempt to free bad pointer 0x%lX\n",
               (unsigned long) ptr);
       abort ();
     }
-  h = *hp;
+  return hp;
+}
+
+void
+tests_free_nosize (void *ptr)
+{
+  struct header  **hp = tests_free_find (ptr);
+  struct header  *h = *hp;
+
   *hp = h->next;  /* unlink */
+
+  __gmp_default_free (ptr, h->size);
+  __gmp_default_free (h, sizeof (*h));
+}
+
+void
+tests_free (void *ptr, size_t size)
+{
+  struct header  **hp = tests_free_find (ptr);
+  struct header  *h = *hp;
 
   if (h->size != size)
     {
@@ -134,8 +148,7 @@ tests_free (void *ptr, size_t size)
       abort ();
     }
 
-  __gmp_default_free (ptr, size);
-  __gmp_default_free (h, sizeof (*h));
+  tests_free_nosize (ptr);
 }
 
 void
