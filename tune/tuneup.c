@@ -676,15 +676,15 @@ all (void)
   }
   printf("\n");
 
-  /* This is an indirect determination, based on a comparison between
-     mpn_redc and mpz_mod.  A fudge factor of 1.05 is applied to mpn_redc,
-     to represent additional overheads that REDC will get in mpz_powm.  */
+  /* This is an indirect determination, based on a comparison between redc
+     and mpz_mod.  A fudge factor of 1.04 is applied to redc, to represent
+     additional overheads it gets in mpz_powm.  */
   {
     static struct param_t  param;
     param.name[0] = "POWM_THRESHOLD";
-    param.function = speed_mpn_redc;
+    param.function = speed_redc;
     param.function2 = speed_mpz_mod;
-    param.function_fudge = 1.05;
+    param.function_fudge = 1.04;
     one (powm_threshold, 1, &param);
   }
   printf("\n");
