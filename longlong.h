@@ -101,6 +101,8 @@ MA 02111-1307, USA. */
    Please add support for more CPUs here, or improve the current support
    for the CPUs below!  */
 
+#if ! defined (NO_ASM)
+
 #if defined (__alpha) && W_TYPE_SIZE == 64
 #if defined (__GNUC__)
 #define umul_ppmm(ph, pl, m0, m1) \
@@ -185,7 +187,7 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 #endif
 
 
-#if defined (__GNUC__) && !defined (NO_ASM)
+#if defined (__GNUC__)
 
 /* We sometimes need to clobber "cc" with gcc2, but that would not be
    understood by gcc1.  Use cpp to avoid major code duplication.  */
@@ -226,6 +228,27 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 	     : "r" (x))
 #define COUNT_LEADING_ZEROS_0 32
 #endif /* __a29k__ */
+
+#if defined (__arc__)
+#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
+  __asm__ ("add.f	%1, %4, %5
+	adc	%0, %2, %3"						\
+	   : "=r" ((USItype) (sh)),					\
+	     "=&r" ((USItype) (sl))					\
+	   : "%r" ((USItype) (ah)),					\
+	     "rIJ" ((USItype) (bh)),					\
+	     "%r" ((USItype) (al)),					\
+	     "rIJ" ((USItype) (bl)))
+#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
+  __asm__ ("sub.f	%1, %4, %5
+	sbc	%0, %2, %3"						\
+	   : "=r" ((USItype) (sh)),					\
+	     "=&r" ((USItype) (sl))					\
+	   : "r" ((USItype) (ah)),					\
+	     "rIJ" ((USItype) (bh)),					\
+	     "r" ((USItype) (al)),					\
+	     "rIJ" ((USItype) (bl)))
+#endif
 
 #if defined (__arm__) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
@@ -526,7 +549,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #if defined (__mc68020__) || defined(mc68020) \
      || defined (__mc68030__) || defined (mc68030) \
      || defined (__mc68040__) || defined (mc68040) \
-     || defined (__mc68332__) || defined (mc68332) \
+     || defined (__mcpu32__) || defined (mcpu32) \
      || defined (__NeXT__)
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("mulu%.l %3,%1:%0"						\
@@ -995,7 +1018,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 	   : "%g1" __AND_CLOBBER_CC)
 #define UDIV_TIME 37
 #define count_leading_zeros(count, x) \
-  __asm__ ("scan %1,0,%0" : "=r" (x) : "r" (count))
+  __asm__ ("scan %1,1,%0" : "=r" (x) : "r" (count))
 /* Early sparclites return 63 for an argument of 0, but they warn that future
    implementations might change this.  Therefore, leave COUNT_LEADING_ZEROS_0
    undefined.  */
@@ -1123,6 +1146,8 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #endif /* __z8000__ */
 
 #endif /* __GNUC__ */
+
+#endif /* NO_ASM */
 
 
 #if !defined (umul_ppmm) && defined (__umulsidi3)
