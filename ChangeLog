@@ -18,6 +18,37 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-13  Kevin Ryde  <kevin@swox.se>
+
+	* mpq/get_d.c: Amend comments per mpn_get_d change.
+	(limb2dbl): Remove, no longer used.
+
+	* gmp-impl.h (DIVREM_1_NORM_THRESHOLD etc) [nails]: Correction to
+	comments, MP_SIZE_T_MAX means preinv never.
+
+	* gmp-impl.h (DIVEXACT_1_THRESHOLD, MODEXACT_1_ODD_THRESHOLD) [nails]:
+	Remove overrides, divexact_1 and modexact_1 have been nailified.
+
+	* mpz/inp_str.c (mpz_inp_str_nowhite): Use ASSERT_ALWAYS for EOF value
+	requirement.
+
+	* tests/refmpn.c (refmpn_rsh1add_n, refmpn_rsh1sub_n): Parens around
+	GMP_NUMB_BITS - 1 with ">>", to quieten gcc -Wall.
+	* tests/t-constants.c (main), tests/t-count_zeros.c (check_clz),
+	tests/t-modlinv.c (one), tests/mpz/t-jac.c (try_si_zi),
+	tests/mpq/t-get_d.c (check_onebit): : Correction to printfs.
+	* tests/mpn/t-fat.c: Add <string.h> for memcpy.
+	* tests/mpz/t-scan.c (check_ref): Remove unused variable "isigned".
+	* tests/mpq/t-get_d.c (check_onebit): Remove unused variable "limit".
+	* tests/mpf/t-set_si.c, tests/mpf/t-set_ui.c (check_data): Braces for
+	initializers.
+	* tests/devel/try.c (mpn_divexact_by3_fun, mpn_modexact_1_odd_fun):
+	Correction to return values.
+
+	* doc/gmp.texi (Miscellaneous Integer Functions): Note mpz_sizeinbase
+	can be used to locate the most significant bit.  Reword a bit for
+	clarity.
+
 2003-12-12  Niels Möller  <niels@s3.kth.se>
 
 	* mpn/generic/hgcd.c (__gmpn_hgcd_sanity): Fixed stack buffer
