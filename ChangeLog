@@ -1,3 +1,17 @@
+2000-04-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpf/tests/t-get_d.c, mpz/tests/reuse.c: Add K&R function
+	definitions.
+	* mpz/tests/t-2exp.c: Don't use ANSI-ism 2ul.
+
+	* gmp.texi (Installing MP): Build problem notes for GSYM_PREFIX
+	and ranlib on native SunOS.
+	Build problem note about AIX shared libraries disabled.
+	Particular systems note about HPPA shared libraries disabled.
+
+	* acinclude.m4 (GMP_CHECK_ASM_UNDERSCORE): Don't depend on C
+	having "void".
+
 2000-04-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/mul_n.c, mpn/generic/gcdext.c, mpz/nextprime.c,
