@@ -585,6 +585,40 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->size, s->xp, 0, s->r, 0))
 
 
+/* s->r is duplicated to form the multiplier.  Not sure if that's
+   particularly useful, but at least it provides some control.  */
+#define SPEED_ROUTINE_MPN_MUL_2(function)                       \
+  {                                                             \
+    mp_ptr     wp;                                              \
+    unsigned   i;                                               \
+    double     t;                                               \
+    mp_limb_t  mult[2];                                         \
+    TMP_DECL (marker);                                          \
+                                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);                         \
+                                                                \
+    TMP_MARK (marker);                                          \
+    wp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);        \
+    mult[0] = s->r;                                             \
+    mult[1] = s->r;                                             \
+                                                                \
+    speed_operand_src (s, s->xp, s->size);                      \
+    speed_operand_src (s, mult, 2);                             \
+    speed_operand_dst (s, wp, s->size+1);                       \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      function (wp, s->xp, s->size, mult);                      \
+    while (--i != 0);                                           \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+    return t;                                                   \
+  }
+
+
 #define SPEED_ROUTINE_MPN_PREINV_DIVREM_1_CALL(call)    \
   {                                                     \
     unsigned   shift;                                   \

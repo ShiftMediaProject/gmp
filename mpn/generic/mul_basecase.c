@@ -59,7 +59,7 @@ mpn_mul_basecase (mp_ptr prodp,
 #if HAVE_NATIVE_mpn_mul_2
   if (vsize >= 2)
     {
-      prodp[usize + 1] = mpn_mul_2 (prodp, up, usize, vp[0], vp[1]);
+      prodp[usize + 1] = mpn_mul_2 (prodp, up, usize, vp);
       prodp += 2, vp += 2, vsize -= 2;
     }
   else

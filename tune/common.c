@@ -491,7 +491,7 @@ speed_mpn_mul_1_inplace (struct speed_params *s)
 double
 speed_mpn_mul_2 (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_UNARY_2 (mpn_mul_2);
+  SPEED_ROUTINE_MPN_MUL_2 (mpn_mul_2);
 }
 #endif
 

@@ -70,7 +70,7 @@ mult (mpz_srcptr u, mpz_srcptr v, mpz_ptr w)
         cy_limb = mpn_mul_1 (wp, PTR(u), usize, PTR(v)[0]);
       else
         {
-          cy_limb = mpn_mul_2 (wp, PTR(u), usize, PTR(v)[0], PTR(v)[1]);
+          cy_limb = mpn_mul_2 (wp, PTR(u), usize, PTR(v));
           usize++;
         }
       wp[usize] = cy_limb;
