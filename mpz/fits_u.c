@@ -19,36 +19,24 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include "gmp.h"
-#include "gmp-impl.h"
-
-
-#ifdef OPERATION_fits_ushort
-#define FUNCTION  mpz_fits_ushort_p
-#define MAXIMUM   USHRT_MAX
-#endif
-
 #ifdef OPERATION_fits_uint
-#define FUNCTION  mpz_fits_uint_p
-#define MAXIMUM   UINT_MAX
-#endif
+#define __GMP_FORCE_mpz_fits_uint_p 1
 
+#else
 #ifdef OPERATION_fits_ulong
-#define FUNCTION  mpz_fits_ulong_p
-#define MAXIMUM   ULONG_MAX
-#endif
+#define __GMP_FORCE_mpz_fits_ulong_p 1
 
+#else
+#ifdef OPERATION_fits_ushort
+#define __GMP_FORCE_mpz_fits_ushort_p 1
+
+#else
 #ifndef FUNCTION
 Error, unrecognised OPERATION symbol.
 #endif
+#endif
+#endif
+#endif
 
-
-int
-FUNCTION (mpz_srcptr z)
-{
-  mp_size_t  size = SIZ(z);
-  mp_limb_t  data = PTR(z)[0];
-
-  return (size == 0
-          || (size == 1 && data <= MAXIMUM));
-}
+#include "gmp.h"
+#include "gmp-impl.h"
