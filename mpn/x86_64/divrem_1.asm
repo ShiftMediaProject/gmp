@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C         integer part  fraction part
 C         cycles/limb   cycles/limb
-C Hammer:     17            16
+C Hammer:     17            15
 
 
 C mp_limb_t mpn_divrem_1 (mp_ptr qp, mp_size_t fn,
@@ -34,7 +34,9 @@ C  * Implement mpn_preinv_divrem_1 entry point
 C  * Address FIXME below about leading quotient limbs optimization
 C  * Optimize by doing some software pipelining and local scheduling
 C  * Optimize by using mmx instructions for shifting
-
+C  * Perhaps compute the inverse without relying on the 71 cycle divq?  Could
+C    either use Newton's method and mulq, or perhaps the faster fdiv.
+C  * Perhaps handle nn+fn < 3 using divq directly (if divq is ever to be used).
 
 C INPUT PARAMETERS
 define(`qp',`%rdi')
@@ -44,9 +46,8 @@ define(`nn_param',`%rcx')
 define(`d',`%r8')
 
 define(`dinv',`%r10')
-define(`np',`%r13')
+define(`np',`%r11')
 define(`nn',`%r9')
-define(`mask',`%r11')
 define(`rem',`%rbp')
 
 
@@ -57,21 +58,14 @@ PROLOGUE(mpn_divrem_1)
 
 C	pushq	%r15
 	pushq	%r14
-	pushq	%r13
+C	pushq	%r13
 	pushq	%r12
 	pushq	%rbp
 	pushq	%rbx
 
-C Form mask for suppressing invalid right shift when msb of divisor is set
-	movq	d, mask
-	sarq	$63, mask
-	notq	mask
-
 	movq	np_param, np
 	movq	nn_param, nn
-	movl	$0, %ebp		C clear remainder
-	leaq	(fn,%rcx), %rax
-	testq	%rax, %rax
+	addq	fn, nn_param
 	je	L(ret)			C we're done if both nn and fn are zero
 
 	leaq	(qp,fn,8), qp		C point qp at least sign. integral limb
@@ -79,47 +73,36 @@ C Form mask for suppressing invalid right shift when msb of divisor is set
 	bsrq	d,%rcx
 	xorl	$63, %ecx		C %ecx = count_leading_zeros (divisor)
 
+	movq	$-1, %rdx
 	salq	%cl, d			C d = normalized divisor
 
-C dinv = invert_limb (d)
-	leaq	(d,d), %rax
-	movq	$-1, dinv
-	testq	%rax, %rax
-	je	L(1)
-	movl	$0, %eax
-	movq	d, %rdx
-	negq	%rdx
+	movq	$-1, %rax
+	subq	d, %rdx
 	divq	d
-	movq	%rax, dinv
-L(1):
+	movq	%rax, dinv		C dinv = invert_limb (d)
+
+	xorl	%ebx, %ebx
+	xorl	%eax, %eax
 
 	testq	nn, nn
 	je	L(frac)			C no integer quotient limbs
-	movq	-8(np,nn,8), %rax
-	negl	%ecx
-	movq	%rax, rem
-	shrq	%cl, rem
+	movq	-8(np,nn,8), %r14
+	shldq	%cl, %r14, %rax
 C FIXME: Should compare rem and d here, and conditionally generate a quotient
 C FIXME: limb for the right outcome
-	andq	mask, rem
-	negl	%ecx
 	subq	$2, nn
 	js	L(intlast)
-
+	ALIGN(64)
 L(intloop):
-	movq	(np,nn,8), %r14
-	salq	%cl, %rax
-	negl	%ecx
-	shrq	%cl, %r14
-	andq	mask, %r14		C conditionally zero %r14
-	leaq	(%r14,%rax), %r14
-	negl	%ecx
-	shrq	$63, %rax
+	movq	(np,nn,8), %rdx
+	shldq	%cl, %rdx, %r14		C n10
 	leaq	(d,%r14), %r12
-	cmovz	%r14, %r12
-	addq	rem, %rax
+	btq	$63, %r14
+	cmovnc	%r14, %r12
+	movq	%rax, rem
+	adcq	$0, %rax
 
-	mulq	dinv
+	mulq	dinv			C %rax = dinv * n
 
 	addq	%r12, %rax
 	movq	d, %rax
@@ -129,23 +112,23 @@ L(intloop):
 
 	mulq	%rdx
 
-	addq	%r14, %rax
-	adcq	rem, %rdx
-	subq	d, %rdx			C 00..00 or 11.11
-	leaq	(d,%rax), rem		C remainder
-	cmovz	%rax, rem		C remainder
-	subq	%r12, %rdx		C quotient
-	movq	%rdx, 8(qp,nn,8)
-	movq	(np,nn,8), %rax
+	addq	%rax, %r14
+	adcq	%rdx, rem
+	subq	d, rem			C 00..00 or 11.11
+	leaq	(d,%r14), %rax		C remainder
+	cmovnc	%r14, %rax		C remainder
+	subq	%r12, rem		C quotient
+	movq	(np,nn,8), %r14
+	movq	rem, 8(qp,nn,8)
 	decq	nn
 	jns	L(intloop)
 L(intlast):
-	salq	%cl, %rax
-	movq	%rax, %r14
-	shrq	$63, %rax
+	salq	%cl, %r14
 	leaq	(d,%r14), %r12
-	cmovz	%r14, %r12
-	addq	rem, %rax
+	btq	$63, %r14
+	cmovnc	%r14, %r12
+	movq	%rax, rem
+	adcq	$0, %rax
 
 	mulq	dinv
 
@@ -157,21 +140,22 @@ L(intlast):
 
 	mulq	%rdx
 
-	addq	%r14, %rax
-	adcq	rem, %rdx
-	subq	d, %rdx
-	leaq	(d,%rax), rem		C remainder
-	cmovz	%rax, rem		C remainder
-	subq	%r12, %rdx
-	movq	%rdx, (qp)
+	addq	%rax, %r14
+	adcq	%rdx, rem
+	subq	d, rem
+	leaq	(d,%r14), %rax		C remainder
+	cmovnc	%r14, %rax		C remainder
+	subq	%r12, rem
+	movq	rem, (qp)
 
 L(frac):
-	leaq	0(,fn,8), %rax
-	subq	%rax, qp
+	leaq	(,fn,8), %rdx
+	subq	%rdx, qp
 	decq	fn
 	js	L(fracskip)
+	ALIGN(4)
 L(fracloop):
-	movq	rem, %rax
+	movq	%rax, rem
 
 	mulq	dinv
 
@@ -184,20 +168,19 @@ L(fracloop):
 
 	addq	rem, %rdx
 	subq	d, %rdx
-	leaq	(d,%rax), rem		C remainder
-	cmovz	%rax, rem		C remainder
+	leaq	(d,%rax), %r14
+	cmovc	%r14, %rax		C remainder
 	subq	%r12, %rdx
 	movq	%rdx, (qp,fn,8)
 	decq	fn
 	jns	L(fracloop)
 L(fracskip):
-	shrq	%cl, rem
+	shrq	%cl, %rax
 L(ret):
-	movq	rem, %rax
 	popq	%rbx
 	popq	%rbp
 	popq	%r12
-	popq	%r13
+C	popq	%r13
 	popq	%r14
 C	popq	%r15
 	ret
