@@ -1,6 +1,6 @@
 /* GMP module external subroutines.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -214,6 +214,9 @@ tmp_mpf_grow (tmp_mpf_ptr f, unsigned long prec)
 static mpz_t  tmp_mpz_0, tmp_mpz_1, tmp_mpz_2;
 static mpq_t  tmp_mpq_0, tmp_mpq_1;
 static tmp_mpf_t tmp_mpf_0, tmp_mpf_1;
+
+/* for GMP::Mpz::export */
+#define tmp_mpz_4  tmp_mpz_2
 
 
 #define FREE_MPX_FREELIST(p,type)               \
@@ -1739,6 +1742,51 @@ CODE:
     else
       RETVAL = mpz_kronecker (coerce_mpz(tmp_mpz_0,a),
                               coerce_mpz(tmp_mpz_1,b));
+OUTPUT:
+    RETVAL
+
+
+void
+mpz_export (order, size, endian, nails, z)
+    int        order
+    size_t     size
+    int        endian
+    size_t     nails
+    mpz_coerce z
+PREINIT:
+    size_t  numb, count, bytes, actual_count;
+    char    *data;
+    SV      *sv;
+PPCODE:
+    numb = 8*size - nails;
+    count = (mpz_sizeinbase (z, 2) + numb-1) / numb;
+    bytes = count * size;
+    New (GMP_MALLOC_ID, data, bytes+1, char);
+    mpz_export (data, &actual_count, order, size, endian, nails, z);
+    assert (count == actual_count);
+    data[bytes] = '\0';
+    sv = sv_newmortal(); sv_usepvn_mg (sv, data, bytes); PUSHs(sv);
+
+
+mpz
+mpz_import (order, size, endian, nails, sv)
+    int     order
+    size_t  size
+    int     endian
+    size_t  nails
+    SV      *sv
+PREINIT:
+    size_t      count, bytes;
+    const char  *data;
+    STRLEN      len;
+CODE:
+    data = SvPV (sv, len);
+    if ((len % size) != 0)
+      croak ("%s mpz_import: string not a multiple of the given size",
+             mpz_class);
+    count = len / size;
+    RETVAL = new_mpz();
+    mpz_import (RETVAL->m, count, order, size, endian, nails, data);
 OUTPUT:
     RETVAL
 

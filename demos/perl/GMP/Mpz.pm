@@ -1,6 +1,6 @@
 # GMP mpz module.
 
-# Copyright 2001 Free Software Foundation, Inc.
+# Copyright 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -32,11 +32,11 @@ require Exporter;
 			     congruent_2exp_p divexact divisible_p
 			     divisible_2exp_p even_p fac fdiv fdiv_2exp fib
 			     fib2 gcd gcdext hamdist invert jacobi kronecker
-			     lcm lucnum lucnum2 mod mpz nextprime odd_p
-			     perfect_power_p perfect_square_p popcount powm
-			     probab_prime_p realloc remove root roote scan0
-			     scan1 setbit sizeinbase sqrtrem tdiv tdiv_2exp
-			     tstbit)],
+			     lcm lucnum lucnum2 mod mpz mpz_export
+			     mpz_import nextprime odd_p perfect_power_p
+			     perfect_square_p popcount powm probab_prime_p
+			     realloc remove root roote scan0 scan1 setbit
+			     sizeinbase sqrtrem tdiv tdiv_2exp tstbit)],
 		'constants'   => [@EXPORT],
 		'noconstants' => [@EXPORT]);
 Exporter::export_ok_tags('all');
