@@ -31,52 +31,21 @@ MA 02111-1307, USA. */
 #define NTOH_LIMB_FETCH(limb, src)  do { (limb) = *(src); } while (0)
 #endif
 
-/* The generic implementations below very likely come out as lots of
-   separate byte fetches, so if we know the host is little endian then
-   instead use a single load and a purely arithmetic BSWAP_LIMB.  */
 #if HAVE_LIMB_LITTLE_ENDIAN
 #define NTOH_LIMB_FETCH(limb, src)  BSWAP_LIMB_FETCH (limb, src)
 #endif
 
-#if ! defined (NTOH_LIMB_FETCH)
-#if BITS_PER_MP_LIMB == 8
-#define NTOH_LIMB_FETCH(limb, src)  do { (limb) = *(src); } while (0)
-#endif
-#if BITS_PER_MP_LIMB == 16
+#ifndef NTOH_LIMB_FETCH
 #define NTOH_LIMB_FETCH(limb, src)                              \
   do {                                                          \
     const unsigned char  *__p = (const unsigned char *) (src);  \
-    (limb) =                                                    \
-      ( (mp_limb_t) __p[0] << 8)                                \
-      + (mp_limb_t) __p[1];                                     \
+    mp_limb_t  __limb;                                          \
+    int        __i;                                             \
+    __limb = 0;                                                 \
+    for (__i = 0; __i < BYTES_PER_MP_LIMB; __i++)               \
+      __limb = (__limb << 8) | __p[__i];                        \
+    (limb) = __limb;                                            \
   } while (0)
-#endif
-#if BITS_PER_MP_LIMB == 32
-#define NTOH_LIMB_FETCH(limb, src)                              \
-  do {                                                          \
-    const unsigned char  *__p = (const unsigned char *) (src);  \
-    (limb) =                                                    \
-      (  (mp_limb_t) __p[0] << 24)                              \
-      + ((mp_limb_t) __p[1] << 16)                              \
-      + ((mp_limb_t) __p[2] << 8)                               \
-      +  (mp_limb_t) __p[3];                                    \
-  } while (0)
-#endif
-#if ! defined (NTOH_LIMB_FETCH) && BITS_PER_MP_LIMB == 64
-#define NTOH_LIMB_FETCH(limb, src)                              \
-  do {                                                          \
-    const unsigned char  *__p = (const unsigned char *) (src);  \
-    (limb) =                                                    \
-      (  (mp_limb_t) __p[0] << 56)                              \
-      + ((mp_limb_t) __p[1] << 48)                              \
-      + ((mp_limb_t) __p[2] << 40)                              \
-      + ((mp_limb_t) __p[3] << 32)                              \
-      + ((mp_limb_t) __p[4] << 24)                              \
-      + ((mp_limb_t) __p[5] << 16)                              \
-      + ((mp_limb_t) __p[6] << 8)                               \
-      +  (mp_limb_t) __p[7];                                    \
-  } while (0)
-#endif
 #endif
 
 
