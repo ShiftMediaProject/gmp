@@ -74,9 +74,9 @@ Free Software Foundation, Inc.
 Permission is granted to copy, distribute and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.1 or any later
 version published by the Free Software Foundation; with no Invariant Sections,
-with the Front-Cover Texts being "A GNU Manual", and with the Back-Cover Texts
-being "You have freedom to copy and modify this GNU Manual, like GNU
-software".  A copy of the license is included in @ref{GNU Free Documentation
+with the Front-Cover Texts being ``A GNU Manual'', and with the Back-Cover
+Texts being ``You have freedom to copy and modify this GNU Manual, like GNU
+software''.  A copy of the license is included in @ref{GNU Free Documentation
 License}.
 
 @iftex
@@ -1388,6 +1388,22 @@ If stripped static libraries are wanted, the suggested workaround is to build
 normally, strip the separate object files, and do another @samp{make all} to
 rebuild.  Alternately @samp{CFLAGS} with @samp{-g} omitted can always be used
 if it's just debugging which is unwanted.
+
+@item @command{make} syntax error
+
+On certain versions of SCO OpenServer 5 and IRIX 6.5 the native @command{make}
+is unable to handle the long dependencies list for @file{libgmp.la}.  The
+symptom is a ``syntax error'' on the following line of the top-level
+@file{Makefile}.
+
+@example
+libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES) 
+@end example
+
+Either use GNU Make, or as a workaround remove
+@code{$(libgmp_la_DEPENDENCIES)} from that line (which will make the initial
+build work, but if any recompiling is done @file{libgmp.la} might not be
+rebuilt).
 
 @item NeXT prior to 3.3
 
@@ -3393,7 +3409,7 @@ Set the value of @var{rop} to @var{op1}/@var{op2}.  Note that if @var{op1} and
 @deftypefun int mpq_set_str (mpq_t @var{rop}, char *@var{str}, int @var{base})
 Set @var{rop} from a null-terminated string @var{str} in the given @var{base}.
 
-The string can be an integer like "41" or a fraction like "41/152".  The
+The string can be an integer like ``41'' or a fraction like ``41/152''.  The
 fraction must be in canonical form (@pxref{Rational Number Functions}), or if
 not then @code{mpq_canonicalize} must be called.
 
@@ -5247,6 +5263,7 @@ reveals itself.}
 @noindent
 All the C++ classes and functions are available with
 
+@cindex gmpxx.h
 @example
 #include <gmpxx.h>
 @end example
@@ -5575,6 +5592,7 @@ Options}).  This interface must be regarded as preliminary and possibly
 subject to incompatible changes in the future, since MPFR itself is
 preliminary.  All definitions can be obtained with
 
+@cindex mpfrxx.h
 @example
 #include <mpfrxx.h>
 @end example
@@ -5978,7 +5996,7 @@ interface, expression templates to eliminate temporaries.
 ALP @spaceuref{http://www.inria.fr/saga/logiciels/ALP} @* Linear algebra and
 polynomials using templates.
 @item
-CLN @spaceuref{http://clisp.cons.org/~haible/packages-cln.html"} @* High level
+CLN @spaceuref{http://clisp.cons.org/~haible/packages-cln.html} @* High level
 classes for arithmetic.
 @item
 LiDIA @spaceuref{http://www.informatik.tu-darmstadt.de/TI/LiDIA} @* A C++
