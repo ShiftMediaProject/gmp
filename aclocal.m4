@@ -60,9 +60,8 @@ ifelse(m4_eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h) > 0),1,
 [.GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h)])])
 
 
-dnl  GMP_PROG_M4()
-dnl  -------------
-dnl
+dnl  GMP_PROG_M4
+dnl  -----------
 dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
 dnl  and an AC_SUBST accordingly.  If $M4 is already set then it's a user
 dnl  choice and is accepted with no checks.  GMP_PROG_M4 is like
@@ -391,22 +390,22 @@ AC_DEFUN(GMP_DEFINE_RAW,
 echo [$1] >> ifelse([$2], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
 ])dnl
 
-dnl  GMP_CHECK_ASM_LABEL_SUFFIX
+dnl  GMP_ASM_LABEL_SUFFIX
 dnl  Should a label have a colon or not?
-AC_DEFUN(GMP_CHECK_ASM_LABEL_SUFFIX,
+AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
 [AC_CACHE_CHECK([what assembly label suffix to use],
-               gmp_cv_check_asm_label_suffix,
+               gmp_cv_asm_label_suffix,
 [case "$target" in 
-  *-*-hpux*) gmp_cv_check_asm_label_suffix=[""] ;;
-  *) gmp_cv_check_asm_label_suffix=[":"] ;;
+  *-*-hpux*) gmp_cv_asm_label_suffix=[""] ;;
+  *) gmp_cv_asm_label_suffix=[":"] ;;
 esac
 ])
-echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_check_asm_label_suffix>)"] >> $gmp_tmpconfigm4
+echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
 ])dnl
 
 
-dnl  GMP_CHECK_ASM_UNDERSCORE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl  -------------------------------------------------------------------
+dnl  GMP_ASM_UNDERSCORE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl  -------------------------------------------------------------
 dnl
 dnl  Deterine whether global symbols need to be prefixed with an underscore.
 dnl  A test program is linked to an assembler module with or without an
@@ -417,26 +416,26 @@ dnl  nm, since it corresponds to what a real program is going to do.  Note
 dnl  in particular that grepping doesn't work with SunOS 4 native grep since
 dnl  that grep seems to have trouble with '\0's in files.
 
-AC_DEFUN(GMP_CHECK_ASM_UNDERSCORE,
+AC_DEFUN(GMP_ASM_UNDERSCORE,
 [AC_CACHE_CHECK([if globals are prefixed by underscore], 
-	        gmp_cv_check_asm_underscore,
-[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
-AC_REQUIRE([GMP_CHECK_ASM_GLOBL])
-AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
+	        gmp_cv_asm_underscore,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 cat > conftes1.c <<EOF
 main () { underscore_test(); }
 EOF
 for tmp_underscore in "" "_"; do
   cat > conftes2.s <<EOF
-      	$gmp_cv_check_asm_text
-	$gmp_cv_check_asm_globl ${tmp_underscore}underscore_test
-${tmp_underscore}underscore_test$gmp_cv_check_asm_label_suffix
+      	$gmp_cv_asm_text
+	$gmp_cv_asm_globl ${tmp_underscore}underscore_test
+${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
   case "$target" in
   *-*-aix*)
     cat >> conftes2.s <<EOF
-	$gmp_cv_check_asm_globl .${tmp_underscore}underscore_test
-.${tmp_underscore}underscore_test:
+	$gmp_cv_asm_globl .${tmp_underscore}underscore_test
+.${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
     ;;
   esac
@@ -452,18 +451,18 @@ if test $tmp_result_ = yes; then
   if test $tmp_result = yes; then
     AC_MSG_ERROR([Test program unexpectedly links both with and without underscore.])
   else
-    gmp_cv_check_asm_underscore=yes
+    gmp_cv_asm_underscore=yes
   fi
 else
   if test $tmp_result = yes; then
-    gmp_cv_check_asm_underscore=no
+    gmp_cv_asm_underscore=no
   else
     AC_MSG_ERROR([Test program links neither with nor without underscore.])
   fi
 fi
 rm -f conftes* a.out
 ])
-if test "$gmp_cv_check_asm_underscore" = "yes"; then
+if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
   ifelse([$1], , :, [$1])
 else
@@ -473,26 +472,26 @@ fi
 ])
 
 
-dnl  GMP_CHECK_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl  GMP_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl  Is parameter to `.align' logarithmic?
 dnl  Requires NM to be set to nm for target.
-AC_DEFUN(GMP_CHECK_ASM_ALIGN_LOG,
-[AC_REQUIRE([GMP_CHECK_ASM_GLOBL])
-AC_REQUIRE([GMP_CHECK_ASM_DATA])
-AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
+AC_DEFUN(GMP_ASM_ALIGN_LOG,
+[AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_DATA])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([if .align assembly directive is logarithmic],
-		gmp_cv_check_asm_align_log,
+		gmp_cv_asm_align_log,
 [if test -z "$NM"; then
   echo; echo ["configure: $0: fatal: need nm"]
   exit 1
 fi
 cat > conftest.s <<EOF
-      	$gmp_cv_check_asm_data
+      	$gmp_cv_asm_data
       	.align  4
-	$gmp_cv_check_asm_globl	foo
+	$gmp_cv_asm_globl	foo
 	.byte	1
 	.align	4
-foo$gmp_cv_check_asm_label_suffix
+foo$gmp_cv_asm_label_suffix
 	.byte	2
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
@@ -502,9 +501,9 @@ if AC_TRY_EVAL(ac_assemble); then
        -e 's;[^1-9]*\([0-9]*\).*;\1;'`
   changequote([, ])dnl
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
-    gmp_cv_check_asm_align_log=yes
+    gmp_cv_asm_align_log=yes
   else
-    gmp_cv_check_asm_align_log=no
+    gmp_cv_asm_align_log=no
   fi
 else 
   echo "configure: failed program was:" >&AC_FD_CC
@@ -512,8 +511,8 @@ else
 fi
 rm -f conftest*
 ])
-GMP_DEFINE_RAW(["define(<ALIGN_LOGARITHMIC>,<$gmp_cv_check_asm_align_log>)"])
-if test "$gmp_cv_check_asm_align_log" = "yes"; then
+GMP_DEFINE_RAW(["define(<ALIGN_LOGARITHMIC>,<$gmp_cv_asm_align_log>)"])
+if test "$gmp_cv_asm_align_log" = "yes"; then
   ifelse([$1], , :, [$1])
 else
   ifelse([$2], , :, [$2])
@@ -521,8 +520,8 @@ fi
 ])dnl
 
 
-dnl  GMP_CHECK_ASM_ALIGN_FILL_0x90
-dnl  -----------------------------
+dnl  GMP_ASM_ALIGN_FILL_0x90
+dnl  -----------------------
 dnl  Determine whether a ",0x90" suffix works on a .align directive.
 dnl  This is only meant for use on x86, 0x90 being a "nop".
 dnl
@@ -551,12 +550,12 @@ dnl
 dnl  The warning from solaris 2.8 is supressed to stop anyone worrying that
 dnl  something might be wrong.
 
-AC_DEFUN(GMP_CHECK_ASM_ALIGN_FILL_0x90,
+AC_DEFUN(GMP_ASM_ALIGN_FILL_0x90,
 [AC_CACHE_CHECK([if the .align directive accepts an 0x90 fill in .text],
-                gmp_cv_check_asm_align_fill_0x90,
-[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
+                gmp_cv_asm_align_fill_0x90,
+[AC_REQUIRE([GMP_ASM_TEXT])
 cat > conftest.s <<EOF
-      	$gmp_cv_check_asm_text
+      	$gmp_cv_asm_text
       	.align  4, 0x90
 	.byte   0
       	.align  4, 0x90
@@ -565,57 +564,57 @@ if $CCAS $CFLAGS conftest.s >conftest.out 2>&1; then
   cat conftest.out 1>&AC_FD_CC
   if grep "Warning: Fill parameter ignored for executable section" conftest.out >/dev/null; then
     echo "Supressing this warning by omitting 0x90" 1>&AC_FD_CC
-    gmp_cv_check_asm_align_fill_0x90=no
+    gmp_cv_asm_align_fill_0x90=no
   else
-    gmp_cv_check_asm_align_fill_0x90=yes
+    gmp_cv_asm_align_fill_0x90=yes
   fi
 else
   cat conftest.out 1>&AC_FD_CC
   echo "Non-zero exit code" 1>&AC_FD_CC
-  gmp_cv_check_asm_align_fill_0x90=no
+  gmp_cv_asm_align_fill_0x90=no
 fi
 rm -f conftest*
 ])
 GMP_DEFINE_RAW(
-["define(<ALIGN_FILL_0x90>,<$gmp_cv_check_asm_align_fill_0x90>)"])
+["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
 ])
 
 
-dnl  GMP_CHECK_ASM_TEXT
-AC_DEFUN(GMP_CHECK_ASM_TEXT,
-[AC_CACHE_CHECK([how to switch to text section], gmp_cv_check_asm_text,
+dnl  GMP_ASM_TEXT
+AC_DEFUN(GMP_ASM_TEXT,
+[AC_CACHE_CHECK([how to switch to text section], gmp_cv_asm_text,
 [case "$target" in
   *-*-aix*)
     changequote({, })
-    gmp_cv_check_asm_text={".csect .text[PR]"}
+    gmp_cv_asm_text={".csect .text[PR]"}
     changequote([, ])
     ;;
-  *-*-hpux*) gmp_cv_check_asm_text=[".code"] ;;
-  *) gmp_cv_check_asm_text=[".text"] ;;
+  *-*-hpux*) gmp_cv_asm_text=[".code"] ;;
+  *) gmp_cv_asm_text=[".text"] ;;
 esac
 ])
-echo ["define(<TEXT>, <$gmp_cv_check_asm_text>)"] >> $gmp_tmpconfigm4
+echo ["define(<TEXT>, <$gmp_cv_asm_text>)"] >> $gmp_tmpconfigm4
 ])dnl
 
-dnl  GMP_CHECK_ASM_DATA
+dnl  GMP_ASM_DATA
 dnl  Can we say `.data'?
-AC_DEFUN(GMP_CHECK_ASM_DATA,
-[AC_CACHE_CHECK([how to switch to data section], gmp_cv_check_asm_data,
+AC_DEFUN(GMP_ASM_DATA,
+[AC_CACHE_CHECK([how to switch to data section], gmp_cv_asm_data,
 [case "$target" in
   *-*-aix*)
     changequote({, })
-    gmp_cv_check_asm_data={".csect .data[RW]"}
+    gmp_cv_asm_data={".csect .data[RW]"}
     changequote([, ])
     ;;
-  *) gmp_cv_check_asm_data=[".data"] ;;
+  *) gmp_cv_asm_data=[".data"] ;;
 esac
 ])
-echo ["define(<DATA>, <$gmp_cv_check_asm_data>)"] >> $gmp_tmpconfigm4
+echo ["define(<DATA>, <$gmp_cv_asm_data>)"] >> $gmp_tmpconfigm4
 ])dnl
 
 
-dnl  GMP_CHECK_ASM_RODATA
-dnl  --------------------
+dnl  GMP_ASM_RODATA
+dnl  --------------
 dnl
 dnl  ELF uses `.section .rodata', possibly with a `,"a"' though in gas the
 dnl  flags default from the section name.
@@ -632,86 +631,86 @@ dnl
 dnl  i386 and i486 don't have caching but are treated the same as newer x86s
 dnl  since i386 in particular is used to mean generic x86.
 
-AC_DEFUN(GMP_CHECK_ASM_RODATA,
+AC_DEFUN(GMP_ASM_RODATA,
 [AC_CACHE_CHECK([how to switch to read-only data section],
-                gmp_cv_check_asm_rodata,
-[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
-AC_REQUIRE([GMP_CHECK_ASM_DATA])
+                gmp_cv_asm_rodata,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_DATA])
 case "$target" in
 [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
-  gmp_cv_check_asm_rodata="$gmp_cv_check_asm_data" ;;
+  gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
 *)
-  gmp_cv_check_asm_rodata="$gmp_cv_check_asm_text" ;;
+  gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
 esac
 ])
-echo ["define(<RODATA>, <$gmp_cv_check_asm_rodata>)"] >> $gmp_tmpconfigm4
+echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 ])
 
 
-dnl  GMP_CHECK_ASM_GLOBL
+dnl  GMP_ASM_GLOBL
 dnl  Can we say `.global'?
-AC_DEFUN(GMP_CHECK_ASM_GLOBL,
-[AC_CACHE_CHECK([how to export a symbol], gmp_cv_check_asm_globl,
+AC_DEFUN(GMP_ASM_GLOBL,
+[AC_CACHE_CHECK([how to export a symbol], gmp_cv_asm_globl,
 [case "$target" in
-  *-*-hpux*) gmp_cv_check_asm_globl=[".export"] ;;
-  *) gmp_cv_check_asm_globl=[".globl"] ;;
+  *-*-hpux*) gmp_cv_asm_globl=[".export"] ;;
+  *) gmp_cv_asm_globl=[".globl"] ;;
 esac
 ])
-echo ["define(<GLOBL>, <$gmp_cv_check_asm_globl>)"] >> $gmp_tmpconfigm4
+echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 ])dnl
 
-dnl  GMP_CHECK_ASM_TYPE
+dnl  GMP_ASM_TYPE
 dnl  Can we say `.type'?
-AC_DEFUN(GMP_CHECK_ASM_TYPE,
+AC_DEFUN(GMP_ASM_TYPE,
 [AC_CACHE_CHECK([how the .type assembly directive should be used],
-gmp_cv_check_asm_type,
+gmp_cv_asm_type,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 for gmp_tmp_prefix in @ \# %; do
   echo "	.type	sym,${gmp_tmp_prefix}function" > conftest.s
   if AC_TRY_EVAL(ac_assemble); then
-    gmp_cv_check_asm_type="[.type	\$][1,${gmp_tmp_prefix}\$][2]"
+    gmp_cv_asm_type="[.type	\$][1,${gmp_tmp_prefix}\$][2]"
     break
   fi
 done
-if test -z "$gmp_cv_check_asm_type"; then
-  gmp_cv_check_asm_type="[dnl]"
+if test -z "$gmp_cv_asm_type"; then
+  gmp_cv_asm_type="[dnl]"
 fi
 ])
-echo ["define(<TYPE>, <$gmp_cv_check_asm_type>)"] >> $gmp_tmpconfigm4
+echo ["define(<TYPE>, <$gmp_cv_asm_type>)"] >> $gmp_tmpconfigm4
 ])dnl
 
-dnl  GMP_CHECK_ASM_SIZE
+dnl  GMP_ASM_SIZE
 dnl  Can we say `.size'?
-AC_DEFUN(GMP_CHECK_ASM_SIZE,
-[AC_CACHE_CHECK([if the .size assembly directive works], gmp_cv_check_asm_size,
+AC_DEFUN(GMP_ASM_SIZE,
+[AC_CACHE_CHECK([if the .size assembly directive works], gmp_cv_asm_size,
 [ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 echo '	.size	sym,1' > conftest.s
 if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_check_asm_size="[.size	\$][1,\$][2]"
+  gmp_cv_asm_size="[.size	\$][1,\$][2]"
 else
-  gmp_cv_check_asm_size="[dnl]"
+  gmp_cv_asm_size="[dnl]"
 fi
 ])
-echo ["define(<SIZE>, <$gmp_cv_check_asm_size>)"] >> $gmp_tmpconfigm4
+echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
 ])dnl
 
-dnl  GMP_CHECK_ASM_LSYM_PREFIX
+dnl  GMP_ASM_LSYM_PREFIX
 dnl  What is the prefix for a local label?
 dnl  Requires NM to be set to nm for target.
-AC_DEFUN(GMP_CHECK_ASM_LSYM_PREFIX,
-[AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
+AC_DEFUN(GMP_ASM_LSYM_PREFIX,
+[AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([what prefix to use for a local label], 
-gmp_cv_check_asm_lsym_prefix,
+gmp_cv_asm_lsym_prefix,
 [if test -z "$NM"; then
   echo; echo ["$0: fatal: need nm"]
   exit 1
 fi
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-gmp_cv_check_asm_lsym_prefix="L"
+gmp_cv_asm_lsym_prefix="L"
 for gmp_tmp_pre in L .L $ L$; do
   cat > conftest.s <<EOF
-dummy${gmp_cv_check_asm_label_suffix}
-${gmp_tmp_pre}gurkmacka${gmp_cv_check_asm_label_suffix}
+dummy${gmp_cv_asm_label_suffix}
+${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
 	.byte 0
 EOF
   if AC_TRY_EVAL(ac_assemble); then
@@ -722,7 +721,7 @@ EOF
       break
     fi
     if $NM conftest.o | grep gurkmacka >/dev/null; then true; else
-      gmp_cv_check_asm_lsym_prefix="$gmp_tmp_pre"
+      gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
       break
     fi
   else
@@ -733,18 +732,18 @@ EOF
 done
 rm -f conftest*
 ])
-echo ["define(<LSYM_PREFIX>, <${gmp_cv_check_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
+echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 ])
 
-dnl  GMP_CHECK_ASM_W32
+dnl  GMP_ASM_W32
 dnl  How to [define] a 32-bit word.
 dnl  Requires NM to be set to nm for target.
-AC_DEFUN(GMP_CHECK_ASM_W32,
-[AC_REQUIRE([GMP_CHECK_ASM_DATA])
-AC_REQUIRE([GMP_CHECK_ASM_GLOBL])
-AC_REQUIRE([GMP_CHECK_ASM_LABEL_SUFFIX])
+AC_DEFUN(GMP_ASM_W32,
+[AC_REQUIRE([GMP_ASM_DATA])
+AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([how to [define] a 32-bit word],
-	       gmp_cv_check_asm_w32,
+	       gmp_cv_asm_w32,
 [if test -z "$NM"; then
   echo; echo ["configure: $0: fatal: need nm"]
   exit 1
@@ -758,16 +757,16 @@ fi
 
 case "$target" in 
   *-*-hpux*)
-    gmp_cv_check_asm_w32=".word"
+    gmp_cv_asm_w32=".word"
     ;;
   *-*-*)
     ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
     for gmp_tmp_op in .long .word; do
       cat > conftest.s <<EOF
-	$gmp_cv_check_asm_data
-	$gmp_cv_check_asm_globl	foo
+	$gmp_cv_asm_data
+	$gmp_cv_asm_globl	foo
 	$gmp_tmp_op	0
-foo${gmp_cv_check_asm_label_suffix}
+foo${gmp_cv_asm_label_suffix}
 	.byte	0
 EOF
       if AC_TRY_EVAL(ac_assemble); then
@@ -776,7 +775,7 @@ EOF
              -e 's;[^1-9]*\([0-9]*\).*;\1;'`
         changequote([, ])dnl
         if test "$gmp_tmp_val" = "4"; then
-          gmp_cv_check_asm_w32="$gmp_tmp_op"
+          gmp_cv_asm_w32="$gmp_tmp_op"
           break
         fi
       fi
@@ -784,42 +783,41 @@ EOF
     ;;
 esac
 
-if test -z "$gmp_cv_check_asm_w32"; then
+if test -z "$gmp_cv_asm_w32"; then
   echo; echo ["configure: $0: fatal: do not know how to define a 32-bit word"]
   exit 1
 fi
 rm -f conftest*
 ])
-echo ["define(<W32>, <$gmp_cv_check_asm_w32>)"] >> $gmp_tmpconfigm4
+echo ["define(<W32>, <$gmp_cv_asm_w32>)"] >> $gmp_tmpconfigm4
 ])
 
 
-dnl  GMP_CHECK_ASM_MMX([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
-dnl  -----------------------------------------------------------
+dnl  GMP_ASM_MMX([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
+dnl  -----------------------------------------------------
 dnl  Determine wither the assembler supports MMX instructions.
 dnl
-dnl  This macro is wanted before GMP_CHECK_ASM_TEXT, so ".text" is hard
-dnl  coded here.  ".text" is believed to be correct on all x86 systems,
-dnl  certainly it's all GMP_CHECK_ASM_TEXT gives currently.  Actually
-dnl  ".text" probably isn't needed at all, at least for just checking
-dnl  instruction syntax.
+dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
+dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
+dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
+dnl  needed at all, at least for just checking instruction syntax.
 
-AC_DEFUN(GMP_CHECK_ASM_MMX,
+AC_DEFUN(GMP_ASM_MMX,
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
-		gmp_cv_check_asm_mmx,
+		gmp_cv_asm_mmx,
 [cat > conftest.s <<EOF
 	.text
 	por	%mm0, %mm0
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_check_asm_mmx=yes
+  gmp_cv_asm_mmx=yes
 else 
-  gmp_cv_check_asm_mmx=no
+  gmp_cv_asm_mmx=no
 fi
 rm -f conftest*
 ])
-if test "$gmp_cv_check_asm_mmx" = "yes"; then
+if test "$gmp_cv_asm_mmx" = "yes"; then
   ifelse([$1], , :, [$1])
 else
   AC_MSG_WARN([+----------------------------------------------------------])
@@ -834,25 +832,25 @@ fi
 ])dnl
 
 
-dnl  GMP_CHECK_ASM_SHLDL_CL([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
-dnl  ----------------------------------------------------------------
-AC_DEFUN(GMP_CHECK_ASM_SHLDL_CL,
-[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
+dnl  GMP_ASM_SHLDL_CL([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
+dnl  ----------------------------------------------------------
+AC_DEFUN(GMP_ASM_SHLDL_CL,
+[AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler takes cl with shldl],
-		gmp_cv_check_asm_shldl_cl,
+		gmp_cv_asm_shldl_cl,
 [cat > conftest.s <<EOF
-	$gmp_cv_check_asm_text
+	$gmp_cv_asm_text
 	shldl	%cl, %eax, %ebx
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_check_asm_shldl_cl=yes
+  gmp_cv_asm_shldl_cl=yes
 else 
-  gmp_cv_check_asm_shldl_cl=no
+  gmp_cv_asm_shldl_cl=no
 fi
 rm -f conftest*
 ])
-if test "$gmp_cv_check_asm_shldl_cl" = "yes"; then
+if test "$gmp_cv_asm_shldl_cl" = "yes"; then
   ifelse([$1], , :, [$1])
 else
   ifelse([$2], , :, [$2])
@@ -901,6 +899,94 @@ if test $gmp_cv_gcc_march_pentiumpro = yes; then
 else
   ifelse([$2], , :, [$2])
 fi
+])
+
+
+dnl  GMP_ASM_X86_MCOUNT
+dnl  ------------------
+dnl  Find out how to call mcount for profiling on an x86 system.
+dnl
+dnl  A dummy function is compiled and the ".s" output examined.  The pattern
+dnl  matching might be a bit fragile, but should work at least with gcc on
+dnl  sensible systems.  Certainly it's better than hard coding a table of
+dnl  conventions.
+dnl
+dnl  For non-PIC, any ".data" is taken to mean a counter might be passed.
+dnl  It's assumed a movl will set it up, and the right register is taken
+dnl  from that movl.  Any movl involving %esp is ignored (a frame pointer
+dnl  setup normally).
+dnl
+dnl  For PIC, any ".data" is similarly interpreted, but a GOTOFF identifies
+dnl  the line setting up the right register.
+dnl
+dnl  In both cases a line with "mcount" identifies the call and that line is
+dnl  used literally.
+dnl
+dnl  On some systems (eg. FreeBSD 3.5) gcc emits ".data" but doesn't use it,
+dnl  so it's not an error to have .data but then not find a register.
+dnl
+dnl  Variations in mcount conventions on different x86 systems can be found
+dnl  in gcc config/i386.  mcount can have a "_" prefix or be .mcount or
+dnl  _mcount_ptr, and for PIC it can be called through a GOT entry, or via
+dnl  the PLT.  If a pointer to a counter is required it's passed in %eax or
+dnl  %edx.
+dnl
+dnl  Flags to specify PIC are taken from $ac_cv_prog_cc_pic set by
+dnl  AC_PROG_LIBTOOL.
+dnl
+dnl  Enhancement: Cache the values determined here. But what's the right way
+dnl  to get two variables (mcount_nonpic_reg and mcount_nonpic_call say) set
+dnl  from one block of commands?
+
+AC_DEFUN(GMP_ASM_X86_MCOUNT,
+[AC_REQUIRE([AC_ENABLE_SHARED])
+AC_REQUIRE([AC_PROG_LIBTOOL])
+AC_MSG_CHECKING([how to call x86 mcount])
+cat >conftest.c <<EOF
+foo(){bar();}
+EOF
+
+if test "$enable_static" = yes; then
+  gmp_asmout_compile="$CC $CFLAGS -S conftest.c 1>&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_asmout_compile); then
+    if grep '\.data' conftest.s >/dev/null; then
+      mcount_nonpic_reg="`sed -n ['/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
+    else
+      mcount_nonpic_reg=
+    fi
+    mcount_nonpic_call="`grep 'call.*mcount' conftest.s`"
+    if test -z "$mcount_nonpic_call"; then
+      AC_MSG_ERROR([Cannot find mcount call for non-PIC])
+    fi
+  else
+    AC_MSG_ERROR([Cannot compile test program for non-PIC])
+  fi
+fi
+
+if test "$enable_shared" = yes; then
+  gmp_asmout_compile="$CC $CFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_asmout_compile); then
+    if grep '\.data' conftest.s >/dev/null; then
+      mcount_pic_reg="`sed -n ['s/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p'] conftest.s`"
+    else
+      mcount_pic_reg=
+    fi
+    mcount_pic_call="`grep 'call.*mcount' conftest.s`"
+    if test -z "$mcount_pic_call"; then
+      AC_MSG_ERROR([Cannot find mcount call for PIC])
+    fi
+  else
+    AC_MSG_ERROR([Cannot compile test program for PIC])
+  fi
+fi
+
+GMP_DEFINE_RAW(["define(<MCOUNT_NONPIC_REG>, <\`$mcount_nonpic_reg'>)"])
+GMP_DEFINE_RAW(["define(<MCOUNT_NONPIC_CALL>,<\`$mcount_nonpic_call'>)"])
+GMP_DEFINE_RAW(["define(<MCOUNT_PIC_REG>,    <\`$mcount_pic_reg'>)"])
+GMP_DEFINE_RAW(["define(<MCOUNT_PIC_CALL>,   <\`$mcount_pic_call'>)"])
+
+rm -f conftest.*
+AC_MSG_RESULT([determined])
 ])
 
 
@@ -1052,449 +1138,6 @@ rm -f conftest.*
 dnl  Deal with bad synchronization of Autoconf with Libtool.
 AC_DEFUN(AC_CANONICAL_BUILD, [_AC_CANONICAL_BUILD])
 AC_DEFUN(AC_CHECK_TOOL_PREFIX, [_AC_CHECK_TOOL_PREFIX])
-
-
-# serial 1
-
-AC_DEFUN(AM_C_PROTOTYPES,
-[AC_REQUIRE([AM_PROG_CC_STDC])
-AC_REQUIRE([AC_PROG_CPP])
-AC_MSG_CHECKING([for function prototypes])
-if test "$am_cv_prog_cc_stdc" != no; then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(PROTOTYPES,1,[Define if compiler has function prototypes])
-  U= ANSI2KNR=
-else
-  AC_MSG_RESULT(no)
-  U=_ ANSI2KNR=./ansi2knr
-  # Ensure some checks needed by ansi2knr itself.
-  AC_HEADER_STDC
-  AC_CHECK_HEADERS(string.h)
-fi
-AC_SUBST(U)dnl
-AC_SUBST(ANSI2KNR)dnl
-])
-
-
-# serial 1
-
-# @defmac AC_PROG_CC_STDC
-# @maindex PROG_CC_STDC
-# @ovindex CC
-# If the C compiler in not in ANSI C mode by default, try to add an option
-# to output variable @code{CC} to make it so.  This macro tries various
-# options that select ANSI C on some system or another.  It considers the
-# compiler to be in ANSI C mode if it handles function prototypes correctly.
-#
-# If you use this macro, you should check after calling it whether the C
-# compiler has been set to accept ANSI C; if not, the shell variable
-# @code{am_cv_prog_cc_stdc} is set to @samp{no}.  If you wrote your source
-# code in ANSI C, you can make an un-ANSIfied copy of it by using the
-# program @code{ansi2knr}, which comes with Ghostscript.
-# @end defmac
-
-AC_DEFUN(AM_PROG_CC_STDC,
-[AC_REQUIRE([AC_PROG_CC])
-AC_BEFORE([$0], [AC_C_INLINE])
-AC_BEFORE([$0], [AC_C_CONST])
-dnl Force this before AC_PROG_CPP.  Some cpp's, eg on HPUX, require
-dnl a magic option to avoid problems with ANSI preprocessor commands
-dnl like #elif.
-dnl FIXME: can't do this because then AC_AIX won't work due to a
-dnl circular dependency.
-dnl AC_BEFORE([$0], [AC_PROG_CPP])
-AC_MSG_CHECKING(for ${CC-cc} option to accept ANSI C)
-AC_CACHE_VAL(am_cv_prog_cc_stdc,
-[am_cv_prog_cc_stdc=no
-ac_save_CC="$CC"
-# Don't try gcc -ansi; that turns off useful extensions and
-# breaks some systems' header files.
-# AIX			-qlanglvl=ansi
-# Ultrix and OSF/1	-std1
-# HP-UX 10.20 and later	-Ae
-# HP-UX older versions	-Aa -D_HPUX_SOURCE
-# SVR4			-Xc -D__EXTENSIONS__
-for ac_arg in "" -qlanglvl=ansi -std1 -Ae "-Aa -D_HPUX_SOURCE" "-Xc -D__EXTENSIONS__"
-do
-  CC="$ac_save_CC $ac_arg"
-  AC_TRY_COMPILE(
-[#include <stdarg.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-/* Most of the following tests are stolen from RCS 5.7's src/conf.sh.  */
-struct buf { int x; };
-FILE * (*rcsopen) (struct buf *, struct stat *, int);
-static char *e (p, i)
-     char **p;
-     int i;
-{
-  return p[i];
-}
-static char *f (char * (*g) (char **, int), char **p, ...)
-{
-  char *s;
-  va_list v;
-  va_start (v,p);
-  s = g (p, va_arg (v,int));
-  va_end (v);
-  return s;
-}
-int test (int i, double x);
-struct s1 {int (*f) (int a);};
-struct s2 {int (*f) (double a);};
-int pairnames (int, char **, FILE *(*)(struct buf *, struct stat *, int), int, int);
-int argc;
-char **argv;
-], [
-return f (e, argv, 0) != argv[0]  ||  f (e, argv, 1) != argv[1];
-],
-[am_cv_prog_cc_stdc="$ac_arg"; break])
-done
-CC="$ac_save_CC"
-])
-if test -z "$am_cv_prog_cc_stdc"; then
-  AC_MSG_RESULT([none needed])
-else
-  AC_MSG_RESULT($am_cv_prog_cc_stdc)
-fi
-case "x$am_cv_prog_cc_stdc" in
-  x|xno) ;;
-  *) CC="$CC $am_cv_prog_cc_stdc" ;;
-esac
-])
-
-# Do all the work for Automake.  This macro actually does too much --
-# some checks are only needed if your package does certain things.
-# But this isn't really a big deal.
-
-# serial 1
-
-dnl Usage:
-dnl AM_INIT_AUTOMAKE(package,version, [no-define])
-
-AC_DEFUN(AM_INIT_AUTOMAKE,
-[AC_REQUIRE([AC_PROG_INSTALL])
-dnl We require 2.13 because we rely on SHELL being computed by configure.
-AC_PREREQ([2.13])
-PACKAGE=[$1]
-AC_SUBST(PACKAGE)
-VERSION=[$2]
-AC_SUBST(VERSION)
-dnl test to see if srcdir already configured
-if test "`CDPATH=: && cd $srcdir && pwd`" != "`pwd`" &&
-   test -f $srcdir/config.status; then
-  AC_MSG_ERROR([source directory already configured; run "make distclean" there first])
-fi
-ifelse([$3],,
-AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of package])
-AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version number of package]))
-AC_REQUIRE([AM_SANITY_CHECK])
-AC_REQUIRE([AC_ARG_PROGRAM])
-AM_MISSING_PROG(ACLOCAL, aclocal)
-AM_MISSING_PROG(AUTOCONF, autoconf)
-AM_MISSING_PROG(AUTOMAKE, automake)
-AM_MISSING_PROG(AUTOHEADER, autoheader)
-AM_MISSING_PROG(MAKEINFO, makeinfo)
-AM_MISSING_PROG(AMTAR, tar)
-AM_MISSING_INSTALL_SH
-dnl We need awk for the "check" target.  The system "awk" is bad on
-dnl some platforms.
-AC_REQUIRE([AC_PROG_AWK])
-AC_REQUIRE([AC_PROG_MAKE_SET])
-AC_REQUIRE([AM_DEP_TRACK])
-AC_REQUIRE([AM_SET_DEPDIR])
-ifdef([AC_PROVIDE_AC_PROG_CC], [AM_DEPENDENCIES(CC)], [
-   define([AC_PROG_CC], defn([AC_PROG_CC])[AM_DEPENDENCIES(CC)])])
-ifdef([AC_PROVIDE_AC_PROG_CXX], [AM_DEPENDENCIES(CXX)], [
-   define([AC_PROG_CXX], defn([AC_PROG_CXX])[AM_DEPENDENCIES(CXX)])])
-])
-
-#
-# Check to make sure that the build environment is sane.
-#
-
-AC_DEFUN(AM_SANITY_CHECK,
-[AC_MSG_CHECKING([whether build environment is sane])
-# Just in case
-sleep 1
-echo timestamp > conftestfile
-# Do `set' in a subshell so we don't clobber the current shell's
-# arguments.  Must try -L first in case configure is actually a
-# symlink; some systems play weird games with the mod time of symlinks
-# (eg FreeBSD returns the mod time of the symlink's containing
-# directory).
-if (
-   set X `ls -Lt $srcdir/configure conftestfile 2> /dev/null`
-   if test "[$]*" = "X"; then
-      # -L didn't work.
-      set X `ls -t $srcdir/configure conftestfile`
-   fi
-   if test "[$]*" != "X $srcdir/configure conftestfile" \
-      && test "[$]*" != "X conftestfile $srcdir/configure"; then
-
-      # If neither matched, then we have a broken ls.  This can happen
-      # if, for instance, CONFIG_SHELL is bash and it inherits a
-      # broken ls alias from the environment.  This has actually
-      # happened.  Such a system could not be considered "sane".
-      AC_MSG_ERROR([ls -t appears to fail.  Make sure there is not a broken
-alias in your environment])
-   fi
-
-   test "[$]2" = conftestfile
-   )
-then
-   # Ok.
-   :
-else
-   AC_MSG_ERROR([newly created file is older than distributed files!
-Check your system clock])
-fi
-rm -f conftest*
-AC_MSG_RESULT(yes)])
-
-dnl AM_MISSING_PROG(NAME, PROGRAM)
-AC_DEFUN(AM_MISSING_PROG, [
-AC_REQUIRE([AM_MISSING_HAS_RUN])
-$1=${$1-"${am_missing_run}$2"}
-AC_SUBST($1)])
-
-dnl Like AM_MISSING_PROG, but only looks for install-sh.
-dnl AM_MISSING_INSTALL_SH()
-AC_DEFUN(AM_MISSING_INSTALL_SH, [
-AC_REQUIRE([AM_MISSING_HAS_RUN])
-if test -z "$install_sh"; then
-   install_sh="$ac_aux_dir/install-sh"
-   test -f "$install_sh" || install_sh="$ac_aux_dir/install.sh"
-   test -f "$install_sh" || install_sh="${am_missing_run}${ac_auxdir}/install-sh"
-   dnl FIXME: an evil hack: we remove the SHELL invocation from
-   dnl install_sh because automake adds it back in.  Sigh.
-   install_sh="`echo $install_sh | sed -e 's/\${SHELL}//'`"
-fi
-AC_SUBST(install_sh)])
-
-dnl AM_MISSING_HAS_RUN.
-dnl Define MISSING if not defined so far and test if it supports --run.
-dnl If it does, set am_missing_run to use it, otherwise, to nothing.
-AC_DEFUN([AM_MISSING_HAS_RUN], [
-test x"${MISSING+set}" = xset || \
-  MISSING="\${SHELL} `CDPATH=: && cd $ac_aux_dir && pwd`/missing"
-dnl Use eval to expand $SHELL
-if eval "$MISSING --run :"; then
-  am_missing_run="$MISSING --run "
-else
-  am_missing_run=
-  am_backtick='`'
-  AC_MSG_WARN([${am_backtick}missing' script is too old or missing])
-fi
-])
-
-dnl See how the compiler implements dependency checking.
-dnl Usage:
-dnl AM_DEPENDENCIES(NAME)
-dnl NAME is "CC", "CXX" or "OBJC".
-
-dnl We try a few techniques and use that to set a single cache variable.
-
-AC_DEFUN(AM_DEPENDENCIES,[
-AC_REQUIRE([AM_SET_DEPDIR])
-AC_REQUIRE([AM_OUTPUT_DEPENDENCY_COMMANDS])
-ifelse([$1],CC,[
-AC_REQUIRE([AC_PROG_CC])
-AC_REQUIRE([AC_PROG_CPP])
-depcc="$CC"
-depcpp="$CPP"],[$1],CXX,[
-AC_REQUIRE([AC_PROG_CXX])
-AC_REQUIRE([AC_PROG_CXXCPP])
-depcc="$CXX"
-depcpp="$CXXCPP"],[$1],OBJC,[
-am_cv_OBJC_dependencies_compiler_type=gcc],[
-AC_REQUIRE([AC_PROG_][$1])
-depcc="$[$1]"
-depcpp=""])
-AC_MSG_CHECKING([dependency style of $depcc])
-AC_CACHE_VAL(am_cv_[$1]_dependencies_compiler_type,[
-if test -z "$AMDEP"; then
-  echo '#include "conftest.h"' > conftest.c
-  echo 'int i;' > conftest.h
-
-  am_cv_[$1]_dependencies_compiler_type=none
-  for depmode in `sed -n 's/^#*\([a-zA-Z0-9]*\))$/\1/p' < "$am_depcomp"`; do
-    case "$depmode" in
-    nosideeffect)
-      # after this tag, mechanisms are not by side-effect, so they'll
-      # only be used when explicitly requested
-      if test "x$enable_dependency_tracking" = xyes; then
-	continue
-      else
-	break
-      fi
-      ;;
-    none) break ;;
-    esac
-    if depmode="$depmode" \
-       source=conftest.c object=conftest.o \
-       depfile=conftest.Po tmpdepfile=conftest.TPo \
-       $SHELL $am_depcomp $depcc -c conftest.c 2>/dev/null &&
-       grep conftest.h conftest.Po > /dev/null 2>&1; then
-      am_cv_[$1]_dependencies_compiler_type="$depmode"
-      break
-    fi
-  done
-
-  rm -f conftest.*
-else
-  am_cv_[$1]_dependencies_compiler_type=none
-fi
-])
-AC_MSG_RESULT($am_cv_[$1]_dependencies_compiler_type)
-[$1]DEPMODE="depmode=$am_cv_[$1]_dependencies_compiler_type"
-AC_SUBST([$1]DEPMODE)
-])
-
-dnl Choose a directory name for dependency files.
-dnl This macro is AC_REQUIREd in AM_DEPENDENCIES
-
-AC_DEFUN(AM_SET_DEPDIR,[
-if test -d .deps || mkdir .deps 2> /dev/null || test -d .deps; then
-  DEPDIR=.deps
-else
-  DEPDIR=_deps
-fi
-AC_SUBST(DEPDIR)
-])
-
-AC_DEFUN(AM_DEP_TRACK,[
-AC_ARG_ENABLE(dependency-tracking,
-[  --disable-dependency-tracking Speeds up one-time builds
-  --enable-dependency-tracking  Do not reject slow dependency extractors])
-if test "x$enable_dependency_tracking" = xno; then
-  AMDEP="#"
-else
-  am_depcomp="$ac_aux_dir/depcomp"
-  if test ! -f "$am_depcomp"; then
-    AMDEP="#"
-  else
-    AMDEP=
-  fi
-fi
-AC_SUBST(AMDEP)
-if test -z "$AMDEP"; then
-  AMDEPBACKSLASH='\'
-else
-  AMDEPBACKSLASH=
-fi
-pushdef([subst], defn([AC_SUBST]))
-subst(AMDEPBACKSLASH)
-popdef([subst])
-])
-
-dnl Generate code to set up dependency tracking.
-dnl This macro should only be invoked once -- use via AC_REQUIRE.
-dnl Usage:
-dnl AM_OUTPUT_DEPENDENCY_COMMANDS
-
-dnl
-dnl This code is only required when automatic dependency tracking
-dnl is enabled.  FIXME.  This creates each `.P' file that we will
-dnl need in order to bootstrap the dependency handling code.
-AC_DEFUN(AM_OUTPUT_DEPENDENCY_COMMANDS,[
-AC_OUTPUT_COMMANDS([
-test x"$AMDEP" != x"" ||
-for mf in $CONFIG_FILES; do
-  case "$mf" in
-  Makefile) dirpart=.;;
-  */Makefile) dirpart=`echo "$mf" | sed -e 's|/[^/]*$||'`;;
-  *) continue;;
-  esac
-  grep '^DEP_FILES *= *[^ #]' < "$mf" > /dev/null || continue
-  # Extract the definition of DEP_FILES from the Makefile without
-  # running `make'.
-  DEPDIR=`sed -n -e '/^DEPDIR = / s///p' < "$mf"`
-  test -z "$DEPDIR" && continue
-  # When using ansi2knr, U may be empty or an underscore; expand it
-  U=`sed -n -e '/^U = / s///p' < "$mf"`
-  test -d "$dirpart/$DEPDIR" || mkdir "$dirpart/$DEPDIR"
-  # We invoke sed twice because it is the simplest approach to
-  # changing $(DEPDIR) to its actual value in the expansion.
-  for file in `sed -n -e '
-    /^DEP_FILES = .*\\\\$/ {
-      s/^DEP_FILES = //
-      :loop
-	s/\\\\$//
-	p
-	n
-	/\\\\$/ b loop
-      p
-    }
-    /^DEP_FILES = / s/^DEP_FILES = //p' < "$mf" | \
-       sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
-    # Make sure the directory exists.
-    test -f "$dirpart/$file" && continue
-    fdir=`echo "$file" | sed -e 's|/[^/]*$||'`
-    $ac_aux_dir/mkinstalldirs "$dirpart/$fdir" > /dev/null 2>&1
-    # echo "creating $dirpart/$file"
-    echo '# dummy' > "$dirpart/$file"
-  done
-done
-], [AMDEP="$AMDEP"
-ac_aux_dir="$ac_aux_dir"])])
-
-# Like AC_CONFIG_HEADER, but automatically create stamp file.
-
-AC_DEFUN(AM_CONFIG_HEADER,
-[AC_PREREQ([2.12])
-AC_CONFIG_HEADER([$1])
-dnl When config.status generates a header, we must update the stamp-h file.
-dnl This file resides in the same directory as the config header
-dnl that is generated.  We must strip everything past the first ":",
-dnl and everything past the last "/".
-AC_OUTPUT_COMMANDS(changequote(<<,>>)dnl
-ifelse(patsubst(<<$1>>, <<[^ ]>>, <<>>), <<>>,
-<<test -z "<<$>>CONFIG_HEADERS" || echo timestamp > patsubst(<<$1>>, <<^\([^:]*/\)?.*>>, <<\1>>)stamp-h<<>>dnl>>,
-<<am_indx=1
-for am_file in <<$1>>; do
-  case " <<$>>CONFIG_HEADERS " in
-  *" <<$>>am_file "*<<)>>
-    echo timestamp > `echo <<$>>am_file | sed -e 's%:.*%%' -e 's%[^/]*$%%'`stamp-h$am_indx
-    ;;
-  esac
-  am_indx=`expr "<<$>>am_indx" + 1`
-done<<>>dnl>>)
-changequote([,]))])
-
-# Add --enable-maintainer-mode option to configure.
-# From Jim Meyering
-
-# serial 1
-
-AC_DEFUN(AM_MAINTAINER_MODE,
-[AC_MSG_CHECKING([whether to enable maintainer-specific portions of Makefiles])
-  dnl maintainer-mode is disabled by default
-  AC_ARG_ENABLE(maintainer-mode,
-[  --enable-maintainer-mode enable make rules and dependencies not useful
-                          (and sometimes confusing) to the casual installer],
-      USE_MAINTAINER_MODE=$enableval,
-      USE_MAINTAINER_MODE=no)
-  AC_MSG_RESULT($USE_MAINTAINER_MODE)
-  AM_CONDITIONAL(MAINTAINER_MODE, test $USE_MAINTAINER_MODE = yes)
-  MAINT=$MAINTAINER_MODE_TRUE
-  AC_SUBST(MAINT)dnl
-]
-)
-
-# Define a conditional.
-
-AC_DEFUN(AM_CONDITIONAL,
-[AC_SUBST($1_TRUE)
-AC_SUBST($1_FALSE)
-if $2; then
-  $1_TRUE=
-  $1_FALSE='#'
-else
-  $1_TRUE='#'
-  $1_FALSE=
-fi])
 
 
 # serial 42 AC_PROG_LIBTOOL
@@ -2167,4 +1810,447 @@ AC_DEFUN(AM_PROG_NM, [indir([AC_PROG_NM])])dnl
 
 dnl This is just to silence aclocal about the macro not being used
 ifelse([AC_DISABLE_FAST_INSTALL])dnl
+
+
+# serial 1
+
+AC_DEFUN(AM_C_PROTOTYPES,
+[AC_REQUIRE([AM_PROG_CC_STDC])
+AC_REQUIRE([AC_PROG_CPP])
+AC_MSG_CHECKING([for function prototypes])
+if test "$am_cv_prog_cc_stdc" != no; then
+  AC_MSG_RESULT(yes)
+  AC_DEFINE(PROTOTYPES,1,[Define if compiler has function prototypes])
+  U= ANSI2KNR=
+else
+  AC_MSG_RESULT(no)
+  U=_ ANSI2KNR=./ansi2knr
+  # Ensure some checks needed by ansi2knr itself.
+  AC_HEADER_STDC
+  AC_CHECK_HEADERS(string.h)
+fi
+AC_SUBST(U)dnl
+AC_SUBST(ANSI2KNR)dnl
+])
+
+
+# serial 1
+
+# @defmac AC_PROG_CC_STDC
+# @maindex PROG_CC_STDC
+# @ovindex CC
+# If the C compiler in not in ANSI C mode by default, try to add an option
+# to output variable @code{CC} to make it so.  This macro tries various
+# options that select ANSI C on some system or another.  It considers the
+# compiler to be in ANSI C mode if it handles function prototypes correctly.
+#
+# If you use this macro, you should check after calling it whether the C
+# compiler has been set to accept ANSI C; if not, the shell variable
+# @code{am_cv_prog_cc_stdc} is set to @samp{no}.  If you wrote your source
+# code in ANSI C, you can make an un-ANSIfied copy of it by using the
+# program @code{ansi2knr}, which comes with Ghostscript.
+# @end defmac
+
+AC_DEFUN(AM_PROG_CC_STDC,
+[AC_REQUIRE([AC_PROG_CC])
+AC_BEFORE([$0], [AC_C_INLINE])
+AC_BEFORE([$0], [AC_C_CONST])
+dnl Force this before AC_PROG_CPP.  Some cpp's, eg on HPUX, require
+dnl a magic option to avoid problems with ANSI preprocessor commands
+dnl like #elif.
+dnl FIXME: can't do this because then AC_AIX won't work due to a
+dnl circular dependency.
+dnl AC_BEFORE([$0], [AC_PROG_CPP])
+AC_MSG_CHECKING(for ${CC-cc} option to accept ANSI C)
+AC_CACHE_VAL(am_cv_prog_cc_stdc,
+[am_cv_prog_cc_stdc=no
+ac_save_CC="$CC"
+# Don't try gcc -ansi; that turns off useful extensions and
+# breaks some systems' header files.
+# AIX			-qlanglvl=ansi
+# Ultrix and OSF/1	-std1
+# HP-UX 10.20 and later	-Ae
+# HP-UX older versions	-Aa -D_HPUX_SOURCE
+# SVR4			-Xc -D__EXTENSIONS__
+for ac_arg in "" -qlanglvl=ansi -std1 -Ae "-Aa -D_HPUX_SOURCE" "-Xc -D__EXTENSIONS__"
+do
+  CC="$ac_save_CC $ac_arg"
+  AC_TRY_COMPILE(
+[#include <stdarg.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+/* Most of the following tests are stolen from RCS 5.7's src/conf.sh.  */
+struct buf { int x; };
+FILE * (*rcsopen) (struct buf *, struct stat *, int);
+static char *e (p, i)
+     char **p;
+     int i;
+{
+  return p[i];
+}
+static char *f (char * (*g) (char **, int), char **p, ...)
+{
+  char *s;
+  va_list v;
+  va_start (v,p);
+  s = g (p, va_arg (v,int));
+  va_end (v);
+  return s;
+}
+int test (int i, double x);
+struct s1 {int (*f) (int a);};
+struct s2 {int (*f) (double a);};
+int pairnames (int, char **, FILE *(*)(struct buf *, struct stat *, int), int, int);
+int argc;
+char **argv;
+], [
+return f (e, argv, 0) != argv[0]  ||  f (e, argv, 1) != argv[1];
+],
+[am_cv_prog_cc_stdc="$ac_arg"; break])
+done
+CC="$ac_save_CC"
+])
+if test -z "$am_cv_prog_cc_stdc"; then
+  AC_MSG_RESULT([none needed])
+else
+  AC_MSG_RESULT($am_cv_prog_cc_stdc)
+fi
+case "x$am_cv_prog_cc_stdc" in
+  x|xno) ;;
+  *) CC="$CC $am_cv_prog_cc_stdc" ;;
+esac
+])
+
+# Do all the work for Automake.  This macro actually does too much --
+# some checks are only needed if your package does certain things.
+# But this isn't really a big deal.
+
+# serial 1
+
+dnl Usage:
+dnl AM_INIT_AUTOMAKE(package,version, [no-define])
+
+AC_DEFUN(AM_INIT_AUTOMAKE,
+[AC_REQUIRE([AC_PROG_INSTALL])
+dnl We require 2.13 because we rely on SHELL being computed by configure.
+AC_PREREQ([2.13])
+PACKAGE=[$1]
+AC_SUBST(PACKAGE)
+VERSION=[$2]
+AC_SUBST(VERSION)
+dnl test to see if srcdir already configured
+if test "`CDPATH=: && cd $srcdir && pwd`" != "`pwd`" &&
+   test -f $srcdir/config.status; then
+  AC_MSG_ERROR([source directory already configured; run "make distclean" there first])
+fi
+ifelse([$3],,
+AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of package])
+AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version number of package]))
+AC_REQUIRE([AM_SANITY_CHECK])
+AC_REQUIRE([AC_ARG_PROGRAM])
+AM_MISSING_PROG(ACLOCAL, aclocal)
+AM_MISSING_PROG(AUTOCONF, autoconf)
+AM_MISSING_PROG(AUTOMAKE, automake)
+AM_MISSING_PROG(AUTOHEADER, autoheader)
+AM_MISSING_PROG(MAKEINFO, makeinfo)
+AM_MISSING_PROG(AMTAR, tar)
+AM_MISSING_INSTALL_SH
+dnl We need awk for the "check" target.  The system "awk" is bad on
+dnl some platforms.
+AC_REQUIRE([AC_PROG_AWK])
+AC_REQUIRE([AC_PROG_MAKE_SET])
+AC_REQUIRE([AM_DEP_TRACK])
+AC_REQUIRE([AM_SET_DEPDIR])
+ifdef([AC_PROVIDE_AC_PROG_CC], [AM_DEPENDENCIES(CC)], [
+   define([AC_PROG_CC], defn([AC_PROG_CC])[AM_DEPENDENCIES(CC)])])
+ifdef([AC_PROVIDE_AC_PROG_CXX], [AM_DEPENDENCIES(CXX)], [
+   define([AC_PROG_CXX], defn([AC_PROG_CXX])[AM_DEPENDENCIES(CXX)])])
+])
+
+#
+# Check to make sure that the build environment is sane.
+#
+
+AC_DEFUN(AM_SANITY_CHECK,
+[AC_MSG_CHECKING([whether build environment is sane])
+# Just in case
+sleep 1
+echo timestamp > conftestfile
+# Do `set' in a subshell so we don't clobber the current shell's
+# arguments.  Must try -L first in case configure is actually a
+# symlink; some systems play weird games with the mod time of symlinks
+# (eg FreeBSD returns the mod time of the symlink's containing
+# directory).
+if (
+   set X `ls -Lt $srcdir/configure conftestfile 2> /dev/null`
+   if test "[$]*" = "X"; then
+      # -L didn't work.
+      set X `ls -t $srcdir/configure conftestfile`
+   fi
+   if test "[$]*" != "X $srcdir/configure conftestfile" \
+      && test "[$]*" != "X conftestfile $srcdir/configure"; then
+
+      # If neither matched, then we have a broken ls.  This can happen
+      # if, for instance, CONFIG_SHELL is bash and it inherits a
+      # broken ls alias from the environment.  This has actually
+      # happened.  Such a system could not be considered "sane".
+      AC_MSG_ERROR([ls -t appears to fail.  Make sure there is not a broken
+alias in your environment])
+   fi
+
+   test "[$]2" = conftestfile
+   )
+then
+   # Ok.
+   :
+else
+   AC_MSG_ERROR([newly created file is older than distributed files!
+Check your system clock])
+fi
+rm -f conftest*
+AC_MSG_RESULT(yes)])
+
+dnl AM_MISSING_PROG(NAME, PROGRAM)
+AC_DEFUN(AM_MISSING_PROG, [
+AC_REQUIRE([AM_MISSING_HAS_RUN])
+$1=${$1-"${am_missing_run}$2"}
+AC_SUBST($1)])
+
+dnl Like AM_MISSING_PROG, but only looks for install-sh.
+dnl AM_MISSING_INSTALL_SH()
+AC_DEFUN(AM_MISSING_INSTALL_SH, [
+AC_REQUIRE([AM_MISSING_HAS_RUN])
+if test -z "$install_sh"; then
+   install_sh="$ac_aux_dir/install-sh"
+   test -f "$install_sh" || install_sh="$ac_aux_dir/install.sh"
+   test -f "$install_sh" || install_sh="${am_missing_run}${ac_auxdir}/install-sh"
+   dnl FIXME: an evil hack: we remove the SHELL invocation from
+   dnl install_sh because automake adds it back in.  Sigh.
+   install_sh="`echo $install_sh | sed -e 's/\${SHELL}//'`"
+fi
+AC_SUBST(install_sh)])
+
+dnl AM_MISSING_HAS_RUN.
+dnl Define MISSING if not defined so far and test if it supports --run.
+dnl If it does, set am_missing_run to use it, otherwise, to nothing.
+AC_DEFUN([AM_MISSING_HAS_RUN], [
+test x"${MISSING+set}" = xset || \
+  MISSING="\${SHELL} `CDPATH=: && cd $ac_aux_dir && pwd`/missing"
+dnl Use eval to expand $SHELL
+if eval "$MISSING --run :"; then
+  am_missing_run="$MISSING --run "
+else
+  am_missing_run=
+  am_backtick='`'
+  AC_MSG_WARN([${am_backtick}missing' script is too old or missing])
+fi
+])
+
+dnl See how the compiler implements dependency checking.
+dnl Usage:
+dnl AM_DEPENDENCIES(NAME)
+dnl NAME is "CC", "CXX" or "OBJC".
+
+dnl We try a few techniques and use that to set a single cache variable.
+
+AC_DEFUN(AM_DEPENDENCIES,[
+AC_REQUIRE([AM_SET_DEPDIR])
+AC_REQUIRE([AM_OUTPUT_DEPENDENCY_COMMANDS])
+ifelse([$1],CC,[
+AC_REQUIRE([AC_PROG_CC])
+AC_REQUIRE([AC_PROG_CPP])
+depcc="$CC"
+depcpp="$CPP"],[$1],CXX,[
+AC_REQUIRE([AC_PROG_CXX])
+AC_REQUIRE([AC_PROG_CXXCPP])
+depcc="$CXX"
+depcpp="$CXXCPP"],[$1],OBJC,[
+am_cv_OBJC_dependencies_compiler_type=gcc],[
+AC_REQUIRE([AC_PROG_][$1])
+depcc="$[$1]"
+depcpp=""])
+AC_MSG_CHECKING([dependency style of $depcc])
+AC_CACHE_VAL(am_cv_[$1]_dependencies_compiler_type,[
+if test -z "$AMDEP"; then
+  echo '#include "conftest.h"' > conftest.c
+  echo 'int i;' > conftest.h
+
+  am_cv_[$1]_dependencies_compiler_type=none
+  for depmode in `sed -n 's/^#*\([a-zA-Z0-9]*\))$/\1/p' < "$am_depcomp"`; do
+    case "$depmode" in
+    nosideeffect)
+      # after this tag, mechanisms are not by side-effect, so they'll
+      # only be used when explicitly requested
+      if test "x$enable_dependency_tracking" = xyes; then
+	continue
+      else
+	break
+      fi
+      ;;
+    none) break ;;
+    esac
+    if depmode="$depmode" \
+       source=conftest.c object=conftest.o \
+       depfile=conftest.Po tmpdepfile=conftest.TPo \
+       $SHELL $am_depcomp $depcc -c conftest.c 2>/dev/null &&
+       grep conftest.h conftest.Po > /dev/null 2>&1; then
+      am_cv_[$1]_dependencies_compiler_type="$depmode"
+      break
+    fi
+  done
+
+  rm -f conftest.*
+else
+  am_cv_[$1]_dependencies_compiler_type=none
+fi
+])
+AC_MSG_RESULT($am_cv_[$1]_dependencies_compiler_type)
+[$1]DEPMODE="depmode=$am_cv_[$1]_dependencies_compiler_type"
+AC_SUBST([$1]DEPMODE)
+])
+
+dnl Choose a directory name for dependency files.
+dnl This macro is AC_REQUIREd in AM_DEPENDENCIES
+
+AC_DEFUN(AM_SET_DEPDIR,[
+if test -d .deps || mkdir .deps 2> /dev/null || test -d .deps; then
+  DEPDIR=.deps
+else
+  DEPDIR=_deps
+fi
+AC_SUBST(DEPDIR)
+])
+
+AC_DEFUN(AM_DEP_TRACK,[
+AC_ARG_ENABLE(dependency-tracking,
+[  --disable-dependency-tracking Speeds up one-time builds
+  --enable-dependency-tracking  Do not reject slow dependency extractors])
+if test "x$enable_dependency_tracking" = xno; then
+  AMDEP="#"
+else
+  am_depcomp="$ac_aux_dir/depcomp"
+  if test ! -f "$am_depcomp"; then
+    AMDEP="#"
+  else
+    AMDEP=
+  fi
+fi
+AC_SUBST(AMDEP)
+if test -z "$AMDEP"; then
+  AMDEPBACKSLASH='\'
+else
+  AMDEPBACKSLASH=
+fi
+pushdef([subst], defn([AC_SUBST]))
+subst(AMDEPBACKSLASH)
+popdef([subst])
+])
+
+dnl Generate code to set up dependency tracking.
+dnl This macro should only be invoked once -- use via AC_REQUIRE.
+dnl Usage:
+dnl AM_OUTPUT_DEPENDENCY_COMMANDS
+
+dnl
+dnl This code is only required when automatic dependency tracking
+dnl is enabled.  FIXME.  This creates each `.P' file that we will
+dnl need in order to bootstrap the dependency handling code.
+AC_DEFUN(AM_OUTPUT_DEPENDENCY_COMMANDS,[
+AC_OUTPUT_COMMANDS([
+test x"$AMDEP" != x"" ||
+for mf in $CONFIG_FILES; do
+  case "$mf" in
+  Makefile) dirpart=.;;
+  */Makefile) dirpart=`echo "$mf" | sed -e 's|/[^/]*$||'`;;
+  *) continue;;
+  esac
+  grep '^DEP_FILES *= *[^ #]' < "$mf" > /dev/null || continue
+  # Extract the definition of DEP_FILES from the Makefile without
+  # running `make'.
+  DEPDIR=`sed -n -e '/^DEPDIR = / s///p' < "$mf"`
+  test -z "$DEPDIR" && continue
+  # When using ansi2knr, U may be empty or an underscore; expand it
+  U=`sed -n -e '/^U = / s///p' < "$mf"`
+  test -d "$dirpart/$DEPDIR" || mkdir "$dirpart/$DEPDIR"
+  # We invoke sed twice because it is the simplest approach to
+  # changing $(DEPDIR) to its actual value in the expansion.
+  for file in `sed -n -e '
+    /^DEP_FILES = .*\\\\$/ {
+      s/^DEP_FILES = //
+      :loop
+	s/\\\\$//
+	p
+	n
+	/\\\\$/ b loop
+      p
+    }
+    /^DEP_FILES = / s/^DEP_FILES = //p' < "$mf" | \
+       sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
+    # Make sure the directory exists.
+    test -f "$dirpart/$file" && continue
+    fdir=`echo "$file" | sed -e 's|/[^/]*$||'`
+    $ac_aux_dir/mkinstalldirs "$dirpart/$fdir" > /dev/null 2>&1
+    # echo "creating $dirpart/$file"
+    echo '# dummy' > "$dirpart/$file"
+  done
+done
+], [AMDEP="$AMDEP"
+ac_aux_dir="$ac_aux_dir"])])
+
+# Like AC_CONFIG_HEADER, but automatically create stamp file.
+
+AC_DEFUN(AM_CONFIG_HEADER,
+[AC_PREREQ([2.12])
+AC_CONFIG_HEADER([$1])
+dnl When config.status generates a header, we must update the stamp-h file.
+dnl This file resides in the same directory as the config header
+dnl that is generated.  We must strip everything past the first ":",
+dnl and everything past the last "/".
+AC_OUTPUT_COMMANDS(changequote(<<,>>)dnl
+ifelse(patsubst(<<$1>>, <<[^ ]>>, <<>>), <<>>,
+<<test -z "<<$>>CONFIG_HEADERS" || echo timestamp > patsubst(<<$1>>, <<^\([^:]*/\)?.*>>, <<\1>>)stamp-h<<>>dnl>>,
+<<am_indx=1
+for am_file in <<$1>>; do
+  case " <<$>>CONFIG_HEADERS " in
+  *" <<$>>am_file "*<<)>>
+    echo timestamp > `echo <<$>>am_file | sed -e 's%:.*%%' -e 's%[^/]*$%%'`stamp-h$am_indx
+    ;;
+  esac
+  am_indx=`expr "<<$>>am_indx" + 1`
+done<<>>dnl>>)
+changequote([,]))])
+
+# Add --enable-maintainer-mode option to configure.
+# From Jim Meyering
+
+# serial 1
+
+AC_DEFUN(AM_MAINTAINER_MODE,
+[AC_MSG_CHECKING([whether to enable maintainer-specific portions of Makefiles])
+  dnl maintainer-mode is disabled by default
+  AC_ARG_ENABLE(maintainer-mode,
+[  --enable-maintainer-mode enable make rules and dependencies not useful
+                          (and sometimes confusing) to the casual installer],
+      USE_MAINTAINER_MODE=$enableval,
+      USE_MAINTAINER_MODE=no)
+  AC_MSG_RESULT($USE_MAINTAINER_MODE)
+  AM_CONDITIONAL(MAINTAINER_MODE, test $USE_MAINTAINER_MODE = yes)
+  MAINT=$MAINTAINER_MODE_TRUE
+  AC_SUBST(MAINT)dnl
+]
+)
+
+# Define a conditional.
+
+AC_DEFUN(AM_CONDITIONAL,
+[AC_SUBST($1_TRUE)
+AC_SUBST($1_FALSE)
+if $2; then
+  $1_TRUE=
+  $1_FALSE='#'
+else
+  $1_TRUE='#'
+  $1_FALSE=
+fi])
 
