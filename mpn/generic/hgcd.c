@@ -76,7 +76,7 @@ trace (const char *format, ...)
 /* Return -1 if a < x + y + z,
            0 if a = x + y + z,
 	   1 if a > x + y + z. */
-int
+static int
 mpn_cmp_sum3 (mp_srcptr ap, mp_size_t an,
 	      mp_srcptr xp, mp_size_t xn,
 	      mp_srcptr yp, mp_size_t yn,
