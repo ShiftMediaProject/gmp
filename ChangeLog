@@ -19,6 +19,16 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-08  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/rootrem.c: New file.
+
+	* mpz/perfpow.c: Amend allocations for mpn_rootrem requirements.
+
+	* gmp-impl.h (mpn_rootrem): Add declaration.
+
+	* mpz/root.c: Rewrite to use mpn_rootrem.
+
 2002-05-08  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (MUL_KARATSUBA_THRESHOLD etc): Remove forced nail values.
