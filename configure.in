@@ -1254,16 +1254,24 @@ case $host in
     #     athlon-tbird, athlon-4, athlon-xp, athlon-mp.
     # gcc 3.2 adds winchip2.
     # gcc 3.3 adds winchip-c6.
-    # gcc 3.3.1 from mandrake adds k8.
-    # gcc pre-release 3.4 adds c3, c3-2, k8.
+    # gcc 3.3.1 from mandrake adds k8 and knows -mtune.
+    # gcc 3.4 adds c3, c3-2, k8, and deprecates -mcpu in favour of -mtune.
     #
     # In gcc 2.95.[0123], -march=pentiumpro provoked a stack slot bug in an
     # old version of mpz/powm.c.  Seems to be fine with the current code, so
     # no need for any restrictions on that option.
     #
     # -march=pentiumpro can fail if the assembler doesn't know "cmov"
-    # (eg. solaris 2.8 native "as"), so always have -march=pentium as a
-    # fallback.
+    # (eg. solaris 2.8 native "as"), so always have -march=pentium after
+    # that as a fallback.
+    #
+    # -mtune is used at the start of each cpu option list to give something
+    # gcc 3.4 will use, thereby avoiding warnings from -mcpu.  -mcpu forms
+    # are retained for use by prior gcc.  For example pentium has
+    # "-mtune=pentium -mcpu=pentium ...", the -mtune is for 3.4 and the
+    # -mcpu for prior.  If there's a brand new choice in 3.4 for a chip,
+    # like k8 for x86_64, then it can be the -mtune at the start, no need to
+    # duplicate anything.
     #
     gcc_cflags_optlist="cpu arch"
     case $host in
@@ -1276,42 +1284,42 @@ case $host in
         gcc_cflags_arch="-march=i386"
         ;;
       i586*-*-* | pentium-*-*)
-        gcc_cflags_cpu="-mcpu=pentium -m486"
+        gcc_cflags_cpu="-mtune=pentium -mcpu=pentium -m486"
         gcc_cflags_arch="-march=pentium"
         ;;
       pentiummmx-*-*)
-        gcc_cflags_cpu="-mcpu=pentium-mmx -mcpu=pentium -m486"
+        gcc_cflags_cpu="-mtune=pentium-mmx -mcpu=pentium-mmx -mcpu=pentium -m486"
         gcc_cflags_arch="-march=pentium-mmx -march=pentium"
         ;;
       i686*-*-* | pentiumpro-*-*)
-        gcc_cflags_cpu="-mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=pentiumpro -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentiumpro -march=pentium"
         ;;
       pentium2-*-*)
-        gcc_cflags_cpu="-mcpu=pentium2 -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=pentium2 -mcpu=pentium2 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium2 -march=pentiumpro -march=pentium"
         ;;
       pentium3-*-*)
-        gcc_cflags_cpu="-mcpu=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=pentium3 -mcpu=pentium3 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium3 -march=pentiumpro -march=pentium"
         ;;
       k6-*-*)
-        gcc_cflags_cpu="-mcpu=k6 -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=k6 -mcpu=k6 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k6"
         ;;
       k62-*-*)
-        gcc_cflags_cpu="-mcpu=k6-2 -mcpu=k6 -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=k6-2 -mcpu=k6-2 -mcpu=k6 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k6-2 -march=k6"
         ;;
       k63-*-*)
-        gcc_cflags_cpu="-mcpu=k6-3 -mcpu=k6 -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=k6-3 -mcpu=k6-3 -mcpu=k6 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k6-3 -march=k6"
         ;;
       athlon-*-*)
         # Athlon instruction costs are close to P6 (3 cycle load latency,
         # 4-6 cycle mul, 40 cycle div, pairable adc, etc) so if gcc doesn't
         # know athlon (eg. 2.95.2 doesn't) then fall back on pentiumpro.
-        gcc_cflags_cpu="-mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=athlon -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=athlon -march=pentiumpro -march=pentium"
         ;;
       i786-*-* | pentium4-*-*)
@@ -1323,26 +1331,26 @@ case $host in
         # This gets us cmov to eliminate branches.  Maybe "athlon" would be
         # a possibility on gcc 3.0.
         #
-        gcc_cflags_cpu="-mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=pentium4 -mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentium4 -march=pentium4~-mno-sse2 -march=pentiumpro -march=pentium"
         ;;
       viac32-*-*)
         # Not sure of the best fallbacks here for -mcpu.
         # c3-2 has sse and mmx, so pentium3 is good for -march.
-        gcc_cflags_cpu="-mcpu=c3-2 -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=c3-2 -mcpu=c3-2 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=c3-2 -march=pentium3 -march=pentiumpro -march=pentium"
         ;;
       viac3*-*-*)
         # Not sure of the best fallbacks here.
-        gcc_cflags_cpu="-mcpu=c3 -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=c3 -mcpu=c3 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=c3 -march=pentium-mmx -march=pentium"
         ;;
       x86_64-*-*)
-        gcc_cflags_cpu="-mcpu=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=k8 -mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k8 -march=athlon -march=pentiumpro -march=pentium"
         ;;
       *)
-        gcc_cflags_cpu="-mcpu=i486 -m486"
+        gcc_cflags_cpu="-mtune=i486 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=i486"
         ;;
     esac
