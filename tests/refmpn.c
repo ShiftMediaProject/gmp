@@ -148,6 +148,13 @@ refmpn_zero (mp_ptr ptr, mp_size_t size)
   refmpn_fill (ptr, size, CNST_LIMB(0));
 }
 
+void
+refmpn_zero_extend (mp_ptr ptr, mp_size_t oldsize, mp_size_t newsize)
+{
+  ASSERT (newsize >= oldsize);
+  refmpn_zero (ptr+oldsize, newsize-oldsize);
+}
+
 int
 refmpn_zero_p (mp_srcptr ptr, mp_size_t size)
 {
@@ -156,6 +163,15 @@ refmpn_zero_p (mp_srcptr ptr, mp_size_t size)
     if (ptr[i] != 0)
       return 0;
   return 1;
+}
+
+mp_size_t
+refmpn_normalize (mp_srcptr ptr, mp_size_t size)
+{
+  ASSERT (size >= 0);
+  while (size > 0 && ptr[size-1] == 0)
+    size--;
+  return size;
 }
 
 /* the highest one bit in x */
@@ -1684,4 +1700,90 @@ refmpn_random2 (mp_ptr ptr, mp_size_t size)
       ptr[i] = limb;
       bit = GMP_NUMB_HIGHBIT;
     }
+}
+
+/* This is a simple bitwise algorithm working high to low across "s" and
+   testing each time whether setting the bit would make s^2 exceed n.  */
+mp_size_t
+refmpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nsize)
+{
+  mp_ptr     tp, dp;
+  mp_size_t  ssize, talloc, tsize, dsize, ret, ilimbs;
+  unsigned   ibit;
+  long       i;
+  mp_limb_t  c;
+
+  ASSERT (nsize >= 0);
+
+  /* If n==0, then s=0 and r=0.  */
+  if (nsize == 0)
+    return 0;
+
+  ASSERT (np[nsize - 1] != 0);
+  ASSERT (rp == NULL || MPN_SAME_OR_SEPARATE_P (np, rp, nsize));
+  ASSERT (rp == NULL || ! MPN_OVERLAP_P (sp, (nsize + 1) / 2, rp, nsize));
+  ASSERT (! MPN_OVERLAP_P (sp, (nsize + 1) / 2, np, nsize));
+
+  /* root */
+  ssize = (nsize+1)/2;
+  refmpn_zero (sp, ssize);
+
+  /* the remainder so far */
+  dp = refmpn_memdup_limbs (np, nsize);
+  dsize = nsize;
+
+  /* temporary */
+  talloc = 2*ssize + 1;
+  tp = refmpn_malloc_limbs (talloc);
+
+  for (i = GMP_NUMB_BITS * ssize - 1; i >= 0; i--)
+    {
+      /* t = 2*s*2^i + 2^(2*i), being the amount s^2 will increase by if 2^i
+         is added to it */
+
+      ilimbs = (i+1) / GMP_NUMB_BITS;
+      ibit = (i+1) % GMP_NUMB_BITS;
+      refmpn_zero (tp, ilimbs);
+      c = refmpn_lshift_or_copy (tp+ilimbs, sp, ssize, ibit);
+      tsize = ilimbs + ssize;
+      tp[tsize] = c;
+      tsize += (c != 0);
+
+      ilimbs = (2*i) / GMP_NUMB_BITS;
+      ibit = (2*i) % GMP_NUMB_BITS;
+      if (ilimbs + 1 > tsize)
+        {
+          refmpn_zero_extend (tp, tsize, ilimbs + 1);
+          tsize = ilimbs + 1;
+        }
+      c = refmpn_add_1 (tp+ilimbs, tp+ilimbs, tsize-ilimbs,
+                        CNST_LIMB(1) << ibit);
+      ASSERT (tsize < talloc);
+      tp[tsize] = c;
+      tsize += (c != 0);
+
+      if (refmpn_cmp_twosizes (dp, dsize, tp, tsize) >= 0)
+        {
+          /* set this bit in s and subtract from the remainder */
+          refmpn_setbit (sp, i);
+
+          ASSERT_NOCARRY (refmpn_sub_n (dp, dp, tp, dsize));
+          dsize = refmpn_normalize (dp, dsize);
+        }
+    }
+
+  if (rp == NULL)
+    {
+      ret = ! refmpn_zero_p (dp, dsize);
+    }
+  else
+    {
+      ASSERT (dsize == 0 || dp[dsize-1] != 0);
+      refmpn_copy (rp, dp, dsize);
+      ret = dsize;
+    }
+
+  free (dp);
+  free (tp);
+  return ret;
 }
