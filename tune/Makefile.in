@@ -173,7 +173,7 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 # FIXME: Would like for example mul_n.c to depend on $(top_builddir)/mul_n.c
 # so the recompiled object will be rebuilt if that file changes.
 
-TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c bz_divrem_n.c tdiv_qr.c gcd.c gcdext.c
+TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c dc_divrem_n.c tdiv_qr.c gcd.c gcdext.c
 TUNE_MPZ_SRCS = fib_ui.c powm.c
 
 # This bit like mpn/Makefile.am
@@ -218,7 +218,7 @@ speed_ext_DEPENDENCIES =  libspeed.la
 speed_ext_LDFLAGS = 
 am_tuneup_OBJECTS =  tuneup$U.$(OBJEXT)
 nodist_tuneup_OBJECTS =  mul_n$U.$(OBJEXT) mul_fft$U.$(OBJEXT) \
-mul$U.$(OBJEXT) bz_divrem_n$U.$(OBJEXT) tdiv_qr$U.$(OBJEXT) \
+mul$U.$(OBJEXT) dc_divrem_n$U.$(OBJEXT) tdiv_qr$U.$(OBJEXT) \
 gcd$U.$(OBJEXT) gcdext$U.$(OBJEXT) fib_ui$U.$(OBJEXT) powm$U.$(OBJEXT)
 tuneup_OBJECTS =  $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 tuneup_LDFLAGS = 
@@ -311,10 +311,10 @@ tuneup$(EXEEXT): $(tuneup_OBJECTS) $(tuneup_DEPENDENCIES)
 	$(COMPILE) -c `cygpath -w $<`
 .c.lo:
 	$(LTCOMPILE) -c -o $@ $<
-bz_divrem_n_.c: bz_divrem_n.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/bz_divrem_n.c; then echo $(srcdir)/bz_divrem_n.c; else echo bz_divrem_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > bz_divrem_n_.c
 common_.c: common.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/common.c; then echo $(srcdir)/common.c; else echo common.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > common_.c
+dc_divrem_n_.c: dc_divrem_n.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dc_divrem_n.c; then echo $(srcdir)/dc_divrem_n.c; else echo dc_divrem_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dc_divrem_n_.c
 fib_ui_.c: fib_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_ui.c; then echo $(srcdir)/fib_ui.c; else echo fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_ui_.c
 freq_.c: freq.c $(ANSI2KNR)
@@ -349,7 +349,7 @@ time_.c: time.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/time.c; then echo $(srcdir)/time.c; else echo time.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > time_.c
 tuneup_.c: tuneup.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tuneup.c; then echo $(srcdir)/tuneup.c; else echo tuneup.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tuneup_.c
-bz_divrem_n_.$(OBJEXT) bz_divrem_n_.lo common_.$(OBJEXT) common_.lo \
+common_.$(OBJEXT) common_.lo dc_divrem_n_.$(OBJEXT) dc_divrem_n_.lo \
 fib_ui_.$(OBJEXT) fib_ui_.lo freq_.$(OBJEXT) freq_.lo gcd_.$(OBJEXT) \
 gcd_.lo gcdext_.$(OBJEXT) gcdext_.lo modlinv_.$(OBJEXT) modlinv_.lo \
 mul_.$(OBJEXT) mul_.lo mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) \
@@ -536,8 +536,8 @@ st:
 stg:
 	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
 
-bz:
-	./speed -s 5-40 -c mpn_bz_divrem_sb mpn_bz_divrem_n mpn_bz_tdiv_qr
+dc:
+	./speed -s 5-40 -c mpn_dc_divrem_sb mpn_dc_divrem_n mpn_dc_tdiv_qr
 
 fib:
 	./speed -s 80-120 -c mpz_fib_ui
