@@ -476,7 +476,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
 
   TRACE (printf ("__gmp_doscan \"%s\"\n", orig_fmt);
          if (funs->scan == (gmp_doscan_scan_t) sscanf)
-           printf ("  s=\"%s\"\n", (const char *) data));
+           printf ("  s=\"%s\"\n", * (const char **) data));
 
   /* Don't modify orig_ap, if va_list is actually an array and hence call by
      reference.  It could be argued that it'd be more efficient to leave
@@ -586,7 +586,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
 
             TRACE (printf ("  scan \"%s\"\n", alloc_fmt);
                    if (funs->scan == (gmp_doscan_scan_t) sscanf)
-                     printf ("  s=\"%s\"\n", (const char *) data));
+                     printf ("  s=\"%s\"\n", * (const char **) data));
 
             new_chars = -1;
             if (param.ignore)
