@@ -21,6 +21,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
+#include "gmp.h"
+#include "gmp-impl.h"
+
+#undef POWM_THRESHOLD
 #define POWM_THRESHOLD  1
 #define __gmpz_powm  mpz_powm_mod
+
 #include "../mpz/powm.c"

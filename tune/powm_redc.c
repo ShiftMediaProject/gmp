@@ -21,10 +21,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
+#include "gmp.h"
+#include "gmp-impl.h"
 
 /* WANT_GLOBAL_REDC makes redc() available for speed and tune program use. */
-
+#undef POWM_THRESHOLD
 #define POWM_THRESHOLD    MP_SIZE_T_MAX
 #define WANT_REDC_GLOBAL  1
 #define __gmpz_powm  mpz_powm_redc
+
 #include "../mpz/powm.c"

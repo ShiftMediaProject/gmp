@@ -21,6 +21,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
+#include "gmp.h"
+#include "gmp-impl.h"
+
+#undef GCD_ACCEL_THRESHOLD
 #define GCD_ACCEL_THRESHOLD  MP_SIZE_T_MAX
 #define __gmpn_gcd  mpn_gcd_binary
+
 #include "../mpn/generic/gcd.c"
