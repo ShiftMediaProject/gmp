@@ -26,8 +26,6 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 #include "mp.h"
 
-
-#define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
 #define SGN(x)       ((x) < 0 ? -1 : (x) == 0 ? 0 : 1)
 
 
