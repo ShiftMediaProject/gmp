@@ -9252,7 +9252,7 @@ vectors in assembler.
 
 First determine the algorithm and which instructions are needed.  Code it
 without unrolling or scheduling, to make sure it works.  On a 3-operand CPU
-try to write each new value to a new register, this will greatly simply later
+try to write each new value to a new register, this will greatly simplify later
 steps.
 
 Then note for each instruction the functional unit and/or issue port
