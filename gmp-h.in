@@ -579,10 +579,6 @@ void mpz_set_si _PROTO ((mpz_ptr, signed long int));
 int mpz_set_str _PROTO ((mpz_ptr, __gmp_const char *, int));
 void mpz_set_ui _PROTO ((mpz_ptr, unsigned long int));
 void mpz_setbit _PROTO ((mpz_ptr, unsigned long int));
-
-#define mpz_si_pow_ui __gmpz_si_pow_ui
-void    mpz_si_pow_ui _PROTO ((mpz_ptr, long, unsigned long));
-
 size_t mpz_size _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 size_t mpz_sizeinbase _PROTO ((mpz_srcptr, int)) __GMP_ATTRIBUTE_PURE;
 void mpz_sqrt _PROTO ((mpz_ptr, mpz_srcptr));

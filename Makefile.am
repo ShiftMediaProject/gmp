@@ -144,7 +144,7 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/remove$U.lo mpz/root$U.lo mpz/rrandomb$U.lo mpz/scan0$U.lo	\
   mpz/scan1$U.lo mpz/set$U.lo mpz/set_d$U.lo mpz/set_f$U.lo		\
   mpz/set_q$U.lo mpz/set_si$U.lo mpz/set_str$U.lo mpz/set_ui$U.lo	\
-  mpz/setbit$U.lo mpz/si_pow_ui$U.lo					\
+  mpz/setbit$U.lo							\
   mpz/size$U.lo mpz/sizeinbase$U.lo mpz/sqrt$U.lo			\
   mpz/sqrtrem$U.lo mpz/sub$U.lo mpz/sub_ui$U.lo mpz/swap$U.lo		\
   mpz/tdiv_ui$U.lo mpz/tdiv_q$U.lo mpz/tdiv_q_2exp$U.lo			\

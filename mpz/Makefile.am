@@ -45,7 +45,7 @@ libmpz_la_SOURCES = \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
-  set_ui.c setbit.c si_pow_ui.c size.c sizeinbase.c sqrt.c sqrtrem.c \
+  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c \
   swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
