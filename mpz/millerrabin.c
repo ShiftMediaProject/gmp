@@ -9,8 +9,8 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001 Free Software
-Foundation, Inc.  Contributed by John Amanatides.
+Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001, 2002 Free
+Software Foundation, Inc.  Contributed by John Amanatides.
 
 This file is part of the GNU MP Library.
 
@@ -40,7 +40,7 @@ int
 mpz_millerrabin (mpz_srcptr n, int reps)
 {
   int r;
-  mpz_t nm1, x, y, q;
+  mpz_t nm1, nm3, x, y, q;
   unsigned long int k;
   gmp_randstate_t rstate;
   int is_prime;
@@ -68,14 +68,19 @@ mpz_millerrabin (mpz_srcptr n, int reps)
   k = mpz_scan1 (nm1, 0L);
   mpz_tdiv_q_2exp (q, nm1, k);
 
-  gmp_randinit (rstate, GMP_RAND_ALG_DEFAULT, 32L);
+  /* n-3 */
+  MPZ_TMP_INIT (nm3, SIZ (n) + 1);
+  mpz_sub_ui (nm3, n, 3L);
+  ASSERT (mpz_cmp_ui (nm3, 1L) >= 0);
+
+  gmp_randinit_default (rstate);
 
   is_prime = 1;
   for (r = 0; r < reps && is_prime; r++)
     {
-      do
-	mpz_urandomb (x, rstate, mpz_sizeinbase (n, 2) - 1);
-      while (mpz_cmp_ui (x, 1L) <= 0);
+      /* 2 to n-2 inclusive, don't want 1, 0 or -1 */
+      mpz_urandomm (x, rstate, nm3);
+      mpz_add_ui (x, x, 2L);
 
       is_prime = millerrabin (n, nm1, x, y, q, k);
     }
