@@ -1,6 +1,6 @@
 /* Test mpz_mul_ui and mpz_mul_si.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -64,6 +64,24 @@ check_samples (void)
     long  y;
 
     mpz_set_ui (x, 1L);
+    y = 0;
+    mpz_mul_si (got, x, y);
+    mpz_set_si (want, y);
+    compare_si (y);
+
+    mpz_set_ui (x, 1L);
+    y = 1;
+    mpz_mul_si (got, x, y);
+    mpz_set_si (want, y);
+    compare_si (y);
+
+    mpz_set_ui (x, 1L);
+    y = -1;
+    mpz_mul_si (got, x, y);
+    mpz_set_si (want, y);
+    compare_si (y);
+
+    mpz_set_ui (x, 1L);
     y = LONG_MIN;
     mpz_mul_si (got, x, y);
     mpz_set_si (want, y);
@@ -80,9 +98,21 @@ check_samples (void)
     unsigned long y;
   
     mpz_set_ui (x, 1L);
+    y = 0;
+    mpz_mul_ui (got, x, y);
+    mpz_set_ui (want, y);
+    compare_ui (y);
+
+    mpz_set_ui (x, 1L);
+    y = 1;
+    mpz_mul_ui (got, x, y);
+    mpz_set_ui (want, y);
+    compare_ui (y);
+
+    mpz_set_ui (x, 1L);
     y = ULONG_MAX;
-    mpz_mul_si (got, x, y);
-    mpz_set_si (want, y);
+    mpz_mul_ui (got, x, y);
+    mpz_set_ui (want, y);
     compare_ui (y);
   }
 }
