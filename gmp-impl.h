@@ -32,6 +32,7 @@ MA 02111-1307, USA. */
    on compiler options.)  Instead use limits.h.  */
 #if defined _CRAY
 #include <limits.h>
+#include <intrinsics.h>  /* for _popcnt */
 #endif
 
 #if ! __GMP_WITHIN_CONFIGURE
@@ -2413,6 +2414,14 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 #endif
 
+/* Cray intrinsic. */
+#ifdef _CRAY
+#define popc_limb(result, input)        \
+  do {                                  \
+    (result) = _popcnt (input);         \
+  } while (0)
+#endif
+
 /* Cool population count of an mp_limb_t.
    You have to figure out how this works, We won't tell you!
 
@@ -2475,6 +2484,21 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     mp_limb_t  __x = (input);                                                 \
     __x = (__x & 1) + ((__x >> 1) & 1) + ((__x >> 2) & 1) + ((__x >> 3) & 1); \
     (result) = __x;                                                           \
+  } while (0)
+#endif
+
+#if ! defined (popc_limb)
+#define popc_limb(result, input)                \
+  do {                                          \
+    mp_limb_t  __x = (input);                   \
+    int        __result = 0;                    \
+    int        __i;                             \
+    for (__i = 0; __i < GMP_LIMB_BITS; __i++)   \
+      {                                         \
+        __result += (int) (__x & 1);            \
+        __x >>= 1;                              \
+      }                                         \
+    (result) = __result;                        \
   } while (0)
 #endif
 
