@@ -856,7 +856,8 @@ all (void)
     param.name[1] = "TOOM3_MUL_THRESHOLD";
     param.function = speed_mpn_mul_n;
     param.min_size[0] = MAX (4, MPN_KARA_MUL_N_MINSIZE);
-    param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT;
+    param.max_size[0] = TOOM3_MUL_THRESHOLD_LIMIT-1;
+    param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT-1;
     one (mul_threshold, 2, &param);
   }
   printf("\n");
