@@ -3535,13 +3535,87 @@ fi
 
       echo "$as_me:$LINENO: checking compiler $cc $cflags $cppflags" >&5
 echo $ECHO_N "checking compiler $cc $cflags $cppflags... $ECHO_C" >&6
-cat >conftest.c <<EOF
+gmp_prog_cc_works=yes
 
+# first see a simple "main()" works, then go on to other checks
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
+
+int main () { return 0; }
+EOF
+  echo "Test compile: " >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
 void *g() { return (void *) 0; }
 void *f() { return g(); }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: function pointer return" >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, function pointer return, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, function pointer return"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes an invalid instruction syntax from i386 gcc
    -march=pentiumpro on Solaris 2.8.  The native sun assembler
    requires a non-standard syntax for cmov which gcc (as of 2.95.2 at
@@ -3549,6 +3623,41 @@ void *f() { return g(); }
 int n;
 int cmov () { return (n >= 0 ? n : 0); }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: cmov instruction" >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, cmov instruction, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, cmov instruction"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes a linker invocation problem with gcc 3.0.3
    on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
    option causes gcc to incorrectly select the 32-bit libgcc.a, not
@@ -3557,24 +3666,129 @@ int cmov () { return (n >= 0 ? n : 0); }
 double d;
 unsigned long gcc303 () { return (unsigned long) d; }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: double -> ulong conversion" >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, double -> ulong conversion, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, double -> ulong conversion"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
    the assembler doesn't know hppa 2.0 instructions.  fneg is a 2.0
-   instruction, and a "-x" like this comes out using that.  */
+   instruction, and a negation like this comes out using it.  */
 double fneg_data;
 unsigned long fneg () { return -fneg_data; }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: double negation" >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, double negation, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, double negation"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
    (cvtsd2ss) which will provoke an error if the assembler doesn't recognise
-   those.  Not sure how much of the gmp code will come out wanting sse2, but
-   it's easiest to reject an option we know is bad.  */
+   those instructions.  Not sure how much of the gmp code will come out
+   wanting sse2, but it's easiest to reject an option we know is bad.  */
 double ftod_data;
 float ftod () { return (float) ftod_data; }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: double -> float conversion" >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, double -> float conversion, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, double -> float conversion"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes an internal compiler error from gcc version
    "2.9-gnupro-99r1" under "-O2 -mcpu=ev6", apparently relating to char
    values being spilled into floating point registers.  The problem doesn't
-   show up all the time, but has enough in GMP for us to reject this
-   compiler+flags.  */
+   show up all the time, but has occurred enough in GMP for us to reject
+   this compiler+flags.  */
 struct try_t
 {
  char dst[2];
@@ -3606,40 +3820,47 @@ param_init ()
 }
 
 int main () { return 0; }
-
 EOF
-gmp_prog_cc_works=no
-gmp_compile="$cc $cflags $cppflags conftest.c >&5"
-if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  echo "Test compile: gnupro alpha ev6 char spilling" >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
   (eval $gmp_compile) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; then
-  if test "$cross_compiling" = no; then
-    if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-      gmp_prog_cc_works=yes
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, gnupro alpha ev6 char spilling, does not run"
+      fi
     fi
   else
-    gmp_prog_cc_works=yes
+    gmp_prog_cc_works="no, gnupro alpha ev6 char spilling"
   fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
 fi
-if test $gmp_prog_cc_works = no; then
-  echo "failed program was:" >&5
-  cat conftest.c >&5
-fi
-rm -f conftest* a.out b.out a.exe a_out.exe
+
+
 echo "$as_me:$LINENO: result: $gmp_prog_cc_works" >&5
 echo "${ECHO_T}$gmp_prog_cc_works" >&6
-if test $gmp_prog_cc_works = yes; then
-  :
-else
-  continue
-fi
+case $gmp_prog_cc_works in
+  yes)
+
+    ;;
+  *)
+    continue
+esac
 
 
       # If we're supposed to be using a "long long" for a limb, check that
@@ -4081,13 +4302,87 @@ fi
 
         echo "$as_me:$LINENO: checking compiler $cc $cflags $cppflags $flag" >&5
 echo $ECHO_N "checking compiler $cc $cflags $cppflags $flag... $ECHO_C" >&6
-cat >conftest.c <<EOF
+gmp_prog_cc_works=yes
 
+# first see a simple "main()" works, then go on to other checks
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
+
+int main () { return 0; }
+EOF
+  echo "Test compile: " >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
 void *g() { return (void *) 0; }
 void *f() { return g(); }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: function pointer return" >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, function pointer return, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, function pointer return"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes an invalid instruction syntax from i386 gcc
    -march=pentiumpro on Solaris 2.8.  The native sun assembler
    requires a non-standard syntax for cmov which gcc (as of 2.95.2 at
@@ -4095,6 +4390,41 @@ void *f() { return g(); }
 int n;
 int cmov () { return (n >= 0 ? n : 0); }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: cmov instruction" >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, cmov instruction, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, cmov instruction"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes a linker invocation problem with gcc 3.0.3
    on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
    option causes gcc to incorrectly select the 32-bit libgcc.a, not
@@ -4103,24 +4433,129 @@ int cmov () { return (n >= 0 ? n : 0); }
 double d;
 unsigned long gcc303 () { return (unsigned long) d; }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: double -> ulong conversion" >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, double -> ulong conversion, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, double -> ulong conversion"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
    the assembler doesn't know hppa 2.0 instructions.  fneg is a 2.0
-   instruction, and a "-x" like this comes out using that.  */
+   instruction, and a negation like this comes out using it.  */
 double fneg_data;
 unsigned long fneg () { return -fneg_data; }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: double negation" >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, double negation, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, double negation"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
    (cvtsd2ss) which will provoke an error if the assembler doesn't recognise
-   those.  Not sure how much of the gmp code will come out wanting sse2, but
-   it's easiest to reject an option we know is bad.  */
+   those instructions.  Not sure how much of the gmp code will come out
+   wanting sse2, but it's easiest to reject an option we know is bad.  */
 double ftod_data;
 float ftod () { return (float) ftod_data; }
 
+int main () { return 0; }
+EOF
+  echo "Test compile: double -> float conversion" >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, double -> float conversion, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cc_works="no, double -> float conversion"
+  fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
 /* The following provokes an internal compiler error from gcc version
    "2.9-gnupro-99r1" under "-O2 -mcpu=ev6", apparently relating to char
    values being spilled into floating point registers.  The problem doesn't
-   show up all the time, but has enough in GMP for us to reject this
-   compiler+flags.  */
+   show up all the time, but has occurred enough in GMP for us to reject
+   this compiler+flags.  */
 struct try_t
 {
  char dst[2];
@@ -4152,41 +4587,48 @@ param_init ()
 }
 
 int main () { return 0; }
-
 EOF
-gmp_prog_cc_works=no
-gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
-if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  echo "Test compile: gnupro alpha ev6 char spilling" >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
   (eval $gmp_compile) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; then
-  if test "$cross_compiling" = no; then
-    if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-      gmp_prog_cc_works=yes
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cc_works="no, gnupro alpha ev6 char spilling, does not run"
+      fi
     fi
   else
-    gmp_prog_cc_works=yes
+    gmp_prog_cc_works="no, gnupro alpha ev6 char spilling"
   fi
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
 fi
-if test $gmp_prog_cc_works = no; then
-  echo "failed program was:" >&5
-  cat conftest.c >&5
-fi
-rm -f conftest* a.out b.out a.exe a_out.exe
+
+
 echo "$as_me:$LINENO: result: $gmp_prog_cc_works" >&5
 echo "${ECHO_T}$gmp_prog_cc_works" >&6
-if test $gmp_prog_cc_works = yes; then
-  cflags="$cflags $flag"
+case $gmp_prog_cc_works in
+  yes)
+    cflags="$cflags $flag"
           break
-else
-  :
-fi
+    ;;
+  *)
+
+esac
 
       done
     done
@@ -6064,35 +6506,139 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
     eval CXXFLAGS=\"\$cxxflags_$cxxflags_choice\"
     echo "$as_me:$LINENO: checking C++ compiler $CXX $CXXFLAGS" >&5
 echo $ECHO_N "checking C++ compiler $CXX $CXXFLAGS... $ECHO_C" >&6
-cat >conftest.cc <<EOF
-#include <iostream>
-using namespace std;
-int
-main (void)
-{
-  cout.setf (ios::hex);
-  cout << 123;
-  return 0;
-}
-EOF
+gmp_prog_cxx_works=yes
 
-gmp_cxxcompile="$CXX $CXXFLAGS conftest.cc -o conftest >&5"
-if { (eval echo "$as_me:$LINENO: \"$gmp_cxxcompile\"") >&5
+# start with a plain "main()", then go on to further checks
+if test $gmp_prog_cxx_works = yes; then
+  cat >conftest.c <<EOF
+
+int main (void) { return 0; }
+EOF
+  echo "Test compile: " >&5
+  gmp_cxxcompile="$CXX $CXXFLAGS conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_cxxcompile\"") >&5
   (eval $gmp_cxxcompile) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; then
-  rm -f conftest*
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-  want_cxx=yes
-      break
-else
-  rm -f conftest*
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-  :
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cxx_works="no, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cxx_works="no"
+  fi
+  case $gmp_prog_cxx_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
 fi
+
+
+if test $gmp_prog_cxx_works = yes; then
+  cat >conftest.c <<EOF
+using namespace std;
+
+int main (void) { return 0; }
+EOF
+  echo "Test compile: namespace" >&5
+  gmp_cxxcompile="$CXX $CXXFLAGS conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_cxxcompile\"") >&5
+  (eval $gmp_cxxcompile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cxx_works="no, namespace, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cxx_works="no, namespace"
+  fi
+  case $gmp_prog_cxx_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+if test $gmp_prog_cxx_works = yes; then
+  cat >conftest.c <<EOF
+/* GMP requires the standard C++ iostream classes.  This test rejects g++
+   2.7.2 which has only a pre-standard iostream.h.  */
+#include <iostream>
+using namespace std;
+void
+foo (void)
+{
+  cout.setf (ios::hex);
+  cout << 123;
+}
+
+int main (void) { return 0; }
+EOF
+  echo "Test compile: std iostream" >&5
+  gmp_cxxcompile="$CXX $CXXFLAGS conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_cxxcompile\"") >&5
+  (eval $gmp_cxxcompile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        gmp_prog_cxx_works="no, std iostream, does not run"
+      fi
+    fi
+  else
+    gmp_prog_cxx_works="no, std iostream"
+  fi
+  case $gmp_prog_cxx_works in
+    no*)
+      echo "failed program was:" >&5
+      cat conftest.c >&5
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
+fi
+
+
+echo "$as_me:$LINENO: result: $gmp_prog_cxx_works" >&5
+echo "${ECHO_T}$gmp_prog_cxx_works" >&6
+case $gmp_prog_cxx_works in
+  yes)
+    want_cxx=yes
+      break
+    ;;
+  *)
+
+    ;;
+esac
 
   done
 
@@ -7953,7 +8499,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7956 "configure"' > conftest.$ac_ext
+  echo '#line 8502 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9373,11 +9919,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9376: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9922: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9380: \$? = $ac_status" >&5
+   echo "$as_me:9926: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -9605,11 +10151,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9608: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10154: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9612: \$? = $ac_status" >&5
+   echo "$as_me:10158: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -9672,11 +10218,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9675: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10221: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9679: \$? = $ac_status" >&5
+   echo "$as_me:10225: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11684,7 +12230,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11687 "configure"
+#line 12233 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11782,7 +12328,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11785 "configure"
+#line 12331 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13914,11 +14460,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13917: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14463: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:13921: \$? = $ac_status" >&5
+   echo "$as_me:14467: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -13981,11 +14527,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13984: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14530: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:13988: \$? = $ac_status" >&5
+   echo "$as_me:14534: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -15224,7 +15770,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 15227 "configure"
+#line 15773 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -15322,7 +15868,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 15325 "configure"
+#line 15871 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16144,11 +16690,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16147: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16693: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16151: \$? = $ac_status" >&5
+   echo "$as_me:16697: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -16211,11 +16757,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16214: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16760: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16218: \$? = $ac_status" >&5
+   echo "$as_me:16764: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -18151,11 +18697,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18154: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18700: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18158: \$? = $ac_status" >&5
+   echo "$as_me:18704: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -18383,11 +18929,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18386: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18932: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18390: \$? = $ac_status" >&5
+   echo "$as_me:18936: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -18450,11 +18996,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18453: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18999: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:18457: \$? = $ac_status" >&5
+   echo "$as_me:19003: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -20462,7 +21008,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 20465 "configure"
+#line 21011 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -20560,7 +21106,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 20563 "configure"
+#line 21109 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H

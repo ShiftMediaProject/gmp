@@ -417,49 +417,68 @@ dnl  sparc-*-solaris2.7 can compile ABI=64 but won't run it if the kernel
 dnl  was booted in 32-bit mode.  The effect of requiring the compiler output
 dnl  will run is that a plain native "./configure" falls back on ABI=32, but
 dnl  ABI=64 is still available as a cross-compile.
+dnl
+dnl  The various specific problems we try to detect are done in separate
+dnl  compiles.  Although this is probably a bit slower than one test
+dnl  program, it makes it easy to indicate the problem in AC_MSG_RESULT,
+dnl  hence giving the user a clue about why we rejected the compiler.
 
 AC_DEFUN(GMP_PROG_CC_WORKS,
 [AC_MSG_CHECKING([compiler $1])
-cat >conftest.c <<EOF
-[
-/* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
+gmp_prog_cc_works=yes
+
+# first see a simple "main()" works, then go on to other checks
+GMP_PROG_CC_WORKS_PART([$1], [])
+
+GMP_PROG_CC_WORKS_PART([$1], [function pointer return],
+[/* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
 void *g() { return (void *) 0; }
 void *f() { return g(); }
+])
 
-/* The following provokes an invalid instruction syntax from i386 gcc
+GMP_PROG_CC_WORKS_PART([$1], [cmov instruction],
+[/* The following provokes an invalid instruction syntax from i386 gcc
    -march=pentiumpro on Solaris 2.8.  The native sun assembler
    requires a non-standard syntax for cmov which gcc (as of 2.95.2 at
    least) doesn't know.  */
 int n;
 int cmov () { return (n >= 0 ? n : 0); }
+])
 
-/* The following provokes a linker invocation problem with gcc 3.0.3
+GMP_PROG_CC_WORKS_PART([$1], [double -> ulong conversion],
+[/* The following provokes a linker invocation problem with gcc 3.0.3
    on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
    option causes gcc to incorrectly select the 32-bit libgcc.a, not
    the 64-bit one, and consequently it misses out on the __fixunsdfdi
    helper (double -> uint64 conversion).  */
 double d;
 unsigned long gcc303 () { return (unsigned long) d; }
+])
 
-/* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
+GMP_PROG_CC_WORKS_PART([$1], [double negation],
+[/* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
    the assembler doesn't know hppa 2.0 instructions.  fneg is a 2.0
-   instruction, and a "-x" like this comes out using that.  */
+   instruction, and a negation like this comes out using it.  */
 double fneg_data;
 unsigned long fneg () { return -fneg_data; }
+])
 
-/* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
+GMP_PROG_CC_WORKS_PART([$1], [double -> float conversion],
+[/* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
    (cvtsd2ss) which will provoke an error if the assembler doesn't recognise
-   those.  Not sure how much of the gmp code will come out wanting sse2, but
-   it's easiest to reject an option we know is bad.  */
+   those instructions.  Not sure how much of the gmp code will come out
+   wanting sse2, but it's easiest to reject an option we know is bad.  */
 double ftod_data;
 float ftod () { return (float) ftod_data; }
+])
 
-/* The following provokes an internal compiler error from gcc version
+GMP_PROG_CC_WORKS_PART([$1], [gnupro alpha ev6 char spilling],
+[/* The following provokes an internal compiler error from gcc version
    "2.9-gnupro-99r1" under "-O2 -mcpu=ev6", apparently relating to char
    values being spilled into floating point registers.  The problem doesn't
-   show up all the time, but has enough in GMP for us to reject this
-   compiler+flags.  */
+   show up all the time, but has occurred enough in GMP for us to reject
+   this compiler+flags.  */
 struct try_t
 {
  char dst[2];
@@ -489,31 +508,45 @@ param_init ()
  memcpy (p, &param[ 5 ], sizeof (*p));
  return 0;
 }
+])
 
+AC_MSG_RESULT($gmp_prog_cc_works)
+case $gmp_prog_cc_works in
+  yes)
+    [$2]
+    ;;
+  *)
+    [$3]
+esac
+])
+
+dnl  Called: GMP_PROG_CC_WORKS_PART(CC+CFLAGS,FAIL-MESSAGE [,CODE])
+dnl
+AC_DEFUN(GMP_PROG_CC_WORKS_PART,
+[if test $gmp_prog_cc_works = yes; then
+  cat >conftest.c <<EOF
+[$3]
 int main () { return 0; }
-]
 EOF
-gmp_prog_cc_works=no
-gmp_compile="$1 conftest.c >&AC_FD_CC"
-if AC_TRY_EVAL(gmp_compile); then
-  if test "$cross_compiling" = no; then
-    if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then
-      gmp_prog_cc_works=yes
+  echo "Test compile: [$2]" >&AC_FD_CC
+  gmp_compile="$1 conftest.c >&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_compile); then
+    if test "$cross_compiling" = no; then
+      if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then :;
+      else
+        gmp_prog_cc_works="no[]m4_if([$2],,,[, ])[$2], does not run"
+      fi
     fi
   else
-    gmp_prog_cc_works=yes
+    gmp_prog_cc_works="no[]m4_if([$2],,,[, ])[$2]"
   fi
-fi
-if test $gmp_prog_cc_works = no; then
-  echo "failed program was:" >&AC_FD_CC
-  cat conftest.c >&AC_FD_CC
-fi
-rm -f conftest* a.out b.out a.exe a_out.exe
-AC_MSG_RESULT($gmp_prog_cc_works)
-if test $gmp_prog_cc_works = yes; then
-  ifelse([$2],,:,[$2])
-else
-  ifelse([$3],,:,[$3])
+  case $gmp_prog_cc_works in
+    no*)
+      echo "failed program was:" >&AC_FD_CC
+      cat conftest.c >&AC_FD_CC
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
 fi
 ])
 
@@ -1046,30 +1079,79 @@ dnl  Check whether cxx/cxxflags can compile and link.
 dnl
 dnl  This test is designed to be run repeatedly with different cxx/cxxflags
 dnl  selections, so the result is not cached.
+dnl
+dnl  For a native build, we insist on being able to run the program, so as
+dnl  to detect any problems with the standard C++ library.  During
+dnl  development various systems with broken or incomplete C++ installations
+dnl  were seen.
+dnl
+dnl  The various features and problems we try to detect are done in separate
+dnl  compiles.  Although this is probably a bit slower than one test
+dnl  program, it makes it easy to indicate the problem in AC_MSG_RESULT,
+dnl  hence giving the user a clue about why we rejected the compiler.
 
 AC_DEFUN(GMP_PROG_CXX_WORKS,
 [AC_MSG_CHECKING([C++ compiler $1])
-cat >conftest.cc <<EOF
+gmp_prog_cxx_works=yes
+
+# start with a plain "main()", then go on to further checks
+GMP_PROG_CXX_WORKS_PART([$1], [])
+
+GMP_PROG_CXX_WORKS_PART([$1], [namespace],
+[using namespace std;
+])
+
+GMP_PROG_CXX_WORKS_PART([$1], [std iostream],
+[/* GMP requires the standard C++ iostream classes.  This test rejects g++
+   2.7.2 which has only a pre-standard iostream.h.  */
 #include <iostream>
 using namespace std;
-int
-main (void)
+void
+foo (void)
 {
   cout.setf (ios::hex);
   cout << 123;
-  return 0;
 }
-EOF
+])
 
-gmp_cxxcompile="$1 conftest.cc -o conftest >&AC_FD_CC"
-if AC_TRY_EVAL(gmp_cxxcompile); then
-  rm -f conftest*
-  AC_MSG_RESULT(yes)
-  ifelse([$2],,:,[$2])
-else
-  rm -f conftest*
-  AC_MSG_RESULT(no)
-  ifelse([$3],,:,[$3])
+AC_MSG_RESULT($gmp_prog_cxx_works)
+case $gmp_prog_cxx_works in
+  yes)
+    [$2]
+    ;;
+  *)
+    [$3]
+    ;;
+esac
+])
+
+dnl  Called: GMP_PROG_CXX_WORKS_PART(CXX+CXXFLAGS, FAIL-MESSAGE [,CODE])
+dnl
+AC_DEFUN(GMP_PROG_CXX_WORKS_PART,
+[if test $gmp_prog_cxx_works = yes; then
+  cat >conftest.c <<EOF
+[$3]
+int main (void) { return 0; }
+EOF
+  echo "Test compile: [$2]" >&AC_FD_CC
+  gmp_cxxcompile="$1 conftest.c >&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_cxxcompile); then
+    if test "$cross_compiling" = no; then
+      if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then :;
+      else
+        gmp_prog_cxx_works="no[]m4_if([$2],,,[, ])[$2], does not run"
+      fi
+    fi
+  else
+    gmp_prog_cxx_works="no[]m4_if([$2],,,[, ])[$2]"
+  fi
+  case $gmp_prog_cxx_works in
+    no*)
+      echo "failed program was:" >&AC_FD_CC
+      cat conftest.c >&AC_FD_CC
+      ;;
+  esac
+  rm -f conftest* a.out b.out a.exe a_out.exe
 fi
 ])
 
