@@ -170,7 +170,7 @@ mpn_fft_initl (int **l, int k)
 
   Copied from mpn/generic/lshift.c.
 */
-mp_limb_t
+static mp_limb_t
 mpn_lshift_com (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
 {
   mp_limb_t high_limb, low_limb;
@@ -184,15 +184,15 @@ mpn_lshift_com (mp_ptr rp, mp_srcptr up, mp_size_t n, unsigned int cnt)
   tnc = GMP_NUMB_BITS - cnt;
   low_limb = *--up;
   retval = low_limb >> tnc;
-  high_limb = (low_limb << cnt) & GMP_NUMB_MASK;
+  high_limb = (low_limb << cnt);
 
   for (i = n - 1; i != 0; i--)
     {
       low_limb = *--up;
-      *--rp = ~ (high_limb | (low_limb >> tnc));
-      high_limb = (low_limb << cnt) & GMP_NUMB_MASK;
+      *--rp = (~(high_limb | (low_limb >> tnc))) & GMP_NUMB_MASK;
+      high_limb = low_limb << cnt;
     }
-  *--rp = ~high_limb;
+  *--rp = (~high_limb) & GMP_NUMB_MASK;
 
   return retval;
 }
@@ -463,17 +463,6 @@ mpn_fft_normalize (mp_ptr ap, mp_size_t n)
 	MPN_ZERO (ap, n);
     }
 }
-
-int
-mpn_fft_zero_p (mp_ptr ap, mp_size_t n)
-{
-  int i;
-
-  mpn_fft_normalize (ap, n);
-  for (i=0; i<n && ap[i]==0; i++);
-  return i == n;
-}
-
 
 /* a[i] <- a[i]*b[i] mod 2^(n*GMP_NUMB_BITS)+1 for 0 <= i < K */
 static void
