@@ -132,7 +132,8 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/init$U.lo mpz/inp_raw$U.lo mpz/inp_str$U.lo mpz/invert$U.lo	\
   mpz/ior$U.lo mpz/iset$U.lo mpz/iset_d$U.lo mpz/iset_si$U.lo		\
   mpz/iset_str$U.lo mpz/iset_ui$U.lo mpz/jacobi$U.lo mpz/kronsz$U.lo	\
-  mpz/kronuz$U.lo mpz/kronzs$U.lo mpz/kronzu$U.lo mpz/lcm$U.lo		\
+  mpz/kronuz$U.lo mpz/kronzs$U.lo mpz/kronzu$U.lo			\
+  mpz/lcm$U.lo mpz/lcm_ui$U.lo						\
   mpz/mod$U.lo mpz/mul$U.lo mpz/mul_2exp$U.lo				\
   mpz/mul_si$U.lo mpz/mul_ui$U.lo					\
   mpz/n_pow_ui$U.lo mpz/neg$U.lo mpz/nextprime$U.lo			\
