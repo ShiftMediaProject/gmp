@@ -1,7 +1,7 @@
 /* GMP assertion failure handler. */
 
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,15 +27,8 @@ MA 02111-1307, USA.
 
 
 int
-#if __STDC__
 __gmp_assert_fail (const char *filename, int linenum,
                    const char *expr)
-#else
-__gmp_assert_fail (filename, linenum, expr)
-char *filename;
-int  linenum;
-char *expr;
-#endif
 {
   if (filename != NULL && filename[0] != '\0')
     {

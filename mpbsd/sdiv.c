@@ -1,7 +1,7 @@
 /* sdiv -- Divide a MINT by a short integer.  Produce a MINT quotient
    and a short remainder.
 
-Copyright 1991, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,15 +26,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 void
-#if __STDC__
 sdiv (const MINT *dividend, signed short int divisor_short, MINT *quot, short *rem_ptr)
-#else
-sdiv (dividend, divisor_short, quot, rem_ptr)
-     const MINT *dividend;
-     short int divisor_short;
-     MINT *quot;
-     short *rem_ptr;
-#endif
 {
   mp_size_t sign_dividend;
   signed long int sign_divisor;

@@ -1,6 +1,6 @@
 /* itom -- BSD compatible allocate and initiate a MINT.
 
-Copyright 1991, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,12 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 MINT *
-#if __STDC__
 itom (signed short int n)
-#else
-itom (n)
-     short int n;
-#endif
 {
   MINT *x;
   mp_ptr xp;

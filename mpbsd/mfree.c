@@ -1,6 +1,6 @@
 /* mfree -- BSD compatible mfree.
 
-Copyright 1991, 1994, 1995, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,12 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mfree (MINT *m)
-#else
-mfree (m)
-     MINT *m;
-#endif
 {
   (*__gmp_free_func) (m->_mp_d, m->_mp_alloc * BYTES_PER_MP_LIMB);
   (*__gmp_free_func) (m, sizeof (MINT));

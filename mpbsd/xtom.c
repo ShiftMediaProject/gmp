@@ -1,7 +1,7 @@
 /* xtom -- convert a hexadecimal string to a MINT, and return a pointer to
    the MINT.
 
-Copyright 1991, 1994, 1995, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1995, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,13 +27,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 static int
-#if __STDC__
 digit_value_in_base (int c, int base)
-#else
-digit_value_in_base (c, base)
-     int c;
-     int base;
-#endif
 {
   int digit;
 
@@ -52,12 +46,7 @@ digit_value_in_base (c, base)
 }
 
 MINT *
-#if __STDC__
 xtom (const char *str)
-#else
-xtom (str)
-     const char *str;
-#endif
 {
   size_t str_size;
   char *s, *begs;

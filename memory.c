@@ -1,6 +1,6 @@
 /* Memory allocation routines.
 
-Copyright 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -40,12 +40,7 @@ void	(*__gmp_free_func) _PROTO ((void *, size_t)) = __gmp_default_free;
    an error message is written to stderr and the program aborts.  */
 
 void *
-#if __STDC__
 __gmp_default_allocate (size_t size)
-#else
-__gmp_default_allocate (size)
-     size_t size;
-#endif
 {
   void *ret;
 #ifdef DEBUG
@@ -73,14 +68,7 @@ __gmp_default_allocate (size)
 }
 
 void *
-#if __STDC__
 __gmp_default_reallocate (void *oldptr, size_t old_size, size_t new_size)
-#else
-__gmp_default_reallocate (oldptr, old_size, new_size)
-     void *oldptr;
-     size_t old_size;
-     size_t new_size;
-#endif
 {
   void *ret;
 
@@ -128,13 +116,7 @@ __gmp_default_reallocate (oldptr, old_size, new_size)
 }
 
 void
-#if __STDC__
 __gmp_default_free (void *blk_ptr, size_t blk_size)
-#else
-__gmp_default_free (blk_ptr, blk_size)
-     void *blk_ptr;
-     size_t blk_size;
-#endif
 {
 #ifdef DEBUG
   {

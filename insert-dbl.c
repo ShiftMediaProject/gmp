@@ -1,6 +1,6 @@
 /* __gmp_insert_double -- convert from array of mp_limb_t to double.
 
-Copyright 1996, 1997, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,13 +31,7 @@ MA 02111-1307, USA. */
 #endif
 
 double
-#if __STDC__
 __gmp_scale2 (double d, int exp)
-#else
-__gmp_scale2 (d, exp)
-     double d;
-     int exp;
-#endif
 {
 #if _GMP_IEEE_FLOATS
   {

@@ -2,7 +2,7 @@
    length NBITS in RP.  RP must have enough space allocated to hold
    NBITS.
 
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -116,13 +116,7 @@ the most-significant bits. */
 
 static
 unsigned long int
-#if __STDC__
 lc (mp_ptr rp, gmp_randstate_t rstate)
-#else
-lc (rp, rstate)
-     mp_ptr rp;
-     gmp_randstate_t rstate;
-#endif
 {
   mp_ptr tp, seedp, ap;
   mp_size_t ta;
@@ -264,14 +258,7 @@ lc_test (mp_ptr rp, gmp_randstate_t s, const int evenbits)
 #endif /* RAWRANDEBUG */
 
 void
-#if __STDC__
 _gmp_rand (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
-#else
-_gmp_rand (rp, rstate, nbits)
-     mp_ptr rp;
-     gmp_randstate_t rstate;
-     unsigned long int nbits;
-#endif
 {
   mp_size_t rn;			/* Size of R.  */
 

@@ -26,12 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mout (const MINT *x)
-#else
-mout (x)
-     const MINT *x;
-#endif
 {
   mp_ptr xp;
   mp_size_t x_size = x->_mp_size;

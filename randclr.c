@@ -1,6 +1,6 @@
 /* gmp_randclear (state) -- Clear and deallocate random state STATE.
 
-Copyright 1999, 2000  Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001  Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,12 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 gmp_randclear (gmp_randstate_t rstate)
-#else
-gmp_randclear (rstate)
-     gmp_randstate_t rstate;
-#endif
 {
   mpz_clear (rstate->_mp_seed);
 
