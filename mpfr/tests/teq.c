@@ -26,9 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void teq _PROTO ((mpfr_t));
-
-void
+static void
 teq (mpfr_t x)
 {
   mpfr_t y; long k, px, mx; 

@@ -52,7 +52,7 @@ check3 (double x, unsigned long y, mp_rnd_t rnd_mode, double z1)
       printf ("mpfr_sub_ui failed for x=%1.20e y=%lu with rnd_mode=%s\n",
               x, y, mpfr_print_rnd_mode (rnd_mode));
       exit (1);
-  }
+    }
   mpfr_clear (xx);
   mpfr_clear (zz);
 }

@@ -83,7 +83,7 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
   char *str1;                  /* copy of str, should not be modified */
   size_t size_str1;            /* number of characters in str1 */
   char *mant_s;                /* pointer in str1 */
-  int negative = 0;            /* 1 if str<=0, 0 otherwise */
+  int negative;                /* 1 if str<=0, 0 otherwise */
   size_t i, j;
   long err = 0;
   int exact;                   /* is the computation exact */
@@ -137,8 +137,8 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
      their value */
   for (mant_s = str1; *str != 0; str++)
     {
-      if (((base < 10) && (*str == 'e')) || (*str == 'E') ||
-	  (*str == '@'))
+      if (*str == '@'
+          || (base <= 10 && (*str == 'e' || *str == 'E')))
 	{
           char *endptr[1];
 	  /* the exponent digits are kept in ASCII */
@@ -176,10 +176,9 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
   /* test if x = 0 */
   if (prec_s == 0)
     {
-      MPFR_CLEAR_FLAGS (x);
       MPFR_SET_ZERO (x);
       res = 0;
-      goto end;
+      goto sign_and_flags;
     }
 
   /* now we have str = 0.mant_s[0]...mant_s[prec_s-1]*base^exp_s */
@@ -354,18 +353,17 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
 
   TMP_FREE(marker);
 
+  MPFR_EXP(x) = exp_y + n * BITS_PER_MP_LIMB;
+
+ sign_and_flags:
   MPFR_CLEAR_FLAGS(x);
   if (negative)
     MPFR_SET_NEG(x);
   else
     MPFR_SET_POS(x);
-  MPFR_EXP(x) = exp_y + n * BITS_PER_MP_LIMB;
 
  end:
   (*__gmp_free_func) (str1, size_str1 * sizeof (char));
 
   return res;
 }
-
-
-

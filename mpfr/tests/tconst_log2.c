@@ -29,9 +29,7 @@ MA 02111-1307, USA. */
 
 /* tlog2 [prec] [rnd] [0 = no print] */
 
-void check _PROTO ((mp_prec_t, mp_prec_t));
-
-void
+static void
 check (mp_prec_t p0, mp_prec_t p1)
 {
   mpfr_t x, y, z;

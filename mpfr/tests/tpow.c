@@ -26,11 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void check_pow_ui  _PROTO ((void));
-void check_inexact _PROTO ((mp_prec_t));
-void special       _PROTO ((void));
-
-void
+static void
 check_pow_ui (void)
 {
   mpfr_t a, b;
@@ -42,9 +38,11 @@ check_pow_ui (void)
   mpfr_set_d (b, 0.6926773, GMP_RNDN);
   mpfr_pow_ui (a, b, 10, GMP_RNDN);
   mpfr_pow_ui (b, b, 10, GMP_RNDN);
-  if (mpfr_cmp (a, b)) {
-    fprintf (stderr, "Error for mpfr_pow_ui (b, b, ...)\n"); exit (1);
-  }
+  if (mpfr_cmp (a, b))
+    {
+      fprintf (stderr, "Error for mpfr_pow_ui (b, b, ...)\n");
+      exit (1);
+    }
 
   /* check large exponents */
   mpfr_set_d (b, 1, GMP_RNDN);
@@ -70,7 +68,7 @@ check_pow_ui (void)
   mpfr_clear (b);
 }
 
-void
+static void
 check_inexact (mp_prec_t p)
 {
   mpfr_t x, y, z, t;
@@ -133,7 +131,7 @@ check_inexact (mp_prec_t p)
   mpfr_clear (t);
 }
 
-void
+static void
 special ()
 {
   mpfr_t x, y, z, t;
@@ -224,4 +222,3 @@ main (void)
   tests_end_mpfr ();
   return 0;
 }
-

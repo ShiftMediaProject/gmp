@@ -28,13 +28,9 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void check _PROTO((unsigned long, double, mp_rnd_t, double)); 
-void check_inexact _PROTO((void));
-void check_nan _PROTO((void));
-
 /* checks that y/x gives the same results in double
    and with mpfr with 53 bits of precision */
-void
+static void
 check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
 {
   double z2;
@@ -51,12 +47,12 @@ check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
       printf ("mpfr_ui_div failed for y=%lu x=%1.20e with rnd_mode=%s\n",
               y, x, mpfr_print_rnd_mode (rnd_mode));
       exit (1);
-  }
+    }
   mpfr_clear (xx);
   mpfr_clear (zz);
 }
 
-void
+static void
 check_inexact (void)
 {
   mpfr_t x, y, z;
@@ -108,7 +104,8 @@ check_inexact (void)
   mpfr_clear (z);
 }
 
-void
+#if 0
+static void
 check_nan (void)
 {
   mpfr_t  d, q;
@@ -145,6 +142,7 @@ check_nan (void)
   mpfr_clear (d);
   mpfr_clear (q);
 }
+#endif
 
 int
 main (int argc, char *argv[])

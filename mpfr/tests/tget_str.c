@@ -28,27 +28,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void check         _PROTO((double, mp_rnd_t)); 
-void check3        _PROTO((double, mp_rnd_t, char *)); 
-void check_small   _PROTO((void)); 
-void check_large   _PROTO((void)); 
-void check_special _PROTO((int, mp_prec_t));
-
-void
-check (double d, mp_rnd_t rnd)
-{
-  mpfr_t x;
-  char *str;
-  mp_exp_t e;
-
-  mpfr_init2 (x, 53);
-  mpfr_set_d (x, d, rnd);
-  str = mpfr_get_str (NULL, &e, 10, 5, x, rnd);
-  mpfr_clear (x);
-  (*__gmp_free_func) (str, strlen (str) + 1);
-}
-
-void
+static void
 check3 (double d, mp_rnd_t rnd, char *res)
 {
   mpfr_t x;
@@ -68,7 +48,7 @@ check3 (double d, mp_rnd_t rnd, char *res)
   (*__gmp_free_func) (str, strlen (str) + 1);
 }
 
-void
+static void
 check_small (void)
 {
   mpfr_t x;
@@ -204,7 +184,7 @@ check_small (void)
 }
 
 /* bugs found by Alain Delplanque */
-void
+static void
 check_large (void)
 {
   mpfr_t x;
@@ -293,7 +273,7 @@ check_large (void)
 
 #define MAX_DIGITS 100
 
-void
+static void
 check_special (int b, mp_prec_t p)
 {
   mpfr_t x;

@@ -26,11 +26,9 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void check _PROTO((unsigned long, mp_rnd_t, double)); 
-
 int maxulp=0;
 
-void
+static void
 check (unsigned long a, mp_rnd_t rnd_mode, double Q)
 {
   mpfr_t q;

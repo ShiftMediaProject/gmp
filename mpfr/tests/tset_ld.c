@@ -27,13 +27,11 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void check_set_get _PROTO((long double, mpfr_t));
-
 /* checks that a long double converted to a mpfr (with precision >=113),
    then converted back to a long double gives the initial value,
    or in other words mpfr_get_ld(mpfr_set_ld(d)) = d.
 */
-void
+static void
 check_set_get (long double d, mpfr_t x)
 {
   mp_rnd_t r;

@@ -27,11 +27,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void check _PROTO((double, unsigned long, mp_rnd_t, double)); 
-void special _PROTO((void));
-void check_inexact _PROTO((void));
-
-void
+static void
 check (double d, unsigned long u, mp_rnd_t rnd, double e)
 {
   mpfr_t x, y;
@@ -49,12 +45,12 @@ check (double d, unsigned long u, mp_rnd_t rnd, double e)
       printf ("expected result is %1.20e, got %1.20e, dif=%d ulp\n",
               e, f, ulp (e,f));
       exit (1);
-  }
+    }
   mpfr_clear (x);
   mpfr_clear (y);
 }
 
-void
+static void
 special (void)
 {
   mpfr_t x, y;
@@ -119,7 +115,7 @@ special (void)
   mpfr_clear (y);
 }
 
-void
+static void
 check_inexact (void)
 {
   mpfr_t x, y, z;

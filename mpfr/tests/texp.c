@@ -28,18 +28,12 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-int check3 _PROTO((double, mp_rnd_t, double)); 
-int check_large _PROTO((double, int, mp_rnd_t)); 
-int check_worst_case _PROTO((double, double)); 
-int check_worst_cases _PROTO((void)); 
-void compare_exp2_exp3 _PROTO((int)); 
-
 int maxu=0;
 
 #define check(d, r) check3(d, r, 0.0)
 
 /* returns the number of ulp of error */
-int
+static int
 check3 (double d, mp_rnd_t rnd, double e)
 {
   mpfr_t x, y;
@@ -75,38 +69,42 @@ check3 (double d, mp_rnd_t rnd, double e)
 }
 
 /* computes n bits of exp(d) */
-int
+static int
 check_large (double d, int n, mp_rnd_t rnd)
 {
   mpfr_t x; mpfr_t y;
   
   mpfr_init2(x, n); mpfr_init2(y, n);
-  if (d==0.0) { /* try exp(Pi*sqrt(163)/3)-640320 */
-    mpfr_set_d(x, 163.0, rnd);
-    mpfr_sqrt(x, x, rnd);
-    mpfr_const_pi(y, rnd);
-    mpfr_mul(x, x, y, rnd);
-    mpfr_div_ui(x, x, 3, rnd);
-  }
+  if (d==0.0)
+    { /* try exp(Pi*sqrt(163)/3)-640320 */
+      mpfr_set_d(x, 163.0, rnd);
+      mpfr_sqrt(x, x, rnd);
+      mpfr_const_pi(y, rnd);
+      mpfr_mul(x, x, y, rnd);
+      mpfr_div_ui(x, x, 3, rnd);
+    }
   else mpfr_set_d(x, d, rnd);
   mpfr_exp (y, x, rnd);
-  if (d==0.0) {
-    mpfr_set_d(x, 640320.0, rnd);
-    mpfr_sub(y, y, x, rnd);
-    printf("exp(Pi*sqrt(163)/3)-640320=");
-  }
-  else printf("exp(%1.20e)=",d); 
+  if (d==0.0)
+    {
+      mpfr_set_d(x, 640320.0, rnd);
+      mpfr_sub(y, y, x, rnd);
+      printf("exp(Pi*sqrt(163)/3)-640320=");
+    }
+  else
+    printf("exp(%1.20e)=",d); 
   mpfr_out_str(stdout, 10, 0, y, rnd);
   putchar('\n');
   printf(" ="); mpfr_print_binary(y); putchar('\n');
-  if (n==53) printf(" =%1.20e\n", mpfr_get_d1 (y));
+  if (n==53)
+    printf(" =%1.20e\n", mpfr_get_d1 (y));
 
   mpfr_clear(x); mpfr_clear(y);
   return 0;
 }
 
 /* expx is the value of exp(X) rounded towards -infinity */
-int
+static int
 check_worst_case (double X, double expx)
 {
   mpfr_t x, y;
@@ -114,22 +112,26 @@ check_worst_case (double X, double expx)
   mpfr_init2(x, 53); mpfr_init2(y, 53);
   mpfr_set_d(x, X, GMP_RNDN);
   mpfr_exp(y, x, GMP_RNDD);
-  if (mpfr_get_d1 (y) != expx) {
-    fprintf(stderr, "exp(x) rounded towards -infinity is wrong\n"); exit(1);
-  }
+  if (mpfr_get_d1 (y) != expx)
+    {
+      fprintf(stderr, "exp(x) rounded towards -infinity is wrong\n");
+      exit(1);
+    }
   mpfr_exp(x, x, GMP_RNDN);
   mpfr_set_d(x, X, GMP_RNDN);
   mpfr_exp(x, x, GMP_RNDU);
   mpfr_add_one_ulp(y, GMP_RNDN);
-  if (mpfr_cmp(x,y)) {
-    fprintf(stderr, "exp(x) rounded towards +infinity is wrong\n"); exit(1);
-  }
+  if (mpfr_cmp(x,y))
+    {
+      fprintf(stderr, "exp(x) rounded towards +infinity is wrong\n");
+      exit(1);
+    }
   mpfr_clear(x); mpfr_clear(y);
   return 0;
 }
 
 /* worst cases communicated by Jean-Michel Muller and Vincent Lefevre */
-int
+static int
 check_worst_cases (void)
 {
   mpfr_t x; mpfr_t y;
@@ -159,17 +161,18 @@ check_worst_cases (void)
   mpfr_init2 (y, 601);
   mpfr_exp_2 (y, x, GMP_RNDD);
   mpfr_exp3 (x, x, GMP_RNDD);
-  if (mpfr_cmp (x, y)) {
-    fprintf (stderr, "mpfr_exp_2 and mpfr_exp3 for prec=601\n");
-    exit (1);
-  }
+  if (mpfr_cmp (x, y))
+    {
+      fprintf (stderr, "mpfr_exp_2 and mpfr_exp3 for prec=601\n");
+      exit (1);
+    }
 
   mpfr_clear (x);
   mpfr_clear (y);
   return 0;
 }
 
-void
+static void
 compare_exp2_exp3 (int n)
 {
   mpfr_t x, y, z; int prec; mp_rnd_t rnd;

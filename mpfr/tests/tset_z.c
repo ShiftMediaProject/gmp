@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_z.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -26,10 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void check _PROTO((long, unsigned char)); 
-void check_large _PROTO((void)); 
-
-void
+static void
 check(long i, unsigned char rnd)
 {
   mpfr_t f; mpz_t z; 
@@ -37,14 +34,15 @@ check(long i, unsigned char rnd)
   mpfr_init2(f, 53); mpz_init(z);
   mpz_set_ui(z, i);
   mpfr_set_z(f, z, rnd);
-  if ((long)mpfr_get_d1 (f) != i) {
-    printf("Error in mpfr_set_z for i=%ld rnd_mode=%d\n",i,rnd);
-    exit(1);
-  }
+  if ((long)mpfr_get_d1 (f) != i)
+    {
+      printf("Error in mpfr_set_z for i=%ld rnd_mode=%d\n",i,rnd);
+      exit(1);
+    }
   mpfr_clear(f); mpz_clear(z);
 }
 
-void
+static void
 check_large (void)
 {
   mpz_t z; mpfr_t x,y;
@@ -53,9 +51,11 @@ check_large (void)
   mpz_set_str(z, "77031627725494291259359895954016675357279104942148788042", 10);
   mpfr_set_z(x, z, GMP_RNDN);
   mpfr_set_str_raw(y, "0.1100100100001111110110101010001000100001011010001100001000110100110001001100011001100010100010111000000011011100000111001101000100101001000000100100111000001001E186");
-  if (mpfr_cmp(x,y)) {
-    fprintf(stderr, "Error in mpfr_set_z on large input\n"); exit(1);
-  }
+  if (mpfr_cmp(x,y))
+    {
+      fprintf(stderr, "Error in mpfr_set_z on large input\n");
+      exit(1);
+    }
   mpz_clear(z); mpfr_clear(x); mpfr_clear(y);
 }
 

@@ -32,15 +32,7 @@ MA 02111-1307, USA. */
 
 int maxulp=0;
 
-void check3 _PROTO((double, mp_rnd_t, double)); 
-void check4 _PROTO((double, mp_rnd_t, char *)); 
-void check24 _PROTO((float, mp_rnd_t, float)); 
-void check_float _PROTO((void)); 
-void special _PROTO((void));
-void check_inexact _PROTO((mp_prec_t));
-void check_nan _PROTO((void));
-
-void
+static void
 check3 (double a, mp_rnd_t rnd_mode, double Q)
 {
   mpfr_t q;
@@ -63,7 +55,7 @@ check3 (double a, mp_rnd_t rnd_mode, double Q)
   mpfr_clear (q);
 }
 
-void
+static void
 check4 (double a, mp_rnd_t rnd_mode, char *Q)
 {
   mpfr_t q, res;
@@ -72,7 +64,8 @@ check4 (double a, mp_rnd_t rnd_mode, char *Q)
   mpfr_set_d(q, a, rnd_mode);
   mpfr_sqrt(q, q, rnd_mode);
   mpfr_set_str(res, Q, 16, GMP_RNDN);
-  if (mpfr_cmp(q, res)) {
+  if (mpfr_cmp(q, res))
+    {
       printf("mpfr_sqrt failed for a=%1.20e, rnd_mode=%s\n",
 	     a, mpfr_print_rnd_mode(rnd_mode));
       printf("expected "); mpfr_print_binary(res); putchar('\n');
@@ -84,7 +77,7 @@ check4 (double a, mp_rnd_t rnd_mode, char *Q)
   mpfr_clear(q);
 }
 
-void
+static void
 check24 (float a, mp_rnd_t rnd_mode, float Q)
 {
   mpfr_t q; float Q2;
@@ -104,7 +97,7 @@ check24 (float a, mp_rnd_t rnd_mode, float Q)
 
 /* the following examples come from the paper "Number-theoretic Test 
    Generation for Directed Rounding" from Michael Parks, Table 3 */
-void
+static void
 check_float (void)
 {
   float b = 8388608.0; /* 2^23 */
@@ -154,7 +147,7 @@ check_float (void)
   check24(b*10873622.0, GMP_RNDD, 9.550631e6);
 }
 
-void
+static void
 special (void)
 {
   mpfr_t x, z;
@@ -203,11 +196,12 @@ special (void)
   mpfr_set_d (x, 1.0, GMP_RNDN);
   mpfr_set_d (z, -1.0, GMP_RNDN);
   mpfr_sqrt (z, x, GMP_RNDN);
-  if (mpfr_cmp_ui (z, 0) < 0) {
-    fprintf (stderr, "Error: square root of %e gives %e\n", 
-	     mpfr_get_d1 (x), mpfr_get_d1 (z));
-    exit (1);
-  }
+  if (mpfr_cmp_ui (z, 0) < 0)
+    {
+      fprintf (stderr, "Error: square root of %e gives %e\n",
+               mpfr_get_d1 (x), mpfr_get_d1 (z));
+      exit (1);
+    }
 
   mpfr_set_prec (x, 192);
   mpfr_set_prec (z, 160);
@@ -220,7 +214,7 @@ special (void)
   mpfr_clear (z);
 }
 
-void
+static void
 check_inexact (mp_prec_t p)
 {
   mpfr_t x, y, z;
@@ -257,7 +251,7 @@ check_inexact (mp_prec_t p)
   mpfr_clear (z);
 }
 
-void
+static void
 check_nan (void)
 {
   mpfr_t  x, got;

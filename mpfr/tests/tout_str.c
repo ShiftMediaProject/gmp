@@ -33,10 +33,7 @@ FILE *fout;
 
 #define check(d,r,b) check4(d,r,b,53)
 
-void check4 _PROTO((double, mp_rnd_t, int, int)); 
-void check_large _PROTO((void)); 
-
-void
+static void
 check4 (double d, mp_rnd_t rnd, int base, int prec)
 {
   mpfr_t x;
@@ -49,7 +46,7 @@ check4 (double d, mp_rnd_t rnd, int base, int prec)
   mpfr_clear (x);
 }
 
-void
+static void
 check_large (void)
 {
   mpfr_t x; mp_exp_t e; char *s;

@@ -1,6 +1,6 @@
 /* Test file for exceptions.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -25,9 +25,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void mpfr_set_double_range _PROTO((void));
-
-void
+static void
 mpfr_set_double_range (void)
 {
   mpfr_set_default_prec (53);

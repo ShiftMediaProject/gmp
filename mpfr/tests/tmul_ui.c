@@ -27,9 +27,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void check_inexact _PROTO((mp_prec_t));
-
-void
+static void
 check_inexact (mp_prec_t p)
 {
   mpfr_t x, y, z;
@@ -108,8 +106,7 @@ main (int argc, char *argv[])
       printf ("y=  "); mpfr_print_binary (y); putchar ('\n');
       printf ("1*y="); mpfr_print_binary (x); putchar ('\n');
       exit (1);
-  }
-
+    }
 
   mpfr_set_inf (x, 1);
   mpfr_mul_ui (x, x, 3, GMP_RNDU);
@@ -147,12 +144,13 @@ main (int argc, char *argv[])
   mpfr_set_d(x, -2.0, GMP_RNDZ);
   mpfr_set_d(y, 3.0, GMP_RNDZ);
   mpfr_mul_ui(x, y, 4, GMP_RNDZ);
-  if (mpfr_cmp_ui(x, 0) <= 0) {
-    fprintf(stderr, "Error in mpfr_mul_ui: 4*3.0 does not give a positive result:\n"); 
-    mpfr_print_binary(x); putchar('\n');
-    printf("mpfr_cmp_ui(x, 0) = %d\n", mpfr_cmp_ui(x, 0));
-    exit(1);
-  }
+  if (mpfr_cmp_ui(x, 0) <= 0)
+    {
+      fprintf(stderr, "Error in mpfr_mul_ui: 4*3.0 does not give a positive result:\n"); 
+      mpfr_print_binary(x); putchar('\n');
+      printf("mpfr_cmp_ui(x, 0) = %d\n", mpfr_cmp_ui(x, 0));
+      exit(1);
+    }
 
   mpfr_set_prec (x, 9);
   mpfr_set_prec (y, 9);
@@ -173,10 +171,11 @@ main (int argc, char *argv[])
   mpfr_mul_ui(x, y, 121, GMP_RNDD);
   /* 121*y = 145173518207904485376, representable exactly */
   mpfr_set_str_raw(y, "0.1111101111010101111111100011010010111010111110110011001E67");
-  if (mpfr_cmp(x, y)) {
-    printf("Error for 121*y: expected result is:\n");
-    mpfr_print_binary(y); putchar('\n');
-  }
+  if (mpfr_cmp(x, y))
+    {
+      printf("Error for 121*y: expected result is:\n");
+      mpfr_print_binary(y); putchar('\n');
+    }
 
   mpfr_set_prec (x, 32);
   mpfr_set_str_raw (x, "0.10000000000000000000000000000000E1");

@@ -26,9 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void check_inexact _PROTO((void));
-
-void
+static void
 check_inexact (void)
 {
   mp_prec_t p, q;

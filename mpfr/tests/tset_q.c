@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_q.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -26,9 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-void check _PROTO((long int, long int, mp_rnd_t, double)); 
-
-void
+static void
 check (long int n, long int d, mp_rnd_t rnd, double y)
 {
   mpq_t q;
@@ -46,11 +44,11 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
   /* check values */
   if (y != z)
     {
-    fprintf (stderr, "Error for q=%ld/%lu and rnd=%s\n", n, d, 
-	     mpfr_print_rnd_mode (rnd));
-    fprintf (stderr, "correct result is %1.20e, mpfr_set_q gives %1.20e\n",
-             y, z);
-    exit (1);
+      fprintf (stderr, "Error for q=%ld/%lu and rnd=%s\n", n, d, 
+               mpfr_print_rnd_mode (rnd));
+      fprintf (stderr, "correct result is %1.20e, mpfr_set_q gives %1.20e\n",
+               y, z);
+      exit (1);
     }
 
   /* check inexact flag */

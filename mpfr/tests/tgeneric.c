@@ -1,6 +1,6 @@
 /* Generic test file for functions with one mpfr_t argument.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -19,9 +19,7 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-void test_generic _PROTO((int, int, int));
-
-void
+static void
 test_generic (int p0, int p1, int N)
 {
   mp_prec_t prec, yprec;

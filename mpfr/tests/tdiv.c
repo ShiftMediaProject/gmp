@@ -30,16 +30,8 @@ MA 02111-1307, USA. */
 
 #define check53(n, d, rnd, res) check4(n, d, rnd, 53, res)
 
-void check4 _PROTO((double, double, mp_rnd_t, int, double)); 
-void check24 _PROTO((float, float, mp_rnd_t, float)); 
-void check_float _PROTO((void)); 
-void check_convergence _PROTO((void)); 
-void check_lowr _PROTO((void));
-void check_inexact _PROTO((void));
-void check_nan _PROTO((void));
-
 /* if Q is not zero, then it is the correct result */
-void
+static void
 check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
 {
   mpfr_t q, n, d;
@@ -65,7 +57,7 @@ check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
   mpfr_clear (d);
 }
 
-void
+static void
 check24 (float N, float D, mp_rnd_t rnd_mode, float Q)
 {
   mpfr_t q, n, d; float Q2;
@@ -86,7 +78,7 @@ check24 (float N, float D, mp_rnd_t rnd_mode, float Q)
 
 /* the following examples come from the paper "Number-theoretic Test 
    Generation for Directed Rounding" from Michael Parks, Table 2 */
-void
+static void
 check_float(void)
 {
   float b=8388608.0; /* 2^23 */
@@ -132,7 +124,7 @@ check_float(void)
   check24(b*12582913.0, 8388610.0, GMP_RNDD, 1.258291e7);
 }
 
-void
+static void
 check_convergence (void)
 {
   mpfr_t x, y; int i, j;
@@ -175,7 +167,7 @@ check_convergence (void)
   mpfr_clear(x); mpfr_clear(y);
 }
 
-void
+static void
 check_lowr (void)
 {
   mpfr_t x, y, z, z2, z3, tmp; 
@@ -305,7 +297,7 @@ check_lowr (void)
 
 #define MAX_PREC 100
 
-void
+static void
 check_inexact (void)
 {
   mpfr_t x, y, z, u;
@@ -388,7 +380,7 @@ check_inexact (void)
   mpfr_clear (u);
 }
 
-void
+static void
 check_nan (void)
 {
   mpfr_t  a, d, q;

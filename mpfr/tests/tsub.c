@@ -26,12 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void check_diverse _PROTO((void));
-void bug_ddefour _PROTO((void));
-void check_two_sum _PROTO((mp_prec_t));
-void check_inexact _PROTO((void));
-
-void
+static void
 check_diverse (void)
 {
   mpfr_t x, y, z;
@@ -252,7 +247,7 @@ check_diverse (void)
   mpfr_clear (z);
 }
 
-void
+static void
 bug_ddefour(void)
 {
     mpfr_t ex, ex1, ex2, ex3, tot, tot1;
@@ -289,7 +284,7 @@ bug_ddefour(void)
 }
 
 /* if u = o(x-y), v = o(u-x), w = o(v+y), then x-y = u-w */
-void
+static void
 check_two_sum (mp_prec_t p)
 {
   mpfr_t x, y, u, v, w;
@@ -334,7 +329,7 @@ check_two_sum (mp_prec_t p)
 
 #define MAX_PREC 100
 
-void
+static void
 check_inexact (void)
 {
   mpfr_t x, y, z, u;

@@ -28,9 +28,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-int check_denorms _PROTO ((void));
-
-int
+static int
 check_denorms ()
 {
   mp_rnd_t rnd_mode;
@@ -46,29 +44,29 @@ check_denorms ()
 
   mpfr_init2 (x, BITS_PER_MP_LIMB);
 
-      rnd_mode = GMP_RNDN;
-      for (k = -17; k <= 17; k += 2)
+  rnd_mode = GMP_RNDN;
+  for (k = -17; k <= 17; k += 2)
+    {
+      d = (double) k * dbl_min; /* k * 2^(-1022) */
+      f = 1.0;
+      mpfr_set_si (x, k, GMP_RNDN);
+      mpfr_div_2exp (x, x, 1022, GMP_RNDN); /* k * 2^(-1022) */
+      for (n = 0; n <= 58; n++)
         {
-          d = (double) k * dbl_min; /* k * 2^(-1022) */
-          f = 1.0;
-          mpfr_set_si (x, k, GMP_RNDN);
-          mpfr_div_2exp (x, x, 1022, GMP_RNDN); /* k * 2^(-1022) */
-          for (n = 0; n <= 58; n++)
+          d2 = d * f;
+          dd = mpfr_get_d (x, rnd_mode);
+          if (d2 != dd) /* should be k * 2^(-1022-n) for n < 53 */
             {
-              d2 = d * f;
-              dd = mpfr_get_d (x, rnd_mode);
-              if (d2 != dd) /* should be k * 2^(-1022-n) for n < 53 */
-                {
-                  fprintf (stderr,
-                           "Wrong result for %d * 2^(%d), rnd_mode %d\n",
-                           k, -1022-n, rnd_mode);
-                  fprintf (stderr, "got %.20e instead of %.20e\n", dd, d2);
-                  fail = 1;
-                }
-              f *= 0.5;
-              mpfr_div_2exp (x, x, 1, GMP_RNDN);
+              fprintf (stderr,
+                       "Wrong result for %d * 2^(%d), rnd_mode %d\n",
+                       k, -1022-n, rnd_mode);
+              fprintf (stderr, "got %.20e instead of %.20e\n", dd, d2);
+              fail = 1;
             }
+          f *= 0.5;
+          mpfr_div_2exp (x, x, 1, GMP_RNDN);
         }
+    }
 
   mpfr_clear (x);
   return fail;
