@@ -25,7 +25,7 @@ include(`../config.m4')
 C INPUT PARAMETERS
 define(`res_ptr',`%r26')
 define(`s1_ptr',`%r25')
-define(`size',`%r24')
+define(`size_param',`%r24')
 define(`s2_limb',`%r23')
 
 define(`cylimb',`%r28')
@@ -49,7 +49,7 @@ C	.callinfo	frame=128,no_calls
 	ldo	128(%r30),%r30
 	stws	s2_limb,-16(%r30)
 	add	 %r0,%r0,cylimb			C clear cy and cylimb
-	addib,<	-4,size,L(few_limbs)
+	addib,<	-4,size_param,L(few_limbs)
 	fldws	-16(%r30),%fr31R
 
 	ldo	-112(%r30),%r31
@@ -68,7 +68,7 @@ C	.callinfo	frame=128,no_calls
 	ldws	-16(%r31),cylimb
 	ldws	-12(%r31),lo0
 	add	 s0,lo0,s0
-	addib,< -1,size,L(few_limbs)
+	addib,< -1,size_param,L(few_limbs)
 	stws,ma	 s0,4(res_ptr)
 
 C start software pipeline ----------------------------------------------------
@@ -100,7 +100,7 @@ C start software pipeline ----------------------------------------------------
 	addc	 lo2,hi1,lo2
 	addc	 lo3,hi2,lo3
 
-	addib,<	 -4,size,L(end)
+	addib,<	 -4,size_param,L(end)
 	addc	 %r0,hi3,cylimb			C propagate carry into cylimb
 C main loop ------------------------------------------------------------------
 	.label	L(loop)
@@ -143,7 +143,7 @@ C main loop ------------------------------------------------------------------
 	addc	 lo3,hi2,lo3
 	stws,ma	 s3,4(res_ptr)
 
-	addib,>= -4,size,L(loop)
+	addib,>= -4,size_param,L(loop)
 	addc	 %r0,hi3,cylimb			C propagate carry into cylimb
 C finish software pipeline ---------------------------------------------------
 	.label	L(end)
@@ -169,7 +169,7 @@ C restore callee-saves registers ---------------------------------------------
 	ldw	-80(%r30),%r7
 
 	.label	L(few_limbs)
-	addib,=,n 4,size,L(ret)
+	addib,=,n 4,size_param,L(ret)
 
 	.label	L(loop2)
 	fldws,ma 4(s1_ptr),%fr4
@@ -182,7 +182,7 @@ C restore callee-saves registers ---------------------------------------------
 	addc	 %r0,hi0,cylimb
 	add	 s0,lo0,s0
 	stws,ma	 s0,4(res_ptr)
-	addib,<> -1,size,L(loop2)
+	addib,<> -1,size_param,L(loop2)
 	nop
 
 	.label	L(ret)
