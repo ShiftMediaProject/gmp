@@ -29,11 +29,14 @@ st-get_d: t-get_d
 	touch $@
 
 t-cmp: t-cmp.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-cmp_ui: t-cmp_ui.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-get_d: t-get_d.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 
 t-cmp.o: $(srcdir)/t-cmp.c
 t-cmp_ui.o: $(srcdir)/t-cmp_ui.c

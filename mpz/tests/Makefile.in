@@ -78,39 +78,56 @@ st-reuse: reuse
 	touch $@
 
 t-mul: t-mul.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-tdiv: t-tdiv.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-tdiv_ui: t-tdiv_ui.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-fdiv: t-fdiv.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-fdiv_ui: t-fdiv_ui.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-gcd: t-gcd.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 dive: dive.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-sqrtrem: t-sqrtrem.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 convert: convert.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 io: io.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 logic: logic.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 bit: bit.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-powm: t-powm.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-powm_ui: t-powm_ui.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-pow_ui: t-pow_ui.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 t-2exp: t-2exp.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 reuse: reuse.o $(TEST_LIBS)
-	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(CC) -o tmp-$@ $@.o $(TEST_LIBS) $(CFLAGS) $(XCFLAGS)
+	$(srcdir)/move-if-change tmp-$@ $@
 
 t-mul.o: $(srcdir)/t-mul.c
 t-tdiv.o: $(srcdir)/t-tdiv.c
