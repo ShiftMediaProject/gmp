@@ -1,6 +1,7 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 1996, 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
+# Copyright 1996, 1998, 1999, 2000, 2001, 2002 Free Software Foundation,
+# Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -35,13 +36,14 @@ libmpz_la_SOURCES = aors.h aors_ui.h fits_s.h mul_i.h \
   com.c \
   cong.c cong_2exp.c cong_ui.c \
   divexact.c divegcd.c dive_ui.c divis.c divis_ui.c divis_2exp.c \
-  dump.c fac_ui.c fdiv_q.c fdiv_q_ui.c \
+  dump.c export.c fac_ui.c fdiv_q.c fdiv_q_ui.c \
   fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_ui.c fdiv_ui.c \
   fib_ui.c fib2_ui.c \
   fits_sint.c fits_slong.c fits_sshort.c \
   fits_uint.c fits_ulong.c fits_ushort.c \
   gcd.c gcd_ui.c gcdext.c get_d.c get_d_2exp.c get_si.c \
-  get_str.c get_ui.c getlimbn.c hamdist.c init.c init2.c inp_raw.c inp_str.c \
+  get_str.c get_ui.c getlimbn.c hamdist.c \
+  import.c init.c init2.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c kronsz.c kronuz.c kronzs.c kronzu.c \
   lcm.c lcm_ui.c lucnum_ui.c lucnum2_ui.c millerrabin.c \
