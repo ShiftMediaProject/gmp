@@ -7,6 +7,9 @@
 /* --enable-assert option */
 #undef WANT_ASSERT
 
+/* --disable-alloca option */
+#undef USE_STACK_ALLOC
+
 /* Define if a limb is long long. */
 #undef _LONG_LONG_LIMB
 
