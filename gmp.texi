@@ -708,10 +708,11 @@ The memory allocation functions, @code{malloc} and friends, that GMP
 uses unless directed to use custom allocation, may not be reentrant.
 
 @item
-The random number functions (@code{mpz_random}, etc) use an underlying
+The old random number functions (@code{mpz_random}, etc) use an underlying
 random number generator from the C library, typically @code{mrand48} or
-@code{random}.  These routines are not reentrant, since they rely on
-global state.
+@code{random}.  These routines are not reentrant, since they rely on global
+state.  (The newer random number functions that accept a
+@code{gmp_randstate_t} parameter are however reentrant.)
 @end itemize
 
 If the memory allocation functions (@code{malloc} and friends, or
