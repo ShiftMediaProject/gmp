@@ -138,7 +138,7 @@ tune: tuneup
 # "g" forms produce graphs
 
 mk:
-	./speed -s 5-30 -c mpn_mul_basecase.0 mpn_kara_mul_n
+	./speed -s 5-40 -c mpn_mul_basecase.0 mpn_kara_mul_n
 
 MTS = -s 50-150 -c
 mt:
@@ -147,7 +147,7 @@ mtg:
 	./speed $(MTS) -P mtg mpn_kara_mul_n mpn_toom3_mul_n
 
 sk:
-	./speed -s 5-30 -c mpn_sqr_basecase mpn_kara_sqr_n mpn_sqr_n
+	./speed -s 5-40 -c mpn_sqr_basecase mpn_kara_sqr_n mpn_sqr_n
 
 STS = -s 50-150 -c
 st:
