@@ -877,13 +877,15 @@ case ${target} in
     cyclecounter_size=1 ;;
   sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
     SPEED_CYCLECOUNTER_OBJ=sparcv9.lo ;;
-  hppa2*-*-*)
+  hppa2.0w-*-*)
+    SPEED_CYCLECOUNTER_OBJ=hppa2w.lo ;;
+  hppa2.0*-*-*)
     if test -n "$CC64"; then
       SPEED_CYCLECOUNTER_OBJ=hppa2.lo
     else
       SPEED_CYCLECOUNTER_OBJ=hppa.lo
       cyclecounter_size=1
-    fi;;
+    fi ;;
   hppa*-*-*)
     SPEED_CYCLECOUNTER_OBJ=hppa.lo
     cyclecounter_size=1 ;;
