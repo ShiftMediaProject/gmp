@@ -1138,12 +1138,12 @@ AC_DEFUN(GMP_C_SIZES,
     for tmp_try in 1 2 4 8 16 32; do
       echo "Trying $tmp_try:" >>conftest.out
       cat >conftest.c <<EOF
-#include "gmp.h"
+#include "$srcdir/gmp.h"
 [int test [2*(sizeof($tmp_type) == $tmp_try) - 1];]
 EOF
       cat conftest.c >>conftest.out
-      echo "$CC $CFLAGS -I$srcdir -c conftest.c" >>conftest.out
-      if ($CC $CFLAGS -I$srcdir -c conftest.c) >>conftest.out 2>&1; then
+      echo "$CC $CFLAGS $CPPFLAGS -c conftest.c" >>conftest.out
+      if ($CC $CFLAGS $CPPFLAGS -c conftest.c) >>conftest.out 2>&1; then
         if test -n "$tmp_val"; then
           cat conftest.out 1>&AC_FD_CC
           AC_MSG_ERROR([$tmp_def $tmp_type passes both $tmp_val and $tmp_try])
