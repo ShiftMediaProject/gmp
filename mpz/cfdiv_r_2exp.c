@@ -113,8 +113,8 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
         wp[i] = MP_LIMB_T_MAX;
 
       /* Twos complement.  Since u!=0 in the relevant part, the twos
-         complement never gives 0 and a carry, so can use mpn_incr_u. */
-      mpn_incr_u (wp, CNST_LIMB(1));
+         complement never gives 0 and a carry, so can use MPN_INCR_U. */
+      MPN_INCR_U (wp, limb_cnt+1, CNST_LIMB(1));
 
       usize = -usize;
     }
