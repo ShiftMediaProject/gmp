@@ -223,8 +223,7 @@ one.  For instance,
     $b = $a;
     setbit ($a, 0);   # $a becomes 7, $b stays at 6
 
-C<scan0> and C<scan1> return ULONG_MAX if no 0 or 1 bit is found, as per the
-C functions.  That value can be obtained in perl with C<~0>.
+C<scan0> and C<scan1> return ~0 if no 0 or 1 bit respectively is found.
 
 =head2 GMP::Mpq
 
@@ -359,7 +358,7 @@ and returns a float and an integer exponent,
 
 C<get_str> takes an optional second argument which is the base, defaulting
 to decimal.  A negative base means upper case, as per the C functions.  For
-integer, -integer string, mpz or mpq operands a string is returned.
+integer, integer string, mpz or mpq operands a string is returned.
 
     use GMP qw(:all);
     use GMP::Mpq qw(:all);
