@@ -12,6 +12,18 @@
 
 2000-04-16  Torbjorn Granlund  <tege@swox.com>
 
+	* longlong.h (alpha count_leading_zeros): Wrap in __MPN.
+	* mpn/alpha/cntlz.asm: Use __gmpn prefix (by means of __MPN).
+
+	* mpn/alpha/udiv_qrnnd.S: Use __gmpn prefix.
+	* mpn/hppa/udiv_qrnnd.s: Likewise.
+	* mpn/hppa/hppa1_1/udiv_qrnnd.s: Likewise.
+	* mpn/pa64/udiv_qrnnd.c: Likewise (by means of __MPN).
+	* mpn/pa64/umul_ppmm.S: Likewise.
+	* mpn/sparc32/udiv_fp.asm: Likewise (by means of MPN).
+	* mpn/sparc32/udiv_nfp.asm: Likewise (by means of MPN).
+	* sparc32/v8/supersparc/udiv.asm: Likewise (by means of MPN).
+
 	* mpn/generic/tdiv_qr.c: Work around gcc 2.7.2.3 i386 register handling
 	bug.
 
