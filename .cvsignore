@@ -10,6 +10,7 @@ config.cache
 config.status
 asm-syntax.h
 gmp.info*
+mpfr.info*
 gmp.fn
 gmp.vr
 gmp.tp
