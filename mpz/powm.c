@@ -31,12 +31,12 @@ MA 02111-1307, USA. */
 /* set c <- (a*b)/R^n mod m c has to have at least (2n) allocated limbs */
 static void
 #if __STDC__
-mpz_redc (mpz_t c, mpz_t a, mpz_t b, mpz_srcptr m, mp_limb_t Nprim)
+mpz_redc (mpz_ptr c, mpz_srcptr a, mpz_srcptr b, mpz_srcptr m, mp_limb_t Nprim)
 #else
 mpz_redc (c, a, b, m, Nprim)
-     mpz_t c;
-     mpz_t a;
-     mpz_t b;
+     mpz_ptr c;
+     mpz_srcptr a;
+     mpz_srcptr b;
      mpz_srcptr m;
      mp_limb_t Nprim;
 #endif
