@@ -117,7 +117,7 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 SUBDIRS = tests
 
@@ -145,12 +145,13 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
+ANSI2KNR = $(top_builddir)/ansi2knr
 libmpbsd_la_LDFLAGS = 
 libmpbsd_la_LIBADD = 
-am_libmpbsd_la_OBJECTS =  itom.lo mfree.lo min.lo mout.lo move.lo \
-mtox.lo sdiv.lo xtom.lo
-nodist_libmpbsd_la_OBJECTS =  add.lo cmp.lo gcd.lo mul.lo pow_ui.lo \
-powm.lo realloc.lo sqrtrem.lo sub.lo tdiv_qr.lo
+am_libmpbsd_la_OBJECTS =  itom$U.lo mfree$U.lo min$U.lo mout$U.lo \
+move$U.lo mtox$U.lo sdiv$U.lo xtom$U.lo
+nodist_libmpbsd_la_OBJECTS =  add$U.lo cmp$U.lo gcd$U.lo mul$U.lo \
+pow_ui$U.lo powm$U.lo realloc$U.lo sqrtrem$U.lo sub$U.lo tdiv_qr$U.lo
 libmpbsd_la_OBJECTS =  $(am_libmpbsd_la_OBJECTS) \
 $(nodist_libmpbsd_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -209,6 +210,21 @@ clean-libtool:
 distclean-libtool:
 
 maintainer-clean-libtool:
+$(top_builddir)/ansi2knr: $(top_builddir)/ansi2knr.$(OBJEXT)
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr
+
+$(top_builddir)/ansi2knr.$(OBJEXT):
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) ansi2knr.$(OBJEXT)
+
+
+mostlyclean-kr:
+	-rm -f *_.c
+
+clean-kr:
+
+distclean-kr:
+
+maintainer-clean-kr:
 
 libmpbsd.la: $(libmpbsd_la_OBJECTS) $(libmpbsd_la_DEPENDENCIES)
 	$(LINK)  $(libmpbsd_la_LDFLAGS) $(libmpbsd_la_OBJECTS) $(libmpbsd_la_LIBADD) $(LIBS)
@@ -218,6 +234,50 @@ libmpbsd.la: $(libmpbsd_la_OBJECTS) $(libmpbsd_la_DEPENDENCIES)
 	$(COMPILE) -c `cygpath -w $<`
 .c.lo:
 	$(LTCOMPILE) -c -o $@ $<
+add_.c: add.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c
+cmp_.c: cmp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp.c; then echo $(srcdir)/cmp.c; else echo cmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_.c
+gcd_.c: gcd.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd.c; then echo $(srcdir)/gcd.c; else echo gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_.c
+itom_.c: itom.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/itom.c; then echo $(srcdir)/itom.c; else echo itom.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > itom_.c
+mfree_.c: mfree.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mfree.c; then echo $(srcdir)/mfree.c; else echo mfree.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mfree_.c
+min_.c: min.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/min.c; then echo $(srcdir)/min.c; else echo min.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > min_.c
+mout_.c: mout.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mout.c; then echo $(srcdir)/mout.c; else echo mout.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mout_.c
+move_.c: move.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/move.c; then echo $(srcdir)/move.c; else echo move.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > move_.c
+mtox_.c: mtox.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mtox.c; then echo $(srcdir)/mtox.c; else echo mtox.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mtox_.c
+mul_.c: mul.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul.c; then echo $(srcdir)/mul.c; else echo mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_.c
+pow_ui_.c: pow_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pow_ui.c; then echo $(srcdir)/pow_ui.c; else echo pow_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pow_ui_.c
+powm_.c: powm.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm.c; then echo $(srcdir)/powm.c; else echo powm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_.c
+realloc_.c: realloc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/realloc.c; then echo $(srcdir)/realloc.c; else echo realloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > realloc_.c
+sdiv_.c: sdiv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sdiv.c; then echo $(srcdir)/sdiv.c; else echo sdiv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sdiv_.c
+sqrtrem_.c: sqrtrem.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqrtrem.c; then echo $(srcdir)/sqrtrem.c; else echo sqrtrem.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqrtrem_.c
+sub_.c: sub.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c
+tdiv_qr_.c: tdiv_qr.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_qr.c; then echo $(srcdir)/tdiv_qr.c; else echo tdiv_qr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_qr_.c
+xtom_.c: xtom.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/xtom.c; then echo $(srcdir)/xtom.c; else echo xtom.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > xtom_.c
+add_.$(OBJEXT) add_.lo cmp_.$(OBJEXT) cmp_.lo gcd_.$(OBJEXT) gcd_.lo \
+itom_.$(OBJEXT) itom_.lo mfree_.$(OBJEXT) mfree_.lo min_.$(OBJEXT) \
+min_.lo mout_.$(OBJEXT) mout_.lo move_.$(OBJEXT) move_.lo \
+mtox_.$(OBJEXT) mtox_.lo mul_.$(OBJEXT) mul_.lo pow_ui_.$(OBJEXT) \
+pow_ui_.lo powm_.$(OBJEXT) powm_.lo realloc_.$(OBJEXT) realloc_.lo \
+sdiv_.$(OBJEXT) sdiv_.lo sqrtrem_.$(OBJEXT) sqrtrem_.lo sub_.$(OBJEXT) \
+sub_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo xtom_.$(OBJEXT) xtom_.lo : \
+$(ANSI2KNR)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -370,27 +430,27 @@ distclean-generic:
 maintainer-clean-generic:
 	-rm -f Makefile.in
 mostlyclean-am:  mostlyclean-noinstLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-tags \
+		mostlyclean-libtool mostlyclean-kr mostlyclean-tags \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-recursive
 
-clean-am:  clean-noinstLTLIBRARIES clean-compile clean-libtool \
+clean-am:  clean-noinstLTLIBRARIES clean-compile clean-libtool clean-kr \
 		clean-tags clean-generic mostlyclean-am
 
 clean: clean-recursive
 
 distclean-am:  distclean-noinstLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-tags distclean-generic \
-		clean-am
+		distclean-libtool distclean-kr distclean-tags \
+		distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-recursive
 
 maintainer-clean-am:  maintainer-clean-noinstLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-tags maintainer-clean-generic \
-		distclean-am
+		maintainer-clean-kr maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -400,12 +460,12 @@ maintainer-clean: maintainer-clean-recursive
 clean-noinstLTLIBRARIES maintainer-clean-noinstLTLIBRARIES \
 mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool install-recursive \
-uninstall-recursive install-data-recursive uninstall-data-recursive \
-install-exec-recursive uninstall-exec-recursive installdirs-recursive \
-uninstalldirs-recursive all-recursive check-recursive \
-installcheck-recursive info-recursive dvi-recursive \
-mostlyclean-recursive distclean-recursive clean-recursive \
+clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
+clean-kr maintainer-clean-kr install-recursive uninstall-recursive \
+install-data-recursive uninstall-data-recursive install-exec-recursive \
+uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
+all-recursive check-recursive installcheck-recursive info-recursive \
+dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
 maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
 distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
 dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
