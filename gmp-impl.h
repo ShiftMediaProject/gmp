@@ -433,10 +433,10 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 
 /* Threshold at which FFT should be used to do a modF NxN -> N multiply. */
 #ifndef FFT_MODF_MUL_THRESHOLD
-#define FFT_MODF_MUL_THRESHOLD   (TOOM3_MUL_THRESHOLD * 2)
+#define FFT_MODF_MUL_THRESHOLD   (TOOM3_MUL_THRESHOLD * 3)
 #endif
 #ifndef FFT_MODF_SQR_THRESHOLD
-#define FFT_MODF_SQR_THRESHOLD   (TOOM3_SQR_THRESHOLD * 2)
+#define FFT_MODF_SQR_THRESHOLD   (TOOM3_SQR_THRESHOLD * 3)
 #endif
 
 /* Threshold at which FFT should be used to do an NxN -> 2N multiply.  This
@@ -456,24 +456,22 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
    etc.  See mpn_fft_best_k(). */
 #ifndef FFT_MUL_TABLE
 #define FFT_MUL_TABLE                           \
-  { TOOM3_MUL_THRESHOLD * 3,   /* k=5 */        \
-    TOOM3_MUL_THRESHOLD * 7,   /* k=6 */        \
-    TOOM3_MUL_THRESHOLD * 15,  /* k=7 */        \
-    TOOM3_MUL_THRESHOLD * 31,  /* k=8 */        \
-    TOOM3_MUL_THRESHOLD * 64,  /* k=9 */        \
-    TOOM3_MUL_THRESHOLD * 129, /* k=10 */       \
-    TOOM3_MUL_THRESHOLD * 257, /* k=11 */       \
+  { TOOM3_MUL_THRESHOLD * 4,   /* k=5 */        \
+    TOOM3_MUL_THRESHOLD * 8,   /* k=6 */        \
+    TOOM3_MUL_THRESHOLD * 16,  /* k=7 */        \
+    TOOM3_MUL_THRESHOLD * 32,  /* k=8 */        \
+    TOOM3_MUL_THRESHOLD * 96,  /* k=9 */        \
+    TOOM3_MUL_THRESHOLD * 288, /* k=10 */       \
     0 }
 #endif
 #ifndef FFT_SQR_TABLE
 #define FFT_SQR_TABLE                           \
-  { TOOM3_SQR_THRESHOLD * 3,   /* k=5 */        \
-    TOOM3_SQR_THRESHOLD * 7,   /* k=6 */        \
-    TOOM3_SQR_THRESHOLD * 15,  /* k=7 */        \
-    TOOM3_SQR_THRESHOLD * 31,  /* k=8 */        \
-    TOOM3_SQR_THRESHOLD * 64,  /* k=9 */        \
-    TOOM3_SQR_THRESHOLD * 129, /* k=10 */       \
-    TOOM3_SQR_THRESHOLD * 257, /* k=11 */       \
+  { TOOM3_SQR_THRESHOLD * 4,   /* k=5 */        \
+    TOOM3_SQR_THRESHOLD * 8,   /* k=6 */        \
+    TOOM3_SQR_THRESHOLD * 16,  /* k=7 */        \
+    TOOM3_SQR_THRESHOLD * 32,  /* k=8 */        \
+    TOOM3_SQR_THRESHOLD * 96,  /* k=9 */        \
+    TOOM3_SQR_THRESHOLD * 288, /* k=10 */       \
     0 }
 #endif
 
