@@ -170,8 +170,9 @@ m4_assert_defined(`MCOUNT_PIC_REG')
 m4_assert_defined(`MCOUNT_NONPIC_REG')
 m4_assert_defined(`MCOUNT_PIC_CALL')
 m4_assert_defined(`MCOUNT_NONPIC_CALL')
-`ifelse(MCOUNT_REG,,,
+`ifelse(ifdef(`PIC',`MCOUNT_PIC_REG',`MCOUNT_NONPIC_REG'),,,
 `	DATA
+	ALIGN(4)
 L(mcount_data):
 	W32	0
 	TEXT
