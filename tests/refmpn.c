@@ -417,7 +417,7 @@ refmpn_xnor_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 
 /* set *w to x+y, return 0 or 1 carry */
 mp_limb_t
-add (mp_limb_t *w, mp_limb_t x, mp_limb_t y)
+ref_addc_limb (mp_limb_t *w, mp_limb_t x, mp_limb_t y)
 {
   mp_limb_t  sum, cy;
 
@@ -437,7 +437,7 @@ add (mp_limb_t *w, mp_limb_t x, mp_limb_t y)
 
 /* set *w to x-y, return 0 or 1 borrow */
 mp_limb_t
-sub (mp_limb_t *w, mp_limb_t x, mp_limb_t y)
+ref_subc_limb (mp_limb_t *w, mp_limb_t x, mp_limb_t y)
 {
   mp_limb_t  diff, cy;
 
@@ -465,8 +465,8 @@ adc (mp_limb_t *w, mp_limb_t x, mp_limb_t y, mp_limb_t c)
   ASSERT_LIMB (y);
   ASSERT (c == 0 || c == 1);
 
-  r = add (w, x, y);
-  return r + add (w, *w, c);
+  r = ref_addc_limb (w, x, y);
+  return r + ref_addc_limb (w, *w, c);
 }
 
 /* set *w to x-y-c (where c is 0 or 1), return 0 or 1 borrow */
@@ -479,8 +479,8 @@ sbb (mp_limb_t *w, mp_limb_t x, mp_limb_t y, mp_limb_t c)
   ASSERT_LIMB (y);
   ASSERT (c == 0 || c == 1);
 
-  r = sub (w, x, y);
-  return r + sub (w, *w, c);
+  r = ref_subc_limb (w, x, y);
+  return r + ref_subc_limb (w, *w, c);
 }
 
 
@@ -501,12 +501,12 @@ sbb (mp_limb_t *w, mp_limb_t x, mp_limb_t y, mp_limb_t c)
 mp_limb_t
 refmpn_add_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t n)
 {
-  AORS_1 (add);
+  AORS_1 (ref_addc_limb);
 }
 mp_limb_t
 refmpn_sub_1 (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t n)
 {
-  AORS_1 (sub);
+  AORS_1 (ref_subc_limb);
 }
 
 #define AORS_NC(operation)                                              \
@@ -650,7 +650,7 @@ refmpn_mul_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier,
     {
       hi = refmpn_umul_ppmm (&lo, sp[i], multiplier);
       lo >>= GMP_NAIL_BITS;
-      ASSERT_NOCARRY (add (&hi, hi, add (&lo, lo, carry)));
+      ASSERT_NOCARRY (ref_addc_limb (&hi, hi, ref_addc_limb (&lo, lo, carry)));
       rp[i] = lo;
       carry = hi;
     }

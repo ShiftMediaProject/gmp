@@ -122,8 +122,10 @@ mp_size_t byte_diff_highest __GMP_PROTO ((const void *p1, const void *p2, mp_siz
 mp_size_t byte_diff_lowest __GMP_PROTO ((const void *p1, const void *p2, mp_size_t size)) __GMP_ATTRIBUTE_PURE;
 
 
+mp_limb_t ref_addc_limb __GMP_PROTO ((mp_limb_t *, mp_limb_t, mp_limb_t));
 mp_limb_t ref_bswap_limb __GMP_PROTO ((mp_limb_t src));
 unsigned long ref_popc_limb __GMP_PROTO ((mp_limb_t src));
+mp_limb_t ref_subc_limb __GMP_PROTO ((mp_limb_t *, mp_limb_t, mp_limb_t));
 
 
 void refmpf_add __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
