@@ -97,8 +97,8 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
 	}
     }
 
-  /* Skip leading zeros.  */
-  while (c == '0')
+  /* Skip leading zeros and white space.  */
+  while (c == '0' || isspace (c))
     c = *str++;
   /* Make sure the string does not become empty, mpn_set_str would fail.  */
   if (c == 0)
