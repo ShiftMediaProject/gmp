@@ -18,6 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-04-06  Kevin Ryde  <kevin@swox.se>
+
+	* tests/mpz/t-gcd_ui.c: New file.
+	* tests/mpz/Makefile.am: Add it.
+
+	* mpz/gcd_ui.c: Correction to return value on longlong limb systems,
+	limb might not fit a ulong.
+
+2003-04-04  Kevin Ryde  <kevin@swox.se>
+
+	* configure, aclocal.m4, ltmain.sh: Update to libtool cvs snapshot
+	2003-04-02.
+
 2003-04-02  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (*-*-cygwin*): No longer force lt_cv_sys_max_cmd_len,
