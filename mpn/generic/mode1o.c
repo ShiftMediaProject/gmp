@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -48,10 +48,10 @@ MA 02111-1307, USA.
 
 
    r is a bit like the remainder returned by mpn_divexact_by3c, and is the
-   sort of remainder a hypothetical mpn_divexact_1 might return.  Like
-   mpn_divexact_by3c, r represents a borrow, since effectively quotient
-   limbs are chosen so that subtracting that multiple of d from src at each
-   step will produce a zero limb.
+   sort of remainder mpn_divexact_1 might return.  Like mpn_divexact_by3c, r
+   represents a borrow, since effectively quotient limbs are chosen so that
+   subtracting that multiple of d from src at each step will produce a zero
+   limb.
 
    A long calculation can be done piece by piece from low to high by passing
    the return value from one part as the carry parameter to the next part.
@@ -77,7 +77,7 @@ MA 02111-1307, USA.
    In the main loop it will be noted that the new carry (call it r) is the
    sum of the high product h and any borrow from l=s-c.  If c<d then we will
    have r<d too, for the following reasons.  Let q=l*inverse be the quotient
-   limb, so that q*d = b*h + l.  Now if h=d-1 then
+   limb, so that q*d = b*h + l, where b=2^GMP_NUMB_BITS.  Now if h=d-1 then
 
        l = q*d - b*(d-1) <= (b-1)*d - b*(d-1) = b-d
 
@@ -104,9 +104,11 @@ MA 02111-1307, USA.
 
 
 mp_limb_t
-mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
+mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d,
+                     mp_limb_t orig_c)
 {
-  mp_limb_t  s, h, l, inverse, dummy, dmul;
+  mp_limb_t  s, h, l, inverse, dummy, dmul, ret;
+  mp_limb_t  c = orig_c;
   mp_size_t  i;
 
   ASSERT (size >= 1);
@@ -160,8 +162,7 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
       if (l > c)
 	l += d;
 
-      ASSERT (l < d);
-      return l;
+      ret = l;
     }
   else
     {
@@ -171,10 +172,11 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
       l = (l * inverse) & GMP_NUMB_MASK;
       umul_ppmm (h, dummy, l, dmul);
       c += h;
-
-      ASSERT (c < d);
-      return c;
+      ret = c;
     }
+
+  ASSERT (orig_c < d ? ret < d : ret <= d);
+  return ret;
 }
 
 
