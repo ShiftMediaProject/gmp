@@ -1,4 +1,4 @@
-/* gmp-mparam.h -- Compiler/machine parameter header file.
+/* AMD K6 gmp-mparam.h -- Compiler/machine parameter header file.
 
 Copyright (C) 1991, 1993, 1994, 2000 Free Software Foundation, Inc.
 
