@@ -135,6 +135,7 @@ mp_size_t  fib_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  powm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcd_accel_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcdext_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  divexact_1_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  divrem_1_norm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  divrem_1_unnorm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  divrem_2_threshold[2] = { MP_SIZE_T_MAX };
@@ -1005,6 +1006,7 @@ all (void)
      the results in the .asm file, and there's no need for such thresholds
      to appear in gmp-mparam.h.  */
 #if ! HAVE_NATIVE_mpn_divrem_1
+#define SPEED_MPN_DIVREM_1  speed_mpn_divrem_1_tune
 
   /* Tune for the integer part of mpn_divrem_1.  This will very possibly be
      a bit out for the fractional part, but that's too bad, the integer part
@@ -1026,6 +1028,12 @@ all (void)
     one (divrem_1_unnorm_threshold, 1, &param);
   }
 #endif /* ! HAVE_NATIVE_mpn_divrem_1 */
+
+  /* use the regular mpn_divrem_1 if there's no tuned version */
+#ifndef SPEED_MPN_DIVREM_1
+#define SPEED_MPN_DIVREM_1  speed_mpn_divrem_1
+#endif
+
 #if ! HAVE_NATIVE_mpn_mod_1
 #define SPEED_MPN_MOD_1  speed_mpn_mod_1_tune
   {
@@ -1118,6 +1126,72 @@ all (void)
   }
 #endif
 #endif
+
+
+  /* mpn_divexact_1 is vaguely expected to be used on smallish divisors, so
+     tune for that.  Its speed can differ on odd or even divisor, so take an
+     average threshold for the two.
+
+     mpn_divrem_1 can vary with high<divisor or not, whereas mpn_divexact_1
+     might not vary that way, but don't test this since high<divisor isn't
+     expected to occur often with small divisors.  */
+  {
+    static struct param_t  param;
+    mp_size_t  thresh[2], average;
+    int        low, i;
+
+    param.name[0] = "DIVEXACT_1_THRESHOLD";
+    param.check_size = 256;
+    param.min_size[0] = 2;
+    param.stop_factor = 1.5;
+    param.function  = SPEED_MPN_DIVREM_1;
+    param.function2 = speed_mpn_divexact_1;
+    param.noprint = 1;
+
+    print_define_start (param.name[0]);
+
+    for (low = 0; low <= 1; low++)
+      {
+        s.r = randlimb_half();
+        if (low == 0)
+          s.r |= 1;
+        else
+          s.r &= ~CNST_LIMB(7);
+
+        one (divexact_1_threshold, 1, &param);
+        if (option_trace)
+          printf ("low=%d thresh %ld\n", low, divexact_1_threshold[0]);
+
+        if (divexact_1_threshold[0] == MP_SIZE_T_MAX)
+          {
+            average = MP_SIZE_T_MAX;
+            goto divexact_1_done;
+          }
+
+        thresh[low] = divexact_1_threshold[0];
+      }
+
+    if (option_trace)
+      {
+        printf ("average of:");
+        for (i = 0; i < numberof(thresh); i++)
+          printf (" %ld", thresh[i]);
+        printf ("\n");
+      }
+
+    average = 0;
+    for (i = 0; i < numberof(thresh); i++)
+      average += thresh[i];
+    average /= numberof(thresh);
+
+    /* If divexact turns out to be better as early as 3 limbs, then use it
+       always, so as to reduce code size and conditional jumps.  */
+    if (average <= 3)
+      average = 0;
+
+  divexact_1_done:
+    print_define_end (param.name[0], average);
+  }
 
 
   /* The generic mpn_modexact_1_odd skips a divide step if high<divisor, the
