@@ -1332,7 +1332,8 @@ case $host in
   m68*-*-netbsd1.4*) ac_cv_func_getrusage=no ;;
 esac
 
-AC_CHECK_FUNCS(getpagesize getrusage gettimeofday localeconv memset mprotect obstack_vprintf popen processor_info read_real_time snprintf strchr strtoul sysconf sysctl sysctlbyname times vsnprintf)
+AC_CHECK_FUNCS(getpagesize getrusage gettimeofday localeconv memset mprotect obstack_vprintf popen processor_info read_real_time strchr strtoul sysconf sysctl sysctlbyname times)
+GMP_FUNC_VSNPRINTF
 
 
 # Pick the correct source files in $path and link them to mpn/.
