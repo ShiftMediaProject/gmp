@@ -32,7 +32,6 @@ AC_PREREQ(2.59)
 AC_INIT(GNU MP, GMP_VERSION, bug-gmp@gnu.org, gmp)
 AC_CONFIG_SRCDIR(gmp-impl.h)
 m4_pattern_forbid([^[ \t]*GMP_])
-m4_pattern_forbid([^[ \t]*MPFR_CONFIGS])
 m4_pattern_allow(GMP_LDFLAGS)
 m4_pattern_allow(GMP_LIMB_BITS)
 m4_pattern_allow(GMP_MPARAM_H_SUGGEST)
@@ -148,20 +147,6 @@ yes|no) ;;
 esac],
 [enable_mpbsd=no])
 AM_CONDITIONAL(WANT_MPBSD, test "$enable_mpbsd" = "yes")
-
-
-AC_ARG_ENABLE(mpfr,
-AC_HELP_STRING([--enable-mpfr],[build MPFR [[default=no]]]),
-[case $enableval in
-yes|no) ;;
-*) AC_MSG_ERROR([bad value $enableval for --enable-mpfr, need yes or no]) ;;
-esac],
-[enable_mpfr=no])
-AM_CONDITIONAL(WANT_MPFR, test "$enable_mpfr" = "yes")
-if test "$enable_mpfr" = "yes"; then
-  AC_DEFINE(WANT_MPFR, 1,
-            [Define to 1 if --enable-mpfr])
-fi
 
 
 AC_ARG_ENABLE(nails,
@@ -604,6 +589,10 @@ case $host in
 
     case $host in
       hppa2.0*-*-* | hppa64-*-*)
+        # HP cc +O3 in the past had been seen causing problems for mpfr
+        # tests/tdiv.c, apparently relating to hardware float tests.  This
+        # shouldn't affect us (and shouldn't affect mpfr any more either.)
+        #
 	cclist_20n="gcc cc"
         abilist="2.0n 1.0"
         path_20n="pa64"
@@ -620,7 +609,6 @@ case $host in
         gcc_20n_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1"
         gcc_20n_testlist="sizeof-long-4 hppa-level-2.0"
 
-        # +O3 causes problems with fp rounding in mpfr/tests/tdiv.
         cc_20n_cflags="+DA2.0 +e +O2 -Wl,+vnocompatwarnings"
         cc_20n_testlist="hpc-hppa-2-0"
 
@@ -639,7 +627,6 @@ case $host in
 
           cclist_20w="gcc cc"
 	  gcc_20w_cflags="-O2 -mpa-risc-2-0"
-	  # +O3 causes problems with fp rounding in mpfr/tests/tdiv.
           cc_20w_cflags="+DD64 +O2"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
@@ -3033,23 +3020,6 @@ AC_SUBST(mpn_objs_in_libgmp)
 AC_SUBST(gmp_srclinks)
 
 
-# Configs for mpfr.
-#
-AC_CONFIG_LIBOBJ_DIR(mpfr)
-if test $enable_mpfr = yes; then
-  gmp_CFLAGS=$CFLAGS
-  gmp_LIBS=$LIBS
-  LIBS="$LIBS $LIBM"
-
-  MPFR_CONFIGS
-
-  AC_SUBST(MPFR_CFLAGS,$CFLAGS)
-  AC_SUBST(MPFR_LIBS,  $LIBS)
-  CFLAGS=$gmp_CFLAGS
-  LIBS=$gmp_LIBS
-fi
-
-
 # A recompiled sqr_basecase for use in the tune program, if necessary.
 TUNE_SQR_OBJ=
 test -d tune || mkdir tune
@@ -3135,11 +3105,6 @@ AM_PROG_LEX
 
 # Configs for demos/expr directory
 AC_CONFIG_FILES(demos/expr/expr-config.h:demos/expr/expr-config-h.in)
-if test $enable_mpfr = yes; then
-  AC_SUBST(HAVE_MPFR_01, 1)
-else
-  HAVE_MPFR_01=0
-fi
 if test $ac_cv_have_decl_optarg = yes; then
   AC_SUBST(HAVE_DECL_OPTARG, 1)
 else
@@ -3161,7 +3126,6 @@ AC_OUTPUT(Makefile							\
   tests/mpf/Makefile tests/mpn/Makefile tests/mpq/Makefile		\
   tests/mpz/Makefile tests/rand/Makefile tests/misc/Makefile		\
   tests/cxx/Makefile							\
-  mpfr/Makefile mpfr/tests/Makefile					\
   doc/Makefile tune/Makefile						\
   demos/Makefile demos/calc/Makefile demos/expr/Makefile		\
   gmp.h:gmp-h.in mp.h:mp-h.in)

@@ -1047,14 +1047,6 @@ The Berkeley MP compatibility library (@file{libmp}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
-@item MPFR, @option{--enable-mpfr}
-@cindex MPFR
-@cindex @code{--enable-mpfr}
-The optional MPFR functions are built and installed only if
-@option{--enable-mpfr} is used.  These are in a separate library
-@file{libmpfr.a} and are documented separately too (@pxref{Introduction to
-MPFR,, Introduction to MPFR, mpfr, MPFR}).
-
 @item Assertion Checking, @option{--enable-assert}
 @cindex Assertion checking
 @cindex @code{--enable-assert}
@@ -2546,7 +2538,7 @@ GMP.
 
 @item Source File Paths
 GMP has multiple source files with the same name, in different directories.
-For example @file{mpz}, @file{mpq}, @file{mpf} and @file{mpfr} each have an
+For example @file{mpz}, @file{mpq} and @file{mpf} each have an
 @file{init.c}.  If the debugger can't already determine the right one it may
 help to build with absolute paths on each C file.  One way to do that is to
 use a separate object directory with an absolute path to the source directory.
@@ -2783,20 +2775,6 @@ or up,
 AC_CHECK_SIZEOF(mp_limb_t, , [#include <gmp.h>])
 @end example
 
-The optional @code{mpfr} functions are provided in a separate
-@file{libmpfr.a}, and this might be from GMP with @option{--enable-mpfr} or
-from MPFR installed separately.  Either way @file{libmpfr} depends on
-@file{libgmp}, it doesn't stand alone.  Currently only a static
-@file{libmpfr.a} will be available, not a shared library, since upward binary
-compatibility is not guaranteed.
-
-@example
-AC_CHECK_LIB(mpfr, mpfr_add, ,
-  [AC_MSG_ERROR(
-[Need MPFR either from GNU MP 4 or separate MPFR package.
-See http://www.mpfr.org/ or http://swox.com/gmp/])
-@end example
-
 
 @node Emacs,  , Autoconf, GMP Basics
 @section Emacs
@@ -2821,8 +2799,6 @@ your @file{.emacs},
              (cons '("(gmp)Function Index" nil "^ -.* " "\\>")
                    (nth 3 mode-value)))))
 @end example
-
-The same can be done for MPFR, with @code{(mpfr)} in place of @code{(gmp)}.
 
 
 @node Reporting Bugs, Integer Functions, GMP Basics, Top
@@ -6217,7 +6193,6 @@ reveals itself.}
 * C++ Interface Integers::      
 * C++ Interface Rationals::     
 * C++ Interface Floats::        
-* C++ Interface MPFR::          
 * C++ Interface Random Numbers::  
 * C++ Interface Limitations::   
 @end menu
@@ -6500,7 +6475,7 @@ If the @var{rop} read might not be in canonical form then
 @end deftypefun
 
 
-@node C++ Interface Floats, C++ Interface MPFR, C++ Interface Rationals, C++ Class Interface
+@node C++ Interface Floats, C++ Interface Random Numbers, C++ Interface Rationals, C++ Class Interface
 @section C++ Interface Floats
 
 When an expression requires the use of temporary intermediate @code{mpf_class}
@@ -6618,31 +6593,7 @@ mechanism for it.
 @end deftypefun
 
 
-@node C++ Interface MPFR, C++ Interface Random Numbers, C++ Interface Floats, C++ Class Interface
-@section C++ Interface MPFR
-
-The C++ class interface to MPFR is incorporated within @file{gmpxx.h} and is
-enabled by first including @file{mpfr.h}.
-
-@example
-#include <mpfr.h>
-#include <gmpxx.h>
-@end example
-
-@noindent
-This defines
-
-@deftp Class mpfr_class
-@end deftp
-
-@noindent
-which behaves similarly to @code{mpf_class} (@pxref{C++ Interface Floats}).
-
-This interface must be regarded as preliminary and possibly subject to
-incompatible changes in the future, since MPFR itself is preliminary.
-
-
-@node C++ Interface Random Numbers, C++ Interface Limitations, C++ Interface MPFR, C++ Class Interface
+@node C++ Interface Random Numbers, C++ Interface Limitations, C++ Interface Floats, C++ Class Interface
 @section C++ Interface Random Numbers
 
 @deftp Class gmp_randclass
@@ -9899,8 +9850,8 @@ a big endian nor little endian system can just read and write @code{_mp_d}.
 @cindex C++ interface internals
 
 A system of expression templates is used to ensure something like @code{a=b+c}
-turns into a simple call to @code{mpz_add} etc.  For @code{mpf_class} and
-@code{mpfr_class} the scheme also ensures the precision of the final
+turns into a simple call to @code{mpz_add} etc.  For @code{mpf_class}
+the scheme also ensures the precision of the final
 destination is used for any temporaries within a statement like
 @code{f=w*x+y*z}.  These are important features which a naive implementation
 cannot provide.

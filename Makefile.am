@@ -81,26 +81,7 @@ LIBMP_LT_REVISION = 4
 LIBMP_LT_AGE =      1
 
 
-ACLOCAL_AMFLAGS = -I mpfr
-
-
-# FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
-# conditionalized.  We want mpfr/mpfr.info only installed under
-# --enable-mpfr, but it and the rest of mpfr always included in a "make
-# dist".
-if WANT_MPFR
-MPFR_DIR = mpfr
-else
-if MAINTAINER_MODE
-MPFR_DIR = mpfr
-endif
-endif
-
-# "tests" ahead of "mpfr" ensures tests/t-constants is run before the
-# mpfr/tests programs.
-#
-SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) \
-  demos tune doc
+SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd demos tune doc
 
 EXTRA_DIST = macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf
 
