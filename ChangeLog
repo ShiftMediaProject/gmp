@@ -21,10 +21,13 @@ MA 02111-1307, USA.
 
 2001-11-28  Torbjorn Granlund  <tege@swox.com>
 
+	* mpf/get_d_2exp.c: New file.
+	* mpz/get_d_2exp.c: New file.
+
 	* mpz/realloc2.c: Fix typo.  Make more similar to mpz_realloc.
 	* mpz/realloc.c: Use __GMP_REALLOCATE_FUNC_LIMBS.
 
-2001-10-09  Gerardo Ballabio  <ballabio@sissa.it>
+2001-11-27  Gerardo Ballabio  <ballabio@sissa.it>
 
 	* gmpxx.h, mpfrxx.h: Various updates and improvements.
 
