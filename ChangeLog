@@ -18,6 +18,28 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-03  Kevin Ryde  <kevin@swox.se>
+
+	* INSTALL: Use return rather than exit in the example programs.
+	Suggested by Richard Dawe.
+
+	* gmp.texi (Build Options): Move non-unix notes to ...
+	(Notes for Particular Systems): ... here, and mention MS Interix.
+	(C++ Interface Random Numbers): Add gmp_randinit_mt to examples.
+
+	* acinclude.m4 (GMP_ASM_LABEL_SUFFIX): Must test empty suffix first,
+	for the benefit of hppa hp-ux.
+	(GMP_ASM_UNDERSCORE): Grep the output of "nm" instead of trying to
+	construct an asm file, and in case of failure fallback on no
+	underscore and a warning.
+
+	* longlong.h (count_leading_zeros, count_trailing_zeros) [ev67, ev68]:
+	Restrict __asm__ ctlz and cttz to __GNUC__.
+
+	* gen-psqr.c (HAVE_CONST, const): New macros.
+
+	* tests/cxx/t-rand.cc (check_randinit): Add gmp_randinit_mt.
+
 2002-12-02  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h: Split popc_limb again, combined version gives too many
@@ -38,6 +60,9 @@ MA 02111-1307, USA.
 	`const void *', to match qsort spec.
 
 2002-12-01  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Integer Division): Fix a couple of @math's for tex.
+	Use @dots in more places.
 
 	* tests/cxx/t-locale.cc: Test non std::locale systems too.
 	* tests/cxx/clocale.c: New file, reinstating what was localeconv.c,
