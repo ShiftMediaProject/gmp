@@ -254,13 +254,13 @@ libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 
 
 # We need at least one .cc file in $(libgmpxx_la_SOURCES) so automake will
-# use $(CXXLINK) rather than the plain C $(LINK).  cxx/osfuns.cc is an
-# arbitrary choice for that.
+# use $(CXXLINK) rather than the plain C $(LINK).  cxx/dummy.cc is that
+# file.
 
 if WANT_CXX
 GMPXX_LTLIBRARIES_OPTION = libgmpxx.la
 endif
-libgmpxx_la_SOURCES = dummy.cc
+libgmpxx_la_SOURCES = cxx/dummy.cc
 libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS) libgmp.la
 libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES)
 libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) \
