@@ -4,8 +4,14 @@
 
 
 These instructions are only for the impatient.  Others should read the install
-instructions in the manual, gmp.info.  Use "info -f gmp.info", or, if you
-don't have info, type "C-u C-h i gmp.info" in emacs.
+instructions in the manual, gmp.info.  Use
+
+	info -f ./gmp.info
+
+or in emacs
+
+	C-u C-h i gmp.info
+
 
 Here are some brief instructions on how to install GMP, and some examples to
 help you get started using GMP.
@@ -18,12 +24,12 @@ impatient, try this:
 If that fails, or you care about the performance of GMP, you need to read the
 full instructions in the chapter "Installing GMP", in the manual.
 
-Next, you need to try some small test programs, for example the ones below.
+Next, try some small test programs, for example the ones below.
 
 In GMP programs, all variables need to be initialized before they are
 assigned, and cleared out before program flow leaves the scope in which they
-were declared.  Here is an example of a program that reads two numbers from
-the command line, multiplies them, and prints the result to stdout.
+were declared.  Here is an example program that reads two numbers from the
+command line, multiplies them, and prints the result to stdout.
 
 
     #include <stdio.h>
@@ -62,8 +68,7 @@ the command line, multiplies them, and prints the result to stdout.
 
 This might look tedious, with all the initializing and clearing.  Fortunately
 some of these operations can be combined, and other operations can often be
-avoided.  The example above would be written differently by an experienced GMP
-user:
+avoided.  An experienced GMP user might write:
 
 
     #include <stdio.h>
@@ -93,14 +98,15 @@ user:
       exit (0);
     }
 
+
 Now you have to compile your test program, and link it with the GMP library.
 Assuming your working directory is still the gmp source directory, and your
 source file is called example.c, enter:
 
 	gcc -g -I. example.c .libs/libgmp.a
 
-After installing, the command becomes: "gcc -g example.c -lgmp".  GMP is
-libtool based, and you can use that to link if you want.
+After installing, the command becomes: "gcc -g example.c -lgmp".  Also, GMP is
+libtool based so you can use that to link if you want.
 
 Now try to run the example:
 
@@ -125,7 +131,7 @@ gmp.dvi" or "make gmp.ps".  This requires various "tex" commands.
 To install the library, do "make install" (then you can use -lgmp instead of
 .libs/libgmp.a).
 
-If you decide to use GMP, it is a good idea you read at least the chapter "GMP
+If you decide to use GMP, it is a good idea you at least read the chapter "GMP
 Basics" in the manual.
 
 Some known build problems are noted in the "Installing GMP" chapter of
