@@ -41,7 +41,7 @@ PROLOGUE(mpn_lshift)
 	and	%o2,4-1,%g4	! number of limbs in first loop
 	srlx	%g2,%o5,%g1	! compute function result
 	brz,pn	%g4,L(0)		! if multiple of 4 limbs, skip first loop
-	stx	%g1,[%sp+79]
+	mov	%g1,%g5
 
 	sub	%o2,%g4,%o2	! adjust count for main loop
 
@@ -93,5 +93,5 @@ L(loop1):
 L(end):	sllx	%g2,%o3,%g2
 	stx	%g2,[%o0-8]
 	retl
-	ldx	[%sp+79],%o0
+	mov	%g5,%o0
 EPILOGUE(mpn_lshift)
