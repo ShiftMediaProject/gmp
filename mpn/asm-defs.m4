@@ -156,11 +156,12 @@ ifelse(eval($#>1),1,`errprint(`,')m4_errprint_commas(shift($@))')')
 
 
 dnl  Usage: m4_error(args...)
+dnl         m4_warning(args...)
 dnl
 dnl  Print an error message, using m4_errprint_commas, prefixed with the
-dnl  current filename and line number (if available), and setup to give an
-dnl  error exit at the end of processing.  This macro is the recommended way
-dnl  to print errors.
+dnl  current filename and line number (if available).  m4_error sets up to
+dnl  give an error exit at the end of processing, m4_warning just prints.
+dnl  These macros are the recommended way to print errors.
 dnl
 dnl  The arguments here should be quoted in the usual way to prevent them
 dnl  being expanded when the macro call is read.  (m4_error takes care not
@@ -179,13 +180,15 @@ dnl  or if __file__ and __line__ aren't available
 dnl
 dnl         some error message
 dnl
-dnl  The "file:line:" format is a common style, used by gcc and GNU m4, so
+dnl  The "file:line:" format is a basic style, used by gcc and GNU m4, so
 dnl  emacs and other editors will recognise it in their normal error message
 dnl  parsing.
 
+define(m4_warning,
+`m4_errprint_commas(m4_file_and_line`'$@)')
+
 define(m4_error,
-`define(`m4_error_occurred',1)dnl
-m4_errprint_commas(m4_file_and_line`'$@)')
+`define(`m4_error_occurred',1)m4_warning($@)')
 
 define(`m4_error_occurred',0)
 
@@ -795,13 +798,13 @@ define(`PROLOGUE',
 	`
 	TEXT
 	ALIGN(4)
-	GLOBL	GSYM_PREFIX($1)
-	TYPE(GSYM_PREFIX($1),`function')
-GSYM_PREFIX($1):')
+	GLOBL	GSYM_PREFIX`$1'
+	TYPE(GSYM_PREFIX`$1',`function')
+GSYM_PREFIX`$1':')
 
 define(`EPILOGUE',
 	`
-	SIZE(GSYM_PREFIX($1),.-GSYM_PREFIX($1))')
+	SIZE(GSYM_PREFIX`$1',.-GSYM_PREFIX`$1')')
 
 dnl  LSYM_PREFIX might be L$, so defn() must be used to quote it or the L
 dnl  will expand as the L macro here, an infinite recursion.
