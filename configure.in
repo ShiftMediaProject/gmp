@@ -608,8 +608,8 @@ done
 # _AC_OUTPUT_FILES of autoconf acgeneral.m4.
 case "$srcdir" in
 [[/\\]]* | ?:[[/\\]]* )
-     GMP_DEFINE_RAW(["define(\`CONFIG_SRCDIR',\`\`$srcdir'')"])    ;;
-*)   GMP_DEFINE_RAW(["define(\`CONFIG_SRCDIR',\`\`../$srcdir'')"]) ;;
+     GMP_DEFINE_RAW(["define(<CONFIG_SRCDIR>,<\`$srcdir'>)"])    ;;
+*)   GMP_DEFINE_RAW(["define(<CONFIG_SRCDIR>,<\`../$srcdir'>)"]) ;;
 esac
  
 # After including asm.m4.
