@@ -2,7 +2,7 @@
    in the range 0 to N-1, using STATE as the random state previously
    initialized by a call to gmp_rand_init().
 
-Copyright (C) 1999, 2000  Free Software Foundation, Inc.
+Copyright (C) 2000  Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,7 +23,7 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-
+#include "longlong.h"
 
 void
 #if __STDC__
@@ -35,20 +35,37 @@ mpz_urandomm (rop, s, n)
      mpz_t n;
 #endif
 {
-#if 0
-  mp_ptr rp;
-  mp_size_t size, bsize;
-  unsigned cnt;			/* FIXME: type? */
+  mpz_t t, p, m;
+  mp_ptr tp;
+  mp_size_t nbits, size, count;
 
-  rp = PTR (rop);
   size = SIZ (n);
-  count_leading_zeros (cnt, rp[size - 1]);
-  bsize = BITS_PER_MP_LIMP * size - cnt;
+  count_leading_zeros (count, PTR (n)[size - 1]);
+  nbits = (size - 1) * BITS_PER_MP_LIMB
+    + BITS_PER_MP_LIMB - count;
 
-  mpn_rawrandom (tp, bsize + 20, s);
-  MPN_NORMALIZE (tp, size);	
-  SIZ (rop) = size;
+  /* Allocate enough for any mpz function called since a realloc of
+     these will fail.  */
+  MPZ_TMP_INIT (t, size);	
+  MPZ_TMP_INIT (m, size + 1);
+  MPZ_TMP_INIT (p, size + 1);
 
-  mpz_tdiv_r (rop, rop, n);	/* reduce to spec'd interval */
-#endif
+  /* Let m = highest possible random number plus 1.  */
+  mpz_set_ui (m, 0);
+  mpz_setbit (m, nbits);
+
+  /* Let p = floor(m / n) * n.  */
+  mpz_fdiv_q (p, m, n);
+  mpz_mul (p, p, n);
+
+  tp = PTR (t);
+  do
+    {
+      mpn_rawrandom (tp, s, nbits);
+      MPN_NORMALIZE (tp, size);	/* FIXME: Really necessary?  */
+      SIZ (t) = size;
+    }
+  while (mpz_cmp (t, p) >= 0);
+
+  mpz_mod (rop, t, n);
 }
