@@ -55,6 +55,23 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #include "gmp.h"
 
+/* GMP version 1.x compatibility.  */
+#if ! (__GNU_MP_VERSION >= 2)
+typedef MP_INT __mpz_struct;
+typedef __mpz_struct mpz_t[1];
+typedef __mpz_struct *mpz_ptr;
+#define mpz_fdiv_q	mpz_div
+#define mpz_fdiv_r	mpz_mod
+#define mpz_tdiv_q_2exp	mpz_div_2exp
+#define mpz_sgn(Z) ((Z)->size < 0 ? -1 : (Z)->size > 0)
+#endif
+
+/* GMP version 2.0 compatibility.  */
+#if ! (__GNU_MP_VERSION > 2 || __GNU_MP_VERSION_MINOR >= 1)
+#define mpz_swap(a,b) \
+  do { __mpz_struct __t; __t = *a; *a = *b; *b = __t;} while (0)
+#endif
+
 jmp_buf errjmpbuf;
 
 enum op_t {NOP, LIT, NEG, NOT, PLUS, MINUS, MULT, DIV, MOD, REM, INVMOD, POW,
@@ -97,14 +114,25 @@ int flag_html = 0;
 int flag_splitup_output = 0;
 char *newline = "";
 
-main (int argc, char **argv)
+void
+setup_error_handler ()
 {
-  struct expr *e;
-  int i;
-  mpz_t r;
-  int errcode = 0;
-  char *str;
-  int base = 10;
+  struct sigaction act;
+  struct sigaltstack sigstk;
+
+  /* Set up a stack for signal handling.  A typical cause of error is stack
+     overflow, and in such situation a signal can not be delivered on the
+     overflown stack.  */
+  sigstk.ss_sp = malloc (SIGSTKSZ);
+  sigstk.ss_size = SIGSTKSZ;
+  sigstk.ss_flags = 0;
+  if (sigaltstack (&sigstk, 0) < 0)
+    perror("sigaltstack");
+
+  /* Initialize structure for sigaction (called below).  */
+  act.sa_handler = cleanup_and_exit;
+  act.sa_mask = 0;
+  act.sa_flags = SA_ONSTACK;
 
 #ifdef LIMIT_RESOURCE_USAGE
   {
@@ -117,20 +145,33 @@ main (int argc, char **argv)
     limit.rlim_max = 4;
     setrlimit (RLIMIT_CPU, &limit);
 
-    limit.rlim_cur = limit.rlim_max = 5 * 1024 * 1024;	/* 5 MB */
+    limit.rlim_cur = limit.rlim_max = 4 * 1024 * 1024;
     setrlimit (RLIMIT_DATA, &limit);
 
     getrlimit (RLIMIT_STACK, &limit);
-    limit.rlim_cur = 400 * 1024;
+    limit.rlim_cur = 1 * 1024 * 1024;
     setrlimit (RLIMIT_STACK, &limit);
 
-    signal (SIGXCPU, cleanup_and_exit);
+    sigaction (SIGXCPU, &act, 0);
   }
 #endif
 
-  signal (SIGILL, cleanup_and_exit);
-  signal (SIGSEGV, cleanup_and_exit);
-  signal (SIGBUS, cleanup_and_exit);
+  sigaction (SIGILL, &act, 0);
+  sigaction (SIGSEGV, &act, 0);
+  sigaction (SIGBUS, &act, 0);
+  sigaction (SIGFPE, &act, 0);
+}
+
+main (int argc, char **argv)
+{
+  struct expr *e;
+  int i;
+  mpz_t r;
+  int errcode = 0;
+  char *str;
+  int base = 10;
+
+  setup_error_handler ();
 
   mpz_init (r);
 
@@ -192,7 +233,8 @@ main (int argc, char **argv)
 	  fprintf (stderr, "       %s%s\n", argv[i], newline);
 	  if (! flag_html)
 	    {
-	      /* ??? Dunno how to align expression position with arrow in HTML ??? */
+	      /* ??? Dunno how to align expression position with arrow in
+		 HTML ??? */
 	      fprintf (stderr, "       ");
 	      for (s = jmpval - (long) argv[i]; --s >= 0; )
 		putc (' ', stderr);
@@ -207,11 +249,14 @@ main (int argc, char **argv)
 
       if (str[0] != 0)
 	{
-	  fprintf (stderr, "error: garbage where end of expression expected%s\n", newline);
+	  fprintf (stderr,
+		   "error: garbage where end of expression expected%s\n",
+		   newline);
 	  fprintf (stderr, "       %s%s\n", argv[i], newline);
 	  if (! flag_html)
 	    {
-	      /* ??? Dunno how to align expression position with arrow in HTML ??? */
+	      /* ??? Dunno how to align expression position with arrow in
+		 HTML ??? */
 	      fprintf (stderr, "        ");
 	      for (s = str - argv[i]; --s; )
 		putc (' ', stderr);
@@ -230,7 +275,8 @@ main (int argc, char **argv)
 	  fprintf (stderr, "       %s%s\n", argv[i], newline);
 	  if (! flag_html)
 	    {
-	      /* ??? Dunno how to align expression position with arrow in HTML ??? */
+	      /* ??? Dunno how to align expression position with arrow in
+		 HTML ??? */
 	      fprintf (stderr, "       ");
 	      for (s = str - argv[i]; --s >= 0; )
 		putc (' ', stderr);
@@ -514,7 +560,9 @@ struct functions
 struct functions fns[] =
 {
   {"sqrt", SQRT, 1},
+#if __GNU_MP_VERSION >= 2
   {"popc", POPCNT, 1},
+#endif
   {"gcd", GCD, 0},
 #if __GNU_MP_VERSION > 2 || __GNU_MP_VERSION_MINOR >= 1
   {"lcm", LCM, 0},
@@ -530,7 +578,9 @@ struct functions fns[] =
   {"div", DIV, 2},
   {"mod", MOD, 2},
   {"rem", REM, 2},
+#if __GNU_MP_VERSION >= 2
   {"invmod", INVMOD, 2},
+#endif
   {"log", LOG, 2},
   {"log2", LOG2, 1},
   {"F", FERMAT, 1},
@@ -769,6 +819,7 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
       mpz_fdiv_r (r, lhs, rhs);
       mpz_clear (lhs); mpz_clear (rhs);
       return;
+#if __GNU_MP_VERSION >= 2
     case INVMOD:
       mpz_init (lhs); mpz_init (rhs);
       mpz_eval_expr (lhs, e->operands.ops.lhs);
@@ -776,6 +827,7 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
       mpz_invert (r, lhs, rhs);
       mpz_clear (lhs); mpz_clear (rhs);
       return;
+#endif
     case POW:
       mpz_init (lhs); mpz_init (rhs);
       mpz_eval_expr (lhs, e->operands.ops.lhs);
@@ -802,10 +854,14 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	  /* error if exponent does not fit into an unsigned long int.  */
 	  if (mpz_cmp_ui (rhs, ~(unsigned long int) 0) > 0)
 	    goto pow_err;
- 
+
 	  y = mpz_get_ui (rhs);
 	  /* x^y == (x/(2^c))^y * 2^(c*y) */
+#if __GNU_MP_VERSION >= 2
 	  cnt = mpz_scan1 (lhs, 0);
+#else
+	  cnt = 0;
+#endif
 	  if (cnt != 0)
 	    {
 	      if (y * cnt / cnt != y)
@@ -883,6 +939,7 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	}
       mpz_fac_ui (r, mpz_get_ui (r));
       return;
+#if __GNU_MP_VERSION >= 2
     case POPCNT:
       mpz_eval_expr (r, e->operands.ops.lhs);
       { unsigned long int cnt;
@@ -890,6 +947,7 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	mpz_set_ui (r, cnt);
       }
       return;
+#endif
     case LOG2:
       mpz_eval_expr (r, e->operands.ops.lhs);
       { unsigned long int cnt;
@@ -904,9 +962,9 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
       return;
     case LOG:
       { unsigned long int cnt;
-        mpz_init (lhs); mpz_init (rhs);
-        mpz_eval_expr (lhs, e->operands.ops.lhs);
-        mpz_eval_expr (rhs, e->operands.ops.rhs);
+	mpz_init (lhs); mpz_init (rhs);
+	mpz_eval_expr (lhs, e->operands.ops.lhs);
+	mpz_eval_expr (rhs, e->operands.ops.rhs);
 	if (mpz_sgn (lhs) <= 0)
 	  {
 	    error = "logarithm of non-positive number";
@@ -919,9 +977,9 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	    mpz_clear (lhs); mpz_clear (rhs);
 	    longjmp (errjmpbuf, 1);
 	  }
-        cnt = mpz_sizeinbase (lhs, mpz_get_ui (rhs));
-        mpz_set_ui (r, cnt - 1);
-        mpz_clear (lhs); mpz_clear (rhs);
+	cnt = mpz_sizeinbase (lhs, mpz_get_ui (rhs));
+	mpz_set_ui (r, cnt - 1);
+	mpz_clear (lhs); mpz_clear (rhs);
       }
       return;
     case FIBONACCI:
@@ -1022,10 +1080,12 @@ cleanup_and_exit (int sig)
 {
 #ifdef LIMIT_RESOURCE_USAGE
   if (sig == SIGXCPU)
-    printf ("took too long time to perform%s\n", newline);
+    printf ("expression took too long time to evaluate%s\n", newline);
+  else if (sig == SIGFPE)
+    printf ("divide by zero%s\n", newline);
   else
 #endif
-    printf ("required too much memory to perform%s\n", newline);
+    printf ("expression required too much memory to evaluate%s\n", newline);
   exit (-2);
 }
 
