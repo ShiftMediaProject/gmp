@@ -80,7 +80,10 @@ main (void)
 {
   tests_start ();
 
-  check_sample ();
+  /* Disabled due to the bogosity of trying to fake an _mp_d pointer to
+     below an object.  Has been seen to fail on a hppa system.  */
+
+  /* check_sample (); */
 
   tests_end ();
   exit (0);
