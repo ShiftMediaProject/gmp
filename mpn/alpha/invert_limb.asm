@@ -62,7 +62,7 @@ $73:
 	ldt	f11,0(r30)
 	cvtqt	f11,f1
 	mult	f1,f10,f1
-	cvttq/c	f1,f1
+	cvttqc	f1,f1
 	stt	f1,0(r30)
 	ldq	r4,0(r30)
 	subq	r0,r4,r0
