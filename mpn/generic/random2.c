@@ -92,7 +92,7 @@ mpn_random2 (mp_ptr rp, mp_size_t n)
 	  ran_nbits = BITS_PER_RANDCALL;
 	}
 
-      nb = (ran >> 1) % (1 << LOGBITS_PER_BLOCK) + 1;
+      nb = (ran >> 1) % ((mp_limb_t) 1 << LOGBITS_PER_BLOCK) + 1;
       if ((ran & 1) != 0)
 	{
 	  /* Generate a string of nb ones.  */
