@@ -319,8 +319,9 @@ check_mpf (void)
     { "256", "1.000@+02", ios::hex | ios::scientific, 0, 3 },
 
     { "123",   "7.b@+01", ios::hex | ios::scientific, 0, 1 },
-    { "123", "0x7.b@+01", ios::hex | ios::scientific | ios::showbase, 0, 1 },
-    { "123", "0X7.B@+01", ios::hex | ios::scientific | ios::showbase | ios::uppercase, 0, 1 },
+    { "123",   "7.B@+01", ios::hex | ios::scientific | ios::uppercase, 0, 1 },
+    { "123", "0x7.b@+0x01", ios::hex | ios::scientific | ios::showbase, 0, 1 },
+    { "123", "0X7.B@+0X01", ios::hex | ios::scientific | ios::showbase | ios::uppercase, 0, 1 },
 
     { "1099511627776", "1.0@+0a", ios::hex | ios::scientific, 0, 1 },
     { "1099511627776", "1.0@+0A", ios::hex | ios::scientific | ios::uppercase, 0, 1 },
@@ -328,9 +329,21 @@ check_mpf (void)
     { "0.0625", "1.00@-01", ios::hex | ios::scientific, 0, 2 },
 
     { "0", "0", ios::oct },
-    { "0", "0", ios::oct | ios::showbase },
     { "123",  "173", ios::oct },
     { "123", "0173", ios::oct | ios::showbase },
+
+    /* octal showbase suppressed for zero integer part */
+    { "0", "0", ios::oct | ios::showbase },
+    { ".125",    "0.1",  ios::oct | ios::showbase, 0, 1 },
+    { ".015625", "0.01", ios::oct | ios::showbase, 0, 2 },
+    { ".125",    "0.1",  ios::fixed | ios::oct | ios::showbase, 0, 1 },
+    { ".015625", "0.0",  ios::fixed | ios::oct | ios::showbase, 0, 1 },
+    { ".015625", "0.01", ios::fixed | ios::oct | ios::showbase, 0, 2 },
+
+    {  "0.125",  "1.000000e-01", ios::oct | ios::scientific },
+    {  "0.125", "+1.000000e-01", ios::oct | ios::scientific | ios::showpos },
+    { "-0.125", "-1.000000e-01", ios::oct | ios::scientific },
+    { "-0.125", "-1.000000e-01", ios::oct | ios::scientific | ios::showpos },
 
     { "0", "0.000e+00", ios::oct | ios::scientific, 0, 3 },
     { "256",  "4.000e+02", ios::oct | ios::scientific, 0, 3 },
@@ -338,13 +351,14 @@ check_mpf (void)
     { "256",  "4.000E+02", ios::oct | ios::scientific | ios::uppercase, 0, 3 },
     { "256", "04.000E+02", ios::oct | ios::scientific | ios::showbase | ios::uppercase, 0, 3 },
 
-    { "16777216", "1.000000e+10", ios::oct | ios::scientific },
-    { "16777216", "1.000000E+10", ios::oct | ios::scientific | ios::uppercase },
-
-    {  "0.125",  "1.000000e-01", ios::oct | ios::scientific },
-    {  "0.125", "+1.000000e-01", ios::oct | ios::scientific | ios::showpos },
-    { "-0.125", "-1.000000e-01", ios::oct | ios::scientific },
-    { "-0.125", "-1.000000e-01", ios::oct | ios::scientific | ios::showpos },
+    { "16777216",    "1.000000e+10", ios::oct | ios::scientific },
+    { "16777216",    "1.000000E+10", ios::oct | ios::scientific | ios::uppercase },
+    { "16777216",   "01.000000e+010", ios::oct | ios::scientific | ios::showbase },
+    { "16777216",   "01.000000E+010", ios::oct | ios::scientific | ios::showbase | ios::uppercase },
+    { "16777216",  "+01.000000e+010", ios::oct | ios::scientific | ios::showbase | ios::showpos },
+    { "16777216",  "+01.000000E+010", ios::oct | ios::scientific | ios::showbase | ios::showpos | ios::uppercase },
+    { "-16777216", "-01.000000e+010", ios::oct | ios::scientific | ios::showbase | ios::showpos },
+    { "-16777216", "-01.000000E+010", ios::oct | ios::scientific | ios::showbase | ios::showpos | ios::uppercase },
 
   };
 
