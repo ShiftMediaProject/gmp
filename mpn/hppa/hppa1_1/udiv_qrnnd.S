@@ -28,8 +28,10 @@
 ; d		gr23
 
 	.code
+	.align		8
 L$0000	.word		0x43f00000		; 2^64
 	.word		0x0
+
 	.export		__gmpn_udiv_qrnnd
 __gmpn_udiv_qrnnd
 	.proc
@@ -40,17 +42,19 @@ __gmpn_udiv_qrnnd
 	stws		%r25,-16(0,%r30)	; n_hi
 	stws		%r24,-12(0,%r30)	; n_lo
 #ifdef PIC
-	addil		LT%L$0000,%r19
-	ldo		RT%L$0000(%r1),%r19
+	bl		L$0,%r31
+	dep		%r0,31,2,%r31
+L$0	addil		LR%L$0000-L$0,%r31
+	ldo		RR%L$0000-L$0(%r1),%r31
 #else
-	ldil		L%L$0000,%r19
-	ldo		R%L$0000(%r19),%r19
-#endif	
+	ldil		L%L$0000,%r31
+	ldo		R%L$0000(%r31),%r31
+#endif
 	fldds		-16(0,%r30),%fr5
 	stws		%r23,-12(0,%r30)
 	comib,<=	0,%r25,L$1
 	fcnvxf,dbl,dbl	%fr5,%fr5
-	fldds		0(0,%r19),%fr4
+	fldds		0(0,%r31),%fr4
 	fadd,dbl	%fr4,%fr5,%fr5
 L$1
 	fcpy,sgl	%fr0,%fr6L
@@ -67,8 +71,8 @@ L$1
 	ldws		-12(0,%r30),%r21
 	ldws		-16(0,%r30),%r20
 	sub		%r24,%r21,%r22
-	subb		%r25,%r20,%r19
-	comib,=		0,%r19,L$2
+	subb		%r25,%r20,%r20
+	comib,=		0,%r20,L$2
 	ldo		-64(%r30),%r30
 
 	add		%r22,%r23,%r22
