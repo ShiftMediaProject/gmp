@@ -232,6 +232,20 @@ MA 02111-1307, USA. */
   } while (0)
 
 
+/* ASM_L(foo) gives a local label for use in a gcc asm statement, for use
+   when temporary local labels like "1:" might not be available, which is
+   the case for instance on the x86s (the SCO assembler doesn't support
+   them).
+
+   The label generated is made unique by including "%=" which is a unique
+   number for each insn gcc.  This ensures the same name can be used in
+   multiple asm blocks, perhaps via a macro.  Since jumps between asm blocks
+   are not allowed there's no need for a label to be usable outside of a
+   single asm block.  */
+
+#define ASM_L(name)  LSYM_PREFIX "asm_%=_" #name
+
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -496,7 +510,9 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
 /* Define MPN_COPY for vector computers.  Since #pragma cannot be in a macro,
-   rely on function inlining. */
+   rely on function inlining.
+   Enhancement: Does this suit MPN_COPY_INCR too, and maybe MPN_COPY_DECR if
+   the loop direction is reversed.  */
 #if defined (_CRAY) || defined (__uxp__)
 static inline void
 _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
@@ -983,24 +999,27 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
   } while (0)
 
 
-/* MPN_INCR_U does {ptr,size} += n, expecting no carry out.  In a normal
-   build the size isn't checked, the carry is propagated as far as it needs
-   to go.  MPN_DECR_U is similar, doing {ptr,size} -= n, expecting no borrow
-   out.
+/* MPN_INCR_U does {ptr,size} += n, MPN_DECR_U does {ptr,size} -= n, both
+   expecting no carry (or borrow) from that.
 
-   On random data, usually only one or two limbs of {ptr,size} need to be
-   used, so there's no need for any sophisticated looping, just something
-   compact and sensible.
+   The size parameter is only for the benefit of assertion checking.  In a
+   normal build it's unused and the carry/borrow is just propagated as far
+   as it needs to go.
 
-   FIXME: Implement MPN_{INCR,DECR}_U with a block of code like mpn_incr_u
-   with the assertions builtin, rather than using the separate add_1 and
-   sub_1 when assertion checking.
+   On random data, usually only one or two limbs of {ptr,size} get updated,
+   so there's no need for any sophisticated looping, just something compact
+   and sensible.
+
+   FIXME: Do the generic MPN_{INCR,DECR}_U with a block of code like
+   mpn_incr_u but with the assertions built in, rather than the separate
+   add_1 and sub_1 when assertion checking.
 
    FIXME: Switch all code from mpn_{incr,decr}_u to MPN_{INCR,DECR}_U,
-   declaring their operand sizes, then remove the former.  */
+   declaring their operand sizes, then remove the former.  This is purely
+   for the benefit of assertion checking.  */
 
 #if defined (__GNUC__) && (defined (__i386__) || defined (__i486__))    \
-  && W_TYPE_SIZE == 32 && ! defined (NO_ASM) && ! WANT_ASSERT
+  && BITS_PER_MP_LIMB == 32 && ! defined (NO_ASM) && ! WANT_ASSERT
 /* Better flags handling than the generic C gives on i386, saving a few
    bytes of code and maybe a cycle or two.  aors is an add or sub, iord is
    an inc or dec, and jiord is a jump for overflow of iord.  */
@@ -1737,13 +1756,14 @@ extern const int __gmp_0;
       }                                                 \
   } while (0)
 
-#define MPF_CHECK_FORMAT(f)                                     \
-  do {                                                          \
-    ASSERT_ALWAYS (ABSIZ(f) <= PREC(f)+1);                      \
-    if (SIZ(f) == 0)                                            \
-      ASSERT_ALWAYS (EXP(f) == 0);                              \
-    if (SIZ(f) != 0)                                            \
-      ASSERT_ALWAYS (PTR(f)[ABSIZ(f) - 1] != 0); \
+#define MPF_CHECK_FORMAT(f)                             \
+  do {                                                  \
+    ASSERT_ALWAYS (PREC(f) >= __GMPF_BITS_TO_PREC(53)); \
+    ASSERT_ALWAYS (ABSIZ(f) <= PREC(f)+1);              \
+    if (SIZ(f) == 0)                                    \
+      ASSERT_ALWAYS (EXP(f) == 0);                      \
+    if (SIZ(f) != 0)                                    \
+      ASSERT_ALWAYS (PTR(f)[ABSIZ(f) - 1] != 0);        \
   } while (0)
 
 
