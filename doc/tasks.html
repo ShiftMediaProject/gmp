@@ -126,12 +126,13 @@
 <li> <code>mpn_perfect_square_p</code> on small operands might be better off
      skipping the residue tests and just taking a square root.
 <li> <code>mpz_perfect_power_p</code> could be improved in a number of ways.
-     Use p-adic arithmetic to find possible roots.  Negatives should be
-     handled, and used to know the power must be odd.
-     <code>mpn_perfect_square_p</code> should be called to test for square
-     roots.  Divisibility by powers of 2 should be tested with
-     <code>mpz_scan1</code> or similar.  Divisibility by other primes should be
-     tested by grouping into a limb like <code>PP</code>.
+     Test for Nth power residues modulo small primes like
+     <code>mpn_perfect_square_p</code> does.  Use p-adic arithmetic to find
+     possible roots.  Negatives should be handled, and used to know the power
+     must be odd.  <code>mpn_perfect_square_p</code> should be called to test
+     for square roots.  Divisibility by powers of 2 should be tested with
+     <code>mpz_scan1</code> or similar.  Divisibility by other primes should
+     be tested by grouping into a limb like <code>PP</code>.
 <li> <code>mpz_probab_prime_p</code>, <code>mpn_perfect_square_p</code> and
      <code>mpz_perfect_power_p</code> could take a remainder mod 2^24-1 to
      quickly get remainders mod 3, 5, 7, 13 and 17 (factors of 2^24-1).
