@@ -91,6 +91,15 @@ mp_size_t mpn_diff_lowest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n));
 void mpz_set_str_or_abort _PROTO ((mpz_ptr z, const char *str, int base));
 void mpf_set_str_or_abort _PROTO ((mpf_ptr f, const char *str, int base));
 
+void mpz_erandomb _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
+                           unsigned long nbits));
+void mpz_erandomb_nonzero _PROTO ((mpz_ptr rop, gmp_randstate_t rstate,
+                                   unsigned long nbits));
+
+
+void refmpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+void refmpf_sub _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+
 
 mp_limb_t refmpn_add _PROTO ((mp_ptr rp,
                               mp_srcptr s1p, mp_size_t s1size,
@@ -233,9 +242,13 @@ void refmpn_xor_n  _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 int refmpn_zero_p _PROTO ((mp_srcptr ptr, mp_size_t size));
 
 
-
-void refmpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
-void refmpf_sub _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+int refmpz_kronecker _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
+int refmpz_jacobi _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
+int refmpz_legendre _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
+int refmpz_kronecker_si _PROTO ((mpz_srcptr, long));
+int refmpz_kronecker_ui _PROTO ((mpz_srcptr, unsigned long));
+int refmpz_si_kronecker _PROTO ((long, mpz_srcptr));
+int refmpz_ui_kronecker _PROTO ((unsigned long, mpz_srcptr));
 
 
 #if defined (__cplusplus)
