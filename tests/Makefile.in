@@ -212,7 +212,7 @@ libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
 # Create ansi2knr rules for sources conditionally used
 libdummy_la_SOURCES = x86check.c
 
-check_PROGRAMS = t-bswap t-constants t-count_zeros t-gmpmax t-modlinv
+check_PROGRAMS = t-bswap t-constants t-count_zeros t-gmpmax t-modlinv t-popc
 TESTS = $(check_PROGRAMS)
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -227,7 +227,8 @@ am_libtests_la_OBJECTS = memory$U.lo misc$U.lo refmpf$U.lo refmpn$U.lo \
 	refmpq$U.lo refmpz$U.lo spinner$U.lo trace$U.lo
 libtests_la_OBJECTS = $(am_libtests_la_OBJECTS)
 check_PROGRAMS = t-bswap$(EXEEXT) t-constants$(EXEEXT) \
-	t-count_zeros$(EXEEXT) t-gmpmax$(EXEEXT) t-modlinv$(EXEEXT)
+	t-count_zeros$(EXEEXT) t-gmpmax$(EXEEXT) t-modlinv$(EXEEXT) \
+	t-popc$(EXEEXT)
 t_bswap_SOURCES = t-bswap.c
 t_bswap_OBJECTS = t-bswap$U.$(OBJEXT)
 t_bswap_LDADD = $(LDADD)
@@ -253,6 +254,11 @@ t_modlinv_OBJECTS = t-modlinv$U.$(OBJEXT)
 t_modlinv_LDADD = $(LDADD)
 t_modlinv_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
 t_modlinv_LDFLAGS =
+t_popc_SOURCES = t-popc.c
+t_popc_OBJECTS = t-popc$U.$(OBJEXT)
+t_popc_LDADD = $(LDADD)
+t_popc_DEPENDENCIES = libtests.la $(top_builddir)/libgmp.la
+t_popc_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -270,7 +276,7 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-bswap.c \
-	t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c
+	t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c t-popc.c
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
@@ -278,7 +284,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = Makefile.am Makefile.in
 DIST_SUBDIRS = $(SUBDIRS)
-SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c
+SOURCES = $(libdummy_la_SOURCES) $(libtests_la_SOURCES) t-bswap.c t-constants.c t-count_zeros.c t-gmpmax.c t-modlinv.c t-popc.c
 
 all: all-recursive
 
@@ -314,6 +320,9 @@ t-gmpmax$(EXEEXT): $(t_gmpmax_OBJECTS) $(t_gmpmax_DEPENDENCIES)
 t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES) 
 	@rm -f t-modlinv$(EXEEXT)
 	$(LINK) $(t_modlinv_LDFLAGS) $(t_modlinv_OBJECTS) $(t_modlinv_LDADD) $(LIBS)
+t-popc$(EXEEXT): $(t_popc_OBJECTS) $(t_popc_DEPENDENCIES) 
+	@rm -f t-popc$(EXEEXT)
+	$(LINK) $(t_popc_LDFLAGS) $(t_popc_OBJECTS) $(t_popc_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -360,6 +369,8 @@ t-gmpmax_.c: t-gmpmax.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gmpmax.c; then echo $(srcdir)/t-gmpmax.c; else echo t-gmpmax.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-gmpmax_.c || rm -f t-gmpmax_.c
 t-modlinv_.c: t-modlinv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-modlinv.c; then echo $(srcdir)/t-modlinv.c; else echo t-modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-modlinv_.c || rm -f t-modlinv_.c
+t-popc_.c: t-popc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-popc.c; then echo $(srcdir)/t-popc.c; else echo t-popc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-popc_.c || rm -f t-popc_.c
 trace_.c: trace.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/trace.c; then echo $(srcdir)/trace.c; else echo trace.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > trace_.c || rm -f trace_.c
 x86check_.c: x86check.c $(ANSI2KNR)
@@ -369,8 +380,9 @@ refmpf_.lo refmpn_.$(OBJEXT) refmpn_.lo refmpq_.$(OBJEXT) refmpq_.lo \
 refmpz_.$(OBJEXT) refmpz_.lo spinner_.$(OBJEXT) spinner_.lo \
 t-bswap_.$(OBJEXT) t-bswap_.lo t-constants_.$(OBJEXT) t-constants_.lo \
 t-count_zeros_.$(OBJEXT) t-count_zeros_.lo t-gmpmax_.$(OBJEXT) \
-t-gmpmax_.lo t-modlinv_.$(OBJEXT) t-modlinv_.lo trace_.$(OBJEXT) \
-trace_.lo x86check_.$(OBJEXT) x86check_.lo : $(ANSI2KNR)
+t-gmpmax_.lo t-modlinv_.$(OBJEXT) t-modlinv_.lo t-popc_.$(OBJEXT) \
+t-popc_.lo trace_.$(OBJEXT) trace_.lo x86check_.$(OBJEXT) x86check_.lo \
+: $(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo
