@@ -145,8 +145,9 @@ Code alignment
 - if an opcode/modrm or 0Fh/opcode/modrm crosses a cache line boundary,
   short decode is inhibited.  The cross.pl script detects this.
 
-- loops should be aligned to 16 bytes, or ensure at least 2 instructions
-  before a 32 byte boundary.  (Don't know why.)
+- loops and branch targets should be aligned to 16 bytes, or ensure at least
+  2 instructions before a 32 byte boundary.  This makes use of the 16 byte
+  cache in the BTB.
 
 Addressing modes
 
