@@ -1,5 +1,5 @@
-/* Pentium __mpn_addmul_1 -- Multiply a limb vector with a limb and add
-   the result to a second limb vector.
+/* Pentium __mpn_submul_1 -- Multiply a limb vector with a limb and subtract
+   the result from a second limb vector.
 
 Copyright (C) 1992, 1994, 1996 Free Software Foundation, Inc.
 
@@ -37,8 +37,8 @@ MA 02111-1307, USA. */
 
 	TEXT
 	ALIGN (3)
-	GLOBL	C_SYMBOL_NAME(__mpn_addmul_1)
-C_SYMBOL_NAME(__mpn_addmul_1:)
+	GLOBL	C_SYMBOL_NAME(__mpn_submul_1)
+C_SYMBOL_NAME(__mpn_submul_1:)
 
 	INSN1(push,l	,R(edi))
 	INSN1(push,l	,R(esi))
@@ -65,7 +65,7 @@ Loop:	INSN2(adc,l	,R(ebx),$0)
 	INSN2(mov,l	,R(ebx),MEM_INDEX(res_ptr,size,4))
 
 	INSN2(adc,l	,R(edx),$0)
-	INSN2(add,l	,R(ebx),R(eax))
+	INSN2(sub,l	,R(ebx),R(eax))
 
 	INSN2(mov,l	,MEM_INDEX(res_ptr,size,4),R(ebx))
 	INSN1(inc,l	,R(size))
