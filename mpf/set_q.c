@@ -19,6 +19,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdio.h>  /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -96,13 +97,23 @@ mpf_set_q (mpf_t r, mpq_srcptr q)
   exp = prospective_qsize;                /* ie. number of integer limbs */
   qsize = prec + 1;                       /* desired q */
 
-  /* how many zero limbs to pad n with to get desired qsize */
-  zeros = qsize - prospective_qsize;
+  zeros = qsize - prospective_qsize;   /* n zeros to get desired qsize */
+  tsize = nsize + zeros;               /* possible copy of n */
 
-  /* space for copy of n, if need zeros */
-  tsize = (zeros > 0 ? nsize + zeros : 1);
-
-  TMP_ALLOC_LIMBS_2 (remp, dsize, tp, tsize);
+  if (WANT_TMP_DEBUG)
+    {
+      /* separate alloc blocks, for malloc debugging */
+      remp = TMP_ALLOC_LIMBS (dsize);
+      tp = NULL;
+      if (zeros > 0)
+        tp = TMP_ALLOC_LIMBS (tsize);
+    }
+  else
+    {
+      /* one alloc with a conditionalized size, for efficiency */
+      remp = TMP_ALLOC_LIMBS (dsize + (zeros > 0 ? tsize : 0));
+      tp = remp + dsize;
+    }
 
   if (zeros > 0)
     {
