@@ -82,6 +82,7 @@ MA 02111-1307, USA. */
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+#include "config.h"
 #include "gmp-mparam.h"
 /* #include "longlong.h" */
 
@@ -136,8 +137,16 @@ void _mp_default_free ();
 #endif
 #endif
 
+#if HAVE_NATIVE_mpn_copyi
+#define mpn_copyi __MPN(copyi)
+void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#endif
+
 /* Copy NLIMBS *limbs* from SRC to DST.  */
 #ifndef MPN_COPY_INCR
+#if HAVE_NATIVE_mpn_copyi
+#define MPN_COPY_INCR(DST, SRC, NLIMBS)   mpn_copyi (DST, SRC, NLIMBS)
+#else
 #define MPN_COPY_INCR(DST, SRC, NLIMBS) \
   do {									\
     mp_size_t __i;							\
@@ -145,14 +154,24 @@ void _mp_default_free ();
       (DST)[__i] = (SRC)[__i];						\
   } while (0)
 #endif
+#endif
+
+#if HAVE_NATIVE_mpn_copyd
+#define mpn_copyd __MPN(copyd)
+void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#endif
 
 #ifndef MPN_COPY_DECR
+#if HAVE_NATIVE_mpn_copyd
+#define MPN_COPY_DECR(DST, SRC, NLIMBS)   mpn_copyd (DST, SRC, NLIMBS)
+#else
 #define MPN_COPY_DECR(DST, SRC, NLIMBS) \
   do {									\
     mp_size_t __i;							\
     for (__i = (NLIMBS) - 1; __i >= 0; __i--)				\
       (DST)[__i] = (SRC)[__i];						\
   } while (0)
+#endif
 #endif
 
 /* Define MPN_COPY for vector computers.  Since #pragma cannot be in a macro,
@@ -272,6 +291,90 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define assert_nocarry(expr)   (expr)
 #else
 #define assert_nocarry(expr)   assert ((expr) == 0)
+#endif
+
+#if HAVE_NATIVE_mpn_com_n
+#define mpn_com_n __MPN(com_n)
+void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_com_n(d,s1,s2,n)    \
+  {                             \
+    mp_ptr     __d = (d);       \
+    mp_srcptr  __s = (s);       \
+    mp_size_t  __n = (n);       \
+                                \
+    do                          \
+      __d[__n-1] = ~__s[__n-1]; \
+    while (--__n);              \
+  } while (0)
+#endif
+
+#define MPN_LOGOPS_N_INLINE(d,s1,s2,n,dop,op,s2op)              \
+  {                                                             \
+    mp_ptr     __d = (d);                                       \
+    mp_srcptr  __s1 = (s1);                                     \
+    mp_srcptr  __s2 = (s2);                                     \
+    mp_size_t  __n = (n);                                       \
+                                                                \
+    do                                                          \
+      __d[__n-1] = dop (__s1[__n-1] op s2op __s2[__n-1]);       \
+    while (--__n);                                              \
+  } while (0)
+
+#if HAVE_NATIVE_mpn_and_n
+#define mpn_and_n __MPN(and_n)
+void mpn_and_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_and_n(d,s1,s2,n)  MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,&, )
+#endif
+
+#if HAVE_NATIVE_mpn_andn_n
+#define mpn_andn_n __MPN(andn_n)
+void mpn_andn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_andn_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,&,~)
+#endif
+
+#if HAVE_NATIVE_mpn_nand_n
+#define mpn_nand_n __MPN(nand_n)
+void mpn_nand_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_nand_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n,~,&, )
+#endif
+
+#if HAVE_NATIVE_mpn_ior_n
+#define mpn_ior_n __MPN(ior_n)
+void mpn_ior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_ior_n(d,s1,s2,n)  MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,|, )
+#endif
+
+#if HAVE_NATIVE_mpn_iorn_n
+#define mpn_iorn_n __MPN(iorn_n)
+void mpn_iorn_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_iorn_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,|,~)
+#endif
+
+#if HAVE_NATIVE_mpn_nior_n
+#define mpn_nior_n __MPN(nior_n)
+void mpn_nior_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_nior_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n,~,|, )
+#endif
+
+#if HAVE_NATIVE_mpn_xor_n
+#define mpn_xor_n __MPN(xor_n)
+void mpn_xor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_xor_n(d,s1,s2,n)  MPN_LOGOPS_N_INLINE(d,s1,s2,n, ,^, )
+#endif
+
+#if HAVE_NATIVE_mpn_xnor_n
+#define mpn_xnor_n __MPN(xnor_n)
+void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+#else
+#define mpn_xnor_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n,~,^, )
 #endif
 
 /* Structure for conversion between internal binary format and
