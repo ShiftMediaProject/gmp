@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
    to some extent.  It would be natural to avoid representing the low zero
    bits mpz_scan1 is counting, and at the same time call mpn directly.  */
 
+#include <stdio.h> /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
