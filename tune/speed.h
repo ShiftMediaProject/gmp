@@ -1790,7 +1790,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                                 \
                                                                         \
     base = s->r == 0 ? 10 : s->r;                                       \
-    SPEED_RESTRICT_COND (base >= 2 && base <= 255);                     \
+    SPEED_RESTRICT_COND (base >= 2 && base <= 256);                     \
                                                                         \
     TMP_MARK (marker);                                                  \
     xp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);              \
@@ -1838,7 +1838,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                                      \
                                                                              \
     base = s->r == 0 ? 10 : s->r;                                            \
-    SPEED_RESTRICT_COND (base >= 2 && base <= 255);                          \
+    SPEED_RESTRICT_COND (base >= 2 && base <= 256);                          \
                                                                              \
     TMP_MARK (marker);                                                       \
                                                                              \
