@@ -43,7 +43,7 @@ PROLOGUE(mpn_sqr_diagonal)
 		mov		r22 = pr
 	.body
 ifdef(`HAVE_ABI_32',
-		addp4	r32 = 0, r32
+`		addp4	r32 = 0, r32
 		addp4	r33 = 0, r33
 		sxt4	r34 = r34
 		;;
