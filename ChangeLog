@@ -1,3 +1,11 @@
+2000-10-18  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (alpha*-*-*): Define gmp_xoptcflags_gcc like for
+	alpha*-*-osf*.
+
+	* longlong.h (x86 udiv_qrnnd): Change `d' => `dx' to avoid K&R C
+	stringification.
+
 2000-10-15  Kevin Ryde  <kevin@swox.se>
 
 	* doc/configuration: Updates.
