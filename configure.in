@@ -589,7 +589,7 @@ case $host in
         esac
         ;;
 
-      # sparc64-*-linux* is a misnomer, since there's no support for any
+      # sparc64-*-linux-gnu is a misnomer, since there's no support for any
       # 64-bit operations in user mode.  We assume that a future release
       # will have some 64-bit support and that the gcc options will be the
       # same as on solaris.
@@ -597,7 +597,7 @@ case $host in
       # cc -xarch actually controls the ABI, hence it must be v8 for 32-bit,
       # even though the chip is v9.
       #
-      sparcv9*-*-* | ultrasparc*-*-* | sparc64-*-linux*)
+      sparcv9*-*-* | ultrasparc*-*-* | sparc64-*-*)
         path="sparc32/v9 sparc32/v8 sparc32"
         extra_functions="udiv_fp"
 
