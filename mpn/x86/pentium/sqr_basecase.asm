@@ -69,6 +69,7 @@ deflit(`FRAME',0)
 	ret
 
 #------------------------------------------------------------------------------
+	ALIGN(8)
 L(two_limbs):
 	# eax	src
 	# ebx
@@ -97,9 +98,8 @@ L(two_limbs):
 	movl	%edx, %ebp	# dst[3]
 
 	movl	(%ebx), %eax
-	movl	4(%ebx), %edx
 
-	mull	%edx		# src[0]*src[1]
+	mull	4(%ebx)		# src[0]*src[1]
 
 	addl	%eax, %esi
 	popl	%ebx
@@ -125,6 +125,7 @@ L(two_limbs):
 
 
 #------------------------------------------------------------------------------
+	ALIGN(8)
 L(three_or_more):
 	# eax	src low limb
 	# ebx
@@ -171,17 +172,15 @@ deflit(`FRAME',4)
 	movl	%edx, 20(%ecx)
 
 	movl	(%ebx), %eax
-	movl	4(%ebx), %edx
 
-	mull	%edx		# src[0] * src[1]
+	mull	4(%ebx)		# src[0] * src[1]
 
 	movl	%eax, %esi
 	movl	%edx, %edi
 
 	movl	(%ebx), %eax
-	movl	8(%ebx), %edx
 
-	mull	%edx		# src[0] * src[2]
+	mull	8(%ebx)		# src[0] * src[2]
 
 	addl	%eax, %edi
 	movl	%edx, %ebp
@@ -189,9 +188,7 @@ deflit(`FRAME',4)
 	adcl	$0, %ebp
 	movl	4(%ebx), %eax
 
-	movl	8(%ebx), %edx
-
-	mull	%edx		# src[1] * src[2]
+	mull	8(%ebx)		# src[1] * src[2]
 
 	xorl	%ebx, %ebx
 	addl	%eax, %ebp
@@ -247,6 +244,7 @@ deflit(`FRAME',4)
 
 
 #------------------------------------------------------------------------------
+	ALIGN(8)
 L(four_or_more):
 	# eax	src low limb
 	# ebx	src
@@ -270,7 +268,7 @@ FRAME_pushl()
 	leal	(%ecx,%edx,4), %edi	# dst end of this mul1
 
 	leal	(%ebx,%edx,4), %esi	# src end
-	movl	%eax, %ebp		# multiplier
+	movl	%ebx, %ebp		# src
 
 	negl	%edx			# -size
 	xorl	%ebx, %ebx		# clear carry limb and carry flag
@@ -284,12 +282,12 @@ L(mul1):
 	# edx	scratch
 	# esi	&src[size]
 	# edi	&dst[size]
-	# ebp	multiplier
+	# ebp	src
 
 	adcl	$0, %ebx
 	movl	(%esi,%ecx,4), %eax
 
-	mull	%ebp
+	mull	(%ebp)
 
 	addl	%eax, %ebx
 
@@ -342,9 +340,8 @@ L(outer):
 	movl	%ebx, (%edi)
 	addl	$4, %edi
 
-	movl	-8-4(%esi,%edx,4), %ebp	# multiplier
+	addl	$4, %ebp
 	xorl	%ebx, %ebx		# initial carry limb, clear carry flag
-
 
 L(inner):
 	# eax	scratch
@@ -353,12 +350,12 @@ L(inner):
 	# edx	scratch
 	# esi	&src[size]
 	# edi	dst end of this addmul
-	# ebp	multiplier
+	# ebp	&src[j]
 
 	adcl	$0, %ebx
 	movl	(%esi,%ecx,4), %eax
 
-	mull	%ebp
+	mull	(%ebp)
 
 	addl	%ebx, %eax
 	movl	(%edi,%ecx,4), %ebx
@@ -386,37 +383,34 @@ L(corner):
 	# esi	&src[size]
 	# edi	&dst[2*size-4]
 
-	movl	-12(%esi), %ebp
 	movl	-8(%esi), %eax
+	movl	-4(%edi), %ebx		# risk of data cache bank clash here
 
-	mull	%ebp			# src[size-2]*src[size-3]
-
-	movl	-4(%edi), %ebx
-	movl	%edx, %ecx
+	mull	-12(%esi)		# src[size-2]*src[size-3]
 
 	addl	%eax, %ebx
-	movl	-4(%esi), %eax
+	movl	%edx, %ecx
 
 	adcl	$0, %ecx
-	movl	%ebx, -4(%edi)
+	movl	-4(%esi), %eax
 
-	mull	%ebp			# src[size-1]*src[size-3]
+	mull	-12(%esi)		# src[size-1]*src[size-3]
 
 	addl	%ecx, %eax
 	movl	(%edi), %ecx
 
 	adcl	$0, %edx
-	addl	%eax, %ecx
+	movl	%ebx, -4(%edi)
 
-	adcl	$0, %edx
+	addl	%eax, %ecx
+	movl	%edx, %ebx
+
+	adcl	$0, %ebx
 	movl	-4(%esi), %eax
 
-	movl	%edx, %ebx
-	movl	-8(%esi), %edx
+	mull	-8(%esi)		# src[size-1]*src[size-2]
 
-	mull	%edx			# src[size-1]*src[size-2]
-
-	movl	%ecx, (%edi)
+	movl	%ecx, 0(%edi)
 	addl	%eax, %ebx
 
 	adcl	$0, %edx
