@@ -207,10 +207,12 @@ libgmp_la_LIBADD = \
 libgmp_la_DEPENDENCIES = \
 	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 
+## FIXME: --version-info is on the form `current[:revision[:age]]' (see libtool doc)
+## Hint: See binutils/bfd/Makefile.am
+## libmpn_la_LDFLAGS = -version-info @VERSION@
+
 # FIXME: Build libmp.a?
 
-# FIXME: `make check' doesn't build libgmp.la the same way as `make' does.
-#        Let `check' depend on something else (`all'?).
 check: all
 	cd mpz/tests && $(MAKE) $(FLAGS_TO_PASS) check
 	cd mpq/tests && $(MAKE) $(FLAGS_TO_PASS) check
@@ -218,4 +220,4 @@ check: all
 
 # Don't ship CVS directories.
 dist-hook:
-	-find $(distdir) -name CVS -type d | xargs rm
+	-find $(distdir) -name CVS -type d | xargs rm -rf
