@@ -4,7 +4,7 @@ dnl  K7: approx 4.42 cycles per cross product at around 20x20 limbs (16
 dnl      limbs/loop unrolling).
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

@@ -13,7 +13,7 @@ dnl  K6    2.0   2.0   2.25  2.25  2.25  2.25  2.0   2.0   iorn,xnor
 dnl  K6    2.0   2.25  2.25  2.25  2.25  2.25  2.25  2.0   nand,nior
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_Xshift.
 
-dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl  Copyright (C) 2000, 2001 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C This code runs at 2 cycles/limb for large operands on the Itanium.  It needs
 C a very deep software pipeline, since shl/shr.u have a 4 cycle latency.  The
-C main loop here is not great, it is oversheduled with respect to the shr.u
+C main loop here is not great; it is oversheduled with respect to the shr.u
 C instructions, and this actually turns out to give considerably more complex
 C wind down code.  The code runs slowly for operands with <= 8 limbs, since we
 C have a non-scheduled loop for that case.  We also have a primitive loop for

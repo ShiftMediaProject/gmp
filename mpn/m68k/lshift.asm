@@ -4,7 +4,7 @@ dnl            cycles/limb
 dnl         shift==1  shift>1
 dnl  68040:   3.5       9.5
 
-dnl  Copyright 1996, 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl

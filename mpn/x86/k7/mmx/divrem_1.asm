@@ -3,7 +3,7 @@ dnl
 dnl  K7: 17.0 cycles/limb integer part, 15.0 cycles/limb fraction part.
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 

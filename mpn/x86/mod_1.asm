@@ -8,7 +8,7 @@ dnl  K6      20
 dnl  K7      41
 dnl  P4      58
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
