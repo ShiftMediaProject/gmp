@@ -340,7 +340,7 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 	    len = len - powtab->digits_in_base;
 	  str = mpn_dc_get_str (str, len, qp, qn, powtab - 1);
 	  str = mpn_dc_get_str (str, powtab->digits_in_base, rp, pwn, powtab - 1);
-	  TMP_FREE (mark);
+	  TMP_FREE (marker);
 	}
     }
   return str;
