@@ -51,27 +51,7 @@ cputime ()
 #define M * 1000000
 
 #ifndef CLOCK
-#if defined (__m88k__)
-#define CLOCK 20 M
-#elif defined (__i386__)
-#define CLOCK (16666667)
-#elif defined (__m68k__)
-#define CLOCK (20 M)
-#elif defined (_IBMR2)
-#define CLOCK (25 M)
-#elif defined (__sparc__)
-#define CLOCK (20 M)
-#elif defined (__sun__)
-#define CLOCK (20 M)
-#elif defined (__mips)
-#define CLOCK (40 M)
-#elif defined (__hppa__)
-#define CLOCK (50 M)
-#elif defined (__alpha)
-#define CLOCK (133 M)
-#else
 #error "Don't know CLOCK of your machine"
-#endif
 #endif
 
 #ifndef OPS
@@ -232,11 +212,12 @@ main (argc, argv)
 	  printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyy);
 	  mpn_print (dy+1, size);
 #endif
-	  printf ("TEST NUMBER %d\n", test);
-	  if (dy[size+1] != 0x12345678)
-	    printf ("clobbered at high end\n");
+	  printf ("\n");
 	  if (dy[0] != 0x87654321)
 	    printf ("clobbered at low end\n");
+	  if (dy[size+1] != 0x12345678)
+	    printf ("clobbered at high end\n");
+	  printf ("TEST NUMBER %u\n", test);
 	  abort();
 	}
 #endif
