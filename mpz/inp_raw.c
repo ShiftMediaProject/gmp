@@ -141,8 +141,9 @@ mpz_inp_raw (mpz_ptr x, FILE *fp)
         }
 
       /* GMP 1.x mpz_out_raw wrote high zero bytes, strip any high zero
-         limbs resulting from this */
-      MPN_NORMALIZE_NOT_ZERO (xp, abs_xsize);
+         limbs resulting from this.  Should be a non-zero value here, but
+         for safety don't assume that. */
+      MPN_NORMALIZE (xp, abs_xsize);
     }
 
   SIZ(x) = (csize >= 0 ? abs_xsize : -abs_xsize);
