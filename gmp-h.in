@@ -23,9 +23,17 @@ MA 02111-1307, USA. */
 #ifndef __GMP_H__
 
 
-/* Instantiated by configure, for internal use only */
+/* Instantiated by configure, for internal use only.
+
+   LSYM_PREFIX depends on the assembler in use and is therefore not compiler
+   independent, but it's only used for i386 gcc and it seems reasonable to
+   assume that if gcc is used by an application it will have been used to
+   build libgmp so we'll have the right setting.  Also in reality L or .L
+   are the candidates, and there's a good chance both will work anyway.  */
+
 #if ! __GMP_WITHIN_CONFIGURE
 #define __GMP_BITS_PER_MP_LIMB  @__GMP_BITS_PER_MP_LIMB@
+#define __GMP_LSYM_PREFIX       @__GMP_LSYM_PREFIX@
 #endif
 
 
@@ -1089,10 +1097,6 @@ mp_limb_t __GMP_DECLSPEC mpn_submul_1c _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp
 #define mpn_tdiv_qr  __MPN(tdiv_qr)
 void __GMP_DECLSPEC mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
-#if defined (__cplusplus)
-}
-#endif
-
 
 /**************** mpz inlines ****************/
 
@@ -1370,6 +1374,359 @@ mpf_size (mpf_srcptr f)
 
 /**************** mpn inlines ****************/
 
+/* __GMP_ASM_L gives a local label for a gcc asm block, for use when
+   temporary local labels like "1:" might not be available, which is the
+   case for instance on the x86s (the SCO assembler doesn't support them).
+
+   The label generated is made unique by including "%=" which is a unique
+   number for each insn.  This ensures the same name can be used in multiple
+   asm blocks, perhaps via a macro.  Since jumps between asm blocks are not
+   allowed there's no need for a label to be usable outside a single
+   block.  */
+
+#define __GMP_ASM_L(name)  __GMP_LSYM_PREFIX "asm_%=_" #name
+
+
+/* The following x86 stuff gives better flags handling than the generic C,
+   usually saving a register, some code size and a cycle or two.  The
+   emphasis is on something compact and sensible.
+
+   The src!=dst / n!=1 case has separate code for add and sub since the
+   former can merge cout and n and use a load/add to save one instruction.
+   Whether that's significant overall is debatable.
+
+   The sbbl to establish cout should be reasonable on all x86s.  If it's
+   about to be added to something then we miss the opportunity to do "adcl
+   $0, var", but that's inevitable since the carry flag can't be an output.
+
+   Possibilities:
+
+   An alternative to sbbl would be setc and let gcc convert QI to SI if
+   necessary, but on P54 that's a cycle slower, and on P6 it's not clear
+   whether gcc 2.95.x properly understands partial register stalls.
+
+   On chips with a good clc, that could be used and the loops driven with a
+   single jnbe instead of two jumps, to perhaps save a BTB entry.  The final
+   cout=-cout would become cout++.  */
+
+#if defined (__GNUC__) && (defined (__i386__) || defined (__i486__))    \
+  && __GMP_BITS_PER_MP_LIMB == 32 && ! defined (NO_ASM)
+
+#define __GMPN_AORS_1_INPLACE(cout, ptr, size, n, aors) \
+  do {                                                  \
+    mp_ptr     __dummy1;                                \
+    mp_size_t  __dummy2;                                \
+                                                        \
+    if (__builtin_constant_p (n) && (n) == 1)           \
+      {                                                 \
+        __asm__ __volatile__                            \
+          (__GMP_ASM_L(top) ":\n"                       \
+              aors " $1, (%1)\n"                        \
+           "  jnc  " __GMP_ASM_L(done) "\n"             \
+           "  leal   4(%1), %1\n"                       \
+           "  decl   %2\n"                              \
+           "  jnz  " __GMP_ASM_L(top) "\n"              \
+           __GMP_ASM_L(done) ":\n"                      \
+           "  sbbl   %0, %0\n"                          \
+           : "=r"  (cout),                              \
+             "=r"  (__dummy1),                          \
+             "=rm" (__dummy2)                           \
+           : "1"   (ptr),                               \
+             "2"   (size)                               \
+           : "memory");                                 \
+      }                                                 \
+    else                                                \
+      {                                                 \
+        __asm__ __volatile__                            \
+          (   aors " %5, (%1)\n"                        \
+           "  jnc  " __GMP_ASM_L(done) "\n"             \
+           __GMP_ASM_L(top) ":\n"                       \
+           "  leal   4(%1), %1\n"                       \
+           "  decl   %2\n"                              \
+           "  jz   " __GMP_ASM_L(done) "\n"             \
+              aors " $1, (%1)\n"                        \
+           "  jc   " __GMP_ASM_L(top) "\n"              \
+           __GMP_ASM_L(done) ":\n"                      \
+           "  sbbl   %0, %0\n"                          \
+           : "=r"  (cout),                              \
+             "=r"  (__dummy1),                          \
+             "=rm" (__dummy2)                           \
+           : "1"   (ptr),                               \
+             "2"   (size),                              \
+             "ri"  (n)                                  \
+           : "memory");                                 \
+      }                                                 \
+    (cout) = -(cout);                                   \
+                                                        \
+  } while (0)
+
+#define __GMPN_AORS_1_GENERAL_ONE(cout, dst, src, size, aors)   \
+  do {                                                          \
+    mp_ptr     __dst;                                           \
+    mp_srcptr  __src;                                           \
+    mp_size_t  __size;                                          \
+                                                                \
+    __asm__ __volatile__                                        \
+      (__GMP_ASM_L(top) ":\n"                                   \
+       "  movl   (%2), %0\n"                                    \
+       "  addl   $4, %2\n"                                      \
+          aors " $1, %0\n"                                      \
+       "  movl   %0, (%1)\n"                                    \
+       "  leal   4(%1), %1\n"                                   \
+       "  decl   %3\n"                                          \
+       "  jz   " __GMP_ASM_L(done) "\n"                         \
+       "  jc   " __GMP_ASM_L(top) "\n"                          \
+       __GMP_ASM_L(done) ":\n"                                  \
+       "  sbbl   %0, %0\n"                                      \
+       : "=r"  (cout),                                          \
+         "=r"  (__dst),                                         \
+         "=r"  (__src),                                         \
+         "=rm" (__size)                                         \
+       : "1" (dst),                                             \
+         "2" (src),                                             \
+         "3" (size)                                             \
+       : "memory");                                             \
+                                                                \
+    (cout) = -(cout);                                           \
+    if (__src != __dst)                                         \
+      __GMPN_COPY (__dst, __src, __size);                       \
+                                                                \
+  } while (0)
+
+#define __GMPN_ADD_1(cout, dst, src, size, n)                           \
+  do {                                                                  \
+    /* ASSERT ((size) >= 1); */                                         \
+    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */             \
+                                                                        \
+    if (__builtin_constant_p ((dst) == (src)) && (dst) == (src))        \
+      {                                                                 \
+        __GMPN_AORS_1_INPLACE (cout, dst, size, n, "addl");             \
+      }                                                                 \
+    else                                                                \
+      {                                                                 \
+        if (__builtin_constant_p (n) && (n) == 1)                       \
+          {                                                             \
+            __GMPN_AORS_1_GENERAL_ONE (cout, dst, src, size, "addl");   \
+          }                                                             \
+        else                                                            \
+          {                                                             \
+            mp_ptr     __dst;                                           \
+            mp_srcptr  __src;                                           \
+            mp_size_t  __size;                                          \
+                                                                        \
+            __asm__ __volatile__                                        \
+              (__GMP_ASM_L(top) ":\n"                                   \
+               "  addl   (%2), %0\n"                                    \
+               "  leal   4(%2), %2\n"                                   \
+               "  movl   %0, (%1)\n"                                    \
+               "  leal   4(%1), %1\n"                                   \
+               "  movl   $1, %0\n"                                      \
+               "  decl   %3\n"                                          \
+               "  jz   " __GMP_ASM_L(done) "\n"                         \
+               "  jc   " __GMP_ASM_L(top) "\n"                          \
+               __GMP_ASM_L(done) ":\n"                                  \
+               "  sbbl   %0, %0\n"                                      \
+               : "=r"  (cout),                                          \
+                 "=r"  (__dst),                                         \
+                 "=r"  (__src),                                         \
+                 "=rm" (__size)                                         \
+               : "1"   (dst),                                           \
+                 "2"   (src),                                           \
+                 "3"   (size),                                          \
+                 "0"   (n)                                              \
+               : "memory");                                             \
+                                                                        \
+            (cout) = -(cout);                                           \
+            if (__src != __dst)                                         \
+              __GMPN_COPY (__dst, __src, __size);                       \
+          }                                                             \
+      }                                                                 \
+  } while (0)
+
+#define __GMPN_SUB_1(cout, dst, src, size, n)                           \
+  do {                                                                  \
+    /* ASSERT ((size) >= 1); */                                         \
+    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */             \
+                                                                        \
+    if (__builtin_constant_p ((dst) == (src)) && (dst) == (src))        \
+      {                                                                 \
+        __GMPN_AORS_1_INPLACE (cout, dst, size, n, "subl");             \
+      }                                                                 \
+    else                                                                \
+      {                                                                 \
+        if (__builtin_constant_p (n) && (n) == 1)                       \
+          {                                                             \
+            __GMPN_AORS_1_GENERAL_ONE (cout, dst, src, size, "subl");   \
+          }                                                             \
+        else                                                            \
+          {                                                             \
+            mp_ptr     __dst;                                           \
+            mp_srcptr  __src;                                           \
+            mp_size_t  __size;                                          \
+            mp_limb_t  __dummy;                                         \
+                                                                        \
+            __asm__ __volatile__                                        \
+              (__GMP_ASM_L(top) ":\n"                                   \
+               "  movl   (%2), %0\n"                                    \
+               "  addl   $4, %2\n"                                      \
+               "  subl   %4, %0\n"                                      \
+               "  movl   %0, (%1)\n"                                    \
+               "  leal   4(%1), %1\n"                                   \
+               "  movl   $1, %4\n"                                      \
+               "  decl   %3\n"                                          \
+               "  jz   " __GMP_ASM_L(done) "\n"                         \
+               "  jc   " __GMP_ASM_L(top) "\n"                          \
+               __GMP_ASM_L(done) ":\n"                                  \
+               "  sbbl   %0, %0\n"                                      \
+               : "=r"  (cout),                                          \
+                 "=r"  (__dst),                                         \
+                 "=r"  (__src),                                         \
+                 "=rm" (__size),                                        \
+                 "=rm" (__dummy)                                        \
+               : "1"   (dst),                                           \
+                 "2"   (src),                                           \
+                 "3"   (size),                                          \
+                 "4"   (n)                                              \
+               : "memory");                                             \
+                                                                        \
+            (cout) = -(cout);                                           \
+            if (__src != __dst)                                         \
+              __GMPN_COPY (__dst, __src, __size);                       \
+          }                                                             \
+      }                                                                 \
+  } while (0)
+#endif
+
+
+/* The special cases here for src==dst known at compile time are because gcc
+   (as of 2.95.4) doesn't recognise __src and __dst are identical when
+   initialized from the same expression, perhaps because they get
+   incremented (despite being incremented together).  The main saving from
+   this is not needing the __GMPN_COPY code.
+
+   The use of __n is designed to keep the code size down.  On the second and
+   subsequent limbs updated it's only a carry of 1 being propagated and that
+   could be separate code, but it seems better to share one piece of
+   load/add/store/test since on random data only 1 or 2 limbs normally need
+   to be touched.
+
+   For constant n==1, __n optimizes down to a constant 1, which saves a few
+   bytes of code.
+
+   In __GMPN_SUB_1, constant n==1 might be better off with the "no-borrow"
+   test as "(dst = src - 1) != MP_LIMB_T_MAX" rather than the current "(dst
+   = src - 1) <= src", but the difference between the two ought to be
+   minimal, and in any case ideally gcc would recognise both as checking
+   unsigned underflow.  */
+
+#if defined (__GNUC__) && ! defined (__GMPN_ADD_1)
+#define __GMPN_AORS_1(cout, dst, src, size, n, TEST)                    \
+  do {                                                                  \
+    mp_ptr     __dst = (dst);                                           \
+    mp_size_t  __size = (size);                                         \
+    mp_limb_t  __n = (n);                                               \
+    mp_limb_t  __x;                                                     \
+                                                                        \
+    /* ASSERT ((size) >= 1); */                                         \
+    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */             \
+                                                                        \
+    if (__builtin_constant_p ((dst) == (src)) && (dst) == (src))        \
+      {                                                                 \
+        (cout) = 0;                                                     \
+        for (;;)                                                        \
+          {                                                             \
+            __x = *__dst;                                               \
+            if (TEST)                                                   \
+              break;                                                    \
+            __n = 1;                                                    \
+            if (--__size == 0)                                          \
+              {                                                         \
+                (cout) = 1;                                             \
+                break;                                                  \
+              }                                                         \
+          }                                                             \
+      }                                                                 \
+    else                                                                \
+      {                                                                 \
+        mp_srcptr  __src = (src);                                       \
+        (cout) = 0;                                                     \
+        for (;;)                                                        \
+          {                                                             \
+            __size--;                                                   \
+            __x = *__src++;                                             \
+            if (TEST)                                                   \
+              {                                                         \
+                if (__dst != __src)                                     \
+                  __GMPN_COPY (__dst, __src, __size);                   \
+                break;                                                  \
+              }                                                         \
+            __n = 1;                                                    \
+            if (__size == 0)                                            \
+              {                                                         \
+                (cout) = 1;                                             \
+                break;                                                  \
+              }                                                         \
+          }                                                             \
+      }                                                                 \
+  } while (0)
+
+#define __GMPN_ADD_1(cout, dst, src, size, n)                            \
+  __GMPN_AORS_1 (cout, dst, src, size, n, (*__dst++ = __x + __n) >= __n)
+#define __GMPN_SUB_1(cout, dst, src, size, n)                            \
+  __GMPN_AORS_1 (cout, dst, src, size, n, (*__dst++ = __x - __n) <= __x)
+#endif
+
+
+/* The following is designed to optimize down on non-gcc compilers.  The use
+   of __i ensures a compile time src==dst remains nice and clear, in
+   particular the __GMPN_COPY will disappear, and the load/add/store gets a
+   chance to become a read/modify/write on CISC CPUs.  The use of __n is as
+   per the gcc code above and should be recognised as a constant 1 for a
+   constant n==1.  */
+
+#ifndef __GMPN_ADD_1
+#define __GMPN_AORS_1(cout, dst, src, size, n, TEST)            \
+  do {                                                          \
+    mp_size_t  __i;                                             \
+    mp_limb_t  __n = (n);                                       \
+    mp_limb_t  __x;                                             \
+                                                                \
+    /* ASSERT ((size) >= 1); */                                 \
+    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */     \
+                                                                \
+    (cout) = 0;                                                 \
+    __i = 0;                                                    \
+    for (;;)                                                    \
+      {                                                         \
+        __x = (src)[__i];                                       \
+        if (TEST)                                               \
+          {                                                     \
+            if ((src) != (dst))                                 \
+              {                                                 \
+                __i++;                                          \
+                __GMPN_COPY ((dst)+__i, (src)+__i, (size)-__i); \
+              }                                                 \
+            break;                                              \
+          }                                                     \
+        __n = 1;                                                \
+        if (++__i >= (size))                                    \
+          {                                                     \
+            (cout) = 1;                                         \
+            break;                                              \
+          }                                                     \
+      }                                                         \
+                                                                \
+  } while (0)
+
+#define __GMPN_ADD_1(cout, dst, src, size, n)           \
+  __GMPN_AORS_1(cout, dst, src, size, n,                \
+                ((dst)[__i] = __x + __n) >= __n)
+#define __GMPN_SUB_1(cout, dst, src, size, n)           \
+  __GMPN_AORS_1(cout, dst, src, size, n,                \
+                ((dst)[__i] = __x - __n) <= __x)
+#endif
+
+
 /* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
    negative.  size==0 is allowed.  On random data usually only one limb will
    need to be examined to get a result, so it's worth having it inline.  */
@@ -1395,6 +1752,34 @@ mpf_size (mpf_srcptr f)
       }                                                         \
   } while (0)
 
+
+/* Enhancement: Use some of the smarter code from gmp-impl.h.  Maybe use
+   mpn_copyi if there's a native version, and if we don't mind demanding
+   binary compatibility for it (on targets which use it).  */
+#define __GMPN_COPY(dst, src, size)                             \
+  do {                                                          \
+    mp_size_t __j;                                              \
+    /* ASSERT ((size) >= 0); */                                 \
+    /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */     \
+    for (__j = 0; __j < (size); __j++)                          \
+      (dst)[__j] = (src)[__j];                                  \
+  } while (0)
+
+
+
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpn_add_1
+#if ! __GMP_FORCE_mpn_add_1
+__GMP_EXTERN_INLINE
+#endif
+mp_limb_t
+mpn_add_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
+{
+  mp_limb_t  c;
+  __GMPN_ADD_1 (c, dst, src, size, n);
+  return c;
+}
+#endif
+
 #if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpn_cmp
 #if ! __GMP_FORCE_mpn_cmp
 __GMP_EXTERN_INLINE
@@ -1408,42 +1793,21 @@ mpn_cmp (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
 }
 #endif
 
+#if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpn_sub_1
+#if ! __GMP_FORCE_mpn_sub_1
+__GMP_EXTERN_INLINE
+#endif
+mp_limb_t
+mpn_sub_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
+{
+  mp_limb_t  c;
+  __GMPN_SUB_1 (c, dst, src, size, n);
+  return c;
+}
+#endif
+
 
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
-_EXTERN_INLINE mp_limb_t
-mpn_add_1 (register mp_ptr res_ptr,
-	   register mp_srcptr s1_ptr,
-	   register mp_size_t s1_size,
-	   register mp_limb_t s2_limb)
-{
-  register mp_limb_t x;
-
-  x = *s1_ptr++;
-  s2_limb = x + s2_limb;
-  *res_ptr++ = s2_limb;
-  if (s2_limb < x)
-    {
-      while (--s1_size != 0)
-	{
-	  x = *s1_ptr++ + 1;
-	  *res_ptr++ = x;
-	  if (x != 0)
-	    goto fin;
-	}
-
-      return 1;
-    }
-
- fin:
-  if (res_ptr != s1_ptr)
-    {
-      mp_size_t i;
-      for (i = 0; i < s1_size - 1; i++)
-	res_ptr[i] = s1_ptr[i];
-    }
-  return 0;
-}
-
 _EXTERN_INLINE mp_limb_t
 mpn_add (register mp_ptr res_ptr,
 	 register mp_srcptr s1_ptr,
@@ -1457,45 +1821,12 @@ mpn_add (register mp_ptr res_ptr,
     cy_limb = mpn_add_n (res_ptr, s1_ptr, s2_ptr, s2_size);
 
   if (s1_size - s2_size != 0)
-    cy_limb = mpn_add_1 (res_ptr + s2_size,
-			 s1_ptr + s2_size,
-			 s1_size - s2_size,
-			 cy_limb);
+    __GMPN_ADD_1 (cy_limb,
+                  res_ptr + s2_size,
+                  s1_ptr + s2_size,
+                  s1_size - s2_size,
+                  cy_limb);
   return cy_limb;
-}
-
-_EXTERN_INLINE mp_limb_t
-mpn_sub_1 (register mp_ptr res_ptr,
-	   register mp_srcptr s1_ptr,
-	   register mp_size_t s1_size,
-	   register mp_limb_t s2_limb)
-{
-  register mp_limb_t x;
-
-  x = *s1_ptr++;
-  s2_limb = x - s2_limb;
-  *res_ptr++ = s2_limb;
-  if (s2_limb > x)
-    {
-      while (--s1_size != 0)
-	{
-	  x = *s1_ptr++;
-	  *res_ptr++ = x - 1;
-	  if (x != 0)
-	    goto fin;
-	}
-
-      return 1;
-    }
-
- fin:
-  if (res_ptr != s1_ptr)
-    {
-      mp_size_t i;
-      for (i = 0; i < s1_size - 1; i++)
-	res_ptr[i] = s1_ptr[i];
-    }
-  return 0;
 }
 
 _EXTERN_INLINE mp_limb_t
@@ -1511,13 +1842,20 @@ mpn_sub (register mp_ptr res_ptr,
     cy_limb = mpn_sub_n (res_ptr, s1_ptr, s2_ptr, s2_size);
 
   if (s1_size - s2_size != 0)
-    cy_limb = mpn_sub_1 (res_ptr + s2_size,
-			 s1_ptr + s2_size,
-			 s1_size - s2_size,
-			 cy_limb);
+    __GMPN_SUB_1 (cy_limb,
+                  res_ptr + s2_size,
+                  s1_ptr + s2_size,
+                  s1_size - s2_size,
+                  cy_limb);
   return cy_limb;
 }
 #endif /* __GNUC__ */
+
+
+#if defined (__cplusplus)
+}
+#endif
+
 
 /* Allow faster testing for negative, zero, and positive.  */
 #define mpz_sgn(Z) ((Z)->_mp_size < 0 ? -1 : (Z)->_mp_size > 0)
