@@ -37,8 +37,8 @@ mpz_congruent_ui_p (mpz_srcptr a, unsigned long cu, unsigned long du)
   mp_size_t  asize;
   mp_limb_t  c, d, r;
 
-  if (du == 0)
-    DIVIDE_BY_ZERO;
+  if (UNLIKELY (du == 0))
+    return (mpz_cmp_ui (a, cu) == 0);
 
   asize = SIZ(a);
   if (asize == 0)

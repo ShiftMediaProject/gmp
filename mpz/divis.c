@@ -1,6 +1,5 @@
-/* mpz_divisible_p -- mpz by mpz divisibility test */
+/* mpz_divisible_p -- mpz by mpz divisibility test
 
-/*
 Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -27,12 +25,11 @@ MA 02111-1307, USA.
 int
 mpz_divisible_p (mpz_srcptr a, mpz_srcptr d)
 {
-  mp_size_t dsize;
+  mp_size_t dsize = SIZ(d);
+  mp_size_t asize = SIZ(a);
 
-  dsize = SIZ(d);
-  if (dsize == 0)
-    DIVIDE_BY_ZERO;
+  if (UNLIKELY (dsize == 0))
+    return (asize == 0);
 
-  return mpn_divisible_p (PTR(a), (mp_size_t) ABSIZ(a),
-                          PTR(d), (mp_size_t) ABS(dsize));
+  return mpn_divisible_p (PTR(a), ABS(asize), PTR(d), ABS(dsize));
 }

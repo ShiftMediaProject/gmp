@@ -60,8 +60,9 @@ mpz_congruent_p (mpz_srcptr a, mpz_srcptr c, mpz_srcptr d)
   TMP_DECL (marker);
 
   dsize = SIZ(d);
-  if (dsize == 0)
-    DIVIDE_BY_ZERO;
+  if (UNLIKELY (dsize == 0))
+    return (mpz_cmp (a, c) == 0);
+
   dsize = ABS(dsize);
   dp = PTR(d);
 

@@ -31,10 +31,10 @@ mpz_divisible_ui_p (mpz_srcptr a, unsigned long d)
   mp_ptr     ap;
   unsigned   twos;
 
-  if (d == 0)
-    DIVIDE_BY_ZERO;
-
   asize = SIZ(a);
+  if (UNLIKELY (d == 0))
+    return (asize == 0);
+
   if (asize == 0)  /* 0 divisible by any d */
     return 1;
 
