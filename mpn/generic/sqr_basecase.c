@@ -67,7 +67,7 @@ mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
 	  cy = mpn_addmul_1 (tp + 2 * i - 2, up + i, n - i, up[i - 1]);
 	  tp[n + i - 2] = cy;
 	}
-#ifdef HAVE_NATIVE_mpn_sqr_diagonal
+#if HAVE_NATIVE_mpn_sqr_diagonal
       mpn_sqr_diagonal (prodp + 2, up + 1, n - 1);
 #else
       for (i = 1; i < n; i++)
