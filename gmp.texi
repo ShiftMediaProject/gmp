@@ -1538,8 +1538,8 @@ function returns zero, @var{rop} is undefined.
 
 @deftypefun int mpz_jacobi (mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx int mpz_legendre (mpz_t @var{op1}, mpz_t @var{op2})
-Compute the Jacobi and Legendre symbols, respectively.  @var{op2} must be odd
-and positive.
+Compute the Jacobi and Legendre symbols, respectively.  @var{op2} should be
+odd and must be positive.
 @end deftypefun
 
 @deftypefun int mpz_kronecker_si_zi (long @var{a}, mpz_t @var{b});
@@ -1552,12 +1552,12 @@ with the Kronecker extension $\left(a \over 2\right) = \left(2 \over a\right)$
 when $a$ odd, or $\left(a \over 2\right) = 0$ when $a$ even.
 @end tex
 @ifnottex
-Calculate the value of the Jacobi symbol (@var{a}/@var{b}), with the
+Calculate the value of the Kronecker/Jacobi symbol (@var{a}/@var{b}), with the
 Kronecker extension (a/2)=(2/a) when a odd, or (a/2)=0 when a even.
 @end ifnottex
-See Henri Cohen, section 1.4.2, for more information (@pxref{References}).
-See also the example program @file{demos/qcn.c} which uses
-@code{mpz_kronecker_zi_ui}.
+All values of @var{a} and @var{b} give a well-defined result.  See Henri
+Cohen, section 1.4.2, for more information (@pxref{References}).  See also the
+example program @file{demos/qcn.c} which uses @code{mpz_kronecker_zi_ui}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_remove (mpz_t @var{rop}, mpz_t @var{op}, mpz_t @var{f})
