@@ -38,8 +38,7 @@ unsigned long
 gmp_urandomm_ui (gmp_randstate_ptr rstate, unsigned long n)
 {
   mp_limb_t      a[LIMBS_PER_ULONG];
-  unsigned long  ret;
-  unsigned       bits, leading;
+  unsigned long  ret, bits, leading;
   int            i;
 
   if (UNLIKELY (n == 0))
@@ -55,8 +54,7 @@ gmp_urandomm_ui (gmp_randstate_ptr rstate, unsigned long n)
   count_leading_zeros (leading, (mp_limb_t) n);
   bits = GMP_LIMB_BITS - leading - (POW2_P(n) != 0);
 
-  i = 0;
-  do
+  for (i = 0; i < MAX_URANDOMM_ITER; i++)
     {
       _gmp_rand (a, rstate, bits);
 #if GMP_NAIL_BITS == 0
@@ -66,14 +64,12 @@ gmp_urandomm_ui (gmp_randstate_ptr rstate, unsigned long n)
 #endif
       if (LIKELY (ret < n))   /* usually one iteration suffices */
         goto done;
-
-      i++;
     }
-  while (i < MAX_URANDOMM_ITER);
 
-  /* Too many iterations, there must be something degenerate about the rand
-     algorithm.  Return n-1 as a more or less arbitrary fallback.  */
-  ret = n-1;
+  /* Too many iterations, there must be something degenerate about the
+     rstate algorithm.  Return r%n.  */
+  ret -= n;
+  ASSERT (ret < n);
 
  done:
   return ret;
