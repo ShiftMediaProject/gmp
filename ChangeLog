@@ -18,6 +18,32 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-21  Kevin Ryde  <kevin@swox.se>
+
+	* cxx/osdoprnti.cc: Use <cstdarg> and <cstring> rather than <stdarg.h>
+	and <string.h>.  No need for <stdio.h>.
+
+	* demos/expr/expr.c, demos/expr/exprfa.c, demos/expr/exprfra.c,
+	demos/expr/exprza.c: Use mp_get_memory_functions, not
+	__gmp_allocate_func etc.
+	* demos/expr/t-expr.c: Don't use gmp-impl.h.
+	(numberof): New macro.
+	
+	* gmp-h.in, gmp-impl.h (__gmp_allocate_func, __gmp_reallocate_func,
+	__gmp_free_func): Move declarations to gmp-impl.h
+
+	* mp_get_fns.c: New file.
+	* Makefile.am (libgmp_la_SOURCES, libmp_la_SOURCES): Add it.
+	* gmp-h.in (mp_get_memory_functions): Add prototype.
+	* gmp.texi (Custom Allocation): Add mp_get_memory_functions, refer to
+	"free" not "deallocate" function.
+	* gmpxx.h (struct __gmp_alloc_cstring): Use mp_get_memory_functions,
+	not __gmp_free_func.
+
+	* gmp-impl.h [__cplusplus]: Add <cstring> for strlen.
+	(gmp_allocated_string): Hold length in a field.
+	* cxx/osdoprnti.cc, cxx/osmpf.cc: Use this.
+
 2002-12-20  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-perfsqr.c (check_sqrt): Print more variables upon
