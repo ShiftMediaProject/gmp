@@ -59,14 +59,14 @@ xtom (const char *str)
 
   /* Skip whitespace.  */
   do
-    c = *str++;
+    c = (unsigned char) *str++;
   while (isspace (c));
 
   negative = 0;
   if (c == '-')
     {
       negative = 1;
-      c = *str++;
+      c = (unsigned char) *str++;
     }
 
   if (digit_value_in_base (c, 16) < 0)
@@ -88,7 +88,7 @@ xtom (const char *str)
 	    }
 	  *s++ = dig;
 	}
-      c = *str++;
+      c = (unsigned char) *str++;
     }
 
   str_size = s - begs;

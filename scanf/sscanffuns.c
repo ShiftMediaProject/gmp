@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -57,7 +57,7 @@ get (const char **sp)
   const char  *s;
   int  c;
   s = *sp;
-  c = *s++;
+  c = (unsigned char) *s++;
   if (c == '\0')
     return EOF;
   *sp = s;
@@ -75,7 +75,7 @@ unget (int c, const char **sp)
       return;
     }
   s--;
-  ASSERT (*s == c);
+  ASSERT ((unsigned char) *s == c);
   *sp = s;
 }
 

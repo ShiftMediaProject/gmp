@@ -62,14 +62,14 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
 
   /* Skip whitespace.  */
   do
-    c = *str++;
+    c = (unsigned char) *str++;
   while (isspace (c));
 
   negative = 0;
   if (c == '-')
     {
       negative = 1;
-      c = *str++;
+      c = (unsigned char) *str++;
     }
 
   if (digit_value_in_base (c, base == 0 ? 10 : base) < 0)
@@ -83,23 +83,23 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
       if (c == '0')
 	{
 	  base = 8;
-	  c = *str++;
+	  c = (unsigned char) *str++;
 	  if (c == 'x' || c == 'X')
 	    {
 	      base = 16;
-	      c = *str++;
+	      c = (unsigned char) *str++;
 	    }
 	  else if (c == 'b' || c == 'B')
 	    {
 	      base = 2;
-	      c = *str++;
+	      c = (unsigned char) *str++;
 	    }
 	}
     }
 
   /* Skip leading zeros and white space.  */
   while (c == '0' || isspace (c))
-    c = *str++;
+    c = (unsigned char) *str++;
   /* Make sure the string does not become empty, mpn_set_str would fail.  */
   if (c == 0)
     {
@@ -125,7 +125,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
 	    }
 	  *s++ = dig;
 	}
-      c = *str++;
+      c = (unsigned char) *str++;
     }
 
   str_size = s - begs;

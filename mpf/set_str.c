@@ -91,17 +91,17 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 
   TMP_MARK (marker);
 
-  c = *str;
+  c = (unsigned char) *str;
 
   /* Skip whitespace.  */
   while (isspace (c))
-    c = *++str;
+    c = (unsigned char) *++str;
 
   negative = 0;
   if (c == '-')
     {
       negative = 1;
-      c = *++str;
+      c = (unsigned char) *++str;
     }
 
   decimal_exponent_flag = base < 0;
@@ -129,7 +129,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	    {
 	      base = 16;
 	      str += 2;
-	      c = *str;
+	      c = (unsigned char) *str;
 	    }
 	}
 #endif
@@ -139,7 +139,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   str_size = strlen (str);
   for (i = 0; i < str_size; i++)
     {
-      c = str[i];
+      c = (unsigned char) str[i];
       if (c == '@' || (base <= 10 && (c == 'e' || c == 'E')))
 	{
 	  expflag = 1;
@@ -153,7 +153,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 
   for (i = 0; i < str_size; i++)
     {
-      c = *str;
+      c = (unsigned char) *str;
       if (!isspace (c))
 	{
 	  int dig;
@@ -180,7 +180,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	      *s++ = dig;
 	    }
 	}
-      c = *++str;
+      c = (unsigned char) *++str;
     }
 
   str_size = s - begs;
