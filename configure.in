@@ -281,51 +281,81 @@ case $host in
 
 
   alpha*-*-*)
-    path="alpha"
+    case $host_cpu in
+      alphaev5 | alphapca56) path="alpha/ev5 alpha" ;;
+      alphaev6)              path="alpha/ev6 alpha/ev5 alpha" ;;
+      *)                     path="alpha" ;;
+    esac
     extra_functions="cntlz"
-    case $host in
-      alphaev5*-*-* | alphapca56*-*-*) path="alpha/ev5 alpha" ;;
-      alphaev6*-*-*)                   path="alpha/ev6 alpha/ev5 alpha" ;;
+    gcc_cflags_optlist="cpu asm"
+
+    # gcc 2.7.2.3 doesn't know any -mcpu= for alpha, apparently.
+    # gcc 2.95 and 3.0 know ev4, ev5, ev56, pca56, ev6.
+    # gcc 3.1 adds ev67.
+    #
+    case $host_cpu in
+      alpha)        gcc_cflags_cpu="-mcpu=ev4" ;;
+      alphaev5)     gcc_cflags_cpu="-mcpu=ev5" ;;
+      alphaev56)    gcc_cflags_cpu="-mcpu=ev56" ;;
+      alphapca56 | alphapca57)
+                    gcc_cflags_cpu="-mcpu=pca56" ;;
+      alphaev6)     gcc_cflags_cpu="-mcpu=ev6" ;;
+      alphaev67 | alphaev68)
+                    gcc_cflags_cpu="-mcpu=ev67 -mcpu=ev6" ;;
     esac
 
-    SPEED_CYCLECOUNTER_OBJ=alpha.lo
-    cyclecounter_size=1
-
-    flavour=`echo $host_cpu | sed 's/^alpha//g'`
-    case "$flavour" in
-      # compilers don't seem to understand `ev67' and such.
-      ev6? | ev7*)  flavour=ev6 ;;
-      ev* | pca*) ;;
-      *) flavour=ev4 ;;
+    # only need ev5 and ev6 for current asm code, nothing more specific
+    case $host_cpu in
+      alphaev5* | alphapca5*) gcc_cflags_asm="-Wa,-arch,ev5 -Wa,-mev5" ;;
+      alphaev6)               gcc_cflags_asm="-Wa,-arch,ev6 -Wa,-mev6" ;;
     esac
 
-    # FIXME: Maybe a feature test should find out whether -Wa,arch is
-    # necessary.
-    if test -n "$flavour"; then
-      gcc_cflags_optlist="cpu arch"
-      gcc_cflags_cpu="-mcpu=$flavour"
-      gcc_cflags_arch="-Wa,-arch,$flavour -Wa,-m$flavour"
-    fi
-
+    # It might be better to ask "cc" whether it's Cray C or DEC C,
+    # instead of relying on the OS part of $host.  But it's hard to
+    # imagine either of those compilers anywhere except their native
+    # systems.
+    #
     case $host in
       *-cray-unicos*)
-        # FIXME: Is GCC available for these systems? Hopefully it doesn't
-        # hurt to check for it anyway.
         cc_cflags="-O"		# no -g, it silently disables all optimizations
         GMP_INCLUDE_MPN(alpha/unicos.m4)
         # Don't perform any assembly syntax tests on this beast.
         gmp_asm_syntax_testing=no
-        # tune/alpha.asm assumes int==4bytes but unicos uses int=8bytes
-        SPEED_CYCLECOUNTER_OBJ=
         ;;
       *-*-osf*)
-        cc_cflags_optlist="cpu"
-        cc_cflags="-arch $flavour -tune $flavour"
         GMP_INCLUDE_MPN(alpha/default.m4)
+        cc_cflags=""
+        cc_cflags_optlist="opt cpu"
+
+        # not sure if -fast works on old versions, so make it optional
+	cc_cflags_opt="-fast -O2"
+
+    	# DEC C V5.9-005 knows ev4, ev5, ev56, pca56, ev6.
+    	# Compaq C V6.3-029 adds ev67.
+    	#
+    	case $host_cpu in
+    	  alpha)       cc_cflags_cpu="-arch~ev4~-tune~ev4" ;;
+    	  alphaev5)    cc_cflags_cpu="-arch~ev5~-tune~ev5" ;;
+    	  alphaev56)   cc_cflags_cpu="-arch~ev56~-tune~ev56" ;;
+    	  alphapca56 | alphapca57)
+    	               cc_cflags_cpu="-arch~pca56~-tune~pca56" ;;
+    	  alphaev6)    cc_cflags_cpu="-arch~ev6~-tune~ev6" ;;
+    	  alphaev67 | alphaev68)
+    	               cc_cflags_cpu="-arch~ev67~-tune~ev67" ;;
+    	esac
         ;;
       *)
         GMP_INCLUDE_MPN(alpha/default.m4)
         ;;
+    esac
+
+    case $host in
+      *-*-unicos*)
+        # tune/alpha.asm assumes int==4bytes but unicos uses int==8bytes
+        ;;
+      *)
+        SPEED_CYCLECOUNTER_OBJ=alpha.lo
+        cyclecounter_size=1 ;;
     esac
     ;;
 
@@ -1099,6 +1129,9 @@ if test $found_compiler = yes; then
       test -n "$optflags" || eval optflags=\"\$${ccbase}_cflags_${opt}\"
 
       for flag in $optflags; do
+
+	# ~ respresents a space in an option spec
+        flag=`echo "$flag" | tr '~' ' '`
 
         case $flag in
           -march=pentiumpro)
