@@ -1,6 +1,6 @@
 /* mpq_set_f -- set an mpq from an mpf.
 
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -43,13 +43,8 @@ mpq_set_f (mpq_ptr q, mpf_srcptr f)
     }
 
   /* strip low zero limbs from f */
-  for (;;)
-    {
-      flow = *fptr;
-      if (flow != 0)
-        break;
-      fptr++, abs_fsize--;
-    }
+  flow = *fptr;
+  MPN_STRIP_LOW_ZEROS_NOT_ZERO (fptr, abs_fsize, flow);
 
   if (fexp >= abs_fsize)
     {
