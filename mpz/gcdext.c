@@ -44,7 +44,7 @@ mpz_gcdext (g, s, t, a, b)
   mp_ptr gp, sp, tmp_gp, tmp_sp;
   mpz_srcptr u, v;
   mpz_ptr ss, tt;
-  __mpz_struct tmp_struct;
+  __mpz_struct stmp, gtmp;
   TMP_DECL (marker);
 
   TMP_MARK (marker);
@@ -98,25 +98,11 @@ mpz_gcdext (g, s, t, a, b)
     gsize = mpn_gcdext (tmp_gp, tmp_sp, &tmp_ssize, up, usize, vp, vsize);
   ssize = ABS (tmp_ssize);
 
-  if (ALLOC (g) < gsize)
-    _mpz_realloc (g, gsize);
-  gp = PTR (g);
-  MPN_COPY (gp, tmp_gp, gsize);
-  SIZ (g) = gsize;
+  PTR (&gtmp) = tmp_gp;
+  SIZ (&gtmp) = gsize;
 
-  if (ss == NULL)
-    {
-      ss = &tmp_struct;
-      MPZ_TMP_INIT (ss, ssize);
-    }
-  else
-    {
-      if (ALLOC (ss) < ssize)
-	_mpz_realloc (ss, ssize);
-    }
-  sp = PTR (ss);
-  MPN_COPY (sp, tmp_sp, ssize);
-  SIZ (ss) = (tmp_ssize ^ SIZ (u)) >= 0 ? ssize : -ssize;
+  PTR (&stmp) = tmp_sp;
+  SIZ (&stmp) = (tmp_ssize ^ SIZ (u)) >= 0 ? ssize : -ssize;
 
   if (tt != NULL)
     {
@@ -126,11 +112,26 @@ mpz_gcdext (g, s, t, a, b)
 	{
 	  mpz_t x;
 	  MPZ_TMP_INIT (x, ssize + usize + 1);
-	  mpz_mul (x, ss, u);
-	  mpz_sub (x, g, x);
+	  mpz_mul (x, &stmp, u);
+	  mpz_sub (x, &gtmp, x);
 	  mpz_tdiv_q (tt, x, v);
 	}
     }
+
+  if (ss != NULL)
+    {
+      if (ALLOC (ss) < ssize)
+	_mpz_realloc (ss, ssize);
+      sp = PTR (ss);
+      MPN_COPY (sp, tmp_sp, ssize);
+      SIZ (ss) = SIZ (&stmp);
+    }
+
+  if (ALLOC (g) < gsize)
+    _mpz_realloc (g, gsize);
+  gp = PTR (g);
+  MPN_COPY (gp, tmp_gp, gsize);
+  SIZ (g) = gsize;
 
   TMP_FREE (marker);
 }
