@@ -132,8 +132,12 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 		}
 	      else
 		{
+#if HAVE_NATIVE_mpn_mul_1c
+		  cy_limb = mpn_mul_1c (rp, rp, size, big_base, res_digit);
+#else
 		  cy_limb = mpn_mul_1 (rp, rp, size, big_base);
-		  cy_limb += mpn_add_1 (rp, rp, size, res_digit);
+		  mpn_incr_u (rp, res_digit);
+#endif
 		  if (cy_limb != 0)
 		    rp[size++] = cy_limb;
 		}
@@ -169,8 +173,12 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 	    }
 	  else
 	    {
+#if HAVE_NATIVE_mpn_mul_1c
+	      cy_limb = mpn_mul_1c (rp, rp, size, big_base, res_digit);
+#else
 	      cy_limb = mpn_mul_1 (rp, rp, size, big_base);
-	      cy_limb += mpn_add_1 (rp, rp, size, res_digit);
+	      mpn_incr_u (rp, res_digit);
+#endif
 	      if (cy_limb != 0)
 		rp[size++] = cy_limb;
 	    }
