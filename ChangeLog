@@ -19,6 +19,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-03  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/refmpn.c (refmpn_overlap_p): Reverse return values.
+
 2001-11-02  Kevin Ryde  <kevin@swox.se>
 
 	* tune/many.pl: Setup CFLAGS_PIC and ASMFLAGS_PIC, since that's no
