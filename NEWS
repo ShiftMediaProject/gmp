@@ -12,6 +12,9 @@ Changes between MP version 3.1.1 and 3.2
 * Updated mpfr.
 * Jacobi symbol accepts non-positive denominators, and new mpz_kronecker added.
 * Speed improvements for mpz_powm.
+* New integer functions: mpz_si_pow_ui, mpz_cdiv_q_2exp, mpz_cdiv_r_2exp.
+* New divisibility tests: mpz_divisible_p, mpz_divisible_ui_p,
+  mpz_divisible_2exp_p.
 * New rational functions: mpq_abs, mpq_div_2exp, mpq_mul_2exp, mpq_set_f.
 * New float conversion functions: mpf_get_si, mpf_get_ui.
 * New float test functions: mpf_integer_p, mpf_fits_sint_p, mpf_fits_slong_p,
