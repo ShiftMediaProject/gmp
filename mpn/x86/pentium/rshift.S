@@ -58,7 +58,7 @@ Lnormal:
 	movl	(%esi),%edx
 	addl	$4,%esi
 	xorl	%eax,%eax
-	shrdl	%cl,%edx,%eax		/* compute carry limb */
+	INSND(shrd,l	,R(eax),R(edx),R(cl))		/* compute carry limb */
 	pushl	%eax			/* push carry limb onto stack */
 
 	decl	%ebp
@@ -74,29 +74,29 @@ Loop:	movl	28(%edi),%eax		/* fetch destination cache line */
 
 	movl	(%esi),%eax
 	movl	4(%esi),%edx
-	shrdl	%cl,%eax,%ebx
-	shrdl	%cl,%edx,%eax
+	INSND(shrd,l	,R(ebx),R(eax),R(cl))
+	INSND(shrd,l	,R(eax),R(edx),R(cl))
 	movl	%ebx,(%edi)
 	movl	%eax,4(%edi)
 
 	movl	8(%esi),%ebx
 	movl	12(%esi),%eax
-	shrdl	%cl,%ebx,%edx
-	shrdl	%cl,%eax,%ebx
+	INSND(shrd,l	,R(edx),R(ebx),R(cl))
+	INSND(shrd,l	,R(ebx),R(eax),R(cl))
 	movl	%edx,8(%edi)
 	movl	%ebx,12(%edi)
 
 	movl	16(%esi),%edx
 	movl	20(%esi),%ebx
-	shrdl	%cl,%edx,%eax
-	shrdl	%cl,%ebx,%edx
+	INSND(shrd,l	,R(eax),R(edx),R(cl))
+	INSND(shrd,l	,R(edx),R(ebx),R(cl))
 	movl	%eax,16(%edi)
 	movl	%edx,20(%edi)
 
 	movl	24(%esi),%eax
 	movl	28(%esi),%edx
-	shrdl	%cl,%eax,%ebx
-	shrdl	%cl,%edx,%eax
+	INSND(shrd,l	,R(ebx),R(eax),R(cl))
+	INSND(shrd,l	,R(eax),R(edx),R(cl))
 	movl	%ebx,24(%edi)
 	movl	%eax,28(%edi)
 

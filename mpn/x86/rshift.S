@@ -49,7 +49,7 @@ C_SYMBOL_NAME(__mpn_rshift:)
 
 	movl	(%esi,%edx,4),%ebx	/* read least significant limb */
 	xorl	%eax,%eax
-	shrdl	%cl,%ebx,%eax		/* compute carry limb */
+	INSND(shrd,l	,R(eax),R(ebx),R(cl))	/* compute carry limb */
 	incl	%edx
 	jz	Lend
 	pushl	%eax			/* push carry limb onto stack */
@@ -59,11 +59,11 @@ C_SYMBOL_NAME(__mpn_rshift:)
 
 	ALIGN (3)
 Loop:	movl	(%esi,%edx,4),%ebx	/* load next higher limb */
-	shrdl	%cl,%ebx,%eax		/* compute result limb */
+	INSND(shrd,l	,R(eax),R(ebx),R(cl))	/* compute result limb */
 	movl	%eax,(%edi,%edx,4)	/* store it */
 	incl	%edx
 L1:	movl	(%esi,%edx,4),%eax
-	shrdl	%cl,%eax,%ebx
+	INSND(shrd,l	,R(ebx),R(eax),R(cl))
 	movl	%ebx,(%edi,%edx,4)
 	incl	%edx
 	jnz	Loop
