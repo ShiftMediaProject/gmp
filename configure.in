@@ -1725,22 +1725,31 @@ AC_SUBST(TUNE_SQR_OBJ)
 
 
 # Configs for demos/calc directory
-AM_CONFIG_HEADER(demos/calc/calc-config.h:demos/calc/calc-config-h.in)
+#
+# AC_SUBST is used here since with AM_CONFIG_HEADER automake would put
+# demos/calc in the default $(DEFAULT_INCLUDES) for every directory,
+# which would look very strange.  Likewise demos/expr below.
+#
+AC_CONFIG_FILES(demos/calc/calc-config.h:demos/calc/calc-config-h.in)
 use_readline=$with_readline
 if test $with_readline = detect; then
   AC_CHECK_LIB(readline, readline, use_readline=yes)
 fi
 if test $use_readline = yes; then
-  AC_DEFINE(WITH_READLINE, 1, [See demos/calc/calc-config.h])
+  AC_SUBST(WITH_READLINE_01, 1)
   AC_SUBST(LIBREADLINE, -lreadline)
+else
+  WITH_READLINE_01=0
 fi
 AC_PROG_YACC
 AM_PROG_LEX
 
 # Configs for demos/expr directory
-AM_CONFIG_HEADER(demos/expr/expr-config.h:demos/expr/expr-config-h.in)
+AC_CONFIG_FILES(demos/expr/expr-config.h:demos/expr/expr-config-h.in)
 if test $enable_mpfr = yes; then
-  AC_DEFINE(HAVE_MPFR, 1, [Whether mpfr functions and headers are available.])
+  AC_SUBST(HAVE_MPFR_01, 1)
+else
+  HAVE_MPFR_01=0
 fi
 
 
