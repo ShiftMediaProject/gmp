@@ -1,3 +1,7 @@
+2000-10-04  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (sparc64-*-linux*): Set path according to CC64.
+
 2000-10-04  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_CHECK_ASM_UNDERSCORE): Use LABEL_SUFFIX, not a
