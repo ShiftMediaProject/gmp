@@ -199,6 +199,8 @@ double speed_mpn_mul_n_sqr _PROTO ((struct speed_params *s));
 double speed_mpn_nand_n _PROTO ((struct speed_params *s));
 double speed_mpn_nior_n _PROTO ((struct speed_params *s));
 double speed_mpn_popcount _PROTO ((struct speed_params *s));
+double speed_mpn_preinv_divrem_1 _PROTO ((struct speed_params *s));
+double speed_mpn_preinv_divrem_1f _PROTO ((struct speed_params *s));
 double speed_mpn_preinv_mod_1 _PROTO ((struct speed_params *s));
 double speed_redc _PROTO ((struct speed_params *s));
 double speed_mpn_rshift _PROTO ((struct speed_params *s));
@@ -581,6 +583,30 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 #define SPEED_ROUTINE_MPN_DIVREM_1CF(function) \
   SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->size, s->xp, 0, s->r, 0))
+
+
+#define SPEED_ROUTINE_MPN_PREINV_DIVREM_1_CALL(call)    \
+  {                                                     \
+    unsigned   shift;                                   \
+    mp_limb_t  dinv;                                    \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 0);                 \
+    SPEED_RESTRICT_COND (s->r != 0);                    \
+                                                        \
+    count_leading_zeros (shift, s->r);                  \
+    invert_limb (dinv, s->r << shift);                  \
+                                                        \
+    SPEED_ROUTINE_MPN_UNARY_1_CALL (call);              \
+  }                                                     \
+
+#define SPEED_ROUTINE_MPN_PREINV_DIVREM_1(function)             \
+  SPEED_ROUTINE_MPN_PREINV_DIVREM_1_CALL                        \
+  ((*function) (wp, 0, s->xp, s->size, s->r, dinv, shift))
+
+/* s->size limbs worth of fraction part */
+#define SPEED_ROUTINE_MPN_PREINV_DIVREM_1F(function)            \
+  SPEED_ROUTINE_MPN_PREINV_DIVREM_1_CALL                        \
+  ((*function) (wp, s->size, s->xp, 0, s->r, dinv, shift))
 
 
 /* For mpn_lshift, mpn_rshift, mpn_mul_1, with r, or similar. */

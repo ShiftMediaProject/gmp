@@ -544,15 +544,16 @@ validate_sqrtrem (void)
 #define TYPE_DIVMOD_1C        28
 #define TYPE_DIVREM_1         29
 #define TYPE_DIVREM_1C        30
-#define TYPE_PREINV_MOD_1     31
-#define TYPE_MOD_34LSUB1      32
+#define TYPE_PREINV_DIVREM_1  31
+#define TYPE_PREINV_MOD_1     32
+#define TYPE_MOD_34LSUB1      33
 
-#define TYPE_DIVEXACT_1       33
-#define TYPE_DIVEXACT_BY3     34
-#define TYPE_DIVEXACT_BY3C    35
+#define TYPE_DIVEXACT_1       34
+#define TYPE_DIVEXACT_BY3     35
+#define TYPE_DIVEXACT_BY3C    36
 
-#define TYPE_MODEXACT_1_ODD   36
-#define TYPE_MODEXACT_1C_ODD  37
+#define TYPE_MODEXACT_1_ODD   37
+#define TYPE_MODEXACT_1C_ODD  38
 
 #define TYPE_GCD              40
 #define TYPE_GCD_1            41
@@ -801,6 +802,10 @@ param_init (void)
   COPY (TYPE_DIVREM_1);
   p->carry = CARRY_DIVISOR;
   REFERENCE (refmpn_divrem_1c);
+
+  p = &param[TYPE_PREINV_DIVREM_1];
+  COPY (TYPE_DIVREM_1);
+  REFERENCE (refmpn_preinv_divrem_1);
 
   p = &param[TYPE_PREINV_MOD_1];
   p->retval = 1;
@@ -1190,6 +1195,9 @@ const struct choice_t choice_array[] = {
   { TRY_FUNFUN(mpn_xnor_n), TYPE_XNOR_N },
 
   { TRY(mpn_divrem_1),     TYPE_DIVREM_1 },
+#if USE_PREINV_DIVREM_1
+  { TRY(mpn_preinv_divrem_1), TYPE_PREINV_DIVREM_1 },
+#endif
   { TRY(mpn_mod_1),        TYPE_MOD_1 },
   { TRY(mpn_preinv_mod_1), TYPE_PREINV_MOD_1 },
 #if HAVE_NATIVE_mpn_divrem_1c
@@ -1753,6 +1761,16 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_DIVREM_1C:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, size2, e->s[0].p, size, divisor, carry);
+    break;
+  case TYPE_PREINV_DIVREM_1:
+    {
+      mp_limb_t  dinv;
+      unsigned   shift;
+      shift = refmpn_count_leading_zeros (divisor);
+      dinv = refmpn_invert_limb (divisor << shift);
+      e->retval = CALLING_CONVENTIONS (function)
+        (e->d[0].p, size2, e->s[0].p, size, divisor, dinv, shift);
+    }
     break;
   case TYPE_MOD_1:
   case TYPE_MODEXACT_1_ODD:
