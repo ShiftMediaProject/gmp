@@ -826,7 +826,10 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
 
    The table lookup gives an inverse with the low 8 bits valid, and each
    multiply step doubles the number of bits.  See Jebelean's exact division
-   paper, end of section 4 (reference in gmp.texi). */
+   paper, end of section 4 (reference in gmp.texi).
+
+   Possible enhancement: Could use UHWtype until the last step, if half-size
+   multiplies are faster (might help under _LONG_LONG_LIMB).  */
 
 #define modlimb_invert_table  __gmp_modlimb_invert_table
 extern const unsigned char  modlimb_invert_table[128];
