@@ -265,7 +265,7 @@ void
 #if __STDC__
 _gmp_rand (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
 #else
-_gmp_rand_getraw (rp, rstate, nbits)
+_gmp_rand (rp, rstate, nbits)
      mp_ptr rp;
      gmp_randstate_t rstate;
      unsigned long int nbits;
