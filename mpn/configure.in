@@ -119,6 +119,10 @@ case "${target}" in
 	target_makefile_frag=config/t-freebsd ;;
   rs6000-*-aix[456789]* | rs6000-*-aix3.2.[456789])
     target_makefile_frag=config/t-pwr-aix ;;
+  ppc601-*-aix[456789]* | ppc601-*-aix3.2.[456789] | \
+  ppc60[234]*-*-aix[456789]* | ppc60[234]*-*-aix3.2.[456789] | \
+  powerpc*-*-aix[456789]* | powerpc*-*-aix3.2.[456789])
+    target_makefile_frag=config/t-ppc-aix ;;
 esac
 
 
