@@ -118,19 +118,19 @@ mp_size_t  gcd_accel_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcdext_threshold[2] = { MP_SIZE_T_MAX };
 
 
-#ifndef KARATSUBA_SQR_THRESHOLD_MAX
-#define KARATSUBA_SQR_THRESHOLD_MAX  0 /* meaning no limit */
+#ifndef KARATSUBA_SQR_MAX
+#define KARATSUBA_SQR_MAX  0 /* meaning no limit */
 #endif
 
 mp_size_t  mul_max[MAX_TABLE] = { 0, TOOM3_MUL_THRESHOLD_LIMIT };
-mp_size_t  sqr_max[MAX_TABLE] = { KARATSUBA_SQR_THRESHOLD_MAX, 0 };
+mp_size_t  sqr_max[MAX_TABLE] = { KARATSUBA_SQR_MAX, 0 };
 
 
 const char *mul_names[MAX_TABLE] = {
   "KARATSUBA_MUL_THRESHOLD", "TOOM3_MUL_THRESHOLD"
 };
 const char *sqr_names[MAX_TABLE] = {
-  "KARATSUBA_MUL_THRESHOLD", "TOOM3_MUL_THRESHOLD"
+  "KARATSUBA_SQR_THRESHOLD", "TOOM3_SQR_THRESHOLD"
 };
 const char *bz_names[1] = { "BZ_THRESHOLD" };
 const char *fib_names[1] = { "FIB_THRESHOLD" };
@@ -230,11 +230,15 @@ one (speed_function_t function, mp_size_t table[], size_t max_table,
         {
           double   ti, tiplus1, d;
 
+          /* If there's a size limit and it's reached then it should still
+             be sensible to analyze the data since we want the threshold put
+             either at or near the limit.  */
           if (table_max_size != NULL && table_max_size[i] != 0
-              && s.size > table_max_size[i])
+              && s.size >= table_max_size[i])
             {
-              fprintf (stderr, "Exceeded maximum size (%ld) without finding a threshold\n", table_max_size[i]);
-              abort ();
+              if (option_trace)
+                printf (stderr, "Reached maximum size (%ld) without otherwise stopping\n", table_max_size[i]);
+              break;
             }
 
           /*
