@@ -21,6 +21,9 @@ MA 02111-1307, USA.
 
 2001-10-02  Kevin Ryde  <kevin@swox.se>
 
+	* tests/mpz/t-popcount.c (check_data): Use "~ (unsigned long) 0" to
+	avoid compiler warnings on sco.
+
 	* mpbsd/Makefile.am: Compile mpz files directly, no copying.
 	Use mpz/add.c and mpz/sub.c rather than mpz/aors.c.
 	(INCLUDES): Remove -DOPERATION_$*, no longer needed (by mpz).
