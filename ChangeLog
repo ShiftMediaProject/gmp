@@ -1,3 +1,8 @@
+2000-05-25  Linus Nordberg  <linus@swox.se>
+
+	* mpbsd/tests/dummy.c (main): Call exit() instead of doing return
+	(some old SysV machines don't get this correct, I've heard.)
+
 2000-05-25  Kevin Ryde  <kevin@swox.se>
 
 	* mpf/iset_str.c: Initialize _mp_size and _mp_exp to 0, in case no
