@@ -3793,7 +3793,7 @@ Convert @{@var{s1p}, @var{s1n}@} to a raw unsigned char array in base
 ASCII; to convert it to printable format, add the ASCII codes for @samp{0} or
 @samp{A}, depending on the base and range.
 
-The area at @var{s1p} is clobbered.
+The area @{@var{s1p}, @var{s1n}+1@} is clobbered.
 
 Return the number of characters in @var{str}.
 
