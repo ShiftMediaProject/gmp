@@ -29,7 +29,8 @@
      for an mp_exp_t.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
-<li> One reuse case is missing from mpX/tests/reuse.c: <code>mpz_XXX(a,a,a)</code>.
+<li> One reuse case is missing from mpX/tests/reuse.c:
+     <code>mpz_XXX(a,a,a)</code>.
 <li> When printing mpf_t numbers with exponents &gt;2^53 on machines with
      64-bit <code>mp_exp_t</code>, the precision of
      <code>__mp_bases[base].chars_per_bit_exactly</code> is insufficient and
@@ -304,6 +305,7 @@
      modular inverse of the base.  But what to do if an inverse doesn't exist
      (base and modulus have common factors)?  Throw a divide by zero maybe, or
      return a flag like <code>mpz_invert</code> does.
+<li> <code>mpz_nthprime</code>.
 </ul>
 
 
@@ -360,6 +362,7 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
      mpn/generic/pow_ui.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
 <li> Rewrite the various mpX_random* to use the new GMP random generators.
+<li> Merge mpn/pa64 and pa64w.
 </ul>
 
 
