@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2003-03-17  Torbjorn Granlund  <tege@swox.com>
 
+	* Makefile.am (libgmp_la_SOURCES): Add mp_dv_tab.c.
+	(libmp_la_SOURCES): Add mp_dv_tab.c.
+
 	* mpn/alpha/invert_limb.asm: Add a few comments.
 
 	* mp_dv_tab.c: New file, defining __gmp_digit_value_tab.

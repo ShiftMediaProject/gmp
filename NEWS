@@ -27,6 +27,7 @@ Changes between MP version 4.1.2 and 4.2
 * New --enable-profiling=instrument build option.
 * New functions: mp_get_memory_functions.
 * gmp_scanf and friends accept C99 hex floats.
+* Numbers input and output can now be in bases up to 62.
 
 Changes between MP version 4.1.1 and 4.1.2
 
