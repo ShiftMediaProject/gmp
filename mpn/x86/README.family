@@ -206,15 +206,16 @@ and mpn_copyb), the calculations change as follows.
 
 
 
-OLD GAS 2.9.1
+GAS 2.9.1
 
-This version, which comes with RedHat Linux 6.1, doesn't support divisions
-in constants, for example the following gives an error
+RedHat Linux 6.1 has a version of this which doesn't support divisions in
+constants, for example the following gives an error
 
 	addl	$32/2, %eax
 
-gas 2.91 and up support divisions, but to work everywhere expressions with
-divisions should be done with m4 eval() instead.
+The FreeBSD 3.3 and 3.4 versions of the same 2.9.1 support divisions, and
+even the old gas 1.92.3 does too in fact.  But in order to work everywhere,
+expressions with divisions should be done with m4 eval() instead.
 
 
 
