@@ -87,6 +87,7 @@ main ()
 
   for (test = 0; ; test++)
     {
+      printf ("%d\n", test);
 #ifdef RANDOM
       nsize = random () % (2 * SIZE) + 1;
       dsize = random () % nsize + 1;

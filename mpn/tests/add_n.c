@@ -120,8 +120,8 @@ main (argc, argv)
 {
   mp_limb_t s1[SIZE];
   mp_limb_t s2[SIZE];
-  mp_limb_t dx[SIZE+1];
-  mp_limb_t dy[SIZE+1];
+  mp_limb_t dx[SIZE+2];
+  mp_limb_t dy[SIZE+2];
   int cyx, cyy;
   int i;
   long t0, t;
@@ -136,59 +136,60 @@ main (argc, argv)
       size = SIZE;
 #endif
 
+      dx[0] = 0x87654321;
+      dy[0] = 0x87654321;
+      dx[size+1] = 0x12345678;
+      dy[size+1] = 0x12345678;
+
+#if TIMES != 1
+      mpn_random (s1, size);
+      mpn_random (s2, size);
+
+      t0 = cputime();
+      for (i = 0; i < TIMES; i++)
+	refmpn_add_n (dx+1, s1, s2, size);
+      t = cputime() - t0;
+      printf ("refmpn_add_n:   %ldms (%.2f cycles/limb)\n",
+	      t, ((double) t * CLOCK) / (OPS * 1000.0));
+
+      t0 = cputime();
+      for (i = 0; i < TIMES; i++)
+	mpn_add_n (dx+1, s1, s2, size);
+      t = cputime() - t0;
+      printf ("mpn_add_n:   %ldms (%.2f cycles/limb)\n",
+	      t, ((double) t * CLOCK) / (OPS * 1000.0));
+#endif
+
+#ifndef NOCHECK
       mpn_random2 (s1, size);
       mpn_random2 (s2, size);
-
-      dx[size] = 0x12345678;
-      dy[size] = 0x12345678;
 
 #ifdef PRINT
       mpn_print (s1, size);
       mpn_print (s2, size);
 #endif
-      t0 = cputime();
-      for (i = 0; i < TIMES; i++)
-	cyx = refmpn_add_n (dx, s1, s2, size);
-      t = cputime() - t0;
-#if TIMES != 1
-      printf ("refmpn_add_n:   %ldms (%.2f cycles/limb)\n",
-	      t,
-	      ((double) t * CLOCK) / (OPS * 1000.0));
-#endif
-#ifdef PRINT
-      printf ("%d ", cyx); mpn_print (dx, size);
-#endif
 
-      t0 = cputime();
-      for (i = 0; i < TIMES; i++)
-	cyx = mpn_add_n (dx, s1, s2, size);
-      t = cputime() - t0;
-#if TIMES != 1
-      printf ("mpn_add_n:   %ldms (%.2f cycles/limb)\n",
-	      t,
-	      ((double) t * CLOCK) / (OPS * 1000.0));
-#endif
-#ifdef PRINT
-      printf ("%d ", cyx); mpn_print (dx, size);
-#endif
-
-#ifndef NOCHECK
       /* Put garbage in the destination.  */
       for (i = 0; i < size; i++)
 	{
-	  dx[i] = 0x7654321;
-	  dy[i] = 0x1234567;
+	  dx[i+1] = 0xdead;
+	  dy[i+1] = 0xbeef;
 	}
 
-      cyx = refmpn_add_n (dx, s1, s2, size);
-      cyy = mpn_add_n (dy, s1, s2, size);
-      if (cyx != cyy || mpn_cmp (dx, dy, size) != 0
-	  || dx[size] != 0x12345678 || dy[size] != 0x12345678)
+      cyx = refmpn_add_n (dx+1, s1, s2, size);
+      cyy = mpn_add_n (dy+1, s1, s2, size);
+#ifdef PRINT
+      printf ("%d ", cyx); mpn_print (dx+1, size);
+      printf ("%d ", cyy); mpn_print (dy+1, size);
+#endif
+      if (cyx != cyy || mpn_cmp (dx, dy, size+2) != 0
+	  || dx[0] != 0x87654321 || dx[size+1] != 0x12345678)
 	{
 #ifndef PRINT
-	  printf ("%d ", cyx); mpn_print (dx, size);
-	  printf ("%d ", cyy); mpn_print (dy, size);
+	  printf ("%d ", cyx); mpn_print (dx+1, size);
+	  printf ("%d ", cyy); mpn_print (dy+1, size);
 #endif
+	  printf ("TEST NUMBER %d\n", test);
 	  abort();
 	}
 #endif

@@ -121,6 +121,7 @@ main (argc, argv)
   int test;
   mp_limb_t xlimb;
   mp_size_t size;
+  double cyc;
 
   for (test = 0; ; test++)
     {
@@ -130,17 +131,38 @@ main (argc, argv)
       size = SIZE;
 #endif
 
-      mpn_random2 (s1, size);
-      mpn_random2 (dy+1, size);
-
-      if (random () % 0x100 == 0)
-	xlimb = 0;
-      else
-	mpn_random2 (&xlimb, 1);
-
       dy[size+1] = 0x12345678;
       dy[0] = 0x87654321;
 
+#if TIMES != 1
+      mpn_random (&xlimb, 1);
+      mpn_random (s1, size);
+      mpn_random (dy+1, size);
+
+      MPN_COPY (dx, dy, size+2);
+      t0 = cputime();
+      for (i = 0; i < TIMES; i++)
+	refmpn_mul_1 (dx+1, s1, size, xlimb);
+      t = cputime() - t0;
+      cyc = ((double) t * CLOCK) / (OPS * 1000.0);
+      printf ("refmpn_mul_1: %5ldms (%.2f cycles/limb) [%.2f Gb/s]\n",
+	      t, cyc,
+	      CLOCK/cyc*BITS_PER_MP_LIMB*BITS_PER_MP_LIMB/1e9);
+
+      MPN_COPY (dx, dy, size+2);
+      t0 = cputime();
+      for (i = 0; i < TIMES; i++)
+	mpn_mul_1 (dx+1, s1, size, xlimb);
+      t = cputime() - t0;
+      cyc = ((double) t * CLOCK) / (OPS * 1000.0);
+      printf ("mpn_mul_1:    %5ldms (%.2f cycles/limb) [%.2f Gb/s]\n",
+	      t, cyc,
+	      CLOCK/cyc*BITS_PER_MP_LIMB*BITS_PER_MP_LIMB/1e9);
+#endif
+
+      mpn_random2 (&xlimb, 1);
+      mpn_random2 (s1, size);
+      mpn_random2 (dy+1, size);
 #if defined (PRINT) || defined (XPRINT)
       printf ("xlimb=%*lX\n", (int) (2 * sizeof(mp_limb_t)), xlimb);
 #endif
@@ -149,27 +171,6 @@ main (argc, argv)
 #endif
 
       MPN_COPY (dx, dy, size+2);
-      t0 = cputime();
-      for (i = 0; i < TIMES; i++)
-	cyx = refmpn_mul_1 (dx+1, s1, size, xlimb);
-      t = cputime() - t0;
-#if TIMES != 1
-      printf ("refmpn_mul_1: %5ldms (%.2f cycles/limb)\n",
-	      t,
-	      ((double) t * CLOCK) / (OPS * 1000.0));
-#endif
-
-      MPN_COPY (dx, dy, size+2);
-      t0 = cputime();
-      for (i = 0; i < TIMES; i++)
-	cyy = mpn_mul_1 (dx+1, s1, size, xlimb);
-      t = cputime() - t0;
-#if TIMES != 1
-      printf ("mpn_mul_1:    %5ldms (%.2f cycles/limb)\n",
-	      t,
-	      ((double) t * CLOCK) / (OPS * 1000.0));
-#endif
-
       cyx = refmpn_mul_1 (dx+1, s1, size, xlimb);
       cyy = mpn_mul_1 (dy+1, s1, size, xlimb);
 
@@ -190,6 +191,7 @@ main (argc, argv)
 	  printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyy);
 	  mpn_print (dy+1, size);
 #endif
+	  printf ("TEST NUMBER %d\n", test);
 	  abort();
 	}
 #endif
