@@ -1,6 +1,7 @@
 # Makefile.in generated automatically by automake 1.4a from Makefile.am
 
-# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -31,8 +32,6 @@ mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
 
-DESTDIR =
-
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -59,12 +58,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 
 @SET_MAKE@
-build_alias = @build_alias@
-build_triplet = @build@
 host_alias = @host_alias@
 host_triplet = @host@
-target_alias = @target_alias@
-target_triplet = @target@
 AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AR = @AR@
@@ -78,7 +73,9 @@ CXX = @CXX@
 CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
+ECHO = @ECHO@
 EXEEXT = @EXEEXT@
+GMP_LDFLAGS = @GMP_LDFLAGS@
 LIBM = @LIBM@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
@@ -124,6 +121,9 @@ AUTOMAKE_OPTIONS = gnu $(top_builddir)/ansi2knr no-dependencies
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
+check_PROGRAMS = t-dc
+TESTS = $(check_PROGRAMS)
+
 EXTRA_PROGRAMS = \
   add_n addmul_1 copy divmod_1 divrem lshift mul_1 rshift \
   sub_n submul_1 tst-addsub try
@@ -149,6 +149,7 @@ EXTRA_PROGRAMS =  add_n$(EXEEXT) addmul_1$(EXEEXT) copy$(EXEEXT) \
 divmod_1$(EXEEXT) divrem$(EXEEXT) lshift$(EXEEXT) mul_1$(EXEEXT) \
 rshift$(EXEEXT) sub_n$(EXEEXT) submul_1$(EXEEXT) tst-addsub$(EXEEXT) \
 try$(EXEEXT)
+check_PROGRAMS =  t-dc$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
@@ -205,6 +206,11 @@ submul_1_OBJECTS =  submul_1$U.$(OBJEXT)
 submul_1_LDADD = $(LDADD)
 submul_1_DEPENDENCIES =  $(top_builddir)/libgmp.la
 submul_1_LDFLAGS = 
+t_dc_SOURCES = t-dc.c
+t_dc_OBJECTS =  t-dc$U.$(OBJEXT)
+t_dc_LDADD = $(LDADD)
+t_dc_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_dc_LDFLAGS = 
 am_try_OBJECTS =  try$U.$(OBJEXT) ref$U.$(OBJEXT) trace$U.$(OBJEXT) \
 spinner$U.$(OBJEXT)
 try_OBJECTS =  $(am_try_OBJECTS)
@@ -220,16 +226,16 @@ CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  add_n.c addmul_1.c copy.c divmod_1.c divrem.c lshift.c \
-mul_1.c rshift.c sub_n.c submul_1.c $(try_SOURCES) tst-addsub.c
+mul_1.c rshift.c sub_n.c submul_1.c t-dc.c $(try_SOURCES) tst-addsub.c
+depcomp = 
 DIST_COMMON =  README $(EXTRA_HEADERS) Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-depcomp = 
-SOURCES = add_n.c addmul_1.c copy.c divmod_1.c divrem.c lshift.c mul_1.c rshift.c sub_n.c submul_1.c $(try_SOURCES) tst-addsub.c
-OBJECTS = add_n$U.$(OBJEXT) addmul_1$U.$(OBJEXT) copy$U.$(OBJEXT) divmod_1$U.$(OBJEXT) divrem$U.$(OBJEXT) lshift$U.$(OBJEXT) mul_1$U.$(OBJEXT) rshift$U.$(OBJEXT) sub_n$U.$(OBJEXT) submul_1$U.$(OBJEXT) $(am_try_OBJECTS) tst-addsub$U.$(OBJEXT)
+SOURCES = add_n.c addmul_1.c copy.c divmod_1.c divrem.c lshift.c mul_1.c rshift.c sub_n.c submul_1.c t-dc.c $(try_SOURCES) tst-addsub.c
+OBJECTS = add_n$U.$(OBJEXT) addmul_1$U.$(OBJEXT) copy$U.$(OBJEXT) divmod_1$U.$(OBJEXT) divrem$U.$(OBJEXT) lshift$U.$(OBJEXT) mul_1$U.$(OBJEXT) rshift$U.$(OBJEXT) sub_n$U.$(OBJEXT) submul_1$U.$(OBJEXT) t-dc$U.$(OBJEXT) $(am_try_OBJECTS) tst-addsub$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -241,6 +247,15 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
+
+mostlyclean-checkPROGRAMS:
+
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+
+distclean-checkPROGRAMS:
+
+maintainer-clean-checkPROGRAMS:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
@@ -318,6 +333,10 @@ submul_1$(EXEEXT): $(submul_1_OBJECTS) $(submul_1_DEPENDENCIES)
 	@rm -f submul_1$(EXEEXT)
 	$(LINK) $(submul_1_LDFLAGS) $(submul_1_OBJECTS) $(submul_1_LDADD) $(LIBS)
 
+t-dc$(EXEEXT): $(t_dc_OBJECTS) $(t_dc_DEPENDENCIES)
+	@rm -f t-dc$(EXEEXT)
+	$(LINK) $(t_dc_LDFLAGS) $(t_dc_OBJECTS) $(t_dc_LDADD) $(LIBS)
+
 try$(EXEEXT): $(try_OBJECTS) $(try_DEPENDENCIES)
 	@rm -f try$(EXEEXT)
 	$(LINK) $(try_LDFLAGS) $(try_OBJECTS) $(try_LDADD) $(LIBS)
@@ -355,6 +374,8 @@ sub_n_.c: sub_n.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub_n.c; then echo $(srcdir)/sub_n.c; else echo sub_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_n_.c
 submul_1_.c: submul_1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/submul_1.c; then echo $(srcdir)/submul_1.c; else echo submul_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > submul_1_.c
+t-dc_.c: t-dc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-dc.c; then echo $(srcdir)/t-dc.c; else echo t-dc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-dc_.c
 trace_.c: trace.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/trace.c; then echo $(srcdir)/trace.c; else echo trace.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > trace_.c
 try_.c: try.c $(ANSI2KNR)
@@ -366,9 +387,9 @@ copy_.$(OBJEXT) copy_.lo divmod_1_.$(OBJEXT) divmod_1_.lo \
 divrem_.$(OBJEXT) divrem_.lo lshift_.$(OBJEXT) lshift_.lo \
 mul_1_.$(OBJEXT) mul_1_.lo ref_.$(OBJEXT) ref_.lo rshift_.$(OBJEXT) \
 rshift_.lo spinner_.$(OBJEXT) spinner_.lo sub_n_.$(OBJEXT) sub_n_.lo \
-submul_1_.$(OBJEXT) submul_1_.lo trace_.$(OBJEXT) trace_.lo \
-try_.$(OBJEXT) try_.lo tst-addsub_.$(OBJEXT) tst-addsub_.lo : \
-$(ANSI2KNR)
+submul_1_.$(OBJEXT) submul_1_.lo t-dc_.$(OBJEXT) t-dc_.lo \
+trace_.$(OBJEXT) trace_.lo try_.$(OBJEXT) try_.lo tst-addsub_.$(OBJEXT) \
+tst-addsub_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
@@ -379,7 +400,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	  done | \
 	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	mkid -f$$here/ID $$unique $(LISP)
+	mkid -fID $$unique $(LISP)
 
 TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
@@ -402,6 +423,60 @@ distclean-tags:
 	-rm -f TAGS ID
 
 maintainer-clean-tags:
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; \
+	srcdir=$(srcdir); export srcdir; \
+	list='$(TESTS)'; \
+	if test -n "$$list"; then \
+	  for tst in $$list; do \
+	    if test -f ./$$tst; then dir=./; \
+	    elif test -f $$tst; then dir=; \
+	    else dir="$(srcdir)/"; fi; \
+	    if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *" $$tst "*) \
+	        xpass=`expr $$xpass + 1`; \
+	        failed=`expr $$failed + 1`; \
+	        echo "XPASS: $$tst"; \
+	      ;; \
+	      *) \
+	        echo "PASS: $$tst"; \
+	      ;; \
+	      esac; \
+	    elif test $$? -ne 77; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *" $$tst "*) \
+	        xfail=`expr $$xfail + 1`; \
+	        echo "XFAIL: $$tst"; \
+	      ;; \
+	      *) \
+	        failed=`expr $$failed + 1`; \
+	        echo "FAIL: $$tst"; \
+	      ;; \
+	      esac; \
+	    fi; \
+	  done; \
+	  if test "$$failed" -eq 0; then \
+	    if test "$$xfail" -eq 0; then \
+	      banner="All $$all tests passed"; \
+	    else \
+	      banner="All $$all tests behaved as expected ($$xfail expected failures)"; \
+	    fi; \
+	  else \
+	    if test "$$xpass" -eq 0; then \
+	      banner="$$failed of $$all tests failed"; \
+	    else \
+	      banner="$$failed of $$all tests did not behave as expected ($$xpass unexpected passes)"; \
+	    fi; \
+	  fi; \
+	  dashes=`echo "$$banner" | sed s/./=/g`; \
+	  echo "$$dashes"; \
+	  echo "$$banner"; \
+	  echo "$$dashes"; \
+	  test "$$failed" -eq 0; \
+	fi
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
@@ -409,10 +484,12 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pR $$d/$$file $(distdir); \
+	    cp -pR $$d/$$file $(distdir) \
+	    || exit 1; \
 	  else \
 	    test -f $(distdir)/$$file \
-	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
 	  fi; \
 	done
 info-am:
@@ -420,6 +497,8 @@ info: info-am
 dvi-am:
 dvi: dvi-am
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 installcheck-am:
 installcheck: installcheck-am
@@ -452,23 +531,26 @@ distclean-generic:
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-compile mostlyclean-libtool mostlyclean-kr \
-		mostlyclean-tags mostlyclean-generic
+mostlyclean-am:  mostlyclean-checkPROGRAMS mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-kr mostlyclean-tags \
+		mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
-clean-am:  clean-compile clean-libtool clean-kr clean-tags clean-generic \
-		mostlyclean-am
+clean-am:  clean-checkPROGRAMS clean-compile clean-libtool clean-kr \
+		clean-tags clean-generic mostlyclean-am
 
 clean: clean-am
 
-distclean-am:  distclean-compile distclean-libtool distclean-kr \
-		distclean-tags distclean-generic clean-am
+distclean-am:  distclean-checkPROGRAMS distclean-compile \
+		distclean-libtool distclean-kr distclean-tags \
+		distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
+maintainer-clean-am:  maintainer-clean-checkPROGRAMS \
+		maintainer-clean-compile maintainer-clean-libtool \
 		maintainer-clean-kr maintainer-clean-tags \
 		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
@@ -476,11 +558,13 @@ maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool mostlyclean-kr distclean-kr \
-clean-kr maintainer-clean-kr tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+.PHONY: mostlyclean-checkPROGRAMS distclean-checkPROGRAMS \
+clean-checkPROGRAMS maintainer-clean-checkPROGRAMS mostlyclean-compile \
+distclean-compile clean-compile maintainer-clean-compile \
+mostlyclean-libtool distclean-libtool clean-libtool \
+maintainer-clean-libtool mostlyclean-kr distclean-kr clean-kr \
+maintainer-clean-kr tags mostlyclean-tags distclean-tags clean-tags \
+maintainer-clean-tags check-TESTS distdir info-am info dvi-am dvi check \
 check-am installcheck-am installcheck install-exec-am install-exec \
 install-data-am install-data install-am install uninstall-am uninstall \
 all-redirect all-am all install-strip installdirs mostlyclean-generic \
