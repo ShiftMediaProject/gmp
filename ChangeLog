@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-09-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/addmul_1.asm: Slightly enhance cross-jumping for code density.
+	* mpn/ia64/mul_1.asm: Analogous changes.
+
 2004-09-29  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (x86 ULONG_PARITY): Work around GCC change of "q" register
