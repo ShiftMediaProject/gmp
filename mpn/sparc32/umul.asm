@@ -1,4 +1,4 @@
-dnl  SPARC __umul_ppmm -- support for longlong.h for non-gcc.
+dnl  SPARC mpn_umul_ppmm -- support for longlong.h for non-gcc.
 
 dnl  Copyright (C) 1995, 1996, 2000 Free Software Foundation, Inc.
 
@@ -23,7 +23,7 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 ASM_START()
-PROLOGUE(__umul_ppmm)
+PROLOGUE(mpn_umul_ppmm)
 	wr	%g0,%o1,%y
 	sra	%o2,31,%g2	C Don't move this insn
 	and	%o1,%g2,%g2	C Don't move this insn
@@ -65,4 +65,4 @@ PROLOGUE(__umul_ppmm)
 	st	%g3,[%o0]
 	retl
 	add	%g1,%g2,%o0
-EPILOGUE(__umul_ppmm)
+EPILOGUE(mpn_umul_ppmm)
