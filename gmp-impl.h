@@ -1972,6 +1972,23 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
   } while (0)
 
 
+/* Set n to the number of significant digits an mpf of the given _mp_prec
+   field, in the given base.  This is a rounded up value, designed to ensure
+   there's enough digits to reproduce all the guaranteed part of the value.
+
+   There are prec many limbs, but the high might be only "1" so forget it
+   and just count prec-1 limbs into chars.  +1 rounds that upwards, and a
+   further +1 is because the limbs usually won't fall on digit boundaries
+   (unless the base is 2, 4 or 16).  */
+
+#define MPF_SIGNIFICANT_DIGITS(n, base, prec)                           \
+  do {                                                                  \
+    ASSERT (base >= 2 && base < numberof (__mp_bases));                 \
+    (n) = 2 + (size_t) ((((prec) - 1) * BITS_PER_MP_LIMB)               \
+                        * __mp_bases[(base)].chars_per_bit_exactly);    \
+  } while (0)
+
+
 #define DOPRNT_CONV_FIXED        1
 #define DOPRNT_CONV_SCIENTIFIC   2
 #define DOPRNT_CONV_GENERAL      3
@@ -2064,11 +2081,6 @@ struct gmp_snprintf_t {
       DOPRNT_MEMORY (ptr, len);         \
   } while (0)
 
-/* check the ndigits calculation for fixed in __gmp_doprnt_float_digits */
-#define ASSERT_DOPRNT_NDIGITS(param,ndigits,exp)                        \
-  ASSERT ((param).conv == DOPRNT_CONV_FIXED                             \
-          ? (ndigits) >= MIN (1, (exp) + (param).prec + 2) : 1);
-
 int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *funs,
                           void *data,
                           const char *fmt,
@@ -2077,25 +2089,10 @@ int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *funs,
                                   void *data,
                                   const struct doprnt_params_t *p,
                                   const char *s));
-int __gmp_doprnt_float _PROTO ((const struct doprnt_funs_t *funs,
-                                void * data,
-                                const struct doprnt_params_t *p,
-                                char *s,
-                                mp_exp_t exp));
-int __gmp_doprnt_float_digits _PROTO ((const struct doprnt_params_t *p,
-                                       mpf_srcptr f));
-int __gmp_doprnt_integer_cxx _PROTO ((const struct doprnt_funs_t *funs,
-                                      void *data,
-                                      const struct doprnt_params_t *p,
-                                      const char *s));
-int __gmp_doprnt_float_cxx _PROTO ((const struct doprnt_funs_t *funs,
-                                    void * data,
-                                    const struct doprnt_params_t *p,
-                                    char *s,
-                                    mp_exp_t exp));
-int __gmp_doprnt_float_digits_cxx _PROTO ((const struct doprnt_params_t *p,
-                                           mpf_srcptr f));
-
+int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *funs,
+                              void * data,
+                              const struct doprnt_params_t *p,
+                              mpf_srcptr f));
 #endif /* _GMP_H_HAVE_VA_LIST */
 
 
@@ -2229,21 +2226,5 @@ extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 }
 #endif
 
-
-#ifdef __cplusplus
-
-/* A little helper for a null-terminated __gmp_allocate_func string, to
-   ensure it's freed if an exception is thrown.  */
-class gmp_allocated_string {
- public:
-  char *str;
-  gmp_allocated_string(char *arg) { str = arg; }
-  ~gmp_allocated_string() { (*__gmp_free_func) (str, strlen(str)+1); }
-};
-
-class ios;
-void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o);
-
-#endif /* __cplusplus */
 
 #endif
