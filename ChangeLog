@@ -1,3 +1,37 @@
+2001-08-28  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi: Switch to GFDL.
+	(Top): Arrange copyright and conditions to appear here too.  For
+	clarity have all this before the miscellaneous macro definitions.
+	(Copying): Refer to COPYING.LIB file, mention plain GPL2 in demo
+	programs.
+	(Contributors, References): Use @appendix rather than @unnumbered.
+	(GNU Free Documentation License): New appendix.
+	(@contents): Move to start of document, use only for tex (not html).
+	(Debugging): Add leakbug.
+	(Build Options): Add pentium4.
+	(I/O of Rationals): Add mpq_inp_str.
+
+	* fdl.texi: New file, with two @appendix directive tweaks.
+	* Makefile.am (gmp_TEXINFOS): Add it.
+
+	* tests/mpz/io.c: Check mpz_inp_str return against ftell, send error
+	messages just to stdout.
+
+	* mpz/inp_str.c, gmp-impl.h (__gmpz_inp_str_nowhite): New function,
+	and share a __gmp_free_func call.
+	* mpq/inp_str.c: New file.
+	* Makefile.am, mpq/Makefile.am: Add it.
+	* tests/mpq/t-inp_str.c: New file.
+	* tests/mpq/Makefile.am (check_PROGRAMS): Add it.
+
+	* configure.in, acconfig.h (HAVE_HOST_CPU_FAMILY_power,
+	HAVE_HOST_CPU_FAMILY_powerpc, HAVE_HOST_CPU_FAMILY_x86): AC_DEFINEs
+	for processor families.
+	* gmp-impl.h: Use them, rather than cpp defines.
+
+	* tune/many.pl, tune/Makefile.am: Fix some from clean and distclean.
+
 2001-08-26  Kevin Ryde  <kevin@swox.se>
 
 	* tests/devel/try.c (ARRAY_ITERATION): Make types match on "?:" legs.
