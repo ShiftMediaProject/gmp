@@ -1,3 +1,7 @@
+2001-01-01  Torbjorn Granlund  <tege@swox.com>
+
+	* mpbsd/mout.c: Output newline after "0".
+
 2000-12-31  Torbjorn Granlund  <tege@swox.com>
 
 	* ltmain.sh: Remove space between `#!' and `$SHELL' when generating
