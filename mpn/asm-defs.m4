@@ -867,7 +867,7 @@ define_mpn(submul_1)
 define_mpn(submul_1c)
 define_mpn(xnor_n)
 define_mpn(xor_n)
-
+define_mpn(invert_normalized_limb)
 
 
 define(`ASM_START',
