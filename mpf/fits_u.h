@@ -28,21 +28,45 @@ MA 02111-1307, USA. */
 int
 FUNCTION (mpf_srcptr f)
 {
-  int        size, i;
-  mp_srcptr  ptr;
+  mp_size_t  fn, i;
+  mp_srcptr  fp;
+  mp_exp_t   exp;
+  mp_limb_t  fl;
 
-  size = SIZ (f);
-  if (size <= 0)
-    return (size == 0);  /* zero fits, negatives don't */
+  fn = SIZ(f);
+  if (fn <= 0)
+    return fn == 0;  /* zero fits, negatives don't */
 
-  if (EXP(f) != 1)  /* only 1 limb above the radix point */
+  exp = EXP(f);
+  fp = PTR(f);
+
+  if (exp == 1)
+    {
+      fn -= 1;			/* decrement to point at first fraction limb */
+      fl = fp[fn];
+    }
+#if GMP_NAIL_BITS != 0
+  else if (exp == 2 && MAXIMUM > GMP_NUMB_MAX)
+    {
+      fn -= 1;
+      fl = fp[fn];
+      if ((fl >> GMP_NAIL_BITS) != 0)
+	return 0;
+      fl = (fl << GMP_NUMB_BITS);
+      if (fn >= 1)
+	{
+	  fn -= 1;		/* decrement to point at first fraction limb */
+	  fl |= fp[fn];
+	}
+    }
+#endif
+  else
     return 0;
 
   /* any fraction limbs must be zero */
-  ptr = PTR (f);
-  for (i = 0; i < size-1; i++)
-    if (ptr[i] != 0)
+  for (i = fn - 1; i >= 0; i--)
+    if (fp[i] != 0)
       return 0;
 
-  return ptr[size-1] <= MAXIMUM;
+  return fl <= MAXIMUM;
 }
