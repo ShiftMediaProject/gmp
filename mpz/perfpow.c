@@ -39,12 +39,13 @@ MA 02111-1307, USA. */
    Many things can be improved.  In particular, we should use p-adic
    arithmetic for computing possible roots.  */
 
+#include <stdio.h> /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
-static unsigned long int gcd ();
-static int isprime ();
+static unsigned long int gcd _PROTO ((unsigned long int a, unsigned long int b));
+static int isprime _PROTO ((unsigned long int t));
 
 static unsigned short primes[] =
 {  2,  3,  5,  7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,
@@ -63,8 +64,12 @@ static unsigned short primes[] =
 
 
 int
+#if __STDC__
+mpz_perfect_power_p (mpz_srcptr u)
+#else
 mpz_perfect_power_p (u)
      mpz_srcptr u;
+#endif
 {
   unsigned long int prime;
   unsigned long int n, n2;
@@ -204,8 +209,12 @@ n2prime:
 }
 
 static unsigned long int
+#if __STDC__
+gcd (unsigned long int a, unsigned long int b)
+#else
 gcd (a, b)
      unsigned long int a, b;
+#endif
 {
   int an2, bn2, n2;
 
@@ -244,8 +253,12 @@ gcd (a, b)
 }
 
 static int
+#if __STDC__
+isprime (unsigned long int t)
+#else
 isprime (t)
      unsigned long int t;
+#endif
 {
   unsigned long int q, r, d;
 
