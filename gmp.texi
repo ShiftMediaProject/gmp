@@ -9,15 +9,35 @@
 @end iftex
 @comment %**end of header
 
-@c  Texinfo version 4 or up will be needed to process this into .info files.
+@copying
+This manual describes how to install and use the GNU multiple precision
+arithmetic library, version @value{VERSION}.
+
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002
+Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document under
+the terms of the GNU Free Documentation License, Version 1.1 or any later
+version published by the Free Software Foundation; with no Invariant Sections,
+with the Front-Cover Texts being ``A GNU Manual'', and with the Back-Cover
+Texts being ``You have freedom to copy and modify this GNU Manual, like GNU
+software''.  A copy of the license is included in @ref{GNU Free Documentation
+License}.
+@end copying
+
+
+@c  Texinfo version 4.2 or up will be needed to process this into .info files.
 @c
 @c  The supplied texinfo.tex (or newer) should be used when processing into
 @c  .dvi etc.
 @c
-@c  The edition number is in three places and the month/year in one, all taken
-@c  from version.texi.  version.texi is created when you configure with
-@c  --enable-maintainer-mode, and is included in a distribution made with
-@c  "make dist".
+@c  The version number and edition number are taken from version.texi provided
+@c  by automake (note it's regenerated only if you configure with
+@c  --enable-maintainer-mode).
+@c
+@c  Discussions about this version in relation to previous ones (for instance
+@c  in the "Compatibility" section) obviously must be looked at manually
+@c  though.
 @c
 @c  "cindex" entries have been made for function categories and programming
 @c  topics.  Minutiae like particular systems and processors mentioned in
@@ -26,25 +46,26 @@
 @c  beginner looking for "GCD" or something is only going to be confused by
 @c  pointers to low level routines.
 
+
 @dircategory GNU libraries
 @direntry
 * gmp: (gmp).                   GNU Multiple Precision Arithmetic Library.
 @end direntry
 
+@c  html <meta name=description content="...">
+@documentdescription
+How to install and use the GNU multiple precision arithmetic library, version @value{VERSION}.
+@end documentdescription
+
 @c smallbook
 @finalout
 @setchapternewpage on
 
-@ifnottex
 @node Top, Copying, (dir), (dir)
 @top GNU MP
-This manual describes how to install and use the GNU multiple precision
-arithmetic library, version @value{VERSION}.
-@end ifnottex
 
 @iftex
 @titlepage
-@c  use the new format for titles
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
 @subtitle Edition @value{EDITION}
@@ -64,28 +85,21 @@ arithmetic library, version @value{VERSION}.
 
 @page
 @vskip 0pt plus 1filll
-
-@c  Ensure copyright stuff gets into info and html output.
 @end iftex
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002
-Free Software Foundation, Inc.
-
-Permission is granted to copy, distribute and/or modify this document under
-the terms of the GNU Free Documentation License, Version 1.1 or any later
-version published by the Free Software Foundation; with no Invariant Sections,
-with the Front-Cover Texts being ``A GNU Manual'', and with the Back-Cover
-Texts being ``You have freedom to copy and modify this GNU Manual, like GNU
-software''.  A copy of the license is included in @ref{GNU Free Documentation
-License}.
+@insertcopying
 
 @iftex
 @end titlepage
 @headings double
-
-@c  Don't bother with contents for "makeinfo --html", the menus seem adequate.
-@contents
 @end iftex
+
+@c  Don't bother with contents for html, the menus seem adequate.
+@c  Would like to have contents in plain text, but that seems broken in
+@c  texinfo 4.2.
+@ifnothtml
+@contents
+@end ifnothtml
 
 @menu
 * Copying::                    GMP Copying Conditions (LGPL).
@@ -4467,7 +4481,8 @@ are destroyed.
 
 @{@var{s1p}, @var{s1n}@} must have at least as many bits as @{@var{s2p},
 @var{s2n}@}.  @{@var{s2p}, @var{s2n}@} must be odd.  Both operands must have
-non-zero most significant limbs.
+non-zero most significant limbs.  No overlap is permitted between @{@var{s1p},
+@var{s1n}@} and @{@var{s2p}, @var{s2n}@}.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_gcd_1 (const mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t @var{s2limb})
@@ -4528,12 +4543,24 @@ The area at @var{str} has to have space for the largest possible number
 represented by a @var{s1n} long limb array, plus one extra character.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_set_str (mp_limb_t *@var{r1p}, const char *@var{str}, size_t @var{strsize}, int @var{base})
-Convert the raw unsigned char array at @var{str} of length @var{strsize} to a
-limb array.  The base of @var{str} is @var{base}.  @var{strsize} must be at
-least 1.
+@deftypefun mp_size_t mpn_set_str (mp_limb_t *@var{rp}, const char *@var{str}, size_t @var{strsize}, int @var{base})
+Convert bytes @{@var{str},@var{strsize}@} in the given @var{base} to limbs at
+@var{rp}.
 
-Return the number of limbs stored in @var{r1p}.
+@math{@var{str}[0]} is the most significant byte and
+@math{@var{str}[@var{strsize}-1]} is the least significant.  Each byte should
+be a value in the range 0 to @math{@var{base}-1}, not an ASCII character.
+@var{base} can vary from 2 to 256.
+
+The return value is the number of limbs written to @var{rp}.  If the most
+significant input byte is non-zero then the high limb at @var{rp} will be
+non-zero, and only that exact number of limbs will be required there.
+
+If the most significant input byte is zero then there may be high zero limbs
+written to @var{rp} and included in the return value.
+
+@var{strsize} must be at least 1, and no overlap is permitted between
+@{@var{str},@var{strsize}@} and the result at @var{rp}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpn_scan0 (const mp_limb_t *@var{s1p}, unsigned long int @var{bit})
@@ -4573,6 +4600,68 @@ Compute the hamming distance between @{@var{s1p}, @var{n}@} and @{@var{s2p},
 @deftypefun int mpn_perfect_square_p (const mp_limb_t *@var{s1p}, mp_size_t @var{n})
 Return non-zero iff @{@var{s1p}, @var{n}@} is a perfect square.
 @end deftypefun
+
+
+@sp 1
+@section Nails
+@cindex Nails
+
+@strong{Everything in this section is highly experimental and may disappear or
+be subject to incompatible changes in a future version of GMP.}
+
+Nails are an experimental feature whereby a few bits are left unused at the
+top of each @code{mp_limb_t}.  This can significantly improve carry handling
+on some processors.
+
+All the @code{mpn} functions accepting limb data will expect the nail bits to
+be zero on entry, and will return data with the nails similarly all zero.
+This applies both to limb vectors and to single limb arguments.
+
+Nails can be enabled by configuring with @samp{--enable-nails}.  By default
+the number of bits will be chosen according to what suits the host processor,
+but a particular number can be selected with @samp{--enable-nails=N}.
+
+At the mpn level, a nail build is neither source nor binary compatible with a
+non-nail build, strictly speaking.  But programs acting on limbs only through
+the mpn functions are likely to work equally well with either build, and
+judicious use of the definitions below should make any program compatible with
+either build, at the source level.
+
+For the higher level routines, meaning @code{mpz} etc, a nail build should be
+fully source and binary compatible with a non-nail build.
+
+@defmac GMP_NAIL_BITS
+@defmacx GMP_NUMB_BITS
+@defmacx GMP_LIMB_BITS
+@code{GMP_NAIL_BITS} is the number of nail bits, or 0 when nails are not in
+use.  @code{GMP_NUMB_BITS} is the number of data bits in a limb.
+@code{GMP_LIMB_BITS} is the total number of bits in an @code{mp_limb_t}.  In
+all cases
+
+@example
+GMP_LIMB_BITS == GMP_NAIL_BITS + GMP_NUMB_BITS
+@end example
+@end defmac
+
+@defmac GMP_NAIL_MASK
+@defmacx GMP_NUMB_MASK
+Bit masks for the nail and number parts of a limb.  @code{GMP_NAIL_MASK} is 0
+when nails are not in use.
+
+@code{GMP_NAIL_MASK} is not often needed, since the nail part can be obtained
+with @code{x >> GMP_NUMB_BITS}, and that means one less large constant, which
+can help various RISC chips.
+@end defmac
+
+The term ``nails'' comes from finger or toe nails, which are at the ends of a
+limb (arm or leg).  ``numb'' is short for number, but is also how the
+developers felt after trying for a long time to come up with sensible names
+for these things.
+
+In the future (the distant future most likely) a non-zero nail might be
+permitted, giving non-unique representations for numbers in a limb vector.
+This would help vector processors since carries would only ever need to
+propagate one or two limbs.
 
 
 @node Random Number Functions, Formatted Output, Low-level Functions, Top
@@ -5305,7 +5394,15 @@ nature imply intermediate values, like @code{a=b*c+d*e}, still use temporaries
 though.
 
 The classes can be freely intermixed in expressions, as can the classes and
-the standard C++ types.
+the standard types @code{long}, @code{unsigned long} and @code{double}.
+Smaller types like @code{int} or @code{float} can also be intermixed, since
+C++ will promote them.
+
+Note that @code{bool} is not accepted directly, but must be explicitly cast to
+an @code{int} first.  This is because C++ will automatically convert any
+pointer to a @code{bool}, so if GMP accepted @code{bool} it would make all
+sorts of invalid class and pointer combinations compile but almost certainly
+not do anything sensible.
 
 Conversions back from the classes to standard C++ types aren't done
 automatically, instead member functions like @code{get_si} are provided (see
@@ -6096,6 +6193,14 @@ GMPY @uref{http://gmpy.sourceforge.net}
 @itemize @bullet
 @item
 RScheme @spaceuref{http://www.rscheme.org}
+@item
+STklos @spaceuref{http://kaolin.unice.fr/STklos}
+@end itemize
+
+@item Smalltalk
+@itemize @bullet
+@item
+GNU Smalltalk @spaceuref{http://www.smalltalk.org/versions/GNUSmalltalk.html}
 @end itemize
 
 @item Other
@@ -6111,6 +6216,8 @@ computer algebra using GCL.
 @item
 Q @spaceuref{http://www.musikwissenschaft.uni-mainz.de/~ag/q} @* Equational
 programming system.
+@item
+Regina @spaceuref{http://regina.sourceforge.net} @* Topological calculator.
 @item
 Yacas @spaceuref{http://www.xs4all.nl/~apinkus/yacas.html} @* Yet another
 computer algebra system.
@@ -7446,10 +7553,70 @@ dominated by conversions should probably use a different data representation.
 Conversions from binary to a power-of-2 radix use a simple and fast
 @math{O(N)} bit extraction algorithm.
 
-Conversions from binary to other radices use repeated divisions, first by the
-biggest power of the radix that fits in a single limb, then by the radix on
-the remainders.  This is an @math{O(N^2)} algorithm and can be quite
-time-consuming on large inputs.
+Conversions from binary to other radices use one of two algorithms.  Sizes
+below @code{GET_STR_PRECOMPUTE_THRESHOLD} use a basic @math{O(N^2)} method.
+Repeated divisions by @math{b^n} are made, where @math{b} is the radix and
+@math{n} is the biggest power that fits in a limb.  But instead of simply
+using the remainder @math{r} from such divisions, an extra divide step is done
+to give a fractional limb representing @math{r/b^n}.  The digits of @math{r}
+can then be extracted using multiplications by @math{b} rather than divisions.
+Special case code is provided for decimal, allowing multiplications by 10 to
+optimize to shifts and adds.
+
+Above @code{GET_STR_PRECOMPUTE_THRESHOLD} a sub-quadratic algorithm is used.
+For an input @math{t}, powers @m{b^{n2^i},b^(n*2^i)} of the radix are
+calculated, until a power between @math{t} and @m{\sqrt{t},sqrt(t)} is
+reached.  @math{t} is then divided by that largest power, giving a quotient
+which is the digits above that power, and a remainder which is those below.
+These two parts are in turn divided by the second highest power, and so on
+recursively.  When a piece has been divided down to less than
+@code{GET_STR_DC_THRESHOLD} limbs, the basecase algorithm described above is
+used.
+
+The advantage of this algorithm is that big divisions can make use of the
+sub-quadratic divide and conquer division (@pxref{Divide and Conquer
+Division}), and big divisions tend to have less overheads than lots of
+separate single limb divisions anyway.  But in any case the cost of
+calculating the powers @m{b^{n2^i},b^(n*2^i)} must first be overcome.
+
+@code{GET_STR_PRECOMPUTE_THRESHOLD} and @code{GET_STR_DC_THRESHOLD} represent
+the same basic thing, the point where it becomes worth doing a big division to
+cut the input in half.  @code{GET_STR_PRECOMPUTE_THRESHOLD} includes the cost
+of calculating the radix power required, whereas @code{GET_STR_DC_THRESHOLD}
+assumes that's already available, which is the case when recursing.
+
+Since the base case produces digits from least to most significant but they
+want to be stored from most to least, it's necessary to calculate in advance
+how many digits there will be, or at least be sure not to underestimate that.
+For GMP the number of input bits is multiplied by @code{chars_per_bit_exactly}
+from @code{mp_bases}, rounding up.  The result is either correct or one too
+big.
+
+Examining some of the high bits of the input could increase the chance of
+getting the exact number of digits, but an exact result every time would not
+be practical, since in general the difference between numbers 100@dots{} and
+99@dots{} is only in the last few bits and the work to identify 99@dots{}
+might well be almost as much as a full conversion.
+
+@code{mpf_get_str} doesn't currently use the algorithm described here, it
+multiplies or divides by a power of @math{b} to move the radix point to the
+just above the highest non-zero digit (or at worst one above that location),
+then multiplies by @math{b^n} to bring out digits.  This is @math{O(N^2)} and
+is certainly not optimal.
+
+The @math{r/b^n} scheme described above for using multiplications to bring out
+digits might be useful for more than a single limb.  Some brief experiments
+with it on the base case when recursing didn't give a noticable improvement,
+but perhaps that was only due to the implementation.  Something similar would
+work for the sub-quadratic divisions too, though there would be the cost of
+calculating a bigger radix power.
+
+Another possible improvement for the sub-quadratic part would be to arrange
+for radix powers that balanced the sizes of quotient and remainder produced,
+ie. the highest power would be an @m{b^{nk},b^(n*k)} approximately equal to
+@m{\sqrt{t},sqrt(t)}, not restricted to a @math{2^i} factor.  That ought to
+smooth out a graph of times against sizes, but may or may not be a net
+speedup.
 
 
 @node Radix to Binary,  , Binary to Radix, Radix Conversion Algorithms
@@ -7458,10 +7625,36 @@ time-consuming on large inputs.
 Conversions from a power-of-2 radix into binary use a simple and fast
 @math{O(N)} bitwise concatenation algorithm.
 
-Conversions from other radices use repeated multiplications, first
-accumulating as many digits as fit in a limb, then doing an N@cross{}1
-multi-precision multiplication.  This is @math{O(N^2)} and is certainly
-sub-optimal on sizes above the Karatsuba multiply threshold.
+Conversions from other radices use one of two algorithms.  Sizes below
+@code{SET_STR_THRESHOLD} use a basic @math{O(N^2)} method.  Groups of @math{n}
+digits are converted to limbs, where @math{n} is the biggest power of the base
+@math{b} which will fit in a limb, then those groups are accumulated into the
+result by multiplying by @math{b^n} and adding.  This saves multi-precision
+operations, as per Knuth section 4.4 part E (@pxref{References}).  Some
+special case code is provided for decimal, giving the compiler a chance to
+optimize multiplications by 10.
+
+Above @code{SET_STR_THRESHOLD} a sub-quadratic algorithm is used.  First
+groups of @math{n} digits are converted into limbs.  Then adjacent limbs are
+combined into limb pairs with @m{xb^n+y,x*b^n+y}, where @math{x} and @math{y}
+are the limbs.  Adjacent limb pairs are combined into quads similarly with
+@m{xb^{2n}+y,x*b^(2n)+y}.  This continues until a single block remains, that
+being the result.
+
+The advantage of this method is that the multiplications for each @math{x} are
+big blocks, allowing Karatsuba and higher algorithms to be used.  But the cost
+of calculating the powers @m{b^{n2^i},b^(n*2^i)} must be overcome.
+@code{SET_STR_THRESHOLD} usually ends up quite big, around 5000 digits, and on
+some processors much bigger still.
+
+@code{SET_STR_THRESHOLD} is based on the input digits (and tuned for decimal),
+though it might be better based on a limb count, so as to be independent of
+the base.  But that sort of count isn't used by the base case and so would
+need some sort of initial calculation or estimate.
+
+The main reason @code{SET_STR_THRESHOLD} is so much bigger than the
+corresponding @code{GET_STR_PRECOMPUTE_THRESHOLD} is that @code{mpn_mul_1} is
+much faster than @code{mpn_divrem_1} (often by a factor of 10, or more).
 
 
 @need 1000
@@ -7754,28 +7947,47 @@ needs to be coded in assembler for best results.
 @subsection Cache Handling
 
 GMP aims to perform well both on operands that fit entirely in L1 cache and
-those that don't.  In the assembler subroutines this means prefetching, either
-always or when large enough operands are presented.
+those which don't.
 
-Pre-fetching sources combines well with loop unrolling, since a prefetch can
-be initiated once per unrolled loop (or more than once if the loop processes
-more than one cache line).
+Basic routines like @code{mpn_add_n} or @code{mpn_lshift} are often used on
+large operands, so L2 and main memory performance is important for them.
+@code{mpn_mul_1} and @code{mpn_addmul_1} are mostly used for multiply and
+square basecases, so L1 performance matters most for them, unless assembler
+versions of @code{mpn_mul_basecase} and @code{mpn_sqr_basecase} exist, in
+which case the remaining uses are mostly for larger operands.
 
-Pre-fetching destinations won't be necessary if the CPU has a big enough store
-queue.  Older processors without a write-allocate L1 however will want
-destination prefetching, to avoid repeated write-throughs, unless they can
-keep up with the rate at which destination limbs are produced.
+For L2 or main memory operands, memory access times will almost certainly be
+more than the calculation time.  The aim therefore is to maximize memory
+throughput, by starting a load of the next cache line which processing the
+contents of the previous one.  Clearly this is only possible if the chip has a
+lock-up free cache or some sort of prefetch instruction.  Most current chips
+have both these features.
 
-The distance ahead to prefetch will be determined by the rate data is
-processed versus the time it takes to bring a line up to L1.  Naturally the
-net data rate from L2 or RAM will always limit the rate of data processing.
-Prefetch distance may also be limited by the number of prefetches the
-processor can have in progress at any one time.
+Prefetching sources combines well with loop unrolling, since a prefetch can be
+initiated once per unrolled loop (or more than once if the loop covers more
+than one cache line).
+
+Prefetching destinations will ensure that a calculation is not held up by
+store instructions.  But this might be unnecessary if the CPU has a big enough
+store queue, enough to hold all the results that accumulate before it can
+acquire the cache line being written.
+
+On CPUs without write-allocate caches, destination prefetching will ensure
+individual stores don't go further down the cache hierarchy, limiting
+bandwidth.  Of course for calculations which are slow anyway, like
+@code{mpn_divrem_1}, write-throughs might be fine.
+
+The distance ahead to prefetch will be determined by memory latency versus
+throughput.  The aim of course is to have data arriving continuously, at peak
+throughput.  Some CPUs have limits on the number of fetches or prefetches in
+progress.
 
 If a special prefetch instruction doesn't exist then a plain load can be used,
-so long as the CPU supports out-of-order loads.  But this may mean having a
-second copy of a loop so that the last few limbs can be processed without
-prefetching, since reading past the end of an operand must be avoided.
+but in that case care must be taken not to attempt to read past the end of an
+operand, since that might produce a segmentation violation.
+
+Some CPUs or systems have hardware that detects sequential memory accesses and
+initiates suitable cache movements automatically, making life easy.
 
 
 @node Assembler Floating Point, Assembler SIMD Instructions, Assembler Cache Handling, Assembler Coding
