@@ -1561,6 +1561,12 @@ extern const int __gmp_0;
       }                                                 \
   } while (0)
 
+#define MPF_CHECK_FORMAT(f)                                     \
+  do {                                                          \
+    ASSERT_ALWAYS (SIZ(f) == 0 || PTR(f)[ABSIZ(f) - 1] != 0);   \
+    ASSERT_ALWAYS (ABSIZ(f) <= PREC(f)+1);                      \
+  } while (0)
+
 
 #define MPZ_PROVOKE_REALLOC(z)					\
   do { ALLOC(z) = ABSIZ(z); } while (0)
