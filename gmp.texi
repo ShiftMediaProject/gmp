@@ -265,33 +265,37 @@ All the usual autoconf configure options are available, run @samp{./configure
 @item Non-Unix Systems
 
 @samp{configure} needs various Unix-like tools installed.  On an MS-DOS system
-cygwin or djgpp should work.  It might be possible to build without the help of
-@samp{configure}, certainly all the C code is there, but you'll be on your own.
+cygwin or djgpp should work.  It might be possible to build without the help
+of @samp{configure}, certainly all the code is there, but you'll be on your
+own.
 
 @item Object Directory
 
-To compile in a separate object directory, @samp{cd} to that directory, and
-prefix the configure command with the path to the MP source directory.  Not all
-@samp{make} programs have the necessary features (VPATH) to support this.  In
-particular, SunOS and Slowaris @samp{make} have bugs that makes them unable to
-build from a separate object directory.  Use GNU @samp{make} instead.
+To compile in a separate object directory, @command{cd} to that directory, and
+prefix the configure command with the path to the MP source directory.  Not
+all @samp{make} programs have the necessary features (@code{VPATH}) to support
+this.  In particular, SunOS and Slowaris @command{make} have bugs that make
+them unable to build from a separate object directory.  Use GNU @command{make}
+instead.
 
 @item @option{--disable-shared}, @option{--disable-static}
 
-By default both shared and static libraries are built (where possible), but one
-or other can be disabled.  Shared libraries are very slightly slower, having a
-small cost on each function call, so the static library is best if you're not
-sharing code.
+By default both shared and static libraries are built (where possible), but
+one or other can be disabled.  Shared libraries are very slightly slower,
+having a small cost on each function call, but result in smaller executables
+and permit code sharing between separate running processes.
 
 @item @option{--target=CPU-VENDOR-OS}
 
 The build target can be specified in the usual way, for either native or cross
-compilation.  @samp{configure} looks at the host system if @samp{--target}
-isn't given, though you'll want to check the CPU it decides.
+compilation.  If @option{--target} isn't given, @samp{./configure} builds for
+the host system.  On some systems @samp{./configure} can't distinguish between
+different CPUs in a family, and you should check its guess (run
+@samp{./config.guess} to see it).
 
 In general, if you want a library that runs as fast as possible, you should
 configure MP for the exact CPU type your system uses.  However, this may mean
-the code won't run on older members of the family, and might run slower on
+the binaries won't run on older members of the family, and might run slower on
 other members, older or newer.  The best idea is always to build MP for the
 exact machine type you intend to run it on.
 
@@ -303,6 +307,10 @@ The following CPUs have specific assembly code support.  See
 @file{configure.in} for which @file{mpn} subdirectories get used by each.
 
 @itemize @bullet
+
+@c Leave this formatting, it's easy to read and it can be grepped to
+@c automatically test that targets listed get through ./config.sub
+
 @item
 Alpha:
 @samp{alpha},
@@ -389,17 +397,15 @@ Other:
 CPUs not listed use generic C code.  If some of the assembly code causes
 problems, the generic C code can be selected with CPU @samp{none}.
 
-@c As of gmp 3.0 CC and CFLAGS can't be set like this.
+@item @option{CC}, @option{CFLAGS}
 
-@c @item @option{CC}, @option{CFLAGS}
+The C compiler used is chosen from among some likely candidates, with GCC
+normally preferred if it's present.  The usual @samp{CC=whatever} can be
+passed to @samp{./configure} to choose something different.
 
-@c The C compiler used is chosen from among some likely candidates, with GCC 
-@c normally preferred if it's present.  The usual @samp{CC=whatever} can be
-@c passed to @command{configure} to choose something different.
-
-@c For some configurations specific compiler flags are set based on the target
-@c CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
-@c choose the best flags.
+For some configurations specific compiler flags are set based on the target
+CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
+choose the best flags.
 
 @item @option{--disable-alloca}
 
@@ -414,21 +420,20 @@ selected with @code{mp_set_memory_functions} that's used, this being
 @code{malloc} by default.  @xref{Custom Allocation}.
 
 Depending on your system, the only indication of stack overflow might be a
-segmentation violation.  @code{setrlimit}, @command{ulimit} or @command{limit}
+segmentation violation.  @command{limit}, @command{ulimit} or @code{setrlimit}
 might be able to increase the stack space available to programs.
 
 @item @option{--enable-mpbsd}
 
-The optional Berkley MP compability library (@file{libmp.a}) and header file
+The Berkley MP compatibility library (@file{libmp.a}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
 @item Demonstration Programs
 
 The @file{demos} subdirectory has some sample programs using MP.  These aren't
-built or installed by default, but there's @command{make} rules available to
-compile them.  For instance @command{make pexpr}, and then run say
-@command{./pexpr 68^975+10}.
+built or installed, but there's @command{make} rules available to compile
+them.  For instance, @samp{make pexpr} and then @samp{./pexpr 68^975+10}.
 
 @item Documentation
 
@@ -466,14 +471,14 @@ significant performance increase on relevant systems.
 @item x86 Pentium and PentiumPro
 
 The Intel Pentium P5 code is good for its intended P5, but quite slow when run
-on Intel P6 class chips (PPro, P-II, P-III).  @samp{i386} is a better choice if
-you're making binaries that must run on both.
+on Intel P6 class chips (PPro, P-II, P-III)@.  @samp{i386} is a better choice
+if you're making binaries that must run on both.
 
 @item x86 MMX and old GAS
 
 Old versions of GAS don't support MMX instructions, in particular version
 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately there's no
-newer assembler for FreeBSD 2.2.8).
+newer assembler for that system).
 
 If the target CPU has MMX code but the assembler doesn't support it, a warning
 is given and non-MMX code is used instead.  This will be an inferior build,
@@ -515,24 +520,24 @@ test the rest of the build.)  Use GCC instead if plan to use the function
 
 @command{/usr/bin/m4} lacks features needed to process @file{.asm} files.
 Either the SysV @command{/usr/5bin/m4} or GNU @command{m4} should be used
-instead.  On the @samp{configure} command line use @samp{M4=/usr/5bin/m4}, or
-the equivalent for wherever GNU @command{m4} is installed.
+instead.  On the @samp{./configure} command line use @samp{M4=/usr/5bin/m4},
+or the equivalent for wherever GNU @command{m4} is installed.
 
 The setting for @code{GSYM_PREFIX} in @file{config.m4} may be incorrectly
 determined when using the native @command{grep}, leading at link-time to
-undefined symbols like @code{___mpn_add_n}.  To fix this, after running
-@command{configure}, change the relevant line in @file{config.m4} to
+undefined symbols like @code{___gmpn_add_n}.  To fix this, after running
+@samp{./configure}, change the relevant line in @file{config.m4} to
 @samp{define(<GSYM_PREFIX>, <_>)}.
 
 The @command{ranlib} command will need to be run manually when building a
 static library with the native @command{ar}.  After @samp{make}, run
-@samp{ranlib .libs/libgmp.a}, and if using @option{--enable-mpbsd} then
+@samp{ranlib .libs/libgmp.a}, and when using @option{--enable-mpbsd} run
 @samp{ranlib .libs/libmp.a} too.
 
 @item VAX running Ultrix
 
 You need to build and install the GNU assembler before you compile MP.  The VAX
-assembly in MP uses an instruction (@samp{jsobgtr}) that cannot be assembled by
+assembly in MP uses an instruction (@code{jsobgtr}) that cannot be assembled by
 the Ultrix assembler.
 @end table
 
