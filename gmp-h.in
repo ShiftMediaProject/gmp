@@ -1492,10 +1492,18 @@ mpz_abs (mpz_ptr __gmp_w, mpz_srcptr __gmp_u)
 }
 #endif
 
-#define __GMPZ_FITS_UTYPE_P(z,maxval)                                         \
-  mp_size_t  __gmp_size = z->_mp_size;                                        \
-  mp_limb_t  __gmp_data = z->_mp_d[0];                                        \
-  return (__gmp_size == 0 || (__gmp_size == 1 && __gmp_data <= maxval));
+#if GMP_NAIL_BITS == 0
+#define __GMPZ_FITS_UTYPE_P(z,maxval)					\
+  mp_size_t  __gmp_n = z->_mp_size;					\
+  mp_ptr  __gmp_p = z->_mp_d;						\
+  return (__gmp_n == 0 || (__gmp_n == 1 && __gmp_p[0] <= maxval));
+#else
+#define __GMPZ_FITS_UTYPE_P(z,maxval)					\
+  mp_size_t  __gmp_n = z->_mp_size;					\
+  mp_ptr  __gmp_p = z->_mp_d;						\
+  return (__gmp_n == 0 || (__gmp_n == 1 && __gmp_p[0] <= maxval)	\
+	  || (__gmp_n == 2 && __gmp_p[1] <= (maxval >> GMP_NUMB_BITS)));
+#endif
 
 #if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_fits_uint_p
 #if ! __GMP_FORCE_mpz_fits_uint_p
