@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 6 Jul 2001.  An up-to-date version is available at
+  This file current as of 9 Jul 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -59,13 +59,9 @@
 <li> <code>mpf_set_str</code> doesn't validate it's exponent, for instance
      garbage 123.456eX789X is accepted (and an exponent 0 used), and overflow
      of a <code>long</code> is not detected.
-<li> <code>mpf_set_str</code> and <code>mpf_inp_str</code> could usefully
-     accept 0x, 0b etc when base==0.  Perhaps the exponent could default to
-     decimal in this case, with a further 0x, 0b etc allowed there.
-     Eg. 0xFFAA@0x5A.
-<li> <code>DIVIDE_BY_ZERO</code> on powerpc does nothing, because division by
-     zero in the basic "divu" instruction isn't an exception.  Does falling
-     though to subsequent code in the gmp routines upset anything?
+<li> <code>mpf_add</code> doesn't check for a carry from truncated portions of
+     the inputs, and in that respect doesn't implement the "infinite precision
+     followed by truncate" specified in the manual.
 </ul>
 
 
@@ -95,18 +91,11 @@
      either make that call or do it on-the-fly.
 <li> Copy tricky code for converting a limb from development version of
      <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
-<li> Consider inlining: <code>mpz_init</code>, <code>mpz_clear</code>,
-     <code>mpz_set_ui</code>, <code>mpz_init_set_ui</code>,
-     <code>mpf_init</code>, <code>mpf_init2</code>, <code>mpf_clear</code>.
-     If inits and clears are not time critical then perhaps they're better as
-     function calls to get smaller code.  <code>mpz_init*</code> would put an
-     initial allocation into application code, which might prevent changing to
-     2 limbs minimum in the future (so <code>mpz_set_ull</code> could be done
-     without a realloc).  <code>mpz_clear</code> would prevent a "lazy"
-     allocation scheme (see below) since applications would be forcibly
-     calling a free.  <code>mpz_set_ui</code> similarly, since it might expect
-     a minimum 1 limb.
-<li> Consider inlining: <code>mpz_[cft]div_ui</code> and maybe
+<li> Consider inlining <code>mpz_set_ui</code>.  This would be both small and
+     fast, especially for compile-time constants, but would make application
+     binaries depend on having 1 limb allocated to an <code>mpz_t</code>,
+     preventing the "lazy" allocation scheme below.
+<li> Consider inlining <code>mpz_[cft]div_ui</code> and maybe
      <code>mpz_[cft]div_r_ui</code>.  A <code>__gmp_divide_by_zero</code>
      would be needed for the divide by zero test, unless that could be left to
      <code>mpn_mod_1</code> (not sure currently whether all the risc chips
@@ -201,6 +190,10 @@
 <li> <code>mpq_cmp_ui</code> could form the num1*den2 and num2*den1 products
      limb-by-limb from high to low and look at each step for values differing
      by more than the possible carry bit from the uncalculated portion.
+<li> <code>mpq_cmp</code> could do the same high-to-low progressive multiply
+     and compare.  The benefits of karatsuba and higher multiplication
+     algorithms are lost, but if it's assumed only a few high limbs will be
+     needed to determine an order then that's fine.
 </ul>
 
 
@@ -269,12 +262,6 @@
      as <code>mpn_lshift</code>.  Some judicious use of m4 might let the two
      share source code, or with a register to control the loop direction
      perhaps even share object code.
-<li> PPC630: <code>mpn_copyi</code> and <code>mpn_copyd</code> could be
-     inlined.  This would result in leaf functions in a few places.  On gcc
-     the generic <code>MPN_COPY</code> doesn't turn into the nice
-     <code>bdnz</code> loop, but writing pre-increment addressing and a
-     pre-decrement <code>do while</code> seems to help gcc recognise the loop
-     form.  Very possibly the same would suit powerpc32.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
      for important machines.  Helping the generic sqr_basecase.c with an
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
@@ -333,7 +320,9 @@
 	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
 	   if ((x &gt&gt 48) == 0) { x &lt&lt= 16; cnt += 16; }
 	   ... </pre>
-
+<li> IRIX 6 MIPSpro compiler has an <code>__inline</code> which could perhaps
+     be used in <code>__GMP_EXTERN_INLINE</code>.  What would be the right way
+     to identify suitable versions of that compiler?
 </ul>
 
 <h4>New Functionality</h4>
@@ -400,6 +389,10 @@
      <code>mpz_nior</code>, <code>mpz_xnor</code> might be useful additions,
      if they could share code with the current such functions (which should be
      possible).
+<li> <code>mpf_set_str</code> and <code>mpf_inp_str</code> could usefully
+     accept 0x, 0b etc when base==0.  Perhaps the exponent could default to
+     decimal in this case, with a further 0x, 0b etc allowed there.
+     Eg. 0xFFAA@0x5A.
 </ul>
 
 
@@ -514,9 +507,10 @@ near future, but are at least worth thinking about.
      two limbs at a time, by following <code>udiv_qrnnd_preinv</code> but with
      two limbs everywhere one is used.  This would mean 3 or 4 multiplies each
      place 1 is currently done, but they'll be independent and so 2 limbs can
-     be processed with the same latency as 1 would have been.  This idea would
+     be processed with the same latency as 1 would have been.  This is similar
+     to what happens when a 16-bit divisor is used in a 32-bit limb, and would
      apply to CPUs with long latency but good thoughput multipliers.  Clearly
-     it can be extended to 3 limbs at a time, or 4, or however many, though
+     this can be extended to 3 limbs at a time, or 4, or however many, though
      each time more are used then more time will be taken creating an initial
      multi-limb inverse (<code>invert_limb</code> style), and the
      quadratically increasing number of cross-products will at some point see
@@ -541,7 +535,7 @@ near future, but are at least worth thinking about.
      applications using many small values.
 <li> m68k: configure could accept <code>m68020fp</code> or similar to select
      68881 floating point.  config.guess could try to detect that too.  This
-     would only be to add -m68881 to gcc, there's no gmp asm code using float,
+     would only be to add -m68881 to gcc, there's no GMP asm code using float,
      so perhaps it's just as easily left to the user to set
      <code>CFLAGS</code>.
 <li> <code>mpq</code> functions could perhaps check for numerator or
