@@ -1,4 +1,4 @@
-The IA-64 ISA is strange and the Itanium pipeline is a bizarre!  How
+The IA-64 ISA is strange and the Itanium pipeline is bizarre!  How
 come everybody else is moving from static to dynamic OOO pipelines,
 and Intel moves in the opposite direction?  I think compiler writers
 failed badly to generate reasonable code for the static RISC pipelines
@@ -10,14 +10,18 @@ Programmers/compilers need to put explicit breaks `;;' between WAW or
 RAW dependencies.  Such breaks can be anywhere in a bundle, or between
 bundles.
 
-The Itanium implementation can in under ideal conditions execute two
+The Itanium implementation can under ideal conditions execute two
 bundles per cycle.  But to reach that rate for integer code, one needs
 to sprinkle the code with `nop.f' instructions, one per bundle.  With
 good scheduling, one can thus reach a peak execution rate of 4
 instructions/cycle.
 
-Taken branches seem to insert a bubble into the pipeline where no
-instructions can be issued.
+Taken cloop branches seem to insert a bubble into the pipeline most of
+the time.
+
+Loads to the fp registers bypass the L1 cache and thus get extremely
+long latencies, 9 cycles.  It is faster to load stuff via the integer
+registers and then use setf.sig to move it to a fp register.
 
 
 ================================================================
@@ -28,10 +32,6 @@ mpn_addmul_1
 	xma.hu
 	xma.l
 	xma.hu
-	stf8
-	stf8
-	add 1
-	add
 	getf.sig
 	getf.sig
 	getf.sig
@@ -42,6 +42,10 @@ mpn_addmul_1
 	add
 	cmp.ltu
 	cmp.leu
+	add 1
+	add
+	stf8
+	stf8
 
 2 limbs/20 instructions
 	   20 insn/max 6 insn/cycle:		3.3 cycles/2limb
@@ -56,10 +60,6 @@ mpn_mul_1
 	xma.hu
 	xma.l
 	xma.hu
-	stf8
-	stf8
-	add 1
-	add
 	getf.sig
 	getf.sig
 	getf.sig
@@ -70,6 +70,10 @@ mpn_mul_1
 	add
 	cmp.ltu
 	cmp.leu
+	add 1
+	add
+	stf8
+	stf8
 
 2 limbs/19 instructions
 	   19 insn/max 6 insn/cycle:		3.2 cycles/2limb
@@ -78,7 +82,7 @@ mpn_mul_1
 	   4 fpops/max 2 fpops/cycle:		2.0 cycles/2limb
 
 ================================================================
-mpn_mul_basecase8
+mpn_mul_8
 
 /* First load the 8 values from v */
 	ldfp8		v0, v1 = [r35], 16;;
@@ -142,38 +146,37 @@ Loop:	ldf8		u0 = [r33], 8
 ================================================================
 
 For mpn_mul_1, start by doing a series of 8 ldf8 and non-accumulating
-xma.hu.  Then, with about 8 cycles skew, start doing accumulating
-xma.l, taking the acc operand from the previous xma.hu outputs.
+xma.l.  Then, with about 8 cycles skew, start doing accumulating
+xma.hu, taking the acc operand from the previous xma.l outputs.
 
-WRONG.  Ignores carry-out from low limb.  We normally should either
-have same same forms for both xma.l and xma.hu, but we could use the
-accumulating form for xma.hu to avoid all carry handling.
+WRONG.  Ignores carry-out from high limb.
 
-       ldf8		f24 = [r33], 8
-       ldf8		f25 = [r33], 8
-       ldf8		f26 = [r33], 8
-       ldf8		f27 = [r33], 8
-       ldf8		f28 = [r33], 8
-       ldf8		f29 = [r33], 8
-       ldf8		f30 = [r33], 8
-       ldf8		f31 = [r33], 8
+
+       ldf8		f24 = [r33], 8	;;
+       ldf8		f25 = [r33], 8	;;
+       ldf8		f26 = [r33], 8	;;
+       ldf8		f27 = [r33], 8	;;
+       ldf8		f28 = [r33], 8	;;
+       ldf8		f29 = [r33], 8	;;
+       ldf8		f30 = [r33], 8	;;
+       ldf8		f31 = [r33], 8	;;
 
        xma.l		 f7 = s2, f24, f0
-       ldf8		f32 = [r33], 8
+       ldf8		f32 = [r33], 8	;;
        xma.l		 f8 = s2, f25, f0
-       ldf8		f33 = [r33], 8
+       ldf8		f33 = [r33], 8	;;
        xma.l		 f9 = s2, f26, f0
-       ldf8		f34 = [r33], 8
+       ldf8		f34 = [r33], 8	;;
        xma.l		f10 = s2, f27, f0
-       ldf8		f35 = [r33], 8
+       ldf8		f35 = [r33], 8	;;
        xma.l		f11 = s2, f28, f0
-       ldf8		f36 = [r33], 8
+       ldf8		f36 = [r33], 8	;;
        xma.l		f12 = s2, f29, f0
-       ldf8		f37 = [r33], 8
+       ldf8		f37 = [r33], 8	;;
        xma.l		f13 = s2, f30, f0
-       ldf8		f38 = [r33], 8
+       ldf8		f38 = [r33], 8	;;
        xma.l		f14 = s2, f31, f0
-       ldf8		f39 = [r33], 8
+       ldf8		f39 = [r33], 8	;;
 # will need another warmup phase here, after stf8 instruction have been added to the loop
 .Loop
        xma.hu		f16 = s2, f24, f8
