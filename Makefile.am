@@ -83,7 +83,7 @@ endif
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
 #
-SUBDIRS = tests mpn mpz mpq mpf mpbsd $(MPFR_DIR) demos tune
+SUBDIRS = tests mpn mpz mpq mpf printf mpbsd $(MPFR_DIR) demos tune
 
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
@@ -179,6 +179,22 @@ MPQ_OBJECTS = mpq/abs$U.lo mpq/add$U.lo					\
 
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
+PRINTF_CXX_OBJECTS =						\
+  printf/doprntfx$U.lo printf/doprntix$U.lo printf/osfuns$U.lo	\
+  printf/osmpf$U.lo printf/osmpq$U.lo printf/osmpz$U.lo
+
+PRINTF_OBJECTS =							\
+  printf/asprintf$U.lo							\
+  printf/doprnt$U.lo printf/doprntf$U.lo printf/doprnti$U.lo		\
+  printf/fprintf$U.lo							\
+  printf/obprintf$U.lo printf/obvprintf$U.lo printf/obprntffuns$U.lo	\
+  printf/printf$U.lo printf/printffuns$U.lo				\
+  printf/snprintf$U.lo printf/snprntffuns$U.lo				\
+  printf/sprintf$U.lo printf/sprintffuns$U.lo				\
+  printf/vasprintf$U.lo printf/vfprintf$U.lo printf/vprintf$U.lo	\
+  printf/vsnprintf$U.lo printf/vsprintf$U.lo				\
+  @PRINTF_CXX_OBJECTS@
+
 MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/powm$U.lo mpbsd/sub$U.lo mpbsd/cmp$U.lo mpbsd/mfree$U.lo	\
   mpbsd/mtox$U.lo mpbsd/realloc$U.lo mpbsd/gcd$U.lo mpbsd/itom$U.lo	\
@@ -201,7 +217,7 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
   version.c
 libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
-  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
+  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) $(PRINTF_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
