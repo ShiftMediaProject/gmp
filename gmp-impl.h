@@ -718,13 +718,12 @@ typedef __gmp_randstate_struct *gmp_randstate_ptr;
 
 /* Pseudo-random number generator function pointers structure.  */
 typedef struct {
-  int (*randseed_fn) __GMP_PROTO ((gmp_randstate_t rstate, mpz_srcptr seed));
+  void (*randseed_fn) __GMP_PROTO ((gmp_randstate_t rstate, mpz_srcptr seed));
   void (*randget_fn) __GMP_PROTO ((gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits));
   void (*randclear_fn) __GMP_PROTO ((gmp_randstate_t rstate));
 } gmp_randfnptr_t;
 
-/* Macro to obtain a void pointer to the function pointers structure.
-   When used as a lvalue the rvalue needs to be cast to void *.  */
+/* Macro to obtain a void pointer to the function pointers structure.  */
 #define RNG_FNPTR(rstate) ((rstate)->_mp_algdata._mp_lc)
 
 /* Macro to obtain a pointer to the generator's state.
@@ -1891,20 +1890,35 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 /* bit count to limb count, rounding up */
 #define BITS_TO_LIMBS(n)  (((n) + (GMP_NUMB_BITS - 1)) / GMP_NUMB_BITS)
 
-/* Create fake mpz_t from ui.  The zl argument must have room for 2 limbs.  */
-#if BITS_PER_ULONG <= GMP_NUMB_BITS
-#define MPZ_FAKE_UI(z, zl, u)   \
-  zl[0] = (u);                  \
-  PTR(z) = zl;                  \
-  SIZ(z) = (zl[0] != 0);        \
-  ASSERT_CODE (ALLOC(z) = 1);
-#else
-#define MPZ_FAKE_UI(z, zl, u)                          \
-  zl[0] = (u) & GMP_NUMB_MASK;                         \
-  zl[1] = (u) >> GMP_NUMB_BITS;                        \
-  SIZ(z) = (zl[1] != 0 ? 2 : zl[0] != 0 ? 1 : 0);      \
-  PTR(z) = zl;                                         \
-  ASSERT_CODE (ALLOC(z) = 2);
+/* MPN_SET_UI sets an mpn (ptr, cnt) to given ui.  MPZ_FAKE_UI creates fake
+   mpz_t from ui.  The zp argument must have room for LIMBS_PER_ULONG limbs
+   in both cases (LIMBS_PER_ULONG is also defined here.) */
+#if BITS_PER_ULONG <= GMP_NUMB_BITS /* need one limb per ulong */
+
+#define LIMBS_PER_ULONG 1
+#define MPN_SET_UI(zp, zn, u)   \
+  (zp)[0] = (u);                \
+  (zn) = ((zp)[0] != 0);
+#define MPZ_FAKE_UI(z, zp, u)   \
+  (zp)[0] = (u);                \
+  PTR (z) = (zp);               \
+  SIZ (z) = ((zp)[0] != 0);     \
+  ASSERT_CODE (ALLOC (z) = 1);
+
+#else /* need two limbs per ulong */
+
+#define LIMBS_PER_ULONG 2
+#define MPN_SET_UI(zp, zn, u)                          \
+  (zp)[0] = (u) & GMP_NUMB_MASK;                       \
+  (zp)[1] = (u) >> GMP_NUMB_BITS;                      \
+  (zn) = ((zp)[1] != 0 ? 2 : (zp)[0] != 0 ? 1 : 0);
+#define MPZ_FAKE_UI(z, zp, u)                          \
+  (zp)[0] = (u) & GMP_NUMB_MASK;                       \
+  (zp)[1] = (u) >> GMP_NUMB_BITS;                      \
+  SIZ (z) = ((zp)[1] != 0 ? 2 : (zp)[0] != 0 ? 1 : 0); \
+  PTR (z) = (zp);                                      \
+  ASSERT_CODE (ALLOC (z) = 2);
+
 #endif
 
 
