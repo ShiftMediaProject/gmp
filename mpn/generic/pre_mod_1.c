@@ -28,13 +28,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef UMUL_TIME
-#define UMUL_TIME 1
-#endif
-
-#ifndef UDIV_TIME
-#define UDIV_TIME UMUL_TIME
-#endif
 
 mp_limb_t
 #if __STDC__
@@ -53,17 +46,13 @@ mpn_preinv_mod_1 (dividend_ptr, dividend_size, divisor_limb, divisor_limb_invert
   int dummy;
 
   ASSERT (dividend_size >= 1);
-  ASSERT (divisor_limb != 0);
+  ASSERT (divisor_limb & MP_LIMB_T_HIGHBIT);
 
-  i = dividend_size - 1;
-  r = dividend_ptr[i];
-
+  r = dividend_ptr[dividend_size-1];
   if (r >= divisor_limb)
-    r = 0;
-  else
-    i--;
+    r -= divisor_limb;
 
-  for (; i >= 0; i--)
+  for (i = dividend_size - 2; i >= 0; i--)
     {
       n0 = dividend_ptr[i];
       udiv_qrnnd_preinv (dummy, r, r, n0, divisor_limb, divisor_limb_inverted);
