@@ -36,8 +36,6 @@ MA 02111-1307, USA. */
 #define CHAR_BIT 8
 #endif
 
-#define LONGDOUBLE_ISNAN(x) ((x) != (x))
-
 
 /* Various i386 systems have been seen with float.h LDBL constants equal to
    the DBL ones, whereas they ought to be bigger, reflecting the 10-byte
@@ -69,11 +67,7 @@ mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
   mpfr_t t, u;
   int inexact, shift_exp = 0, inexact2 = 0;
 
-  if (LONGDOUBLE_ISNAN(d))
-    {
-      MPFR_SET_NAN(r);
-      MPFR_RET_NAN;
-    }
+  LONGDOUBLE_NAN_ACTION (d, goto nan);
 
   if (d > MPFR_LDBL_MAX)
     {
@@ -187,4 +181,9 @@ mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
   mpfr_clear (u);
 
   return inexact;
+
+
+ nan:
+  MPFR_SET_NAN(r);
+  MPFR_RET_NAN;
 }

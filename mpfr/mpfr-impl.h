@@ -107,6 +107,26 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define DBL_NEG_INF (-1.0/0.0)
 #define DBL_NAN (0.0/0.0)
 
+
+/* Execute the code "action" if x is a NaN.
+   Under IEEE rules, NaN is not equal to anything, including itself.
+   "volatile" here stops "cc" on mips64-sgi-irix6.5 from optimizing away
+   x!=x. */
+#define LONGDOUBLE_NAN_ACTION(x, action)                \
+  do {                                                  \
+    volatile long double __x = LONGDOUBLE_VOLATILE (x); \
+    if ((x) != __x)                                     \
+      { action; }                                       \
+  } while (0)
+
+#ifdef volatile
+long double __gmpfr_longdouble_volatile __GMP_PROTO ((long double)) ATTRIBUTE_CONST;
+#define LONGDOUBLE_VOLATILE(x)  (__gmpfr_longdouble_volatile (x))
+#else
+#define LONGDOUBLE_VOLATILE(x)  (x)
+#endif
+
+
 /* bit 31 of _mpfr_size is used for sign,
    bit 30 of _mpfr_size is used for Nan flag,
    bit 29 of _mpfr_size is used for Inf flag,

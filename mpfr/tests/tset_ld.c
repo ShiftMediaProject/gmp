@@ -24,8 +24,20 @@ MA 02111-1307, USA. */
 #include <float.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
+
+
+static int
+Isnan_ld (long double d)
+{
+  LONGDOUBLE_NAN_ACTION (d, goto yes);
+  return 0;
+ yes:
+  return 1;
+}
 
 /* checks that a long double converted to a mpfr (with precision >=113),
    then converted back to a long double gives the initial value,
@@ -45,7 +57,7 @@ check_set_get (long double d, mpfr_t x)
           exit (1);
         }
       e = mpfr_get_ld (x, r);
-      if (e != d && !(LONGDOUBLE_ISNAN(e) && LONGDOUBLE_ISNAN(d)))
+      if (e != d && !(Isnan_ld(e) && Isnan_ld(d)))
         {
           fprintf (stderr, "Error: mpfr_get_ld o mpfr_set_ld <> Id\n");
           fprintf (stderr, "d=%1.30Le get_ld(set_ld(d))=%1.30Le\n", d, e);

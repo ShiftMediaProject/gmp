@@ -84,4 +84,4 @@ double dbl _PROTO ((double, int));
 double Ulp _PROTO ((double));
 
 int Isnan _PROTO ((double));
-#define LONGDOUBLE_ISNAN(x) ((x) != (x))
+
