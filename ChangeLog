@@ -1,3 +1,13 @@
+2000-05-31  Kevin Ryde  <kevin@swox.se>
+
+	* tune/speed.* (FLAG_R_OPTIONAL): New option for routines, use on
+	mpn_gcd_1 and mpn_mul_basecase.
+	* tune/README: Update.
+
+	* tune/alpha.asm: New file, by Torbjorn.
+	* tune/Makefile.am (EXTRA_DIST): Add it.
+	* configure.in (alpha*-*-*): Use it.
+
 2000-05-30  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mul_basecase.c: Call mpn_mul_2 and mpn_addmul_2
