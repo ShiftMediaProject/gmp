@@ -49,7 +49,7 @@ rpow (b, e, r)
 #endif /* BERKELEY_MP */
 {
   mp_ptr rp, bp, tp, xp;
-  mp_size_t rsize, bsize;
+  mp_size_t ralloc, rsize, bsize;
   int cnt, i;
   mp_limb_t blimb;
   TMP_DECL (marker);
@@ -82,13 +82,13 @@ rpow (b, e, r)
       /* Estimate space requirements accurately.  Using the code from the
 	 `else' path would over-estimate space requirements wildly.   */
       float lb = __mp_bases[blimb].chars_per_bit_exactly;
-      rsize = 2 + ((mp_size_t) (e / lb) / BITS_PER_MP_LIMB);
+      ralloc = 3 + ((mp_size_t) (e / lb) / BITS_PER_MP_LIMB);
     }
   else
     {
       /* Over-estimate space requirements somewhat.  */
       count_leading_zeros (cnt, blimb);
-      rsize = bsize * e - cnt * e / BITS_PER_MP_LIMB + 1;
+      ralloc = bsize * e - cnt * e / BITS_PER_MP_LIMB + 2;
     }
 
   TMP_MARK (marker);
@@ -97,8 +97,8 @@ rpow (b, e, r)
      product for mpn_mul.  (This scheme is used to fulfill the requirements
      of mpn_mul; that the product space may not be the same as any of the
      input operands.)  */
-  rp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
-  tp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
+  rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
+  tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 
   MPN_COPY (rp, bp, bsize);
   rsize = bsize;
