@@ -87,13 +87,14 @@ SUFFIXES = .asm
 
 
 # Recompiled versions of $(LIBGMPTUNE_OBJS) are always used.  sqr_basecase.o
-# is replaced if it's mpn/generic/sqr_basecase.c (due to its fixed size
+# is replaced if it's mpn/generic/sqr_basecase.c (due to the fixed size
 # temporary array), or sqr_basecase.asm with a KARATSUBA_SQR_THRESHOLD_MAX
 # (because that says it normally works only up to KARATSUBA_SQR_THRESHOLD).
 
 SQR_GENERIC_MAX = 200
 
-LIBGMPTUNE_OBJS = mul_n.o mul.o bz_divrem_n.o tdiv_qr.o fib_ui.o gcd.o gcdext.o
+LIBGMPTUNE_OBJS = \
+  mul_n.o mul.o bz_divrem_n.o tdiv_qr.o fib_ui.o powm.o gcd.o gcdext.o
 
 sqr_basecase.h: libgmptune.a
 
@@ -153,6 +154,9 @@ tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr.c
 
 fib_ui.o: $(top_srcdir)/mpz/fib_ui.c
 	$(COMPILE) $(THRESHOLDS) -c $(top_srcdir)/mpz/fib_ui.c
+
+powm.o: $(top_srcdir)/mpz/powm.c
+	$(COMPILE) $(THRESHOLDS) -c $(top_srcdir)/mpz/powm.c
 
 gcd.o: $(top_builddir)/mpn/gcd.c
 	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/gcd.c
