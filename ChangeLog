@@ -1,3 +1,11 @@
+2000-12-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/pre_mod_1.c: Use proper type for udiv_qrnnd
+	parameter `dummy'.
+
+	* mpn/generic/divrem_1.c: Use explicit `!= 0' in if statement.
+	* mpn/generic/mod_1.c: Likewise.
+
 2000-12-14  Kevin Ryde  <kevin@swox.se>
 
 	* config.guess (mips-*-irix[6789]*): Transform to mips64.
