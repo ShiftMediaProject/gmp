@@ -20,6 +20,10 @@ MA 02111-1307, USA.
 
 2004-10-14  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/gcdext.c: Add a few missing TMP_MARK.
+
+2004-10-14  Torbjorn Granlund  <tege@swox.com>
+
 	* acinclude.m4 (GMP_ASM_W32): Try also "data4".
 
 	* mpn/ia64/logops_n.asm: Don't use naked "br", rejected by Intel
