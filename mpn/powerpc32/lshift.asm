@@ -1,49 +1,34 @@
-/* PowerPC-32 __mpn_lshift -- Shift a number left.
+#  PowerPC-32 mpn_lshift -- Shift a number left.
+#
+# Copyright (C) 1995, 1998 Free Software Foundation, Inc.
+#
+# This file is part of the GNU MP Library.
+#
+# The GNU MP Library is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# The GNU MP Library is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+# MA 02111-1307, USA.
 
-Copyright (C) 1995, 1998 Free Software Foundation, Inc.
+# INPUT PARAMETERS
+# res_ptr	r3
+# s1_ptr	r4
+# size		r5
+# cnt		r6
 
-This file is part of the GNU MP Library.
+include(`../config.m4')
 
-The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.
-
-The GNU MP Library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-License for more details.
-
-You should have received a copy of the GNU Library General Public License
-along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA. */
-
-
-/* INPUT PARAMETERS
-   res_ptr	r3
-   s1_ptr	r4
-   size		r5
-   cnt		r6 */
-
-#include "asm-syntax.h"
-
-#ifdef AIX_SYNTAX
-	.toc
-	.globl	__mpn_lshift
-	.globl	.__mpn_lshift
-	.csect	__mpn_lshift[DS]
-__mpn_lshift:
-	.long	.__mpn_lshift, TOC[tc0], 0
-	.csect	.text[PR]
-	.align	2
-.__mpn_lshift:
-#else
-	.text
-	.align	4
-	.globl	C_SYMBOL_NAME(__mpn_lshift)
-C_SYMBOL_NAME(__mpn_lshift):
-#endif
+ASM_START()
+PROLOGUE(mpn_lshift)
 	cmpi	cr0,r5,12	/* more than 12 limbs? */
 	slwi	r0,r5,2
 	add	r4,r4,r0	/* make r4 point at end of s1 */
@@ -156,3 +141,4 @@ C_SYMBOL_NAME(__mpn_lshift):
 	stw	r0,-4(r7)
 	lmw	r24,-32(r1)	/* restore registers */
 	blr
+EPILOGUE(mpn_lshift)
