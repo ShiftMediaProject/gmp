@@ -48,7 +48,6 @@ define(`v3', `r7')
 define(`cy0', `r0')
 define(`cy1', `r20')
 define(`cy', `r22')
-define(`cy', `r23')
 define(`rr', `r24')
 define(`ps', `r25')
 define(`sl', `r28')
@@ -86,7 +85,7 @@ $Lb11:	C n = 3, 7, 11, ...
 	ldq	v2, -8(vp)
 	ldq	u2, -8(up)
 	bge	n, $Loop
-	br	$Lcj3
+	br	r31, $Lcj3
 $Lb10:	C n = 2, 6, 10, ...
 	bis	r31, r31, cy0
 	lda	vp, 48(vp)
@@ -99,7 +98,7 @@ $Lb10:	C n = 2, 6, 10, ...
 	ldq	v3, -32(vp)
 	ldq	u3, 0(up)
 	bge	n, $LL10
-	br	$Lcj2
+	br	r31, $Lcj2
 $Lb01:	C n = 1, 5, 9, ...
 	lda	vp, 40(vp)
 	lda	up, 8(up)
@@ -112,7 +111,7 @@ $Lb01:	C n = 1, 5, 9, ...
 	ldq	u0, 8(up)
 	bge	n, $LL01
 	lda	rp, -32(rp)
-	br	$Lcj1
+	br	r31, $Lcj1
 $Lb00:	C n = 4, 8, 12, ...
 	bis	r31, r31, cy0
 	lda	vp, 32(vp)
@@ -124,7 +123,7 @@ $Lb00:	C n = 4, 8, 12, ...
 	ldq	u0, -24(up)
 	ldq	v1, -16(vp)
 	ldq	u1, -16(up)
-	br	$LL00
+	br	r31, $LL00
 	ALIGN(16)
 C 0
 $Loop:	sll	v0, 1, sl	C left shift vlimb
