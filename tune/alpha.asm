@@ -22,12 +22,15 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C mp_limb_t speed_cyclecounter_1 (void);
+C void speed_cyclecounter (int p[2]);
 C
 
 ASM_START()
-PROLOGUE(speed_cyclecounter_1)
-	rpcc	$0
+PROLOGUE(speed_cyclecounter)
+	rpcc	r0
+	stl	r0,0(r16)
+	srl	r0,32,r0
+	stl	r0,4(r16)
 	ret	r31,(r26),1
-EPILOGUE(speed_cyclecounter_1)
+EPILOGUE(speed_cyclecounter)
 ASM_END()
