@@ -48,7 +48,7 @@ MA 02111-1307, USA. */
    checked at run-time since we'd like odd b to go fast in mpz_kronecker
    too.
 
-   mpz_legendre could assume b is an odd prime, but knowing that doesn't
+   mpz_legendre could assume b is an odd prime, but knowing this doesn't
    present any obvious benefits.  Result 0 wouldn't arise (unless "a" is a
    multiple of b), but the checking for that takes little time compared to
    other operations.
