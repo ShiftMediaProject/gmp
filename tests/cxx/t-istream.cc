@@ -1,6 +1,6 @@
 /* Test istream formatted input.
 
-Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -141,7 +141,7 @@ check_mpz (void)
   mpz_init (got);
   mpz_init (want);
 
-  for (int i = 0; i < numberof (data); i++)
+  for (size_t i = 0; i < numberof (data); i++)
     {
       want_pos = (data[i].want_pos == -1
                   ? strlen (data[i].input) : data[i].want_pos);
@@ -283,7 +283,7 @@ check_mpq (void)
   mpq_init (got);
   mpq_init (want);
 
-  for (int i = 0; i < numberof (data); i++)
+  for (size_t i = 0; i < numberof (data); i++)
     {
       want_pos = (data[i].want_pos == -1
                   ? strlen (data[i].input) : data[i].want_pos);
@@ -437,7 +437,7 @@ check_mpf (void)
   mpf_init (got);
   mpf_init (want);
 
-  for (int i = 0; i < numberof (data); i++)
+  for (size_t i = 0; i < numberof (data); i++)
     {
       want_pos = (data[i].want_pos == -1
                   ? strlen (data[i].input) : data[i].want_pos);
