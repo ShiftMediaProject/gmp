@@ -29,8 +29,10 @@ This directory contains mpn functions for various 32-bit PowerPC chips.
 
 CODE ORGANIZATION
 
-	powerpc           generic, 604, 604e
-	powerpc/750       740, 750, 7400
+	directory	  used for
+	================================================
+	powerpc           generic, 604, 604e, 744x, 745x
+	powerpc/750       740, 750, 7400, 7410
 
 
 The top-level powerpc directory is currently mostly aimed at 604/604e but
@@ -43,11 +45,22 @@ STATUS
 The code is quite well optimized for the 604e, other chips have had less
 attention.
 
-Altivec SIMD available in 7400 might hold some promise, but unfortunately
+Altivec SIMD available in 74xx might hold some promise, but unfortunately
 GMP only guarantees 32-bit data alignment, so there's lots of fiddling
 around with partial operations at the start and end of limb vectors.  A
 128-bit limb would be a novel idea, but is unlikely to be practical, since
 it would have to work with ordinary +, -, * etc in the C code.
+
+Also, Altivec isn't very well suited for the GMP multiplication needs.
+Using floating-point based multiplication has much better better performance
+potential for all current powerpcs, both the ones with slow integer multiply
+units (603, 740, 750, 7400, 7410) and those with fast (604, 604e, 744x,
+755x).  This is because all powerpcs do some level of pipelining in the FPU:
+
+603 and 750 can sustain one fmadd every 2nd cycle.
+604 and 604e can sustain one fmadd per cycle.
+7400 and 7410 can sustain 3 fmadd in 4 cycles.
+744x and 745x can sustain 4 fmadd in 5 cycles.
 
 
 
@@ -61,7 +74,9 @@ omitted, for instance "lwzx r6,0,r7".
 
 The GMP code uses the "r" forms, powerpc-defs.m4 transforms them to plain
 numbers according to what GMP_ASM_POWERPC_R_REGISTERS finds is needed.
-
+(Note that this style isn't fully general, as the identifier r4 and the
+register r4 will not be distinguishable on some systems.  However, this is
+not a problem for the limited GMP assembly usage.)
 
 
 
