@@ -652,34 +652,6 @@ evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 #endif
 
 
-#ifdef USE_MORE_MPN
-
-/*-- mpn_divexact3_n -------------------------------------------------------*/
-
-/* Exact division by 3.  Returns overflow word which is 0 iff division was really exact. */
-static mp_limb_t
-mpn_divexact3_n (mp_ptr R, mp_srcptr A, mp_size_t len) 
-{
-  mp_limb_t b, c, w;
-  mp_size_t i;
-
-  ASSERT(len > 0);
-
-  b = 0; i = 0;
-  do {
-    w = A[i];
-    c = w < b; w -= b;
-    w *= INVERSE_3;
-    R[i] = w;
-    b = c + (w >> (BITS_PER_MP_LIMB - 1)) + (w*3 < w);
-  } while (++i < len);
-
-  return b;
-}
-
-#endif
-
-
 /*-- interpolate3 ----------------------------------------------------------*/
 
 /* Interpolates B, C, D (in-place) from:
