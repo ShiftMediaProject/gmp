@@ -1,23 +1,23 @@
-dnl PowerPC-32 mpn_sqr_diagonal.
+dnl  PowerPC-32 mpn_sqr_diagonal.
 
-dnl Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
-dnl This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-dnl The GNU MP Library is free software; you can redistribute it and/or modify
-dnl it under the terms of the GNU Lesser General Public License as published by
-dnl the Free Software Foundation; either version 2.1 of the License, or (at your
-dnl option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
 
-dnl The GNU MP Library is distributed in the hope that it will be useful, but
-dnl WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-dnl or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-dnl License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
 
-dnl You should have received a copy of the GNU Lesser General Public License
-dnl along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-dnl the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-dnl MA 02111-1307, USA.
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
@@ -51,7 +51,8 @@ PROLOGUE(mpn_sqr_diagonal)
 	mulhwu	r10,r7,r7
 	bdz	L(ende)
 
-L(oop):	lwzu	r7,4(r4)
+L(loop):
+	lwzu	r7,4(r4)
 	stw	r9,4(r3)
 	mullw	r9,r6,r6
 	stwu	r11,8(r3)
@@ -62,7 +63,7 @@ L(oop):	lwzu	r7,4(r4)
 	mullw	r8,r7,r7
 	stwu	r10,8(r3)
 	mulhwu	r10,r7,r7
-	bdnz	L(oop)
+	bdnz	L(loop)
 
 L(ende):
 	stw	r9,4(r3)
