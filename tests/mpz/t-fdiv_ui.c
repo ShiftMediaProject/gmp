@@ -1,5 +1,5 @@
 /* Test mpz_abs, mpz_add, mpz_cmp, mpz_cmp_ui, mpz_fdiv_qr_ui, mpz_fdiv_q_ui,
-   mpz_fdiv_r_ui, mpz_mul_ui.
+   mpz_fdiv_r_ui, mpz_fdiv_ui, mpz_mul_ui.
 
 Copyright 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
 
@@ -104,7 +104,7 @@ main (int argc, char **argv)
 	    != (mpz_cmp_ui (dividend, 0) < 0))
 	dump_abort ("quotient sign wrong", dividend, divisor);
 
-      /* Check if the remainder has the same sign as the divisor
+      /* Check if the remainder has the same sign as the (positive) divisor
 	 (quotient rounded towards minus infinity).  */
       if (mpz_cmp_ui (remainder, 0) != 0)
 	if (mpz_cmp_ui (remainder, 0) < 0)
