@@ -1796,9 +1796,27 @@ case $host in
       AC_MSG_ERROR([cannot build both static and DLL, since gmp.h is different for each.
 Use "--disable-static --enable-shared" to build just a DLL.])
     fi
+
+    # "-no-undefined" is required when building a DLL, see documentation on
+    # AC_LIBTOOL_WIN32_DLL.
+    #
+    # "-Wl,--export-all-symbols" is a bit of a hack, it gets all functions
+    # and variables exported.  This is what libtool did in the past, and
+    # it's convenient for us in the test programs and in mpfr.
+    #
+    # Maybe it'd be prudent to check for --export-all-symbols before using
+    # it, but it seems to have been in ld since at least 2000, and there's
+    # not really any alternative we want to take up at the moment.
+    #
+    # FIXME: It might be better to export only the things we really need,
+    # using libtool -export-symbols.  This would apply to all systems, not
+    # just windows DLLs.  Perhaps the test programs could avoid internals,
+    # or use only a few.  The tune program is built static where possible,
+    # and only recommended for a static build, so the internals it uses
+    # wouldn't matter too much.
+    #
     if test "$enable_shared" = yes; then
-      # libtool requires "-no-undefined", see AC_LIBTOOL_WIN32_DLL doco.
-      GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
+      GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined -Wl,--export-all-symbols"
       LIBGMP_DLL=1
     fi
     ;;
@@ -2355,6 +2373,7 @@ if test "$gmp_asm_syntax_testing" != no; then
       ;;
     X86_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
+      GMP_ASM_COFF_TYPE
       GMP_ASM_X86_GOT_UNDERSCORE
       GMP_ASM_X86_SHLDL_CL
       case $enable_profiling in
