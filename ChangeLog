@@ -18,6 +18,51 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-18  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to mpfr-2-0-2-branch 2003-10-18.
+
+	* gmpxx.h (mpz_class, mpq_class, mpf_class, mpfr_class constructors
+	and operator= taking string or char*): Throw std::invalid_argument if
+	string cannot be converted.
+	* tests/cxx/t-constr.cc, tests/cxx/t-assign.cc: Exercise this.
+
+	* cxx/ismpz.cc, cxx/ismpq.cc, cxx/ismpf.cc: Use istream std::locale
+	ctype facet for isspace when available.  Only accept space at the
+	start of the input, same as g++ libstdc++.  Use ASSERT_NOCARRY to
+	check result of mpz_set_str etc.
+	* cxx/ismpf.cc: Don't accept "@" for exponent indicator.
+
+	* tune/speed.c, tune/speed.h, tune/common.c, tune/Makefile.am: Remove
+	_open and _mpn variants of mpn_toom3_mul_n, only one style now.
+	* tune/mul_n_open.c, tune/mul_n_mpn.c: Remove files.
+
+	* gmp-impl.h (LIMB_HIGHBIT_TO_MASK): New macro.
+	(udiv_qrnnd_preinv2, udiv_qrnnd_preinv2gen): Use it.
+
+	* tests/mpz/t-import.c, tests/mpz/t-export.c: Use octal for character
+	constants, hex is an ANSI-ism.
+
+	* mpn/alpha/ev5/mode1o.c: Corrections to ASSERTs, as per
+	mpn/generic/mode1o.c.
+
+	* mpn/generic/diveby3.c: Add commented out alternative code and notes
+	for taking the multiply off the dependent chain.  Amend/clarify some
+	of the other comments.
+
+	* configure.in (powerpc970-*-*): Use gcc -mcpu=970 when available.
+	(powerpc7400-*-*): Fallback on gcc -mcpu=750 if -mcpu=7400 not
+	available.
+
+	* doc/gmp.texi (C++ Formatted Input): Note locale digit grouping not
+	supported.
+	(C++ Formatted Input, C++ Formatted Output): Cross reference class
+	interface on overloading.
+
+	* mpn/m68k/README: Add various ideas from doc/tasks.html.
+
+	* mpn/m88k/README: New file.	
+
 2003-10-16  Torbjorn Granlund  <tege@swox.com>
 
 	* config.sub: Recognize powerpc970.
