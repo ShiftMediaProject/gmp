@@ -183,7 +183,7 @@ ifdef(`HAVE_ABI_32',
 
 		// No noticable difference in speed for the loop aligned to
 		// 32 or just 16.
-.Ltop3:
+.Ltop:
 		// r8	x
 		// r10  y-1
 		// r34	y
@@ -207,7 +207,7 @@ ifdef(`HAVE_ABI_32',
 }		;;
 
 {		shr.u	x = x, r9	// I0   new x without twos
-	(p10)	br.sptk.few.clr .Ltop3
+	(p10)	br.sptk.few.clr .Ltop
 }		;;
 
 
