@@ -153,11 +153,10 @@ void _mp_default_free ();
       }									\
   } while (0)
 
-/* Initialize the MP_INT X with space for NLIMBS limbs.
-   X should be a temporary variable, and it will be automatically
-   cleared out when the running function returns.
-   We use __x here to make it possible to accept both mpz_ptr and mpz_t
-   arguments.  */
+/* Initialize X of type mpz_t with space for NLIMBS limbs.  X should be a
+   temporary variable; it will be automatically cleared out at function
+   return.  We use __x here to make it possible to accept both mpz_ptr and
+   mpz_t arguments.  */
 #define MPZ_TMP_INIT(X, NLIMBS) \
   do {									\
     mpz_ptr __x = (X);							\
