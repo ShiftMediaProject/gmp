@@ -60,7 +60,7 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
     {
       /* Odd length. */
       mp_size_t n2, n3, np1, nm1;
-      int sign = 0;
+      int sign;
 
       n2 = n >> 1;
       n3 = n - n2; /* = n2 + 1 */
@@ -68,6 +68,7 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
       {
 	mp_limb_t w, w0, w1; mp_srcptr x, y;
 	/* Subtract smaller half of up[] from larger half. */
+	sign = 0;
 	w = up[n2];
 	if (w != 0)
 	  w -= mpn_sub_n (prodp, up, up + n3, n2);
@@ -156,7 +157,7 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
       /* Even length. */
       mp_limb_t cy;
       mp_size_t n2 = n >> 1;
-      int sign = 0;
+      int sign;
 
       {
 	mp_limb_t w0, w1; mp_size_t i; mp_srcptr x, y;
@@ -164,7 +165,6 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 	i = n2 - 1;
 	while ((w0 = up[i]) == (w1 = up[n2 + i]) && i != 0)
 	  i--;
-	sign = 0;
 	if (w0 < w1)
 	  {
 	    y = up;
@@ -175,6 +175,7 @@ __gmpn_mul_n (prodp, up, vp, n, tspace)
 	  {
 	    x = up;
 	    y = up + n2;
+	    sign = 0;
 	  }
 	mpn_sub_n (prodp, x, y, n2);
       }
