@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 20 Jun 2002.  An up-to-date version is available at
+  This file current as of 13 Jul 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -373,6 +373,10 @@ MA 02111-1307, USA.
 <li> Alpha 21264 ev67: Use <code>ctlz</code> and <code>cttz</code> for
      <code>count_leading_zeros</code> and<code>count_trailing_zeros</code>.
      Use inline for gcc, probably want asm files for elsewhere.
+<li> Alpha Unicos: Apparently there's no <code>alloca</code> on this system,
+     making <code>configure</code> choose the slower
+     <code>malloc-reentrant</code> allocation method.  Is there a better way?
+     Maybe variable-length arrays per notes below.
 <li> ARC: gcc longlong.h sets up <code>umul_ppmm</code> to call
      <code>__umulsidi3</code> in libgcc.  Could be copied straight across, but
      perhaps ought to be tested.
@@ -438,8 +442,6 @@ MA 02111-1307, USA.
      as <code>mpn_lshift</code>.  Some judicious use of m4 might let the two
      share source code, or with a register to control the loop direction
      perhaps even share object code.
-<li> PowerPC-32: <code>mpn_rshift</code> should do the same sort of unrolled
-     loop as <code>mpn_lshift</code>.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
      for important machines.  Helping the generic sqr_basecase.c with an
      <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
@@ -543,6 +545,13 @@ MA 02111-1307, USA.
      particular helping RISCs that don't do store-to-load forwarding.  Clearly
      this is only possible if the ABI returns a structure of two
      <code>mp_limb_t</code>s in registers.
+     <br>
+     On PowerPC structures are returned in memory on AIX and Darwin
+     unfortunately, but in registers on SVR4, except that draft SVR4 had said
+     memory, so it's a gcc option which to use.  Would need to find out what
+     mode we're in, or maybe it'd work to force "register" mode with
+     <code>-msvr4-struct-return</code>, since this is purely internal and we
+     don't do anything else involving structure returns).
 </ul>
 
 <h4>New Functionality</h4>
