@@ -1154,7 +1154,7 @@ AC_DEFUN(GMP_C_SIZES,
 else
   AC_CHECK_SIZEOF(mp_limb_t,,
 [#include <stdio.h>
-#define __GMP_DISABLE_CONFIG_DEFS 1
+#define __GMP_WITHIN_CONFIGURE 1
 #include "$srcdir/gmp-h.in"
 ])
   if test "$ac_cv_sizeof_mp_limb_t" = 0; then
