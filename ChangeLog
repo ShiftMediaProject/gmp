@@ -1,3 +1,30 @@
+2000-09-06  Kevin Ryde  <kevin@swox.se>
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_GCD_CALL): Fix for sizes > 512 limbs.
+
+	* doc/multiplication: Corrections and additions pointed out by Paul.
+
+	* tune/modlinv.c: New file with alternate modlimb_inverts.
+	* tune/Makefile.am, tune/speed.[ch]: Add measuring of them.
+	* tune/speed.c (FLAG_NODATA): New attribute, use for mpz_bin_uiui,
+	mpz_fib_ui, mpz_fac_ui.
+
+	* mpn/x86/t-zdisp.sh: New file.
+
+	* tests/t-modlinv.c: New file.
+	* tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* gmp-impl.h (MPQ_CHECK_FORMAT): New macro.
+	* mpq/tests/t-set_f.c: New file.
+	* mpq/tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpq/set_f.c: New file.
+	* mpq/Makefile.am (libmpq_la_SOURCES): Add it.
+	* Makefile.am (MPQ_OBJECTS): Ditto.
+	* gmp.h: Add prototype.
+	* gmp.texi (Miscellaneous Rational Functions): Document mpq_set_f,
+	correct return type of mpq_set_d.
+
 2000-09-03  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/aors_ui.c: New file merging add_ui.c and sub_ui.c, no object
