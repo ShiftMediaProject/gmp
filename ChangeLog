@@ -1,3 +1,26 @@
+2000-04-12  Linus Nordberg  <linus@swox.se>
+
+	* mpf/urandomb.c (mpf_urandomb): Add third parameter 'nbits'.  If
+	'nbits' doesn't make even limbs, shift up result before
+	normalizing.
+	
+	* gmp.h (mpf_urandomb): Add parameter to prototype.
+
+	* mpf/urandom.c: Rename file to ...
+	* mpf/urandomb.c: ... this.
+	* Makefile.am (MPF_OBJECTS): Change urandom.lo --> urandomb.lo.
+	* Makefile.in: Regenerate.
+	* mpf/Makefile.am (libmpf_la_SOURCES): Change urandom.c --> urandomb.c.
+	* mpf/Makefile.in: Regenerate.
+
+	* config.in: Regenerate for HAVE_DECL_OPTARG.
+
+	* randraw.c (lc): Change return type.
+	Initialize `shiftcount' to avoid compiler warnings.
+	Use one temporary storage instead of two.
+	If M is a power of 2 and bigger than the maximum size of T, don't
+	do any modulus operation at all.
+
 2000-04-12  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h: Include config.h before TMP_ALLOC, so
