@@ -1,4 +1,55 @@
+2003-11-19  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tui_pow.c, pow.c:
+	Ported Paul's patch (fix and tests) concerning the pow.c bug (in case
+	exact result) to the 2.0.2 branch.
+
+2003-11-14  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* pow_si.c, tests/tpow.c:
+	Ported the pow_si patch (and test) to the 2.0.2 branch.
+
+	* pow.c, tests/tui_pow.c, tests/tzeta.c:
+	Ported the pow.c precision patch to the 2.0.2 branch (with the tests).
+
+	* tests/tset_ld.c:
+	Detect optimization bug of gcc 3.3 on Alpha to avoid a test failure.
+
+2003-11-11  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tests.c (tests_rand_start): Use gmp_randinit_default not the
+	RANDS macro, to cope with new non-seeding MT setup by RANDS.
+
+2003-11-04  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* pow_ui.c:
+	Overflow on err (which is now unsigned) avoided, simplified its
+	computation, added some asserts, fixed the underflow check (the
+	cast to double was useless and could be inexact).
+
+	* tests/tacosh.c: Merged the check_inf test to the 2.0.2 branch.
+
+	* tests/tacosh.c:
+	The check_inf test wasn't called. Added 2 missing mpfr_clear and \n.
+
+	* acosh.c: Special cases rewritten.
+
+2003-10-30  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* log1p.c: MPFR_RET_NAN -> MPFR_RET(0).
+
+2003-10-27  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/thyperbolic.c:
+	Fixes for thyperbolic.c merged to the 2.0.2 branch.
+
+	* tests/thyperbolic.c: Another fix, for acosh(-INF).
+
+	* tests/thyperbolic.c: Fixed exit status.
+
 2003-10-21  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* ChangeLog: Update.
 
 	* const_log2.c, const_pi.c, mpfr.h, TODO:
 	Fixed the mpfr_round bug (the mpfr_round macro hadn't been updated).

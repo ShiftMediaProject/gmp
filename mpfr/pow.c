@@ -147,7 +147,7 @@ is_odd (mpfr_srcptr y)
 int
 mpfr_pow (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mp_rnd_t rnd_mode)
 {
-  int inexact = 0;
+  int inexact = 1;
 
   /* pow(x, ±0) returns 1 for any x, even a NaN. */
   if (MPFR_IS_FP(y) && MPFR_IS_ZERO(y))
@@ -355,11 +355,18 @@ mpfr_pow (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mp_rnd_t rnd_mode)
 
         /* check exact power */
         if (ok == 0 && loop == 1)
-          ok = mpfr_pow_is_exact (x, y);
+          {
+            ok = mpfr_pow_is_exact (x, y);
+            if (ok)
+              inexact = 0;
+          }
       }
     while (err < 0 || ok == 0);
 
-    inexact = mpfr_set (z, t, rnd_mode);
+    if (inexact)
+      inexact = mpfr_set (z, t, rnd_mode);
+    else /* result is exact: round to nearest and return inexact=0 */
+      mpfr_set (z, t, GMP_RNDN);
 
     mpfr_clear (t);
     mpfr_clear (ti);
