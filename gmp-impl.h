@@ -611,11 +611,24 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
    few sizes want the simple addition based code), so set the defaults like
    that.  */
 #ifndef FIB_THRESHOLD
+#if BITS_PER_MP_LIMB == 4
+#define FIB_THRESHOLD  20
+#endif
+#if BITS_PER_MP_LIMB == 8
+#define FIB_THRESHOLD  30
+#endif
+#if BITS_PER_MP_LIMB == 16
+#define FIB_THRESHOLD  50
+#endif
 #if BITS_PER_MP_LIMB == 32
 #define FIB_THRESHOLD  100
 #endif
 #if BITS_PER_MP_LIMB == 64
 #define FIB_THRESHOLD  200
+#endif
+/* something arbitrary otherwise */
+#ifndef FIB_THRESHOLD
+#define FIB_THRESHOLD  100
 #endif
 #endif
 
