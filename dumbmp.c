@@ -827,3 +827,62 @@ mpz_invert_ui_2exp (mpz_t r, unsigned long a, unsigned long n)
   mpz_invert_2exp (r, az, n);
   mpz_clear (az);
 }
+
+/* x=y^z */
+void
+mpz_pow_ui (mpz_t x, mpz_t y, unsigned long z)
+{
+  mpz_t t;
+
+  mpz_init_set_ui (t, 1);
+  for (; z != 0; z--)
+    mpz_mul (t, t, y);
+  mpz_set (x, t);
+  mpz_clear (t);
+}
+
+/* x=x+y*z */
+void
+mpz_addmul_ui (mpz_t x, mpz_t y, unsigned long z)
+{
+  mpz_t t;
+
+  mpz_init (t);
+  mpz_mul_ui (t, y, z);
+  mpz_add (x, x, t);
+  mpz_clear (t);
+}
+
+/* x=floor(y^(1/z)) */
+void
+mpz_root (mpz_t x, mpz_t y, unsigned long z)
+{
+  mpz_t t, u;
+
+  if (mpz_sgn (y) < 0)
+    {
+      fprintf (stderr, "mpz_root does not accept negative values\n");
+      abort ();
+    }
+  if (mpz_cmp_ui (y, 1) <= 0)
+    {
+      mpz_set (x, y);
+      return;
+    }
+  mpz_init (t);
+  mpz_init_set (u, y);
+  do
+    {
+      mpz_pow_ui (t, u, z - 1);
+      mpz_tdiv_q (t, y, t);
+      mpz_addmul_ui (t, u, z - 1);
+      mpz_tdiv_q_ui (t, t, z);
+      if (mpz_cmp (t, u) >= 0)
+	break;
+      mpz_set (u, t);
+    }
+  while (1);
+  mpz_set (x, u);
+  mpz_clear (t);
+  mpz_clear (u);
+}
