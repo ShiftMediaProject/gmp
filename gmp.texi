@@ -271,6 +271,7 @@ arithmetic library, version @value{VERSION}.
 * Random Number Functions::    Functions for generating random numbers.
 * BSD Compatible Functions::   All functions found in BSD MP.
 * Custom Allocation::          How to customize the internal allocation.
+* Algorithms::                 What happens behind the scenes.
 
 * Contributors::	       Who brings your this library?
 * References::                 Some useful papers and books to read.
@@ -3793,7 +3794,7 @@ passed a value returned by @code{itom} or @code{xtom}.}
 @end deftypefun
 
 
-@node Custom Allocation, Contributors, BSD Compatible Functions, Top
+@node Custom Allocation, Algorithms, BSD Compatible Functions, Top
 @comment  node-name,  next,  previous,  up
 @chapter Custom Allocation
 @cindex Custom allocation
@@ -3855,7 +3856,1480 @@ is a problem in your application.
 the size of an object, normally an 8 bit byte.)
 
 
-@node Contributors, References, Custom Allocation, Top
+@node Algorithms, Contributors, Custom Allocation, Top
+@chapter Algorithms
+@cindex Algorithms
+
+This chapter is an introduction to some of the algorithms used for various GMP
+operations.  The code is likely to be hard to understand without knowing
+something about the algorithms.
+
+Some GMP internals are mentioned, but applications that expect to be
+compatible with future GMP releases should take care to use only the
+documented functions.
+
+@menu
+* Multiplication Algorithms::   
+* Division Algorithms::         
+* Greatest Common Divisor Algorithms::  
+* Powering Algorithms::         
+* Root Extraction Algorithms::  
+* Radix Conversion Algorithms::  
+* Assembler Coding::            
+@end menu
+
+
+@node Multiplication Algorithms, Division Algorithms, Algorithms, Algorithms
+@section Multiplication
+@cindex Multiplication algorithms
+
+N@cross{}N limb multiplications and squares are done using one of four
+algorithms, according to the size N.
+@c  @display doesn't seem to work around @multitable in tex
+
+@iftex
+{@advance@leftskip by @lispnarrowing@noindent
+@multitable {KaratsubaMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item Algorithm @tab Sizes
+@item Basecase  @tab @code{< KARATSUBA_MUL_THRESHOLD}
+@item Karatsuba @tab @code{>= KARATSUBA_MUL_THRESHOLD}
+@item Toom-3    @tab @code{>= TOOM3_MUL_THRESHOLD}
+@item FFT       @tab @code{>= FFT_MUL_THRESHOLD}
+@end multitable
+@par}
+@end iftex
+@ifnottex
+
+@display
+@multitable {KaratsubaMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item Algorithm @tab Sizes
+@item Basecase  @tab @nicode{< KARATSUBA_MUL_THRESHOLD}
+@item Karatsuba @tab @nicode{>= KARATSUBA_MUL_THRESHOLD}
+@item Toom-3    @tab @nicode{>= TOOM3_MUL_THRESHOLD}
+@item FFT       @tab @nicode{>= FFT_MUL_THRESHOLD}
+@end multitable
+@end display
+@end ifnottex
+
+Similarly for squaring, with the @code{SQR} thresholds.  Note though that the
+FFT is only used if GMP is configured with @samp{--enable-fft}, @pxref{Build
+Options}.
+
+N@cross{}M multiplications of operands with different sizes above
+@code{KARATSUBA_MUL_THRESHOLD} are currently done by splitting into M@cross{}M
+pieces.  The Karatsuba and Toom-3 routines then operate only on equal size
+operands.  This is not very efficient, and is slated for improvement in the
+future.
+
+@menu
+* Basecase Multiplication::     
+* Karatsuba Multiplication::    
+* Toom-Cook 3-Way Multiplication::  
+* FFT Multiplication::          
+* Other Multiplication::        
+@end menu
+
+
+@node Basecase Multiplication, Karatsuba Multiplication, Multiplication Algorithms, Multiplication Algorithms
+@subsection Basecase Multiplication
+
+Basecase N@cross{}M multiplication is a straightforward rectangular set of
+cross-products, the same as long multiplication done by hand and for that
+reason sometimes known as the schoolbook or grammar school method.  This is an
+@m{O(NM),O(N*M)} algorithm.  See Knuth section 4.3.1 algorithm M
+(@pxref{References}), and the @file{mpn/generic/mul_basecase.c} code.
+
+Assembler implementations of @code{mpn_mul_basecase} are essentially the same
+as the generic C code, but have all the usual assembler tricks and
+obscurities introduced for speed.
+
+A square can be done in roughly half the time of a multiply, by using the fact
+that the cross products above and below the diagonal are the same.  A triangle
+of products below the diagonal is formed, doubled (left shift by one bit), and
+then the products on the diagonal added.  This can be seen in
+@file{mpn/generic/sqr_basecase.c}.  Again the assembler implementations take
+essentially the same approach.
+
+@tex
+\def\GMPline#1#2#3#4#5#6{%
+  \hbox {%
+    \vrule height 2.5ex depth 1ex
+           \hbox to 2em {\hfil{#2}\hfil}%
+    \vrule \hbox to 2em {\hfil{#3}\hfil}%
+    \vrule \hbox to 2em {\hfil{#4}\hfil}%
+    \vrule \hbox to 2em {\hfil{#5}\hfil}%
+    \vrule \hbox to 2em {\hfil{#6}\hfil}%
+    \vrule}}
+\GMPdisplay{
+  \hbox{%
+    \vbox{%
+      \hbox to 1.5em {\vrule height 2.5ex depth 1ex width 0pt}%
+      \hbox {\vrule height 2.5ex depth 1ex width 0pt u0\hfil}%
+      \hbox {\vrule height 2.5ex depth 1ex width 0pt u1\hfil}%
+      \hbox {\vrule height 2.5ex depth 1ex width 0pt u2\hfil}%
+      \hbox {\vrule height 2.5ex depth 1ex width 0pt u3\hfil}%
+      \hbox {\vrule height 2.5ex depth 1ex width 0pt u4\hfil}%
+      \vfill}%
+    \vbox{%
+      \hbox{%
+        \hbox to 2em {\hfil u0\hfil}%
+        \hbox to 2em {\hfil u1\hfil}%
+        \hbox to 2em {\hfil u2\hfil}%
+        \hbox to 2em {\hfil u3\hfil}%
+        \hbox to 2em {\hfil u4\hfil}}%
+      \vskip 0.7ex
+      \hrule
+      \GMPline{u0}{d}{}{}{}{}%
+      \hrule
+      \GMPline{u1}{}{d}{}{}{}%
+      \hrule
+      \GMPline{u2}{}{}{d}{}{}%
+      \hrule
+      \GMPline{u3}{}{}{}{d}{}%
+      \hrule
+      \GMPline{u4}{}{}{}{}{d}%
+      \hrule}}}
+@end tex
+@ifnottex
+@example
+@group
+     u0  u1  u2  u3  u4
+   +---+---+---+---+---+
+u0 | d |   |   |   |   |
+   +---+---+---+---+---+
+u1 |   | d |   |   |   |
+   +---+---+---+---+---+
+u2 |   |   | d |   |   |
+   +---+---+---+---+---+
+u3 |   |   |   | d |   |
+   +---+---+---+---+---+
+u4 |   |   |   |   | d |
+   +---+---+---+---+---+
+@end group
+@end example
+@end ifnottex
+
+In practice squaring isn't a full 2@cross{} faster than multiplying, it's
+usually around 1.5@cross{}.  Less than 1.5@cross{} probably indicates
+@code{mpn_sqr_basecase} wants improving on that CPU.
+
+
+@node Karatsuba Multiplication, Toom-Cook 3-Way Multiplication, Basecase Multiplication, Multiplication Algorithms
+@subsection Karatsuba Multiplication
+
+The Karatsuba multiplication algorithm is described in Knuth section 4.3.3
+part A, and various other textbooks.  A brief description is given here.
+
+The inputs @ma{x} and @ma{y} are treated as each split into two parts of equal
+length (or the most significant part one limb shorter if N is odd).
+
+@tex
+\global\newdimen\GMPboxwidth \GMPboxwidth=5em
+\global\newdimen\GMPboxheight \GMPboxheight=3ex
+\def\GMPbox#1#2{%
+  \vbox {%
+    \hrule
+    \hbox{%
+      \vrule height 2ex depth 1ex
+      \hbox to \GMPboxwidth {\hfil\hbox{$#1$}\hfil}%
+      \vrule
+      \hbox to \GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
+      \vrule}
+    \hrule
+}}
+\GMPdisplay{%
+\vbox{%
+  \hbox to 2\GMPboxwidth {high \hfil low}
+  \vskip 0.7ex
+  \GMPbox{x_1}{x_0}
+  \vskip 0.5ex
+  \GMPbox{y_1}{y_0}
+}}
+%}
+%\moveright \lispnarrowing 
+%\vskip 0.5 ex
+%\vskip 0.5 ex
+@end tex
+@ifnottex
+@example
+@group
+ high              low
++----------+----------+
+|    x1    |    x0    |
++----------+----------+
+
++----------+----------+
+|    y1    |    y0    |
++----------+----------+
+@end group
+@end example
+@end ifnottex
+
+Let @ma{b} be the power of 2 where the split occurs, ie.@: if @ms{x,0} is
+@ma{k} limbs (@ms{y,0} the same) then
+@m{b=2\GMPraise{$k*$@code{mp\_bits\_per\_limb}}, b=2^(k*mp_bits_per_limb)}.
+With that @m{x=x_1b+x_0,x=x1*b+x0} and @m{y=y_1b+y_0,y=y1*b+y0}, and the
+following holds,
+
+@display
+@m{xy = (b^2+b)x_1y_1 + b(x_1-x_0)(y_1-y_0) + (b+1)x_0y_0,
+  x*y = (b^2+b)*x1*y1 + b*(x1-x0)*(y1-y0) + (b+1)*x0*y0}
+@end display
+
+This formula means doing only three multiplies of (N/2)@cross{}(N/2) limbs,
+whereas a basecase multiply of N@cross{}N limbs is equivalent to four
+multiplies of (N/2)@cross{}(N/2).  The factors @ma{(b^2+b)} etc represent the
+positions where the three products must be added in.
+
+@tex
+\global\newdimen\GMPboxwidth \GMPboxwidth=5em
+\global\newdimen\GMPboxheight \GMPboxheight=3ex
+\def\GMPboxA#1#2{%
+  \vbox to \GMPboxheight{%
+    \hrule \vfil
+    \hbox{%
+      \strut \vrule
+      \hbox to 2\GMPboxwidth {\hfil\hbox{$#1$}\hfil}%
+      \vrule
+      \hbox to 2\GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
+      \vrule}
+    \vfil \hrule}}
+\def\GMPboxB#1{%
+  \moveright \GMPboxwidth 
+  \vbox to \GMPboxheight{%
+    \hrule \vfil
+    \hbox{%
+      \strut \vrule
+      \hbox to 2\GMPboxwidth {\hfil\hbox{$#1$}\hfil}
+      \vrule}
+    \vfil \hrule}}
+\GMPdisplay{%
+\vbox{%
+  \hbox to 4\GMPboxwidth {high \hfil low}
+  \vskip 0.7ex
+  \GMPboxA{x_1y_1}{x_0y_0}
+  \vskip 0.5ex
+  \GMPboxB{x_1y_1}
+  \vskip 0.5ex
+  \GMPboxB{x_0y_0}
+  \vskip 0.5ex
+  \GMPboxB{(x_1-x_0)(y_1-y_0)}
+}}
+@end tex
+@ifnottex
+@example
+@group
+ high                              low
++--------+--------+ +--------+--------+
+|      x1*y1      | |      x0*y0      |
++--------+--------+ +--------+--------+
+          +--------+--------+
+          |      x1*y1      |
+          +--------+--------+
+          +--------+--------+
+          |      x0*y0      |
+          +--------+--------+
+          +--------+--------+
+          | (x1-x0)*(y1-y0) |
+          +--------+--------+
+@end group
+@end example
+@end ifnottex
+
+The term @m{(x_1-x_0)(y_1-y_0),(x1-x0)*(y1-y0)} can be negative, but the final
+result is of course always positive.  Notice the sum @m{\mathop{\rm
+high}(x_0y_0)+\mathop{\rm low}(x_1y_1), high(x0*y0)+low(x1*y1)} occurs twice,
+so it's possible to do @m{5k,5*k} limb additions, rather than @m{6k,6*k}, but
+in GMP extra function call overheads outweigh the saving.
+
+Squaring is similar to multiplying, but with @ma{x=y} the formula reduces to
+an equivalent with three squares,
+
+@display
+@m{x^2 = (b^2+b)*x_1^2 + b(x_1-x_0)^2 + (b+1)x_0^2,
+   x^2 = (b^2+b)*x1^2 + b*(x1-x0)^2 + (b+1)*x0^2}
+@end display
+
+The final result is accumulated from those three squares the same way as for
+the three multiplies above.  The middle term @m{(x_1-x_0)^2,(x1-x0)^2} is now
+always positive.
+
+A similar formula for both multiplying and squaring can be constructed with a
+middle term @m{(x_1+x_0)(y_1+y_0),(x1+x0)*(y1+y0)}.  But those sums can exceed
+@ma{k} limbs, leading to more carry handling and additions than the form
+above.
+
+Karatsuba multiplication is asymptotically an @m{O(N^{1.585}),O(N^1.585)}
+algorithm, the exponent being @m{\log3/\log2,log(3)/log(2)}, representing 3
+multiplies each 1/2 the size of the inputs.  This is a big improvement over
+the basecase multiply at @ma{O(N^2)} and the advantage soon overcomes the
+extra additions karatsuba performs.
+
+@code{KARATSUBA_MUL_THRESHOLD} can be as little as 10 limbs.  The @code{SQR}
+threshold is usually about twice the @code{MUL}.  A fast @code{mpn_addmul_1}
+or @code{mpn_mul_basecase} can make the thresholds higher by staying faster
+than the karatsuba overheads for longer.  Unrolling in those functions can
+further raise the thresholds, by becoming proportionally more efficient as the
+size increases.
+
+
+@node Toom-Cook 3-Way Multiplication, FFT Multiplication, Karatsuba Multiplication, Multiplication Algorithms
+@subsection Toom-Cook 3-Way Multiplication
+
+The karatsuba formula is the simplest case of a general approach to splitting
+inputs that leads to both Toom-Cook and FFT algorithms.  A description of
+Toom-Cook can be found in Knuth section 4.3.3, with an example 3-way
+calculation after Theorem A.  The 3-way form used in GMP is described here.
+
+The operands are each considered split into 3 pieces of equal length (or the
+most significant part 1 or 2 limbs shorter than the others).
+
+@iftex
+@global@newdimen@GMPboxwidth @GMPboxwidth=5em
+@global@newdimen@GMPboxheight @GMPboxheight=3ex
+@end iftex
+@tex
+\def\GMPbox#1#2#3{%
+  \vbox to \GMPboxheight{%
+    \hrule \vfil
+    \hbox{%
+      \strut \vrule
+      \hbox to \GMPboxwidth {\hfil\hbox{$#1$}\hfil}%
+      \vrule
+      \hbox to \GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
+      \vrule
+      \hbox to \GMPboxwidth {\hfil\hbox{$#3$}\hfil}%
+      \vrule}
+    \vfil \hrule
+}}
+\GMPdisplay{%
+\vbox{%
+  \hbox to 3\GMPboxwidth {high \hfil low}
+  \vskip 0.7ex
+  \GMPbox{x_2}{x_1}{x_0}
+  \vskip 0.5ex
+  \GMPbox{y_2}{y_1}{y_0}
+  \vskip 0.5ex
+}}
+@end tex
+@ifnottex
+@example
+@group
+ high                         low
++----------+----------+----------+
+|    x2    |    x1    |    x0    |
++----------+----------+----------+
+
++----------+----------+----------+
+|    y2    |    y1    |    y0    |
++----------+----------+----------+
+@end group
+@end example
+@end ifnottex
+
+@noindent
+These parts are treated as the coefficients of two polynomials
+
+@display
+@group
+@m{X(t) = x_2t^2 + x_1t + x_0,
+   X(t) = x2*t^2 + x1*t + x0}
+@m{Y(t) = y_2t^2 + y_1t + y_0,
+   Y(t) = y2*t^2 + y1*t + y0}
+@end group
+@end display
+
+Again let @ma{b} equal the power of 2 which is the size of the @ms{x,0},
+@ms{x,1}, @ms{y,0} and @ms{y,1} pieces, ie.@: if they're @ma{k} limbs each
+then @m{b=2\GMPraise{$k*$@code{mp\_bits\_per\_limb}},
+b=2^(k*mp_bits_per_limb)}.  With this @ma{x=X(b)} and @ma{y=Y(b)}.
+
+Let a polynomial @m{W(t)=X(t)Y(t),W(t)=X(t)*Y(t)} and suppose its coefficients
+are
+
+@display
+@m{W(t) = w_4t^4 + w_3t^3 + w_2t^2 + w_1t + w_0,
+   W(t) = w4*t^4 + w3*t^3 + w2*t^2 + w1*t + w0}
+@end display
+
+@noindent
+The @m{w_i,w[i]} are going to be determined, and when they are they'll give
+the final result using @ma{w=W(b)}, since @m{xy=X(b)Y(b),x*y=X(b)*Y(b)=W(b)}.
+The coefficients will be roughly @ma{b^2} each, and the final @ma{W(b)} will
+be an addition like,
+
+@tex
+\def\GMPbox#1#2{%
+  \moveright #1\GMPboxwidth
+  \vbox to \GMPboxheight{%
+    \hrule \vfil
+    \hbox{%
+      \strut \vrule
+      \hbox to 2\GMPboxwidth {\hfil\hbox{$#2$}\hfil}%
+      \vrule}
+    \vfil \hrule
+}}
+\GMPdisplay{%
+\vbox{%
+  \hbox to 6\GMPboxwidth {high \hfil low}
+  \vskip 0.7ex
+  \GMPbox{0}{w_4}
+  \vskip 0.5ex
+  \GMPbox{1}{w_3}
+  \vskip 0.5ex
+  \GMPbox{2}{w_2}
+  \vskip 0.5ex
+  \GMPbox{3}{w_1}
+  \vskip 0.5ex
+  \GMPbox{4}{w_1}
+}}
+@end tex
+@ifnottex
+@example
+@group
+ high                                        low
++-------+-------+
+|       w4      |
++-------+-------+
+       +--------+-------+
+       |        w3      |
+       +--------+-------+
+               +--------+-------+
+               |        w2      |
+               +--------+-------+
+                       +--------+-------+
+                       |        w1      |
+                       +--------+-------+
+                                +-------+-------+
+                                |       w0      |
+                                +-------+-------+
+@end group
+@end example
+@end ifnottex
+
+The @m{w_i,w[i]} coefficients could be formed by a simple set of cross
+products, like @m{w_4=x_2y_2,w4=x2*y2}, @m{w_3=x_2y_1+x_1y_2,w3=x2*y1+x1*y2},
+@m{w_2=x_2y_0+x_1y_1+x_0y_2,w2=x2*y0+x1*y1+x0*y2} etc, but this would need all
+nine @m{x_iy_j,x[i]*y[j]} for @ma{i,j=0,1,2}, and would be equivalent merely
+to a basecase multiply.  Instead the following approach is used.
+
+@ma{X(t)} and @ma{Y(t)} are evaluated and multiplied at 5 points, giving
+values of @ma{W(t)} at those points.  The points used can be chosen in
+various ways, but in GMP the following are used
+
+@tex
+\GMPdisplay{%
+  \def\GMPbox#1{\hbox to 4em{$#1$\hfil}}%
+  \GMPbox{\rm Point}   Value\hfil\break
+  \GMPbox{t=0}         $x_0y_0$, which gives $w_0$ immediately\hfil\break
+  \GMPbox{t=2}         $(4x_2+2x_1+x_0)(4y_2+2y_1+y_0)$\hfil\break
+  \GMPbox{t=1}         $(x_2+x_1+x_0)(y_2+y_1+y_0)$\hfil\break
+  \GMPbox{t={1\over2}} $(x_2+2x_1+4x_0)(y_2+2y_1+4y_0)$\hfil\break
+  \GMPbox{t=\infty}    $x_2y_2$, which gives $w_4$ immediately
+}
+@end tex
+@ifnottex
+@display
+@multitable {@ma{t=infM}} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
+@item Point      @tab Value
+@item @ma{t=0}   @tab @ma{x0*y0}, which gives w0 immediately
+@item @ma{t=2}   @tab @ma{(4*x2+2*x1+x0)*(4*y2+2*y1+y0)}
+@item @ma{t=1}   @tab @ma{(x2+x1+x0)*(y2+y1+y0)}
+@item @ma{t=1/2} @tab @ma{(x2+2*x1+4*x0)*(y2+2*y1+4*y0)}
+@item @ma{t=inf} @tab @ma{x2*y2}, which gives @ma{w4} immediately
+@end multitable
+@end display
+@end ifnottex
+
+At @m{t={1\over2},t=1/2} the value calculated is actually
+@m{16X({1\over2})Y({1\over2}), 16*X(1/2)*Y(1/2)}, giving a value for
+@m{16W({1\over2}),16*W(1/2)}, and this is always an integer.  At
+@m{t=\infty,t=inf} the value is actually @m{\lim_{t\to\infty} {X(t)Y(t)\over
+t^2}, X(t)*Y(t)/t^2 in the limit as t approaches infinity}, but it's much
+easier to think of as simply @m{x_2y_2,x2*y2} giving @ms{w,4} immediately
+(much like @m{x_0y_0,x0*y0} at @ma{t=0} gives @ms{w,0} immediately).
+
+Now each of the points substituted into
+@m{W(t)=w_4t^4+\cdots+w_0,W(t)=w4*t^4+@dots{}+w0} gives a linear combination
+of the @m{w_i,w[i]} coefficients, and the value of those combinations has just
+been calculated.
+
+@tex
+\GMPdisplay{%
+$\matrix{%
+W(0)           & = &       &   &      &   &      &   &      &   &   w_0 \cr
+16W({1\over2}) & = &   w_4 & + & 2w_3 & + & 4w_2 & + & 8w_1 & + & 16w_0 \cr
+W(1)           & = &   w_4 & + &  w_3 & + &  w_2 & + &  w_1 & + &   w_0 \cr
+W(2)           & = & 16w_4 & + & 8w_3 & + & 4w_2 & + & 2w_1 & + &   w_0 \cr
+W(\infty)      & = &   w_4 \cr
+}$}
+@end tex
+@ifnottex
+@example
+@group
+   W(0)   =                                 w0
+16*W(1/2) =    w4 + 2*w3 + 4*w2 + 8*w1 + 16*w0
+   W(1)   =    w4 +   w3 +   w2 +   w1 +    w0
+   W(2)   = 16*w4 + 8*w3 + 4*w2 + 2*w1 +    w0
+   W(inf) =    w4
+@end group
+@end example
+@end ifnottex
+
+This is a set of five equations in five unknowns, and some elementary linear
+algebra quickly isolates each @m{w_i,w[i]}, by subtracting multiples of one
+equation from another.
+
+In the code the set of five values @ma{W(0)},@dots{},@m{W(\infty),W(inf)} will
+represent those certain linear combinations.  By adding or subtracting one
+from another as necessary, values which are each @m{w_i,w[i]} alone are
+arrived at.  This involves only a few subtractions of small multiples (some of
+which are powers of 2), and so is fast.  A couple of divisions remain by
+powers of 2 and one division by 3 (or by 6 rather), and that last uses the
+special @code{mpn_divexact_by3}.
+
+In the code the values @ms{w,4}, @ms{w,2} and @ms{w,0} are formed in the
+destination with pointers @code{E}, @code{C} and @code{A}, and @ms{w,3} and
+@ms{w,1} in temporary space @code{D} and @code{B} are added to them.  There
+are extra limbs @code{tD}, @code{tC} and @code{tB} at the high end of
+@ms{w,3}, @ms{w,2} and @ms{w,1} which are handled separately.  The final
+addition then is as follows.
+
+@tex
+\def\GMPboxT#1{%
+  \vbox to \GMPboxheight{%
+    \hrule
+    \hbox {\strut \vrule{} #1 \vrule}%
+    \hrule
+}}
+\GMPdisplay{%
+\advance\baselineskip by 1ex
+\vbox{%
+  \hbox to 6\GMPboxwidth {high \hfil low}
+  \vbox to \GMPboxheight{%
+    \hrule \vfil
+    \hbox{%
+      \strut \vrule
+      \hbox to 2\GMPboxwidth {\hfil@code{E}\hfil}
+      \vrule
+      \hbox to 2\GMPboxwidth {\hfil@code{C}\hfil}
+      \vrule
+      \hbox to 2\GMPboxwidth {\hfil@code{A}\hfil}
+      \vrule}
+    \vfil \hrule
+  }%
+  \moveright \GMPboxwidth
+  \vbox to \GMPboxheight{%
+    \hrule \vfil
+    \hbox{%
+      \strut \vrule
+      \hbox to 2\GMPboxwidth {\hfil@code{D}\hfil}
+      \vrule
+      \hbox to 2\GMPboxwidth {\hfil@code{B}\hfil}
+      \vrule}
+    \vfil \hrule
+  }%
+  \hbox{%
+    \hbox to \GMPboxwidth{\hfil \GMPboxT{\code{tD}}}%
+    \hbox to \GMPboxwidth{\hfil \GMPboxT{\code{tC}}}%
+    \hbox to \GMPboxwidth{\hfil \GMPboxT{\code{tB}}}}
+}}
+@end tex
+@ifnottex
+@example
+@group
+ high                                        low
++-------+-------+-------+-------+-------+-------+
+|       E       |       C       |       A       |
++-------+-------+-------+-------+-------+-------+
+         +------+-------++------+-------+
+         |      D       ||      B       |
+         +------+-------++------+-------+
+      --      --      --
+     |tD|    |tC|    |tB|        
+      --      --      --
+@end group
+@end example
+@end ifnottex
+
+The conversion of @ma{W(t)} values to the coefficients is interpolation.  A
+polynomial of degree 4 like @ma{W(t)} is uniquely determined by values known
+at 5 different points.  The points can be chosen to make the linear equations
+come out with a convenient set of steps for isolating the @m{w_i,w[i]}.
+
+In @file{mpn/generic/mul_n.c} the @code{interpolate3} routine performs the
+interpolation.  The open-coded one-pass version may be a bit hard to
+understand, the steps performed can be better seen in the @code{USE_MORE_MPN}
+version.
+
+Squaring follows the same procedure as multiplication, but there's only one
+@ma{X(t)} and it's evaluated at 5 points, and those values squared to give
+values of @ma{W(t)}.  The interpolation is then identical, and in fact the
+same @code{interpolate3} is used for both squaring and multiplying.
+
+Toom-3 is asymptotically @m{O(N^{1.465}),O(N^1.465)}, the exponent being
+@m{\log5/\log3,log(5)/log(3)}, representing 5 recursive multiplies of 1/3 the
+original size.  This is an improvement over Karatsuba at
+@m{O(N^{1.585}),O(N^1.585)}, though Toom-Cook does more work in the evaluation
+and interpolation and so it only realizes its advantage above a certain size.
+
+Near the crossover between Toom-3 and Karatsuba there's generally a range of
+sizes where the difference between the two is small.
+@code{TOOM3_MUL_THRESHOLD} is a somewhat arbitrary point in that range and
+successive runs of the tune program can give different values due to small
+variations in measuring.  A graph of time versus size for the two shows the
+effect, see @file{tune/README}.
+
+At the fairly small sizes where the Toom-3 thresholds occur it's worth
+remembering that the asymptotic behaviour for Karatsuba and Toom-3 can't be
+expected to make accurate predictions, due of course to the big influence of
+all sorts of overheads, and the fact that only a few recursions of each are
+being performed.  Even at large sizes there's a good chance machine dependent
+effects like cache architecture will mean actual performance deviates from
+what might be predicted.
+
+The formula given above for the Karatsuba algorithm has an equivalent for
+Toom-3 involving only five multiplies, but this would be complicated and
+unenlightening.
+
+An alternate view of Toom-3 can be found in Zuras (@pxref{References}), using
+a vector to represent the @ma{x} and @ma{y} splits and a matrix multiplication
+for the evaluation and interpolation stages.  The matrix inverses are not
+meant to be actually used, and they have elements with values much greater
+than in fact arise in the interpolation steps.  The diagram shown for the
+3-way is attractive, but again doesn't have to be implemented that way and for
+example with a bit of rearrangement just one division by 6 can be done.
+
+
+@node FFT Multiplication, Other Multiplication, Toom-Cook 3-Way Multiplication, Multiplication Algorithms
+@subsection FFT Multiplication
+
+At large to very large sizes a Fermat style FFT multiplication is used,
+following Sch@"onhage and Strassen (@pxref{References}).  Descriptions of FFTs
+in various forms can be found in many textbooks, for instance Knuth section
+4.3.3 part C or Lipson chapter IX.  A brief description of the form used in
+GMP is given here.
+
+The multiplication done is @m{xy \bmod 2^N+1, x*y mod 2^N+1}, for a given
+@ma{N}.  A full product @m{xy,x*y} is obtained by choosing @m{N \ge
+\mathop{\rm bits}(x)+\mathop{\rm bits}(y), N>=bits(x)+bits(y)} and padding
+@ma{x} and @ma{y} with high zero limbs.  The modular product is the native
+form for the algorithm, so padding to get a full product is unavoidable.
+
+The algorithm follows a split, evaluate, pointwise multiply and interpolate
+similar to that described above for Karatsuba and Toom-3.  A @ma{k} parameter
+controls the split, with an FFT-@ma{k} splitting into @ma{2^k} pieces of
+@ma{M=N/2^k} bits each.  @ma{N} must be a multiple of @ma{2^k} and @ma{M} must
+be a multiple of @code{mp_bits_per_limb}.
+
+The evaluations, pointwise multiplications, and interpolation, are all done
+modulo @m{2^{N'}+1, 2^N'+1} where @ma{N'} is @ma{2M+k+3} rounded up to a
+multiple of @ma{2^k} and of @code{mp_bits_per_limb}.  The results of
+interpolation will be certain sums @m{\sum_{i=0}^{2^k-1} x_i y_j, x[i]*y[i]
+for i=0 to 2^k-1} where @m{x_i,x[i]} and @m{y_j,y[j]} are the input pieces,
+and this choice of @ma{N'} ensures those sums aren't truncated.
+
+The points used for the evaluation are @ma{g^i} for @ma{i=0} to @ma{2^k} where
+@m{g=2^{2N'/2^k}, g=2^(2N'/2^k)}.  @ma{g} is a @m{2^k,2^k'}th root of unity
+mod @m{2^{N'}+1,2^N'+1}, which produces necessary cancellations at the
+interpolation stage, and it's also a power of 2 so the fast fourier transforms
+used for the evaluation and interpolation do only shifts, adds and negations.
+
+The pointwise multiplications are done modulo @m{2^{N'}+1, 2^N'+1} and either
+recurse into a further FFT or use a plain Toom-3 multiplication, whichever is
+optimal at the size @ma{N'}.
+
+The interpolation is an inverse fast fourier transform.  The resulting set of
+convoluted sums of @m{x_iy_j,x[i]*y[j]} are added at appropriate offsets to
+give the final result.
+
+Squaring is the same, but @ma{x} is the only input so it's one transform at
+the evaluate stage and the pointwise multiplies are squares.  The
+interpolation is the same.
+
+For a mod @ma{2^N+1} product, an FFT-@ma{k} is an @m{O(N^{k/(k-1)}),
+O(N^(k/(k-1)))} algorithm, the exponent representing @ma{2^k} recursed modular
+multiplies each @m{1/2^{k-1},1/2^(k-1)} the size of the original.  Each
+successive @ma{k} is an asymptotic improvement, but overheads mean each is
+only faster at bigger and bigger sizes.  In the code, @code{FFT_MUL_TABLE} and
+@code{FFT_SQR_TABLE} are the thresholds where each @ma{k} is used.  Each new
+@ma{k} effectively swaps some multiplying for some shifts, adds and overheads.
+
+A mod @ma{2^N+1} product can be formed with a normal
+@ma{N@cross{}N@rightarrow{}2N} bit multiply plus a subtraction, so an FFT and
+Toom-3 etc can be compared directly.  A @ma{k=4} FFT at @m{O(N^{1.333}),
+O(N^1.333)} can be expected to be the first faster than Toom-3 at
+@m{O(N^{1.465}), O(N^1.465)}.  In practice this is what's found, with
+@code{FFT_MODF_MUL_THRESHOLD} and @code{FFT_MODF_SQR_THRESHOLD} being between
+300 and 1000 limbs, depending on the CPU.  So far it's been found that larger
+FFTs are brought on at small enough sizes that their pointwise multiplies are
+below these thresholds.
+
+When an FFT is to get a full product, the change of @ma{N} to @ma{2N} doesn't
+alter the theoretical complexity for a given @ma{k}, but for the purposes of
+deciding where an FFT might be first used it can be assumed that the FFT is
+recursing into a normal multiply and that on that basis it's doing @ma{2^k}
+recursed multiplies each @m{1/2^{k-2},1/2^(k-2)} the size of the inputs,
+making it @m{O(N^{k/(k-2)}), O(N^(k/(k-2)))}.  This would mean @ma{k=7} at
+@m{O(N^{1.399}), O(N^1.399)} would be the first FFT faster than Toom-3.  In
+practice @code{FFT_MUL_THRESHOLD} and @code{FFT_SQR_THRESHOLD} have been found
+to be in the @ma{k=8} range, somewhere between 3000 and 10000 limbs.
+
+The way @ma{N} is split into @ma{2^k} pieces and then @ma{2M+k+3} is rounded
+up to a multiple of @ma{2^k} and @code{mp_bits_per_limb} means that when
+@m{2^k\ge@code{mp\_bits\_per\_limb}, 2^k>=@nicode{mp_bits_per_limb}} the
+effective @ma{N} is a multiple of @m{2^{2k-1},2^(2k-1)} bits.  The @ma{+k+3}
+means some values of @ma{N} just under such a multiple will be rounded to the
+next.  The complexity calculations above assume that a favourable size is
+used, meaning one which isn't padded through rounding, and it's also assumed
+that the extra @ma{+k+3} bits are negligable at typical FFT sizes.
+
+The practical effect of the @m{2^{2k-1},2^(2k-1)} constraint is to introduce a
+step-effect into measured speeds.  For example @ma{k=8} will round @ma{N} up
+to a multiple of 32768 bits, so for a 32-bit limb there'll be 512 limb groups
+of sizes for which @code{mpn_mul_n} runs at the same speed.  Or for @ma{k=9}
+groups of 2048 limbs, @ma{k=10} groups of 8192 limbs, etc.  In practice it's
+been found each @ma{k} is used at quite small multiples of its size constraint
+and so the effect is quite noticable in a time versus size graph.
+
+The threshold determinations currently measure at the mid-points of size
+steps, but this is sub-optimal since at the start of a new step it can happen
+that it's better to go back to the previous @ma{k} for a while.  Something
+more sophisticated for @code{FFT_MUL_TABLE} and @code{FFT_SQR_TABLE} will be
+needed.
+
+
+@node Other Multiplication,  , FFT Multiplication, Multiplication Algorithms
+@subsection Other Multiplication
+
+The 3-way Toom-Cook algorithm described above (@pxref{Toom-Cook 3-Way
+Multiplication}) generalizes to split into an arbitrary number of pieces, as
+per Knuth section 4.3.3 algorithm C.  This is not currently used, though it's
+possible a Toom-4 might fit in between Toom-3 and the FFTs.  The notes here
+are merely for interest.
+
+In general a split into @ma{r+1} pieces is made, and evaluations and pointwise
+multiplications done at @m{2r+1,2*r+1} points.  A 4-way split does 7 pointwise
+multiplies, 5-way does 9, etc.  Asymptotically an @ma{r+1}-way algorithm is
+@m{O(N^{log(2r+1)/log(r+1)}, O(N^(log(2*r+1)/log(r+1)))}.  Only the pointwise
+multiplications count towards big-@ma{O} complexity, but the time spent in the
+evaluate and interpolate stages grows with @ma{r} and has a significant
+practical impact, with the asymptotic advantage of each @ma{r} realized only
+at bigger and bigger sizes.  The overheads grow as @m{O(Nr),O(N*r)}, whereas
+in an @ma{r=2^k} FFT they grow only as @m{O(N \log r), O(N*log(r))}.
+
+Knuth algorithm C evaluates at points 0,1,2,@dots{},@m{2r,2*r}, but exercise 4
+uses @ma{-r},@dots{},0,@dots{},@ma{r} and the latter saves some small
+multiplies in the evaluate stage (or rather trades them for additions), and
+has a further saving of nearly half the interpolate steps.  The idea is to
+separate odd and even final coefficients and then perform algorithm C steps C7
+and C8 on them separately.  The divisors at step C7 become @ma{j^2} and the
+multipliers at C8 become @m{2tj-j^2,2*t*j-j^2}.
+
+Splitting odd and even parts through positive and negative points can be
+thought of as using @ma{-1} as a square root of unity.  If a 4th root of unity
+was available then a further split and speedup would be possible, but no such
+root exists for plain integers.  Going to complex integers with
+@m{i=\sqrt{-1}, i=sqrt(-1)} doesn't help, essentially because in cartesian
+form it takes three real multiplications to do a complex multiply.  The
+existance of @m{2^k,2^k'}th roots of unity in a suitable ring or field lets
+the fast fourier transform keep splitting and get to @m{O(N \log r),
+O(N*log(r))}.
+
+
+@node Division Algorithms, Greatest Common Divisor Algorithms, Multiplication Algorithms, Algorithms
+@section Division Algorithms
+@cindex Division algorithms
+
+@menu
+* Single Limb Division::        
+* Basecase Division::           
+* Divide and Conquer Division::  
+* Exact Division::              
+* Small Quotient Division::     
+@end menu
+
+
+@node Single Limb Division, Basecase Division, Division Algorithms, Division Algorithms
+@subsection Single Limb Division
+
+N@cross{}1 division is implemented using repeated 2@cross{}1 divisions from
+high to low, either with a hardware divide instruction or a multiplication by
+inverse, whichever is best on a given CPU.
+
+The multiply by inverse used follows Granlund and Montgomery section 8
+(@pxref{References}) and is implemented as @code{udiv_qrnnd_preinv} in
+@file{gmp-impl.h}.  The idea is to have a fixed point approximation to
+@ma{1/d} (see @code{invert_limb}) and then multiply by the high limb (plus one
+bit) of the dividend to get a quotient @ma{q}.  With @ma{d} normalized (high
+bit set), @ma{q} is no more than 1 too small.  Subtracting @m{qd,q*d} from the
+dividend gives a remainder, and lets the quotient be corrected if necessary.
+
+The result is a division done with two multiplications and four or five
+arithmetic operations.  On CPUs with low latency multipliers this can be much
+faster than a hardware divide, though the cost of calculating the inverse at
+the start may mean it's only better on inputs bigger than say 4 or 5 limbs.
+
+When a normalized divisor is required, either for the multiply by inverse or a
+hardware divide instruction that needs it that way, the division performed is
+@m{a2^k,a*2^k} by @m{d2^k,d*2^k} where @ma{a} is the dividend and @ma{k} is
+the power necessary to have the high bit of @m{d2^k,d*2^k} set.  The shift for
+the dividend is usually accomplished ``on the fly'' meaning by extracting the
+appropriate bits at each step.  Done this way the quotient limbs come out
+aligned ready to store.  An alternative for @code{mpn_mod_1}, which doesn't
+want the quotients, is to do just one shift at the end and an extra divide
+step.
+
+N@cross{}1 division isn't used to construct N@cross{}M divisions, it's only
+for small divisors (which are fairly common), and for radix conversion.
+
+
+@node Basecase Division, Divide and Conquer Division, Single Limb Division, Division Algorithms
+@subsection Basecase Division
+
+Basecase N@cross{}M division is like long division done by hand, but done in
+base @m{2\GMPraise{@code{mp\_bits\_per\_limb}}, 2^mp_bits_per_limb}.  See
+Knuth section 4.3.1 algorithm D, and @file{mpn/generic/sb_divrem_mn.c}.
+
+Briefly stated, while the dividend remains larger than the divisor, a high
+quotient limb is formed and the N@cross{}1 product @m{qd,q*d} subtracted at
+the top end of the dividend.  As noted in Knuth, with a normalized divisor
+(most significant bit set), each quotient limb can be formed using a
+2@cross{}1 division and a 1@cross{}1 multiplication plus some subtractions.
+The 2@cross{}1 division is by the high limb of the divisor and is done either
+with a hardware divide or a multiply by inverse (the same as in @ref{Single
+Limb Division}) whichever is faster.  Such a quotient is sometimes one too
+big, requiring an addback of the divisor, but that happens rarely.
+
+With Q=N@minus{}M being the number of quotient limbs, this is an
+@m{O(QM),O(Q*M)} algorithm and will run at a speed similar to a basecase
+Q@cross{}M multiplication, differing in fact only in the extra multiply and
+divide for each of the Q quotient limbs.
+
+
+@node Divide and Conquer Division, Exact Division, Basecase Division, Division Algorithms
+@subsection Divide and Conquer Division
+
+For divisors larger than @code{DC_THRESHOLD}, division is done by dividing.
+Or to be precise by a recursive divide and conquer algorithm based on work by
+Moenck and Borodin, Jebelean, and Burnikel and Ziegler, @pxref{References}.
+
+The algorithm consists essentially of recognising that a 2N@cross{}N division
+can be done with the basecase division algorithm (@pxref{Basecase Division}),
+but using N/2 limbs as a base, not just a single limb.  This way the
+multiplications that arise are (N/2)@cross{}(N/2) and can take advantage of
+Karatsuba and higher multiplication algorithms (@pxref{Multiplication
+Algorithms}).  The ``digits'' of the quotient are formed by recursive
+N@cross{}(N/2) divisions.
+
+If the (N/2)@cross{}(N/2) multiplies are done with a basecase multiplication
+then the work is about the same as a basecase division, but with more function
+call overheads and with some subtractions separated from the multiplies.
+These overheads mean that it's only when N/2 is above
+@code{KARATSUBA_MUL_THRESHOLD} that divide and conquer is of use.
+
+Since @code{DC_THRESHOLD} is based on the size N, it will be somewhere above
+twice @code{KARATSUBA_MUL_THRESHOLD}, but how much above depends on the CPU.
+An optimized @code{mpn_mul_basecase} can lower @code{DC_THRESHOLD} a little by
+offering a ready-made advantage over repeated @code{mpn_submul_1} calls.
+
+Divide and conquer is asymptotically @m{O(M(N)\log N),O(M(N)*log(N))} where
+@ma{M(N)} is the time for an N@cross{}N multiplication.  The actual time is a
+sum over multiplications of the recursed sizes, as can be seen near the end of
+section 2.2 of Burnikel and Zeigler.  In practice, at moderate to large sizes,
+a 2N@cross{}N division tends to be about 2 to 4 times slower than an
+N@cross{}N multiplication.
+
+
+@node Exact Division, Small Quotient Division, Divide and Conquer Division, Division Algorithms
+@subsection Exact Division
+
+A so-called exact division is when the dividend is known to be an exact
+multiple of the divisor.  Jebelean's exact division algorithm uses this
+knowledge to make some significant optimizations (@pxref{References}).
+
+The idea can be illustrated in decimal for example with 368154 divided by
+543.  Because the low digit of the dividend is 4, the low digit of the
+quotient must be 8.  This is arrived at from @m{4 \mathord{\times} 7 \bmod 10,
+4*7 mod 10}, using the fact 7 is the modular inverse of 3, the low digit of
+the divisor, since @m{3 \mathord{\times} 7 \mathop{\equiv} 1 \bmod 10, 3*7
+@equiv{} 1 mod 10}.  So @m{8\mathord{\times}543 = 4344,8*543=4344} can be
+subtracted from the dividend leaving 363810.  Notice the low digit has become
+zero.
+
+The procedure is repeated at the second digit, with the next quotient digit 7
+(@m{1 \mathord{\times} 7 \bmod 10, 7 @equiv{} 1*7 mod 10}), subtracting
+@m{7\mathord{\times}543 = 3801,7*543=3801}, leaving 325800.  And finally at
+the third digit with quotient digit 6 (@m{8 \mathord{\times} 7 \bmod 10, 8*7
+mod 10}), subtracting @m{6\mathord{\times}543 = 3258,6*543=3258} leaving 0.
+So the quotient is 678.
+
+Notice however that the multiplies and subtractions don't need to extend past
+the low three digits of the dividend, since that's enough to determine the
+three quotient digits.  For the last quotient digit no subtraction is needed
+at all.  On a 2N@cross{}N multiply like this one, only about half the work of
+a normal basecase division is necessary.
+
+For an N@cross{}M exact division producing Q=N@minus{}M quotient limbs, the
+saving over a normal basecase division is in two parts.  Firstly, each of the
+Q quotient limbs needs only one multiply, not a 2@cross{}1 divide and
+multiply.  Secondly, the crossproducts are reduced when @ma{Q>M} to
+@m{QM-M(M+1)/2,Q*M-M*(M+1)/2}, or when @m{Q\leq M, Q<=M} to @m{Q(Q-1)/2,
+Q*(Q-1)/2}.  Notice the savings are complementary.  If Q is big then many
+divisions are saved, or if Q is small then the crossproducts reduce to a small
+number.
+
+The modular inverse used is calculated efficiently using @code{modlimb_invert}
+in @file{gmp-impl.h}.  This does four multiplies for a 32-bit limb, or six for
+a 64-bit limb.  @file{tune/modlinv.c} has some alternate implementations that
+might suit processors better at bit twiddling than multiplying.
+
+The sub-quadratic exact division described by Jebelean in "Exact Division with
+Karatsuba Complexity" is not currently implemented.  It uses a rearrangement
+similar to the divide and conquer for normal division (@pxref{Divide and
+Conquer Division}), but operating from low to high.
+
+A special case exact division by 3 exists in @code{mpn_divexact_by3},
+supporting Toom-3 multiplication and currently not otherwise available from
+high level functions.  It forms quotient digits with a multiply by the modular
+inverse of 3 (which is @code{0xAA...AAB}) and a couple of comparisons, taking
+advantage of the fact that 3 is a divisor of
+@m{2\GMPraise{@code{mp\_bits\_per\_limb}}-1, 2^mp_bits_per_limb-1} whenever
+@code{mp_bits_per_limb} is even.
+
+
+@node Small Quotient Division,  , Exact Division, Division Algorithms
+@subsection Small Quotient Division
+
+An N@cross{}M division where the number of quotient limbs Q=N@minus{}M is
+small can be optimized somewhat.
+
+An ordinary basecase division normalizes the divisor by shifting it to make
+the high bit set, shifting the dividend accordingly, and shifting the
+remainder back down at the end of the calculation.  This is wasteful if only a
+few quotient limbs are to be formed.  Instead a division of just the top
+@m{\rm2Q,2*Q} limbs of the dividend by the top Q limbs of the divisor can be
+used to form a trial quotient.  This requires only those limbs normalized, not
+the whole of the divisor and dividend.
+
+A multiply and subtract then applies the trial quotient to the M@minus{}Q
+unused limbs of the divisor and N@minus{}Q dividend limbs (which includes Q
+limbs remaining from the trial quotient division).  The starting trial
+quotient can be 1 or 2 too big, but all cases of 2 too big and most cases of 1
+too big are detected by first comparing the most significant limbs that will
+arise from the subtraction.  An addback is done if the quotient still turns
+out to be 1 too big.
+
+This whole procedure is essentially the same as one step of the basecase
+algorithm done in a Q limb base, though with the trial quotient test done only
+with the high limbs, not an entire Q limb ``digit'' product.  The correctness
+of this weaker test can be established by following the argument of Knuth
+section 4.3.1 exercise 20 but with the @m{v_2 \GMPhat q > b \GMPhat r
++ u_2, v2*q>br+u2} condition appropriately relaxed.
+
+
+@node Greatest Common Divisor Algorithms, Powering Algorithms, Division Algorithms, Algorithms
+@section Greatest Common Divisor
+@cindex Greatest common divisor algorithms
+
+@menu
+* Binary GCD::                  
+* Accelerated GCD::             
+* Extended GCD::                
+* Jacobi Symbol::               
+@end menu
+
+
+@node Binary GCD, Accelerated GCD, Greatest Common Divisor Algorithms, Greatest Common Divisor Algorithms
+@subsection Binary GCD
+
+At small sizes GMP uses an @ma{O(N^2)} binary style GCD.  This is described in
+many textbooks, for example Knuth section 4.5.2 algorithm B.  It simply
+consists of successively reducing operands @ma{a} and @ma{b} using
+@ma{@gcd{}(a,b) = @gcd{}(@min{}(a,b),@abs{}(a-b))}, and also that if @ma{a}
+and @ma{b} are first made odd then @ma{@abs{}(a-b)} is even and factors of two
+can be discarded.
+
+Variants like letting @ma{a-b} become negative and doing a different next step
+are of interest only as far as they suit particular CPUs, since on small
+operands it's machine dependent factors that determine performance.
+
+The Euclidean GCD algorithm, as per Knuth algorithms E and A, reduces using
+@ma{a @bmod b} but this has so far been found to be slower everywhere.  One
+reason the binary method does well is that the implied quotient at each step
+is usually small, so often only one or two subtractions are needed to get the
+same effect as a division.  Quotients 1, 2 and 3 for example occur 67.7% of
+the time, see Knuth section 4.5.3 Theorem E.
+
+
+@node Accelerated GCD, Extended GCD, Binary GCD, Greatest Common Divisor Algorithms
+@subsection Accelerated GCD
+
+For sizes above @code{GCD_ACCEL_THRESHOLD}, GMP uses the Accelerated GCD
+algorithm described independently by Weber and Jebelean (as the ``Generalized
+Binary'' algorithm in the latter case), @pxref{References}.  This algorithm is
+still @ma{O(N^2)}, but is much faster than the binary algorithm since it does
+fewer multi-precision operations.  It consists of the @ma{k}-ary reduction by
+Sorenson, but with larger coefficients, and between each reduction a dmod
+similar to an exact division.
+
+For operands @ma{u} and @ma{v} the @ma{k}-ary reduction replaces @ma{u} with
+@m{nv-du,n*v-d*u} where @ma{n} and @ma{d} are single limb values chosen to
+give a trailing zero limb on that value, which can be stripped.  @ma{n} and
+@ma{d} are calculated using an algorithm similar to half of a two limb GCD
+(see @code{find_a} in @file{mpn/generic/gcd.c}).
+
+When @ma{u} and @ma{v} differ in size by more than a certain number of bits, a
+dmod is performed to zero out bits at the low end of the larger.  It consists
+of a single step of Jebelean's exact division algorithm applied to an
+appropriate number of bits (@pxref{Exact Division}).  This is faster than a
+@ma{k}-ary reduction but is useful only when the operands differ in size.
+There's a dmod after each @ma{k}-ary reduction, and if the dmod leaves the
+operands still differing in size then it's repeated.
+
+The @ma{k}-ary reduction step can introduce spurious factors into the GCD
+@ma{g} calculated, and these are eliminated at the end by taking GCDs with the
+original inputs @ma{@gcd{}(u,@gcd{}(v,g))} using the binary algorithm.  Since
+@ma{g} is almost always small this takes very little time.
+
+At small sizes the algorithm needs a good implementation of @code{find_a}.  At
+larger sizes it's dominated by @code{mpn_addmul_1} calls applying @ma{n} and
+@ma{d}.
+
+
+@node Extended GCD, Jacobi Symbol, Accelerated GCD, Greatest Common Divisor Algorithms
+@subsection Extended GCD
+
+The extended GCD calculates @ma{@gcd{}(a,b)} and also cofactors @ma{x} and
+@ma{y} satisfying @m{ax+by=\gcd(a@C{}b), a*x+b*y=gcd(a@C{}b)}.  Lehmer's
+multi-step improvement of the extended Euclidean algorithm is used.  See Knuth
+section 4.5.2 algorithm L, and @file{mpn/generic/gcdext.c}.  This is an
+@ma{O(N^2)} algorithm.
+
+The multipliers at each step are found using single limb calculations for
+sizes up to @code{GCDEXT_THRESHOLD}, or double limb calculations above that.
+The single limb code is faster but doesn't produce full-limb multipliers.
+
+When a CPU has a data-dependent multiplier, meaning one which is faster on
+operands with fewer bits, the extra work in the double-limb calculation might
+only save some looping overheads, leading to a large @code{GCDEXT_THRESHOLD}.
+Currently the single limb calculation doesn't optimize for the small quotients
+that often occur, and this can lead to unusually low values of
+@code{GCDEXT_THRESHOLD}, depending on the CPU.
+
+
+@node Jacobi Symbol,  , Extended GCD, Greatest Common Divisor Algorithms
+@subsection Jacobi Symbol
+
+Currently @code{mpz_jacobi} is implemented with a simple Euclidean division
+algorithm and isn't very fast when both inputs are large.  Lehmer's multi-step
+improvement or a binary based multi-step algorithm is likely to be better.
+
+@code{mpz_kronecker_ui} and friends consist simply of an @code{mpn_mod_1}
+followed by a binary style single limb jacobi symbol as implemented in
+@file{mpn/generic/jacbase.c}.  Sign changes for the result are efficiently
+accumulated using some bit twiddling, avoiding table lookups and conditional
+jumps.
+
+
+@node Powering Algorithms, Root Extraction Algorithms, Greatest Common Divisor Algorithms, Algorithms
+@section Powering Algorithms
+@cindex Powering algorithms
+
+@menu
+* Normal Powering Algorithm::   
+* Modular Powering Algorithm::  
+@end menu
+
+
+@node Normal Powering Algorithm, Modular Powering Algorithm, Powering Algorithms, Powering Algorithms
+@subsection Normal Powering
+
+Normal @code{mpz} or @code{mpf} powering uses a simple binary algorithm,
+successively squaring and then multiplying by the base when a 1 bit is seen in
+the exponent, as per Knuth section 4.6.3.  The ``left to right''
+variant described there is used rather than algorithm A, since it's just as
+easy and can be done with somewhat less temporary memory.
+
+
+@node Modular Powering Algorithm,  , Normal Powering Algorithm, Powering Algorithms
+@subsection Modular Powering
+
+Modular powering is implemented using a @ma{2^k}-ary sliding window with
+@ma{k} chosen according to the size of the exponent.  Larger exponents use
+larger values of @ma{k}, the choice being made to minimize the average number
+of multiplications that must supplement the squaring.
+
+Fixed window @ma{m}-ary powering is described in Knuth section 4.6.3 under
+``Fewer multiplications''.  The sliding window improvement is to observe that
+while the part of the exponent being considered has a low bit of 0 then a
+square can be done and the window slid along, until it contains an odd value.
+This means only @ma{m/2} pre-calculated powers are needed, and it may do fewer
+multiplications depending on the bits of the exponent.
+
+The modular multiplies and squares use either a simple division or the REDC
+method by Montgomery (@pxref{References}).  REDC is a little faster,
+essentially saving N single limb divisions in a fashion similar to exact
+division (@pxref{Exact Division}), but because a full remainder is wanted no
+crossproducts are saved.  The current REDC has some limitations.  It's only
+@ma{O(N^2)} so above @code{POWM_THRESHOLD} division becomes faster and is
+used.  It doesn't attempt to detect small bases, but rather always uses a REDC
+form, which is usually a full size operand.  And lastly it's only applied to
+odd moduli.
+
+
+@node Root Extraction Algorithms, Radix Conversion Algorithms, Powering Algorithms, Algorithms
+@section Root Extraction Algorithms
+@cindex Root extraction algorithms
+
+@menu
+* Square Root Algorithm::       
+* Nth Root Algorithm::          
+* Perfect Square Algorithm::    
+* Perfect Power Algorithm::     
+@end menu
+
+
+@node Square Root Algorithm, Nth Root Algorithm, Root Extraction Algorithms, Root Extraction Algorithms
+@subsection Square Root
+
+Square roots are taken using Newton's method with the following iteration,
+where @ma{A} is the input.
+@tex
+$$a_{i+1} = {1\over2} \left({A \over a_i} + a_i\right)$$
+@end tex
+@ifnottex
+
+@example
+         1      A
+a[i+1] = - * ( ---- + a[i] )
+         2     a[i] 
+@end example
+
+@end ifnottex
+The initial approximation @m{a_1,a[1]} is taken from a small table, or from a
+CPU square root instruction if available and worthwhile.  Convergence is
+quadratic, meaning each @m{a_i,a[i]} has twice as many accurate bits as
+@m{a_{i-1},a[i-1]}.  Currently the divisions don't exploit the fact that
+@m{a_{i+1},a[i+1]} has many high limbs identical to @m{a_i,a[i]}.
+
+
+@node Nth Root Algorithm, Perfect Square Algorithm, Square Root Algorithm, Root Extraction Algorithms
+@subsection Nth Root
+
+Nth roots are taken using Newton's method with the following iteration, where
+@ma{A} is then input and @ma{n} is the root to be taken.
+@tex
+$$a_{i+1} = {1\over n} \left({A \over a_i^{n-1}} + (n-1)a_i \right)$$
+@end tex
+@ifnottex
+
+@example
+         1         A
+a[i+1] = - * ( --------- + (n-1)*a[i] )
+         n     a[i]^(n-1)
+@end example
+
+@end ifnottex
+The initial approximation @m{a_1,a[1]} is generated bitwise by successively
+powering a trial root with or without new 1 bits, aiming to be just above the
+true root.  The iteration converges quadratically when started from a good
+approximation.  When @ma{n} is large more initial bits are needed to get good
+convergence.  The current implementation is not particularly well optimized.
+
+
+@node Perfect Square Algorithm, Perfect Power Algorithm, Nth Root Algorithm, Root Extraction Algorithms
+@subsection Perfect Square
+
+@code{mpz_perfect_square_p} is able to quickly exclude most non-squares by
+checking whether the input is a quadratic residue modulo some small integers.
+
+The first test is modulo 256 which means simply examining the least
+significant byte.  Only 44 different values occur as the low byte of a square,
+so 82.8% of non-squares can be immediately excluded.  Similar tests modulo
+primes from 3 to 29 exclude 99.5% of those remaining, or if a limb is 64 bits
+then primes up to 53 are used, excluding 99.99%.  A single N@cross{}1
+remainder using @code{PP} from @file{gmp-impl.h} quickly gives all these
+remainders.
+
+A square root must still be taken for any value that passes the residue tests,
+to verify it's really a square and not one of the 0.086% (or 0.000156% for 64
+bits) non-squares that get through.  @xref{Square Root Algorithm}.
+
+
+@node Perfect Power Algorithm,  , Perfect Square Algorithm, Root Extraction Algorithms
+@subsection Perfect Power
+
+Detecting perfect powers is required by some factorization algorithms.
+Currently @code{mpz_perfect_power_p} is implemented using repeated Nth root
+extractions, though naturally only prime roots need to be considered.
+(@xref{Nth Root Algorithm}.)
+
+If a prime divisor @ma{p} with multiplicity @ma{e} can be found, then only
+roots which are divisors of @ma{e} need to be considered, much reducing the
+work necessary.  To this end divisibility by a set of small primes is checked.
+
+
+@node Radix Conversion Algorithms, Assembler Coding, Root Extraction Algorithms, Algorithms
+@section Radix Conversion
+@cindex Radix conversion algorithms
+
+Radix conversions are less important than other algorithms.  A program
+dominated by conversions should probably use a different data representation.
+
+@menu
+* Binary to Radix::             
+* Radix to Binary::             
+@end menu
+
+
+@node Binary to Radix, Radix to Binary, Radix Conversion Algorithms, Radix Conversion Algorithms
+@subsection Binary to Radix
+
+Conversions from binary to a power-of-2 radix use a simple and fast @ma{O(N)}
+bit extraction algorithm.
+
+Conversions from binary to other radices use repeated divisions, first by the
+biggest power of the radix that fits in a single limb, then by the radix on
+the remainders.  This is an @ma{O(N^2)} algorithm and can be quite
+time-consuming on large inputs.
+
+
+@node Radix to Binary,  , Binary to Radix, Radix Conversion Algorithms
+@subsection Radix to Binary
+
+Conversions from a power-of-2 radix into binary use a simple and fast
+@ma{O(N)} bitwise concatenation algorithm.
+
+Conversions from other radices use repeated multiplications, first
+accumulating as many digits as fit in a limb, then doing an N@cross{}1
+multi-precision multiplication.  This is @ma{O(N^2)} and is certainly
+sub-optimal on sizes above the Karatsuba multiply threshold.
+
+
+@node Assembler Coding,  , Radix Conversion Algorithms, Algorithms
+@section Assembler Coding
+
+The assembler subroutines in GMP are the most significant source of speed at
+small to moderate sizes.  At larger sizes algorithm selection becomes more
+important, but of course speedups in low level routines will still speed up
+everything proportionally.
+
+Carry handling and widening multiplies that are important for GMP can't be
+easily expressed in C.  GCC @code{asm} blocks help a lot and are provided in
+@file{longlong.h}, but hand coding low level routines invariably offers a
+speedup over generic C by a factor of anything from 2 to 10.
+
+@menu
+* Assembler Code Organisation::  
+* Assembler Basics::            
+* Assembler Carry Propagation::  
+* Assembler Cache Handling::    
+* Assembler Floating Point::    
+* Assembler SIMD Instructions::  
+* Assembler Software Pipelining::  
+* Assembler Loop Unrolling::    
+@end menu
+
+
+@node Assembler Code Organisation, Assembler Basics, Assembler Coding, Assembler Coding
+@subsection Code Organisation
+
+The various @file{mpn} subdirectories contain machine-dependent code, written
+in C or assembler.  The @file{mpn/generic} subdirectory contains default code,
+used when there's no machine-specific version of a particular file.
+
+Each @file{mpn} subdirectory is for an ISA family.  Generally 32-bit and
+64-bit variants in a family cannot share code and have separate directories.
+Within a family further subdirectories may exist for CPU variants.
+
+
+@node Assembler Basics, Assembler Carry Propagation, Assembler Code Organisation, Assembler Coding
+@subsection Assembler Basics
+
+@code{mpn_addmul_1} and @code{mpn_submul_1} are the most important routines
+for overall GMP performance.  All multiplications and divisions come down to
+repeated calls to these.  @code{mpn_add_n}, @code{mpn_sub_n},
+@code{mpn_lshift} and @code{mpn_rshift} are next most important.
+
+On some CPUs assembler versions of the internal functions
+@code{mpn_mul_basecase} and @code{mpn_sqr_basecase} give significant speedups,
+mainly through avoiding function call overheads.  They can also potentially
+make better use of a wide superscalar processor.
+
+The restrictions on overlaps between sources and destinations (described in
+@ref{Low-level Functions}) are designed to facilitate a variety of
+implementations.  For example knowing @code{mpn_add_n} won't have partly
+overlapping sources and destination means reading can be done far ahead of
+writing on superscalar processors, and loops can be vectorized on a vector
+processor, depending on the carry handling.
+
+
+@node Assembler Carry Propagation, Assembler Cache Handling, Assembler Basics, Assembler Coding
+@subsection Carry Propagation
+
+The problem that presents most challenges in GMP is propagating carries from
+one limb to the next.  In functions like @code{mpn_addmul_1} and
+@code{mpn_add_n}, carries are the only dependencies between limb operations.
+
+On processors with carry flags, a straightforward CISC style @code{adc} is
+generally best.  AMD K6 @code{mpn_addmul_1} however is an example of an
+unusual set of circumstances where a branch works out better.
+
+On RISC processors generally an add and compare for overflow is used.  This
+sort of thing can be seen in @file{mpn/generic/aors_n.c} too.  Some carry
+propagation schemes require 4 instructions, meaning at least 4 cycles per
+limb, but other schemes may use just 1 or 2.  On wide superscalar processors
+performance may be completely determined by the number of dependent
+instructions between carry-in and carry-out for each limb.
+
+On vector processors good use can be made of the fact that a carry bit only
+very rarely propagates more than one limb.  When adding a single bit to a
+limb, there's only a carry out if that limb was @code{0xFF...FF} which on
+random data will be only 1 in @m{2\GMPraise{@code{mp\_bits\_per\_limb}},
+2^mp_bits_per_limb}.  @file{mpn/cray/add_n.c} is an example of this, it adds
+all limbs in parallel, adds one set of carry bits in parallel and then only
+rarely needs to fall through to a loop propagating further carries.
+
+On the x86s, GCC (as of version 2.95.2) doesn't generate particularly good code
+for the RISC style idioms that are necessary to handle carry bits in
+C.  Often conditional jumps are generated where @code{adc} or @code{sbb} forms
+would be better.  Unfortunately almost any loop involving carry bits
+eventually needs to be coded in assembler for best results.
+
+
+@node Assembler Cache Handling, Assembler Floating Point, Assembler Carry Propagation, Assembler Coding
+@subsection Cache Handling
+
+GMP aims to perform well both on operands that fit entirely in L1 cache and
+those that don't.  In the assembler subroutines this means prefetching, either
+always or when large enough operands are presented.
+
+Pre-fetching sources combines well with loop unrolling, since a prefetch can
+be initiated once per unrolled loop (or more than once if the loop processes
+more than one cache line).
+
+Pre-fetching destinations won't be necessary if the CPU has a big enough store
+queue.  Older processors without a write-allocate L1 however will want
+destination prefetching, to avoid repeated write-throughs, unless they can
+keep up with the rate at which destination limbs are produced.
+
+The distance ahead to prefetch will be determined by the rate data is
+processed versus the time it takes to bring a line up to L1.  Naturally the
+net data rate from L2 or RAM will always limit the rate of data processing.
+Prefetch distance may also be limited by the number of prefetches the
+processor can have in progress at any one time.
+
+If a special prefetch instruction doesn't exist then a plain load can be used,
+so long as the CPU supports out-of-order loads.  But this may mean having a
+second copy of a loop so that the last few limbs can be processed without
+prefetching, since reading past the end of an operand must be avoided.
+
+
+@node Assembler Floating Point, Assembler SIMD Instructions, Assembler Cache Handling, Assembler Coding
+@subsection Floating Point
+
+Floating point arithmetic is used in GMP for multiplications on CPUs with poor
+integer multipliers.  Floating point generally doesn't suit other operations
+like additions or shifts, due to difficulties implementing carry handling.
+
+With IEEE 53-bit double precision floats, integer multiplications producing up
+to 53 bits will give exact results.  Breaking a multiplication into
+16@cross{}@ma{32@rightarrow{}48} bit pieces is convenient.  With some care
+though three 21@cross{}@ma{32@rightarrow{}53} bit products can be used to do a
+64@cross{}32 multiply, if one of those 21@cross{}32 parts uses the sign bit.
+
+Generally limbs want to be treated as unsigned, but on some CPUs floating
+point conversions only treat integers as signed.  Copying through a zero
+extended memory region or testing and adjusting for a sign bit may be
+necessary.
+
+Currently floating point FFTs aren't used for large multiplications.  On some
+processors they probably have a good chance of being worthwhile, if great care
+is taken with precision control.
+
+
+@node Assembler SIMD Instructions, Assembler Software Pipelining, Assembler Floating Point, Assembler Coding
+@subsection SIMD Instructions
+
+The single-instruction multiple-data support in current microprocessors is
+aimed at signal processing algorithms where each data point can be treated
+more or less independently.  There's generally not much support for
+propagating the sort of carries that arise in GMP.
+
+SIMD multiplications of say four 16@cross{}16 bit multiplies only do as much
+work as one 32@cross{}32 from GMP's point of view, and need some shifts and
+adds besides.  But of course if say the SIMD form is fully pipelined and uses
+less instruction decoding then it may still be worthwhile.
+
+On the x86 chips, MMX has so far found a use only in shifts, where it allows
+64-bit operations and has good instruction decoding.  3DNow and SSE haven't
+been found useful.
+
+
+@node Assembler Software Pipelining, Assembler Loop Unrolling, Assembler SIMD Instructions, Assembler Coding
+@subsection Software Pipelining
+
+Software pipelining consists of scheduling instructions around the branch
+point in a loop.  For example a loop taking a checksum of an array of limbs
+might have a load and an add, but the load wouldn't be for that add, rather
+for the one next time around the loop.  Each load then is effectively
+scheduled back in the previous iteration, allowing latency to be hidden.
+
+Naturally this is wanted only when doing things like loads or multiplies that
+take a few cycles to complete, and only where a CPU has multiple functional
+units so that other work can be done while waiting.
+
+A pipeline with several stages will have a data value in progress at each
+stage and each loop iteration moves them along one stage.  This is like
+juggling.
+
+Within the loop some moves between registers may be necessary to have the
+right values in the right places for each iteration.  Loop unrolling can help
+this, with each unrolled block able to use different registers for different
+values, even if some shuffling is still needed just before going back to the
+top of the loop.
+
+
+@node Assembler Loop Unrolling,  , Assembler Software Pipelining, Assembler Coding
+@subsection Loop Unrolling
+
+Loop unrolling consists of replicating code so that several limbs are
+processed in each loop.  At a minimum this reduces loop overheads by a
+corresponding factor, but it can also allow better register usage, for example
+alternately using one register combination and then another.  Judicious use of
+@command{m4} macros can help avoid lots of duplication in the source code.
+
+Unrolling is generally best done to a power of 2 multiple.  This makes it
+possible to calculate the number of unrolled loops and the number of remaining
+limbs using a shift and mask.  Sizes not a multiple of the unrolling can be
+handled in various ways, for example
+
+@itemize @bullet
+@item
+A simple loop at the end (or the start) to process the excess.  Care will be
+wanted that it isn't too much slower than the unrolled part.
+
+@item
+A set of binary tests, for example after an 8-limb unrolling, test for 4 more
+limbs to process, then a further 2 more or not, and finally 1 more or not.
+This will probably take more code space than a simple loop.
+
+@item
+A computed jump into the middle of the loop, thus making the first iteration
+handle the excess.  This should make times smoothly increase with size, which
+is attractive, but setups for the jump and adjustments for pointers can be
+tricky and could become quite difficult in combination with deep pipelining.
+@end itemize
+
+One way to write the setups and finishups for a pipelined unrolled loop is
+simply to duplicate the loop at the start and the end, then delete
+instructions at the start which have no valid antecedents, and delete
+instructions at the end whose results are unwanted.  Sizes not a multiple of
+the unrolling can then be handled as desired.
+
+
+@node Contributors, References, Algorithms, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered Contributors
 @cindex Contributors
@@ -3936,29 +5410,46 @@ USA.
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
 about the omission!)
 
+
 @node References, Concept Index, Contributors, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered References
 @cindex References
 
+Books.
+
 @itemize @bullet
+@item
+Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
+Texts in Mathematics number 138, Springer-Verlag, 1993.
+@* @uref{http://www.math.u-bordeaux.fr/~cohen}
 
 @item
 Donald E. Knuth, ``The Art of Computer Programming'', volume 2,
 ``Seminumerical Algorithms'', 3rd edition, Addison-Wesley, 1988.
+@* @uref{http://www-cs-faculty.stanford.edu/~knuth/taocp.html}
 
 @item
 John D. Lipson, ``Elements of Algebra and Algebraic Computing'',
 The Benjamin Cummings Publishing Company Inc, 1981.
 
 @item
+Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, ``Handbook of
+Applied Cryptography'', @* @uref{http://cacr.math.uwaterloo.ca/hac/}
+
+@item
 Richard M. Stallman, ``Using and Porting GCC'', Free Software Foundation, 1999,
 available online @uref{http://www.gnu.org/software/gcc/onlinedocs/}, and in
 the GCC package @uref{ftp://ftp.gnu.org/pub/gnu/gcc/}
+@end itemize
 
+Papers.
+
+@itemize @bullet
 @item
-Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
-Mathematics of Computation, volume 44, number 170, April 1985.
+Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
+Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @*
+@uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}
 
 @item
 Torbjorn Granlund and Peter L. Montgomery, ``Division by Invariant
@@ -3967,32 +5458,55 @@ PLDI'94 Conference, June 1994.  Available online, @*
 @uref{ftp://ftp.cwi.nl/pub/pmontgom/divcnst.psa4.gz} (and .psl.gz too).
 
 @item
+Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
+Mathematics of Computation, volume 44, number 170, April 1985.
+
+@item
 Tudor Jebelean,
 ``An algorithm for exact division'',
 Journal of Symbolic Computation,
-v. 15, 1993, pp. 169-180.
+volume 15, 1993, pp. 169-180.
 Research report version available online @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-35.ps.gz}
 
 @item
+Tudor Jebelean, ``Exact Division with Karatsuba Complexity - Extended
+Abstract'', RISC-Linz technical report 96-31, available online @*
+@uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1996/96-31.ps.gz}
+
+@item
+Tudor Jebelean, ``Practical Integer Division with Karatsuba Complexity'',
+ISSAC 97, pp. 339-341.  Technical report available online, @*
+@uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1996/96-29.ps.gz}
+
+@item
+Tudor Jebelean, ``A Generalization of the Binary GCD Algorithm'', ISSAC 93,
+pp. 111-116.  Technical report available online, @*
+@uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1993/93-01.ps.gz}
+
+@item
+R. Moenck and A. Borodin, ``Fast Modular Transforms via Division'',
+Proceedings of the 13th Annual IEEE Symposium on Switching and Automata
+Theory, October 1972, pp. 90-96.  Reprinted as ``Fast Modular Transforms'',
+Journal of Computer and System Sciences, volume 8, number 3, June 1974,
+pp. 366-386.
+
+@item
+Arnold Sch@"onhage and Volker Strassen, ``Schnelle Multiplikation grosser
+Zahlen'', Computing 7, 1971, pp. 281-292.
+
+@item
 Kenneth Weber, ``The accelerated integer GCD algorithm'',
 ACM Transactions on Mathematical Software,
-v. 21 (March), 1995, pp. 111-122.
+volume 21, number 1, March 1995, pp. 111-122.
 
 @item
-Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
-Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @*
-@uref{http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz}
-
-@item
-Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone, ``Handbook of
-Applied Cryptography'', @* @uref{http://cacr.math.uwaterloo.ca/hac/}
-
-@item
-Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
-Texts in Mathematics number 138, Springer-Verlag, 1993.  Errata available
-online @* @uref{http://www.math.u-bordeaux.fr/~cohen}
+Dan Zuras, ``On Squaring and Multiplying Large Integers'', ARITH-11: IEEE
+Symposium on Computer Arithmetic, 1993, pp. 260 to 271.  Reprinted as ``More
+on Multiplying and Squaring Large Integers'', IEEE Transactions on Computers,
+volume 43, number 8, August 1994, pp. 899-908.
 @end itemize
+
 
 @node Concept Index, Function Index, References, Top
 @comment  node-name,  next,  previous,  up
