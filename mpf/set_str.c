@@ -202,7 +202,7 @@ mpf_set_str (x, str, base)
       {
 	MPN_COPY (x->_mp_d, mp, msize);
 	x->_mp_size = negative ? -msize : msize;
-	x->_mp_exp = msize;
+	x->_mp_exp = msize + madj;
 	TMP_FREE (marker);
 	return 0;
       }
