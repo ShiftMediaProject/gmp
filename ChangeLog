@@ -1,3 +1,7 @@
+2000-05-25  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Use X86CPU for lots more systems.
+
 2000-05-25  Linus Nordberg  <linus@swox.se>
 
 	* mpbsd/tests/dummy.c (main): Call exit() instead of doing return
