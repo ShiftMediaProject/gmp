@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-03  Kevin Ryde  <user42@zip.com.au>
+
+	* mpn/ia64/hamdist.asm: New file.
+	* mpn/ia64/mode1o.asm: New file.
+	* mpn/ia64/ia64-defs.m4 (ASSERT): New macro.
+
+	* tests/mpz/t-set_d.c (check_2n_plus_1): New test.
+
 2003-11-01  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/fac_ui.c (BSWAP_ULONG) [limb==2*long]: Remove this case, it
