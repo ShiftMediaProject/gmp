@@ -59,7 +59,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
           }
         else
           { /* sqrt(-0) = -0 */
-            MPFR_CLEAR_INF(r);
+            MPFR_CLEAR_FLAGS(r);
             MPFR_SET_ZERO(r);
             MPFR_SET_NEG(r);
             MPFR_RET(0);
