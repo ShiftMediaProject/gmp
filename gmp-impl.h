@@ -24,6 +24,14 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 
+/* __GMP_DECLSPEC must be given on any global data that will be accessed
+   from outside libgmp, meaning from the test or development programs, or
+   from libgmpxx.  Failing to do this will result in an incorrect address
+   being used for the accesses.  On functions __GMP_DECLSPEC makes calls
+   from outside libgmp more efficient, but they'll still work fine without
+   it.  */
+
+
 #ifndef __GMP_IMPL_H__
 #define __GMP_IMPL_H__
 
@@ -2919,7 +2927,6 @@ struct gmp_snprintf_t {
 __GMP_DECLSPEC int __gmp_doprnt _PROTO ((const struct doprnt_funs_t *, void *, const char *, va_list));
 __GMP_DECLSPEC int __gmp_doprnt_integer _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, const char *));
 __GMP_DECLSPEC int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *, void *, const struct doprnt_params_t *, mpf_srcptr));
-/* why no __GMP_DECLSPEC here??? */
 int __gmp_replacement_vsnprintf _PROTO ((char *, size_t, const char *, va_list));
 #endif /* _GMP_H_HAVE_VA_LIST */
 
