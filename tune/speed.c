@@ -206,9 +206,9 @@ const struct routine_t {
   { "mpf_init_clear",              speed_mpf_init_clear              },
   { "mpz_init_realloc_clear",      speed_mpz_init_realloc_clear      },
 
-  { "umul_ppmm",              speed_umul_ppmm       },
+  { "umul_ppmm",         speed_umul_ppmm,     FLAG_R_OPTIONAL },
 #if HAVE_NATIVE_mpn_umul_ppmm
-  { "mpn_umul_ppmm",          speed_mpn_umul_ppmm   },
+  { "mpn_umul_ppmm",     speed_mpn_umul_ppmm, FLAG_R_OPTIONAL },
 #endif
 
   { "udiv_qrnnd",             speed_udiv_qrnnd,             FLAG_R_OPTIONAL },
