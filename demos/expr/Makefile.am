@@ -33,10 +33,9 @@ endif
 EXTRA_DIST = exprfr.c exprfra.c
 
 EXTRA_LIBRARIES = libexpr.a
-libexpr_a_SOURCES = expr.h \
+libexpr_a_SOURCES = expr.h expr-impl.h \
   expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c \
   $(MPFR_SOURCES_OPTION)
-nodist_libexpr_a_SOURCES = expr-impl.h
 
 EXTRA_PROGRAMS = run-expr t-expr
 LDADD = libexpr.a $(MPFR_LIBADD_OPTION) $(top_builddir)/libgmp.la
