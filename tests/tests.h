@@ -207,6 +207,7 @@ mp_limb_t refmpn_mod_1 _PROTO ((mp_srcptr sp, mp_size_t size,
                                 mp_limb_t divisor));
 mp_limb_t refmpn_mod_1c _PROTO ((mp_srcptr sp, mp_size_t size,
                                  mp_limb_t divisor, mp_limb_t carry));
+mp_limb_t refmpn_mod_34lsub1 (mp_srcptr p, mp_size_t n);
 
 mp_limb_t refmpn_mul_1 _PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                 mp_limb_t multiplier));
