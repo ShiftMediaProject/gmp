@@ -1,5 +1,7 @@
 2000-12-05  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in: Do a `mkdir tune' before creating tune/sqr_basecase.c.
+
 	* Makefile.am: Treat mp.h analogously to gmp.h.
 
 	configure.in (*-*-aix): Pass -qmaxmem=20000 to xlc.
