@@ -1096,15 +1096,14 @@ union ieee_double_extract
 #endif
 #endif
 
-/* Using "(2.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1)))" doesn't work on
-   SunOS 4.1.4 native /usr/ucb/cc (K&R), it comes out as -4294967296.0,
-   presumably due to treating the mp_limb_t constant as signed rather than
-   unsigned. */
+/* Use (4.0 * ...) instead of (2.0 * ...) to work around buggy compilers.  */
 #define MP_BASE_AS_DOUBLE (4.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 2)))
-#if BITS_PER_MP_LIMB == 64
-#define LIMBS_PER_DOUBLE 2
-#else
-#define LIMBS_PER_DOUBLE 3
+
+               xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+     ...|...|...|...|...|...|...|...|...|...|...|...|...|...|...|...|...|
+/* Maximum number of limbs it will take to store any `double'.
+   We assume doubles have 53 mantissam bits.  */
+#define LIMBS_PER_DOUBLE ((53 + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB + 1)
 #endif
 
 double __gmp_scale2 _PROTO ((double, int));
