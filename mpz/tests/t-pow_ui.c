@@ -20,9 +20,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
 void debug_mp ();
 void ref_mpz_pow_ui ();
@@ -31,35 +33,71 @@ main (argc, argv)
      int argc;
      char **argv;
 {
-  mpz_t base;
+  mpz_t base, exp;
   mpz_t result, ref_result;
   mp_size_t base_size;
-  unsigned long int exp;
+  unsigned long int exp2;
   int i;
-  int reps = 50000;
+  int reps = 500;
+  gmp_randstate_t rands;
+  mpz_t bs;
+  unsigned long bsi, size_range;
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
+  mpz_init (bs);
 
   if (argc == 2)
      reps = atoi (argv[1]);
 
   mpz_init (base);
+  mpz_init (exp);
   mpz_init (result);
   mpz_init (ref_result);
 
   for (i = 0; i < reps; i++)
     {
-      base_size = urandom () % 8 - 4;
-      exp = urandom () % 16;
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 13 + 2;
 
-      mpz_random2 (base, base_size);
+      do  /* Loop until mathematically well-defined.  */
+	{
+	  mpz_urandomb (bs, rands, size_range);
+	  base_size = mpz_get_ui (bs);
+	  mpz_rrandomb (base, rands, base_size);
 
-      ref_mpz_pow_ui (ref_result, base, exp);
+	  mpz_urandomb (exp, rands, 5L);
+	  exp2 = mpz_getlimbn (exp, 0);
+	}
+      while (mpz_cmp_ui (base, 0) == 0 && exp2 == 0);
 
-      mpz_pow_ui (result, base, exp);
+      mpz_urandomb (bs, rands, 2);
+      bsi = mpz_get_ui (bs);
+      if ((bsi & 1) != 0)
+	mpz_neg (base, base);
+
+      /* printf ("%ld %lu\n", SIZ (base), exp2); */
+
+      ref_mpz_pow_ui (ref_result, base, exp2);
+
+      mpz_pow_ui (result, base, exp2);
       if (mpz_cmp (result, ref_result))
 	{
 	  fprintf (stderr, "ERROR (mpz_pow_ui):\n");
 	  debug_mp ("      base = ", base, -16);
-	  fprintf (stderr, "       exp = %lu (0x%lX)\n", exp, exp);
+	  fprintf (stderr, "       exp = %lu (0x%lX)\n", exp2, exp2);
 	  debug_mp ("    result = ", result, -16);
 	  debug_mp ("ref_result = ", ref_result, -16);
 	  abort ();
@@ -68,12 +106,12 @@ main (argc, argv)
       if (mpz_cmp_ui (base, 0L) >= 0
 	  && mpz_cmp_ui (base, ~(unsigned long int) 0) <= 0)
 	{
-	  mpz_ui_pow_ui (result, mpz_get_ui (base), exp);
+	  mpz_ui_pow_ui (result, mpz_get_ui (base), exp2);
 	  if (mpz_cmp (result, ref_result))
 	    {
 	      fprintf (stderr, "ERROR (mpz_ui_pow_ui):\n");
 	      debug_mp ("      base = ", base, -16);
-	      fprintf (stderr, "       exp = %lu (0x%lX)\n", exp, exp);
+	      fprintf (stderr, "       exp = %lu (0x%lX)\n", exp2, exp2);
 	      debug_mp ("    result = ", result, -16);
 	      debug_mp ("ref_result = ", ref_result, -16);
 	      abort ();
