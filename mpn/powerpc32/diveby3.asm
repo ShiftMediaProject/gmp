@@ -21,11 +21,12 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
 
-
-C      cycles/limb
-C 750:    10.0
-C 7400:   10.0
-
+C                cycles/limb
+C 603e:             ?
+C 604e:             7.0
+C 75x (G3):        10.0
+C 7400,7410 (G4):  10.0
+C 744x,745x (G4+): 10.0
 
 C void mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C

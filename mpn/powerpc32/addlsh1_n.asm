@@ -23,7 +23,7 @@ include(`../config.m4')
 
 C                cycles/limb
 C 603e:            ?
-C 604e:            ?
+C 604e:            4.0
 C 75x (G3):        5.0
 C 7400,7410 (G4):  5.0
 C 744x,745x (G4+): 5.0

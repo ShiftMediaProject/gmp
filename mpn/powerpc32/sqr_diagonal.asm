@@ -19,16 +19,19 @@ dnl along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl MA 02111-1307, USA.
 
-
-dnl INPUT PARAMETERS
-dnl res_ptr	r3
-dnl s1_ptr	r4
-dnl size	r5
-
-dnl This runs at 4 cycles/limb on the PPC604.  That's saturating the multiply
-dnl unit.
-
 include(`../config.m4')
+
+C                cycles/limb
+C 603e:             ?
+C 604e:             4.0
+C 75x (G3):        10.5
+C 7400,7410 (G4):  10.5
+C 744x,745x (G4+):  4.0
+
+C INPUT PARAMETERS
+C rp	r3
+C up	r4
+C n	r5
 
 ASM_START()
 PROLOGUE(mpn_sqr_diagonal)
