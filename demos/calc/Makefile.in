@@ -94,6 +94,7 @@ EXEEXT = @EXEEXT@
 GCJ = @GCJ@
 GCJFLAGS = @GCJFLAGS@
 GMP_LDFLAGS = @GMP_LDFLAGS@
+HAVE_MPFR_01 = @HAVE_MPFR_01@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LEX = @LEX@
 LIBM = @LIBM@
@@ -115,6 +116,7 @@ TAL_OBJECT = @TAL_OBJECT@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
+WITH_READLINE_01 = @WITH_READLINE_01@
 YACC = @YACC@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_HAVE_HOST_CPU_FAMILY_power = @__GMP_HAVE_HOST_CPU_FAMILY_power@
@@ -144,9 +146,8 @@ calc_SOURCES = calc.c calclex.c calcread.c calc.h calc-common.h
 CLEANFILES = $(EXTRA_PROGRAMS)
 subdir = demos/calc
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = $(top_builddir)/config.h calc-config.h \
-	$(top_builddir)/demos/expr/expr-config.h
-CONFIG_CLEAN_FILES =
+CONFIG_HEADER = $(top_builddir)/config.h
+CONFIG_CLEAN_FILES = calc-config.h
 EXTRA_PROGRAMS = calc$(EXEEXT)
 am_calc_OBJECTS = calc$U.$(OBJEXT) calclex$U.$(OBJEXT) \
 	calcread$U.$(OBJEXT)
@@ -156,7 +157,7 @@ calc_DEPENDENCIES = $(top_builddir)/libgmp.la
 calc_LDFLAGS =
 
 DEFS = @DEFS@
-DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I. -I$(top_builddir)/demos/expr
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -170,12 +171,10 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(calc_SOURCES)
-DIST_COMMON = README ./stamp-h2.in Makefile.am Makefile.in \
-	calc-config-h.in
+DIST_COMMON = README Makefile.am Makefile.in calc-config-h.in
 SOURCES = $(calc_SOURCES)
 
-all: calc-config.h
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
@@ -195,31 +194,8 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
-calc-config.h: stamp-h2
-	@if test ! -f $@; then \
-		rm -f stamp-h2; \
-		$(MAKE) stamp-h2; \
-	else :; fi
-stamp-h2: $(srcdir)/calc-config-h.in $(top_builddir)/config.status
-	@rm -f stamp-h2 stamp-h2T
-	@echo timestamp > stamp-h2T 2> /dev/null
-	cd $(top_builddir) \
-	  && CONFIG_FILES= CONFIG_HEADERS=demos/calc/calc-config.h:demos/calc/calc-config-h.in \
-	     $(SHELL) ./config.status
-	@mv stamp-h2T stamp-h2
-$(srcdir)/calc-config-h.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/./stamp-h2.in
-	@if test ! -f $@; then \
-		rm -f $(srcdir)/./stamp-h2.in; \
-		$(MAKE) $(srcdir)/./stamp-h2.in; \
-	else :; fi
-$(srcdir)/./stamp-h2.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/acconfig.h
-	@rm -f $(srcdir)/./stamp-h2.in $(srcdir)/./stamp-h2.inT
-	@echo timestamp > $(srcdir)/./stamp-h2.inT 2> /dev/null
-	cd $(top_srcdir) && $(AUTOHEADER)
-	@mv $(srcdir)/./stamp-h2.inT $(srcdir)/./stamp-h2.in
-
-distclean-hdr:
-	-rm -f calc-config.h
+calc-config.h: $(top_builddir)/config.status calc-config-h.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@:demos/calc/calc-config-h.in CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 calc$(EXEEXT): $(calc_OBJECTS) $(calc_DEPENDENCIES) 
 	@rm -f calc$(EXEEXT)
 	$(LINK) $(calc_LDFLAGS) $(calc_OBJECTS) $(calc_LDADD) $(LIBS)
@@ -266,7 +242,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS:  $(HEADERS) $(SOURCES) calc-config-h.in $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -276,8 +252,8 @@ TAGS:  $(HEADERS) $(SOURCES) calc-config-h.in $(TAGS_DEPENDENCIES) \
 	  done | \
 	  $(AWK) '    { files[$$0] = 1; } \
 	       END { for (i in files) print i; }'`; \
-	test -z "$(ETAGS_ARGS)calc-config-h.in$$unique$(LISP)$$tags" \
-	  || etags $(ETAGS_ARGS) $$tags calc-config-h.in $$unique $(LISP)
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
 
 GTAGS:
 	here=`CDPATH=: && cd $(top_builddir) && pwd` \
@@ -310,7 +286,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile calc-config.h
+all-am: Makefile
 
 installdirs:
 
@@ -344,7 +320,7 @@ clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 
-distclean-am: clean-am distclean-compile distclean-generic distclean-hdr \
+distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-tags
 
 dvi: dvi-am
@@ -378,14 +354,14 @@ uninstall-am: uninstall-info-am
 
 .PHONY: GTAGS all all-am check check-am clean clean-generic \
 	clean-libtool distclean distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags distdir dvi \
-	dvi-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-kr mostlyclean-libtool tags \
-	uninstall uninstall-am uninstall-info-am
+	distclean-libtool distclean-tags distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-exec install-exec-am install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-kr mostlyclean-libtool tags uninstall uninstall-am \
+	uninstall-info-am
 
 
 allprogs: $(EXTRA_PROGRAMS)
