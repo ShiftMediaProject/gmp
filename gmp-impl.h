@@ -2155,10 +2155,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   do {                                          \
     mp_limb_t dummy;                            \
     ASSERT ((xl) != 0);                         \
-    if ((xl) << 1 == 0)                         \
-      (invxl) = ~(mp_limb_t) 0;                 \
-    else                                        \
-      udiv_qrnnd (invxl, dummy, -(xl), 0, xl);  \
+    udiv_qrnnd (invxl, dummy, ~(xl), ~CNST_LIMB(0), xl);  \
   } while (0)
 #endif
 
