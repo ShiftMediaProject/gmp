@@ -69,8 +69,10 @@ MA 02111-1307, USA. */
 #define TMP_FREE(m)
 #endif
 
-/* Allocating "mp_limb_t"s, not bytes. */
-#define TMP_ALLOC_LIMBS(n)  ((mp_ptr) TMP_ALLOC ((n) * sizeof (mp_limb_t)))
+/* Allocating various types. */
+#define TMP_ALLOC_TYPE(n,type) ((type *) TMP_ALLOC ((n) * sizeof (type)))
+#define TMP_ALLOC_LIMBS(n)     TMP_ALLOC_TYPE(n,mp_limb_t)
+#define TMP_ALLOC_MP_PTRS(n)   TMP_ALLOC_TYPE(n,mp_ptr)
 
 
 #if ! defined (__GNUC__)	/* FIXME: Test for C++ compilers here,
@@ -81,6 +83,7 @@ MA 02111-1307, USA. */
 #define ABS(x) (x >= 0 ? x : -x)
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
 #define MAX(h,i) ((h) > (i) ? (h) : (i))
+#define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
 
 /* Field access macros.  */
 #define SIZ(x) ((x)->_mp_size)
@@ -91,27 +94,36 @@ MA 02111-1307, USA. */
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+/* Extra casts because shorts are promoted to ints by "~" and "<<".  "-1"
+   rather than "1" in SIGNED_TYPE_MIN avoids warnings from some compilers
+   about arithmetic overflow.  */
+#define UNSIGNED_TYPE_MAX(type)      ((type) ~ (type) 0)
+#define UNSIGNED_TYPE_HIGHBIT(type)  ((type) ~ (UNSIGNED_TYPE_MAX(type) >> 1))
+#define SIGNED_TYPE_MIN(type)        (((type) -1) << (8*sizeof(type)-1))
+#define SIGNED_TYPE_MAX(type)        ((type) ~ SIGNED_TYPE_MIN(type))
+#define SIGNED_TYPE_HIGHBIT(type)    SIGNED_TYPE_MIN(type)
 
-#define MP_LIMB_T_MAX      (~ (mp_limb_t) 0)
-#define MP_LIMB_T_HIGHBIT  (~ (MP_LIMB_T_MAX >> 1))
+#define MP_LIMB_T_MAX      UNSIGNED_TYPE_MAX (mp_limb_t)
+#define MP_LIMB_T_HIGHBIT  UNSIGNED_TYPE_HIGHBIT (mp_limb_t)
+
+#define MP_SIZE_T_MAX      SIGNED_TYPE_MAX (mp_size_t)
 
 #ifndef ULONG_MAX
-#define ULONG_MAX       (~ (unsigned long) 0)
+#define ULONG_MAX          UNSIGNED_TYPE_MAX (unsigned long)
 #endif
-#define ULONG_HIGHBIT   (~ (ULONG_MAX >> 1))
-#define LONG_HIGHBIT    ((long) ULONG_HIGHBIT)
+#define ULONG_HIGHBIT      UNSIGNED_TYPE_HIGHBIT (unsigned long)
+#define LONG_HIGHBIT       SIGNED_TYPE_HIGHBIT (long)
 #ifndef LONG_MAX
-#define LONG_MAX        ((long) (ULONG_HIGHBIT-1))
+#define LONG_MAX           SIGNED_TYPE_MAX (long)
 #endif
 
-/* extra casts because shorts are promoted to ints by ~ */
 #ifndef USHORT_MAX
-#define USHORT_MAX      ((unsigned short) (~ 0))
+#define USHORT_MAX         UNSIGNED_TYPE_MAX (unsigned short)
 #endif
-#define USHORT_HIGHBIT  ((unsigned short) (~ (USHORT_MAX >> 1)))
-#define SHORT_HIGHBIT   ((short) USHORT_HIGHBIT)
+#define USHORT_HIGHBIT     UNSIGNED_TYPE_HIGHBIT (unsigned short)
+#define SHORT_HIGHBIT      SIGNED_TYPE_HIGHBIT (short)
 #ifndef SHORT_MAX
-#define SHORT_MAX       ((short) (USHORT_HIGHBIT-1))
+#define SHORT_MAX          SIGNED_TYPE_MAX (short)
 #endif
 
 
@@ -245,6 +257,23 @@ void mpn_toom3_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,mp_ptr));
 
 #define mpn_toom3_sqr_n  __MPN(toom3_sqr_n)
 void mpn_toom3_sqr_n _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define mpn_fft_best_k  __MPN(fft_best_k)
+int mpn_fft_best_k _PROTO ((mp_size_t n, int sqr));
+
+#define mpn_mul_fft  __MPN(mul_fft)
+void mpn_mul_fft _PROTO ((mp_ptr op, mp_size_t pl,
+                          mp_srcptr n, mp_size_t nl,
+                          mp_srcptr m, mp_size_t ml,
+                          int k));
+
+#define mpn_mul_fft_full  __MPN(mul_fft_full)
+void mpn_mul_fft_full _PROTO ((mp_ptr op,
+                               mp_srcptr n, mp_size_t nl,
+                               mp_srcptr m, mp_size_t ml));
+
+#define mpn_fft_next_size  __MPN(fft_next_size)
+mp_size_t mpn_fft_next_size _PROTO ((mp_size_t pl, int k));
 
 mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_bz_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
@@ -389,6 +418,64 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #ifndef TOOM3_SQR_THRESHOLD
 #define TOOM3_SQR_THRESHOLD (2*TOOM3_MUL_THRESHOLD)
 #endif
+
+/* First k to use for an FFT modF multiply.  A modF FFT is an order
+   log(2^k)/log(2^(k-1)) algorithm, so k=3 is merely 1.5 like karatsuba,
+   whereas k=4 is 1.33 which is faster than toom3 at 1.485.    */
+#define FFT_FIRST_K  4
+
+/* Threshold at which FFT should be used to do a modF NxN -> N multiply. */
+#ifndef FFT_MODF_MUL_THRESHOLD
+#define FFT_MODF_MUL_THRESHOLD   (TOOM3_MUL_THRESHOLD * 2)
+#endif
+#ifndef FFT_MODF_SQR_THRESHOLD
+#define FFT_MODF_SQR_THRESHOLD   (TOOM3_SQR_THRESHOLD * 2)
+#endif
+
+/* Threshold at which FFT should be used to do an NxN -> 2N multiply.  This
+   will be a size where FFT is using k=7 or k=8, since an FFT-k used for an
+   NxN->2N multiply and not recursing into itself is an order
+   log(2^k)/log(2^(k-2)) algorithm, so it'll be at least k=7 at 1.39 which
+   is the first better than toom3.  */
+#ifndef FFT_MUL_THRESHOLD
+#define FFT_MUL_THRESHOLD   (FFT_MODF_MUL_THRESHOLD * 10)
+#endif
+#ifndef FFT_SQR_THRESHOLD
+#define FFT_SQR_THRESHOLD   (FFT_MODF_SQR_THRESHOLD * 10)
+#endif
+
+/* Table of thresholds for successive modF FFT "k"s.  The first entry is
+   where FFT_FIRST_K+1 should be used, the second FFT_FIRST_K+2,
+   etc.  See mpn_fft_best_k(). */
+#ifndef FFT_MUL_TABLE
+#define FFT_MUL_TABLE                           \
+  { TOOM3_MUL_THRESHOLD * 3,   /* k=5 */        \
+    TOOM3_MUL_THRESHOLD * 7,   /* k=6 */        \
+    TOOM3_MUL_THRESHOLD * 15,  /* k=7 */        \
+    TOOM3_MUL_THRESHOLD * 31,  /* k=8 */        \
+    TOOM3_MUL_THRESHOLD * 64,  /* k=9 */        \
+    TOOM3_MUL_THRESHOLD * 129, /* k=10 */       \
+    TOOM3_MUL_THRESHOLD * 257, /* k=11 */       \
+    0 }
+#endif
+#ifndef FFT_SQR_TABLE
+#define FFT_SQR_TABLE                           \
+  { TOOM3_SQR_THRESHOLD * 3,   /* k=5 */        \
+    TOOM3_SQR_THRESHOLD * 7,   /* k=6 */        \
+    TOOM3_SQR_THRESHOLD * 15,  /* k=7 */        \
+    TOOM3_SQR_THRESHOLD * 31,  /* k=8 */        \
+    TOOM3_SQR_THRESHOLD * 64,  /* k=9 */        \
+    TOOM3_SQR_THRESHOLD * 129, /* k=10 */       \
+    TOOM3_SQR_THRESHOLD * 257, /* k=11 */       \
+    0 }
+#endif
+
+#ifndef FFT_TABLE_ATTRS
+#define FFT_TABLE_ATTRS   static const
+#endif
+
+#define MPN_FFT_TABLE_SIZE  16
+
 
 /* Return non-zero if xp,xsize and yp,ysize overlap.
    If xp+xsize<=yp there's no overlap, or if yp+ysize<=xp there's no
@@ -926,7 +1013,9 @@ extern const int __gmp_0;
    program.  Not part of a normal build. */
 
 extern mp_size_t  mul_threshold[];
+extern mp_size_t  fft_modf_mul_threshold;
 extern mp_size_t  sqr_threshold[];
+extern mp_size_t  fft_modf_sqr_threshold;
 extern mp_size_t  bz_threshold[];
 extern mp_size_t  fib_threshold[];
 extern mp_size_t  powm_threshold[];
@@ -935,10 +1024,14 @@ extern mp_size_t  gcdext_threshold[];
 
 #undef KARATSUBA_MUL_THRESHOLD
 #undef TOOM3_MUL_THRESHOLD
+#undef FFT_MUL_TABLE
 #undef FFT_MUL_THRESHOLD
+#undef FFT_MODF_MUL_THRESHOLD
 #undef KARATSUBA_SQR_THRESHOLD
 #undef TOOM3_SQR_THRESHOLD
+#undef FFT_SQR_TABLE
 #undef FFT_SQR_THRESHOLD
+#undef FFT_MODF_SQR_THRESHOLD
 #undef BZ_THRESHOLD
 #undef FIB_THRESHOLD
 #undef POWM_THRESHOLD
@@ -947,10 +1040,14 @@ extern mp_size_t  gcdext_threshold[];
 
 #define KARATSUBA_MUL_THRESHOLD  mul_threshold[0]
 #define TOOM3_MUL_THRESHOLD      mul_threshold[1]
+#define FFT_MUL_TABLE            0
 #define FFT_MUL_THRESHOLD        mul_threshold[2]
+#define FFT_MODF_MUL_THRESHOLD   fft_modf_mul_threshold
 #define KARATSUBA_SQR_THRESHOLD  sqr_threshold[0]
 #define TOOM3_SQR_THRESHOLD      sqr_threshold[1]
+#define FFT_SQR_TABLE            0
 #define FFT_SQR_THRESHOLD        sqr_threshold[2]
+#define FFT_MODF_SQR_THRESHOLD   fft_modf_sqr_threshold
 #define BZ_THRESHOLD             bz_threshold[0]
 #define FIB_THRESHOLD            fib_threshold[0]
 #define POWM_THRESHOLD           powm_threshold[0]
@@ -959,7 +1056,11 @@ extern mp_size_t  gcdext_threshold[];
 
 #define TOOM3_MUL_THRESHOLD_LIMIT  700
 
-#endif
+#undef  FFT_TABLE_ATTRS
+#define FFT_TABLE_ATTRS
+extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
+
+#endif /* TUNE_PROGRAM_BUILD */
 
 #if defined (__cplusplus)
 }
