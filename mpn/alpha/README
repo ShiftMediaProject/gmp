@@ -87,7 +87,55 @@ serializing because of carry propagation is trickier; the ultimate performance
 of the code will be determined of the number of latency cycles it takes from
 accepting carry-in to a vector point until we can generate carry-out.
 
-addmul_1 dependency diagram (needs 175 columns wide screen):
+Most integer instructions can execute in either the L0, U0, L1, or U1
+pipelines.  Shifts only execute in U0 and U1, and multiply only in U1.
+
+CMOV instructions split into two internal instructions, CMOV1 and CMOV2, but
+the execute efficiently.  But CMOV split the mapping process (see pg 2-26 in
+cmpwrgd.pdf), suggesting the CMOV should always be placed as the last
+instruction of an aligned 4 instruction block (?).
+
+Perhaps the most important issue is the latency between the L0/U0 and L1/U1
+clusters; a result obtained on either cluster has an extra cycle of latency
+for consumers in the opposite cluster.  Because of the dynamic nature of the
+implementation, it is hard to predict where an instruction will execute.
+
+The shift loops need (per limb):
+    1 load (Lx pipes)
+    1 store (Lx pipes)
+    2 shift (Ux pipes)
+    1 iaddlog (Lx pipes, Ux pipes)
+Obviously, since the pipes are very equally loaded, we should get 4 insn/cycle, or 1.25 cycles/limb.
+
+For mpn_add_n, we currently have
+    2 load (Lx pipes)
+    1 store (Lx pipes)
+    5 iaddlog (Lx pipes, Ux pipes)
+
+Again, we have a perfect balance and will be limited by carry propagation
+delays, currently three cycles.  The superoptimizer indicates that ther
+might be sequences that--using a final cmov--have a carry propagation delay
+of just two.  Montgomery's subtraction sequence could perhaps be used, by
+complementing some operands.  All in all, we should get down to 2 cycles
+without much problems.
+
+For mpn_mul_1, we could do, just like for mpn_add_n:
+    not		newlo,notnewlo
+    addq	cylimb,newlo,newlo  ||    cmpult	cylimb,notnewlo,cyout
+    addq	cyout,newhi,cylimb
+and get 2-cycle carry propagation.  The instructions needed will be
+    1 ld (Lx pipes)
+    1 st (Lx pipes)
+    2 mul (U1 pipe)
+    4 iaddlog (Lx pipes, Ux pipes)
+issue1: addq not mul ld
+issue2: cmpult addq mul st
+Conclusion: no cluster delays and 2-cycle carry delays will give us 2 cycles/limb!
+
+Last, we have mpn_addmul_1.  Almost certainly, we will get down to 3
+cycles/limb, which would be absolutely awesome.
+
+Old, perhaps obsolete addmul_1 dependency diagram (needs 175 columns wide screen):
 
    i  
    s
