@@ -955,8 +955,8 @@ Otherwise return the least significant part of @var{op}, with the same sign
 as @var{op}.
 
 If @var{op} is too large to fit in a @code{signed long int}, the returned
-result is probably not very useful.  @c To find out if the value will fit, use
-@c the function @code{mpz_fits_si}.
+result is probably not very useful.  To find out if the value will fit, use
+the function @code{mpz_fits_slong_p}.
 @end deftypefun
 
 @deftypefun double mpz_get_d (mpz_t @var{op})
@@ -1352,16 +1352,18 @@ The case of $0^0$ yields 1.
 
 @subsection Root Functions
 
-@deftypefun void mpz_root (mpz_t @var{rop}, mpz_t @var{op}, unsigned long int @var{n})
+@deftypefun int mpz_root (mpz_t @var{rop}, mpz_t @var{op}, unsigned long int @var{n})
 @ifinfo
 Set @var{rop} to the truncated integer part of the @var{n}th root of @var{op}.
 @end ifinfo
 @iftex
 @tex
-Set @var{rop} to $\lfloor\root n \of {op}\rfloor$, the truncated integer part
-of the @var{n}th root of @var{op}.
+Set @var{rop} to $\lfloor\root n \of {op}\rfloor$, the truncated integer
+part of the @var{n}th root of @var{op}. 
 @end tex
 @end iftex
+Return non-zero if the computation was exact, i.e., if @var{op} is
+@var{rop} to the @var{n}th power.
 @end deftypefun
 
 @deftypefun void mpz_sqrt (mpz_t @var{rop}, mpz_t @var{op})
@@ -1698,6 +1700,18 @@ machines.
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 @cindex Miscellaneous integer functions
+
+@deftypefun int mpz_fits_ulong_p (mpz_t @var{op})
+@deftypefunx mpz_fits_slong_p (mpz_t @var{op})
+@deftypefunx mpz_fits_uint_p (mpz_t @var{op})
+@deftypefunx mpz_fits_sint_p (mpz_t @var{op})
+@deftypefunx mpz_fits_ushort_p (mpz_t @var{op})
+@deftypefunx mpz_fits_sshort_p (mpz_t @var{op})
+Return non-zero iff the value of @var{op} fits in an @code(unsigned long int},
+@code(signed long int}, @code(unsigned int}, @code(signed int}, @code(unsigned
+short int}, or @code(signed short int}, respectively.  Otherwise, return zero.
+@end deftypefun
+
 
 The random number functions of GMP come in two groups; older function
 that rely on a global state, and newer functions that accept a state
