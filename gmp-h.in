@@ -521,6 +521,10 @@ int mpz_si_kronecker _PROTO ((long, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 int mpz_ui_kronecker _PROTO ((unsigned long, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 
 void mpz_lcm _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#define mpz_lcm_ui __gmpz_lcm_ui
+void    mpz_lcm_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long));
+
 int mpz_legendre _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 void mpz_mod _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_mul _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
