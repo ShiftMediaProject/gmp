@@ -20,6 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <math.h>
+#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -136,7 +137,12 @@ main (int argc, char *argv[])
       do
         {
           d = drand ();
-        } while (isnan(d));
+        }
+#ifdef HAVE_DENORMS
+      while (0);
+#else
+      while (ABS(d) < DBL_MIN);
+#endif
       r = LONG_RAND() % 4;
       p = 2 + LONG_RAND() % 35;
       check (d, r, p);
