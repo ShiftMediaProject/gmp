@@ -27,15 +27,46 @@ MA 02111-1307, USA. */
 using namespace std;
 
 
+/* all flavours of initialization */
 void
-check_mpz (void)
+check_randinit (void)
 {
+  {
+    gmp_randclass r(gmp_randinit_default);
+  }
+
   {
     mpz_class a(0);
     unsigned long c = 0, m2exp = 8;
     gmp_randclass r(gmp_randinit_lc_2exp, a, c, m2exp);
   }
 
+  {
+    unsigned long m2exp = 64;
+    gmp_randclass r(gmp_randinit_lc_2exp_size, m2exp);
+  }
+
+  /* obsolete, but still available */
+  {
+    gmp_randalg_t alg = GMP_RAND_ALG_LC;
+    unsigned long m2exp = 64;
+    gmp_randclass r(alg, m2exp);
+  }
+  {
+    gmp_randalg_t alg = GMP_RAND_ALG_DEFAULT;
+    unsigned long m2exp = 64;
+    gmp_randclass r(alg, m2exp);
+  }
+  {
+    gmp_randalg_t alg = (gmp_randalg_t) 0;
+    unsigned long m2exp = 64;
+    gmp_randclass r(alg, m2exp);
+  }
+}
+
+void
+check_mpz (void)
+{
   {
     gmp_randclass r(gmp_randinit_default);
     mpz_class a(123);
@@ -65,11 +96,6 @@ void
 check_mpf (void)
 {
   {
-    unsigned long m2exp = 64;
-    gmp_randclass r(gmp_randinit_lc_2exp_size, m2exp);
-  }
-
-  {
     gmp_randclass r(gmp_randinit_default);
     mpz_class a(123);
     r.seed(a);
@@ -91,6 +117,7 @@ main (void)
 {
   tests_start();
 
+  check_randinit();
   check_mpz();
   check_mpf();
 
