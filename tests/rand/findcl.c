@@ -1,47 +1,46 @@
 #include <stdio.h>
+#include <unistd.h>
 #include "gmp.h"
 #include "gmpstat.h"
 
 int g_debug = 0;
 
-/* Input is all the factors of a modulus (m).  We shall find
-   multiplyer (a) and adder (c) conforming to the rules found in the
-   first comment block in file mpz/urandom.c.
+/* Input is a modulus (m).  We shall find multiplyer (a) and adder (c)
+   conforming to the rules found in the first comment block in file
+   mpz/urandom.c.
 
    Then run a spectral test on the generator and discard any
-   multipliers not passing.
-*/
+   multipliers not passing.  */
 
 int
 main (int argc, char *argv[])
 {
+  const char usage[] = "usage: findcl m";
   int f;
   int lose, best;
   int debug = 1;
-  int cnt;
   unsigned long int rem;
-  mpz_t m, mfac, a, c;
+  mpz_t m, a;
   mpz_t ulim, z_tmp;
 #define DIMS 6			/* dimensions run in spectral test */
   mpf_t v[DIMS-1];		/* spectral test result (there's no v
                                    for 1st dimension */
 
   mpz_init (m);
-  mpz_init (mfac);
   mpz_init (a);
-  mpz_init (c);
   mpz_init (ulim);
   mpz_init (z_tmp);
   for (f = 0; f < DIMS-1; f++)
     mpf_init (v[f]);
 
 
-  mpz_set_ui (m, 1);
-  for (f = 1; f < argc; f++)
+  if (argc != 2)
     {
-      mpz_set_str (mfac, argv[f], 0);
-      mpz_mul (m, m, mfac);
+      fputs (usage, stderr);
+      exit (1);
     }
+
+  mpz_set_str (m, argv[1], 0);
   printf ("m = 0x");
   mpz_out_str (stdout, 16, m);
   puts ("");
@@ -65,7 +64,7 @@ main (int argc, char *argv[])
   mpz_add_ui (a, a, 8 + (5 - rem));
 
   best = 2*(DIMS-1);
-  for (cnt = 0; mpz_cmp (a, ulim) <= 0 && cnt < 10; mpz_add_ui (a, a, 8))
+  for (; mpz_cmp (a, ulim) <= 0; mpz_add_ui (a, a, 8))
     {
       /* TODO: Reject 'a' with "binary or  decimal simple, regular pattern."  */
 
@@ -80,7 +79,6 @@ main (int argc, char *argv[])
 	{
 	  mpz_out_str (stdout, 10, a);
 	  puts ("");
-	  cnt++;
 	}
 
       if (lose < best)
@@ -94,9 +92,7 @@ main (int argc, char *argv[])
 
 
   mpz_clear (m);
-  mpz_clear (mfac);
   mpz_clear (a);
-  mpz_clear (c);
   mpz_clear (ulim);
   mpz_clear (z_tmp);
 

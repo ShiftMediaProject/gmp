@@ -1,5 +1,9 @@
 1999-04-27  Linus Nordberg  <linus.nordberg@canit.se>
 
+	* findcl.c (main): Input is `m', not all factors of `m'.  Print
+	all matching multipliers, not only the 10 first.
+	Include <unistd.h>.
+
 	* spect.c: Move everything but main() to statlib.c.
 
 	* findcl.c: New file.
