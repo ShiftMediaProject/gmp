@@ -47,12 +47,14 @@ _check (double x, double y, double res, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_mul(zz, xx, yy, rnd_mode);
   z2 = mpfr_get_d1 (zz);
-  if (res != z2) {
-    printf("mpfr_mul failed for x=%1.20e y=%1.20e with rnd_mode=%s\n", x, y,
-	     mpfr_print_rnd_mode(rnd_mode));
-    printf("correct is %1.20e, mpfr_mul gives %1.20e\n", res, z2);
-    if (res!=0.0) exit(1);
-  }
+  if (res != z2)
+    {
+      printf ("mpfr_mul failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
+              x, y, mpfr_print_rnd_mode (rnd_mode));
+      printf ("correct is %1.20e, mpfr_mul gives %1.20e\n", res, z2);
+      if (res != 0.0)
+        exit (1);
+    }
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
 
@@ -98,9 +100,9 @@ check24 (float x, float y, mp_rnd_t rnd_mode, float z1)
   z2 = (float) mpfr_get_d1 (zz);
   if (z1 != z2)
     {
-      fprintf (stderr, "mpfr_mul failed for x=%1.0f y=%1.0f with prec=24 and"
+      printf ("mpfr_mul failed for x=%1.0f y=%1.0f with prec=24 and"
 	      "rnd=%s\n", x, y, mpfr_print_rnd_mode(rnd_mode));
-      fprintf (stderr, "correct result is gives %.10e, mpfr_mul gives %.10e\n", z1, z2);
+      printf ("correct result is gives %.10e, mpfr_mul gives %.10e\n", z1, z2);
       exit (1);
     }
   mpfr_clear(xx);
@@ -168,9 +170,11 @@ check_sign (void)
   mpfr_set_d(a, -1.0, GMP_RNDN);
   mpfr_set_d(b, 2.0, GMP_RNDN);
   mpfr_mul(a, b, b, GMP_RNDN);
-  if (mpfr_get_d1 (a) != 4.0) {
-    fprintf(stderr,"2.0*2.0 gives %1.20e\n", mpfr_get_d1 (a)); exit(1);
-  }
+  if (mpfr_get_d1 (a) != 4.0)
+    {
+      printf ("2.0*2.0 gives %1.20e\n", mpfr_get_d1 (a));
+      exit (1);
+    }
   mpfr_clear(a); mpfr_clear(b);
 }
 
@@ -191,11 +195,11 @@ check_exact (void)
   mpfr_set_prec (a, 17);
   mpfr_set_prec (b, 17);
   mpfr_set_prec (c, 32);
-  mpfr_set_str_raw (a, "1.1000111011000100e-1");
-  mpfr_set_str_raw (b, "1.0010001111100111e-1");
+  mpfr_set_str_binary (a, "1.1000111011000100e-1");
+  mpfr_set_str_binary (b, "1.0010001111100111e-1");
   if (mpfr_mul (c, a, b, GMP_RNDZ))
     {
-      fprintf (stderr, "wrong return value (1)\n");
+      printf ("wrong return value (1)\n");
       exit (1);
     }
 
@@ -206,37 +210,37 @@ check_exact (void)
       mpfr_set_prec (c, 2 * prec - 2);
       mpfr_set_prec (d, 2 * prec);
       for (i = 0; i < 1000; i++)
-	{
-	  mpfr_random (a);
-	  mpfr_random (b);
-	  rnd = randlimb () % 4;
-	  inexact = mpfr_mul (c, a, b, rnd);
-	  if (mpfr_mul (d, a, b, rnd)) /* should be always exact */
-	    {
-	      fprintf (stderr, "unexpected inexact return value\n");
-	      exit (1);
-	    }
-	  if ((inexact == 0) && mpfr_cmp (c, d))
-	    {
-	      fprintf (stderr, "inexact=0 but results differ\n");
-	      exit (1);
-	    }
-	  else if (inexact && (mpfr_cmp (c, d) == 0))
-	    {
-	      fprintf (stderr, "inexact!=0 but results agree\n");
-	      fprintf (stderr, "prec=%u rnd=%s a=", (unsigned int) prec,
-		       mpfr_print_rnd_mode (rnd));
-	      mpfr_out_str (stderr, 2, 0, a, rnd);
-	      fprintf (stderr, "\nb=");
-	      mpfr_out_str (stderr, 2, 0, b, rnd);
-	      fprintf (stderr, "\nc=");
-	      mpfr_out_str (stderr, 2, 0, c, rnd);
-	      fprintf (stderr, "\nd=");
-	      mpfr_out_str (stderr, 2, 0, d, rnd);
-	      fprintf (stderr, "\n");
-	      exit (1);
-	    }
-	}
+        {
+          mpfr_random (a);
+          mpfr_random (b);
+          rnd = randlimb () % 4;
+          inexact = mpfr_mul (c, a, b, rnd);
+          if (mpfr_mul (d, a, b, rnd)) /* should be always exact */
+            {
+              printf ("unexpected inexact return value\n");
+              exit (1);
+            }
+          if ((inexact == 0) && mpfr_cmp (c, d))
+            {
+              printf ("inexact=0 but results differ\n");
+              exit (1);
+            }
+          else if (inexact && (mpfr_cmp (c, d) == 0))
+            {
+              printf ("inexact!=0 but results agree\n");
+              printf ("prec=%u rnd=%s a=", (unsigned int) prec,
+                      mpfr_print_rnd_mode (rnd));
+              mpfr_out_str (stdout, 2, 0, a, rnd);
+              printf ("\nb=");
+              mpfr_out_str (stdout, 2, 0, b, rnd);
+              printf ("\nc=");
+              mpfr_out_str (stdout, 2, 0, c, rnd);
+              printf ("\nd=");
+              mpfr_out_str (stdout, 2, 0, d, rnd);
+              printf ("\n");
+              exit (1);
+            }
+        }
     }
 
   mpfr_clear (a);

@@ -62,7 +62,7 @@ special (void)
 
   mpfr_init2 (x, 63);
   mpfr_init2 (y, 63);
-  mpfr_set_str_raw (x, "0.110100000000000001110001110010111111000000000101100011100100011");
+  mpfr_set_str_binary (x, "0.110100000000000001110001110010111111000000000101100011100100011");
   mpfr_add_ui (y, x, 1, GMP_RNDD);
   mpfr_clear (x);
   mpfr_clear (y);

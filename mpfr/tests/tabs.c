@@ -41,7 +41,7 @@ check_inexact (void)
   mpfr_init (x);
   mpfr_init (y);
   mpfr_init (absx);
-  
+
   for (p=2; p<500; p++)
     {
       mpfr_set_prec (x, p);
@@ -55,24 +55,25 @@ check_inexact (void)
       else
 	mpfr_set (absx, x, GMP_RNDN);
       for (q=2; q<2*p; q++)
-	{
-	  mpfr_set_prec (y, q);
-	  for (rnd=0; rnd<4; rnd++)
-	    {
-	      inexact = mpfr_abs (y, x, rnd);
-	      cmp = mpfr_cmp (y, absx);
-	      if (((inexact == 0) && (cmp != 0)) ||
-		  ((inexact > 0) && (cmp <= 0)) ||
-		  ((inexact < 0) && (cmp >= 0)))
-		{
-		  fprintf (stderr, "Wrong inexact flag: expected %d, got %d\n", cmp, inexact);
-		  printf ("x="); mpfr_print_binary (x); puts ("");
-		  printf ("absx="); mpfr_print_binary (absx); puts ("");
-		  printf ("y="); mpfr_print_binary (y); puts ("");
-		  exit (1);
-		}
-	    }
-	}
+        {
+          mpfr_set_prec (y, q);
+          for (rnd=0; rnd<4; rnd++)
+            {
+              inexact = mpfr_abs (y, x, rnd);
+              cmp = mpfr_cmp (y, absx);
+              if (((inexact == 0) && (cmp != 0)) ||
+                  ((inexact > 0) && (cmp <= 0)) ||
+                  ((inexact < 0) && (cmp >= 0)))
+                {
+                  printf ("Wrong inexact flag: expected %d, got %d\n",
+                          cmp, inexact);
+                  printf ("x="); mpfr_print_binary (x); puts ("");
+                  printf ("absx="); mpfr_print_binary (absx); puts ("");
+                  printf ("y="); mpfr_print_binary (y); puts ("");
+                  exit (1);
+                }
+            }
+        }
     }
 
   mpfr_clear (x);
@@ -83,73 +84,76 @@ check_inexact (void)
 int
 main (int argc, char *argv[])
 {
-   mpfr_t x;
-   int n, k, rnd;
-   double d, absd, dd;
+  mpfr_t x;
+  int n, k, rnd;
+  double d, absd, dd;
 
-   mpfr_test_init ();
+  mpfr_test_init ();
 
-   check_inexact ();
+  check_inexact ();
 
-   mpfr_init2(x, 53);
+  mpfr_init2(x, 53);
 
-   mpfr_set_d(x, 1.0, GMP_RNDN);
-   mpfr_abs(x, x, GMP_RNDN);
-   if (mpfr_get_d1 (x) != 1.0) {
-     fprintf(stderr, "Error in mpfr_abs(1.0)\n"); exit(1);
-   }
+  mpfr_set_d(x, 1.0, GMP_RNDN);
+  mpfr_abs(x, x, GMP_RNDN);
+  if (mpfr_get_d1 (x) != 1.0)
+    {
+      printf ("Error in mpfr_abs(1.0)\n");
+      exit (1);
+    }
 
-   mpfr_set_d(x, -1.0, GMP_RNDN);
-   mpfr_abs(x, x, GMP_RNDN);
-   if (mpfr_get_d1 (x) != 1.0) {
-     fprintf(stderr, "Error in mpfr_abs(-1.0)\n"); exit(1);
-   }
+  mpfr_set_d(x, -1.0, GMP_RNDN);
+  mpfr_abs(x, x, GMP_RNDN);
+  if (mpfr_get_d1 (x) != 1.0)
+    {
+      printf ("Error in mpfr_abs(-1.0)\n");
+      exit (1);
+    }
 
-   mpfr_set_inf (x, 1);
-   mpfr_abs (x, x, GMP_RNDN);
-   if (!mpfr_inf_p(x) || (mpfr_sgn(x) <= 0))
-     {
-       fprintf (stderr, "Error in mpfr_abs(Inf).\n");
-       exit (1);
-     }
+  mpfr_set_inf (x, 1);
+  mpfr_abs (x, x, GMP_RNDN);
+  if (!mpfr_inf_p(x) || (mpfr_sgn(x) <= 0))
+    {
+      printf ("Error in mpfr_abs(Inf).\n");
+      exit (1);
+    }
 
-   mpfr_set_inf (x, -1);
-   mpfr_abs (x, x, GMP_RNDN);
-   if (!mpfr_inf_p(x) || (mpfr_sgn(x) <= 0))
-     {
-       fprintf (stderr, "Error in mpfr_abs(-Inf).\n");
-       exit (1);
-     }
+  mpfr_set_inf (x, -1);
+  mpfr_abs (x, x, GMP_RNDN);
+  if (!mpfr_inf_p(x) || (mpfr_sgn(x) <= 0))
+    {
+      printf ("Error in mpfr_abs(-Inf).\n");
+      exit (1);
+    }
 
-   n = (argc==1) ? 1000000 : atoi(argv[1]);
-   for (k = 1; k <= n; k++)
-     {
-       do
-	 {
-	   d = DBL_RAND ();
-	   absd = ABS(d);
-	 }
+  n = (argc==1) ? 1000000 : atoi(argv[1]);
+  for (k = 1; k <= n; k++)
+    {
+      do
+        {
+          d = DBL_RAND ();
+          absd = ABS(d);
+        }
 #ifdef HAVE_DENORMS
-       while (0);
+      while (0);
 #else
-       while (absd < DBL_MIN);
+      while (absd < DBL_MIN);
 #endif
-       rnd = randlimb () % 4;
-       mpfr_set_d (x, d, 0);
-       mpfr_abs (x, x, rnd);
-       dd = mpfr_get_d1 (x);
-       if (!Isnan(d) && (dd != absd))
-	 { 
-	   fprintf(stderr, 
-		   "Mismatch on d = %.20e\n", d);
-	   fprintf(stderr, "dd=%.20e\n", dd);
-	   mpfr_print_binary(x); puts ("");
-	   exit(1);
-	 } 
-     }
+      rnd = randlimb () % 4;
+      mpfr_set_d (x, d, 0);
+      mpfr_abs (x, x, rnd);
+      dd = mpfr_get_d1 (x);
+      if (!Isnan(d) && (dd != absd))
+        {
+          printf ("Mismatch on d = %.20e\n", d);
+          printf ("dd=%.20e\n", dd);
+          mpfr_print_binary(x); puts ("");
+          exit (1);
+        }
+    }
 
-   mpfr_clear(x);
+  mpfr_clear(x);
 
-   tests_end_mpfr ();
-   return 0;
+  tests_end_mpfr ();
+  return 0;
 }

@@ -83,13 +83,14 @@ check2a (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode,
   mpfr_add(zz, xx, yy, rnd_mode);
   mpfr_set_prec(xx, pz);
   mpfr_set_str(xx, res, 16, GMP_RNDN);
-  if (mpfr_cmp(xx, zz)) { 
-    printf("x=%1.20e,%d y=%1.20e,%d pz=%d,rnd=%s\n",
-	   x,px,y,py,pz,mpfr_print_rnd_mode(rnd_mode));
-    printf("got        "); mpfr_print_binary(zz); puts ("");
-    printf("instead of "); mpfr_print_binary(xx); puts ("");
-    exit(1); 
-  }
+  if (mpfr_cmp(xx, zz))
+    {
+      printf ("x=%1.20e,%d y=%1.20e,%d pz=%d,rnd=%s\n",
+              x, px, y, py, pz, mpfr_print_rnd_mode (rnd_mode));
+      printf ("got        "); mpfr_print_binary(zz); puts ("");
+      printf ("instead of "); mpfr_print_binary(xx); puts ("");
+      exit (1);
+    }
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
 
@@ -103,15 +104,15 @@ check64 (void)
   mpfr_init (u);
 
   mpfr_set_prec (x, 29);
-  mpfr_set_str_raw (x, "1.1101001000101111011010010110e-3");
+  mpfr_set_str_binary (x, "1.1101001000101111011010010110e-3");
   mpfr_set_prec (t, 58);
-  mpfr_set_str_raw (t, "0.11100010011111001001100110010111110110011000000100101E-1");
+  mpfr_set_str_binary (t, "0.11100010011111001001100110010111110110011000000100101E-1");
   mpfr_set_prec (u, 29);
   mpfr_add (u, x, t, GMP_RNDD);
-  mpfr_set_str_raw (t, "1.0101011100001000011100111110e-1");
+  mpfr_set_str_binary (t, "1.0101011100001000011100111110e-1");
   if (mpfr_cmp (u, t))
     {
-      fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=29, prec(t)=58\n");
+      printf ("mpfr_add(u, x, t) failed for prec(x)=29, prec(t)=58\n");
       printf ("expected "); mpfr_out_str (stdout, 2, 29, t, GMP_RNDN);
       puts ("");
       printf ("got      "); mpfr_out_str (stdout, 2, 29, u, GMP_RNDN);
@@ -120,21 +121,21 @@ check64 (void)
     }
 
   mpfr_set_prec (x, 4);
-  mpfr_set_str_raw (x, "-1.0E-2");
+  mpfr_set_str_binary (x, "-1.0E-2");
   mpfr_set_prec (t, 2);
-  mpfr_set_str_raw (t, "-1.1e-2");
+  mpfr_set_str_binary (t, "-1.1e-2");
   mpfr_set_prec (u, 2);
   mpfr_add (u, x, t, GMP_RNDN);
   if (MPFR_MANT(u)[0] << 2)
     {
-      fprintf (stderr, "result not normalized for prec=2\n");
+      printf ("result not normalized for prec=2\n");
       mpfr_print_binary (u); puts ("");
       exit (1);
     }
-  mpfr_set_str_raw (t, "-1.0e-1");
+  mpfr_set_str_binary (t, "-1.0e-1");
   if (mpfr_cmp (u, t))
     {
-      fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=4, prec(t)=2\n");
+      printf ("mpfr_add(u, x, t) failed for prec(x)=4, prec(t)=2\n");
       printf ("expected -1.0e-1\n");
       printf ("got      "); mpfr_out_str (stdout, 2, 4, u, GMP_RNDN);
       puts ("");
@@ -142,14 +143,14 @@ check64 (void)
     }
 
   mpfr_set_prec (x, 8);
-  mpfr_set_str_raw (x, "-0.10011010"); /* -77/128 */
+  mpfr_set_str_binary (x, "-0.10011010"); /* -77/128 */
   mpfr_set_prec (t, 4);
-  mpfr_set_str_raw (t, "-1.110e-5"); /* -7/128 */
+  mpfr_set_str_binary (t, "-1.110e-5"); /* -7/128 */
   mpfr_set_prec (u, 4);
   mpfr_add (u, x, t, GMP_RNDN); /* should give -5/8 */
-  mpfr_set_str_raw (t, "-1.010e-1");
+  mpfr_set_str_binary (t, "-1.010e-1");
   if (mpfr_cmp (u, t)) {
-    fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=8, prec(t)=4\n");
+    printf ("mpfr_add(u, x, t) failed for prec(x)=8, prec(t)=4\n");
     printf ("expected -1.010e-1\n");
     printf ("got      "); mpfr_out_str (stdout, 2, 4, u, GMP_RNDN);
     puts ("");
@@ -157,159 +158,178 @@ check64 (void)
   }
 
   mpfr_set_prec (x, 112); mpfr_set_prec (t, 98); mpfr_set_prec (u, 54);
-  mpfr_set_str_raw (x, "-0.11111100100000000011000011100000101101010001000111E-401");
-  mpfr_set_str_raw (t, "0.10110000100100000101101100011111111011101000111000101E-464");
+  mpfr_set_str_binary (x, "-0.11111100100000000011000011100000101101010001000111E-401");
+  mpfr_set_str_binary (t, "0.10110000100100000101101100011111111011101000111000101E-464");
   mpfr_add (u, x, t, GMP_RNDN);
-  if (mpfr_cmp (u, x)) {
-    fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=112, prec(t)=98\n");
-    exit (1);
-  }
+  if (mpfr_cmp (u, x))
+    {
+      printf ("mpfr_add(u, x, t) failed for prec(x)=112, prec(t)=98\n");
+      exit (1);
+    }
 
   mpfr_set_prec (x, 92); mpfr_set_prec (t, 86); mpfr_set_prec (u, 53);
   mpfr_set_d (x, -5.03525136761487735093e-74, GMP_RNDN);
   mpfr_set_d (t, 8.51539046314262304109e-91, GMP_RNDN);
   mpfr_add (u, x, t, GMP_RNDN);
-  if (mpfr_get_d1 (u) != -5.0352513676148773509283672e-74) {
-    fprintf (stderr, "mpfr_add(u, x, t) failed for prec(x)=92, prec(t)=86\n");
-    exit (1);
-  }
+  if (mpfr_get_d1 (u) != -5.0352513676148773509283672e-74)
+    {
+      printf ("mpfr_add(u, x, t) failed for prec(x)=92, prec(t)=86\n");
+      exit (1);
+    }
 
   mpfr_set_prec(x, 53); mpfr_set_prec(t, 76); mpfr_set_prec(u, 76);
-  mpfr_set_str_raw(x, "-0.10010010001001011011110000000000001010011011011110001E-32");
-  mpfr_set_str_raw(t, "-0.1011000101110010000101111111011111010001110011110111100110101011110010011111");
+  mpfr_set_str_binary(x, "-0.10010010001001011011110000000000001010011011011110001E-32");
+  mpfr_set_str_binary(t, "-0.1011000101110010000101111111011111010001110011110111100110101011110010011111");
   mpfr_sub(u, x, t, GMP_RNDU);
-  mpfr_set_str_raw(t, "0.1011000101110010000101111111011100111111101010011011110110101011101000000100");
-  if (mpfr_cmp(u,t)) {
-    printf("expect "); mpfr_print_binary(t); puts ("");
-    fprintf (stderr, "mpfr_add failed for precisions 53-76\n"); exit(1);
-  }
+  mpfr_set_str_binary(t, "0.1011000101110010000101111111011100111111101010011011110110101011101000000100");
+  if (mpfr_cmp(u,t))
+    {
+      printf ("expect "); mpfr_print_binary(t); puts ("");
+      printf ("mpfr_add failed for precisions 53-76\n");
+      exit (1);
+    }
   mpfr_set_prec(x, 53); mpfr_set_prec(t, 108); mpfr_set_prec(u, 108);
-  mpfr_set_str_raw(x, "-0.10010010001001011011110000000000001010011011011110001E-32");
-  mpfr_set_str_raw(t, "-0.101100010111001000010111111101111101000111001111011110011010101111001001111000111011001110011000000000111111");
+  mpfr_set_str_binary(x, "-0.10010010001001011011110000000000001010011011011110001E-32");
+  mpfr_set_str_binary(t, "-0.101100010111001000010111111101111101000111001111011110011010101111001001111000111011001110011000000000111111");
   mpfr_sub(u, x, t, GMP_RNDU);
-  mpfr_set_str_raw(t, "0.101100010111001000010111111101110011111110101001101111011010101110100000001011000010101110011000000000111111");
-  if (mpfr_cmp(u,t)) {
-    printf("expect "); mpfr_print_binary(t); puts ("");
-    fprintf(stderr, "mpfr_add failed for precisions 53-108\n"); exit(1);
-  }
+  mpfr_set_str_binary(t, "0.101100010111001000010111111101110011111110101001101111011010101110100000001011000010101110011000000000111111");
+  if (mpfr_cmp(u,t))
+    {
+      printf ("expect "); mpfr_print_binary(t); puts ("");
+      printf ("mpfr_add failed for precisions 53-108\n");
+      exit (1);
+    }
   mpfr_set_prec(x, 97); mpfr_set_prec(t, 97); mpfr_set_prec(u, 97);
-  mpfr_set_str_raw(x, "0.1111101100001000000001011000110111101000001011111000100001000101010100011111110010000000000000000E-39");
+  mpfr_set_str_binary(x, "0.1111101100001000000001011000110111101000001011111000100001000101010100011111110010000000000000000E-39");
   mpfr_set_ui(t, 1, GMP_RNDN);
   mpfr_add(u, x, t, GMP_RNDN);
-  mpfr_set_str_raw(x, "0.1000000000000000000000000000000000000000111110110000100000000101100011011110100000101111100010001E1");
-  if (mpfr_cmp(u,x)) {
-    fprintf(stderr, "mpfr_add failed for precision 97\n"); exit(1);
-  }
+  mpfr_set_str_binary(x, "0.1000000000000000000000000000000000000000111110110000100000000101100011011110100000101111100010001E1");
+  if (mpfr_cmp(u,x))
+    {
+      printf ("mpfr_add failed for precision 97\n");
+      exit (1);
+    }
   mpfr_set_prec(x, 128); mpfr_set_prec(t, 128); mpfr_set_prec(u, 128);
-  mpfr_set_str_raw(x, "0.10101011111001001010111011001000101100111101000000111111111011010100001100011101010001010111111101111010100110111111100101100010E-4");
+  mpfr_set_str_binary(x, "0.10101011111001001010111011001000101100111101000000111111111011010100001100011101010001010111111101111010100110111111100101100010E-4");
   mpfr_set(t, x, GMP_RNDN);
   mpfr_sub(u, x, t, GMP_RNDN);
   mpfr_set_prec(x, 96); mpfr_set_prec(t, 96); mpfr_set_prec(u, 96);
-  mpfr_set_str_raw(x, "0.111000000001110100111100110101101001001010010011010011100111100011010100011001010011011011000010E-4");
+  mpfr_set_str_binary(x, "0.111000000001110100111100110101101001001010010011010011100111100011010100011001010011011011000010E-4");
   mpfr_set(t, x, GMP_RNDN);
   mpfr_sub(u, x, t, GMP_RNDN);
   mpfr_set_prec(x, 85); mpfr_set_prec(t, 85); mpfr_set_prec(u, 85);
-  mpfr_set_str_raw(x, "0.1111101110100110110110100010101011101001100010100011110110110010010011101100101111100E-4");
-  mpfr_set_str_raw(t, "0.1111101110100110110110100010101001001000011000111000011101100101110100001110101010110E-4");
+  mpfr_set_str_binary(x, "0.1111101110100110110110100010101011101001100010100011110110110010010011101100101111100E-4");
+  mpfr_set_str_binary(t, "0.1111101110100110110110100010101001001000011000111000011101100101110100001110101010110E-4");
   mpfr_sub(u, x, t, GMP_RNDU);
   mpfr_sub(x, x, t, GMP_RNDU);
-  if (mpfr_cmp(x, u) != 0) {
-    printf("Error in mpfr_sub: u=x-t and x=x-t give different results\n");
-    exit(1);
-  }
-  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] & 
-      ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0) {
-    printf("Error in mpfr_sub: result is not msb-normalized (1)\n"); exit(1);
-  }
+  if (mpfr_cmp(x, u) != 0)
+    {
+      printf ("Error in mpfr_sub: u=x-t and x=x-t give different results\n");
+      exit (1);
+    }
+  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] &
+       ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0)
+    {
+      printf ("Error in mpfr_sub: result is not msb-normalized (1)\n");
+      exit (1);
+    }
   mpfr_set_prec(x, 65); mpfr_set_prec(t, 65); mpfr_set_prec(u, 65);
-  mpfr_set_str_raw(x, "0.10011010101000110101010000000011001001001110001011101011111011101E623");
-  mpfr_set_str_raw(t, "0.10011010101000110101010000000011001001001110001011101011111011100E623");
+  mpfr_set_str_binary(x, "0.10011010101000110101010000000011001001001110001011101011111011101E623");
+  mpfr_set_str_binary(t, "0.10011010101000110101010000000011001001001110001011101011111011100E623");
   mpfr_sub(u, x, t, GMP_RNDU);
-  if (mpfr_get_d1 (u) != 9.4349060620538533806e167) { /* 2^558 */
-    printf("Error (1) in mpfr_sub\n"); exit(1);
-  }
+  if (mpfr_get_d1 (u) != 9.4349060620538533806e167)
+    { /* 2^558 */
+      printf ("Error (1) in mpfr_sub\n");
+      exit (1);
+    }
 
   mpfr_set_prec(x, 64); mpfr_set_prec(t, 64); mpfr_set_prec(u, 64);
-  mpfr_set_str_raw(x, "0.1000011110101111011110111111000011101011101111101101101100000100E-220");
-  mpfr_set_str_raw(t, "0.1000011110101111011110111111000011101011101111101101010011111101E-220");
+  mpfr_set_str_binary(x, "0.1000011110101111011110111111000011101011101111101101101100000100E-220");
+  mpfr_set_str_binary(t, "0.1000011110101111011110111111000011101011101111101101010011111101E-220");
   mpfr_add(u, x, t, GMP_RNDU);
-  if ((MPFR_MANT(u)[0] & 1) != 1) { 
-    printf("error in mpfr_add with rnd_mode=GMP_RNDU\n");
-    printf("b=  "); mpfr_print_binary(x); puts ("");
-    printf("c=  "); mpfr_print_binary(t); puts ("");
-    printf("b+c="); mpfr_print_binary(u); puts ("");
-    exit(1);
-  }
+  if ((MPFR_MANT(u)[0] & 1) != 1)
+    {
+      printf ("error in mpfr_add with rnd_mode=GMP_RNDU\n");
+      printf ("b=  "); mpfr_print_binary(x); puts ("");
+      printf ("c=  "); mpfr_print_binary(t); puts ("");
+      printf ("b+c="); mpfr_print_binary(u); puts ("");
+      exit (1);
+    }
 
   /* bug found by Norbert Mueller, 14 Sep 2000 */
   mpfr_set_prec(x, 56); mpfr_set_prec(t, 83); mpfr_set_prec(u, 10);
-  mpfr_set_str_raw(x, "0.10001001011011001111101100110100000101111010010111010111E-7");
-  mpfr_set_str_raw(t, "0.10001001011011001111101100110100000101111010010111010111000000000111110110110000100E-7");
+  mpfr_set_str_binary(x, "0.10001001011011001111101100110100000101111010010111010111E-7");
+  mpfr_set_str_binary(t, "0.10001001011011001111101100110100000101111010010111010111000000000111110110110000100E-7");
   mpfr_sub(u, x, t, GMP_RNDU);
 
   /* array bound write found by Norbert Mueller, 26 Sep 2000 */
   mpfr_set_prec(x, 109); mpfr_set_prec(t, 153); mpfr_set_prec(u, 95);
-  mpfr_set_str_raw(x,"0.1001010000101011101100111000110001111111111111111111111111111111111111111111111111111111111111100000000000000E33");
-  mpfr_set_str_raw(t,"-0.100101000010101110110011100011000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011100101101000000100100001100110111E33");
+  mpfr_set_str_binary(x,"0.1001010000101011101100111000110001111111111111111111111111111111111111111111111111111111111111100000000000000E33");
+  mpfr_set_str_binary(t,"-0.100101000010101110110011100011000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011100101101000000100100001100110111E33");
   mpfr_add(u, x, t, GMP_RNDN);
 
   /* array bound writes found by Norbert Mueller, 27 Sep 2000 */
   mpfr_set_prec(x, 106); mpfr_set_prec(t, 53); mpfr_set_prec(u, 23);
-  mpfr_set_str_raw(x, "-0.1000011110101111111001010001000100001011000000000000000000000000000000000000000000000000000000000000000000E-59");
-  mpfr_set_str_raw(t, "-0.10000111101011111110010100010001101100011100110100000E-59");
+  mpfr_set_str_binary(x, "-0.1000011110101111111001010001000100001011000000000000000000000000000000000000000000000000000000000000000000E-59");
+  mpfr_set_str_binary(t, "-0.10000111101011111110010100010001101100011100110100000E-59");
   mpfr_sub(u, x, t, GMP_RNDN);
   mpfr_set_prec(x, 177); mpfr_set_prec(t, 217); mpfr_set_prec(u, 160);
-  mpfr_set_str_raw(x, "-0.111010001011010000111001001010010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000E35");
-  mpfr_set_str_raw(t, "0.1110100010110100001110010010100100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111011010011100001111001E35");
+  mpfr_set_str_binary(x, "-0.111010001011010000111001001010010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000E35");
+  mpfr_set_str_binary(t, "0.1110100010110100001110010010100100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111011010011100001111001E35");
   mpfr_add(u, x, t, GMP_RNDN);
   mpfr_set_prec(x, 214); mpfr_set_prec(t, 278); mpfr_set_prec(u, 207);
-  mpfr_set_str_raw(x, "0.1000100110100110101101101101000000010000100111000001001110001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000E66");
-  mpfr_set_str_raw(t, "-0.10001001101001101011011011010000000100001001110000010011100010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111011111001001100011E66");
+  mpfr_set_str_binary(x, "0.1000100110100110101101101101000000010000100111000001001110001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000E66");
+  mpfr_set_str_binary(t, "-0.10001001101001101011011011010000000100001001110000010011100010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111011111001001100011E66");
   mpfr_add(u, x, t, GMP_RNDN);
   mpfr_set_prec(x, 32); mpfr_set_prec(t, 247); mpfr_set_prec(u, 223);
-  mpfr_set_str_raw(x, "0.10000000000000000000000000000000E1");
-  mpfr_set_str_raw(t, "0.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000110001110100000100011110000101110110011101110100110110111111011010111100100000000000000000000000000E0");
+  mpfr_set_str_binary(x, "0.10000000000000000000000000000000E1");
+  mpfr_set_str_binary(t, "0.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000110001110100000100011110000101110110011101110100110110111111011010111100100000000000000000000000000E0");
   mpfr_sub(u, x, t, GMP_RNDN);
-  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] & 
-      ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0) {
-    printf("Error in mpfr_sub: result is not msb-normalized (2)\n"); exit(1);
-  }
+  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] &
+       ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0)
+    {
+      printf ("Error in mpfr_sub: result is not msb-normalized (2)\n");
+      exit (1);
+    }
 
   /* bug found by Nathalie Revol, 21 March 2001 */
   mpfr_set_prec (x, 65);
   mpfr_set_prec (t, 65);
   mpfr_set_prec (u, 65);
-  mpfr_set_str_raw (x, "0.11100100101101001100111011111111110001101001000011101001001010010E-35");
-  mpfr_set_str_raw (t, "0.10000000000000000000000000000000000001110010010110100110011110000E1");
+  mpfr_set_str_binary (x, "0.11100100101101001100111011111111110001101001000011101001001010010E-35");
+  mpfr_set_str_binary (t, "0.10000000000000000000000000000000000001110010010110100110011110000E1");
   mpfr_sub (u, t, x, GMP_RNDU);
-  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] & 
-      ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0) {
-    fprintf(stderr, "Error in mpfr_sub: result is not msb-normalized (3)\n");
-    exit (1);
-  }
+  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] &
+       ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0)
+    {
+      printf ("Error in mpfr_sub: result is not msb-normalized (3)\n");
+      exit (1);
+    }
 
   /* bug found by Fabrice Rouillier, 27 Mar 2001 */
   mpfr_set_prec (x, 107);
   mpfr_set_prec (t, 107);
   mpfr_set_prec (u, 107);
-  mpfr_set_str_raw (x, "0.10111001001111010010001000000010111111011011011101000001001000101000000000000000000000000000000000000000000E315");
-  mpfr_set_str_raw (t, "0.10000000000000000000000000000000000101110100100101110110000001100101011111001000011101111100100100111011000E350");
+  mpfr_set_str_binary (x, "0.10111001001111010010001000000010111111011011011101000001001000101000000000000000000000000000000000000000000E315");
+  mpfr_set_str_binary (t, "0.10000000000000000000000000000000000101110100100101110110000001100101011111001000011101111100100100111011000E350");
   mpfr_sub (u, x, t, GMP_RNDU);
-  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] & 
-      ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0) {
-    fprintf(stderr, "Error in mpfr_sub: result is not msb-normalized (4)\n");
-    exit (1);
-  }
-  
+  if ((MPFR_MANT(u)[(MPFR_PREC(u)-1)/mp_bits_per_limb] &
+       ((mp_limb_t)1<<(mp_bits_per_limb-1)))==0)
+    {
+      printf ("Error in mpfr_sub: result is not msb-normalized (4)\n");
+      exit (1);
+    }
+
   /* checks that NaN flag is correctly reset */
   mpfr_set_d (t, 1.0, GMP_RNDN);
   mpfr_set_d (u, 1.0, GMP_RNDN);
   mpfr_set_nan (x);
   mpfr_add (x, t, u, GMP_RNDN);
-  if (mpfr_cmp_ui (x, 2)) {
-    fprintf (stderr, "Error in mpfr_add: 1+1 gives %e\n", mpfr_get_d1 (x));
-    exit (1);
-  }
+  if (mpfr_cmp_ui (x, 2))
+    {
+      printf ("Error in mpfr_add: 1+1 gives %e\n", mpfr_get_d1 (x));
+      exit (1);
+    }
 
   mpfr_clear(x); mpfr_clear(t); mpfr_clear(u);
 }
@@ -330,34 +350,35 @@ check_case_1b (void)
     {
       mpfr_set_prec (a, prec_a);
       for (prec_b = prec_a + 2; prec_b <= 64; prec_b++)
-	{
-	  dif = prec_b - prec_a;
-	  mpfr_set_prec (b, prec_b);
-	  /* b = 1 - 2^(-prec_a) + 2^(-prec_b) */
-	  mpfr_set_ui (b, 1, GMP_RNDN);
-	  mpfr_div_2exp (b, b, dif, GMP_RNDN);
-	  mpfr_sub_ui (b, b, 1, GMP_RNDN);
-	  mpfr_div_2exp (b, b, prec_a, GMP_RNDN);
-	  mpfr_add_ui (b, b, 1, GMP_RNDN);
-	  for (prec_c = dif; prec_c <= 64; prec_c++)
-	    {
-	      /* c = 2^(-prec_a) - 2^(-prec_b) */
-	      mpfr_set_prec (c, prec_c);
-	      mpfr_set_si (c, -1, GMP_RNDN);
-	      mpfr_div_2exp (c, c, dif, GMP_RNDN);
-	      mpfr_add_ui (c, c, 1, GMP_RNDN);
-	      mpfr_div_2exp (c, c, prec_a, GMP_RNDN);
-	      mpfr_add (a, b, c, GMP_RNDN);
-	      if (mpfr_cmp_ui (a, 1) != 0)
-		{
-		  fprintf (stderr, "case (1b) failed for prec_a=%u, prec_b=%u, prec_c=%u\n", prec_a, prec_b, prec_c);
-		  printf("b="); mpfr_print_binary(b); puts ("");
-		  printf("c="); mpfr_print_binary(c); puts ("");
-		  printf("a="); mpfr_print_binary(a); puts ("");
-		  exit (1);
-		}
-	    }
-	}
+        {
+          dif = prec_b - prec_a;
+          mpfr_set_prec (b, prec_b);
+          /* b = 1 - 2^(-prec_a) + 2^(-prec_b) */
+          mpfr_set_ui (b, 1, GMP_RNDN);
+          mpfr_div_2exp (b, b, dif, GMP_RNDN);
+          mpfr_sub_ui (b, b, 1, GMP_RNDN);
+          mpfr_div_2exp (b, b, prec_a, GMP_RNDN);
+          mpfr_add_ui (b, b, 1, GMP_RNDN);
+          for (prec_c = dif; prec_c <= 64; prec_c++)
+            {
+              /* c = 2^(-prec_a) - 2^(-prec_b) */
+              mpfr_set_prec (c, prec_c);
+              mpfr_set_si (c, -1, GMP_RNDN);
+              mpfr_div_2exp (c, c, dif, GMP_RNDN);
+              mpfr_add_ui (c, c, 1, GMP_RNDN);
+              mpfr_div_2exp (c, c, prec_a, GMP_RNDN);
+              mpfr_add (a, b, c, GMP_RNDN);
+              if (mpfr_cmp_ui (a, 1) != 0)
+                {
+                  printf ("case (1b) failed for prec_a=%u, prec_b=%u,"
+                          " prec_c=%u\n", prec_a, prec_b, prec_c);
+                  printf ("b="); mpfr_print_binary(b); puts ("");
+                  printf ("c="); mpfr_print_binary(c); puts ("");
+                  printf ("a="); mpfr_print_binary(a); puts ("");
+                  exit (1);
+                }
+            }
+        }
     }
 
   mpfr_clear (a);
@@ -376,19 +397,19 @@ check_case_2 (void)
   mpfr_init2 (c, 500);
   mpfr_init2 (d, 800);
 
-  mpfr_set_str_raw(a, "1E110");  /* a = 2^110 */
-  mpfr_set_str_raw(b, "1E900");  /* b = 2^900 */
-  mpfr_set_str_raw(c, "1E500");  /* c = 2^500 */
+  mpfr_set_str_binary(a, "1E110");  /* a = 2^110 */
+  mpfr_set_str_binary(b, "1E900");  /* b = 2^900 */
+  mpfr_set_str_binary(c, "1E500");  /* c = 2^500 */
   mpfr_add(c, c, a, GMP_RNDZ);   /* c = 2^500 + 2^110 */
   mpfr_sub(d, b, c, GMP_RNDZ);   /* d = 2^900 - 2^500 - 2^110 */
   mpfr_add(b, b, c, GMP_RNDZ);   /* b = 2^900 + 2^500 + 2^110 */
   mpfr_add(a, b, d, GMP_RNDZ);   /* a = 2^901 */
   if (mpfr_cmp_ui_2exp (a, 1, 901))
     {
-      fprintf (stderr, "b + d fails for b=2^900+2^500+2^110, d=2^900-2^500-2^110\n");
-      fprintf (stderr, "expected 1.0e901, got ");
-      mpfr_out_str (stderr, 2, 0, a, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("b + d fails for b=2^900+2^500+2^110, d=2^900-2^500-2^110\n");
+      printf ("expected 1.0e901, got ");
+      mpfr_out_str (stdout, 2, 0, a, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
 
@@ -406,9 +427,11 @@ check_same (void)
 
   mpfr_init(x); mpfr_set_d(x, 1.0, GMP_RNDZ);
   mpfr_add(x, x, x, GMP_RNDZ);
-  if (mpfr_get_d1 (x) != 2.0) {
-    printf("Error when all 3 operands are equal\n"); exit(1);
-  }
+  if (mpfr_get_d1 (x) != 2.0)
+    {
+      printf ("Error when all 3 operands are equal\n");
+      exit (1);
+    }
   mpfr_clear(x);
 }
 
@@ -423,31 +446,31 @@ check_inexact (void)
   mp_prec_t px, py, pu, pz;
   int inexact, cmp;
   mp_rnd_t rnd;
-  
+
   mpfr_init (x);
   mpfr_init (y);
   mpfr_init (z);
   mpfr_init (u);
 
   mpfr_set_prec (x, 2);
-  mpfr_set_str_raw (x, "0.1E-4");
+  mpfr_set_str_binary (x, "0.1E-4");
   mpfr_set_prec (u, 33);
-  mpfr_set_str_raw (u, "0.101110100101101100000000111100000E-1");
+  mpfr_set_str_binary (u, "0.101110100101101100000000111100000E-1");
   mpfr_set_prec (y, 31);
   if ((inexact = mpfr_add (y, x, u, GMP_RNDN)))
     {
-      fprintf (stderr, "Wrong inexact flag (2): expected 0, got %d\n", inexact);
+      printf ("Wrong inexact flag (2): expected 0, got %d\n", inexact);
       exit (1);
     }
 
   mpfr_set_prec (x, 2);
-  mpfr_set_str_raw (x, "0.1E-4");
+  mpfr_set_str_binary (x, "0.1E-4");
   mpfr_set_prec (u, 33);
-  mpfr_set_str_raw (u, "0.101110100101101100000000111100000E-1");
+  mpfr_set_str_binary (u, "0.101110100101101100000000111100000E-1");
   mpfr_set_prec (y, 28);
   if ((inexact = mpfr_add (y, x, u, GMP_RNDN)))
     {
-      fprintf (stderr, "Wrong inexact flag (1): expected 0, got %d\n", inexact);
+      printf ("Wrong inexact flag (1): expected 0, got %d\n", inexact);
       exit (1);
     }
 
@@ -479,7 +502,7 @@ check_inexact (void)
 	      rnd = randlimb () % 4;
 	      if (mpfr_add (z, x, u, rnd))
 		{
-		  fprintf (stderr, "z <- x + u should be exact\n");
+		  printf ("z <- x + u should be exact\n");
 		  printf ("x="); mpfr_print_binary (x); puts ("");
 		  printf ("u="); mpfr_print_binary (u); puts ("");
 		  printf ("z="); mpfr_print_binary (z); puts ("");
@@ -493,8 +516,8 @@ check_inexact (void)
 		      ((inexact > 0) && (cmp <= 0)) ||
 		      ((inexact < 0) && (cmp >= 0)))
 		    {
-		      fprintf (stderr, "Wrong inexact flag for rnd=%s\n",
-			   mpfr_print_rnd_mode(rnd));
+		      printf ("Wrong inexact flag for rnd=%s\n",
+                              mpfr_print_rnd_mode(rnd));
 		      printf ("expected %d, got %d\n", cmp, inexact);
 		      printf ("x="); mpfr_print_binary (x); puts ("");
 		      printf ("u="); mpfr_print_binary (u); puts ("");
@@ -601,15 +624,15 @@ main (int argc, char *argv[])
 	1.2377342379999998e9);
   check(-4.567291988483277e8, 1262857194.0, GMP_RNDN, 53, 64, 53,
 	8.0612799515167236e8);
-  check(4.7719471752925262e7, 196089880.0, GMP_RNDN, 53, 53, 53, 
+  check(4.7719471752925262e7, 196089880.0, GMP_RNDN, 53, 53, 53,
 	2.4380935175292528e8);
-  check(4.7719471752925262e7, 196089880.0, GMP_RNDN, 53, 64, 53, 
+  check(4.7719471752925262e7, 196089880.0, GMP_RNDN, 53, 64, 53,
 	2.4380935175292528e8);
   check(-1.716113812768534e-140, 1271212614.0, GMP_RNDZ, 53, 64, 53,
 	1.2712126139999998e9);
   check(-1.2927455200185474e-50, 1675676122.0, GMP_RNDD, 53, 64, 53,
 	1.6756761219999998e9);
-  check53(1.22191250737771397120e+20, 948002822.0, GMP_RNDN, 
+  check53(1.22191250737771397120e+20, 948002822.0, GMP_RNDN,
 	  122191250738719408128.0);
   check53(9966027674114492.0, 1780341389094537.0, GMP_RNDN,
 	  11746369063209028.0);
@@ -691,7 +714,7 @@ main (int argc, char *argv[])
   check2a(2.72046257722708717791e+243,97,-1.62158447436486437113e+243,83,96,
 	  GMP_RNDN, "a.4cc63e002d2e8@201");
   /* Checking double precision (53 bits) */
-  check53(-8.22183238641455905806e-19, 7.42227178769761587878e-19, GMP_RNDD, 
+  check53(-8.22183238641455905806e-19, 7.42227178769761587878e-19, GMP_RNDD,
 	  -7.9956059871694317927e-20);
   check53(5.82106394662028628236e+234, -5.21514064202368477230e+89, GMP_RNDD,
 	  5.8210639466202855763e234);
@@ -725,7 +748,7 @@ main (int argc, char *argv[])
 	  5.5729438093246831053e71);
   check53(6.6052588496951015469e24, 4938448004894539.0, GMP_RNDU,
 	6.6052588546335505068e24);
-  check53(1.23056185051606761523e-190, 1.64589756643433857138e-181, GMP_RNDU, 
+  check53(1.23056185051606761523e-190, 1.64589756643433857138e-181, GMP_RNDU,
 	  1.6458975676649006598e-181);
   check53(2.93231171510175981584e-280, 3.26266919161341483877e-273, GMP_RNDU,
 	  3.2626694848445867288e-273);
@@ -748,7 +771,7 @@ main (int argc, char *argv[])
   check53(9007199254740992.0, -1.0, GMP_RNDN, 9007199254740991.0);
   check53(9007199254740994.0, -1.0, GMP_RNDN, 9007199254740992.0);
   check53(9007199254740996.0, -1.0, GMP_RNDN, 9007199254740996.0);
-  
+
   tests_end_mpfr ();
   return 0;
 }

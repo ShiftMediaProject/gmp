@@ -56,7 +56,6 @@ tests_start_mpfr (void)
 {
   /* don't buffer, so output is not lost if a test causes a segv etc */
   setbuf (stdout, NULL);
-  setbuf (stderr, NULL);
 
   tests_memory_start ();
   tests_rand_start ();
@@ -145,7 +144,7 @@ mpfr_test_init ()
   d = DBL_MIN;
   if (2.0 * (d / 2.0) != d)
     {
-      fprintf (stderr, "Warning: no denormalized numbers\n");
+      printf ("Warning: no denormalized numbers\n");
       exit (1);
     }
 #endif
@@ -161,11 +160,10 @@ mpfr_test_init ()
   d += c;
   if (c != d)
     {
-      fprintf (stderr, "Warning: IEEE 754 standard not fully supported\n");
-      fprintf (stderr, "         (maybe extended precision not disabled)\n");
-      fprintf (stderr, "         Some tests may fail\n");
+      printf ("Warning: IEEE 754 standard not fully supported\n"
+              "         (maybe extended precision not disabled)\n"
+              "         Some tests may fail\n");
     }
-  
 }
 
 

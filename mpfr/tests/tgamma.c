@@ -48,8 +48,8 @@ main (void)
   mpfr_gamma (y, x, GMP_RNDN);
   if (mpfr_get_d (y, GMP_RNDN) != (yd = 0.96134843256452096050))
     {
-      fprintf (stderr, "mpfr_gamma(%1.20e) is wrong: expected %1.20e, got %1.20e\n",
-               xd, yd, mpfr_get_d (y, GMP_RNDN));
+      printf ("mpfr_gamma(%1.20e) is wrong: expected %1.20e, got %1.20e\n",
+              xd, yd, mpfr_get_d (y, GMP_RNDN));
       exit (1);
     }
 
@@ -58,8 +58,8 @@ main (void)
   mpfr_gamma (y, x, GMP_RNDN);
   if (mpfr_get_d (y, GMP_RNDN) != (yd = 1.0502315560291053398))
     {
-      fprintf (stderr, "mpfr_gamma(%1.20e) is wrong: expected %1.20e, got %1.20e\n",
-               xd, yd, mpfr_get_d (y, GMP_RNDN));
+      printf ("mpfr_gamma(%1.20e) is wrong: expected %1.20e, got %1.20e\n",
+              xd, yd, mpfr_get_d (y, GMP_RNDN));
       exit (1);
     }
 

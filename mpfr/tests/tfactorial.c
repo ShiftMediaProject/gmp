@@ -1,6 +1,6 @@
 /* Test file for mpfr_factorial.
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -46,7 +46,7 @@ main (int argc, char *argv[])
   mpfr_init (t);
 
   mpfr_fac_ui (y, 0, GMP_RNDN);
- 
+
   if (mpfr_cmp_ui (y, 1))
     {
       printf ("mpfr_fac_ui(0) does not give 1\n");
@@ -63,7 +63,7 @@ main (int argc, char *argv[])
 
       for (n=0; n<100; n++)
 	for (rnd=0; rnd<4; rnd++)
-	  { 
+	  {
 	    inexact = mpfr_fac_ui (y, n, rnd);
 	    err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
 	    if (mpfr_can_round (y, err, rnd, rnd, prec))
@@ -77,7 +77,7 @@ main (int argc, char *argv[])
 		  {
 		    if (inexact)
 		      {
-			fprintf (stderr, "Wrong inexact flag: expected exact\n");
+			printf ("Wrong inexact flag: expected exact\n");
 			exit (1);
 		      }
 		  }
@@ -85,7 +85,7 @@ main (int argc, char *argv[])
 		  {
 		    if (!inexact)
 		      {
-			fprintf (stderr, "Wrong inexact flag: expected inexact\n");
+			printf ("Wrong inexact flag: expected inexact\n");
 			printf ("n=%u prec=%u\n", n, prec);
 			mpfr_print_binary(z); puts ("");
 			exit (1);

@@ -45,7 +45,7 @@ main (void)
   mpfr_acos (y, x, GMP_RNDN);
   if (mpfr_nan_p(y) == 0)
     {
-      fprintf (stderr, "Error: acos(NaN) != NaN\n");
+      printf ("Error: acos(NaN) != NaN\n");
       exit (1);
     }
 
@@ -53,7 +53,7 @@ main (void)
   mpfr_acos (y, x, GMP_RNDN);
   if (mpfr_nan_p(y) == 0)
     {
-      fprintf (stderr, "Error: acos(2) != NaN\n");
+      printf ("Error: acos(2) != NaN\n");
       exit (1);
     }
 

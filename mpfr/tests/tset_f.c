@@ -32,10 +32,10 @@ main (void)
   mpfr_t x, u;
   mpf_t y, z;
   unsigned long k, pr;
-  
+
   tests_start_mpfr ();
 
-  mpf_init(y); 
+  mpf_init(y);
   mpf_init(z);
 
   mpf_set_d (y, 0.0);
@@ -45,7 +45,7 @@ main (void)
   mpfr_set_prec (x, 100);
   mpfr_set_f (x, y, GMP_RNDN);
 
-  mpf_random2(y, 10, 0); 
+  mpf_random2(y, 10, 0);
   mpfr_set_f(x, y, randlimb () & 3);
 
   /* bug found by Jean-Pierre Merlet */
@@ -57,15 +57,19 @@ main (void)
      16, GMP_RNDN);
   mpf_set_str(y, "2033.033", 10);
   mpfr_set_f(x, y, GMP_RNDN);
-  if (mpfr_cmp(x, u)) {
-    fprintf(stderr, "mpfr_set_f failed for y=2033.033\n"); exit(1);
-  }
+  if (mpfr_cmp(x, u))
+    {
+      printf ("mpfr_set_f failed for y=2033.033\n");
+      exit (1);
+    }
   mpf_set_str(y, "-2033.033", 10);
   mpfr_set_f(x, y, GMP_RNDN);
   mpfr_neg(u, u, GMP_RNDN);
-  if (mpfr_cmp(x, u)) {
-    fprintf(stderr, "mpfr_set_f failed for y=-2033.033\n"); exit(1);
-  }
+  if (mpfr_cmp(x, u))
+    {
+      printf ("mpfr_set_f failed for y=-2033.033\n");
+      exit (1);
+    }
 
   mpfr_clear(u);
   mpfr_clear(x);

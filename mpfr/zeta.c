@@ -34,11 +34,11 @@ void mpfr_zeta_c      _PROTO ((int, mpfr_t *));
 void mpfr_zeta_part_a _PROTO ((mpfr_t, mpfr_srcptr, int));
 void mpfr_zeta_pos    _PROTO ((mpfr_t, mpfr_srcptr, mp_rnd_t));
 
-/* 
+/*
    Parameters:
    s - the input floating-point number
    n, p - parameters from the algorithm
-   tc - an array of p floating-point numbers tc[1]..tc[p] 
+   tc - an array of p floating-point numbers tc[1]..tc[p]
    Output:
    b is the result
 */
@@ -73,7 +73,7 @@ mpfr_zeta_part_b (mpfr_t b, mpfr_srcptr s, int n, int p, mpfr_t *tc)
       mpfr_div_ui (d, d, n2, GMP_RNDN);
       mpfr_add (d, d, tc[p-l], GMP_RNDN);
       if (mpfr_cmpabs (d, tc[p-l]) > 0)
-	mpfr_set (d, tc[p-l], GMP_RNDN); 
+	mpfr_set (d, tc[p-l], GMP_RNDN);
     }
   mpfr_mul (d, d, s, GMP_RNDN);
   mpfr_add_ui (s1, s, 1, GMP_RNDN);
@@ -213,7 +213,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
       else /* Branch 2 */
         {
           size_t size;
-#ifdef DEBUG	
+#ifdef DEBUG
           printf ("branch 2\n");
 #endif
           /* Computation of parameters n, p and working precision */
@@ -222,7 +222,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
           /* beta = dnep + 0.61 + sd * log (6.2832 / sd);
              but a larger value is ok */
 #define LOG6dot2832 1.83787940484160805532
-          beta = dnep + 0.61 + sd * (LOG6dot2832 - LOG2 * 
+          beta = dnep + 0.61 + sd * (LOG6dot2832 - LOG2 *
                                      __gmpfr_floor_log2 (sd));
           if (beta <= 0.0)
             {
@@ -294,7 +294,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
 	}
       else
 	{
-#ifdef DEBUG	  
+#ifdef DEBUG
 	  printf ("\nwe cannot round");
 #endif
 	  d = d + 5;
@@ -318,7 +318,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
   mpfr_clear (s1);
 }
 
-void
+int
 mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
 {
   double sd, eps, m1, c;
@@ -329,42 +329,34 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
 
   if (mpfr_nan_p (s))
     {
-      mpfr_set_nan (z); /* Zeta(NaN) = NaN */
-      return;
+      MPFR_SET_NAN (z);
+      MPFR_RET_NAN;
     }
-  
+
   if (mpfr_inf_p (s))
     {
       if (MPFR_SIGN(s) > 0)
-	{
-	  mpfr_set_ui (z, 1, GMP_RNDN); /* Zeta(+Inf) = 1 */
-	  return;
-	}
-      else
-	{
-	  mpfr_set_nan (z); /* Zeta(-Inf) = NaN */
-	  return;
-	}
+        return mpfr_set_ui (z, 1, GMP_RNDN); /* Zeta(+Inf) = 1 */
+      MPFR_SET_NAN (z); /* Zeta(-Inf) = NaN */
+      MPFR_RET_NAN;
     }
 
   /* now s is neither NaN nor Infinite */
 
   if (mpfr_cmp_ui(s,0) == 0) /* Case s = 0 */
     {
-      mpfr_set_ui(z, 1, rnd_mode);
-      mpfr_div_2ui(z, z, 1, rnd_mode);
-      mpfr_neg(z,z,rnd_mode);
-      return;
+      mpfr_set_ui (z, 1, rnd_mode);
+      mpfr_div_2ui (z, z, 1, rnd_mode);
+      return mpfr_neg (z, z, rnd_mode);
     }
-  
+
   mpfr_init2(s2, mpfr_get_prec(s));
   mpfr_div_2ui(s2, s, 1, rnd_mode);
   if ((MPFR_SIGN(s) == -1) && (mpfr_floor(s2, s2) == 0)) /* Case s = -2n */
     {
-      mpfr_set_ui(z, 0, rnd_mode);
-      mpfr_clear(s2);
-      return;
-    };
+      mpfr_clear (s2);
+      return mpfr_set_ui (z, 0, rnd_mode);
+    }
   mpfr_clear(s2);
   precz = mpfr_get_prec (z);
   precs = mpfr_get_prec (s);
@@ -397,40 +389,42 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
       do
 	{
 	  prec1 = prec1 + 10;
-      mpfr_set_prec(z_pre, prec1);
-      mpfr_set_prec(s1, prec1);
-      mpfr_set_prec(y, prec1);
-      mpfr_set_prec(p, prec1);
-      mpfr_set_prec(sint, prec1);
-      mpfr_set_prec(sfrac, prec1);
-      mpfr_ui_sub(s1, 1, s, GMP_RNDN);
-      mpfr_add_ui(sfrac, s, 2, GMP_RNDN);
-      mpfr_div_2ui(sfrac, sfrac, 2, GMP_RNDN);
-      mpfr_floor (sint, sfrac);
-      mpfr_sub(sfrac, sfrac, sint, GMP_RNDN);
-      mpfr_mul_2ui(sfrac, sfrac, 2, GMP_RNDN);
-      mpfr_sub_ui(sfrac, sfrac, 2, GMP_RNDN);
-      if (mpfr_cmp_ui(sfrac, 1) > 0)
-        mpfr_ui_sub (sfrac, 2, sfrac, GMP_RNDN);
-      else if (mpfr_cmp_si(sfrac, -1) < 0)
-        {
-          mpfr_neg(sfrac, sfrac, GMP_RNDN);
-          mpfr_sub_ui(sfrac, sfrac, 2, GMP_RNDN);
+          mpfr_set_prec (z_pre, prec1);
+          mpfr_set_prec (s1, prec1);
+          mpfr_set_prec (y, prec1);
+          mpfr_set_prec (p, prec1);
+          mpfr_set_prec (sint, prec1);
+          mpfr_set_prec (sfrac, prec1);
+          mpfr_ui_sub (s1, 1, s, GMP_RNDN);
+          mpfr_add_ui (sfrac, s, 2, GMP_RNDN);
+          mpfr_div_2ui (sfrac, sfrac, 2, GMP_RNDN);
+          mpfr_floor (sint, sfrac);
+          mpfr_sub (sfrac, sfrac, sint, GMP_RNDN);
+          mpfr_mul_2ui (sfrac, sfrac, 2, GMP_RNDN);
+          mpfr_sub_ui (sfrac, sfrac, 2, GMP_RNDN);
+          if (mpfr_cmp_ui (sfrac, 1) > 0)
+            mpfr_ui_sub (sfrac, 2, sfrac, GMP_RNDN);
+          else if (mpfr_cmp_si (sfrac, -1) < 0)
+            {
+              mpfr_neg (sfrac, sfrac, GMP_RNDN);
+              mpfr_sub_ui (sfrac, sfrac, 2, GMP_RNDN);
+            }
+          mpfr_div_2ui (sfrac, sfrac, 1, GMP_RNDN);
+          mpfr_zeta_pos (z_pre, s1, GMP_RNDN);
+          mpfr_gamma (y, s1, GMP_RNDN);
+          mpfr_mul (z_pre, z_pre, y, GMP_RNDN);
+          mpfr_const_pi (p, GMP_RNDD);
+          mpfr_mul (y, sfrac, p, GMP_RNDN);
+          mpfr_sin (y, y, GMP_RNDN);
+          mpfr_mul (z_pre, z_pre, y, GMP_RNDN);
+          mpfr_mul_2ui (y, p, 1, GMP_RNDN);
+          mpfr_neg (s1, s1, GMP_RNDN);
+          mpfr_pow (y, y, s1, GMP_RNDN);
+          mpfr_mul (z_pre, z_pre, y, GMP_RNDN);
+          mpfr_mul_2ui (z_pre, z_pre, 1, GMP_RNDN);
+          can_round = mpfr_can_round (z_pre, prec1 - add, GMP_RNDN,
+                                      rnd_mode, precz);
         }
-      mpfr_div_2ui(sfrac, sfrac, 1, GMP_RNDN);
-      mpfr_zeta_pos(z_pre, s1, GMP_RNDN);
-      mpfr_gamma(y, s1, GMP_RNDN);
-      mpfr_mul(z_pre, z_pre, y, GMP_RNDN);
-      mpfr_const_pi(p, GMP_RNDD);
-      mpfr_mul(y, sfrac, p, GMP_RNDN);
-      mpfr_sin(y, y, GMP_RNDN);
-      mpfr_mul(z_pre, z_pre, y, GMP_RNDN);
-      mpfr_mul_2ui(y, p, 1, GMP_RNDN);
-      mpfr_neg(s1, s1, GMP_RNDN);
-      mpfr_pow(y, y, s1, GMP_RNDN);
-      mpfr_mul(z_pre, z_pre, y, GMP_RNDN);
-      mpfr_mul_2ui(z_pre, z_pre, 1, GMP_RNDN);
-      can_round = mpfr_can_round (z_pre, prec1 - add, GMP_RNDN, rnd_mode, precz);}
       while (can_round == 0);
       mpfr_set (z, z_pre, rnd_mode);
       mpfr_clear(z_pre);
@@ -439,10 +433,6 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
       mpfr_clear(p);
       mpfr_clear(sint);
       mpfr_clear(sfrac);
-	}
+    }
+  return 1;
 }
-
-
-
-
-

@@ -23,7 +23,9 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 #define PREC_MAX 80
@@ -36,7 +38,7 @@ test1 (void)
 
   mpfr_init2 (x, 32);
   mpfr_init2 (y, 42);
-  mpfr_set_str_raw (x, "1.1111111101000111011010010010100e-1");
+  mpfr_set_str_binary (x, "1.1111111101000111011010010010100e-1");
   mpfr_zeta (y, x, GMP_RNDN); /* shouldn't crash */
   mpfr_clear (x);
   mpfr_clear (y);
@@ -115,8 +117,8 @@ main (int argc, char *argv[])
 
   if (argc != 1 && argc != 4)
     {
-      fprintf (stderr, "Usage: tzeta\n");
-      fprintf (stderr, "    or tzeta s prec rnd_mode\n");
+      printf ("Usage: tzeta\n"
+              "    or tzeta s prec rnd_mode\n");
       exit (1);
     }
 
@@ -148,7 +150,7 @@ main (int argc, char *argv[])
   /* the following seems to loop */
   mpfr_set_prec (s, 6);
   mpfr_set_prec (z, 6);
-  mpfr_set_str_raw (s, "1.10010e4");
+  mpfr_set_str_binary (s, "1.10010e4");
   mpfr_zeta (z, s, GMP_RNDZ);
 
 
@@ -160,91 +162,91 @@ main (int argc, char *argv[])
   mpfr_zeta (z, s, GMP_RNDN);
   if (!mpfr_inf_p (z) || MPFR_SIGN (z) < 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta for s = 1 (should be +inf)\n");
+      printf ("Error in mpfr_zeta for s = 1 (should be +inf)\n");
       exit (1);
     }
 
-  mpfr_set_str_raw (s, "0.1100011101110111111111111010000110010111001011001011");
-  mpfr_set_str_raw (y, "-0.11111101111011001001001111111000101010000100000100100E2");
+  mpfr_set_str_binary (s, "0.1100011101110111111111111010000110010111001011001011");
+  mpfr_set_str_binary (y, "-0.11111101111011001001001111111000101010000100000100100E2");
   mpfr_zeta (z, s, GMP_RNDN);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (1,RNDN)\n");
+      printf ("Error in mpfr_zeta (1,RNDN)\n");
       exit (1);
     }
   mpfr_zeta (z, s, GMP_RNDZ);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (1,RNDZ)\n");
+      printf ("Error in mpfr_zeta (1,RNDZ)\n");
       exit (1);
     }
   mpfr_zeta (z, s, GMP_RNDU);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (1,RNDU)\n");
+      printf ("Error in mpfr_zeta (1,RNDU)\n");
       exit (1);
     }
   mpfr_zeta (z, s, GMP_RNDD);
   mpfr_add_one_ulp (y, GMP_RNDD);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (1,RNDD)\n");
+      printf ("Error in mpfr_zeta (1,RNDD)\n");
       exit (1);
     }
 
-  mpfr_set_str_raw (s, "0.10001011010011100110010001100100001011000010011001011");
-  mpfr_set_str_raw (y, "-0.11010011010010101101110111011010011101111101111010110E1");
+  mpfr_set_str_binary (s, "0.10001011010011100110010001100100001011000010011001011");
+  mpfr_set_str_binary (y, "-0.11010011010010101101110111011010011101111101111010110E1");
   mpfr_zeta (z, s, GMP_RNDN);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (2,RNDN)\n");
+      printf ("Error in mpfr_zeta (2,RNDN)\n");
       exit (1);
     }
   mpfr_zeta (z, s, GMP_RNDZ);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (2,RNDZ)\n");
+      printf ("Error in mpfr_zeta (2,RNDZ)\n");
       exit (1);
     }
   mpfr_zeta (z, s, GMP_RNDU);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (2,RNDU)\n");
+      printf ("Error in mpfr_zeta (2,RNDU)\n");
       exit (1);
     }
   mpfr_zeta (z, s, GMP_RNDD);
   mpfr_add_one_ulp (y, GMP_RNDD);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (2,RNDD)\n");
+      printf ("Error in mpfr_zeta (2,RNDD)\n");
       exit (1);
     }
 
-  mpfr_set_str_raw (s, "0.1100111110100001111110111000110101111001011101000101");
-  mpfr_set_str_raw (y, "-0.10010111010110000111011111001101100001111011000001010E3");
+  mpfr_set_str_binary (s, "0.1100111110100001111110111000110101111001011101000101");
+  mpfr_set_str_binary (y, "-0.10010111010110000111011111001101100001111011000001010E3");
   mpfr_zeta (z, s, GMP_RNDN);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (3,RNDN)\n");
+      printf ("Error in mpfr_zeta (3,RNDN)\n");
       exit (1);
     }
   mpfr_zeta (z, s, GMP_RNDD);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (3,RNDD)\n");
+      printf ("Error in mpfr_zeta (3,RNDD)\n");
       exit (1);
     }
   mpfr_sub_one_ulp (y, GMP_RNDZ);
   mpfr_zeta (z, s, GMP_RNDZ);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (3,RNDZ)\n");
+      printf ("Error in mpfr_zeta (3,RNDZ)\n");
       exit (1);
     }
   mpfr_zeta (z, s, GMP_RNDU);
   if (mpfr_cmp (z, y) != 0)
     {
-      fprintf (stderr, "Error in mpfr_zeta (3,RNDU)\n");
+      printf ("Error in mpfr_zeta (3,RNDU)\n");
       exit (1);
     }
 

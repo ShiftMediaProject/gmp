@@ -53,7 +53,7 @@ check_set_get (long double d, mpfr_t x)
     {
       if (mpfr_set_ld (x, d, r))
         {
-          fprintf (stderr, "Error: mpfr_set_ld should be exact\n");
+          printf ("Error: mpfr_set_ld should be exact\n");
           exit (1);
         }
       e = mpfr_get_ld (x, r);
@@ -94,7 +94,7 @@ main (int argc, char *argv[])
   mpfr_set_ld (x, -0.0, GMP_RNDN);
   if (MPFR_SIGN(x) > 0)
     {
-      fprintf (stderr, "Error: sign of -0.0 is not set correctly\n");
+      printf ("Error: sign of -0.0 is not set correctly\n");
       exit (1);
     }
 
@@ -146,10 +146,10 @@ main (int argc, char *argv[])
       d = mpfr_get_ld (x, GMP_RNDN);
       check_set_get (d, x);
     }
-     
+
   mpfr_clear (x);
 
   tests_end_mpfr ();
 
-  return 0; 
+  return 0;
 }

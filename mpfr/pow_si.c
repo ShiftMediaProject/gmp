@@ -1,6 +1,6 @@
-/* mpfr_pow_si -- power function x^y with y an unsigned int 
+/* mpfr_pow_si -- power function x^y with y an unsigned int
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -38,8 +38,6 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
     return mpfr_pow_ui (y, x, n, rnd_mode);
   else
     {
-      int inexact = 0;
-
       if (MPFR_IS_NAN(x))
         {
           MPFR_SET_NAN(y);
@@ -85,46 +83,43 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
         mp_prec_t Ny = MPFR_PREC(y);   /* Precision of input variable */
 
         mp_prec_t Nt;   /* Precision of the intermediary variable */
-        long int err;  /* Precision of error */
-                
+        long int err;   /* Precision of error */
+        int inexact;
+
         /* compute the precision of intermediary variable */
         Nt=MAX(Nx,Ny);
         /* the optimal number of bits : see algorithms.ps */
         Nt=Nt+3+__gmpfr_ceil_log2(Nt);
 
+        mpfr_save_emin_emax ();
+
         /* initialise of intermediary	variable */
         mpfr_init(t);
         mpfr_init(ti);
 
-        do {
+        do
+          {
+            /* reactualisation of the precision */
+            mpfr_set_prec (t, Nt);
+            mpfr_set_prec (ti, Nt);
 
-          /* reactualisation of the precision */
-          mpfr_set_prec(t,Nt);                    
-          mpfr_set_prec(ti,Nt);             
+            /* compute 1/(x^n) n>0*/
+            mpfr_pow_ui (ti, x, (unsigned long int) n, GMP_RNDN);
+            mpfr_ui_div (t, 1, ti, GMP_RNDN);
 
-          /* compute 1/(x^n) n>0*/
-          mpfr_pow_ui(ti,x,(unsigned long int)(n),GMP_RNDN);
-          mpfr_ui_div(t,1,ti,GMP_RNDN);
+            /* error estimate -- see pow function in algorithms.ps */
+            err = Nt - 3;
 
-          /* estimation of the error -- see pow function in algorithms.ps*/
-          err = Nt - 3;
+            /* actualisation of the precision */
+            Nt += 10;
+          }
+        while (err < 0 || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny));
 
-          /* actualisation of the precision */
-          Nt += 10;
-
-        } while (err<0 || !mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
- 
-        inexact = mpfr_set(y,t,rnd_mode);
-        mpfr_clear(t);
-        mpfr_clear(ti);
+        inexact = mpfr_set (y, t, rnd_mode);
+        mpfr_clear (t);
+        mpfr_clear (ti);
+        mpfr_restore_emin_emax ();
+        return mpfr_check_range (y, inexact, rnd_mode);
       }
-      return inexact;
     }
 }
-
-
-
-
-
-
-

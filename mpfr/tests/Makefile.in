@@ -206,7 +206,7 @@ EXTRA_libfrtests_a_SOURCES = amd64.asm x86.asm
 libfrtests_a_DEPENDENCIES = $(TESTS_ASM_OBJECTS)
 libfrtests_a_LIBADD = $(libfrtests_a_DEPENDENCIES)
 
-@WANT_MPFR_TRUE@check_PROGRAMS = tinits reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui teq texp tfrac tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tget_d_2exp tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos tgamma tset_ld tcbrt tsin_cos mpf_compat mpfr_compat tzeta tcmp_d terf
+@WANT_MPFR_TRUE@check_PROGRAMS = tinits reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui teq texp tfrac tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tget_d_2exp tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos tgamma tset_ld tcbrt tsin_cos mpf_compat mpfr_compat tzeta tcmp_d terf tnext tcomparisons
 @WANT_MPFR_TRUE@check_LIBRARIES = libfrtests.a
 @WANT_MPFR_TRUE@TESTS = $(check_PROGRAMS)
 EXTRA_DIST = tgeneric.c mpf_compat.h
@@ -253,7 +253,8 @@ libfrtests_a_OBJECTS = $(am_libfrtests_a_OBJECTS)
 @WANT_MPFR_TRUE@	tgamma$(EXEEXT) tset_ld$(EXEEXT) tcbrt$(EXEEXT) \
 @WANT_MPFR_TRUE@	tsin_cos$(EXEEXT) mpf_compat$(EXEEXT) \
 @WANT_MPFR_TRUE@	mpfr_compat$(EXEEXT) tzeta$(EXEEXT) \
-@WANT_MPFR_TRUE@	tcmp_d$(EXEEXT) terf$(EXEEXT)
+@WANT_MPFR_TRUE@	tcmp_d$(EXEEXT) terf$(EXEEXT) tnext$(EXEEXT) \
+@WANT_MPFR_TRUE@	tcomparisons$(EXEEXT)
 @WANT_MPFR_FALSE@check_PROGRAMS =
 mpf_compat_SOURCES = mpf_compat.c
 mpf_compat_OBJECTS = mpf_compat$U.$(OBJEXT)
@@ -359,6 +360,12 @@ tcmp_ui_LDADD = $(LDADD)
 tcmp_ui_DEPENDENCIES = libfrtests.a ../libmpfr.a \
 	$(top_builddir)/libgmp.la
 tcmp_ui_LDFLAGS =
+tcomparisons_SOURCES = tcomparisons.c
+tcomparisons_OBJECTS = tcomparisons$U.$(OBJEXT)
+tcomparisons_LDADD = $(LDADD)
+tcomparisons_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
+tcomparisons_LDFLAGS =
 tconst_euler_SOURCES = tconst_euler.c
 tconst_euler_OBJECTS = tconst_euler$U.$(OBJEXT)
 tconst_euler_LDADD = $(LDADD)
@@ -533,6 +540,11 @@ tmul_ui_LDADD = $(LDADD)
 tmul_ui_DEPENDENCIES = libfrtests.a ../libmpfr.a \
 	$(top_builddir)/libgmp.la
 tmul_ui_LDFLAGS =
+tnext_SOURCES = tnext.c
+tnext_OBJECTS = tnext$U.$(OBJEXT)
+tnext_LDADD = $(LDADD)
+tnext_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
+tnext_LDFLAGS =
 tout_str_SOURCES = tout_str.c
 tout_str_OBJECTS = tout_str$U.$(OBJEXT)
 tout_str_LDADD = $(LDADD)
@@ -710,18 +722,18 @@ DIST_SOURCES = $(libfrtests_a_SOURCES) $(EXTRA_libfrtests_a_SOURCES) \
 	mpf_compat.c mpfr_compat.c reuse.c tabs.c tacos.c tacosh.c \
 	tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c \
 	tcan_round.c tcbrt.c tcmp.c tcmp2.c tcmp_d.c tcmp_ui.c \
-	tconst_euler.c tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c \
-	tdiv_ui.c teq.c terf.c texceptions.c texp.c texp2.c texpm1.c \
-	tfactorial.c tfma.c tfrac.c tgamma.c tget_d.c tget_d_2exp.c \
-	tget_str.c thyperbolic.c thypot.c tinits.c tisnan.c tlog.c \
-	tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c tmul_ui.c \
-	tout_str.c tpow.c tpow3.c trandom.c trint.c tround_prec.c \
-	tset.c tset_d.c tset_f.c tset_ld.c tset_q.c tset_si.c \
-	tset_str.c tset_z.c tsin.c tsin_cos.c tsinh.c tsqrt.c \
+	tcomparisons.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c \
+	tcosh.c tdiv.c tdiv_ui.c teq.c terf.c texceptions.c texp.c \
+	texp2.c texpm1.c tfactorial.c tfma.c tfrac.c tgamma.c tget_d.c \
+	tget_d_2exp.c tget_str.c thyperbolic.c thypot.c tinits.c \
+	tisnan.c tlog.c tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c \
+	tmul_ui.c tnext.c tout_str.c tpow.c tpow3.c trandom.c trint.c \
+	tround_prec.c tset.c tset_d.c tset_f.c tset_ld.c tset_q.c \
+	tset_si.c tset_str.c tset_z.c tsin.c tsin_cos.c tsinh.c tsqrt.c \
 	tsqrt_ui.c tsub.c tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c \
 	tui_div.c tui_pow.c tui_sub.c tzeta.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libfrtests_a_SOURCES) $(EXTRA_libfrtests_a_SOURCES) mpf_compat.c mpfr_compat.c reuse.c tabs.c tacos.c tacosh.c tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c tcan_round.c tcbrt.c tcmp.c tcmp2.c tcmp_d.c tcmp_ui.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c tdiv_ui.c teq.c terf.c texceptions.c texp.c texp2.c texpm1.c tfactorial.c tfma.c tfrac.c tgamma.c tget_d.c tget_d_2exp.c tget_str.c thyperbolic.c thypot.c tinits.c tisnan.c tlog.c tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c tmul_ui.c tout_str.c tpow.c tpow3.c trandom.c trint.c tround_prec.c tset.c tset_d.c tset_f.c tset_ld.c tset_q.c tset_si.c tset_str.c tset_z.c tsin.c tsin_cos.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c tui_sub.c tzeta.c
+SOURCES = $(libfrtests_a_SOURCES) $(EXTRA_libfrtests_a_SOURCES) mpf_compat.c mpfr_compat.c reuse.c tabs.c tacos.c tacosh.c tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c tcan_round.c tcbrt.c tcmp.c tcmp2.c tcmp_d.c tcmp_ui.c tcomparisons.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c tdiv_ui.c teq.c terf.c texceptions.c texp.c texp2.c texpm1.c tfactorial.c tfma.c tfrac.c tgamma.c tget_d.c tget_d_2exp.c tget_str.c thyperbolic.c thypot.c tinits.c tisnan.c tlog.c tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c tmul_ui.c tnext.c tout_str.c tpow.c tpow3.c trandom.c trint.c tround_prec.c tset.c tset_d.c tset_f.c tset_ld.c tset_q.c tset_si.c tset_str.c tset_z.c tsin.c tsin_cos.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c tui_sub.c tzeta.c
 
 all: all-am
 
@@ -803,6 +815,9 @@ tcmp_d$(EXEEXT): $(tcmp_d_OBJECTS) $(tcmp_d_DEPENDENCIES)
 tcmp_ui$(EXEEXT): $(tcmp_ui_OBJECTS) $(tcmp_ui_DEPENDENCIES) 
 	@rm -f tcmp_ui$(EXEEXT)
 	$(LINK) $(tcmp_ui_LDFLAGS) $(tcmp_ui_OBJECTS) $(tcmp_ui_LDADD) $(LIBS)
+tcomparisons$(EXEEXT): $(tcomparisons_OBJECTS) $(tcomparisons_DEPENDENCIES) 
+	@rm -f tcomparisons$(EXEEXT)
+	$(LINK) $(tcomparisons_LDFLAGS) $(tcomparisons_OBJECTS) $(tcomparisons_LDADD) $(LIBS)
 tconst_euler$(EXEEXT): $(tconst_euler_OBJECTS) $(tconst_euler_DEPENDENCIES) 
 	@rm -f tconst_euler$(EXEEXT)
 	$(LINK) $(tconst_euler_LDFLAGS) $(tconst_euler_OBJECTS) $(tconst_euler_LDADD) $(LIBS)
@@ -896,6 +911,9 @@ tmul_2exp$(EXEEXT): $(tmul_2exp_OBJECTS) $(tmul_2exp_DEPENDENCIES)
 tmul_ui$(EXEEXT): $(tmul_ui_OBJECTS) $(tmul_ui_DEPENDENCIES) 
 	@rm -f tmul_ui$(EXEEXT)
 	$(LINK) $(tmul_ui_LDFLAGS) $(tmul_ui_OBJECTS) $(tmul_ui_LDADD) $(LIBS)
+tnext$(EXEEXT): $(tnext_OBJECTS) $(tnext_DEPENDENCIES) 
+	@rm -f tnext$(EXEEXT)
+	$(LINK) $(tnext_LDFLAGS) $(tnext_OBJECTS) $(tnext_LDADD) $(LIBS)
 tout_str$(EXEEXT): $(tout_str_OBJECTS) $(tout_str_DEPENDENCIES) 
 	@rm -f tout_str$(EXEEXT)
 	$(LINK) $(tout_str_LDFLAGS) $(tout_str_OBJECTS) $(tout_str_LDADD) $(LIBS)
@@ -1047,6 +1065,8 @@ tcmp_d_.c: tcmp_d.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcmp_d.c; then echo $(srcdir)/tcmp_d.c; else echo tcmp_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tcmp_ui_.c: tcmp_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcmp_ui.c; then echo $(srcdir)/tcmp_ui.c; else echo tcmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+tcomparisons_.c: tcomparisons.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tcomparisons.c; then echo $(srcdir)/tcomparisons.c; else echo tcomparisons.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tconst_euler_.c: tconst_euler.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tconst_euler.c; then echo $(srcdir)/tconst_euler.c; else echo tconst_euler.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tconst_log2_.c: tconst_log2.c $(ANSI2KNR)
@@ -1111,6 +1131,8 @@ tmul_2exp_.c: tmul_2exp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tmul_2exp.c; then echo $(srcdir)/tmul_2exp.c; else echo tmul_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tmul_ui_.c: tmul_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tmul_ui.c; then echo $(srcdir)/tmul_ui.c; else echo tmul_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+tnext_.c: tnext.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tnext.c; then echo $(srcdir)/tnext.c; else echo tnext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tout_str_.c: tout_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tout_str.c; then echo $(srcdir)/tout_str.c; else echo tout_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tpow_.c: tpow.c $(ANSI2KNR)
@@ -1178,36 +1200,37 @@ tasin_.$(OBJEXT) tasin_.lo tasinh_.$(OBJEXT) tasinh_.lo \
 tatan_.$(OBJEXT) tatan_.lo tatanh_.$(OBJEXT) tatanh_.lo \
 tcan_round_.$(OBJEXT) tcan_round_.lo tcbrt_.$(OBJEXT) tcbrt_.lo \
 tcmp_.$(OBJEXT) tcmp_.lo tcmp2_.$(OBJEXT) tcmp2_.lo tcmp_d_.$(OBJEXT) \
-tcmp_d_.lo tcmp_ui_.$(OBJEXT) tcmp_ui_.lo tconst_euler_.$(OBJEXT) \
-tconst_euler_.lo tconst_log2_.$(OBJEXT) tconst_log2_.lo \
-tconst_pi_.$(OBJEXT) tconst_pi_.lo tcos_.$(OBJEXT) tcos_.lo \
-tcosh_.$(OBJEXT) tcosh_.lo tdiv_.$(OBJEXT) tdiv_.lo tdiv_ui_.$(OBJEXT) \
-tdiv_ui_.lo teq_.$(OBJEXT) teq_.lo terf_.$(OBJEXT) terf_.lo \
-tests_.$(OBJEXT) tests_.lo texceptions_.$(OBJEXT) texceptions_.lo \
-texp_.$(OBJEXT) texp_.lo texp2_.$(OBJEXT) texp2_.lo texpm1_.$(OBJEXT) \
-texpm1_.lo tfactorial_.$(OBJEXT) tfactorial_.lo tfma_.$(OBJEXT) \
-tfma_.lo tfrac_.$(OBJEXT) tfrac_.lo tgamma_.$(OBJEXT) tgamma_.lo \
+tcmp_d_.lo tcmp_ui_.$(OBJEXT) tcmp_ui_.lo tcomparisons_.$(OBJEXT) \
+tcomparisons_.lo tconst_euler_.$(OBJEXT) tconst_euler_.lo \
+tconst_log2_.$(OBJEXT) tconst_log2_.lo tconst_pi_.$(OBJEXT) \
+tconst_pi_.lo tcos_.$(OBJEXT) tcos_.lo tcosh_.$(OBJEXT) tcosh_.lo \
+tdiv_.$(OBJEXT) tdiv_.lo tdiv_ui_.$(OBJEXT) tdiv_ui_.lo teq_.$(OBJEXT) \
+teq_.lo terf_.$(OBJEXT) terf_.lo tests_.$(OBJEXT) tests_.lo \
+texceptions_.$(OBJEXT) texceptions_.lo texp_.$(OBJEXT) texp_.lo \
+texp2_.$(OBJEXT) texp2_.lo texpm1_.$(OBJEXT) texpm1_.lo \
+tfactorial_.$(OBJEXT) tfactorial_.lo tfma_.$(OBJEXT) tfma_.lo \
+tfrac_.$(OBJEXT) tfrac_.lo tgamma_.$(OBJEXT) tgamma_.lo \
 tget_d_.$(OBJEXT) tget_d_.lo tget_d_2exp_.$(OBJEXT) tget_d_2exp_.lo \
 tget_str_.$(OBJEXT) tget_str_.lo thyperbolic_.$(OBJEXT) thyperbolic_.lo \
 thypot_.$(OBJEXT) thypot_.lo tinits_.$(OBJEXT) tinits_.lo \
 tisnan_.$(OBJEXT) tisnan_.lo tlog_.$(OBJEXT) tlog_.lo tlog10_.$(OBJEXT) \
 tlog10_.lo tlog1p_.$(OBJEXT) tlog1p_.lo tlog2_.$(OBJEXT) tlog2_.lo \
 tmul_.$(OBJEXT) tmul_.lo tmul_2exp_.$(OBJEXT) tmul_2exp_.lo \
-tmul_ui_.$(OBJEXT) tmul_ui_.lo tout_str_.$(OBJEXT) tout_str_.lo \
-tpow_.$(OBJEXT) tpow_.lo tpow3_.$(OBJEXT) tpow3_.lo trandom_.$(OBJEXT) \
-trandom_.lo trint_.$(OBJEXT) trint_.lo tround_prec_.$(OBJEXT) \
-tround_prec_.lo tset_.$(OBJEXT) tset_.lo tset_d_.$(OBJEXT) tset_d_.lo \
-tset_f_.$(OBJEXT) tset_f_.lo tset_ld_.$(OBJEXT) tset_ld_.lo \
-tset_q_.$(OBJEXT) tset_q_.lo tset_si_.$(OBJEXT) tset_si_.lo \
-tset_str_.$(OBJEXT) tset_str_.lo tset_z_.$(OBJEXT) tset_z_.lo \
-tsin_.$(OBJEXT) tsin_.lo tsin_cos_.$(OBJEXT) tsin_cos_.lo \
-tsinh_.$(OBJEXT) tsinh_.lo tsqrt_.$(OBJEXT) tsqrt_.lo \
-tsqrt_ui_.$(OBJEXT) tsqrt_ui_.lo tsub_.$(OBJEXT) tsub_.lo \
-tsub_ui_.$(OBJEXT) tsub_ui_.lo tswap_.$(OBJEXT) tswap_.lo \
-ttan_.$(OBJEXT) ttan_.lo ttanh_.$(OBJEXT) ttanh_.lo ttrunc_.$(OBJEXT) \
-ttrunc_.lo tui_div_.$(OBJEXT) tui_div_.lo tui_pow_.$(OBJEXT) \
-tui_pow_.lo tui_sub_.$(OBJEXT) tui_sub_.lo tzeta_.$(OBJEXT) tzeta_.lo : \
-$(ANSI2KNR)
+tmul_ui_.$(OBJEXT) tmul_ui_.lo tnext_.$(OBJEXT) tnext_.lo \
+tout_str_.$(OBJEXT) tout_str_.lo tpow_.$(OBJEXT) tpow_.lo \
+tpow3_.$(OBJEXT) tpow3_.lo trandom_.$(OBJEXT) trandom_.lo \
+trint_.$(OBJEXT) trint_.lo tround_prec_.$(OBJEXT) tround_prec_.lo \
+tset_.$(OBJEXT) tset_.lo tset_d_.$(OBJEXT) tset_d_.lo tset_f_.$(OBJEXT) \
+tset_f_.lo tset_ld_.$(OBJEXT) tset_ld_.lo tset_q_.$(OBJEXT) tset_q_.lo \
+tset_si_.$(OBJEXT) tset_si_.lo tset_str_.$(OBJEXT) tset_str_.lo \
+tset_z_.$(OBJEXT) tset_z_.lo tsin_.$(OBJEXT) tsin_.lo \
+tsin_cos_.$(OBJEXT) tsin_cos_.lo tsinh_.$(OBJEXT) tsinh_.lo \
+tsqrt_.$(OBJEXT) tsqrt_.lo tsqrt_ui_.$(OBJEXT) tsqrt_ui_.lo \
+tsub_.$(OBJEXT) tsub_.lo tsub_ui_.$(OBJEXT) tsub_ui_.lo \
+tswap_.$(OBJEXT) tswap_.lo ttan_.$(OBJEXT) ttan_.lo ttanh_.$(OBJEXT) \
+ttanh_.lo ttrunc_.$(OBJEXT) ttrunc_.lo tui_div_.$(OBJEXT) tui_div_.lo \
+tui_pow_.$(OBJEXT) tui_pow_.lo tui_sub_.$(OBJEXT) tui_sub_.lo \
+tzeta_.$(OBJEXT) tzeta_.lo : $(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo

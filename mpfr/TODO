@@ -25,10 +25,10 @@ Documentation:
 
 - add a description of the algorithms used + proof of correctness
 
-- support for accented characters when converting the texi file to
-  the dvi file
-
 - web page: add a html version of the documentation
+
+- mpfr_set_prec: add an explanation of how to speed up calculations
+  which increase their precision at each step.
 
 Installation:
 
@@ -46,8 +46,7 @@ Changes in existing functions:
 	 mpfr_strtofr -> without final '\0', returns the number of characters
 	 read (or name mpfr_strtod suggested by Kevin, see below)]
 
-Suggestion from Kevin:
-- Function: char * mpf_strto (mpz_t ROP, const char *STR)
+- [suggestion from Kevin:] char * mpf_strto (mpz_t ROP, const char *STR)
      Read a floating point number from a string.  If successful the
      result is stored in ROP and the return value points to the
      character after those parsed.  If STR doesn't start with a valid
@@ -79,10 +78,8 @@ Suggestion from Kevin:
      The decimal point character, or string, expected is taken from the
      current locale on systems providing `localeconv'. [end of suggestion]
 
-- in mpfr_set_str, make string comparisons case insensitive and use @Inf@
-  and @NaN@ instead of the possibly ambiguous Inf and NaN in bases > 10.
-  Modify the other functions to make them consistent with this choice.
-  Possibly accept other strings, like those accepted by strtod.
+- in mpfr_set_str, possibly accept other strings, like those accepted
+  by strtod.
 
 New functions to implement:
 
@@ -99,10 +96,8 @@ New functions to implement:
 	(http://www.cs.berkeley.edu/~demmel/AccurateSummation.ps)
 - mpfr_root to compute x^(1/n) for n integer [suggested by Damien Fisher,
 	damien@maths.usyd.edu.au, 20 Jul 2003]
-
-Rounding:
-
-- mpfr_pow isn't completely specified (concerning signed zeros).
+- a function to free the cache used by constants (and possibly other
+  functions).
 
 Efficiency:
 
@@ -153,18 +148,6 @@ Miscellaneous:
 - problem when reading a float followed by a character, for example 1.5*x
 	[from Fabrice.Rouillier@loria.fr, Mon, 04 Dec 2000]
 
-- add tests for nextabove/nextbelow/nexttoward.
-
-- documentation and tests for:
-                         =     <     >     unordered
-mpfr_greater_p           0     0     1     0
-mpfr_greaterequal_p      1     0     1     0
-mpfr_less_p              0     1     0     0
-mpfr_lessequal_p         1     1     0     0
-mpfr_lessgreater_p       0     1     1     0
-mpfr_equal_p             1     0     0     0
-mpfr_unordered_p         0     0     0     1
-
 
 Reentrancy / Thread-Safety:
 
@@ -183,6 +166,11 @@ Portability:
 
 - mpfr_get_d3 assumes a double is IEEE format.
 
+- [Kevin about texp.c long strings]
+  For strings longer than c99 guarantees, it might be cleaner to
+  introduce a "tests_strdupcat" or something to concatenate literal
+  strings into newly allocated memory.  I thought I'd done that in a
+  couple of places already.  Arrays of chars are not much fun.
 
 Possible future MPF / MPFR integration:
 

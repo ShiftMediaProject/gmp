@@ -44,17 +44,17 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
   /* check values */
   if (y != z)
     {
-      fprintf (stderr, "Error for q=%ld/%lu and rnd=%s\n", n, d, 
-               mpfr_print_rnd_mode (rnd));
-      fprintf (stderr, "correct result is %1.20e, mpfr_set_q gives %1.20e\n",
-               y, z);
+      printf ("Error for q=%ld/%lu and rnd=%s\n", n, d,
+              mpfr_print_rnd_mode (rnd));
+      printf ("correct result is %1.20e, mpfr_set_q gives %1.20e\n",
+              y, z);
       exit (1);
     }
 
   /* check inexact flag */
   if (mpfr_mul_ui (t, x, (d < 0) ? (-d) : d, rnd))
     {
-      fprintf (stderr, "t <- x * d should be exact\n");
+      printf ("t <- x * d should be exact\n");
       exit (1);
     }
   compare = mpfr_cmp_si (t, n);
@@ -62,8 +62,8 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
       ((inexact < 0) && (compare >= 0)) ||
       ((inexact > 0) && (compare <= 0)))
     {
-      fprintf (stderr, "wrong inexact flag: expected %d, got %d\n", compare,
-	       inexact);
+      printf ("wrong inexact flag: expected %d, got %d\n", compare,
+              inexact);
       exit (1);
     }
 

@@ -103,14 +103,15 @@ test_random2 (unsigned long nbtests, unsigned long prec, int verbose)
       /* check that lower bits are zero */
       if (MPFR_MANT(x)[0] & ((MP_LIMB_T_ONE << sh) - MP_LIMB_T_ONE))
         {
-          fprintf (stderr, "Error: mpfr_random2() returns invalid numbers:\n");
+          printf ("Error: mpfr_random2() returns invalid numbers:\n");
           mpfr_print_binary (x); puts ("");
           exit (1);
         }
       /* check that exponent is in correct range */
       if (mpfr_get_exp (x) != 0)
         {
-          fprintf (stderr, "Error: mpfr_random2 (.., .., 0) does not return a 0 exponent:\n");
+          printf ("Error: mpfr_random2 (.., .., 0) does not return"
+                  " a 0 exponent:\n");
           mpfr_print_binary (x); puts ("");
           exit (1);
         }
@@ -174,7 +175,7 @@ test_urandomb (unsigned long nbtests, unsigned long prec, int verbose)
       /* check that lower bits are zero */
       if (MPFR_MANT(x)[0] & ((MP_LIMB_T_ONE << sh) - MP_LIMB_T_ONE))
         {
-          fprintf (stderr, "Error: mpfr_urandomb() returns invalid numbers:\n");
+          printf ("Error: mpfr_urandomb() returns invalid numbers:\n");
           mpfr_print_binary (x); puts ("");
           exit (1);
         }

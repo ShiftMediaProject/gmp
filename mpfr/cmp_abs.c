@@ -24,8 +24,8 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-/* returns sign(abs(b) - abs(c))
-   b and c must be real numbers */
+/* Return a positive value if abs(b) > abs(c), 0 if abs(b) = abs(c), and
+   a negative value if abs(b) < abs(c). Neither b nor c may be NaN. */
 
 int
 mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)
@@ -34,13 +34,18 @@ mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)
   mp_size_t bn, cn;
   mp_limb_t *bp, *cp;
 
-  MPFR_ASSERTN(MPFR_IS_FP(b));
-  MPFR_ASSERTN(MPFR_IS_FP(c));
+  MPFR_ASSERTN (! MPFR_IS_NAN (b));
+  MPFR_ASSERTN (! MPFR_IS_NAN (c));
 
-  if (MPFR_IS_ZERO(b))
-    return MPFR_IS_ZERO(c) ? 0 : -1;
-  if (MPFR_IS_ZERO(c))
-    return 1;
+  if (MPFR_IS_INF (b))
+    return ! MPFR_IS_INF (c);
+  if (MPFR_IS_INF (c))
+    return -1;
+
+  if (MPFR_IS_ZERO (c))
+    return ! MPFR_IS_ZERO (b);
+  if (MPFR_IS_ZERO (b))
+    return -1;
 
   be = MPFR_GET_EXP (b);
   ce = MPFR_GET_EXP (c);

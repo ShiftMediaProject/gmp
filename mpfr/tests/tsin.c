@@ -37,10 +37,10 @@ check53 (double x, double sin_x, mp_rnd_t rnd_mode)
   mpfr_sin (s, xx, rnd_mode);
   if (mpfr_get_d1 (s) != sin_x && !(Isnan(sin_x) && mpfr_nan_p(s)))
     {
-      fprintf (stderr, "mpfr_sin failed for x=%1.20e, rnd=%s\n", x,
-	       mpfr_print_rnd_mode (rnd_mode));
-      fprintf (stderr, "mpfr_sin gives sin(x)=%1.20e, expected %1.20e\n",
-	       mpfr_get_d1 (s), sin_x);
+      printf ("mpfr_sin failed for x=%1.20e, rnd=%s\n",
+              x, mpfr_print_rnd_mode (rnd_mode));
+      printf ("mpfr_sin gives sin(x)=%1.20e, expected %1.20e\n",
+              mpfr_get_d1 (s), sin_x);
       exit(1);
     }
   mpfr_clear (xx);
@@ -67,20 +67,18 @@ test_sign (void)
         mpfr_sin (y, x, GMP_RNDN);
         if (MPFR_SIGN(y) > 0)
           {
-            fprintf (stderr,
-                     "Error in test_sign for sin(%dpi-epsilon), prec = %d"
-                     " for argument.\nResult should have been negative.\n",
-                     k, p);
+            printf ("Error in test_sign for sin(%dpi-epsilon), prec = %d"
+                    " for argument.\nResult should have been negative.\n",
+                    k, p);
             exit (1);
           }
         mpfr_mul_ui (x, piu, k, GMP_RNDU);
         mpfr_sin (y, x, GMP_RNDN);
         if (MPFR_SIGN(y) < 0)
           {
-            fprintf (stderr,
-                     "Error in test_sign for sin(%dpi+epsilon), prec = %d"
-                     " for argument.\nResult should have been positive.\n",
-                     k, p);
+            printf ("Error in test_sign for sin(%dpi+epsilon), prec = %d"
+                    " for argument.\nResult should have been positive.\n",
+                    k, p);
             exit (1);
           }
       }
@@ -102,7 +100,7 @@ check_nans (void)
   mpfr_sin (y, x, GMP_RNDN);
   if (! mpfr_nan_p (y))
     {
-      fprintf (stderr, "Error: sin(NaN) != NaN\n");
+      printf ("Error: sin(NaN) != NaN\n");
       exit (1);
     }
 
@@ -110,7 +108,7 @@ check_nans (void)
   mpfr_sin (y, x, GMP_RNDN);
   if (! mpfr_nan_p (y))
     {
-      fprintf (stderr, "Error: sin(Inf) != NaN\n");
+      printf ("Error: sin(Inf) != NaN\n");
       exit (1);
     }
 
@@ -118,7 +116,7 @@ check_nans (void)
   mpfr_sin (y, x, GMP_RNDN);
   if (! mpfr_nan_p (y))
     {
-      fprintf (stderr, "Error: sin(-Inf) != NaN\n");
+      printf ("Error: sin(-Inf) != NaN\n");
       exit (1);
     }
 
@@ -156,7 +154,7 @@ main (int argc, char *argv[])
   mpfr_sin (x, x, GMP_RNDD);
   if (mpfr_get_d1 (x) != 0.375)
     {
-      fprintf (stderr, "mpfr_sin(0.5, GMP_RNDD) failed with precision=2\n");
+      printf ("mpfr_sin(0.5, GMP_RNDD) failed with precision=2\n");
       exit (1);
     }
 
@@ -167,7 +165,7 @@ main (int argc, char *argv[])
   mpfr_sin (x, x, GMP_RNDN);
   if (mpfr_cmp_ui (x, 0) >= 0)
     {
-      fprintf (stderr, "Error: wrong sign for sin(3*Pi/2)\n");
+      printf ("Error: wrong sign for sin(3*Pi/2)\n");
       exit (1);
     }
 

@@ -38,8 +38,7 @@ main (void)
    mpfr_prec_round (x, 2, GMP_RNDN);
    if (mpfr_cmp_ui(x, 4))
      {
-       fprintf (stderr, "Error in tround: got %1.1f instead of 4\n",
-		mpfr_get_d1 (x));
+       printf ("Error in tround: got %1.1f instead of 4\n", mpfr_get_d1 (x));
        exit (1);
      }
 
@@ -49,8 +48,7 @@ main (void)
    mpfr_prec_round (x, mp_bits_per_limb + 1, GMP_RNDN);
    if (mpfr_cmp_ui(x, 5))
      {
-       fprintf (stderr, "Error in tround: got %1.1f instead of 5\n",
-		mpfr_get_d1 (x));
+       printf ("Error in tround: got %1.1f instead of 5\n", mpfr_get_d1 (x));
        exit (1);
      }
 
@@ -60,8 +58,7 @@ main (void)
    mpfr_prec_round (x, mp_bits_per_limb + 1, GMP_RNDN);
    if (mpfr_cmp_si(x, -5))
      {
-       fprintf (stderr, "Error in tround: got %1.1f instead of -5\n",
-		mpfr_get_d1 (x));
+       printf ("Error in tround: got %1.1f instead of -5\n", mpfr_get_d1 (x));
        exit (1);
      }
 
@@ -71,8 +68,7 @@ main (void)
    mpfr_prec_round (x, 3, GMP_RNDN); /* exact */
    if (mpfr_cmp_ui(x, 5))
      {
-       fprintf (stderr, "Error in tround: got %1.1f instead of 5\n",
-		mpfr_get_d1 (x));
+       printf ("Error in tround: got %1.1f instead of 5\n", mpfr_get_d1 (x));
        exit (1);
      }
 

@@ -74,7 +74,7 @@ typedef unsigned long int       mp_size_unsigned_t;
 
 /* MPFR_ASSERTN(expr): assertions that should always be checked */
 /* #define MPFR_ASSERTN(expr) ASSERT_ALWAYS(expr) */
-#define MPFR_ASSERTN(expr)  ((expr) ? (void) 0 : (void) ASSERT_FAIL (expr))
+#define MPFR_ASSERTN(expr)  ((void) ((expr) || (ASSERT_FAIL (expr), 0)))
 
 /* MPFR_ASSERTD(expr): assertions that should be checked when testing */
 /* #define MPFR_ASSERTD(expr) ASSERT(expr) */
@@ -284,7 +284,7 @@ long double __gmpfr_longdouble_volatile __GMP_PROTO ((long double)) ATTRIBUTE_CO
 
 #if defined (__cplusplus)
 extern "C" {
-#endif  
+#endif
 
 extern mpfr_t __mpfr_const_log2;
 extern mp_prec_t __gmpfr_const_log2_prec;
@@ -303,6 +303,10 @@ int strncasecmp _PROTO ((const char *, const char *, size_t));
 #else
 int mpfr_strncasecmp _PROTO ((const char *, const char *, size_t));
 #endif
+
+void mpfr_inits2 _PROTO ((mp_prec_t, mpfr_ptr, ...));
+void mpfr_inits _PROTO ((mpfr_ptr, ...));
+void mpfr_clears _PROTO ((mpfr_ptr, ...));
 
 int mpfr_set_underflow _PROTO ((mpfr_ptr, mp_rnd_t, int));
 int mpfr_set_overflow _PROTO ((mpfr_ptr, mp_rnd_t, int));
@@ -329,14 +333,16 @@ int mpfr_powerof2_raw _PROTO ((mpfr_srcptr));
 void mpfr_setmax _PROTO ((mpfr_ptr, mp_exp_t));
 void mpfr_setmin _PROTO ((mpfr_ptr, mp_exp_t));
 long mpn_exp _PROTO ((mp_limb_t *, mp_exp_t *, int, mp_exp_t, size_t));
+void mpfr_print_binary _PROTO ((mpfr_srcptr));
+void mpfr_set_str_binary _PROTO ((mpfr_ptr, __gmp_const char *));
 
 #define mpfr_round_raw(yp, xp, xprec, neg, yprec, r, inexp) \
   mpfr_round_raw_generic((yp), (xp), (xprec), (neg), (yprec), (r), (inexp), 0)
 
 #define mpfr_round_raw2(xp, xn, neg, r, prec) \
   mpfr_round_raw_generic(0, (xp), (xn) * BITS_PER_MP_LIMB, (neg), \
-			 (prec), (r), 0, 1); 
+			 (prec), (r), 0, 1);
 
 #if defined (__cplusplus)
 }
-#endif  
+#endif

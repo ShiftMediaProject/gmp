@@ -1,6 +1,6 @@
 /* Test file for mpfr_frac.
 
-Copyright 2002 Free Software Foundation.
+Copyright 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -42,17 +42,17 @@ check0 (mpfr_ptr ip, mpfr_ptr fp, mp_prec_t prec, mp_rnd_t rnd)
 
   if (MPFR_SIGN (ip) != MPFR_SIGN (fp))
     {
-      fprintf (stderr, "Internal error (1)\n");
+      printf ("Internal error (1)\n");
       exit (1);
     }
   if (mpfr_add (sum, ip, fp, GMP_RNDZ))
     {
-      fprintf (stderr, "Wrong inexact flag in mpfr_add\n");
+      printf ("Wrong inexact flag in mpfr_add\n");
       exit (1);
     }
   if (MPFR_SIGN (sum) != MPFR_SIGN (fp))
     {
-      fprintf (stderr, "Internal error (2)\n");
+      printf ("Internal error (2)\n");
       exit (1);
     }
 
@@ -60,23 +60,23 @@ check0 (mpfr_ptr ip, mpfr_ptr fp, mp_prec_t prec, mp_rnd_t rnd)
   inex2 = mpfr_set (fp2, fp, rnd);
   if (inex1 != inex2)
     {
-      fprintf (stderr, "Wrong inexact flag in mpfr_frac for\n");
-      mpfr_out_str (stderr, 2, 0, sum, GMP_RNDN);
-      fprintf (stderr, "\nGot %d instead of %d\n", inex1, inex2);
+      printf ("Wrong inexact flag in mpfr_frac for\n");
+      mpfr_out_str (stdout, 2, 0, sum, GMP_RNDN);
+      printf ("\nGot %d instead of %d\n", inex1, inex2);
       exit (1);
     }
   if (!mpfr_number_p (dst) ||
       MPFR_SIGN (dst) != MPFR_SIGN (fp2) ||
       mpfr_cmp (dst, fp2))
     {
-      fprintf (stderr, "Error in mpfr_frac (y, x, %s) with\nx = ",
-               mpfr_print_rnd_mode (rnd));
-      mpfr_out_str (stderr, 2, 0, sum, GMP_RNDN);
-      fprintf (stderr, "\nGot        ");
-      mpfr_out_str (stderr, 2, 0, dst, GMP_RNDN);
-      fprintf (stderr, "\ninstead of ");
-      mpfr_out_str (stderr, 2, 0, fp2, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("Error in mpfr_frac (y, x, %s) with\nx = ",
+              mpfr_print_rnd_mode (rnd));
+      mpfr_out_str (stdout, 2, 0, sum, GMP_RNDN);
+      printf ("\nGot        ");
+      mpfr_out_str (stdout, 2, 0, dst, GMP_RNDN);
+      printf ("\ninstead of ");
+      mpfr_out_str (stdout, 2, 0, fp2, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
 
@@ -85,22 +85,22 @@ check0 (mpfr_ptr ip, mpfr_ptr fp, mp_prec_t prec, mp_rnd_t rnd)
       inex1 = mpfr_frac (sum, sum, rnd);
       if (inex1)
         {
-          fprintf (stderr, "Wrong inexact flag in mpfr_frac\n");
+          printf ("Wrong inexact flag in mpfr_frac\n");
           exit (1);
         }
       if (!mpfr_number_p (sum) ||
           MPFR_SIGN (sum) != MPFR_SIGN (fp) ||
           mpfr_cmp (sum, fp))
         {
-          fprintf (stderr, "Error in mpfr_frac (x, x, %s) with\nx = ",
-                   mpfr_print_rnd_mode (rnd));
+          printf ("Error in mpfr_frac (x, x, %s) with\nx = ",
+                  mpfr_print_rnd_mode (rnd));
           mpfr_add (tmp, ip, fp, GMP_RNDZ);
-          mpfr_out_str (stderr, 2, 0, tmp, GMP_RNDN);
-          fprintf (stderr, "\nGot        ");
-          mpfr_out_str (stderr, 2, 0, sum, GMP_RNDN);
-          fprintf (stderr, "\ninstead of ");
-          mpfr_out_str (stderr, 2, 0, fp, GMP_RNDN);
-          fprintf (stderr, "\n");
+          mpfr_out_str (stdout, 2, 0, tmp, GMP_RNDN);
+          printf ("\nGot        ");
+          mpfr_out_str (stdout, 2, 0, sum, GMP_RNDN);
+          printf ("\ninstead of ");
+          mpfr_out_str (stdout, 2, 0, fp, GMP_RNDN);
+          printf ("\n");
           exit (1);
         }
     }

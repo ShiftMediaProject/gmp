@@ -41,7 +41,7 @@ main (void)
   mpfr_cbrt (x, x, GMP_RNDN);
   if (mpfr_get_d1 (x) != 9.43166207799662426048e-01)
     {
-      fprintf (stderr, "Error (1)\n");
+      printf ("Error (1)\n");
       exit (1);
     }
 
@@ -54,20 +54,20 @@ main (void)
           mpfr_cbrt (x, x, r);
           if (mpfr_cmp_ui (x, 1))
             {
-              fprintf (stderr, "Error in mpfr_cbrt for x=1, rnd=%s\ngot ",
-                       mpfr_print_rnd_mode (r));
-              mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
-              fprintf (stderr, "\n");
+              printf ("Error in mpfr_cbrt for x=1, rnd=%s\ngot ",
+                      mpfr_print_rnd_mode (r));
+              mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+              printf ("\n");
               exit (1);
             }
           mpfr_set_si (x, -1, GMP_RNDN);
           mpfr_cbrt (x, x, r);
           if (mpfr_cmp_si (x, -1))
             {
-              fprintf (stderr, "Error in mpfr_cbrt for x=-1, rnd=%s\ngot ",
-                       mpfr_print_rnd_mode (r));
-              mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
-              fprintf (stderr, "\n");
+              printf ("Error in mpfr_cbrt for x=-1, rnd=%s\ngot ",
+                      mpfr_print_rnd_mode (r));
+              mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+              printf ("\n");
               exit (1);
             }
 
@@ -81,11 +81,11 @@ main (void)
                   mpfr_cbrt (x, x, GMP_RNDN);
                   if (mpfr_cmp_si_2exp (x, 3, i))
                     {
-                      fprintf (stderr, "Error in mpfr_cbrt for "
-                               "x = 27.0 * 2^(%d), rnd=%s\ngot ",
-                               3*i, mpfr_print_rnd_mode (r));
-                      mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
-                      fprintf (stderr, "\ninstead of 3 * 2^(%d)\n", i);
+                      printf ("Error in mpfr_cbrt for "
+                              "x = 27.0 * 2^(%d), rnd=%s\ngot ",
+                              3*i, mpfr_print_rnd_mode (r));
+                      mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+                      printf ("\ninstead of 3 * 2^(%d)\n", i);
                       exit (1);
                     }
                 }

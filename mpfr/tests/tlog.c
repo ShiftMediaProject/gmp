@@ -20,10 +20,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 #if (BITS_PER_LONGINT == 32)
@@ -68,7 +70,7 @@ check1 (double a, mp_rnd_t rnd_mode, double res1, int ck, int max_ulp)
   mpfr_log (tres, ta, rnd_mode);
   res2 = mpfr_get_d1 (tres);
   mpfr_clear (ta);
-  mpfr_clear (tres); 
+  mpfr_clear (tres);
 
   if (res1 != res2 && !(Isnan(res1) && Isnan(res2)))
     {
@@ -89,7 +91,7 @@ static void
 check3 (double d, unsigned long prec, mp_rnd_t rnd)
 {
   mpfr_t x, y;
-  
+
   mpfr_init2 (x, prec);
   mpfr_init2 (y, prec);
   mpfr_set_d (x, d, rnd);
@@ -122,7 +124,7 @@ check4 (int N)
       sum += cur;
     }
   d = (double)sum / (double)N;
-  fprintf(stderr, "max error : %i \t mean error : %f   (in ulps)\n",max,d);
+  printf ("max error : %i \t mean error : %f   (in ulps)\n", max, d);
 }
 
 static void
@@ -136,27 +138,27 @@ slave (int N, int p)
   mpfr_init2(tres, p);
   for(i=0;i<N;i++)
     {
-      d = drand_log(); 
+      d = drand_log();
       mpfr_set_d (ta, d, GMP_RNDN);
       mpfr_log (tres, ta, randlimb () % 4 );
     }
-  mpfr_clear(ta); mpfr_clear(tres); 
+  mpfr_clear(ta); mpfr_clear(tres);
   printf("fin\n");
 }
 #endif
 
-/* examples from Jean-Michel Muller and Vincent Lefevre 
+/* examples from Jean-Michel Muller and Vincent Lefevre
    Cf http://www.ens-lyon.fr/~jmmuller/Intro-to-TMD.htm
 */
 
 static void
 check_worst_cases (void)
 {
-  check2(1.00089971802309629645, GMP_RNDD, 8.99313519443722736088e-04); 
+  check2(1.00089971802309629645, GMP_RNDD, 8.99313519443722736088e-04);
   check2(1.00089971802309629645, GMP_RNDN, 8.99313519443722844508e-04);
-  check2(1.00089971802309629645, GMP_RNDU, 8.99313519443722844508e-04); 
+  check2(1.00089971802309629645, GMP_RNDU, 8.99313519443722844508e-04);
 
-  check2(1.01979300812244555452, GMP_RNDD, 1.95996734891603630047e-02); 
+  check2(1.01979300812244555452, GMP_RNDD, 1.95996734891603630047e-02);
   check2(1.01979300812244555452, GMP_RNDN, 1.95996734891603664741e-02);
   check2(1.01979300812244555452, GMP_RNDU, 1.95996734891603664741e-02);
 
@@ -217,7 +219,7 @@ check_worst_cases (void)
   check2(12.4646345033981766903, GMP_RNDU, 2.52289539471636059531);
 
   check2(17.0953275851761752335, GMP_RNDD, 2.83880518553861849185);
-  check2(17.0953275851761752335, GMP_RNDN, 2.83880518553861893594); 
+  check2(17.0953275851761752335, GMP_RNDN, 2.83880518553861893594);
   check2(17.0953275851761752335, GMP_RNDU, 2.83880518553861893594);
 
   check2(19.8509496207496916043, GMP_RNDD, 2.98825184582516722998);
@@ -230,7 +232,7 @@ check_worst_cases (void)
 
   check2(428.315247165198229595, GMP_RNDD, 6.05985948325268264369);
   check2(428.315247165198229595, GMP_RNDN, 6.05985948325268353187);
-  check2(428.315247165198229595, GMP_RNDU, 6.05985948325268353187); 
+  check2(428.315247165198229595, GMP_RNDU, 6.05985948325268353187);
 }
 
 static void
@@ -244,7 +246,7 @@ special (void)
   mpfr_log (y, x, GMP_RNDD);
   if (mpfr_get_d1 (y) != 1.09861228866810956)
     {
-      fprintf (stderr, "Error in mpfr_log(3) for GMP_RNDD\n");
+      printf ("Error in mpfr_log(3) for GMP_RNDD\n");
       exit (1);
     }
 
@@ -298,14 +300,14 @@ main (int argc, char *argv[])
 
       check2(1.01979300812244555452, GMP_RNDN, 1.95996734891603664741e-02);
       check2(10.0,GMP_RNDU,2.30258509299404590110e+00);
-      check2(6.0,GMP_RNDU,1.79175946922805517936);  
-      check2(1.0,GMP_RNDZ,0.0);  
+      check2(6.0,GMP_RNDU,1.79175946922805517936);
+      check2(1.0,GMP_RNDZ,0.0);
       check2(62.0,GMP_RNDU,4.12713438504509166905);
-      check2(0.5,GMP_RNDZ,-6.93147180559945286226e-01);   
-      check2(3.0,GMP_RNDZ,1.09861228866810956006e+00); 
+      check2(0.5,GMP_RNDZ,-6.93147180559945286226e-01);
+      check2(3.0,GMP_RNDZ,1.09861228866810956006e+00);
       check2(234375765.0,GMP_RNDU,1.92724362186836231104e+01);
-      check2(8.0,GMP_RNDZ,2.07944154167983574765e+00);  
-      check2(44.0,GMP_RNDU,3.78418963391826146392e+00); 
+      check2(8.0,GMP_RNDZ,2.07944154167983574765e+00);
+      check2(44.0,GMP_RNDU,3.78418963391826146392e+00);
       check2(1.01979300812244555452, GMP_RNDN, 1.95996734891603664741e-02);
       /* bugs found by Vincent Lefe`vre */
       d = -4723773766428415.0 / 1180591620717411303424.0;
@@ -331,7 +333,7 @@ main (int argc, char *argv[])
       check2(7.3890560989306504,GMP_RNDU,2.0000000000000004); /* exp(2.0) */
       check2(7.3890560989306495,GMP_RNDU,2.0); /* exp(2.0) */
       check2(7.53428236571286402512e+34,GMP_RNDZ,8.03073567492226345621e+01);
-      check2(6.18784121531737948160e+19,GMP_RNDZ,4.55717030391710693493e+01); 
+      check2(6.18784121531737948160e+19,GMP_RNDZ,4.55717030391710693493e+01);
       check2(1.02560267603047283735e+00,GMP_RNDD,2.52804164149448735987e-02);
       check2(7.53428236571286402512e+34,GMP_RNDZ,8.03073567492226345621e+01);
       d = 497773706319601.0 / 4398046511104.0;

@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 #define CST   2.27  /* CST=1+ln(2.4)/ln(2) */
 #define CST2  1.45  /* CST2=1/ln(2) */
 
-static int mpfr_atan_aux _PROTO((mpfr_ptr, mpz_srcptr, int, int));
+static int mpfr_atan_aux _PROTO((mpfr_ptr, mpz_srcptr, long, int));
 
 #undef B
 #define A

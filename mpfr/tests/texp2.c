@@ -47,7 +47,7 @@ main (int argc, char *argv[])
   mpfr_exp2 (y, x, GMP_RNDU);
   if (mpfr_cmp_ui (y, 16) != 0)
     {
-      fprintf (stderr, "Error for 2^4\n");
+      printf ("Error for 2^4\n");
       exit (1);
     }
 
@@ -57,7 +57,7 @@ main (int argc, char *argv[])
   mpfr_exp2 (y, x, GMP_RNDU);
   if (mpfr_cmp_ui_2exp (y, 1, -4) != 0)
     {
-      fprintf (stderr, "Error for 2^(-4)\n");
+      printf ("Error for 2^(-4)\n");
       exit (1);
     }
 
@@ -67,7 +67,7 @@ main (int argc, char *argv[])
   mpfr_exp2 (y, x, GMP_RNDN);
   if (mpfr_get_d1 (y) != 2.991959870867646566478e-231)
     {
-      fprintf (stderr, "Error for x=-1683977482443233/2^41\n");
+      printf ("Error for x=-1683977482443233/2^41\n");
       exit (1);
     }
 
@@ -77,7 +77,7 @@ main (int argc, char *argv[])
   mpfr_exp2 (y, x, GMP_RNDN);
   if(!MPFR_IS_INF(y))
     {
-      fprintf (stderr, "evaluation of function in INF does not return INF\n");
+      printf ("evaluation of function in INF does not return INF\n");
       exit (1);
     }
 
@@ -85,7 +85,7 @@ main (int argc, char *argv[])
   mpfr_exp2 (y, x, GMP_RNDN);
   if(!MPFR_IS_ZERO(y))
     {
-      fprintf (stderr, "evaluation of function in -INF does not return 0\n");
+      printf ("evaluation of function in -INF does not return 0\n");
       exit (1);
     }
 
@@ -93,7 +93,7 @@ main (int argc, char *argv[])
   mpfr_exp2 (y, x, GMP_RNDN);
   if(!MPFR_IS_NAN(y))
     {
-      fprintf (stderr, "evaluation of function in NaN does not return NaN\n");
+      printf ("evaluation of function in NaN does not return NaN\n");
       exit (1);
     }
 

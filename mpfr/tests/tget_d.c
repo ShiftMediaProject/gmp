@@ -57,10 +57,9 @@ check_denorms ()
           dd = mpfr_get_d (x, rnd_mode);
           if (d2 != dd) /* should be k * 2^(-1022-n) for n < 53 */
             {
-              fprintf (stderr,
-                       "Wrong result for %d * 2^(%d), rnd_mode %d\n",
-                       k, -1022-n, rnd_mode);
-              fprintf (stderr, "got %.20e instead of %.20e\n", dd, d2);
+              printf ("Wrong result for %d * 2^(%d), rnd_mode %d\n",
+                      k, -1022-n, rnd_mode);
+              printf ("got %.20e instead of %.20e\n", dd, d2);
               fail = 1;
             }
           f *= 0.5;

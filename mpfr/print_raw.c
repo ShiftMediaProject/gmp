@@ -1,4 +1,4 @@
-/* mpfr_print_binary -- print the internal binary representation of a 
+/* mpfr_print_binary -- print the internal binary representation of a
                      floating-point number
 
 Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
@@ -21,71 +21,58 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <limits.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-static void mpfr_get_str_raw _PROTO ((char *, mpfr_srcptr));
-
-static void
-mpfr_get_str_raw (char *digit_ptr, mpfr_srcptr x)
-{
-  mp_limb_t *mx, wd, t; long ex, sx, k, l, p;
-
-  mx = MPFR_MANT(x); 
-  ex = MPFR_GET_EXP (x);
-  p = MPFR_PREC(x); 
-
-  if (MPFR_SIGN(x) < 0) { *digit_ptr = '-'; digit_ptr++; }
-  sprintf(digit_ptr, "0."); digit_ptr += 2; 
-
-  sx = 1+(p-1)/BITS_PER_MP_LIMB; /* number of significant limbs */
-  for (k = sx - 1; k >= 0 ; k--)
-    { 
-      wd = mx[k]; 
-      t = MPFR_LIMB_HIGHBIT;
-      for (l = BITS_PER_MP_LIMB - 1; l>=0; l--)
-	{
-	  if (wd & t) 
-	    { *digit_ptr = '1'; digit_ptr++; } 
-	  else 
-	    { *digit_ptr = '0'; digit_ptr++; }
-	  t >>= 1; 
-	  if (--p==0) { *digit_ptr = '['; digit_ptr++; }
-	}
-    }
-  sprintf(digit_ptr, "]E%ld", ex); 
-}
- 
 void
 mpfr_print_binary (mpfr_srcptr x)
 {
-  char *str;
-  unsigned long alloc_size;
+  if (MPFR_IS_NAN (x))
+    {
+      printf ("@NaN@");
+      return;
+    }
 
-  if (MPFR_IS_NAN(x)) printf("@NaN@");
-  else if (MPFR_IS_INF(x)) {
-    if (MPFR_SIGN(x) == 1) { printf("@Inf@"); } else printf("-@Inf@"); 
-  }
-  else if (!MPFR_NOTZERO(x)) {
-    if (MPFR_SIGN(x) < 0) printf("-");
-    printf("0");
-  }
-  else {
-     /* 3 char for sign + 0 + binary point
-	+ MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB for mantissa
-	+ 2 for brackets in mantissa
-	+ 1 for 'E'
-	+ 11 for exponent (including sign)
-	= 17 + MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB
-      */
-    alloc_size = 17 + MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB;
-     str = (char *) (*__gmp_allocate_func) (alloc_size * sizeof(char));
-     mpfr_get_str_raw(str, x);
+  if (MPFR_SIGN (x) < 0)
+    printf ("-");
 
-     printf("%s", str); 
-     (*__gmp_free_func) (str, alloc_size * sizeof(char));
-  }
+  if (MPFR_IS_INF (x))
+    printf ("@Inf@");
+  else if (MPFR_IS_ZERO (x))
+    printf ("0");
+  else
+    {
+      mp_limb_t *mx;
+      mp_prec_t px;
+      mp_size_t n;
+
+      mx = MPFR_MANT (x);
+      px = MPFR_PREC (x);
+
+      printf ("0.");
+      for (n = (px - 1) / BITS_PER_MP_LIMB; ; n--)
+        {
+          mp_limb_t wd, t;
+
+          MPFR_ASSERTN (n >= 0);
+          wd = mx[n];
+          for (t = MPFR_LIMB_HIGHBIT; t != 0; t >>= 1)
+            {
+              printf ((wd & t) == 0 ? "0" : "1");
+              if (--px == 0)
+                {
+                  mp_exp_t ex;
+
+                  ex = MPFR_GET_EXP (x);
+                  MPFR_ASSERTN (ex >= LONG_MIN && ex <= LONG_MAX);
+                  printf ("E%ld", (long) ex);
+                  return;
+                }
+            }
+        }
+    }
 }
-

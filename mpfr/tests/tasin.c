@@ -47,8 +47,8 @@ main (void)
   mpfr_neg (z, z, GMP_RNDN);
   if (mpfr_cmp (y, z))
     {
-      fprintf (stderr, "sin(-1) is wrong, expected %.20e, got %.20e\n",
-               mpfr_get_d1 (z), mpfr_get_d1 (y));
+      printf ("sin(-1) is wrong, expected %.20e, got %.20e\n",
+              mpfr_get_d1 (z), mpfr_get_d1 (y));
       exit (1);
     }
 

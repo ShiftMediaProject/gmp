@@ -1,6 +1,6 @@
 /* comparison predicates
 
-Copyright 2002 Free Software Foundation.
+Copyright 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 Contributed by the Spaces project (LORIA/LIP6).
@@ -27,6 +27,16 @@ MA 02111-1307, USA. */
 
 /* Note: these functions currently use mpfr_cmp; they could have their
    own code to be faster. */
+
+/*                          =     <     >     unordered
+ * mpfr_greater_p           0     0     1     0
+ * mpfr_greaterequal_p      1     0     1     0
+ * mpfr_less_p              0     1     0     0
+ * mpfr_lessequal_p         1     1     0     0
+ * mpfr_lessgreater_p       0     1     1     0
+ * mpfr_equal_p             1     0     0     0
+ * mpfr_unordered_p         0     0     0     1
+ */
 
 int
 mpfr_greater_p (mpfr_srcptr x, mpfr_srcptr y)

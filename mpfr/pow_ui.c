@@ -64,6 +64,7 @@ mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
 
   MPFR_CLEAR_INF(x);
 
+  mpfr_save_emin_emax ();
   mpfr_init (res);
 
   prec = MPFR_PREC(x);
@@ -83,7 +84,7 @@ mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
 	  if (mpfr_mul (res, res, res, GMP_RNDU))
 	    inexact = 1;
 	  err++;
-	  if (n & (1 << i))
+	  if (n & (1UL << i))
 	    if (mpfr_mul (res, res, y, rnd1))
 	      inexact = 1;
 	}
@@ -91,14 +92,13 @@ mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
       if (err < 0)
 	err = 0;
     }
-  while (inexact && (mpfr_can_round (res, err,
-	  (MPFR_SIGN(res) > 0) ? GMP_RNDU : GMP_RNDD, rnd, MPFR_PREC(x)) == 0));
+  while (inexact &&
+         mpfr_can_round (res, err, MPFR_SIGN(res) > 0 ? GMP_RNDU : GMP_RNDD,
+                         rnd, MPFR_PREC(x)) == 0);
 
   if (mpfr_set (x, res, rnd))
     inexact = 1;
-
   mpfr_clear (res);
-
-  return inexact;
+  mpfr_restore_emin_emax ();
+  return mpfr_check_range (x, inexact, rnd);
 }
-

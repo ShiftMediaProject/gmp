@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 int
@@ -34,7 +35,7 @@ main (int argc, char *argv[])
   mpfr_t x, y, z;
   unsigned long k, n;
   double d, dd;
-  
+
   tests_start_mpfr ();
   mpfr_test_init ();
 
@@ -48,11 +49,12 @@ main (int argc, char *argv[])
         mpfr_set_d (x, d, GMP_RNDN);
         if (mpfr_cmp_ui_2exp (x, 1, -1022-n))
           {
-            fprintf (stderr, "Wrong result for d=2^(%ld), ", -1022-n);
-            fprintf (stderr, "got ");
-            mpfr_out_str (stderr, 10, 10, x, GMP_RNDN);
-            fprintf (stderr, "\n");
-            mpfr_print_binary (x); puts ("");
+            printf ("Wrong result for d=2^(%ld), ", -1022-n);
+            printf ("got ");
+            mpfr_out_str (stdout, 10, 10, x, GMP_RNDN);
+            printf ("\n");
+            mpfr_print_binary (x);
+            puts ("");
             exit (1);
           }
       }
@@ -62,55 +64,59 @@ main (int argc, char *argv[])
    mpfr_set_d (x, 5.0, GMP_RNDN);
    if (mpfr_get_d1 (x) != 4.0)
      {
-       fprintf (stderr, "Error in tset_d: got %g instead of 4.0\n",
-	       mpfr_get_d1 (x));
+       printf ("Error in tset_d: got %g instead of 4.0\n", mpfr_get_d1 (x));
        exit (1);
      }
    mpfr_set_d (x, -5.0, GMP_RNDN);
    if (mpfr_get_d1 (x) != -4.0)
      {
-       fprintf (stderr, "Error in tset_d: got %g instead of -4.0\n",
-	       mpfr_get_d1 (x));
+       printf ("Error in tset_d: got %g instead of -4.0\n", mpfr_get_d1 (x));
        exit (1);
      }
 
-   mpfr_set_d (x, 9.84891017624509146344e-01, GMP_RNDU); 
+   mpfr_set_d (x, 9.84891017624509146344e-01, GMP_RNDU);
    if (mpfr_get_d1 (x) != 1.0)
      {
-       fprintf (stderr, "Error in tset_d: got %g instead of 1.0\n",
-		mpfr_get_d1 (x));
+       printf ("Error in tset_d: got %g instead of 1.0\n", mpfr_get_d1 (x));
        exit (1);
      }
 
   mpfr_init2(z, 32);
   mpfr_set_d(z, 1.0, 0);
-  if (mpfr_get_d1 (z) != 1.0) {
-    mpfr_print_binary(z); puts ("");
-    printf("Error: 1.0 != 1.0\n"); exit(1);
-  }
+  if (mpfr_get_d1 (z) != 1.0)
+    {
+      mpfr_print_binary (z); puts ("");
+      printf ("Error: 1.0 != 1.0\n");
+      exit (1);
+    }
   mpfr_set_prec(x, 53); mpfr_init2(y, 53);
   mpfr_set_d(x, d=-1.08007920352320089721e+150, 0);
-  if (mpfr_get_d1 (x) != d) {
-    mpfr_print_binary(x); puts ("");
-    printf("Error: get_d o set_d <> identity for d = %1.20e %1.20e\n",d,
-	   mpfr_get_d1 (x)); exit(1);
-  }
+  if (mpfr_get_d1 (x) != d)
+    {
+      mpfr_print_binary (x); puts ("");
+      printf ("Error: get_d o set_d <> identity for d = %1.20e %1.20e\n",
+              d, mpfr_get_d1 (x));
+      exit (1);
+    }
 
-  mpfr_set_d(x, 8.06294740693074521573e-310, 0); 
+  mpfr_set_d(x, 8.06294740693074521573e-310, 0);
   d = -6.72658901114033715233e-165;
   mpfr_set_d(x, d, 0);
-  if (d != mpfr_get_d1 (x)) {
-    mpfr_print_binary(x); puts ("");
-    printf("Error: get_d o set_d <> identity for d = %1.20e %1.20e\n",d,
-	   mpfr_get_d1 (x)); exit(1);
-  }
+  if (d != mpfr_get_d1 (x))
+    {
+      mpfr_print_binary (x);
+      puts ("");
+      printf ("Error: get_d o set_d <> identity for d = %1.20e %1.20e\n",
+              d, mpfr_get_d1 (x));
+      exit (1);
+    }
   n = (argc==1) ? 1000000 : atoi(argv[1]);
   for (k = 1; k <= n; k++)
-    {      
+    {
       do
-	{
-	  d = DBL_RAND ();
-	}
+        {
+          d = DBL_RAND ();
+        }
 #ifdef HAVE_DENORMS
       while (0);
 #else
@@ -119,13 +125,12 @@ main (int argc, char *argv[])
       mpfr_set_d (x, d, 0);
       dd = mpfr_get_d1 (x);
       if (d != dd && !(Isnan(d) && Isnan(dd)))
-	{ 
-	  fprintf (stderr, 
-                   "Mismatch on : %1.18g != %1.18g\n", d, mpfr_get_d1 (x)); 
-	  mpfr_print_binary (x);
+        {
+          printf ("Mismatch on : %1.18g != %1.18g\n", d, mpfr_get_d1 (x));
+          mpfr_print_binary (x);
           puts ("");
-	  exit (1);
-	}
+          exit (1);
+        }
     }
 
   mpfr_clear (x);
@@ -133,5 +138,5 @@ main (int argc, char *argv[])
   mpfr_clear (z);
 
   tests_end_mpfr ();
-  return 0; 
+  return 0;
 }

@@ -59,7 +59,7 @@ main (int argc, char *argv[])
     }
   else if (mpfr_get_d1 (x) != 3.141592653589793116)
     {
-      fprintf (stderr, "mpfr_const_pi failed for prec=53\n");
+      printf ("mpfr_const_pi failed for prec=53\n");
       exit (1);
     }
   mpfr_clear (x);

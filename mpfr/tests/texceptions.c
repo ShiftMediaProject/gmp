@@ -31,7 +31,7 @@ static void
 mpfr_set_double_range (void)
 {
   mpfr_set_default_prec (53);
-  
+
   /* in double precision format, the unbiased exponent is between 0 and
      2047, where 0 is used for subnormal numbers, and 2047 for special
      numbers (infinities, NaN), and the bias is 1023, thus "normal" numbers
@@ -75,13 +75,13 @@ test_set_underflow (void)
           inex = mpfr_set_underflow (x, i, s);
           if (mpfr_cmp (x, r[j]) || inex * t[j] <= 0)
             {
-              fprintf (stderr, "Error in test_set_underflow, sign = %d,"
-                       " rnd_mode = %s\n", s, mpfr_print_rnd_mode (i));
-              fprintf (stderr, "Got\n");
-              mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
-              fprintf (stderr, ", inex = %d\ninstead of\n", inex);
-              mpfr_out_str (stderr, 2, 0, r[j], GMP_RNDN);
-              fprintf (stderr, ", inex = %d\n", t[j]);
+              printf ("Error in test_set_underflow, sign = %d,"
+                      " rnd_mode = %s\n", s, mpfr_print_rnd_mode (i));
+              printf ("Got\n");
+              mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+              printf (", inex = %d\ninstead of\n", inex);
+              mpfr_out_str (stdout, 2, 0, r[j], GMP_RNDN);
+              printf (", inex = %d\n", t[j]);
               exit (1);
             }
         }
@@ -118,13 +118,13 @@ test_set_overflow (void)
           inex = mpfr_set_overflow (x, i, s);
           if (mpfr_cmp (x, r[j]) || inex * t[j] <= 0)
             {
-              fprintf (stderr, "Error in test_set_overflow, sign = %d,"
-                       " rnd_mode = %s\n", s, mpfr_print_rnd_mode (i));
-              fprintf (stderr, "Got\n");
-              mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
-              fprintf (stderr, ", inex = %d\ninstead of\n", inex);
-              mpfr_out_str (stderr, 2, 0, r[j], GMP_RNDN);
-              fprintf (stderr, ", inex = %d\n", t[j]);
+              printf ("Error in test_set_overflow, sign = %d,"
+                      " rnd_mode = %s\n", s, mpfr_print_rnd_mode (i));
+              printf ("Got\n");
+              mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+              printf (", inex = %d\ninstead of\n", inex);
+              mpfr_out_str (stdout, 2, 0, r[j], GMP_RNDN);
+              printf (", inex = %d\n", t[j]);
               exit (1);
             }
         }
@@ -152,7 +152,7 @@ main (int argc, char *argv[])
   emax = mpfr_get_emax ();
   if (emin >= emax)
     {
-      fprintf (stderr, "Error: emin >= emax\n");
+      printf ("Error: emin >= emax\n");
       exit (1);
     }
 
@@ -162,7 +162,7 @@ main (int argc, char *argv[])
   mpfr_check_range (x, 0, GMP_RNDN);
   if (!mpfr_inf_p (x) || (mpfr_sgn(x) <= 0))
     {
-      fprintf (stderr, "Error: 2^1024 rounded to nearest should give +Inf\n");
+      printf ("Error: 2^1024 rounded to nearest should give +Inf\n");
       exit (1);
     }
 
@@ -173,7 +173,7 @@ main (int argc, char *argv[])
   mpfr_check_range (x, 0, GMP_RNDD);
   if (!mpfr_number_p (x))
     {
-      fprintf (stderr, "Error: 2^1024 rounded down should give a normal number\n");
+      printf ("Error: 2^1024 rounded down should give a normal number\n");
       exit (1);
     }
 
@@ -182,7 +182,7 @@ main (int argc, char *argv[])
   mpfr_add (x, x, x, GMP_RNDN);
   if (!mpfr_inf_p (x) || (mpfr_sgn(x) <= 0))
     {
-      fprintf (stderr, "Error: x+x rounded to nearest for x=2^1023 should give +Inf\n");
+      printf ("Error: x+x rounded to nearest for x=2^1023 should give +Inf\n");
       printf ("emax = %ld\n", mpfr_get_emax ());
       printf ("got "); mpfr_print_binary (x); puts ("");
       exit (1);
@@ -193,24 +193,26 @@ main (int argc, char *argv[])
   mpfr_add (x, x, x, GMP_RNDD);
   if (!mpfr_number_p (x))
     {
-      fprintf (stderr, "Error: x+x rounded down for x=2^1023 should give a normal number\n");
+      printf ("Error: x+x rounded down for x=2^1023 should give"
+              " a normal number\n");
       exit (1);
     }
 
   mpfr_set_ui (x, 1, GMP_RNDN);
   mpfr_div_2exp (x, x, 1022, GMP_RNDN);
-  mpfr_set_str_raw (y, "1.1e-1022"); /* y = 3/2*x */
+  mpfr_set_str_binary (y, "1.1e-1022"); /* y = 3/2*x */
   mpfr_sub (y, y, x, GMP_RNDZ);
   if (mpfr_cmp_ui (y, 0))
     {
-      fprintf (stderr, "Error: y-x rounded to zero should give 0 for y=3/2*2^(-1022), x=2^(-1022)\n");
+      printf ("Error: y-x rounded to zero should give 0"
+              " for y=3/2*2^(-1022), x=2^(-1022)\n");
       printf ("y="); mpfr_print_binary (y); puts ("");
       exit (1);
     }
 
   mpfr_clear (x);
   mpfr_clear (y);
-    
+
   tests_end_mpfr ();
   return 0;
 }

@@ -27,7 +27,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-static int mpfr_aux_pi _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
+static int mpfr_aux_pi _PROTO ((mpfr_ptr, mpz_srcptr, long, int));
 static int mpfr_pi_machin3 _PROTO ((mpfr_ptr, mp_rnd_t));
 
 #define A
@@ -40,22 +40,22 @@ static int mpfr_pi_machin3 _PROTO ((mpfr_ptr, mp_rnd_t));
 #define GENERIC mpfr_aux_pi
 #define R_IS_RATIONAL
 #define NO_FACTORIAL
-#include "generic.c" 
+#include "generic.c"
 
 
 static int
-mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode) 
+mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
 {
   int prec, logn, prec_x;
   int prec_i_want=MPFR_PREC(mylog);
   int good = 0;
-  mpfr_t tmp1, tmp2, result,tmp3,tmp4,tmp5,tmp6; 
+  mpfr_t tmp1, tmp2, result,tmp3,tmp4,tmp5,tmp6;
   mpz_t cst;
 
-  MPFR_CLEAR_FLAGS(mylog); 
+  MPFR_CLEAR_FLAGS(mylog);
   logn = __gmpfr_ceil_log2 ((double) MPFR_PREC(mylog));
   prec_x = prec_i_want + logn + 5;
-  mpz_init(cst);  
+  mpz_init(cst);
   while (!good)
     {
       prec = __gmpfr_ceil_log2 ((double) prec_x);
@@ -69,27 +69,27 @@ mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
       mpfr_init2(result, prec_x);
       mpz_set_si(cst, -1);
 
-      mpfr_aux_pi(tmp1, cst, 268*268, prec - 4);
+      mpfr_aux_pi(tmp1, cst, 268L*268L, prec - 4);
       mpfr_div_ui(tmp1, tmp1, 268, GMP_RNDD);
       mpfr_mul_ui(tmp1, tmp1, 61, GMP_RNDD);
 
-      mpfr_aux_pi(tmp2, cst, 343*343, prec - 4);
+      mpfr_aux_pi(tmp2, cst, 343L*343L, prec - 4);
       mpfr_div_ui(tmp2, tmp2, 343, GMP_RNDD);
       mpfr_mul_ui(tmp2, tmp2, 122, GMP_RNDD);
 
-      mpfr_aux_pi(tmp3, cst, 557*557, prec - 4);
+      mpfr_aux_pi(tmp3, cst, 557L*557L, prec - 4);
       mpfr_div_ui(tmp3, tmp3, 557, GMP_RNDD);
       mpfr_mul_ui(tmp3, tmp3, 115, GMP_RNDD);
 
-      mpfr_aux_pi(tmp4, cst, 1068*1068, prec - 4);
+      mpfr_aux_pi(tmp4, cst, 1068L*1068L, prec - 4);
       mpfr_div_ui(tmp4, tmp4, 1068, GMP_RNDD);
       mpfr_mul_ui(tmp4, tmp4, 32, GMP_RNDD);
 
-      mpfr_aux_pi(tmp5, cst, 3458*3458, prec - 4);
+      mpfr_aux_pi(tmp5, cst, 3458L*3458L, prec - 4);
       mpfr_div_ui(tmp5, tmp5, 3458, GMP_RNDD);
       mpfr_mul_ui(tmp5, tmp5, 83, GMP_RNDD);
 
-      mpfr_aux_pi(tmp6, cst, 27493*27493, prec - 4);
+      mpfr_aux_pi(tmp6, cst, 27493L*27493L, prec - 4);
       mpfr_div_ui(tmp6, tmp6, 27493, GMP_RNDD);
       mpfr_mul_ui(tmp6, tmp6, 44, GMP_RNDD);
 
@@ -118,13 +118,13 @@ mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
         }
     }
   mpz_clear(cst);
-  return 0;    
+  return 0;
 }
 
 /*
 Set x to the value of Pi to precision MPFR_PREC(x) rounded to direction rnd_mode.
 Use the formula giving the binary representation of Pi found by Simon Plouffe
-David Bailey and Peter Borwein. 
+David Bailey and Peter Borwein.
 
                    infinity    4         2         1         1
                     -----   ------- - ------- - ------- - -------
@@ -155,26 +155,28 @@ mpfr_t __mpfr_const_pi; /* stored value of Pi */
 mp_prec_t __gmpfr_const_pi_prec = 0; /* precision of stored value */
 static mp_rnd_t __mpfr_const_pi_rnd; /* rounding mode of stored value */
 
-void 
-mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode) 
+int
+mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
 {
-  int N, oldN, n, prec; mpz_t pi, num, den, d3, d2, tmp; mpfr_t y;
+  int N, oldN, n, prec;
+  mpz_t pi, num, den, d3, d2, tmp;
+  mpfr_t y;
 
   prec=MPFR_PREC(x);
 
   /* has stored value enough precision ? */
   if ((prec==__gmpfr_const_pi_prec && rnd_mode==__mpfr_const_pi_rnd) ||
       (prec<=__gmpfr_const_pi_prec &&
-      mpfr_can_round(__mpfr_const_pi, __gmpfr_const_pi_prec, 
-		     __mpfr_const_pi_rnd, rnd_mode, prec)))
+       mpfr_can_round(__mpfr_const_pi, __gmpfr_const_pi_prec,
+                      __mpfr_const_pi_rnd, rnd_mode, prec)))
     {
-      mpfr_set(x, __mpfr_const_pi, rnd_mode); return; 
+      return mpfr_set(x, __mpfr_const_pi, rnd_mode);
     }
 
   if (prec < 20000)
     {
       /* need to recompute */
-      N=1; 
+      N=1;
       do
         {
           oldN = N;
@@ -241,4 +243,5 @@ mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
   mpfr_set(__mpfr_const_pi, x, rnd_mode);
   __gmpfr_const_pi_prec=prec;
   __mpfr_const_pi_rnd=rnd_mode;
+  return 1;
 }

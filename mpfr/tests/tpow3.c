@@ -64,60 +64,58 @@ main (int argc, char *argv[])
       yprec = prec + 10;
 
       for (n=0; n<N; n++)
-	{
-         
-	  mpfr_random (x);
-
-	  mpfr_random (s);
+        {
+          mpfr_random (x);
+          mpfr_random (s);
           if (randlimb () % 2)
             mpfr_neg (s, s, GMP_RNDN);
-	  rnd = randlimb () % 4;
-	  mpfr_set_prec (y, yprec);
-	  compare = mpfr_pow (y, x, s, rnd);
-	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
-	  if (mpfr_can_round (y, err, rnd, rnd, prec))
-	    {
-	      mpfr_set (t, y, rnd);
-	      inexact = mpfr_pow (z,x, s, rnd);	
-	      if (mpfr_cmp (t, z))
-		{
-		  printf ("results differ for x=");
-		  mpfr_out_str (stdout, 2, prec, x, GMP_RNDN);
+          rnd = randlimb () % 4;
+          mpfr_set_prec (y, yprec);
+          compare = mpfr_pow (y, x, s, rnd);
+          err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
+          if (mpfr_can_round (y, err, rnd, rnd, prec))
+            {
+              mpfr_set (t, y, rnd);
+              inexact = mpfr_pow (z,x, s, rnd);
+              if (mpfr_cmp (t, z))
+                {
+                  printf ("results differ for x=");
+                  mpfr_out_str (stdout, 2, prec, x, GMP_RNDN);
                   printf (" values of the exponential=");
-		  mpfr_out_str (stdout, 2, prec, s, GMP_RNDN);
-		  printf (" prec=%u rnd_mode=%s\n", (unsigned) prec,
-			  mpfr_print_rnd_mode (rnd));
-		  printf ("got      ");
-		  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
-		  puts ("");
-		  printf ("expected ");
-		  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
-		  puts ("");
-		  printf ("approx  ");
-		  mpfr_print_binary (y);
-		  puts ("");
-		  exit (1);
-		}
-	      compare2 = mpfr_cmp (t, y);
-	      /* if rounding to nearest, cannot know the sign of t - f(x)
-		 because of composed rounding: y = o(f(x)) and t = o(y) */
-	      if ((rnd != GMP_RNDN) && (compare * compare2 >= 0))
-		compare = compare + compare2;
-	      else
-		compare = inexact; /* cannot determine sign(t-f(x)) */
-	      if (((inexact == 0) && (compare != 0)) ||
-		  ((inexact > 0) && (compare <= 0)) ||
-		  ((inexact < 0) && (compare >= 0)))
-		{
-		  fprintf (stderr, "Wrong inexact flag for rnd=%s: expected %d, got %d\n",
-			   mpfr_print_rnd_mode (rnd), compare, inexact);
-		  printf ("x="); mpfr_print_binary (x); puts ("");
-		  printf ("y="); mpfr_print_binary (y); puts ("");
-		  printf ("t="); mpfr_print_binary (t); puts ("");
-		  exit (1);
-		}
-	    }
-	}
+                  mpfr_out_str (stdout, 2, prec, s, GMP_RNDN);
+                  printf (" prec=%u rnd_mode=%s\n", (unsigned int) prec,
+                          mpfr_print_rnd_mode (rnd));
+                  printf ("got      ");
+                  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
+                  puts ("");
+                  printf ("expected ");
+                  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
+                  puts ("");
+                  printf ("approx  ");
+                  mpfr_print_binary (y);
+                  puts ("");
+                  exit (1);
+                }
+              compare2 = mpfr_cmp (t, y);
+              /* if rounding to nearest, cannot know the sign of t - f(x)
+                 because of composed rounding: y = o(f(x)) and t = o(y) */
+              if ((rnd != GMP_RNDN) && (compare * compare2 >= 0))
+                compare = compare + compare2;
+              else
+                compare = inexact; /* cannot determine sign(t-f(x)) */
+              if (((inexact == 0) && (compare != 0)) ||
+                  ((inexact > 0) && (compare <= 0)) ||
+                  ((inexact < 0) && (compare >= 0)))
+                {
+                  printf ("Wrong inexact flag for rnd=%s: expected %d, got %d"
+                          "\n", mpfr_print_rnd_mode (rnd), compare, inexact);
+                  printf ("x="); mpfr_print_binary (x); puts ("");
+                  printf ("y="); mpfr_print_binary (y); puts ("");
+                  printf ("t="); mpfr_print_binary (t); puts ("");
+                  exit (1);
+                }
+            }
+        }
     }
 
   mpfr_clear (s);

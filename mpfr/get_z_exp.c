@@ -65,10 +65,11 @@ mpfr_get_z_exp (mpz_ptr z, mpfr_srcptr f)
 
   SIZ(z) = MPFR_SIGN(f) < 0 ? -fn : fn;
 
-  /* This always fails for very small "f", ie. when MPFR_EXP(f) is equal to
-     or only just above MPFR_EMIN_MIN.
-  MPFR_ASSERTN((mp_exp_unsigned_t) MPFR_GET_EXP (f) - MPFR_EMIN_MIN
+  /* Test if the result is representable. Later, we could choose
+     to return MP_EXP_T_MIN if it isn't, or perhaps MP_EXP_T_MAX
+     to signal an error. The mantissa would still be meaningful. */
+  MPFR_ASSERTN((mp_exp_unsigned_t) MPFR_GET_EXP (f) - MP_EXP_T_MIN
                >= (mp_exp_unsigned_t) MPFR_PREC(f));
-  */
+
   return MPFR_GET_EXP (f) - MPFR_PREC (f);
 }

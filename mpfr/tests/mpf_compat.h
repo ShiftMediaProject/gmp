@@ -43,24 +43,24 @@ main ()
   int i;
   FILE *f;
   gmp_randstate_t state;
-  
+
   /* Initialization Functions */
   prec = 53;
   mpf_set_default_prec (prec);
   prec2 = mpf_get_default_prec ();
   if (prec2 < prec)
     {
-      fprintf (stderr, "Error in get_default_prec: %lu < %lu\n", prec2, prec);
+      printf ("Error in get_default_prec: %lu < %lu\n", prec2, prec);
       exit (1);
     }
 
   mpf_init (y);
 
   mpf_init2 (x, prec);
-  prec2 = mpf_get_prec (x); 
+  prec2 = mpf_get_prec (x);
   if (prec2 < prec)
     {
-      fprintf (stderr, "Error in get_prec: %lu < %lu\n", prec2, prec);
+      printf ("Error in get_prec: %lu < %lu\n", prec2, prec);
       exit (1);
     }
 
@@ -68,7 +68,7 @@ main ()
   prec2 = mpf_get_prec (x);
   if (prec2 < 2 * prec)
     {
-      fprintf (stderr, "Error in set_prec: %lu < %lu\n", prec2, 2 * prec);
+      printf ("Error in set_prec: %lu < %lu\n", prec2, 2 * prec);
       exit (1);
     }
 
@@ -76,7 +76,7 @@ main ()
   prec2 = mpf_get_prec (x);
   if (prec2 < prec)
     {
-      fprintf (stderr, "Error in set_prec_raw: %lu < %lu\n", prec2, prec);
+      printf ("Error in set_prec_raw: %lu < %lu\n", prec2, prec);
       exit (1);
     }
 
@@ -89,7 +89,7 @@ main ()
 
   mpz_init_set_ui (z, 17);
   mpf_set_z (x, z);
-  mpz_clear (z);	     
+  mpz_clear (z);
 
   mpq_init (q);
   mpq_set_ui (q, 2, 3);
@@ -156,7 +156,7 @@ main ()
   f = fopen ("/dev/null", "w");
   mpf_out_str (f, 10, 10, x);
   fclose (f);
-  
+
   f = fopen ("/dev/null", "r");
   mpf_inp_str (x, f, 10);
   fclose (f);

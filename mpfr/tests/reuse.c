@@ -1,6 +1,6 @@
 /* Test file for in-place operations.
 
-Copyright 2000, 2001, 2002 Free Software Foundation.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -42,7 +42,7 @@ int mpfr_compare _PROTO ((mpfr_t, mpfr_t));
 int
 mpfr_compare (mpfr_t a, mpfr_t b)
 {
-  return (MPFR_IS_NAN(a)) ? !MPFR_IS_NAN(b) : 
+  return (MPFR_IS_NAN(a)) ? !MPFR_IS_NAN(b) :
     (MPFR_IS_NAN(b) || mpfr_cmp(a, b));
 }
 
@@ -80,29 +80,31 @@ test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 
     /* reference call: foo(a, b, c) */
     testfunc (ref1, ref2, ref3, rnd);
- 
+
     /* foo(a, a, c) */
     mpfr_set (res1, ref2, rnd); /* exact operation */
     testfunc (res1, res1, ref3, rnd);
- 
-    if (mpfr_compare (res1, ref1)) {
-      fprintf (stderr, "Error for %s(a, a, c) for a=%e, c=%e\n", foo,
-	       mpfr_get_d1 (ref2), mpfr_get_d1 (ref3));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
-	       mpfr_get_d1 (res1));
-      exit (1);
-    }
+
+    if (mpfr_compare (res1, ref1))
+      {
+        printf ("Error for %s(a, a, c) for a=%e, c=%e\n", foo,
+                mpfr_get_d1 (ref2), mpfr_get_d1 (ref3));
+        printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
+                mpfr_get_d1 (res1));
+        exit (1);
+      }
 
     /* foo(a, b, a) */
     mpfr_set (res1, ref3, rnd);
     testfunc (res1, ref2, res1, rnd);
-    if (mpfr_compare (res1, ref1)) {
-      fprintf (stderr, "Error for %s(a, b, a) for b=%e, a=%e\n", foo,
-	       mpfr_get_d1 (ref2), mpfr_get_d1 (ref3));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
-	       mpfr_get_d1 (res1));
-      exit (1);
-    }
+    if (mpfr_compare (res1, ref1))
+      {
+        printf ("Error for %s(a, b, a) for b=%e, a=%e\n", foo,
+                mpfr_get_d1 (ref2), mpfr_get_d1 (ref3));
+        printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
+                mpfr_get_d1 (res1));
+        exit (1);
+      }
 
     /* foo(a, a, a) */
     mpfr_set (ref3, ref2, rnd);
@@ -110,13 +112,14 @@ test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
     mpfr_set (res1, ref2, rnd);
     testfunc (res1, res1, res1, rnd);
 
-   if (mpfr_compare (res1, ref1)) {
-      fprintf (stderr, "Error for %s(a, a, a) for a=%e\n", foo,
-	       mpfr_get_d1 (ref2));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
-	       mpfr_get_d1 (res1));
-      exit (1);
-    }
+    if (mpfr_compare (res1, ref1))
+      {
+        printf ("Error for %s(a, a, a) for a=%e\n", foo,
+                mpfr_get_d1 (ref2));
+        printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
+                mpfr_get_d1 (res1));
+        exit (1);
+      }
   }
 
   mpfr_clear (ref1);
@@ -144,9 +147,8 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   /* for each variable, consider each of the following 6 possibilities:
      NaN, +Infinity, -Infinity, +0, -0 or a random number */
 
-  for (i=0; i<6; i++) 
+  for (i=0; i<6; i++)
     {
-
       MPFR_CLEAR_FLAGS(op1);
       if (i==0) mpfr_set_nan (op1);
       if (i==1) mpfr_set_inf (op1, 1);
@@ -154,10 +156,9 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
       if (i==3) mpfr_set_d (op1, 0.0, GMP_RNDN);
       if (i==4) mpfr_set_d (op1, -0.0, GMP_RNDN);
       if (i==5) mpfr_random (op1);
-      
-      for (j=0; j<6; j++) 
-        {
 
+      for (j=0; j<6; j++)
+        {
           MPFR_CLEAR_FLAGS(op2);
           if (j==0) mpfr_set_nan (op2);
           if (j==1) mpfr_set_inf (op2, 1);
@@ -166,9 +167,8 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
           if (j==4) mpfr_set_d (op2, -0.0, GMP_RNDN);
           if (j==5) mpfr_random (op2);
 
-          for (k=0; k<6; k++) 
+          for (k=0; k<6; k++)
             {
-
               MPFR_CLEAR_FLAGS(op3);
               if (k==0) mpfr_set_nan (op3);
               if (k==1) mpfr_set_inf (op3, 1);
@@ -179,110 +179,103 @@ test4 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 
               /* reference call: foo(s, a, b, c) */
               testfunc (ref, op1, op2, op3, rnd);
- 
+
               /* foo(a, a, b, c) */
               mpfr_set (res, op1, rnd); /* exact operation */
               testfunc (res, res, op2, op3, rnd);
- 
-              if (mpfr_compare (res, ref)) 
-              {
-                fprintf (stderr, 
-                         "Error for %s(a, a, b, c) for a=%e, b=%e, c=%e\n", 
-                         foo,
-                         mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
-                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
-                         mpfr_get_d1 (res));
-                exit (1);
-              }
+
+              if (mpfr_compare (res, ref))
+                {
+                  printf ("Error for %s(a, a, b, c) for a=%e, b=%e, c=%e\n",
+                          foo, mpfr_get_d1 (op1), mpfr_get_d1 (op2),
+                          mpfr_get_d1 (op3));
+                  printf ("expected %e, got %e\n", mpfr_get_d1 (ref),
+                          mpfr_get_d1 (res));
+                  exit (1);
+                }
 
               /* foo(b, a, b, c) */
               mpfr_set (res, op2, rnd);
               testfunc (res, op1, res, op3, rnd);
 
-             if (mpfr_compare (res, ref)) 
-              {
-                fprintf (stderr, 
-                         "Error for %s(b, a, b, c) for a=%e, b=%e, c=%e\n", 
-                         foo,
-                         mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
-                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
-                         mpfr_get_d1 (res));
-                exit (1);
-              }
+              if (mpfr_compare (res, ref))
+                {
+                  printf ("Error for %s(b, a, b, c) for a=%e, b=%e, c=%e\n",
+                          foo, mpfr_get_d1 (op1), mpfr_get_d1 (op2),
+                          mpfr_get_d1 (op3));
+                  printf ("expected %e, got %e\n", mpfr_get_d1 (ref),
+                          mpfr_get_d1 (res));
+                  exit (1);
+                }
 
               /* foo(c, a, b, c) */
               mpfr_set (res, op3, rnd);
               testfunc (res, op1, op2, res, rnd);
 
-             if (mpfr_compare (res, ref)) 
-              {
-                fprintf (stderr, 
-                         "Error for %s(c, a, b, c) for a=%e, b=%e, c=%e\n",
-                         foo,
-                         mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
-                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
-                         mpfr_get_d1 (res));
-                exit (1);
-              }
+              if (mpfr_compare (res, ref))
+                {
+                  printf ("Error for %s(c, a, b, c) for a=%e, b=%e, c=%e\n",
+                          foo, mpfr_get_d1 (op1), mpfr_get_d1 (op2),
+                          mpfr_get_d1 (op3));
+                  printf ("expected %e, got %e\n", mpfr_get_d1 (ref),
+                          mpfr_get_d1 (res));
+                  exit (1);
+                }
 
               /* foo(a, a, a,c) */
-             testfunc (ref, op1, op1, op3, rnd);
-             mpfr_set (res, op1, rnd);
-             testfunc (res, res, res, op3, rnd);
-             if (mpfr_compare (res, ref)) 
-              {
-                fprintf (stderr, 
-                         "Error for %s(a, a, a, c) for a=%e, a=%e, c=%e\n",
-                         foo,
-                         mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
-                fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
-                         mpfr_get_d1 (res));
-                exit (1);
-              }
+              testfunc (ref, op1, op1, op3, rnd);
+              mpfr_set (res, op1, rnd);
+              testfunc (res, res, res, op3, rnd);
+              if (mpfr_compare (res, ref))
+                {
+                  printf ("Error for %s(a, a, a, c) for a=%e, a=%e, c=%e\n",
+                          foo, mpfr_get_d1 (op1), mpfr_get_d1 (op2),
+                          mpfr_get_d1 (op3));
+                  printf ("expected %e, got %e\n", mpfr_get_d1 (ref),
+                          mpfr_get_d1 (res));
+                  exit (1);
+                }
 
               /* foo(a, a, b,a) */
               testfunc (ref, op1, op2, op1, rnd);
               mpfr_set (res, op1, rnd);
               testfunc (res, res, op2, res, rnd);
-              if (mpfr_compare (res, ref)) 
-               {
-                 fprintf (stderr, 
-                          "Error for %s(a, a, b, a) for a=%e, a=%e, c=%e\n",
-                          foo,
-                       mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
-                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+              if (mpfr_compare (res, ref))
+                {
+                  printf ("Error for %s(a, a, b, a) for a=%e, a=%e, c=%e\n",
+                          foo, mpfr_get_d1 (op1), mpfr_get_d1 (op2),
+                          mpfr_get_d1 (op3));
+                  printf ("expected %e, got %e\n", mpfr_get_d1 (ref),
                           mpfr_get_d1 (res));
-                 exit (1);
-               }
+                  exit (1);
+                }
 
               /* foo(b, a, b, b) */
               testfunc (ref, op1, op2, op2, rnd);
               mpfr_set (res, op2, rnd);
               testfunc (res, op1, res, res, rnd);
-              if (mpfr_compare (res, ref)) 
-               {
-                 fprintf (stderr, 
-                          "Error for %s(b, a, b, b) for a=%e, a=%e, c=%e\n", 
-                          foo,
-                        mpfr_get_d1 (op1), mpfr_get_d1 (op2), mpfr_get_d1 (op3));
-                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+              if (mpfr_compare (res, ref))
+                {
+                  printf ("Error for %s(b, a, b, b) for a=%e, a=%e, c=%e\n",
+                          foo, mpfr_get_d1 (op1), mpfr_get_d1 (op2),
+                          mpfr_get_d1 (op3));
+                  printf ("expected %e, got %e\n", mpfr_get_d1 (ref),
                           mpfr_get_d1 (res));
-                 exit (1);
-               }
+                  exit (1);
+                }
 
               /* foo (a, a, a, a) */
               testfunc (ref, op1, op1, op1 ,rnd);
               mpfr_set (res, op1, rnd);
               testfunc (res, res, res, res, rnd);
-              if (mpfr_compare (res, ref)) 
-               {
-                 fprintf (stderr,
-                          "Error for %s(a, a, a, a) for a=%e\n", foo,
+              if (mpfr_compare (res, ref))
+                {
+                  printf ("Error for %s(a, a, a, a) for a=%e\n", foo,
                           mpfr_get_d1 (op1));
-                 fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref),
+                  printf ("expected %e, got %e\n", mpfr_get_d1 (ref),
                           mpfr_get_d1 (res));
-                 exit (1);
-               }
+                  exit (1);
+                }
             }
         }
     }
@@ -304,7 +297,7 @@ test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG  
+#ifdef DEBUG
   printf("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
@@ -324,9 +317,9 @@ test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
       if (i%6==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
       if (i%6==5) mpfr_random (ref2);
 
-      if (i/6==0) 
+      if (i/6==0)
 	ref3=0;
-      else 
+      else
 	{
 	  mpn_random (c, 1);
 	  ref3 = (unsigned int) c[0];
@@ -341,10 +334,10 @@ test2ui (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 
       if (mpfr_compare (res1, ref1))
 	{
-	  fprintf (stderr, "Error for %s(a, a, c) for a=%e c=%u\n", foo,
-	       mpfr_get_d1 (ref2), ref3);
-	  fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
-	       mpfr_get_d1 (res1));
+	  printf ("Error for %s(a, a, c) for a=%e c=%u\n", foo,
+                  mpfr_get_d1 (ref2), ref3);
+	  printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
+                  mpfr_get_d1 (res1));
 	  exit (1);
 	}
     }
@@ -363,7 +356,7 @@ testui2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG  
+#ifdef DEBUG
   printf("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
@@ -393,13 +386,14 @@ testui2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
     /* foo(a, b, a) */
     mpfr_set (res1, ref3, rnd); /* exact operation */
     testfunc (res1, ref2, res1, rnd);
-    if (mpfr_compare (res1, ref1)) {
-      fprintf (stderr, "Error for %s(a, b, a) for b=%u a=%e\n", foo,
-	       ref2, mpfr_get_d1 (ref3));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
-	       mpfr_get_d1 (res1));
-      exit (1);
-    }
+    if (mpfr_compare (res1, ref1))
+      {
+        printf ("Error for %s(a, b, a) for b=%u a=%e\n", foo,
+                ref2, mpfr_get_d1 (ref3));
+        printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
+                mpfr_get_d1 (res1));
+        exit (1);
+      }
   }
 
   mpfr_clear (ref1);
@@ -415,7 +409,7 @@ test2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG  
+#ifdef DEBUG
   printf("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
@@ -423,27 +417,29 @@ test2 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_init2 (res1, prec);
   mpfr_random (ref2);
 
-  for (i=0; i<6; i++) {
-    if (i==0) mpfr_set_nan (ref2);
-    if (i==1) mpfr_set_inf (ref2, 1);
-    if (i==2) mpfr_set_inf (ref2, -1);
-    if (i==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
-    if (i==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
-    if (i==5) mpfr_random (ref2);
+  for (i=0; i<6; i++)
+    {
+      if (i==0) mpfr_set_nan (ref2);
+      if (i==1) mpfr_set_inf (ref2, 1);
+      if (i==2) mpfr_set_inf (ref2, -1);
+      if (i==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
+      if (i==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
+      if (i==5) mpfr_random (ref2);
 
-    /* reference call: foo(a, b) */
-    testfunc (ref1, ref2, rnd);
+      /* reference call: foo(a, b) */
+      testfunc (ref1, ref2, rnd);
 
-    /* foo(a, a) */
-    mpfr_set (res1, ref2, rnd); /* exact operation */
-    testfunc (res1, res1, rnd);
-    if (mpfr_compare (res1, ref1)) {
-      fprintf (stderr, "Error for %s(a, a) for a=%e\n", foo, mpfr_get_d1 (ref2));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
-	       mpfr_get_d1 (res1));
-      exit (1);
+      /* foo(a, a) */
+      mpfr_set (res1, ref2, rnd); /* exact operation */
+      testfunc (res1, res1, rnd);
+      if (mpfr_compare (res1, ref1))
+        {
+          printf ("Error for %s(a, a) for a=%e\n", foo, mpfr_get_d1 (ref2));
+          printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
+                  mpfr_get_d1 (res1));
+          exit (1);
+        }
     }
-  }
 
   mpfr_clear (ref1);
   mpfr_clear (ref2);
@@ -458,35 +454,37 @@ test2a (char *foo, mp_prec_t prec)
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG  
-  printf("checking %s\n", foo);
+#ifdef DEBUG
+  printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
   mpfr_init2 (ref2, prec);
   mpfr_init2 (res1, prec);
   mpfr_random (ref2);
 
-  for (i=0; i<6; i++) {
-    if (i==0) mpfr_set_nan (ref2);
-    if (i==1) mpfr_set_inf (ref2, 1);
-    if (i==2) mpfr_set_inf (ref2, -1);
-    if (i==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
-    if (i==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
-    if (i==5) mpfr_random (ref2);
+  for (i=0; i<6; i++)
+    {
+      if (i==0) mpfr_set_nan (ref2);
+      if (i==1) mpfr_set_inf (ref2, 1);
+      if (i==2) mpfr_set_inf (ref2, -1);
+      if (i==3) mpfr_set_d (ref2, 0.0, GMP_RNDN);
+      if (i==4) mpfr_set_d (ref2, -0.0, GMP_RNDN);
+      if (i==5) mpfr_random (ref2);
 
-    /* reference call: foo(a, b) */
-    testfunc (ref1, ref2);
+      /* reference call: foo(a, b) */
+      testfunc (ref1, ref2);
 
-    /* foo(a, a) */
-    mpfr_set (res1, ref2, GMP_RNDN); /* exact operation */
-    testfunc (res1, res1);
-    if (mpfr_compare (res1, ref1)) {
-      fprintf (stderr, "Error for %s(a, a) for a=%e\n", foo, mpfr_get_d1 (ref2));
-      fprintf (stderr, "expected %e, got %e\n", mpfr_get_d1 (ref1),
-	       mpfr_get_d1 (res1));
-      exit (1);
+      /* foo(a, a) */
+      mpfr_set (res1, ref2, GMP_RNDN); /* exact operation */
+      testfunc (res1, res1);
+      if (mpfr_compare (res1, ref1))
+        {
+          printf ("Error for %s(a, a) for a=%e\n", foo, mpfr_get_d1 (ref2));
+          printf ("expected %e, got %e\n", mpfr_get_d1 (ref1),
+                  mpfr_get_d1 (res1));
+          exit (1);
+        }
     }
-  }
 
   mpfr_clear (ref1);
   mpfr_clear (ref2);
@@ -501,8 +499,8 @@ test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_t res1, res2;
   int i;
 
-#ifdef DEBUG  
-  printf("checking %s\n", foo);
+#ifdef DEBUG
+  printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
   mpfr_init2 (ref2, prec);
@@ -511,37 +509,40 @@ test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
   mpfr_init2 (res2, prec);
   mpfr_random (ref3);
 
-  for (i=0; i<6; i++) {
-    if (i==0) mpfr_set_nan (ref3);
-    if (i==1) mpfr_set_inf (ref3, 1);
-    if (i==2) mpfr_set_inf (ref3, -1);
-    if (i==3) mpfr_set_d (ref3, 0.0, GMP_RNDN);
-    if (i==4) mpfr_set_d (ref3, -0.0, GMP_RNDN);
-    if (i==5) mpfr_random (ref3);
+  for (i=0; i<6; i++)
+    {
+      if (i==0) mpfr_set_nan (ref3);
+      if (i==1) mpfr_set_inf (ref3, 1);
+      if (i==2) mpfr_set_inf (ref3, -1);
+      if (i==3) mpfr_set_d (ref3, 0.0, GMP_RNDN);
+      if (i==4) mpfr_set_d (ref3, -0.0, GMP_RNDN);
+      if (i==5) mpfr_random (ref3);
 
-     /* reference call: foo(a, b, c) */
-     testfunc (ref1, ref2, ref3, rnd);
+      /* reference call: foo(a, b, c) */
+      testfunc (ref1, ref2, ref3, rnd);
 
-     /* foo(a, b, a) */
-     mpfr_set (res1, ref3, rnd); /* exact operation */
-     testfunc (res1, res2, res1, rnd);
-     if (mpfr_compare (res1, ref1) || mpfr_compare (res2, ref2)) {
-       fprintf (stderr, "Error for %s(a, b, a) for a=%e\n", foo, mpfr_get_d1 (ref3));
-       fprintf (stderr, "expected (%e,%e), got (%e,%e)\n", mpfr_get_d1 (ref1),
-		mpfr_get_d1 (ref2), mpfr_get_d1 (res1), mpfr_get_d1 (res2));
-       exit (1);
-     }
+      /* foo(a, b, a) */
+      mpfr_set (res1, ref3, rnd); /* exact operation */
+      testfunc (res1, res2, res1, rnd);
+      if (mpfr_compare (res1, ref1) || mpfr_compare (res2, ref2))
+        {
+          printf ("Error for %s(a, b, a) for a=%e\n", foo, mpfr_get_d1 (ref3));
+          printf ("expected (%e,%e), got (%e,%e)\n", mpfr_get_d1 (ref1),
+                  mpfr_get_d1 (ref2), mpfr_get_d1 (res1), mpfr_get_d1 (res2));
+          exit (1);
+        }
 
-     /* foo(a, b, b) */
-     mpfr_set (res2, ref3, rnd); /* exact operation */
-     testfunc (res1, res2, res2, rnd);
-     if (mpfr_compare (res1, ref1) || mpfr_compare (res2, ref2)) {
-       fprintf (stderr, "Error for %s(a, b, b) for b=%e\n", foo, mpfr_get_d1 (ref3));
-       fprintf (stderr, "expected (%e,%e), got (%e,%e)\n", mpfr_get_d1 (ref1),
-		mpfr_get_d1 (ref2), mpfr_get_d1 (res1), mpfr_get_d1 (res2));
-       exit (1);
-     }
-  }
+      /* foo(a, b, b) */
+      mpfr_set (res2, ref3, rnd); /* exact operation */
+      testfunc (res1, res2, res2, rnd);
+      if (mpfr_compare (res1, ref1) || mpfr_compare (res2, ref2))
+        {
+          printf ("Error for %s(a, b, b) for b=%e\n", foo, mpfr_get_d1 (ref3));
+          printf ("expected (%e,%e), got (%e,%e)\n", mpfr_get_d1 (ref1),
+                  mpfr_get_d1 (ref2), mpfr_get_d1 (res1), mpfr_get_d1 (res2));
+          exit (1);
+        }
+    }
 
   mpfr_clear (ref1);
   mpfr_clear (ref2);

@@ -67,7 +67,7 @@ check_two_sum (mp_prec_t p)
   mpfr_t y, u, v, w;
   mp_rnd_t rnd;
   int inexact;
-  
+
   mpfr_init2 (y, p);
   mpfr_init2 (u, p);
   mpfr_init2 (v, p);
@@ -88,8 +88,8 @@ check_two_sum (mp_prec_t p)
       ((inexact > 0) && (mpfr_cmp_ui (w, 0) <= 0)) ||
       ((inexact < 0) && (mpfr_cmp_ui (w, 0) >= 0)))
     {
-      fprintf (stderr, "Wrong inexact flag for prec=%u, rnd=%s\n", (unsigned)p,
-	       mpfr_print_rnd_mode (rnd));
+      printf ("Wrong inexact flag for prec=%u, rnd=%s\n",
+              (unsigned int) p, mpfr_print_rnd_mode (rnd));
       printf ("x=%u\n", x);
       printf ("y="); mpfr_print_binary(y); puts ("");
       printf ("u="); mpfr_print_binary(u); puts ("");

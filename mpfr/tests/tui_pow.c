@@ -36,7 +36,7 @@ test1 (void)
 
   mpfr_init2 (x, 32);
   mpfr_init2 (y, 65);
-  mpfr_set_str_raw (x, "-0.101110001001011011011e-9");
+  mpfr_set_str_binary (x, "-0.101110001001011011011e-9");
   mpfr_ui_pow (y, 7, x, GMP_RNDN);
   mpfr_clear (x);
   mpfr_clear (y);
@@ -94,9 +94,8 @@ check1 (mpfr_ptr x, mp_prec_t prec, unsigned long nt, mp_rnd_t rnd)
           ((inexact > 0) && (compare <= 0)) ||
           ((inexact < 0) && (compare >= 0)))
         {
-          fprintf (stderr,
-                   "Wrong inexact flag for rnd=%s: expected %d, got %d\n",
-                   mpfr_print_rnd_mode (rnd), compare, inexact);
+          printf ("Wrong inexact flag for rnd=%s: expected %d, got %d\n",
+                  mpfr_print_rnd_mode (rnd), compare, inexact);
           printf ("x="); mpfr_print_binary (x); puts ("");
           printf ("y="); mpfr_print_binary (y); puts ("");
           printf ("t="); mpfr_print_binary (t); puts ("");
@@ -163,7 +162,7 @@ main (int argc, char *argv[])
   mpfr_init2 (t, 6);
 
   /* check exact power */
-  mpfr_set_str_raw (t, "0.110000E5");
+  mpfr_set_str_binary (t, "0.110000E5");
   mpfr_ui_pow (z, 3, t, GMP_RNDN);
 
   mpfr_clear (z);

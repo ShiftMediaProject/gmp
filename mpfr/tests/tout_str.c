@@ -27,6 +27,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 FILE *fout;
@@ -54,7 +55,7 @@ check_large (void)
   mpfr_init(x);
 
   mpfr_set_prec (x, 7);
-  mpfr_set_str_raw (x, "0.1010101E10");
+  mpfr_set_str_binary (x, "0.1010101E10");
   s = mpfr_get_str (NULL, &e, 10, 2, x, GMP_RNDU);
   (*__gmp_free_func) (s, strlen (s) + 1);
 
@@ -64,8 +65,8 @@ check_large (void)
   s = mpfr_get_str (NULL, &e, 10, 2, x, GMP_RNDD);
   if (strcmp (s, "-12"))
     {
-      fprintf (stderr, "Error in mpfr_get_str for x=-11.5 and rnd=GMP_RNDD\n");
-      fprintf (stderr, "got %s instead of -12\n", s);
+      printf ("Error in mpfr_get_str for x=-11.5 and rnd=GMP_RNDD\n"
+              "got %s instead of -12\n", s);
       free (s);
       mpfr_clear (x);
       exit (1);
@@ -75,7 +76,7 @@ check_large (void)
   s = mpfr_get_str (NULL, &e, 10, 2, x, GMP_RNDU);
   if (strcmp (s, "-11"))
     {
-      fprintf (stderr, "Error in mpfr_get_str for x=-11.5 and rnd=GMP_RNDU\n");
+      printf ("Error in mpfr_get_str for x=-11.5 and rnd=GMP_RNDU\n");
       free (s);
       mpfr_clear (x);
       exit (1);
@@ -84,16 +85,17 @@ check_large (void)
 
   /* bug found by Jean-Pierre Merlet, produced error in mpfr_get_str */
   mpfr_set_prec (x, 128);
-  mpfr_set_str_raw (x, "0.10111001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011010E3");
+  mpfr_set_str_binary (x, "0.10111001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011010E3");
   s = mpfr_get_str (NULL, &e, 10, 0, x, GMP_RNDU);
   (*__gmp_free_func) (s, strlen (s) + 1);
 
   mpfr_set_prec (x, 381);
-  mpfr_set_str_raw (x, "0.111111111111111111111111111111111111111111111111111111111111111111101110110000100110011101101101001010111000101111000100100011110101010110101110100000010100001000110100000100011111001000010010000010001010111001011110000001110010111101100001111000101101100000010110000101100100000101010110010110001010100111001111100011100101100000100100111001100010010011110011011010110000001000010");
+  mpfr_set_str_binary (x, "0.111111111111111111111111111111111111111111111111111111111111111111101110110000100110011101101101001010111000101111000100100011110101010110101110100000010100001000110100000100011111001000010010000010001010111001011110000001110010111101100001111000101101100000010110000101100100000101010110010110001010100111001111100011100101100000100100111001100010010011110011011010110000001000010");
   s = mpfr_get_str (NULL, &e, 10, 0, x, GMP_RNDD);
   if (e != 0)
     {
-      fprintf (stderr, "Error in mpfr_get_str for x=0.999999..., exponent is %d instead of 0\n", (int) e);
+      printf ("Error in mpfr_get_str for x=0.999999..., exponent is %d"
+              " instead of 0\n", (int) e);
       exit (1);
     }
   (*__gmp_free_func) (s, strlen (s) + 1);

@@ -1,4 +1,539 @@
+2003-09-25  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tgeneric.c, tests/tget_d.c, tests/tget_str.c, tests/thypot.c, tests/tisnan.c, tests/tlog.c, tests/tlog10.c, tests/tmul.c, tests/tmul_2exp.c, tests/tmul_ui.c, tests/tout_str.c, tests/tpow.c, tests/tpow3.c, tests/trandom.c, tests/tconst_pi.c, tests/tcos.c, tests/tdiv.c, tests/tdiv_ui.c, tests/teq.c, tests/terf.c, tests/tests.c, tests/texceptions.c, tests/texp.c, tests/texp2.c, tests/tfactorial.c, tests/tfma.c, tests/tfrac.c, tests/tgamma.c, tests/mpf_compat.h, tests/reuse.c, tests/tabs.c, tests/tacos.c, tests/tadd.c, tests/tagm.c, tests/tasin.c, tests/tatan.c, tests/tcan_round.c, tests/tcbrt.c, tests/tcmp.c, tests/tcmp2.c, tests/tcmp_d.c, tests/tcmp_ui.c, tests/tconst_log2.c:
+	Changed the remaining stderr to stdout.
+
+2003-09-24  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tset_str.c, tests/tset_z.c, tests/tsin.c, tests/tsin_cos.c, tests/tsqrt.c, tests/tsub.c, tests/tsub_ui.c, tests/tswap.c, tests/ttan.c, tests/ttrunc.c, tests/tui_div.c, tests/tui_pow.c, tests/tui_sub.c, tests/tzeta.c, tests/trint.c, tests/tround_prec.c, tests/tset.c, tests/tset_d.c, tests/tset_f.c, tests/tset_ld.c, tests/tset_q.c, tests/tset_si.c:
+	Changed some stderr to stdout.
+
+	* comparisons.c, mpfr.texi, TODO:
+	Added documentation for mpfr_greater_p, mpfr_greaterequal_p,
+	mpfr_less_p, mpfr_lessequal_p, mpfr_lessgreater_p, mpfr_equal_p
+	and mpfr_unordered_p.
+
+	* TODO, tests/Makefile.am, tests/tcomparisons.c:
+	Added tests for mpfr_greater_p, mpfr_greaterequal_p, mpfr_less_p,
+	mpfr_lessequal_p, mpfr_lessgreater_p, mpfr_equal_p, mpfr_unordered_p.
+
+	* TODO, tests/tnext.c:
+	Added a few more tests (involving mpfr_nexttoward). The tests for
+	the mpfr_nextabove, mpfr_nextbelow and mpfr_nexttoward functions
+	should now be sufficient.
+
+	* tests/Makefile.am, tests/tnext.c, next.c:
+	Added generic tests for mpfr_nextabove and mpfr_nextbelow.
+	Fixed a bug in next.c related to assertion checks.
+
+	* tests/tset_str.c, TODO, set_str.c:
+	Accept (case-insensitive) NaN and Inf in input for bases <= 16 for
+	backward compatibility in these bases (for bases > 16, we cannot
+	guaranty backward compatibility with the current wanted behavior).
+	Added tests.
+
+2003-09-24  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* TODO: added one item from Kevin
+
+2003-09-24  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* texinfo.tex:
+	Added support for some top-bit-set characters in the .texi source.
+
+	* mpfr.texi: Added information on special values for mpfr_pow.
+
+2003-09-24  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* Makefile.am:
+	added MAKEINFOFLAGS = --enable-encoding to get 8-bit characters in mpfr.info
+
+	* AUTHORS, mpfr.texi: used ISO-8859-1 in AUTHORS
+	and @`e, @"o in mpfr.texi (waiting for code for ISO-8859-1 compatibility)
+
+2003-09-24  Kevin Ryde  <user42@zip.com.au>
+
+	* acinclude.m4 (MPFR_C_LONG_DOUBLE_FORMAT): Remove conftest* temporary
+	files.
+
+2003-09-24  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* set_str.c: Fixed comparisons (cases @NaN@ and @Inf@).
+
+2003-09-23  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* TODO: two updates
+
+2003-09-22  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.texi: Updated mpfr_pow description.
+
+2003-09-22  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* print_rnd_mode.c, set_str.c, set_str_raw.c:
+	changed __gmp_const into const in *.c
+	[Torbjo"rn: Please use __gmp_const just in user header files, plain C const in other files.]
+
+2003-09-22  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* TODO: Removed
+
+	- allow the ISO C "P" exponent separator for base 16 in input functions
+
+	(already done).
+
+	* TODO, tests/tset_ld.c: Implemented the following:
+	- use (LDBL_MAX/2)+(LDBL_MAX/4*LDBL_EPSILON) instead of loop in tset_ld
+	       to get largest power of 2 that fits in a long double
+
+	* sub1.c: Added some MPFR_ASSERTN and improved a comment.
+
+	* tests/texp.c, tests/tget_str.c:
+	Avoid string literals longer than 509 characters (ISO C89 limit).
+
+	* tests/texceptions.c (test_set_underflow, test_set_overflow):
+	Cleaner fix (for pre-C99
+	compilers).
+
+2003-09-22  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/texceptions.c (test_set_underflow, test_set_overflow): Use
+	"static" on "r" to allow non-constant initializers.
+
+2003-09-21  Kevin Ryde  <user42@zip.com.au>
+
+	* mpfr.texi (Converting Floats): In mpfr_get_d_2exp, the rounding mode
+	is given, it doesn't use the default mode.
+
+	* mpfr.texi (Assigning Floats): In mpfr_set_str and mpfr_set_str_raw,
+	show "const" not "__gmp_const".
+	(Simultaneous Float Init & Assign): In mpfr_init_set_str, ditto.
+
+	* mpfr.texi (Rounding Modes): Add blank line around @itemize.
+
+	* mpfr.texi (Miscellaneous Float Functions): In mpfr_urandomb and
+	mpfr_random, use @math and @le.
+
+2003-09-20  Kevin Ryde  <user42@zip.com.au>
+
+	* mpfr.texi (Assigning Floats): In mpfr_set_*, remove remarks about
+	long being rounded (this should be clear already), about rounding of
+	decimal double constants like 0.1 (too basic to appear here),
+	(Converting Floats): In mpfr_get_d_2exp, remove remark about exp
+	exceeding IEEE exponent range (should be clear already).
+
+2003-09-19  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* TODO: updated items: removed conversion from/to float (obsolete)
+
+	* TODO, zeta.c: got rid of <math.h> dependency in mpfr_zeta
+
+	* tests/tround_prec.c, tests/tzeta.c, round_prec.c, tests/tacos.c, tests/tasin.c, tests/texp.c, tests/tgamma.c, exp_2.c, get_str.c, log_b2.h, mpfr.h, mpfr.texi, cos.c:
+	mpfr_round_prec is now obsolete
+	new function mpfr_prec_round replaces it
+
+2003-09-18  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr-impl.h: Fix for C implementations with 16-bit int.
+
+2003-09-18  Patrick Pelissier  <Patrick.Pelissier@loria.fr>
+
+	* mpfr-impl.h:
+	 Optimization of macros MPFR_IS_INF, MPFR_IS_NAN and MPFR_IS_FP
+
+2003-09-18  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* set_ld.c:
+	Removed a comment that should have been removed in revision 1.8.
+
+2003-09-15  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* div.c:
+	No longer perform the pre-check for exactness when first division step was
+	actually a complete division. This introduced way too much overhead.
+
+	* inp_str.c: replaced test stream==0 by stream==NULL
+
+2003-09-15  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* round_prec.c, tests/tcan_round.c:
+	Fixed a bug in mpfr_can_round_raw and added other mpfr_can_round
+	tests.
+
+	* round_prec.c, tests/tcan_round.c:
+	Added a test to tests/tcan_round.c and assertions to round_prec.c.
+
+2003-09-14  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/texceptions.c, exceptions.c, exp.c:
+	Fixed mpfr_set_overflow, added tests for mpfr_set_underflow
+	and mpfr_set_overflow, and reverted exp.c.
+
+2003-09-13  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* exp.c: overflow with round to zero was incorrect
+
+2003-09-11  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* Makefile.am, clears.c, inits.c, inits2.c, mpfr.h, mpfr.texi, tests/Makefile.am, tests/tinits.c:
+	New functions mpfr_inits, mpfr_inits2 and mpfr_clears to initialize or
+	free several floating-point numbers (written by Patrick Pélissier).
+
+2003-09-09  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* TODO, zeta.c:
+	Replaced malloc/free by __gmp_allocate_func/__gmp_free_func in
+	mpfr_zeta_pos. zeta.c still uses math (libm) functions -> TODO:
+	remove this dependence.
+
+	* tests/tui_pow.c:
+	Added a test that makes MPFR crash (coming from the mpfr_zeta crash).
+
+	* tests/tzeta.c:
+	Case that crashes MPFR (coming from test_generic) -> function test1.
+
+	* ui_pow.c:
+	Ended up by simplifying mpfr_ui_pow to fix it completely (with a
+	call to mpfr_pow, in a way similar to other ui functions). There
+	isn't significant differences with the old code anyway, and the
+	case integer^integer wasn't optimized like in mpfr_pow.
+	The test tui_pow now passes, but the test tzeta now fails!
+
+	* tests/tui_pow.c, ui_pow.c:
+	Code clean-up and reindented. Replaced a 8 by CHAR_BIT,
+	as CHAR_BIT isn't necessarily equal to 8. The bug seems
+	to occur on all machines.
+
+2003-09-08  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tui_pow.c:
+	Added a test to reproduce a bug (to be fixed later) on all 64-bit
+	machines.
+
+	* tests/tset_str.c: Added a cast (useful under Linux/alpha).
+
+2003-09-01  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.h, mpfr.texi, print_rnd_mode.c, TODO:
+	Changes (Patrick Pelissier's suggestions):
+	  _ mpfr_print_rnd_mode now has __gmp_const char * return type;
+	  _ some corrections in mpfr.texi, documentencoding set.
+
+2003-08-30  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/Makefile.am (EXTRA_libfrtests_a_SOURCES): Add amd64.asm.
+
+	* tests/amd64.asm: New file.
+
+	* acinclude.m4: Correction to:
+	(MPFR_CONFIGS): Add amd64-*-* to x86 test objects.
+
+	* tests/tests.c (tests_machine_prec_long_double): Add amd64 to the
+	comments.
+
+	* acinclude.m4 (MPFR_CONFIGS): Add amd64-*-* to x86 test objects.
+
+	* tests/tset_ld.c (check_set_get): Improve error messages.
+
+	* mpfr-test.h, tests/tests.c (ld_trace): New function.
+
+	* set_ld.c (ldbl_max_struct): Use octal character constants, since hex
+	is an ANSI-ism.
+
+2003-08-07  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* ui_pow_ui.c: Avoid a potential overflow.
+
+2003-08-04  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* agm.c, tests/tagm.c: fixed pb found by Damien Fisher
+
+2003-07-24  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* get_d.c:
+	If the exponent of the number is meaningless (src = NaN, inf or 0),
+	0 is stored in expptr (behavior similar to the ISO C frexp function).
+
+2003-07-21  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* TODO: added one item
+
+2003-07-19  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/Makefile.am (check_PROGRAMS): Add tget_d_2exp.c.
+
+	* tests/tget_d_2exp.c: New file, partly derived from tget_d.c.
+
+	* get_d.c (mpfr_get_d_2exp): Ensure 0.5 <= abs(ret) < 1.0 is respected
+	when rounding away from zero.
+
+	* mpfr-test.h, tests/tests.c (d_trace): New function.
+
+	* mpfr.texi (Converting Floats): mpfr_get_d_2exp stores to a long.
+
+	* get_d.c (mpfr_get_d_2exp): Store exp in a long, same as
+	mpz_get_d_2exp and mpf_get_d_2exp.
+
+2003-07-18  Kevin Ryde  <user42@zip.com.au>
+
+	* mpfr.h (mpfr_get_d_2exp): Store exp in a long, same as
+	mpz_get_d_2exp and mpf_get_d_2exp.
+
+2003-07-15  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* get_d.c: Updated comment.
+
+2003-07-08  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* random2.c: Correction in a comment (patch by Torbjorn).
+
+2003-07-01  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr.texi, round_prec.c: can_round returns 0 for NaN/Inf
+
+	* round_prec.c: fixed Uninitialized memory read in mpfr_can_round
+	(when b is NaN or Inf)
+
+2003-06-30  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tget_str.c:
+	fixed array bound write (need 6+1 characters in s1 to represent -@inf@ + \0)
+
+2003-06-28  Kevin Ryde  <user42@zip.com.au>
+
+	* get_d.c: Add "const" to IEEE byte sequence data.
+
+	* tests/tests.c (tests_rand_end): Remove explicit __gmp_rands
+	clearing, it's what RANDS_CLEAR does already.
+
+2003-06-26  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* cmp_d.c, get_d.c, get_ld.c, mpfr-impl.h, set_d.c, set_dfl_prec.c, set_ld.c:
+	moved macros for [L]DBL_MANT_DIG in mpfr-impl.h
+
+2003-06-25  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* urandomb.c: fixed several problems noticed by Kevin
+
+	* tests/tset_ld.c: changed test for 2^1024, using LDBL_MAX_EXP
+
+2003-06-24  Kevin Ryde  <user42@zip.com.au>
+
+	* mpfr-math.h: Remove file, no longer used.
+
+	* Makefile.am (libmpfr_a_SOURCES): Remove mpfr-math.h.
+
+	* get_d.c (MPFR_DBL_INFP, MPFR_DBL_INFM, MPFR_DBL_NAN): Make private
+	definitions based on IEEE byte sequences, in particular avoid HUGE_VAL
+	from mpfr-math.h since that's not infinity on hppa1.1-hp-hpux10.
+	Remove includes of mpfr-math.h, math.h and stddef.h.
+
+	* tests/tget_d.c (check_inf_nan): New test.
+
+	* acinclude.m4 (MPFR_C_LONG_DOUBLE_FORMAT): Use octal char constants,
+	'\xHH' is an ANSI-ism.
+
+2003-06-24  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tset_ld.c:
+	check 2^1024 only when sizeof(long double) > sizeof(double)
+
+	* tests/tsub.c: correction to previous patch
+
+	* tests/tadd.c:
+	correction to previous patch: problem was that x and u can be 0,
+	then MPFR_PREC() undefined
+
+2003-06-24  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tests.c (tests_start_mpfr): Make stdout and stderr unbuffered.
+
+	* tests/tsub.c, tests/tadd.c (check_inexact):
+	For pz, use at least MPFR_PREC_MIN
+	since this is required by mpfr_set_prec.
+
+2003-06-23  Kevin Ryde  <user42@zip.com.au>
+
+	* TODO: Remove mingw portability of random/rand48, no longer used.
+
+	* TODO: Remove __setfpucw, no longer used.
+	Remove mpfr_integer_p, done.
+	Remove gmp rand functions in test programs, done.
+	Remove MPFR_CHECK_RANDOMIZE, done (as GMP_CHECK_RANDOMIZE).
+
+2003-06-21  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.texi: mpfr_random is deprecated.
+
+2003-06-20  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tdiv.c, tests/tsub.c, tests/tui_div.c:
+	changed since mpfr_random now can return 0
+
+2003-06-20  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* random.c:
+	The distribution should now be uniform (mpfr_random implemented
+	by calling mpfr_urandomb).
+
+	* mpfr.h, mpfr.texi, urandomb.c:
+	Take the current exponent range into account in mpfr_urandomb
+	(which now returns an int).
+
+	* urandomb.c: Bug fix.
+
+2003-06-20  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tests.c:
+	moved _gmp_rands_initialized stuff from tests_end_mpfr() to tests_rand_end()
+
+	* tests/tset_z.c, tests/tset_si.c: reduced default number of tests
+	improved style
+
+2003-06-19  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* exp_2.c: fixed bug in mpfr_exp2_aux2 (spe175.testdrive.hp.com)
+
+	* exp3.c: improved style
+
+	* tests/texp.c: added more information in case of failure
+
+	* tests/tests.c, tests/tlog.c, tests/tmul_2exp.c, tests/tout_str.c, tests/tset_d.c, tests/tset_f.c, tests/tset_si.c, tests/tset_str.c, tests/tset_z.c, tests/tadd.c, tests/tagm.c:
+	removed randseed() stuff [obsolete now we use the GMP mechanism]
+
+	* tests/tzeta.c: added memory test mechanism
+
+	* tests/tdiv.c: added new test from Parks
+
+	* zeta.c: fixed allocation problem (forgot to clear)
+
+2003-06-19  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr-test.h: Removed drand48/lrand48/srand48 prototypes.
+
+2003-06-18  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tset_z.c, tests/tset_si.c:
+	Don't use mpz_get_d1, since a 53-bit double is not
+	enough when long is 64-bits.
+
+2003-06-13  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tests.c: Use autoconf recommended style for time.h with
+	sys/time.h.
+
+	* acinclude.m4 (MPFR_CONFIGS): Require AC_HEADER_TIME, add
+	AC_CHECK_HEADERS of sys/time.h.
+
+	* acinclude.m4 (MPFR_CONFIGS): Add AC_CHECK_FUNCS of gettimeofday.
+
+2003-06-13  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tsqrt.c: moved disabled test to "special" code
+
+	* algorithms.bib, algorithms.tex: added reference to Higham
+
+	* algorithms.tex, erf.c, exp.c: improved error analysis on erf
+
+	* tests/tlog.c: improved indentation
+
+2003-06-12  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tests.c: added support for random see
+	(when env. variable GMP_CHECK_RANDOMIZE set)
+
+2003-06-12  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tatan.c, tests/tcmp.c, tests/tcmp2.c, tests/tdiv_ui.c, tests/terf.c, tests/tests.c, tests/texp.c, tests/tfma.c, tests/tgamma.c, tests/tgeneric.c, tests/thypot.c, tests/tlog.c, tests/tmul.c, tests/tmul_2exp.c, tests/tmul_ui.c, tests/tout_str.c, tests/tpow.c, tests/tpow3.c, tests/trint.c, tests/tset.c, tests/tset_d.c, tests/tset_f.c, tests/tset_si.c, tests/tset_str.c, tests/tset_z.c, tests/tsqrt.c, tests/tsub.c, tests/tsub_ui.c, tests/tui_div.c, tests/tui_pow.c, tests/tui_sub.c, tests/tzeta.c, acinclude.m4, mpfr-test.h, tests/tabs.c, tests/tacos.c, tests/tadd.c, tests/tagm.c, tests/tasin.c:
+	Replaced misc random functions by GMP ones.
+
+	* mpfr-test.h, tests/tests.c: Added function randlimb().
+
+	* erf.c: Fixed a few bugs concerning special values, code simplified.
+
+2003-06-12  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* Makefile.am, algorithms.tex, erf.c, mpfr.h, mpfr.texi, tests/Makefile.am, tests/terf.c:
+	added error function
+
+2003-06-11  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* random2.c: Make x positive + some minor changes.
+
+	* random2.c: New version written by Torbjorn Granlund.
+
+2003-06-10  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* algorithms.bib, algorithms.tex: updated formular for erf
+	added url for Abramowitz & Stegun
+
+2003-06-10  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* get_d.c: Added a comment concerning NO_MATH_DEFS.
+
+2003-06-10  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tgamma.c: made test faster
+
+	* tests/tzeta.c: reduced test time
+
+	* tests/tdiv.c: reduced time of test
+
+	* tests/tfrac.c: reduced time
+
+2003-06-09  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tabs.c, tests/tacos.c, tests/tadd.c, tests/tasin.c, tests/tatan.c, tests/tcmp2.c, tests/tconst_euler.c, tests/tconst_log2.c, tests/tconst_pi.c, tests/tcos.c, tests/tdiv.c, tests/tdiv_ui.c, tests/texceptions.c, tests/texp.c, tests/tfactorial.c, tests/tfma.c, tests/tgamma.c, tests/tgeneric.c, tests/tget_str.c, tests/thyperbolic.c, tests/thypot.c, tests/tlog.c, tests/tmul_ui.c, tests/tpow.c, tests/tpow3.c, tests/trandom.c, tests/tset_d.c, tests/tset_si.c, tests/tset_str.c, tests/tsin_cos.c, tests/tsqrt.c, tests/tsub.c, tests/tsub_ui.c, tests/tui_div.c, tests/tui_pow.c, tests/tui_sub.c, tests/tzeta.c:
+	Patch by Torbjorn: use puts not putchar, to avoid GNUPro compiler bug.
+
+2003-06-08  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tsqrt.c: Disable "8093416094703476*2^(-1075)" because mips64
+	SGI cc doesn't seem to like the value (a denorm).
+
+	* get_d.c: Include <stddef.h> before <math.h>, to avoid problems with
+	gcc 3.2 on hppa2.0w-hp-hpux11.11.
+
+	* mpfr-test.h (random): Remove prototype, since it conflicts with
+	stdlib.h on osf4.
+
+2003-05-28  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr-test.h, tests/tzeta.c, mpfr-impl.h:
+	Added prototypes of non-standard functions that weren't always defined.
+
+	* mpfr-impl.h:
+	MPFR_EXP_CHECK is now defined when WANT_ASSERT is defined.
+
+2003-05-26  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* zeta.c:
+	The special case s = 1 is taken into account (the previous code
+	seemed to work, but perhaps not for rigorous reasons).
+
+	* tests/tzeta.c: Added test for case s = 1.
+
+	* round_prec.c (mpfr_round_prec):
+	Bug fixed (case zero wasn't taken into account)
+	and 'assertion failed' avoided.
+
+	* add_one_ulp.c, div_ui.c, sub_one_ulp.c:
+	Update related to MPFR_GET_EXP and MPFR_SET_EXP.
+
+	* rint.c: MPFR_GET_EXP (r) -> exp.
+
+	* swap.c: Function mpfr_swap rewritten using memcpy.
+
+	* set.c, set_si.c, set_ui.c, sqrt_ui.c, sub_ui.c, add_ui.c, mpfr-impl.h:
+	Updates/optimizations related to MPFR_GET_EXP and MPFR_SET_EXP.
+
+2003-05-23  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* add1.c: Code clean-up. Assertion failed avoided.
+
 2003-05-22  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* ChangeLog: Update.
 
 	* mpfr-impl.h, mul.c, mul_2si.c, mul_2ui.c, mul_ui.c, next.c, pow.c, print_raw.c, random.c, random2.c, rint.c, round_prec.c, set.c, set_d.c, set_exp.c, set_f.c, set_si.c, set_str.c, set_str_raw.c, set_ui.c, set_z.c, setmax.c, setmin.c, sin.c, sin_cos.c, sinh.c, sqrt.c, sqrt_ui.c, sub.c, sub1.c, sub_one_ulp.c, sub_ui.c, swap.c, tan.c, tanh.c, ui_div.c, ui_pow.c, ui_sub.c, urandomb.c, zeta.c, acos.c, acosh.c, add.c, add1.c, add_one_ulp.c, add_ui.c, asin.c, asinh.c, atan.c, atanh.c, cbrt.c, cmp.c, cmp2.c, cmp_abs.c, cmp_si.c, cmp_ui.c, const_log2.c, const_pi.c, cos.c, div.c, div_2si.c, div_2ui.c, div_ui.c, eq.c, exceptions.c, exp.c, exp2.c, exp3.c, exp_2.c, expm1.c, frac.c, generic.c, get_d.c, get_exp.c, get_ld.c, get_si.c, get_str.c, get_ui.c, get_z_exp.c, hypot.c, isinteger.c, log.c, log1p.c, log2.c, BUGS:
 	Macros MPFR_EXP_INVALID (invalid exponent value) and MPFR_EXP_CHECK

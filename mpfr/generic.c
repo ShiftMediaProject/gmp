@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 /* Compute the first 2^m terms from the hypergeometric series
    with x = p / 2^r */
 static int
-GENERIC (mpfr_ptr y, mpz_srcptr p, int r, int m)
+GENERIC (mpfr_ptr y, mpz_srcptr p, long r, int m)
 {
   int n,i,k,j,l;
   int is_p_one = 0;

@@ -42,8 +42,8 @@ check3 (double d, mp_rnd_t rnd, double e)
 
   mpfr_init2 (x, 53);
   mpfr_init2 (y, 53);
-  mpfr_set_d (x, d, rnd); 
-  mpfr_exp (y, x, rnd); 
+  mpfr_set_d (x, d, rnd);
+  mpfr_exp (y, x, rnd);
   f = mpfr_get_d1 (y);
   if (f != e && !(Isnan(f) && Isnan(e)))
     {
@@ -73,7 +73,7 @@ static int
 check_large (double d, int n, mp_rnd_t rnd)
 {
   mpfr_t x, y;
-  
+
   mpfr_init2 (x, n);
   mpfr_init2 (y, n);
   if (d == 0.0)
@@ -120,7 +120,7 @@ check_worst_case (double X, double expx)
   mpfr_exp(y, x, GMP_RNDD);
   if (mpfr_get_d1 (y) != expx)
     {
-      fprintf(stderr, "exp(x) rounded towards -infinity is wrong\n");
+      printf ("exp(x) rounded towards -infinity is wrong\n");
       exit(1);
     }
   mpfr_exp(x, x, GMP_RNDN);
@@ -129,7 +129,7 @@ check_worst_case (double X, double expx)
   mpfr_add_one_ulp(y, GMP_RNDN);
   if (mpfr_cmp(x,y))
     {
-      fprintf(stderr, "exp(x) rounded towards +infinity is wrong\n");
+      printf ("exp(x) rounded towards +infinity is wrong\n");
       exit(1);
     }
   mpfr_clear(x); mpfr_clear(y);
@@ -169,12 +169,12 @@ check_worst_cases (void)
   mpfr_exp3 (x, x, GMP_RNDD);
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "mpfr_exp_2 and mpfr_exp3 differ for prec=601\n");
-      fprintf (stderr, "mpfr_exp_2 gives ");
-      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
-      fprintf (stderr, "\nmpfr_exp_3 gives ");
-      mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("mpfr_exp_2 and mpfr_exp3 differ for prec=601\n");
+      printf ("mpfr_exp_2 gives ");
+      mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+      printf ("\nmpfr_exp_3 gives ");
+      mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
 
@@ -231,21 +231,21 @@ check_special ()
   /* bug reported by Franky Backeljauw, 28 Mar 2003 */
   mpfr_init2 (x, 53);
   mpfr_init2 (y, 53);
-  mpfr_set_str_raw (x, "1.1101011000111101011110000111010010101001101001110111e28");
+  mpfr_set_str_binary (x, "1.1101011000111101011110000111010010101001101001110111e28");
   mpfr_exp (y, x, GMP_RNDN);
 
   mpfr_set_prec (x, 153);
   mpfr_init2 (z, 153);
-  mpfr_set_str_raw (x, "1.1101011000111101011110000111010010101001101001110111e28");
+  mpfr_set_str_binary (x, "1.1101011000111101011110000111010010101001101001110111e28");
   mpfr_exp (z, x, GMP_RNDN);
   mpfr_prec_round (z, 53, GMP_RNDN);
 
   if (mpfr_cmp (y, z))
     {
-      fprintf (stderr, "Error in mpfr_exp for large argument\n");
+      printf ("Error in mpfr_exp for large argument\n");
       exit (1);
     }
-  
+
   mpfr_clear (x);
   mpfr_clear (y);
   mpfr_clear (z);
@@ -262,7 +262,7 @@ main (int argc, char *argv[])
 
   if (argc == 4)
     {
-      check_large (atof(argv[1]), atoi(argv[2]), atoi(argv[3])); 
+      check_large (atof(argv[1]), atoi(argv[2]), atoi(argv[3]));
       exit (0);
     }
 
@@ -291,7 +291,7 @@ main (int argc, char *argv[])
   check3(2.58165606081678085104e+01, GMP_RNDD, 1.62925781879432281494e+11);
   check3(-2.36539020084338638128e+01, GMP_RNDZ, 5.33630792749924762447e-11);
   check3(2.39211946135858077866e+01, GMP_RNDU, 2.44817704330214385986e+10);
-  check3(-2.78190533055889162029e+01, GMP_RNDZ, 8.2858803483596879512e-13); 
+  check3(-2.78190533055889162029e+01, GMP_RNDZ, 8.2858803483596879512e-13);
   check3(2.64028186174889789584e+01, GMP_RNDD, 2.9281844652878973388e11);
   check3(2.92086338843268329413e+01, GMP_RNDZ, 4.8433797301907177734e12);
   check3(-2.46355324071459982349e+01, GMP_RNDZ, 1.9995129297760994791e-11);
@@ -301,11 +301,11 @@ main (int argc, char *argv[])
   d = 7819821913254249.0 / 70368744177664.0;
   check3(d, GMP_RNDN, 1.8262572323517295459e48);
   check3(-3.56196340354684821250e+02, GMP_RNDN, 2.0225297096141478156e-155);
-  check3(6.59678273772710895173e+02, GMP_RNDU, 3.1234469273830195529e286); 
-  check3(5.13772529701934331570e+02, GMP_RNDD, 1.3445427121297197752e223); 
-  check3(3.57430211008718345056e+02, GMP_RNDD, 1.6981197246857298443e155); 
-  check3(3.82001814471465536371e+02, GMP_RNDU, 7.9667300591087367805e165); 
-  check3(5.92396038219384422518e+02, GMP_RNDD, 1.880747529554661989e257); 
+  check3(6.59678273772710895173e+02, GMP_RNDU, 3.1234469273830195529e286);
+  check3(5.13772529701934331570e+02, GMP_RNDD, 1.3445427121297197752e223);
+  check3(3.57430211008718345056e+02, GMP_RNDD, 1.6981197246857298443e155);
+  check3(3.82001814471465536371e+02, GMP_RNDU, 7.9667300591087367805e165);
+  check3(5.92396038219384422518e+02, GMP_RNDD, 1.880747529554661989e257);
   check3(-5.02678550462488090034e+02, GMP_RNDU, 4.8919201895446217839e-219);
   check3(5.30015757134837031117e+02, GMP_RNDD, 1.5237672861171573939e230);
   check3(5.16239362447650933063e+02, GMP_RNDZ, 1.5845518406744492105e224);

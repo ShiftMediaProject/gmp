@@ -48,19 +48,6 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
   bp = MPFR_MANT(b);
   cp = MPFR_MANT(c);
 
-  if (ap == bp)
-    {
-      bp = (mp_ptr) TMP_ALLOC((size_t) MPFR_ABSSIZE(b) * BYTES_PER_MP_LIMB);
-      MPN_COPY (bp, ap, MPFR_ABSSIZE(b));
-      if (ap == cp)
-        { cp = bp; }
-    }
-  else if (ap == cp)
-    {
-      cp = (mp_ptr) TMP_ALLOC ((size_t) MPFR_ABSSIZE(c) * BYTES_PER_MP_LIMB);
-      MPN_COPY(cp, ap, MPFR_ABSSIZE(c));
-    }
-
   aq = MPFR_PREC(a);
   bq = MPFR_PREC(b);
   cq = MPFR_PREC(c);
@@ -70,6 +57,19 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
   sh = aq2 - aq;                    /* non-significant bits in low limb */
   bn = (bq-1)/BITS_PER_MP_LIMB + 1; /* number of significant limbs of b */
   cn = (cq-1)/BITS_PER_MP_LIMB + 1; /* number of significant limbs of c */
+
+  if (ap == bp)
+    {
+      bp = (mp_ptr) TMP_ALLOC (bn * BYTES_PER_MP_LIMB);
+      MPN_COPY (bp, ap, MPFR_ABSSIZE(b));
+      if (ap == cp)
+        { cp = bp; }
+    }
+  else if (ap == cp)
+    {
+      cp = (mp_ptr) TMP_ALLOC (cn * BYTES_PER_MP_LIMB);
+      MPN_COPY(cp, ap, MPFR_ABSSIZE(c));
+    }
 
   exp = MPFR_GET_EXP (b);
   MPFR_SET_SAME_SIGN(a, b);

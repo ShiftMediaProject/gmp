@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
-   
+
 #define TEST_FUNCTION mpfr_hypot
 
 static void
@@ -52,19 +52,19 @@ test_large (void)
   mpfr_hypot (t, x, y, GMP_RNDN);
   if (mpfr_cmp (z, t))
     {
-      fprintf (stderr, "Error in test_large: got\n");
-      mpfr_out_str (stderr, 2, 0, t, GMP_RNDN);
-      fprintf (stderr, "\ninstead of\n");
-      mpfr_out_str (stderr, 2, 0, z, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("Error in test_large: got\n");
+      mpfr_out_str (stdout, 2, 0, t, GMP_RNDN);
+      printf ("\ninstead of\n");
+      mpfr_out_str (stdout, 2, 0, z, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
 
   mpfr_set_prec (x, 53);
   mpfr_set_prec (t, 53);
   mpfr_set_prec (y, 53);
-  mpfr_set_str_raw (x, "0.11101100011110000011101000010101010011001101000001100E-1021");
-  mpfr_set_str_raw (t, "0.11111001010011000001110110001101011100001000010010100E-1021");
+  mpfr_set_str_binary (x, "0.11101100011110000011101000010101010011001101000001100E-1021");
+  mpfr_set_str_binary (t, "0.11111001010011000001110110001101011100001000010010100E-1021");
   mpfr_hypot (y, x, t, GMP_RNDN);
 
   mpfr_clear (x);
@@ -105,61 +105,61 @@ main (int argc, char *argv[])
       yprec = prec + 10;
 
       for (n=0; n<N; n++)
-	{
-	  mpfr_random(x1);
-	  mpfr_random(x2);
+        {
+          mpfr_random(x1);
+          mpfr_random(x2);
           if (randlimb () % 2)
-	    mpfr_neg (x1, x1, GMP_RNDN);
+            mpfr_neg (x1, x1, GMP_RNDN);
           if (randlimb () % 2)
-	    mpfr_neg (x2, x2, GMP_RNDN);
-	  rnd = randlimb () % 4;
-	  mpfr_set_prec (y, yprec);
+            mpfr_neg (x2, x2, GMP_RNDN);
+          rnd = randlimb () % 4;
+          mpfr_set_prec (y, yprec);
 
-	  compare =TEST_FUNCTION (y, x1,x2, rnd);
-	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
-	  if (mpfr_can_round (y, err, rnd, rnd, prec))
-	    {
-	      mpfr_set (t, y, rnd);
-	      inexact = TEST_FUNCTION (z, x1,x2, rnd);
-	      if (mpfr_cmp (t, z))
-		{ 
-		  printf ("results differ for x1=");
-		  mpfr_out_str (stdout, 2, prec, x1, GMP_RNDN);
-		  printf ("\n et x2=");
-		  mpfr_out_str (stdout, 2, prec, x2, GMP_RNDN);
-		  printf (" \n prec=%u rnd_mode=%s\n", prec,
-			  mpfr_print_rnd_mode (rnd));
-		  printf ("   got ");
+          compare =TEST_FUNCTION (y, x1,x2, rnd);
+          err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
+          if (mpfr_can_round (y, err, rnd, rnd, prec))
+            {
+              mpfr_set (t, y, rnd);
+              inexact = TEST_FUNCTION (z, x1,x2, rnd);
+              if (mpfr_cmp (t, z))
+                {
+                  printf ("results differ for x1=");
+                  mpfr_out_str (stdout, 2, prec, x1, GMP_RNDN);
+                  printf ("\n et x2=");
+                  mpfr_out_str (stdout, 2, prec, x2, GMP_RNDN);
+                  printf (" \n prec=%u rnd_mode=%s\n", prec,
+                          mpfr_print_rnd_mode (rnd));
+                  printf ("   got ");
                   mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
-		  puts ("");
-		  printf ("   expected ");
-		  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
-		  puts ("");
-		  printf ("   approximation was ");
-		  mpfr_print_binary (y);
-		  puts ("");
-		  exit (1);
-		}
-	      compare2 = mpfr_cmp (t, y);
-	      /* if rounding to nearest, cannot know the sign of t - f(x)
-		 because of composed rounding: y = o(f(x)) and t = o(y) */
-	      if ((rnd != GMP_RNDN) && (compare * compare2 >= 0))
-		compare = compare + compare2;
-	      else
-		compare = inexact; /* cannot determine sign(t-f(x)) */
-	      if (((inexact == 0) && (compare != 0)) ||
-		  ((inexact > 0) && (compare <= 0)) ||
-		  ((inexact < 0) && (compare >= 0)))
-              {
-		  fprintf (stderr, "Wrong inexact flag for rnd=%s: expected %d, got %d\n",
-			   mpfr_print_rnd_mode (rnd), compare, inexact);
-		  printf ("x1="); mpfr_print_binary (x1); puts ("");
-		  printf ("x2="); mpfr_print_binary (x2); puts ("");
-		  printf ("t="); mpfr_print_binary (t); puts ("");
-		  exit (1);
-              }
-	    }
-	}
+                  puts ("");
+                  printf ("   expected ");
+                  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
+                  puts ("");
+                  printf ("   approximation was ");
+                  mpfr_print_binary (y);
+                  puts ("");
+                  exit (1);
+                }
+              compare2 = mpfr_cmp (t, y);
+              /* if rounding to nearest, cannot know the sign of t - f(x)
+                 because of composed rounding: y = o(f(x)) and t = o(y) */
+              if ((rnd != GMP_RNDN) && (compare * compare2 >= 0))
+                compare = compare + compare2;
+              else
+                compare = inexact; /* cannot determine sign(t-f(x)) */
+              if (((inexact == 0) && (compare != 0)) ||
+                  ((inexact > 0) && (compare <= 0)) ||
+                  ((inexact < 0) && (compare >= 0)))
+                {
+                  printf ("Wrong inexact flag for rnd=%s: expected %d, got %d"
+                          "\n", mpfr_print_rnd_mode (rnd), compare, inexact);
+                  printf ("x1="); mpfr_print_binary (x1); puts ("");
+                  printf ("x2="); mpfr_print_binary (x2); puts ("");
+                  printf ("t="); mpfr_print_binary (t); puts ("");
+                  exit (1);
+                }
+            }
+        }
     }
 
   mpfr_clear (x1);

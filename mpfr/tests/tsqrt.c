@@ -158,10 +158,10 @@ special (void)
   mpfr_init (z);
 
   mpfr_set_prec (x, 27);
-  mpfr_set_str_raw (x, "0.110100111010101000010001011");
+  mpfr_set_str_binary (x, "0.110100111010101000010001011");
   if ((inexact = mpfr_sqrt (x, x, GMP_RNDZ)) >= 0)
     {
-      fprintf (stderr, "Wrong inexact flag: expected -1, got %d\n", inexact);
+      printf ("Wrong inexact flag: expected -1, got %d\n", inexact);
       exit (1);
     }
 
@@ -174,7 +174,8 @@ special (void)
       mpfr_sqrt (x, z, GMP_RNDU);
       if (mpfr_get_d1 (x) != 1.5)
 	{
-	  fprintf (stderr, "Error: sqrt(1+ulp(1), up) should give 1.5 (prec=%u)\n", (unsigned) p);
+	  printf ("Error: sqrt(1+ulp(1), up) should give 1.5 (prec=%u)\n",
+                  (unsigned int) p);
 	  printf ("got "); mpfr_print_binary (x); puts ("");
 	  exit (1);
 	}
@@ -182,10 +183,10 @@ special (void)
 
   /* check inexact flag */
   mpfr_set_prec (x, 5);
-  mpfr_set_str_raw (x, "1.1001E-2");
+  mpfr_set_str_binary (x, "1.1001E-2");
   if ((inexact = mpfr_sqrt (x, x, GMP_RNDN)))
     {
-      fprintf (stderr, "Wrong inexact flag: expected 0, got %d\n", inexact);
+      printf ("Wrong inexact flag: expected 0, got %d\n", inexact);
       exit (1);
     }
 
@@ -198,14 +199,14 @@ special (void)
   mpfr_sqrt (z, x, GMP_RNDN);
   if (mpfr_cmp_ui (z, 0) < 0)
     {
-      fprintf (stderr, "Error: square root of %e gives %e\n",
-               mpfr_get_d1 (x), mpfr_get_d1 (z));
+      printf ("Error: square root of %e gives %e\n",
+              mpfr_get_d1 (x), mpfr_get_d1 (z));
       exit (1);
     }
 
   mpfr_set_prec (x, 192);
   mpfr_set_prec (z, 160);
-  mpfr_set_str_raw (z, "0.1011010100000100100100100110011001011100100100000011000111011001011101101101110000110100001000100001100001011000E1");
+  mpfr_set_str_binary (z, "0.1011010100000100100100100110011001011100100100000011000111011001011101101101110000110100001000100001100001011000E1");
   mpfr_set_prec (x, 160);
   mpfr_sqrt(x, z, GMP_RNDN);
   mpfr_sqrt(z, x, GMP_RNDN);
@@ -217,7 +218,7 @@ special (void)
   mpfr_set_str (z, "1e55596835b5ef@-141", 16, GMP_RNDN);
   if (mpfr_cmp (x, z))
     {
-      fprintf (stderr, "Error: square root of 8093416094703476*2^(-1075)\n");
+      printf ("Error: square root of 8093416094703476*2^(-1075)\n");
       exit (1);
     }
 
@@ -240,7 +241,7 @@ check_inexact (mp_prec_t p)
   inexact = mpfr_sqrt (y, x, rnd);
   if (mpfr_mul (z, y, y, rnd)) /* exact since prec(z) = 2*prec(y) */
     {
-      fprintf (stderr, "Error: multiplication should be exact\n");
+      printf ("Error: multiplication should be exact\n");
       exit (1);
     }
   mpfr_sub (z, z, x, rnd); /* exact also */
@@ -249,8 +250,8 @@ check_inexact (mp_prec_t p)
       ((inexact > 0) && (sign <= 0)) ||
       ((inexact < 0) && (sign >= 0)))
     {
-      fprintf (stderr, "Error: wrong inexact flag, expected %d, got %d\n",
-	       sign, inexact);
+      printf ("Error: wrong inexact flag, expected %d, got %d\n",
+              sign, inexact);
       printf ("x=");
       mpfr_print_binary (x);
       printf (" rnd=%s\n", mpfr_print_rnd_mode (rnd));

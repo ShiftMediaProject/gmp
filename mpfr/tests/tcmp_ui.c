@@ -29,25 +29,25 @@ int
 main (void)
 {
   mpfr_t x; unsigned long i; long s;
-  
+
   tests_start_mpfr ();
 
   mpfr_init(x);
 
   mpfr_set_ui(x, 3, GMP_RNDZ);
-  if (mpfr_cmp_ui(x, i=3)!=0) {    
-    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d1 (x), i); 
-    mpfr_clear(x); 
+  if (mpfr_cmp_ui(x, i=3)!=0) {
+    printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d1 (x), i);
+    mpfr_clear(x);
     exit(1);
   }
   if (mpfr_cmp_ui(x, i=2)<=0) {
     printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d1 (x), i);
-    mpfr_clear(x); 
+    mpfr_clear(x);
     exit(1);
   }
   if (mpfr_cmp_ui(x, i=4)>=0) {
     printf("Error in mpfr_cmp_ui(%1.20f,%lu)\n",mpfr_get_d1 (x), i);
-    mpfr_clear(x); 
+    mpfr_clear(x);
     exit(1);
   }
   mpfr_set_ui (x, 0, GMP_RNDZ);
@@ -61,17 +61,17 @@ main (void)
   mpfr_set_si(x, -3, GMP_RNDZ);
   if (mpfr_cmp_si(x, s=-3)!=0) {
     printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d1 (x), s);
-    mpfr_clear(x); 
+    mpfr_clear(x);
     exit(1);
   }
   if (mpfr_cmp_si(x, s=-4)<=0) {
     printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d1 (x), s);
-    mpfr_clear(x); 
+    mpfr_clear(x);
     exit(1);
   }
   if (mpfr_cmp_si(x, s=1)>=0) {
     printf("Error in mpfr_cmp_si(%1.20f,%ld)\n",mpfr_get_d1 (x), s);
-    mpfr_clear(x); 
+    mpfr_clear(x);
     exit(1);
   }
 
@@ -79,11 +79,11 @@ main (void)
   mpfr_ui_div (x, 1, x, GMP_RNDU);
   if (mpfr_cmp_ui (x, 0) == 0)
     {
-      fprintf (stderr, "Error in mpfr_cmp_ui (Inf, 0)\n");
+      printf ("Error in mpfr_cmp_ui (Inf, 0)\n");
       exit (1);
     }
 
-  mpfr_clear(x); 
+  mpfr_clear(x);
 
   tests_end_mpfr ();
   return 0;

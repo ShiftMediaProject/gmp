@@ -34,54 +34,54 @@ special (void)
 {
   mpfr_t x, y, res;
   int inexact;
-  
+
   mpfr_init (x);
   mpfr_init (y);
   mpfr_init (res);
 
   mpfr_set_prec (x, 24);
   mpfr_set_prec (y, 24);
-  mpfr_set_str_raw (y, "0.111100110001011010111");
+  mpfr_set_str_binary (y, "0.111100110001011010111");
   inexact = mpfr_ui_sub (x, 1, y, GMP_RNDN);
   if (inexact)
     {
-      fprintf (stderr, "Wrong inexact flag: got %d, expected 0\n", inexact);
+      printf ("Wrong inexact flag: got %d, expected 0\n", inexact);
       exit (1);
     }
 
   mpfr_set_prec (x, 24);
   mpfr_set_prec (y, 24);
-  mpfr_set_str_raw (y, "0.111100110001011010111");
+  mpfr_set_str_binary (y, "0.111100110001011010111");
   if ((inexact = mpfr_ui_sub (x, 38181761, y, GMP_RNDN)) >= 0)
     {
-      fprintf (stderr, "Wrong inexact flag: got %d, expected -1\n", inexact);
+      printf ("Wrong inexact flag: got %d, expected -1\n", inexact);
       exit (1);
     }
 
   mpfr_set_prec (x, 63);
   mpfr_set_prec (y, 63);
-  mpfr_set_str_raw (y, "0.111110010010100100110101101010001001100101110001000101110111111E-1");
+  mpfr_set_str_binary (y, "0.111110010010100100110101101010001001100101110001000101110111111E-1");
   if ((inexact = mpfr_ui_sub (x, 1541116494, y, GMP_RNDN)) <= 0)
     {
-      fprintf (stderr, "Wrong inexact flag: got %d, expected +1\n", inexact);
+      printf ("Wrong inexact flag: got %d, expected +1\n", inexact);
       exit (1);
     }
 
   mpfr_set_prec (x, 32);
   mpfr_set_prec (y, 32);
-  mpfr_set_str_raw (y, "0.11011000110111010001011100011100E-1");
+  mpfr_set_str_binary (y, "0.11011000110111010001011100011100E-1");
   if ((inexact = mpfr_ui_sub (x, 2000375416, y, GMP_RNDN)) >= 0)
     {
-      fprintf (stderr, "Wrong inexact flag: got %d, expected -1\n", inexact);
+      printf ("Wrong inexact flag: got %d, expected -1\n", inexact);
       exit (1);
     }
 
   mpfr_set_prec (x, 24);
   mpfr_set_prec (y, 24);
-  mpfr_set_str_raw (y, "0.110011011001010011110111E-2");
+  mpfr_set_str_binary (y, "0.110011011001010011110111E-2");
   if ((inexact = mpfr_ui_sub (x, 927694848, y, GMP_RNDN)) <= 0)
     {
-      fprintf (stderr, "Wrong inexact flag: got %d, expected +1\n", inexact);
+      printf ("Wrong inexact flag: got %d, expected +1\n", inexact);
       exit (1);
     }
 
@@ -89,38 +89,40 @@ special (void)
   mpfr_set_prec (x, 5);
   mpfr_set_prec (y, 5);
   mpfr_set_prec (res, 5);
-  mpfr_set_str_raw (x, "1e-12");
+  mpfr_set_str_binary (x, "1e-12");
 
   mpfr_ui_sub (y, 1, x, GMP_RNDD);
-  mpfr_set_str_raw (res, "0.11111");
+  mpfr_set_str_binary (res, "0.11111");
   if (mpfr_cmp (y, res))
     {
-      fprintf (stderr, "Error in mpfr_ui_sub (y, 1, x, GMP_RNDD) for x=2^(-12)\nexpected 1.1111e-1, got ");
-      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("Error in mpfr_ui_sub (y, 1, x, GMP_RNDD) for x=2^(-12)\nexpected 1.1111e-1, got ");
+      mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
-  
+
   mpfr_ui_sub (y, 1, x, GMP_RNDU);
-  mpfr_set_str_raw (res, "1.0");
+  mpfr_set_str_binary (res, "1.0");
   if (mpfr_cmp (y, res))
     {
-      fprintf (stderr, "Error in mpfr_ui_sub (y, 1, x, GMP_RNDU) for x=2^(-12)\nexpected 1.0, got ");
-      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("Error in mpfr_ui_sub (y, 1, x, GMP_RNDU) for x=2^(-12)\n"
+              "expected 1.0, got ");
+      mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
-  
+
   mpfr_ui_sub (y, 1, x, GMP_RNDN);
-  mpfr_set_str_raw (res, "1.0");
+  mpfr_set_str_binary (res, "1.0");
   if (mpfr_cmp (y, res))
     {
-      fprintf (stderr, "Error in mpfr_ui_sub (y, 1, x, GMP_RNDN) for x=2^(-12)\nexpected 1.0, got ");
-      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("Error in mpfr_ui_sub (y, 1, x, GMP_RNDN) for x=2^(-12)\n"
+              "expected 1.0, got ");
+      mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
-  
+
   mpfr_clear (x);
   mpfr_clear (y);
   mpfr_clear (res);
@@ -158,7 +160,7 @@ check_two_sum (mp_prec_t p)
   mpfr_t y, u, v, w;
   mp_rnd_t rnd;
   int inexact;
-  
+
   mpfr_init2 (y, p);
   mpfr_init2 (u, p);
   mpfr_init2 (v, p);
@@ -179,8 +181,8 @@ check_two_sum (mp_prec_t p)
       ((inexact > 0) && (mpfr_cmp_ui (w, 0) <= 0)) ||
       ((inexact < 0) && (mpfr_cmp_ui (w, 0) >= 0)))
     {
-      fprintf (stderr, "Wrong inexact flag for prec=%u, rnd=%s\n", (unsigned)p,
-	       mpfr_print_rnd_mode (rnd));
+      printf ("Wrong inexact flag for prec=%u, rnd=%s\n",
+              (unsigned int) p, mpfr_print_rnd_mode (rnd));
       printf ("x=%u\n", x);
       printf ("y="); mpfr_print_binary(y); puts ("");
       printf ("u="); mpfr_print_binary(u); puts ("");

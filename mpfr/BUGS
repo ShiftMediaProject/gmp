@@ -28,20 +28,13 @@ Known bugs:
   partially implemented. For instance, mpfr_pow (z, x, y, rnd) fails for
   very small x and some values of y.
 
-* problem with tsqrt on ia64-hpux (problem is that variable a in check4 has
-	a different value than in the call, may be a memory problem, since
-	it disappears when we remove the mpfr_set_str instruction, and
-	disappears without -O2)
-mpfr_sqrt failed for a=4.15383748682786210282e+34, rnd_mode=GMP_RNDZ
-expected 0.10010010111100001100100110000001011110111111001010000[00000000000]E53
-got      0.10110101000001001111001100110011111110011101111001100[00000000000]E58
+* Elementary functions may return an incorrect ternary value (e.g.
+  in the rounding to nearest mode, when the exact value is close to
+  a representable number). A rewrite of mpfr_can_round (as proposed
+  by Paul Zimmermann) can help to fix this bug.
 
-* texp fails on ia64-hpux: mpfr_exp_2 and mpfr_exp3 for prec=601
-
-* acosh is wrong near EMAX (idem asinh):
-   rounding mode GMP_RNDU:
-      6096987078287.281250 ulp(s) for x=1.75062535692767808555e+308
-      [mpfr: 7.097561817130842e2 libm: 7.10449328893644064919e+02]
+* The mpfr_set_ld function assumes that the long double type has an
+  exponent of at most 15 bits.
 
 Potential bugs:
 
@@ -54,16 +47,8 @@ Potential bugs:
 
 * mpfr_set_d may give wrong results on some architectures.
 
-* Error analysis in mpfr_sin is incorrect. A test has been added to
-  show the bug. Check the other functions too...
+* Error analysis for some functions may be incorrect (out-of-date due
+  to modifications in the code?).
 
 * mpfr_hypot may fail for x very large, y very small and a very large
-  target precision.
-
-* Possible bugs related to the exponents. Compile with -DMPFR_EXP_CHECK
-  and make check to see the potential problems (but in this case, don't
-  be surprised if nothing is working!). This doesn't mean that the
-  results may be incorrect though (a further analysis should be done
-  and the code should be updated to avoid the failed assertions). As a
-  consequence, MPFR_EXP_CHECK is not currently defined by default even
-  when WANT_ASSERT is defined.
+  target precision. Other functions may be affected by similar problems.

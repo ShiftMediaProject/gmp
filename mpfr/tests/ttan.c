@@ -41,7 +41,7 @@ check_nans (void)
   mpfr_tan (y, x, GMP_RNDN);
   if (! mpfr_nan_p (y))
     {
-      fprintf (stderr, "Error: tan(NaN) != NaN\n");
+      printf ("Error: tan(NaN) != NaN\n");
       exit (1);
     }
 
@@ -49,7 +49,7 @@ check_nans (void)
   mpfr_tan (y, x, GMP_RNDN);
   if (! mpfr_nan_p (y))
     {
-      fprintf (stderr, "Error: tan(Inf) != NaN\n");
+      printf ("Error: tan(Inf) != NaN\n");
       exit (1);
     }
 
@@ -57,7 +57,7 @@ check_nans (void)
   mpfr_tan (y, x, GMP_RNDN);
   if (! mpfr_nan_p (y))
     {
-      fprintf (stderr, "Error: tan(-Inf) != NaN\n");
+      printf ("Error: tan(-Inf) != NaN\n");
       exit (1);
     }
 
@@ -84,8 +84,8 @@ main(int argc, char *argv[])
   mpfr_tan (x, x, GMP_RNDD);
   if (mpfr_get_d1 (x) != 0.5)
     {
-      fprintf (stderr, "mpfr_tan(0.5, GMP_RNDD) failed\n");
-      fprintf (stderr, "expected 0.5, got %f\n", mpfr_get_d1 (x));
+      printf ("mpfr_tan(0.5, GMP_RNDD) failed\n"
+              "expected 0.5, got %f\n", mpfr_get_d1 (x));
       exit (1);
     }
 
@@ -99,7 +99,7 @@ main(int argc, char *argv[])
       mpfr_tan (x, x, GMP_RNDN);
       if (mpfr_cmp_si (x, -1))
         {
-          fprintf (stderr, "tan(3*Pi/4) fails for prec=%u\n", prec[i]);
+          printf ("tan(3*Pi/4) fails for prec=%u\n", prec[i]);
           exit (1);
         }
     }
@@ -114,7 +114,7 @@ main(int argc, char *argv[])
       mpfr_tan (x, x, GMP_RNDN);
       if (mpfr_cmp_si (x, -1))
         {
-          fprintf (stderr, "tan(3*Pi/4) fails for prec=%u\n", prec2[i]);
+          printf ("tan(3*Pi/4) fails for prec=%u\n", prec2[i]);
           exit (1);
         }
     }

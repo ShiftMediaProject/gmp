@@ -40,7 +40,7 @@ check_pow_ui (void)
   mpfr_pow_ui (b, b, 10, GMP_RNDN);
   if (mpfr_cmp (a, b))
     {
-      fprintf (stderr, "Error for mpfr_pow_ui (b, b, ...)\n");
+      printf ("Error for mpfr_pow_ui (b, b, ...)\n");
       exit (1);
     }
 
@@ -52,7 +52,7 @@ check_pow_ui (void)
   mpfr_pow_ui (a, a, 4049053855UL, GMP_RNDN);
   if (!mpfr_inf_p (a) || (mpfr_sgn (a) >= 0))
     {
-      fprintf (stderr, "Error for (-Inf)^4049053855\n");
+      printf ("Error for (-Inf)^4049053855\n");
       exit (1);
     }
 
@@ -60,7 +60,7 @@ check_pow_ui (void)
   mpfr_pow_ui (a, a, (unsigned long) 30002752, GMP_RNDN);
   if (!mpfr_inf_p (a) || (mpfr_sgn (a) <= 0))
     {
-      fprintf (stderr, "Error for (-Inf)^30002752\n");
+      printf ("Error for (-Inf)^30002752\n");
       exit (1);
     }
 
@@ -86,35 +86,36 @@ check_inexact (mp_prec_t p)
   for (q=2; q<=p; q++)
     for (rnd=0; rnd<4; rnd++)
       {
-	mpfr_set_prec (y, q);
-	mpfr_set_prec (z, q + 10);
-	mpfr_set_prec (t, q);
-	inexact = mpfr_pow_ui (y, x, u, rnd);
-	cmp = mpfr_pow_ui (z, x, u, rnd);
-	if (mpfr_can_round (z, q + 10, rnd, rnd, q))
-	  {
-	    cmp = mpfr_set (t, z, rnd) || cmp;
-	    if (mpfr_cmp (y, t))
-	      {
-		fprintf (stderr, "results differ for u=%lu rnd=%s\n", u,
-			 mpfr_print_rnd_mode(rnd));
-		printf ("x="); mpfr_print_binary (x); puts ("");
-		printf ("y="); mpfr_print_binary (y); puts ("");
-		printf ("t="); mpfr_print_binary (t); puts ("");
-		printf ("z="); mpfr_print_binary (z); puts ("");
-		exit (1);
-	      }
-	    if (((inexact == 0) && (cmp != 0)) ||
-		((inexact != 0) && (cmp == 0)))
-	      {
-		fprintf (stderr, "Wrong inexact flag for p=%u, q=%u, rnd=%s\n",
-			 (unsigned) p, (unsigned) q, mpfr_print_rnd_mode (rnd));
-		printf ("expected %d, got %d\n", cmp, inexact);
-		printf ("u=%lu x=", u); mpfr_print_binary (x); puts ("");
+        mpfr_set_prec (y, q);
+        mpfr_set_prec (z, q + 10);
+        mpfr_set_prec (t, q);
+        inexact = mpfr_pow_ui (y, x, u, rnd);
+        cmp = mpfr_pow_ui (z, x, u, rnd);
+        if (mpfr_can_round (z, q + 10, rnd, rnd, q))
+          {
+            cmp = mpfr_set (t, z, rnd) || cmp;
+            if (mpfr_cmp (y, t))
+              {
+                printf ("results differ for u=%lu rnd=%s\n",
+                        u, mpfr_print_rnd_mode(rnd));
+                printf ("x="); mpfr_print_binary (x); puts ("");
                 printf ("y="); mpfr_print_binary (y); puts ("");
-		exit (1);
-	      }
-	  }
+                printf ("t="); mpfr_print_binary (t); puts ("");
+                printf ("z="); mpfr_print_binary (z); puts ("");
+                exit (1);
+              }
+            if (((inexact == 0) && (cmp != 0)) ||
+                ((inexact != 0) && (cmp == 0)))
+              {
+                printf ("Wrong inexact flag for p=%u, q=%u, rnd=%s\n",
+                        (unsigned int) p, (unsigned int) q,
+                        mpfr_print_rnd_mode (rnd));
+                printf ("expected %d, got %d\n", cmp, inexact);
+                printf ("u=%lu x=", u); mpfr_print_binary (x); puts ("");
+                printf ("y="); mpfr_print_binary (y); puts ("");
+                exit (1);
+              }
+          }
       }
 
   /* check exact power */
@@ -145,14 +146,14 @@ special ()
   mpfr_set_prec (y, 64);
   mpfr_set_prec (z, 64);
   mpfr_set_prec (t, 64);
-  mpfr_set_str_raw (x, "0.111011000111100000111010000101010100110011010000011");
-  mpfr_set_str_raw (y, "0.111110010100110000011101100011010111000010000100101");
-  mpfr_set_str_raw (t, "0.1110110011110110001000110100100001001111010011111000010000011001");
+  mpfr_set_str_binary (x, "0.111011000111100000111010000101010100110011010000011");
+  mpfr_set_str_binary (y, "0.111110010100110000011101100011010111000010000100101");
+  mpfr_set_str_binary (t, "0.1110110011110110001000110100100001001111010011111000010000011001");
     ;
   mpfr_pow (z, x, y, GMP_RNDN);
   if (mpfr_cmp (z, t))
     {
-      fprintf (stderr, "Error in mpfr_pow for prec=64, rnd=GMP_RNDN\n");
+      printf ("Error in mpfr_pow for prec=64, rnd=GMP_RNDN\n");
       exit (1);
     }
 
@@ -164,7 +165,7 @@ special ()
   mpfr_pow (z, x, y, GMP_RNDZ);
   if (mpfr_get_d1 (z) != 0.60071044650456473235)
     {
-      fprintf (stderr, "Error in mpfr_pow for prec=53, rnd=GMP_RNDZ\n");
+      printf ("Error in mpfr_pow for prec=53, rnd=GMP_RNDZ\n");
       exit (1);
     }
 
@@ -178,7 +179,7 @@ special ()
   mpfr_set_str (y, "1.01101001111010101110000101111e-1", 2, GMP_RNDN);
   if (mpfr_cmp (z, y))
     {
-      fprintf (stderr, "Error in mpfr_pow for prec=30, rnd=GMP_RNDN\n");
+      printf ("Error in mpfr_pow for prec=30, rnd=GMP_RNDN\n");
       exit (1);
     }
 
@@ -190,12 +191,12 @@ special ()
   mpfr_set_str (y, "1.01101011010001100000e-1", 2, GMP_RNDN);
   if (mpfr_cmp (z, y))
     {
-      fprintf (stderr, "Error in mpfr_pow for prec=21, rnd=GMP_RNDZ\n");
-      fprintf (stderr, "Expected ");
-      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
-      fprintf (stderr, "\nGot      ");
-      mpfr_out_str (stderr, 2, 0, z, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("Error in mpfr_pow for prec=21, rnd=GMP_RNDZ\n");
+      printf ("Expected ");
+      mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+      printf ("\nGot      ");
+      mpfr_out_str (stdout, 2, 0, z, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
 
@@ -252,9 +253,8 @@ particular_cases (void)
           p = -p;
         if (p != q[i][j])
           {
-            fprintf (stderr,
-                     "Error in mpfr_pow for particular case (%d,%d):\n"
-                     "got %d instead of %d\n", i, j, p, q[i][j]);
+            printf ("Error in mpfr_pow for particular case (%d,%d):\n"
+                    "got %d instead of %d\n", i, j, p, q[i][j]);
             error = 1;
           }
       }
@@ -286,11 +286,11 @@ underflows(void)
       mpfr_pow (y, x, y, GMP_RNDN);
       if (!MPFR_IS_FP(y) || mpfr_cmp_ui (y, 0))
         {
-          fprintf (stderr, "Error in mpfr_pow for ");
-          mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
-          fprintf (stderr, " ^ (%d/2)\nGot ", i);
-          mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
-          fprintf (stderr, " instead of 0.\n");
+          printf ("Error in mpfr_pow for ");
+          mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+          printf (" ^ (%d/2)\nGot ", i);
+          mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+          printf (" instead of 0.\n");
           exit (1);
         }
     }

@@ -40,7 +40,7 @@ main (int argc, char *argv[])
   long k, z, d;
   unsigned long zl, dl, N;
   int inex;
-  
+
   tests_start_mpfr ();
 
   mpfr_init2 (x, 100);
@@ -54,15 +54,13 @@ main (int argc, char *argv[])
       d = mpfr_get_si (x, GMP_RNDZ);
       if (d != z)
         {
-          fprintf (stderr, "Error in mpfr_set_si: expected %ld got %ld\n",
-                   z, d);
+          printf ("Error in mpfr_set_si: expected %ld got %ld\n", z, d);
           exit (1);
         }
       if (inex)
         {
-          fprintf (stderr, 
-                   "Error in mpfr_set_si: inex value incorrect for %ld: %d\n",
-                   z, inex);
+          printf ("Error in mpfr_set_si: inex value incorrect for %ld: %d\n",
+                  z, inex);
           exit (1);
         }
     }
@@ -74,15 +72,13 @@ main (int argc, char *argv[])
       dl = mpfr_get_ui (x, GMP_RNDZ);
       if (dl != zl)
         {
-          fprintf (stderr, "Error in mpfr_set_ui: expected %lu got %lu\n",
-                   zl, dl);
+          printf ("Error in mpfr_set_ui: expected %lu got %lu\n", zl, dl);
           exit (1);
         }
       if (inex)
         {
-          fprintf (stderr,
-                   "Error in mpfr_set_ui: inex value incorrect for %lu: %d\n",
-                   zl, inex);
+          printf ("Error in mpfr_set_ui: inex value incorrect for %lu: %d\n",
+                  zl, inex);
           exit (1);
         }
     }
@@ -90,14 +86,14 @@ main (int argc, char *argv[])
   mpfr_set_prec (x, 2);
   if (mpfr_set_si (x, 5, GMP_RNDZ) >= 0)
     {
-      fprintf (stderr, "Wrong inexact flag for x=5, rnd=GMP_RNDZ\n");
+      printf ("Wrong inexact flag for x=5, rnd=GMP_RNDZ\n");
       exit (1);
     }
 
   mpfr_set_prec (x, 2);
   if (mpfr_set_si (x, -5, GMP_RNDZ) <= 0)
     {
-      fprintf (stderr, "Wrong inexact flag for x=-5, rnd=GMP_RNDZ\n");
+      printf ("Wrong inexact flag for x=-5, rnd=GMP_RNDZ\n");
       exit (1);
     }
 
@@ -106,7 +102,7 @@ main (int argc, char *argv[])
   if (MPFR_MANT(x)[0] != ((mp_limb_t)1 << (mp_bits_per_limb-1))
       || inex >= 0)
     {
-      fprintf (stderr, "Error in mpfr_set_si(x:3, 77617, GMP_RNDD)\n");
+      printf ("Error in mpfr_set_si(x:3, 77617, GMP_RNDD)\n");
       mpfr_print_binary (x);
       puts ("");
       exit (1);
@@ -115,7 +111,7 @@ main (int argc, char *argv[])
   if (MPFR_MANT(x)[0] != ((mp_limb_t)1 << (mp_bits_per_limb-1))
       || inex >= 0)
     {
-      fprintf (stderr, "Error in mpfr_set_ui(x:3, 77617, GMP_RNDD)\n");
+      printf ("Error in mpfr_set_ui(x:3, 77617, GMP_RNDD)\n");
       mpfr_print_binary (x);
       puts ("");
       exit (1);
@@ -125,15 +121,15 @@ main (int argc, char *argv[])
   inex = mpfr_set_si (x, 33096, GMP_RNDU);
   if (mpfr_get_si (x, GMP_RNDZ) != 49152 || inex <= 0)
     {
-    fprintf (stderr, "Error in mpfr_set_si, exp. 49152, got %ld, inex %d\n",
-             mpfr_get_si (x, GMP_RNDZ), inex);
-    exit (1);
+      printf ("Error in mpfr_set_si, exp. 49152, got %ld, inex %d\n",
+              mpfr_get_si (x, GMP_RNDZ), inex);
+      exit (1);
     }
   inex = mpfr_set_ui (x, 33096, GMP_RNDU);
   if (mpfr_get_si (x, GMP_RNDZ) != 49152)
     {
-      fprintf (stderr, "Error in mpfr_set_ui, exp. 49152, got %ld, inex %d\n",
-               mpfr_get_si (x, GMP_RNDZ), inex);
+      printf ("Error in mpfr_set_ui, exp. 49152, got %ld, inex %d\n",
+              mpfr_get_si (x, GMP_RNDZ), inex);
       exit (1);
     }
 
@@ -141,7 +137,7 @@ main (int argc, char *argv[])
   mpfr_set_ui (x, 0, GMP_RNDN);
   if (MPFR_SIGN (x) < 0)
     {
-      fprintf (stderr, "mpfr_set_ui (x, 0) gives -0\n");
+      printf ("mpfr_set_ui (x, 0) gives -0\n");
       exit (1);
     }
 
@@ -149,7 +145,7 @@ main (int argc, char *argv[])
   mpfr_set_si (x, 0, GMP_RNDN);
   if (MPFR_SIGN (x) < 0)
     {
-      fprintf (stderr, "mpfr_set_si (x, 0) gives -0\n");
+      printf ("mpfr_set_si (x, 0) gives -0\n");
       exit (1);
     }
 
@@ -158,7 +154,7 @@ main (int argc, char *argv[])
   mpfr_set_si (x, -1, GMP_RNDN);
   if (mpfr_sgn (x) >= 0)
     {
-      fprintf (stderr, "mpfr_set_si (x, -1) fails\n");
+      printf ("mpfr_set_si (x, -1) fails\n");
       exit (1);
     }
 
@@ -167,7 +163,7 @@ main (int argc, char *argv[])
   mpfr_set_si (x, -31, GMP_RNDN);
   if (mpfr_sgn (x) >= 0)
     {
-      fprintf (stderr, "mpfr_set_si (x, -31) fails\n");
+      printf ("mpfr_set_si (x, -31) fails\n");
       exit (1);
     }
 

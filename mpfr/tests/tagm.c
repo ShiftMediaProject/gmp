@@ -57,12 +57,12 @@ check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
   mpfr_init2(ta, 53);
   mpfr_init2(tb, 53);
   mpfr_init2(tres, 53);
-  
+
   mpfr_set_d(ta, a, rnd_mode);
   mpfr_set_d(tb, b, rnd_mode);
 
   mpfr_agm(tres, ta, tb, rnd_mode);
-  
+
   res2 = mpfr_get_d1 (tres);
 
   if (res1!=res2 && !(Isnan(res1) && Isnan(res2)))
@@ -87,15 +87,15 @@ check_large (void)
   mpfr_init2 (agm, 82);
 
   mpfr_set_ui (a, 1, GMP_RNDN);
-  mpfr_set_str_raw (b, "0.1111101100001000000001011000110111101000001011111000100001000101010100011111110010E-39");
+  mpfr_set_str_binary (b, "0.1111101100001000000001011000110111101000001011111000100001000101010100011111110010E-39");
   mpfr_agm (agm, a, b, GMP_RNDN);
-  mpfr_set_str_raw (a, "0.1110001000111101101010101010101101001010001001001011100101111011110101111001111100E-4");
+  mpfr_set_str_binary (a, "0.1110001000111101101010101010101101001010001001001011100101111011110101111001111100E-4");
   if (mpfr_cmp (agm, a))
     {
-      fprintf (stderr, "mpfr_agm failed for precision 82\n");
+      printf ("mpfr_agm failed for precision 82\n");
       exit (1);
     }
-  
+
   /* problem found by Damien Fischer <damien@maths.usyd.edu.au> 4 Aug 2003:
      produced a division by zero exception */
   mpfr_set_prec (a, 268);
@@ -128,7 +128,7 @@ slave (int N, int p)
     mpfr_set_d(tb, b, GMP_RNDN);
     mpfr_agm(tres, ta, tb, randlimb () % 4 );
   }
-    mpfr_clear(ta); mpfr_clear(ta); mpfr_clear(tres); 
+    mpfr_clear(ta); mpfr_clear(ta); mpfr_clear(tres);
     printf("fin\n");
 }
 #endif
@@ -198,7 +198,7 @@ main (int argc, char* argv[])
        N = atoi (argv[1]);
        for (i = 0; i < N; i++)
          {
-           a = DBL_RAND (); 
+           a = DBL_RAND ();
            b = DBL_RAND ();
            check(a, b, randlimb () % 4);
          }

@@ -60,7 +60,7 @@ check_inexact (void)
   int inexact, cmp;
   unsigned long int u;
   mp_rnd_t rnd;
-  
+
   mpfr_init (x);
   mpfr_init (y);
   mpfr_init (z);
@@ -75,32 +75,32 @@ check_inexact (void)
       while (mpfr_cmp_ui (x, 0) == 0);
       u = randlimb ();
       for (py=2; py<300; py++)
-	{
-	  mpfr_set_prec (y, py);
-	  mpfr_set_prec (z, py + px);
-	  for (rnd=0; rnd<4; rnd++)
-	    {
-	      inexact = mpfr_ui_div (y, u, x, rnd);
-	      if (mpfr_mul (z, y, x, rnd))
-		{
-		  fprintf (stderr, "z <- y * x should be exact\n");
-		  exit (1);
-		}
-	      cmp = mpfr_cmp_ui (z, u);
-	      if (((inexact == 0) && (cmp != 0)) ||
-		  ((inexact > 0) && (cmp <= 0)) ||
-		  ((inexact < 0) && (cmp >= 0)))
-		{
-		  fprintf (stderr, "Wrong inexact flag for u=%lu, rnd=%s\n", u,
-			   mpfr_print_rnd_mode(rnd));
-		  printf ("expected %d, got %d\n", cmp, inexact);
-		  printf ("x="); mpfr_print_binary (x); puts ("");
-		  printf ("y="); mpfr_print_binary (y); puts ("");
-		  printf ("y*x="); mpfr_print_binary (z); puts ("");
-		  exit (1);
-		}
-	    }
-	}
+        {
+          mpfr_set_prec (y, py);
+          mpfr_set_prec (z, py + px);
+          for (rnd=0; rnd<4; rnd++)
+            {
+              inexact = mpfr_ui_div (y, u, x, rnd);
+              if (mpfr_mul (z, y, x, rnd))
+                {
+                  printf ("z <- y * x should be exact\n");
+                  exit (1);
+                }
+              cmp = mpfr_cmp_ui (z, u);
+              if (((inexact == 0) && (cmp != 0)) ||
+                  ((inexact > 0) && (cmp <= 0)) ||
+                  ((inexact < 0) && (cmp >= 0)))
+                {
+                  printf ("Wrong inexact flag for u=%lu, rnd=%s\n",
+                          u, mpfr_print_rnd_mode (rnd));
+                  printf ("expected %d, got %d\n", cmp, inexact);
+                  printf ("x="); mpfr_print_binary (x); puts ("");
+                  printf ("y="); mpfr_print_binary (y); puts ("");
+                  printf ("y*x="); mpfr_print_binary (z); puts ("");
+                  exit (1);
+                }
+            }
+        }
     }
 
   mpfr_clear (x);

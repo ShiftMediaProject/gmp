@@ -45,7 +45,7 @@ main (void)
   for (s = 2; s < 100; s++)
     {
       /* z has exactly s bits */
-      
+
       mpz_mul_2exp (z, z, 1);
       if (randlimb () % 2)
         mpz_add_ui (z, z, 1);
@@ -53,8 +53,8 @@ main (void)
       mpfr_set_prec (t, s);
       if (mpfr_set_z (x, z, GMP_RNDN))
         {
-          fprintf (stderr, "Error: mpfr_set_z should be exact (s = %u)\n",
-                   (unsigned int) s);
+          printf ("Error: mpfr_set_z should be exact (s = %u)\n",
+                  (unsigned int) s);
           exit (1);
         }
       for (p=2; p<100; p++)
@@ -72,7 +72,7 @@ main (void)
                 inexact = mpfr_floor (y, x);
               if (mpfr_sub (t, y, x, GMP_RNDN))
                 {
-                  fprintf (stderr, "Error: subtraction should be exact\n");
+                  printf ("Error: subtraction should be exact\n");
                   exit (1);
                 }
               sign_t = mpfr_cmp_ui (t, 0);
@@ -80,7 +80,7 @@ main (void)
                   ((inexact < 0) && (sign_t >= 0)) ||
                   ((inexact > 0) && (sign_t <= 0)))
                 {
-                  fprintf (stderr, "Wrong inexact flag\n");
+                  printf ("Wrong inexact flag\n");
                   exit (1);
                 }
             }

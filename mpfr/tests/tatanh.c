@@ -1,6 +1,6 @@
 /* Test file for mpfr_atanh.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -23,7 +23,9 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 #define TEST_FUNCTION mpfr_atanh

@@ -24,7 +24,9 @@ MA 02111-1307, USA. */
 #include <float.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 static void
@@ -35,8 +37,8 @@ check (double d, unsigned long u, mp_rnd_t rnd, double e)
 
   mpfr_init2 (x, 53);
   mpfr_init2 (y, 53);
-  mpfr_set_d (x, d, rnd); 
-  mpfr_div_ui (y, x, u, rnd); 
+  mpfr_set_d (x, d, rnd);
+  mpfr_div_ui (y, x, u, rnd);
   f = mpfr_get_d1 (y);
   if (f != e && !(Isnan(f) && Isnan(e)))
     {
@@ -72,38 +74,38 @@ special (void)
   mpfr_div_ui (y, x, 123456789, GMP_RNDN);
   if (mpfr_cmp_ui (y, 0))
     {
-      fprintf (stderr, "mpfr_div_ui gives non-zero for 0/ui\n");
+      printf ("mpfr_div_ui gives non-zero for 0/ui\n");
       exit (1);
     }
 
   /* bug found by Norbert Mueller, 21 Aug 2001 */
   mpfr_set_prec (x, 110);
   mpfr_set_prec (y, 60);
-  mpfr_set_str_raw (x, "0.110101110011111110011111001110011001110111000000111110001000111011000011E-44");
+  mpfr_set_str_binary (x, "0.110101110011111110011111001110011001110111000000111110001000111011000011E-44");
   mpfr_div_ui (y, x, 17, GMP_RNDN);
-  mpfr_set_str_raw (x, "0.11001010100101100011101110000001100001010110101001010011011E-48");
+  mpfr_set_str_binary (x, "0.11001010100101100011101110000001100001010110101001010011011E-48");
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "Error in x/17 for x=1/16!\n");
-      fprintf (stderr, "Expected ");
-      mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
-      fprintf (stderr, "\nGot      ");
-      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
-      fprintf (stderr, "\n");
+      printf ("Error in x/17 for x=1/16!\n");
+      printf ("Expected ");
+      mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+      printf ("\nGot      ");
+      mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+      printf ("\n");
       exit (1);
     }
 
   for (xprec = 53; xprec <= 128; xprec++)
     {
       mpfr_set_prec (x, xprec);
-      mpfr_set_str_raw (x, "0.1100100100001111110011111000000011011100001100110111E2");
+      mpfr_set_str_binary (x, "0.1100100100001111110011111000000011011100001100110111E2");
       for (yprec = 53; yprec <= 128; yprec++)
 	{
 	  mpfr_set_prec (y, yprec);
 	  mpfr_div_ui (y, x, 1, GMP_RNDN);
 	  if (mpfr_get_d1 (x) != mpfr_get_d1 (y))
 	    {
-	      fprintf (stderr, "division by 1.0 fails for xprec=%u, yprec=%u\n", xprec, yprec);
+	      printf ("division by 1.0 fails for xprec=%u, yprec=%u\n", xprec, yprec);
 	      printf ("expected "); mpfr_print_binary (x); puts ("");
 	      printf ("got      "); mpfr_print_binary (y); puts ("");
 	      exit (1);
@@ -123,7 +125,7 @@ check_inexact (void)
   int inexact, cmp;
   unsigned long int u;
   mp_rnd_t rnd;
-  
+
   mpfr_init (x);
   mpfr_init (y);
   mpfr_init (z);
@@ -132,34 +134,38 @@ check_inexact (void)
     {
       mpfr_set_prec (x, px);
       mpfr_random (x);
-      do { u = randlimb (); } while (u == 0);
+      do
+        {
+          u = randlimb ();
+        }
+      while (u == 0);
       for (py=2; py<300; py++)
-	{
-	  mpfr_set_prec (y, py);
-	  mpfr_set_prec (z, py + mp_bits_per_limb);
-	  for (rnd=0; rnd<4; rnd++)
-	    {
-	      inexact = mpfr_div_ui (y, x, u, rnd);
-	      if (mpfr_mul_ui (z, y, u, rnd))
-		{
-		  fprintf (stderr, "z <- y * u should be exact for u=%lu\n", u);
-		  printf ("y="); mpfr_print_binary (y); puts ("");
-		  printf ("z="); mpfr_print_binary (z); puts ("");
-		  exit (1);
-		}
-	      cmp = mpfr_cmp (z, x);
-	      if (((inexact == 0) && (cmp != 0)) ||
-		  ((inexact > 0) && (cmp <= 0)) ||
-		  ((inexact < 0) && (cmp >= 0)))
-		{
-		  fprintf (stderr, "Wrong inexact flag for u=%lu, rnd=%s\n", u,
-			   mpfr_print_rnd_mode(rnd));
-		  printf ("x="); mpfr_print_binary (x); puts ("");
-		  printf ("y="); mpfr_print_binary (y); puts ("");
-		  exit (1);
-		}
-	    }
-	}
+        {
+          mpfr_set_prec (y, py);
+          mpfr_set_prec (z, py + mp_bits_per_limb);
+          for (rnd=0; rnd<4; rnd++)
+            {
+              inexact = mpfr_div_ui (y, x, u, rnd);
+              if (mpfr_mul_ui (z, y, u, rnd))
+                {
+                  printf ("z <- y * u should be exact for u=%lu\n", u);
+                  printf ("y="); mpfr_print_binary (y); puts ("");
+                  printf ("z="); mpfr_print_binary (z); puts ("");
+                  exit (1);
+                }
+              cmp = mpfr_cmp (z, x);
+              if (((inexact == 0) && (cmp != 0)) ||
+                  ((inexact > 0) && (cmp <= 0)) ||
+                  ((inexact < 0) && (cmp >= 0)))
+                {
+                  printf ("Wrong inexact flag for u=%lu, rnd=%s\n", u,
+                          mpfr_print_rnd_mode(rnd));
+                  printf ("x="); mpfr_print_binary (x); puts ("");
+                  printf ("y="); mpfr_print_binary (y); puts ("");
+                  exit (1);
+                }
+            }
+        }
     }
 
   mpfr_clear (x);
@@ -190,9 +196,11 @@ main (int argc, char **argv)
   mpfr_set_ui(x, 3, GMP_RNDD);
   mpfr_log(x, x, GMP_RNDD);
   mpfr_div_ui(x, x, 5, GMP_RNDD);
-  if (mpfr_get_d1 (x) != 0.21972245773362189536) {
-    fprintf(stderr, "Error in mpfr_div_ui for x=ln(3), u=5\n"); exit(1);
-  }
+  if (mpfr_get_d1 (x) != 0.21972245773362189536)
+    {
+      printf ("Error in mpfr_div_ui for x=ln(3), u=5\n");
+      exit (1);
+    }
   mpfr_clear(x);
 
   tests_end_mpfr ();

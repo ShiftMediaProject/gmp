@@ -40,13 +40,13 @@ check_diverse (void)
   mpfr_set_prec (x, 32);
   mpfr_set_prec (y, 63);
   mpfr_set_prec (z, 63);
-  mpfr_set_str_raw (x, "0.101101111011011100100100100111E31");
-  mpfr_set_str_raw (y, "0.111110010010100100110101101010001001100101110001000101110111111E-1");
+  mpfr_set_str_binary (x, "0.101101111011011100100100100111E31");
+  mpfr_set_str_binary (y, "0.111110010010100100110101101010001001100101110001000101110111111E-1");
   mpfr_sub (z, x, y, GMP_RNDN);
-  mpfr_set_str_raw (y, "0.1011011110110111001001001001101100000110110101101100101001011E31");
+  mpfr_set_str_binary (y, "0.1011011110110111001001001001101100000110110101101100101001011E31");
   if (mpfr_cmp (z, y))
     {
-      fprintf (stderr, "Error in mpfr_sub (5)\n");
+      printf ("Error in mpfr_sub (5)\n");
       printf ("expected "); mpfr_print_binary (y); puts ("");
       printf ("got      "); mpfr_print_binary (z); puts ("");
       exit (1);
@@ -54,12 +54,12 @@ check_diverse (void)
 
   mpfr_set_prec (y, 63);
   mpfr_set_prec (z, 63);
-  mpfr_set_str_raw (y, "0.1011011110110111001001001001101100000110110101101100101001011E31");
+  mpfr_set_str_binary (y, "0.1011011110110111001001001001101100000110110101101100101001011E31");
   mpfr_sub_ui (z, y, 1541116494, GMP_RNDN);
-  mpfr_set_str_raw (y, "-0.11111001001010010011010110101E-1");
+  mpfr_set_str_binary (y, "-0.11111001001010010011010110101E-1");
   if (mpfr_cmp (z, y))
     {
-      fprintf (stderr, "Error in mpfr_sub (7)\n");
+      printf ("Error in mpfr_sub (7)\n");
       printf ("expected "); mpfr_print_binary (y); puts ("");
       printf ("got      "); mpfr_print_binary (z); puts ("");
       exit (1);
@@ -67,12 +67,12 @@ check_diverse (void)
 
   mpfr_set_prec (y, 63);
   mpfr_set_prec (z, 63);
-  mpfr_set_str_raw (y, "0.1011011110110111001001001001101100000110110101101100101001011E31");
+  mpfr_set_str_binary (y, "0.1011011110110111001001001001101100000110110101101100101001011E31");
   mpfr_sub_ui (z, y, 1541116494, GMP_RNDN);
-  mpfr_set_str_raw (y, "-0.11111001001010010011010110101E-1");
+  mpfr_set_str_binary (y, "-0.11111001001010010011010110101E-1");
   if (mpfr_cmp (z, y))
     {
-      fprintf (stderr, "Error in mpfr_sub (6)\n");
+      printf ("Error in mpfr_sub (6)\n");
       printf ("expected "); mpfr_print_binary (y); puts ("");
       printf ("got      "); mpfr_print_binary (z); puts ("");
       exit (1);
@@ -80,35 +80,33 @@ check_diverse (void)
 
   mpfr_set_prec (x, 32);
   mpfr_set_prec (y, 32);
-  mpfr_set_str_raw (x, "0.10110111101001110100100101111000E0");
-  mpfr_set_str_raw (y, "0.10001100100101000100110111000100E0");
+  mpfr_set_str_binary (x, "0.10110111101001110100100101111000E0");
+  mpfr_set_str_binary (y, "0.10001100100101000100110111000100E0");
   if ((inexact = mpfr_sub (x, x, y, GMP_RNDN)))
     {
-      fprintf (stderr, "Wrong inexact flag (2): got %d instead of 0\n",
-	       inexact);
+      printf ("Wrong inexact flag (2): got %d instead of 0\n", inexact);
       exit (1);
     }
 
   mpfr_set_prec (x, 32);
   mpfr_set_prec (y, 32);
-  mpfr_set_str_raw (x, "0.11111000110111011000100111011010E0");
-  mpfr_set_str_raw (y, "0.10011111101111000100001000000000E-3");
+  mpfr_set_str_binary (x, "0.11111000110111011000100111011010E0");
+  mpfr_set_str_binary (y, "0.10011111101111000100001000000000E-3");
   if ((inexact = mpfr_sub (x, x, y, GMP_RNDN)))
     {
-      fprintf (stderr, "Wrong inexact flag (1): got %d instead of 0\n",
-	       inexact);
+      printf ("Wrong inexact flag (1): got %d instead of 0\n", inexact);
       exit (1);
     }
 
   mpfr_set_prec (x, 33);
   mpfr_set_prec (y, 33);
   mpfr_set_ui (x, 1, GMP_RNDN);
-  mpfr_set_str_raw (y, "-0.1E-32");
+  mpfr_set_str_binary (y, "-0.1E-32");
   mpfr_add (x, x, y, GMP_RNDN);
-  mpfr_set_str_raw (y, "0.111111111111111111111111111111111E0");
+  mpfr_set_str_binary (y, "0.111111111111111111111111111111111E0");
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "Error in mpfr_sub (1 - 1E-33) with prec=33\n");
+      printf ("Error in mpfr_sub (1 - 1E-33) with prec=33\n");
       printf ("Expected "); mpfr_print_binary (y); puts ("");
       printf ("got      "); mpfr_print_binary (x); puts ("");
       exit (1);
@@ -117,11 +115,11 @@ check_diverse (void)
   mpfr_set_prec (x, 32);
   mpfr_set_prec (y, 33);
   mpfr_set_ui (x, 1, GMP_RNDN);
-  mpfr_set_str_raw (y, "-0.1E-32");
+  mpfr_set_str_binary (y, "-0.1E-32");
   mpfr_add (x, x, y, GMP_RNDN);
   if (mpfr_cmp_ui (x, 1))
     {
-      fprintf (stderr, "Error in mpfr_sub (1 - 1E-33) with prec=32\n");
+      printf ("Error in mpfr_sub (1 - 1E-33) with prec=32\n");
       printf ("Expected 1.0, got "); mpfr_print_binary (x); puts ("");
       exit (1);
     }
@@ -129,43 +127,43 @@ check_diverse (void)
   mpfr_set_prec (x, 65);
   mpfr_set_prec (y, 65);
   mpfr_set_prec (z, 64);
-  mpfr_set_str_raw (x, "1.1110111011110001110111011111111111101000011001011100101100101101");
-  mpfr_set_str_raw (y, "0.1110111011110001110111011111111111101000011001011100101100101100");
+  mpfr_set_str_binary (x, "1.1110111011110001110111011111111111101000011001011100101100101101");
+  mpfr_set_str_binary (y, "0.1110111011110001110111011111111111101000011001011100101100101100");
   mpfr_sub (z, x, y, GMP_RNDZ);
   if (mpfr_cmp_ui (z, 1))
     {
-      fprintf (stderr, "Error in mpfr_sub (1)\n");
+      printf ("Error in mpfr_sub (1)\n");
       exit (1);
     }
   mpfr_sub (z, x, y, GMP_RNDU);
-  mpfr_set_str_raw (x, "1.000000000000000000000000000000000000000000000000000000000000001");
+  mpfr_set_str_binary (x, "1.000000000000000000000000000000000000000000000000000000000000001");
   if (mpfr_cmp (z, x))
     {
-      fprintf (stderr, "Error in mpfr_sub (2)\n");
+      printf ("Error in mpfr_sub (2)\n");
       exit (1);
     }
-  mpfr_set_str_raw (x, "1.1110111011110001110111011111111111101000011001011100101100101101");
+  mpfr_set_str_binary (x, "1.1110111011110001110111011111111111101000011001011100101100101101");
   mpfr_sub (z, x, y, GMP_RNDN);
   if (mpfr_cmp_ui (z, 1))
     {
-      fprintf (stderr, "Error in mpfr_sub (3)\n");
+      printf ("Error in mpfr_sub (3)\n");
       exit (1);
     }
   mpfr_set_prec (x, 66);
-  mpfr_set_str_raw (x, "1.11101110111100011101110111111111111010000110010111001011001010111");
+  mpfr_set_str_binary (x, "1.11101110111100011101110111111111111010000110010111001011001010111");
   mpfr_sub (z, x, y, GMP_RNDN);
   if (mpfr_cmp_ui (z, 1))
     {
-      fprintf (stderr, "Error in mpfr_sub (4)\n");
+      printf ("Error in mpfr_sub (4)\n");
       exit (1);
     }
-  
+
   /* check in-place operations */
   mpfr_set_d (x, 1.0, GMP_RNDN);
   mpfr_sub (x, x, x, GMP_RNDN);
   if (mpfr_get_d1 (x) != 0.0)
     {
-      fprintf (stderr, "Error for mpfr_add (x, x, x, GMP_RNDN) with x=1.0\n");
+      printf ("Error for mpfr_add (x, x, x, GMP_RNDN) with x=1.0\n");
       exit (1);
     }
 
@@ -179,7 +177,7 @@ check_diverse (void)
   got = mpfr_get_d1 (z);
   if (got != res)
     {
-      fprintf (stderr, "Error in mpfr_sub (1.22e9 - 2.32e5)\n");
+      printf ("Error in mpfr_sub (1.22e9 - 2.32e5)\n");
       printf ("expected %1.20e, got %1.20e\n", res, got);
       exit (1);
     }
@@ -187,11 +185,11 @@ check_diverse (void)
   mpfr_set_prec (x, 112);
   mpfr_set_prec (y, 98);
   mpfr_set_prec (z, 54);
-  mpfr_set_str_raw (x, "0.11111100100000000011000011100000101101010001000111E-401");
-  mpfr_set_str_raw (y, "0.10110000100100000101101100011111111011101000111000101E-464");
+  mpfr_set_str_binary (x, "0.11111100100000000011000011100000101101010001000111E-401");
+  mpfr_set_str_binary (y, "0.10110000100100000101101100011111111011101000111000101E-464");
   mpfr_sub (z, x, y, GMP_RNDN);
   if (mpfr_cmp (z, x)) {
-    fprintf (stderr, "mpfr_sub(z, x, y) failed for prec(x)=112, prec(y)=98\n");
+    printf ("mpfr_sub(z, x, y) failed for prec(x)=112, prec(y)=98\n");
     printf ("expected "); mpfr_print_binary (x); puts ("");
     printf ("got      "); mpfr_print_binary (z); puts ("");
     exit (1);
@@ -204,25 +202,25 @@ check_diverse (void)
 
   mpfr_set_prec (x, 5);
   mpfr_set_prec (y, 5);
-  mpfr_set_str_raw (x, "1e-12");
+  mpfr_set_str_binary (x, "1e-12");
   mpfr_set_ui (y, 1, GMP_RNDN);
   mpfr_sub (x, y, x, GMP_RNDD);
-  mpfr_set_str_raw (y, "0.11111");
+  mpfr_set_str_binary (y, "0.11111");
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "Error in mpfr_sub (x, y, x, GMP_RNDD) for x=2^(-12), y=1\n");
+      printf ("Error in mpfr_sub (x, y, x, GMP_RNDD) for x=2^(-12), y=1\n");
       exit (1);
     }
 
   mpfr_set_prec (x, 24);
   mpfr_set_prec (y, 24);
-  mpfr_set_str_raw (x, "-0.100010000000000000000000E19");
-  mpfr_set_str_raw (y, "0.100000000000000000000100E15");
+  mpfr_set_str_binary (x, "-0.100010000000000000000000E19");
+  mpfr_set_str_binary (y, "0.100000000000000000000100E15");
   mpfr_add (x, x, y, GMP_RNDD);
-  mpfr_set_str_raw (y, "-0.1E19");
+  mpfr_set_str_binary (y, "-0.1E19");
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "Error in mpfr_add (2)\n");
+      printf ("Error in mpfr_add (2)\n");
       exit (1);
     }
 
@@ -230,15 +228,15 @@ check_diverse (void)
   mpfr_set_prec (y, 10);
   mpfr_set_prec (z, 10);
   mpfr_set_ui (y, 0, GMP_RNDN);
-  mpfr_set_str_raw (z, "0.100000000000000000000100E15");
+  mpfr_set_str_binary (z, "0.100000000000000000000100E15");
   if (mpfr_sub (x, y, z, GMP_RNDN) <= 0)
     {
-      fprintf (stderr, "Wrong inexact flag in x=mpfr_sub(0,z) for prec(z)>prec(x)\n");
+      printf ("Wrong inexact flag in x=mpfr_sub(0,z) for prec(z)>prec(x)\n");
       exit (1);
     }
   if (mpfr_sub (x, z, y, GMP_RNDN) >= 0)
     {
-      fprintf (stderr, "Wrong inexact flag in x=mpfr_sub(z,0) for prec(z)>prec(x)\n");
+      printf ("Wrong inexact flag in x=mpfr_sub(z,0) for prec(z)>prec(x)\n");
       exit (1);
     }
 
@@ -267,12 +265,12 @@ bug_ddefour(void)
     mpfr_sub( tot1, tot, ex1, GMP_RNDN); /* tot1 = tot - ex1 */
     mpfr_set( ex3, tot1, GMP_RNDN); /* ex3 = high(tot - ex1) */
 
-    if (mpfr_cmp(ex2, ex3)) 
+    if (mpfr_cmp(ex2, ex3))
       {
-	fprintf (stderr, "Error in ddefour test.\n");
-	printf ("ex2="); mpfr_print_binary (ex2); puts ("");
-	printf ("ex3="); mpfr_print_binary (ex3); puts ("");
-	exit (1);
+        printf ("Error in ddefour test.\n");
+        printf ("ex2="); mpfr_print_binary (ex2); puts ("");
+        printf ("ex3="); mpfr_print_binary (ex3); puts ("");
+        exit (1);
       }
 
     mpfr_clear (ex);
@@ -290,7 +288,7 @@ check_two_sum (mp_prec_t p)
   mpfr_t x, y, u, v, w;
   mp_rnd_t rnd;
   int inexact;
-  
+
   mpfr_init2 (x, p);
   mpfr_init2 (y, p);
   mpfr_init2 (u, p);
@@ -310,7 +308,7 @@ check_two_sum (mp_prec_t p)
       ((inexact > 0) && (mpfr_cmp_ui (w, 0) <= 0)) ||
       ((inexact < 0) && (mpfr_cmp_ui (w, 0) >= 0)))
     {
-      fprintf (stderr, "Wrong inexact flag for prec=%u, rnd=%s\n", (unsigned)p,
+      printf ("Wrong inexact flag for prec=%u, rnd=%s\n", (unsigned)p,
 	       mpfr_print_rnd_mode (rnd));
       printf ("x="); mpfr_print_binary(x); puts ("");
       printf ("y="); mpfr_print_binary(y); puts ("");
@@ -336,7 +334,7 @@ check_inexact (void)
   mp_prec_t px, py, pu, pz;
   int inexact, cmp;
   mp_rnd_t rnd;
-  
+
   mpfr_init (x);
   mpfr_init (y);
   mpfr_init (z);
@@ -351,7 +349,7 @@ check_inexact (void)
   inexact = mpfr_sub (y, y, x, GMP_RNDN); /* y = round(-7/16) = -1/2 */
   if (inexact >= 0)
     {
-      fprintf (stderr, "Error: wrong inexact flag for -1/16 - (6/16)\n");
+      printf ("Error: wrong inexact flag for -1/16 - (6/16)\n");
       exit (1);
     }
 
@@ -364,47 +362,47 @@ check_inexact (void)
         }
       while (mpfr_cmp_ui (x, 0) == 0);
       for (pu=2; pu<MAX_PREC; pu++)
-	{
-	  mpfr_set_prec (u, pu);
+        {
+          mpfr_set_prec (u, pu);
           do
             {
               mpfr_random (u);
             }
           while (mpfr_cmp_ui (u, 0) == 0);
-	  for (py=2; py<MAX_PREC; py++)
-	    {
-	      mpfr_set_prec (y, py);
+          for (py=2; py<MAX_PREC; py++)
+            {
+              mpfr_set_prec (y, py);
               /* warning: MPFR_EXP is undefined for 0 */
-	      pz =  (mpfr_cmpabs (x, u) >= 0) ? MPFR_EXP(x) - MPFR_EXP(u)
-		: MPFR_EXP(u) - MPFR_EXP(x);
-	      pz = pz + MAX(MPFR_PREC(x), MPFR_PREC(u));
-	      mpfr_set_prec (z, pz);
-	      rnd = randlimb () % 4;
-	      if (mpfr_sub (z, x, u, rnd))
-		{
-		  fprintf (stderr, "z <- x - u should be exact\n");
-		  exit (1);
-		}
-	      for (rnd=0; rnd<4; rnd++)
-		{
-		  inexact = mpfr_sub (y, x, u, rnd);
-		  cmp = mpfr_cmp (y, z);
-		  if (((inexact == 0) && (cmp != 0)) ||
-		      ((inexact > 0) && (cmp <= 0)) ||
-		      ((inexact < 0) && (cmp >= 0)))
-		    {
-		      fprintf (stderr, "Wrong inexact flag for rnd=%s\n",
-			   mpfr_print_rnd_mode(rnd));
-		      printf ("expected %d, got %d\n", cmp, inexact);
-		      printf ("x="); mpfr_print_binary (x); puts ("");
-		      printf ("u="); mpfr_print_binary (u); puts ("");
-		      printf ("y=  "); mpfr_print_binary (y); puts ("");
-		      printf ("x-u="); mpfr_print_binary (z); puts ("");
-		      exit (1);
-		    }
-		}
-	    }
-	}
+              pz =  (mpfr_cmpabs (x, u) >= 0) ? MPFR_EXP(x) - MPFR_EXP(u)
+                : MPFR_EXP(u) - MPFR_EXP(x);
+              pz = pz + MAX(MPFR_PREC(x), MPFR_PREC(u));
+              mpfr_set_prec (z, pz);
+              rnd = randlimb () % 4;
+              if (mpfr_sub (z, x, u, rnd))
+                {
+                  printf ("z <- x - u should be exact\n");
+                  exit (1);
+                }
+              for (rnd=0; rnd<4; rnd++)
+                {
+                  inexact = mpfr_sub (y, x, u, rnd);
+                  cmp = mpfr_cmp (y, z);
+                  if (((inexact == 0) && (cmp != 0)) ||
+                      ((inexact > 0) && (cmp <= 0)) ||
+                      ((inexact < 0) && (cmp >= 0)))
+                    {
+                      printf ("Wrong inexact flag for rnd=%s\n",
+                              mpfr_print_rnd_mode(rnd));
+                      printf ("expected %d, got %d\n", cmp, inexact);
+                      printf ("x="); mpfr_print_binary (x); puts ("");
+                      printf ("u="); mpfr_print_binary (u); puts ("");
+                      printf ("y=  "); mpfr_print_binary (y); puts ("");
+                      printf ("x-u="); mpfr_print_binary (z); puts ("");
+                      exit (1);
+                    }
+                }
+            }
+        }
     }
 
   mpfr_clear (x);

@@ -22,7 +22,9 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 int
@@ -42,16 +44,16 @@ main (void)
   inexact = mpfr_init_set_d (u, 1.0, GMP_RNDN);
 
   mpfr_set_prec (y, 11);
-  mpfr_set_str_raw (y, "0.11111111100E-8");
+  mpfr_set_str_binary (y, "0.11111111100E-8");
   mpfr_set_prec (x, 2);
   mpfr_set (x, y, GMP_RNDN);
-  mpfr_set_str_raw (y, "1.0E-8");
+  mpfr_set_str_binary (y, "1.0E-8");
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "Error for y=0.11111111100E-8, prec=2, rnd=GMP_RNDN\n");
+      printf ("Error for y=0.11111111100E-8, prec=2, rnd=GMP_RNDN\n");
       exit (1);
     }
-  
+
   for (p=2; p<500; p++)
     {
       mpfr_set_prec (x, p);
@@ -59,21 +61,22 @@ main (void)
       if (randlimb () % 2)
 	mpfr_neg (x, x, GMP_RNDN);
       for (q=2; q<2*p; q++)
-	{
-	  mpfr_set_prec (y, q);
-	  for (rnd=0; rnd<4; rnd++)
-	    {
-	      inexact = mpfr_set (y, x, rnd);
-	      cmp = mpfr_cmp (y, x);
-	      if (((inexact == 0) && (cmp != 0)) ||
-		  ((inexact > 0) && (cmp <= 0)) ||
-		  ((inexact < 0) && (cmp >= 0)))
-		{
-		  fprintf (stderr, "Wrong inexact flag in mpfr_set: expected %d, got %d\n", cmp, inexact);
-		  exit (1);
-		}
-	    }
-	}
+        {
+          mpfr_set_prec (y, q);
+          for (rnd=0; rnd<4; rnd++)
+            {
+              inexact = mpfr_set (y, x, rnd);
+              cmp = mpfr_cmp (y, x);
+              if (((inexact == 0) && (cmp != 0)) ||
+                  ((inexact > 0) && (cmp <= 0)) ||
+                  ((inexact < 0) && (cmp >= 0)))
+                {
+                  printf ("Wrong inexact flag in mpfr_set: expected %d,"
+                          " got %d\n", cmp, inexact);
+                  exit (1);
+                }
+            }
+        }
     }
 
   mpfr_clear (x);
