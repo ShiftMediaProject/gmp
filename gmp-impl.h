@@ -246,10 +246,11 @@ typedef unsigned long       gmp_uint_least32_t;
 #if ! HAVE_MEMSET
 #define memset(p, c, n)                 \
   do {                                  \
-    ASSERT (n >= 0);                    \
+    ASSERT ((n) >= 0);                  \
+    char *__memset__p = (p);            \
     int  __i;                           \
     for (__i = 0; __i < (n); __i++)     \
-      (p)[__i] = (c);                   \
+      __memset__p[__i] = (c);           \
   } while (0)
 #endif
 
