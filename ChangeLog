@@ -18,6 +18,17 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-05-15  Kevin Ryde  <kevin@swox.se>
+
+	* tune/time.c (getrusage_backwards_p): New function
+	(speed_time_init): Use it to exclude broken netbsd1.4.1 getrusage.
+	* configure.in (m68*-*-netbsd1.4*): Remove code pretending getrusage
+	doesn't exist.
+	* tune/README (NetBSD 1.4.1 m68k): Update notes.
+
+	* configure.in (mips*-*-* ABI=n32): Remove gcc_n32_ldflags and
+	cc_n32_ldflags, libtool knows to put the linker in n32 mode.
+
 2004-05-15  Torbjorn Granlund  <tege@swox.com>
 
 	* config.guess (powerpc*-*-*): Add more processor types to mfpvr code.
