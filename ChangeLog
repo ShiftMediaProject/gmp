@@ -20,6 +20,16 @@ MA 02111-1307, USA.
 
 2004-04-20  Kevin Ryde  <kevin@swox.se>
 
+	* doc/texinfo.tex: Update to 2004-04-07.08 from texinfo 4.7.
+	* doc/gmp.texi (@copying): Don't put a line break in @ref within
+	@copying, recent texinfo.tex doesn't like that.
+
+	* demos/perl/GMP.xs (static_functable): Treat cygwin the same as mingw
+	DLLs.
+
+	* */Makefile.in, install-sh: Update to automake 1.8.3.
+	* ltmain.sh, aclocal.m4, configure: Update to libtool 1.5.6.
+
 	* gmp-impl.h (LIMB_HIGHBIT_TO_MASK): Use a compile-time constant
 	expression, rather than a configure test.
 	* acinclude.m4, configure.in (GMP_C_RIGHT_SHIFT): Remove, no longer
