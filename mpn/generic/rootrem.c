@@ -68,7 +68,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
 
   /* The extra factor 1.585 = log(3)/log(2) here is for the worst case
      overestimate of the root, i.e., when the code rounds a root that is
-     2+epsilon to 3, and the powers this to a potentially huge power.  We
+     2+epsilon to 3, and then powers this to a potentially huge power.  We
      could generalize the code for detecting root=1 a few lines below to deal
      with xnb <= k, for some small k.  For example, when xnb <= 2, meaning
      the root should be 1, 2, or 3, we could replace this factor by the much
