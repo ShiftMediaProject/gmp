@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 25 Oct 2001.  An up-to-date version is available at
+  This file current as of 5 Nov 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -328,6 +328,8 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 	#else /* system compiler */
 	...
 	#endif	</pre>
+<li> <code>invert_limb</code> on various processors might benefit from the
+     little Newton iteration done for alpha and ia64.
 <li> Alpha 21264: Improve feed-in code for <code>mpn_addmul_1</code> and
      <code>mpn_submul_1</code>.  Integrate new <code>mpn_mul_1</code> code.
 <li> Alpha 21164: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>,
