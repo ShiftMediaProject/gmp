@@ -101,25 +101,25 @@
      <code>mpf_get_prec</code>, <code>mpf_set_prec_raw</code>,
      <code>mpf_set_ui</code>, <code>mpf_init</code>, <code>mpf_init2</code>,
      <code>mpf_clear</code>, <code>mpf_set_si</code>.
-
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> aren't very
      fast on one or two limb moduli, due to a lot of function call
      overheads.  These could perhaps be handled as special cases.
-
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> want better
      algorithm selection, and the latter should use REDC.  Both could
      change to use an <code>mpn_powm</code> and <code>mpn_redc</code>.
-
 <li> <code>mpn_gcd</code> might be able to be sped up on small to
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
      <code>count_leading_zeros</code>.
-
 </ul>
 
 
 <h4>Machine Dependent Optimization</h4>
 <ul>
+<li> Run the `tune' utility for more compiler/CPU combinations.  We would like
+     to have gmp-mparam.h files in practically every implementation specific
+     mpn subdirectory, and repeat each *_THRESHOLD for gcc and the system
+     compiler.  See the `tune' top-level directory for more information.
 <li> Alpha: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code> for the 21264.  On 21264, they should run at 4, 3,
      and 3 cycles/limb respectively, if the code is unrolled properly.  (Ask
@@ -129,12 +129,6 @@
      multiplies and floating-point multiplies.  For the floating-point
      operations, the single-limb multiplier should be split into three 21-bit
      chunks.
-<li> UltraSPARC: Rewrite 64-bit <code>mpn_add_n</code> and
-     <code>mpn_sub_n</code>.  The current sparc64 code uses <code>MOVcc</code>
-     instructions, which take about 6 cycles on UltraSPARC.  The correct
-     approach is probably to use conditional branching.  That should lead to
-     loops that run at 4 cycles/limb.  (Torbjörn has code that just needs to be
-     finished.)
 <li> UltraSPARC: Rewrite 64-bit <code>mpn_addmul_1</code>,
      <code>mpn_submul_1</code>, and <code>mpn_mul_1</code>.  Should use
      floating-point operations, and split the invariant single-limb multiplier
@@ -144,19 +138,15 @@
 <li> UltraSPARC: Rewrite <code>mpn_lshift</code> and <code>mpn_rshift</code>.
      Should give 2 cycles/limb.  (Torbjörn has code that just needs to be
      finished.)
-
 <li> SPARC32/V9: Find out why the speed of <code>mpn_addmul_1</code>
      and the other multiplies vary so much on successive sizes.
-
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current development code runs at 11
      cycles/limb, which is already very good.  But it should be possible to
      saturate the cache, which will happen at 7.5 cycles/limb.
-
 <li> Sparc & SparcV8: Enable umul.asm for native cc.  The generic
      longlong.h umul_ppmm is suspected to be causing sqr_basecase to
      be slower than mul_basecase.
-
 <li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
      <code>mpn_sqr_basecase</code>.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
@@ -215,25 +205,19 @@
      little-endian and big-endian machines.
 <li> Handle numeric exceptions: Call an error handler, and/or set
      <code>gmp_errno</code>.
-
 <li> Implement <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
      <code>gmp_snprintf</code>.  Think about some sort of wrapper
      around <code>printf</code> so it and its several variants don't
      have to be completely reimplemented.
-
 <li> Implement some <code>mpq</code> input and output functions.
-
 <li> Implement a full precision <code>mpz_kronecker</code>, leave
      <code>mpz_jacobi</code> for compatibility.
-
 <li> Make the mpn logops and copys available in gmp.h.  Since they can
      be either library functions or inlines, gmp.h would need to be
      generated from a gmp.in based on what's in the library.  gmp.h
      would still be compiler-independent though.
-
 <li> Make versions of <code>mpz_set_str</code> etc taking string
      lengths rather than null-terminators.
-
 </ul>
 
 
@@ -252,76 +236,59 @@
   processor and operating system.
 
 <ul>
-
-  <li> Find out whether there's an alloca available and how to use it.
-       AC_FUNC_ALLOCA has various system dependencies covered, but we
-       don't want its alloca.c replacement.  (One thing current cpp
-       tests don't cover: HPUX 10 C compiler supports alloca, but
-       cannot find any symbol to test in order to know if we're on
-       HPUX 10.  Damn.)
-
-  <li> Improve config.guess.  We want to recognize the processor very
-       accurately, more accurately than other GNU packages.
-       config.guess does not currently make the distinctions we would
-       like it to do and a --target often needs to be set explicitly.
-       Remember to make sure config.sub accepts the guesses.
-
-  <li> Identify Mips processor under Irix: `hinv -c processor'.
-       config.guess should say mips2, mips3, and mips4.
-
-  <li> Identify Alpha processor under OSF: "/usr/sbin/sizer -c".
-       Unfortunately, sizer is not available before some revision of
-       Dec Unix 4.0, and it also returns some rather cryptic names for
-       processors.  Perhaps the <code>implver</code> and
-       <code>amask</code> assembly instructions are better, but that
-       doesn't differentiate between ev5 and ev56.
-
-  <li> Identify Sparc processors.  config.guess should say supersparc,
-       microsparc, ultrasparc1, ultrasparc2, etc.
-
-  <li> Identify HPPA processors similarly.
-
-  <li> Get lots of information about a Solaris system: prtconf -vp
-
-  <li> For some target machines and some compilers, specific options
-       are needed (sparcv8/gcc needs -mv8, sparcv8/cc needs -cg92,
-       Irix64/cc needs -64, Irix32/cc might need -n32, etc).  Some are
-       set already, add more, see configure.in.
-
-  <li> Options to be passed to the assembler (via the compiler, using
-       whatever syntax the compiler uses for passing options to the
-       assembler).
-
-  <li> On Solaris 7, check if gcc supports native v9 64-bit
-       arithmetic.  If not compile using "cc -fast -xarch=v9".
-       (Problem: -fast requires that we link with -fast too, which
-       might not be very good.  Pass "-xO4 -xtarget=native" instead?)
-
-  <li> Extend the "optional" compiler arguments to choose the first
-       that works from from a set, so when gcc gets athlon support it
-       can try -mcpu=athlon, -mcpu=pentiumpro, or -mcpu=i486,
-       whichever works.
-
-  <li> Detect gcc >=2.96 and enable -march=pentiumpro for relevant
-       x86s.  (A bug in gcc 2.95.2 prevents it being used
-       unconditionally.)
-
-  <li> Build multiple variants of the library under certain systems.
-       An example is -n32, -o32, and -64 on Irix.
-
-  <li> Check name conflicts under DOS 8.3 filenames and DJGPP, with a
-       view to avoiding at least the simplest ones.  Similarly old
-       SysV 14 char names.
-
-  <li> Enable support for FORTRAN versions of mpn files (eg. for
-       mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
-       AC_PROG_F77 if such a file is found, .  Hopefully automake will
-       generate everything needed in the makefiles.
-
-  <li> Only run GMP_PROG_M4 if it's needed, ie. if there's .asm files
-       selected from the mpn path.  This might help say a generic C
-       build on weird systems.
-
+<li> Find out whether there's an alloca available and how to use it.
+     AC_FUNC_ALLOCA has various system dependencies covered, but we
+     don't want its alloca.c replacement.  (One thing current cpp
+     tests don't cover: HPUX 10 C compiler supports alloca, but
+     cannot find any symbol to test in order to know if we're on
+     HPUX 10.  Damn.)
+<li> Improve config.guess.  We want to recognize the processor very
+     accurately, more accurately than other GNU packages.
+     config.guess does not currently make the distinctions we would
+     like it to do and a --target often needs to be set explicitly.
+     Remember to make sure config.sub accepts the guesses.
+<li> Identify Mips processor under Irix: `hinv -c processor'.
+     config.guess should say mips2, mips3, and mips4.
+<li> Identify Alpha processor under OSF: "/usr/sbin/sizer -c".
+     Unfortunately, sizer is not available before some revision of
+     Dec Unix 4.0, and it also returns some rather cryptic names for
+     processors.  Perhaps the <code>implver</code> and
+     <code>amask</code> assembly instructions are better, but that
+     doesn't differentiate between ev5 and ev56.
+<li> Identify Sparc processors.  config.guess should say supersparc,
+     microsparc, ultrasparc1, ultrasparc2, etc.
+<li> Identify HPPA processors similarly.
+<li> Get lots of information about a Solaris system: prtconf -vp
+<li> For some target machines and some compilers, specific options
+     are needed (sparcv8/gcc needs -mv8, sparcv8/cc needs -cg92,
+     Irix64/cc needs -64, Irix32/cc might need -n32, etc).  Some are
+     set already, add more, see configure.in.
+<li> Options to be passed to the assembler (via the compiler, using
+     whatever syntax the compiler uses for passing options to the
+     assembler).
+<li> On Solaris 7, check if gcc supports native v9 64-bit
+     arithmetic.  If not compile using "cc -fast -xarch=v9".
+     (Problem: -fast requires that we link with -fast too, which
+     might not be very good.  Pass "-xO4 -xtarget=native" instead?)
+<li> Extend the "optional" compiler arguments to choose the first
+     that works from from a set, so when gcc gets athlon support it
+     can try -mcpu=athlon, -mcpu=pentiumpro, or -mcpu=i486,
+     whichever works.
+<li> Detect gcc >=2.96 and enable -march=pentiumpro for relevant
+     x86s.  (A bug in gcc 2.95.2 prevents it being used
+     unconditionally.)
+<li> Build multiple variants of the library under certain systems.
+     An example is -n32, -o32, and -64 on Irix.
+<li> Check name conflicts under DOS 8.3 filenames and DJGPP, with a
+     view to avoiding at least the simplest ones.  Similarly old
+     SysV 14 char names.
+<li> Enable support for FORTRAN versions of mpn files (eg. for
+     mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
+     AC_PROG_F77 if such a file is found, .  Hopefully automake will
+     generate everything needed in the makefiles.
+<li> Only run GMP_PROG_M4 if it's needed, ie. if there's .asm files
+     selected from the mpn path.  This might help say a generic C
+     build on weird systems.
 </ul>
 
 <p> In general, getting the exact right configuration, passing the
@@ -333,7 +300,7 @@ target machines: (1) Both gcc and cc (and c89).  (2) Both 32-bit mode
 and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 `make' and GNU `make'. (4) With and without GNU binutils.
 
-  
+
 <h4>Miscellaneous</h4>
 <ul>
 
@@ -349,7 +316,6 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 <li> Maybe make mpz_pow_ui.c more like mpz/ui_pow_ui.c, or write new
      mpn/generic/pow_ui.
 <li> Make mpz_invert call mpn_gcdext directly.
-
 <li> Make a build option to enable execution profiling with gprof.  In
      particular look at getting the right <code>mcount</code> call at
      the start of each assembler subroutine (for important targets at
@@ -362,7 +328,6 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 <li> Make an option for stack-alloc.c to call <code>malloc</code>
      separately for each <code>TMP_ALLOC</code> block, so a redzoning
      malloc debugger could be used during development.
-
 <li> Add <code>ASSERT</code>s at the start of each user-visible
      mpz/mpq/mpf function to check the validity of each
      <code>mp?_t</code> parameter, in particular to check they've been
