@@ -274,7 +274,8 @@ typedef __mpq_struct *mpq_ptr;
   || defined (__STDIO_H__)            /* IRIX */                \
   || defined (_STDIO_INCLUDED)        /* HPUX */                \
   || defined (__dj_include_stdio_h_)  /* DJGPP */               \
-  || defined (_FILE_DEFINED)          /* Microsoft */
+  || defined (_FILE_DEFINED)          /* Microsoft */          \
+  || defined (__STDIO__)              /* Apple MPW MrC */
 #define _GMP_H_HAVE_FILE 1
 #endif
 
