@@ -1,6 +1,6 @@
 /* mpfr_set_str -- set a floating-point number from a string
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -69,7 +69,8 @@ mpfr_set_str (mpfr_ptr x, __gmp_const char *str, int base, mp_rnd_t rnd_mode)
 
   /* be careful that 'nan' is a valid number in base >= 24,
      since n=23, a=10, n=23 */
-  if (((base < 24) ? strncasecmp : strncmp) (str, "NaN", 3) == 0)
+  if (((base < 24) ? strncasecmp (str, "NaN", 3) : strncmp (str, "NaN", 3))
+      == 0)
     {
       MPFR_SET_NAN(x);
       /* MPFR_RET_NAN not used as the return value isn't a ternary value */
