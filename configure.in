@@ -1541,8 +1541,8 @@ case $host in
   # FIXME: Shared libraries aren't supported on unicos, but as of Dec 2000
   # libtool doesn't seem to detect this correctly, so forcibly disable them.
   #
-  *-*-unicos*)
-    enable_shared=no ;;
+#  *-*-unicos*)
+#    enable_shared=no ;;
 
   # It seems there are no shared libs on ultrix, and it is not very important
   # to work on this.  Just disable for now.
