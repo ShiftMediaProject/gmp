@@ -1,7 +1,7 @@
 dnl  SPARC v9 64-bit mpn_mul_1 -- Multiply a limb vector with a limb and store
 dnl  the result in a second limb vector.
 
-dnl  Copyright 1998, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -22,6 +22,10 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C      		   cycles/limb
+C UltraSPARC 1&2:     14
+C UltraSPARC 3:	      18.5
+
 C Algorithm: We use eight floating-point multiplies per limb product, with the
 C invariant v operand split into four 16-bit pieces, and the s1 operand split
 C into 32-bit pieces.  We sum pairs of 48-bit partial products using
@@ -33,12 +37,13 @@ C   1. Align the stack area where we transfer the four 49-bit product-sums
 C      to a 32-byte boundary.  That would minimize the cache collision.
 C      (UltraSPARC-1/2 use a direct-mapped cache.)  (Perhaps even better would
 C      be to align the area to map to the area immediately before s1?)
-C   2. Figure out a better way for summing the 49-bit quantities.
+C   2. Sum the 4 49-bit quantities using 32-bit operations, as in the
+C      develop mpn_addmul_2.  This would save many integer instructions.
 C   3. Unrolling.  Questionable if it is worth the code expansion, given that
 C      it could only save 1 cycle/limb.
 C   4. Specialize for particular v values.  If its upper 32 bits are zero, we
 C      could save many operations, in the FPU (fmuld), but more so in the IEU
-C      since we'll be summing 48-bit quantities, which is much simpler.
+C      since we'll be summing 48-bit quantities, which might be simpler.
 C   5. Ideally, we should schedule the f2/f3 and f4/f5 RAW further apart, and
 C      the i00,i16,i32,i48 RAW less apart.  The latter apart-scheduling should
 C      not be greater than needed for L2 cache latency, and also not so great
@@ -56,8 +61,7 @@ C    1 BRANCH
 C   49 insns totally (plus three mov insns that should be optimized out)
 
 C The loop executes 53 instructions in 14 cycles on UltraSPARC-1/2, i.e we
-C sustain 3.79 instructions/cycle.  It would not be terribly hard to save a
-C cycle/loop.
+C sustain 3.79 instructions/cycle.
 
 C INPUT PARAMETERS
 C rp	i0

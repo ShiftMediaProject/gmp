@@ -1,7 +1,7 @@
 dnl  SPARC v9 mpn_add_n -- Add two limb vectors of the same length > 0 and
 dnl  store sum in a third limb vector.
 
-dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,6 +21,10 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
+
+C      		   cycles/limb
+C UltraSPARC 1&2:     4
+C UltraSPARC 3:	      4.5
 
 C Compute carry-out from the most significant bits of u,v, and r, where
 C r=u+v+carry_in, using logic operations.
