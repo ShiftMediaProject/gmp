@@ -101,8 +101,9 @@ MPN_OBJECTS = @mpn_objs_in_libgmp@
 
 MPBSD_OBJECTS = mpbsd/add.lo mpbsd/mdiv.lo mpbsd/move.lo mpbsd/powm.lo	  \
   mpbsd/sub.lo mpbsd/cmp.lo mpbsd/mfree.lo mpbsd/mtox.lo mpbsd/realloc.lo \
-  mpbsd/xtom.lo mpbsd/gcd.lo mpbsd/min.lo mpbsd/mul.lo mpbsd/sdiv.lo	  \
-  mpbsd/itom.lo mpbsd/mout.lo mpbsd/pow_ui.lo mpbsd/sqrtrem.lo
+  mpbsd/assert.lo mpbsd/memory.lo mpbsd/mp_bpl.lo			  \
+  mpbsd/gcd.lo mpbsd/itom.lo mpbsd/min.lo mpbsd/mul.lo mpbsd/mout.lo	  \
+  mpbsd/pow_ui.lo mpbsd/sdiv.lo mpbsd/sqrtrem.lo mpbsd/xtom.lo 
 
 
 libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
@@ -113,6 +114,7 @@ libgmp_la_LIBADD = \
 libgmp_la_DEPENDENCIES = \
 	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 libgmp_la_LDFLAGS = -release @VERSION@
+
 
 
 if WANT_MPBSD
