@@ -133,7 +133,7 @@ mpz_realloc (mpz_t r, int n)
     return;
 
   ALLOC(r) = n;
-  PTR(r) = realloc (PTR(r), n * sizeof (mp_limb_t));
+  PTR(r) = (mp_limb_t *) realloc (PTR(r), n * sizeof (mp_limb_t));
   if (PTR(r) == NULL)
     {
       fprintf (stderr, "Out of memory (realloc to %d)\n", n);
