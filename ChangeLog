@@ -1,5 +1,7 @@
 2000-11-21  Torbjorn Granlund  <tege@swox.com>
 
+	* tune/Makefile.am (EXTRA_DIST): List hppa2w.asm.
+
 	* tune/hppa2.asm: Change level directive to "2.0n".
 	* tune/hppa2w.asm: New file.
 	* configure.in [SPEED_CYCLECOUNTER_OBJS switch]: Separate out hppa2.0w.
