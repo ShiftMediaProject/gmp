@@ -117,7 +117,7 @@ case "$target" in
     ;;
 
   # x86
-  [*-*-freebsd[34]*])	# hides generic *bsd* alternative
+  [*-*-freebsd[3-9]*])	# hides generic *bsd* alternative
     gmp_cflags_gcc="-g -O -fomit-frame-pointer"
     ;;
   [i[3456]86*-*-*bsd* | pentium*-*-*bsd* | k[5678]*-*-*bsd* |] \
