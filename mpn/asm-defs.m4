@@ -145,7 +145,7 @@ dnl       eg. changecom(;).
 dnl
 dnl  OpenBSD 2.6 m4 - in this m4, eval() rejects decimal constants containing
 dnl       an 8 or 9, making it pretty much unusable.  The bug is confined to
-dnl       version 2.6 (it's not in 2.5, and has been fixed in 2.7).
+dnl       version 2.6 (it's not in 2.5, and was fixed in 2.7).
 dnl
 dnl  SunOS /usr/bin/m4 - this m4 lacks a number of desired features,
 dnl       including $# and $@, defn(), m4exit(), m4wrap(), pushdef(),
@@ -403,14 +403,12 @@ dnl  Additional error checking things.
 dnl  Usage: m4_file_seen()
 dnl
 dnl  Record __file__ for the benefit of m4_file_and_line in m4wrap text.
-dnl  The basic __file__ macro comes out quoted, like `foo.asm', and
-dnl  m4_file_seen_last is defined like that too.
 dnl
-dnl  This only needs to be used with something that could generate an error
-dnl  message in m4wrap text.  The x86 PROLOGUE is the only such at the
-dnl  moment (at end of input its m4wrap checks for missing EPILOGUE).  A few
-dnl  include()s can easily trick this scheme, but you'd expect an EPILOGUE
-dnl  in the same file as the PROLOGUE.
+dnl  The basic __file__ macro comes out quoted in GNU m4, like `foo.asm',
+dnl  and m4_file_seen_last is defined like that too.
+dnl
+dnl  This is used by PROLOGUE, since that's normally in the main .asm file,
+dnl  and in particular it sets up m4wrap error checks for missing EPILOGUE.
 
 define(m4_file_seen,
 m4_assert_numargs(0)
@@ -1421,7 +1419,8 @@ dnl  -D__gmpn_add_n=mpn_add_n_foo when GSYM_PREFIX is not empty.
 
 define(PROLOGUE,
 m4_assert_numargs_range(1,2)
-`define(`PROLOGUE_list',m4_list_quote($1,PROLOGUE_list))dnl
+`m4_file_seen()dnl
+define(`PROLOGUE_list',m4_list_quote($1,PROLOGUE_list))dnl
 ifelse(`$2',,
 `PROLOGUE_cpu(GSYM_PREFIX`'$1)',
 `PROLOGUE_cpu(GSYM_PREFIX`'$1,`$2')')')
@@ -1596,7 +1595,7 @@ m4_assert_numargs(1)
 
 dnl  Usage: GMP_NUMB_MASK
 dnl
-dnl  A bit masks for the number part of a limb.  Eg.  with 6 bit nails in a
+dnl  A bit mask for the number part of a limb.  Eg. with 6 bit nails in a
 dnl  32 bit limb, GMP_NUMB_MASK would be 0x3ffffff.
 
 define(GMP_NUMB_MASK,
