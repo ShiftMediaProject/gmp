@@ -1,3 +1,8 @@
+2000-06-19  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/set_si.c [_LONG_LONG_LIMB]: Fix to zero extend 0x80...00.
+	* mpz/tests/t-misc.c (check_mpz_set_si): New test.
+
 2000-06-17  Torbjorn Granlund  <tege@swox.com>
 
 	* config.sub: Recognize k5 and k6 with common pattern.
