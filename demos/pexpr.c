@@ -942,17 +942,19 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
       mpz_com (r, r);
       return;
     case SQRT:
+      mpz_init (lhs);
       mpz_eval_expr (lhs, e->operands.ops.lhs);
       if (mpz_sgn (lhs) < 0)
 	{
 	  error = "cannot take square root of negative numbers";
-	  mpz_clear (lhs); mpz_clear (rhs);
+	  mpz_clear (lhs);
 	  longjmp (errjmpbuf, 1);
 	}
       mpz_sqrt (r, lhs);
       return;
 #if __GNU_MP_VERSION > 2 || __GNU_MP_VERSION_MINOR >= 1
     case ROOT:
+      mpz_init (lhs); mpz_init (rhs);
       mpz_eval_expr (lhs, e->operands.ops.lhs);
       mpz_eval_expr (rhs, e->operands.ops.rhs);
       if (mpz_sgn (rhs) <= 0)
@@ -979,6 +981,7 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	  }
 	mpz_root (r, lhs, nth);
       }
+      mpz_clear (lhs); mpz_clear (rhs);
       return;
 #endif
     case FAC:
