@@ -1,3 +1,7 @@
+Fri May 17 02:24:43 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* mpf/set_d.c: Make it work for 64-bit machines.
+
 Thu May 16 20:53:57 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
 	* gmp-impl.h: Set IEEE_DOUBLE_BIG_ENDIAN to 0 for little-endian
