@@ -18,6 +18,17 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-05  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (add_ssaaaa) [pa64]: Output zero operand as register 0.
+	Allow more immediate operands.
+	(sub_ddmmss) [pa64]: Likewise.
+	(add_ssaaaa) [pa32]: Likewise.
+	(sub_ddmmss) [pa32]: Likewise.
+
+	* mpn/pa64: Change ".level 2.0W" to ".level 2.0w" to please
+	picky GNU assembler.
+
 2003-06-05  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Integer Special Functions): In mpz_array_init, fix type
