@@ -725,10 +725,8 @@ AC_TRY_COMPILER([int main(){return(0);}],
 if test "$tmp_works" = "yes"; then
   case "$target" in 
     *-*-aix*)	# Returning a funcptr.
-      AC_MSG_CHECKING([if the C compiler ($CC $CFLAGS) works (returning a function pointer)])
       AC_TRY_COMPILE( , [} void *g(); void *f() { return g(); } int bar(){],
                       tmp_works=yes, tmp_works=no)
-      AC_MSG_RESULT($tmp_works)
       ;;
   esac
 fi
