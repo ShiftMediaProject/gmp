@@ -1,6 +1,6 @@
 /* Test mpf_mul, mpf_div, mpf_ui_div, and mpf_div_ui.
 
-Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1996, 2000, 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -40,7 +40,7 @@ main (int argc, char **argv)
   mpf_t u, v, w, x;
   mp_size_t bprec = SIZE * BITS_PER_MP_LIMB;
   mpf_t rerr, limit_rerr;
-  mp_limb_t ulimb, vlimb;
+  unsigned long ulimb, vlimb;
   int single_flag;
 
   tests_start ();
