@@ -755,7 +755,7 @@ case $host in
         ;;
       [i686*-*-* | pentiumpro-*-* | pentium[23]-*-*])
         gcc_cflags_cpu="-mcpu=pentiumpro -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=pentiumpro -march=i486"
+        gcc_cflags_arch="-march=pentiumpro -march=pentium -march=i486"
         ;;
       k6*-*-*)
         gcc_cflags_cpu="-mcpu=k6 -mcpu=i486 -m486"
@@ -766,14 +766,14 @@ case $host in
         # 4-6 cycle mul, 40 cycle div, pairable adc, etc) so if gcc doesn't
         # know athlon (eg. 2.95.2 doesn't) then fall back on pentiumpro.
         gcc_cflags_cpu="-mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=athlon -march=pentiumpro -march=i486"
+        gcc_cflags_arch="-march=athlon -march=pentiumpro -march=pentium -march=i486"
         ;;
       pentium4-*-*)
         # pentium4 is known to gcc 3.1 and up, not sure what cpu choice
         # would best suit previous versions, pentiumpro will get us cmov
         # from gcc 2.95.4 up, otherwise let's just try i486.
         gcc_cflags_cpu="-mcpu=pentium4 -mcpu=pentiumpro -mcpu=i486 -m486"
-        gcc_cflags_arch="-march=pentium4 -march=pentiumpro -march=i486"
+        gcc_cflags_arch="-march=pentium4 -march=pentiumpro -march=pentium -march=i486"
         ;;
     esac
 
