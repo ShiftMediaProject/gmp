@@ -1,6 +1,6 @@
 /* Linear Congruential pseudo-random number generator functions.
 
-Copyright 1999, 2000, 2001, 2002  Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -220,11 +220,41 @@ randclear_lc (gmp_randstate_t rstate)
   (*__gmp_free_func) (p, sizeof (gmp_rand_lc_struct));
 }
 
+static void randiset_lc __GMP_PROTO ((gmp_randstate_ptr dst, gmp_randstate_srcptr src));
+
 static const gmp_randfnptr_t Linear_Congruential_Generator = {
   randseed_lc,
   randget_lc,
-  randclear_lc
+  randclear_lc,
+  randiset_lc
 };
+
+static void
+randiset_lc (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
+{
+  gmp_rand_lc_struct *dstp, *srcp;
+
+  srcp = (gmp_rand_lc_struct *) RNG_STATE (src);
+  dstp = (*__gmp_allocate_func) (sizeof (gmp_rand_lc_struct));
+
+  RNG_STATE (dst) = (void *) dstp;
+  RNG_FNPTR (dst) = (void *) &Linear_Congruential_Generator;
+
+  /* _mp_seed and _mp_a might be unnormalized (high zero limbs), but
+     mpz_init_set won't worry about that */
+  mpz_init_set (dstp->_mp_seed, srcp->_mp_seed);
+  mpz_init_set (dstp->_mp_a,    srcp->_mp_a);
+
+  dstp->_cn = srcp->_cn;
+
+  dstp->_cp[0] = srcp->_cp[0];
+  if (LIMBS_PER_ULONG > 1)
+    dstp->_cp[1] = srcp->_cp[1];
+  if (LIMBS_PER_ULONG > 2)  /* usually there's only 1 or 2 */
+    MPN_COPY (dstp->_cp + 2, srcp->_cp + 2, LIMBS_PER_ULONG - 2);
+
+  dstp->_mp_m2exp = srcp->_mp_m2exp;
+}
 
 /* Initialize LC-specific data.  */
 void

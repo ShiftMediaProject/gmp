@@ -1,6 +1,6 @@
 /* Mersenne Twister pseudo-random number generator functions.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -472,12 +472,33 @@ randclear_mt (gmp_randstate_t rstate)
 		      sizeof (gmp_rand_mt_struct));
 }
 
+static void randiset_mt __GMP_PROTO ((gmp_randstate_ptr dst, gmp_randstate_srcptr src));
 
 static const gmp_randfnptr_t Mersenne_Twister_Generator = {
   randseed_mt,
   randget_mt,
-  randclear_mt
+  randclear_mt,
+  randiset_mt
 };
+
+static void
+randiset_mt (gmp_randstate_ptr dst, gmp_randstate_srcptr src)
+{
+  gmp_rand_mt_struct *dstp, *srcp;
+  int  i;
+
+  srcp = (gmp_rand_mt_struct *) RNG_STATE (src);
+  dstp = (*__gmp_allocate_func) (sizeof (gmp_rand_mt_struct));
+
+  RNG_STATE (dst) = (void *) dstp;
+  RNG_FNPTR (dst) = (void *) &Mersenne_Twister_Generator;
+
+  for (i = 0; i < N; i++)
+    dstp->mt[i] = srcp->mt[i];
+
+  dstp->mti = srcp->mti;
+}
+
 
 /* Initialize MT-specific data.  */
 void
