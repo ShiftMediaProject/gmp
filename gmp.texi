@@ -1407,6 +1407,30 @@ every time, which is an annoyance when re-running a @samp{make check}.
 @chapter GMP Basics
 @cindex Basics
 
+@strong{Using functions, macros, data types, etc.@: not documented in this
+manual is strongly discouraged.  If you do so your application is guaranteed
+to be incompatible with future versions of GMP.}
+
+@menu
+* Headers and Libraries::       
+* Nomenclature and Types::      
+* Function Classes::            
+* Variable Conventions::        
+* Parameter Conventions::       
+* Memory Management::           
+* Reentrancy::                  
+* Useful Macros and Constants::  
+* Compatibility with older versions::  
+* Efficiency::                  
+* Debugging::                   
+* Profiling::                   
+* Autoconf::                    
+@end menu
+
+@node Headers and Libraries, Nomenclature and Types, GMP Basics, GMP Basics
+@section Headers and Libraries
+@cindex Headers
+
 @cindex @file{gmp.h}
 All declarations needed to use GMP are collected in the include file
 @file{gmp.h}.  It is designed to work with both C and C++ compilers.
@@ -1423,26 +1447,39 @@ are only provided if @code{<stdio.h>} is included too.
 #include <gmp.h>
 @end example
 
-@strong{Using functions, macros, data types, etc.@: not documented in this
-manual is strongly discouraged.  If you do so your application is guaranteed
-to be incompatible with future versions of GMP.}
+Likewise @code{<stdarg.h>} (or @code{<varargs.h>}) is required for prototypes
+with @code{va_list} parameters, such as @code{gmp_vprintf}.  And
+@code{<obstack.h>} for prototypes with @code{struct obstack} parameters, such
+as @code{gmp_obstack_printf}, when available.
 
-@menu
-* Nomenclature and Types::      
-* Function Classes::            
-* Variable Conventions::        
-* Parameter Conventions::       
-* Memory Management::           
-* Reentrancy::                  
-* Useful Macros and Constants::  
-* Compatibility with older versions::  
-* Efficiency::                  
-* Debugging::                   
-* Profiling::                   
-* Autoconf::                    
-@end menu
+@cindex Libraries
+@cindex Linking
+All programs using GMP must link against the @file{libgmp} library.  On a
+typical Unix-like system this can be done with @samp{-lgmp}, for example
 
-@node Nomenclature and Types, Function Classes, GMP Basics, GMP Basics
+@example
+gcc myprogram.c -lgmp
+@end example
+
+GMP C++ functions are in a separate @file{libgmpxx} library.  This is built
+and installed if C++ support has been enabled (@pxref{Build Options}).  For
+example,
+
+@example
+g++ mycxxprog.cc -lgmpxx -lgmp
+@end example
+
+GMP is built using Libtool and an application can use that to link if desired,
+@pxref{Top,Shared library support for GNU,Introduction,libtool,GNU Libtool}
+
+If GMP has been installed to a non-standard location then it may be necessary
+to use @samp{-I} and @samp{-L} compiler options to point to the right
+directories, and some sort of run-time path for a shared library.  Consult
+your compiler documentation, for instance @ref{Top,,Introduction,gcc,Using and
+Porting the GNU Compiler Collection}.
+
+
+@node Nomenclature and Types, Function Classes, Headers and Libraries, GMP Basics
 @section Nomenclature and Types
 @cindex Nomenclature
 @cindex Types
@@ -1585,7 +1622,9 @@ foo (void)
 
 When a GMP variable is used as a function parameter, it's effectively a
 call-by-reference, meaning if the function stores a value there it will change
-the original in the caller.
+the original in the caller.  Parameters which are input-only can be designated
+@code{const} to provoke a compiler error or warning on attempting to modify
+them.
 
 When a function is going to return a GMP result, it should designate a
 parameter that it sets, like the library functions do.  More than one value
@@ -1598,7 +1637,7 @@ and storing the result to the indicated parameter.
 
 @example
 void
-foo (mpz_t result, mpz_t param, unsigned long n)
+foo (mpz_t result, const mpz_t param, unsigned long n)
 @{
   unsigned long  i;
   mpz_mul_ui (result, param, n);
@@ -4580,9 +4619,10 @@ Manual}).  A format specification is of the form
 @end example
 
 GMP adds types @samp{Z}, @samp{Q} and @samp{F} for @code{mpz_t}, @code{mpq_t}
-and @code{mpf_t} respectively.  @samp{Z} and @samp{Q} behave like integers.
-@samp{Q} will print a @samp{/} and a denominator, if needed.  @samp{F} behaves
-like a float.  For example,
+and @code{mpf_t} respectively, and @samp{N} for an @code{mp_limb_t} array.
+@samp{Z}, @samp{Q} and @samp{N} behave like integers.  @samp{Q} will print a
+@samp{/} and a denominator, if needed.  @samp{F} behaves like a float.  For
+example,
 
 @example
 mpz_t z;
@@ -4594,17 +4634,23 @@ gmp_printf ("a hex rational: %#40Qx\n", q);
 mpf_t f;
 int   n;
 gmp_printf ("fixed point mpf %.*Ff with %d digits\n", n, f, n);
+
+const mp_limb_t *ptr;
+mp_size_t       size;
+gmp_printf ("limb array %Nx\n", ptr, size);
 @end example
+
+For @samp{N} the limbs are expected least significant first, as per the
+@code{mpn} functions (@pxref{Low-level Functions}).  A negative size can be
+given to print the value as a negative.
 
 All the standard C @code{printf} types behave the same as the C library
 @code{printf}, and can be freely intermixed with the GMP extensions.  In the
 current implementation the standard parts of the format string are simply
 handed to @code{printf} and only the GMP extensions handled directly.
 
-The flags accepted are as follows.  GLIBC style @nisamp{'}
-(@pxref{Locales,,Locales and Internationalization,libc,The GNU C Library
-Reference Manual}) is only for the standard C types (not the GMP types), and
-only if the C library supports it.
+The flags accepted are as follows.  GLIBC style @nisamp{'} is only for the
+standard C types (not the GMP types), and only if the C library supports it.
 
 @quotation
 @multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
@@ -4641,6 +4687,7 @@ The GMP types are
 @multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
 @item @nicode{F}  @tab @nicode{mpf_t}, float conversions
 @item @nicode{Q}  @tab @nicode{mpq_t}, integer conversions
+@item @nicode{N}  @tab @nicode{mp_limb_t} array, integer conversions
 @item @nicode{Z}  @tab @nicode{mpz_t}, integer conversions
 @end multitable
 @end quotation
@@ -4669,10 +4716,10 @@ types.  @samp{m} and @samp{p} depend on the C library.
 @end quotation
 
 @samp{o}, @samp{x} and @samp{X} are unsigned for the standard C types, but for
-@samp{Z} and @samp{Q} a sign is included.  @samp{u} is not meaningful for
-@code{Z} and @code{Q}.
+types @samp{Z}, @samp{Q} and @samp{N} they are signed.  @samp{u} is not
+meaningful for @samp{Z}, @samp{Q} and @samp{N}.
 
-@samp{n} can be used with any of the types, even the GMP types.
+@samp{n} can be used with any type, even the GMP types.
 
 Other types or conversions that might be accepted by the C library
 @code{printf} cannot be used through @code{gmp_printf}, this includes for
@@ -4691,7 +4738,7 @@ happens even for an @samp{f} conversion of an @code{mpf_t} which is an
 integer, for instance @ma{2^@W{1024}} in an @code{mpf_t} of 128 bits precision
 will only produce about 20 digits, then pad with zeros to the decimal point.
 An empty precision field like @samp{%.Fe} or @samp{%.Ff} can be used to
-specifically request all significant digits.
+specifically request just the significant digits.
 
 The decimal point character (or string) is taken from the current locale
 settings on systems which provide @code{localeconv} (@pxref{Locales,,Locales
