@@ -399,7 +399,6 @@ mpn_hgcd_init_itch (mp_size_t size)
      but we allocate one extra limb. */
 
   return 4 * (size + 1) + 8 * ((size / 2) + 1);
-  
 }
 
 void
@@ -518,7 +517,7 @@ do {							\
   row[3] = __hgcd_swap4_2_tmp;				\
 } while (0)
 
-/* Sets (a, b, c)  <--  (b, c, a) */
+/* Sets (a, b, c)  <--	(b, c, a) */
 #define HGCD_SWAP3_LEFT(row)				\
 do {							\
   struct hgcd_row __hgcd_swap4_left_tmp = row[0];	\
@@ -547,57 +546,51 @@ hgcd_mul (struct hgcd_row *P, mp_size_t alloc,
   ASSERT (psize <= talloc);
 
   if (rsize >= ssize)
-    for (i = 0; i < 2; i++)
-      for (j = 0; j < 2; j++)
-	{
-	  /* Set P[i, j] = R[i, 0] S[0, j] + R[i,1] S[1, j] */
-	  mp_limb_t cy;
+    {
+      for (i = 0; i < 2; i++)
+	for (j = 0; j < 2; j++)
+	  {
+	    /* Set P[i, j] = R[i, 0] S[0, j] + R[i,1] S[1, j] */
+	    mp_limb_t cy;
 
-	  mpn_mul (P[i].uvp[j],
-		   R[i].uvp[0], rsize,
-		   S[0].uvp[j], ssize);
-	  mpn_mul (tp,
-		   R[i].uvp[1], rsize,
-		   S[1].uvp[j], ssize);
+	    mpn_mul (P[i].uvp[j], R[i].uvp[0], rsize, S[0].uvp[j], ssize);
+	    mpn_mul (tp, R[i].uvp[1], rsize, S[1].uvp[j], ssize);
 
-	  cy = mpn_add_n (P[i].uvp[j], P[i].uvp[j],
-			  tp, psize);
+	    cy = mpn_add_n (P[i].uvp[j], P[i].uvp[j], tp, psize);
 
-	  if (cy)
-	    {
-	      ASSERT (psize + 1 < alloc);
-	      P[i].uvp[j][psize] = cy;
-	      grow = 1;
-	    }
-	  else
-	    h |= P[i].uvp[j][psize - 1];
-	}
+	    if (cy)
+	      {
+		ASSERT (psize + 1 < alloc);
+		P[i].uvp[j][psize] = cy;
+		grow = 1;
+	      }
+	    else
+	      h |= P[i].uvp[j][psize - 1];
+	  }
+    }
   else
-    for (i = 0; i < 2; i++)
-      for (j = 0; j < 2; j++)
-	{
-	  /* Set P[i, j] = R[i, 0] S[0, j] + R[i,1] S[1, j] */
-	  mp_limb_t cy;
+    {
+      for (i = 0; i < 2; i++)
+	for (j = 0; j < 2; j++)
+	  {
+	    /* Set P[i, j] = R[i, 0] S[0, j] + R[i,1] S[1, j] */
+	    mp_limb_t cy;
 
-	  mpn_mul (P[i].uvp[j],
-		   S[0].uvp[j], ssize,
-		   R[i].uvp[0], rsize);
-	  mpn_mul (tp,
-		   S[1].uvp[j], ssize,
-		   R[i].uvp[1], rsize);
+	    mpn_mul (P[i].uvp[j], S[0].uvp[j], ssize, R[i].uvp[0], rsize);
+	    mpn_mul (tp, S[1].uvp[j], ssize, R[i].uvp[1], rsize);
 
-	  cy = mpn_add_n (P[i].uvp[j], P[i].uvp[j],
-			  tp, psize);
+	    cy = mpn_add_n (P[i].uvp[j], P[i].uvp[j], tp, psize);
 
-	  if (cy)
-	    {
-	      ASSERT (psize + 1 < alloc);
-	      P[i].uvp[j][psize] = cy;
-	      grow = 1;
-	    }
-	  else
-	    h |= P[i].uvp[j][psize - 1];
-	}
+	    if (cy)
+	      {
+		ASSERT (psize + 1 < alloc);
+		P[i].uvp[j][psize] = cy;
+		grow = 1;
+	      }
+	    else
+	      h |= P[i].uvp[j][psize - 1];
+	  }
+    }
 
   if (grow)
     return psize + 1;
@@ -641,7 +634,7 @@ mpn_hgcd_fix (mp_size_t k,
   ASSERT (tsize <= ralloc);
 
   ASSERT (rp != hp);
-  
+
   /* r = W^k h + u a */
   if (uvsize <= k)
     mpn_mul (rp, ap, k, up, uvsize);
@@ -687,30 +680,26 @@ hgcd_update_r (struct hgcd_row *r, mp_srcptr qp, mp_size_t qsize)
   mp_ptr r2p = r[2].rp;
   mp_size_t r0size = r[0].rsize;
   mp_size_t r1size = r[1].rsize;
-  
+
   ASSERT (MPN_LESS_P (r1p, r1size, r0p, r0size));
 
   if (qsize == 0)
     {
-      ASSERT_NOCARRY (mpn_sub (r2p,
-			       r0p, r0size,
-			       r1p, r1size));
+      ASSERT_NOCARRY (mpn_sub (r2p, r0p, r0size, r1p, r1size));
     }
   else if (qsize == 1)
     {
       mp_size_t size;
       mp_limb_t cy = mpn_mul_1 (r2p, r1p, r1size, qp[0]);
       size = r1size;
-      
+
       if (cy)
 	{
 	  ASSERT (size < r0size);
 	  r2p[size++] = cy;
 	}
-      
-      ASSERT_NOCARRY (mpn_sub (r2p,
-			       r0p, r0size,
-			       r2p, size));
+
+      ASSERT_NOCARRY (mpn_sub (r2p, r0p, r0size, r2p, size));
     }
   else
     {
@@ -729,9 +718,7 @@ hgcd_update_r (struct hgcd_row *r, mp_srcptr qp, mp_size_t qsize)
 	  ASSERT (r2p[size] == 0);
 	}
 
-      ASSERT_NOCARRY (mpn_sub (r2p,
-			       r0p, r0size,
-			       r2p, size));
+      ASSERT_NOCARRY (mpn_sub (r2p, r0p, r0size, r2p, size));
     }
 
   MPN_NORMALIZE (r[2].rp, r0size);
@@ -749,21 +736,22 @@ hgcd_update_uv (struct hgcd_row *r, mp_size_t usize,
 
   mp_size_t grow = 0;
 
-  /* Compute u2  = u0 + q u1 */
+  /* Compute u2	 = u0 + q u1 */
 
   if (qsize == 0)
-    /* Represents a unit quotient */
-    for (i = 0; i < 2; i++)
-      {
-	mp_limb_t cy = mpn_add_n (r[2].uvp[i],
-				  r[0].uvp[i],
-				  r[1].uvp[i], usize);
-	if (cy)
-	  {
-	    r[2].uvp[i][usize] = cy;
-	    grow = 1;
-	  }
-      }
+    {
+      /* Represents a unit quotient */
+      for (i = 0; i < 2; i++)
+	{
+	  mp_limb_t cy;
+	  cy = mpn_add_n (r[2].uvp[i], r[0].uvp[i], r[1].uvp[i], usize);
+	  if (cy)
+	    {
+	      r[2].uvp[i][usize] = cy;
+	      grow = 1;
+	    }
+	}
+    }
   else if (qsize == 1)
     {
       mp_limb_t q = qp[0];
@@ -786,7 +774,6 @@ hgcd_update_uv (struct hgcd_row *r, mp_size_t usize,
 	    }
 	}
     }
-
   else
     {
       grow = qsize - 1;
@@ -801,9 +788,7 @@ hgcd_update_uv (struct hgcd_row *r, mp_size_t usize,
 	  else
 	    mpn_mul (u2p, qp, qsize, u1p, usize);
 
-	  ASSERT_NOCARRY (mpn_add (u2p,
-				   u2p, usize + qsize,
-				   u0p, usize));
+	  ASSERT_NOCARRY (mpn_add (u2p, u2p, usize + qsize, u0p, usize));
 	  if (u2p[usize + qsize - 1])
 	    grow = qsize;
 	}
@@ -880,8 +865,8 @@ hgcd_backup (struct hgcd_row *r, mp_size_t usize,
     {
       /* r0 = r2 + q r1
 
-         Result must be of size r1size + q1size - 1, or one limb
-         larger. */
+	 Result must be of size r1size + q1size - 1, or one limb
+	 larger. */
 
       mp_size_t size;
 
@@ -1087,16 +1072,12 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
   if (hgcd->sign >= 0)
     {
       /* Check if r1 - r2 >= u2 - u1 */
-      cy = mpn_add_n (tp,
-		      hgcd->row[2].uvp[0],
-		      hgcd->row[1].uvp[0], L);
+      cy = mpn_add_n (tp, hgcd->row[2].uvp[0], hgcd->row[1].uvp[0], L);
     }
   else
     {
       /* Check if r1 - r2 >= v2 - v1 */
-      cy = mpn_add_n (tp,
-		      hgcd->row[2].uvp[1],
-		      hgcd->row[1].uvp[1], L);
+      cy = mpn_add_n (tp, hgcd->row[2].uvp[1], hgcd->row[1].uvp[1], L);
     }
   if (cy)
     tp[tsize++] = cy;
@@ -1130,8 +1111,7 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
 	}
 
       /* Check r3 - r2 >= v3 - v2 */
-      cy = mpn_add_n (tp,
-		      hgcd->row[3].uvp[1], hgcd->row[2].uvp[1], L);
+      cy = mpn_add_n (tp, hgcd->row[3].uvp[1], hgcd->row[2].uvp[1], L);
     }
   else
     {
@@ -1153,8 +1133,7 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
 
       /* Check r3 - r2 >= u3 - u2 */
 
-      cy = mpn_add_n (tp,
-		      hgcd->row[3].uvp[0], hgcd->row[2].uvp[0], L);
+      cy = mpn_add_n (tp, hgcd->row[3].uvp[0], hgcd->row[2].uvp[0], L);
     }
 
   if (cy)
@@ -1288,10 +1267,9 @@ hgcd_case0 (struct hgcd *hgcd, mp_size_t M,
 {
   hgcd->size = euclid_step (hgcd->row, hgcd->size, quotients, hgcd->alloc);
   ASSERT (hgcd->size < hgcd->alloc);
-  
+
   if (hgcd->row[2].rsize <= M)
-    return hgcd_small_1 (hgcd, M, quotients,
-			 tp, talloc);
+    return hgcd_small_1 (hgcd, M, quotients, tp, talloc);
   else
     {
       /* Keep this remainder */
@@ -1442,7 +1420,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
   trace ("hgcd_lehmer: asize = %d, bsize = %d, HGCD_SCHOENHAGE_THRESHOLD = %d\n",
 	 asize, bsize, HGCD_SCHOENHAGE_THRESHOLD);
 #endif
-  
+
   if (bsize <= M)
     return 0;
 
@@ -1490,7 +1468,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 			     ~R.sign,
 			     R.row[1].u, hgcd->row[0].rp, hgcd->row[0].rsize,
 			     R.row[1].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-	  
+
 	  hgcd->row[3].rsize
 	    = mpn_hgcd2_fix (hgcd->row[3].rp, ralloc,
 			     R.sign,
@@ -1547,7 +1525,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 			     R.sign,
 			     R.row[2].u, hgcd->row[0].rp, hgcd->row[0].rsize,
 			     R.row[2].v, hgcd->row[1].rp, hgcd->row[1].rsize);
-	  
+
 	correct_r2:
 	  /* Discard r3, and the corresponding quotient */
 	  qstack_drop (quotients);
@@ -1608,7 +1586,7 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
   ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 0, 2);
 
   return hgcd_final (hgcd, M, quotients, tp, talloc);
-}  
+}
 
 mp_size_t
 mpn_hgcd_itch (mp_size_t asize)
@@ -1622,7 +1600,7 @@ mpn_hgcd_itch (mp_size_t asize)
   unsigned k = mpn_hgcd_max_recursion (asize);
 
   return asize + mpn_hgcd_init_itch (asize + k * (6 + 12));
-}  
+}
 
 /* Computes hgcd using Schönhage's algorithm */
 int
@@ -1925,7 +1903,7 @@ mpn_hgcd (struct hgcd *hgcd,
 		      hgcd->row[0].rp + k, hgcd->row[0].rsize - k,
 		      hgcd->row[1].rp + k, hgcd->row[1].rsize - k,
 		      quotients, tp, talloc);
-      
+
       if (!res)
 	{
 	  /* The first remainder was small. Then there's a good chance
@@ -1954,7 +1932,7 @@ mpn_hgcd (struct hgcd *hgcd,
 			R.row[0].uvp[1], hgcd->row[1].rp,
 			R.size,
 			tp, talloc);
-      
+
       hgcd->row[3].rsize
 	= mpn_hgcd_fix (k, hgcd->row[3].rp, hgcd->row[1].rsize + 1,
 			R.row[1].rp, R.row[1].rsize,
@@ -2001,11 +1979,11 @@ mpn_hgcd (struct hgcd *hgcd,
 	  qsize = qstack_get_1 (quotients, &qp);
 
 	  ASSERT (qsize + hgcd->size <= hgcd->alloc);
-	  hgcd_update_r (hgcd->row, qp, qsize);	  
+	  hgcd_update_r (hgcd->row, qp, qsize);
 	  hgcd->size = hgcd_update_uv (hgcd->row, hgcd->size,
 				       qp, qsize);
 	  ASSERT (hgcd->size < hgcd->alloc);
-	  
+
 	  ASSERT (hgcd->row[2].rsize > k);
 	  if (hgcd->row[2].rsize <= M)
 	    {
@@ -2027,7 +2005,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	  hgcd->size = euclid_step (hgcd->row, hgcd->size,
 				    quotients, hgcd->alloc);
 	  ASSERT (hgcd->size < hgcd->alloc);
-	  
+
 	  if (hgcd->row[2].rsize <= M)
 	    return hgcd_small_1 (hgcd, M, quotients,
 				 tp, talloc);
@@ -2057,7 +2035,7 @@ mpn_hgcd (struct hgcd *hgcd,
 				  quotients, hgcd->alloc);
 
       ASSERT (hgcd->size < hgcd->alloc);
-      
+
       if (hgcd->row[3].rsize <= M)
 	{
 #if WANT_ASSERT
