@@ -23,14 +23,16 @@ include(`../config.m4')
 
 
 C      cycles/limb
-C EV5:    2.0  from L1
+C EV4:    4.75
+C EV5:    2.0
+C EV6:    1.5
 
 
 C mp_limb_t mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
-C The main loop is 7 cycles plus 1 taken branch bubble, for a total 2.0 c/l.
-C In general, a pattern like this unrolled to N limbs per loop will be
-C 1.5+2/N c/l.
+C For ev5 the main loop is 7 cycles plus 1 taken branch bubble, for a total
+C 2.0 c/l.  In general, a pattern like this unrolled to N limbs per loop
+C will be 1.5+2/N c/l.
 C
 C 2 cycles of loop control are unavoidable, for pointer updates and the
 C taken branch bubble, but also since ldq cannot issue two cycles after stq
@@ -55,14 +57,12 @@ C before the explicit store to dst[0], in case src==dst.
 C 
 
 ASM_START()
-DATASTART(L(dat))
-	ALIGN(8)
-	.t_floating 2.0
-DATAEND()
 
-PROLOGUE(mpn_com_n,gp)
+FLOAT64(L(dat), 2.0)
 
 	ALIGN(16)
+
+PROLOGUE(mpn_com_n,gp)
 
 	C r16	dst
 	C r17	src
@@ -88,8 +88,6 @@ PROLOGUE(mpn_com_n,gp)
 
 	stq	r20, 0(r16)		C dst[0]
 	s8addq	r5, r16, r19		C skip dst[0] if even
-	unop
-	unop
 
 	ldt	f1, 0(r8)		C data 2.0
 	lda	r30, 16(r30)		C restore stack
