@@ -5019,7 +5019,6 @@ if test -z "$CC_FOR_BUILD"; then
 fi
 if test -z "$HOST_CC"; then
   HOST_CC=$i
-
 fi
 
 
@@ -7273,7 +7272,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7276 "configure"' > conftest.$ac_ext
+  echo '#line 7275 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -10354,7 +10353,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10357 "configure"
+#line 10356 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10452,7 +10451,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10455 "configure"
+#line 10454 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13557,7 +13556,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 13560 "configure"
+#line 13559 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13655,7 +13654,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 13658 "configure"
+#line 13657 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16281,7 +16280,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16284 "configure"
+#line 16283 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16379,7 +16378,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16382 "configure"
+#line 16381 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -21804,7 +21803,7 @@ echo "$as_me: error: some sort of compiler problem, mp_limb_t doesn't seem to wo
    { (exit 1); exit 1; }; }
   fi
   if test -z "$BITS_PER_MP_LIMB"; then
-    BITS_PER_MP_LIMB="(8*$ac_cv_sizeof_mp_limb_t)"
+    BITS_PER_MP_LIMB=`expr 8 \* $ac_cv_sizeof_mp_limb_t`
   fi
   if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
   else
@@ -24073,7 +24072,6 @@ s,@AMDEPBACKSLASH@,$AMDEPBACKSLASH,;t t
 s,@CCDEPMODE@,$CCDEPMODE,;t t
 s,@CPP@,$CPP,;t t
 s,@CC_FOR_BUILD@,$CC_FOR_BUILD,;t t
-s,@HOST_CC@,$HOST_CC,;t t
 s,@CPP_FOR_BUILD@,$CPP_FOR_BUILD,;t t
 s,@EXEEXT_FOR_BUILD@,$EXEEXT_FOR_BUILD,;t t
 s,@U_FOR_BUILD@,$U_FOR_BUILD,;t t

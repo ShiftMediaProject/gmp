@@ -2139,7 +2139,7 @@ GMP_INCLUDE_GMP_H)
     AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
   fi
   if test -z "$BITS_PER_MP_LIMB"; then
-    BITS_PER_MP_LIMB="(8*$ac_cv_sizeof_mp_limb_t)"
+    BITS_PER_MP_LIMB=`expr 8 \* $ac_cv_sizeof_mp_limb_t`
   fi
   if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
   else
@@ -2574,7 +2574,7 @@ if test -z "$CC_FOR_BUILD"; then
   AC_SUBST(CC_FOR_BUILD,$i)
 fi
 if test -z "$HOST_CC"; then
-  AC_SUBST(HOST_CC,$i)
+  HOST_CC=$i
 fi
 ])
 
