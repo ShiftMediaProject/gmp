@@ -30,7 +30,7 @@ C them to the integer unit.
 
 C Possible optimizations:
 C   1. Align the stack area where we transfer the four 49-bit product-sums
-C      to a 32-byte boundary.  That would minimize the cache collition.
+C      to a 32-byte boundary.  That would minimize the cache collision.
 C      (UltraSPARC-1/2 use a direct-mapped cache.)  (Perhaps even better would
 C      be to align the area to map to the area immediately before s1?)
 C   2. Figure out a better way for summing the 49-bit quantities.
