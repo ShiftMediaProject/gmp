@@ -1,6 +1,6 @@
 /* mpz_scan1 -- search for a 1 bit.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -133,10 +133,7 @@ mpz_scan1 (mpz_srcptr u, unsigned long starting_bit)
     }
 
  got_limb:
-  /* Mask to 0 all bits above the lowest 1 bit. */
   ASSERT (limb != 0);
-  limb &= -limb;
-
-  count_leading_zeros (cnt, limb);
-  return (p - u_ptr) * GMP_NUMB_BITS + GMP_LIMB_BITS - 1 - cnt;
+  count_trailing_zeros (cnt, limb);
+  return (p - u_ptr) * GMP_NUMB_BITS + cnt;
 }
