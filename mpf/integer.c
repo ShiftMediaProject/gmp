@@ -1,7 +1,7 @@
 /* mpf_trunc, mpf_floor, mpf_ceil -- Assign a float from another float while
    rounding it to an integer.
 
-Copyright (C) 1997, 1998 Free Software Foundation, Inc.
+Copyright (C) 1997, 1998, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,26 +23,26 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#if MPF_FLOOR
+
+#if defined (OPERATION_floor)
 #define _MPF_FLOOR_OR_CEIL
 #define FUNC_NAME mpf_floor
-#undef MPF_FLOOR
 #define MPF_FLOOR 1
 #define MPF_CEIL 0
-#endif
 
-#if MPF_CEIL
+#elif defined (OPERATION_ceil)
 #define _MPF_FLOOR_OR_CEIL
 #define FUNC_NAME mpf_ceil
-#undef MPF_CEIL
 #define MPF_CEIL 1
 #define MPF_FLOOR 0
+
+#elif defined (OPERATION_trunc)
+#define FUNC_NAME mpf_trunc
+
+#else
+Error, error, unrecognised OPERATION
 #endif
 
-#if MPF_TRUNC
-#undef FUNC_NAME
-#define FUNC_NAME mpf_trunc
-#endif
 
 #ifdef _MPF_FLOOR_OR_CEIL
 static int
