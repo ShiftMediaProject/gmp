@@ -1,6 +1,6 @@
 # Makefile for GMP perl module.
 
-# Copyright 2001, 2003 Free Software Foundation, Inc.
+# Copyright 2001, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -53,7 +53,7 @@ if (defined $GMP_BUILDDIR) {
 
 WriteMakefile(
 	      NAME         => 'GMP',
-	      VERSION      => '1',
+	      VERSION      => '2.00',
 	      LIBS         => [$LIBS],
 	      OBJECT       => $OBJECT,
 	      INC          => $INC,
