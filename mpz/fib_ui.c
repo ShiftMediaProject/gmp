@@ -1,6 +1,6 @@
 /* mpz_fib_ui -- calculate Fibonacci numbers.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -37,14 +37,13 @@ MA 02111-1307, USA. */
    In the F[2k+1] for k even, the +2 won't give a carry out of the low limb
    in normal circumstances.  This is an F[4m+1] and we claim that F[3*2^b+1]
    == 1 mod 2^b is the first F[4m+1] congruent to 0 or 1 mod 2^b, and hence
-   if n < 2^BITS_PER_MP_LIMB then F[n] cannot have a low limb of 0 or 1.  No
+   if n < 2^GMP_NUMB_BITS then F[n] cannot have a low limb of 0 or 1.  No
    proof for this claim, but it's been verified up to b==32 and has such a
    nice pattern it must be true :-).  Of interest is that F[3*2^b] == 0 mod
    2^(b+1) seems to hold too.
 
-   When n >= 2^BITS_PER_MP_LIMB, which can arise in test setups with a small
-   limb, then the low limb of F[4m+1] can certainly be 1, and an mpn_add_1
-   must be used.  */
+   When n >= 2^GMP_NUMB_BITS, which can arise in a nails build, then the low
+   limb of F[4m+1] can certainly be 1, and an mpn_add_1 must be used.  */
 
 void
 mpz_fib_ui (mpz_ptr fn, unsigned long n)
@@ -101,12 +100,11 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
       size = xsize + ysize;
       c = mpn_mul (fp, xp, xsize, yp, ysize);
 
-#if BITS_PER_MP_LIMB >= BITS_PER_ULONG
+#if GMP_NUMB_BITS >= BITS_PER_ULONG
       /* no overflow, see comments above */
-      ASSERT (n & 2 ? fp[0] >= 2 : fp[0] <= MP_LIMB_T_MAX-2);
+      ASSERT (n & 2 ? fp[0] >= 2 : fp[0] <= GMP_NUMB_MAX-2);
       fp[0] += (n & 2 ? -CNST_LIMB(2) : CNST_LIMB(2));
 #else
-      /* this code only for testing with small limbs, limb<ulong is unusual */
       if (n & 2)
         {
           ASSERT (fp[0] >= 2);
@@ -114,7 +112,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
         }
       else
         {
-          ASSERT (c != MP_LIMB_T_MAX); /* because it's the high of a mul */
+          ASSERT (c != GMP_NUMB_MAX); /* because it's the high of a mul */
           c += mpn_add_1 (fp, fp, size-1, CNST_LIMB(2));
           fp[size-1] = c;
         }
