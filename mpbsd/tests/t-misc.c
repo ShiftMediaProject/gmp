@@ -42,14 +42,9 @@ check_itom (void)
     {  1L,  1, 1 },
     { -1L, -1, 1 },
 
-    {  SHORT_MAX,  1, SHORT_MAX },
-    { -SHORT_MAX, -1, SHORT_MAX },
-#if !defined (_CRAY) || defined (_CRAYMPP)
-    /* These values are computed such that it will not work on traditional
-       Cray systems.  The occupied space is 64 bits but for signed short,
-       just 46 of them are valid. */
-    { SHORT_HIGHBIT, -1, USHORT_HIGHBIT },
-#endif
+    {  SHRT_MAX,  1, SHRT_MAX },
+    { -SHRT_MAX, -1, SHRT_MAX },
+    { SHRT_MIN, -1, -SHRT_MIN },
   };
 
   MINT  *m;
