@@ -143,7 +143,8 @@ dnl
 dnl  See mpn/asm-defs.m4 for details on the known bad m4s.
 
 AC_DEFUN(GMP_PROG_M4,
-[AC_CACHE_CHECK([for suitable m4],
+[AC_ARG_VAR(M4,[m4 macro processor])
+AC_CACHE_CHECK([for suitable m4],
                 gmp_cv_prog_m4,
 [if test -n "$M4"; then
   gmp_cv_prog_m4="$M4"
