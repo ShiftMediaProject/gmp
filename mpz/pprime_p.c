@@ -204,15 +204,25 @@ millerrabin (n, n_minus_1, x, y, q, k)
   mpz_powm (y, x, q, n);
 
   if (mpz_cmp_ui (y, 1L) == 0 || mpz_cmp (y, n_minus_1) == 0)
-    return 1;
+    {
+      gmp_randclear (rstate);
+      return 1;
+    }
 
   for (i = 1; i < k; i++)
     {
       mpz_powm_ui (y, y, 2L, n);
       if (mpz_cmp (y, n_minus_1) == 0)
-	return 1;
+	{
+	  gmp_randclear (rstate);
+	  return 1;
+	}
       if (mpz_cmp_ui (y, 1L) == 0)
-	return 0;
+	{
+	  gmp_randclear (rstate);
+	  return 0;
+	}
     }
+  gmp_randclear (rstate);
   return 0;
 }
