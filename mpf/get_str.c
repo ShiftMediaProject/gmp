@@ -332,16 +332,13 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
        digits_computed_so_far += dig_per_u)
     {
       mp_limb_t cy;
-      /* For speed: skip trailing zeroes.  */
+      /* For speed: skip trailing zero limbs.  */
       if (rp[0] == 0)
 	{
 	  rp++;
 	  rsize--;
 	  if (rsize == 0)
-	    {
-	      n_digits = digits_computed_so_far;
-	      break;
-	    }
+	    break;
 	}
 
       cy = mpn_mul_1 (rp, rp, rsize, big_base);
@@ -374,56 +371,57 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 	  digits_computed_so_far--;
 	  exp_in_base--;
 
-	  if (tstr[0] == 0)
-	    abort ();
+	  ASSERT_ALWAYS (tstr[0] != 0);
 	}
     }
 
-  {
-    size_t i;
-
-    /* We should normally have computed too many digits.  Round the result
-       at the point indicated by n_digits.  */
-    if (digits_computed_so_far > n_digits)
-      {
-	/* Round the result.  */
-	if (tstr[n_digits] * 2 >= base)
-	  {
-	    digits_computed_so_far = n_digits;
-	    for (i = n_digits - 1;; i--)
-	      {
-		unsigned int x;
-		x = ++(tstr[i]);
-		if (x != base)
+  /* We should normally have computed too many digits.  Round the result
+     at the point indicated by n_digits.  */
+  if (digits_computed_so_far > n_digits)
+    {
+      size_t i;
+      /* Round the result.  */
+      if (tstr[n_digits] * 2 >= base)
+	{
+	  digits_computed_so_far = n_digits;
+	  for (i = n_digits - 1;; i--)
+	    {
+	      unsigned int x;
+	      x = ++(tstr[i]);
+	      if (x != base)
+		break;
+	      digits_computed_so_far--;
+	      if (i == 0)
+		{
+		  /* We had something like `bbbbbbb...bd', where 2*d >= base
+		     and `b' denotes digit with significant base - 1.
+		     This rounds up to `1', increasing the exponent.  */
+		  tstr[0] = 1;
+		  digits_computed_so_far = 1;
+		  exp_in_base++;
 		  break;
-		digits_computed_so_far--;
-		if (i == 0)
-		  {
-		    /* We had something like `9999999...9d', where 2*d >= base.
-		       This rounds up to `1', increasing the exponent.  */
-		    tstr[0] = 1;
-		    digits_computed_so_far = 1;
-		    exp_in_base++;
-		    break;
-		  }
-	      }
-	  }
-      }
+		}
+	    }
+	}
+    }
 
-    /* We might have fewer digits than requested as a result of rounding above,
-       (i.e. 0.999999 => 1.0) or because we have a number that simply doesn't
-       need many digits in this base (i.e., 0.125 in base 10).  */
-    if (n_digits > digits_computed_so_far)
-      n_digits = digits_computed_so_far;
+  /* We might have fewer digits than requested as a result of rounding above,
+     (i.e. 0.999999 => 1.0) or because we have a number that simply doesn't
+     need many digits in this base (e.g., 0.125 in base 10).  */
+  if (n_digits > digits_computed_so_far)
+    n_digits = digits_computed_so_far;
 
-    /* Remove trailing 0.  There can be many zeros.  */
-    while (n_digits != 0 && tstr[n_digits - 1] == 0)
+  /* Remove trailing 0.  There can be many zeros.  */
+  while (n_digits != 0 && tstr[n_digits - 1] == 0)
+    n_digits--;
+
+  /* Translate to ASCII and copy to result string.  */
+  while (n_digits != 0)
+    {
+      *str++ = num_to_text[*tstr++];
       n_digits--;
+    }
 
-    /* Translate to ascii and null-terminate.  */
-    for (i = 0; i < n_digits; i++)
-      *str++ = num_to_text[tstr[i]];
-  }
   *str = 0;
   *exp = exp_in_base;
   TMP_FREE (marker);
