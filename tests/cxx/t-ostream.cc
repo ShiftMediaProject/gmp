@@ -350,13 +350,13 @@ check_mpf (void)
     { "123",  "173", ios::oct },
     { "123", "0173", ios::oct | ios::showbase },
 
-    /* octal showbase suppressed for zero integer part */
+    /* octal showbase suppressed for 0 */
     { "0", "0", ios::oct | ios::showbase },
-    { ".125",    "0.1",  ios::oct | ios::showbase, 0, 1 },
-    { ".015625", "0.01", ios::oct | ios::showbase, 0, 2 },
-    { ".125",    "0.1",  ios::fixed | ios::oct | ios::showbase, 0, 1 },
-    { ".015625", "0.0",  ios::fixed | ios::oct | ios::showbase, 0, 1 },
-    { ".015625", "0.01", ios::fixed | ios::oct | ios::showbase, 0, 2 },
+    { ".125",    "00.1",  ios::oct | ios::showbase, 0, 1 },
+    { ".015625", "00.01", ios::oct | ios::showbase, 0, 2 },
+    { ".125",    "00.1",  ios::fixed | ios::oct | ios::showbase, 0, 1 },
+    { ".015625", "0.0",   ios::fixed | ios::oct | ios::showbase, 0, 1 },
+    { ".015625", "00.01", ios::fixed | ios::oct | ios::showbase, 0, 2 },
 
     {  "0.125",  "1.000000e-01", ios::oct | ios::scientific },
     {  "0.125", "+1.000000e-01", ios::oct | ios::scientific | ios::showpos },
