@@ -80,7 +80,7 @@ deflit(`FRAME',SAVE_SIZE)
 
 	movl	(%edx), %edx
 
-	shldl	%cl, %edx, %eax		# eax was decremented to zero
+	shldl(	%cl, %edx, %eax)	# eax was decremented to zero
 
  	shll	%cl, %edx
 
