@@ -1,3 +1,10 @@
+1999-03-17  Torbjorn Granlund  <tege@matematik.su.se>
+
+	* extract-dbl.c: When packing result, adjust exp when sc == 0.
+
+	* mpf/tests/t-get_d.c: New file.
+	* mpf/tests/Makefile.in: Compile t-get_d.c.
+
 1999-03-16  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* make.bat: Compile mpz/urandomc and mpf/urandom.c
