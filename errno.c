@@ -1,6 +1,10 @@
 /* gmp_errno, __gmp_exception -- exception handling and reporting.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+   THE FUNCTIONS IN THIS FILE, APART FROM gmp_errno, ARE FOR INTERNAL USE
+   ONLY.  THEY'RE ALMOST CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR
+   DISAPPEAR COMPLETELY IN FUTURE GNU MP RELEASES.
+
+Copyright 2000, 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
