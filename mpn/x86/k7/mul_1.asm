@@ -200,7 +200,9 @@ L(here):
 
 ifdef(`PIC',`
 L(add_eip_to_edx):
-	leal	L(entry)-L(here) (%edx,%ebp), %edx
+	# See README.family about old gas bugs
+	leal	(%edx,%ebp), %edx
+	addl	$L(entry)-L(here), %edx
 	addl	(%esp), %edx
 	ret
 ')

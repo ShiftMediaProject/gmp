@@ -179,9 +179,12 @@ L(here):
 
 	jmp	*%esi
 
+
 ifdef(`PIC',`
 L(pic_calc):
-	leal	L(entry)-L(here) (%edi,%edi,8), %esi
+	# See README.family about old gas bugs
+	leal	(%edi,%edi,8), %esi
+	addl	$L(entry)-L(here), %esi
 	addl	(%esp), %esi
 	ret
 ')

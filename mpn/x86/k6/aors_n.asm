@@ -147,7 +147,7 @@ L(simple):
 	ret
 
 
-#-----------------------------------------------------------------
+#------------------------------------------------------------------------------
 L(unroll):
 deflit(`FRAME',8)
 	movl	PARAM_DST, %edi
@@ -192,8 +192,7 @@ L(pic_ret):
 	jmp	*%esi
 
 
-
-#---------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # This is within range of a short jump for the above tests.
 
 	ALIGN(16)
@@ -245,8 +244,27 @@ L(inplace_pic_ret):
 	jmp	*%esi
 
 
+ifdef(`PIC',`
+L(pic_calc):
+	# See README.family about old gas bugs
+	leal	(%edi,%edi,8), %esi
+	addl	$L(entry)-L(pic_ret), %esi
+	addl	(%esp), %esi
+	ret
+')
 
-#--------------------------------------------------------------------
+
+ifdef(`PIC',`
+L(inplace_pic_calc):
+	# See README.family about old gas bugs
+	leal	(%ebp,%ebp,2), %esi
+	addl	$L(inplace_entry)-L(inplace_pic_ret), %esi
+	addl	(%esp), %esi
+	ret
+')
+
+
+#------------------------------------------------------------------------------
 # needs to be 32-byte aligned to get the speed claimed
 	ALIGN(32)
 L(top):
@@ -287,22 +305,7 @@ forloop(`i', 0, UNROLL_COUNT-1, `
 	ret
 
 
-ifdef(`PIC',`
-L(pic_calc):
-	leal	L(entry)-L(pic_ret) (%edi,%edi,8), %esi
-	addl	(%esp), %esi
-	ret
-')
-
-
-#----------------------------------------------------------------------
-ifdef(`PIC',`
-L(inplace_pic_calc):
-	leal	L(inplace_entry)-L(inplace_pic_ret) (%ebp,%ebp,2), %esi
-	addl	(%esp), %esi
-	ret
-')
-
+#------------------------------------------------------------------------------
 	# needs to be 32-byte aligned to get the speed claimed
 	ALIGN(32)
 L(inplace_top):

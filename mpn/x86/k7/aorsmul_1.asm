@@ -261,7 +261,9 @@ L(here):
 
 ifdef(`PIC',`
 L(pic_calc):
-	leal	L(entry)-L(here) (%edx,%ebx,1), %edx
+	# See README.family about old gas bugs
+	leal	(%edx,%ebx,1), %edx
+	addl	$L(entry)-L(here), %edx
 	addl	(%esp), %edx
 	ret
 ')
