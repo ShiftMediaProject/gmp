@@ -423,11 +423,15 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #define count_leading_zeros(count, x) \
   do {									\
     USItype __cbtmp;							\
+    ASSERT ((x) != 0);                                                  \
     __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));	\
     (count) = __cbtmp ^ 31;						\
   } while (0)
-#define count_trailing_zeros(count, x) \
-  __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)))
+#define count_trailing_zeros(count, x)                                  \
+  do {                                                                  \
+    ASSERT ((x) != 0);                                                  \
+    __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));        \
+  } while (0)
 #ifndef UMUL_TIME
 #define UMUL_TIME 10
 #endif
@@ -1233,6 +1237,10 @@ extern mp_limb_t mpn_udiv_qrnnd _PROTO ((mp_limb_t *,
 #define __udiv_qrnnd_c(q, r, n1, n0, d) \
   do {									\
     UWtype __d1, __d0, __q1, __q0, __r1, __r0, __m;			\
+									\
+    ASSERT ((d) != 0);                                                  \
+    ASSERT ((n1) < (d));                                                \
+									\
     __d1 = __ll_highpart (d);						\
     __d0 = __ll_lowpart (d);						\
 									\
