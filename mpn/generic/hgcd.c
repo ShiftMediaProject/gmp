@@ -74,7 +74,7 @@ trace (const char *format, ...)
 
 
 /* Return -1 if a < x + y + z,
-           0 if a = x + y + z,
+	   0 if a = x + y + z,
 	   1 if a > x + y + z. */
 static int
 mpn_cmp_sum3 (mp_srcptr ap, mp_size_t an,
@@ -112,13 +112,13 @@ mpn_cmp_sum3 (mp_srcptr ap, mp_size_t an,
        (c[1], a[0]) = x[0]   + y[0]   + z[0]   + c[0]
        (c[2], a[1]) = x[1]   + y[1]   + z[1]   + c[1]
      (c[k+1], a[k]) = x[k]   + y[k]   + z[k]   + c[2]
-                   ...
+		   ...
      (c[n], a[n-1]) = x[n-1] + y[n-1] + z[n-1] + c[n-1]
 
      where the start and stop conditions are that c[0] = c[n] = 0.
      Then we can start at the high end, iterating
 
-        c[k] = (c[k+1], a[k]) - x[k] - y[k] - z[k]
+	c[k] = (c[k+1], a[k]) - x[k] - y[k] - z[k]
 
      If equality holds, then 0 <= c[k] <= 2 for all k (since for
      example 0xf + 0xf + 0xf + 2 = 0x2f). If we find c[k] < 0, then we
@@ -216,7 +216,7 @@ loselose
 
       if (cy < sh || (cy == sh && ap[an] < sl))
 	return -1;
-      
+
       sl = ap[an] - sl; /* Monkey business */
       sh = cy - sh - (sl > ap[an]);
       if (sh > 0)
@@ -274,7 +274,7 @@ hgcd_start_row_p (const struct hgcd_row *r, mp_size_t n)
    Return 0 on failure, i.e. if B or A mod B < W^M. Return 1 in case
    r0 and r1 are correct, but we still make no progress because r0 =
    A, r1 = B.
-   
+
    Otherwise return 2, 3 or 4, the number of r:s that are correct.
  */
 static int
@@ -282,7 +282,7 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M)
 {
   mp_size_t L;
   unsigned bit;
-  
+
   ASSERT (hgcd->row[0].rsize > M);
   ASSERT (hgcd->row[1].rsize > M);
   ASSERT (hgcd->row[2].rsize > M);
@@ -411,7 +411,7 @@ qstack_get_1 (const struct qstack *stack,
 
 /* Adds d to the element on top of the stack */
 static void
-qstack_adjust (struct qstack *stack)
+qstack_adjust (struct qstack *stack, mp_limb_t d)
 {
   mp_size_t qsize;
   mp_ptr qp;
@@ -432,13 +432,13 @@ qstack_adjust (struct qstack *stack)
 
   if (qsize == 0)
     {
-      qp[0] = 2;
+      qp[0] = 1 + d;
       stack->size[stack->size_next - 1] = 1;
       stack->limb_next++;
     }
   else
     {
-      mp_limb_t cy = mpn_add_1 (qp, qp, qsize, 1);
+      mp_limb_t cy = mpn_add_1 (qp, qp, qsize, d);
       if (cy)
 	{
 	  qp[qsize] = cy;
@@ -1332,17 +1332,31 @@ hgcd_adjust (struct hgcd_row *r, mp_size_t size,
 {
   mp_limb_t c0;
   mp_limb_t c1;
+  mp_limb_t d;
 
-  /* Compute the correct r3, we have r3' = r3 - r2. */
+  /* Compute the correct r1. We have r1' = r1 - d r0, and we always
+     have d = 1 or 2. */
 
   ASSERT_NOCARRY (mpn_sub (r[1].rp, r[1].rp, r[1].rsize, r[0].rp, r[0].rsize));
 
   MPN_NORMALIZE (r[1].rp, r[1].rsize);
 
-  ASSERT (MPN_LESS_P (r[1].rp, r[1].rsize, r[0].rp, r[0].rsize));
+  if (MPN_LESS_P (r[1].rp, r[1].rsize, r[0].rp, r[0].rsize))
+    {
+      c0 = mpn_add_n (r[1].uvp[0], r[1].uvp[0], r[0].uvp[0], size);
+      c1 = mpn_add_n (r[1].uvp[1], r[1].uvp[1], r[0].uvp[1], size);
+      d = 1;
+    }
+  else
+    {
+      ASSERT_NOCARRY (mpn_sub (r[1].rp, r[1].rp, r[1].rsize, r[0].rp, r[0].rsize));
+      MPN_NORMALIZE (r[1].rp, r[1].rsize);
+      ASSERT (MPN_LESS_P (r[1].rp, r[1].rsize, r[0].rp, r[0].rsize));
 
-  c0 = mpn_add_n (r[1].uvp[0], r[1].uvp[0], r[0].uvp[0], size);
-  c1 = mpn_add_n (r[1].uvp[1], r[1].uvp[1], r[0].uvp[1], size);
+      c0 = mpn_addmul_1 (r[1].uvp[0], r[0].uvp[0], size, 2);
+      c1 = mpn_addmul_1 (r[1].uvp[1], r[0].uvp[1], size, 2);
+      d = 2;
+    }
 
   /* FIXME: Can avoid branches */
   if (c1 != 0)
@@ -1357,7 +1371,7 @@ hgcd_adjust (struct hgcd_row *r, mp_size_t size,
     }
 
   /* Remains to adjust the quotient on stack */
-  qstack_adjust (quotients);
+  qstack_adjust (quotients, d);
 
   return size;
 }
