@@ -18,6 +18,31 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-01-05  Kevin Ryde  <kevin@swox.se>
+
+	* demos/expr/t-expr.c (check_r): Tolerate mpfr_set_str new return
+	value.
+
+	* configure, aclocal.m4 (*-*-osf4*, *-*-osf5*): Regenerate with
+	libtool patch to avoid bash printf option problem when building shared
+	libraries with cxx.
+
+	* configure.in (pentium4-*-*): Use "-march=pentium4 -mno-sse2" since
+	sse2 causes buggy code from gcc 3.2.1 and is only supported on new
+	enough kernels.
+
+	* acinclude.m4 (GMP_PROG_NM): Add some notes about failures, per
+	report by Krzysztof Kozminski.
+
+	* gmp-h.in (mpz_mdivmod_ui, mpz_mmod_ui): Add parens around "r".
+
+	* gmp-h.in (__GMP_CAST): New macro, clean to g++ -Wold-style-cast.
+	(GMP_NUMB_MASK, mpz_cmp_si, mpq_cmp_si, mpz_odd_p, mpn_divexact_by3,
+	mpn_divmod): Use it.  Reported by Krzysztof Kozminski.
+	(mpz_odd_p): No need for the outermost cast to "int".
+	* tests/cxx/t-cast.cc: New file.
+	* tests/cxx/Makefile.am: Add it.
+
 2003-01-04  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr/set_str.c: Update to mpfr cvs 2003-01-04.
