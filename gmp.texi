@@ -1605,7 +1605,7 @@ script to hide them, and for instance configure with
 ./configure CC=gcc-with-my-options
 @end example
 
-@item DJGPP
+@item DJGPP (@samp{*-*-msdosdjgpp*})
 @cindex DJGPP
 The DJGPP port of @command{bash} 2.03 is unable to run the @samp{configure}
 script, it exits silently, having died writing a preamble to
@@ -1670,8 +1670,9 @@ Either use GNU Make, or as a workaround remove
 build work, but if any recompiling is done @file{libgmp.la} might not be
 rebuilt).
 
-@item MacOS X
+@item MacOS X (@samp{*-*-darwin*})
 @cindex MacOS X
+@cindex Darwin
 Libtool currently only knows how to create shared libraries on MacOS X using
 the native @command{cc} (which is a modified GCC), not a plain GCC.  A
 static-only build should work though (@samp{--disable-shared}).
@@ -1710,14 +1711,6 @@ A shared library build of GMP seems to fail in this combination, it builds but
 then fails the tests, apparently due to some incorrect data relocations within
 @code{gmp_randinit_lc_2exp_size}.  The exact cause is unknown,
 @samp{--disable-shared} is recommended.
-
-@item Windows DLL test programs
-@cindex Microsoft Windows
-When creating a DLL version of @file{libgmp}, libtool creates wrapper scripts
-like @file{t-mul} for programs that would normally be @file{t-mul.exe}, in
-order to setup the right library paths etc.  This works fine, but the absence
-of @file{t-mul.exe} etc causes @command{make} to think they need recompiling
-every time, which is an annoyance when re-running a @samp{make check}.
 @end table
 
 
