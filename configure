@@ -3558,7 +3558,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, does not run"
+        gmp_prog_cc_works="no, program does not run"
       fi
     fi
   else
@@ -3598,7 +3598,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, function pointer return, does not run"
+        gmp_prog_cc_works="no, function pointer return, program does not run"
       fi
     fi
   else
@@ -3640,7 +3640,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, cmov instruction, does not run"
+        gmp_prog_cc_works="no, cmov instruction, program does not run"
       fi
     fi
   else
@@ -3683,7 +3683,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, double -> ulong conversion, does not run"
+        gmp_prog_cc_works="no, double -> ulong conversion, program does not run"
       fi
     fi
   else
@@ -3724,7 +3724,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, double negation, does not run"
+        gmp_prog_cc_works="no, double negation, program does not run"
       fi
     fi
   else
@@ -3766,7 +3766,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, double -> float conversion, does not run"
+        gmp_prog_cc_works="no, double -> float conversion, program does not run"
       fi
     fi
   else
@@ -3836,7 +3836,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, gnupro alpha ev6 char spilling, does not run"
+        gmp_prog_cc_works="no, gnupro alpha ev6 char spilling, program does not run"
       fi
     fi
   else
@@ -4325,7 +4325,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, does not run"
+        gmp_prog_cc_works="no, program does not run"
       fi
     fi
   else
@@ -4365,7 +4365,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, function pointer return, does not run"
+        gmp_prog_cc_works="no, function pointer return, program does not run"
       fi
     fi
   else
@@ -4407,7 +4407,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, cmov instruction, does not run"
+        gmp_prog_cc_works="no, cmov instruction, program does not run"
       fi
     fi
   else
@@ -4450,7 +4450,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, double -> ulong conversion, does not run"
+        gmp_prog_cc_works="no, double -> ulong conversion, program does not run"
       fi
     fi
   else
@@ -4491,7 +4491,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, double negation, does not run"
+        gmp_prog_cc_works="no, double negation, program does not run"
       fi
     fi
   else
@@ -4533,7 +4533,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, double -> float conversion, does not run"
+        gmp_prog_cc_works="no, double -> float conversion, program does not run"
       fi
     fi
   else
@@ -4603,7 +4603,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cc_works="no, gnupro alpha ev6 char spilling, does not run"
+        gmp_prog_cc_works="no, gnupro alpha ev6 char spilling, program does not run"
       fi
     fi
   else
@@ -6529,7 +6529,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cxx_works="no, does not run"
+        gmp_prog_cxx_works="no, program does not run"
       fi
     fi
   else
@@ -6566,7 +6566,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cxx_works="no, namespace, does not run"
+        gmp_prog_cxx_works="no, namespace, program does not run"
       fi
     fi
   else
@@ -6612,7 +6612,7 @@ EOF
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then :;
       else
-        gmp_prog_cxx_works="no, std iostream, does not run"
+        gmp_prog_cxx_works="no, std iostream, program does not run"
       fi
     fi
   else

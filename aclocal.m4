@@ -534,7 +534,7 @@ EOF
     if test "$cross_compiling" = no; then
       if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then :;
       else
-        gmp_prog_cc_works="no[]m4_if([$2],,,[, ])[$2], does not run"
+        gmp_prog_cc_works="no[]m4_if([$2],,,[, ])[$2], program does not run"
       fi
     fi
   else
@@ -1139,7 +1139,7 @@ EOF
     if test "$cross_compiling" = no; then
       if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then :;
       else
-        gmp_prog_cxx_works="no[]m4_if([$2],,,[, ])[$2], does not run"
+        gmp_prog_cxx_works="no[]m4_if([$2],,,[, ])[$2], program does not run"
       fi
     fi
   else
