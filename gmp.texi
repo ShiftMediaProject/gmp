@@ -1041,7 +1041,7 @@ for CPU @samp{hppa2.0n} only 2.0n or 1.0 are allowed.
 
 @sp 1
 @need 1000
-@item MIPS under IRIX 6 (@samp{mips*-*-irix[6789]}
+@item MIPS under IRIX 6 (@samp{mips*-*-irix[6789]})
 
 IRIX 6 supports the n32 and 64 ABIs and always has a 64-bit MIPS 3 or better
 CPU.  In both these ABIs GMP uses a 64-bit limb.  A new enough @command{gcc}
@@ -1366,8 +1366,8 @@ serious bugs.
 
 A shared library build of GMP seems to fail in this combination, it builds but
 then fails the tests, apparently due to some incorrect data relocations within
-@code{gmp_randinit}.  The exact cause is unknown, @samp{--disable-shared} is
-recommended.
+@code{gmp_randinit_lc_2exp_size}.  The exact cause is unknown,
+@samp{--disable-shared} is recommended.
 
 @item Windows DLL test programs
 
@@ -1679,8 +1679,7 @@ since this involves an update of that variable.
 @item
 On SCO systems the default @code{<ctype.h>} macros use per-file static
 variables and may not be reentrant, depending whether the compiler optimizes
-away fetches from them.  The GMP functions affected are @code{mpz_set_str},
-@code{mpz_inp_str}, @code{mpf_set_str} and @code{mpf_inp_str}.
+away fetches from them.  The GMP text-based input functions are affected.
 @end itemize
 
 
@@ -4569,7 +4568,7 @@ gmp_printf ("a hex rational: %#40Qx\n", q);
 
 mpf_t f;
 int   n;
-gmp_printf ("fixed point mpf %.*f with %d digits\n", n, f, n);
+gmp_printf ("fixed point mpf %.*Ff with %d digits\n", n, f, n);
 @end example
 
 All the standard C @code{printf} types behave the same as the C library
@@ -6739,7 +6738,7 @@ have a fixed-point approximation to @ma{1/d} (see @code{invert_limb}) and then
 multiply by the high limb (plus one bit) of the dividend to get a quotient
 @ma{q}.  With @ma{d} normalized (high bit set), @ma{q} is no more than 1 too
 small.  Subtracting @m{qd,q*d} from the dividend gives a remainder, and
-reveals whether @ma{q} or @ma{q+1} is correct.
+reveals whether @ma{q} or @ma{q-1} is correct.
 
 The result is a division done with two multiplications and four or five
 arithmetic operations.  On CPUs with low latency multipliers this can be much
@@ -7072,7 +7071,8 @@ section 4.5.2 algorithm L, and @file{mpn/generic/gcdext.c}.  This is an
 
 The multipliers at each step are found using single limb calculations for
 sizes up to @code{GCDEXT_THRESHOLD}, or double limb calculations above that.
-The single limb code is faster but doesn't produce full-limb multipliers.
+The single limb code is faster but doesn't produce full-limb multipliers,
+hence not making full use of the @code{mpn_addmul_1} calls.
 
 When a CPU has a data-dependent multiplier, meaning one which is faster on
 operands with fewer bits, the extra work in the double-limb calculation might
@@ -8051,9 +8051,9 @@ multiple of the limb size.
 @end ifnottex
 
 The size is 4 bytes written most significant byte first, being the number of
-subsequent data bytes, or the negative of that when a negative integer is
-represented.  The data bytes are the absolute value of the integer, written
-most significant byte first.
+subsequent data bytes, or the twos complement negative of that when a negative
+integer is represented.  The data bytes are the absolute value of the integer,
+written most significant byte first.
 
 The most significant data byte is always non-zero, so the output is the same
 on all systems, irrespective of limb size.
@@ -8063,7 +8063,9 @@ of the limb size.  @code{mpz_inp_raw} will still accept this, for
 compatibility.
 
 The use of ``big endian'' for both the size and data fields is deliberate, it
-makes the data easy to read in a hex dump of a file.
+makes the data easy to read in a hex dump of a file.  Unfortunately it also
+means that the limb data must be reversed when reading or writing, so neither
+a big endian nor little endian system can just read and write @code{_mp_d}.
 
 
 @node C++ Interface Internals,  , Raw Output Internals, Internals
@@ -8202,10 +8204,11 @@ releases.
 Joachim Hollman was involved in the design of the @code{mpf} interface, and in
 the @code{mpz} design revisions for version 2.
 
-Bennet Yee contributed the functions @code{mpz_jacobi} and @code{mpz_legendre}.
+Bennet Yee contributed the initial versions of @code{mpz_jacobi} and
+@code{mpz_legendre}.
 
 Andreas Schwab contributed the files @file{mpn/m68k/lshift.S} and
-@file{mpn/m68k/rshift.S}.
+@file{mpn/m68k/rshift.S} (now in @file{.asm} form).
 
 The development of floating point functions of GNU MP 2, were supported in part
 by the ESPRIT-BRA (Basic Research Activities) 6846 project POSSO (POlynomial
@@ -8244,10 +8247,10 @@ miscellaneous improvements elsewhere.
 
 Steve Root helped write the optimized alpha 21264 assembly code.
 
-Gerardo Ballabio wrote the gmpxx.h C++ class interface and the C++ istream
-input routines.
+Gerardo Ballabio wrote the @file{gmpxx.h} C++ class interface and the C++
+istream input routines.
 
-GNU MP 3.1 was finished and released by Torbjorn Granlund and Kevin Ryde.
+GNU MP 4.0 was finished and released by Torbjorn Granlund and Kevin Ryde.
 Torbjorn's work was partially funded by the IDA Center for Computing Sciences,
 USA.
 
