@@ -1025,7 +1025,7 @@ void __GMP_DECLSPEC mpq_init _PROTO ((mpq_ptr));
 
 #define mpq_inp_str __gmpq_inp_str
 #ifdef _GMP_H_HAVE_FILE
-size_t mpq_inp_str _PROTO ((mpq_ptr, FILE *, int));
+size_t __GMP_DECLSPEC mpq_inp_str _PROTO ((mpq_ptr, FILE *, int));
 #endif
 
 #define mpq_inv __gmpq_inv
@@ -1355,7 +1355,7 @@ mp_size_t __GMP_DECLSPEC mpn_gcdext _PROTO ((mp_ptr, mp_ptr, mp_size_t *, mp_ptr
 size_t __GMP_DECLSPEC mpn_get_str _PROTO ((unsigned char *, int, mp_ptr, mp_size_t));
 
 #define mpn_hamdist __MPN(hamdist)
-unsigned long int mpn_hamdist _PROTO ((mp_srcptr, mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
+unsigned long int __GMP_DECLSPEC mpn_hamdist _PROTO ((mp_srcptr, mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 
 #define mpn_lshift __MPN(lshift)
 mp_limb_t __GMP_DECLSPEC mpn_lshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
