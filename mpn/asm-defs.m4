@@ -2,7 +2,8 @@ divert(-1)
 dnl
 dnl  m4 macros for gmp assembly code, shared by all CPUs.
 
-dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation,
+dnl  Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -111,6 +112,9 @@ dnl
 dnl  eval() <<,>> - SysV m4 doesn't support shift operators in eval() (on
 dnl       Solaris 7 /usr/xpg4/m4 has them but /usr/ccs/m4 doesn't).  See
 dnl       m4_lshift() and m4_rshift() below for workarounds.
+dnl
+dnl  ifdef() - OSF 4.0 m4 considers a macro defined to a zero value `0' or
+dnl       `00' etc as not defined.  See m4_ifdef below for a workaround.
 dnl
 dnl  m4wrap() sequence - in BSD m4, m4wrap() replaces any previous m4wrap()
 dnl       string, in SysV m4 it appends to it, and in GNU m4 it prepends.
@@ -497,7 +501,7 @@ m4_assert_numargs(1)
 dnl  Called: m4_assert_defined_internal(`macroname',`define_required')
 define(m4_assert_defined_internal,
 m4_assert_numargs(2)
-`ifdef(`$2',,
+`m4_ifdef(`$2',,
 `m4_error(`$1 needs $2 defined
 ')')')
 
@@ -546,6 +550,24 @@ dnl  pasting" like m4_unquote(foo`'bar).
 define(m4_unquote,
 m4_assert_onearg()
 `$1')
+
+
+dnl  Usage: m4_ifdef(name,yes[,no])
+dnl
+dnl  Expand to the yes argument if name is defined, or to the no argument if
+dnl  not.
+dnl
+dnl  This is the same as the builtin "ifdef", but avoids an OSF 4.0 m4 bug
+dnl  in which a macro with a zero value `0' or `00' etc is considered not
+dnl  defined.
+dnl
+dnl  There's no particular need to use this everywhere, only if there might
+dnl  be a zero value.
+
+define(m4_ifdef,
+m4_assert_numargs_range(2,3)
+`ifelse(eval(ifdef(`$1',1,0)+m4_length(defn(`$1'))),0,
+`$3',`$2')')
 
 
 dnl  Usage: m4_ifdef_anyof_p(`symbol',...)
