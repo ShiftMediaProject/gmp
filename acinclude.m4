@@ -25,6 +25,26 @@ define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
 
+dnl  GMP_INCLUDE_GMP_H
+dnl  -----------------
+dnl  Expand to the right way to #include gmp-h.in.  This must be used
+dnl  instead of gmp.h, since that file isn't generated until the end of the
+dnl  configure.
+dnl
+dnl  GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB starts as a dummy, but gets
+dnl  redefined in GMP_C_SIZES when the right value is known.
+
+define(GMP_INCLUDE_GMP_H,
+[[#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */]
+GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB
+[$DEFN_LONG_LONG_LIMB
+#include "$srcdir/gmp-h.in"]
+])
+
+define(GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB,
+[[#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for mpf_get_prec etc inlines */]])
+
+
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
 dnl  ----------------------------
 dnl  Expand at autoconf time to the value of a "#define NAME" from the given
@@ -181,7 +201,7 @@ AC_SUBST(M4)
 
 dnl  GMP_M4_M4WRAP_SPURIOUS
 dnl  ----------------------
-dnl  Check for the spurious output from m4wrap(), noted in mpn/asm-defs.m4.
+dnl  Check for spurious output from m4wrap(), as described in mpn/asm-defs.m4.
 dnl
 dnl  The following systems have been seen with the problem.
 dnl
@@ -248,7 +268,7 @@ fi
 
 dnl  GMP_PROG_CC_WORKS(cc+cflags,[ACTION-IF-WORKS][,ACTION-IF-NOT-WORKS])
 dnl  --------------------------------------------------------------------
-dnl  Check if CC+CFLAGS can compile and link.
+dnl  Check if cc+cflags can compile and link.
 dnl
 dnl  This test is designed to be run repeatedly with different cc+cflags
 dnl  selections, so the result is not cached.
@@ -1441,11 +1461,6 @@ dnl  true.  It'd be better to probe for how many bits seem to work, like
 dnl  t-constants does.  But all currently supported systems have limbs and
 dnl  ulongs with bits=8*sizeof, so it's academic.  Strange systems can
 dnl  always have the right values put in gmp-mparam.h explicitly.
-dnl
-dnl  Notice the use of gmp-h.in, since gmp.h isn't instantiated yet.
-dnl  AC_CHECK_SIZEOF includes confdefs.h, which gives the right
-dnl  _LONG_LONG_LIMB setting.  __GMP_WITHIN_CONFIGURE ensures the template
-dnl  parts of gmp-h.in don't get used.
 
 AC_DEFUN(GMP_C_SIZES,
 [__GMP_BITS_PER_MP_LIMB=[`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`]
@@ -1453,12 +1468,8 @@ if test -n "$__GMP_BITS_PER_MP_LIMB" \
    && grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
 else
   AC_CHECK_SIZEOF(mp_limb_t,,
-[#include <stdio.h>
-#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
-#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for mpf_get_prec etc inlines */
-$DEFN_LONG_LONG_LIMB
-#include "$srcdir/gmp-h.in"
-])
+[#include <stdio.h>]
+GMP_INCLUDE_GMP_H)
   if test "$ac_cv_sizeof_mp_limb_t" = 0; then
     AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
   fi
@@ -1472,6 +1483,8 @@ $DEFN_LONG_LONG_LIMB
   fi
 fi
 AC_SUBST(__GMP_BITS_PER_MP_LIMB)
+define([GMP_INCLUDE_GMP_H_BITS_PER_MP_LIMB],
+[[#define __GMP_BITS_PER_MP_LIMB $__GMP_BITS_PER_MP_LIMB]])
 
 if grep "^#define BITS_PER_ULONG" $gmp_mparam_source >/dev/null; then : ;
 else
@@ -1536,10 +1549,9 @@ AC_DEFUN(GMP_FUNC_ALLOCA,
 AC_CACHE_CHECK([for alloca (via gmp-impl.h)],
                gmp_cv_func_alloca,
 [AC_TRY_LINK(
-[#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
-#define  __GMP_BITS_PER_MP_LIMB 123 /* dummy for mpf_get_prec etc inlines */
-#include "$srcdir/gmp-h.in"
-#include "$srcdir/gmp-impl.h"],
+GMP_INCLUDE_GMP_H
+[#include "$srcdir/gmp-impl.h"
+],
   [char *p = (char *) alloca (1);],
   gmp_cv_func_alloca=yes,
   gmp_cv_func_alloca=no)])
@@ -1617,4 +1629,47 @@ case $gmp_cv_option_alloca in
     ;;
 esac
 AC_SUBST(TAL_OBJECT)
+])
+
+
+dnl  GMP_H_EXTERN_INLINE
+dnl  -------------------
+dnl  If the compiler has an "inline" of some sort, check whether the
+dnl  #ifdef's in gmp.h recognise it.
+
+AC_DEFUN(GMP_H_EXTERN_INLINE,
+[AC_REQUIRE([AC_C_INLINE])
+case $ac_cv_c_inline in
+no) ;;
+*)
+  AC_TRY_COMPILE(
+GMP_INCLUDE_GMP_H
+[#ifndef __GMP_EXTERN_INLINE
+die die die
+#endif
+],,,
+  [case $ac_cv_c_inline in
+  "") tmp_inline=inline ;;
+  *)  tmp_inline=$ac_cv_c_inline ;;
+  esac    
+  AC_MSG_WARN([gmp.h doesnt recognise compiler "$tmp_inline", inlines will be unavailable])])
+  ;;
+esac
+])
+
+
+dnl  GMP_H_HAVE_FILE
+dnl  ---------------
+dnl  Check whether the #ifdef's in gmp.h recognise when stdio.h has been
+dnl  included to get FILE.
+
+AC_DEFUN(GMP_H_HAVE_FILE,
+[AC_TRY_COMPILE(
+[#include <stdio.h>]
+GMP_INCLUDE_GMP_H
+[#if ! _GMP_H_HAVE_FILE
+die die die
+#endif
+],,,
+  [AC_MSG_WARN([gmp.h doesnt recognise <stdio.h>, FILE prototypes will be unavailable])])
 ])
