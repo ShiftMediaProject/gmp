@@ -28,7 +28,7 @@ MA 02111-1307, USA.
    of overhead.  Different combinations of arguments and return values have
    to be separate though.
 
-   The "INTERFACE:" feature isn't available in perl 5.004 and so isn't used.
+   The "INTERFACE:" feature isn't available in perl 5.005 and so isn't used.
    "ALIAS:" requires a table lookup with CvXSUBANY(cv).any_i32 ("ix")
    whereas "INTERFACE:" would have CvXSUBANY(cv).any_dptr as the function
    pointer immediately.
@@ -88,7 +88,7 @@ MA 02111-1307, USA.
 #define assert_support(x) x
 #endif
 
-/* sv_derived_from etc in 5.004 took "char *" rather than "const char *".
+/* sv_derived_from etc in 5.005 took "char *" rather than "const char *".
    Avoid some compiler warnings by using const only where it works.  */
 #if PERL_REVISION > 5 || (PERL_REVISION == 5 && PERL_VERSION >= 6)
 #define classconst const
@@ -1748,7 +1748,7 @@ PPCODE:
     mult = mpz_remove (rem->m, z, f);
     EXTEND (SP, 2);
     sv = sv_newmortal(); sv_setref_pv (sv, mpz_class, rem); PUSHs(sv);
-    PUSHs (sv_2mortal (newSVuv (mult)));
+    PUSHs (sv_2mortal (newSViv (mult)));
 
 
 void

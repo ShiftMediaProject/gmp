@@ -20,7 +20,7 @@
 # MA 02111-1307, USA.
 
 
-# This code is designed to work with perl 5.004, so it and the sub-packages
+# This code is designed to work with perl 5.005, so it and the sub-packages
 # aren't as modern as they could be.
 
 package GMP;
@@ -482,6 +482,10 @@ integer strings as floats if they don't fit a plain integer.
 GMP manual, L<perl>, L<overload>.
 
 =head1 BUGS
+
+The overloaded constants sometimes provoke seg faults from perl 5.005_03 on
+i386 FreeBSD.  Don't know if that's a perl bug or a GMP module bug, though
+it does seem to go bad before reaching anything in GMP.xs.
 
 There's no way to specify an arbitrary base when converting a string to an
 mpz (or mpq or mpf), only hex or octal with 0x or 0 (for mpz and mpq, but
