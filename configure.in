@@ -1529,14 +1529,6 @@ case $host in
   [*-*-aix[34]*])
     if test -z "$enable_shared"; then enable_shared=no; fi ;;
 
-  # FIXME: Libtool recognises djgpp can't build shared libraries, but still
-  # makes tests/.libs/libtests.al out of PIC objects, which then fail to
-  # link into the test programs.  Forcibly disable shared stuff until
-  # libtool gets it right,
-  #
-  *-*-msdosdjgpp*)
-    enable_shared=no ;;
-
   # FIXME: On SCO 5, an explicit -lc is not wanted when making shared
   # libraries.  Giving it makes strange things happen, like ctype.h macros
   # not working and profiler mcount calls segfaulting.  Libtool ought to
