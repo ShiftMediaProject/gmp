@@ -52,7 +52,7 @@ MA 02111-1307, USA.
    speed_unittime are 1.0.
 
    Notice that speed_unittime*speed_precision is the target duration for
-   speed_endtime() irrespective of whether that's in seconds or cycles.
+   speed_endtime(), irrespective of whether that's in seconds or cycles.
 
    Call speed_cycletime_need_seconds() to demand that speed_endtime() is in
    seconds and not perhaps in cycles.
@@ -64,8 +64,9 @@ MA 02111-1307, USA.
 
    Notes:
 
-   Various combinations of cycle counter, getrusage(), gettimeofday() and
-   times() can arise, according to which are available and their precision.
+   Various combinations of cycle counter, read_real_time(), getrusage(),
+   gettimeofday() and times() can arise, according to which are available
+   and their precision.
 
 
    Allowing speed_endtime() to return either seconds or cycles is only a
@@ -123,6 +124,10 @@ MA 02111-1307, USA.
 #include <sys/resource.h>  /* for struct rusage */
 #endif
 
+#if HAVE_SYS_SYSTEMCFG_H
+#include <sys/systemcfg.h> /* for RTC_POWER on AIX */
+#endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -168,6 +173,22 @@ static const int have_cycles = 0;
 #define speed_cyclecounter(p)  abort()
 #endif
 
+#if HAVE_READ_REAL_TIME
+static const int have_rrt = 1;
+#else
+static const int have_rrt = 0;
+#define read_real_time(t,s)     abort()
+#define time_base_to_time(t,s)  abort()
+#define RTC_POWER     1
+#define RTC_POWER_PC  2
+#define timebasestruct_t   struct timebasestruct_dummy
+struct timebasestruct_dummy {
+  int             flag;
+  unsigned int    tb_high;
+  unsigned int    tb_low;
+};
+#endif
+
 #if HAVE_GETRUSAGE
 static const int have_grus = 1;
 #define struct_rusage   struct rusage
@@ -207,17 +228,20 @@ struct rusage_dummy {
 };
 
 static int  use_cycles;
+static int  use_rrt;
 static int  use_gtod;
 static int  use_grus;
 static int  use_times;
 static int  use_tick_boundary;
 
-static struct_rusage  start_grus;
-static struct_timeval start_gtod;
-static struct_tms     start_times;
-static unsigned       start_cycles[2];
+static unsigned         start_cycles[2];
+static timebasestruct_t start_rrt;
+static struct_rusage    start_grus;
+static struct_timeval   start_gtod;
+static struct_tms       start_times;
 
 static double  cycles_limit = 1e100;
+static double  rrt_unittime;
 static double  grus_unittime;
 static double  gtod_unittime;
 static double  times_unittime;
@@ -464,7 +488,35 @@ speed_time_init (void)
     {
       /* No cycle counter */
 
-      if (have_grus && getrusage_microseconds_p())
+/* for RTC_POWER format */
+#define TIMEBASESTRUCT_SECS(t)  ((t)->tb_high + (t)->tb_low * 1e-9)
+
+      if (have_rrt)
+        {
+          timebasestruct_t  t;
+          use_rrt = 1;
+          DEFAULT (speed_precision, 10000);
+          read_real_time (&t, sizeof(t));
+          switch (t.flag) {
+          case RTC_POWER:
+            /* FIXME: What's the actual RTC resolution? */
+            speed_unittime = 1e-7;
+            speed_time_string = "read_real_time() power nanoseconds";
+            break;
+          case RTC_POWER_PC:
+            t.tb_high = 1;
+            t.tb_low = 0;
+            time_base_to_time (&t, sizeof(t));
+            speed_unittime = TIMEBASESTRUCT_SECS(&t) / M_2POW32;
+            speed_time_string = "read_real_time() powerpc ticks";
+            break;
+          default:
+            fprintf (stderr, "ERROR: Unrecognised timebasestruct_t flag=%d\n",
+                     t.flag);
+            abort ();
+          }            
+        }
+      else if (have_grus && getrusage_microseconds_p())
         {
           use_grus = 1;
           speed_unittime = grus_unittime = 1.0e-6;
@@ -588,13 +640,16 @@ speed_starttime (void)
         times (&start_times);
     }
 
+  if (use_rrt)
+    read_real_time (&start_rrt, sizeof(start_rrt));
+
   /* Cycles sampled last for maximum accuracy. */
   if (use_cycles)
     speed_cyclecounter (start_cycles);
 }
 
 
-/* Return the difference between two cycle counter samples, as a "double"
+/* Calculate the difference between two cycle counter samples, as a "double"
    counter of cycles.
 
    The start and end values are allowed to cancel in integers in case the
@@ -616,29 +671,73 @@ speed_cyclecounter_diff (const unsigned end[2], const unsigned start[2])
   else
     {
       d = end[0] - start[0];
-      t = d - (d > end[0] ? M_2POWU : 0);
+      t = d - (d > end[0] ? M_2POWU : 0.0);
       t += (end[1] - start[1]) * M_2POW32;
     }
   return t;
 }
 
 
+/* Calculate the difference between "start" and "end" using fields "sec" and
+   "psec", where each "psec" is a "punit" of a second.  Care is taken to
+   preserve accuracy.
+
+   - High parts are allowed to cancel in unsigneds in case a simple
+     "sec+psec*punit" exceeds the precision of a double.
+
+   - Total time in units of "psec"s are only calculated in a "double" since
+     an integer might overflow.  2^32 microseconds is only a bit over an
+     hour, or 2^32 nanoseconds only about 4 seconds.
+
+   - No assumptions are made about negative "end->psec - start->psec", a
+     test for which of start or end is greater is done.  */
+
+#define DIFF_SECS_ROUTINE(type, sec, psec, punit)                       \
+  {                                                                     \
+    type  delta_sec = end->sec - start->sec;                            \
+    if (end->psec >= start->psec)                                       \
+      return (double) delta_sec + punit * (end->psec - start->psec);    \
+    else                                                                \
+      return (double) delta_sec - punit * (start->psec - end->psec);    \
+  }                                                                     \
+
+double
+timebasestruct_diff_secs (const timebasestruct_t *end,
+                          const timebasestruct_t *start)
+{
+  DIFF_SECS_ROUTINE (unsigned, tb_high, tb_low, 1e-9);
+}
+
+double
+timeval_diff_secs (const struct_timeval *end, const struct_timeval *start)
+{
+  DIFF_SECS_ROUTINE (long, tv_sec, tv_usec, 1e-6);
+}
+
+double
+rusage_diff_secs (const struct_rusage *end, const struct_rusage *start)
+{
+  DIFF_SECS_ROUTINE (long, ru_utime.tv_sec, ru_utime.tv_usec, 1e-6);
+}
+
+
 double
 speed_endtime (void)
 {
-
 #define END_USE(name,value)                             \
   do {                                                  \
     if (speed_option_verbose >= 3)                      \
       printf ("speed_endtime(): used %s\n", name);      \
-    return value;                                       \
+    result = value;                                     \
+    goto done;                                          \
   } while (0)
 
 #define END_ENOUGH(name,value)                                          \
   do {                                                                  \
     if (speed_option_verbose >= 3)                                      \
       printf ("speed_endtime(): %s gives enough precision\n", name);    \
-    return value;                                                       \
+    result = value;                                                     \
+    goto done;                                                          \
   } while (0)
 
 #define END_EXCEED(name,value)                                            \
@@ -646,25 +745,37 @@ speed_endtime (void)
     if (speed_option_verbose >= 3)                                        \
       printf ("speed_endtime(): cycle counter limit exceeded, used %s\n", \
               name);                                                      \
-    return value;                                                         \
+    result = value;                                                       \
+    goto done;                                                            \
   } while (0)
 
-  unsigned        end_cycles[2];
-  struct_timeval  end_gtod;
-  struct_rusage   end_grus;
-  struct_tms      end_times;
-  double          t_gtod, t_grus, t_times, t_cycles;
+  unsigned          end_cycles[2];
+  timebasestruct_t  end_rrt;
+  struct_timeval    end_gtod;
+  struct_rusage     end_grus;
+  struct_tms        end_times;
+  double            t_gtod, t_grus, t_times, t_rrt, t_cycles;
+  double            result = -1.0;
 
   /* Cycles sampled first for maximum accuracy. */
 
   if (use_cycles)  speed_cyclecounter (end_cycles);
+  if (use_rrt)     read_real_time (&end_rrt, sizeof(end_rrt));
   if (use_gtod)    gettimeofday (&end_gtod, NULL);
   if (use_grus)    getrusage (0, &end_grus);
   if (use_times)   times (&end_times);
 
+  if (use_rrt)
+    {
+      time_base_to_time (&start_rrt, sizeof(start_rrt));
+      time_base_to_time (&end_rrt, sizeof(end_rrt));
+      t_rrt = timebasestruct_diff_secs (&end_rrt, &start_rrt);
+      END_USE ("getrusage()", t_rrt);
+    }
+
   if (use_grus)
     {
-      t_grus = TIMEVAL_DIFF_SEC (&end_grus.ru_utime, &start_grus.ru_utime);
+      t_grus = timeval_diff_secs (&end_grus.ru_utime, &start_grus.ru_utime);
 
       /* Use getrusage() if the cycle counter limit would be exceeded, or if
          it provides enough accuracy already. */
@@ -694,7 +805,7 @@ speed_endtime (void)
 
   if (use_gtod)
     {
-      t_gtod = TIMEVAL_DIFF_SEC (&end_gtod, &start_gtod);
+      t_gtod = timeval_diff_secs (&end_gtod, &start_gtod);
 
       /* Use gettimeofday() if it measured a value bigger than the cycle
          counter can handle.  */
@@ -724,4 +835,14 @@ speed_endtime (void)
 
   fprintf (stderr, "speed_endtime(): oops, no time method available\n");
   abort ();
+
+ done:
+  if (result < 0.0)
+    {
+      fprintf (stderr,
+               "speed_endtime(): fatal error: negative time measured: %.9f\n",
+               result);
+      abort ();
+    }
+  return result;
 }
