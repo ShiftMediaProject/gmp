@@ -165,9 +165,8 @@ L(unroll):
 
 	# 15 code bytes/limb
 ifdef(`PIC',`
-	call	L(add_eip_to_edx)
+	call	L(pic_calc)
 L(here):
-	leal	L(entry)-L(here) (%edx,%ecx), %edx
 ',`
 	leal	L(entry) (%edx,%ecx), %edx
 ')
@@ -177,7 +176,10 @@ L(here):
 
 
 ifdef(`PIC',`
-L(add_eip_to_edx):
+L(pic_calc):
+	# See README.family about old gas bugs
+	leal	(%edx,%ecx), %edx
+	addl	$L(entry)-L(here), %edx
 	addl	(%esp), %edx
 	ret
 ')

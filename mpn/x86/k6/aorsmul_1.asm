@@ -304,8 +304,9 @@ L(noswap):
 
 ifdef(`PIC',`
 L(pic_calc):
-deflit(`FRAME',20)
-	leal	L(entry)-L(here) (%edx,%ecx,1), %edx
+	# See README.family about old gas bugs
+	leal	(%edx,%ecx,1), %edx
+	addl	$L(entry)-L(here), %edx
 	addl	(%esp), %edx
 	ret
 ')

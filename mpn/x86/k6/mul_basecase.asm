@@ -446,9 +446,8 @@ deflit(`FRAME', 16+VAR_STACK_SPACE)
 
 	# 15 code bytes per limb
 ifdef(`PIC',`
-	call	L(add_eip_to_ecx)
+	call	L(pic_calc)
 L(unroll_here):
-	leal	L(unroll_entry)-L(unroll_here) (%ecx,%esi,1), %ecx
 ',`
 	leal	L(unroll_entry) (%ecx,%esi,1), %ecx
 ')
@@ -486,7 +485,10 @@ L(unroll_here):
 
 
 ifdef(`PIC',`
-L(add_eip_to_ecx):
+L(pic_calc):
+	# See README.family about old gas bugs
+	leal	(%ecx,%esi,1), %ecx
+	addl	$L(unroll_entry)-L(unroll_here), %ecx
 	addl	(%esp), %ecx
 	ret
 ')
