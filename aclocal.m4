@@ -820,35 +820,6 @@ fi
 ])
 
 
-dnl  GMP_LIBDIR
-dnl  ----------
-dnl  Establish $gmp_libdir, an expanded value of $libdir.
-dnl
-dnl  The default for $libdir is "${exec_prefix}/lib" and the user may well
-dnl  give something similar, perhaps using ${prefix}.  In either case this
-dnl  is normally expanded when "make" runs, allowing the prefix to be
-dnl  specified during "make", per the GNU standards.
-dnl
-dnl  $prefix and $exec_prefix can be NONE if not specified by the user with
-dnl  --prefix and --exec_prefix.  Autoconf leaves it until the end of
-dnl  configure to default $prefix to $ac_default_prefix, and $exec_prefix in
-dnl  turn to $prefix.
-
-AC_DEFUN(GMP_LIBDIR,
-[gmp_save_prefix=$prefix
-gmp_save_exec_prefix=$exec_prefix
-if test "$prefix" = NONE; then
-  prefix=$ac_default_prefix
-fi
-if test "$exec_prefix" = NONE; then
-  exec_prefix=$prefix
-fi
-eval gmp_libdir=$libdir
-prefix=$gmp_save_prefix
-exec_prefix=$gmp_save_exec_prefix
-])
-
-
 dnl  GMP_INIT([M4-DEF-FILE])
 dnl  -----------------------
 dnl  Initializations for GMP config.m4 generation.
