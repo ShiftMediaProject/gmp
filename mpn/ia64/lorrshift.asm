@@ -94,7 +94,7 @@ C
 	br.ret.sptk.many b0
 
 C
-C Code for operands with >8 limbs.  A edge loop and a very deep software
+C Code for operands with >8 limbs.  An edge loop and a very deep software
 C pipeline.
 C
 .Lbig:	and	r15 = 3, r34
