@@ -66,6 +66,9 @@ hpux "as" doesn't.
 .proc / .endp generates the appropriate .type and .size information
 for ELF, so those directives don't need to be given explicitly.
 
+gas accepts ".pred.rel.mutex ...", but HP as demands ".pred.rel
+"mutex",...".
+
 
 REGISTER USAGE
 
@@ -259,3 +262,10 @@ and Optimization, Intel document 251110-002, April 2003.
 All the above documents can be found online at
 
     http://developer.intel.com/design/itanium/manuals.htm
+
+
+----------------
+Local variables:
+mode: text
+fill-column: 76
+End:
