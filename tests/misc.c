@@ -217,6 +217,39 @@ mpf_set_str_or_abort (mpf_ptr f, const char *str, int base)
 }
 
 
+/* requires n!=0 */
+#define POW2_P(n)  (((n)&-(n)) == (n))
+
+/* Whether the absolute value of z is a power of 2. */
+int
+mpz_pow2abs_p (mpz_srcptr z)
+{
+  mp_size_t  size, i;
+  mp_srcptr  ptr;
+
+  size = SIZ (z);
+  if (size == 0)
+    return 0;  /* zero is not a power of 2 */
+  size = ABS (size);
+
+  ptr = PTR (z);
+  for (i = 0; i < size-1; i++)
+    if (ptr[i] != 0)
+      return 0;  /* non-zero low limb means not a power of 2 */
+
+  return POW2_P (ptr[i]);  /* high limb power of 2 */
+}
+
+void
+mpz_flipbit (mpz_ptr r, unsigned long bit)
+{
+  if (mpz_tstbit (r, bit))
+    mpz_clrbit (r, bit);
+  else
+    mpz_setbit (r, bit);
+}
+
+
 /* Exponentially distributed between 0 and 2^nbits-1, meaning the number of
    bits in the result is uniformly distributed between 0 and nbits-1.
 
@@ -227,9 +260,7 @@ mpf_set_str_or_abort (mpf_ptr f, const char *str, int base)
 void
 mpz_erandomb (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
 {
-  mpz_urandomb (rop, rstate, 32);
-  nbits = mpz_get_ui (rop) % nbits;
-  mpz_urandomb (rop, rstate, nbits);
+  mpz_urandomb (rop, rstate, urandom () % nbits);
 }
 
 void
@@ -238,6 +269,29 @@ mpz_erandomb_nonzero (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
   mpz_erandomb (rop, rstate, nbits);
   if (mpz_sgn (rop) == 0)
     mpz_set_ui (rop, 1L);
+}
+
+void
+mpz_errandomb (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
+{
+  mpz_rrandomb (rop, rstate, urandom () % nbits);
+}
+
+void
+mpz_errandomb_nonzero (mpz_ptr rop, gmp_randstate_t rstate, unsigned long nbits)
+{
+  mpz_errandomb (rop, rstate, nbits);
+  if (mpz_sgn (rop) == 0)
+    mpz_set_ui (rop, 1L);
+}
+
+void
+mpz_negrandom (mpz_ptr rop, gmp_randstate_t rstate)
+{
+  mp_limb_t  n;
+  _gmp_rand (&n, RANDS, 1);
+  if (n != 0)
+    mpz_neg (rop, rop);
 }
 
 mp_limb_t
