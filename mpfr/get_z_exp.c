@@ -1,7 +1,7 @@
 /* mpfr_get_z_exp -- get a multiple-precision integer and an exponent
                      from a floating-point number
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -65,7 +65,10 @@ mpfr_get_z_exp (mpz_ptr z, mpfr_srcptr f)
 
   SIZ(z) = MPFR_SIGN(f) < 0 ? -fn : fn;
 
+  /* This always fails for very small "f", ie. when MPFR_EXP(f) is equal to
+     or only just above MPFR_EMIN_MIN.
   MPFR_ASSERTN((mp_exp_unsigned_t) MPFR_EXP(f) - MPFR_EMIN_MIN
                >= (mp_exp_unsigned_t) MPFR_PREC(f));
+  */
   return MPFR_EXP(f) - MPFR_PREC(f);
 }
