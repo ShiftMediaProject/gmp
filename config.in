@@ -219,6 +219,9 @@ MA 02111-1307, USA. */
 /* Define if you have the `memset' function. */
 #undef HAVE_MEMSET
 
+/* Define if you have the `mmap' function. */
+#undef HAVE_MMAP
+
 /* Define if you have the `mprotect' function. */
 #undef HAVE_MPROTECT
 
