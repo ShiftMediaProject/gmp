@@ -71,7 +71,6 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
      1. qxn
      2. pass allocated storage in additional parameter?
   */
-
   if (qxn != 0)
     abort ();
 
@@ -91,12 +90,14 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	int cnt;
 	mp_ptr n2p, d2p;
 	mp_limb_t qhl, cy;
+	TMP_DECL (marker);
+	TMP_MARK (marker);
 	count_leading_zeros (cnt, dp[dn - 1]);
 	if (cnt != 0)
 	  {
-	    d2p = alloca (dn * BYTES_PER_MP_LIMB);
+	    d2p = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
 	    mpn_lshift (d2p, dp, dn, cnt);
-	    n2p = alloca ((nn + 1) * BYTES_PER_MP_LIMB);
+	    n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
 	    cy = mpn_lshift (n2p, np, nn, cnt);
 	    n2p[nn] = cy;
 	    qhl = mpn_divrem_2 (qp, 0L, n2p, nn + (cy != 0), d2p);
@@ -106,7 +107,7 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	else
 	  {
 	    d2p = (mp_ptr) dp;
-	    n2p = alloca (nn * BYTES_PER_MP_LIMB);
+	    n2p = (mp_ptr) TMP_ALLOC (nn * BYTES_PER_MP_LIMB);
 	    MPN_COPY (n2p, np, nn);
 	    qhl = mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
 	    qp[nn - 2] = qhl;	/* always store nn-dn+1 quotient limbs */
@@ -116,12 +117,15 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	  mpn_rshift (rp, n2p, dn, cnt);
 	else
 	  MPN_COPY (rp, n2p, dn);
+	TMP_FREE (marker);
 	return;
       }
 
     default:
       {
 	int adjust;
+	TMP_DECL (marker);
+	TMP_MARK (marker);
 	adjust = np[nn - 1] >= dp[dn - 1];	/* conservative tests for quotient size */
 	if (nn + adjust >= 2 * dn)
 	  {
@@ -133,9 +137,9 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	    qp[nn - dn] = 0;			/* zero high quotient limb */
 	    if (cnt != 0)			/* normalize divisor if needed */
 	      {
-		d2p = alloca (dn * BYTES_PER_MP_LIMB);
+		d2p = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
 		mpn_lshift (d2p, dp, dn, cnt);
-		n2p = alloca ((nn + 1) * BYTES_PER_MP_LIMB);
+		n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
 		cy = mpn_lshift (n2p, np, nn, cnt);
 		n2p[nn] = cy;
 		nn += adjust;
@@ -143,7 +147,7 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	    else
 	      {
 		d2p = (mp_ptr) dp;
-		n2p = alloca ((nn + 1) * BYTES_PER_MP_LIMB);
+		n2p = (mp_ptr) TMP_ALLOC ((nn + 1) * BYTES_PER_MP_LIMB);
 		MPN_COPY (n2p, np, nn);
 		n2p[nn] = 0;
 		nn += adjust;
@@ -189,6 +193,7 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	      mpn_rshift (rp, n2p, dn, cnt);
 	    else
 	      MPN_COPY (rp, n2p, dn);
+	    TMP_FREE (marker);
 	    return;
 	  }
 
@@ -245,6 +250,7 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	    if (qn == 0)
 	      {
 		MPN_COPY (rp, np, dn);
+		TMP_FREE (marker);
 		return;
 	      }
 
@@ -255,12 +261,12 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	    count_leading_zeros (cnt, dp[dn - 1]);
 	    if (cnt != 0)
 	      {
-		d2p = alloca (qn * BYTES_PER_MP_LIMB);
+		d2p = (mp_ptr) TMP_ALLOC (qn * BYTES_PER_MP_LIMB);
 
 		mpn_lshift (d2p, dp + in, qn, cnt);
 		d2p[0] |= dp[in - 1] >> (BITS_PER_MP_LIMB - cnt);
 
-		n2p = alloca ((2 * qn + 1) * BYTES_PER_MP_LIMB);
+		n2p = (mp_ptr) TMP_ALLOC ((2 * qn + 1) * BYTES_PER_MP_LIMB);
 		cy = mpn_lshift (n2p, np + nn - 2 * qn, 2 * qn, cnt);
 		if (adjust)
 		  {
@@ -276,7 +282,7 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	      {
 		d2p = (mp_ptr) dp + in;
 
-		n2p = alloca ((2 * qn + 1) * BYTES_PER_MP_LIMB);
+		n2p = (mp_ptr) TMP_ALLOC ((2 * qn + 1) * BYTES_PER_MP_LIMB);
 		MPN_COPY (n2p, np + nn - 2 * qn, 2 * qn);
 		if (adjust)
 		  {
@@ -356,7 +362,7 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	      }
 	    /* True: partial remainder now is neutral, i.e., it is not shifted up.  */
 
-	    tp = alloca (dn * BYTES_PER_MP_LIMB);
+	    tp = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
 
 	    if (in < qn)
 	      {
@@ -385,6 +391,7 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 		mpn_add_n (rp, rp, dp, dn);
 	      }
 	  }
+	TMP_FREE (marker);
 	return;
       }
     }
