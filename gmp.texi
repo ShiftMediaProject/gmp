@@ -3381,10 +3381,15 @@ destroyed, plus one limb past the end of each, ie. @{@var{s1p},
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{size})
 Compute the square root of @{@var{sp}, @var{size}@} and put the result at
-@var{r1p}.  Write the remainder at @var{r2p}, unless @var{r2p} is @code{NULL}.
+@var{r1p}.
 
-Return the size of the remainder, whether @var{r2p} was @code{NULL} or non-@code{NULL}.
-Iff the operand was a perfect square, the return value will be 0.
+If @var{r2p} is not NULL, write the remainder there and return its size.  If
+@var{r2p} is NULL, discard the remainder and return 0 or 1, where 0 means that
+the remainder was identical zero, and 1 means that that the remainder was
+greater than zero.
+
+In either case, iff the operand was a perfect square, the return value will be
+0.
 
 The areas at @var{r1p} and @var{sp} have to be distinct.  The areas at
 @var{r2p} and @var{sp} have to be identical or completely separate, not
