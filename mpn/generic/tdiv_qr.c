@@ -44,8 +44,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
      1. qxn
      2. pass allocated storage in additional parameter?
   */
-  if (qxn != 0)
-    abort ();
+  ASSERT_ALWAYS (qxn == 0);
 
   ASSERT (qxn >= 0);
   ASSERT (nn >= 0);
@@ -356,8 +355,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		cy2 = mpn_submul_1 (n2p, qp, qn, dp[in - 1] & (GMP_NUMB_MASK >> cnt));
 		if (qn != rn)
 		  {
-		    if (n2p[qn] < cy2)
-		      abort ();
+		    ASSERT_ALWAYS (n2p[qn] >= cy2);
 		    n2p[qn] -= cy2;
 		  }
 		else
@@ -378,8 +376,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 		if (in == 0)
 		  {
 		    MPN_COPY (rp, n2p, rn);
-		    if (rn != dn)
-		      abort ();
+		    ASSERT_ALWAYS (rn == dn);
 		    goto foo;
 		  }
 		mpn_mul (tp, qp, qn, dp, in);
