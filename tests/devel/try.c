@@ -275,11 +275,11 @@ struct try_t {
   char  src[2];
   char  dst[2];
 
-#define SIZE_ALLOW_ZERO   1
-#define SIZE_1            2  /* 1 limb  */
-#define SIZE_2            3  /* 2 limbs */
-#define SIZE_3            4  /* 3 limbs */
-#define SIZE_YES          5
+#define SIZE_YES          1
+#define SIZE_ALLOW_ZERO   2
+#define SIZE_1            3  /* 1 limb  */
+#define SIZE_2            4  /* 2 limbs */
+#define SIZE_3            5  /* 3 limbs */
 #define SIZE_FRACTION     6  /* size2 is fraction for divrem etc */
 #define SIZE_SIZE2        7
 #define SIZE_PLUS_1       8
@@ -481,46 +481,48 @@ validate_sqrtrem (void)
    as they're all distinct and within the size of param[].  Renumber
    whenever necessary or desired.  */
 
-#define TYPE_ADD_N             1
-#define TYPE_ADD_NC            2
-#define TYPE_SUB_N             3
-#define TYPE_SUB_NC            4
+#define TYPE_ADD               1
+#define TYPE_ADD_N             2
+#define TYPE_ADD_NC            3
+#define TYPE_SUB               4
+#define TYPE_SUB_N             5
+#define TYPE_SUB_NC            6
 
-#define TYPE_MUL_1             5
-#define TYPE_MUL_1C            6
+#define TYPE_MUL_1             7
+#define TYPE_MUL_1C            8
 
-#define TYPE_MUL_2             7
+#define TYPE_MUL_2             9
 
-#define TYPE_ADDMUL_1          8
-#define TYPE_ADDMUL_1C         9
-#define TYPE_SUBMUL_1         10
-#define TYPE_SUBMUL_1C        11
+#define TYPE_ADDMUL_1         10
+#define TYPE_ADDMUL_1C        11
+#define TYPE_SUBMUL_1         12
+#define TYPE_SUBMUL_1C        13
 
-#define TYPE_ADDSUB_N         12
-#define TYPE_ADDSUB_NC        13
+#define TYPE_ADDSUB_N         14
+#define TYPE_ADDSUB_NC        15
 
-#define TYPE_RSHIFT           14
-#define TYPE_LSHIFT           15
+#define TYPE_RSHIFT           16
+#define TYPE_LSHIFT           17
 
-#define TYPE_COPY             16
-#define TYPE_COPYI            17
-#define TYPE_COPYD            18
-#define TYPE_COM_N            19
+#define TYPE_COPY             20
+#define TYPE_COPYI            21
+#define TYPE_COPYD            22
+#define TYPE_COM_N            23
 
-#define TYPE_MOD_1            20
-#define TYPE_MOD_1C           21
-#define TYPE_DIVMOD_1         22
-#define TYPE_DIVMOD_1C        23
-#define TYPE_DIVREM_1         24
-#define TYPE_DIVREM_1C        25
-#define TYPE_PREINV_MOD_1     26
+#define TYPE_MOD_1            25
+#define TYPE_MOD_1C           26
+#define TYPE_DIVMOD_1         27
+#define TYPE_DIVMOD_1C        28
+#define TYPE_DIVREM_1         29
+#define TYPE_DIVREM_1C        30
+#define TYPE_PREINV_MOD_1     31
 
-#define TYPE_DIVEXACT_1       27
-#define TYPE_DIVEXACT_BY3     28
-#define TYPE_DIVEXACT_BY3C    29
+#define TYPE_DIVEXACT_1       32
+#define TYPE_DIVEXACT_BY3     33
+#define TYPE_DIVEXACT_BY3C    34
 
-#define TYPE_MODEXACT_1_ODD   30
-#define TYPE_MODEXACT_1C_ODD  31
+#define TYPE_MODEXACT_1_ODD   35
+#define TYPE_MODEXACT_1C_ODD  36
 
 #define TYPE_GCD              40
 #define TYPE_GCD_1            41
@@ -603,6 +605,16 @@ param_init (void)
   p = &param[TYPE_SUB_NC];
   COPY (TYPE_ADD_NC);
   REFERENCE (refmpn_sub_nc);
+
+  p = &param[TYPE_ADD];
+  COPY (TYPE_ADD_N);
+  p->size = SIZE_ALLOW_ZERO;
+  p->size2 = 1;
+  REFERENCE (refmpn_add);
+
+  p = &param[TYPE_SUB];
+  COPY (TYPE_ADD);
+  REFERENCE (refmpn_sub);
 
 
   p = &param[TYPE_MUL_1];
@@ -1099,8 +1111,12 @@ struct choice_t {
 #endif
 
 const struct choice_t choice_array[] = {
+  { TRY(mpn_add),       TYPE_ADD    },
+  { TRY(mpn_sub),       TYPE_SUB    },
+
   { TRY(mpn_add_n),     TYPE_ADD_N  },
   { TRY(mpn_sub_n),     TYPE_SUB_N  },
+
 #if HAVE_NATIVE_mpn_add_nc
   { TRY(mpn_add_nc),    TYPE_ADD_NC },
 #endif
@@ -1331,7 +1347,7 @@ int        divisor_index;
 #define ARRAY_ITERATION(var, index, limit, array, randoms, cond)        \
   for (index = 0;                                                       \
        (index < numberof (array)                                        \
-        ? CAST_TO_VOID (var = array[index])                             \
+        ? (void)_VOID (var = array[index])                              \
         : (MPN_RANDOM_ALT (index, &var, 1), (mp_limb_t) 0)),            \
        index < limit;                                                   \
        index++)
@@ -1487,8 +1503,8 @@ print_all (void)
 
   for (i = 0; i < NUM_DESTS; i++)
     if (tr->dst[i])
-      printf ("   d[%d] %s, align %ld\n",
-              i, d[i].high ? "high" : "low", d[i].align);
+      printf ("   d[%d] %s, align %ld, size %ld\n",
+              i, d[i].high ? "high" : "low", d[i].align, d[i].size);
 
   for (i = 0; i < NUM_SOURCES; i++)
     {
@@ -1578,6 +1594,12 @@ void
 call (struct each_t *e, tryfun_t function)
 {
   switch (choice->type) {
+  case TYPE_ADD:
+  case TYPE_SUB:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p, size, e->s[1].p, size2);
+    break;
+
   case TYPE_ADD_N:
   case TYPE_SUB_N:
     e->retval = CALLING_CONVENTIONS (function)
