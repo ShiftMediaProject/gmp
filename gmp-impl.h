@@ -2129,14 +2129,22 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     (r) = _r;								\
     (q) = _q;								\
   } while (0)
-/* Like udiv_qrnnd_preinv, but branch-free.  */
-#define udiv_qrnnd_preinv2(q, r, nh, nl, d, di) \
+
+/* Like udiv_qrnnd_preinv, but branch-free.
+
+   Recent versions of gcc (eg. 3.3) know to turn the _n1 highbit test into
+   an arithmetic right shift (eg. sarl on i386).  Previous gcc would be
+   better with say "(mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1)", but
+   that's not portable since C doesn't guarantee a signed right shift is
+   arithmetic (and on Cray vector systems it isn't).  */
+
+#define udiv_qrnnd_preinv2(q, r, nh, nl, d, di)                         \
   do {									\
     mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
     _n2 = (nh);								\
     _n10 = (nl);							\
-    _n1 = (mp_limb_signed_t) _n10 >> (BITS_PER_MP_LIMB - 1);		\
+    _n1 = (_n10 & GMP_LIMB_HIGHBIT ? MP_LIMB_T_MAX : 0);                \
     _nadj = _n10 + (_n1 & (d));						\
     umul_ppmm (_xh, _xl, di, _n2 - _n1);				\
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
@@ -2147,6 +2155,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     (r) = _xl + ((d) & _xh);						\
     (q) = _xh - _q1;							\
   } while (0)
+
 /* Like udiv_qrnnd_preinv2, but for for any value D.  DNORM is D shifted left
    so that its most significant bit is set.  LGUP is ceil(log2(D)).  */
 #define udiv_qrnnd_preinv2gen(q, r, nh, nl, d, di, dnorm, lgup) \
