@@ -702,19 +702,39 @@ MA 02111-1307, USA.
 
 <h4>C++</h4>
 <ul>
-<li> <code>mp?_class(string)</code>: Call libgmpxx functions
-     <code>mp?_set_str_cxxlocale</code>, in preparation for using aspects of
-     the C++ global locale, instead of the C one.  Applications will need to
-     be recompiled to take advantage of this.
-<li> <code>mpf_class(string)</code>: Use the C++ global locale decimal point,
+<li> <code>mpz_class(string)</code>, etc: Use the C++ global locale to
+     identify whitespace.
+     <br>
+     <code>mpf_class(string)</code>: Use the C++ global locale decimal point,
      rather than the C one.
-<li> <code>mp?_class(string)</code>: Use the <code>ctype&lt;char&gt;</code>
-     facet of the global locale for whitespace recognition.
+     <br>
+     Consider making these variant <code>mpz_set_str</code> etc forms
+     available for <code>mpz_t</code> too, not just <code>mpz_class</code>
+     etc.
 <li> <code>operator&gt;&gt;</code>: Make a test program to see that we accept
      and reject the same as the standard <code>operator&gt;&gt;</code>.  Kevin
      has made a start on this.
 <li> <code>mpq_class operator+=</code>: Don't emit an unnecssary
      <code>mpq_set(q,q)</code> before <code>mpz_addmul</code> etc.
+<li> Put various bits of gmpxx.h into libgmpxx, to avoid excessive inlining.
+     Candidates for this would be,
+     <ul>
+     <li> <code>mpz_class(const char *)</code>, etc: since they're normally
+          not fast anyway, and we can hide the exception <code>throw</code>.
+     <li> <code>mpz_class(string)</code>, etc: to hide the <code>cstr</code>
+          needed to get to the C conversion function.
+     <li> <code>mpz_class string, char*</code> etc constructors: likewise to
+          hide the throws and conversions.
+     <li> <code>mpz_class::get_str</code>, etc: to hide the <code>char*</code>
+          to <code>string</code> conversion and free.  Perhaps
+          <code>mpz_get_str</code> can write directly into a
+          <code>string</code>, to avoid copying.
+          <br>
+          Consider making such <code>string</code> returning variants
+          available for use with plain <code>mpz_t</code> etc too.
+     </ul>
+     The mpfr routines are not candidates, since we don't want MPFR support in
+     libgmpxx yet.
 </ul>
 
 <h4>Miscellaneous</h4>
