@@ -145,7 +145,7 @@ mk:
 
 MTS = -s 50-150 -c
 mt:
-	./speed $(MTS) mpn_kara_mul_n mpn_toom3_mul_n | less
+	./speed $(MTS) mpn_kara_mul_n mpn_toom3_mul_n
 mtg:
 	./speed $(MTS) -P mtg mpn_kara_mul_n mpn_toom3_mul_n
 
@@ -154,7 +154,7 @@ sk:
 
 STS = -s 50-150 -c
 st:
-	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n | less
+	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n
 stg:
 	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
 
