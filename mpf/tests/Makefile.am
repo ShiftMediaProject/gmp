@@ -25,7 +25,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d
+check_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d \
+  t-misc
 TESTS = $(check_PROGRAMS)
 
 t_add_SOURCES = t-add.c ref.c
