@@ -45,14 +45,25 @@ __mpn_addsub_n:
 	.csect	.text[PR]
 .__mpn_addsub_n:
 #else
-/*             r1p r2p s1p s2p n
-/* Use reg r0, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12 */
-
 	.text
 	.align 4
 	.globl C_SYMBOL_NAME(__mpn_addsub_n)
 C_SYMBOL_NAME(__mpn_addsub_n):
 #endif
+
+// 19991117
+
+// This is just crafted for testing some ideas, and verifying that we can make
+// it run fast.  It runs at 2.55 cycles/limb on the 630, which is very good.
+// We should play a little with the schedule.  No time has been spent on that.
+
+// To finish this, the loop warm up and cool down code needs to be written,
+// and the result need to be tested.  Also, the proper calling sequence should
+// be used.
+
+/*             r1p r2p s1p s2p n
+/* Use reg r0, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12 */
+
 	std	r14,-64(1)
 	std	r15,-56(1)
 	std	r16,-48(1)
@@ -60,8 +71,8 @@ C_SYMBOL_NAME(__mpn_addsub_n):
 	std	r18,-32(1)
 	std	r19,-24(1)
 
-	srdi	r6,r6,2
-	mtctr	r6		/* copy size into CTR */
+	srdi	r7,r7,2
+	mtctr	r7		/* copy size into CTR */
 	addic	r0,r0,0		/* clear cy */
 	addi	r3,r3,-8	/* offset res_ptr, it's updated before it's used */
 	addi	r4,r4,-8	/* offset res_ptr, it's updated before it's used */
