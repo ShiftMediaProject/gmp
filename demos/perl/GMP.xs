@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
 
    Routines are grouped with the alias feature and a table of function
    pointers where possible, since each xsub routine ends up with quite a bit
-   of overhead.  Different combinations of arguments and return values have
+   of code size.  Different combinations of arguments and return values have
    to be separate though.
 
    The "INTERFACE:" feature isn't available in perl 5.005 and so isn't used.
@@ -2686,6 +2686,12 @@ CODE:
                 Safefree (RETVAL);
                 XSRETURN_UNDEF;
               }
+          }
+        else if (strcmp (method, "mt") == 0)
+          {
+            if (items != 1)
+              goto invalid;
+            gmp_randinit_mt (RETVAL);
           }
         else
           {

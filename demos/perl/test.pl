@@ -846,6 +846,7 @@ ok (reldiff (4,2) == 0.5);
 { my $r = randstate('lc_2exp', 1, 2, 3);        ok (defined $r); }
 { my $r = randstate('lc_2exp_size', 64);        ok (defined $r); }
 { my $r = randstate('lc_2exp_size', 999999999); ok (! defined $r); }
+{ my $r = randstate('mt');                      ok (defined $r); }
 {
   my $r = randstate();
   $r->seed(123);

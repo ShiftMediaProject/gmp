@@ -423,11 +423,13 @@ generation.  C<randstate> creates a new object, for example,
     $r = randstate();
     $r = randstate('lc_2exp_size', 64);
     $r = randstate('lc_2exp', 43840821, 1, 32);
+    $r = randstate('mt');
 
 With no parameters this corresponds to the C function
 C<gmp_randinit_default>, and is a compromise between speed and randomness.
-'lc_2exp_size' corresponds to C<gmp_randinit_lc_2exp_size>, and 'lc_2exp'
-corresponds to C<gmp_randinit_lc_2exp>.
+'lc_2exp_size' corresponds to C<gmp_randinit_lc_2exp_size>, 'lc_2exp'
+corresponds to C<gmp_randinit_lc_2exp>, and 'mt' corresponds to
+C<gmp_randinit_mt>.
 
 'lc_2exp_size' can fail if the requested size is bigger than the internal
 table provides for, in which case undef is returned.  The maximum size
