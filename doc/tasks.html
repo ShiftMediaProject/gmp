@@ -111,6 +111,10 @@
      fast on one or two limb moduli, due to a lot of function call
      overheads.  These could perhaps be be handled as special cases.
 
+<li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> want better
+     algorithm selection, and the latter should use REDC.  Both could
+     change to use an <code>mpn_powm</code> and <code>mpn_redc</code>.
+
 <li> <code>mpn_gcd</code> might be able to be sped up on small to
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
