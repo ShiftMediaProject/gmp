@@ -21,19 +21,21 @@ MA 02111-1307, USA. */
 
 #include "config.h"
 
-#include <strstream.h>
+#include <strstream>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #if HAVE_LOCALE_H
-#include <locale.h>    /* for lconv */
+#include <clocale>    /* for lconv */
 #endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "tests.h"
+
+using namespace std;
 
 
 #if HAVE_LOCALECONV
