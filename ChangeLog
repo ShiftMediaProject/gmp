@@ -1,3 +1,10 @@
+2001-04-06  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/lisp/gmpasm-mode.el (gmpasm-comment-start-regexp): Add | for 68k.
+	(gmpasm-mode-syntax-table): Add to comments.
+
+	* tests/mpz/reuse.c (dsi_div_func_names): Add names for cdiv_[qr]_2exp.
+
 2001-04-04  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_M4_M4WRAP_SPURIOUS): Fix test so as to actually
