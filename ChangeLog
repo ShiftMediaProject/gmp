@@ -1,3 +1,22 @@
+1999-05-04  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (setup_error_handler): Use sigemptyset to create
+	empty set (for portability).
+	(fns): Fix typo '#if #if'.
+	(mpz_eval_expr): Implement FERMAT and MERSENNE.
+
+	* demos/pexpr.c: Cast longjmp argument via long to silent warnings on
+	64-bit hosts.
+
+1999-05-03  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c: Add #defines for GMP 1.x and 2.0 compatibility.
+
+	* demos/pexpr.c (setup_error_handler): New function; take signal
+	handler setup code from main(), with major modifications to use modern
+	signal interface.
+	(main): Remove signal handler setup code; call setup_error_handler.
+
 1999-04-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/configure.in: Fix typo, "sparc-*)" was "sparc)".
@@ -88,7 +107,7 @@
 	* mpz/Makefile.in: Compile urandom.c
 
 	* mpf/urandom.c (mpf_urandomb): New function.
-	
+
 	* mpf/Makefile.in: Compile urandom.c.
 
 	* gmp.h (__gmp_rand_state_struct, __gmp_rand_scheme_struct): New
@@ -265,7 +284,7 @@
 	* mpn/config/mt-pa2hpux: New file.
 	* mpn/configure.in (hppa2.0*-*-*): Use new 64-bit code.
 
-	* config.sub: Recognize hppa2.0 as CPU type. 
+	* config.sub: Recognize hppa2.0 as CPU type.
 
 	* longlong.h (64-bit hppa): Add umul_ppmm and udiv_qrnnd.
 	* mpn/pa64/mul_1.S: New file.
