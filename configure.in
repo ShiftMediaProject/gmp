@@ -1905,15 +1905,17 @@ AC_HEADER_TIME
 #   sys/processor.h - solaris specific, though also present in macos
 #   sys/resource.h - not in mingw
 #   sys/sysctl.h - not in mingw
+#   sys/sysinfo.h - OSF specific
 #   sys/syssgi.h - IRIX specific
 #   sys/systemcfg.h - AIX specific
 #   sys/time.h - autoconf suggests testing, don't know anywhere without it
 #   sys/times.h - not in mingw
+#   machine/hal_sysinfo.h - OSF specific
 #
 # inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
 # default tests
 #
-AC_CHECK_HEADERS(fcntl.h float.h langinfo.h locale.h nl_types.h sys/mman.h sys/param.h sys/processor.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(fcntl.h float.h langinfo.h locale.h nl_types.h sys/mman.h sys/param.h sys/processor.h sys/sysinfo.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # On SunOS, sys/resource.h needs sys/time.h (for struct timeval)
 AC_CHECK_HEADERS(sys/resource.h,,,
@@ -1932,6 +1934,12 @@ AC_CHECK_HEADERS(sys/resource.h,,,
 AC_CHECK_HEADERS(sys/sysctl.h,,,
 [#if HAVE_SYS_PARAM_H
 # include <sys/param.h>
+#endif])
+
+# On OSF 4.0, <machine/hal_sysinfo.h> must have <sys/sysinfo.h> for ulong_t
+AC_CHECK_HEADERS(machine/hal_sysinfo.h,,,
+[#if HAVE_SYS_SYSINFO_H
+# include <sys/sysinfo.h>
 #endif])
 
 # Reasons for testing:
@@ -2021,6 +2029,7 @@ esac
 #   alarm - not in mingw
 #   clock_gettime - not in glibc 2.2.4, only very recent systems
 #   cputime - not in glibc
+#   getsysinfo - OSF specific
 #   getrusage - not in mingw
 #   gettimeofday - not in mingw
 #   mmap - not in mingw, djgpp
@@ -2047,7 +2056,7 @@ esac
 # __gmp_replacement_vsnprintf which is not required on AIX since it has a
 # vsnprintf.
 #
-AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage gettimeofday localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info raise read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage getsysinfo gettimeofday localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info raise read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
 
 GMP_FUNC_VSNPRINTF
 GMP_FUNC_SSCANF_WRITABLE_INPUT
