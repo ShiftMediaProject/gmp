@@ -21,8 +21,6 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
 
-NAILS_SUPPORT(0-31)
-
 
 C mp_limb_t mpn_udiv_qrnnd (mp_limb_t *remptr, mp_limb_t high, mp_limb_t low,
 C                           mp_limb_t divisor);
