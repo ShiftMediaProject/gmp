@@ -1,3 +1,8 @@
+2001-02-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/copyi.asm: New file.
+	* mpn/ia64/copyd.asm: New file.
+
 2001-02-04  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/alpha/ev5/gmp-mparam.h, mpn/mips3/gmp-mparam.h,
@@ -17,6 +22,8 @@
 	* gmp.texi (Integer Division): Another rewording of 2exp divisions.
 
 2001-02-03  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/arm/gmp-mparam.h: Tune.
 
 	* mpn/ia64/popcount.asm: Put a `;;' break at end of main loop.
 
