@@ -1,7 +1,6 @@
-/* mpn_sqrtrem -- square root and remainder */
+/* mpn_sqrtrem -- square root and remainder
 
-/*
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 /* Contributed by Paul Zimmermann.
@@ -217,6 +215,7 @@ mpn_sqrtrem (mp_ptr sp, mp_ptr rp, mp_srcptr np, mp_size_t nn)
   TMP_DECL (marker);
 
   ASSERT (nn >= 0);
+  ASSERT_MPN (np, nn);
 
   /* If OP is zero, both results are zero.  */
   if (nn == 0)
