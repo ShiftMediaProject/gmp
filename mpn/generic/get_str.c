@@ -148,8 +148,18 @@ mpn_sb_get_str (unsigned char *str, size_t len,
   unsigned char *s;
   int base;
 
-#if GET_STR_BASECASE_THRESHOLD > 2
+#if TUNE_PROGRAM_BUILD
+#define USE_MULTILIMB  1
+#else
+#define USE_MULTILIMB  (GET_STR_BASECASE_THRESHOLD > 2)
+#endif
+
+#if USE_MULTILIMB
+#if TUNE_PROGRAM_BUILD
+#define BUF_ALLOC (GET_STR_THRESHOLD_LIMIT * BITS_PER_MP_LIMB)
+#else
 #define BUF_ALLOC (GET_STR_PRECOMPUTE_THRESHOLD * BITS_PER_MP_LIMB)
+#endif
   base = powtab->base;
   if (base == 10)
     {
@@ -272,6 +282,7 @@ mpn_sb_get_str (unsigned char *str, size_t len,
     }
   else
     {
+      int i;
       s = str + len;
       if (base == 10)
 	{
@@ -350,6 +361,9 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 }
 
 
+/* There are no leading zeros on the digits generated at str, but that's not
+   currently a documented feature.  */
+
 size_t
 mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 {
