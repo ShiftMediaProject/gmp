@@ -126,7 +126,7 @@ noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
   add.c canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
   get_den.c get_num.c init.c inv.c mul.c neg.c set.c set_den.c \
-  set_num.c set_si.c set_ui.c sub.c equal.c set_z.c set_d.c
+  set_num.c set_si.c set_ui.c sub.c equal.c set_z.c set_d.c swap.c
 
 subdir = mpq
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -144,7 +144,7 @@ libmpq_la_LIBADD =
 am_libmpq_la_OBJECTS =  add.lo canonicalize.lo clear.lo cmp.lo cmp_ui.lo \
 div.lo get_d.lo get_den.lo get_num.lo init.lo inv.lo mul.lo neg.lo \
 set.lo set_den.lo set_num.lo set_si.lo set_ui.lo sub.lo equal.lo \
-set_z.lo set_d.lo
+set_z.lo set_d.lo swap.lo
 libmpq_la_OBJECTS =  $(am_libmpq_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
