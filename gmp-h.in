@@ -121,11 +121,9 @@ MA 02111-1307, USA. */
    For testing on a non-windows system, __GMP_DECLSPEC can be set to
    __attribute__ ((section ("foo"))) or similar, and the resulting objects
    checked with readelf or whatever to see if all the expected globals have
-   ended up with that attribute.
+   ended up with that attribute.  */
 
-   PORTME: What does Borland use? */
-
-#if defined (__GNUC__) || defined (_MSC_VER)
+#if defined (__GNUC__) || defined (_MSC_VER) || defined (__BORLANDC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(dllexport)
 #define __GMP_DECLSPEC_IMPORT  __declspec(dllimport)
 #endif
@@ -272,6 +270,7 @@ typedef __mpq_struct *mpq_ptr;
   || defined (_H_STDIO)               /* AIX */                 \
   || defined (_STDIO_H)               /* glibc, Sun, SCO */     \
   || defined (_STDIO_H_)              /* BSD, OSF */            \
+  || defined (__STDIO_H)              /* Borland */             \
   || defined (__STDIO_H__)            /* IRIX */                \
   || defined (_STDIO_INCLUDED)        /* HPUX */                \
   || defined (__dj_include_stdio_h_)  /* DJGPP */               \
