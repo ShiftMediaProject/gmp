@@ -171,7 +171,7 @@ typedef __mpq_struct *mpq_ptr;
 void mp_set_memory_functions _PROTO ((void *(*) (size_t),
 				      void *(*) (void *, size_t, size_t),
 				      void (*) (void *, size_t)));
-extern const int mp_bits_per_limb;
+extern __gmp_const int mp_bits_per_limb;
 
 /**************** Integer (i.e. Z) routines.  ****************/
 
@@ -292,6 +292,7 @@ void mpq_div _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 void mpq_neg _PROTO ((mpq_ptr, mpq_srcptr));
 int mpq_cmp _PROTO ((mpq_srcptr, mpq_srcptr));
 int mpq_cmp_ui _PROTO ((mpq_srcptr, unsigned long int, unsigned long int));
+int mpq_equal _PROTO ((mpq_srcptr, mpq_srcptr));
 void mpq_inv _PROTO ((mpq_ptr, mpq_srcptr));
 void mpq_set_num _PROTO ((mpq_ptr, mpz_srcptr));
 void mpq_set_den _PROTO ((mpq_ptr, mpz_srcptr));
@@ -325,7 +326,7 @@ size_t mpf_inp_str _PROTO ((mpf_ptr, FILE *, int));
 void mpf_init_set _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_init_set_d _PROTO ((mpf_ptr, double));
 void mpf_init_set_si _PROTO ((mpf_ptr, signed long int));
-int mpf_init_set_str _PROTO ((mpf_ptr, char *, int));
+int mpf_init_set_str _PROTO ((mpf_ptr, const char *, int));
 void mpf_init_set_ui _PROTO ((mpf_ptr, unsigned long int));
 void mpf_mul _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_mul_2exp _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
