@@ -532,6 +532,7 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
   return gsize + zero_words;
 }
 
+#if 1
 mp_size_t
 mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 {
@@ -541,7 +542,7 @@ mpn_gcd (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 /* The rest of this file is disabled since the schoenhage code does not work
    yet.  */
 
-#if 0
+#else
 
 #define MPN_LEQ_P(ap, asize, bp, bsize)				\
 ((asize) < (bsize) || ((asize) == (bsize)			\
@@ -792,8 +793,7 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 		      &quotients,
 		      tp, talloc);
 
-      if (!res || (res == 2
-		   && hgcd_start_row_p (hgcd.row, hgcd.size)))
+      if (res == 0 || res == 1)
 	{
 	euclid:
 	  ASSERT (r[0].rsize - r[1].rsize + 1 <= talloc);
@@ -844,20 +844,14 @@ gcd_schoenhage (mp_ptr gp, mp_srcptr ap, mp_size_t asize,
 	  /* s[0] and s[1] are correct */
 	  r[2].rsize
 	    = mpn_hgcd_fix (k, r[2].rp, ralloc,
-			    s[0].rp, s[0].rsize,
-			    sign,
-			    s[0].uvp[0], r[0].rp,
-			    s[0].uvp[1], r[1].rp,
-			    hgcd.size,
+			    sign, hgcd.size, s, 
+			    r[0].rp, r[1].rp,
 			    tp, talloc);
 
 	  r[3].rsize
 	    = mpn_hgcd_fix (k, r[3].rp, ralloc,
-			    s[1].rp, s[1].rsize,
-			    ~sign,
-			    s[1].uvp[0], r[0].rp,
-			    s[1].uvp[1], r[1].rp,
-			    hgcd.size,
+			    ~sign, hgcd.size, s+1,
+			    r[0].rp, r[1].rp,
 			    tp, talloc);
 
 	  NHGCD_SWAP4_2 (r);
