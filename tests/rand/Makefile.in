@@ -196,7 +196,7 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(libstat_la_SOURCES) findlc.c gen.c \
 	$(gen_static_SOURCES) spect.c stat.c t-rand.c
-DIST_COMMON = ChangeLog Makefile.am Makefile.in
+DIST_COMMON = Makefile.am Makefile.in
 SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-rand.c
 
 all: all-am
