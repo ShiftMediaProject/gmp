@@ -19,6 +19,61 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-06  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpf/t-trunc.c: Nailify.
+
+	* tests/mpf/t-set_si.c: Disable for nails.
+
+	* mpz/get_si.c: Misc variable name changes.
+
+	* mpf/cmp_si.c: Nailify.
+	* mpf/cmp_ui.c: Nailify.
+	* mpf/div.c: Nailify.
+	* mpf/div_2exp.c: Nailify.
+	* mpf/div_ui.c: Nailify.
+	* mpf/eq.c: Nailify.
+	* mpf/get_d.c: Nailify.
+	* mpf/get_d_2exp.c: Nailify.
+	* mpf/get_si.c: Nailify.
+	* mpf/get_str.c: Nailify.
+	* mpf/get_ui.c: Nailify.
+	* mpf/mul_2exp.c: Nailify.
+	* mpf/random2.c: Nailify.
+	* mpf/set_q.c: Nailify.
+	* mpf/set_si.c: Nailify.
+	* mpf/set_str.c: Nailify.
+	* mpf/set_ui.c: Nailify.
+	* mpf/sub.c: Nailify.
+	* mpf/ui_div.c: Nailify.
+	* mpf/ui_sub.c: Nailify.
+	* mpf/urandomb.c: Nailify.
+
+	* gmp-impl.h (__GMPF_BITS_TO_PREC, __GMPF_PREC_TO_BITS): Nailify.
+
+	* mpf/fits_u.h: Rewrite - nailify.
+	* mpf/fits_s.h: Likewise.
+
+	* mpz/mod.c: Disambiguate if-statament with extra {}.
+
+	* mpf/int_p.c: Fix type of size variables.
+	* mpf/get_ui: Likewise.
+	* mpf/get_si: Likewise.
+	* mpq/equal.c: Likewise.
+	* mpq/get_d.c: Likewise.
+	* mpz/cmp_d.c: Likewise.
+	* mpz/cmpabs_d.c: Likewise.
+	* mpz/divis_2exp.c: Likewise.
+	* mpz/kronuz.c: Likewise.
+	* mpz/kronzu.c: Likewise.
+	* mpz/kronzs.c: Likewise.
+	* mpz/kronsz.c: Likewise.
+	* mpz/scan0.c: Likewise.
+	* mpz/scan1.c: Likewise.
+	* mpz/tstbit.c: Likewise.
+	* mpz/cong_2exp.c: Likewise.
+	* mpz/divis.c: Likewise.
+
 2002-05-04  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/gcd.c: Additional nailify changes.
@@ -10445,7 +10500,7 @@ MA 02111-1307, USA.
 1999-03-24  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* tests/rand/Makefile (GMPINC): Rename to GMPH.
-	(GMPH):	Add gmp-mparam.h.
+	(GMPH): Add gmp-mparam.h.
 	(CFLAGS): Add -I$(GMPLIBDIR)/mpn
 
 1999-03-23  Linus Nordberg  <linus.nordberg@canit.se>
@@ -14730,7 +14785,7 @@ Wed May  8 20:02:42 1991  Torbjorn Granlund  (tege@zevs.sics.se)
 
 	* mpz_mul_2exp: Handle zero input MINT correctly.
 
-	* mpn_rshiftci:  Don't handle shift counts > BITS_PER_MP_DIGIT.
+	* mpn_rshiftci: Don't handle shift counts > BITS_PER_MP_DIGIT.
 
 	* mpz_out_raw.c, mpz_inp_raw.c: New files for raw I/O.
 
