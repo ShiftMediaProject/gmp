@@ -880,6 +880,7 @@ dnl  Various possible defines passed from the Makefile that are to be tested
 dnl  with ifdef() rather than be expanded.
 
 m4_not_for_expansion(`PIC')
+m4_not_for_expansion(`DLL_EXPORT')
 
 dnl  aors_n
 m4_not_for_expansion(`OPERATION_add_n')
