@@ -119,6 +119,7 @@ AUTOMAKE_OPTIONS = gnu
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libmp.la
+dummy_LDADD = 
 
 @WANT_MPBSD_TRUE@MPBSD_check_OPTION = @WANT_MPBSD_TRUE@allfuns
 
@@ -142,8 +143,7 @@ allfuns_DEPENDENCIES =  $(top_builddir)/libmp.la
 allfuns_LDFLAGS = 
 dummy_SOURCES = dummy.c
 dummy_OBJECTS =  dummy.$(OBJEXT)
-dummy_LDADD = $(LDADD)
-dummy_DEPENDENCIES =  $(top_builddir)/libmp.la
+dummy_DEPENDENCIES = 
 dummy_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
