@@ -1032,6 +1032,40 @@ refmpn_hamdist (mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 }
 
 
+/* set r to a%d */
+void
+refmpn_mod2 (mp_limb_t r[2], const mp_limb_t a[2], const mp_limb_t d[2])
+{
+  mp_limb_t  D[2];
+  int        n;
+
+  D[1] = d[1], D[0] = d[0];
+  r[1] = a[1], r[0] = a[0];
+  n = 0;
+
+  for (;;)
+    {
+      if (D[1] & MP_LIMB_T_HIGHBIT)
+        break;
+      if (refmpn_cmp (r, D, 2) <= 0)
+        break;
+      refmpn_lshift (D, D, 2, 1);
+      n++;
+      ASSERT (n <= BITS_PER_MP_LIMB);
+    }
+
+  while (n >= 0)
+    {
+      if (refmpn_cmp (r, D, 2) >= 0)
+        ASSERT_NOCARRY (refmpn_sub_n (r, r, D, 2));
+      refmpn_rshift (D, D, 2, 1);
+      n--;
+    }
+
+  ASSERT (refmpn_cmp (r, d, 2) < 0);
+}
+
+
 /* Find n where 0<n<2^BITS_PER_MP_LIMB and n==c mod m */
 mp_limb_t
 refmpn_gcd_finda (const mp_limb_t c[2])
@@ -1049,7 +1083,6 @@ refmpn_gcd_finda (const mp_limb_t c[2])
  
   while (n2[1] != 0)
     {
-      //      printf ("R %lX %lX   %lX %lX\n", n1[1], n1[0], n2[1], n2[0]);
       refmpn_mod2 (n1, n1, n2);
 
       MP_LIMB_T_SWAP (n1[0], n2[0]);
