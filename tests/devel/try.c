@@ -1347,7 +1347,7 @@ int        divisor_index;
 #define ARRAY_ITERATION(var, index, limit, array, randoms, cond)        \
   for (index = 0;                                                       \
        (index < numberof (array)                                        \
-        ? (void)_VOID (var = array[index])                              \
+        ? (void) (var = array[index])                                   \
         : (MPN_RANDOM_ALT (index, &var, 1), (mp_limb_t) 0)),            \
        index < limit;                                                   \
        index++)
