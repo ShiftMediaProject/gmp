@@ -1641,20 +1641,10 @@ GMP_OPTION_ALLOCA
 GMP_H_HAVE_FILE
 GMP_IMPL_H_IEEE_FLOATS
 
-# FIXME: Autoconf 2.52 AC_C_BIGENDIAN bombs when cross compiling, but in the
-# future the probes will be better and this override can be removed.
-if test "$cross_compiling" = yes; then
-  ac_cv_c_bigendian=unknown
-fi
-AC_C_BIGENDIAN
-# Enhancement: In the future AC_C_BIGENDIAN will accept these actions as
-# parameters.
-case $ac_cv_c_bigendian in
-  yes)     AC_DEFINE(HAVE_LIMB_BIG_ENDIAN, 1) ;;
-  no)      AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1) ;;
-  unknown) ;;
-  *)       AC_MSG_ERROR([Oops, unrecognised ac_cv_c_bigendian]) ;;
-esac
+AC_C_BIGENDIAN(
+  [AC_DEFINE(HAVE_LIMB_BIG_ENDIAN, 1)],
+  [AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1)],
+  [:])
 AH_VERBATIM([HAVE_LIMB],
 [/* Define one (just one) of the following for the endiannes of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
