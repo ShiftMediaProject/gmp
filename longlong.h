@@ -467,18 +467,59 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
   __asm__ ("divl %4"		     /* stringification in K&R C */	\
 	   : "=a" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "rm" ((USItype)(dx)))
-#define count_leading_zeros(count, x) \
-  do {									\
-    USItype __cbtmp;							\
-    ASSERT ((x) != 0);                                                  \
-    __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));	\
-    (count) = __cbtmp ^ 31;						\
+
+#if HAVE_TARGET_CPU_i586 || HAVE_TARGET_CPU_pentium || HAVE_TARGET_CPU_pentiummmx
+/* This code should be a fixed 14 or 15 cycles, but possibly plus an L1
+   cache miss reading from __clz_tab.  P5 "bsrl" on the other hand takes
+   between 10 and 72 cycles depending where the most significant 1 bit is.
+
+   The asm block sets __shift to -3 if the high 24 bits are clear, -2 for
+   16, -1 for 8, or 0 otherwise.  This could be written equivalently as
+   follows, but as of gcc 2.95.2 this results in conditional jumps.
+
+       __shift = -(__n < 0x1000000);
+       __shift -= (__n < 0x10000);
+       __shift -= (__n < 0x100);
+
+   The middle two sbbl and cmpl's pair, and with luck something the compiler
+   generates might pair with the first cmpl and the last sbbl.  The "32+1"
+   constant could be folded into __clz_tab[], but it doesn't seem worth
+   making a different table just for that.  */
+
+#define count_leading_zeros(c,n)                        \
+  do {                                                  \
+    USItype  __n = (n);                                 \
+    USItype  __shift;                                   \
+    __asm__ ("cmpl  $0x1000000, %1\n"                   \
+             "sbbl  %0, %0\n"                           \
+             "cmpl  $0x10000, %1\n"                     \
+             "sbbl  $0, %0\n"                           \
+             "cmpl  $0x100, %1\n"                       \
+             "sbbl  $0, %0\n"                           \
+             : "=&r" (__shift) : "r"  (__n));           \
+    __shift = __shift*8 + 24 + 1;                       \
+    (c) = 32 + 1 - __shift - __clz_tab[__n >> __shift]; \
   } while (0)
+
+#define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+#define COUNT_LEADING_ZEROS_0   31   /* n==0 indistinguishable from n==1 */
+
+#else
+#define count_leading_zeros(count, x)                                   \
+  do {                                                                  \
+    USItype __cbtmp;                                                    \
+    ASSERT ((x) != 0);                                                  \
+    __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));      \
+    (count) = __cbtmp ^ 31;                                             \
+  } while (0)
+#endif
+
 #define count_trailing_zeros(count, x)                                  \
   do {                                                                  \
     ASSERT ((x) != 0);                                                  \
     __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));        \
   } while (0)
+
 #ifndef UMUL_TIME
 #define UMUL_TIME 10
 #endif
@@ -1342,12 +1383,13 @@ extern mp_limb_t mpn_udiv_qrnnd _PROTO ((mp_limb_t *,
 #define udiv_qrnnd __udiv_qrnnd_c
 #endif
 
-#if !defined (count_leading_zeros)
 extern
 #if __STDC__
 const
 #endif
 unsigned char __clz_tab[128];
+
+#if !defined (count_leading_zeros)
 #define count_leading_zeros(count, x) \
   do {									\
     UWtype __xr = (x);							\
