@@ -198,7 +198,7 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-lc2exp t-rand t-urndmm
+check_PROGRAMS = t-lc2exp t-mt t-rand t-urndmm
 TESTS = $(check_PROGRAMS)
 
 EXTRA_PROGRAMS = findlc gen gen.static spect stat
@@ -223,7 +223,8 @@ am_libstat_la_OBJECTS = statlib$U.lo zdiv_round$U.lo
 libstat_la_OBJECTS = $(am_libstat_la_OBJECTS)
 EXTRA_PROGRAMS = findlc$(EXEEXT) gen$(EXEEXT) gen.static$(EXEEXT) \
 	spect$(EXEEXT) stat$(EXEEXT)
-check_PROGRAMS = t-lc2exp$(EXEEXT) t-rand$(EXEEXT) t-urndmm$(EXEEXT)
+check_PROGRAMS = t-lc2exp$(EXEEXT) t-mt$(EXEEXT) t-rand$(EXEEXT) \
+	t-urndmm$(EXEEXT)
 findlc_SOURCES = findlc.c
 findlc_OBJECTS = findlc$U.$(OBJEXT)
 findlc_DEPENDENCIES = libstat.la
@@ -253,6 +254,12 @@ t_lc2exp_LDADD = $(LDADD)
 t_lc2exp_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_lc2exp_LDFLAGS =
+t_mt_SOURCES = t-mt.c
+t_mt_OBJECTS = t-mt$U.$(OBJEXT)
+t_mt_LDADD = $(LDADD)
+t_mt_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_mt_LDFLAGS =
 t_rand_SOURCES = t-rand.c
 t_rand_OBJECTS = t-rand$U.$(OBJEXT)
 t_rand_LDADD = $(LDADD)
@@ -277,10 +284,10 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libstat_la_SOURCES) findlc.c gen.c \
-	$(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-rand.c \
+	$(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-mt.c t-rand.c \
 	t-urndmm.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-rand.c t-urndmm.c
+SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-mt.c t-rand.c t-urndmm.c
 
 all: all-am
 
@@ -318,6 +325,9 @@ stat$(EXEEXT): $(stat_OBJECTS) $(stat_DEPENDENCIES)
 t-lc2exp$(EXEEXT): $(t_lc2exp_OBJECTS) $(t_lc2exp_DEPENDENCIES) 
 	@rm -f t-lc2exp$(EXEEXT)
 	$(LINK) $(t_lc2exp_LDFLAGS) $(t_lc2exp_OBJECTS) $(t_lc2exp_LDADD) $(LIBS)
+t-mt$(EXEEXT): $(t_mt_OBJECTS) $(t_mt_DEPENDENCIES) 
+	@rm -f t-mt$(EXEEXT)
+	$(LINK) $(t_mt_LDFLAGS) $(t_mt_OBJECTS) $(t_mt_LDADD) $(LIBS)
 t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES) 
 	@rm -f t-rand$(EXEEXT)
 	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
@@ -358,6 +368,8 @@ statlib_.c: statlib.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/statlib.c; then echo $(srcdir)/statlib.c; else echo statlib.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-lc2exp_.c: t-lc2exp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-lc2exp.c; then echo $(srcdir)/t-lc2exp.c; else echo t-lc2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-mt_.c: t-mt.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-mt.c; then echo $(srcdir)/t-mt.c; else echo t-mt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-rand_.c: t-rand.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-rand.c; then echo $(srcdir)/t-rand.c; else echo t-rand.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-urndmm_.c: t-urndmm.c $(ANSI2KNR)
@@ -366,9 +378,9 @@ zdiv_round_.c: zdiv_round.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/zdiv_round.c; then echo $(srcdir)/zdiv_round.c; else echo zdiv_round.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 findlc_.$(OBJEXT) findlc_.lo gen_.$(OBJEXT) gen_.lo spect_.$(OBJEXT) \
 spect_.lo stat_.$(OBJEXT) stat_.lo statlib_.$(OBJEXT) statlib_.lo \
-t-lc2exp_.$(OBJEXT) t-lc2exp_.lo t-rand_.$(OBJEXT) t-rand_.lo \
-t-urndmm_.$(OBJEXT) t-urndmm_.lo zdiv_round_.$(OBJEXT) zdiv_round_.lo : \
-$(ANSI2KNR)
+t-lc2exp_.$(OBJEXT) t-lc2exp_.lo t-mt_.$(OBJEXT) t-mt_.lo \
+t-rand_.$(OBJEXT) t-rand_.lo t-urndmm_.$(OBJEXT) t-urndmm_.lo \
+zdiv_round_.$(OBJEXT) zdiv_round_.lo : $(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo
