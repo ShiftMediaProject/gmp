@@ -607,7 +607,7 @@ dnl ------------
 dnl  FIXME: Shared libs seem to fail on aix4.3.
 dnl  FIXME: Should invoke [AC_DISABLE_SHARED], but m4 recurses to death.
 case "$target" in
-  *-*-aix*) enable_shared=no ;;
+  [*-*-aix4.[3-9]*]) enable_shared=no ;;
 esac
 AC_PROG_LIBTOOL
 
