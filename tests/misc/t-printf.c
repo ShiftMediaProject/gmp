@@ -35,6 +35,7 @@ MA 02111-1307, USA. */
 #include <varargs.h>
 #endif
 
+#include <stddef.h>    /* for ptrdiff_t */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -727,45 +728,80 @@ check_f (void)
 void
 check_n (void)
 {
-  int        n;
-  long       l;
-  short      h[2];
-  mp_limb_t  a[5];
-  mp_limb_t  a_want[numberof(a)];
-  mp_size_t  i;
+  {
+    int  n = -1;
+    check_one ("blah", "%nblah", &n);
+    ASSERT_ALWAYS (n == 0);
+  }
 
-  check_one ("blah", "%nblah", &n);
-  ASSERT_ALWAYS (n == 0);
+  {
+    int  n = -1;
+    check_one ("hello ", "hello %n", &n);
+    ASSERT_ALWAYS (n == 6);
+  }
 
-  check_one ("hello ", "hello %n", &n);
-  ASSERT_ALWAYS (n == 6);
-
-  check_one ("hello  world", "hello %n world", &n);
-  ASSERT_ALWAYS (n == 6);
+  {
+    int  n = -1;
+    check_one ("hello  world", "hello %n world", &n);
+    ASSERT_ALWAYS (n == 6);
+  }
 
   /* should write whole of l */
-  l = -1;
-  check_one ("", "%ln", &l);
-  ASSERT_ALWAYS (l == 0);
+  {
+    long  l = -1;
+    check_one ("", "%ln", &l);
+    ASSERT_ALWAYS (l == 0);
+  }
 
   /* should write only h[0] */
-  h[0] = -123;
-  h[1] = -456;
-  check_one ("", "%hn", &h[0]);
-  ASSERT_ALWAYS (h[0] == 0);
-  ASSERT_ALWAYS (h[1] == -456);
+  {
+    short      h[2];
+    h[0] = -123;
+    h[1] = -456;
+    check_one ("", "%hn", &h[0]);
+    ASSERT_ALWAYS (h[0] == 0);
+    ASSERT_ALWAYS (h[1] == -456);
+  }
 
-  a[0] = 123;
-  check_one ("blah", "bl%Nnah", a, 0);
-  ASSERT_ALWAYS (a[0] == 123);
+  {
+    size_t  s = -1;
+    check_one ("blah", "bl%znah", &s);
+    ASSERT_ALWAYS (s == 2);
+  }
 
-  MPN_ZERO (a_want, numberof (a_want));
-  for (i = 1; i < numberof (a); i++)
-    {
-      check_one ("blah", "bl%Nnah", a, i);
-      a_want[0] = 2;
-      ASSERT_ALWAYS (mpn_cmp (a, a_want, i) == 0);
-    }
+#if HAVE_PTRDIFF_T
+  {
+    ptrdiff_t  d = -1;
+    check_one ("blah", "bl%tnah", &d);
+    ASSERT_ALWAYS (d == 2);
+  }
+#endif
+
+#if HAVE_LONG_LONG
+  {
+    long long  ll = -1;
+    check_one ("blah", "bl%Lnah", &ll);
+    ASSERT_ALWAYS (ll == 2);
+  }
+#endif
+
+  {
+    mp_limb_t  a[5];
+    mp_limb_t  a_want[numberof(a)];
+    mp_size_t  i;
+
+    a[0] = 123;
+    check_one ("blah", "bl%Nnah", a, 0);
+    ASSERT_ALWAYS (a[0] == 123);
+
+    MPN_ZERO (a_want, numberof (a_want));
+    for (i = 1; i < numberof (a); i++)
+      {
+        check_one ("blah", "bl%Nnah", a, i);
+        a_want[0] = 2;
+        ASSERT_ALWAYS (mpn_cmp (a, a_want, i) == 0);
+      }
+  }
 }
 
 
@@ -828,6 +864,13 @@ check_misc (void)
              "|%5Zo|%5Zx|%5ZX|%#5Zo|%#5Zx|%#5ZX|%#10.8Zx|",
              /**/ z,   z,   z,    z,    z,    z,       z);
 
+  /* %zd for size_t won't be available on old systems, and running something
+     to see if it works might be bad, so try it on glibc only */
+#ifdef __GLIBC__
+  mpz_set_ui (z, 789L);
+  check_one ("456 789 blah", "%zd %Zd blah", (size_t) 456, z);
+#endif
+
   mpz_clear (z);
   mpf_clear (f);
 }
@@ -842,7 +885,7 @@ main (int argc, char *argv[])
   tests_start ();
   check_vfprintf_fp = fopen (CHECK_VFPRINTF_FILENAME, "w+");
   ASSERT_ALWAYS (check_vfprintf_fp != NULL);
-  
+
   check_z ();
   check_q ();
   check_f ();
