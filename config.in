@@ -131,6 +131,9 @@ MA 02111-1307, USA.
 /* Define if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
+/* Define if you have the `processor_info' function. */
+#undef HAVE_PROCESSOR_INFO
+
 /* Version number of package */
 #undef VERSION
 
