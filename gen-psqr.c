@@ -26,8 +26,8 @@ MA 02111-1307, USA. */
 
 
 /* The aim of this program is to choose either mpn_mod_34lsub1 or mpn_mod_1
-   (plus a PERFSQR_PP modulus), and generate tables indicating residues and
-   non-residues modulo small factors of that modulus.
+   (plus a PERFSQR_PP modulus), and generate tables indicating quadratic
+   residues and non-residues modulo small factors of that modulus.
 
    For the usual 32 or 64 bit cases mpn_mod_34lsub1 gets used.  That
    function exists specifically because 2^24-1 and 2^48-1 have nice sets of
@@ -405,7 +405,9 @@ generate_mod (int limb_bits, int nail_bits)
   for (i = 0; i < nfactor; i++)
     {
       mpz_init (factor[i].inverse);
-      mpz_invert_ui_2exp (factor[i].inverse, factor[i].divisor, mod_bits);
+      mpz_invert_ui_2exp (factor[i].inverse,
+                          (unsigned long) factor[i].divisor,
+                          (unsigned long) mod_bits);
 
       mpz_init (factor[i].mask);
       square_mask (factor[i].mask, factor[i].divisor);
@@ -447,7 +449,7 @@ print (int limb_bits, int nail_bits)
   for (i = 0; i < nsq_res_0x100; i++)
     {
       printf ("  CNST_LIMB(0x");
-      mpz_out_str (0, 16, sq_res_0x100[i]);
+      mpz_out_str (stdout, 16, sq_res_0x100[i]);
       printf ("),\n");
     }
   printf ("};\n");
@@ -474,13 +476,13 @@ print (int limb_bits, int nail_bits)
   if (mpz_sgn (pp) != 0)
     {
       printf ("#define PERFSQR_PP            CNST_LIMB(0x");
-      mpz_out_str (0, 16, pp);
+      mpz_out_str (stdout, 16, pp);
       printf (")\n");
       printf ("#define PERFSQR_PP_NORM       CNST_LIMB(0x");
-      mpz_out_str (0, 16, pp_norm);
+      mpz_out_str (stdout, 16, pp_norm);
       printf (")\n");
       printf ("#define PERFSQR_PP_INVERTED   CNST_LIMB(0x");
-      mpz_out_str (0, 16, pp_inverted);
+      mpz_out_str (stdout, 16, pp_inverted);
       printf (")\n");
     }
   printf ("\n");
@@ -507,21 +509,21 @@ print (int limb_bits, int nail_bits)
       printf ("    PERFSQR_MOD_%d (r, CNST_LIMB(%2d), CNST_LIMB(0x",
               factor[i].divisor <= limb_bits ? 1 : 2,
               factor[i].divisor);
-      mpz_out_str (0, 16, factor[i].inverse);
+      mpz_out_str (stdout, 16, factor[i].inverse);
       printf ("), \\\n");
       printf ("                   CNST_LIMB(0x");
 
       if ( factor[i].divisor <= limb_bits)
         {
-          mpz_out_str (0, 16, factor[i].mask);
+          mpz_out_str (stdout, 16, factor[i].mask);
         }
       else
         {
           mpz_tdiv_r_2exp (mlo, factor[i].mask, (unsigned long) limb_bits);
           mpz_tdiv_q_2exp (mhi, factor[i].mask, (unsigned long) limb_bits);
-          mpz_out_str (0, 16, mhi);
+          mpz_out_str (stdout, 16, mhi);
           printf ("), CNST_LIMB(0x");
-          mpz_out_str (0, 16, mlo);
+          mpz_out_str (stdout, 16, mlo);
         }
       printf (")); \\\n");
     }
