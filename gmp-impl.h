@@ -409,21 +409,39 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 /* Set various *_THRESHOLD values to be used for nails.  Thus we avoid using
    code that has not yet been qualified.  */
 
+#undef MUL_KARATSUBA_THRESHOLD
+#undef MUL_TOOM3_THRESHOLD
 #define MUL_KARATSUBA_THRESHOLD          30
 #define MUL_TOOM3_THRESHOLD             150
 
+#undef SQR_BASECASE_THRESHOLD
+#undef SQR_KARATSUBA_THRESHOLD
+#undef SQR_TOOM3_THRESHOLD
 #define SQR_BASECASE_THRESHOLD            0
 #define SQR_KARATSUBA_THRESHOLD          50
 #define SQR_TOOM3_THRESHOLD             250
 
+#undef DIV_SB_PREINV_THRESHOLD
+#undef DIV_DC_THRESHOLD
+#undef POWM_THRESHOLD
 #define DIV_SB_PREINV_THRESHOLD           MP_SIZE_T_MAX
 #define DIV_DC_THRESHOLD                 50
 #define POWM_THRESHOLD                    0
 
+#undef GCD_ACCEL_THRESHOLD
+#undef GCDEXT_THRESHOLD
 #define GCD_ACCEL_THRESHOLD               3
 #define GCDEXT_THRESHOLD                  0  /* always */
-#define JACOBI_BASE_METHOD                2
 
+#undef DIVREM_1_NORM_THRESHOLD
+#undef DIVREM_1_UNNORM_THRESHOLD
+#undef MOD_1_NORM_THRESHOLD
+#undef MOD_1_UNNORM_THRESHOLD
+#undef USE_PREINV_DIVREM_1
+#undef USE_PREINV_MOD_1
+#undef DIVREM_2_THRESHOLD
+#undef DIVEXACT_1_THRESHOLD
+#undef MODEXACT_1_ODD_THRESHOLD
 #define DIVREM_1_NORM_THRESHOLD           MP_SIZE_T_MAX  /* preinv always */
 #define DIVREM_1_UNNORM_THRESHOLD         MP_SIZE_T_MAX  /* always */
 #define MOD_1_NORM_THRESHOLD              MP_SIZE_T_MAX  /* always */
@@ -434,14 +452,23 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define DIVEXACT_1_THRESHOLD              MP_SIZE_T_MAX  /* always */
 #define MODEXACT_1_ODD_THRESHOLD          MP_SIZE_T_MAX  /* always */
 
+#undef GET_STR_DC_THRESHOLD
+#undef GET_STR_PRECOMPUTE_THRESHOLD
+#undef SET_STR_THRESHOLD
 #define GET_STR_DC_THRESHOLD             22
 #define GET_STR_PRECOMPUTE_THRESHOLD     42
 #define SET_STR_THRESHOLD              3259
 
+#undef MUL_FFT_TABLE
+#undef MUL_FFT_MODF_THRESHOLD
+#undef MUL_FFT_THRESHOLD
 #define MUL_FFT_TABLE  { 400, 928, 1856, 3840, 7168, 20480, 0 }
 #define MUL_FFT_MODF_THRESHOLD          416
 #define MUL_FFT_THRESHOLD                MP_SIZE_T_MAX
 
+#undef  SQR_FFT_TABLE
+#undef  SQR_FFT_MODF_THRESHOLD
+#undef  SQR_FFT_THRESHOLD
 #define SQR_FFT_TABLE  { 400, 992, 1984, 3840, 9216, 20480, 0 }
 #define SQR_FFT_MODF_THRESHOLD          416
 #define SQR_FFT_THRESHOLD                MP_SIZE_T_MAX
