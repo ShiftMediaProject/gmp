@@ -615,6 +615,22 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    depending where the least significant 1 bit is.  */
 
 #else
+/* gcc on p6 prior to 3.0 generates a partial register stall for __cbtmp^31,
+   due to using "xorb $31" instead of "xorl $31", the former being 1 code
+   byte smaller.  "31-__cbtmp" is a workaround, probably at the cost of one
+   extra instruction.  Do this for "i386" too, since that means generic
+   x86.  */
+#if __GNUC__ < 3                                                \
+  && (HAVE_HOST_CPU_i386 || HAVE_HOST_CPU_pentiumpro            \
+      || HAVE_HOST_CPU_pentium2 || HAVE_HOST_CPU_pentium3)
+#define count_leading_zeros(count, x)                                   \
+  do {                                                                  \
+    USItype __cbtmp;                                                    \
+    ASSERT ((x) != 0);                                                  \
+    __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));      \
+    (count) = 31 - __cbtmp;                                             \
+  } while (0)
+#else
 #define count_leading_zeros(count, x)                                   \
   do {                                                                  \
     USItype __cbtmp;                                                    \
@@ -622,6 +638,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));      \
     (count) = __cbtmp ^ 31;                                             \
   } while (0)
+#endif                                                                  \
+                                                                        \
 #define count_trailing_zeros(count, x)                                  \
   do {                                                                  \
     ASSERT ((x) != 0);                                                  \
