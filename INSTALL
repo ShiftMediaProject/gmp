@@ -33,8 +33,8 @@ command line, multiplies them, and prints the result to stdout.
     {
       mpz_t a, b, p;
 
-      /* Expect 2 command line parameters */
-      if (argc < 3) exit (1);
+      if (argc != 3)
+        { printf ("Usage: %s <number> <number>\n", argv[0]); exit (1); }
 
       /* Initialize variables */
       mpz_init (a);
@@ -73,8 +73,8 @@ MP user:
     {
       mpz_t a, b, p;
 
-      /* Expect 2 command line parameters */
-      if (argc < 3) exit (1);
+      if (argc != 3)
+        { printf ("Usage: %s <number> <number>\n", argv[0]); exit (1); }
 
       /* Initialize and assign a and b from base 10 strings in argv */
       mpz_init_set_str (a, argv[1], 10);
