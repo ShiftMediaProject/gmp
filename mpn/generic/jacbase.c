@@ -1,10 +1,9 @@
 /* mpn_jacobi_base -- limb/limb Jacobi symbol with restricted arguments.
 
    THIS INTERFACE IS PRELIMINARY AND MIGHT DISAPPEAR OR BE SUBJECT TO
-   INCOMPATIBLE CHANGES IN A FUTURE RELEASE OF GMP. */
+   INCOMPATIBLE CHANGES IN A FUTURE RELEASE OF GMP.
 
-/*
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,18 +20,23 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.  */
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
 
-#if COUNT_TRAILING_ZEROS_TIME <= 7
-/* If count_trailing_zeros is fast, use it.
-   K7 at 7 cycles and P6 at 2 are good here.  K6 at 12-27 and P5 at 18-42
-   are not.  The default 15 in longlong.h is meant to mean not good here.  */
+/* Use the simple loop by default.  The generic count_trailing_zeros is not
+   very fast, and the extra trickery of method 3 has proven to be less use
+   than might have been though.  */
+#ifndef JACOBI_BASE_METHOD
+#define JACOBI_BASE_METHOD  2
+#endif
 
+
+/* Use count_trailing_zeros.  */
+#if JACOBI_BASE_METHOD == 1
 #define PROCESS_TWOS_ANY                                \
   {                                                     \
     mp_limb_t  twos;                                    \
@@ -40,16 +44,12 @@ MA 02111-1307, USA.  */
     result_bit1 ^= JACOBI_TWOS_U_BIT1 (twos, b);        \
     a >>= twos;                                         \
   }
-
 #define PROCESS_TWOS_EVEN  PROCESS_TWOS_ANY
+#endif
 
-#else
-/* Use a loop instead.  With "a" uniformly distributed there will usually be
-   only a few trailing zeros.
-
-   Unfortunately the branch for the while loop here will be on a 50/50
-   chance of a 1 or 0, which is bad for branch prediction.  */
-
+/* Use a simple loop.  A disadvantage of this is that there's a branch on a
+   50/50 chance of a 0 or 1 low bit.  */
+#if JACOBI_BASE_METHOD == 2
 #define PROCESS_TWOS_EVEN               \
   {                                     \
     int  two;                           \
@@ -62,11 +62,52 @@ MA 02111-1307, USA.  */
       }                                 \
     while ((a & 1) == 0);               \
   }
-
 #define PROCESS_TWOS_ANY        \
   if ((a & 1) == 0)             \
     PROCESS_TWOS_EVEN;
+#endif
 
+/* Process one bit arithmetically, then a simple loop.  This cuts the loop
+   condition down to a 25/75 chance, which should branch predict better.
+   The CPU will need a reasonable variable left shift.  */
+#if JACOBI_BASE_METHOD == 3
+#define PROCESS_TWOS_EVEN               \
+  {                                     \
+    int  two, mask, shift;              \
+                                        \
+    two = JACOBI_TWO_U_BIT1 (b);        \
+    mask = (~a & 2);                    \
+    a >>= 1;                            \
+                                        \
+    shift = (~a & 1);                   \
+    a >>= shift;                        \
+    result_bit1 ^= two ^ (two & mask);  \
+                                        \
+    while ((a & 1) == 0)                \
+      {                                 \
+        a >>= 1;                        \
+        result_bit1 ^= two;             \
+        ASSERT (a != 0);                \
+      }                                 \
+  }
+#define PROCESS_TWOS_ANY                \
+  {                                     \
+    int  two, mask, shift;              \
+                                        \
+    two = JACOBI_TWO_U_BIT1 (b);        \
+    shift = (~a & 1);                   \
+    a >>= shift;                        \
+                                        \
+    mask = shift << 1;                  \
+    result_bit1 ^= (two & mask);        \
+                                        \
+    while ((a & 1) == 0)                \
+      {                                 \
+        a >>= 1;                        \
+        result_bit1 ^= two;             \
+        ASSERT (a != 0);                \
+      }                                 \
+  }
 #endif
 
 
