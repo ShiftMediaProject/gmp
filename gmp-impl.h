@@ -133,14 +133,15 @@ MA 02111-1307, USA. */
   } while (0)
 #endif
 
-/* va_copy is a standard part of C99, and we expect it'll be available on
-   earlier systems too if they need something other than a plain "=", though
-   possibly as __va_copy (for example gcc in strict C89 mode).  */
+/* va_copy is standard in C99, and gcc provides __va_copy when in strict C89
+   mode.  Falling back to a memcpy will give maximum portability, since it
+   works no matter whether va_list is a pointer, struct or array.  */
 #if ! defined (va_copy) && defined (__va_copy)
 #define va_copy(dst,src)  __va_copy(dst,src)
 #endif
 #if ! defined (va_copy)
-#define va_copy(dst,src)  do { (dst) = (src); } while (0)
+#define va_copy(dst,src) \
+  do { memcpy (&(dst), &(src), sizeof (va_list)); } while (0)
 #endif
 
 
