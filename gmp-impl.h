@@ -1137,30 +1137,35 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
    bytes of code and maybe a cycle or two.  aors is an add or sub, iord is
    an inc or dec, and jiord is a jump for overflow of iord.  */
 
-#define MPN_IORD_U(ptr, n, aors, iord, jiord)                   \
-  do {                                                          \
-    mp_ptr  __dummy;                                            \
-    if (__builtin_constant_p (n) && (n) == 1)                   \
-      {                                                         \
-        __asm__ __volatile__                                    \
-          (ASM_L(top) ":\n"                                     \
-              iord  "   (%0)\n"                                 \
-           "  leal      4(%0), %0\n"                            \
-              jiord " " ASM_L(top) "\n"                         \
-           : "=r" (__dummy) : "0" (ptr) : "memory");            \
-      }                                                         \
-    else                                                        \
-      {                                                         \
-        __asm__ __volatile__                                    \
-          (   aors  "   %2, (%0)\n"                             \
-           "  jnc   "   ASM_L(done) "\n"                        \
-           ASM_L(top) ":\n"                                     \
-              iord  "   4(%0)\n"                                \
-           "  leal      4(%0), %0\n"                            \
-              jiord " " ASM_L(top) "\n"                         \
-           ASM_L(done) ":\n"                                    \
-           : "=r" (__dummy) : "0" (ptr), "ri" (n) : "memory");  \
-      }                                                         \
+#define MPN_IORD_U(ptr, n, aors, iord, jiord)   \
+  do {                                          \
+    mp_ptr  __dummy;                            \
+    if (__builtin_constant_p (n) && (n) == 1)   \
+      {                                         \
+        __asm__ __volatile__                    \
+          (ASM_L(top) ":\n"                     \
+              iord  "   (%0)\n"                 \
+           "  leal      4(%0), %0\n"            \
+              jiord " " ASM_L(top) "\n"         \
+           : "=r" (__dummy)                     \
+           : "0"  (ptr)                         \
+           : "memory");                         \
+      }                                         \
+    else                                        \
+      {                                         \
+        __asm__ __volatile__                    \
+          (   aors  "   %2, (%0)\n"             \
+           "  jnc   "   ASM_L(done) "\n"        \
+           ASM_L(top) ":\n"                     \
+              iord  "   4(%0)\n"                \
+           "  leal      4(%0), %0\n"            \
+              jiord " " ASM_L(top) "\n"         \
+           ASM_L(done) ":\n"                    \
+           : "=r" (__dummy)                     \
+           : "0"  (ptr),                        \
+             "ri" (n)                           \
+           : "memory");                         \
+      }                                         \
   } while (0)
 
 #define MPN_INCR_U(ptr, size, n)  MPN_IORD_U (ptr, n, "addl", "incl",     "jz")
