@@ -2061,6 +2061,48 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 
 
+/* Apparently lwbrx might be slow on some PowerPC chips, so restrict it to
+   those we know are fast.  */
+#if defined (__GNUC__) && ! defined (NO_ASM)    \
+  && (HAVE_HOST_CPU_powerpc604                  \
+      || HAVE_HOST_CPU_powerpc604e              \
+      || HAVE_HOST_CPU_powerpc750               \
+      || HAVE_HOST_CPU_powerpc7400)
+#define BSWAP_LIMB_FETCH(limb, src)     \
+  do {                                  \
+    asm ("lwbrx %0, 0, %1"              \
+         : "=r" (limb)                  \
+         : "r" (src));                  \
+  } while (0)
+#endif
+
+#if ! defined (BSWAP_LIMB_FETCH)
+#define BSWAP_LIMB_FETCH(limb, src)  BSWAP_LIMB (limb, *(src))
+#endif
+
+
+/* On the same basis that lwbrx might be slow, restrict stwbrx to those we
+   know are fast.  FIXME: Is this necessary?  */
+#if defined (__GNUC__) && ! defined (NO_ASM)    \
+  && (HAVE_HOST_CPU_powerpc604                  \
+      || HAVE_HOST_CPU_powerpc604e              \
+      || HAVE_HOST_CPU_powerpc750               \
+      || HAVE_HOST_CPU_powerpc7400)
+#define BSWAP_LIMB_STORE(dst, limb)     \
+  do {                                  \
+    asm ("stwbrx %0, 0, %1"             \
+         :                              \
+         : "r" (limb),                  \
+           "r" (dst)                    \
+         : "memory");                   \
+  } while (0)
+#endif
+
+#if ! defined (BSWAP_LIMB_STORE)
+#define BSWAP_LIMB_STORE(dst, limb)  BSWAP_LIMB (*(dst), limb)
+#endif
+
+
 /* No processor claiming to be SPARC v9 compliant seems to
    implement the POPC instruction.  Disable pattern for now.  */
 #if 0
