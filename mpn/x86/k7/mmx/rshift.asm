@@ -360,7 +360,7 @@ L(done):
 
 	movl	SAVE_EDI, %edi
 	addl	$SAVE_SIZE, %esp
-	femms
+	emms
 
 	ret
 
@@ -383,7 +383,7 @@ L(end_even_unaligned):
 	movl	SAVE_EDI, %edi
 	addl	$SAVE_SIZE, %esp
 
-	femms
+	emms
 
 	ret
 
