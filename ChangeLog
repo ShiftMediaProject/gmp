@@ -2,6 +2,7 @@
 
 	* mpz/pprime_p.c: Pass 0L for mpz_scan1.  mpz_mmod => mpz_mod.
 	(millerrabin): Use new random interface.
+	(millerrabin): ... and don't forget to call gmp_randclear.
 
 	* mpz/nextprime.c: New file.
 	* gmp.h: Declare mpz_nextprime.
