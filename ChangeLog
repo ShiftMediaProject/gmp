@@ -18,6 +18,27 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-07-24  Kevin Ryde  <kevin@swox.se>
+
+	* demos/primes.c: Use __GMP_PROTO and don't use signed, for the
+	benefit of K&R.
+
+	* demos/calc/calclex.l: Add <string.h> for strcmp.
+
+	* mpn/ia64/invert_limb.asm: Use .rodata which works on ia64-*-hpux*
+	and should be standard, rather than worrying about RODATA.
+
+	* gmp.texi (Function Classes): Add cross references.
+	(Integer Import and Export): Fix return value grouping.
+
+	* mpn/lisp/gmpasm-mode.el (gmpasm-comment-start-regexp): Add // for
+	ia64.  Add notes on what the various styles are for.
+
+	* mpn/ia64/default.m4 (ASM_START): Define to empty, not dnl, so as not
+	to kill text on the same line.
+	(EPILOGUE_cpu): Force a newline after "#", so as not to suppress macro
+	expansion in the rest of the EPILOGUE line.
+
 2002-07-21  Kevin Ryde  <kevin@swox.se>
 
 	* tune/speed.h: Fix some missing _PROTOs.
