@@ -32,12 +32,12 @@ mpz_remove (dest, src, f)
      mpz_srcptr f;
 #endif
 {
-  mpz_t fpow[40];		/* inexhastible...until year 2020 or so */
+  mpz_t fpow[40];		/* inexhaustible...until year 2020 or so */
   mpz_t x, rem;
   unsigned long int pwr;
   int p;
 
-  if (mpz_cmp_ui (f, 1) <= 0)
+  if (mpz_cmp_ui (f, 1) <= 0 || mpz_sgn (src) == 0)
     DIVIDE_BY_ZERO;
   if (mpz_cmp_ui (f, 2) == 0)
     {
