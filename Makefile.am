@@ -194,7 +194,8 @@ MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
 libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
   mp_minv_tab.c mp_set_fns.c stack-alloc.c
-libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS) \
+MPN_OBJS_IN_LIBMP = @mpn_objs_in_libmp@
+libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP) \
   mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/init$U.lo mpz/mod$U.lo	\
   mpz/mul$U.lo mpz/mul_2exp$U.lo mpz/n_pow_ui$U.lo			\
   mpz/realloc$U.lo mpz/set$U.lo						\
