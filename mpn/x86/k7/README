@@ -4,7 +4,7 @@
 
 This directory contains code optimized for the AMD Athalon CPU.
 
-The mmx subdirectory has routines using mmx instructions.  All Athalons have
+The mmx subdirectory has routines using MMX instructions.  All Athalons have
 MMX, the separate directory is just so that configure can omit it if the
 assembler doesn't support MMX.
 
@@ -20,8 +20,8 @@ Times for the loops, with all code and data in L1 cache.
 	mpn_copyi                 0.75 or 1.0   \ varying with data alignment
 	mpn_copyd                 0.75 or 1.0   /
 
-	mpn_divrem_1             42.0
-	mpn_mod_1                42.0
+	mpn_divrem_1             17.0 integer part, 15.0 fractional part
+	mpn_mod_1                17.0
 
 	mpn_l/rshift              1.2
 
@@ -44,13 +44,12 @@ Write-allocate L1 data cache means prefetching of destinations is unnecessary.
 Floating point multiplications can be done in parallel with integer
 multiplications, but there doesn't seem to be any way to make use of this.
 
-Unsigned "mul"s take 3 cycles executed back-to-back, so long as eax is
-loaded so it doesn't cause a dependency on the previous mul.  This suggests
-3 is a limit on the speed of the multiplication routines.  The documentation
-shows mul executing in IEU0 (or maybe in IEU0 and IEU1 together), so it
-might be that, to get near 3 cycles code has to be arranged so that nothing
-else is issued to IEU0.  A busy IEU0 could explain why some code takes 4
-cycles and other apparently equivalent code takes 5.
+Unsigned "mul"s can be issued every 3 cycles.  This suggests 3 is a limit on
+the speed of the multiplication routines.  The documentation shows mul
+executing in IEU0 (or maybe in IEU0 and IEU1 together), so it might be that,
+to get near 3 cycles code has to be arranged so that nothing else is issued
+to IEU0.  A busy IEU0 could explain why some code takes 4 cycles and other
+apparently equivalent code takes 5.
 
 
 
@@ -64,9 +63,9 @@ Computed jumps into the unrolling are used to handle sizes not a multiple of
 the unrolling.  An attractive feature of this is that times increase
 smoothly with operand size, but it may be that some routines should just
 have simple loops to finish up, especially when PIC adds between 2 and 16
-cycles to get eip.
+cycles to get %eip.
 
-Position independent code is implemented using a call to get eip for the
+Position independent code is implemented using a call to get %eip for the
 computed jumps and a ret is always done, rather than an addl $4,%esp or a
 popl, so the CPU return address branch prediction stack stays synchronised
 with the actual stack in memory.
@@ -82,7 +81,7 @@ CODING
 Instructions in general code have been shown grouped if they can execute
 together, which means up to three direct-path instructions which have no
 successive dependencies.  K7 always decodes three and has out-of-order
-execution, but the groupings show what slots are available and what
+execution, but the groupings show what slots might be available and what
 dependency chains exist.
 
 When there's vector-path instructions an effort is made to get triplets of
@@ -100,7 +99,7 @@ lodsl,etc  vector
 loop       1 cycle vector (decl/jnz opens up one decode slot)
 movd reg   vector
 movd mem   direct
-mull       3 cycles when back-to-back with no dependency on a previous mul
+mull       issue every 3 cycles, latency 4 cycles low word, 6 cycles high word
 popl	   vector (use movl for more than one pop)
 pushl	   direct, will pair with a load
 shrdl %cl  vector, 3 cycles, seems to be 3 execute too
@@ -125,6 +124,12 @@ instructions added in the Athalon processor, such as pswapd and the extra
 prefetch forms.  Available on-line,
 
 	http://www.amd.com/products/cpg/athlon/techdocs/pdf/22466.pdf
+
+"3DNow Instruction Porting Guide", AMD publication number 22621, revision B,
+August 1999.  This has some notes on general Athlon optimizations as well as
+3DNow.  Available on-line,
+
+	http://www.amd.com/products/cpg/athlon/techdocs/pdf/22621.pdf
 
 
 
