@@ -362,3 +362,5 @@ union ieee_double_extract
 #else
 #define LIMBS_PER_DOUBLE 3
 #endif
+
+double __gmp_scale2 ();
