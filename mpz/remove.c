@@ -1,6 +1,6 @@
 /* mpz_remove -- divide out a factor and return its multiplicity.
 
-Copyright (C) 1998, 1999 Free Software Foundation, Inc.
+Copyright (C) 1998, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,7 +23,14 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 unsigned long int
+#if __STDC__
 mpz_remove (mpz_ptr dest, mpz_srcptr src, mpz_srcptr f)
+#else
+mpz_remove (dest, src, f)
+     mpz_ptr dest;
+     mpz_srcptr src;
+     mpz_srcptr f;
+#endif
 {
   mpz_t fpow[40];		/* inexhastible...until year 2020 or so */
   mpz_t x, rem;
