@@ -53,13 +53,6 @@ MA 02111-1307, USA. */
 #define TRACE(x) 
 
 
-#if ! defined (va_copy) && defined (__va_copy)
-#define va_copy(dst,src)  __va_copy(dst,src)
-#endif
-#if ! defined (va_copy)
-#define va_copy(dst,src)  do { (dst) = (src); } while (0)
-#endif
-
 /* Should be portable, but in any case this is only used under some ASSERTs. */
 #define va_equal(x, y)                           \
   (memcmp (&(x), &(y), sizeof(va_list)) == 0)

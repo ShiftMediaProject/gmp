@@ -128,6 +128,16 @@ MA 02111-1307, USA. */
   } while (0)
 #endif
 
+/* va_copy is a standard part of C99, and we expect it'll be available on
+   earlier systems too if they need something other than a plain "=", though
+   possibly as __va_copy (for example gcc in strict C89 mode).  */
+#if ! defined (va_copy) && defined (__va_copy)
+#define va_copy(dst,src)  __va_copy(dst,src)
+#endif
+#if ! defined (va_copy)
+#define va_copy(dst,src)  do { (dst) = (src); } while (0)
+#endif
+
 
 #if defined (__cplusplus)
 extern "C" {
