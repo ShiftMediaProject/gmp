@@ -43,7 +43,7 @@
 #define t4 %r31
 	.level  2.0n
 	.code
-	.export __gmpn_addmul_1
+	.export __gmpn_addmul_1,entry
 __gmpn_addmul_1
 	.proc
 	.callinfo frame=128,no_calls

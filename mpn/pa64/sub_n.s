@@ -31,7 +31,7 @@
 
 	.level	2.0n
 	.code
-	.export	__gmpn_sub_n
+	.export	__gmpn_sub_n,entry
 __gmpn_sub_n
 	.proc
 	.callinfo frame=0,args_saved

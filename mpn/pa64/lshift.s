@@ -30,7 +30,7 @@
 
 	.level	2.0n
 	.code
-	.export	__gmpn_lshift
+	.export	__gmpn_lshift,entry
 __gmpn_lshift
 	.proc
 	.callinfo frame=0,args_saved
