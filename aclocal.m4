@@ -508,6 +508,50 @@ fi
 ])
 
 
+dnl  GMP_C_TEST_SIZEOF(cc/cflags,test,[ACTION-GOOD][,ACTION-BAD])
+dnl  ------------------------------------------------------------
+dnl  The given cc/cflags compiler is run to check the size of a type
+dnl  specified by the "test" argument.  "test" can either be a string, or a
+dnl  variable like $foo.  The value should be for instance "sizeof-long-4",
+dnl  to test that sizeof(long)==4.
+dnl
+dnl  This test is designed to be run for different compiler and/or flags
+dnl  combinations, so the result is not cached.
+dnl
+dnl  The idea for making an array that has a negative size if the desired
+dnl  condition test is false comes from autoconf AC_CHECK_SIZEOF.  The cast
+dnl  to "long" in the array dimension also follows autoconf, apparently it's
+dnl  a workaround for a HP compiler bug.
+
+AC_DEFUN(GMP_C_TEST_SIZEOF,
+[echo "configure: testlist $2" >&AC_FD_CC
+[gmp_sizeof_type=`echo "$2" | sed 's/sizeof-\([a-z]*\).*/\1/'`]
+[gmp_sizeof_want=`echo "$2" | sed 's/sizeof-[a-z]*-\([0-9]*\).*/\1/'`]
+AC_MSG_CHECKING([compiler $1 has sizeof($gmp_sizeof_type)==$gmp_sizeof_want])
+cat >conftest.c <<EOF
+[int
+main ()
+{
+  static int test_array [1 - 2 * (long) (sizeof ($gmp_sizeof_type) != $gmp_sizeof_want)];
+  test_array[0] = 0;
+  return 0;
+}]
+EOF
+gmp_c_testlist_sizeof=no
+gmp_compile="$1 -c conftest.c >&AC_FD_CC"
+if AC_TRY_EVAL(gmp_compile); then
+  gmp_c_testlist_sizeof=yes
+fi
+rm -f conftest*
+AC_MSG_RESULT($gmp_c_testlist_sizeof)
+if test $gmp_c_testlist_sizeof = yes; then
+  ifelse([$3],,:,[$3])
+else
+  ifelse([$4],,:,[$4])
+fi
+])
+
+
 dnl  GMP_PROG_CC_IS_GNU(CC,[ACTIONS-IF-YES][,ACTIONS-IF-NO])
 dnl  -------------------------------------------------------
 dnl  Determine whether the given compiler is GNU C.
