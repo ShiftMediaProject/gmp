@@ -21,8 +21,64 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 
-dnl  This runs at 6.25 cycles/limb on a PA8500.  This is very close to optimal,
-dnl  but with more unrolling one could shave off one cycle.
+dnl  This runs at 7.0 cycles/limb on PA8000 and 6.375 cycles/limb on PA8500.
+dnl  It should be possible to do 6.0 cycles/limb with the current instructions
+dnl  and unrolling level.  It is unknown why the code runs somewhat slower.
+
+dnl  DESCRIPTION:
+dnl  The main loop "BIG" is 4-way unrolled, mainly to allow
+dnl  effective use of ADD,DC.  Delays in moving data via the cache from the FP
+dnl  registers to the IU registers, have demaned a deep software pipeline, and
+dnl  a lot of stack slots for partial products in flight.
+dnl
+dnl  CODE STRUCTURE:
+dnl  save-some-registers
+dnl  do 0, 1, 2, or 3 limbs
+dnl  if done, restore-some-regs and return
+dnl  save-many-regs
+dnl  do 4, 8, ... limb
+dnl  restore-all-regs
+
+dnl  STACK LAYOUT:
+dnl  HP-PA stack grows upwards.  We could allocate 8 fewer slots by using the
+dnl  slots marked FREE, as well as some slots in the caller's "frame marker".
+dnl
+dnl -00 <- r30
+dnl -08  FREE
+dnl -10  tmp
+dnl -18  tmp
+dnl -20  tmp
+dnl -28  tmp
+dnl -30  tmp
+dnl -38  tmp
+dnl -40  tmp
+dnl -48  tmp
+dnl -50  tmp
+dnl -58  tmp
+dnl -60  tmp
+dnl -68  tmp
+dnl -70  tmp
+dnl -78  tmp
+dnl -80  tmp
+dnl -88  tmp
+dnl -90  FREE
+dnl -98  FREE
+dnl -a0  FREE
+dnl -a8  FREE
+dnl -b0  r13
+dnl -b8  r12
+dnl -c0  r11
+dnl -c8  r10
+dnl -d0  r8
+dnl -d8  r8
+dnl -e0  r7
+dnl -e8  r6
+dnl -f0  r5
+dnl -f8  r4
+dnl -100 r3
+dnl  Previous frame:
+dnl  [unused area]
+dnl -38/-138 vlimb home slot.  For 2.0N, the vlimb arg will arrive here.
 
 
 include(`../config.m4')
@@ -31,20 +87,24 @@ dnl INPUT PARAMETERS:
 define(`rp',`%r26')	dnl
 define(`up',`%r25')	dnl
 define(`n',`%r24')	dnl
-define(`s2limb',`%r23')	dnl
+define(`vlimb',`%r23')	dnl
 
-define(`climb',`%r18')	dnl
+define(`climb',`%r23')	dnl
 
-	.level	2.0w
+ifdef(`HAVE_ABI_2_0w',
+`	.level	2.0W
+',`	.level	2.0N
+')
 PROLOGUE(mpn_addmul_1)
-	std		s2limb, -16(%r30)
-	std,ma		%r3, 256(%r30)
-	std		%r4, -248(%r30)
-	std		%r5, -240(%r30)
 
+ifdef(`HAVE_ABI_2_0w',
+`	std		vlimb, -0x38(%r30)	C store vlimb into "home" slot
+')
+	std,ma		%r3, 0x100(%r30)
+	std		%r4, -0xf8(%r30)
+	std		%r5, -0xf0(%r30)
 	ldo		0(%r0), climb		C clear climb
-	fldd		-272(%r30), %fr8
-
+	fldd		-0x138(%r30), %fr8	C put vlimb in fp register
 
 define(`p032a1',`%r1')	dnl
 define(`p032a2',`%r19')	dnl
@@ -70,13 +130,13 @@ define(`r000',`%r3')	dnl
 	ldo		8(up), up
 	xmpyu		%fr8R, %fr4L, %fr22
 	xmpyu		%fr8L, %fr4R, %fr23
-	fstd		%fr22, -0x78(%r30)	C mid product to bytes  -0x78..-113
+	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
 	xmpyu		%fr8R, %fr4R, %fr24
 	xmpyu		%fr8L, %fr4L, %fr25
-	fstd		%fr23, -0x70(%r30)	C mid product to bytes  -0x70..-105
-	fstd		%fr24, -0x80(%r30)	C low product to bytes  -0x80..-121
+	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
+	fstd		%fr24, -0x80(%r30)	C low product to  -0x80..-0x79
 	addib,<>	-1, %r5, L(two_or_more)
-	fstd		%fr25, -0x68(%r30)	C high product to bytes -0x68..-97
+	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
 L(one)
 	ldd		-0x78(%r30), p032a1
 	ldd		-0x70(%r30), p032a2
@@ -90,16 +150,16 @@ L(two_or_more)
 	xmpyu		%fr8R, %fr4L, %fr22
 	xmpyu		%fr8L, %fr4R, %fr23
 	ldd		-0x78(%r30), p032a1
-	fstd		%fr22, -0x78(%r30)	C mid product to bytes  -0x78..-113
+	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
 	xmpyu		%fr8R, %fr4R, %fr24
 	xmpyu		%fr8L, %fr4L, %fr25
 	ldd		-0x70(%r30), p032a2
-	fstd		%fr23, -0x70(%r30)	C mid product to bytes  -0x70..-105
+	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
 	ldd		-0x80(%r30), p000a
-	fstd		%fr24, -0x80(%r30)	C low product to bytes  -0x80..-121
+	fstd		%fr24, -0x80(%r30)	C low product to  -0x80..-0x79
 	ldd		-0x68(%r30), p064a
 	addib,<>	-1, %r5, L(three_or_more)
-	fstd		%fr25, -0x68(%r30)	C high product to bytes -0x68..-97
+	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
 L(two)
 	add		p032a1, p032a2, m032
 	add,dc		%r0, %r0, m096
@@ -122,22 +182,22 @@ L(oop0)
 dnl	xmpyu		%fr8R, %fr4L, %fr22
 dnl	xmpyu		%fr8L, %fr4R, %fr23
 dnl	ldd		-0x78(%r30), p032a1
-dnl	fstd		%fr22, -0x78(%r30)	C mid product to bytes  -0x78..-113
+dnl	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
 dnl
 dnl	xmpyu		%fr8R, %fr4R, %fr24
 dnl	xmpyu		%fr8L, %fr4L, %fr25
 dnl	ldd		-0x70(%r30), p032a2
-dnl	fstd		%fr23, -0x70(%r30)	C mid product to bytes  -0x70..-105
+dnl	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
 dnl
 dnl	ldo		8(rp), rp
 dnl	add		climb, p000a, s000
 dnl	ldd		-0x80(%r30), p000a
-dnl	fstd		%fr24, -0x80(%r30)	C low product to bytes  -0x80..-121
+dnl	fstd		%fr24, -0x80(%r30)	C low product to  -0x80..-0x79
 dnl
 dnl	add,dc		p064a, %r0, climb
 dnl	ldo		8(up), up
 dnl	ldd		-0x68(%r30), p064a
-dnl	fstd		%fr25, -0x68(%r30)	C high product to bytes -0x68..-97
+dnl	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
 dnl
 dnl	add		ma000, s000, s000
 dnl	add,dc		ma064, climb, climb
@@ -160,18 +220,18 @@ L(0_out)
 	xmpyu		%fr8R, %fr4L, %fr22
 	xmpyu		%fr8L, %fr4R, %fr23
 	ldd		-0x78(%r30), p032a1
-	fstd		%fr22, -0x78(%r30)	C mid product to bytes  -0x78..-113
+	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
 	xmpyu		%fr8R, %fr4R, %fr24
 	xmpyu		%fr8L, %fr4L, %fr25
 	ldd		-0x70(%r30), p032a2
-	fstd		%fr23, -0x70(%r30)	C mid product to bytes  -0x70..-105
+	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
 	ldo		8(rp), rp
 	add		climb, p000a, s000
 	ldd		-0x80(%r30), p000a
-	fstd		%fr24, -0x80(%r30)	C low product to bytes  -0x80..-121
+	fstd		%fr24, -0x80(%r30)	C low product to  -0x80..-0x79
 	add,dc		p064a, %r0, climb
 	ldd		-0x68(%r30), p064a
-	fstd		%fr25, -0x68(%r30)	C high product to bytes -0x68..-97
+	fstd		%fr25, -0x68(%r30)	C high product to -0x68..-0x61
 	add		ma000, s000, s000
 	add,dc		ma064, climb, climb
 	add		r000, s000, s000
@@ -212,16 +272,8 @@ L(0_one_out)
 	add,dc		%r0, climb, climb
 	std		s000, 0(rp)
 
-	comib,<		4, n, L(BIG)		C Conditionally proceed to BIG code
+	comib,>=	4, n, L(done)
 	ldo		8(rp), rp
-
-dnl We're done already, restore registers and return
-	copy		climb, %r28
-	ldd		-240(%r30), %r5
-	ldd		-248(%r30), %r4
-	bve		(%r2)
-	ldd,mb		-256(%r30), %r3
-
 
 dnl 4-way unrolled code.
 
@@ -267,17 +319,19 @@ define(`r064',`%r19')	dnl
 define(`r128',`%r20')	dnl
 define(`r192',`%r21')	dnl
 
-	std		%r6, -232(%r30)
-	std		%r7, -224(%r30)
-	std		%r8, -216(%r30)
-	std		%r9, -208(%r30)
-	std		%r10, -200(%r30)
-	std		%r11, -192(%r30)
-	std		%r12, -184(%r30)
-	std		%r13, -176(%r30)
-	std		%r18, -136(%r30)
+	std		%r6, -0xe8(%r30)
+	std		%r7, -0xe0(%r30)
+	std		%r8, -0xd8(%r30)
+	std		%r9, -0xd0(%r30)
+	std		%r10, -0xc8(%r30)
+	std		%r11, -0xc0(%r30)
+	std		%r12, -0xb8(%r30)
+	std		%r13, -0xb0(%r30)
 
-	extrd,u		n, 61, 62, n		C right shift 2 in HP lingo
+ifdef(`HAVE_ABI_2_0w',
+`	extrd,u		n, 61, 62, n		C right shift 2
+',`	extrd,u		n, 61, 30, n		C right shift 2, zero extend
+')
 
 L(4_or_more)
 	fldd		0(up), %fr4
@@ -290,33 +344,33 @@ L(4_or_more)
 	xmpyu		%fr8L, %fr5R, %fr25
 	xmpyu		%fr8R, %fr6L, %fr26
 	xmpyu		%fr8L, %fr6R, %fr27
-	fstd		%fr22, -0x78(%r30)	C mid product to bytes  -0x78..-113
+	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
 	xmpyu		%fr8R, %fr7L, %fr28
 	xmpyu		%fr8L, %fr7R, %fr29
-	fstd		%fr23, -0x70(%r30)	C mid product to bytes  -0x70..-105
+	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
 	xmpyu		%fr8R, %fr4R, %fr30
 	xmpyu		%fr8L, %fr4L, %fr31
-	fstd		%fr24, -0x38(%r30)	C mid product to bytes  -0x38..-49
+	fstd		%fr24, -0x38(%r30)	C mid product to  -0x38..-0x31
 	xmpyu		%fr8R, %fr5R, %fr22
 	xmpyu		%fr8L, %fr5L, %fr23
-	fstd		%fr25, -0x30(%r30)	C mid product to bytes  -0x30..-41
+	fstd		%fr25, -0x30(%r30)	C mid product to  -0x30..-0x29
 	xmpyu		%fr8R, %fr6R, %fr24
 	xmpyu		%fr8L, %fr6L, %fr25
-	fstd		%fr26, -0x58(%r30)	C mid product to bytes  -0x58..-81
+	fstd		%fr26, -0x58(%r30)	C mid product to  -0x58..-0x51
 	xmpyu		%fr8R, %fr7R, %fr26
-	fstd		%fr27, -0x50(%r30)	C mid product to bytes  -0x50..-73
+	fstd		%fr27, -0x50(%r30)	C mid product to  -0x50..-0x49
 	addib,<>	-1, n, L(8_or_more)
 	xmpyu		%fr8L, %fr7L, %fr27
-	fstd		%fr28, -0x18(%r30)	C mid product to bytes  -0x18..-17
-	fstd		%fr29, -0x10(%r30)	C mid product to bytes  -0x10..-9
-	fstd		%fr30, -0x80(%r30)	C low product to bytes  -0x80..-121
-	fstd		%fr31, -0x68(%r30)	C high product to bytes -0x68..-97
-	fstd		%fr22, -0x40(%r30)	C low product to bytes  -0x40..-57
-	fstd		%fr23, -0x28(%r30)	C high product to bytes -0x28..-33
-	fstd		%fr24, -0x60(%r30)	C low product to bytes  -0x60..-89
-	fstd		%fr25, -0x48(%r30)	C high product to bytes -0x48..-65
-	fstd		%fr26, -0x20(%r30)	C low product to bytes  -0x20..-25
-	fstd		%fr27, -0x08(%r30)	C high product to bytes -0x08..-1
+	fstd		%fr28, -0x18(%r30)	C mid product to  -0x18..-0x11
+	fstd		%fr29, -0x10(%r30)	C mid product to  -0x10..-0x09
+	fstd		%fr30, -0x80(%r30)	C low product to  -0x80..-0x79
+	fstd		%fr31, -0x68(%r30)	C high product to -0x68..-0x61
+	fstd		%fr22, -0x40(%r30)	C low product to  -0x40..-0x39
+	fstd		%fr23, -0x28(%r30)	C high product to -0x28..-0x21
+	fstd		%fr24, -0x60(%r30)	C low product to  -0x60..-0x59
+	fstd		%fr25, -0x48(%r30)	C high product to -0x48..-0x41
+	fstd		%fr26, -0x20(%r30)	C low product to  -0x20..-0x19
+	fstd		%fr27, -0x88(%r30)	C high product to -0x88..-0x81
 	ldd		-0x78(%r30), p032a1
 	ldd		-0x70(%r30), p032a2
 	ldd		-0x38(%r30), p096b1
@@ -329,17 +383,17 @@ L(4_or_more)
 	nop
 
 L(8_or_more)
-	fstd		%fr28, -0x18(%r30)	C mid product to bytes  -0x18..-17
-	fstd		%fr29, -0x10(%r30)	C mid product to bytes  -0x10..-9
+	fstd		%fr28, -0x18(%r30)	C mid product to  -0x18..-0x11
+	fstd		%fr29, -0x10(%r30)	C mid product to  -0x10..-0x09
 	ldo		32(up), up
-	fstd		%fr30, -0x80(%r30)	C low product to bytes  -0x80..-121
-	fstd		%fr31, -0x68(%r30)	C high product to bytes -0x68..-97
-	fstd		%fr22, -0x40(%r30)	C low product to bytes  -0x40..-57
-	fstd		%fr23, -0x28(%r30)	C high product to bytes -0x28..-33
-	fstd		%fr24, -0x60(%r30)	C low product to bytes  -0x60..-89
-	fstd		%fr25, -0x48(%r30)	C high product to bytes -0x48..-65
-	fstd		%fr26, -0x20(%r30)	C low product to bytes  -0x20..-25
-	fstd		%fr27, -0x08(%r30)	C high product to bytes -0x08..-1
+	fstd		%fr30, -0x80(%r30)	C low product to  -0x80..-0x79
+	fstd		%fr31, -0x68(%r30)	C high product to -0x68..-0x61
+	fstd		%fr22, -0x40(%r30)	C low product to  -0x40..-0x39
+	fstd		%fr23, -0x28(%r30)	C high product to -0x28..-0x21
+	fstd		%fr24, -0x60(%r30)	C low product to  -0x60..-0x59
+	fstd		%fr25, -0x48(%r30)	C high product to -0x48..-0x41
+	fstd		%fr26, -0x20(%r30)	C low product to  -0x20..-0x19
+	fstd		%fr27, -0x88(%r30)	C high product to -0x88..-0x81
 	fldd		0(up), %fr4
 	fldd		8(up), %fr5
 	fldd		16(up), %fr6
@@ -353,78 +407,78 @@ L(8_or_more)
 	xmpyu		%fr8R, %fr6L, %fr26
 	ldd		-0x38(%r30), p096b1
 	xmpyu		%fr8L, %fr6R, %fr27
-	fstd		%fr22, -0x78(%r30)	C mid product to bytes  -0x78..-113
+	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
 	xmpyu		%fr8R, %fr7L, %fr28
 	ldd		-0x30(%r30), p096b2
 	xmpyu		%fr8L, %fr7R, %fr29
-	fstd		%fr23, -0x70(%r30)	C mid product to bytes  -0x70..-105
+	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
 	xmpyu		%fr8R, %fr4R, %fr30
 	ldd		-0x58(%r30), p160c1
 	xmpyu		%fr8L, %fr4L, %fr31
-	fstd		%fr24, -0x38(%r30)	C mid product to bytes  -0x38..-49
+	fstd		%fr24, -0x38(%r30)	C mid product to  -0x38..-0x31
 	xmpyu		%fr8R, %fr5R, %fr22
 	ldd		-0x50(%r30), p160c2
 	xmpyu		%fr8L, %fr5L, %fr23
-	fstd		%fr25, -0x30(%r30)	C mid product to bytes  -0x30..-41
+	fstd		%fr25, -0x30(%r30)	C mid product to  -0x30..-0x29
 	xmpyu		%fr8R, %fr6R, %fr24
 	ldd		-0x18(%r30), p224d1
 	xmpyu		%fr8L, %fr6L, %fr25
-	fstd		%fr26, -0x58(%r30)	C mid product to bytes  -0x58..-81
+	fstd		%fr26, -0x58(%r30)	C mid product to  -0x58..-0x51
 	xmpyu		%fr8R, %fr7R, %fr26
 	ldd		-0x10(%r30), p224d2
-	fstd		%fr27, -0x50(%r30)	C mid product to bytes  -0x50..-73
+	fstd		%fr27, -0x50(%r30)	C mid product to  -0x50..-0x49
 	addib,=		-1, n, L(end2)
 	xmpyu		%fr8L, %fr7L, %fr27
 L(oop)
 	add		p032a1, p032a2, m032
 	ldd		-0x80(%r30), p000a
 	add,dc		p096b1, p096b2, m096
-	fstd		%fr28, -0x18(%r30)	C mid product to bytes  -0x18..-17
+	fstd		%fr28, -0x18(%r30)	C mid product to  -0x18..-0x11
 
 	add,dc		p160c1, p160c2, m160
 	ldd		-0x68(%r30), p064a
 	add,dc		p224d1, p224d2, m224
-	fstd		%fr29, -0x10(%r30)	C mid product to bytes  -0x10..-9
+	fstd		%fr29, -0x10(%r30)	C mid product to  -0x10..-0x09
 
 	add,dc		%r0, %r0, m288
 	ldd		-0x40(%r30), p064b
 	ldo		32(up), up
-	fstd		%fr30, -0x80(%r30)	C low product to bytes  -0x80..-121
+	fstd		%fr30, -0x80(%r30)	C low product to  -0x80..-0x79
 
 	depd,z		m032, 31, 32, ma000
 	ldd		-0x28(%r30), p128b
 	extrd,u		m032, 31, 32, ma064
-	fstd		%fr31, -0x68(%r30)	C high product to bytes -0x68..-97
+	fstd		%fr31, -0x68(%r30)	C high product to -0x68..-0x61
 
 	depd		m096, 31, 32, ma064
 	ldd		-0x60(%r30), p128c
 	extrd,u		m096, 31, 32, ma128
-	fstd		%fr22, -0x40(%r30)	C low product to bytes  -0x40..-57
+	fstd		%fr22, -0x40(%r30)	C low product to  -0x40..-0x39
 
 	depd		m160, 31, 32, ma128
 	ldd		-0x48(%r30), p192c
 	extrd,u		m160, 31, 32, ma192
-	fstd		%fr23, -0x28(%r30)	C high product to bytes -0x28..-33
+	fstd		%fr23, -0x28(%r30)	C high product to -0x28..-0x21
 
 	depd		m224, 31, 32, ma192
 	ldd		-0x20(%r30), p192d
 	extrd,u		m224, 31, 32, ma256
-	fstd		%fr24, -0x60(%r30)	C low product to bytes  -0x60..-89
+	fstd		%fr24, -0x60(%r30)	C low product to  -0x60..-0x59
 
 	depd		m288, 31, 32, ma256
-	ldd		-0x08(%r30), p256d
+	ldd		-0x88(%r30), p256d
 	add		climb, p000a, s000
-	fstd		%fr25, -0x48(%r30)	C high product to bytes -0x48..-65
+	fstd		%fr25, -0x48(%r30)	C high product to -0x48..-0x41
 
 	add,dc		p064a, p064b, s064
 	ldd		0(rp), r000
 	add,dc		p128b, p128c, s128
-	fstd		%fr26, -0x20(%r30)	C low product to bytes  -0x20..-25
+	fstd		%fr26, -0x20(%r30)	C low product to  -0x20..-0x19
 
 	add,dc		p192c, p192d, s192
 	ldd		8(rp), r064
 	add,dc		p256d, %r0, climb
-	fstd		%fr27, -0x08(%r30)	C high product to bytes -0x08..-1
+	fstd		%fr27, -0x88(%r30)	C high product to -0x88..-0x81
 
 	ldd		16(rp), r128
 	add		ma000, s000, s000	C accum mid 0
@@ -462,31 +516,31 @@ L(oop)
 	xmpyu		%fr8R, %fr6L, %fr26
 	ldd		-0x38(%r30), p096b1
 	xmpyu		%fr8L, %fr6R, %fr27
-	fstd		%fr22, -0x78(%r30)	C mid product to bytes  -0x78..-113
+	fstd		%fr22, -0x78(%r30)	C mid product to  -0x78..-0x71
 
 	xmpyu		%fr8R, %fr7L, %fr28
 	ldd		-0x30(%r30), p096b2
 	xmpyu		%fr8L, %fr7R, %fr29
-	fstd		%fr23, -0x70(%r30)	C mid product to bytes  -0x70..-105
+	fstd		%fr23, -0x70(%r30)	C mid product to  -0x70..-0x69
 
 	xmpyu		%fr8R, %fr4R, %fr30
 	ldd		-0x58(%r30), p160c1
 	xmpyu		%fr8L, %fr4L, %fr31
-	fstd		%fr24, -0x38(%r30)	C mid product to bytes  -0x38..-49
+	fstd		%fr24, -0x38(%r30)	C mid product to  -0x38..-0x31
 
 	xmpyu		%fr8R, %fr5R, %fr22
 	ldd		-0x50(%r30), p160c2
 	xmpyu		%fr8L, %fr5L, %fr23
-	fstd		%fr25, -0x30(%r30)	C mid product to bytes  -0x30..-41
+	fstd		%fr25, -0x30(%r30)	C mid product to  -0x30..-0x29
 
 	xmpyu		%fr8R, %fr6R, %fr24
 	ldd		-0x18(%r30), p224d1
 	xmpyu		%fr8L, %fr6L, %fr25
-	fstd		%fr26, -0x58(%r30)	C mid product to bytes  -0x58..-81
+	fstd		%fr26, -0x58(%r30)	C mid product to  -0x58..-0x51
 
 	xmpyu		%fr8R, %fr7R, %fr26
 	ldd		-0x10(%r30), p224d2
-	fstd		%fr27, -0x50(%r30)	C mid product to bytes  -0x50..-73
+	fstd		%fr27, -0x50(%r30)	C mid product to  -0x50..-0x49
 	xmpyu		%fr8L, %fr7L, %fr27
 
 	addib,<>	-1, n, L(oop)
@@ -496,42 +550,42 @@ L(end2)
 	add		p032a1, p032a2, m032
 	ldd		-0x80(%r30), p000a
 	add,dc		p096b1, p096b2, m096
-	fstd		%fr28, -0x18(%r30)	C mid product to bytes  -0x18..-17
+	fstd		%fr28, -0x18(%r30)	C mid product to  -0x18..-0x11
 	add,dc		p160c1, p160c2, m160
 	ldd		-0x68(%r30), p064a
 	add,dc		p224d1, p224d2, m224
-	fstd		%fr29, -0x10(%r30)	C mid product to bytes  -0x10..-9
+	fstd		%fr29, -0x10(%r30)	C mid product to  -0x10..-0x09
 	add,dc		%r0, %r0, m288
 	ldd		-0x40(%r30), p064b
-	fstd		%fr30, -0x80(%r30)	C low product to bytes  -0x80..-121
+	fstd		%fr30, -0x80(%r30)	C low product to  -0x80..-0x79
 	depd,z		m032, 31, 32, ma000
 	ldd		-0x28(%r30), p128b
 	extrd,u		m032, 31, 32, ma064
-	fstd		%fr31, -0x68(%r30)	C high product to bytes -0x68..-97
+	fstd		%fr31, -0x68(%r30)	C high product to -0x68..-0x61
 	depd		m096, 31, 32, ma064
 	ldd		-0x60(%r30), p128c
 	extrd,u		m096, 31, 32, ma128
-	fstd		%fr22, -0x40(%r30)	C low product to bytes  -0x40..-57
+	fstd		%fr22, -0x40(%r30)	C low product to  -0x40..-0x39
 	depd		m160, 31, 32, ma128
 	ldd		-0x48(%r30), p192c
 	extrd,u		m160, 31, 32, ma192
-	fstd		%fr23, -0x28(%r30)	C high product to bytes -0x28..-33
+	fstd		%fr23, -0x28(%r30)	C high product to -0x28..-0x21
 	depd		m224, 31, 32, ma192
 	ldd		-0x20(%r30), p192d
 	extrd,u		m224, 31, 32, ma256
-	fstd		%fr24, -0x60(%r30)	C low product to bytes  -0x60..-89
+	fstd		%fr24, -0x60(%r30)	C low product to  -0x60..-0x59
 	depd		m288, 31, 32, ma256
-	ldd		-0x08(%r30), p256d
+	ldd		-0x88(%r30), p256d
 	add		climb, p000a, s000
-	fstd		%fr25, -0x48(%r30)	C high product to bytes -0x48..-65
+	fstd		%fr25, -0x48(%r30)	C high product to -0x48..-0x41
 	add,dc		p064a, p064b, s064
 	ldd		0(rp), r000
 	add,dc		p128b, p128c, s128
-	fstd		%fr26, -0x20(%r30)	C low product to bytes  -0x20..-25
+	fstd		%fr26, -0x20(%r30)	C low product to  -0x20..-0x19
 	add,dc		p192c, p192d, s192
 	ldd		8(rp), r064
 	add,dc		p256d, %r0, climb
-	fstd		%fr27, -0x08(%r30)	C high product to bytes -0x08..-1
+	fstd		%fr27, -0x88(%r30)	C high product to -0x88..-0x81
 	ldd		16(rp), r128
 	add		ma000, s000, s000	C accum mid 0
 	ldd		24(rp), r192
@@ -580,7 +634,7 @@ L(end1)
 	ldd		-0x20(%r30), p192d
 	extrd,u		m224, 31, 32, ma256
 	depd		m288, 31, 32, ma256
-	ldd		-0x08(%r30), p256d
+	ldd		-0x88(%r30), p256d
 	add		climb, p000a, s000
 	add,dc		p064a, p064b, s064
 	ldd		0(rp), r000
@@ -605,20 +659,22 @@ L(end1)
 	std		s128, 16(rp)
 	std		s192, 24(rp)
 
-	copy		climb, %r28
-
-	ldd		-136(%r30), %r18
-	ldd		-176(%r30), %r13
-	ldd		-184(%r30), %r12
-	ldd		-192(%r30), %r11
-	ldd		-200(%r30), %r10
-	ldd		-208(%r30), %r9
-	ldd		-216(%r30), %r8
-	ldd		-224(%r30), %r7
-	ldd		-232(%r30), %r6
-	ldd		-240(%r30), %r5
-	ldd		-248(%r30), %r4
-
+	ldd		-0xb0(%r30), %r13
+	ldd		-0xb8(%r30), %r12
+	ldd		-0xc0(%r30), %r11
+	ldd		-0xc8(%r30), %r10
+	ldd		-0xd0(%r30), %r9
+	ldd		-0xd8(%r30), %r8
+	ldd		-0xe0(%r30), %r7
+	ldd		-0xe8(%r30), %r6
+L(done)
+ifdef(`HAVE_ABI_2_0w',
+`	copy		climb, %r28
+',`	extrd,u		climb, 63, 32, %r29
+	extrd,u		climb, 31, 32, %r28
+')
+	ldd		-0xf0(%r30), %r5
+	ldd		-0xf8(%r30), %r4
 	bve		(%r2)
-	ldd,mb		-256(%r30), %r3
+	ldd,mb		-0x100(%r30), %r3
 EPILOGUE(mpn_addmul_1)
