@@ -61,8 +61,10 @@ How to install and use the GNU multiple precision arithmetic library, version @v
 @finalout
 @setchapternewpage on
 
+@ifnottex
 @node Top, Copying, (dir), (dir)
 @top GNU MP
+@end ifnottex
 
 @iftex
 @titlepage
@@ -88,6 +90,9 @@ How to install and use the GNU multiple precision arithmetic library, version @v
 @end iftex
 
 @insertcopying
+@ifnottex
+@sp 1
+@end ifnottex
 
 @iftex
 @end titlepage
@@ -95,8 +100,6 @@ How to install and use the GNU multiple precision arithmetic library, version @v
 @end iftex
 
 @c  Don't bother with contents for html, the menus seem adequate.
-@c  Would like to have contents in plain text, but that seems broken in
-@c  texinfo 4.2.
 @ifnothtml
 @contents
 @end ifnothtml
