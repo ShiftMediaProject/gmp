@@ -487,17 +487,16 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
   /* subtract {t2, 2k+1} in {c+3k, 2k+1} i.e. in {t2+k, 2k+1}:
      by chunks of k limbs from right to left to avoid overlap */
 #define t2 (vm1)
-  /* a borrow may occur in one of the 3 following mpn_sub_1 calls,
-     but since the final result is nonnegative, it will be compensated
-     later on */
-  cout = -mpn_sub_1 (c5, c5, twor - k, t2[twok]);
+  /* a borrow may occur in one of the 2 following __GMPN_SUB_1 calls, but since
+     the final result is nonnegative, it will be compensated later on */
+  __GMPN_SUB_1 (cout, c5, c5, twor - k, t2[twok]);
   cy = mpn_sub_n (c4, c4, t2 + k, k);
-  cout -= mpn_sub_1 (c5, c5, twor - k, cy);
+  __GMPN_SUB_1 (cout, c5, c5, twor - k, cy);
   cy = mpn_sub_n (c3, c3, t2, k);
-  cout -= mpn_sub_1 (c4, c4, twor, cy);
+  __GMPN_SUB_1 (cout, c4, c4, twor, cy);
 
   /* don't forget to add vinf0 in {c+4k, ...} */
-  cout += mpn_add_1 (c4, c4, twor, vinf0);
+  __GMPN_ADD_1 (cout, c4, c4, twor, vinf0);
 
   /* c  c+k c+2k c+3k c+4k+1   t  t+2k+1 t+4k+2
      v0     t2        hi(vinf) v1 t1     vinf
@@ -512,9 +511,11 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
   /* subtract v0+vinf in {c+2k, ...} */
   cy = cinf0 + mpn_sub_n (c2, c2, vinf, twor);
   if (twor < twok)
-    cy = mpn_sub_1 (c2 + twor, c2 + twor, twok - twor, cy)
-      + mpn_sub_n (c2 + twor, c2 + twor, v0 + twor, twok - twor);
-  cout -= mpn_sub_1 (c4, c4, twor, cy); /* 2n-4k = 2r */
+    {
+      __GMPN_SUB_1 (cy, c2 + twor, c2 + twor, twok - twor, cy);
+      cy += mpn_sub_n (c2 + twor, c2 + twor, v0 + twor, twok - twor);
+    }
+  __GMPN_SUB_1 (cout, c4, c4, twor, cy); /* 2n-4k = 2r */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0       t2          vinf      v1  t1      vinf
@@ -523,7 +524,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
   /* subtract t1 in {c+k, ...} */
   cy = mpn_sub_n (c1, c1, v2, kk1);
-  cout -= mpn_sub_1 (c3 + 1, c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
+  __GMPN_SUB_1 (cout, c3 + 1, c3 + 1, twor + k - 1, cy); /* 2n-(3k+1)=k+2r-1 */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0       t2          vinf      v1  t1      vinf
@@ -532,7 +533,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
   /* add t1 in {c+3k, ...} */
   cy = mpn_add_n (c3, c3, v2, kk1);
-  cout += mpn_add_1 (c5 + 1, c5 + 1, twor - k - 1, cy); /* 2n-(5k+1) = 2r-k-1 */
+  __GMPN_ADD_1 (cout, c5 + 1, c5 + 1, twor - k - 1, cy); /* 2n-(5k+1) = 2r-k-1 */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0       t2    t1    vinf      v1  t1      vinf
@@ -541,9 +542,7 @@ toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
 
   /* add v1 in {c+k, ...} */
   cy = mpn_add_n (c1, c1, v1, kk1);
-  cout += mpn_add_1 (c3 + 1, c3 + 1, twor + k - 1, cy); /* 2n-(3k+1) = 2r+k-1 */
-
-  ASSERT(cout == 0);
+  __GMPN_ADD_1 (cout, c3 + 1, c3 + 1, twor + k - 1, cy); /* 2n-(3k+1) = 2r+k-1 */
 
   /* c   c+k  c+2k  c+3k  c+4k      t   t+2k+1  t+4k+2
      v0  v1   t2    t1    vinf      v1  t1      vinf
@@ -654,8 +653,8 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   cc = mpn_add_n (c1 + 1, b, b + twok, r);
   if (r < k)
     {
-      cy = mpn_add_1 (c + r, a + r, k - r, cy);
-      cc = mpn_add_1 (c1 + 1 + r, b + r, k - r, cc);
+      __GMPN_ADD_1 (cy, c + r, a + r, k - r, cy);
+      __GMPN_ADD_1 (cc, c1 + 1 + r, b + r, k - r, cc);
     }
   c3[2] = (c1[0] = cy) + mpn_add_n (c2 + 2, c, a + k, k);
   c4[3] = (c2[1] = cc) + mpn_add_n (c3 + 3, c1 + 1, b + k, k);
@@ -697,8 +696,8 @@ mpn_toom3_mul_n (mp_ptr c, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr t)
   c5[2] = mpn_addlsh1_n (c4 + 2, b + k, b + twok, r);
   if (r < k)
     {
-      c1[0] = mpn_add_1 (c + r, a + k + r, k - r, c1[0]);
-      c5[2] = mpn_add_1 (c4 + 2 + r, b + k + r, k - r, c5[2]);
+      __GMPN_ADD_1 (c1[0], c + r, a + k + r, k - r, c1[0]);
+      __GMPN_ADD_1 (c5[2], c4 + 2 + r, b + k + r, k - r, c5[2]);
     }
   c1[0] = 2 * c1[0] + mpn_addlsh1_n (c, a, c, k);
   c5[2] = 2 * c5[2] + mpn_addlsh1_n (c4 + 2, b, c4 + 2, k);
@@ -814,7 +813,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 
   cy = mpn_add_n (c, a, a + twok, r);
   if (r < k)
-    cy = mpn_add_1 (c + r, a + r, k - r, cy);
+    __GMPN_ADD_1 (cy, c + r, a + r, k - r, cy);
   c3[2] = (c1[0] = cy) + mpn_add_n (c2 + 2, c, a + k, k);
 
 #define v2 (t+2*k+1)
@@ -831,7 +830,7 @@ mpn_toom3_sqr_n (mp_ptr c, mp_srcptr a, mp_size_t n, mp_ptr t)
 #ifdef HAVE_NATIVE_mpn_addlsh1_n
   c1[0] = mpn_addlsh1_n (c, a + k, a + twok, r);
   if (r < k)
-    c1[0] = mpn_add_1 (c + r, a + k + r, k - r, c1[0]);
+    __GMPN_ADD_1 (c1[0], c + r, a + k + r, k - r, c1[0]);
   c1[0] = 2 * c1[0] + mpn_addlsh1_n (c, a, c, k);
 #else
   c[r] = mpn_lshift (c, a + twok, r, 1);
