@@ -101,7 +101,6 @@ mpz_xor (res, op1, op2)
       if (op2_size < 0)
 	{
 	  mp_ptr opx;
-	  mp_limb_t cy;
 
 	  /* Both operands are negative, the result will be positive.
 	      (-OP1) ^ (-OP2) =
@@ -165,7 +164,6 @@ mpz_xor (res, op1, op2)
   {
     mp_ptr opx;
     mp_limb_t cy;
-    mp_size_t count;
 
     /* Operand 2 negative, so will be the result.
        -(OP1 ^ (-OP2)) = -(OP1 ^ ~(OP2 - 1)) =

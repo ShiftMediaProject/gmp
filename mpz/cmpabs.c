@@ -35,7 +35,6 @@ mpz_cmpabs (u, v)
 {
   mp_size_t usize = u->_mp_size;
   mp_size_t vsize = v->_mp_size;
-  mp_size_t size;
   mp_srcptr up, vp;
   int cmp;
 

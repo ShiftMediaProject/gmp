@@ -70,7 +70,6 @@ gmp_rrandomb (rp, rstate, nbits)
   mp_size_t limb_pos;
   mp_limb_t ran, ranm;
   mp_limb_t acc;
-  mp_size_t n;
 
   bit_pos = nbits % BITS_PER_MP_LIMB;
   limb_pos = nbits / BITS_PER_MP_LIMB;
