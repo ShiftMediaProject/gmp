@@ -365,10 +365,18 @@ void mpz_array_init _PROTO ((mpz_ptr, mp_size_t, mp_size_t));
 void mpz_bin_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_bin_uiui _PROTO ((mpz_ptr, unsigned long int, unsigned long int));
 void mpz_cdiv_q _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#define mpz_cdiv_q_2exp __gmpz_cdiv_q_2exp
+void    mpz_cdiv_q_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long));
+
 unsigned long int mpz_cdiv_q_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_cdiv_qr _PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, mpz_srcptr));
 unsigned long int mpz_cdiv_qr_ui _PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_cdiv_r _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+
+#define mpz_cdiv_r_2exp __gmpz_cdiv_r_2exp
+void    mpz_cdiv_r_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long));
+
 unsigned long int mpz_cdiv_r_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int mpz_cdiv_ui _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_clear _PROTO ((mpz_ptr));
