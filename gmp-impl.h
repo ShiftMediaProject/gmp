@@ -436,23 +436,6 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #endif
 
 
-/* Note that if every use of an inline routine is in fact expanded, then
-   there'd no need for a library copy in mpn/inlines.lo.  But gcc can
-   sometimes decide not to inline, and it's easier to just have a copy in
-   inlines.lo than to figure out when that is.  */
-
-#undef _EXTERN_INLINE
-#ifdef _FORCE_INLINES
-#define _EXTERN_INLINE
-#else
-#ifdef __GNUC__
-#define _EXTERN_INLINE extern inline
-#else
-#define _EXTERN_INLINE static inline
-#endif
-#endif
-
-
 #if defined (__GNUC__) && defined (__i386__)
 #if 0
 /* FIXME: Check that these actually improve things.
@@ -632,7 +615,7 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 /* Define MPN_COPY for vector computers.  Since #pragma cannot be in a macro,
    rely on function inlining.
    Enhancement: Does this suit MPN_COPY_INCR too, and maybe MPN_COPY_DECR if
-   the loop direction is reversed.  */
+   the loop direction is reversed?  */
 #if defined (_CRAY) || defined (__uxp__)
 static inline void
 _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
