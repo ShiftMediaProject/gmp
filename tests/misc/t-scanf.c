@@ -39,6 +39,7 @@ MA 02111-1307, USA. */
 #include <varargs.h>
 #endif
 
+#include <stddef.h>    /* for ptrdiff_t */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1393,6 +1394,65 @@ check_misc (void)
     cmp = strcmp (buf, "xyz");
     ASSERT_ALWAYS (cmp == 0);
     ASSERT_ALWAYS (n == 4);
+  }
+#endif
+
+  /* %zd etc won't be accepted by sscanf on old systems, and running
+     something to see if they work might be bad, so try it on glibc only */
+#ifdef __GLIBC__
+  {
+    mpz_t   z;
+    size_t  s = -1;
+    mpz_init (z);
+    ret = gmp_sscanf ("456 789", "%zd %Zd", &s, z);
+    ASSERT_ALWAYS (ret == 2);
+    ASSERT_ALWAYS (s == 456);
+    ASSERT_ALWAYS (mpz_cmp_ui (z, 789L) == 0);
+    mpz_clear (z);
+  }
+  {
+    mpz_t      z;
+    ptrdiff_t  d = -1;
+    mpz_init (z);
+    ret = gmp_sscanf ("456 789", "%td %Zd", &d, z);
+    ASSERT_ALWAYS (ret == 2);
+    ASSERT_ALWAYS (d == 456);
+    ASSERT_ALWAYS (mpz_cmp_ui (z, 789L) == 0);
+    mpz_clear (z);
+  }
+  {
+    mpz_t      z;
+    long long  ll = -1;
+    mpz_init (z);
+    ret = gmp_sscanf ("456 789", "%Ld %Zd", &ll, z);
+    ASSERT_ALWAYS (ret == 2);
+    ASSERT_ALWAYS (ll == 456);
+    ASSERT_ALWAYS (mpz_cmp_ui (z, 789L) == 0);
+    mpz_clear (z);
+  }
+#endif
+
+  /* but for gmp_sscanf %n, we only need the type available */
+  {
+    size_t  len = -1;
+    ret = gmp_sscanf ("abc", "abc%zn", &len);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (len == 3);
+  }
+#if HAVE_PTRDIFF_T
+  {
+    ptrdiff_t  len = -1;
+    ret = gmp_sscanf ("abc", "abc%tn", &len);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (len == 3);
+  }
+#endif
+#if HAVE_LONG_LONG
+  {
+    long long  len = -1;
+    ret = gmp_sscanf ("abc", "abc%Ln", &len);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (len == 3);
   }
 #endif
 }
