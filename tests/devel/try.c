@@ -2902,7 +2902,9 @@ main (int argc, char *argv[])
         }
       }
 
-    gmp_randseed_ui (RANDS, seed);
+    gmp_randinit_default (__gmp_rands);
+    __gmp_rands_initialized = 1;
+    gmp_randseed_ui (__gmp_rands, seed);
   }
 
   try_init();
