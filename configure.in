@@ -1874,7 +1874,7 @@ AC_CHECK_HEADERS(sys/sysctl.h,,,
 # optarg should be in unistd.h and the rest in stdio.h, both of which are
 # in the autoconf default includes.
 #
-# sys_errlist and sys_nerr are supposedto be in <errno.h> on SunOS according
+# sys_errlist and sys_nerr are supposed to be in <errno.h> on SunOS according
 # to the man page (but aren't), in glibc they're in stdio.h.
 #
 AC_CHECK_DECLS([fgetc, fscanf, optarg, ungetc, vfprintf])
