@@ -1,6 +1,6 @@
 /* Test mpz_fib_ui.
 
-Copyright (C) 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -25,9 +25,20 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
+/* Usage: t-fib_ui [x|num]
+
+   Run with no arguments, testing goes up to the initial value of "limit"
+   below.  With a number argument tests are carried up that far, or with a
+   literal "x" tests are continued without limit (this being only meant for
+   development purposes).
+
+   The size tests performed are designed to partially replicate what will be
+   going on in mpz_fac_ui.  There are some ASSERTs there, but they're not
+   normally enabled.  */
+
+
 #define MPZ_FIB_SIZE_FLOAT(n) \
   ((mp_size_t) ((n) * 0.6942419 / BITS_PER_MP_LIMB + 1))
-
 
 int
 main (int argc, char *argv[])
