@@ -93,11 +93,13 @@ AC_DEFUN(GMP_COMPARE_GE_INTERNAL,
 [if test -n "$1" && test "$1" -ge $2; then
   gmp_compare_ge=yes
 fi],
-[if test "$1" -gt $2; then
-  gmp_compare_ge=yes
-else
-  if test "$1" -eq $2; then
-    GMP_COMPARE_GE_INTERNAL(m4_shift(m4_shift($@)))
+[if test -n "$1"; then
+  if test "$1" -gt $2; then
+    gmp_compare_ge=yes
+  else
+    if test "$1" -eq $2; then
+      GMP_COMPARE_GE_INTERNAL(m4_shift(m4_shift($@)))
+    fi
   fi
 fi])
 ])
@@ -147,16 +149,15 @@ AC_DEFUN(GMP_PROG_M4,
   gmp_cv_prog_m4="$M4"
 else
   cat >conftest.m4 <<\EOF
-dnl  must protect this against being expanded during autoconf m4!
-[define(dollarhash,``$][#'')dnl
-ifelse(dollarhash(x),1,`define(t1,Y)',
+dnl  Must protect this against being expanded during autoconf m4!
+dnl  Dont put "dnl"s in this as autoconf will flag an error for unexpanded
+dnl  macros.
+[define(dollarhash,``$][#'')ifelse(dollarhash(x),1,`define(t1,Y)',
 ``bad: $][# not supported (SunOS /usr/bin/m4)
-'')dnl
-ifelse(eval(89),89,`define(t2,Y)',
+'')ifelse(eval(89),89,`define(t2,Y)',
 `bad: eval() doesnt support 8 or 9 in a constant (OpenBSD 2.6 m4)
-')dnl
-ifelse(t1`'t2,YY,`good
-')dnl]
+')ifelse(t1`'t2,YY,`good
+')]
 EOF
 dnl ' <- balance the quotes for emacs sh-mode
   echo "trying m4" >&AC_FD_CC
@@ -323,16 +324,24 @@ dnl  -march=pentiumpro until 2.96.
 dnl
 dnl  This macro is used only once, after finalizing a choice of CC, so it's
 dnl  ok to cache the result.
+dnl
+dnl  egcs 2.91 --version gives "egcs-2.91".
 
 AC_DEFUN(GMP_GCC_MARCH_PENTIUMPRO,
 [AC_CACHE_CHECK([whether $1 -march=pentiumpro is good],
                 gmp_cv_gcc_march_pentiumpro,
 [if test $1 = gcc; then
-  major=`($2 --version | sed -n ['s/^\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
-  minor=`($2 --version | sed -n ['s/^[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
-  echo "$2 major '$major', minor '$minor'" >&AC_FD_CC
-  GMP_COMPARE_GE($major, 2, $minor, 96)
-  gmp_cv_gcc_march_pentiumpro="$gmp_compare_ge"
+  tmp_version=`($2 --version) 2>&AC_FD_CC`
+  major=`(echo "$tmp_version" | sed -n ['s/^\(egcs-\)*\([0-9][0-9]*\).*/\2/p']) 2>&AC_FD_CC`
+  minor=`(echo "$tmp_version" | sed -n ['s/^\(egcs-\)*[0-9][0-9]*\.\([0-9][0-9]*\).*/\2/p']) 2>&AC_FD_CC`
+  echo "$2 --version '$tmp_version' is major '$major' minor '$minor'" >&AC_FD_CC
+  if test -z "$major"; then
+    AC_MSG_WARN([unrecognised gcc version string: $tmp_version])
+    gmp_cv_gcc_march_pentiumpro=no
+  else
+    GMP_COMPARE_GE($major, 2, $minor, 96)
+    gmp_cv_gcc_march_pentiumpro=$gmp_compare_ge
+  fi
 else
   gmp_cv_gcc_march_pentiumpro=not-applicable
 fi])
@@ -347,6 +356,9 @@ fi
 dnl  GMP_INIT([M4-DEF-FILE])
 dnl  -----------------------
 dnl  Initializations for GMP config.m4 generation.
+dnl
+dnl  FIXME: The generated config.m4 doesn't get recreated by config.status.
+dnl  Maybe the relevant "echo"s should go through AC_CONFIG_COMMANDS.
 
 AC_DEFUN(GMP_INIT,
 [ifelse([$1], , gmp_configm4=config.m4, gmp_configm4="[$1]")
@@ -355,13 +367,13 @@ gmp_tmpconfigm4i=cnfm4i.tmp
 gmp_tmpconfigm4p=cnfm4p.tmp
 rm -f $gmp_tmpconfigm4 $gmp_tmpconfigm4i $gmp_tmpconfigm4p
 
+# CONFIG_TOP_SRCDIR is a path from the mpn builddir to the top srcdir.
 # The pattern here tests for an absolute path the same way as
 # _AC_OUTPUT_FILES in autoconf acgeneral.m4.
 case $srcdir in
 [[\\/]]* | ?:[[\\/]]* )  tmp="$srcdir"    ;;
 *)                       tmp="../$srcdir" ;;
 esac
-echo ["dnl  CONFIG_TOP_SRCDIR is a path from the mpn builddir to the top srcdir"] >>$gmp_tmpconfigm4
 echo ["define(<CONFIG_TOP_SRCDIR>,<\`$tmp'>)"] >>$gmp_tmpconfigm4
 
 # All CPUs use asm-defs.m4 
@@ -389,13 +401,13 @@ dnl  on BSD m4.
 AC_DEFUN(GMP_FINISH,
 [AC_REQUIRE([GMP_INIT])
 echo "creating $gmp_configm4"
-echo ["dnl $gmp_configm4.  Generated automatically by configure."] > $gmp_configm4
+echo ["d""nl $gmp_configm4.  Generated automatically by configure."] > $gmp_configm4
 if test -f $gmp_tmpconfigm4; then
-  echo ["changequote(<,>)dnl"] >> $gmp_configm4
+  echo ["changequote(<,>)"] >> $gmp_configm4
   echo ["ifdef(<__CONFIG_M4_INCLUDED__>,,<"] >> $gmp_configm4
   cat $gmp_tmpconfigm4 >> $gmp_configm4
   echo [">)"] >> $gmp_configm4
-  echo ["changequote(\`,')dnl"] >> $gmp_configm4
+  echo ["changequote(\`,')"] >> $gmp_configm4
   rm $gmp_tmpconfigm4
 fi
 echo ["ifdef(\`__CONFIG_M4_INCLUDED__',,\`"] >> $gmp_configm4
