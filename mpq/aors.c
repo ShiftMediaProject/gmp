@@ -1,6 +1,6 @@
 /* mpq_add, mpq_sub -- add or subtract rational numbers.
 
-Copyright 1991, 1994, 1995, 1996, 1997, 2000 Free Software Foundation,
+Copyright 1991, 1994, 1995, 1996, 1997, 2000, 2001 Free Software Foundation,
 Inc.
 
 This file is part of the GNU MP Library.
@@ -45,9 +45,9 @@ FUNCTION (mpq_ptr rop, mpq_srcptr op1, mpq_srcptr op2)
   mpz_t gcd;
   mpz_t tmp1, tmp2;
   mp_size_t op1_num_size = ABS (op1->_mp_num._mp_size);
-  mp_size_t op1_den_size = ABS (op1->_mp_den._mp_size);
+  mp_size_t op1_den_size =      op1->_mp_den._mp_size;
   mp_size_t op2_num_size = ABS (op2->_mp_num._mp_size);
-  mp_size_t op2_den_size = ABS (op2->_mp_den._mp_size);
+  mp_size_t op2_den_size =      op2->_mp_den._mp_size;
   TMP_DECL (marker);
 
   TMP_MARK (marker);
