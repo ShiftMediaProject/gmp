@@ -92,9 +92,9 @@ mpn_mul_basecase (mp_ptr rp,
   while (vn >= 3)
     {
       rp[un + 3 - 1] = mpn_addmul_3 (rp, up, un, vp);
+      rp += 3, vp += 3, vn -= 3;
       if (MAX_LEFT - 3 <= 3)
 	break;
-      rp += 3, vp += 3, vn -= 3;
     }
 #undef MAX_LEFT
 #define MAX_LEFT 2
@@ -104,9 +104,9 @@ mpn_mul_basecase (mp_ptr rp,
   while (vn >= 2)
     {
       rp[un + 2 - 1] = mpn_addmul_2 (rp, up, un, vp);
+      rp += 2, vp += 2, vn -= 2;
       if (MAX_LEFT - 2 <= 2)
 	break;
-      rp += 2, vp += 2, vn -= 2;
     }
 #undef MAX_LEFT
 #define MAX_LEFT 1
@@ -115,8 +115,8 @@ mpn_mul_basecase (mp_ptr rp,
   while (vn >= 1)
     {
       rp[un] = mpn_addmul_1 (rp, up, un, vp[0]);
+      rp += 1, vp += 1, vn -= 1;
       if (MAX_LEFT - 1 <= 1)
 	break;
-      rp += 1, vp += 1, vn -= 1;
     }
 }
