@@ -954,12 +954,9 @@ MPFR,, Introduction to MPFR, mpfr, MPFR}).
 This option enables some consistency checking within the library.  This can be
 of use while debugging, @pxref{Debugging}.
 
-@item Execution Profiling, @option{--enable-profiling=prof/gprof}
+@item Execution Profiling, @option{--enable-profiling=prof/gprof/instrument}
 
-Profiling support can be enabled either for @command{prof} or @command{gprof}.
-This adds @samp{-p} or @samp{-pg} respectively to @samp{CFLAGS}, and for some
-systems adds corresponding @code{mcount} calls to the assembler code.
-@xref{Profiling}.
+Enable profiling support, in one of various styles, @pxref{Profiling}.
 
 @item @option{MPN_PATH}
 
@@ -2296,6 +2293,7 @@ operation, but on most systems the resolution of the sampling is quite low (10
 milliseconds for instance), requiring long runs to get accurate information.
 
 @item @samp{--enable-profiling=prof}
+@cindex prof
 
 Build with support for the system @command{prof}, which means @samp{-p} added
 to the @samp{CFLAGS}.
@@ -2308,10 +2306,15 @@ The x86 assembler code has support for this option, but on other processors
 the assembler routines will be as if compiled without @samp{-p} and therefore
 won't appear in the call counts.
 
-@item @samp{--enable-profiling=gprof}
+On some systems, such as GNU/Linux, @samp{-p} in fact means @samp{-pg} and in
+this case @samp{--enable-profiling=gprof} described below should be used
+instead.
 
-Build with support for @command{gprof} (@pxref{Top,Profiling a Program
-,Introduction,gprof,GNU gprof}), which means @samp{-pg} added to the
+@item @samp{--enable-profiling=gprof}
+@cindex gprof
+
+Build with support for @command{gprof} (@pxref{Top, Profiling a Program,
+Introduction,gprof,GNU gprof}), which means @samp{-pg} added to the
 @samp{CFLAGS}.
 
 This provides call graph construction in addition to call counting and program
@@ -2333,6 +2336,40 @@ Incidentally it should be possible to use @command{gprof} with a plain
 @command{prof} build.  But in that case only the @samp{gprof -p} flat profile
 and call counts can be expected to be valid, not the @samp{gprof -q} call
 graph.
+
+@item @samp{--enable-profiling=instrument}
+@cindex -finstrument-functions
+@cindex instrument-functions
+
+Build with the GCC option @samp{-finstrument-functions} added to the
+@samp{CFLAGS} (@pxref{Code Gen Options,Options for Code Generation,Options for
+Code Generation,gcc,Using the GNU Compiler Collection (GCC)}).
+
+This inserts special instrumenting calls at the start and end of each
+function, allowing exact timing and full call graph construction.
+
+This instrumenting is not normally a standard system feature and will require
+support from an external library, such as
+
+@display
+@uref{http://sourceforge.net/projects/fnccheck}
+@end display
+
+This should be included in @samp{LIBS} during the GMP configure so that test
+programs will link.  For example,
+
+@example
+./configure --enable-profiling=instrument LIBS=-lfc
+@end example
+
+On a GNU system the C library provides dummy instrumenting functions, so
+programs compiled with this option will link.  In this case it's only
+necessary to ensure the correct library is added when linking an application.
+
+The x86 assembler code supports this option, but on other processors the
+assembler routines will be as if compiled without
+@samp{-finstrument-functions} meaning time spent in them will effectively be
+attributed to their caller.
 @end table
 
 
@@ -6300,6 +6337,7 @@ this is a problem.
 
 @node Language Bindings, Algorithms, Custom Allocation, Top
 @chapter Language Bindings
+@cindex Language Bindings
 
 The following packages and projects offer access to GMP from languages other
 than C, though perhaps with varying levels of functionality and efficiency.
