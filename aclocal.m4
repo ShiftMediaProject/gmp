@@ -2187,9 +2187,9 @@ EOF
       _lt_hint=1;
       cat $export_symbols | while read symbol; do
 	set dummy \$symbol;
-	case \$# in
-	  2) echo "	\$2 @ \$_lt_hint ; " >> $output_objdir/$soname-def;;
-	  *) echo "     \$2 @ \$_lt_hint \$3 ; " >> $output_objdir/$soname-def;;
+	case \[$]# in
+	  2) echo "	\[$]2 @ \$_lt_hint ; " >> $output_objdir/$soname-def;;
+	  *) echo "     \[$]2 @ \$_lt_hint \[$]3 ; " >> $output_objdir/$soname-def;;
 	esac;
 	_lt_hint=`expr 1 + \$_lt_hint`;
       done~
@@ -2428,7 +2428,7 @@ else
 
   osf3*)
     if test "$ac_cv_prog_gcc" = yes; then
-      allow_undefined_flag=' ${wl}-expect_unresolved ${wl}\*'
+      allow_undefined_flag=" ${wl}-expect_unresolved ${wl}\*"
       archive_cmds='$CC -shared${allow_undefined_flag} $libobjs $deplibs $compiler_flags ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${output_objdir}/so_locations -o $lib'
     else
       allow_undefined_flag=' -expect_unresolved \*'
@@ -2440,7 +2440,7 @@ else
 
   osf4* | osf5*)	# as osf3* with the addition of -msym flag
     if test "$ac_cv_prog_gcc" = yes; then
-      allow_undefined_flag=' ${wl}-expect_unresolved ${wl}\*'
+      allow_undefined_flag=" ${wl}-expect_unresolved ${wl}\*"
       archive_cmds='$CC -shared${allow_undefined_flag} $libobjs $deplibs $compiler_flags ${wl}-msym ${wl}-soname ${wl}$soname `test -n "$verstring" && echo ${wl}-set_version ${wl}$verstring` ${wl}-update_registry ${wl}${output_objdir}/so_locations -o $lib'
     else
       allow_undefined_flag=' -expect_unresolved \*'
