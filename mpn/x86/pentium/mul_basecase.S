@@ -1,7 +1,7 @@
 /* Pentium mpn_mul_basecase -- Multiply two limb vectors and store
    the result in a third limb vector.
 
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright (C) 1996,2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -56,27 +56,28 @@ C_SYMBOL_NAME(__mpn_mul_basecase:)
 	decl	%ecx		   /* If usize = 1, vsize = 1 too */
 	jz	Ldone
 
+	movl	28(%esp),%eax	   /* usize */
 	pushl	%ebx
 	movl	%edx,%ebx
-	movl	32(%esp),%eax	   /* usize */
 	leal	(%esi,%eax,4),%esi /* make uptr point at end */
 	leal	(%edi,%eax,4),%edi /* offset rptr by usize */
 	negl	%ecx		   /* negate j size/index for inner loop */
+	xorl	%eax,%eax          /* clear carry */
 
 	ALIGN	(3)
-Loop1:	movl	(%esi,%ecx,4),%eax /* load next limb at uptr[j] */
+Loop1:	adcl	$0,%ebx
+	movl	(%esi,%ecx,4),%eax /* load next limb at uptr[j] */
 	mull	(%ebp)
 	addl	%ebx,%eax
-	movl	%edx,%ebx
-	adcl	$0,%ebx
 	movl	%eax,(%edi,%ecx,4)
 	incl	%ecx
+	movl	%edx,%ebx
 	jnz	Loop1
 
+	adcl	$0,%ebx
+	movl	40(%esp),%eax
 	movl	%ebx,(%edi)	   /* store most significant limb of product */
 	addl	$4,%edi		   /* increment rptr */
-
-	movl	40(%esp),%eax
 	decl	%eax
 	jz	Lskip
 	movl	%eax,16(%esp)	   /* set index i to vsize */
@@ -86,7 +87,7 @@ Louter:	addl	$4,%ebp		   /* make ebp point to next v limb */
 	negl	%ecx
 	xorl	%ebx,%ebx
 
-	ALIGN	(3)
+	# code at 0x61 here, close enough to aligned
 Loop2:	adcl	$0,%ebx
 	movl	(%esi,%ecx,4),%eax
 	mull	(%ebp)
