@@ -31,6 +31,9 @@ static unsigned long current_total_allocation = 0;
 static tmp_stack xxx = {&xxx, &xxx, 0};
 static tmp_stack *current = &xxx;
 
+/* The rounded size of the header of each allocation block.  */
+#define HSIZ ((sizeof (tmp_stack) + __TMP_ALIGN - 1) & -__TMP_ALIGN)
+
 /* Allocate a block of exactly <size> bytes.  This should only be called
    through the TMP_ALLOC macro, which takes care of rounding/alignment.  */
 void *
@@ -56,20 +59,20 @@ __tmp_alloc (size)
 	  /* We need more temporary memory than ever before.  Increase
 	     for future needs.  */
 	  now = now * 3 / 2;
-	  chunk_size = now - current_total_allocation + sizeof (tmp_stack);
+	  chunk_size = now - current_total_allocation + HSIZ;
 	  current_total_allocation = now;
 	  max_total_allocation = current_total_allocation;
 	}
       else
 	{
-	  chunk_size = max_total_allocation - current_total_allocation + sizeof (tmp_stack);
+	  chunk_size = max_total_allocation - current_total_allocation + HSIZ;
 	  current_total_allocation = max_total_allocation;
 	}
 
       chunk = malloc (chunk_size);
       header = chunk;
       header->end = (char *) chunk + chunk_size;
-      header->alloc_point = (char *) chunk + sizeof (tmp_stack);
+      header->alloc_point = (char *) chunk + HSIZ;
       header->prev = current;
       current = header;
     }
@@ -100,8 +103,7 @@ __tmp_free (mark)
 
       tmp = current;
       current = tmp->prev;
-      current_total_allocation -= (((char *) (tmp->end) - (char *) tmp)
-				   - sizeof (tmp_stack));
+      current_total_allocation -= (((char *) (tmp->end) - (char *) tmp) - HSIZ);
       free (tmp);
     }
   current->alloc_point = mark->alloc_point;
