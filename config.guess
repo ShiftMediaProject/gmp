@@ -3,7 +3,7 @@
 # GMP config.guess wrapper.
 
 
-# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -25,9 +25,10 @@
 
 # Usage: config.guess
 #
-# Print the host system CPU-VENDOR-OS.  configfsf.guess is run and its
-# guess then sharpened up to take advantage of the finer grained CPU
-# types GMP knows.
+# Print the host system CPU-VENDOR-OS.
+#
+# configfsf.guess is run and its guess then sharpened up to take advantage
+# of the finer grained CPU types that GMP knows.
 
 
 # Expect to find configfsf.guess in the same directory as this config.guess
@@ -43,7 +44,8 @@ else
   exit 1
 fi
 
-# Always run configfsf.guess with $SHELL, like autoconf does for config.guess
+# Setup a $SHELL with which to run configfsf.guess, using the same
+# $CONFIG_SHELL or /bin/sh as autoconf does when running config.guess
 SHELL=${CONFIG_SHELL-/bin/sh}
 
 # Identify ourselves on --version, --help or errors
@@ -54,7 +56,22 @@ if test $# != 0; then
 fi
 
 
-guess_full=`$SHELL $configfsf_guess`
+# A fake $RANDOM is established, if not already available, so that
+# configfsf.guess will work on m68k NetBSD 1.4.1.
+#
+# FIXME: configfsf.guess ought to make its own arrangements for this system.
+# Certainly it's old, but doesn't seem completely dead.  If/when this
+# happens our configfsf.guess invocation here would revert to just `$SHELL
+# $configfsf_guess`.
+#
+# The problem is that when configfsf.guess wants to run the compiler to
+# probe the system, it creates a directory under /tmp (so as not to make a
+# mess in the current directory), and it attempts to do this securely (in
+# case anyone is running as root).  The creation relies on having either an
+# "mktemp" program or a "$RANDOM" shell variable, neither of which is
+# available in an m68k NetBSD 1.4.1 base system.
+#
+guess_full=`$SHELL -c 'if test -z "$RANDOM"; then RANDOM=12345; fi; . '"$configfsf_guess"`
 if test $? != 0; then
   exit 1
 fi
