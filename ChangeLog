@@ -18,6 +18,20 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-09-08  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_GCC_WA_MCPU): New macro.
+	* configure.in (alpha*-*-*): Use it to avoid -Wa,-mev67 if gas isn't
+	new enough to know ev67.  Reported by David Bremner.
+
+2002-07-30  Gerardo Ballabio <gerardo.ballabio@unimib.it>
+
+	* gmpxx.h (__gmpz_value etc): Remove, use mpz_t etc instead.
+	(__gmp_expr): Reorganise specializations, use __gmp_expr<T,T> not
+	mpz_class etc.
+	(mpfr evals): Remove mode parameter, was always
+	__gmp_default_rounding_mode anyway.
+
 2002-09-07  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in, mp-h.in: Use #ifdef for tests, for the benefit of
