@@ -2195,9 +2195,6 @@ enum
   GMP_ERROR_DIVISION_BY_ZERO = 2,
   GMP_ERROR_SQRT_OF_NEGATIVE = 4,
   GMP_ERROR_INVALID_ARGUMENT = 8,
-  GMP_ERROR_ALLOCATE = 16,
-  GMP_ERROR_BAD_STRING = 32,
-  GMP_ERROR_UNUSED_ERROR
 };
 
 /* Major version number is the value of __GNU_MP__ too, above and in mp.h. */
