@@ -47,6 +47,10 @@ MA 02111-1307, USA.
 #undef HAVE_TARGET_CPU_ultrasparc1
 #undef HAVE_TARGET_CPU_ultrasparc2
 #undef HAVE_TARGET_CPU_sparc64
+#undef HAVE_TARGET_CPU_hppa1_0
+#undef HAVE_TARGET_CPU_hppa1_1
+#undef HAVE_TARGET_CPU_hppa2_0n
+#undef HAVE_TARGET_CPU_hppa2_0w
 
 /* a dummy to make autoheader happy */
 #undef HAVE_TARGET_CPU_
@@ -120,12 +124,18 @@ MA 02111-1307, USA.
 /* a dummy to make autoheader happy */
 #undef HAVE_NATIVE_
 
+/* Define if you have the `getrusage' function. */
+#undef HAVE_GETRUSAGE
+
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't.
    */
 #undef HAVE_DECL_OPTARG
 
 /* ./configure --enable-assert option, to enable some ASSERT()s */
 #undef WANT_ASSERT
+
+/* Define if you can safely include both <sys/time.h> and <time.h>. */
+#undef TIME_WITH_SYS_TIME
 
 /* Define if you have the <sys/sysctl.h> header file. */
 #undef HAVE_SYS_SYSCTL_H
@@ -145,11 +155,17 @@ MA 02111-1307, USA.
 /* Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD */
 #undef TUNE_KARATSUBA_SQR_MAX
 
+/* Define if you have the `times' function. */
+#undef HAVE_TIMES
+
 /* Define if you have the `popen' function. */
 #undef HAVE_POPEN
 
 /* ./configure --disable-alloca option, to use stack-alloc.c, not alloca */
 #undef USE_STACK_ALLOC
+
+/* Define if you have the `gettimeofday' function. */
+#undef HAVE_GETTIMEOFDAY
 
 /* Define if cpp supports the ANSI # stringizing operator. */
 #undef HAVE_STRINGIZE
@@ -157,14 +173,23 @@ MA 02111-1307, USA.
 /* Define if you have the <sys/time.h> header file. */
 #undef HAVE_SYS_TIME_H
 
+/* Define if you have the <sys/resource.h> header file. */
+#undef HAVE_SYS_RESOURCE_H
+
 /* Define if you have the `sysconf' function. */
 #undef HAVE_SYSCONF
 
 /* Define if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
+/* Define if you have the <sys/times.h> header file. */
+#undef HAVE_SYS_TIMES_H
+
 /* Define if you have the `processor_info' function. */
 #undef HAVE_PROCESSOR_INFO
+
+/* Define as the return type of signal handlers (`int' or `void'). */
+#undef RETSIGTYPE
 
 /* Version number of package */
 #undef VERSION
@@ -175,7 +200,7 @@ MA 02111-1307, USA.
 /* Define if you have the <getopt.h> header file. */
 #undef HAVE_GETOPT_H
 
-/* Define if the CPU has a speed_cyclecounter in the tune directory) */
+/* Tune directory speed_cyclecounter, 0=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
 /* Define if you have the ANSI C header files. */
