@@ -119,7 +119,6 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
 static void
 randget_lc (gmp_randstate_t rstate, mp_ptr rp, unsigned long int nbits)
 {
-  mp_size_t rn;			/* Size of R.  */
   unsigned long int rbitpos;
   int chunk_nbits;
   mp_ptr tp;
@@ -128,8 +127,6 @@ randget_lc (gmp_randstate_t rstate, mp_ptr rp, unsigned long int nbits)
   TMP_DECL (lcmark);
 
   p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
-
-  rn = BITS_TO_LIMBS (nbits);
 
   TMP_MARK (lcmark);
 
