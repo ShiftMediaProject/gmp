@@ -1,5 +1,9 @@
 2001-03-07  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/cray/cfp/mul_1.c: Don't call mpn_add_n with size 0.
+	* mpn/cray/cfp/addmul_1.c: Likewise.
+	* mpn/cray/cfp/submul_1.c: Don't call mpn_sub_n with size 0..
+
 	* tests/mpz/t-div_2exp.c (check_various): Start 2nd d loop from 0
 	(avoid problems with Cray compilers).
 
