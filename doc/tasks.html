@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 12 Nov 2003.  An up-to-date version is available at
+  This file current as of 29 Nov 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -289,6 +289,11 @@ MA 02111-1307, USA.
      operations, the single-limb multiplier should be split into three 21-bit
      chunks, or perhaps even better in four 16-bit chunks.  Probably possible
      to reach 9 cycles/limb.
+<li> Alpha 21164: <code>count_leading_zeros</code> in mpn/alpha/cntlz.asm is
+     probably small enough to inline, which would make a few routines into
+     leaf functions (eg. <code>mpn_divrem_1</code>).  This would be only for
+     GCC, since an <code>asm</code> for <code>cmpbge</code> would be needed,
+     or <code>__builtin_alpha_cmpbge</code> in GCC 3.4 and up.
 <li> Alpha ev67/ev68: GCC 3.4 introduces <code>__builtin_ctzl</code>,
      <code>__builtin_clzl</code> and <code>__builtin_popcountl</code> using
      the corresponding CIX <code>ct</code> instructions.  These builtins might
@@ -305,11 +310,9 @@ MA 02111-1307, USA.
 <li> ARM V5: <code>count_leading_zeros</code> can use the <code>clz</code>
      instruction.  For GCC 3.4 and up, do this via <code>__builtin_clzl</code>
      since then gcc knows it's "predicable".
-<li> Itanium: <code>mpn_hamdist</code> could be put together based on the
-     current <code>mpn_popcount</code>.
 <li> Itanium: GCC 3.4 introduces <code>__builtin_popcount</code> which can be
      used instead of an <code>asm</code> block.  The builtin should give gcc
-     more information about scheduling, bundling and predication.
+     more opportunities for scheduling, bundling and predication.
      <code>__builtin_ctz</code> similarly (it just uses popcount as per
      current longlong.h).
 <li> UltraSPARC/64: Optimize <code>mpn_mul_1</code>, <code>mpn_addmul_1</code>,
@@ -456,7 +459,7 @@ MA 02111-1307, USA.
      this is only possible if the ABI returns a structure of two
      <code>mp_limb_t</code>s in registers.
      <br>
-     On PowerPC structures are returned in memory on AIX and Darwin.  In SVR4
+     On PowerPC, structures are returned in memory on AIX and Darwin.  In SVR4
      they're returned in registers, except that draft SVR4 had said memory, so
      it'd be prudent to check which is done.  We can jam the compiler into the
      right mode if we know how, since all this is purely internal to libgmp.
@@ -573,7 +576,7 @@ MA 02111-1307, USA.
      double</code>, eg. xlc on AIX can use either 64-bit or 128-bit.  It's
      probably simplest to regard this as a compiler compatibility issue, and
      leave it to users or sysadmins to ensure application and library code is
-     build the same.
+     built the same.
 <li> <code>mpz_sqrt_if_perfect_square</code>: When
      <code>mpz_perfect_square_p</code> does its tests it calculates a square
      root and then discards it.  For some applications it might be useful to
@@ -628,13 +631,12 @@ MA 02111-1307, USA.
 <h4>Configuration</h4>
 
 <ul>
-<li> a29k: umul.s and udiv.s exist but don't get used.
-<li> Alpha OSF: Libtool doesn't seem to recognise this system is "pic always"
-     and ends up running gcc twice with the same options.  This is wasteful,
-     but harmless.  Perhaps a newer libtool will be better.
-<li> Alpha OSF: Libtool ends up with some <code>${wl}</code> bits coming
-     through to the commands run.  Seems to work anyway, but hopefully a newer
-     version will have this fixed.
+<li> Alpha OSF: Libtool (version 1.5) doesn't seem to recognise this system is
+     "pic always" and ends up running gcc twice with the same options.  This
+     is wasteful, but harmless.  Perhaps a newer libtool will be better.
+<li> Alpha OSF: Libtool (version 1.5) ends up with some <code>${wl}</code>
+     bits coming through to the commands run.  Seems to work anyway, but
+     hopefully a newer version will have this fixed.
 <li> ARM: <code>umul_ppmm</code> in longlong.h always uses <code>umull</code>,
      but is that available only for M series chips or some such?  Perhaps it
      should be configured in some way.
@@ -649,12 +651,6 @@ MA 02111-1307, USA.
      <code>*-*-aix*</code>.  It might be more reliable to do some sort of
      feature test, examining the compiler output perhaps.  It might also be
      nice to merge the aix.m4 files into powerpc-defs.m4.
-<li> Some CPUs have <code>umul</code> and <code>udiv</code> code not being
-     used.  Check all such for bit rot and then put umul and udiv in
-     <code>$gmp_mpn_functions_optional</code> as "standard optional" objects.
-     <br> In particular Sparc and SparcV8 on non-gcc should benefit from
-     umul.asm enabled; the generic umul is suspected to be making sqr_basecase
-     slower than mul_basecase.
 <li> config.m4 is generated only by the configure script, it won't be
      regenerated by config.status.  Creating it as an <code>AC_OUTPUT</code>
      would work, but it might upset "make" to have things like <code>L$</code>
@@ -693,8 +689,6 @@ MA 02111-1307, USA.
           avoid <code>mpn_mul</code> calls.  Perhaps the same for two limbs.
      <li> Inline the <code>lc</code> code, to avoid a function call and
           <code>TMP_ALLOC</code> for every chunk.
-     <li> The special case for <code>seedn==0</code> will be very rarely used,
-          and on that basis seems unnecessary.
      <li> Perhaps the <code>2exp</code> and general LC cases should be split,
           for clarity (if the general case is retained).
      </ul>
