@@ -8,7 +8,7 @@
    INTERFACES.  IT IS ALMOST GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN
    A FUTURE GNU MP RELEASE.
 
-Copyright 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -53,7 +53,6 @@ MA 02111-1307, USA. */
    same pointers).  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -78,32 +77,8 @@ _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, int, int, mp_ptr *, mp_ptr *,
 	 mp_ptr, mp_ptr, mp_size_t, mp_size_t, mp_size_t, int **, mp_ptr,
          int));
 
-#ifdef DEBUG
-void
-mpn_print (mp_srcptr A, int Nprime)
-{
-  int j;
 
-  for (j=0; j<Nprime; j++)
-    {
-      printf ("+%lu*B^%u", A[j], j);
-      if (j % 3 == 2)
-        printf ("\n");
-    }
-  printf (":\n");
-}
-
-void
-mpn_print2 (mp_srcptr A, int Nprime, char c)
-{
-  int j;
-
-  for (j=0; j<Nprime; j++)
-    printf ("   %c[%d]=%lu;\n", c, j, A[j]);
-}
-#endif
-
-/* Find the best k to use for a mod 2^(n*GMP_NUMB_BITS)+1 FFT.
+/* Find the best k to use for a mod 2^(m*GMP_NUMB_BITS)+1 FFT for m >= n.
    sqr==0 if for a multiply, sqr==1 for a square.
    Don't declare it static since it is needed by tuneup.
 */
@@ -124,10 +99,8 @@ mpn_fft_best_k (mp_size_t n, int sqr)
 }
 
 
-/* Returns smallest possible number of limbs >= pl for a fft of size 2^k.
-
-   We must have N = res*GMP_NUMB_BITS multiple of 2^k*GMP_NUMB_BITS,
-   thus res multiple of 2^k.
+/* Returns smallest possible number of limbs >= pl for a fft of size 2^k,
+   i.e. smallest multiple of 2^k >= pl.
 
    Don't declare static: needed by tuneup.
 */
@@ -297,10 +270,12 @@ static void
 mpn_fft_add_modF (mp_ptr r, mp_srcptr a, mp_srcptr b, int n)
 {
   r[n] = a[n] + b[n] + mpn_add_n (r, a, b, n);
-  while (r[n] > 1)
+  /* now 0 <= r[n] <= 3 */
+  if (r[n] > 1) /* subtract r[n]-1 at both ends */
     {
-      MPN_DECR_U (r, n + 1, CNST_LIMB(1));
-      r[n]--;
+      mp_limb_t c = r[n] - CNST_LIMB(1);
+      r[n] = CNST_LIMB(1); /* r[n] - c = 1 */
+      MPN_DECR_U (r, n + 1, c);
     }
 }
 
@@ -313,7 +288,7 @@ mpn_fft_sub_modF (mp_ptr r, mp_srcptr a, mp_srcptr b, int n)
 {
   mp_limb_t c;
 
-  c = a[n] - b[n] - mpn_sub_n (r, a, b, n); /* 0 <= c <= 2 */
+  c = a[n] - b[n] - mpn_sub_n (r, a, b, n); /* -2 <= c <= 1 */
   /* r[n] <- c */
   r[n] = (c & GMP_LIMB_HIGHBIT) ? mpn_add_1 (r, r, n, -c) : c;
 }
@@ -329,15 +304,18 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
 {
   if (K == 2)
     {
+      mp_limb_t cy;
 #if HAVE_NATIVE_mpn_addsub_n
-      if (mpn_addsub_n (Ap[0], Ap[inc], Ap[0], Ap[inc], n + 1) & 1)
-	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, CNST_LIMB(1));
+      cy = mpn_addsub_n (Ap[0], Ap[inc], Ap[0], Ap[inc], n + 1) & 1;
 #else
       MPN_COPY (tp, Ap[0], n + 1);
       mpn_add_n (Ap[0], Ap[0], Ap[inc], n + 1);
-      if (mpn_sub_n (Ap[inc], tp, Ap[inc], n + 1))
-	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, CNST_LIMB(1));
+      cy = mpn_sub_n (Ap[inc], tp, Ap[inc], n + 1);
 #endif
+      if (Ap[0][n] > CNST_LIMB(1)) /* can be 2 or 3 */
+        Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
+      if (cy) /* Ap[inc][n] can be -1 or -2 */
+        Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, ~Ap[inc][n] + CNST_LIMB(1));
     }
   else
     {
@@ -413,21 +391,26 @@ mpn_fft_fft (mp_ptr *Ap, mp_ptr *Bp, mp_size_t K, int **ll,
 {
   if (K == 2)
     {
+      mp_limb_t ca, cb;
 #if HAVE_NATIVE_mpn_addsub_n
-      if (mpn_addsub_n (Ap[0], Ap[inc], Ap[0], Ap[inc], n + 1) & 1)
-	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, CNST_LIMB(1));
-      if (mpn_addsub_n (Bp[0], Bp[inc], Bp[0], Bp[inc], n + 1) & 1)
-	Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, CNST_LIMB(1));
+      ca = mpn_addsub_n (Ap[0], Ap[inc], Ap[0], Ap[inc], n + 1) & 1;
+      cb = mpn_addsub_n (Bp[0], Bp[inc], Bp[0], Bp[inc], n + 1) & 1;
 #else
       MPN_COPY (tp, Ap[0], n + 1);
       mpn_add_n (Ap[0], Ap[0], Ap[inc], n + 1);
-      if (mpn_sub_n (Ap[inc], tp, Ap[inc], n + 1))
-	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, CNST_LIMB(1));
+      ca = mpn_sub_n (Ap[inc], tp, Ap[inc], n + 1);
       MPN_COPY (tp, Bp[0], n + 1);
       mpn_add_n (Bp[0], Bp[0], Bp[inc], n + 1);
-      if (mpn_sub_n (Bp[inc], tp, Bp[inc], n + 1))
-	Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, CNST_LIMB(1));
+      cb = mpn_sub_n (Bp[inc], tp, Bp[inc], n + 1);
 #endif
+      if (Ap[0][n] > CNST_LIMB(1)) /* can be 2 or 3 */
+        Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
+      if (ca) /* Ap[inc][n] can be -1 or -2 */
+        Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, ~Ap[inc][n] + CNST_LIMB(1));
+      if (Bp[0][n] > CNST_LIMB(1)) /* can be 2 or 3 */
+        Bp[0][n] = CNST_LIMB(1) - mpn_sub_1 (Bp[0], Bp[0], n, Bp[0][n] - CNST_LIMB(1));
+      if (cb) /* Bp[inc][n] can be -1 or -2 */
+        Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, ~Bp[inc][n] + CNST_LIMB(1));
     }
   else
     {
@@ -482,12 +465,28 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 
       k = mpn_fft_best_k (n, sqr);
       K2 = 1 << k;
+      ASSERT_ALWAYS(n % K2 == 0);
       maxLK = (K2 > GMP_NUMB_BITS) ? K2 : GMP_NUMB_BITS;
       M2 = n * GMP_NUMB_BITS / K2;
       l = n / K2;
       Nprime2 = ((2 * M2 + k + 2 + maxLK) / maxLK) * maxLK;
       /* Nprime2 = ceil((2*M2+k+3)/maxLK)*maxLK*/
       nprime2 = Nprime2 / GMP_NUMB_BITS;
+
+      /* we should ensure that nprime2 is a multiple of the next K */
+      if (nprime2 >= (sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
+        {
+          unsigned long K3;
+          while (nprime2 % (K3 = 1 << mpn_fft_best_k (nprime2, sqr)))
+            {
+              nprime2 = ((nprime2 + K3 - 1) / K3) * K3;
+              Nprime2 = nprime2 * BITS_PER_MP_LIMB;
+              /* warning: since nprime2 changed, K3 may change too! */
+            }
+          ASSERT(nprime2 % K3 == 0);
+        }
+      ASSERT_ALWAYS(nprime2 < n); /* otherwise we'll loop */
+
       Mp2 = Nprime2 / K2;
 
       Ap = TMP_ALLOC_MP_PTRS (K2);
@@ -546,22 +545,28 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 
 
 /* input: A^[l[k][0]] A^[l[k][1]] ... A^[l[k][K-1]]
-   output: K*A[0] K*A[K-1] ... K*A[1] */
+   output: K*A[0] K*A[K-1] ... K*A[1].
+   Assumes the Ap[] are pseudo-normalized, i.e. 0 <= Ap[][n] <= 1.
+   This condition is also fulfilled at exit.
+*/
 
 static void
 mpn_fft_fftinv (mp_ptr *Ap, int K, mp_size_t omega, mp_size_t n, mp_ptr tp)
 {
   if (K == 2)
     {
+      mp_limb_t cy;
 #if HAVE_NATIVE_mpn_addsub_n
-      if (mpn_addsub_n (Ap[0], Ap[1], Ap[0], Ap[1], n + 1) & 1)
-	Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, CNST_LIMB(1));
+      cy = mpn_addsub_n (Ap[0], Ap[1], Ap[0], Ap[1], n + 1) & 1;
 #else
       MPN_COPY (tp, Ap[0], n + 1);
       mpn_add_n (Ap[0], Ap[0], Ap[1], n + 1);
-      if (mpn_sub_n (Ap[1], tp, Ap[1], n + 1))
-	Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, CNST_LIMB(1));
+      cy = mpn_sub_n (Ap[1], tp, Ap[1], n + 1);
 #endif
+      if (Ap[0][n] > CNST_LIMB(1)) /* can be 2 or 3 */
+        Ap[0][n] = CNST_LIMB(1) - mpn_sub_1 (Ap[0], Ap[0], n, Ap[0][n] - CNST_LIMB(1));
+      if (cy) /* Ap[1][n] can be -1 or -2 */
+        Ap[1][n] = mpn_add_1 (Ap[1], Ap[1], n, ~Ap[1][n] + CNST_LIMB(1));
     }
   else
     {
@@ -854,16 +859,20 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   nprime = Nprime / GMP_NUMB_BITS;
   TRACE (printf ("N=%d K=%d, M=%d, l=%d, maxLK=%d, Np=%d, np=%d\n",
 		 N, K, M, l, maxLK, Nprime, nprime));
+  /* we should ensure that recursively, nprime is a multiple of the next K */
   if (nprime >= (sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
     {
-      maxLK = (1 << mpn_fft_best_k (nprime, n == m)) * GMP_NUMB_BITS;
-      if (Nprime % maxLK)
-	{
-	  Nprime = ((Nprime / maxLK) + 1) * maxLK;
-	  nprime = Nprime / GMP_NUMB_BITS;
-	}
+      unsigned long K2;
+      while (nprime % (K2 = 1 << mpn_fft_best_k (nprime, sqr)))
+        {
+          nprime = ((nprime + K2 - 1) / K2) * K2;
+          Nprime = nprime * BITS_PER_MP_LIMB;
+          /* warning: since nprime changed, K2 may change too! */
+        }
       TRACE (printf ("new maxLK=%d, Np=%d, np=%d\n", maxLK, Nprime, nprime));
+      ASSERT(nprime % K2 == 0);
     }
+  ASSERT_ALWAYS (nprime < pl); /* otherwise we'll loop */
 
   T = TMP_ALLOC_LIMBS (2 * (nprime + 1));
   Mp = Nprime / K;
@@ -871,12 +880,6 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   TRACE (printf ("%dx%d limbs -> %d times %dx%d limbs (%1.2f)\n",
 		pl, pl, K, nprime, nprime, 2.0 * (double) N / Nprime / K);
 	 printf ("   temp space %ld\n", 2 * K * (nprime + 1)));
-
-  if (nprime >= pl)
-    {
-      fprintf (stderr, "Error: recursive calls with larger size\n");
-      exit (1);
-    }
 
   A = __GMP_ALLOCATE_FUNC_LIMBS (2 * K * (nprime + 1));
   B = A + K * (nprime + 1);
