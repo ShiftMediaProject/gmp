@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
+#include "tests.h"
 
 #ifndef SIZE
 #define SIZE 8
@@ -38,6 +39,7 @@ MA 02111-1307, USA. */
 
 void dump _PROTO ((mpq_t));
 
+int
 main (int argc, char **argv)
 {
   mpq_t a;
@@ -47,6 +49,8 @@ main (int argc, char **argv)
   double last_d, new_d;
   mpq_t qlast_d, qnew_d;
   mpq_t eps;
+
+  tests_start ();
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -107,6 +111,12 @@ main (int argc, char **argv)
 	}
     }
 
+  mpq_clear (a);
+  mpq_clear (eps);
+  mpq_clear (qlast_d);
+  mpq_clear (qnew_d);
+
+  tests_end ();
   exit (0);
 }
 

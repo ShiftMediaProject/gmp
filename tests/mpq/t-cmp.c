@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
+#include "tests.h"
 
 #define NUM(x) (&((x)->_mp_num))
 #define DEN(x) (&((x)->_mp_den))
@@ -53,6 +54,7 @@ ref_mpq_cmp (mpq_t a, mpq_t b)
 #define SIZE 8	/* increasing this lowers the probabilty of finding an error */
 #endif
 
+int
 main (int argc, char **argv)
 {
   mpq_t a, b;
@@ -60,6 +62,8 @@ main (int argc, char **argv)
   int reps = 100000;
   int i;
   int cc, ccref;
+
+  tests_start ();
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -97,5 +101,9 @@ main (int argc, char **argv)
 	abort ();
     }
 
+  mpq_clear (a);
+  mpq_clear (b);
+
+  tests_end ();
   exit (0);
 }

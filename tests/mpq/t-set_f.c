@@ -105,7 +105,9 @@ main (int argc, char **argv)
   mpz_t  want_num, want_den;
   int    i, neg;
 
-  mpf_init2 (f, 1024);
+  tests_start ();
+
+  mpf_init2 (f, 1024L);
   mpq_init (got);
   mpz_init (want_num);
   mpz_init (want_den);
@@ -157,5 +159,11 @@ main (int argc, char **argv)
         }
     }
 
+  mpf_clear (f);
+  mpq_clear (got);
+  mpz_clear (want_num);
+  mpz_clear (want_den);
+
+  tests_end ();
   exit (0);
 }

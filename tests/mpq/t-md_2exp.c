@@ -105,6 +105,8 @@ main (void)
   mpq_ptr  q;
   int      i, muldiv, sign, overlap;
 
+  tests_start ();
+
   mpq_init (sep);
   mpq_init (got);
   mpq_init (want);
@@ -173,5 +175,10 @@ main (void)
         }
     }
 
+  mpq_clear (sep);
+  mpq_clear (got);
+  mpq_clear (want);
+
+  tests_end ();
   exit (0);
 }
