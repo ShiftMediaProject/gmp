@@ -32,7 +32,8 @@ MA 02111-1307, USA. */
 
   B) Divide U by b^g, for g such that 1/b <= U/b^g < 1, generating a fraction.
      Then develop digits by multiplying the fraction repeatedly by b.  Digits
-     come out from left to right.  (Currently not used herein.)
+     come out from left to right.  (Currently not used herein, except for in
+     code for single limbs.)
 
   C) Compute b^1, b^2, b^4, ..., b^(2^s), for s such that b^(2^s) > sqrt(U).
      Then divide U by b^(2^k), generating an integer quotient and remainder.
@@ -44,18 +45,28 @@ MA 02111-1307, USA. */
   since the required b^g power will be readily accessible.
 
   Optimization ideas:
-  1. Obviously, b should normally be replaced by big_base, the largest power of
-     b that fits in a limb.
-  2. The recursive function of (C) could avoid TMP allocation:
+  1. The recursive function of (C) could avoid TMP allocation:
      a) Overwrite dividend with quotient and remainder, just as permitted by
         mpn_sb_divrem_mn.
      b) If TMP memory is anyway needed, pass it as a parameter, similarly to
         how we do it in Karatsuba multiplication.
-  3. Store the powers of (C) normalized, with the normalization count.
+  2. Store the powers of (C) in normalized form, with the normalization count.
      Quotients will usually need to be left-shifted before each divide, and
      remainders will either need to be left-shifted of right-shifted.
-  4. When b is even, the powers will end up with lots of low zero limbs.  Can
-     we take advantage of that?
+  3. When b is even, the powers will end up with lots of low zero limbs.  Could
+     save significant time in the mpn_tdiv_qr call by stripping these zeros.
+  4. In the code for developing digits from a single limb, we could avoid using
+     a full umul_ppmm except for the first (or first few) digits, provided base
+     is even.  Subsequent digits can be developed using plain multiplication.
+     (This saves on register-starved machines (read x86) and on all machines
+     that generate the upper product half using a separate instruction (alpha,
+     powerpc, IA-64) or lacks such support altogether (sparc64, hppa64).
+  5. Separate mpn_dc_get_str basecase code from code for small conversions. The
+     former code will have the exact right power readily available in the
+     powtab parameter for dividing the current number into a fraction.  Convert
+     that using algorithm B.
+  6. Completely avoid division.  Compute the inverses of the powers now in
+     powtab instead of the actual powers.
 
   Basic structure of (C):
     mpn_get_str:
