@@ -440,6 +440,9 @@ uninstall-am: uninstall-info-am
 	mostlyclean-libtool tags uninstall uninstall-am \
 	uninstall-info-am
 
+
+$(top_builddir)/tests/libtests.la:
+	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
