@@ -91,7 +91,6 @@ gcdext_1_odd (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
       *up = u0; *vp = v0;
       return 1;
     }
-
   else if (B == 1)
     {
       *up = u1; *vp = v1;
@@ -212,7 +211,6 @@ gcdext_1 (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
 
 	  if (v % 2 == 0)
 	    v /= 2;
-
 	  else
 	    {
 	      u = u + b;
@@ -242,7 +240,6 @@ gcdext_1 (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
 
 	  if (u % 2 == 0)
 	    u /= 2;
-
 	  else
 	    {
 	      u = u/2 + b/2 + 1;
@@ -331,10 +328,10 @@ hgcd_update_u (struct hgcd_row *r, mp_size_t usize,
   /* u1 = 0 is an exceptional case. Except for this, u1 should be
      normalized. */
 
-  ASSERT ( (usize == 1 && u1p[0] == 0) || u1p[usize - 1] != 0);
-  
+  ASSERT ((usize == 1 && u1p[0] == 0) || u1p[usize - 1] != 0);
+
   /* Compute u2  = u0 + q u1 */
-  
+
   if (usize == 1 && u1p[0] == 0)
     {
       /* u1 == 0 is a special case, then q might be large, but it
@@ -375,7 +372,7 @@ hgcd_update_u (struct hgcd_row *r, mp_size_t usize,
     }
   ASSERT (mpn_cmp (r[1].uvp[0], r[2].uvp[0], usize) <= 0);
   ASSERT (r[2].uvp[0][usize - 1] != 0);
-  
+
   return usize;
 }
 
@@ -468,7 +465,7 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 
   struct hgcd2 hgcd;
   int res;
-  
+
   ASSERT (asize >= bsize);
   ASSERT (asize > 1);
   ASSERT (bsize > 0);
@@ -482,7 +479,7 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
   r[2].rp = tp; tp += ralloc; talloc -= ralloc;
   r[3].rp = tp; tp += ralloc; talloc -= ralloc;
 
-  /* Must zero out the u fields. We don't use the v fields. */  
+  /* Must zero out the u fields. We don't use the v fields. */
   MPN_ZERO (tp, 4 * ualloc);
 
   r[0].uvp[0] = tp; tp += ualloc; talloc -= ualloc;
@@ -504,7 +501,7 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
 			 bp, bsize);
       MPN_COPY (r[0].rp, bp, bsize);
       r[0].rsize = bsize;
-	  
+
       r[0].uvp[0][0] = 0;
       r[1].uvp[0][0] = 1;
       rsign = -1;
@@ -641,8 +638,8 @@ hgcd_mul_vector (struct hgcd_row *Y, mp_size_t alloc,
   MPN_NORMALIZE (R[1].uvp[1], rsize);
   /* u1 = 0 is an exceptional case. Except for this, u1 should be
      normalized. */
-  ASSERT ( (xsize == 1 && X[1].uvp[0][0] == 0)
-	   || X[1].uvp[0][xsize - 1] != 0);
+  ASSERT ((xsize == 1 && X[1].uvp[0][0] == 0)
+	  || X[1].uvp[0][xsize - 1] != 0);
 
   if (xsize == 1 && X[1].uvp[0][0] == 0)
     {
@@ -661,14 +658,14 @@ hgcd_mul_vector (struct hgcd_row *Y, mp_size_t alloc,
   ASSERT (ysize <= talloc);
 
   h = 0; grow = 0;
-  
+
   if (rsize >= xsize)
     {
       for (i = 0; i < 2; i++)
 	{
 	  /* Set Y[i, 0] = R[i, 0] X[0, 0] + R[i,1] X[1, 0] */
 	  mp_limb_t cy;
-	  
+
 	  mpn_mul (Y[i].uvp[0], R[i].uvp[0], rsize, X[0].uvp[0], xsize);
 	  mpn_mul (tp, R[i].uvp[1], rsize, X[1].uvp[0], xsize);
 
@@ -712,8 +709,8 @@ hgcd_mul_vector (struct hgcd_row *Y, mp_size_t alloc,
   else
     ysize -= (h == 0);
 
-  ASSERT ( (ysize == 1 && Y[1].uvp[0][0] == 0) || Y[1].uvp[0][ysize - 1] != 0);
-  
+  ASSERT ((ysize == 1 && Y[1].uvp[0][0] == 0) || Y[1].uvp[0][ysize - 1] != 0);
+
   return ysize;
 }
 
@@ -862,9 +859,9 @@ sanity_check_row (mp_srcptr ap, mp_size_t asize,
   mp_size_t qsize;
   mp_ptr rp;
   mp_size_t i;
-  
+
   TMP_DECL (marker);
-      
+
   ASSERT (asize > 0 && ap[asize - 1] != 0);
   ASSERT (bsize > 0 && bp[bsize - 1] != 0);
   ASSERT (xsize == 0 || xp[xsize - 1] != 0);
@@ -877,15 +874,15 @@ sanity_check_row (mp_srcptr ap, mp_size_t asize,
       ASSERT (MPN_EQUAL_P (xp, xsize, bp, bsize));
       return;
     }
-  
+
   tp = TMP_ALLOC_LIMBS (usize + asize + 1);
-  qp = TMP_ALLOC_LIMBS (usize + asize + 2 - bsize); 
+  qp = TMP_ALLOC_LIMBS (usize + asize + 2 - bsize);
   rp = TMP_ALLOC_LIMBS (bsize);
 
   mpn_mul (tp, ap, asize, up, usize);
   tsize = asize + usize;
   tsize -= (tp[tsize - 1] == 0);
-  
+
   if (sign >= 0)
     {
       ASSERT_NOCARRY (mpn_sub (tp, tp, tsize, xp, xsize));
@@ -972,14 +969,14 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
   rsize = 1;
   rsign = 0;
 
-  scratch = mpn_hgcd_init_itch ( (asize + 1) / 2);
+  scratch = mpn_hgcd_init_itch ((asize + 1) / 2);
   ASSERT (scratch <= talloc);
   mpn_hgcd_init (&hgcd, (asize + 1) / 2, tp);
   tp += scratch; talloc -= scratch;
 
   {
     mp_size_t nlimbs = qstack_itch ((asize + 1) / 2);
- 
+
     ASSERT (nlimbs <= talloc);
     qstack_init (&quotients, (asize + 1) / 2, tp, nlimbs);
 
@@ -995,7 +992,7 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
       ASSERT_ROW (ap, asize, bp, bsize, rsign, rsize, r);
       ASSERT_ROW (ap, asize, bp, bsize, ~rsign, rsize, r + 1);
-      
+
       if (r[1].rsize <= k)
 	goto euclid;
 
@@ -1040,7 +1037,7 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 			    ~sign, hgcd.size, s+1,
 			    r[0].rp, r[1].rp,
 			    tp, talloc);
-	  
+
 	  rsize = hgcd_mul_vector (r + 2, ualloc, s, hgcd.size,
 				   r, rsize, tp, talloc);
 	  ASSERT (rsize < ualloc);
@@ -1048,7 +1045,7 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	  rsign ^= sign;
 	  ASSERT_ROW (ap, asize, bp, bsize, rsign, rsize, r + 2);
 	  ASSERT_ROW (ap, asize, bp, bsize, ~rsign, rsize, r + 3);
-	  
+
 	  HGCD_SWAP4_2 (r);
 	}
     }
@@ -1072,7 +1069,7 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 	 u  <= r1,
 	 u0 <= b/r0 (except if r0 = a, which should never be the case here)
 	 v  <= r0
-	 u1 <= b/r0 
+	 u1 <= b/r0
       */
 
       mp_size_t gsize;
@@ -1150,7 +1147,7 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 		 r[0].uvp[0], rsize);
 
       usize += rsize;
-      
+
       /* There may be more than one zero limb, if #u0 < #u1 */
       MPN_NORMALIZE (up, usize);
       ASSERT (usize < ualloc);
@@ -1172,7 +1169,7 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
 	  vsize += rsize - (cy == 0);
 	  ASSERT (vsize < ualloc);
-	  
+
 	  if (vsize <= usize)
 	    cy = mpn_add (up, up, usize, r[2].uvp[0], vsize);
 	  else
@@ -1185,7 +1182,7 @@ gcdext_schoenhage (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
 	  ASSERT (usize < ualloc);
 	}
-      *usizep = (rsign >= 0 ) ? usize : -usize;
+      *usizep = (rsign >= 0) ? usize : -usize;
 
       return gsize;
     }
@@ -1231,5 +1228,5 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 				 tp, talloc);
       TMP_FREE (marker);
       return gsize;
-    }    
+    }
 }
