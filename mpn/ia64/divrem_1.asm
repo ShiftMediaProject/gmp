@@ -96,11 +96,11 @@ ifdef(`HAVE_ABI_32',
 	setf.sig	f10 = r36
 	mov		ar.lc = r35
 	setf.sig	f7 = r38		;;
-.Loop1:					// q=r18 nh=r38/f7
+.Loop1:					C q=r18 nh=r38/f7
 	ld8		r20 = [r34], -8
 	xma.hu		f11 = f7, f6, f0
 	;;
-	xma.l		f8 = f11, f12, f7	// q = q + nh
+	xma.l		f8 = f11, f12, f7	C q = q + nh
 	;;
 	getf.sig	r18 = f8
 	xma.hu		f9 = f8, f10, f0
@@ -113,27 +113,27 @@ ifdef(`HAVE_ABI_32',
 	sub		r15 = r20, r15
 	sub		r16 = r38, r16
 	;;
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0?
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0?
    (p6)	add		r16 = -1, r16
    (p0)	cmp.ne.unc	p6, p7 = r0, r0
 	;;
    (p8)	cmp.ltu		p6, p7 = r15, r36
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	.pred.rel "mutex",p6,p7
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0 still?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0 still?
-   (p6)	add		r16 = -1, r16		// propagate carry into rH
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0 still?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0 still?
+   (p6)	add		r16 = -1, r16		C propagate carry into rH
 	;;
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	cmp.ltu		p6, p7 = r15, r36
 	;;
    (p7)	sub		r15 = r15, r36
-   (p7)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p7)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	setf.sig	f7 = r15
 	st8		[r32] = r18, -8
@@ -152,7 +152,7 @@ ifdef(`HAVE_ABI_32',
 .Loop2:
 	xma.hu		f11 = f7, f6, f0
 	;;
-	xma.l		f8 = f11, f12, f7	// q = q + nh
+	xma.l		f8 = f11, f12, f7	C q = q + nh
 	;;
 	getf.sig	r18 = f8
 	xma.hu		f9 = f8, f10, f0
@@ -165,27 +165,27 @@ ifdef(`HAVE_ABI_32',
 	sub		r15 = 0, r15
 	sub		r16 = r38, r16
 	;;
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0?
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0?
    (p6)	add		r16 = -1, r16
    (p0)	cmp.ne.unc	p6, p7 = r0, r0
 	;;
    (p8)	cmp.ltu		p6, p7 = r15, r36
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	.pred.rel "mutex",p6,p7
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0 still?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0 still?
-   (p6)	add		r16 = -1, r16		// propagate carry into rH
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0 still?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0 still?
+   (p6)	add		r16 = -1, r16		C propagate carry into rH
 	;;
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	cmp.ltu		p6, p7 = r15, r36
 	;;
    (p7)	sub		r15 = r15, r36
-   (p7)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p7)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	setf.sig	f7 = r15
 	st8		[r32] = r18, -8
@@ -255,7 +255,7 @@ ifdef(`HAVE_ABI_32',
 	ld8		r14 = [r34], -8
 	xma.hu		f11 = f7, f6, f0
 	;;
-	xma.l		f8 = f11, f12, f7	// q = q + nh
+	xma.l		f8 = f11, f12, f7	C q = q + nh
 	;;
 	getf.sig	r18 = f8
 	xma.hu		f9 = f8, f10, f0
@@ -272,27 +272,27 @@ ifdef(`HAVE_ABI_32',
 	sub		r15 = r20, r15
 	sub		r16 = r38, r16
 	;;
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0?
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0?
    (p6)	add		r16 = -1, r16
    (p0)	cmp.ne.unc	p6, p7 = r0, r0
 	;;
    (p8)	cmp.ltu		p6, p7 = r15, r36
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	.pred.rel "mutex",p6,p7
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0 still?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0 still?
-   (p6)	add		r16 = -1, r16		// propagate carry into rH
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0 still?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0 still?
+   (p6)	add		r16 = -1, r16		C propagate carry into rH
 	;;
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	cmp.ltu		p6, p7 = r15, r36
 	;;
    (p7)	sub		r15 = r15, r36
-   (p7)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p7)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	setf.sig	f7 = r15
 	st8		[r32] = r18, -8
@@ -306,7 +306,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	xma.hu		f11 = f7, f6, f0
 	;;
-	xma.l		f8 = f11, f12, f7	// q = q + nh
+	xma.l		f8 = f11, f12, f7	C q = q + nh
 	;;
 	getf.sig	r18 = f8
 	xma.hu		f9 = f8, f10, f0
@@ -320,27 +320,27 @@ ifdef(`HAVE_ABI_32',
 	sub		r15 = r20, r15
 	sub		r16 = r38, r16
 	;;
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0?
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0?
    (p6)	add		r16 = -1, r16
    (p0)	cmp.ne.unc	p6, p7 = r0, r0
 	;;
    (p8)	cmp.ltu		p6, p7 = r15, r36
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	.pred.rel "mutex",p6,p7
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0 still?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0 still?
-   (p6)	add		r16 = -1, r16		// propagate carry into rH
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0 still?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0 still?
+   (p6)	add		r16 = -1, r16		C propagate carry into rH
 	;;
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	cmp.ltu		p6, p7 = r15, r36
 	;;
    (p7)	sub		r15 = r15, r36
-   (p7)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p7)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	st8		[r32] = r18, -8
 	mov		r38 = r15
@@ -356,7 +356,7 @@ ifdef(`HAVE_ABI_32',
 .Loop4:
 	xma.hu		f11 = f7, f6, f0
 	;;
-	xma.l		f8 = f11, f12, f7	// q = q + nh
+	xma.l		f8 = f11, f12, f7	C q = q + nh
 	;;
 	getf.sig	r18 = f8
 	xma.hu		f9 = f8, f10, f0
@@ -369,27 +369,27 @@ ifdef(`HAVE_ABI_32',
 	sub		r15 = 0, r15
 	sub		r16 = r38, r16
 	;;
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0?
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0?
    (p6)	add		r16 = -1, r16
    (p0)	cmp.ne.unc	p6, p7 = r0, r0
 	;;
    (p8)	cmp.ltu		p6, p7 = r15, r36
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	.pred.rel "mutex",p6,p7
-   (p6)	cmp.ne		p8, p9 = 1, r16		// is rH != 0 still?
-   (p7)	cmp.ne		p8, p9 = 0, r16		// is rH != 0 still?
-   (p6)	add		r16 = -1, r16		// propagate carry into rH
+   (p6)	cmp.ne		p8, p9 = 1, r16		C is rH != 0 still?
+   (p7)	cmp.ne		p8, p9 = 0, r16		C is rH != 0 still?
+   (p6)	add		r16 = -1, r16		C propagate carry into rH
 	;;
    (p8)	sub		r15 = r15, r36
-   (p8)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p8)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	cmp.ltu		p6, p7 = r15, r36
 	;;
    (p7)	sub		r15 = r15, r36
-   (p7)	add		r18 = 1, r18		// q = 1 + 1;	done if: rH > 0
+   (p7)	add		r18 = 1, r18		C q = 1 + 1;	done if: rH > 0
 	;;
 	setf.sig	f7 = r15
 	st8		[r32] = r18, -8
