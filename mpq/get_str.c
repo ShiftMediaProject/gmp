@@ -61,7 +61,7 @@ mpq_get_str (char *str, int base, mpq_srcptr q)
           mpz_sizeinbase (mpq_denref(q), ABS(base)) + 3);
 
   if (str_alloc != 0)
-    __GMP_REALLOCATE_FUNC_MAYBE (str, str_alloc, len+1);
+    __GMP_REALLOCATE_FUNC_MAYBE_TYPE (str, str_alloc, len+1, char);
 
   return str;
 }
