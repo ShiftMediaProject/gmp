@@ -104,7 +104,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
 #if BITS_PER_MP_LIMB >= BITS_PER_ULONG
       /* no overflow, see comments above */
       ASSERT (n & 2 ? fp[0] >= 2 : fp[0] <= MP_LIMB_T_MAX-2);
-      fp[0] += CNST_LIMB(2) - (mp_limb_t) ((n & 2) << 1);
+      fp[0] += (n & 2 ? -CNST_LIMB(2) : CNST_LIMB(2));
 #else
       /* this code only for testing with small limbs, limb<ulong is unusual */
       if (n & 2)
@@ -116,6 +116,7 @@ mpz_fib_ui (mpz_ptr fn, unsigned long n)
         {
           ASSERT (c != MP_LIMB_T_MAX); /* because it's the high of a mul */
           c += mpn_add_1 (fp, fp, size-1, CNST_LIMB(2));
+          fp[size-1] = c;
         }          
 #endif
     }
