@@ -1,6 +1,6 @@
 /* Test mpz_cmp_d and mpz_cmpabs_d.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -237,6 +237,44 @@ check_one_2exp (void)
   mpz_clear (x);
 }
 
+void
+check_infinity (void)
+{
+  mpz_t   x;
+  double  y = tests_infinity_d ();
+  if (y == 0.0)
+    return;
+
+  mpz_init (x);
+
+  /* 0 cmp inf */
+  mpz_set_ui (x, 0L);
+  check_one ("check_infinity", x,  y, -1, -1);
+  check_one ("check_infinity", x, -y,  1, -1);
+
+  /* 123 cmp inf */
+  mpz_set_ui (x, 123L);
+  check_one ("check_infinity", x,  y, -1, -1);
+  check_one ("check_infinity", x, -y,  1, -1);
+
+  /* -123 cmp inf */
+  mpz_set_si (x, -123L);
+  check_one ("check_infinity", x,  y, -1, -1);
+  check_one ("check_infinity", x, -y,  1, -1);
+
+  /* 2^5000 cmp inf */
+  mpz_set_ui (x, 1L);
+  mpz_mul_2exp (x, x, 5000L);
+  check_one ("check_infinity", x,  y, -1, -1);
+  check_one ("check_infinity", x, -y,  1, -1);
+
+  /* -2^5000 cmp inf */
+  mpz_neg (x, x);
+  check_one ("check_infinity", x,  y, -1, -1);
+  check_one ("check_infinity", x, -y,  1, -1);
+
+  mpz_clear (x);
+}
 
 int
 main (int argc, char *argv[])
@@ -247,6 +285,7 @@ main (int argc, char *argv[])
   check_onebits ();
   check_low_z_one ();
   check_one_2exp ();
+  check_infinity ();
 
   tests_end ();
   exit (0);
