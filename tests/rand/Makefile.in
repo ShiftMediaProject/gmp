@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -200,7 +200,7 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-lc2exp t-mt t-rand t-urndmm
+check_PROGRAMS = t-iset t-lc2exp t-mt t-rand t-urbui t-urmui t-urndmm
 TESTS = $(check_PROGRAMS)
 
 EXTRA_PROGRAMS = findlc gen gen.static spect stat
@@ -225,7 +225,8 @@ am_libstat_la_OBJECTS = statlib$U.lo zdiv_round$U.lo
 libstat_la_OBJECTS = $(am_libstat_la_OBJECTS)
 EXTRA_PROGRAMS = findlc$(EXEEXT) gen$(EXEEXT) gen.static$(EXEEXT) \
 	spect$(EXEEXT) stat$(EXEEXT)
-check_PROGRAMS = t-lc2exp$(EXEEXT) t-mt$(EXEEXT) t-rand$(EXEEXT) \
+check_PROGRAMS = t-iset$(EXEEXT) t-lc2exp$(EXEEXT) t-mt$(EXEEXT) \
+	t-rand$(EXEEXT) t-urbui$(EXEEXT) t-urmui$(EXEEXT) \
 	t-urndmm$(EXEEXT)
 findlc_SOURCES = findlc.c
 findlc_OBJECTS = findlc$U.$(OBJEXT)
@@ -250,6 +251,12 @@ stat_SOURCES = stat.c
 stat_OBJECTS = stat$U.$(OBJEXT)
 stat_DEPENDENCIES = libstat.la
 stat_LDFLAGS =
+t_iset_SOURCES = t-iset.c
+t_iset_OBJECTS = t-iset$U.$(OBJEXT)
+t_iset_LDADD = $(LDADD)
+t_iset_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_iset_LDFLAGS =
 t_lc2exp_SOURCES = t-lc2exp.c
 t_lc2exp_OBJECTS = t-lc2exp$U.$(OBJEXT)
 t_lc2exp_LDADD = $(LDADD)
@@ -268,6 +275,18 @@ t_rand_LDADD = $(LDADD)
 t_rand_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_rand_LDFLAGS =
+t_urbui_SOURCES = t-urbui.c
+t_urbui_OBJECTS = t-urbui$U.$(OBJEXT)
+t_urbui_LDADD = $(LDADD)
+t_urbui_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_urbui_LDFLAGS =
+t_urmui_SOURCES = t-urmui.c
+t_urmui_OBJECTS = t-urmui$U.$(OBJEXT)
+t_urmui_LDADD = $(LDADD)
+t_urmui_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_urmui_LDFLAGS =
 t_urndmm_SOURCES = t-urndmm.c
 t_urndmm_OBJECTS = t-urndmm$U.$(OBJEXT)
 t_urndmm_LDADD = $(LDADD)
@@ -286,10 +305,10 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libstat_la_SOURCES) findlc.c gen.c \
-	$(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-mt.c t-rand.c \
-	t-urndmm.c
+	$(gen_static_SOURCES) spect.c stat.c t-iset.c t-lc2exp.c t-mt.c \
+	t-rand.c t-urbui.c t-urmui.c t-urndmm.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-lc2exp.c t-mt.c t-rand.c t-urndmm.c
+SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-iset.c t-lc2exp.c t-mt.c t-rand.c t-urbui.c t-urmui.c t-urndmm.c
 
 all: all-am
 
@@ -324,6 +343,9 @@ spect$(EXEEXT): $(spect_OBJECTS) $(spect_DEPENDENCIES)
 stat$(EXEEXT): $(stat_OBJECTS) $(stat_DEPENDENCIES) 
 	@rm -f stat$(EXEEXT)
 	$(LINK) $(stat_LDFLAGS) $(stat_OBJECTS) $(stat_LDADD) $(LIBS)
+t-iset$(EXEEXT): $(t_iset_OBJECTS) $(t_iset_DEPENDENCIES) 
+	@rm -f t-iset$(EXEEXT)
+	$(LINK) $(t_iset_LDFLAGS) $(t_iset_OBJECTS) $(t_iset_LDADD) $(LIBS)
 t-lc2exp$(EXEEXT): $(t_lc2exp_OBJECTS) $(t_lc2exp_DEPENDENCIES) 
 	@rm -f t-lc2exp$(EXEEXT)
 	$(LINK) $(t_lc2exp_LDFLAGS) $(t_lc2exp_OBJECTS) $(t_lc2exp_LDADD) $(LIBS)
@@ -333,6 +355,12 @@ t-mt$(EXEEXT): $(t_mt_OBJECTS) $(t_mt_DEPENDENCIES)
 t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES) 
 	@rm -f t-rand$(EXEEXT)
 	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
+t-urbui$(EXEEXT): $(t_urbui_OBJECTS) $(t_urbui_DEPENDENCIES) 
+	@rm -f t-urbui$(EXEEXT)
+	$(LINK) $(t_urbui_LDFLAGS) $(t_urbui_OBJECTS) $(t_urbui_LDADD) $(LIBS)
+t-urmui$(EXEEXT): $(t_urmui_OBJECTS) $(t_urmui_DEPENDENCIES) 
+	@rm -f t-urmui$(EXEEXT)
+	$(LINK) $(t_urmui_LDFLAGS) $(t_urmui_OBJECTS) $(t_urmui_LDADD) $(LIBS)
 t-urndmm$(EXEEXT): $(t_urndmm_OBJECTS) $(t_urndmm_DEPENDENCIES) 
 	@rm -f t-urndmm$(EXEEXT)
 	$(LINK) $(t_urndmm_LDFLAGS) $(t_urndmm_OBJECTS) $(t_urndmm_LDADD) $(LIBS)
@@ -368,21 +396,29 @@ stat_.c: stat.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stat.c; then echo $(srcdir)/stat.c; else echo stat.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 statlib_.c: statlib.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/statlib.c; then echo $(srcdir)/statlib.c; else echo statlib.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-iset_.c: t-iset.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-iset.c; then echo $(srcdir)/t-iset.c; else echo t-iset.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-lc2exp_.c: t-lc2exp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-lc2exp.c; then echo $(srcdir)/t-lc2exp.c; else echo t-lc2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-mt_.c: t-mt.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-mt.c; then echo $(srcdir)/t-mt.c; else echo t-mt.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-rand_.c: t-rand.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-rand.c; then echo $(srcdir)/t-rand.c; else echo t-rand.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-urbui_.c: t-urbui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-urbui.c; then echo $(srcdir)/t-urbui.c; else echo t-urbui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-urmui_.c: t-urmui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-urmui.c; then echo $(srcdir)/t-urmui.c; else echo t-urmui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-urndmm_.c: t-urndmm.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-urndmm.c; then echo $(srcdir)/t-urndmm.c; else echo t-urndmm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 zdiv_round_.c: zdiv_round.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/zdiv_round.c; then echo $(srcdir)/zdiv_round.c; else echo zdiv_round.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 findlc_.$(OBJEXT) findlc_.lo gen_.$(OBJEXT) gen_.lo spect_.$(OBJEXT) \
 spect_.lo stat_.$(OBJEXT) stat_.lo statlib_.$(OBJEXT) statlib_.lo \
-t-lc2exp_.$(OBJEXT) t-lc2exp_.lo t-mt_.$(OBJEXT) t-mt_.lo \
-t-rand_.$(OBJEXT) t-rand_.lo t-urndmm_.$(OBJEXT) t-urndmm_.lo \
-zdiv_round_.$(OBJEXT) zdiv_round_.lo : $(ANSI2KNR)
+t-iset_.$(OBJEXT) t-iset_.lo t-lc2exp_.$(OBJEXT) t-lc2exp_.lo \
+t-mt_.$(OBJEXT) t-mt_.lo t-rand_.$(OBJEXT) t-rand_.lo \
+t-urbui_.$(OBJEXT) t-urbui_.lo t-urmui_.$(OBJEXT) t-urmui_.lo \
+t-urndmm_.$(OBJEXT) t-urndmm_.lo zdiv_round_.$(OBJEXT) zdiv_round_.lo : \
+$(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo
