@@ -30,7 +30,7 @@ MA 02111-1307, USA. */
 
 #define SQR_BASECASE_THRESHOLD            5
 #define SQR_KARATSUBA_THRESHOLD          66
-#define SQR_TOOM3_THRESHOLD             133
+#define SQR_TOOM3_THRESHOLD              97
 
 #define DIV_SB_PREINV_THRESHOLD           0  /* preinv always */
 #define DIV_DC_THRESHOLD                129
@@ -50,14 +50,14 @@ MA 02111-1307, USA. */
 #define DIVEXACT_1_THRESHOLD              0  /* always */
 #define MODEXACT_1_ODD_THRESHOLD          0  /* always */
 
-#define GET_STR_DC_THRESHOLD       19
+#define GET_STR_DC_THRESHOLD             19
 #define GET_STR_PRECOMPUTE_THRESHOLD     28
-#define SET_STR_THRESHOLD             46000
+#define SET_STR_THRESHOLD             35525
 
-#define MUL_FFT_TABLE  { 688, 1440, 2880, 6400, 15360, 45056, 0 }
-#define MUL_FFT_MODF_THRESHOLD          752
-#define MUL_FFT_THRESHOLD              6272
+#define MUL_FFT_TABLE  { 496, 992, 1856, 3840, 7168, 28672, 0 }
+#define MUL_FFT_MODF_THRESHOLD          488
+#define MUL_FFT_THRESHOLD              2944
 
-#define SQR_FFT_TABLE  { 624, 1376, 3264, 6400, 17408, 36864, 0 }
-#define SQR_FFT_MODF_THRESHOLD          752
-#define SQR_FFT_THRESHOLD              7040
+#define SQR_FFT_TABLE  { 592, 1248, 2624, 5376, 15360, 28672, 0 }
+#define SQR_FFT_MODF_THRESHOLD          552
+#define SQR_FFT_THRESHOLD              3456
