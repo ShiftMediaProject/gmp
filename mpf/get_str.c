@@ -172,9 +172,9 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
 
   /* Allocate temporary digit space.  We can't put digits directly in the user
      area, since we generate more digits than requested.  (We allocate
-     GMP_LIMB_BITS extra bytes because of the digit block nature of the
+     2 * GMP_LIMB_BITS extra bytes because of the digit block nature of the
      conversion.)  */
-  tstr = (unsigned char *) TMP_ALLOC (n_digits + GMP_LIMB_BITS + 3);
+  tstr = (unsigned char *) TMP_ALLOC (n_digits + 2 * GMP_LIMB_BITS + 3);
 
   n_limbs_needed = 2 + ((mp_size_t) (n_digits / mp_bases[base].chars_per_bit_exactly)) / GMP_NUMB_BITS;
 
