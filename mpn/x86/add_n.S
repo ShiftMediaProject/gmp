@@ -64,7 +64,7 @@ L0:	leal	(%eax,%eax,8),%eax
 	addl	$4,%esp
 #else
 /* Calculate start address in loop for non-PIC.  */
- 	leal	(Loop - 3)(%eax,%eax,8),%eax
+ 	leal	Loop-3(%eax,%eax,8),%eax
 #endif
 	jmp	*%eax			/* jump into loop */
 	ALIGN (3)
