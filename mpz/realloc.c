@@ -1,6 +1,6 @@
 /* _mpz_realloc -- make the mpz_t have NEW_SIZE digits allocated.
 
-Copyright 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,4 +1,4 @@
-/* mfree -- BSD compatible mfree.
+/*, 2000 mfree -- BSD compatible mfree.
 
 Copyright 1991, 1994, 1995 Free Software Foundation, Inc.
 
