@@ -335,9 +335,9 @@ forloop(`i', 0, UNROLL_COUNT/2-1, `
 	deflit(`disp0', eval(2*i*4))
 	deflit(`disp1', eval(disp0 + 4))
 
-	movl	disp0(%ebx), %eax
+Zdisp(	movl,	disp0,(%ebx), %eax)
 	mull	%ebp
-	M4_inst	%ecx, disp0(%edi)
+Zdisp(	M4_inst,%ecx, disp0,(%edi))
 	adcl	%eax, %esi
 	movl	%edx, %ecx
 	jadcl0(	%ecx)

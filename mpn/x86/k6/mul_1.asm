@@ -205,12 +205,12 @@ L(entry):
 forloop(i, 0, UNROLL_COUNT-1, `
 	deflit(`disp', eval(i*4 ifelse(UNROLL_BYTES,256,-128)))
 
-	movl	disp(%ebx), %eax
+Zdisp(	movl,	disp,(%ebx), %eax)
 	mull	%ebp
 	addl	%esi, %eax
 	movl	%edx, %esi
 	adcl	$0, %esi
-	movl	%eax, disp(%edi)
+Zdisp(	movl,	%eax, disp,(%edi))
 ')
 
 	decl	%ecx
