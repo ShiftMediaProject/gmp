@@ -329,9 +329,31 @@ EOF
 gmp_compile="$1 -c conftest.c"
 if AC_TRY_EVAL(gmp_compile); then
   rm -f conftest*
+  AC_MSG_CHECKING([whether $1 is gcc])
+  AC_MSG_RESULT(yes)
   ifelse([$2],,:,[$2])
 else
   rm -f conftest*
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
+dnl  GMP_PROG_CC_IS_XLC(CC,[ACTIONS-IF-YES][,ACTIONS-IF-NO])
+dnl  -------------------------------------------------------
+dnl  Determine whether the given compiler is IBM xlc (on AIX).
+dnl
+dnl  There doesn't seem to be a preprocessor symbol to test for this, or if
+dnl  there is one then it's well hidden in xlc 3.1 on AIX 4.3, so just grep
+dnl  the man page printed when xlc is invoked with no arguments.
+
+AC_DEFUN(GMP_PROG_CC_IS_XLC,
+[gmp_command="$1 2>&1 | grep xlc >/dev/null"
+if AC_TRY_EVAL(gmp_command); then
+  AC_MSG_CHECKING([whether $1 is xlc])
+  AC_MSG_RESULT(yes)
+  ifelse([$2],,:,[$2])
+else
   ifelse([$3],,:,[$3])
 fi
 ])
@@ -1073,8 +1095,8 @@ echo ["define(<W32>, <$gmp_cv_asm_w32>)"] >> $gmp_tmpconfigm4
 ])
 
 
-dnl  GMP_ASM_X86_MMX([ACTION-IF-FOUND][,ACTION-IF-NOT-FOUND])
-dnl  ---------------------------------------------------------
+dnl  GMP_ASM_X86_MMX([ACTION-IF-YES][,ACTION-IF-NO])
+dnl  -----------------------------------------------
 dnl  Determine whether the assembler supports MMX instructions.
 dnl
 dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
@@ -1082,8 +1104,8 @@ dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
 dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
 dnl  needed at all, at least for just checking instruction syntax.
 dnl
-dnl  "movq %mm0, %mm1" should assemble as "0f 6f c8", but Solaris 2.6 and
-dnl  2.7 wrongly assemble it as "0f 6f c1" (that being the reverse "movq
+dnl  "movq %mm0, %mm1" should assemble to "0f 6f c8", but Solaris 2.6 and
+dnl  2.7 wrongly assemble it to "0f 6f c1" (that being the reverse "movq
 dnl  %mm1, %mm0").  It seems more trouble than it's worth to work around
 dnl  this in the code, so just detect and reject.
 
@@ -1157,8 +1179,8 @@ fi
 ])
 
 
-dnl  GMP_ASM_X86_SSE2([ACTION-IF-FOUND][,ACTION-IF-NOT-FOUND])
-dnl  ---------------------------------------------------------
+dnl  GMP_ASM_X86_SSE2([ACTION-IF-YES][,ACTION-IF-NO])
+dnl  ------------------------------------------------
 dnl  Determine whether the assembler supports SSE2 instructions.
 dnl
 dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
