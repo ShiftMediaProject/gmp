@@ -26,6 +26,8 @@ INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libmp.la
 
 if WANT_MPBSD
-check_PROGRAMS = allfuns
-TESTS = $(check_PROGRAMS)
+MPBSD_check_OPTION = allfuns
 endif
+
+check_PROGRAMS = dummy $(MPBSD_check_OPTION)
+TESTS = $(check_PROGRAMS)
