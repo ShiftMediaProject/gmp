@@ -1771,6 +1771,14 @@ for tmp_fn in $gmp_mpn_functions; do
           # For a nails build, check if the file supports our nail bits.
           # Generic code always supports all nails.
           #
+          # FIXME: When a multi-function file is selected to provide one of
+          # the nails-neutral routines, like logops_n for and_n, the
+          # PROLOGUE grepping will create HAVE_NATIVE_mpn_<foo> defines for
+          # all functions in that file, even if they haven't all been
+          # nailified.  Not sure what to do about this, it's only really a
+          # problem for logops_n, and it's not too terrible to insist those
+          # get nailified alwasy.
+          #
           if test $GMP_NAIL_BITS != 0 && test $tmp_dir != generic; then
             case $tmp_fn in
               and_n | ior_n | xor_n | \
