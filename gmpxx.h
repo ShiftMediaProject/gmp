@@ -4900,7 +4900,7 @@ __GMP_DEFINE_UNARY_FUNCTION(sqrt, __gmp_sqrt_function)
 __GMP_DEFINE_BINARY_FUNCTION(hypot, __gmp_hypot_function)
 
 __GMP_DEFINE_UNARY_TYPE_FUNCTION(int, sgn, __gmp_sgn_function)
-__GMP_DEFINE_BINARY_TYPE_FUNCTION(int, compare, __gmp_cmp_function)
+__GMP_DEFINE_BINARY_TYPE_FUNCTION(int, cmp, __gmp_cmp_function)
 
 // member operators for mpz_class
 
