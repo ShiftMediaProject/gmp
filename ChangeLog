@@ -1,3 +1,9 @@
+2000-12-09  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/cmpabs.c: Remove unused variable.
+	* mpz/rrandomb.c: Likewise.
+	* mpz/xor.c: Likewise.
+
 2000-12-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/gcdext.c: Handle double carry when computing s1.
