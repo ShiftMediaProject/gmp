@@ -102,7 +102,8 @@ INCLUDES = -I$(top_srcdir)
 LDADD = ../../libgmp.la
 
 noinst_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
-  dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse
+  dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse \
+  t-root
 
 subdir = mpz/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -112,7 +113,7 @@ noinst_PROGRAMS =  t-mul$(EXEEXT) t-tdiv$(EXEEXT) t-tdiv_ui$(EXEEXT) \
 t-fdiv$(EXEEXT) t-fdiv_ui$(EXEEXT) t-gcd$(EXEEXT) dive$(EXEEXT) \
 t-sqrtrem$(EXEEXT) convert$(EXEEXT) io$(EXEEXT) logic$(EXEEXT) \
 bit$(EXEEXT) t-powm$(EXEEXT) t-powm_ui$(EXEEXT) t-pow_ui$(EXEEXT) \
-t-2exp$(EXEEXT) reuse$(EXEEXT)
+t-2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT)
 PROGRAMS =  $(noinst_PROGRAMS)
 
 
@@ -190,6 +191,11 @@ t_powm_ui_OBJECTS =  t-powm_ui.$(OBJEXT)
 t_powm_ui_LDADD = $(LDADD)
 t_powm_ui_DEPENDENCIES =  ../../libgmp.la
 t_powm_ui_LDFLAGS = 
+t_root_SOURCES = t-root.c
+t_root_OBJECTS =  t-root.$(OBJEXT)
+t_root_LDADD = $(LDADD)
+t_root_DEPENDENCIES =  ../../libgmp.la
+t_root_LDFLAGS = 
 t_sqrtrem_SOURCES = t-sqrtrem.c
 t_sqrtrem_OBJECTS =  t-sqrtrem.$(OBJEXT)
 t_sqrtrem_LDADD = $(LDADD)
@@ -212,7 +218,7 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c \
 t-fdiv.c t-fdiv_ui.c t-gcd.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c \
-t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -224,10 +230,10 @@ DEP_FILES =  @AMDEP@ $(DEPDIR)/bit.Po $(DEPDIR)/convert.Po \
 $(DEPDIR)/dive.Po $(DEPDIR)/io.Po $(DEPDIR)/logic.Po $(DEPDIR)/reuse.Po \
 $(DEPDIR)/t-2exp.Po $(DEPDIR)/t-fdiv.Po $(DEPDIR)/t-fdiv_ui.Po \
 $(DEPDIR)/t-gcd.Po $(DEPDIR)/t-mul.Po $(DEPDIR)/t-pow_ui.Po \
-$(DEPDIR)/t-powm.Po $(DEPDIR)/t-powm_ui.Po $(DEPDIR)/t-sqrtrem.Po \
-$(DEPDIR)/t-tdiv.Po $(DEPDIR)/t-tdiv_ui.Po
-SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-fdiv.c t-fdiv_ui.c t-gcd.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
-OBJECTS = bit.$(OBJEXT) convert.$(OBJEXT) dive.$(OBJEXT) io.$(OBJEXT) logic.$(OBJEXT) reuse.$(OBJEXT) t-2exp.$(OBJEXT) t-fdiv.$(OBJEXT) t-fdiv_ui.$(OBJEXT) t-gcd.$(OBJEXT) t-mul.$(OBJEXT) t-pow_ui.$(OBJEXT) t-powm.$(OBJEXT) t-powm_ui.$(OBJEXT) t-sqrtrem.$(OBJEXT) t-tdiv.$(OBJEXT) t-tdiv_ui.$(OBJEXT)
+$(DEPDIR)/t-powm.Po $(DEPDIR)/t-powm_ui.Po $(DEPDIR)/t-root.Po \
+$(DEPDIR)/t-sqrtrem.Po $(DEPDIR)/t-tdiv.Po $(DEPDIR)/t-tdiv_ui.Po
+SOURCES = bit.c convert.c dive.c io.c logic.c reuse.c t-2exp.c t-fdiv.c t-fdiv_ui.c t-gcd.c t-mul.c t-pow_ui.c t-powm.c t-powm_ui.c t-root.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+OBJECTS = bit.$(OBJEXT) convert.$(OBJEXT) dive.$(OBJEXT) io.$(OBJEXT) logic.$(OBJEXT) reuse.$(OBJEXT) t-2exp.$(OBJEXT) t-fdiv.$(OBJEXT) t-fdiv_ui.$(OBJEXT) t-gcd.$(OBJEXT) t-mul.$(OBJEXT) t-pow_ui.$(OBJEXT) t-powm.$(OBJEXT) t-powm_ui.$(OBJEXT) t-root.$(OBJEXT) t-sqrtrem.$(OBJEXT) t-tdiv.$(OBJEXT) t-tdiv_ui.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -326,6 +332,10 @@ t-powm_ui$(EXEEXT): $(t_powm_ui_OBJECTS) $(t_powm_ui_DEPENDENCIES)
 	@rm -f t-powm_ui$(EXEEXT)
 	$(LINK) $(t_powm_ui_LDFLAGS) $(t_powm_ui_OBJECTS) $(t_powm_ui_LDADD) $(LIBS)
 
+t-root$(EXEEXT): $(t_root_OBJECTS) $(t_root_DEPENDENCIES)
+	@rm -f t-root$(EXEEXT)
+	$(LINK) $(t_root_LDFLAGS) $(t_root_OBJECTS) $(t_root_LDADD) $(LIBS)
+
 t-sqrtrem$(EXEEXT): $(t_sqrtrem_OBJECTS) $(t_sqrtrem_DEPENDENCIES)
 	@rm -f t-sqrtrem$(EXEEXT)
 	$(LINK) $(t_sqrtrem_LDFLAGS) $(t_sqrtrem_OBJECTS) $(t_sqrtrem_LDADD) $(LIBS)
@@ -399,6 +409,7 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/t-pow_ui.Po
 @AMDEP@include $(DEPDIR)/t-powm.Po
 @AMDEP@include $(DEPDIR)/t-powm_ui.Po
+@AMDEP@include $(DEPDIR)/t-root.Po
 @AMDEP@include $(DEPDIR)/t-sqrtrem.Po
 @AMDEP@include $(DEPDIR)/t-tdiv.Po
 @AMDEP@include $(DEPDIR)/t-tdiv_ui.Po
@@ -512,7 +523,7 @@ mostlyclean distclean maintainer-clean
 
 check: Makefile st-mul st-tdiv st-tdiv_ui st-fdiv st-fdiv_ui st-gcd st-dive \
   st-sqrtrem st-convert st-io st-logic st-bit st-powm st-powm_ui st-pow_ui \
-  st-2exp st-reuse
+  st-2exp st-reuse st-root
 	@echo "The tests passed."
 
 st-mul: t-mul@EXEEXT@
@@ -565,6 +576,9 @@ st-2exp: t-2exp@EXEEXT@
 	touch $@
 st-reuse: reuse@EXEEXT@
 	./reuse
+	touch $@
+st-root: t-root@EXEEXT@
+	./t-root
 	touch $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

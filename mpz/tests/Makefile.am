@@ -4,14 +4,14 @@ AUTOMAKE_OPTIONS = gnu
 
 INCLUDES = -I$(top_srcdir)
 LDADD = ../../libgmp.la
-##LDFLAGS = -static
 
 noinst_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
-  dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse
+  dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse \
+  t-root
 
 check: Makefile st-mul st-tdiv st-tdiv_ui st-fdiv st-fdiv_ui st-gcd st-dive \
   st-sqrtrem st-convert st-io st-logic st-bit st-powm st-powm_ui st-pow_ui \
-  st-2exp st-reuse
+  st-2exp st-reuse st-root
 	@echo "The tests passed."
 
 st-mul: t-mul@EXEEXT@
@@ -64,4 +64,7 @@ st-2exp: t-2exp@EXEEXT@
 	touch $@
 st-reuse: reuse@EXEEXT@
 	./reuse
+	touch $@
+st-root: t-root@EXEEXT@
+	./t-root
 	touch $@
