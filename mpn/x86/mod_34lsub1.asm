@@ -2,7 +2,7 @@ dnl  Generic x86 mpn_mod_32lsub1 -- mpn remainder modulo 2^24-1.
 dnl
 dnl       cycles/limb
 dnl  P5:     3.0
-dnl  P6:     3.7
+dnl  P6:     3.66
 dnl  K6:     3.0
 dnl  K7:     1.3
 dnl  P4:     9
