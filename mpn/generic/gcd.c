@@ -129,7 +129,11 @@ gcd_2 (vp, up)
    precision.  If N2 > N1 initially, the first iteration of the while loop
    will swap them.  In all other situations, N1 >= N2 is maintained.  */
 
-static __gmp_inline mp_limb_t
+static
+#if ! defined (__i386__)
+__gmp_inline			/* don't inline this for the x86 */
+#endif
+mp_limb_t
 #if __STDC__
 find_a (mp_srcptr cp)
 #else
