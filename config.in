@@ -1,5 +1,8 @@
 /* config.in.  Generated automatically from configure.in by autoheader.  */
 
+/* --enable-assert option */
+#undef WANT_ASSERT
+
 /* Define if we have native implementation of function. */
 #undef HAVE_NATIVE_
 #undef HAVE_NATIVE_mpn_add                 
@@ -61,8 +64,8 @@
 /* Name of package */
 #undef PACKAGE
 
-/* Version number of package */
-#undef VERSION
-
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Version number of package */
+#undef VERSION
