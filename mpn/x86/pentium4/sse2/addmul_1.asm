@@ -1,7 +1,7 @@
 dnl  Intel Pentium-4 mpn_addmul_1 -- Multiply a limb vector with a limb and add
 dnl  the result to a second limb vector.
 
-dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2001, 2002, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -23,9 +23,8 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C P4: 5.5 cycles/limb, unstable timing, at on Pentium4 models 0, 1, 2
-C         (as returned by the cpuid instruction).
-
+C P4 Willamette/Northwood: 5.5 cycles/limb, fluctuating
+C P4 Prescott:		   6.0 cycles/limb
 
 C mp_limb_t mpn_addmul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C                         mp_limb_t multiplier);
