@@ -120,7 +120,17 @@ main (int argc, char **argv)
 #endif
 
       if (mpz_cmp (r1, r2) != 0)
-	abort ();
+	{
+	  fprintf (stderr, "\ntest %d: Incorrect results for operands:\n", i);
+	  debug_mp (base, -16);
+	  debug_mp (exp, -16);
+	  debug_mp (mod, -16);
+	  fprintf (stderr, "mpz_powm result:\n");
+	  debug_mp (r1, -16);
+	  fprintf (stderr, "reference result:\n");
+	  debug_mp (r2, -16);
+	  abort ();
+	}
     }
 
   mpz_clear (bs);
