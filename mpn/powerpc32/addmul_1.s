@@ -1,7 +1,7 @@
 # PowerPC-32 __mpn_addmul_1 -- Multiply a limb vector with a limb and add
 # the result to a second limb vector.
 
-# Copyright (C) 1995 Free Software Foundation, Inc.
+# Copyright (C) 1995, 1997, 1998 Free Software Foundation, Inc.
 
 # This file is part of the GNU MP Library.
 
@@ -27,18 +27,32 @@
 # size		r5
 # s2_limb	r6
 
-	.toc
-	.csect .__mpn_addmul_1[PR]
-	.align 2
-	.globl __mpn_addmul_1
-	.globl .__mpn_addmul_1
-	.csect __mpn_addmul_1[DS]
-__mpn_addmul_1:
-	.long .__mpn_addmul_1[PR], TOC[tc0], 0
-	.csect .__mpn_addmul_1[PR]
-.__mpn_addmul_1:
-	mtctr	5
+# This is optimized for the PPC604.  It has not been tested on PPC601, PPC603
+# or PPC750 since I don't have access to any such machines.
 
+#include "asm-syntax.h"
+
+#ifdef AIX_SYNTAX
+	.toc
+	.csect	.text[PR]
+	.align	2
+	.globl	__mpn_addmul_1
+	.globl	.__mpn_addmul_1
+	.csect	__mpn_addmul_1[DS]
+__mpn_addmul_1:
+	.long	.__mpn_addmul_1, TOC[tc0], 0
+	.csect	.text[PR]
+.__mpn_addmul_1:
+#else
+	.text
+	.align	4
+	.globl	__mpn_addmul_1
+__mpn_addmul_1:
+#endif
+	cmpi	0,5,9		# more than 9 limbs?
+	bgt	0,Lbig		# branch if more than 9 limbs
+
+	mtctr	5
 	lwz	0,0(4)
 	mullw	7,0,6
 	mulhwu	10,0,6
@@ -46,7 +60,6 @@ __mpn_addmul_1:
 	addc	8,7,9
 	addi	3,3,-4
 	bdz	Lend
-
 Loop:	lwzu	0,4(4)
 	stwu	8,4(3)
 	mullw	8,0,6
@@ -56,7 +69,67 @@ Loop:	lwzu	0,4(4)
 	addze	10,10
 	addc	8,7,9
 	bdnz	Loop
-
 Lend:	stw	8,4(3)
 	addze	3,10
+	blr
+
+Lbig:	stmw	30,-32(1)
+	addi	5,5,-1
+	srwi	0,5,2
+	mtctr	0
+
+	lwz	7,0(4)
+	mullw	8,7,6
+	mulhwu	0,7,6
+	lwz	7,0(3)
+	addc	8,8,7
+	stw	8,0(3)
+
+LoopU:	lwz	7,4(4)
+	lwz	12,8(4)
+	lwz	30,12(4)
+	lwzu	31,16(4)
+	mullw	8,7,6
+	mullw	9,12,6
+	mullw	10,30,6
+	mullw	11,31,6
+	adde	8,8,0		# add cy_limb
+	mulhwu	0,7,6
+	lwz	7,4(3)
+	adde	9,9,0
+	mulhwu	0,12,6
+	lwz	12,8(3)
+	adde	10,10,0
+	mulhwu	0,30,6
+	lwz	30,12(3)
+	adde	11,11,0
+	mulhwu	0,31,6
+	lwz	31,16(3)
+	addze	0,0		# new cy_limb
+	addc	8,8,7
+	stw	8,4(3)
+	adde	9,9,12
+	stw	9,8(3)
+	adde	10,10,30
+	stw	10,12(3)
+	adde	11,11,31
+	stwu	11,16(3)
+	bdnz	LoopU
+
+	andi.	31,5,3
+	mtctr	31
+	beq	0,Lendx
+
+LoopE:	lwzu	7,4(4)
+	mullw	8,7,6
+	adde	8,8,0		# add cy_limb
+	mulhwu	0,7,6
+	lwz	7,4(3)
+	addze	0,0		# new cy_limb
+	addc	8,8,7
+	stwu	8,4(3)
+	bdnz	LoopE
+Lendx:
+	addze	3,0
+	lmw	30,-32(1)
 	blr
