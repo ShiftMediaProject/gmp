@@ -19,9 +19,6 @@
 
 	* gmp.texi (Known Build Problems): Note problem stripping libgmp.a.
 
-	* mpn/tests/try.c (try_init): Account for ALIGNMENTS when sizing
-	source and dest regions.
-
 2000-08-02  Kent Boortz  <kent@swox.com>
 
 	* mpfr: Integrated experimental version of mpfr-0.4.
