@@ -138,6 +138,7 @@ MA 02111-1307, USA.
    ./config.guess.  If your CPU is not listed here, leave all undefined.  */
 #undef HAVE_HOST_CPU_alphaev67
 #undef HAVE_HOST_CPU_alphaev68
+#undef HAVE_HOST_CPU_alphaev7
 #undef HAVE_HOST_CPU_m68020
 #undef HAVE_HOST_CPU_m68030
 #undef HAVE_HOST_CPU_m68040
