@@ -24,6 +24,11 @@ MA 02111-1307, USA.
 
 	* mpn/ia64/divrem_2.asm: New file.
 
+2004-09-28  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpn/generic/mul_fft.c (mpn_mul_fft): Fix a bug in the choice of the
+	recursive fft parameters.
+
 2004-09-20  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/misc.c (tests_rand_start): Default to strtoul for re-seeding.
