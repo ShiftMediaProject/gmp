@@ -1637,7 +1637,7 @@ refmpn_sb_divrem_mn (mp_ptr qp,
   ASSERT (nsize >= dsize);
   /* ASSERT (dsize > 2); */
   ASSERT (dsize >= 2);
-  ASSERT (dp[dsize-1] & GMP_LIMB_HIGHBIT);
+  ASSERT (dp[dsize-1] & GMP_NUMB_HIGHBIT);
   ASSERT (! refmpn_overlap_p (qp, nsize-dsize, np, nsize) || qp+dsize >= np);
   ASSERT_MPN (np, nsize);
   ASSERT_MPN (dp, dsize);
@@ -1657,9 +1657,10 @@ refmpn_sb_divrem_mn (mp_ptr qp,
 
       ASSERT (n0 <= d1);
       if (n0 == d1)
-        q = MP_LIMB_T_MAX;
+        q = GMP_NUMB_MAX;
       else
-        q = refmpn_udiv_qrnnd (&dummy_r, n0, n1, d1);
+        q = refmpn_udiv_qrnnd (&dummy_r, n0, n1 << GMP_NAIL_BITS,
+                               d1 << GMP_NAIL_BITS);
 
       n0 -= refmpn_submul_1 (np+i, dp, dsize, q);
       ASSERT (n0 == 0 || n0 == MP_LIMB_T_MAX);
@@ -1707,6 +1708,8 @@ refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
   ASSERT (qxn == 0);
   ASSERT_MPN (np, nsize);
   ASSERT_MPN (dp, dsize);
+  ASSERT (dsize > 0);
+  ASSERT (dp[dsize-1] != 0);
 
   if (dsize == 1)
     {
@@ -1717,7 +1720,7 @@ refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
     {
       mp_ptr  n2p = refmpn_malloc_limbs (nsize+1);
       mp_ptr  d2p = refmpn_malloc_limbs (dsize);
-      int     norm = refmpn_count_leading_zeros (dp[dsize-1]);
+      int     norm = refmpn_count_leading_zeros (dp[dsize-1]) - GMP_NAIL_BITS;
 
       n2p[nsize] = refmpn_lshift_or_copy (n2p, np, nsize, norm);
       ASSERT_NOCARRY (refmpn_lshift_or_copy (d2p, dp, dsize, norm));
