@@ -63,7 +63,7 @@ max allowed vn		2097152
 number of multiplies	16
 
 
-IDEAS:
+IDEA:
 * Rewrite mpn_add_n:
     short cy[n + 1];
     #pragma _CRI ivdep
@@ -91,3 +91,13 @@ IDEAS:
   and 2, and generate cy[].  Then add operand 3 to the partial result,
   and accumulate carry into cy[].  Finally propagate carry just like
   in the new mpn_add_n.
+
+IDEA:
+
+Store fewer bits, perhaps 62, per limb.  That brings mpn_add_n time
+down to 2.5 cycles/limb and mpn_addmul_1 times to 4 cycles/limb.  By
+storing even fewer bits per limb, perhaps 56, it would be possible to
+write a mul_mul_basecase that would run at effectively 1 cycle/limb.
+(Use VM here to better handle the romb-shaped multiply area, perhaps
+rouding operand sizes up to the next power of 2.)
+ 
