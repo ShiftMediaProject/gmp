@@ -1,7 +1,6 @@
-/* mpz_si_kronecker -- long+mpz Kronecker/Jacobi symbol. */
+/* mpz_si_kronecker -- long+mpz Kronecker/Jacobi symbol.
 
-/*
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -44,6 +42,18 @@ mpz_si_kronecker (long a, mpz_srcptr b)
   mp_limb_t  a_limb, b_rem;
   unsigned   twos;
   int        result_bit1;
+
+#if GMP_NUMB_BITS < BITS_PER_ULONG
+  if (a > GMP_NUMB_MAX || a < -GMP_NUMB_MAX)
+    {
+      mp_limb_t  alimbs[2];
+      mpz_t      az;
+      ALLOC(az) = numberof (alimbs);
+      PTR(az) = alimbs;
+      mpz_set_si (az, a);
+      return mpz_kronecker (az, b);
+    }
+#endif
 
   if (b_abs_size == 0)
     return JACOBI_S0 (a);  /* (a/0) */
