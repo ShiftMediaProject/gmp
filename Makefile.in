@@ -224,7 +224,7 @@ SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) demos tune
 # build-system stuff over and done with at the start.  Also, dependencies on
 # the .h files are not properly expressed for the various objects that use
 # them.
-EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf gmpxx.h libmp.sym dumbmp.c gen-fac_ui.c gen-fib.c gen-bases.c
+EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf gmpxx.h libmp.sym dumbmp.c gen-fac_ui.c gen-fib.c gen-bases.c gen-psqr.c
 
 @WANT_CXX_TRUE@GMPXX_HEADERS_OPTION = gmpxx.h
 
@@ -232,9 +232,9 @@ include_HEADERS = $(GMPXX_HEADERS_OPTION)
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
-BUILT_SOURCES = gmp.h mp.h mpz/fac_ui.h fib_table.h mpn/fib_table.c mp_bases.h mpn/mp_bases.c
+BUILT_SOURCES = gmp.h mp.h mpz/fac_ui.h fib_table.h mpn/fib_table.c mp_bases.h mpn/mp_bases.c mpn/perfsqr.h
 
-DISTCLEANFILES = $(BUILT_SOURCES) config.m4 @gmp_srclinks@ gen-fac_ui$(EXEEXT_FOR_BUILD) gen-fib$(EXEEXT_FOR_BUILD) gen-bases$(EXEEXT_FOR_BUILD)
+DISTCLEANFILES = $(BUILT_SOURCES) config.m4 @gmp_srclinks@ gen-fac_ui$(EXEEXT_FOR_BUILD) gen-fib$(EXEEXT_FOR_BUILD) gen-bases$(EXEEXT_FOR_BUILD) gen-psqr$(EXEEXT_FOR_BUILD)
 
 # Tell gmp.h it's building gmp, not an application, used by windows DLL stuff.
 INCLUDES = -D__GMP_WITHIN_GMP
@@ -1158,6 +1158,15 @@ gen-bases$(EXEEXT_FOR_BUILD): gen-bases$(U_FOR_BUILD).c dumbmp.c
 
 gen-bases_.c: gen-bases.c $(ANSI2KNR)
 	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-bases.c; then echo $(srcdir)/gen-bases.c; else echo gen-bases.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-bases_.c || rm -f gen-bases_.c
+
+mpn/perfsqr.h: gen-psqr$(EXEEXT_FOR_BUILD)
+	./gen-psqr $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpn/perfsqr.h || (rm -f mpn/perfsqr.h; exit 1)
+
+gen-psqr$(EXEEXT_FOR_BUILD): gen-psqr$(U_FOR_BUILD).c dumbmp.c
+	$(CC_FOR_BUILD) `test -f 'gen-psqr$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-psqr$(U_FOR_BUILD).c -o gen-psqr$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
+
+gen-psqr_.c: gen-psqr.c $(ANSI2KNR)
+	$(CPP_FOR_BUILD) `if test -f $(srcdir)/gen-psqr.c; then echo $(srcdir)/gen-psqr.c; else echo gen-psqr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gen-psqr_.c || rm -f gen-psqr_.c
 
 # Avoid: CVS - cvs directories
 #        *~  - emacs backups
