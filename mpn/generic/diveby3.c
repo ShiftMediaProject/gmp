@@ -88,19 +88,27 @@ mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
 
    The carry handling consists of determining the c for the next iteration.
    This is the same as described above, namely look for any borrow from
-   src[i]-c, and at the high of 3*q.  high(3*q) is done with two comparisons
-   as above (in c1 and c2), so we end up with three comparisons, added
-   together to give c, and each selecting either -MODLIMB_INVERSE_3 or 0 to
-   add together to give -c*inverse.
+   src[i]-c, and at the high of 3*q.
+
+   high(3*q) is done with two comparisons as above (in c2 and c3).  The
+   borrow from src[i]-c is incorporated into those by noting that if there's
+   a carry then then we have src[i]-c == 0xFF..FF or 0xFF..FE, in turn
+   giving q = 0x55..55 or 0xAA..AA.  Adding 1 to either of those q values is
+   enough to make high(3*q) come out 1 bigger, as required.
+
+   l = -c*inverse is calculated at the same time as c, since for most chips
+   it can be more conveniently derived from separate c1/c2/c3 values than
+   from a combined c equal to 0, 1 or 2.
 
    The net effect is that with good pipelining this loop should be able to
-   run at perhaps 5 cycles/limb.
+   run at perhaps 4 cycles/limb, depending on available execute resources
+   etc.
 
    Usage:
 
    This code is not used by default, since we really can't rely on the
-   compiler generating a good software pipeline, nor on that approach even
-   being worthwhile on all CPUs.
+   compiler generating a good software pipeline, nor on such an approach
+   even being worthwhile on all CPUs.
 
    Itanium is one chip where this algorithm helps though, see
    mpn/ia64/diveby3.asm.  */
@@ -108,8 +116,8 @@ mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
 mp_limb_t
 mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
 {
+  mp_limb_t  s, sm, l, q, qx, c1, c2, c3;
   mp_size_t  i;
-  mp_limb_t  l;
 
   ASSERT (size >= 1);
   ASSERT (c == 0 || c == 1 || c == 2);
@@ -119,24 +127,20 @@ mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t c)
 
   for (i = 0; i < size; i++)
     {
-      mp_limb_t  s, sm, c1, c2;
-
       s = src[i];
       sm = s * MODLIMB_INVERSE_3;
 
-      l += sm;
-      dst[i] = l;
+      q = l + sm;
+      c1 = (s < c);
 
-      c = (s < c);
-      c1 = -(l > MP_LIMB_T_MAX/3);
-      c2 = -(l > (MP_LIMB_T_MAX/3)*2);
+      dst[i] = q;
+      qx = q + c1;
 
-      l = -c & -MODLIMB_INVERSE_3;
-      c -= c1;
-      c -= c2;
+      c2 = (qx > MP_LIMB_T_MAX/3);
+      c3 = (qx > (MP_LIMB_T_MAX/3)*2);
 
-      l += c1 & -MODLIMB_INVERSE_3;
-      l += c2 & -MODLIMB_INVERSE_3;
+      c = c2 + c3;
+      l = (-c2 & -MODLIMB_INVERSE_3) + (-c3 & -MODLIMB_INVERSE_3);
     }
 
   return c;
