@@ -168,11 +168,11 @@ const struct routine_t {
   { "mpn_preinv_mod_1",  speed_mpn_preinv_mod_1, FLAG_R },
 
   { "mpn_divrem_1_div",  speed_mpn_divrem_1_div,  FLAG_R },
-  { "mpn_divrem_1_mul",  speed_mpn_divrem_1_mul,  FLAG_R },
+  { "mpn_divrem_1_inv",  speed_mpn_divrem_1_inv,  FLAG_R },
   { "mpn_divrem_1f_div", speed_mpn_divrem_1f_div, FLAG_R },
-  { "mpn_divrem_1f_mul", speed_mpn_divrem_1f_mul, FLAG_R },
+  { "mpn_divrem_1f_inv", speed_mpn_divrem_1f_inv, FLAG_R },
   { "mpn_mod_1_div",     speed_mpn_mod_1_div,     FLAG_R },
-  { "mpn_mod_1_mul",     speed_mpn_mod_1_mul,     FLAG_R },
+  { "mpn_mod_1_inv",     speed_mpn_mod_1_inv,     FLAG_R },
 
   { "mpn_divrem_2",      speed_mpn_divrem_2,        },
   { "mpn_divexact_by3",  speed_mpn_divexact_by3     },
