@@ -12,8 +12,8 @@
    the function is 0 if OP is a perfect square, and *any* non-zero number
    otherwise.
 
-Copyright (C) 1993, 1994, 1996, 1997, 1998, 1999 Free Software Foundation,
-Inc.
+Copyright (C) 1993, 1994, 1996, 1997, 1998, 1999, 2000 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -36,6 +36,7 @@ MA 02111-1307, USA. */
    doesn't help to use CHAR_BIT from limits.h, as the real problem is
    the static arrays.  */
 
+#include <stdio.h> /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
