@@ -57,8 +57,8 @@ libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
 TARG_DIST = a29k alpha arm clipper cray generic hppa i960 ia64 lisp m68k m88k \
-  mips2 mips3 ns32k pa64 pa64w power powerpc32 powerpc64 pyr s390 sh sparc32 \
-  sparc64 thumb vax x86 z8000 z8000x
+  mips32 mips64 ns32k pa64 pa64w power powerpc32 powerpc64 pyr s390 sh \
+  sparc32 sparc64 thumb vax x86 z8000 z8000x
 
 EXTRA_DIST = Makeasm.am asm-defs.m4 cpp-ccas m4-ccas $(TARG_DIST)
 
