@@ -157,10 +157,10 @@ check_mpz (void)
 
       {
         ostrstream  got;
-        CALL (mpz_out_ostream (got, z) << '\0');
+        CALL (operator<< (got, z) << '\0');
         if (strcmp (got.str(), data[i].want) != 0)
           {
-            printf ("mpz_out_ostream wrong, data[%d]\n", i);
+            printf ("mpz operator<< wrong, data[%d]\n", i);
             printf ("  z:     %s\n", data[i].z);
             mpz_trace ("  z", z);
             ABORT ();
@@ -223,10 +223,10 @@ check_mpq (void)
       {
         ostrstream  got;
         MPQ_CHECK_FORMAT (q);
-        CALL (mpq_out_ostream (got, q) << '\0');
+        CALL (operator<< (got, q) << '\0');
         if (strcmp (got.str(), data[i].want) != 0)
           {
-            printf ("mpq_out_ostream wrong, data[%d]\n", i);
+            printf ("mpq operator<< wrong, data[%d]\n", i);
             printf ("  q:     %s\n", data[i].q);
             mpq_trace ("  q", q);
             ABORT ();
@@ -391,10 +391,10 @@ check_mpf (void)
 
       {
         ostrstream  got;
-        CALL (mpf_out_ostream (got, f) << '\0');
+        CALL (operator<< (got, f) << '\0');
         if (strcmp (got.str(), data[i].want) != 0)
           {
-            printf ("mpf_out_ostream wrong, data[%d]\n", i);
+            printf ("mpf operator<< wrong, data[%d]\n", i);
             printf ("  f:     %s\n", data[i].f);
             mpf_trace ("  f", f);
             ABORT ();
