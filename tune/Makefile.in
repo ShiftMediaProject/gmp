@@ -140,7 +140,7 @@ libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES)
 LDFLAGS = -static
 LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
 
-EXTRA_PROGRAMS = speed tuneup
+EXTRA_PROGRAMS = speed speed-ext tuneup
 
 tuneup_SOURCES = tuneup.c
 tuneup_DEPENDENCIES = libspeed.la libgmptune.a
@@ -200,6 +200,11 @@ speed_OBJECTS =  $(am_speed_OBJECTS)
 speed_LDADD = $(LDADD)
 speed_DEPENDENCIES =  libspeed.la $(top_builddir)/libgmp.la
 speed_LDFLAGS = 
+speed_ext_SOURCES = speed-ext.c
+speed_ext_OBJECTS =  speed-ext$U.$(OBJEXT)
+speed_ext_LDADD = $(LDADD)
+speed_ext_DEPENDENCIES =  libspeed.la $(top_builddir)/libgmp.la
+speed_ext_LDFLAGS = 
 am_tuneup_OBJECTS =  tuneup$U.$(OBJEXT)
 tuneup_OBJECTS =  $(am_tuneup_OBJECTS)
 tuneup_LDFLAGS = 
@@ -208,7 +213,7 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libspeed_la_SOURCES) $(speed_SOURCES) \
+DIST_SOURCES =  $(libspeed_la_SOURCES) $(speed_SOURCES) speed-ext.c \
 $(tuneup_SOURCES)
 HEADERS =  $(noinst_HEADERS)
 
@@ -219,8 +224,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = $(libspeed_la_SOURCES) $(speed_SOURCES) $(tuneup_SOURCES)
-OBJECTS = $(am_libspeed_la_OBJECTS) $(am_speed_OBJECTS) $(am_tuneup_OBJECTS)
+SOURCES = $(libspeed_la_SOURCES) $(speed_SOURCES) speed-ext.c $(tuneup_SOURCES)
+OBJECTS = $(am_libspeed_la_OBJECTS) $(am_speed_OBJECTS) speed-ext$U.$(OBJEXT) $(am_tuneup_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -276,6 +281,10 @@ speed$(EXEEXT): $(speed_OBJECTS) $(speed_DEPENDENCIES)
 	@rm -f speed$(EXEEXT)
 	$(LINK) $(speed_LDFLAGS) $(speed_OBJECTS) $(speed_LDADD) $(LIBS)
 
+speed-ext$(EXEEXT): $(speed_ext_OBJECTS) $(speed_ext_DEPENDENCIES)
+	@rm -f speed-ext$(EXEEXT)
+	$(LINK) $(speed_ext_LDFLAGS) $(speed_ext_OBJECTS) $(speed_ext_LDADD) $(LIBS)
+
 tuneup$(EXEEXT): $(tuneup_OBJECTS) $(tuneup_DEPENDENCIES)
 	@rm -f tuneup$(EXEEXT)
 	$(LINK) $(tuneup_LDFLAGS) $(tuneup_OBJECTS) $(tuneup_LDADD) $(LIBS)
@@ -291,13 +300,15 @@ noop_.c: noop.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/noop.c; then echo $(srcdir)/noop.c; else echo noop.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > noop_.c
 speed_.c: speed.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed.c; then echo $(srcdir)/speed.c; else echo speed.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed_.c
+speed-ext_.c: speed-ext.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed-ext.c; then echo $(srcdir)/speed-ext.c; else echo speed-ext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed-ext_.c
 time_.c: time.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/time.c; then echo $(srcdir)/time.c; else echo time.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > time_.c
 tuneup_.c: tuneup.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tuneup.c; then echo $(srcdir)/tuneup.c; else echo tuneup.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tuneup_.c
 common_.$(OBJEXT) common_.lo noop_.$(OBJEXT) noop_.lo speed_.$(OBJEXT) \
-speed_.lo time_.$(OBJEXT) time_.lo tuneup_.$(OBJEXT) tuneup_.lo : \
-$(ANSI2KNR)
+speed_.lo speed-ext_.$(OBJEXT) speed-ext_.lo time_.$(OBJEXT) time_.lo \
+tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
