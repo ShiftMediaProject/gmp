@@ -1,3 +1,32 @@
+2000-04-26  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/sparc32/udiv_fp.asm: Use mpn_udiv_qrnnd macro.
+	* mpn/sparc32/udiv_nfp.asm: Ditto.
+	* mpn/sparc32/v8/supersparc/udiv.asm: Ditto.
+	* mpn/sparc32/umul.asm: Name the function mpn_umul_ppmm.
+	* mpn/sparc32/v8/umul.asm: Ditto.
+	* mpn/powerpc32/umul.asm: Ditto.
+
+	* mpn/x86/syntax.h: Remove file, since now unused.
+
+	* configure.in (x86): Remove -DBROKEN_ALIGN and -DOLD_GAS
+	previously used by .S files.
+	(x86 extra_functions): Add udiv and umul.
+	(GMP_PROG_M4): Use this instead of AC_CHECK_PROG(M4,m4,...)
+	(HAVE_NATIVE_*): Loosen up the regexp to "PROLOGUE.*" so as to
+	accept PROLOGUE_GP on alpha.
+
+	* acconfig.h (HAVE_NATIVE_mpn_umul_ppmm, udiv_qrnnd, invert_limb):
+	New template defines.
+	* mpn/asm-defs.m4 (mpn_umul_ppmm, mpn_udiv_qrnnd): New define_mpn()s.
+	* longlong.h (umul_ppmm, udiv_qrnnd): Use a library version if
+	it's available and an asm macro isn't.
+	* gmp-impl.h (invert_limb): Ditto.
+
+	* gmp-impl.h (ASSERT_NOREALLOC): Not a good idea, remove it.
+
+	* acinclude.m4 (GMP_PROG_M4): New macro.
+
 2000-04-25  Linus Nordberg  <linus@swox.se>
 
 	* gmp.texi (Random State Initialization): Correct arguments to
