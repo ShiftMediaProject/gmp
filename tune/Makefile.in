@@ -195,13 +195,13 @@ speed_ext_SOURCES = speed.c
 speed_ext_LDFLAGS = -static
 
 tuneup_SOURCES = tuneup.c
-nodist_tuneup_SOURCES = sqr_basecase.c $(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS)
+nodist_tuneup_SOURCES = sqr_basecase.c $(TUNE_MPN_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES)
 tuneup_LDFLAGS = -static
 
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
-	$(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS) sqr_asm.asm \
+	$(TUNE_MPN_SRCS) sqr_asm.asm \
 	stg.gnuplot stg.data \
 	mtg.gnuplot mtg.data \
 	fibg.gnuplot fibg.data \
@@ -230,7 +230,6 @@ TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
 TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c mul_n.c mul_fft.c mul.c \
   sb_divrem_mn.c tdiv_qr.c
 
-TUNE_MPZ_SRCS = 
 
 COMPILE_FLAGS = \
 	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -622,12 +621,6 @@ mod_1.c:
 	echo "#define TUNE_PROGRAM_BUILD 1"          >mod_1.c
 	echo "#define __gmpn_mod_1  mpn_mod_1_tune" >>mod_1.c
 	echo "#include \"mpn/generic/mod_1.c\""     >>mod_1.c
-
-$(TUNE_MPZ_SRCS):
-	for i in $(TUNE_MPZ_SRCS); do \
-	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
-	  echo "#include \"mpz/$$i\"" >>$$i; \
-	done
 
 sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	echo 'define(KARATSUBA_SQR_THRESHOLD_OVERRIDE,KARATSUBA_SQR_THRESHOLD_MAX)' >sqr_asm.asm
