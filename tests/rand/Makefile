@@ -32,6 +32,10 @@ spect: spect.c $(DEP)
 ks: ks.c $(DEP)
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
+clean: 
+	-rm $(LIBSTAT_FILES) libstat.a
+	-rm *.o
+
 test: gen stat
 	@(echo -n '16i: '; ./gen -f mpz_urandomb -z 16 1000 | ./stat -i 0xffff | grep ^[0-9])
 	@(echo -n '32i: '; ./gen -f mpz_urandomb -z 32 1000 | ./stat -i 0xffffffff  | grep ^[0-9])
