@@ -2,10 +2,9 @@
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
-   FUTURE GNU MP RELEASES.  */
+   FUTURE GNU MP RELEASES.
 
-/*
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,8 +21,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -81,6 +79,8 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
   ASSERT (asize == 0 || ap[asize-1] != 0);
   ASSERT (dsize >= 1);
   ASSERT (dp[dsize-1] != 0);
+  ASSERT_MPN (ap, asize);
+  ASSERT_MPN (dp, dsize);
 
   /* When a<d only a==0 is divisible.
      Notice this test covers all cases of asize==0. */
@@ -132,7 +132,8 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
 	{
 	  unsigned  twos;
 	  count_trailing_zeros (twos, dlow);
-	  dlow = (dlow >> twos) | (dsecond << (BITS_PER_MP_LIMB-twos));
+	  dlow = (dlow >> twos) | (dsecond << (GMP_NUMB_BITS-twos));
+          ASSERT_LIMB (dlow);
 	  return MPN_MOD_OR_MODEXACT_1_ODD (ap, asize, dlow) == 0;
 	}
     }
