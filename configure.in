@@ -881,9 +881,11 @@ case ${target} in
       SPEED_CYCLECOUNTER_OBJ=hppa2.lo
     else
       SPEED_CYCLECOUNTER_OBJ=hppa.lo
+      cyclecounter_size=1 ;;
     fi;;
   hppa*-*-*)
     SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
+    cyclecounter_size=1 ;;
   ia64*-*-*)
     SPEED_CYCLECOUNTER_OBJ=ia64.lo ;;
 esac
