@@ -201,8 +201,7 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
 	mpn_mul (tp, pp, pn, up, un);	/* FIXME: mpn_mul_highpart */
       tn = un + pn;
       tn -= tp[tn - 1] == 0;
-      fracn = un - ue;
-      off = fracn - ign;
+      off = un - ue - ign;
       if (off < 0)
 	{
 	  MPN_COPY_DECR (tp - off, tp, tn);
