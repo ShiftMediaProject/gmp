@@ -19,6 +19,29 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-28  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/get_str.c: Avoid one mpn_divrem_1 by running main loop
+	only until msize==1.
+
+	* tune/tuneup.c: Break up all() for clarity.
+	(USE_PREINV_DIVREM_1, USE_PREINV_MOD_1): Compare against plain
+	division udiv_qrnnd, not the tuned and possibly preinv version.
+
+	* tune/freq.c: Split sysctl and sysctlbyname probes into separate
+	functions, shorten some identifiers, put descriptions inside
+	functions, define functions unconditionally and do nothing if
+	requisites not available.
+	(speed_cycletime_need_cycles): Correction to failure condition.
+
+	* mpz/inp_raw.c: Avoid a gcc 3.0 powerpc64 bug on AIX.
+
+	* acinclude.m4, configure.in (GMP_C_RESTRICT): New macro.
+
+	* mpfr/sin.c: Patch from Paul to fix sign of sin(3pi/2).
+
+	* demos/calc/calc.y: Improve some error messages.
+
 2001-12-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc64/mul_1.asm: Rename r72 -> r80.
