@@ -111,12 +111,16 @@ mpn_bdivmod (qp, up, usize, vp, vsize, d)
     {
       mp_limb_t b;
       mp_limb_t q = (up[0] * v_inv) & (((mp_limb_t)1<<d) - 1);
-      switch (q)
+      if (q <= 1)
 	{
-	  case 0:  return 0;
-	  case 1:  b = mpn_sub_n (up, up, vp, MIN (usize, vsize));   break;
-	  default: b = mpn_submul_1 (up, vp, MIN (usize, vsize), q); break;
+	  if (q == 0)
+	    return 0;
+	  else
+	    b = mpn_sub_n (up, up, vp, MIN (usize, vsize));
 	}
+      else
+	b = mpn_submul_1 (up, vp, MIN (usize, vsize), q);
+
       if (usize > vsize)
 	mpn_sub_1 (up + vsize, up + vsize, usize - vsize, b);
       return q;
