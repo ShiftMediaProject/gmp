@@ -21,15 +21,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
 void debug_mp ();
-
-#ifndef SIZE
-#define SIZE 128
-#endif
 
 main (argc, argv)
      int argc;
@@ -41,6 +39,25 @@ main (argc, argv)
   mp_size_t op1_size, op2_size, x_size;
   int i;
   int reps = 2000;
+  gmp_randstate_t rands;
+  mpz_t bs;
+  unsigned long bsi, size_range;
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
+  mpz_init (bs);
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -57,18 +74,36 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      op1_size = urandom () % SIZE - SIZE/2;
-      op2_size = urandom () % SIZE - SIZE/2;
-      x_size = urandom () % SIZE/2;
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 12 + 2; /* 0..8191 bit operands */
 
-      mpz_random2 (op1, op1_size);
-      mpz_random2 (op2, op2_size);
-      mpz_random2 (x, x_size);
+      mpz_urandomb (bs, rands, size_range);
+      op1_size = mpz_get_ui (bs);
+      mpz_rrandomb (op1, rands, op1_size);
+
+      mpz_urandomb (bs, rands, size_range);
+      op2_size = mpz_get_ui (bs);
+      mpz_rrandomb (op2, rands, op2_size);
+
+      mpz_urandomb (bs, rands, size_range);
+      x_size = mpz_get_ui (bs);
+      mpz_rrandomb (x, rands, x_size);
+
+      mpz_urandomb (bs, rands, 2);
+      bsi = mpz_get_ui (bs);
+      if ((bsi & 1) != 0)
+	mpz_neg (op1, op1);
+      if ((bsi & 2) != 0)
+	mpz_neg (op2, op2);
+
+      /* printf ("%ld %ld\n", SIZ (op1), SIZ (op2)); */
+
       mpz_mul (op1, op1, x);
       mpz_mul (op2, op2, x);
 
       mpz_gcd (gcd, op1, op2);
-      /* We know GCD will be at least X, since we multiplied in that factor.  */
+      /* We know GCD will be at least X, since we multiplied both operands
+	 with it.  */
       if (mpz_cmp (gcd, x) < 0 && mpz_sgn (op1) != 0 && mpz_sgn (op2) != 0)
 	dump_abort (op1, op2);
 

@@ -1,7 +1,7 @@
 /* Test mpz_abs, mpz_add, mpz_cmp, mpz_cmp_ui, mpz_fdiv_qr_ui, mpz_fdiv_q_ui,
    mpz_fdiv_r_ui, mpz_mul, mpz_mul_ui.
 
-Copyright 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,15 +21,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
 void debug_mp ();
-
-#ifndef SIZE
-#define SIZE 16
-#endif
 
 main (argc, argv)
      int argc;
@@ -42,7 +40,26 @@ main (argc, argv)
   mp_size_t dividend_size;
   mp_limb_t divisor;
   int i;
-  int reps = 100000;
+  int reps = 10000;
+  gmp_randstate_t rands;
+  mpz_t bs;
+  unsigned long bsi, size_range;
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
+  mpz_init (bs);
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -56,12 +73,26 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      dividend_size = urandom () % SIZE - SIZE/2;
-      mpz_random2 (dividend, dividend_size);
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 10 + 2; /* 0..2047 bit operands */
 
-      divisor = urandom ();
-      if (divisor == 0)
-	continue;
+      do
+	{
+	  mpz_rrandomb (bs, rands, 64);
+	  divisor = mpz_get_ui (bs);
+	}
+      while (divisor == 0);
+
+      mpz_urandomb (bs, rands, size_range);
+      dividend_size = mpz_get_ui (bs);
+      mpz_rrandomb (dividend, rands, dividend_size);
+
+      mpz_urandomb (bs, rands, 2);
+      bsi = mpz_get_ui (bs);
+      if ((bsi & 1) != 0)
+	mpz_neg (dividend, dividend);
+
+      /* printf ("%ld\n", SIZ (dividend)); */
 
       mpz_fdiv_qr_ui (quotient, remainder, dividend, divisor);
       mpz_fdiv_q_ui (quotient2, dividend, divisor);

@@ -1,6 +1,6 @@
 /* Test mpz_add, mpz_add_ui, mpz_cmp, mpz_cmp, mpz_mul, mpz_sqrtrem.
 
-Copyright 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,15 +20,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
 void debug_mp ();
-
-#ifndef SIZE
-#define SIZE 16
-#endif
 
 main (argc, argv)
      int argc;
@@ -39,7 +37,26 @@ main (argc, argv)
   mpz_t temp, temp2;
   mp_size_t x2_size;
   int i;
-  int reps = 100000;
+  int reps = 20000;
+  gmp_randstate_t rands;
+  mpz_t bs;
+  unsigned long bsi, size_range;
+  char *perform_seed;
+
+  gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
+
+  perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
+  if (perform_seed != 0)
+    {
+      struct timeval tv;
+      gettimeofday (&tv, NULL);
+      gmp_randseed_ui (rands, tv.tv_sec + tv.tv_usec);
+      printf ("PLEASE INCLUDE THIS SEED NUMBER IN ALL BUG REPORTS:\n");
+      printf ("GMP_CHECK_RANDOMIZE is set--seeding with %ld\n",
+	      tv.tv_sec + tv.tv_usec);
+    }
+
+  mpz_init (bs);
 
   if (argc == 2)
      reps = atoi (argv[1]);
@@ -52,9 +69,14 @@ main (argc, argv)
 
   for (i = 0; i < reps; i++)
     {
-      x2_size = urandom () % SIZE;
+      mpz_urandomb (bs, rands, 32);
+      size_range = mpz_get_ui (bs) % 12 + 2; /* 0..8191 bit operands */
 
-      mpz_random2 (x2, x2_size);
+      mpz_urandomb (bs, rands, size_range);
+      x2_size = mpz_get_ui (bs);
+      mpz_rrandomb (x2, rands, x2_size);
+
+      /* printf ("%ld\n", SIZ (x2)); */
 
       mpz_sqrtrem (x, rem, x2);
       mpz_mul (temp, x, x);
