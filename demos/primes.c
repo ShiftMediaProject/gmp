@@ -80,7 +80,8 @@ main (int argc, char **argv)
 	  mpz_set_str (r1, argv[2] + 1, 0);
 	  mpz_add (r1, r1, r0);
 	}
-      mpz_set_str (r1, argv[2], 0);
+      else
+	mpz_set_str (r1, argv[2], 0);
     }
   else
     {
