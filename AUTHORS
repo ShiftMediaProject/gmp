@@ -11,3 +11,4 @@ Linus Nordberg		New random number framework, original autoconfery
 Kent Boortz		MacOS port
 Kevin Ryde		Most x86 assembly, new autoconfery, ...
 Guillaume Hanrot	mpfr functions (with Paul Zimmermann)
+Gerardo Ballabio	gmpxx.h and C++ istream input
