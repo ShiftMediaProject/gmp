@@ -137,6 +137,8 @@ libstat_la_SOURCES = statlib.c zdiv_round.c
 libstat_la_LIBADD = $(top_builddir)/libgmp.la -lm
 
 EXTRA_DIST = gmpstat.h
+
+CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES)
 subdir = tests/rand
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
@@ -151,6 +153,8 @@ libstat_la_LDFLAGS =
 libstat_la_DEPENDENCIES =  $(top_builddir)/libgmp.la
 am_libstat_la_OBJECTS =  statlib$U.lo zdiv_round$U.lo
 libstat_la_OBJECTS =  $(am_libstat_la_OBJECTS)
+EXTRA_PROGRAMS =  findlc$(EXEEXT) gen$(EXEEXT) gen.static spect$(EXEEXT) \
+stat$(EXEEXT)
 check_PROGRAMS =  t-rand$(EXEEXT)
 findlc_SOURCES = findlc.c
 findlc_OBJECTS =  findlc$U.$(OBJEXT)
@@ -429,6 +433,7 @@ installdirs:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
@@ -476,6 +481,8 @@ uninstall-am uninstall all-redirect all-am all install-strip \
 installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
+allprogs: $(EXTRA_PROGRAMS)
 
 manual-test: gen$(EXEEXT) stat$(EXEEXT)
 	@(echo -n '16i: '; ./gen -f mpz_urandomb -z 16 1000 \
