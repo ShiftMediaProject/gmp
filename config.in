@@ -115,9 +115,6 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the <float.h> header file. */
 #undef HAVE_FLOAT_H
 
-/* Define to 1 if you have the <fpu_control.h> header file. */
-#undef HAVE_FPU_CONTROL_H
-
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
@@ -352,6 +349,9 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the `syssgi' function. */
 #undef HAVE_SYSSGI
 
+/* Define to 1 if you have the <sys/fpu.h> header file. */
+#undef HAVE_SYS_FPU_H
+
 /* Define to 1 if you have the <sys/mman.h> header file. */
 #undef HAVE_SYS_MMAN_H
 
@@ -406,6 +406,9 @@ MA 02111-1307, USA.
 
 /* Define if you have the `isnan' function via the <math.h> header file. */
 #undef MPFR_HAVE_ISNAN
+
+/* Define to 1 if mpfr x86 test routines are available. */
+#undef MPFR_HAVE_TESTS_x86
 
 /* Name of package */
 #undef PACKAGE

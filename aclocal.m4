@@ -8235,6 +8235,16 @@ case $host in
 		;;
 esac
 
+# CPU-dependent objects for the test programs
+case $host in
+  X86_PATTERN)
+    AC_SUBST(TESTS_ASM_OBJECTS, x86.$OBJEXT)
+    AC_DEFINE(MPFR_HAVE_TESTS_x86, 1,
+              [Define to 1 if mpfr x86 test routines are available.])
+    ;;
+esac
+
+
 AC_REPLACE_FUNCS(strcasecmp strncasecmp)
 
 dnl Check for IEEE-754 switches on Alpha
@@ -8257,7 +8267,11 @@ alpha*-*-*)
   fi
 esac
 
-AC_CHECK_HEADERS(fpu_control.h)
+# Reasons for testing:
+#
+#   sys/fpu.h - MIPS specific
+#
+AC_CHECK_HEADERS(sys/fpu.h)
 
 dnl Check for fesetround
 AC_CACHE_CHECK([for fesetround], mpfr_cv_have_fesetround, [
