@@ -93,11 +93,11 @@ MA 02111-1307, USA. */
     (size) += (size2) - (cy == 0);                      \
   } while (0)
 
-#define MPN_MUL_2(ptr, size, alloc, high, low)  \
+#define MPN_MUL_2(ptr, size, alloc, low, high)  \
   do {                                          \
     mp_limb_t  cy;                              \
     ASSERT ((size)+2 <= (alloc));               \
-    cy = mpn_mul_2 (ptr, ptr, size, high, low); \
+    cy = mpn_mul_2 (ptr, ptr, size, low, high); \
     (size)++;                                   \
     (ptr)[(size)] = cy;                         \
     (size) += (cy != 0);                        \
@@ -423,12 +423,12 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
               MPN_SQR_N (tp, talloc, rp, rsize);
               SWAP_RP_TP;
               if ((e & (1L << i)) != 0)
-                MPN_MUL_2 (rp, rsize, ralloc, blimb, blimb_low);
+                MPN_MUL_2 (rp, rsize, ralloc, blimb_low, blimb);
             }
 
           TRACE (mpn_trace ("mul_2 before rl, r", rp, rsize));
           if (rl_high != 0)
-            MPN_MUL_2 (rp, rsize, ralloc, rl_high, rl);
+            MPN_MUL_2 (rp, rsize, ralloc, rl, rl_high);
           else if (rl != 1)
             MPN_MUL_1 (rp, rsize, ralloc, rl);
         }
