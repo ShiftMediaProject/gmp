@@ -18,6 +18,55 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-07-01  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/pa64/umul.asm, mpn/pa64/udiv.asm, mpn/asm-defs.m4, acconfig.h,
+	longlong.h, tune/speed.c, tune/speed.h, tune/common.c, tune/many.pl,
+	tests/devel/try.c: Introduce mpn_umul_ppmm_r and mpn_udiv_qrnnd_r
+	rather than having variant parameter order for mpn_umul_ppmm and
+	mpn_udiv_qrnnd on pa64.
+
+	* gmp-h.in (mpz_export): Remove a spurious parameter name.
+	* gmp-impl.h (mpn_rootrem): Use __MPN.
+
+2002-06-29  Kevin Ryde  <kevin@swox.se>
+
+	* longlong.h (udiv_qrnnd) [hppa32]: Remove mpn_udiv_qrnnd version, the
+	general mechanism for that suffices.
+
+	* mpf/inp_str.c: Fix returned count of chars read, reported by Paul
+	Zimmermann.  Also fix a memory leak for invalid input.
+	* tests/mpf/t-inp_str.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+
+	* tests/devel/try.c (mpn_mod_34lsub1): Only exists for
+	GMP_NUMB_BITS%4==0.
+	(SIZE2_FIRST): Respect option_firstsize2 for "fraction" case.
+
+	* mpn/generic/diveby3.c: Further nailifications.
+	* gmp-impl.h (MODLIMB_INVERSE_3): Allow for GMP_NUMB_BITS odd.
+	(GMP_NUMB_CEIL_MAX_DIV3, GMP_NUMB_CEIL_2MAX_DIV3): New constants.
+	* tests/t-constants.c: Check them.
+
+	* gmp-h.in (__GMP_CRAY_Pragma): New macro.
+	(__GMPN_COPY_REST): Use it.
+	* gmp-impl.h (CRAY_Pragma): Use it.
+
+2002-06-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/import.c, mpz/export.c: Cast data pointer through "char *" in
+	alignment tests, for the benefit of Cray vector systems.
+
+	* configure.in (x86-*-*): Remove -march=pentiumpro check, seems ok
+	with current code.
+	* acinclude.m4 (GMP_GCC_MARCH_PENTIUMPRO, GMP_GCC_VERSION_GE): Remove
+	macros, no longer needed
+
+	* acinclude.m4 (GMP_ASM_RODATA): Remove temporary files.
+
+	* configure.in (GMP_ASM_GLOBL_ATTR): Reposition to avoid duplication
+	through AC_REQUIRE.
+
 2002-06-23  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpz/t-fib_ui.c (check_fib_table): Check table values, not just
