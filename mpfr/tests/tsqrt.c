@@ -377,11 +377,18 @@ main (void)
   check4 (a*8010323124937260.0, GMP_RNDD, "1.556abe212b56e@13");
   check4 (a*2.0*8010776873384260.0, GMP_RNDD, "1.e2d9a51977e6d@13");
 
+  /* This test is disabled because it fails on mips64-sgi-irix6.5 with SGI
+     cc in n32 mode.  Looks like "a" is truncated to zero rather than
+     becoming a denorm.  FIXME: This test could be reinstated, but only if
+     done purely with mpfr operations.  We're not interested in exploring
+     the dark corners of hardware floats.  */
+#if 0
   /* 8093416094703476*2^(-1075) -> 8538091790120431*2^(-564) */
   a = 8093416094703476.0;
   for (k = 0; k < 1075; k++)
     a = a / 2.0;
   check4 (a, GMP_RNDN, "1e55596835b5ef@-141");
+#endif
 
   tests_end_mpfr ();
   return 0;
