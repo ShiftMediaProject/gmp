@@ -167,10 +167,10 @@
 #
 # If a file has "1c" or "nc" carry-in entrypoints, they're renamed and made
 # available too.  These are recognised from PROLOGUE or MULFUNC_PROLOGUE in
-# .S and .asm files, or from a line starting with "mpn_foo_1c" in a .c file,
-# and on that basis are entirely optional.  This entrypoint matching is done
-# for the standard entrypoints too, but it would be very unusual to have for
-# instance a mul_1c without a mul_1.
+# .S and .asm files, or from a line starting with "mpn_foo_1c" in a .c file
+# (possibly via a #define), and on that basis are entirely optional.  This
+# entrypoint matching is done for the standard entrypoints too, but it would
+# be very unusual to have for instance a mul_1c without a mul_1.
 #
 # Some mpz files are recognized.  For example an experimental copy of
 # mpz/powm.c could be included as powm_new.c and would be called
@@ -180,6 +180,10 @@
 # The PIC functions have a "_pic" suffix, for example "mpn_mod_1_k7_mmx_pic".
 # This can be ignored for routines that don't differ for PIC, or for CPUs
 # where everything is PIC anyway.
+#
+# K&R compilers are supported via the same ansi2knr mechanism used by
+# automake, though it's hard to believe anyone will have much interest in
+# measuring a compiler so old that it doesn't even have an ANSI mode.
 #
 # The "-t" option can be used to print a trace of the files found and what's
 # done with them.  A great deal of obscure output is produced, but it can
@@ -217,28 +221,19 @@
 #
 # FUTURE
 #
-# Try to detect duplicate function names here, rather than leaving it to
-# link errors.
-#
-# Follow #include or include_mpn's when checking for PROLOGUE's to recognise
-# entrypoints.
-#
-# Make a way to measure alternate versions of longlong.h macros.
-#
-# Add mpn_invert_limb and mpn_count_leading_zeros.
-#
 # Maybe the C files should be compiled pic and non-pic too.  Wait until
 # there's a difference that might be of interest.
 #
 #
 # LIMITATIONS
 #
-# Not sure if ansi2knr works with this stuff, probably not.
-#
 # Some of the command lines can become very long when a lot of files are
 # included.  If this is a problem on a given system the only suggestion is
 # to run many.pl for just those that are actually wanted at a particular
 # time.
+#
+# DOS 8.3 or SysV 14 char filesystems won't work, since the long filenames
+# generated will almost certainly fail to be unique.
 
 
 use strict;
@@ -462,12 +457,20 @@ my @table =
        'args'  => 'mp_srcptr xp, mp_size_t size, mp_limb_t divisor, mp_limb_t inverse',
        'speed_flags'=> 'FLAG_R',
      },
+     {
+       'regexp'=> 'invert_limb',
+       'ret'   => 'mp_limb_t',
+       'args'  => 'mp_limb_t divisor',
+       'attrib'=> 'ATTRIBUTE_CONST',
+       'speed_flags'=> 'FLAG_R_OPTIONAL',
+       'try'   => 'none',
+     },
 
      {
        'regexp'=> 'mode1o',
        'funs'  => ['modexact_1_odd'],
        'ret'   => 'mp_limb_t',
-       'args'  => 'mp_srcptr src, mp_size_t size, unsigned divisor',
+       'args'  => 'mp_srcptr src, mp_size_t size, mp_limb_t divisor',
        'speed_flags'=> 'FLAG_R',
      },
 
@@ -535,6 +538,35 @@ my @table =
        'regexp'=> 'sqrtrem',
        'ret'   => 'mp_size_t',
        'args'  => 'mp_ptr root, mp_ptr rem, mp_srcptr src, mp_size_t size',
+       'try'   => 'none',
+     },
+
+     {
+       'regexp'=> 'cntlz',
+       'funs'  => ['count_leading_zeros'],
+       'ret'   => 'unsigned',
+       'args'  => 'mp_limb_t',
+       'attrib'=> 'ATTRIBUTE_CONST',
+       'macro-before' => "#undef COUNT_LEADING_ZEROS_0",
+       'macro-speed'  =>
+'#ifdef COUNT_LEADING_ZEROS_0
+#define COUNT_LEADING_ZEROS_0_ALLOWED   1
+#else
+#define COUNT_LEADING_ZEROS_0_ALLOWED   0
+#endif
+  SPEED_ROUTINE_COUNT_LEADING_ZEROS_C ($fun (c, n),
+    COUNT_LEADING_ZEROS_0_ALLOWED)',
+       'speed_flags'=> 'FLAG_R_OPTIONAL',
+       'try'   => 'none',
+     },
+     {
+       'regexp'=> 'cnttz',
+       'funs'  => ['count_trailing_zeros'],
+       'ret'   => 'unsigned',
+       'args'  => 'mp_limb_t',
+       'attrib'=> 'ATTRIBUTE_CONST',
+       'macro-speed' => 'SPEED_ROUTINE_COUNT_TRAILING_ZEROS_C ($fun(c,n), 0)',
+       'speed_flags' => 'FLAG_R_OPTIONAL',
        'try'   => 'none',
      },
 
@@ -652,7 +684,7 @@ foreach my $dir (@DIRECTORIES) {
     if (! opendir DD,$dir) {
       print "Cannot open $dir: $!\n";
     } else {
-      push @files, map {$_="$dir/$_"} grep /\.(c|asm|S)$/, readdir DD;
+      push @files, map {$_="$dir/$_"} grep /\.(c|asm|S|h)$/, readdir DD;
       closedir DD;
     }
   }
@@ -662,12 +694,19 @@ print "@files ",join(" ",@files),"\n" if $opt{'t'};
 
 my $count_files = 0;
 my $count_functions = 0;
+my %seen_obj;
+my %seen_file;
 
 foreach my $file_full (@files) {
   if (! -f $file_full) {
     print "Not a file: $file_full\n";
     next;
   }
+  if (defined $seen_file{$file_full}) {
+    print "Skipping duplicate file: $file_full\n";
+    next;
+  }
+  $seen_file{$file_full} = 1;
 
   my ($FILE,$path,$lang) = fileparse($file_full,"\.[a-zA-Z]+");
   $path =~ s/\/$//;
@@ -677,6 +716,7 @@ foreach my $file_full (@files) {
   if ($lang eq '.asm')  { @pic_choices=('no','yes'); }
   elsif ($lang eq '.c') { @pic_choices=('no'); }
   elsif ($lang eq '.S') { @pic_choices=('no','yes'); }
+  elsif ($lang eq '.h') { @pic_choices=('no'); }
   else { next };
   
   my ($t, $file_match);
@@ -702,11 +742,13 @@ foreach my $file_full (@files) {
   print "objs @$objs\n" if $opt{'t'};
 
   my $ret = $t->{'ret'};
-  die "$FILE return type not defined\n" if ! defined $ret;
+  if (! defined $ret && $lang eq '.h') { $ret = ''; }
+  if (! defined $ret) { die "$FILE return type not defined\n" };
   print "ret $ret\n" if $opt{'t'};
 
   my $mpX = $t->{'mpX'};
-  $mpX = "mpn" if ! defined $mpX;
+  if (! defined $mpX) { $mpX = ($lang eq '.h' ? '' : 'mpn'); }
+  $mpX = "${mpX}_" if $mpX ne '';
   print "mpX $mpX\n" if $opt{'t'};
 
   my $carrys;
@@ -742,6 +784,15 @@ foreach my $file_full (@files) {
   foreach my $obj (@{$objs}) {
     print "obj $obj\n" if $opt{'t'};
 
+    my $obj_with_suffix = "${obj}_$suffix";
+    if (defined $seen_obj{$obj_with_suffix}) {
+      print "Skipping duplicate object: $obj_with_suffix\n";
+      print "   first from: $seen_obj{$obj_with_suffix}\n";
+      print "   now from:   $file_full\n";
+      next;
+    }
+    $seen_obj{$obj_with_suffix} = $file_full;
+
     my $funs = $t->{'funs'};
     print "funs @$funs\n" if $opt{'t'};
 
@@ -757,18 +808,20 @@ foreach my $file_full (@files) {
       if ($path !~ "." && -f "${objbase}.c") {
 	die "Already have ${objbase}.c";
       }
+
+      my $tmp_file = "tmp-$objbase.c";
       
       my $renaming;
       foreach my $fun (@{$funs}) {
 	my $fun_carry = $fun;
 	if (! ($fun_carry =~ s/_1/_1c/)) { $fun_carry = "${fun}c"; }
 	$renaming .=
-	    "\t\t-D__g${mpX}_$fun=${mpX}_${fun}_$suffix$pic->{'suffix'} \\\n" .
-	    "\t\t-D__g${mpX}_$fun_carry=${mpX}_${fun_carry}_$suffix$pic->{'suffix'} \\\n";
+	    "\t\t-D__g$mpX$fun=$mpX${fun}_$suffix$pic->{'suffix'} \\\n" .
+	    "\t\t-D__g$mpX$fun_carry=$mpX${fun_carry}_$suffix$pic->{'suffix'} \\\n";
       }
       foreach my $r (@{$t->{'rename'}}) {
 	$renaming .= "\\\n" .
-	    "\t\t-D__g${mpX}_$r=${mpX}_${r}_$suffix$pic->{'suffix'}";
+	    "\t\t-D__g$mpX$r=$mpX${r}_$suffix$pic->{'suffix'}";
       }
       print "renaming $renaming\n" if $opt{'t'};
 
@@ -781,21 +834,51 @@ foreach my $file_full (@files) {
 	    "		$file_full >tmp-$objbase.s\n" .
             "	\$(CCAS) \$(COMPILE_FLAGS) $pic->{'cflags'} tmp-$objbase.s -o $objbase.o\n" .
             "	\$(RM_TMP_S) tmp-$objbase.s\n";
+	$MANY_OBJS .= " $objbase.o";
+
       } elsif ($lang eq '.c') {
 	print MAKEFILE
 	    "$objbase.o: $file_full\n" .
 	    "	\$(COMPILE) -DOPERATION_$obj $pic->{'cflags'} \\\n" .
   	    "$renaming" .
 	    "		-c $file_full -o $objbase.o\n";
+	print_ansi2knr($objbase,
+		       $file_full,
+		       " -DOPERATION_$obj\\\n$renaming\t\t");
+	$MANY_OBJS .= " $objbase\$U.o";
+
       } elsif ($lang eq '.S') {
 	print MAKEFILE
 	    "$objbase.o: $file_full\n" .
             "	\$(COMPILE) -g $pic->{'asmflags'} \\\n" .
   	    "$renaming" .
             "	-c $file_full -o $objbase.o\n";
+	$MANY_OBJS .= " $objbase.o";
+
+      } elsif ($lang eq '.h') {
+	print MAKEFILE
+	    "$objbase.o: tmp-$objbase.c $file_full\n" .
+	    "	\$(COMPILE) -DOPERATION_$obj $pic->{'cflags'} \\\n" .
+  	    "$renaming" .
+	    "		-c tmp-$objbase.c -o $objbase.o\n";
+	print_ansi2knr($objbase,
+		       "tmp-$objbase.c",
+		       " -DOPERATION_$obj\\\n$renaming\t\t");
+	$MANY_OBJS .= " $objbase\$U.o";
+
+	open(TMP_C,">tmp-$objbase.c")
+	    or die "Can't create tmp-$objbase.c: $!\n";
+	print TMP_C
+"/* tmp-$objbase.c generated by many.pl - DO NOT EDIT, CHANGES WILL BE LOST */
+
+#include \"gmp.h\"
+#include \"gmp-impl.h\"
+#include \"longlong.h\"
+#include \"speed.h\"
+
+";
       }
-      $MANY_OBJS .= " $objbase.o";
-      
+
       my $tests_program = "$top_srcdir/tests/devel/$obj.c";
       if (-f $tests_program) {
 	$tests_program = "\$(top_srcdir)/tests/devel/$obj.c";
@@ -811,15 +894,15 @@ tests_$objbase.o: $tests_program
 	\$(COMPILE) \$(CFLAGS_TESTS) \\
 $renaming		-c $tests_program -o tests_$objbase.o
 
-tests_$objbase: $objbase.o tests_$objbase\$(U).o ../libgmp.la
-	\$(LINK) tests_$objbase\$(U).o $objbase.o ../libgmp.la -o tests_$objbase
+tests_$objbase: $objbase\$U.o tests_$objbase\$U.o ../libgmp.la
+	\$(LINK) tests_$objbase\$U.o $objbase\$U.o ../libgmp.la -o tests_$objbase
 
 tests_${objbase}_sp.o: $tests_program
 	\$(COMPILE) \$(CFLAGS_TESTS_SP) \\
 $renaming		-c $tests_program -o tests_${objbase}_sp.o
 
-tests_${objbase}_sp: $objbase.o tests_${objbase}_sp.o ../libgmp.la
-	\$(LINK) tests_${objbase}_sp\$(U).o $objbase.o ../libgmp.la -o tests_${objbase}_sp
+tests_${objbase}_sp: $objbase\$U.o tests_${objbase}_sp\$U.o ../libgmp.la
+	\$(LINK) tests_${objbase}_sp\$U.o $objbase\$U.o ../libgmp.la -o tests_${objbase}_sp
 
 EOF
         $CLEAN .= " tests_$objbase tests_${objbase}_sp";
@@ -827,6 +910,17 @@ EOF
 
       foreach my $fun (@{$funs}) {
 	print "fun $fun\n" if $opt{'t'};
+
+	if ($lang eq '.h') {
+          my $macro_before = $t->{'macro_before'};
+          $macro_before = "" if ! defined $macro_before;
+	  print TMP_C
+"$macro_before
+#undef $fun
+#include \"$file_full\"
+
+";
+	}
 
 	my $args = $t->{"args_$fun"};
 	if (! defined $args) { $args = $t->{'args'}; }
@@ -841,13 +935,18 @@ EOF
           print "fun_carry $fun_carry\n" if $opt{'t'};
 		    
 	  if ($lang =~ /\.(asm|S)/
-	      && ! grep(m"PROLOGUE.*${mpX}_$fun_carry",@file_contents)) {
-	    print "no PROLOGUE ${mpX}_$fun_carry\n" if $opt{'t'};
+	      && ! grep(m"PROLOGUE.*$mpX$fun_carry",@file_contents)) {
+	    print "no PROLOGUE $mpX$fun_carry\n" if $opt{'t'};
 	    next;
 	  }
-	  if ($lang =~ /\.c/
-	      && ! grep(m"^${mpX}_$fun_carry\W", @file_contents)) {
-	    print "no mention of ${mpX}_$fun_carry\n" if $opt{'t'};
+	  if ($lang eq '.c'
+	      && ! grep(m"^(#define FUNCTION\s+)?$mpX$fun_carry\W", @file_contents)) {
+	    print "no mention of $mpX$fun_carry\n" if $opt{'t'};
+	    next;
+	  }
+	  if ($lang eq '.h'
+	      && ! grep(m"^#define $fun_carry\W", @file_contents)) {
+	    print "no mention of #define $fun_carry\n" if $opt{'t'};
 	    next;
 	  }
 	  
@@ -859,20 +958,26 @@ EOF
 	  else                          { $carryarg = ', mp_limb_t carry'; }
 	  print "carryarg $carryarg\n" if $opt{'t'};
 	  
-	  my $funfull="${mpX}_${fun_carry}_$suffix$pic->{'suffix'}";
+	  my $funfull="$mpX${fun_carry}_$suffix$pic->{'suffix'}";
 	  print "funfull $funfull\n" if $opt{'t'};
-	  
-	  my $proto = "$t->{'ret'} $funfull _PROTO (($args$carryarg)); \\\n";
-	  $SPEED_EXTRA_PROTOS .= $proto;
-	  $TRY_EXTRA_PROTOS .= $proto;
+
+	  if ($lang ne '.h') {
+	    my $attrib = $t->{'attrib'};
+	    if (defined $attrib) { $attrib = " $attrib"; }
+	    else { $attrib = ''; }
+
+	    my $proto = "$t->{'ret'} $funfull _PROTO (($args$carryarg))$attrib; \\\n";
+	    $SPEED_EXTRA_PROTOS .= $proto;
+	    $TRY_EXTRA_PROTOS .= $proto;
+	  }
 	  
 	  my $try_type = $t->{"try-$fun"};
 	  $try_type = $t->{'try'} if ! defined $try_type;
 	  if (! defined $try_type) {
-	    if ($mpX eq 'mpn') {
+	    if ($mpX eq 'mpn_') {
 	      $try_type = "TYPE_\U$fun_carry";
 	    } else {
-	      $try_type = "TYPE_\U${mpX}_\U$fun_carry";
+	      $try_type = "TYPE_\U$mpX\U$fun_carry";
 	    }
 	  }
 	  print "try_type $try_type\n" if $opt{'t'};
@@ -887,7 +992,7 @@ EOF
 	  
 	  if ($try_type ne 'none') {
 	    $TRY_EXTRA_ROUTINES .=
-		"  { TRY(${mpX}_${fun_carry}_$suffix$pic->{'suffix'}), $try_type$try_minsize }, \\\n";
+		"  { TRY($mpX${fun_carry}_$suffix$pic->{'suffix'}), $try_type$try_minsize }, \\\n";
 	  }
 
 	  my $speed_flags = $t->{'speed_flags'};
@@ -895,7 +1000,7 @@ EOF
 	  print "speed_flags $speed_flags\n" if $opt{'t'};
 	  
 	  my $speed_routine = $t->{'speed'};
-	  $speed_routine = "SPEED_ROUTINE_\U${mpX}_\U$fun"
+	  $speed_routine = "SPEED_ROUTINE_\U$mpX\U$fun"
 	      if !defined $speed_routine;
 	  if (! ($speed_routine =~ s/_1/_1\U$carry/)) {
 	    $speed_routine = "$speed_routine\U$carry";
@@ -907,20 +1012,35 @@ EOF
 	  push (@speed_suffixes, @{$t->{'speed_suffixes'}})
 	      if defined $t->{'speed_suffixes'};
 	  
+          my $macro_speed = $t->{'macro-speed'};
+          $macro_speed = "" if ! defined $macro_speed;
+          $macro_speed =~ s/\$fun/$fun_carry/g;
+
 	  foreach my $S (@speed_suffixes) {
-	    my $Sfunfull="${mpX}_${fun_carry}${S}_$suffix$pic->{'suffix'}";
+	    my $Sfunfull="$mpX${fun_carry}${S}_$suffix$pic->{'suffix'}";
 	    
 	    $SPEED_EXTRA_PROTOS .=
 	      "double speed_$Sfunfull _PROTO ((struct speed_params *s)); \\\n";
 	    $SPEED_EXTRA_ROUTINES .=
 	      "  { \"$Sfunfull\", speed_$Sfunfull, $speed_flags }, \\\n";
-	    $SPEED_CODE .=
-	      "double\n" .
-	      "speed_$Sfunfull (struct speed_params *s)\n" .
-	      "{\n" .
-              "$restriction" .
-	      "  $speed_routine\U$S\E ($funfull)\n" .
-              "}\n";
+	    if ($lang eq '.h') {
+              print TMP_C
+"double
+speed_$Sfunfull (struct speed_params *s)
+{
+$macro_speed
+}
+
+";
+            } else {
+	      $SPEED_CODE .=
+	        "double\n" .
+	        "speed_$Sfunfull (struct speed_params *s)\n" .
+                "{\n" .
+                "$restriction" .
+	        "  $speed_routine\U$S\E ($funfull)\n" .
+                "}\n";
+            }
 	  }
 	}
       }
@@ -957,11 +1077,11 @@ MANY_OBJS = $MANY_OBJS
 
 CLEAN = $CLEAN
 
-speed-many: \$(MANY_OBJS) speed-many\$(U).o libspeed.la $extra_libraries
-	\$(LINK) \$(LDFLAGS) speed-many\$(U).o \$(MANY_OBJS) \$(LDADD) \$(LIBS) $extra_libraries
+speed-many: \$(MANY_OBJS) speed-many\$U.o libspeed.la $extra_libraries
+	\$(LINK) \$(LDFLAGS) speed-many\$U.o \$(MANY_OBJS) \$(LDADD) \$(LIBS) $extra_libraries
 
-try-many: \$(MANY_OBJS) try-many\$(U).o libspeed.la $extra_libraries
-	\$(LINK) \$(LDFLAGS) try-many\$(U).o \$(MANY_OBJS)  \$(LDADD) \$(LIBS) $extra_libraries
+try-many: \$(MANY_OBJS) try-many\$U.o libspeed.la $extra_libraries
+	\$(LINK) \$(LDFLAGS) try-many\$U.o \$(MANY_OBJS)  \$(LDADD) \$(LIBS) $extra_libraries
 
 try-many.o: try-many.c \$(top_srcdir)/tests/devel/try.c $tryinc
 	\$(COMPILE) -I\$(top_srcdir)/tests/devel -c try-many.c
@@ -970,7 +1090,7 @@ EOF
 
 print_ansi2knr("speed-many");
 print_ansi2knr("try-many",
-	       "$(top_srcdir)/tests/devel/try-many",
+	       "\$(top_srcdir)/tests/devel/try.c",
 	       "-I\$(top_srcdir)/tests/devel");
 
 print MAKEFILE <<EOF;
