@@ -34,7 +34,14 @@ MA 02111-1307, USA.
    limb value of either 0xFF...FF or 0xFF...FE and the multiply by
    MODLIMB_INVERSE_3 gives 0x55...55 or 0xAA...AA respectively, producing a
    further borrow of only 0 or 1 respectively.  Hence the carry out of each
-   stage and for the return value is always only 0, 1 or 2.  */
+   stage and for the return value is always only 0, 1 or 2.
+
+   This implementation has each multiply successively dependent due to the
+   "l=s-c", but the multiply src[i]*MODLIMB_INVERSE_3 could be scheduled
+   back as far as desired, and the effect of the "-c" applied by subtracting
+   0, 1 or 2 copies or MODLIMB_INVERSE_3 from the product.  With some good
+   scheduling in assembler it might come down to a dependent chain of maybe
+   5 simple operations per limb.  */
 
 mp_limb_t
 #if __STDC__
