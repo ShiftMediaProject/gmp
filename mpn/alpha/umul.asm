@@ -27,8 +27,8 @@ C
 
 ASM_START()
 PROLOGUE(mpn_umul_ppmm)
-	mulq $17,$18,$1
-	umulh $17,$18,$0
-	stq $1,0($16)
-	ret $31,($26),1
+	mulq	r17, r18, r1
+	umulh	r17, r18, r0
+	stq	r1, 0(r16)
+	ret	r31, (r26), 1
 EPILOGUE()
