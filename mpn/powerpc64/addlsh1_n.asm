@@ -58,7 +58,7 @@ PROLOGUE(mpn_addlsh1_n)
 	std	s1, 8(rp)	C store result limb
 	srdi	s0, v0, 63	C shift down previous v limb
 	ldu	u0, 16(up)	C load u limb and update up
-	rldimi	s0, v1, 1, 0	C lest shift v limb and merge with prev v limb
+	rldimi	s0, v1, 1, 0	C left shift v limb and merge with prev v limb
 
 	bdz	.Lexit		C decrement ctr and exit if done
 
@@ -67,7 +67,7 @@ PROLOGUE(mpn_addlsh1_n)
 	stdu	s0, 16(rp)	C store result limb and update rp
 	srdi	s1, v1, 63	C shift down previous v limb
 	ld	u0, 8(up)	C load u limb
-	rldimi	s1, v0, 1, 0	C lest shift v limb and merge with prev v limb
+	rldimi	s1, v0, 1, 0	C left shift v limb and merge with prev v limb
 
 	bdnz	.Loop		C decrement ctr and loop back
 
