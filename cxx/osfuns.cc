@@ -47,51 +47,63 @@ const struct doprnt_funs_t  __gmp_asprintf_funs_noformat = {
 void
 __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o)
 {
-  switch (o.flags() & ios::basefield) {
-  case ios::hex:
-    p->base = (o.flags() & ios::uppercase ? -16 : 16);
-    switch (o.flags() & (ios::uppercase | ios::showbase)) {
-    default:                              p->expfmt = "@%c%02x"; break;
-    case ios::uppercase:                  p->expfmt = "@%c%02X"; break;
-    case ios::showbase:                   p->expfmt = "@%c%#04x"; break;
-    case ios::showbase | ios::uppercase:  p->expfmt = "@%c%#04X"; break;
+  if ((o.flags() & ios::basefield) == ios::hex)
+    {
+      if (o.flags() & ios::uppercase)
+        {
+          p->base = -16;
+          if (o.flags() & ios::showbase)  p->expfmt = "@%c%#04X";
+          else                            p->expfmt = "@%c%02X";
+        }
+      else
+        {
+          p->base = 16;
+          if (o.flags() & ios::showbase)  p->expfmt = "@%c%#04x";
+          else                            p->expfmt = "@%c%02x";
+        }
     }
-    break;
-  case ios::oct:
-    p->base = 8;
-    switch (o.flags() & (ios::uppercase | ios::showbase)) {
-    default:                              p->expfmt = "e%c%02o"; break;
-    case ios::uppercase:                  p->expfmt = "E%c%02o"; break;
-    case ios::showbase:                   p->expfmt = "e%c%#02o"; break;
-    case ios::showbase | ios::uppercase:  p->expfmt = "E%c%#02o"; break;
+  else if ((o.flags() & ios::basefield) == ios::oct)
+    {
+      p->base = 8;
+
+
+      if (o.flags() & ios::uppercase)
+        {
+          if (o.flags() & ios::showbase)  p->expfmt = "E%c%#02o";
+          else                            p->expfmt = "E%c%02o";
+        }
+      else
+        {
+          if (o.flags() & ios::showbase)  p->expfmt = "e%c%#02o";
+          else                            p->expfmt = "e%c%02o";
+        }
     }
-    break;
-  default:
-    p->base = 10;
-    switch (o.flags() & ios::uppercase) {
-    default:             p->expfmt = "e%c%02d"; break;
-    case ios::uppercase: p->expfmt = "E%c%02d"; break;
+  else
+    {
+      p->base = 10;
+      if (o.flags() & ios::uppercase)     p->expfmt = "E%c%02d";
+      else                                p->expfmt = "e%c%02d";
     }
-    break;
-  }
 
   /* "general" if none or more than one bit set */
-  switch (o.flags() & ios::floatfield) {
-  case ios::fixed:      p->conv = DOPRNT_CONV_FIXED;      break;
-  case ios::scientific: p->conv = DOPRNT_CONV_SCIENTIFIC; break;
-  default:              p->conv = DOPRNT_CONV_GENERAL;    break;
-  }
+  if ((o.flags() & ios::floatfield) == ios::fixed)
+    p->conv = DOPRNT_CONV_FIXED;
+  else if ((o.flags() & ios::floatfield) == ios::scientific)
+    p->conv = DOPRNT_CONV_SCIENTIFIC;
+  else
+    p->conv = DOPRNT_CONV_GENERAL;
 
   p->exptimes4 = 0;
 
   p->fill = o.fill();
 
   /* "right" if more than one bit set */
-  switch (o.flags() & ios::adjustfield) {
-  case ios::left:     p->justify = DOPRNT_JUSTIFY_LEFT;     break;
-  case ios::internal: p->justify = DOPRNT_JUSTIFY_INTERNAL; break;
-  default:            p->justify = DOPRNT_JUSTIFY_RIGHT;    break;
-  }
+  if ((o.flags() & ios::adjustfield) == ios::left)
+    p->justify = DOPRNT_JUSTIFY_LEFT;
+  else if ((o.flags() & ios::adjustfield) == ios::internal)
+    p->justify = DOPRNT_JUSTIFY_INTERNAL;
+  else
+    p->justify = DOPRNT_JUSTIFY_RIGHT;
 
   /* ios::fixed allows prec==0, others take 0 as the default 6.
      Don't allow negatives (they do bad things to __gmp_doprnt_float_cxx).  */
@@ -110,11 +122,11 @@ __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o)
 
   /* in fixed and scientific always show trailing zeros, in general format
      show them if showpoint is set (or so it seems) */
-  switch (o.flags() & ios::floatfield) {
-  case ios::fixed:
-  case ios::scientific: p->showtrailing = 1;            break;
-  default:              p->showtrailing = p->showpoint; break;
-  }
+  if ((o.flags() & ios::floatfield) == ios::fixed
+      || (o.flags() & ios::floatfield) == ios::scientific)
+    p->showtrailing = 1;
+  else
+    p->showtrailing = p->showpoint;
 
   p->sign = (o.flags() & ios::showpos ? '+' : '\0');
 
