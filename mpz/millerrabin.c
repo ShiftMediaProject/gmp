@@ -5,6 +5,10 @@
    reps is the number of internal passes of the probabilistic algorithm.  Knuth
    indicates that 25 passes are reasonable.
 
+   THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
+   CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
+   FUTURE GNU MP RELEASES.
+
 Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001 Free Software
 Foundation, Inc.  Contributed by John Amanatides.
 
