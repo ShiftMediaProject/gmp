@@ -1,6 +1,6 @@
 /* Exercise mpz_*_kronecker_*() and mpz_jacobi() functions.
 
-Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -617,7 +617,7 @@ check_data (void)
       "0x10000000000000000000000000000000000000000000000003", 1 },
   };
 
-  int    i, answer;
+  int    i;
   mpz_t  a, b;
 
   mpz_init (a);
@@ -627,8 +627,6 @@ check_data (void)
     {
       mpz_set_str_or_abort (a, data[i].a, 0);
       mpz_set_str_or_abort (b, data[i].b, 0);
-
-      answer = data[i].answer;
       try_all (a, b, data[i].answer);
     }
 
