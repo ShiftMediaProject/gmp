@@ -57,6 +57,7 @@ WriteMakefile(
 	      LIBS         => [$LIBS],
 	      OBJECT       => $OBJECT,
 	      INC          => $INC,
+	      clean        => { FILES => 'test.tmp' },
 	      );
 
 
