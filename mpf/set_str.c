@@ -27,7 +27,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#define assert(true) do { if (!(true)) abort (); } while (0)
 
 #define swapptr(xp,yp) \
 do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
