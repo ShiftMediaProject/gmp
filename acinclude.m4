@@ -339,6 +339,16 @@ dnl  Check if cc+cflags can compile and link.
 dnl
 dnl  This test is designed to be run repeatedly with different cc+cflags
 dnl  selections, so the result is not cached.
+dnl
+dnl  For a native build, meaning $cross_compiling == no, we require that the
+dnl  generated program will run.  This is the same as AC_PROG_CC does in
+dnl  _AC_COMPILER_EXEEXT_WORKS, and checking here will ensure we don't pass
+dnl  a CC/CFLAGS combination that it rejects.
+dnl
+dnl  sparc-*-solaris2.7 can compile ABI=64 but won't run it if the kernel
+dnl  was booted in 32-bit mode.  The effect of requiring the compiler output
+dnl  will run is that a plain native "./configure" falls back on ABI=32, but
+dnl  ABI=64 is still available as a cross-compile.
 
 AC_DEFUN(GMP_PROG_CC_WORKS,
 [AC_MSG_CHECKING([compiler $1])
@@ -358,14 +368,22 @@ int cmov () { return (n >= 0 ? n : 0); }
 
 int main () { return 0; }
 EOF
-gmp_compile="$1 conftest.c -o conftest >&AC_FD_CC"
+gmp_prog_cc_works=no
+gmp_compile="$1 conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
-  rm -f conftest*
-  AC_MSG_RESULT(yes)
+  if test "$cross_compiling" = no; then
+    if AC_TRY_COMMAND([./a.out || ./a.exe || ./conftest]); then
+      gmp_prog_cc_works=yes
+    fi
+  else
+    gmp_prog_cc_works=yes
+  fi
+fi
+rm -f conftest* a.out a.exe
+AC_MSG_RESULT($gmp_prog_cc_works)
+if test $gmp_prog_cc_works; then
   ifelse([$2],,:,[$2])
 else
-  rm -f conftest*
-  AC_MSG_RESULT(no)
   ifelse([$3],,:,[$3])
 fi
 ])
