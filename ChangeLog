@@ -1,5 +1,8 @@
 2000-11-20  Torbjorn Granlund  <tege@swox.com>
 
+	* configure.in [compiler switch]: Pass "-Aa -D_HPUX_SOURCE" to cc for
+	all hppa versions.
+
 	* mpn/hppa/hppa1_1/udiv_qrnnd.S: Reference data using PC relative
 	addressing (was r19 relative addressing).
 
