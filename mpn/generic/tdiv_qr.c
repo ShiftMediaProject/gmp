@@ -51,7 +51,6 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
   ASSERT (nn >= 0);
   ASSERT (dn >= 0);
   ASSERT (dn == 0 || dp[dn - 1] != 0);
-  ASSERT (! MPN_OVERLAP_P (np, nn, dp, dn));
   ASSERT (! MPN_OVERLAP_P (qp, nn - dn + 1 + qxn, np, nn));
   ASSERT (! MPN_OVERLAP_P (qp, nn - dn + 1 + qxn, dp, dn));
 
