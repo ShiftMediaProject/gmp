@@ -1425,27 +1425,27 @@ __GMP_DECLSPEC void mpn_tdiv_qr __GMP_PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcp
 
 #if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_abs
 __GMP_EXTERN_INLINE void
-mpz_abs (mpz_ptr w, mpz_srcptr u)
+mpz_abs (mpz_ptr __gmp_w, mpz_srcptr __gmp_u)
 {
-  if (w != u)
-    mpz_set (w, u);
-  w->_mp_size = __GMP_ABS (w->_mp_size);
+  if (__gmp_w != __gmp_u)
+    mpz_set (__gmp_w, __gmp_u);
+  __gmp_w->_mp_size = __GMP_ABS (__gmp_w->_mp_size);
 }
 #endif
 
-#define __GMPZ_FITS_UTYPE_P(z,maxval)                   \
-  mp_size_t  size = z->_mp_size;                        \
-  mp_limb_t  data = z->_mp_d[0];                        \
-  return (size == 0 || (size == 1 && data <= maxval));
+#define __GMPZ_FITS_UTYPE_P(z,maxval)                                         \
+  mp_size_t  __gmp_size = z->_mp_size;                                        \
+  mp_limb_t  __gmp_data = z->_mp_d[0];                                        \
+  return (__gmp_size == 0 || (__gmp_size == 1 && __gmp_data <= maxval));
 
 #if defined (__GMP_EXTERN_INLINE) || __GMP_FORCE_mpz_fits_uint_p
 #if ! __GMP_FORCE_mpz_fits_uint_p
 __GMP_EXTERN_INLINE
 #endif
 int
-mpz_fits_uint_p (mpz_srcptr z)
+mpz_fits_uint_p (mpz_srcptr __gmp_z)
 {
-  __GMPZ_FITS_UTYPE_P (z, __GMP_UINT_MAX);
+  __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_UINT_MAX);
 }
 #endif
 
@@ -1454,9 +1454,9 @@ mpz_fits_uint_p (mpz_srcptr z)
 __GMP_EXTERN_INLINE
 #endif
 int
-mpz_fits_ulong_p (mpz_srcptr z)
+mpz_fits_ulong_p (mpz_srcptr __gmp_z)
 {
-  __GMPZ_FITS_UTYPE_P (z, __GMP_ULONG_MAX);
+  __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_ULONG_MAX);
 }
 #endif
 
@@ -1465,9 +1465,9 @@ mpz_fits_ulong_p (mpz_srcptr z)
 __GMP_EXTERN_INLINE
 #endif
 int
-mpz_fits_ushort_p (mpz_srcptr z)
+mpz_fits_ushort_p (mpz_srcptr __gmp_z)
 {
-  __GMPZ_FITS_UTYPE_P (z, __GMP_USHRT_MAX);
+  __GMPZ_FITS_UTYPE_P (__gmp_z, __GMP_USHRT_MAX);
 }
 #endif
 
@@ -1476,10 +1476,10 @@ mpz_fits_ushort_p (mpz_srcptr z)
 __GMP_EXTERN_INLINE
 #endif
 unsigned long
-mpz_get_ui (mpz_srcptr z)
+mpz_get_ui (mpz_srcptr __gmp_z)
 {
-  mp_limb_t l = z->_mp_d[0];
-  return z->_mp_size ? l : 0;
+  mp_limb_t __gmp_l = __gmp_z->_mp_d[0];
+  return __gmp_z->_mp_size ? __gmp_l : 0;
 }
 #endif
 
@@ -1488,22 +1488,22 @@ mpz_get_ui (mpz_srcptr z)
 __GMP_EXTERN_INLINE
 #endif
 mp_limb_t
-mpz_getlimbn (mpz_srcptr z, mp_size_t n)
+mpz_getlimbn (mpz_srcptr __gmp_z, mp_size_t __gmp_n)
 {
-  if (__GMP_ABS (z->_mp_size) <= n || n < 0)
+  if (__GMP_ABS (__gmp_z->_mp_size) <= __gmp_n || __gmp_n < 0)
     return 0;
   else
-    return z->_mp_d[n];
+    return __gmp_z->_mp_d[__gmp_n];
 }
 #endif
 
 #if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpz_neg
 __GMP_EXTERN_INLINE void
-mpz_neg (mpz_ptr w, mpz_srcptr u)
+mpz_neg (mpz_ptr __gmp_w, mpz_srcptr __gmp_u)
 {
-  if (w != u)
-    mpz_set (w, u);
-  w->_mp_size = - w->_mp_size;
+  if (__gmp_w != __gmp_u)
+    mpz_set (__gmp_w, __gmp_u);
+  __gmp_w->_mp_size = - __gmp_w->_mp_size;
 }
 #endif
 
@@ -1512,13 +1512,13 @@ mpz_neg (mpz_ptr w, mpz_srcptr u)
 __GMP_EXTERN_INLINE
 #endif
 int
-mpz_perfect_square_p (mpz_srcptr a)
+mpz_perfect_square_p (mpz_srcptr __gmp_a)
 {
-  mp_size_t asize = a->_mp_size;
-  if (asize <= 0)
-    return (asize == 0);  /* zero is a square, negatives are not */
+  mp_size_t __gmp_asize = __gmp_a->_mp_size;
+  if (__gmp_asize <= 0)
+    return (__gmp_asize == 0);  /* zero is a square, negatives are not */
   else
-    return mpn_perfect_square_p (a->_mp_d, asize);
+    return mpn_perfect_square_p (__gmp_a->_mp_d, __gmp_asize);
 }
 #endif
 
@@ -1527,14 +1527,14 @@ mpz_perfect_square_p (mpz_srcptr a)
 __GMP_EXTERN_INLINE
 #endif
 unsigned long
-mpz_popcount (mpz_srcptr u)
+mpz_popcount (mpz_srcptr __gmp_u)
 {
-  mp_size_t usize = u->_mp_size;
+  mp_size_t __gmp_usize = __gmp_u->_mp_size;
 
-  if (usize <= 0)
-    return (usize < 0 ? __GMP_ULONG_MAX : 0);
+  if (__gmp_usize <= 0)
+    return (__gmp_usize < 0 ? __GMP_ULONG_MAX : 0);
   else
-    return mpn_popcount (u->_mp_d, usize);
+    return mpn_popcount (__gmp_u->_mp_d, __gmp_usize);
 }
 #endif
 
@@ -1543,9 +1543,9 @@ mpz_popcount (mpz_srcptr u)
 __GMP_EXTERN_INLINE
 #endif
 void
-mpz_set_q (mpz_ptr w, mpq_srcptr u)
+mpz_set_q (mpz_ptr __gmp_w, mpq_srcptr __gmp_u)
 {
-  mpz_tdiv_q (w, mpq_numref (u), mpq_denref (u));
+  mpz_tdiv_q (__gmp_w, mpq_numref (__gmp_u), mpq_denref (__gmp_u));
 }
 #endif
 
@@ -1554,9 +1554,9 @@ mpz_set_q (mpz_ptr w, mpq_srcptr u)
 __GMP_EXTERN_INLINE
 #endif
 size_t
-mpz_size (mpz_srcptr z)
+mpz_size (mpz_srcptr __gmp_z)
 {
-  return __GMP_ABS (z->_mp_size);
+  return __GMP_ABS (__gmp_z->_mp_size);
 }
 #endif
 
@@ -1565,21 +1565,21 @@ mpz_size (mpz_srcptr z)
 
 #if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpq_abs
 __GMP_EXTERN_INLINE void
-mpq_abs (mpq_ptr w, mpq_srcptr u)
+mpq_abs (mpq_ptr __gmp_w, mpq_srcptr __gmp_u)
 {
-  if (w != u)
-    mpq_set (w, u);
-  w->_mp_num._mp_size = __GMP_ABS (w->_mp_num._mp_size);
+  if (__gmp_w != __gmp_u)
+    mpq_set (__gmp_w, __gmp_u);
+  __gmp_w->_mp_num._mp_size = __GMP_ABS (__gmp_w->_mp_num._mp_size);
 }
 #endif
 
 #if defined (__GMP_EXTERN_INLINE) && ! __GMP_FORCE_mpq_neg
 __GMP_EXTERN_INLINE void
-mpq_neg (mpq_ptr w, mpq_srcptr u)
+mpq_neg (mpq_ptr __gmp_w, mpq_srcptr __gmp_u)
 {
-  if (w != u)
-    mpq_set (w, u);
-  w->_mp_num._mp_size = - w->_mp_num._mp_size;
+  if (__gmp_w != __gmp_u)
+    mpq_set (__gmp_w, __gmp_u);
+  __gmp_w->_mp_num._mp_size = - __gmp_w->_mp_num._mp_size;
 }
 #endif
 
@@ -1603,47 +1603,47 @@ mpq_neg (mpq_ptr w, mpq_srcptr u)
 
 #define __GMPN_AORS(cout, wp, xp, xsize, yp, ysize, FUNCTION, TEST)     \
   do {                                                                  \
-    mp_size_t  __i;                                                     \
-    mp_limb_t  __x;                                                     \
+    mp_size_t  __gmp_i;                                                 \
+    mp_limb_t  __gmp_x;                                                 \
                                                                         \
     /* ASSERT ((ysize) >= 0); */                                        \
     /* ASSERT ((xsize) >= (ysize)); */                                  \
     /* ASSERT (MPN_SAME_OR_SEPARATE2_P (wp, xsize, xp, xsize)); */      \
     /* ASSERT (MPN_SAME_OR_SEPARATE2_P (wp, xsize, yp, ysize)); */      \
                                                                         \
-    __i = (ysize);                                                      \
-    if (__i != 0)                                                       \
+    __gmp_i = (ysize);                                                  \
+    if (__gmp_i != 0)                                                   \
       {                                                                 \
-        if (FUNCTION (wp, xp, yp, __i))                                 \
+        if (FUNCTION (wp, xp, yp, __gmp_i))                             \
           {                                                             \
             do                                                          \
               {                                                         \
-                if (__i >= (xsize))                                     \
+                if (__gmp_i >= (xsize))                                 \
                   {                                                     \
                     (cout) = 1;                                         \
-                    goto __done;                                        \
+                    goto __gmp_done;                                    \
                   }                                                     \
-                __x = (xp)[__i];                                        \
+                __gmp_x = (xp)[__gmp_i];                                \
               }                                                         \
             while (TEST);                                               \
           }                                                             \
       }                                                                 \
     if ((wp) != (xp))                                                   \
-      __GMPN_COPY_REST (wp, xp, xsize, __i);                            \
+      __GMPN_COPY_REST (wp, xp, xsize, __gmp_i);                        \
     (cout) = 0;                                                         \
-  __done:                                                               \
+  __gmp_done:                                                           \
     ;                                                                   \
   } while (0)
 
 #define __GMPN_ADD(cout, wp, xp, xsize, yp, ysize)              \
   __GMPN_AORS (cout, wp, xp, xsize, yp, ysize, mpn_add_n,       \
-               (((wp)[__i++] = __x + 1) == 0))
+               (((wp)[__gmp_i++] = __gmp_x + 1) == 0))
 #define __GMPN_SUB(cout, wp, xp, xsize, yp, ysize)              \
   __GMPN_AORS (cout, wp, xp, xsize, yp, ysize, mpn_sub_n,       \
-               (((wp)[__i++] = __x - 1), __x == 0))
+               (((wp)[__gmp_i++] = __gmp_x - 1), __gmp_x == 0))
 
 
-/* The use of __i indexing is designed to ensure a compile time src==dst
+/* The use of __gmp_i indexing is designed to ensure a compile time src==dst
    remains nice and clear to the compiler, so that __GMPN_COPY_REST can
    disappear, and the load/add/store gets a chance to become a
    read-modify-write on CISC CPUs.
@@ -1669,28 +1669,28 @@ mpq_neg (mpq_ptr w, mpq_srcptr u)
 
 #define __GMPN_AORS_1(cout, dst, src, n, v, OP, CB)		\
   do {								\
-    mp_size_t  __i;						\
-    mp_limb_t  __x, __r;					\
+    mp_size_t  __gmp_i;						\
+    mp_limb_t  __gmp_x, __gmp_r;                                \
 								\
     /* ASSERT ((n) >= 1); */					\
     /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, n)); */	\
 								\
-    __x = (src)[0];						\
-    __r = __x OP (v);						\
-    (dst)[0] = __r;						\
-    if (CB (__r, __x, (v)))					\
+    __gmp_x = (src)[0];						\
+    __gmp_r = __gmp_x OP (v);                                   \
+    (dst)[0] = __gmp_r;						\
+    if (CB (__gmp_r, __gmp_x, (v)))                             \
       {								\
 	(cout) = 1;						\
-	for (__i = 1; __i < (n);)				\
+	for (__gmp_i = 1; __gmp_i < (n);)                       \
 	  {							\
-	    __x = (src)[__i];					\
-	    __r = __x OP 1;					\
-	    (dst)[__i] = __r;					\
-	    ++__i;						\
-	    if (!CB (__r, __x, 1))				\
+	    __gmp_x = (src)[__gmp_i];                           \
+	    __gmp_r = __gmp_x OP 1;                             \
+	    (dst)[__gmp_i] = __gmp_r;                           \
+	    ++__gmp_i;						\
+	    if (!CB (__gmp_r, __gmp_x, 1))                      \
 	      {							\
 		if ((src) != (dst))				\
-		  __GMPN_COPY_REST (dst, src, n, __i);		\
+		  __GMPN_COPY_REST (dst, src, n, __gmp_i);      \
 		(cout) = 0;					\
 		break;						\
 	      }							\
@@ -1716,26 +1716,26 @@ mpq_neg (mpq_ptr w, mpq_srcptr u)
 /* Compare {xp,size} and {yp,size}, setting "result" to positive, zero or
    negative.  size==0 is allowed.  On random data usually only one limb will
    need to be examined to get a result, so it's worth having it inline.  */
-#define __GMPN_CMP(result, xp, yp, size)                        \
-  do {                                                          \
-    mp_size_t  __i;                                             \
-    mp_limb_t  __x, __y;                                        \
-                                                                \
-    /* ASSERT ((size) >= 0); */                                 \
-                                                                \
-    (result) = 0;                                               \
-    __i = (size);                                               \
-    while (--__i >= 0)                                          \
-      {                                                         \
-        __x = (xp)[__i];                                        \
-        __y = (yp)[__i];                                        \
-        if (__x != __y)                                         \
-          {                                                     \
-            /* Cannot use __x - __y, may overflow an "int" */   \
-            (result) = (__x > __y ? 1 : -1);                    \
-            break;                                              \
-          }                                                     \
-      }                                                         \
+#define __GMPN_CMP(result, xp, yp, size)                                \
+  do {                                                                  \
+    mp_size_t  __gmp_i;                                                 \
+    mp_limb_t  __gmp_x, __gmp_y;                                        \
+                                                                        \
+    /* ASSERT ((size) >= 0); */                                         \
+                                                                        \
+    (result) = 0;                                                       \
+    __gmp_i = (size);                                                   \
+    while (--__gmp_i >= 0)                                              \
+      {                                                                 \
+        __gmp_x = (xp)[__gmp_i];                                        \
+        __gmp_y = (yp)[__gmp_i];                                        \
+        if (__gmp_x != __gmp_y)                                         \
+          {                                                             \
+            /* Cannot use __gmp_x - __gmp_y, may overflow an "int" */   \
+            (result) = (__gmp_x > __gmp_y ? 1 : -1);                    \
+            break;                                                      \
+          }                                                             \
+      }                                                                 \
   } while (0)
 
 
@@ -1756,19 +1756,19 @@ mpq_neg (mpq_ptr w, mpq_srcptr u)
    from this loop too.  */
 
 #if __GMP_HAVE_HOST_CPU_FAMILY_power || __GMP_HAVE_HOST_CPU_FAMILY_powerpc
-#define __GMPN_COPY_INCR(dst, src, size)                \
-  do {                                                  \
-    /* ASSERT ((size) >= 0); */                         \
-    /* ASSERT (MPN_SAME_OR_INCR_P (dst, src, size)); */ \
-    if ((size) != 0)                                    \
-      {                                                 \
-        mp_ptr     __dst = (dst) - 1;                   \
-        mp_srcptr  __src = (src) - 1;                   \
-        mp_size_t  __size = (size);                     \
-        do                                              \
-          *++__dst = *++__src;                          \
-        while (--__size != 0);                          \
-      }                                                 \
+#define __GMPN_COPY_INCR(dst, src, size)                        \
+  do {                                                          \
+    /* ASSERT ((size) >= 0); */                                 \
+    /* ASSERT (MPN_SAME_OR_INCR_P (dst, src, size)); */         \
+    if ((size) != 0)                                            \
+      {                                                         \
+        mp_ptr     __gmp_copy_incr_dst = (dst) - 1;             \
+        mp_srcptr  __gmp_copy_incr_src = (src) - 1;             \
+        mp_size_t  __gmp_copy_incr_size = (size);               \
+        do                                                      \
+          *++__gmp_copy_incr_dst = *++__gmp_copy_incr_src;      \
+        while (--__gmp_copy_incr_size != 0);                    \
+      }                                                         \
   } while (0)
 #define __GMPN_COPY(dst, src, size)                             \
   do {                                                          \
@@ -1792,13 +1792,13 @@ mpq_neg (mpq_ptr w, mpq_srcptr u)
 #if ! defined (__GMPN_COPY_REST)
 #define __GMPN_COPY_REST(dst, src, size, start)                 \
   do {                                                          \
-    mp_size_t __j;                                              \
+    mp_size_t __gmp_j;                                          \
     /* ASSERT ((size) >= 0); */                                 \
     /* ASSERT ((start) >= 0); */                                \
     /* ASSERT ((start) <= (size)); */                           \
     /* ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size)); */     \
-    for (__j = (start); __j < (size); __j++)                    \
-      (dst)[__j] = (src)[__j];                                  \
+    for (__gmp_j = (start); __gmp_j < (size); __gmp_j++)        \
+      (dst)[__gmp_j] = (src)[__gmp_j];                          \
   } while (0)
 #endif
 
@@ -1816,12 +1816,11 @@ mpq_neg (mpq_ptr w, mpq_srcptr u)
 __GMP_EXTERN_INLINE
 #endif
 mp_limb_t
-mpn_add (mp_ptr wp,
-         mp_srcptr xp, mp_size_t xsize, mp_srcptr yp, mp_size_t ysize)
+mpn_add (mp_ptr __gmp_wp, mp_srcptr __gmp_xp, mp_size_t __gmp_xsize, mp_srcptr __gmp_yp, mp_size_t __gmp_ysize)
 {
-  mp_limb_t  c;
-  __GMPN_ADD (c, wp, xp, xsize, yp, ysize);
-  return c;
+  mp_limb_t  __gmp_c;
+  __GMPN_ADD (__gmp_c, __gmp_wp, __gmp_xp, __gmp_xsize, __gmp_yp, __gmp_ysize);
+  return __gmp_c;
 }
 #endif
 
@@ -1830,11 +1829,11 @@ mpn_add (mp_ptr wp,
 __GMP_EXTERN_INLINE
 #endif
 mp_limb_t
-mpn_add_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
+mpn_add_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_t __gmp_n)
 {
-  mp_limb_t  c;
-  __GMPN_ADD_1 (c, dst, src, size, n);
-  return c;
+  mp_limb_t  __gmp_c;
+  __GMPN_ADD_1 (__gmp_c, __gmp_dst, __gmp_src, __gmp_size, __gmp_n);
+  return __gmp_c;
 }
 #endif
 
@@ -1843,11 +1842,11 @@ mpn_add_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
 __GMP_EXTERN_INLINE
 #endif
 int
-mpn_cmp (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
+mpn_cmp (mp_srcptr __gmp_xp, mp_srcptr __gmp_yp, mp_size_t __gmp_size)
 {
-  int result;
-  __GMPN_CMP (result, xp, yp, size);
-  return result;
+  int __gmp_result;
+  __GMPN_CMP (__gmp_result, __gmp_xp, __gmp_yp, __gmp_size);
+  return __gmp_result;
 }
 #endif
 
@@ -1856,12 +1855,11 @@ mpn_cmp (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
 __GMP_EXTERN_INLINE
 #endif
 mp_limb_t
-mpn_sub (mp_ptr wp,
-         mp_srcptr xp, mp_size_t xsize, mp_srcptr yp, mp_size_t ysize)
+mpn_sub (mp_ptr __gmp_wp, mp_srcptr __gmp_xp, mp_size_t __gmp_xsize, mp_srcptr __gmp_yp, mp_size_t __gmp_ysize)
 {
-  mp_limb_t  c;
-  __GMPN_SUB (c, wp, xp, xsize, yp, ysize);
-  return c;
+  mp_limb_t  __gmp_c;
+  __GMPN_SUB (__gmp_c, __gmp_wp, __gmp_xp, __gmp_xsize, __gmp_yp, __gmp_ysize);
+  return __gmp_c;
 }
 #endif
 
@@ -1870,11 +1868,11 @@ mpn_sub (mp_ptr wp,
 __GMP_EXTERN_INLINE
 #endif
 mp_limb_t
-mpn_sub_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
+mpn_sub_1 (mp_ptr __gmp_dst, mp_srcptr __gmp_src, mp_size_t __gmp_size, mp_limb_t __gmp_n)
 {
-  mp_limb_t  c;
-  __GMPN_SUB_1 (c, dst, src, size, n);
-  return c;
+  mp_limb_t  __gmp_c;
+  __GMPN_SUB_1 (__gmp_c, __gmp_dst, __gmp_src, __gmp_size, __gmp_n);
+  return __gmp_c;
 }
 #endif
 
