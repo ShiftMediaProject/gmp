@@ -55,7 +55,7 @@ generate (int limb_bits, int nail_bits, int base)
   for (;;)
     {
       mpz_mul_ui (big_base, big_base, (long) base);
-      if (mpz_cmp (big_base, t) >= 0)
+      if (mpz_cmp (big_base, t) > 0)
         break;
       chars_per_limb++;
     }
@@ -173,7 +173,7 @@ main (int argc, char **argv)
     table (limb_bits, nail_bits);
   else
     {
-      fprintf (stderr, "Invalid header/data choice: %s\n", argv[1]);
+      fprintf (stderr, "Invalid header/table choice: %s\n", argv[1]);
       exit (1);
     }
 
