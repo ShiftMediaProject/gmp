@@ -1,3 +1,35 @@
+2000-02-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/asm-defs.m4 (MULFUNC_PROLOGUE): New macro by Linus.
+	* mpn/x86/k6/aors_n.asm: Use MULFUNC_PROLOGUE.
+	* mpn/x86/k6/aorsmul_1.asm: Ditto.
+	* mpn/x86/k7/aors_n.asm: Ditto.
+	* mpn/x86/k7/aorsmul_1.asm: Ditto.
+	* mpn/x86/p6/aorsmul_1.asm: Ditto.
+
+	* mpn/tests/ref.c (refmpn_copyi,refmpn_copyd): Allow size==0.
+
+	* gmp-impl.h: Move mpn_and_n, mpn_andn_n, mpn_com_n, mpn_ior_n,
+	mpn_iorn_n, mpn_nand_n, mpn_nior_n, mpn_xor_n and mpn_xorn_n here
+	from gmp.h.  Use HAVE_NATIVE_mpn_* to make these functions or
+	inlines.
+
+	* gmp-impl.h: Move mpn_copyd, mpn_copyi here from gmp.h.
+	* gmp-impl.h (MPN_COPY_INCR): Use mpn_copyi if available.
+	* gmp-impl.h (MPN_COPY_DECR): Use mpn_copyd if available.
+	
+	* mpn/x86/k6/mmx/com_n.asm: Moved into mmx subdirectory.
+	* mpn/x86/k6/mmx/copyi.asm: Ditto.
+	* mpn/x86/k6/mmx/lshift.asm: Ditto.
+	* mpn/x86/k6/mmx/rshift.asm: Ditto.
+	* mpn/x86/k6/mmx/logops_n.asm: New file.
+	* configure.in (k6*-*-*): Add logops_n.asm.
+	* mpn/x86/k6/README: Update.
+
+	* mpn/x86/k7/mmx/copyi.asm: New file.
+	* mpn/x86/k7/mmx/copyd.asm: New file.
+	* mpn/x86/k7/README: Update.
+
 2000-02-24  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/x86-defs.m4 (femms): Generate emms if 3dnow not available.
@@ -8,6 +40,7 @@
 	* mpn/x86/divrem_1.asm: Moved from mpn/x86/k6, allow size==0,
 	conditionalize loop versus decl/jnz.
 	* mpn/x86/mod_1.asm: Ditto.
+	* mpn/x86/divmod_1.asm: Removed.
 	* gmp.texi (mpn_divrem_1,mpn_mod_1): Add that size==0 is allowed.
 	* mpn/tests/ref.c (refmpn_divrem_1c,etc): Allow size==0.
 
@@ -21,6 +54,7 @@
 	* mpn/x86/k7/mul_1.asm: Ditto.
 	* mpn/x86/k7/mul_basecase.asm: Ditto.
 	* mpn/x86/k7/rshift.asm: Ditto.
+	* mpn/x86/p6/aorsmul_1.asm: Ditto.
 	* mpn/x86/README.family: Describe problem.
 
 2000-02-23  Kevin Ryde  <kevin@swox.se>
