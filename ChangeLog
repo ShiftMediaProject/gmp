@@ -20,6 +20,12 @@ MA 02111-1307, USA.
 
 2004-03-27  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/amd64/sublsh1_n.asm: Fix typo.
+
+	* mpn/generic/divrem_1.c: Fix typo.
+
+	* mpn/generic/sqr_basecase.c: Fix typo.
+
 	* mpn/amd64/divrem_1.asm: New file.
 
 2004-03-20  Kevin Ryde  <kevin@swox.se>
