@@ -36,6 +36,8 @@ case "${target}" in
   alpha*-*-*) path="alpha"; extra_functions="udiv_qrnnd" ;;
   am29000*-*-*) path="am29000" ;;
   a29k*-*-*) path="am29000" ;;
+
+# Intel x86 configurations
   i[34]86*-*-linuxaout* | i[34]86*-*-linuxoldld* | \
   i[34]86*-*-*bsd*)			# x86 running BSD or Linux with a.out
 	echo '#define BSD_SYNTAX' >asm-syntax.h
@@ -55,7 +57,7 @@ case "${target}" in
 	echo '#define ELF_SYNTAX' >asm-syntax.h
 	echo '#include "'$srcdir'/x86/syntax.h"' >>asm-syntax.h
 	path="x86/pentium x86" ;;
-  i960*-*-*) path="i960" ;;
+
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
 # mc68000 or mc68060 configurations need to be specified explicitly
   m680[234]0*-*-linuxaout* | m68k*-*-linuxaout*)
@@ -82,6 +84,8 @@ case "${target}" in
         echo '#define MIT_SYNTAX' >asm-syntax.h
 	echo '#include "'$srcdir'/m68k/syntax.h"' >>asm-syntax.h
 	path="m68k/mc68020 m68k" ;;
+
+  i960*-*-*) path="i960" ;;
   m88k*-*-* | m88k*-*-*) path="m88k" ;;
   m88110*-*-*) path="m88k/mc88110 m88k" ;;
   ns32k*-*-*) path="n32k" ;;
@@ -113,6 +117,8 @@ case "${target}" in
   i[3456]86*-*-freebsd* | pentium-*-freebsd* | pentiumpro-*-freebsd* | \
   i[3456]86*-*-netbsd* | pentium-*-netbsd* | pentiumpro-*-netbsd*)
 	target_makefile_frag=config/t-freebsd ;;
+  rs6000-*-aix[456]*)
+    target_makefile_frag=config/t-pwr-aix ;;
 esac
 
 
