@@ -1,6 +1,5 @@
-/* Test mpz_pow_ui, mpz_si_pow_ui and mpz_ui_pow_ui. */
+/* Test mpz_pow_ui and mpz_ui_pow_ui.
 
-/*
 Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -74,21 +73,6 @@ check_one (mpz_srcptr want, mpz_srcptr base, unsigned long exp)
         }
     }
 
-  if (mpz_fits_slong_p (base))
-    {
-      unsigned long  base_s = mpz_get_si (base);
-      mpz_si_pow_ui (got, base_s, exp);
-      if (mpz_cmp (got, want))
-        {
-          printf    ("mpz_si_pow_ui wrong\n");
-          printf    ("  base=%ld (0x%lX)\n", base_s, ABS(base_s));
-          printf    ("  exp = %lu (0x%lX)\n", exp, exp);
-          mpz_trace ("  got ", got);
-          mpz_trace ("  want", want);
-          abort ();
-        }
-    }
-
   mpz_clear (got);
 }
 
@@ -152,7 +136,7 @@ check_various (void)
     { "0x18000000100000000" },
     { "0x180000000000000010000000000000000" },
 
-    /* handling of absolute value in mpz_si_pow_ui */
+    /* handling of absolute value */
     { "-0x80000000" },
     { "-0x8000000000000000" },
 
