@@ -18,6 +18,23 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-06-19  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to mpfr cvs 2003-06-19.
+
+	* mpn/generic/dive_1.c: Share src[0] fetch among all cases.  No need
+	for separate final umul_ppmm in even case, make it part of the loop.
+
+	* mpz/get_d_2exp.c, mpq/set_si.c, mpq/set_ui.c: Nailify.
+
+	* mpf/iset_si.c: Rewrite using mpf/set_si.c code, in particular this
+	nailifies it.
+	* tests/mpf/t-set_si.c: Nailify tests.
+
+	* mpf/iset_ui.c: Nailify, as per mpf/set_ui.c
+	* tests/mpf/t-set_ui.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+
 2003-06-15  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr/*: Update to mpfr cvs 2003-06-15.
