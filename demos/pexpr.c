@@ -293,6 +293,8 @@ main (int argc, char **argv)
 	base = 2;
       else if (arg[1] == 'x' && arg[2] == 0)
 	base = 16;
+      else if (arg[1] == 'X' && arg[2] == 0)
+	base = -16;
       else if (arg[1] == 'o' && arg[2] == 0)
 	base = 8;
       else if (arg[1] == 'd' && arg[2] == 0)
@@ -412,11 +414,11 @@ main (int argc, char **argv)
 	    {
 	      double t;
 	      printf ("output conversion ");
-	      TIME (t, mpz_get_str (tmp, -base, r));
+	      TIME (t, mpz_get_str (tmp, base, r));
 	      printf ("took %.2f ms%s\n", t, newline);
 	    }
 	  else
-	    mpz_get_str (tmp, -base, r);
+	    mpz_get_str (tmp, base, r);
 
 	  out_len = strlen (tmp);
 	  if (flag_splitup_output)
