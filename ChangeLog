@@ -1,3 +1,21 @@
+2001-04-22  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/powerpc64/addsub_n.asm: Use config.m4 not asm-syntax.m4.
+
+	* mpz/cmp_d.c, mpz/cmpabs_d.c: New files.
+	* Makefile.am, mpz/Makefile.am: Add them.
+	* mpf/cmp_d.c, mpf/get_dfl_prec.c: New files.
+	* Makefile.am, mpf/Makefile.am: Add them.
+	* gmp-h.in (mpz_cmp_d, mpz_cmpabs_d, mpf_cmp_d, mpf_get_default_prec):
+	Add prototypes.
+	* gmp.texi: Add documentation.
+
+	* mpf/set_prc.c: Avoid a realloc call if already the right precision.
+	
+	* gmp-impl.h (MPF_BITS_TO_PREC, MPF_PREC_TO_BITS): New macros.
+	* mpf/get_prc.c, init2.c, set_dfl_prec.c, set_prc.c, set_prc_raw.c:
+	Use them.
+
 2001-04-20  Kevin Ryde  <kevin@swox.se>
 
 	* tests/devel/try.c: Don't test size==0 on mpn_popcount and
