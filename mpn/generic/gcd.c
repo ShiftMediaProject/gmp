@@ -123,6 +123,10 @@ gcd_2 (vp, up)
    precision.  If N2 > N1 initially, the first iteration of the while loop
    will swap them.  In all other situations, N1 >= N2 is maintained.  */
 
+#if HAVE_NATIVE_mpn_gcd_finda
+#define find_a(cp)  mpn_gcd_finda (cp)
+
+#else
 static
 #if ! defined (__i386__)
 __gmp_inline			/* don't inline this for the x86 */
@@ -171,6 +175,8 @@ find_a (cp)
 
   return n2_l;
 }
+#endif
+
 
 mp_size_t
 #if __STDC__
