@@ -22,14 +22,12 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C void speed_cyclecounter_2 (mp_limb_t p[2]);
+C void speed_cyclecounter (unsigned long p[2]);
 C
-C Get the sparc v9 tick counter, storing the least significant word in
-C p[0] and the most significant in p[1].  We cannot return 64 bits
-C since not all V9 systems run a 64-bit aware OS.
+C Get the sparc v9 tick counter.
 
 ASM_START()
-PROLOGUE(speed_cyclecounter_2)
+PROLOGUE(speed_cyclecounter)
 	rd	%tick,%g1
 	srlx	%g1,32,%g4
 	st	%g4,[%o0+4]		C high 32 bits
@@ -37,4 +35,4 @@ PROLOGUE(speed_cyclecounter_2)
 	st	%g4,[%o0]		C low 32 bits
 	retl
 	nop
-EPILOGUE(speed_cyclecounter_2)
+EPILOGUE(speed_cyclecounter)
