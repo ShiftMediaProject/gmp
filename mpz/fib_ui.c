@@ -60,7 +60,7 @@ MA 02111-1307, USA. */
    table2[i][0] is the low limb, table2[i][1] the high limb.  */
 
 #if BITS_PER_MP_LIMB == 32
-const mp_limb_t table1[] = {
+static const mp_limb_t table1[] = {
  CNST_LIMB (0),  /* 0 */
  CNST_LIMB (1),  /* 1 */
  CNST_LIMB (1),  /* 2 */
@@ -110,7 +110,7 @@ const mp_limb_t table1[] = {
  CNST_LIMB (1836311903),  /* 46 */
  CNST_LIMB (2971215073),  /* 47 */
 };
-const mp_limb_t table2[][2] = {
+static const mp_limb_t table2[][2] = {
  {CNST_LIMB(512559680), CNST_LIMB(1)}, /* 48 */
  {CNST_LIMB(3483774753), CNST_LIMB(1)}, /* 49 */
  {CNST_LIMB(3996334433), CNST_LIMB(2)}, /* 50 */
@@ -161,7 +161,7 @@ const mp_limb_t table2[][2] = {
 #endif
 
 #if BITS_PER_MP_LIMB == 64
-const mp_limb_t table1[] = {
+static const mp_limb_t table1[] = {
  CNST_LIMB (0),  /* 0 */
  CNST_LIMB (1),  /* 1 */
  CNST_LIMB (1),  /* 2 */
@@ -257,7 +257,7 @@ const mp_limb_t table1[] = {
  CNST_LIMB (7540113804746346429),  /* 92 */
  CNST_LIMB (12200160415121876738),  /* 93 */
 };
-const mp_limb_t table2[][2] = {
+static const mp_limb_t table2[][2] = {
  {CNST_LIMB(1293530146158671551), CNST_LIMB(1)}, /* 94 */
  {CNST_LIMB(13493690561280548289), CNST_LIMB(1)}, /* 95 */
  {CNST_LIMB(14787220707439219840), CNST_LIMB(2)}, /* 96 */
@@ -659,7 +659,7 @@ generate (int bpml)
   mpz_init (lo);
 
   printf ("#if BITS_PER_MP_LIMB == %d\n", bpml);
-  printf ("const mp_limb_t table1[] = {\n");
+  printf ("static const mp_limb_t table1[] = {\n");
 
   /* at n==0 */
   mpz_init_set_ui (fn1, 1);  /* F[n-1] */
@@ -670,7 +670,7 @@ generate (int bpml)
       if (mpz_sizeinbase(fn,2) > bpml && mpz_sizeinbase(fn1,2) <= bpml)
         {
           printf ("};\n");
-          printf ("const mp_limb_t table2[][2] = {\n");
+          printf ("static const mp_limb_t table2[][2] = {\n");
         }
 
       if (mpz_sizeinbase(fn,2) <= bpml)
