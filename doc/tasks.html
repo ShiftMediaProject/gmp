@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 28 Apr 2003.  An up-to-date version is available at
+  This file current as of 26 May 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -90,8 +90,8 @@ MA 02111-1307, USA.
 
 <h4>Machine Independent Optimization</h4>
 <ul>
-<li> <code>mpn_gcdext</code>, <code>mpz_get_d</code>,
-     <code>mpf_get_str</code>: Don't test <code>count_leading_zeros</code> for
+<li> <code>mpn_gcdext</code>, <code>mpz_get_d</code>:
+     Don't test <code>count_leading_zeros</code> for
      zero, instead check the high bit of the operand and avoid invoking
      <code>count_leading_zeros</code>.  This is an optimization on all
      machines, and significant on machines with slow
@@ -230,7 +230,6 @@ MA 02111-1307, USA.
 <li> <code>__mp_bases</code> field <code>big_base_inverted</code> is only used
      if <code>USE_PREINV_DIVREM_1</code> is true, and could be omitted
      otherwise, to save space.
-<li> Make <code>mpf_get_str</code> call <code>mpn_get_str</code>.
 <li> <code>mpz_get_str</code>, <code>mtox</code>: For power-of-2 bases, which
      are of course fast, it seems a little silly to make a second pass over
      the <code>mpn_get_str</code> output to convert to ASCII.  Perhaps combine
