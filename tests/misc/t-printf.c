@@ -46,6 +46,14 @@ MA 02111-1307, USA. */
 #include <obstack.h>
 #endif
 
+#if HAVE_INTTYPES_H
+# include <inttypes.h> /* for intmax_t */
+#else
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
+#endif
+
 #if HAVE_UNISTD_H
 #include <unistd.h>  /* for unlink */
 #endif
@@ -746,44 +754,78 @@ check_n (void)
     ASSERT_ALWAYS (n == 6);
   }
 
-  /* should write whole of l */
-  {
-    long  l = -1;
-    check_one ("", "%ln", &l);
-    ASSERT_ALWAYS (l == 0);
-  }
+#define CHECK_N(type, string)                           \
+  do {                                                  \
+    type  x[2];                                         \
+    char  fmt[128];                                     \
+                                                        \
+    x[0] = ~ (type) 0;                                  \
+    x[1] = ~ (type) 0;                                  \
+    sprintf (fmt, "%%d%%%sn%%d", string);               \
+    check_one ("123456", fmt, 123, &x[0], 456);         \
+                                                        \
+    /* should write whole of x[0] and none of x[1] */   \
+    ASSERT_ALWAYS (x[0] == 3);                          \
+    ASSERT_ALWAYS (x[1] == ~ (type) 0);                 \
+                                                        \
+  } while (0)
 
-  /* should write only h[0] */
-  {
-    short      h[2];
-    h[0] = -123;
-    h[1] = -456;
-    check_one ("", "%hn", &h[0]);
-    ASSERT_ALWAYS (h[0] == 0);
-    ASSERT_ALWAYS (h[1] == -456);
-  }
-
-  {
-    size_t  s = -1;
-    check_one ("blah", "bl%znah", &s);
-    ASSERT_ALWAYS (s == 2);
-  }
-
-#if HAVE_PTRDIFF_T
-  {
-    ptrdiff_t  d = -1;
-    check_one ("blah", "bl%tnah", &d);
-    ASSERT_ALWAYS (d == 2);
-  }
-#endif
-
+  CHECK_N (char,      "hh");
+  CHECK_N (long,      "l");
 #if HAVE_LONG_LONG
-  {
-    long long  ll = -1;
-    check_one ("blah", "bl%Lnah", &ll);
-    ASSERT_ALWAYS (ll == 2);
-  }
+  CHECK_N (long long, "L");
 #endif
+#if HAVE_INTMAX_T
+  CHECK_N (intmax_t,  "j");
+#endif
+#if HAVE_PTRDIFF_T
+  CHECK_N (ptrdiff_t, "t");
+#endif
+  CHECK_N (short,     "h");
+  CHECK_N (size_t,    "z");
+
+  {
+    mpz_t  x[2];
+    mpz_init_set_si (x[0], -987L);
+    mpz_init_set_si (x[1],  654L);
+    check_one ("123456", "%d%Zn%d", 123, x[0], 456);
+    MPZ_CHECK_FORMAT (x[0]);
+    MPZ_CHECK_FORMAT (x[1]);
+    ASSERT_ALWAYS (mpz_cmp_ui (x[0], 3L) == 0);
+    ASSERT_ALWAYS (mpz_cmp_ui (x[1], 654L) == 0);
+    mpz_clear (x[0]);
+    mpz_clear (x[1]);
+  }
+
+  {
+    mpq_t  x[2];
+    mpq_init (x[0]);
+    mpq_init (x[1]);
+    mpq_set_ui (x[0], -987L, 654L);
+    mpq_set_ui (x[1], 4115L, 226L);
+    check_one ("123456", "%d%Qn%d", 123, x[0], 456);
+    MPQ_CHECK_FORMAT (x[0]);
+    MPQ_CHECK_FORMAT (x[1]);
+    ASSERT_ALWAYS (mpq_cmp_ui (x[0], 3L, 1L) == 0);
+    ASSERT_ALWAYS (mpq_cmp_ui (x[1], 4115L, 226L) == 0);
+    mpq_clear (x[0]);
+    mpq_clear (x[1]);
+  }
+
+  {
+    mpf_t  x[2];
+    mpf_init (x[0]);
+    mpf_init (x[1]);
+    mpf_set_ui (x[0], -987L);
+    mpf_set_ui (x[1],  654L);
+    check_one ("123456", "%d%Fn%d", 123, x[0], 456);
+    MPF_CHECK_FORMAT (x[0]);
+    MPF_CHECK_FORMAT (x[1]);
+    ASSERT_ALWAYS (mpf_cmp_ui (x[0], 3L) == 0);
+    ASSERT_ALWAYS (mpf_cmp_ui (x[1], 654L) == 0);
+    mpf_clear (x[0]);
+    mpf_clear (x[1]);
+  }
 
   {
     mp_limb_t  a[5];
@@ -791,7 +833,7 @@ check_n (void)
     mp_size_t  i;
 
     a[0] = 123;
-    check_one ("blah", "bl%Nnah", a, 0);
+    check_one ("blah", "bl%Nnah", a, (mp_size_t) 0);
     ASSERT_ALWAYS (a[0] == 123);
 
     MPN_ZERO (a_want, numberof (a_want));

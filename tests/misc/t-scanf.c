@@ -44,6 +44,14 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <string.h>
 
+#if HAVE_INTTYPES_H
+# include <inttypes.h> /* for intmax_t */
+#else
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
+#endif
+
 #if HAVE_UNISTD_H
 #include <unistd.h>  /* for unlink */
 #endif
@@ -1223,6 +1231,132 @@ check_f (void)
 
 
 void
+check_n (void)
+{
+  int    ret;
+
+  /* %n suppressed */
+  {
+    int n = 123;
+    gmp_sscanf ("   ", " %*n", &n);
+    ASSERT_ALWAYS (n == 123);
+  }
+  {
+    int n = 123;
+    fromstring_gmp_fscanf ("   ", " %*n", &n);
+    ASSERT_ALWAYS (n == 123);
+  }
+
+
+#define CHECK_N(type, string)                           \
+  do {                                                  \
+    type  x[2];                                         \
+    char  fmt[128];                                     \
+    int   ret;                                          \
+                                                        \
+    x[0] = ~ (type) 0;                                  \
+    x[1] = ~ (type) 0;                                  \
+    sprintf (fmt, "abc%%%sn", string);                  \
+    ret = gmp_sscanf ("abc", fmt, &x[0]);               \
+                                                        \
+    ASSERT_ALWAYS (ret == 0);                           \
+                                                        \
+    /* should write whole of x[0] and none of x[1] */   \
+    ASSERT_ALWAYS (x[0] == 3);                          \
+    ASSERT_ALWAYS (x[1] == ~ (type) 0);                 \
+                                                        \
+  } while (0)
+
+  CHECK_N (char,      "hh");
+  CHECK_N (long,      "l");
+#if HAVE_LONG_LONG
+  CHECK_N (long long, "L");
+#endif
+#if HAVE_INTMAX_T
+  CHECK_N (intmax_t,  "j");
+#endif
+#if HAVE_PTRDIFF_T
+  CHECK_N (ptrdiff_t, "t");
+#endif
+  CHECK_N (short,     "h");
+  CHECK_N (size_t,    "z");
+
+  /* %Zn */
+  {
+    mpz_t  x[2];
+    mpz_init_set_si (x[0], -987L);
+    mpz_init_set_si (x[1],  654L);
+    ret = gmp_sscanf ("xyz   ", "xyz%Zn", x[0]);
+    MPZ_CHECK_FORMAT (x[0]);
+    MPZ_CHECK_FORMAT (x[1]);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (mpz_cmp_ui (x[0], 3L) == 0);
+    ASSERT_ALWAYS (mpz_cmp_ui (x[1], 654L) == 0);
+    mpz_clear (x[0]);
+    mpz_clear (x[1]);
+  }
+  {
+    mpz_t  x;
+    mpz_init (x);
+    ret = fromstring_gmp_fscanf ("xyz   ", "xyz%Zn", x);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (mpz_cmp_ui (x, 3L) == 0);
+    mpz_clear (x);
+  }
+
+  /* %Qn */
+  {
+    mpq_t  x[2];
+    mpq_init (x[0]);
+    mpq_init (x[1]);
+    mpq_set_ui (x[0], -987L, 654L);
+    mpq_set_ui (x[1], 4115L, 226L);
+    ret = gmp_sscanf ("xyz   ", "xyz%Qn", x[0]);
+    MPQ_CHECK_FORMAT (x[0]);
+    MPQ_CHECK_FORMAT (x[1]);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (mpq_cmp_ui (x[0], 3L, 1L) == 0);
+    ASSERT_ALWAYS (mpq_cmp_ui (x[1], 4115L, 226L) == 0);
+    mpq_clear (x[0]);
+    mpq_clear (x[1]);
+  }
+  {
+    mpq_t  x;
+    mpq_init (x);
+    ret = fromstring_gmp_fscanf ("xyz   ", "xyz%Qn", x);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (mpq_cmp_ui (x, 3L, 1L) == 0);
+    mpq_clear (x);
+  }
+
+  /* %Fn */
+  {
+    mpf_t  x[2];
+    mpf_init (x[0]);
+    mpf_init (x[1]);
+    mpf_set_ui (x[0], -987L);
+    mpf_set_ui (x[1],  654L);
+    ret = gmp_sscanf ("xyz   ", "xyz%Fn", x[0]);
+    MPF_CHECK_FORMAT (x[0]);
+    MPF_CHECK_FORMAT (x[1]);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (mpf_cmp_ui (x[0], 3L) == 0);
+    ASSERT_ALWAYS (mpf_cmp_ui (x[1], 654L) == 0);
+    mpf_clear (x[0]);
+    mpf_clear (x[1]);
+  }
+  {
+    mpf_t  x;
+    mpf_init (x);
+    ret = fromstring_gmp_fscanf ("xyz   ", "xyz%Fn", x);
+    ASSERT_ALWAYS (ret == 0);
+    ASSERT_ALWAYS (mpf_cmp_ui (x, 3L) == 0);
+    mpf_clear (x);
+  }
+}
+
+
+void
 check_misc (void)
 {
   int  ret, cmp;
@@ -1322,37 +1456,6 @@ check_misc (void)
     mpz_clear (x);
   }
 
-  /* %n suppressed */
-  {
-    int n = 123;
-    gmp_sscanf ("   ", " %*n", &n);
-    ASSERT_ALWAYS (n == 123);
-  }
-  {
-    int n = 123;
-    fromstring_gmp_fscanf ("   ", " %*n", &n);
-    ASSERT_ALWAYS (n == 123);
-  }
-
-  /* %Zn */
-  {
-    mpz_t  z;
-    mpz_init (z);
-    ret = gmp_sscanf ("xyz   ", "xyz%Zn", z);
-    ASSERT_ALWAYS (ret == 0);
-    ret = mpz_cmp_ui (z, 3L);
-    ASSERT_ALWAYS (ret == 0);
-    mpz_clear (z);
-  }
-  {
-    mpz_t  z;
-    mpz_init (z);
-    ret = fromstring_gmp_fscanf ("xyz   ", "xyz%Zn", z);
-    ASSERT_ALWAYS (ret == 0);
-    ASSERT_ALWAYS (mpz_cmp_ui (z, 3L) == 0);
-    mpz_clear (z);
-  }
-
   /* %[...], glibc only */
 #ifdef __GLIBC__
   {
@@ -1431,32 +1534,7 @@ check_misc (void)
     mpz_clear (z);
   }
 #endif
-
-  /* but for gmp_sscanf %n, we only need the type available */
-  {
-    size_t  len = -1;
-    ret = gmp_sscanf ("abc", "abc%zn", &len);
-    ASSERT_ALWAYS (ret == 0);
-    ASSERT_ALWAYS (len == 3);
-  }
-#if HAVE_PTRDIFF_T
-  {
-    ptrdiff_t  len = -1;
-    ret = gmp_sscanf ("abc", "abc%tn", &len);
-    ASSERT_ALWAYS (ret == 0);
-    ASSERT_ALWAYS (len == 3);
-  }
-#endif
-#if HAVE_LONG_LONG
-  {
-    long long  len = -1;
-    ret = gmp_sscanf ("abc", "abc%Ln", &len);
-    ASSERT_ALWAYS (ret == 0);
-    ASSERT_ALWAYS (len == 3);
-  }
-#endif
 }
-
 
 int
 main (int argc, char *argv[])
@@ -1469,6 +1547,7 @@ main (int argc, char *argv[])
   check_z ();
   check_q ();
   check_f ();
+  check_n ();
   check_misc ();
 
   unlink (TEMPFILE);
