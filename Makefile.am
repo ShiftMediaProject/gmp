@@ -263,10 +263,11 @@ libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
 MPN_OBJS_IN_LIBMP = @mpn_objs_in_libmp@
 libmp_la_DEPENDENCIES = $(srcdir)/libmp.sym				\
   @TAL_OBJECT@ $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP)			\
-  mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/init$U.lo mpz/mod$U.lo	\
+  mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/gcdext$U.lo		\
+  mpz/init$U.lo mpz/invert$U.lo mpz/mod$U.lo				\
   mpz/mul$U.lo mpz/mul_2exp$U.lo mpz/n_pow_ui$U.lo			\
-  mpz/realloc$U.lo mpz/set$U.lo						\
-  mpz/set_ui$U.lo mpz/tdiv_r$U.lo mpz/sub$U.lo
+  mpz/realloc$U.lo mpz/set$U.lo	mpz/set_ui$U.lo				\
+  mpz/tdiv_q$U.lo mpz/tdiv_r$U.lo mpz/sub$U.lo
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES)
 libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE) \
