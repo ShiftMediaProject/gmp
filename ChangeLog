@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2004-09-30  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/amd64/addmul_1.asm: Rewrite, now 3.25 cycles/limb.
+
 	* mpn/ia64/addmul_1.asm: Slightly enhance cross-jumping for code density.
 	* mpn/ia64/mul_1.asm: Analogous changes.
 
