@@ -68,7 +68,7 @@ command line, multiplies them, and prints the result to stdout.
       if (argc != 3)
         {
           printf ("Usage: %s <number> <number>\n", argv[0]);
-          exit (1);
+          return 1;
         }
 
       /* Initialize variables */
@@ -90,7 +90,7 @@ command line, multiplies them, and prints the result to stdout.
       mpz_clear (a);
       mpz_clear (b);
       mpz_clear (p);
-      exit (0);
+      return 0;
     }
 
 
@@ -109,7 +109,7 @@ avoided.  An experienced GMP user might write:
       if (argc != 3)
         {
           printf ("Usage: %s <number> <number>\n", argv[0]);
-          exit (1);
+          return 1;
         }
 
       /* Initialize and assign a and b from base 10 strings in argv */
@@ -125,7 +125,7 @@ avoided.  An experienced GMP user might write:
       gmp_printf ("%Zd\n", p);
 
       /* Since we're about to exit, no need to clear out variables */
-      exit (0);
+      return 0;
     }
 
 
