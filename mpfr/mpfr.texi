@@ -218,12 +218,12 @@ Here are the steps needed to install the library on Unix systems:
 @enumerate
 @item
 In most cases, @samp{./configure --with-gmp=/usr/local/gmp} should work,
-where @samp{/usr/local/gmp} is the directory where you have installed
+where the directory @samp{/usr/local/gmp} is where you have installed
 GNU MP.
 When you install GNU MP, you have to copy the files
 @samp{config.h},
 @samp{gmp-impl.h}, @samp{gmp-mparam.h}, 
-and @samp{longlong.h} from the GNU MP source directory 
+@samp{longlong.h} and @samp{stack-alloc.h} from the GNU MP source directory 
 to @samp{/usr/local/gmp/include};
 these additional files are needed by MPFR.
 An alternative way is 
@@ -257,8 +257,9 @@ information on what to include in useful bug reports.)
 @item
 @samp{make install}
 
-This will copy the files @file{mpfr.h} and @file{libmpfr.a}, 
-to @file{/usr/local/include} and @file{/usr/local/lib}
+This will copy the files @file{mpfr.h} and @file{mpf2mpfr.h},
+and @file{libmpfr.a}, 
+to the directories @file{/usr/local/include} and @file{/usr/local/lib}
 respectively (or if you passed the @samp{--prefix} option to
 @file{configure}, to the directory given as argument to @samp{--prefix}).
 @end enumerate
@@ -267,7 +268,7 @@ There are some other useful make targets:
 
 @itemize @bullet
 @item
-@samp{mpfr.dvi}
+@samp{mpfr.dvi} or @samp{dvi}
 
 Create a DVI version of the manual, in @file{mpfr.dvi}.
 @c and a set of info files, in @file{mpfr.info}, @file{mpfr.info-1}, @file{mpfr.info-2}, etc.
@@ -325,6 +326,10 @@ You should include that file in any program using the MPFR library:
 @dfn{Floating point number} or @dfn{Float} for short, is an arbitrary precision
 mantissa with a limited precision exponent.  The C data type for such objects
 is @code{mpfr_t}.
+A floating point number can have three special values: Not-a-Number (NaN)
+or plus or minus Infinity. NaN represents a value which cannot be represented
+in the floating point format, like 0 divided by 0, or Infinity minus Infinity.
+
 
 @cindex Precision
 @tindex @code{mp_prec_t}
@@ -392,11 +397,30 @@ Hence unless you change its precision, or clear and reinitialize it,
 a floating-point variable will have the same allocated space during all its
 life.
 
+@section Compatibility with MPF
+
+A header file @file{mpf2mpfr.h} is included in the distribution of MPFR for
+compatibility with the GNU MP class MPF.
+After inserting the following two lines after the @code{#include "gmp.h"}
+line,
+
+@code{#include "mpfr.h"}
+
+@code{#include "mpf2mpfr.h"}
+
+any program written for
+MPF can be linked directly with MPFR without any changes.
+All operations are then performed with the default MPFR rounding mode,
+which can be reset with @code{mpfr_set_default_rounding_mode}.
+
+@deftypevr {Global Variable} {mp_rnd_t} __gmp_default_rounding_mode
+The default rounding mode (to nearest initially).
+@end deftypevr
+
 @section Getting the Latest Version of MP
 
-The latest version of the MPFR library is available from the web page
-of the PolKA team at
-@samp{http://www.loria.fr/equipes/polka}. 
+The latest version of MPFR is available from
+@file{http://www.loria.fr/projets/mpfr/}.
 
 @node Reporting Bugs, Floating-point Functions, MPFR Basics, Top
 @comment  node-name,  next,  previous,  up
@@ -479,15 +503,7 @@ different word size.
 @end menu
 
 @cindex Rouding modes
-@section Global Variables and Rounding Modes
-
-@deftypevr {Global Variable} {mp_prec_t} __gmp_default_fp_bit_precision
-The default precision in bits (53 initially).
-@end deftypevr
-
-@deftypevr {Global Variable} {mp_rnd_t} __gmp_default_rounding_mode
-The default rounding mode (to nearest initially).
-@end deftypevr
+@section Rounding Modes
 
 The following four rounding modes are supported:
 @itemize @bullet
@@ -539,10 +555,14 @@ corresponding to the rounding mode @var{rnd}.
 Set the default precision to be @strong{exactly} @var{prec} bits.  The
 precision of a variable means the number of bits used to store its mantissa.
 All
-subsequent calls to @code{mpf_init} will use this precision, but previously
+subsequent calls to @code{mpfr_init} will use this precision, but previously
 initialized variables are unaffected.
 This default precision is set to 53 bits initially.
 The precision can be any positive integer, even a precision of 1 is possible.
+@end deftypefun
+
+@deftypefun mp_prec_t mpfr_get_default_prec ()
+Returns the default MPFR precision in bits.
 @end deftypefun
 
 An @code{mpfr_t} object must be initialized before storing the first value in
@@ -601,12 +621,12 @@ In case you want to keep the previous value stored in @var{x},
 use @code{mpfr_round} instead.
 @end deftypefun
 
-@deftypefun mp_prec_t mpfr_get_prec (mpf_t @var{x})
+@deftypefun mp_prec_t mpfr_get_prec (mpfr_t @var{x})
 Return the precision actually used for assignments of @var{x}, i.e.
 the number of bits used to store its mantissa.
 @end deftypefun
 
-@deftypefun void mpfr_set_prec_raw (mpf_t @var{x}, unsigned long int @var{p})
+@deftypefun void mpfr_set_prec_raw (mpfr_t @var{x}, unsigned long int @var{p})
 Reset the precision of @var{x} to be @strong{exactly} @var{prec} bits.
 The only difference with @code{mpfr_set_prec} is that @var{p} is assumed to
 be small enough so that the mantissa fits into the current allocated memory
@@ -659,7 +679,7 @@ Set @var{x} to the GNU MP floating-point number
 of @var{x}.
 @end deftypefun
 
-@deftypefun void mpfr_swap (mpfr_t @var{x}, mpf_t @var{y})
+@deftypefun void mpfr_swap (mpfr_t @var{x}, mpfr_t @var{y})
 Swap the values @var{x} and @var{y} efficiently. Warning: the
 precisions are exchanged too; in case the precisions are different,
 @code{mpfr_swap} is thus not equivalent to three @code{mpfr_set} calls
@@ -713,8 +733,7 @@ digit, which can happen especially if the precision of @var{op} is small.
 If @var{str} is NULL, space for the mantissa is allocated using the default
 allocation function, and a pointer to the string is returned.
 In that case, the user should her/himself free the corresponding memory
-with @code{(*_mp_free_func)(s, strlen(s) + k)} where @code{k} is 1 when
-the number is nonnegative, and 2 when there is a minus sign.
+with @code{(*_mp_free_func)(s, strlen(s) + 1)}.
 
 If @var{str} is not NULL, it should point to a block of storage enough large
 for the mantissa, i.e., @var{n_digits} + 2.  The two extra bytes are for a
@@ -884,6 +903,19 @@ equal, zero otherwise.  I.e., test of @var{op1} and @var{op2} are
 approximately equal.
 @end deftypefun
 
+@deftypefun int mpfr_nan_p (mpfr_t @var{op})
+Return non-zero if @var{op} is Not-a-Number (NaN), zero otherwise.
+@end deftypefun
+
+@deftypefun int mpfr_inf_p (mpfr_t @var{op})
+Return non-zero if @var{op} is plus or minus infinity, zero otherwise.
+@end deftypefun
+
+@deftypefun int mpfr_number_p (mpfr_t @var{op})
+Return non-zero if @var{op} is an ordinary number, i.e. neither Not-a-Number
+nor plus or minus infinity.
+@end deftypefun
+
 @deftypefun void mpfr_reldiff (mpfr_t @var{rop}, mpfr_t @var{op1}, mpfr_t @var{op2}, mp_rnd_t @var{rnd})
 Compute the relative difference between @var{op1} and @var{op2} 
 and store the result in @var{rop}.
@@ -948,6 +980,7 @@ i.e. the result is 1).
 Set @var{sop} to the sinus of @var{op}, @var{cop} to the cosinus of @var{op},
 rounded to the direction @var{rnd} with the precision of @var{rop}.
 @var{sop} and @var{cop} must be different variables.
+If one of @var{sop} or @var{cop} is NULL, only the other value is returned.
 Return 0 iff the results are exact (this occurs in fact only when @var{op} is 0
 i.e. the sine is 0 and the cosine is 1).
 @end deftypefun
@@ -1066,10 +1099,6 @@ the interval @minus{}@var{exp} to @var{exp}.  This function is useful for
 testing functions and algorithms, since this kind of random numbers have
 proven to be more likely to trigger corner-case bugs.  Negative random numbers
 are generated when @var{max_size} is negative.
-@end deftypefun
-
-@deftypefun void mpfr_srandom (unsigned long int @var{seed})
-Set the random seed used by @code{mpfr_random} to @var{seed}.
 @end deftypefun
 
 @deftypefun void mpfr_random2 (mpfr_t @var{rop}, mp_size_t @var{max_size}, mp_exp_t @var{max_exp})
