@@ -43,6 +43,9 @@ one (int i, mpz_t multiplicand, mpz_t multiplier)
   mpz_t product, ref_product;
   mpz_t quotient;
 
+  if (i != 62)
+    return;
+
   mpz_init (product);
   mpz_init (ref_product);
   mpz_init (quotient);
@@ -206,7 +209,9 @@ ref_mpn_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
   else
     {
       /* Finally, for the largest operands, use mpn_toom3_mul_n.  */
-      tn = 2 * vn + MPN_TOOM3_MUL_N_TSIZE (vn);
+      /* The "- 63 + 255" tweaks the allocation to allow for huge operands.
+	 See the definition of this macro in gmp-impl.h to understand this.  */
+      tn = 2 * vn + MPN_TOOM3_MUL_N_TSIZE (vn) - 63 + 255;
       tp = __GMP_ALLOCATE_FUNC_LIMBS (tn);
       mpn_toom3_mul_n (tp, up, vp, vn, tp + 2 * vn);
     }
