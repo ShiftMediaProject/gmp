@@ -57,7 +57,7 @@ MA 02111-1307, USA.
 	* longlong.h: Test __x86_64__ not __x86_64.  Reported by Andreas
 	Jaeger.
 
-	* mpz/import.c, mpz/export.c: Use char* subract from NULL to get
+	* mpz/import.c, mpz/export.c: Use char* subtract from NULL to get
 	pointer alignment, for the benefit of Cray vector systems.
 
 	* cxx/ismpf.cc: Use <clocale>.
