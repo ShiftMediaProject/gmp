@@ -143,6 +143,10 @@ subdir = mpn/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
+EXTRA_PROGRAMS =  add_n$(EXEEXT) addmul_1$(EXEEXT) copy$(EXEEXT) \
+divmod_1$(EXEEXT) divrem$(EXEEXT) lshift$(EXEEXT) mul_1$(EXEEXT) \
+rshift$(EXEEXT) sub_n$(EXEEXT) submul_1$(EXEEXT) tst-addsub$(EXEEXT) \
+try$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
@@ -484,14 +488,14 @@ mostlyclean distclean maintainer-clean
 
 allprogs: $(EXTRA_PROGRAMS)
 
-# Copying the rules straight from mpn/Makefile.am doesn't work because we're
-# in a second-level subdirectory here.
+# Relative paths don't work out right when running m4 from a second level
+# subdirectory, so copy the necessary files up to build them.
 .asm.o:
-	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
+	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
 .asm.obj:
-	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
+	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
 .asm.lo:
-	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
+	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
