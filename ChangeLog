@@ -3,12 +3,15 @@
 	* gmp-impl.h (ULONG_HIGHBIT, UINT_HIGHBIT, USHRT_HIGHBIT): Cast
 	ULONG_MAX etc to unsigned long etc before attempting to right shift.
 
-	* gmp-impl.h (mpn_incr_u, mpn_decr_u, MPN_INCR_U, MPN_DECR_U): Add
-	i386 optimized versions.
+	* acinclude.m4 (GMP_ASM_LSYM_PREFIX): Add an AC_DEFINE of LSYM_PREFIX.
+	* gmp-impl.h (ASM_L): New macro.
+	(mpn_incr_u, mpn_decr_u, MPN_INCR_U, MPN_DECR_U): Add i386 optimized
+	versions.
 
 	* mpn/hppa/*.s,S,asm: Use .label so the code works with gas on hppa
 	GNU/Linux too, reported by LaMont Jones <lamont@smallone.fc.hp.com>.
 	* mpn/hppa/README: Add some notes on this.
+	* acinclude.m4 (GMP_ASM_LABEL_SUFFIX): Ditto.
 
 	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Add dive_1.c,
 	fib2_ui.c.
