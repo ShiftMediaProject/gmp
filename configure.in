@@ -78,6 +78,15 @@ esac],
 [enable_alloca=reentrant])
 
 
+AC_ARG_ENABLE(cxx,
+AC_HELP_STRING([--enable-cxx],[enable C++ support [default=detect]]),
+[case $enableval in
+yes|no|detect) ;;
+*) AC_MSG_ERROR([bad value $enableval for --enable-cxx, need yes/no/detect]) ;;
+esac],
+[enable_cxx=detect])
+
+
 AC_ARG_ENABLE(fft,
 AC_HELP_STRING([--enable-fft],[enable FFTs for multiplication [default=no]]),
 [case $enableval in
@@ -433,7 +442,7 @@ case $host in
     esac
 
     # FIXME: m68k/mc68020 looks like it's ok for cpu32, but this wants to be
-    # tested.  Will need to introduce an m68k/cpu32 if m68/mc62020 ever uses
+    # tested.  Will need to introduce an m68k/cpu32 if m68k/mc62020 ever uses
     # the bitfield instructions.
     case $host in
     [m680[2346]0-*-* | m68360-*-*])  path="m68k/mc68020 m68k"
@@ -679,9 +688,9 @@ case $host in
 
   # VAX
   vax*-*-*)
-    # Believe that vax gcc always accepts -fomit-frame-pointer, though it
-    # might not do anything.  Cf. gcc/config/vax/vax.h which has
-    # FRAME_POINTER_REQUIRED=1 always.
+    # Currently (version 3.0) gcc on vax always uses a frame pointer
+    # (config/vax/vax.h FRAME_POINTER_REQUIRED=1), so -fomit-frame-pointer
+    # will be ignored.
     #
     gcc_cflags="-g -O2 $fomit_frame_pointer"
     path="vax"
@@ -771,7 +780,8 @@ case $host in
     ;;
 
 
-  # FIXME: z8kx won't get through config.sub.
+  # FIXME: z8kx won't get through config.sub.  Could make 16 versus 32 bit
+  # limb an ABI option perhaps.
   z8kx*-*-*)
     path="z8000x"
     extra_functions="udiv_w_sdiv"
@@ -915,8 +925,8 @@ for abi in $abilist; do
         GMP_PROG_CC_IS_GNU($cc,ccbase=gcc)
       fi
 
-      # Similarly if the compiler is xlc but invoked as cc or whatever then
-      # change $ccbase and make the default xlc flags available.
+      # Similarly if the compiler is IBM xlc but invoked as cc or whatever
+      # then change $ccbase and make the default xlc flags available.
       if test $ccbase != xlc; then
         GMP_PROG_CC_IS_XLC($cc,ccbase=xlc)
       fi
@@ -931,7 +941,9 @@ for abi in $abilist; do
       test -n "$cppflags" || eval cppflags=\"\$${ccbase}${abi2}_cppflags\"
       if test "$test_CPPFLAGS" = set; then cppflags=$CPPFLAGS; fi
 
-      # --enable-profiling adds -p/-pg even to user-specified CFLAGS
+      # --enable-profiling adds -p/-pg even to user-specified CFLAGS.
+      # This is convenient, but it's perhaps a bit naughty to modify user
+      # CFLAGS.
       case "$enable_profiling" in
       prof)  cflags="$cflags -p" ;;
       gprof) cflags="$cflags -pg" ;;
@@ -1101,6 +1113,57 @@ esac
 AC_SUBST(DEFN_LONG_LONG_LIMB)
 
 
+# The C compiler and preprocessor, put into ANSI mode if possible.
+AC_PROG_CC
+AC_PROG_CC_STDC
+AC_PROG_CPP
+GMP_H_ANSI
+
+
+# The C++ compiler, if desired.
+want_cxx=no
+if test $enable_cxx != no; then
+  test_CXXFLAGS=${CXXFLAGS+set}
+  AC_PROG_CXX
+
+  echo "CXXFLAGS chosen by autoconf: $CXXFLAGS" >&AC_FD_CC
+  cxxflags_ac_prog_cxx=$CXXFLAGS
+  cxxflags_list=ac_prog_cxx
+
+  # If the user didn't specify $CXXFLAGS, then try $CFLAGS, with -g removed
+  # if AC_PROG_CXX thinks that doesn't work.  $CFLAGS stands a good chance
+  # of working, eg. on a GNU system where CC=gcc and CXX=g++.
+  #
+  if test "$test_CXXFLAGS" != set; then
+    cxxflags_cflags=$CFLAGS
+    cxxflags_list="cflags $cxxflags_list"
+    if test "$ac_prog_cxx_g" = no; then
+      cxxflags_cflags=`echo "$cxxflags_cflags" | sed -e 's/ -g //' -e 's/^-g //' -e 's/ -g$//'`
+    fi
+  fi
+
+  # See if the C++ compiler works.  If the user specified CXXFLAGS then all
+  # we're doing is checking whether AC_PROG_CXX succeeded, since it doesn't
+  # give a fatal error, just leaves CXX set to a default g++.  If on the
+  # other hand the user didn't specify CXXFLAGS then we get to try here our
+  # $cxxflags_list alternatives.
+  #
+  for cxxflags_choice in $cxxflags_list; do
+    eval CXXFLAGS=\"\$cxxflags_$cxxflags_choice\"
+    GMP_PROG_CXX_WORKS($CXX $CXXFLAGS,
+      [want_cxx=yes
+      break])
+  done
+
+  # If --enable-cxx=yes but a C++ compiler can't be found, then abort.
+  if test $want_cxx = no && test $enable_cxx = yes; then
+    AC_MSG_ERROR([C++ compiler not available])
+  fi
+fi
+
+AM_CONDITIONAL(WANT_CXX, test $want_cxx = yes)
+AC_DEFINE(WANT_CXX, 1, [Define if C++ support is wanted])
+
 cat >&AC_FD_CC <<EOF
 configure:__line__: Decided:
 ABI=$ABI
@@ -1108,17 +1171,18 @@ CC=$CC
 CFLAGS=$CFLAGS
 CPPFLAGS=$CPPFLAGS
 GMP_LDFLAGS=$GMP_LDFLAGS
+CXX=$CXX
+CXXFLAGS=$CXXFLAGS
 path=$path
 EOF
-echo using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
-
-
-# The C compiler and preprocessor, put into ANSI mode if possible.
-AC_PROG_CC
-AC_PROG_CC_STDC
-AC_PROG_CPP
-GMP_H_ANSI
-
+echo "using ABI=\"$ABI\""
+echo "      CC=\"$CC\""
+echo "      CFLAGS=\"$CFLAGS\""
+echo "      CPPFLAGS=\"$CPPFLAGS\""
+if test $want_cxx = yes; then
+  echo "      CXX=\"$CXX\""
+  echo "      CXXFLAGS=\"$CXXFLAGS\""
+fi
 
 case $host_cpu in
   c90 | t90)
@@ -1606,11 +1670,12 @@ GMP_FINISH
 
 AC_OUTPUT(Makefile							\
   mpbsd/Makefile mpf/Makefile mpfr/Makefile mpn/Makefile mpq/Makefile	\
-  mpz/Makefile printf/Makefile						\
+  mpz/Makefile printf/Makefile cxx/Makefile				\
   mpfr/tests/Makefile							\
   tests/Makefile tests/devel/Makefile tests/mpbsd/Makefile		\
   tests/mpf/Makefile tests/mpn/Makefile tests/mpq/Makefile		\
   tests/mpz/Makefile tests/rand/Makefile tests/printf/Makefile		\
+  tests/cxx/Makefile							\
   tune/Makefile								\
   demos/Makefile demos/calc/Makefile demos/expr/Makefile		\
   gmp.h:gmp-h.in mp.h:mp-h.in						\
