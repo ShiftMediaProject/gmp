@@ -72,7 +72,7 @@ trace (const char *format, ...)
   ((((xh) << ((count) - GMP_NAIL_BITS)) & GMP_NUMB_MASK) |	\
    ((xl) >> (GMP_LIMB_BITS - (count))))
 
-/* Checks if a - b < c. Overwrites c.
+/* Checks if a - b < c.  Prerequisite a >= b.  Overwrites c.
 
    Let W = 2^GMP_NUMB_BITS, k = csize.
    
