@@ -250,7 +250,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 	w = -mpn_sub_n (ws, p, ws, n);
       w += mpn_add_n (ws, p + n, ws, n);
       w += mpn_add_n (p + n2, p + n2, ws, n);
-      mpn_incr_u (p + n2 + n, w);
+      MPN_INCR_U (p + n2 + n, 2*n - (n2 + n), w);
     }
 }
 
@@ -400,7 +400,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       w = -mpn_sub_n (ws, p, ws, n);
       w += mpn_add_n (ws, p + n, ws, n);
       w += mpn_add_n (p + n2, p + n2, ws, n);
-      mpn_incr_u (p + n2 + n, w);
+      MPN_INCR_U (p + n2 + n, 2*n - (n2 + n), w);
     }
 }
 
@@ -1011,9 +1011,9 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
   /** Final stage: add up the coefficients. **/
   tB += mpn_add_n (p + l, p + l, B, l2);
   tD += mpn_add_n (p + l3, p + l3, D, l2);
-  mpn_incr_u (p + l3, tB);
-  mpn_incr_u (p + l4, tC);
-  mpn_incr_u (p + l5, tD);
+  MPN_INCR_U (p + l3, 2*n - l3, tB);
+  MPN_INCR_U (p + l4, 2*n - l4, tC);
+  MPN_INCR_U (p + l5, 2*n - l5, tD);
 }
 
 /*-- mpn_toom3_sqr_n --------------------------------------------------------------*/
@@ -1109,9 +1109,9 @@ mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
   /** Final stage: add up the coefficients. **/
   tB += mpn_add_n (p + l, p + l, B, l2);
   tD += mpn_add_n (p + l3, p + l3, D, l2);
-  mpn_incr_u (p + l3, tB);
-  mpn_incr_u (p + l4, tC);
-  mpn_incr_u (p + l5, tD);
+  MPN_INCR_U (p + l3, 2*n - l3, tB);
+  MPN_INCR_U (p + l4, 2*n - l4, tC);
+  MPN_INCR_U (p + l5, 2*n - l5, tD);
 }
 
 void
