@@ -1632,6 +1632,86 @@ AC_SUBST(TAL_OBJECT)
 ])
 
 
+dnl  GMP_OPTION_CXX
+dnl  --------------
+dnl  Handle the --enable-cxx option.
+
+AC_DEFUN(GMP_OPTION_CXX,
+[have_cxx=no
+if test $enable_cxx != no; then
+  test_CXXFLAGS=${CXXFLAGS+set}
+  AC_PROG_CXX
+
+  cat >conftest.cc <<EOF
+#include <iostream.h>
+int
+main (void)
+{
+  cout.setf (ios::hex);
+  cout << 123;
+  return 0;
+}
+EOF
+  echo "configure: C++ test program:" >&AC_FD_CC
+  cat conftest.cc >&AC_FD_CC
+  gmp_cxxcompile="$CXX $CXXFLAGS conftest.cc"
+
+  if test "$test_CXXFLAGS" = set; then
+    # User specified $CXXFLAGS, just check the compiler works
+    AC_MSG_CHECKING([C++ compiler $CXX $CXXFLAGS])
+    if AC_TRY_EVAL(gmp_cxxcompile); then
+      AC_MSG_RESULT(yes)
+      have_cxx=yes
+    fi
+    AC_MSG_RESULT(no)
+
+  else
+    # User didn't specify $CXXFLAGS, try $CFLAGS (possibly with -g removed)
+    # or what AC_PROG_CXX decided (which is either "-g -O2" or "-O2").
+    #
+    # $CFLAGS stands a good chance of working, eg. on a GNU system where
+    # CC=gcc and CXX=g++, but no need to worry if it doesn't.
+
+    if test "$ac_prog_cxx_g" = no; then
+      cxxflags_cflags=`echo "$CFLAGS" | sed -e 's/ -g //' -e 's/^-g //' -e 's/ -g$//'`
+    else
+      cxxflags_cflags=$CFLAGS
+    fi
+
+    echo "CXXFLAGS chosen by autoconf: $CXXFLAGS" >&AC_FD_CC
+    cxxflags_ac_prog_cxx="$CXXFLAGS"
+
+    for CXXFLAGS in "$cxxflags_cflags" "$cxxflags_ac_prog_cxx" ""; do
+      AC_MSG_CHECKING([C++ compiler $CXX $CXXFLAGS])
+      if AC_TRY_EVAL(gmp_cxxcompile); then
+        AC_MSG_RESULT(yes)
+        have_cxx=yes
+        break    
+      fi
+      AC_MSG_RESULT(no)
+    done
+  fi
+  rm -f conftest* a.out
+
+  # an error if C++ was requested but doesn't work
+  if test $have_cxx = no && test $enable_cxx = yes; then
+    AC_MSG_ERROR([C++ compiler not available])
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_CXX, test $have_cxx = yes)
+
+# FIXME: This hack is because automake doesn't seem to like AM_CONDITIONAL
+# defined variables in libgmp_la_DEPENDENCIES.
+if test $have_cxx = yes; then
+  PRINTF_CXX_OBJECTS='$(PRINTF_CXX_OBJECTS)'
+else
+  PRINTF_CXX_OBJECTS=
+fi
+AC_SUBST(PRINTF_CXX_OBJECTS)
+])
+
+
 dnl  GMP_H_EXTERN_INLINE
 dnl  -------------------
 dnl  If the compiler has an "inline" of some sort, check whether the
