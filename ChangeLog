@@ -18,6 +18,21 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-07-31  Kevin Ryde  <kevin@swox.se>
+
+	* config.guess: Remove $dummy.o files everywhere, in case vendor
+	compilers produce that even when not asked.
+
+	* demos/perl/GMP.xs (class_or_croak): Rename "class" parameter to
+	avoid C++ keyword.
+	(coerce_ulong, coerce_long): Move croaks to stop g++ 3.3 complaining
+	about uninitialized variables.
+
+	* demos/perl/INSTALL: Add notes on building with a DLL.
+
+	* longlong.h (count_trailing_zeros) [x86_64]: Ensure bsfq destination
+	is a 64-bit register.  Diagnosed by Francois G. Dorais.
+
 2003-07-31  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h [ppc]: Remove nested test for vxworks.
