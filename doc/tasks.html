@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 6 Sep 2001.  An up-to-date version is available at
+  This file current as of 12 Sep 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -263,7 +263,8 @@
      (The current umul_ppmm loop of mpn_sqr_basecase runs at around 60
      cycles/limb.)  If we use VIS <code>fand</code> for splitting operands,
      just 13 memory are needed.
-<li> UltraSPARC/64: <code>mpn_divrem_1</code> and <code>mpn_mod_1</code> could
+<li> UltraSPARC/64: <code>mpn_divrem_1</code>, <code>mpn_mod_1</code>,
+     <code>mpn_divexact_1</code> and <code>mpn_modexact_1_odd</code> could
      process 32 bits at a time when the divisor fits 32-bits.  This will need
      only 4 <code>mulx</code>'s per limb instead of 8 in the general case.
 <li> UltraSPARC/32: Rewrite <code>mpn_lshift</code>, <code>mpn_rshift</code>.
@@ -271,6 +272,11 @@
 <li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 &lt; 2^16.
 <li> UltraSPARC/32: Use <code>mulx</code> for <code>umul_ppmm</code> if
      possible (see commented out code in longlong.h).
+<li> UltraSPARC: <code>modlimb_invert</code> might save a few cycles from
+     masking down to just the useful bits at each point in the calculation,
+     since <code>mulx</code> speed depends on the highest bit set.  Either
+     explicit masks or small types like <code>short</code> and
+     <code>int</code> ought to work.
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current code runs at 11 cycles/limb.  It
      should be possible to saturate the cache, which will happen at 8
@@ -299,9 +305,14 @@
      <code>__builtin_memcpy</code>.  Examine the code for some simple and
      complex functions to find out.  Inlining <code>rep movs</code> would be
      desirable, it'd be both smaller and faster.
-<br> Pentium MMX: <code>mpn_divexact_1</code> and
+<li> Pentium P54: <code>mpn_lshift</code> and <code>mpn_rshift</code> can come
+     down from 6.0 c/l to 5.5 or 5.375 by paying attention to pairing after
+     <code>shrdl</code> and <code>shldl</code>, see mpn/x86/pentium/README.
+<li> Pentium P55 MMX: <code>mpn_divexact_1</code> and
      <code>mpn_modexact_1_odd</code> on 16-bit divisors could use MMX
      multiplies and run at around 16 cycles (down from 23).
+<li> Pentium P55 MMX: <code>mpn_lshift</code> and <code>mpn_rshift</code>
+     might benefit from some destination prefetching.
 <li> PentiumPro: <code>mpn_divrem_1</code> might be able to use a
      mul-by-inverse, hoping for maybe 30 c/l.
 <li> P6: <code>mpn_add_n</code> and <code>mpn_sub_n</code> should be able to go
@@ -452,6 +463,10 @@
 <li> Sparc: config.guess should say supersparc, microsparc, ultrasparc1,
      ultrasparc2, etc.  "prtconf -vp" gives lots of information about a
      Solaris system.
+<li> Sparc: recognise sparclite and sparclet (which configfsf.sub accepts).
+     These have <code>umul</code> but not <code>udiv</code>, or something like
+     that.  Check the mpn/sparc32/v8 code is suitable, and add -mcpu= options
+     for gcc.
 <li> Sparc32: floating point or integer <code>udiv</code> should be selected
      according to the CPU target.  Currently floating point ends up being
      used on all sparcs, which is probably not right for generic V7 and V8.
@@ -486,6 +501,12 @@
 <li> Make <code>mpz_div</code> and <code>mpz_divmod</code> use rounding
      analogous to <code>mpz_mod</code>.  Document, and list as an
      incompatibility.
+<li> <code>mpz_gcdext</code> and <code>mpn_gcdext</code> ought to document
+     what range of values the generated cofactors can take, and preferrably
+     ensure the definition uniquely specifies the cofactors for given inputs.
+     A basic extended Euclidean algorithm or multi-step variant leads to
+     |x|<|b| and |y|<|a| or something like that, but there's probably two
+     solutions under just those restrictions.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
 <li> Merge mpn/pa64 and pa64w.
 <li> <code>mpz_urandomm</code> should do something for n&lt;=0 (but what?),
@@ -497,8 +518,8 @@
      <code>libgmp</code>.  This establishes good cross-checks, but it might be
      better to use simple reference routines where possible.  Where it's not
      possible some attention could be paid to the order of the tests, so a
-     main <code>libgmp</code> routine is only used to construct tests once it
-     seems to be good.
+     <code>libgmp</code> routine is only used for tests once it seems to be
+     good.
 <li> <code>mpf_set_q</code> is very similar to <code>mpf_div</code>, it'd be
      good for the two to share code.  Perhaps <code>mpf_set_q</code> should
      make some <code>mpf_t</code> aliases for its numerator and denominator
@@ -509,7 +530,7 @@
 </ul>
 
 
-<h4>Aids to Debugging</h4>
+<h4>Aids to Development</h4>
 <ul>
 <li> Add <code>ASSERT</code>s at the start of each user-visible mpz/mpq/mpf
      function to check the validity of each <code>mp?_t</code> parameter, in
@@ -519,6 +540,11 @@
      else then consistency checks like size&lt;=alloc, ptr not
      <code>NULL</code> and ptr+size not wrapping around the address space,
      would be possible.
+<li> tune/time.c could try to determine at runtime whether
+     <code>getrusage</code> and <code>gettimeofday</code> are reliable.
+     Currently we pretend in configure that the dodgy m68k netbsd 1.4.1
+     <code>getrusage</code> doesn't exist.  If a test might take a long time
+     to run then perhaps cache the result in a file somewhere.
 </ul>
 
 
@@ -591,6 +617,13 @@ near future, but are at least worth thinking about.
      separate" function parameters?  If so, judicious use might improve the
      code generated a bit.  Do any compilers have their own flavour of
      restrict as "completely unaliased", and is that still usable?
+<li> 68000: A 16-bit limb might suit 68000 better than 32-bits, since the
+     native multiply is only 16x16.  Could have this as an <code>ABI</code>
+     option, selecting <code>_SHORT_LIMB</code> in gmp.h.  Naturally a new set
+     of asm subroutines would be necessary.  Would need new
+     <code>mpz_set_ui</code> etc since the current code assumes limb>=long,
+     but 2-limb operand forms would find a use for <code>long long</code> on
+     other processors too.
 </ul>
 
 
