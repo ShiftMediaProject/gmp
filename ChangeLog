@@ -1,3 +1,7 @@
+2001-08-10  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (setup_error_handler): Catch also SIGABRT.
+
 2001-07-31  Kevin Ryde  <kevin@swox.se>
 
 	* tests/refmpn.c (refmpn_mul_1c): Allow low to high overlaps.
