@@ -186,8 +186,6 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
   else
     {
       /* Even length. */
-      mp_limb_t t;
-
       i = n2;
       do
 	{
@@ -352,8 +350,6 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
   else
     {
       /* Even length. */
-      mp_limb_t t;
-
       i = n2;
       do 
 	{
