@@ -1,0 +1,91 @@
+Copyright 2002 Free Software Foundation, Inc.
+
+This file is part of the GNU MP Library.
+
+The GNU MP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
+option) any later version.
+
+The GNU MP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+02111-1307, USA.
+
+
+
+
+
+                    POWERPC 32-BIT MPN SUBROUTINES
+
+
+This directory contains mpn functions for various 32-bit PowerPC chips.
+
+
+CODE ORGANIZATION
+
+	powerpc           generic, 604, 604e
+	powerpc/750       740, 750, 7400
+
+
+The top-level powerpc directory is currently mostly aimed at 604/604e but
+should be reasonable on all powerpcs.
+
+
+
+STATUS
+
+The code is quite well optimized for the 604e, other chips have had less
+attention.
+
+Altivec SIMD available in 7400 might hold some promise, but unfortunately
+GMP only guarantees 32-bit data alignment, so there's lots of fiddling
+around with partial operations at the start and end of limb vectors.  A
+128-bit limb would be a novel idea, but is unlikely to be practical, since
+it would have to work with ordinary +, -, * etc in the C code.
+
+
+
+REGISTER NAMES
+
+The normal powerpc convention is to give registers as plain numbers, like
+"mtctr 6", but on Apple MacOS X (powerpc*-*-rhapsody* and
+powerpc*-*-darwin*) the assembler demands an "r" like "mtctr r6".  Note
+however when register 0 in an instruction means a literal zero the "r" is
+omitted, for instance "lwzx r6,0,r7".
+
+The GMP code uses the "r" forms, powerpc-defs.m4 transforms them to plain
+numbers according to what GMP_ASM_POWERPC_R_REGISTERS finds is needed.
+
+
+
+
+REFERENCES
+
+PowerPC Microprocessor Family: The Programming Environments for 32-bit
+Microprocessors, IBM document G522-0290-01, 2000.
+
+PowerPC 604e RISC Microprocessor User's Manual with Supplement for PowerPC
+604 Microprocessor, IBM document G552-0330-00, Motorola document
+MPC604EUM/AD, 1998.
+
+MPC7400 RISC Microprocessor User's Manual, Motorola document MPC7400UM/D,
+rev 0, 3/2000.
+
+The above are available online from
+
+	http://chips.ibm.com/techlib/products/powerpc/manuals
+	http://www.mot.com/PowerPC
+
+
+
+----------------
+Local variables:
+mode: text
+fill-column: 76
+End:
