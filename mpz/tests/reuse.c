@@ -34,21 +34,13 @@ MA 02111-1307, USA. */
 #define SIZE 50
 #endif
 
-#if __STDC__
-typedef void (*dss_func) (mpz_ptr, mpz_srcptr, mpz_srcptr);
-typedef void (*dsi_func) (mpz_ptr, mpz_srcptr, unsigned long int);
-typedef unsigned long int (*dsi_div_func) (mpz_ptr, mpz_srcptr, unsigned long int);
-typedef unsigned long int (*ddsi_div_func) (mpz_ptr, mpz_ptr, mpz_srcptr, unsigned long int);
-typedef void (*ddss_div_func) (mpz_ptr, mpz_ptr, mpz_srcptr, mpz_srcptr);
-typedef void (*ds_func) (mpz_ptr, mpz_srcptr);
-#else
-typedef void (*dss_func) ();
-typedef void (*dsi_func) ();
-typedef unsigned long int (*dsi_div_func) ();
-typedef unsigned long int (*ddsi_div_func) ();
-typedef void (*ddss_div_func) ();
-typedef void (*ds_func) ();
-#endif
+typedef void (*dss_func) _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+typedef void (*dsi_func) _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+typedef unsigned long int (*dsi_div_func) _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+typedef unsigned long int (*ddsi_div_func) _PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, unsigned long int));
+typedef void (*ddss_div_func) _PROTO ((mpz_ptr, mpz_ptr, mpz_srcptr, mpz_srcptr));
+typedef void (*ds_func) _PROTO ((mpz_ptr, mpz_srcptr));
+
 
 void
 #if __STDC__
@@ -148,12 +140,24 @@ char *ds_func_names[] =
   "mpz_abs", "mpz_com", "mpz_neg", "mpz_sqrt"
 };
 
+
+/* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
+#if defined (__STDC__) || defined (__cplusplus)
 #define FAIL(class,indx,op1,op2,op3) \
   do {									\
   class##_funcs[indx] = 0;						\
   dump_abort (class##_func_names[indx], op1, op2, op3);			\
   failures++;								\
   } while (0)
+#else
+#define FAIL(class,indx,op1,op2,op3) \
+  do {									\
+  class/**/_funcs[indx] = 0;						\
+  dump_abort (class/**/_func_names[indx], op1, op2, op3);		\
+  failures++;								\
+  } while (0)
+#endif
+
 
 main (argc, argv)
      int argc;
