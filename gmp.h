@@ -637,6 +637,7 @@ void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state s));
 #define mpn_addsub_n		__MPN(addsub_n)
 #define mpn_bdivmod		__MPN(bdivmod)
 #define mpn_cmp			__MPN(cmp)
+#define mpn_divexact_by3        __MPN(divexact_by3)
 #define mpn_divmod_1		__MPN(divmod_1)
 #define mpn_divrem		__MPN(divrem)
 #define mpn_divrem_1		__MPN(divrem_1)
@@ -685,6 +686,7 @@ mp_limb_t mpn_addmul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_addsub_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_bdivmod _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, unsigned long int));
 int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
+mp_limb_t mpn_divexact_by3 _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
 mp_limb_t mpn_divmod_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_divrem _PROTO((mp_ptr, mp_size_t, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t));
