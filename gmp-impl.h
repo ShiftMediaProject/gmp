@@ -502,7 +502,7 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
 
 #define ABOVE_THRESHOLD(size,thresh)    \
   ((thresh) == 0                        \
-   || (! (thresh) == MP_SIZE_T_MAX      \
+   || ((thresh) != MP_SIZE_T_MAX        \
        && (size) >= (thresh)))
 #define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
 
