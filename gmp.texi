@@ -3371,8 +3371,6 @@ $\lceil@var{n}/2\rceil$%
 @end iftex
 @ifnottex
 ceil(@var{n}/2)@}
-
-The area at @var{r1p} needs to have space for ceil(@var{n}/2) limbs.
 @end ifnottex
 and the remainder at @{@var{r2p}, @var{retval}@}.  @var{r2p} needs space for
 @var{n} limbs, but the return value indicates how many are produced.
