@@ -33,7 +33,7 @@ MA 02111-1307, USA. */
    n==0 is allowed and is considered a zero value.  */
 
 int
-mpn_zero_p (mp_ptr p, mp_size_t n)
+mpn_zero_p (mp_srcptr p, mp_size_t n)
 {
   mp_size_t i;
 
