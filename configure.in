@@ -440,10 +440,11 @@ case $host in
 
     case $host in
       mips*-*-irix6*)
-        abilist="64 32"
-        gcc_64_cflags="-g -O2 -mabi=n32 -mips3"
-        cc_64_cflags="-g -O2 -n32 -mips3"
-        path_64="mips3"
+        # n32L uses a long long limb, but is setup by _ABIN32 in gmp.h.
+        abilist="n32L 32"
+        gcc_n32L_cflags="-g -O2 -mabi=n32 -mips3"
+        cc_n32L_cflags="-g -O2 -n32 -mips3"
+        path_n32L="mips3"
         ;;
       [mips[34]*-*-*])
         path="mips3"
