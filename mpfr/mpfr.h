@@ -98,11 +98,7 @@ typedef __gmp_const __mpfr_struct *mpfr_srcptr;
 /* Prototypes */
 
 #ifndef _PROTO
-#if defined (__STDC__) || defined (__cplusplus)
-#define _PROTO(x) x
-#else
-#define _PROTO(x) ()
-#endif
+#define _PROTO(x)  __GMP_PROTO(x)
 #endif
 
 #if defined (__cplusplus)
