@@ -947,6 +947,7 @@ tune_dc (void)
   static struct param_t  param;
   param.name = "DIV_DC_THRESHOLD";
   param.function = speed_mpn_dc_tdiv_qr;
+  param.step_factor = 0.02;
   one (&div_dc_threshold, &param);
 }
 
@@ -1548,7 +1549,7 @@ tune_set_str (void)
   static struct param_t  param;
 
   s.r = 10;  /* decimal */
-  param.step_factor = 0.04;
+  param.step_factor = 0.1;
   param.name = "SET_STR_THRESHOLD";
   param.function = speed_mpn_set_str_basecase;
   param.function2 = speed_mpn_set_str_subquad;
