@@ -40,7 +40,8 @@ PROLOGUE(mpn_invert_limb)
 	cmp.eq		p6,p7 = 0,r8;;			// check for d = 2^63
 	ldfe		f10 = [r14],16			// 2^64
         setf.sig	f7 = r32
-   (p6)	br.cond.spnt.few .L1;;				// branch if d = 2^63
+	mov		r8 = -1
+   (p6)	br.ret.spnt	b0;;
         ldfe		f8 = [r14]			// 2^128
 	fmpy.s1		f11 = f7,f10;;			// scale by 2^64
 	fsub.s1		f6 = f8,f11;;
@@ -61,7 +62,6 @@ PROLOGUE(mpn_invert_limb)
 	add		r32 = r32,r14;;
 	cmp.ltu		p6,p7 = r32,r14;;		// got overflow?
    (p6) add		r8 = -1,r8			// adjust di down
-.L1:
         br.ret.sptk	b0
 EPILOGUE(mpn_invert_limb)
 ASM_END()
