@@ -92,7 +92,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
       return 1;
     }
 
-  if ((base & (base - 1)) == 0)
+  if (POW2_P (base))
     {
       /* The base is a power of 2.  Make conversion from most
 	 significant side.  */
