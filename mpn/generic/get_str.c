@@ -25,6 +25,66 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+/* Conversion of U {up,un} to a string in base b.  Basic algorithms:
+
+  A) Divide U repeatedly by b, generating an integer quotient and remainder.
+     Digits come out from right to left.  (Used in mpn_sb_divrem_mn.)
+
+  B) Divide U by b^g, for g such that 1/b <= U/b^g < 1, generating a fraction.
+     Then develop digits by multiplying the fraction repeatedly by b.  Digits
+     come out from left to right.  (Currently not used herein.)
+
+  C) Compute b^1, b^2, b^4, ..., b^(2^s), for s such that b^(2^s) > sqrt(U).
+     Then divide U by b^(2^k), generating an integer quotient and remainder.
+     Recursively convert the quotient, then the remainder, using the
+     precomputed powers.  Digits come out from left to right.  (Used in
+     mpn_dc_get_str.)
+
+  When using algorithm C, algorithm B might be suitable for basecase code,
+  since the required b^g power will be readily accessible.
+
+  Optimization ideas:
+  1. Obviously, b should normally be replaced by big_base, the largest power of
+     b that fits in a limb.
+  2. The recursive function of (C) could avoid TMP allocation:
+     a) Overwrite dividend with quotient and remainder, just as permitted by
+        mpn_sb_divrem_mn.
+     b) If TMP memory is anyway needed, pass it as a parameter, similarly to
+        how we do it in Karatsuba multiplication.
+  3. Store the powers of (C) normalized, with the normalization count.
+     Quotients will usually need to be left-shifted before each divide, and
+     remainders will either need to be left-shifted of right-shifted.
+  4. When b is even, the powers will end up with lots of low zero limbs.  Can
+     we take advantage of that?
+
+  Basic structure of (C):
+    mpn_get_str:
+      if POW2_P (n)
+	...
+      else
+	if (un < GET_STR_PRECOMPUTE_THRESHOLD)
+	  mpn_sb_get_str (str, base, up, un);
+	else
+	  precompute_power_tables
+	  mpn_dc_get_str
+
+    mpn_dc_get_str:
+	mpn_tdiv_qr
+	if (qn < GET_STR_BASECASE_THRESHOLD)
+	  mpn_sb_get_str
+	else
+	  mpn_dc_get_str
+	if (rn < GET_STR_BASECASE_THRESHOLD)
+	  mpn_sb_get_str
+	else
+	  mpn_dc_get_str
+
+
+  The reason for the two threshold values is the cost of
+  precompute_power_tables.  GET_STR_PRECOMPUTE_THRESHOLD will be considerably
+  larger than GET_STR_PRECOMPUTE_THRESHOLD.  Do you think I should change
+  mpn_dc_get_str to instead look like the following?  */
+
 
 /* The x86s and m68020 have a quotient and remainder "div" instruction and
    gcc recognises an adjacent "/" and "%" can be combined using that.
