@@ -419,8 +419,13 @@ esac
 
 case ${target} in
   [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
-    extra_functions="$extra_functions copyi copyd";;
+    extra_functions="$extra_functions copyi copyd"
+    GMP_CHECK_ASM_SHLDL_CL(
+      [GMP_DEFINE(WANT_SHLDL_CL,1)],
+      [GMP_DEFINE(WANT_SHLDL_CL,0)])
+    ;;
 esac
+
 
 dnl Extensions for executable and object files.
 dnl -------------------------------------------
