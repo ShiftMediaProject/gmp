@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-03  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/refmpn.c (refmpn_addlsh1_n, refmpn_sublsh1_n, refmpn_rsh1add_n,
+	refmpn_rsh1sub_n): New functions.
+
 2003-10-02  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in (ia64*-*-hpux*): Fall back to +O1, not +O.
