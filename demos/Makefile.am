@@ -25,6 +25,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
+qcn_LDADD = $(LDADD) -lm
+
 # None of these programs are built by default, but "make <whatever>" will
 # build one once libgmp.la has been built.
 #
