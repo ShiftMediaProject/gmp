@@ -1,6 +1,6 @@
 /* mpz_divexact -- finds quotient when known that quot * den == num && den != 0.
 
-Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -53,9 +53,22 @@ mpz_divexact (quot, num, den)
   mp_size_t dsize = ABS (den->_mp_size);
   TMP_DECL (marker);
 
-  /*  Generate divide-by-zero error if dsize == 0.  */
-  if (dsize == 0)
+  qsize = nsize - dsize + 1;
+  if (quot->_mp_alloc < qsize)
+    _mpz_realloc (quot, qsize);
+  qp = quot->_mp_d;
+
+  if (dsize <= 1)
     {
+      if (dsize == 1)
+	{
+	  mpn_divmod_1 (qp, np, nsize, dp[0]);
+	  qsize -= qp[qsize - 1] == 0;
+	  quot->_mp_size = (num->_mp_size ^ den->_mp_size) >= 0 ? qsize : -qsize;
+	  return;
+	}
+
+      /*  Generate divide-by-zero error if dsize == 0.  */
       quot->_mp_size = 1 / dsize;
       return;
     }
@@ -65,11 +78,6 @@ mpz_divexact (quot, num, den)
       quot->_mp_size = 0;
       return;
     }
-
-  qsize = nsize - dsize + 1;
-  if (quot->_mp_alloc < qsize)
-    _mpz_realloc (quot, qsize);
-  qp = quot->_mp_d;
 
   TMP_MARK (marker);
 
@@ -106,7 +114,7 @@ mpz_divexact (quot, num, den)
   mpn_bdivmod (qp, qp, qsize, tp, tsize, qsize * BITS_PER_MP_LIMB);
   MPN_NORMALIZE (qp, qsize);
 
-  quot->_mp_size = (num->_mp_size < 0) == (den->_mp_size < 0) ? qsize : -qsize;
+  quot->_mp_size = (num->_mp_size ^ den->_mp_size) >= 0 ? qsize : -qsize;
 
   TMP_FREE (marker);
 }
