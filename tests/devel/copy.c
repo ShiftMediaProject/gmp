@@ -23,6 +23,7 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 #ifdef OPERATION_copyi
 #define func MPN_COPY_INCR

@@ -25,6 +25,7 @@ MA 02111-1307, USA.
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
+#include "tests.h"
 
 #ifdef OPERATION_mul_1
 #define func __gmpn_mul_1
