@@ -25,6 +25,8 @@
 
 <h4>Correctness and Completeness</h4>
 <ul>
+<li> mpf{r,}_random2 incorrectly assumes random() returns enough bits
+     for an mp_exp_t.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c: <code>mpz_XXX(a,a,a)</code>.
@@ -140,6 +142,8 @@
      for square roots.  Divisibility by powers of 2 should be tested with
      <code>mpz_scan1</code> or similar.  Divisibility by other primes should
      be tested by grouping into a limb like <code>PP</code>.
+<li> Change PP/PP_INVERTED into an array of such pairs, listing several hundred
+     of primes.  Perhaps actually make the products larger than one limb each.
 <li> <code>mpz_probab_prime_p</code>, <code>mpn_perfect_square_p</code> and
      <code>mpz_perfect_power_p</code> could take a remainder mod 2^24-1 to
      quickly get remainders mod 3, 5, 7, 13 and 17 (factors of 2^24-1).  A
@@ -339,6 +343,7 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 <li> Maybe make mpz/pow_ui.c more like mpz/ui_pow_ui.c, or write new
      mpn/generic/pow_ui.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
+<li> Rewrite the various mpX_random* to use the new GMP random generators.
 </ul>
 
 
