@@ -927,7 +927,8 @@ void speed_option_set _PROTO((const char *s));
 
 #define SPEED_ROUTINE_MPN_DIVREM_2(function)            \
   {                                                     \
-    mp_ptr    xp, wp;                                   \
+    mp_ptr    wp, xp;                                   \
+    mp_limb_t yp[2];                                    \
     unsigned  i;                                        \
     double    t;                                        \
     TMP_DECL (marker);                                  \
@@ -938,17 +939,22 @@ void speed_option_set _PROTO((const char *s));
     xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);  \
     wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
                                                         \
-    /* source is overwritten */                         \
+    /* source is destroyed */                           \
     MPN_COPY (xp, s->xp, s->size);                      \
                                                         \
+    /* divisor must be normalized */                    \
+    MPN_COPY (yp, s->yp_block, 2);                      \
+    yp[1] |= MP_LIMB_T_HIGHBIT;                         \
+                                                        \
     speed_operand_src (s, xp, s->size);                 \
+    speed_operand_src (s, yp, 2);                       \
     speed_operand_dst (s, wp, s->size);                 \
     speed_cache_fill (s);                               \
                                                         \
     speed_starttime ();                                 \
     i = s->reps;                                        \
     do                                                  \
-      function (wp, 0, xp, s->size, s->yp);             \
+      function (wp, 0, xp, s->size, yp);                \
     while (--i != 0);                                   \
     t = speed_endtime ();                               \
                                                         \
