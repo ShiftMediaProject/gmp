@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 29 May 2002.  An up-to-date version is available at
+  This file current as of 20 Jun 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -320,6 +320,10 @@ MA 02111-1307, USA.
      coefficient additions look like they could use a single
      <code>mpn_add_n</code> of <code>l4</code> limbs rather than two of
      <code>l2</code> limbs.
+<li> <code>add2Times</code> in mpn/generic/mul_n.c is supposed to be inlined
+     under <code>USE_MORE_MPN</code>, but isn't because it uses
+     <code>alloca</code>.  Do something with a macro to avoid that, and indeed
+     to get it always irrespective.
 </ul>
 
 
@@ -543,8 +547,6 @@ MA 02111-1307, USA.
 
 <h4>New Functionality</h4>
 <ul>
-<li> Add in-memory versions of <code>mp?_out_raw</code> and
-     <code>mp?_inp_raw</code>.
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
 <li> <code>mpz_init</code> and <code>mpq_init</code> could do lazy allocation.
@@ -590,10 +592,6 @@ MA 02111-1307, USA.
      <code>BELOW_THRESHOLD</code> macros can do this adequately, and also pick
      up cases where a threshold of zero should mean only the second algorithm.
 <li> <code>mpz_nthprime</code>.
-<li> Perhaps <code>mpz_init2</code>, initializing and making initial room for
-     N bits.  The actual size would be rounded up to a limb, and perhaps an
-     extra limb added since so many <code>mpz</code> routines need that on
-     their destination.
 <li> <code>mpz_andn</code>, <code>mpz_iorn</code>, <code>mpz_nand</code>,
      <code>mpz_nior</code>, <code>mpz_xnor</code> might be useful additions,
      if they could share code with the current such functions (which should be
@@ -791,6 +789,10 @@ MA 02111-1307, USA.
 <li> Automake: Latest automake has a <code>CCAS</code>, <code>CCASFLAGS</code>
      scheme.  Though we probably wouldn't be using its assembler support we
      could try to use those variables in compatible ways.
+<li> AIX PowerPC: <code>config.guess</code> prints an unattractive "Memory
+     fault" message from the <code>mfpvr</code> test program.  Should try to
+     suppress that.  The use of <code>$SHELL -c</code> is supposed to do that,
+     but doesn't.
 </ul>
 
 
@@ -866,11 +868,6 @@ MA 02111-1307, USA.
      by switching to <code>mpn_tdiv_qr</code> perhaps making them small enough
      not to bother with sharing (especially since <code>mpf_set_q</code>
      wouldn't need to watch out for overlaps).
-<li> PowerPC: The cpu time base registers (per <code>mftb</code> and
-     <code>mftbu</code>) could be used for the speed and tune programs.  Would
-     need to know its frequency of course.  Usually it's 1/4 of bus speed
-     (eg. 25 MHz) but some chips drive it from an external input.  Probably
-     have to measure to be sure.
 <li> <code>MUL_FFT_THRESHOLD</code> etc: the FFT thresholds should allow a
      return to a previous k at certain sizes.  This arises basically due to
      the step effect caused by size multiples effectively used for each k.
@@ -904,9 +901,12 @@ MA 02111-1307, USA.
 
 <h4>Documentation</h4>
 <ul>
-<li> Document conventions, like that <code> unsigned long int</code> is used for
-     bit counts/ranges, and that <code>mp_size_t</code> is used for limb counts.
 <li> <code>mpz_inp_str</code> (etc) doesn't say when it stops reading digits.
+<li> <code>mpn_get_str</code> isn't terribly clear about how many digits it
+     produces.  It'd probably be possible to say at most one leading zero,
+     which is what both it and <code>mpz_get_str</code> currently do.  But
+     want to be careful not to bind ourselves to something that might not suit
+     another implementation.
 </ul>
 
 
