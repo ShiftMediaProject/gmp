@@ -58,7 +58,7 @@ MA 02111-1307, USA. */
       possible to put the quotient in the high part of NUM, right after the
       remainder in NUM.
    3. NSIZE >= DSIZE.
-   4. DSIZE >= 2.  */
+   4. DSIZE > 2.  */
 
 
 mp_limb_t
