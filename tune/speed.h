@@ -250,17 +250,11 @@ void noop_wxys _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 void mpn_cache_fill _PROTO ((mp_srcptr ptr, mp_size_t size));
 void mpn_cache_fill_dummy _PROTO ((mp_limb_t n));
 mp_ptr speed_tmp_alloc_adjust _PROTO ((void *ptr, mp_size_t align));
-void *__gmp_allocate_or_reallocate _PROTO ((void *ptr,
-                                          size_t oldsize, size_t newsize));
-void *align_pointer _PROTO ((void *p, size_t align));
-void *__gmp_allocate_func_aligned _PROTO ((size_t bytes, size_t align));
 void speed_cache_fill _PROTO ((struct speed_params *s));
 void speed_operand_src _PROTO ((struct speed_params *s,
                                 mp_ptr ptr, mp_size_t size));
 void speed_operand_dst _PROTO ((struct speed_params *s,
                                 mp_ptr ptr, mp_size_t size));
-void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
-void mpz_init_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 
 extern int  speed_option_addrs;
 extern int  speed_option_verbose;
