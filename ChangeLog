@@ -18,10 +18,35 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-08-17  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/powerpc32/mode1o.asm: New file.
+	* configure.in, acinclude.m4 (GMP_ASM_POWERPC_PIC_ALWAYS): New macro.
+	* mpn/asm-defs.m4: Use it to help setting up PIC.
+
+	* configure.in (AC_PREREQ): Bump to 2.53.
+
+	* mpn/powerpc32/powerpc-defs.m4	(ASSERT): New macro.
+	(PROLOGUE_cpu): New macro, giving ALIGN(4) not 8.
+
 2002-08-16  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/m68k/lshift.asm: Fix typo in !scale_available_p code.
 	* mpn/m68k/rshift.asm: Likewise.
+
+2002-08-16  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (--enable-profiling=instrument): New option.
+	* gmp.texi (Profiling): Describe it.
+	* mpn/x86/x86-defs.m4 (PROLOGUE_cpu, call_instrument, ret_internal):
+	Add support.
+	(call_mcount): Share PIC setups with call_instrument.
+	* mpn/x86/*.asm: Use ret_internal.
+	* mpn/asm-defs.m4 (m4_unquote): New macro.
+	* tests/mpn/t-instrument.c: New file.
+	* tests/mpn/Makefile.am: Add it.
+
+	* mpn/alpha/umul.asm: Add ASM_END.
 
 2002-08-12  Kevin Ryde  <kevin@swox.se>
 
