@@ -809,7 +809,8 @@ compare (void)
 
   if ((tr->flag & TRY_RETVAL) && ref.retval != fun.retval)
     {
-      printf ("Different return values\n");
+      printf ("Different return values (%lu, %lu)\n",
+              ref.retval, fun.retval);
       error = 1;
     }
 
@@ -970,11 +971,16 @@ call (struct each_t *e, tryfun_t function)
       (e->d[0].p, e->s[0].p, size, shift);
     break;
 
+    /* The two casts here are necessary for _LONG_LONG_LIMB.  They might not
+       be enough if some actual calling conventions checking is implemented
+       on such a system.  */
   case TRY_TYPE_POPCOUNT:
-    e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, size);
+    e->retval =  (* (unsigned long (*)(ANYARGS))
+                  CALLING_CONVENTIONS (function)) (e->s[0].p, size);
     break;
   case TRY_TYPE_HAMDIST:
-    e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, e->s[1].p, size);
+    e->retval = (* (unsigned long (*)(ANYARGS))
+                 CALLING_CONVENTIONS (function)) (e->s[0].p, e->s[1].p, size);
     break;
 
   default:
