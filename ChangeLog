@@ -1173,7 +1173,8 @@
 	* mpz/cong.c, mpz/cong_2exp.c, mpz/cong_ui.c: New files.
 	* Makefile.am, mpz/Makefile.am: Add them.
 	* gmp-impl.h (NEG_MOD): New macro.
-	* gmp-h.in (mpn_congruent{,_2exp,_ui}_p): Add prototypes.
+	* gmp-h.in (mpz_congruent_p, mpz_congruent_2exp_p,
+	mpz_congruent_ui_p): Add prototypes.
 	* gmp.texi (Integer Division, Efficiency): Add documentation.
 
 	* mpq/aors.c: No need for ABS on denominator sizes.
