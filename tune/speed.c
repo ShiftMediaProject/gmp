@@ -33,9 +33,7 @@ MA 02111-1307, USA.
 
 */
 
-#if HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #if HAVE_GETOPT_H
 #include <getopt.h>  /* for getopt_long() */
