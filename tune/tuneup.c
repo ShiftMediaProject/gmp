@@ -1149,8 +1149,7 @@ tune_preinv_mod_1 (void)
      mpn_preinv_mod_1 should be used.  */
   if (UDIV_PREINV_ALWAYS)
     {
-      printf ("#define %-*s    1  /* preinv always */\n",
-              PRINT_WIDTH, "USE_PREINV_MOD_1");
+      print_define_remark ("USE_PREINV_MOD_1", 1, "preinv always");
       return;
     }
   
