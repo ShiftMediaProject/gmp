@@ -1,6 +1,6 @@
 /* mout(MINT) -- Do decimal output of MINT to standard output.
 
-Copyright 1991, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1994, 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -48,13 +48,13 @@ mout (const MINT *x)
     }
 
   TMP_MARK (marker);
-  str_size = ((size_t) (x_size * BITS_PER_MP_LIMB
-			* __mp_bases[10].chars_per_bit_exactly)) + 3;
+  MPN_GET_STR_SIZE (str_size, 10, x_size);
+  str_size += 2;
   str = (unsigned char *) TMP_ALLOC (str_size);
 
   /* Move the number to convert into temporary space, since mpn_get_str
      clobbers its argument + needs one extra high limb....  */
-  xp = (mp_ptr) TMP_ALLOC ((x_size + 1) * BYTES_PER_MP_LIMB);
+  xp = TMP_ALLOC_LIMBS (x_size);
   MPN_COPY (xp, x->_mp_d, x_size);
 
   str_size = mpn_get_str (str, 10, xp, x_size);
