@@ -1679,13 +1679,9 @@ all (void)
   tune_powm ();
   printf("\n");
 
-#if 0
   tune_hgcd ();
-#endif
   tune_gcd_accel ();
-#if 0
   tune_gcd_schoenhage ();
-#endif
   tune_gcdext ();
   tune_jacobi_base ();
   printf("\n");
