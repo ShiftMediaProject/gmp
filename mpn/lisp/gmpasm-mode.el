@@ -23,21 +23,21 @@
 
 ;;; Commentary:
 ;;
-;; gmpasm-mode is an editing mode for m4 processed assembler code and m4
-;; macro files in GMP.  It's similar to m4-mode, but has a number of
+;; gmpasm-mode is a major mode for editing m4 processed assembler code and
+;; m4 macro files in GMP.  It's similar to m4-mode, but has a number of
 ;; settings better suited to GMP.
 ;;
 ;;
 ;; Install
 ;; -------
 ;;
-;; To make M-x gmpasm-mode available, put gmpasm-mode.el somewhere in the
-;; load-path and the following in .emacs
+;; To make M-x gmpasm-mode available, put gmpasm-mode.el somewhere in your
+;; load-path and the following in your .emacs
 ;;
 ;;	(autoload 'gmpasm-mode "gmpasm-mode" nil t)
 ;;
 ;; To use gmpasm-mode automatically on all .asm and .m4 files, put the
-;; following in .emacs
+;; following in your .emacs
 ;;
 ;;	(add-to-list 'auto-mode-alist '("\\.asm\\'" . gmpasm-mode))
 ;;	(add-to-list 'auto-mode-alist '("\\.m4\\'" . gmpasm-mode))
@@ -57,7 +57,7 @@
 ;; Emacsen
 ;; -------
 ;;
-;; GNU Emacs 20.x, 21.x and XEmacs 20.x all seem fine.  GNU Emacs 19.x
+;; GNU Emacs 20.x, 21.x and XEmacs 20.x all work well.  GNU Emacs 19.x
 ;; should work if replacements for the various 20.x-isms are available,
 ;; though comment-region with "C" doesn't do the right thing.
 
@@ -144,18 +144,17 @@ aren't affected."
     table)
   "Syntax table used in `gmpasm-mode'.
 
-No table entry is made for the `comment-start' character, since doing so can
-make emacs quote and parenthesis matching differ from how m4 will interpret
-the code.
+'#' and '\n' aren't set as comment syntax.  In m4 these are a comment
+outside quotes, but not inside.  Omitting a syntax entry ensures that when
+inside quotes emacs treats parentheses and apostrophes the same way that m4
+does.  When outside quotes this is not quite right, but having it right when
+nesting expressions is more important.
 
-- The m4 comment character (#, or as set by changecom()) is recognised
-  outside quotes, but not inside.  Omitting a syntax table entry seems best,
-  since then emacs detects invalid apostrophes in comments inside quotes.
-
-- Assembler comment characters like *, ! or | are not set in m4 changecom()
-  since that would prevent eval() expressions from using them, and they're
-  not wanted in the syntax table since there's no way to know if they're an
-  operator or an actual assembler comment.")
+'*', '!' or '|' aren't setup as comment syntax either, on CPUs which use
+these for comments.  The GMP macro setups don't set them in m4 changecom(),
+since that prevents them being used in eval() expressions, and on that basis
+they don't change the way quotes and parentheses are treated by m4 and
+should be treated by emacs.")
 
 
 (defvar gmpasm-font-lock-keywords
@@ -256,23 +255,25 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 
   ;; If comment-start ends in an alphanumeric then \b is used to match it
   ;; only as a separate word.  The test is for an alphanumeric rather than
-  ;; \w since we might try # or ! as \w characters but without wanting \b.
+  ;; \w since we might try # or ! as \w characters but without wanting \b on
+  ;; them.
   (let ((comment-regexp
 	 (concat (regexp-quote comment-start)
 		 (if (string-match "[a-zA-Z0-9]\\'" comment-start) "\\b"))))
     
     ;; Whitespace is required before a comment-start so m4 $# doesn't match
     ;; when comment-start is "#".
-    ;; Only spaces or tabs match after, so newline isn't included in the
-    ;; font lock below.
     (set (make-local-variable 'comment-start-skip)
-	 (concat "\\(\\<dnl\\>\\|\\(^\\|\\s-\\)" comment-regexp "\\)[ \t]*"))
+	 (concat "\\(^\\|\\s-\\)\\(\\<dnl\\>\\|" comment-regexp "\\)[ \t]*"))
 
-    ;; Comment fontification based on comment-start, matching through to the
-    ;; end of the line.
+    ;; Comment fontification based on comment-start, and always with dnl.
+    ;; Same treatment of a space before "#" as in comment-start-skip, but
+    ;; don't fontify that space.
     (add-to-list (make-local-variable 'gmpasm-font-lock-keywords)
-		 (cons (concat comment-start-skip ".*$")
-		       'font-lock-comment-face))
+		 (list (concat "\\(^\\|\\s-\\)\\(\\(\\<dnl\\>\\|"
+			       comment-regexp
+			       "\\).*$\\)")
+		       2 'font-lock-comment-face))
 
     (set (make-local-variable 'font-lock-defaults)
 	 '(gmpasm-font-lock-keywords
@@ -298,7 +299,7 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 	 "\\`\\([ \t]*dnl\\)?[ \t]*\\'")
 
     (when (fboundp 'filladapt-mode)
-      (when (not gmpasm-filladapt-token-table)
+      (unless gmpasm-filladapt-token-table
 	(setq gmpasm-filladapt-token-table
 	      filladapt-token-table)
 	(setq gmpasm-filladapt-token-match-table
@@ -322,8 +323,7 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 	(add-to-list 'gmpasm-filladapt-token-match-table
 		     '(gmpasm-comment gmpasm-comment))
 	(add-to-list 'gmpasm-filladapt-token-conversion-table
-		     '(gmpasm-comment . exact))
-	)
+		     '(gmpasm-comment . exact)))
       
       (set (make-local-variable 'filladapt-token-table)
 	   gmpasm-filladapt-token-table)
@@ -337,8 +337,7 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
       ;; with ("^" beginning-of-line), so put our addition second.
       (gmpasm-add-to-list-second 'filladapt-token-table
 				 (list (concat "dnl[ \t]\\|" comment-regexp)
-				       'gmpasm-comment))
-      ))
+				       'gmpasm-comment))))
   
   (run-hooks 'gmpasm-mode-hook))
 
