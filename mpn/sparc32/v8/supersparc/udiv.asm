@@ -31,7 +31,7 @@
 include(`../config.m4')
 
 ASM_START()
-	RODATA
+	DATA
 	ALIGN(8)
 L(C0):	.double	0r4294967296
 L(C1):	.double	0r2147483648

@@ -30,7 +30,7 @@
 include(`../config.m4')
 
 ASM_START()
-	RODATA
+	DATA
 	ALIGN(4)
 L(noll):
 	.word	0
