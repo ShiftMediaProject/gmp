@@ -82,19 +82,8 @@ Caller-saves but rotating: r32- f32-
 ================================================================
 mpn_add_n, mpn_sub_n:
 
-The current code runs at 3 cycles/limb on Itanium 1 and 2 cycles/limb
-on Itanium 2.  A better method is this, in particular for Itanium 2,
-with a 1 cycle recurrency is this:
-
-        ld8             r20 = [r33], 8
-        ld8             r21 = [r34], 8          ;;
-        add             r22 = r20, r21          ;;
-        cmp.ltu         p6, p7 = r22, r20       ;;
-   (p8) cmp.eq.or       p6, p7 = -1, r22
-   (p8) add             r22 = 1, r22            ;;
-        st8             [r32] = r22, 8
-
-This could reach 1.75 c/l for Itanium 1 and 1.17 c/l for Itanium 2.
+The current code runs at 2 cycles/limb on Itanium 1 and 1.25 cycles/limb
+on Itanium 2.  (Neeed to verify Itanium 1 time.)
 
 ================================================================
 mpn_addmul_1:
