@@ -40,6 +40,7 @@ mpf_trunc (mpf_ptr r, mpf_srcptr u)
     {
       /* u is only a fraction */
       SIZ(r) = 0;
+      EXP(r) = 0;
       return;
     }
 

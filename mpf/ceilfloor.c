@@ -41,7 +41,9 @@ mpf_ceil_or_floor (mpf_ptr r, mpf_srcptr u, int dir)
   size = SIZ(u);
   if (size == 0)
     {
+    zero:
       SIZ(r) = 0;
+      EXP(r) = 0;
       return;
     }
 
@@ -50,10 +52,11 @@ mpf_ceil_or_floor (mpf_ptr r, mpf_srcptr u, int dir)
   if (exp <= 0)
     {
       /* u is only a fraction */
+      if ((size ^ dir) < 0)
+        goto zero;
       rp[0] = 1;
       EXP(r) = 1;
-      dir = ((size ^ dir) >= 0 ? dir : 0);
-      SIZ(r) = (size != 0 ? dir : 0);
+      SIZ(r) = dir;
       return;
     }
   EXP(r) = exp;
