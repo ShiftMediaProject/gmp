@@ -1,3 +1,23 @@
+2000-12-19  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/sqrtrem.c: Rewrite by Paul Zimmermann, based on his
+	Karatsuba Square Root algorithm.
+	* gmp.texi (Square Root Algorithm): Update.
+
+	* tune/many.pl: New file.
+
+	* mpn/tests/try.c,ref.[ch] (mpn_preinv_mod_1, mpn_sb_divrem_mn,
+	mpn_tdiv_qr, mpn_gcd_finda, mpn_{kara,toom3}_{mul,sqr}_n): Add testing.
+	* mpn/tests/ref.c: Cast some "0"s in function calls.
+
+	* mpn/x86/k7/mmx/mod_1.asm: Add preinv_mod_1 entrypoint, remove extra
+	variable for loop termination.
+
+	* mpn/x86/p6/mmx/mod_1.asm: Remove file, in favour of the following.
+	* mpn/x86/p6/mod_1.asm: New file.
+
+	* mpn/x86/pentium/mod_1.asm: New file.
+
 2000-12-18  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k6/pre_mod_1.asm: New file.
@@ -25,7 +45,7 @@
 	(OPERATION_[lr]shift): Use m4_not_for_expansion, for the benefit of
 	lorrshift multifunc.
 
-	* mpn/Makeasm.am (RM_TMP): New variable controlling temporary ".s"
+	* mpn/Makeasm.am (RM_TMP): New variable controlling tmp-*.s
 	removal, for development purposes.
 
 	* mpz/fac_ui.c: Fix for long long limb by using mpn_mul_1 not
