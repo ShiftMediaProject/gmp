@@ -952,6 +952,15 @@ case $host in
 *-*-sco3.2v5*) ac_cv_archive_cmds_need_lc=no
 esac
 
+# FIXME: Shared libraries aren't supported on unicos, but
+# libtool doesn't seem to detect this correctly, so forcibly
+# disable them.
+#
+case $host in
+  *-*-unicos*) enable_shared=no ;;
+esac
+
+
 AC_PROG_LIBTOOL
 
 # FIXME: On AIX, libtool has $libname.a in $library_names_spec, so foo.a
