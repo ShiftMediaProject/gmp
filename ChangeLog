@@ -1,3 +1,8 @@
+2000-04-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/hppa/hppa1_1/udiv_qrnnd.S: New name for udiv_qrnnd.s.
+	Add PIC support.
+
 2000-04-26  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/sparc32/udiv_fp.asm: Use mpn_udiv_qrnnd macro.
