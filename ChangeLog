@@ -1,3 +1,28 @@
+2000-11-21  Kevin Ryde  <kevin@swox.se>
+
+	* urandom.h (random): No prototype if glibc stdlib.h has already
+	provided it (avoids an int32_t/long conflict).
+
+	* tune/Makefile.am (LDFLAGS): Use -all-static.
+	(speed-dynamic): Dynamic linked version of speed.c.
+	* tune/README: Update.
+
+	* mpn/generic/gcd.c (find_a): Use native version if available.
+	* acconfig.h (HAVE_NATIVE_mpn_gcd_finda): Add #undef.
+	* gmp-impl.h (mpn_gcd_finda): Add prototype and define.
+	* mpn/asm-defs.m4 (mpn_gcd_finda): New define_mpn.
+	* tune/gcd_finda_gen.c: #undef any HAVE_NATIVE_mpn_gcd_finda.
+	* configure.in (gmp_mpn_functions_optional): Add gcd_finda.
+	* mpn/x86/k6/gcd_finda.asm: New file.
+
+	* tune/tuneup.c (POWM_THRESHOLD): Slightly bigger size steps.
+
+	* gmp-impl.h (__GMP_IMPL_H__): Protect against multiple inclusion.
+	* tune/{gcd_bin,powm_mod,powm_redc}.c: Use #undef after gmp-impl.h to
+	force thresholds.
+	* tune/tuneup.c (print_define, fft): No need for #ifndefs on
+	thresholds any more.
+
 2000-11-20  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/t-powm.c: Analogous changes as made 2000-11-12 to t-mul.c.
