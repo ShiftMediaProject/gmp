@@ -42,7 +42,7 @@ define(M68K_PATTERN,
 [[m68k-*-* | m68[0-9][0-9][0-9]-*-*]])
 
 define(POWERPC64_PATTERN,
-[[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-*]])
+[[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-* | powerpc970-*-*]])
 
 define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-* | viac3*-*-*]])
