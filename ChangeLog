@@ -18,6 +18,21 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-07-15  Kevin Ryde  <kevin@swox.se>
+
+	* Makefile.am (PRINTF_OBJECTS): Avoid ending in a backslash, hpux ia64
+	make doesn't like that.
+
+	* mpn/ia64/*.asm: Add .sptk to unconditional branches, add ";" after
+	.mib etc, for the benefit of hpux.
+
+	* configure.in (ia64*-*-*): Use ABI=64 on non-HPUX systems, for
+	consistency.
+
+	* gmp-impl.h (ieee_double_extract): Test __sparc__, used by gcc 3.1.
+	Reported by nix@esperi.demon.co.uk.
+	* mpfr/mpfr-math.h (_MPFR_NAN_BYTES etc): Ditto.
+
 2002-07-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/powerpc32/rshift.asm: Rewrite, transformed from lshift.asm.
@@ -27,6 +42,7 @@ MA 02111-1307, USA.
 
 	* gmp-h.in (__GMP_EXTERN_INLINE): Don't use this during configure,
 	ie. __GMP_WITHIN_CONFIGURE, to avoid needing dependent routines.
+	* acinclude.m4 (GMP_H_EXTERN_INLINE): Consequent changes.
 
 	* gmp-impl.h, mpn/asm-defs.m4 (mpn_addmul_2, mpn_addmul_3,
 	mpn_addmul_4): Add prototypes and defines.
