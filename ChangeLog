@@ -19,6 +19,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-10-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/hppa: Convert files to `.asm'.
+
 2001-10-05  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/Makeasm.am (.S files): Revert to separate CPP and CCAS, use
@@ -31,6 +35,15 @@ MA 02111-1307, USA.
 	macro expansion problems on Cray.
 
 	* configure.in (AC_PROG_CXXCPP): Add this, to make libtool happier.
+
+2001-10-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/rrandomb.c (gmp_rrandomb): Change bit_pos to be 0-based (was
+	1-based); shift 2 (was 1) when making bit mask.  These two changes
+	avoid undefined shift counts.
+	(gmp_rrandomb): Avoid most calls to _gmp_rand by caching random values.
+
+	* mpn/generic/random2.c: Changes for mirroring mpz/rrandomb.c.
 
 2001-10-04  Kevin Ryde  <kevin@swox.se>
 
