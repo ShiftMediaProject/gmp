@@ -18,6 +18,20 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-09-12  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/aorsmul_i.c: Allow for w==x overlap with nails.  Test
+	BITS_PER_ULONG >= GMP_NUMB_BITS rather than GMP_NAIL_BITS != 0.
+	* tests/mpz/t-aorsmul.c: Test this.
+
+	* tune/common.c: mpn_mod_34lsub1 only exists for GMP_NUMB_BITS%4==0
+	* tune/speed.c: Add mpn_mod_34lsub1.
+
+2002-09-10  Pedro Gimeno  <pggimeno@wanadoo.es>
+
+	* rand.c: Remove old disabled BBS code.
+	* mpf/urandomb.c: Use BITS_TO_LIMBS.
+
 2002-09-10  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Multiplication Algorithms): FFT is now enabled by default.
