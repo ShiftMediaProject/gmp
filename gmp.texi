@@ -580,8 +580,9 @@ MIPS:
 
 @item
 Motorola:
-@samp{m68000},
 @samp{m68k},
+@samp{m68000},
+@samp{m68020},
 @samp{m88k},
 @samp{m88110}
 
@@ -649,9 +650,14 @@ should make it possible to at least get something running if all else fails.
 
 On some systems GMP supports multiple ABIs (application binary interfaces),
 meaning data type sizes and calling conventions.  By default GMP chooses the
-best ABI available, but a particular ABI can be selected.  See @ref{ABI and
-ISA}, for the available choices on relevant CPUs, and what applications need
-to do.
+best ABI available, but a particular ABI can be selected.  For example
+
+@example
+./configure --build=mips64-sgi-irix6 ABI=n32
+@end example
+
+See @ref{ABI and ISA}, for the available choices on relevant CPUs, and what
+applications need to do.
 
 @item @option{CC}, @option{CFLAGS}
 
@@ -805,6 +811,12 @@ and can't be just copied around.  Note that whether a limb is a @code{long} or
 a @code{long long} for a particular ABI, it will be the same for all compilers
 on that system in that ABI.
 
+Currently no attempt is made to follow whatever conventions a system has for
+installing library or header files built for a particular ABI.  This will
+probably only matter when installing multiple builds of GMP, and it might be
+as simple as configuring with a special @samp{libdir}, or it might require
+more than that.
+
 @table @asis
 @need 1000
 @item HPPA 2.0 (@samp{hppa2.0*})
@@ -841,10 +853,11 @@ CPU type @samp{hppa2.0w} or @samp{hppa2.0} will use any of the above ABIs,
 @samp{hppa2.0n} uses only 2.0n or 1.0.
 
 @need 1000
-@item MIPS 3 and up (@samp{mips3*}, @samp{mips64*})
+@item MIPS under IRIX 6 (@samp{mips*-*-irix[6789]}
 
-The n32 and 64 ABIs are available on IRIX 6 and up.  GNU/Linux, as of kernel
-version 2.2, doesn't have the necessary support.
+IRIX 6 and up supports the n32 and 64 ABIs, and requires a MIPS 3 or better
+CPU, so a 64-bit limb is always used on that system.  Note that GNU/Linux, as
+of kernel version 2.2, doesn't have the necessary support for n32 or 64.
 
 @table @asis
 @item @samp{ABI=64}
@@ -866,11 +879,6 @@ The n32 ABI is 32-bit pointers and integers, but with a 64-bit limb using a
 gcc  -mabi=n32
 cc   -n32
 @end example
-
-@item @samp{ABI=o32}
-
-This is the plain 32-bit ABI with a 32-bit limb, and can be used on newer
-CPUs.  No special compiler options are required.
 @end table
 
 @need 1000
