@@ -3,8 +3,8 @@
    THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND ARE ALMOST CERTAIN TO
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE GNU MP RELEASES.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003
-Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
+2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -761,14 +761,15 @@ __GMP_DECLSPEC mp_limb_t mpn_addlsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcpt
 #define mpn_sublsh1_n __MPN(sublsh1_n)
 __GMP_DECLSPEC mp_limb_t mpn_sublsh1_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
-/* mpn_rsh1add_n(c,a,b,n), when it exists, sets {c,n} to ({a,n} + {b,n}) / 2,
-   and returns the rshift carry out (0 or GMP_NUMB_HIGHBIT).  */
+/* mpn_rsh1add_n(c,a,b,n), when it exists, sets {c,n} to ({a,n} + {b,n}) >> 1,
+   and returns the bit rshifted out (0 or 1).  */
 #define mpn_rsh1add_n __MPN(rsh1add_n)
 __GMP_DECLSPEC mp_limb_t mpn_rsh1add_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
-/* mpn_rsh1sub_n(c,a,b,n), when it exists, sets {c,n} to ({a,n} - {b,n}) / 2,
-   and returns a two-bit carry, the high bit (GMP_NUMB_HIGHBIT) being the
-   rshift carry out, and the low bit (1) being the subtract borrow.  */
+/* mpn_rsh1sub_n(c,a,b,n), when it exists, sets {c,n} to ({a,n} - {b,n}) >> 1,
+   and returns the bit rshifted out (0 or 1).  If there's a borrow from the
+   subtract, it's stored as a 1 in the high bit of c[n-1], like a twos
+   complement negative.  */
 #define mpn_rsh1sub_n __MPN(rsh1sub_n)
 __GMP_DECLSPEC mp_limb_t mpn_rsh1sub_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 
