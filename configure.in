@@ -619,6 +619,7 @@ case $host in
         esac
         cclist_32L="gcc"
         gcc_32L_cflags="-g -O2 -mpowerpc64"
+        gcc_32L_cflags_optlist="cpu"
         limb_32L=longlong
         path_32L="powerpc64"
 
@@ -629,6 +630,7 @@ case $host in
             abilist="aix64 $abilist"
             cclist_aix64="gcc xlc"
             gcc_aix64_cflags="-g -O2 -maix64 -mpowerpc64"
+            gcc_aix64_cflags_optlist="cpu"
 	    gcc_aix64_ldflags="-Wc,-maix64"
             xlc_aix64_cflags="-g -O2 -q64 -qtune=pwr3 -qmaxmem=20000"
 	    xlc_aix64_ldflags="-Wc,-q64"
@@ -1081,6 +1083,7 @@ if test $found_compiler = yes; then
     for opt in $optlist; do
                              eval optflags=\"\$${ccbase}${abi1}_cflags_${opt}\"
       test -n "$optflags" || eval optflags=\"\$${ccbase}${abi2}_cflags_${opt}\"
+      test -n "$optflags" || eval optflags=\"\$${ccbase}_cflags_${opt}\"
 
       for flag in $optflags; do
 
