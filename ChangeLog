@@ -1,3 +1,13 @@
+2000-06-17  Torbjorn Granlund  <tege@swox.com>
+
+	* config.sub: Recognize k5 and k6 with common pattern.
+
+	* mpq/tests/t-get_d.c: Also test mpq_set_d.  Misc improvements.
+
+	* mpq/set_d.c: Special case 0.0.  Don't call mpn_rshift with 0 count.
+	Allocate correct amount of memory for numerator.  Delete spurious
+	ASSERT_ALWAYS(1).
+
 2000-06-17  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/perfsqr.c: Fix so that zero is considered a perfect square.
@@ -78,7 +88,7 @@
 	* gmp-impl.h (MP_LIMB_T_MAX, MP_LIMB_T_HIGHBIT): New macros.
 	* mpn/generic/{diveby3,mul_n,gcd}, tune/speed.c, mpn/tests/ref.c:
 	Use them.
-	
+
 	* mpn/tests/spinner.c: Remove setitimer, just alarm is enough.
 	* configure.in (AC_CHECK_FUNCS): Remove setitimer.
 	* mpn/tests/x86call.asm: Start with junk in %eax, %ecx, %edx.
@@ -116,7 +126,7 @@
 	(sparcv9-*-solaris2.[7-9]], gmp_cflags64_gcc):
 	Inherit from previous gmp_cflags64_gcc; pass `-m64 -mptr64'.
 	(ia64*-*-*): New.
-	
+
 	* mpn/generic/dump.c: Make it work when an mp_limb_t is not `long'.
 
 	* mpf/set_prc.c: MPN_COPY => MPN_COPY_INCR.
