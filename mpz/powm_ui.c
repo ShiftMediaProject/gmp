@@ -70,6 +70,7 @@ mpz_powm_ui (mpz_ptr r, mpz_srcptr b, unsigned long int el, mpz_srcptr m)
   /* Normalize m (i.e. make its most significant bit set) as required by
      division functions below.  */
   count_leading_zeros (m_zero_cnt, mp[mn - 1]);
+  m_zero_cnt -= GMP_NAIL_BITS;
   if (m_zero_cnt != 0)
     {
       mp_ptr new_mp = TMP_ALLOC_LIMBS (mn);
