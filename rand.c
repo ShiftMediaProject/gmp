@@ -116,7 +116,7 @@ gmp_randinit (va_alist)
 	/* Install scheme.  */
 	mpz_init_set_str (a, sp->astr, 0);
 	gmp_randinit_lc_2exp (rstate, a, sp->c, sp->m2exp);
-	
+	mpz_clear (a);
 	break;
       }
 
