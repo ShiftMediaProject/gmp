@@ -36,8 +36,10 @@ mpn_mul_1 (res_ptr, s1_ptr, s1_size, s2_limb)
   register mp_size_t j;
   register mp_limb_t prod_high, prod_low;
 
+  /* mpf/mul_ui.c uses res_ptr==s1_ptr-1 */
   ASSERT (s1_size >= 1);
-  ASSERT (MPN_SAME_OR_SEPARATE_P (res_ptr, s1_ptr, s1_size));
+  ASSERT (res_ptr==s1_ptr-1
+          || MPN_SAME_OR_SEPARATE_P (res_ptr, s1_ptr, s1_size));
 
   /* The loop counter and index J goes from -S1_SIZE to -1.  This way
      the loop becomes faster.  */
