@@ -154,7 +154,7 @@ PIC is necessary for ELF shared libraries because they can be mapped into
 different processes at different virtual addresses.  Text relocations in
 shared libraries are allowed, but that presumably means a page with such a
 relocation isn't shared.  The use of the PLT for PIC adds a fixed cost to
-every function call, which is small but might be noticable when working with
+every function call, which is small but might be noticeable when working with
 small operands.
 
 Calls from one library function to another don't need to go through the PLT,
@@ -320,7 +320,7 @@ order numbers 243190, 243191 and 243192.  Available on-line,
 published by McGraw-Hill, 1991, ISBN 0-07-031219-2.
 
 "System V Application Binary Interface", Unix System Laboratories Inc, 1992,
-published by Pretice Hall, ISBN 0-13-880410-9.  And the "Intel386 Processor
+published by Prentice Hall, ISBN 0-13-880410-9.  And the "Intel386 Processor
 Supplement", AT&T, 1991, ISBN 0-13-877689-X.  (These have details of ELF
 shared library PIC coding.)
 
