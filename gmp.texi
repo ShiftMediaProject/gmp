@@ -842,7 +842,7 @@ CPU type @samp{hppa2.0w} or @samp{hppa2.0} will use any of the above ABIs,
 @item MIPS 3 and 4 (@samp{mips[34]})
 
 @table @asis
-@item @samp{ABI=n32L}
+@item @samp{ABI=n32}
 
 The n32 ABI with a 64-bit limb is available on systems @samp{mips*-*-irix6*}.
 Applications must be compiled with
@@ -915,8 +915,8 @@ cc   -xarch=v8plus
 @end example
 @end table
 
-Don't be confused by the names of these options, they're called @samp{arch}
-but they effectively control the ABI.
+Don't be confused by the names of these sparc options, they're called
+@samp{arch} but they effectively control the ABI.
 @end table
 
 
