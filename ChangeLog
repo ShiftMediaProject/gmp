@@ -22,8 +22,7 @@
 
 	* acinclude.m4 (GMP_GCC_M68K_OPTIMIZE): New macro.
 	* configure.in (m68*-*-*): Use it to run gcc 2.95.x at -O not -O2.
-	(m680?0-*-*, m683??-*-*): Add optional gcc -m options.
-	(m5200-*-*): Recognise, use m68000 code.
+	(m680?0-*-*, m683?2-*-*, m68360-*-*): Add optional gcc -m options.
 
 	* tests/mpz/t-cmp.c: New file.
 	* tests/mpz/t-sizeinbase.c: New file.
