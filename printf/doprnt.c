@@ -411,11 +411,6 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 #else
               case 'L':  ASSERT_FAIL (long long not available); break;
 #endif
-#if HAVE_QUAD_T
-              case 'q':  * (quad_t    *) p = retval; break;
-#else
-              case 'q':  ASSERT_FAIL (quad_t not available); break;
-#endif
               case 'Q':  mpq_set_si ((mpq_ptr) p, (long) retval, 1L); break;
 #if HAVE_PTRDIFF_T
               case 't':  * (ptrdiff_t *) p = retval; break;
