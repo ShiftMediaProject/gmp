@@ -50,6 +50,11 @@ void tests_rand_start __GMP_PROTO ((void));
 void tests_rand_end __GMP_PROTO ((void));
 
 double tests_infinity_d __GMP_PROTO (()); 
+int tests_hardware_getround __GMP_PROTO ((void));
+int tests_hardware_setround __GMP_PROTO ((int));
+
+void x86_fldcw __GMP_PROTO ((unsigned short));
+unsigned short x86_fstcw __GMP_PROTO ((void));
 
 
 #if HAVE_CALLING_CONVENTIONS
