@@ -14,6 +14,15 @@
 	used yet!)  
 	Change parameter order to mpn_rawrandom().
 
+	* Makefile.am (libgmp_la_SOURCES): Add errno.c, randlc2x.c,
+	randsd.c, randsdui.c.  Remove randui.c.
+	(MPZ_OBJECTS): Rename urandom.lo --> urandomb.lo.  Add urandomm.lo.
+	* Makefile.in: Regenerate.
+
+	* mpz/Makefile.am (libmpz_la_SOURCES): Change urandom.c -->
+	urandomb.c.  Add urandomm.c.
+	* mpz/Makefile.in: Regenerate.
+
 2000-04-01  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_CHECK_ASM_DATA): Plain .data for hpux.
