@@ -1,4 +1,4 @@
-dnl  HP-PA 2.0 64-bit mpn_udiv_qrnnd.
+dnl  HP-PA 2.0 64-bit mpn_udiv_qrnnd_r.
 
 dnl  Copyright 2001, 2002 Free Software Foundation, Inc.
 
@@ -52,7 +52,7 @@ ifdef(`HAVE_ABI_2_0w',
 `	.level	2.0W
 ',`	.level	2.0N
 ')
-PROLOGUE(mpn_udiv_qrnnd)
+PROLOGUE(mpn_udiv_qrnnd_r)
 	.proc
 	.entry
 	.callinfo	frame=0,no_calls,save_rp,entry_gr=7
@@ -117,4 +117,4 @@ ifdef(`HAVE_ABI_2_0n',
 	std		n1,0(remptr)	C store remainder
 
 	.procend
-EPILOGUE(mpn_udiv_qrnnd)
+EPILOGUE(mpn_udiv_qrnnd_r)

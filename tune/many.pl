@@ -549,9 +549,10 @@ my @table =
      {
        # not for use with hppa reversed argument versions of mpn_umul_ppmm
        'regexp'=> 'udiv',
-       'funs'  => ['udiv_qrnnd'],
+       'funs'  => ['udiv_qrnnd','udiv_qrnnd_r'],
        'ret'   => 'mp_limb_t',
-       'args'  => 'mp_limb_t *remptr, mp_limb_t n1, mp_limb_t n0, mp_limb_t d',
+       'args_udiv_qrnnd'   => 'mp_limb_t *, mp_limb_t, mp_limb_t, mp_limb_t',
+       'args_udiv_qrnnd_r' => 'mp_limb_t, mp_limb_t, mp_limb_t, mp_limb_t *',
        'speed' => 'none',
        'try-minsize' => 2,
      },
@@ -600,11 +601,11 @@ my @table =
        'rename'=> ['kara_mul_n','kara_sqr_n','toom3_mul_n','toom3_sqr_n'],
      },
      {
-       # not for use with hppa reversed argument versions of mpn_umul_ppmm
        'regexp'=> 'umul',
-       'funs'  => ['umul_ppmm'],
+       'funs'  => ['umul_ppmm','umul_ppmm_r'],
        'ret'   => 'mp_limb_t',
-       'args'  => 'mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2',
+       'args_umul_ppmm'   => 'mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2',
+       'args_umul_ppmm_r' => 'mp_limb_t m1, mp_limb_t m2, mp_limb_t *lowptr',
        'speed' => 'none',
        'try-minsize' => 3,
      },

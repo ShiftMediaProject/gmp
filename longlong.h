@@ -191,25 +191,6 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 	   : "=r" (sh), "=&r" (sl)					\
 	   : "rM" (ah), "rM" (bh), "rM" (al), "rM" (bl))
 #endif
-/* We put the result pointer parameter last here, since it makes passing
-   of the other parameters more efficient.  */
-#ifndef LONGLONG_STANDALONE
-#define umul_ppmm(wh, wl, u, v) \
-  do {									\
-    UWtype __p0;							\
-    (wh) = __MPN(umul_ppmm) (u, v, &__p0);				\
-    (wl) = __p0;							\
-  } while (0)
-extern UWtype __MPN(umul_ppmm) _PROTO ((UWtype, UWtype, UWtype *));
-#define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UWtype __r;							\
-    (q) = __MPN(udiv_qrnnd) (n1, n0, d, &__r);				\
-    (r) = __r;								\
-  } while (0)
-extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype, UWtype, UWtype, UWtype *));
-#define UMUL_TIME 8
-#define UDIV_TIME 60
-#endif /* LONGLONG_STANDALONE */
 #endif /* hppa */
 
 #if defined (__ia64) && W_TYPE_SIZE == 64
@@ -1447,31 +1428,62 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif
 
 
-/* Note the prototypes are under !defined(umul_ppmm) etc too, since the pa64
-   versions above are different and we don't want to conflict.  */
+/* Use mpn_umul_ppmm or mpn_udiv_qrnnd functions, if they exist.  The "_r"
+   forms have "reversed" arguments, meaning the pointer is last, which
+   sometimes allows better parameter passing, in particular on 64-bit
+   hppa. */
 
-#if ! defined (umul_ppmm) && HAVE_NATIVE_mpn_umul_ppmm
 #define mpn_umul_ppmm  __MPN(umul_ppmm)
-extern mp_limb_t mpn_umul_ppmm _PROTO ((mp_limb_t *, mp_limb_t, mp_limb_t));
-#define umul_ppmm(wh, wl, u, v)						\
-  do {									\
-    mp_limb_t __umul_ppmm__p0;						\
-    (wh) = __MPN(umul_ppmm) (&__umul_ppmm__p0,				\
-			     (mp_limb_t) (u), (mp_limb_t) (v));		\
-    (wl) = __umul_ppmm__p0;						\
+extern UWtype mpn_umul_ppmm _PROTO ((UWtype *, UWtype, UWtype));
+
+#if ! defined (umul_ppmm) && HAVE_NATIVE_mpn_umul_ppmm  \
+  && ! defined (LONGLONG_STANDALONE)
+#define umul_ppmm(wh, wl, u, v)                                               \
+  do {                                                                        \
+    UWtype __umul_ppmm__p0;                                                   \
+    (wh) = mpn_umul_ppmm (&__umul_ppmm__p0, (UWtype) (u), (UWtype) (v));      \
+    (wl) = __umul_ppmm__p0;                                                   \
   } while (0)
 #endif
 
-#if ! defined (udiv_qrnnd) && HAVE_NATIVE_mpn_udiv_qrnnd
+#define mpn_umul_ppmm_r  __MPN(umul_ppmm_r)
+extern UWtype mpn_umul_ppmm_r _PROTO ((UWtype, UWtype, UWtype *));
+
+#if ! defined (umul_ppmm) && HAVE_NATIVE_mpn_umul_ppmm_r        \
+  && ! defined (LONGLONG_STANDALONE)
+#define umul_ppmm(wh, wl, u, v)                                               \
+  do {                                                                        \
+    UWtype __umul_ppmm__p0;                                                   \
+    (wh) = mpn_umul_ppmm_r ((UWtype) (u), (UWtype) (v), &__umul_ppmm__p0);    \
+    (wl) = __umul_ppmm__p0;                                                   \
+  } while (0)
+#endif
+
 #define mpn_udiv_qrnnd  __MPN(udiv_qrnnd)
-extern mp_limb_t mpn_udiv_qrnnd _PROTO ((mp_limb_t *,
-					 mp_limb_t, mp_limb_t, mp_limb_t));
+extern UWtype mpn_udiv_qrnnd _PROTO ((UWtype *, UWtype, UWtype, UWtype));
+
+#if ! defined (udiv_qrnnd) && HAVE_NATIVE_mpn_udiv_qrnnd        \
+  && ! defined (LONGLONG_STANDALONE)
 #define udiv_qrnnd(q, r, n1, n0, d)					\
   do {									\
-    mp_limb_t __udiv_qrnnd__r;						\
+    UWtype __udiv_qrnnd__r;						\
     (q) = mpn_udiv_qrnnd (&__udiv_qrnnd__r,				\
-			  (mp_limb_t) (n1), (mp_limb_t) (n0), (mp_limb_t) d); \
+                          (UWtype) (n1), (UWtype) (n0), (UWtype) d);    \
     (r) = __udiv_qrnnd__r;						\
+  } while (0)
+#endif
+
+#define mpn_udiv_qrnnd_r  __MPN(udiv_qrnnd_r)
+extern UWtype mpn_udiv_qrnnd_r _PROTO ((UWtype, UWtype, UWtype, UWtype *));
+
+#if ! defined (udiv_qrnnd) && HAVE_NATIVE_mpn_udiv_qrnnd_r      \
+  && ! defined (LONGLONG_STANDALONE)
+#define udiv_qrnnd(q, r, n1, n0, d)                                     \
+  do {                                                                  \
+    UWtype __udiv_qrnnd__r;                                             \
+    (q) = mpn_udiv_qrnnd ((UWtype) (n1), (UWtype) (n0), (UWtype) d,     \
+			  &__udiv_qrnnd__r);                            \
+    (r) = __udiv_qrnnd__r;                                              \
   } while (0)
 #endif
 

@@ -543,60 +543,59 @@ validate_sqrtrem (void)
 #define TYPE_COPYD            22
 #define TYPE_COM_N            23
 
-#define TYPE_MOD_1            25
-#define TYPE_MOD_1C           26
-#define TYPE_DIVMOD_1         27
-#define TYPE_DIVMOD_1C        28
-#define TYPE_DIVREM_1         29
-#define TYPE_DIVREM_1C        30
-#define TYPE_PREINV_DIVREM_1  31
-#define TYPE_PREINV_MOD_1     32
-#define TYPE_MOD_34LSUB1      33
-#define TYPE_UDIV_QRNND       34
+#define TYPE_MOD_1            30
+#define TYPE_MOD_1C           31
+#define TYPE_DIVMOD_1         32
+#define TYPE_DIVMOD_1C        33
+#define TYPE_DIVREM_1         34
+#define TYPE_DIVREM_1C        35
+#define TYPE_PREINV_DIVREM_1  36
+#define TYPE_PREINV_MOD_1     37
+#define TYPE_MOD_34LSUB1      38
+#define TYPE_UDIV_QRNND       39
+#define TYPE_UDIV_QRNND_R     40
 
-#define TYPE_DIVEXACT_1       35
-#define TYPE_DIVEXACT_BY3     36
-#define TYPE_DIVEXACT_BY3C    37
+#define TYPE_DIVEXACT_1       50
+#define TYPE_DIVEXACT_BY3     51
+#define TYPE_DIVEXACT_BY3C    52
+#define TYPE_MODEXACT_1_ODD   53
+#define TYPE_MODEXACT_1C_ODD  54
 
-#define TYPE_MODEXACT_1_ODD   38
-#define TYPE_MODEXACT_1C_ODD  39
+#define TYPE_GCD              60
+#define TYPE_GCD_1            61
+#define TYPE_GCD_FINDA        62
+#define TYPE_MPZ_JACOBI       63
+#define TYPE_MPZ_KRONECKER    64
+#define TYPE_MPZ_KRONECKER_UI 65
+#define TYPE_MPZ_KRONECKER_SI 66
+#define TYPE_MPZ_UI_KRONECKER 67
+#define TYPE_MPZ_SI_KRONECKER 68
 
-#define TYPE_GCD              40
-#define TYPE_GCD_1            41
-#define TYPE_GCD_FINDA        42
-#define TYPE_MPZ_JACOBI       43
-#define TYPE_MPZ_KRONECKER    44
-#define TYPE_MPZ_KRONECKER_UI 45
-#define TYPE_MPZ_KRONECKER_SI 46
-#define TYPE_MPZ_UI_KRONECKER 47
-#define TYPE_MPZ_SI_KRONECKER 48
+#define TYPE_AND_N            70
+#define TYPE_NAND_N           71
+#define TYPE_ANDN_N           72
+#define TYPE_IOR_N            73
+#define TYPE_IORN_N           74
+#define TYPE_NIOR_N           75
+#define TYPE_XOR_N            76
+#define TYPE_XNOR_N           77
 
-#define TYPE_AND_N            50
-#define TYPE_NAND_N           51
-#define TYPE_ANDN_N           52
-#define TYPE_IOR_N            53
-#define TYPE_IORN_N           54
-#define TYPE_NIOR_N           55
-#define TYPE_XOR_N            56
-#define TYPE_XNOR_N           57
+#define TYPE_MUL_BASECASE     80
+#define TYPE_MUL_N            81
+#define TYPE_SQR              82
+#define TYPE_UMUL_PPMM        83
+#define TYPE_UMUL_PPMM_R      84
 
-#define TYPE_POPCOUNT         58
-#define TYPE_HAMDIST          59
+#define TYPE_SB_DIVREM_MN     90
+#define TYPE_TDIV_QR          91
 
-#define TYPE_MUL_BASECASE     60
-#define TYPE_MUL_N            61
-#define TYPE_SQR              62
-#define TYPE_UMUL_PPMM        63
-#define TYPE_UMUL_PPMM_R      64
+#define TYPE_SQRTREM          100
+#define TYPE_ZERO             101
+#define TYPE_GET_STR          102
+#define TYPE_POPCOUNT         103
+#define TYPE_HAMDIST          104
 
-#define TYPE_SB_DIVREM_MN     70
-#define TYPE_TDIV_QR          71
-
-#define TYPE_SQRTREM          80
-#define TYPE_ZERO             81
-#define TYPE_GET_STR          82
-
-#define TYPE_EXTRA            90
+#define TYPE_EXTRA            110
 
 struct try_t  param[150];
 
@@ -837,6 +836,10 @@ param_init (void)
   p->data = DATA_UDIV_QRNND;
   p->overlap = OVERLAP_NONE;
   REFERENCE (refmpn_udiv_qrnnd);
+
+  p = &param[TYPE_UDIV_QRNND_R];
+  COPY (TYPE_UDIV_QRNND);
+  REFERENCE (refmpn_udiv_qrnnd_r);
 
 
   p = &param[TYPE_DIVEXACT_1];
@@ -1164,13 +1167,6 @@ umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
   umul_ppmm (high, *lowptr, m1, m2);
   return high;
 }
-mp_limb_t
-mpn_umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
-{
-  mp_limb_t  high;
-  umul_ppmm (high, *lowptr, m1, m2);
-  return high;
-}
 
 void
 MPN_ZERO_fun (mp_ptr ptr, mp_size_t size)
@@ -1250,7 +1246,14 @@ const struct choice_t choice_array[] = {
 #if GMP_NUMB_BITS % 4 == 0
   { TRY(mpn_mod_34lsub1),  TYPE_MOD_34LSUB1 },
 #endif
+
   { TRY_FUNFUN(udiv_qrnnd), TYPE_UDIV_QRNND, 2 },
+#if HAVE_NATIVE_mpn_udiv_qrnnd
+  { TRY(mpn_udiv_qrnnd),    TYPE_UDIV_QRNND, 2 },
+#endif
+#if HAVE_NATIVE_mpn_udiv_qrnnd_r
+  { TRY(mpn_udiv_qrnnd_r),  TYPE_UDIV_QRNND_R, 2 },
+#endif
 
   { TRY(mpn_divexact_1),          TYPE_DIVEXACT_1 },
   { TRY_FUNFUN(mpn_divexact_by3), TYPE_DIVEXACT_BY3 },
@@ -1283,6 +1286,12 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_sqr_n),  TYPE_SQR },
 
   { TRY_FUNFUN(umul_ppmm), TYPE_UMUL_PPMM, 2 },
+#if HAVE_NATIVE_mpn_umul_ppmm
+  { TRY(mpn_umul_ppmm),    TYPE_UMUL_PPMM, 2 },
+#endif
+#if HAVE_NATIVE_mpn_umul_ppmm_r
+  { TRY(mpn_umul_ppmm_r),  TYPE_UMUL_PPMM_R, 2 },
+#endif
 
   { TRY_FUNFUN(mpn_kara_mul_n),  TYPE_MUL_N, MPN_KARA_MUL_N_MINSIZE },
   { TRY_FUNFUN(mpn_kara_sqr_n),  TYPE_SQR,   MPN_KARA_SQR_N_MINSIZE },
@@ -1856,9 +1865,14 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_MOD_34LSUB1:
     e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, size);
     break;
+
   case TYPE_UDIV_QRNND:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p[1], e->s[0].p[0], divisor);
+    break;
+  case TYPE_UDIV_QRNND_R:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->s[0].p[1], e->s[0].p[0], divisor, e->d[0].p);
     break;
 
   case TYPE_SB_DIVREM_MN:

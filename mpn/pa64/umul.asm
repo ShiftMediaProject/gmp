@@ -39,7 +39,7 @@ ifdef(`HAVE_ABI_2_0w',
 `	.level	2.0W
 ',`	.level	2.0N
 ')
-PROLOGUE(mpn_umul_ppmm)
+PROLOGUE(mpn_umul_ppmm_r)
 	ldo		128(%r30),%r30
 ifdef(`HAVE_ABI_2_0w',
 `	std		%r26,-64(%r30)
@@ -86,5 +86,5 @@ ifdef(`HAVE_ABI_2_0w',
 ')
 	bve		(%r2)
 	ldo		-128(%r30),%r30
-EPILOGUE(mpn_umul_ppmm)
+EPILOGUE(mpn_umul_ppmm_r)
 

@@ -325,6 +325,9 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_umul_ppmm
   { "mpn_umul_ppmm",     speed_mpn_umul_ppmm, FLAG_R_OPTIONAL },
 #endif
+#if HAVE_NATIVE_mpn_umul_ppmm_r
+  { "mpn_umul_ppmm_r",   speed_mpn_umul_ppmm_r, FLAG_R_OPTIONAL },
+#endif
 
   { "count_leading_zeros",  speed_count_leading_zeros,  FLAG_NODATA | FLAG_R_OPTIONAL },
   { "count_trailing_zeros", speed_count_trailing_zeros, FLAG_NODATA | FLAG_R_OPTIONAL },
@@ -335,6 +338,9 @@ const struct routine_t {
   { "udiv_qrnnd_c",           speed_udiv_qrnnd_c,           FLAG_R_OPTIONAL },
 #if HAVE_NATIVE_mpn_udiv_qrnnd
   { "mpn_udiv_qrnnd",         speed_mpn_udiv_qrnnd,         FLAG_R_OPTIONAL },
+#endif
+#if HAVE_NATIVE_mpn_udiv_qrnnd_r
+  { "mpn_udiv_qrnnd_r",       speed_mpn_udiv_qrnnd_r,       FLAG_R_OPTIONAL },
 #endif
   { "invert_limb",            speed_invert_limb,            FLAG_R_OPTIONAL },
 

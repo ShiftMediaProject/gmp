@@ -1385,41 +1385,68 @@ speed_umul_ppmm (struct speed_params *s)
 
 
 #if HAVE_NATIVE_mpn_umul_ppmm
-
-#if defined (__hppa) && W_TYPE_SIZE == 64
-#define CALL_MPN_UMUL_PPMM  (h = __MPN (umul_ppmm) (h, l, &l))
-#else
-#define CALL_MPN_UMUL_PPMM  (h = __MPN (umul_ppmm) (&l, h, l))
-#endif
-
 double
 speed_mpn_umul_ppmm (struct speed_params *s)
 {
   SPEED_MACRO_UMUL_PPMM_A;
   {
-    CALL_MPN_UMUL_PPMM;  h ^= s->xp_block[0]; l ^= s->yp_block[0];
-     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[1]; l ^= s->yp_block[1];
-     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[2]; l ^= s->yp_block[2];
-    CALL_MPN_UMUL_PPMM;  h ^= s->xp_block[3]; l ^= s->yp_block[3];
-     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[4]; l ^= s->yp_block[4];
-     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[5]; l ^= s->yp_block[5];
-    CALL_MPN_UMUL_PPMM;  h ^= s->xp_block[6]; l ^= s->yp_block[6];
-     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[7]; l ^= s->yp_block[7];
-     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[8]; l ^= s->yp_block[8];
-    CALL_MPN_UMUL_PPMM;  h ^= s->xp_block[9]; l ^= s->yp_block[9];
+    h = mpn_umul_ppmm (&l, h, l);  h ^= s->xp_block[0]; l ^= s->yp_block[0];
+     h = mpn_umul_ppmm (&l, h, l); h ^= s->xp_block[1]; l ^= s->yp_block[1];
+     h = mpn_umul_ppmm (&l, h, l); h ^= s->xp_block[2]; l ^= s->yp_block[2];
+    h = mpn_umul_ppmm (&l, h, l);  h ^= s->xp_block[3]; l ^= s->yp_block[3];
+     h = mpn_umul_ppmm (&l, h, l); h ^= s->xp_block[4]; l ^= s->yp_block[4];
+     h = mpn_umul_ppmm (&l, h, l); h ^= s->xp_block[5]; l ^= s->yp_block[5];
+    h = mpn_umul_ppmm (&l, h, l);  h ^= s->xp_block[6]; l ^= s->yp_block[6];
+     h = mpn_umul_ppmm (&l, h, l); h ^= s->xp_block[7]; l ^= s->yp_block[7];
+     h = mpn_umul_ppmm (&l, h, l); h ^= s->xp_block[8]; l ^= s->yp_block[8];
+    h = mpn_umul_ppmm (&l, h, l);  h ^= s->xp_block[9]; l ^= s->yp_block[9];
   }
   SPEED_MACRO_UMUL_PPMM_B;
   {
-    CALL_MPN_UMUL_PPMM;
-     CALL_MPN_UMUL_PPMM;
-     CALL_MPN_UMUL_PPMM;
-    CALL_MPN_UMUL_PPMM;
-     CALL_MPN_UMUL_PPMM;
-     CALL_MPN_UMUL_PPMM;
-    CALL_MPN_UMUL_PPMM;
-     CALL_MPN_UMUL_PPMM;
-     CALL_MPN_UMUL_PPMM;
-    CALL_MPN_UMUL_PPMM;
+    h = mpn_umul_ppmm (&l, h, l);
+     h = mpn_umul_ppmm (&l, h, l);
+     h = mpn_umul_ppmm (&l, h, l);
+    h = mpn_umul_ppmm (&l, h, l);
+     h = mpn_umul_ppmm (&l, h, l);
+     h = mpn_umul_ppmm (&l, h, l);
+    h = mpn_umul_ppmm (&l, h, l);
+     h = mpn_umul_ppmm (&l, h, l);
+     h = mpn_umul_ppmm (&l, h, l);
+    h = mpn_umul_ppmm (&l, h, l);
+  }
+  SPEED_MACRO_UMUL_PPMM_C;
+}
+#endif
+
+#if HAVE_NATIVE_mpn_umul_ppmm_r
+double
+speed_mpn_umul_ppmm_r (struct speed_params *s)
+{
+  SPEED_MACRO_UMUL_PPMM_A;
+  {
+    h = mpn_umul_ppmm_r (h, l, &l);  h ^= s->xp_block[0]; l ^= s->yp_block[0];
+     h = mpn_umul_ppmm_r (h, l, &l); h ^= s->xp_block[1]; l ^= s->yp_block[1];
+     h = mpn_umul_ppmm_r (h, l, &l); h ^= s->xp_block[2]; l ^= s->yp_block[2];
+    h = mpn_umul_ppmm_r (h, l, &l);  h ^= s->xp_block[3]; l ^= s->yp_block[3];
+     h = mpn_umul_ppmm_r (h, l, &l); h ^= s->xp_block[4]; l ^= s->yp_block[4];
+     h = mpn_umul_ppmm_r (h, l, &l); h ^= s->xp_block[5]; l ^= s->yp_block[5];
+    h = mpn_umul_ppmm_r (h, l, &l);  h ^= s->xp_block[6]; l ^= s->yp_block[6];
+     h = mpn_umul_ppmm_r (h, l, &l); h ^= s->xp_block[7]; l ^= s->yp_block[7];
+     h = mpn_umul_ppmm_r (h, l, &l); h ^= s->xp_block[8]; l ^= s->yp_block[8];
+    h = mpn_umul_ppmm_r (h, l, &l);  h ^= s->xp_block[9]; l ^= s->yp_block[9];
+  }
+  SPEED_MACRO_UMUL_PPMM_B;
+  {
+    h = mpn_umul_ppmm_r (h, l, &l);
+     h = mpn_umul_ppmm_r (h, l, &l);
+     h = mpn_umul_ppmm_r (h, l, &l);
+    h = mpn_umul_ppmm_r (h, l, &l);
+     h = mpn_umul_ppmm_r (h, l, &l);
+     h = mpn_umul_ppmm_r (h, l, &l);
+    h = mpn_umul_ppmm_r (h, l, &l);
+     h = mpn_umul_ppmm_r (h, l, &l);
+     h = mpn_umul_ppmm_r (h, l, &l);
+    h = mpn_umul_ppmm_r (h, l, &l);
   }
   SPEED_MACRO_UMUL_PPMM_C;
 }
@@ -1568,28 +1595,42 @@ speed_udiv_qrnnd_c (struct speed_params *s)
 }  
 
 #if HAVE_NATIVE_mpn_udiv_qrnnd
-
-#if defined (__hppa) && W_TYPE_SIZE == 64
-#define CALL_MPN_UDIV_QRNND  (q = __MPN (udiv_qrnnd) (r, q, d, &r))
-#else
-#define CALL_MPN_UDIV_QRNND  (q = __MPN (udiv_qrnnd) (&r, r, q, d))
-#endif
-
 double
 speed_mpn_udiv_qrnnd (struct speed_params *s)
 {
   SPEED_ROUTINE_UDIV_QRNND_A (1);
   {
-    CALL_MPN_UDIV_QRNND;
-     CALL_MPN_UDIV_QRNND;
-     CALL_MPN_UDIV_QRNND;
-    CALL_MPN_UDIV_QRNND;
-     CALL_MPN_UDIV_QRNND;
-     CALL_MPN_UDIV_QRNND;
-    CALL_MPN_UDIV_QRNND;
-     CALL_MPN_UDIV_QRNND;
-     CALL_MPN_UDIV_QRNND;
-    CALL_MPN_UDIV_QRNND;
+    q = mpn_udiv_qrnnd (&r, r, q, d);
+     q = mpn_udiv_qrnnd (&r, r, q, d);
+     q = mpn_udiv_qrnnd (&r, r, q, d);
+    q = mpn_udiv_qrnnd (&r, r, q, d);
+     q = mpn_udiv_qrnnd (&r, r, q, d);
+     q = mpn_udiv_qrnnd (&r, r, q, d);
+    q = mpn_udiv_qrnnd (&r, r, q, d);
+     q = mpn_udiv_qrnnd (&r, r, q, d);
+     q = mpn_udiv_qrnnd (&r, r, q, d);
+    q = mpn_udiv_qrnnd (&r, r, q, d);
+  }
+  SPEED_ROUTINE_UDIV_QRNND_B;
+}
+#endif
+
+#if HAVE_NATIVE_mpn_udiv_qrnnd_r
+double
+speed_mpn_udiv_qrnnd_r (struct speed_params *s)
+{
+  SPEED_ROUTINE_UDIV_QRNND_A (1);
+  {
+    q = mpn_udiv_qrnnd_r (r, q, d, &r);
+     q = mpn_udiv_qrnnd_r (r, q, d, &r);
+     q = mpn_udiv_qrnnd_r (r, q, d, &r);
+    q = mpn_udiv_qrnnd_r (r, q, d, &r);
+     q = mpn_udiv_qrnnd_r (r, q, d, &r);
+     q = mpn_udiv_qrnnd_r (r, q, d, &r);
+    q = mpn_udiv_qrnnd_r (r, q, d, &r);
+     q = mpn_udiv_qrnnd_r (r, q, d, &r);
+     q = mpn_udiv_qrnnd_r (r, q, d, &r);
+    q = mpn_udiv_qrnnd_r (r, q, d, &r);
   }
   SPEED_ROUTINE_UDIV_QRNND_B;
 }
