@@ -1,6 +1,6 @@
-/* mpq_neg(dst, src) -- Assign the negated value of SRC to DST.
+/* mpq_neg -- negate a rational.
 
-Copyright 1991, 1994, 1995 Free Software Foundation, Inc.
+Copyright 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,15 +22,25 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+
 void
-#if __STDC__
-mpq_neg (MP_RAT *dst, const MP_RAT *src)
-#else
-mpq_neg (dst, src)
-     MP_RAT *dst;
-     const MP_RAT *src;
-#endif
+mpq_neg (mpq_ptr dst, mpq_srcptr src)
 {
-  mpz_neg (&dst->_mp_num, &src->_mp_num);
-  mpz_set (&dst->_mp_den, &src->_mp_den);
+  mp_size_t  num_size = src->_mp_num._mp_size;
+
+  if (src != dst)
+    {
+      mp_size_t  num_abs_size = ABS(num_size);
+      mp_size_t  den_size = src->_mp_den._mp_size;
+
+      MPZ_REALLOC (mpq_numref(dst), num_abs_size);
+      MPZ_REALLOC (mpq_denref(dst), den_size);
+
+      MPN_COPY (dst->_mp_num._mp_d, src->_mp_num._mp_d, num_abs_size);
+      MPN_COPY (dst->_mp_den._mp_d, src->_mp_den._mp_d, den_size);
+
+      dst->_mp_den._mp_size = den_size;
+    }
+
+  dst->_mp_num._mp_size = -num_size;
 }
