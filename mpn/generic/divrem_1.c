@@ -190,12 +190,12 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 	  if (un != 0)
 	    {
 	      n1 = up[un - 1] << GMP_NAIL_BITS;
-	      r |= (n1 >> (BITS_PER_MP_LIMB - norm));
+	      r |= (n1 >> (GMP_LIMB_BITS - norm));
 	      for (i = un - 2; i >= 0; i--)
 		{
 		  n0 = up[i] << GMP_NAIL_BITS;
 		  udiv_qrnnd (*qp, r, r,
-			      ((n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm))),
+			      ((n1 << norm) | (n0 >> (GMP_NUMB_BITS - norm))),
 			      d);
 		  r >>= GMP_NAIL_BITS;
 		  qp--;
@@ -220,12 +220,12 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 	  if (un != 0)
 	    {
 	      n1 = up[un - 1] << GMP_NAIL_BITS;
-	      r |= (n1 >> (BITS_PER_MP_LIMB - norm));
+	      r |= (n1 >> (GMP_LIMB_BITS - norm));
 	      for (i = un - 2; i >= 0; i--)
 		{
 		  n0 = up[i] << GMP_NAIL_BITS;
 		  udiv_qrnnd_preinv (*qp, r, r, 
-				     ((n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm))),
+				     ((n1 << norm) | (n0 >> (GMP_NUMB_BITS - norm))),
 				     d, dinv);
 		  r >>= GMP_NAIL_BITS;
 		  qp--;
