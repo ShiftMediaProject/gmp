@@ -244,7 +244,8 @@ MPBSD_OBJECTS = mpbsd/add.lo mpbsd/tdiv_qr.lo mpbsd/move.lo mpbsd/powm.lo \
 # unnecessary, but we don't try to detect that.
 #
 libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
-  mp_clz_tab.c rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c	 \
+  mp_clz_tab.c mp_minv_tab.c						 \
+  rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c		 \
   randsdui.c version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 
 libgmp_la_DEPENDENCIES = \
@@ -259,7 +260,7 @@ libgmp_la_LDFLAGS = \
 @WANT_MPBSD_TRUE@MPBSD_HEADERS_OPTION = @WANT_MPBSD_TRUE@mp.h
 @WANT_MPBSD_TRUE@MPBSD_LTLIBRARIES_OPTION = @WANT_MPBSD_TRUE@libmp.la
 libmp_la_SOURCES = \
-  assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c stack-alloc.c
+  assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c mp_minv_tab.c stack-alloc.c
 
 libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)			    \
   mpz/add.lo mpz/clear.lo mpz/init.lo mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo \
@@ -285,12 +286,13 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 ANSI2KNR = @ANSI2KNR@
 am_libgmp_la_OBJECTS =  assert$U.lo compat$U.lo errno$U.lo memory$U.lo \
-mp_set_fns$U.lo mp_clz_tab$U.lo rand$U.lo randclr$U.lo randlc$U.lo \
-randlc2x$U.lo randraw$U.lo randsd$U.lo randsdui$U.lo version$U.lo \
-stack-alloc$U.lo mp_bpl$U.lo extract-dbl$U.lo insert-dbl$U.lo
+mp_set_fns$U.lo mp_clz_tab$U.lo mp_minv_tab$U.lo rand$U.lo randclr$U.lo \
+randlc$U.lo randlc2x$U.lo randraw$U.lo randsd$U.lo randsdui$U.lo \
+version$U.lo stack-alloc$U.lo mp_bpl$U.lo extract-dbl$U.lo \
+insert-dbl$U.lo
 libgmp_la_OBJECTS =  $(am_libgmp_la_OBJECTS)
 am_libmp_la_OBJECTS =  assert$U.lo errno$U.lo memory$U.lo mp_bpl$U.lo \
-mp_clz_tab$U.lo stack-alloc$U.lo
+mp_clz_tab$U.lo mp_minv_tab$U.lo stack-alloc$U.lo
 libmp_la_OBJECTS =  $(am_libmp_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -465,6 +467,8 @@ mp_bpl_.c: mp_bpl.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mp_bpl.c; then echo $(srcdir)/mp_bpl.c; else echo mp_bpl.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mp_bpl_.c
 mp_clz_tab_.c: mp_clz_tab.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mp_clz_tab.c; then echo $(srcdir)/mp_clz_tab.c; else echo mp_clz_tab.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mp_clz_tab_.c
+mp_minv_tab_.c: mp_minv_tab.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mp_minv_tab.c; then echo $(srcdir)/mp_minv_tab.c; else echo mp_minv_tab.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mp_minv_tab_.c
 mp_set_fns_.c: mp_set_fns.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mp_set_fns.c; then echo $(srcdir)/mp_set_fns.c; else echo mp_set_fns.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mp_set_fns_.c
 rand_.c: rand.c $(ANSI2KNR)
@@ -489,12 +493,12 @@ assert_.$(OBJEXT) assert_.lo compat_.$(OBJEXT) compat_.lo \
 errno_.$(OBJEXT) errno_.lo extract-dbl_.$(OBJEXT) extract-dbl_.lo \
 insert-dbl_.$(OBJEXT) insert-dbl_.lo memory_.$(OBJEXT) memory_.lo \
 mp_bpl_.$(OBJEXT) mp_bpl_.lo mp_clz_tab_.$(OBJEXT) mp_clz_tab_.lo \
-mp_set_fns_.$(OBJEXT) mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo \
-randclr_.$(OBJEXT) randclr_.lo randlc_.$(OBJEXT) randlc_.lo \
-randlc2x_.$(OBJEXT) randlc2x_.lo randraw_.$(OBJEXT) randraw_.lo \
-randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
-stack-alloc_.$(OBJEXT) stack-alloc_.lo version_.$(OBJEXT) version_.lo : \
-$(ANSI2KNR)
+mp_minv_tab_.$(OBJEXT) mp_minv_tab_.lo mp_set_fns_.$(OBJEXT) \
+mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo randclr_.$(OBJEXT) randclr_.lo \
+randlc_.$(OBJEXT) randlc_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
+randraw_.$(OBJEXT) randraw_.lo randsd_.$(OBJEXT) randsd_.lo \
+randsdui_.$(OBJEXT) randsdui_.lo stack-alloc_.$(OBJEXT) stack-alloc_.lo \
+version_.$(OBJEXT) version_.lo : $(ANSI2KNR)
 
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@stamp-vti
 	@:
