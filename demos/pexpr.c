@@ -33,6 +33,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
    -<NUM>    print output in base NUM
    -t        print timing information
    -html     output html
+   -wml      output wml
    -nosplit  do not split long lines each 60th digit
 */
 
@@ -74,7 +75,7 @@ jmp_buf errjmpbuf;
 
 enum op_t {NOP, LIT, NEG, NOT, PLUS, MINUS, MULT, DIV, MOD, REM, INVMOD, POW,
 	   AND, IOR, XOR, SLL, SRA, POPCNT, HAMDIST, GCD, LCM, SQRT, ROOT, FAC,
-	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI, RANDOM};
+	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI, RANDOM, NEXTPRIME};
 
 /* Type for the expression tree.  */
 struct expr
@@ -109,6 +110,7 @@ char *error;
 int flag_print = 1;
 int print_timing = 0;
 int flag_html = 0;
+int flag_wml = 0;
 int flag_splitup_output = 0;
 char *newline = "";
 gmp_randstate_t rstate;
@@ -236,7 +238,12 @@ main (int argc, char **argv)
       else if (strcmp (arg, "-html") == 0)
 	{
 	  flag_html = 1;
-	  newline = "<BR>";
+	  newline = "<br>";
+	}
+      else if (strcmp (arg, "-wml") == 0)
+	{
+	  flag_wml = 1;
+	  newline = "<br/>";
 	}
       else if (strcmp (arg, "-split") == 0)
 	{
@@ -603,6 +610,7 @@ struct functions fns[] =
 #if __GNU_MP_VERSION >= 2
   {"root", ROOT, 2},
   {"popc", POPCNT, 1},
+  {"hamdist", HAMDIST, 2},
 #endif
   {"gcd", GCD, 0},
 #if __GNU_MP_VERSION > 2 || __GNU_MP_VERSION_MINOR >= 1
@@ -614,6 +622,7 @@ struct functions fns[] =
   {"xor", XOR, 0},
 #endif
   {"plus", PLUS, 0},
+  {"pow", POW, 2},
   {"minus", MINUS, 2},
   {"mul", MULT, 0},
   {"div", DIV, 2},
@@ -629,6 +638,7 @@ struct functions fns[] =
   {"fib", FIBONACCI, 1},
   {"Fib", FIBONACCI, 1},
   {"random", RANDOM, 1},
+  {"nextprime", NEXTPRIME, 1},
   {"", NOP, 0}
 };
 
@@ -1019,9 +1029,19 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 #if __GNU_MP_VERSION >= 2
     case POPCNT:
       mpz_eval_expr (r, e->operands.ops.lhs);
-      { unsigned long int cnt;
+      { long int cnt;
 	cnt = mpz_popcount (r);
-	mpz_set_ui (r, cnt);
+	mpz_set_si (r, cnt);
+      }
+      return;
+    case HAMDIST:
+      { long int cnt;
+        mpz_init (lhs); mpz_init (rhs);
+	mpz_eval_expr (lhs, e->operands.ops.lhs);
+	mpz_eval_expr (rhs, e->operands.ops.rhs);
+	cnt = mpz_hamdist (lhs, rhs);
+	mpz_clear (lhs); mpz_clear (rhs);
+	mpz_set_si (r, cnt);
       }
       return;
 #endif
@@ -1139,6 +1159,12 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	n = mpz_get_ui (lhs);
 	mpz_clear (lhs);
 	mpz_urandomb (r, rstate, n);
+      }
+      return;
+    case NEXTPRIME:
+      {
+	mpz_eval_expr (r, e->operands.ops.lhs);
+	mpz_nextprime (r, r);
       }
       return;
     default:
