@@ -1,7 +1,7 @@
 \input texinfo    @c -*-texinfo-*-
 @c %**start of header
 @setfilename gmp.info
-@settitle GNU MP 2.0.2
+@settitle GNU MP 2.0.3
 @synindex tp fn
 @iftex
 @afourpaper
@@ -62,8 +62,8 @@ by the Foundation.
 
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
-@subtitle Edition 2.0.2
-@subtitle June 1996
+@subtitle Edition 2.0.3
+@subtitle August 1996
 
 @author by Torbj@"orn Granlund, TMG Datakonsult
 
@@ -108,7 +108,7 @@ by the Foundation.
 @top GNU MP
 
 This manual documents how to install and use the GNU multiple precision
-arithmetic library, version 2.0.2.
+arithmetic library, version 2.0.3.
 
 @end ifinfo
 
@@ -195,6 +195,9 @@ Pyramid AP/XP.
 This version of MP is released under a more liberal license than previous
 versions.  It is now permitted to link MP to non-free programs, as long as MP
 source code is provided when distributing the non-free program.
+
+For up-to-date information on MP, please see the GMP Home Pages at
+@samp{http://www.nada.kth.se/~tege/gmp/}.
 
 
 @section How to use this Manual
@@ -307,21 +310,27 @@ Delete all files copied by @samp{make install}.
 
 @section Known Build Problems
 
-GCC 2.7.2 (as well as 2.6.3) for the RS/6000 and PowerPC can not be used to
+(You might find more up-to-date information at
+@samp{http://www.nada.kth.se/~tege/gmp/}.)
+
+GCC 2.7.2 (as well as 2.6.3) for the POWER and PowerPC can not be used to
 compile MP, due to a bug in GCC.  If you want to use GCC for these machines,
-you need to apply the patch below to GCC, or use a later version of the
-compiler.
+get GCC 2.7.2.1 (or later), or apply the patch below to GCC and recompile GCC.
 
-If you are on a Sequent Symmetry, use the GNU assembler instead of the
-system's assembler, since the latter has serious bugs.
+If you are on a Sequent Symmetry, use the GNU assembler instead of the system
+assembler, since the latter has serious bugs.
 
-The system compiler on NeXT is a massacred and old gcc, even if the compiler
+If you are on a VAX running Ultrix, you need to build and install the GNU
+assembler before you compile MP.  The VAX assembly in MP uses an instruction
+(@samp{jsobgtr}) that cannot be assembled by the Ultrix assembler.
+
+The system compiler on NeXT is a massacred and old GCC, even if the compiler
 calls itself @file{cc}.  This compiler cannot be used to build MP.  You need
-to get a real gcc, and install that before you compile MP.  (NeXT might have
+to get a real GCC, and install that before you compile MP.  (NeXT might have
 fixed this in newer releases of their system.)
 
 The system C compiler under SunOS 4 has a bug that makes it miscompile
-mpq/get_d.c.  This will make @samp{make check} fail.
+mpq/get_d.c.  Use GCC instead if plan to use the function @code{mpq_get_d}.
 
 Please report other problems to @samp{bug-gmp@@prep.ai.mit.edu}.
 @xref{Reporting Bugs}.
@@ -528,9 +537,9 @@ for 0^0.  (In version 1, they yielded 0.)
 
 @section Getting the Latest Version of MP
 
-The latest version of the MP library is available by anonymous ftp from
-from @samp{prep.ai.mit.edu}.  The file name is
-@file{/pub/gnu/gmp-M.N.tar.gz}.  Many sites around the world mirror
+The latest version of the MP library is available by at
+@samp{ftp://prep.ai.mit.edu/pub/gnu}.  The file name is
+@file{gmp-M.N.tar.gz}.  Many sites around the world mirror
 @samp{prep}; please use a mirror site near you.
 
 @node Reporting Bugs, Integer Functions, MP Basics, Top
@@ -733,14 +742,21 @@ an error occurs.  (I.e., you have to call @code{mpz_clear} for it.)
 @cindex Conversion functions
 
 This section describes functions for converting arbitrary precision integers
-to standard C types.  Functions for converting @emph{to} arbitrary
-precision integers are described in @ref{Assigning Integers} and @ref{I/O of
-Integers}.
+to standard C types.  Functions for converting @emph{to} arbitrary precision
+integers are described in @ref{Assigning Integers} and @ref{I/O of Integers}.
+
+@deftypefun mp_limb_t mpz_getlimbn (mpz_t @var{op}, mp_size_t @var{n})
+Return limb #@var{n} from @var{op}.  This function allows for very efficient
+decomposition of a number in its limbs.
+
+The function @code{mpz_size} can be used to determine the useful range for
+@var{n}.
+@end deftypefun
 
 @deftypefun {unsigned long int} mpz_get_ui (mpz_t @var{op})
-Return the least significant part from @var{op}.  This function combined
-with @* @code{mpz_tdiv_q_2exp(@dots{}, @var{op}, CHAR_BIT*sizeof(unsigned
-long int))} can be used to extract the limbs of an integer.
+Return the least significant part from @var{op}.  This function combined with
+@* @code{mpz_tdiv_q_2exp(@dots{}, @var{op}, CHAR_BIT*sizeof(unsigned long
+int))} can be used to decompose an integer into unsigned longs.
 @end deftypefun
 
 @deftypefun {signed long int} mpz_get_si (mpz_t @var{op})
@@ -772,6 +788,7 @@ character.
 @end deftypefun
 
 
+@need 2000
 @node Integer Arithmetic, Comparison Functions, Converting Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Arithmetic Functions
@@ -832,7 +849,7 @@ Set @var{rop} to the absolute value of @var{op}.
 Set @var{rop} to @var{op}!, the factorial of @var{op}.
 @end deftypefun
 
-@subsection Division functions
+@subsection Division and mod functions
 
 Division is undefined if the divisor is zero, and passing a zero divisor to
 the divide or modulo functions, as well passing a zero mod argument to the
@@ -1347,9 +1364,6 @@ when @var{max_size} is negative.
 Return the size of @var{op} measured in number of limbs.  If @var{op} is zero,
 the returned value will be zero.
 @c (@xref{Nomenclature}, for an explanation of the concept @dfn{limb}.)
-
-@strong{This function is obsolete.  It will disappear from future MP
-releases.}
 @end deftypefun
 
 @deftypefun size_t mpz_sizeinbase (mpz_t @var{op}, int @var{base})
@@ -2083,95 +2097,95 @@ one limb.  No size argument may be zero.
 The @code{mpn} functions is the base for the implementation of the @code{mpz_},
 @code{mpf_}, and @code{mpq_} functions.
 
-This example adds the number beginning at @var{src1_ptr} and the number
-beginning at @var{src2_ptr} and writes the sum at @var{dest_ptr}.  All areas
+This example adds the number beginning at @var{s1p} and the number
+beginning at @var{s2p} and writes the sum at @var{destp}.  All areas
 have @var{size} limbs.
 
 @example
-cy = mpn_add_n (dest_ptr, src1_ptr, src2_ptr, size)
+cy = mpn_add_n (destp, s1p, s2p, size)
 @end example
 
 @noindent
 In the notation used here, a source operand is identified by the pointer to
 the least significant limb, and the limb count in braces.  For example,
-@{s1_ptr, s1_size@}.
+@{s1p, s1size@}.
 
-@deftypefun mp_limb_t mpn_add_n (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, const mp_limb_t * @var{src2_ptr}, mp_size_t @var{size})
-Add @{@var{src1_ptr}, @var{size}@} and @{@var{src2_ptr}, @var{size}@}, and
-write the @var{size} least significant limbs of the result to @var{dest_ptr}.
+@deftypefun mp_limb_t mpn_add_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{size})
+Add @{@var{s1p}, @var{size}@} and @{@var{s2p}, @var{size}@}, and
+write the @var{size} least significant limbs of the result to @var{rp}.
 Return carry, either 0 or 1.
 
 This is the lowest-level function for addition.  It is the preferred function
 for addition, since it is written in assembly for most targets.  For addition
-of a variable to itself (i.e., @var{src1_ptr} equals @var{src2_ptr}, use
+of a variable to itself (i.e., @var{s1p} equals @var{s2p}, use
 @code{mpn_lshift} with a count of 1 for optimal speed.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_add_1 (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, mp_size_t @var{size}, mp_limb_t @var{src2_limb})
-Add @{@var{src1_ptr}, @var{size}@} and @var{src2_limb}, and write the
-@var{size} least significant limbs of the result to @var{dest_ptr}.  Return
+@deftypefun mp_limb_t mpn_add_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
+Add @{@var{s1p}, @var{size}@} and @var{s2limb}, and write the
+@var{size} least significant limbs of the result to @var{rp}.  Return
 carry, either 0 or 1.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_add (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, mp_size_t @var{src1_size}, const mp_limb_t * @var{src2_ptr}, mp_size_t @var{src2_size})
-Add @{@var{src1_ptr}, @var{src1_size}@} and @{@var{src2_ptr},
-@var{src2_size}@}, and write the @var{src1_size} least significant limbs of
-the result to @var{dest_ptr}.  Return carry, either 0 or 1.
+@deftypefun mp_limb_t mpn_add (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
+Add @{@var{s1p}, @var{s1size}@} and @{@var{s2p},
+@var{s2size}@}, and write the @var{s1size} least significant limbs of
+the result to @var{rp}.  Return carry, either 0 or 1.
 
-This function requires that @var{src1_size} is greater than or equal to
-@var{src2_size}.
+This function requires that @var{s1size} is greater than or equal to
+@var{s2size}.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_sub_n (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, const mp_limb_t * @var{src2_ptr}, mp_size_t @var{size})
-Subtract @{@var{src2_ptr}, @var{src2_size}@} from @{@var{src1_ptr},
+@deftypefun mp_limb_t mpn_sub_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{size})
+Subtract @{@var{s2p}, @var{s2size}@} from @{@var{s1p},
 @var{size}@}, and write the @var{size} least significant limbs of the result
-to @var{dest_ptr}.  Return borrow, either 0 or 1.
+to @var{rp}.  Return borrow, either 0 or 1.
 
 This is the lowest-level function for subtraction.  It is the preferred
 function for subtraction, since it is written in assembly for most targets.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_sub_1 (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, mp_size_t @var{size}, mp_limb_t @var{src2_limb})
-Subtract @var{src2_limb} from @{@var{src1_ptr}, @var{size}@}, and write the
-@var{size} least significant limbs of the result to @var{dest_ptr}.  Return
+@deftypefun mp_limb_t mpn_sub_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
+Subtract @var{s2limb} from @{@var{s1p}, @var{size}@}, and write the
+@var{size} least significant limbs of the result to @var{rp}.  Return
 borrow, either 0 or 1.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_sub (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, mp_size_t @var{src1_size}, const mp_limb_t * @var{src2_ptr}, mp_size_t @var{src2_size})
-Subtract @{@var{src2_ptr}, @var{src2_size}@} from @{@var{src1_ptr},
-@var{src1_size}@}, and write the @var{src1_size} least significant limbs of
-the result to @var{dest_ptr}.  Return borrow, either 0 or 1.
+@deftypefun mp_limb_t mpn_sub (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
+Subtract @{@var{s2p}, @var{s2size}@} from @{@var{s1p},
+@var{s1size}@}, and write the @var{s1size} least significant limbs of
+the result to @var{rp}.  Return borrow, either 0 or 1.
 
-This function requires that @var{src1_size} is greater than or equal to
-@var{src2_size}.
+This function requires that @var{s1size} is greater than or equal to
+@var{s2size}.
 @end deftypefun
 
-@deftypefun void mpn_mul_n (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, const mp_limb_t * @var{src2_ptr}, mp_size_t @var{size})
-Multiply @{@var{src1_ptr}, @var{size}@} and @{@var{src2_ptr}, @var{size}@},
-and write the @strong{entire} result to @var{dest_ptr}.
+@deftypefun void mpn_mul_n (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{size})
+Multiply @{@var{s1p}, @var{size}@} and @{@var{s2p}, @var{size}@},
+and write the @strong{entire} result to @var{rp}.
 
 The destination has to have space for 2@var{size} limbs, even if the
 significant result might be one limb smaller.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_mul_1 (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, mp_size_t @var{size}, mp_limb_t @var{src2_limb})
-Multiply @{@var{src1_ptr}, @var{size}@} and @var{src2_limb}, and write the
-@var{size} least significant limbs of the product to @var{dest_ptr}.  Return
+@deftypefun mp_limb_t mpn_mul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
+Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and write the
+@var{size} least significant limbs of the product to @var{rp}.  Return
 the most significant limb of the product.
 
 This is a low-level function that is a building block for general
 multiplication as well as other operations in MP.  It is written in assembly
 for most targets.
 
-Don't call this function if @var{src2_limb} is a power of 2; use
-@code{mpn_lshift} with a count equal to the logarithm of @var{src2_limb}
+Don't call this function if @var{s2limb} is a power of 2; use
+@code{mpn_lshift} with a count equal to the logarithm of @var{s2limb}
 instead, for optimal speed.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_addmul_1 (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, mp_size_t @var{size}, mp_limb_t @var{src2_limb})
-Multiply @{@var{src1_ptr}, @var{size}@} and @var{src2_limb}, and add the
-@var{size} least significant limbs of the product to @{@var{dest_ptr},
-@var{size}@} and write the result to @var{dest_ptr} @var{dest_ptr}.  Return
+@deftypefun mp_limb_t mpn_addmul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
+Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and add the
+@var{size} least significant limbs of the product to @{@var{rp},
+@var{size}@} and write the result to @var{rp}.  Return
 the most significant limb of the product, plus carry-out from the addition.
 
 This is a low-level function that is a building block for general
@@ -2179,10 +2193,10 @@ multiplication as well as other operations in MP.  It is written in assembly
 for most targets.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_submul_1 (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, mp_size_t @var{size}, mp_limb_t @var{src2_limb})
-Multiply @{@var{src1_ptr}, @var{size}@} and @var{src2_limb}, and subtract the
-@var{size} least significant limbs of the product from @{@var{dest_ptr},
-@var{size}@} and write the result to @var{dest_ptr}.  Return the most
+@deftypefun mp_limb_t mpn_submul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{size}, mp_limb_t @var{s2limb})
+Multiply @{@var{s1p}, @var{size}@} and @var{s2limb}, and subtract the
+@var{size} least significant limbs of the product from @{@var{rp},
+@var{size}@} and write the result to @var{rp}.  Return the most
 significant limb of the product, minus borrow-out from the subtraction.
 
 This is a low-level function that is a building block for general
@@ -2190,22 +2204,23 @@ multiplication and division as well as other operations in MP.  It is written
 in assembly for most targets.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_mul (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src1_ptr}, mp_size_t @var{src1_size}, const mp_limb_t * @var{src2_ptr}, mp_size_t @var{src2_size})
-Multiply @{@var{src1_ptr}, @var{src1_size}@} and @{@var{src2_ptr},
-@var{src2_size}@}, and write the result to @var{dest_ptr}.  Return the most
+@deftypefun mp_limb_t mpn_mul (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
+Multiply @{@var{s1p}, @var{s1size}@} and @{@var{s2p},
+@var{s2size}@}, and write the result to @var{rp}.  Return the most
 significant limb of the result.
 
-The destination has to have space for @var{src1_size} + @var{src1_size}
+The destination has to have space for @var{s1size} + @var{s2size}
 limbs, even if the result might be one limb smaller.
 
-This function requires that @var{src1_size} is greater than or equal to
-@var{src2_size}.  The destination must be distinct from either input operands.
+This function requires that @var{s1size} is greater than or equal to
+@var{s2size}.  The destination must be distinct from either input operands.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_divrem (mp_limb_t * @var{r1p}, mp_size_t @var{xsize}, mp_limb_t * @var{rs2p}, mp_size_t @var{rs2size}, const mp_limb_t * @var{s3p}, mp_size_t @var{s3size})
-Divide @{@var{rs2p}, @var{rs2size}@} by @{@var{s3p}, @var{s3size}@}, and
-write the quotient at @var{r1p}, with the exception of the most significant
-limb, which is returned.  The remainder replaces the dividend at @var{rs2p}.
+@deftypefun mp_limb_t mpn_divrem (mp_limb_t *@var{r1p}, mp_size_t @var{xsize}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2size}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3size})
+Divide @{@var{rs2p}, @var{rs2size}@} by @{@var{s3p}, @var{s3size}@}, and write
+the quotient at @var{r1p}, with the exception of the most significant limb,
+which is returned.  The remainder replaces the dividend at @var{rs2p}; it will
+be @var{s3size} limbs long (i.e., as many limbs as the divisor).
 
 In addition to an integer quotient, @var{xsize} fraction limbs are developed,
 and stored after the integral limbs.  For most usages, @var{xsize} will be
@@ -2223,7 +2238,7 @@ The area at @var{r1p} needs to be @var{rs2size} @minus{} @var{s3size} +
 @var{xsize} limbs large.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_divrem_1 (mp_limb_t * @var{r1p}, mp_size_t @var{xsize}, mp_limb_t * @var{s2p}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
+@deftypefun mp_limb_t mpn_divrem_1 (mp_limb_t *@var{r1p}, mp_size_t @var{xsize}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
 Divide @{@var{s2p}, @var{s2size}@} by @var{s3limb}, and write the quotient
 at @var{r1p}.  Return the remainder.
 
@@ -2235,31 +2250,31 @@ The areas at @var{r1p} and @var{s2p} have to be identical or completely
 separate, not partially overlapping.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_divmod (mp_limb_t * @var{r1p}, mp_limb_t * @var{rs2p}, mp_size_t @var{rs2size}, const mp_limb_t * @var{s3p}, mp_size_t @var{s3size})
+@deftypefun mp_limb_t mpn_divmod (mp_limb_t *@var{r1p}, mp_limb_t *@var{rs2p}, mp_size_t @var{rs2size}, const mp_limb_t *@var{s3p}, mp_size_t @var{s3size})
 @strong{This interface is obsolete.  It will disappear from future releases.
 Use @code{mpn_divrem} in its stead.}
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_divmod_1 (mp_limb_t * @var{r1p}, mp_limb_t * @var{s2p}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
+@deftypefun mp_limb_t mpn_divmod_1 (mp_limb_t *@var{r1p}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size}, mp_limb_t @var{s3limb})
 @strong{This interface is obsolete.  It will disappear from future releases.
 Use @code{mpn_divrem_1} in its stead.}
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_mod_1 (mp_limb_t * @var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb})
+@deftypefun mp_limb_t mpn_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb})
 Divide @{@var{s1p}, @var{s1size}@} by @var{s2limb}, and return the remainder.
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_preinv_mod_1 (mp_limb_t * @var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb}, mp_limb_t @var{s3limb})
+@deftypefun mp_limb_t mpn_preinv_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb}, mp_limb_t @var{s3limb})
 @strong{This interface is obsolete.  It will disappear from future releases.
 Use @code{mpn_mod_1} in its stead.}
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_bdivmod (mp_limb_t * @var{dest_ptr}, mp_limb_t * @var{s1p}, mp_size_t @var{s1size}, const mp_limb_t * @var{s2p}, mp_size_t @var{s2size}, unsigned long int @var{d})
+@deftypefun mp_limb_t mpn_bdivmod (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2size}, unsigned long int @var{d})
 The function puts the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of
 @var{q} =
 @{@var{s1p}, @var{s1size}@}/@{@var{s2p}, @var{s2size}@}
 mod 2^@var{d}
-at @var{dest_ptr},
+at @var{rp},
 and returns the high @var{d} mod @var{BITS_PER_MP_LIMB} bits of @var{q}.
 
 @{@var{s1p}, @var{s1size}@} - @var{q} * @{@var{s2p}, @var{s2size}@}
@@ -2268,7 +2283,7 @@ is placed at @var{s1p}.
 Since the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of
 this difference are zero, it is possible to overwrite the low limbs at
 @var{s1p} with this difference,
-provided @var{dest_ptr} <= @var{s1p}.
+provided @var{rp} <= @var{s1p}.
 
 This function requires that @var{s1size} * @var{BITS_PER_MP_LIMB} >= @var{D},
 and that @{@var{s2p}, @var{s2size}@} is odd.
@@ -2277,67 +2292,67 @@ and that @{@var{s2p}, @var{s2size}@} is odd.
 future revisions.}
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_lshift (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src_ptr}, mp_size_t @var{src_size}, unsigned long int @var{count})
+@deftypefun mp_limb_t mpn_lshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{src_ptr}, mp_size_t @var{src_size}, unsigned long int @var{count})
 Shift @{@var{src_ptr}, @var{src_size}@} @var{count} bits to the left, and
 write the @var{src_size} least significant limbs of the result to
-@var{dest_ptr}.  @var{count} might be in the range 1 to n @minus{} 1, on an
+@var{rp}.  @var{count} might be in the range 1 to n @minus{} 1, on an
 n-bit machine. The bits shifted out to the left are returned.
 
 Overlapping of the destination space and the source space is allowed in this
-function, provided @var{dest_ptr} >= @var{src_ptr}.
+function, provided @var{rp} >= @var{src_ptr}.
 
 This function is written in assembly for most targets.
 @end deftypefun
 
-@deftypefun mp_limp_t mpn_rshift (mp_limb_t * @var{dest_ptr}, const mp_limb_t * @var{src_ptr}, mp_size_t @var{src_size}, unsigned long int @var{count})
+@deftypefun mp_limp_t mpn_rshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{src_ptr}, mp_size_t @var{src_size}, unsigned long int @var{count})
 Shift @{@var{src_ptr}, @var{src_size}@} @var{count} bits to the right, and
 write the @var{src_size} most significant limbs of the result to
-@var{dest_ptr}.  @var{count} might be in the range 1 to n @minus{} 1, on an
+@var{rp}.  @var{count} might be in the range 1 to n @minus{} 1, on an
 n-bit machine.  The bits shifted out to the right are returned.
 
 Overlapping of the destination space and the source space is allowed in this
-function, provided @var{dest_ptr} <= @var{src_ptr}.
+function, provided @var{rp} <= @var{src_ptr}.
 
 This function is written in assembly for most targets.
 @end deftypefun
 
-@deftypefun int mpn_cmp (const mp_limb_t * @var{src1_ptr}, const mp_limb_t * @var{src2_ptr}, mp_size_t @var{size})
-Compare @{@var{src1_ptr}, @var{size}@} and @{@var{src2_ptr}, @var{size}@} and
-return a positive value if src1 > src2, 0 of they are equal, and a negative
-value if src1 < src2.
+@deftypefun int mpn_cmp (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{size})
+Compare @{@var{s1p}, @var{size}@} and @{@var{s2p}, @var{size}@} and
+return a positive value if s1 > src2, 0 of they are equal, and a negative
+value if s1 < src2.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_gcd (mp_limb_t * @var{dest_ptr}, mp_limb_t * @var{src1_ptr}, mp_size_t @var{src1_size}, mp_limb_t * @var{src2_ptr}, mp_size_t @var{src2_size})
-Puts at @var{dest_ptr} the greatest common divisor of @{@var{src1_ptr},
-@var{src1_size}@} and @{@var{src2_ptr}, @var{src2_size}@}; both source
+@deftypefun mp_size_t mpn_gcd (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
+Puts at @var{rp} the greatest common divisor of @{@var{s1p},
+@var{s1size}@} and @{@var{s2p}, @var{s2size}@}; both source
 operands are destroyed by the operation.  The size in limbs of the greatest
 common divisor is returned.
 
-@{@var{src1_ptr}, @var{src1_size}@} must be odd, and @{@var{src2_ptr},
-@var{src2_size}@} must have at least as many bits as @{@var{src1_ptr},
-@var{src1_size}@}.
+@{@var{s1p}, @var{s1size}@} must have at least as many bits as 
+@{@var{s2p}, @var{s2size}@}, and @{@var{s2p}, @var{s2size}@} must be odd.
 
 @strong{This interface is preliminary.  It might change incompatibly in
 future revisions.}
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_gcd_1 (const mp_limb_t * @var{src1_ptr}, mp_size_t @var{src1_size}, mp_limb_t @var{src2_limb})
-Return the greatest common divisor of @{@var{src1_ptr}, @var{src1_size}@}
-and @var{src2_limb}, where @var{src2_limb} (as well as @var{src1_size})
+@deftypefun mp_limb_t mpn_gcd_1 (const mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb})
+Return the greatest common divisor of @{@var{s1p}, @var{s1size}@}
+and @var{s2limb}, where @var{s2limb} (as well as @var{s1size})
 must be different from 0.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_gcdext (mp_limb_t * @var{r1p}, mp_limb_t * @var{r2p}, mp_limb_t * @var{s1p}, mp_size_t @var{s1size}, mp_limb_t * @var{s2p}, mp_size_t @var{s2size})
+@deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2size}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
 Puts at @var{r1p} the greatest common divisor of @{@var{s1p}, @var{s1size}@}
-and @{@var{s2p}, @var{s2size}@}.  The first cofactor is written at
-@var{r2p}.  Both source operands are destroyed by the operation.  The size
-in limbs of the greatest common divisor is returned.
+and @{@var{s2p}, @var{s2size}@}.  The first cofactor is written at @var{r2p}.
+Both source operands are destroyed by the operation.  The size of the first
+cofactor is written through @var{r2size}.  The size in limbs of the greatest
+common divisor is returned.
 
 @strong{This interface is preliminary.  It might change incompatibly in
 future revisions.}
 @end deftypefun
 
-@deftypefun mp_size_t mpn_sqrtrem (mp_limb_t * @var{r1p}, mp_limb_t * @var{r2p}, const mp_limb_t * @var{sp}, mp_size_t @var{size})
+@deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{size})
 Compute the square root of @{@var{sp}, @var{size}@} and put the result at
 @var{r1p}.  Write the remainder at @var{r2p}, unless @var{r2p} is NULL.
 
@@ -2362,7 +2377,7 @@ The area at @var{r2p} needs to be @var{size} limbs large.
 future revisions.}
 @end deftypefun
 
-@deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t * @var{s1p}, mp_size_t @var{s1size})
+@deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size})
 Convert @{@var{s1p}, @var{s1size}@} to a raw unsigned char array in base
 @var{base}.  The string is not in ASCII; to convert it to printable format,
 add the ASCII codes for @samp{0} or @samp{A}, depending on the base and
@@ -2376,7 +2391,7 @@ The area at @var{str} has to have space for the largest possible number
 represented by a @var{s1size} long limb array, plus one extra character.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_set_str (mp_limb_t * @var{r1p}, const char *@var{str}, size_t {strsize}, int @var{base})
+@deftypefun mp_size_t mpn_set_str (mp_limb_t *@var{r1p}, const char *@var{str}, size_t @var{strsize}, int @var{base})
 Convert the raw unsigned char array at @var{str} of length @var{strsize} to
 a limb array @{@var{s1p}, @var{s1size}@}.  The base of @var{str} is
 @var{base}.
@@ -2384,7 +2399,7 @@ a limb array @{@var{s1p}, @var{s1size}@}.  The base of @var{str} is
 Return the number of limbs stored in @var{r1p}.
 @end deftypefun
 
-@deftypefun {unsigned long int} mpn_scan0 (const mp_limb_t * @var{s1p}, unsigned long int @var{bit})
+@deftypefun {unsigned long int} mpn_scan0 (const mp_limb_t *@var{s1p}, unsigned long int @var{bit})
 Scan @var{s1p} from bit position @var{bit} for the next clear bit.
 
 It is required that there be a clear bit within the area at @var{s1p} at or
@@ -2394,7 +2409,7 @@ beyond bit position @var{bit}, so that the function has something to return.
 future revisions.}
 @end deftypefun
 
-@deftypefun {unsigned long int} mpn_scan1 (const mp_limb_t * @var{s1p}, unsigned long int @var{bit})
+@deftypefun {unsigned long int} mpn_scan1 (const mp_limb_t *@var{s1p}, unsigned long int @var{bit})
 Scan @var{s1p} from bit position @var{bit} for the next set bit.
 
 It is required that there be a set bit within the area at @var{s1p} at or
@@ -2404,7 +2419,7 @@ beyond bit position @var{bit}, so that the function has something to return.
 future revisions.}
 @end deftypefun
 
-@deftypefun void mpn_random2 (mp_limb_t * @var{r1p}, mp_size_t @var{r1size})
+@deftypefun void mpn_random2 (mp_limb_t *@var{r1p}, mp_size_t @var{r1size})
 Generate a random number of length @var{r1size} with long strings of zeros
 and ones in the binary representation, and store it at @var{r1p}.
 
@@ -2412,16 +2427,16 @@ The generated random numbers are intended for testing the correctness of the
 implementation of the @code{mpn} routines.
 @end deftypefun
 
-@deftypefun {unsigned long int} mpn_popcount (const mp_limb_t * @var{s1p}, unsigned long int @var{size})
+@deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, unsigned long int @var{size})
 Count the number of set bits in @{@var{s1p}, @var{size}@}.
 @end deftypefun
 
-@deftypefun {unsigned long int} mpn_hamdist (const mp_limb_t * @var{s1p}, const mp_limb_t * @var{s2p}, unsigned long int @var{size})
+@deftypefun {unsigned long int} mpn_hamdist (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, unsigned long int @var{size})
 Compute the hamming distance between @{@var{s1p}, @var{size}@} and
 @{@var{s2p}, @var{size}@}.
 @end deftypefun
 
-@deftypefun int mpn_perfect_square_p (const mp_limb_t * @var{s1p}, mp_size_t @var{size})
+@deftypefun int mpn_perfect_square_p (const mp_limb_t *@var{s1p}, mp_size_t @var{size})
 Return non-zero iff @{@var{s1p}, @var{size}@} is a perfect square.
 @end deftypefun
 
