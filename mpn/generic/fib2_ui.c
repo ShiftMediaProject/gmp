@@ -313,8 +313,7 @@ mpn_fib2_ui (mp_ptr fp, mp_ptr f1p, unsigned long int n)
 
       TMP_MARK (marker);
       alloc = MPN_FIB2_SIZE (n);
-      xp = TMP_ALLOC_LIMBS (2*alloc);
-      yp = xp + alloc;
+      TMP_ALLOC_LIMBS_2 (xp,alloc, yp,alloc);
 
       do
         {

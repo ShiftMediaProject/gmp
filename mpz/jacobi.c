@@ -199,8 +199,7 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
 
 
   TMP_MARK (marker);
-  ap = TMP_ALLOC_LIMBS (asize + bsize);
-  bp = ap + asize;
+  TMP_ALLOC_LIMBS_2 (ap, asize, bp, bsize);
 
   MPN_RSHIFT_OR_COPY (ap, asrcp, asize, atwos);
   ASSERT (alow == ap[0]);
@@ -223,11 +222,11 @@ mpz_jacobi (mpz_srcptr a, mpz_srcptr b)
      Division is much faster than chipping away at "a" bit-by-bit. */
   if (asize > bsize)
     {
-      mp_ptr  rp = TMP_ALLOC_LIMBS (asize+1);
-      mp_ptr  qp = rp + bsize;
+      mp_ptr  rp, qp;
 
       TRACE (printf ("tdiv_qr asize=%ld bsize=%ld\n", asize, bsize));
 
+      TMP_ALLOC_LIMBS_2 (rp, bsize, qp, asize-bsize+1);
       mpn_tdiv_qr (qp, rp, 0, ap, asize, bp, bsize);
       ap = rp;
       asize = bsize;

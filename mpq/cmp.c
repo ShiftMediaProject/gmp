@@ -85,8 +85,7 @@ mpq_cmp (const MP_RAT *op1, const MP_RAT *op2)
   /* 3. Finally, cross multiply and compare.  */
 
   TMP_MARK (marker);
-  tmp1_ptr = (mp_ptr) TMP_ALLOC (tmp1_size * BYTES_PER_MP_LIMB);
-  tmp2_ptr = (mp_ptr) TMP_ALLOC (tmp2_size * BYTES_PER_MP_LIMB);
+  TMP_ALLOC_LIMBS_2 (tmp1_ptr,tmp1_size, tmp2_ptr,tmp2_size);
 
   if (num1_size >= den2_size)
     tmp1_size -= 0 == mpn_mul (tmp1_ptr,
