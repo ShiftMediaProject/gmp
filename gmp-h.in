@@ -545,7 +545,7 @@ __GMP_DECLSPEC int gmp_randinit_lc_2exp_size __GMP_PROTO ((gmp_randstate_t, unsi
 __GMP_DECLSPEC void gmp_randinit_mt __GMP_PROTO ((gmp_randstate_t));
 
 #define gmp_randinit_set __gmp_randinit_set
-void gmp_randinit_set __GMP_PROTO ((gmp_randstate_t, const __gmp_randstate_struct *));
+void gmp_randinit_set __GMP_PROTO ((gmp_randstate_t, __gmp_const __gmp_randstate_struct *));
 
 #define gmp_randseed __gmp_randseed
 __GMP_DECLSPEC void gmp_randseed __GMP_PROTO ((gmp_randstate_t, mpz_srcptr));
