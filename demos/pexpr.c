@@ -75,7 +75,7 @@ typedef __mpz_struct *mpz_ptr;
 jmp_buf errjmpbuf;
 
 enum op_t {NOP, LIT, NEG, NOT, PLUS, MINUS, MULT, DIV, MOD, REM, INVMOD, POW,
-	   AND, IOR, XOR, SLL, SRA, POPCNT, HAMDIST, GCD, LCM, SQRT, FAC,
+	   AND, IOR, XOR, SLL, SRA, POPCNT, HAMDIST, GCD, LCM, SQRT, ROOT, FAC,
 	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI};
 
 /* Type for the expression tree.  */
@@ -579,6 +579,7 @@ struct functions fns[] =
 {
   {"sqrt", SQRT, 1},
 #if __GNU_MP_VERSION >= 2
+  {"root", ROOT, 2},
   {"popc", POPCNT, 1},
 #endif
   {"gcd", GCD, 0},
@@ -941,9 +942,45 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
       mpz_com (r, r);
       return;
     case SQRT:
-      mpz_eval_expr (r, e->operands.ops.lhs);
-      mpz_sqrt (r, r);
+      mpz_eval_expr (lhs, e->operands.ops.lhs);
+      if (mpz_sgn (lhs) < 0)
+	{
+	  error = "cannot take square root of negative numbers";
+	  mpz_clear (lhs); mpz_clear (rhs);
+	  longjmp (errjmpbuf, 1);
+	}
+      mpz_sqrt (r, lhs);
       return;
+#if __GNU_MP_VERSION > 2 || __GNU_MP_VERSION_MINOR >= 1
+    case ROOT:
+      mpz_eval_expr (lhs, e->operands.ops.lhs);
+      mpz_eval_expr (rhs, e->operands.ops.rhs);
+      if (mpz_sgn (rhs) <= 0)
+	{
+	  error = "cannot take non-positive root orders";
+	  mpz_clear (lhs); mpz_clear (rhs);
+	  longjmp (errjmpbuf, 1);
+	}
+      if (mpz_sgn (lhs) < 0 && (mpz_get_ui (rhs) & 1) == 0)
+	{
+	  error = "cannot take even root orders of negative numbers";
+	  mpz_clear (lhs); mpz_clear (rhs);
+	  longjmp (errjmpbuf, 1);
+	}
+
+      {
+	unsigned long int nth = mpz_get_ui (rhs);
+	if (mpz_cmp_ui (rhs, ~(unsigned long int) 0) > 0)
+	  {
+	    /* If we are asked to take an awfully large root order, cheat and
+	       ask for the largest order we can pass to mpz_root.  This saves
+	       some error prone special cases.  */
+	    nth = ~(unsigned long int) 0;
+	  }
+	mpz_root (r, lhs, nth);
+      }
+      return;
+#endif
     case FAC:
       mpz_eval_expr (r, e->operands.ops.lhs);
       if (mpz_size (r) > 1)
