@@ -19,6 +19,26 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-28  Kevin Ryde  <user42@zip.com.au>
+
+	* gmp-h.in (gmp_errno, gmp_version): Move into extern "C" block,
+	reported by librik@panix.com.
+
+	* gmp-h.in (__GMP_DECLSPEC_EXPORT, __GMP_DECLSPEC_IMPORT): Use
+	__declspec(dllexport) and __declspec(dllimport) on Borland.
+	(_GMP_H_HAVE_FILE): Test __STDIO_H for Borland.
+	Reported by "delta trinity".
+
+	* gmp-impl.h (va_copy): Fall back on memcpy, not "=".
+
+	* mpn/generic/pre_mod_1.c: Add a comment about obsolescence.
+
+	* tune/time.c (MICROSECONDS_P): Don't trust time differences of 1
+	microsecond.
+
+	* tests/cxx/t-ostream.cc: Use "const char *" not just "char *" for
+	test data strings, avoids warnings on Sun CC.
+
 2002-02-27  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: For sparc under solaris2.[7-9], pass -fsimple=1 to
