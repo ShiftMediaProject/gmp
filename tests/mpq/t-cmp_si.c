@@ -21,6 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -40,13 +41,13 @@ check_data (void)
   } data[] = {
     { "0", 0, 1, 0 },
     { "0", 0, 123, 0 },
-    { "0", 0, MP_LIMB_T_MAX, 0 },
+    { "0", 0, ULONG_MAX, 0 },
     { "1", 0, 1, 1 },
     { "1", 0, 123, 1 },
-    { "1", 0, MP_LIMB_T_MAX, 1 },
+    { "1", 0, ULONG_MAX, 1 },
     { "-1", 0, 1, -1 },
     { "-1", 0, 123, -1 },
-    { "-1", 0, MP_LIMB_T_MAX, -1 },
+    { "-1", 0, ULONG_MAX, -1 },
 
     { "123", 123, 1, 0 },
     { "124", 123, 1, 1 },
