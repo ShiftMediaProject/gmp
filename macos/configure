@@ -2,7 +2,7 @@
 # Note that this script can't be run directly from MPW perl
 # because it has the wrong end-of-line characters. See README.
 
-# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -53,6 +53,8 @@ my @dirs =
    'MpnObj',
    'MpqObj',
    'MpzObj',
+   'PrintfObj',
+   'ScanfObj',
    'CmnObj',
    'AsmObj',
    'Asm',
@@ -315,6 +317,8 @@ my %config =
    'mpz_objects' => what_objects("mpz","../mpz","{MpzObjDir}"),
    'mpf_objects' => what_objects("mpf","../mpf","{MpfObjDir}"),
    'mpq_objects' => what_objects("mpq","../mpq","{MpqObjDir}"),
+   'printf_objects' => what_objects("printf","../printf","{PrintfObjDir}"),
+   'scanf_objects'  => what_objects("scanf","../scanf","{ScanfObjDir}"),
    'gmp_objects' => what_objects("gmp","..",    "{CmnObjDir}"),
    %{$cfg},
   );

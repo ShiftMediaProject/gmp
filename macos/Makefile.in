@@ -1,4 +1,4 @@
-# Copyright 2000, 2001 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -42,6 +42,8 @@ MpfObjDir	= :MpfObj:
 MpnObjDir	= :MpnObj:
 MpqObjDir	= :MpqObj:
 MpzObjDir	= :MpzObj:
+PrintfObjDir	= :PrintfObj:
+ScanfObjDir	= :ScanfObj:
 CmnObjDir	= :CmnObj:
 AsmObjDir	= :AsmObj:
 AsmSrcDir	= :Asm:
@@ -50,6 +52,7 @@ MpqBinDir	= :MpqBin:
 MpzBinDir	= :MpzBin:
 
 ObjDirs		= {MpfObjDir} {MpnObjDir} {MpqObjDir} {MpzObjDir} @c@
+		  {PrintfObjDir} {ScanfObjDir} @c@
 		  {CmnObjDir} {AsmObjDir} {AsmSrcDir} @c@
                   {MpfBinDir} {MpqBinDir} {MpzBinDir}
 
@@ -71,10 +74,16 @@ MpqObjs = @c@
 MpzObjs = @c@
 	@mpz_objects@
 
+PrintfObjs = @c@
+	@printf_objects@
+
+ScanfObjs = @c@
+	@scanf_objects@
+
 CmnObjs = @c@
 	@gmp_objects@
 
-Objs = {AsmObjs} {MpfObjs} {MpnObjs} {MpqObjs} {MpzObjs} {CmnObjs}
+Objs = {AsmObjs} {MpfObjs} {MpnObjs} {MpqObjs} {MpzObjs} {PrintfObjs} {ScanfObjs} {CmnObjs}
 
 
 
@@ -96,6 +105,10 @@ all	@dep@ {Lib}
 {MpqObjDir} @dep@ ::mpq:
 
 {MpzObjDir} @dep@ ::mpz:
+
+{PrintfObjDir} @dep@ ::printf:
+
+{ScanfObjDir} @dep@ ::scanf:
 
 {CmnObjDir} @dep@ ::
 
