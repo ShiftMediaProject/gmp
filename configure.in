@@ -53,8 +53,7 @@ case "$target" in
     ;;
 
   # Sparc
-  # FIXME: Is it `sparc9' or `sparcv9'?  config.guess says `sparc9'.
-  ultrasparc*-*-solaris2.[7-9] | sparc9-*-solaris2.[7-9])
+  ultrasparc*-*-solaris2.[7-9] | sparcv9-*-solaris2.[7-9])
     ## FIXME: Match `sparc64*' as well?
     ## FIXME: define _LONG_LONG_LIMB in config.h instead.
     os_64bit=yes
@@ -63,7 +62,7 @@ case "$target" in
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
-  ultrasparc*-*-* | sparc9-*-*)
+  ultrasparc*-*-* | sparcv9-*-*)
     ## FIXME: path=sparc32/v9
     gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v8plus"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
@@ -180,7 +179,7 @@ case ${target} in
   arm*-*-*)
     path="arm"
     ;;
-  sparc9*-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*)
+  sparcv9*-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*)
     family=sparc
     if test -n "$CC64"; then
       path="sparc64"
@@ -188,14 +187,14 @@ case ${target} in
       path="sparc32/v9 sparc32/v8 sparc32"
     fi
     ;;
-  sparc8*-*-* | microsparc*-*-*)
+  sparcv8*-*-* | microsparc*-*-*)
 	path="sparc32/v8 sparc32"
 	if test x${floating_point} = xno
 	  then extra_functions="udiv_nfp"
 	  else extra_functions="udiv_fp"
 	fi
 	family=sparc;;
-  sparc9*-*-* | ultrasparc*-*-*)
+  sparcv9*-*-* | ultrasparc*-*-*)
 	path="sparc32/v9 sparc32/v8 sparc32"
 	extra_functions="udiv_fp"
 	family=sparc;;
@@ -410,7 +409,7 @@ case "${target}" in
   ppc60[234]*-*-* | ppc60[234]*-*-* | \
   powerpc*-*-* | powerpc*-*-*)
     syntax=elf;;
-  sparc9-*-solaris2* | ultrasparc*-*-solaris2*)
+  sparcv9-*-solaris2* | ultrasparc*-*-solaris2*)
     ;;
 esac
 changequote([,])dnl
