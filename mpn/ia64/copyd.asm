@@ -30,8 +30,8 @@ ASM_START()
 PROLOGUE(mpn_copyd)
 	.prologue
 	.save ar.lc, r2
-	.body
 		mov	r2 = ar.lc
+	.body
 ifdef(`HAVE_ABI_32',
 `		addp4	r32 = 0, r32
 		addp4	r33 = 0, r33
