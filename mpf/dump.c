@@ -1,6 +1,11 @@
 /* mpf_dump -- Dump a float to stdout.
 
-Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
+   THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS NOT SAFE TO
+   CALL THIS FUNCTION DIRECTLY.  IN FACT, IT IS ALMOST GUARANTEED THAT THIS
+   FUNCTION WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
+
+
+Copyright (C) 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

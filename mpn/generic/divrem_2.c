@@ -1,7 +1,14 @@
 /* mpn_divrem_2 -- Divide natural numbers, producing both remainder and
    quotient.  The divisor is two limbs.
 
-Copyright (C) 1993, 1994, 1995, 1996, 1999 Free Software Foundation, Inc.
+   THIS FILE CONTAINS INTERNAL FUNCTIONS WITH MUTABLE INTERFACES.  IT IS
+   ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
+   ALMOST GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP
+   RELEASE.
+
+
+Copyright (C) 1993, 1994, 1995, 1996, 1999, 2000 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 

@@ -1,6 +1,12 @@
 /* mpn_divrem_classic -- Divide natural numbers, producing both remainder and
    quotient.
 
+   THIS FILE CONTAINS INTERNAL FUNCTIONS WITH MUTABLE INTERFACES.  IT IS
+   ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
+   ALMOST GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP
+   RELEASE.
+
+
 Copyright (C) 1993, 1994, 1995, 1996, 1997, 1999, 2000 Free Software
 Foundation, Inc.
 

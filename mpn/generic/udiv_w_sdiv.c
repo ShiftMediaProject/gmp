@@ -3,7 +3,13 @@
 
    Contributed by Peter L. Montgomery.
 
-Copyright (C) 1992, 1994, 1996 Free Software Foundation, Inc.
+   THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY SAFE
+   TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
+   ALMOST GUARANTEED THAT THIS FUNCTION WILL CHANGE OR DISAPPEAR IN A FUTURE
+   GNU MP RELEASE.
+
+
+Copyright (C) 1992, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

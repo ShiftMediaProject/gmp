@@ -1,6 +1,10 @@
 /* mpn_mul_basecase -- Internal routine to multiply two natural numbers
    of length m and n.
 
+   THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS ONLY
+   SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
+
+
 Copyright (C) 1991, 1992, 1993, 1994, 1996, 1997, 2000 Free Software
 Foundation, Inc.
 

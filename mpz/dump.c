@@ -1,6 +1,11 @@
 /* mpz_dump - Dump an integer to stdout.
 
-Copyright (C) 1999 Free Software Foundation, Inc.
+   THIS IS AN INTERNAL FUNCTION WITH A MUTABLE INTERFACE.  IT IS NOT SAFE TO
+   CALL THIS FUNCTION DIRECTLY.  IN FACT, IT IS ALMOST GUARANTEED THAT THIS
+   FUNCTION WILL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
+
+
+Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

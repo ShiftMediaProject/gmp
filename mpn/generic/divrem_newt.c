@@ -1,6 +1,12 @@
 /* Division using Newton's method.
 
-Copyright (C) 1994, 1997, 1999 Free Software Foundation, Inc.
+   THIS FILE CONTAINS INTERNAL FUNCTIONS WITH MUTABLE INTERFACES.  IT IS
+   ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
+   ALMOST GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP
+   RELEASE.
+
+
+Copyright (C) 1994, 1997, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
