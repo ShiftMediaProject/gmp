@@ -1795,10 +1795,6 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
    so there's no need for any sophisticated looping, just something compact
    and sensible.
 
-   FIXME: Do the generic MPN_{INCR,DECR}_U with a block of code like
-   mpn_incr_u but with the assertions built in, rather than the separate
-   add_1 and sub_1 when assertion checking.
-
    FIXME: Switch all code from mpn_{incr,decr}_u to MPN_{INCR,DECR}_U,
    declaring their operand sizes, then remove the former.  This is purely
    for the benefit of assertion checking.  */
