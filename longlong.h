@@ -306,9 +306,19 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 #if 1 || defined (__arm_m__)	/* `M' series has widening multiply support */
 #define umul_ppmm(xh, xl, a, b) \
   __asm__ ("umull %0,%1,%2,%3" : "=&r" (xl), "=&r" (xh) : "r" (a), "r" (b))
+#define UMUL_TIME 5
 #define smul_ppmm(xh, xl, a, b) \
   __asm__ ("smull %0,%1,%2,%3" : "=&r" (xl), "=&r" (xh) : "r" (a), "r" (b))
-#define UMUL_TIME 5
+#ifndef LONGLONG_STANDALONE
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do { UWtype __di;							\
+    __di = __MPN(invert_limb) (d);					\
+    udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
+  } while (0)
+#define UDIV_PREINV_ALWAYS  1
+#define UDIV_NEEDS_NORMALIZATION 1
+#define UDIV_TIME 70
+#endif /* LONGLONG_STANDALONE */
 #else
 #define umul_ppmm(xh, xl, a, b) \
   __asm__ ("%@ Inlined umul_ppmm\n"					\
@@ -328,7 +338,6 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
 	   : "r" (a), "r" (b)						\
 	   : "r0", "r1", "r2")
 #define UMUL_TIME 20
-#endif
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { USItype __r;							\
@@ -336,8 +345,9 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
     (r) = __r;								\
   } while (0)
 extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype));
-#define UDIV_TIME 140
+#define UDIV_TIME 200
 #endif /* LONGLONG_STANDALONE */
+#endif
 #endif /* __arm__ */
 
 #if defined (__clipper__) && W_TYPE_SIZE == 32
