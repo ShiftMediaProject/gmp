@@ -167,11 +167,11 @@ case $basic_machine in
 	vax-* | tahoe-* | i[3456]86-* | i860-* | m68k-* | m68000-* | m88k-* \
 	      | sparc-* | ns32k-* | fx80-* | arm-* | arme[lb]-* | c[123]* \
 	      | mips-* | pyramid-* | tron-* | a29k-* | romp-* | rs6000-* | power-* \
-	      | none-* | 580-* | cray2-* | h8300-* | i960-* | xmp-* | ymp-* \
+	      | none-* | 580-* | cray2-* | h8300-* | i960-* | xmp-* | ymp-* | [ctj]90-* \
 	      | hppa1.0-* | hppa1.1-* | alpha-* | we32k-* | cydra-* | ns16k-* \
 	      | pn-* | np1-* | xps100-* | clipper-* | orion-* | sparclite-* \
 	      | pdp11-* | sh-* | powerpc-* | powerpcle-* | sparc64-* \
-	      | mips64-* | mipsel-* | mips64el-* | mips64orion-* \
+	      | mips64-* | mipsel-* | mips64el-* | mips64orion-* | f30[01]-* \
 	      | mips64orionel-* | sparc8-* | supersparc-* | microsparc-* | ultrasparc-*)
 		;;
 	m88110-* | m680[012346]0-* | m683?2-* | m68360-* | z8k-* | h8500-*) # CYGNUS LOCAL
@@ -239,10 +239,6 @@ case $basic_machine in
 		basic_machine=ns32k-sequent
 		os=-dynix
 		;;
-	[ctj]90-cray)
-		basic_machine=c90-cray
-		os=-unicos
-		;;
 	convex-c1)
 		basic_machine=c1-convex
 		os=-bsd
@@ -263,12 +259,20 @@ case $basic_machine in
 		basic_machine=c38-convex
 		os=-bsd
 		;;
+	f30[01])
+		basic_machine=f300-fujitsu
+		os=-sysv
+		;;
 	cray | ymp)
 		basic_machine=ymp-cray
 		os=-unicos
 		;;
 	cray2)
 		basic_machine=cray2-cray
+		os=-unicos
+		;;
+	[ctj]90)
+		basic_machine=$basic_machine-cray
 		os=-unicos
 		;;
 	crds | unos)
