@@ -62,6 +62,9 @@
 	* acinclude.m4 (GMP_CHECK_ASM_DATA): Plain .data for hpux.
 	* configure.in (CCAS): No CFLAGS, they're added when it's used.
 	(CONFIG_SRCDIR): New define for config.m4.
+	* mpn/sparc64/addmul_1.asm: Use it for an include().
+	* mpn/sparc64/submul_1.asm: Ditto.
+	* mpn/sparc64/mul_1.asm: Ditto.
 
 2000-03-31  Linus Nordberg  <linus@swox.se>
 	
