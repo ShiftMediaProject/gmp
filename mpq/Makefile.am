@@ -27,19 +27,9 @@ INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
 
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES =							\
-  abs.c canonicalize.c clear.c cmp.c cmp_si.c cmp_ui.c div.c equal.c	\
+  abs.c aors.c canonicalize.c clear.c					\
+  cmp.c cmp_si.c cmp_ui.c div.c equal.c					\
   get_d.c get_den.c get_num.c get_str.c					\
   init.c inp_str.c inv.c md_2exp.c mul.c neg.c out_str.c		\
   set.c set_den.c set_num.c set_si.c set_str.c set_ui.c set_z.c set_d.c	\
   set_f.c swap.c
-
-nodist_libmpq_la_SOURCES = add.c sub.c
-
-CLEANFILES = $(nodist_libmpq_la_SOURCES)
-
-EXTRA_DIST = aors.c
-
-add.c: $(srcdir)/aors.c
-	cp $(srcdir)/aors.c add.c
-sub.c: $(srcdir)/aors.c
-	cp $(srcdir)/aors.c sub.c
