@@ -1,6 +1,6 @@
 /* mpf_ui_div -- Divide an unsigned integer with a float.
 
-Copyright (C) 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -50,7 +50,8 @@ mpf_ui_div (r, u, v)
   prec = r->_mp_prec;
 
   if (vsize == 0)
-    vsize = 1 / vsize;		/* divide by zero as directed */
+    DIVIDE_BY_ZERO;
+
   if (u == 0)
     {
       r->_mp_size = 0;
