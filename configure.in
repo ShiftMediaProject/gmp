@@ -644,8 +644,15 @@ for tmp_dir in $path ; do
   fi
 done
 
+# Dig out the links from `gmp_links' for inclusion in DISTCLEANFILES.
+gmp_srclinks=
+for f in $gmp_links; do
+  gmp_srclinks="$gmp_srclinks `echo $f | sed 's/\(.*\):.*/\1/'`"
+done
+
 AC_SUBST(mpn_objects)
 AC_SUBST(mpn_objs_in_libgmp)
+AC_SUBST(gmp_srclinks)
 
 dnl  ----------------------------------------
 dnl  Debugging.
@@ -656,6 +663,7 @@ dnl
 [echo "***DEBUG*** path=$path"]
 [echo "***DEBUG*** mpn_objects=$mpn_objects"]
 dnl [echo "***DEBUG*** gmp_links=$gmp_links"]
+dnl [echo "***DEBUG*** gmp_srclinks=$gmp_srclinks"]
 
 dnl  ----------------------------------------
 dnl  Make links.
