@@ -91,7 +91,7 @@ power[12] | power2sc)
   test_cpu=power ;;
 powerpc64)
   test_cpu=powerpc ;;
-sparcv8 | supersparc | microsparc | ultrasparc[123])
+sparcv8 | supersparc | microsparc | ultrasparc | ultrasparc[123])
   test_cpu=sparc ;;
 sh2)
   test_cpu=sh ;;
