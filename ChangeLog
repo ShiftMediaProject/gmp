@@ -18,6 +18,33 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-22  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (ULONG_PARITY) [generic C]: Mask result to a single bit.
+	(ULONG_PARITY) [_CRAY, __ia64]: New macros.
+	* tests/t-parity.c: New test.
+	* tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* longlong.h (count_trailing_zeros) [ia64]: New macro.
+
+	* tests/t-count_zeros.c (check_various): Remove unused variable "n".
+
+	* mpn/x86/README: Revise notes on PIC, PLT and GOT.
+
+	* demos/perl/GMP.xs, demos/perl/GMP.pm, demos/perl/test.pl: Add "mt"
+	to GMP::Rand::randstate.
+
+2002-12-22  Pedro Gimeno  <pggimeno@wanadoo.es>
+
+	* randmt.c (randseed_mt): Fix bug that might cause the generator to
+	return all zeros with certain seeds.  Fix WARM_UP==0 case.
+	(gmp_randinit_mt): Initialize to a known state by default.
+	(randget_mt): Remove check for uninitialized buffer: no longer needed.
+	(recalc_buffer): Use ?: instead of two-element array.
+
+	* tests/rand/t-mt.c: New test.
+	* tests/rand/Makefile.am (check_PROGRAMS): Add it.
+
 2002-12-21  Kevin Ryde  <kevin@swox.se>
 
 	* cxx/osdoprnti.cc: Use <cstdarg> and <cstring> rather than <stdarg.h>
