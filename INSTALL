@@ -115,10 +115,10 @@ Basics" in the manual.
 Known Build Problems
 --------------------
 
-Note that GCC 2.7.2 (as well as 2.6.3) for the RS/6000 and PowerPC can not
-be used to compile GMP, due to a bug in GCC.  If you want to use GCC, you
-need to apply the patch at the end of this file, or use a later version of
-the compiler.
+Note that GCC 2.7.2 (or 2.6.3) for the POWER and PowerPC can not be used
+to compile GMP, due to a bug in GCC.  If you want to use GCC, you need to
+apply the patch at the end of this file, or use a later version of the
+compiler.
 
 If you are on a Sequent Symmetry, use GAS instead of the system's assembler
 due to the latter's serious bugs.
