@@ -53,6 +53,9 @@ _mpz_cmp_ui (mpz_srcptr u, unsigned long int v_digit)
 	{
 	  ul = up[0] + (up[1] << GMP_NUMB_BITS);
 
+	  if ((up[1] >> GMP_NAIL_BITS) != 0)
+	    return 1;
+
 	  if (ul > v_digit)
 	    return 1;
 	  if (ul < v_digit)
