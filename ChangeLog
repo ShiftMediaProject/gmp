@@ -21,8 +21,8 @@ MA 02111-1307, USA.
 2004-04-20  Kevin Ryde  <kevin@swox.se>
 
 	* doc/texinfo.tex: Update to 2004-04-07.08 from texinfo 4.7.
-	* doc/gmp.texi (@copying): Don't put a line break in @ref within
-	@copying, recent texinfo.tex doesn't like that.
+	* doc/gmp.texi, mpfr/mpfr.texi (@copying): Don't put a line break in
+	@ref within @copying, recent texinfo.tex doesn't like that.
 
 	* demos/perl/GMP.xs (static_functable): Treat cygwin the same as mingw
 	DLLs.
