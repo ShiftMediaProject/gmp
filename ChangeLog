@@ -1,3 +1,7 @@
+2000-12-04  Torbjorn Granlund  <tege@swox.com>
+
+	* acinclude.m4: Fix typo testing for bad HP compiler.
+
 2000-12-03  Torbjorn Granlund  <tege@swox.com>
 
 	* mpbsd/tests/t-misc.c (check_itom): Exclude some tests for Cray
