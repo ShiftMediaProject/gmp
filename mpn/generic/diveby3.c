@@ -51,7 +51,7 @@ mpn_divexact_by3c (dst, src, size, c)
      mp_ptr    dst;
      mp_srcptr src;
      mp_size_t size;
-     mp_limb_t carry;
+     mp_limb_t c;
 #endif
 {
   mp_size_t  i;
