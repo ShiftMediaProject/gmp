@@ -349,31 +349,36 @@ mpn_kara_sqr_n (p, a, n, ws)
 	}
       else
 	{
-	  mpn_kara_sqr_n (ws, p, n3, ws + n1);
-	  mpn_kara_sqr_n (p, a, n3, ws + n1);
-	  mpn_kara_sqr_n (p + n1, a + n3, n2, ws + n1);
+	  mpn_kara_sqr_n (ws, p, n3, ws + n1);           /* (x-y)^2 */
+	  mpn_kara_sqr_n (p, a, n3, ws + n1);            /* x^2     */
+	  mpn_kara_sqr_n (p + n1, a + n3, n2, ws + n1);  /* y^2     */
 	}
 
-      mpn_sub_n (ws, p, ws, n1);
+      /* Since x^2+y^2-(x-y)^2 = 2xy >= 0 there's no need to track the
+         borrow from mpn_sub_n.  If it occurs then it'll be cancelled by a
+         carry from ws[n].  Further, since 2xy fits in n1 limbs there won't
+         be any carry out of ws[n] other than cancelling that borrow. */
+
+      mpn_sub_n (ws, p, ws, n1);             /* x^2-(x-y)^2 */
 
       nm1 = n - 1;
-      if (mpn_add_n (ws, p + n1, ws, nm1))
+      if (mpn_add_n (ws, p + n1, ws, nm1))   /* x^2+y^2-(x-y)^2 = 2xy */
 	{
 	  mp_limb_t x = ws[nm1] + 1;
 	  ws[nm1] = x;
 	  if (x == 0)
 	    ++ws[n];
 	}
+
       if (mpn_add_n (p + n3, p + n3, ws, n1))
 	{
 	  mp_limb_t x;
 	  i = n1 + n3;
-	  do
-	    {
-	      x = p[i] + 1;
-	      p[i] = x;
-	      ++i;
-	    } while (x == 0);
+	  do {
+            x = p[i] + 1;
+            p[i] = x;
+            ++i;
+          } while (x == 0);
 	}
     }
   else
@@ -382,7 +387,7 @@ mpn_kara_sqr_n (p, a, n, ws)
       mp_limb_t t;
 
       i = n2;
-      do
+      do 
 	{
 	  --i;
 	  w0 = a[i];
@@ -419,6 +424,10 @@ mpn_kara_sqr_n (p, a, n, ws)
       w = -mpn_sub_n (ws, p, ws, n);
       w += mpn_add_n (ws, p + n, ws, n);
       w += mpn_add_n (p + n2, p + n2, ws, n);
+
+      /* w=0 or 1 because x^2+y^2-(x-y)^2 = 2xy */
+      ASSERT (w == 0 || w == 1);
+
       /* TO DO: could put "if (w) { ... }" here.
        * Less work but badly predicted branch.
        * No measurable difference in speed on Alpha.
