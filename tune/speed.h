@@ -59,9 +59,18 @@ MA 02111-1307, USA. */
 
 #define SPEED_TMP_ALLOC_ADJUST_MASK  (CACHE_LINE_SIZE/BYTES_PER_MP_LIMB - 1)
 
-#define SPEED_TMP_ALLOC_LIMBS(limbs, align) \
-  (speed_tmp_alloc_adjust             \
-    (TMP_ALLOC_LIMBS((limbs) + SPEED_TMP_ALLOC_ADJUST_MASK), (align)))
+/* Set ptr to a TMP_ALLOC block of the given limbs, with the given limb
+   alignment.  */
+#define SPEED_TMP_ALLOC_LIMBS(ptr, limbs, align)                        \
+  do {                                                                  \
+    mp_ptr     __ptr;                                                   \
+    mp_size_t  __ptr_align, __ptr_add;                                  \
+                                                                        \
+    __ptr = TMP_ALLOC_LIMBS ((limbs) + SPEED_TMP_ALLOC_ADJUST_MASK-1);  \
+    __ptr_align = (__ptr - (mp_ptr) NULL);                              \
+    __ptr_add = ((align) - __ptr_align) & SPEED_TMP_ALLOC_ADJUST_MASK;  \
+    (ptr) = __ptr + __ptr_add;                                          \
+  } while (0)
 
 
 /* This is the size for s->xp_block and s->yp_block, used in certain
@@ -344,7 +353,6 @@ void noop_wxys _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
                         mp_size_t size));
 void mpn_cache_fill _PROTO ((mp_srcptr ptr, mp_size_t size));
 void mpn_cache_fill_dummy _PROTO ((mp_limb_t n));
-mp_ptr speed_tmp_alloc_adjust _PROTO ((void *ptr, mp_size_t align));
 void speed_cache_fill _PROTO ((struct speed_params *s));
 void speed_operand_src _PROTO ((struct speed_params *s,
                                 mp_ptr ptr, mp_size_t size));
@@ -525,7 +533,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 0);                 \
                                                         \
     TMP_MARK (marker);                                  \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);   \
                                                         \
     speed_operand_src (s, s->xp, s->size);              \
     speed_operand_dst (s, wp, s->size);                 \
@@ -552,7 +560,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 0);                 \
                                                         \
     TMP_MARK (marker);                                  \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);   \
                                                         \
     speed_operand_src (s, s->xp, s->size);              \
     speed_operand_dst (s, wp, s->size);                 \
@@ -581,7 +589,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 0);				\
 								\
     TMP_MARK (marker);						\
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);		\
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);		\
 								\
     speed_operand_src (s, s->xp, s->size);			\
     speed_operand_dst (s, wp, s->size);				\
@@ -611,7 +619,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                 \
                                                         \
     TMP_MARK (marker);                                  \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);   \
                                                         \
     xp = s->xp;                                         \
     yp = s->yp;                                         \
@@ -664,7 +672,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                 \
                                                         \
     TMP_MARK (marker);                                  \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);   \
                                                         \
     speed_operand_src (s, s->xp, s->size);              \
     speed_operand_dst (s, wp, s->size);                 \
@@ -747,7 +755,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                                                 \
     TMP_MARK (marker);                                          \
     wsize = s->size + N-1;                                      \
-    wp = SPEED_TMP_ALLOC_LIMBS (wsize, s->align_wp);            \
+    SPEED_TMP_ALLOC_LIMBS (wp, wsize, s->align_wp);             \
     for (i = 0; i < N; i++)                                     \
       yp[i] = (s->r != 0 ? s->r : MP_BASES_BIG_BASE_10);        \
                                                                 \
@@ -798,7 +806,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (size1 >= s->size);                     \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp = SPEED_TMP_ALLOC_LIMBS (size1 + s->size, s->align_wp);  \
+    SPEED_TMP_ALLOC_LIMBS (wp, size1 + s->size, s->align_wp);   \
                                                                 \
     speed_operand_src (s, s->xp, size1);                        \
     speed_operand_src (s, s->yp, s->size);                      \
@@ -827,7 +835,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp = SPEED_TMP_ALLOC_LIMBS (2*s->size, s->align_wp);        \
+    SPEED_TMP_ALLOC_LIMBS (wp, 2*s->size, s->align_wp);         \
                                                                 \
     speed_operand_src (s, s->xp, s->size);                      \
     speed_operand_src (s, s->yp, s->size);                      \
@@ -859,8 +867,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= minsize);                   \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp = SPEED_TMP_ALLOC_LIMBS (2*s->size, s->align_wp);        \
-    tspace = SPEED_TMP_ALLOC_LIMBS (tsize, s->align_wp2);       \
+    SPEED_TMP_ALLOC_LIMBS (wp, 2*s->size, s->align_wp);         \
+    SPEED_TMP_ALLOC_LIMBS (tspace, tsize, s->align_wp2);        \
                                                                 \
     speed_operand_src (s, s->xp, s->size);                      \
     speed_operand_src (s, s->yp, s->size);                      \
@@ -902,7 +910,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp = SPEED_TMP_ALLOC_LIMBS (2*s->size, s->align_wp);        \
+    SPEED_TMP_ALLOC_LIMBS (wp, 2*s->size, s->align_wp);        \
                                                                 \
     speed_operand_src (s, s->xp, s->size);                      \
     speed_operand_dst (s, wp, 2*s->size);                       \
@@ -936,8 +944,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= minsize);                   \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp = SPEED_TMP_ALLOC_LIMBS (2*s->size, s->align_wp);        \
-    tspace = SPEED_TMP_ALLOC_LIMBS (tsize, s->align_wp2);       \
+    SPEED_TMP_ALLOC_LIMBS (wp, 2*s->size, s->align_wp);         \
+    SPEED_TMP_ALLOC_LIMBS (tspace, tsize, s->align_wp2);        \
                                                                 \
     speed_operand_src (s, s->xp, s->size);                      \
     speed_operand_dst (s, wp, 2*s->size);                       \
@@ -1033,10 +1041,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    a = SPEED_TMP_ALLOC_LIMBS (2*s->size, s->align_xp);         \
-    d = SPEED_TMP_ALLOC_LIMBS (s->size,   s->align_yp);         \
-    q = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);         \
-    r = SPEED_TMP_ALLOC_LIMBS (s->size,   s->align_wp2);        \
+    SPEED_TMP_ALLOC_LIMBS (a, 2*s->size, s->align_xp);          \
+    SPEED_TMP_ALLOC_LIMBS (d, s->size,   s->align_yp);          \
+    SPEED_TMP_ALLOC_LIMBS (q, s->size+1, s->align_wp);          \
+    SPEED_TMP_ALLOC_LIMBS (r, s->size,   s->align_wp2);         \
                                                                 \
     MPN_COPY (a, s->xp, s->size);                               \
     MPN_COPY (a+s->size, s->xp, s->size);                       \
@@ -1089,14 +1097,14 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 3);                 \
                                                         \
     TMP_MARK (marker);                                  \
-    a = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);   \
+    SPEED_TMP_ALLOC_LIMBS (a, s->size, s->align_xp);    \
                                                         \
-    d = SPEED_TMP_ALLOC_LIMBS (3, s->align_yp);         \
+    SPEED_TMP_ALLOC_LIMBS (d, 3, s->align_yp);          \
     MPN_COPY (d, s->yp, 3);                             \
     d[2] |= GMP_NUMB_HIGHBIT;                           \
                                                         \
     qsize = s->size - 3;                                \
-    q = SPEED_TMP_ALLOC_LIMBS (qsize, s->align_wp);     \
+    SPEED_TMP_ALLOC_LIMBS (q, qsize, s->align_wp);      \
                                                         \
     speed_operand_dst (s, a, s->size);                  \
     speed_operand_src (s, d, 3);                        \
@@ -1161,10 +1169,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    ap = SPEED_TMP_ALLOC_LIMBS (2*s->size+1, s->align_xp);      \
-    mp = SPEED_TMP_ALLOC_LIMBS (s->size,     s->align_yp);      \
-    cp = SPEED_TMP_ALLOC_LIMBS (s->size,     s->align_wp);      \
-    tp = SPEED_TMP_ALLOC_LIMBS (2*s->size+1, s->align_wp2);     \
+    SPEED_TMP_ALLOC_LIMBS (ap, 2*s->size+1, s->align_xp);       \
+    SPEED_TMP_ALLOC_LIMBS (mp, s->size,     s->align_yp);       \
+    SPEED_TMP_ALLOC_LIMBS (cp, s->size,     s->align_wp);       \
+    SPEED_TMP_ALLOC_LIMBS (tp, 2*s->size+1, s->align_wp2);      \
                                                                 \
     MPN_COPY (ap,         s->xp, s->size);                      \
     MPN_COPY (ap+s->size, s->xp, s->size);                      \
@@ -1296,8 +1304,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                                         \
     TMP_MARK (marker);                                  \
     alloc = MPN_FIB2_SIZE (s->size);                    \
-    fp  = SPEED_TMP_ALLOC_LIMBS (alloc, s->align_xp);   \
-    f1p = SPEED_TMP_ALLOC_LIMBS (alloc, s->align_yp);   \
+    SPEED_TMP_ALLOC_LIMBS (fp,  alloc, s->align_xp);    \
+    SPEED_TMP_ALLOC_LIMBS (f1p, alloc, s->align_yp);    \
                                                         \
     speed_starttime ();                                 \
     i = s->reps;                                        \
@@ -1387,8 +1395,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 0);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp  = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);         \
-    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);        \
+    SPEED_TMP_ALLOC_LIMBS (wp,  s->size, s->align_wp);          \
+    SPEED_TMP_ALLOC_LIMBS (wp2, s->size, s->align_wp2);         \
     xp = s->xp;                                                 \
     yp = s->yp;                                                 \
                                                                 \
@@ -1442,7 +1450,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->r != 0);                    \
                                                         \
     TMP_MARK (marker);                                  \
-    xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);  \
+    SPEED_TMP_ALLOC_LIMBS (xp, s->size, s->align_xp);  \
     MPN_COPY (xp, s->xp, s->size);                      \
     xp[0] |= refmpn_zero_p (xp, s->size);               \
                                                         \
@@ -1475,8 +1483,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size <= mp_bits_per_limb);          \
                                                                 \
     TMP_MARK (marker);                                          \
-    px = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, s->align_xp); \
-    py = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, s->align_yp); \
+    SPEED_TMP_ALLOC_LIMBS (px, SPEED_BLOCK_SIZE, s->align_xp);  \
+    SPEED_TMP_ALLOC_LIMBS (py, SPEED_BLOCK_SIZE, s->align_yp);  \
     MPN_COPY (px, s->xp_block, SPEED_BLOCK_SIZE);               \
     MPN_COPY (py, s->yp_block, SPEED_BLOCK_SIZE);               \
                                                                 \
@@ -1544,10 +1552,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    xtmp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_xp);      \
-    ytmp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_yp);      \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);        \
-    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp2);      \
+    SPEED_TMP_ALLOC_LIMBS (xtmp, s->size+1, s->align_xp);       \
+    SPEED_TMP_ALLOC_LIMBS (ytmp, s->size+1, s->align_yp);       \
+    SPEED_TMP_ALLOC_LIMBS (wp,   s->size+1, s->align_wp);       \
+    SPEED_TMP_ALLOC_LIMBS (wp2,  s->size+1, s->align_wp2);      \
                                                                 \
     pieces = SPEED_BLOCK_SIZE * datafactor / s->size / s->size; \
     pieces = MIN (pieces, SPEED_BLOCK_SIZE / s->size);          \
@@ -1621,13 +1629,13 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                                                         \
     TMP_MARK (marker);                                                  \
                                                                         \
-    xtmp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_xp);              \
-    ytmp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_yp);              \
+    SPEED_TMP_ALLOC_LIMBS (xtmp, s->size+1, s->align_xp);               \
+    SPEED_TMP_ALLOC_LIMBS (ytmp, s->size+1, s->align_yp);               \
     MPN_COPY (xtmp, s->xp, s->size);                                    \
     MPN_COPY (ytmp, s->yp, s->size);                                    \
                                                                         \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp);                \
-    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_wp2);              \
+    SPEED_TMP_ALLOC_LIMBS (wp,  s->size+1, s->align_wp);                \
+    SPEED_TMP_ALLOC_LIMBS (wp2, s->size+1, s->align_wp2);               \
                                                                         \
     pieces = SPEED_BLOCK_SIZE / 3;                                      \
     psize = 3 * pieces;                                                 \
@@ -1758,8 +1766,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 2);                 \
                                                         \
     TMP_MARK (marker);                                  \
-    xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);  \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+    SPEED_TMP_ALLOC_LIMBS (xp, s->size, s->align_xp);   \
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);   \
                                                         \
     /* source is destroyed */                           \
     MPN_COPY (xp, s->xp, s->size);                      \
@@ -1832,8 +1840,8 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp  = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);         \
-    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);        \
+    SPEED_TMP_ALLOC_LIMBS (wp,  s->size, s->align_wp);          \
+    SPEED_TMP_ALLOC_LIMBS (wp2, s->size, s->align_wp2);         \
                                                                 \
     speed_operand_src (s, s->xp, s->size);                      \
     speed_operand_dst (s, wp, s->size);                         \
@@ -1870,7 +1878,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (base >= 2 && base <= 256);                     \
                                                                         \
     TMP_MARK (marker);                                                  \
-    xp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);              \
+    SPEED_TMP_ALLOC_LIMBS (xp, s->size + 1, s->align_xp);               \
                                                                         \
     MPN_SIZEINBASE (wsize, s->xp, s->size, base);                       \
     wp = TMP_ALLOC (wsize);                                             \
@@ -1925,7 +1933,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                                                              \
     wsize = ((mp_size_t) (s->size / __mp_bases[base].chars_per_bit_exactly)) \
       / BITS_PER_MP_LIMB + 2;                                                \
-    wp = SPEED_TMP_ALLOC_LIMBS (wsize, s->align_wp);                         \
+    SPEED_TMP_ALLOC_LIMBS (wp, wsize, s->align_wp);                          \
                                                                              \
     /* use this during development to check wsize is big enough */           \
     /*                                                                       \
@@ -2006,7 +2014,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     TMP_DECL (marker);                                                  \
                                                                         \
     TMP_MARK (marker);                                                  \
-    xp = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, s->align_xp);         \
+    SPEED_TMP_ALLOC_LIMBS (xp, SPEED_BLOCK_SIZE, s->align_xp);          \
                                                                         \
     if (! speed_routine_count_zeros_setup (s, xp, leading, zero))       \
       return -1.0;                                                      \
@@ -2109,7 +2117,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 0);                 \
                                                         \
     TMP_MARK (marker);                                  \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
+    SPEED_TMP_ALLOC_LIMBS (wp, s->size, s->align_wp);   \
     speed_operand_dst (s, wp, s->size);                 \
     speed_cache_fill (s);                               \
                                                         \
