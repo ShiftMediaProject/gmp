@@ -1207,7 +1207,7 @@ initialized variables ready for use.  It should be possible to integrate
 something like that with a garbage collector.
 
 @item Reallocations
-An @code{mpz_t} or @code{mpq_t} variable useded to hold successively larger
+An @code{mpz_t} or @code{mpq_t} variable used to hold successively larger
 values may end up with its memory being repeatedly @code{realloc}ed, which
 could be quite slow or could fragment memory, depending on the C library.  If
 an application can estimate the final size then @code{@w{_mpz}_realloc} can be
@@ -1256,9 +1256,9 @@ possibilities, in no particular order, include
 
 @display
 @uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc}
-@uref{http://quorum.tamu.edu/jon/gnu} @ @ (debauch)
+@uref{http://quorum.tamu.edu/jon/gnu} @ (debauch)
 @uref{http://dmalloc.com}
-@uref{http://www.perens.com/FreeSoftware} @ @ (electric fence)
+@uref{http://www.perens.com/FreeSoftware} @ (electric fence)
 @uref{http://packages.debian.org/fda}
 @uref{http://people.redhat.com/~otaylor/memprof}
 @end display
