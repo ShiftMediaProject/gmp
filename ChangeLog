@@ -12,6 +12,8 @@
 
 2000-04-16  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/inp_str.c: Fix memory leakage.
+
 	* mpz/tests/reuse.c (dss_func_division): Add a final 1.
 
 	* longlong.h (alpha count_leading_zeros): Wrap in __MPN.
