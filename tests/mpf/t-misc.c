@@ -55,9 +55,11 @@ check_mpf_set_si (void)
     {
       mpf_init (x);
       mpf_set_si (x, data[i].x);
+      MPF_CHECK_FORMAT (x);
       if (x->_mp_size != data[i].want_size
-          || (x->_mp_size != 0 && x->_mp_d[0] != data[i].want_limb)
-          || (x->_mp_exp != (data[i].x != 0)))
+          || (x->_mp_size != 0
+              && (x->_mp_d[0] != data[i].want_limb
+                  || x->_mp_exp != 1)))
         {
           printf ("mpf_set_si wrong on data[%d]\n", i); 
           abort();                                    
@@ -65,9 +67,11 @@ check_mpf_set_si (void)
       mpf_clear (x);
 
       mpf_init_set_si (x, data[i].x);
+      MPF_CHECK_FORMAT (x);
       if (x->_mp_size != data[i].want_size
-          || (x->_mp_size != 0 && x->_mp_d[0] != data[i].want_limb)
-          || (x->_mp_exp != (data[i].x != 0)))
+          || (x->_mp_size != 0
+              && (x->_mp_d[0] != data[i].want_limb
+                  || x->_mp_exp != 1)))
         {
           printf ("mpf_init_set_si wrong on data[%d]\n", i); 
           abort();                                    
