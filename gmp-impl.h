@@ -327,6 +327,9 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define ASSERT_FILE  ""
 #endif
 
+int __gmp_assert_fail _PROTO((const char *filename, int linenum,
+                              const char *expr));
+
 #if HAVE_STRINGIZE
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, #expr)
 #else
@@ -344,13 +347,50 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #if WANT_ASSERT
 #define ASSERT(expr)           ASSERT_ALWAYS (expr)
 #define ASSERT_NOCARRY(expr)   ASSERT_ALWAYS ((expr) == 0)
+
 #else
 #define ASSERT(expr)           (CAST_TO_VOID 0)
 #define ASSERT_NOCARRY(expr)   (expr)
 #endif
 
-int __gmp_assert_fail _PROTO((const char *filename, int linenum,
-                              const char *expr));
+
+/* When WANT_ASSERT is set, ASSERT_NOREALLOC() temporarily changes the
+   normal memory allocation function pointers to abort()s.  This can be used
+   when a destination in an mpz call is an MPZ_TMP_INIT() allocated
+   variable, which can't be reallocated, and shouldn't be so long as it was
+   created with enough space.  For example,
+
+       MPZ_TMP_INIT (w, 100);
+       ASSERT_NOREALLOC (mpz_mul (w, x, y));
+
+   This works well with simple functions like mpz_mul, but doesn't suit
+   calls to complicated functions that're doing mpz_init()s for their own
+   purposes (eg. mpz_fib_ui).  But complicated routines are likely to have
+   complicated size requirements and be unsuitable for MPZ_TMP_INIT anyway.  */
+
+#if WANT_ASSERT
+#else
+/*  #define ASSERT_NOREALLOC(statements)   statements */
+#endif
+#define ASSERT_NOREALLOC(statements)                                     \
+  {                                                                      \
+    void * (*__assert_norealloc_alloc)                                   \
+      _PROTO ((size_t))                  = _mp_allocate_func;            \
+    void * (*__assert_norealloc_realloc)                                 \
+      _PROTO ((void *, size_t, size_t))  = _mp_reallocate_func;          \
+    void   (*__assert_norealloc_free)                                    \
+      _PROTO ((void *, size_t))          = _mp_free_func;                \
+                                                                         \
+    _mp_allocate_func   = (void*(*)_PROTO((size_t)))              abort; \
+    _mp_reallocate_func = (void*(*)_PROTO((void*,size_t,size_t))) abort; \
+    _mp_free_func       = (void (*)_PROTO((void*,size_t)))        abort; \
+                                                                         \
+    { statements; }                                                      \
+                                                                         \
+    _mp_allocate_func   = __assert_norealloc_alloc;                      \
+    _mp_reallocate_func = __assert_norealloc_realloc;                    \
+    _mp_free_func       = __assert_norealloc_free;                       \
+  }
 
 
 #if HAVE_NATIVE_mpn_com_n
@@ -703,9 +743,29 @@ extern const int __gmp_0;
 #define MPZ_PROVOKE_REALLOC(z)						\
   do { ALLOC(z) = ABSIZ(z); } while (0)
 
+
 #if TUNE_PROGRAM_BUILD
 /* Some extras wanted when recompiling some .c files for use by the tune
    program.  Not part of a normal build. */
+
 extern mp_size_t  tune_mul_threshold[];
 extern mp_size_t  tune_sqr_threshold[];
+extern mp_size_t  bz_threshold[];
+
+#undef KARATSUBA_MUL_THRESHOLD
+#undef TOOM3_MUL_THRESHOLD
+#undef FFT_MUL_THRESHOLD
+#undef KARATSUBA_SQR_THRESHOLD
+#undef TOOM3_SQR_THRESHOLD
+#undef FFT_SQR_THRESHOLD
+#undef BZ_THRESHOLD
+
+#define KARATSUBA_MUL_THRESHOLD  tune_mul_threshold[0]
+#define TOOM3_MUL_THRESHOLD      tune_mul_threshold[1]
+#define FFT_MUL_THRESHOLD        tune_mul_threshold[2]
+#define KARATSUBA_SQR_THRESHOLD  tune_sqr_threshold[0]
+#define TOOM3_SQR_THRESHOLD      tune_sqr_threshold[1]
+#define FFT_SQR_THRESHOLD        tune_sqr_threshold[2]
+#define BZ_THRESHOLD             bz_threshold[0]
+
 #endif
