@@ -161,6 +161,7 @@ __gmp_extract_double (rp, d)
     {
       rp[1] = manl;
       rp[0] = 0;
+      exp--;
     }
 #else
   if (sc != 0)
@@ -174,6 +175,7 @@ __gmp_extract_double (rp, d)
       rp[2] = manh;
       rp[1] = manl;
       rp[0] = 0;
+      exp--;
     }
 #endif
 
