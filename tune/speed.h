@@ -185,6 +185,7 @@ double speed_mpn_mod_1_inv _PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1_odd _PROTO ((struct speed_params *s));
 double speed_mpn_modexact_1c_odd _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
+double speed_mpn_mul_1_inplace _PROTO ((struct speed_params *s));
 double speed_mpn_mul_2 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft _PROTO ((struct speed_params *s));
@@ -521,6 +522,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 #define SPEED_ROUTINE_MPN_BINARY_N_SELF(function) \
    SPEED_ROUTINE_MPN_BINARY_N_CALL ((*function) (wp, s->xp, s->xp, s->size))
 
+/* FIXME: wp is uninitialized here, should start it off from yp or something */
 #define SPEED_ROUTINE_MPN_BINARY_N_INPLACE(function) \
    SPEED_ROUTINE_MPN_BINARY_N_CALL ((*function) (wp, wp, s->xp, s->size))
 
@@ -558,6 +560,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 #define SPEED_ROUTINE_MPN_UNARY_1C(function) \
   SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->xp, s->size, s->r, 0))
+
+/* FIXME: wp is uninitialized here, should start it off from xp */
+#define SPEED_ROUTINE_MPN_UNARY_1_INPLACE(function) \
+  SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, wp, s->size, s->r))
 
 #define SPEED_ROUTINE_MPN_DIVEXACT_1(function)                            \
   SPEED_ROUTINE_MPN_UNARY_1_CALL ((*function) (wp, s->xp, s->size, s->r))
