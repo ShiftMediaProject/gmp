@@ -666,6 +666,7 @@ HPPA:
 @nisamp{hppa2.0},
 @nisamp{hppa2.0n},
 @nisamp{hppa2.0w}
+@nisamp{hppa64}
 
 @item
 IA-64:
@@ -1053,35 +1054,45 @@ with a fresh @command{./configure} and @command{make} each.
 @table @asis
 @sp 1
 @need 1000
-@item HPPA 2.0 (@samp{hppa2.0*})
+@item HPPA 2.0 (@samp{hppa2.0*}, @samp{hppa64})
 @cindex HPPA
 @table @asis
 @item @samp{ABI=2.0w}
-The 2.0w ABI uses 64-bit limbs and pointers and is available on HP-UX 11 or up
-when using @command{cc}.  @command{gcc} support for this is in progress.
-Applications must be compiled with
+The 2.0w ABI uses 64-bit limbs and pointers and is available on HP-UX 11 or
+up.  Applications must be compiled with
 
 @example
+gcc [built for 2.0w]
 cc  +DD64
 @end example
 
 @item @samp{ABI=2.0n}
-The 2.0n ABI means the 32-bit HPPA 1.0 ABI but with a 64-bit limb using
-@code{long long}.  This is available on HP-UX 10 or up when using
-@command{cc}.  No @command{gcc} support is planned for this.  Applications
-must be compiled with
+The 2.0n ABI means the 32-bit HPPA 1.0 ABI and all its normal calling
+conventions, but with 64-bit instructions permitted within functions.  GMP
+uses a 64-bit @code{long long} for a limb.  This ABI is available on hppa64
+GNU/Linux and on HP-UX 10 or higher.  Applications must be compiled with
 
 @example
+gcc [built for 2.0n]
 cc  +DA2.0 +e
 @end example
+
+Note that current versions of GCC (eg. 3.2) don't generate 64-bit instructions
+for @code{long long} operations and so may be slower than for 2.0w.  (The GMP
+assembler code is the same though.)
 
 @item @samp{ABI=1.0}
 HPPA 2.0 CPUs can run all HPPA 1.0 and 1.1 code in the 32-bit HPPA 1.0 ABI.
 No special compiler options are needed for applications.
 @end table
 
-All three ABIs are available for CPUs @samp{hppa2.0w} and @samp{hppa2.0}, but
-for CPU @samp{hppa2.0n} only 2.0n or 1.0 are allowed.
+All three ABIs are available for CPU types @samp{hppa2.0w}, @samp{hppa2.0} and
+@samp{hppa64}, but for CPU type @samp{hppa2.0n} only 2.0n or 1.0 are
+considered.
+
+Note that GCC on HP-UX has no options to choose between 2.0n and 2.0w modes,
+unlike HP @command{cc}.  Instead it must be built for one or the other ABI.
+GMP will detect how it was built, and skip to the corresponding @samp{ABI}.
 
 @sp 1
 @need 1500
