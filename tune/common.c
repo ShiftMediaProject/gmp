@@ -997,12 +997,13 @@ speed_mpn_hgcd (struct speed_params *s)
 
   speed_starttime ();
   i = s->reps;
-  do {
-    qstack_reset (&quotients, s->size);
-    res = mpn_hgcd (&hgcd, ap, s->size, bp, s->size,
-		    &quotients,
-		    wp, hgcd_scratch);
-  }
+  do
+    {
+      qstack_reset (&quotients, s->size);
+      res = mpn_hgcd (&hgcd, ap, s->size, bp, s->size,
+                      &quotients,
+                      wp, hgcd_scratch);
+    }
   while (--i != 0);
   t = speed_endtime ();
 #if WANT_ASSERT
@@ -1055,12 +1056,13 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
 
   speed_starttime ();
   i = s->reps;
-  do {
-    qstack_reset (&quotients, s->size);
-    res = mpn_hgcd_lehmer (&hgcd, ap, s->size, bp, s->size,
-			   &quotients,
-			   wp, hgcd_scratch);
-  }
+  do
+    {
+      qstack_reset (&quotients, s->size);
+      res = mpn_hgcd_lehmer (&hgcd, ap, s->size, bp, s->size,
+                             &quotients,
+                             wp, hgcd_scratch);
+    }
   while (--i != 0);
   t = speed_endtime ();
 #if WANT_ASSERT
