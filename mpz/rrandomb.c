@@ -46,57 +46,80 @@ mpz_rrandomb (mpz_ptr x, gmp_randstate_t rstate, unsigned long int nbits)
   SIZ(x) = nl;
 }
 
-#define BITS_PER_CHUNK 4
+/* It's a bit tricky to get this right, so please test the code well if you
+   hack with it.  Some early versions of the function produced random numbers
+   with the leading limb == 0, and some versions never made the most
+   significant bit set.
+
+   This code and mpn_random2 are almost identical, though the latter makes bit
+   runs of 1 to 32, and forces the first block to contain 1-bits.
+
+   The random state produces some number of random bits per underlying lc
+   invocation (BITS_PER_RANDCALL).  We should perhaps ask for that, instead of
+   asking for 32, presuming that limbs are at least 32 bits.  FIXME: Handle
+   smaller limbs, such as 4-bit limbs useful for testing purposes, or limbs
+   truncated by nailing.
+
+   For efficiency, we make sure to use most bits returned from _gmp_rand, since
+   the underlying random number generator is slow.  Keep returned bits in
+   ranm/ran, and a count of how many bits remaining in ran_nbits.  */
+
+#define LOGBITS_PER_BLOCK 4
+#define BITS_PER_RANDCALL 32
 
 static void
 gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
 {
   int nb;
-  int bit_pos;
-  mp_size_t limb_pos;
-  mp_limb_t ran, ranm;
-  mp_limb_t acc;
+  int bit_pos;			/* bit number of least significant bit where
+				   next bit field to be inserted */
+  mp_size_t ri;			/* index in rp */
+  mp_limb_t ran, ranm;		/* buffer for random bits */
+  mp_limb_t acc;		/* accumulate output random data here */
+  int ran_nbits;		/* number of valid bits in ran */
 
-  bit_pos = nbits % BITS_PER_MP_LIMB;
-  limb_pos = nbits / BITS_PER_MP_LIMB;
-  if (bit_pos == 0)
-    {
-      bit_pos = BITS_PER_MP_LIMB;
-      limb_pos--;
-    }
+  bit_pos = (nbits - 1) % BITS_PER_MP_LIMB;
+  ri = (nbits - 1) / BITS_PER_MP_LIMB;
 
   acc = 0;
-  while (limb_pos >= 0)
+  while (ri >= 0)
     {
-      _gmp_rand (&ranm, rstate, BITS_PER_CHUNK + 1);
-      ran = ranm;
-      nb = (ran >> 1) + 1;
+      if (ran_nbits < LOGBITS_PER_BLOCK + 1)
+	{
+	  _gmp_rand (&ranm, rstate, BITS_PER_RANDCALL);
+	  ran = ranm;
+	  ran_nbits = BITS_PER_RANDCALL;
+	}
+
+      nb = (ran >> 1) % (1 << LOGBITS_PER_BLOCK) + 1;
       if ((ran & 1) != 0)
 	{
-	  /* Generate a string of ones.  */
+	  /* Generate a string of nb ones.  */
 	  if (nb > bit_pos)
 	    {
-	      rp[limb_pos--] = acc | ((((mp_limb_t) 1) << bit_pos) - 1);
+	      rp[ri--] = acc | (((mp_limb_t) 2 << bit_pos) - 1);
 	      bit_pos += BITS_PER_MP_LIMB;
 	      bit_pos -= nb;
-	      acc = (~(mp_limb_t) 0) << bit_pos;
+	      acc = (~(mp_limb_t) 1) << bit_pos;
 	    }
 	  else
 	    {
 	      bit_pos -= nb;
-	      acc |= ((((mp_limb_t) 1) << nb) - 1) << bit_pos;
+	      acc |= (((mp_limb_t) 2 << nb) - 2) << bit_pos;
 	    }
 	}
       else
 	{
-	  /* Generate a string of zeroes.  */
+	  /* Generate a string of nb zeroes.  */
 	  if (nb > bit_pos)
 	    {
-	      rp[limb_pos--] = acc;
+	      rp[ri--] = acc;
 	      acc = 0;
 	      bit_pos += BITS_PER_MP_LIMB;
 	    }
 	  bit_pos -= nb;
 	}
+      ran_nbits -= LOGBITS_PER_BLOCK + 1;
+      ran >>= LOGBITS_PER_BLOCK + 1;
     }
 }
