@@ -205,7 +205,7 @@ MA 02111-1307, USA.
 	(gmp_mpn_functions_optional): Add mul_3, mul_4, addmul_2, addmul_3,
 	and addmul_4.
 	* acconfig.h: Add #undefs for new optional mpn functions.
-	
+
 2002-05-18  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Integer Import and Export): Mention Cray unfilled words.
@@ -255,7 +255,7 @@ MA 02111-1307, USA.
 	before returning.
 	* mpz/root.c: Don't allocate extra limb for root value.
 	* mpz/perfpow.c: Undo last change.
-	
+
 2002-05-08  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (powerpc BSWAP_LIMB_FETCH): Rename local variable to make
@@ -268,7 +268,7 @@ MA 02111-1307, USA.
 	* gmp-impl.h (mpn_rootrem): Add declaration.
 	* mpz/perfpow.c: Amend allocations for mpn_rootrem requirements.
 	* mpz/root.c: Rewrite to use mpn_rootrem.
-	
+
 2002-05-08  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (MUL_KARATSUBA_THRESHOLD etc): Remove forced nail values.
