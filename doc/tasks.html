@@ -327,10 +327,6 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 <li> Maybe make mpz/pow_ui.c more like mpz/ui_pow_ui.c, or write new
      mpn/generic/pow_ui.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
-<li> Make a build option to enable execution profiling with gprof.  In
-     particular look at getting the right <code>mcount</code> call at
-     the start of each assembler subroutine (for important targets at
-     least).
 </ul>
 
 
