@@ -1,5 +1,8 @@
 2000-12-19  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/sqrtrem.c (mpn_sqrtrem): Separate `limb' values from
+	`size' values.
+
 	* configure.in (*-cray-unicos*): Add `-Wa,-B' to cc_cflags.
 
 	* demos/pexpr.c (rstate): New variable.
