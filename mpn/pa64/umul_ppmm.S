@@ -27,8 +27,8 @@
 #define m1	%r24
 	.level  2.0n
 	.code
-	.export __umul_ppmm64
-__umul_ppmm64
+	.export __gmpn_umul_ppmm
+__gmpn_umul_ppmm
 	.proc
 	.callinfo frame=128,no_calls
 	.entry
