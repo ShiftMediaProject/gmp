@@ -1,7 +1,6 @@
-/* mpz_pow_ui(res, base, exp) -- Set RES to BASE**EXP.
+/* mpz_pow_ui -- mpz raised to ulong.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,96 +19,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#ifdef BERKELEY_MP
-#include "mp.h"
-#endif
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "longlong.h"
 
 void
-#ifndef BERKELEY_MP
 mpz_pow_ui (mpz_ptr r, mpz_srcptr b, unsigned long int e)
-#else /* BERKELEY_MP */
-rpow (const MINT *b, signed short int e, MINT *r)
-#endif /* BERKELEY_MP */
 {
-  mp_ptr rp, bp, tp, xp;
-  mp_size_t ralloc, rsize, bsize;
-  int cnt, i;
-  mp_limb_t blimb;
-  TMP_DECL (marker);
-
-  bsize = ABS (b->_mp_size);
-
-  /* Single out cases that give result == 0 or 1.  These tests are here
-     to simplify the general code below, not to optimize.  */
-  if (e == 0)
-    {
-      r->_mp_d[0] = 1;
-      r->_mp_size = 1;
-      return;
-    }
-  if (bsize == 0
-#ifdef BERKELEY_MP
-      || e < 0
-#endif
-      )
-    {
-      r->_mp_size = 0;
-      return;
-    }
-
-  bp = b->_mp_d;
-
-  blimb = bp[bsize - 1];
-  if (bsize == 1 && blimb < 0x100)
-    {
-      /* Estimate space requirements accurately.  Using the code from the
-	 `else' path would over-estimate space requirements wildly.   */
-      float lb = __mp_bases[blimb].chars_per_bit_exactly;
-      ralloc = 3 + ((mp_size_t) (e / lb) / BITS_PER_MP_LIMB);
-    }
-  else
-    {
-      /* Over-estimate space requirements somewhat.  */
-      count_leading_zeros (cnt, blimb);
-      ralloc = bsize * e - cnt * e / BITS_PER_MP_LIMB + 2;
-    }
-
-  TMP_MARK (marker);
-
-  /* The two areas are used to alternatingly hold the input and recieve the
-     product for mpn_mul.  (This scheme is used to fulfill the requirements
-     of mpn_mul; that the product space may not be the same as any of the
-     input operands.)  */
-  rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
-  tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
-
-  MPN_COPY (rp, bp, bsize);
-  rsize = bsize;
-  count_leading_zeros (cnt, e);
-
-  for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
-    {
-      mpn_sqr_n (tp, rp, rsize);
-      rsize = 2 * rsize;
-      rsize -= tp[rsize - 1] == 0;
-      xp = tp; tp = rp; rp = xp;
-
-      if ((e & ((mp_limb_t) 1 << i)) != 0)
-	{
-	  rsize = rsize + bsize - (mpn_mul (tp, rp, rsize, bp, bsize) == 0);
-	  xp = tp; tp = rp; rp = xp;
-	}
-    }
-
-  /* Now then we know the exact space requirements, reallocate if
-     necessary.  */
-  if (r->_mp_alloc < rsize)
-    _mpz_realloc (r, rsize);
-
-  MPN_COPY (r->_mp_d, rp, rsize);
-  r->_mp_size = (e & 1) == 0 || b->_mp_size >= 0 ? rsize : -rsize;
-  TMP_FREE (marker);
+  mpz_n_pow_ui (r, PTR(b), (mp_size_t) SIZ(b), e);
 }
