@@ -18,6 +18,20 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-07-06  Kevin Ryde  <kevin@swox.se>
+
+	* tests/cxx/t-allfuns.cc: New file.
+	* tests/cxx/Makefile.am: Add it.
+
+	* mpz/clrbit.c, mpz/setbit.c: Only MPN_NORMALIZE if high limb changes
+	to zero.  Use _mpz_realloc return value.
+
+	* gmp.texi (Build Options, C++ Formatted Output, C++ Formatted Input):
+	Cross reference to Headers and Libraries for libgmpxx stuff.
+	(Low-level Functions): mpn_divexact_by3 result based on GMP_NUMB_BITS.
+	mpn_set_str takes "unsigned char *", reported by Mark Sofroniou.
+	(C++ Interface General): Describe linking with libgmpxx and libgmp.
+
 2002-07-01  Kevin Ryde  <kevin@swox.se>
 
 	* tune/tuneup.c, gmp-impl.h: Eliminate the array of thresholds in
