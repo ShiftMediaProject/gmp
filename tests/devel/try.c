@@ -1265,19 +1265,51 @@ round_up_multiple (size_t a, size_t m)
     return a + (m - r);
 }
 
+
+/* On some systems it seems that only an mmap'ed region can be mprotect'ed,
+   for instance HP-UX 10.
+
+   mmap will almost certainly return a pointer already aligned to a page
+   boundary, but it's easy enough to share the alignment handling with the
+   malloc case. */
+
 void
 malloc_region (struct region_t *r, mp_size_t n)
 {
   mp_ptr  p;
+  size_t  nbytes;
 
   ASSERT ((pagesize % BYTES_PER_MP_LIMB) == 0);
 
-  r->size = round_up_multiple (n, PAGESIZE_LIMBS);
-  p = refmpn_malloc_limbs_aligned (r->size + REDZONE_LIMBS*2, pagesize);
-  mprotect_maybe (p, REDZONE_BYTES, PROT_NONE);
+  n = round_up_multiple (n, PAGESIZE_LIMBS);
+  r->size = n;
 
-  r->ptr = p + REDZONE_LIMBS;
-  mprotect_maybe (r->ptr + r->size, REDZONE_BYTES, PROT_NONE);
+  nbytes = n*BYTES_PER_MP_LIMB + 2*REDZONE_BYTES + pagesize;
+
+#if defined (MAP_ANONYMOUS) && ! defined (MAP_ANON)
+#define MAP_ANON  MAP_ANONYMOUS
+#endif
+
+#if HAVE_MMAP && defined (MAP_ANON)
+  p = mmap (NULL, nbytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, 0, 0);
+  if (p == (void *) -1)
+    {
+      fprintf (stderr, "Cannot mmap %#x anon bytes: %s\n",
+               nbytes, strerror (errno));
+      exit (1);
+    }
+#else
+  p = malloc (nbytes);
+  ASSERT_ALWAYS (p != NULL);
+#endif
+
+  p = align_pointer (p, pagesize);
+
+  mprotect_maybe (p, REDZONE_BYTES, PROT_NONE);
+  p += REDZONE_LIMBS;
+  r->ptr = p;
+
+  mprotect_maybe (p + n, REDZONE_BYTES, PROT_NONE);
 }
 
 void
