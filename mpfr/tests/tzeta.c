@@ -35,8 +35,28 @@ test1 (void)
 
   mpfr_init2 (x, 32);
   mpfr_init2 (y, 42);
+
   mpfr_set_str_binary (x, "1.1111111101000111011010010010100e-1");
   mpfr_zeta (y, x, GMP_RNDN); /* shouldn't crash */
+
+  mpfr_set_prec (x, 40);
+  mpfr_set_prec (y, 50);
+  mpfr_set_str_binary (x, "1.001101001101000010011010110100110000101e-1");
+  mpfr_zeta (y, x, GMP_RNDU);
+  mpfr_set_prec (x, 50);
+  mpfr_set_str_binary (x, "-0.11111100011100111111101111100011110111001111111111E1");
+  if (mpfr_cmp (x, y))
+    {
+      printf ("Error for input on 40 bits, output on 50 bits\n");
+      printf ("Expected "); mpfr_print_binary (x); puts ("");
+      printf ("Got      "); mpfr_print_binary (y); puts ("");
+      mpfr_set_str_binary (x, "1.001101001101000010011010110100110000101e-1");
+      mpfr_zeta (y, x, GMP_RNDU);
+      mpfr_print_binary (x); puts ("");
+      mpfr_print_binary (y); puts ("");
+      exit (1);
+    }
+
   mpfr_clear (x);
   mpfr_clear (y);
 }

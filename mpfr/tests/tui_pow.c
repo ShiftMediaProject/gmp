@@ -36,8 +36,22 @@ test1 (void)
 
   mpfr_init2 (x, 32);
   mpfr_init2 (y, 65);
+
   mpfr_set_str_binary (x, "-0.101110001001011011011e-9");
   mpfr_ui_pow (y, 7, x, GMP_RNDN);
+
+  mpfr_set_prec (x, 40);
+  mpfr_set_str_binary (x, "-0.1100101100101111011001010010110011110110E-1");
+  mpfr_set_prec (y, 74);
+  mpfr_ui_pow (y, 8, x, GMP_RNDN);
+  mpfr_set_prec (x, 74);
+  mpfr_set_str_binary (x, "0.11100000010100111101000011111011011010011000011000101011010011010101000011E-1");
+  if (mpfr_cmp (x, y))
+    {
+      printf ("Error for input of 40 bits, output of 74 bits\n");
+      exit (1);
+    }
+
   mpfr_clear (x);
   mpfr_clear (y);
 }

@@ -142,6 +142,22 @@ special ()
   mpfr_init2 (z, 53);
   mpfr_init2 (t, 2);
 
+  mpfr_set_ui (x, 2, GMP_RNDN);
+  mpfr_pow_si (x, x, -2, GMP_RNDN);
+  if (mpfr_cmp_ui_2exp (x, 1, -2))
+    {
+      printf ("Error in pow_si(x,x,-2) for x=2\n");
+      exit (1);
+    }
+  mpfr_set_ui (x, 2, GMP_RNDN);
+  mpfr_set_si (y, -2, GMP_RNDN);
+  mpfr_pow (x, x, y, GMP_RNDN);
+  if (mpfr_cmp_ui_2exp (x, 1, -2))
+    {
+      printf ("Error in pow(x,x,y) for x=2, y=-2\n");
+      exit (1);
+    }
+
   mpfr_set_prec (x, 64);
   mpfr_set_prec (y, 64);
   mpfr_set_prec (z, 64);

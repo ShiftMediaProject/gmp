@@ -74,8 +74,10 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
       /* detect exact powers: x^(-n) is exact iff x is a power of 2 */
       if (mpfr_cmp_si_2exp (x, MPFR_SIGN(x), MPFR_EXP(x) - 1) == 0)
         {
+          mp_exp_t expx = MPFR_EXP(x); /* warning: x and y may be the same
+                                            variable */
           mpfr_set_si (y, (n % 2) ? MPFR_SIGN(x) : 1, rnd_mode);
-          MPFR_EXP(y) += n * (MPFR_EXP(x) - 1);
+          MPFR_EXP(y) += n * (expx - 1);
           return 0;
         }
 

@@ -29,6 +29,20 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
+static void
+check_gcc33_bug (void)
+{
+  volatile long double x;
+  x = (long double) 9007199254740992.0 + 1.0;
+  if (x != 0.0)
+    return;  /* OK */
+  printf
+    ("Detected optimization bug of gcc 3.3 on Alpha concerning long double\n"
+     "comparisons; set_ld tests are disabled (set_ld won't work correctly).\n"
+     "See http://gcc.gnu.org/ml/gcc-bugs/2003-10/msg00853.html for more\n"
+     "information on this bug.\n");
+  exit (0);  /* This is not a bug in MPFR, so don't fail. */
+}
 
 static int
 Isnan_ld (long double d)
@@ -77,6 +91,8 @@ main (int argc, char *argv[])
   long double d, e;
   mpfr_t x;
   int i;
+
+  check_gcc33_bug ();
 
   tests_start_mpfr ();
   mpfr_test_init ();
