@@ -1,3 +1,12 @@
+2000-04-16  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/asm-defs.m4: invert_normalized_limb => invert_limb.
+	* mpn/alpha/invert_limb.asm: mpn_invert_normalized_limb =>
+	mpn_invert_limb.
+	* gmp-impl.h (alpha specific): invert_normalized_limb => invert_limb;
+	wrap with __MPN.
+	* longlong.h (alpha udiv_qrnnd): Likewise.
+
 2000-04-16  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.h (mp_set_memory_functions,mp_bits_per_limb,gmp_errno): Add
@@ -14,7 +23,7 @@
 	* mpn/*: Change __mpn to __gmpn.
 	* gmp.h (__MPN): Ditto.
 	* stack_alloc.c,stack-alloc.h: Change __tmp to __gmp_tmp.
-	
+
 	* mpn/generic/sb_divrem_mn.c (mpn_sb_divrem_mn): Avoid gcc 2.7.2.3
 	i386 register handling bug (same as previously in mpn_divrem_classic).
 
@@ -39,7 +48,7 @@
 	* configure.in (hppa2.0*): Use path "hppa/hppa1_1 hppa" if no
 	64-bit compiler was found.
 	* configure: Regenerate.
-	
+
 2000-04-15  Linus Nordberg  <linus@swox.se>
 
 	* configure.in: Honor `CC' and `CFLAGS' set by user on configure
@@ -47,7 +56,7 @@
 	* acinclude.m4: (GMP_PROG_CC_SELECT): Set CFLAGS if not set already.
 	* aclocal.m4: Regenerate.
 	* configure: Regenerate.
-	
+
 2000-04-15  Linus Nordberg  <linus@swox.se>
 
 	* acinclude.m4 (GMP_PROG_CC_FIND): Remove debug output.  Remove
@@ -80,7 +89,7 @@
 
 	* mpn/generic/bz_divrem_n.c,sb_divrem_mn.c: Add comment that
 	internal functions are changeable and shouldn't be used directly.
-	
+
 2000-04-15  Linus Nordberg  <linus@swox.se>
 
 	* configure.in: Remove debug output.
@@ -96,7 +105,7 @@
 
 	* configure.in: Disable -march=pentiumpro due to apparent compiler
 	problems.
-	
+
 	* mpz/powm.c: Replace with new code from Paul Zimmermann.
 
 	* mpz/tdiv_q.c: Remove debug code.
@@ -125,7 +134,7 @@
 	(mpn_sb_divrem_mn): Declare.
 	(mpn_bz_divrem_n): Declare.
 	(mpn_tdiv_qr): Declare.
-	
+
 	* configure.in (gmp_mpn_functions): Delete divrem_newt and divrem_1n;
 	add tdiv_qr, bz_divrem_n, and sb_divrem_mn.
 	* mpn/generic/divrem_newt.c: Delete file.
