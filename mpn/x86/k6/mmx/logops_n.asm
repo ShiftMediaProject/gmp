@@ -22,6 +22,8 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
 
+NAILS_SUPPORT(0-31)
+
 
 C         alignment dst/src1/src2, A=0mod8, N=4mod8
 C      A/A/A A/A/N A/N/A A/N/N N/A/A N/A/N N/N/A N/N/N
@@ -54,9 +56,13 @@ define(`M4_i_neg_src2',`$7')
 
 dnl  xnor is done in "iorn" style because it's a touch faster than "nior"
 dnl  style (the two are equivalent for xor).
+dnl
+dnl  pandn can't be used with nails.
 
 M4_choose_op( and_n,  pand,0,0,  andl,0,0)
-M4_choose_op( andn_n, pandn,0,0, andl,0,1)
+ifelse(GMP_NAIL_BITS,0,
+`M4_choose_op(andn_n, pandn,0,0, andl,0,1)',
+`M4_choose_op(andn_n, pand,0,1,  andl,0,1)')
 M4_choose_op( nand_n, pand,1,0,  andl,1,0)
 M4_choose_op( ior_n,  por,0,0,   orl,0,0)
 M4_choose_op( iorn_n, por,0,1,   orl,0,1)
@@ -108,20 +114,22 @@ deflit(`FRAME',0)
 	ALIGN(32)
 PROLOGUE(M4_function)
 			movl	PARAM_SIZE, %ecx
-			pushl	%ebx
-		FRAME_pushl()
+			pushl	%ebx		FRAME_pushl()
+
 			movl	PARAM_SRC1, %eax
+
 			movl	PARAM_SRC2, %ebx
 			cmpl	$1, %ecx
+
 			movl	PARAM_DST, %edx
 			ja	L(two_or_more)
 
 
 			movl	(%ebx), %ecx
 			popl	%ebx
-ifelse(M4_i_neg_src2,1,`notl	%ecx')
+ifelse(M4_i_neg_src2,1,`notl_or_xorl_GMP_NUMB_MASK(	%ecx)')
 			M4_i	(%eax), %ecx
-ifelse(M4_i_neg_dst,1,`	notl	%ecx')
+ifelse(M4_i_neg_dst,1,`	notl_or_xorl_GMP_NUMB_MASK(	%ecx)')
 			movl	%ecx, (%edx)
 
 			ret
@@ -136,17 +144,16 @@ L(two_or_more):
 			C edi
 			C ebp
 
-			pushl	%esi
-		FRAME_pushl()
+			pushl	%esi		FRAME_pushl()
 			testl	$4, %eax
 			jz	L(alignment_ok)
 
 			movl	(%ebx), %esi
 			addl	$4, %ebx
-ifelse(M4_i_neg_src2,1,`notl	%esi')
+ifelse(M4_i_neg_src2,1,`notl_or_xorl_GMP_NUMB_MASK(	%esi)')
 			M4_i	(%eax), %esi
 			addl	$4, %eax
-ifelse(M4_i_neg_dst,1,`	notl	%esi')
+ifelse(M4_i_neg_dst,1,`	notl_or_xorl_GMP_NUMB_MASK(	%esi)')
 			movl	%esi, (%edx)
 			addl	$4, %edx
 			decl	%ecx
@@ -158,9 +165,9 @@ L(alignment_ok):
 
 			movl	(%ebx), %ecx
 			popl	%esi
-ifelse(M4_i_neg_src2,1,`notl	%ecx')
+ifelse(M4_i_neg_src2,1,`notl_or_xorl_GMP_NUMB_MASK(	%ecx)')
 			M4_i	(%eax), %ecx
-ifelse(M4_i_neg_dst,1,`	notl	%ecx')
+ifelse(M4_i_neg_dst,1,`	notl_or_xorl_GMP_NUMB_MASK(	%ecx)')
 			popl	%ebx
 			movl	%ecx, (%edx)
 			ret
@@ -168,7 +175,8 @@ ifelse(M4_i_neg_dst,1,`	notl	%ecx')
 
 L(still_two_or_more):
 ifelse(eval(M4_p_neg_src2 || M4_p_neg_dst),1,`
-			pcmpeqd	%mm7, %mm7	C all ones
+			pcmpeqd	%mm7, %mm7		C all ones
+ifelse(GMP_NAIL_BITS,0,,`psrld	$GMP_NAIL_BITS, %mm7')	C clear nails
 ')
 
 			ALIGN(16)
@@ -195,9 +203,9 @@ ifelse(M4_p_neg_dst,1,`	pxor	%mm7, %mm0')
 			jnc	L(no_extra)
 
 			movl	-4(%ebx,%esi,4), %ebx
-ifelse(M4_i_neg_src2,1,`notl	%ebx')
+ifelse(M4_i_neg_src2,1,`notl_or_xorl_GMP_NUMB_MASK(	%ebx)')
 			M4_i	-4(%eax,%esi,4), %ebx
-ifelse(M4_i_neg_dst,1,`	notl	%ebx')
+ifelse(M4_i_neg_dst,1,`	notl_or_xorl_GMP_NUMB_MASK(	%ebx)')
 			movl	%ebx, -4(%edx,%esi,4)
 L(no_extra):
 

@@ -21,6 +21,8 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
 
+NAILS_SUPPORT(0-31)
+
 
 C    alignment dst/src, A=0mod8 N=4mod8
 C       A/A   A/N   N/A   N/N
@@ -48,7 +50,7 @@ deflit(`FRAME',0)
 	jnz	L(two_or_more)
 
 	movl	(%eax), %eax
-	notl	%eax
+	notl_or_xorl_GMP_NUMB_MASK(	%eax)
 	movl	%eax, (%edx)
 	ret
 
@@ -59,7 +61,7 @@ L(two_or_more):
 
 	movl	%ecx, %ebx
 ifelse(GMP_NAIL_BITS,0,,
-`	psrld	$GMP_NAIL_BITS, %mm7')	C numb part, if nails
+`	psrld	$GMP_NAIL_BITS, %mm7')	C clear nails
 
 
 
@@ -81,7 +83,7 @@ L(top):
 
 	jnc	L(no_extra)
 	movl	(%eax,%ebx,8), %eax
-	notl_or_xorl_GMP_NUMB_MASK(%eax)
+	notl_or_xorl_GMP_NUMB_MASK(	%eax)
 	movl	%eax, (%edx,%ebx,8)
 L(no_extra):
 
