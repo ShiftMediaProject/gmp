@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2001 Free Software Foundation, Inc.
+# Copyright 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -27,8 +27,10 @@ LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 check_PROGRAMS = t-printf t-scanf t-locale
 TESTS = $(check_PROGRAMS)
 
-# t-printf.tmp is used by t-printf.c, removed automatically if the tests pass
-CLEANFILES = t-printf.tmp
+# Temporary files used by the tests.  Removed automatically if the tests
+# pass, but ensure they're cleaned if they fail.
+#
+CLEANFILES = *.tmp
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la

@@ -29,10 +29,10 @@ check_PROGRAMS = t-aors t-cmp t-cmp_ui t-cmp_si t-equal t-get_d t-get_str \
   t-inp_str t-md_2exp t-set_f t-set_str
 TESTS = $(check_PROGRAMS)
 
-# t-inp_str.tmp is used by t-inp_str.c and will be removed automatically if
-# the tests pass, but have it cleaned here in case the tests fail.
+# Temporary files used by the tests.  Removed automatically if the tests
+# pass, but ensure they're cleaned if they fail.
 #
-CLEANFILES = t-inp_str.tmp
+CLEANFILES = *.tmp
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la

@@ -37,11 +37,10 @@ check_PROGRAMS = t-addsub t-cmp t-mul t-mul_i t-tdiv t-tdiv_ui t-fdiv   \
 
 TESTS = $(check_PROGRAMS)
 
-# io.tmp, t-io_raw.tmp and t-inp_str.tmp are used by io.c, t-io_raw.c and
-# t-inp_str.c respectively, all removed automatically if the tests pass, but
-# arrange to clean them here if the tests fail.
+# Temporary files used by the tests.  Removed automatically if the tests
+# pass, but ensure they're cleaned if they fail.
 #
-CLEANFILES = io.tmp t-io_raw.tmp t-inp_str.tmp
+CLEANFILES = *.tmp
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
