@@ -163,7 +163,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 	  rsize = 2 * rsize;
 	  rsize -= tp[rsize - 1] == 0;
 
-          if (rsize > prec)
+	  if (rsize > prec)
 	    {
 	      MPN_COPY (rp, tp + rsize - prec, prec + 1);
 	      rsize = prec;
