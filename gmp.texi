@@ -984,7 +984,7 @@ routines are not reentrant, since they rely on global state.
 @item
 If @code{alloca} is not available, or GMP is configured with
 @samp{--disable-alloca}, the library is not reentrant, due to the current
-implementation of @file{stack-alloc.c}.  In the generated @file{config.h}
+implementation of @file{stack-alloc.c}.  In the generated @file{config.h},
 @code{USE_STACK_ALLOC} set to 1 will mean not reentrant.
 
 @item
