@@ -62,12 +62,12 @@ ifdef(`HAVE_ABI_32',
 	and		r14 = 3, n		C M I
 	;;
 }
-{.mii
+{.mmi
 	setf.sig	f6 = vl			C M2 M3
-	shr.u		r31 = r15, 2		C I
 	cmp.eq		p10, p0 = 0, r14	C M I
+	shr.u		r31 = r15, 2		C I
 }
-{.mii
+{.mmi
 	cmp.eq		p11, p0 = 2, r14	C M I
 	cmp.eq		p12, p0 = 3, r14	C M I
 	nop.i		0			C I
