@@ -125,8 +125,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-cmp t-cmp_ui t-cmp_si t-equal t-get_d t-get_str t-inp_str \
-  t-md_2exp t-set_f t-set_str
+check_PROGRAMS = t-aors t-cmp t-cmp_ui t-cmp_si t-equal t-get_d t-get_str \
+  t-inp_str t-md_2exp t-set_f t-set_str
 
 TESTS = $(check_PROGRAMS)
 
@@ -138,10 +138,16 @@ subdir = tests/mpq
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-check_PROGRAMS = t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) t-cmp_si$(EXEEXT) \
-	t-equal$(EXEEXT) t-get_d$(EXEEXT) t-get_str$(EXEEXT) \
-	t-inp_str$(EXEEXT) t-md_2exp$(EXEEXT) t-set_f$(EXEEXT) \
-	t-set_str$(EXEEXT)
+check_PROGRAMS = t-aors$(EXEEXT) t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) \
+	t-cmp_si$(EXEEXT) t-equal$(EXEEXT) t-get_d$(EXEEXT) \
+	t-get_str$(EXEEXT) t-inp_str$(EXEEXT) t-md_2exp$(EXEEXT) \
+	t-set_f$(EXEEXT) t-set_str$(EXEEXT)
+t_aors_SOURCES = t-aors.c
+t_aors_OBJECTS = t-aors$U.$(OBJEXT)
+t_aors_LDADD = $(LDADD)
+t_aors_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_aors_LDFLAGS =
 t_cmp_SOURCES = t-cmp.c
 t_cmp_OBJECTS = t-cmp$U.$(OBJEXT)
 t_cmp_LDADD = $(LDADD)
@@ -217,10 +223,11 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = t-cmp.c t-cmp_si.c t-cmp_ui.c t-equal.c t-get_d.c \
-	t-get_str.c t-inp_str.c t-md_2exp.c t-set_f.c t-set_str.c
+DIST_SOURCES = t-aors.c t-cmp.c t-cmp_si.c t-cmp_ui.c t-equal.c \
+	t-get_d.c t-get_str.c t-inp_str.c t-md_2exp.c t-set_f.c \
+	t-set_str.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = t-cmp.c t-cmp_si.c t-cmp_ui.c t-equal.c t-get_d.c t-get_str.c t-inp_str.c t-md_2exp.c t-set_f.c t-set_str.c
+SOURCES = t-aors.c t-cmp.c t-cmp_si.c t-cmp_ui.c t-equal.c t-get_d.c t-get_str.c t-inp_str.c t-md_2exp.c t-set_f.c t-set_str.c
 
 all: all-am
 
@@ -245,6 +252,9 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+t-aors$(EXEEXT): $(t_aors_OBJECTS) $(t_aors_DEPENDENCIES) 
+	@rm -f t-aors$(EXEEXT)
+	$(LINK) $(t_aors_LDFLAGS) $(t_aors_OBJECTS) $(t_aors_LDADD) $(LIBS)
 t-cmp$(EXEEXT): $(t_cmp_OBJECTS) $(t_cmp_DEPENDENCIES) 
 	@rm -f t-cmp$(EXEEXT)
 	$(LINK) $(t_cmp_LDFLAGS) $(t_cmp_OBJECTS) $(t_cmp_LDADD) $(LIBS)
@@ -297,6 +307,8 @@ mostlyclean-kr:
 
 .c.lo:
 	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+t-aors_.c: t-aors.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-aors.c; then echo $(srcdir)/t-aors.c; else echo t-aors.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-aors_.c || rm -f t-aors_.c
 t-cmp_.c: t-cmp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-cmp.c; then echo $(srcdir)/t-cmp.c; else echo t-cmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-cmp_.c || rm -f t-cmp_.c
 t-cmp_si_.c: t-cmp_si.c $(ANSI2KNR)
@@ -317,12 +329,12 @@ t-set_f_.c: t-set_f.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-set_f.c; then echo $(srcdir)/t-set_f.c; else echo t-set_f.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-set_f_.c || rm -f t-set_f_.c
 t-set_str_.c: t-set_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-set_str.c; then echo $(srcdir)/t-set_str.c; else echo t-set_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-set_str_.c || rm -f t-set_str_.c
-t-cmp_.$(OBJEXT) t-cmp_.lo t-cmp_si_.$(OBJEXT) t-cmp_si_.lo \
-t-cmp_ui_.$(OBJEXT) t-cmp_ui_.lo t-equal_.$(OBJEXT) t-equal_.lo \
-t-get_d_.$(OBJEXT) t-get_d_.lo t-get_str_.$(OBJEXT) t-get_str_.lo \
-t-inp_str_.$(OBJEXT) t-inp_str_.lo t-md_2exp_.$(OBJEXT) t-md_2exp_.lo \
-t-set_f_.$(OBJEXT) t-set_f_.lo t-set_str_.$(OBJEXT) t-set_str_.lo : \
-$(ANSI2KNR)
+t-aors_.$(OBJEXT) t-aors_.lo t-cmp_.$(OBJEXT) t-cmp_.lo \
+t-cmp_si_.$(OBJEXT) t-cmp_si_.lo t-cmp_ui_.$(OBJEXT) t-cmp_ui_.lo \
+t-equal_.$(OBJEXT) t-equal_.lo t-get_d_.$(OBJEXT) t-get_d_.lo \
+t-get_str_.$(OBJEXT) t-get_str_.lo t-inp_str_.$(OBJEXT) t-inp_str_.lo \
+t-md_2exp_.$(OBJEXT) t-md_2exp_.lo t-set_f_.$(OBJEXT) t-set_f_.lo \
+t-set_str_.$(OBJEXT) t-set_str_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
