@@ -35,9 +35,9 @@ libmpn_la_SOURCES = $(GENERIC_SOURCES)
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
-TARG_DIST = a29k alpha arm clipper cray generic hppa i960 m68k mips2 mips3 \
-  ns32k pa64 power powerpc32 powerpc64 pyr sh sparc32 sparc64 thumb vax x86 \
-  z8000 z8000x
+TARG_DIST = a29k alpha arm clipper cray generic hppa i960 lisp m68k m88k \
+  mips2 mips3 ns32k pa64 power powerpc32 powerpc64 pyr sh sparc32 sparc64 \
+  thumb vax x86 z8000 z8000x
 
 EXTRA_DIST = tests underscore.h asm-defs.m4 $(TARG_DIST)
 
