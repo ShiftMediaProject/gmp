@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
   This still needs work, as suggested by some FIXME comments.
   1. Don't depend on superfluous mantissa digits.
   2. Allocate temp space more cleverly.
-  2. Use mpn_tdiv_qr instead of mpn_lshift+mpn_divrem.
+  3. Use mpn_tdiv_qr instead of mpn_lshift+mpn_divrem.
 */
 
 #define _GNU_SOURCE    /* for DECIMAL_POINT in langinfo.h */
@@ -186,9 +186,6 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   s = begs = (char *) TMP_ALLOC (str_size + 1);
 
   /* Loop through mantissa, converting it from ASCII to raw byte values.  */
-  /* FIXME: Should just consider the leading
-     (prec * GMP_NUMB_BITS * mp_bases[base].chars_per_bit_exactly)
-     digits of the mantissa.  */
   for (i = 0; i < str_size; i++)
     {
       c = (unsigned char) *str;
@@ -234,21 +231,30 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     int cnt;
     mp_ptr mp, tp, rp;
     mp_exp_t exp_in_limbs;
-    mp_size_t prec = x->_mp_prec + 1;
+    mp_size_t prec = PREC(x) + 1;
     int divflag;
     mp_size_t madj, radj;
 
-    /* FIXME: Should allocate 2*prec limbs for mp, and zero pad it for
-       mpn_tdiv_qr below.  */
-    ma = (((mp_size_t) (str_size / __mp_bases[base].chars_per_bit_exactly))
-	  / GMP_NUMB_BITS + 2);
+#if 0
+    size_t n_chars_needed;
+
+    /* This breaks things like 0.000...0001.  To safely ignore superfluous
+       digits, we need to skip over leadng zeros.  */
+    /* Just consider the relevant leading digits of the mantissa.  */
+    n_chars_needed = 2 + (size_t)
+      (((size_t) prec * GMP_NUMB_BITS) * mp_bases[base].chars_per_bit_exactly);
+    if (str_size > n_chars_needed)
+      str_size = n_chars_needed;
+#endif
+
+    ma = 2 * (prec + 1);
     mp = TMP_ALLOC_LIMBS (ma);
     mn = mpn_set_str (mp, (unsigned char *) begs, str_size, base);
 
     if (mn == 0)
       {
-	x->_mp_size = 0;
-	x->_mp_exp = 0;
+	SIZ(x) = 0;
+	EXP(x) = 0;
 	TMP_FREE (marker);
 	return 0;
       }
@@ -263,6 +269,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
       }
 
     if (expptr != 0)
+      /* FIXME: Should do some error checking here.  */
       exp_in_base = strtol (expptr, (char **) 0, exp_base);
     else
       exp_in_base = 0;
@@ -273,9 +280,9 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 
     if (exp_in_base == 0)
       {
-	MPN_COPY (x->_mp_d, mp, mn);
-	x->_mp_size = negative ? -mn : mn;
-	x->_mp_exp = mn + madj;
+	MPN_COPY (PTR(x), mp, mn);
+	SIZ(x) = negative ? -mn : mn;
+	EXP(x) = mn + madj;
 	TMP_FREE (marker);
 	return 0;
       }
@@ -289,7 +296,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
       {
 #if 0
 	/* FIXME: Should use mpn_tdiv here.  */
-	mpn_tdiv_qr (qp, mp, 0L, mp, mn, tp, rn);
+	mpn_tdiv_qr (qp, mp, 0L, mp, mn, rp, rn);
 #else
 	mp_ptr qp;
 	mp_limb_t qlimb;
@@ -347,9 +354,9 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	  }
       }
 
-    MPN_COPY (x->_mp_d, tp, rn);
-    x->_mp_size = negative ? -rn : rn;
-    x->_mp_exp = exp_in_limbs;
+    MPN_COPY (PTR(x), tp, rn);
+    SIZ(x) = negative ? -rn : rn;
+    EXP(x) = exp_in_limbs;
     TMP_FREE (marker);
     return 0;
   }
