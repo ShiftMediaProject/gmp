@@ -22,6 +22,12 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#if BITS_PER_MP_LIMB == 64
+#define NLIMBS 2
+#else
+#define NLIMBS 3
+#endif
+
 void
 #if __STDC__
 mpf_set_d (mpf_ptr r, double d)
@@ -31,98 +37,11 @@ mpf_set_d (r, d)
      double d;
 #endif
 {
-  mp_ptr rp;
-  mp_size_t size;
-  mp_exp_t exp;
-  mp_limb_t manh, manl;
-  mp_limb_t man2, man1, man0;
-  union ieee_double_extract x;
-  unsigned sc;
+  int negative;
 
-  /* This code does not read PREC(r), but instead assumes there is enough
-     space.  This is safe, since the precison will never be less than 3 for
-     32-bit machines, and never less than 2 for 64-bit machines.  */
+  negative = d < 0;
+  d = ABS (d);
 
-  if (d == 0)
-    {
-      r->_mp_exp = 0;
-      r->_mp_size = 0;
-      return;
-    }
-
-  rp = r->_mp_d;
-  x.d = d;
-
-  exp = x.s.exp;
-  sc = (unsigned) (exp + 2) % BITS_PER_MP_LIMB;
-
-#if BITS_PER_MP_LIMB == 32
-  manh = ((mp_limb_t) 1 << 31) | (x.s.manh << 11) | (x.s.manl >> 21);
-  manl = x.s.manl << 11;
-
-  if (sc != 0)
-    {
-      man2 = manh >> (BITS_PER_MP_LIMB - sc);
-      man1 = (manl >> (BITS_PER_MP_LIMB - sc)) | (manh << sc);
-      man0 = manl << sc;
-    }
-  else
-    {
-      man2 = manh;
-      man1 = manl;
-      man0 = 0;
-    }
-
-  if (man0 == 0)
-    {
-      if (man1 == 0)
-	{
-	  size = 1;
-	  rp[0] = man2;
-	}
-      else
-	{
-	  size = 2;
-	  rp[1] = man2;
-	  rp[0] = man1;
-	}
-    }
-  else
-    {
-      size = 3;
-      rp[2] = man2;
-      rp[1] = man1;
-      rp[0] = man0;
-    }
-#endif
-#if BITS_PER_MP_LIMB == 64
-  manl = (((mp_limb_t) 1 << 63)
-	  | ((mp_limb_t) x.s.manh << 43) | ((mp_limb_t) x.s.manl << 11));
-
-  if (sc != 0)
-    {
-      man1 = manl >> (BITS_PER_MP_LIMB - sc);
-      man0 = manl << sc;
-    }
-  else
-    {
-      man1 = manl;
-      man0 = 0;
-    }
-
-  if (man0 == 0)
-    {
-      size = 1;
-      rp[0] = man1;
-    }
-  else
-    {
-      size = 2;
-      rp[1] = man1;
-      rp[0] = man0;
-    }
-#endif
-
-  r->_mp_exp = (exp + 1) / BITS_PER_MP_LIMB - 1024 / BITS_PER_MP_LIMB + 1;
-  r->_mp_size = x.s.sig == 0 ? size : -size;
+  EXP(r) = __gmp_extract_double (PTR(r), d);
+  SIZ(r) = negative ? -NLIMBS : NLIMBS;
 }

@@ -27,111 +27,70 @@ MA 02111-1307, USA. */
 
 void
 #if __STDC__
-mpz_set_d (mpz_ptr dest, double val)
+mpz_set_d (mpz_ptr r, double d)
 #else
-mpz_set_d (dest, val)
-     mpz_ptr dest;
-     double val;
+mpz_set_d (r, d)
+     mpz_ptr r;
+     double d;
 #endif
 {
   int negative;
-  double base;
-  int mexp;
-  unsigned exp;
   mp_size_t size;
+  mp_limb_t tp[3];
+  mp_ptr rp;
 
-  negative = val < 0;
-  val = fabs (val);
+  negative = d < 0;
+  d = ABS (d);
 
-  /* Zero is not handled correctly by the code below.  */
-  if (val < 1)
-    {
-      dest->_mp_size = 0;
-      return;
-    }
   /* Handle small arguments quickly.  */
-  if (val < MP_BASE_AS_DOUBLE)
+  if (d < MP_BASE_AS_DOUBLE)
     {
-      dest->_mp_d[0] = val;
-      dest->_mp_size = negative ? -1 : 1;
+      mp_limb_t tmp;
+      tmp = d;
+      PTR(r)[0] = tmp;
+      SIZ(r) = negative ? -(tmp != 0) : (tmp != 0);
       return;
     }
 
-  base = frexp (val, &mexp);
-  exp = mexp;
+  size = __gmp_extract_double (tp, d);
 
-#if BITS_PER_MP_LIMB >= 64
-  {
-    double dlo, dhi;
-    mp_size_t lexp, bexp;
-    mp_limb_t l0, l1, l2;
-    mp_ptr rp = dest->_mp_d;
+  if (ALLOC(r) < size)
+    _mpz_realloc (r, size);
 
-    l0 = base * MP_BASE_AS_DOUBLE;
-    lexp = exp / BITS_PER_MP_LIMB;
-    bexp = exp % BITS_PER_MP_LIMB;
-    if (bexp != 0)
-      {
-	l1 = l0 >> (BITS_PER_MP_LIMB - bexp);
-	l0 = l0 << bexp;
-      }
-    else
-      {
-	l1 = l0;
-	l0 = 0;
-	lexp--;
-      }
-    size = lexp + 1;
-    if (dest->_mp_alloc < size)
-      _mpz_realloc (dest, size);
-    MPN_ZERO (rp, lexp - 1);
-    rp[lexp - 1] = l0;
-    rp[lexp] = l1;
-  }
-#endif
-#if BITS_PER_MP_LIMB < 64
-  {
-    double dlo, dhi;
-    mp_size_t lexp, bexp;
-    mp_limb_t l0, l1, l2;
-    mp_ptr rp = dest->_mp_d;
+  rp = PTR (r);
 
-    dlo = modf (base * MP_BASE_AS_DOUBLE, &dhi);
-    l0 = dlo * MP_BASE_AS_DOUBLE;
-    l1 = dhi;
-    lexp = exp / BITS_PER_MP_LIMB;
-    bexp = exp % BITS_PER_MP_LIMB;
-    if (bexp != 0)
-      {
-	l2 = l1 >> (BITS_PER_MP_LIMB - bexp);
-	l1 = (l1 << bexp) | (l0 >> (BITS_PER_MP_LIMB - bexp));
-	l0 = l0 << bexp;
-      }
-    else
-      {
-	l2 = l1;
-	l1 = l0;
-	l0 = 0;
-	lexp--;
-      }
-    if (exp <= 2 * BITS_PER_MP_LIMB)
-      {
-	rp[0] = l1;
-	rp[1] = l2;
-	size = 2;
-      }
-    else
-      {
-	size = lexp + 1;
-	if (dest->_mp_alloc < size)
-	  _mpz_realloc (dest, size);
-	MPN_ZERO (rp, lexp - 2);
-	rp[lexp - 2] = l0;
-	rp[lexp - 1] = l1;
-	rp[lexp] = l2;
-      }
-  }
+#if BITS_PER_MP_LIMB == 32
+  switch (size)
+    {
+    default:
+      MPN_ZERO (rp, size - 3);
+      rp += size - 3;
+    case 3:
+      rp[2] = tp[2];
+      rp[1] = tp[1];
+      rp[0] = tp[0];
+      break;
+    case 2:
+      rp[1] = tp[2];
+      rp[0] = tp[1];
+      break;
+    case 1:
+      abort ();
+    }
+#else
+  switch (size)
+    {
+    default:
+      MPN_ZERO (rp, size - 2);
+      rp += size - 2;
+    case 2:
+      rp[1] = tp[1];
+      rp[0] = tp[0];
+      break;
+    case 1:
+      abort ();
+    }
 #endif
 
-  dest->_mp_size = negative ? -size : size;
+  SIZ(r) = negative ? -size : size;
 }
