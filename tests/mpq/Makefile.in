@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
+# Copyright 1996, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -155,10 +155,10 @@ check_PROGRAMS = t-aors t-cmp t-cmp_ui t-cmp_si t-equal t-get_d t-get_str \
 
 TESTS = $(check_PROGRAMS)
 
-# t-inp_str.tmp is used by t-inp_str.c and will be removed automatically if
-# the tests pass, but have it cleaned here in case the tests fail.
+# Temporary files used by the tests.  Removed automatically if the tests
+# pass, but ensure they're cleaned if they fail.
 #
-CLEANFILES = t-inp_str.tmp
+CLEANFILES = *.tmp
 subdir = tests/mpq
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
