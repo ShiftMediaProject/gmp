@@ -1,6 +1,6 @@
 /* Test locale support in C++ functions.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,6 +19,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <clocale>
 #include <iostream>
 
 #include "gmp.h"
@@ -95,14 +96,15 @@ check_input (void)
 
               istringstream is (str.c_str());
 
-              // dummy initial value
-              mpf_set_d (got, 123.0);
+              mpf_set_ui (got, 123);   // dummy initial value
 
               if (! (is >> got))
                 {
                   cout << "istream mpf_t operator>> error\n";
                   cout << "  point " << point[i] << "\n";
                   cout << "  str   \"" << str << "\"\n";
+                  cout << "  localeconv point \""
+                       << localeconv()->decimal_point << "\"\n";
                   abort ();
                 }
 
@@ -116,6 +118,8 @@ check_input (void)
                   cout << "  str   \"" << str << "\"\n";
                   cout << "  got   " << got << "\n";
                   cout << "  want  " << want << "\n";
+                  cout << "  localeconv point \""
+                       << localeconv()->decimal_point << "\"\n";
                   abort ();
                 }
             }
@@ -177,9 +181,7 @@ main (void)
 
   if (replacement_works())
     {
-      // not yet supported
-      // check_input ();
-
+      check_input ();
       check_output ();
     }
   else
