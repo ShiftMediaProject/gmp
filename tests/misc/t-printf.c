@@ -423,10 +423,10 @@ check_z (void)
     { "%.3Zd", "0", "000" },
   };
 
-  int        i, j, zeros;
+  int        i, j;
   mpz_t      z;
   char       *nfmt;
-  mp_size_t  nsize;
+  mp_size_t  nsize, zeros;
 
   mpz_init (z);
   
