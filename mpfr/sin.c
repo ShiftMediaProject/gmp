@@ -1,6 +1,6 @@
 /* mpfr_sin -- sine of a floating-point number
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -51,14 +51,14 @@ mpfr_sin_sign (mpfr_srcptr x)
          the result is an integer */
       mpfr_const_pi (c, GMP_RNDN); /* err <= ulp(c) = 2^(2-m) */
       mpfr_div (k, x, c, GMP_RNDN);
-      MPFR_EXP(k) --; /* x/(2Pi) = 1/2*(x/Pi) */
+      MPFR_SET_EXP(k, MPFR_GET_EXP (k) - 1); /* x/(2Pi) = 1/2*(x/Pi) */
       mpfr_rint (k, k, GMP_RNDN);
 
       if (MPFR_NOTZERO(k))
         {
-          K = MPFR_EXP(k); /* k is an integer, thus K >= 1 */
+          K = MPFR_GET_EXP (k); /* k is an integer, thus K >= 1 */
           mpfr_mul (k, k, c, GMP_RNDN); /* err <= 2^(K+3-m) */
-          MPFR_EXP(k) ++;
+          MPFR_SET_EXP (k, MPFR_GET_EXP (k) + 1);
           mpfr_sub (k, x, k, GMP_RNDN); /* err<=2^(4-m)+2^(K+3-m)<=2^(K+4-m) */
           y = k;
         }
@@ -74,7 +74,7 @@ mpfr_sin_sign (mpfr_srcptr x)
           y = k;
         }
     }
-  while (MPFR_IS_ZERO(y) || (MPFR_EXP(y) < K + 5 - (mp_exp_t) m));
+  while (MPFR_IS_ZERO (y) || (MPFR_GET_EXP (y) < K + 5 - (mp_exp_t) m));
 
   sign = MPFR_SIGN(y);
 
@@ -105,7 +105,8 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     }
 
   precy = MPFR_PREC(y);
-  m = precy + __gmpfr_ceil_log2 ((double) precy) + MAX(0,MPFR_EXP(x)) + 13;
+  m = precy + __gmpfr_ceil_log2 ((double) precy)
+    + MAX (0, MPFR_GET_EXP (x)) + 13;
   
   sign = mpfr_sin_sign (x);
 
@@ -116,13 +117,13 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_cos (c, x, GMP_RNDZ);
       mpfr_mul (c, c, c, GMP_RNDU);
       mpfr_ui_sub (c, 1, c, GMP_RNDN);
-      e = 2 + (-MPFR_EXP(c)) / 2;
+      e = 2 + (- MPFR_GET_EXP (c)) / 2;
       mpfr_sqrt (c, c, GMP_RNDN);
       if (sign < 0)
 	mpfr_neg (c, c, GMP_RNDN);
 
       /* the absolute error on c is at most 2^(e-m) = 2^(EXP(c)-err) */
-      e = MPFR_EXP(c) + m - e;
+      e = MPFR_GET_EXP (c) + m - e;
       ok = (e >= 0) && mpfr_can_round (c, e, GMP_RNDN, rnd_mode, precy);
 
       if (ok == 0)

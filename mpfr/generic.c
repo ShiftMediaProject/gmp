@@ -1,6 +1,6 @@
 /* generic file for evaluation of hypergeometric series using binary splitting
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -178,7 +178,7 @@ GENERIC (mpfr_ptr y, mpz_srcptr p, int r, int m)
 
   mpz_tdiv_q(S[0], S[0], P[0]);
   mpfr_set_z(y, S[0], GMP_RNDD);
-  MPFR_EXP(y) += expo; 
+  MPFR_SET_EXP (y, MPFR_GET_EXP (y) + expo);
 
 #ifdef R_IS_RATIONAL
   /* exact division */

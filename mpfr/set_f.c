@@ -1,6 +1,6 @@
 /* mpfr_set_f -- set a MPFR number from a GNU MPF number
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -77,7 +77,7 @@ mpfr_set_f (mpfr_ptr y, mpf_srcptr x, mp_rnd_t rnd_mode)
       inexact = 0;
     }
   
-  MPFR_EXP(y) = EXP(x) * BITS_PER_MP_LIMB - cnt;
+  MPFR_SET_EXP(y, EXP(x) * BITS_PER_MP_LIMB - cnt);
 
   return inexact;
 }

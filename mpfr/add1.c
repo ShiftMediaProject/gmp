@@ -1,6 +1,6 @@
 /* mpfr_add1 -- internal function to perform a "real" addition
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 Contributed by the Spaces project, INRIA Lorraine.
 
 This file is part of the MPFR Library.
@@ -36,7 +36,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
   mp_limb_t *ap, *bp, *cp;
   mp_prec_t aq, bq, cq, aq2;
   mp_size_t an, bn, cn;
-  mp_exp_t difw;
+  mp_exp_t difw, exp;
   int sh, rb, fb, inex;
   TMP_DECL(marker);
 
@@ -71,7 +71,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
   bn = (bq-1)/BITS_PER_MP_LIMB + 1; /* number of significant limbs of b */
   cn = (cq-1)/BITS_PER_MP_LIMB + 1; /* number of significant limbs of c */
 
-  MPFR_EXP(a) = MPFR_EXP(b);
+  exp = MPFR_GET_EXP (b);
   MPFR_SET_SAME_SIGN(a, b);
 
   /*
@@ -159,13 +159,12 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
       if (cc) /* carry */
         {
-          mp_exp_t exp = MPFR_EXP(a);
           if (exp == __gmpfr_emax)
             {
               inex = mpfr_set_overflow(a, rnd_mode, MPFR_SIGN(a));
               goto end_of_add;
             }
-          MPFR_EXP(a)++;
+          exp++;
           rb = (ap[0] >> sh) & 1; /* LSB(a) --> rounding bit after the shift */
           if (sh)
             {
@@ -301,13 +300,12 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
                   && (rb < 0 || (rb ^= 1) == 0)
                   && mpn_add_1(ap, ap, an, MP_LIMB_T_ONE << sh))
                 {
-                  mp_exp_t exp = MPFR_EXP(a);
                   if (exp == __gmpfr_emax)
                     {
                       inex = mpfr_set_overflow(a, rnd_mode, MPFR_SIGN(a));
                       goto end_of_add;
                     }
-                  MPFR_EXP(a)++;
+                  exp++;
                   ap[an-1] = MPFR_LIMB_HIGHBIT;
                   rb = 0;
                 }
@@ -355,13 +353,12 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
                   rb ^= 1;
                   if (rb == 0 && mpn_add_1(ap, ap, an, MP_LIMB_T_ONE << sh))
                     {
-                      mp_exp_t exp = MPFR_EXP(a);
                       if (exp == __gmpfr_emax)
                         {
                           inex = mpfr_set_overflow(a, rnd_mode, MPFR_SIGN(a));
                           goto end_of_add;
                         }
-                      MPFR_EXP(a)++;
+                      exp++;
                       ap[an-1] = MPFR_LIMB_HIGHBIT;
                     }
                 } /* bb < cc */
@@ -484,7 +481,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
           if (rb == 0)
             {
               inex = 0;
-              goto end_of_add;
+              goto set_exponent;
             }
           /* round to even */
           if (ap[0] & (MP_LIMB_T_ONE << sh))
@@ -496,7 +493,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
         {
         rndn_zero:
           inex = MPFR_ISNEG(a) ? 1 : -1;
-          goto end_of_add;
+          goto set_exponent;
         }
       else
         {
@@ -507,40 +504,42 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
     case GMP_RNDZ:
       inex = rb || fb ? (MPFR_ISNEG(a) ? 1 : -1) : 0;
-      goto end_of_add;
+      goto set_exponent;
 
     case GMP_RNDU:
       inex = rb || fb;
       if (inex && MPFR_ISNONNEG(a))
         goto add_one_ulp;
       else
-        goto end_of_add;
+        goto set_exponent;
 
     case GMP_RNDD:
       inex = - (rb || fb);
       if (inex && MPFR_ISNEG(a))
         goto add_one_ulp;
       else
-        goto end_of_add;
+        goto set_exponent;
 
     default:
       MPFR_ASSERTN(0);
       inex = 0;
-      goto end_of_add;
+      goto set_exponent;
     }
 
  add_one_ulp: /* add one unit in last place to a */
   if (mpn_add_1(ap, ap, an, MP_LIMB_T_ONE << sh))
     {
-      mp_exp_t exp = MPFR_EXP(a);
       if (exp == __gmpfr_emax)
         inex = mpfr_set_overflow(a, rnd_mode, MPFR_SIGN(a));
       else
         {
-          MPFR_EXP(a)++;
+          exp++;
           ap[an-1] = MPFR_LIMB_HIGHBIT;
         }
     }
+
+ set_exponent:
+  MPFR_SET_EXP (a, exp);
 
  end_of_add:
   TMP_FREE(marker);

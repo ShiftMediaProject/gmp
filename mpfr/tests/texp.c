@@ -72,34 +72,40 @@ check3 (double d, mp_rnd_t rnd, double e)
 static int
 check_large (double d, int n, mp_rnd_t rnd)
 {
-  mpfr_t x; mpfr_t y;
+  mpfr_t x, y;
   
-  mpfr_init2(x, n); mpfr_init2(y, n);
-  if (d==0.0)
+  mpfr_init2 (x, n);
+  mpfr_init2 (y, n);
+  if (d == 0.0)
     { /* try exp(Pi*sqrt(163)/3)-640320 */
-      mpfr_set_d(x, 163.0, rnd);
-      mpfr_sqrt(x, x, rnd);
-      mpfr_const_pi(y, rnd);
-      mpfr_mul(x, x, y, rnd);
-      mpfr_div_ui(x, x, 3, rnd);
-    }
-  else mpfr_set_d(x, d, rnd);
-  mpfr_exp (y, x, rnd);
-  if (d==0.0)
-    {
-      mpfr_set_d(x, 640320.0, rnd);
-      mpfr_sub(y, y, x, rnd);
-      printf("exp(Pi*sqrt(163)/3)-640320=");
+      mpfr_set_d (x, 163.0, rnd);
+      mpfr_sqrt (x, x, rnd);
+      mpfr_const_pi (y, rnd);
+      mpfr_mul (x, x, y, rnd);
+      mpfr_div_ui (x, x, 3, rnd);
     }
   else
-    printf("exp(%1.20e)=",d); 
-  mpfr_out_str(stdout, 10, 0, y, rnd);
-  putchar('\n');
-  printf(" ="); mpfr_print_binary(y); putchar('\n');
-  if (n==53)
-    printf(" =%1.20e\n", mpfr_get_d1 (y));
+    mpfr_set_d (x, d, rnd);
+  mpfr_exp (y, x, rnd);
+  if (d == 0.0)
+    {
+      mpfr_set_d (x, 640320.0, rnd);
+      mpfr_sub (y, y, x, rnd);
+      printf ("exp(Pi*sqrt(163)/3)-640320=");
+    }
+  else
+    printf ("exp(%1.20e)=", d);
+  mpfr_out_str (stdout, 10, 0, y, rnd);
+  putchar ('\n');
+  printf (" =");
+  mpfr_print_binary (y);
+  putchar ('\n');
+  if (n == 53)
+    printf (" =%1.20e\n", mpfr_get_d1 (y));
 
-  mpfr_clear(x); mpfr_clear(y);
+  mpfr_clear (x);
+  mpfr_clear (y);
+
   return 0;
 }
 
@@ -212,6 +218,34 @@ compare_exp2_exp3 (int n)
 #define TEST_FUNCTION mpfr_exp
 #include "tgeneric.c"
 
+static void
+check_special ()
+{
+  mpfr_t x, y, z;
+
+  /* bug reported by Franky Backeljauw, 28 Mar 2003 */
+  mpfr_init2 (x, 53);
+  mpfr_init2 (y, 53);
+  mpfr_set_str_raw (x, "1.1101011000111101011110000111010010101001101001110111e28");
+  mpfr_exp (y, x, GMP_RNDN);
+
+  mpfr_set_prec (x, 153);
+  mpfr_init2 (z, 153);
+  mpfr_set_str_raw (x, "1.1101011000111101011110000111010010101001101001110111e28");
+  mpfr_exp (z, x, GMP_RNDN);
+  mpfr_round_prec (z, GMP_RNDN, 53);
+
+  if (mpfr_cmp (y, z))
+    {
+      fprintf (stderr, "Error in mpfr_exp for large argument\n");
+      exit (1);
+    }
+  
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (z);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -219,13 +253,15 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
 
-  test_generic (2, 100, 100);
+  check_special ();
 
   if (argc == 4)
     {
       check_large (atof(argv[1]), atoi(argv[2]), atoi(argv[3])); 
-      exit(1);
+      exit (0);
     }
+
+  test_generic (2, 100, 100);
 
   compare_exp2_exp3(500);
   check_worst_cases();

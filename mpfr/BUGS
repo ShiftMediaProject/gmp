@@ -59,3 +59,11 @@ Potential bugs:
 
 * mpfr_hypot may fail for x very large, y very small and a very large
   target precision.
+
+* Possible bugs related to the exponents. Compile with -DMPFR_EXP_CHECK
+  and make check to see the potential problems (but in this case, don't
+  be surprised if nothing is working!). This doesn't mean that the
+  results may be incorrect though (a further analysis should be done
+  and the code should be updated to avoid the failed assertions). As a
+  consequence, MPFR_EXP_CHECK is not currently defined by default even
+  when WANT_ASSERT is defined.

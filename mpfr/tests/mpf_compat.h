@@ -144,11 +144,7 @@ main ()
   /* Comparison Functions */
 
   i = mpf_cmp (y, x);
-#ifdef MPFR
-  fprintf (stderr, "Warning: mpfr_cmp_d is missing\n");
-#else
   i = mpf_cmp_d (y, 1.7);
-#endif
   i = mpf_cmp_ui (y, 17);
   i = mpf_cmp_si (y, -17);
   i = mpf_eq (y, x, 17);

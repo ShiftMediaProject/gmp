@@ -1,6 +1,6 @@
 /* mpfr_div -- divide two floating-point numbers
 
-Copyright 1999, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -331,7 +331,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
    *  [size rsize].                                                         *
    **************************************************************************/
 
-  qexp = MPFR_EXP(u) - MPFR_EXP(v);
+  qexp = MPFR_GET_EXP (u) - MPFR_GET_EXP (v);
 
   if (qp[qsize] != 0) 
     /* Hack : qp[qsize] is 0, 1 or 2, hence if not 0, = 2^(qp[qsize] - 1). */
@@ -440,7 +440,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
   TMP_FREE (marker);
 
   MPFR_MANT(q)[0] &= ~((MP_LIMB_T_ONE << rw) - MP_LIMB_T_ONE);
-  MPFR_EXP(q) = qexp;
+  MPFR_SET_EXP (q, qexp);
 
   MPFR_RET(inex); 
 }

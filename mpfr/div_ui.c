@@ -1,6 +1,6 @@
 /* mpfr_div_ui -- divide a floating-point number by a machine integer
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -32,6 +32,7 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 {
   long int xn, yn, dif, sh, i;
   mp_limb_t *xp, *yp, *tmp, c, d;
+  mp_exp_t exp;
   int inexact, middle = 1;
   TMP_DECL(marker);
 
@@ -80,7 +81,7 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 
   xp = MPFR_MANT(x);
   yp = MPFR_MANT(y);
-  MPFR_EXP(y) = MPFR_EXP(x);
+  exp = MPFR_GET_EXP (x);
 
   dif = yn + 1 - xn;
 
@@ -113,7 +114,7 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
     {
       tmp--;
       sh = 0;
-      MPFR_EXP(y) -= BITS_PER_MP_LIMB;
+      exp -= BITS_PER_MP_LIMB;
     }
 
   /* now we have yn limbs starting from tmp[1], with tmp[yn]<>0 */
@@ -126,7 +127,7 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
       yp[0] += tmp[0] >> (BITS_PER_MP_LIMB - sh);
       middle = middle || ((tmp[0] << sh) != 0);
       inexact = inexact || ((tmp[0] << sh) != 0);
-      MPFR_EXP(y) -= sh; 
+      exp -= sh;
     }
   else
     MPN_COPY(yp, tmp + 1, yn);
@@ -136,6 +137,8 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 
   d = *yp & ((MP_LIMB_T_ONE << sh) - MP_LIMB_T_ONE);
   *yp ^= d; /* set to zero lowest sh bits */
+
+  MPFR_SET_EXP (y, exp);
 
   TMP_FREE(marker);
   if ((d == 0) && (inexact == 0))
@@ -170,7 +173,8 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 	   (a) sh > 0 and inexact == 0
 	   (b) sh=0 and middle=1
 	 */
-	if ((sh && inexact) || (!sh && (middle > 0)) || (*yp & (MP_LIMB_T_ONE << sh)))
+	if ((sh && inexact) || (!sh && (middle > 0)) ||
+            (*yp & (MP_LIMB_T_ONE << sh)))
 	  {
 	    mpfr_add_one_ulp (y, rnd_mode);
 	    MPFR_RET(MPFR_SIGN(x));
@@ -181,6 +185,3 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
     }
   MPFR_RET(inexact); /* should never go here */
 }
-
-
-

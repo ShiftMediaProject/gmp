@@ -68,7 +68,7 @@ digit_value_in_base (int c, int base)
                      mpf_set_str)
  */
 int
-mpfr_set_str (mpfr_t x, __gmp_const unsigned char *str, int base, mp_rnd_t rnd)
+mpfr_set_str (mpfr_t x, __gmp_const char *str, int base, mp_rnd_t rnd)
 {
   mp_limb_t *y;                /* current value of x */
   mp_exp_t exp_y;              /* such as x = y*base^exp_y */
@@ -81,9 +81,9 @@ mpfr_set_str (mpfr_t x, __gmp_const unsigned char *str, int base, mp_rnd_t rnd)
                                   mantissa 0.xxx...xxx */
   mp_exp_t binexp = 0;         /* binary exponent (for base 16) */
   mp_exp_t prec_x;             /* working precision for x */
-  unsigned char *str1;         /* copy of str */
+  char *str1;                  /* copy of str */
   size_t size_str1;            /* number of characters in str1 */
-  unsigned char *mant_s;       /* pointer in str1 */
+  char *mant_s;                /* pointer in str1 */
   int negative;                /* 1 if str<=0, 0 otherwise */
   size_t i, j;
   long err = 0;
@@ -216,7 +216,7 @@ mpfr_set_str (mpfr_t x, __gmp_const unsigned char *str, int base, mp_rnd_t rnd)
 	pr = prec_s;
 
       /* convert str into binary */
-      i = mpn_set_str (y, mant_s, pr, base);
+      i = mpn_set_str (y, (unsigned char *) mant_s, pr, base);
 
       /* normalize y */
       count_leading_zeros (j, *(y + i - 1));
@@ -361,7 +361,7 @@ mpfr_set_str (mpfr_t x, __gmp_const unsigned char *str, int base, mp_rnd_t rnd)
 
   TMP_FREE(marker);
 
-  MPFR_EXP(x) = exp_y + n * BITS_PER_MP_LIMB;
+  MPFR_SET_EXP (x, exp_y + n * BITS_PER_MP_LIMB);
 
  sign_and_flags:
   MPFR_CLEAR_FLAGS(x);
@@ -377,7 +377,7 @@ mpfr_set_str (mpfr_t x, __gmp_const unsigned char *str, int base, mp_rnd_t rnd)
 }
 
 int
-mpfr_init_set_str (mpfr_ptr x, __gmp_const unsigned char *str, int base, mp_rnd_t rnd)
+mpfr_init_set_str (mpfr_ptr x, __gmp_const char *str, int base, mp_rnd_t rnd)
 {
   mpfr_init (x);
   return mpfr_set_str (x, str, base, rnd);

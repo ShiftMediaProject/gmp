@@ -41,11 +41,11 @@ mpfr_pow_is_exact (mpfr_srcptr x, mpfr_srcptr y)
     return 0;
 
   if (mpfr_sgn (y) < 0)
-    return mpfr_cmp_si_2exp (x, MPFR_SIGN(x), MPFR_EXP(x) - 1) == 0;
+    return mpfr_cmp_si_2exp (x, MPFR_SIGN(x), MPFR_GET_EXP (x) - 1) == 0;
 
   /* compute d such that y = c*2^d with c odd integer */
   ysize = 1 + (MPFR_PREC(y) - 1) / BITS_PER_MP_LIMB;
-  d = MPFR_EXP(y) - ysize * BITS_PER_MP_LIMB;
+  d = MPFR_GET_EXP (y) - ysize * BITS_PER_MP_LIMB;
   /* since y is not zero, necessarily one of the mantissa limbs is not zero,
      thus we can simply loop until we find a non zero limb */
   yp = MPFR_MANT(y);
@@ -98,7 +98,7 @@ is_odd (mpfr_srcptr y)
   if (MPFR_IS_ZERO(y))
     return 0;
 
-  expo = MPFR_EXP(y);
+  expo = MPFR_GET_EXP (y);
   if (expo <= 0)
     return 0;  /* |y| < 1 and not 0 */
 
@@ -329,7 +329,7 @@ mpfr_pow (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mp_rnd_t rnd_mode)
         /* otherwise MPFR_EXP(te) below doesn't exist */
 
 	/* estimate of the error -- see pow function in algorithms.ps */
-        err = Nt - (MPFR_EXP(te) + 3);
+        err = Nt - (MPFR_GET_EXP (te) + 3);
 
 	/* actualisation of the precision */
         Nt += 10;

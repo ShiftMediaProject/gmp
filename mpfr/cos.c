@@ -1,6 +1,6 @@
 /* mpfr_cos -- cosine of a floating-point number
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -59,7 +59,7 @@ mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_mul (r, x, x, GMP_RNDU); /* err <= 1 ulp */
 
       /* we need that |r| < 1 for mpfr_cos2_aux, i.e. up(x^2)/2^(2K) < 1 */
-      K = K0 + MAX(MPFR_EXP(r), 0);
+      K = K0 + MAX (MPFR_GET_EXP (r), 0);
 
       mpfr_div_2ui (r, r, 2 * K, GMP_RNDN); /* r = (x/2^K)^2, err <= 1 ulp */
 
@@ -77,7 +77,8 @@ mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       for (k = 2 * K, l = 2 * l + 1; l > 1; k++, l = (l + 1) >> 1);
       /* now the error is bounded by 2^(k-m) = 2^(EXP(s)-err) */
 
-      l = mpfr_can_round (s, MPFR_EXP(s) + m - k, GMP_RNDN, rnd_mode, precy);
+      l = mpfr_can_round (s, MPFR_GET_EXP (s) + m - k,
+                          GMP_RNDN, rnd_mode, precy);
 
       if (l == 0)
 	{
@@ -108,12 +109,12 @@ mpfr_cos2_aux (mpfr_ptr s, mpfr_srcptr r)
   long int prec_t, m = MPFR_PREC(s);
   mpfr_t t;
 
-  MPFR_ASSERTN (MPFR_EXP(r) <= 0);
+  MPFR_ASSERTN (MPFR_GET_EXP (r) <= 0);
   mpfr_init2 (t, m);
   mpfr_set_ui (t, 1, GMP_RNDN);
   mpfr_set_ui(s, 1, GMP_RNDN);
 
-  for (l = 1; MPFR_EXP(t) + m >= 0; l++)
+  for (l = 1; MPFR_GET_EXP (t) + m >= 0; l++)
     {
       mpfr_mul (t, t, r, GMP_RNDU); /* err <= (3l-1) ulp */
       mpfr_div_ui (t, t, (2*l-1)*(2*l), GMP_RNDU); /* err <= 3l ulp */
@@ -121,13 +122,13 @@ mpfr_cos2_aux (mpfr_ptr s, mpfr_srcptr r)
 	mpfr_add (s, s, t, GMP_RNDD);
       else
 	mpfr_sub (s, s, t, GMP_RNDD);
-      MPFR_ASSERTN (MPFR_EXP(s) == 0); /* check 1/2 <= s < 1 */
+      MPFR_ASSERTN (MPFR_GET_EXP (s) == 0); /* check 1/2 <= s < 1 */
       /* err(s) <= l * 2^(-m) */
       if (3 * l > (1 << b))
 	b++;
       /* now 3l <= 2^b, we want 3l*ulp(t) <= 2^(-m)
 	 i.e. b+EXP(t)-PREC(t) <= -m */
-      prec_t = m + MPFR_EXP(t) + b;
+      prec_t = m + MPFR_GET_EXP (t) + b;
       if (prec_t >= MPFR_PREC_MIN)
 	mpfr_round_prec (t, GMP_RNDN, prec_t);
     }

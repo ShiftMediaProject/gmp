@@ -1,6 +1,6 @@
 /* mpfr_asinh -- inverse hyperbolic sine
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -82,27 +82,28 @@ mpfr_asinh (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_save_emin_emax ();
 
   /* First computation of asinh */
-  do {
+  do
+    {
+      /* reactualisation of the precision */
+      mpfr_set_prec (t, Nt);
+      mpfr_set_prec (te, Nt);
+      mpfr_set_prec (ti, Nt);
 
-    /* reactualisation of the precision */
-    mpfr_set_prec (t, Nt);
-    mpfr_set_prec (te, Nt);
-    mpfr_set_prec (ti, Nt);
+      /* compute asinh */
+      mpfr_mul (te, x, x, GMP_RNDD);                   /* x^2 */
+      mpfr_add_ui (ti, te, 1, GMP_RNDD);               /* x^2+1 */
+      mpfr_sqrt (t, ti, GMP_RNDN);                     /* sqrt(x^2+1) */
+      (neg ? mpfr_sub : mpfr_add) (t, t, x, GMP_RNDN); /* sqrt(x^2+1)+x */
+      mpfr_log (t, t, GMP_RNDN);                       /* ln(sqrt(x^2+1)+x)*/
 
-    /* compute asinh */
-    mpfr_mul (te, x, x, GMP_RNDD);                     /* x^2 */
-    mpfr_add_ui (ti, te, 1, GMP_RNDD);                 /* x^2+1 */
-    mpfr_sqrt (t, ti, GMP_RNDN);                       /* sqrt(x^2+1) */
-    ((neg) ? mpfr_sub : mpfr_add) (t, t, x, GMP_RNDN); /* sqrt(x^2+1)+x */
-    mpfr_log (t, t, GMP_RNDN);                         /* ln(sqrt(x^2+1)+x)*/
+      /* error estimate -- see algorithms.ps */
+      err = Nt - (MAX(3 - MPFR_GET_EXP (t), 0) + 1);
 
-    /* estimation of the error -- see algorithms.ps */
-    err = Nt - (MAX(3 - MPFR_EXP(t), 0) + 1);
-
-    /* actualisation of the precision */
-    Nt += 10;
-
-  } while ((err < 0) || (!mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny) || (MPFR_IS_ZERO(t))));
+      /* actualisation of the precision */
+      Nt += 10;
+    }
+  while ((err < 0) || (!mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny)
+                       || MPFR_IS_ZERO(t)));
 
   mpfr_restore_emin_emax ();
   

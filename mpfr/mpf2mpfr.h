@@ -35,6 +35,8 @@ MA 02111-1307, USA. */
 #define mpf_cmp_si mpfr_cmp_si
 #undef mpf_cmp_ui
 #define mpf_cmp_ui mpfr_cmp_ui
+#undef mpf_cmp_d
+#define mpf_cmp_d mpfr_cmp_d
 #undef mpf_eq
 #define mpf_eq mpfr_eq
 #undef mpf_floor

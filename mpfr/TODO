@@ -36,6 +36,14 @@ Installation:
 
 Changes in existing functions:
 
+- use (LDBL_MAX/2)+(LDBL_MAX/4*LDBL_EPSILON) instead of loop in tset_ld
+	to get largest power of 2 that fits in a long double
+	[and avoid overflow exceptions in tests, for example adding
+	#if MPFR_HAVE_TESTS_x86
+	  x86_fldcw (x86_fstcw () & ~8);
+	#endif
+	in mpfr_test_init to enable overflow exceptions]
+	
 - allow the ISO C "P" exponent separator for base 16 in input functions
 - invert 2nd and 3rd arguments of mpfr_round_prec (to be coherent with
 	mpfr_set_prec)
@@ -82,18 +90,15 @@ Changes in existing functions:
 
 New functions to implement:
 
-- functions in mpf and not in mpfr (for compatibility)
 - modf (to extract integer and fractional parts), suggested by
 	Dmitry Antipov <dmitry.antipov@mail.ru> Thu, 13 Jun 2002
 - mpz_set_fr (to set a mpz from a mpfr, with a rounding mode)
 	-> cf code in leibniz:mpfr/mpz_set_fr.c
 - those from LIA: missing secant, cosecant, cotangent (trigo/hyperbolic)
 - atan2
-- mpfr_set_f (MPF -> float) or mpfr_strtof, mpfr_set_ld or mpfr_strtold
-	(idem for mpfr_get_*)
+- mpfr_set_float (MPF -> float) or mpfr_strtof (idem for mpfr_get_*)
 - implement accurate summation algorithms from Demmel
 	(http://www.cs.berkeley.edu/~demmel/AccurateSummation.ps)
-- mpfr_cmp_d (for Gerardo)
 
 Rounding:
 
@@ -185,9 +190,6 @@ Portability:
 - _mpfr_ceil_log2 is IEEE specific.  Many callers only seem to want
   this operation on an integer, which could be done with
   count_leading_zeros from longlong.h.
-
-- test set_ld for special values (+/- 0, LDBL_MAX, LDBL_MIN...)
-
 
 Possible future MPF / MPFR integration:
 

@@ -620,8 +620,8 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
       pow2 = BITS_PER_MP_LIMB - pow2 - 1; /* base = 2^pow2 */
  
       /* set MPFR_EXP(x) = f*pow2 + r, 1 <= r <= pow2 */
-      f = (MPFR_EXP(x) - 1) / pow2;
-      r = MPFR_EXP(x) - f * pow2;
+      f = (MPFR_GET_EXP (x) - 1) / pow2;
+      r = MPFR_GET_EXP (x) - f * pow2;
       if (r <= 0)
 	{
 	  f --;
@@ -675,7 +675,7 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
       return (s0);
    }
 
-  g = mpfr_get_str_compute_g (b, MPFR_EXP(x) - 1);
+  g = mpfr_get_str_compute_g (b, MPFR_GET_EXP (x) - 1);
   exact = 1;
   prec = (mp_exp_t) _mpfr_ceil ((double) m / log_b2[b-2]) + 1;
   exp = ((mp_exp_t) m < g) ? g - (mp_exp_t) m : (mp_exp_t) m - g;
@@ -705,7 +705,7 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
             exact = mpn_scan1 (xp, 0) >= (nx - n) * BITS_PER_MP_LIMB;
 	  err = !exact;
 	  MPN_COPY2 (a, n, xp, nx);
-	  exp_a = MPFR_EXP(x) - n * BITS_PER_MP_LIMB;
+	  exp_a = MPFR_GET_EXP (x) - n * BITS_PER_MP_LIMB;
 	}
       else if ((mp_exp_t) m > g) /* we have to multiply x by b^exp */
         {
@@ -730,7 +730,7 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
           /* result = a * x */
 	  result = (mp_limb_t*) TMP_ALLOC ((n + nx1) * sizeof (mp_limb_t));
 	  mpn_mul (result, a, n, x1, nx1);
-          exp_a += MPFR_EXP (x);
+          exp_a += MPFR_GET_EXP (x);
 	  if (mpn_scan1 (result, 0) < (nx1 * BITS_PER_MP_LIMB))
 	    exact = 0;
 
@@ -763,7 +763,7 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
 
 	  /* result = x / a */
 	  mpn_tdiv_qr (result, reste, 0, x1, 2 * n, a, n);
-	  exp_a = MPFR_EXP (x) - exp_a - 2 * n * BITS_PER_MP_LIMB;
+	  exp_a = MPFR_GET_EXP (x) - exp_a - 2 * n * BITS_PER_MP_LIMB;
 
 	  /* test if division was exact */
 	  if (exact)

@@ -1,6 +1,6 @@
 /* mpfr_hypot -- Euclidean distance
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -78,8 +78,8 @@ mpfr_hypot (mpfr_ptr z, mpfr_srcptr x , mpfr_srcptr y , mp_rnd_t rnd_mode)
 
   /* now |x| >= |y| */
 
-  Ex = MPFR_EXP(x);
-  Ey = MPFR_EXP(y);
+  Ex = MPFR_GET_EXP (x);
+  Ey = MPFR_GET_EXP (y);
   diff_exp = (mp_exp_unsigned_t) Ex - Ey;
 
   Nz = MPFR_PREC(z);   /* Precision of output variable */

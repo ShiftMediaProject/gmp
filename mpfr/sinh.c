@@ -1,6 +1,6 @@
 /* mpfr_sinh -- hyperbolic sine
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -116,9 +116,9 @@ mpfr_sinh (mpfr_ptr y, mpfr_srcptr xt, mp_rnd_t rnd_mode)
         else
           {
             /* calculation of the error */
-            d = MPFR_EXP(te) - MPFR_EXP(t) + 2;
-	
-            /* estimation of the error */
+            d = MPFR_GET_EXP (te) - MPFR_GET_EXP (t) + 2;
+
+            /* error estimate */
             /* err = Nt-(__gmpfr_ceil_log2(1+pow(2,d)));*/
             err = Nt - (MAX(d,0) + 1);
           }

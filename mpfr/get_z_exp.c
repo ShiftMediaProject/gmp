@@ -67,8 +67,8 @@ mpfr_get_z_exp (mpz_ptr z, mpfr_srcptr f)
 
   /* This always fails for very small "f", ie. when MPFR_EXP(f) is equal to
      or only just above MPFR_EMIN_MIN.
-  MPFR_ASSERTN((mp_exp_unsigned_t) MPFR_EXP(f) - MPFR_EMIN_MIN
+  MPFR_ASSERTN((mp_exp_unsigned_t) MPFR_GET_EXP (f) - MPFR_EMIN_MIN
                >= (mp_exp_unsigned_t) MPFR_PREC(f));
   */
-  return MPFR_EXP(f) - MPFR_PREC(f);
+  return MPFR_GET_EXP (f) - MPFR_PREC (f);
 }

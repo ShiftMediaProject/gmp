@@ -1,6 +1,6 @@
 /* mpfr_add_one_ulp -- add one unit in last place
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -43,12 +43,13 @@ mpfr_add_one_ulp (mpfr_ptr x, mp_rnd_t rnd_mode)
   xp = MPFR_MANT(x);
   if (mpn_add_1 (xp, xp, xn, MP_LIMB_T_ONE << sh)) /* got 1.0000... */
     {
-      mp_exp_t exp = MPFR_EXP(x);
+      mp_exp_t exp = MPFR_EXP (x);
       if (exp == __gmpfr_emax)
         return mpfr_set_overflow(x, rnd_mode, MPFR_SIGN(x));
       else
         {
-          MPFR_EXP(x)++;
+          MPFR_ASSERTD (exp < __gmpfr_emax);
+          MPFR_SET_EXP (x, exp + 1);
           xp[xn-1] = MPFR_LIMB_HIGHBIT;
         }
     }

@@ -1,6 +1,6 @@
 /* mpfr_sin_cos -- sine and cosine of a floating-point number
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -48,7 +48,7 @@ mpfr_sin_cos (mpfr_ptr y, mpfr_ptr z, mpfr_srcptr x, mp_rnd_t rnd_mode)
     }
 
   prec = MAX(MPFR_PREC(y), MPFR_PREC(z));
-  m = prec + __gmpfr_ceil_log2 ((double) prec) + ABS(MPFR_EXP(x)) + 13;
+  m = prec + __gmpfr_ceil_log2 ((double) prec) + ABS (MPFR_GET_EXP (x)) + 13;
 
   mpfr_init2 (c, m);
   mpfr_init2 (k, m);
@@ -72,13 +72,13 @@ mpfr_sin_cos (mpfr_ptr y, mpfr_ptr z, mpfr_srcptr x, mp_rnd_t rnd_mode)
           inexact = mpfr_set (z, c, rnd_mode);
           mpfr_mul (c, c, c, GMP_RNDU);
           mpfr_ui_sub (c, 1, c, GMP_RNDN);
-          e = 2 + (-MPFR_EXP(c)) / 2;
+          e = 2 + (- MPFR_GET_EXP (c)) / 2;
           mpfr_sqrt (c, c, GMP_RNDN);
           if (neg)
             mpfr_neg (c, c, GMP_RNDN);
 
           /* the absolute error on c is at most 2^(e-m) = 2^(EXP(c)-err) */
-          e = MPFR_EXP(c) + m - e;
+          e = MPFR_GET_EXP (c) + m - e;
           ok = (e >= 0) && mpfr_can_round (c, e, GMP_RNDN, rnd_mode,
                                            MPFR_PREC(y));
         }

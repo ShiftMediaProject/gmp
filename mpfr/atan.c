@@ -1,6 +1,6 @@
 /* mpfr_atan -- arc-tangent of a floating-point number
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library, and was contributed by Mathieu Dutour.
 
@@ -57,7 +57,7 @@ mpfr_atan (mpfr_ptr arctangent, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_t xp;
   mpfr_t arctgt;
 
-  int comparaison, signe, suplement;
+  int comparaison, signe, supplement;
 
   mpfr_t t_arctan;
   int i;
@@ -103,7 +103,7 @@ mpfr_atan (mpfr_ptr arctangent, mpfr_srcptr x, mp_rnd_t rnd_mode)
 	    rnd_mode = GMP_RNDU;
 	  mpfr_const_pi (arctangent, rnd_mode);
 	}
-      MPFR_EXP(arctangent)--;
+      MPFR_SET_EXP (arctangent, MPFR_GET_EXP (arctangent) - 1);
       return 1; /* inexact */
     }
 
@@ -136,9 +136,9 @@ mpfr_atan (mpfr_ptr arctangent, mpfr_srcptr x, mp_rnd_t rnd_mode)
     return 1; /* inexact result */
   }
   if (comparaison > 0)
-      suplement = 2;
+    supplement = 2;
   else
-      suplement = 2-MPFR_EXP(xp);
+    supplement = 2 - MPFR_GET_EXP (xp);
 
   prec_x = __gmpfr_ceil_log2 ((double) MPFR_PREC(x) / BITS_PER_MP_LIMB);
   logn = __gmpfr_ceil_log2 ((double) prec_x);
@@ -149,8 +149,8 @@ mpfr_atan (mpfr_ptr arctangent, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
 
   while (!good){
-    N0 = __gmpfr_ceil_log2((double) realprec + suplement + CST);
-    estimated_delta = 1 + suplement + __gmpfr_ceil_log2((double) (3*N0-2));
+    N0 = __gmpfr_ceil_log2((double) realprec + supplement + CST);
+    estimated_delta = 1 + supplement + __gmpfr_ceil_log2((double) (3*N0-2));
     Prec = realprec+estimated_delta;
 
     /* Initialisation    */

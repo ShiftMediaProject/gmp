@@ -1,6 +1,6 @@
 /* mpfr_log1p -- Compute log(1+x)
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -113,8 +113,8 @@ mpfr_log1p (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_log (t, t, GMP_RNDN);        /* log(1+x)*/
 
       /* estimation of the error */
-      /*err=Nt-(__gmpfr_ceil_log2(1+pow(2,1-MPFR_EXP(t))));*/
-      err=Nt-(MAX(1-MPFR_EXP(t),0)+1);
+      /*err=Nt-(__gmpfr_ceil_log2(1+pow(2,1-MPFR_GET_EXP(t))));*/
+      err = Nt - (MAX (1 - MPFR_GET_EXP (t), 0) + 1);
 
       /* actualisation of the precision */
       Nt += 10;

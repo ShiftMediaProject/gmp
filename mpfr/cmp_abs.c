@@ -1,6 +1,6 @@
 /* mpfr_cmpabs -- compare the absolute values of two FP numbers
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -42,8 +42,8 @@ mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)
   if (MPFR_IS_ZERO(c))
     return 1;
 
-  be = MPFR_EXP(b);
-  ce = MPFR_EXP(c);
+  be = MPFR_GET_EXP (b);
+  ce = MPFR_GET_EXP (c);
   if (be > ce)
     return 1;
   if (be < ce)

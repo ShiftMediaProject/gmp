@@ -1,6 +1,6 @@
 /* mpfr_rint -- Round to an integer.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -54,7 +54,7 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
     }
 
   sign = MPFR_SIGN(u);
-  exp = MPFR_EXP(u);
+  exp = MPFR_GET_EXP (u);
 
   /* Single out the case where |u| < 1. */
   if (exp <= 0)  /* 0 < |u| < 1 */
@@ -70,7 +70,7 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
           rm = (MPFR_PREC(r) - 1) / BITS_PER_MP_LIMB;
           rp[rm] = MPFR_LIMB_HIGHBIT;
           MPN_ZERO(rp, rm);
-          MPFR_EXP(r) = 1;  /* |r| = 1 */
+          MPFR_SET_EXP (r, 1);  /* |r| = 1 */
           MPFR_RET(sign > 0 ? 2 : -2);
         }
       else
@@ -100,7 +100,7 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
       rn = MPFR_ESIZE(r);
       sh = (mp_prec_t) rn * BITS_PER_MP_LIMB - MPFR_PREC(r);
 
-      MPFR_EXP(r) = exp;
+      MPFR_SET_EXP (r, exp);
 
       if ((exp - 1) / BITS_PER_MP_LIMB >= un)
         {
@@ -217,7 +217,7 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
               uflags : -uflags;
           else
             {
-              MPFR_EXP(r)++;
+              MPFR_SET_EXP(r, exp + 1);
               rp[rn-1] = MPFR_LIMB_HIGHBIT;
             }
         }

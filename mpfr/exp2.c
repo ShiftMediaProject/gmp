@@ -125,7 +125,7 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
         mpfr_exp (t, te, GMP_RNDN);       /* exp(x*ln(2))*/
 
 	/* estimate of the error -- see pow function in algorithms.ps*/
-	err = Nt - (MPFR_EXP(te) + 2);
+	err = Nt - (MPFR_GET_EXP (te) + 2);
 
 	/* actualisation of the precision */
 	Nt += __gmpfr_isqrt (Nt) + 10;

@@ -1,6 +1,6 @@
 /* mpfr_add -- add two floating-point numbers
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 Contributed by the Spaces project, INRIA Lorraine.
 
 This file is part of the MPFR Library.
@@ -91,15 +91,16 @@ mpfr_add (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
     }
   else
     { /* signs are equal, it's an addition */
-      if (MPFR_EXP(b) < MPFR_EXP(c))
+      mp_exp_t eb, ec;
+      eb = MPFR_GET_EXP (b);
+      ec = MPFR_GET_EXP (c);
+      if (eb < ec)
         {
-          return mpfr_add1(a, c, b, rnd_mode,
-                           (mp_exp_unsigned_t) MPFR_EXP(c) - MPFR_EXP(b));
+          return mpfr_add1(a, c, b, rnd_mode, (mp_exp_unsigned_t) ec - eb);
         }
       else
         {
-          return mpfr_add1(a, b, c, rnd_mode,
-                           (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c));
+          return mpfr_add1(a, b, c, rnd_mode, (mp_exp_unsigned_t) eb - ec);
         }
     }
 }

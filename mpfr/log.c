@@ -1,6 +1,6 @@
 /* mpfr_log -- natural logarithm of a floating-point number
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -121,7 +121,7 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
     printf("p=%d\n", p);
 #endif
     /* Calculus of m (depends on p) */
-    m = (p + 1) / 2 - MPFR_EXP(a) + 1;
+    m = (p + 1) / 2 - MPFR_GET_EXP (a) + 1;
 
     /* All the mpfr_t needed have a precision of p */
     TMP_MARK(marker);
@@ -145,9 +145,9 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
     mpfr_div (tmp2, cst, tmp1, GMP_RNDN); /* pi/2*AG(1,4/s), err<=5ulps */
     mpfr_const_log2 (cst, GMP_RNDN);      /* compute log(2), err<=1ulp */
     mpfr_mul(tmp1,cst,mm,GMP_RNDN);       /* I compute m*log(2), err<=2ulps */
-    cancel = MPFR_EXP(tmp2); 
+    cancel = MPFR_GET_EXP (tmp2); 
     mpfr_sub(cst,tmp2,tmp1,GMP_RNDN);     /* log(a), err<=7ulps+cancel */ 
-    cancel -= MPFR_EXP(cst);
+    cancel -= MPFR_GET_EXP (cst);
 #ifdef DEBUG
     printf("canceled bits=%d\n", cancel);
     printf("approx="); mpfr_print_binary(cst); putchar('\n');

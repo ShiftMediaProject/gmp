@@ -1,7 +1,7 @@
 /* mpfr_round_raw_generic, mpfr_round_raw2, mpfr_round_raw, mpfr_round_prec,
    mpfr_can_round, mpfr_can_round_raw -- various rounding functions
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -177,10 +177,10 @@ mpfr_round_prec (mpfr_ptr x, mp_rnd_t rnd_mode, mp_prec_t prec)
   if (MPFR_IS_NAN(x))
     MPFR_RET_NAN;
 
-  if (MPFR_IS_INF(x))
-    return 0; /* infinity is exact */
+  if (MPFR_IS_INF(x) || MPFR_IS_ZERO(x))
+    return 0; /* infinity and zero are exact */
 
-  /* x is a real number */
+  /* x is a non-zero real number */
 
   TMP_MARK(marker); 
   tmp = TMP_ALLOC (nw * BYTES_PER_MP_LIMB);
@@ -191,13 +191,14 @@ mpfr_round_prec (mpfr_ptr x, mp_rnd_t rnd_mode, mp_prec_t prec)
 
   if (carry)
     {
-      mp_exp_t exp = MPFR_EXP(x);
+      mp_exp_t exp = MPFR_EXP (x);
 
       if (exp == __gmpfr_emax)
         (void) mpfr_set_overflow(x, rnd_mode, MPFR_SIGN(x));
       else
         {
-          MPFR_EXP(x)++;
+          MPFR_ASSERTD (exp < __gmpfr_emax);
+          MPFR_SET_EXP (x, exp + 1);
           xp[nw - 1] = MPFR_LIMB_HIGHBIT;
           if (nw - 1 > 0)
             MPN_ZERO(xp, nw - 1);

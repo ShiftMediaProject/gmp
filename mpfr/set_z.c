@@ -1,6 +1,6 @@
 /* mpfr_set_z -- set a floating-point number from a multiple-precision integer
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -178,6 +178,6 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
         rnd_mode = GMP_RNDZ;
       return mpfr_set_underflow(f, rnd_mode, sign_z);
     }
-  MPFR_EXP(f) = exp;
+  MPFR_SET_EXP (f, exp);
   MPFR_RET(inex);
 }

@@ -1,6 +1,6 @@
 /* mpfr_ui_pow -- power of n function n^x
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -48,7 +48,7 @@ mpfr_ui_pow_is_exact (unsigned long int x, mpfr_srcptr y)
 
   /* compute d such that y = c*2^d with c odd integer */
   ysize = 1 + (MPFR_PREC(y) - 1) / BITS_PER_MP_LIMB;
-  d = MPFR_EXP(y) - ysize * BITS_PER_MP_LIMB;
+  d = MPFR_GET_EXP (y) - ysize * BITS_PER_MP_LIMB;
   /* since y is not zero, necessarily one of the mantissa limbs is not zero,
      thus we can simply loop until we find a non zero limb */
   yp = MPFR_MANT(y);
@@ -128,7 +128,7 @@ mpfr_ui_pow (mpfr_ptr y, unsigned long int n, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
     /* General case */
     {
-    /* Declaration of the intermediary variable */
+      /* Declaration of the intermediary variable */
       mpfr_t t, te, ti;
 
       /* Declaration of the size variable */
@@ -148,26 +148,27 @@ mpfr_ui_pow (mpfr_ptr y, unsigned long int n, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_init2 (ti, sizeof(unsigned long int) * 8); /* 8 = CHAR_BIT */
       mpfr_init2 (te, MPFR_PREC_MIN);
 
-      do {
+      do
+        {
+          /* reactualisation of the precision */
+          mpfr_set_prec (t, Nt);
+          mpfr_set_prec (te, Nt);             
 
-	/* reactualisation of the precision */
-	mpfr_set_prec (t, Nt);
-   	mpfr_set_prec (te, Nt);             
+          /* compute   exp(x*ln(n))*/
+          mpfr_set_ui (ti, n, GMP_RNDN);      /* ti <- n*/
+          mpfr_log (t, ti, GMP_RNDU);         /* ln(n) */
+          mpfr_mul (te, x, t, GMP_RNDU);       /* x*ln(n) */
+          mpfr_exp (t, te, GMP_RNDN);         /* exp(x*ln(n))*/
 
-	/* compute   exp(x*ln(n))*/
-        mpfr_set_ui (ti, n, GMP_RNDN);      /* ti <- n*/
-        mpfr_log (t, ti, GMP_RNDU);         /* ln(n) */
-        mpfr_mul (te, x, t, GMP_RNDU);       /* x*ln(n) */
-        mpfr_exp (t, te, GMP_RNDN);         /* exp(x*ln(n))*/
+          /* error estimate -- see pow function in algorithms.ps */
+          err = Nt - (MPFR_GET_EXP (te) + 3);
 
-	/* estimation of the error -- see pow function in algorithms.ps*/
-	err = Nt - (MPFR_EXP(te) + 3);
+          /* actualisation of the precision */
+          Nt += 10;
+        }
+      while (inexact &&
+             (err < 0 || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny)));
 
-	/* actualisation of the precision */
-	Nt += 10;
-
-      } while (inexact && (err < 0 || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny)));
- 
       inexact = mpfr_set (y, t, rnd_mode);
 
       mpfr_clear (t);

@@ -1,6 +1,6 @@
 /* mpfr_exp -- exponential of a floating-point number
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,13 +19,11 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
+#include <limits.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
-
-static int mpfr_exp_rational _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
 
 static int
 mpfr_exp_rational (mpfr_ptr y, mpz_srcptr p, int r, int m)
@@ -42,6 +40,7 @@ mpfr_exp_rational (mpfr_ptr y, mpz_srcptr p, int r, int m)
   TMP_DECL (marker);
 
   TMP_MARK (marker);
+  MPFR_ASSERTN(m < sizeof(int) * CHAR_BIT - 1);
   n = 1 << m;
   P = (mpz_t*) TMP_ALLOC((m+1) * sizeof(mpz_t));
   S = (mpz_t*) TMP_ALLOC((m+1) * sizeof(mpz_t));
@@ -63,6 +62,7 @@ mpfr_exp_rational (mpfr_ptr y, mpz_srcptr p, int r, int m)
     mpz_set_ui(P[k], i+1);
     mpz_set(S[k], P[k]);;
     j=i+1; l=0; while ((j & 1) == 0) {      
+      MPFR_ASSERTN(l < sizeof(int) * CHAR_BIT - 1);
       mpz_mul(S[k], S[k], ptoj[l]);
       mpz_mul(S[k-1], S[k-1], P[k]);
       mpz_mul_2exp(S[k-1], S[k-1], r*(1<<l));
@@ -107,7 +107,7 @@ mpfr_exp_rational (mpfr_ptr y, mpz_srcptr p, int r, int m)
 
   mpz_tdiv_q(S[0], S[0], P[0]);
   mpfr_set_z(y,S[0], GMP_RNDD);
-  MPFR_EXP(y) += expo;
+  MPFR_SET_EXP (y, MPFR_GET_EXP (y) + expo);
 
   mpfr_div_2ui(y, y, r*(i-1),GMP_RNDN); 
   for (i=0;i<=m;i++) { mpz_clear(P[i]); mpz_clear(S[i]); mpz_clear(ptoj[i]); }
@@ -143,7 +143,7 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   if (prec_x < 0) prec_x = 0;
   logn =  __gmpfr_ceil_log2 ((double) prec_x + MPFR_PREC(y));
   if (logn < 2) logn = 2;
-  ttt = MPFR_EXP(x);
+  ttt = MPFR_GET_EXP (x);
   mpfr_init2(x_copy,MPFR_PREC(x));
   mpfr_set(x_copy,x,GMP_RNDD);
   /* we shift to get a number less than 1 */
@@ -151,7 +151,7 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     {
       shift_x = ttt;
       mpfr_div_2ui(x_copy, x, ttt, GMP_RNDN);
-      ttt = MPFR_EXP(x_copy);
+      ttt = MPFR_GET_EXP (x_copy);
     }
   realprec = MPFR_PREC(y)+logn;
   mpz_init (uk);
@@ -179,6 +179,7 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
 	  }
 	mpfr_mul(tmp,tmp,t,GMP_RNDD); 
+        MPFR_ASSERTN(twopoweri <= INT_MAX/2);
 	twopoweri <<= 1;
     }
       mpfr_clear (t);

@@ -1,6 +1,6 @@
 /* mpfr_asin -- arc-sinus of a floating-point number
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library, and was contributed by Mathieu Dutour.
 
@@ -32,7 +32,7 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_t xp;
   mpfr_t arcs;
 
-  int signe, suplement;
+  int signe, supplement;
 
   mpfr_t tmp;
   int Prec;
@@ -78,7 +78,7 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
           mpfr_const_pi (asin, rnd_mode);
           mpfr_neg (asin, asin, rnd_mode);
         }
-      MPFR_EXP(asin)--;
+      MPFR_SET_EXP (asin, MPFR_GET_EXP (asin) - 1);
       mpfr_clear (xp);
       return 1; /* inexact */
     }
@@ -93,15 +93,15 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
   prec_asin = MPFR_PREC(asin);
   mpfr_ui_sub (xp, 1, xp, GMP_RNDD);
   
-  suplement = 2 - MPFR_EXP(xp);
+  supplement = 2 - MPFR_GET_EXP (xp);
 #ifdef DEBUG
-  printf("suplement=%d\n", suplement);
+  printf("supplement=%d\n", supplement);
 #endif
   realprec = prec_asin + 10;
 
   while (!good)
     {
-      estimated_delta = 1 + suplement;
+      estimated_delta = 1 + supplement;
       Prec = realprec+estimated_delta;
 
       /* Initialisation    */

@@ -1,6 +1,6 @@
 /* mpfr_const_log2 -- compute natural logarithm of 2
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -167,7 +167,7 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
         }
 
       mpfr_set_z (x, s, rnd_mode);
-      MPFR_EXP(x) -= N;
+      MPFR_SET_EXP (x, MPFR_GET_EXP (x) - N);
       mpz_clear (s);
       mpz_clear (t);
       mpz_clear (u);

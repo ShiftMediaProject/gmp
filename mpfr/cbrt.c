@@ -1,6 +1,6 @@
 /* mpfr_cbrt -- cube root function.
 
-Copyright 2002 Free Software Foundation.
+Copyright 2002, 2003 Free Software Foundation.
 Contributed by the Spaces project, INRIA Lorraine.
 
 This file is part of the MPFR Library.
@@ -134,7 +134,7 @@ mpfr_cbrt (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
      is not changed; or inexact=0, and inexact is set only when
      rnd_mode=GMP_RNDN and bit (n+1) from m is 1 */
   inexact += mpfr_set_z (y, m, GMP_RNDN);
-  MPFR_EXP(y) += e / 3;
+  MPFR_SET_EXP (y, MPFR_GET_EXP (y) + e / 3);
 
   if (sign_x < 0)
     {

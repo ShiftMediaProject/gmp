@@ -50,7 +50,7 @@ mpfr_frac (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
       MPFR_RET(0);  /* zero is exact */
     }
 
-  ue = MPFR_EXP(u);
+  ue = MPFR_GET_EXP (u);
   if (ue <= 0)  /* |u| < 1 */
     return mpfr_set(r, u, rnd_mode);
 
@@ -94,7 +94,7 @@ mpfr_frac (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
      of u into account, because of the mpn_lshift below. */
   MPFR_CLEAR_FLAGS(t);
   MPFR_SET_SAME_SIGN(t, u);
-  MPFR_EXP(t) = re;
+  MPFR_SET_EXP (t, re);
 
   /* Put the fractional part of u into t */
   tn = (MPFR_PREC(t) - 1) / BITS_PER_MP_LIMB;

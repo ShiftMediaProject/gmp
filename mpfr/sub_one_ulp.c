@@ -1,6 +1,6 @@
 /* mpfr_sub_one_ulp -- subtract one unit in last place
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -46,7 +46,7 @@ mpfr_sub_one_ulp(mpfr_ptr x, mp_rnd_t rnd_mode)
   mpn_sub_1 (xp, xp, xn, MP_LIMB_T_ONE << sh);
   if (xp[xn-1] >> (BITS_PER_MP_LIMB - 1) == 0)
     { /* was an exact power of two: not normalized any more */
-      mp_exp_t exp = MPFR_EXP(x);
+      mp_exp_t exp = MPFR_EXP (x);
       /* Note: In case of underflow and rounding to the nearest mode,
          x won't be changed. Beware of infinite loops! */
       if (exp == __gmpfr_emin)
@@ -54,7 +54,8 @@ mpfr_sub_one_ulp(mpfr_ptr x, mp_rnd_t rnd_mode)
       else
         {
           mp_size_t i;
-          MPFR_EXP(x)--;
+          MPFR_ASSERTD (exp > __gmpfr_emin);
+          MPFR_SET_EXP (x, exp - 1);
           xp[0] = (sh + 1 == BITS_PER_MP_LIMB) ? 0 : MP_LIMB_T_MAX << (sh + 1);
           for (i = 1; i < xn; i++)
             xp[i] = MP_LIMB_T_MAX;

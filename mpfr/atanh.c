@@ -1,6 +1,6 @@
 /* mpfr_atanh -- Inverse Hyperbolic Tangente of Unsigned Integer Number
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -100,28 +100,30 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
     mpfr_init(ti);                    
 
     /* First computation of cosh */
-    do {
+    do
+      {
+        /* reactualisation of the precision */
+        mpfr_set_prec(t,Nt);             
+        mpfr_set_prec(te,Nt);             
+        mpfr_set_prec(ti,Nt);             
 
-      /* reactualisation of the precision */
-      mpfr_set_prec(t,Nt);             
-      mpfr_set_prec(te,Nt);             
-      mpfr_set_prec(ti,Nt);             
+        /* compute atanh */
+        mpfr_ui_sub(te,1,x,GMP_RNDU);   /* (1-xt)*/
+        mpfr_add_ui(ti,x,1,GMP_RNDD);   /* (xt+1)*/
+        mpfr_div(te,ti,te,GMP_RNDN);    /* (1+xt)/(1-xt)*/
+        mpfr_log(te,te,GMP_RNDN);       /* ln((1+xt)/(1-xt))*/
+        mpfr_div_2ui(t,te,1,GMP_RNDN);  /* (1/2)*ln((1+xt)/(1-xt))*/
 
-      /* compute atanh */
-      mpfr_ui_sub(te,1,x,GMP_RNDU);   /* (1-xt)*/
-      mpfr_add_ui(ti,x,1,GMP_RNDD);   /* (xt+1)*/
-      mpfr_div(te,ti,te,GMP_RNDN);    /* (1+xt)/(1-xt)*/
-      mpfr_log(te,te,GMP_RNDN);       /* ln((1+xt)/(1-xt))*/
-      mpfr_div_2ui(t,te,1,GMP_RNDN);  /* (1/2)*ln((1+xt)/(1-xt))*/
-	
-      /* estimation of the error see- algorithms.ps*/
-      /* err=Nt-__gmpfr_ceil_log2(1+5*pow(2,1-MPFR_EXP(t)));*/
-      err=Nt-(MAX(4-MPFR_EXP(t),0)+1);
+        /* error estimate see- algorithms.ps*/
+        /* err=Nt-__gmpfr_ceil_log2(1+5*pow(2,1-MPFR_EXP(t)));*/
+        err = Nt - (MAX (4 - MPFR_GET_EXP (t), 0) + 1);
 
-      /* actualisation of the precision */
-      Nt += 10;
+        /* actualisation of the precision */
+        Nt += 10;
 
-    } while ((err < 0) || (!mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny) || (MPFR_IS_ZERO(t))));
+      }
+    while ((err < 0) ||
+           (!mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny) || MPFR_IS_ZERO(t)));
 
     if(flag_neg)
       MPFR_CHANGE_SIGN(t);
@@ -135,8 +137,3 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
   mpfr_clear(x);
   return inexact;
 }
-
-
-
-
-

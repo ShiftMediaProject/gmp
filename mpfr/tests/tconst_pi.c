@@ -25,12 +25,14 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-/* tpi [prec] [rnd] [0 = no print] */
+/* tconst_pi [prec] [rnd] [0 = no print] */
 
 int
 main (int argc, char *argv[])
 {
-  mpfr_t x; int p; unsigned char rnd;
+  mpfr_t x;
+  int p;
+  unsigned char rnd;
 
   tests_start_mpfr ();
 
@@ -42,17 +44,25 @@ main (int argc, char *argv[])
         p = a;
     }
 
-  rnd = (argc>2) ? atoi(argv[2]) : GMP_RNDZ;
+  rnd = (argc > 2) ? atoi(argv[2]) : GMP_RNDZ;
 
-  mpfr_init2(x, p);
-  mpfr_const_pi(x, rnd);
-  if (argc>=2) {
-    printf("Pi="); mpfr_out_str(stdout, 10, 0, x, rnd); putchar('\n');
-  }
-  else if (mpfr_get_d1 (x) != 3.141592653589793116) {
-    fprintf(stderr, "mpfr_const_pi failed for prec=53\n"); exit(1);
-  }
-  mpfr_clear(x);
+  mpfr_init2 (x, p);
+  mpfr_const_pi (x, rnd);
+  if (argc >= 2)
+    {
+      if (argc < 4 || atoi (argv[3]) != 0)
+        {
+          printf ("Pi=");
+          mpfr_out_str (stdout, 10, 0, x, rnd);
+          putchar ('\n');
+        }
+    }
+  else if (mpfr_get_d1 (x) != 3.141592653589793116)
+    {
+      fprintf (stderr, "mpfr_const_pi failed for prec=53\n");
+      exit (1);
+    }
+  mpfr_clear (x);
 
   tests_end_mpfr ();
   return 0;

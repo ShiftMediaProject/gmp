@@ -2,7 +2,7 @@
    long runs of consecutive ones and zeros in the binary representation.
    Intended for testing of other MP routines.
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 (Copied from the GNU MP Library.)
 
 This file is part of the MPFR Library.
@@ -52,7 +52,7 @@ mpfr_random2 (mpfr_ptr x, mp_size_t size, mp_exp_t exp)
     mpn_lshift (xp, xp, xn, cnt);
 
   mpn_random ((mp_limb_t*) yp, 1);
-  MPFR_EXP(x) = ABS ((mp_exp_t) yp[0] % (2 * exp + 1)) - exp;
+  MPFR_SET_EXP (x, ABS ((mp_exp_t) yp[0] % (2 * exp + 1)) - exp);
 
   cnt = xn * BITS_PER_MP_LIMB - MPFR_PREC(x);
   /* cnt is the number of non significant bits in the low limb */

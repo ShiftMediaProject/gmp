@@ -20,16 +20,16 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <float.h>
+#ifndef NO_MATH_DEFS
+#include <math.h>
+#endif
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-math.h"
-#include <float.h>
-#ifndef NO_MATH_DEFS
-#include <math.h>
-#endif
 
 static double mpfr_scale2 _PROTO ((double, int));
 
@@ -186,19 +186,19 @@ double
 mpfr_get_d (mpfr_srcptr src, mp_rnd_t rnd_mode)
 {
   return mpfr_get_d3 (src, MPFR_IS_FP(src) && MPFR_NOTZERO(src) ?
-                      MPFR_EXP(src) : 0, rnd_mode);
+                      MPFR_GET_EXP (src) : 0, rnd_mode);
 }
 
 double
 mpfr_get_d1 (mpfr_srcptr src)
 {
   return mpfr_get_d3 (src, MPFR_IS_FP(src) && MPFR_NOTZERO(src) ?
-                      MPFR_EXP(src) : 0, __gmpfr_default_rounding_mode);
+                      MPFR_GET_EXP (src) : 0, __gmpfr_default_rounding_mode);
 }
 
 double
 mpfr_get_d_2exp (mp_exp_t *exp, mpfr_srcptr src, mp_rnd_t rnd_mode)
 {
-  *exp = MPFR_EXP (src);
+  *exp = MPFR_GET_EXP (src);
   return mpfr_get_d3 (src, 0, rnd_mode);
 } 

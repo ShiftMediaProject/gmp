@@ -1,8 +1,649 @@
-2003-06-05  Torbjorn Granlund  <tege@swox.com>
+2003-05-22  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
 
-	* get_d.c: Change include file order to placate gcc under hpux 11.
+	* mpfr-impl.h, mul.c, mul_2si.c, mul_2ui.c, mul_ui.c, next.c, pow.c, print_raw.c, random.c, random2.c, rint.c, round_prec.c, set.c, set_d.c, set_exp.c, set_f.c, set_si.c, set_str.c, set_str_raw.c, set_ui.c, set_z.c, setmax.c, setmin.c, sin.c, sin_cos.c, sinh.c, sqrt.c, sqrt_ui.c, sub.c, sub1.c, sub_one_ulp.c, sub_ui.c, swap.c, tan.c, tanh.c, ui_div.c, ui_pow.c, ui_sub.c, urandomb.c, zeta.c, acos.c, acosh.c, add.c, add1.c, add_one_ulp.c, add_ui.c, asin.c, asinh.c, atan.c, atanh.c, cbrt.c, cmp.c, cmp2.c, cmp_abs.c, cmp_si.c, cmp_ui.c, const_log2.c, const_pi.c, cos.c, div.c, div_2si.c, div_2ui.c, div_ui.c, eq.c, exceptions.c, exp.c, exp2.c, exp3.c, exp_2.c, expm1.c, frac.c, generic.c, get_d.c, get_exp.c, get_ld.c, get_si.c, get_str.c, get_ui.c, get_z_exp.c, hypot.c, isinteger.c, log.c, log1p.c, log2.c, BUGS:
+	Macros MPFR_EXP_INVALID (invalid exponent value) and MPFR_EXP_CHECK
+	added. Code update to use MPFR_GET_EXP and MPFR_SET_EXP instead of
+	MPFR_EXP to allow more bug detection related to special values.
+	Macros MPFR_SET_NAN, MPFR_SET_INF, MPFR_SET_ZERO and MPFR_INIT set
+	the exponent of the number to MPFR_EXP_INVALID if MPFR_EXP_CHECK
+	is defined. Compile with -DMPFR_EXP_CHECK and make check to see
+	the potential problems; currently, 40 of 76 tests fail.
+
+2003-05-21  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr-impl.h:
+	MPFR_ASSERTD: use MPFR_ASSERTN instead of ASSERT_ALWAYS so that
+	it can be used as an expression.
+	New macros MPFR_GET_EXP and MPFR_SET_EXP (they should almost
+	completely replace MPFR_EXP).
+
+2003-05-19  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/teq.c: added test 'special'
+
+	* eq.c: fixed bug when n_bits larger than size*BITS_PER_MP_LIMB
+
+2003-05-18  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* eq.c: Bugs fixed (special cases).
+
+2003-05-13  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/Makefile.am: removed dummy test tdump
+
+	* TODO: compatibility with mpf is done
+
+	* mpfr.texi, cmp_d.c, mpf2mpfr.h: updated mpfr_cmp_d
+	added mpfr_cmp_d in mpf2mpfr.h and mpfr.texi
+
+2003-05-13  Guillaume Hanrot  <Guillaume.Hanrot@loria.fr>
+
+	* cmp_d.c, tests/tcmp_d.c: Added cmp_d.c, tcmp_d.c.
+
+	* mpfr.h, tests/Makefile.am, tests/mpf_compat.h, Makefile.am:
+	Added cmp_d/tcmp_d.
+
+2003-04-11  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/reuse.c, zeta.c: moved test for NaN/Inf
+
+	* Makefile.am, mpfr.h, mpfr.texi, tests/Makefile.am, tests/tzeta.c, zeta.c:
+	added Riemann Zeta function (contribution from Jean-Luc Re'my)
+
+2003-04-08  Kevin Ryde  <user42@zip.com.au>
+
+	* mpfr.texi: Move macros down below @copying.
+
+	* mpfr.texi: Add @: after various abbreviations.
+
+2003-04-01  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* exp_2.c: fixed pb with count_leading_zeros (n=0)
+
+	* tests/texp.c: added test for bug found by Franky Backeljauw
+
+	* exp_2.c: fixed bug found by Franky
+
+2003-03-28  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* exp3.c: Added some asserts.
+
+2003-03-28  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tconst_pi.c:
+	fixed pb found by Will Galway <galway@pims.math.ca> (continued)
+
+2003-03-28  Guillaume Hanrot  <Guillaume.Hanrot@loria.fr>
+
+	* const_pi.c, tests/tconst_pi.c: Patches from W. Galway.
+
+2003-03-28  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr.texi: fixed reference to Plouffe/Bailey/Borwein formula
+
+2003-03-27  Guillaume Hanrot  <Guillaume.Hanrot@loria.fr>
+
+	* const_pi.c: Credits for the pi formula modified.
+
+2003-03-26  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr.texi, set_str.c, set_str_raw.c, mpfr.h:
+	changed back "unsigned char *" to "char *"
+
+2003-03-25  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr.h, mpfr.texi, set_str.c, set_str_raw.c:
+	char * -> const unsigned char * for mpfr_set_str, mpfr_set_str_raw,
+	and mpfr_init_set_str
+
+2003-03-24  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* get_ld.c: removed unused variable
+
+2003-03-18  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr.texi: fixed documentation bug in mpfr_log2 (exact results)
+
+	* tests/tsqrt.c: changed new test in 'check4' style
+
+2003-03-17  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* BUGS, mpfr.texi: Update concerning underflow problems.
+
+2003-03-17  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tpow.c (main): Comment out underflows(), until it works.
+
+	* get_z_exp.c: Comment out an assert tickled for an f with exponent
+	near MPFR_EMIN_MIN.
+
+2003-03-16  Kevin Ryde  <user42@zip.com.au>
+
+	* mpfr-impl.h (LONGDOUBLE_NAN_ACTION): New version for IEEE quad big
+	endian, fixing HP cc.
+	(WANT_LONGDOUBLE_VOLATILE): New define for when LONGDOUBLE_VOLATILE is
+	wanted.
+	(WANT_GMPFR_LONGDOUBLE_VOLATILE): New define for when
+	__gmpfr_longdouble_volatile is wanted.
+
+	* volatile.c: Use WANT_GMPFR_LONGDOUBLE_VOLATILE.
+
+	* acinclude.m4 (MPFR_C_LONG_DOUBLE_FORMAT): Add IEEE quad big endian,
+	check long double exists before testing.
+
+2003-03-14  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tpow.c: Added underflow test showing a bug in mpfr_pow.
+
+2003-03-14  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* pow.c: fixed bug for x=1
+
+2003-03-14  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* BUGS, pow.c: This wasn't a compiler bug; mpfr_pow is really buggy.
+	Added some asserts to show that.
+
+	* tests/tpow.c, BUGS:
+	The infinite loop concerning 1^0.5 was probably due to a bug in the
+	compiler [cc (GCC) 3.2.3 20030309 (Debian prerelease)]: adding some
+	printf's changes the values of the variables and the correct result
+	is returned.
+
+2003-03-13  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tpow.c: fixed sign problem in particular_cases()
+
+	* ui_pow.c: declared mpfr_ui_pow_is_exact as static
+
+	* pow_si.c, pow.c: gnu-style
+
+2003-03-13  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tpow3.c:
+	Removed some useless and inaccurate tests on NaN, infinities, zeros
+	(as the behavior of mpfr_pow on such particular cases has changed);
+	similar tests were added to "tests/tpow.c".
+
+	* BUGS, tests/tpow.c: Test of mpfr_pow: particular cases. Bugs.
+
+2003-03-12  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* pow.c, tests/tpow3.c: Special cases for mpfr_pow().
+
+2003-03-11  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* out_str.c:
+	when stream=NULL, use stdout (as indicated in the documentation)
+
+2003-03-03  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* sin.c: mpfr_sin_sign -> static.
+
+	* pow.c: Useless declaration removed.
+
+	* pow.c: Special cases for mpfr_pow: like Section F.9.4.4 of the
+	ISO C99 standard.
+
+	* pow.c: Prototype fixed.
+
+2003-02-27  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* set_str.c, tests/tset_str.c, mpfr.texi:
+	mpfr_set_str now accepts a binary exponent for base 16
+	(as defined by the ISO C99 standard).
+
+	* TODO: Comment concerning the installation of MPFR: done.
+
+	* INSTALL, mpfr.texi: New recommendation to install MPFR.
+
+2003-02-24  Guillaume Hanrot  <Guillaume.Hanrot@loria.fr>
+
+	* tests/tget_str.c, tests/tset_str.c, dump.c, get_str.c, out_str.c, print_raw.c, set_str.c:
+	Replaced NaN, Inf by @NaN@, @Inf@ [for bases > 24].
+
+2003-02-21  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/thypot.c: added one test
+
+2003-02-21  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* get_ui.c: Fixed cast (though unnecessary).
+
+2003-02-21  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tsqrt.c: added one test
+
+2003-02-13  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/Makefile.am: added mpf_compat, mpfr_compat
+
+	* tests/mpf_compat.c, tests/mpf_compat.h, tests/mpfr_compat.c:
+	test files for mpf-mpfr compatibility
+
+	* set_str.c: added mpfr_init_set_str
+
+	* mpfr.h: added "const" to char* arg. of mpfr_init_set_str
+
+	* mpf2mpfr.h: added macros for new mpfr functions
+	changed some old macros
+
+	* tests/tpow3.c, pow.c: mpfr_isinteger -> mpfr_integer_p
+
+	* mpfr.texi:
+	document new functions (fits_*, get_ui, get_si, get_d_2exp)
+	added integer_p that was not documented
+
+	* mpfr.h: mpfr_isinteger -> mpfr_integer_p
+	new functions: mpfr_fits_*, mpfr_get_ui, mpfr_get_si, mpfr_get_d_2exp
+
+	* log10.c, isinteger.c: mpfr_isinteger -> mpfr_integer_p
+
+	* get_d.c: added mpfr_get_d_2exp
+
+	* frac.c, exp2.c: mpfr_isinteger -> mpfr_integer_p
+
+	* Makefile.am: new functions mpfr_fits_* and mpfr_get_ui/si
+
+	* fits_s.h, fits_sint.c, fits_slong.c, fits_sshort.c, fits_u.h, fits_uint.c, fits_ulong.c, fits_ushort.c, get_si.c, get_ui.c:
+	new functions mpfr_fits_* and mpfr_get_[us]i
+
+2003-01-27  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tset_str.c: check for +/-0.0 after variable set to NaN
+
+2003-01-25  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* acinclude.m4:
+	Suppressed the underscores of AC_CHECK_LIBM in comments, otherwise
+	aclocal 1.4-p6 includes libtool code in aclocal.m4 and this leads
+	to compilation problems.
+
+2003-01-25  Kevin Ryde  <user42@zip.com.au>
+
+	* mpfr.h (_MPFR_H_HAVE_FILE): Copy FILE define tests from gmp.h, adds
+	Borland, Microsoft and Apple MPW.
+
+	* Makefile.am (libmpfr_a_SOURCES): Add volatile.c.
+
+	* volatile.c: New file.
+
+	* tests/tset_ld.c (Isnan_ld):
+	New function based on LONGDOUBLE_NAN_ACTION, use it
+	instead of LONGDOUBLE_ISNAN.
+
+	* mpfr-test.h (LONGDOUBLE_ISNAN): Remove.
+
+	* set_ld.c (LONGDOUBLE_ISNAN):
+	Remove this, use LONGDOUBLE_NAN_ACTION instead.
+
+	* mpfr-impl.h (LONGDOUBLE_NAN_ACTION): New macro.
+
+2003-01-24  Kevin Ryde  <user42@zip.com.au>
+
+	* set_str.c: Allow "e" exponent in base<=10 not <10.  Restrict "E"
+	exponent to base<=10 too, since digits are not case sensitive.
+
+2003-01-24  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tcmp2.c, tests/tconst_log2.c, tests/tdiv.c, tests/tdiv_ui.c, tests/teq.c, tests/texceptions.c, tests/texp.c, tests/tgeneric.c, tests/tget_d.c, tests/tget_str.c, tests/thyperbolic.c, tests/tlog.c, tests/tmul_ui.c, tests/tout_str.c, tests/tpow.c, tests/trandom.c, tests/tset_ld.c, tests/tset_q.c, tests/tset_z.c, tests/tsqrt.c, tests/tsqrt_ui.c, tests/tsub.c, tests/tsub_ui.c, tests/tui_div.c, tests/tabs.c, tests/tatan.c:
+	Prototypes: use static. Some code reformatting.
+
+	* set_str.c: The sign wasn't set when the result was zero.
+
+2003-01-24  Kevin Ryde  <user42@zip.com.au>
+
+	* set_str.c:
+	Reject "", "+" and "-", also fixing an attempt to allocate a 0 length
+	block in these cases.
+
+	* set_str.c: Clear NAN and INF flags when setting result to zero.
+
+2003-01-24  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tadd.c, tests/tadd_ui.c, tests/tagm.c, tests/tcos.c, tests/tmul.c, tests/tsin.c, tests/tsin_cos.c, tests/tsub_ui.c, tests/ttan.c, tests/tui_sub.c:
+	Fixed prototypes (use static...).
+
+	* tests/tcbrt.c: Missing #include.
+
+2003-01-23  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tget_d.c: workaround for gcc bug on m68040-unknown-netbsd1.4.1
+
+	* tests/tget_d.c: added cast to double
+
+2003-01-23  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tadd.c:
+	Use mpfr_set_nan and mpfr_set_inf for NaN and Inf tests,
+	not "double" nans and infs.
+
+2003-01-22  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tmul.c, tests/tui_sub.c, tests/tsub_ui.c, tests/tadd_ui.c:
+	Use mpfr_set_nan and mpfr_set_inf for NaN and Inf tests,
+	not "double" nans and infs.
+
+	* tests/tgamma.c, tests/tdiv.c, tests/tui_div.c, tests/tzeta.c, tests/tsqrt.c:
+	Use tests_start_mpfr / tests_end_mpfr.
+
+	* tests/tout_str.c: Use tests_start_mpfr / tests_end_mpfr.
+	(check_large): Use __gmp_free_func to free mpfr_get_str result.
+
+	* tests/tget_d.c, tests/tcbrt.c: Use tests_start_mpfr / tests_end_mpfr.
+
+	* tests/tsin_cos.c:
+	Use mpfr_set_nan and mpfr_set_inf for NaN and Inf tests,
+	not "double" nans and infs.  Use tests_start_mpfr / tests_end_mpfr.
+
+	* tests/tagm.c:
+	Use mpfr_set_nan and mpfr_set_inf for NaN and Inf tests,
+	not "double" nans and infs.
+
+	* tests/tsqrt.c:
+	Remove tests involving "double" nans and infs, covered by check_nan.
+
+	* tests/tsin.c, tests/tcos.c, tests/ttan.c:
+	Use mpfr_set_nan and mpfr_set_inf for NaN and Inf tests,
+	not "double" nans and infs.
+
+2003-01-18  Kevin Ryde  <user42@zip.com.au>
+
+	* Makefile.am:
+	Move log_b2.h from include_HEADERS to libmpfr_a_SOURCES, it doesn't
+	want to be installed.
+
+	* set_str.c:
+	Correction to memory leak fix, need "result" for final rounding.
+
+2003-01-17  Kevin Ryde  <user42@zip.com.au>
+
+	* set_str.c: Fix two memory leaks.
+
+	* tests/Makefile.am (LDADD): Add $(MPFR_LIBM).
+
+	* configure.in: Remove -lm setups, now handled by MPFR_CHECK_LIBM.
+
+	* acinclude.m4 (MPFR_CHECK_LIBM): New macro.
+	(MPFR_CONFIGS): Use it.
+
+2003-01-17  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* BUGS, NEWS, README, TODO, acinclude.m4:
+	added copyright notices and license statements
+
+	* tests/tcmp2.c:
+	now use __gmpfr_floor_log2 instead of floor/log to get rid of math.h
+
+	* tests/tagm.c: removed unused function dagm(), and get rid of math.h
+	added tests for NaN, Inf's
+
+2003-01-17  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* acinclude.m4:
+	Re-added $OBJEXT, using AC_REQUIRE([AC_OBJEXT]) for old autoconf.
+
+2003-01-16  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tcmp2.c: put back math.h
+
+	* tests/tagm.c: added back math.h (for sqrt)
+
+	* Makefile.am: added log_b2.h in include_HEADERS
+
+	* tests/Makefile.am: added tsin_cos
+
+	* tests/tadd.c: added #ifdef HAVE_DENORMS for denormalized test
+
+	* tests/tcmp2.c, tests/tcmp_ui.c, tests/teq.c, tests/tmul_ui.c, tests/tout_str.c, tests/tset.c, tests/tsub.c:
+	removed math.h
+
+	* tests/tset_d.c, tests/tsin.c, tests/tsin_cos.c, tests/tsqrt.c, tests/tsqrt_ui.c, tests/tsub_ui.c, tests/tadd.c, tests/tcmp.c, tests/tcos.c, tests/tdiv.c, tests/tdiv_ui.c, tests/texp.c, tests/tlog.c, tests/tmul.c:
+	added year 2003 in copyright line
+	removed math.h
+
+	* tests/ttan.c, tests/tui_div.c, tests/tui_sub.c:
+	added 2003, removed math.h
+
+	* tests/tabs.c: added 2003
+
+	* tests/tadd_ui.c: added 2003, removed math.h
+
+	* tests/tagm.c: removed math.h
+
+	* tests/tset_str.c, tests/memory.c: added 2003
+
+	* tests/trandom.c: removed math.h
+
+	* tests/tget_str.c: added year 2003
+	removed math.h
+
+	* tests/tadd.c: patch for compiler bug on hppa2.0w-hp-hpux11.11
+
+2003-01-16  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* set_ld.c: Macro LONGDOUBLE_ISNAN wasn't defined.
+
+2003-01-16  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr-test.h: now always define Isnan
+
+	* mpfr-impl.h: moved LONGDOUBLE_ISNAN to mpfr-test.h
+
+	* acinclude.m4: removed check from isnan
+
+	* tests/tcmp.c, tests/tcos.c, tests/tdiv.c, tests/tdiv_ui.c, tests/tests.c, tests/texp.c, tests/tlog.c, tests/tmul.c, tests/tset_d.c, tests/tset_ld.c, tests/tsin.c, tests/tsin_cos.c, tests/tsqrt.c, tests/tsqrt_ui.c, tests/tsub_ui.c, tests/ttan.c, tests/tui_div.c, tests/tui_sub.c, tests/tabs.c, tests/tadd.c, tests/tadd_ui.c, tests/tagm.c:
+	replaced isnan() by Isnan()
+
+2003-01-16  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* acinclude.m4:
+	AC_PREREQ(2.50) added (useful when both autoconf 2.13 and autoconf
+	2.50 are installed, with a wrapper to select the required version).
+
+	* tests/tests.c: Comment in mpfr_test_init: s/preprocessor/compiler/.
+
+2003-01-16  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tests.c:
+	fixed pb in mpfr_test_init with the compiler optimizing too much
+	(this happened on Alpha with -O1 or higher)
+
+2003-01-15  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* zeta.c: Standard prototype only. Particular cases added.
+
+2003-01-15  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* get_str.c, set_str.c:
+	moved common prototype for mpn_exp in mpfr-impl.h
+
+	* mpfr-impl.h: removed spurious ; after MPFR_ESIZE
+	added prototype for mpn_exp
+
+	* TODO: removed items done
+
+	* tests/tset_str.c: new tests from Alain Delplanque
+
+	* set_str.c: new version using mpn_set_str
+	[written by Alain Delplanque, edited by Paul Zimmermann]
+
+2003-01-15  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* acinclude.m4:
+	Replace $OBJEXT by o (as $OBJEXT isn't defined everywhere).
+
+	* acinclude.m4:
+	A ` must be quoted to avoid an error with Autoconf 2.13.
+
+	* gamma.c: Use type mp_prec_t for precisions.
+
+	* gamma.c: Source re-indented.
+
+	* gamma.c: Several bugs fixed concerning the particular cases.
+	<stdio.h> and <stdlib.h> not included by default.
+	int mpfr_gamma _PROTO ... removed (was useless).
+
+2003-01-15  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* gamma.c: get rid of ceil() call, that requires -lm
+
+2003-01-14  Kevin Ryde  <user42@zip.com.au>
+
+	* get_ld.c:
+	Force LDBL_MANT_DIG on IEEE extended, to avoid problems with
+	some i386 gcc.
+
+	* set_ld.c:
+	Avoid problems with bad LDBL_MAX and LDBL_MANT_DIG on some i386 gcc.
+
+	* acinclude.m4 (MPFR_C_LONG_DOUBLE_FORMAT): New macro.
+	(MPFR_CONFIGS): Use it.
+
+2003-01-11  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/memory.c: Required casts added (and switch from uint to ulong);
+	in particular, useful on Alpha.
+
+2003-01-10  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/trandom.c, tests/tconst_pi.c:
+	Tolerate empty argv[1], which can arise from ancient bash executing
+	the libtool shared library wrapper script.
+
+	* get_ld.c:
+	Avoid unnecessary extra power of 2 squaring, so as not to provoke an
+	overflow exception when result is in range.
+
+2003-01-10  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tests.c: Extended precision detection fixed.
+
+2003-01-09  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* get_ld.c: fixed possible overflow when EXP=1024
+
+	* set_ld.c: rewritten to avoid overflows
+
+	* tests/tpow.c: added one test
+
+2003-01-08  Kevin Ryde  <user42@zip.com.au>
+
+	* get_str.c (mpn_exp):
+	Don't store -1 in a uint then return it as a long.
+	Fixes systems such as alpha where sizeof(uint)!=sizeof(long).
+
+	* acinclude.m4 (AC_CHECK_HEADERS):
+	Remove fpu_control.h, no longer required.
+
+	* tests/tset_ld.c: Use tests_machine_prec_long_double.
+	Use LDBL_MAX for largest value and to find largest power of 2.
+
+	* mpfr-test.h (__setfpucw, _FPU_EXTENDED, etc): Remove these setups.
+	(tests_machine_prec_double, tests_machine_prec_long_double,
+	x86_fstcw, x86_fldcw): Add prototypes.
+
+	* tests/tests.c (tests_machine_prec_double, tests_machine_prec_long_double):
+	New functions.
+	(mpfr_test_init): Replace __setfpucw with tests_machine_prec_double.
+
+	* acinclude.m4 (MPFR_CONFIGS): Add tests/x86.asm support.
+
+	* configure.in (X86_PATTERN): New define, supporting acinclude.m4.
+
+	* tests/Makefile.am: Add x86.asm support.
+
+	* tests/x86.asm: New file.
+
+2003-01-07  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* exp2.c: fixed pb for underflow and rounding to nearest
+
+	* mpfr-impl.h, set_ld.c: added macro LONGDOUBLE_ISNAN
+	use LONGDOUBLE_ISNAN in set_ld instead of cast to double and DOUBLE_ISNAN
+	(did raise exception under freebsd)
+
+2003-01-07  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* exp2.c:
+	Added assertions that can be resolved at compile time: the exponents
+	must be representable in a long int (IMHO, this limitation should be
+	avoided in a clean way).
+
+2003-01-06  Kevin Ryde  <user42@zip.com.au>
+
+	* TODO: Remove mpfr_get_ld, done.
+
+	* TODO: Remove mpfr_set_machine_rnd_mode, done.
+
+2003-01-06  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* exp2.c: Bug fix: __mpfr_emax -> __gmpfr_emax.
+
+2003-01-06  Kevin Ryde  <user42@zip.com.au>
+
+	* set_str.c:
+	Use separate function calls to second strncasecmp and strncmp
+	for consistency and to avoid gcc warnings.
+
+2003-01-06  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* exp2.c, tests/texp2.c: fixed infinite loop for 2^integer
+
+2003-01-06  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* set_str.c: Use digit_value_in_base for the part after the '.'.
+
+	* set_str.c:
+	Static function digit_value_in_base is now compatible with any locale.
+
+2003-01-03  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tests.c, mpfr-test.h:
+	(<sys/fpu.h>) [__mips]: Move from mpfr-test.h to tests/tests.c,
+	and conditionalize with HAVE_SYS_FPU_H.
+
+	* acinclude.m4 (AC_CHECK_HEADERS): Add sys/fpu.h.
+
+	* mpfr-test.h:
+	(HAVE_DENORMS) [__mips]: Remove this, let the configure test decide.
+
+	* set_str.c:
+	Use separate function calls to strncasecmp and strncmp, rather than
+	?: on function pointers, since the latter demands declarations not
+	present on SunOS.  Both forms are optimized the same by gcc.
+
+2003-01-03  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* BUGS:
+	Added some potential bugs (mpfr_exp2 is known to have such a bug).
+
+2003-01-02  Kevin Ryde  <user42@zip.com.au>
+
+	* tests/tset_str.c, tests/tget_str.c:
+	Add gmp-impl.h for __gmp_free_func.
+
+2002-12-16  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tconst_log2.c, tests/tests.c, set_rnd.c, set_si.c, set_str.c, set_str_raw.c, set_ui.c, set_z.c, sin.c, sin_cos.c, sinh.c, sub1.c, sub_one_ulp.c, tan.c, tanh.c, uceil_exp2.c, uceil_log2.c, ufloor_log2.c, ui_pow.c, mul_2si.c, mul_2ui.c, mul_ui.c, next.c, pow.c, pow_si.c, rint.c, round_prec.c, save_expo.c, set.c, set_dfl_prec.c, set_exp.c, set_nan.c, log10.c, log1p.c, log2.c, mpf2mpfr.h, mpfr-impl.h, mpfr.h, mul.c, factorial.c, gamma.c, gammaPiAGMformula.c, get_d.c, get_str.c, get_z_exp.c, hypot.c, init.c, const_pi.c, cos.c, cosh.c, div_2si.c, div_2ui.c, exceptions.c, exp.c, exp2.c, exp3.c, exp_2.c, expm1.c, acosh.c, add1.c, add_one_ulp.c, agm.c, asin.c, asinh.c, atan.c, atanh.c, const_euler.c, const_log2.c, acos.c:
+	Suppress some #define and fix symbol names (makes code cleaner):
+	perl -pi -e 's/__mpfr_flags/__gmpfr_flags/g' **/*.{c,h}
+	perl -pi -e 's/__mpfr_emin/__gmpfr_emin/g' **/*.{c,h}
+	perl -pi -e 's/__mpfr_emax/__gmpfr_emax/g' **/*.{c,h}
+	perl -pi -e 's/__mpfr_default_fp_bit_precision/__gmpfr_default_fp_bit_precision/g' **/*.{c,h}
+	perl -pi -e 's/__gmp_default_rounding_mode/__gmpfr_default_rounding_mode/g' **/*.{c,h}
+	perl -pi -e 's/__mpfr_const_log2_prec/__gmpfr_const_log2_prec/g' **/*.{c,h}
+	perl -pi -e 's/__mpfr_const_pi_prec/__gmpfr_const_pi_prec/g' **/*.{c,h}
+	perl -pi -e 's/_mpfr_ceil_log2/__gmpfr_ceil_log2/g' **/*.{c,h}
+	perl -pi -e 's/_mpfr_floor_log2/__gmpfr_floor_log2/g' **/*.{c,h}
+	perl -pi -e 's/_mpfr_ceil_exp2/__gmpfr_ceil_exp2/g' **/*.{c,h}
+	perl -pi -e 's/_mpfr_isqrt/__gmpfr_isqrt/g' **/*.{c,h}
+	perl -pi -e 's/_mpfr_cuberoot/__gmpfr_cuberoot/g' **/*.{c,h}
+	perl -pi -e 's/^#define __gmpfr_.*\n//' *.h
 
 2002-12-13  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* ChangeLog: Update.
 
 	* mpfr.texi: IEEE 754 / IEEE P754 -> IEEE 754-1985.
 

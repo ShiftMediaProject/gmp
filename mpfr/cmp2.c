@@ -1,6 +1,6 @@
 /* mpfr_cmp2 -- exponent shift when subtracting two numbers.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -65,10 +65,10 @@ mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c, mp_prec_t *cancel)
       return 1;
     }
 
-  if (MPFR_EXP(b) >= MPFR_EXP(c))
+  if (MPFR_GET_EXP (b) >= MPFR_GET_EXP (c))
     {
       sign = 1;
-      diff_exp = (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c);
+      diff_exp = (mp_exp_unsigned_t) MPFR_GET_EXP (b) - MPFR_GET_EXP (c);
 
       bp = MPFR_MANT(b);
       cp = MPFR_MANT(c);
@@ -131,7 +131,7 @@ mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c, mp_prec_t *cancel)
   else /* MPFR_EXP(b) < MPFR_EXP(c) */
     {
       sign = -1;
-      diff_exp = (mp_exp_unsigned_t) MPFR_EXP(c) - MPFR_EXP(b);
+      diff_exp = (mp_exp_unsigned_t) MPFR_GET_EXP (c) - MPFR_GET_EXP (b);
 
       bp = MPFR_MANT(c);
       cp = MPFR_MANT(b);

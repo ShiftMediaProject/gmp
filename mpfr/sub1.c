@@ -1,6 +1,6 @@
 /* mpfr_sub1 -- internal function to perform a "real" subtraction
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Contributed by the Spaces project, INRIA Lorraine.
 
 This file is part of the MPFR Library.
@@ -74,7 +74,7 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
   if (!sub)
     MPFR_SET_SAME_SIGN(a, b);
 
-  diff_exp = (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c);
+  diff_exp = (mp_exp_unsigned_t) MPFR_GET_EXP (b) - MPFR_GET_EXP (c);
 
   /* reserve a space to store b aligned with the result, i.e. shifted by
      (-cancel) % BITS_PER_MP_LIMB to the right */
@@ -393,7 +393,7 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
       mp_exp_t exp_a;
 
       cancel -= add_exp; /* still valid as unsigned long */
-      exp_a = MPFR_EXP(b) - cancel;
+      exp_a = MPFR_GET_EXP (b) - cancel;
       if (exp_a < __gmpfr_emin)
         {
           TMP_FREE(marker);
@@ -403,19 +403,22 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
             rnd_mode = GMP_RNDZ;
           return mpfr_set_underflow (a, rnd_mode, MPFR_SIGN(a));
         }
-      MPFR_EXP(a) = exp_a;
+      MPFR_SET_EXP (a, exp_a);
     }
   else /* cancel = 0: MPFR_EXP(a) <- MPFR_EXP(b) + add_exp */
     {
       /* in case cancel = 0, add_exp can still be 1, in case b is just
 	 below a power of two, c is very small, prec(a) < prec(b),
 	 and rnd=away or nearest */
-      if (add_exp && MPFR_EXP(b) == __gmpfr_emax)
+      mp_exp_t exp_b;
+
+      exp_b = MPFR_GET_EXP (b);
+      if (add_exp && exp_b == __gmpfr_emax)
 	{
 	  TMP_FREE(marker);
 	  return mpfr_set_overflow (a, rnd_mode, MPFR_SIGN(a));
 	}
-      MPFR_EXP(a) = MPFR_EXP(b) + add_exp;
+      MPFR_SET_EXP (a, exp_b + add_exp);
     }
   TMP_FREE(marker);
 #ifdef DEBUG

@@ -1,6 +1,6 @@
 /* mpfr_sub -- subtract two floating-point numbers
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Contributed by the Spaces project, INRIA Lorraine.
 
 This file is part of the MPFR Library.
@@ -90,22 +90,23 @@ mpfr_sub (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
     }
   else
     { /* signs differ, it's an addition */
-      if (MPFR_EXP(b) < MPFR_EXP(c))
+      mp_exp_t eb, ec;
+      eb = MPFR_GET_EXP (b);
+      ec = MPFR_GET_EXP (c);
+      if (eb < ec)
         { /* exchange rounding modes towards +/- infinity */
           int inexact;
           if (rnd_mode == GMP_RNDU)
             rnd_mode = GMP_RNDD;
           else if (rnd_mode == GMP_RNDD)
             rnd_mode = GMP_RNDU;
-          inexact = mpfr_add1(a, c, b, rnd_mode,
-                              (mp_exp_unsigned_t) MPFR_EXP(c) - MPFR_EXP(b));
+          inexact = mpfr_add1(a, c, b, rnd_mode, (mp_exp_unsigned_t) ec - eb);
           MPFR_CHANGE_SIGN(a);
           return -inexact;
         }
       else
         {
-          return mpfr_add1(a, b, c, rnd_mode,
-                           (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c));
+          return mpfr_add1(a, b, c, rnd_mode, (mp_exp_unsigned_t) eb - ec);
         }
     }
 }

@@ -1,6 +1,6 @@
 /* Exception flags and utilities.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -124,7 +124,7 @@ mpfr_check_range (mpfr_ptr x, int t, mp_rnd_t rnd_mode)
 {
   if (MPFR_IS_FP(x) && MPFR_NOTZERO(x))
     { /* x is a non-zero FP */
-      mp_exp_t exp = MPFR_EXP(x);
+      mp_exp_t exp = MPFR_EXP (x);  /* Do not use MPFR_GET_EXP */
       if (exp < __gmpfr_emin)
         {
           /* The following test is necessary because in the rounding to the

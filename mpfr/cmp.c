@@ -1,6 +1,6 @@
 /* mpfr_cmp -- compare two floating-point numbers
 
-Copyright 1999, 2001 Free Software Foundation.
+Copyright 1999, 2001, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -59,8 +59,8 @@ mpfr_cmp3 (mpfr_srcptr b, mpfr_srcptr c, int s)
 
   /* now signs are equal */
 
-  be = MPFR_EXP(b);
-  ce = MPFR_EXP(c);
+  be = MPFR_GET_EXP (b);
+  ce = MPFR_GET_EXP (c);
   if (be > ce)
     return s;
   if (be < ce)

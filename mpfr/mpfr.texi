@@ -10,35 +10,12 @@
 @end iftex
 @comment %**end of header
 
-@c  Usage: @GMPabs{x}                                                           
-@c  Give either |x| in tex, or abs(x) in info or html.                          
-@tex
-\gdef\GMPabs#1{|#1|}
-@end tex
-@ifnottex
-@macro GMPabs {X}
-@abs{}(\X\)
-@end macro
-@macro le
-<=
-@end macro
-@end ifnottex
-
-@tex
-\gdef\abs{\mathop{\rm abs}}
-@end tex
-@ifnottex
-@macro abs
-abs
-@end macro
-@end ifnottex
-
 @copying
 This manual documents how to install and use the Multiple Precision
 Floating-Point Reliable Library, version @value{VERSION}.
 
-Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002
-Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
+2003 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.1 or any later
@@ -147,6 +124,17 @@ How to install and use MPFR, a library for reliable multiple precision floating-
 @end macro
 @end ifnottex
 
+@c  Usage: @GMPabs{x}
+@c  Give either |x| in tex, or abs(x) in info or html.
+@tex
+\gdef\GMPabs#1{|#1|}
+@end tex
+@ifnottex
+@macro GMPabs {X}
+@abs{}(\X\)
+@end macro
+@end ifnottex
+
 @c  Usage: @GMPtimes{}
 @c  Give either \times or the word "times".
 @tex
@@ -155,6 +143,17 @@ How to install and use MPFR, a library for reliable multiple precision floating-
 @ifnottex
 @macro GMPtimes
 times
+@end macro
+@end ifnottex
+
+@c  New math operators.
+@c  @abs{} can be used in both tex and info, or just \abs in tex.
+@tex
+\gdef\abs{\mathop{\rm abs}}
+@end tex
+@ifnottex
+@macro abs
+abs
 @end macro
 @end ifnottex
 
@@ -168,6 +167,9 @@ times
 @c  Math operators already available in tex, made available in info too.
 @c  For example @log{} can be used in both tex and info.
 @ifnottex
+@macro le
+<=
+@end macro
 @macro log
 log
 @end macro
@@ -222,7 +224,7 @@ the GNU MP floating-point numbers in a future release. The main differences
 with the @code{mpf} class are: 
 
 @itemize @bullet
-@item the @code{mpfr} code is portable, i.e. the result of any operation
+@item the @code{mpfr} code is portable, i.e.@: the result of any operation
 does not depend (or should not) on the machine word size 
 @code{mp_bits_per_limb} (32 or 64 on most machines);
 @item the precision in bits can be set exactly to any valid value
@@ -409,7 +411,7 @@ is @code{mpfr_t}.
 A floating-point number can have three special values: Not-a-Number (NaN)
 or plus or minus Infinity. NaN represents a value which cannot be represented
 in the floating-point format, like 0 divided by 0, or Infinity minus Infinity.
-Moreover, like in the IEEE 754-1985 standard, zero is signed, i.e. there are
+Moreover, like in the IEEE 754-1985 standard, zero is signed, i.e.@: there are
 a +0 and a -0; the behavior is the same as in the IEEE 754-1985 standard and
 it is generalized to the other functions supported by MPFR.
 
@@ -583,8 +585,8 @@ as last argument a rounding mode, and
 have a return value of type @code{int}. If this value is zero, it means
 that the value stored in the destination variable is the exact result of
 the corresponding mathematical function. If the returned value is positive
-(resp. negative), it means the value stored in the destination variable
-is greater (resp. lower) than the exact result.
+(resp.@: negative), it means the value stored in the destination variable
+is greater (resp.@: lower) than the exact result.
 For example with the @code{GMP_RNDU} rounding mode, the returned value
 is usually positive, except when the result is exact, in which case it is
 zero.
@@ -655,7 +657,7 @@ result is equal to the exact one, a positive value if the rounded
 result is larger than the exact one, a negative value if the rounded
 result is smaller than the exact one. Note that unlike most functions,
 the results is compared to the exact one, not the original value of
-@var{x}, i.e. the ternary value is propagated.
+@var{x}, i.e.@: the ternary value is propagated.
 @end deftypefun
 
 @deftypefun void mpfr_clear_underflow (void)
@@ -806,7 +808,7 @@ width of the long double type; the @code{mpfr_set_ld} function assumes
 it has at most 113 bits, and an exponent of at most 15 bits.
 @end deftypefun
 
-@deftypefun int mpfr_set_str (mpfr_t @var{x}, const unsigned char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
+@deftypefun int mpfr_set_str (mpfr_t @var{x}, const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
 Set @var{x} to the value of the string @var{s} in base @var{base} (between
 2 and 36), rounded in direction @var{rnd} to the precision of @var{x}.
 See the documentation of @code{mpfr_inp_str} for a detailed description 
@@ -818,7 +820,7 @@ Special values can be read as follows: @code{NaN}, @code{Inf}, @code{+Inf}
 and @code{-Inf} (possibly in lower case when the base is less than 24).
 @end deftypefun
 
-@deftypefun void mpfr_set_str_raw (mpfr_t @var{x}, const unsigned char *@var{s})
+@deftypefun void mpfr_set_str_raw (mpfr_t @var{x}, const char *@var{s})
 Set @var{x} to the value of the binary number in string @var{s}, which has to 
 be of the
 form +/-xxxx.xxxxxxEyy. The exponent is read in decimal, but is interpreted
@@ -872,7 +874,7 @@ The return value if zero if @var{rop}=@var{op}, positive if @var{rop}>@var{op},
 and negative when @var{rop}<@var{op}.
 @end deftypefn
 
-@deftypefun int mpfr_init_set_str (mpfr_t @var{x}, const unsigned char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
+@deftypefun int mpfr_init_set_str (mpfr_t @var{x}, const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
 Initialize @var{x} and set its value from
 the string @var{s} in base @var{base}, 
 rounded to direction @var{rnd}.
@@ -1109,6 +1111,7 @@ you should use @code{mpfr_div_2ui} (or @code{mpfr_div_2si}) instead.
 @deftypefun int mpfr_cmp (mpfr_t @var{op1}, mpfr_t @var{op2})
 @deftypefunx int mpfr_cmp_ui (mpfr_t @var{op1}, unsigned long int @var{op2})
 @deftypefunx int mpfr_cmp_si (mpfr_t @var{op1}, signed long int @var{op2})
+@deftypefunx int mpfr_cmp_d (mpfr_t @var{op1}, double @var{op2})
 Compare @var{op1} and @var{op2}.  Return a positive value if @math{@var{op1} >
 @var{op2}}, zero if @math{@var{op1} = @var{op2}}, and a negative value if
 @math{@var{op1} < @var{op2}}.
@@ -1148,7 +1151,7 @@ Return non-zero if @var{op} is plus or minus infinity, zero otherwise.
 @end deftypefun
 
 @deftypefun int mpfr_number_p (mpfr_t @var{op})
-Return non-zero if @var{op} is an ordinary number, i.e. neither Not-a-Number
+Return non-zero if @var{op} is an ordinary number, i.e.@: neither Not-a-Number
 nor plus or minus infinity.
 @end deftypefun
 
@@ -1206,7 +1209,7 @@ and a negative value when it is smaller.
 Set @var{cop} to the cosine of @var{op}, @var{sop} to the sine of @var{op},
 @var{top} to the tangent of @var{op}, rounded to the direction @var{rnd} with
 the precision of @var{rop}. Return 0 iff the result is exact (this occurs
-in fact only when @var{op} is 0 i.e. the sine is 0, the cosine is 1, and the
+in fact only when @var{op} is 0 i.e.@: the sine is 0, the cosine is 1, and the
 tangent is 0).
 @end deftypefun
 
@@ -1252,14 +1255,14 @@ Return 0 iff the result is exact.
 Set @var{rop} to the logarithm of one plus @var{op},
 rounded to the direction @var{rnd} with the precision of @var{rop}.
 Return 0 iff the result is exact (this occurs in fact only when @var{op} is 0
-i.e. the result is 0).
+i.e.@: the result is 0).
 @end deftypefun
 
 @deftypefun int mpfr_expm1 (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 Set @var{rop} to the exponential of @var{op} minus one,
 rounded to the direction @var{rnd} with the precision of @var{rop}.
 Return 0 iff the result is exact (this occurs in fact only when @var{op} is 0
-i.e. the result is 0).
+i.e.@: the result is 0).
 @end deftypefun
 
 @deftypefun int mpfr_log2 (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
@@ -1275,6 +1278,11 @@ only when @var{op} is 1 for @code{mpfr_log10}, and a power of two for
 Set @var{rop} to the value of the Gamma function on @var{op},
 rounded to the direction @var{rnd} with the precision of @var{rop}.
 Return 0 iff the result is exact.
+@end deftypefun
+
+@deftypefun void mpfr_zeta (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+Set @var{rop} to the value of the Riemann Zeta function on @var{op},
+rounded to the direction @var{rnd} with the precision of @var{rop}.
 @end deftypefun
 
 @deftypefun int mpfr_fma (mpfr_t @var{rop}, mpfr_t @var{opx},mpfr_t @var{opy},mpfr_t @var{opz}, mp_rnd_t @var{rnd}) 
@@ -1303,8 +1311,8 @@ requested.
 
 @deftypefun void mpfr_const_pi (mpfr_t @var{rop}, mp_rnd_t @var{rnd})
 Set @var{rop} to the value of @m{\pi,Pi} rounded to the direction @var{rnd}
-with the precision of @var{rop}. This function uses the Borwein, Borwein,
-Plouffe formula which directly gives the expansion of @m{\pi,Pi} in base 16.
+with the precision of @var{rop}. This function uses the Plouffe, Bailey,
+Borwein formula which directly gives the expansion of @m{\pi,Pi} in base 16.
 @end deftypefun
 
 @deftypefun void mpfr_const_euler (mpfr_t @var{rop}, mp_rnd_t @var{rnd})
@@ -1577,6 +1585,7 @@ David Daney contributed the hyperbolic and inverse hyperbolic functions,
 the base-2 exponential, and the factorial function. Fabrice Rouillier
 contributed the original version of @file{mul_ui.c}, the @file{gmp_op.c}
 file, and helped to the Windows porting.
+Jean-Luc Rémy contributed the @code{mpfr_zeta} code.
 
 @node References, GNU Free Documentation License, Contributors, Top
 @comment  node-name,  next,  previous,  up

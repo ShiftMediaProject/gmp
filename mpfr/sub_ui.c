@@ -1,6 +1,6 @@
 /* mpfr_sub_ui -- subtract a floating-point number and a machine integer
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -39,11 +39,11 @@ mpfr_sub_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
     MPFR_ASSERTN(u == (mp_limb_t) u);
     count_leading_zeros(cnt, (mp_limb_t) u);
     *up = (mp_limb_t) u << cnt;
-    MPFR_EXP(uu) = BITS_PER_MP_LIMB - cnt;
 
-    /* Optimization note: Exponent operations may be removed
-       if mpfr_sub works even when uu is out-of-range. */
+    /* Optimization note: Exponent save/restore operations may be
+       removed if mpfr_sub works even when uu is out-of-range. */
     mpfr_save_emin_emax();
+    MPFR_SET_EXP (uu, BITS_PER_MP_LIMB - cnt);
     inex = mpfr_sub(y, x, uu, rnd_mode);
     mpfr_restore_emin_emax();
     return mpfr_check_range(y, inex, rnd_mode);

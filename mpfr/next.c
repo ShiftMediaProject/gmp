@@ -1,7 +1,7 @@
 /* mpfr_nextabove, mpfr_nextbelow, mpfr_nexttoward -- next representable
 floating-point number
 
-Copyright 1999, 2001, 2002 Free Software Foundation.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation.
 Contributed by the Spaces project, INRIA Lorraine.
 
 This file is part of the MPFR Library.
@@ -53,13 +53,13 @@ mpfr_nexttozero (mpfr_ptr x)
       mpn_sub_1 (xp, xp, xn, MP_LIMB_T_ONE << sh);
       if (xp[xn-1] >> (BITS_PER_MP_LIMB - 1) == 0)
         { /* was an exact power of two: not normalized any more */
-          mp_exp_t exp = MPFR_EXP(x);
+          mp_exp_t exp = MPFR_GET_EXP (x);
           if (exp == __gmpfr_emin)
             MPFR_SET_ZERO(x);
           else
             {
               mp_size_t i;
-              MPFR_EXP(x)--;
+              MPFR_SET_EXP (x, exp - 1);
               xp[0] = MP_LIMB_T_MAX << sh;
               for (i = 1; i < xn; i++)
                 xp[i] = MP_LIMB_T_MAX;
@@ -87,12 +87,12 @@ mpfr_nexttoinf (mpfr_ptr x)
       xp = MPFR_MANT(x);
       if (mpn_add_1 (xp, xp, xn, MP_LIMB_T_ONE << sh)) /* got 1.0000... */
         {
-          mp_exp_t exp = MPFR_EXP(x);
+          mp_exp_t exp = MPFR_GET_EXP (x);
           if (exp == __gmpfr_emax)
             MPFR_SET_INF(x);
           else
             {
-              MPFR_EXP(x)++;
+              MPFR_SET_EXP (x, exp + 1);
               xp[xn-1] = MPFR_LIMB_HIGHBIT;
             }
         }

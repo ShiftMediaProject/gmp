@@ -1,6 +1,6 @@
 /* mpfr_mul -- multiply two floating-point numbers
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -88,8 +88,8 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
       MPFR_RET(0); /* 0 * 0 is exact */
     }
 
-  bx = MPFR_EXP(b);
-  cx = MPFR_EXP(c);
+  bx = MPFR_GET_EXP (b);
+  cx = MPFR_GET_EXP (c);
   /* Note: the exponent of the exact result will be e = bx + cx + ec with
      ec in {-1,0,1} and the following assumes that e is representable. */
   MPFR_ASSERTN(MPFR_EMAX_MAX <= (MP_EXP_T_MAX >> 1));
@@ -155,7 +155,7 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
         rnd_mode = GMP_RNDZ;
       return mpfr_set_underflow (a, rnd_mode, sign_product);
     }
-  MPFR_EXP(a) = ax;
+  MPFR_SET_EXP (a, ax);
 
   if (MPFR_SIGN(a) != sign_product)
     MPFR_CHANGE_SIGN(a);

@@ -74,16 +74,16 @@ mpfr_get_ld (mpfr_srcptr x, mp_rnd_t rnd_mode)
          problems) */
       mpfr_init2 (y, MPFR_LDBL_MANT_DIG);
       mpfr_set (y, x, rnd_mode);
-      e = MPFR_EXP(y);
+      e = MPFR_GET_EXP (y);
       if (e > 1023)
         {
           sh = e - 1023;
-          MPFR_EXP(y) = 1023;
+          MPFR_SET_EXP (y, 1023);
         }
       else if (e < -1021)
         {
           sh = e + 1021;
-          MPFR_EXP(y) = -1021;
+          MPFR_SET_EXP (y, -1021);
         }
       else
         {

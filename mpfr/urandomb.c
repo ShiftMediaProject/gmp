@@ -3,7 +3,7 @@
    using STATE as the random state previously initialized by a call to
    gmp_randinit().
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -68,6 +68,6 @@ mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
       rp[0] &= ~((MP_LIMB_T_ONE << cnt) - 1);
     }
 
-  MPFR_EXP (rop) = exp;
+  MPFR_SET_EXP (rop, exp);
   MPFR_SET_POS (rop);
 }

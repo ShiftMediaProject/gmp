@@ -1,6 +1,6 @@
 /* mpfr_acosh -- inverse hyperbolic cosine
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -85,28 +85,30 @@ mpfr_acosh (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode)
     mpfr_save_emin_emax ();
 
     /* First computation of acosh */
-    do {
+    do
+      {
+        /* reactualisation of the precision */
+        mpfr_set_prec (t, Nt);
+        mpfr_set_prec (te, Nt);
+        mpfr_set_prec (ti, Nt);
 
-      /* reactualisation of the precision */
-      mpfr_set_prec (t, Nt);
-      mpfr_set_prec (te, Nt);
-      mpfr_set_prec (ti, Nt);
+        /* compute acosh */
+        mpfr_mul (te, x, x, GMP_RNDD);     /* x^2 */
+        mpfr_sub_ui (ti, te, 1, GMP_RNDD); /* x^2-1 */
+        mpfr_sqrt (t, ti, GMP_RNDN);       /* sqrt(x^2-1) */
+        mpfr_add (t, t, x, GMP_RNDN);      /* sqrt(x^2-1)+x */
+        mpfr_log (t, t, GMP_RNDN);         /* ln(sqrt(x^2-1)+x)*/
 
-      /* compute acosh */
-      mpfr_mul (te, x, x, GMP_RNDD);     /* x^2 */
-      mpfr_sub_ui (ti, te, 1, GMP_RNDD); /* x^2-1 */
-      mpfr_sqrt (t, ti, GMP_RNDN);       /* sqrt(x^2-1) */
-      mpfr_add (t, t, x, GMP_RNDN);      /* sqrt(x^2-1)+x */
-      mpfr_log (t, t, GMP_RNDN);         /* ln(sqrt(x^2-1)+x)*/
+        /* error estimate -- see algorithms.ps */
+        err = Nt - (-1 + 2 * MAX(2 + MAX(2 - MPFR_GET_EXP (t),
+                                         1 + MPFR_GET_EXP (te)
+                                         - MPFR_GET_EXP (ti)
+                                         - MPFR_GET_EXP (t)), 0));
 
-      /* estimation of the error -- see algorithms.ps */
-      err = Nt - (-1 + 2 * MAX(2 + MAX(2 - MPFR_EXP(t),
-                           1 + MPFR_EXP(te) - MPFR_EXP(ti) - MPFR_EXP(t)), 0));
-
-      /* actualisation of the precision */
-      Nt += 10;
-
-    } while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny));
+        /* actualisation of the precision */
+        Nt += 10;
+      }
+    while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny));
  
     inexact = mpfr_set (y, t, rnd_mode);
 

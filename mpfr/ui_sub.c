@@ -1,6 +1,6 @@
 /* mpfr_ui_sub -- subtract a floating-point number from an integer
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -54,7 +54,7 @@ mpfr_ui_sub (mpfr_ptr y, unsigned long int u, mpfr_srcptr x, mp_rnd_t rnd_mode)
       MPFR_ASSERTN(u == (mp_limb_t) u);
       count_leading_zeros (cnt, (mp_limb_t) u);
       *up = (mp_limb_t) u << cnt;
-      MPFR_EXP(uu) = BITS_PER_MP_LIMB - cnt;
+      MPFR_SET_EXP (uu, BITS_PER_MP_LIMB - cnt);
       return mpfr_sub (y, uu, x, rnd_mode);
     }
   else

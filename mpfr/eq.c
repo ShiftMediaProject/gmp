@@ -1,6 +1,6 @@
 /* mpfr_eq -- Compare two floats up to a specified bit #.
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2003 Free Software Foundation, Inc.
 (Copied from GNU MP, file mpf_eq.)
 
 This file is part of the MPFR Library.
@@ -26,6 +26,8 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
+/* return non-zero if the first n_bits bits of u, v are equal,
+   0 otherwise */
 int
 mpfr_eq (mpfr_srcptr u, mpfr_srcptr v, unsigned long int n_bits)
 {
@@ -34,48 +36,42 @@ mpfr_eq (mpfr_srcptr u, mpfr_srcptr v, unsigned long int n_bits)
   mp_exp_t uexp, vexp;
   int usign, k;
 
-  uexp = MPFR_EXP(u);
-  vexp = MPFR_EXP(v);
+  if (MPFR_IS_NAN(u) || MPFR_IS_NAN(v))
+    return 0; /* non equal */
 
-  usize = (MPFR_PREC(u)-1)/BITS_PER_MP_LIMB + 1;
-  vsize = (MPFR_PREC(v)-1)/BITS_PER_MP_LIMB + 1;
+  usign = MPFR_SIGN(u);
 
-  usign = MPFR_SIGN(u); 
+  if (MPFR_IS_INF(u))
+    return MPFR_IS_INF(v) && usign == MPFR_SIGN(v); /* +Inf = +Inf */
+  else if (MPFR_IS_INF(v))
+    return 0; /* +Inf != -Inf */
 
   /* 1. Are the signs different?  */
-  if (usign ==  MPFR_SIGN(v))
+  if (usign == MPFR_SIGN(v))
     {
       /* U and V are both non-negative or both negative.  */
-      if (!MPFR_NOTZERO(u))
-	return !MPFR_NOTZERO(v); 
-      if (!MPFR_NOTZERO(v))
-	return !MPFR_NOTZERO(u);
+      if (MPFR_IS_ZERO(u))
+        return MPFR_IS_ZERO(v); /* 0 = 0 */
+      if (MPFR_IS_ZERO(v))
+        return MPFR_IS_ZERO(u); /* 0 = 0 */
 
       /* Fall out.  */
     }
   else
     {
       /* Either U or V is negative, but not both.  */
-      if (MPFR_NOTZERO(u) || MPFR_NOTZERO(v)) 
-	return 0;
-      else return 1; /* particular case -0 = +0 */
+      return MPFR_IS_ZERO(u) && MPFR_IS_ZERO(v);
     }
 
-  /* U and V have the same sign and are both non-zero.  */
-  if (MPFR_IS_INF(u)) 
-    return (MPFR_IS_INF(v) && (usign == MPFR_SIGN(v))); 
-  else if (MPFR_IS_INF(v)) return 0; 
-
-  if (MPFR_IS_NAN(u) || MPFR_IS_NAN(v)) return 0; 
+  uexp = MPFR_GET_EXP (u);
+  vexp = MPFR_GET_EXP (v);
 
   /* 2. Are the exponents different?  */
-  if (uexp > vexp)
-    return 0;			/* ??? handle (uexp = vexp + 1)   */
-  if (vexp > uexp)
-    return 0;			/* ??? handle (vexp = uexp + 1)   */
+  if (uexp != vexp)
+    return 0; /* no bit agree */
 
-  usize = ABS (usize);
-  vsize = ABS (vsize);
+  usize = (MPFR_PREC(u) - 1) / BITS_PER_MP_LIMB + 1;
+  vsize = (MPFR_PREC(v) - 1) / BITS_PER_MP_LIMB + 1;
 
   up = MPFR_MANT(u);
   vp = MPFR_MANT(v);
@@ -107,17 +103,25 @@ mpfr_eq (mpfr_srcptr u, mpfr_srcptr v, unsigned long int n_bits)
       size = usize;
     }
 
+  /* now size = min (usize, vsize) */
+
   if (size > (n_bits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB)
     size = (n_bits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
 
   up += usize - size;
   vp += vsize - size;
 
-  for (i = size - 1; i > 0; i--)
+  for (i = size - 1; i > 0 && n_bits >= BITS_PER_MP_LIMB; i--)
     {
       if (up[i] != vp[i])
 	return 0;
+      n_bits -= BITS_PER_MP_LIMB;
     }
+
+  /* now either i=0 or n_bits<BITS_PER_MP_LIMB */
+
+  if (n_bits > BITS_PER_MP_LIMB)
+    return mpfr_cmp (u, v) == 0;
 
   if (n_bits & (BITS_PER_MP_LIMB - 1))
     return (up[i] >> (BITS_PER_MP_LIMB - (n_bits & (BITS_PER_MP_LIMB - 1))) == 

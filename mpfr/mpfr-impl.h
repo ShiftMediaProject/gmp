@@ -68,6 +68,10 @@ typedef unsigned long int       mp_size_unsigned_t;
 
 /* Compile with -DWANT_ASSERT to check all assert statements */
 
+/* Note: do not use GMP macros ASSERT_ALWAYS and ASSERT as they are not
+   expressions, and as a consequence, they cannot be used in a for(),
+   with a comma operator and so on. */
+
 /* MPFR_ASSERTN(expr): assertions that should always be checked */
 /* #define MPFR_ASSERTN(expr) ASSERT_ALWAYS(expr) */
 #define MPFR_ASSERTN(expr)  ((expr) ? (void) 0 : (void) ASSERT_FAIL (expr))
@@ -75,9 +79,30 @@ typedef unsigned long int       mp_size_unsigned_t;
 /* MPFR_ASSERTD(expr): assertions that should be checked when testing */
 /* #define MPFR_ASSERTD(expr) ASSERT(expr) */
 #if WANT_ASSERT
-#define MPFR_ASSERTD(expr)  ASSERT_ALWAYS (expr)
+#define MPFR_EXP_CHECK 1
+#define MPFR_ASSERTD(expr)  MPFR_ASSERTN (expr)
 #else
 #define MPFR_ASSERTD(expr)  ((void) 0)
+#endif
+
+/* Invalid exponent value (to track bugs...) */
+#define MPFR_EXP_INVALID ((mp_exp_t) 1 << 30)
+
+/* Use MPFR_GET_EXP and MPFR_SET_EXP instead of MPFR_EXP directly,
+   unless when the exponent may be out-of-range, for instance when
+   setting the exponent before calling mpfr_check_range.
+   MPFR_EXP_CHECK is defined when WANT_ASSERT is defined, but if you
+   don't use WANT_ASSERT (for speed reasons), you can still define
+   MPFR_EXP_CHECK by setting -DMPFR_EXP_CHECK in $CFLAGS. */
+
+#if MPFR_EXP_CHECK
+#define MPFR_GET_EXP(x)          mpfr_get_exp (x)
+#define MPFR_SET_EXP(x, exp)     MPFR_ASSERTN (!mpfr_set_exp ((x), (exp)))
+#define MPFR_SET_INVALID_EXP(x)  ((void) (MPFR_EXP (x) = MPFR_EXP_INVALID))
+#else
+#define MPFR_GET_EXP(x)          MPFR_EXP (x)
+#define MPFR_SET_EXP(x, exp)     ((void) (MPFR_EXP (x) = (exp)))
+#define MPFR_SET_INVALID_EXP(x)  ((void) 0)
 #endif
 
 /* Definition of constants */
@@ -169,11 +194,15 @@ long double __gmpfr_longdouble_volatile __GMP_PROTO ((long double)) ATTRIBUTE_CO
 #define MPFR_CLEAR_FLAGS(x) \
   (((x) -> _mpfr_size &= ~((mp_size_unsigned_t) 3 << 29)))
 #define MPFR_IS_NAN(x) (((x)->_mpfr_size >> 30) & 1)
-#define MPFR_SET_NAN(x) ((x)->_mpfr_size |= ((mp_size_unsigned_t) 1 << 30))
+#define MPFR_SET_NAN(x) \
+  (MPFR_SET_INVALID_EXP(x), \
+   (x)->_mpfr_size |= ((mp_size_unsigned_t) 1 << 30))
 #define MPFR_CLEAR_NAN(x) \
   (((x) -> _mpfr_size &= ~((mp_size_unsigned_t) 1 << 30)))
 #define MPFR_IS_INF(x) (((x)->_mpfr_size >> 29) & 1)
-#define MPFR_SET_INF(x) ((x)->_mpfr_size |= ((mp_size_unsigned_t) 1 << 29))
+#define MPFR_SET_INF(x) \
+  (MPFR_SET_INVALID_EXP(x), \
+   (x)->_mpfr_size |= ((mp_size_unsigned_t) 1 << 29))
 #define MPFR_CLEAR_INF(x) ((x)->_mpfr_size &= ~((mp_size_unsigned_t) 1 << 29))
 #define MPFR_IS_FP(x) ((((x) -> _mpfr_size >> 29) & 3) == 0)
 #define MPFR_ABSSIZE(x) \
@@ -197,7 +226,8 @@ long double __gmpfr_longdouble_volatile __GMP_PROTO ((long double)) ATTRIBUTE_CO
 #define MPFR_IS_ZERO(x) \
   (MPFR_MANT(x)[(MPFR_PREC(x)-1)/BITS_PER_MP_LIMB] == (mp_limb_t) 0)
 #define MPFR_SET_ZERO(x) \
-  (MPFR_MANT(x)[(MPFR_PREC(x)-1)/BITS_PER_MP_LIMB] = (mp_limb_t) 0)
+  (MPFR_SET_INVALID_EXP(x), \
+   MPFR_MANT(x)[(MPFR_PREC(x)-1)/BITS_PER_MP_LIMB] = (mp_limb_t) 0)
 #define MPFR_ESIZE(x) \
   ((MPFR_PREC((x)) - 1) / BITS_PER_MP_LIMB + 1)
 #define MPFR_EVEN_INEX 2
@@ -217,7 +247,7 @@ long double __gmpfr_longdouble_volatile __GMP_PROTO ((long double)) ATTRIBUTE_CO
    MPFR_PREC(x) = (p), \
    MPFR_MANT(x) = (xp), \
    MPFR_SIZE(x) = (s), \
-   MPFR_EXP(x) = 0)
+   MPFR_SET_INVALID_EXP(x))
 /* same when xp is already allocated */
 #define MPFR_INIT1(xp, x, p, s) \
   (MPFR_PREC(x) = (p), MPFR_MANT(x) = (xp), MPFR_SIZE(x) = (s))
@@ -240,11 +270,15 @@ extern mp_prec_t __gmpfr_const_log2_prec;
 extern mpfr_t __mpfr_const_pi;
 extern mp_prec_t __gmpfr_const_pi_prec;
 
-#ifndef HAVE_STRCASECMP
+#ifdef HAVE_STRCASECMP
+int strcasecmp _PROTO ((const char *, const char *));
+#else
 int mpfr_strcasecmp _PROTO ((const char *, const char *));
 #endif
 
-#ifndef HAVE_STRNCASECMP
+#ifdef HAVE_STRNCASECMP
+int strncasecmp _PROTO ((const char *, const char *, size_t));
+#else
 int mpfr_strncasecmp _PROTO ((const char *, const char *, size_t));
 #endif
 

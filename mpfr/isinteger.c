@@ -38,7 +38,7 @@ mpfr_integer_p (mpfr_srcptr x)
   if (MPFR_IS_ZERO(x))
     return 1;
 
-  expo = MPFR_EXP(x);
+  expo = MPFR_GET_EXP (x);
   if (expo <= 0)
     return 0;
 

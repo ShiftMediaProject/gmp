@@ -175,9 +175,9 @@ void mpfr_clear _PROTO ((mpfr_ptr));
 void mpfr_nextabove _PROTO ((mpfr_ptr));
 void mpfr_nextbelow _PROTO ((mpfr_ptr));
 void mpfr_nexttoward _PROTO ((mpfr_ptr, mpfr_srcptr));
-void mpfr_set_str_raw _PROTO ((mpfr_ptr, __gmp_const unsigned char *));
-int mpfr_set_str _PROTO ((mpfr_ptr, __gmp_const unsigned char *, int, mp_rnd_t));
-int mpfr_init_set_str _PROTO ((mpfr_ptr, __gmp_const unsigned char *, int, mp_rnd_t));
+void mpfr_set_str_raw _PROTO ((mpfr_ptr, __gmp_const char *));
+int mpfr_set_str _PROTO ((mpfr_ptr, __gmp_const char *, int, mp_rnd_t));
+int mpfr_init_set_str _PROTO ((mpfr_ptr, __gmp_const char *, int, mp_rnd_t));
 char* mpfr_get_str _PROTO ((char *, mp_exp_t *, int, size_t, mpfr_srcptr, mp_rnd_t));
 #ifdef _MPFR_H_HAVE_FILE
 size_t mpfr_inp_str _PROTO ((mpfr_ptr, FILE *, int, mp_rnd_t));
@@ -248,6 +248,7 @@ void mpfr_swap _PROTO((mpfr_ptr, mpfr_ptr));
 void mpfr_dump _PROTO((mpfr_srcptr, mp_rnd_t));
 int mpfr_set4 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t, int));
 int mpfr_cmp3 _PROTO ((mpfr_srcptr, mpfr_srcptr, int));
+int mpfr_cmp_d _PROTO ((mpfr_srcptr, double)); 
 int mpfr_cmpabs _PROTO ((mpfr_srcptr, mpfr_srcptr));
 #define mpfr_cmp_abs mpfr_cmpabs /* keep for compatibility with mpfr-2.0.1 */
 int mpfr_nan_p _PROTO((mpfr_srcptr));
@@ -283,6 +284,7 @@ int mpfr_log1p _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_expm1 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
 int mpfr_cbrt _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
 int mpfr_gamma _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+void mpfr_zeta _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 int mpfr_min _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_max _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));

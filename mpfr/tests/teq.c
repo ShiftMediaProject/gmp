@@ -26,6 +26,8 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
+void special _PROTO ((void));
+
 static void
 teq (mpfr_t x)
 {
@@ -59,12 +61,48 @@ teq (mpfr_t x)
   mpfr_clear(y); 
 }
 
+void
+special (void)
+{
+  mpfr_t x, y, z;
+  int i, error = 0;
+
+  mpfr_init2 (x, 53);
+  mpfr_init2 (y, 53);
+  mpfr_init2 (z, 53);
+
+  mpfr_set_str (x, "1", 10, 0);
+  mpfr_set_str (y, "1e-10000", 10, 0);
+  mpfr_add (z, x, y, GMP_RNDU);
+
+  for (i = 1; i <= 52; i++)
+    if (mpfr_eq (x, z, i) == 0)
+      error = 1;
+  for (i = 53; i <= 100; i++)
+    if (mpfr_eq (x, z, i) != 0)
+      error = 1;
+  if (mpfr_eq (x, z, 1000) != 0)
+    error = 1;
+
+  if (error)
+    {
+      fprintf (stderr, "Error in mpfr_eq (1, 1+1e-1000)\n");
+      exit (1);
+    }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (z);
+}
+
 int
 main (void)
 {
   int j; mpfr_t x; 
 
   tests_start_mpfr ();
+
+  special ();
 
   mpfr_init2 (x, 1000); 
 

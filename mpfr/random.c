@@ -1,6 +1,6 @@
 /* mpfr_random -- generate a random floating-point number
 
-Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -50,7 +50,7 @@ mpfr_random (mpfr_ptr x)
   count_leading_zeros (cnt, xp[xn - 1]);
   if (cnt != 0)
     mpn_lshift (xp, xp, xn, cnt);
-  MPFR_EXP(x) = -cnt;
+  MPFR_SET_EXP (x, -cnt);
   MPFR_SET_POS(x);
 
   cnt = (mp_prec_t) xn * BITS_PER_MP_LIMB - prec;

@@ -1,6 +1,6 @@
 /* mpfr_expm1 -- Compute exp(x)-1
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -86,29 +86,31 @@ mpfr_expm1 (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode)
     mpfr_init(te);             
 
     /* First computation of cosh */
-    do {
+    do
+      {
 
-      /* reactualisation of the precision */
-      mpfr_set_prec(t,Nt);
-      mpfr_set_prec(te,Nt);
-      
-      /* compute expm1 */
-      mpfr_exp(te,x,GMP_RNDN);        /* exp(x)*/
-      mpfr_sub_ui(t,te,1,GMP_RNDN);   /* exp(x)-1 */
+        /* reactualisation of the precision */
+        mpfr_set_prec(t,Nt);
+        mpfr_set_prec(te,Nt);
 
-      /* estimation of the error */
-      /*err=Nt-(__gmpfr_ceil_log2(1+pow(2,MPFR_EXP(te)-MPFR_EXP(t))));*/
-      err=Nt-(MAX(MPFR_EXP(te)-MPFR_EXP(t),0)+1);
+        /* compute expm1 */
+        mpfr_exp(te,x,GMP_RNDN);        /* exp(x)*/
+        mpfr_sub_ui(t,te,1,GMP_RNDN);   /* exp(x)-1 */
 
-      /* actualisation of the precision */
-      Nt += 10;
+        /* error estimate */
+        /*err=Nt-(__gmpfr_ceil_log2(1+pow(2,MPFR_EXP(te)-MPFR_EXP(t))));*/
+        err = Nt - (MAX (MPFR_GET_EXP (te) - MPFR_GET_EXP (t), 0) + 1);
 
-    } while ((err <0) || !mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
+        /* actualisation of the precision */
+        Nt += 10;
+      }
+    while ((err <0) || !mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
  
-      inexact = mpfr_set(y,t,rnd_mode);
+    inexact = mpfr_set(y,t,rnd_mode);
 
-      mpfr_clear(t);
-      mpfr_clear(te);
+    mpfr_clear(t);
+    mpfr_clear(te);
   }
+
   return inexact;
 }

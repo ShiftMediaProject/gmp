@@ -1,6 +1,6 @@
 /* mpfr_tan -- tangent of a floating-point number
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -46,7 +46,8 @@ mpfr_tan (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     }
 
   precy = MPFR_PREC(y);
-  m = precy + __gmpfr_ceil_log2 ((double) precy) + ABS(MPFR_EXP(x)) + 13;
+  m = precy + __gmpfr_ceil_log2 ((double) precy)
+    + ABS (MPFR_GET_EXP (x)) + 13;
 
   mpfr_init2 (s, m);
   mpfr_init2 (c, m);

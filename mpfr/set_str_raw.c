@@ -33,11 +33,13 @@ MA 02111-1307, USA. */
    to hold all the bits of str. */
 
 void
-mpfr_set_str_raw (mpfr_ptr x, __gmp_const unsigned char *str)
+mpfr_set_str_raw (mpfr_ptr x, __gmp_const char *str)
 {
   char *str2, *str0, negative = 0; 
-  unsigned long j, l, k = 0, xsize, cnt, alloc; mp_limb_t *xp; 
-  long expn = 0, e; char *endstr2;
+  unsigned long j, l, k = 0, xsize, cnt, alloc;
+  mp_limb_t *xp; 
+  long expn = 0, e;
+  char *endstr2;
 
   xp = MPFR_MANT(x);
   xsize = 1 + (MPFR_PREC(x) - 1) / BITS_PER_MP_LIMB;
@@ -123,12 +125,14 @@ mpfr_set_str_raw (mpfr_ptr x, __gmp_const unsigned char *str)
 	xp[xsize - k] <<= (BITS_PER_MP_LIMB - j); 
       }
 
-    for (; k <= xsize; k++) { xp[xsize - k] = 0; }
+    for (; k <= xsize; k++)
+      xp[xsize - k] = 0;
 
-    count_leading_zeros(cnt, xp[xsize - 1]); 
-    if (cnt) mpn_lshift(xp, xp, xsize, cnt); 
+    count_leading_zeros(cnt, xp[xsize - 1]);
+    if (cnt)
+      mpn_lshift(xp, xp, xsize, cnt);
 
-    MPFR_EXP(x) = expn - cnt; 
+    MPFR_SET_EXP (x, expn - cnt);
     if (MPFR_ISNEG(x) != negative)
       MPFR_CHANGE_SIGN(x);
   }

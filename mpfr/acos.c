@@ -1,6 +1,6 @@
 /* mpfr_acos -- arc-cosinus of a floating-point number
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library, and was contributed by Mathieu Dutour.
 
@@ -32,7 +32,7 @@ mpfr_acos (mpfr_ptr acos, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_t xp;
   mpfr_t arcc;
 
-  int signe, suplement;
+  int signe, supplement;
 
   mpfr_t tmp;
   int Prec;
@@ -79,7 +79,7 @@ mpfr_acos (mpfr_ptr acos, mpfr_srcptr x, mp_rnd_t rnd_mode)
     {
       mpfr_clear (xp);
       mpfr_const_pi (acos, rnd_mode);
-      MPFR_EXP(acos)--;
+      MPFR_SET_EXP (acos, MPFR_GET_EXP (acos) - 1);
       return 1; /* inexact */
     }
 
@@ -87,15 +87,15 @@ mpfr_acos (mpfr_ptr acos, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_ui_sub (xp, 1, xp, GMP_RNDD);
   
   if (signe > 0)
-      suplement = 2 - 2 * MPFR_EXP(xp);
+    supplement = 2 - 2 * MPFR_GET_EXP (xp);
   else
-      suplement = 2 - MPFR_EXP(xp);
+    supplement = 2 - MPFR_GET_EXP(xp);
 
   realprec = prec_acos + 10;
 
   while (!good)
     {
-      Prec = realprec+suplement;
+      Prec = realprec + supplement;
 
       /* Initialisation    */
       mpfr_init2 (tmp, Prec);

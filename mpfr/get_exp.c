@@ -1,6 +1,6 @@
 /* mpfr_get_exp - get the exponent of a floating-point number
 
-Copyright 2002 Free Software Foundation.
+Copyright 2002, 2003 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -28,5 +28,5 @@ mp_exp_t
 mpfr_get_exp (mpfr_srcptr x)
 {
   MPFR_ASSERTN(MPFR_IS_FP(x) && MPFR_NOTZERO(x));
-  return MPFR_EXP(x);
+  return MPFR_EXP(x);  /* do not use MPFR_GET_EXP of course... */
 }

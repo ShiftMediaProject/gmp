@@ -1,7 +1,7 @@
 /* mpfr_set_d -- convert a machine double precision float to
                  a multiple precision floating-point number
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -203,7 +203,7 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
   signd = (d < 0) ? -1 : 1;
   d = ABS (d);
 
-  MPFR_EXP(tmp) = __mpfr_extract_double (tmpmant, d);
+  MPFR_SET_EXP(tmp, __mpfr_extract_double (tmpmant, d));
 
 #ifndef NDEBUG
   /* Failed assertion if the stored value is 0 (e.g., if the exponent range
@@ -233,7 +233,7 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
   if (k)
     MPN_ZERO (tmpmant, k);
 
-  MPFR_EXP(tmp) -= cnt + k * BITS_PER_MP_LIMB;
+  MPFR_SET_EXP (tmp, MPFR_GET_EXP (tmp) - (cnt + k * BITS_PER_MP_LIMB));
 
   /* tmp is exact since PREC(tmp)=53 */
   inexact = mpfr_set4 (r, tmp, rnd_mode, signd);

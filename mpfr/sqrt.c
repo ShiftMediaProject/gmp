@@ -1,6 +1,6 @@
 /* mpfr_sqrt -- square root of a floating-point number
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -92,7 +92,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
 
     /* Compare the mantissas */
 
-    odd_exp_u = (unsigned int) MPFR_EXP(u) & 1;
+    odd_exp_u = (unsigned int) MPFR_GET_EXP (u) & 1;
     MPFR_ASSERTN(MPFR_PREC(r) <= MPFR_INTPREC_MAX - 3);
     rrsize = (MPFR_PREC(r) + 2 + odd_exp_u) / BITS_PER_MP_LIMB + 1;
     MPFR_ASSERTN(rrsize <= MP_SIZE_T_MAX/2);
@@ -124,9 +124,9 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
           }
       }
 
-    MPFR_EXP(r) = MPFR_EXP(u) != MPFR_EMAX_MAX
-      ? (MPFR_EXP(u) + odd_exp_u) / 2
-      : (MPFR_EMAX_MAX - 1) / 2 + 1;
+    MPFR_SET_EXP(r, MPFR_GET_EXP(u) != MPFR_EMAX_MAX
+      ? (MPFR_GET_EXP(u) + odd_exp_u) / 2
+      : (MPFR_EMAX_MAX - 1) / 2 + 1);
 
     do
       {
@@ -264,7 +264,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
         /* Is a shift necessary here? Isn't the result 1.0000...? */
         mpn_rshift (rp, rp, rrsize, 1);
         rp[rrsize-1] |= MPFR_LIMB_HIGHBIT;
-        MPFR_EXP(r)++;
+        MPFR_SET_EXP (r, MPFR_GET_EXP (r) + 1);
       }
 
  fin:

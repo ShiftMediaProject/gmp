@@ -1,6 +1,6 @@
 /* mpfr_log2 -- log base 2
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -86,11 +86,10 @@ mpfr_log2 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
     }
 
   /* If a is integer, log2(a) is exact*/
-  if (mpfr_cmp_ui_2exp(a,1,MPFR_EXP(a)-1) == 0)
-      return mpfr_set_si(r,MPFR_EXP(a)-1,rnd_mode); 
+  if (mpfr_cmp_ui_2exp (a, 1, MPFR_GET_EXP (a) - 1) == 0)
+    return mpfr_set_si(r, MPFR_GET_EXP (a) - 1, rnd_mode);
 
-
- /* General case */
+  /* General case */
   {
     /* Declaration of the intermediary variable */
     mpfr_t t, tt;
