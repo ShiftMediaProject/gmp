@@ -295,7 +295,14 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	    if (qn == 1)
 	      {
 		mp_limb_t q0, r0;
-		udiv_qrnnd (q0, r0, n2p[1], n2p[0], d2p[0]);
+		mp_limb_t gcc272bug_n1, gcc272bug_n0, gcc272bug_d0;
+		/* Due to a gcc 2.7.2.3 reload pass bug, we have to use some
+		   temps here.  This doesn't hurt code quality on any machines
+		   so we do it unconditionally.  */
+		gcc272bug_n1 = n2p[1];
+		gcc272bug_n0 = n2p[0];
+		gcc272bug_d0 = d2p[0];
+		udiv_qrnnd (q0, r0, gcc272bug_n1, gcc272bug_n0, gcc272bug_d0);
 		n2p[0] = r0;
 		qp[0] = q0;
 	      }
