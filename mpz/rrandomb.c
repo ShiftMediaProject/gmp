@@ -74,7 +74,7 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
   int bit_pos;			/* bit number of least significant bit where
 				   next bit field to be inserted */
   mp_size_t ri;			/* index in rp */
-  mp_limb_t ran, ranm[3];	/* buffer for random bits */
+  mp_limb_t ran, ranm;		/* buffer for random bits */
   mp_limb_t acc;		/* accumulate output random data here */
   int ran_nbits;		/* number of valid bits in ran */
 
@@ -87,8 +87,8 @@ gmp_rrandomb (mp_ptr rp, gmp_randstate_t rstate, unsigned long int nbits)
     {
       if (ran_nbits < LOGBITS_PER_BLOCK + 1)
 	{
-	  _gmp_rand (ranm+1, rstate, BITS_PER_RANDCALL);
-	  ran = ranm[1];
+	  _gmp_rand (&ranm, rstate, BITS_PER_RANDCALL);
+	  ran = ranm;
 	  ran_nbits = BITS_PER_RANDCALL;
 	}
 
