@@ -22,7 +22,8 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
+INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
+  -DOPERATION_`echo $* | sed 's/_$$//'`
 
 OFILES = @mpn_objects@
 
@@ -36,7 +37,8 @@ EXTRA_LTLIBRARIES = libdummy.la
 nodist_libdummy_la_SOURCES =						    \
   add_n.c addmul_1.c and_n.c andn_n.c bdivmod.c com_n.c copyd.c copyi.c	    \
   dc_divrem_n.c cmp.c                                                       \
-  diveby3.c divis.c divrem.c divrem_1.c divrem_2.c dump.c gcd.c             \
+  dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c		    \
+  dump.c fib_ui.c gcd.c							    \
   gcd_finda.c gcd_1.c gcdext.c get_str.c hamdist.c inlines.c invert_limb.c  \
   ior_n.c iorn_n.c jacbase.c lshift.c mod_1.c mode1o.c mul.c mul_1.c	    \
   mul_fft.c mul_n.c mul_basecase.c nand_n.c nior_n.c perfsqr.c popcount.c   \
