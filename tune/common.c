@@ -39,9 +39,6 @@ MA 02111-1307, USA.
 #include "speed.h"
 
 
-typedef int (*qsort_function_t) _PROTO ((const void *, const void *));
-
-
 int   speed_option_addrs = 0;
 int   speed_option_verbose = 0;
 
