@@ -431,7 +431,7 @@ sparc-*-* | sparc64-*-*)
 	.globl	_getpsr
 getpsr:
 _getpsr:
-	rd     %psr, %0
+	rd	%psr, %o0
 	nop
 	nop
 	nop
@@ -439,6 +439,7 @@ _getpsr:
 	nop
 EOF
   cat >${dummy}b.c <<EOF
+#include <stdio.h>
 int
 main ()
 {
@@ -452,6 +453,7 @@ main ()
     case 0: break;  /* Fujitsu MB86900/1A or LSI L64831 SparcKIT-40 */
     case 4: break;  /* Fujitsu MB86904 */
     case 5: break;  /* Fujitsu TurboSparc MB86907 */
+    }
     break;
   case 1:
     switch (vers) {
