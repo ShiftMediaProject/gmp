@@ -108,7 +108,11 @@ MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
   mpf/set_q$U.lo mpf/get_d$U.lo mpf/set_dfl_prec$U.lo mpf/set_prc$U.lo	    \
   mpf/set_prc_raw$U.lo mpf/get_prc$U.lo mpf/ui_div$U.lo mpf/sqrt_ui$U.lo    \
   mpf/floor$U.lo mpf/ceil$U.lo mpf/trunc$U.lo mpf/pow_ui$U.lo		    \
-  mpf/urandomb$U.lo mpf/swap$U.lo
+  mpf/urandomb$U.lo mpf/swap$U.lo					    \
+  mpf/fits_sint$U.lo mpf/fits_slong$U.lo mpf/fits_sshort$U.lo		    \
+  mpf/fits_uint$U.lo mpf/fits_ulong$U.lo mpf/fits_ushort$U.lo		    \
+  mpf/get_si.lo mpf/get_ui.lo						    \
+  mpf/int_p.lo
 
 MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/addmul_ui$U.lo mpz/and$U.lo mpz/array_init$U.lo mpz/bin_ui$U.lo	\
