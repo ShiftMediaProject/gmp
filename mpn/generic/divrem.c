@@ -116,7 +116,10 @@ mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
 	  mp_limb_t r, p1, p0;
 
 	  if (UDIV_TIME > 2 * UMUL_TIME + 6 && have_preinv)
-	    udiv_qrnnd_preinv (q, r, nx, np[dsize - 1], dx, dxinv);
+	    {
+	      mp_limb_t  nl = np[dsize - 1];  /* avoid gcc 2.7.2.3 bug */
+	      udiv_qrnnd_preinv (q, r, nx, nl, dx, dxinv);
+	    }
 	  else
 	    udiv_qrnnd (q, r, nx, np[dsize - 1], dx);
 	  umul_ppmm (p1, p0, d1, q);
