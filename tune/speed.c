@@ -49,6 +49,7 @@ MA 02111-1307, USA.
 #endif
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h> /* for getpid() */
 #include <sys/time.h>  /* for struct timeval for sys/resource.h */
@@ -82,7 +83,8 @@ SPEED_EXTRA_PROTOS
 #define LONG_BIT  (8 * sizeof(long))
 #endif
 
-#define numberof(x)   (sizeof (x) / sizeof ((x)[0]))
+#define MP_LIMB_T_MAX  (~((mp_limb_t) 0))
+#define numberof(x)    (sizeof (x) / sizeof ((x)[0]))
 
 #define MPN_FILL(ptr, size, n)                  \
   do {                                          \
@@ -107,7 +109,7 @@ double     option_factor = 0.0;
 mp_size_t  option_step = 1;
 int        option_gnuplot = 0;
 char      *option_gnuplot_basename;
-struct {
+struct size_array_t {
   mp_size_t start, end;
 } *size_array = NULL;
 mp_size_t  size_num = 0;
@@ -389,8 +391,8 @@ run_all (FILE *fp)
     MPN_ZERO (sp.yp, max_size);
     break;
   case DATA_FFS:
-    MPN_FILL (sp.xp, max_size, -1);
-    MPN_FILL (sp.yp, max_size, -1);
+    MPN_FILL (sp.xp, max_size, MP_LIMB_T_MAX);
+    MPN_FILL (sp.yp, max_size, MP_LIMB_T_MAX);
     break;
   }
 
@@ -407,7 +409,7 @@ run_all (FILE *fp)
 
           if (option_factor != 0.0)
             {
-              step = sp.size * option_factor - sp.size;
+              step = (mp_size_t) (sp.size * option_factor - sp.size);
               if (step < 1)
                 step = 1;
             }
@@ -462,8 +464,10 @@ run_gnuplot (void)
   FILE  *fp;
   int   i;
      
-  plot_filename = (*_mp_allocate_func) (strlen (option_gnuplot_basename) + 20);
-  data_filename = (*_mp_allocate_func) (strlen (option_gnuplot_basename) + 20);
+  plot_filename = (char *) (*_mp_allocate_func)
+    (strlen (option_gnuplot_basename) + 20);
+  data_filename = (char *) (*_mp_allocate_func)
+    (strlen (option_gnuplot_basename) + 20);
       
   sprintf (plot_filename, "%s.gnuplot", option_gnuplot_basename);
   sprintf (data_filename, "%s.data",    option_gnuplot_basename);
@@ -655,10 +659,10 @@ The available routines are as follows.\n\
   printf ("Times for sizes out of the range accepted by a routine are shown as 0.\n");
   printf ("The fastest routine at each size is marked with a # (free form output only).\n");
   printf ("\n");
-          printf ("Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n");
-  printf ("Quickplot home page http://www.kachinatech.com/~quickplot\n");
-
   printf("%s", speed_time_string);
+  printf ("\n");
+  printf ("Gnuplot home page http://www.cs.dartmouth.edu/gnuplot_info.html\n");
+  printf ("Quickplot home page http://www.kachinatech.com/~quickplot\n");
 }
 
 int
@@ -785,8 +789,9 @@ main (int argc, char *argv[])
               {
                 if (size_num == size_allocnum)
                   {
-                    size_array = _mp_allocate_or_reallocate
-                      (size_array, 
+                    size_array = (struct size_array_t *)
+                      _mp_allocate_or_reallocate
+                      (size_array,
                        size_allocnum * sizeof(size_array[0]),
                        (size_allocnum+10) * sizeof(size_array[0]));
                     size_allocnum += 10;
@@ -856,7 +861,8 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  choice = (*_mp_allocate_func) ((argc - optind) * sizeof(choice[0]));
+  choice = (struct choice_t *) (*_mp_allocate_func)
+    ((argc - optind) * sizeof(choice[0]));
   for ( ; optind < argc; optind++)
     {
       struct choice_t  c;
