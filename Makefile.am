@@ -97,6 +97,9 @@ DISTCLEANFILES = $(nodist_include_HEADERS) asm-syntax.h config.m4 \
 # FIXME: Maybe this should be added to automake.
 MOSTLYCLEANFILES= gmp.tmp
 
+# Tell gmp.h it's building gmp, not an application, used by windows DLL stuff.
+AM_CPPFLAGS=-D__GMP_WITHIN_GMP
+
 
 MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
   mpf/set_si$U.lo mpf/set_str$U.lo mpf/set_d$U.lo mpf/set_z$U.lo	    \
@@ -135,7 +138,7 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/fac_ui$U.lo mpz/fdiv_q$U.lo					\
   mpz/fdiv_q_ui$U.lo mpz/fdiv_qr$U.lo mpz/fdiv_qr_ui$U.lo		\
   mpz/fdiv_r$U.lo mpz/fdiv_r_ui$U.lo					\
-  mpz/fdiv_ui$U.lo mpz/fib_ui$U.lo mpz/fits_sint$U.lo			\
+  mpz/fdiv_ui$U.lo mpz/fib_ui$U.lo mpz/fib2_ui$U.lo mpz/fits_sint$U.lo	\
   mpz/fits_slong$U.lo mpz/fits_sshort$U.lo mpz/fits_uint$U.lo		\
   mpz/fits_ulong$U.lo mpz/fits_ushort$U.lo mpz/gcd$U.lo			\
   mpz/gcd_ui$U.lo mpz/gcdext$U.lo mpz/get_d$U.lo mpz/get_si$U.lo	\
@@ -144,7 +147,7 @@ MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
   mpz/ior$U.lo mpz/iset$U.lo mpz/iset_d$U.lo mpz/iset_si$U.lo		\
   mpz/iset_str$U.lo mpz/iset_ui$U.lo mpz/jacobi$U.lo mpz/kronsz$U.lo	\
   mpz/kronuz$U.lo mpz/kronzs$U.lo mpz/kronzu$U.lo			\
-  mpz/lcm$U.lo mpz/lcm_ui$U.lo						\
+  mpz/lcm$U.lo mpz/lcm_ui$U.lo mpz/lucnum_ui$U.lo mpz/lucnum2_ui$U.lo	\
   mpz/mod$U.lo mpz/mul$U.lo mpz/mul_2exp$U.lo				\
   mpz/mul_si$U.lo mpz/mul_ui$U.lo					\
   mpz/n_pow_ui$U.lo mpz/neg$U.lo mpz/nextprime$U.lo			\
