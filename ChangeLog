@@ -18,6 +18,45 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-10  Kevin Ryde  <kevin@swox.se>
+
+	* demos/perl/test.pl: Should be $] for perl version in old perl.
+
+	* configure.in (sparc64-*-*): Single block of gcc configs for all
+	systems, on unknown systems try both ABI 32 and 64.
+
+	* configure.in (LIBGMP_LDFLAGS, LIBGMPXX_LDFLAGS): New AC_SUBSTs with
+	options to generate .def files with windows DLLs.
+	* Makefile.am (libgmp_la_LDFLAGS, libgmpxx_la_LDFLAGS): Use them.
+
+	* mpn/generic/gcd.c: Use ABOVE_THRESHOLD / BELOW_THRESHOLD, to follow
+	convention and cooperate with tune/tuneup.c.
+
+	* tune/tuneup.c (tune_gcd_schoenhage): Increase max_size to 3000, side
+	default 1000 is approx the crossover point on athlon.
+
+	* tune/common.c, tune/speed.c, tune/speed.h, tune/speed-ext.c,
+	tune/tuneup.c (SPEED_TMP_ALLOC_LIMBS): Take variable as parameter
+	rather than returning a value, avoids alloca in a function call.
+	* tune/common.c, tune/speed.h (speed_tmp_alloc_adjust): Remove, now
+	inline in SPEED_TMP_ALLOC_LIMBS, and using ptr-NULL for alignment
+	extraction.
+
+	* gmpxx.h (__gmp_binary_equal, __gmp_binary_not_equal,
+	__gmp_binary_less, __gmp_binary_less_equal, __gmp_binary_greater,
+	__gmp_binary_greater_equal, __gmp_cmp_function): Use mpfr_cmp_si and
+	mpfr_cmp_d.
+	* tests/cxx/t-ops.cc: Exercise this.
+
+	* demos/perl/Makefile.PL: Don't install sample.pl and test2.pl.
+
+	* demos/perl/GMP.xs (use_sv): Prefer PV over IV or NV to avoid any
+	rounding.
+	* demos/perl/test.pl: Exercise this.
+
+	* demos/perl/GMP/Mpf.pm (overload_string): Corrections to $# usage.
+	* demos/perl/test.pl: Exercise this.
+
 2003-12-08  Kevin Ryde  <kevin@swox.se>
 
 	* demos/perl/GMP.pm: Correction to canonicalize example.
