@@ -623,10 +623,14 @@ check_squares_zi (void)
       mpz_urandomb (bs, rands, size_range);
       an = mpz_get_ui (bs);
       mpz_rrandomb (a, rands, an);
+      if (mpz_sgn (a) == 0)
+        mpz_set_ui (a, 1L);
 
       mpz_urandomb (bs, rands, size_range);
       bn = mpz_get_ui (bs);
       mpz_rrandomb (b, rands, bn);
+      if (mpz_sgn (b) == 0)
+        mpz_set_ui (b, 1L);
 
       mpz_mul (a, a, b);
 
