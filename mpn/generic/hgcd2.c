@@ -434,10 +434,6 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
     /* Check r2 */
     /* We always have r2 > u2, v2 */
 
-#if GMP_NAIL_BITS > 0
-# error hgcd2 needs different code for limbs
-#endif
-
     if (hgcd->sign >= 0)
       {
 	/* Check if r1 - r2 >= u2 - u1 = |u2| + |u1| */
