@@ -68,6 +68,7 @@ int arr[GMP_LIMB_BITS + 1];
 	   and then switch to double-limb arithmetic.  */
 
 
+#if 0 /* Currently unused.  We should check to see if this helps.  */
 /* One-limb division optimized for small quotients.  */
 static mp_limb_t
 div1 (mp_limb_t n0, mp_limb_t d0)
@@ -121,6 +122,7 @@ div1 (mp_limb_t n0, mp_limb_t d0)
       return q;
     }
 }
+#endif
 
 /* Two-limb division optimized for small quotients.  */
 static mp_limb_t
