@@ -257,10 +257,10 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	    madj -= rsize - msize;
 	    msize = rsize;
 	  }
-	count_leading_zeros (cnt, rp[rsize - 1]);
-	if (cnt != 0)
+	if (! (rp[rsize-1] & MP_LIMB_T_HIGHBIT))
 	  {
 	    mp_limb_t cy;
+            count_leading_zeros (cnt, rp[rsize - 1]);
 	    mpn_lshift (rp, rp, rsize, cnt);
 	    cy = mpn_lshift (mp, mp, msize, cnt);
 	    if (cy)
