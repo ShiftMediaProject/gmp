@@ -440,13 +440,6 @@ mpn_gcd (mp_ptr gp,
 		    cy = mpn_addmul_1 (tp + i, up + vsize, qsize, s1p[i]);
 		    tp[qsize + i] = cy;
 		  }
-		if (qh != 0)
-		  {
-		    mp_limb_t cy;
-		    cy = mpn_add_n (tp + qsize, tp + qsize, s1p, ssize);
-		    if (cy != 0)
-		      abort ();
-		  }
 	      }
 	    else
 	      {
@@ -457,16 +450,16 @@ mpn_gcd (mp_ptr gp,
 		    cy = mpn_addmul_1 (tp + i, s1p, ssize, up[vsize + i]);
 		    tp[ssize + i] = cy;
 		  }
-		if (qh != 0)
+	      }
+	    if (qh != 0)
+	      {
+		mp_limb_t cy;
+		cy = mpn_add_n (tp + qsize, tp + qsize, s1p, ssize);
+		if (cy != 0)
 		  {
-		    mp_limb_t cy;
-		    cy = mpn_add_n (tp + qsize, tp + qsize, s1p, ssize);
-		    if (cy != 0)
-		      {
-			tp[qsize + ssize] = cy;
-			s1p[qsize + ssize] = 0;
-			ssize++;
-		      }
+		    tp[qsize + ssize] = cy;
+		    s1p[qsize + ssize] = 0;
+		    ssize++;
 		  }
 	      }
 	    ssize += qsize;
