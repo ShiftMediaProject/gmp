@@ -1916,80 +1916,54 @@ struct __gmp_hypot_function
 
 #ifdef __MPFR_H
   static void eval(mpfr_ptr f, mpfr_srcptr g, mpfr_srcptr h)
-  {
-    mpfr_t temp;
-    mpfr_init2(temp, mpfr_get_prec(f));
-    mpfr_mul(temp, g, g, __gmp_default_rounding_mode);
-    mpfr_mul(f, h, h, __gmp_default_rounding_mode);
-    mpfr_add(f, f, temp, __gmp_default_rounding_mode);
-    mpfr_sqrt(f, f, __gmp_default_rounding_mode);
-    mpfr_clear(temp);
-  }
+  { mpfr_hypot (f, g, h, __gmp_default_rounding_mode); }
 
   static void eval(mpfr_ptr f, mpfr_srcptr g, unsigned long int l)
   {
     mpfr_t temp;
-    mpfr_init2(temp, mpfr_get_prec(f));
-    mpfr_mul(temp, g, g, __gmp_default_rounding_mode);
-    mpfr_set_ui(f, l, __gmp_default_rounding_mode);
-    mpfr_mul(f, f, f, __gmp_default_rounding_mode);
-    mpfr_add(f, f, temp, __gmp_default_rounding_mode);
-    mpfr_sqrt(f, f, __gmp_default_rounding_mode);
+    mpfr_init2 (temp, 8*sizeof(l));
+    mpfr_set_ui (temp, l, GMP_RNDZ);  /* no rounding */
+    mpfr_hypot (f, g, temp, __gmp_default_rounding_mode);
     mpfr_clear(temp);
   }
   static void eval(mpfr_ptr f, unsigned long int l, mpfr_srcptr g)
   {
     mpfr_t temp;
-    mpfr_init2(temp, mpfr_get_prec(f));
-    mpfr_mul(temp, g, g, __gmp_default_rounding_mode);
-    mpfr_set_ui(f, l, __gmp_default_rounding_mode);
-    mpfr_mul(f, f, f, __gmp_default_rounding_mode);
-    mpfr_add(f, f, temp, __gmp_default_rounding_mode);
-    mpfr_sqrt(f, f, __gmp_default_rounding_mode);
+    mpfr_init2 (temp, 8*sizeof(l));
+    mpfr_set_ui (temp, l, GMP_RNDZ);  /* no rounding */
+    mpfr_hypot (f, g, temp, __gmp_default_rounding_mode);
     mpfr_clear(temp);
   }
   static void eval(mpfr_ptr f, mpfr_srcptr g, signed long int l)
   {
     mpfr_t temp;
-    mpfr_init2(temp, mpfr_get_prec(f));
-    mpfr_mul(temp, g, g, __gmp_default_rounding_mode);
-    mpfr_set_si(f, l, __gmp_default_rounding_mode);
-    mpfr_mul(f, f, f, __gmp_default_rounding_mode);
-    mpfr_add(f, f, temp, __gmp_default_rounding_mode);
-    mpfr_sqrt(f, f, __gmp_default_rounding_mode);
+    mpfr_init2 (temp, 8*sizeof(l));
+    mpfr_set_si (temp, l, GMP_RNDZ);  /* no rounding */
+    mpfr_hypot (f, g, temp, __gmp_default_rounding_mode);
     mpfr_clear(temp);
   }
   static void eval(mpfr_ptr f, signed long int l, mpfr_srcptr g)
   {
     mpfr_t temp;
-    mpfr_init2(temp, mpfr_get_prec(f));
-    mpfr_mul(temp, g, g, __gmp_default_rounding_mode);
-    mpfr_set_si(f, l, __gmp_default_rounding_mode);
-    mpfr_mul(f, f, f, __gmp_default_rounding_mode);
-    mpfr_add(f, f, temp, __gmp_default_rounding_mode);
-    mpfr_sqrt(f, f, __gmp_default_rounding_mode);
+    mpfr_init2 (temp, 8*sizeof(l));
+    mpfr_set_si (temp, l, GMP_RNDZ);  /* no rounding */
+    mpfr_hypot (f, g, temp, __gmp_default_rounding_mode);
     mpfr_clear(temp);
   }
   static void eval(mpfr_ptr f, mpfr_srcptr g, double d)
   {
     mpfr_t temp;
-    mpfr_init2(temp, mpfr_get_prec(f));
-    mpfr_mul(temp, g, g, __gmp_default_rounding_mode);
-    mpfr_set_d(f, d, __gmp_default_rounding_mode);
-    mpfr_mul(f, f, f, __gmp_default_rounding_mode);
-    mpfr_add(f, f, temp, __gmp_default_rounding_mode);
-    mpfr_sqrt(f, f, __gmp_default_rounding_mode);
+    mpfr_init2 (temp, 8*sizeof(l));
+    mpfr_set_d (temp, l, GMP_RNDZ);  /* no rounding */
+    mpfr_hypot (f, g, temp, __gmp_default_rounding_mode);
     mpfr_clear(temp);
   }
   static void eval(mpfr_ptr f, double d, mpfr_srcptr g)
   {
     mpfr_t temp;
-    mpfr_init2(temp, mpfr_get_prec(f));
-    mpfr_mul(temp, g, g, __gmp_default_rounding_mode);
-    mpfr_set_d(f, d, __gmp_default_rounding_mode);
-    mpfr_mul(f, f, f, __gmp_default_rounding_mode);
-    mpfr_add(f, f, temp, __gmp_default_rounding_mode);
-    mpfr_sqrt(f, f, __gmp_default_rounding_mode);
+    mpfr_init2 (temp, 8*sizeof(l));
+    mpfr_set_d (temp, l, GMP_RNDZ);  /* no rounding */
+    mpfr_hypot (f, g, temp, __gmp_default_rounding_mode);
     mpfr_clear(temp);
   }
 #endif
