@@ -1,3 +1,9 @@
+2000-10-31  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in [compiler switch] (sparc64-*-linux*): Remove -mvis
+	from gmp_xoptflags_gcc, this might not be an ultrasparc.
+	Remove -m32 from gmp_cflags_gcc; add -Wa,-xarch=v8plus.
+
 2000-10-29  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/lorrshift.asm: New file.
@@ -5,6 +11,9 @@
 	* configure.in: New mulfunc `lorrshift' for lshift and rshift.
 
 2000-10-29  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/mul_n.c (mpn_kara_sqr_n): Delete code performing
+	superfluous mpn_sub_n calls.
 
 	* gmp.texi (Integer Division): Fix 2exp function descriptions,
 	tdiv_q_2exp is the arithmetic shift, not fdiv.
