@@ -1,4 +1,4 @@
-Copyright 1999, 2000, 2001, 2003 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -87,7 +87,19 @@ addmul/submul:Same situation as for mul.
 
 POWER4/PPC970 and POWER5 pipeline information:
 
-Decoding is 4-way + branch, issue is 8-way deep out-of-order.
+This is a very odd pipeline, it is basically a VLIW masquerading as a plain
+architecture.  Its issue rules are not made public, and since it is so weird,
+it is very hard to figure out any useful information from experimentation.
+An example:
+
+  A well-aligned loop with nop's take 3, 4, 6, 7, ... cycles.
+    3 cycles for  0,  1,  2,  3,  4,  5,  6,  7 nop's
+    4 cycles for  8,  9, 10, 11, 12, 13, 14, 15 nop's
+    6 cycles for 16, 17, 18, 19, 20, 21, 22, 23 nop's
+    7 cycles for 24, 25, 26, 27 nop's
+    8 cycles for 28, 29, 30, 31 nop's
+    ... continues regularly
+
 
 Functional units:
 LS1  - ld/st unit 1
