@@ -119,16 +119,14 @@ AUTOMAKE_OPTIONS = gnu no-dependencies
 
 SUBDIRS = tests
 
-# $(top_srcdir)/mpz is for #include "dmincl.c" in mdiv.c
-INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
-	-I$(top_srcdir) -I$(top_srcdir)/mpz
-
+INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc -I$(top_srcdir)
 
 nodist_libmpbsd_la_SOURCES = \
-	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c
+	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c \
+	tdiv_qr.c
 
 libmpbsd_la_SOURCES = \
-	itom.c mdiv.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c
+	itom.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c
 
 
 @WANT_MPBSD_TRUE@noinst_LTLIBRARIES = @WANT_MPBSD_TRUE@libmpbsd.la
@@ -147,10 +145,10 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libmpbsd_la_LDFLAGS = 
 libmpbsd_la_LIBADD = 
-am_libmpbsd_la_OBJECTS =  itom.lo mdiv.lo mfree.lo min.lo mout.lo \
-move.lo mtox.lo sdiv.lo xtom.lo
+am_libmpbsd_la_OBJECTS =  itom.lo mfree.lo min.lo mout.lo move.lo \
+mtox.lo sdiv.lo xtom.lo
 nodist_libmpbsd_la_OBJECTS =  add.lo cmp.lo gcd.lo mul.lo pow_ui.lo \
-powm.lo realloc.lo sqrtrem.lo sub.lo
+powm.lo realloc.lo sqrtrem.lo sub.lo tdiv_qr.lo
 libmpbsd_la_OBJECTS =  $(am_libmpbsd_la_OBJECTS) \
 $(nodist_libmpbsd_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -442,6 +440,9 @@ sqrtrem.c: $(top_srcdir)/mpz/sqrtrem.c
 
 sub.c: $(top_srcdir)/mpz/sub.c
 	cp $(top_srcdir)/mpz/sub.c sub.c
+
+tdiv_qr.c: $(top_srcdir)/mpz/tdiv_qr.c
+	cp $(top_srcdir)/mpz/tdiv_qr.c tdiv_qr.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
