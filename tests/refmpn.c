@@ -116,6 +116,14 @@ refmpn_malloc_limbs (mp_size_t size)
   return p;
 }
 
+/* Free limbs allocated by refmpn_malloc_limbs. NOTE: Can't free
+ * memory allocated by refmpn_malloc_limbs_aligned. */
+void
+refmpn_free_limbs (mp_ptr p)
+{
+  free (p);
+}
+
 mp_ptr
 refmpn_memdup_limbs (mp_srcptr ptr, mp_size_t size)
 {
