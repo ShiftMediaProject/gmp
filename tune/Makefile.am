@@ -195,6 +195,10 @@ fibg:
 	./speed -s 10-300 -P fibg mpz_fib_ui
 
 
+gcd:
+	./speed -s 1-20 -c mpn_gcd
+
+
 graph:
 	./speed -s 1-5000 -f 1.02 -P graph mpn_mul_n mpn_sqr
 	gnuplot graph.gnuplot
