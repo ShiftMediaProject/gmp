@@ -22,7 +22,7 @@
 
 AUTOMAKE_OPTIONS = gnu
 
-INCLUDES = -I$(top_srcdir) -I$(top_builddir)
+INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-cmp t-cmp_ui t-get_d
