@@ -1580,7 +1580,7 @@ fi
 
 # Define the identity of the package.
 PACKAGE=gmp
-VERSION=4.0
+VERSION=4.1
 
 cat >>confdefs.h <<EOF
 #define PACKAGE "$PACKAGE"
