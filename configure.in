@@ -900,68 +900,135 @@ case $host in
 
 
   *sparc*-*-*)
-    # For cc and acc, -g disables -O, so it's not used
     abilist="32"
     cclist="gcc acc cc"
-    path="sparc32"
-    gcc_cflags="-g -O2"
-    gcc_cflags_optlist="cpu"
-    gcc_cflags_cpu=
-    acc_cflags="-O2"
-    cc_cflags="-O2"
     extra_functions="udiv"
     GMP_INCLUDE_MPN(sparc32/sparc-defs.m4)
 
+    case $host_cpu in
+      sparcv8 | microsparc)
+        path="sparc32/v8 sparc32" ;;
+      supersparc)
+        path="sparc32/v8/supersparc sparc32/v8 sparc32" ;;
+      sparc64 | sparcv9* | ultrasparc*)
+        path="sparc32/v9 sparc32/v8 sparc32" ;;
+      *)
+        path="sparc32" ;;
+    esac
+
+    # gcc 2.7.2 doesn't know about v9 and doesn't pass -xarch=v8plus to the
+    # assembler.  Add it explicitly since the solaris assembler won't accept
+    # our sparc32/v9 asm code without it.  gas accepts -xarch=v8plus too, so
+    # it can be in the cflags unconditionally (though gas doesn't need it).
+    #
+    case $host_cpu in
+      sparc64 | sparcv9* | ultrasparc*)
+        gcc_cflags="-g -O2 -Wa,-xarch=v8plus" ;;
+      *)
+        gcc_cflags="-g -O2" ;;
+    esac
+    gcc_cflags_optlist="cpu"
+
+    # gcc 2.7.2 knows -mcypress, -msupersparc, -mv8, -msparclite.
+    # gcc 2.95 knows -mcpu= v7, hypersparc, sparclite86x, f930, f934,
+    #   sparclet, tsc701, v9, ultrasparc.  A warning is given that the
+    #   plain -m forms will disappear.
+    # gcc 3.0 adds nothing.
+    # gcc 3.1 adds nothing.
+    # gcc 3.2 adds nothing.
+    # gcc pre-release 3.3 adds ultrasparc3.
+    #
+    case $host_cpu in
+      supersparc)           gcc_cflags_cpu="-mcpu=supersparc -msupersparc" ;;
+      sparcv8 | microsparc) gcc_cflags_cpu="-mcpu=v8 -mv8" ;;
+      sparc64 | sparcv9*)   gcc_cflags_cpu="-mcpu=v9 -mv8" ;;
+      ultrasparc3)          gcc_cflags_cpu="-mcpu=ultrasparc3 -mcpu=ultrasparc -mv8" ;;
+      ultrasparc*)          gcc_cflags_cpu="-mcpu=ultrasparc -mv8" ;;
+      *)                    gcc_cflags_cpu="-mcpu=v7 -mcypress" ;;
+    esac
+
+    # SunPRO cc and acc, and SunOS bundled cc
     case $host in
-      sparcv8*-*-* | supersparc*-*-* | microsparc*-*-*)
-        gcc_cflags_cpu="-mcpu=v8 -mv8"
-        acc_cflags="-O2 -cg92"
-        path="sparc32/v8 sparc32"
+      *-*-solaris* | *-*-sunos*)
+    	# Note no -g, it disables all optimizations.
+    	cc_cflags=
+    	cc_cflags_optlist="opt arch cpu"
 
+        # SunOS cc doesn't know -xO4, fallback to -O2.
+    	cc_cflags_opt="-xO4 -O2"
+
+        # SunOS cc doesn't know -xarch, apparently always generating v7
+        # code, so make this optional
+    	case $host_cpu in
+    	  sparcv8 | microsparc | supersparc)  cc_cflags_arch="-xarch=v8" ;;
+    	  sparc64 | sparcv9* | ultrasparc*)   cc_cflags_arch="-xarch=v8plus" ;;
+    	  *)                                  cc_cflags_arch="-xarch=v7" ;;
+    	esac
+
+        # SunOS cc doesn't know -xchip and doesn't seem to have an equivalent.
+    	# SunPRO cc 5 recognises -xchip=generic, old, super, super2, micro,
+    	#   micro2, hyper, hyper2, powerup, ultra, ultra2, ultra2i.
+    	# SunPRO cc 6 adds -xchip=ultra2e, ultra3cu.
+        #
+    	# FIXME: Which of ultra, ultra2 or ultra2i is the best fallback for
+    	# ultrasparc3?
+    	#
+    	case $host_cpu in
+    	  supersparc)   cc_cflags_cpu="-xchip=super" ;;
+    	  microsparc)   cc_cflags_cpu="-xchip=micro" ;;
+    	  ultrasparc)   cc_cflags_cpu="-xchip=ultra" ;;
+    	  ultrasparc2)  cc_cflags_cpu="-xchip=ultra2" ;;
+    	  ultrasparc2i) cc_cflags_cpu="-xchip=ultra2i" ;;
+    	  ultrasparc3)  cc_cflags_cpu="-xchip=ultra3 -xchip=ultra" ;;
+    	  *)            cc_cflags_cpu="-xchip=generic" ;;
+    	esac
+    esac
+
+    # ABI=64 is available for v9 processors on solaris 2.7 or up.  Solaris
+    # 2.6 and earlier doesn't save registers properly and cannot run ABI=64.
+    # GNU/Linux sparc64 means a v9 cpu, but currently seems to have no
+    # support for 64-bit operations in user mode.
+    #
+    # FIXME: gcc -Wa,-xarch=v9 is thought to be necessary in some cases, but
+    # it would seem likely that if gcc is going to generate 64-bit code it
+    # will have to add that option itself where it's needed.  An extra copy
+    # of this option should be harmless though, so leave it until we're sure.
+    #
+    case $host_cpu in
+      sparc64 | sparcv9* | ultrasparc*)
         case $host in
-          *-*-solaris2.*)  cc_cflags="-xtarget=native -xarch=v8 -xO4" ;;
-        esac
-        case $host in
-          supersparc*-*-*) path="sparc32/v8/supersparc sparc32/v8 sparc32" ;;
-        esac
-        ;;
-
-      # sparc64-*-linux-gnu is a misnomer, since there's no support for any
-      # 64-bit operations in user mode.  We assume that a future release
-      # will have some 64-bit support and that the gcc options will be the
-      # same as on solaris.
-      #
-      # cc -xarch actually controls the ABI, hence it must be v8 for 32-bit,
-      # even though the chip is v9.
-      #
-      sparcv9*-*-* | ultrasparc*-*-* | sparc64-*-*)
-        path="sparc32/v9 sparc32/v8 sparc32"
-
-        SPEED_CYCLECOUNTER_OBJ=sparcv9.lo
-
-        gcc_cflags="-g -O2 -Wa,-xarch=v8plus"
-        gcc_cflags_cpu="-mcpu=ultrasparc -mcpu=v9 -mcpu=v8 -mv8"
-
-        cc_cflags="-xtarget=native -xarch=v8 -xO4"
-
-        case $host in
-          [*-*-solaris2.[7-9]])
-            # solaris prior to 2.6 doesn't save registers properly, so the
-            # 64-bit ABI is only available for 2.7 up
+          [*-*-solaris2.[7-9]*])
             abilist="64 32"
             path_64="sparc64"
             cclist_64="gcc cc"
-            gcc_64_cflags="-g -O2 -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
+            gcc_64_cflags="-g -O2 -m64 -mptr64 -Wa,-xarch=v9"
             gcc_64_ldflags="-Wc,-m64"
-	    # -fast enables different optimizations depending compiler version
-	    # -fns=no and -fsimple=1 disables some transformations that
-	    # conflict with IEEE 754, which some compiler versions perform.
+            gcc_64_cflags_optlist="cpu"
+
+            # -fast enables different optimizations depending on compiler
+            # version.  Unfortunately it does things according to the native
+            # system, which may not be optimal when cross compiling (to a
+            # different sparc).  -xchip from cc_cflags_cpu will override at
+            # least that part of its selections.
+            #
+            # -fns=no and -fsimple=1 disable some transformations that
+            # conflict with IEEE 754, which some compiler versions perform
+            # under -fast.
+            #
             cc_64_cflags="-fast -fns=no -fsimple=1 -xarch=v9"
-            SPEED_CYCLECOUNTER_OBJ_64=sparcv9.lo
-            cyclecounter_size_64=2
+            cc_64_cflags_optlist="cpu"
             ;;
         esac
       ;;
+    esac
+
+    # using the v9 %tick register
+    case $host_cpu in
+      sparc64 | sparcv9* | ultrasparc*)
+        SPEED_CYCLECOUNTER_OBJ=sparcv9.lo
+        SPEED_CYCLECOUNTER_OBJ_64=sparcv9.lo
+        cyclecounter_size_64=2
+        ;;
     esac
     ;;
 
@@ -1254,6 +1321,16 @@ for abi in $abilist; do
       if test $ccbase != xlc; then
         GMP_PROG_CC_IS_XLC($cc,ccbase=xlc)
       fi
+
+      # acc was Sun's first unbundled compiler back in the SunOS days, or
+      # something like that, but today its man page says it's not meant to
+      # be used directly (instead via /usr/ucb/cc).  The options are pretty
+      # much the same as the main SunPRO cc, so share those configs.
+      #
+      case $host in
+        *sparc*-*-solaris* | *sparc*-*-sunos*)
+          if test "$ccbase" = acc; then ccbase=cc; fi ;;
+      esac
 
       # Any user CFLAGS, even an empty string, takes precendence
                            eval cflags=\"\$${ccbase}${abi1}_cflags\"
