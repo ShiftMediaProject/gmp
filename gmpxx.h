@@ -266,10 +266,7 @@ struct __gmp_binary_minus
   static void eval(mpz_ptr z, mpz_srcptr w, unsigned long int l)
   { mpz_sub_ui(z, w, l); }
   static void eval(mpz_ptr z, unsigned long int l, mpz_srcptr w)
-  {
-    mpz_sub_ui(z, w, l);
-    mpz_neg(z, z);
-  }
+  { mpz_ui_sub(z, l, w); }
   static void eval(mpz_ptr z, mpz_srcptr w, signed long int l)
   {
     if (l >= 0)
@@ -280,10 +277,12 @@ struct __gmp_binary_minus
   static void eval(mpz_ptr z, signed long int l, mpz_srcptr w)
   {
     if (l >= 0)
-      mpz_sub_ui(z, w, l);
+      mpz_ui_sub(z, l, w);
     else
-      mpz_add_ui(z, w, -l);
-    mpz_neg(z, z);
+      {
+        mpz_add_ui(z, w, -l);
+        mpz_neg(z, z);
+      }
   }
   static void eval(mpz_ptr z, mpz_srcptr w, double d)
   {
