@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 20 Mar 2001.  An up-to-date version is available at
+  This file current as of 20 Apr 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
 </comment>
 
@@ -62,6 +62,15 @@
 
     <li> It's possible CPU dependent effects like cache locality will
          have a greater impact on speed than algorithmic improvements.
+
+    <li> Add support for partial products, either a given number of low limbs
+         or high limbs of the result.  A high partial product can be used by
+         <code>mpf_mul</code> now, a low half partial product might be of use
+         in a future sub-quadratic REDC.  On small sizes a partial product
+         will be faster simply through fewer cross-products, similar to the
+         way squaring is faster.  But work by Thom Mulders shows that for
+         Karatsuba and higher order algorithms the advantage is progressively
+         lost, so for large sizes partial products turn out to be no faster.
 
   </ol>
 
