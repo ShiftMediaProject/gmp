@@ -23,6 +23,11 @@ MA 02111-1307, USA.
 	* mpn/alpha/mod_34lsub1.asm: Add code for big-endian, using existing
 	little-endian code only if HAVE_LIMB_LITTLE_ENDIAN is defined.
 
+2002-12-18  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (HAVE_LIMB_BIG_ENDIAN, HAVE_LIMB_LITTLE_ENDIAN): New
+	defines in config.m4.
+
 2002-12-17  Torbjorn Granlund  <tege@swox.com>
 
 	* printf/printffuns.c (gmp_fprintf_reps): Make it actually work
@@ -272,7 +277,8 @@ MA 02111-1307, USA.
 	Suggested by Richard Dawe.
 
 	* gmp.texi (Build Options): Move non-unix notes to ...
-	(Notes for Particular Systems): ... here, and mention MS Interix.
+	(Notes for Particular Systems): ... here.  Mention MS Interix,
+	reported by Paul Leyland.
 	(C++ Interface Random Numbers): Add gmp_randinit_mt to examples.
 
 	* acinclude.m4 (GMP_ASM_LABEL_SUFFIX): Must test empty suffix first,
