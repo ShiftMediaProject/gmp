@@ -426,42 +426,41 @@ speed_option_set (const char *s)
 double
 speed_MPN_COPY (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_COPY_CALL (MPN_COPY (wp, s->xp, s->size));
+  SPEED_ROUTINE_MPN_COPY (MPN_COPY);
 }
 double
 speed_MPN_COPY_INCR (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_COPY_CALL (MPN_COPY_INCR (wp, s->xp, s->size));
+  SPEED_ROUTINE_MPN_COPY (MPN_COPY_INCR);
 }
 double
 speed_MPN_COPY_DECR (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_COPY_CALL (MPN_COPY_DECR (wp, s->xp, s->size));
+  SPEED_ROUTINE_MPN_COPY (MPN_COPY_DECR);
 }
 #if HAVE_NATIVE_mpn_copyi
 double
 speed_mpn_copyi (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_COPY_CALL (mpn_copyi (wp, s->xp, s->size));
+  SPEED_ROUTINE_MPN_COPY (mpn_copyi);
 }
 #endif
 #if HAVE_NATIVE_mpn_copyd
 double
 speed_mpn_copyd (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_COPY_CALL (mpn_copyd (wp, s->xp, s->size));
+  SPEED_ROUTINE_MPN_COPY (mpn_copyd);
 }
 #endif
 double
 speed_memcpy (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_COPY_CALL
-    (memcpy (wp, s->xp, s->size * BYTES_PER_MP_LIMB));
+  SPEED_ROUTINE_MPN_COPY_BYTES (memcpy);
 }
 double
 speed_mpn_com_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_COPY_CALL (mpn_com_n (wp, s->xp, s->size));
+  SPEED_ROUTINE_MPN_COPY (mpn_com_n);
 }
 
 
@@ -604,8 +603,7 @@ speed_mpn_divexact_1 (struct speed_params *s)
 double
 speed_mpn_divexact_by3 (struct speed_params *s)
 {
-  /* mpn_divexact_by3 is a macro, so the _CALL form is necessary */
-  SPEED_ROUTINE_MPN_COPY_CALL(mpn_divexact_by3 (wp, s->xp, s->size));
+  SPEED_ROUTINE_MPN_COPY (mpn_divexact_by3);
 }
 
 #if HAVE_NATIVE_mpn_modexact_1_odd
