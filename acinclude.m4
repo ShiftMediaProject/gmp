@@ -22,7 +22,7 @@ dnl  MA 02111-1307, USA.
 
 
 dnl  GMP_HEADER_GETVAL(NAME,FILE)
-dnl  ---------------------------------
+dnl  ----------------------------
 dnl  Expand to the value of a "#define NAME" from the given FILE.
 dnl  The regexps here aren't very rugged, but are enough for gmp.
 dnl  /dev/null as a parameter prevents a hang if $2 is accidentally omitted.
@@ -525,6 +525,13 @@ rm -f conftest*
 if test "$gmp_cv_check_asm_mmx" = "yes"; then
   ifelse([$1], , :, [$1])
 else
+  AC_MSG_WARN([+----------------------------------------------------------])
+  AC_MSG_WARN([| WARNING WARNING WARNING])
+  AC_MSG_WARN([| Target CPU has MMX code, but it can't be assembled by])
+  AC_MSG_WARN([|     $CCAS $CFLAGS])
+  AC_MSG_WARN([| Non-MMX replacements will be used.])
+  AC_MSG_WARN([| This will be an inferior build.])
+  AC_MSG_WARN([+----------------------------------------------------------])
   ifelse([$2], , :, [$2])
 fi
 ])dnl
