@@ -386,8 +386,8 @@ libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 # arbitrary choice for that.
 @WANT_CXX_TRUE@GMPXX_LTLIBRARIES_OPTION = libgmpxx.la
 libgmpxx_la_SOURCES = dummy.cc
-libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS)
-libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES) libgmp.la
+libgmpxx_la_DEPENDENCIES = $(CXX_OBJECTS) libgmp.la
+libgmpxx_la_LIBADD = $(libgmpxx_la_DEPENDENCIES)
 libgmpxx_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMPXX_LT_CURRENT):$(LIBGMPXX_LT_REVISION):$(LIBGMPXX_LT_AGE)
 
