@@ -152,7 +152,9 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 
   /* The format string is chopped up into pieces to be passed to
      funs->format.  Unfortunately that means it has to be copied so each
-     piece can be null-terminated.  */
+     piece can be null-terminated.  We're not going to be very fast here, so
+     use __gmp_allocate_func rather than TMP_ALLOC, to avoid overflowing the
+     stack if a long output string is given.  */
   alloc_fmt_size = strlen (orig_fmt) + 1;
   alloc_fmt = (*__gmp_allocate_func) (alloc_fmt_size);
   fmt = alloc_fmt;
@@ -351,13 +353,13 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             goto floating;
 
           case 'F':
-          case 'h':
           case 'j':
           case 'L':
           case 'q':
           case 'Q':
           case 't':
           case 'Z':
+          set_type:
             type = fchar;
             break;
 
@@ -370,23 +372,38 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             param.showtrailing = 0;
             goto floating;
 
-          case 'l':
-            if (type == 'l')
-              type = 'L';   /* "ll" means "L" */
-            else
-              type = 'l';
+          case 'h':
+            if (type != 'h')
+              goto set_type;
+            type = 'H';   /* internal code for "hh" */
             break;
 
+          case 'l':
+            if (type != 'l')
+              goto set_type;
+            type = 'L';   /* "ll" means "L" */
+            break;
+            
           case 'm':
             /* glibc strerror(errno), no argument */
             goto next;
             
           case 'n':
-            FLUSH ();
-            switch (type) {
-            case 'h': { short *p = va_arg (ap, short *); *p = retval; } break;
-            case 'l': { long  *p = va_arg (ap, long *);  *p = retval; } break;
-            default:  { int   *p = va_arg (ap, int *);   *p = retval; } break;
+            {
+              void  *p;
+              FLUSH ();
+              p = va_arg (ap, void *);
+              switch (type) {
+              case 'H': * (char      *) p = retval; break;
+              case 'h': * (short     *) p = retval; break;
+              case 'l': * (long      *) p = retval; break;
+              default:  * (int       *) p = retval; break;
+#if HAVE_LONG_LONG
+              case 'L': * (long long *) p = retval; break;
+#else
+              case 'L': ASSERT_FAIL (long long not available); break;
+#endif
+              }
             }
             va_copy (last_ap, ap);
             last_fmt = fmt;
