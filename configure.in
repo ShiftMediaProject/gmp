@@ -130,7 +130,6 @@ case "$target" in
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
   ultrasparc*-*-* | sparcv9-*-*)
-    ## FIXME: path=sparc32/v9
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
     gmp_optcflags_gcc="-mcpu=v9"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
@@ -669,7 +668,14 @@ GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')", POST)
 # file contains.  The multifunc files are symlinked to <funcname>.asm
 # and preprocessed with -DOPERATION_<funcname>.
 
-path="$path generic"
+# If the user specified `mpn_path', use that instead of the path we've
+# come up with.
+if test -z "$mpn_path"; then
+  path="$path generic"
+else
+  path="$mpn_path"
+fi
+
 mpn_objects=
 gmp_mpn_functions="${extra_functions} inlines add_n sub_n mul_1 addmul_1 \
   submul_1 lshift rshift diveby3 divmod_1 divrem divrem_1 divrem_2 \
