@@ -72,7 +72,6 @@ main (int argc, char *argv[])
       switch (opt) {
       case 'f':
       case 'q':
-      case 'r':
       case 'z':
         type = opt;
         break;
