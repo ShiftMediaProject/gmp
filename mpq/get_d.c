@@ -78,13 +78,14 @@ mpq_get_d (const MP_RAT *src)
   /* Normalize the denominator, i.e. make its most significant bit set by
      shifting it NORMALIZATION_STEPS bits to the left.  Also shift the
      numerator the same number of steps (to keep the quotient the same!).  */
-  if (! (dp[dsize - 1] & MP_LIMB_T_HIGHBIT))
+  if (! (dp[dsize - 1] & GMP_NUMB_HIGHBIT))
     {
       mp_ptr tp;
       mp_limb_t nlimb;
       unsigned normalization_steps;
 
       count_leading_zeros (normalization_steps, dp[dsize - 1]);
+      normalization_steps -= GMP_NAIL_BITS;
 
       /* Shift up the denominator setting the most significant bit of
 	 the most significant limb.  Use temporary storage not to clobber
@@ -152,7 +153,7 @@ mpq_get_d (const MP_RAT *src)
     for (i = qsize - 2; i >= 0; i--)
       res = res * MP_BASE_AS_DOUBLE + qp[i];
 
-    res = __gmp_scale2 (res, BITS_PER_MP_LIMB * scale);
+    res = __gmp_scale2 (res, GMP_NUMB_BITS * scale);
 
     TMP_FREE (marker);
     return sign_quotient >= 0 ? res : -res;

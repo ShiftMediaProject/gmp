@@ -68,6 +68,7 @@ mpz_get_d (mpz_srcptr src)
   else
     {
       count_leading_zeros (cnt, qp[size - 1]);
+      cnt -= GMP_NAIL_BITS;
 
 #if BITS_PER_MP_LIMB == 32
       if (cnt == 0)
@@ -77,8 +78,8 @@ mpz_get_d (mpz_srcptr src)
 	}
       else
 	{
-	  hz = (qp[size - 1] << cnt) | (qp[size - 2] >> BITS_PER_MP_LIMB - cnt);
-	  lz = (qp[size - 2] << cnt) | (qp[size - 3] >> BITS_PER_MP_LIMB - cnt);
+	  hz = ((qp[size - 1] << cnt) | (qp[size - 2] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
+	  lz = ((qp[size - 2] << cnt) | (qp[size - 3] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
 	}
 #if _GMP_IEEE_FLOATS
       /* Take bits from less significant limbs, but only if they may affect
@@ -86,30 +87,32 @@ mpz_get_d (mpz_srcptr src)
       if ((lz & 0x7ff) == 0x400)
 	{
 	  if (cnt != 0)
-	    lz += ((qp[size - 3] << cnt) != 0 || ! mpn_zero_p (qp, size - 3));
+	    lz += (((qp[size - 3] << cnt) & GMP_NUMB_MASK) != 0
+		   || ! mpn_zero_p (qp, size - 3));
 	  else
 	    lz += (! mpn_zero_p (qp, size - 2));
 	}
 #endif
       res = MP_BASE_AS_DOUBLE * hz + lz;
-      res = __gmp_scale2 (res, (size - 2) * BITS_PER_MP_LIMB - cnt);
+      res = __gmp_scale2 (res, (size - 2) * GMP_NUMB_BITS - cnt);
 #endif
 #if BITS_PER_MP_LIMB == 64
       if (cnt == 0)
 	hz = qp[size - 1];
       else
-	hz = (qp[size - 1] << cnt) | (qp[size - 2] >> BITS_PER_MP_LIMB - cnt);
+	hz = ((qp[size - 1] << cnt) | (qp[size - 2] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
 #if _GMP_IEEE_FLOATS
       if ((hz & 0x7ff) == 0x400)
 	{
 	  if (cnt != 0)
-	    hz += ((qp[size - 2] << cnt) != 0 || ! mpn_zero_p (qp, size - 2));
+	    hz += (((qp[size - 2] << cnt) & GMP_NUMB_MASK) != 0
+		   || ! mpn_zero_p (qp, size - 2));
 	  else
 	    hz += (! mpn_zero_p (qp, size - 1));
 	}
 #endif
       res = hz;
-      res = __gmp_scale2 (res, (size - 1) * BITS_PER_MP_LIMB - cnt);
+      res = __gmp_scale2 (res, (size - 1) * GMP_NUMB_BITS - cnt);
 #endif
     }
 
