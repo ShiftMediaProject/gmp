@@ -386,6 +386,20 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
    vinf0 is the low limb of vinf.
 
    ws is temporary space, and should have at least 2r limbs.
+
+   Think about:
+
+   The evaluated point a-b+c stands a good chance of having a zero carry
+   limb, a+b+c would have a 1/4 chance, and 4*a+2*b+c a 1/8 chance, roughly.
+   Perhaps this could be tested and stripped.  Doing so before recursing
+   would be better than stripping at the start of mpn_toom3_mul_n/sqr_n,
+   since then the recursion could be based on the new size.  Although in
+   truth the kara vs toom3 crossover is never so exact that one limb either
+   way makes a difference.
+
+   A small value like 1 or 2 for the carry could perhaps also be handled
+   with an add_n or addlsh1_n.  Would that be faster than an extra limb on a
+   (recursed) multiply/square?
 */
 static void
 toom3_interpolate (mp_ptr c, mp_srcptr v1, mp_ptr v2, mp_ptr vm1,
