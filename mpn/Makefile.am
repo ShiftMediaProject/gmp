@@ -25,7 +25,7 @@ AUTOMAKE_OPTIONS = gnu
 CPP	= @CPP@
 
 # -DOPERATION_$* tells multi-function files which function to produce.
-INCLUDES = -I$(top_srcdir) -I$(top_builddir) -DOPERATION_$*
+INCLUDES = -I$(top_srcdir) -DOPERATION_$*
 
 GENERIC_SOURCES = mp_bases.c
 OFILES = @mpn_objects@

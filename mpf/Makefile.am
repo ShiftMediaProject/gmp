@@ -24,7 +24,7 @@ AUTOMAKE_OPTIONS = gnu
 
 SUBDIRS = tests
 
-INCLUDES = -I$(top_srcdir) -I$(top_builddir)
+INCLUDES = -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libmpf.la
 libmpf_la_SOURCES = \

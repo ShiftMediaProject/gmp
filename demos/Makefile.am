@@ -22,7 +22,7 @@
 
 AUTOMAKE_OPTIONS = gnu
 
-INCLUDES = -I$(top_srcdir) -I$(top_builddir)
+INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
 # None of these programs are built by default, but "make <whatever>" will

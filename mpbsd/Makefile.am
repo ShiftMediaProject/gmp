@@ -23,7 +23,7 @@
 AUTOMAKE_OPTIONS = gnu
 
 # $(top_srcdir)/mpz is for #include "dmincl.c" in mdiv.c
-INCLUDES = -DBERKELEY_MP -I$(top_srcdir) -I$(top_srcdir)/mpz -I$(top_builddir)
+INCLUDES = -DBERKELEY_MP -I$(top_srcdir) -I$(top_srcdir)/mpz
 
 libmpbsd_la_SOURCES = \
 	itom.c mdiv.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c \
