@@ -1,6 +1,6 @@
 dnl  Itanium-2 mpn_hamdist -- mpn hamming distance.
 
-dnl  Copyright 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -87,12 +87,12 @@ ifdef(`HAVE_ABI_32',
 	.save	ar.lc, save_lc
 		mov	save_lc = ar.lc		C I0
 .mmi;	.save	ar.pfs, save_pfs
-		alloc	save_pfs = ar.pfs, 2,22,0,24	C M2
+		alloc	save_pfs = ar.pfs, 3,21,0,24	C M2
 		add	siz = -1, siz		C M3  size-1
 		;;
 
 		mov	r8 = 0			C M0  total
-		mov	ar.lc = siz		C I0  size-2
+		mov	ar.lc = siz		C I0  size-1
 
 	.save	pr, save_pr
 		mov	save_pr = pr		C I0
@@ -100,7 +100,7 @@ ifdef(`HAVE_ABI_32',
 
 		mov	ar.ec = 9		C I0
 
-		mov	pr.rot = 1<<16		C I0  p16,p17 true
+		mov	pr.rot = 1<<16		C I0  p16 true, others false
 		;;
 
 		C Stages:
