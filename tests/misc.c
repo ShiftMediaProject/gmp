@@ -428,3 +428,43 @@ tests_infinity_d (void)
   return 0;
 #endif
 }
+
+
+/* Set the hardware floating point rounding mode.  Same mode values as mpfr,
+   namely 0=nearest, 1=tozero, 2=up, 3=down.  Return 1 if successful, 0 if
+   not.  */
+int
+tests_hardware_setround (int mode)
+{
+#if HAVE_HOST_CPU_FAMILY_x86
+  int  rc;
+  switch (mode) {
+  case 0: rc = 0; break;  /* nearest */
+  case 1: rc = 3; break;  /* tozero  */
+  case 2: rc = 2; break;  /* up      */
+  case 3: rc = 1; break;  /* down    */
+  default:
+    return 0;
+  }
+  x86_fldcw ((x86_fstcw () & ~0xC00) | (rc << 10));
+  return 1;
+#endif
+
+  return 0;
+}
+
+/* Return the hardware floating point rounding mode, or -1 if unknown. */
+int
+tests_hardware_getround (void)
+{
+#if HAVE_HOST_CPU_FAMILY_x86
+  switch ((x86_fstcw () & ~0xC00) >> 10) {
+  case 0: return 0; break;  /* nearest */
+  case 1: return 3; break;  /* down    */
+  case 2: return 2; break;  /* up      */
+  case 3: return 1; break;  /* tozero  */
+  }
+#endif
+
+  return -1;
+}
