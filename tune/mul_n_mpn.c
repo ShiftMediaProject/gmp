@@ -28,5 +28,6 @@ MA 02111-1307, USA.
 #define __gmpn_toom3_mul_n mpn_toom3_mul_n_mpn
 #define __gmpn_toom3_sqr_n mpn_toom3_sqr_n_mpn
 #define __gmpn_mul_n       mpn_mul_n_mpn
+#define __gmpn_sqr_n       mpn_sqr_n_mpn
 
 #include "../mpn/generic/mul_n.c"
