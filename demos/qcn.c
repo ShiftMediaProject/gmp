@@ -114,7 +114,7 @@ qcn_str (char *num)
       mpz_out_str (stdout, 0, z);
       printf (" is not supported (negatives only)\n");
     }
-  else if (! (mpz_mod4 (z) == 0 || mpz_mod4 (z) == 1))
+  else if (mpz_fdiv_ui (z, 4) != 0 && mpz_fdiv_ui (z, 4) != 1)
     {
       mpz_out_str (stdout, 0, z);
       printf (" is not a discriminant (must == 0 or 1 mod 4)\n");
