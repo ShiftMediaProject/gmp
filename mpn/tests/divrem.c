@@ -1,37 +1,29 @@
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "longlong.h"
 
-#ifndef USG
+#if defined (USG) || defined (__SVR4) || defined (_UNICOS) || defined (__hpux)
+#include <time.h>
+
+int
+cputime ()
+{
+  if (CLOCKS_PER_SEC < 100000)
+    return clock () * 1000 / CLOCKS_PER_SEC;
+  return clock () / (CLOCKS_PER_SEC / 1000);
+}
+#else
+#include <sys/types.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 
-unsigned long
+int
 cputime ()
 {
-    struct rusage rus;
+  struct rusage rus;
 
-    getrusage (0, &rus);
-    return rus.ru_utime.tv_sec * 1000 + rus.ru_utime.tv_usec / 1000;
-}
-#else
-#include <time.h>
-
-#ifndef CLOCKS_PER_SEC
-#define CLOCKS_PER_SEC 1000000
-#endif
-
-#if CLOCKS_PER_SEC >= 10000
-#define CLOCK_TO_MILLISEC(cl) ((cl) / (CLOCKS_PER_SEC / 1000))
-#else
-#define CLOCK_TO_MILLISEC(cl) ((cl) * 1000 / CLOCKS_PER_SEC)
-#endif
-
-unsigned long
-cputime ()
-{
-  return CLOCK_TO_MILLISEC (clock ());
+  getrusage (0, &rus);
+  return rus.ru_utime.tv_sec * 1000 + rus.ru_utime.tv_usec / 1000;
 }
 #endif
 
@@ -77,9 +69,9 @@ cputime ()
 main ()
 {
   mp_limb_t nptr[2 * SIZE];
-  mp_limb_t dptr[SIZE];
+  mp_limb_t dptr[2 * SIZE];
   mp_limb_t qptr[2 * SIZE];
-  mp_limb_t pptr[2 * SIZE];
+  mp_limb_t pptr[2 * SIZE + 1];
   mp_limb_t rptr[2 * SIZE];
   mp_size_t nsize, dsize, qsize, rsize, psize;
   int test;
