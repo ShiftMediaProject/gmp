@@ -50,6 +50,9 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
   limb_cnt = cnt / BITS_PER_MP_LIMB;
   cnt %= BITS_PER_MP_LIMB;
   abs_usize = ABS (usize);
+
+  /* MPZ_REALLOC(w) below is only when w!=u, so we can fetch PTR(u) here
+     nice and early */
   up = PTR(u);
 
   if ((usize ^ dir) < 0)
