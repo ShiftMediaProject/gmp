@@ -37,7 +37,7 @@ MA 02111-1307, USA.
 
 	* mpz/aorsmul.c, mpz/aorsmul_i.c, mpz/cfdiv_q_2exp.c,
 	mpz/cfdiv_r_2exp.c, mpq/aors.c, mpf/ceilfloor.c: Give REGPARM_ATTR()
-	on function definition too, as demanded by by gcc 3.4.
+	on function definition too, as demanded by gcc 3.4.
 
 2004-04-22  Kevin Ryde  <kevin@swox.se>
 
