@@ -1,3 +1,13 @@
+2000-10-24  Kevin Ryde  <kevin@swox.se>
+
+	* mpq/aors.c, mpq/canonicalize.c: Skip two mpz_divexact calls if
+	gcd gives 1, which should be 60% of the time.
+	* gmp-impl.h (MPZ_EQUAL_1_P): New macro.
+	* mpq/mul.c, mpq/div.c: Use it, and a new DIV_OR_SET.
+
+	* tune/tuneup.c (xp_block, yp_block): Initialize these with random
+	data.  Fixes GCD_ACCEL and GCDEXT thresholds, and latest POWM.
+
 2000-10-23  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in, SPEED_CYCLECOUNTER_OBJS switch: Add ia64 case.
