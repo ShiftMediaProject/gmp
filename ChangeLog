@@ -19,6 +19,41 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-12  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/root.c: Add <stdlib.h>, for abort().
+
+	* mpfr/tests/Makefile.am (AUTOMAKE_OPTIONS): Add ansi2knr.
+	* mpfr/mpfr.h, mpfr/mpfr-tests.h, reuse.c, tadd.c, tadd_ui.c, tagm.c,
+	tatan.c, tcmp2.c, tcos.c, tdiv.c, tdiv_ui.c, teq.c, texp.c,
+	tget_str.c, thyperbolic.c, tlog.c, tmul.c, tout_str.c, tpow.c,
+	trandom.c, tset_z.c, tsin.c, tsqrt.c, tsqrt_ui.c, tsub_ui.c, ttan.c,
+	tui_div.c: Fixes for K&R.
+
+	* tests/misc/t-scanf.c (check_misc, check_misc): 
+
+	* tests/mpz/t-inp_str.c, tests/mpq/t-inp_str.c, tests/misc/t-scanf.c:
+	Avoid strings in ASSERT, not enjoyed by K&R.
+
+	* tests/tests.h (refmpn_mod_34lsub1): Add __GMP_PROTO.
+
+	* mpbsd/Makefile.am: Avoid an automake problem with ansi2knr and
+	sources in a different directory.
+
+	* printf/repl-vsnprintf.c: Test HAVE_LONG_DOUBLE for long double.
+
+	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Add mod_34lsub1.c,
+	mul_2.c, pre_divrem_1.c.
+
+	* gmp-h.in, gmp-impl.h (mpn_add_nc, mpn_addmul_1c, mpn_addsub_n,
+	mpn_addsub_nc, mpn_divrem_1c, mpn_dump, mpn_mod_1c, mpn_mul_1c,
+	mpn_mul_basecase, mpn_sqr_n, mpn_sqr_basecase, mpn_sub_nc,
+	mpn_submul_1c): Move to gmp-impl.h, since they're undocumented.
+
+	* gmp-impl.h (mpn_reciprocal): Remove, unused.
+
+	* tune/many.pl (cntlz, cnttz): Use new SPEED_ROUTINE_COUNT_ZEROS.
+
 2002-01-11  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/hppa/*.asm, mpn/pa64/*.asm, mpn/pa64w/*.asm: Use L().
