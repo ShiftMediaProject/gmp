@@ -197,6 +197,9 @@ typedef long int		mp_limb_signed_t;
 #endif
 #endif
 
+/* For reference, note that the name __mpz_struct gets into C++ mangled
+   function names, which means although the "__" suggests an internal, we
+   must leave this name for binary compatibility.  */
 typedef struct
 {
   int _mp_alloc;		/* Number of *limbs* allocated and pointed
