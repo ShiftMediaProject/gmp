@@ -57,11 +57,10 @@ struct hgcd_ref
   mpz_t v[4];
 };
 
-static void hgcd_ref_init (struct hgcd_ref *hgcd);
-static void hgcd_ref_clear (struct hgcd_ref *hgcd);
-static int hgcd_ref (struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b);
-static int
-hgcd_ref_equal (const struct hgcd *hgcd, const struct hgcd_ref *ref);
+static void hgcd_ref_init __GMP_PROTO ((struct hgcd_ref *hgcd));
+static void hgcd_ref_clear __GMP_PROTO ((struct hgcd_ref *hgcd));
+static int hgcd_ref __GMP_PROTO ((struct hgcd_ref *hgcd, const mpz_t a, const mpz_t b));
+static int hgcd_ref_equal __GMP_PROTO ((const struct hgcd *hgcd, const struct hgcd_ref *ref));
 
 int
 main (int argc, char **argv)
