@@ -2463,95 +2463,62 @@ typedef mp_limb_t UWtype;
 typedef unsigned int UHWtype;
 #define W_TYPE_SIZE BITS_PER_MP_LIMB
 
-/* Define ieee_double_extract and _GMP_IEEE_FLOATS.  */
+/* Define ieee_double_extract and _GMP_IEEE_FLOATS.
 
-#if (defined (__arm__) && (defined (__ARMWEL__) || defined (__linux__)))
-/* Special case for little endian ARM since floats remain in big-endian.  */
-#define _GMP_IEEE_FLOATS 1
-union ieee_double_extract
-{
-  struct
-    {
-      unsigned int manh:20;
-      unsigned int exp:11;
-      unsigned int sig:1;
-      unsigned int manl:32;
-    } s;
-  double d;
-};
+   "unsigned" is used for the bit fields, unless that's less than 32 bits,
+   which is the case for instance on the m68k palmos prc tools port of gcc.  */
+
+#if SIZEOF_UNSIGNED >= 4
+#define GMP_UINT32  unsigned
 #else
-#if defined (_LITTLE_ENDIAN) || defined (__LITTLE_ENDIAN__)		\
- || defined (__alpha)							\
- || defined (__clipper__)						\
- || defined (__cris)							\
- || defined (__i386__)							\
- || defined (__i860__)							\
- || defined (__i960__)							\
- || defined (__ia64)							\
- || defined (MIPSEL) || defined (_MIPSEL)				\
- || defined (__ns32000__)						\
- || defined (__WINNT) || defined (_WIN32)
+#define GMP_UINT32  unsigned long
+#endif
+
+#if HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
 #define _GMP_IEEE_FLOATS 1
 union ieee_double_extract
 {
   struct
     {
-      unsigned int manl:32;
-      unsigned int manh:20;
-      unsigned int exp:11;
-      unsigned int sig:1;
+      GMP_UINT32 manh:20;
+      GMP_UINT32 exp:11;
+      GMP_UINT32 sig:1;
+      GMP_UINT32 manl:32;
     } s;
   double d;
 };
-#else /* Need this as an #else since the tests aren't made exclusive.  */
-#if defined (__mc68000__) || defined (__mc68020__) || defined (__m68k__)\
-    || defined(mc68020)
+#endif
+
+#if HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
 #define _GMP_IEEE_FLOATS 1
 union ieee_double_extract
 {
   struct
     {
-      /* "int" might be only 16 bits, so use "long" */
-      unsigned long sig:1;
-      unsigned long exp:11;
-      unsigned long manh:20;
-      unsigned long manl:32;
+      GMP_UINT32 manl:32;
+      GMP_UINT32 manh:20;
+      GMP_UINT32 exp:11;
+      GMP_UINT32 sig:1;
     } s;
   double d;
 };
-#else
-#if defined (_BIG_ENDIAN) || defined (__BIG_ENDIAN__)			\
- || defined (__a29k__) || defined (_AM29K)				\
- || defined (__arm__)							\
- || (defined (__convex__) && defined (_IEEE_FLOAT_))			\
- || defined (_CRAYMPP) || defined (_CRAYIEEE)				\
- || defined (__i370__) || defined (__mvs__)				\
- || defined (__m88000__)						\
- || defined (MIPSEB) || defined (_MIPSEB)				\
- || defined (__hppa) || defined (__hppa__)				\
- || defined (__pyr__)							\
- || defined (__ibm032__)						\
- || defined (_IBMR2) || defined (_ARCH_PPC)				\
- || defined (__sh__)							\
- || defined (__sparc) || defined (sparc)				\
- || defined (__sparc__)  /* gcc 3.1 */                                  \
- || defined (__we32k__)
+#endif
+
+#if HAVE_DOUBLE_IEEE_BIG_ENDIAN
 #define _GMP_IEEE_FLOATS 1
 union ieee_double_extract
 {
   struct
     {
-      unsigned int sig:1;
-      unsigned int exp:11;
-      unsigned int manh:20;
-      unsigned int manl:32;
+      GMP_UINT32 sig:1;
+      GMP_UINT32 exp:11;
+      GMP_UINT32 manh:20;
+      GMP_UINT32 manl:32;
     } s;
   double d;
 };
 #endif
-#endif
-#endif
-#endif
+
 
 /* Use (4.0 * ...) instead of (2.0 * ...) to work around buggy compilers
    that don't convert ulong->double correctly (eg. SunOS 4 native cc).  */
