@@ -194,7 +194,7 @@ There is carefully optimized assembly code for these CPUs:
 ARM,
 DEC Alpha 21064, 21164, and 21264,
 AMD 29000, K6 and Athlon,
-Hitachi SH and SH2,
+Hitachi SuperH and SH-2,
 HPPA 1.0, 1.1 and 2.0,
 Intel Pentium, Pentium Pro/Pentium II, generic x86,
 Intel i960,
@@ -779,8 +779,9 @@ see the GMP 2 manual for details.
 @section Getting the Latest Version of GMP
 
 The latest version of the GMP library is available by at
-@samp{ftp://ftp.gnu.org/pub/gnu/gmp}.  Many sites around the world mirror
-@samp{ftp.gnu.org}; please use a mirror site near you.
+@uref{ftp://ftp.gnu.org/pub/gnu/gmp}.  Many sites around the world mirror
+@samp{ftp.gnu.org}; please use a mirror site near you, see
+@uref{http://www.gnu.org/order/ftp.html}.
 
 
 @node Reporting Bugs, Integer Functions, GMP Basics, Top
