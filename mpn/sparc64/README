@@ -32,7 +32,7 @@ Notation:
   FA = fadd*/fsub*/f*to*/fmov*
   FM = fmul*
 
-UltraSPARC-1/2 can issue four instructions per cycle, with these restrictions:
+UltraSPARC can issue four instructions per cycle, with these restrictions:
 * Two IANY instructions, but only one of these may be a shift.  If there is a
   shift and an IANY instruction, the shift must precede the IANY instruction.
 * One FA.
@@ -60,46 +60,56 @@ operand.  When used for 32x32->64 multiplication, it needs 20 cycles.
 Furthermore, it stalls the processor while executing.  We stay away from that
 instruction, and instead use floating-point operations.
 
-Integer conditional move instructions cannot dual-issue with other integer
-instructions.  No conditional move can issue 1-5 cycles after a load.  (Or
-something such bizarre.)  Useless.
+Floating-point add and multiply units are fully pipelined.  The latency for
+UltraSPARC-1/2 is 3 cycles and for UltraSPARC-3 it is 4 cycles.
 
-The UltraSPARC-3 pipeline seems similar, but is somewhat more rigid.  Branches
-execute slower, and there may be other new stalls.  Integer multiply doesn't
-halt the CPU and also has a much lower latency.  But it's still not pipelined,
-and thus useless for our needs.
+Integer conditional move instructions cannot dual-issue with other integer
+instructions.  No conditional move can issue 1-5 cycles after a load.  (This
+might have been fixed for UltraSPARC-3.)
+
+The UltraSPARC-3 pipeline is very simular to he one of UltraSPARC-1/2 , but is
+somewhat slower.  Branches execute slower, and there may be other new stalls.
+But integer multiply doesn't stall the entire CPU and also has a much lower
+latency.  But it's still not pipelined, and thus useless for our needs.
 
 STATUS
 
-(Timings are for UltraSPARC-1/2.  UltraSPARC-3 is a few cycles slower.)
-
-* mpn_lshift, mpn_rshift: The current code runs at 2.0 cycles/limb.  The IEU0
+* mpn_lshift, mpn_rshift: The current code runs at 2.0 cycles/limb on
+  UltraSPARC-1/2 and 2.65 on UltraSPARC-3.  For UltraSPARC-1/2, the IEU0
   functional unit is saturated with shifts.
 
-* mpn_add_n, mpn_sub_n: The current code runs at 4 cycles/limb.  The 4
-  instruction recurrency is the speed limiter.
+* mpn_add_n, mpn_sub_n: The current code runs at 4 cycles/limb on
+  UltraSPARC-1/2 and 4.5 cycles/limb on UltraSPARC-3.  The 4 instruction
+  recurrency is the speed limiter.
 
-* mpn_addmul_1: The current code runs at 14 cycles/limb asymptotically.  The
+* mpn_addmul_1: The current code runs at 14 cycles/limb asymptotically on
+  UltraSPARC-1/2 and 17.5 cycles/limb on UltraSPARC-3.  On UltraSPARC-1/2, the
   code sustains 4 instructions/cycle.  It might be possible to invent a better
   way of summing the intermediate 49-bit operands, but it is unlikely that it
   will save enough instructions to save an entire cycle.
 
-  The load-use of the `rlimb' operand is not enough scheduled for good L2 cache
-  performance.  Since UltraSPARC-1/2 L1 cache is direct mapped, we miss to L2
-  very often.  The load-use of the std/ldx pairs via the stack are somewhat
-  over-scheduled.
+  The load-use of the u operand is not enough scheduled for good L2 cache
+  performance.  The UltraSPARC-1/2 L1 cache is direct mapped, and since we use
+  temporary stack slots that will conflict with the u and r operands, we miss
+  to L2 very often.  The load-use of the std/ldx pairs via the stack are
+  perhaps over-scheduled.
 
-  It would be possible to save two instructions: (1) The `mov' could be avoided
-  if ths std/ldx were less scheduled.  (2) The ldx of `rlimb' could be split
-  into two `ld' instructions, saving the shifts/masks.
+  It would be possible to save two instructions: (1) The mov could be avoided
+  if the std/ldx were less scheduled.  (2) The ldx of the r operand could be
+  split into two ld instructions, saving the shifts/masks.
+
+  It should be possible to reach 14 cycles/limb for UltraSPARC-3 if the fp
+  operations where rescheduled for this processor's 4-cycle latency.
 
 * mpn_mul_1: The current code is a straightforward edit of the mpn_addmul_1
   code.  It would be possible to shave one or two cycles from it, with some
   labour.
 
-* mpn_submul_1: Braindead code just calling mpn_mul_1 + mpn_sub_n.  It would be
-  possible to either match the mpn_addmul_1 performance, or in the worst case
-  use one more instruction group.
+* mpn_submul_1: Simpleminded code just calling mpn_mul_1 + mpn_sub_n.  This
+  means that it runs at 18 cycles/limb on UltraSPARC-1/2 and 23 cycles/limb on
+  UltraSPARC-3.  It would be possible to either match the mpn_addmul_1
+  performance, or in the worst case use one more instruction group.
 
-* mpn_Xmul_2: These could be made to run at 9 cycles/limb.  Straightforward
-  generalization of mpn_Xmul_1.
+* mpn_Xmul_2: Could be made to run at 9 cycles/limb.  Straightforward
+  generalization of mpn_Xmul_1.  This means that we could double the
+  UltraSPARC-3 multiply performance by implementing mpn_addmul_2.
