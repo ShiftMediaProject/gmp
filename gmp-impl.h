@@ -2679,6 +2679,27 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
 #define JACOBI_RECIP_UU_BIT1(a, b) \
   ((int) ((a) & (b)))
 
+/* Strip low zero limbs from {b_ptr,b_size} by incrementing b_ptr and
+   decrementing b_size.  b_low should be b_ptr[0] on entry, and will be
+   updated for the new b_ptr.  result_bit1 is updated according to the
+   factors of 2 stripped, as per (a/2).  */
+#define JACOBI_STRIP_LOW_ZEROS(result_bit1, a, b_ptr, b_size, b_low)    \
+  do {                                                                  \
+    ASSERT ((b_size) >= 1);                                             \
+    ASSERT ((b_low) == (b_ptr)[0]);                                     \
+                                                                        \
+    while (UNLIKELY ((b_low) == 0))                                     \
+      {                                                                 \
+        (b_size)--;                                                     \
+        ASSERT ((b_size) >= 1);                                         \
+        (b_ptr)++;                                                      \
+        (b_low) = *(b_ptr);                                             \
+                                                                        \
+        ASSERT (((a) & 1) != 0);                                        \
+        if ((GMP_NUMB_BITS % 2) == 1)                                   \
+          (result_bit1) ^= JACOBI_TWO_U_BIT1(a);                        \
+      }                                                                 \
+  } while (0)
 
 /* Set a_rem to {a_ptr,a_size} reduced modulo b, either using mod_1 or
    modexact_1_odd, but in either case leaving a_rem<b.  b must be odd and
