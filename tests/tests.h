@@ -254,6 +254,7 @@ mp_limb_t refmpn_preinv_mod_1 __GMP_PROTO ((mp_srcptr sp, mp_size_t size,
 
 void refmpn_random __GMP_PROTO ((mp_ptr, mp_size_t));
 void refmpn_random2 __GMP_PROTO ((mp_ptr, mp_size_t));
+mp_limb_t refmpn_random_limb __GMP_PROTO ((void));
 
 mp_limb_t refmpn_rshift __GMP_PROTO ((mp_ptr wp, mp_srcptr xp, mp_size_t size,
                                  unsigned shift));
