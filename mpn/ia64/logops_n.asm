@@ -113,7 +113,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	ld8		r19 = [up], 8		C			M
 	ld8		r23 = [vp], 8		C			M
-  (p15)	br		.grt4			C			B
+  (p15)	br.cond.dpnt	.grt4			C			B
 
 	logop(		r14, r10, r11)		C			M I
 	;;
@@ -134,7 +134,7 @@ ifdef(`HAVE_ABI_32',
 
 .Lb01:	add		n = -1, n		C			M I
 	logop(		r15, r10, r11)		C			M I
-  (p15)	br		.grt1			C			B
+  (p15)	br.cond.dpnt	.grt1			C			B
 	;;
 
 	notormov(	r9, r15)		C			M I
@@ -167,7 +167,7 @@ ifdef(`HAVE_ABI_32',
 
 .Lb10:	ld8		r19 = [up], 8		C			M
 	ld8		r23 = [vp], 8		C			M
-  (p15)	br		.grt2			C			B
+  (p15)	br.cond.dpnt	.grt2			C			B
 
 	logop(		r14, r10, r11)		C			M I
 	;;
@@ -201,7 +201,7 @@ ifdef(`HAVE_ABI_32',
 	ld8		r19 = [up], 8		C			M
 	ld8		r23 = [vp], 8		C			M
 	logop(		r15, r10, r11)		C			M I
-  (p15)	br		.grt3			C			B
+  (p15)	br.cond.dpnt	.grt3			C			B
 	;;
 
 	logop(		r14, r18, r22)		C			M I

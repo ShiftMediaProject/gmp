@@ -141,7 +141,7 @@ ifdef(`HAVE_ABI_32',`
 	cmp.PRED	p9, p0 = w3, u3		C			M I
    (p7)	cmp.eq.or	p8, p0 = LIM, w2	C			M I
    (p7)	add		w2 = INCR, w2		C			M I
-  (p14)	br		.Lcj8			C			B
+  (p14)	br.cond.dptk	.Lcj8			C			B
 	;;
 
 .grt8:	ld8		v1 = [vp], 8		C			M01
@@ -158,7 +158,7 @@ ifdef(`HAVE_ABI_32',`
 
 .Lb001:	add		rpx = 16, rp		C			M I
 	ADDSUB		w0 = r10, r11		C			M I
-  (p15)	br		.grt1			C			B
+  (p15)	br.cond.dpnt	.grt1			C			B
 	;;
 	cmp.PRED	p6, p0 = w0, r10	C			M I
 	mov		r8 = 0			C			M I
@@ -201,7 +201,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u0 = [up], 8		C			M01
 	add		rpx = 24, rp		C			M I
 	ADDSUB		w7 = r10, r11		C			M I
-  (p15)	br		.grt2			C			B
+  (p15)	br.cond.dpnt	.grt2			C			B
 	;;
 	cmp.PRED	p9, p0 = w7, r10	C			M I
 	ADDSUB		w0 = u0, v0		C			M I
@@ -239,7 +239,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	ld8		v0 = [vp], 8		C			M01
 	ld8		u0 = [up], 8		C			M01
-  (p15)	br		.grt3			C			B
+  (p15)	br.cond.dpnt	.grt3			C			B
 	;;
 	cmp.PRED	p8, p0 = w6, r10	C			M I
 	ADDSUB		w7 = u7, v7		C			M I
@@ -290,7 +290,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	ld8		v0 = [vp], 8		C			M01
 	ld8		u0 = [up], 8		C			M01
-  (p15)	br		.grt4			C			B
+  (p15)	br.cond.dpnt	.grt4			C			B
 	;;
 	cmp.PRED	p7, p0 = w5, r10	C			M I
 	ADDSUB		w6 = u6, v6		C			M I
@@ -346,7 +346,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		u0 = [up], 8		C			M01
 	ADDSUB		w5 = u5, v5		C			M I
 	add		n = -1, n		C loop count		M I
-  (p15)	br		.grt5			C			B
+  (p15)	br.cond.dpnt	.grt5			C			B
 	;;
 	cmp.PRED	p7, p0 = w5, u5		C			M I
 	ADDSUB		w6 = u6, v6		C			M I
@@ -390,7 +390,7 @@ ifdef(`HAVE_ABI_32',`
 	ld8		v0 = [vp], 8		C			M01
 	ld8		u0 = [up], 8		C			M01
 	ADDSUB		w4 = u4, v4		C			M I
-  (p14)	br		.Lcj67			C			B
+  (p14)	br.cond.dptk	.Lcj67			C			B
 	;;
 
 .grt6:	ld8		v1 = [vp], 8		C			M01
@@ -428,7 +428,7 @@ ifdef(`HAVE_ABI_32',`
 	;;
 	ld8		v0 = [vp], 8		C			M01
 	ld8		u0 = [up], 8		C			M01
-  (p15)	br		.grt7			C			B
+  (p15)	br.cond.dpnt	.grt7			C			B
 	;;
 	st8		[rp] = w2, 8		C			M23
    (p8)	cmp.eq.or	p9, p0 = LIM, w3	C			M I
