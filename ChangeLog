@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2003-12-29  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/sparc64/README: Remove mpn_Xmul_2, done.
+	Add blurb about L1 cache conflicts.
+
 	* mpn/generic/gcd.c: Disable Schoenhage code for now.
 
 2003-12-29  Kevin Ryde  <kevin@swox.se>
@@ -46,7 +49,7 @@ MA 02111-1307, USA.
 
 	* mpn/generic/gcd.c (gcd_schoenhage_itch): Avoid unary "+".
 	 (mpn_gcd): Allocate scratch space on heap for gcd_schoenhage.
-	(mpn_gcd): Don't invoke MPN_NORMALIZE on in operands.
+	(mpn_gcd): Don't invoke MPN_NORMALIZE on input operands.
 
 2003-12-23  Kevin Ryde  <kevin@swox.se>
 
