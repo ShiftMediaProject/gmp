@@ -1849,6 +1849,9 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
       }                                                                 \
   } while (0)
 
+/* bit count to limb count, rounding up */
+#define BITS_TO_LIMBS(n)  (((n) + (GMP_NUMB_BITS - 1)) / GMP_NUMB_BITS)
+
 
 #if HAVE_HOST_CPU_FAMILY_x86
 #define TARGET_REGISTER_STARVED 1
