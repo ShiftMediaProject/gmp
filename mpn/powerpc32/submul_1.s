@@ -27,12 +27,6 @@
 # size		r5
 # s2_limb	r6
 
-# This is a fairly straightforward implementation.  The timing of the PC601
-# is hard to understand, so I will wait to optimize this until I have some
-# hardware to play with.
-
-# The code trivially generalizes to 64 bit limbs for the PC620.
-
 	.toc
 	.csect .__mpn_submul_1[PR]
 	.align 2
