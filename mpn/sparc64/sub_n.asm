@@ -1,172 +1,219 @@
-! SPARC v9 __gmpn_sub_n -- Subtract two limb vectors of the same length > 0 and
-! store difference in a third limb vector.
+dnl  SPARC v9 mpn_sub_n -- Subtract two limb vectors of the same length > 0 and
+dnl  store difference in a third limb vector.
 
-! Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 2001 Free Software Foundation, Inc.
 
-! This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-! The GNU MP Library is free software; you can redistribute it and/or modify
-! it under the terms of the GNU Lesser General Public License as published by
-! the Free Software Foundation; either version 2.1 of the License, or (at your
-! option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
 
-! The GNU MP Library is distributed in the hope that it will be useful, but
-! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-! or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-! License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
 
-! You should have received a copy of the GNU Lesser General Public License
-! along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-! the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-! MA 02111-1307, USA.
-
-
-! INPUT PARAMETERS
-! res_ptr	%o0
-! s1_ptr	%o1
-! s2_ptr	%o2
-! size		%o3
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
+
+C Compute carry-out from the most significant bits of u,v, and r, where
+C r=u-v-carry_in, using logic operations.
+
+C This code runs at 4 cycles/limb on UltraSPARC 1 and 2.  It has a 4 insn
+C recurrency, and the UltraSPARC 1 and 2 the IE units are 100% saturated.
+C Therefore, it seems futile to try to optimize this any further...
+
+C INPUT PARAMETERS
+define(`rp',`%i0')
+define(`up',`%i1')
+define(`vp',`%i2')
+define(`n',`%i3')
+
+define(`u0',`%l0')
+define(`u1',`%l2')
+define(`u2',`%l4')
+define(`u3',`%l6')
+define(`v0',`%l1')
+define(`v1',`%l3')
+define(`v2',`%l5')
+define(`v3',`%l7')
+
+define(`cy',`%i4')
+
+define(`fanop',`fitod %f0,%f2')		dnl  A quasi nop running in the FA pipe
+define(`fmnop',`fmuld %f0,%f0,%f4')	dnl  A quasi nop running in the FM pipe
 
 ASM_START()
 	.register	%g2,#scratch
 	.register	%g3,#scratch
 PROLOGUE(mpn_sub_n)
-
-! 12 mem ops >= 12 cycles
-! 8 shift insn >= 8 cycles
-! 8 addccc, executing alone, +8 cycles
-! Unrolling not mandatory...perhaps 2-way is best?
-! Put one ldx/stx and one s?lx per issue tuple, fill with pointer arith and loop ctl
-! All in all, it runs at 5 cycles/limb
-
 	save	%sp,-160,%sp
 
-	addcc	%g0,%g0,%g0
+	fitod %f0,%f0		C make sure f0 contains small, quiet number
+	mov	0,cy
+	subcc	n,4,n
+	bl,pn	%icc,.Lend123
+	fanop
+	ldx	[up+0],u0
+	ldx	[vp+0],v0
+	add	up,32,up
+	ldx	[up-24],u1
+	ldx	[vp+8],v1
+	add	vp,32,vp
+	ldx	[up-16],u2
+	ldx	[vp-16],v2
+	ldx	[up-8],u3
+	ldx	[vp-8],v3
+	subcc	n,4,n
+	sub	u0,v0,%g1	C main sub
+	sub	%g1,cy,%g4	C carry sub
+	orn	u0,v0,%g2
+	bl,pn	%icc,.Lend4567
+	fanop
+	b,a	.Loop
 
-	add	%i3,-4,%i3
-	brlz,pn	%i3,L(there)
-	nop
+	.align	16
+C START MAIN LOOP
+.Loop:	orn	%g4,%g2,%g2
+	andn	u0,v0,%g3
+	ldx	[up+0],u0
+	fanop
+C --
+	andn	%g2,%g3,%g2
+	ldx	[vp+0],v0
+	add	up,32,up
+	fanop
+C --
+	srlx	%g2,63,cy
+	sub	u1,v1,%g1
+	stx	%g4,[rp+0]
+	fanop
+C --
+	sub	%g1,cy,%g4
+	orn	u1,v1,%g2
+	fmnop
+	fanop
+C --
+	orn	%g4,%g2,%g2
+	andn	u1,v1,%g3
+	ldx	[up-24],u1
+	fanop
+C --
+	andn	%g2,%g3,%g2
+	ldx	[vp+8],v1
+	add	vp,32,vp
+	fanop
+C --
+	srlx	%g2,63,cy
+	sub	u2,v2,%g1
+	stx	%g4,[rp+8]
+	fanop
+C --
+	sub	%g1,cy,%g4
+	orn	u2,v2,%g2
+	fmnop
+	fanop
+C --
+	orn	%g4,%g2,%g2
+	andn	u2,v2,%g3
+	ldx	[up-16],u2
+	fanop
+C --
+	andn	%g2,%g3,%g2
+	ldx	[vp-16],v2
+	add	rp,32,rp
+	fanop
+C --
+	srlx	%g2,63,cy
+	sub	u3,v3,%g1
+	stx	%g4,[rp-16]
+	fanop
+C --
+	sub	%g1,cy,%g4
+	orn	u3,v3,%g2
+	fmnop
+	fanop
+C --
+	orn	%g4,%g2,%g2
+	andn	u3,v3,%g3
+	ldx	[up-8],u3
+	fanop
+C --
+	andn	%g2,%g3,%g2
+	subcc	n,4,n
+	ldx	[vp-8],v3
+	fanop
+C --
+	srlx	%g2,63,cy
+	sub	u0,v0,%g1
+	stx	%g4,[rp-8]
+	fanop
+C --
+	sub	%g1,cy,%g4
+	orn	u0,v0,%g2
+	bge,pt	%icc,.Loop
+	fanop
+C END MAIN LOOP
+.Lend4567:
+	orn	%g4,%g2,%g2
+	andn	u0,v0,%g3
+	andn	%g2,%g3,%g2
+	srlx	%g2,63,cy
+	sub	u1,v1,%g1
+	stx	%g4,[rp+0]
+	sub	%g1,cy,%g4
+	orn	u1,v1,%g2
+	orn	%g4,%g2,%g2
+	andn	u1,v1,%g3
+	andn	%g2,%g3,%g2
+	srlx	%g2,63,cy
+	sub	u2,v2,%g1
+	stx	%g4,[rp+8]
+	sub	%g1,cy,%g4
+	orn	u2,v2,%g2
+	orn	%g4,%g2,%g2
+	andn	u2,v2,%g3
+	andn	%g2,%g3,%g2
+	add	rp,32,rp
+	srlx	%g2,63,cy
+	sub	u3,v3,%g1
+	stx	%g4,[rp-16]
+	sub	%g1,cy,%g4
+	orn	u3,v3,%g2
+	orn	%g4,%g2,%g2
+	andn	u3,v3,%g3
+	andn	%g2,%g3,%g2
+	srlx	%g2,63,cy
+	stx	%g4,[rp-8]
 
-	ldx	[%i1+0],%l0
-	ldx	[%i2+0],%l4
-	ldx	[%i1+8],%l1
-	ldx	[%i2+8],%l5
-	ldx	[%i1+16],%l2
-	ldx	[%i2+16],%l6
-	ldx	[%i1+24],%l3
-	ldx	[%i2+24],%l7
-	add	%i1,32,%i1
-	add	%i2,32,%i2
+.Lend123:
+	addcc	n,4,n
+	bz,pn	%icc,.Lret
+	fanop
 
-	add	%i3,-4,%i3
-	brlz,pn	%i3,L(skip)
-	nop
-	b	L(loop1)	! jump instead of executing many NOPs
-	nop
-	ALIGN(32)
-!---------  Start main loop ---------
-L(loop1):
-	subccc	%l0,%l4,%g1
-!-
-	srlx	%l0,32,%o0
-	ldx	[%i1+0],%l0
-!-
-	srlx	%l4,32,%o4
-	ldx	[%i2+0],%l4
-!-
-	subccc	%o0,%o4,%g0
-!-
-	subccc	%l1,%l5,%g2
-!-
-	srlx	%l1,32,%o1
-	ldx	[%i1+8],%l1
-!-
-	srlx	%l5,32,%o5
-	ldx	[%i2+8],%l5
-!-
-	subccc	%o1,%o5,%g0
-!-
-	subccc	%l2,%l6,%g3
-!-
-	srlx	%l2,32,%o2
-	ldx	[%i1+16],%l2
-!-
-	srlx	%l6,32,%g5	! asymmetry
-	ldx	[%i2+16],%l6
-!-
-	subccc	%o2,%g5,%g0
-!-
-	subccc	%l3,%l7,%g4
-!-
-	srlx	%l3,32,%o3
-	ldx	[%i1+24],%l3
-	add	%i1,32,%i1
-!-
-	srlx	%l7,32,%o7
-	ldx	[%i2+24],%l7
-	add	%i2,32,%i2
-!-
-	subccc	%o3,%o7,%g0
-!-
-	stx	%g1,[%i0+0]
-!-
-	stx	%g2,[%i0+8]
-!-
-	stx	%g3,[%i0+16]
-	add	%i3,-4,%i3
-!-
-	stx	%g4,[%i0+24]
-	add	%i0,32,%i0
+.Loop0:	ldx	[up],u0
+	add	up,8,up
+	ldx	[vp],v0
+	add	vp,8,vp
+	add	rp,8,rp
+	subcc	n,1,n
+	sub	u0,v0,%g1
+	orn	u0,v0,%g2
+	sub	%g1,cy,%g4
+	andn	u0,v0,%g3
+	orn	%g4,%g2,%g2
+	stx	%g4,[rp-8]
+	andn	%g2,%g3,%g2
+	bnz,pt	%icc,.Loop0
+	srlx	%g2,63,cy
 
-	brgez,pt	%i3,L(loop1)
-	nop
-!---------  End main loop ---------
-L(skip):
-	subccc	%l0,%l4,%g1
-	srlx	%l0,32,%o0
-	srlx	%l4,32,%o4
-	subccc	%o0,%o4,%g0
-	subccc	%l1,%l5,%g2
-	srlx	%l1,32,%o1
-	srlx	%l5,32,%o5
-	subccc	%o1,%o5,%g0
-	subccc	%l2,%l6,%g3
-	srlx	%l2,32,%o2
-	srlx	%l6,32,%g5	! asymmetry
-	subccc	%o2,%g5,%g0
-	subccc	%l3,%l7,%g4
-	srlx	%l3,32,%o3
-	srlx	%l7,32,%o7
-	subccc	%o3,%o7,%g0
-	stx	%g1,[%i0+0]
-	stx	%g2,[%i0+8]
-	stx	%g3,[%i0+16]
-	stx	%g4,[%i0+24]
-	add	%i0,32,%i0
-
-L(there):
-	add	%i3,4,%i3
-	brz,pt	%i3,L(end)
-	nop
-
-L(loop2):
-	ldx	[%i1+0],%l0
-	add	%i1,8,%i1
-	ldx	[%i2+0],%l4
-	add	%i2,8,%i2
-	srlx	%l0,32,%g2
-	srlx	%l4,32,%g3
-	subccc	%l0,%l4,%g1
-	subccc	%g2,%g3,%g0
-	stx	%g1,[%i0+0]
-	add	%i0,8,%i0
-	add	%i3,-1,%i3
-	brgz,pt	%i3,L(loop2)
-	nop
-
-L(end):	addc	%g0,%g0,%i0
+.Lret:	mov	cy,%i0
 	ret
 	restore
 EPILOGUE(mpn_sub_n)
