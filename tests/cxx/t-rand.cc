@@ -1,6 +1,6 @@
 /* Test gmp_randclass.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -44,6 +44,16 @@ check_randinit (void)
   {
     unsigned long m2exp = 64;
     gmp_randclass r(gmp_randinit_lc_2exp_size, m2exp);
+  }
+
+  /* gmp_randinit_lc_2exp_size, with excessive size */
+  {
+    try {
+      unsigned long m2exp = ULONG_MAX;
+      gmp_randclass r(gmp_randinit_lc_2exp_size, m2exp);
+      ASSERT_ALWAYS (0);  /* should not be reached */
+    } catch (length_error) {
+    }
   }
 
   {
