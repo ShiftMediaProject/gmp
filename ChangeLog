@@ -1,3 +1,23 @@
+2001-01-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k6/mode1o.asm: New file.
+	* mpn/x86/k7/mode1o.asm: New file.
+
+	* mpn/asm-defs.m4 (modexact_1_odd, modexact_1c_odd): New define_mpn's.
+	(__clz_tab, modlimb_invert_table, PROLOGUE, EPILOGUE): Add asserts for
+	GSYM_PREFIX.
+	* mpn/x86/x86-defs.m4 (Zdisp): Add a movzbl.
+
+	* tests/mpz/t-jac.c (check_a_zero): New test.
+	(check_squares_zi): Fix to use (a^2/b), not (a*b/b); revert last
+	change avoiding a,b=0, both are fine.
+	(try_2den): Don't use mpz_kronecker_ui for the expected answer.
+	(try_*): Call abort rather than exit.
+
+	* mpz/kronzu.c, mpz/kronzs.c: Fix for a=0.
+
+	* tune/tuneup.c (USE_PREINV_MOD_1): Fix to use new DATA_HIGH_LT_R.
+
 2001-01-08  Torbjorn Granlund  <tege@swox.com>
 
 	* urandom.h: Amend 2000-11-21 change to also handle cygwin.
