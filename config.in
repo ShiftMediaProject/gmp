@@ -95,6 +95,9 @@ MA 02111-1307, USA. */
 #undef HAVE_NATIVE_mpn_add_nc
 #undef HAVE_NATIVE_mpn_addmul_1
 #undef HAVE_NATIVE_mpn_addmul_1c
+#undef HAVE_NATIVE_mpn_addmul_2
+#undef HAVE_NATIVE_mpn_addmul_3
+#undef HAVE_NATIVE_mpn_addmul_4
 #undef HAVE_NATIVE_mpn_addsub_n
 #undef HAVE_NATIVE_mpn_addsub_nc
 #undef HAVE_NATIVE_mpn_and_n
@@ -131,6 +134,8 @@ MA 02111-1307, USA. */
 #undef HAVE_NATIVE_mpn_mul_1
 #undef HAVE_NATIVE_mpn_mul_1c
 #undef HAVE_NATIVE_mpn_mul_2
+#undef HAVE_NATIVE_mpn_mul_3
+#undef HAVE_NATIVE_mpn_mul_4
 #undef HAVE_NATIVE_mpn_mul_basecase
 #undef HAVE_NATIVE_mpn_mul_n
 #undef HAVE_NATIVE_mpn_nand_n
