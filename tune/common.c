@@ -1344,6 +1344,25 @@ speed_udiv_qrnnd_preinv2norm (struct speed_params *s)
   SPEED_ROUTINE_UDIV_QRNND_B;
 }
 
+double
+speed_udiv_qrnnd_c (struct speed_params *s)
+{
+  SPEED_ROUTINE_UDIV_QRNND_A (1);
+  {
+    __udiv_qrnnd_c (q, r, r, q, d);
+     __udiv_qrnnd_c (q, r, r, q, d);
+     __udiv_qrnnd_c (q, r, r, q, d);
+    __udiv_qrnnd_c (q, r, r, q, d);
+     __udiv_qrnnd_c (q, r, r, q, d);
+     __udiv_qrnnd_c (q, r, r, q, d);
+    __udiv_qrnnd_c (q, r, r, q, d);
+     __udiv_qrnnd_c (q, r, r, q, d);
+     __udiv_qrnnd_c (q, r, r, q, d);
+    __udiv_qrnnd_c (q, r, r, q, d);
+  }
+  SPEED_ROUTINE_UDIV_QRNND_B;
+}  
+
 #if HAVE_NATIVE_mpn_udiv_qrnnd
 
 #if defined (__hppa) && W_TYPE_SIZE == 64
@@ -1372,6 +1391,79 @@ speed_mpn_udiv_qrnnd (struct speed_params *s)
   SPEED_ROUTINE_UDIV_QRNND_B;
 }
 #endif
+
+
+/* r==0 measures on data with the values uniformly distributed.  This will
+   be typical for count_trailing_zeros in a GCD etc.
+
+   r==1 measures on data with the resultant count uniformly distributed
+   between 0 and BITS_PER_MP_LIMB-1.  This is probably sensible for
+   count_leading_zeros on the high limbs of divisors.  */
+
+void
+speed_routine_count_zeros_setup (struct speed_params *s,
+                                 mp_ptr xp, int leading, int zero)
+{
+  int        i, c;
+  mp_limb_t  n;
+
+  switch (s->r) {
+  case 0:
+  default:
+    /* Make uniformly distributed data.  If zero isn't allowed then change
+       it to 1 for leading, or 0x800..00 for trailing.  */
+    MPN_COPY (xp, s->xp_block, SPEED_BLOCK_SIZE);
+    if (! zero)
+      for (i = 0; i < SPEED_BLOCK_SIZE; i++)
+        if (xp[i] == 0)
+          xp[i] = leading ? 1 : MP_LIMB_T_HIGHBIT;
+    break;
+
+  case 1:
+    /* Make counts uniformly distributed.  A randomly chosen bit is set, and
+       for leading the rest above it are cleared, or for trailing then the
+       rest below.  */
+    for (i = 0; i < SPEED_BLOCK_SIZE; i++)
+      {
+        mp_limb_t  set = CNST_LIMB(1) << (s->yp_block[i] % BITS_PER_MP_LIMB);
+        mp_limb_t  keep_below = set-1;
+        mp_limb_t  keep_above = MP_LIMB_T_MAX ^ keep_below;
+        mp_limb_t  keep = (leading ? keep_below : keep_above);
+        xp[i] = (s->xp_block[i] & keep) | set;
+      }
+    break;
+  }
+
+  /* Account for the effect of n^=c. */
+  c = 0;
+  for (i = 0; i < SPEED_BLOCK_SIZE; i++)
+    {
+      n = xp[i];
+      xp[i] ^= c;
+
+      if (leading)
+        count_leading_zeros (c, n);
+      else
+        count_trailing_zeros (c, n);
+    }
+}
+
+double
+speed_count_leading_zeros (struct speed_params *s)
+{
+#ifdef COUNT_LEADING_ZEROS_0
+#define COUNT_LEADING_ZEROS_0_ALLOWED   1
+#else
+#define COUNT_LEADING_ZEROS_0_ALLOWED   0
+#endif
+  SPEED_ROUTINE_COUNT_LEADING_ZEROS (count_leading_zeros (c, n),
+                                     COUNT_LEADING_ZEROS_0_ALLOWED)
+}
+double
+speed_count_trailing_zeros (struct speed_params *s)
+{
+  SPEED_ROUTINE_COUNT_TRAILING_ZEROS (count_trailing_zeros (c, n), 0)
+}
 
 
 double

@@ -118,6 +118,11 @@ double speed_measure _PROTO ((speed_function_t fun, struct speed_params *s));
 
 /* Prototypes for speed measuring routines */
 
+double speed_count_leading_zeros _PROTO ((struct speed_params *s));
+double speed_count_trailing_zeros _PROTO ((struct speed_params *s));
+double speed_find_a _PROTO ((struct speed_params *s));
+double speed_gmp_allocate_free _PROTO ((struct speed_params *s));
+double speed_gmp_allocate_reallocate_free _PROTO ((struct speed_params *s));
 double speed_malloc_free _PROTO ((struct speed_params *s));
 double speed_malloc_realloc_free _PROTO ((struct speed_params *s));
 double speed_memcpy _PROTO ((struct speed_params *s));
@@ -126,9 +131,6 @@ double speed_modlimb_invert_mul1 _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_loop _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_cond _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_arith _PROTO ((struct speed_params *s));
-double speed_find_a _PROTO ((struct speed_params *s));
-double speed_gmp_allocate_free _PROTO ((struct speed_params *s));
-double speed_gmp_allocate_reallocate_free _PROTO ((struct speed_params *s));
 
 double speed_mpf_init_clear _PROTO ((struct speed_params *s));
 
@@ -211,6 +213,7 @@ double speed_noop_wxys _PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd _PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_preinv _PROTO ((struct speed_params *s));
 double speed_udiv_qrnnd_preinv2norm _PROTO ((struct speed_params *s));
+double speed_udiv_qrnnd_c _PROTO ((struct speed_params *s));
 double speed_umul_ppmm _PROTO ((struct speed_params *s));
 
 
@@ -269,6 +272,9 @@ void mpn_toom3_mul_n_mpn _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
                                   mp_ptr));
 void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
+void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
+                                              mp_ptr xp, int leading,
+                                              int zero));
 
 /* The measuring routines use these big macros to save duplication for
    similar forms.  They also get used for some automatically generated
@@ -1233,6 +1239,48 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
     s->time_divisor = SPEED_BLOCK_SIZE;                         \
     return t;                                                   \
   }  
+
+
+/* "call" should do "count_foo_zeros(c,n)".
+   Give leading=1 if foo is leading zeros, leading=0 for trailing.
+   Give zero=1 if n=0 is allowed in the call, zero=0 if not.  */
+
+#define SPEED_ROUTINE_COUNT_ZEROS(call, leading, zero)                     \
+  {                                                                        \
+    mp_ptr     xp = SPEED_TMP_ALLOC_LIMBS (SPEED_BLOCK_SIZE, s->align_xp); \
+    int        i, c;                                                       \
+    unsigned   j;                                                          \
+    mp_limb_t  n;                                                          \
+    double     t;                                                          \
+                                                                           \
+    speed_routine_count_zeros_setup (s, xp, leading, zero);                \
+    speed_operand_src (s, xp, SPEED_BLOCK_SIZE);                           \
+    speed_cache_fill (s);                                                  \
+                                                                           \
+    c = 0;                                                                 \
+    speed_starttime ();                                                    \
+    j = s->reps;                                                           \
+    do {                                                                   \
+      for (i = 0; i < SPEED_BLOCK_SIZE; i++)                               \
+        {                                                                  \
+          n = xp[i];                                                       \
+          n ^= c;                                                          \
+          call;                                                            \
+        }                                                                  \
+    } while (--j != 0);                                                    \
+    t = speed_endtime ();                                                  \
+                                                                           \
+    noop_1 (c);                                                            \
+                                                                           \
+    s->time_divisor = SPEED_BLOCK_SIZE;                                    \
+    return t;                                                              \
+  }                                                                        \
+  
+#define SPEED_ROUTINE_COUNT_LEADING_ZEROS(call,zero)    \
+  SPEED_ROUTINE_COUNT_ZEROS (call, 1, zero)
+
+#define SPEED_ROUTINE_COUNT_TRAILING_ZEROS(call,zero)   \
+  SPEED_ROUTINE_COUNT_ZEROS (call, 0, zero)
 
 
 #endif
