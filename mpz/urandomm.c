@@ -37,12 +37,14 @@ mpz_urandomm (rop, s, n)
 {
   mpz_t t, p, m;
   mp_ptr tp;
-  mp_size_t nbits, size, count;
+  mp_size_t nbits, size;
+  int count;
+
+  /* FIXME: Should check for n == 0 and report error */
 
   size = SIZ (n);
   count_leading_zeros (count, PTR (n)[size - 1]);
-  nbits = (size - 1) * BITS_PER_MP_LIMB
-    + BITS_PER_MP_LIMB - count;
+  nbits = size * BITS_PER_MP_LIMB - count;
 
   /* Allocate enough for any mpz function called since a realloc of
      these will fail.  */
