@@ -1,5 +1,7 @@
 2000-08-21  Torbjorn Granlund  <tege@swox.com>
 
+	* gmp-impl.h (ASSERT): Use do..while for dummy version.
+
 	* mpf/get_str.c: Don't set n_digits from digits_computed_so_far
 	when the converted operand becomes zero.  Misc cleanups.
 
