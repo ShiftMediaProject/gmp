@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-26  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/mpfr-test.h (MAX, MIN, ABS): Use instead a patch from Paul and
+	Vincent.
+
 2002-01-24  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in: Extra quoting to get argument help messages right.
