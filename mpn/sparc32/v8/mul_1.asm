@@ -35,8 +35,8 @@ PROLOGUE(mpn_mul_1)
 	and	%g1,(4-1)<<4,%g1
 ifdef(`PIC',
 `	mov	%o7,%g4		C Save return address register
-	call	1f
-	add	%o7,L(1)-1f,%g3
+0:	call	1f
+	add	%o7,L(1)-0b,%g3
 1:	mov	%g4,%o7		C Restore return address register
 ',
 `	sethi	%hi(L(1)),%g3
