@@ -48,12 +48,19 @@ instance has things like $ for immediates on CRDS or reversed cmp order for
 AT&T SGS.  These could probably be handled if anyone really needs it.
 
 
+STATUS
+
+The code herein is old and poorly maintained.  If somebody really cared, it
+could be optimized substantially.  For example, mpn_add_n and mpn_sub_n
+could, with more unrolling be improved from 6 to close to 4 c/l (on m68040).
+The multiplication loops could be sped up by using the FPU.
+
 
 REFERENCES
 
 "Motorola M68000 Family Programmer's Reference Manual", available online,
 
-	http://e-www.motorola.com/collateral/M68000PM.pdf
+	http://e-www.motorola.com/brdata/PDFDB/docs/M68000PM.pdf
 
 "System V Application Binary Interface: Motorola 68000 Processor Family
 Supplement", AT&T, 1990, ISBN 0-13-877553-6.  Has details of calling
