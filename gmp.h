@@ -472,6 +472,7 @@ void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #define mpq_get_num __gmpq_get_num
 #define mpq_get_den __gmpq_get_den
 #define mpq_get_d __gmpq_get_d
+#define mpq_set_d __gmpq_set_d
 #define mpq_canonicalize __gmpq_canonicalize
 
 #if defined (__cplusplus)
@@ -497,6 +498,7 @@ void mpq_set_den _PROTO ((mpq_ptr, mpz_srcptr));
 void mpq_get_num _PROTO ((mpz_ptr, mpq_srcptr));
 void mpq_get_den _PROTO ((mpz_ptr, mpq_srcptr));
 double mpq_get_d _PROTO ((mpq_srcptr));
+double mpq_set_d _PROTO ((mpq_ptr, double));
 void mpq_canonicalize _PROTO ((mpq_ptr));
 #if defined (__cplusplus)
 }
