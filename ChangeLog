@@ -18,6 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-04  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Floating-point Functions): Note the mantissa is binary and
+	decimal fractions cannot be represented exactly.  Suggested by Serge
+	Winitzki.
+	(Known Build Problems): Note libtool stripping options when linking.
+	Reported by Vincent Lefevre.
+
+	* acinclude.m4 (GMP_ASM_LABEL_SUFFIX): Don't make an empty result a
+	failure, that's a valid result.
+	(GMP_ASM_GLOBL): Establish this from the host cpu type.
+	(IA64_PATTERN): New macro.
+        (GMP_PROG_EXEEXT_FOR_BUILD, GMP_C_FOR_BUILD_ANSI,
+	GMP_CHECK_LIBM_FOR_BUILD): Remove temporary files created.
+	* configure.in: Use IA64_PATTERN.
+
 2002-12-03  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/hppa.asm: Use config.m4.
