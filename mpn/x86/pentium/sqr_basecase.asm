@@ -4,7 +4,7 @@ dnl  P5: approx 8 cycles per crossproduct, or 15.5 cycles per triangular
 dnl  product at around 20x20 limbs.
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -411,7 +411,7 @@ L(corner):
 
 	mull	-8(%esi)		C src[size-1]*src[size-2]
 
-	movl	%ecx, 0(%edi)
+	movl	%ecx, (%edi)
 	addl	%eax, %ebx
 
 	adcl	$0, %edx
