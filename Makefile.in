@@ -170,7 +170,7 @@ LIBMP_LT_AGE = 0
 
 AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
 
-SUBDIRS = mpn mpz mpf mpq mpbsd tests demos tune
+SUBDIRS = mpn mpz mpq mpf mpbsd tests demos tune
 
 include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 EXTRA_HEADERS = mp.h
