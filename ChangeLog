@@ -1,3 +1,9 @@
+2000-06-13  Torbjorn Granlund  <tege@swox.com>
+
+	* tune/sparcv9.asm: Tune, deleting two instructions.
+
+	* tune/alpha.asm: Update to unified speed_cyclecounter.
+
 2000-06-11  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/tests/reuse.c (FAIL): Add a K&R version.
@@ -51,6 +57,12 @@
 	* mpn/tests/copy.c: Test MPN_COPY_INCR, not __gmpn_copy.
 
 2000-06-08  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (alpha*-*-osf*): Default `flavour' to ev6 for ev6 and
+	higher.
+	(alpha*-*-*): Likewise.
+	(alpha*-*-osf*: gmp_optcflags_cc): Move -arch/-tune flags from
+	gmp_xoptcflags_gcc.
 
 	* mpn/Makefile.am (TARG_DIST): Add pa64w.
 
