@@ -3538,7 +3538,7 @@ echo $ECHO_N "checking compiler $cc $cflags $cppflags... $ECHO_C" >&6
 gmp_prog_cc_works=yes
 
 # first see a simple "main()" works, then go on to other checks
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 
 int main () { return 0; }
@@ -3574,7 +3574,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
@@ -3614,7 +3614,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes an invalid instruction syntax from i386 gcc
    -march=pentiumpro on Solaris 2.8.  The native sun assembler
@@ -3656,7 +3656,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes a linker invocation problem with gcc 3.0.3
    on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
@@ -3699,7 +3699,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
    the assembler doesn't know hppa 2.0 instructions.  fneg is a 2.0
@@ -3740,7 +3740,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
    (cvtsd2ss) which will provoke an error if the assembler doesn't recognise
@@ -3782,7 +3782,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes an internal compiler error from gcc version
    "2.9-gnupro-99r1" under "-O2 -mcpu=ev6", apparently relating to char
@@ -4305,7 +4305,7 @@ echo $ECHO_N "checking compiler $cc $cflags $cppflags $flag... $ECHO_C" >&6
 gmp_prog_cc_works=yes
 
 # first see a simple "main()" works, then go on to other checks
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 
 int main () { return 0; }
@@ -4341,7 +4341,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
@@ -4381,7 +4381,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes an invalid instruction syntax from i386 gcc
    -march=pentiumpro on Solaris 2.8.  The native sun assembler
@@ -4423,7 +4423,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes a linker invocation problem with gcc 3.0.3
    on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
@@ -4466,7 +4466,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
    the assembler doesn't know hppa 2.0 instructions.  fneg is a 2.0
@@ -4507,7 +4507,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
    (cvtsd2ss) which will provoke an error if the assembler doesn't recognise
@@ -4549,7 +4549,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cc_works = yes; then
+if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 /* The following provokes an internal compiler error from gcc version
    "2.9-gnupro-99r1" under "-O2 -mcpu=ev6", apparently relating to char
@@ -6509,7 +6509,7 @@ echo $ECHO_N "checking C++ compiler $CXX $CXXFLAGS... $ECHO_C" >&6
 gmp_prog_cxx_works=yes
 
 # start with a plain "main()", then go on to further checks
-if test $gmp_prog_cxx_works = yes; then
+if test "$gmp_prog_cxx_works" = yes; then
   cat >conftest.c <<EOF
 
 int main (void) { return 0; }
@@ -6545,7 +6545,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cxx_works = yes; then
+if test "$gmp_prog_cxx_works" = yes; then
   cat >conftest.c <<EOF
 using namespace std;
 
@@ -6582,7 +6582,7 @@ EOF
 fi
 
 
-if test $gmp_prog_cxx_works = yes; then
+if test "$gmp_prog_cxx_works" = yes; then
   cat >conftest.c <<EOF
 /* GMP requires the standard C++ iostream classes.  This test rejects g++
    2.7.2 which has only a pre-standard iostream.h.  */
