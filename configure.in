@@ -1012,6 +1012,8 @@ case ${target} in
     SPEED_CYCLECOUNTER_OBJ=hppa2.lo ;;
   hppa*-*-*)
     SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
+  ia64*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=ia64.lo ;;
 esac
 AC_SUBST(SPEED_CYCLECOUNTER_OBJ)
 if test -n "$SPEED_CYCLECOUNTER_OBJ"
