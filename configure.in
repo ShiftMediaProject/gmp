@@ -1395,7 +1395,7 @@ for abi in $abilist; do
         hpc-hppa-2-0)   GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
         gcc-arm-umodsi) GMP_GCC_ARM_UMODSI($cc,,testlist_pass=no) ;;
         gcc-mips-o32)   GMP_GCC_MIPS_O32($cc,,testlist_pass=no) ;;
-        sizeof*)        GMP_C_TESTLIST_SIZEOF($cc $cflags,$tst,,testlist_pass=no) ;;
+        sizeof*)       GMP_C_TEST_SIZEOF($cc $cflags,$tst,,testlist_pass=no) ;;
         esac
         if test $testlist_pass = no; then break; fi
       done
