@@ -842,4 +842,7 @@ $1:
 	')
 
 
+dnl  MULFUNC_PROLOGUE expands to nothing.
+define(`MULFUNC_PROLOGUE', `')
+
 divert`'dnl
