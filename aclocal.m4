@@ -193,6 +193,41 @@ AC_SUBST(M4)
 ])
 
 
+dnl  GMP_M4_M4WRAP_SPURIOUS
+dnl  ----------------------
+dnl  Check for the spurious output from m4wrap(), noted in mpn/asm-defs.m4.
+dnl
+dnl  Alpha Unicos has the problem, but its assembler doesn't seem to mind.
+dnl  MacOS X has been seen with the problem too, and its assembler ends up
+dnl  failing.
+dnl
+dnl  Enhancement: Maybe this could be in GMP_PROG_M4, and attempt to prefer
+dnl  an m4 with a working m4wrap, if it can be found.
+
+AC_DEFUN(GMP_M4_M4WRAP_SPURIOUS,
+[AC_REQUIRE([GMP_PROG_M4])
+AC_CACHE_CHECK([if m4wrap produces spurious output],
+               gmp_cv_m4_m4wrap_spurious,
+[# hide the d-n-l from autoconf's error checking
+tmp_d_n_l=d""nl
+cat >conftest.m4 <<EOF
+[changequote({,})m4wrap({{}})$tmp_d_n_l]
+EOF
+echo test input is >&AC_FD_CC
+cat conftest.m4 >&AC_FD_CC
+tmp_chars=`$M4 conftest.m4 | wc -c`
+echo produces $tmp_chars chars output >&AC_FD_CC
+rm -f conftest.m4
+if test $tmp_chars = 0; then
+  gmp_cv_m4_m4wrap_spurious=no
+else
+  gmp_cv_m4_m4wrap_spurious=yes
+fi
+])
+GMP_DEFINE_RAW(["define(<M4WRAP_SPURIOUS>,<$gmp_cv_m4_m4wrap_spurious>)"])
+])
+
+
 dnl  GMP_PROG_NM
 dnl  -----------
 dnl  GMP additions to libtool AC_PROG_NM.
