@@ -158,6 +158,9 @@ mp_size_t  sqr_karatsuba_threshold
 mp_size_t  sqr_toom3_threshold          = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_threshold            = MP_SIZE_T_MAX;
 mp_size_t  sqr_fft_modf_threshold       = MP_SIZE_T_MAX;
+mp_size_t  mullow_basecase_threshold    = MP_SIZE_T_MAX;
+mp_size_t  mullow_dc_threshold          = MP_SIZE_T_MAX;
+mp_size_t  mullow_mul_n_threshold       = MP_SIZE_T_MAX;
 mp_size_t  div_sb_preinv_threshold      = MP_SIZE_T_MAX;
 mp_size_t  div_dc_threshold             = MP_SIZE_T_MAX;
 mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
@@ -832,6 +835,38 @@ tune_mul (void)
   param.min_size = MAX (mul_karatsuba_threshold, MPN_TOOM3_MUL_N_MINSIZE);
   param.max_size = MUL_TOOM3_THRESHOLD_LIMIT-1;
   one (&mul_toom3_threshold, &param);
+
+  /* disabled until tuned */
+  MUL_FFT_THRESHOLD = MP_SIZE_T_MAX;
+}
+
+
+/* This was written by the tuneup challenged tege.  Kevin, please delete
+   this comment when you've reviewed/rewritten this.  :-) */
+void
+tune_mullow (void)
+{
+  static struct param_t  param;
+
+  param.function = speed_mpn_mullow_n;
+
+  param.name = "MULLOW_BASECASE_THRESHOLD";
+  param.min_size = 3;
+  param.min_is_always = 1;
+  param.max_size = mul_karatsuba_threshold; /* ??? */
+  one (&mullow_basecase_threshold, &param);
+
+  param.min_is_always = 0;	/* ??? */
+
+  param.name = "MULLOW_DC_THRESHOLD";
+  param.min_size = mul_karatsuba_threshold;
+  param.max_size = 10 * mul_karatsuba_threshold; /* ??? */
+  one (&mullow_dc_threshold, &param);
+
+  param.name = "MULLOW_MUL_N_THRESHOLD";
+  param.min_size = mullow_dc_threshold;
+  param.max_size = MUL_TOOM3_THRESHOLD_LIMIT; /* ??? no FFT yet */
+  one (&mullow_mul_n_threshold, &param);
 
   /* disabled until tuned */
   MUL_FFT_THRESHOLD = MP_SIZE_T_MAX;
@@ -1673,6 +1708,9 @@ all (void)
   printf("\n");
 
   tune_sqr ();
+  printf("\n");
+
+  tune_mullow ();
   printf("\n");
 
   tune_sb_preinv ();
