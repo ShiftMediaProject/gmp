@@ -221,7 +221,7 @@ check_vsnprintf (const char *want, const char *fmt, va_list ap)
       got[bufsize] = '!';
       ret = gmp_vsnprintf (got, bufsize, fmt, ap);
 
-      got_len = MIN (MAX (0, bufsize-1), want_len);
+      got_len = MIN (MAX(1,bufsize)-1, want_len);
 
       if (got[bufsize] != '!')
         {
