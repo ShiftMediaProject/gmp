@@ -129,6 +129,7 @@ MA 02111-1307, USA. */
     __di = __MPN(invert_limb) (d);					\
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
+#define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
 #define UDIV_TIME 220
 long __MPN(count_leading_zeros) ();
@@ -186,6 +187,7 @@ extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *))
     __di = __MPN(invert_limb) (d);					\
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
+#define UDIV_PREINV_ALWAYS  1
 #define UDIV_NEEDS_NORMALIZATION 1
 #endif
 #define UDIV_TIME 220
@@ -1013,6 +1015,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
 #define umul_ppmm(w1, w0, u, v) \
   __asm__ ("umul %2,%3,%1;rd %%y,%0" : "=r" (w1), "=r" (w0) : "r" (u), "r" (v))
 #define UMUL_TIME 5
+
 #if HAVE_HOST_CPU_supersparc
 #define UDIV_TIME 60		/* SuperSPARC timing */
 #else
@@ -1028,6 +1031,7 @@ extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype))
   } while (0)
 #define UDIV_TIME 25
 #endif /* HAVE_HOST_CPU_supersparc */
+
 #else /* ! __sparc_v8__ */
 #if defined (__sparclite__)
 /* This has hardware multiply but not divide.  It also has two additional
@@ -1439,6 +1443,12 @@ unsigned char __clz_tab[128];
 
 #ifndef UDIV_NEEDS_NORMALIZATION
 #define UDIV_NEEDS_NORMALIZATION 0
+#endif
+
+/* Whether udiv_qrnnd is actually implemented with udiv_qrnnd_preinv, and
+   that hence the latter should always be used.  */
+#ifndef UDIV_PREINV_ALWAYS
+#define UDIV_PREINV_ALWAYS 0
 #endif
 
 /* Give defaults for UMUL_TIME and UDIV_TIME.  */
