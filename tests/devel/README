@@ -1,14 +1,13 @@
 
-                         MPN TEST PROGRAMS
+                       DEVELOPMENT TEST PROGRAMS
 
 
-This directory contains programs designed to exercise various mpn
-subroutines.  Nothing here is built or installed, nor even run in a "make
-check", but there's Makefile rules to build each program, or "allprogs" to
-build everything.
-
-All the programs here are meant only for use during development and casual
+This directory contains various programs used during development.  Casual
 GMP users are unlikely to find anything of interest.
+
+Nothing here is built or installed, nor even run in a "make check", but
+there's Makefile rules to build each program, or "allprogs" to build
+everything.
 
 
 
