@@ -10,7 +10,7 @@
 
 2001-09-20  Torbjorn Granlund  <tege@swox.com>
 
-	* mpz/cong.c (mpz_congruent_p): Fix typo.
+	* mpz/cong.c (mpz_congruent_p): Fix one limb c<d test.
 
 	* longlong.h: Rewrite __i370__ smul_ppmm; enable also for __s390__.
 
