@@ -34,8 +34,13 @@ mpz_sqrt (mpz_ptr root, mpz_srcptr op)
 
   TMP_MARK (marker);
   op_size = op->_mp_size;
-  if (op_size < 0)
-    SQRT_OF_NEGATIVE;
+  if (op_size <= 0)
+    {
+      if (op_size < 0)
+        SQRT_OF_NEGATIVE;
+      SIZ(root) = 0;
+      return;
+    }
 
   /* The size of the root is accurate after this simple calculation.  */
   root_size = (op_size + 1) / 2;
