@@ -1,5 +1,11 @@
 2000-12-23  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/mul_fft.c: Reformat.
+	(mpn_fft_neg_modF): Remove.
+	(mpn_fft_mul_2exp_modF): Inline mpn_fft_neg_modF.
+	
+	* mpn/cray/gmp-mparam.h: Retune.
+
 	* configure.in (*-cray-unicos*): Pass `-O3 -htask0'.
 	(vax*-*-*): Fix typo.
 
