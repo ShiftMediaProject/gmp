@@ -534,7 +534,15 @@ void mpq_set_z _PROTO ((mpq_ptr, mpz_srcptr));
 void mpq_add _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 void mpq_sub _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
 void mpq_mul _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
+
+#define mpq_mul_2exp __gmpq_mul_2exp
+void mpq_mul_2exp _PROTO ((mpq_ptr, mpq_srcptr, unsigned long));
+
 void mpq_div _PROTO ((mpq_ptr, mpq_srcptr, mpq_srcptr));
+
+#define mpq_div_2exp __gmpq_div_2exp
+void mpq_div_2exp _PROTO ((mpq_ptr, mpq_srcptr, unsigned long));
+
 void mpq_neg _PROTO ((mpq_ptr, mpq_srcptr));
 int mpq_cmp _PROTO ((mpq_srcptr, mpq_srcptr));
 int _mpq_cmp_ui _PROTO ((mpq_srcptr, unsigned long int, unsigned long int));
