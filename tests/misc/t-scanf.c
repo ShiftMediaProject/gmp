@@ -205,6 +205,7 @@ check_z (void)
     int         want_ret;
     long        want_ftell;
     int         want_upto;
+    int         not_glibc;
 
   } data[] = {
 
@@ -396,13 +397,10 @@ check_z (void)
     { " x%Zn",   "",    "-999", EOF, 0, -555 },
     { " %Zn x",  " ",   "-999", EOF, 1, -555 },
 
-    /* these give different return value on glibc and bsd, disabled until
-       can find which is right */
-#if 0
-    { " x",      " ",   "-999",   0, 1, -555 },
-    { " xyz",    " ",   "-999",   0, 1, -555 },
-    { " x%Zn",   " ",   "-999",   0, 1, -555 },
-#endif
+    /* these seem to tickle a bug in glibc 2.2.4 */
+    { " x",      " ",   "-999", EOF, 1, -555, 1 },
+    { " xyz",    " ",   "-999", EOF, 1, -555, 1 },
+    { " x%Zn",   " ",   "-999", EOF, 1, -555, 1 },
   };
 
   int         i, j, ignore;
@@ -452,6 +450,10 @@ check_z (void)
             fun2 = (fun2_t) fromstring_gmp_fscanf;
             break;
           case 2:
+#ifdef __GLIBC__
+            if (data[i].not_glibc)
+              continue;
+#endif
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard sscanf";
@@ -459,6 +461,10 @@ check_z (void)
             fun2 = (fun2_t) sscanf;
             break;
           case 3:
+#ifdef __GLIBC__
+            if (data[i].not_glibc)
+              continue;
+#endif
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard fscanf";
@@ -889,7 +895,11 @@ check_q (void)
               printf ("%s wrong return value\n", name);
               error = 1;
             }
-          if (want_ret == 1 && ! mpq_equal (want, got))
+          /* use direct mpz compares, since some of the test data is
+             non-canonical and can trip ASSERTs in mpq_equal */
+          if (want_ret == 1
+              && ! (mpz_cmp (mpq_numref(want), mpq_numref(got)) == 0
+                    && mpz_cmp (mpq_denref(want), mpq_denref(got)) == 0))
             {
               printf ("%s wrong result\n", name);
               error = 1;
