@@ -18,6 +18,33 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-09-28  Kevin Ryde  <kevin@swox.se>
+
+	* tests/devel/try.c, tune/speed.c: Avoid strings longer than C99
+	guarantees.
+
+	* tests/refmpn.c, tests/tests.h (refmpn_zero_extend, refmpn_normalize,
+	refmpn_sqrtrem): New functions.
+	* tests/devel/try.c (TYPE_SQRTREM): Use refmpn_sqrtrem.
+	(compare): Correction to tr->dst_size subscripting.
+
+	* dumbmp.c: Add several new functions, allow for initial n<d in
+	mpz_tdiv_q (now in mpz_tdiv_qr actually).
+
+	* gen-bases.c (chars_per_limb): Get GMP_NUMB_BITS for base==2,
+	similarly other powers of 2, which this was in the past.
+	* tests/refmpn.c (refmpn_chars_per_limb): Ditto.
+	* tests/mpn/t-mp_bases.c: Test chars_per_limb for power-of-2 bases too.
+
+	* Makefile.am, mpz/Makefile.am: Setups for gen-fac_ui.c generating
+	mpz/fac_ui.h.
+
+2002-09-28  Jason Moxham <J.L.Moxham@maths.soton.ac.uk>
+
+	* dumbmp.c (mpz_pow_ui, mpz_addmul_ui, mpz_root): New functions.
+	* gen-fac_ui.c: New file.
+	* mpz/fac_ui.c: Rewrite.
+
 2002-09-26  Kevin Ryde  <kevin@swox.se>
 
 	* tests/cxx/localeconv.c: New file, split from t-locale.cc.
