@@ -22,6 +22,41 @@ MA 02111-1307, USA.
 
 	* mpn/generic/mul_n.c (mpn_toom3_sqr_n): Remove write-only variable c5.
 
+2004-02-18  Kevin Ryde  <kevin@swox.se>
+
+	* mpf/iset_si.c, mpf/iset_ui.c, mpf/set_si.c, mpf/set_ui.c [nails]:
+	Always store second limb, to avoid a conditional.
+
+	* tests/mpf/t-get_ui.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+	* tests/mpf/t-get_si.c (check_limbdata): Further tests.
+
+	* mpf/get_ui.c, mpf/get_si.c: Remove size==0 test, it's covered by
+	other conditions.  Attempt greater clarity by expressing conditions as
+	based on available data range.
+	* mpf/get_si.c [nails]: Correction, don't bail on exp > abs_size,
+	since may still have second limb above radix point available.
+	* mpf/get_ui.c: Nailify.
+
+2004-02-16  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/scan0.c, mpz/scan1.c: Use count_trailing_zeros, instead of
+	count_leading_zeros on limb&-limb.
+
+	* mpf/sqrt.c: Use "/ 2" for exp, avoiding C undefined behaviour on
+	">>" of negatives.  Correction to comment, exp is rounded upwards.
+	SIZ(r) always prec now, no need for tsize expression.  Store EXP(r)
+	and SIZ(r) where calculated to reduce variable lifespans.  Make tsize
+	mp_size_t not mp_exp_t, though of course those are currently the same.
+
+	* gmp-h.in (GMP_ERROR_ALLOCATE, GMP_ERROR_BAD_STRING,
+	GMP_ERROR_UNUSED_ERROR): Remove, never used or documented, and we
+	don't want to use globals for communicating error information.
+
+	* mpz/gcd_ui.c [nails]: Correction, actually return a value.
+
+	* mpn/generic/addmul_1.c, mpn/generic/submul_1.c [nails==1]: Add code.
+
 2004-02-15  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpz/t-jac.c (check_data): Remove unnecessary variable
