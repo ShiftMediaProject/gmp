@@ -27,6 +27,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#if GMP_NAIL_BITS == 0
+
 /* Copied from mpn/generic/gcdext.c, and modified slightly to return
    the remainder. */
 /* Two-limb division optimized for small quotients.  */
@@ -415,3 +417,4 @@ mpn_hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
 }
 
 #undef HGCD2_STEP
+#endif /* GMP_NAIL_BITS == 0 */

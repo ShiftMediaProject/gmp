@@ -34,6 +34,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#if GMP_NAIL_BITS == 0
+
 #if WANT_TRACE
 static void
 trace (const char *format, ...)
@@ -2100,3 +2102,4 @@ mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B)
 
   return 1;
 }
+#endif /* GMP_NAIL_BITS == 0 */
