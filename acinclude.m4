@@ -423,7 +423,7 @@ EOF
   *-*-aix*)
     cat >> conftes2.s <<EOF
 	$gmp_cv_asm_globl .${tmp_underscore}underscore_test
-.${tmp_underscore}underscore_test:
+.${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
     ;;
   esac
