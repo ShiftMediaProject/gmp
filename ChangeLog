@@ -19,6 +19,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-21  Torbjorn Granlund  <tege@swox.com>
+
+	From Jakub Jelinek:
+	* longlong.h (add_ssaaaa,sub_ddmmss) [64-bit sparc]:
+	Make it actually work.
+
 2002-05-18  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/ui_div.c: Shut up compiler warning.
