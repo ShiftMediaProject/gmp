@@ -24,6 +24,17 @@ MA 02111-1307, USA.
 	speed_mpn_rsh1add_n, speed_mpn_rsh1sub_n): Conditionalize on
 	corresponding HAVE_NATIVE_*.
 
+2003-09-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/combit.c: Use GMP_NUMB_BITS not BITS_PER_MP_LIMB.
+
+	* demos/expr/exprfr.c: Allow for mpfr_inf_p, mpfr_nan_p and
+	mpfr_number_p merely returning non-zero, rather than 1 or 0.
+
+	* demos/expr/exprfr.c, demos/expr/t-expr.c: Add erf, integer_p, zeta.
+
+	* demos/expr/Makefile.am (LDADD): Update comments on $(LIBM).
+
 2003-09-24  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/speed.c (routine): Add entires for mpn_addlsh1_n, mpn_sublsh1_n,
@@ -58,6 +69,8 @@ MA 02111-1307, USA.
 	* mpn/amd64/rsh1sub_n.asm: New file.
 
 2003-09-24  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to mpfr cvs 2003-09-24.
 
 	* acinclude.m4 (GMP_C_DOUBLE_FORMAT): Remove conftest* temporary files.
 
