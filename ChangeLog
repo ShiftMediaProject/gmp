@@ -1,5 +1,8 @@
 2001-02-19  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/sparc64/add_n.asm: Rewrite using `majority' logic.
+	* mpn/sparc64/sub_n.asm: Likewise.
+
 	* tune/tuneup.c (all): Recognise DECC and MIPSpro compilers.
 
 	* mpn/pa64/sqr_diagonal.asm: Use PROLOGUE/EPILOGUE.
