@@ -1526,11 +1526,11 @@ initialized variables ready for use.  It should be possible to integrate
 something like that with a garbage collector.
 
 @item Reallocations
-An @code{mpz_t} or @code{mpq_t} variable used to hold successively larger
-values may end up with its memory being repeatedly @code{realloc}ed, which
-could be quite slow or could fragment memory, depending on the C library.  If
-an application can estimate the final size then @code{@w{_mpz}_realloc} can be
-used to allocate the necessary space at the start (@pxref{Initializing
+An @code{mpz_t} or @code{mpq_t} variable used to hold successively increasing
+values will have its memory repeatedly @code{realloc}ed, which could be quite
+slow or could fragment memory, depending on the C library.  If an application
+can estimate the final size then @code{@w{_mpz}_realloc} can be called to
+allocate the necessary space from the beginning (@pxref{Initializing
 Integers}).
 
 It doesn't matter if a size set with @code{@w{_mpz}_realloc} is too small,
