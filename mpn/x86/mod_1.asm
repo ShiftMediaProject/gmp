@@ -1,10 +1,10 @@
 # x86 mpn_mod_1 -- mpn by limb remainder.
 #
 #       cycles/limb
-# K7
+# K7        42
 # K6        20
-# P6
-# P5        
+# P6        40
+# P5        44
 # 486   approx 42 maybe
 
 
