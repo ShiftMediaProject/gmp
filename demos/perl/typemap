@@ -36,8 +36,6 @@ mpf_coerce_def		MPF_COERCE_DEF
 mpz_mutate		MPZ_MUTATE
 randstate		RANDSTATE
 ulong_coerce		ULONG_COERCE
-string			STRING
-const_string		STRING
 malloced_string		MALLOCED_STRING
 order_noswap		ORDER_NOSWAP
 dummy			DUMMY
@@ -102,7 +100,5 @@ MPF_ASSUME
     sv_setref_pv ($arg, mpf_class, $var);
 RANDSTATE
     sv_setref_pv ($arg, rand_class, $var);
-STRING
-    sv_setpv ($arg, $var);
 MALLOCED_STRING
     sv_usepvn_mg ($arg, $var, strlen($var));
