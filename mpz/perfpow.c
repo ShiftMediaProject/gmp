@@ -87,8 +87,8 @@ mpz_perfect_power_p (mpz_srcptr u)
   TMP_MARK (marker);
 
   uns = ABS (usize) - n2 / BITS_PER_MP_LIMB;
-  MPZ_TMP_INIT (q, uns + 1);	/* mpn_rootrem wants extra root limb */
-  MPZ_TMP_INIT (u2, uns + 1);	/* mpn_rootrem wants extra root limb */
+  MPZ_TMP_INIT (q, uns);
+  MPZ_TMP_INIT (u2, uns);
 
   mpz_tdiv_q_2exp (u2, u, n2);
 
