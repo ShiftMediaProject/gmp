@@ -36,7 +36,7 @@ check_PROGRAMS = reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui
 check_LIBRARIES = libfrtests.a
 TESTS = $(check_PROGRAMS)
 endif
-EXTRA_DIST= tgeneric.c
+EXTRA_DIST = tgeneric.c mpf_compat.h
 
 ../libmpfr.a:
 	cd ..; make libmpfr.a  
