@@ -126,9 +126,7 @@ noinst_HEADERS = speed.h
 
 # No dependency on libgmp, so can use libgmptune instead for tune program
 EXTRA_LTLIBRARIES = libspeed.la
-libspeed_la_SOURCES = common.c time.c noop.c \
-  mul_n_mpn.c mul_n_open.c
-
+libspeed_la_SOURCES = common.c time.c noop.c mul_n_mpn.c mul_n_open.c
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJS)
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES)
 
