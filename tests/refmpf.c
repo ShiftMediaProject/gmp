@@ -1,6 +1,6 @@
 /* Reference floating point routines.
 
-Copyright 1996, 2001 Free Software Foundation, Inc.
+Copyright 1996, 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -97,6 +97,57 @@ done:
   EXP (w) = exp;
   TMP_FREE (mark);
 }
+
+
+/* Add 1 "unit in last place" (ie. in the least significant limb) to f.
+   f cannot be zero, since that has no well-defined "last place".
+
+   This routine is designed for use in cases where we pay close attention to
+   the size of the data value and are using that (and the exponent) to
+   indicate the accurate part of a result, or similar.  For this reason, if
+   there's a carry out we don't store 1 and adjust the exponent, we just
+   leave 100..00.  We don't even adjust if there's a carry out of prec+1
+   limbs, but instead give up in that case (which we intend shouldn't arise
+   in normal circumstances).  */
+
+void
+refmpf_add_ulp (mpf_ptr f)
+{
+  mp_ptr     fp = PTR(f);
+  mp_size_t  fsize = SIZ(f);
+  mp_size_t  abs_fsize = ABSIZ(f);
+  mp_limb_t  c;
+
+  if (fsize == 0)
+    {
+      printf ("Oops, refmpf_add_ulp called with f==0\n");
+      abort ();
+    }
+
+  c = refmpn_add_1 (fp, fp, abs_fsize, CNST_LIMB(1));
+  if (c != 0)
+    {
+      if (abs_fsize >= PREC(f) + 1)
+        {
+          printf ("Oops, refmpf_add_ulp carried out of prec+1 limbs\n");
+          abort ();
+        }
+
+      fp[abs_fsize] = c;
+      abs_fsize++;
+      SIZ(f) = (fsize > 0 ? abs_fsize : - abs_fsize);
+    }
+}
+
+
+/* Like mpf_set_prec, but taking a precision in limbs.
+   PREC(f) ends up as the given "prec" value.  */
+void
+refmpf_set_prec_limbs (mpf_ptr f, unsigned long prec)
+{
+  mpf_set_prec (f, __GMPF_PREC_TO_BITS (prec));
+}
+
 
 void
 refmpf_sub (mpf_ptr w, mpf_srcptr u, mpf_srcptr v)
