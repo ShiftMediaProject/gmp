@@ -52,6 +52,13 @@ NetBSD 1.4.1 m68k macintosh time base
     doesn't update atomically when it crosses a 1 second boundary.  Not sure
     what to do about this.  Expect intermittent failures.
 
+SCO OpenUNIX 8 /etc/hw
+
+    /etc/hw takes about a second to return the cpu frequency, which suggests
+    perhaps it's measuring each time it runs.  If this is annoying when
+    running the speed program repeatedly then set a GMP_CPU_FREQUENCY
+    environment variable (see TIME BASE section below).
+
 
 
 
