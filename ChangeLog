@@ -1,3 +1,10 @@
+2000-04-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_n.c: Rewrite (mostly by Robert Harley).
+	* mpn/generic/mul.c: Rewrite (mostly by Robert Harley).
+
+	* configure.in (sparcv9 64-bit OS): Set extra_functions.
+
 2000-04-04  Linus Nordberg  <linus@swox.se>
 
 	* mpn/generic/rawrandom.c: Remove file and replace with randraw.c
