@@ -1,5 +1,8 @@
 2000-12-03  Torbjorn Granlund  <tege@swox.com>
 
+	* mpbsd/tests/t-misc.c (check_itom): Exclude some tests for Cray
+	CFP systems.
+
 	* longlong.h (CRAYIEEE umul_ppmm): New.
 
 	* mpn/cray/gmp-mparam.h (BITS_PER_SHORTINT): 32 => 64.
