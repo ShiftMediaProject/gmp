@@ -38,6 +38,7 @@
 	* gmp.texi (Known Build Problems): Notes on make, $* and K&R, misc
 	tweaks elsewhere.
 	(Low-level Functions): Use {} notation in mpn_sqrtrem.
+	(Basecase Multiplication): Mention BASECASE_SQR_THRESHOLD.
 
 	* mpfr/isnan.c (mpfr_number_p): Infinity is not a number.
 	* mpfr/out_str.c: Pass strlen+1 for the block size to free.
