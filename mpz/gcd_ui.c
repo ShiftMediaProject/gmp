@@ -1,6 +1,7 @@
 /* mpz_gcd_ui -- Calculate the greatest common divisior of two integers.
 
-Copyright 1994, 1996, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1994, 1996, 1999, 2000, 2001, 2002, 2003 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -58,8 +59,9 @@ mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
 	    }
 	  SIZ(w) = un;
 	}
-      /* We can't return any useful result for gcd(big,0).  */
-      return un > 1 ? 0 : PTR(u)[0];
+      /* Return u if it fits a ulong, otherwise 0. */
+      res = PTR(u)[0];
+      return (un == 1 && res <= ULONG_MAX ? res : 0);
     }
   else
     res = mpn_gcd_1 (PTR(u), un, (mp_limb_t) v);
