@@ -2383,4 +2383,22 @@ extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #endif
 
 
+#ifdef __cplusplus
+
+/* A little helper for a null-terminated __gmp_allocate_func string.
+   The destructor ensures it's freed even if an exception is thrown.  */
+class gmp_allocated_string {
+ public:
+  char *str;
+  inline gmp_allocated_string(char *arg) { str = arg; }
+  inline ~gmp_allocated_string() { (*__gmp_free_func) (str, strlen(str)+1); }
+};
+
+class ios;
+void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o);
+ostream& __gmp_doprnt_integer_ostream (ostream &o, const struct doprnt_params_t *p, char *s);
+extern const struct doprnt_funs_t  __gmp_asprintf_funs_noformat;
+
+#endif /* __cplusplus */
+
 #endif /* __GMP_IMPL_H__ */
