@@ -194,7 +194,7 @@ case $basic_machine in
 	# We use `pc' rather than `unknown'
 	# because (1) that's what they normally are, and
 	# (2) the word "unknown" tends to confuse beginning users.
-	i[34]86 | pentium[23] | k5 | k6 | k6[23] | athlon)
+	i[34567]86 | pentium[23] | k5 | k6 | k6[23] | athlon)
 	  basic_machine=$basic_machine-pc
 	  ;;
 	# Object if more than one company name word.
@@ -203,7 +203,7 @@ case $basic_machine in
 		exit 1
 		;;
 	# Recognize the basic CPU types with company name.
-	vax-* | tahoe-* | i[34]86-* | pentium[23]-* | i860-* | ia64-* | m32r-* | m68k-* | m68000-* \
+	vax-* | tahoe-* | i[34567]86-* | pentium[23]-* | i860-* | ia64-* | m32r-* | m68k-* | m68000-* \
 	      | m88k-* | sparc-* | ns32k-* | fx80-* | arc-* | arm-* | c[123]* \
 	      | mips-* | pyramid-* | tron-* | a29k-* | romp-* | rs6000-* \
 	      | power-* | none-* | 580-* | cray2-* | h8300-* | h8500-* | i960-* \
