@@ -22,10 +22,9 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* Multiply the natural numbers u (pointed to by UP, with USIZE limbs)
-   and v (pointed to by VP, with VSIZE limbs), and store the result at
-   PRODP.  USIZE + VSIZE limbs are always stored, but if the input
-   operands are normalized.  Return the most significant limb of the
+/* Multiply the natural numbers u (pointed to by UP, with USIZE limbs) and v
+   (pointed to by VP, with VSIZE limbs), and store the result at PRODP.  The
+   result is USIZE + VSIZE limbs.  Return the most significant limb of the
    result.
 
    NOTE: The space pointed to by PRODP is overwritten before finished
