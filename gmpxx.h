@@ -33,11 +33,6 @@ MA 02111-1307, USA. */
 #include <string>
 #include <gmp.h>
 
-// these should go into gmp.h
-istream & operator>>(istream &, mpz_ptr);
-istream & operator>>(istream &, mpq_ptr);
-istream & operator>>(istream &, mpf_ptr);
-
 struct __gmp_unary_plus
 {
   static void eval(mpz_ptr z, mpz_srcptr w) { mpz_set(z, w); }
