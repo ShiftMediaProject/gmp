@@ -43,10 +43,9 @@ MA 02111-1307, USA.
    assembler on a CPU that has any asm code.
 
    Enhancement: As noted with GMP_ASM_TYPE, if .type is wrong but .size is
-   right then everything works, but doesn't go through the PLT properly,
-   more than likely producing relocations in the library image.  Maybe we
-   could detect that if we built a test library with an object that had
-   .size deliberately disabled.  */
+   right then everything works, but uses code copied down to the mainline
+   data area.  Maybe we could detect that if we built a test library with an
+   object that had .size deliberately disabled.  */
 
 int
 main (void)
