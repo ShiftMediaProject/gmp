@@ -100,7 +100,7 @@ powerpc801 | powerpc821 | powerpc823  | powerpc860 | \
 powerpc64)
   test_cpu=powerpc ;;
 sparcv8 | supersparc | microsparc | \
-ultrasparc | ultrasparc1 | ultrasparc2 | ultrasparc2i | ultrasparc3)
+ultrasparc | ultrasparc2 | ultrasparc2i | ultrasparc3)
   test_cpu=sparc ;;
 sh2)
   test_cpu=sh ;;

@@ -729,7 +729,6 @@ SPARC:
 @nisamp{supersparc},
 @nisamp{sparcv9},
 @nisamp{ultrasparc},
-@nisamp{ultrasparc1},
 @nisamp{ultrasparc2},
 @nisamp{ultrasparc2i},
 @nisamp{ultrasparc3},
@@ -6100,8 +6099,8 @@ computer algebra using GCL.
 Q @spaceuref{http://www.musikwissenschaft.uni-mainz.de/~ag/q} @* Equational
 programming system.
 @item
-Yacas @spaceuref{http://www.xs4all.nl/~apinkus/yacas.html} @* Computer algebra
-system.
+Yacas @spaceuref{http://www.xs4all.nl/~apinkus/yacas.html} @* Yet another
+computer algebra system.
 @end itemize
 
 @end table
