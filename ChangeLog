@@ -19,6 +19,50 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-16  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Integer Exponentiation): mpz_powm supports negative
+	exponents.
+	(Assigning Floats, I/O of Floats, C++ Formatted Output, C++ Formatted
+	Input): Decimal point follows locale.
+	(Formatted Output Strings): %n accepts any type.
+	(Formatted Input Strings): New section.
+	(Formatted Input Functions): New section.
+	(C++ Class Interface): Corrections and clarifications suggested by
+	Gerardo.
+
+	* scanf/doscan.c, scanf/fscanf.c, scanf/fscanffuns.c, scanf/scanf.c,
+	scanf/sscanf.c, scanf/sscanffuns.c, scanf/vfscanf.c, scanf/vscanf.c,
+	scanf/vsscanf.c, scanf/Makefile.am, tests/misc/t-scanf.c: New files.
+	* gmp-h.in, gmp-impl.h, Makefile.am, configure.in: Consequent
+	additions.
+
+	* tests/misc: New directory.
+	* tests/misc/Makefile.am: New file.
+	* tests/misc/t-locale.c: New file.
+	* tests/misc/t-printf.c: Moved from tests/printf.
+	* tests/printf: Remove directory.
+	* configure.in, tests/Makefile.am: Update.
+
+	* tests/cxx/t-locale.cc: New file.
+	* tests/cxx/Makefile.am: Add it.
+
+	* mpf/set_str.c, cxx/ismpf.cc: Use localeconv for the decimal point.
+
+	* acinclude.m4 (GMP_ASM_X86_MCOUNT): Update to $lt_prog_compiler_pic
+	for current libtool, recognise non-PIC style mcount in windows DLLs.
+
+	* gmp-impl.h (__gmp_replacement_vsnprintf): Add prototype.
+
+	* gmp-impl.h (__gmp_rands, __gmp_rands_initialized,
+	modlimb_invert_table): Add __GMP_DECLSPEC for the benefit of test
+	programs using them from a windows DLL.
+	* longlong.h (__clz_tab): Ditto.
+
+	* mpn/x86/t-zdisp2.pl: New file.
+
+	* mpn/x86/pentium4/README: New file.
+
 2001-11-15  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/powm.c (HANDLE_NEGATIVE_EXPONENT): #define to 1.
