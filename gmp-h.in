@@ -415,7 +415,6 @@ void __GMP_DECLSPEC gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_fdiv_r_2exp __gmpz_fdiv_r_2exp
 #define mpz_fdiv_r_ui __gmpz_fdiv_r_ui
 #define mpz_fdiv_ui __gmpz_fdiv_ui
-#define mpz_fib_ui __gmpz_fib_ui
 #define mpz_fits_sint_p __gmpz_fits_sint_p
 #define mpz_fits_slong_p __gmpz_fits_slong_p
 #define mpz_fits_sshort_p __gmpz_fits_sshort_p
@@ -579,7 +578,13 @@ void __GMP_DECLSPEC mpz_fdiv_r _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void __GMP_DECLSPEC mpz_fdiv_r_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int __GMP_DECLSPEC mpz_fdiv_r_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int __GMP_DECLSPEC mpz_fdiv_ui _PROTO ((mpz_srcptr, unsigned long int)) __GMP_ATTRIBUTE_PURE;
+
+#define mpz_fib_ui __gmpz_fib_ui
 void __GMP_DECLSPEC mpz_fib_ui _PROTO ((mpz_ptr, unsigned long int));
+
+#define mpz_fib2_ui __gmpz_fib2_ui
+void __GMP_DECLSPEC mpz_fib2_ui _PROTO ((mpz_ptr, mpz_ptr, unsigned long int));
+
 int __GMP_DECLSPEC mpz_fits_sint_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 int __GMP_DECLSPEC mpz_fits_slong_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
 int __GMP_DECLSPEC mpz_fits_sshort_p _PROTO ((mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
@@ -630,6 +635,13 @@ void __GMP_DECLSPEC mpz_lcm _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void __GMP_DECLSPEC mpz_lcm_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long));
 
 int __GMP_DECLSPEC mpz_legendre _PROTO ((mpz_srcptr, mpz_srcptr)) __GMP_ATTRIBUTE_PURE;
+
+#define mpz_lucnum_ui __gmpz_lucnum_ui
+void __GMP_DECLSPEC mpz_lucnum_ui _PROTO ((mpz_ptr, unsigned long int));
+
+#define mpz_lucnum2_ui __gmpz_lucnum2_ui
+void __GMP_DECLSPEC mpz_lucnum2_ui _PROTO ((mpz_ptr, mpz_ptr, unsigned long int));
+
 void __GMP_DECLSPEC mpz_mod _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void __GMP_DECLSPEC mpz_mul _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void __GMP_DECLSPEC mpz_mul_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
