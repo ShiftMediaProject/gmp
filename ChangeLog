@@ -1,5 +1,7 @@
 2001-02-03  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/popcount.asm: Put a `;;' break at end of main loop.
+
 	* configure.in (arm*-*-*): Set gcc_cflags in order to pass
 	$fomit_frame_pointer.
 
