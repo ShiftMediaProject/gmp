@@ -19,11 +19,12 @@ dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
+
+include(`../config.m4')
+
 C      		   cycles/limb
 C UltraSPARC 1&2:     2
 C UltraSPARC 3:	      3.25
-
-include(`../config.m4')
 
 C INPUT PARAMETERS
 define(`rp',`%i0')
