@@ -72,10 +72,6 @@ MA 02111-1307, USA. */
 #define TMP_ALLOC_LIMBS(n)  ((mp_ptr) TMP_ALLOC ((n) * sizeof (mp_limb_t)))
 
 
-#ifndef NULL
-#define NULL ((void *) 0)
-#endif
-
 #if ! defined (__GNUC__)	/* FIXME: Test for C++ compilers here,
 				   __DECC understands __inline */
 #define inline			/* Empty */
@@ -94,6 +90,10 @@ MA 02111-1307, USA. */
 #define PREC(x) ((x)->_mp_prec)
 #define ALLOC(x) ((x)->_mp_alloc)
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 /* FIXME: These are purely internal, so do a search and replace to change
    them to __gmp forms, rather than using these macros. */
 #define _mp_allocate_func      __gmp_allocate_func
@@ -104,9 +104,6 @@ MA 02111-1307, USA. */
 #define _mp_default_free       __gmp_default_free
 
 #if (__STDC__-0) || defined (__cplusplus)
-void *malloc (size_t);
-void *realloc (void *, size_t);
-void free (void *);
 
 extern void *	(*_mp_allocate_func) (size_t);
 extern void *	(*_mp_reallocate_func) (void *, size_t, size_t);
@@ -120,10 +117,6 @@ void _mp_default_free (void *, size_t);
 
 #define const			/* Empty */
 #define signed			/* Empty */
-
-void *malloc ();
-void *realloc ();
-void free ();
 
 extern void *	(*_mp_allocate_func) ();
 extern void *	(*_mp_reallocate_func) ();
@@ -162,16 +155,24 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 /* Remap names of internal mpn functions.  */
 #define __clz_tab               __MPN(clz_tab)
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
-#define mpn_kara_sqr_n		__MPN(kara_sqr_n)
-#define mpn_toom3_sqr_n		__MPN(toom3_sqr_n)
-#define mpn_kara_mul_n		__MPN(kara_mul_n)
-#define mpn_toom3_mul_n		__MPN(toom3_mul_n)
 #define mpn_reciprocal		__MPN(reciprocal)
 
 #define mpn_sb_divrem_mn	__MPN(sb_divrem_mn)
 #define mpn_bz_divrem_n		__MPN(bz_divrem_n)
 #define mpn_tdiv_qr		__MPN(tdiv_qr)
 /* #define mpn_tdiv_q		__MPN(tdiv_q) */
+
+#define mpn_kara_mul_n	__MPN(kara_mul_n)
+void mpn_kara_mul_n _PROTO((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define mpn_kara_sqr_n  __MPN(kara_sqr_n)
+void mpn_kara_sqr_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
+
+#define mpn_toom3_mul_n  __MPN(toom3_mul_n)
+void mpn_toom3_mul_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_limb_t,mp_ptr));
+
+#define mpn_toom3_sqr_n  __MPN(toom3_sqr_n)
+void mpn_toom3_sqr_n _PROTO((mp_ptr, mp_srcptr, mp_limb_t, mp_ptr));
 
 mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
 mp_limb_t mpn_bz_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
@@ -718,6 +719,7 @@ extern const int __gmp_0;
 extern mp_size_t  tune_mul_threshold[];
 extern mp_size_t  tune_sqr_threshold[];
 extern mp_size_t  bz_threshold[];
+extern mp_size_t  fib_threshold[];
 
 #undef KARATSUBA_MUL_THRESHOLD
 #undef TOOM3_MUL_THRESHOLD
@@ -726,6 +728,7 @@ extern mp_size_t  bz_threshold[];
 #undef TOOM3_SQR_THRESHOLD
 #undef FFT_SQR_THRESHOLD
 #undef BZ_THRESHOLD
+#undef FIB_THRESHOLD
 
 #define KARATSUBA_MUL_THRESHOLD  tune_mul_threshold[0]
 #define TOOM3_MUL_THRESHOLD      tune_mul_threshold[1]
@@ -734,5 +737,10 @@ extern mp_size_t  bz_threshold[];
 #define TOOM3_SQR_THRESHOLD      tune_sqr_threshold[1]
 #define FFT_SQR_THRESHOLD        tune_sqr_threshold[2]
 #define BZ_THRESHOLD             bz_threshold[0]
+#define FIB_THRESHOLD            fib_threshold[0]
 
+#endif
+
+#if defined (__cplusplus)
+}
 #endif
