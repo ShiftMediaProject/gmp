@@ -1,6 +1,6 @@
 /* mpf_add -- Add two floats.
 
-Copyright (C) 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -122,8 +122,8 @@ mpf_add (r, u, v)
   if (ediff >= prec)
     {
       /* V completely cancelled.  */
-      if (tp != up)
-	MPN_COPY (rp, up, usize);
+      if (rp != up)
+	MPN_COPY_INCR (rp, up, usize);
       rsize = usize;
     }
   else
