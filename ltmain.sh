@@ -654,7 +654,7 @@ EOF
 	command="$command -o $lobj"
       fi
 
-      $run $rm "$lobj" "$output_obj"
+      $run $rm "$lobj" "$output_obj" 2>/dev/null
 
       $show "$command"
       if $run eval "$command"; then :
@@ -725,7 +725,7 @@ EOF
 
       # Suppress compiler output if we already did a PIC compilation.
       command="$command$suppress_output"
-      $run $rm "$obj" "$output_obj"
+      $run $rm "$obj" "$output_obj" 2>/dev/null
       $show "$command"
       if $run eval "$command"; then :
       else
