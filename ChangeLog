@@ -48,11 +48,6 @@ MA 02111-1307, USA.
 	* tests/misc/t-locale.c (check_input): Don't let "0x" appear from fake
 	decimal point.
 
-	* mpn/x86/k6/gcd_1.asm, mpn/x86/k7/gcd_1.asm: Don't use the PLT to
-	call mpn_modexact_1_odd.
-
-	* mpn/x86/README: Update notes on PIC calls.
-
 	* config.guess (sparc*-*-*): Look at BSD sysctl hw.model to recognise
 	ultrasparcs.
 
