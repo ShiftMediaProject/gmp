@@ -189,15 +189,14 @@ mpn_divrem (qp, qextra_limbs, np, nsize, dp, dsize)
 	    mp_limb_t n1, n2;
 	    mp_limb_t cy_limb;
 
+	    n2 = np[dsize - 1];
 	    if (i >= qextra_limbs)
 	      {
 		np--;
-		n2 = np[dsize];
 	      }
 	    else
 	      {
-		n2 = np[dsize - 1];
-		MPN_COPY_DECR (np + 1, np, dsize);
+		MPN_COPY_DECR (np + 1, np, dsize - 1);
 		np[0] = 0;
 	      }
 
