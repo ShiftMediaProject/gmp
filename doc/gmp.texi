@@ -3112,13 +3112,26 @@ the function @code{mpz_fits_slong_p}.
 @end deftypefun
 
 @deftypefun double mpz_get_d (mpz_t @var{op})
-Convert @var{op} to a @code{double}.
+Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+towards zero).
+
+If the exponent from the conversion is too big, the result is system
+dependent.  An infinity is returned where available.  A hardware overflow trap
+may or may not occur.
 @end deftypefun
 
 @deftypefun double mpz_get_d_2exp (signed long int *@var{exp}, mpz_t @var{op})
-Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
-raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1}, is a good
-approximation to @var{op}.
+Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+towards zero), and returning the exponent separately.
+
+The return value is in the range @math{0.5@le{}@GMPabs{@var{d}}<1} and the
+exponent is stored to @code{*@var{exp}}.  @m{@var{d} * 2^{exp}, @var{d} *
+2^@var{exp}} is the (truncated) @var{op} value.  If @var{op} is zero, the
+return is @math{0.0} and 0 is stored to @code{*@var{exp}}.
+
+@cindex @code{frexp}
+This is similar to the standard C @code{frexp} function (@pxref{Normalization
+Functions,,, libc, The GNU C Library Reference Manual}).
 @end deftypefun
 
 @deftypefun {char *} mpz_get_str (char *@var{str}, int @var{base}, mpz_t @var{op})
@@ -4161,12 +4174,19 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @cindex Conversion functions
 
 @deftypefun double mpq_get_d (mpq_t @var{op})
-Convert @var{op} to a @code{double}.
+Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+towards zero).
+
+If the exponent from the conversion is too big or too small to fit a
+@code{double} then the result is system dependent.  For too big an infinity is
+returned when available.  For too small @math{0.0} is normally returned.
+Hardware overflow, underflow and denorm traps may or may not occur.
 @end deftypefun
 
 @deftypefun void mpq_set_d (mpq_t @var{rop}, double @var{op})
 @deftypefunx void mpq_set_f (mpq_t @var{rop}, mpf_t @var{op})
-Set @var{rop} to the value of @var{op}, without rounding.
+Set @var{rop} to the value of @var{op}.  There is no rounding, this conversion
+is exact.
 @end deftypefun
 
 @deftypefun {char *} mpq_get_str (char *@var{str}, int @var{base}, mpq_t @var{op})
@@ -4628,14 +4648,27 @@ set by @code{mpf_set_default_prec}.
 @cindex Conversion functions
 
 @deftypefun double mpf_get_d (mpf_t @var{op})
-Convert @var{op} to a @code{double}.
+Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+towards zero).
+
+If the exponent in @var{op} is too big or too small to fit a @code{double}
+then the result is system dependent.  For too big an infinity is returned when
+available.  For too small @math{0.0} is normally returned.  Hardware overflow,
+underflow and denorm traps may or may not occur.
 @end deftypefun
 
 @deftypefun double mpf_get_d_2exp (signed long int *@var{exp}, mpf_t @var{op})
-Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
-raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1}, is a good
-approximation to @var{op}.  This is similar to the standard C function
-@code{frexp}.
+Convert @var{op} to a @code{double}, truncating if necessary (ie.@: rounding
+towards zero), and with an exponent returned separately.
+
+The return value is in the range @math{0.5@le{}@GMPabs{@var{d}}<1} and the
+exponent is stored to @code{*@var{exp}}.  @m{@var{d} * 2^{exp}, @var{d} *
+2^@var{exp}} is the (truncated) @var{op} value.  If @var{op} is zero, the
+return is @math{0.0} and 0 is stored to @code{*@var{exp}}.
+
+@cindex @code{frexp}
+This is similar to the standard C @code{frexp} function (@pxref{Normalization
+Functions,,, libc, The GNU C Library Reference Manual}).
 @end deftypefun
 
 @deftypefun long mpf_get_si (mpf_t @var{op})
@@ -8994,6 +9027,12 @@ used when there's no machine-specific version of a particular file.
 Each @file{mpn} subdirectory is for an ISA family.  Generally 32-bit and
 64-bit variants in a family cannot share code and have separate directories.
 Within a family further subdirectories may exist for CPU variants.
+
+In each directory a @file{nails} subdirectory may exist, holding code with
+nails support for that CPU variant.  A @code{NAILS_SUPPORT} directive in each
+file indicates the nails values the code handles.  Nails code only exists
+where it's faster, or promises to be faster, than plain code.  There's no
+effort put into nails if they're not going to enhance a given CPU.
 
 
 @node Assembler Basics, Assembler Carry Propagation, Assembler Code Organisation, Assembler Coding
