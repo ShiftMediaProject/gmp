@@ -171,8 +171,8 @@ __gmpn_cpuvec_init (void)
 
   memset (&decided_cpuvec, '\0', sizeof (decided_cpuvec));
 
-  CPUVEC_SETUP_fat;
   CPUVEC_SETUP_x86;
+  CPUVEC_SETUP_fat;
 
   if (! __gmpn_cpuid_available ())
     {
