@@ -158,7 +158,7 @@ EXTRA_LTLIBRARIES = libdummy.la
 nodist_libdummy_la_SOURCES = \
   add_n.c addmul_1.c bdivmod.c dc_divrem_n.c cmp.c diveby3.c divrem.c	      \
   divrem_1.c divrem_2.c dump.c gcd.c gcd_1.c gcdext.c get_str.c hamdist.c     \
-  inlines.c jacbase.c lshift.c mod_1.c mod_1_rs.c mul.c mul_1.c mul_fft.c     \
+  inlines.c jacbase.c lshift.c mod_1.c mode1o.c mul.c mul_1.c mul_fft.c       \
   mul_n.c mul_basecase.c perfsqr.c popcount.c pre_mod_1.c random.c random2.c  \
   rshift.c sb_divrem_mn.c scan0.c scan1.c set_str.c sqr_basecase.c sqrtrem.c  \
   sub_n.c submul_1.c tdiv_qr.c						      \
@@ -205,7 +205,7 @@ nodist_libdummy_la_OBJECTS =  add_n$U.lo addmul_1$U.lo bdivmod$U.lo \
 dc_divrem_n$U.lo cmp$U.lo diveby3$U.lo divrem$U.lo divrem_1$U.lo \
 divrem_2$U.lo dump$U.lo gcd$U.lo gcd_1$U.lo gcdext$U.lo get_str$U.lo \
 hamdist$U.lo inlines$U.lo jacbase$U.lo lshift$U.lo mod_1$U.lo \
-mod_1_rs$U.lo mul$U.lo mul_1$U.lo mul_fft$U.lo mul_n$U.lo \
+mode1o$U.lo mul$U.lo mul_1$U.lo mul_fft$U.lo mul_n$U.lo \
 mul_basecase$U.lo perfsqr$U.lo popcount$U.lo pre_mod_1$U.lo random$U.lo \
 random2$U.lo rshift$U.lo sb_divrem_mn$U.lo scan0$U.lo scan1$U.lo \
 set_str$U.lo sqr_basecase$U.lo sqrtrem$U.lo sub_n$U.lo submul_1$U.lo \
@@ -351,8 +351,8 @@ lshift_.c: lshift.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/lshift.c; then echo $(srcdir)/lshift.c; else echo lshift.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > lshift_.c
 mod_1_.c: mod_1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mod_1.c; then echo $(srcdir)/mod_1.c; else echo mod_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mod_1_.c
-mod_1_rs_.c: mod_1_rs.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mod_1_rs.c; then echo $(srcdir)/mod_1_rs.c; else echo mod_1_rs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mod_1_rs_.c
+mode1o_.c: mode1o.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mode1o.c; then echo $(srcdir)/mode1o.c; else echo mode1o.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mode1o_.c
 mp_bases_.c: mp_bases.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mp_bases.c; then echo $(srcdir)/mp_bases.c; else echo mp_bases.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mp_bases_.c
 mul_.c: mul.c $(ANSI2KNR)
@@ -419,7 +419,7 @@ gcdext_.lo get_str_.$(OBJEXT) get_str_.lo hamdist_.$(OBJEXT) \
 hamdist_.lo inlines_.$(OBJEXT) inlines_.lo ior_n_.$(OBJEXT) ior_n_.lo \
 iorn_n_.$(OBJEXT) iorn_n_.lo jacbase_.$(OBJEXT) jacbase_.lo \
 lshift_.$(OBJEXT) lshift_.lo mod_1_.$(OBJEXT) mod_1_.lo \
-mod_1_rs_.$(OBJEXT) mod_1_rs_.lo mp_bases_.$(OBJEXT) mp_bases_.lo \
+mode1o_.$(OBJEXT) mode1o_.lo mp_bases_.$(OBJEXT) mp_bases_.lo \
 mul_.$(OBJEXT) mul_.lo mul_1_.$(OBJEXT) mul_1_.lo \
 mul_basecase_.$(OBJEXT) mul_basecase_.lo mul_fft_.$(OBJEXT) mul_fft_.lo \
 mul_n_.$(OBJEXT) mul_n_.lo nand_n_.$(OBJEXT) nand_n_.lo \
