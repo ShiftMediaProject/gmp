@@ -4143,6 +4143,71 @@ fi
 fi
 
 
+if test "$gmp_prog_cc_works" = yes; then
+  cat >conftest.c <<EOF
+/* The following provokes an internal error from the assembler on
+   power2-ibm-aix4.3.1.0.  gcc -mrios2 compiles to nabs+fcirz, and this
+   results in "Internal error related to the source program domain".
+
+   For reference it seems to be the combination of nabs+fcirz which is bad,
+   not either alone.  This sort of thing occurs in mpz/get_str.c with the
+   way double chars_per_bit_exactly is applied in MPN_SIZEINBASE.  Perhaps
+   if that code changes to a scaled-integer style then we won't need this
+   test.  */
+
+double fp[1];
+int x;
+int f ()
+{
+  int a;
+  a = (x >= 0 ? x : -x);
+  return a * fp[0];
+}
+
+int main () { return 0; }
+EOF
+  echo "Test compile: abs int -> double conversion" >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    cc_works_part=yes
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        cc_works_part=norun
+      fi
+    fi
+  else
+    cc_works_part=no
+  fi
+  if test "$cc_works_part" != yes; then
+    echo "failed program was:" >&5
+    cat conftest.c >&5
+  fi
+  rm -f conftest* a.out b.out a.exe a_out.exe
+  case $cc_works_part in
+    yes)
+
+      ;;
+    no)
+      gmp_prog_cc_works="no, abs int -> double conversion"
+      ;;
+    norun)
+      gmp_prog_cc_works="no, abs int -> double conversion, program does not run"
+      ;;
+  esac
+fi
+
+
+
 echo "$as_me:$LINENO: result: $gmp_prog_cc_works" >&5
 echo "${ECHO_T}$gmp_prog_cc_works" >&6
 case $gmp_prog_cc_works in
@@ -5089,6 +5154,71 @@ fi
       ;;
   esac
 fi
+
+
+if test "$gmp_prog_cc_works" = yes; then
+  cat >conftest.c <<EOF
+/* The following provokes an internal error from the assembler on
+   power2-ibm-aix4.3.1.0.  gcc -mrios2 compiles to nabs+fcirz, and this
+   results in "Internal error related to the source program domain".
+
+   For reference it seems to be the combination of nabs+fcirz which is bad,
+   not either alone.  This sort of thing occurs in mpz/get_str.c with the
+   way double chars_per_bit_exactly is applied in MPN_SIZEINBASE.  Perhaps
+   if that code changes to a scaled-integer style then we won't need this
+   test.  */
+
+double fp[1];
+int x;
+int f ()
+{
+  int a;
+  a = (x >= 0 ? x : -x);
+  return a * fp[0];
+}
+
+int main () { return 0; }
+EOF
+  echo "Test compile: abs int -> double conversion" >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    cc_works_part=yes
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        cc_works_part=norun
+      fi
+    fi
+  else
+    cc_works_part=no
+  fi
+  if test "$cc_works_part" != yes; then
+    echo "failed program was:" >&5
+    cat conftest.c >&5
+  fi
+  rm -f conftest* a.out b.out a.exe a_out.exe
+  case $cc_works_part in
+    yes)
+
+      ;;
+    no)
+      gmp_prog_cc_works="no, abs int -> double conversion"
+      ;;
+    norun)
+      gmp_prog_cc_works="no, abs int -> double conversion, program does not run"
+      ;;
+  esac
+fi
+
 
 
 echo "$as_me:$LINENO: result: $gmp_prog_cc_works" >&5
@@ -8982,7 +9112,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 8985 "configure"' > conftest.$ac_ext
+  echo '#line 9115 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -10402,11 +10532,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10405: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10535: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10409: \$? = $ac_status" >&5
+   echo "$as_me:10539: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -10634,11 +10764,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10637: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10767: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10641: \$? = $ac_status" >&5
+   echo "$as_me:10771: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -10701,11 +10831,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10704: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10834: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10708: \$? = $ac_status" >&5
+   echo "$as_me:10838: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12713,7 +12843,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 12716 "configure"
+#line 12846 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12811,7 +12941,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 12814 "configure"
+#line 12944 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14943,11 +15073,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14946: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15076: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14950: \$? = $ac_status" >&5
+   echo "$as_me:15080: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -15010,11 +15140,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15013: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15143: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:15017: \$? = $ac_status" >&5
+   echo "$as_me:15147: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16253,7 +16383,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16256 "configure"
+#line 16386 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16351,7 +16481,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16354 "configure"
+#line 16484 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17173,11 +17303,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17176: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17306: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:17180: \$? = $ac_status" >&5
+   echo "$as_me:17310: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -17240,11 +17370,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17243: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17373: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17247: \$? = $ac_status" >&5
+   echo "$as_me:17377: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -19180,11 +19310,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19183: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19313: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:19187: \$? = $ac_status" >&5
+   echo "$as_me:19317: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -19412,11 +19542,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19415: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19545: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:19419: \$? = $ac_status" >&5
+   echo "$as_me:19549: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -19479,11 +19609,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19482: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19612: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:19486: \$? = $ac_status" >&5
+   echo "$as_me:19616: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -21491,7 +21621,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 21494 "configure"
+#line 21624 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -21589,7 +21719,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 21592 "configure"
+#line 21722 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
