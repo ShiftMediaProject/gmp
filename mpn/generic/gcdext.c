@@ -23,16 +23,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#if defined (__i386__)
 #ifndef THRESHOLD
-#define THRESHOLD 15
-#endif
-#endif
-
-#define STEPDIV
-
-#ifndef THRESHOLD
-#define THRESHOLD 4
+#define THRESHOLD 16
 #endif
 
 #ifndef EXTEND
@@ -60,138 +52,91 @@ int arr[BITS_PER_MP_LIMB];
 		  2) V > 0.
 */
 
-/* Idea 1: After we have performed a full division, don't shift operands back,
+/* We use Lehmer's algorithm.  The idea is to extract the most significant
+   bits of the operands, and compute the continued fraction for them.  We then
+   apply the gathered cofactors to the full operands.
+
+   Idea 1: After we have performed a full division, don't shift operands back,
 	   but instead account for the extra factors-of-2 thus introduced.
    Idea 2: Simple generalization to use divide-and-conquer would give us an
 	   algorithm that runs faster than O(n^2).
    Idea 3: The input numbers need less space as the computation progresses,
-	   while the s0 and s1 variables need more space.  To save space, we
+	   while the s0 and s1 variables need more space.  To save memory, we
 	   could make them share space, and have the latter variables grow
 	   into the former.
    Idea 4: We should not do double-limb arithmetic from the start.  Instead,
 	   do things in single-limb arithmetic until the quotients differ,
-	   and then switch to double-limb arithmetic.
-*/
+	   and then switch to double-limb arithmetic.  */
 
 #define swapptr(xp,yp) \
 do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
 
-#ifdef STEPDIV
-
-/* Division optimized for small quotients.  Not general, 1) expects the most
-   significant bits of both numerator and denominator to be clear.  2) error
-   return if quotient is more than one limb.  */
+/* Division optimized for small quotients.  If the quotient is more than one limb,
+   store 1 in *qh and return 0.  */
 static mp_limb_t
 div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
 {
-  unsigned q;
-  int cnt;
-
   if (d1 == 0)
     {
       *qh = 1;
       return 0;
     }
 
-  for (cnt = 0; n1 > d1 || (n1 == d1 && n0 >= d0); cnt++)
+  if ((mp_limb_signed_t) n1 < 0)
     {
-      d1 = (d1 << 1) | (d0 >> (BITS_PER_MP_LIMB - 1));
-      d0 = d0 << 1;
-    }
-
-  q = 0;
-  while (cnt)
-    {
-      d0 = (d1 << (BITS_PER_MP_LIMB - 1)) | (d0 >> 1);
-      d1 = d1 >> 1;
-      q <<= 1;
-      if (n1 > d1 || (n1 == d1 && n0 >= d0))
+      mp_limb_t q;
+      int cnt;
+      for (cnt = 1; (mp_limb_signed_t) d1 >= 0; cnt++)
 	{
-	  sub_ddmmss (n1, n0, n1, n0, d1, d0);
-	  q |= 1;
+	  d1 = (d1 << 1) | (d0 >> (BITS_PER_MP_LIMB - 1));
+	  d0 = d0 << 1;
 	}
-      cnt--;
-    }
 
-  *qh = 0;
-  return q;
-}
+      q = 0;
+      while (cnt)
+	{
+	  q <<= 1;
+	  if (n1 > d1 || (n1 == d1 && n0 >= d0))
+	    {
+	      sub_ddmmss (n1, n0, n1, n0, d1, d0);
+	      q |= 1;
+	    }
+	  d0 = (d1 << (BITS_PER_MP_LIMB - 1)) | (d0 >> 1);
+	  d1 = d1 >> 1;
+	  cnt--;
+	}
 
-#else
-
-static mp_limb_t
-div2 (mp_limb_t *qh, mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
-{
-  mp_limb_t n2;
-  mp_limb_t q0;
-  int b, bm;
-
-  if (d1 == 0)
-    {
-      *qh = 1;
-      return 0;
-    }
-
-  if (d1 > n1)
-    {
-      /* 00 = nn / DD */
-
-      q0 = 0;
+      *qh = 0;
+      return q;
     }
   else
     {
-      /* 0q = NN / dd */
-
-      count_leading_zeros (bm, d1);
-      if (bm == 0)
+      mp_limb_t q;
+      int cnt;
+      for (cnt = 0; n1 > d1 || (n1 == d1 && n0 >= d0); cnt++)
 	{
-	  /* From (n1 >= d1) /\ (the most significant bit of d1 is set),
-	     conclude (the most significant bit of n1 is set) /\ (the
-	     quotient digit q0 = 0 or 1).
+	  d1 = (d1 << 1) | (d0 >> (BITS_PER_MP_LIMB - 1));
+	  d0 = d0 << 1;
+	}
 
-	     This special case is necessary, not an optimization.  */
-
-	  /* The condition on the next line takes advantage of that
-	     n1 >= d1 (true due to program flow).  */
-	  if (n1 > d1 || n0 >= d0)
+      q = 0;
+      while (cnt)
+	{
+	  d0 = (d1 << (BITS_PER_MP_LIMB - 1)) | (d0 >> 1);
+	  d1 = d1 >> 1;
+	  q <<= 1;
+	  if (n1 > d1 || (n1 == d1 && n0 >= d0))
 	    {
-	      q0 = 1;
 	      sub_ddmmss (n1, n0, n1, n0, d1, d0);
+	      q |= 1;
 	    }
-	  else
-	    q0 = 0;
+	  cnt--;
 	}
-      else
-	{
-	  USItype m1, m0;
-	  /* Normalize.  */
 
-	  b = BITS_PER_MP_LIMB - bm;
-
-	  d1 = (d1 << bm) | (d0 >> b);
-	  d0 = d0 << bm;
-	  n2 = n1 >> b;
-	  n1 = (n1 << bm) | (n0 >> b);
-	  n0 = n0 << bm;
-
-	  udiv_qrnnd (q0, n1, n2, n1, d1);
-	  umul_ppmm (m1, m0, q0, d0);
-
-	  if (m1 > n1 || (m1 == n1 && m0 > n0))
-	    {
-	      q0--;
-	      sub_ddmmss (m1, m0, m1, m0, d1, d0);
-	    }
-	}
+      *qh = 0;
+      return q;
     }
-
-  *qh = 0;
-  return q0;
 }
-#endif
-
-#define SEXT(x) ((mp_limb_t) ((mp_limb_signed_t) (x) >> (BITS_PER_MP_LIMB - 1)))
-
 
 mp_size_t
 #if EXTEND
@@ -222,11 +167,11 @@ mpn_gcd (gp, up, size, vp, vsize)
 #endif
 #endif
 {
-  mp_limb_signed_t A, B, C, D;
+  mp_limb_t A, B, C, D;
   int cnt;
   mp_ptr tp, wp;
 #if RECORD
-  mp_limb_signed_t min = 0, max = 0;
+  mp_limb_t max = 0;
 #endif
 #if EXTEND
   mp_ptr s1p;
@@ -285,6 +230,7 @@ mpn_gcd (gp, up, size, vp, vsize)
 
   for (;;)
     {
+      mp_limb_t asign;
       /* Figure out exact size of V.  */
       vsize = size;
       MPN_NORMALIZE (vp, vsize);
@@ -314,38 +260,32 @@ mpn_gcd (gp, up, size, vp, vsize)
 		}
 	    }
 
-	  /* A, B, C, D below would overflow if full double-limb operands
-	     were used.  Therefore, shift them down one bit.  */
-	  ul = (uh << (BITS_PER_MP_LIMB - 1)) | (ul >> 1);
-	  uh >>= 1;
-	  vl = (vh << (BITS_PER_MP_LIMB - 1)) | (vl >> 1);
-	  vh >>= 1;
-
 	  A = 1;
 	  B = 0;
 	  C = 0;
 	  D = 1;
 
+	  asign = 0;
 	  for (;;)
 	    {
-	      mp_limb_signed_t q, T;
+	      mp_limb_t T;
 	      mp_limb_t qh, q1, q2;
 	      mp_limb_t nh, nl, dh, dl;
 	      mp_limb_t t1, t0;
 	      mp_limb_t Th, Tl;
 
-	      add_ssaaaa (dh, dl, vh, vl, SEXT (C), C);
+	      sub_ddmmss (dh, dl, vh, vl, 0, C);
 	      if ((dl | dh) == 0)
 		break;
-	      add_ssaaaa (nh, nl, uh, ul, SEXT (A), A);
+	      add_ssaaaa (nh, nl, uh, ul, 0, A);
 	      q1 = div2 (&qh, nh, nl, dh, dl);
 	      if (qh != 0)
 		break;		/* could handle this */
 
-	      add_ssaaaa (dh, dl, vh, vl, SEXT (D), D);
+	      add_ssaaaa (dh, dl, vh, vl, 0, D);
 	      if ((dl | dh) == 0)
 		break;
-	      add_ssaaaa (nh, nl, uh, ul, SEXT (B), B);
+	      sub_ddmmss (nh, nl, uh, ul, 0, B);
 	      q2 = div2 (&qh, nh, nl, dh, dl);
 	      if (qh != 0)
 		break;		/* could handle this */
@@ -353,10 +293,12 @@ mpn_gcd (gp, up, size, vp, vsize)
 	      if (q1 != q2)
 		break;
 
-	      T = A - q1 * C;
+	      asign = ~asign;
+
+	      T = A + q1 * C;
 	      A = C;
 	      C = T;
-	      T = B - q1 * D;
+	      T = B + q1 * D;
 	      B = D;
 	      D = T;
 	      umul_ppmm (t1, t0, q1, vl);
@@ -364,10 +306,42 @@ mpn_gcd (gp, up, size, vp, vsize)
 	      sub_ddmmss (Th, Tl, uh, ul, t1, t0);
 	      uh = vh, ul = vl;
 	      vh = Th, vl = Tl;
-#if EXTEND
-	      sign = -sign;
-#endif
+
+	      add_ssaaaa (dh, dl, vh, vl, 0, C);
+	      sub_ddmmss (nh, nl, uh, ul, 0, A);
+	      q1 = div2 (&qh, nh, nl, dh, dl);
+	      if (qh != 0)
+		break;		/* could handle this */
+
+	      sub_ddmmss (dh, dl, vh, vl, 0, D);
+	      if ((dl | dh) == 0)
+		break;
+	      add_ssaaaa (nh, nl, uh, ul, 0, B);
+	      q2 = div2 (&qh, nh, nl, dh, dl);
+	      if (qh != 0)
+		break;		/* could handle this */
+
+	      if (q1 != q2)
+		break;
+
+	      asign = ~asign;
+
+	      T = A + q1 * C;
+	      A = C;
+	      C = T;
+	      T = B + q1 * D;
+	      B = D;
+	      D = T;
+	      umul_ppmm (t1, t0, q1, vl);
+	      t1 += q1 * vh;
+	      sub_ddmmss (Th, Tl, uh, ul, t1, t0);
+	      uh = vh, ul = vl;
+	      vh = Th, vl = Tl;
 	    }
+#if EXTEND
+	  if (asign)
+	    sign = -sign;
+#endif
 	}
       else /* Same, but using single-limb calculations.  */
 	{
@@ -388,34 +362,55 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  C = 0;
 	  D = 1;
 
+	  asign = 0;
 	  for (;;)
 	    {
-	      mp_limb_signed_t q, T;
-	      if (vh + C == 0 || vh + D == 0)
+	      mp_limb_t q, T;
+	      if (vh - C == 0 || vh + D == 0)
 		break;
 
-	      q = (uh + A) / (vh + C);
-	      if (q != (uh + B) / (vh + D))
+	      q = (uh + A) / (vh - C);
+	      if (q != (uh - B) / (vh + D))
 		break;
 
-	      T = A - q * C;
+	      asign = ~asign;
+
+	      T = A + q * C;
 	      A = C;
 	      C = T;
-	      T = B - q * D;
+	      T = B + q * D;
 	      B = D;
 	      D = T;
 	      T = uh - q * vh;
 	      uh = vh;
 	      vh = T;
-    #if EXTEND
-	      sign = -sign;
-    #endif
+
+	      if (vh - D == 0)
+		break;
+
+	      q = (uh - A) / (vh + C);
+	      if (q != (uh + B) / (vh - D))
+		break;
+
+	      asign = ~asign;
+
+	      T = A + q * C;
+	      A = C;
+	      C = T;
+	      T = B + q * D;
+	      B = D;
+	      D = T;
+	      T = uh - q * vh;
+	      uh = vh;
+	      vh = T;
 	    }
+#if EXTEND
+	  if (asign)
+	    sign = -sign;
+#endif
 	}
 
 #if RECORD
-      min = MIN (A, min);  min = MIN (B, min);
-      min = MIN (C, min);  min = MIN (D, min);
       max = MAX (A, max);  max = MAX (B, max);
       max = MAX (C, max);  max = MAX (D, max);
 #endif
@@ -424,7 +419,6 @@ mpn_gcd (gp, up, size, vp, vsize)
 	{
 	  mp_limb_t qh;
 	  mp_size_t i;
-
 	  /* This is quite rare.  I.e., optimize something else!  */
 
 	  /* Normalize V (and shift up U the same amount).  */
@@ -511,107 +505,91 @@ mpn_gcd (gp, up, size, vp, vsize)
 	     V = W	   */
 
 #if STAT
-	  { mp_limb_t x;
-	    x = ABS (A) | ABS (B) | ABS (C) | ABS (D);
-	    count_leading_zeros (cnt, x);
-	    arr[BITS_PER_MP_LIMB - cnt]++; }
+	  { mp_limb_t x; x = A | B | C | D; count_leading_zeros (cnt, x);
+	  arr[BITS_PER_MP_LIMB - cnt]++; }
 #endif
 	  if (A == 0)
 	    {
-	      /* B == 1 */
+	      /* B == 1 and C == 1 (D is arbitrary) */
+	      mp_limb_t cy;
 	      MPN_COPY (tp, vp, size);
-	    }
-	  else
-	    {
-	      if (A < 0)
-		{
-		  mpn_mul_1 (tp, vp, size, B);
-		  mpn_submul_1 (tp, up, size, -A);
-		}
-	      else
-		{
-		  mpn_mul_1 (tp, up, size, A);
-		  mpn_submul_1 (tp, vp, size, -B);
-		}
-	    }
-	  if (C < 0)
-	    {
-	      mpn_mul_1 (wp, vp, size, D);
-	      mpn_submul_1 (wp, up, size, -C);
-	    }
-	  else
-	    {
-	      mpn_mul_1 (wp, up, size, C);
-	      mpn_submul_1 (wp, vp, size, -D);
-	    }
-
-	  swapptr (tp, up);
-	  swapptr (wp, vp);
-
+	      MPN_COPY (wp, up, size);
+	      mpn_submul_1 (wp, vp, size, D);
+	      swapptr (tp, up);
+	      swapptr (wp, vp);
 #if EXTEND
-	  if (A == 0)
-	    {
-	      /* B == 1 */
 	      MPN_COPY (tp, s1p, ssize);
 	      tsize = ssize;
 	      tp[ssize] = 0;	/* must zero since wp might spill below */
+	      MPN_COPY (wp, s0p, ssize);
+	      cy = mpn_addmul_1 (wp, s1p, ssize, D);
+	      wp[ssize] = cy;
+	      wsize = ssize + (cy != 0);
+	      swapptr (tp, s0p);
+	      swapptr (wp, s1p);
+	      ssize = MAX (wsize, tsize);
+#endif
 	    }
 	  else
 	    {
-	      mp_limb_t cy;
-	      if (A < 0)
+	      if (asign)
 		{
+		  mp_limb_t cy;
+		  mpn_mul_1 (tp, vp, size, B);
+		  mpn_submul_1 (tp, up, size, A);
+		  mpn_mul_1 (wp, up, size, C);
+		  mpn_submul_1 (wp, vp, size, D);
+		  swapptr (tp, up);
+		  swapptr (wp, vp);
+#if EXTEND
 		  cy = mpn_mul_1 (tp, s1p, ssize, B);
-		  cy += mpn_addmul_1 (tp, s0p, ssize, -A);
+		  cy += mpn_addmul_1 (tp, s0p, ssize, A);
+		  tp[ssize] = cy;
+		  tsize = ssize + (cy != 0);
+		  cy = mpn_mul_1 (wp, s0p, ssize, C);
+		  cy += mpn_addmul_1 (wp, s1p, ssize, D);
+		  wp[ssize] = cy;
+		  wsize = ssize + (cy != 0);
+		  swapptr (tp, s0p);
+		  swapptr (wp, s1p);
+		  ssize = MAX (wsize, tsize);
+#endif
 		}
 	      else
 		{
+		  mp_limb_t cy;
+		  mpn_mul_1 (tp, up, size, A);
+		  mpn_submul_1 (tp, vp, size, B);
+		  mpn_mul_1 (wp, vp, size, D);
+		  mpn_submul_1 (wp, up, size, C);
+		  swapptr (tp, up);
+		  swapptr (wp, vp);
+#if EXTEND
 		  cy = mpn_mul_1 (tp, s0p, ssize, A);
-		  cy += mpn_addmul_1 (tp, s1p, ssize, -B);
+		  cy += mpn_addmul_1 (tp, s1p, ssize, B);
+		  tp[ssize] = cy;
+		  tsize = ssize + (cy != 0);
+		  cy = mpn_mul_1 (wp, s1p, ssize, D);
+		  cy += mpn_addmul_1 (wp, s0p, ssize, C);
+		  wp[ssize] = cy;
+		  wsize = ssize + (cy != 0);
+		  swapptr (tp, s0p);
+		  swapptr (wp, s1p);
+		  ssize = MAX (wsize, tsize);
+#endif
 		}
-	      tp[ssize] = cy;
-	      tsize = ssize + (cy != 0);
 	    }
 
-	  {
-	    mp_limb_t cy;
-	    if (C < 0)
-	      {
-		cy = mpn_mul_1 (wp, s1p, ssize, D);
-		cy += mpn_addmul_1 (wp, s0p, ssize, -C);
-	      }
-	    else
-	      {
-		cy = mpn_mul_1 (wp, s0p, ssize, C);
-		cy += mpn_addmul_1 (wp, s1p, ssize, -D);
-	      }
-	    wp[ssize] = cy;
-	    wsize = ssize + (cy != 0);
-	  }
-	  ssize = MAX (wsize, tsize);
-
-	  swapptr (tp, s0p);
-	  swapptr (wp, s1p);
-#endif
-#if 0	/* Is it a win to remove multiple zeros here? */
-	  MPN_NORMALIZE (up, size);
-#else
 	  size -= up[size - 1] == 0;
-#endif
 	}
     }
 
 #if RECORD
-  printf ("min: -%lx\n", -min);
   printf ("max: %lx\n", max);
 #endif
 
 #if STAT
-  {
-    int i;
-    for (i = 0; i < BITS_PER_MP_LIMB; i++)
-      printf ("%d:%d\n", i, arr[i]);
-  }
+ {int i; for (i = 0; i < BITS_PER_MP_LIMB; i++) printf ("%d:%d\n", i, arr[i]);}
 #endif
 
   if (vsize == 0)
