@@ -75,18 +75,18 @@ dnl
 dnl  Variations in m4 affecting gmp:
 dnl
 dnl  $# - When a macro is called as "foo" with no brackets, BSD m4 sets $#
-dnl       to 1, whereas GNU or SysV m4 set it to 0.  In all though "foo()"
-dnl       sets $# to 1.  This is worked around in various places.
+dnl       to 1, whereas GNU or SysV m4 set it to 0.  In all cases though
+dnl       "foo()" sets $# to 1.  This is worked around in various places.
 dnl
 dnl  len() - When "len()" is given an empty argument, BSD m4 evaluates to
-dnl       nothing, whereas GNU, SysV, or the new OpenBSD, evaluate to 0.
+dnl       nothing, whereas GNU, SysV, and the new OpenBSD, evaluate to 0.
 dnl       See m4_length() below which works around this.
 dnl
 dnl  translit() - GNU m4 accepts character ranges like A-Z, and the new
-dnl       OpenBSD m4 does under option -g, but BSD and SysV don't.
+dnl       OpenBSD m4 does under option -g, but basic BSD and SysV don't.
 dnl
-dnl  popdef() - BSD and SysV m4 popdef() takes multiple arguments and pops
-dnl       each, but GNU m4 only takes one argument.
+dnl  popdef() - in BSD and SysV m4 popdef() takes multiple arguments and
+dnl       pops each, but GNU m4 only takes one argument.
 dnl
 dnl  push back - BSD m4 has some limits on the amount of text that can be
 dnl       pushed back.  The limit is reasonably big and so long as macros
@@ -111,13 +111,15 @@ dnl       GNU gives an unhelpful "NONE 0" in an m4wrap(), but that's worked
 dnl       around.
 dnl
 dnl
-dnl  SunOS /usr/bin/m4 - this m4 lacks a number of desired features,
-dnl       including macro $# and $@, eval() bitwise operators, defn(),
-dnl       m4exit(), m4wrap(), pushdef()/popdef().
+dnl  OpenBSD 2.6 m4 - this m4 rejects decimal constants containing an 8 or 9
+dnl       in eval(), making it pretty much unusable.  This bug is confined
+dnl       to version 2.6 (it's not in 2.5, and has been fixed in 2.7).
 dnl
-dnl       /usr/5bin/m4 is a SysV style m4 which should always be available,
-dnl       on SunOS and "configure" will reject /usr/bin/m4 in favour of
-dnl       /usr/5bin/m4 if necessary.
+dnl  SunOS /usr/bin/m4 - this m4 lacks a number of necessary features,
+dnl       including $# and $@, eval() bitwise operators, defn(), m4exit(),
+dnl       m4wrap(), and pushdef()/popdef().  /usr/5bin/m4 is a SysV style m4
+dnl       which should always be available, and "configure" will reject
+dnl       /usr/bin/m4 in favour of /usr/5bin/m4 (if necessary).
 dnl
 dnl       The sparc code actually has modest m4 requirements currently and
 dnl       could manage with /usr/bin/m4, but there's no reason to put our
@@ -131,6 +133,18 @@ ifdef(`__ASM_DEFS_M4_INCLUDED__',
 define(`__ASM_DEFS_M4_INCLUDED__')
 
 
+dnl  Detect and give a message about OpenBSD 2.6 m4.
+
+ifelse(eval(89),89,,
+`errprint(
+`This m4 doesnt accept 8 and/or 9 in constants in eval(), making it unusable.
+This is probably OpenBSD 2.6 m4 (September 1999).  Upgrade to OpenBSD 2.7,
+or get a bug fix from the CVS (expr.c rev 1.9), or get GNU m4.  Dont forget
+to configure with M4=/wherever/m4 if you install one of these in a directory
+not in $PATH.
+')m4exit(1)')
+
+
 dnl  Detect and give a message about the unsuitable SunOS /usr/bin/m4.
 dnl
 dnl  Unfortunately this test doesn't work when m4 is run in the normal way
@@ -138,19 +152,20 @@ dnl  from mpn/Makefile with "m4 -DOPERATION_foo foo.asm", since the bad m4
 dnl  takes "-" in "-D..." to mean read stdin, so it will look like it just
 dnl  hangs.  But running "m4 asm-defs.m4" to try it out will work.
 dnl
-dnl  We'd like to abort immediately on finding the bad m4, but unfortunately
-dnl  it doesn't have an m4exit(), nor does an invalid eval() kill it.  But
-dnl  unexpanded $#'s in some m4_assert_numargs() later on will comment out
-dnl  some closing parentheses and kill it with "m4: arg stack overflow".
-dnl
-define(m4_dollarhash_exists_test,``$#'')
-ifelse(m4_dollarhash_exists_test,`$#',
+dnl  We'd like to abort immediately on finding a problem, but unfortunately
+dnl  the bad m4 doesn't have an m4exit(), nor does an invalid eval() kill
+dnl  it.  Unexpanded $#'s in some m4_assert_numargs() later on will comment
+dnl  out some closing parentheses and kill it with "m4: arg stack overflow".
+
+define(m4_dollarhash_works_test,``$#'')
+ifelse(m4_dollarhash_works_test(x),1,,
 `errprint(
-`This version of m4 doesnt support $# and cant be used for GMP .asm processing.
-If this is on SunOS, try configuring with M4=/usr/5bin/m4 if you have that,
-or install GNU m4 and use a similar M4=/wherever/m4
+`This m4 doesnt support $# and cant be used for GMP asm processing.
+If this is on SunOS, ./configure should choose /usr/5bin/m4 if you have that
+or can get it, otherwise install GNU m4.  Dont forget to configure with
+M4=/wherever/m4 if you install in a directory not in $PATH.
 ')')
-undefine(`m4_dollarhash_exists_test')
+undefine(`m4_dollarhash_works_test')
 
 
 dnl  --------------------------------------------------------------------------
@@ -341,10 +356,10 @@ dnl  The basic __file__ macro comes out quoted, like `foo.asm', and
 dnl  m4_file_seen_last is defined like that too.
 dnl
 dnl  This only needs to be used with something that could generate an error
-dnl  message in m4wrap text.  PROLOGUE is the only such at the moment (at
-dnl  end of input its m4wrap checks for missing EPILOGUE).  A few include()s
-dnl  can easily trick this scheme, but you'd expect an EPILOGUE in the same
-dnl  file as the PROLOGUE.
+dnl  message in m4wrap text.  The x86 PROLOGUE is the only such at the
+dnl  moment (at end of input its m4wrap checks for missing EPILOGUE).  A few
+dnl  include()s can easily trick this scheme, but you'd expect an EPILOGUE
+dnl  in the same file as the PROLOGUE.
 
 define(m4_file_seen,
 m4_assert_numargs(0)
