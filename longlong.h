@@ -197,14 +197,13 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 
 #if defined (__ia64) && W_TYPE_SIZE == 64
 #if defined (__GNUC__)
+/* Do both product parts in assembly, since that gives better code with
+   all gcc versions.  Some callers will just use the upper part, and in
+   that situation we waste an instruction, but not any cycles.  */ 
 #define umul_ppmm(ph, pl, m0, m1) \
-  do {									\
-    UDItype __m0 = (m0), __m1 = (m1);					\
-    __asm__ ("xma.hu %0 = %1, %2, f0"					\
-	     : "=f" (ph)						\
-	     : "f" (m0), "f" (m1));					\
-    (pl) = __m0 * __m1;							\
-  } while (0)
+    __asm__ ("xma.hu %0 = %2, %3, f0\n\txma.l %1 = %2, %3, f0"		\
+	     : "=f" (ph), "=f" (pl)					\
+	     : "f" (m0), "f" (m1))
 #define UMUL_TIME 14
 #define count_leading_zeros(count, x) \
   do {									\
