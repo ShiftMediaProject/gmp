@@ -1340,10 +1340,10 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
     if (__builtin_constant_p (n) && (n) == 1)   \
       {                                         \
         __asm__ __volatile__                    \
-          (ASM_L(top) ":\n"                     \
-              iord  "   (%0)\n"                 \
-           "  leal      4(%0), %0\n"            \
-              jiord " " ASM_L(top) "\n"         \
+          ("\n" ASM_L(top) ":\n"                \
+           "\t" iord "(%0)\n"                   \
+           "\tleal 4(%0),%0\n"                  \
+           "\t" jiord " " ASM_L(top)            \
            : "=r" (__dummy)                     \
            : "0"  (ptr)                         \
            : "memory");                         \
@@ -1351,12 +1351,12 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
     else                                        \
       {                                         \
         __asm__ __volatile__                    \
-          (   aors  "   %2, (%0)\n"             \
-           "  jnc   "   ASM_L(done) "\n"        \
+          (   aors  " %2,(%0)\n"                \
+           "\tjnc " ASM_L(done) "\n"            \
            ASM_L(top) ":\n"                     \
-              iord  "   4(%0)\n"                \
-           "  leal      4(%0), %0\n"            \
-              jiord " " ASM_L(top) "\n"         \
+           "\t" iord "4(%0)\n"                  \
+           "\tleal 4(%0),%0\n"                  \
+           "\t" jiord " " ASM_L(top) "\n"       \
            ASM_L(done) ":\n"                    \
            : "=r" (__dummy)                     \
            : "0"  (ptr),                        \
@@ -1365,7 +1365,7 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
       }                                         \
   } while (0)
 
-#define MPN_INCR_U(ptr, size, n)  MPN_IORD_U (ptr, n, "addl", "incl",     "jz")
+#define MPN_INCR_U(ptr, size, n)  MPN_IORD_U (ptr, n, "addl", "addl $1,", "jc")
 #define MPN_DECR_U(ptr, size, n)  MPN_IORD_U (ptr, n, "subl", "subl $1,", "jc")
 #define mpn_incr_u(ptr, n)  MPN_INCR_U (ptr, 0, n)
 #define mpn_decr_u(ptr, n)  MPN_DECR_U (ptr, 0, n)
@@ -1510,7 +1510,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 	_q += 1;                                                          \
 	if (_xh != 0)                                                     \
 	  {                                                               \
-	    sub_ddmmss (_xh, _r, _xh, _r, 0, (d));                        \
+	    _r -= (d);                                                    \
 	    _q += 1;                                                      \
 	  }                                                               \
       }                                                                   \
