@@ -4672,7 +4672,7 @@ The area at @var{str} has to have space for the largest possible number
 represented by a @var{s1n} long limb array, plus one extra character.
 @end deftypefun
 
-@deftypefun mp_size_t mpn_set_str (mp_limb_t *@var{rp}, const char *@var{str}, size_t @var{strsize}, int @var{base})
+@deftypefun mp_size_t mpn_set_str (mp_limb_t *@var{rp}, const unsigned char *@var{str}, size_t @var{strsize}, int @var{base})
 Convert bytes @{@var{str},@var{strsize}@} in the given @var{base} to limbs at
 @var{rp}.
 
