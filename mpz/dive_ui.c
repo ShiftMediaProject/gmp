@@ -1,6 +1,6 @@
 /* mpz_divexact_ui -- exact division mpz by ulong.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,6 +31,18 @@ mpz_divexact_ui (mpz_ptr dst, mpz_srcptr src, unsigned long divisor)
 
   if (divisor == 0)
     DIVIDE_BY_ZERO;
+
+  /* For nails don't try to be clever if d is bigger than a limb, just fake
+     up an mpz_t and go to the main mpz_divexact.  */
+  if (divisor > GMP_NUMB_MAX)
+    {
+      mp_limb_t  dlimbs[2];
+      mpz_t      dz;
+      ALLOC(dz) = 2;
+      PTR(dz) = dlimbs;
+      mpz_set_ui (dz, divisor);
+      return mpz_divexact (dst, src, dz);
+    }
 
   size = SIZ(src);
   if (size == 0)
