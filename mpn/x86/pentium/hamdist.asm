@@ -44,37 +44,39 @@ PROLOGUE(mpn_hamdist)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	xorl	%eax, %eax	C total
+	pushl	%esi	FRAME_pushl()
 
 	shll	%ecx		C size in byte pairs
-	jz	L(done)
-
-	pushl	%esi	FRAME_pushl()
 	pushl	%edi	FRAME_pushl()
-
-	movl	PARAM_SRC1, %esi
-	movl	PARAM_SRC2, %edi
 
 ifdef(`PIC',`
 	pushl	%ebx	FRAME_pushl()
 	pushl	%ebp	FRAME_pushl()
 
-	call	L(here)
+	call	L(here)	FRAME_pushl()
 L(here):
-	popl	%ebp
+	movl	PARAM_SRC1, %esi
+	popl	%ebp	FRAME_popl()
 
+	movl	PARAM_SRC2, %edi
 	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(here)], %ebp
 
-	xorl	%edx, %edx	C byte
 	xorl	%ebx, %ebx	C byte
+	xorl	%edx, %edx	C byte
 
 	movl	TABLE_NAME@GOT(%ebp), %ebp
+	xorl	%eax, %eax	C total
 define(TABLE,`(%ebp,$1)')
+
 ',`
 dnl non-PIC
-	pushl	%ebx	FRAME_pushl()
-	xorl	%edx, %edx	C byte
+	movl	PARAM_SRC1, %esi
+	movl	PARAM_SRC2, %edi
 
+	xorl	%eax, %eax	C total
+	pushl	%ebx	FRAME_pushl()
+
+	xorl	%edx, %edx	C byte
 	xorl	%ebx, %ebx	C byte
 
 define(TABLE,`TABLE_NAME($1)')
@@ -123,7 +125,6 @@ ifdef(`PIC',`
 
 	popl	%esi
 
-L(done):
 	ret
 
 EPILOGUE()

@@ -49,30 +49,37 @@ PROLOGUE(mpn_popcount)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	xorl	%eax, %eax	C total
-
-	shll	%ecx		C size in byte pairs
-	jz	L(done)
-
-	pushl	%ebx	FRAME_pushl()
 	pushl	%esi	FRAME_pushl()
 
-	movl	PARAM_SRC, %esi
-	xorl	%edx, %edx	C byte
-
-	xorl	%ebx, %ebx	C byte
-
 ifdef(`PIC',`
+	pushl	%ebx	FRAME_pushl()
 	pushl	%ebp	FRAME_pushl()
 
 	call	L(here)
 L(here):
 	popl	%ebp
+	shll	%ecx		C size in byte pairs
+
 	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(here)], %ebp
+	movl	PARAM_SRC, %esi
+
+	xorl	%eax, %eax	C total
+	xorl	%ebx, %ebx	C byte
 
 	movl	TABLE_NAME@GOT(%ebp), %ebp
+	xorl	%edx, %edx	C byte
 define(TABLE,`(%ebp,$1)')
 ',`
+dnl non-PIC
+	shll	%ecx		C size in byte pairs
+	movl	PARAM_SRC, %esi
+
+	pushl	%ebx	FRAME_pushl()
+	xorl	%eax, %eax	C total
+
+	xorl	%ebx, %ebx	C byte
+	xorl	%edx, %edx	C byte
+
 define(TABLE,`TABLE_NAME`'($1)')
 ')
 
@@ -104,12 +111,11 @@ ifdef(`PIC',`
 	popl	%ebp
 ')
 	addl	%ebx, %eax
-	popl	%esi
-
-	addl	%edx, %eax
 	popl	%ebx
 
-L(done):
+	addl	%edx, %eax
+	popl	%esi
+
 	ret
 
 EPILOGUE()
