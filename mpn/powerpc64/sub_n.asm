@@ -1,7 +1,9 @@
 # PowerPC-64 mpn_sub_n -- Subtract two limb vectors of the same length > 0
 # and store difference in a third limb vector.
+#
+# ppc630: 1.75 cycles/limb
 
-# Copyright 1999, 2000 Free Software Foundation, Inc.b
+# Copyright 1999, 2000, 2001 Free Software Foundation, Inc.b
 
 # This file is part of the GNU MP Library.
 

@@ -1,5 +1,7 @@
 # PowerPC-64 mpn_mul_1 -- Multiply a limb vector with a limb and store
 # the result in a second limb vector.
+#
+# ppc630: 6 to 12 cycles/limb, depending on multiplier
 
 # Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 

@@ -1,6 +1,8 @@
 # PowerPC-64 mpn_copyi -- Copy a limb vector.
+#
+# ppc630: 1.65 cycles/limb
 
-# Copyright 1999, 2000 Free Software Foundation, Inc.
+# Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 # This file is part of the GNU MP Library.
 

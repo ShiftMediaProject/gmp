@@ -1,4 +1,6 @@
-#  PowerPC-64 mpn_lshift -- Shift a number left.
+# PowerPC-64 mpn_lshift -- Shift a number left.
+#
+# ppc630: 1.6375 cycles/limb
 
 # Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 

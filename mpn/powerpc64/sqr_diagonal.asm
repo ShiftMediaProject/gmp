@@ -1,4 +1,7 @@
 # PowerPC-64 mpn_sqr_diagonal.
+#
+# ppc630: 18.0 cycles/limb
+
 
 # Copyright 2001 Free Software Foundation, Inc.
 
