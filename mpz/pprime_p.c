@@ -32,6 +32,12 @@ MA 02111-1307, USA. */
 
 static int isprime _PROTO ((unsigned long int t));
 
+
+/* MPN_MOD_OR_MODEXACT_1_ODD can be used instead of mpn_mod_1 for the trial
+   division.  It gives a result which is not the actual remainder r but a
+   value congruent to r*2^n mod d.  Since all the primes being tested are
+   odd, r*2^n mod p will be 0 if and only if r mod p is 0.  */
+
 int
 mpz_probab_prime_p (mpz_srcptr n, int reps)
 {
