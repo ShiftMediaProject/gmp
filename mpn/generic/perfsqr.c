@@ -77,9 +77,11 @@ mpn_perfect_square_p (up, usize)
      is even more on continuing up to p=53 in the 64-bit case.  */
 
   /* Firstly, compute REM = A mod PP.  */
+#if defined (PP_INVERTED)
   if (UDIV_TIME > UDIV_NORM_PREINV_TIME)
     rem = mpn_preinv_mod_1 (up, usize, (mp_limb_t) PP, (mp_limb_t) PP_INVERTED);
   else
+#endif
     rem = mpn_mod_1 (up, usize, (mp_limb_t) PP);
 
   /* Now decide if REM is a quadratic residue modulo the factors in PP.  */
@@ -88,7 +90,7 @@ mpn_perfect_square_p (up, usize)
      time, so things might run faster if we limit this loop according to the
      size of A.  */
 
-#if BITS_PER_MP_LIMB == 64
+#if BITS_PER_MP_LIMB >= 64
   if (((CNST_LIMB(0x12DD703303AED3) >> rem % 53) & 1) == 0)
     return 0;
   if (((CNST_LIMB(0x4351B2753DF) >> rem % 47) & 1) == 0)
@@ -102,6 +104,7 @@ mpn_perfect_square_p (up, usize)
   if (((CNST_LIMB(0x121D47B7) >> rem % 31) & 1) == 0)
     return 0;
 #endif
+#if BITS_PER_MP_LIMB >= 32
   if (((0x13D122F3L >> rem % 29) & 1) == 0)
     return 0;
   if (((0x5335FL >> rem % 23) & 1) == 0)
@@ -110,17 +113,24 @@ mpn_perfect_square_p (up, usize)
     return 0;
   if (((0x1A317L >> rem % 17) & 1) == 0)
     return 0;
+#endif
+#if BITS_PER_MP_LIMB >= 16
   if (((0x161BL >> rem % 13) & 1) == 0)
     return 0;
   if (((0x23BL >> rem % 11) & 1) == 0)
     return 0;
+#endif
+#if BITS_PER_MP_LIMB >= 8
   if (((0x017L >> rem % 7) & 1) == 0)
     return 0;
+#endif
+#if BITS_PER_MP_LIMB >= 4
   if (((0x13L >> rem % 5) & 1) == 0)
     return 0;
+#endif
   if (((0x3L >> rem % 3) & 1) == 0)
     return 0;
-#endif
+#endif /* PP */
 
   TMP_MARK (marker);
 

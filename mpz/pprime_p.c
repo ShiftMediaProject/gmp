@@ -66,14 +66,28 @@ mpz_probab_prime_p (n, reps)
   if ((mpz_get_ui (n) & 1) == 0)
     return 0;
 
+#if defined (PP)
   /* Check if n has small factors.  */
+#if defined (PP_INVERTED)
   if (UDIV_TIME > (2 * UMUL_TIME + 6))
     r = mpn_preinv_mod_1 (PTR(n), SIZ(n), (mp_limb_t) PP, (mp_limb_t) PP_INVERTED);
   else
+#endif /* PP_INVERTED */
     r = mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) PP);
-  if (r % 3 == 0 || r % 5 == 0 || r % 7 == 0 || r % 11 == 0 || r % 13 == 0
+  if (r % 3 == 0
+#if BITS_PER_MP_LIMB >= 4
+      || r % 5 == 0
+#endif
+#if BITS_PER_MP_LIMB >= 8
+      || r % 7 == 0
+#endif
+#if BITS_PER_MP_LIMB >= 16
+      || r % 11 == 0 || r % 13 == 0
+#endif
+#if BITS_PER_MP_LIMB >= 32
       || r % 17 == 0 || r % 19 == 0 || r % 23 == 0 || r % 29 == 0
-#if BITS_PER_MP_LIMB == 64
+#endif
+#if BITS_PER_MP_LIMB >= 64
       || r % 31 == 0 || r % 37 == 0 || r % 41 == 0 || r % 43 == 0
       || r % 47 == 0 || r % 53 == 0
 #endif
@@ -81,6 +95,7 @@ mpz_probab_prime_p (n, reps)
     {
       return 0;
     }
+#endif /* PP */
 
   /* Do more dividing.  We collect small primes, using umul_ppmm, until we
      overflow a single limb.  We divide our number by the small primes product,
@@ -95,7 +110,7 @@ mpz_probab_prime_p (n, reps)
     nprimes = 0;
     p = 1;
     ln2 = mpz_sizeinbase (n, 2) / 30; ln2 = ln2 * ln2;
-    for (q = BITS_PER_MP_LIMB == 64 ? 59 : 31; q < ln2; q += 2)
+    for (q = PP_FIRST_OMITTED; q < ln2; q += 2)
       {
 	if (isprime (q))
 	  {
