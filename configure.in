@@ -1336,6 +1336,14 @@ AC_PROG_CPP
 GMP_H_ANSI
 
 
+# How to assemble, used with CFLAGS etc, see mpn/Makeasm.am.
+# Using the compiler is a lot easier than figuring out how to invoke the
+# assembler directly.
+#
+test -n "$CCAS" || CCAS="$CC -c"
+AC_SUBST(CCAS)
+
+
 # The C++ compiler, if desired.
 want_cxx=no
 if test $enable_cxx != no; then
@@ -1388,6 +1396,10 @@ if test $want_cxx = yes; then
   AC_PROG_CXXCPP
 fi
 
+
+# Path setups for Cray, according to IEEE or CFP.  These have to come after
+# deciding the compiler.
+#
 case $host_cpu in
   c90 | t90)
     AC_EGREP_CPP(yes,
@@ -1405,7 +1417,8 @@ if test -z "$MPN_PATH"; then
   path="$add_path $path"
 fi
 
-# for a nail build, also look in "nails" subdirectories
+# For a nail build, also look in "nails" subdirectories.
+#
 if test $GMP_NAIL_BITS != 0 && test -z "$MPN_PATH"; then
   new_path=
   for i in $path; do
@@ -1416,6 +1429,20 @@ if test $GMP_NAIL_BITS != 0 && test -z "$MPN_PATH"; then
   done
   path=$new_path
 fi
+
+# If there's any sse2 or mmx in the path, check whether the assembler
+# supports it, and remove if not.
+#
+case $host in
+  X86_PATTERN)
+    case "$path" in
+      *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(*mmx*)]) ;;
+    esac
+    case "$path" in
+      *sse2*)  GMP_ASM_X86_SSE2( , [GMP_STRIP_PATH(sse2)]) ;;
+    esac
+  ;;
+esac
 
 
 cat >&AC_FD_CC <<EOF
@@ -1572,27 +1599,6 @@ if test "$enable_shared" = yes && test "$enable_static" = yes; then
       ;;
   esac
 fi
-
-
-# How to assemble, used with CFLAGS etc, see mpn/Makeasm.am.
-# Using the compiler is a lot easier than figuring out how to invoke the
-# assembler directly.
-#
-test -n "$CCAS" || CCAS="$CC -c"
-AC_SUBST(CCAS)
-
-case $host in
-  X86_PATTERN)
-    # If there's any sse2 or mmx in the path, check whether the assembler
-    # supports it, and remove if not.
-    case "$path" in
-      *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(*mmx*)]) ;;
-    esac
-    case "$path" in
-      *sse2*)  GMP_ASM_X86_SSE2( , [GMP_STRIP_PATH(sse2)]) ;;
-    esac
-  ;;
-esac
 
 
 # The library and header checks are mostly for the benefit of supplementary
