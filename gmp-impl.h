@@ -2297,6 +2297,8 @@ int __gmp_doprnt_mpf _PROTO ((const struct doprnt_funs_t *funs,
                               void * data,
                               const struct doprnt_params_t *p,
                               mpf_srcptr f));
+int __gmp_replacement_vsnprintf _PROTO ((char *buf, size_t buf_size,
+                                         const char *fmt, va_list ap));
 #endif /* _GMP_H_HAVE_VA_LIST */
 
 
