@@ -8,7 +8,7 @@ Terms Used In This Document:
 	 are done with single instructions, not 32 bits at a time.)
   Environment = The operating system and compiler.
 
-GMP is a very complex packagde to build since its speed is very
+GMP is a very complex package to build since its speed is very
 sensitive to the ISA and ABI.  For example, if the ISA provides 64-bit
 instructions, it is crucial that GMP is configured to use them.
 
