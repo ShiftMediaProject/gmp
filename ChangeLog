@@ -1,3 +1,8 @@
+2000-04-04  Kevin Ryde  <kevin@swox.se>
+
+	* make.bat: Removed (no longer works, no longer supported).
+	* mpn/msdos/asm-syntax.h: Removed (was used only by make.bat).
+
 2000-04-03  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/brandom.c: New file, replacing random2.
