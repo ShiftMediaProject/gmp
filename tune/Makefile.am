@@ -61,7 +61,7 @@ speed_ext_SOURCES = speed.c
 speed_ext_LDFLAGS = -all-static
 
 tuneup_SOURCES = tuneup.c
-nodist_tuneup_SOURCES = $(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS)
+nodist_tuneup_SOURCES = sqr_basecase.c $(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES)
 tuneup_LDFLAGS = -all-static
@@ -75,11 +75,13 @@ allprogs: $(EXTRA_PROGRAMS)
 
 
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
-	$(nodist_tuneup_SOURCES) sqr_basecase.c sqr_asm.asm \
+	$(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS) sqr_asm.asm \
 	stg.gnuplot stg.data \
 	mtg.gnuplot mtg.data \
 	fibg.gnuplot fibg.data \
 	graph.gnuplot graph.data
+
+DISTCLEANFILES = sqr_basecase.c 
 
 
 # Generating these little files at build time seems better than including
@@ -102,11 +104,6 @@ $(TUNE_MPZ_SRCS):
 	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
 	  echo "#include \"mpz/$$i\"" >>$$i; \
 	done
-
-sqr_basecase.c: $(top_builddir)/mpn/sqr_basecase.c
-	echo '#define TUNE_PROGRAM_BUILD 1' >sqr_basecase.c
-	echo '#define TUNE_PROGRAM_BUILD_SQR 1' >>sqr_basecase.c
-	echo '#include "mpn/sqr_basecase.c"' >>sqr_basecase.c
 
 sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
 	echo 'define(KARATSUBA_SQR_THRESHOLD_OVERRIDE,KARATSUBA_SQR_THRESHOLD_MAX)' >sqr_asm.asm
