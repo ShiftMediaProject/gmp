@@ -1,11 +1,4 @@
 dnl  x86 mpn_mod_1 -- mpn by limb remainder.
-dnl 
-dnl        cycles/limb
-dnl  K7        42
-dnl  K6        20
-dnl  P6        40
-dnl  P5        44
-dnl  486   approx 42 maybe
 
 
 dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
@@ -26,6 +19,19 @@ dnl  You should have received a copy of the GNU Library General Public
 dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
+
+
+dnl        cycles/limb
+dnl  K6        20
+dnl  P5        44
+dnl  P6        39
+dnl  486   approx 42 maybe
+dnl
+dnl  The following have their own optimized mod_1 implementations, but for
+dnl  reference the code here runs as follows.
+dnl
+dnl  P6MMX     39
+dnl  K7        41
 
 
 include(`../config.m4')
@@ -53,12 +59,10 @@ PROLOGUE(mpn_mod_1c)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	pushl	%ebx
-FRAME_pushl()
+	pushl	%ebx		FRAME_pushl()
 
 	movl	PARAM_SRC, %ebx
-	pushl	%esi
-FRAME_pushl()
+	pushl	%esi		FRAME_pushl()
 
 	movl	PARAM_DIVISOR, %esi
 	orl	%ecx, %ecx
@@ -80,12 +84,10 @@ PROLOGUE(mpn_mod_1)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	pushl	%ebx
-FRAME_pushl()
+	pushl	%ebx		FRAME_pushl()
 
 	movl	PARAM_SRC, %ebx
-	pushl	%esi
-FRAME_pushl()
+	pushl	%esi		FRAME_pushl()
 
 	movl	PARAM_DIVISOR, %esi
 	orl	%ecx, %ecx
