@@ -852,19 +852,19 @@ interpolate3 (A, B, C, D, E,
   ASSERT(!(*B & 3));
   mpn_rshift (B, B, len, 2);
   B[len-1] |= tb<<(BITS_PER_MP_LIMB-2);
-  ASSERT((long)tb >= 0);
+  ASSERT((mp_limb_signed_t)tb >= 0);
   tb >>= 2;
 
   ASSERT(!(*C & 1));
   mpn_rshift (C, C, len, 1);
   C[len-1] |= tc<<(BITS_PER_MP_LIMB-1);
-  ASSERT((long)tc >= 0);
+  ASSERT((mp_limb_signed_t)tc >= 0);
   tc >>= 1;
 
   ASSERT(!(*D & 3));
   mpn_rshift (D, D, len, 2);
   D[len-1] |= td<<(BITS_PER_MP_LIMB-2);
-  ASSERT((long)td >= 0);
+  ASSERT((mp_limb_signed_t)td >= 0);
   td >>= 2;
 
 #if WANT_ASSERT
@@ -1002,10 +1002,10 @@ interpolate3 (A, B, C, D, E,
       tc += c < sc;
       /* TO DO: choose one of the following alternatives. */
 #if 1
-      sc = (mp_limb_t)((long)sc >> (BITS_PER_MP_LIMB - 1));
+      sc = (mp_limb_signed_t) sc >> (BITS_PER_MP_LIMB - 1);
       sc += tc;
 #else
-      sc = tc - ((long)sc < 0L);
+      sc = tc - ((mp_limb_signed_t) sc < 0L);
 #endif
 
       /* sd has period 2. */
