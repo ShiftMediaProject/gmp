@@ -1,6 +1,6 @@
 /* mpz_addmul, mpz_submul -- add or subtract multiple.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -39,7 +39,7 @@ MA 02111-1307, USA. */
 static void __gmpz_aorsmul _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub))) REGPARM_ATTR (1);
 #define mpz_aorsmul(w,x,y,sub)  __gmpz_aorsmul (REGPARM_3_1 (w, x, y, sub))
 
-static void
+REGPARM_ATTR (1) static void
 mpz_aorsmul (mpz_ptr w, mpz_srcptr x, mpz_srcptr y, mp_size_t sub)
 {
   mp_size_t  xsize, ysize, tsize, wsize, wsize_signed;
