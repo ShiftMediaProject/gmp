@@ -572,8 +572,7 @@ my @table =
      {
        'regexp'=> 'mul_2',
        'ret'   => 'mp_limb_t',
-       'args'  => 'mp_ptr wp, mp_srcptr xp, mp_size_t size, mp_limb_t low, mp_limb_t high',
-       'speed' => 'SPEED_ROUTINE_MPN_UNARY_2',
+       'args'  => 'mp_ptr wp, mp_srcptr xp, mp_size_t size, mp_srcptr mult',
      },
      
      {
