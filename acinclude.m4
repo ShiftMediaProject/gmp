@@ -781,14 +781,22 @@ rm -f conftest*
 echo ["define(<W32>, <$gmp_cv_check_asm_w32>)"] >> $gmp_tmpconfigm4
 ])
 
+
 dnl  GMP_CHECK_ASM_MMX([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
-dnl  Can we assemble MMX insns?
+dnl  -----------------------------------------------------------
+dnl  Determine wither the assembler supports MMX instructions.
+dnl
+dnl  This macro is wanted before GMP_CHECK_ASM_TEXT, so ".text" is hard
+dnl  coded here.  ".text" is believed to be correct on all x86 systems,
+dnl  certainly it's all GMP_CHECK_ASM_TEXT gives currently.  Actually
+dnl  ".text" probably isn't needed at all, at least for just checking
+dnl  instruction syntax.
+
 AC_DEFUN(GMP_CHECK_ASM_MMX,
-[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
-AC_CACHE_CHECK([if the assembler knows about MMX instructions],
+[AC_CACHE_CHECK([if the assembler knows about MMX instructions],
 		gmp_cv_check_asm_mmx,
 [cat > conftest.s <<EOF
-	$gmp_cv_check_asm_text
+	.text
 	por	%mm0, %mm0
 EOF
 ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
@@ -813,7 +821,9 @@ else
 fi
 ])dnl
 
+
 dnl  GMP_CHECK_ASM_SHLDL_CL([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
+dnl  ----------------------------------------------------------------
 AC_DEFUN(GMP_CHECK_ASM_SHLDL_CL,
 [AC_REQUIRE([GMP_CHECK_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler takes cl with shldl],
