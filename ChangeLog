@@ -2430,7 +2430,7 @@ MA 02111-1307, USA.
 
 	* mpn/amd64/gmp-mparam.h: New file.
 
-	* tune/amd64.asm: New file.
+	* tune/amd64.asm: New file, derived in part from tune/pentium.asm.
 
 2003-08-15  Kevin Ryde  <kevin@swox.se>
 
