@@ -820,6 +820,7 @@ case $host in
     gcc_cflags_cpu=
     acc_cflags="-O2"
     cc_cflags="-O2"
+    GMP_INCLUDE_MPN(sparc32/sparc-defs.m4)
 
     # FIXME: This should be selected according to the CPU
     if test x${floating_point} = xno
@@ -869,6 +870,7 @@ case $host in
             path_64="sparc64"
             cclist_64="gcc cc"
             gcc_64_cflags="-g -O2 -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
+            gcc_64_ldflags="-Wc,-m64"
 	    # -fast enables different optimizations depending compiler version
 	    # -fns=no and -fsimple=1 disables some transformations that
 	    # conflict with IEEE 754, which some compiler versions perform.
@@ -884,7 +886,7 @@ case $host in
 
   # VAX
   vax*-*-*)
-    # Currently (version 3.0) gcc on vax always uses a frame pointer
+    # Currently gcc (version 3.0) on vax always uses a frame pointer
     # (config/vax/vax.h FRAME_POINTER_REQUIRED=1), so -fomit-frame-pointer
     # will be ignored.
     #
@@ -1936,6 +1938,13 @@ if test "$gmp_asm_syntax_testing" != no; then
       ;;
     power*-*-aix*)
       GMP_INCLUDE_MPN(powerpc32/aix.m4)
+      ;;
+    sparcv9*-*-* | ultrasparc*-*-* | sparc64-*-*)
+      case $host in
+        [*-*-solaris2.[7-9]])
+          GMP_ASM_SPARC_REGISTER
+          ;;
+      esac
       ;;
     X86_PATTERN)
       GMP_ASM_ALIGN_FILL_0x90
