@@ -201,6 +201,13 @@ void *_mp_default_allocate _PROTO ((size_t));
 void *_mp_default_reallocate _PROTO ((void *, size_t, size_t));
 void _mp_default_free _PROTO ((void *, size_t));
 
+#define _MP_ALLOCATE_FUNC_TYPE(n,type) \
+  ((type *) (*_mp_allocate_func) ((n) * sizeof (type)))
+#define _MP_ALLOCATE_FUNC_LIMBS(n)   _MP_ALLOCATE_FUNC_TYPE(n,mp_limb_t)
+
+#define _MP_FREE_FUNC_TYPE(p,n,type) (*_mp_free_func) (p, (n) * sizeof (type))
+#define _MP_FREE_FUNC_LIMBS(p,n)     _MP_FREE_FUNC_TYPE(p,n,mp_limb_t)
+
 
 #if (__STDC__-0) || defined (__cplusplus)
 
