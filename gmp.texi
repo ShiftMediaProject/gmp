@@ -522,25 +522,33 @@ installation information too.
 @table @asis
 @item Non-Unix Systems
 
-@samp{configure} needs various Unix-like tools installed.  On an MS-DOS system
-Cygwin or DJGPP should work.  See
+@samp{configure} requires various Unix-like tools.  On an MS-DOS system
+Cygwin, DJGPP or MINGW can be used.  See
 
 @display
-@uref{http://www.delorie.com/djgpp/}
-@uref{http://www.cygnus.com/cygwin/}
+@uref{http://www.cygnus.com/cygwin}
+@uref{http://www.delorie.com/djgpp}
+@uref{http://www.mingw.org}
 @end display
 
 It might be possible to build without the help of @samp{configure}, certainly
 all the code is there, but unfortunately you'll be on your own.
 
-@item Object Directory
+@item Build Directory
 
-To compile in a separate object directory, @command{cd} to that directory, and
+To compile in a separate build directory, @command{cd} to that directory, and
 prefix the configure command with the path to the GMP source directory.  For
-example @samp{../src/gmp-@value{VERSION}/configure}.  Not all @samp{make}
-programs have the necessary features (@code{VPATH}) to support this.  In
-particular, SunOS and Slowaris @command{make} have bugs that make them unable
-to build from a separate object directory.  Use GNU @command{make} instead.
+example
+
+@example
+cd /my/build/dir
+/my/sources/gmp-@value{VERSION}/configure
+@end example
+
+Not all @samp{make} programs have the necessary features (@code{VPATH}) to
+support this.  In particular, SunOS and Slowaris @command{make} have bugs that
+make them unable to build in a separate directory.  Use GNU @command{make}
+instead.
 
 @item @option{--disable-shared}, @option{--disable-static}
 
@@ -554,8 +562,8 @@ are slightly slower, having a small cost on each function call.
 For normal native compilation, the system can be specified with
 @samp{--build}.  By default @samp{./configure} uses the output from running
 @samp{./config.guess}.  On some systems @samp{./config.guess} can determine
-the exact CPU type, on others it will be necessary to give the exact CPU
-explicitly.  For example,
+the exact CPU type, on others it will be necessary to give it explicitly.  For
+example,
 
 @example
 ./configure --build=ultrasparc-sun-solaris2.7
@@ -586,7 +594,7 @@ suitable cross-compiling @command{cc} etc.
 Compiling for a different CPU in the same family as the build system is a form
 of cross-compilation, though very possibly this would merely be with special
 options on a native compiler.  In any case @samp{./configure} will avoid
-trying to run anything on the build system, and this can be important when
+trying to run anything on the build system, and this is important when
 creating binaries for a newer CPU, since they might not run on the build
 system.
 
@@ -1075,7 +1083,7 @@ detect the CPU.  But a way to manually specify a @samp{--build} will be wanted
 for systems where @samp{./config.guess} is inexact.
 
 It should be noted that @file{gmp.h} is a generated file, and will be
-architecure and ABI dependent.
+architecture and ABI dependent.
 
 
 @need 2000
@@ -1110,6 +1118,22 @@ available.
 On systems @samp{arm*-*-*}, versions of GCC up to and including 2.95.3 have a
 bug in unsigned division, giving wrong results for some operands.  GMP
 @samp{./configure} will demand GCC 2.95.4 or later.
+
+@item Microsoft Windows
+On systems @samp{*-*-cygwin*}, @samp{*-*-mingw*} and @samp{*-*-pw32*} by
+default GMP builds only a static library, but a standard Windows DLL can be
+built instead using
+
+@example
+./configure --disable-static --enable-shared
+@end example
+
+Static and DLL libraries can't both be built, since certain export directives
+in @file{gmp.h} must be different.  This might change in the future.
+
+GCC is recommended for compiling GMP, but the resulting DLLs can be used with
+any compiler.  On a mingw system only the standard Windows libraries will be
+needed, on a cygwin system the usual cygwin runtime will be required.
 
 @item Motorola 68k Family
 
@@ -1190,6 +1214,12 @@ the default @env{CFLAGS} for GCC 2.95.4 and up.
 You might find more up-to-date information at @uref{http://swox.com/gmp/}.
 
 @table @asis
+@item DJGPP bash
+
+The DJGPP port of @command{bash} 2.03 is unable to run the @samp{configure}
+script, it exits silently, having died writing a preamble to
+@file{config.log}.  Use @command{bash} 2.04 or higher.
+
 @item GNU binutils @command{strip}
 @cindex Stripped libraries
 
@@ -1447,7 +1477,7 @@ main (void)
 @}
 @end example
 
-In this example, @code{foo} work even if the mainline passes the same variable
+In this example, @code{foo} works even if the mainline passes the same variable
 as both @code{param} and @code{result}, just like the library functions.  But
 sometimes this is tricky to arrange, and an application might not want to
 bother.
@@ -1527,7 +1557,6 @@ but it's not safe for one to read while the another might be writing, nor for
 two threads to write simultaneously.  It's not safe for two threads to
 generate a random number from the same @code{gmp_randstate_t} simultaneously,
 since this involves an update of that variable.
-generated.
 
 @item
 On SCO systems the default @code{<ctype.h>} macros use per-file static
@@ -2618,8 +2647,9 @@ Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
 @deftypefun int mpz_invert (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 @cindex Modular inverse functions
 Compute the inverse of @var{op1} modulo @var{op2} and put the result in
-@var{rop}.  Return non-zero if an inverse exists, zero otherwise.  When the
-function returns zero, @var{rop} is undefined.
+@var{rop}.  If the inverse exists, the return value is non-zero and @var{rop}
+will satisfy @ma{0 @le{} @var{rop} < @var{op2}}.  If an inverse doesn't exist
+the return value is zero and @var{rop} is undefined.
 @end deftypefun
 
 @deftypefun int mpz_jacobi (mpz_t @var{a}, mpz_t @var{b})
@@ -2673,9 +2703,35 @@ bin(-n@C{}k) = (-1)^k * bin(n+k-1@C{}k)}, see Knuth volume 1 section 1.2.6
 part G.
 @end deftypefun
 
-@deftypefun void mpz_fib_ui (mpz_t @var{rop}, unsigned long int @var{n})
+@deftypefun void mpz_fib_ui (mpz_t @var{fn}, unsigned long int @var{n})
+@deftypefunx void mpz_fib2_ui (mpz_t @var{fn}, mpz_t @var{fnsub1}, unsigned long int @var{n})
 @cindex Fibonacci sequence functions
-Compute the @var{n}th Fibonacci number and store the result in @var{rop}.
+@code{mpz_fib_ui} sets @var{fn} to to @m{F_n,F[n]}, the @var{n}'th Fibonacci
+number.  @code{mpz_fib2_ui} sets @var{fn} to @m{F_n,F[n]}, and @var{fnsub1} to
+@m{F_{n-1},F[n-1]}.
+
+These functions are designed for calculating isolated Fibonacci numbers.  When
+a sequence of values is wanted it's best to start with @code{mpz_fib2_ui} and
+iterate the defining @m{F_{n+1} = F_n + F_{n-1}, F[n+1]=F[n]+F[n-1]} or
+similar.
+@end deftypefun
+
+@deftypefun void mpz_lucnum_ui (mpz_t @var{ln}, unsigned long int @var{n})
+@deftypefunx void mpz_lucnum2_ui (mpz_t @var{ln}, mpz_t @var{lnsub1}, unsigned long int @var{n})
+@cindex Lucas number functions
+@code{mpz_lucnum_ui} sets @var{ln} to to @m{L_n,L[n]}, the @var{n}'th Lucas
+number.  @code{mpz_lucnum2_ui} sets @var{ln} to @m{L_n,L[n]}, and @var{lnsub1}
+to @m{L_{n-1},L[n-1]}.
+
+These functions are designed for calculating isolated Lucas numbers.  When a
+sequence of values is wanted it's best to start with @code{mpz_lucnum2_ui} and
+iterate the defining @m{L_{n+1} = L_n + L_{n-1}, L[n+1]=L[n]+L[n-1]} or
+similar.
+
+The Fibonacci numbers and Lucas numbers are related sequences, so it's never
+necessary to call both @code{mpz_fib2_ui} and @code{mpz_lucnum2_ui}.  The
+formulas for going from Fibonacci to Lucas can be found in @ref{Lucas Numbers
+Algorithm}, the reverse is straightforward too.
 @end deftypefun
 
 
@@ -2757,7 +2813,7 @@ between the two operands.  Otherwise, return the largest possible value
 
 It is possible to extend this function to return a useful value when the
 operands are both negative, but the current implementation returns
-@var{MAX_ULONG} in this case.  @strong{Do not depend on this behavior, since
+@var{MAX_ULONG} in this case.  @strong{Do not depend on this behaviour, since
 it will change in a future release.}
 @end deftypefun
 
@@ -3020,7 +3076,7 @@ The string can be an integer like "41" or a fraction like "41/152".  The
 fraction must be in canonical form (@pxref{Rational Number Functions}), or if
 not then @code{mpq_canonicalize} must be called.
 
-The numerator and optional denomintor are parsed the same as in
+The numerator and optional denominator are parsed the same as in
 @code{mpz_set_str} (@pxref{Assigning Integers}).  White space is allowed in
 the string, and is simply ignored.  The @var{base} can vary from 2 to 36, or
 if @var{base} is 0 then the leading characters are used: @code{0x} for hex,
@@ -4615,7 +4671,7 @@ usually around 1.5@cross{}.  Less than 1.5@cross{} probably indicates
 @code{mpn_sqr_basecase} wants improving on that CPU.
 
 On some CPUs @code{mpn_mul_basecase} can be faster than the generic C
-@code{mpn_sqr_basecase}.  @code{BASECASE_SQR_THERSHOLD} is the size at which
+@code{mpn_sqr_basecase}.  @code{BASECASE_SQR_THRESHOLD} is the size at which
 to use @code{mpn_sqr_basecase}, this will be zero if that routine should be
 used always.
 
@@ -5817,71 +5873,127 @@ sub-optimal on sizes above the Karatsuba multiply threshold.
 
 @menu
 * Fibonacci Numbers Algorithm::  
+* Lucas Numbers Algorithm::     
 @end menu
 
-@node Fibonacci Numbers Algorithm,  , Other Algorithms, Other Algorithms
+@node Fibonacci Numbers Algorithm, Lucas Numbers Algorithm, Other Algorithms, Other Algorithms
 @subsection Fibonacci Numbers
 
-The Fibonacci number function @code{mpz_fib_ui} is designed for calculating an
-isolated @m{F_n,F[n]} efficiently.  It uses three approaches.
+The Fibonacci functions @code{mpz_fib_ui} and @code{mpz_fib2_ui} are designed
+for calculating isolated @m{F_n,F[n]} or @m{F_n,F[n]},@m{F_{n-1},F[n-1]}
+values efficiently.
 
-One and two limb numbers are held in a table and simply returned.  For a
-32-bit limb this means up to @m{F_{93},F[93]}, or for a 64-bit limb up to
-@m{F_{186},F[186]}.  A 64-bit system can be expected to have more memory
-available, so it makes sense to use more table data there.
+For small @ma{n}, a table of single limb values in @code{__gmp_fib_table} is
+used.  On a 32-bit limb this goes up to @m{F_{47},F[47]}, or on a 64-bit limb
+up to @m{F_{93},F[93]}.  For convenience the table starts at @m{F_{-1},F[-1]}.
 
-Values past the tables are generated by starting from the last two entries and
-iterating the defining Fibonacci formula,
-@tex
-$$ F_n = F_{n-1} + F_{n-2} $$
-@end tex
-@ifnottex
-
-@example
-F[n] = F[n-1] + F[n-2]
-@end example
-
-@end ifnottex
-For @ma{n} above @code{FIB_THRESHOLD}, a binary powering algorithm is used,
-calculating @m{F_n,F[n]} and @m{F_{n-1},F[n-1]}.  The ``doubling'' formulas
-are
+Beyond the table, values are generated with a binary powering algorithm,
+calculating a pair @m{F_n,F[n]} and @m{F_{n-1},F[n-1]} working from high to
+low across the bits of @ma{n}.  The formulas used are
 @tex
 $$\eqalign{
-  F_{2n}   &= F_n     (2F_{n-1} + F_{n})   \cr
-  F_{2n-2} &= F_{n-1} (2F_n     - F_{n-1}) \cr
+  F_{2k+1} &= 4F_k^2 - F_{k-1}^2 + 2(-1)^k \cr
+  F_{2k-1} &=  F_k^2 + F_{k-1}^2           \cr
+  F_{2k}   &= F_{2k+1} - F_{2k-1}
 }$$
 @end tex
 @ifnottex
 
 @example
-F[2n]   = F[n]   * (2*F[n-1] + F[n])
-F[2n-2] = F[n-1] * (2*F[n]   - F[n-1])
+F[2k+1] = 4*F[k]^2 - F[k-1]^2 + 2*(-1)^k
+F[2k-1] =   F[k]^2 + F[k-1]^2
+
+F[2k] = F[2k+1] - F[2k-1]
 @end example
 
 @end ifnottex
-And from these a new pair @m{F_{2n},F[2n]},@m{F_{2n-1},F[2n-1]} or
-@m{F_{2n+1},F[2n+1]},@m{F_{2n},F[2n]} is obtained with one of
+At each stage @ma{k} is the high @ma{b} bits of @ma{n}.  If the next bit of
+@ma{n} is 0 then @m{F_{2k},F[2k]},@m{F_{2k-1},F[2k-1]} is used, or if it's a 1
+then @m{F_{2k+1},F[2k+1]},@m{F_{2k},F[2k]} is used, and the process repeated
+until all bits of @ma{n} are incorporated.  Notice these formulas require just
+two squares per bit of @ma{n}.
+
+It'd be possible to handle the first few @ma{n} above the single limb table
+with simple additions, using the defining Fibonacci recurrance @m{F_{k+1} =
+F_k + F_{k-1}, F[k+1]=F[k]+F[k-1]}, but this is not done since it turns out to
+be faster for only about 10 or 20 values of @ma{n}, and including a block of
+code for just those doesn't seem worthwhile.  If they really mattered it'd be
+better to extend the data table.
+
+Using a table avoids lots of calculations on small numbers, and makes small
+@ma{n} go fast.  A bigger table would make more small @ma{n} go fast, it's
+just a question of balancing size against desired speed.  For GMP the code is
+kept compact, with the emphasis primarily on a good powering algorithm.
+
+@code{mpz_fib2_ui} returns both @m{F_n,F[n]} and @m{F_{n-1},F[n-1]}, but
+@code{mpz_fib_ui} is only interested in @m{F_n,F[n]}.  In this case the last
+step of the algorithm can become one multiply rather than two squares.  One of
+the two following formulas is used, according to @ma{n} odd or even.
 @tex
 $$\eqalign{
-  F_{2n+1} &= 2F_{2n} - F_{2n-2} \cr
-  F_{2n-1} &= F_{2n} - F_{2n-2}  \cr
+  F_{2k}   &= F_k (F_k + 2F_{k-1}) \cr
+  F_{2k+1} &= (2F_k + F_{k-1}) (2F_k - F_{k-1}) + 2(-1)^k
 }$$
 @end tex
 @ifnottex
 
-@display
-F[2n+1] = 2*F[2n]-F[2n-2]
-F[2n-1] = F[2n]-F[2n-2]
-@end display
+@example
+F[2k]   = F[k]*(F[k]+2F[k-1])
+
+F[2k+1] = (2F[k]+F[k-1])*(2F[k]-F[k-1]) + 2*(-1)^k
+@end example
 
 @end ifnottex
-Powering this way is much faster than simple addition, and in fact
-@code{FIB_THRESHOLD} is usually small, with only a few @ma{n} handled by
-additions.  For large @ma{n}, Karatsuba and higher multiplication algorithms
-get used for the multiplications since the operands are roughly the same size.
+@m{F_{2k+1},F[2k+1]} here is the same as above, just rearranged to be a
+multiply.  For interest, the @m{2(-1)^k, 2*(-1)^k} term both here and above
+can be applied just to the low limb of the calculation, without a carry or
+borrow into further limbs, which saves some code size.  See comments with
+@code{mpz_fib_ui} and the internal @code{mpn_fib2_ui} for how this is done.
 
-Alternate formulas using two squares per bit rather than two multiplies exist,
-and will be used in the future.
+
+@node Lucas Numbers Algorithm,  , Fibonacci Numbers Algorithm, Other Algorithms
+@subsection Lucas Numbers
+
+@code{mpz_lucnum2_ui} derives a pair of Lucas numbers from a pair of Fibonacci
+numbers with the following simple formulas.
+@tex
+$$\eqalign{
+  L_k     &=  F_k + 2F_{k-1} \cr
+  L_{k-1} &= 2F_k -  F_{k-1}
+}$$
+@end tex
+@ifnottex
+
+@example
+L[k]   =   F[k] + 2*F[k-1]
+L[k-1] = 2*F[k] -   F[k-1]
+@end example
+
+@end ifnottex
+@code{mpz_lucnum_ui} is only interested in @m{L_n,L[n]}, and some work can be
+saved.  Trailing zero bits on @ma{n} can be handled with a single square each.
+@tex
+$$ L_{2k} = L_k^2 - 2(-1)^k $$
+@end tex
+@ifnottex
+
+@example
+L[2n] = = L[k]^2 - 2*(-1)^k
+@end example
+
+@end ifnottex
+And the lowest 1 bit can be handled with one multiply of a pair of Fibonacci
+numbers, in a way not dissimilar to what @code{mpz_fib_ui} does.
+@tex
+$$ L_{2k+1} = 5F_{k-1} (2F_k + F_{k-1}) - 4(-1)^k $$
+@end tex
+@ifnottex
+
+@example
+L[2k+1] = 5*F[k-1]*(2*F[k]+F[k-1]) - 4*(-1)^k
+@end example
+
+@end ifnottex
 
 
 @node Assembler Coding,  , Other Algorithms, Algorithms
@@ -6414,13 +6526,13 @@ limb from @code{_mp_prec} before converting to bits.  The net effect of
 reading back with @code{mpf_get_prec} is simply the precision rounded up to a
 multiple of @code{mp_bits_per_limb}.
 
-Note that the extra limb added here for the high limb is in addition to the
-extra limb allocated to @code{_mp_d}.  For example with a 32-bit limb, an
-application request for 250 bits will be rounded up to 8 limbs, then an extra
-added for the high being only non-zero, giving an @code{_mp_prec} of 9.
-@code{_mp_d} then gets 10 limbs allocated.  Reading back with
-@code{mpf_get_prec} will take @code{_mp_prec} subtract 1 limb and multiply by
-32, giving 256 bits.
+Note that the extra limb added here for the high limb only being non-zero is
+in addition to the extra limb allocated to @code{_mp_d}.  For example with a
+32-bit limb, an application request for 250 bits will be rounded up to 8
+limbs, then an extra added for the high being only non-zero, giving an
+@code{_mp_prec} of 9.  @code{_mp_d} then gets 10 limbs allocated.  Reading
+back with @code{mpf_get_prec} will take @code{_mp_prec} subtract 1 limb and
+multiply by 32, giving 256 bits.
 
 Strictly speaking, the fact the high limb has at least one bit means that a
 float with, say, 3 limbs of 32-bits each will be holding at least 65 bits, but
@@ -6470,7 +6582,8 @@ The most significant data byte is always non-zero, so the output is the same
 on all systems, irrespective of limb size.
 
 In GMP 1, leading zero bytes were written to pad the data bytes to a multiple
-of the limb size.  @code{mpz_inp_raw} will accept this, for compatibility.
+of the limb size.  @code{mpz_inp_raw} will still accept this, for
+compatibility.
 
 The use of ``big endian'' for both the size and data fields is deliberate, it
 makes the data easy to read in a hex dump of a file.
