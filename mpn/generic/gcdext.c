@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 #endif
 
 #if STAT
-int arr[BITS_PER_MP_LIMB + 1];
+int arr[GMP_LIMB_BITS + 1];
 #endif
 
 
@@ -68,6 +68,60 @@ int arr[BITS_PER_MP_LIMB + 1];
 	   and then switch to double-limb arithmetic.  */
 
 
+/* One-limb division optimized for small quotients.  */
+static mp_limb_t
+div1 (mp_limb_t n0, mp_limb_t d0)
+{
+  if ((mp_limb_signed_t) n0 < 0)
+    {
+      mp_limb_t q;
+      int cnt;
+      for (cnt = 1; (mp_limb_signed_t) d0 >= 0; cnt++)
+	{
+	  d0 = d0 << 1;
+	}
+
+      q = 0;
+      while (cnt)
+	{
+	  q <<= 1;
+	  if (n0 >= d0)
+	    {
+	      n0 = n0 - d0;
+	      q |= 1;
+	    }
+	  d0 = d0 >> 1;
+	  cnt--;
+	}
+
+      return q;
+    }
+  else
+    {
+      mp_limb_t q;
+      int cnt;
+      for (cnt = 0; n0 >= d0; cnt++)
+	{
+	  d0 = d0 << 1;
+	}
+
+      q = 0;
+      while (cnt)
+	{
+	  d0 = d0 >> 1;
+	  q <<= 1;
+	  if (n0 >= d0)
+	    {
+	      n0 = n0 - d0;
+	      q |= 1;
+	    }
+	  cnt--;
+	}
+
+      return q;
+    }
+}
+
 /* Two-limb division optimized for small quotients.  */
 static mp_limb_t
 div2 (mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
@@ -78,7 +132,7 @@ div2 (mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
       int cnt;
       for (cnt = 1; (mp_limb_signed_t) d1 >= 0; cnt++)
 	{
-	  d1 = (d1 << 1) | (d0 >> (BITS_PER_MP_LIMB - 1));
+	  d1 = (d1 << 1) | (d0 >> (GMP_LIMB_BITS - 1));
 	  d0 = d0 << 1;
 	}
 
@@ -91,7 +145,7 @@ div2 (mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
 	      sub_ddmmss (n1, n0, n1, n0, d1, d0);
 	      q |= 1;
 	    }
-	  d0 = (d1 << (BITS_PER_MP_LIMB - 1)) | (d0 >> 1);
+	  d0 = (d1 << (GMP_LIMB_BITS - 1)) | (d0 >> 1);
 	  d1 = d1 >> 1;
 	  cnt--;
 	}
@@ -104,14 +158,14 @@ div2 (mp_limb_t n1, mp_limb_t n0, mp_limb_t d1, mp_limb_t d0)
       int cnt;
       for (cnt = 0; n1 > d1 || (n1 == d1 && n0 >= d0); cnt++)
 	{
-	  d1 = (d1 << 1) | (d0 >> (BITS_PER_MP_LIMB - 1));
+	  d1 = (d1 << 1) | (d0 >> (GMP_LIMB_BITS - 1));
 	  d0 = d0 << 1;
 	}
 
       q = 0;
       while (cnt)
 	{
-	  d0 = (d1 << (BITS_PER_MP_LIMB - 1)) | (d0 >> 1);
+	  d0 = (d1 << (GMP_LIMB_BITS - 1)) | (d0 >> 1);
 	  d1 = d1 >> 1;
 	  q <<= 1;
 	  if (n1 > d1 || (n1 == d1 && n0 >= d0))
@@ -214,18 +268,83 @@ mpn_gcd (mp_ptr gp,
 	  ul = up[size - 2];
 	  vl = vp[size - 2];
 	  count_leading_zeros (cnt, uh);
+#if GMP_NAIL_BITS == 0
 	  if (cnt != 0)
 	    {
-	      uh = (uh << cnt) | (ul >> (BITS_PER_MP_LIMB - cnt));
-	      vh = (vh << cnt) | (vl >> (BITS_PER_MP_LIMB - cnt));
+	      uh = (uh << cnt) | (ul >> (GMP_LIMB_BITS - cnt));
+	      vh = (vh << cnt) | (vl >> (GMP_LIMB_BITS - cnt));
 	      vl <<= cnt;
 	      ul <<= cnt;
 	      if (size >= 3)
 		{
-		  ul |= (up[size - 3] >> (BITS_PER_MP_LIMB - cnt));
-		  vl |= (vp[size - 3] >> (BITS_PER_MP_LIMB - cnt));
+		  ul |= (up[size - 3] >> (GMP_LIMB_BITS - cnt));
+		  vl |= (vp[size - 3] >> (GMP_LIMB_BITS - cnt));
 		}
 	    }
+#else
+	  uh = uh << cnt;
+	  vh = vh << cnt;
+	  if (cnt < GMP_NUMB_BITS)
+	    {			     /* GMP_NAIL_BITS <= cnt < GMP_NUMB_BITS */
+	      uh |= ul >> (GMP_NUMB_BITS - cnt);
+	      vh |= vl >> (GMP_NUMB_BITS - cnt);
+	      ul <<= cnt + GMP_NAIL_BITS;
+	      vl <<= cnt + GMP_NAIL_BITS;
+	      if (size >= 3)
+		{
+		  if (cnt + GMP_NAIL_BITS > GMP_NUMB_BITS)
+		    {
+		      ul |= up[size - 3] << cnt + GMP_NAIL_BITS - GMP_NUMB_BITS;
+		      vl |= vp[size - 3] << cnt + GMP_NAIL_BITS - GMP_NUMB_BITS;
+		      if (size >= 4)
+			{
+			  ul |= up[size - 4] >> 2 * GMP_NUMB_BITS - GMP_NAIL_BITS - cnt;
+			  vl |= vp[size - 4] >> 2 * GMP_NUMB_BITS - GMP_NAIL_BITS - cnt;
+			}
+		    }
+		  else
+		    {
+		      ul |= up[size - 3] >> (GMP_LIMB_BITS - cnt - 2 * GMP_NAIL_BITS);
+		      vl |= vp[size - 3] >> (GMP_LIMB_BITS - cnt - 2 * GMP_NAIL_BITS);
+		    }
+		}
+	    }
+	  else
+	    {			  /* GMP_NUMB_BITS <= cnt <= GMP_LIMB_BITS-1 */
+	      uh |= ul << cnt - GMP_NUMB_BITS;	/* 0 <= c <= GMP_NAIL_BITS-1 */
+	      vh |= vl << cnt - GMP_NUMB_BITS;
+	      if (size >= 3)
+		{
+		  if (cnt - GMP_NUMB_BITS != 0)
+		    {				/* uh/vh need yet more bits! */
+		      uh |= up[size - 3] >> 2 * GMP_NUMB_BITS - cnt;
+		      vh |= vp[size - 3] >> 2 * GMP_NUMB_BITS - cnt;
+		      ul = up[size - 3] << cnt + GMP_NAIL_BITS - GMP_NUMB_BITS;
+		      vl = vp[size - 3] << cnt + GMP_NAIL_BITS - GMP_NUMB_BITS;
+		      if (size >= 4)
+			{
+			  ul |= up[size - 4] >> 2 * GMP_NUMB_BITS - GMP_NAIL_BITS - cnt;
+			  vl |= vp[size - 4] >> 2 * GMP_NUMB_BITS - GMP_NAIL_BITS - cnt;
+			}
+		    }
+		  else
+		    {
+		      ul = up[size - 3] << GMP_LIMB_BITS - cnt;
+		      vl = vp[size - 3] << GMP_LIMB_BITS - cnt;
+		      if (size >= 4)
+			{
+			  ul |= up[size - 4] >> GMP_NUMB_BITS - (GMP_LIMB_BITS - cnt);
+			  vl |= vp[size - 4] >> GMP_NUMB_BITS - (GMP_LIMB_BITS - cnt);
+			}
+		    }
+		}
+	      else
+		{
+		  ul = 0;
+		  vl = 0;
+		}
+	    }
+#endif
 
 	  A = 1;
 	  B = 0;
@@ -235,7 +354,7 @@ mpn_gcd (mp_ptr gp,
 	  asign = 0;
 	  for (;;)
 	    {
-	      mp_limb_t T;
+	      mp_limb_t Tac, Tbd;
 	      mp_limb_t q1, q2;
 	      mp_limb_t nh, nl, dh, dl;
 	      mp_limb_t t1, t0;
@@ -248,27 +367,35 @@ mpn_gcd (mp_ptr gp,
 	      q1 = div2 (nh, nl, dh, dl);
 
 	      add_ssaaaa (dh, dl, vh, vl, 0, D);
+	      if (dh == 0)
+		break;
 	      sub_ddmmss (nh, nl, uh, ul, 0, B);
 	      q2 = div2 (nh, nl, dh, dl);
 
 	      if (q1 != q2)
 		break;
 
-	      asign = ~asign;
-
-	      T = A + q1 * C;
+	      Tac = A + q1 * C;
+	      if (GMP_NAIL_BITS != 0 && Tac > GMP_NUMB_MAX)
+		break;
+	      Tbd = B + q1 * D;
+	      if (GMP_NAIL_BITS != 0 && Tbd > GMP_NUMB_MAX)
+		break;
 	      A = C;
-	      C = T;
-	      T = B + q1 * D;
+	      C = Tac;
 	      B = D;
-	      D = T;
+	      D = Tbd;
 	      umul_ppmm (t1, t0, q1, vl);
 	      t1 += q1 * vh;
 	      sub_ddmmss (Th, Tl, uh, ul, t1, t0);
 	      uh = vh, ul = vl;
 	      vh = Th, vl = Tl;
 
+	      asign = ~asign;
+
 	      add_ssaaaa (dh, dl, vh, vl, 0, C);
+/*	      if (dh == 0)	should never happen
+		break;	       */
 	      sub_ddmmss (nh, nl, uh, ul, 0, A);
 	      q1 = div2 (nh, nl, dh, dl);
 
@@ -281,19 +408,23 @@ mpn_gcd (mp_ptr gp,
 	      if (q1 != q2)
 		break;
 
-	      asign = ~asign;
-
-	      T = A + q1 * C;
+	      Tac = A + q1 * C;
+	      if (GMP_NAIL_BITS != 0 && Tac > GMP_NUMB_MAX)
+		break;
+	      Tbd = B + q1 * D;
+	      if (GMP_NAIL_BITS != 0 && Tbd > GMP_NUMB_MAX)
+		break;
 	      A = C;
-	      C = T;
-	      T = B + q1 * D;
+	      C = Tac;
 	      B = D;
-	      D = T;
+	      D = Tbd;
 	      umul_ppmm (t1, t0, q1, vl);
 	      t1 += q1 * vh;
 	      sub_ddmmss (Th, Tl, uh, ul, t1, t0);
 	      uh = vh, ul = vl;
 	      vh = Th, vl = Tl;
+
+	      asign = ~asign;
 	    }
 #if EXTEND
 	  if (asign)
@@ -308,11 +439,31 @@ mpn_gcd (mp_ptr gp,
 	  uh = up[size - 1];
 	  vh = vp[size - 1];
 	  count_leading_zeros (cnt, uh);
+#if GMP_NAIL_BITS == 0
 	  if (cnt != 0)
 	    {
-	      uh = (uh << cnt) | (up[size - 2] >> (BITS_PER_MP_LIMB - cnt));
-	      vh = (vh << cnt) | (vp[size - 2] >> (BITS_PER_MP_LIMB - cnt));
+	      uh = (uh << cnt) | (up[size - 2] >> (GMP_LIMB_BITS - cnt));
+	      vh = (vh << cnt) | (vp[size - 2] >> (GMP_LIMB_BITS - cnt));
 	    }
+#else
+	  uh <<= cnt;
+	  vh <<= cnt;
+	  if (cnt < GMP_NUMB_BITS)
+	    {
+	      uh |= up[size - 2] >> (GMP_NUMB_BITS - cnt);
+	      vh |= vp[size - 2] >> (GMP_NUMB_BITS - cnt);
+	    }
+	  else
+	    {
+	      uh |= up[size - 2] << cnt - GMP_NUMB_BITS;
+	      vh |= vp[size - 2] << cnt - GMP_NUMB_BITS;
+	      if (size >= 3)
+		{
+		  uh |= up[size - 3] >> 2 * GMP_NUMB_BITS - cnt;
+		  vh |= vp[size - 3] >> 2 * GMP_NUMB_BITS - cnt;
+		}
+	    }
+#endif
 
 	  A = 1;
 	  B = 0;
@@ -330,8 +481,6 @@ mpn_gcd (mp_ptr gp,
 	      if (q != (uh - B) / (vh + D))
 		break;
 
-	      asign = ~asign;
-
 	      T = A + q * C;
 	      A = C;
 	      C = T;
@@ -341,6 +490,8 @@ mpn_gcd (mp_ptr gp,
 	      T = uh - q * vh;
 	      uh = vh;
 	      vh = T;
+
+	      asign = ~asign;
 
 	      if (vh - D == 0)
 		break;
@@ -349,8 +500,6 @@ mpn_gcd (mp_ptr gp,
 	      if (q != (uh + B) / (vh - D))
 		break;
 
-	      asign = ~asign;
-
 	      T = A + q * C;
 	      A = C;
 	      C = T;
@@ -360,6 +509,8 @@ mpn_gcd (mp_ptr gp,
 	      T = uh - q * vh;
 	      uh = vh;
 	      vh = T;
+
+	      asign = ~asign;
 	    }
 #if EXTEND
 	  if (asign)
@@ -417,7 +568,7 @@ mpn_gcd (mp_ptr gp,
 
 #if STAT
 	  { mp_limb_t x; x = A | B | C | D; count_leading_zeros (cnt, x);
-	  arr[BITS_PER_MP_LIMB - cnt]++; }
+	  arr[GMP_LIMB_BITS - cnt]++; }
 #endif
 	  if (A == 0)
 	    {
@@ -466,27 +617,36 @@ mpn_gcd (mp_ptr gp,
 	      cy1 = mpn_mul_1 (tp, s0p, ssize, A);
 	      cy2 = mpn_addmul_1 (tp, s1p, ssize, B);
 	      cy = cy1 + cy2;
-	      tp[ssize] = cy;
+	      tp[ssize] = cy & GMP_NUMB_MASK;
 	      tsize = ssize + (cy != 0);
+#if GMP_NAIL_BITS == 0
 	      if (cy < cy1)
+#else
+	      if (cy > GMP_NUMB_MAX)
+#endif
 		{
-		  abort ();
-		  /* Should not happen, even it can happen below.  */
+		  tp[tsize] = 1;
+		  wp[tsize] = 0;
+		  tsize++;
+		  /* This happens just for nails, since we get more work done
+		     per numb there.  */
 		}
 
 	      /* Compute new s1 */
 	      cy1 = mpn_mul_1 (wp, s1p, ssize, D);
 	      cy2 = mpn_addmul_1 (wp, s0p, ssize, C);
 	      cy = cy1 + cy2;
-	      wp[ssize] = cy;
+	      wp[ssize] = cy & GMP_NUMB_MASK;
 	      wsize = ssize + (cy != 0);
+#if GMP_NAIL_BITS == 0
 	      if (cy < cy1)
+#else
+	      if (cy > GMP_NUMB_MAX)
+#endif
 		{
 		  wp[wsize] = 1;
-		  tp[wsize] = 0; /* Safe, s0 (here stored at tp) will be
-				    smaller than s1 (stored at wp), so
-				    we don't risk to overwrite s0's
-				    most significant limb.  */
+		  if (wsize >= tsize)
+		    tp[wsize] = 0;
 		  wsize++;
 		}
 
@@ -496,6 +656,9 @@ mpn_gcd (mp_ptr gp,
 #endif
 	    }
 	  size -= up[size - 1] == 0;
+#if GMP_NAIL_BITS != 0
+	  size -= up[size - 1] == 0;
+#endif
 	}
 
 #if WANT_GCDEXT_ONE_STEP
@@ -509,7 +672,7 @@ mpn_gcd (mp_ptr gp,
 #endif
 
 #if STAT
- {int i; for (i = 0; i <= BITS_PER_MP_LIMB; i++) printf ("%d:%d\n", i, arr[i]);}
+ {int i; for (i = 0; i <= GMP_LIMB_BITS; i++) printf ("%d:%d\n", i, arr[i]);}
 #endif
 
   if (vsize == 0)
