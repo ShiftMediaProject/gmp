@@ -32,22 +32,35 @@ C                         mp_limb_t mult);
 C mp_limb_t mpn_submul_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C                          mp_limb_t mult, mp_limb_t carry);
 C
-C The basic calculation here is d-s*m+c, where d is a destination limb, s is
-C a source limb and c is a carry, being a 64-bit twos complement borrow.
-C The low limb is stored back to the destination and the high limb becomes
-C the new c'.  If this new c' is non-zero then it represents a borrow and
-C should be extended to 64-bits with an 0xFFFFFFFF, or if it's zero then
-C there's no borrow and it should be extended with 0.  This is achieved by
-C calculating instead (b-1)*b+d-s*m+c, where b=2^32, by putting b-1 in the
-C high of d.  This leaves (b-1)+c' mod b, which means b-1 if no borrow, or
-C any other value for a borrow.  Subtracting b-1 produces the desired high
-C limb of c', ie. 0 if no borrow, all 1s if there is a borrow.
-C
 C This code is not particularly good at 7 c/l.  The dependent chain is only
-C 6 c/l and it's not clear why that isn't achieved.  In theory we should be
-C able to go at 4 or 5 c/l, for instance by handling a carry bit and carry
-C limb separately, though straightforward attempts have been no better than
-C 7 c/l.
+C 4 c/l and there's only 4 MMX unit instructions, so it's not clear why that
+C speed isn't achieved.
+C
+C The arrangements made here to get a two instruction dependent chain are
+C slightly subtle.  In the loop the carry (or borrow rather) is a negative
+C so that a paddq can be used to give a low limb ready to store, and a high
+C limb ready to become the new carry after a psrlq.
+C
+C If the carry was a simple twos complement negative then the psrlq shift
+C would need to bring in 0 bits or 1 bits according to whether the high was
+C zero or non-zero, since a non-zero value would represent a negative
+C needing sign extension.  That wouldn't be particularly easy to arrange and
+C certainly would add an instruction to the dependent chain, so instead an
+C offset is applied so that the high limb will be 0xFFFFFFFF+c.  With c in
+C the range -0xFFFFFFFF to 0, the value 0xFFFFFFFF+c is in the range 0 to
+C 0xFFFFFFFF and is therefore always positive and can always have 0 bits
+C shifted in, which is what psrlq does.
+C
+C The extra 0xFFFFFFFF must be subtracted before c is used, but that can be
+C done off the dependent chain.  The total adjustment then is to add
+C 0xFFFFFFFF00000000 to offset the new carry, and subtract
+C 0x00000000FFFFFFFF to remove the offset from the current carry, for a net
+C add of 0xFFFFFFFE00000001.  In the code this is applied to the destination
+C limb when fetched.
+C
+C It's also possible to view the 0xFFFFFFFF adjustment as a ones-complement
+C negative, which is how it's undone for the return value, but that doesn't
+C seem as clear.
 
 defframe(PARAM_CARRY,     20)
 defframe(PARAM_MULTIPLIER,16)
@@ -61,37 +74,37 @@ defframe(PARAM_DST,       4)
 PROLOGUE(mpn_submul_1c)
 deflit(`FRAME',0)
 	movd	PARAM_CARRY, %mm1
-	pxor	%mm0, %mm0
-	psubq	%mm1, %mm0	C twos complement negative
 	jmp	LF(mpn_submul_1,start_1c)
 EPILOGUE()
 
 PROLOGUE(mpn_submul_1)
 deflit(`FRAME',0)
-	pxor	%mm0, %mm0
+	pxor	%mm1, %mm1		C initial borrow
+
 L(start_1c):
 	movl	PARAM_SRC, %eax
-	pcmpeqd	%mm5, %mm5
+	pcmpeqd	%mm0, %mm0
 
 	movd	PARAM_MULTIPLIER, %mm7
 	pcmpeqd	%mm6, %mm6
 
 	movl	PARAM_DST, %edx
-	psrlq	$32, %mm5		C 0x00000000FFFFFFFF
+	psrlq	$32, %mm0		C 0x00000000FFFFFFFF
 
 	movl	PARAM_SIZE, %ecx
 	psllq	$32, %mm6		C 0xFFFFFFFF00000000
 
-	paddq	%mm5, %mm0		C offset initial carry
+	psubq	%mm0, %mm6		C 0xFFFFFFFE00000001
 
-	psubq	%mm5, %mm6		C 0xFFFFFFFE00000001
+	psubq	%mm1, %mm0		C 0xFFFFFFFF - borrow
+
 
 	C eax	src, incrementing
 	C ebx
 	C ecx	loop counter, decrementing
 	C edx	dst, incrementing
 	C
-	C mm0	carry, low 32-bits, twos comp neg of borrow
+	C mm0	0xFFFFFFFF - borrow
 	C mm6	0xFFFFFFFE00000001
 	C mm7	multiplier
 
