@@ -1,6 +1,6 @@
 /* mpz_set_si(integer, val) -- Assign INTEGER with a small value VAL.
 
-Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
