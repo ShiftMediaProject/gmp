@@ -1,3 +1,8 @@
+2000-04-18  Linus Nordberg  <linus@swox.se>
+
+	* NEWS: Add info about shared libraries.  Remove reference to
+	gmp_randinit_lc.
+
 2000-04-17  Torbjorn Granlund  <tege@swox.com>
 
 	* Version 3.0 released.
