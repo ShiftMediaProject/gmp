@@ -1,6 +1,85 @@
-2001-01-02  Torbjorn Granlund  <tege@swox.com>
+2001-01-03  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/t-jac.c
+	(main, check_squares_zi): Generate test operands numbers using new
+	random functions.
+
+	All changes below on this date for enabling `make; make check'
+	with C++ compilers:
+	
+	* mpz/tests/t-pow_ui.c (debug_mp, ref_mpz_pow_ui): Provide prototypes.
+
+	* mpz/tests/t-mul.c (debug_mp, base_mul, ref_mpz_mul):
+	Provide prototypes.
+	(dump_abort): Provide prototype and declare properly for C++.
+
+	* mpz/tests/t-jac.c: #include stdlib.h and sys/time.h.
+
+	* mpz/tests/t-fdiv.c
+	(dump_abort): Provide prototype and declare properly for C++.
+	(debug_mp): Provide prototype.
+	* mpz/tests/t-fdiv_ui.c: Likewise.
+	* mpz/tests/t-gcd.c: Likewise.
+	* mpz/tests/t-powm.c: Likewise.
+	* mpz/tests/t-powm_ui.c: Likewise.
+	* mpz/tests/t-sqrtrem.c: Likewise.
+	* mpz/tests/t-tdiv_ui.c: Likewise.
+	* mpz/tests/t-tdiv.c: Likewise.
+
+	* mpz/tests/t-2exp.c: #include stdlib.h and sys/time.h.
+	Remove #include of longlong.h.
+
+	* mpz/tests/io.c: #include config.h, stdlib.h, sys/time.h, and
+	conditionally unistd.h.
+
+	* mpz/tests/dive.c: #include stdlib.h and sys/time.h.
+	(dump_abort): Provide prototype and declare properly for C++.
+	(debug_mp): Provide prototype.
+	* mpz/tests/logic.c: Likewise.
+
+	* mpz/tests/convert.c (debug_mp): Provide prototype.
+	* mpz/tests/t-root.c (debug_mp): Likewise.
+
+	* mpz/tests/bit.c: #include stdlib.h and sys/time.h.
+
+	* mpq/tests/t-get_d.c: #include stdlib.h and sys/time.h.
+	(dump): Provide prototype and declare properly for C++.
+
+	* mpq/tests/t-cmp_ui.c: #include stdio.h, stdlib.h and sys/time.h.
+	(ref_mpq_cmp_ui): Declare properly for C++.
+
+	* mpq/tests/t-cmp.c: #include stdlib.h and sys/time.h.
+	(ref_mpq_cmp): Declare properly for C++.
+	(dump): Delete unused function.
+
+	* mpf/random2.c (myrandom): New function.
+	(mpf_random2): Use it.
+
+	* mpn/generic/random2.c: #include stdlib.h (for random/mrand48).
+	(myrandom): New function.
+	(mpn_random2): Use it.
+
+	* mpf/tests/t-add.c: #include stdlib.h and sys/time.h.
+	(oo): Remove unused function.
+	* mpf/tests/t-conv.c: Likewise.
+	* mpf/tests/t-sub.c: Likewise.
+	* mpf/tests/t-dm2exp.c: Likewise.
+	* mpf/tests/t-muldiv.c: Likewise.
+	* mpf/tests/t-sqrt.c: Likewise.
+
+	* mpf/tests/reuse.c: #include stdlib.h and sys/time.h.
+	Use PROTO on some typedefs.
+	(oo): Remove function.
+	(dump_abort): Call mpf_dump instead of oo.
+
+	* mpf/set_str.c: #include stdlib.h (for strtol).
+
+	* mpf/random2.c: #include stdlib.h (for random/mrand48).
+	* mpn/alpha/udiv_arnnd: File deleted.
 
 	* Remove K&R function headers.
+
+2001-01-02  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mul.c: Clean up spacing and indentation.
 
