@@ -1073,6 +1073,12 @@ the benefit of old versions of @command{ld} which only recognise @file{.a},
 but unfortunately this is done even if a fully functional @command{ld} is
 available.
 
+@item ARM
+
+On systems @samp{arm*-*-*}, versions of GCC up to and including 2.95.3 have a
+bug in unsigned division, giving wrong results for some operands.  GMP
+@samp{./configure} will demand GCC 2.95.4 or later.
+
 @item OpenBSD 2.6
 
 @command{m4} in this release of OpenBSD has a bug in @code{eval} that makes it
