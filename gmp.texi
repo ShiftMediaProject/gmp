@@ -872,7 +872,9 @@ Some supplementary notes can be found in the @file{doc} subdirectory.
 @node ABI and ISA, Notes for Package Builds, Build Options, Installing GMP
 @section ABI and ISA
 @cindex ABI
+@cindex Application Binary Interface
 @cindex ISA
+@cindex Instruction Set Architecture
 
 ABI (Application Binary Interface) refers to the calling conventions between
 functions, meaning what registers are used and what sizes the various C data
@@ -1450,7 +1452,7 @@ expects to be compatible with future GMP releases.
 @need 1000
 @node Memory Management, Reentrancy, Parameter Conventions, GMP Basics
 @section Memory Management
-@cindex Memory
+@cindex Memory Management
 
 The GMP types like @code{mpz_t} are small, containing only a couple of sizes,
 and pointers to allocated data.  Once a variable is initialized, GMP takes
@@ -1626,6 +1628,7 @@ source and binary compatible with the standard @file{libmp}.
 @need 1000
 @node Efficiency, Debugging, Compatibility with older versions, GMP Basics
 @section Efficiency
+@cindex Efficiency
 
 @table @asis
 @item Small operands
@@ -2378,12 +2381,14 @@ the return value is wanted.
 @end deftypefun
 
 @deftypefun void mpz_divexact (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@deftypefunx void mpz_divexact_si (mpz_t @var{q}, mpz_t @var{n}, long @var{d})
+@deftypefunx void mpz_divexact_ui (mpz_t @var{q}, mpz_t @var{n}, unsigned long @var{d})
 @cindex Exact division functions
-Set @var{q} to @var{n}/@var{d}.  This function produces correct results only
+Set @var{q} to @var{n}/@var{d}.  These functions produce correct results only
 when it is known in advance that @var{d} divides @var{n}.
 
-@code{mpz_divexact} is much faster than the other division functions, and is
-the best choice when exact division is known to occur, for example reducing a
+These functions are much faster than the other division functions, and are the
+best choice when exact division is known to occur, for example reducing a
 rational to lowest terms.
 @end deftypefun
 
@@ -2396,7 +2401,7 @@ Return non-zero if @var{n} is exactly divisible by @var{d}, or in the case of
 
 @deftypefun int mpz_congruent_p (mpz_t @var{n}, mpz_t @var{c}, mpz_t @var{d})
 @deftypefunx int mpz_congruent_ui_p (mpz_t @var{n}, unsigned long int @var{c}, unsigned long int @var{d})
-@deftypefunx int mpz_congruent_2exp_p (mpz_t @var{n}, unsigned long int @var{c}, unsigned long int @var{b})
+@deftypefunx int mpz_congruent_2exp_p (mpz_t @var{n}, mpz_t @var{c}, unsigned long int @var{b})
 Return non-zero if @var{n} is congruent to @var{c} modulo @var{d}, or in the
 case of @code{mpz_congruent_2exp_p} modulo @m{2^b,2^@var{b}}.
 @end deftypefun
@@ -2407,6 +2412,7 @@ case of @code{mpz_congruent_2exp_p} modulo @m{2^b,2^@var{b}}.
 @section Exponentiation Functions
 @cindex Integer exponentiation functions
 @cindex Exponentiation functions
+@cindex Powering functions
 
 @deftypefun void mpz_powm (mpz_t @var{rop}, mpz_t @var{base}, mpz_t @var{exp}, mpz_t @var{mod})
 @deftypefunx void mpz_powm_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp}, mpz_t @var{mod})
@@ -2479,7 +2485,7 @@ higher value lowers the probability for a non-prime to pass as a
 The function uses Miller-Rabin's probabilistic test.
 @end deftypefun
 
-@deftypefun int mpz_nextprime (mpz_t @var{rop}, mpz_t @var{op})
+@deftypefun void mpz_nextprime (mpz_t @var{rop}, mpz_t @var{op})
 Set @var{rop} to the next prime greater than @var{op}.
 
 This function uses a probabilistic algorithm to identify primes, but for for
@@ -3433,6 +3439,7 @@ Set @var{rop} to @m{\sqrt{@var{op}}, the square root of @var{op}}.
 
 @deftypefun void mpf_pow_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
 @cindex Exponentiation functions
+@cindex Powering functions
 Set @var{rop} to @m{@var{op1}^{op2}, @var{op1} raised to the power @var{op2}}.
 @end deftypefun
 
@@ -3461,6 +3468,7 @@ Set @var{rop} to @m{@var{op1}/2^{op2}, @var{op1} divided by 2 raised to
 @cindex Comparison functions
 
 @deftypefun int mpf_cmp (mpf_t @var{op1}, mpf_t @var{op2})
+@deftypefunx int mpf_cmp_d (mpf_t @var{op1}, double @var{op2})
 @deftypefunx int mpf_cmp_ui (mpf_t @var{op1}, unsigned long int @var{op2})
 @deftypefunx int mpf_cmp_si (mpf_t @var{op1}, signed long int @var{op2})
 Compare @var{op1} and @var{op2}.  Return a positive value if @ma{@var{op1} >
@@ -5333,7 +5341,7 @@ essentially the same.
 
 Clearly @ma{r} is zero when @ma{a} is a multiple of @ma{d}, and this leads to
 divisibility or congruence tests which are potentially more efficient than a
-normal division.  Code implementing this is in progress.
+normal division.
 
 The factor of @ma{b^n} on @ma{r} can be ignored in a GCD (with @ma{d} odd),
 hence the use of @code{mpn_bdivmod} by @code{mpn_gcd}, and the use of
