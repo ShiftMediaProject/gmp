@@ -4127,6 +4127,14 @@ up to a whole limb, and then sometimes having a further partial limb,
 depending on the high limb of the mantissa.  But applications shouldn't be
 concerned by such details.
 
+The mantissa in stored in binary, as might be imagined from the fact
+precisions are expressed in bits.  One consequence of this is that decimal
+fractions like @math{0.1} cannot be represented exactly.  The same is true of
+plain IEEE @code{double} floats.  This makes both highly unsuitable for
+calculations involving money or other values that should be exact decimal
+fractions.  (Suitably scaled integers, or perhaps rationals, are better
+choices.)
+
 @code{mpf} functions and variables have no special notion of infinity or
 not-a-number, and applications must take care not to overflow the exponent or
 results will be unpredictable.  This might change in a future release.
