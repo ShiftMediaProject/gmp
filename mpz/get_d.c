@@ -24,6 +24,21 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
+/* FIXME: Would prefer to inline this on all compilers, not just those with
+   "inline".  */
+static inline int
+mpn_zero_p (mp_srcptr p, mp_size_t n)
+{
+  mp_size_t i;
+
+  for (i = 0; i < n; i++)
+    if (p[i] != 0)
+      return 0;
+
+  return 1;
+}
+
+
 double
 mpz_get_d (mpz_srcptr src)
 {
