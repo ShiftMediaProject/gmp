@@ -2,7 +2,7 @@
    Convert a STR_LEN long base BASE byte string pointed to by STR to a limb
    vector pointed to by RES_PTR.  Return the number of limbs in RES_PTR.
 
-Copyright (C) 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002 Free Software
+Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -25,10 +25,7 @@ USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#define swapptr(xp,yp) \
-do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
-
-static mp_size_t convert_blocks (mp_ptr, const unsigned char *, size_t, int);
+static mp_size_t convert_blocks __GMP_PROTO ((mp_ptr, const unsigned char *, size_t, int));
 
 /* When to switch to sub-quadratic code.  This counts characters/digits in
    the input string, not limbs as most other *_THRESHOLD.  */
@@ -44,10 +41,14 @@ static mp_size_t convert_blocks (mp_ptr, const unsigned char *, size_t, int);
 #define SET_STR_BLOCK_SIZE 1	/* Must be a power of 2. */
 #endif
 
+
+/* This check interferes with expression based values of SET_STR_THRESHOLD
+   used for tuning and measuring.
 #if SET_STR_BLOCK_SIZE >= SET_STR_THRESHOLD
 These values are silly.
 The sub-quadratic code would recurse to itself.
 #endif
+*/
 
 mp_size_t
 mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
@@ -66,7 +67,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 
   size = 0;
 
-  if ((base & (base - 1)) == 0)
+  if (POW2_P (base))
     {
       /* The base is a power of 2.  Read the input string from least to most
 	 significant character/digit.  */
@@ -237,7 +238,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 	      n -= tp[n - 1] == 0;
 
 	      step = 2 * step;
-	      swapptr (tp, xp);
+	      MP_PTR_SWAP (tp, xp);
 	    }
 #endif
 
@@ -278,7 +279,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 		  mpn_sqr_n (tp, xp, n);
 		  n = 2 * n;
 		  n -= tp[n - 1] == 0;
-		  swapptr (tp, xp);
+		  MP_PTR_SWAP (tp, xp);
 		}
 	    }
 
