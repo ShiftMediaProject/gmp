@@ -33,6 +33,10 @@ MA 02111-1307, USA.
 	* mpn/generic/hgcd.c, mpn/generic/hgcd2.c, mpn/generic/qstack.c:
 	New files, needed for the sub-quadratic gcd.
 
+2003-11-25  Kevin Ryde  <kevin@swox.se>
+
+	* doc/gmp.texi (Language Bindings): Add Axiom.
+
 2003-11-22  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/alpha/README: More notes on assembler syntax variations.
