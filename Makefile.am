@@ -63,21 +63,18 @@ LIBMP_LT_AGE =      1
 
 AUTOMAKE_OPTIONS = gnu no-dependencies ansi2knr
 
-# mpfr temporarily removed from the distribution
-MPFR_DIR =
-#
-# # FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
-# # conditionalized.  We want mpfr/mpfr.info only installed under
-# # --enable-mpfr, but it and the rest of mpfr always included in a "make
-# # dist".
-# if WANT_MPFR
-# MPFR_DIR = mpfr
-# else
-# if MAINTAINER_MODE
-# MPFR_DIR = mpfr
-# endif
-# endif
 
+# FIXME: This is a workaround for automake not allowing info_TEXINFOS to be
+# conditionalized.  We want mpfr/mpfr.info only installed under
+# --enable-mpfr, but it and the rest of mpfr always included in a "make
+# dist".
+if WANT_MPFR
+MPFR_DIR = mpfr
+else
+if MAINTAINER_MODE
+MPFR_DIR = mpfr
+endif
+endif
 
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
