@@ -21,7 +21,7 @@ MA 02111-1307, USA. */
 
 #if defined (__hpux) || defined (__svr4__) || defined (__SVR4)
 /* HPUX lacks random().  */
-static inline unsigned long
+static inline mp_limb_t
 urandom ()
 {
   return mrand48 ();
@@ -32,7 +32,7 @@ urandom ()
 #if defined (__alpha) && !defined (__URANDOM)
 /* DEC OSF/1 1.2 random() returns a double.  */
 long mrand48 ();
-static inline unsigned long
+static inline mp_limb_t
 urandom ()
 {
   return mrand48 () | (mrand48 () << 32);
@@ -42,7 +42,7 @@ urandom ()
 
 #if BITS_PER_MP_LIMB == 32 && !defined (__URANDOM)
 long random ();
-static inline unsigned long
+static inline mp_limb_t
 urandom ()
 {
   /* random() returns 31 bits, we want 32.  */
@@ -53,11 +53,11 @@ urandom ()
 
 #if BITS_PER_MP_LIMB == 64 && !defined (__URANDOM)
 long random ();
-static inline unsigned long
+static inline mp_limb_t
 urandom ()
 {
   /* random() returns 31 bits, we want 64.  */
-  return random () ^ (random () << 31) ^ (random () << 62);
+  return random () ^ ((mp_limb_t) random () << 31) ^ ((mp_limb_t) random () << 62);
 }
 #define __URANDOM
 #endif
