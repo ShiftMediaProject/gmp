@@ -154,6 +154,16 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_toom3_mul_n		__MPN(toom3_mul_n)
 #define mpn_reciprocal		__MPN(reciprocal)
 
+#define mpn_sb_divrem_mn	__MPN(sb_divrem_mn)
+#define mpn_bz_divrem_n		__MPN(bz_divrem_n)
+#define mpn_tdiv_qr		__MPN(tdiv_qr)
+/* #define mpn_tdiv_q		__MPN(tdiv_q) */
+
+mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
+mp_limb_t mpn_bz_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
+void mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+/* void mpn_tdiv_q _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t)); */
+
 /* Copy NLIMBS *limbs* from SRC to DST, NLIMBS==0 allowed.  */
 #ifndef MPN_COPY_INCR
 #if HAVE_NATIVE_mpn_copyi
@@ -248,6 +258,13 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
     mpz_ptr __x = (X);							\
     __x->_mp_alloc = (NLIMBS);						\
     __x->_mp_d = (mp_ptr) TMP_ALLOC ((NLIMBS) * BYTES_PER_MP_LIMB);	\
+  } while (0)
+
+/* Realloc for an mpz_t WHAT if it has less thann NEEDED limbs.  */
+#define MPZ_REALLOC(what,needed) \
+  do {								\
+    if ((needed) > ALLOC (what))				\
+      _mpz_realloc (what, needed);				\
   } while (0)
 
 /* If KARATSUBA_MUL_THRESHOLD is not already defined, define it to a
