@@ -419,7 +419,7 @@ case $host in
   *-cray-unicos*)
     gmp_asm_syntax_testing=no
     cclist="cc"
-    cc_cflags="-O3 -hscalar0 -htask0 -Wa,-B"
+    cc_cflags="-O3 -hnofastmd -htask0 -Wa,-B"
     path="cray"
     ;;
 
@@ -619,7 +619,9 @@ case $host in
         cclist_n32="gcc cc"
         gcc_n32_cflags="-g -O2 -mabi=n32"
         gcc_n32_ldflags="-Wc,-mabi=n32"
-        cc_n32_cflags="-O2 -n32"        # no -g, it disables all optimizations
+	# Pass just -O1, MIPSpro 7.2.1 miscompiles mpn/generic/divrem_1.c
+	# cvs version 1.20, for -O2 and -O3
+        cc_n32_cflags="-O1 -n32"        # no -g, it disables all optimizations
         cc_n32_ldflags="-Wc,-n32"
         limb_n32=longlong
         path_n32="mips64"
