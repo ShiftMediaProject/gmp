@@ -21,11 +21,24 @@
 
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
+SUBDIRS = . devel mpz mpq mpf rand mpbsd
 
-SUBDIRS = rand
+include ../mpn/Makeasm.am
 
 INCLUDES = -I$(top_srcdir)
-LDADD = $(top_builddir)/libgmp.la
+LDADD = libtests.la $(top_builddir)/libgmp.la
+
+EXTRA_DIST = x86call.asm
+EXTRA_HEADERS = tests.h
+EXTRA_LTLIBRARIES = libdummy.la
+check_LTLIBRARIES = libtests.la
+
+libtests_la_SOURCES = memory.c misc.c refmpn.c spinner.c trace.c
+libtests_la_DEPENDENCIES = @CALLING_CONVENTIONS_OBJS@
+libtests_la_LIBADD = $(libtests_la_DEPENDENCIES) $(top_builddir)/libgmp.la
+
+# Create ansi2knr rules for sources conditionally used
+libdummy_la_SOURCES = x86check.c
 
 check_PROGRAMS = t-constants t-modlinv
 TESTS = $(check_PROGRAMS)
