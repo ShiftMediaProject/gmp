@@ -580,6 +580,51 @@ int f ()
 }
 ])
 
+GMP_PROG_CC_WORKS_PART_MAIN([$1], [mpn_lshift_com optimization],
+[/* The following is mis-compiled by HP ia-64 cc version
+        cc: HP aC++/ANSI C B3910B A.05.55 [Dec 04 2003]
+   under "cc +O3", both in +DD32 and +DD64 modes.  The mpn_lshift_com gets
+   inlined and its return value somehow botched to be 0 instead of 1.  This
+   arises in the real mpn_lshift_com in mul_fft.c.  A lower optimization
+   level, like +O2 seems ok.  This code needs to be run to show the problem,
+   but that's fine, the offending cc is a native-only compiler so we don't
+   have to worry about cross compiling.  */
+
+unsigned long
+lshift_com (rp, up, n, cnt)
+  unsigned long *rp;
+  unsigned long *up;
+  long n;
+  unsigned cnt;
+{
+  unsigned long retval, high_limb, low_limb;
+  unsigned tnc;
+  long i;
+  tnc = 8 * sizeof (unsigned long) - cnt;
+  low_limb = *up++;
+  retval = low_limb >> tnc;
+  high_limb = low_limb << cnt;
+  for (i = n - 1; i != 0; i--)
+    {
+      low_limb = *up++;
+      *rp++ = ~(high_limb | (low_limb >> tnc));
+      high_limb = low_limb << cnt;
+    }
+  return retval;
+}
+int
+main ()
+{
+  unsigned long cy, rp[2], up[2];
+  up[0] = ~ 0L;
+  up[1] = 0;
+  cy = lshift_com (rp, up, 2L, 1);
+  if (cy != 1L)
+    return 1;
+  return 0;
+}
+])
+
 AC_MSG_RESULT($gmp_prog_cc_works)
 case $gmp_prog_cc_works in
   yes)
@@ -592,8 +637,18 @@ esac
 ])
 
 dnl  Called: GMP_PROG_CC_WORKS_PART(CC+CFLAGS,FAIL-MESSAGE [,CODE])
+dnl  A dummy main() is appended to the CODE given.
 dnl
 AC_DEFUN([GMP_PROG_CC_WORKS_PART],
+[GMP_PROG_CC_WORKS_PART_MAIN([$1],[$2],
+[$3]
+[int main () { return 0; }])
+])
+
+dnl  Called: GMP_PROG_CC_WORKS_PART_MAIN(CC+CFLAGS,FAIL-MESSAGE,CODE)
+dnl  CODE must include a main().
+dnl
+AC_DEFUN([GMP_PROG_CC_WORKS_PART_MAIN],
 [GMP_PROG_CC_WORKS_PART_TEST([$1],[$2],[$3],
   [],
   gmp_prog_cc_works="no[]m4_if([$2],,,[[, ]])[$2]",
@@ -607,7 +662,6 @@ AC_DEFUN([GMP_PROG_CC_WORKS_PART_TEST],
 [if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 [$3]
-int main () { return 0; }
 EOF
   echo "Test compile: [$2]" >&AC_FD_CC
   gmp_compile="$1 conftest.c >&AC_FD_CC"
