@@ -416,7 +416,7 @@ case $host in
     GMP_INCLUDE_MPN(m68k/m68k-defs.m4)
     gcc_cflags="-g $fomit_frame_pointer"
     gcc_cflags_optlist="optimize arch"
-    gcc_cflags_optimize="-O2"   # changed below on gcc 2.95.x
+    gcc_cflags_optimize="-O2"   # munged below on gcc 2.95.x
 
     # gcc 2.7.2 doesn't know -m68060 or -mcpu32, so let them fall back
     # appropriately.
@@ -1128,6 +1128,14 @@ Use --disable-static --enable-shared to build just a DLL.])
     fi
     ;;
 
+  # FIXME: Libtool recognises djgpp can't build shared libraries, but still
+  # makes tests/.libs/libtests.al out of PIC objects, which then fail to
+  # link into the test programs.  Forcibly disable shared stuff until
+  # libtool gets it right,
+  #
+  *-*-msdosdjgpp*)
+    enable_shared=no ;;
+
   # FIXME: On SCO 5, an explicit -lc is not wanted when making shared
   # libraries.  Giving it makes strange things happen, like ctype.h macros
   # not working and profiler mcount calls segfaulting.  Libtool ought to
@@ -1178,11 +1186,6 @@ yes) __GMP_LIBGMP_STATIC=1 ;;
 no)  __GMP_LIBGMP_STATIC=0 ;;
 esac
 AC_SUBST(__GMP_LIBGMP_STATIC)
-
-# Tell gmp.h it's building gmp, not an application.
-# Currently only used to help the windows DLL stuff.
-#
-CPPFLAGS="$CPPFLAGS -D__GMP_WITHIN_GMP"
 
 
 # libtool $pic_flag for use by mpn/Makeasm.am.
@@ -1306,7 +1309,7 @@ gmp_mpn_functions_optional="copyi copyd com_n		\
 
 gmp_mpn_functions="$extra_functions inlines add_n sub_n mul_1 addmul_1   \
   submul_1 lshift rshift dive_1 diveby3 divis divrem divrem_1 divrem_2     \
-  mod_1 mode1o pre_mod_1 dump                                              \
+  fib_ui mod_1 mode1o pre_mod_1 dump                                       \
   mul mul_fft mul_n mul_basecase sqr_basecase random                       \
   random2 sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp perfsqr \
   bdivmod gcd_1 gcd gcdext tdiv_qr dc_divrem_n sb_divrem_mn jacbase        \
@@ -1492,8 +1495,8 @@ GMP_C_SIZES
 
 # Exclude the mpn random functions from mpbsd since that would drag in the
 # top-level rand things, all of which are unnecessary for libmp.  There's
-# other unnecessary objects there too actually, if we could be bothered
-# figuring out exactly what.
+# other unnecessary objects too actually, if we could be bothered figuring
+# out exactly which they are.
 #
 mpn_objs_in_libmp=
 for i in $mpn_objs_in_libgmp; do
