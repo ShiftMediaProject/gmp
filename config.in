@@ -178,9 +178,21 @@ MA 02111-1307, USA. */
 /* Define if tests/libtests has calling conventions checking for the CPU */
 #undef HAVE_CALLING_CONVENTIONS
 
+/* Define to 1 if you have the declaration of `fgetc', and to 0 if you don't.
+   */
+#undef HAVE_DECL_FGETC
+
+/* Define to 1 if you have the declaration of `fscanf', and to 0 if you don't.
+   */
+#undef HAVE_DECL_FSCANF
+
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't.
    */
 #undef HAVE_DECL_OPTARG
+
+/* Define to 1 if you have the declaration of `ungetc', and to 0 if you don't.
+   */
+#undef HAVE_DECL_UNGETC
 
 /* Define to 1 if you have the declaration of `vfprintf', and to 0 if you
    don't. */
