@@ -141,7 +141,7 @@ fi
 
 AC_ARG_ENABLE(mpbsd,
 AC_HELP_STRING([--enable-mpbsd],
-               [build Berkley MP compatibility library [[default=no]]]),
+               [build Berkeley MP compatibility library [[default=no]]]),
 [case $enableval in
 yes|no) ;;
 *) AC_MSG_ERROR([bad value $enableval for --enable-mpbsd, need yes or no]) ;;
