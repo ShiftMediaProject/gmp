@@ -2,10 +2,9 @@
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
-   FUTURE GNU MP RELEASES.  */
+   FUTURE GNU MP RELEASES.
 
-/*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -107,11 +106,14 @@ MA 02111-1307, USA.
 mp_limb_t
 mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
 {
-  mp_limb_t  s, h, l, inverse, dummy;
+  mp_limb_t  s, h, l, inverse, dummy, dmul;
   mp_size_t  i;
 
   ASSERT (size >= 1);
   ASSERT (d & 1);
+  ASSERT_MPN (src, size);
+  ASSERT_LIMB (d);
+  ASSERT_LIMB (c);
 
   if (size == 1)
     {
@@ -133,15 +135,15 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
 
 
   modlimb_invert (inverse, d);
+  dmul = d << GMP_NAIL_BITS;
 
   i = 0;
   do
     {
       s = src[i];
-      l = s - c;
-      c = (l > s);
-      l *= inverse;
-      umul_ppmm (h, dummy, l, d);
+      SUBC_LIMB (c, l, s, c);
+      l = (l * inverse) & GMP_NUMB_MASK;
+      umul_ppmm (h, dummy, l, dmul);
       c += h;
     }
   while (++i < size-1);
@@ -164,10 +166,10 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
   else
     {
       /* Can't skip a divide, just do the loop code once more. */
-      l = s - c;
-      c = (l > s);
-      l *= inverse;
-      umul_ppmm (h, dummy, l, d);
+
+      SUBC_LIMB (c, l, s, c);
+      l = (l * inverse) & GMP_NUMB_MASK;
+      umul_ppmm (h, dummy, l, dmul);
       c += h;
 
       ASSERT (c < d);
@@ -193,7 +195,7 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
 mp_limb_t
 mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t h)
 {
-  mp_limb_t  s, x, y, inverse, dummy;
+  mp_limb_t  s, x, y, inverse, dummy, dmul, c1, c2;
   mp_limb_t  c = 0;
   mp_size_t  i;
 
@@ -201,24 +203,23 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t h)
   ASSERT (d & 1);
 
   modlimb_invert (inverse, d);
+  dmul = d << GMP_NAIL_BITS;
 
   for (i = 0; i < size; i++)
     {
       ASSERT (c==0 || c==1);
 
       s = src[i];
-      x = s - c;
-      c = (x > s);
+      SUBC_LIMB (c1, x, s, c);
 
-      y = x - h;
-      c += (y > x);
+      SUBC_LIMB (c2, y, x, h);
+      c = c1 + c2;
 
-      y *= inverse;
-      umul_ppmm (h, dummy, y, d);
+      y = (y * inverse) & GMP_NUMB_MASK;
+      umul_ppmm (h, dummy, y, dmul);
     }
 
   h += c;
-  ASSERT (h < d);
   return h;
 }
 
