@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.401 .
+# From configure.in Revision: 1.404 .
 #
 #
 #
@@ -1929,9 +1929,9 @@ cc_64_cflags="-O"
 SPEED_CYCLECOUNTER_OBJ=
 cyclecounter_size=2
 
-__GMP_HAVE_HOST_CPU_FAMILY_power=0
+HAVE_HOST_CPU_FAMILY_power=0
 
-__GMP_HAVE_HOST_CPU_FAMILY_powerpc=0
+HAVE_HOST_CPU_FAMILY_powerpc=0
 
 case $host in
 
@@ -2284,7 +2284,7 @@ echo "include_mpn(\`mips32/mips-defs.m4')" >> $gmp_tmpconfigm4i
 #define HAVE_HOST_CPU_FAMILY_powerpc 1
 EOF
 
-    __GMP_HAVE_HOST_CPU_FAMILY_powerpc=1
+    HAVE_HOST_CPU_FAMILY_powerpc=1
     cclist="gcc cc"
     cc_cflags="-g -O2"
     gcc_cflags="-g -O2 -mpowerpc"
@@ -2390,7 +2390,7 @@ EOF
 #define HAVE_HOST_CPU_FAMILY_power 1
 EOF
 
-    __GMP_HAVE_HOST_CPU_FAMILY_power=1
+    HAVE_HOST_CPU_FAMILY_power=1
     cclist="gcc"
     extra_functions="udiv_w_sdiv"
     path="power"
@@ -5671,7 +5671,8 @@ esac
 
 # Configs for Windows DLLs.
 
-__GMP_LIBGMP_DLL=0
+LIBGMP_DLL=0
+
 case $host in
   *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
     # By default, build only static.
@@ -5680,7 +5681,7 @@ case $host in
     fi
     # Don't allow both static and DLL.
     if test "$enable_shared" != no && test "$enable_static" != no; then
-      { { echo "$as_me:5683: error: cannot build both static and DLL, since gmp.h is different for each.
+      { { echo "$as_me:5684: error: cannot build both static and DLL, since gmp.h is different for each.
 Use \"--disable-static --enable-shared\" to build just a DLL." >&5
 echo "$as_me: error: cannot build both static and DLL, since gmp.h is different for each.
 Use \"--disable-static --enable-shared\" to build just a DLL." >&2;}
@@ -5689,8 +5690,7 @@ Use \"--disable-static --enable-shared\" to build just a DLL." >&2;}
     if test "$enable_shared" = yes; then
       # libtool requires "-no-undefined", see AC_LIBTOOL_WIN32_DLL doco.
       GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
-      __GMP_LIBGMP_DLL=1
-
+      LIBGMP_DLL=1
     fi
     ;;
 esac
@@ -19940,8 +19940,8 @@ echo "define(<SQR_KARATSUBA_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)" >> $
 fi
 
 # This must come after gmp-mparam.h has been chosen.
-__GMP_BITS_PER_MP_LIMB=`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`
-if test -n "$__GMP_BITS_PER_MP_LIMB" \
+BITS_PER_MP_LIMB=`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`
+if test -n "$BITS_PER_MP_LIMB" \
    && grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
 else
   echo "$as_me:19947: checking for mp_limb_t" >&5
@@ -20216,8 +20216,8 @@ EOF
 echo "$as_me: error: some sort of compiler problem, mp_limb_t doesn't seem to work" >&2;}
    { (exit 1); exit 1; }; }
   fi
-  if test -z "$__GMP_BITS_PER_MP_LIMB"; then
-    __GMP_BITS_PER_MP_LIMB="(8*$ac_cv_sizeof_mp_limb_t)"
+  if test -z "$BITS_PER_MP_LIMB"; then
+    BITS_PER_MP_LIMB="(8*$ac_cv_sizeof_mp_limb_t)"
   fi
   if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
   else
@@ -21145,6 +21145,12 @@ if test $enable_mpfr = yes; then
 else
   HAVE_MPFR_01=0
 fi
+if test $ac_cv_have_decl_optarg = yes; then
+  HAVE_DECL_OPTARG=1
+
+else
+  HAVE_DECL_OPTARG=0
+fi
 
 # Create config.m4.
 
@@ -21254,7 +21260,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:21257: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:21263: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -21433,7 +21439,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:21436: error: ambiguous option: $1
+    { { echo "$as_me:21442: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -21452,7 +21458,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:21455: error: unrecognized option: $1
+  -*) { { echo "$as_me:21461: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -21531,7 +21537,7 @@ do
   "gmp-mparam.h" ) CONFIG_LINKS="$CONFIG_LINKS gmp-mparam.h:mpn/$gmp_mparam_dir/gmp-mparam.h" ;;
   "default-1" ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h:config.in" ;;
-  *) { { echo "$as_me:21534: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:21540: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -21651,8 +21657,8 @@ s,@WANT_MPBSD_FALSE@,$WANT_MPBSD_FALSE,;t t
 s,@WANT_MPFR_TRUE@,$WANT_MPFR_TRUE,;t t
 s,@WANT_MPFR_FALSE@,$WANT_MPFR_FALSE,;t t
 s,@ABI@,$ABI,;t t
-s,@__GMP_HAVE_HOST_CPU_FAMILY_power@,$__GMP_HAVE_HOST_CPU_FAMILY_power,;t t
-s,@__GMP_HAVE_HOST_CPU_FAMILY_powerpc@,$__GMP_HAVE_HOST_CPU_FAMILY_powerpc,;t t
+s,@HAVE_HOST_CPU_FAMILY_power@,$HAVE_HOST_CPU_FAMILY_power,;t t
+s,@HAVE_HOST_CPU_FAMILY_powerpc@,$HAVE_HOST_CPU_FAMILY_powerpc,;t t
 s,@GMP_LDFLAGS@,$GMP_LDFLAGS,;t t
 s,@SPEED_CYCLECOUNTER_OBJ@,$SPEED_CYCLECOUNTER_OBJ,;t t
 s,@CALLING_CONVENTIONS_OBJS@,$CALLING_CONVENTIONS_OBJS,;t t
@@ -21677,7 +21683,7 @@ s,@U@,$U,;t t
 s,@ANSI2KNR@,$ANSI2KNR,;t t
 s,@AR@,$AR,;t t
 s,@ac_ct_AR@,$ac_ct_AR,;t t
-s,@__GMP_LIBGMP_DLL@,$__GMP_LIBGMP_DLL,;t t
+s,@LIBGMP_DLL@,$LIBGMP_DLL,;t t
 s,@LN_S@,$LN_S,;t t
 s,@ECHO@,$ECHO,;t t
 s,@RANLIB@,$RANLIB,;t t
@@ -21697,7 +21703,7 @@ s,@TAL_OBJECT@,$TAL_OBJECT,;t t
 s,@REPL_VSNPRINTF_PRINTF_OBJ@,$REPL_VSNPRINTF_PRINTF_OBJ,;t t
 s,@REPL_VSNPRINTF_OBJ@,$REPL_VSNPRINTF_OBJ,;t t
 s,@M4@,$M4,;t t
-s,@__GMP_BITS_PER_MP_LIMB@,$__GMP_BITS_PER_MP_LIMB,;t t
+s,@BITS_PER_MP_LIMB@,$BITS_PER_MP_LIMB,;t t
 s,@GMP_NAIL_BITS@,$GMP_NAIL_BITS,;t t
 s,@mpn_objs_in_libmp@,$mpn_objs_in_libmp,;t t
 s,@mpn_objects@,$mpn_objects,;t t
@@ -21721,6 +21727,7 @@ s,@LEX@,$LEX,;t t
 s,@LEXLIB@,$LEXLIB,;t t
 s,@LEX_OUTPUT_ROOT@,$LEX_OUTPUT_ROOT,;t t
 s,@HAVE_MPFR_01@,$HAVE_MPFR_01,;t t
+s,@HAVE_DECL_OPTARG@,$HAVE_DECL_OPTARG,;t t
 CEOF
 
 EOF
@@ -21835,7 +21842,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:21838: creating $ac_file" >&5
+    { echo "$as_me:21845: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -21853,7 +21860,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:21856: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:21863: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -21866,7 +21873,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:21869: error: cannot find input file: $f" >&5
+           { { echo "$as_me:21876: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -21927,7 +21934,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:21930: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:21937: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -21938,7 +21945,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:21941: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:21948: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -21951,7 +21958,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:21954: error: cannot find input file: $f" >&5
+           { { echo "$as_me:21961: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -22068,7 +22075,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:22071: $ac_file is unchanged" >&5
+      { echo "$as_me:22078: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
@@ -22125,11 +22132,11 @@ for ac_file in : $CONFIG_LINKS; do test "x$ac_file" = x: && continue
   ac_dest=`echo "$ac_file" | sed 's,:.*,,'`
   ac_source=`echo "$ac_file" | sed 's,[^:]*:,,'`
 
-  { echo "$as_me:22128: linking $srcdir/$ac_source to $ac_dest" >&5
+  { echo "$as_me:22135: linking $srcdir/$ac_source to $ac_dest" >&5
 echo "$as_me: linking $srcdir/$ac_source to $ac_dest" >&6;}
 
   if test ! -r $srcdir/$ac_source; then
-    { { echo "$as_me:22132: error: $srcdir/$ac_source: File not found" >&5
+    { { echo "$as_me:22139: error: $srcdir/$ac_source: File not found" >&5
 echo "$as_me: error: $srcdir/$ac_source: File not found" >&2;}
    { (exit 1); exit 1; }; }
   fi
@@ -22179,7 +22186,7 @@ done; }
   # Make a symlink if possible; otherwise try a hard link.
   ln -s $ac_rel_source $ac_dest 2>/dev/null ||
     ln $srcdir/$ac_source $ac_dest ||
-    { { echo "$as_me:22182: error: cannot link $ac_dest to $srcdir/$ac_source" >&5
+    { { echo "$as_me:22189: error: cannot link $ac_dest to $srcdir/$ac_source" >&5
 echo "$as_me: error: cannot link $ac_dest to $srcdir/$ac_source" >&2;}
    { (exit 1); exit 1; }; }
 done
