@@ -124,8 +124,8 @@ mpz_fac_ui (mpz_ptr result, unsigned long int n)
   unsigned int tree_cnt;
 
   /* for testing with small limbs */
-  if (BITS_PER_MP_LIMB < BITS_PER_LONGINT)
-    ASSERT_ALWAYS (n < MP_LIMB_T_MAX);
+  if (MP_LIMB_T_MAX < ULONG_MAX)
+    ASSERT_ALWAYS (n <= MP_LIMB_T_MAX);
 
   top = top_limit_so_far = -1;
   tree_cnt = 0;
