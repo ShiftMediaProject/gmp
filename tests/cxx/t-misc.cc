@@ -19,10 +19,15 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include "config.h"
+
 #include <climits>
 #include <string>
 
 #include "gmp.h"
+#ifdef WANT_MPFR
+#include "mpfr.h"
+#endif
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -365,6 +370,46 @@ check_mpf (void)
 }
 
 
+static void
+check_mpfr_hypot (void)
+{
+#if WANT_MPFR
+  // hypot(mpfr_t,mpfr_t)
+  {
+    mpfr_class  x(3), y(4), got;
+    got = hypot (x, y);
+    ASSERT_ALWAYS (got == 5);
+  }
+
+  // hypot(mpfr_t,long)
+  {
+    mpfr_class  x(0), got;
+    got = hypot (x, LONG_MIN);
+    ASSERT_ALWAYS (got == LONG_MIN);
+  }
+  // hypot(long,mpfr_t)
+  {
+    mpfr_class  y(0), got;
+    got = hypot (LONG_MIN, y);
+    ASSERT_ALWAYS (got == LONG_MIN);
+  }
+
+  // hypot(mpfr_t,double)
+  {
+    mpfr_class  x(3), got;
+    got = hypot (x, -4.0);
+    ASSERT_ALWAYS (got == 5);
+  }
+  // hypot(double,mpfr_t)
+  {
+    mpfr_class  y(4), got;
+    got = hypot (3.0, y);
+    ASSERT_ALWAYS (got == 5);
+  }
+#endif
+}
+
+
 int
 main (void)
 {
@@ -373,6 +418,7 @@ main (void)
   check_mpz();
   check_mpq();
   check_mpf();
+  check_mpfr_hypot ();
 
   tests_end();
   return 0;
