@@ -569,7 +569,7 @@ tune:
 allprogs: $(EXTRA_PROGRAMS)
 
 $(TUNE_MPN_SRCS_BASIC):
-	for i in $(TUNE_MPN_SRCS); do \
+	for i in $(TUNE_MPN_SRCS_BASIC); do \
 	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
 	  echo "#include \"mpn/generic/$$i\"" >>$$i; \
 	done
