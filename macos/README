@@ -78,15 +78,27 @@ From the MPW development environment you need at least
 Put these into a folder and drag the whole folder to the "StuffIt
 Expander" icon to unpack them.
 
-Create a folder "Tools" inside the "MPW_Shell Folder" and move "Make",
-"PPCAsm", "MrC" and "PPCLink" down into the "Tools" folder.
-
 Move "Scripts" folder down into the "MPW_Shell Folder".
 
+Create a folder "Tools" inside the "MPW_Shell Folder" and move "Make",
+"PPCAsm", "MrC", "PPCLink" and "GetFileName" down into the "Tools"
+folder.
+
 Create a folder "Interfaces&Libraries" at the same level as the
-"MPW_Shell Folder" and inside this folder a new folders
-"Interfaces". Put "RuntimeLibraries", "Libraries" and "CInlcudes" into
-the corresponding folder.
+"MPW_Shell Folder". Put Put "RuntimeLibraries", "Libraries" into
+the "Interfaces&Libraries" folder. Inside the "Interfaces&Libraries" folder 
+create a new folder "Interfaces" and put "CInlcudes" into it.
+
+In summary, the manually moved files/folders should be located at
+
+	:MPW_Shell Folder:Tools:Make
+	:MPW_Shell Folder:Tools:PPCAsm
+	:MPW_Shell Folder:Tools:MrC
+	:MPW_Shell Folder:Tools:PPCLink
+	:MPW_Shell Folder:Tools:GetFileName
+	:Interfaces&Libraries:RuntimeLibraries:
+	:Interfaces&Libraries:Libraries:
+	:Interfaces&Libraries:Interfaces:CInlcudes:
 
 You can see the expected file structure in
 
