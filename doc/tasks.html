@@ -82,16 +82,13 @@ MA 02111-1307, USA.
      when those routines are coming from a DLL (because they're effectively
      function pointer global variables themselves).  Need to rearrange perhaps
      to a set of calls to a test function rather than iterating over an array.
-<li> demos/pexpr.c: The local variables in <code>main</code> might be
-     clobbered by the <code>longjmp</code>.
 </ul>
 
 
 
 <h4>Machine Independent Optimization</h4>
 <ul>
-<li> <code>mpn_gcdext</code>, <code>mpz_get_d</code>:
-     Don't test <code>count_leading_zeros</code> for
+<li> <code>mpn_gcdext</code>: Don't test <code>count_leading_zeros</code> for
      zero, instead check the high bit of the operand and avoid invoking
      <code>count_leading_zeros</code>.  This is an optimization on all
      machines, and significant on machines with slow
@@ -194,11 +191,6 @@ MA 02111-1307, USA.
      bitfield for the mantissa extraction, not two, when endianness permits.
      Might depend on the compiler allowing <code>long long</code> bit fields
      when that's the only actual 64-bit type.
-<li> <code>mpf_get_d</code> could be more like <code>mpz_get_d</code> and do
-     more in integers and give the float conversion as such a chance to round
-     in its preferred direction.  Some code sharing ought to be possible.  Or
-     if nothing else then for consistency the two ought to give identical
-     results on integer operands (not clear if this is so right now).
 <li> <code>usqr_ppm</code> or some such could do a widening square in the
      style of <code>umul_ppmm</code>.  This would help 68000, and be a small
      improvement for the generic C (which is used on UltraSPARC/64 for
@@ -259,18 +251,6 @@ MA 02111-1307, USA.
 
 <h4>Machine Dependent Optimization</h4>
 <ul>
-<li> <code>udiv_qrnnd_preinv2norm</code>, the branch-free version of
-     <code>udiv_qrnnd_preinv</code>, might be faster on various pipelined
-     chips.  In particular the first <code>if (_xh != 0)</code> in
-     <code>udiv_qrnnd_preinv</code> might be roughly a 50/50 chance and might
-     branch predict poorly.  (The second test is probably almost always
-     false.)  Measuring with the tuneup program would be possible, but perhaps
-     a bit messy.  In any case maybe the default should be the branch-free
-     version.
-     <br>
-     Note that the current <code>udiv_qrnnd_preinv2norm</code> implementation
-     assumes a right shift will sign extend, which is not guaranteed by the C
-     standards, and doesn't happen on Cray vector systems.
 <li> Run the `tune' utility for more compiler/CPU combinations.  We would like
      to have gmp-mparam.h files in practically every implementation specific
      mpn subdirectory, and repeat each *_THRESHOLD for gcc and the system
@@ -321,9 +301,6 @@ MA 02111-1307, USA.
      perhaps ought to be tested.
 <li> ARM: On v5 cpus see if the <code>clz</code> instruction can be used for
      <code>count_leading_zeros</code>.
-<li> Itanium: <code>mpn_divexact_by3</code> isn't particularly important, but
-     the generic C runs at about 27 c/l, whereas with the multiplies off the
-     dependent chain about 3 c/l ought to be possible.
 <li> Itanium: <code>mpn_hamdist</code> could be put together based on the
      current <code>mpn_popcount</code>.
 <li> Itanium: GCC 3.4 introduces <code>__builtin_popcount</code> which can be
@@ -576,9 +553,6 @@ MA 02111-1307, USA.
      supported in the future, or perhaps for <code>mpq_t</code>.  Something
      like <code>&amp;*r</code> (r for rounding, and mpfr style
      <code>GMP_RND</code> parameter).
-<li> <code>mpz_combit</code> to toggle a bit would be a good companion for
-     <code>mpz_setbit</code> and <code>mpz_clrbit</code>.  Suggested by Niels
-     Möller (and has done some work towards it).
 <li> <code>mpz_scan0_reverse</code> or <code>mpz_scan0low</code> or some such
      searching towards the low end of an integer might match
      <code>mpz_scan0</code> nicely.  Likewise for <code>scan1</code>.
@@ -588,9 +562,6 @@ MA 02111-1307, USA.
      indicating whether it's a proper or non-proper subset would be good and
      wouldn't cost anything in the implementation.  Suggested by Roberto
      Bagnara.
-<li> <code>gmp_randinit_r</code> and maybe <code>gmp_randstate_set</code> to
-     init-and-copy or to just copy a <code>gmp_randstate_t</code>.  Suggested
-     by Pedro Gimeno.
 <li> <code>mpf_get_ld</code>, <code>mpf_set_ld</code>: Conversions between
      <code>mpf_t</code> and <code>long double</code>, suggested by Dan
      Christensen.  There'd be some work to be done by <code>configure</code>
