@@ -52,7 +52,7 @@ tuneup_LDADD = $(tuneup_DEPENDENCIES) -lm
 # Don't know how to get tuneup$U.lo to depend on sqr_basecase.h, so just do
 # an explicit make.  A plain "make tuneup" will fail if used directly.
 tune:
-	$(MAKE) $(AM_MAKEFLAGS) sqr_basecase.h tuneup
+	$(MAKE) $(AM_MAKEFLAGS) sqr_basecase.h tuneup$(EXEEXT)
 	./tuneup
 
 allprogs: sqr_basecase.h $(EXTRA_PROGRAMS)
@@ -111,9 +111,10 @@ sqr_basecase.h: libgmptune.a
 # "ar r" is going to be a bit fragile because there's more than one mul.o in
 # libgmp.a.
 
-libgmptune.a: $(top_builddir)/.libs/libgmp.a $(LIBGMPTUNE_OBJS)
+libgmptune.a: $(top_builddir)/libgmp.la $(LIBGMPTUNE_OBJS)
 	rm -f libgmptmp.a
-	cp $(top_builddir)/.libs/libgmp.a libgmptmp.a
+	eval `$(LIBTOOL) --config | grep '^objdir='` ; \
+		cp $(top_builddir)/$$objdir/libgmp.a libgmptmp.a
 	$(AR) r libgmptmp.a $(LIBGMPTUNE_OBJS)
 	rm -f $(SQR_CLEANFILES)
 	echo "" >sqr_basecase.h
