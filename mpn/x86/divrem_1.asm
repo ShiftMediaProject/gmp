@@ -59,8 +59,8 @@ C
 C - If gcc isn't being used then divrem_1.c will get the generic C
 C   udiv_qrnnd() and be rather slow.
 C
-C - On K6, using the loop instruction is a 10% speedup, but gcc doesn't
-C   generate that instruction (as of gcc 2.95.2 at least).
+C - On K6, using the loop instruction is a 10% speedup, but gcc prior to 3.0
+C   doesn't generate that instruction.
 C
 C A test is done to see if the high limb is less the the divisor, and if so
 C one less div is done.  A div is between 20 and 40 cycles on the various
