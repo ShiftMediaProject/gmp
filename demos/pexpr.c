@@ -519,6 +519,11 @@ power (char *str, expr_t *e)
   expr_t e2;
 
   str = factor (str, e);
+  while (str[0] == '!')
+    {
+      str++;
+      makeexp (e, FAC, *e, NULL);
+    }
   str = skipspace (str);
   if (str[0] == '^')
     {
@@ -711,11 +716,6 @@ factor (char *str, expr_t *e)
     {
       error = "operand expected";
       longjmp (errjmpbuf, (int) (long) str);
-    }
-  if (str[0] == '!')
-    {
-      str++;
-      makeexp (e, FAC, *e, NULL);
     }
   return str;
 }
