@@ -217,6 +217,10 @@ main (int argc, char **argv)
 {
   int reps = 500;
 
+  /* dummy call to drag in refmpn.o for testing mpz/n_pow_ui.c with
+     refmpn_mul_2 */
+  refmpn_zero_p (NULL, (mp_size_t) 0);
+
   tests_start ();
   mp_trace_base = -16;
 
