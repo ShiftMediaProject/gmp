@@ -32,6 +32,8 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 
+using namespace std;
+
 
 /* The gmp_asprintf support routines never give an error, so
    __gmp_doprnt_mpf shouldn't fail and it's return can just be checked with

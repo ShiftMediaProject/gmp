@@ -25,6 +25,9 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+using namespace std;
+
+
 int
 __gmp_istream_set_base (istream &i, char &c, bool &zero, bool &showbase)
 {

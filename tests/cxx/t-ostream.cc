@@ -28,6 +28,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
+using namespace std;
+
 
 int   option_check_standard = 0;
 
