@@ -19,6 +19,16 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-14  Kevin Ryde  <kevin@swox.se>
+
+	* macos/README: Bug reports to bug-gmp@gnu.org, clarify MacOS X a bit.
+
+	* mpn/generic/gcdext.c [WANT_GCDEXT_ONE_STEP]: Add missing TMP_FREE.
+
+	* tune/speed.c, tune/tuneup.c: Allow for speed_cycletime of 0.0 in
+	some diagnostic printouts.
+	* tune/time.c (speed_cycletime): Note can be 0.0.
+
 2002-02-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/mul_1.asm: Add mpn_mul_1c entry.
