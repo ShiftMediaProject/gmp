@@ -66,7 +66,7 @@ MPF_OBJECTS = mpf/init.lo mpf/init2.lo mpf/set.lo mpf/set_ui.lo mpf/set_si.lo \
   mpf/div_2exp.lo mpf/abs.lo mpf/neg.lo mpf/set_q.lo mpf/get_d.lo \
   mpf/set_dfl_prec.lo mpf/set_prc.lo mpf/set_prc_raw.lo mpf/get_prc.lo \
   mpf/ui_div.lo mpf/sqrt_ui.lo mpf/floor.lo mpf/ceil.lo mpf/trunc.lo \
-  mpf/pow_ui.lo mpf/urandom.lo
+  mpf/pow_ui.lo mpf/urandomb.lo
 MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/array_init.lo mpz/bin_ui.lo mpz/bin_uiui.lo mpz/cdiv_q.lo \
   mpz/cdiv_q_ui.lo mpz/cdiv_qr.lo mpz/cdiv_qr_ui.lo mpz/cdiv_r.lo \
