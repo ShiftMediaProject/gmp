@@ -38,7 +38,7 @@ defframe(PARAM_SRC, 8)
 defframe(PARAM_DST, 4)
 
 	TEXT
-	ALIGN(32)
+	ALIGN(16)
 PROLOGUE(mpn_com_n)
 deflit(`FRAME',0)
 
@@ -62,7 +62,7 @@ FRAME_pushl()
 	pcmpeqd	%mm7, %mm7	C all ones
 
 
-	ALIGN(16)
+	ALIGN(8)
 L(top):
 	C eax	src
 	C ebx	floor(size/2)
