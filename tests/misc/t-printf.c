@@ -1,6 +1,6 @@
 /* Test gmp_printf and related functions.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -727,9 +727,12 @@ check_f (void)
 void
 check_n (void)
 {
-  int    n;
-  long   l;
-  short  h[2];
+  int        n;
+  long       l;
+  short      h[2];
+  mp_limb_t  a[5];
+  mp_limb_t  a_want[numberof(a)];
+  mp_size_t  i;
 
   check_one ("blah", "%nblah", &n);
   ASSERT_ALWAYS (n == 0);
@@ -751,6 +754,18 @@ check_n (void)
   check_one ("", "%hn", &h[0]);
   ASSERT_ALWAYS (h[0] == 0);
   ASSERT_ALWAYS (h[1] == -456);
+
+  a[0] = 123;
+  check_one ("blah", "bl%Nnah", a, 0);
+  ASSERT_ALWAYS (a[0] == 123);
+
+  MPN_ZERO (a_want, numberof (a_want));
+  for (i = 1; i < numberof (a); i++)
+    {
+      check_one ("blah", "bl%Nnah", a, i);
+      a_want[0] = 2;
+      ASSERT_ALWAYS (mpn_cmp (a, a_want, i) == 0);
+    }
 }
 
 
