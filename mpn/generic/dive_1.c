@@ -2,10 +2,9 @@
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
-   FUTURE GNU MP RELEASES.  */
+   FUTURE GNU MP RELEASES.
 
-/*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,8 +21,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -77,6 +75,8 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
   ASSERT (size >= 1);
   ASSERT (divisor != 0);
   ASSERT (MPN_SAME_OR_SEPARATE_P (dst, src, size));
+  ASSERT_MPN (src, size);
+  ASSERT_LIMB (divisor);
 
   if (size == 1)
     {
@@ -93,6 +93,7 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
     shift = 0;
 
   modlimb_invert (inverse, divisor);
+  divisor <<= GMP_NAIL_BITS;
 
   if (shift != 0)
     {
@@ -109,13 +110,12 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 
 	even_entry:
 	  s_next = src[i+1];
-	  ls = ((s >> shift) | (s_next << (BITS_PER_MP_LIMB-shift)));
+	  ls = ((s >> shift) | (s_next << (GMP_NUMB_BITS-shift))) & GMP_NUMB_MASK;
 	  s = s_next;
 
-	  l = ls - c;
-	  c = (l > ls);
+          SUBC_LIMB (c, l, ls, c);
 
-	  l *= inverse;
+	  l = (l * inverse) & GMP_NUMB_MASK;
 	  dst[i] = l;
 	  i++;
 	}
@@ -125,13 +125,13 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
       c += l;
       ls = s >> shift;
       l = ls - c;
-      l *= inverse;
+      l = (l * inverse) & GMP_NUMB_MASK;
       dst[i] = l;
     }
   else
     {
       l = src[0];
-      l *= inverse;
+      l = (l * inverse) & GMP_NUMB_MASK;
       dst[0] = l;
       i = 1;
       c = 0;
@@ -142,10 +142,9 @@ mpn_divexact_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 	  c += l;
 
 	  s = src[i];
-	  l = s - c;
-	  c = (l > s);
+          SUBC_LIMB (c, l, s, c);
 
-	  l *= inverse;
+          l = (l * inverse) & GMP_NUMB_MASK;
 	  dst[i] = l;
 	  i++;
 	}
