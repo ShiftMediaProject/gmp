@@ -25,6 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+
 unsigned long int
 mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
 {
@@ -32,25 +33,25 @@ mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
   mp_size_t usize, vsize, size;
   unsigned long int count;
 
-  usize = u->_mp_size;
-  vsize = v->_mp_size;
+  usize = SIZ(u);
+  vsize = SIZ(v);
 
   if ((usize | vsize) < 0)
     return ~ (unsigned long int) 0;
 
-  up = u->_mp_d;
-  vp = v->_mp_d;
+  up = PTR(u);
+  vp = PTR(v);
 
-  if (usize > vsize)
-    {
-      count = mpn_popcount (up + vsize, usize - vsize);
-      size = vsize;
-    }
-  else
-    {
-      count = mpn_popcount (vp + usize, vsize - usize);
-      size = usize;
-    }
+  if (usize < vsize)
+    MPN_SRCPTR_SWAP (up,usize, vp,vsize);
 
-  return count + mpn_hamdist (up, vp, size);
+  count = 0;
+  if (vsize != 0)
+    count = mpn_hamdist (up, vp, vsize);
+
+  usize -= vsize;
+  if (usize != 0)
+    count += mpn_popcount (up + vsize, usize);
+
+  return count;
 }

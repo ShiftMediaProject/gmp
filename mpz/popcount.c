@@ -23,15 +23,14 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+
 unsigned long int
 mpz_popcount (mpz_srcptr u)
 {
-  mp_size_t usize;
+  mp_size_t usize = u->_mp_size;
 
-  usize = u->_mp_size;
-
-  if ((usize) < 0)
-    return ~ (unsigned long int) 0;
+  if (usize <= 0)
+    return (usize < 0 ? ~ (unsigned long) 0 : 0);
 
   return mpn_popcount (u->_mp_d, usize);
 }
