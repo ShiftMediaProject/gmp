@@ -1,3 +1,7 @@
+2000-07-31  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (References): Add URL for invariant division.
+
 2000-07-30  Kevin Ryde  <kevin@swox.se>
 
 	* tune/time.c (speed_cpu_frequency_proc_cpuinfo): Add support for
