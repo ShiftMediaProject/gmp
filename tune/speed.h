@@ -1098,7 +1098,7 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
    decimal by default. */
 #define SPEED_ROUTINE_MPN_GET_STR(function)                             \
   {                                                                     \
-    char      *wp;                                                      \
+    unsigned char *wp;                                                  \
     size_t    wsize;                                                    \
     mp_ptr    xp;                                                       \
     int       base;                                                     \
@@ -1147,7 +1147,7 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
    decimal by default. */
 #define SPEED_ROUTINE_MPN_SET_STR(function)                                  \
   {                                                                          \
-    char       *xp;                                                          \
+    unsigned char *xp;                                                       \
     mp_ptr     wp;                                                           \
     mp_size_t  wsize;                                                        \
     unsigned   i;                                                            \
