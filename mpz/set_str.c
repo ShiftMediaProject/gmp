@@ -105,10 +105,22 @@ mpz_set_str (x, str, base)
 	}
     }
 
+  /* Skip leading zeros.  */
+  while (c == '0')
+    c = *str++;
+  /* Make sure the string does not become empty, mpn_set_str would fail.  */
+  if (c == 0)
+    {
+      x->_mp_size = 0;
+      return 0;
+    }
+
   TMP_MARK (marker);
   str_size = strlen (str - 1);
   s = begs = (char *) TMP_ALLOC (str_size + 1);
 
+  /* Remove spaces from the string and convert the result from ASCII to a
+     byte array.  */
   for (i = 0; i < str_size; i++)
     {
       if (!isspace (c))
@@ -131,6 +143,7 @@ mpz_set_str (x, str, base)
   if (x->_mp_alloc < xsize)
     _mpz_realloc (x, xsize);
 
+  /* Convert the byte array in base BASE to our bignum format.  */
   xsize = mpn_set_str (x->_mp_d, (unsigned char *) begs, str_size, base);
   x->_mp_size = negative ? -xsize : xsize;
 
