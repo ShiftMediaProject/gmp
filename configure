@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.153
+# From configure.in Revision: 1.155
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -2418,7 +2418,7 @@ fi
 
   i960*-*-*) path="i960";;
 
-  ia64*-*-*) path="ia64";;
+  ia64*-*-*) path="ia64"; extra_functions="invert_limb";;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
   m680[234]0*-*-* | m68k*-*-* | \
