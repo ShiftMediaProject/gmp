@@ -434,9 +434,14 @@ are available to make @file{gmp.ps} and/or @file{gmp.dvi}.
 @item AIX with PowerPC 64
 
 Currently only a 64-bit version of the MP library is built, and when linking
-your application you need to pass @option{-maix64} to @code{gcc} or
-@option{-q64} to @code{xlc}.  We hope this will change in a future version of
-MP.
+your application you need to pass @option{-maix64} to @command{gcc} or
+@option{-q64} to @command{xlc}.  We hope this will change in a future version
+of MP.
+
+@item HPPA
+
+The MP assembly code for HPPA is not currently position-independent, so shared
+libraries are disabled for targets @samp{hppa*-*-*}.
 
 @item Sparc
 
@@ -466,6 +471,12 @@ corresponding plain integer code.
 You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 
 @table @asis
+
+@item AIX
+
+Targets @samp{*-*-aix*} have shared libraries disabled since they seem to fail
+on AIX 4.3.
+
 @item NeXT prior to 3.3
 The system compiler on old versions of NeXT was a massacred and old GCC, even
 if the compiler called itself @file{cc}.  This compiler cannot be used to build
@@ -482,14 +493,27 @@ Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
 
 @item SunOS 4
-In the past the system C compiler had a bug that made it miscompile
-@file{mpq/get_d.c}.  If this is still true then use GCC instead if plan to use
-the function @code{mpq_get_d}.
+The system C compiler has a bug that makes it miscompile @file{mpq/get_d.c}
+and @file{mpf/get_d.c}, and causes two corresponding tests to fail.  (You can
+@command{cd} to the @file{mpz} directory to run @samp{make check} there to
+test the rest of the build.)  Use GCC instead if plan to use the function
+@code{mpq_get_d}.
 
 @command{/usr/bin/m4} lacks features needed to process @file{.asm} files.
-Either the optional SysV @command{/usr/5bin/m4} or GNU @command{m4} should be
-used instead.  On the @samp{configure} command line use @samp{M4=/usr/5bin/m4},
-or the equivalent for wherever GNU @command{m4} is installed.
+Either the SysV @command{/usr/5bin/m4} or GNU @command{m4} should be used
+instead.  On the @samp{configure} command line use @samp{M4=/usr/5bin/m4}, or
+the equivalent for wherever GNU @command{m4} is installed.
+
+The setting for @code{GSYM_PREFIX} in @file{config.m4} may be incorrectly
+determined when using the native @command{grep}, leading at link-time to
+undefined symbols like @code{___mpn_add_n}.  To fix this, after running
+@command{configure}, change the relevant line in @file{config.m4} to
+@samp{define(<GSYM_PREFIX>, <_>)}.
+
+The @command{ranlib} command will need to be run manually when building a
+static library with the native @command{ar}.  After @samp{make}, run
+@samp{ranlib .libs/libgmp.a}, and if using @option{--enable-mpbsd} then
+@samp{ranlib .libs/libmp.a} too.
 
 @item VAX running Ultrix
 You need to build and install the GNU assembler before you compile MP.  The VAX
