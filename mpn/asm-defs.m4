@@ -643,6 +643,27 @@ define(`$1',m4_incr_or_decr($1,$2))dnl
 forloop_internal(`$1',$2,`$3')')')
 
 
+dnl  Usage: foreach(var,body, item1,item2,...,itemN)
+dnl
+dnl  For each "item" argument, define "var" to that value and expand "body".
+dnl  For example,
+dnl
+dnl         foreach(i, `something i
+dnl         ', one, two)
+dnl  gives
+dnl         something one
+dnl         something two
+dnl
+dnl  Any previous definition of "var", or lack thereof, is saved and
+dnl  restored.  Empty "item"s are not allowed.
+
+define(foreach,
+m4_assert_numargs_range(2,1000)
+`ifelse(`$3',,,
+`pushdef(`$1',`$3')$2`'popdef(`$1')dnl
+foreach(`$1',`$2',shift(shift(shift($@))))')')
+
+
 dnl  Usage: m4_toupper(x)
 dnl         m4_tolower(x)
 dnl
