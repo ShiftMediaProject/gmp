@@ -47,12 +47,11 @@ FreeBSD 4.2 i486 getrusage
 
 NetBSD 1.4.1 m68k macintosh time base
 
-    On this system its been found getrusage often goes backwards, making it
-    unusable.  And gettimeofday sometimes doesn't update atomically when it
-    crosses a 1 second boundary.  Not sure what to do about this.  Disable
-    getrusage with ac_cv_func_getrusage=no as per above to try gettimeofday,
-    but don't expect it to work properly.
-    
+    On this system it's been found getrusage often goes backwards, making it
+    unusable (configure is setup to ignore it).  gettimeofday sometimes
+    doesn't update atomically when it crosses a 1 second boundary.  Not sure
+    what to do about this.  Expect intermittent failures.
+
 
 
 
