@@ -23,11 +23,14 @@
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
-LDADD = $(top_builddir)/libgmp.la
+
+# $(LEXLIB) seems to be unnecessary when using flex, but put it here for the
+# benefit of anyone rebuilding using a standard lex.
+LDADD = $(top_builddir)/libgmp.la $(LIBREADLINE) $(LEXLIB)
 
 EXTRA_DIST = calc.y calclex.l
 EXTRA_PROGRAMS = calc
-calc_SOURCES = calc.c calclex.c calc.h
+calc_SOURCES = calc.c calclex.c calcread.c calc.h calc-common.h
 
 CLEANFILES = $(EXTRA_PROGRAMS)
 
@@ -42,8 +45,10 @@ allprogs: $(EXTRA_PROGRAMS)
 # Using "cd"s instead of a $(srcdir) path ensures $(srcdir) doesn't get into
 # the "#line"s in the generated files.
 #
-# FIXME: Automake yacc handling isn't quite right when building in a
-# separate object directory, hence the explicit rules used for now.
+# FIXME: Automake knows about .y and .l, but as of version 1.5 doesn't do
+# the right thing when building in a separate object directory, hence the
+# explicit rules.  Not sure if these rules cover all the portability
+# problems that automake does.
 #
 # FIXME: With ansi2knr and no-dependencies, there doesn't seem any easy way
 # to manually express that calclex$U.lo depends on calc.h.  Making calclex.c
@@ -51,6 +56,6 @@ allprogs: $(EXTRA_PROGRAMS)
 # unnecessary.
 
 $(srcdir)/calclex.c: calclex.l calc.h
-	cd $(srcdir); lex -ocalclex.c calclex.l
+	cd $(srcdir); $(LEX) -ocalclex.c calclex.l
 $(srcdir)/calc.c $(srcdir)/calc.h: calc.y
-	cd $(srcdir); yacc -d -ocalc.c calc.y
+	cd $(srcdir); $(YACC) -d -ocalc.c calc.y
