@@ -59,6 +59,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
   mp_srcptr x, y;
 
   n2 = n >> 1;
+  ASSERT (n2 > 0);
 
   if (n & 1)
     {
@@ -268,6 +269,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
   mp_srcptr x, y;
 
   n2 = n >> 1;
+  ASSERT (n2 > 0);
 
   if (n & 1)
     {
@@ -334,9 +336,9 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       p[n] = w;
 
       n1 = n + 1;
-      if (n2 < KARATSUBA_MUL_THRESHOLD)
+      if (n2 < KARATSUBA_SQR_THRESHOLD)
 	{
-	  if (n3 < KARATSUBA_MUL_THRESHOLD)
+	  if (n3 < KARATSUBA_SQR_THRESHOLD)
 	    {
 	      mpn_sqr_basecase (ws, p, n3);
 	      mpn_sqr_basecase (p, a, n3);
@@ -430,7 +432,7 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       mpn_sub_n (p + n2, x, y, n2);
 
       /* Pointwise products. */
-      if (n2 < KARATSUBA_MUL_THRESHOLD)
+      if (n2 < KARATSUBA_SQR_THRESHOLD)
 	{
 	  mpn_sqr_basecase (ws, p, n2);
 	  mpn_sqr_basecase (p, a, n2);
@@ -1114,7 +1116,7 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_limb_t n, mp_ptr ws)
 void
 mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_limb_t n, mp_ptr ws)
 {
-  mp_limb_t cB,cC,cD, dB,dC,dD, l,l2,l3,l4,l5,ls, tB,tC,tD;
+  mp_limb_t cB,cC,cD, l,l2,l3,l4,l5,ls, tB,tC,tD;
   mp_limb_t *A,*B,*C,*D,*E, *W;
   mp_srcptr b = a;
 
@@ -1147,38 +1149,30 @@ mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_limb_t n, mp_ptr ws)
   }
 
   /** First stage: evaluation at points 0, 1/2, 1, 2, oo. **/
-  evaluate3 (A,     B,     C,     &cB, &cC, &cD, a, a + l, a + l2, l, ls);
-  evaluate3 (A + l, B + l, C + l, &dB, &dC, &dD, a, a + l, a + l2, l, ls);
+  evaluate3 (A, B, C, &cB, &cC, &cD, a, a + l, a + l2, l, ls);
 
   /** Second stage: pointwise multiplies. **/
   TOOM3_SQR_REC(D, C, l, W);
-  tD = cD*dD;
-  if (cD) tD += mpn_addmul_1 (D + l, C, l, cD);
-  if (dD) tD += mpn_addmul_1 (D + l, C, l, dD);
+  tD = cD*cD;
+  if (cD) tD += mpn_addmul_1 (D + l, C, l, 2*cD);
   ASSERT (tD < 49);
   TOOM3_SQR_REC(C, B, l, W);
-  tC = cC*dC;
+  tC = cC*cC;
   /* TO DO: choose one of the following alternatives. */
 #if 0
-  if (cC) tC += mpn_addmul_1 (C + l, B, l, cC);
-  if (dC) tC += mpn_addmul_1 (C + l, B, l, dC);
+  if (cC) tC += mpn_addmul_1 (C + l, B, l, 2*cC);
 #else
-  if (cC)
+  if (cC >= 1)
     {
-      if (cC == 1) tC += mpn_add_n (C + l, C + l, B, l);
-      else tC += add2Times (C + l, C + l, B, l);
-    }
-  if (dC)
-    {
-      if (dC == 1) tC += mpn_add_n (C + l, C + l, B, l);
-      else tC += add2Times (C + l, C + l, B, l);
+      tC += add2Times (C + l, C + l, B, l);
+      if (cC == 2)
+        tC += add2Times (C + l, C + l, B, l);
     }
 #endif
   ASSERT (tC < 9);
   TOOM3_SQR_REC(B, A, l, W);
-  tB = cB*dB;
-  if (cB) tB += mpn_addmul_1 (B + l, A, l, cB);
-  if (dB) tB += mpn_addmul_1 (B + l, A, l, dB);
+  tB = cB*cB;
+  if (cB) tB += mpn_addmul_1 (B + l, A, l, 2*cB);
   ASSERT (tB < 49);
   TOOM3_SQR_REC(A, a, l, W);
   TOOM3_SQR_REC(E, a + l2, ls, W);
