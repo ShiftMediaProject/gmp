@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 #include "tests.h"
 
 #ifndef SIZE
-#define SIZE 6
+#define SIZE 8
 #endif
 
 /* VAX D floats only have an 8 bit signed exponent, so anything 2^128 or
@@ -200,9 +200,7 @@ main (int argc, char **argv)
   tests_start ();
 
   check_onebit ();
-#if 0
   check_monotonic (argc, argv);
-#endif
 
   tests_end ();
   exit (0);
