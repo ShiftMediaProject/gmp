@@ -10,7 +10,7 @@ The programs here are tools, not ready to run solutions.  Nothing is built
 in a normal "make all", but various Makefile targets described below exist.
 
 Relatively few systems and CPUs have been tested, so be sure to verify that
-you're getting sensible results before relying on them.
+results are sensible.
 
 
 
@@ -36,19 +36,18 @@ PARAMETER TUNING
 
 The "tuneup" program runs some tests designed to find the best settings for
 various thresholds, like KARATSUBA_MUL_THRESHOLD.  Its output can be put
-into gmp-mparam.h.  The program can be built and run with
+into gmp-mparam.h.  The program is built and run with
 
         make tune
 
 If the thresholds indicated are grossly different from the values in the
-selected gmp-mparam.h then you may get a performance boost in relevant size
+selected gmp-mparam.h then there may be a performance boost in relevant size
 ranges by changing gmp-mparam.h accordingly.
 
-If your CPU has specific tuned parameters coming from a gmp-mparam.h in one
-of the mpn subdirectories then the values from "make tune" should be
-similar.  You can submit new values if it looks like the current ones are
-out of date or wildly wrong.  But check you're on the right CPU target and
-there aren't any machine-specific effects causing a difference.
+If a CPU has specific tuned parameters coming from a gmp-mparam.h in one of
+the mpn subdirectories then the values from "make tune" should be similar.
+Check though that the CPU target is right and there are no machine specific
+effects causing a difference.
 
 It's hoped the compiler and options used won't have too much effect on
 thresholds, since for most CPUs they ultimately come down to comparisons
@@ -57,7 +56,7 @@ using gcc will probably have an effect.
 
 Some thresholds produced by the tune program are merely single values chosen
 from what's actually a range of sizes where two algorithms are pretty much
-the same speed.  When this happens the program is likely to give slightly
+the same speed.  When this happens the program is likely to give somewhat
 different values on successive runs.  This is noticeable on the toom3
 thresholds for instance.
 
@@ -107,11 +106,12 @@ counters on various CPUs.
 
 Currently, all methods except possibly the alpha cycle counter depend on the
 machine being otherwise idle, or rather on other jobs not stealing CPU time
-from the measuring program.  Short routines (that complete within a
+from the measuring program.  Short routines (those that complete within a
 timeslice) should work even on a busy machine.  Some trouble is taken by
 speed_measure() in common.c to avoid the ill effects of sporadic interrupts,
 or other intermittent things (like cron waking up every minute).  But
-generally you'll want an idle machine to be sure of consistent results.
+generally an idle machine will be necessary to be certain of consistent
+results.
 
 The CPU frequency is needed if times in cycles are to be displayed, and it's
 always needed when using a cycle counter time base.  time.c knows how to get
@@ -124,18 +124,18 @@ Hertz).  For example in "bash" on a 650 MHz machine,
 A high precision time base makes it possible to get accurate measurements in
 a shorter time.  Support for systems and CPUs not already covered is wanted.
 
-When setting up a method, be sure not to claim a higher accuracy than is
-really available.  For example the default gettimeofday() code is set for
-microsecond accuracy, but if only 10ms or 55ms is available then
+When choosing or creating a method, be sure not to claim a higher accuracy
+than is really available.  For example the default gettimeofday() code is
+set for microsecond accuracy, but if only 10ms or 55ms is available then
 inconsistent results can be expected.
 
 
 
 
 
-EXAMPLE COMPARISONS
+EXAMPLE COMPARISONS - VARIOUS
 
-Here are some ideas for things you can do with the speed program.
+Here are some ideas for things that can be done with the speed program.
 
 There's always going to be a certain amount of overhead in the time
 measurements, due to reading the time base, and in the loop that runs a
@@ -147,12 +147,12 @@ the times printed or anything.
 
 	./speed -s 1 noop noop_wxs noop_wxys
 
-If you want to know how many cycles per limb a routine is taking, look at
-the time increase when the size increments, using option -D.  This avoids
-fixed overheads in the measuring.  Also, remember many of the assembler
-routines have unrolled loops, so it might be necessary to compare times at,
-say, 16, 32, 48, 64 etc to see what the unrolled part is taking, as opposed
-to any finishing off.
+To see how many cycles per limb a routine is taking, look at the time
+increase when the size increments, using option -D.  This avoids fixed
+overheads in the measuring.  Also, remember many of the assembler routines
+have unrolled loops, so it might be necessary to compare times at, say, 16,
+32, 48, 64 etc to see what the unrolled part is taking, as opposed to any
+finishing off.
 
         ./speed -s 16-64 -t 16 -C -D mpn_add_n
 
@@ -175,16 +175,15 @@ limbs.
 
 When a routine has an unrolled loop for, say, multiples of 8 limbs and then
 an ordinary loop for the remainder, it can happen that it's actually faster
-to do an operation on, say, 8 limbs than it is on 7 limbs.  Here's an
-example drawing a graph of mpn_sub_n, which you can look at to see if times
-smoothly increase with size.
+to do an operation on, say, 8 limbs than it is on 7 limbs.  The following
+draws a graph of mpn_sub_n, to see whether times smoothly increase with
+size.
 
         ./speed -s 1-100 -c -P foo mpn_sub_n
 	gnuplot foo.gnuplot
 
-If mpn_lshift and mpn_rshift for your CPU have special case code for shifts
-by 1, it ought to be faster (or at least not slower) than shifting by, say,
-2 bits.
+If mpn_lshift and mpn_rshift have special case code for shifts by 1, it
+ought to be faster (or at least not slower) than shifting by, say, 2 bits.
 
         ./speed -s 1-200 -c mpn_rshift.1 mpn_rshift.2
 
@@ -201,12 +200,17 @@ routine, not available for other operations.)
         ./speed -s 1-200 -c mpn_add_n mpn_add_n_inplace
 
 The gmp manual recommends divisions by powers of two should be done using a
-right shift because it'll be significantly faster.  Here's how you can see
-by what factor mpn_rshift is faster, using division by 32 as an example.
+right shift because it'll be significantly faster.  The following shows by
+what factor mpn_rshift is faster, using division by 32 as an example.
 
         ./speed -s 10-20 -r mpn_rshift.5 mpn_divrem_1.32
 
-mul_basecase takes an "r" parameter that's the first (larger) size
+
+
+
+EXAMPLE COMPARISONS - MULTIPLICATION
+
+mul_basecase takes a ".<r>" parameter which is the first (larger) size
 parameter.  For example to show speeds for 20x1 up to 20x15 in cycles,
 
         ./speed -s 1-15 -c mpn_mul_basecase.20
@@ -251,35 +255,71 @@ square,
         ./speed -s 10-20 -t 10 -CDE mpn_mul_basecase
         ./speed -s 15-30 -t 15 -CDF mpn_sqr_basecase
 
+Two versions of toom3 interpolation and evaluation are available in
+mpn/generic/mul_n.c, using either a one-pass open-coded style or simple mpn
+subroutine calls.  The former is used on RISCs with lots of registers, the
+latter on other CPUs.  The two can be compared directly to check which is
+best.  Naturally it's sizes where toom3 is faster than karatsuba that are of
+interest.
+
+        ./speed -s 80-120 -c mpn_toom3_mul_n_mpn mpn_toom3_mul_n_open
+        ./speed -s 80-120 -c mpn_toom3_sqr_n_mpn mpn_toom3_sqr_n_open
+
+
+
+
+EXAMPLE COMPARISONS - MALLOC
+
 The gmp manual recommends application programs avoid excessive initializing
 and clearing of mpz_t variables (and mpq_t and mpf_t too).  Every new
 variable will at a minimum go through an init, a realloc for its first
 store, and finally a clear.  Quite how long that takes depends on the C
 library.  The following compares an mpz_init/realloc/clear to a 10 limb
-mpz_add.
+mpz_add.  Don't be surprised if the mallocing is quite slow.
 
         ./speed -s 10 -c mpz_init_realloc_clear mpz_add
 
-The normal libtool link of the speed program does a static link to libgmp.la
-and libspeed.la, but will end up dynamic linked to libc.  Depending on the
-system, a dynamic linked malloc may be noticeably slower than static linked,
-and you may want to re-run the libtool link invocation to static link libc
-for comparison.  The example below does a 10 limb malloc/free or
-malloc/realloc/free to test the C library.  Of course a real world program
-has big problems if it's doing so many mallocs and frees that it gets slowed
-down by a dynamic linked malloc.
+The normal libtool compilation of the speed program does a static link to
+libgmp.la and libspeed.la, but will end up dynamic linked to libc.
+Depending on the system, a dynamic linked malloc may be noticeably slower
+than a static one, and there may be value in re-running the libtool link
+command to static link libc for comparison.  The example below does a 10
+limb malloc/free or malloc/realloc/free to test the C library.  Of course a
+real world program has big problems if it's doing so many mallocs and frees
+that it gets slowed down by a dynamic linked malloc.
 
         ./speed -s 10 -c malloc_free malloc_realloc_free
 
-Two versions of toom3 interpolation and evaluation are available in
-mpn/generic/mul_n.c, either a one-pass open-coded form or simple mpn
-subroutine calls.  The former is used on RISCs with lots of registers, the
-latter on other CPUs.  The two can be compared directly to check which is
-best.  Sizes where toom3 is faster than karatsuba are of interest.
 
-        ./speed -s 80-120 -c mpn_toom3_mul_n_mpn mpn_toom3_mul_n_open
-        ./speed -s 80-120 -c mpn_toom3_sqr_n_mpn mpn_toom3_sqr_n_open
 
+
+EXAMPLE COMPARISONS - STRING CONVERSIONS
+
+mpn_get_str does a binary to string conversion.  The base is specified with
+a ".<r>" parameter, or decimal by default.  Power of 2 bases are much faster
+than general bases.  The following compares decimal and hex for instance.
+
+        ./speed -s 1-20 -c mpn_get_str mpn_get_str.16
+
+Smaller bases need more divisions to split a given size number, and so are
+slower.  The following compares base 3 and base 9.  On small operands 9 will
+be nearly twice as fast, though at bigger sizes this reduces since in the
+current implementation both divide repeatedly by 3^20 (or 3^40 for 64 bit
+limbs) and those divisions come to dominate.
+
+        ./speed -s 1-20 -cr mpn_get_str.3 mpn_get_str.9
+
+mpn_set_str does a string to binary conversion.  The base is specified with
+a ".<r>" parameter, or decimal by default.  Power of 2 bases are faster than
+general bases on large conversions.
+
+	./speed -s 1-512 -f 2 -c mpn_set_str.8 mpn_set_str.10
+
+mpn_set_str also has some special case code for decimal which is a bit
+faster than the general case, basically by giving the compiler a chance to
+optimize some multiplications by 10.
+
+	./speed -s 20-40 -c mpn_set_str.9 mpn_set_str.10 mpn_set_str.11
 
 
 
@@ -307,7 +347,7 @@ the karatsuba multiply threshold,
 
 When examining the toom3 threshold, remember it depends on the karatsuba
 threshold, so the right karatsuba threshold needs to be compiled into the
-library first.  The tune program uses special recompiled versions of
+library first.  The tune program uses specially recompiled versions of
 mpn/mul_n.c etc for this reason, but the speed program simply uses the
 normal libgmp.la.
 
@@ -517,9 +557,6 @@ FUTURE
 Make a program to check the time base is working properly, for small and
 large measurements.  Make it able to test each available method, including
 perhaps the apparent resolution of each.
-
-Add versions of the toom3 multiplication using either the mpn calls or the
-open-coded style, so the two can be compared.
 
 Add versions of the generic C mpn_divrem_1 using straight division versus a
 multiply by inverse, so the two can be compared.  Include the branch-free
