@@ -4,7 +4,8 @@
    result.  If STRING is not NULL, the caller must ensure enough space is
    available to store the result.
 
-Copyright 1991, 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -122,7 +123,8 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     {
       size_t  actual_size = str_size + 1 + (res_str - return_str);
       ASSERT (actual_size == strlen (return_str) + 1);
-      __GMP_REALLOCATE_FUNC_MAYBE (return_str, alloc_size, actual_size);
+      __GMP_REALLOCATE_FUNC_MAYBE_TYPE (return_str, alloc_size, actual_size,
+                                        char);
     }
   return return_str;
 }
