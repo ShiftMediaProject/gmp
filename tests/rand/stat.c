@@ -21,10 +21,12 @@ Test 1000 integers 0 <= X <= 2^34-1.
 #include <stdlib.h>
 #include <unistd.h>
 #include <math.h>
-#include <gmp.h>
-#include "statlib.h"
+#include "gmp.h"
+#include "gmpstat.h"
 
 #define FVECSIZ (100000L)
+
+int g_debug = 0;
 
 static void
 print_ks_results (mpf_t f_p, mpf_t f_p_prob,

@@ -4,11 +4,14 @@
 
 1999-04-27  Linus Nordberg  <linus.nordberg@canit.se>
 
+	* stat.c: Include gmpstat.h.
+	Add global int g_debug.
+
 	* spect.c: Include <unistd.h>.
 
 	* findcl.c (main): Input is `m', not all factors of `m'.  Print
 	only the very first matching multiplier.  Include <unistd.h>.
-	Flush stdout.
+	Flush stdout.  Print "done." when done.
 
 	* spect.c: Move everything but main() to statlib.c.
 
