@@ -221,12 +221,6 @@ MA 02111-1307, USA.
      <code>mpn_tdiv_qr</code>.
 <li> <code>mpf_sqrt</code>: If r!=u, and if u doesn't need to be padded with
      zeros, then there's no need for the tp temporary.
-<li> <code>invert_limb</code> generic C: The division could use dividend
-     b*(b-d)-1 which is high:low of (b-1-d):(b-1), instead of the current
-     (b-d):0, where b=2^<code>BITS_PER_MP_LIMB</code> and d=divisor.  The
-     former is per the original paper and is used in the x86 code, the
-     advantage is that the current special case for 0x80..00 could be dropped.
-     The two should be equivalent, but a little check of that would be wanted.
 <li> <code>mpq_cmp_ui</code> could form the <code>num1*den2</code> and
      <code>num2*den1</code> products limb-by-limb from high to low and look at
      each step for values differing by more than the possible carry bit from
@@ -585,12 +579,6 @@ MA 02111-1307, USA.
      actually documented).  Alternately, perhaps a separate
      <code>mpq_get_str_point</code> or some such might be more use.  Suggested
      by Pedro Gimeno.
-<li> <code>gmp_printf</code> could usefully accept a flag to control the
-     rounding of float conversions.  This wouldn't do much for
-     <code>mpf_t</code>, but would be good if <code>mpfr_t</code> was
-     supported in the future, or perhaps for <code>mpq_t</code>.  Something
-     like <code>&amp;*r</code> (r for rounding, and mpfr style
-     <code>GMP_RND</code> parameter).
 <li> <code>mpz_rscan0</code> or <code>mpz_revscan0</code> or some such
      searching towards the low end of an integer might match
      <code>mpz_scan0</code> nicely.  Likewise for <code>scan1</code>.
@@ -773,8 +761,6 @@ MA 02111-1307, USA.
           Consider making such <code>string</code> returning variants
           available for use with plain <code>mpz_t</code> etc too.
      </ul>
-     The mpfr routines are not candidates, since we don't want MPFR support in
-     libgmpxx yet.
 </ul>
 
 <h4>Miscellaneous</h4>
