@@ -1,6 +1,6 @@
 /* mpz_swap (dest_integer, src_integer) -- Swap U and V.
 
-Copyright (C) 1997 Free Software Foundation, Inc.
+Copyright (C) 1997, 1998 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
