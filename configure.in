@@ -317,6 +317,7 @@ case $host in
     path="arm"
     gcc_cflags="$gcc_cflags $fomit_frame_pointer"
     extra_functions="udiv"
+    GMP_INCLUDE_MPN(arm/arm-defs.m4)
     ;;
 
 
