@@ -2457,6 +2457,13 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 
 #if defined (__GNUC__) && ! defined (NO_ASM) && HAVE_HOST_CPU_FAMILY_x86
+#if __GMP_GNUC_PREREQ (3,1)
+#define __GMP_qm "=Qm"
+#define __GMP_q "=Q"
+#else
+#define __GMP_qm "=qm"
+#define __GMP_q "=q"
+#endif
 #define ULONG_PARITY(p, n)						\
   do {									\
     char	   __p;							\
@@ -2464,7 +2471,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
     __n ^= (__n >> 16);							\
     __asm__ ("xorb %h1, %b1\n\t"					\
 	     "setpo %0"							\
-	 : "=qm" (__p), "=q" (__n)					\
+	 : __GMP_qm (__p), __GMP_q (__n)				\
 	 : "1" (__n));							\
     (p) = __p;								\
   } while (0)
