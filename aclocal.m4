@@ -37,6 +37,9 @@ dnl  MA 02111-1307, USA.
 define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
+define(POWERPC64_PATTERN,
+[[powerpc64-*-* | powerpc64le-*-* | powerpc620-*-* | powerpc630-*-*]])
+
 
 dnl  GMP_STRIP_PATH(subdir)
 dnl  ----------------------
@@ -254,6 +257,23 @@ HOST_CC=$gmp_cv_prog_host_cc
 ])
 
 
+dnl  GMP_PROG_LEX
+dnl  ------------
+dnl  AC_PROG_LEX bombs if $LEX is set to ${am_missing_run}flex by
+dnl  AM_PROG_LEX.  It needs to see LEX=: if lex is missing.  Avoid this by
+dnl  running AC_PROG_LEX first and then using "missing".
+dnl
+dnl  FIXME: This can be removed and just AM_PROG_LEX used, one that macro
+dnl  works properly.
+
+AC_DEFUN(GMP_PROG_LEX,
+[AC_REQUIRE([AC_PROG_LEX])
+if test "$LEX" = :; then
+  LEX=${am_missing_run}flex
+fi
+])
+
+
 dnl  GMP_PROG_M4
 dnl  -----------
 dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
@@ -433,11 +453,11 @@ void *f() { return g(); }
 int n;
 int cmov () { return (n >= 0 ? n : 0); }
 
-/* The following provokes a linker problem with gcc 3.0.3 on AIX 4.3
-   under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630 option causes
-   gcc to incorrectly invoke the linker with the 32-bit version of
-   libgcc.a, not the 64-bit one, meaning it misses out on __fixunsdfdi
-   helper (double to unsigned 64bit conversion).  */
+/* The following provokes a linker invocation problem with gcc 3.0.3
+   on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
+   option causes gcc to incorrectly select the 32-bit libgcc.a, not
+   the 64-bit one, and consequently it misses out on the __fixunsdfdi
+   helper (double -> uint64 conversion).  */
 double d;
 unsigned long gcc303 () { return (unsigned long) d; }
 
@@ -8180,13 +8200,4 @@ case "x$am_cv_prog_cc_stdc" in
   *) CC="$CC $am_cv_prog_cc_stdc" ;;
 esac
 ])
-
-
-# AM_PROG_LEX
-# Look for flex, lex or missing, then run AC_PROG_LEX and AC_DECL_YYTEXT
-AC_DEFUN([AM_PROG_LEX],
-[AC_REQUIRE([AM_MISSING_HAS_RUN])
-AC_CHECK_PROGS(LEX, flex lex, [${am_missing_run}flex])
-AC_PROG_LEX
-AC_DECL_YYTEXT])
 
