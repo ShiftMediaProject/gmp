@@ -33,9 +33,23 @@ and at what offset in the frame.
 
 Cray T3 code is very very different...
 
-"not" as an alias for "ornot r31, ..." is available in gas and DEC as, but not
-in the Cray Unicos assembler.  "ornot" must be used.
+"$6" / "$f6" etc is the usual syntax for registers, but on Unicos instead "r6"
+/ "f6" is required.  We use the "r6" / "f6" forms, and have m4 defines expand
+them to "$6" or "$f6" where necessary.
 
+"0x" introduces a hex constant in gas and DEC as, but on Unicos "^X" is
+required.  The X() macro accomodates this difference.
+
+"cvttqc" is required by DEC as, "cvttq/c" is required by Unicos, and gas will
+accept either.  We use cvttqc and have an m4 define expand to cvttq/c where
+necessary.
+
+"not" as an alias for "ornot r31, ..." is available in gas and DEC as, but not
+the Unicos assembler.  The full "ornot" must be used.
+
+"unop" is not available in Unicos.  We make an m4 define to the usual "ldq_u
+r31,0(r30)", and in fact use that define on all systems since it comes out the
+same.
 
 
 
