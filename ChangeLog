@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-12-17  Torbjorn Granlund  <tege@swox.com>
+
+	* printf/printffuns.c (gmp_fprintf_reps): Make it actually work
+	for padding > 256.
+
 2002-12-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpbsd/Makefile.am (nodist_libmpbsd_la_SOURCES): Move these mpz
