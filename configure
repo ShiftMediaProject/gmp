@@ -3789,6 +3789,8 @@ gmp_prog_cc_works=yes
 
 # first see a simple "main()" works, then go on to other checks
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 
 int main () { return 0; }
@@ -3835,7 +3837,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
@@ -3886,7 +3891,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an invalid instruction syntax from i386 gcc
    -march=pentiumpro on Solaris 2.8.  The native sun assembler
@@ -3939,7 +3947,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes a linker invocation problem with gcc 3.0.3
    on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
@@ -3993,7 +4004,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
    the assembler doesn't know hppa 2.0 instructions.  fneg is a 2.0
@@ -4045,7 +4059,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
    (cvtsd2ss) which will provoke an error if the assembler doesn't recognise
@@ -4098,7 +4115,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an internal compiler error from gcc version
    "2.9-gnupro-99r1" under "-O2 -mcpu=ev6", apparently relating to char
@@ -4179,12 +4199,14 @@ fi
 
 
 
+
 # __builtin_alloca is not available everywhere, check it exists before
 # seeing that it works
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 int k; int foo () { __builtin_alloca (k); }
-int main () { return 0; }
 EOF
   echo "Test compile: __builtin_alloca availability" >&5
   gmp_compile="$cc $cflags $cppflags conftest.c >&5"
@@ -4216,6 +4238,8 @@ EOF
   case $cc_works_part in
     yes)
       if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an internal compiler error from Itanium HP-UX cc
     under +O2 or higher.  We use this sort of code in mpn/generic/mul_fft.c. */
@@ -4271,6 +4295,7 @@ EOF
 fi
 
 
+
       ;;
     no)
 
@@ -4283,6 +4308,8 @@ fi
 
 
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an internal error from the assembler on
    power2-ibm-aix4.3.1.0.  gcc -mrios2 compiles to nabs+fcirz, and this
@@ -4341,6 +4368,97 @@ EOF
       ;;
     norun)
       gmp_prog_cc_works="no, abs int -> double conversion, program does not run"
+      ;;
+  esac
+fi
+
+
+
+
+if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
+  cat >conftest.c <<EOF
+/* The following is mis-compiled by HP ia-64 cc version
+        cc: HP aC++/ANSI C B3910B A.05.55 [Dec 04 2003]
+   under "cc +O3", both in +DD32 and +DD64 modes.  The mpn_lshift_com gets
+   inlined and its return value somehow botched to be 0 instead of 1.  This
+   arises in the real mpn_lshift_com in mul_fft.c.  A lower optimization
+   level, like +O2 seems ok.  This code needs to be run to show the problem,
+   but that's fine, the offending cc is a native-only compiler so we don't
+   have to worry about cross compiling.  */
+
+unsigned long
+lshift_com (rp, up, n, cnt)
+  unsigned long *rp;
+  unsigned long *up;
+  long n;
+  unsigned cnt;
+{
+  unsigned long retval, high_limb, low_limb;
+  unsigned tnc;
+  long i;
+  tnc = 8 * sizeof (unsigned long) - cnt;
+  low_limb = *up++;
+  retval = low_limb >> tnc;
+  high_limb = low_limb << cnt;
+  for (i = n - 1; i != 0; i--)
+    {
+      low_limb = *up++;
+      *rp++ = ~(high_limb | (low_limb >> tnc));
+      high_limb = low_limb << cnt;
+    }
+  return retval;
+}
+int
+main ()
+{
+  unsigned long cy, rp[2], up[2];
+  up[0] = ~ 0L;
+  up[1] = 0;
+  cy = lshift_com (rp, up, 2L, 1);
+  if (cy != 1L)
+    return 1;
+  return 0;
+}
+
+EOF
+  echo "Test compile: mpn_lshift_com optimization" >&5
+  gmp_compile="$cc $cflags $cppflags conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    cc_works_part=yes
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        cc_works_part=norun
+      fi
+    fi
+  else
+    cc_works_part=no
+  fi
+  if test "$cc_works_part" != yes; then
+    echo "failed program was:" >&5
+    cat conftest.c >&5
+  fi
+  rm -f conftest* a.out b.out a.exe a_out.exe
+  case $cc_works_part in
+    yes)
+
+      ;;
+    no)
+      gmp_prog_cc_works="no, mpn_lshift_com optimization"
+      ;;
+    norun)
+      gmp_prog_cc_works="no, mpn_lshift_com optimization, program does not run"
       ;;
   esac
 fi
@@ -4628,6 +4746,8 @@ if test "${gmp_cv_os_x86_xmm+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if test "$build" = "$host"; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.s <<EOF
 	.text
 main:
@@ -4807,6 +4927,8 @@ gmp_prog_cc_works=yes
 
 # first see a simple "main()" works, then go on to other checks
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 
 int main () { return 0; }
@@ -4853,7 +4975,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
@@ -4904,7 +5029,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an invalid instruction syntax from i386 gcc
    -march=pentiumpro on Solaris 2.8.  The native sun assembler
@@ -4957,7 +5085,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes a linker invocation problem with gcc 3.0.3
    on AIX 4.3 under "-maix64 -mpowerpc64 -mcpu=630".  The -mcpu=630
@@ -5011,7 +5142,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an error from hppa gcc 2.95 under -mpa-risc-2-0 if
    the assembler doesn't know hppa 2.0 instructions.  fneg is a 2.0
@@ -5063,7 +5197,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following makes gcc 3.3 -march=pentium4 generate an SSE2 xmm insn
    (cvtsd2ss) which will provoke an error if the assembler doesn't recognise
@@ -5116,7 +5253,10 @@ fi
 
 
 
+
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an internal compiler error from gcc version
    "2.9-gnupro-99r1" under "-O2 -mcpu=ev6", apparently relating to char
@@ -5197,12 +5337,14 @@ fi
 
 
 
+
 # __builtin_alloca is not available everywhere, check it exists before
 # seeing that it works
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 int k; int foo () { __builtin_alloca (k); }
-int main () { return 0; }
 EOF
   echo "Test compile: __builtin_alloca availability" >&5
   gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
@@ -5234,6 +5376,8 @@ EOF
   case $cc_works_part in
     yes)
       if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an internal compiler error from Itanium HP-UX cc
     under +O2 or higher.  We use this sort of code in mpn/generic/mul_fft.c. */
@@ -5289,6 +5433,7 @@ EOF
 fi
 
 
+
       ;;
     no)
 
@@ -5301,6 +5446,8 @@ fi
 
 
 if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.c <<EOF
 /* The following provokes an internal error from the assembler on
    power2-ibm-aix4.3.1.0.  gcc -mrios2 compiles to nabs+fcirz, and this
@@ -5359,6 +5506,97 @@ EOF
       ;;
     norun)
       gmp_prog_cc_works="no, abs int -> double conversion, program does not run"
+      ;;
+  esac
+fi
+
+
+
+
+if test "$gmp_prog_cc_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
+  cat >conftest.c <<EOF
+/* The following is mis-compiled by HP ia-64 cc version
+        cc: HP aC++/ANSI C B3910B A.05.55 [Dec 04 2003]
+   under "cc +O3", both in +DD32 and +DD64 modes.  The mpn_lshift_com gets
+   inlined and its return value somehow botched to be 0 instead of 1.  This
+   arises in the real mpn_lshift_com in mul_fft.c.  A lower optimization
+   level, like +O2 seems ok.  This code needs to be run to show the problem,
+   but that's fine, the offending cc is a native-only compiler so we don't
+   have to worry about cross compiling.  */
+
+unsigned long
+lshift_com (rp, up, n, cnt)
+  unsigned long *rp;
+  unsigned long *up;
+  long n;
+  unsigned cnt;
+{
+  unsigned long retval, high_limb, low_limb;
+  unsigned tnc;
+  long i;
+  tnc = 8 * sizeof (unsigned long) - cnt;
+  low_limb = *up++;
+  retval = low_limb >> tnc;
+  high_limb = low_limb << cnt;
+  for (i = n - 1; i != 0; i--)
+    {
+      low_limb = *up++;
+      *rp++ = ~(high_limb | (low_limb >> tnc));
+      high_limb = low_limb << cnt;
+    }
+  return retval;
+}
+int
+main ()
+{
+  unsigned long cy, rp[2], up[2];
+  up[0] = ~ 0L;
+  up[1] = 0;
+  cy = lshift_com (rp, up, 2L, 1);
+  if (cy != 1L)
+    return 1;
+  return 0;
+}
+
+EOF
+  echo "Test compile: mpn_lshift_com optimization" >&5
+  gmp_compile="$cc $cflags $cppflags $flag conftest.c >&5"
+  if { (eval echo "$as_me:$LINENO: \"$gmp_compile\"") >&5
+  (eval $gmp_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+    cc_works_part=yes
+    if test "$cross_compiling" = no; then
+      if { ac_try='./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then :;
+      else
+        cc_works_part=norun
+      fi
+    fi
+  else
+    cc_works_part=no
+  fi
+  if test "$cc_works_part" != yes; then
+    echo "failed program was:" >&5
+    cat conftest.c >&5
+  fi
+  rm -f conftest* a.out b.out a.exe a_out.exe
+  case $cc_works_part in
+    yes)
+
+      ;;
+    no)
+      gmp_prog_cc_works="no, mpn_lshift_com optimization"
+      ;;
+    norun)
+      gmp_prog_cc_works="no, mpn_lshift_com optimization, program does not run"
       ;;
   esac
 fi
@@ -6705,6 +6943,7 @@ esac
 if test -n "$CC_FOR_BUILD"; then
   echo "$as_me:$LINENO: checking build system compiler $CC_FOR_BUILD" >&5
 echo $ECHO_N "checking build system compiler $CC_FOR_BUILD... $ECHO_C" >&6
+# remove anything that might look like compiler output to our "||" expression
 rm -f conftest* a.out b.out a.exe a_out.exe
 cat >conftest.c <<EOF
 int
@@ -6738,6 +6977,7 @@ fi
 elif test -n "$HOST_CC"; then
   echo "$as_me:$LINENO: checking build system compiler $HOST_CC" >&5
 echo $ECHO_N "checking build system compiler $HOST_CC... $ECHO_C" >&6
+# remove anything that might look like compiler output to our "||" expression
 rm -f conftest* a.out b.out a.exe a_out.exe
 cat >conftest.c <<EOF
 int
@@ -6772,6 +7012,7 @@ else
   for i in "$CC" "$CC $CFLAGS $CPPFLAGS" cc gcc c89 c99; do
     echo "$as_me:$LINENO: checking build system compiler $i" >&5
 echo $ECHO_N "checking build system compiler $i... $ECHO_C" >&6
+# remove anything that might look like compiler output to our "||" expression
 rm -f conftest* a.out b.out a.exe a_out.exe
 cat >conftest.c <<EOF
 int
@@ -7367,6 +7608,8 @@ gmp_prog_cxx_works=yes
 
 # start with a plain "main()", then go on to further checks
 if test "$gmp_prog_cxx_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.cc <<EOF
 
 int main (void) { return 0; }
@@ -7403,6 +7646,8 @@ fi
 
 
 if test "$gmp_prog_cxx_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.cc <<EOF
 namespace foo { }
 using namespace foo;
@@ -7442,6 +7687,8 @@ fi
 
 # GMP requires the standard C++ iostream classes
 if test "$gmp_prog_cxx_works" = yes; then
+  # remove anything that might look like compiler output to our "||" expression
+  rm -f conftest* a.out b.out a.exe a_out.exe
   cat >conftest.cc <<EOF
 /* This test rejects g++ 2.7.2 which doesn't have <iostream>, only a
     pre-standard iostream.h. */
@@ -9308,7 +9555,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 9311 "configure"' > conftest.$ac_ext
+  echo '#line 9558 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -10746,11 +10993,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10749: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10996: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10753: \$? = $ac_status" >&5
+   echo "$as_me:11000: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -10978,11 +11225,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10981: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:11228: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10985: \$? = $ac_status" >&5
+   echo "$as_me:11232: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -11045,11 +11292,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:11048: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:11295: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:11052: \$? = $ac_status" >&5
+   echo "$as_me:11299: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -13163,7 +13410,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 13166 "configure"
+#line 13413 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13261,7 +13508,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 13264 "configure"
+#line 13511 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -15413,11 +15660,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15416: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15663: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:15420: \$? = $ac_status" >&5
+   echo "$as_me:15667: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -15480,11 +15727,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15483: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15730: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:15487: \$? = $ac_status" >&5
+   echo "$as_me:15734: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16809,7 +17056,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16812 "configure"
+#line 17059 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16907,7 +17154,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 16910 "configure"
+#line 17157 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17729,11 +17976,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17732: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17979: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:17736: \$? = $ac_status" >&5
+   echo "$as_me:17983: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -17796,11 +18043,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17799: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18046: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17803: \$? = $ac_status" >&5
+   echo "$as_me:18050: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -19758,11 +20005,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19761: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:20008: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:19765: \$? = $ac_status" >&5
+   echo "$as_me:20012: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -19990,11 +20237,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19993: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:20240: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:19997: \$? = $ac_status" >&5
+   echo "$as_me:20244: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -20057,11 +20304,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:20060: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:20307: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:20064: \$? = $ac_status" >&5
+   echo "$as_me:20311: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -22175,7 +22422,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 22178 "configure"
+#line 22425 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -22273,7 +22520,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 22276 "configure"
+#line 22523 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
