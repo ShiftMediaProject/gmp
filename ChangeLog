@@ -40,10 +40,10 @@ MA 02111-1307, USA.
 
 	* configure.in (x86-*-*): Use ABI=32 rather than ABI=standard.
 	Use gcc -m32 when available, to force mode on bi-arch amd64 gcc.
-	(x86_64-*-*): Merge into plain x86 setups as ABI=64.  Support ABI=32,
-	using athlon code.  Use gcc -mcpu=k8, -march=k8.
+	* configure.in, acinclude.m4 (x86_64-*-*): Merge into plain x86 setups
+	as ABI=64.  Support ABI=32, using athlon code.  Use gcc -mcpu=k8,
+	-march=k8.
 	(amd64-*-*): Remove pattern, config.sub only gives x86_64.
-	* acinclude.m4 (X86_PATTERN): Add x86_64.
 	* doc/gmp.texi (ABI and ISA): Add x86_64 dual ABIs.
 
 	* mpn/amd64/README: Add reference to ABI spec.
