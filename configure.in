@@ -389,6 +389,8 @@ case $host in
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_alpha)
     case $host_cpu in
       alphaev5* | alphapca5*) path="alpha/ev5 alpha" ;;
+      alphaev67 | alphaev68 | alphaev7*)
+        path="alpha/ev67 alpha/ev6 alpha/ev5 alpha" ;;
       alphaev6* | alphaev7*)  path="alpha/ev6 alpha/ev5 alpha" ;;
       *)                      path="alpha" ;;
     esac
