@@ -232,6 +232,10 @@ void refmpn_nior_n _PROTO ((mp_ptr wp, mp_srcptr xp, mp_srcptr yp,
 mp_limb_t refmpn_neg_n _PROTO ((mp_ptr dst, mp_srcptr src, mp_size_t size));
 
 unsigned long refmpn_popcount _PROTO ((mp_srcptr sp, mp_size_t size));
+mp_limb_t refmpn_preinv_divrem_1 _PROTO ((mp_ptr rp, mp_size_t xsize,
+                                          mp_srcptr sp, mp_size_t size,
+                                          mp_limb_t divisor,
+                                          mp_limb_t inverse, unsigned shift));
 mp_limb_t refmpn_preinv_mod_1 _PROTO ((mp_srcptr sp, mp_size_t size,
                                        mp_limb_t divisor,
                                        mp_limb_t divisor_inverse));

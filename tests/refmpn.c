@@ -820,6 +820,18 @@ refmpn_divrem_1 (mp_ptr rp, mp_size_t xsize,
   return refmpn_divrem_1c (rp, xsize, sp, size, divisor, CNST_LIMB(0));
 }
 
+mp_limb_t
+refmpn_preinv_divrem_1 (mp_ptr rp, mp_size_t xsize,
+                        mp_srcptr sp, mp_size_t size,
+                        mp_limb_t divisor, mp_limb_t inverse, unsigned shift)
+{
+  ASSERT (size >= 0);
+  ASSERT (shift == refmpn_count_leading_zeros (divisor));
+  ASSERT (inverse == refmpn_invert_limb (divisor << shift));
+
+  return refmpn_divrem_1 (rp, xsize, sp, size, divisor);
+}
+
 
 /* Inverse is floor((b*(b-d)-1) / d), per division by invariant integers
    paper, figure 8.1 m', where b=2^BITS_PER_MP_LIMB.  Note that -d-1 < d
