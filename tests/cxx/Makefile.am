@@ -69,4 +69,4 @@ $(top_builddir)/tests/libtests.la:
 # Note this fix applies only when running "make check".  The cp here should
 # be done manually if just one program is to be built and run.
 #
-TESTS_ENVIRONMENT = cp $(top_builddir)/.libs/libgmp.so.* .libs;
+TESTS_ENVIRONMENT = cp $(top_builddir)/.libs/libgmp.so.* .libs 2>/dev/null;
