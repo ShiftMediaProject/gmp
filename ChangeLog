@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-03-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/powm.c (redc): Instead of repeated mpn_incr_u invocations,
+	accumulate carries and add at the end.
+	(mpz_powm): Trim tp allocation, now as redc doesn't need carry guard.
+
 2003-02-25  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/copyd.asm: Correct header comment.
