@@ -1,6 +1,6 @@
 /* gmp-mparam.h -- Compiler/machine parameter header file.
 
-Copyright 1991, 1993, 1994, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,8 +33,6 @@ MA 02111-1307, USA. */
 #define SB_PREINV_THRESHOLD            0  /* (preinv always) */
 #define DC_THRESHOLD                 180
 #define POWM_THRESHOLD               271
-
-#define FIB_THRESHOLD                194
 
 #define GCD_ACCEL_THRESHOLD            3
 #define GCDEXT_THRESHOLD               0
