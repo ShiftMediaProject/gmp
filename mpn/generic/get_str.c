@@ -153,7 +153,7 @@ typedef struct powers powers_t;
 static unsigned char *
 mpn_sb_get_str (unsigned char *str, size_t len,
 		mp_ptr up, mp_size_t un,
-		powers_t *powtab)
+		const powers_t *powtab)
 {
   mp_limb_t rl, ul;
   unsigned char *s;
@@ -315,7 +315,7 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 static unsigned char *
 mpn_dc_get_str (unsigned char *str, size_t len,
 		mp_ptr up, mp_size_t un,
-		powers_t *powtab)
+		const powers_t *powtab)
 {
   if (un < GET_STR_DC_THRESHOLD)
     {
@@ -386,8 +386,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 
   if (POW2_P (base))
     {
-      /* The base is a power of 2.  Make conversion from most
-	 significant side.  */
+      /* The base is a power of 2.  Convert from most significant end.  */
       mp_limb_t n1, n0;
       int bits_per_digit = __mp_bases[base].big_base;
       int cnt;
@@ -398,18 +397,18 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
       n1 = up[un - 1];
       count_leading_zeros (cnt, n1);
 
-      /* BIT_POS should be R when input ends in least sign. nibble,
-	 R + bits_per_digit * n when input ends in n:th least significant
+      /* BIT_POS should be R when input ends in least significant nibble,
+	 R + bits_per_digit * n when input ends in nth least significant
 	 nibble. */
 
       {
 	unsigned long bits;
 
-	bits = BITS_PER_MP_LIMB * un - cnt;
+	bits = GMP_NUMB_BITS * un - cnt + GMP_NAIL_BITS;
 	cnt = bits % bits_per_digit;
 	if (cnt != 0)
 	  bits += bits_per_digit - cnt;
-	bit_pos = bits - (un - 1) * BITS_PER_MP_LIMB;
+	bit_pos = bits - (un - 1) * GMP_NUMB_BITS;
       }
 
       /* Fast loop for bit output.  */
@@ -427,7 +426,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 	    break;
 	  n0 = (n1 << -bit_pos) & ((1 << bits_per_digit) - 1);
 	  n1 = up[i];
-	  bit_pos += BITS_PER_MP_LIMB;
+	  bit_pos += GMP_NUMB_BITS;
 	  *s++ = n0 | (n1 >> bit_pos);
 	}
 
