@@ -474,7 +474,7 @@ case $host in
   # when generating the shared library.
 
   [mips*-*-irix[6789]*])
-    abilist="64 n32"
+    abilist="n32 64"
 
     # let the $found_compiler test below know that the cpu is recognised
     path=dummy
