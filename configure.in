@@ -1121,10 +1121,9 @@ if test -n "$ac_cv_prog_cc_pic"; then lt_cv_prog_cc_pic=$ac_cv_prog_cc_pic; fi
 CFLAGS_PIC=$lt_cv_prog_cc_pic
 AC_SUBST(CFLAGS_PIC)
 
-# i386 cygwin - shared libraries are DLLs, and it seems they should be
+# i386 cygwin shared libraries are DLLs, and it seems they should be
 #     non-PIC, certainly libtool only uses -DDLL_EXPORT, and the assembler
-#     rejects ELF style _GLOBAL_OFFSET_TABLE_ expressions.  FIXME: A
-#     reference for assembler level DLL conventions would help here.
+#     rejects ELF style _GLOBAL_OFFSET_TABLE_ expressions.
 #
 case $host in
   *-*-cygwin*) ASMFLAGS_PIC= ;;
