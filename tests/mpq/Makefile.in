@@ -125,17 +125,23 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-cmp t-cmp_ui t-cmp_si t-equal t-get_d t-get_str t-md_2exp \
-  t-set_f t-set_str
+check_PROGRAMS = t-cmp t-cmp_ui t-cmp_si t-equal t-get_d t-get_str t-inp_str \
+  t-md_2exp t-set_f t-set_str
 
 TESTS = $(check_PROGRAMS)
+
+# t-inp_str.tmp is used by t-inp_str.c and will be removed automatically if
+# the tests pass, but have it cleaned here in case the tests fail.
+#
+CLEANFILES = t-inp_str.tmp
 subdir = tests/mpq
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 check_PROGRAMS = t-cmp$(EXEEXT) t-cmp_ui$(EXEEXT) t-cmp_si$(EXEEXT) \
 	t-equal$(EXEEXT) t-get_d$(EXEEXT) t-get_str$(EXEEXT) \
-	t-md_2exp$(EXEEXT) t-set_f$(EXEEXT) t-set_str$(EXEEXT)
+	t-inp_str$(EXEEXT) t-md_2exp$(EXEEXT) t-set_f$(EXEEXT) \
+	t-set_str$(EXEEXT)
 t_cmp_SOURCES = t-cmp.c
 t_cmp_OBJECTS = t-cmp$U.$(OBJEXT)
 t_cmp_LDADD = $(LDADD)
@@ -172,6 +178,12 @@ t_get_str_LDADD = $(LDADD)
 t_get_str_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_get_str_LDFLAGS =
+t_inp_str_SOURCES = t-inp_str.c
+t_inp_str_OBJECTS = t-inp_str$U.$(OBJEXT)
+t_inp_str_LDADD = $(LDADD)
+t_inp_str_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_inp_str_LDFLAGS =
 t_md_2exp_SOURCES = t-md_2exp.c
 t_md_2exp_OBJECTS = t-md_2exp$U.$(OBJEXT)
 t_md_2exp_LDADD = $(LDADD)
@@ -206,9 +218,9 @@ LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 DIST_SOURCES = t-cmp.c t-cmp_si.c t-cmp_ui.c t-equal.c t-get_d.c \
-	t-get_str.c t-md_2exp.c t-set_f.c t-set_str.c
+	t-get_str.c t-inp_str.c t-md_2exp.c t-set_f.c t-set_str.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = t-cmp.c t-cmp_si.c t-cmp_ui.c t-equal.c t-get_d.c t-get_str.c t-md_2exp.c t-set_f.c t-set_str.c
+SOURCES = t-cmp.c t-cmp_si.c t-cmp_ui.c t-equal.c t-get_d.c t-get_str.c t-inp_str.c t-md_2exp.c t-set_f.c t-set_str.c
 
 all: all-am
 
@@ -251,6 +263,9 @@ t-get_d$(EXEEXT): $(t_get_d_OBJECTS) $(t_get_d_DEPENDENCIES)
 t-get_str$(EXEEXT): $(t_get_str_OBJECTS) $(t_get_str_DEPENDENCIES) 
 	@rm -f t-get_str$(EXEEXT)
 	$(LINK) $(t_get_str_LDFLAGS) $(t_get_str_OBJECTS) $(t_get_str_LDADD) $(LIBS)
+t-inp_str$(EXEEXT): $(t_inp_str_OBJECTS) $(t_inp_str_DEPENDENCIES) 
+	@rm -f t-inp_str$(EXEEXT)
+	$(LINK) $(t_inp_str_LDFLAGS) $(t_inp_str_OBJECTS) $(t_inp_str_LDADD) $(LIBS)
 t-md_2exp$(EXEEXT): $(t_md_2exp_OBJECTS) $(t_md_2exp_DEPENDENCIES) 
 	@rm -f t-md_2exp$(EXEEXT)
 	$(LINK) $(t_md_2exp_LDFLAGS) $(t_md_2exp_OBJECTS) $(t_md_2exp_LDADD) $(LIBS)
@@ -294,6 +309,8 @@ t-get_d_.c: t-get_d.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-get_d.c; then echo $(srcdir)/t-get_d.c; else echo t-get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-get_d_.c || rm -f t-get_d_.c
 t-get_str_.c: t-get_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-get_str.c; then echo $(srcdir)/t-get_str.c; else echo t-get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-get_str_.c || rm -f t-get_str_.c
+t-inp_str_.c: t-inp_str.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-inp_str.c; then echo $(srcdir)/t-inp_str.c; else echo t-inp_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-inp_str_.c || rm -f t-inp_str_.c
 t-md_2exp_.c: t-md_2exp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-md_2exp.c; then echo $(srcdir)/t-md_2exp.c; else echo t-md_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-md_2exp_.c || rm -f t-md_2exp_.c
 t-set_f_.c: t-set_f.c $(ANSI2KNR)
@@ -303,8 +320,9 @@ t-set_str_.c: t-set_str.c $(ANSI2KNR)
 t-cmp_.$(OBJEXT) t-cmp_.lo t-cmp_si_.$(OBJEXT) t-cmp_si_.lo \
 t-cmp_ui_.$(OBJEXT) t-cmp_ui_.lo t-equal_.$(OBJEXT) t-equal_.lo \
 t-get_d_.$(OBJEXT) t-get_d_.lo t-get_str_.$(OBJEXT) t-get_str_.lo \
-t-md_2exp_.$(OBJEXT) t-md_2exp_.lo t-set_f_.$(OBJEXT) t-set_f_.lo \
-t-set_str_.$(OBJEXT) t-set_str_.lo : $(ANSI2KNR)
+t-inp_str_.$(OBJEXT) t-inp_str_.lo t-md_2exp_.$(OBJEXT) t-md_2exp_.lo \
+t-set_f_.$(OBJEXT) t-set_f_.lo t-set_str_.$(OBJEXT) t-set_str_.lo : \
+$(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
@@ -439,6 +457,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES) stamp-h stamp-h[0-9]*
