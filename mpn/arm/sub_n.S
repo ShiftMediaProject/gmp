@@ -1,4 +1,4 @@
-@ ARM mpn_sub -- Subtract two limb vectors of the same length > 0 and store
+@ ARM mpn_sub_n -- Subtract two limb vectors of the same length > 0 and store
 @ difference in a third limb vector.
 @ Contributed by Robert Harley.
 
