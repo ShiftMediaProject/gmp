@@ -359,7 +359,7 @@ typedef unsigned int UDItype	__attribute__ ((mode (DI)));
 typedef unsigned char UQItype;
 typedef		 long SItype;
 typedef unsigned long USItype;
-#if defined _LONGLONG
+#if defined _LONGLONG || defined _LONG_LONG_LIMB
 typedef	long long int DItype;
 typedef unsigned long long int UDItype;
 #endif
