@@ -1,3 +1,21 @@
+2001-02-04  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/alpha/ev5/gmp-mparam.h, mpn/mips3/gmp-mparam.h,
+	mpn/powerpc32/gmp-mparam.h, mpn/powerpc64/gmp-mparam.h,
+	mpn/sparc64/gmp-mparam.h, mpn/x86/*/gmp-mparam.h:
+	Update tuned parameters.
+
+	* mpn/x86/i486: New directory.
+	* configure.in (i486-*-*): Use it.
+	* mpn/x86/i486/gmp-mparam.h: New file.
+
+	* mpn/x86/pentium/mode1o.asm: New file.
+	* mpn/x86/p6/mode1o.asm: New file.
+
+	* tune/many.pl: Use $(ASMFLAGS_PIC) and $(CFLAGS_PIC).
+
+	* gmp.texi (Integer Division): Another rewording of 2exp divisions.
+
 2001-02-03  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/popcount.asm: Put a `;;' break at end of main loop.
