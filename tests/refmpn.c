@@ -1006,7 +1006,7 @@ mp_limb_t
 refmpn_invert_limb (mp_limb_t d)
 {
   mp_limb_t r;
-  ASSERT (d & MP_LIMB_T_HIGHBIT);
+  ASSERT (d & GMP_LIMB_HIGHBIT);
   return refmpn_udiv_qrnnd (&r, -d-1, -1, d);
 }
 
@@ -1177,7 +1177,7 @@ refmpn_count_leading_zeros (mp_limb_t x)
 
   ASSERT (x != 0);
 
-  while ((x & MP_LIMB_T_HIGHBIT) == 0)
+  while ((x & GMP_LIMB_HIGHBIT) == 0)
     {
       x <<= 1;
       n++;
@@ -1395,7 +1395,7 @@ refmpn_sb_divrem_mn (mp_ptr qp,
   ASSERT (nsize >= dsize);
   /* ASSERT (dsize > 2); */
   ASSERT (dsize >= 2);
-  ASSERT (dp[dsize-1] & MP_LIMB_T_HIGHBIT);
+  ASSERT (dp[dsize-1] & GMP_LIMB_HIGHBIT);
   ASSERT (! refmpn_overlap_p (qp, nsize-dsize, np, nsize) || qp+dsize >= np);
   ASSERT_MPN (np, nsize);
   ASSERT_MPN (dp, dsize);

@@ -66,7 +66,7 @@ mpfr_set4 (mpfr_ptr a, mpfr_srcptr b, mp_rnd_t rnd_mode, int signb)
             return mpfr_set_overflow(a, rnd_mode, signb);
 
           MPFR_EXP(a)++;
-          ap[(MPFR_PREC(a)-1)/BITS_PER_MP_LIMB] = MP_LIMB_T_HIGHBIT;
+          ap[(MPFR_PREC(a)-1)/BITS_PER_MP_LIMB] = GMP_LIMB_HIGHBIT;
         }
     }
 

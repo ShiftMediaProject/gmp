@@ -268,7 +268,7 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
 
       if ((rnd_mode == GMP_RNDN) && !k && sh == 0)
 	{
-	  mp_limb_t half = MP_LIMB_T_HIGHBIT;
+	  mp_limb_t half = GMP_LIMB_HIGHBIT;
 
 	  is_exact = (bb == cc);
 
@@ -371,7 +371,7 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
  add_one_ulp: /* add one unit in last place to a */
   if (mpn_add_1 (ap, ap, an, MP_LIMB_T_ONE << sh)) /* result is a power of 2 */
     {
-      ap[an-1] = MP_LIMB_T_HIGHBIT;
+      ap[an-1] = GMP_LIMB_HIGHBIT;
       add_exp = 1;
     }
   inexact = 1; /* result larger than exact value */
@@ -379,7 +379,7 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
  truncate:
   if ((ap[an-1] >> (BITS_PER_MP_LIMB - 1)) == 0) /* case 1 - epsilon */
     {
-      ap[an-1] = MP_LIMB_T_HIGHBIT;
+      ap[an-1] = GMP_LIMB_HIGHBIT;
       add_exp = 1;
     }
 

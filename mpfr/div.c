@@ -337,7 +337,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
     /* Hack : qp[qsize] is 0, 1 or 2, hence if not 0, = 2^(qp[qsize] - 1). */
     {
       near = mpn_rshift(qp, qp, qsize, qp[qsize]);
-      qp[qsize - 1] |= MP_LIMB_T_HIGHBIT; qexp += qp[qsize]; 
+      qp[qsize - 1] |= GMP_LIMB_HIGHBIT; qexp += qp[qsize]; 
     }
   else
     {
@@ -430,7 +430,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
       if (cc)
         {
           mpn_rshift (qp, qp, qsize, 1);
-          qp[qsize-1] |= MP_LIMB_T_HIGHBIT;
+          qp[qsize-1] |= GMP_LIMB_HIGHBIT;
           qexp++;
         }
     }

@@ -68,7 +68,7 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
 
           rp = MPFR_MANT(r);
           rm = (MPFR_PREC(r) - 1) / BITS_PER_MP_LIMB;
-          rp[rm] = MP_LIMB_T_HIGHBIT;
+          rp[rm] = GMP_LIMB_HIGHBIT;
           MPN_ZERO(rp, rm);
           MPFR_EXP(r) = 1;  /* |r| = 1 */
           MPFR_RET(sign > 0 ? 2 : -2);
@@ -134,7 +134,7 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
              is 0, change the rounding mode to GMP_RNDZ. */
           if (rnd_mode == GMP_RNDN &&
               ((sh != 0 && (rp[0] & (MP_LIMB_T_ONE << (sh - 1))) == 0) ||
-               (sh == 0 && (up[un - rn - 1] & MP_LIMB_T_HIGHBIT) == 0)))
+               (sh == 0 && (up[un - rn - 1] & GMP_LIMB_HIGHBIT) == 0)))
             rnd_mode = GMP_RNDZ;
           if (uflags == 0)
             { /* u is an integer; determine if it is representable */
@@ -193,7 +193,7 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
                   ((ush != 0 &&
                     (up[uj] & (MP_LIMB_T_ONE << (ush - 1))) == 0) ||
                    (ush == 0 &&
-                    (uj == 0 || (up[uj - 1] & MP_LIMB_T_HIGHBIT) == 0))))
+                    (uj == 0 || (up[uj - 1] & GMP_LIMB_HIGHBIT) == 0))))
                 rnd_mode = GMP_RNDZ;  /* rounding bit is 0 */
             }
           if (sh != 0)
@@ -218,7 +218,7 @@ mpfr_rint (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
           else
             {
               MPFR_EXP(r)++;
-              rp[rn-1] = MP_LIMB_T_HIGHBIT;
+              rp[rn-1] = GMP_LIMB_HIGHBIT;
             }
         }
 

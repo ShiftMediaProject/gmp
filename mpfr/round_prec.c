@@ -198,7 +198,7 @@ mpfr_round_prec (mpfr_ptr x, mp_rnd_t rnd_mode, mp_prec_t prec)
       else
         {
           MPFR_EXP(x)++;
-          xp[nw - 1] = MP_LIMB_T_HIGHBIT;
+          xp[nw - 1] = GMP_LIMB_HIGHBIT;
           if (nw - 1 > 0)
             MPN_ZERO(xp, nw - 1);
         }

@@ -44,7 +44,7 @@ mpfr_get_str_raw (char *digit_ptr, mpfr_srcptr x)
   for (k = sx - 1; k >= 0 ; k--)
     { 
       wd = mx[k]; 
-      t = MP_LIMB_T_HIGHBIT;
+      t = GMP_LIMB_HIGHBIT;
       for (l = BITS_PER_MP_LIMB - 1; l>=0; l--)
 	{
 	  if (wd & t) 

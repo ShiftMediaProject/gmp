@@ -180,7 +180,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
                 fb = 1;
             }
           mpn_rshift(ap, ap, an, 1);
-          ap[an-1] += MP_LIMB_T_HIGHBIT;
+          ap[an-1] += GMP_LIMB_HIGHBIT;
           if (sh && fb < 0)
             goto rounding;
         } /* cc */
@@ -247,7 +247,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
               if (rb < 0) /* rb not initialized yet */
                 {
                   rb = bb >> (BITS_PER_MP_LIMB - 1);
-                  bb |= MP_LIMB_T_HIGHBIT;
+                  bb |= GMP_LIMB_HIGHBIT;
                 }
               fb = 1;
               if (bb != MP_LIMB_T_MAX)
@@ -308,7 +308,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
                       goto end_of_add;
                     }
                   MPFR_EXP(a)++;
-                  ap[an-1] = MP_LIMB_T_HIGHBIT;
+                  ap[an-1] = GMP_LIMB_HIGHBIT;
                   rb = 0;
                 }
 
@@ -362,7 +362,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
                           goto end_of_add;
                         }
                       MPFR_EXP(a)++;
-                      ap[an-1] = MP_LIMB_T_HIGHBIT;
+                      ap[an-1] = GMP_LIMB_HIGHBIT;
                     }
                 } /* bb < cc */
 
@@ -405,7 +405,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
               if (rb < 0) /* rb not initialized yet */
                 {
                   rb = bb >> (BITS_PER_MP_LIMB - 1);
-                  bb &= ~MP_LIMB_T_HIGHBIT;
+                  bb &= ~GMP_LIMB_HIGHBIT;
                 }
               fb = bb != 0;
             } /* fb < 0 */
@@ -459,7 +459,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
               if (rb < 0)
                 {
                   rb = cc >> (BITS_PER_MP_LIMB - 1);
-                  cc &= ~MP_LIMB_T_HIGHBIT;
+                  cc &= ~GMP_LIMB_HIGHBIT;
                 }
               while (cc == 0)
                 {
@@ -538,7 +538,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
       else
         {
           MPFR_EXP(a)++;
-          ap[an-1] = MP_LIMB_T_HIGHBIT;
+          ap[an-1] = GMP_LIMB_HIGHBIT;
         }
     }
 

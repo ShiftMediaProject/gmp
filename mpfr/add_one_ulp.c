@@ -49,7 +49,7 @@ mpfr_add_one_ulp (mpfr_ptr x, mp_rnd_t rnd_mode)
       else
         {
           MPFR_EXP(x)++;
-          xp[xn-1] = MP_LIMB_T_HIGHBIT;
+          xp[xn-1] = GMP_LIMB_HIGHBIT;
         }
     }
   return 0;

@@ -71,7 +71,7 @@ mpn_mod_1 (mp_srcptr up, mp_size_t un, mp_limb_t d)
 
   d <<= GMP_NAIL_BITS;
 
-  if ((d & MP_LIMB_T_HIGHBIT) != 0)
+  if ((d & GMP_LIMB_HIGHBIT) != 0)
     {
       /* High limb is initial remainder, possibly with one subtract of
 	 d to get r<d.  */

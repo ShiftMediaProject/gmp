@@ -367,7 +367,7 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define ULONG_HIGHBIT      (ULONG_MAX ^ ((unsigned long) ULONG_MAX >> 1))
 #define UINT_HIGHBIT       (UINT_MAX ^ ((unsigned) UINT_MAX >> 1))
 #define USHRT_HIGHBIT      ((unsigned short) (USHRT_MAX ^ ((unsigned short) USHRT_MAX >> 1)))
-#define MP_LIMB_T_HIGHBIT  (MP_LIMB_T_MAX ^ (MP_LIMB_T_MAX >> 1))
+#define GMP_LIMB_HIGHBIT  (MP_LIMB_T_MAX ^ (MP_LIMB_T_MAX >> 1))
 
 #ifndef LONG_MIN
 #define LONG_MIN           ((long) ULONG_HIGHBIT)

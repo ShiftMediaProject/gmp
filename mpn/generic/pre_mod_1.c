@@ -42,7 +42,7 @@ mpn_preinv_mod_1 (mp_srcptr dividend_ptr, mp_size_t dividend_size,
   mp_limb_t dummy;
 
   ASSERT (dividend_size >= 1);
-  ASSERT (divisor_limb & MP_LIMB_T_HIGHBIT);
+  ASSERT (divisor_limb & GMP_LIMB_HIGHBIT);
 
   r = dividend_ptr[dividend_size-1];
   if (r >= divisor_limb)

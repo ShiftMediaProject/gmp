@@ -92,7 +92,7 @@ mpq_set_f (mpq_ptr q, mpf_srcptr f)
           abs_fsize -= (num_ptr[abs_fsize-1] == 0);
 
           MPN_ZERO (den_ptr, den_size);
-          den_ptr[den_size] = MP_LIMB_T_HIGHBIT >> (shift-1);
+          den_ptr[den_size] = GMP_LIMB_HIGHBIT >> (shift-1);
         }
 
       q->_mp_num._mp_size = fsize >= 0 ? abs_fsize : -abs_fsize;

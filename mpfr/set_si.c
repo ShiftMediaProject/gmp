@@ -73,7 +73,7 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
             return mpfr_set_overflow(x, rnd_mode, (i < 0 ? -1 : 1));
 
           MPFR_EXP(x)++;
-          xp[xn] = MP_LIMB_T_HIGHBIT;
+          xp[xn] = GMP_LIMB_HIGHBIT;
         }
     }
 

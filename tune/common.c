@@ -1710,7 +1710,7 @@ speed_routine_count_zeros_setup (struct speed_params *s,
       if (! zero)
         for (i = 0; i < SPEED_BLOCK_SIZE; i++)
           if (xp[i] == 0)
-            xp[i] = leading ? 1 : MP_LIMB_T_HIGHBIT;
+            xp[i] = leading ? 1 : GMP_LIMB_HIGHBIT;
     }
   else if (s->r == 1)
     {

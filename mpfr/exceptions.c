@@ -182,7 +182,7 @@ mpfr_set_underflow (mpfr_ptr x, mp_rnd_t rnd_mode, int sign)
       MPFR_EXP(x) = __mpfr_emin;
       xn = (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
       xp = MPFR_MANT(x);
-      xp[xn] = MP_LIMB_T_HIGHBIT;
+      xp[xn] = GMP_LIMB_HIGHBIT;
       MPN_ZERO(xp, xn);
       inex = 1;
     }

@@ -117,7 +117,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
           {
             up = TMP_ALLOC((usize + 1) * BYTES_PER_MP_LIMB);
             if (mpn_rshift(up + 1, MPFR_MANT(u), usize, 1))
-              up[0] = MP_LIMB_T_HIGHBIT;
+              up[0] = GMP_LIMB_HIGHBIT;
             else
               up[0] = 0;
             usize++;
@@ -263,7 +263,7 @@ mpfr_sqrt (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
       {
         /* Is a shift necessary here? Isn't the result 1.0000...? */
         mpn_rshift (rp, rp, rrsize, 1);
-        rp[rrsize-1] |= MP_LIMB_T_HIGHBIT;
+        rp[rrsize-1] |= GMP_LIMB_HIGHBIT;
         MPFR_EXP(r)++;
       }
 

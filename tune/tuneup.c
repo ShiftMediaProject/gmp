@@ -183,7 +183,7 @@ randlimb_norm (void)
 {
   mp_limb_t  n;
   mpn_random (&n, 1);
-  n |= MP_LIMB_T_HIGHBIT;
+  n |= GMP_LIMB_HIGHBIT;
   return n;
 }
 

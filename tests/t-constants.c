@@ -215,7 +215,7 @@ main (int argc, char *argv[])
   CHECK_BITS (BITS_PER_MP_LIMB, mp_limb_t);
   CHECK_BITS (BITS_PER_ULONG, unsigned long);
 
-  CHECK_HIGHBIT (MP_LIMB_T_HIGHBIT, mp_limb_t,      LL("0x%lX","0x%lX"));
+  CHECK_HIGHBIT (GMP_LIMB_HIGHBIT, mp_limb_t,      LL("0x%lX","0x%lX"));
   CHECK_HIGHBIT (ULONG_HIGHBIT,     unsigned long,  "0x%lX");
   CHECK_HIGHBIT (UINT_HIGHBIT,      unsigned int,   "0x%X");
   CHECK_HIGHBIT (USHRT_HIGHBIT,     unsigned short, "0x%hX");

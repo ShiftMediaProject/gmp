@@ -62,7 +62,7 @@ mpn_pow_1 (mp_ptr rp, mp_srcptr bp, mp_size_t bn, mp_limb_t exp, mp_ptr tp)
       for (i = GMP_LIMB_BITS - cnt - 1;;)
 	{
 	  exp <<= 1;
-	  if ((exp & MP_LIMB_T_HIGHBIT) != 0)
+	  if ((exp & GMP_LIMB_HIGHBIT) != 0)
 	    {
 	      rp[rn] = mpn_mul_1 (rp, rp, rn, bl);
 	      rn += rp[rn] != 0;
@@ -87,7 +87,7 @@ mpn_pow_1 (mp_ptr rp, mp_srcptr bp, mp_size_t bn, mp_limb_t exp, mp_ptr tp)
       for (i = GMP_LIMB_BITS - cnt - 1;;)
 	{
 	  exp <<= 1;
-	  if ((exp & MP_LIMB_T_HIGHBIT) != 0)
+	  if ((exp & GMP_LIMB_HIGHBIT) != 0)
 	    {
 	      rn = rn + bn - (mpn_mul (tp, rp, rn, bp, bn) == 0);
 	      MP_PTR_SWAP (rp, tp);

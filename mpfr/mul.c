@@ -160,7 +160,7 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
   cc = mpfr_round_raw (ap, tmp, bq + cq, sign_product < 0, aq,
 		       rnd_mode, &inexact);
   if (cc) /* cc = 1 ==> result is a power of two */
-    ap[an-1] = MP_LIMB_T_HIGHBIT;
+    ap[an-1] = GMP_LIMB_HIGHBIT;
 
   TMP_FREE(marker);
 

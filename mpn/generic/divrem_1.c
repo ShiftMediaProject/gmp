@@ -100,7 +100,7 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 
   qp += (n - 1);   /* Make qp point at most significant quotient limb */
 
-  if ((d & MP_LIMB_T_HIGHBIT) != 0)
+  if ((d & GMP_LIMB_HIGHBIT) != 0)
     {
       if (un != 0)
 	{

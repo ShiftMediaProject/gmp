@@ -85,7 +85,7 @@ mpfr_mul_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
   /* since the case u=1 was treated above, we have u >= 2, thus
      yp[xn] >= 1 since x was msb-normalized */
   MPFR_ASSERTN(yp[xn] != 0);
-  if ((yp[xn] & MP_LIMB_T_HIGHBIT) == 0)
+  if ((yp[xn] & GMP_LIMB_HIGHBIT) == 0)
     {
       count_leading_zeros(cnt, yp[xn]);
       mpn_lshift (yp, yp, xn + 1, cnt);
@@ -105,7 +105,7 @@ mpfr_mul_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 
   if (c) /* rounded result is 1.0000000000000000... */
     {
-      old_yp[yn-1] = MP_LIMB_T_HIGHBIT;
+      old_yp[yn-1] = GMP_LIMB_HIGHBIT;
       cnt++;
     }
 
