@@ -406,6 +406,13 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
               case 'j':  ASSERT_FAIL (intmax_t not available); break;
 #endif
               case 'l':  * (long      *) p = retval; break;
+#if HAVE_QUAD_T && HAVE_LONG_LONG
+              case 'q':
+                ASSERT_ALWAYS (sizeof (quad_t) == sizeof (long long));
+                /*FALLTHRU*/
+#else
+              case 'q':  ASSERT_FAIL (quad_t not available); break;
+#endif
 #if HAVE_LONG_LONG
               case 'L':  * (long long *) p = retval; break;
 #else
