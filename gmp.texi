@@ -273,7 +273,7 @@ arithmetic library, version @value{VERSION}.
 * Copying::                    GMP Copying Conditions (LGPL).
 * Introduction to GMP::        Brief introduction to GNU MP.
 * Installing GMP::             How to configure and compile the GMP library.
-* GMP Basics::                 What every GMP user should now.
+* GMP Basics::                 What every GMP user should know.
 * Reporting Bugs::             How to usefully report bugs.
 * Integer Functions::          Functions for arithmetic on signed integers.
 * Rational Number Functions::  Functions for arithmetic on rational numbers.
