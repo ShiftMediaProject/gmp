@@ -1,7 +1,7 @@
 dnl  SPARC v9 32-bit mpn_mul_1 -- Multiply a limb vector with a limb and
 dnl  store the result in a second limb vector.
 
-dnl  Copyright 1998, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -47,12 +47,12 @@ ifdef(`PIC',
 
 	sethi	%hi(0xffff0000),%o0
 	andn	%i3,%o0,%o0
-	st	%o0,[%fp-16]
+	stw	%o0,[%fp-16]
 	ld	[%fp-16],%f11
 	fxtod	%f10,%f6
 
 	srl	%i3,16,%o0
-	st	%o0,[%fp-16]
+	stw	%o0,[%fp-16]
 	ld	[%fp-16],%f11
 	fxtod	%f10,%f8
 
@@ -119,7 +119,7 @@ L(loop):
 	ldx	[%fp-16],%g1		C p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		C align p16
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 	fdtox	%f16,%f14
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	std	%f14,[%fp-24]
@@ -139,7 +139,7 @@ L(loopm):
 	ldx	[%fp-32],%g1		C p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		C align p16
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 	fdtox	%f16,%f14
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	std	%f14,[%fp-40]
@@ -158,7 +158,7 @@ C END LOOP
 	ldx	[%fp-16],%g1		C p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		C align p16
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 	b,a	L(xxx)
 L(loope):
 L(end4):
@@ -170,7 +170,7 @@ L(end4):
 	ldx	[%fp-32],%g1		C p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		C align p16
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 	fdtox	%f16,%f14
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	std	%f14,[%fp-40]
@@ -183,7 +183,7 @@ L(end4):
 	ldx	[%fp-24],%g2		C p16
 	ldx	[%fp-16],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 	b,a	L(yyy)
 
 L(end3):
@@ -205,7 +205,7 @@ L(xxx):	fdtox	%f16,%f14
 	ldx	[%fp-40],%g2		C p16
 	ldx	[%fp-32],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	add	%i0,4,%i0		C res_ptr++
 
@@ -214,7 +214,7 @@ L(xxx):	fdtox	%f16,%f14
 	ldx	[%fp-24],%g2		C p16
 	ldx	[%fp-16],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	add	%i0,4,%i0		C res_ptr++
 	b,a	L(ret)
@@ -238,7 +238,7 @@ L(yyy):	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	ldx	[%fp-40],%g2		C p16
 	ldx	[%fp-32],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	add	%i0,4,%i0		C res_ptr++
 	b,a	L(ret)
@@ -260,7 +260,7 @@ L(end1):
 
 L(ret):	add	%g3,%g1,%g4		C p += cy
 	srlx	%g4,32,%g3
-	st	%g4,[%i0-4]
+	stw	%g4,[%i0-4]
 
 	ret
 	restore %g0,%g3,%o0		C sideeffect: put cy in retreg

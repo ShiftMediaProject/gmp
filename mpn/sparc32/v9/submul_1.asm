@@ -1,7 +1,7 @@
 dnl  SPARC v9 32-bit mpn_submul_1 -- Multiply a limb vector with a limb and
 dnl  subtract the result from a second limb vector.
 
-dnl  Copyright 1998, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1998, 2000, 2001 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -47,12 +47,12 @@ ifdef(`PIC',
 
 	sethi	%hi(0xffff0000),%o0
 	andn	%i3,%o0,%o0
-	st	%o0,[%fp-16]
+	stw	%o0,[%fp-16]
 	ld	[%fp-16],%f11
 	fxtod	%f10,%f6
 
 	srl	%i3,16,%o0
-	st	%o0,[%fp-16]
+	stw	%o0,[%fp-16]
 	ld	[%fp-16],%f11
 	fxtod	%f10,%f8
 
@@ -90,7 +90,7 @@ ifdef(`PIC',
 	fxtod	%f10,%f2
 	ld	[%i1],%f11
 	add	%i1,4,%i1		C s1_ptr++
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	ldx	[%fp-24],%g2		C p16
 	fmuld	%f2,%f8,%f16
 	ldx	[%fp-16],%g1		C p0
@@ -115,14 +115,14 @@ L(loop):
 	add	%i1,4,%i1		C s1_ptr++
 	add	%g3,%g1,%g4		C p += cy
 	subcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	srlx	%g4,32,%g3
 	ldx	[%fp-24],%g2		C p16
 	fmuld	%f2,%f8,%f16
 	ldx	[%fp-16],%g1		C p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		C align p16
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 	addx	%g3,0,%g3
 	fdtox	%f16,%f14
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
@@ -138,14 +138,14 @@ L(loopm):
 	add	%i1,4,%i1		C s1_ptr++
 	add	%g3,%g1,%g4		C p += cy
 	subcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	srlx	%g4,32,%g3
 	ldx	[%fp-40],%g2		C p16
 	fmuld	%f2,%f8,%f16
 	ldx	[%fp-32],%g1		C p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		C align p16
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 	addx	%g3,0,%g3
 	fdtox	%f16,%f14
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
@@ -160,28 +160,28 @@ C END LOOP
 	fxtod	%f10,%f2
 	add	%g3,%g1,%g4		C p += cy
 	subcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	srlx	%g4,32,%g3
 	ldx	[%fp-24],%g2		C p16
 	fmuld	%f2,%f8,%f16
 	ldx	[%fp-16],%g1		C p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		C align p16
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 	b,a	L(xxx)
 L(loope):
 L(end4):
 	fxtod	%f10,%f2
 	add	%g3,%g1,%g4		C p += cy
 	subcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	srlx	%g4,32,%g3
 	ldx	[%fp-40],%g2		C p16
 	fmuld	%f2,%f8,%f16
 	ldx	[%fp-32],%g1		C p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		C align p16
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 	fdtox	%f16,%f14
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	std	%f14,[%fp-40]
@@ -191,17 +191,17 @@ L(end4):
 
 	add	%g3,%g1,%g4		C p += cy
 	subxcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	srlx	%g4,32,%g3
 	ldx	[%fp-24],%g2		C p16
 	ldx	[%fp-16],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 	b,a	L(yyy)
 
 L(end3):
 	fxtod	%f10,%f2
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	ldx	[%fp-24],%g2		C p16
 	fmuld	%f2,%f8,%f16
 	ldx	[%fp-16],%g1		C p0
@@ -216,23 +216,23 @@ L(xxx):	fdtox	%f16,%f14
 
 	add	%g3,%g1,%g4		C p += cy
 	subxcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	srlx	%g4,32,%g3
 	ldx	[%fp-40],%g2		C p16
 	ldx	[%fp-32],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	add	%i0,4,%i0		C res_ptr++
 
 	add	%g3,%g1,%g4		C p += cy
 	subxcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	srlx	%g4,32,%g3
 	ldx	[%fp-24],%g2		C p16
 	ldx	[%fp-16],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	add	%i0,4,%i0		C res_ptr++
 	b,a	L(ret)
@@ -245,7 +245,7 @@ L(end2):
 	std	%f14,[%fp-40]
 	fdtox	%f4,%f12
 	std	%f12,[%fp-32]
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	ldx	[%fp-24],%g2		C p16
 	ldx	[%fp-16],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
@@ -254,12 +254,12 @@ L(yyy):	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 
 	add	%g3,%g1,%g4		C p += cy
 	subxcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	srlx	%g4,32,%g3
 	ldx	[%fp-40],%g2		C p16
 	ldx	[%fp-32],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 	add	%g2,%g1,%g1		C add p16 to p0 (ADD1)
 	add	%i0,4,%i0		C res_ptr++
 	b,a	L(ret)
@@ -273,7 +273,7 @@ L(end1):
 	fdtox	%f4,%f12
 	std	%f12,[%fp-16]
 
-	ld	[%i0],%g5
+	lduw	[%i0],%g5
 	ldx	[%fp-24],%g2		C p16
 	ldx	[%fp-16],%g1		C p0
 	sllx	%g2,16,%g2		C align p16
@@ -283,7 +283,7 @@ L(end1):
 L(ret):	add	%g3,%g1,%g4		C p += cy
 	subxcc	%g5,%g4,%l2		C add *res_ptr to p0 (ADD2)
 	srlx	%g4,32,%g3
-	st	%l2,[%i0-4]
+	stw	%l2,[%i0-4]
 
 	addx	%g3,%g0,%g3
 	ret
