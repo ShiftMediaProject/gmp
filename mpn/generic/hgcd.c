@@ -177,7 +177,7 @@ mpn_diff_smaller_p (mp_srcptr ap, mp_size_t asize,
      f...f. */
 
   for (i = csize; i < asize - 1; i++)
-    if (ap[i] != 0 || bp[i] != MP_LIMB_T_MAX)
+    if (ap[i] != 0 || bp[i] != GMP_NUMB_MAX)
       return 0;
 
   return 1;
@@ -388,6 +388,18 @@ hgcd2_mul (struct hgcd_row *P, mp_size_t alloc,
   else
     /* Don't add redundant zeroes */
     return n + (h != 0);
+}
+
+
+unsigned
+mpn_hgcd_max_recursion (mp_size_t n)
+{
+  int count;
+
+  count_leading_zeros (count, (mp_limb_t)
+		       (1 + n / (HGCD_SCHOENHAGE_THRESHOLD  - 5)));
+
+  return GMP_LIMB_BITS - count;
 }
 
 mp_size_t
@@ -1104,6 +1116,20 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
 
   ASSERT (L < talloc);
 
+#if WANT_TRACE
+  trace ("hgcd_jebelean: sign = %d\n", hgcd->sign);
+
+  if (L < 50)
+    {
+      unsigned i;
+      for (i = 0; i<4; i++)
+	trace (" r%d = %Nd; u%d = %Nd; v%d = %Nd\n",
+	       i, hgcd->row[i].rp, hgcd->row[i].rsize, 
+	       i, hgcd->row[i].uvp[0], hgcd->size, 
+	       i, hgcd->row[i].uvp[1], hgcd->size);
+    }
+#endif
+  
   tsize = L;
 
   if (hgcd->sign >= 0)
@@ -1299,8 +1325,8 @@ hgcd_start (struct hgcd *hgcd,
 /* FIXME: Rename function */
 static int
 hgcd_case0 (struct hgcd *hgcd, mp_size_t M,
-		  struct qstack *quotients,
-		  mp_ptr tp, mp_size_t talloc)
+	    struct qstack *quotients,
+	    mp_ptr tp, mp_size_t talloc)
 {
   hgcd->size = euclid_step (hgcd->row, hgcd->size, quotients, hgcd->alloc);
   ASSERT (hgcd->size < hgcd->alloc);
@@ -1618,6 +1644,8 @@ mpn_hgcd_lehmer (struct hgcd *hgcd,
 				   R.row + 2, hgcd->row, hgcd->size);
 	  hgcd->sign ^= R.sign;
 
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
+	  
 	  if (hgcd->row[3].rsize <= M)
 	    {
 	      /* Backup two steps */
@@ -1647,7 +1675,7 @@ mpn_hgcd_itch (mp_size_t asize)
   /* Limit on the recursion depth */
   unsigned k = mpn_hgcd_max_recursion (asize);
 
-  return asize + mpn_hgcd_init_itch (asize + k * (6 + 12));
+  return asize + mpn_hgcd_init_itch (asize + 6 * k) + 12 * k;
 }
 
 /* Computes hgcd using Schönhage's algorithm. Should return the same
@@ -1672,6 +1700,9 @@ mpn_hgcd (struct hgcd *hgcd,
 #if WANT_TRACE
   trace ("hgcd: asize = %d, bsize = %d, HGCD_SCHOENHAGE_THRESHOLD = %d\n",
 	 asize, bsize, HGCD_SCHOENHAGE_THRESHOLD);
+  if (asize < 100)
+    trace ("  a = %Nd\n"
+	   "  b = %Nd\n", ap, asize, bp, bsize);
 #endif
 
   if (bsize <= M)
@@ -1897,6 +1928,8 @@ mpn_hgcd (struct hgcd *hgcd,
 				 tp, talloc);
 	  hgcd->sign ^= R.sign;
 
+	  ASSERT_HGCD (hgcd, ap, asize, bp, bsize, 2, 4);
+
 	  if (hgcd->row[3].rsize <= M)
 	    {
 	      /* Backup two steps */
@@ -2081,8 +2114,7 @@ mpn_hgcd (struct hgcd *hgcd,
 	  ASSERT (hgcd->row[3].rsize <= M + 1);
 	}
       else
-	/* At this point, we have already dropped the old
-	   quotient.. */
+	/* At this point, we have already dropped the old quotient. */
 	hgcd->size = euclid_step (hgcd->row + 1, hgcd->size,
 				  quotients, hgcd->alloc);
 

@@ -140,16 +140,3 @@ __gmpn_qstack_sanity (struct qstack *stack)
   ASSERT (next == stack->limb_next);
 }
 #endif
-
-/* What's the right place for this function? */
-unsigned
-mpn_hgcd_max_recursion (mp_size_t n)
-{
-  int count;
-
-  count_leading_zeros (count, (mp_limb_t)
-		       (1 + n / (HGCD_SCHOENHAGE_THRESHOLD  - 5)));
-
-  return GMP_LIMB_BITS - count;
-}
-
