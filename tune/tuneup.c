@@ -80,7 +80,6 @@ extern int optind, opterr;
 
 
 #define MAX_SIZE        1000  /* limbs */
-#define STEP_FACTOR     0.01  /* how much to step sizes by (rounded down) */
 #define MAX_TABLE       2     /* threshold entries */
 
 
@@ -124,7 +123,8 @@ struct param_t {
   const char        *name[MAX_TABLE];
   speed_function_t  function;
   speed_function_t  function2;
-  double            function_fudge;
+  double            step_factor;    /* how much to step sizes (rounded down) */
+  double            function_fudge; /* multiplier for "function" speeds */
   int               stop_since_change;
   mp_size_t         min_size;
   mp_size_t         max_size[MAX_TABLE];
@@ -221,18 +221,21 @@ tuneup_measure (speed_function_t fun, struct speed_params *s)
 void
 print_define_start (const char *name)
 {
-  printf ("#ifndef %s\n", name);
+  printf ("#define %-23s  ", name);
+  if (option_trace)
+    printf ("...\n");
 }
 
 void
 print_define_end (const char *name, mp_size_t value)
 {
-  printf ("#define %-23s  ", name);
+  if (option_trace)
+    printf ("#define %-23s  ", name);
+
   if (value == MP_SIZE_T_MAX)
     printf ("MP_SIZE_T_MAX\n");
   else
     printf ("%5ld\n", value);
-  printf ("#endif\n");
 }
 
 void
@@ -256,6 +259,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
 
   DEFAULT (function_fudge, 1.0);
   DEFAULT (function2, param->function);
+  DEFAULT (step_factor, 0.01);  /* small steps by default */
   DEFAULT (stop_since_change, 80);
   DEFAULT (min_size, 10);
   for (i = 0; i < numberof (param->max_size); i++)
@@ -282,7 +286,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
         }
 
       for ( ; s.size < MAX_SIZE; 
-            s.size += MAX ((mp_size_t) floor (s.size * STEP_FACTOR), 1))
+            s.size += MAX ((mp_size_t) floor (s.size * param->step_factor), 1))
         {
           double   ti, tiplus1, d;
 
@@ -483,7 +487,6 @@ fft (struct fft_param_t *p)
 
   option_trace = MAX (option_trace, option_fft_trace);
 
-  printf ("#ifndef %s\n", p->table_name);
   printf ("#define %s  {", p->table_name);
   if (option_trace >= 2)
     printf ("\n");
@@ -529,7 +532,6 @@ fft (struct fft_param_t *p)
 
   mpn_fft_table[p->sqr][k-FFT_FIRST_K] = 0;
   printf (" 0 }\n");
-  printf ("#endif\n");
 
 
   size = p->first_size;
@@ -616,8 +618,8 @@ all (void)
     fprintf (stderr, "speed_precision %d, speed_unittime %.2e secs\n",
              speed_precision, speed_unittime);
 
-  fprintf (stderr, "MAX_SIZE %d, fft_max_size %ld, STEP_FACTOR %.3f\n",
-           MAX_SIZE, option_fft_max_size, STEP_FACTOR);
+  fprintf (stderr, "MAX_SIZE %d, fft_max_size %ld\n",
+           MAX_SIZE, option_fft_max_size);
   fprintf (stderr, "\n");
 
   {
@@ -657,6 +659,20 @@ all (void)
   }
   printf("\n");
 
+  /* This is an indirect determination, based on a comparison between redc
+     and mpz_mod.  A fudge factor of 1.04 is applied to redc, to represent
+     additional overheads it gets in mpz_powm.  */
+  {
+    static struct param_t  param;
+    param.name[0] = "POWM_THRESHOLD";
+    param.function = speed_redc;
+    param.function2 = speed_mpz_mod;
+    param.step_factor = 0.03;
+    param.function_fudge = 1.04;
+    one (powm_threshold, 1, &param);
+  }
+  printf("\n");
+
   {
     static struct param_t  param;
     param.name[0] = "FIB_THRESHOLD";
@@ -673,19 +689,6 @@ all (void)
     }
 
     one (fib_threshold, 1, &param);
-  }
-  printf("\n");
-
-  /* This is an indirect determination, based on a comparison between redc
-     and mpz_mod.  A fudge factor of 1.04 is applied to redc, to represent
-     additional overheads it gets in mpz_powm.  */
-  {
-    static struct param_t  param;
-    param.name[0] = "POWM_THRESHOLD";
-    param.function = speed_redc;
-    param.function2 = speed_mpz_mod;
-    param.function_fudge = 1.04;
-    one (powm_threshold, 1, &param);
   }
   printf("\n");
 
