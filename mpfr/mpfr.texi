@@ -566,12 +566,14 @@ precision, then MPFR will still compute the result with full precision.
 @section Rounding Modes
 
 The following four rounding modes are supported:
+
 @itemize @bullet
 @item @code{GMP_RNDN}: round to nearest
 @item @code{GMP_RNDZ}: round towards zero
 @item @code{GMP_RNDU}: round towards plus infinity
 @item @code{GMP_RNDD}: round towards minus infinity
 @end itemize
+
 The @samp{round to nearest} mode works as in the IEEE 754-1985 standard: in
 case the number to be rounded lies exactly in the middle of two representable
 numbers, it is rounded to the one with the least significant bit set to zero.
@@ -821,7 +823,7 @@ width of the long double type; the @code{mpfr_set_ld} function assumes
 it has at most 113 bits, and an exponent of at most 15 bits.
 @end deftypefun
 
-@deftypefun int mpfr_set_str (mpfr_t @var{x}, __gmp_const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
+@deftypefun int mpfr_set_str (mpfr_t @var{x}, const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
 Set @var{x} to the value of the string @var{s} in base @var{base} (between
 2 and 36), rounded in direction @var{rnd} to the precision of @var{x}.
 See the documentation of @code{mpfr_inp_str} for a detailed description 
@@ -833,7 +835,7 @@ Special values can be read as follows: @code{NaN}, @code{Inf}, @code{+Inf}
 and @code{-Inf} (possibly in lower case when the base is less than 24).
 @end deftypefun
 
-@deftypefun void mpfr_set_str_raw (mpfr_t @var{x}, __gmp_const char *@var{s})
+@deftypefun void mpfr_set_str_raw (mpfr_t @var{x}, const char *@var{s})
 Set @var{x} to the value of the binary number in string @var{s}, which has to 
 be of the
 form +/-xxxx.xxxxxxEyy. The exponent is read in decimal, but is interpreted
@@ -887,7 +889,7 @@ The return value if zero if @var{rop}=@var{op}, positive if @var{rop}>@var{op},
 and negative when @var{rop}<@var{op}.
 @end deftypefn
 
-@deftypefun int mpfr_init_set_str (mpfr_t @var{x}, __gmp_const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
+@deftypefun int mpfr_init_set_str (mpfr_t @var{x}, const char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
 Initialize @var{x} and set its value from
 the string @var{s} in base @var{base}, 
 rounded to direction @var{rnd}.
@@ -917,7 +919,7 @@ Convert @var{op} to a double, using the default MPFR rounding mode
 @deftypefun double mpfr_get_d_2exp (long *@var{exp}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
 raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1} equals
-@var{op} rounded to double precision, using the default MPFR rounding mode.
+@var{op} rounded to double precision, using the given @var{rnd} mode.
 @end deftypefun
 
 @deftypefun long mpfr_get_si (mpfr_t @var{op}, mp_rnd_t @var{rnd})
@@ -1470,13 +1472,13 @@ Equivalent to @code{mpfr_nexttoward} where @var{y} is minus infinity.
 @end deftypefun
 
 @deftypefun int mpfr_urandomb (mpfr_t @var{rop}, gmp_randstate_t @var{state})
-Generate a uniformly distributed random float in the interval 0 <= X < 1.
+Generate a uniformly distributed random float in the interval @math{0 @le{} X < 1}.
 Return 0, unless the exponent is not in the current exponent range, in
 which case @var{rop} is set to NaN and 1 is returned.
 @end deftypefun
 
 @deftypefun void mpfr_random (mpfr_t @var{rop})
-Generate a uniformly distributed random float in the interval 0 <= X < 1.
+Generate a uniformly distributed random float in the interval @math{0 @le{} X < 1}.
 This function is deprecated and replaced by @code{mpfr_urandomb}.
 @end deftypefun
 

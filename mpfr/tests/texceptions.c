@@ -51,8 +51,9 @@ mpfr_set_double_range (void)
 static void
 test_set_underflow (void)
 {
-  mpfr_t x, zero, min;
-  mpfr_ptr r[4] = { min, zero, min, zero };
+  /* static to allow non-constant initialiers in r */
+  static mpfr_t x, zero, min;
+  static mpfr_ptr r[4] = { min, zero, min, zero };
   int t[4] = { 1, -1, 1, -1 };
   mp_rnd_t i;
   int s;
@@ -91,8 +92,9 @@ test_set_underflow (void)
 static void
 test_set_overflow (void)
 {
-  mpfr_t x, inf, max;
-  mpfr_ptr r[4] = { inf, max, inf, max };
+  /* static to allow non-constant initialiers in r */
+  static mpfr_t x, inf, max;
+  static mpfr_ptr r[4] = { inf, max, inf, max };
   int t[4] = { 1, -1, 1, -1 };
   mp_rnd_t i;
   int s;
