@@ -1677,10 +1677,6 @@ Libtool currently only knows how to create shared libraries on MacOS X using
 the native @command{cc} (which is a modified GCC), not a plain GCC.  A
 static-only build should work though (@samp{--disable-shared}).
 
-Also, libtool currently cannot build C++ shared libraries on MacOS X, so if
-@samp{--enable-cxx} is desired then @samp{--disable-shared} must be used.
-Hopefully this will be fixed in the future.
-
 @item NeXT prior to 3.3
 @cindex NeXT
 The system compiler on old versions of NeXT was a massacred and old GCC, even
