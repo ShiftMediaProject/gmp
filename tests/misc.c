@@ -87,12 +87,13 @@ tests_rand_start (void)
           struct timeval  tv;
           gettimeofday (&tv, NULL);
           seed = tv.tv_sec + tv.tv_usec;
+#else
+          time_t  tv;
+          time (&tv);
+          seed = tv;
+#endif
           gmp_randseed_ui (rands, seed);
           printf ("Seed GMP_CHECK_RANDOMIZE=%lu (include this in bug reports)\n", seed);
-#else
-          printf ("tests_rand_start(): Oops, gettimeofday() not available\n");
-          abort ();
-#endif
         }
     }
 }
