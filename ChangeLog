@@ -116,7 +116,8 @@
 	t-trunc.c: Ditto.
 	* tests/mpbsd/allfuns.c, t-misc.c: Ditto.
 
-	* mpn/generic/mul_n.c, mpz/cfdiv_r_2exp.c: Use MPN_INCR_U.
+	* mpn/generic/mul_n.c, mpz/cfdiv_r_2exp.c: Use MPN_INCR_U rather than
+	mpn_incr_u.
 
 	* tests/devel/try.c (TYPE_SB_DIVREM_MN): More fixes for calling method.
 
