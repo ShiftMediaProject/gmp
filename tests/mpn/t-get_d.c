@@ -19,7 +19,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include "config.h"
+
 #include <limits.h>
+#include <setjmp.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -28,23 +32,8 @@ MA 02111-1307, USA. */
 #include "tests.h"
 
 
-/* BITS_PER_DOUBLE_MANT is the number of bits in the mantissa of a "double".
-   Exact when we know the format of a double, or an underestimate if we
-   don't.  */
-#if _GMP_IEEE_FLOATS
-#define BITS_PER_DOUBLE_MANT  53
-#endif
-#if HAVE_DOUBLE_CRAY_CFP
-#define BITS_PER_DOUBLE_MANT  48
-#endif
-#if HAVE_DOUBLE_VAX_D
-#define BITS_PER_DOUBLE_MANT  55
-#endif
-#if HAVE_DOUBLE_VAX_G
-#define BITS_PER_DOUBLE_MANT  53
-#endif
-#ifndef BITS_PER_DOUBLE_MANT
-#define BITS_PER_DOUBLE_MANT  ((8 * sizeof (double)) / 2)
+#ifndef _GMP_IEEE_FLOATS
+#define _GMP_IEEE_FLOATS 0
 #endif
 
 
@@ -134,18 +123,23 @@ check_onebit (void)
     }
 }
 
-/* Exercise values 2^n+1, while such a value fits the mantissa of a
-   double.  */
+
+/* Exercise values 2^n+1, while such a value fits the mantissa of a double. */
 void
 check_twobit (void)
 {
-  int        i;
+  int        i, mant_bits;
   double     got, want;
   mp_size_t  nsize, sign;
-  mp_limb_t  np[BITS_TO_LIMBS (BITS_PER_DOUBLE_MANT)];
+  mp_ptr     np;
 
+  mant_bits = tests_dbl_mant_bits ();
+  if (mant_bits == 0)
+    return;
+
+  np = refmpn_malloc_limbs (BITS_TO_LIMBS (mant_bits));
   want = 3.0;
-  for (i = 1; i < BITS_PER_DOUBLE_MANT; i++)
+  for (i = 1; i < mant_bits; i++)
     {
       nsize = BITS_TO_LIMBS (i+1);
       refmpn_zero (np, nsize);
@@ -170,13 +164,62 @@ check_twobit (void)
 
       want = 2.0 * want - 1.0;
     }
+
+  free (np);
 }
 
-/* Expect large values to result in +/-inf, on systems with such doubles. */
+
+/* Expect large negative exponents to underflow to 0.0.
+   Some systems might have hardware traps for such an underflow (though
+   usually it's not the default), so watch out for SIGFPE. */
+void
+check_underflow (void)
+{
+  static const long exp_table[] = {
+    -999999L, LONG_MIN,
+  };
+  static const mp_limb_t  np[1] = { 1 };
+
+  static long exp;
+  mp_size_t  nsize, sign;
+  double     got;
+  int        exp_i;
+
+  nsize = numberof (np);
+
+  if (tests_setjmp_sigfpe() == 0)
+    {
+      for (exp_i = 0; exp_i < numberof (exp_table); exp_i++)
+        {
+          exp = exp_table[exp_i];
+
+          for (sign = 0; sign >= -1; sign--)
+            {
+              got = mpn_get_d (np, nsize, sign, exp);
+              if (got != 0.0)
+                {
+                  printf  ("mpn_get_d wrong, didn't get 0.0 on underflow\n");
+                  printf  ("  nsize    %ld\n", (long) nsize);
+                  printf  ("  exp      %ld\n", exp);
+                  printf  ("  sign     %ld\n", (long) sign);
+                  d_trace ("  got      ", got);
+                  abort ();
+                }
+            }
+        }
+    }
+  else
+    {
+      printf ("Warning, underflow to zero tests skipped due to SIGFPE (exp=%ld)\n", exp);
+    }
+  tests_sigfpe_done ();
+}
+
+
+/* Expect large values to result in +/-inf, on IEEE systems. */
 void
 check_inf (void)
 {
-#if _GMP_IEEE_FLOATS
   static const long exp_table[] = {
     999999L, LONG_MAX,
   };
@@ -185,6 +228,9 @@ check_inf (void)
   mp_size_t  nsize, sign, got_sign;
   double     got;
   int        exp_i;
+
+  if (! _GMP_IEEE_FLOATS)
+    return;
 
   for (nsize = 1; nsize <= numberof (np); nsize++)
     {
@@ -215,8 +261,108 @@ check_inf (void)
             }
         }
     }
-#endif
 }
+
+/* Check values 2^n approaching and into IEEE denorm range.
+   Some systems might not support denorms, or might have traps setup, so
+   watch out for SIGFPE.  */
+void
+check_ieee_denorm (void)
+{
+  static long exp;
+  mp_limb_t  n = 1;
+  long       i;
+  mp_size_t  sign;
+  double     want, got;
+
+  if (! _GMP_IEEE_FLOATS)
+    return;
+
+  if (tests_setjmp_sigfpe() == 0)
+    {
+      exp = -1020;
+      want = 1.0;
+      for (i = 0; i > exp; i--)
+        want *= 0.5;
+
+      for ( ; exp > -1500 && want != 0.0; exp--)
+        {
+          for (sign = 0; sign >= -1; sign--)
+            {
+              got = mpn_get_d (&n, (mp_size_t) 1, sign, exp);
+              if (got != want)
+                {
+                  printf  ("mpn_get_d wrong on denorm\n");
+                  printf  ("  n=1\n");
+                  printf  ("  exp   %ld\n", exp);
+                  printf  ("  sign  %ld\n", (long) sign);
+                  d_trace ("  got   ", got);
+                  d_trace ("  want  ", want);
+                  abort ();
+                }
+              want = -want;
+            }
+          want *= 0.5;
+          FORCE_DOUBLE (want);
+        }
+    }
+  else
+    {
+      printf ("Warning, IEEE denorm tests skipped due to SIGFPE (exp=%ld)\n", exp);
+    }
+  tests_sigfpe_done ();
+}
+
+
+/* Check values 2^n approaching exponent overflow.
+   Some systems might trap on overflow, so watch out for SIGFPE.  */
+void
+check_ieee_overflow (void)
+{
+  static long exp;
+  mp_limb_t  n = 1;
+  long       i;
+  mp_size_t  sign;
+  double     want, got;
+
+  if (! _GMP_IEEE_FLOATS)
+    return;
+
+  if (tests_setjmp_sigfpe() == 0)
+    {
+      exp = 1010;
+      want = 1.0;
+      for (i = 0; i < exp; i++)
+        want *= 2.0;
+
+      for ( ; exp < 1050; exp++)
+        {
+          for (sign = 0; sign >= -1; sign--)
+            {
+              got = mpn_get_d (&n, (mp_size_t) 1, sign, exp);
+              if (got != want)
+                {
+                  printf  ("mpn_get_d wrong on overflow\n");
+                  printf  ("  n=1\n");
+                  printf  ("  exp   %ld\n", exp);
+                  printf  ("  sign  %ld\n", (long) sign);
+                  d_trace ("  got   ", got);
+                  d_trace ("  want  ", want);
+                  abort ();
+                }
+              want = -want;
+            }
+          want *= 2.0;
+          FORCE_DOUBLE (want);
+        }
+    }
+  else
+    {
+      printf ("Warning, IEEE overflow tests skipped due to SIGFPE (exp=%ld)\n", exp);
+    }
+  tests_sigfpe_done ();
+}
+
 
 /* ARM gcc 2.95.4 was seen generating bad code for ulong->double
    conversions, resulting in for instance 0x81c25113 incorrectly converted.
@@ -231,6 +377,9 @@ check_0x81c25113 (void)
   mp_limb_t  np[4];
   mp_size_t  nsize;
   long       exp;
+
+  if (tests_dbl_mant_bits() < 32)
+    return;
 
   for (nsize = 1; nsize <= numberof (np); nsize++)
     {
@@ -251,15 +400,96 @@ check_0x81c25113 (void)
 #endif
 }
 
+
+void
+check_rand (void)
+{
+  gmp_randstate_ptr rands = RANDS;
+  int            rep, i;
+  unsigned long  mant_bits;
+  long           exp, exp_min, exp_max;
+  double         got, want, d;
+  mp_size_t      nalloc, nsize, sign;
+  mp_limb_t      nhigh_mask;
+  mp_ptr         np;
+
+  mant_bits = tests_dbl_mant_bits ();
+  if (mant_bits == 0)
+    return;
+
+  /* Allow for vax D format with exponent 127 to -128 only.
+     FIXME: Do something to probe for a valid exponent range.  */
+  exp_min = -100 - mant_bits;
+  exp_max =  100 - mant_bits;
+
+  nalloc = BITS_TO_LIMBS (mant_bits);
+  np = refmpn_malloc_limbs (nalloc);
+  nhigh_mask = MP_LIMB_T_MAX
+    >> (GMP_NAIL_BITS + nsize * GMP_NUMB_BITS - mant_bits);
+
+  for (rep = 0; rep < 500; rep++)
+    {
+      exp = exp_min + (long) gmp_urandomm_ui (rands, exp_max - exp_min + 1);
+
+      if (rep & 1)
+        mpn_random (np, nalloc);
+      else
+        mpn_random2 (np, nalloc);
+      nsize = nalloc;
+      np[nsize-1] &= nhigh_mask;
+      MPN_NORMALIZE (np, nsize);
+      if (nsize == 0)
+        continue;
+
+      sign = (mp_size_t) gmp_urandomb_ui (rands, 1L) - 1;
+
+      /* want = {np,nsize}, converting one bit at a time */
+      want = 0.0;
+      for (i = 0, d = 1.0; i < mant_bits; i++, d *= 2.0)
+        if (np[i/GMP_NUMB_BITS] & (CNST_LIMB(1) << (i%GMP_NUMB_BITS)))
+          want += d;
+      if (sign < 0)
+        want = -want;
+
+      /* want = want * 2^exp */
+      for (i = 0; i < exp; i++)
+        want *= 2.0;
+      for (i = 0; i > exp; i--)
+        want *= 0.5;
+
+      got = mpn_get_d (np, nsize, sign, exp);
+
+      if (got != want)
+        {
+          printf    ("mpn_get_d wrong on random data\n");
+          printf    ("   sign     %ld\n", (long) sign);
+          mpn_trace ("   n        ", np, nsize);
+          printf    ("   nsize    %ld\n", (long) nsize);
+          printf    ("   exp      %ld\n", exp);
+          d_trace   ("   want     ", want);
+          d_trace   ("   got      ", got);
+          abort();
+        }
+    }
+
+  free (np);
+}
+
+
 int
 main (void)
 {
   tests_start ();
+  mp_trace_base = -16;
 
   check_onebit ();
   check_twobit ();
   check_inf ();
+  check_underflow ();
+  check_ieee_denorm ();
+  check_ieee_overflow ();
   check_0x81c25113 ();
+  check_rand ();
 
   tests_end ();
   exit (0);
