@@ -148,6 +148,12 @@ dnl  table index, hence the use of AC_CHECK_TOOL.
 dnl
 dnl  A user-selected $AR is always left unchanged.  AC_CHECK_TOOL is still
 dnl  run to get the "checking" message printed though.
+dnl
+dnl  $AR_FLAGS is set to "cq" rather than leaving it to libtool "cru".  The
+dnl  latter fails when libtool goes into piecewise mode and is unlucky
+dnl  enough to have two same-named objects in separate pieces, as happens
+dnl  for instance to random.o (and others) on vax-dec-ultrix4.5.  Naturally
+dnl  a user-selected $AR_FLAGS is left unchanged.
 
 AC_DEFUN(GMP_PROG_AR,
 [dnl  Want to establish $AR before libtool initialization.
@@ -162,6 +168,9 @@ if test -z "$gmp_user_AR"; then
     AR="$AR $arflags"
     AC_MSG_RESULT([$arflags])
   fi
+fi
+if test -z "$AR_FLAGS"; then
+  AR_FLAGS=cq
 fi
 ])
 
@@ -388,10 +397,12 @@ AC_DEFUN(GMP_HPC_HPPA_2_0,
 # Let A.10.32.30 or higher be ok.
 echo >conftest.c
 gmp_tmp_vs=`$1 $2 -V -c -o conftest.o conftest.c 2>&1 | grep "^ccom:"`
+echo "Version string: $gmp_tmp_vs" >&AC_FD_CC
 rm conftest*
 gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
 gmp_tmp_v2=`echo $gmp_tmp_vs | sed 's/.* .\..*\.\(.*\)\..* HP C.*/\1/'`
 gmp_tmp_v3=`echo $gmp_tmp_vs | sed 's/.* .\..*\..*\.\(.*\) HP C.*/\1/'`
+echo "Version number: $gmp_tmp_v1.$gmp_tmp_v2.$gmp_tmp_v3" >&AC_FD_CC
 if test -z "$gmp_tmp_v1"; then
   gmp_hpc_64bit=not-applicable
 else
