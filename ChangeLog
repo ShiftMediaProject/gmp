@@ -4,6 +4,16 @@
 
 1999-11-17  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/x86/syntax.h (PROLOG): New #define.
+	(EPILOG): New #define.
+
+	* gmp.h (mpn_addsub_n): Declare.
+	* gmp.h (mpn_add_nc): Declare.
+	* gmp.h (mpn_sub_nc): Declare.
+	* mpn/powerpc64/addsub_n.S: New file.
+
+1999-11-17  Torbjorn Granlund  <tege@swox.com>
+
 	* mpn/alpha/gmp-mparam.h
 	(KARATSUBA_MUL_THRESHOLD): Only #define #ifndef.
 	(KARATSUBA_SQR_THRESHOLD): Likewise.
