@@ -279,7 +279,7 @@ clk_tck (void)
 {
   static long  result = -1L;
   if (result != -1L)
-    goto success;
+    return result;
 
 #if HAVE_SYSCONF
   result = sysconf (_SC_CLK_TCK);
@@ -287,25 +287,22 @@ clk_tck (void)
     {
       if (speed_option_verbose)
         printf ("sysconf(_SC_CLK_TCK) is %ld per second\n", result);
-      goto success;
+      return result;
     }
 
   fprintf (stderr,
-           "sysconf(_SC_CLK_TCK) not available, using CLK_TCK instead\n");
+           "sysconf(_SC_CLK_TCK) not working, using CLK_TCK instead\n");
 #endif
 
 #ifdef CLK_TCK
   result = CLK_TCK;
   if (speed_option_verbose)
     printf ("CLK_TCK is %ld per second\n", result);
-  goto success;
-#endif
-
+  return result;
+#else
   fprintf (stderr, "CLK_TCK not defined, cannot continue\n");
   abort ();
-
- success:
-  return result;
+#endif
 }
 
 
