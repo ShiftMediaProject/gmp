@@ -44,12 +44,12 @@ MA 02111-1307, USA.  */
 /* State structure for MT.  */
 typedef struct
 {
-  unsigned long int mt[N];	/* State array.  */
-  int mti;			/* Index of current value.  */
+  gmp_uint_least32_t mt[N];    /* State array.  */
+  int mti;                     /* Index of current value.  */
 } gmp_rand_mt_struct;
 
 /* Initial state of buffer when initialized with default seed.  */
-static const unsigned long int default_state[N] =
+static const gmp_uint_least32_t default_state[N] =
 {
   0xD247B233,0x9E5AA8F1,0x0FFA981B,0x9DCB0980,0x74200F2B,0xA576D044,
   0xE9F05ADF,0x1538BFF5,0x59818BBF,0xCF9E58D8,0x09FCE032,0x6A1C663F,
@@ -158,9 +158,9 @@ static const unsigned long int default_state[N] =
 };
 
 static void
-recalc_buffer (unsigned long int mt[])
+recalc_buffer (gmp_uint_least32_t mt[])
 {
-  unsigned long int y;
+  gmp_uint_least32_t y;
   int kk;
 
   for (kk = 0; kk < N - M; kk++)
@@ -185,12 +185,12 @@ recalc_buffer (unsigned long int mt[])
 static void
 randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
 {
-  unsigned long int y;
+  gmp_uint_least32_t y;
   int rbits;
   mp_size_t i;
   mp_size_t nlimbs;
   int *pmti;
-  unsigned long int *mt;
+  gmp_uint_least32_t *mt;
 
   pmti = &((gmp_rand_mt_struct *) RNG_STATE (rstate))->mti;
   mt = ((gmp_rand_mt_struct *) RNG_STATE (rstate))->mt;
@@ -273,8 +273,8 @@ randget_mt (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits)
        Bits are consumed using the LSB bits of bitpool_l, and
        inserted via bitpool_h and shifted to the right place.  */
 
-    unsigned long int bitpool_h = 0;
-    unsigned long int bitpool_l = 0;
+    gmp_uint_least32_t bitpool_h = 0;
+    gmp_uint_least32_t bitpool_l = 0;
     int bits_in_pool = 0;	/* Holds number of valid bits in the pool.  */
     int bits_to_fill;		/* Holds total number of bits to put in
 				   destination.  */
@@ -446,8 +446,8 @@ randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
   mpz_clrbit (seed1, 19936L);
 
   /* Split seed1 into N-1 32-bit chunks.  */
-  mpz_export ((void *) &p->mt[1], &cnt, -1, sizeof (unsigned long int), 0, 0,
-	      seed1);
+  mpz_export (&p->mt[1], &cnt, -1, sizeof (p->mt[1]), 0,
+              8 * sizeof (p->mt[1]) - 32, seed1);
   while (cnt < N)
     p->mt[cnt++] = 0;
 
