@@ -32,7 +32,7 @@ mpz_rrandomb (mpz_ptr x, gmp_randstate_t rstate, unsigned long int nbits)
 #else
 mpz_rrandomb (x, rstate, nbits)
      mpz_ptr x;
-     gmp_randstate_t rstate;p
+     gmp_randstate_t rstate;
      unsigned long int nbits;
 #endif
 {
