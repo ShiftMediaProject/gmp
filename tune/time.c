@@ -62,6 +62,7 @@ MA 02111-1307, USA.
 
 
 #include <stdio.h>
+#include <stdlib.h> /* for getenv */
 
 #include <sys/types.h>
 #if HAVE_SYS_SYSCTL_H
@@ -249,7 +250,12 @@ speed_cycletime_init (void)
 /* ---------------------------------------------------------------------- */
 #if SPEED_USE_PENTIUM_RDTSC
 /* This method is for Intel pentium and higher processors with an RDTSC
-   instruction.  */
+   instruction.
+
+   mp_limb_t is the declared type for pentium_rdtsc() since sub_ddmmss()
+   needs "unsigned long" not just "unsigned" when in g++.  (g++ thinks a
+   cast unsigned long -> unsigned stops the destinations being lvalues in
+   sub_ddmmss().)  */
 
 const char *speed_time_string 
   = "Time measurements using pentium rdtsc cycle counter.\n";
@@ -260,7 +266,7 @@ int speed_precision = 10000;
 double speed_unittime;
 double speed_cycletime;
 
-static unsigned speed_starttime_save[2];
+static mp_limb_t speed_starttime_save[2];
 static int  speed_time_initialized = 0;
 
 /* Knowing the CPU frequency is mandatory because it's needed to convert
@@ -289,8 +295,9 @@ speed_starttime (void)
 double
 speed_endtime (void)
 {
-  unsigned  endtime[2];
+  mp_limb_t  endtime[2];
   pentium_rdtsc (endtime);
+
   sub_ddmmss (endtime[1], endtime[0], endtime[1], endtime[0], 
               speed_starttime_save[1], speed_starttime_save[0]);
   return (double) (endtime[1] * 65536.0 * 65536.0 + endtime[0])
