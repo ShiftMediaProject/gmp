@@ -90,18 +90,24 @@ struct gmp_asprintf_t {
    Notice the use of ret+2 for the new space in the C99 case.  This ensures
    the next vsnprintf return value will be space-2, which is unambiguously
    successful.  But actually NEED() will realloc to even bigger than that
-   ret+2.  */
+   ret+2.
+
+   vsnprintf might trash it's given ap, so copy it in case we need to use it
+   more than once.  See comments with gmp_snprintf_format.  */
 
 static int
-gmp_asprintf_format (struct gmp_asprintf_t *d, const char *fmt, va_list ap)
+gmp_asprintf_format (struct gmp_asprintf_t *d, const char *fmt,
+                     va_list orig_ap)
 {
-  int     ret;
-  size_t  space = 256;
+  int      ret;
+  va_list  ap;
+  size_t   space = 256;
 
   for (;;)
     {
       NEED (space);
       space = d->alloc - d->size;
+      va_copy (ap, orig_ap);
       ret = vsnprintf (d->buf + d->size, space, fmt, ap);
       if (ret == -1)
         {
