@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-09-18  Torbjorn Granlund  <tege@swox.com>
+
+	* randmt.c (randget_mt): Fix typo.
+
 2002-09-18  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h (_gmp_rand): Avoid evaluating "state" more than once, for
