@@ -3,7 +3,14 @@
 #include "longlong.h"
 
 void
+#if __STDC__
 mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
+#else
+mpz_bin_uiui (r, n, k)
+     mpz_ptr r;
+     unsigned long int n;
+     unsigned long int k;
+#endif
 {
   if (n < k)
     /* This special case is a good idea since the unsigned variable n would

@@ -3,17 +3,28 @@
 #include "longlong.h"
 
 /*
-  k < 0   => bin(n,k) = 0
-
-  k == 0  => bin(n,k) = 1
-
-  1       => bin(n,k) = bin(n-1,k-1)*n/k
+tege> Vilken är definitionen för negativa n?
+teke> Den rekursiva definitionen funkar där också dvs
+teke> 
+teke>   k < 0   => bin(n,k) = 0
+teke> 
+teke>   k == 0  => bin(n,k) = 1
+teke> 
+teke>   1       => bin(n,k) = bin(n-1,k-1)*n/k
+(teke=Torsten Ekedahl)
 */
 
 /* This is a poor implementation.  Look at bin_uiui.c for improvement ideas.  */
 
 void
+#if __STDC__
 mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
+#else
+mpz_bin_ui (r, n, k)
+     mpz_ptr r;
+     mpz_srcptr n;
+     unsigned long int k;
+#endif
 {
   mpz_t ni;
   unsigned long int i;
