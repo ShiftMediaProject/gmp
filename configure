@@ -9641,7 +9641,7 @@ EOF
 cat >>$CONFIG_STATUS <<\EOF
 # If no file are specified by the user, then we need to provide default
 # value.  By we need to know if files were specified by the user.
-ac_need_defaults=true
+ac_need_defaults=:
 while test $# != 0
 do
   case $1 in
@@ -9730,10 +9730,10 @@ cat >>$CONFIG_STATUS <<\EOF
 # If the user did not use the arguments to specify the items to instantiate,
 # then the envvar interface is used.  Set only those that are not.
 if $ac_need_defaults; then
-  CONFIG_FILES=${CONFIG_FILES="$config_files"}
-  CONFIG_HEADERS=${CONFIG_HEADERS="$config_headers"}
-  CONFIG_LINKS=${CONFIG_LINKS="$config_links"}
-  CONFIG_COMMANDS=${CONFIG_COMMANDS="$config_commands"}
+  test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
+  test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
+  test "${CONFIG_LINKS+set}" = set || CONFIG_LINKS=$config_links
+  test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
 fi
 
 # Create a temporary directory, and hook for its removal unless debugging.
