@@ -22,8 +22,18 @@ MA 02111-1307, USA. */
 
 #ifndef __GMP_H__
 
+
+/* We need declarations of std::istream and std::ostream to give the
+   prototypes involving those types.  Compaq C++ has two flavours of
+   iostream, an old pre-standard one and a new standard one.  In the old one
+   (which is the default) <iosfwd> is not available, so use <iostream>
+   instead. */
 #if defined (__cplusplus)
-#include <iosfwd>   /* for istream, ostream */
+#if defined (__DECCXX) && ! defined (__USE_STD_IOSTREAM)
+#include <iostream>
+#else
+#include <iosfwd>
+#endif
 #endif
 
 
