@@ -226,6 +226,11 @@
 <li> Cray: Write <code>mpn_mul_basecase</code> and
      <code>mpn_sqr_basecase</code>.  Same comment applies to this as to the
      same functions for Fujitsu VPP.
+<li> Cray T90: In IEEE environment, use _int_mult_upper(x,y).
+     Documented online in "Migration to CRAY T90 IEEE Floating Point".
+<li> Cray with CFP (all vector systems except T90 IEEE): i24mult no longer
+     works.  It is "outmoded".  What else can we use for reasonable speed?
+     What makes current assembly mulww.s fail?
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
   <pre>
 	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
