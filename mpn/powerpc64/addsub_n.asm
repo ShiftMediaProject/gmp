@@ -26,7 +26,7 @@
 # s2_ptr	r5
 # size		r6
 
-include(`asm-syntax.m4')
+include(`../config.m4')
 
 define(SAVE_BORROW_RESTORE_CARRY,
 	`sldi $1,$1,63
