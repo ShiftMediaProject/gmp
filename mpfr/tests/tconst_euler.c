@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 int
 main (int argc, char *argv[])
@@ -31,6 +32,8 @@ main (int argc, char *argv[])
   mpfr_t gamma, y, z, t;
   unsigned int err, prec, yprec, p0 = 2, p1 = 200;
   mp_rnd_t rnd;
+
+  tests_start_mpfr ();
 
   prec = (argc < 2) ? 53 : atoi(argv[1]);
 
@@ -86,5 +89,6 @@ main (int argc, char *argv[])
   mpfr_clear (z);
   mpfr_clear (t);
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -66,6 +66,8 @@ main (int argc, char *argv[])
   mp_rnd_t rnd;
   mpfr_t x, y, z, t;
 
+  tests_start_mpfr ();
+
   worst_cases ();
 
   mpfr_init (x);
@@ -124,5 +126,6 @@ main (int argc, char *argv[])
   mpfr_clear (z);
   mpfr_clear (t);
 
+  tests_end_mpfr ();
   return 0;
 }

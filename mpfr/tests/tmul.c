@@ -42,11 +42,12 @@ void check_min _PROTO((void));
 
 /* checks that x*y gives the same results in double
    and with mpfr with 53 bits of precision */
-void
+static void
 _check (double x, double y, double res, mp_rnd_t rnd_mode, unsigned int px, 
         unsigned int py, unsigned int pz)
 {
-  double z1, z2; mpfr_t xx, yy, zz;
+  double z2;
+  mpfr_t xx, yy, zz;
 
   mpfr_init2 (xx, px);
   mpfr_init2 (yy, py);
@@ -54,17 +55,11 @@ _check (double x, double y, double res, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_mul(zz, xx, yy, rnd_mode);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd_mode);
-#endif
-  z1 = (res==0.0) ? x*y : res;
   z2 = mpfr_get_d1 (zz);
-  if (z1!=z2 && (z1>=MINNORM || z1<=-MINNORM)) {
-    printf("mpfr_mul ");
-    if (res==0.0) printf("differs from libm.a"); else printf("failed");
-      printf(" for x=%1.20e y=%1.20e with rnd_mode=%s\n", x, y,
+  if (res != z2) {
+    printf("mpfr_mul failed for x=%1.20e y=%1.20e with rnd_mode=%s\n", x, y,
 	     mpfr_print_rnd_mode(rnd_mode));
-    printf("libm.a gives %1.20e, mpfr_mul gives %1.20e\n", z1, z2);
+    printf("correct is %1.20e, mpfr_mul gives %1.20e\n", res, z2);
     if (res!=0.0) exit(1);
   }
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
@@ -85,7 +80,7 @@ check53 (double x, double y, mp_rnd_t rnd_mode, double z1)
   if (z1!=z2 && (!isnan(z1) || !isnan(z2))) {
     printf("mpfr_mul failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
 	   x, y, mpfr_print_rnd_mode(rnd_mode));
-    printf("libm.a gives %1.20e, mpfr_mul gives %1.20e\n", z1, z2);
+    printf("correct result is %1.20e, mpfr_mul gives %1.20e\n", z1, z2);
     exit(1);
   }
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
@@ -110,7 +105,7 @@ check24 (float x, float y, mp_rnd_t rnd_mode, float z1)
     {
       fprintf (stderr, "mpfr_mul failed for x=%1.0f y=%1.0f with prec=24 and"
 	      "rnd=%s\n", x, y, mpfr_print_rnd_mode(rnd_mode));
-      fprintf (stderr, "libm.a gives %.10e, mpfr_mul gives %.10e\n", z1, z2);
+      fprintf (stderr, "correct result is gives %.10e, mpfr_mul gives %.10e\n", z1, z2);
       exit (1);
     }
   mpfr_clear(xx);
@@ -351,12 +346,7 @@ check_min(void)
 int
 main (int argc, char *argv[])
 {
-#ifdef MPFR_HAVE_FESETROUND
-  double x, y, z;
-  int i, prec, rnd_mode;
-
-  mpfr_test_init ();
-#endif
+  tests_start_mpfr ();
 
   check_exact ();
   check_float ();
@@ -391,21 +381,7 @@ main (int argc, char *argv[])
 	49, 3, 2, 0.09375);
   check_max();
   check_min();
-#ifdef MPFR_HAVE_FESETROUND
-  SEED_RAND (time(NULL));
-  prec = (argc<2) ? 53 : atoi(argv[1]);
-  rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
-  for (i=0;i<1000000;) {
-    x = drand();
-    y = drand();
-    z = x*y; if (z<0) z=-z;
-    if (z<1e+308 && z>1e-308) /* don't test overflow/underflow for now */
-      { i++;
-      check(x, y, (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode, 
-	    prec, prec, prec, 0.0);
-      }
-  } 
-#endif
 
+  tests_end_mpfr ();
   return 0;
 }

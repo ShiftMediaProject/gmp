@@ -48,16 +48,28 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
   fp = MPFR_MANT(f);
   fn = 1 + (MPFR_PREC(f) - 1) / BITS_PER_MP_LIMB;
   zn = ABS(SIZ(z));
+  MPFR_ASSERTN(zn >= 1);
   dif = zn - fn;
   zp = PTR(z);
   count_leading_zeros(k, zp[zn-1]);
 
+  if (zn > MPFR_EMAX_MAX / BITS_PER_MP_LIMB + 1)
+    return mpfr_set_overflow(f, rnd_mode, sign_z);
+  /* because zn >= __gmpfr_emax / BITS_PER_MP_LIMB + 2
+     and zn * BITS_PER_MP_LIMB >= __gmpfr_emax + BITS_PER_MP_LIMB + 1
+     and exp = zn * BITS_PER_MP_LIMB - k > __gmpfr_emax */
+
+  /* now zn <= MPFR_EMAX_MAX / BITS_PER_MP_LIMB + 1
+     thus zn * BITS_PER_MP_LIMB <= MPFR_EMAX_MAX + BITS_PER_MP_LIMB
+     and exp = zn * BITS_PER_MP_LIMB - k
+             <= MPFR_EMAX_MAX + BITS_PER_MP_LIMB */
   exp = (mp_prec_t) zn * BITS_PER_MP_LIMB - k;
   /* The exponent will be exp or exp + 1 (due to rounding) */
-  if (exp > __mpfr_emax)
+  if (exp > __gmpfr_emax)
     return mpfr_set_overflow(f, rnd_mode, sign_z);
-  if (exp + 1 < __mpfr_emin)
-    return mpfr_set_underflow(f, rnd_mode, sign_z);
+  if (exp + 1 < __gmpfr_emin)
+    return mpfr_set_underflow(f, rnd_mode == GMP_RNDN ? GMP_RNDZ : rnd_mode,
+                              sign_z);
 
   if (MPFR_SIGN(f) * sign_z < 0)
     MPFR_CHANGE_SIGN(f);
@@ -65,7 +77,7 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
   if (dif >= 0)
     {
       mp_limb_t cc;
-      int sh;
+      int sh, to0;
 
       /* number has to be truncated */
       if (k != 0)
@@ -81,9 +93,9 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
       cc = fp[0] & ((MP_LIMB_T_ONE << sh) - 1);
       fp[0] &= ~cc;
 
-      if ((rnd_mode == GMP_RNDU && sign_z < 0) ||
-          (rnd_mode == GMP_RNDD && sign_z > 0))
-        rnd_mode = GMP_RNDZ;
+      to0 = rnd_mode == GMP_RNDZ
+        || (rnd_mode == GMP_RNDU && sign_z < 0)
+        || (rnd_mode == GMP_RNDD && sign_z > 0);
 
       /* remaining bits... */
       if (rnd_mode == GMP_RNDN)
@@ -96,7 +108,7 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
 
               rb = MP_LIMB_T_ONE << (sh - 1);
               if ((cc & rb) == 0)
-                rnd_mode = GMP_RNDZ; /* rounding bit is 0 */
+                to0 = 1; /* rounding bit is 0 */
               else
                 cc &= ~rb;
               if (cc == 0 && dif > 0)
@@ -107,8 +119,8 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
               MPFR_ASSERTN(cc == 0);
               if (dif > 0)
                 cc = zp[--dif] << k;
-              if ((cc & GMP_LIMB_HIGHBIT) == 0)
-                rnd_mode = GMP_RNDZ; /* rounding bit is 0 */
+              if ((cc & MPFR_LIMB_HIGHBIT) == 0)
+                to0 = 1; /* rounding bit is 0 */
               else
                 cc <<= 1;
             }
@@ -116,11 +128,11 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
           while (cc == 0 && dif > 0)
             cc = zp[--dif];
 
-          if (rnd_mode == GMP_RNDN && cc == 0) /* even rounding */
+          if (!to0 && cc == 0) /* even rounding */
             {
               cc = 1;
               if ((fp[0] & (MP_LIMB_T_ONE << sh)) == 0)
-                rnd_mode = GMP_RNDZ;
+                to0 = 1;
             }
         } /* rnd_mode == GMP_RNDN */
       else if (cc == 0 && dif > 0)
@@ -132,18 +144,18 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
 
       if (cc == 0)
         inex = 0;
-      else if (rnd_mode == GMP_RNDZ)
+      else if (to0)
         inex = -sign_z;
       else
         {
           if (mpn_add_1(fp, fp, fn, MP_LIMB_T_ONE << sh))
             {
-              if (exp == __mpfr_emax)
+              if (exp == __gmpfr_emax)
                 return mpfr_set_overflow(f, rnd_mode, sign_z);
               else
                 {
                   exp++;
-                  fp[fn-1] = GMP_LIMB_HIGHBIT;
+                  fp[fn-1] = MPFR_LIMB_HIGHBIT;
                 }
             }
           inex = sign_z;
@@ -160,8 +172,12 @@ mpfr_set_z (mpfr_ptr f, mpz_srcptr z, mp_rnd_t rnd_mode)
       inex = 0; /* result is exact */
     }
 
-  if (exp < __mpfr_emin)
-    return mpfr_set_underflow(f, rnd_mode, sign_z);
+  if (exp < __gmpfr_emin)
+    {
+      if (rnd_mode == GMP_RNDN && inex == 0 && mpfr_powerof2_raw (f))
+        rnd_mode = GMP_RNDZ;
+      return mpfr_set_underflow(f, rnd_mode, sign_z);
+    }
   MPFR_EXP(f) = exp;
   MPFR_RET(inex);
 }

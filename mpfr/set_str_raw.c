@@ -1,6 +1,6 @@
 /* mpfr_set_str_raw -- set a floating-point number from a binary string
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -54,7 +54,7 @@ mpfr_set_str_raw (mpfr_ptr x, char *str)
   if (*str == 'N')
     {
       MPFR_SET_NAN(x);
-      __mpfr_flags |= MPFR_FLAGS_NAN;
+      __gmpfr_flags |= MPFR_FLAGS_NAN;
       return;
     }
 

@@ -5,20 +5,111 @@ Documentation:
 Installation:
 
 - from Kevin Ryde <user42@zip.com.au>:
-   Determine the exp2/exp3 thresholds using tune/tuneup.c.
+  Determine the exp2/exp3 thresholds using tune/tuneup.c.
+  A start has been made on this, but there's a noticable step-effect
+  in the times making them cross back and forward between which is
+  faster.  Hopefully this will go away with improvements to the exp
+  code.
+- install config.h gmp-impl.h gmp-mparam.h longlong.h only in the mpfr
+  build directory ["Nelson H. F. Beebe" <beebe@math.utah.edu>]
+  Alternately, insist on having a gmp build tree for the mpfr build to
+  access.
 
-- problems when mpfr uses a different compiler (gcc) than gmp (for example
-	cc under Solaris 2.7).
+Changes in existing functions:
+
+- allow the ISO C "P" exponent separator for base 16 in input functions
+- invert 2nd and 3rd arguments of mpfr_round_prec (to be coherent with
+	mpfr_set_prec)
+- merge mpfr_inp_str and mpfr_set_str (cf glibc sscanf/fscanf)
+	[mpfr_set_str -> with final '\0',
+	 mpfr_strtofr -> without final '\0', returns the number of characters
+	 read (or name mpfr_strtod suggested by Kevin, see below)]
+ Suggestion from Kevin:
+ - Function: char * mpf_strto (mpz_t ROP, const char *STR)
+     Read a floating point number from a string.  If successful the
+     result is stored in ROP and the return value points to the
+     character after those parsed.  If STR doesn't start with a valid
+     number then the return value is `NULL' and the value in ROP is
+     undefined.
+
+     Parsing follows the standard C `strtod' function (*note Parsing of
+     Integers: (libc)Parsing of Integers.).  This means optional
+     leading whitespace, an optional `+' or `-', mantissa digits, and an
+     optional exponent consisting of an `e' or `E', an optional sign,
+     and digits.  A hex mantissa can be given with a leading `0x' or
+     `0X', in which case `p' or `P' introduces the exponent (still in
+     decimal).  In addition `inf' or `infinity' with an optional sign,
+     or `nan' or `nan(..chars..)', all non case significant, can be
+     given.
+
+     There must be at least one digit in the mantissa for the number to
+     be valid.  If an exponent has no digits it's ignored and parsing
+     stops after the mantissa.  If an `0x' or `0X' is not followed by
+     hexadecimal digits, parsing stops after the `0'.
+
+     Note that in the hex format the exponent represents a power of 2,
+     ie. the result is MANTISSA*2^EXPONENT.  This is as per the `%a'
+     format in `printf' (*note Formatted Output Strings::).
+
+     `mpf_t' does not currently support NaNs or infinities.  The value
+     stored to ROP for these is undefined.
+
+     The decimal point character, or string, expected is taken from the
+     current locale on systems providing `localeconv'. [end of suggestion]
+- remove mpfr_set_machine_rnd_mode from the documentation,
+	and move it to the test directory
+- in mpfr_set_str, make string comparisons case insensitive and use @Inf@
+  and @NaN@ instead of the possibly ambiguous Inf and NaN in bases > 10.
+  Modify the other functions to make them consistent with this choice.
+  Possibly accept other strings, like those accepted by strtod.
+- implement ternary flag for mpfr_agm: result is exact when u=v, or u=0,
+  or v=0.
 
 New functions to implement:
 
+- functions in mpf and not in mpfr (for compatibility)
+- modf (to extract integer and fractional parts), suggested by
+	Dmitry Antipov <dmitry.antipov@mail.ru> Thu, 13 Jun 2002
+- mpz_set_fr (to set a mpz from a mpfr, with a rounding mode)
+	-> cf code in leibniz:mpfr/mpz_set_fr.c
 - those from LIA: missing secant, cosecant, cotangent (trigo/hyperbolic)
-- nextafter/nextforward : X + epsilon if X < Y, X - epsilon if X > Y
-- nextabove/nextbelow ?
+- atan2
+- mpfr_set_f (MPF -> float) or mpfr_strtof, mpfr_set_ld or mpfr_strtold
+	(idem for mpfr_get_*)
+- implement accurate summation algorithms from Demmel
+	(http://www.cs.berkeley.edu/~demmel/AccurateSummation.ps)
+- mpfr_cmp_d (for Gerardo)
 
 Rounding:
 
+- mpfr_pow isn't completely specified (concerning signed zeros).
+
 Efficiency:
+
+- implement range reduction in sin/cos/tan for large arguments
+	(currently too slow for 2^1024)
+- mpfr_asin/acos are too slow for small values (2^(-1021) for example)
+- idem for mpfr_atanh (2^(-1021) for example)
+- improve generic.c to work for number of terms <> 2^k
+- rewrite mpfr_greater_p...
+- combine tests for singular values [from Torbjorn Granlund]:
+    For example, mpfr_add could have this structure:
+    if (MPFR_SINGULAR (a))
+      ...
+    else if (MPFR_SINGULAR (b)
+      ...
+    else
+      plain operands
+- mpf_t uses a scheme where the number of limbs actually present can
+  be less than the selected precision, thereby allowing low precision
+  values (for instance small integers) to be stored and manipulated in
+  an mpf_t efficiently.
+
+  Perhaps mpfr should get something similar, especially if looking to
+  replace mpf with mpfr, though it'd be a major change.  Alternately
+  perhaps those mpfr routines like mpfr_mul where optimizations are
+  possible through stripping low zero bits or limbs could check for
+  that (this would be less efficient but easier).
 
 Miscellaneous:
 
@@ -27,6 +118,7 @@ Miscellaneous:
 - add mpfr_get_ld for 'long double' [asked by J-C Fauge`re] ?
   (exists since K&R, but has not necessarily a greater precision than double)
   cf http://anubis.dkuug.dk/jtc1/sc22/wg14/www/docs/n869/
+	[cf above]
 
 - from Kevin Ryde <user42@zip.com.au>:
    Also for pi.c, a pre-calculated compiled-in pi to a few thousand
@@ -37,13 +129,78 @@ Miscellaneous:
 - problem when reading a float followed by a character, for example 1.5*x
 	[from Fabrice.Rouillier@loria.fr, Mon, 04 Dec 2000]
 
-- rewrite mpfr_get_str and mpfr_set_str to use mpn_get_str and mpn_set_str.
+- rewrite mpfr_set_str to use mpn_set_str.
 	(Torbjorn Granlund <tege@swox.com>, 30 Jan 2002)
 
 - mpfr_pow isn't completely specified (concerning signed zeros).
 
-- rename mpfr_isinteger to mpfr_integer_p.
+- rename (and rewrite) mpfr_isinteger to mpfr_integer_p.
 	(Kevin Ryde, 05 Mar 2002)
 
-- some comparison functions aren't completely specified (concerning NaN).
-  Add new comparison functions (eq, ne, lt, gt, le, ge)?
+- use GMP rand/srand functions instead for SEED_RAND (time(NULL)). Kevin:
+  GMP tests/misc.c has a scheme to print the seed chosen and allow for a
+  re-run with a given seed.  If you moved towards _gmp_rand and friends
+  at some stage you could probably use that scheme almost unchanged.
+  An advantage of _gmp_rand of course is that it's the same on all
+  systems, apart from limb size, so you're not at the mercy of random or
+  lrand48, etc.
+
+- randomized tests: do like GMP (see misc.c), but using MPFR_CHECK_RANDOMIZE
+
+- add tests for nextabove/nextbelow/nexttoward.
+
+- documentation and tests for:
+                         =     <     >     unordered
+mpfr_greater_p           0     0     1     0
+mpfr_greaterequal_p      1     0     1     0
+mpfr_less_p              0     1     0     0
+mpfr_lessequal_p         1     1     0     0
+mpfr_lessgreater_p       0     1     1     0
+mpfr_equal_p             1     0     0     0
+mpfr_unordered_p         0     0     0     1
+
+
+Reentrancy / Thread-Safety:
+
+- Temporary changes to emin/emax are not safe (all uses of
+  mpfr_save_emin_emax, eg. mpfr_set_q).
+
+- Global variables for caching in mpfr_const_log2 and mpfr_const_pi
+  are not safe.
+
+
+Portability:
+
+- MINGW has neither random() nor rand48(), making the setups in
+  mpfr-test.h fail.  It does have rand(), returning just 15 bits.
+  Switching to gmp_randstate_t etc would be better.
+
+- _mpfr_ceil_log2 is IEEE specific.  Many callers only seem to want
+  this operation on an integer, which could be done with
+  count_leading_zeros from longlong.h.
+
+- test set_ld for special values (+/- 0, LDBL_MAX, LDBL_MIN...)
+
+
+Possible future MPF / MPFR integration:
+
+- mpf routines can become "extern inline"s calling mpfr equivalents,
+  probably just with GMP_RNDZ hard coded, since that's what mpf has
+  always done.
+
+- Want to preserve the mpf_t size, for binary compatibility.  Breaking
+  compatibility would cause lots of pain and potential subtle breakage
+  for users.  If the fields in mpf_t are not enough then extra space
+  under _mp_d can be used.
+
+- mpf_sgn has been a macro directly accessing the _mp_size field, so a
+  compatible representation would be required.  At worst that field
+  could be maintained for mpf_sgn, but not otherwise used internally.
+
+  mpf_sgn should probably throw an exception if called with NaN, since
+  there's no useful value it can return, so it might want to become a
+  function.  Inlined copies in existing binaries would hopefully never
+  see a NaN, if they only do old-style mpf things.
+
+- mpfr routines replacing mpf routines must be reentrant and thread
+  safe, since of course that's what has been documented for mpf.

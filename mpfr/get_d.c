@@ -116,6 +116,9 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
      subnormal is 2^(-1074)=0.1e-1073 */
   if (e < -1073)
     {
+      /* Note: Avoid using a constant expression DBL_MIN * DBL_EPSILON
+         as this gives 0 instead of the correct result with gcc on some
+         Alpha machines. */
       d = negative ?
         (rnd_mode == GMP_RNDD ||
          (rnd_mode == GMP_RNDN && mpfr_cmp_si_2exp(src, -1, -1075) < 0)
@@ -190,5 +193,5 @@ double
 mpfr_get_d1 (mpfr_srcptr src)
 {
   return mpfr_get_d3 (src, MPFR_IS_FP(src) && MPFR_NOTZERO(src) ?
-                      MPFR_EXP(src) : 0, __gmp_default_rounding_mode);
+                      MPFR_EXP(src) : 0, __gmpfr_default_rounding_mode);
 }

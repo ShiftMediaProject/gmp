@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 typedef void (*fct_t)();
 fct_t testfunc;
@@ -552,6 +553,8 @@ test3a (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 int
 main (void)
 {
+  tests_start_mpfr ();
+
   testfunc = (fct_t) mpfr_add; test3 ("mpfr_add", 53, GMP_RNDN);
   testfunc = (fct_t) mpfr_add_ui; test2ui ("mpfr_add_ui", 53, GMP_RNDN);
   testfunc = (fct_t) mpfr_agm; test3 ("mpfr_agm", 53, GMP_RNDN);
@@ -591,5 +594,7 @@ main (void)
   testfunc = (fct_t) mpfr_log2; test2 ("mpfr_log2", 53, GMP_RNDN);
   testfunc = (fct_t) mpfr_pow; test3 ("mpfr_pow", 53, GMP_RNDN);
   testfunc = (fct_t) mpfr_fma; test4 ("mpfr_fma", 53, GMP_RNDN);
+
+  tests_end_mpfr ();
   return 0;
 }

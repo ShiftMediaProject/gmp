@@ -43,13 +43,9 @@ int maxu=0;
 int
 check3 (double d, mp_rnd_t rnd, double e)
 {
-  mpfr_t x, y; double f; int u=0, ck=0;
+  mpfr_t x, y; double f; int u=0;
 
   mpfr_init2(x, 53); mpfr_init2(y, 53);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd);
-#endif
-  if (e==0.0) e = exp(d); else ck=1; /* really check */
   mpfr_set_d(x, d, rnd); 
   mpfr_exp(y, x, rnd); 
   f = mpfr_get_d1 (y);
@@ -60,18 +56,10 @@ check3 (double d, mp_rnd_t rnd, double e)
       u=-u;
     }
     if (u!=0) {
-      if (ck) {
-	printf("mpfr_exp failed for x=%1.20e, rnd=%s\n", d,
-	       mpfr_print_rnd_mode(rnd));
-	printf("expected result is %1.20e, got %1.20e, dif=%d ulp\n",e,f,u);
-	exit(1);
-      }
-      else if (u>maxu) {
-	maxu=u;
-	printf("mpfr_exp differs from libm.a for x=%1.20e, rnd=%s\n",d,
-	       mpfr_print_rnd_mode(rnd));
-	printf("libm.a gave %1.20e, mpfr_exp got %1.20e, dif=%d ulp\n",e,f,u);
-      }
+      printf ("mpfr_exp failed for x=%1.20e, rnd=%s\n", d,
+             mpfr_print_rnd_mode(rnd));
+      printf ("expected result is %1.20e, got %1.20e, dif=%d ulp\n",e,f,u);
+      exit (1);
     }
   }
   mpfr_clear(x); mpfr_clear(y);
@@ -216,11 +204,9 @@ compare_exp2_exp3 (int n)
 int
 main (int argc, char *argv[])
 {
-#ifdef MPFR_HAVE_FESETROUND
-  int i, N, s=0, e, maxe=0;
-  double lo, hi;
-#endif
   double d;
+
+  tests_start_mpfr ();
 
   test_generic (2, 100, 100);
 
@@ -272,22 +258,7 @@ main (int argc, char *argv[])
   check3(5.30015757134837031117e+02, GMP_RNDD, 1.5237672861171573939e230);
   check3(5.16239362447650933063e+02, GMP_RNDZ, 1.5845518406744492105e224);
   check3(6.00812634798592370977e-01, GMP_RNDN, 1.823600119339019443);
-#ifdef MPFR_HAVE_FESETROUND
-  SEED_RAND (time(NULL));
-  N = (argc==1) ? 0 : atoi(argv[1]);
-  lo = (argc>=3) ? atof(argv[2]) : -7.083964185e2;
-  hi = (argc>=4) ? atof(argv[3]) : 7.097827129e2;
-  for (i=0;i<N;i++) {
-    /* select d such that exp(d) can be represented as a normalized
-       machine double-precision number, 
-       i.e. 2^(-1022) <= exp(d) <= 2^(1023)*(2-2^(-52)) */
-    d = lo + (hi-lo)*DBL_RAND();
-    e = check(d, LONG_RAND() % 4);
-    s += e;
-    if (e>maxe) maxe=e;
-  }
-  if (N) printf("mean error=%1.2e max error=%d\n", (double)s/(double)N,maxe);
-#endif
 
+  tests_end_mpfr ();
   return 0;
 }

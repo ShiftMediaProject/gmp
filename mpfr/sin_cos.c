@@ -48,7 +48,7 @@ mpfr_sin_cos (mpfr_ptr y, mpfr_ptr z, mpfr_srcptr x, mp_rnd_t rnd_mode)
     }
 
   prec = MAX(MPFR_PREC(y), MPFR_PREC(z));
-  m = prec + _mpfr_ceil_log2 ((double) prec) + ABS(MPFR_EXP(x)) + 13;
+  m = prec + __gmpfr_ceil_log2 ((double) prec) + ABS(MPFR_EXP(x)) + 13;
 
   mpfr_init2 (c, m);
   mpfr_init2 (k, m);
@@ -85,7 +85,7 @@ mpfr_sin_cos (mpfr_ptr y, mpfr_ptr z, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
       if (ok == 0)
 	{
-	  m += _mpfr_ceil_log2 ((double) m);
+	  m += __gmpfr_ceil_log2 ((double) m);
 	  mpfr_set_prec (c, m);
 	}
     }

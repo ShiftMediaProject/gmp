@@ -60,6 +60,8 @@ main(int argc, char *argv[])
   unsigned int prec[10] = {14, 15, 19, 22, 23, 24, 25, 40, 41, 52};
   unsigned int prec2[10] = {4, 5, 6, 19, 70, 95, 100, 106, 107, 108};
 
+  tests_start_mpfr ();
+
 #ifdef HAVE_INFS
   check53 (DBL_NAN, DBL_NAN, GMP_RNDN);
   check53 (DBL_POS_INF, DBL_NAN, GMP_RNDN);
@@ -112,5 +114,6 @@ main(int argc, char *argv[])
 
   test_generic (2, 100, 100);
 
+  tests_end_mpfr ();
   return 0;
 }

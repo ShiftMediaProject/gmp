@@ -1,6 +1,6 @@
 /* Save/restore the minimum and maximum exponents.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -35,11 +35,11 @@ mpfr_save_emin_emax (void)
 {
   if (save_ctr++ == 0)
     {
-      saved_flags = __mpfr_flags;
-      saved_emin = __mpfr_emin;
-      saved_emax = __mpfr_emax;
-      __mpfr_emin = MPFR_EMIN_MIN;
-      __mpfr_emax = MPFR_EMAX_MAX;
+      saved_flags = __gmpfr_flags;
+      saved_emin = __gmpfr_emin;
+      saved_emax = __gmpfr_emax;
+      __gmpfr_emin = MPFR_EMIN_MIN;
+      __gmpfr_emax = MPFR_EMAX_MAX;
     }
   else if (save_ctr == 0)
     {
@@ -55,8 +55,8 @@ mpfr_restore_emin_emax (void)
 {
   if (--save_ctr == 0)
     {
-      __mpfr_flags = saved_flags;
-      __mpfr_emin = saved_emin;
-      __mpfr_emax = saved_emax;
+      __gmpfr_flags |= saved_flags;
+      __gmpfr_emin = saved_emin;
+      __gmpfr_emax = saved_emax;
     }
 }

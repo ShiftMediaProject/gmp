@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 #define TEST_FUNCTION mpfr_fac_ui
 
@@ -36,6 +37,8 @@ main (int argc, char *argv[])
   mp_rnd_t rnd;
   mpfr_t x, y, z, t;
   int inexact;
+
+  tests_start_mpfr ();
 
   mpfr_init (x);
   mpfr_init (y);
@@ -114,5 +117,6 @@ main (int argc, char *argv[])
   mpfr_clear (z);
   mpfr_clear (t);
 
+  tests_end_mpfr ();
   return 0;
 }

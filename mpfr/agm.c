@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void 
+int
 mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
 {
   int s, go_on, compare;
@@ -38,16 +38,16 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
   if (MPFR_IS_NAN(op1) || MPFR_IS_NAN(op2))
     {
       MPFR_SET_NAN(r);
-      __mpfr_flags |= MPFR_FLAGS_NAN;
-      return;
+      __gmpfr_flags |= MPFR_FLAGS_NAN;
+      MPFR_RET_NAN;
     }
 
   /* If a or b is negative (including -Infinity), the result is NaN */
   if ((MPFR_SIGN(op1) < 0) || (MPFR_SIGN(op2) < 0))
     {
       MPFR_SET_NAN(r);
-      __mpfr_flags |= MPFR_FLAGS_NAN;
-      return;
+      __gmpfr_flags |= MPFR_FLAGS_NAN;
+      MPFR_RET_NAN;
     }
 
   MPFR_CLEAR_NAN(r);
@@ -57,7 +57,7 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
     {
       MPFR_SET_INF(r);
       MPFR_SET_SAME_SIGN(r, op1);
-      return;
+      MPFR_RET(0); /* exact */
     }
 
   MPFR_CLEAR_INF(r);
@@ -66,7 +66,7 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
   if ((MPFR_NOTZERO(op1) && MPFR_NOTZERO(op2)) == 0)
     {
       MPFR_SET_ZERO(r);
-      return;
+      MPFR_RET(0); /* exact */
     }
 
  /* precision of the following calculus */
@@ -98,7 +98,7 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
     {
       mpfr_set (r, op1, rnd_mode);
       TMP_FREE(marker);
-      return;
+      MPFR_RET(0); /* exact */
     }
   else
     {
@@ -118,13 +118,13 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
     int err, can_round;
     mp_prec_t eq;
     
-    err=1 + (int) ((3.0/2.0*(double)_mpfr_ceil_log2((double)p)+1.0)*_mpfr_ceil_exp2(-(double)p)
-	     +3.0*_mpfr_ceil_exp2(-2.0*(double)p*uo/(vo-uo)));
+    err=1 + (int) ((3.0/2.0*(double)__gmpfr_ceil_log2((double)p)+1.0)*__gmpfr_ceil_exp2(-(double)p)
+	     +3.0*__gmpfr_ceil_exp2(-2.0*(double)p*uo/(vo-uo)));
     if(p-err-3<=q) {
       p=q+err+4;
       err= 1 + 
-	(int) ((3.0/2.0*_mpfr_ceil_log2((double)p)+1.0)*_mpfr_ceil_exp2(-(double)p)
-	       +3.0*_mpfr_ceil_exp2(-2.0*(double)p*uo/(vo-uo)));
+	(int) ((3.0/2.0*__gmpfr_ceil_log2((double)p)+1.0)*__gmpfr_ceil_exp2(-(double)p)
+	       +3.0*__gmpfr_ceil_exp2(-2.0*(double)p*uo/(vo-uo)));
     }
 
     /* Calculus of un and vn */
@@ -167,5 +167,11 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
   /* Let's clean */
   TMP_FREE(marker); 
 
-  return ;
+  return 1; /* agm(u,v) can be exact for u, v rational only for u=v.
+               Proof (due to Nicolas Brisebarre): it suffices to consider
+               u=1 and v<1. Then 1/AGM(1,v) = 2F1(1/2,1/2,1;1-v^2),
+               and a theorem due to G.V. Chudnovsky states that for x a
+               non-zero algebraic number with |x|<1, then 
+               2F1(1/2,1/2,1;x) and 2F1(-1/2,1/2,1;x) are algebraically
+               independent over Q. */
 }

@@ -1,6 +1,6 @@
 /* mpfr_sub1 -- internal function to perform a "real" subtraction
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 Contributed by the Spaces project, INRIA Lorraine.
 
 This file is part of the MPFR Library.
@@ -207,7 +207,8 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
 #endif
 
   /* now perform rounding */
-  sh = an * BITS_PER_MP_LIMB - MPFR_PREC(a); /* last unused bits from a */
+  sh = (mp_prec_t) an * BITS_PER_MP_LIMB - MPFR_PREC(a);
+  /* last unused bits from a */
   carry = ap[0] & ((MP_LIMB_T_ONE << sh) - MP_LIMB_T_ONE);
   ap[0] -= carry;
 
@@ -268,7 +269,7 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
 
       if ((rnd_mode == GMP_RNDN) && !k && sh == 0)
 	{
-	  mp_limb_t half = GMP_LIMB_HIGHBIT;
+	  mp_limb_t half = MPFR_LIMB_HIGHBIT;
 
 	  is_exact = (bb == cc);
 
@@ -371,7 +372,7 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
  add_one_ulp: /* add one unit in last place to a */
   if (mpn_add_1 (ap, ap, an, MP_LIMB_T_ONE << sh)) /* result is a power of 2 */
     {
-      ap[an-1] = GMP_LIMB_HIGHBIT;
+      ap[an-1] = MPFR_LIMB_HIGHBIT;
       add_exp = 1;
     }
   inexact = 1; /* result larger than exact value */
@@ -379,7 +380,7 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
  truncate:
   if ((ap[an-1] >> (BITS_PER_MP_LIMB - 1)) == 0) /* case 1 - epsilon */
     {
-      ap[an-1] = GMP_LIMB_HIGHBIT;
+      ap[an-1] = MPFR_LIMB_HIGHBIT;
       add_exp = 1;
     }
 
@@ -389,24 +390,27 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
      exponent range */
   if (cancel)
     {
-      mp_exp_t exp_b;
+      mp_exp_t exp_a;
 
       cancel -= add_exp; /* still valid as unsigned long */
-      exp_b = MPFR_EXP(b); /* save it in case a equals b */
-      MPFR_EXP(a) = MPFR_EXP(b) - cancel;
-      if ((MPFR_EXP(a) > exp_b) /* underflow in type mp_exp_t */
-	  || (MPFR_EXP(a) < __mpfr_emin))
-	{
-	  TMP_FREE(marker); 
-	  return mpfr_set_underflow (a, rnd_mode, MPFR_SIGN(a));
-	}
+      exp_a = MPFR_EXP(b) - cancel;
+      if (exp_a < __gmpfr_emin)
+        {
+          TMP_FREE(marker);
+          if (rnd_mode == GMP_RNDN &&
+              (exp_a < __gmpfr_emin - 1 ||
+               (inexact >= 0 && mpfr_powerof2_raw (a))))
+            rnd_mode = GMP_RNDZ;
+          return mpfr_set_underflow (a, rnd_mode, MPFR_SIGN(a));
+        }
+      MPFR_EXP(a) = exp_a;
     }
   else /* cancel = 0: MPFR_EXP(a) <- MPFR_EXP(b) + add_exp */
     {
       /* in case cancel = 0, add_exp can still be 1, in case b is just
 	 below a power of two, c is very small, prec(a) < prec(b),
 	 and rnd=away or nearest */
-      if (add_exp && MPFR_EXP(b) == __mpfr_emax)
+      if (add_exp && MPFR_EXP(b) == __gmpfr_emax)
 	{
 	  TMP_FREE(marker);
 	  return mpfr_set_overflow (a, rnd_mode, MPFR_SIGN(a));

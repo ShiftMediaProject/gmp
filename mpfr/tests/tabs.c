@@ -21,6 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
@@ -35,6 +36,8 @@ check_inexact (void)
   mpfr_t x, y, absx;
   mp_rnd_t rnd;
   int inexact, cmp;
+
+  tests_start_mpfr ();
 
   mpfr_init (x);
   mpfr_init (y);
@@ -130,7 +133,7 @@ main (int argc, char *argv[])
 #ifdef HAVE_DENORMS
        while (0);
 #else
-       while (absd <= 2.2e-307);
+       while (absd < DBL_MIN);
 #endif
        rnd = LONG_RAND() % 4;
        mpfr_set_d (x, d, 0);
@@ -148,5 +151,6 @@ main (int argc, char *argv[])
 
    mpfr_clear(x);
 
+   tests_end_mpfr ();
    return 0;
 }

@@ -25,6 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 void teq _PROTO ((mpfr_t));
 
@@ -66,6 +67,8 @@ main (void)
 {
   int j; mpfr_t x; 
 
+  tests_start_mpfr ();
+
   mpfr_init2 (x, 1000); 
 
   for (j=0;j<1000;j++) {
@@ -74,5 +77,6 @@ main (void)
   }
   mpfr_clear (x); 
 
+  tests_end_mpfr ();
   return 0;
 }

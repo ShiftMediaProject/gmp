@@ -54,6 +54,7 @@ mpfr_ui_pow_ui (mpfr_ptr x, unsigned long int y, unsigned long int n,
       for (i = 0, m = n; m; i++, m >>= 1)
         prec++;
       mpfr_set_prec (res, prec);
+      mpfr_clear_flags ();
       inexact = mpfr_set_ui (res, y, GMP_RNDU);
       err = 1;
       /* now 2^(i-1) <= n < 2^i */
@@ -78,5 +79,6 @@ mpfr_ui_pow_ui (mpfr_ptr x, unsigned long int y, unsigned long int n,
 
   mpfr_clear (res);
 
-  MPFR_RESTORE_RET(inexact, x, rnd);
+  mpfr_restore_emin_emax ();
+  return mpfr_check_range (x, inexact, rnd);
 }

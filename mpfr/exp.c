@@ -69,15 +69,15 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   expx = MPFR_EXP(x);
   precy = MPFR_PREC(y);
 
-  /* result is +Inf when exp(x) >= 2^(__mpfr_emax), i.e.
-     x >= __mpfr_emax * log(2) */
+  /* result is +Inf when exp(x) >= 2^(__gmpfr_emax), i.e.
+     x >= __gmpfr_emax * log(2) */
   d = mpfr_get_d1 (x);
-  if (d >= (double) __mpfr_emax * LOG2)
+  if (d >= (double) __gmpfr_emax * LOG2)
     return mpfr_set_overflow(y, rnd_mode, 1);
 
-  /* result is 0 when exp(x) < 1/2*2^(__mpfr_emin), i.e.
-     x < (__mpfr_emin-1) * LOG2 */
-  if (d < ((double) __mpfr_emin - 1.0) * LOG2)
+  /* result is 0 when exp(x) < 1/2*2^(__gmpfr_emin), i.e.
+     x < (__gmpfr_emin-1) * LOG2 */
+  if (d < ((double) __gmpfr_emin - 1.0) * LOG2)
     return mpfr_set_underflow(y, rnd_mode, 1);
 
   /* if x < 2^(-precy), then exp(x) i.e. gives 1 +/- 1 ulp(1) */
@@ -85,17 +85,24 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     {
       int signx = MPFR_SIGN(x);
 
-      mpfr_set_ui (y, 1, rnd_mode);
+      if (signx < 0 && (rnd_mode == GMP_RNDD || rnd_mode == GMP_RNDZ))
+        {
+          MPFR_CLEAR_FLAGS(y);
+          MPFR_SET_POS(y);
+          mpfr_setmax (y, 0);  /* y = 1 - epsilon */
+          return -1;
+        }
+      mpfr_setmin (y, 1);  /* y = 1 */
       if (signx > 0 && rnd_mode == GMP_RNDU)
-	{
-	  mpfr_add_one_ulp (y, rnd_mode);
-	  return 1;
-	}
-      else if (signx < 0 && (rnd_mode == GMP_RNDD || rnd_mode == GMP_RNDZ))
-	{
-	  mpfr_sub_one_ulp (y, rnd_mode);
-	  return -1;
-	}
+        {
+          mp_size_t yn;
+          int sh;
+
+          yn = 1 + (MPFR_PREC(y) - 1) / BITS_PER_MP_LIMB;
+          sh = (mp_prec_t) yn * BITS_PER_MP_LIMB - MPFR_PREC(y);
+          MPFR_MANT(y)[0] += MP_LIMB_T_ONE << sh;
+          return 1;
+        }
       return -signx;
     }
 

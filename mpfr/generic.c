@@ -1,6 +1,6 @@
 /* generic file for evaluation of hypergeometric series using binary splitting
 
-Copyright 1999, 2000, 2001 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 

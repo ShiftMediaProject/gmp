@@ -35,6 +35,8 @@ main (int argc, char *argv[])
   unsigned long zl, dl, N;
   int inex;
   
+  tests_start_mpfr ();
+
   mpfr_init2(x, 100);
 
   SEED_RAND (time(NULL));
@@ -159,5 +161,6 @@ main (int argc, char *argv[])
 
   mpfr_clear(x); 
 
+  tests_end_mpfr ();
   return 0;
 }

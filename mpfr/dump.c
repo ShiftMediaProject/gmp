@@ -48,10 +48,10 @@ mpfr_dump (mpfr_srcptr u, mp_rnd_t rnd_mode)
       return; 
     }
 
-  str = mpfr_get_str (NULL, &exp, 10, 0, u, rnd_mode);
+  str = mpfr_get_str (NULL, &exp, 2, MPFR_PREC(u), u, rnd_mode);
   if (str[0] == '-')
     printf ("-0.%se%ld\n", str + 1, exp);
   else
     printf ("0.%se%ld\n", str, exp);
-  (*__gmp_free_func) (str, strlen(str)+1);
+  (*__gmp_free_func) (str, strlen(str) + 1);
 }

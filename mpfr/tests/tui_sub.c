@@ -22,6 +22,7 @@ MA 02111-1307, USA. */
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 #include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
@@ -140,10 +141,6 @@ check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
   mpfr_init2(zz, 53);
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_ui_sub(zz, y, xx, rnd_mode);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd_mode);
-#endif
-  if (z1==0.0) z1 = y-x;
   z2 = mpfr_get_d1 (zz);
   if (z1!=z2 && !(isnan(z1) && isnan(z2))) {
     printf("expected difference is %1.20e, got %1.20e\n",z1,z2);
@@ -204,26 +201,9 @@ main (int argc, char *argv[])
 {
   mp_prec_t p;
   unsigned k;
-#ifdef MPFR_HAVE_FESETROUND
-  double x;
-  unsigned long y, N;
-  int i, rnd_mode, rnd;
 
-  mpfr_test_init ();
+  tests_start_mpfr ();
 
-  SEED_RAND (time(NULL));
-  N = (argc<2) ? 1000000 : atoi(argv[1]);
-  rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
-  for (i=0;i<1000000;i++) {
-    x = drand ();
-    y = LONG_RAND ();
-    if (ABS(x)>2.2e-307) {
-      /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
-      check(y, x, rnd, 0.0);
-    }
-  }
-#endif
   special ();
   for (p=2; p<100; p++)
     for (k=0; k<100; k++)
@@ -246,5 +226,6 @@ main (int argc, char *argv[])
   check(293607738, -1.9967571564050541e-5, GMP_RNDU, 2.9360773800002003e8);
   check(354270183, 2.9469161763489528e3, GMP_RNDN, 3.5426723608382362e8);
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -79,7 +79,6 @@ check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
 {
   mpfr_t ta, tb, tres;
   double res2;
-  int ck=0;
 
   mpfr_init2(ta, 53);
   mpfr_init2(tb, 53);
@@ -89,21 +88,19 @@ check4 (double a, double b, mp_rnd_t rnd_mode, double res1)
   mpfr_set_d(tb, b, rnd_mode);
 
   mpfr_agm(tres, ta, tb, rnd_mode);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd_mode);
-#endif
   
-  if (res1==0.0) res1=dagm(a,b); else ck=1;
-if (ck==0) printf("%1.20e\n", res1);
   res2 = mpfr_get_d1 (tres);
 
-  if (ck && res1!=res2 && (!isnan(res1) || !isnan(res2))) {
-    printf("mpfr_agm failed for a=%1.20e, b=%1.20e, rnd_mode=%d\n",a,b,rnd_mode);
-    printf("expected result is %1.20e, got %1.20e (%d ulp)\n",res1,res2,
-	   ulp(res2,res1));
-    /*exit(1);*/
+  if (res1!=res2 && (!isnan(res1) || !isnan(res2)))
+    {
+      printf ("mpfr_agm failed for a=%1.20e, b=%1.20e, rnd_mode=%d\n",a,b,rnd_mode);
+      printf ("expected result is %1.20e, got %1.20e (%d ulp)\n",res1,res2,
+              ulp(res2,res1));
+      exit (1);
   }
-  mpfr_clear(ta); mpfr_clear(tb); mpfr_clear(tres); 
+  mpfr_clear (ta);
+  mpfr_clear (tb);
+  mpfr_clear (tres);
 }
 
 void
@@ -151,6 +148,8 @@ main (int argc, char* argv[])
 
    SEED_RAND (time(NULL));
 
+   tests_start_mpfr ();
+
    if (argc==3) {   /* tagm N p : N calculus with precision p*/
      printf("Doing %d random tests in %d precision\n",atoi(argv[1]),atoi(argv[2]));
      slave(atoi(argv[1]),atoi(argv[2]));
@@ -184,5 +183,6 @@ main (int argc, char* argv[])
 
    /* TODO : tests des infinis dans tagm.c */
 
+   tests_end_mpfr ();
    return 0;
 }

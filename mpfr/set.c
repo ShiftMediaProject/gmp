@@ -1,6 +1,6 @@
 /* mpfr_set -- copy of a floating-point number
 
-Copyright 1999, 2001 Free Software Foundation.
+Copyright 1999, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -45,28 +45,35 @@ mpfr_set4 (mpfr_ptr a, mpfr_srcptr b, mp_rnd_t rnd_mode, int signb)
     }
   else
     {
-      mp_limb_t *ap;
-      mp_prec_t aq;
-      int carry;
-
       MPFR_CLEAR_FLAGS(a);
-
-      ap = MPFR_MANT(a);
-      aq = MPFR_PREC(a);
-
-      carry = mpfr_round_raw(ap, MPFR_MANT(b), MPFR_PREC(b), (signb < 0),
-                             aq, rnd_mode, &inex);
-      MPFR_EXP(a) = MPFR_EXP(b);
-
-      if (carry)
+      if (MPFR_IS_ZERO(b))
         {
-          mp_exp_t exp = MPFR_EXP(a);
+          MPFR_SET_ZERO(a);
+          inex = 0;
+        }
+      else
+        {
+          mp_limb_t *ap;
+          mp_prec_t aq;
+          int carry;
 
-          if (exp == __mpfr_emax)
-            return mpfr_set_overflow(a, rnd_mode, signb);
+          ap = MPFR_MANT(a);
+          aq = MPFR_PREC(a);
 
-          MPFR_EXP(a)++;
-          ap[(MPFR_PREC(a)-1)/BITS_PER_MP_LIMB] = GMP_LIMB_HIGHBIT;
+          carry = mpfr_round_raw(ap, MPFR_MANT(b), MPFR_PREC(b), (signb < 0),
+                                 aq, rnd_mode, &inex);
+          MPFR_EXP(a) = MPFR_EXP(b);
+
+          if (carry)
+            {
+              mp_exp_t exp = MPFR_EXP(a);
+
+              if (exp == __gmpfr_emax)
+                return mpfr_set_overflow(a, rnd_mode, signb);
+
+              MPFR_EXP(a)++;
+              ap[(MPFR_PREC(a)-1)/BITS_PER_MP_LIMB] = MPFR_LIMB_HIGHBIT;
+            }
         }
     }
 

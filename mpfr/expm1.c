@@ -79,7 +79,7 @@ mpfr_expm1 (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode)
     /* compute the precision of intermediary variable */
     Nt=MAX(Nx,Ny);
     /* the optimal number of bits : see algorithms.ps */
-    Nt=Nt+5+_mpfr_ceil_log2(Nt);
+    Nt=Nt+5+__gmpfr_ceil_log2(Nt);
 
     /* initialise of intermediary	variable */
     mpfr_init(t);             
@@ -97,7 +97,7 @@ mpfr_expm1 (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode)
       mpfr_sub_ui(t,te,1,GMP_RNDN);   /* exp(x)-1 */
 
       /* estimation of the error */
-      /*err=Nt-(_mpfr_ceil_log2(1+pow(2,MPFR_EXP(te)-MPFR_EXP(t))));*/
+      /*err=Nt-(__gmpfr_ceil_log2(1+pow(2,MPFR_EXP(te)-MPFR_EXP(t))));*/
       err=Nt-(MAX(MPFR_EXP(te)-MPFR_EXP(t),0)+1);
 
       /* actualisation of the precision */

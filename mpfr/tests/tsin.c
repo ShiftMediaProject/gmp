@@ -27,9 +27,7 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-void check53 _PROTO ((double, double, mp_rnd_t));
-
-void
+static void
 check53 (double x, double sin_x, mp_rnd_t rnd_mode)
 {
   mpfr_t xx, s;
@@ -50,6 +48,49 @@ check53 (double x, double sin_x, mp_rnd_t rnd_mode)
   mpfr_clear (s);
 }
 
+static void
+test_sign (void)
+{
+  mpfr_t pid, piu, x, y;
+  int p, k;
+
+  mpfr_init2 (pid, 4096);
+  mpfr_const_pi (pid, GMP_RNDD);
+  mpfr_init2 (piu, 4096);
+  mpfr_const_pi (piu, GMP_RNDU);
+  mpfr_init (x);
+  mpfr_init2 (y, 2);
+  for (p = 8; p <= 128; p++)
+    for (k = 2; k <= 22; k += 2)
+      {
+        mpfr_set_prec (x, p);
+        mpfr_mul_ui (x, pid, k, GMP_RNDD);
+        mpfr_sin (y, x, GMP_RNDN);
+        if (MPFR_SIGN(y) > 0)
+          {
+            fprintf (stderr,
+                     "Error in test_sign for sin(%dpi-epsilon), prec = %d"
+                     " for argument.\nResult should have been negative.\n",
+                     k, p);
+            exit (1);
+          }
+        mpfr_mul_ui (x, piu, k, GMP_RNDU);
+        mpfr_sin (y, x, GMP_RNDN);
+        if (MPFR_SIGN(y) < 0)
+          {
+            fprintf (stderr,
+                     "Error in test_sign for sin(%dpi+epsilon), prec = %d"
+                     " for argument.\nResult should have been positive.\n",
+                     k, p);
+            exit (1);
+          }
+      }
+  mpfr_clear (pid);
+  mpfr_clear (piu);
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 #define TEST_FUNCTION mpfr_sin
 #include "tgeneric.c"
 
@@ -57,6 +98,8 @@ int
 main (int argc, char *argv[])
 {
   mpfr_t x;
+
+  tests_start_mpfr ();
 
 #ifdef HAVE_INFS
   check53 (DBL_NAN, DBL_NAN, GMP_RNDN);
@@ -99,6 +142,8 @@ main (int argc, char *argv[])
   mpfr_clear (x);
 
   test_generic (2, 100, 80);
+  test_sign ();
 
+  tests_end_mpfr ();
   return 0;
 }

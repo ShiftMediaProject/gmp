@@ -1,4 +1,4 @@
-/* mpfr_acosh -- Inverse Hyperbolic Cosine of Unsigned Integer Number
+/* mpfr_acosh -- inverse hyperbolic cosine
 
 Copyright 2001, 2002 Free Software Foundation.
 
@@ -26,32 +26,25 @@ MA 02111-1307, USA. */
 
  /* The computation of acosh is done by
 
-    acosh= ln(x+sqrt(x-1)*sqrt(x+1))
+    acosh= ln(x + sqrt(x^2-1))
  */
 
 int
 mpfr_acosh (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode) 
 {
     
-  int inexact =0;
+  int inexact = 0;
   int comp;
 
-  if (MPFR_IS_NAN(x)) 
+  if (MPFR_IS_NAN(x) || (comp = mpfr_cmp_ui (x, 1)) < 0)
     {
       MPFR_SET_NAN(y); 
       MPFR_RET_NAN;
     }
     
-  comp=mpfr_cmp_ui(x,1);
-
-  if(comp < 0)
-    {
-      MPFR_SET_NAN(y); 
-      MPFR_RET_NAN;
-    }
   MPFR_CLEAR_NAN(y);
 
-  if(comp == 0)
+  if (comp == 0)
     {
       MPFR_SET_ZERO(y); /* acosh(1) = 0 */
       MPFR_SET_POS(y);
@@ -69,57 +62,62 @@ mpfr_acosh (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode)
 
   /* General case */
   {
-    /* Declaration of the intermediary variable */
-    mpfr_t t, te,ti;       
+    /* Declaration of the intermediary variables */
+    mpfr_t t, te, ti;
     
-    /* Declaration of the size variable */
+    /* Declaration of the size variables */
     mp_prec_t Nx = MPFR_PREC(x);   /* Precision of input variable */
-    mp_prec_t Ny = MPFR_PREC(y);   /* Precision of input variable */
+    mp_prec_t Ny = MPFR_PREC(y);   /* Precision of output variable */
     
     mp_prec_t Nt;   /* Precision of the intermediary variable */
     int err;  /* Precision of error */
                 
     /* compute the precision of intermediary variable */
-    Nt=MAX(Nx,Ny);
+    Nt = MAX(Nx, Ny);
     /* the optimal number of bits : see algorithms.ps */
-    Nt=Nt+4+_mpfr_ceil_log2(Nt);
+    Nt = Nt + 4 + __gmpfr_ceil_log2 (Nt);
 
-    /* initialise of intermediary	variable */
-    mpfr_init(t);             
-    mpfr_init(te);             
-    mpfr_init(ti);                    
+    /* initialization of intermediary variables */
+    mpfr_init (t);
+    mpfr_init (te);
+    mpfr_init (ti);
 
-    /* First computation of cosh */
+    mpfr_save_emin_emax ();
+
+    /* First computation of acosh */
     do {
 
       /* reactualisation of the precision */
-      mpfr_set_prec(t,Nt);             
-      mpfr_set_prec(te,Nt);             
-      mpfr_set_prec(ti,Nt);             
+      mpfr_set_prec (t, Nt);
+      mpfr_set_prec (te, Nt);
+      mpfr_set_prec (ti, Nt);
 
       /* compute acosh */
-      mpfr_mul(te,x,x,GMP_RNDD);  /* (x^2) */
-      mpfr_sub_ui(ti,te,1,GMP_RNDD);  /* (x^2-1) */
-      mpfr_sqrt(t,ti,GMP_RNDN);     /* sqrt(x^2-1) */
-      mpfr_add(t,t,x,GMP_RNDN);    /* sqrt(x^2-1)+x */
-      mpfr_log(t,t,GMP_RNDN);        /* ln(sqrt(x^2-1)+x)*/
+      mpfr_mul (te, x, x, GMP_RNDD);     /* x^2 */
+      mpfr_sub_ui (ti, te, 1, GMP_RNDD); /* x^2-1 */
+      mpfr_sqrt (t, ti, GMP_RNDN);       /* sqrt(x^2-1) */
+      mpfr_add (t, t, x, GMP_RNDN);      /* sqrt(x^2-1)+x */
+      mpfr_log (t, t, GMP_RNDN);         /* ln(sqrt(x^2-1)+x)*/
 
-      /* estimation of the error see- algorithms.ps*/
-      /*err=Nt-_mpfr_ceil_log2(0.5+pow(2,2-MPFR_EXP(t))+pow(2,1+MPFR_EXP(te)-MPFR_EXP(ti)-MPFR_EXP(t)));*/
-      err=Nt-(-1+2*MAX(2+MAX(2-MPFR_EXP(t),1+MPFR_EXP(te)-MPFR_EXP(ti)-MPFR_EXP(t)),0));
+      /* estimation of the error -- see algorithms.ps */
+      err = Nt - (-1 + 2 * MAX(2 + MAX(2 - MPFR_EXP(t),
+                           1 + MPFR_EXP(te) - MPFR_EXP(ti) - MPFR_EXP(t)), 0));
 
       /* actualisation of the precision */
       Nt += 10;
 
-    } while ((err<0) ||!mpfr_can_round(t,err,GMP_RNDN,rnd_mode,Ny));
+    } while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny));
  
-    inexact = mpfr_set(y,t,rnd_mode);
+    inexact = mpfr_set (y, t, rnd_mode);
 
-    mpfr_clear(t);
-    mpfr_clear(ti);
-    mpfr_clear(te);
+    mpfr_clear (t);
+    mpfr_clear (ti);
+    mpfr_clear (te);
   }
-  return inexact;
+
+  mpfr_restore_emin_emax ();
+
+  return mpfr_check_range (y, inexact, rnd_mode);
 }
 
 

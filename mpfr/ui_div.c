@@ -1,6 +1,6 @@
 /* mpfr_ui_div -- divide a machine integer by a floating-point number
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -55,6 +55,7 @@ mpfr_ui_div (mpfr_ptr y, unsigned long int u, mpfr_srcptr x, mp_rnd_t rnd_mode)
   if (u)
     {
       MPFR_INIT1(up, uu, BITS_PER_MP_LIMB, 1);
+      MPFR_ASSERTN(u == (mp_limb_t) u);
       count_leading_zeros(cnt, (mp_limb_t) u);
       *up = (mp_limb_t) u << cnt;
       MPFR_EXP(uu) = BITS_PER_MP_LIMB-cnt;

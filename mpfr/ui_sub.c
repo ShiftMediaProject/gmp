@@ -32,7 +32,7 @@ mpfr_ui_sub (mpfr_ptr y, unsigned long int u, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mp_limb_t up[1];
   unsigned long cnt;
   
-  if (MPFR_IS_NAN(x)) 
+  if (MPFR_IS_NAN(x))
     {
       MPFR_SET_NAN(y);
       MPFR_RET_NAN;
@@ -48,14 +48,15 @@ mpfr_ui_sub (mpfr_ptr y, unsigned long int u, mpfr_srcptr x, mp_rnd_t rnd_mode)
       MPFR_RET(0); /* +/-infinity is exact */
     }
 
-  if (u) {
-    MPFR_INIT1 (up, uu, BITS_PER_MP_LIMB, 1);
-    count_leading_zeros (cnt, (mp_limb_t) u);
-    *up = (mp_limb_t) u << cnt;
-    MPFR_EXP(uu) = BITS_PER_MP_LIMB - cnt;
-  
-    return mpfr_sub (y, uu, x, rnd_mode);
-  }
+  if (u)
+    {
+      MPFR_INIT1 (up, uu, BITS_PER_MP_LIMB, 1);
+      MPFR_ASSERTN(u == (mp_limb_t) u);
+      count_leading_zeros (cnt, (mp_limb_t) u);
+      *up = (mp_limb_t) u << cnt;
+      MPFR_EXP(uu) = BITS_PER_MP_LIMB - cnt;
+      return mpfr_sub (y, uu, x, rnd_mode);
+    }
   else
     return mpfr_neg (y, x, rnd_mode); /* if u=0, then set y to -x */
 }

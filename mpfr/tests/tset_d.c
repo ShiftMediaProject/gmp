@@ -19,9 +19,9 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 #include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
@@ -34,6 +34,7 @@ main (int argc, char *argv[])
   unsigned long k, n;
   double d, dd;
   
+  tests_start_mpfr ();
   mpfr_test_init ();
 
   mpfr_init2 (x, 2);
@@ -113,7 +114,7 @@ main (int argc, char *argv[])
 #ifdef HAVE_DENORMS
       while (0);
 #else
-      while (ABS(d) <= 2.2e-307);
+      while (ABS(d) < DBL_MIN);
 #endif
       mpfr_set_d (x, d, 0);
       dd = mpfr_get_d1 (x);
@@ -128,5 +129,6 @@ main (int argc, char *argv[])
 
   mpfr_clear(x); mpfr_clear(y); mpfr_clear(z);
 
+  tests_end_mpfr ();
   return 0; 
 }

@@ -35,6 +35,8 @@ main (void)
   int i, c;
   mp_prec_t p;
 
+  tests_start_mpfr ();
+
   mpfr_init (xx);
   mpfr_init (yy);
 
@@ -174,5 +176,6 @@ main (void)
 
   mpfr_clear(xx); mpfr_clear(yy);
 
+  tests_end_mpfr ();
   return 0;
 }

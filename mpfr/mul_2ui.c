@@ -48,8 +48,8 @@ mpfr_mul_2ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int n, mp_rnd_t rnd_mode)
       /* MPFR_EMIN_MIN + (long) n is signed and doesn't lead to an overflow;
          the first test useful so that the real test can't lead to an
          overflow. */
-      if (__mpfr_emax < MPFR_EMIN_MIN + (long) n ||
-          MPFR_EXP(y) > __mpfr_emax - (long) n)
+      if (__gmpfr_emax < MPFR_EMIN_MIN + (long) n ||
+          MPFR_EXP(y) > __gmpfr_emax - (long) n)
         return mpfr_set_overflow (y, rnd_mode, MPFR_SIGN(y));
 
       MPFR_EXP(y) += (long) n;

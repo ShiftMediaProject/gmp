@@ -25,17 +25,17 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 /* default is 53 bits */
-mp_prec_t __mpfr_default_fp_bit_precision = 53;
+mp_prec_t __gmpfr_default_fp_bit_precision = 53;
 
 void
 mpfr_set_default_prec (mp_prec_t prec)
 {
   MPFR_ASSERTN(prec >= MPFR_PREC_MIN && prec <= MPFR_PREC_MAX);
-  __mpfr_default_fp_bit_precision = prec;
+  __gmpfr_default_fp_bit_precision = prec;
 }
 
 mp_prec_t
 mpfr_get_default_prec (void)
 {
-  return __mpfr_default_fp_bit_precision;
+  return __gmpfr_default_fp_bit_precision;
 }

@@ -35,6 +35,8 @@ main (int argc, char *argv[])
   mpfr_t x, y;
   unsigned int n;
 
+  tests_start_mpfr ();
+
   test_generic (2, 100, 100);
 
   /* check log10(10^n)=n */
@@ -56,5 +58,6 @@ main (int argc, char *argv[])
   mpfr_clear (x);
   mpfr_clear (y);
 
+  tests_end_mpfr ();
   return 0;
 }

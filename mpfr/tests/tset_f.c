@@ -33,6 +33,8 @@ main (void)
   mpf_t y, z;
   unsigned long k, pr;
   
+  tests_start_mpfr ();
+
   mpf_init(y); 
   mpf_init(z);
 
@@ -81,5 +83,6 @@ main (void)
   mpf_clear (y);
   mpf_clear (z);
 
+  tests_end_mpfr ();
   return 0;
 }

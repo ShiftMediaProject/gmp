@@ -52,6 +52,7 @@ mpfr_set_q (mpfr_ptr f, mpq_srcptr q, mp_rnd_t rnd)
   if (mpfr_set_z (n, num, GMP_RNDZ)) /* result is exact unless overflow */
     {
       mpfr_clear (n);
+      mpfr_clear_flags ();
       mpfr_restore_emin_emax ();
       MPFR_SET_NAN (f);
       MPFR_RET_NAN;
@@ -64,6 +65,7 @@ mpfr_set_q (mpfr_ptr f, mpq_srcptr q, mp_rnd_t rnd)
     {
       mpfr_clear (d);
       mpfr_clear (n);
+      mpfr_clear_flags ();
       mpfr_restore_emin_emax ();
       MPFR_SET_NAN (f);
       MPFR_RET_NAN;
@@ -71,5 +73,6 @@ mpfr_set_q (mpfr_ptr f, mpq_srcptr q, mp_rnd_t rnd)
   inexact = mpfr_div (f, n, d, rnd);
   mpfr_clear (n);
   mpfr_clear (d);
-  MPFR_RESTORE_RET (inexact, f, rnd);
+  mpfr_restore_emin_emax ();
+  return mpfr_check_range (f, inexact, rnd);
 }

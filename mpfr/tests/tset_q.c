@@ -40,10 +40,6 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
   mpfr_init2 (t, mpfr_get_prec (x) + mp_bits_per_limb);
   mpq_init (q);
   mpq_set_si (q, n, d);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode (rnd);
-  y = (double) n / d;
-#endif
   inexact = mpfr_set_q (x, q, rnd);
   z = mpfr_get_d1 (x);
 
@@ -52,7 +48,8 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
     {
     fprintf (stderr, "Error for q=%ld/%lu and rnd=%s\n", n, d, 
 	     mpfr_print_rnd_mode (rnd));
-    fprintf (stderr, "libm.a gives %1.20e, mpfr_set_q gives %1.20e\n", y, z);
+    fprintf (stderr, "correct result is %1.20e, mpfr_set_q gives %1.20e\n",
+             y, z);
     exit (1);
     }
 
@@ -80,24 +77,8 @@ check (long int n, long int d, mp_rnd_t rnd, double y)
 int
 main (void)
 {
-#ifdef MPFR_HAVE_FESETROUND
-  long int i, n;
-  unsigned long int d;
-  double y;
-  unsigned char rnd;
+  tests_start_mpfr ();
 
-  mpfr_test_init ();
-
-  SEED_RAND(time(NULL));
-  for (i=0;i<1000000;i++) {
-    n = LONG_RAND();
-    d = LONG_RAND();
-    if (LONG_RAND()%2) n = -n;
-    rnd = LONG_RAND() % 4;
-    y = (double) n / d;
-    check(n, d, rnd, y);
-  }
-#endif
   check(-1647229822, 40619231, GMP_RNDZ, -4.055295438754120596e1);
   check(-148939696, 1673285490, GMP_RNDZ, -8.9010331404953485501e-2);
   check(-441322590, 273662545, GMP_RNDZ, -1.6126525096812205362);
@@ -106,6 +87,8 @@ main (void)
   check(75504803, 400207282, GMP_RNDU, 1.8866424074712365155e-1);
   check(643562308, 23100894, GMP_RNDD, 2.7858762002890447462e1);
   check(632549085, 1831935802, GMP_RNDN, 3.4528998467600230393e-1);
+  check (1, 1, GMP_RNDN, 1.0);
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -1,6 +1,6 @@
 /* mpfr_set_prec -- reset the precision of a floating-point number
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -25,7 +25,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-int
+void
 mpfr_set_prec (mpfr_ptr x, mp_prec_t p)
 {
   mp_size_t xsize;
@@ -44,8 +44,6 @@ mpfr_set_prec (mpfr_ptr x, mp_prec_t p)
 
   MPFR_PREC(x) = p;
   MPFR_SET_NAN(x); /* initializes to NaN */
-
-  return MPFR_MANT(x) == NULL;
 }
 
 mp_prec_t

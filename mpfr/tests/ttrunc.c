@@ -1,6 +1,6 @@
 /* Test file for mpfr_trunc, mpfr_ceil, mpfr_floor.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 #define SIZEX 100
 
@@ -31,6 +32,8 @@ int
 main (void)
 {
   int j, k; mpfr_t x, y, z, t, y2, z2, t2; 
+
+  tests_start_mpfr ();
 
   mpfr_init2(x, SIZEX); 
   mpfr_init2(y, SIZEX); 
@@ -140,5 +143,6 @@ main (void)
   mpfr_clear(t); 
   mpfr_clear(t2); 
 
+  tests_end_mpfr ();
   return 0;
 }

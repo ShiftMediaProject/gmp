@@ -1,4 +1,4 @@
-/* _mpfr_floor_log2 - returns floor(log(d)/log(2))
+/* __gmpfr_floor_log2 - returns floor(log(d)/log(2))
 
 Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 
 /* returns floor(log(d)/log(2)) */
 long
-_mpfr_floor_log2 (double d)
+__gmpfr_floor_log2 (double d)
 {
   union ieee_double_extract x;
 

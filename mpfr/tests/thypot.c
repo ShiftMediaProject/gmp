@@ -1,6 +1,6 @@
 /* Test file for mpfr_hypot.
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -31,6 +31,41 @@ MA 02111-1307, USA. */
    
 #define TEST_FUNCTION mpfr_hypot
 
+static void
+test_large (void)
+{
+  mpfr_t x, y, z, t;
+
+  mpfr_init (x);
+  mpfr_init (y);
+  mpfr_init (z);
+  mpfr_init (t);
+
+  mpfr_set_ui (x, 21, GMP_RNDN);
+  mpfr_set_ui (y, 28, GMP_RNDN);
+  mpfr_set_ui (z, 35, GMP_RNDN);
+
+  mpfr_mul_2ui (x, x, MPFR_EMAX_DEFAULT-6, GMP_RNDN);
+  mpfr_mul_2ui (y, y, MPFR_EMAX_DEFAULT-6, GMP_RNDN);
+  mpfr_mul_2ui (z, z, MPFR_EMAX_DEFAULT-6, GMP_RNDN);
+
+  mpfr_hypot (t, x, y, GMP_RNDN);
+  if (mpfr_cmp (z, t))
+    {
+      fprintf (stderr, "Error in test_large: got\n");
+      mpfr_out_str (stderr, 2, 0, t, GMP_RNDN);
+      fprintf (stderr, "\ninstead of\n");
+      mpfr_out_str (stderr, 2, 0, z, GMP_RNDN);
+      fprintf (stderr, "\n");
+      exit (1);
+    }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (z);
+  mpfr_clear (t);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -38,6 +73,8 @@ main (int argc, char *argv[])
   mp_rnd_t rnd;
   mpfr_t x1, x2, y, z, t;
   int inexact, compare, compare2;
+
+  tests_start_mpfr ();
 
   mpfr_init (x1);
   mpfr_init (x2);
@@ -124,9 +161,8 @@ main (int argc, char *argv[])
   mpfr_clear (z);
   mpfr_clear (t);
 
+  test_large ();
+
+  tests_end_mpfr ();
   return 0;
 }
-
-
-
-

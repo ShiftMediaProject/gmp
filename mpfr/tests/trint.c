@@ -35,6 +35,8 @@ main (void)
   mp_rnd_t r;
   int inexact, sign_t;
 
+  tests_start_mpfr ();
+
   mpfr_init (x);
   mpfr_init (y);
   mpz_init (z);
@@ -89,5 +91,6 @@ main (void)
   mpz_clear (z);
   mpfr_clear (t);
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -1,6 +1,6 @@
 /* mpfr_const_log2 -- compute natural logarithm of 2
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -27,8 +27,8 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 mpfr_t __mpfr_const_log2; /* stored value of log(2) */
-mp_prec_t __mpfr_const_log2_prec=0; /* precision of stored value */
-mp_rnd_t __mpfr_const_log2_rnd; /* rounding mode of stored value */
+mp_prec_t __gmpfr_const_log2_prec = 0; /* precision of stored value */
+static mp_rnd_t __mpfr_const_log2_rnd; /* rounding mode of stored value */
 
 static int mpfr_aux_log2 _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
 static int mpfr_const_aux_log2 _PROTO ((mpfr_ptr, mp_rnd_t));
@@ -65,10 +65,10 @@ mpfr_const_aux_log2 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
   mp_prec_t prec_x;
 
   mpz_init(cst);
-  logn =  _mpfr_ceil_log2 ((double) MPFR_PREC(mylog));
+  logn =  __gmpfr_ceil_log2 ((double) MPFR_PREC(mylog));
   prec_x = prec_i_want + logn;
   while (!good){
-    prec = _mpfr_ceil_log2 ((double) prec_x);
+    prec = __gmpfr_ceil_log2 ((double) prec_x);
     mpfr_init2(tmp1, prec_x);
     mpfr_init2(result, prec_x);
     mpfr_init2(tmp2, prec_x);
@@ -134,10 +134,10 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
   MPFR_CLEAR_FLAGS(x); 
 
   /* has stored value enough precision ? */
-  if (precx <= __mpfr_const_log2_prec)
+  if (precx <= __gmpfr_const_log2_prec)
     {
       if ((rnd_mode == __mpfr_const_log2_rnd) ||
-          mpfr_can_round (__mpfr_const_log2, __mpfr_const_log2_prec - 1,
+          mpfr_can_round (__mpfr_const_log2, __gmpfr_const_log2_prec - 1,
                           __mpfr_const_log2_rnd, rnd_mode, precx))
         {
           mpfr_set (x, __mpfr_const_log2, rnd_mode);
@@ -150,7 +150,7 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
     {
       /* the following was checked by exhaustive search to give a correct
          result for all 4 rounding modes up to precx = 13500 */
-      N = precx + 2 * _mpfr_ceil_log2 ((double) precx) + 1;
+      N = precx + 2 * __gmpfr_ceil_log2 ((double) precx) + 1;
 
       mpz_init (s); /* set to zero */
       mpz_init (u);
@@ -176,12 +176,12 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
     mpfr_const_aux_log2(x, rnd_mode);
 
   /* store computed value */
-  if (__mpfr_const_log2_prec == 0)
+  if (__gmpfr_const_log2_prec == 0)
     mpfr_init2 (__mpfr_const_log2, precx);
   else
     mpfr_set_prec (__mpfr_const_log2, precx);
 
   mpfr_set (__mpfr_const_log2, x, rnd_mode);
-  __mpfr_const_log2_prec = precx;
+  __gmpfr_const_log2_prec = precx;
   __mpfr_const_log2_rnd = rnd_mode;
 }

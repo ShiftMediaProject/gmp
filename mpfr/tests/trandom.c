@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 void test_random _PROTO ((unsigned long, unsigned long, int));
 void test_random2 _PROTO ((unsigned long, unsigned long, int));
@@ -40,7 +41,7 @@ test_random (unsigned long nbtests, unsigned long prec, int verbose)
 
   mpfr_init2(x, prec); 
 
-  size_tab = (nbtests < 1000 ? nbtests / 50 : 20); 
+  size_tab = (nbtests >= 1000 ? nbtests / 50 : 20); 
   tab = (int *) malloc (size_tab * sizeof(int)); 
   for (k = 0; k < size_tab; ++k) tab[k] = 0; 
 
@@ -56,7 +57,7 @@ test_random (unsigned long nbtests, unsigned long prec, int verbose)
   av /= nbtests; 
   var = (var /nbtests) - av*av; 
 
-  th = (double)nbtests / size_tab; 
+  th = (double) nbtests / size_tab;
   
   printf("Average = %.5f\nVariance = %.5f\n", av, var); 
   printf("Repartition for random. Each integer should be close to %d.\n", 
@@ -80,24 +81,40 @@ test_random (unsigned long nbtests, unsigned long prec, int verbose)
 void
 test_random2 (unsigned long nbtests, unsigned long prec, int verbose)
 {
-  mpfr_t x; 
-  int *tab, size_tab, k; 
+  mpfr_t x;
+  int *tab, size_tab, k, sh, xn;
   double d, av = 0, var = 0, chi2 = 0, th; 
 
-  mpfr_init2(x, prec); 
+  mpfr_init2 (x, prec);
+  xn = 1 + (prec - 1) / mp_bits_per_limb;
+  sh = xn * mp_bits_per_limb - prec;
 
-  size_tab = (nbtests < 1000 ? nbtests / 50 : 20); 
+  size_tab = (nbtests >= 1000 ? nbtests / 50 : 20); 
   tab = (int *) malloc (size_tab * sizeof(int)); 
   for (k = 0; k < size_tab; ++k) tab[k] = 0; 
 
   for (k = 0; k < nbtests; k++) {
-    mpfr_random2 (x, MPFR_ABSSIZE(x), 0); 
+    mpfr_random2 (x, xn, 0);
+    /* check that lower bits are zero */
+    if (MPFR_MANT(x)[0] & ((MP_LIMB_T_ONE << sh) - MP_LIMB_T_ONE))
+      {
+        fprintf (stderr, "Error: mpfr_random2() returns invalid numbers:\n");
+        mpfr_print_binary (x); putchar ('\n');
+        exit (1);
+      }
+    /* check that exponent is in correct range */
+    if (mpfr_get_exp (x) != 0)
+      {
+        fprintf (stderr, "Error: mpfr_random2 (.., .., 0) does not return a 0 exponent:\n");
+        mpfr_print_binary (x); putchar ('\n');
+        exit (1);
+      }
     d = mpfr_get_d1 (x); av += d; var += d*d; 
     if (d < 1)
       tab[(int)(size_tab * d)]++;     
   }
 
-  mpfr_clear(x);
+  mpfr_clear (x);
   if (!verbose) { free(tab); return; }
   
   av /= nbtests; 
@@ -124,13 +141,15 @@ void
 test_urandomb (unsigned long nbtests, unsigned long prec, int verbose)
 {
   mpfr_t x; 
-  int *tab, size_tab, k; 
+  int *tab, size_tab, k, sh, xn;
   gmp_randstate_t state; 
   double d, av = 0, var = 0, chi2 = 0, th; 
 
-  mpfr_init2(x, prec); 
+  mpfr_init2 (x, prec);
+  xn = 1 + (prec - 1) / mp_bits_per_limb;
+  sh = xn * mp_bits_per_limb - prec;
 
-  size_tab = (nbtests < 1000 ? nbtests / 50 : 20); 
+  size_tab = (nbtests >= 1000 ? nbtests / 50 : 20); 
   tab = (int *) malloc (size_tab * sizeof(int)); 
   for (k = 0; k < size_tab; ++k) tab[k] = 0; 
 
@@ -138,7 +157,14 @@ test_urandomb (unsigned long nbtests, unsigned long prec, int verbose)
   gmp_randseed_ui (state, time(NULL));
 
   for (k = 0; k < nbtests; k++) {
-    mpfr_urandomb(x, state); 
+    mpfr_urandomb (x, state);
+    /* check that lower bits are zero */
+    if (MPFR_MANT(x)[0] & ((MP_LIMB_T_ONE << sh) - MP_LIMB_T_ONE))
+      {
+        fprintf (stderr, "Error: mpfr_urandomb() returns invalid numbers:\n");
+        mpfr_print_binary (x); putchar ('\n');
+        exit (1);
+      }
     d = mpfr_get_d1 (x); av += d; var += d*d; 
     tab[(int)(size_tab * d)]++;     
   }
@@ -173,14 +199,24 @@ main (int argc, char *argv[])
 {
   unsigned long nbtests, prec; int verbose = 0; 
   
+  tests_start_mpfr ();
+
   if (argc > 1) verbose = 1;
  
   if (argc == 1) { nbtests = 10000; } else nbtests = atoi(argv[1]);
   if (argc <= 2) { prec = 1000; } else prec = atoi(argv[2]); 
 
-  test_random(nbtests, prec, verbose);
-  test_random2(nbtests, prec, verbose); 
-  test_urandomb(nbtests, prec, verbose);
-  
+  test_random (nbtests, prec, verbose);
+  test_random2 (nbtests, prec, verbose); 
+  test_urandomb (nbtests, prec, verbose);
+
+  if (argc == 1)  /* check also small precision */
+    {
+      test_random (nbtests, 2, 0);
+      test_random2 (nbtests, 2, 0); 
+      test_urandomb (nbtests, 2, 0);
+    }
+
+  tests_end_mpfr ();
   return 0;
 }

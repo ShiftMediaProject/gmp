@@ -2,7 +2,7 @@
    long runs of consecutive ones and zeros in the binary representation.
    Intended for testing of other MP routines.
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 (Copied from the GNU MP Library.)
 
 This file is part of the MPFR Library.
@@ -35,29 +35,26 @@ mpfr_random2 (mpfr_ptr x, mp_size_t size, mp_exp_t exp)
   mp_size_t xn;
   unsigned long cnt;
   mp_ptr xp = MPFR_MANT(x), yp[1];
-  mp_size_t prec = (MPFR_PREC(x) - 1)/BITS_PER_MP_LIMB; 
+  mp_size_t prec = (MPFR_PREC(x) - 1)/BITS_PER_MP_LIMB;
 
   MPFR_CLEAR_FLAGS(x);
   xn = ABS (size);
   if (xn != 0)
     {
       if (xn > prec + 1)
-	xn = prec + 1;
+        xn = prec + 1;
 
       mpn_random2 (xp, xn);
     }
 
-  if (exp != 0) {
-    /* use mpn_random instead of random since that function is not
-       available on all platforms (for example HPUX, DEC OSF, ...) */
-    mpn_random ((mp_limb_t*) yp, 1);
-    exp = (mp_exp_t) yp[0] % (2 * exp) - exp;
-  }
+  count_leading_zeros (cnt, xp[xn - 1]);
+  if (cnt)
+    mpn_lshift (xp, xp, xn, cnt);
 
-  count_leading_zeros(cnt, xp[xn - 1]); 
-  if (cnt) mpn_lshift(xp, xp, xn, cnt); 
-  MPFR_EXP(x) = exp-cnt; 
-  cnt = xn*BITS_PER_MP_LIMB - prec; 
+  mpn_random ((mp_limb_t*) yp, 1);
+  MPFR_EXP(x) = ABS ((mp_exp_t) yp[0] % (2 * exp + 1)) - exp;
+
+  cnt = xn * BITS_PER_MP_LIMB - MPFR_PREC(x);
   /* cnt is the number of non significant bits in the low limb */
   xp[0] &= ~((MP_LIMB_T_ONE << cnt) - MP_LIMB_T_ONE);
 }

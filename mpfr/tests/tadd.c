@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 #include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
@@ -54,7 +55,7 @@ void check_inexact _PROTO((void));
 
 /* checks that x+y gives the same results in double
    and with mpfr with 53 bits of precision */
-void
+static void
 _check (double x, double y, double z1, mp_rnd_t rnd_mode, unsigned int px, 
         unsigned int py, unsigned int pz)
 {
@@ -66,11 +67,8 @@ _check (double x, double y, double z1, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_add(zz, xx, yy, rnd_mode);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd_mode);
-  if (px==53 && py==53 && pz==53) cert=1;
-#endif
-  if (z1==0.0) z1=x+y; else cert=1;
+  if (px==53 && py==53 && pz==53)
+    cert = 1;
   z2 = mpfr_get_d1 (zz);
   mpfr_set_d (yy, z2, GMP_RNDN);
   if (!mpfr_cmp (zz, yy) && cert && z1!=z2 && !(isnan(z1) && isnan(z2))) {
@@ -94,123 +92,12 @@ checknan (double x, double y, mp_rnd_t rnd_mode, unsigned int px,
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_add(zz, xx, yy, rnd_mode);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd_mode);
-#endif
   if (MPFR_IS_NAN(zz) == 0) { printf("Error, not an MPFR_NAN for xx = %1.20e, y = %1.20e\n", x, y); exit(1); }
   z2 = mpfr_get_d1 (zz);
   if (!isnan(z2)) { printf("Error, not a NaN after conversion, xx = %1.20e yy = %1.20e, got %1.20e\n", x, y, z2); exit(1); }
 
   mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
 }
-
-#ifdef MPFR_HAVE_FESETROUND
-/* idem than check for mpfr_add(x, x, y) */
-void
-check3 (double x, double y, mp_rnd_t rnd_mode)
-{
-  double z1,z2; mpfr_t xx,yy; int neg;
-
-  neg = LONG_RAND() % 2;
-  mpfr_init2(xx, 53);
-  mpfr_init2(yy, 53);
-  mpfr_set_d(xx, x, rnd_mode);
-  mpfr_set_d(yy, y, rnd_mode);
-  if (neg) mpfr_sub(xx, xx, yy, rnd_mode);
-  else mpfr_add(xx, xx, yy, rnd_mode);
-  mpfr_set_machine_rnd_mode(rnd_mode);
-  z1 = (neg) ? x-y : x+y;
-  z2 = mpfr_get_d1 (xx);
-  mpfr_set_d (yy, z2, GMP_RNDN);
-  if (!mpfr_cmp (xx, yy) && z1!=z2 && !(isnan(z1) && isnan(z2))) {
-    printf("expected result is %1.20e, got %1.20e\n",z1,z2);
-    printf("mpfr_%s(x,x,y) failed for x=%1.20e y=%1.20e with rnd_mode=%u\n",
-	   (neg) ? "sub" : "add",x,y,rnd_mode);
-    exit(1);
-  }
-  mpfr_clear(xx); mpfr_clear(yy);
-}
-
-/* idem than check for mpfr_add(x, y, x) */
-void
-check4 (double x, double y, mp_rnd_t rnd_mode)
-{
-  double z1, z2;
-  mpfr_t xx, yy;
-  int neg;
-
-  neg = LONG_RAND() % 2;
-  mpfr_init2(xx, 53);
-  mpfr_init2(yy, 53);
-  mpfr_set_d(xx, x, rnd_mode);
-  mpfr_set_d(yy, y, rnd_mode);
-  if (neg) mpfr_sub(xx, yy, xx, rnd_mode);
-  else mpfr_add(xx, yy, xx, rnd_mode);
-  mpfr_set_machine_rnd_mode(rnd_mode);
-  z1 = (neg) ? y-x : x+y;
-  z2 = mpfr_get_d1 (xx);
-  mpfr_set_d (yy, z2, GMP_RNDN);
-  /* check that xx is representable as a double and no overflow occurred */
-  if ((mpfr_cmp (xx, yy) == 0) && (z1 != z2)) {
-    printf("expected result is %1.20e, got %1.20e\n", z1, z2);
-    printf("mpfr_%s(x,y,x) failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
-	   (neg) ? "sub" : "add", x, y, mpfr_print_rnd_mode(rnd_mode));
-    exit(1);
-  }
-  mpfr_clear(xx); mpfr_clear(yy);
-}
-
-/* idem than check for mpfr_add(x, x, x) */
-void
-check5 (double x, mp_rnd_t rnd_mode)
-{
-  double z1,z2; mpfr_t xx, yy; int neg;
-
-  mpfr_init2(xx, 53);
-  mpfr_init2(yy, 53);
-  neg = LONG_RAND() % 2;
-  mpfr_set_d(xx, x, rnd_mode);
-  if (neg) mpfr_sub(xx, xx, xx, rnd_mode);
-  else mpfr_add(xx, xx, xx, rnd_mode);
-  mpfr_set_machine_rnd_mode(rnd_mode);
-  z1 = (neg) ? x-x : x+x;
-  z2 = mpfr_get_d1 (xx);
-  mpfr_set_d (yy, z2, GMP_RNDN);
-  /* check NaNs first since mpfr_cmp does not like them */
-  if (!(isnan(z1) && isnan(z2)) && !mpfr_cmp (xx, yy) && z1!=z2)
-    {
-      printf ("expected result is %1.20e, got %1.20e\n",z1,z2);
-      printf ("mpfr_%s(x,x,x) failed for x=%1.20e with rnd_mode=%s\n",
-              (neg) ? "sub" : "add", x, mpfr_print_rnd_mode (rnd_mode));
-      exit (1);
-    }
-  mpfr_clear(xx);
-  mpfr_clear(yy);
-}
-
-void
-check2 (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode)
-{
-  mpfr_t xx, yy, zz; double z,z2; int u;
-
-  mpfr_init2(xx,px); mpfr_init2(yy,py); mpfr_init2(zz,pz);
-  mpfr_set_d(xx, x, rnd_mode);
-  mpfr_set_d(yy, y, rnd_mode);
-  mpfr_add(zz, xx, yy, rnd_mode);
-  mpfr_set_machine_rnd_mode(rnd_mode);
-  z = x+y; z2=mpfr_get_d1 (zz); u=ulp(z,z2);
-  /* one ulp difference is possible due to composed rounding */
-  if (px>=53 && py>=53 && pz>=53 && ABS(u)>1) { 
-    printf("x=%1.20e,%d y=%1.20e,%d pz=%d,rnd=%s\n",
-	   x,px,y,py,pz,mpfr_print_rnd_mode(rnd_mode));
-    printf("got %1.20e\n",z2);
-    printf("result should be %1.20e (diff=%d ulp)\n",z,u);
-    mpfr_set_d(zz, z, rnd_mode);
-    printf("i.e."); mpfr_print_binary(zz); putchar('\n');
-    exit(1); }
-  mpfr_clear(xx); mpfr_clear(yy); mpfr_clear(zz);
-}
-#endif
 
 void
 check2a (double x, int px, double y, int py, int pz, mp_rnd_t rnd_mode,
@@ -604,7 +491,7 @@ check_inexact (void)
 	  for (py=2; py<MAX_PREC; py++)
 	    {
 	      mpfr_set_prec (y, py);
-	      pz =  (mpfr_cmp_abs (x, u) >= 0) ? MPFR_EXP(x)-MPFR_EXP(u)
+	      pz =  (mpfr_cmpabs (x, u) >= 0) ? MPFR_EXP(x)-MPFR_EXP(u)
 		: MPFR_EXP(u)-MPFR_EXP(x);
 	      /* x + u is exactly representable with precision
 		 abs(EXP(x)-EXP(u)) + max(prec(x), prec(u)) + 1 */
@@ -650,13 +537,10 @@ check_inexact (void)
 int
 main (int argc, char *argv[])
 {
-#ifdef MPFR_HAVE_FESETROUND
-  int prec, rnd_mode;
-  int rnd;
-  double y;
-#endif
   double x;
   int i;
+
+  tests_start_mpfr ();
 
   mpfr_test_init ();
   check_inexact ();
@@ -821,11 +705,9 @@ main (int argc, char *argv[])
   check53(5.76707395945001907217e-58, 4.74752971449827687074e-51, GMP_RNDD,
 	  4.747530291205672325e-51);
   check53(277363943109.0, 11.0, GMP_RNDN, 277363943120.0);
-#if 0		/* disabled since it seems silly to use denorms */
   /* test denormalized numbers too */
   check53(8.06294740693074521573e-310, 6.95250701071929654575e-310, GMP_RNDU,
 	  1.5015454417650041761e-309);
-#endif
 #ifdef HAVE_INFS
   /* the following check double overflow */
   check53(6.27557402141211962228e+307, 1.32141396570101687757e+308,
@@ -847,58 +729,6 @@ main (int argc, char *argv[])
   check53(9007199254740994.0, -1.0, GMP_RNDN, 9007199254740992.0);
   check53(9007199254740996.0, -1.0, GMP_RNDN, 9007199254740996.0);
   
-#ifdef MPFR_HAVE_FESETROUND
-  prec = (argc<2) ? 53 : atoi(argv[1]);
-  rnd_mode = (argc<3) ? -1 : atoi(argv[2]);
-  /* Comparing to double precision using machine arithmetic */
-  for (i=0;i<N;i++) {
-    x = drand(); 
-    y = drand();
-    if (ABS(x)>2.2e-307 && ABS(y)>2.2e-307 && x+y<1.7e+308 && x+y>-1.7e308) {
-      /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
-      check(x, y, rnd, prec, prec, prec, 0.0);
-    }
-  } 
-  /* tests with random precisions */
-  for (i=0;i<N;i++) {
-    int px, py, pz;
-    px = 53 + (LONG_RAND() % 64); 
-    py = 53 + (LONG_RAND() % 64); 
-    pz = 53 + (LONG_RAND() % 64); 
-    rnd_mode = LONG_RAND() % 4;
-    do { x = drand(); } while (isnan(x));
-    do { y = drand(); } while (isnan(y));
-    check2 (x, px, y, py, pz, rnd_mode);
-  }
-  /* Checking mpfr_add(x, x, y) with prec=53 */
-  for (i=0;i<N;i++) {
-    x = drand(); 
-    y = drand();
-    if (ABS(x)>2.2e-307 && ABS(y)>2.2e-307 && x+y<1.7e+308 && x+y>-1.7e308) {
-      /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
-      check3(x, y, rnd);
-    }
-  }
-  /* Checking mpfr_add(x, y, x) with prec=53 */
-  for (i=0;i<N;i++) {
-    x = drand(); 
-    y = drand();
-    if (ABS(x)>2.2e-307 && ABS(y)>2.2e-307 && x+y<1.7e+308 && x+y>-1.7e308) {
-      /* avoid denormalized numbers and overflows */
-      rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
-      check4(x, y, rnd);
-    }
-  }
-  /* Checking mpfr_add(x, x, x) with prec=53 */
-  for (i=0;i<N;i++) {
-    do { x = drand(); } while ((ABS(x)<2.2e-307) || (ABS(x)>0.8e308));
-    /* avoid denormalized numbers and overflows */
-    rnd = (rnd_mode==-1) ? LONG_RAND()%4 : rnd_mode;
-    check5(x, rnd);
-  }
-#endif
-
+  tests_end_mpfr ();
   return 0;
 }

@@ -44,7 +44,7 @@ MA 02111-1307, USA. */
 int
 mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode) 
 {
-  int m, bool, size, cancel, inexact = 0;
+  int m, go_on, size, cancel, inexact = 0;
   mp_prec_t p, q;
   mpfr_t cst, rapport, agm, tmp1, tmp2, s, mm;
   mp_limb_t *cstp, *rapportp, *agmp, *tmp1p, *tmp2p, *sp, *mmp;
@@ -113,9 +113,9 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
   /* adjust to entire limb */
   if (p%BITS_PER_MP_LIMB) p += BITS_PER_MP_LIMB - (p%BITS_PER_MP_LIMB);
 
-  bool=1;
+  go_on=1;
 
-  while (bool==1) {
+  while (go_on==1) {
 #ifdef DEBUG
     printf("a="); mpfr_print_binary(a); putchar('\n');
     printf("p=%d\n", p);
@@ -164,7 +164,7 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
 #ifdef DEBUG
       printf("result="); mpfr_print_binary(r); putchar('\n');
 #endif
-      bool=0;
+      go_on=0;
     }
     /* else we increase the precision */
     else {

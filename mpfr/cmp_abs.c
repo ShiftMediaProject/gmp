@@ -1,6 +1,6 @@
-/* mpfr_cmp_abs -- compare the absolute values of two nonzero FP numbers
+/* mpfr_cmpabs -- compare the absolute values of two FP numbers
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -25,17 +25,22 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 /* returns sign(abs(b) - abs(c))
-   b and c must be nonzero real numbers */
+   b and c must be real numbers */
 
 int
-mpfr_cmp_abs (mpfr_srcptr b, mpfr_srcptr c)
+mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)
 {
   mp_exp_t be, ce;
   mp_size_t bn, cn;
   mp_limb_t *bp, *cp;
 
-  MPFR_ASSERTN(MPFR_IS_FP(b) && MPFR_NOTZERO(b));
-  MPFR_ASSERTN(MPFR_IS_FP(c) && MPFR_NOTZERO(c));
+  MPFR_ASSERTN(MPFR_IS_FP(b));
+  MPFR_ASSERTN(MPFR_IS_FP(c));
+
+  if (MPFR_IS_ZERO(b))
+    return MPFR_IS_ZERO(c) ? 0 : -1;
+  if (MPFR_IS_ZERO(c))
+    return 1;
 
   be = MPFR_EXP(b);
   ce = MPFR_EXP(c);

@@ -19,78 +19,51 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#if (defined (__arm__) && (defined (__ARMWEL__) || defined (__linux__)))
-/* little endian ARM */
-#define _MPFR_NAN_BYTES  { 0, 0, 0xf8, 0x7f, 0, 0, 0, 0 }
+#if HAVE_DOUBLE_IEEE_LITTLE_ENDIAN || HAVE_DOUBLE_IEEE_LITTLE_SWAPPED
+#define _MPFR_NAN_BYTES  { 0, 0, 0xc0, 0x7f }
 #define _MPFR_INFP_BYTES { 0, 0, 0x80, 0x7f }
 #define _MPFR_INFM_BYTES { 0, 0, 0x80, 0xff }
+#endif
 
-#else
-#if defined (_LITTLE_ENDIAN) || defined (__LITTLE_ENDIAN__)		\
- || defined (__alpha)							\
- || (defined (__arm__) && (defined (__ARMWEL__) || defined (__linux__)))\
- || defined (__clipper__)						\
- || defined (__cris)							\
- || defined (__i386__)							\
- || defined (__i860__)							\
- || defined (__i960__)							\
- || defined (__ia64)							\
- || defined (MIPSEL) || defined (_MIPSEL)				\
- || defined (__ns32000__)						\
- || defined (__WINNT) || defined (_WIN32)
-#define _MPFR_NAN_BYTES  { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f }
-#define _MPFR_INFP_BYTES { 0, 0, 0x80, 0x7f }
-#define _MPFR_INFM_BYTES { 0, 0, 0x80, 0xff }
-
-#else
-#if defined (_BIG_ENDIAN) || defined (__BIG_ENDIAN__)			\
- || defined (__mc68000__) || defined (__mc68020__) || defined (__m68k__)\
- || defined (mc68020)                                                   \
- || defined (__a29k__) || defined (_AM29K)				\
- || defined (__arm__)							\
- || (defined (__convex__) && defined (_IEEE_FLOAT_))			\
- || defined (_CRAYMPP) || defined (_CRAYIEEE)				\
- || defined (__i370__) || defined (__mvs__)				\
- || defined (__m88000__)						\
- || defined (MIPSEB) || defined (_MIPSEB)				\
- || defined (__hppa) || defined (__hppa__)				\
- || defined (__pyr__)							\
- || defined (__ibm032__)						\
- || defined (_IBMR2) || defined (_ARCH_PPC)				\
- || defined (__sh__)							\
- || defined (__sparc) || defined (sparc)				\
- || defined (__sparc__)  /* gcc 3.1 */                                  \
- || defined (__we32k__)
-#define _MPFR_NAN_BYTES  { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 }
+#if HAVE_DOUBLE_IEEE_BIG_ENDIAN
+#define _MPFR_NAN_BYTES  { 0x7f, 0xc0, 0, 0 }
 #define _MPFR_INFP_BYTES { 0x7f, 0x80, 0, 0 }
 #define _MPFR_INFM_BYTES { 0xff, 0x80, 0, 0 }
-#endif
-#endif
 #endif
 
 #ifdef NAN
 #define MPFR_DBL_NAN ((double) NAN)
 #else
 #ifdef _MPFR_NAN_BYTES
-static union { unsigned char c[8]; double d; } __mpfr_nan
-= { _MPFR_NAN_BYTES };
-#define MPFR_DBL_NAN ((double) __mpfr_nan.d)
+/* A struct is used here rather than a union of a float and a char array
+   since union initializers aren't available in K&R, in particular not in
+   the HP bundled cc.  Alignment will hopefully be based on the structure
+   size, rather than it's contents, so we should be ok.  */
+#ifdef __alpha
+/* gcc 3.0.2 on an alphaev56-unknown-freebsd4.3 doesn't seem to correctly
+   convert from a float NAN to a double NAN, use an 8-byte form instead as a
+   workaround.  */
+static struct { unsigned char c[8]; } __mpfr_nan
+= { { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f } };
+#define MPFR_DBL_NAN (*((double *) __mpfr_nan.c))
+#else
+static struct { unsigned char c[4]; } __mpfr_nan = { _MPFR_NAN_BYTES };
+#define MPFR_DBL_NAN ((double) *((float *) __mpfr_nan.c))
+#endif
 #else
 #define MPFR_DBL_NAN (0./0.)
 #endif
 #endif
 
-#ifdef HUGE_VAL
+#ifdef HAVE_HUGE_VAL
 #define MPFR_DBL_INFP HUGE_VAL
 #define MPFR_DBL_INFM (-HUGE_VAL)
 #else
 #ifdef _MPFR_INFP_BYTES
-static union { unsigned char c[4]; float d; } __mpfr_infp
-= { _MPFR_INFP_BYTES };
-static union { unsigned char c[4]; float d; } __mpfr_infm
-= { _MPFR_INFM_BYTES };
-#define MPFR_DBL_INFP ((double) __mpfr_infp.d)
-#define MPFR_DBL_INFM ((double) __mpfr_infm.d)
+static struct { unsigned char c[4]; } __mpfr_infp = { _MPFR_INFP_BYTES };
+static struct { unsigned char c[4]; } __mpfr_infm = { _MPFR_INFM_BYTES };
+#define MPFR_DBL_INFP ((double) *((float *) __mpfr_infp.c))
+#define MPFR_DBL_INFM ((double) *((float *) __mpfr_infm.c))
 #else
 #define MPFR_DBL_INFP (1/0.)
 #define MPFR_DBL_INFM (-1/0.)

@@ -62,9 +62,9 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     if (MPFR_IS_ZERO(x))
       return mpfr_set_ui (y, 1, rnd_mode);
 
-    /* since the smallest representable non-zero float is 1/2*2^__mpfr_emin,
-       if x < __mpfr_emin - 1, the result is either 1/2*2^__mpfr_emin or 0 */
-    if (mpfr_cmp_si_2exp (x, __mpfr_emin - 1, 0) < 0)
+    /* since the smallest representable non-zero float is 1/2*2^__gmpfr_emin,
+       if x < __gmpfr_emin - 1, the result is either 1/2*2^__gmpfr_emin or 0 */
+    if (mpfr_cmp_si_2exp (x, __gmpfr_emin - 1, 0) < 0)
       return mpfr_set_underflow (y, rnd_mode, 1);
 
     /* General case */
@@ -82,7 +82,7 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       /* compute the precision of intermediary variable */
       Nt = MAX(Nx, Ny);
       /* the optimal number of bits : see algorithms.ps */
-      Nt = Nt + 5 + _mpfr_ceil_log2 (Nt);
+      Nt = Nt + 5 + __gmpfr_ceil_log2 (Nt);
 
 
       /* initialise of intermediary	variable */
@@ -105,7 +105,7 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 	err = Nt - (MPFR_EXP(te) + 2);
 
 	/* actualisation of the precision */
-	Nt += _mpfr_isqrt (Nt) + 10;
+	Nt += __gmpfr_isqrt (Nt) + 10;
 
       } while ((err < 0) || !mpfr_can_round (t, err, GMP_RNDN, rnd_mode, Ny));
  

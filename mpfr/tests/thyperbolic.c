@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 
 int check_O _PROTO((void));
@@ -596,11 +597,13 @@ check_O (void)
 int
 main(void)
 {
+tests_start_mpfr ();
 
 if (check_INF())printf("Error in evaluation of INF\n");
 if (check_NAN())printf("Error in evaluation of NAN\n");
 /*if (check_O())printf("Error in evaluation of composition hyperbolic function\n");*/
 
+tests_end_mpfr ();
 return(0);
 
 

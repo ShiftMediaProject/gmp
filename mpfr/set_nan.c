@@ -28,5 +28,5 @@ void
 mpfr_set_nan (mpfr_ptr x)
 {
   MPFR_SET_NAN (x);
-  __mpfr_flags |= MPFR_FLAGS_NAN;
+  __gmpfr_flags |= MPFR_FLAGS_NAN;
 }

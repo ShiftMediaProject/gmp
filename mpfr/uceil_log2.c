@@ -1,4 +1,4 @@
-/* _mpfr_ceil_log2 - returns ceil(log(d)/log(2))
+/* __gmpfr_ceil_log2 - returns ceil(log(d)/log(2))
 
 Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 
 /* returns ceil(log(d)/log(2)) */
 long
-_mpfr_ceil_log2 (double d)
+__gmpfr_ceil_log2 (double d)
 {
   long exp;
   union ieee_double_extract x;

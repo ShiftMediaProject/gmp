@@ -1,6 +1,6 @@
 /* Test file for mpfr_set.
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -33,6 +33,8 @@ main (void)
   mpfr_t x, y, z, u;
   mp_rnd_t rnd;
   int inexact, cmp;
+
+  tests_start_mpfr ();
 
   /* check prototypes of mpfr_init_set_* */
   inexact = mpfr_init_set_si (x, -1, GMP_RNDN);
@@ -79,5 +81,7 @@ main (void)
   mpfr_clear (y);
   mpfr_clear (z);
   mpfr_clear (u);
+
+  tests_end_mpfr ();
   return 0;
 }

@@ -1,4 +1,4 @@
-/* _mpfr_ceil_exp2 - returns y >= 2^d
+/* __gmpfr_ceil_exp2 - returns y >= 2^d
 
 Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 
 /* returns y >= 2^d, assuming that d <= 1024 */
 double
-_mpfr_ceil_exp2 (double d)
+__gmpfr_ceil_exp2 (double d)
 {
   long exp;
   union ieee_double_extract x;

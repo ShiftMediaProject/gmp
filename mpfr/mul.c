@@ -27,8 +27,8 @@ MA 02111-1307, USA. */
 int
 mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode) 
 {
-  int sign_product, cc, inexact, ec, em = 0;
-  mp_exp_t bx, cx;
+  int sign_product, cc, inexact;
+  mp_exp_t ax, bx, cx;
   mp_limb_t *ap, *bp, *cp, *tmp;
   mp_limb_t b1;
   mp_prec_t aq, bq, cq;
@@ -90,39 +90,15 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
 
   bx = MPFR_EXP(b);
   cx = MPFR_EXP(c);
-  /* Note: exponent of the result will be bx + cx + ec with ec in {-1,0,1} */
-  if (bx >= 0 && cx > 0)
-    { /* bx + cx > 0 */
-      if (__mpfr_emax < 0 ||
-          (mp_exp_unsigned_t) bx + cx > (mp_exp_unsigned_t) __mpfr_emax + 1)
-        return mpfr_set_overflow(a, rnd_mode, sign_product);
-
-      if ((mp_exp_unsigned_t) bx + cx == (mp_exp_unsigned_t) __mpfr_emax + 1)
-        em = 1;
-    }
-  else if (bx <= 0 && cx < 0)
-    { /* bx + cx < 0 */
-      if (__mpfr_emin > 0 ||
-          (mp_exp_unsigned_t) bx + cx < (mp_exp_unsigned_t) __mpfr_emin - 1)
-        return mpfr_set_underflow(a, rnd_mode, sign_product);
-
-      if ((mp_exp_unsigned_t) bx + cx == (mp_exp_unsigned_t) __mpfr_emin - 1)
-        em = -1;
-    }
-  else
-    { /* bx != 0 and cx doesn't have the same sign */
-      if ((bx + cx) - 1 > __mpfr_emax)
-        return mpfr_set_overflow(a, rnd_mode, sign_product);
-
-      if ((bx + cx) - 1 == __mpfr_emax)
-        em = 1;
-
-      if ((bx + cx) + 1 < __mpfr_emin)
-        return mpfr_set_underflow(a, rnd_mode, sign_product);
-
-      if ((bx + cx) + 1 == __mpfr_emin)
-        em = -1;
-    }
+  /* Note: the exponent of the exact result will be e = bx + cx + ec with
+     ec in {-1,0,1} and the following assumes that e is representable. */
+  MPFR_ASSERTN(MPFR_EMAX_MAX <= (MP_EXP_T_MAX >> 1));
+  MPFR_ASSERTN(MPFR_EMIN_MIN >= -(MP_EXP_T_MAX >> 1));
+  if (bx + cx > __gmpfr_emax + 1)
+    return mpfr_set_overflow (a, rnd_mode, sign_product);
+  if (bx + cx < __gmpfr_emin - 2)
+    return mpfr_set_underflow (a, rnd_mode == GMP_RNDN ? GMP_RNDZ : rnd_mode,
+                               sign_product);
 
   ap = MPFR_MANT(a);
   bp = MPFR_MANT(b);
@@ -160,38 +136,26 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
   cc = mpfr_round_raw (ap, tmp, bq + cq, sign_product < 0, aq,
 		       rnd_mode, &inexact);
   if (cc) /* cc = 1 ==> result is a power of two */
-    ap[an-1] = GMP_LIMB_HIGHBIT;
+    ap[an-1] = MPFR_LIMB_HIGHBIT;
 
   TMP_FREE(marker);
 
-  ec = b1 - 1 + cc;
-
-  if (em == 0)
+  ax = (bx + cx) + (mp_exp_t) (b1 - 1 + cc);
+  if (ax > __gmpfr_emax)
+    return mpfr_set_overflow (a, rnd_mode, sign_product);
+  if (ax < __gmpfr_emin)
     {
-      mp_exp_t ax = bx + cx;
-
-      if (ax == __mpfr_emax && ec > 0)
-        return mpfr_set_overflow(a, rnd_mode, sign_product);
-
-      if (ax == __mpfr_emin && ec < 0)
-        return mpfr_set_underflow(a, rnd_mode, sign_product);
-
-      MPFR_EXP(a) = ax + ec;
+      /* In the rounding to the nearest mode, if the exponent of the exact
+         result (i.e. before rounding, i.e. without taking cc into account)
+         is < __gmpfr_emin - 1 or the exact result is a power of 2 (i.e. if
+         both arguments are powers of 2), then round to zero. */
+      if (rnd_mode == GMP_RNDN &&
+          ((bx + cx) + (mp_exp_t) b1 < __gmpfr_emin ||
+           (mpfr_powerof2_raw (b) && mpfr_powerof2_raw (c))))
+        rnd_mode = GMP_RNDZ;
+      return mpfr_set_underflow (a, rnd_mode, sign_product);
     }
-  else if (em > 0)
-    {
-      if (ec >= 0)
-        return mpfr_set_overflow(a, rnd_mode, sign_product);
-
-      MPFR_EXP(a) = __mpfr_emax;
-    }
-  else
-    {
-      if (ec <= 0)
-        return mpfr_set_underflow(a, rnd_mode, sign_product);
-
-      MPFR_EXP(a) = __mpfr_emin;
-    }
+  MPFR_EXP(a) = ax;
 
   if (MPFR_SIGN(a) != sign_product)
     MPFR_CHANGE_SIGN(a);

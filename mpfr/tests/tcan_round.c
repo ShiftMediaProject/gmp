@@ -23,11 +23,14 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-test.h"
 
 int
 main (void)
 {
    mpfr_t x;
+
+   tests_start_mpfr ();
 
    /* checks that rounds to nearest sets the last
      bit to zero in case of equal distance */
@@ -56,5 +59,6 @@ main (void)
 
    mpfr_clear (x);
 
+   tests_end_mpfr ();
    return 0;
 }

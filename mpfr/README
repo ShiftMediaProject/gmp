@@ -18,11 +18,12 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 
 The MPFR distribution contains the following files:
+(This does not apply to code retrieved by CVS.)
 
 AUTHORS     - the authors of the library
 BUGS        - bugs in MPFR - please read this file!
 COPYING     - the GNU General Public License, version 2
-COPYING.LIB - the Gnu Lesser General Public License, version 2.1
+COPYING.LIB - the GNU Lesser General Public License, version 2.1
 ChangeLog   - the log of changes
 INSTALL     - how to install MPFR (see also mpfr.texi)
 Makefile*   - files for building the library
@@ -33,6 +34,7 @@ VERSION     - version of MPFR (next release version if taken from CVS)
 ac*.m4      - automatic configuration files
 *.c         - source files
 configure*  - configuration files
+fdl.texi    - the GNU Free Documentation License
 install*    - installation files
 missing     - auxiliary installation file
 mkinst*     - auxiliary installation file
@@ -45,3 +47,10 @@ mpfr.info   - info file for MPFR
 mpfr.texi   - texinfo documentation for MPFR
 tests/      - test directory
 texinfo.tex - TeX macros to handle mpfr.texi
+
+
+You can get the latest source code by CVS:
+
+  cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/spaces checkout mpfr
+
+(empty password). CVS users should read the file "README.dev".

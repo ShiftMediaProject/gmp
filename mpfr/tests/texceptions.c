@@ -1,6 +1,6 @@
 /* Test file for exceptions.
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "mpfr.h"
+#include "mpfr-test.h"
 
 void mpfr_set_double_range _PROTO((void));
 
@@ -53,6 +54,8 @@ main (int argc, char *argv[])
   mpfr_t x, y;
   mp_exp_t emin, emax;
 
+  tests_start_mpfr ();
+
   mpfr_init (x);
   mpfr_init (y);
 
@@ -67,7 +70,7 @@ main (int argc, char *argv[])
   mpfr_set_ui (x, 1, GMP_RNDN);
   mpfr_mul_2exp (x, x, 1024, GMP_RNDN);
   mpfr_set_double_range ();
-  mpfr_check_range (x, GMP_RNDN);
+  mpfr_check_range (x, 0, GMP_RNDN);
   if (!mpfr_inf_p (x) || (mpfr_sgn(x) <= 0))
     {
       fprintf (stderr, "Error: 2^1024 rounded to nearest should give +Inf\n");
@@ -78,7 +81,7 @@ main (int argc, char *argv[])
   mpfr_set_ui (x, 1, GMP_RNDN);
   mpfr_mul_2exp (x, x, 1024, GMP_RNDN);
   mpfr_set_double_range ();
-  mpfr_check_range (x, GMP_RNDD);
+  mpfr_check_range (x, 0, GMP_RNDD);
   if (!mpfr_number_p (x))
     {
       fprintf (stderr, "Error: 2^1024 rounded down should give a normal number\n");
@@ -119,5 +122,6 @@ main (int argc, char *argv[])
   mpfr_clear (x);
   mpfr_clear (y);
     
+  tests_end_mpfr ();
   return 0;
 }

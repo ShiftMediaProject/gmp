@@ -281,6 +281,7 @@ main (void)
 {
   int i,j; double x=1.0, y, z;
 
+  tests_start_mpfr ();
   mpfr_test_init ();
 
   worst_cases ();
@@ -303,5 +304,6 @@ main (void)
     if (y != 0.0 && y != -0.0) tcmp2(x, y, -1);
   }
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -1,4 +1,4 @@
-/* Dummy file to stop libfrtests.a being empty.
+/* mpfr_get_exp - get the exponent of a floating-point number
 
 Copyright 2002 Free Software Foundation.
 
@@ -19,4 +19,14 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-int libfrtests_dummy = 0;
+#include "gmp.h"
+#include "gmp-impl.h"
+#include "mpfr.h"
+#include "mpfr-impl.h"
+
+mp_exp_t
+mpfr_get_exp (mpfr_srcptr x)
+{
+  MPFR_ASSERTN(MPFR_IS_FP(x) && MPFR_NOTZERO(x));
+  return MPFR_EXP(x);
+}

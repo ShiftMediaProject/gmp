@@ -77,7 +77,7 @@ mpfr_exp_rational (mpfr_ptr y, mpz_srcptr p, int r, int m)
    l = 0;
    accu = 0;
    while (k > 0){
-     mpz_mul(S[k], S[k], ptoj[_mpfr_ceil_log2((double) nb_terms[k])]);
+     mpz_mul(S[k], S[k], ptoj[__gmpfr_ceil_log2((double) nb_terms[k])]);
      mpz_mul(S[k-1], S[k-1], P[k]);
      accu += nb_terms[k];
      mpz_mul_2exp(S[k-1], S[k-1], r* accu);
@@ -139,9 +139,9 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   /* decompose x */
   /* we first write x = 1.xxxxxxxxxxxxx
      ----- k bits -- */
-  prec_x = _mpfr_ceil_log2 ((double) (MPFR_PREC(x)) / BITS_PER_MP_LIMB);
+  prec_x = __gmpfr_ceil_log2 ((double) (MPFR_PREC(x)) / BITS_PER_MP_LIMB);
   if (prec_x < 0) prec_x = 0;
-  logn =  _mpfr_ceil_log2 ((double) prec_x + MPFR_PREC(y));
+  logn =  __gmpfr_ceil_log2 ((double) prec_x + MPFR_PREC(y));
   if (logn < 2) logn = 2;
   ttt = MPFR_EXP(x);
   mpfr_init2(x_copy,MPFR_PREC(x));
@@ -157,7 +157,7 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpz_init (uk);
   while (!good){      
     Prec = realprec+shift+2+shift_x;
-    k = _mpfr_ceil_log2 ((double) Prec / BITS_PER_MP_LIMB);
+    k = __gmpfr_ceil_log2 ((double) Prec / BITS_PER_MP_LIMB);
 
     /* now we have to extract */
     mpfr_init2 (t, Prec);

@@ -86,9 +86,10 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 
   /* we need to store yn+1 = xn + dif limbs of the quotient */
   /* don't use tmp=yp since the mpn_lshift call below requires yp >= tmp+1 */
-  tmp = TMP_ALLOC((yn + 1) * BYTES_PER_MP_LIMB);
+  tmp = (mp_limb_t*) TMP_ALLOC((yn + 1) * BYTES_PER_MP_LIMB);
 
   c = (mp_limb_t) u;
+  MPFR_ASSERTN(u == c);
   if (dif >= 0)
     c = mpn_divrem_1 (tmp, dif, xp, xn, c); /* used all the dividend */
   else /* dif < 0 i.e. xn > yn, don't use the (-dif) low limbs from x */

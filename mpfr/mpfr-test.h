@@ -19,13 +19,17 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include <stdlib.h>
+#include <limits.h>
+#include <float.h>
 #include <math.h>
 #ifdef __mips
 #include <sys/fpu.h>
+#define HAVE_DENORMS
+#endif
+
+#if HAVE_CONFIG_H
+#include "config.h"
 #endif
 
 /* set precision control to double on x86 */
@@ -46,6 +50,11 @@ MA 02111-1307, USA. */
 #endif /* ifndef __setfpucw */
 #endif /* __i386__ */
 
+/* Because of the SunOS 4 compiler */
+#ifndef RAND_MAX
+#define RAND_MAX 0x7FFFFFFF
+#endif
+
 /* generates a random long int, a random double,
    and corresponding seed initializing */
 #ifdef HAVE_LRAND48
@@ -63,12 +72,6 @@ MA 02111-1307, USA. */
 #define random() (mrand48() & 0x7fffffff)
 #endif
 
-void mpfr_test_init _PROTO ((void));
-double drand _PROTO ((void)); 
-int ulp _PROTO ((double, double)); 
-double dbl _PROTO ((double, int)); 
-double Ulp _PROTO ((double));
-
 #define MINNORM 2.2250738585072013831e-308 /* 2^(-1022), smallest normalized */
 #define MAXNORM 1.7976931348623157081e308 /* 2^(1023)*(2-2^(-52)) */
 
@@ -83,84 +86,20 @@ double Ulp _PROTO ((double));
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define ABS(x) (((x)>0) ? (x) : -(x))
 
-/* initialization function for tests using the hardware floats */
-void
-mpfr_test_init ()
-{
-#ifdef __mips
-  /* to get denormalized numbers on IRIX64 */
-  union fpc_csr exp;
+void tests_memory_start _PROTO ((void));
+void tests_memory_end _PROTO ((void));
 
-  exp.fc_word = get_fpc_csr();
-  exp.fc_struct.flush = 0;
-  set_fpc_csr(exp.fc_word);
+void tests_start_mpfr _PROTO ((void));
+void tests_end_mpfr _PROTO ((void));
+
+int mpfr_set_machine_rnd_mode _PROTO ((mp_rnd_t));
+void mpfr_test_init _PROTO ((void));
+double drand _PROTO ((void)); 
+int ulp _PROTO ((double, double)); 
+double dbl _PROTO ((double, int)); 
+double Ulp _PROTO ((double));
+
+#if !defined(HAVE_ISNAN) && !defined(isnan)
+int Isnan _PROTO ((double));
+#define isnan(d) Isnan(d)
 #endif
-
-#ifdef HAVE_SETFPUCW
-  /* sets the precision to double */
-  __setfpucw((_FPU_DEFAULT & (~_FPU_EXTENDED)) | _FPU_DOUBLE);
-#endif
-}
-
-/* generate a random double using the whole range of possible values,
-   including denormalized numbers, NaN, infinities, ... */
-double
-drand (void)
-{
-  double d; int *i, expo;
-
-  i = (int*) &d;
-  d = 1.0;
-  if (i[0] == 0)
-    expo = 1; /* little endian, exponent in i[1] */
-  else
-    expo = 0;
-  i[0] = LONG_RAND();
-  i[1] = LONG_RAND();
-  while (i[expo] >= 2146435072)
-    i[expo] = LONG_RAND(); /* avoids NaNs */
-  if ((LONG_RAND() % 2) && !isnan (d))
-    d = -d; /* generates negative numbers */
-  return d;
-}
-
-/* returns ulp(x) for x a 'normal' double-precision number */
-double
-Ulp (double x)
-{
-   double y, eps;
-
-   if (x < 0) x = -x;
-
-   y = x * 2.220446049250313080847263336181640625e-16 ; /* x / 2^52 */
-
-   /* as ulp(x) <= y = x/2^52 < 2*ulp(x),
-   we have x + ulp(x) <= x + y <= x + 2*ulp(x),
-   therefore o(x + y) = x + ulp(x) or x + 2*ulp(x) */
-
-   eps =  x + y;
-   eps = eps - x; /* ulp(x) or 2*ulp(x) */
-
-   return (eps > y) ? 0.5 * eps : eps;
-}
-
-/* returns the number of ulp's between a and b */
-int
-ulp (double a, double b)
-{
-  if (a==0.0) {
-    if (b==0.0) return 0;
-    else if (b<0.0) return 2147483647;
-    else return -2147483647;
-  }
-  return (a-b)/Ulp(a);
-}
-
-/* return double m*2^e */
-double
-dbl (double m, int e)
-{
-  if (e>=0) while (e-->0) m *= 2.0;
-  else while (e++<0) m /= 2.0;
-  return m;
-}

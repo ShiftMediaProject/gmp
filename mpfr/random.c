@@ -1,6 +1,6 @@
 /* mpfr_random -- generate a random floating-point number
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,7 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -31,26 +30,30 @@ MA 02111-1307, USA. */
 void
 mpfr_random (mpfr_ptr x)
 {
-  mp_limb_t *xp; unsigned long xn, cnt, prec = MPFR_PREC(x); 
+  mp_limb_t *xp;
+  mp_prec_t prec;
+  mp_size_t xn;
+  int cnt;
 
   MPFR_CLEAR_FLAGS(x);
   xp = MPFR_MANT(x);
-  xn = (prec-1)/BITS_PER_MP_LIMB + 1;
+  prec = MPFR_PREC(x);
+  xn = (prec - 1) / BITS_PER_MP_LIMB + 1;
 
   mpn_random (xp, xn);
 
   if (xp[xn - 1] == 0)
     xp[xn - 1] = 1;
-  /* since count_leading_zeros doesn't like zeroes */
+  /* since count_leading_zeros doesn't like zeroes, but xp[xn - 1] = 1
+     will appear twice often. */
 
-  count_leading_zeros (cnt, xp[xn - 1]); 
-  if (cnt)
-    mpn_lshift (xp, xp, xn, cnt); 
-  MPFR_EXP(x) = -cnt; 
-  if (MPFR_SIGN(x) < 0)
-    MPFR_CHANGE_SIGN(x);
+  count_leading_zeros (cnt, xp[xn - 1]);
+  if (cnt != 0)
+    mpn_lshift (xp, xp, xn, cnt);
+  MPFR_EXP(x) = -cnt;
+  MPFR_SET_POS(x);
 
-  cnt = xn * BITS_PER_MP_LIMB - prec; 
+  cnt = (mp_prec_t) xn * BITS_PER_MP_LIMB - prec;
   /* cnt is the number of non significant bits in the low limb */
   xp[0] &= ~((MP_LIMB_T_ONE << cnt) - MP_LIMB_T_ONE);
 }

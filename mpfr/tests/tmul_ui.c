@@ -86,6 +86,8 @@ main (int argc, char *argv[])
   unsigned int xprec, yprec, i;
   mp_prec_t p;
 
+  tests_start_mpfr ();
+
   for (p=2; p<100; p++)
     for (i=1; i<50; i++)
       check_inexact (p);
@@ -240,5 +242,6 @@ main (int argc, char *argv[])
 
   mpfr_clear(x); mpfr_clear(y);
 
+  tests_end_mpfr ();
   return 0;
 }

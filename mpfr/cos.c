@@ -47,7 +47,7 @@ mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   precy = MPFR_PREC(y);
 
-  K0 = _mpfr_isqrt(precy / 2);
+  K0 = __gmpfr_isqrt(precy / 2);
   /* we need at least K + log2(precy/K) extra bits */
   m = precy + 3 * K0 + 3;
 

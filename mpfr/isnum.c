@@ -1,6 +1,6 @@
 /* mpfr_number_p -- check for ordinary numbers
 
-Copyright 2000, 2001 Free Software Foundation.
+Copyright 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -27,5 +27,5 @@ MA 02111-1307, USA. */
 int
 mpfr_number_p (mpfr_srcptr x)
 {
-  return !MPFR_IS_NAN(x) && !MPFR_IS_INF(x);
+  return MPFR_IS_FP(x);
 }

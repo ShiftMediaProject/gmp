@@ -1,6 +1,6 @@
 /* mpfr_set_si -- set a MPFR number from a machine signed integer
 
-Copyright 1999, 2000, 2001 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -42,7 +42,8 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
     }
 
   xn = (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
-  ai = SAFE_ABS(long, i);
+  ai = SAFE_ABS(unsigned long, i);
+  MPFR_ASSERTN(SAFE_ABS(unsigned long, i) == ai);
   count_leading_zeros(cnt, ai);
 
   xp = MPFR_MANT(x);
@@ -54,7 +55,7 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
     MPFR_CHANGE_SIGN(x);
 
   MPFR_EXP(x) = nbits = BITS_PER_MP_LIMB - cnt;
-  inex = mpfr_check_range(x, rnd_mode);
+  inex = mpfr_check_range(x, 0, rnd_mode);
   if (inex)
     return inex; /* underflow or overflow */
 
@@ -69,11 +70,11 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
         {
           mp_exp_t exp = MPFR_EXP(x);
 
-          if (exp == __mpfr_emax)
+          if (exp == __gmpfr_emax)
             return mpfr_set_overflow(x, rnd_mode, (i < 0 ? -1 : 1));
 
           MPFR_EXP(x)++;
-          xp[xn] = GMP_LIMB_HIGHBIT;
+          xp[xn] = MPFR_LIMB_HIGHBIT;
         }
     }
 

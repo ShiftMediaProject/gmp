@@ -36,13 +36,15 @@ mpfr_sqrt_ui (mpfr_ptr r, unsigned long u, mp_rnd_t rnd_mode)
       int inex;
 
       MPFR_INIT1(up, uu, BITS_PER_MP_LIMB, 1);
+      MPFR_ASSERTN(u == (mp_limb_t) u);
       count_leading_zeros (cnt, (mp_limb_t) u);
       *up = (mp_limb_t) u << cnt;
       MPFR_EXP(uu) = BITS_PER_MP_LIMB - cnt;
 
       mpfr_save_emin_emax();
       inex = mpfr_sqrt(r, uu, rnd_mode);
-      MPFR_RESTORE_RET(inex, r, rnd_mode);
+      mpfr_restore_emin_emax();
+      return mpfr_check_range(r, inex, rnd_mode);
     }
   else /* sqrt(0) = 0 */
     {

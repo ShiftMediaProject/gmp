@@ -46,7 +46,7 @@ mpfr_tan (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     }
 
   precy = MPFR_PREC(y);
-  m = precy + _mpfr_ceil_log2 ((double) precy) + ABS(MPFR_EXP(x)) + 13;
+  m = precy + __gmpfr_ceil_log2 ((double) precy) + ABS(MPFR_EXP(x)) + 13;
 
   mpfr_init2 (s, m);
   mpfr_init2 (c, m);

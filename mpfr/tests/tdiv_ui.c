@@ -21,6 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 #include <time.h>
 #include "gmp.h"
 #include "mpfr.h"
@@ -37,10 +38,6 @@ check (double d, unsigned long u, mp_rnd_t rnd, double e)
   double f;
 
   mpfr_init2(x, 53); mpfr_init2(y, 53);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd);
-#endif
-  if (e==0.0) e = d / u;
   mpfr_set_d(x, d, rnd); 
   mpfr_div_ui(y, x, u, rnd); 
   f = mpfr_get_d1 (y);
@@ -174,21 +171,8 @@ int
 main (int argc, char **argv)
 {
   mpfr_t x;
-#ifdef MPFR_HAVE_FESETROUND
-  int i;
-  unsigned long u;
-  double d;
 
-  mpfr_test_init ();
-
-  SEED_RAND (time(NULL));
-  for (i=0;i<1000000;i++)
-    {
-      do { u = LONG_RAND(); } while (u==0);
-      do { d = drand(); } while (ABS(d/u)<2.2e-307);
-      check (d, u, LONG_RAND() % 4, 0.0);
-    }
-#endif
+  tests_start_mpfr ();
 
   check_inexact ();
 
@@ -211,5 +195,6 @@ main (int argc, char **argv)
   }
   mpfr_clear(x);
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -37,16 +37,16 @@ void check4 _PROTO((double, mp_rnd_t, int, int));
 void check_large _PROTO((void)); 
 
 void
-check4(double d, mp_rnd_t rnd, int base, int prec)
+check4 (double d, mp_rnd_t rnd, int base, int prec)
 {
   mpfr_t x;
 
-  mpfr_init2(x, prec);
-  mpfr_set_d(x, d, rnd);
-  fprintf(fout, "%1.19e base %d rnd %d:\n ", d, base, rnd);
-  mpfr_out_str(fout, base, (base==2) ? prec : 0, x, rnd);
-  fputc('\n', fout);
-  mpfr_clear(x);
+  mpfr_init2 (x, prec);
+  mpfr_set_d (x, d, rnd);
+  fprintf (fout, "%1.19e base %d rnd %d:\n ", d, base, rnd);
+  mpfr_out_str (fout, base, (base == 2) ? prec : 0, x, rnd);
+  fputc ('\n', fout);
+  mpfr_clear (x);
 }
 
 void
@@ -68,6 +68,7 @@ check_large (void)
   if (strcmp (s, "-12"))
     {
       fprintf (stderr, "Error in mpfr_get_str for x=-11.5 and rnd=GMP_RNDD\n");
+      fprintf (stderr, "got %s instead of -12\n", s);
       free (s);
       mpfr_clear (x);
       exit (1);
@@ -106,29 +107,35 @@ check_large (void)
 int
 main (int argc, char *argv[])
 {
-  int i,N=10000,r,p; double d;
+  int i, N=10000, r, p;
+  double d;
 
-  check_large();
+  check_large ();
   /* with no argument: prints to /dev/null,
      tout_str N: prints N tests to stdout */
-  if (argc==1) fout=fopen("/dev/null", "w");
-  else { fout=stdout; N=atoi(argv[1]); }
-  check(-1.37247529013405550000e+15, GMP_RNDN, 7);
-  check(-1.5674376729569697500e+15, GMP_RNDN, 19);
-  check(-5.71262771772792640000e-79, GMP_RNDU, 16);
-  check(-0.0, GMP_RNDU, 7);
-  check(-4.5306392613572974756e-308, GMP_RNDN, 8);
-  check(-6.7265890111403371523e-165, GMP_RNDN, 4);
-  check(-1.3242553591261807653e+156, GMP_RNDN, 16);
-  check(-6.606499965302424244461355e233, GMP_RNDN, 10);
-  check4(1.0, GMP_RNDN, 10, 120);
-  check(1.0, GMP_RNDU, 10);
-  check(4.059650008e-83, GMP_RNDN, 10);
-  check(-7.4, GMP_RNDN, 10);
-  check(0.997, GMP_RNDN, 10);
-  check(-4.53063926135729747564e-308, GMP_RNDN, 10);
-  check(2.14478198760196000000e+16, GMP_RNDN, 10);
-  check(7.02293374921793516813e-84, GMP_RNDN, 10);
+  if (argc==1)
+    fout = fopen ("/dev/null", "w");
+  else
+    {
+      fout = stdout;
+      N = atoi (argv[1]);
+    }
+  check (-1.37247529013405550000e+15, GMP_RNDN, 7);
+  check (-1.5674376729569697500e+15, GMP_RNDN, 19);
+  check (-5.71262771772792640000e-79, GMP_RNDU, 16);
+  check (-0.0, GMP_RNDU, 7);
+  check (-4.5306392613572974756e-308, GMP_RNDN, 8);
+  check (-6.7265890111403371523e-165, GMP_RNDN, 4);
+  check (-1.3242553591261807653e+156, GMP_RNDN, 16);
+  check (-6.606499965302424244461355e233, GMP_RNDN, 10);
+  check4 (1.0, GMP_RNDN, 10, 120);
+  check (1.0, GMP_RNDU, 10);
+  check (4.059650008e-83, GMP_RNDN, 10);
+  check (-7.4, GMP_RNDN, 10);
+  check (0.997, GMP_RNDN, 10);
+  check (-4.53063926135729747564e-308, GMP_RNDN, 10);
+  check (2.14478198760196000000e+16, GMP_RNDN, 10);
+  check (7.02293374921793516813e-84, GMP_RNDN, 10);
 
   /* random tests */
   SEED_RAND (time(NULL));
@@ -147,6 +154,8 @@ main (int argc, char *argv[])
       p = 2 + LONG_RAND() % 35;
       check (d, r, p);
     }
+
+  fclose (fout);
 
   return 0;
 }

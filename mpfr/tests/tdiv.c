@@ -38,28 +38,31 @@ void check_lowr _PROTO((void));
 void check_inexact _PROTO((void));
 void check_nan _PROTO((void));
 
+/* if Q is not zero, then it is the correct result */
 void
 check4 (double N, double D, mp_rnd_t rnd_mode, int p, double Q)
 {
-  mpfr_t q, n, d; double Q2;
+  mpfr_t q, n, d;
+  double Q2;
 
-  mpfr_init2(q, p); mpfr_init2(n, p); mpfr_init2(d, p);
+  mpfr_init2 (q, p);
+  mpfr_init2 (n, p);
+  mpfr_init2 (d, p);
   mpfr_set_d(n, N, rnd_mode);
   mpfr_set_d(d, D, rnd_mode);
   mpfr_div(q, n, d, rnd_mode);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd_mode);
-#endif
-  if (Q==0.0) Q = N/D;
   Q2 = mpfr_get_d1 (q);
-  if (p==53 && Q!=Q2 && (!isnan(Q) || !isnan(Q2))) {
-    printf("mpfr_div failed for n=%1.20e, d=%1.20e, rnd_mode=%s\n",
-	   N, D, mpfr_print_rnd_mode(rnd_mode));
-    printf("expected quotient is %1.20e, got %1.20e (%d ulp)\n", Q, Q2,
-	   ulp(Q2, Q));
-    exit(1);
-  }
-  mpfr_clear(q); mpfr_clear(n); mpfr_clear(d);  
+  if (p == 53 && Q != Q2 && (!isnan(Q) || !isnan(Q2)))
+    {
+      printf ("mpfr_div failed for n=%1.20e, d=%1.20e, rnd_mode=%s\n",
+              N, D, mpfr_print_rnd_mode(rnd_mode));
+      printf ("correct quotient is %1.20e, mpfr_div gives %1.20e (%d ulp)\n",
+              Q, Q2, ulp (Q2, Q));
+      exit (1);
+    }
+  mpfr_clear (q);
+  mpfr_clear (n);
+  mpfr_clear (d);
 }
 
 void
@@ -451,13 +454,6 @@ main (int argc, char *argv[])
 {
   mpfr_t x, y, z; 
 
-#ifdef MPFR_HAVE_FESETROUND
-  int N, i;
-  double n, d, e;
-
-  mpfr_test_init ();
-#endif
-
   check_inexact(); 
 
   mpfr_init2 (x, 64);
@@ -493,18 +489,13 @@ main (int argc, char *argv[])
 	  -4.0250194961676020848e-258);
   check53(1.04636807108079349236e-189, 3.72295730823253012954e-292, GMP_RNDZ,
 	  2.810583051186143125e102);
-
-#ifdef MPFR_HAVE_FESETROUND
-  N = (argc>1) ? atoi(argv[1]) : 10000;
-  SEED_RAND (time(NULL));
-  for (i=0;i<N;i++)
-    {
-      do { n = drand(); d = drand(); e = ABS(n)/ABS(d); }
-      /* smallest normalized is 2^(-1022), largest is 2^(1023)*(2-2^(-52)) */
-      while (e>=MAXNORM || e<MINNORM);
-      check4 (n, d, LONG_RAND() % 4, 53, 0.0);
-    }
-#endif
+  /* problems found by Kevin under HP-PA */
+  check53 (2.861044553323177e-136, -1.1120354257068143e+45, GMP_RNDZ,
+           -2.5727998292003016e-181);
+  check53 (-4.0559157245809205e-127, -1.1237723844524865e+77, GMP_RNDN,
+           3.6091968273068081e-204);
+  check53 (-1.8177943561493235e-93, -8.51233984260364e-104, GMP_RNDU,
+           2.1354814184595821e+10);
 
   mpfr_clear (x);
   mpfr_clear (y);

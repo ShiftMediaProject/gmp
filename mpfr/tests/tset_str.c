@@ -24,6 +24,7 @@ MA 02111-1307, USA. */
 #include <string.h>
 #include <time.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
@@ -36,6 +37,8 @@ main (int argc, char *argv[])
   char *str, *str2;
   mp_exp_t e;
   int base, logbase, prec, baseprec;
+
+  tests_start_mpfr ();
 
   if (argc>=2) /* tset_str <string> <prec> */
     {
@@ -56,7 +59,7 @@ main (int argc, char *argv[])
 
   bd = LONG_RAND() & 8;
   
-  str2 = str = (char *) malloc (nc * sizeof(char));
+  str2 = str = (*__gmp_allocate_func) (nc * sizeof(char));
 
   if (bd)
     {
@@ -93,7 +96,7 @@ main (int argc, char *argv[])
       exit(1);
     }
 
-  free(str);
+  (*__gmp_free_func) (str, nc * sizeof(char));
 
   mpfr_set_prec (x, 53);
   mpfr_set_str_raw (x, "+110101100.01010000101101000000100111001000101011101110E00");
@@ -160,38 +163,48 @@ main (int argc, char *argv[])
 	  mpfr_clear (y);
 	  exit (1);
 	}
-      free (str);
+      (*__gmp_free_func) (str, strlen (str) + 1);
     }
 
-  if (mpfr_set_str (x, "NaN", 10, GMP_RNDN) != 0 || !mpfr_nan_p(x))
+  if (mpfr_set_str (x, "NaNgarbage", 10, GMP_RNDN) != 3 || !mpfr_nan_p(x))
     {
       fprintf (stderr, "mpfr_set_str failed on NaN\n");
       exit (1);
     }
 
-  if (mpfr_set_str (x, "Inf", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
+  if (mpfr_set_str (x, "Infgarbage", 10, GMP_RNDN) != 3 || !mpfr_inf_p(x) ||
       MPFR_SIGN(x) < 0)
     {
       fprintf (stderr, "mpfr_set_str failed on Inf\n");
       exit (1);
     }
 
-  if (mpfr_set_str (x, "-Inf", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
+  if (mpfr_set_str (x, "-Infgarbage", 10, GMP_RNDN) != 4 || !mpfr_inf_p(x) ||
       MPFR_SIGN(x) > 0)
     {
       fprintf (stderr, "mpfr_set_str failed on -Inf\n");
       exit (1);
     }
 
-  if (mpfr_set_str (x, "+Inf", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
+  if (mpfr_set_str (x, "+Infgarbage", 10, GMP_RNDN) != 4 || !mpfr_inf_p(x) ||
       MPFR_SIGN(x) < 0)
     {
       fprintf (stderr, "mpfr_set_str failed on +Inf\n");
       exit (1);
     }
 
+  /* check that mpfr_set_str works for uppercase letters too */
+  mpfr_set_prec (x, 10);
+  mpfr_set_str (x, "B", 16, GMP_RNDN);
+  if (mpfr_cmp_ui (x, 11) != 0)
+    {
+      fprintf (stderr, "mpfr_set_str does not work for uppercase letters\n");
+      exit (1);
+    }
+
   mpfr_clear (x);
   mpfr_clear (y);
 
+  tests_end_mpfr ();
   return 0;
 }

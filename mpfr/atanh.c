@@ -92,7 +92,7 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
     /* compute the precision of intermediary variable */
     Nt=MAX(Nx,Ny);
     /* the optimal number of bits : see algorithms.ps */
-    Nt=Nt+4+_mpfr_ceil_log2(Nt);
+    Nt=Nt+4+__gmpfr_ceil_log2(Nt);
 
     /* initialise of intermediary	variable */
     mpfr_init(t);             
@@ -115,7 +115,7 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
       mpfr_div_2ui(t,te,1,GMP_RNDN);  /* (1/2)*ln((1+xt)/(1-xt))*/
 	
       /* estimation of the error see- algorithms.ps*/
-      /* err=Nt-_mpfr_ceil_log2(1+5*pow(2,1-MPFR_EXP(t)));*/
+      /* err=Nt-__gmpfr_ceil_log2(1+5*pow(2,1-MPFR_EXP(t)));*/
       err=Nt-(MAX(4-MPFR_EXP(t),0)+1);
 
       /* actualisation of the precision */

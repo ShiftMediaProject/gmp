@@ -1,7 +1,7 @@
 /* mpfr_print_binary -- print the internal binary representation of a 
                      floating-point number
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -44,7 +44,7 @@ mpfr_get_str_raw (char *digit_ptr, mpfr_srcptr x)
   for (k = sx - 1; k >= 0 ; k--)
     { 
       wd = mx[k]; 
-      t = GMP_LIMB_HIGHBIT;
+      t = MPFR_LIMB_HIGHBIT;
       for (l = BITS_PER_MP_LIMB - 1; l>=0; l--)
 	{
 	  if (wd & t) 

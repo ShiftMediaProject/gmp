@@ -1,6 +1,6 @@
 /* Test file for mpfr_pow.
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -35,6 +35,9 @@ main (int argc, char *argv[])
 {
   mpfr_t x, y, z, ax;
   long int iy;
+
+  tests_start_mpfr ();
+
   mpfr_init (x);
   mpfr_init (ax);
   mpfr_init2 (y,sizeof(unsigned long int)*CHAR_BIT);
@@ -420,5 +423,6 @@ main (int argc, char *argv[])
   mpfr_clear (z);
   mpfr_clear (ax);
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -1,6 +1,6 @@
 /* Test file for mpfr_const_log2.
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -25,6 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
+#include "mpfr-test.h"
 
 /* tlog2 [prec] [rnd] [0 = no print] */
 
@@ -40,7 +41,7 @@ check (mp_prec_t p0, mp_prec_t p1)
   mpfr_init (y);
   mpfr_init2 (z, p1 + 10);
   mpfr_const_log2 (z, GMP_RNDN);
-  __mpfr_const_log2_prec = 1;
+  __gmpfr_const_log2_prec = 1;
 
   for (; p0<=p1; p0++)
     {
@@ -76,6 +77,8 @@ main (int argc, char *argv[])
   mpfr_t x;
   int p;
   mp_rnd_t rnd;
+
+  tests_start_mpfr ();
 
   p = (argc>1) ? atoi(argv[1]) : 53;
   rnd = (argc>2) ? atoi(argv[2]) : GMP_RNDZ;
@@ -113,5 +116,6 @@ main (int argc, char *argv[])
 
   mpfr_clear(x);
 
+  tests_end_mpfr ();
   return 0;
 }

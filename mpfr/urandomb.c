@@ -3,7 +3,7 @@
    using STATE as the random state previously initialized by a call to
    gmp_randinit().
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -22,7 +22,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -33,9 +32,10 @@ void
 mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
 {
   mp_ptr rp;
+  mp_prec_t nbits;
   mp_size_t nlimbs;
   mp_exp_t exp;
-  unsigned long cnt, nbits;
+  int cnt;
 
   MPFR_CLEAR_FLAGS(rop);
 
@@ -46,12 +46,8 @@ mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
   _gmp_rand (rp, rstate, nbits);
 
   /* If nbits isn't a multiple of BITS_PER_MP_LIMB, shift up.  */
-  if (nlimbs != 0)
-    {
-      if (nbits % BITS_PER_MP_LIMB != 0)
-	mpn_lshift (rp, rp, nlimbs,
-		    BITS_PER_MP_LIMB - nbits % BITS_PER_MP_LIMB);
-    }
+  if (nbits % BITS_PER_MP_LIMB != 0)
+    mpn_lshift (rp, rp, nlimbs, BITS_PER_MP_LIMB - nbits % BITS_PER_MP_LIMB);
 
   exp = 0;
   while (nlimbs != 0 && rp[nlimbs - 1] == 0)
@@ -60,13 +56,18 @@ mpfr_urandomb (mpfr_ptr rop, gmp_randstate_t rstate)
       exp--;
     }
 
-  count_leading_zeros (cnt, rp[nlimbs - 1]); 
-  if (cnt) mpn_lshift (rp, rp, nlimbs, cnt); 
-  exp -= cnt; 
+  if (nlimbs != 0) /* otherwise value is zero */
+    {
+      count_leading_zeros (cnt, rp[nlimbs - 1]); 
+      if (cnt != 0)
+        mpn_lshift (rp, rp, nlimbs, cnt);
+      exp -= cnt;
 
-  cnt = nlimbs*BITS_PER_MP_LIMB - nbits; 
-  /* cnt is the number of non significant bits in the low limb */
-  rp[0] &= ~((MP_LIMB_T_ONE << cnt) - 1);
+      cnt = (mp_prec_t) nlimbs * BITS_PER_MP_LIMB - nbits;
+      /* cnt is the number of non significant bits in the low limb */
+      rp[0] &= ~((MP_LIMB_T_ONE << cnt) - 1);
+    }
 
   MPFR_EXP (rop) = exp;
+  MPFR_SET_POS (rop);
 }

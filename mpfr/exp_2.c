@@ -33,7 +33,7 @@ static int mpz_normalize2     _PROTO ((mpz_t, mpz_t, int, int));
 
 /* returns floor(sqrt(n)) */
 unsigned long
-_mpfr_isqrt (unsigned long n)
+__gmpfr_isqrt (unsigned long n)
 {
   unsigned long s;
 
@@ -46,7 +46,7 @@ _mpfr_isqrt (unsigned long n)
 
 /* returns floor(n^(1/3)) */
 unsigned long
-_mpfr_cuberoot (unsigned long n)
+__gmpfr_cuberoot (unsigned long n)
 {
   double s, is;
 
@@ -118,9 +118,9 @@ mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   /* for the O(n^(1/2)*M(n)) method, the Taylor series computation of
      n/K terms costs about n/(2K) multiplications when computed in fixed
      point */
-  K = (precy<SWITCH) ? _mpfr_isqrt((precy + 1) / 2) : _mpfr_cuberoot (4*precy);
+  K = (precy<SWITCH) ? __gmpfr_isqrt((precy + 1) / 2) : __gmpfr_cuberoot (4*precy);
   l = (precy-1)/K + 1;
-  err = K + (int) _mpfr_ceil_log2 (2.0 * (double) l + 18.0);
+  err = K + (int) __gmpfr_ceil_log2 (2.0 * (double) l + 18.0);
   /* add K extra bits, i.e. failure probability <= 1/2^K = O(1/precy) */
   q = precy + err + K + 3;
   mpfr_init2 (r, q);
@@ -284,7 +284,7 @@ mpfr_exp2_aux2 (mpz_t s, mpfr_srcptr r, int q, int *exps)
 
   /* estimate value of l */
   l = q / (-MPFR_EXP(r));
-  m = (int) _mpfr_isqrt (l);
+  m = (int) __gmpfr_isqrt (l);
   /* we access R[2], thus we need m >= 2 */
   if (m < 2) m = 2;
   TMP_MARK(marker);

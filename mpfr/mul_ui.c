@@ -78,6 +78,7 @@ mpfr_mul_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
   if (yn < xn + 1)
     yp = (mp_ptr) TMP_ALLOC ((size_t) (xn + 1) * BYTES_PER_MP_LIMB);
 
+  MPFR_ASSERTN(u == (mp_limb_t) u);
   yp[xn] = mpn_mul_1 (yp, MPFR_MANT(x), xn, u);
 
   /* x * u is stored in yp[xn], ..., yp[0] */
@@ -85,7 +86,7 @@ mpfr_mul_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
   /* since the case u=1 was treated above, we have u >= 2, thus
      yp[xn] >= 1 since x was msb-normalized */
   MPFR_ASSERTN(yp[xn] != 0);
-  if ((yp[xn] & GMP_LIMB_HIGHBIT) == 0)
+  if ((yp[xn] & MPFR_LIMB_HIGHBIT) == 0)
     {
       count_leading_zeros(cnt, yp[xn]);
       mpn_lshift (yp, yp, xn + 1, cnt);
@@ -105,13 +106,13 @@ mpfr_mul_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 
   if (c) /* rounded result is 1.0000000000000000... */
     {
-      old_yp[yn-1] = GMP_LIMB_HIGHBIT;
+      old_yp[yn-1] = MPFR_LIMB_HIGHBIT;
       cnt++;
     }
 
   TMP_FREE(marker);
 
-  if (__mpfr_emax < MPFR_EMAX_MIN + cnt || MPFR_EXP(x) > __mpfr_emax - cnt)
+  if (__gmpfr_emax < MPFR_EMAX_MIN + cnt || MPFR_EXP(x) > __gmpfr_emax - cnt)
     return mpfr_set_overflow(y, rnd_mode, MPFR_SIGN(x));
 
   MPFR_EXP(y) = MPFR_EXP(x) + cnt;

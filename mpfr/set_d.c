@@ -205,23 +205,30 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
 
   MPFR_EXP(tmp) = __mpfr_extract_double (tmpmant, d);
 
-  /* determine the index i of the most significant non-zero limb
-     and the number k of zero high limbs */
-  i = MPFR_LIMBS_PER_DOUBLE - 1;
-  k = 0;
+#ifndef NDEBUG
+  /* Failed assertion if the stored value is 0 (e.g., if the exponent range
+     has been reduced at the wrong moment and an underflow to 0 occurred).
+     Probably a bug in the C implementation if this happens. */
+  i = 0;
   while (tmpmant[i] == 0)
     {
-      MPFR_ASSERTN(i > 0);
-      i--;
-      k++;
+      i++;
+      MPFR_ASSERTN(i < MPFR_LIMBS_PER_DOUBLE);
     }
+#endif
 
-  count_leading_zeros (cnt, tmpmant[i]);
+  /* determine the index i-1 of the most significant non-zero limb
+     and the number k of zero high limbs */
+  i = MPFR_LIMBS_PER_DOUBLE;
+  MPN_NORMALIZE_NOT_ZERO(tmpmant, i);
+  k = MPFR_LIMBS_PER_DOUBLE - i;
+
+  count_leading_zeros (cnt, tmpmant[i - 1]);
 
   if (cnt)
-    mpn_lshift (tmpmant + k, tmpmant, i + 1, cnt);
+    mpn_lshift (tmpmant + k, tmpmant, i, cnt);
   else if (k)
-    MPN_COPY (tmpmant + k, tmpmant, i + 1);
+    MPN_COPY (tmpmant + k, tmpmant, i);
 
   if (k)
     MPN_ZERO (tmpmant, k);

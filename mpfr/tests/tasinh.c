@@ -1,6 +1,6 @@
 /* Test file for mpfr_asinh.
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -34,6 +34,8 @@ main (int argc, char *argv[])
 {
   mpfr_t x, y;
 
+  tests_start_mpfr ();
+
   mpfr_init (x);
   mpfr_init (y);
 
@@ -47,5 +49,6 @@ main (int argc, char *argv[])
   mpfr_clear (x);
   mpfr_clear (y);
 
+  tests_end_mpfr ();
   return 0;
 }

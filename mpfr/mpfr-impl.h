@@ -19,6 +19,26 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#ifndef HAVE_STRCASECMP
+#define strcasecmp mpfr_strcasecmp
+#endif
+
+#ifndef HAVE_STRNCASECMP
+#define strncasecmp mpfr_strncasecmp
+#endif
+
+/* Definition of MPFR_LIMB_HIGHBIT */
+
+#ifdef GMP_LIMB_HIGHBIT
+#define MPFR_LIMB_HIGHBIT GMP_LIMB_HIGHBIT
+#else
+#define MPFR_LIMB_HIGHBIT MP_LIMB_T_HIGHBIT
+#endif
+
+#if GMP_NAIL_BITS != 0
+#error "MPFR doesn't support nonzero values of GMP_NAIL_BITS"
+#endif
+
 /* Test if X (positive) is a power of 2 */
 
 #define IS_POW2(X) (((X) & ((X) - 1)) == 0)
@@ -66,8 +86,9 @@ typedef unsigned long int       mp_size_unsigned_t;
 #define ALPHA 4.3191365662914471407 /* a+2 = a*log(a), rounded to +infinity */
 
 /* Safe absolute value (to avoid possible integer overflow) */
+/* type is the target (unsigned) type */
 
-#define SAFE_ABS(type,x) ((x) >= 0 ? (unsigned type)(x) : -(unsigned type)(x))
+#define SAFE_ABS(type,x) ((x) >= 0 ? (type)(x) : -(type)(x))
 
 /* macros for doubles, based on gmp union ieee_double_extract */
 
@@ -129,23 +150,8 @@ typedef union ieee_double_extract Ieee_double_extract;
    following two macros, unless the flag comes from another function
    returning the ternary inexact value */
 #define MPFR_RET(I) return \
-  (I) ? ((__mpfr_flags |= MPFR_FLAGS_INEXACT), (I)) : 0
-#define MPFR_RET_NAN return (__mpfr_flags |= MPFR_FLAGS_NAN), 0
-
-/* The following macro restores the exponent range and the flags,
-   checks that the result is in the exponent range and returns the
-   ternary inexact value. */
-#define MPFR_RESTORE_RET(inex, x, rnd_mode) \
-  do \
-    { \
-      int inex_cr; \
-      mpfr_restore_emin_emax(); \
-      inex_cr = mpfr_check_range(x, rnd_mode); \
-      if (inex_cr) \
-        return inex_cr; /* underflow or overflow */ \
-      MPFR_RET(inex); \
-    } \
-  while(0)
+  (I) ? ((__gmpfr_flags |= MPFR_FLAGS_INEXACT), (I)) : 0
+#define MPFR_RET_NAN return (__gmpfr_flags |= MPFR_FLAGS_NAN), 0
 
 /* Memory gestion */
 
@@ -172,7 +178,20 @@ typedef union ieee_double_extract Ieee_double_extract;
 extern "C" {
 #endif  
 
-extern mp_prec_t __mpfr_const_log2_prec;
+extern mpfr_t __mpfr_const_log2;
+extern mp_prec_t __gmpfr_const_log2_prec;
+
+extern mpfr_t __mpfr_const_pi;
+extern mp_prec_t __gmpfr_const_pi_prec;
+
+#ifndef HAVE_STRCASECMP
+int mpfr_strcasecmp _PROTO ((const char *, const char *));
+#endif
+
+#ifndef HAVE_STRNCASECMP
+int mpfr_strncasecmp _PROTO ((const char *, const char *, size_t));
+#endif
+
 int mpfr_set_underflow _PROTO ((mpfr_ptr, mp_rnd_t, int));
 int mpfr_set_overflow _PROTO ((mpfr_ptr, mp_rnd_t, int));
 void mpfr_save_emin_emax _PROTO ((void));
@@ -186,15 +205,17 @@ int mpfr_round_raw_generic _PROTO ((mp_limb_t *, mp_limb_t *, mp_prec_t, int,
 int mpfr_can_round_raw _PROTO ((mp_limb_t *, mp_size_t, int, mp_exp_t,
 				mp_rnd_t, mp_rnd_t, mp_prec_t));
 double mpfr_get_d3 _PROTO ((mpfr_srcptr, mp_exp_t, mp_rnd_t));
-int mpfr_cmp_abs _PROTO ((mpfr_srcptr, mpfr_srcptr));
 int mpfr_cmp2 _PROTO ((mpfr_srcptr, mpfr_srcptr, mp_prec_t *));
-long _mpfr_ceil_log2 _PROTO ((double));
-long _mpfr_floor_log2 _PROTO ((double));
-double _mpfr_ceil_exp2 _PROTO ((double));
-unsigned long _mpfr_isqrt _PROTO ((unsigned long));
-unsigned long _mpfr_cuberoot _PROTO ((unsigned long));
+long __gmpfr_ceil_log2 _PROTO ((double));
+long __gmpfr_floor_log2 _PROTO ((double));
+double __gmpfr_ceil_exp2 _PROTO ((double));
+unsigned long __gmpfr_isqrt _PROTO ((unsigned long));
+unsigned long __gmpfr_cuberoot _PROTO ((unsigned long));
 int mpfr_exp_2 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_exp3 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_powerof2_raw _PROTO ((mpfr_srcptr));
+void mpfr_setmax _PROTO ((mpfr_ptr, mp_exp_t));
+void mpfr_setmin _PROTO ((mpfr_ptr, mp_exp_t));
 
 #define mpfr_round_raw(yp, xp, xprec, neg, yprec, r, inexp) \
   mpfr_round_raw_generic((yp), (xp), (xprec), (neg), (yprec), (r), (inexp), 0)

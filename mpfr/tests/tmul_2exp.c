@@ -35,6 +35,8 @@ main (int argc, char *argv[])
 {
   double x, z; mpfr_t w; unsigned long k; 
 
+  tests_start_mpfr ();
+
   mpfr_init2(w, 53); 
 
   mpfr_set_inf (w, 1);
@@ -68,5 +70,6 @@ main (int argc, char *argv[])
 
   mpfr_clear(w);
 
+  tests_end_mpfr ();
   return 0;
 }

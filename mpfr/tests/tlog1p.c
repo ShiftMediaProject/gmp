@@ -1,6 +1,6 @@
 /* Test file for mpfr_log1p.
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 Adapted from tsinh.c.
 
 This file is part of the MPFR Library.
@@ -32,7 +32,10 @@ MA 02111-1307, USA. */
 int
 main (int argc, char *argv[])
 {
+  tests_start_mpfr ();
+
   test_generic (2, 100, 100);
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -1,6 +1,6 @@
 /* mpfr_isinteger -- test if a mpfr variable is integer
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -27,26 +27,37 @@ MA 02111-1307, USA. */
 int 
 mpfr_isinteger (mpfr_srcptr x)
 {
-
-  mpfr_t u;
-  int expo;
+  mp_exp_t expo;
   mp_prec_t prec;
-  int result;
+  mp_size_t xn;
+  mp_limb_t *xp;
 
-  expo=(int)MPFR_EXP(x);
-  prec=MPFR_PREC(x);
-
-  if (expo<=0) 
+  if (!MPFR_IS_FP(x))
     return 0;
 
-  if (expo>=prec) 
+  if (MPFR_IS_ZERO(x))
     return 1;
 
-  mpfr_init2(u,prec);
-  mpfr_trunc(u,x);
+  expo = MPFR_EXP(x);
+  if (expo <= 0)
+    return 0;
 
-  result = (mpfr_cmp (x,u) == 0);
+  prec = MPFR_PREC(x);
+  if (expo >= prec)
+    return 1;
 
-  mpfr_clear (u);
-  return result;
+  /* 0 < expo < prec */
+
+  xn = (prec - 1) / BITS_PER_MP_LIMB;  /* index of last limb */
+  xn -= (mp_size_t) (expo / BITS_PER_MP_LIMB);
+  /* now the index of the last limb containing bits of the fractional part */
+
+  xp = MPFR_MANT(x);
+  MPFR_ASSERTN(xn >= 0);
+  if (xp[xn] << (expo % BITS_PER_MP_LIMB) != 0)
+    return 0;
+  while (--xn >= 0)
+    if (xp[xn] != 0)
+      return 0;
+  return 1;
 }

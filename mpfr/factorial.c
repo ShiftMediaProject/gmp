@@ -56,7 +56,7 @@ mpfr_fac_ui (mpfr_ptr y, unsigned long int x , mp_rnd_t rnd_mode)
         /* Initialisation of the Precision */
 	Ny=MPFR_PREC(y);
         
-	Nt=Ny+2*(int)_mpfr_ceil_log2((double)x)+10; /*compute the size of intermediary variable */
+	Nt=Ny+2*(int)__gmpfr_ceil_log2((double)x)+10; /*compute the size of intermediary variable */
 
 	
         mpfr_init2(t, Nt);/* initialise of intermediary variable */
@@ -74,7 +74,7 @@ mpfr_fac_ui (mpfr_ptr y, unsigned long int x , mp_rnd_t rnd_mode)
                   inexact = round;
               }
 	    
-            err = Nt - 1 - (int) _mpfr_ceil_log2 ((double) Nt);
+            err = Nt - 1 - (int) __gmpfr_ceil_log2 ((double) Nt);
 
             round = !inexact || mpfr_can_round (t,err,GMP_RNDZ,rnd_mode,Ny);
             

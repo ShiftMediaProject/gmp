@@ -37,7 +37,7 @@ mpfr_const_euler (mpfr_t x, mp_rnd_t rnd)
   mpfr_t y, z;
   unsigned long n;
 
-  log2m = _mpfr_ceil_log2 ((double) prec);
+  log2m = __gmpfr_ceil_log2 ((double) prec);
   m = prec + log2m;
 
   mpfr_init (y);
@@ -83,7 +83,7 @@ mpfr_const_euler_S (mpfr_t x, unsigned long n)
   N = (long) (ALPHA * (double) n + 1.0); /* ceil(alpha * n) */
 
   m = MPFR_PREC(x) + (unsigned long) ((double) n / LOG2)
-    + _mpfr_ceil_log2 ((double) N) + 1;
+    + __gmpfr_ceil_log2 ((double) N) + 1;
 
   mpz_init_set_ui (a, 1);
   mpz_mul_2exp (a, a, m); /* a=-2^m where m is the precision of x */

@@ -1,6 +1,6 @@
 /* mpfr_cmp2 -- exponent shift when subtracting two numbers.
 
-Copyright 1999, 2000, 2001 Free Software Foundation.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 

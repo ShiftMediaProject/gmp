@@ -44,40 +44,19 @@ void check_nan _PROTO((void));
 void
 check3 (double a, mp_rnd_t rnd_mode, double Q)
 {
-  mpfr_t q; double Q2; int ck,u;
+  mpfr_t q; double Q2; int u;
 
-  ck = (Q!=-1.0); /* if ck=1, then Q is certified correct */
   mpfr_init2(q, 53);
   mpfr_set_d(q, a, rnd_mode);
-#ifdef MPFR_HAVE_FESETROUND
-  mpfr_set_machine_rnd_mode(rnd_mode);
-#endif
   mpfr_sqrt(q, q, rnd_mode);
-  if (ck==0) Q = sqrt(a);
-  else {
-    if (Q != sqrt(a) && (!isnan(Q) || !isnan(sqrt(a)))) {
-      fprintf(stderr, "you've found a bug in your machine's sqrt for x=%1.20e\n", a);
-      mpfr_clear(q); 
-      exit(1);
-
-    }
-  }
   Q2 = mpfr_get_d1 (q);
   if (Q!=Q2 && (!isnan(Q) || !isnan(Q2))) {
     u = ulp(Q2,Q);
-    if (ck) {
-      printf("mpfr_sqrt failed for a=%1.20e, rnd_mode=%s\n",
-	     a, mpfr_print_rnd_mode(rnd_mode));
-      printf("expected sqrt is %1.20e, got %1.20e (%d ulp)\n",Q,Q2,u);
-      mpfr_clear(q); 
-      exit(1);
-    }
-    else if (u>maxulp || u<-maxulp) {
-      maxulp = (u>maxulp) ? u : -u;
-      printf("libm.a differs from mpfr_sqrt for a=%1.20e, rnd_mode=%s\n",
-	     a, mpfr_print_rnd_mode(rnd_mode));
-      printf("libm.a gives %1.20e, mpfr_sqrt gives %1.20e (%d ulp)\n",Q,Q2,u);
-    }
+    printf("mpfr_sqrt failed for a=%1.20e, rnd_mode=%s\n",
+           a, mpfr_print_rnd_mode(rnd_mode));
+    printf("expected sqrt is %1.20e, got %1.20e (%d ulp)\n",Q,Q2,u);
+    mpfr_clear(q); 
+    exit(1);
   }
   mpfr_clear(q);
 }
@@ -328,35 +307,6 @@ main (void)
   double a;
   mp_prec_t p;
   int k;
-#ifdef MPFR_HAVE_FESETROUND
-  int i;
-
-  mpfr_test_init ();
-
-  /* On Debian potato glibc 2.1.3-18, sqrt() doesn't seem to respect
-     fesetround. */
-  {
-    double  a, b;
-    mpfr_set_machine_rnd_mode (GMP_RNDU);
-    a = sqrt (five);
-    mpfr_set_machine_rnd_mode (GMP_RNDD);
-    b = sqrt (five);
-    if (a == b)
-      {
-        printf ("Tests suppressed, mpfr_set_machine_rnd_mode doesn't affect sqrt()\n");
-        goto nogood;
-      }
-  }
-
-  SEED_RAND (time(NULL));
-  for (i=0;i<100000;i++)
-    {
-      a = drand();
-      if (a < 0.0) a = -a; /* ensures a is positive */
-      check (a, LONG_RAND() % 4);
-    }
- nogood:
-#endif
 
   check_nan ();
 

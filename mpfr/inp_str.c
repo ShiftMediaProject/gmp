@@ -1,7 +1,7 @@
 /* mpf_inp_str(dest_float, stream, base) -- Input a number in base
    BASE from stdio stream STREAM and store the result in DEST_FLOAT.
 
-Copyright 1999, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2001, 2002 Free Software Foundation, Inc.
 (Copied from GMP, file mpf/inp_str.c)
 
 This file is part of the MPFR Library.
@@ -54,6 +54,8 @@ mpfr_inp_str (mpfr_ptr rop, FILE *stream, int base, mp_rnd_t rnd_mode)
     }
   while (isspace (c));
 
+  /* number of characters read is nread */
+
   for (;;)
     {
       if (str_size >= alloc_size)
@@ -69,13 +71,15 @@ mpfr_inp_str (mpfr_ptr rop, FILE *stream, int base, mp_rnd_t rnd_mode)
     }
   ungetc (c, stream);
 
+  /* number of characters read is nread + str_size - 1 */
+
   if (str_size >= alloc_size)
     {
       size_t old_alloc_size = alloc_size;
       alloc_size = alloc_size * 3 / 2;
       str = (char *) (*__gmp_reallocate_func) (str, old_alloc_size, alloc_size);
     }
-  str[str_size] = 0;
+  str[str_size] = '\0';
 
   retval = mpfr_set_str (rop, str, base, rnd_mode);
   (*__gmp_free_func) (str, alloc_size);
@@ -83,5 +87,5 @@ mpfr_inp_str (mpfr_ptr rop, FILE *stream, int base, mp_rnd_t rnd_mode)
   if (retval == -1)
     return 0;			/* error */
 
-  return str_size + nread;
+ return str_size + nread - 1;
 }

@@ -1,6 +1,6 @@
 /* Test file for mpfr_sub.
 
-Copyright 2001 Free Software Foundation.
+Copyright 2001, 2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -304,7 +304,7 @@ check_two_sum (mp_prec_t p)
   mpfr_init2 (w, p);
   mpfr_random (x);
   mpfr_random (y);
-  if (mpfr_cmp_abs (x, y) < 0)
+  if (mpfr_cmpabs (x, y) < 0)
     mpfr_swap (x, y);
   rnd = LONG_RAND() % 4;
   rnd = GMP_RNDN;
@@ -348,6 +348,19 @@ check_inexact (void)
   mpfr_init (z);
   mpfr_init (u);
 
+  mpfr_set_prec (x, 2);
+  mpfr_set_ui (x, 6, GMP_RNDN);
+  mpfr_div_2exp (x, x, 4, GMP_RNDN); /* x = 6/16 */
+  mpfr_set_prec (y, 2);
+  mpfr_set_si (y, -1, GMP_RNDN);
+  mpfr_div_2exp (y, y, 4, GMP_RNDN); /* y = -1/16 */
+  inexact = mpfr_sub (y, y, x, GMP_RNDN); /* y = round(-7/16) = -1/2 */
+  if (inexact >= 0)
+    {
+      fprintf (stderr, "Error: wrong inexact flag for -1/16 - (6/16)\n");
+      exit (1);
+    }
+
   for (px=2; px<MAX_PREC; px++)
     {
       mpfr_set_prec (x, px);
@@ -359,7 +372,7 @@ check_inexact (void)
 	  for (py=2; py<MAX_PREC; py++)
 	    {
 	      mpfr_set_prec (y, py);
-	      pz =  (mpfr_cmp_abs (x, u) >= 0) ? MPFR_EXP(x)-MPFR_EXP(u)
+	      pz =  (mpfr_cmpabs (x, u) >= 0) ? MPFR_EXP(x)-MPFR_EXP(u)
 		: MPFR_EXP(u)-MPFR_EXP(x);
 	      pz = pz + MAX(MPFR_PREC(x), MPFR_PREC(u));
 	      mpfr_set_prec (z, pz);
@@ -403,6 +416,8 @@ main(void)
   mp_prec_t p;
   unsigned i;
 
+  tests_start_mpfr ();
+
   check_diverse ();
   check_inexact ();
   bug_ddefour ();
@@ -411,5 +426,6 @@ main(void)
     for (i=0; i<200; i++)
       check_two_sum (p);
 
+  tests_end_mpfr ();
   return 0;
 }
