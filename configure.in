@@ -399,20 +399,12 @@ dnl  The following variables are used later when creating asm-syntax.h
 dnl  and asm-syntax.m4.
 dnl
 dnl  Set `underscore' to "yes" if globals are prefixed by `_'.
-GMP_CHECK_ASM_UNDERSCORE(
-  [GMP_DEFINE(GSYM_PREFIX, [_$1])
-  underscore=yes],
-  [GMP_DEFINE(GSYM_PREFIX, [$1])
-  underscore=no])
+GMP_CHECK_ASM_UNDERSCORE(underscore=yes, underscore=no)
 
 dnl  Set `asm_align' to "log" or "nolog".
 dnl  Used for picking which *_SYNTAX to define.
 dnl    Example: x86 + log -> BSD_SYNTAX
-GMP_CHECK_ASM_ALIGN_LOG(
-  [GMP_DEFINE(ALIGN, [.align m4_log2($1)])
-  asm_align=log],
-  [GMP_DEFINE(ALIGN, [.align $1])
-  asm_align=nolog])
+GMP_CHECK_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
 
 dnl  Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
 syntax=
