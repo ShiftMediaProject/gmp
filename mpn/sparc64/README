@@ -23,26 +23,13 @@ is incredibly slow on these CPUs!)
 
 STATUS
 
-There is new code in ~/prec/gmp-remote/sparc64.  Not tested or completed, but
-the pipelines are worked out.  Here are the timings:
+Timings on UltraSPARC-1/2:
 
 * lshift, rshift: The code is well-optimized and runs at 2.0 cycles/limb.
 
-* add_n, sub_n: add3.s currently runs at 6 cycles/limb.  We use a bizarre
-  scheme of compares and branches (with some nops and fnops to align things)
-  and carefully stay away from the instructions intended for this application
-  (i.e., movcs and movcc).
+* add_n, sub_n: currently runs at 5 cycles/limb.  Not very fast, but
+  probably optimal.
 
-  Using movcc/movcs, even with deep unrolling, seems to get down to 7
-  cycles/limb.
+* mul_1/addmul_1/submul_1: The used method is within 2x from what would be
+  attainable by the 21-bit chunk split method.
 
-  The most promising approach is to split operands in 32-bit pieces using
-  srlx, then use two addccc, and finally compile the results with sllx+or.
-  The result could run at 5 cycles/limb, I think.  It might be possible to
-  do without unrolling, or with minimal unrolling.
-
-* addmul_1/submul_1: Should optimize for when scalar operand < 2^32.
-* addmul_1/submul_1: Since mulx is horrendously slow on UltraSPARC I/II,
-  Karatsuba's method should save up to 16 cycles (i.e. > 20%).
-* mul_1 (and possibly the other multiply functions): Handle carry in the
-  same tricky way as add_n,sub_n.
