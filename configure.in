@@ -1168,6 +1168,14 @@ for abi in $abilist; do
 
       GMP_PROG_CC_WORKS($cc $cflags $cppflags,,continue)
 
+      # If we're supposed to be using a "long long" for a limb, check that
+      # it works.
+                                eval limb_chosen=\"\$limb$abi1\"
+      test -n "$limb_chosen" || eval limb_chosen=\"\$limb$abi2\"
+      if test "$limb_chosen" = longlong; then
+        GMP_PROG_CC_WORKS_LONGLONG($cc $cflags $cppflags,,continue)
+      fi
+
       # The tests to perform on this $cc, if any
                              eval testlist=\"\$${ccbase}${abi1}_testlist\"
       test -n "$testlist" || eval testlist=\"\$${ccbase}${abi2}_testlist\"
@@ -1321,9 +1329,7 @@ else
 fi
 
 
-# Whether using a long long limb in this ABI.
-                          eval limb_chosen=\"\$limb$abi1\"
-test -n "$limb_chosen" || eval limb_chosen=\"\$limb$abi2\"
+# Long long limb setup for gmp.h.
 case $limb_chosen in
 longlong) DEFN_LONG_LONG_LIMB="#define _LONG_LONG_LIMB 1"    ;;
 *)        DEFN_LONG_LONG_LIMB="/* #undef _LONG_LONG_LIMB */" ;;

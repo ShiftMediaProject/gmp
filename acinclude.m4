@@ -441,6 +441,35 @@ fi
 ])
 
 
+dnl  GMP_PROG_CC_WORKS_LONGLONG(cc+cflags,[ACTION-YES][,ACTION-NO])
+dnl  --------------------------------------------------------------
+dnl  Check that cc+cflags accepts "long long".
+dnl
+dnl  This test is designed to be run repeatedly with different cc+cflags
+dnl  selections, so the result is not cached.
+
+AC_DEFUN(GMP_PROG_CC_WORKS_LONGLONG,
+[AC_MSG_CHECKING([compiler $1 has long long])
+cat >conftest.c <<EOF
+long long  foo;
+long long  bar () { return foo; }
+int main () { return 0; }
+EOF
+gmp_prog_cc_works=no
+gmp_compile="$1 -c conftest.c >&AC_FD_CC"
+if AC_TRY_EVAL(gmp_compile); then
+  gmp_prog_cc_works=yes
+fi
+rm -f conftest* a.out a.exe a_out.exe
+AC_MSG_RESULT($gmp_prog_cc_works)
+if test $gmp_prog_cc_works = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
 dnl  GMP_PROG_CC_IS_GNU(CC,[ACTIONS-IF-YES][,ACTIONS-IF-NO])
 dnl  -------------------------------------------------------
 dnl  Determine whether the given compiler is GNU C.
