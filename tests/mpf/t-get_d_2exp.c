@@ -113,7 +113,7 @@ int
 main (void)
 {
   tests_start ();
-  mp_trace_base = -16;
+  mp_trace_base = 16;
 
   check_onebit ();
   check_round ();
