@@ -1,4 +1,9 @@
-/* mpn_mod_1_rshift -- mpn remainder under hypothetical right shift.  */
+/* mpn_mod_1_rshift -- mpn remainder under hypothetical right shift.
+
+   THE FUNCTION IN THIS FILE IS FOR INTERNAL USE AND HAS A MUTABLE
+   INTERFACE.  IT IS ONLY SAFE TO REACH IT THROUGH DOCUMENTED INTERFACES.
+   IT'S ALMOST GUARANTEED THAT IT'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP
+   RELEASE. */
 
 /*
 Copyright (C) 1999, 2000 Free Software Foundation, Inc.
