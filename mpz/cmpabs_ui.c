@@ -27,24 +27,43 @@ MA 02111-1307, USA. */
 int
 mpz_cmpabs_ui (mpz_srcptr u, unsigned long int v_digit)
 {
-  mp_size_t usize = u->_mp_size;
+  mp_ptr up;
+  mp_size_t un;
+  mp_limb_t ul;
 
-  if (usize == 0)
+  up = PTR(u);
+  un = SIZ(u);
+
+  if (un == 0)
     return -(v_digit != 0);
 
-  usize = ABS (usize);
+  un = ABS (un);
 
-  if (usize == 1)
+  if (un == 1)
     {
-      mp_limb_t u_digit;
-
-      u_digit = u->_mp_d[0];
-      if (u_digit > v_digit)
+      ul = up[0];
+      if (ul > v_digit)
 	return 1;
-      if (u_digit < v_digit)
+      if (ul < v_digit)
 	return -1;
       return 0;
     }
+
+#if GMP_NAIL_BITS != 0
+  if (v_digit > GMP_NUMB_MAX)
+    {
+      if (un == 2)
+	{
+	  ul = up[0] + (up[1] << GMP_NUMB_BITS);
+
+	  if (ul > v_digit)
+	    return 1;
+	  if (ul < v_digit)
+	    return -1;
+	  return 0;
+	}
+    }
+#endif
 
   return 1;
 }

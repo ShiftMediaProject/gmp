@@ -110,7 +110,8 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 
       mpz_add_ui (ni, ni, 1);
       mpz_mul (nacc, nacc, ni);
-      umul_ppmm (k1, k0, kacc, i);
+      umul_ppmm (k1, k0, kacc, i << GMP_NAIL_BITS);
+      k0 >>= GMP_NAIL_BITS;
       if (k1 != 0)
 	{
 	  /* Accumulator overflow.  Perform bignum step.  */

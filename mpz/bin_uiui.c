@@ -111,8 +111,10 @@ mpz_bin_uiui (mpz_ptr r, unsigned long int n, unsigned long int k)
       kacc >>= cnt;
 #endif
       /* Accumulate next multiples.  */
-      umul_ppmm (n1, n0, nacc, j);
-      umul_ppmm (k1, k0, kacc, i);
+      umul_ppmm (n1, n0, nacc, j << GMP_NAIL_BITS);
+      umul_ppmm (k1, k0, kacc, i << GMP_NAIL_BITS);
+      n0 >>= GMP_NAIL_BITS;
+      k0 >>= GMP_NAIL_BITS;
       if (n1 != 0)
         {
           /* Accumulator overflow.  Perform bignum step. */
