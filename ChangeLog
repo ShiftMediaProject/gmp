@@ -3,8 +3,14 @@
 	* printf/doprnt.c: '#' means showpoint and showtrailing for %e, %f, %g.
 	* tests/printf/t-printf.c (check_f): More test cases.
 
+2001-09-15  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in (__GMPN_AORS_1): Remove param TEST, add OP and CB.
+	Postpone zeroing of (cout).
+	(__GMPN_ADD_1, __GMPN_SUB_1): Corresponding changes.
+
 2001-09-14  Kevin Ryde  <kevin@swox.se>
-	
+
 	* ChangeLog: Merge in tests/rand/ChangeLog.
 	* tests/rand/ChangeLog: Remove file.
 
@@ -30,7 +36,7 @@
 
 	* gmp-h.in, version.c (gmp_version): Make the pointer "const" as well
 	as the string.
-	
+
 	* acinclude.m4, configure.in (GMP_PROG_CC_IS_XLC): Recognise xlc when
 	invoked under another name (cc, xlc128, etc).
 	* acinclude.m4 (GMP_PROG_CC_IS_GCC): Print a message when recognised.
@@ -128,7 +134,7 @@
 
 2001-08-30  Kevin Ryde  <kevin@swox.se>
 
-	* mpn/x86/x86-defs.m4 (cmov_available_p): Add pentium4.	
+	* mpn/x86/x86-defs.m4 (cmov_available_p): Add pentium4.
 
 	* gmp-h.in: Put #define renamings with prototypes.
 	Remove commented out #defines of gmp-impl.h things.
@@ -209,7 +215,7 @@
 	support, for the time being.
 	* printf/doprntfx.cc, doprntix.cc, osfuns.cc, osmpf.cc, osmpq.cc,
 	osmpz.cc, tests/printf/t-ostream.cc: Remove files.
-	
+
 	* printf/doprnt.c, printf/doprntf.c, gmp-impl.h: Use a single
 	__gmp_doprnt_mpf, rather than a separate ndigits calculation.
 	* printf/doprnt.c, printf/doprntf.c, gmp-impl.h, gmp.texi,
@@ -233,7 +239,7 @@
 	* demos/perl/test.pl: Update tests, split overloaded constants into ...
 	* demos/perl/test2.pl: ... this new file.
 	* demos/perl/Makefile.PL (clean): Add test.tmp.
-	
+
 2001-08-16  Kevin Ryde  <kevin@swox.se>
 
 	* printf/snprntffuns.c (gmp_snprintf_format): Correction to bufsize-1
@@ -285,7 +291,7 @@
 	* configure.in, acinclude.m4 (GMP_FUNC_VSNPRINTF): New macro.
 
 	* mpn/generic/get_str.c: Add an ASSERT for high limb non-zero.
-	
+
 2001-07-24  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options): Add --enable-cxx.
@@ -362,7 +368,7 @@
         * mpz/fits_uint.c, fits_ulong.c, mpz/fits_ushort.c: Split up fits_u.c.
 	* mpz/fits_u.c: Remove file.
 	* mpz/Makefile.am, macos/Makefile.in: Update.
- 
+
 	* tests/refmpn.c,tests.h (refmpn_copy): New function.
 	* tests/devel/try.c (TYPE_ZERO): No return value from call.
 	(TYPE_MODEXACT_1_ODD, TYPE_MODEXACT_1C_ODD): Share call with
@@ -374,7 +380,7 @@
 	* gmp-h.in (__GMPN_COPY): Add form to help gcc on power and powerpc.
 	* gmp-impl.h (MPN_COPY_INCR, MPN_COPY_DECR, MPN_ZERO): Ditto.
 	* mpn/powerpc64/copyi.asm, mpn/powerpc64/copyd.asm: Remove files.
-	
+
 	* mpz/tdiv_ui.c: Eliminate some local variables (seems to save code on
 	i386 gcc 2.95.x), remove a bogus comment about quotient.
 
@@ -394,11 +400,11 @@
 
 	* tests/mpf/t-set_si.c,t-cmp_si.c,t-gsprec.c: Split from t-misc.c.
 	* tests/mpf/t-misc.c: Remove file.
-	* tests/mpf/Makefile.am: Update.	
+	* tests/mpf/Makefile.am: Update.
 
 	* tests/mpz/t-oddeven.c,t-set_si.c,t-cmp_si.c: Split from t-misc.c.
 	* tests/mpz/t-misc.c: Remove file.
-	* tests/mpz/Makefile.am: Update.	
+	* tests/mpz/Makefile.am: Update.
 
 	* stack-alloc.c: Add some alignment ASSERTs.
 
@@ -516,7 +522,7 @@
 
 	* gmp-impl.h (modlimb_invert): Mask after shifting, so mask constant
 	fits a signed byte.
-	
+
 	* tests/devel/try.c (TYPE_SB_DIVREM_MN): Fix initial fill of quotient
 	with garbage.
 
@@ -563,7 +569,7 @@
 	* gmp-impl.h: Extend extern "C" to TMP_ALLOC declarations.
 	* stack-alloc.c (tmp_stack): Move private parts of stack-alloc.h to
 	here, use gmp-impl.h.
-	
+
 	* gmp-impl.h (TMP_ALLOC_LIMBS_2): New macro.
 	* mpz/fib_ui.c, mpz/jacobi.c, mpq/cmp.c, mpn/generic/fib2_ui.c: Use it.
 
@@ -607,7 +613,7 @@
 	* mp_clz_tab.c: Compile the table only if longlong.h says it's needed;
 	add an internal-use-only comment.
 	* tune/common.c: Force a __clz_tab for convenience when testng.
-	
+
 	* mpn/x86/pentium/gmp-mparam.h, mpn/x86/pentium/mmx/gmp-mparam.h: Add
 	COUNT_LEADING_ZEROS_NEED_CLZ_TAB, for mod_1.asm.
 
@@ -672,7 +678,7 @@
 	* mpz/jacobi.c, gmp-h.in (mpz_kronecker, mpz_legendre): Remove
 	separate entrypoints, just #define to mpz_jacobi.
 	* compat.c (__gmpz_legendre): Add compatibility entrypoint.
-	
+
 	* mpn/generic/mul_1.c: Allow "incr" style overlaps.
 	* tests/devel/try.c (param_init): Test this.
 
@@ -728,7 +734,7 @@
 	* mpz/fib2_ui.c, mpz/lucnum_ui.c mpz/lucnum2_ui.c: New files.
 	* Makefile.am, mpz/Makefile.am: Add them.
 	* gmp-h.in (mpz_fib2_ui, mpz_lucnum_ui, mpz_lucnum2_ui): Add
-   	prototypes.
+	prototypes.
 
 	* mpn/generic/fib2_ui.c: New file.
 	* configure.in (gmp_mpn_functions): Add it.
@@ -746,7 +752,7 @@
 
 	* configure.in (*-*-msdosdjgpp*): Forcibly disable shared libraries,
 	to make libtests.la work.
-	
+
 	* acconfig.h (_LONG_LONG_LIMB, HAVE_MPFR): Remove dummy defines, no
 	longer needed.
 
@@ -765,7 +771,7 @@
 	(Assembler Loop Unrolling): Mention non power-of-2 unrolling.
 	(Internals): New chapter.
 	* mpf/README: Remove file.
-	
+
 	* demos/expr/README: Miscellaneous rewordings.
 
 	* demos/perl: New directory.
@@ -773,7 +779,7 @@
 	* demos/perl/INSTALL, Makefile.PL, GMP.pm, GMP.xs, typemap,
 	GMP/Mpz.pm, GMP/Mpq.pm, GMP/mpf.pm, GMP/Rand.pm, sample.pl, test.pl:
 	New files.
-	
+
 	* configure, aclocal.m4: Update to autoconf 2.50.
 
 	* configure, aclocal.m4, ltmain.sh: Update to libtool 1.4.
@@ -881,7 +887,7 @@
 
 	* tests/mpz/t-mul_i.c: New file.
 	* tests/mpz/Makefile.am: Add it.
-	
+
 	* mpz/mul_siui.c (mpz_mul_si): Fix for -0x80..00 on long long limb.
 
 	* gmp-h.in (mpf_set_si, mpf_set_ui): Revert last change, set exp to 0
@@ -919,7 +925,7 @@
 	* mpz/getlimbn.c, mpz/get_ui.c, mpz/perfsqr.c, mpz/popcount.c
 	mpz/set_q.c, mpz/size.c, mpf/set_si.c, mpf/set_ui.c, mpf/size.c: Use
 	__GMP_FORCE to get code from gmp.h.
-	
+
 2001-05-03  Kevin Ryde  <kevin@swox.se>
 
 	* extract-dbl.c: Add ASSERT d>=0.
@@ -929,7 +935,7 @@
 	(Integer Arithmetic): Add mpz_addmul, mpz_submul, mpz_submul_ui.
 	(Initializing Rationals): Add mpq_set_str.
 	(Low-level Functions): mpn_set_str requires strsize >= 1.
-	
+
 	* gmp-h.in (__GMP_EXTERN_INLINE, __GMP_ABS): New macros.
 	(mpz_abs, mpq_abs, mpf_abs, mpz_neg, mpq_neg, mpf_neg): Provide inline
 	versions.
@@ -1036,7 +1042,7 @@
 	* gmp.texi: Add documentation.
 
 	* mpf/set_prc.c: Avoid a realloc call if already the right precision.
-	
+
 	* gmp-impl.h (MPF_BITS_TO_PREC, MPF_PREC_TO_BITS): New macros.
 	* mpf/get_prc.c, init2.c, set_dfl_prec.c, set_prc.c, set_prc_raw.c:
 	Use them.
@@ -1181,7 +1187,7 @@
 
 	* configure.in (m68*-*-netbsd1.4*): Pretend getrusage doesn't exist.
 	* tune/README: Update.
-	
+
 	* configure.in (powerpc*-*-*): For the benefit of Darwin 1.3, add cc
 	to cclist, make gcc_cflags -Wa,-mppc optional.
 
@@ -5847,7 +5853,7 @@
 	to mpf_urandomb.
 
 	* tests/rand/t-rand.c: New file for testing random number generation.
-	
+
 	* tests/rand/Makefile.am: Run t-rand for 'make check'.
 	(test, bigtest): Rename to manual-test, manual-bigtest.
 	* tests/rand/Makefile.in: Regenerate.
