@@ -1,7 +1,7 @@
 /* config.in.  Generated automatically from configure.in by autoheader.  */
 /* Templates for defines setup by configure.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -193,6 +193,9 @@ MA 02111-1307, USA. */
 
 /* Define if you have the `clock' function. */
 #undef HAVE_CLOCK
+
+/* Define if you have the `clock_gettime' function. */
+#undef HAVE_CLOCK_GETTIME
 
 /* Define if you have the `cputime' function. */
 #undef HAVE_CPUTIME
