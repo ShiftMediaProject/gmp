@@ -310,7 +310,7 @@ case $host in
 
     # gcc 2.7.2.3 doesn't know any -mcpu= for alpha, apparently.
     # gcc 2.95 and 3.0 know ev4, ev5, ev56, pca56, ev6.
-    # gcc 3.1 adds ev67.
+    # gcc 3.1 pre-releases add ev67.
     #
     case $host_cpu in
       alpha)        gcc_cflags_cpu="-mcpu=ev4" ;;
@@ -629,15 +629,6 @@ case $host in
   # preprocessing is done separately, and this is only a speedup, the normal
   # preprocessor gets run if there's any problems.
   #
-  # gcc 2.7.2 knows -mcpu=403, 603, 604.
-  #
-  # gcc 2.95 adds 401, 505, 602, 603e, ec603e, 604e, 620, 740, 750,
-  # 801, 821, 823, 860.
-  #
-  # gcc 3.0 adds 630, rs64a.
-  #
-  # gcc 3.1 adds 405, 7400, 7450.
-  #
   powerpc*-*-*)
     AC_DEFINE(HAVE_HOST_CPU_FAMILY_powerpc)
     __GMP_HAVE_HOST_CPU_FAMILY_powerpc=1
@@ -654,27 +645,26 @@ case $host in
                 xlc_cflags="-g -O2 -qarch=ppc -qmaxmem=20000" ;;
     esac
 
+    # gcc 2.7.2 knows -mcpu=403, 603, 604.
+    # gcc 2.95 adds 401, 505, 602, 603e, ec603e, 604e, 620, 740, 750,
+    #   801, 821, 823, 860.
+    # gcc 3.0 adds 630, rs64a.
+    # gcc 3.1 pre-releases add 405, 7400, 7450.
+    #
     # FIXME: The way 603e falls back to 603 for gcc 2.7.2 should be
     # done for all the others too.  But what would be the correct
     # arrangements?
-    # FIXME: These xlc options are based on some doco from an oldish
-    # version, maybe a newer version knows more flavours.
+    #
     case $host_cpu in
       powerpc401)   gcc_cflags_cpu="-mcpu=401" ;;
-      powerpc403)   gcc_cflags_cpu="-mcpu=403"
-                    xlc_cflags_arch="-qarch=403" ;;
+      powerpc403)   gcc_cflags_cpu="-mcpu=403" ;;
       powerpc405)   gcc_cflags_cpu="-mcpu=405" ;;
       powerpc505)   gcc_cflags_cpu="-mcpu=505" ;;
-      powerpc602)   gcc_cflags_cpu="-mcpu=602"
-                    xlc_cflags_arch="-qarch=602" ;;
-      powerpc603)   gcc_cflags_cpu="-mcpu=603"
-                    xlc_cflags_arch="-qarch=603" ;;
-      powerpc603e)  gcc_cflags_cpu="-mcpu=603e -mcpu=603"
-                    xlc_cflags_arch="-qarch=603" ;;
-      powerpc604)   gcc_cflags_cpu="-mcpu=604"
-                    xlc_cflags_arch="-qarch=604" ;;
-      powerpc604e)  gcc_cflags_cpu="-mcpu=604e -mcpu=604"
-                    xlc_cflags_arch="-qarch=604" ;;
+      powerpc602)   gcc_cflags_cpu="-mcpu=602" ;;
+      powerpc603)   gcc_cflags_cpu="-mcpu=603" ;;
+      powerpc603e)  gcc_cflags_cpu="-mcpu=603e -mcpu=603" ;;
+      powerpc604)   gcc_cflags_cpu="-mcpu=604" ;;
+      powerpc604e)  gcc_cflags_cpu="-mcpu=604e -mcpu=604" ;;
       powerpc620)   gcc_cflags_cpu="-mcpu=620" ;;
       powerpc630)   gcc_cflags_cpu="-mcpu=630" ;;
       powerpc740)   gcc_cflags_cpu="-mcpu=740" ;;
@@ -685,6 +675,18 @@ case $host in
       powerpc821)   gcc_cflags_cpu="-mcpu=821" ;;
       powerpc823)   gcc_cflags_cpu="-mcpu=823" ;;
       powerpc860)   gcc_cflags_cpu="-mcpu=860" ;;
+    esac
+
+    # xlc X.X knows -qarch=ppc, ppcgr, 601, 602, 603, 604, 403, rs64a
+    # FIXME: Perhaps newer versions know more flavours.
+    #
+    case $host_cpu in
+      powerpc403)   xlc_cflags_arch="-qarch=403" ;;
+      powerpc602)   xlc_cflags_arch="-qarch=602" ;;
+      powerpc603)   xlc_cflags_arch="-qarch=603" ;;
+      powerpc603e)  xlc_cflags_arch="-qarch=603" ;;
+      powerpc604)   xlc_cflags_arch="-qarch=604" ;;
+      powerpc604e)  xlc_cflags_arch="-qarch=604" ;;
     esac
 
     case $host in
