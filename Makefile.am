@@ -109,10 +109,11 @@ MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
   mpf/int_p$U.lo
 
 MPZ_OBJECTS = mpz/abs$U.lo mpz/add$U.lo mpz/add_ui$U.lo			\
-  mpz/addmul_ui$U.lo mpz/and$U.lo mpz/array_init$U.lo mpz/bin_ui$U.lo	\
-  mpz/bin_uiui$U.lo mpz/cdiv_q$U.lo mpz/cdiv_q_ui$U.lo			\
-  mpz/cdiv_qr$U.lo mpz/cdiv_qr_ui$U.lo mpz/cdiv_r$U.lo			\
-  mpz/cdiv_r_ui$U.lo mpz/cdiv_ui$U.lo					\
+  mpz/aorsmul$U.lo mpz/aorsmul_i$U.lo mpz/and$U.lo mpz/array_init$U.lo	\
+  mpz/bin_ui$U.lo mpz/bin_uiui$U.lo					\
+  mpz/cdiv_q$U.lo  mpz/cdiv_q_ui$U.lo					\
+  mpz/cdiv_qr$U.lo mpz/cdiv_qr_ui$U.lo					\
+  mpz/cdiv_r$U.lo  mpz/cdiv_r_ui$U.lo mpz/cdiv_ui$U.lo			\
   mpz/cfdiv_q_2exp$U.lo mpz/cfdiv_r_2exp$U.lo				\
   mpz/clear$U.lo mpz/clrbit$U.lo					\
   mpz/cmp$U.lo mpz/cmp_d$U.lo mpz/cmp_si$U.lo mpz/cmp_ui$U.lo		\
@@ -159,7 +160,7 @@ MPQ_OBJECTS = mpq/abs$U.lo mpq/add$U.lo				\
   mpq/init$U.lo mpq/inv$U.lo					\
   mpq/md_2exp$U.lo mpq/mul$U.lo mpq/neg$U.lo mpq/out_str$U.lo	\
   mpq/set$U.lo mpq/set_den$U.lo mpq/set_num$U.lo 		\
-  mpq/set_si$U.lo mpq/set_ui$U.lo				\
+  mpq/set_si$U.lo mpq/set_str$U.lo mpq/set_ui$U.lo		\
   mpq/sub$U.lo mpq/equal$U.lo mpq/set_z$U.lo mpq/set_d$U.lo	\
   mpq/set_f$U.lo mpq/swap$U.lo
 
