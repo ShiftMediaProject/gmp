@@ -1,6 +1,6 @@
 Thu Jun  6 19:00:53 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
-	* Version 2.0.1 released.
+	* Version 2.0.2 released.
 
 	* install.sh: New file.
 	* Makefile.in (INSTALL): Use install.sh.
@@ -14,6 +14,8 @@ Thu Jun  6 19:00:53 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 	* configure.in: Use config/mt-linux for all linux systems.
 
 Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
+
+	* Version 2.0.1 released.
 
 	* mpf/tests/ref.c: Cast result of TMP_ALLOC to the right pointer type.
 
