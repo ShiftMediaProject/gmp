@@ -1,6 +1,6 @@
 /* mpfr_sqrt -- square root of a floating-point number
 
-Copyright (C) 1999 Free Software Foundation.
+Copyright (C) 1999, 2001 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -47,7 +47,7 @@ mpfr_sqrt (r, u, rnd_mode)
   int exact = 0, t;
   unsigned long cc = 0; 
   char can_round = 0; 
-  TMP_DECL (marker); TMP_DECL(marker0); 
+  TMP_DECL(marker0);
 
   if (MPFR_IS_NAN(u)) {
     MPFR_SET_NAN(r);
@@ -129,6 +129,8 @@ mpfr_sqrt (r, u, rnd_mode)
 
   MPFR_EXP(r) = ((MPFR_EXP(u) + (MPFR_EXP(u) & 1)) / 2) ;  
   
+  {
+  TMP_DECL (marker);
   do
     {
       TMP_MARK (marker);
@@ -256,6 +258,7 @@ mpfr_sqrt (r, u, rnd_mode)
 				   (MPFR_PREC(r) & (BITS_PER_MP_LIMB - 1)))) - 1) ; 
   
   TMP_FREE (marker);
+  }
   TMP_FREE(marker0);
   return exact;
 }
