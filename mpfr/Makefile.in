@@ -143,7 +143,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
 
 INCLUDES = -I$(top_srcdir)
-CFLAGS = @CFLAGS@ $(MPFR_CFLAGS)
+CFLAGS = @CFLAGS@ $(CFLAGS_IEEE_WITH_INEXACT)
 
 @WANT_MPFR_TRUE@lib_LIBRARIES = libmpfr.a
 @WANT_MPFR_TRUE@include_HEADERS = mpfr.h
