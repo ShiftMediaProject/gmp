@@ -537,12 +537,13 @@ void __GMP_DECLSPEC _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long in
 extern char             __GMP_DECLSPEC __gmp_rands_initialized;
 extern gmp_randstate_t  __GMP_DECLSPEC __gmp_rands;
 
-#define RANDS                                                   \
-  ((__gmp_rands_initialized ? 0                                 \
-    : (__gmp_rands_initialized = 1,                             \
-       gmp_randinit (__gmp_rands, GMP_RAND_ALG_LC, 64), 0)),    \
+#define RANDS                                   \
+  ((__gmp_rands_initialized ? 0                 \
+    : (__gmp_rands_initialized = 1,             \
+       gmp_randinit_default (__gmp_rands), 0)), \
    __gmp_rands)
 
+/* this is used by the test programs, to free memory */
 #define RANDS_CLEAR()                   \
   do {                                  \
     if (__gmp_rands_initialized)        \
