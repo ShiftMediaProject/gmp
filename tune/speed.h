@@ -258,16 +258,40 @@ double speed_umul_ppmm _PROTO ((struct speed_params *s));
 /* low 32-bits in p[0], high 32-bits in p[1] */
 void speed_cyclecounter _PROTO ((unsigned p[2]));
 
-#if defined(__GNUC__) && ! defined (NO_ASM) \
+/* In i386 gcc -fPIC, ebx is a fixed register and can't be declared a dummy
+   output or a clobber for the cpuid, hence an explicit save and restore.  A
+   clobber as such doesn't provoke an error unfortunately (gcc 3.0), so use
+   the dummy output style in non-PIC, so there's an error if somehow -fPIC
+   is used without a -DPIC to tell us about it.  */
+#if defined(__GNUC__) && ! defined (NO_ASM)     \
   && (defined (__i386__) || defined (__i486__))
-#define speed_cyclecounter(p)                                   \
-  do {                                                          \
-    __asm__ __volatile__ ("cpuid\n"                             \
-                          "rdtsc"                               \
-                          : "=a" ((p)[0]), "=d" ((p)[1])        \
-                          :                                     \
-                          : "ebx", "ecx");                      \
+#ifdef PIC
+#define speed_cyclecounter(p)                                           \
+  do {                                                                  \
+    int  __speed_cyclecounter__save_ebx;                                \
+    int  __speed_cyclecounter__dummy;                                   \
+    __asm__ __volatile__ ("movl %%ebx, %1\n"                            \
+                          "cpuid\n"                                     \
+                          "movl %1, %%ebx\n"                            \
+                          "rdtsc"                                       \
+                          : "=a"   ((p)[0]),                            \
+                            "=&rm" (__speed_cyclecounter__save_ebx),    \
+                            "=c"   (__speed_cyclecounter__dummy),       \
+                            "=d"   ((p)[1]));                           \
   } while (0)
+#else
+#define speed_cyclecounter(p)                                           \
+  do {                                                                  \
+    int  __speed_cyclecounter__dummy1;                                  \
+    int  __speed_cyclecounter__dummy2;                                  \
+    __asm__ __volatile__ ("cpuid\n"                                     \
+                          "rdtsc"                                       \
+                          : "=a" ((p)[0]),                              \
+                            "=b" (__speed_cyclecounter__dummy1),        \
+                            "=c" (__speed_cyclecounter__dummy2),        \
+                            "=d" ((p)[1]));                             \
+  } while (0)
+#endif
 #endif
 
 double speed_cyclecounter_diff _PROTO ((const unsigned end[2],
