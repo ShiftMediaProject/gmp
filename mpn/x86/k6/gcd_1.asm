@@ -312,15 +312,7 @@ L(modexact):
 
 	pushl	%ebx		FRAME_pushl()
 
-ifdef(`PIC',`
-	nop	C code alignment
-	call	L(movl_eip_ebx)
-L(here):
-	addl	$_GLOBAL_OFFSET_TABLE_, %ebx
-        call	GSYM_PREFIX`'mpn_modexact_1_odd@PLT
-',`
 	call	GSYM_PREFIX`'mpn_modexact_1_odd
-')
 
 	movl	%esi, %edx		C y odd
 	movl	SAVE_ESI, %esi
@@ -342,12 +334,5 @@ L(here):
 	popl	%ebx
 
 	ret
-
-
-ifdef(`PIC',`
-L(movl_eip_ebx):
-	movl	(%esp), %ebx
-	ret_internal
-')
 
 EPILOGUE()
