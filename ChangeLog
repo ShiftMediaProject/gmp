@@ -19,6 +19,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-05-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_basecase.c: Use mpn_addmul_2, mpn_addmul_3, and
+	mpn_addmul_4, as available.
+
+	* mpn/alpha/ev6/nails/addmul_2.asm: Adjust NAILS_SUPPORT decls.
+	* mpn/alpha/ev6/nails/addmul_3.asm: Likewise
+	* mpn/alpha/ev6/nails/addmul_4.asm: Likewise.
+
+	* configure.in (*-cray-unicos*): Back again to -hscalar0.
+	(gmp_mpn_functions_optional): Add mul_3, mul_4, addmul_2, addmul_3,
+	and addmul_4.
+	* acconfig.h: Add #undefs for new optional mpn functions.
+	
 2002-05-18  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Integer Import and Export): Mention Cray unfilled words.
