@@ -66,11 +66,12 @@
 
 <h4>Machine Independent Optimization</h4>
 <ul>
-<li> In hundreds of places in the code, we invoke count_leading_zeros and then
-     check if the returned count is zero.  Instead check the most significant
-     bit of the operand, and avoid invoking <code>count_leading_zeros</code> if
-     the bit is set.  This is an optimization on all machines, and significant
-     on machines with slow <code>count_leading_zeros</code>.
+<li> In hundreds of places in the code, we invoke
+     <code>count_leading_zeros</code> and then check if the returned count is
+     zero.  Instead check the most significant bit of the operand, and avoid
+     invoking <code>count_leading_zeros</code> if the bit is set.  This is an
+     optimization on all machines, and significant on machines with slow
+     <code>count_leading_zeros</code>.
 <li> In a couple of places <code>count_trailing_zeros</code> is used
      on more or less uniformly distributed numbers.  For some CPUs
      <code>count_trailing_zeros</code> is slow and it's probably worth
@@ -115,9 +116,9 @@
      moderate sizes by improving <code>find_a</code>, possibly just by
      providing an alternate implementation for CPUs with slowish
      <code>count_leading_zeros</code>.
-<li> Implement a cache localized evaluate and interpolate for the
-     toom3 <code>USE_MORE_MPN</code> code.  The necessary
-     right-to-left <code>mpn_divexact_by3c</code> exists.
+<li> Toom3 <code>USE_MORE_MPN</code> could use a low to high cache localized
+     evaluate and interpolate.  The necessary <code>mpn_divexact_by3c</code>
+     exists.
 <li> <code>mpn_mul_basecase</code> on NxM with big N but small M could try for
      better cache locality by taking N piece by piece.  The current code could
      be left available for CPUs without caching.  Depending how karatsuba etc
@@ -125,6 +126,9 @@
      always smallish.
 <li> <code>mpz_probab_prime_p</code> could take a remainder mod 2^24-1 to
      quickly check divisibility by 3, 5, 7, 13 and 17 (factors of 2^24-1).
+<li> <code>mpf_set_str</code> produces low zero limbs when a string has a
+     fraction but is exactly representable, eg. 0.5 in decimal.  These could be
+     stripped to save work in later operations.
 </ul>
 
 
@@ -308,15 +312,16 @@
 <li> There's a few filenames that don't fit in 14 chars, if this
      matters.
 <li> Enable support for FORTRAN versions of mpn files (eg. for
-     mpn/cray/mulww.f).  Add "f" to the mpn path searching, run AC_PROG_F77 if
-     such a file is found.  Automake will generate some of what's needed in the
-     makefiles, but libtool doesn't know fortran and so rules like the current
-     ".asm.lo" will be needed.
-<li> Consider running GMP_PROG_M4 only if it's needed, ie. if there's a .asm in
-     the mpn path.  This might help say a generic C build on weird systems.
-<li> Consider running the GMP_CHECK_ASM tests only if they're needed, ie. if
-     there's a .S or .asm in the mpn path.  Hopefully the path can be
-     determined without reference to those tests.
+     mpn/cray/mulww.f).  Add "f" to the mpn path searching, run
+     <code>AC_PROG_F77</code> if such a file is found.  Automake will generate
+     some of what's needed in the makefiles, but libtool doesn't know fortran
+     and so rules like the current ".asm.lo" will be needed.
+<li> Consider running <code>GMP_PROG_M4</code> only if it's needed, ie. if
+     there's a .asm in the mpn path.  This might help say a generic C build on
+     weird systems.
+<li> Consider running the <code>GMP_CHECK_ASM</code> tests only if they're
+     needed, ie. if there's a .S or .asm in the mpn path.  Hopefully the path
+     can be determined without reference to those tests.
 </ul>
 
 <p> In general, getting the exact right configuration, passing the
@@ -334,7 +339,7 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 <li> Make <code>mpz_div</code> and <code>mpz_divmod</code> use rounding
      analogous to <code>mpz_mod</code>.  Document, and list as an
      incompatibility.
-<li> Maybe make mpz_pow_ui.c more like mpz/ui_pow_ui.c, or write new
+<li> Maybe make mpz/pow_ui.c more like mpz/ui_pow_ui.c, or write new
      mpn/generic/pow_ui.
 <li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
 <li> Make a build option to enable execution profiling with gprof.  In
