@@ -30,7 +30,7 @@ static unsigned add[] = {4, 2, 4, 2, 4, 6, 2, 6};
 #if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
 /* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
 long mrand48 ();
-static inline long
+static long
 random ()
 {
   return mrand48 ();
