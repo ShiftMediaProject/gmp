@@ -1835,6 +1835,8 @@ if test "$enable_shared" = yes && test "$enable_static" = yes; then
   esac
 fi
 
+AM_CONDITIONAL(ENABLE_STATIC, test "$enable_static" = yes)
+
 
 # The library and header checks are mostly for the benefit of supplementary
 # programs.  libgmp doesn't use anything too weird.
