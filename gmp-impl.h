@@ -275,6 +275,22 @@ struct bases
 extern const struct bases __mp_bases[];
 extern mp_size_t __gmp_default_fp_limb_precision;
 
+#if defined (__alpha)
+mp_limb_t __mpn_invert_normalized_limb ();
+#define invert_limb(invxl,xl) invxl = __mpn_invert_normalized_limb (xl)
+#endif
+
+#ifndef invert_limb
+#define invert_limb(invxl,xl) \
+  do {									\
+    mp_limb_t dummy;							\
+    if (xl << 1 == 0)							\
+      invxl = ~(mp_limb_t) 0;						\
+    else								\
+      udiv_qrnnd (invxl, dummy, -xl, 0, xl);				\
+  } while (0)
+#endif
+
 /* Divide the two-limb number in (NH,,NL) by D, with DI being the largest
    limb not larger than (2**(2*BITS_PER_MP_LIMB))/D - (2**BITS_PER_MP_LIMB).
    If this would yield overflow, DI should be the largest possible number
