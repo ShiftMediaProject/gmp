@@ -137,10 +137,6 @@ double      speed_unittime;
 double      speed_cycletime = 0.0;
 
 
-/* "struct timeval *" -> "double" in seconds */
-#define TIMEVAL_SECS(tp) \
-  ((double) (tp)->tv_sec + (double) (tp)->tv_usec * 1.0e-6)
-
 /* don't rely on "unsigned" to "double" conversion, it's broken in SunOS 4
    native cc */
 #define M_2POWU   ((double) (1 << (BITS_PER_INT-2)) * 4.0)
@@ -366,14 +362,14 @@ clk_tck (void)
 
 
 int
-gtod_microseconds_p (void)
+gettimeofday_microseconds_p (void)
 {
   MICROSECONDS_P ("gettimeofday",
                   struct_timeval t, t, gettimeofday (&t, NULL));
 }
 
 int
-grus_microseconds_p (void)
+getrusage_microseconds_p (void)
 {
   MICROSECONDS_P ("getrusage",
                   struct_rusage r, (r.ru_utime), getrusage (0, &r));
@@ -411,7 +407,7 @@ speed_time_init (void)
       cycles_limit = (have_cycles == 1 ? M_2POW32 : M_2POW64) / 2.0
         * speed_cycletime;
 
-      if (have_grus && grus_microseconds_p())
+      if (have_grus && getrusage_microseconds_p())
         {
           /* this is a good combination */
           use_grus = 1;
@@ -422,7 +418,7 @@ speed_time_init (void)
         {
           /* When speed_cyclecounter has a limited range, look for something
              to supplement it. */
-          if (have_gtod && gtod_microseconds_p())
+          if (have_gtod && gettimeofday_microseconds_p())
             {
               use_gtod = 1;
               supplement_unittime = gtod_unittime = 1.0e-6;
@@ -471,14 +467,14 @@ speed_time_init (void)
     {
       /* No cycle counter */
 
-      if (have_grus && grus_microseconds_p())
+      if (have_grus && getrusage_microseconds_p())
         {
           use_grus = 1;
           speed_unittime = grus_unittime = 1.0e-6;
           DEFAULT (speed_precision, 1000);
           speed_time_string = "microsecond accurate getrusage()";
         }
-      else if (have_gtod && gtod_microseconds_p())
+      else if (have_gtod && gettimeofday_microseconds_p())
         {
           use_gtod = 1;
           speed_unittime = gtod_unittime = 1.0e-6;
@@ -601,6 +597,35 @@ speed_starttime (void)
 }
 
 
+/* Return the difference between two cycle counter samples, as a "double"
+   counter of cycles.
+
+   The start and end values are allowed to cancel in integers in case the
+   counter values are bigger than the 53 bits that normally fit in a double.
+
+   This works even if speed_cyclecounter() puts a value bigger than 32-bits
+   in the low word (the high word always gets a 2**32 multiplier though). */
+
+double
+speed_cyclecounter_diff (const unsigned end[2], const unsigned start[2])
+{
+  unsigned  d;
+  double    t;
+
+  if (have_cycles == 1)
+    {
+      t = (end[0] - start[0]);
+    }
+  else
+    {
+      d = end[0] - start[0];
+      t = d - (d > end[0] ? M_2POWU : 0);
+      t += (end[1] - start[1]) * M_2POW32;
+    }
+  return t;
+}
+
+
 double
 speed_endtime (void)
 {
@@ -642,8 +667,7 @@ speed_endtime (void)
 
   if (use_grus)
     {
-      t_grus = TIMEVAL_SECS (&end_grus.ru_utime)
-        - TIMEVAL_SECS (&start_grus.ru_utime);
+      t_grus = TIMEVAL_DIFF_SEC (&end_grus.ru_utime, &start_grus.ru_utime);
 
       /* Use getrusage() if the cycle counter limit would be exceeded, or if
          it provides enough accuracy already. */
@@ -673,7 +697,7 @@ speed_endtime (void)
 
   if (use_gtod)
     {
-      t_gtod = TIMEVAL_SECS (&end_gtod) - TIMEVAL_SECS (&start_gtod);
+      t_gtod = TIMEVAL_DIFF_SEC (&end_gtod, &start_gtod);
 
       /* Use gettimeofday() if it measured a value bigger than the cycle
          counter can handle.  */
@@ -686,28 +710,16 @@ speed_endtime (void)
   
   if (use_cycles)  
     {
-      if (have_cycles == 1)
-        {
-          t_cycles = (end_cycles[0] - start_cycles[0]);
-        }
-      else
-        {
-          /* This works even if speed_cyclecounter() puts a value bigger
-             than 32-bits in the low word.  The start and end values are
-             allowed to cancel in uints in case a uint is more than the 53
-             bits that will normally fit in a double. */
-          unsigned  d;
-          d = end_cycles[0] - start_cycles[0];
-          t_cycles = d - (d > end_cycles[0] ? M_2POWU : 0);
-          t_cycles += (end_cycles[1] - start_cycles[1]) * M_2POW32;
-        }
-      t_cycles *= speed_cycletime;
-
+      t_cycles = speed_cyclecounter_diff (end_cycles, start_cycles)
+        * speed_cycletime;
       END_USE ("cycle counter", t_cycles);
     }
 
-  if (use_grus && grus_microseconds_p())  END_USE ("getrusage()",    t_grus);
-  if (use_gtod && gtod_microseconds_p())  END_USE ("gettimeofday()", t_gtod);
+  if (use_grus && getrusage_microseconds_p())
+    END_USE ("getrusage()", t_grus);
+
+  if (use_gtod && gettimeofday_microseconds_p())
+    END_USE ("gettimeofday()", t_gtod);
 
   if (use_times)  END_USE ("times()",        t_times);
   if (use_grus)   END_USE ("getrusage()",    t_grus);
