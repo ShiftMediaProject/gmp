@@ -306,10 +306,10 @@ gcc -c -I. -Impn -I.. -fomit-frame-pointer -O memory.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O mp_clz_tab.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O mp_set_fns.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O stack-alloc.c
+gcc -c -I. -Impn -I.. -fomit-frame-pointer -O rand.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randclr.c
-gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randi.c
-gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randi_cl.c
-gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randicom.c
+gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randcom.c
+gcc -c -I. -Impn -I.. -fomit-frame-pointer -O randlc.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O version.c
 deltree/y tmpdir
 
