@@ -1,6 +1,6 @@
 divert(-1)
 dnl
-dnl  m4 macros for gmp assembler, shared by all CPUs.
+dnl  m4 macros for gmp assembly code, shared by all CPUs.
 dnl
 dnl  These macros are designed for use with any m4 and have been used on
 dnl  GNU, BSD and SysV.  GNU m4 has some advantages, like filenames and line
@@ -684,7 +684,7 @@ m4_assert_defined(`CONFIG_TOP_SRCDIR')
 dnl  Usage: C comment ...
 dnl
 dnl  "C" works like a FORTRAN-style comment character.  This can be used for
-dnl  comments to the right of an assembly instructions, where just dnl would
+dnl  comments to the right of assembly instructions, where just dnl would
 dnl  remove the linefeed, and concatenate adjacent lines.
 dnl
 dnl  "C" and/or "dnl" are useful when an assembler doesn't support comments,
@@ -933,6 +933,8 @@ define_mpn(submul_1)
 define_mpn(submul_1c)
 define_mpn(toom3_mul_n)
 define_mpn(toom3_sqr_n)
+define_mpn(umul_ppmm)
+define_mpn(udiv_qrnnd)
 define_mpn(xnor_n)
 define_mpn(xor_n)
 
