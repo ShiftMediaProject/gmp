@@ -1,3 +1,25 @@
+1999-07-15  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (powerpc64 count_leading_zeros): Fix typo.
+	(powerpc64 add_ssaaaa): Fix typos.
+	(powerpc64 sub_ddmmss): Fix typos.
+
+1999-07-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/Makefile.in: Pass XCFLAGS when linking.
+	* mpf/tests/Makefile.in: Likewise.
+	* mpq/tests/Makefile.in: Likewise.
+	* mpn/Makefile.in (.S.o): Pass XCFLAGS.
+
+	* longlong.h: Add support for 64-bit PowerPC.
+	* config.sub: Handle "powerpc64".
+	* configure.in: Likewise.
+	* mpn/configure.in: Suppress use of config/t-ppc-aix for now,
+	it seems compiler passes proper options.
+	* mpn/powerpc64/*.S: New files.
+	
+	* Makefile.in (FLAGS_TO_PASS): Pass "AR=$(AR)".
+
 1999-07-07  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (factor): Change alloca call to a malloc/free pair.
