@@ -39,6 +39,8 @@ gmp_rand_init_lc_2exp (s, a, c, m2exp)
 #endif
 {
   mpz_init_set_ui (s->seed, 1);
+  _mpz_realloc (s->seed, m2exp / BITS_PER_MP_LIMB
+		+ (m2exp % BITS_PER_MP_LIMB != 0));
 
   /* Allocate algorithm specific data. */
   s->data.lc = (__gmp_rand_data_lc *)
