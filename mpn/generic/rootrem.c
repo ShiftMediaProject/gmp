@@ -65,7 +65,17 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
   TMP_DECL (marker);
 
   TMP_MARK (marker);
-  pp = TMP_ALLOC_LIMBS (un + 2);
+
+  /* The extra factor 1.585 = log(3)/log(2) here is for the worst case
+     overestimate of the root, i.e., when the code rounds a root that is
+     2+epsilon to 3, and the powers this to a potentially huge power.  We
+     could generalize the code for detecting root=1 a few lines below to deal
+     with xnb <= k, for some small k.  For example, when xnb <= 2, meaning
+     the root should be 1, 2, or 3, we could replace this factor by the much
+     smaller log(5)/log(4).  */
+
+#define PP_ALLOC (2 + (mp_size_t) (un*1.585))
+  pp = TMP_ALLOC_LIMBS (PP_ALLOC);
 
   count_leading_zeros (cnt, up[un - 1]);
   unb = un * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
@@ -102,6 +112,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
       mp_limb_t xl = xp[bit / GMP_NUMB_BITS];
       xp[bit / GMP_NUMB_BITS] = xl ^ (mp_limb_t) 1 << bit % GMP_NUMB_BITS;
       pn = mpn_pow_1 (pp, xp, xn, nth, qp);
+      ASSERT_ALWAYS (pn < PP_ALLOC);
       /* If the new root approximation is too small, restore old value.  */
       if (! (un < pn || (un == pn && mpn_cmp (up, pp, pn) < 0)))
 	xp[bit / GMP_NUMB_BITS] = xl;		/* restore old value */
@@ -121,6 +132,7 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
       mp_limb_t cy;
 
       pn = mpn_pow_1 (pp, xp, xn, nth - 1, qp);
+      ASSERT_ALWAYS (pn < PP_ALLOC);
       mpn_tdiv_qr (qp, pp, (mp_size_t) 0, up, un, pp, pn); /* junk remainder */
       qn = un - pn + 1;
       cy = mpn_addmul_1 (qp, xp, xn, nth - 1);
@@ -145,10 +157,12 @@ mpn_rootrem (mp_ptr rootp, mp_ptr remp,
   /* The computed result might be one unit too large.  Adjust as necessary.  */
  done:
   pn = mpn_pow_1 (pp, xp, xn, nth, qp);
+  ASSERT_ALWAYS (pn < PP_ALLOC);
   if (un < pn || (un == pn && mpn_cmp (up, pp, pn) < 0))
     {
       mpn_decr_u (xp, 1);
       pn = mpn_pow_1 (pp, xp, xn, nth, qp);
+      ASSERT_ALWAYS (pn < PP_ALLOC);
 
       ASSERT_ALWAYS (! (un < pn || (un == pn && mpn_cmp (up, pp, pn) < 0)));
     }
