@@ -1,3 +1,8 @@
+2000-04-13  Linus Nordberg  <linus@swox.se>
+
+	* rand.c (gmp_randinit): Don't combine va_alist with ordinary
+	arguments for non STDC.
+
 2000-04-13  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/nextprime.c: Use proper names of new random types and functions.
