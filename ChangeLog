@@ -2164,6 +2164,11 @@
 	before running speed_cyclecounter.
 	* tune/speed.h (cycles_works_p): Add prototype.
 
+2001-01-13  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/rand/t-rand.c (farr): Fix typo.
+	(zarr): Fix typo.
+
 2001-01-12  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/kronsz.c: Don't depend on right shifting a negative.
@@ -4371,6 +4376,13 @@
 	* mpz/tests/io.c: Use one fp opened "w+", since separately opened
 	input and output doesn't work on MS-DOS 6.21.
 
+	* tests/rand/Makefile.am (allprogs): Pseudo-target to build everything.
+	(CLEANFILES): Add EXTRA_PROGRAMS and EXTRA_LTLIBRARIES.
+	(manual-test, manual-bigtest): Add $(EXEEXT) to	dependencies.
+
+	* tests/rand/*/Makefile.in: Regenerate with patched automake that adds
+	$(EXEEXT) to EXTRA_PROGRAMS.
+
 2000-07-13  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/t-root.c: Also test mpz_perfect_power_p.
@@ -4604,6 +4616,8 @@
 	up in one $path traversal.
 	* doc/configuration: Updates.
 
+	* tests/rand/t-rand.c (main): Change "usage" to work with K&R.
+
 2000-06-10  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/mmx/popham.asm, mpn/x86/p6/mmx/popham.asm,
@@ -4645,6 +4659,11 @@
 	* mpn/tests/Makefile.am (EXTRA_PROGRAMS): Remove addsub_n and
 	addsub_n_2 which don't currently build.
 	* mpn/tests/copy.c: Test MPN_COPY_INCR, not __gmpn_copy.
+
+	* tests/rand/Makefile.am (libstat_la_LIBADD): Add -lm, no longer on
+	libgmp.la.
+	(findlc_LDADD): Use libstat.la.
+	(AUTOMAKE_OPTIONS): Use ansi2knr.
 
 2000-06-08  Torbjorn Granlund  <tege@swox.com>
 
@@ -5499,6 +5518,11 @@
 	* aclocal.m4: Regenerate.
 	* configure: Regenerate.
 
+2000-04-16  Linus Nordberg  <linus@swox.se>
+
+	* tests/rand/t-rand.c (main): Add non-ANSI function declaration.
+	Don't use `const'.
+
 2000-04-16  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/dump.c: Suppress output of leadign zeros.
@@ -5594,6 +5618,9 @@
 
 	* configure.in: Make all `-mcpu' options to gcc optional.
 	* configure: Regenerate.
+
+	* tests/rand/Makefile.am: Don't do anything for target 'all'.
+	* tests/rand/Makefile.in: Regenerate.
 
 2000-04-15  Kevin Ryde  <kevin@swox.se>
 
@@ -5714,6 +5741,8 @@
 
 	* gmp.h (gmp_randalg_t): Remove comma after last element.
 
+	* tests/rand/t-rand.c: Add copyright notice.
+
 2000-04-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/mul_n.c, mpn/generic/gcdext.c, mpz/nextprime.c,
@@ -5799,6 +5828,16 @@
 	Fix bug with 64-bit limbs.
 	Fix bug with small seed, small A and large M.
 
+	* tests/rand/gen.c (main): Include gmp.h.  Remove macros MIN, MAX.  Add
+	option '-q'.  Don't demand argument N.  Change parameters in call
+	to mpf_urandomb.
+
+	* tests/rand/t-rand.c: New file for testing random number generation.
+	
+	* tests/rand/Makefile.am: Run t-rand for 'make check'.
+	(test, bigtest): Rename to manual-test, manual-bigtest.
+	* tests/rand/Makefile.in: Regenerate.
+
 2000-04-12  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h: Include config.h before TMP_ALLOC, so
@@ -5850,6 +5889,10 @@
 	(DIVIDE_BY_ZERO): Use GMP_ERROR.
 	(__mp_bases): #define to __MPN(mp_bases).
 
+2000-04-11  Linus Nordberg  <linus@swox.se>
+
+	* tests/rand/stat.c (main): Initialize `l1runs' at declaration.
+
 2000-04-11  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/fib_ui.c: Add K&R function definitions.
@@ -5894,6 +5937,20 @@
 	(Low-level Functions): Remove documentation for gmp_rand_getraw.
 	(Random Number Functions): Add info on where to find documentation
 	on the random number functions.
+
+	* tests/rand/Makefile.am (test, bigtest): Quote argument to grep.
+	* tests/rand/Makefile.in: Regenerate.
+
+	* tests/rand/gen.c: Declare optarg, optind, opterr if not already
+	declared.
+	(main): Use new names for the random stuff.
+	(main): Don't use strtoul() if we don't have it.  Use strtol()
+	instead, if we have it.  Otherwise, use atoi().
+	(main): Use srandom/srandomdev for __FreeBSD__ only.
+	(main): Use new parameter order to gmp_randinit().
+
+	* tests/rand/stat.c: Declare optarg, optind, opterr if not already
+	declared.
 
 2000-04-10  Torbjorn Granlund  <tege@swox.com>
 
@@ -5944,6 +6001,12 @@
 
 	* gmp.texi (Top): Use @ifnottex, to help makeinfo --html.
 	(Installing MP): Describe --enable-mpbsd and demo programs.
+
+	* tests/rand/statlib.c: mpz_cmp_abs => mpz_cmpabs.
+
+	* tests/rand/Makefile.am (LDADD): Don't need -lm (now in libgmp.la).
+	(EXTRA_PROGRAMS): Not noinst_PROGRAMS.
+	(INCLUDES): Shorten to -I$(top_srcdir) now using AM_CONFIG_HEADER.
 
 2000-04-09  Torbjorn Granlund  <tege@swox.com>
 
@@ -6227,6 +6290,14 @@
 	* mpz/Makefile.am (libmpz_la_SOURCES): Change urandom.c -->
 	urandomb.c.  Add urandomm.c.
 	* mpz/Makefile.in: Regenerate.
+
+	* tests/rand/Makefile.am (noinst_PROGRAMS): Change findcl --> findlc.
+	Add gen.static.
+	* tests/rand/Makefile.in: Regenerate.
+
+	* tests/rand/gen.c (main): Add mpz_urandomm.  Add command line options
+	`-C', `-m', extend `-a'.  Use *mp*_*rand*() with new parameters.  Call
+	gmp_rand_seed().
 
 2000-04-01  Kevin Ryde  <kevin@swox.se>
 
@@ -7486,6 +7557,11 @@
 	* mpn/generic/rawrandom.c (mpn_rawrandom): Set SIZ(s->seed) when
 	reallocating.
 
+	* tests/rand/Makefile (test, bigtest): Add 33-bit tests.
+
+	* tests/rand/gen.c (main): Set precision of variable passed to
+	mpf_urandomb().  Add option `-p'.
+
 1999-05-25  Linus Nordberg  <linus@swox.se>
 
 	* randcm.c: Remove.
@@ -7532,6 +7608,9 @@
 	* randcm.c (__gmp_rand_init_common): Ditto.
 	* randclr.c (gmp_rand_clear): Ditto.
 
+	* tests/rand/gen.c (main): Pass `s' to rand-funcs instead of address
+	of `s'.
+
 1999-05-20  Linus Nordberg  <linus@swox.se>
 
 	* Makefile.in: Rename randi.c --> rand.c, randi_lc.c --> randlc.c,
@@ -7571,6 +7650,47 @@
 	signal interface.
 	(main): Remove signal handler setup code; call setup_error_handler.
 
+1999-04-29  Linus Nordberg  <linus@swox.se>
+
+	* tests/rand/findcl.c (main): Add option '-i' for interval factor.
+	Separate v and merit lose figures.  Add '-v' for version.
+
+1999-04-28  Linus Nordberg  <linus@swox.se>
+
+	* tests/rand/statlib.c: Change debugging stuff.
+
+	* tests/rand/gmpstat.h: Add debug values definitions.
+
+	* tests/rand/findcl.c (main): Print low and high merit on startup.
+	Print version string on startup.  Catch SEGV and HUP.  Add option -d
+	for debug.  Fix bug making test for v too hard.
+	(sh_status): New function.
+	(sh_status): Flush stdout.  Add RCSID.
+
+1999-04-27  Linus Nordberg  <linus@swox.se>
+
+	* tests/rand/Makefile (clean): Add target.
+
+1999-04-27  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* tests/rand/stat.c: Include gmpstat.h.
+	Add global int g_debug.
+
+	* tests/rand/spect.c: Include <unistd.h>.
+
+	* tests/rand/findcl.c (main): Input is `m', not all factors of `m'.
+	Print only the very first matching multiplier.  Include <unistd.h>.
+	Flush stdout.  Print "done." when done.
+
+	* tests/rand/spect.c: Move everything but main() to statlib.c.
+
+	* tests/rand/findcl.c: New file.
+
+	* tests/rand/gmpstat.h: New file.
+
+	* tests/rand/statlib.c (merit, merit_u, f_floor, vz_dot,
+	spectral_test): New functions.
+
 1999-04-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/configure.in: Fix typo, "sparc-*)" was "sparc)".
@@ -7603,6 +7723,18 @@
 	* gmp.h (__gmp_rand_data_lc): Now holds a, c, m instead of scheme
 	struct.
 	(__gmp_rand_lc_scheme_struct): Remove mpz_t's `a' and `m'.
+
+	* tests/rand/stat.c (f_freq): Don't print 2nd level results if doing
+	1st level.
+
+	* tests/rand/gen.c (main): Set default algorithm to mpz_urandomb.
+	(main): Add option -c.
+
+1999-03-24  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* tests/rand/Makefile (GMPINC): Rename to GMPH.
+	(GMPH):	Add gmp-mparam.h.
+	(CFLAGS): Add -I$(GMPLIBDIR)/mpn
 
 1999-03-23  Linus Nordberg  <linus.nordberg@canit.se>
 
@@ -7651,6 +7783,10 @@
 
 	* make.bat: Compile mpz/urandom.c and mpf/urandom.c
 
+	* tests/rand/statlib.c (ks_table): Use mpf_pow_ui() and exp().
+
+	* tests/rand/gen.c: Include unistd.h for getopt.
+
 1999-03-15  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* mpz/urandom.c (gmp_rand_init): New function.
@@ -7669,6 +7805,9 @@
 	functions.
 	(mpz_urandomb, mpf_urandomb): Add prototype.
 	(gmp_rand_init, gmp_rand_clear): Add prototype.
+
+	* tests/rand/gen.c, stat.c, statlib.c, statlib.h: New files.
+	* tests/rand/Makefile, tests/rand/ChangeLog: New files.
 
 1999-03-15  Torbjorn Granlund  <tege@matematik.su.se>
 
