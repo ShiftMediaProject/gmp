@@ -30,7 +30,7 @@ MA 02111-1307, USA. */
 #define MUL_KARATSUBA_THRESHOLD          18
 #define MUL_TOOM3_THRESHOLD             156
 
-#define SQR_BASECASE_THRESHOLD            4
+#define SQR_BASECASE_THRESHOLD            0  /* always */
 #define SQR_KARATSUBA_THRESHOLD          65
 #define SQR_TOOM3_THRESHOLD             354
 
