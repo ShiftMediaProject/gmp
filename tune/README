@@ -2,7 +2,7 @@
                GMP SPEED MEASURING AND PARAMETER TUNING
 
 
-The programs in this directory are for knowledgable users who want to make
+The programs in this directory are for knowledgeable users who want to make
 measurements of the speed of GMP routines on their machine, and perhaps
 tweak some settings or identify things that can be improved.
 
@@ -20,11 +20,11 @@ MISCELLANEOUS NOTES
 Don't configure with --enable-assert when using the things here, since the
 extra code added by assertion checking may influence measurements.
 
-Some effort has been made to accomodate CPUs with direct mapped caches, but
+Some effort has been made to accommodate CPUs with direct mapped caches, but
 it will depend on TMP_ALLOC using a proper alloca, and even then it may or
 may not be enough.
 
-The sparc32/v9 addmul_1 code runs at noticably different speeds on
+The sparc32/v9 addmul_1 code runs at noticeably different speeds on
 successive sizes, and this has a bad effect on the tune program's
 determinations of the multiply and square thresholds.
 
@@ -58,7 +58,7 @@ using gcc will probably have an effect.
 Some thresholds produced by the tune program are merely single values chosen
 from what's actually a range of sizes where two algorithms are pretty much
 the same speed.  When this happens the program is likely to give slightly
-different values on successive runs.  This is noticable on the toom3
+different values on successive runs.  This is noticeable on the toom3
 thresholds for instance.
 
 
@@ -245,7 +245,7 @@ Both -E and -F are preliminary and might change.  A consistent approach to
 using them when claiming certain per crossproduct or per triangularproduct
 speeds hasn't really been established, but the increment between speeds in
 the range karatsuba will call seems sensible, that being k to k/2.  For
-instance, if the karatasuba threshold was 20 for the multiply and 30 for the
+instance, if the karatsuba threshold was 20 for the multiply and 30 for the
 square,
 
         ./speed -s 10-20 -t 10 -CDE mpn_mul_basecase
@@ -262,7 +262,7 @@ mpz_add.
 
 The normal libtool link of the speed program does a static link to libgmp.la
 and libspeed.la, but will end up dynamic linked to libc.  Depending on the
-system, a dynamic linked malloc may be noticably slower than static linked,
+system, a dynamic linked malloc may be noticeably slower than static linked,
 and you may want to re-run the libtool link invocation to static link libc
 for comparison.  The example below does a 10 limb malloc/free or
 malloc/realloc/free to test the C library.  Of course a real world program
@@ -378,7 +378,7 @@ various algorithm thresholds.
    TOOM3_MUL_THRESHOLD
 
       At size N, toom3 does five (N/3)x(N/3) multiplies and some extra
-      calculations, compared to karatasuba doing three (N/2)x(N/2)
+      calculations, compared to karatsuba doing three (N/2)x(N/2)
       multiplies and some extra calculations (fewer).  Toom3 will become
       better before long, being O(n^1.465) versus karatsuba at O(n^1.585),
       but exactly where depends a great deal on the implementations of all
@@ -393,7 +393,7 @@ various algorithm thresholds.
       divexact_by3 - used by toom3
 
          Toom3 does a divexact_by3 which at size N is roughly equivalent to
-         N successively dependent multplies with a further couple of extra
+         N successively dependent multiplies with a further couple of extra
          instructions in between.  CPUs with a low latency multiply and good
          divexact_by3 implementation should see the toom3 threshold lowered.
          But note this is unlikely to have much effect on total multiply
