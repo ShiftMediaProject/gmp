@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -74,7 +74,7 @@ calc_OBJECTS = $(am_calc_OBJECTS)
 calc_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 calc_DEPENDENCIES = $(top_builddir)/libgmp.la $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -153,6 +153,7 @@ LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
+LIBCURSES = @LIBCURSES@
 LIBGMPXX_LDFLAGS = @LIBGMPXX_LDFLAGS@
 LIBGMP_DLL = @LIBGMP_DLL@
 LIBGMP_LDFLAGS = @LIBGMP_LDFLAGS@
@@ -247,7 +248,7 @@ INCLUDES = -I$(top_srcdir)
 # calclex.c), but it's included here for the benefit of anyone rebuilding
 # with some other lex.
 #
-LDADD = $(top_builddir)/libgmp.la $(LIBREADLINE) $(LEXLIB)
+LDADD = $(top_builddir)/libgmp.la $(LIBREADLINE) $(LIBCURSES) $(LEXLIB)
 AM_YFLAGS = -d
 calc_SOURCES = calc.y calclex.l calcread.c calc-common.h
 BUILT_SOURCES = calc.h
