@@ -146,6 +146,7 @@ dnl  GMP_FINISH
 dnl  Create 
 AC_DEFUN(GMP_FINISH,
 [AC_REQUIRE([GMP_INIT])
+echo "creating $gmp_configm4"
 echo [dnl $gmp_configm4.  Generated automatically by configure.] > $gmp_configm4
 if test -f $gmp_tmpconfigm4; then
   echo ["changequote(<,>)dnl"] >> $gmp_configm4
