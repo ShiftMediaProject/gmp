@@ -1,6 +1,6 @@
 /* Time routines for speed measurments.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -836,7 +836,7 @@ speed_endtime (void)
       time_base_to_time (&start_rrt, sizeof(start_rrt));
       time_base_to_time (&end_rrt, sizeof(end_rrt));
       t_rrt = timebasestruct_diff_secs (&end_rrt, &start_rrt);
-      END_USE ("getrusage()", t_rrt);
+      END_USE ("read_real_time()", t_rrt);
     }
 
   if (use_grus)
