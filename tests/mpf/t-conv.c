@@ -36,6 +36,7 @@ MA 02111-1307, USA. */
 #define EXPO 20
 #endif
 
+int
 main (int argc, char **argv)
 {
   mpf_t x, y;
@@ -48,6 +49,8 @@ main (int argc, char **argv)
   long size, exp;
   int base;
   char buf[SIZE * BITS_PER_MP_LIMB + 5];
+
+  tests_start ();
 
   if (argc > 1)
     {
@@ -72,11 +75,19 @@ main (int argc, char **argv)
 
   for (i = 0; i < reps; i++)
     {
-      size = urandom () % (2 * SIZE) - SIZE;
-      exp = urandom () % EXPO;
-      mpf_random2 (x, size, exp);
-
-      base = urandom () % 35 + 2;
+      if (i == 0)
+        {
+          /* exercise the special case in get_str for for x==0 */
+          mpf_set_ui (x, 0L);
+          base = 10;
+        }
+      else
+        {
+          size = urandom () % (2 * SIZE) - SIZE;
+          exp = urandom () % EXPO;
+          mpf_random2 (x, size, exp);
+          base = urandom () % 35 + 2;
+        }
 
       str = mpf_get_str (0, &bexp, base, 0, x);
 
@@ -86,7 +97,7 @@ main (int argc, char **argv)
 	sprintf (buf, "0.%s@%ld", str, bexp);
 
       mpf_set_str_or_abort (y, buf, -base);
-      (*__gmp_free_func) (str, 0);
+      (*__gmp_free_func) (str, strlen (str) + 1);
 
       mpf_reldiff (rerr, x, y);
       if (mpf_cmp (rerr, max_rerr) > 0)
@@ -106,5 +117,14 @@ main (int argc, char **argv)
 	}
     }
 
+  mpf_clear (limit_rerr);
+  mpf_clear (rerr);
+  mpf_clear (max_rerr);
+
+  mpf_clear (x);
+  mpf_clear (y);
+  mpf_clear (d);
+
+  tests_end ();
   exit (0);
 }
