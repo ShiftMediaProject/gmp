@@ -30,7 +30,7 @@ MA 02111-1307, USA.
 	* tune/speed.h (SPEED_ROUTINE_MPN_SET_STR): Fix memory clobber in
 	destination cache priming.
 
-	* printf/doprnt.c: Fix for %s and %p.
+	* printf/doprnt.c: Fix parsing of %s and %p conversions.
 	* tests/misc/t-printf.c (check_misc): Add some tests.
 
 2002-02-03  Torbjorn Granlund  <tege@swox.com>
