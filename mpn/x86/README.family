@@ -9,9 +9,13 @@ This file has some notes on things common to all the x86 family code.
 ASM FILES
 
 The .asm files are BSD style x86 assembler code which is first put through
-m4 for macro processing.  Don't edit the resulting .s files, as changes
-there will be lost.  The generic mpn/asm-defs.m4 is used, together with
+m4 for macro processing.  The generic mpn/asm-defs.m4 is used, together with
 mpn/x86/x86-defs.m4.  Detailed notes are in those files.
+
+The .S files are first put through cpp for macro processing, using some
+macros in mpn/x86/syntax.h.  The INSN macros for generating either Intel or
+BSD style assembler are being phased out.  There's no facilties to select
+Intel style.
 
 
 
@@ -63,13 +67,56 @@ example,
 	deflit(STACK_SPACE, 12)
 
 Here STACK_SPACE gets used in a "subl $STACK_SPACE, %esp" to allocate the
-stack space, and that instruction must be followed by a redefinition of
-FRAME (setting it equal to STACK_SPACE) to reflect the change in esp.
+space, and that instruction must be followed by a redefinition of FRAME
+(setting it equal to STACK_SPACE) to reflect the change in esp.
 
 Definitions for saved registers are only put in where they're going to be
 used.  If registers are just saved and restored with pushes and pops then
 they're omitted.
 
+
+
+ZERO DISPLACEMENTS
+
+In a couple of places addressing modes like 0(%ebx) with a byte-sized zero
+displacement are wanted, rather than (%ebx) with no displacement.  These are
+either for computed jumps or to get desirable code alignment.  Explicit
+.byte sequences are used to ensure the assembler doesn't turn 0(%ebx) into
+(%ebx).
+
+Current gas 2.95 or recent 2.91 leave 0(%ebx) as written, but old gas 1.92.3
+changes it.  In general changing would be the sort of "optimization" an
+assembler might perform, hence explicit .bytes are used where necessary.
+
+
+
+DIRECTION FLAG
+
+The x86 calling conventions say that the direction flag should be clear at
+function entry and exit.  (See iBCS2 and SVR4 ABI books, references below.)
+
+Although this has been so since the year dot, it's not absolutely clear
+whether it's universally respected.  Since it's better to be safe than
+sorry, gmp follows glibc and does a "cld" if it depends on the direction
+flag being clear.
+
+
+
+POSITION INDEPENDENT CODE
+
+Defining the symbol PIC in the m4 processing will select position
+independent code.  Calls from assembler code to some other function use the
+normal C procedure linkage table.  Computed jumps do their calculations in a
+self-contained fashion, without using the global offset table.
+
+PIC code is necessary for ELF shared libraries that can be mapped into
+different processes at different addresses.  Text relocations in shared
+libraries are supposed to be allowed, but that presumably means a page with
+such a relocation isn't shared.
+
+PIC adds a certain fixed cost to each function call, which is small but
+might be noticable when working with smallish size operands.  For maximum
+performance use non-PIC code and link with the plain static libgmp.a.
 
 
 
@@ -107,11 +154,6 @@ there's no more speedups.
 
 
 UNROLLED LOOP CODING
-
-In the unrolled loops with computed jumps, addressing modes such as 0(%ebx)
-are used and the assembler must leave these as written.  If they're turned
-into (%ebx) they'll be one byte less code and this will upset the careful C
-code bytes per limb jump.
 
 The x86 addressing modes allow a byte displacement of -128 to +127, making
 it possible to access 256 bytes, which is 64 limbs, without adjusting
@@ -161,24 +203,6 @@ and mpn_copyb), the calculations change as follows.
 
 	add to pointers          (-S & M) * 4
 	displacements            0 to -B*(N-1)
-
-
-
-POSITION INDEPENDENT CODE
-
-Defining the symbol PIC for the m4 processing will select position
-independent code.  Calls from assembler code to some other function use the
-normal C procedure linkage table.  Computed jumps do their calculations in a
-self-contained fashion, without using the global offset table.
-
-PIC code is necessary for ELF shared libraries that can be mapped into
-different processes at different addresses.  Text relocations in shared
-libraries are supposed to be allowed, but that presumably means a page with
-such a relocation isn't shared.
-
-PIC adds a certain fixed cost to each routine, which is small but might be
-noticable when working with smallish size operands.  For maximum performance
-use non-PIC code and link with the plain static libgmp.a.
 
 
 
@@ -237,8 +261,7 @@ numbers 243190, 243191 and 243192.  Available on-line,
 	ftp://download.intel.com/design/PentiumII/manuals/243192.htm
 
 Intel386 Family Binary Compatibility Specification 2, Intel Corporation,
-published by McGraw-Hill, 1991, ISBN 0-07-031219-2.  (This has the x86
-calling conventions, but not much else of relevance.)
+published by McGraw-Hill, 1991, ISBN 0-07-031219-2.
 
 System V Application Binary Interface, Unix System Laboratories Inc, 1992,
 published by Pretice Hall, ISBN 0-13-880410-9.  And the Intel386 Processor
