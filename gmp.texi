@@ -1798,7 +1798,7 @@ The variable @var{state} must be initialized by calling one of the
 before invoking this function.
 @end deftypefun
 
-@deftypefun void mpz_rrandomb (mpz_t @var{rop}, unsigned long int @var{n}, mpz_t @var{seed})
+@deftypefun void mpz_rrandomb (mpz_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{n})
 Generate a random integer with long strings of zeros and ones in the
 binary representation.  Useful for testing functions and algorithms,
 since this kind of random numbers have proven to be more likely to
@@ -1813,19 +1813,9 @@ trigger corner-case bugs.  The random number will be in the range
 @end iftex
 inclusive.
 
-The variable @var{seed} is used as a seed for generating the random
-number.  It is updated with a new seed.  Unlike other random number
-functions, the @var{seed} variable should probably be much smaller than
-the generated numbers, since the generated random numbers are of such
-special nature.  In fact, it should probably be kept under
-@ifinfo
-2^100.
-@end ifinfo
-@iftex
-@tex
-$2^{100}$.
-@end tex
-@end iftex
+The variable @var{state} must be initialized by calling one of the
+@code{gmp_randinit} functions (@ref{Random State Initialization})
+before invoking this function.
 @end deftypefun
 
 @deftypefun size_t mpz_size (mpz_t @var{op})
