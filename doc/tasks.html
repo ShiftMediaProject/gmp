@@ -206,8 +206,6 @@
 <li> <code>mpz_get_nth_ui</code>.  Return the nth word (not necessarily the nth limb).
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
-<li> Add <code>mpq_set_f</code> for assignment from <code>mpf_t</code>
-     (cf. <code>mpq_set_d</code>).
 <li> Maybe make <code>mpz_init</code> (and <code>mpq_init</code>) do lazy
      allocation.  Set <code>ALLOC(var)</code> to 0, and have
      <code>mpz_realloc</code> special-handle that case.  Update functions that
@@ -325,15 +323,12 @@ and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
 
 <h4>Miscellaneous</h4>
 <ul>
-<li> Get rid of mp[zq]/sub.c, and instead define a compile parameter to
-     mp[zq]/add.c to decide whether it will add or subtract.  Will decrease
-     redundancy.  Similarly in other places.
 <li> Make <code>mpz_div</code> and <code>mpz_divmod</code> use rounding
      analogous to <code>mpz_mod</code>.  Document, and list as an
      incompatibility.
 <li> Maybe make mpz_pow_ui.c more like mpz/ui_pow_ui.c, or write new
      mpn/generic/pow_ui.
-<li> Make mpz_invert call mpn_gcdext directly.
+<li> <code>mpz_invert</code> should call <code>mpn_gcdext</code> directly.
 <li> Make a build option to enable execution profiling with gprof.  In
      particular look at getting the right <code>mcount</code> call at
      the start of each assembler subroutine (for important targets at
