@@ -132,6 +132,7 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
       s++, len--;
     }
   signlen = (sign != '\0');
+  TRACE (printf ("  sign %c  signlen %d\n", sign, signlen));
 
   switch (p->conv) {
   case DOPRNT_CONV_FIXED:
@@ -258,7 +259,8 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
          mean truncation */
       ASSERT (explen >= 0 && explen < sizeof(exponent)-1);
 #else
-      explen = sprintf (exponent, p->expfmt, expsign, expval);
+      sprintf (exponent, p->expfmt, expsign, expval);
+      explen = strlen (exponent);
       ASSERT (explen < sizeof(exponent));
 #endif
       TRACE (printf ("  expfmt %s gives %s\n", p->expfmt, exponent));
@@ -284,8 +286,8 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
       goto fixed;
   }
 
-  TRACE (printf ("  intlen %d fraczeros %d fraclen %d\n",
-                 intlen, fraczeros, fraclen));
+  TRACE (printf ("  intlen %d intzeros %d fraczeros %d fraclen %d\n",
+                 intlen, intzeros, fraczeros, fraclen));
   ASSERT (p->prec == -1
           ? intlen + fraclen == strlen (s)
           : intlen + fraclen <= strlen (s));
@@ -314,6 +316,7 @@ __gmp_doprnt_float (const struct doprnt_funs_t *funs,
       pointlen = strlen (point);
     }
 #endif
+  TRACE (printf ("  point |%s|  pointlen %d\n", point, pointlen));
 
   /* Notice the test for a non-zero value is done after any truncation for
      DOPRNT_CONV_FIXED. */
