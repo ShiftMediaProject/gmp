@@ -1385,7 +1385,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # optarg should be in unistd.h, which is already in the default includes
-AC_CHECK_DECLS([fgetc, fscanf, optarg, sscanf, ungetc, vfprintf])
+AC_CHECK_DECLS([fgetc, fscanf, optarg, ungetc, vfprintf])
 
 AC_TYPE_SIGNAL
 
