@@ -539,7 +539,7 @@ case ${target} in
     # the CPUs below wanting to know about mmx
     case ${target} in
       [pentiummmx-*-* | pentium[23]-*-* | k6*-*-* | athlon-*-*])
-	GMP_ASM_MMX(tmp_mmx=yes, tmp_mmx=no)
+	GMP_ASM_X86_MMX(tmp_mmx=yes, tmp_mmx=no)
         ;;
     esac
 
@@ -931,10 +931,8 @@ if test "$gmp_no_asm_syntax_testing" != yes; then
       ;;
 
     X86_PATTERN)
-      GMP_ASM_SHLDL_CL(
-        [GMP_DEFINE(WANT_SHLDL_CL,1)],
-        [GMP_DEFINE(WANT_SHLDL_CL,0)])
       GMP_ASM_ALIGN_FILL_0x90
+      GMP_ASM_X86_SHLDL_CL
       if test "$enable_profiling" != no; then
         GMP_ASM_X86_MCOUNT
       fi
