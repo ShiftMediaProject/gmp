@@ -240,6 +240,7 @@ gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O mul_2exp.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O mul_ui.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O neg.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O out_str.c
+gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O pow_ui.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O random2.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O reldiff.c
 gcc -c -I. -I.. -I../mpn -fomit-frame-pointer -O set.c
