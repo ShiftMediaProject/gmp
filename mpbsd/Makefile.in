@@ -126,7 +126,7 @@ INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
 
 nodist_libmpbsd_la_SOURCES = \
 	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c \
-	assert.c memory.c mp_bpl.c
+	assert.c errno.c memory.c mp_bpl.c
 
 libmpbsd_la_SOURCES = \
 	itom.c mdiv.c mfree.c min.c mout.c move.c mtox.c sdiv.c xtom.c
@@ -151,7 +151,8 @@ libmpbsd_la_LIBADD =
 am_libmpbsd_la_OBJECTS =  itom.lo mdiv.lo mfree.lo min.lo mout.lo \
 move.lo mtox.lo sdiv.lo xtom.lo
 nodist_libmpbsd_la_OBJECTS =  add.lo cmp.lo gcd.lo mul.lo pow_ui.lo \
-powm.lo realloc.lo sqrtrem.lo sub.lo assert.lo memory.lo mp_bpl.lo
+powm.lo realloc.lo sqrtrem.lo sub.lo assert.lo errno.lo memory.lo \
+mp_bpl.lo
 libmpbsd_la_OBJECTS =  $(am_libmpbsd_la_OBJECTS) \
 $(nodist_libmpbsd_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -168,13 +169,13 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 GZIP_ENV = --best
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 DEP_FILES =  @AMDEP@ $(DEPDIR)/add.Plo $(DEPDIR)/assert.Plo \
-$(DEPDIR)/cmp.Plo $(DEPDIR)/gcd.Plo $(DEPDIR)/itom.Plo \
-$(DEPDIR)/mdiv.Plo $(DEPDIR)/memory.Plo $(DEPDIR)/mfree.Plo \
-$(DEPDIR)/min.Plo $(DEPDIR)/mout.Plo $(DEPDIR)/move.Plo \
-$(DEPDIR)/mp_bpl.Plo $(DEPDIR)/mtox.Plo $(DEPDIR)/mul.Plo \
-$(DEPDIR)/pow_ui.Plo $(DEPDIR)/powm.Plo $(DEPDIR)/realloc.Plo \
-$(DEPDIR)/sdiv.Plo $(DEPDIR)/sqrtrem.Plo $(DEPDIR)/sub.Plo \
-$(DEPDIR)/xtom.Plo
+$(DEPDIR)/cmp.Plo $(DEPDIR)/errno.Plo $(DEPDIR)/gcd.Plo \
+$(DEPDIR)/itom.Plo $(DEPDIR)/mdiv.Plo $(DEPDIR)/memory.Plo \
+$(DEPDIR)/mfree.Plo $(DEPDIR)/min.Plo $(DEPDIR)/mout.Plo \
+$(DEPDIR)/move.Plo $(DEPDIR)/mp_bpl.Plo $(DEPDIR)/mtox.Plo \
+$(DEPDIR)/mul.Plo $(DEPDIR)/pow_ui.Plo $(DEPDIR)/powm.Plo \
+$(DEPDIR)/realloc.Plo $(DEPDIR)/sdiv.Plo $(DEPDIR)/sqrtrem.Plo \
+$(DEPDIR)/sub.Plo $(DEPDIR)/xtom.Plo
 SOURCES = $(libmpbsd_la_SOURCES) $(nodist_libmpbsd_la_SOURCES)
 OBJECTS = $(am_libmpbsd_la_OBJECTS) $(nodist_libmpbsd_la_OBJECTS)
 
@@ -338,6 +339,7 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/add.Plo
 @AMDEP@include $(DEPDIR)/assert.Plo
 @AMDEP@include $(DEPDIR)/cmp.Plo
+@AMDEP@include $(DEPDIR)/errno.Plo
 @AMDEP@include $(DEPDIR)/gcd.Plo
 @AMDEP@include $(DEPDIR)/itom.Plo
 @AMDEP@include $(DEPDIR)/mdiv.Plo
@@ -501,6 +503,9 @@ sub.c: $(top_srcdir)/mpz/sub.c
 
 assert.c: $(top_srcdir)/assert.c
 	cp $(top_srcdir)/assert.c assert.c
+
+errno.c: $(top_srcdir)/errno.c
+	cp $(top_srcdir)/errno.c errno.c
 
 memory.c: $(top_srcdir)/memory.c
 	cp $(top_srcdir)/memory.c memory.c
