@@ -34,12 +34,13 @@ lib_LIBRARIES = libmpfr.a
 include_HEADERS = mpfr.h mpf2mpfr.h
 endif
 
-# FIXME: Automake (version 1.5) doesn't allow conditionalized info_TEXINFOS,
+# FIXME: Automake (version 1.7.7) doesn't allow conditionalized info_TEXINFOS,
 # see top level Makefile.am for the workaround.
 info_TEXINFOS = mpfr.texi
 mpfr_TEXINFOS = ../fdl.texi
 AM_MAKEINFOFLAGS = -I$(top_srcdir)
 TEXINFO_TEX = ../texinfo.tex
+MAKEINFOFLAGS = --enable-encoding
 
 # Override automake default AR=ar with the value from GMP_PROG_AR.
 AR = @AR@
