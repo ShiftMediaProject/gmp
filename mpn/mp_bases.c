@@ -1,6 +1,5 @@
-/* __mp_bases -- Structure for conversion between internal binary
-   format and strings in base 2..255.  The fields are explained in
-   gmp-impl.h.
+/* mp_bases -- Structure for conversion between internal binary format and
+   strings in base 2..256.  The fields are explained in gmp-impl.h.
 
 Copyright 1991, 1993, 1994, 1996, 2000, 2002 Free Software Foundation, Inc.
 
@@ -32,7 +31,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 #if BITS_PER_MP_LIMB == 4
-const struct bases __mp_bases[256] =
+const struct bases mp_bases[257] =
 {
   /*  0 */ {0, 0.0, 0, 0},
   /*  1 */ {0, 1e37, 0, 0},
@@ -290,10 +289,11 @@ const struct bases __mp_bases[256] =
   /* 253 */ {0, 0.1252662914786691, 0x1, 0x10},
   /* 254 */ {0, 0.1251770521943144, 0x1, 0x10},
   /* 255 */ {0, 0.1250882898658681, 0x1, 0x10},
+  /* 256 */ {0, 0.1250000000000000, 0x8, 0x0},
 };
 #endif /* 4 */
 #if BITS_PER_MP_LIMB == 8
-const struct bases __mp_bases[256] =
+const struct bases mp_bases[257] =
 {
   /*  0 */ {0, 0.0, 0, 0},
   /*  1 */ {0, 1e37, 0, 0},
@@ -551,10 +551,11 @@ const struct bases __mp_bases[256] =
   /* 253 */ {1, 0.1252662914786691, 0xfd, 0x3},
   /* 254 */ {1, 0.1251770521943144, 0xfe, 0x2},
   /* 255 */ {1, 0.1250882898658681, 0xff, 0x1},
+  /* 256 */ {1, 0.1250000000000000, 0x8, 0x0},
 };
 #endif /* 8 */
 #if BITS_PER_MP_LIMB == 16
-const struct bases __mp_bases[256] =
+const struct bases mp_bases[257] =
 {
   /*  0 */ {0, 0.0, 0, 0},
   /*  1 */ {0, 1e37, 0, 0},
@@ -812,10 +813,11 @@ const struct bases __mp_bases[256] =
   /* 253 */ {2, 0.1252662914786691, 0xfa09, 0x61b},
   /* 254 */ {2, 0.1251770521943144, 0xfc04, 0x40c},
   /* 255 */ {2, 0.1250882898658681, 0xfe01, 0x203},
+  /* 256 */ {2, 0.1250000000000000, 0x8, 0x0},
 };
 #endif /* 16 */
 #if BITS_PER_MP_LIMB == 32
-const struct bases __mp_bases[256] =
+const struct bases mp_bases[257] =
 {
   /*  0 */ {0, 0.0, 0, 0},
   /*  1 */ {0, 1e37, 0, 0},
@@ -1073,10 +1075,11 @@ const struct bases __mp_bases[256] =
   /* 253 */ {4, 0.1252662914786691, 0xf4359451, 0xc5c2749},
   /* 254 */ {4, 0.1251770521943144, 0xf817e010, 0x828a237},
   /* 255 */ {4, 0.1250882898658681, 0xfc05fc01, 0x40a1423},
+  /* 256 */ {4, 0.1250000000000000, 0x8, 0x0},
 };
 #endif /* 32 */
 #if BITS_PER_MP_LIMB == 64
-const struct bases __mp_bases[256] =
+const struct bases mp_bases[257] =
 {
   /*  0 */ {0, 0.0, 0, 0},
   /*  1 */ {0, 1e37, 0, 0},
@@ -1334,6 +1337,7 @@ const struct bases __mp_bases[256] =
   /* 253 */ {8, 0.1252662914786691, CNST_LIMB(0xe8f62df12777c1a1), CNST_LIMB(0x1951136d53ad63ac)},
   /* 254 */ {8, 0.1251770521943144, CNST_LIMB(0xf06e445906fc0100), CNST_LIMB(0x1093d504b3cd7d93)},
   /* 255 */ {8, 0.1250882898658681, CNST_LIMB(0xf81bc845c81bf801), CNST_LIMB(0x824794d1ec1814f)},
+  /* 256 */ {8, 0.1250000000000000, 0x8, 0x0},
 };
 #endif /* 64 */
 
@@ -1390,10 +1394,10 @@ one_table (int bits_per_mp_limb)
     }
 
   printf ("#if BITS_PER_MP_LIMB == %d\n", bits_per_mp_limb);
-  puts ("const struct bases __mp_bases[256] =\n{");
+  puts ("const struct bases mp_bases[257] =\n{");
   puts ("  /*  0 */ {0, 0.0, 0, 0},");
   puts ("  /*  1 */ {0, 1e37, 0, 0},");
-  for (i = 2; i < 256; i++)
+  for (i = 2; i <= 256; i++)
     {
       generate (bits_per_mp_limb, i);
       if ((i & (i - 1)) == 0)
