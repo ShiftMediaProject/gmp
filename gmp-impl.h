@@ -2140,12 +2140,15 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
       || HAVE_HOST_CPU_powerpc604e                                      \
       || HAVE_HOST_CPU_powerpc750                                       \
       || HAVE_HOST_CPU_powerpc7400)
-#define BSWAP_LIMB_FETCH(limb, src)             \
-  do {                                          \
-    __asm__ __volatile__ ("lwbrx %0, 0, %1"     \
-                          : "=r" (limb)         \
-                          : "r" (src)           \
-                          : "memory");          \
+#define BSWAP_LIMB_FETCH(limb, src)     \
+  do {                                  \
+    mp_srcptr  __src = (src);           \
+    mp_limb_t  __limb;                  \
+    __asm__ ("lwbrx %0, 0, %1"          \
+             : "=r" (__limb)            \
+             : "r" (__src),             \
+               "m" (*__src));           \
+    (limb) = __limb;                    \
   } while (0)
 #endif
 
@@ -2162,13 +2165,14 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
       || HAVE_HOST_CPU_powerpc604e                                      \
       || HAVE_HOST_CPU_powerpc750                                       \
       || HAVE_HOST_CPU_powerpc7400)
-#define BSWAP_LIMB_STORE(dst, limb)             \
-  do {                                          \
-    __asm__ __volatile__ ("stwbrx %0, 0, %1"    \
-                          :                     \
-                          : "r" (limb),         \
-                            "r" (dst)           \
-                          : "memory");          \
+#define BSWAP_LIMB_STORE(dst, limb)     \
+  do {                                  \
+    mp_ptr     __dst = (dst);           \
+    mp_limb_t  __limb = (limb);         \
+    __asm__ ("stwbrx %1, 0, %2"         \
+             : "=m" (*__dst)            \
+             : "r" (__limb),            \
+               "r" (__dst));            \
   } while (0)
 #endif
 
