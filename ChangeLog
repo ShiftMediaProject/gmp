@@ -1,3 +1,9 @@
+2000-04-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/nextprime.c: Rewrite still disabled code.
+
+	* configure.in: Specifically match freebsd[3-9]. 
+
 2000-04-21  Torbjorn Granlund  <tege@swox.com>
 
 	* rand.c: Call mpz_clear for otherwise leaking mpz_t.
