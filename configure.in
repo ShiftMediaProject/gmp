@@ -584,11 +584,16 @@ case $host in
     ;;
 
 
-  ia64*-*-*)
+  ia64*-*-* | itanium-*-* | itanium2-*-*)
     abilist="64"
-    path="ia64"
     GMP_INCLUDE_MPN(ia64/default.m4)
     SPEED_CYCLECOUNTER_OBJ=ia64.lo
+
+    case $host_cpu in
+      itanium)   path="ia64/itanium  ia64" ;;
+      itanium2)  path="ia64/itanium2 ia64" ;;
+      *)         path="ia64" ;;
+    esac
 
     case $host in
       *-*-hpux*)
