@@ -697,8 +697,22 @@ __GMP_DECLSPEC mp_limb_t mpn_submul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_
 
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
 
-#define _gmp_rand __gmp_rand
-__GMP_DECLSPEC void _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long int));
+/* Pseudo-random number generator function pointers structure.  */
+typedef struct {
+  int (*randseed_fn) (gmp_randstate_t rstate, mpz_srcptr seed);
+  void (*randget_fn) (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits);
+  void (*randclear_fn) (gmp_randstate_t rstate);
+} gmp_randfnptr_t;
+
+/* Macro to obtain a pointer to the function pointers structure.  */
+#define RNG_FNPTR(rstate) ((gmp_randfnptr_t *)((rstate)->_mp_algdata._mp_lc))
+
+/* Macro to obtain a void pointer to the generator's state */
+#define RNG_STATE(rstate) ((void *)((rstate)->_mp_seed->_mp_d))
+
+/* _gmp_rand function (as macro.) */
+#define _gmp_rand(rp, state, bits) \
+  (*RNG_FNPTR (state)->randget_fn) (state, rp, bits)
 
 
 /* __gmp_rands is the global state for the old-style random functions, and
