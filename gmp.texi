@@ -659,6 +659,12 @@ from the same seed are not truly independent.
 See @ref{Random Number Functions} for a discussion on how to choose the
 initial seed value passed to these functions.
 
+@deftypefun void gmp_rand_clear (gmp_rand_state @var{state})
+Free all memory occupied by @var{state}.  Make sure to call this
+function for all @code{gmp_rand_state} variables when you are done with
+them.
+@end deftypefun
+
 @deftypefun int gmp_rand_init (gmp_rand_state @var{state}, gmp_rand_algorithm @var{alg}, unsigned long int @var{size}, mpz_t @var{seed})
 @deftypefunx int gmp_rand_init_ui (gmp_rand_state @var{state}, gmp_rand_algorithm @var{alg}, unsigned long int @var{size}, unsigned long int @var{seed})
 
@@ -709,7 +715,6 @@ modulus for the linear congruential scheme used, respectively.
 When you're done with a @var{state} variable, call @code{gmp_rand_clear}
 to deallocate any memory allocated by this function.
 @end deftypefun
-
 
 @node Reporting Bugs, Integer Functions, MP Basics, Top
 @comment  node-name,  next,  previous,  up
@@ -2477,6 +2482,17 @@ proven to be more likely to trigger corner-case bugs.  Negative random numbers
 are generated when @var{max_size} is negative.
 @end deftypefun
 
+@deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_rand_state @var{state})
+Generate a universally distributed random float in the interval 
+0 <= X < 1.
+
+The variable @var{state} must be initialized by calling one of the
+@code{gmp_rand_init} functions (@ref{Random State Initialization})
+before invoking this function.
+@end deftypefun
+
+
+
 @c @deftypefun size_t mpf_size (mpf_t @var{op})
 @c Return the size of @var{op} measured in number of limbs.  If @var{op} is
 @c zero, the returned value will be zero.  (@xref{Nomenclature}, for an
@@ -2853,6 +2869,16 @@ and ones in the binary representation, and store it at @var{r1p}.
 The generated random numbers are intended for testing the correctness of the
 implementation of the @code{mpn} routines.
 @end deftypefun
+
+@deftypefun void mpn_rawrandom (mp_ptr @var{rp}, unsigned long int @var{nbits}, gmp_rand_state @var{state})
+Generate a universally distributed random number of size @var{nbits},
+and store it at @var{rp}.
+
+The variable @var{state} must be initialized by calling one of the
+@code{gmp_rand_init} functions (@ref{Random State Initialization})
+before invoking this function.
+@end deftypefun
+
 
 @deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, unsigned long int @var{size})
 Count the number of set bits in @{@var{s1p}, @var{size}@}.

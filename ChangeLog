@@ -1,3 +1,9 @@
+1999-05-24  Linus Nordberg  <linus@swox.se>
+
+	* mpn/generic/rawrandom.c: Clean up comments.
+
+	* gmp.texi: Add documentation for random number generation.
+
 1999-05-21  Linus Nordberg  <linus@swox.se>
 
 	* gmp.h: Typedef `gmp_rand_state' as an array with one element.

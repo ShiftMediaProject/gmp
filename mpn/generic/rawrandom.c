@@ -9,14 +9,6 @@
 
 /* RP must have enough space allocated to hold NBITS. */
 
-#if 0
- #if BITS_PER_LONGINT >= BITS_PER_MP_LIMB
-  #define LIMBS_PER_LONGINT (BITS_PER_LONGINT / BITS_PER_MP_LIMB)
- #else
-  #define LIMBS_PER_LONGINT 1
- #endif  
-#endif
-
 void
 #if __STDC__
 mpn_rawrandom (mp_ptr rp, unsigned long int nbits, gmp_rand_state s)
@@ -68,29 +60,12 @@ mpn_rawrandom (rp, nbits, s)
 
   /* mpn_divrem doc: "It is required that the most significant bit of
      the divisor is set." */
-  /* Problem: mpn_lshift() shifts at most n-1 bits "on an n-bit
-     machine."  Is that BITS_PER_MP_LIMB-1? */
-  /* Easy solution: Shift left one bit at a time and right shift
-     when first 1 is shifted out. */
   /* Assumption: m != 0 */
 
-/* How does count_leading_zeros() work, really?  Result in a variable
-   passed by value.  A macro?  Can't find it. */
   count_leading_zeros (shiftcount, mp[msize - 1]); 
   if (shiftcount)
     mpn_lshift (mcopyp, mp, msize, shiftcount);
 
-#if STUPID_SLOW_EASY_WAY_OF_NORMALIZING
-  shiftcount = 0;
-  if (!mpn_lshift (mcopyp, mp, msize, 1))
-    do
-      shiftcount++;
-    while (!mpn_lshift (mcopyp, mcopyp, msize, 1));
-  mpn_rshift (mcopyp, mcopyp, msize, 1);
-  mcopyp[msize-1] |= (1 << (BITS_PER_MP_LIMB - 1)); /* set most
-                                                       significant bit */
-#endif
-	
   nlimbs = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
   dstp = rp;
   /* rop = (seed * a + c) % m */
@@ -163,43 +138,7 @@ mpn_rawrandom (rp, nbits, s)
      universally distributed. */
   n = nbits % BITS_PER_MP_LIMB;
   if (n)
-#if DISCARDING_LOWBITS
-    mpn_rshift (rp, rp, nbits, BITS_PER_MP_LIMB - n);
-#else
     rp[rpsize - 1] &= (~(mp_limb_t) 0) >> (BITS_PER_MP_LIMB - n);
-#endif
 
   TMP_FREE (mark);
 }
-
-#if OLD_MPZ_STYLE
-  switch (s->alg)
-    {
-    case GMP_RAND_ALG_LC:
-      /* rop = (seed * a + c) % m */
-      mpz_mul (rop, s->seed, s->data.lc->scheme.a);
-      mpz_add_ui (rop, rop, s->data.lc->scheme.c);
-      mpz_mod (rop, rop, s->data.lc->scheme.m);
-  
-      /* Save result for next seed. */
-      /* FIXME: This is the right place to save seed, right? */
-      mpz_set (s->seed, rop);
-
-      break;			/* GMP_RAND_ALG_LC */
-
-    case GMP_RAND_ALG_BBS:
-      /* We can use log2(s->size) bits from the calculation, assuming
-	 that seed contains at least s->size bits of random data. */
-      /* rop = seed^2 mod s->data.bbs->bi */
-
-      mpz_powm_ui (rop, s->seed, 2, s->data.bbs->bi);
-
-      /* Save result for next seed. */
-      mpz_set (s->seed, rop);
-
-      /* FIXME: Mask result? */
-
-      break;
-    }
-#endif
-
