@@ -103,8 +103,9 @@ mpn_fft_best_k (n, sqr)
 
 
 /* Returns smallest possible number of limbs >= pl for a fft of size 2^k.
-   FIXME: Is this simply pl rounded up to the next multiple of 2^k*max(2^k,
-   BITS_PER_MP_LIMB) bits? */
+
+   FIXME: Is this N rounded up to the next multiple of 2^k*BITS_PER_MP_LIMB
+   bits and therefore simply pl rounded up to a multiple of 2^k? */
 
 mp_size_t
 #if __STDC__
