@@ -11,7 +11,7 @@ srcname="GNU Multi-Precision library"
 # per-target:
 
 case "${target}" in
-  sparc8*)
+  sparc8* | microsparc*)
     if [ x$with_gcc != xno ]
     then
       target_makefile_frag=config/mt-sprc8-gcc
