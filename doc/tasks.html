@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 7 Mar 2002.  An up-to-date version is available at
+  This file current as of 10 Mar 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -745,6 +745,10 @@ MA 02111-1307, USA.
 <li> m68k: config.guess can detect 68000, 68010, CPU32 and 68020, but relies
      on system information for 030, 040 and 060.  Can they be identified by
      running some code?
+<li> m68k: gas 2.11.90.0.1 pads with zero bytes in text segments, which is not
+     valid code.  Probably need <code>.balignw &lt;n&gt;,0x4e7f</code> to get
+     nops, if <code>ALIGN</code> is going to be used for anything that's
+     executed across.
 <li> Some CPUs have <code>umul</code> and <code>udiv</code> code not being
      used.  Check all such for bit rot and then put umul and udiv in
      <code>$gmp_mpn_functions_optional</code> as "standard optional" objects.
