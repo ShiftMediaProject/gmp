@@ -282,6 +282,7 @@ void refmpq_add _PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
 void refmpq_sub _PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
 
 
+unsigned long refmpz_hamdist _PROTO ((mpz_srcptr x, mpz_srcptr y));
 int refmpz_kronecker _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
 int refmpz_jacobi _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
 int refmpz_legendre _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));

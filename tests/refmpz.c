@@ -1,6 +1,5 @@
-/* Reference mpz functions */
+/* Reference mpz functions.
 
-/*
 Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 /* always do assertion checking */
 #define WANT_ASSERT  1
@@ -35,6 +33,41 @@ MA 02111-1307, USA.
 #define TRACE(x) 
 
 
+unsigned long
+refmpz_hamdist (mpz_srcptr x, mpz_srcptr y)
+{
+  mp_size_t      tsize;
+  mp_ptr         xp, yp;
+  unsigned long  ret;
+
+  if ((SIZ(x) < 0 && SIZ(y) >= 0)
+      || (SIZ(y) < 0 && SIZ(x) >= 0))
+    return ULONG_MAX;
+
+  tsize = MAX (ABSIZ(x), ABSIZ(y));
+
+  xp = refmpn_malloc_limbs (tsize);
+  refmpn_zero (xp, tsize);
+  refmpn_copy (xp, PTR(x), ABSIZ(x));
+  
+  yp = refmpn_malloc_limbs (tsize);
+  refmpn_zero (yp, tsize);
+  refmpn_copy (yp, PTR(y), ABSIZ(y));
+
+  if (SIZ(x) < 0)
+    refmpn_neg_n (xp, xp, tsize);
+
+  if (SIZ(x) < 0)
+    refmpn_neg_n (yp, yp, tsize);
+
+  ret = refmpn_hamdist (xp, yp, tsize);
+
+  free (xp);
+  free (yp);
+  return ret;
+}
+
+
 /* (0/b), with mpz b; is 1 if b=+/-1, 0 otherwise */
 #define JACOBI_0Z(b)  JACOBI_0LS (PTR(b)[0], SIZ(b))
 
@@ -44,7 +77,6 @@ MA 02111-1307, USA.
 /* (a/b) effect due to sign of a: mpz/unsigned-mpz, b odd;
    is (-1/b) if a<0, or +1 if a>=0 */
 #define JACOBI_ASGN_ZZU_BIT1(a, b)  JACOBI_ASGN_SU_BIT1 (SIZ(a), PTR(b)[0])
-
 
 int
 refmpz_kronecker (mpz_srcptr a_orig, mpz_srcptr b_orig)
