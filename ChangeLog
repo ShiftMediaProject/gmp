@@ -21,9 +21,20 @@ MA 02111-1307, USA.
 
 2002-03-25  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/pa64w/add_n.s: Remove.
+	* mpn/pa64w/sub_n.s: Remove.
+	* mpn/pa64w/lshift.s: Remove.
+	* mpn/pa64w/rshift.s: Remove.
+	* mpn/pa64w/mul_1.S: Remove.
+	* mpn/pa64w/addmul_1.S: Remove.
+	* mpn/pa64w/submul_1.S: Remove.
+	* mpn/pa64w/sqr_diagonal.asm: Remove.
+
 	* mpn/pa64/mul_1.asm: New file with twice faster code; generalized
 	for both 2.0N and 2.0W.
 	* mpn/pa64/submul_1.asm: Likewise.
+	* mpn/pa64/mul_1.S: Remove.
+	* mpn/pa64/submul_1.S: Remove.
 
 	* mpn/pa64/sqr_diagonal.asm: Generalize for both 2.0N and 2.0W.
 
@@ -32,15 +43,14 @@ MA 02111-1307, USA.
 	* mpn/pa64/lshift.asm: Likewise.
 	* mpn/pa64/rshift.asm: Likewise.
 	* mpn/pa64/add_n.s: Remove.
-	* mpn/pa64/sub_n.s: Likewise.
-	* mpn/pa64/lshift.s: Likewise.
-	* mpn/pa64/rshift.s: Likewise.
+	* mpn/pa64/sub_n.s: Remove.
+	* mpn/pa64/lshift.s: Remove.
+	* mpn/pa64/rshift.s: Remove.
 
 2002-03-23  Torbjorn Granlund  <tege@swox.com>
 
-	* mpn/pa64w/addmul_1.asm: New file with twice faster code; generalized
+	* mpn/pa64/addmul_1.asm: New file with twice faster code; generalized
 	for both 2.0N and 2.0W.
-	* mpn/pa64w/addmul_1.S: Remove.
 
 2002-03-22  Kevin Ryde  <kevin@swox.se>
 
