@@ -23,7 +23,9 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 #define check(a,r) check3(a,r,-1.0)
@@ -272,12 +274,59 @@ check_inexact (mp_prec_t p)
   mpfr_clear (z);
 }
 
+void
+check_nan (void)
+{
+  mpfr_t  x, got;
+
+  mpfr_init2 (x, 100L);
+  mpfr_init2 (got, 100L);
+
+  /* sqrt(NaN) == NaN */
+  MPFR_CLEAR_FLAGS (x);
+  MPFR_SET_NAN (x);
+  ASSERT_ALWAYS (mpfr_sqrt (got, x, GMP_RNDZ) == 0); /* exact */
+  ASSERT_ALWAYS (mpfr_nan_p (got));
+
+  /* sqrt(-1) == NaN */
+  mpfr_set_si (x, -1L, GMP_RNDZ);
+  ASSERT_ALWAYS (mpfr_sqrt (got, x, GMP_RNDZ) == 0); /* exact */
+  ASSERT_ALWAYS (mpfr_nan_p (got));
+
+  /* sqrt(+inf) == +inf */
+  MPFR_CLEAR_FLAGS (x);
+  MPFR_SET_INF (x);
+  MPFR_SET_POS (x);
+  ASSERT_ALWAYS (mpfr_sqrt (got, x, GMP_RNDZ) == 0); /* exact */
+  ASSERT_ALWAYS (mpfr_inf_p (got));
+
+  /* sqrt(-inf) == NaN */
+  MPFR_CLEAR_FLAGS (x);
+  MPFR_SET_INF (x);
+  MPFR_SET_NEG (x);
+  ASSERT_ALWAYS (mpfr_sqrt (got, x, GMP_RNDZ) == 0); /* exact */
+  ASSERT_ALWAYS (mpfr_nan_p (got));
+
+  /* sqrt(-0) == 0 */
+  mpfr_set_si (x, 0L, GMP_RNDZ);
+  MPFR_SET_NEG (x);
+  ASSERT_ALWAYS (mpfr_sqrt (got, x, GMP_RNDZ) == 0); /* exact */
+  ASSERT_ALWAYS (mpfr_number_p (got));
+  ASSERT_ALWAYS (mpfr_cmp_ui (got, 0L) == 0);
+
+  mpfr_clear (x);
+  mpfr_clear (got);
+}
+
 int
 main (void)
 {
   double a;
   mp_prec_t p;
   int k;
+
+  check_nan ();
+
 #ifdef TEST
   int i; 
 #ifdef __mips
@@ -300,11 +349,6 @@ main (void)
       check_inexact (p);
   special ();
   check_float();
-  check3(0.0/0.0, GMP_RNDN, 0.0/0.0); 
-  check3(-1.0, GMP_RNDN, 0.0/0.0); 
-  check3(1.0/0.0, GMP_RNDN, 1.0/0.0); 
-  check3(-1.0/0.0, GMP_RNDN, 0.0/0.0); 
-  check3(-0.0, GMP_RNDN, 0.0); 
   check4(6.37983013646045901440e+32, GMP_RNDN, "5.9bc5036d09e0c@13");
   check4(1.0, GMP_RNDN, "1");
   check4(1.0, GMP_RNDZ, "1");
