@@ -27,6 +27,11 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+#define assert(true) do { if (!(true)) abort (); } while (0)
+
+#define swapptr(xp,yp) \
+do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
+
 long int strtol _PROTO ((const char *, char **ptr, int));
 
 static int
@@ -161,10 +166,9 @@ mpf_set_str (x, str, base)
     long exp_in_base;
     mp_size_t ralloc, rsize, msize;
     int cnt, i;
-    mp_ptr mp, xp, tp, rp;
-    mp_limb_t cy;
+    mp_ptr mp, tp, rp;
     mp_exp_t exp_in_limbs;
-    mp_size_t prec = x->_mp_prec;
+    mp_size_t prec = x->_mp_prec + 1;
     int divflag;
     mp_size_t madj, radj;
 
@@ -181,11 +185,11 @@ mpf_set_str (x, str, base)
 
     madj = 0;
     /* Ignore excess limbs in MP,MSIZE.  */
-    if (msize > prec + 1)
+    if (msize > prec)
       {
-	madj = msize - (prec + 1);
-	mp += msize - (prec + 1);
-	msize = prec + 1;
+	madj = msize - prec;
+	mp += msize - prec;
+	msize = prec;
       }      
 
     if (expflag != 0)
@@ -214,18 +218,17 @@ mpf_set_str (x, str, base)
 
     rp[0] = base;
     rsize = 1;
-
     count_leading_zeros (cnt, exp_in_base);
-
     for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
       {
 	mpn_mul_n (tp, rp, rp, rsize);
 	rsize = 2 * rsize;
 	rsize -= tp[rsize - 1] == 0;
-	xp = tp; tp = rp; rp = xp;
+	swapptr (rp, tp);
 
 	if (((exp_in_base >> i) & 1) != 0)
 	  {
+	    mp_limb_t cy;
 	    cy = mpn_mul_1 (rp, rp, rsize, (mp_limb_t) base);
 	    rp[rsize] = cy;
 	    rsize += cy != 0;
@@ -233,18 +236,17 @@ mpf_set_str (x, str, base)
       }
 
     radj = 0;
-    if (rsize > prec + 1)
+    if (rsize > prec)
       {
-	radj += rsize - (prec + 1);
-	rp += rsize - (prec + 1);
-	rsize = prec + 1;
+	radj += rsize - prec;
+	rp += rsize - prec;
+	rsize = prec;
       }
 
     if (divflag)
       {
 	mp_ptr qp;
-	mp_limb_t qflag;
-	mp_size_t xtra;
+	mp_limb_t qlimb;
 	if (msize < rsize)
 	  {
 	    /* Pad out MP,MSIZE for current divrem semantics.  */
@@ -258,18 +260,25 @@ mpf_set_str (x, str, base)
 	count_leading_zeros (cnt, rp[rsize - 1]);
 	if (cnt != 0)
 	  {
+	    mp_limb_t cy;
 	    mpn_lshift (rp, rp, rsize, cnt);
 	    cy = mpn_lshift (mp, mp, msize, cnt);
 	    if (cy)
 	      mp[msize++] = cy;
 	  }
+
 	qp = (mp_ptr) TMP_ALLOC ((prec + 1) * BYTES_PER_MP_LIMB);
-	xtra = prec - (msize - rsize);
-	qflag = mpn_divrem (qp, xtra, mp, msize, rp, rsize);
-	qp[prec] = qflag;
+	qlimb = mpn_divrem (qp, prec - (msize - rsize), mp, msize, rp, rsize);
 	tp = qp;
-	rsize = prec + qflag;
-	exp_in_limbs = rsize - xtra + (madj - radj);
+	exp_in_limbs = qlimb + (msize - rsize) + (madj - radj);
+	rsize = prec;
+	if (qlimb != 0)
+	  {
+	    tp[prec] = qlimb;
+	    /* Skip the least significant limb not to overrun the destination
+	       variable.  */
+	    tp++;
+	  }
       }
     else
       {
