@@ -46,9 +46,14 @@ gmp_cflags64_gcc="-mWHAT -g -O2"
 gmp_cflags_cc="-g"
 gmp_cflags64_cc="-g"
 
-changequote(,)dnl
 case "$target" in
   # Alpha
+  alpha*-cray-unicos*)
+    # Don't perform any assembly syntax tests on this beast.
+    gmp_no_asm_syntax_testing=yes
+    cclist=cc
+    gmp_cflags_cc="$gmp_cflags_cc -O"
+    ;;
   alpha*-*-*)
     taste=`echo $target_cpu | sed s/^alpha//g`
     if test -n "$taste"; then
@@ -58,30 +63,27 @@ case "$target" in
     ;;
 
   # x86
-  *-*-freebsd[34]*)	# hides generic *bsd* alternative
+  [*-*-freebsd[34]*])	# hides generic *bsd* alternative
     gmp_cflags_gcc="-g -O -fomit-frame-pointer"
     ;;
-  i[3456]86*-*-*bsd* | pentium*-*-*bsd* | k[5678]*-*-*bsd* | \
-  i[3456]86*-*-linuxaout* | pentium*-*-linuxaout* | k[5678]*-*-linuxaout* | \
-  i[3456]86*-*-linuxoldld* | pentium*-*-linuxoldld* | k[5678]*-*-linuxoldld* |\
-  i[3456]86*-*-nextstep* | i[3456]86*-*-nextstep* | k[5678]*-*-nextstep*)
+  [i[3456]86*-*-*bsd* | pentium*-*-*bsd* | k[5678]*-*-*bsd* |] \
+  [i[3456]86*-*-linuxaout* | pentium*-*-linuxaout* | k[5678]*-*-linuxaout* |] \
+  [i[3456]86*-*-linuxoldld* | pentium*-*-linuxoldld* | k[5678]*-*-linuxoldld* |] \
+  [i[3456]86*-*-nextstep* | i[3456]86*-*-nextstep* | k[5678]*-*-nextstep*])
     gmp_cflags_gcc="$gmp_cflags_gcc -DBROKEN_ALIGN -DOLD_GAS"
     gmp_cflags_cc="$gmp_cflags_cc -DBROKEN_ALIGN -DOLD_GAS"
     ;;
-  i[3456]86*-*-* | pentium*-*-* | k[5678]*-*-* | athlon-*-*)
+  [i[3456]86*-*-* | pentium*-*-* | k[5678]*-*-* | athlon-*-*])
     gmp_cflags_gcc="-g -O -fomit-frame-pointer"
     ;;
 
   # Sparc
-  ultrasparc*-*-solaris2.[7-9] | sparcv9-*-solaris2.[7-9])
-    ## FIXME: Match `sparc64*' as well?
-    ## FIXME: define _LONG_LONG_LIMB in config.h instead.
+  [ultrasparc*-*-solaris2.[7-9] | sparcv9-*-solaris2.[7-9]])
     os_64bit=yes
     gmp_cflags_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v8plus"
     gmp_cflags64_gcc="$gmp_cflags_gcc -mcpu=v9 -Wa,-xarch=v9 -D_LONG_LONG_LIMB"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
-    dnl  FIXME: Enable when autoheader works:  AC_DEFINE(_LONG_LONG_LIMB)
     ;;
   ultrasparc*-*-* | sparcv9-*-*)
     ## FIXME: path=sparc32/v9
@@ -131,8 +133,8 @@ case "$target" in
     gmp_cflags_xlc="$gmp_cflags_cc -qarch=pwr -O2"
     ;;
   powerpc64*-*-*)
-    ## FIXME: define _LONG_LONG_LIMB in config.h instead.
-    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc64 -D_LONG_LONG_LIMB"
+    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc64"
+    AC_DEFINE(_LONG_LONG_LIMB)
     ;;
   powerpc*-*-*)
     gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
@@ -152,8 +154,8 @@ case "$target" in
   # HP
   hppa2.0*-*-*)
     cclist="gcc"	# Don't use buggy system compiler!
-    ## FIXME: define _LONG_LONG_LIMB in config.h instead.
-    gmp_cflags_gcc="$gmp_cflags_gcc -D_LONG_LONG_LIMB"
+    gmp_cflags_gcc="$gmp_cflags_gcc"
+    AC_DEFINE(_LONG_LONG_LIMB)
     ;;
 
   # VAX
@@ -162,25 +164,15 @@ case "$target" in
     ;;
 
   # Fujitsu
-  f30[01]-fujitsu-sysv*)
+  [f30[01]-fujitsu-sysv*])
     cclist="gcc vcc"
     gmp_cflags_vcc="-g"		# FIXME: flags for vcc?
     ;;
 esac
-changequote([, ])dnl
 
-
-dnl  Find compiler.
+# Find compiler.
 dnl  NOTE: This is our own AC_PROG_CC.  See acinclude.m4.
 GMP_PROG_CC_FIND($cclist, $os_64bit)
-
-dnl  Second round on OS to choose compiler and assembly code base.
-dnl  Set
-dnl    CC	Compiler to use.
-dnl    CFLAGS	Flags to use
-dnl    path	List of directory paths where assembly code is found.
-dnl    family   Processor family.  (FIXME: Used for asm-syntax.h.)
-dnl
 
 # If 64-bit OS and we have a 64-bit compiler, use it.
 if test -n "$os_64bit" && test -n "$CC64"; then
@@ -190,8 +182,28 @@ else
   eval CFLAGS=\$gmp_cflags_$CC  
 fi
 
-dnl  Verify that CC can assemble.
-GMP_PROG_CCAS
+# Try compiler flags that may work with only some compiler versions.
+eval optcflags=\$gmp_optcflags_$CC
+if test -n "$optcflags"; then
+  CFLAGS_save="$CFLAGS"
+  CFLAGS="$CFLAGS $optcflags"
+  AC_MSG_CHECKING([whether $CC accepts $optcflags])
+  AC_LANG_C
+  AC_TRY_COMPILER([int main(){return(0);}], optok, cross)
+  if test "$optok" = "yes"; then
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no])
+    CFLAGS="$CFLAGS_save"
+  fi
+fi
+
+# Select chosen compiler.
+GMP_PROG_CC_SELECT
+
+# How to assemble.
+CCAS="$CC -c $CFLAGS"
+AC_SUBST(CCAS)
 
 dnl Checks for programs.
 dnl --------------------
@@ -219,15 +231,18 @@ esac
 dnl  FIXME: Find good ld?  /usr/ucb/ld on Solaris won't work.
 
 dnl Checks for assembly syntax.
-GMP_CHECK_ASM_TEXT
-GMP_CHECK_ASM_DATA
-GMP_CHECK_ASM_GLOBL
-GMP_CHECK_ASM_LABEL_SUFFIX
-
-GMP_CHECK_ASM_TYPE
-GMP_CHECK_ASM_SIZE
-GMP_CHECK_ASM_LSYM_PREFIX
-GMP_CHECK_ASM_W32
+if test "$gmp_no_asm_syntax_testing" != "yes"; then
+  GMP_CHECK_ASM_TEXT
+  GMP_CHECK_ASM_DATA
+  GMP_CHECK_ASM_GLOBL
+  GMP_CHECK_ASM_LABEL_SUFFIX
+  GMP_CHECK_ASM_TYPE
+  GMP_CHECK_ASM_SIZE
+  GMP_CHECK_ASM_LSYM_PREFIX
+  GMP_CHECK_ASM_W32
+  GMP_CHECK_ASM_UNDERSCORE(underscore=yes, underscore=no)
+  GMP_CHECK_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
+fi
 
 dnl  FIXME: Check for FPU and set `floating_point' appropriately.
 
@@ -394,30 +409,6 @@ case ${target} in
     extra_functions="$extra_functions copyi copyd";;
 esac
 
-dnl
-dnl  Try compiler flags that may work with only some compiler versions.
-dnl
-
-eval optcflags=\$gmp_optcflags_$CC
-if test -n "$optcflags"; then
-  CFLAGS_save="$CFLAGS"
-  CFLAGS="$CFLAGS $optcflags"
-  AC_MSG_CHECKING([whether $CC accepts $optcflags])
-  AC_LANG_C
-  AC_TRY_COMPILER([int main(){return(0);}], optok, cross)
-  if test "$optok" = "yes"; then
-    AC_MSG_RESULT([yes])
-  else
-    AC_MSG_RESULT([no])
-    CFLAGS="$CFLAGS_save"
-  fi
-fi
-
-dnl ``Select'' chosen compiler.
-dnl ----------------------------
-GMP_PROG_CC_SELECT	dnl FIXME: Move.
-
-
 dnl Extensions for executable and object files.
 dnl -------------------------------------------
 AC_EXEEXT
@@ -453,9 +444,6 @@ dnl AC_FUNC_MEMCMP
 dnl AC_TYPE_SIGNAL
 dnl AC_CHECK_FUNCS(strtol strtoul)
 
-GMP_CHECK_ASM_UNDERSCORE(underscore=yes, underscore=no)
-GMP_CHECK_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
-
 dnl  Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
 syntax=
 # For now, we use the old switch for setting syntax.  
@@ -479,6 +467,7 @@ changequote([,])dnl
 dnl  ----------------------------------------
 # Now build an asm-syntax.h file for targets that include that from the
 # assembly files.
+# FIXME: Remove when conversion to .asm is completed.
 case "${family}-${underscore}-${asm_align}-${syntax}" in
   x86-yes-log-*)
     echo '#define BSD_SYNTAX' >asm-syntax.h
@@ -519,6 +508,9 @@ dnl  -----------------------
 changequote(,)dnl
 gmp_m4postinc=
 case "$target" in
+  alpha*-cray-unicos*)
+    gmp_m4postinc="$gmp_m4postinc mpn/alpha/unicos.m4"
+    ;;
   i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
     gmp_m4postinc="$gmp_m4postinc mpn/x86/x86-defs.m4"
     ;;
