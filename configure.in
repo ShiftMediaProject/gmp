@@ -660,11 +660,17 @@ case $host in
 
     case $host in
       *-*-hpux*)
+        # HP cc sometimes gets internal errors if the optimization level is
+        # too high.  GMP_PROG_CC_WORKS detects this, the "_opt" fallbacks
+        # let us use whatever seems to work.
+        #
         abilist="32 64"
 
         cclist_32="gcc cc"
         path_32="ia64"
-        cc_32_cflags="+O3"
+        cc_32_cflags=""
+        cc_32_cflags_optlist="opt"
+        cc_32_cflags_opt="+O3 +O2 +O"
         gcc_32_cflags="-milp32 -O2"
         limb_32=longlong
         SPEED_CYCLECOUNTER_OBJ_32=ia64.lo
@@ -676,8 +682,10 @@ case $host in
         # FIXME: Maybe should use cc_64_ldflags for this, but that would
         # need GMP_LDFLAGS used consistently by all the programs.
         #
-        cc_64_cflags="+O3 +DD64"
+        cc_64_cflags="+DD64"
         cc_64_cppflags="+DD64"
+        cc_64_cflags_optlist="opt"
+        cc_64_cflags_opt="+O3 +O2 +O"
         gcc_64_cflags="-mlp64 -O2"
         ;;
     esac
