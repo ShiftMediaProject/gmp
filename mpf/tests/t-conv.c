@@ -20,6 +20,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
@@ -103,15 +106,4 @@ main (int argc, char **argv)
     }
 
   exit (0);
-}
-
-oo (mpf_t x)
-{
-  int i;
-  printf (" exp = %ld\n", x->_mp_exp);
-  printf ("size = %d\n", x->_mp_size);
-  for (i = ABS (x->_mp_size) - 1; i >= 0; i--)
-    printf ("%08lX ", x->_mp_d[i]);
-  printf ("\n");
-  mpf_dump (x);
 }
