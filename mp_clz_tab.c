@@ -1,6 +1,10 @@
 /* __clz_tab -- support for longlong.h
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation, Inc.
+   THE CONTENTS OF THIS FILE ARE FOR INTERNAL USE AND MAY CHANGE
+   INCOMPATIBLY OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
+
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,7 +25,9 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
+#ifdef COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 const
 unsigned char __clz_tab[128] =
 {
@@ -30,3 +36,4 @@ unsigned char __clz_tab[128] =
   8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
   8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
 };
+#endif
