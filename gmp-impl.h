@@ -930,8 +930,7 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 63)
 #define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 63)
 #endif
-#define MPN_TOOM3_MAX_N 285405
-#else
+#else /* WANT_FFT */
 #if HAVE_NATIVE_mpn_sublsh1_n
 #define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 255)
 #define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 255)
@@ -939,6 +938,7 @@ __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 #define MPN_TOOM3_MUL_N_TSIZE(n)  (2*(n) + 2*(n/3) + 255)
 #define MPN_TOOM3_SQR_N_TSIZE(n)  (2*(n) + 2*(n/3) + 255)
 #endif
+#define MPN_TOOM3_MAX_N 285405
 #endif /* WANT_FFT */
 
 /* need 2 so that n2>=1 */
@@ -3117,7 +3117,7 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 /* HGCD definitions */
 
 /* Limited by 2 + twice the bitsize of mp_size_t */
-#define QSTACK_MAX_QUOTIENTS 130
+#define QSTACK_MAX_QUOTIENTS 82 
 
 /* Name mangling */
 #define qstack_itch __gmpn_qstack_itch
@@ -3140,7 +3140,7 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
 
 struct qstack
 {
-  /* Through out the code we represent q = 1 with qsize = 0. */
+  /* Throughout the code we represent q = 1 with qsize = 0. */
   mp_size_t size[QSTACK_MAX_QUOTIENTS];
   mp_ptr limb;
   mp_size_t limb_alloc;
