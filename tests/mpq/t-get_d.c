@@ -91,12 +91,6 @@ check_monotonic (int argc, char **argv)
 	  mpq_add (a, a, eps);
 	  mpq_canonicalize (a);
 	  new_d = mpq_get_d (a);
-	      fprintf (stderr, "\nLOG (test %d/%d)\n", i, j);
-	      printf ("last: %.16g\n", last_d);
-	      printf (" new: %.16g\n", new_d);
-	      printf ("  a = "); dump (a);
-	      printf ("eps = "); dump (eps);
-	      
 	  if (last_d > new_d)
 	    {
 	      fprintf (stderr, "\nERROR (test %d/%d): bad mpq_get_d results\n", i, j);
