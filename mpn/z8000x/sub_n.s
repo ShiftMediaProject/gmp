@@ -1,4 +1,4 @@
-! Z8000 (32 bit limb version) __mpn_sub_n -- Subtract two limb vectors of the
+! Z8000 (32 bit limb version) __gmpn_sub_n -- Subtract two limb vectors of the
 ! same length > 0 and store difference in a third limb vector.
 
 ! Copyright (C) 1993, 1994 Free Software Foundation, Inc.
@@ -34,8 +34,8 @@
 	segm
 	.text
 	even
-	global ___mpn_sub_n
-___mpn_sub_n:
+	global ___gmpn_sub_n
+___gmpn_sub_n:
 	popl	rr0,@r6
 	popl	rr8,@r5
 	subl	rr0,rr8

@@ -1,4 +1,4 @@
-! Z8000 (32 bit limb version) __mpn_add_n -- Add two limb vectors of equal,
+! Z8000 (32 bit limb version) __gmpn_add_n -- Add two limb vectors of equal,
 ! non-zero length.
 
 ! Copyright (C) 1993, 1994 Free Software Foundation, Inc.
@@ -34,8 +34,8 @@
 	segm
 	.text
 	even
-	global ___mpn_add_n
-___mpn_add_n:
+	global ___gmpn_add_n
+___gmpn_add_n:
 	popl	rr0,@r6
 	popl	rr8,@r5
 	addl	rr0,rr8
