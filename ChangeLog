@@ -23,6 +23,7 @@ MA 02111-1307, USA.
 	* mpn/sparc32/v9/mul_1.asm: Apply cross-jumping.
 	* mpn/sparc32/v9/addmul_1.asm: Likewise.
 	* mpn/sparc32/v9/submul_1.asm: Likewise.
+	* mpn/sparc32/v9/sqr_diagonal.asm: Likewise.
 
 2003-10-27  Kevin Ryde  <kevin@swox.se>
 
