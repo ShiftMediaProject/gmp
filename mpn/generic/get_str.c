@@ -94,8 +94,7 @@ MA 02111-1307, USA. */
 
   The reason for the two threshold values is the cost of
   precompute_power_tables.  GET_STR_PRECOMPUTE_THRESHOLD will be considerably
-  larger than GET_STR_PRECOMPUTE_THRESHOLD.  Do you think I should change
-  mpn_dc_get_str to instead look like the following?  */
+  larger than GET_STR_PRECOMPUTE_THRESHOLD.  */
 
 
 /* The x86s and m68020 have a quotient and remainder "div" instruction and
@@ -428,8 +427,6 @@ mpn_get_str (unsigned char *str, int base, mp_ptr up, mp_size_t un)
 	  bit_pos += GMP_NUMB_BITS;
 	  *s++ = n0 | (n1 >> bit_pos);
 	}
-
-      *s = 0;
 
       return s - str;
     }
