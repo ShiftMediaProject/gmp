@@ -183,11 +183,11 @@ randlimb_norm (void)
 {
   mp_limb_t  n;
   mpn_random (&n, 1);
-  n |= GMP_LIMB_HIGHBIT;
+  n |= GMP_NUMB_HIGHBIT;
   return n;
 }
 
-#define MP_LIMB_T_HALFMASK  ((CNST_LIMB(1) << (BITS_PER_MP_LIMB/2)) - 1)
+#define MP_LIMB_T_HALFMASK  ((CNST_LIMB(1) << (GMP_NUMB_BITS/2)) - 1)
 
 mp_limb_t
 randlimb_half (void)
@@ -879,6 +879,14 @@ tune_sb_preinv (void)
 {
   static struct param_t  param;
 
+  if (GMP_NAIL_BITS != 0)
+    {
+      sb_preinv_threshold[0] = MP_SIZE_T_MAX;
+      print_define_remark ("DIV_SB_PREINV_THRESHOLD", MP_SIZE_T_MAX,
+                           "no preinv with nails");
+      return;
+    }
+
   if (UDIV_PREINV_ALWAYS)
     {
       print_define_remark ("DIV_SB_PREINV_THRESHOLD", 0L, "preinv always");
@@ -1003,6 +1011,15 @@ tune_divrem_1 (void)
   if (HAVE_NATIVE_mpn_divrem_1)
     return;
 
+  if (GMP_NAIL_BITS != 0)
+    {
+      print_define_remark ("DIVREM_1_NORM_THRESHOLD", MP_SIZE_T_MAX,
+                           "no preinv with nails");
+      print_define_remark ("DIVREM_1_UNNORM_THRESHOLD", MP_SIZE_T_MAX,
+                           "no preinv with nails");
+      return;
+    }
+
   if (UDIV_PREINV_ALWAYS)
     {
       print_define_remark ("DIVREM_1_NORM_THRESHOLD", 0L, "preinv always");
@@ -1052,6 +1069,15 @@ tune_mod_1 (void)
   if (HAVE_NATIVE_mpn_mod_1)
     return;
 
+  if (GMP_NAIL_BITS != 0)
+    {
+      print_define_remark ("MOD_1_NORM_THRESHOLD", MP_SIZE_T_MAX,
+                           "no preinv with nails");
+      print_define_remark ("MOD_1_UNNORM_THRESHOLD", MP_SIZE_T_MAX,
+                           "no preinv with nails");
+      return;
+    }
+
   if (UDIV_PREINV_ALWAYS)
     {
       print_define ("MOD_1_NORM_THRESHOLD", 0L);
@@ -1097,6 +1123,12 @@ tune_preinv_divrem_1 (void)
 #define HAVE_NATIVE_mpn_preinv_divrem_1 0
 #endif
 
+  if (GMP_NAIL_BITS != 0)
+    {
+      print_define_remark ("USE_PREINV_DIVREM_1", 0, "no preinv with nails");
+      return;
+    }
+
   /* Any native version of mpn_preinv_divrem_1 is assumed to exist because
      it's faster than mpn_divrem_1.  */
   if (HAVE_NATIVE_mpn_preinv_divrem_1)
@@ -1131,7 +1163,7 @@ tune_preinv_divrem_1 (void)
   /* Divisor, nonzero.  Unnormalized so as to exercise the shift!=0 case,
      since in general that's probably most common, though in fact for a
      64-bit limb mp_bases[10].big_base is normalized.  */
-  s.r = urandom() & (MP_LIMB_T_MAX >> 4);
+  s.r = urandom() & (GMP_NUMB_MASK >> 4);
   if (s.r == 0) s.r = 123;
 
   t1 = tuneup_measure (speed_mpn_preinv_divrem_1, &param, &s);
@@ -1171,6 +1203,12 @@ tune_preinv_mod_1 (void)
   if (HAVE_NATIVE_mpn_preinv_mod_1)
     {
       print_define_remark ("USE_PREINV_MOD_1", 1, "native");
+      return;
+    }
+
+  if (GMP_NAIL_BITS != 0)
+    {
+      print_define_remark ("USE_PREINV_MOD_1", 0, "no preinv with nails");
       return;
     }
 
@@ -1229,6 +1267,13 @@ tune_divrem_2 (void)
      to appear in gmp-mparam.h.  */
   if (HAVE_NATIVE_mpn_divrem_2)
     return;
+
+  if (GMP_NAIL_BITS != 0)
+    {
+      print_define_remark ("DIVREM_2_THRESHOLD", MP_SIZE_T_MAX,
+                           "no preinv with nails");
+      return;
+    }
 
   if (UDIV_PREINV_ALWAYS)
     {
