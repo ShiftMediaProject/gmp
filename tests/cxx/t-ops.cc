@@ -833,12 +833,98 @@ check_mpfr (void)
 
   // operator<<
   // operator>>
+
   // operator==
+  ASSERT_ALWAYS ((mpfr_class(123) == mpfr_class(123)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(123) == mpfr_class(456)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) == -123L) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) == 456L) == 0);
+  ASSERT_ALWAYS ((-123L == mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((456L == mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) == -123.0) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) == 456.0) == 0);
+  ASSERT_ALWAYS ((-123.0 == mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((456.0 == mpfr_class(-123)) == 0);
+
   // operator!=
+  ASSERT_ALWAYS ((mpfr_class(123) != mpfr_class(123)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(123) != mpfr_class(456)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) != -123L) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) != 456L) == 1);
+  ASSERT_ALWAYS ((-123L != mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((456L != mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) != -123.0) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) != 456.0) == 1);
+  ASSERT_ALWAYS ((-123.0 != mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((456.0 != mpfr_class(-123)) == 1);
+
   // operator<
+  ASSERT_ALWAYS ((mpfr_class(-123) < mpfr_class(-100)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) < mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) < mpfr_class(-200)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) < -100L) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) < -123L) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) < -200L) == 0);
+  ASSERT_ALWAYS ((-100L < mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((-123L < mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((-200L < mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) < -100.0) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) < -123.0) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) < -200.0) == 0);
+  ASSERT_ALWAYS ((-100.0 < mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((-123.0 < mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((-200.0 < mpfr_class(-123)) == 1);
+
   // operator<=
+  ASSERT_ALWAYS ((mpfr_class(-123) <= mpfr_class(-100)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) <= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) <= mpfr_class(-200)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) <= -100L) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) <= -123L) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) <= -200L) == 0);
+  ASSERT_ALWAYS ((-100L <= mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((-123L <= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((-200L <= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) <= -100.0) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) <= -123.0) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) <= -200.0) == 0);
+  ASSERT_ALWAYS ((-100.0 <= mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((-123.0 <= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((-200.0 <= mpfr_class(-123)) == 1);
+
   // operator>
+  ASSERT_ALWAYS ((mpfr_class(-123) > mpfr_class(-100)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) > mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) > mpfr_class(-200)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) > -100L) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) > -123L) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) > -200L) == 1);
+  ASSERT_ALWAYS ((-100L > mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((-123L > mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((-200L > mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) > -100.0) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) > -123.0) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) > -200.0) == 1);
+  ASSERT_ALWAYS ((-100.0 > mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((-123.0 > mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((-200.0 > mpfr_class(-123)) == 0);
+
   // operator>=
+  ASSERT_ALWAYS ((mpfr_class(-123) >= mpfr_class(-100)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) >= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) >= mpfr_class(-200)) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) >= -100L) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) >= -123L) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) >= -200L) == 1);
+  ASSERT_ALWAYS ((-100L >= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((-123L >= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((-200L >= mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) >= -100.0) == 0);
+  ASSERT_ALWAYS ((mpfr_class(-123) >= -123.0) == 1);
+  ASSERT_ALWAYS ((mpfr_class(-123) >= -200.0) == 1);
+  ASSERT_ALWAYS ((-100.0 >= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((-123.0 >= mpfr_class(-123)) == 1);
+  ASSERT_ALWAYS ((-200.0 >= mpfr_class(-123)) == 0);
 
   // hypot
   {
@@ -848,33 +934,30 @@ check_mpfr (void)
   }
 
   // cmp
-  {
-    mpfr_class a(123), b(45);
-    int c;
-    c = cmp(a, b); ASSERT_ALWAYS(c > 0);
-    c = cmp(b, a); ASSERT_ALWAYS(c < 0);
-  }
-  {
-    mpfr_class a(123);
-    unsigned long b = 45;
-    int c;
-    c = cmp(a, b); ASSERT_ALWAYS(c > 0);
-    c = cmp(b, a); ASSERT_ALWAYS(c < 0);
-  }
-  {
-    mpfr_class a(123);
-    long b = 45;
-    int c;
-    c = cmp(a, b); ASSERT_ALWAYS(c > 0);
-    c = cmp(b, a); ASSERT_ALWAYS(c < 0);
-  }
-  {
-    mpfr_class a(123);
-    double b = 45;
-    int c;
-    c = cmp(a, b); ASSERT_ALWAYS(c > 0);
-    c = cmp(b, a); ASSERT_ALWAYS(c < 0);
-  }
+  ASSERT_ALWAYS (cmp (mpfr_class(123), mpfr_class(100)) > 0);
+  ASSERT_ALWAYS (cmp (mpfr_class(123), mpfr_class(123)) == 0);
+  ASSERT_ALWAYS (cmp (mpfr_class(123), mpfr_class(200)) < 0);
+
+  ASSERT_ALWAYS (cmp (mpfr_class(123), 100UL) > 0);
+  ASSERT_ALWAYS (cmp (mpfr_class(123), 123UL) == 0);
+  ASSERT_ALWAYS (cmp (mpfr_class(123), 200UL) < 0);
+  ASSERT_ALWAYS (cmp (100UL, mpfr_class(123)) < 0);
+  ASSERT_ALWAYS (cmp (123UL, mpfr_class(123)) == 0);
+  ASSERT_ALWAYS (cmp (200UL, mpfr_class(123)) > 0);
+
+  ASSERT_ALWAYS (cmp (mpfr_class(-123), -100L) < 0);
+  ASSERT_ALWAYS (cmp (mpfr_class(-123), -123L) == 0);
+  ASSERT_ALWAYS (cmp (mpfr_class(-123), -200L) > 0);
+  ASSERT_ALWAYS (cmp (-100L, mpfr_class(-123)) > 0);
+  ASSERT_ALWAYS (cmp (-123L, mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS (cmp (-200L, mpfr_class(-123)) < 0);
+
+  ASSERT_ALWAYS (cmp (mpfr_class(-123), -100.0) < 0);
+  ASSERT_ALWAYS (cmp (mpfr_class(-123), -123.0) == 0);
+  ASSERT_ALWAYS (cmp (mpfr_class(-123), -200.0) > 0);
+  ASSERT_ALWAYS (cmp (-100.0, mpfr_class(-123)) < 0);
+  ASSERT_ALWAYS (cmp (-123.0, mpfr_class(-123)) == 0);
+  ASSERT_ALWAYS (cmp (-200.0, mpfr_class(-123)) > 0);
 
 #endif /* WANT_MPFR */
 }
