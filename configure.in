@@ -390,7 +390,6 @@ dnl --------------------
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
-GMP_PROG_M4
 AC_CHECK_PROG(AR, ar, ar)
 # ar on AIX needs to know the object file format 
 case "$target" in
@@ -842,6 +841,10 @@ gmp_mpn_functions="${extra_functions} inlines add_n sub_n mul_1 addmul_1   \
 mpn_objects=
 mpn_objs_in_libgmp="mpn/mp_bases.lo"
 
+for tmp_ext in asm S s c; do
+  eval found_$tmp_ext=no
+done
+
 for tmp_fn in ${gmp_mpn_functions} ; do
   [rm -f mpn/${tmp_fn}.[Ssc] mpn/${tmp_fn}.asm]
 
@@ -862,6 +865,7 @@ for tmp_fn in ${gmp_mpn_functions} ; do
         tmp_file=$srcdir/mpn/$tmp_dir/$tmp_base.$tmp_ext
         if test -f $tmp_file; then
           found=yes
+          eval found_$tmp_ext=yes
 
           if test $tmp_ext = c; then
             tmp_u='$U'
@@ -903,22 +907,37 @@ for tmp_fn in ${gmp_mpn_functions} ; do
   fi
 done
 
+# Don't demand an m4 unless it's actually needed.
+if test $found_asm = yes; then
+  GMP_PROG_M4
+else
+  M4=m4-not-needed
+  AC_SUBST(M4)
+fi
+
 # Create link for gmp-mparam.h.
+gmp_mparam_source=
 for tmp_dir in $path ; do
   rm -f gmp-mparam.h
-  if test -f $srcdir/mpn/${tmp_dir}/gmp-mparam.h ; then
-    gmp_links="$gmp_links gmp-mparam.h:mpn/${tmp_dir}/gmp-mparam.h"
-
-    # Copy any KARATSUBA_SQR_THRESHOLD in gmp-mparam.h to config.m4.
-    # Some versions of sqr_basecase.asm use this.
-    tmp_gmp_karatsuba_sqr_threshold="`sed -n 's/^#define KARATSUBA_SQR_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $srcdir/mpn/${tmp_dir}/gmp-mparam.h`"
-    if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
-      GMP_DEFINE_RAW(["define(<KARATSUBA_SQR_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
-    fi
-
+  tmp_file=$srcdir/mpn/$tmp_dir/gmp-mparam.h
+  if test -f $tmp_file; then
+    gmp_links="$gmp_links gmp-mparam.h:mpn/$tmp_dir/gmp-mparam.h"
+    gmp_mparam_source=$tmp_file
     break
   fi
 done
+if test -z "$gmp_mparam_source"; then
+  AC_MSG_ERROR([no version of gmp-mparam.h found in path: $path])
+fi
+
+# Copy any KARATSUBA_SQR_THRESHOLD from gmp-mparam.h to config.m4.
+# Some versions of sqr_basecase.asm use this.
+tmp_gmp_karatsuba_sqr_threshold="`sed -n 's/^#define KARATSUBA_SQR_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`"
+if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
+  GMP_DEFINE_RAW(["define(<KARATSUBA_SQR_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
+fi
+
+GMP_C_SIZES
 
 # Dig out the links from `gmp_links' for inclusion in DISTCLEANFILES.
 gmp_srclinks=
