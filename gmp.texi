@@ -7970,12 +7970,7 @@ Prefetching sources combines well with loop unrolling, since a prefetch can be
 initiated once per unrolled loop (or more than once if the loop covers more
 than one cache line).
 
-Prefetching destinations will ensure that a calculation is not held up by
-store instructions.  But this might be unnecessary if the CPU has a big enough
-store queue, enough to hold all the results that accumulate before it can
-acquire the cache line being written.
-
-On CPUs without write-allocate caches, destination prefetching will ensure
+On CPUs without write-allocate caches, prefetching destinations will ensure
 individual stores don't go further down the cache hierarchy, limiting
 bandwidth.  Of course for calculations which are slow anyway, like
 @code{mpn_divrem_1}, write-throughs might be fine.
