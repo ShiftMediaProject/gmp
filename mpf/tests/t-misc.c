@@ -27,19 +27,7 @@ MA 02111-1307, USA.
 
 
 #define numberof(x)  (sizeof (x) / sizeof ((x)[0]))
-
-#ifndef BITS_PER_LONGINT
-#define BITS_PER_LONGINT  (sizeof(long) * 8)
-#endif
-
-#define ULONG_HIGHBIT  ((unsigned long) 1 << (BITS_PER_LONGINT-1))
-#define LONG_HIGHBIT   ((long) ULONG_HIGHBIT)
-
-#ifndef LONG_MAX
-#define LONG_MAX       ((long) (ULONG_HIGHBIT-1))
-#endif
-
-#define SGN(x)  ((x) < 0 ? -1 : (x) == 0 ? 0 : 1)
+#define SGN(x)       ((x) < 0 ? -1 : (x) == 0 ? 0 : 1)
 
 
 void
