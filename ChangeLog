@@ -1,5 +1,7 @@
 2001-01-03  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/t-constants.c (CHECK_CONSTANT): Cast parameters to long.
+
 	* mpn/generic/mul_n.c (mpn_kara_sqr_n): Remove unused variable `t'.
 	(mpn_kara_mul_n): Likewise.
 
@@ -11,7 +13,7 @@
 
 	All changes below on this date for enabling `make; make check'
 	with C++ compilers:
-	
+
 	* mpz/tests/t-pow_ui.c (debug_mp, ref_mpz_pow_ui): Provide prototypes.
 
 	* mpz/tests/t-mul.c (debug_mp, base_mul, ref_mpz_mul):
