@@ -19,6 +19,14 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-07  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Build Options): Note all the ultrasparcs accepted.
+	(Language Bindings): Add Math::BigInt::GMP.
+
+	* config.sub (ultrasparc2i): New cpu type.
+	* config.guess (sparc-*-*, sparc64-*-*): Add some exact CPU detection.
+
 2002-03-05  Kevin Ryde  <kevin@swox.se>
 
 	* longlong.h (count_leading_zeros, count_trailing_zeros) [alphaev67,
