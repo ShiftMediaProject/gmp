@@ -223,6 +223,11 @@ const struct routine_t {
   { "mpz_fac_ui",        speed_mpz_fac_ui,   FLAG_NODATA   },
   { "mpz_fib_ui",        speed_mpz_fib_ui,   FLAG_NODATA   },
   { "mpz_powm",          speed_mpz_powm             },
+  { "mpz_powm_mod",      speed_mpz_powm_mod         },
+  { "mpz_powm_redc",     speed_mpz_powm_redc        },
+
+  { "mpz_mod",           speed_mpz_mod              },
+  { "mpn_redc",          speed_mpn_redc             },
 
   { "MPN_COPY",          speed_MPN_COPY             },
   { "MPN_COPY_INCR",     speed_MPN_COPY_INCR        },

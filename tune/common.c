@@ -580,6 +580,16 @@ speed_mpn_dc_tdiv_qr (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_DC_TDIV_QR (mpn_tdiv_qr);
 }
+double
+speed_mpz_mod (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_MOD (mpz_mod);
+}
+double
+speed_mpn_redc (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_REDC (mpn_redc);
+}
 
 
 double
@@ -853,6 +863,16 @@ double
 speed_mpz_powm (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_POWM (mpz_powm);
+}
+double
+speed_mpz_powm_mod (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_POWM (mpz_powm_mod);
+}
+double
+speed_mpz_powm_redc (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_POWM (mpz_powm_redc);
 }
 
 
