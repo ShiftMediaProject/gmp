@@ -1,7 +1,7 @@
 /* A simple integer desk calculator using yacc and gmp. */
 
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -43,11 +43,12 @@ Place - Suite 330, Boston, MA 02111-1307, USA.
        bin(n,m)     binomial coefficient
        fib(n)       fibonacci number
        gcd(a,b,..)  greatest common divisor
+       kron(a,b)    kronecker symbol
        lcm(a,b,..)  least common multiple
        nextprime(n) next prime after n
        powm(b,e,m)  modulo powering, b^e%m
-       root(n,r)    r-th root (rounded down)
-       sqrt(n)      square root (rounded down)
+       root(n,r)    r-th root
+       sqrt(n)      square root
 
    Other:
        hex          \ set hex or decimal for input and output
@@ -145,7 +146,7 @@ mpz_t  variable[26];
 
 %token EOS BAD
 %token HEX DECIMAL QUIT
-%token ABS BIN FIB GCD LCM NEXTPRIME POWM ROOT SQRT
+%token ABS BIN FIB GCD KRON LCM NEXTPRIME POWM ROOT SQRT
 %token <str> NUMBER
 %token <var> VARIABLE
 
@@ -224,6 +225,8 @@ e:
     | FIB '(' e ')'              ={ CHECK_UI ("fibonacci", sp);
                                     mpz_fib_ui (sp, mpz_get_ui (sp)); }
     | GCD '(' gcdlist ')'        /* value on stack */
+    | KRON '(' e ',' e ')'       ={ sp--; mpz_set_si (sp,
+                                          mpz_kronecker (sp, sp+1)); }
     | LCM '(' lcmlist ')'        /* value on stack */
     | NEXTPRIME '(' e ')'        ={ mpz_nextprime (sp, sp); }
     | POWM '(' e ',' e ',' e ')' ={ sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); }
