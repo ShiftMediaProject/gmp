@@ -698,7 +698,7 @@ check_r (void)
                   const char  *want_str = data[i].want;
                   int         approx = (*want_str == '~');
                   want_str += approx;
-                  if (mpfr_set_str (want, want_str, 10, GMP_RNDZ) != 0)
+                  if (mpfr_set_str (want, want_str, 10, GMP_RNDZ) == -1)
                     {
                       printf ("Cannot parse wanted value string\n");
                       printf ("    \"%s\"\n", want_str);
