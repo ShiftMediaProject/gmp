@@ -25,7 +25,7 @@ use strict;
 
 
 use GMP;
-print "GMP module version $GMP::VERSION using GMP library $GMP::version\n";
+print "using GMP module $GMP::VERSION and GMP library ",GMP::version(),"\n";
 
 
 use GMP::Mpz qw(:all);
