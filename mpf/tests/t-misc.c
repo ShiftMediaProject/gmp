@@ -146,10 +146,36 @@ check_mpf_cmp_si (void)
 }
 
 
+void
+check_mpf_getset_prec (void)
+{
+  mpf_t  x;
+  unsigned long  i, a, b;
+
+  mpf_init (x);
+
+  for (i = 1; i < 2000; i++)
+    {
+      mpf_set_prec (x, i);
+      a = mpf_get_prec (x);
+      mpf_set_prec (x, a);
+      b = mpf_get_prec (x);
+      if (a != b)
+        {
+          printf ("mpf_get_prec / mpf_set_prec inconsistency\n");
+          printf ("   set %lu gives %lu, but then set %lu gives %lu\n",
+                  i, a,
+                  a, b);
+          abort ();
+        }
+    }
+}
+
 int
 main (void)
 {
   check_mpf_set_si ();
   check_mpf_cmp_si ();
+  check_mpf_getset_prec ();
   exit (0);
 }
