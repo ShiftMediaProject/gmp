@@ -175,9 +175,9 @@ void mpfr_clear _PROTO ((mpfr_ptr));
 void mpfr_nextabove _PROTO ((mpfr_ptr));
 void mpfr_nextbelow _PROTO ((mpfr_ptr));
 void mpfr_nexttoward _PROTO ((mpfr_ptr, mpfr_srcptr));
-void mpfr_set_str_raw _PROTO ((mpfr_ptr, char *));
-int mpfr_set_str _PROTO ((mpfr_ptr, __gmp_const char *, int, mp_rnd_t));
-int mpfr_init_set_str _PROTO ((mpfr_ptr, __gmp_const char *, int, mp_rnd_t));
+void mpfr_set_str_raw _PROTO ((mpfr_ptr, __gmp_const unsigned char *));
+int mpfr_set_str _PROTO ((mpfr_ptr, __gmp_const unsigned char *, int, mp_rnd_t));
+int mpfr_init_set_str _PROTO ((mpfr_ptr, __gmp_const unsigned char *, int, mp_rnd_t));
 char* mpfr_get_str _PROTO ((char *, mp_exp_t *, int, size_t, mpfr_srcptr, mp_rnd_t));
 #ifdef _MPFR_H_HAVE_FILE
 size_t mpfr_inp_str _PROTO ((mpfr_ptr, FILE *, int, mp_rnd_t));

@@ -67,7 +67,6 @@ mpfr_get_ld (mpfr_srcptr x, mp_rnd_t rnd_mode)
       double s; /* part of result */
       mp_exp_t e; /* exponent of x */
       mp_exp_t sh; /* exponent shift, so that x/2^sh is in the double range */
-      int negative;
       mpfr_t y, z;
 
       /* first round x to the target long double precision, so that
@@ -75,7 +74,6 @@ mpfr_get_ld (mpfr_srcptr x, mp_rnd_t rnd_mode)
          problems) */
       mpfr_init2 (y, MPFR_LDBL_MANT_DIG);
       mpfr_set (y, x, rnd_mode);
-      negative = MPFR_SIGN(y) < 0;
       e = MPFR_EXP(y);
       if (e > 1023)
         {

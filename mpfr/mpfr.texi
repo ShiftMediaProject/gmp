@@ -806,7 +806,7 @@ width of the long double type; the @code{mpfr_set_ld} function assumes
 it has at most 113 bits, and an exponent of at most 15 bits.
 @end deftypefun
 
-@deftypefun int mpfr_set_str (mpfr_t @var{x}, char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
+@deftypefun int mpfr_set_str (mpfr_t @var{x}, const unsigned char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
 Set @var{x} to the value of the string @var{s} in base @var{base} (between
 2 and 36), rounded in direction @var{rnd} to the precision of @var{x}.
 See the documentation of @code{mpfr_inp_str} for a detailed description 
@@ -818,7 +818,7 @@ Special values can be read as follows: @code{NaN}, @code{Inf}, @code{+Inf}
 and @code{-Inf} (possibly in lower case when the base is less than 24).
 @end deftypefun
 
-@deftypefun void mpfr_set_str_raw (mpfr_t @var{x}, char *@var{s})
+@deftypefun void mpfr_set_str_raw (mpfr_t @var{x}, const unsigned char *@var{s})
 Set @var{x} to the value of the binary number in string @var{s}, which has to 
 be of the
 form +/-xxxx.xxxxxxEyy. The exponent is read in decimal, but is interpreted
@@ -872,7 +872,7 @@ The return value if zero if @var{rop}=@var{op}, positive if @var{rop}>@var{op},
 and negative when @var{rop}<@var{op}.
 @end deftypefn
 
-@deftypefun int mpfr_init_set_str (mpfr_t @var{x}, char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
+@deftypefun int mpfr_init_set_str (mpfr_t @var{x}, const unsigned char *@var{s}, int @var{base}, mp_rnd_t @var{rnd})
 Initialize @var{x} and set its value from
 the string @var{s} in base @var{base}, 
 rounded to direction @var{rnd}.
@@ -919,7 +919,8 @@ See also @code{mpfr_fits_slong_p} and @code{mpfr_fits_ulong_p}
 
 @deftypefun mp_exp_t mpfr_get_z_exp (mpz_t @var{z}, mpfr_t @var{op})
 Puts the mantissa of @var{op} into @var{z}, and returns the exponent
-@var{exp} such that @var{op} equals
+@var{exp} (which may be outside the current exponent range) such that
+@var{op} equals
 @ifnottex
 @var{z} multiplied by two exponent @var{exp}.
 @end ifnottex
@@ -1265,8 +1266,9 @@ i.e. the result is 0).
 @deftypefunx int mpfr_log10 (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
 Set @var{rop} to @m{\log_2 @var{op}, log2(@var{op})} or @m{\log_{10} @var{op},
 log10(@var{op})}, respectively, rounded to the direction @var{rnd} with the
-precision of @var{rop}. Return 0 iff the result is exact (this occurs in fact
-only when @var{op} is 1 i.e. the result is 0).
+precision of @var{rop}. Return 0 iff the result is exact (this occurs
+only when @var{op} is 1 for @code{mpfr_log10}, and a power of two for
+@code{mpfr_log2}).
 @end deftypefun
 
 @deftypefun int mpfr_gamma (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})

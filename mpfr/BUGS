@@ -24,7 +24,9 @@ Probably many bugs.
 
 Known bugs:
 
-* The overflows/underflows are not yet implemented in all functions.
+* The overflows/underflows are not yet implemented in all functions, or
+  partially implemented. For instance, mpfr_pow (z, x, y, rnd) fails for
+  very small x and some values of y.
 
 * problem with tsqrt on ia64-hpux (problem is that variable a in check4 has
 	a different value than in the call, may be a memory problem, since
@@ -57,5 +59,3 @@ Potential bugs:
 
 * mpfr_hypot may fail for x very large, y very small and a very large
   target precision.
-
-* mpfr_pow fails on (1, 0.5).
