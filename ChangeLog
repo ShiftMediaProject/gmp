@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-08-15  Kevin Ryde  <kevin@swox.se>
+
+	* tune/freq.c (freq_irix_hinv): Reinstate, for the benefit of IRIX 6.2.
+	(freq_attr_get_invent): Conditionalize on INFO_LBL_DETAIL_INVENT too.
+
 2003-08-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpq/get_d.c: Use mpn_get_d.
