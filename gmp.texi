@@ -465,11 +465,6 @@ are available to make @file{gmp.ps} and/or @file{gmp.dvi}.
 Targets @samp{*-*-aix4.[3-9]*} have shared libraries disabled since they seem
 to fail on AIX 4.3.
 
-For other AIX targets, GNU @samp{nm} must be used rather than
-@samp{/usr/bin/nm} in order to build shared libraries.  This can be done by
-setting @samp{PATH} so that GNU @samp{nm} is found first, or by providing
-@samp{NM=/path/to/gnu/nm} on the @samp{configure} command line.
-
 @item AIX with PowerPC 64
 
 Currently only a 64-bit version of the GMP library is built, and when linking
