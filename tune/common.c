@@ -550,6 +550,37 @@ speed_mpn_divrem_1cf (struct speed_params *s)
 #endif
 
 double
+speed_mpn_divrem_1_div (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1 (mpn_divrem_1_div);
+}
+double
+speed_mpn_divrem_1f_div (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1F (mpn_divrem_1_div);
+}
+double
+speed_mpn_divrem_1_inv (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1 (mpn_divrem_1_inv);
+}
+double
+speed_mpn_divrem_1f_inv (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVREM_1F (mpn_divrem_1_inv);
+}
+double
+speed_mpn_mod_1_div (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1 (mpn_mod_1_div);
+}
+double
+speed_mpn_mod_1_inv (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MOD_1 (mpn_mod_1_inv);
+}
+
+double
 speed_mpn_divrem_2 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_DIVREM_2 (mpn_divrem_2);
@@ -567,6 +598,11 @@ speed_mpn_mod_1c (struct speed_params *s)
   SPEED_ROUTINE_MPN_MOD_1C (mpn_mod_1c);
 }
 #endif
+double
+speed_mpn_preinv_mod_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_PREINV_MOD_1 (mpn_preinv_mod_1);
+}
 
 double
 speed_mpn_divexact_by3 (struct speed_params *s)
@@ -843,14 +879,19 @@ speed_mpn_gcdext_single (struct speed_params *s)
   SPEED_ROUTINE_MPN_GCDEXT (mpn_gcdext_single);
 }
 double
-speed_mpn_gcdext_one_double (struct speed_params *s)
+speed_mpn_gcdext_double (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_GCDEXT_ONE (mpn_gcdext_one_double);
+  SPEED_ROUTINE_MPN_GCDEXT (mpn_gcdext_double);
 }
 double
 speed_mpn_gcdext_one_single (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCDEXT_ONE (mpn_gcdext_one_single);
+}
+double
+speed_mpn_gcdext_one_double (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCDEXT_ONE (mpn_gcdext_one_double);
 }
 double
 speed_mpn_gcd_1 (struct speed_params *s)
@@ -859,6 +900,11 @@ speed_mpn_gcd_1 (struct speed_params *s)
 }
 
 
+double
+speed_mpz_jacobi (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_JACOBI (mpz_jacobi);
+}
 double
 speed_mpn_jacobi_base (struct speed_params *s)
 {
@@ -899,6 +945,11 @@ double
 speed_mpz_powm_redc (struct speed_params *s)
 {
   SPEED_ROUTINE_MPZ_POWM (mpz_powm_redc);
+}
+double
+speed_mpz_powm_ui (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPZ_POWM_UI (mpz_powm_ui);
 }
 
 
