@@ -41,8 +41,7 @@ MA 02111-1307, USA. */
 /* The following instantiated by configure, for internal use only */
 #if ! __GMP_WITHIN_CONFIGURE
 @DEFN_LONG_LONG_LIMB@
-#define __GMP_LIBGMP_STATIC  @__GMP_LIBGMP_STATIC@
-#define __GMP_LIBGMP_SHARED  @__GMP_LIBGMP_SHARED@
+#define __GMP_LIBGMP_DLL  @__GMP_LIBGMP_DLL@
 #endif
 
 #if  defined (__STDC__)                                 \
@@ -83,19 +82,13 @@ MA 02111-1307, USA. */
 #define __GMP_DECLSPEC_IMPORT  _Import
 #endif
 
+#if __GMP_LIBGMP_DLL
 #if __GMP_WITHIN_GMP
-#ifdef DLL_EXPORT
 #define __GMP_DECLSPEC  __GMP_DECLSPEC_EXPORT
-#endif
 #else
-#if (defined (_WIN32)        /* Microsoft C */  \
-     || defined (__WIN32__)) /* Borland C */    \
-    && __GMP_LIBGMP_SHARED
 #define __GMP_DECLSPEC  __GMP_DECLSPEC_IMPORT
 #endif
-#endif
-
-#ifndef __GMP_DECLSPEC
+#else
 #define __GMP_DECLSPEC
 #endif
 

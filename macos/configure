@@ -2,7 +2,7 @@
 # Note that this script can't be run directly from MPW perl
 # because it has the wrong end-of-line characters. See README.
 
-# Copyright 2000, 2001 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -109,9 +109,9 @@ my %vars =
    '__GMP_BITS_PER_MP_LIMB' => 32,
    '__GMP_HAVE_HOST_CPU_FAMILY_power' => 0,
    '__GMP_HAVE_HOST_CPU_FAMILY_powerpc' => 1,
+   'GMP_NAIL_BITS' => 0,
    'DEFN_LONG_LONG_LIMB' => '',
-   '__GMP_LIBGMP_STATIC' => 0,
-   '__GMP_LIBGMP_SHARED' => 0,
+   '__GMP_LIBGMP_DLL' => 0,
   );
 
 my $make_in      = 'Makefile.in';

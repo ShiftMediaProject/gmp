@@ -52,13 +52,10 @@ MA 02111-1307, USA. */
 #endif
 #undef __need_size_t
 
-/* Instantiated by configure, for internal use only */
+/* Instantiated by configure. */
 #if ! __GMP_WITHIN_CONFIGURE
 @DEFN_LONG_LONG_LIMB@
-
-/* Whether static, shared or both has been built. */
-#define __GMP_LIBGMP_STATIC  @__GMP_LIBGMP_STATIC@
-#define __GMP_LIBGMP_SHARED  @__GMP_LIBGMP_SHARED@
+#define __GMP_LIBGMP_DLL  @__GMP_LIBGMP_DLL@
 #endif
 
 
@@ -104,32 +101,34 @@ MA 02111-1307, USA. */
 #endif
 
 
-/* __GMP_DECLSPEC marks a function or variable for import or export for a
-   windows DLL, or is empty on other systems.
+/* __GMP_DECLSPEC supports Windows DLL versions of libgmp, and is empty in
+   all other circumstances.
 
-   When building GMP, libtool gives us DLL_EXPORT when making objects that
-   will go into a DLL and hence should have export directives.  Notice
-   DLL_EXPORT is only tested under __GMP_WITHIN_GMP, since if some other
-   libtool based package is using gmp.h then DLL_EXPORT will be telling it
-   what to do, not us.
+   When compiling objects for libgmp, __GMP_DECLSPEC is an export directive,
+   or when compiling for an application it's an import directive.  The two
+   cases are differentiated by __GMP_WITHIN_GMP defined by the GMP Makefiles
+   (and not defined from an application).
 
-   When compiling an application, __GMP_LIBGMP_SHARED indicates whether the
-   installed GMP is a DLL or not.  For a DLL we use import directives.
+   __GMP_DECLSPEC_XX is similarly used for libgmpxx.  __GMP_WITHIN_GMPXX
+   indicates when building libgmpxx, and in that case libgmpxx functions are
+   exports, but libgmp functions which might get called are imports.
 
-   There's no attempt here to support GMP installed both static and DLL,
-   doing so would mean applications would have to tell us which of the two
-   is going to be used, and that seems very tedious and error prone when
+   libmp.la uses __GMP_DECLSPEC, just as if it were libgmp.la.  libgmp and
+   libmp don't call each other, so there's no conflict or confusion.
+
+   Libtool DLL_EXPORT define is not used.
+
+   There's no attempt to support GMP built both static and DLL.  Doing so
+   would mean applications would have to tell us which of the two is going
+   to be used when linking, and that seems very tedious and error prone if
    using GMP by hand, and equally tedious from a package since autoconf and
    automake don't give much help.
 
-   Note that __GMP_DECLSPEC is only wanted on documented global functions
-   and variables.  Internals in gmp-impl.h etc should be left unadorned and
-   won't be visible to applications using a DLL.
-
-   For testing on a non-windows system, __GMP_DECLSPEC can be set to
-   __attribute__ ((section ("foo"))) or similar, and the resulting objects
-   checked with readelf or whatever to see if all the expected globals have
-   ended up with that attribute.  */
+   __GMP_DECLSPEC is required on all documented global functions and
+   variables, the various internals in gmp-impl.h etc can be left unadorned.
+   But internals used by the test programs or speed measuring programs
+   should have __GMP_DECLSPEC, and certainly constants or variables must
+   have it or the wrong address will be resolved.  */
 
 #if defined (__GNUC__) || defined (_MSC_VER) || defined (__BORLANDC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(dllexport)
@@ -144,18 +143,16 @@ MA 02111-1307, USA. */
 #define __GMP_DECLSPEC_IMPORT  _Import
 #endif
 
+#if __GMP_LIBGMP_DLL
 #if __GMP_WITHIN_GMP
-#ifdef DLL_EXPORT
+/* compiling to go into a DLL libgmp */
 #define __GMP_DECLSPEC  __GMP_DECLSPEC_EXPORT
-#endif
 #else
-#if (defined (_WIN32)        /* Microsoft C */  \
-     || defined (__WIN32__)) /* Borland C */    \
-    && __GMP_LIBGMP_SHARED
+/* compiling to go into an application which will link to a DLL libgmp */
 #define __GMP_DECLSPEC  __GMP_DECLSPEC_IMPORT
 #endif
-#endif
-#ifndef __GMP_DECLSPEC
+#else
+/* all other cases */
 #define __GMP_DECLSPEC
 #endif
 
@@ -263,18 +260,16 @@ typedef __mpq_struct *mpq_ptr;
 
 /* This is not wanted in mp.h, so put it outside the __GNU_MP__ common
    section. */
+#if __GMP_LIBGMP_DLL
 #if __GMP_WITHIN_GMPXX
-#ifdef DLL_EXPORT
+/* compiling to go into a DLL libgmpxx */
 #define __GMP_DECLSPEC_XX  __GMP_DECLSPEC_EXPORT
-#endif
 #else
-#if (defined (_WIN32)        /* Microsoft C */  \
-     || defined (__WIN32__)) /* Borland C */    \
-    && __GMP_LIBGMP_SHARED
+/* compiling to go into a application which will link to a DLL libgmpxx */
 #define __GMP_DECLSPEC_XX  __GMP_DECLSPEC_IMPORT
 #endif
-#endif
-#ifndef __GMP_DECLSPEC_XX
+#else
+/* all other cases */
 #define __GMP_DECLSPEC_XX
 #endif
 

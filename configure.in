@@ -1421,23 +1421,6 @@ case $host in
   [*-*-aix[34]*])
     if test -z "$enable_shared"; then enable_shared=no; fi ;;
 
-  # On Windows, build only static by default, and don't allow both static
-  # and DLL.  libtool -no-undefined is needed for a DLL, as per the
-  # AC_LIBTOOL_WIN32_DLL doco.
-  #
-  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
-    if test -z "$enable_shared"; then
-      enable_shared=no
-    fi
-    if test "$enable_shared" != no && test "$enable_static" != no; then
-      AC_MSG_ERROR([cannot build both static and DLL, since gmp.h is different for each.
-Use "--disable-static --enable-shared" to build just a DLL.])
-    fi
-    if test "$enable_shared" = yes; then
-      GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
-    fi
-    ;;
-
   # FIXME: Libtool recognises djgpp can't build shared libraries, but still
   # makes tests/.libs/libtests.al out of PIC objects, which then fail to
   # link into the test programs.  Forcibly disable shared stuff until
@@ -1467,18 +1450,45 @@ Use "--disable-static --enable-shared" to build just a DLL.])
     enable_shared=no ;;
 esac
 
-# Libtool runs an impgen.c program on the build system when making windows
-# DLLs.  If we're cross compiling then look for a suitable build system
-# compiler, since $CC can't be expected to work.
-# FIXME: Libtool ought to do this itself.
+
+# Configs for Windows DLLs.
+
+AC_LIBTOOL_WIN32_DLL
+
+__GMP_LIBGMP_DLL=0
+case $host in
+  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
+    # By default, build only static.
+    if test -z "$enable_shared"; then
+      enable_shared=no
+    fi
+    # Don't allow both static and DLL.
+    if test "$enable_shared" != no && test "$enable_static" != no; then
+      AC_MSG_ERROR([cannot build both static and DLL, since gmp.h is different for each.
+Use "--disable-static --enable-shared" to build just a DLL.])
+    fi
+    if test "$enable_shared" = yes; then
+      # libtool requires "-no-undefined", see AC_LIBTOOL_WIN32_DLL doco.
+      GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
+      AC_SUBST(__GMP_LIBGMP_DLL,1)
+    fi
+    ;;
+esac
+
+# When cross compiling a DLL, libtool requires $HOST_CC, to compile impgen.c
+# on the build system.  It's a well-known misfeature that libtool doesn't
+# hunt around for a useful HOST_CC on its own.
+# FIXME: Newer libtool looks like it'll need this only for "*-*-mingw* |
+# *-*-pw32*", not *-*-cygwin*.
 #
-if test "$cross_compiling" != no && test "$enable_shared" != no; then
-  case $host in
-    *-*-cygwin* | *-*-mingw* | *-*-pw32*)
+case $host in
+  *-*-cygwin* | *-*-mingw* | *-*-pw32*)
+    if test "$cross_compiling" != no && test "$enable_shared" != no; then
       GMP_PROG_HOST_CC
-      ;;
-  esac
-fi
+    fi
+    ;;
+esac
+
 
 # Enable CXX in libtool only if we want it, and never enable GCJ, nor RC on
 # mingw and cygwin.  Under --disable-cxx this avoids some error messages
@@ -1496,7 +1506,6 @@ if test "${with_tags+set}" != set; then
   fi
 fi
 
-AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
 # Generate an error here if attempting to build both shared and static when
@@ -1510,21 +1519,6 @@ if test "$enable_shared" = yes && test "$enable_static" = yes; then
       ;;
   esac
 fi
-
-# Encode in gmp.h whether a shared or static library is available.
-# Currently only used for the windows DLL stuff.
-#
-case $enable_shared in
-yes) __GMP_LIBGMP_SHARED=1 ;;
-no)  __GMP_LIBGMP_SHARED=0 ;;
-esac
-AC_SUBST(__GMP_LIBGMP_SHARED)
-
-case $enable_static in
-yes) __GMP_LIBGMP_STATIC=1 ;;
-no)  __GMP_LIBGMP_STATIC=0 ;;
-esac
-AC_SUBST(__GMP_LIBGMP_STATIC)
 
 
 # How to assemble, used with CFLAGS etc, see mpn/Makeasm.am.
