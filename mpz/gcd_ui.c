@@ -28,7 +28,6 @@ mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
 {
   mp_size_t un;
   mp_limb_t res;
-  mp_ptr up;
 
 #if GMP_NAIL_BITS != 0
   if (v > GMP_NUMB_MAX)
@@ -45,7 +44,6 @@ mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
 #endif
 
   un = ABSIZ(u);
-  up = PTR(u);
 
   if (un == 0)
     res = v;
@@ -54,14 +52,14 @@ mpz_gcd_ui (mpz_ptr w, mpz_srcptr u, unsigned long int v)
       if (w != NULL && u != w)
 	{
 	  MPZ_REALLOC (w, un);
-	  MPN_COPY (PTR(w), up, un);
+	  MPN_COPY (PTR(w), PTR(u), un);
 	  SIZ(w) = un;
 	}
       /* We can't return any useful result for gcd(big,0).  */
-      return un > 1 ? 0 : up[0];
+      return un > 1 ? 0 : PTR(u)[0];
     }
   else
-    res = mpn_gcd_1 (up, un, (mp_limb_t) v);
+    res = mpn_gcd_1 (PTR(u), un, (mp_limb_t) v);
 
   if (w != NULL)
     {
