@@ -20,6 +20,10 @@ MA 02111-1307, USA.
 
 2004-03-04  Kevin Ryde  <kevin@swox.se>
 
+	* acinclude.m4 (GMP_PROG_AR): Remove AR_FLAGS=cq, libtool 1.5.2 now
+	does this itself on detecting duplicate object filenames in piecewise
+	linking mode.
+ 
 	* configure.in (hppa2.0*-*-*): Test sizeof(long) == 4 or 8 to verify
 	ABI=2.0n versus ABI=2.0w.  In particular this lets CC=cc_bundled
 	correctly fall back to ABI=2.0n (we don't automatically add CC=+DD64
