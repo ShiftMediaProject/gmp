@@ -30,3 +30,6 @@ check_PROGRAMS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
   t-root t-jac t-bin t-misc
 
 TESTS = $(check_PROGRAMS)
+
+# io.tmp is used by io.c, removed automatically if the tests pass
+CLEANFILES = io.tmp
