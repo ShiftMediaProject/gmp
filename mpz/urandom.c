@@ -207,13 +207,15 @@ gmp_rand_clear (s)
 
   switch (s->alg)
     {
-    case GMP_RAND_ALG_LC:	/* Linear congruental. */
+    case GMP_RAND_ALG_LC:
       mpz_clear (s->n);
       for (sp = __gmp_rand_scheme; sp->bits; sp++)
 	{
 	  mpz_clear (sp->a);
 	  mpz_clear (sp->m);
 	}
+      break;
+    case GMP_RAND_ALG_BBS:
       break;
     }
 }
@@ -263,6 +265,8 @@ mpz_urandomb (rop, s)
 	  mpf_clear (ft2);
 	}
       break;			/* GMP_RAND_ALG_LC */
+    case GMP_RAND_ALG_BBS:
+      break;
     }
 
   /* Save result for next seed. */
