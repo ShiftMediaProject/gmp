@@ -115,7 +115,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 {
   size_t str_size;
   char *s, *begs;
-  size_t i;
+  size_t i, j;
   int c;
   int negative;
   char *dotpos = 0;
@@ -123,7 +123,6 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   int exp_base;
   const char  *point = GMP_DECIMAL_POINT;
   size_t      pointlen = strlen (point);
-  int         point0 = (unsigned char) point[0];
   const unsigned char *digit_value;
   TMP_DECL (marker);
 
@@ -160,8 +159,10 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
   /* Require at least one digit, possibly after an initial decimal point.  */
   if (digit_value[c] >= (base == 0 ? 10 : base))
     {
-      if (memcmp (str, point, pointlen) != 0)
-	return -1;
+      /* not a digit, must be a decimal point */
+      for (i = 0; i < pointlen; i++)
+        if (str[i] != point[i])
+          return -1;
       if (digit_value[(unsigned char) str[pointlen]] >= (base == 0 ? 10 : base))
 	return -1;
     }
@@ -196,15 +197,14 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	{
 	  int dig;
 
-	  /* Avoid memcmp for the usual case (point is one character).  Don't
-	     bother with str+1,point+1,pointlen-1 since those offsets would add
-	     to the code size.  */
-	  if (UNLIKELY (c == point0)
-	      && (LIKELY (pointlen == 1)
-		  || memcmp (str+1, point+1, pointlen-1) == 0))
+          for (j = 0; j < pointlen; j++)
+            if (str[j] != point[j])
+              goto not_point;
+          if (1)
 	    {
 	      if (dotpos != 0)
 		{
+		  /* already saw a decimal point, another is invalid */
 		  TMP_FREE (marker);
 		  return -1;
 		}
@@ -214,6 +214,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	    }
 	  else
 	    {
+            not_point:
 	      dig = digit_value[c];
 	      if (dig >= base)
 		{
