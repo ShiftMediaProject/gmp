@@ -552,54 +552,58 @@ mpn_gcd (gp, up, size, vp, vsize)
 	    }
 	  else
 	    {
+	      mp_limb_t cy, cy1, cy2;
+
 	      if (asign)
 		{
-		  mp_limb_t cy;
 		  mpn_mul_1 (tp, vp, size, B);
 		  mpn_submul_1 (tp, up, size, A);
 		  mpn_mul_1 (wp, up, size, C);
 		  mpn_submul_1 (wp, vp, size, D);
-		  MP_PTR_SWAP (tp, up);
-		  MP_PTR_SWAP (wp, vp);
-#if EXTEND
-		  cy = mpn_mul_1 (tp, s1p, ssize, B);
-		  cy += mpn_addmul_1 (tp, s0p, ssize, A);
-		  tp[ssize] = cy;
-		  tsize = ssize + (cy != 0);
-		  cy = mpn_mul_1 (wp, s0p, ssize, C);
-		  cy += mpn_addmul_1 (wp, s1p, ssize, D);
-		  wp[ssize] = cy;
-		  wsize = ssize + (cy != 0);
-		  MP_PTR_SWAP (tp, s0p);
-		  MP_PTR_SWAP (wp, s1p);
-		  ssize = MAX (wsize, tsize);
-#endif
 		}
 	      else
 		{
-		  mp_limb_t cy;
 		  mpn_mul_1 (tp, up, size, A);
 		  mpn_submul_1 (tp, vp, size, B);
 		  mpn_mul_1 (wp, vp, size, D);
 		  mpn_submul_1 (wp, up, size, C);
-		  MP_PTR_SWAP (tp, up);
-		  MP_PTR_SWAP (wp, vp);
-#if EXTEND
-		  cy = mpn_mul_1 (tp, s0p, ssize, A);
-		  cy += mpn_addmul_1 (tp, s1p, ssize, B);
-		  tp[ssize] = cy;
-		  tsize = ssize + (cy != 0);
-		  cy = mpn_mul_1 (wp, s1p, ssize, D);
-		  cy += mpn_addmul_1 (wp, s0p, ssize, C);
-		  wp[ssize] = cy;
-		  wsize = ssize + (cy != 0);
-		  MP_PTR_SWAP (tp, s0p);
-		  MP_PTR_SWAP (wp, s1p);
-		  ssize = MAX (wsize, tsize);
-#endif
 		}
-	    }
+	      MP_PTR_SWAP (tp, up);
+	      MP_PTR_SWAP (wp, vp);
+#if EXTEND
+	      /* Compute new s0 */
+	      cy1 = mpn_mul_1 (tp, s0p, ssize, A);
+	      cy2 = mpn_addmul_1 (tp, s1p, ssize, B);
+	      cy = cy1 + cy2;
+	      tp[ssize] = cy;
+	      tsize = ssize + (cy != 0);
+	      if (cy < cy1)
+		{
+		  abort ();
+		  /* Should not happen, even it can happen below.  */
+		}
 
+	      /* Compute new s1 */
+	      cy1 = mpn_mul_1 (wp, s1p, ssize, D);
+	      cy2 = mpn_addmul_1 (wp, s0p, ssize, C);
+	      cy = cy1 + cy2;
+	      wp[ssize] = cy;
+	      wsize = ssize + (cy != 0);
+	      if (cy < cy1)
+		{
+		  wp[wsize] = 1;
+		  tp[wsize] = 0; /* Safe, s0 (here stored at tp) will be
+				    smaller than s1 (stored at wp), so
+				    we don't risk to overwrite s0's
+				    most significant limb.  */
+		  wsize++;
+		}
+
+	      MP_PTR_SWAP (tp, s0p);
+	      MP_PTR_SWAP (wp, s1p);
+	      ssize = MAX (wsize, tsize);
+#endif
+	    }
 	  size -= up[size - 1] == 0;
 	}
 
