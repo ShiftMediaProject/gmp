@@ -223,6 +223,9 @@ MA 02111-1307, USA. */
 /* Define if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
+/* Define if `double' is Cray CFP format */
+#undef HAVE_DOUBLE_CRAY_CFP
+
 /* Define if `double' is IEEE format, big endian */
 #undef HAVE_DOUBLE_IEEE_BIG_ENDIAN
 
