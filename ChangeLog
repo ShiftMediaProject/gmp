@@ -18,6 +18,36 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-01-22  Kevin Ryde  <kevin@swox.se>
+
+	* mpf/sqrt.c: Change tsize calculation to get prec limbs result
+	always, previously got prec+1 when exp was odd.
+	* tests/mpf/t-sqrt.c (check_rand1): New function, code from main.
+	(check_rand2): New function.
+
+	* mpf/sqrt_ui.c: Change rsize calculation to get prec limbs result,
+	previously got prec+1.
+	* tests/mpf/t-sqrt_ui.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+
+	* tests/refmpf.c, tests/tests.h (refmpf_add_ulp,
+	refmpf_set_prec_limbs): New functions.
+
+	* mpz/get_d_2exp.c, mpf/get_d_2exp.c: Remove x86+m68k force to double,
+	mpn_get_d now does this.  Remove res==1.0 check for round upwards,
+	mpn_get_d now rounds towards zero.  Move exp store to make mpn_get_d a
+	tail call.
+
+	* configure.in (x86-*-*): Use ABI=32 rather than ABI=standard.
+	Use gcc -m32 when available, to force mode on bi-arch amd64 gcc.
+	(x86_64-*-*): Merge into plain x86 setups as ABI=64.  Support ABI=32,
+	using athlon code.  Use gcc -mcpu=k8, -march=k8.
+	(amd64-*-*): Remove pattern, config.sub only gives x86_64.
+	* acinclude.m4 (X86_PATTERN): Add x86_64.
+	* doc/gmp.texi (ABI and ISA): Add x86_64 dual ABIs.
+
+	* mpn/amd64/README: Add reference to ABI spec.
+
 2004-01-17  Niels Möller  <nisse@harpo.hack.org>
 
 	* mpn/generic/hgcd.c (hgcd_adjust): Backed out mpn_addlsh1_n
