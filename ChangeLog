@@ -18,6 +18,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-05-08  Kevin Ryde  <kevin@swox.se>
+
+	* doc/configuration (Configure): Update for current automake not
+	copying acinclude.m4 into aclocal.m4.
+
+	* configure.in, Makefile.am, doc/gmp.texi, doc/configuration,
+	tests/cxx/Makefile.am, demos/expr/Makefile.am, demos/expr/README,
+	demos/expr/expr.c, demos/expr/expr.h, demos/expr/expr-config-h.in,
+	demos/expr/expr-impl.h, demos/expr/run-expr.c, demos/expr/t-expr.c:
+	MPFR now published separately, remove various bits.
+	* mpfr/*, tests/cxx/t-headfr.cc, demos/expr/exprfr.c,
+	demos/expr/exprfra.c: Remove.
+
 2004-05-07  Kevin Ryde  <kevin@swox.se>
 
 	* tests/cxx/Makefile.am (TESTS_ENVIRONMENT): Amend c++ shared library
