@@ -48,6 +48,25 @@ ifdef(`PIC',
 	sllx	%g2,32,%g2
 	ld	[%g1+%g2],%f10')
 
+	sub	%i1,%i0,%g1
+	srlx	%g1,3,%g1
+	cmp	%g1,%i2
+	bcc,pt	%xcc,L(nooverlap)
+	nop
+
+	sllx	%i2,3,%g2		C compute stack allocation byte count
+	add	%g2,15,%o0
+	and	%o0,-16,%o0
+	sub	%sp,%o0,%sp
+	add	%sp,2223,%o0
+
+	mov	%i1,%o1			C copy s1_ptr to mpn_copyi's srcp
+	call	mpn_copyi
+	mov	%i2,%o2			C copy n to mpn_copyi's count parameter
+
+	add	%sp,2223,%i1
+
+L(nooverlap):
 C First multiply-add with low 32 bits of s2_limb
 	mov	%i0,%o0
 	mov	%i1,%o1
@@ -72,6 +91,8 @@ L(small):
 	restore	%g0,%g0,%g0
 EPILOGUE(mpn_mul_1)
 
+C Put a zero in the text segment to allow us to t the address
+C quickly when compiling for PIC
 	TEXT
 	ALIGN(4)
 L(noll):
