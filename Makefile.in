@@ -50,7 +50,7 @@ LN = ln -s
 SRCS = memory.c mp_set_fns.c mp_clz_tab.c rand.c randclr.c randcom.c \
   randlc.c version.c stack-alloc.c mp_bpl.c extract-dbl.c \
   insert-dbl.c
-OBJS = memory.o mp_set_fns.o mp_clz_tab.o rand.c randclr.o randcom.o \
+OBJS = memory.o mp_set_fns.o mp_clz_tab.o rand.o randclr.o randcom.o \
   randlc.o version.o stack-alloc.o mp_bpl.o extract-dbl.o \
   insert-dbl.o
 FILES = gmp.h mp.h gmp-impl.h longlong.h urandom.h move-if-change \
