@@ -22,7 +22,7 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -I$(top_srcdir) -DTUNE_PROGRAM_BUILD=1
+INCLUDES = -I$(top_srcdir)
 
 EXTRA_DIST = rdtsc.asm
 noinst_HEADERS = speed.h
