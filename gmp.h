@@ -176,9 +176,12 @@ typedef __mpq_struct *mpq_ptr;
 #define _GMP_H_HAVE_FILE 1
 #endif
 
+#define mp_set_memory_functions __gmp_set_memory_functions
 void mp_set_memory_functions _PROTO ((void *(*) (size_t),
 				      void *(*) (void *, size_t, size_t),
 				      void (*) (void *, size_t)));
+
+#define mp_bits_per_limb __gmp_bits_per_limb
 extern __gmp_const int mp_bits_per_limb;
 
 /**************** Random number routines.  ****************/
@@ -960,6 +963,7 @@ mpn_sub (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 #define mpz_div_2exp	mpz_fdiv_q_2exp
 #define mpz_mod_2exp	mpz_fdiv_r_2exp
 
+#define gmp_errno __gmp_errno
 extern int gmp_errno;
 
 enum
