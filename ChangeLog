@@ -1,3 +1,13 @@
+2000-11-10  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/powm.c (redc): Make global under WANT_REDC_GLOBAL.
+	* tune/powm_mod.c, tune/powm_redc.c: New files.
+	* tune/Makefile.am (libspeed_la_SOURCES): Add them.
+	* tune/*: Add measuring of redc, mpz_mod, mpz_powm_mod,	mpz_powm_redc.
+
+	* tune/tuneup.c (POWM_THRESHOLD): Determine from redc and mpz_mod.
+	* tune/Makefile.am (TUNE_MPZ_SRCS): Remove powm.
+
 2000-11-10  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/mips3/gmp-mparam.h: Retune.
