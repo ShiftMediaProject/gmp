@@ -29,6 +29,7 @@ mpn_submul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t limb)
 {
   mp_limb_t p0[n], p1[n], tp[n];
   mp_limb_t cy_limb;
+  mp_size_t i;
 
 #pragma _CRI ivdep
   for (i = 0; i < n; i++)
