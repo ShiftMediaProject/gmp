@@ -27,6 +27,7 @@ MA 02111-1307, USA. */
 
 #ifdef OPERATION_add_ui
 #define FUNCTION          mpz_add_ui
+#define FUNCTION2         mpz_add
 #define VARIATION_CMP     >=
 #define VARIATION_NEG
 #define VARIATION_UNNEG   -
@@ -34,6 +35,7 @@ MA 02111-1307, USA. */
 
 #ifdef OPERATION_sub_ui
 #define FUNCTION          mpz_sub_ui
+#define FUNCTION2         mpz_sub
 #define VARIATION_CMP     <
 #define VARIATION_NEG     -
 #define VARIATION_UNNEG
@@ -45,12 +47,26 @@ Error, need OPERATION_add_ui or OPERATION_sub_ui
 
 
 void
-FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int v)
+FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int vval)
 {
   mp_srcptr up;
   mp_ptr wp;
   mp_size_t usize, wsize;
   mp_size_t abs_usize;
+
+#if GMP_NAIL_BITS != 0
+  if (vval > GMP_NUMB_MAX)
+    {
+      mpz_t v;
+      mp_limb_t vl[2];
+      PTR(v) = vl;
+      vl[0] = vval & GMP_NUMB_MASK;
+      vl[1] = vval >> GMP_NUMB_BITS;
+      SIZ(v) = 2;
+      FUNCTION2 (w, u, v);
+      return;
+    }
+#endif
 
   usize = u->_mp_size;
   abs_usize = ABS (usize);
@@ -66,15 +82,15 @@ FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int v)
 
   if (abs_usize == 0)
     {
-      wp[0] = v;
-      w->_mp_size = VARIATION_NEG (v != 0);
+      wp[0] = vval;
+      w->_mp_size = VARIATION_NEG (vval != 0);
       return;
     }
 
   if (usize VARIATION_CMP 0)
     {
       mp_limb_t cy;
-      cy = mpn_add_1 (wp, up, abs_usize, (mp_limb_t) v);
+      cy = mpn_add_1 (wp, up, abs_usize, (mp_limb_t) vval);
       wp[abs_usize] = cy;
       wsize = VARIATION_NEG (abs_usize + cy);
     }
@@ -82,14 +98,14 @@ FUNCTION (mpz_ptr w, mpz_srcptr u, unsigned long int v)
     {
       /* The signs are different.  Need exact comparison to determine
 	 which operand to subtract from which.  */
-      if (abs_usize == 1 && up[0] < v)
+      if (abs_usize == 1 && up[0] < vval)
 	{
-	  wp[0] = v - up[0];
+	  wp[0] = vval - up[0];
 	  wsize = VARIATION_NEG 1;
 	}
       else
 	{
-	  mpn_sub_1 (wp, up, abs_usize, (mp_limb_t) v);
+	  mpn_sub_1 (wp, up, abs_usize, (mp_limb_t) vval);
 	  /* Size can decrease with at most one limb.  */
 	  wsize = VARIATION_UNNEG (abs_usize - (wp[abs_usize - 1] == 0));
 	}
