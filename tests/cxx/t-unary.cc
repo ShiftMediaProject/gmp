@@ -1,4 +1,4 @@
-/* Test mp*_class unary operators and functions.
+/* Test mp*_class unary expressions.
 
 Copyright 2001, 2002 Free Software Foundation, Inc.
 
@@ -19,10 +19,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <cstdlib>
 #include <iostream>
-#include <string>
+
 #include "gmp.h"
+#ifdef WANT_MPFR
+#  include "mpfr.h"
+#endif
 #include "gmpxx.h"
 #include "gmp-impl.h"
 #include "tests.h"
@@ -30,97 +32,137 @@ MA 02111-1307, USA. */
 using namespace std;
 
 
-#define CHECK_GMP(type, message, want)                           \
-  do                                                             \
-    {                                                            \
-      type##_set_str(ref, want, 0);                              \
-      if (type##_cmp(val.get_##type##_t(), ref) != 0)            \
-        {                                                        \
-          cout << "error on " #type "_class operator/function: " \
-	       << message << "\n";                               \
-          cout << "  want:  " << ref << "\n";                    \
-          cout << "  got:   " << val.get_##type##_t() << "\n";   \
-          abort();                                               \
-        }                                                        \
-    }                                                            \
-  while (0)
-
-#define CHECK_MPZ(expr, want) CHECK_GMP(mpz, expr, want)
-#define CHECK_MPQ(expr, want) CHECK_GMP(mpq, expr, want)
-#define CHECK_MPF(expr, want) CHECK_GMP(mpf, expr, want)
-
-
-void check_mpz(void)
+void
+check_mpz (void)
 {
-  mpz_class val;
-  mpz_t ref;
-  mpz_init(ref);
+  // template <class T, class Op>
+  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, T>, Op> >
+  {
+    mpz_class a(1);
+    mpz_class b(+a); ASSERT_ALWAYS(b == 1);
+  }
+  {
+    mpz_class a(2);
+    mpz_class b;
+    b = -a; ASSERT_ALWAYS(b == -2);
+  }
+  {
+    mpz_class a(3);
+    mpz_class b;
+    b = ~a; ASSERT_ALWAYS(b == -4);
+  }
 
-  mpz_class z(1);
-
-  // operator+
-
-  // operator-
-  val = -z; CHECK_MPZ("val = -z", "-1");
-
-  // operator~
-  // abs
-  // sqrt
-  // sgn
-
-  mpz_clear(ref);
+  // template <class T, class U, class Op>
+  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+  {
+    mpz_class a(1);
+    mpz_class b(-(-a)); ASSERT_ALWAYS(b == 1);
+  }
+  {
+    mpz_class a(2);
+    mpz_class b;
+    b = -(-(-a)); ASSERT_ALWAYS(b == -2);
+  }
 }
 
-void check_mpq(void)
+void
+check_mpq (void)
 {
-  mpq_class val;
-  mpq_t ref;
-  mpq_init(ref);
+  // template <class T, class Op>
+  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, T>, Op> >
+  {
+    mpq_class a(1);
+    mpq_class b(+a); ASSERT_ALWAYS(b == 1);
+  }
+  {
+    mpq_class a(2);
+    mpq_class b;
+    b = -a; ASSERT_ALWAYS(b == -2);
+  }
 
-  mpq_class q(1, 2);
-
-  // operator+
-
-  // operator-
-  val = -q; CHECK_MPQ("val = -q", "-1/2");
-
-  // abs
-  // sgn
-
-  mpq_clear(ref);
+  // template <class T, class U, class Op>
+  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+  {
+    mpq_class a(1);
+    mpq_class b(-(-a)); ASSERT_ALWAYS(b == 1);
+  }
+  {
+    mpq_class a(2);
+    mpq_class b;
+    b = -(-(-a)); ASSERT_ALWAYS(b == -2);
+  }
 }
 
-void check_mpf(void)
+void
+check_mpf (void)
 {
-  mpf_class val;
-  mpf_t ref;
-  mpf_init(ref);
+  // template <class T, class Op>
+  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, T>, Op> >
+  {
+    mpf_class a(1);
+    mpf_class b(+a); ASSERT_ALWAYS(b == 1);
+  }
+  {
+    mpf_class a(2);
+    mpf_class b;
+    b = -a; ASSERT_ALWAYS(b == -2);
+  }
 
-  mpf_class f(1.0);
+  // template <class T, class U, class Op>
+  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+  {
+    mpf_class a(1);
+    mpf_class b(-(-a)); ASSERT_ALWAYS(b == 1);
+  }
+  {
+    mpf_class a(2);
+    mpf_class b;
+    b = -(-(-a)); ASSERT_ALWAYS(b == -2);
+  }
+}
 
-  // operator+
+void
+check_mpfr (void)
+{
+#ifdef WANT_MPFR
 
-  // operator-
-  val = -f; CHECK_MPF("val = -f", "-1.0");
+  // template <class T, class Op>
+  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, T>, Op> >
+  {
+    mpfr_class a(1);
+    mpfr_class b(+a); ASSERT_ALWAYS(b == 1);
+  }
+  {
+    mpfr_class a(2);
+    mpfr_class b;
+    b = -a; ASSERT_ALWAYS(b == -2);
+  }
 
-  // abs
-  // trunc
-  // floor
-  // ceil
-  // sqrt
-  // sgn
+  // template <class T, class U, class Op>
+  // __gmp_expr<T, __gmp_unary_expr<__gmp_expr<T, U>, Op> >
+  {
+    mpfr_class a(1);
+    mpfr_class b(-(-a)); ASSERT_ALWAYS(b == 1);
+  }
+  {
+    mpfr_class a(2);
+    mpfr_class b;
+    b = -(-(-a)); ASSERT_ALWAYS(b == -2);
+  }
 
-  mpf_clear(ref);
+#endif /* WANT_MPFR */
 }
 
 
-int main()
+int
+main (void)
 {
   tests_start();
 
   check_mpz();
   check_mpq();
   check_mpf();
+  check_mpfr();
 
   tests_end();
   return 0;
