@@ -144,7 +144,7 @@ phi (mp_limb_t t)
 #define POWM_THRESHOLD  ((8 * KARATSUBA_SQR_THRESHOLD) / 3)
 #endif
 
-#undef HANDLE_NEGATIVE_EXPONENT
+#define HANDLE_NEGATIVE_EXPONENT 1
 #undef REDUCE_EXPONENT
 
 void
@@ -188,7 +188,7 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	  return;
 	}
 #if HANDLE_NEGATIVE_EXPONENT
-      MPZ_TMP_INIT (new_b, ABSIZ (b) + 1);
+      MPZ_TMP_INIT (new_b, mn + 1);
 
       if (! mpz_invert (new_b, b, m))
 	DIVIDE_BY_ZERO;
