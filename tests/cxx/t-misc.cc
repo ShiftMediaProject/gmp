@@ -170,12 +170,12 @@ check_mpq (void)
   {
     mpq_class  q(0);
     mpq_ptr    p = q.get_mpq_t();
-    ASSERT_ALWAYS (mpq_cmp_ui (p, 0, 0) == 0);
+    ASSERT_ALWAYS (mpq_cmp_ui (p, 0, 1) == 0);
   }
   {
     mpq_class  q(0);
     mpq_srcptr p = q.get_mpq_t();
-    ASSERT_ALWAYS (mpq_cmp_ui (p, 0, 0) == 0);
+    ASSERT_ALWAYS (mpq_cmp_ui (p, 0, 1) == 0);
   }
 
   // mpq_class::get_num, mpq_class::get_den
