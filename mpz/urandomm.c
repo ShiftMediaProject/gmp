@@ -48,7 +48,7 @@ mpz_urandomm (rop, rstate, n)
 
   /* Allocate enough for any mpz function called since a realloc of
      these will fail.  */
-  MPZ_TMP_INIT (t, size);	
+  MPZ_TMP_INIT (t, size);
   MPZ_TMP_INIT (m, size + 1);
   MPZ_TMP_INIT (p, size + 1);
 

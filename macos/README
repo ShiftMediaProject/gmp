@@ -25,7 +25,7 @@ Not all tests pass
 
 	The 'mpf/t-muldiv' test fails, see PROBLEMS section below
 
-	
+
 
 REQUIREMENTS
 ============
@@ -69,7 +69,7 @@ You need "StuffIt Expander" to unpack the source. You can download
 
     http://www.aladdinsys.com/expander/expander_mac_login.html
 
-Unpack the installation instructions 
+Unpack the installation instructions
 
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./About_MPW_etc.sit.hqx
 
@@ -176,8 +176,8 @@ is some sort of glue library or something to link with but
 unfortunately I don't really know at the moment.
 
 The "return" key and the "enter" key mean different things to MPW.
-The first just add a line break, the second send the line your 
-pointer is at or the selection you have to the MPW command 
+The first just add a line break, the second send the line your
+pointer is at or the selection you have to the MPW command
 interpreter.
 
 If you mount the GMP source from a Unix netatalk server don't edit or
