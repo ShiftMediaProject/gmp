@@ -106,13 +106,17 @@ the list elsewhere won't be affected."
 	   (list element)))))
 
 
-(defun gmpasm-delete-from-list (list-var element)
-  "(gmpasm-delete-from-list LIST-VAR ELEMENT)
+(defun gmpasm-remove-from-list (list-var element)
+  "(gmpasm-remove-from-list LIST-VAR ELEMENT)
 
-Delete ELEMENT from LIST-VAR, using `delete'.
-This is like `add-to-list', but the element is deleted from the list.
+Remove ELEMENT from LIST-VAR, using `copy-sequence' and `delete'.
+This is vaguely like `add-to-list', but the element is removed from the list.
 The list is copied rather than changed in-place, so references to it elsewhere
-won't be affected."
+aren't affected."
+
+;; Only the portion of the list up to the removed element needs to be
+;; copied, but there's no need to bother arranging that, since this function
+;; is only used for a couple of initializations.
 
   (set list-var (delete element (copy-sequence (symbol-value list-var)))))
 
@@ -158,9 +162,12 @@ best, since it picks up invalid apostrophes in comments inside quotes.")
        (regexp-opt
 	'("deflit" "defreg" "defframe" "defframe_pushl"
 	  "define_not_for_expansion"
-	  "ASM_START" "ASM_END" "PROLOGUE" "EPILOGUE"
+	  "m4_error" "m4_warning"
+	  "ASM_START" "ASM_END"
+	  "PROLOGUE" "PROLOGUE_GP" "MULFUNC_PROLOGUE" "EPILOGUE"
+	  "DATASTART" "DATAEND"
 	  "forloop"
-	  "TEXT" "DATA" "ALIGN" "W32"
+	  "TEXT" "DATA" "ALIGN" "W32" "FLOAT64"
 	  "builtin" "changecom" "changequote" "changeword" "debugfile"
 	  "debugmode" "decr" "define" "defn" "divert" "divnum" "dumpdef"
 	  "errprint" "esyscmd" "eval" "__file__" "format" "gnu" "ifdef"
@@ -212,8 +219,7 @@ the `C' in it is only matched as a whole word, not on something that happens
 to start with `C'.  Also it's only the particular `comment-start' determined
 that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 
-`gmpasm-mode-hook' is run after initializations are complete.
-"
+`gmpasm-mode-hook' is run after initializations are complete."
 
   (interactive)
   (kill-all-local-variables)
@@ -297,16 +303,16 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 	      filladapt-token-conversion-table)
 	
 	;; Numbered bullet points like "2.1" get matched at the start of a
-	;; line when it's really something like "2.1 cycles/limb", so delete
+	;; line when it's really something like "2.1 cycles/limb", so remove
 	;; this from the list.  The regexp for "1.", "2." etc is left
 	;; though.
-	(gmpasm-delete-from-list 'gmpasm-filladapt-token-table
+	(gmpasm-remove-from-list 'gmpasm-filladapt-token-table
 				 '("[0-9]+\\(\\.[0-9]+\\)+[ \t]"
 				   bullet))
 	  
-	;; "%" as a comment prefix interferes with x86 register names
-	;; like %eax, so delete this.
-	(gmpasm-delete-from-list 'gmpasm-filladapt-token-table
+	;; "%" as a comment prefix interferes with register names on some
+	;; CPUs, like %eax on x86, so remove this.
+	(gmpasm-remove-from-list 'gmpasm-filladapt-token-table
 				 '("%+" postscript-comment))
 	
 	(add-to-list 'gmpasm-filladapt-token-match-table
