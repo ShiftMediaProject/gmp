@@ -28,8 +28,8 @@ MA 02111-1307, USA. */
 int 
 mpfr_tan (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 {
-  int precy, m, ok, e, inexact;
-  mpfr_t c;
+  int precy, m, ok, inexact;
+  mpfr_t s, c;
 
   if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
     {
@@ -48,28 +48,19 @@ mpfr_tan (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   precy = MPFR_PREC(y);
   m = precy + _mpfr_ceil_log2 ((double) precy) + ABS(MPFR_EXP(x)) + 13;
 
+  mpfr_init2 (s, m);
   mpfr_init2 (c, m);
 
   do
     {
-      mpfr_cos (c, x, GMP_RNDZ);
-      mpfr_mul (c, c, c, GMP_RNDZ);
-      mpfr_ui_div (c, 1, c, GMP_RNDU);
-      e = MPFR_EXP(c);
-      mpfr_sub_ui (c, c, 1, GMP_RNDN);
-      e = e - MPFR_EXP(c);
-      mpfr_sqrt (c, c, GMP_RNDU);
-      if (mpfr_cmp_ui (x, 0) < 0)
-	mpfr_neg (c, c, GMP_RNDN);
-
-      /* the error on c is at most (2+11*2^e)*ulp(c) <= 2^(e+4)*ulp(c)
-	 = 2^(e+4+EXP(c)-m) = 2^(EXP(c)-err) */
-      e = m - e - 4;
-      ok = (e >= 0) && mpfr_can_round (c, e, GMP_RNDN, rnd_mode, precy);
+      mpfr_sin_cos (s, c, x, GMP_RNDN); /* err <= 1/2 ulp on s and c */
+      mpfr_div (c, s, c, GMP_RNDN);     /* err <= 2 ulps */
+      ok = mpfr_can_round (c, m - 1, GMP_RNDN, rnd_mode, precy);
 
       if (ok == 0)
 	{
 	  m += BITS_PER_MP_LIMB;
+	  mpfr_set_prec (s, m);
 	  mpfr_set_prec (c, m);
 	}
     }
@@ -77,6 +68,7 @@ mpfr_tan (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   inexact = mpfr_set (y, c, rnd_mode);
 
+  mpfr_clear (s);
   mpfr_clear (c);
 
   return inexact;
