@@ -21,9 +21,9 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
-EXTERN(__clz_tab)
 
 ASM_START()
+EXTERN(__clz_tab)
 PROLOGUE_GP(mpn_count_leading_zeros)
 	cmpbge	r31,  r16, r1
 	lda	r3,   __clz_tab
