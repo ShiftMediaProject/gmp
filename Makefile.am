@@ -56,9 +56,9 @@
 # Do this separately for libgmp and libmp, only do it just before a release.
 #
 #	 GMP	    -version-info
-#	release  libgmp      libmp
-#	2.0.x      -           -
-#	3.0      3:0:0       3:0:0
+#	release   libgmp      libmp
+#	 2.0.x      -           -
+#	 3.0      3:0:0       3:0:0
 #
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
@@ -75,9 +75,9 @@ LIBMP_LT_REVISION = 0
 LIBMP_LT_AGE =      0
 
 
-AUTOMAKE_OPTIONS = gnu check-news no-dependencies
+AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
 
-SUBDIRS = mpf mpz mpn mpq tests demos mpbsd
+SUBDIRS = mpn mpz mpf mpq mpbsd tests demos tune
 
 include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 EXTRA_HEADERS = mp.h
@@ -113,8 +113,9 @@ MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/gcd_ui.lo mpz/gcdext.lo mpz/get_d.lo mpz/get_si.lo mpz/get_str.lo \
   mpz/get_ui.lo mpz/getlimbn.lo mpz/hamdist.lo mpz/init.lo mpz/inp_raw.lo \
   mpz/inp_str.lo mpz/invert.lo mpz/ior.lo mpz/iset.lo mpz/iset_d.lo \
-  mpz/iset_si.lo mpz/iset_str.lo mpz/iset_ui.lo mpz/jacobi.lo mpz/lcm.lo \
-  mpz/legendre.lo mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo mpz/mul_ui.lo \
+  mpz/iset_si.lo mpz/iset_str.lo mpz/iset_ui.lo mpz/jacobi.lo \
+  mpz/lcm.lo mpz/legendre.lo \
+  mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo mpz/mul_si.lo mpz/mul_ui.lo \
   mpz/neg.lo mpz/nextprime.lo mpz/out_raw.lo mpz/out_str.lo mpz/perfpow.lo mpz/perfsqr.lo \
   mpz/popcount.lo mpz/pow_ui.lo mpz/powm.lo mpz/powm_ui.lo mpz/pprime_p.lo \
   mpz/random.lo mpz/random2.lo mpz/realloc.lo mpz/remove.lo mpz/root.lo \
@@ -149,7 +150,8 @@ libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
 libgmp_la_DEPENDENCIES = \
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES) -lm
-libgmp_la_LDFLAGS = -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
+libgmp_la_LDFLAGS = \
+  -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
 
 # -lm wanted on libmp_la_LIBADD for the same reason as libgmp
@@ -157,13 +159,14 @@ if WANT_MPBSD
 MPBSD_HEADERS_OPTION = mp.h
 MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
+libmp_la_SOURCES = \
+  assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c stack-alloc.c
 libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJECTS)			    \
-  assert.lo errno.lo memory.lo mp_bpl.lo mp_clz_tab.lo stack-alloc.lo	    \
   mpz/add.lo mpz/clear.lo mpz/init.lo mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo \
   mpz/realloc.lo mpz/set.lo mpz/set_ui.lo mpz/tdiv_r.lo mpz/sub.lo
 libmp_la_LIBADD = $(libmp_la_DEPENDENCIES) -lm
-libmp_la_SOURCES =
-libmp_la_LDFLAGS = -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)
+libmp_la_LDFLAGS = \
+  -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)
 
 
 info_TEXINFOS = gmp.texi
