@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2005-03-18  Torbjorn Granlund  <tege@swox.com>
 
+	* tests/mpz/t-gcd.c (main): Honor command line reps argument.
+
 	* tune/speed.h (SPEED_ROUTINE_MPN_GCD_CALL): Simplify and correct code
 	for generating test operands.
 
