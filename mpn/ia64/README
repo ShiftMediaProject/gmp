@@ -37,7 +37,7 @@ Taken cloop branches seem to insert a bubble into the pipeline most of
 the time on Itanium 1.
 
 Loads to the fp registers bypass the L1 cache and thus get extremely
-long latencies, 9 cycles on the Itanium 1 and 7 cycles on the Itanium 2.
+long latencies, 9 cycles on the Itanium 1 and 6 cycles on the Itanium 2.
 
 The software pipeline stuff using br.ctop instruction causes delays,
 since many issue slots are taken up by instructions with zero
