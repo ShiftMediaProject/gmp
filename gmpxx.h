@@ -5030,10 +5030,21 @@ public:
 	break;
       }
   }
+
+  // gmp_randinit_default
+  gmp_randclass(void (*f)(gmp_randstate_t))
+  { f(state); }
+
+  // gmp_randinit_lc_2exp
   gmp_randclass(void (*f)(gmp_randstate_t, mpz_srcptr,
 			  unsigned long int, unsigned long int),
 		mpz_class z, unsigned long int l1, unsigned long int l2)
   { f(state, z.get_mpz_t(), l1, l2); }
+
+  // gmp_randinit_lc_2exp_size
+  gmp_randclass(int (*f)(gmp_randstate_t, unsigned long int),
+		unsigned long int size)
+  { f(state, size); }
 
   ~gmp_randclass() { gmp_randclear(state); }
 
