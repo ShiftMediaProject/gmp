@@ -70,6 +70,7 @@ FUNCTION (mpz_ptr prod, mpz_srcptr mult,
   sml = MULTIPLICAND_ABS (small_mult);
 
   cy = mpn_mul_1 (pp, PTR(mult), size, sml & GMP_NUMB_MASK);
+#if GMP_NAIL_BITS != 0	/* this conditional just shuts of compiler warnings */
   if (small_mult > GMP_NUMB_MAX)
     {
       pp[size] = cy;
@@ -79,6 +80,7 @@ FUNCTION (mpz_ptr prod, mpz_srcptr mult,
       MPN_NORMALIZE_NOT_ZERO (pp, size);
     }
   else
+#endif
     {
       pp[size] = cy;
       size += cy != 0;
