@@ -4956,6 +4956,9 @@ Currently the single limb calculation doesn't optimize for the small quotients
 that often occur, and this can lead to unusually low values of
 @code{GCDEXT_THRESHOLD}, depending on the CPU.
 
+An analysis of double-limb calculations can be found in Jebelean
+(@pxref{References}).  The code in GMP was developed independently.
+
 
 @node Jacobi Symbol,  , Extended GCD, Greatest Common Divisor Algorithms
 @subsection Jacobi Symbol
@@ -5527,6 +5530,12 @@ ISSAC 97, pp. 339-341.  Technical report available online, @*
 Tudor Jebelean, ``A Generalization of the Binary GCD Algorithm'', ISSAC 93,
 pp. 111-116.  Technical report available online, @*
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1993/93-01.ps.gz}
+
+@item
+Tudor Jebelean, ``A Double-Digit Lehmer-Euclid Algorithm for Finding the GCD
+of Long Integers'', Journal of Symbolic Computation, volume 19, 1995,
+pp. 145-157.  Technical report version available online, @*
+@uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-69.ps.gz}
 
 @item
 Werner Krandick and Tudor Jebelean, ``Bidirectional Exact Integer Division'',
