@@ -1,4 +1,4 @@
-/* Test mpz_fib_ui.
+/* Test mpz_fib_ui and mpz_fib2_ui.
 
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
@@ -28,14 +28,20 @@ MA 02111-1307, USA. */
 
 /* Usage: t-fib_ui [x|num]
 
-   Run with no arguments, testing goes up to the initial value of "limit"
+   Run with no arguments, tests goes up to the initial value of "limit"
    below.  With a number argument tests are carried up that far, or with a
    literal "x" tests are continued without limit (this being only meant for
    development purposes).
 
    The size tests performed are designed to partially replicate what will be
-   going on in mpz_fac_ui.  There are some ASSERTs there, but they're not
-   normally enabled.  */
+   going on in mpz_fib_ui.  There's plenty of ASSERTs there, but of course
+   they're not normally enabled.
+
+   Misfeatures:
+
+   The tests on MPN_FIB2_SIZE are a bit useless, since that macro includes a
+   +2 for the internal purposes of mpn_fib2_ui.  It's probably better to
+   give mpn_fib2_ui a run with assertion checking enabled.  */
 
 
 #define MPZ_FIB_SIZE_FLOAT(n) \
@@ -45,66 +51,81 @@ int
 main (int argc, char *argv[])
 {
   unsigned long  n;
-  unsigned long  limit = MAX (2000, 32*FIB_THRESHOLD);
-  mpz_t          fn, fn1, r;
+  unsigned long  limit = 100 * BITS_PER_MP_LIMB;
+  mpz_t          want_fn, want_fn1, got_fn, got_fn1;
 
   tests_start ();
-
+  mp_trace_base = -16;
   if (argc > 1 && argv[1][0] == 'x')
     limit = ULONG_MAX;
   else if (argc > 1)
     limit = atoi (argv[1]);
 
   /* start at n==0 */
-  mpz_init_set_ui (fn1, 1);  /* F[n-1] */
-  mpz_init_set_ui (fn,  0);  /* F[n]   */
-  mpz_init (r);
+  mpz_init_set_ui (want_fn1, 1);  /* F[-1] */
+  mpz_init_set_ui (want_fn,  0);  /* F[0]   */
+  mpz_init (got_fn);
+  mpz_init (got_fn1);
 
   for (n = 0; n < limit; n++)
     {
-      if (MPZ_FIB_SIZE (n) < MPZ_FIB_SIZE_FLOAT (n))
-        {
-          printf ("MPZ_FIB_SIZE wrong at n=%lu\n", n);
-          printf ("  MPZ_FIB_SIZE        %ld\n", MPZ_FIB_SIZE (n));
-          printf ("  MPZ_FIB_SIZE_FLOAT  %ld\n", MPZ_FIB_SIZE_FLOAT (n));
-          abort ();
-        }
-
-      mpz_fib_ui (r, n);
-
-      if (MPZ_FIB_SIZE_FLOAT (n) < SIZ(r))
+      /* check our float formula seems right */
+      if (MPZ_FIB_SIZE_FLOAT (n) < SIZ(want_fn))
         {
           printf ("MPZ_FIB_SIZE_FLOAT wrong at n=%lu\n", n);
           printf ("  MPZ_FIB_SIZE_FLOAT  %ld\n", MPZ_FIB_SIZE_FLOAT (n));
-          printf ("  SIZ(r)              %d\n", SIZ(r));
+          printf ("  SIZ(want_fn)        %d\n", SIZ(want_fn));
           abort ();
         }
 
-      if (MPZ_FIB_SIZE (n) < SIZ(r))
+      /* check MPN_FIB2_SIZE seems right, compared to actual size and
+         compared to our float formula */
+      if (MPN_FIB2_SIZE (n) < MPZ_FIB_SIZE_FLOAT (n))
         {
-          printf ("MPZ_FIB_SIZE wrong at n=%lu\n", n);
-          printf ("  MPZ_FIB_SIZE  %ld\n", MPZ_FIB_SIZE (n));
-          printf ("  SIZ(r)        %d\n", SIZ(r));
+          printf ("MPN_FIB2_SIZE wrong at n=%lu\n", n);
+          printf ("  MPN_FIB2_SIZE       %ld\n", MPN_FIB2_SIZE (n));
+          printf ("  MPZ_FIB_SIZE_FLOAT  %ld\n", MPZ_FIB_SIZE_FLOAT (n));
+          abort ();
+        }
+      if (MPN_FIB2_SIZE (n) < SIZ(want_fn))
+        {
+          printf ("MPN_FIB2_SIZE wrong at n=%lu\n", n);
+          printf ("  MPN_FIB2_SIZE  %ld\n", MPN_FIB2_SIZE (n));
+          printf ("  SIZ(want_fn)   %d\n", SIZ(want_fn));
           abort ();
         }
 
-      MPZ_CHECK_FORMAT (r);
+      mpz_fib2_ui (got_fn, got_fn1, n);
+      MPZ_CHECK_FORMAT (got_fn);
+      MPZ_CHECK_FORMAT (got_fn1);
+      if (mpz_cmp (got_fn, want_fn) != 0 || mpz_cmp (got_fn1, want_fn1) != 0)
+        {
+          printf ("mpz_fib2_ui(%lu) wrong\n", n);
+          mpz_trace ("want fn ", want_fn);
+          mpz_trace ("got  fn ",  got_fn);
+          mpz_trace ("want fn1", want_fn1);
+          mpz_trace ("got  fn1",  got_fn1);
+          abort ();
+        }
 
-      if (mpz_cmp (r, fn) != 0)
+      mpz_fib_ui (got_fn, n);
+      MPZ_CHECK_FORMAT (got_fn);
+      if (mpz_cmp (got_fn, want_fn) != 0)
         {
           printf ("mpz_fib_ui(%lu) wrong\n", n);
-          printf ("  got  "); mpz_out_str (stdout, 10, r); printf("\n");
-          printf ("  want "); mpz_out_str (stdout, 10, fn); printf("\n");
+          mpz_trace ("want fn", want_fn);
+          mpz_trace ("got  fn", got_fn);
           abort ();
         }
 
-      mpz_add (fn1, fn1, fn);  /* F[n+1] = F[n] + F[n-1] */
-      mpz_swap (fn1, fn);
+      mpz_add (want_fn1, want_fn1, want_fn);  /* F[n+1] = F[n] + F[n-1] */
+      mpz_swap (want_fn1, want_fn);
     }
 
-  mpz_clear (fn1);
-  mpz_clear (fn);
-  mpz_clear (r);
+  mpz_clear (want_fn);
+  mpz_clear (want_fn1);
+  mpz_clear (got_fn);
+  mpz_clear (got_fn1);
 
   tests_end ();
   exit (0);
