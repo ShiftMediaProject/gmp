@@ -1826,6 +1826,9 @@ AC_HEADER_TIME
 # Reasons for testing:
 #   float.h - not in SunOS bundled cc
 #   langinfo.h - X/Open standard only, not in djgpp for instance
+#   locale.h - old systems won't have this
+#   nl_types.h - X/Open standard only, not in djgpp for instance
+#       (usually langinfo.h gives nl_item etc, but not on netbsd 1.4.1)
 #   sys/mman.h - not in Cray Unicos
 #   sys/param.h - not in mingw
 #   sys/processor.h - solaris specific, though also present in macos
@@ -1839,7 +1842,7 @@ AC_HEADER_TIME
 # inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
 # default tests
 #
-AC_CHECK_HEADERS(fcntl.h float.h langinfo.h locale.h sys/mman.h sys/param.h sys/processor.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(fcntl.h float.h langinfo.h locale.h nl_types.h sys/mman.h sys/param.h sys/processor.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # On SunOS, sys/resource.h needs sys/time.h (for struct timeval)
 AC_CHECK_HEADERS(sys/resource.h,,,
