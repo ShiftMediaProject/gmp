@@ -66,7 +66,7 @@ mpn_rawrandom (rp, nbits, s)
   if (shiftcount)
     mpn_lshift (mcopyp, mp, msize, shiftcount);
 
-  nlimbs = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
+  nlimbs = rpsize;
   dstp = rp;
   /* rop = (seed * a + c) % m */
   do

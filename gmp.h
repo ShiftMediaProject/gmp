@@ -125,15 +125,6 @@ typedef enum
   GMP_RAND_ALG_BBS,		/* Blum, Blum, and Shub. */
 } gmp_rand_algorithm;
 
-/* Distribution types for random functions. */
-/* FIXME: Or should we do the distribution distinction by using
-   separate functions? */
-typedef enum
-{
-  GMP_RAND_DIST_DEFAULT = 0,
-  GMP_RAND_DIST_UNIVERSAL = GMP_RAND_DIST_DEFAULT,
-} __gmp_rand_dist;
-
 typedef struct 
 {
   unsigned int bits;		/* Generate 0 <= Z <= 2^bits - 1 */
