@@ -13,29 +13,30 @@
   </h1>
 </center>
 
+<!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  An up-to-date html version of this file is available at
+  This file current as of 18 Feb 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
-<p> This file lists itemized GMP development tasks.  Not all the tasks
+<p> These are itemized GMP development tasks.  Not all the tasks
     listed here are suitable for volunteers, but many of them are.
     Please see the <a href="projects.html">projects file</a> for more
     sizeable projects.
 
 <h4>Correctness and Completeness</h4>
 <ul>
-<li> mpn/generic/get_str.c stores mp_size_t data in several int variables.
-     (It is also really slow.  Perhaps just call mpn_divrem_1.  See also
-     optimization item below.)
-<li> mpf{r,}_random2 incorrectly assumes random() returns enough bits
-     for an mp_exp_t.
+<li> mpn/generic/get_str.c stores <code>mp_size_t</code> data in several int
+     variables.  (It is also really slow.  Perhaps just call
+     <code>mpn_divrem_1</code>.  See also optimization item below.)
+<li> <code>mpf_random2</code> and <code>mpfr_random2</code> incorrectly assume
+     <code>random()</code> returns enough bits for an <code>mp_exp_t</code>.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c:
      <code>mpz_XXX(a,a,a)</code>.
-<li> When printing mpf_t numbers with exponents &gt;2^53 on machines with
-     64-bit <code>mp_exp_t</code>, the precision of
+<li> When printing <code>mpf_t</code> numbers with exponents &gt;2^53 on
+     machines with 64-bit <code>mp_exp_t</code>, the precision of
      <code>__mp_bases[base].chars_per_bit_exactly</code> is insufficient and
      <code>mpf_get_str</code> aborts.  Detect and compensate.  Alternately,
      think seriously about using some sort of fixed-point integer value.
@@ -220,13 +221,13 @@
 <li> UltraSPARC/32: Rewrite <code>mpn_lshift</code>, <code>mpn_rshift</code>.
      Will give 2 cycles/limb.  (Torbjörn has code that just needs to be
      finished.)
-<li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 < 2^16.
+<li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 &lt; 2^16.
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current development code runs at 11
      cycles/limb, which is already very good.  But it should be possible to
      saturate the cache, which will happen at 8 cycles/limb (7.5 for
-     mpn_mul_1).  Write special loops for s2 < 2^32; it should be possible to
-     make them run at about 5 cycles/limb.
+     mpn_mul_1).  Write special loops for s2 &lt; 2^32; it should be possible
+     to make them run at about 5 cycles/limb.
 <li> PPC630: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  Use both integer and floating-point operations,
      possibly two floating-point and one integer limb per loop.  Split operands
@@ -275,7 +276,11 @@
      duplicating code under each conditional.  Don't really want to turn
      everything into a dog's dinner just because Cray don't offer an
      <code>alloca</code>.
-
+<li> Restricted pointers: DEC and Cray C support <code>restrict</code>
+     attributes for pointers.  Maybe judicious use of this could improve the
+     code generated.  Can it be used on the GMP style "same or separate"
+     function parameters, or would it have to be confined to things like
+     <code>TMP_ALLOC</code>ed blocks known to be completely unaliased?
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
   <pre>
 	   if ((x &gt&gt 32) == 0) { x &lt&lt= 32; cnt += 32; }
@@ -363,7 +368,7 @@
      <code>HAVE_NATIVE</code> scheme if/when the code switches to use a
      <code>PROLOGUE</code> style.
 <li> Combine the pa64 and pa64w directories.
-<li> Rename `mips2' => `mips32' and `mips3' => `mips64'.
+<li> Rename `mips2' =&gt; `mips32' and `mips3' =&gt; `mips64'.
 </ul>
 
 <p> When testing, make sure to test at least the following for all out
@@ -466,3 +471,13 @@ near future, but are at least worth thinking about.
 
 </body>
 </html>
+
+<!--
+Local variables:
+eval: (add-hook 'write-file-hooks 'time-stamp)
+time-stamp-start: "This file current as of "
+time-stamp-format: "%:d %3b %:y"
+time-stamp-end: "\\."
+time-stamp-line-limit: 50
+End:
+-->
