@@ -9,13 +9,10 @@
 @end iftex
 @comment %**end of header
 
-@ifinfo
-@format
-START-INFO-DIR-ENTRY
+@dircategory GNU libraries
+@direntry
 * gmp: (gmp.info).               GNU Multiple Precision Arithmetic Library.
-END-INFO-DIR-ENTRY
-@end format
-@end ifinfo
+@end direntry
 
 @c smallbook
 
@@ -286,10 +283,13 @@ and permit code sharing between separate running processes.
 @item @option{--target=CPU-VENDOR-OS}
 
 The build target can be specified in the usual way, for either native or cross
-compilation.  If @option{--target} isn't given, @samp{./configure} builds for
-the host system.  On some systems @samp{./configure} can't distinguish between
-different CPUs in a family, and you should check its guess (run
-@samp{./config.guess} to see it).
+compilation.
+
+If @option{--target} isn't given, @samp{./configure} builds for the host
+system as determined by @samp{./config.guess}.  On some systems it can't
+distinguish between different CPUs in a family, and you should check the
+guess.  Running @samp{./config.guess} on a target system will also show the
+relevant @samp{VENDOR-OS}, if you don't already know what it should be.
 
 In general, if you want a library that runs as fast as possible, you should
 configure GMP for the exact CPU type your system uses.  However, this may mean
@@ -297,9 +297,9 @@ the binaries won't run on older members of the family, and might run slower on
 other members, older or newer.  The best idea is always to build GMP for the
 exact machine type you intend to run it on.
 
-If you need to create binaries that will run on several processors in a family,
-GMP should be configured for the lowest common denominator among them, something
-with which all the desired processors are upwardly compatible.
+If you need to create binaries that will run on several processors in a
+family, GMP should be configured for the lowest common denominator among them,
+something with which all the desired processors are upwardly compatible.
 
 The following CPUs have specific assembly code support.  See
 @file{configure.in} for which @file{mpn} subdirectories get used by each.
@@ -457,6 +457,12 @@ libraries are disabled for targets @samp{hppa*-*-*}.
 Using @samp{sparcv8} or @samp{supersparc} for the target CPU will give a
 significant performance increase on relevant systems.
 
+@item SunOS
+
+@command{/usr/bin/m4} lacks features needed to process @file{.asm} files, and
+instead @samp{./configure} will automatically use @command{/usr/5bin/m4},
+which we believe is always available.  (GNU m4 can always be used if not.)
+
 @item x86 Pentium and PentiumPro
 
 The Intel Pentium P5 code is good for its intended P5, but quite slow when run
@@ -506,11 +512,6 @@ and @file{mpf/get_d.c}, and causes two corresponding tests to fail.  (You can
 @command{cd} to the @file{mpz} directory to run @samp{make check} there to
 test the rest of the build.)  Use GCC instead if you plan to use the function
 @code{mpq_get_d}.
-
-@command{/usr/bin/m4} lacks features needed to process @file{.asm} files.
-Either the SysV @command{/usr/5bin/m4} or GNU @command{m4} should be used
-instead.  On the @samp{./configure} command line use @samp{M4=/usr/5bin/m4},
-or the equivalent for wherever GNU @command{m4} is installed.
 
 The setting for @code{GSYM_PREFIX} in @file{config.m4} may be incorrectly
 determined when using the native @command{grep}, leading at link-time to
@@ -1081,6 +1082,7 @@ Set @var{rop} to @var{op1} @minus{} @var{op2}.
 @end deftypefun
 
 @deftypefun void mpz_mul (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+@deftypefunx void mpz_mul_si (mpz_t @var{rop}, mpz_t @var{op1}, long int @var{op2})
 @deftypefunx void mpz_mul_ui (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
 @ifnottex
 Set @var{rop} to @var{op1} times @var{op2}.
@@ -1897,6 +1899,11 @@ Set the value of @var{rop} to @var{op1}/@var{op2}.  Note that if @var{op1} and
 @code{mpq_canonicalize} before any operations are performed on @var{rop}.
 @end deftypefun
 
+@deftypefun void mpq_swap (mpq_t @var{rop1}, mpq_t @var{rop2})
+Swap the values @var{rop1} and @var{rop2} efficiently.
+@end deftypefun
+
+
 @node Assigning Rationals, Comparing Rationals, Initializing Rationals, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Arithmetic Functions
@@ -2216,6 +2223,10 @@ White space is allowed in the string, and is simply ignored.
 
 This function returns 0 if the entire string up to the '\0' is a valid number
 in base @var{base}.  Otherwise it returns @minus{}1.
+@end deftypefun
+
+@deftypefun void mpf_swap (mpf_t @var{rop1}, mpf_t @var{rop2})
+Swap the values @var{rop1} and @var{rop2} efficiently.
 @end deftypefun
 
 
@@ -2731,15 +2742,54 @@ Use @code{mpn_divrem} in its stead.}
 Use @code{mpn_divrem_1} in its stead.}
 @end deftypefun
 
-@deftypefun mp_limb_t mpn_divexact_by3 (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, mp_size_t @var{size})
+@deftypefn Macro mp_limb_t mpn_divexact_by3 (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{size}})
+@deftypefnx Function mp_limb_t mpn_divexact_by3c (mp_limb_t *@var{rp}, mp_limb_t *@var{sp}, @w{mp_size_t @var{size}}, mp_limb_t @var{carry})
 Divide @{@var{sp}, @var{size}@} by 3, expecting it to divide exactly, and
-writing the quotient to @{@var{rp}, @var{size}@}.  If 3 divides exactly, the
-return value is zero and the quotient is correct.  If not, the return value is
-non-zero and the quotient won't be anything useful.
+writing the result to @{@var{rp}, @var{size}@}.  If 3 divides exactly, the
+return value is zero and the result is the quotient.  If not, the return value
+is non-zero and the result won't be anything useful.
 
-This routine uses a multiply-by-inverse and will be faster than
+@code{mpn_divexact_by3c} takes an initial carry parameter, which can be the
+return value from a previous call, so a large calculation can be done piece by
+piece.  @code{mpn_divexact_by3} is simply a macro calling
+@code{mpn_divexact_by3c} with a 0 carry parameter.
+
+These routines use a multiply-by-inverse and will be faster than
 @code{mpn_divrem_1} on CPUs with fast multiplication but slow division.
-@end deftypefun
+
+The source @math{a}, result @math{q}, size @math{n}, initial carry @math{i},
+and return value @math{c} satisfy
+@tex
+$c b^n + a - i = 3q$,
+@end tex
+@ifnottex
+@math{c*b^n + a-i = 3*q},
+@end ifnottex
+where @math{b} is the size of a limb
+@tex
+($2^{32}$ or $2^{64}$).
+@end tex
+@ifnottex
+(@math{2^32} or @math{2^64}).
+@end ifnottex
+@math{c} is always 0, 1 or 2, and the initial carry must also be 0, 1 or 2
+(these are both borrows really).  When @math{c=0}, clearly @math{q=(a-i)/3}.
+When
+@tex
+$c \neq 0$,
+the remainder $(a-i) \, mod \, 3$
+@end tex
+@ifnottex
+@math{c!=0}, the remainder @math{(a-i) mod 3}
+@end ifnottex
+is given by @math{3-c}, because
+@tex
+$b \equiv 1 \, mod \, 3$.
+@end tex
+@ifnottex
+@math{b @equiv{} 1 mod 3}.
+@end ifnottex
+@end deftypefn
 
 @deftypefun mp_limb_t mpn_mod_1 (mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t @var{s2limb})
 Divide @{@var{s1p}, @var{s1size}@} by @var{s2limb}, and return the remainder.
@@ -2822,17 +2872,15 @@ must be different from 0.
 
 @deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2size}, mp_limb_t *@var{s1p}, mp_size_t @var{s1size}, mp_limb_t *@var{s2p}, mp_size_t @var{s2size})
 Compute the greatest common divisor of @{@var{s1p}, @var{s1size}@} and
-@{@var{s2p}, @var{s2size}@}, and store it at @var{r1p}.  Write the first
-cofactor at @var{r2p}.  Both source operands are clobbered.
+@{@var{s2p}, @var{s2size}@}.  Store the gcd at @var{r1p} and return its size
+in limbs.  Write the first cofactor at @var{r2p} and store its size in
+*@var{r2size}.  If the cofactor is negative, *@var{r2size} is negative and
+@var{r2p} is the absolute value of the cofactor.
 
-@{@var{s1p}, @var{s1size}@} must be greater or equal to @{@var{s2p},
-@var{s2size}@}.  Neither operand may equal 0.
-
-The size and sign of the first cofactor are written at *@var{r2size}; the
-actual size of the cofactor is the absolute value of *@var{r2size}; the sign
-of the cofactor is negative iff *@var{r2size} is negative.
-
-The size in limbs of the greatest common divisor is returned.
+@{@var{s1p}, @var{s1size}@} must be greater than or equal to @{@var{s2p},
+@var{s2size}@}.  Neither operand may equal 0.  Both source operands are
+destroyed, plus one limb past the end of each, ie. @{@var{s1p},
+@var{s1size}+1@} and @{@var{s2p}, @var{s2size}+1@}.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{size})
