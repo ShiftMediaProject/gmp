@@ -1,3 +1,11 @@
+2000-11-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/t-fdiv.c: Analogous changes as made 2000-11-12 to t-mul.c.
+	* mpz/tests/t-tdiv_ui.c: Likewise.
+	* mpz/tests/t-fdiv_ui.c: Likewise.
+	* mpz/tests/t-sqrtrem.c: Likewise.
+	* mpz/tests/t-gcd.c: Likewise.
+
 2000-11-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/Makeasm.am: New file, splitting out assembler rules.
@@ -21,7 +29,7 @@
 
 2000-11-13  Torbjorn Granlund  <tege@swox.com>
 
-	* mpz/tests/t-mul.c: Don't #include urandom.h.
+	* mpz/tests/t-mul.c: Remove #include urandom.h.
 	* mpz/tests/t-tdiv.c: Likewise.
 
 	* configure.in [SPEED_CYCLECOUNTER_OBJS switch]:
