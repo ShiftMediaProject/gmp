@@ -28,6 +28,18 @@ EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm hppa2w.asm \
   ia64.asm powerpc.asm powerpc64.asm many.pl
 noinst_HEADERS = speed.h
 
+# Prefer -static on the speed and tune programs, since that can avoid
+# overheads of shared library linkages on some systems.  Libtool tends to
+# botch -static if configured with --disable-static, perhaps reasonably
+# enough.  In any event under --disable-static the only choice is a dynamic
+# link so there's no point in -static.
+#
+if ENABLE_STATIC
+STATIC = -static
+else
+STATIC =
+endif
+
 
 EXTRA_LTLIBRARIES = libspeed.la
 
@@ -44,7 +56,7 @@ libspeed_la_SOURCES =							\
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) \
   $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(LIBM)
-libspeed_la_LDFLAGS = -static
+libspeed_la_LDFLAGS = $(STATIC)
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
@@ -67,18 +79,18 @@ DEPENDENCIES = libspeed.la
 LDADD = $(DEPENDENCIES)
 
 speed_SOURCES = speed.c
-speed_LDFLAGS = -static
+speed_LDFLAGS = $(STATIC)
 
 speed_dynamic_SOURCES = speed.c
 
 speed_ext_SOURCES = speed-ext.c
-speed_ext_LDFLAGS = -static
+speed_ext_LDFLAGS = $(STATIC)
 
 tuneup_SOURCES = tuneup.c
 nodist_tuneup_SOURCES = sqr_basecase.c $(TUNE_MPN_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES)
-tuneup_LDFLAGS = -static
+tuneup_LDFLAGS = $(STATIC)
 
 
 tune:
