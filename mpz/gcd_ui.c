@@ -1,6 +1,6 @@
 /* mpz_gcd_ui -- Calculate the greatest common divisior of two integers.
 
-Copyright (C) 1994, 1996, 1999 Free Software Foundation, Inc.
+Copyright (C) 1994, 1996, 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,6 +19,7 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdio.h> /* for NULL */
 #include "gmp.h"
 #include "gmp-impl.h"
 
