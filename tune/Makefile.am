@@ -25,6 +25,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_srcdir)/ansi2knr
 INCLUDES = -I$(top_srcdir)
 
 EXTRA_DIST = rdtsc.asm
+noinst_HEADERS = speed.h
 
 if HAVE_PENTIUM_RDTSC
 PENTIUM_RDTSC_OBJ = rdtsc.lo
@@ -42,13 +43,18 @@ LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
 
 EXTRA_PROGRAMS = speed tuneup
 
+allprogs: $(EXTRA_PROGRAMS)
+
 tuneup_SOURCES = tuneup.c
 tuneup_DEPENDENCIES = libspeed.la libgmptune.a
 tuneup_LDADD = $(tuneup_DEPENDENCIES) -lm
 
-# Force sqr_basecase.h to be built ready for tuneup.c, using DEPENDENCIES
-# etc doesn't work when ansi2knr gets run
-tuneup.c: sqr_basecase.h
+# Don't know how to get tuneup$U.lo to depend on sqr_basecase.h, so just do
+# an explicit make of it.  A plain "make tuneup" will fail if used directly.
+tune:
+	$(MAKE) $(AM_MAKEFLAGS) sqr_basecase.h tuneup
+	./tuneup
+
 
 speed_SOURCES = speed.c
 
@@ -142,9 +148,6 @@ bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n.c
 tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr.c
 	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/tdiv_qr.c
 
-
-tune: tuneup
-	./tuneup
 
 
 
