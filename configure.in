@@ -897,9 +897,9 @@ case $host in
 
     case $host in
       POWERPC64_PATTERN)
-        # On AIX a true 64-bit ABI is available.
         case $host in
           *-*-aix*)
+            # On AIX a true 64-bit ABI is available.
             # Need -Wc to pass object type flags through to the linker.
             abilist="aix64 $abilist"
             cclist_aix64="gcc xlc"
@@ -918,7 +918,11 @@ case $host in
             cyclecounter_size_aix64=0
             ;;
           *-*-darwin*)
-	    abilist="mode32 mode64"
+            # On Darwin we can use 64-bit instructions with a longlong limb,
+            # but the chip still in 32-bit mode.
+            # In theory this can be used on any OS which knows how to save
+            # 64-bit registers in a context switch.
+	    abilist="mode32 $abilist"
 	    cclist_mode32="gcc"
 	    gcc_mode32_cflags="-O3 -mpowerpc64"
 	    path_mode32="powerpc64/mode32 powerpc64"
