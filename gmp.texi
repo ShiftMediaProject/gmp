@@ -839,6 +839,17 @@ preprocessors won't accept all the flags the compiler does.  Preprocessing is
 done separately in some configure tests, and in the @samp{ansi2knr} support
 for K&R compilers.
 
+@item @option{CC_FOR_BUILD}
+Some build-time programs are compiled and run to generate host-specific data
+tables.  @samp{CC_FOR_BUILD} is the compiler used for this.  It doesn't need
+to be in any particular ABI or mode, it merely needs to generate executables
+that can run.  The default is to try the selected @samp{CC} and some likely
+candidates such as @samp{cc} and @samp{gcc}, looking for something that works.
+
+No flags are used with @samp{CC_FOR_BUILD} because a simple invocation like
+@samp{cc foo.c} should be enough.  If some particular options are required
+they can be included as for instance @samp{CC_FOR_BUILD="cc -whatever"}.
+
 @item C++ Support, @option{--enable-cxx}
 @cindex C++ support
 C++ support in GMP can be enabled with @samp{--enable-cxx}, in which case a
@@ -980,9 +991,13 @@ can specify a different path.  Normally this is completely unnecessary.
 
 @item Documentation
 @cindex Documentation formats
-The document you're now reading is @file{gmp.texi}.  The usual automake
-targets are available to make PostScript @file{gmp.ps} and/or DVI
-@file{gmp.dvi}.
+The source for the document you're now reading is @file{gmp.texi}, in Texinfo
+format (@pxref{Top, The GNU documentation format, Overview, texinfo,
+Texinfo}).
+
+Info format @samp{gmp.info} is included in the distribution.  The usual
+automake targets are available to make PostScript @file{gmp.ps} and DVI
+@file{gmp.dvi} (these will require various @TeX{} and Texinfo tools).
 
 HTML can be produced with @samp{makeinfo --html}, see @ref{makeinfo
 html,Generating HTML,Generating HTML,texinfo,Texinfo}.  Or alternately
@@ -1150,7 +1165,7 @@ support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
 
 @sp 1
 @need 1000
-@item PowerPC 64 (@samp{powerpc64*})
+@item PowerPC 64 (@samp{powerpc64*}, @samp{powerpc620}, @samp{powerpc630})
 @cindex PowerPC
 @table @asis
 @item @samp{ABI=aix64}
@@ -1177,12 +1192,13 @@ for applications.
 
 @sp 1
 @need 1000
-@item Sparc V9 (@samp{sparcv9} and @samp{ultrasparc*})
+@item Sparc V9 (@samp{sparc64}, @samp{sparcv9}, @samp{ultrasparc*})
 @cindex Sparc V9
 @table @asis
 @item @samp{ABI=64}
-The 64-bit V9 ABI is available on Solaris 2.7 and up, and on GNU/Linux.  GCC
-2.95 or up, or Sun @command{cc} is required.  Applications must be compiled
+The 64-bit V9 ABI is available on Solaris 2.7 and up (when the kernel is in
+64-bit mode), and on the sparc64 ports of NetBSD and OpenBSD.  GCC 3.2 or up,
+or Sun @command{cc} is required.  On Solaris applications must be compiled
 with
 
 @example
@@ -1190,13 +1206,14 @@ gcc  -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9
 cc   -xarch=v9
 @end example
 
+On the BSD systems no special options are required, since 64-bits is the only
+ABI available.
+
 @item @samp{ABI=32}
-On Solaris 2.6 and earlier, and on Solaris 2.7 with the kernel in 32-bit mode,
-only the plain V8 32-bit ABI can be used, since the kernel doesn't save all
-registers.  GMP still uses as much of the V9 ISA as it can in these
-circumstances.  No special compiler options are required for applications,
-though using something like the following requesting V9 code within the V8 ABI
-is recommended.
+For the basic 32-bit ABI, GMP still uses as much of the V9 ISA as it can.  In
+the Sun documentation this combination is known as ``v8plus''.  No special
+compiler options are required for applications, though using something like
+the following is recommended.
 
 @example
 gcc  -mv8plus
@@ -1207,9 +1224,12 @@ cc   -xarch=v8plus
 @end table
 
 Don't be confused by the names of these sparc @samp{-m} and @samp{-x} options,
-they're called @samp{arch} but they effectively control the ABI.
+they're called @samp{arch} but they effectively control both ABI and ISA.
 
-On Solaris 2.7 with the kernel in 32-bit-mode, a normal native build will
+On Solaris 2.6 and earlier only @samp{ABI=32} is available since the kernel
+doesn't save all registers.
+
+On Solaris 2.7 with the kernel in 32-bit mode, a normal native build will
 reject @samp{ABI=64} because the resulting executables won't run.
 @samp{ABI=64} can still be built if desired by making it look like a
 cross-compile, for example
@@ -1232,12 +1252,16 @@ distribution.
 @cindex Libtool versioning
 @cindex Shared library versioning
 Libtool is used to build the library and @samp{-version-info} is set
-appropriately, having started from @samp{3:0:0} in GMP 3.0.  The GMP 4 series
-will be upwardly binary compatible in each release and will be upwardly binary
-compatible with all of the GMP 3 series.  Additional function interfaces may
-be added in each release, so on systems where libtool versioning is not fully
-checked by the loader an auxiliary mechanism may be needed to express that a
-dynamic linked application depends on a new enough GMP.
+appropriately, having started from @samp{3:0:0} in GMP 3.0 (@pxref{Versioning,
+Library interface versions, Library interface versions, libtool, GNU
+Libtool}).
+
+The GMP 4 series will be upwardly binary compatible in each release and will
+be upwardly binary compatible with all of the GMP 3 series.  Additional
+function interfaces may be added in each release, so on systems where libtool
+versioning is not fully checked by the loader an auxiliary mechanism may be
+needed to express that a dynamic linked application depends on a new enough
+GMP.
 
 An auxiliary mechanism may also be needed to express that @file{libgmpxx.la}
 (from @option{--enable-cxx}, @pxref{Build Options}) requires @file{libgmp.la}
@@ -1394,8 +1418,8 @@ build, since the MMX code that's present is there because it's faster than the
 corresponding plain integer code.  The same applies to SSE2.
 
 Old versions of @samp{gas} don't support MMX instructions, in particular
-version 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately
-there's no newer assembler for that system).
+version 1.92.3 that comes with FreeBSD 2.2.8 or the more recent OpenBSD 3.1
+doesn't.
 
 Solaris 2.6 and 2.7 @command{as} generate incorrect object code for register
 to register @code{movq} instructions, and so can't be used for MMX code.
@@ -1479,11 +1503,15 @@ Either use GNU Make, or as a workaround remove
 build work, but if any recompiling is done @file{libgmp.la} might not be
 rebuilt).
 
-@item MacOS X and GCC
+@item MacOS X
 @cindex MacOS X
-Libtool currently only knows how to create shared libraries with the native
-@command{cc} (which is a modified GCC), not a plain GCC.  A static-only build
-should work though (@samp{--disable-shared}).
+Libtool currently only knows how to create shared libraries on MacOS X using
+the native @command{cc} (which is a modified GCC), not a plain GCC.  A
+static-only build should work though (@samp{--disable-shared}).
+
+Also, libtool currently cannot build C++ shared libraries on MacOS X, so if
+@samp{--enable-cxx} is desired then @samp{--disable-shared} must be used.
+Hopefully this will be fixed in the future.
 
 @item NeXT prior to 3.3
 @cindex NeXT
