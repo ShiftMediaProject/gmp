@@ -21,16 +21,23 @@ MA 02111-1307, USA. */
 
 #ifndef __GMP_H__
 
-#ifndef __GNU_MP__
+#ifndef __GNU_MP__		/* to allow inclusion of both gmp.h and mp.h */
 #define __GNU_MP__ 2
 #define __need_size_t
 #include <stddef.h>
 #undef __need_size_t
 
+#if defined (mips__) && defined (_ABIN32)
+/* Force the use of 64-bit limbs for all 64-bit MIPS CPUs if ABI permits.  */
+#define _LONG_LONG_LIMB
+#endif
+
 #if defined (__STDC__) || defined (__cplusplus)
 #define __gmp_const const
+#define __gmp_signed signed
 #else
 #define __gmp_const
+#define __gmp_signed
 #endif
 
 #if defined (__GNUC__)
@@ -65,55 +72,32 @@ typedef __gmp_const mp_limb_t *	mp_srcptr;
 typedef long int		mp_size_t;
 typedef long int		mp_exp_t;
 
-#ifndef __MP_SMALL__
 typedef struct
 {
+#if ! GMP_SMALL
   int _mp_alloc;		/* Number of *limbs* allocated and pointed
-				   to by the D field.  */
-  int _mp_size;			/* abs(SIZE) is the number of limbs
-				   the last field points to.  If SIZE
-				   is negative this is a negative
-				   number.  */
-  mp_limb_t *_mp_d;		/* Pointer to the limbs.  */
-} __mpz_struct;
+				   to by the _mp_d field.  */
+  int _mp_size;			/* abs(_mp_size) is the number of limbs the
+				   last field points to.  If _mp_size is
+				   negative this is a negative number.  */
 #else
-typedef struct
-{
-  short int _mp_alloc;		/* Number of *limbs* allocated and pointed
-				   to by the D field.  */
-  short int _mp_size;		/* abs(SIZE) is the number of limbs
-				   the last field points to.  If SIZE
-				   is negative this is a negative
-				   number.  */
+  int _mp_alloc:16;		/* Number of *limbs* allocated and pointed
+				   to by the _mp_d field.  */
+  __gmp_signed int _mp_size:16;	/* abs(_mp_size) is the number of limbs the
+				   last field points to.  If _mp_size is
+				   negative this is a negative number.  */
+#endif
   mp_limb_t *_mp_d;		/* Pointer to the limbs.  */
 } __mpz_struct;
-#endif
 #endif /* __GNU_MP__ */
 
-/* User-visible types.  */
 typedef __mpz_struct MP_INT;
 typedef __mpz_struct mpz_t[1];
 
-/* Structure for rational numbers.  Zero is represented as 0/any, i.e.
-   the denominator is ignored.  Negative numbers have the sign in
-   the numerator.  */
 typedef struct
 {
   __mpz_struct _mp_num;
   __mpz_struct _mp_den;
-#if 0
-  int _mp_num_alloc;		/* Number of limbs allocated
-				   for the numerator.  */
-  int _mp_num_size;		/* The absolute value of this field is the
-				   length of the numerator; the sign is the
-				   sign of the entire rational number.  */
-  mp_ptr _mp_num;		/* Pointer to the numerator limbs.  */
-  int _mp_den_alloc;		/* Number of limbs allocated
-				   for the denominator.  */
-  int _mp_den_size;		/* Length of the denominator.  (This field
-				   should always be positive.) */
-  mp_ptr _mp_den;		/* Pointer to the denominator limbs.  */
-#endif
 } __mpq_struct;
 
 typedef __mpq_struct MP_RAT;
@@ -121,21 +105,31 @@ typedef __mpq_struct mpq_t[1];
 
 typedef struct
 {
+#if ! GMP_SMALL
   int _mp_prec;			/* Max precision, in number of `mp_limb_t's.
 				   Set by mpf_init and modified by
-				   mpf_set_prec.  The area pointed to
-				   by the `d' field contains `prec' + 1
-				   limbs.  */
-  int _mp_size;			/* abs(SIZE) is the number of limbs
-				   the last field points to.  If SIZE
-				   is negative this is a negative
-				   number.  */
+				   mpf_set_prec.  The area pointed to by the
+				   _mp_d field contains `prec' + 1 limbs.  */
+  int _mp_size;			/* abs(_mp_size) is the number of limbs the
+				   last field points to.  If _mp_size is
+				   negative this is a negative number.  */
   mp_exp_t _mp_exp;		/* Exponent, in the base of `mp_limb_t'.  */
+#else
+  int _mp_prec:16;		/* Max precision, in number of `mp_limb_t's.
+				   Set by mpf_init and modified by
+				   mpf_set_prec.  The area pointed to by the
+				   _mp_d field contains `prec' + 1 limbs.  */
+  __gmp_signed int _mp_size:16;	/* abs(_mp_size) is the number of limbs the
+				   last field points to.  If _mp_size is
+				   negative this is a negative number.  */
+  __gmp_signed int _mp_exp:32;	/* Exponent, in the base of `mp_limb_t'.  */
+#endif
   mp_limb_t *_mp_d;		/* Pointer to the limbs.  */
 } __mpf_struct;
 
 /* typedef __mpf_struct MP_FLOAT; */
 typedef __mpf_struct mpf_t[1];
+
 
 /* Types for function declarations in gmp files.  */
 /* ??? Should not pollute user name space with these ??? */
@@ -175,6 +169,198 @@ extern __gmp_const int mp_bits_per_limb;
 
 /**************** Integer (i.e. Z) routines.  ****************/
 
+#if GMP_SMALL
+#define _mpz_realloc __gmpzs_realloc
+#define mpz_realloc __gmpzs_realloc
+#define mpz_abs __gmpzs_abs
+#define mpz_add __gmpzs_add
+#define mpz_add_ui __gmpzs_add_ui
+#define mpz_and __gmpzs_and
+#define mpz_array_init __gmpzs_array_init
+#define mpz_cdiv_q __gmpzs_cdiv_q
+#define mpz_cdiv_q_ui __gmpzs_cdiv_q_ui
+#define mpz_cdiv_qr __gmpzs_cdiv_qr
+#define mpz_cdiv_qr_ui __gmpzs_cdiv_qr_ui
+#define mpz_cdiv_r __gmpzs_cdiv_r
+#define mpz_cdiv_r_ui __gmpzs_cdiv_r_ui
+#define mpz_cdiv_ui __gmpzs_cdiv_ui
+#define mpz_clear __gmpzs_clear
+#define mpz_clrbit __gmpzs_clrbit
+#define mpz_cmp __gmpzs_cmp
+#define _mpz_cmp_si __gmpzs_cmp_si
+#define _mpz_cmp_ui __gmpzs_cmp_ui
+#define mpz_com __gmpzs_com
+#define mpz_divexact __gmpzs_divexact
+#define mpz_fac_ui __gmpzs_fac_ui
+#define mpz_fdiv_q __gmpzs_fdiv_q
+#define mpz_fdiv_q_2exp __gmpzs_fdiv_q_2exp
+#define mpz_fdiv_q_ui __gmpzs_fdiv_q_ui
+#define mpz_fdiv_qr __gmpzs_fdiv_qr
+#define mpz_fdiv_qr_ui __gmpzs_fdiv_qr_ui
+#define mpz_fdiv_r __gmpzs_fdiv_r
+#define mpz_fdiv_r_2exp __gmpzs_fdiv_r_2exp
+#define mpz_fdiv_r_ui __gmpzs_fdiv_r_ui
+#define mpz_fdiv_ui __gmpzs_fdiv_ui
+#define mpz_gcd __gmpzs_gcd
+#define mpz_gcd_ui __gmpzs_gcd_ui
+#define mpz_gcdext __gmpzs_gcdext
+#define mpz_get_d __gmpzs_get_d
+#define mpz_get_si __gmpzs_get_si
+#define mpz_get_str __gmpzs_get_str
+#define mpz_get_ui __gmpzs_get_ui
+#define mpz_getlimbn __gmpzs_getlimbn
+#define mpz_hamdist __gmpzs_hamdist
+#define mpz_init __gmpzs_init
+#define mpz_inp_binary __gmpzs_inp_binary
+#define mpz_inp_raw __gmpzs_inp_raw
+#define mpz_inp_str __gmpzs_inp_str
+#define mpz_init_set __gmpzs_init_set
+#define mpz_init_set_d __gmpzs_init_set_d
+#define mpz_init_set_si __gmpzs_init_set_si
+#define mpz_init_set_str __gmpzs_init_set_str
+#define mpz_init_set_ui __gmpzs_init_set_ui
+#define mpz_invert __gmpzs_invert
+#define mpz_ior __gmpzs_ior
+#define mpz_jacobi __gmpzs_jacobi
+#define mpz_legendre __gmpzs_legendre
+#define mpz_mod __gmpzs_mod
+#define mpz_mul __gmpzs_mul
+#define mpz_mul_2exp __gmpzs_mul_2exp
+#define mpz_mul_ui __gmpzs_mul_ui
+#define mpz_neg __gmpzs_neg
+#define mpz_out_binary __gmpzs_out_binary
+#define mpz_out_raw __gmpzs_out_raw
+#define mpz_out_str __gmpzs_out_str
+#define mpz_perfect_square_p __gmpzs_perfect_square_p
+#define mpz_popcount __gmpzs_popcount
+#define mpz_pow_ui __gmpzs_pow_ui
+#define mpz_powm __gmpzs_powm
+#define mpz_powm_ui __gmpzs_powm_ui
+#define mpz_probab_prime_p __gmpzs_probab_prime_p
+#define mpz_random __gmpzs_random
+#define mpz_random2 __gmpzs_random2
+#define mpz_scan0 __gmpzs_scan0
+#define mpz_scan1 __gmpzs_scan1
+#define mpz_set __gmpzs_set
+#define mpz_set_d __gmpzs_set_d
+#define mpz_set_f __gmpzs_set_f
+#define mpz_set_q __gmpzs_set_q
+#define mpz_set_si __gmpzs_set_si
+#define mpz_set_str __gmpzs_set_str
+#define mpz_set_ui __gmpzs_set_ui
+#define mpz_setbit __gmpzs_setbit
+#define mpz_size __gmpzs_size
+#define mpz_sizeinbase __gmpzs_sizeinbase
+#define mpz_sqrt __gmpzs_sqrt
+#define mpz_sqrtrem __gmpzs_sqrtrem
+#define mpz_sub __gmpzs_sub
+#define mpz_sub_ui __gmpzs_sub_ui
+#define mpz_tdiv_q __gmpzs_tdiv_q
+#define mpz_tdiv_q_2exp __gmpzs_tdiv_q_2exp
+#define mpz_tdiv_q_ui __gmpzs_tdiv_q_ui
+#define mpz_tdiv_qr __gmpzs_tdiv_qr
+#define mpz_tdiv_qr_ui __gmpzs_tdiv_qr_ui
+#define mpz_tdiv_r __gmpzs_tdiv_r
+#define mpz_tdiv_r_2exp __gmpzs_tdiv_r_2exp
+#define mpz_tdiv_r_ui __gmpzs_tdiv_r_ui
+#define mpz_ui_pow_ui __gmpzs_ui_pow_ui
+#else /* ! GMP_SMALL */
+#define _mpz_realloc __gmpzl_realloc
+#define mpz_realloc __gmpzl_realloc
+#define mpz_abs __gmpzl_abs
+#define mpz_add __gmpzl_add
+#define mpz_add_ui __gmpzl_add_ui
+#define mpz_and __gmpzl_and
+#define mpz_array_init __gmpzl_array_init
+#define mpz_cdiv_q __gmpzl_cdiv_q
+#define mpz_cdiv_q_ui __gmpzl_cdiv_q_ui
+#define mpz_cdiv_qr __gmpzl_cdiv_qr
+#define mpz_cdiv_qr_ui __gmpzl_cdiv_qr_ui
+#define mpz_cdiv_r __gmpzl_cdiv_r
+#define mpz_cdiv_r_ui __gmpzl_cdiv_r_ui
+#define mpz_cdiv_ui __gmpzl_cdiv_ui
+#define mpz_clear __gmpzl_clear
+#define mpz_clrbit __gmpzl_clrbit
+#define mpz_cmp __gmpzl_cmp
+#define _mpz_cmp_si __gmpzl_cmp_si
+#define _mpz_cmp_ui __gmpzl_cmp_ui
+#define mpz_com __gmpzl_com
+#define mpz_divexact __gmpzl_divexact
+#define mpz_fac_ui __gmpzl_fac_ui
+#define mpz_fdiv_q __gmpzl_fdiv_q
+#define mpz_fdiv_q_2exp __gmpzl_fdiv_q_2exp
+#define mpz_fdiv_q_ui __gmpzl_fdiv_q_ui
+#define mpz_fdiv_qr __gmpzl_fdiv_qr
+#define mpz_fdiv_qr_ui __gmpzl_fdiv_qr_ui
+#define mpz_fdiv_r __gmpzl_fdiv_r
+#define mpz_fdiv_r_2exp __gmpzl_fdiv_r_2exp
+#define mpz_fdiv_r_ui __gmpzl_fdiv_r_ui
+#define mpz_fdiv_ui __gmpzl_fdiv_ui
+#define mpz_gcd __gmpzl_gcd
+#define mpz_gcd_ui __gmpzl_gcd_ui
+#define mpz_gcdext __gmpzl_gcdext
+#define mpz_get_d __gmpzl_get_d
+#define mpz_get_si __gmpzl_get_si
+#define mpz_get_str __gmpzl_get_str
+#define mpz_get_ui __gmpzl_get_ui
+#define mpz_getlimbn __gmpzl_getlimbn
+#define mpz_hamdist __gmpzl_hamdist
+#define mpz_init __gmpzl_init
+#define mpz_inp_binary __gmpzl_inp_binary
+#define mpz_inp_raw __gmpzl_inp_raw
+#define mpz_inp_str __gmpzl_inp_str
+#define mpz_init_set __gmpzl_init_set
+#define mpz_init_set_d __gmpzl_init_set_d
+#define mpz_init_set_si __gmpzl_init_set_si
+#define mpz_init_set_str __gmpzl_init_set_str
+#define mpz_init_set_ui __gmpzl_init_set_ui
+#define mpz_invert __gmpzl_invert
+#define mpz_ior __gmpzl_ior
+#define mpz_jacobi __gmpzl_jacobi
+#define mpz_legendre __gmpzl_legendre
+#define mpz_mod __gmpzl_mod
+#define mpz_mul __gmpzl_mul
+#define mpz_mul_2exp __gmpzl_mul_2exp
+#define mpz_mul_ui __gmpzl_mul_ui
+#define mpz_neg __gmpzl_neg
+#define mpz_out_binary __gmpzl_out_binary
+#define mpz_out_raw __gmpzl_out_raw
+#define mpz_out_str __gmpzl_out_str
+#define mpz_perfect_square_p __gmpzl_perfect_square_p
+#define mpz_popcount __gmpzl_popcount
+#define mpz_pow_ui __gmpzl_pow_ui
+#define mpz_powm __gmpzl_powm
+#define mpz_powm_ui __gmpzl_powm_ui
+#define mpz_probab_prime_p __gmpzl_probab_prime_p
+#define mpz_random __gmpzl_random
+#define mpz_random2 __gmpzl_random2
+#define mpz_scan0 __gmpzl_scan0
+#define mpz_scan1 __gmpzl_scan1
+#define mpz_set __gmpzl_set
+#define mpz_set_d __gmpzl_set_d
+#define mpz_set_f __gmpzl_set_f
+#define mpz_set_q __gmpzl_set_q
+#define mpz_set_si __gmpzl_set_si
+#define mpz_set_str __gmpzl_set_str
+#define mpz_set_ui __gmpzl_set_ui
+#define mpz_setbit __gmpzl_setbit
+#define mpz_size __gmpzl_size
+#define mpz_sizeinbase __gmpzl_sizeinbase
+#define mpz_sqrt __gmpzl_sqrt
+#define mpz_sqrtrem __gmpzl_sqrtrem
+#define mpz_sub __gmpzl_sub
+#define mpz_sub_ui __gmpzl_sub_ui
+#define mpz_tdiv_q __gmpzl_tdiv_q
+#define mpz_tdiv_q_2exp __gmpzl_tdiv_q_2exp
+#define mpz_tdiv_q_ui __gmpzl_tdiv_q_ui
+#define mpz_tdiv_qr __gmpzl_tdiv_qr
+#define mpz_tdiv_qr_ui __gmpzl_tdiv_qr_ui
+#define mpz_tdiv_r __gmpzl_tdiv_r
+#define mpz_tdiv_r_2exp __gmpzl_tdiv_r_2exp
+#define mpz_tdiv_r_ui __gmpzl_tdiv_r_ui
+#define mpz_ui_pow_ui __gmpzl_ui_pow_ui
+#endif /* GMP_SMALL */
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -195,8 +381,8 @@ unsigned long int mpz_cdiv_ui _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_clear _PROTO ((mpz_ptr));
 void mpz_clrbit _PROTO ((mpz_ptr, unsigned long int));
 int mpz_cmp _PROTO ((mpz_srcptr, mpz_srcptr));
-int mpz_cmp_si _PROTO ((mpz_srcptr, signed long int));
-int mpz_cmp_ui _PROTO ((mpz_srcptr, unsigned long int));
+int _mpz_cmp_si _PROTO ((mpz_srcptr, signed long int));
+int _mpz_cmp_ui _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_com _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_divexact _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_fac_ui _PROTO ((mpz_ptr, unsigned long int));
@@ -276,9 +462,61 @@ void mpz_tdiv_r _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_tdiv_r_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_tdiv_r_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_ui_pow_ui _PROTO ((mpz_ptr, unsigned long int, unsigned long int));
+#if defined (__cplusplus)
+}
+#endif
 
 /**************** Rational (i.e. Q) routines.  ****************/
 
+#if GMP_SMALL
+#define mpq_init __gmpqs_init
+#define mpq_clear __gmpqs_clear
+#define mpq_set __gmpqs_set
+#define mpq_set_ui __gmpqs_set_ui
+#define mpq_set_si __gmpqs_set_si
+#define mpq_set_z __gmpqs_set_z
+#define mpq_add __gmpqs_add
+#define mpq_sub __gmpqs_sub
+#define mpq_mul __gmpqs_mul
+#define mpq_div __gmpqs_div
+#define mpq_neg __gmpqs_neg
+#define mpq_cmp __gmpqs_cmp
+#define _mpq_cmp_ui __gmpqs_cmp_ui
+#define mpq_equal __gmpqs_equal
+#define mpq_inv __gmpqs_inv
+#define mpq_set_num __gmpqs_set_num
+#define mpq_set_den __gmpqs_set_den
+#define mpq_get_num __gmpqs_get_num
+#define mpq_get_den __gmpqs_get_den
+#define mpq_get_d __gmpqs_get_d
+#define mpq_canonicalize __gmpqs_canonicalize
+#else /* ! GMP_SMALL */
+#define mpq_init __gmpql_init
+#define mpq_clear __gmpql_clear
+#define mpq_set __gmpql_set
+#define mpq_set_ui __gmpql_set_ui
+#define mpq_set_si __gmpql_set_si
+#define mpq_set_z __gmpql_set_z
+#define mpq_add __gmpql_add
+#define mpq_sub __gmpql_sub
+#define mpq_mul __gmpql_mul
+#define mpq_div __gmpql_div
+#define mpq_neg __gmpql_neg
+#define mpq_cmp __gmpql_cmp
+#define _mpq_cmp_ui __gmpql_cmp_ui
+#define mpq_equal __gmpql_equal
+#define mpq_inv __gmpql_inv
+#define mpq_set_num __gmpql_set_num
+#define mpq_set_den __gmpql_set_den
+#define mpq_get_num __gmpql_get_num
+#define mpq_get_den __gmpql_get_den
+#define mpq_get_d __gmpql_get_d
+#define mpq_canonicalize __gmpql_canonicalize
+#endif /* GMP_SMALL */
+
+#if defined (__cplusplus)
+extern "C" {
+#endif
 void mpq_init _PROTO ((mpq_ptr));
 void mpq_clear _PROTO ((mpq_ptr));
 void mpq_set _PROTO ((mpq_ptr, mpq_srcptr));
@@ -300,9 +538,113 @@ void mpq_get_num _PROTO ((mpz_ptr, mpq_srcptr));
 void mpq_get_den _PROTO ((mpz_ptr, mpq_srcptr));
 double mpq_get_d _PROTO ((mpq_srcptr));
 void mpq_canonicalize _PROTO ((mpq_ptr));
+#if defined (__cplusplus)
+}
+#endif
 
 /**************** Float (i.e. F) routines.  ****************/
 
+#if GMP_SMALL
+#define mpf_abs __gmpfs_abs
+#define mpf_add __gmpfs_add
+#define mpf_add_ui __gmpfs_add_ui
+#define mpf_clear __gmpfs_clear
+#define mpf_cmp __gmpfs_cmp
+#define mpf_cmp_si __gmpfs_cmp_si
+#define mpf_cmp_ui __gmpfs_cmp_ui
+#define mpf_div __gmpfs_div
+#define mpf_div_2exp __gmpfs_div_2exp
+#define mpf_div_ui __gmpfs_div_ui
+#define mpf_dump __gmpfs_dump
+#define mpf_eq __gmpfs_eq
+#define mpf_get_d __gmpfs_get_d
+#define mpf_get_prec __gmpfs_get_prec
+#define mpf_get_str __gmpfs_get_str
+#define mpf_init __gmpfs_init
+#define mpf_init2 __gmpfs_init2
+#define mpf_inp_str __gmpfs_inp_str
+#define mpf_init_set __gmpfs_init_set
+#define mpf_init_set_d __gmpfs_init_set_d
+#define mpf_init_set_si __gmpfs_init_set_si
+#define mpf_init_set_str __gmpfs_init_set_str
+#define mpf_init_set_ui __gmpfs_init_set_ui
+#define mpf_mul __gmpfs_mul
+#define mpf_mul_2exp __gmpfs_mul_2exp
+#define mpf_mul_ui __gmpfs_mul_ui
+#define mpf_neg __gmpfs_neg
+#define mpf_out_str __gmpfs_out_str
+#define mpf_random2 __gmpfs_random2
+#define mpf_reldiff __gmpfs_reldiff
+#define mpf_set __gmpfs_set
+#define mpf_set_d __gmpfs_set_d
+#define mpf_set_default_prec __gmpfs_set_default_prec
+#define mpf_set_prec __gmpfs_set_prec
+#define mpf_set_prec_raw __gmpfs_set_prec_raw
+#define mpf_set_q __gmpfs_set_q
+#define mpf_set_si __gmpfs_set_si
+#define mpf_set_str __gmpfs_set_str
+#define mpf_set_ui __gmpfs_set_ui
+#define mpf_set_z __gmpfs_set_z
+#define mpf_size __gmpfs_size
+#define mpf_sqrt __gmpfs_sqrt
+#define mpf_sqrt_ui __gmpfs_sqrt_ui
+#define mpf_sub __gmpfs_sub
+#define mpf_sub_ui __gmpfs_sub_ui
+#define mpf_ui_div __gmpfs_ui_div
+#define mpf_ui_sub __gmpfs_ui_sub
+#else /* ! GMP_SMALL */
+#define mpf_abs __gmpfl_abs
+#define mpf_add __gmpfl_add
+#define mpf_add_ui __gmpfl_add_ui
+#define mpf_clear __gmpfl_clear
+#define mpf_cmp __gmpfl_cmp
+#define mpf_cmp_si __gmpfl_cmp_si
+#define mpf_cmp_ui __gmpfl_cmp_ui
+#define mpf_div __gmpfl_div
+#define mpf_div_2exp __gmpfl_div_2exp
+#define mpf_div_ui __gmpfl_div_ui
+#define mpf_dump __gmpfl_dump
+#define mpf_eq __gmpfl_eq
+#define mpf_get_d __gmpfl_get_d
+#define mpf_get_prec __gmpfl_get_prec
+#define mpf_get_str __gmpfl_get_str
+#define mpf_init __gmpfl_init
+#define mpf_init2 __gmpfl_init2
+#define mpf_inp_str __gmpfl_inp_str
+#define mpf_init_set __gmpfl_init_set
+#define mpf_init_set_d __gmpfl_init_set_d
+#define mpf_init_set_si __gmpfl_init_set_si
+#define mpf_init_set_str __gmpfl_init_set_str
+#define mpf_init_set_ui __gmpfl_init_set_ui
+#define mpf_mul __gmpfl_mul
+#define mpf_mul_2exp __gmpfl_mul_2exp
+#define mpf_mul_ui __gmpfl_mul_ui
+#define mpf_neg __gmpfl_neg
+#define mpf_out_str __gmpfl_out_str
+#define mpf_random2 __gmpfl_random2
+#define mpf_reldiff __gmpfl_reldiff
+#define mpf_set __gmpfl_set
+#define mpf_set_d __gmpfl_set_d
+#define mpf_set_default_prec __gmpfl_set_default_prec
+#define mpf_set_prec __gmpfl_set_prec
+#define mpf_set_prec_raw __gmpfl_set_prec_raw
+#define mpf_set_q __gmpfl_set_q
+#define mpf_set_si __gmpfl_set_si
+#define mpf_set_str __gmpfl_set_str
+#define mpf_set_ui __gmpfl_set_ui
+#define mpf_set_z __gmpfl_set_z
+#define mpf_size __gmpfl_size
+#define mpf_sqrt __gmpfl_sqrt
+#define mpf_sqrt_ui __gmpfl_sqrt_ui
+#define mpf_sub __gmpfl_sub
+#define mpf_sub_ui __gmpfl_sub_ui
+#define mpf_ui_div __gmpfl_ui_div
+#define mpf_ui_sub __gmpfl_ui_sub
+#endif /* GMP_SMALL */
+
+#if defined (__cplusplus)
+extern "C" {
+#endif
 void mpf_abs _PROTO ((mpf_ptr, mpf_srcptr));
 void mpf_add _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_add_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
@@ -359,7 +701,7 @@ void mpf_ui_sub _PROTO ((mpf_ptr, unsigned long int, mpf_srcptr));
 #endif
 /************ Low level positive-integer (i.e. N) routines.  ************/
 
-/* This is ugly, but we need to make usr calls reach the prefixed function.  */
+/* This is ugly, but we need to make user calls reach the prefixed function. */
 #define mpn_add			__MPN(add)
 #define mpn_add_1		__MPN(add_1)
 #define mpn_add_n		__MPN(add_n)
@@ -410,7 +752,7 @@ mp_limb_t mpn_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb
 void mpn_dump _PROTO ((mp_srcptr, mp_size_t));
 mp_size_t mpn_gcd _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
 mp_limb_t mpn_gcd_1 _PROTO ((mp_srcptr, mp_size_t, mp_limb_t));
-mp_size_t mpn_gcdext _PROTO ((mp_ptr, mp_ptr, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
+mp_size_t mpn_gcdext _PROTO ((mp_ptr, mp_ptr, mp_size_t *, mp_ptr, mp_size_t, mp_ptr, mp_size_t));
 size_t mpn_get_str _PROTO ((unsigned char *, int, mp_ptr, mp_size_t));
 unsigned long int mpn_hamdist _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_lshift _PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned int));
@@ -584,23 +926,27 @@ mpn_sub (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 #define mpf_sgn(F) ((F)->_mp_size < 0 ? -1 : (F)->_mp_size > 0)
 #define mpq_sgn(Q) ((Q)->_mp_num._mp_size < 0 ? -1 : (Q)->_mp_num._mp_size > 0)
 
-/* Allow direct user access to numerator and denominator of a mpq_t object.  */
-#define mpq_numref(Q) (&((Q)->_mp_num))
-#define mpq_denref(Q) (&((Q)->_mp_den))
-
 /* When using GCC, optimize certain common comparisons.  */
 #if defined (__GNUC__)
 #define mpz_cmp_ui(Z,UI) \
   (__builtin_constant_p (UI) && (UI) == 0				\
-   ? mpz_sgn (Z) : mpz_cmp_ui (Z,UI))
+   ? mpz_sgn (Z) : _mpz_cmp_ui (Z,UI))
 #define mpz_cmp_si(Z,UI) \
   (__builtin_constant_p (UI) && (UI) == 0 ? mpz_sgn (Z)			\
-   : __builtin_constant_p (UI) && (UI) > 0 ? mpz_cmp_ui (Z,UI)		\
-   : mpz_cmp_si (Z,UI))
+   : __builtin_constant_p (UI) && (UI) > 0 ? _mpz_cmp_ui (Z,UI)	\
+   : _mpz_cmp_si (Z,UI))
 #define mpq_cmp_ui(Q,NUI,DUI) \
   (__builtin_constant_p (NUI) && (NUI) == 0				\
-   ? mpq_sgn (Q) : mpq_cmp_ui (Q,NUI,DUI))
+   ? mpq_sgn (Q) : _mpq_cmp_ui (Q,NUI,DUI))
+#else
+#define mpz_cmp_ui(Z,UI) _mpz_cmp_ui (Z,UI)
+#define mpz_cmp_si(Z,UI) _mpz_cmp_si (Z,UI)
+#define mpq_cmp_ui(Q,NUI,DUI) _mpq_cmp_ui (Q,NUI,DUI)
 #endif
+
+/* Allow direct user access to numerator and denominator of a mpq_t object.  */
+#define mpq_numref(Q) (&((Q)->_mp_num))
+#define mpq_denref(Q) (&((Q)->_mp_den))
 
 #define mpn_divmod(qp,np,nsize,dp,dsize) mpn_divrem (qp,0,np,nsize,dp,dsize)
 #if 0
