@@ -33,17 +33,19 @@ mpf_pow_ui (r, b, e)
 #endif
 {
   mpf_t b2;
+  unsigned long int e2;
 
   mpf_init2 (b2, mpf_get_prec (r));
   mpf_set (b2, b);
   mpf_set_ui (r, 1);
 
-  while (e != 0)
+  if ((e & 1) != 0)
+    mpf_set (r, b2);
+  for (e2 = e >> 1; e2 != 0; e2 >>= 1)
     {
-      if ((e & 1) != 0)
-	mpf_mul (r, r, b2);
       mpf_mul (b2, b2, b2);
-      e >>= 1;
+      if ((e2 & 1) != 0)
+	mpf_mul (r, r, b2);
     }
 
   mpf_clear (b2);
