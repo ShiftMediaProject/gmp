@@ -1426,7 +1426,7 @@ void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
     ASSERT (__n >= 1);                                  \
     ASSERT (MPN_SAME_OR_SEPARATE_P (__d, __s, __n));    \
     do                                                  \
-      *__d++ = ~ *__s++;                                \
+      *__d++ = (~ *__s++) & GMP_NUMB_MASK;              \
     while (--__n);                                      \
   } while (0)
 #endif
