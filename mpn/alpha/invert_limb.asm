@@ -1,23 +1,23 @@
 dnl  Alpha mpn_invert_limb -- Invert a normalized limb.
 
 dnl  Copyright 1996, 2000 Free Software Foundation, Inc.
-
+dnl
 dnl  This file is part of the GNU MP Library.
-
-dnl  The GNU MP Library is free software; you can redistribute it and/or modify
-dnl  it under the terms of the GNU Lesser General Public License as published by
-dnl  the Free Software Foundation; either version 2.1 of the License, or (at your
-dnl  option) any later version.
-
-dnl  The GNU MP Library is distributed in the hope that it will be useful, but
-dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-dnl  License for more details.
-
-dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-dnl  MA 02111-1307, USA.
+dnl
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Lesser General Public License as
+dnl  published by the Free Software Foundation; either version 2.1 of the
+dnl  License, or (at your option) any later version.
+dnl
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Lesser General Public License for more details.
+dnl
+dnl  You should have received a copy of the GNU Lesser General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 dnl 
 dnl  This is based on sophie:/gmp-stuff/dbg-inv-limb.c.
@@ -84,7 +84,7 @@ $Lend:
 	lda	r30,16(r30)
 	ret	r31,(r26),1
 EPILOGUE(mpn_invert_limb)
-DATASTART(`$invtab',4)
+DATASTART($invtab)
 	.word 0xffff,0xffc0,0xff80,0xff40,0xff00,0xfec0,0xfe81,0xfe41
 	.word 0xfe01,0xfdc2,0xfd83,0xfd43,0xfd04,0xfcc5,0xfc86,0xfc46
 	.word 0xfc07,0xfbc8,0xfb8a,0xfb4b,0xfb0c,0xfacd,0xfa8e,0xfa50
