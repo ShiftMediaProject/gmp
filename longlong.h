@@ -580,15 +580,15 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    exactly where).  gcc 2.95 or up will be best for this, so the "double" is
    correctly aligned on the stack.  */
 
-#define count_leading_zeros(c,n)                \
-  do {                                          \
-    union {                                     \
-      double    d;                              \
-      unsigned  a[2];                           \
-    } __u;                                      \
-    ASSERT ((n) != 0);                          \
-    __u.d = (UWtype) (n);                       \
-    (c) = 0x3FF + 31 - (__u.a[1] >> 20);        \
+#define count_leading_zeros(c,n)					\
+  do {									\
+    union {								\
+      double    d;							\
+      unsigned  a[2];							\
+    } __u;								\
+    ASSERT ((n) != 0);							\
+    __u.d = (UWtype) (n);						\
+    (c) = 0x3FF + 31 - (__u.a[1] >> 20);				\
   } while (0)
 #define COUNT_LEADING_ZEROS_0   (0x3FF + 31)
 
@@ -613,19 +613,19 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    constant could be folded into __clz_tab[], but it doesn't seem worth
    making a different table just for that.  */
 
-#define count_leading_zeros(c,n)                        \
-  do {                                                  \
-    USItype  __n = (n);                                 \
-    USItype  __shift;                                   \
-    __asm__ ("cmpl  $0x1000000, %1\n"                   \
-             "sbbl  %0, %0\n"                           \
-             "cmpl  $0x10000, %1\n"                     \
-             "sbbl  $0, %0\n"                           \
-             "cmpl  $0x100, %1\n"                       \
-             "sbbl  $0, %0\n"                           \
-             : "=&r" (__shift) : "r"  (__n));           \
-    __shift = __shift*8 + 24 + 1;                       \
-    (c) = 32 + 1 - __shift - __clz_tab[__n >> __shift]; \
+#define count_leading_zeros(c,n)					\
+  do {									\
+    USItype  __n = (n);							\
+    USItype  __shift;							\
+    __asm__ ("cmpl  $0x1000000, %1\n"					\
+	     "sbbl  %0, %0\n"						\
+	     "cmpl  $0x10000, %1\n"					\
+	     "sbbl  $0, %0\n"						\
+	     "cmpl  $0x100, %1\n"					\
+	     "sbbl  $0, %0\n"						\
+	     : "=&r" (__shift) : "r"  (__n));				\
+    __shift = __shift*8 + 24 + 1;					\
+    (c) = 32 + 1 - __shift - __clz_tab[__n >> __shift];			\
   } while (0)
 
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
@@ -637,30 +637,30 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    being 1 code byte smaller.  "31-__cbtmp" is a workaround, probably at the
    cost of one extra instruction.  Do this for "i386" too, since that means
    generic x86.  */
-#if __GNUC__ < 3                                                \
-  && (HAVE_HOST_CPU_i386 || HAVE_HOST_CPU_pentiumpro            \
+#if __GNUC__ < 3							\
+  && (HAVE_HOST_CPU_i386 || HAVE_HOST_CPU_pentiumpro			\
       || HAVE_HOST_CPU_pentium2 || HAVE_HOST_CPU_pentium3)
-#define count_leading_zeros(count, x)                                   \
-  do {                                                                  \
-    USItype __cbtmp;                                                    \
-    ASSERT ((x) != 0);                                                  \
-    __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));      \
-    (count) = 31 - __cbtmp;                                             \
+#define count_leading_zeros(count, x)					\
+  do {									\
+    USItype __cbtmp;							\
+    ASSERT ((x) != 0);							\
+    __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));	\
+    (count) = 31 - __cbtmp;						\
   } while (0)
 #else
-#define count_leading_zeros(count, x)                                   \
-  do {                                                                  \
-    USItype __cbtmp;                                                    \
-    ASSERT ((x) != 0);                                                  \
-    __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));      \
-    (count) = __cbtmp ^ 31;                                             \
+#define count_leading_zeros(count, x)					\
+  do {									\
+    USItype __cbtmp;							\
+    ASSERT ((x) != 0);							\
+    __asm__ ("bsrl %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));	\
+    (count) = __cbtmp ^ 31;						\
   } while (0)
 #endif
 
-#define count_trailing_zeros(count, x)                                  \
-  do {                                                                  \
-    ASSERT ((x) != 0);                                                  \
-    __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));        \
+#define count_trailing_zeros(count, x)					\
+  do {									\
+    ASSERT ((x) != 0);							\
+    __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));	\
   } while (0)
 #endif /* ! pentiummmx */
 #endif /* ! pentium */
@@ -808,7 +808,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 "	addx%.l	%2,%0\n"						\
 "	| End inlined umul_ppmm"					\
 	      : "=&d" ((USItype)(xh)), "=&d" ((USItype)(xl)),		\
-	        "=d" (__umul_tmp1), "=&d" (__umul_tmp2)			\
+		"=d" (__umul_tmp1), "=&d" (__umul_tmp2)			\
 	      : "%2" ((USItype)(a)), "d" ((USItype)(b)));		\
   } while (0)
 #define UMUL_TIME 100
@@ -932,12 +932,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    system vendor compilers.
    FIXME: What's needed for gcc PowerPC VxWorks?  __vxworks__ is not good
    enough, since that hits ARM and m68k too.  */
-#if (defined (_ARCH_PPC)       /* AIX */                \
-     || defined (_ARCH_PWR)    /* AIX */                \
-     || defined (__powerpc__)  /* gcc */                \
-     || defined (__POWERPC__)  /* BEOS */               \
-     || defined (__ppc__)      /* Darwin */             \
-     || defined (PPC)          /* GNU/Linux, SysV */    \
+#if (defined (_ARCH_PPC)	/* AIX */				\
+     || defined (_ARCH_PWR)	/* AIX */				\
+     || defined (__powerpc__)	/* gcc */				\
+     || defined (__POWERPC__)	/* BEOS */				\
+     || defined (__ppc__)	/* Darwin */				\
+     || defined (PPC)		/* GNU/Linux, SysV */			\
      ) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   do {									\
@@ -1174,7 +1174,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     (q) = __q;								\
   } while (0)
 #else
-#if defined (__sparc_v8__)   /* gcc normal */           \
+#if defined (__sparc_v8__)   /* gcc normal */				\
   || defined (__sparcv8)     /* gcc solaris */
 /* Don't match immediate range because, 1) it is not often useful,
    2) the 'I' flag thinks of the range as a 13 bit signed interval,
@@ -1427,25 +1427,25 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #if ! defined (umul_ppmm) && HAVE_NATIVE_mpn_umul_ppmm
 #define mpn_umul_ppmm  __MPN(umul_ppmm)
 extern mp_limb_t mpn_umul_ppmm _PROTO ((mp_limb_t *, mp_limb_t, mp_limb_t));
-#define umul_ppmm(wh, wl, u, v)                                 \
-  do {                                                          \
-    mp_limb_t __umul_ppmm__p0;                                  \
-    (wh) = __MPN(umul_ppmm) (&__umul_ppmm__p0,                  \
-                             (mp_limb_t) (u), (mp_limb_t) (v)); \
-    (wl) = __umul_ppmm__p0;                                     \
+#define umul_ppmm(wh, wl, u, v)						\
+  do {									\
+    mp_limb_t __umul_ppmm__p0;						\
+    (wh) = __MPN(umul_ppmm) (&__umul_ppmm__p0,				\
+			     (mp_limb_t) (u), (mp_limb_t) (v));		\
+    (wl) = __umul_ppmm__p0;						\
   } while (0)
 #endif
 
 #if ! defined (udiv_qrnnd) && HAVE_NATIVE_mpn_udiv_qrnnd
 #define mpn_udiv_qrnnd  __MPN(udiv_qrnnd)
 extern mp_limb_t mpn_udiv_qrnnd _PROTO ((mp_limb_t *,
-                                         mp_limb_t, mp_limb_t, mp_limb_t));
-#define udiv_qrnnd(q, r, n1, n0, d)                                           \
-  do {                                                                        \
-    mp_limb_t __udiv_qrnnd__r;                                                \
-    (q) = mpn_udiv_qrnnd (&__udiv_qrnnd__r,                                   \
-                          (mp_limb_t) (n1), (mp_limb_t) (n0), (mp_limb_t) d); \
-    (r) = __udiv_qrnnd__r;                                                    \
+					 mp_limb_t, mp_limb_t, mp_limb_t));
+#define udiv_qrnnd(q, r, n1, n0, d)					\
+  do {									\
+    mp_limb_t __udiv_qrnnd__r;						\
+    (q) = mpn_udiv_qrnnd (&__udiv_qrnnd__r,				\
+			  (mp_limb_t) (n1), (mp_limb_t) (n0), (mp_limb_t) d); \
+    (r) = __udiv_qrnnd__r;						\
   } while (0)
 #endif
 
@@ -1531,8 +1531,8 @@ extern mp_limb_t mpn_udiv_qrnnd _PROTO ((mp_limb_t *,
   do {									\
     UWtype __d1, __d0, __q1, __q0, __r1, __r0, __m;			\
 									\
-    ASSERT ((d) != 0);                                                  \
-    ASSERT ((n1) < (d));                                                \
+    ASSERT ((d) != 0);							\
+    ASSERT ((n1) < (d));						\
 									\
     __d1 = __ll_highpart (d);						\
     __d0 = __ll_lowpart (d);						\
@@ -1623,7 +1623,7 @@ extern const unsigned char __GMP_DECLSPEC __clz_tab[128];
   do {									\
     UWtype __ctz_x = (x);						\
     UWtype __ctz_c;							\
-    ASSERT (__ctz_x != 0);                                              \
+    ASSERT (__ctz_x != 0);						\
     count_leading_zeros (__ctz_c, __ctz_x & -__ctz_x);			\
     (count) = W_TYPE_SIZE - 1 - __ctz_c;				\
   } while (0)
