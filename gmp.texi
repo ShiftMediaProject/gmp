@@ -651,7 +651,7 @@ meaning data type sizes and calling conventions.  By default GMP chooses the
 best ABI available, but a particular ABI can be selected.  See @ref{ABI and
 ISA}, for the available choices and relevant CPUs.
 
-@item @option{CC}, @option{CFLAGS}, @option{CPPFLAGS}
+@item @option{CC}, @option{CFLAGS}
 
 By default the C compiler used is chosen from among some likely candidates,
 with @command{gcc} normally preferred if it's present.  The usual
@@ -663,14 +663,14 @@ compiler.  The usual @samp{CFLAGS="-whatever"} can be passed to
 @samp{./configure} to use something different or to set good flags for systems
 GMP doesn't otherwise know.
 
-After running @samp{./configure}, each generated @file{Makefile} will contain
-the final @samp{CFLAGS}.  This is the easiest way to check the defaults, when
-considering changing or adding something.
+The @samp{CC} and @samp{CFLAGS} used are printed during @samp{./configure},
+and can be found in each generated @file{Makefile}.  This is the easiest way
+to check the defaults when considering changing or adding something.
 
-When @samp{CC} and @samp{CFLAGS} are specified on a system supporting multiple
-ABIs, it's important to given an explicit @samp{ABI=whatever}, since GMP can't
-determine the ABI just from the flags and won't be able to select the correct
-assembler code.
+Note that when @samp{CC} and @samp{CFLAGS} are specified on a system
+supporting multiple ABIs, it's important to give an explicit
+@samp{ABI=whatever}, since GMP can't determine the ABI just from the flags and
+won't be able to select the correct assembler code.
 
 If just @samp{CC} is selected then normal default @samp{CFLAGS} for that
 compiler will be used (if GMP recognises it).  For example @samp{CC=gcc} can
@@ -2251,7 +2251,7 @@ function returns zero, @var{rop} is undefined.
 
 @deftypefun int mpz_jacobi (mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx int mpz_legendre (mpz_t @var{op1}, mpz_t @var{op2})
-@cindex Jabobi symbol functions
+@cindex Jacobi symbol functions
 Compute the Jacobi and Legendre symbols, respectively.  @var{op2} should be
 odd and must be positive.
 @end deftypefun
