@@ -1,3 +1,13 @@
+2001-08-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/inp_str.c: Fix return value (was 1 too big).
+	* tests/mpz/t-inp_str.c: New file.
+	* tests/mpz/Makefile.am: Add it.
+
+	* mpn/x86/pentium4/sse2/add_n.asm: New file.
+	* mpn/x86/pentium4/sse2/sub_n.asm: New file.
+	* mpn/x86/pentium4/sse2/mul_1.asm: New file.
+
 2001-08-12  Kevin Ryde  <kevin@swox.se>
 
 	* printf/sprintffuns.c, printf/doprntf.c: Don't use sprintf return
@@ -7,6 +17,7 @@
 	* configure.in: Add pentium4 support.
 	* mpn/x86/pentium4, mpn/x86/pentium4/mmx, mpn/x86/pentium4/sse2: New
 	directories.
+	* mpn/x86/README: Update.
 
 2001-08-10  Torbjorn Granlund  <tege@swox.com>
 
