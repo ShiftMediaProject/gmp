@@ -34,7 +34,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 10 Oct 2001.  An up-to-date version is available at
+  This file current as of 17 Oct 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -319,6 +319,11 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <li> UltraSPARC/32: Write special mpn_Xmul_1 loops for s2 &lt; 2^16.
 <li> UltraSPARC/32: Use <code>mulx</code> for <code>umul_ppmm</code> if
      possible (see commented out code in longlong.h).
+<li> UltraSPARC/32: On Solaris gcc doesn't give us <code>__sparc_v9__</code>
+     or anything to indicate V9 support when -mcpu=v9 is selected.  See
+     gcc/config/sol2-sld-64.h.  Will need to pass something through from
+     ./configure to select the right code in longlong.h.  (Currently nothing
+     is lost because <code>mulx</code> for multiplying is commented out.)
 <li> UltraSPARC: <code>modlimb_invert</code> might save a few cycles from
      masking down to just the useful bits at each point in the calculation,
      since <code>mulx</code> speed depends on the highest bit set.  Either
@@ -370,6 +375,9 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
 <li> P6: <code>mpn_add_n</code> and <code>mpn_sub_n</code> should be able to go
      faster than the generic x86 code at 3.5 c/l.  The athlon code for instance
      runs at about 2.7.
+<li> K7: <code>mpn_lshift</code> and <code>mpn_rshift</code> might be able to
+     do something branch-free for unaligned startups, and shaving one insn
+     from the loop with alternative indexing might save a cycle.
 <li> PPC32: Try using fewer registers in the current <code>mpn_lshift</code>.
      The pipeline is now extremely deep, perhaps unnecessarily deep.
 <li> PPC32: Write <code>mpn_rshift</code> based on new <code>mpn_lshift</code>.
@@ -389,7 +397,7 @@ Copyright 2000, 2001 Free Software Foundation, Inc.
      -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
 <li> Cray: <code>mpn_com_n</code> and <code>mpn_and_n</code> etc very probably
      wants a pragma like <code>MPN_COPY_INCR</code>.
-<li> Cray: Variable length arrays seem to be faster than the stack-alloc.c
+<li> Cray: Variable length arrays seem to be faster than the tal-notreent.c
      scheme.  Not sure why, maybe they merely give the compiler more
      information about aliasing (or the lack thereof).  Would like to modify
      <code>TMP_ALLOC</code> to use them, or introduce a new scheme.  Memory
