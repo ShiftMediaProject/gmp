@@ -28,43 +28,33 @@ char *
 mtox (const MINT *x)
 {
   mp_size_t xsize = x->_mp_size;
+  mp_ptr    xp;
   mp_size_t xsign;
   unsigned char *str, *s;
   size_t str_size, alloc_size, i;
-  int zeros;
 
-  if (xsize == 0)
-    {
-      str = (unsigned char *) (*__gmp_allocate_func) (2);
-      str[0] = '0';
-      str[1] = 0;
-      return (char *) str;
-    }
   xsign = xsize;
   if (xsize < 0)
     xsize = -xsize;
 
-  MPN_GET_STR_SIZE (alloc_size, 16, xsize);
-  alloc_size += 2; /* '\0' and possible '-' */
+  /* digits, plus '\0', plus possible '-', for an exact size */
+  xp = x->_mp_d;
+  alloc_size = mpn_sizeinbase (xp, xsize, 16) + 1 + (xsign < 0);
+
   str = (unsigned char *) (*__gmp_allocate_func) (alloc_size);
   s = str;
 
   if (xsign < 0)
     *s++ = '-';
 
-  str_size = mpn_get_str (s, 16, PTR(x), xsize);
+  str_size = mpn_get_str (s, 16, xp, xsize);
+  ASSERT (str_size <= alloc_size - (xsign < 0));
+  ASSERT (str_size == 1 || *s != 0);
 
-  /* mpn_get_str might make some leading zeros.  Skip them.  */
-  for (zeros = 0; s[zeros] == 0; zeros++)
-    str_size--;
-
-  /* Translate to printable chars and move string down.  */
   for (i = 0; i < str_size; i++)
-    s[i] = "0123456789abcdef"[s[zeros + i]];
+    s[i] = "0123456789abcdef"[s[i]];
   s[str_size] = 0;
 
-  str_size += 1 + (s - str);
-  ASSERT (str_size == strlen (str) + 1);
-  __GMP_REALLOCATE_FUNC_MAYBE_TYPE (str, alloc_size, str_size, unsigned char);
+  ASSERT (strlen (str) + 1 == alloc_size);
   return (char *) str;
 }
