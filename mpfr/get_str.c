@@ -295,7 +295,7 @@ mpn_exp (mp_limb_t *a, mp_exp_t *exp_r, int b, mp_exp_t e, size_t n)
   *exp_r = f;  
 
   if (erreur == t)
-    erreur = -1; /* exact */
+    return -1; /* exact */
   else
     {
       /* if there are p loops after the first inexact result, with
