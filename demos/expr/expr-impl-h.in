@@ -26,10 +26,13 @@ MA 02111-1307, USA.
 #define HAVE_MPFR @HAVE_MPFR@
 
 
-/* for va_list */
-#if __STDC__
+/* Decide whether to use <stdarg.h> based on cpp defines, since we don't
+   want to depend on the gmp config.h.  */
+#if defined(__STDC__) || define(_MSC_VER)
+#define HAVE_STDARG 1
 #include <stdarg.h>
 #else
+#define HAVE_STDARG 0
 #include <varargs.h>
 #endif
 
