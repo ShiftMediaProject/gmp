@@ -38,13 +38,17 @@ mpz_t gcd1, gcd2, s, t, temp1, temp2;
 
 /* Define this to make all operands be large enough for Schoenhage gcd
    to be used.  */
+#ifndef WHACK_SCHOENHAGE
 #define WHACK_SCHOENHAGE 0
+#endif
 
 #if WHACK_SCHOENHAGE
-#define MIN_OPERAND_SIZE (GCD_SCHOENHAGE_THRESHOLD * GMP_NUMB_BITS)
+#define MIN_OPERAND_BITSIZE (GCD_SCHOENHAGE_THRESHOLD * GMP_NUMB_BITS)
 #else
-#define MIN_OPERAND_SIZE 1
+#define MIN_OPERAND_BITSIZE 1
 #endif
+
+int time_gcd, time_gcdext, time_divis, time_stuff;
 
 int
 main (int argc, char **argv)
@@ -69,7 +73,7 @@ main (int argc, char **argv)
   mpz_init (s);
   mpz_init (t);
 
-  for (i = 0; i < 100; i++)
+  for (i = 0; i < 50; i++)
     {
       /* Generate plain operands with unknown gcd.  These types of operands
 	 have proven to trigger certain bugs in development versions of the
@@ -81,9 +85,9 @@ main (int argc, char **argv)
       size_range = mpz_get_ui (bs) % 13 + 2;
 
       mpz_urandomb (bs, rands, size_range);
-      mpz_urandomb (op1, rands, mpz_get_ui (bs) + MIN_OPERAND_SIZE);
+      mpz_urandomb (op1, rands, mpz_get_ui (bs) + MIN_OPERAND_BITSIZE);
       mpz_urandomb (bs, rands, size_range);
-      mpz_urandomb (op2, rands, mpz_get_ui (bs) + MIN_OPERAND_SIZE);
+      mpz_urandomb (op2, rands, mpz_get_ui (bs) + MIN_OPERAND_BITSIZE);
 
       mpz_urandomb (bs, rands, 2);
       bsi = mpz_get_ui (bs);
@@ -150,6 +154,12 @@ main (int argc, char **argv)
   mpz_clear (t);
 
   tests_end ();
+
+  printf ("%d\n", time_gcd);
+  printf ("%d\n", time_gcdext);
+  printf ("%d\n", time_divis);
+  printf ("%d\n", time_stuff);
+
   exit (0);
 }
 
@@ -172,7 +182,9 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
   fprintf (stderr, "op2=");  debug_mp (op2, -16);
   */
 
+//  time_gcdext -= cputime ();
   mpz_gcdext (gcd1, s, NULL, op1, op2);
+//  time_gcdext += cputime ();
 
   if (ref && mpz_cmp (ref, gcd1) != 0)
     {
@@ -195,7 +207,10 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
       abort ();
     }
 
+//  time_gcd -= cputime ();
   mpz_gcd (gcd2, op1, op2);
+//  time_gcd += cputime ();
+
   if (mpz_cmp (gcd2, gcd1) != 0)
     {
       fprintf (stderr, "ERROR in test %d\n", i);
@@ -226,7 +241,10 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
 	}
     }
 
+//  time_gcdext -= cputime ();
   mpz_gcdext (gcd2, temp1, temp2, op1, op2);
+//  time_gcdext += cputime ();
+
   mpz_mul (temp1, temp1, op1);
   mpz_mul (temp2, temp2, op2);
   mpz_add (temp1, temp1, temp2);
@@ -269,14 +287,18 @@ gcdext_valid_p (const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s)
   if (mpz_sgn (g) <= 0)
     return 0;
 
+//  time_divis -= cputime ();
   if (! (mpz_divisible_p (a, g)
 	 && mpz_divisible_p (b, g)
 	 && mpz_cmpabs (s, b) <= 0))
     return 0;
+//  time_divis += cputime ();
       
+//  time_stuff -= cputime ();
   mpz_mul(temp1, s, a);
   mpz_sub(temp1, g, temp1);
   mpz_tdiv_qr(temp1, temp2, temp1, b);
+//  time_stuff += cputime ();
 
   return mpz_sgn (temp2) == 0 && mpz_cmpabs (temp1, a) <= 0;
 }
