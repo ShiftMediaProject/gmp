@@ -72,18 +72,24 @@ gmp_randinit (gmp_randstate_t rstate,
 	      gmp_randalg_t alg,
 	      ...)
 #else
-gmp_randinit (rstate, alg, va_alist)
-     gmp_randstate_t rstate;
-     gmp_randalg_t alg;
+gmp_randinit (va_alist)
      va_dcl
 #endif
 {
   va_list ap;
+#if __STDC__
+#else
+  __gmp_randstate_struct *rstate;
+  gmp_randalg_t alg;
+#endif
 
 #if __STDC__
   va_start (ap, alg);
 #else
   va_start (ap);
+
+  rstate = va_arg (ap, __gmp_randstate_struct *);
+  alg = va_arg (ap, gmp_randalg_t);
 #endif
 
   switch (alg)
