@@ -35,12 +35,22 @@ MA 02111-1307, USA. */
 #ifndef __GMP_IMPL_H__
 #define __GMP_IMPL_H__
 
-/* On Cray vector systems "short" and "unsigned short" might not be the same
-   number of bits, making the SHRT_MAX defaults below fail.  (This depends
-   on compiler options.)  Instead use limits.h.  */
+#if defined _CRAY
+#include <intrinsics.h>  /* for _popcnt */
+#endif
+
+/* limits.h is not used in general, since it's an ANSI-ism, and since on
+   solaris gcc 2.95 under -mcpu=ultrasparc in ABI=32 ends up getting wrong
+   values (the ABI=64 values).
+
+   On Cray vector systems, however, we need the system limits.h since sizes
+   of signed and unsigned types can differ there, depending on compiler
+   options (eg. -hnofastmd), making our SHRT_MAX etc expressions fail.  For
+   reference, int can be 46 or 64 bits, whereas uint is always 64 bits; and
+   short can be 24, 32, 46 or 64 bits, and different for ushort.  */
+
 #if defined _CRAY
 #include <limits.h>
-#include <intrinsics.h>  /* for _popcnt */
 #endif
 
 /* For fat.h and other fat binary stuff. */
@@ -453,7 +463,11 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 
 
 /* The "short" defines are a bit different because shorts are promoted to
-   ints by ~ or >> etc.  */
+   ints by ~ or >> etc.
+
+   #ifndef's are used since on some systems (HP?) header files other than
+   limits.h setup these defines.  We could forcibly #undef in that case, but
+   there seems no need to worry about that.  */
 
 #ifndef ULONG_MAX
 #define ULONG_MAX   __GMP_ULONG_MAX
