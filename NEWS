@@ -1,3 +1,24 @@
+Changes between MP version 2.1 and 3.0
+
+* Bug fixes.
+* Switch to autoconf/automake/libtool.
+* Multiplication and squaring using 3-way Toom-Cook.
+* Division using Newton's method.
+* Binomial coefficients: mpz_bin_ui, mpz_bin_uiui.
+* Fibonacci numbers: mpz_fib_ui.
+* Random number generators: mpf_urandomb, mpz_rrandomb, mpz_urandomb,
+  mpz_urandomm, gmp_rand, gmp_randclear, gmp_randinit, gmp_randinit_lc,
+  gmp_randinit_lc_2exp, gmp_randseed, gmp_randseed_ui.
+* Integer size tests: mpz_fits_sint_p, mpz_fits_slong_p, mpz_fits_sshort_p,
+  mpz_fits_uint_p, mpz_fits_ulong_p, mpz_fits_ushort_p.
+* New mpf functions: mpf_ceil, mpf_floor, mpf_pow_ui, mpf_trunc.
+* New mpq functions: mpq_set_d.
+* New mpz functions: mpz_addmul_ui, mpz_cmpabs, mpz_cmpabs_ui, mpz_lcm,
+  mpz_nextprime, mpz_perfect_power_p, mpz_remove, mpz_root, mpz_swap,
+  mpz_tdiv_ui, mpz_tstbit, mpz_xor.
+* New CPU support: DEC Alpha 21264, AMD K6 and Athlon, HPPA 2.0 and 64,
+  Intel PentiumPro and P-II, Sparc 64, PowerPC 64.
+
 Changes between MP version 2.0 and 2.1
 
 * Support for a new memory-saving mode.  Compile applications that need less
@@ -72,3 +93,11 @@ INCOMPATIBILITIES BETWEEN GMP 1 AND GMP 2
 * mpz division functions round differently.
 * mpz mod functions now really compute mod.
 * mpz_powm and mpz_powm_ui now really use mod for reduction.
+
+
+
+----------------
+Local variables:
+mode: text
+fill-column: 76
+End:
