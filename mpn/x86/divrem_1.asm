@@ -41,7 +41,8 @@ include(`../config.m4')
 C mp_limb_t mpn_divrem_1 (mp_ptr dst, mp_size_t xsize,
 C                         mp_srcptr src, mp_size_t size, mp_limb_t divisor);
 C mp_limb_t mpn_divrem_1c (mp_ptr dst, mp_size_t xsize,
-C                          mp_srcptr src, mp_size_t size, mp_limb_t divisor);
+C                          mp_srcptr src, mp_size_t size, mp_limb_t divisor,
+C                          mp_limb_t carry);
 C
 C Divide src,size by divisor and store the quotient in dst+xsize,size.
 C Extend the division to fractional quotient limbs in dst,xsize.  Return the
