@@ -51,40 +51,16 @@ __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o)
 {
   if ((o.flags() & ios::basefield) == ios::hex)
     {
-      if (o.flags() & ios::uppercase)
-        {
-          p->base = -16;
-          if (o.flags() & ios::showbase)  p->expfmt = "@%c%#04X";
-          else                            p->expfmt = "@%c%02X";
-        }
-      else
-        {
-          p->base = 16;
-          if (o.flags() & ios::showbase)  p->expfmt = "@%c%#04x";
-          else                            p->expfmt = "@%c%02x";
-        }
-    }
-  else if ((o.flags() & ios::basefield) == ios::oct)
-    {
-      p->base = 8;
-
-
-      if (o.flags() & ios::uppercase)
-        {
-          if (o.flags() & ios::showbase)  p->expfmt = "E%c%#02o";
-          else                            p->expfmt = "E%c%02o";
-        }
-      else
-        {
-          if (o.flags() & ios::showbase)  p->expfmt = "e%c%#02o";
-          else                            p->expfmt = "e%c%02o";
-        }
+      p->expfmt = "@%c%02d";
+      p->base = (o.flags() & ios::uppercase ? -16 : 16);
     }
   else
     {
-      p->base = 10;
-      if (o.flags() & ios::uppercase)     p->expfmt = "E%c%02d";
-      else                                p->expfmt = "e%c%02d";
+      p->expfmt = (o.flags() & ios::uppercase ? "E%c%02d" : "e%c%02d");
+      if ((o.flags() & ios::basefield) == ios::oct)
+        p->base = 8;
+      else
+        p->base = 10;
     }
 
   /* "general" if none or more than one bit set */
