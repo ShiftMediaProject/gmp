@@ -1,3 +1,29 @@
+1999-12-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/configure.in: Recognize more Amd CPUs; Set special paths for
+	k7 CPU.
+
+	* configure.in: Recognize Amd x86 CPUs.
+
+	* mpz/fdiv_r_2exp.c: In rounding code, read in->_mp_size before
+	writing to res->_mp_size.
+
+	* mpn/powerpc64/*.S: Clean up assembly syntax, add function headers.
+	* mpn/powerpc64/gmp-mparam.h: (KARATSUBA_MUL_THRESHOLD): #define.
+	(KARATSUBA_SQR_THRESHOLD): #define.
+
+	* mpn/tests/add_n.c (main): Only print test number if TIMES==1
+	and not printing.
+	(main): Don't run reference code if NOCHECK.
+	* mpn/tests/sub_n.c: Likewise.
+	* mpn/tests/mul_1.c: Likewise.
+	* mpn/tests/addmul_1.c: Likewise.
+	* mpn/tests/submul_1.c: Likewise.
+
+	* mpn/tests/lshift.c: (main): Only print test number if TIMES==1
+	and not printing.
+	* mpn/tests/rshift.c: Likewise.
+
 1999-11-22  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp.h (mpz_init_set_str): Declare using __gmp_const.
@@ -16,6 +42,15 @@
 	* longlong.h: Likewise.
 
 1999-11-21  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc64/gmp-mparam.h (KARATSUBA_MUL_THRESHOLD): #define.
+	(KARATSUBA_SQR_THRESHOLD): #define.
+
+	* mpn/sparc64/lshift.s: Compensate stack references for odd stack ptr.
+	* mpn/sparc64/rshift.s: Likewise.
+
+	* mpn/sparc64/addmul_1.s: Propagate carry properly.
+	* mpn/sparc64/submul_1.s: Likewise.
 
 	* mpn/sparc64/sub_n.s: Rewrite.
 
@@ -51,7 +86,7 @@
 	* mpn/x86/p6/gmp-mparam.h
 	(KARATSUBA_MUL_THRESHOLD): Only #define #ifndef.
 	(KARATSUBA_SQR_THRESHOLD): Likewise.
-	
+
 1999-11-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/addsub_n.c: New file.
@@ -74,10 +109,10 @@
 
 	* config.sub: Handle k5 and k6.
 	* mpn/configure.in: Recognize k6.
-	
+
 	* mpf/tests/t-get_d.c (LOW_BOUND, HIGH_BOUND): New #defines.
 	(main): Tighten error bounds to 14 digits.
-	
+
 	* longlong.h (default umul_ppmm, when smul_ppmm exists):
 	Rename __m0 => __xm0, __m1 => __xm1.
 	(default smul_ppmm): Likewise.
@@ -100,7 +135,7 @@
 	* mpz/tests/move-if-change: New file.
 	* mpf/tests/move-if-change: New file.
 	* mpq/tests/move-if-change: New file.
-	
+
 	* gmp.h (mpn_incr_u): New macro (from mpn/generic/mul_n.c).
 	(mpn_decr_u): New macro.
 
@@ -126,7 +161,7 @@
 	* make.bat: Compile divrem_2.c.
 	* mpn/configure.in (functions): Add divrem_2.
 	* gmp.h: Declare mpn_divrem_2.
-	
+
 	* mpn/generic/divrem.c: Delete special cases, handle just divisors
 	of more than 2 limbs.
 	* gmp.h (mpn_divrem): Call mpn_divrem_1, mpn_divrem_2, as appropriate.
