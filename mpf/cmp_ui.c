@@ -23,11 +23,12 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 int
-mpf_cmp_ui (mpf_srcptr u, unsigned long int vlimb)
+mpf_cmp_ui (mpf_srcptr u, unsigned long int vval)
 {
   mp_srcptr up;
   mp_size_t usize;
   mp_exp_t uexp;
+  mp_limb_t ulimb;
 
   uexp = u->_mp_exp;
   usize = u->_mp_size;
@@ -37,36 +38,52 @@ mpf_cmp_ui (mpf_srcptr u, unsigned long int vlimb)
     return -1;
   /* We rely on usize being non-negative in the code that follows.  */
 
-  if (vlimb == 0)
+  if (vval == 0)
     return usize != 0;
 
   /* 2. Are the exponents different (V's exponent == 1)?  */
+#if GMP_NAIL_BITS != 0
+  if (uexp > 1 + (vval > GMP_NUMB_MAX))
+    return 1;
+  if (uexp < 1 + (vval > GMP_NUMB_MAX))
+    return -1;
+#else
   if (uexp > 1)
     return 1;
   if (uexp < 1)
     return -1;
+#endif
 
   up = u->_mp_d;
 
+  ulimb = up[usize - 1];
+#if GMP_NAIL_BITS != 0
+  if (usize >= 2 && uexp == 2)
+    {
+      if ((ulimb >> GMP_NAIL_BITS) != 0)
+	return 1;
+      ulimb = (ulimb << GMP_NUMB_BITS) | up[usize - 2];
+      usize--;
+    }
+#endif
+  usize--;
+
   /* 3. Compare the most significant mantissa limb with V.  */
-  if (up[usize - 1] > vlimb)
+  if (ulimb > vval)
     return 1;
-  else if (up[usize - 1] < vlimb)
+  else if (ulimb < vval)
     return -1;
 
-#define STRICT_MPF_NORMALIZATION 0
-#if ! STRICT_MPF_NORMALIZATION
   /* Ignore zeroes at the low end of U.  */
   while (*up == 0)
     {
       up++;
       usize--;
     }
-#endif
 
   /* 4. Now, if the number of limbs are different, we have a difference
      since we have made sure the trailing limbs are not zero.  */
-  if (usize > 1)
+  if (usize > 0)
     return 1;
 
   /* Wow, we got zero even if we tried hard to avoid it.  */

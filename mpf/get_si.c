@@ -35,9 +35,10 @@ MA 02111-1307, USA.
 long
 mpf_get_si (mpf_srcptr f)
 {
-  mp_exp_t  exp;
-  int       size, abs_size;
-  long      n;
+  mp_exp_t exp;
+  mp_size_t size, abs_size;
+  mp_ptr fp;
+  mp_limb_t fl;
 
   size = SIZ (f);
   if (size == 0)
@@ -53,10 +54,17 @@ mpf_get_si (mpf_srcptr f)
   if (exp > abs_size)
     return 0L;
 
-  n = (long) PTR(f)[abs_size-exp];
+  fp = PTR(f);
+  fl = fp[abs_size - exp];
+
+#if GMP_NAIL_BITS != 0
+  if (ULONG_MAX > GMP_NUMB_MAX != 0 && exp > 1)
+    fl |= fp[abs_size - exp + 1] << GMP_NUMB_BITS;
+#endif
+
   if (size > 0)
-    return n & LONG_MAX;
+    return fl & LONG_MAX;
   else
     /* this form necessary to correctly handle -0x80..00 */
-    return ~ ((n - 1) & LONG_MAX);
+    return ~ ((fl - 1) & LONG_MAX);
 }

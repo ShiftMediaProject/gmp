@@ -23,24 +23,25 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 int
-mpf_cmp_si (mpf_srcptr u, long int vslimb)
+mpf_cmp_si (mpf_srcptr u, long int vval)
 {
   mp_srcptr up;
   mp_size_t usize;
   mp_exp_t uexp;
+  mp_limb_t ulimb;
   int usign;
 
   uexp = u->_mp_exp;
   usize = u->_mp_size;
 
   /* 1. Are the signs different?  */
-  if ((usize < 0) == (vslimb < 0)) /* don't use xor, type size may differ */
+  if ((usize < 0) == (vval < 0)) /* don't use xor, type size may differ */
     {
       /* U and V are both non-negative or both negative.  */
       if (usize == 0)
-	/* vslimb >= 0 */
-	return -(vslimb != 0);
-      if (vslimb == 0)
+	/* vval >= 0 */
+	return -(vval != 0);
+      if (vval == 0)
 	/* usize >= 0 */
 	return usize != 0;
       /* Fall out.  */
@@ -54,37 +55,52 @@ mpf_cmp_si (mpf_srcptr u, long int vslimb)
   /* U and V have the same sign and are both non-zero.  */
 
   usign = usize >= 0 ? 1 : -1;
+  usize = ABS (usize);
+  vval = ABS (vval);
 
   /* 2. Are the exponents different (V's exponent == 1)?  */
+#if GMP_NAIL_BITS != 0
+  if (uexp > 1 + (vval > GMP_NUMB_MAX))
+    return usign;
+  if (uexp < 1 + (vval > GMP_NUMB_MAX))
+    return -usign;
+#else
   if (uexp > 1)
     return usign;
   if (uexp < 1)
     return -usign;
-
-  usize = ABS (usize);
-  vslimb = ABS (vslimb);
+#endif
 
   up = u->_mp_d;
 
+  ulimb = up[usize - 1];
+#if GMP_NAIL_BITS != 0
+  if (usize >= 2 && uexp == 2)
+    {
+      if ((ulimb >> GMP_NAIL_BITS) != 0)
+	return 1;
+      ulimb = (ulimb << GMP_NUMB_BITS) | up[usize - 2];
+      usize--;
+    }
+#endif
+  usize--;
+
   /* 3. Compare the most significant mantissa limb with V.  */
-  if (up[usize - 1] > (unsigned long) vslimb)
+  if (ulimb > (unsigned long) vval)
     return usign;
-  else if (up[usize - 1] < (unsigned long) vslimb)
+  else if (ulimb < (unsigned long) vval)
     return -usign;
 
-#define STRICT_MPF_NORMALIZATION 0
-#if ! STRICT_MPF_NORMALIZATION
   /* Ignore zeroes at the low end of U.  */
   while (*up == 0)
     {
       up++;
       usize--;
     }
-#endif
 
   /* 4. Now, if the number of limbs are different, we have a difference
      since we have made sure the trailing limbs are not zero.  */
-  if (usize > 1)
+  if (usize > 0)
     return usign;
 
   /* Wow, we got zero even if we tried hard to avoid it.  */

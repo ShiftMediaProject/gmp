@@ -92,7 +92,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 	 desired.  We could probably decrease both this, and avoid the +1
 	 for setting prec above.  */
       prec = 2 + (mp_size_t)
-	(n_digits / (BITS_PER_MP_LIMB * __mp_bases[base].chars_per_bit_exactly));
+	(n_digits / (GMP_NUMB_BITS * __mp_bases[base].chars_per_bit_exactly));
 #endif
   }
 
@@ -136,7 +136,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 #endif
 
       count_leading_zeros (cnt, up[usize - 1]);
-      exp_in_base = (((double) uexp * BITS_PER_MP_LIMB - cnt)
+      exp_in_base = (((double) uexp * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS)
 		     * __mp_bases[base].chars_per_bit_exactly);
       exp_in_base += 1;
 
@@ -147,7 +147,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
       rp[0] = base;
       rsize = 1;
       count_leading_zeros (cnt, exp_in_base);
-      for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
+      for (i = GMP_LIMB_BITS - cnt - 2; i >= 0; i--)
 	{
 	  mpn_sqr_n (tp, rp, rsize);
 	  rsize = 2 * rsize;
@@ -171,6 +171,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 	}
 
       count_leading_zeros (cnt, rp[rsize - 1]);
+      cnt -= GMP_NAIL_BITS;
       if (cnt != 0)
 	{
 	  mpn_lshift (rp, rp, rsize, cnt);
@@ -239,7 +240,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 
       uexp = -uexp;
       count_leading_zeros (cnt, up[usize - 1]);
-      exp_in_base = (((double) uexp * BITS_PER_MP_LIMB + cnt - 1)
+      exp_in_base = (((double) uexp * GMP_NUMB_BITS + cnt - GMP_NAIL_BITS - 1)
 		     * __mp_bases[base].chars_per_bit_exactly);
       if (exp_in_base < 0)
 	exp_in_base = 0;
@@ -253,7 +254,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 	  rp[0] = base;
 	  rsize = 1;
 	  count_leading_zeros (cnt, exp_in_base);
-	  for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
+	  for (i = GMP_LIMB_BITS - cnt - 2; i >= 0; i--)
 	    {
 	      mpn_sqr_n (tp, rp, rsize);
 	      rsize = 2 * rsize;
@@ -305,7 +306,7 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
   if (big_base < 10)		/* logarithm of base when power of two */
     {
       int logbase = big_base;
-      if (dig_per_u * logbase == BITS_PER_MP_LIMB)
+      if (dig_per_u * logbase == GMP_NUMB_BITS)
 	dig_per_u--;
       big_base = (mp_limb_t) 1 << (dig_per_u * logbase);
       /* fall out to general code... */
@@ -318,9 +319,9 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 
   /* Allocate temporary digit space.  We can't put digits directly in the user
      area, since we generate more digits than requested.  (We allocate
-     BITS_PER_MP_LIMB extra bytes because of the digit block nature of the
+     GMP_LIMB_BITS extra bytes because of the digit block nature of the
      conversion.)  */
-  tstr = (unsigned char *) TMP_ALLOC (n_digits + BITS_PER_MP_LIMB + 3);
+  tstr = (unsigned char *) TMP_ALLOC (n_digits + GMP_LIMB_BITS + 3);
 
   for (digits_computed_so_far = 0; digits_computed_so_far < n_digits + 3;
        digits_computed_so_far += dig_per_u)
@@ -336,6 +337,12 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
 	}
 
       cy = mpn_mul_1 (rp, rp, rsize, big_base);
+
+      if (! POW2_P (GMP_NUMB_BITS))
+	{
+	  if (digits_computed_so_far == 0 && cy == 0)
+	    cy = mpn_mul_1 (rp, rp, rsize, big_base);
+	}
 
       ASSERT_ALWAYS (! (digits_computed_so_far == 0 && cy == 0));
 

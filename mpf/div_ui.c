@@ -36,6 +36,21 @@ mpf_div_ui (mpf_ptr r, mpf_srcptr u, unsigned long int v)
   mp_exp_t rexp;
   TMP_DECL (marker);
 
+#if GMP_NAIL_BITS != 0
+  if (v > GMP_NUMB_MAX)
+    {
+      mpf_t vf;
+      mp_limb_t vl[2];
+      SIZ(vf) = 2;
+      EXP(vf) = 2;
+      PTR(vf) = vl;
+      vl[0] = v & GMP_NUMB_MASK;
+      vl[1] = v >> GMP_NUMB_BITS;
+      mpf_div (r, u, vf);
+      return;
+    }
+#endif
+
   usize = u->_mp_size;
   sign_quotient = usize;
   usize = ABS (usize);

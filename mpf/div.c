@@ -83,13 +83,14 @@ mpf_div (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
 
 
   /* Normalize the divisor and the dividend.  */
-  if (! (vp[vsize-1] & MP_LIMB_T_HIGHBIT))
+  if ((vp[vsize-1] & GMP_NUMB_HIGHBIT) == 0)
     {
       mp_ptr tmp;
       mp_limb_t nlimb;
       unsigned normalization_steps;
 
       count_leading_zeros (normalization_steps, vp[vsize - 1]);
+      normalization_steps -= GMP_NAIL_BITS;
 
       /* Shift up the divisor setting the most significant bit of
 	 the most significant limb.  Use temporary storage not to clobber

@@ -37,8 +37,8 @@ MA 02111-1307, USA.
 unsigned long
 mpf_get_ui (mpf_srcptr f)
 {
-  int        size, abs_size;
-  mp_exp_t   exp;
+  mp_size_t size, abs_size;
+  mp_exp_t exp;
 
   size = SIZ (f);
   if (size == 0)

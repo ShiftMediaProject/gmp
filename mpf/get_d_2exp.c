@@ -49,7 +49,7 @@ mpf_get_d_2exp (signed long int *exp2, mpf_srcptr src)
   for (i = 1; i < n_limbs_to_use; i++)
     res = (res + qp[i]) / MP_BASE_AS_DOUBLE;
   count_leading_zeros (cnt, qp[n_limbs_to_use - 1]);
-  *exp2 = EXP(src) * BITS_PER_MP_LIMB - cnt;
+  *exp2 = EXP(src) * GMP_NUMB_BITS - cnt + GMP_NAIL_BITS;
   res = res * ((mp_limb_t) 1 << cnt);
 
   return negative ? -res : res;
