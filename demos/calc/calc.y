@@ -1,6 +1,6 @@
-/* A simple integer desk calculator using yacc and gmp. */
+%{
+/* A simple integer desk calculator using yacc and gmp.
 
-/*
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -16,8 +16,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-Place - Suite 330, Boston, MA 02111-1307, USA.
-*/
+Place - Suite 330, Boston, MA 02111-1307, USA. */
 
 
 /* This is a simple program, meant only to show one way to use GMP for this
@@ -83,7 +82,6 @@ Place - Suite 330, Boston, MA 02111-1307, USA.
    the mpz_init_realloc_clear example in tune/README).  */
 
 
-%{
 #include <stdio.h>
 #include <stdlib.h>
 
