@@ -1,6 +1,5 @@
-/* mpz_ui_kronecker -- ulong+mpz Kronecker/Jacobi symbol. */
+/* mpz_ui_kronecker -- ulong+mpz Kronecker/Jacobi symbol.
 
-/*
 Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -48,6 +46,16 @@ mpz_ui_kronecker (unsigned long a, mpz_srcptr b)
 
   if (b_abs_size == 0)
     return JACOBI_U0 (a);  /* (a/0) */
+
+  if (a > GMP_NUMB_MAX)
+    {
+      mp_limb_t  alimbs[2];
+      mpz_t      az;
+      ALLOC(az) = numberof (alimbs);
+      PTR(az) = alimbs;
+      mpz_set_ui (az, a);
+      return mpz_kronecker (az, b);
+    }
 
   if (! (b_low & 1))
     {
