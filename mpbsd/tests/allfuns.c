@@ -22,6 +22,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
+#include <stdio.h>
 #include "mp.h"
 
 int
@@ -30,6 +31,7 @@ main (int argc, char *argv[])
   MINT *a, *b, *c, *d;
   short  h;
 
+  mp_set_memory_functions (NULL, NULL, NULL);
   a = itom (123);
   b = xtom ("DEADBEEF");
   c = itom (0);
@@ -51,7 +53,6 @@ main (int argc, char *argv[])
       mout (a);
     }
   mtox (b);
-
   mfree(a);
 
   exit (0);
