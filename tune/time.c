@@ -1,6 +1,6 @@
 /* Time routines for speed measurments.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -421,38 +421,39 @@ int
 cycles_works_p (void)
 {
   static int  result = -1;
-  RETSIGTYPE (*old_handler) _PROTO ((int));
-  unsigned  cycles[2];
-
-  /* suppress a warning about cycles[] unused */
-  cycles[0] = 0;
 
   if (result != -1)
     goto done;
 
 #ifdef SIGILL
-  old_handler = signal (SIGILL, cycles_works_handler);
-  if (old_handler == SIG_ERR)
-    {
-      if (speed_option_verbose)
-        printf ("cycles_works_p(): SIGILL not supported, assuming speed_cyclecounter() works\n");
-      goto yes;
-    }
-  if (setjmp (cycles_works_buf))
-    {
-      if (speed_option_verbose)
-        printf ("cycles_works_p(): SIGILL during speed_cyclecounter(), so doesn't work\n");
-      result = 0;
-      goto done;
-    }
-  speed_cyclecounter (cycles);
-  signal (SIGILL, old_handler);
-  if (speed_option_verbose)
-    printf ("cycles_works_p(): speed_cyclecounter() works\n");
+  {
+    RETSIGTYPE (*old_handler) _PROTO ((int));
+    unsigned  cycles[2];
+
+    old_handler = signal (SIGILL, cycles_works_handler);
+    if (old_handler == SIG_ERR)
+      {
+        if (speed_option_verbose)
+          printf ("cycles_works_p(): SIGILL not supported, assuming speed_cyclecounter() works\n");
+        goto yes;
+      }
+    if (setjmp (cycles_works_buf))
+      {
+        if (speed_option_verbose)
+          printf ("cycles_works_p(): SIGILL during speed_cyclecounter(), so doesn't work\n");
+        result = 0;
+        goto done;
+      }
+    speed_cyclecounter (cycles);
+    signal (SIGILL, old_handler);
+    if (speed_option_verbose)
+      printf ("cycles_works_p(): speed_cyclecounter() works\n");
+  }
 #else
 
   if (speed_option_verbose)
     printf ("cycles_works_p(): SIGILL not defined, assuming speed_cyclecounter() works\n");
+  goto yes;
 #endif
 
  yes:
