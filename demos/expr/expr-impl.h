@@ -70,36 +70,36 @@ union mpX_t {
 typedef union mpX_t *mpX_ptr;
 typedef __gmp_const union mpX_t *mpX_srcptr;
 
-typedef void (*mpexpr_fun_one_t) _PROTO ((mpX_ptr));
-typedef unsigned long (*mpexpr_fun_ui_one_t) _PROTO ((mpX_ptr));
+typedef void (*mpexpr_fun_one_t) __GMP_PROTO ((mpX_ptr));
+typedef unsigned long (*mpexpr_fun_ui_one_t) __GMP_PROTO ((mpX_ptr));
 
-typedef void (*mpexpr_fun_0ary_t) _PROTO ((mpX_ptr));
-typedef int  (*mpexpr_fun_i_0ary_t) _PROTO ((void));
+typedef void (*mpexpr_fun_0ary_t) __GMP_PROTO ((mpX_ptr));
+typedef int  (*mpexpr_fun_i_0ary_t) __GMP_PROTO ((void));
 
-typedef void (*mpexpr_fun_unary_t) _PROTO ((mpX_ptr, mpX_srcptr));
-typedef void (*mpexpr_fun_unary_ui_t) _PROTO ((mpX_ptr, unsigned long));
-typedef int  (*mpexpr_fun_i_unary_t) _PROTO ((mpX_srcptr));
-typedef int  (*mpexpr_fun_i_unary_ui_t) _PROTO ((unsigned long));
+typedef void (*mpexpr_fun_unary_t) __GMP_PROTO ((mpX_ptr, mpX_srcptr));
+typedef void (*mpexpr_fun_unary_ui_t) __GMP_PROTO ((mpX_ptr, unsigned long));
+typedef int  (*mpexpr_fun_i_unary_t) __GMP_PROTO ((mpX_srcptr));
+typedef int  (*mpexpr_fun_i_unary_ui_t) __GMP_PROTO ((unsigned long));
 
-typedef void (*mpexpr_fun_binary_t) _PROTO ((mpX_ptr, mpX_srcptr, mpX_srcptr));
-typedef void (*mpexpr_fun_binary_ui_t) _PROTO ((mpX_ptr, mpX_srcptr, unsigned long));
-typedef int  (*mpexpr_fun_i_binary_t) _PROTO ((mpX_srcptr, mpX_srcptr));
-typedef int  (*mpexpr_fun_i_binary_ui_t) _PROTO ((mpX_srcptr, unsigned long));
+typedef void (*mpexpr_fun_binary_t) __GMP_PROTO ((mpX_ptr, mpX_srcptr, mpX_srcptr));
+typedef void (*mpexpr_fun_binary_ui_t) __GMP_PROTO ((mpX_ptr, mpX_srcptr, unsigned long));
+typedef int  (*mpexpr_fun_i_binary_t) __GMP_PROTO ((mpX_srcptr, mpX_srcptr));
+typedef int  (*mpexpr_fun_i_binary_ui_t) __GMP_PROTO ((mpX_srcptr, unsigned long));
 
 typedef void (*mpexpr_fun_ternary_t)
-     _PROTO ((mpX_ptr, mpX_srcptr, mpX_srcptr, mpX_srcptr));
+     __GMP_PROTO ((mpX_ptr, mpX_srcptr, mpX_srcptr, mpX_srcptr));
 typedef void (*mpexpr_fun_ternary_ui_t)
-     _PROTO ((mpX_ptr, mpX_srcptr, mpX_srcptr, unsigned long));
+     __GMP_PROTO ((mpX_ptr, mpX_srcptr, mpX_srcptr, unsigned long));
 typedef int (*mpexpr_fun_i_ternary_t)
-     _PROTO ((mpX_srcptr, mpX_srcptr, mpX_srcptr));
+     __GMP_PROTO ((mpX_srcptr, mpX_srcptr, mpX_srcptr));
 typedef int (*mpexpr_fun_i_ternary_ui_t)
-     _PROTO ((mpX_srcptr, mpX_srcptr, unsigned long));
+     __GMP_PROTO ((mpX_srcptr, mpX_srcptr, unsigned long));
 
 typedef size_t (*mpexpr_fun_number_t)
-     _PROTO ((mpX_ptr, __gmp_const char *str, size_t len, int base));
-typedef void (*mpexpr_fun_swap_t) _PROTO ((mpX_ptr, mpX_ptr));
-typedef unsigned long (*mpexpr_fun_get_ui_t) _PROTO ((mpX_srcptr));
-typedef void (*mpexpr_fun_set_si_t) _PROTO ((mpX_srcptr, long));
+     __GMP_PROTO ((mpX_ptr, __gmp_const char *str, size_t len, int base));
+typedef void (*mpexpr_fun_swap_t) __GMP_PROTO ((mpX_ptr, mpX_ptr));
+typedef unsigned long (*mpexpr_fun_get_ui_t) __GMP_PROTO ((mpX_srcptr));
+typedef void (*mpexpr_fun_set_si_t) __GMP_PROTO ((mpX_srcptr, long));
 
 struct mpexpr_control_t {
   __gmp_const struct mpexpr_operator_t  *op;
@@ -144,7 +144,7 @@ struct mpexpr_parse_t {
 };
 
 
-int mpexpr_evaluate _PROTO ((struct mpexpr_parse_t *p));
-int mpexpr_va_to_var _PROTO ((void *var[], va_list ap));
-size_t mpexpr_mpz_number _PROTO ((mpz_ptr res,
+int mpexpr_evaluate __GMP_PROTO ((struct mpexpr_parse_t *p));
+int mpexpr_va_to_var __GMP_PROTO ((void *var[], va_list ap));
+size_t mpexpr_mpz_number __GMP_PROTO ((mpz_ptr res,
                                   __gmp_const char *e, size_t elen, int base));

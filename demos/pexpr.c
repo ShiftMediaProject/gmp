@@ -1,7 +1,7 @@
 /* Program for computing integer expressions using the GNU Multiple Precision
    Arithmetic Library.
 
-Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1997, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -107,21 +107,21 @@ struct expr
 
 typedef struct expr *expr_t;
 
-void cleanup_and_exit _PROTO ((int));
+void cleanup_and_exit __GMP_PROTO ((int));
 
-char *skipspace _PROTO ((char *));
-void makeexp _PROTO ((expr_t *, enum op_t, expr_t, expr_t));
-void free_expr _PROTO ((expr_t));
-char *expr _PROTO ((char *, expr_t *));
-char *term _PROTO ((char *, expr_t *));
-char *power _PROTO ((char *, expr_t *));
-char *factor _PROTO ((char *, expr_t *));
-int match _PROTO ((char *, char *));
-int matchp _PROTO ((char *, char *));
-int cputime _PROTO ((void));
+char *skipspace __GMP_PROTO ((char *));
+void makeexp __GMP_PROTO ((expr_t *, enum op_t, expr_t, expr_t));
+void free_expr __GMP_PROTO ((expr_t));
+char *expr __GMP_PROTO ((char *, expr_t *));
+char *term __GMP_PROTO ((char *, expr_t *));
+char *power __GMP_PROTO ((char *, expr_t *));
+char *factor __GMP_PROTO ((char *, expr_t *));
+int match __GMP_PROTO ((char *, char *));
+int matchp __GMP_PROTO ((char *, char *));
+int cputime __GMP_PROTO ((void));
 
-void mpz_eval_expr _PROTO ((mpz_ptr, expr_t));
-void mpz_eval_mod_expr _PROTO ((mpz_ptr, expr_t, mpz_ptr));
+void mpz_eval_expr __GMP_PROTO ((mpz_ptr, expr_t));
+void mpz_eval_mod_expr __GMP_PROTO ((mpz_ptr, expr_t, mpz_ptr));
 
 char *error;
 int flag_print = 1;
