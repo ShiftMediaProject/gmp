@@ -53,7 +53,7 @@ MA 02111-1307, USA.
 
 typedef mp_limb_t (*mpn_aors_1_t)
      _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
-mpn_aors_1_t fudge (mpn_aors_1_t);
+mpn_aors_1_t fudge _PROTO ((mpn_aors_1_t));
 
 
 void
