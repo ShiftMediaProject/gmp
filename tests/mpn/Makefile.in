@@ -140,7 +140,7 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-asmtype t-aors_1 t-iord_u t-scan
+check_PROGRAMS = t-asmtype t-aors_1 t-iord_u t-mp_bases t-scan
 
 TESTS = $(check_PROGRAMS)
 subdir = tests/mpn
@@ -148,7 +148,7 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 check_PROGRAMS = t-asmtype$(EXEEXT) t-aors_1$(EXEEXT) t-iord_u$(EXEEXT) \
-	t-scan$(EXEEXT)
+	t-mp_bases$(EXEEXT) t-scan$(EXEEXT)
 t_aors_1_SOURCES = t-aors_1.c
 t_aors_1_OBJECTS = t-aors_1$U.$(OBJEXT)
 t_aors_1_LDADD = $(LDADD)
@@ -167,6 +167,12 @@ t_iord_u_LDADD = $(LDADD)
 t_iord_u_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_iord_u_LDFLAGS =
+t_mp_bases_SOURCES = t-mp_bases.c
+t_mp_bases_OBJECTS = t-mp_bases$U.$(OBJEXT)
+t_mp_bases_LDADD = $(LDADD)
+t_mp_bases_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_mp_bases_LDFLAGS =
 t_scan_SOURCES = t-scan.c
 t_scan_OBJECTS = t-scan$U.$(OBJEXT)
 t_scan_LDADD = $(LDADD)
@@ -188,9 +194,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = t-aors_1.c t-asmtype.c t-iord_u.c t-scan.c
+DIST_SOURCES = t-aors_1.c t-asmtype.c t-iord_u.c t-mp_bases.c t-scan.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = t-aors_1.c t-asmtype.c t-iord_u.c t-scan.c
+SOURCES = t-aors_1.c t-asmtype.c t-iord_u.c t-mp_bases.c t-scan.c
 
 all: all-am
 
@@ -224,6 +230,9 @@ t-asmtype$(EXEEXT): $(t_asmtype_OBJECTS) $(t_asmtype_DEPENDENCIES)
 t-iord_u$(EXEEXT): $(t_iord_u_OBJECTS) $(t_iord_u_DEPENDENCIES) 
 	@rm -f t-iord_u$(EXEEXT)
 	$(LINK) $(t_iord_u_LDFLAGS) $(t_iord_u_OBJECTS) $(t_iord_u_LDADD) $(LIBS)
+t-mp_bases$(EXEEXT): $(t_mp_bases_OBJECTS) $(t_mp_bases_DEPENDENCIES) 
+	@rm -f t-mp_bases$(EXEEXT)
+	$(LINK) $(t_mp_bases_LDFLAGS) $(t_mp_bases_OBJECTS) $(t_mp_bases_LDADD) $(LIBS)
 t-scan$(EXEEXT): $(t_scan_OBJECTS) $(t_scan_DEPENDENCIES) 
 	@rm -f t-scan$(EXEEXT)
 	$(LINK) $(t_scan_LDFLAGS) $(t_scan_OBJECTS) $(t_scan_LDADD) $(LIBS)
@@ -255,11 +264,13 @@ t-asmtype_.c: t-asmtype.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-asmtype.c; then echo $(srcdir)/t-asmtype.c; else echo t-asmtype.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-asmtype_.c || rm -f t-asmtype_.c
 t-iord_u_.c: t-iord_u.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-iord_u.c; then echo $(srcdir)/t-iord_u.c; else echo t-iord_u.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-iord_u_.c || rm -f t-iord_u_.c
+t-mp_bases_.c: t-mp_bases.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-mp_bases.c; then echo $(srcdir)/t-mp_bases.c; else echo t-mp_bases.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-mp_bases_.c || rm -f t-mp_bases_.c
 t-scan_.c: t-scan.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-scan.c; then echo $(srcdir)/t-scan.c; else echo t-scan.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-scan_.c || rm -f t-scan_.c
 t-aors_1_.$(OBJEXT) t-aors_1_.lo t-asmtype_.$(OBJEXT) t-asmtype_.lo \
-t-iord_u_.$(OBJEXT) t-iord_u_.lo t-scan_.$(OBJEXT) t-scan_.lo : \
-$(ANSI2KNR)
+t-iord_u_.$(OBJEXT) t-iord_u_.lo t-mp_bases_.$(OBJEXT) t-mp_bases_.lo \
+t-scan_.$(OBJEXT) t-scan_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
