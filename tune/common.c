@@ -773,26 +773,34 @@ speed_mpn_sub_n (struct speed_params *s)
 SPEED_ROUTINE_MPN_BINARY_N (mpn_sub_n);
 }
 
+#if HAVE_NATIVE_mpn_addlsh1_n
 double
 speed_mpn_addlsh1_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_BINARY_N (mpn_addlsh1_n);
 }
+#endif
+#if HAVE_NATIVE_mpn_sublsh1_n
 double
 speed_mpn_sublsh1_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_BINARY_N (mpn_sublsh1_n);
 }
+#endif
+#if HAVE_NATIVE_mpn_rsh1add_n
 double
 speed_mpn_rsh1add_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_BINARY_N (mpn_rsh1add_n);
 }
+#endif
+#if HAVE_NATIVE_mpn_rsh1sub_n
 double
 speed_mpn_rsh1sub_n (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_BINARY_N (mpn_rsh1sub_n);
 }
+#endif
 
 /* mpn_and_n etc can be macros and so have to be handled with
    SPEED_ROUTINE_MPN_BINARY_N_CALL forms */
