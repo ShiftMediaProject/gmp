@@ -1,3 +1,8 @@
+2000-05-24  Linus Nordberg  <linus@swox.se>
+
+	* acinclude.m4 (GMP_PROG_CC_WORKS): Don't report progress to user
+	when doing the AIX specific test to avoid "nested output".
+
 2000-05-22  Kevin Ryde  <kevin@swox.se>
 
 	* mp.h (_PROTO): Copy from gmp.h, use on prototypes.
