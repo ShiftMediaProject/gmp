@@ -110,12 +110,18 @@ mpq_set_d (dest, d)
 	  ASSERT_ALWAYS (1);
 	}
 #else
-      if (nn > 2)
-	{
+      switch (nn)
+        {
+	default:
 	  MPN_ZERO (np, nn - 2);
 	  np += nn - 2;
+	  /* fall through */
+	case 2:
+	  np[1] = tp[1], np[0] = tp[0];
+	  break;
+	case 1:
+	  ASSERT_ALWAYS (1);
 	}
-      np[1] = tp[1], np[0] = tp[0];
 #endif
       dp = PTR(&(dest->_mp_den));
       dp[0] = 1;
