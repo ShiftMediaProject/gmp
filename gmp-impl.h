@@ -505,16 +505,32 @@ int mpn_jacobi_base _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1)) ATTRIBU
 #define mpz_n_pow_ui __gmpz_n_pow_ui
 void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
 
+
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
+
+#define _gmp_rand __gmp_rand
+void __GMP_DECLSPEC _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long int));
+
+
+/* __gmp_rands is the global state for the old-style random functions, and
+   is also used in the test programs.
+
+   There's no seeding here, so mpz_random etc will generate the same
+   sequence every time.  This is not unlike the C library random functions
+   if you don't seed them, so perhaps it's acceptable.  Digging up a seed
+   from /dev/random or the like would work on many systems, but might
+   encourage a false confidence, since it'd be pretty much impossible to do
+   something that would work reliably everywhere.  In any case the new style
+   functions are recommended to applications which care about randomness, so
+   the old functions aren't too important.  */
+
 extern char             __gmp_rands_initialized;
 extern gmp_randstate_t  __gmp_rands;
 
-/* This is the global for the old-style random functions, and it's also used
-   in the test programs.  */
-#define RANDS								\
-  ((__gmp_rands_initialized ? 0						\
-    : (__gmp_rands_initialized = 1,					\
-       gmp_randinit (__gmp_rands, GMP_RAND_ALG_LC, 64), 0)),		\
+#define RANDS                                                   \
+  ((__gmp_rands_initialized ? 0                                 \
+    : (__gmp_rands_initialized = 1,                             \
+       gmp_randinit (__gmp_rands, GMP_RAND_ALG_LC, 64), 0)),    \
    __gmp_rands)
 
 #define RANDS_CLEAR()                   \
@@ -1976,12 +1992,12 @@ struct doprnt_params_t {
   int         exptimes4;     /* exponent multiply by 4 */
   char        fill;          /* character */
   int         justify;       /* choices above */
-  int         prec;
+  int         prec;          /* prec field, or -1 for all digits */
   int         showbase;      /* choices above */
   int         showpoint;     /* if radix point always shown */
   int         showtrailing;  /* if trailing zeros wanted */
   char        sign;          /* '+', ' ', or '\0' */
-  int         width;
+  int         width;         /* width field */
 };
 
 #if _GMP_H_HAVE_VA_LIST
