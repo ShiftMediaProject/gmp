@@ -717,6 +717,15 @@ case $host in
     extra_functions="udiv_w_sdiv"
     ;;
 
+
+  # Special cpu "none" selects generic C.  -DNO_ASM is used to disable gcc
+  # asm blocks in longlong.h (since they're driven by cpp pre-defined
+  # symbols like "__alpha__" rather than from the configured cpu.
+  #
+  none-*-*)
+    gcc_cppflags="-DNO_ASM"
+    ;;
+
 esac
 
 
@@ -1212,7 +1221,7 @@ gmp_mpn_functions_optional="copyi copyd com_n		\
 
 gmp_mpn_functions="$extra_functions inlines add_n sub_n mul_1 addmul_1   \
   submul_1 lshift rshift diveby3 divrem divrem_1 divrem_2                  \
-  mod_1 mod_1_rs pre_mod_1 mode1o dump                                            \
+  mod_1 mod_1_rs pre_mod_1 dump                                            \
   mul mul_fft mul_n mul_basecase sqr_basecase random                       \
   random2 sqrtrem get_str set_str scan0 scan1 popcount hamdist cmp perfsqr \
   bdivmod gcd_1 gcd gcdext tdiv_qr dc_divrem_n sb_divrem_mn jacbase        \
