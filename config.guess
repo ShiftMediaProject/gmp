@@ -263,23 +263,40 @@ EOF
 
 
 rs6000-*-* | powerpc*-*-*)
-  # Try to read the PVR.  mfpvr is a protected instruction, the linux kernel
-  # allows it in user mode, but MacOS and AIX don't.
+  # Try to read the PVR.  mfpvr is a protected instruction, MacOS and AIX
+  # don't allow it in user mode, but the Linux kernel does.
+  #
+  # Using explicit bytes for mfpvr avoids worrying about assembler syntax
+  # and underscores.  "char"s are used instead of "int"s to avoid worrying
+  # whether sizeof(int)==4 or if it's the right endianness.
+  #
+  # Note this is no good on AIX, since a C function there is the address of
+  # a function descriptor, not actual code.  But this doesn't matter since
+  # AIX doesn't allow mfpvr anyway.
+  #
   cat >$dummy.c <<\EOF
-/* this is a bit nasty, but saves worrying about the assembler syntax */
-const unsigned char  getpvr[] = {
-   0x7c, 0x7f, 0x42, 0xa6,  /* mfpvr r3 */
-   0x4e, 0x80, 0x00, 0x20,  /* blr      */
+#include <stdio.h>
+struct {
+  int   n;  /* force 4-byte alignment */
+  char  a[8];
+} getpvr = {
+  0,
+  {
+    0x7c, 0x7f, 0x42, 0xa6,  /* mfpvr r3 */
+    0x4e, 0x80, 0x00, 0x20,  /* blr      */
+  }
 };
 int
 main ()
 {
   unsigned  (*fun)();
   unsigned  pvr;
-  /* a separate "fun" variable is necessary for the gcc 2.95.2 on MacOS,
+
+  /* a separate "fun" variable is necessary for gcc 2.95.2 on MacOS,
      it gets a compiler error on a combined cast and call */
-  fun = (unsigned (*)()) getpvr;
+  fun = (unsigned (*)()) getpvr.a;
   pvr = (*fun) ();
+
   switch (pvr >> 16) {
   case 1:  puts ("powerpc601");  break;
   case 3:  puts ("powerpc603");  break;
