@@ -1,3 +1,21 @@
+2001-09-11  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, gmp-h.in (__GMP_HAVE_HOST_CPU_FAMILY_power,
+	__GMP_HAVE_HOST_CPU_FAMILY_powerpc): New AC_SUBSTs.
+	* gmp-h.in (__GMPN_COPY_INCR): Use them to select the power/powerpc
+	code, rather than preprocessor defines.
+
+	* acinclude.m4, configure.in (GMP_H_ANSI): New macro.
+
+	* gmp-h.in (__GMP_EXTERN_INLINE): Add a definition for SCO 8 cc.
+
+	* gmp-h.in, version.c (gmp_version): Make the pointer "const" as well
+	as the string.
+	
+	* acinclude.m4, configure.in (GMP_PROG_CC_IS_XLC): Recognise xlc when
+	invoked under another name (cc, xlc128, etc).
+	* acinclude.m4 (GMP_PROG_CC_IS_GCC): Print a message when recognised.
+
 2001-09-11  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-h.in: Let __DECC mean __GMP_HAVE_CONST, etc.
