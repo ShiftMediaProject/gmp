@@ -285,72 +285,6 @@ mpn_addmul2_n_1 (mp_ptr rp, mp_size_t n,
 }
 
 
-
-/* qstack operations */
-
-/* Prepares stack for pushing SIZE limbs */
-static mp_ptr
-qstack_push_start (struct qstack *stack,
-		   mp_size_t size)
-{
-  ASSERT_QSTACK (stack);
-
-  ASSERT (stack->limb_next <= stack->limb_alloc);
-
-  if (size > stack->limb_alloc - stack->limb_next)
-    {
-      qstack_rotate (stack,
-		     size - (stack->limb_alloc - stack->limb_next));
-      ASSERT (stack->size_next < QSTACK_MAX_QUOTIENTS);
-    }
-  else if (stack->size_next >= QSTACK_MAX_QUOTIENTS)
-    {
-      qstack_rotate (stack, 0);
-    }
-
-  ASSERT (size <= stack->limb_alloc - stack->limb_next);
-  ASSERT (stack->size_next < QSTACK_MAX_QUOTIENTS);
-
-  return stack->limb + stack->limb_next;
-}
-
-static void
-qstack_push_end (struct qstack *stack, mp_size_t size)
-{
-  ASSERT (stack->size_next < QSTACK_MAX_QUOTIENTS);
-  ASSERT (size <= stack->limb_alloc - stack->limb_next);
-
-  stack->size[stack->size_next++] = size;
-  stack->limb_next += size;
-
-  ASSERT_QSTACK (stack);
-}
-
-static mp_size_t
-qstack_push_quotient (struct qstack *stack,
-		      mp_ptr *qp,
-		      mp_ptr rp, mp_size_t *rsizep,
-		      mp_srcptr ap, mp_size_t asize,
-		      mp_srcptr bp, mp_size_t bsize)
-{
-  mp_size_t qsize = asize - bsize + 1;
-  mp_size_t rsize = bsize;
-  *qp = qstack_push_start (stack, qsize);
-
-  mpn_tdiv_qr (*qp, rp, 0, ap, asize, bp, bsize);
-  MPN_NORMALIZE (rp, rsize);
-  *rsizep = rsize;
-
-  if ((*qp)[qsize - 1] == 0)
-    qsize--;
-
-  if (qsize == 1 && (*qp)[0] == 1)
-    qsize = 0;
-
-  qstack_push_end (stack, qsize);
-  return qsize;
-}
-
 static void
 qstack_drop (struct qstack *stack)
 {
@@ -1405,14 +1339,52 @@ euclid_step (struct hgcd *hgcd, mp_size_t M,
 	     struct qstack *quotients,
 	     mp_ptr tp, mp_size_t talloc)
 {
+  mp_size_t asize;
+
   mp_size_t qsize;
+  mp_size_t rsize;
   mp_ptr qp;
+  mp_ptr rp;
 
-  qsize = qstack_push_quotient (quotients, &qp,
-				hgcd->row[2].rp, &hgcd->row[2].rsize,
-				hgcd->row[0].rp,  hgcd->row[0].rsize,
-				hgcd->row[1].rp,  hgcd->row[1].rsize);
+  asize = hgcd->row[0].rsize;
+  rsize = hgcd->row[1].rsize;
+  qsize = asize - rsize + 1;
 
+  /* Make sure we have space on stack */
+  ASSERT_QSTACK (quotients);
+
+  if (qsize > quotients->limb_alloc - quotients->limb_next)
+    {
+      qstack_rotate (quotients,
+		     qsize - (quotients->limb_alloc - quotients->limb_next));
+      ASSERT (quotients->size_next < QSTACK_MAX_QUOTIENTS);
+    }
+  else if (quotients->size_next >= QSTACK_MAX_QUOTIENTS)
+    {
+      qstack_rotate (quotients, 0);
+    }
+
+  ASSERT (qsize <= quotients->limb_alloc - quotients->limb_next);
+
+  qp = quotients->limb + quotients->limb_next;
+  
+  rp = hgcd->row[2].rp;
+  mpn_tdiv_qr (qp, rp, 0, hgcd->row[0].rp, asize, hgcd->row[1].rp, rsize);
+  MPN_NORMALIZE (rp, rsize);
+  hgcd->row[2].rsize = rsize;
+
+  if (qp[qsize - 1] == 0)
+    qsize--;
+
+  if (qsize == 1 && qp[0] == 1)
+    qsize = 0;
+
+  quotients->size[quotients->size_next++] = qsize;
+  quotients->limb_next += qsize;
+
+  ASSERT_QSTACK (quotients);
+
+  /* Update u and v */
   ASSERT (hgcd->size + qsize <= hgcd->alloc);
   hgcd->size = hgcd_update_uv (hgcd->row, hgcd->size, qp, qsize);
   ASSERT (hgcd->size < hgcd->alloc);
