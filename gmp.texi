@@ -486,7 +486,7 @@ make install
 
 @noindent
 If you experience problems, please report them to @email{bug-gmp@@gnu.org}.
-(@xref{Reporting Bugs}, for information on what to include in useful bug
+(See @ref{Reporting Bugs}, for information on what to include in useful bug
 reports.)
 
 @menu
@@ -1024,6 +1024,7 @@ GMP should present no great difficulties for packaging in a binary
 distribution.
 
 @cindex Libtool versioning
+@cindex Shared library versioning
 Libtool is used to build the library and @samp{-version-info} is set
 appropriately, having started from @samp{3:0:0} in GMP 3.0.  The GMP 3 series
 will be upwardly binary compatible in each release, but may be adding
@@ -2147,14 +2148,6 @@ This section describes functions for converting GMP integers to standard C
 types.  Functions for converting @emph{to} GMP integers are described in
 @ref{Assigning Integers} and @ref{I/O of Integers}.
 
-@deftypefun mp_limb_t mpz_getlimbn (mpz_t @var{op}, mp_size_t @var{n})
-Return limb #@var{n} from @var{op}.  This function allows for very efficient
-decomposition of a number in its limbs.
-
-The function @code{mpz_size} can be used to determine the useful range for
-@var{n}.
-@end deftypefun
-
 @deftypefun {unsigned long int} mpz_get_ui (mpz_t @var{op})
 Return the least significant part from @var{op}.  This function combined with
 @* @code{mpz_tdiv_q_2exp(@dots{}, @var{op}, CHAR_BIT*sizeof(unsigned long
@@ -2191,6 +2184,15 @@ null-terminator.
 
 A pointer to the result string is returned, being either the allocated block,
 or the given @var{str}.
+@end deftypefun
+
+@deftypefun mp_limb_t mpz_getlimbn (mpz_t @var{op}, mp_size_t @var{n})
+Return limb number @var{n} from @var{op}.  The sign of @var{op} is ignored,
+just the absolute value is used.  The least significant limb is number 0.
+
+@code{mpz_size} can be used to find how many limbs make up @var{op}.
+@code{mpz_getlimbn} returns zero if @var{n} is outside the range 0 to
+@code{mpz_size(@var{op})-1}.
 @end deftypefun
 
 
