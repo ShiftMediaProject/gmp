@@ -32,11 +32,13 @@ libmpf_la_SOURCES = \
   add.c add_ui.c sub.c sub_ui.c ui_sub.c mul.c mul_ui.c div.c div_ui.c \
   cmp.c cmp_ui.c cmp_si.c mul_2exp.c div_2exp.c abs.c neg.c get_d.c \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_prc.c ui_div.c sqrt_ui.c \
-  pow_ui.c urandomb.c swap.c
+  pow_ui.c urandomb.c swap.c get_si.c get_ui.c int_p.c
 
-nodist_libmpf_la_SOURCES = floor.c ceil.c trunc.c
+nodist_libmpf_la_SOURCES = floor.c ceil.c trunc.c	\
+  fits_sint.c fits_slong.c fits_sshort.c		\
+  fits_uint.c fits_ulong.c fits_ushort.c
 
-EXTRA_DIST = integer.c
+EXTRA_DIST = integer.c fits_s.c fits_u.c
 CLEANFILES = $(nodist_libmpf_la_SOURCES)
 
 floor.c: $(srcdir)/integer.c
@@ -45,3 +47,17 @@ ceil.c: $(srcdir)/integer.c
 	cp $(srcdir)/integer.c ceil.c
 trunc.c: $(srcdir)/integer.c
 	cp $(srcdir)/integer.c trunc.c
+
+fits_sint.c: $(srcdir)/fits_s.c
+	cp $(srcdir)/fits_s.c fits_sint.c
+fits_slong.c: $(srcdir)/fits_s.c
+	cp $(srcdir)/fits_s.c fits_slong.c
+fits_sshort.c: $(srcdir)/fits_s.c
+	cp $(srcdir)/fits_s.c fits_sshort.c
+
+fits_uint.c: $(srcdir)/fits_u.c
+	cp $(srcdir)/fits_u.c fits_uint.c
+fits_ulong.c: $(srcdir)/fits_u.c
+	cp $(srcdir)/fits_u.c fits_ulong.c
+fits_ushort.c: $(srcdir)/fits_u.c
+	cp $(srcdir)/fits_u.c fits_ushort.c
