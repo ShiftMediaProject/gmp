@@ -126,7 +126,7 @@ main (int argc, char **argv)
 	  debug_mp (base, -16);
 	  debug_mp (exp, -16);
 	  debug_mp (mod, -16);
-	  fprintf (stderr, "mpz_powm result:\n");
+	  fprintf (stderr, "mpz_powm_ui result:\n");
 	  debug_mp (r1, -16);
 	  fprintf (stderr, "reference result:\n");
 	  debug_mp (r2, -16);
