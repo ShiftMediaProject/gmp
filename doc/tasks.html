@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 9 Jul 2001.  An up-to-date version is available at
+  This file current as of 10 Jul 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -49,8 +49,6 @@
      situation; put similar code in <code>mpf_eq</code>.
 <li> <code>mpf_eq</code> doesn't implement what gmp.texi specifies.  It should
      not use just whole limbs, but partial limbs.
-<li> NeXT might not have <code>__builtin_constant_p</code> available.  Same
-     problem with MacOS X.
 <li> <code>_mpz_realloc</code> will reallocate to less than the current size
      of an mpz.  This is ok internally when a destination size is yet to be
      updated, but from user code it should probably refuse to go below the
