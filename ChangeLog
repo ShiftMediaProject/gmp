@@ -22,18 +22,19 @@ MA 02111-1307, USA.
 
 	* tests/devel/copy.c: Handle both MPN_COPY_INCR and MPN_COPY_DECR.
 
-	* tests/devel/logops_n.c: New file.
+	* tests/devel/logops_n.c: New file, handle all logical operations.
 
-	* tests/devel/anymul_1.c: New file.
+	* tests/devel/anymul_1.c: New file, handle mpn_mul_1, mpn_addmul_1, and
+	mpn_submul_1
 	* tests/devel/mul_1.c: Remove.
 	* tests/devel/addmul_1.c: Remove.
 	* tests/devel/submul_1.c: Remove.
 
-	* tests/devel/shift.c: New file.
+	* tests/devel/shift.c: New file, handle mpn_lshift and mpn_rshift.
 	* tests/devel/lshift.c: Remove.
 	* tests/devel/rshift.c: Remove.
 
-	* tests/devel/aors_n.c: New file.
+	* tests/devel/aors_n.c: New file, handle mpn_add_n and mpn_sub_n.
 	* tests/devel/add_n.c: Remove.
 	* tests/devel/sub_n.c: Remove.
 
