@@ -42,8 +42,8 @@ MA 02111-1307, USA.
 unsigned long  spinner_count = 0;
 
 
-static int  spinner_wanted = -1;  /* -1 uninitialized, 1 wanted, 0 not */
-static int  spinner_tick = 1;     /* 1 ready to print, 0 not */
+int  spinner_wanted = -1;  /* -1 uninitialized, 1 wanted, 0 not */
+int  spinner_tick = 1;     /* 1 ready to print, 0 not */
 
 
 /*ARGSUSED*/
