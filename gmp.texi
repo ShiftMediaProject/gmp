@@ -2090,12 +2090,6 @@ but it's not safe for one to read while the another might be writing, nor for
 two threads to write simultaneously.  It's not safe for two threads to
 generate a random number from the same @code{gmp_randstate_t} simultaneously,
 since this involves an update of that variable.
-
-@item
-@cindex SCO
-On SCO systems the default @code{<ctype.h>} macros use per-file static
-variables and may not be reentrant, depending whether the compiler optimizes
-away fetches from them.  The GMP text-based input functions are affected.
 @end itemize
 
 
