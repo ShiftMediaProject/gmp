@@ -198,6 +198,12 @@ NS32000, IBM POWER, MIPS R3000, R4000, SPARCv7, SuperSPARC, generic SPARCv8,
 UltraSPARC, and DEC VAX.  Some optimizations also for Clipper, IBM ROMP (RT),
 and Pyramid AP/XP.
 
+@ignore
+There is a mailing list for GMP users.  To join it, send a mail to
+gmp-request@swox.com with the word ``subscribe'' in the message *body* (not in
+the subject line).
+@end ignore
+
 For up-to-date information on MP, please see the GMP Home Pages at
 @uref{http://www.swox.com/gmp/}.
 
@@ -2921,18 +2927,6 @@ The generated random numbers are intended for testing the correctness of the
 implementation of the @code{mpn} routines.
 @end deftypefun
 
-@ignore
-FIXME: Rename to gmp_rand_getraw()
-@deftypefun void mpn_rawrandom (mp_ptr @var{rp}, unsigned long int @var{nbits}, gmp_rand_state @var{state})
-Generate a universally distributed random number of size @var{nbits},
-and store it at @var{rp}.
-
-The variable @var{state} must be initialized by calling one of the
-@code{gmp_rand_init} functions (@ref{Random State Initialization})
-before invoking this function.
-@end deftypefun
-@end ignore
-
 @deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, unsigned long int @var{size})
 Count the number of set bits in @{@var{s1p}, @var{size}@}.
 @end deftypefun
@@ -2984,6 +2978,10 @@ as its only source for a seed value.
 On some systems there is a special device, often called @code{/dev/random},
 which provides a source of somewhat random numbers more usable as seed.
 
+The functions actually generating random functions are documented under
+``Miscellaneous Functions'' in their respective function class:
+@ref{Miscellaneous Integer Functions}, @ref{Miscellaneous Float Functions}.
+
 @menu
 * Random State Initialization::	How to initialize a random state.
 @end menu
@@ -3001,7 +2999,7 @@ Initialize random state variable @var{state}.
 @var{alg} denotes what algorithm to use for random number generation.
 Use one of
 @itemize @minus
-@item GMP_RAND_ALG_LC -- Linear congruential.
+@item GMP_RAND_ALG_LC --- Linear congruential.
 
 A fast generator defined by @math{X = (aX + c) mod m}.
 
@@ -3015,7 +3013,7 @@ numbers, use your own scheme and call one of the other @code{gmp_rand_init}
 functions.
 
 @ignore
-@item GMP_RAND_ALG_BBS -- Blum, Blum, and Shub.
+@item GMP_RAND_ALG_BBS --- Blum, Blum, and Shub.
 @end ignore
 @end itemize
 
@@ -3037,8 +3035,8 @@ to deallocate any memory allocated by this function.
 @code{gmp_rand_init} may set the following bits in @var{gmp_errno}:
 @c FIXME: gmp_errno is printed in uppercase.  That's wrong.
 @itemize
-@item GMP_ERROR_UNSUPPORTED_ARGUMENT -- @var{alg} is unsupported
-@item GMP_ERROR_INVALID_ARGUMENT -- @var{size} is too big
+@item GMP_ERROR_UNSUPPORTED_ARGUMENT --- @var{alg} is unsupported
+@item GMP_ERROR_INVALID_ARGUMENT --- @var{size} is too big
 @end itemize
 @end deftypefun
 
@@ -3225,8 +3223,6 @@ function, @code{malloc} by default.
 De-allocate, the space used by @var{operand}.  @strong{This function should
 only be passed a value returned by @code{itom} or @code{xtom}.}
 @end deftypefun
-
-
 
 @node Custom Allocation, Contributors, BSD Compatible Functions, Top
 @comment  node-name,  next,  previous,  up
