@@ -103,7 +103,7 @@ mpn_fft_best_k (n, sqr)
 
 /* Returns smallest possible number of limbs >= pl for a fft of size 2^k.
 
-   FIXME: Is this N rounded up to the next multiple of 2^k*BITS_PER_MP_LIMB
+   FIXME: Is this N rounded up to the next multiple of (2^k)*BITS_PER_MP_LIMB
    bits and therefore simply pl rounded up to a multiple of 2^k? */
 
 mp_size_t
@@ -335,6 +335,30 @@ mpn_fft_fft(Ap,Bp,K,ll,omega,n,inc,tp)
 }
 
 
+/* Given ap[0..n] with ap[n]<=1, reduce it modulo 2^(n*BITS_PER_MP_LIMB)+1,
+   by subtracting that modulus if necessary.
+
+   If ap[0..n] is exactly 2^(n*BITS_PER_MP_LIMB) then the sub_1 produces a
+   borrow and the limbs must be zeroed out again.  This will occur very
+   infrequently.  */
+
+static void
+#if __STDC__
+mpn_fft_norm (mp_limb_t *ap, mp_size_t n)
+#else
+mpn_fft_norm (ap, n)
+     mp_limb_t *ap;
+     mp_size_t n;
+#endif
+{
+  ASSERT (ap[n] <= 1);
+
+  if (ap[n])
+    if ((ap[n] = mpn_sub_1 (ap, ap, n, 1)))
+      MPN_ZERO (ap, n);
+}
+
+
 /* a[i] <- a[i]*b[i] mod 2^(n*BITS_PER_MP_LIMB)+1 for 0 <= i < K */
 static void
 #if __STDC__
@@ -378,10 +402,12 @@ mpn_fft_mul_modF_K(ap, bp, n, K)
 
     TRACE (printf("recurse: %dx%d limbs -> %d times %dx%d (%1.2f)\n", n,
                   n, K2, nprime2, nprime2, 2.0*(double)n/nprime2/K2));
-
-    for (i=0;i<K;i++,ap++,bp++)
+    for (i=0;i<K;i++,ap++,bp++) {
+      mpn_fft_norm (*ap, n);
+      if (!sqr) mpn_fft_norm (*bp, n);
       mpn_mul_fft_internal(*ap, *ap, *bp, n, k, K2, Ap, Bp, A, B, nprime2,
 	 l, Mp2, _fft_l, T, 1);
+    }
   }
   else {
      mp_limb_t *a, *b, cc, *tp, *tpn; int n2=2*n;
@@ -471,13 +497,7 @@ mpn_fft_div_2exp_modF(ap,k,n,tp)
     mpn_fft_mul_2exp_modF(ap,i,n,tp); 
     /* 1/2^k = 2^(2nL-k) mod 2^(n*BITS_PER_MP_LIMB)+1 */
     /* normalize so that A < 2^(n*BITS_PER_MP_LIMB)+1 */
-    if (ap[n]==1) {
-      for (i=0;i<n && ap[i]==0;i++);
-      if (i<n) {
-	ap[n]=0;
-	mpn_sub_1(ap, ap, n, 1);
-      }
-    }
+    mpn_fft_norm (ap, n);
 }
 
 
