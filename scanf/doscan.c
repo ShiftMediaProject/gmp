@@ -68,27 +68,23 @@ MA 02111-1307, USA. */
    appended to each run for that.  For fscanf this merely supports our %n
    output, but for sscanf it lets funs->step move us along the input string.
 
-   For standard % conversions, funs->scan is called once for each conversion
-   and any preceding fixed match text.  %% is considered a fixed match for
-   this purpose.  "next" in __gmp_doscan is where a new fixed match plus %
-   conversion is sought.  "next_again" extends the current this_fmt.
+   Whitespace and literal matches in the format string, including %%, are
+   handled directly within __gmp_doscan.  This is reasonably efficient, and
+   avoids some suspicious behaviour observed in various system libc's.
+   GLIBC 2.2.4 for instance returns 0 on sscanf(" "," x") or on sscanf(" ",
+   " x%d",&n), whereas we think they should return EOF, since end-of-string
+   is reached when a match of "x" is required.
 
-   For GMP % conversions, funs->scan is called for any fixed preceding text
-   to match, plus a space to read leading whitespace.  If there's no fixed
-   text then that space might be all that's passed.  This probably isn't a
-   particularly speedy way to skip whitespace, but it fits easily into the
-   scheme and saves some complexity in gmpscan.
+   For standard % conversions, funs->scan is called once for each
+   conversion.  If we had vfscanf and vsscanf and could rely on their fixed
+   text matching behaviour then we could call them with multiple consecutive
+   standard conversions.  But plain fscanf and sscanf work fine, and parsing
+   one field at a time shouldn't be too much of a slowdown.
 
-   vfscanf and vsscanf are only C99 additions, and so might not be available
-   on old systems.  If they were available then multiple standard
-   conversions could be passed to funs->scan with a va_list for the
-   parameters.  But plain fscanf and sscanf work fine, and parsing one field
-   at a time shouldn't be too much of a slowdown.
-
-   gmpscan reads a gmp type.  It's only used once, but is a separate
-   subroutine to avoid a big chunk of complicated code in the middle of
-   __gmp_doscan.  With a couple of loopbacks it's possible to share code for
-   parsing integers, rationals and floats.
+   gmpscan reads a gmp type.  It's only used from one place, but is a
+   separate subroutine to avoid a big chunk of complicated code in the
+   middle of __gmp_doscan.  Within gmpscan a couple of loopbacks make it
+   possible to share code for parsing integers, rationals and floats.
 
    In gmpscan normally one char of lookahead is maintained, but when width
    is reached that stops, on the principle that an fgetc/ungetc of a char
@@ -102,13 +98,13 @@ MA 02111-1307, USA. */
    invalid field, like a "-" or "+" alone.  -2 means EOF reached before any
    matching characters were read.
 
-   Consideration was given to using a separate gmpscan routine for
-   gmp_fscanf and for gmp_sscanf.  The sscanf case could zip across a string
-   rather than making a function call fun->get per character, and the fscanf
-   could use getc rather than fgetc too, which might help those systems
-   where getc is a macro or otherwise inlined.  But none of this scanning
-   and converting will be particularly fast, so it seems better to have just
-   a common gmpscan to test and maintain.
+   Consideration was given to using a separate code for gmp_fscanf and
+   gmp_sscanf.  The sscanf case could zip across a string making literal
+   matches or recognising digits in gmpscan, rather than making a function
+   call fun->get per character.  The fscanf could use getc rather than fgetc
+   too, which might help those systems where getc is a macro or otherwise
+   inlined.  But none of this scanning and converting will be particularly
+   fast, so the two are done together to keep it a bit simpler for now.
 
    Enhancements:
 
@@ -142,7 +138,6 @@ MA 02111-1307, USA. */
   } while (0)
 
 #define S_ALLOC_STEP  512
-
 
 static int
 gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
@@ -347,6 +342,30 @@ gmpscan (const struct gmp_doscan_funs_t *funs, void *data,
 }
 
 
+/* Read and discard whitespace, if any.  Return number of chars skipped.
+   Whitespace skipping never provokes the EOF return from __gmp_doscan, so
+   it's not necessary to watch for EOF from funs->get, */
+static int
+skip_white (const struct gmp_doscan_funs_t *funs, void *data)
+{
+  int  c;
+  int  ret = 0;
+
+  do
+    {
+      c = (funs->get) (data);
+      ret++;
+    }
+  while (isascii (c) && isspace (c));
+
+  (funs->unget) (c, data);
+  ret--;
+
+  TRACE (printf ("  skip white %d\n", ret));
+  return ret;
+}
+
+
 int
 __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
               const char *orig_fmt, va_list orig_ap)
@@ -354,14 +373,16 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
   struct gmp_doscan_params_t  param;
   va_list     ap;
   char        *alloc_fmt;
-  const char  *fmt, *this_fmt, *percent, *end_fmt;
+  const char  *fmt, *this_fmt, *end_fmt;
   size_t      orig_fmt_len, alloc_fmt_size, len;
-  int         new_fields, new_chars, gmptype;
+  int         new_fields, new_chars;
   char        fchar;
   int         fields = 0;
   int         chars = 0;
 
-  TRACE (printf ("__gmp_doscan \"%s\"\n", orig_fmt));
+  TRACE (printf ("__gmp_doscan \"%s\"\n", orig_fmt);
+         if (funs->scan == (gmp_doscan_scan_t) sscanf)
+           printf ("  s=\"%s\"\n", (const char *) data));
 
   /* Don't modify orig_ap, if va_list is actually an array and hence call by
      reference.  It could be argued that it'd be more efficient to leave
@@ -385,36 +406,49 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
   for (;;)
     {
     next:
-      this_fmt = fmt;
-      if (fmt == end_fmt)
-        break;
-      TRACE (printf ("  this_fmt \"%s\"\n", this_fmt));
+      fchar = *fmt++;
 
-    next_again:
+      if (fchar == '\0')
+        break;
+
+      if (isascii (fchar) && isspace (fchar))
+        {
+          chars += skip_white (funs, data);
+          continue;
+        }
+
+      if (fchar != '%')
+        {
+          int  c;
+        literal:
+          c = (funs->get) (data);
+          if (c != fchar)
+            {
+              (funs->unget) (c, data);
+              if (c == EOF)
+                {
+                eof_no_match:
+                  if (fields == 0)
+                    fields = EOF;
+                }
+              goto done;
+            }
+          chars++;
+          continue;
+        }
+
       param.type = '\0';
       param.base = 10;
       param.ignore = 0;
       param.width = 0;
 
-      percent = memchr (fmt, '%', end_fmt - fmt);
-      if (percent == NULL)
-        {
-          TRACE (printf ("  no more fields\n"));
-          fmt = end_fmt;
-          if (fmt != this_fmt)
-            {
-            doscan_ignore:
-              param.ignore = 1;
-              goto doscan;
-            }
-          goto done;
-        }
-      TRACE (printf ("  percent \"%s\"\n", percent));
-      fmt = percent + 1;
+      this_fmt = fmt-1;
+      TRACE (printf ("  this_fmt \"%s\"\n", this_fmt));
 
       for (;;)
         {
           ASSERT (fmt <= end_fmt);
+
           fchar = *fmt++;
           switch (fchar) {
 
@@ -423,13 +457,13 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
             goto done;
 
           case '%':   /* literal % */
-            goto next_again;
+            goto literal;
 
           case '[':   /* character range */
             fchar = *fmt++;
             if (fchar == '^')
               fchar = *fmt++;
-            /* literal ']' allowed as the first char (possibly after '^') */
+            /* ']' allowed as the first char (possibly after '^') */
             if (fchar == ']')
               fchar = *fmt++;
             for (;;)
@@ -447,91 +481,80 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
               }
             /*FALLTHRU*/
           case 'c':   /* characters */
+          case 's':   /* string of non-whitespace */
+          case 'p':   /* pointer */
+          libc_type:
+            len = fmt - this_fmt;
+            memcpy (alloc_fmt, this_fmt, len);
+            alloc_fmt[len++] = '%';
+            alloc_fmt[len++] = 'n';
+            alloc_fmt[len] = '\0';
+
+            TRACE (printf ("  scan \"%s\"\n", alloc_fmt);
+                   if (funs->scan == (gmp_doscan_scan_t) sscanf)
+                     printf ("  s=\"%s\"\n", (const char *) data));
+
+            new_chars = -1;
+            if (param.ignore)
+              {
+                new_fields = (*funs->scan) (data, alloc_fmt, &new_chars);
+                ASSERT (new_fields == 0 || new_fields == EOF);
+              }
+            else
+              {
+                new_fields = (*funs->scan) (data, alloc_fmt,
+                                            va_arg (ap, void *), &new_chars);
+                ASSERT (new_fields==0 || new_fields==1 || new_fields==EOF);
+
+                if (new_fields == 0)
+                  goto done;  /* invalid input */
+
+                if (new_fields == 1)
+                  ASSERT (new_chars != -1);
+              }
+            TRACE (printf ("  new_fields %d   new_chars %d\n",
+                           new_fields, new_chars));
+
+            if (new_fields == -1)
+              goto eof_no_match;  /* EOF before anything matched */
+
+            /* Wnder param.ignore, when new_fields==0 we don't know if
+               it's a successful match or an invalid field.  new_chars
+               won't have been assigned if it was an invalid field.  */
+            if (new_chars == -1)
+              goto done;  /* invalid input */
+
+            chars += new_chars;
+            (*funs->step) (data, new_chars);
+
+          increment_fields:
+            if (! param.ignore)
+              fields++;
+            goto next;
+
           case 'd':   /* decimal */
           case 'e':   /* float */
           case 'E':   /* float */
           case 'f':   /* float */
           case 'g':   /* float */
           case 'G':   /* float */
-          case 'p':   /* pointer */
-          case 's':   /* string of non-whitespace */
           case 'u':   /* decimal */
-          doscan:
-            gmptype = (param.type == 'F'
-                       || param.type == 'Q'
-                       || param.type == 'Z');
-            len = (gmptype ? percent : fmt) - this_fmt;
-            memcpy (alloc_fmt, this_fmt, len);
+          numeric:
+            if (param.type != 'F' && param.type != 'Q' && param.type != 'Z')
+              goto libc_type;
 
-            /* let funs->scan skip leading whitespace for gmp types */
-            if (gmptype)
-              alloc_fmt[len++] = ' ';
+            chars += skip_white (funs, data);
 
-            /* Append a %n to give us a count of characters read.  This %n
-               doesn't count towards the return value from funs->scan.  */
-            alloc_fmt[len++] = '%';
-            alloc_fmt[len++] = 'n';
-            alloc_fmt[len] = '\0';
-            ASSERT (len < alloc_fmt_size);
-
-            TRACE (printf ("doscan \"%s\"\n", alloc_fmt);
-                   if (funs->scan == (gmp_doscan_scan_t) sscanf)
-                     printf ("  s=\"%s\"\n", (const char *) data));
-
-            new_chars = -1;
-            if (param.ignore || gmptype)
-              {
-                new_fields = (*funs->scan) (data, alloc_fmt, &new_chars);
-                TRACE (printf ("  new_chars %d\n", new_chars));
-                TRACE (printf ("  new_fields %d\n", new_fields));
-                ASSERT (-1 <= new_fields && new_fields <= 0);
-              }
-            else
-              {
-                new_fields = (*funs->scan) (data, alloc_fmt,
-                                            va_arg (ap, void *), &new_chars);
-                TRACE (printf ("  new_chars %d\n", new_chars));
-                TRACE (printf ("  new_fields %d\n", new_fields));
-                ASSERT (-1 <= new_fields && new_fields <= 1);
-
-                if (new_fields == 0)
-                  goto done;   /* matched something, but was bad */
-              }
-
-            if (new_fields == -1)
-              {
-                /* EOF before matching all the fixed text, or before
-                   matching anything for the field.  Return -1 if no
-                   previous non-suppressed fields have matched.  */
-              match_eof:
-                if (fields == 0)
-                  fields = -1;
-                goto done;
-              }
-
-            /* If the fixed text for a gmptype only partly matched then we
-               can have new_fields==0 but new_chars==-1.  */
+            new_chars = gmpscan (funs, data, &param,
+                                 param.ignore ? NULL : va_arg (ap, void*));
+            if (new_chars == -2)
+              goto eof_no_match;
             if (new_chars == -1)
               goto done;
 
+            ASSERT (new_chars >= 0);
             chars += new_chars;
-            (*funs->step) (data, new_chars);
-
-            if (gmptype)
-              {
-                new_chars = gmpscan (funs, data, &param,
-                                     param.ignore ? NULL : va_arg (ap, void*));
-                if (new_chars == -2)
-                  goto match_eof;
-                if (new_chars == -1)
-                  goto done;
-                ASSERT (new_chars >= 0);
-                chars += new_chars;
-              }
-
-            if (! param.ignore)
-              fields++;
-            goto next;
+            goto increment_fields;
 
           case 'a':   /* glibc allocate string */
           case '\'':  /* glibc digit groupings */
@@ -557,7 +580,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
 
           case 'i':
             param.base = 0;
-            goto doscan;
+            goto numeric;
 
           case 'l':   /* long, long long, double or long double */
             if (param.type != 'l')
@@ -566,20 +589,11 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
             break;
 
           case 'n':
-            if (this_fmt != percent)
-              {
-                /* match fixed text before %n */
-                param.type = '\0';
-                fmt = percent;
-                TRACE (printf ("  %%n back to \"%s\"\n", fmt));
-                goto doscan_ignore;
-              }
-
             if (! param.ignore)
               {
                 void  *p;
                 p = va_arg (ap, void *);
-                TRACE (printf ("  store to %p, ap %p\n", p, ap));
+                TRACE (printf ("  store %%n to %p\n", p));
                 switch (param.type) {
                 case '\0': * (int       *) p = chars; break;
                 case 'F':  mpf_set_si ((mpf_ptr) p, (long) chars); break;
@@ -622,12 +636,12 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
 
           case 'o':
             param.base = 8;
-            goto doscan;
+            goto numeric;
 
           case 'x':
           case 'X':
             param.base = 16;
-            goto doscan;
+            goto numeric;
 
           case '0': case '1': case '2': case '3': case '4':
           case '5': case '6': case '7': case '8': case '9':
