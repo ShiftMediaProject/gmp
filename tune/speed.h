@@ -266,6 +266,8 @@ double speed_umul_ppmm _PROTO ((struct speed_params *s));
 /* low 32-bits in p[0], high 32-bits in p[1] */
 void speed_cyclecounter _PROTO ((unsigned p[2]));
 
+void mftb_function _PROTO ((unsigned p[2]));
+
 /* In i386 gcc -fPIC, ebx is a fixed register and can't be declared a dummy
    output or a clobber for the cpuid, hence an explicit save and restore.  A
    clobber as such doesn't provoke an error unfortunately (gcc 3.0), so use
@@ -308,6 +310,7 @@ int gettimeofday_microseconds_p _PROTO ((void));
 int getrusage_microseconds_p _PROTO ((void));
 int cycles_works_p _PROTO ((void));
 long clk_tck _PROTO ((void));
+double freq_measure _PROTO ((const char *, double (*)(void)));
 
 int double_cmp_ptr _PROTO ((const double *p, const double *q));
 void pentium_wbinvd _PROTO ((void));
@@ -393,6 +396,75 @@ void redc _PROTO ((mp_ptr cp, mp_srcptr mp, mp_size_t n, mp_limb_t Nprim,
 int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
                                              mp_ptr xp, int leading,
                                              int zero));
+
+
+/* "get" is called repeatedly until it ticks over, just in case on a fast
+   processor it takes less than a microsecond, though this is probably
+   unlikely if it's a system call.
+
+   speed_cyclecounter is called on the same side of the "get" for the start
+   and end measurements.  It doesn't matter how long it takes from the "get"
+   sample to the cycles sample, since that period will cancel out in the
+   difference calculation (assuming it's the same each time).
+
+   Letting the test run for more than a process time slice is probably only
+   going to reduce accuracy, especially for getrusage when the cycle counter
+   is real time, or for gettimeofday if the cycle counter is in fact process
+   time.  Use CLK_TCK/2 as a reasonable stop.
+
+   It'd be desirable to be quite accurate here.  The default speed_precision
+   for a cycle counter is 10000 cycles, so to mix that with getrusage or
+   gettimeofday the frequency should be at least that accurate.  But running
+   measurements for 10000 microseconds (or more) is too long.  Be satisfied
+   with just a half clock tick (5000 microseconds usually).  */
+
+#define FREQ_MEASURE_ONE(name, type, get, getc, sec, usec)              \
+  do {                                                                  \
+    type      st1, st, et1, et;                                         \
+    unsigned  sc[2], ec[2];                                             \
+    long      dt, half_tick;                                            \
+    double    dc, cyc;                                                  \
+                                                                        \
+    half_tick = (1000000L / clk_tck()) / 2;                             \
+                                                                        \
+    get (st1);                                                          \
+    do {                                                                \
+      get (st);                                                         \
+    } while (usec(st) == usec(st1) && sec(st) == sec(st1));             \
+                                                                        \
+    getc (sc);                                            \
+                                                                        \
+    for (;;)                                                            \
+      {                                                                 \
+        get (et1);                                                      \
+        do {                                                            \
+          get (et);                                                     \
+        } while (usec(et) == usec(et1) && sec(et) == sec(et1));         \
+                                                                        \
+        getc (ec);                                        \
+                                                                        \
+        dc = speed_cyclecounter_diff (ec, sc);                          \
+                                                                        \
+        /* allow secs to cancel before multiplying */                   \
+        dt = sec(et) - sec(st);                                         \
+        dt = dt * 1000000L + (usec(et) - usec(st));                     \
+                                                                        \
+        if (dt >= half_tick)                                            \
+          break;                                                        \
+      }                                                                 \
+                                                                        \
+    cyc = dt * 1e-6 / dc;                                               \
+                                                                        \
+    if (speed_option_verbose >= 2)                                      \
+      printf ("freq_measure_%s_one() dc=%.6g dt=%ld cyc=%.6g\n",        \
+              name, dc, dt, cyc);                                       \
+                                                                        \
+    return dt * 1e-6 / dc;                                              \
+                                                                        \
+  } while (0)
+
+
+
 
 /* The measuring routines use these big macros to save duplication for
    similar forms.  They also get used for some automatically generated

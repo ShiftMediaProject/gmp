@@ -230,6 +230,37 @@ typedef unsigned long  stck_t;   /* dummy */
 #endif
 #define STCK_PERIOD      (1.0 / 4096e6)   /* 2^-12 microseconds */
 
+/* mftb */
+#if HAVE_HOST_CPU_FAMILY_powerpc
+static const int  have_mftb = 1;
+#if defined (__GNUC__) && ! defined (NO_ASM)
+#define MFTB(a)                         \
+  do {                                  \
+    unsigned  __h1, __l, __h2;          \
+    do {                                \
+      asm volatile ("mftbu %0\n"        \
+                    "mftb  %1\n"        \
+                    "mftbu %2"          \
+                    : "=r" (__h1),      \
+                      "=r" (__l),       \
+                      "=r" (__h2));     \
+    } while (__h1 != __h2);             \
+    a[0] = __l;                         \
+    a[1] = __h1;                        \
+  } while (0)
+#else
+#define MFTB(a)   mftb_function (a)
+#endif
+#else /* ! powerpc */
+static const int  have_mftb = 0;
+#define MFTB(a)                         \
+  do {                                  \
+    a[0] = 0;                           \
+    a[1] = 0;                           \
+    ASSERT_FAIL (mftb not available);   \
+  } while (0)
+#endif
+
 /* Unicos 10.X has syssgi(), but not mmap(). */
 #if HAVE_SYSSGI && HAVE_MMAP
 static const int  have_sgi = 1;
@@ -306,6 +337,7 @@ struct timespec_dummy {
 };
 
 static int  use_cycles;
+static int  use_mftb;
 static int  use_sgi;
 static int  use_rrt;
 static int  use_cgt;
@@ -316,6 +348,7 @@ static int  use_tick_boundary;
 
 static unsigned         start_cycles[2];
 static stck_t           start_stck;
+static unsigned         start_mftb[2];
 static unsigned         start_sgi;
 static timebasestruct_t start_rrt;
 static struct_timespec  start_cgt;
@@ -324,6 +357,7 @@ static struct_timeval   start_gtod;
 static struct_tms       start_times;
 
 static double  cycles_limit = 1e100;
+static double  mftb_unittime;
 static double  sgi_unittime;
 static double  cgt_unittime;
 static double  grus_unittime;
@@ -626,6 +660,82 @@ cgt_works_p (void)
 }
 
 
+static double
+freq_measure_mftb_one (void)
+{
+#define call_gettimeofday(t)   gettimeofday (&(t), NULL)
+#define timeval_tv_sec(t)      ((t).tv_sec)
+#define timeval_tv_usec(t)     ((t).tv_usec)
+  FREQ_MEASURE_ONE ("mftb", struct timeval,
+                    call_gettimeofday, MFTB,
+                    timeval_tv_sec, timeval_tv_usec);
+}
+
+
+static jmp_buf  mftb_works_buf;
+
+static RETSIGTYPE
+mftb_works_handler (int sig)
+{
+  longjmp (mftb_works_buf, 1);
+}
+
+int
+mftb_works_p (void)
+{
+  unsigned   a[2];
+  RETSIGTYPE (*old_handler) __GMP_PROTO ((int));
+  double     cycletime;
+
+  /* suppress a warning about a[] unused */
+  a[0] = 0;
+
+  if (! have_mftb)
+    return 0;
+
+#ifdef SIGILL
+  old_handler = signal (SIGILL, mftb_works_handler);
+  if (old_handler == SIG_ERR)
+    {
+      if (speed_option_verbose)
+        printf ("mftb_works_p(): SIGILL not supported, assuming mftb works\n");
+      return 1;
+    }
+  if (setjmp (mftb_works_buf))
+    {
+      if (speed_option_verbose)
+        printf ("mftb_works_p(): SIGILL during mftb, so doesn't work\n");
+      return 0;
+    }
+  MFTB (a);
+  signal (SIGILL, old_handler);
+  if (speed_option_verbose)
+    printf ("mftb_works_p(): mftb works\n");
+#else
+
+  if (speed_option_verbose)
+    printf ("mftb_works_p(): SIGILL not defined, assuming mftb works\n");
+#endif
+
+#if ! HAVE_GETTIMEOFDAY
+  if (speed_option_verbose)
+    printf ("mftb_works_p(): no gettimeofday available to measure mftb\n");
+  return 0;
+#endif
+
+  cycletime = freq_measure ("mftb", freq_measure_mftb_one);
+  if (cycletime == -1.0)
+    {
+      if (speed_option_verbose)
+        printf ("mftb_works_p(): cannot measure mftb period\n");
+      return 0;
+    }
+
+  mftb_unittime = cycletime;
+  return 1;
+}
+
+
 volatile unsigned  *sgi_addr;
 
 int
@@ -812,6 +922,14 @@ speed_time_init (void)
           ("Need to know CPU frequency for effective stck unit");
       speed_unittime = MAX (speed_cycletime, STCK_PERIOD);
       DEFAULT (speed_precision, 10000);
+    }
+  else if (have_mftb && mftb_works_p ())
+    {
+      use_mftb = 1;
+      DEFAULT (speed_precision, 10000);
+      speed_unittime = mftb_unittime;
+      sprintf (speed_time_string, "mftb counter (%s)",
+               unittime_string (speed_unittime));
     }
   else if (have_sgi && sgi_works_p ())
     {
@@ -1001,6 +1119,9 @@ speed_starttime (void)
   if (have_sgi && use_sgi)
     start_sgi = *sgi_addr;
 
+  if (have_mftb && use_mftb)
+    MFTB (start_mftb);
+
   if (have_stck && use_stck)
     STCK (start_stck);
 
@@ -1035,6 +1156,19 @@ speed_cyclecounter_diff (const unsigned end[2], const unsigned start[2])
       t = d - (d > end[0] ? M_2POWU : 0.0);
       t += (end[1] - start[1]) * M_2POW32;
     }
+  return t;
+}
+
+
+double
+speed_mftb_diff (const unsigned end[2], const unsigned start[2])
+{
+  unsigned  d;
+  double    t;
+
+  d = end[0] - start[0];
+  t = (double) d - (d > end[0] ? M_2POW32 : 0.0);
+  t += (end[1] - start[1]) * M_2POW32;
   return t;
 }
 
@@ -1118,6 +1252,7 @@ speed_endtime (void)
 
   unsigned          end_cycles[2];
   stck_t            end_stck;
+  unsigned          end_mftb[2];
   unsigned          end_sgi;
   timebasestruct_t  end_rrt;
   struct_timespec   end_cgt;
@@ -1125,7 +1260,7 @@ speed_endtime (void)
   struct_rusage     end_grus;
   struct_tms        end_times;
   double            t_gtod, t_grus, t_times, t_cgt;
-  double            t_rrt, t_sgi, t_stck, t_cycles;
+  double            t_rrt, t_sgi, t_mftb, t_stck, t_cycles;
   double            result;
 
   /* Cycles sampled first for maximum accuracy.
@@ -1133,6 +1268,7 @@ speed_endtime (void)
 
   if (have_cycles && use_cycles)  speed_cyclecounter (end_cycles);
   if (have_stck   && use_stck)    STCK (end_stck);
+  if (have_mftb   && use_mftb)    MFTB (end_mftb);
   if (have_sgi    && use_sgi)     end_sgi = *sgi_addr;
   if (have_rrt    && use_rrt)     read_real_time (&end_rrt, sizeof(end_rrt));
   if (have_cgt    && use_cgt)     clock_gettime (CGT_ID, &end_cgt);
@@ -1152,6 +1288,11 @@ speed_endtime (void)
 
       if (use_stck)
         printf ("   stck  0x%lX -> 0x%lX\n", start_stck, end_stck);
+
+      if (use_mftb)
+        printf ("   mftb  0x%X,%08X -> 0x%X,%08X\n",
+                start_mftb[1], start_mftb[0],
+                end_mftb[1], end_mftb[0]);
 
       if (use_sgi)
         printf ("   sgi  0x%X -> 0x%X\n", start_sgi, end_sgi);
@@ -1238,6 +1379,12 @@ speed_endtime (void)
         }
     }
   
+  if (use_mftb)
+    {
+      t_mftb = speed_mftb_diff (end_mftb, start_mftb) * mftb_unittime;
+      END_USE ("mftb", t_mftb);
+    }
+
   if (use_stck)  
     {
       t_stck = (end_stck - start_stck) * STCK_PERIOD;

@@ -508,71 +508,6 @@ freq_processor_info (int help)
 }
 
 
-/* "get" is called repeatedly until it ticks over, just in case on a fast
-   processor it takes less than a microsecond, though this is probably
-   unlikely if it's a system call.
-
-   speed_cyclecounter is called on the same side of the "get" for the start
-   and end measurements.  It doesn't matter how long it takes from the "get"
-   sample to the cycles sample, since that period will cancel out in the
-   difference calculation (assuming it's the same each time).
-
-   Letting the test run for more than a process time slice is probably only
-   going to reduce accuracy, especially for getrusage when the cycle counter
-   is real time, or for gettimeofday if the cycle counter is in fact process
-   time.  Use CLK_TCK/2 as a reasonable stop.
-
-   It'd be desirable to be quite accurate here.  The default speed_precision
-   for a cycle counter is 10000 cycles, so to mix that with getrusage or
-   gettimeofday the frequency should be at least that accurate.  But running
-   measurements for 10000 microseconds (or more) is too long.  Be satisfied
-   with just a half clock tick (5000 microseconds usually).  */
-
-#define FREQ_MEASURE_ONE(name, type, get, sec, usec)                    \
-  do {                                                                  \
-    type      st1, st, et1, et;                                         \
-    unsigned  sc[2], ec[2];                                             \
-    long      dt, half_tick;                                            \
-    double    dc, cyc;                                                  \
-                                                                        \
-    half_tick = (1000000L / clk_tck()) / 2;                             \
-                                                                        \
-    get (st1);                                                          \
-    do {                                                                \
-      get (st);                                                         \
-    } while (usec(st) == usec(st1) && sec(st) == sec(st1));             \
-                                                                        \
-    speed_cyclecounter (sc);                                            \
-                                                                        \
-    for (;;)                                                            \
-      {                                                                 \
-        get (et1);                                                      \
-        do {                                                            \
-          get (et);                                                     \
-        } while (usec(et) == usec(et1) && sec(et) == sec(et1));         \
-                                                                        \
-        speed_cyclecounter (ec);                                        \
-                                                                        \
-        dc = speed_cyclecounter_diff (ec, sc);                          \
-                                                                        \
-        /* allow secs to cancel before multiplying */                   \
-        dt = sec(et) - sec(st);                                         \
-        dt = dt * 100000L + (usec(et) - usec(st));                      \
-                                                                        \
-        if (dt >= half_tick)                                            \
-          break;                                                        \
-      }                                                                 \
-                                                                        \
-    cyc = dt * 1e-6 / dc;                                               \
-                                                                        \
-    if (speed_option_verbose >= 2)                                      \
-      printf ("freq_measure_%s_one() dc=%.6g dt=%ld cyc=%.6g\n",        \
-              name, dc, dt, cyc);                                       \
-                                                                        \
-    return dt * 1e-6 / dc;                                              \
-                                                                        \
-  } while (0)
-
 #if HAVE_SPEED_CYCLECOUNTER && HAVE_GETTIMEOFDAY
 static double
 freq_measure_gettimeofday_one (void)
@@ -581,7 +516,8 @@ freq_measure_gettimeofday_one (void)
 #define timeval_tv_sec(t)      ((t).tv_sec)
 #define timeval_tv_usec(t)     ((t).tv_usec)
   FREQ_MEASURE_ONE ("gettimeofday", struct timeval,
-                    call_gettimeofday, timeval_tv_sec, timeval_tv_usec);
+                    call_gettimeofday, speed_cyclecounter,
+                    timeval_tv_sec, timeval_tv_usec);
 }
 #endif
 
@@ -593,7 +529,8 @@ freq_measure_getrusage_one (void)
 #define rusage_tv_sec(t)    ((t).ru_utime.tv_sec)
 #define rusage_tv_usec(t)   ((t).ru_utime.tv_usec)
   FREQ_MEASURE_ONE ("getrusage", struct rusage,
-                    call_getrusage, rusage_tv_sec, rusage_tv_usec);
+                    call_getrusage, speed_cyclecounter,
+                    rusage_tv_sec, rusage_tv_usec);
 }
 #endif
 
@@ -604,7 +541,7 @@ freq_measure_getrusage_one (void)
 #define MEASURE_TOLERANCE      1.005  /* 0.5% */
 #define MEASURE_MATCH          3
 
-static int
+double
 freq_measure (const char *name, double (*one) (void))
 {
   double  t[MEASURE_MAX_ATTEMPTS];
@@ -624,21 +561,19 @@ freq_measure (const char *name, double (*one) (void))
           if (t[j+MEASURE_MATCH-1] <= t[j] * MEASURE_TOLERANCE)
             {
               /* use the average of the range found */
-              speed_cycletime = (t[j+MEASURE_MATCH-1] + t[j]) / 2.0;
-              if (speed_option_verbose)
-                printf ("Using %s() measured cycle counter %.4g (%.2f MHz)\n",
-                        name, speed_cycletime, 1e-6/speed_cycletime);
-              return 1;
+                return (t[j+MEASURE_MATCH-1] + t[j]) / 2.0;
             }
         }
     }
-  return 0;
+  return -1.0;
 }
 
 static int
 freq_measure_getrusage (int help)
 {
 #if HAVE_SPEED_CYCLECOUNTER && HAVE_GETRUSAGE
+  double  cycletime;
+
   if (! getrusage_microseconds_p ())
     return 0;
   if (! cycles_works_p ())
@@ -646,7 +581,16 @@ freq_measure_getrusage (int help)
 
   HELP ("cycle counter measured with microsecond getrusage()");
 
-  return freq_measure ("getrusage", freq_measure_getrusage_one);
+  cycletime = freq_measure ("getrusage", freq_measure_getrusage_one);
+  if (cycletime == -1.0)
+    return 0;
+
+  speed_cycletime = cycletime;
+  if (speed_option_verbose)
+    printf ("Using getrusage() measured cycle counter %.4g (%.2f MHz)\n",
+            speed_cycletime, 1e-6/speed_cycletime);
+  return 1;
+
 #else
   return 0;
 #endif
@@ -656,6 +600,8 @@ static int
 freq_measure_gettimeofday (int help)
 {
 #if HAVE_SPEED_CYCLECOUNTER && HAVE_GETTIMEOFDAY
+  double  cycletime;
+
   if (! gettimeofday_microseconds_p ())
     return 0;
   if (! cycles_works_p ())
@@ -663,7 +609,15 @@ freq_measure_gettimeofday (int help)
 
   HELP ("cycle counter measured with microsecond gettimeofday()");
 
-  return freq_measure ("gettimeofday", freq_measure_gettimeofday_one);
+  cycletime = freq_measure ("gettimeofday", freq_measure_gettimeofday_one);
+  if (cycletime == -1.0)
+    return 0;
+
+  speed_cycletime = cycletime;
+  if (speed_option_verbose)
+    printf ("Using gettimeofday() measured cycle counter %.4g (%.2f MHz)\n",
+            speed_cycletime, 1e-6/speed_cycletime);
+  return 1;
 #else
   return 0;
 #endif
