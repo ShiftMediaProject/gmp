@@ -228,6 +228,7 @@ AH_VERBATIM([HAVE_HOST_CPU_1],
    ./config.guess.  If your CPU is not listed here, leave all undefined.  */
 #undef HAVE_HOST_CPU_alphaev67
 #undef HAVE_HOST_CPU_alphaev68
+#undef HAVE_HOST_CPU_alphaev7
 #undef HAVE_HOST_CPU_m68020
 #undef HAVE_HOST_CPU_m68030
 #undef HAVE_HOST_CPU_m68040
@@ -373,7 +374,7 @@ case $host in
   alpha*-*-*)
     case $host_cpu in
       alphaev5* | alphapca5*) path="alpha/ev5 alpha" ;;
-      alphaev6*)              path="alpha/ev6 alpha/ev5 alpha" ;;
+      alphaev6* | alphaev7*)  path="alpha/ev6 alpha/ev5 alpha" ;;
       *)                      path="alpha" ;;
     esac
     extra_functions="cntlz umul"
@@ -393,7 +394,7 @@ case $host in
       alphapca56 | alphapca57)
                     gcc_cflags_cpu="-mcpu=pca56" ;;
       alphaev6)     gcc_cflags_cpu="-mcpu=ev6" ;;
-      alphaev67 | alphaev68)
+      alphaev67 | alphaev68 | alphaev7*)
                     gcc_cflags_cpu="-mcpu=ev67 -mcpu=ev6" ;;
     esac
 
@@ -426,7 +427,7 @@ case $host in
       alphapca56 | alphapca57)
                     gcc_cflags_asm="-Wa,-arch,pca56 -Wa,-mpca56" ;;
       alphaev6)     gcc_cflags_asm="-Wa,-arch,ev6 -Wa,-mev6" ;;
-      alphaev67 | alphaev68)
+      alphaev67 | alphaev68 | alphaev7*)
                     gcc_cflags_asm="-Wa,-arch,ev67 -Wa,-mev67 -Wa,-arch,ev6 -Wa,-mev6" ;;
     esac
 
@@ -458,10 +459,10 @@ case $host in
     	  alphaev5)    cc_cflags_cpu="-arch~ev5~-tune~ev5" ;;
     	  alphaev56)   cc_cflags_cpu="-arch~ev56~-tune~ev56" ;;
     	  alphapca56 | alphapca57)
-    	               cc_cflags_cpu="-arch~pca56~-tune~pca56" ;;
+            cc_cflags_cpu="-arch~pca56~-tune~pca56" ;;
     	  alphaev6)    cc_cflags_cpu="-arch~ev6~-tune~ev6" ;;
-    	  alphaev67 | alphaev68)
-    	               cc_cflags_cpu="-arch~ev67~-tune~ev67 -arch~ev6~-tune~ev6" ;;
+    	  alphaev67 | alphaev68 | alphaev7*)
+            cc_cflags_cpu="-arch~ev67~-tune~ev67 -arch~ev6~-tune~ev6" ;;
     	esac
         ;;
       *)
