@@ -19,6 +19,26 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-30  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/get_str.c (udiv_qrnd_unnorm): New macro.
+	Use "do while" for dig_per_u loop since it's non-zero.
+	* acconfig.h (HAVE_HOST_CPU_m68k etc): Add templates.
+
+	* mpn/generic/mul_basecase.c, mpz/mul.c, mpz/n_pow_ui.c,
+	mpn/x86/pentium/mul_2.asm, tests/devel/try.c, tests/tests.h,
+	tests/refmpn.c, tune/speed.c, tune/speed.h, tune/common.c (mpn_mul_2):
+	New parameter style.
+	* gmp-impl.h (mpn_mul_2): Add prototype.
+	* configure.in (gmp_mpn_functions_optional): Add mul_2.
+
+	* longlong.h (__vxworks__): Remove from powerpc tests, not correct,
+	not on its own at least.
+
+	* tune/speed.c: Add "aas" to specify 0xAA..AA data.
+
+	* tune/tuneup.c (print_define_end): Indicate "never" and "always".
+
 2001-12-29  Torbjorn Granlund  <tege@swox.com>
 
 	* mpq/set_d.c (mpq_set_d): ANSI-fy.
