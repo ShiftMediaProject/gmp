@@ -521,6 +521,23 @@ main (int argc, char **argv)
 	  if (mpz_cmp (ref1, res1) != 0)
 	    FAIL2 (mpz_divexact, t, in2, NULL);
 	}
+
+      if (mpz_sgn (in2) != 0)
+	{
+	  /* Test mpz_divexact_gcd, same as mpz_divexact */
+	  mpz_mul (t, in1, in2);
+	  mpz_divexact_gcd (ref1, t, in2);
+
+	  mpz_set (res1, t);
+	  mpz_divexact_gcd (res1, res1, in2);
+	  if (mpz_cmp (ref1, res1) != 0)
+	    FAIL2 (mpz_divexact_gcd, t, in2, NULL);
+
+	  mpz_set (res1, in2);
+	  mpz_divexact_gcd (res1, t, res1);
+	  if (mpz_cmp (ref1, res1) != 0)
+	    FAIL2 (mpz_divexact_gcd, t, in2, NULL);
+	}
     }
 
   if (failures != 0)
