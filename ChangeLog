@@ -1,4 +1,11 @@
+2000-12-20  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h: Add udiv_qrnnd and count_leading_zeros for _CRAYMPP
+	systems.
+
 2000-12-19  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (*sparc*-*-*): Remove -g from cc_cflags and acc_cflags.
 
 	* mpn/generic/sqrtrem.c (mpn_sqrtrem): Separate `limb' values from
 	`size' values.
