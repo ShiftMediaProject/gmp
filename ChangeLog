@@ -49,7 +49,7 @@ MA 02111-1307, USA.
 	* acinclude.m4 (GMP_GCC_VERSION_GE): Fix sed regexps to work on
 	Solaris 8.
 
-	* printf/doprnt.c: Support %n of all types, per glibc, except quad_t.
+	* printf/doprnt.c: Support %n of all types, per glibc.
 
 	* gmp-h.in, gmp-impl.h, mpf/abs.c, mpf/neg.c, mpf/get_prc.c,
 	mpf/get_dfl_prec.c, mpf/set_dfl_prec.c, mpf/set_prc_raw.c,
