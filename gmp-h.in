@@ -1397,6 +1397,9 @@ mpf_size (mpf_srcptr f)
    about to be added to something then we miss the opportunity to do "adcl
    $0, var", but that's inevitable since the carry flag can't be an output.
 
+   This code isn't used for egcs 2.91 since __GMPN_ADD_1 tickles some
+   reloader bugs (seen in 2.91.66 19990314 on redhat 6.1).
+
    Possibilities:
 
    An alternative to sbbl would be setc and let gcc convert QI to SI if
@@ -1407,7 +1410,8 @@ mpf_size (mpf_srcptr f)
    single jnbe instead of two jumps, to perhaps save a BTB entry.  The final
    cout=-cout would become cout++.  */
 
-#if defined (__GNUC__) && (defined (__i386__) || defined (__i486__))    \
+#if defined (__GNUC__) && ! (__GNUC__ == 2 && __GNUC_MINOR__ == 91)     \
+  && (defined (__i386__) || defined (__i486__))                         \
   && __GMP_BITS_PER_MP_LIMB == 32 && ! defined (NO_ASM)
 
 #define __GMPN_AORS_1_INPLACE(cout, ptr, size, n, aors) \
@@ -1491,9 +1495,6 @@ mpf_size (mpf_srcptr f)
                                                                 \
   } while (0)
 
-/* The initializers for __dst etc here avoid a bug in egcs 2.91.66 19990314
-   on redhat 6.1, which shows up in tests/mpn/t-aors_1.c check_add_1() as
-   the size parameter to the asm block getting instead the src pointer.  */
 #define __GMPN_ADD_1(cout, dst, src, size, n)                           \
   do {                                                                  \
     /* ASSERT ((size) >= 1); */                                         \
@@ -1511,9 +1512,9 @@ mpf_size (mpf_srcptr f)
           }                                                             \
         else                                                            \
           {                                                             \
-            mp_ptr     __dst = (dst);                                   \
-            mp_srcptr  __src = (src);                                   \
-            mp_size_t  __size = (size);                                 \
+            mp_ptr     __dst;                                           \
+            mp_srcptr  __src;                                           \
+            mp_size_t  __size;                                          \
                                                                         \
             __asm__ __volatile__                                        \
               (__GMP_ASM_L(top) ":\n"                                   \
@@ -1531,9 +1532,9 @@ mpf_size (mpf_srcptr f)
                  "=&r"  (__dst),                                        \
                  "=&r"  (__src),                                        \
                  "=&rm" (__size)                                        \
-               : "1"   (__dst),                                         \
-                 "2"   (__src),                                         \
-                 "3"   (__size),                                        \
+               : "1"   (dst),                                           \
+                 "2"   (src),                                           \
+                 "3"   (size),                                          \
                  "0"   (n)                                              \
                : "memory");                                             \
                                                                         \
