@@ -217,6 +217,9 @@
 <li> Maybe make mpz_pow_ui.c more like mpz/ui_pow_ui.c, or write new
      mpn/generic/pow_ui.
 <li> Make mpz_invert call mpn_gcdext directly.
+<li> Make an option for stack-alloc.c to call <code>malloc</code>
+     separately for each <code>TMP_ALLOC</code> block, so a redzoning
+     malloc debugger could be used during development.
 </ul>
 
 <h4>Documentation</h4>
