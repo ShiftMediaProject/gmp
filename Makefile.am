@@ -45,20 +45,22 @@
 
 # Libtool -version-info for libgmp.la and libmp.la.  See (libtool)Versioning
 #
-# No interfaces changed, only implementations (good): Increment REVISION.
+# 1. No interfaces changed, only implementations (good): Increment REVISION.
 #
-# Interfaces added, none removed (good): Increment CURRENT, increment AGE,
-# set REVISION to 0.
+# 2. Interfaces added, none removed (good): Increment CURRENT, increment
+#    AGE, set REVISION to 0.
 #
-# Interfaces removed (BAD!, breaks upward compatibility): Increment CURRENT,
-# set AGE and REVISION to 0.
+# 3. Interfaces removed (BAD, breaks upward compatibility): Increment
+#    CURRENT, set AGE and REVISION to 0.
 #
 # Do this separately for libgmp and libmp, only do it just before a release.
 #
-#	 GMP	    -version-info
-#	release   libgmp      libmp
-#	 2.0.x      -           -
-#	 3.0      3:0:0       3:0:0
+#	  GMP	   -version-info
+#	release   libgmp  libmp
+#	 2.0.x      -       -
+#	 3.0      3:0:0   3:0:0
+#        3.0.1    3:1:0   3:0:0
+#        3.1      4:0:1   4:0:1
 #
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
@@ -66,13 +68,13 @@
 # Debian GNU/Linux packages of gmp 2.  Pretend gmp 2 was 2:0:0, so the
 # interface changes for gmp 3 mean 3:0:0 is right.
 
-LIBGMP_LT_CURRENT =  3
+LIBGMP_LT_CURRENT =  4
 LIBGMP_LT_REVISION = 0
-LIBGMP_LT_AGE =      0
+LIBGMP_LT_AGE =      1
 
-LIBMP_LT_CURRENT =  3
+LIBMP_LT_CURRENT =  4
 LIBMP_LT_REVISION = 0
-LIBMP_LT_AGE =      0
+LIBMP_LT_AGE =      1
 
 
 AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
