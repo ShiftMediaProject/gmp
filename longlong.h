@@ -997,8 +997,25 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   } while (0)
 #endif /* __ns32000__ */
 
-/* FIXME: We should test _IBMR2 here when we add assembly support for the
-   system vendor compilers.  */
+/* In the past we had a block of various #defines tested
+       _ARCH_PPC    - AIX
+       _ARCH_PWR    - AIX
+       __powerpc__  - gcc
+       __POWERPC__  - BEOS
+       __ppc__      - Darwin
+       PPC          - old gcc, GNU/Linux, SysV
+   The plain PPC test was not good for vxWorks, since PPC is defined on all
+   CPUs there (eg. m68k too), as a constant one is expected to compare
+   CPU_FAMILY against.
+
+   At any rate, this was pretty unattractive and a bit fragile.  The use of
+   HAVE_HOST_CPU_FAMILY is designed to cut through it all and be sure of
+   getting the desired effect.
+
+   ENHANCE-ME: We should test _IBMR2 here when we add assembly support for
+   the system vendor compilers.  (Is that vendor compilers with inline asm,
+   or what?)  */
+
 #if (HAVE_HOST_CPU_FAMILY_power || HAVE_HOST_CPU_FAMILY_powerpc)        \
   && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
