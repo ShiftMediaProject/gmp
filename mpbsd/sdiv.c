@@ -1,7 +1,7 @@
 /* sdiv -- Divide a MINT by a short integer.  Produce a MINT quotient
    and a short remainder.
 
-Copyright (C) 1991, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1991, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -54,7 +54,7 @@ sdiv (dividend, divisor_short, quot, rem_ptr)
     }
 
   sign_divisor = divisor_short;
-  divisor_limb = ABS (divisor_short);
+  divisor_limb = (unsigned short) ABS (divisor_short);
 
   /* No need for temporary allocation and copying even if QUOT == DIVIDEND
      as the divisor is just one limb, and thus no intermediate remainders
