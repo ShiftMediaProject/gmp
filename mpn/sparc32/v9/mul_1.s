@@ -58,10 +58,9 @@ __mpn_mul_1:
 	mov	0,%g3			! cy = 0
 
 	ld	[%i1],%f11
-	add	%i1,4,%i1		! s1_ptr++
 	subcc	%i2,1,%i2
 	be,pn	%icc,.Lend1
-	nop
+	add	%i1,4,%i1		! s1_ptr++
 
 	fxtod	%f10,%f2
 	ld	[%i1],%f11
@@ -71,9 +70,9 @@ __mpn_mul_1:
 	fdtox	%f16,%f14
 	std	%f14,[%fp-24]
 	fdtox	%f4,%f12
-	std	%f12,[%fp-16]
 	subcc	%i2,1,%i2
 	be,pn	%icc,.Lend2
+	std	%f12,[%fp-16]
 
 	fxtod	%f10,%f2
 	ld	[%i1],%f11
@@ -83,9 +82,9 @@ __mpn_mul_1:
 	fdtox	%f16,%f14
 	std	%f14,[%fp-40]
 	fdtox	%f4,%f12
-	std	%f12,[%fp-32]
 	subcc	%i2,1,%i2
 	be,pt	%icc,.Lend3
+	std	%f12,[%fp-32]
 
 	fxtod	%f10,%f2
 	ld	[%i1],%f11
@@ -99,10 +98,10 @@ __mpn_mul_1:
 	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
 	std	%f14,[%fp-24]
 	fdtox	%f4,%f12
-	std	%f12,[%fp-16]
+	add	%i0,4,%i0		! res_ptr++
 	subcc	%i2,1,%i2
 	be,pn	%icc,.Lend4
-	add	%i0,4,%i0		! res_ptr++
+	std	%f12,[%fp-16]
 
 	b,a	.Loopm
 
@@ -158,35 +157,7 @@ __mpn_mul_1:
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		! align p16
 	st	%g4,[%i0-4]
-	fdtox	%f16,%f14
-	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
-	std	%f14,[%fp-24]
-	fdtox	%f4,%f12
-	std	%f12,[%fp-16]
-	add	%i0,4,%i0		! res_ptr++
-
-	add	%g3,%g1,%g4		! p += cy
-	srlx	%g4,32,%g3
-	ldx	[%fp-40],%g2		! p16
-	ldx	[%fp-32],%g1		! p0
-	sllx	%g2,16,%g2		! align p16
-	st	%g4,[%i0-4]
-	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
-	add	%i0,4,%i0		! res_ptr++
-
-	add	%g3,%g1,%g4		! p += cy
-	srlx	%g4,32,%g3
-	ldx	[%fp-24],%g2		! p16
-	ldx	[%fp-16],%g1		! p0
-	sllx	%g2,16,%g2		! align p16
-	st	%g4,[%i0-4]
-	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
-	add	%i0,4,%i0		! res_ptr++
-
-	add	%g3,%g1,%g4		! p += cy
-	srlx	%g4,32,%g3
-	st	%g4,[%i0-4]
-	b,a	.Lret
+	b,a	.Lxxx
 .Loope:
 .Lend4:	fxtod	%f10,%f2
 	add	%g3,%g1,%g4		! p += cy
@@ -210,22 +181,7 @@ __mpn_mul_1:
 	ldx	[%fp-16],%g1		! p0
 	sllx	%g2,16,%g2		! align p16
 	st	%g4,[%i0-4]
-	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
-	add	%i0,4,%i0		! res_ptr++
-
-	add	%g3,%g1,%g4		! p += cy
-	srlx	%g4,32,%g3
-	ldx	[%fp-40],%g2		! p16
-	ldx	[%fp-32],%g1		! p0
-	sllx	%g2,16,%g2		! align p16
-	st	%g4,[%i0-4]
-	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
-	add	%i0,4,%i0		! res_ptr++
-
-	add	%g3,%g1,%g4		! p += cy
-	srlx	%g4,32,%g3
-	st	%g4,[%i0-4]
-	b,a	.Lret
+	b,a	.Lyyy
 
 .Lend3:	fxtod	%f10,%f2
 	ldx	[%fp-24],%g2		! p16
@@ -233,7 +189,7 @@ __mpn_mul_1:
 	ldx	[%fp-16],%g1		! p0
 	fmuld	%f2,%f6,%f4
 	sllx	%g2,16,%g2		! align p16
-	fdtox	%f16,%f14
+.Lxxx:	fdtox	%f16,%f14
 	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
 	std	%f14,[%fp-24]
 	fdtox	%f4,%f12
@@ -257,10 +213,6 @@ __mpn_mul_1:
 	st	%g4,[%i0-4]
 	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
 	add	%i0,4,%i0		! res_ptr++
-
-	add	%g3,%g1,%g4		! p += cy
-	srlx	%g4,32,%g3
-	st	%g4,[%i0-4]
 	b,a	.Lret
 
 .Lend2:	fxtod	%f10,%f2
@@ -273,7 +225,7 @@ __mpn_mul_1:
 	ldx	[%fp-24],%g2		! p16
 	ldx	[%fp-16],%g1		! p0
 	sllx	%g2,16,%g2		! align p16
-	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
+.Lyyy:	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
 	add	%i0,4,%i0		! res_ptr++
 
 	add	%g3,%g1,%g4		! p += cy
@@ -284,10 +236,6 @@ __mpn_mul_1:
 	st	%g4,[%i0-4]
 	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
 	add	%i0,4,%i0		! res_ptr++
-
-	add	%g3,%g1,%g4		! p += cy
-	srlx	%g4,32,%g3
-	st	%g4,[%i0-4]
 	b,a	.Lret
 
 .Lend1:	fxtod	%f10,%f2
@@ -304,12 +252,11 @@ __mpn_mul_1:
 	add	%g2,%g1,%g1		! add p16 to p0 (ADD1)
 	add	%i0,4,%i0		! res_ptr++
 
-	add	%g3,%g1,%g4		! p += cy
+.Lret:	add	%g3,%g1,%g4		! p += cy
 	srlx	%g4,32,%g3
 	st	%g4,[%i0-4]
-	b,a	.Lret
 
-.Lret:	ret
+	ret
 	restore %g0,%g3,%o0		! sideeffect: put cy in retreg
 .LLfe1:
 	.size	 __mpn_mul_1,.LLfe1-__mpn_mul_1
