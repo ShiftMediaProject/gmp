@@ -248,7 +248,7 @@ always represented as 0/1.  If not then C<canonicalize> can be called to put
 it in that form.  For example,
 
     use GMP::Mpq qw(:all);
-    $q = mpq(21,15);   # eek! common factor 5
+    $q = mpq(21,15);   # eek! common factor 3
     canonicalize($q);  # get rid of it
 
 The following overloaded operators are available, and corresponding
@@ -569,9 +569,9 @@ GMP manual, L<perl>, L<overload>.
 
 =head1 BUGS
 
-The overloaded constants sometimes provoke seg faults from perl 5.005_03 on
-i386 FreeBSD.  Don't know if that's a perl bug or a GMP module bug, though
-it does seem to go bad before reaching anything in GMP.xs.
+In perl 5.005_03 on i386 FreeBSD, the overloaded constants sometimes provoke
+seg faults.  Don't know if that's a perl bug or a GMP module bug, though it
+does seem to go bad before reaching anything in GMP.xs.
 
 There's no way to specify an arbitrary base when converting a string to an
 mpz (or mpq or mpf), only hex or octal with 0x or 0 (for mpz and mpq, but
