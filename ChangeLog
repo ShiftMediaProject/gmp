@@ -1,3 +1,9 @@
+2000-05-19  Linus Nordberg  <linus@swox.se>
+
+	* acinclude.m4 (GMP_CHECK_CC_64BIT): Don't use shell variable
+	`ac_compile' for our own compile command string since other
+	Autoconf macros may depend on it.
+
 2000-05-19  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n): Fix
