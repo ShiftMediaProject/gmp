@@ -20664,6 +20664,11 @@ BEGIN {
         }
 
       # ARM style little endian but with the two 4-byte halves swapped
+      #
+      # gcc 2.95.4 on one arm system has been seen generating 000 in the
+      # last byte, whereas 124 is correct.  Not sure where the bug actually
+      # lies, but it seems easy enough to tolerate it here.
+      #
       if (got[8]  == "064" &&  \
           got[9]  == "157" &&  \
           got[10] == "235" &&  \
@@ -20671,7 +20676,7 @@ BEGIN {
           got[12] == "000" &&  \
           got[13] == "000" &&  \
           got[14] == "000" &&  \
-          got[15] == "124")
+          (got[15] == "124" || got[15] == "000"))
         {
           print "IEEE little endian, swapped halves"
           found = 1
