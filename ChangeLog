@@ -19,6 +19,15 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-06  Kevin Ryde  <kevin@swox.se>
+
+	* tune/tuneup.c (tune_mul, tune_sqr): Disable FFTs until tuned.
+	* tune/speed.h (SPEED_ROUTINE_MPN_SET_STR): Fix memory clobber in
+	destination cache priming.
+
+	* printf/doprnt.c: Fix for %s and %p.
+	* tests/misc/t-printf.c (check_misc): Add some tests.
+
 2002-02-03  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc32/v8/udiv.asm: New file, from v8/supersparc.
