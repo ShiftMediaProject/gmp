@@ -282,7 +282,7 @@ if (defined $ENV{directories}) { push @DIRECTORIES, @{$ENV{directories}} }
 my @table =
     (
      {
-       'regexp'=> 'add_n|sub_n',
+       'regexp'=> 'add_n|sub_n|addlsh1_n|sublsh1_n|rsh1add_n|rsh1sub_n',
        'ret'   => 'mp_limb_t',
        'args'  => 'mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size',
        'speed' => 'SPEED_ROUTINE_MPN_BINARY_N',

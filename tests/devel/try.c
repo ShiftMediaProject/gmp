@@ -570,17 +570,22 @@ validate_sqrtrem (void)
 #define TYPE_COPYD            27
 #define TYPE_COM_N            28
 
-#define TYPE_MOD_1            30
-#define TYPE_MOD_1C           31
-#define TYPE_DIVMOD_1         32
-#define TYPE_DIVMOD_1C        33
-#define TYPE_DIVREM_1         34
-#define TYPE_DIVREM_1C        35
-#define TYPE_PREINV_DIVREM_1  36
-#define TYPE_PREINV_MOD_1     37
-#define TYPE_MOD_34LSUB1      38
-#define TYPE_UDIV_QRNND       39
-#define TYPE_UDIV_QRNND_R     40
+#define TYPE_ADDLSH1_N        30
+#define TYPE_SUBLSH1_N        31
+#define TYPE_RSH1ADD_N        32
+#define TYPE_RSH1SUB_N        33
+
+#define TYPE_MOD_1            35
+#define TYPE_MOD_1C           36
+#define TYPE_DIVMOD_1         37
+#define TYPE_DIVMOD_1C        38
+#define TYPE_DIVREM_1         39
+#define TYPE_DIVREM_1C        40
+#define TYPE_PREINV_DIVREM_1  41
+#define TYPE_PREINV_MOD_1     42
+#define TYPE_MOD_34LSUB1      43
+#define TYPE_UDIV_QRNND       44
+#define TYPE_UDIV_QRNND_R     45
 
 #define TYPE_DIVEXACT_1       50
 #define TYPE_DIVEXACT_BY3     51
@@ -845,6 +850,23 @@ param_init (void)
   p->dst[0] = 1;
   p->src[0] = 1;
   REFERENCE (refmpn_com_n);
+
+
+  p = &param[TYPE_ADDLSH1_N];
+  COPY (TYPE_ADD_N);
+  REFERENCE (refmpn_addlsh1_n);
+
+  p = &param[TYPE_SUBLSH1_N];
+  COPY (TYPE_ADD_N);
+  REFERENCE (refmpn_sublsh1_n);
+
+  p = &param[TYPE_RSH1ADD_N];
+  COPY (TYPE_ADD_N);
+  REFERENCE (refmpn_rsh1add_n);
+
+  p = &param[TYPE_RSH1SUB_N];
+  COPY (TYPE_ADD_N);
+  REFERENCE (refmpn_rsh1sub_n);
 
 
   p = &param[TYPE_MOD_1];
@@ -1319,6 +1341,19 @@ const struct choice_t choice_array[] = {
 #endif
 #if HAVE_NATIVE_mpn_copyd
   { TRY(mpn_copyd), TYPE_COPYD },
+#endif
+
+#if HAVE_NATIVE_mpn_addlsh1_n
+  { TRY(mpn_addlsh1_n), TYPE_ADDLSH1_N },
+#endif
+#if HAVE_NATIVE_mpn_sublsh1_n
+  { TRY(mpn_sublsh1_n), TYPE_SUBLSH1_N },
+#endif
+#if HAVE_NATIVE_mpn_rsh1add_n
+  { TRY(mpn_rsh1add_n), TYPE_RSH1ADD_N },
+#endif
+#if HAVE_NATIVE_mpn_rsh1sub_n
+  { TRY(mpn_rsh1sub_n), TYPE_RSH1SUB_N },
 #endif
 
   { TRY_FUNFUN(mpn_and_n),  TYPE_AND_N  },
@@ -1859,6 +1894,10 @@ call (struct each_t *e, tryfun_t function)
 
   case TYPE_ADD_N:
   case TYPE_SUB_N:
+  case TYPE_ADDLSH1_N:
+  case TYPE_SUBLSH1_N:
+  case TYPE_RSH1ADD_N:
+  case TYPE_RSH1SUB_N:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, e->s[1].p, size);
     break;
