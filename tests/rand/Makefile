@@ -1,7 +1,7 @@
 CC 		= gcc
 GMPDIR 		= ../..
-GMPLIBDIR	= $(GMPDIR)
-#GMPLIBDIR	= /tmp/linus/gmp-current
+#GMPLIBDIR	= $(GMPDIR)
+GMPLIBDIR	= /tmp/linus/gmp-current
 GMPLIB		= $(GMPLIBDIR)/libgmp.a
 GMPH		= $(GMPDIR)/gmp.h $(GMPLIBDIR)/mpn/gmp-mparam.h
 
@@ -14,10 +14,13 @@ findcl: findcl.c $(DEP)
 gen: gen.c $(DEP)
 stat: stat.c $(DEP)
 	$(CC) $(CFLAGS) -L. -o $@ $< statlib.o $(LIBS)
-foo: foo.c $(GMPLIB) $(GMPH)
-	$(CC) $(CFLAGS) -o $@ $< -lgmp -lm
+foo: foo.c zdiv_round.o $(DEP)
+	$(CC) $(CFLAGS) -o $@ $< zdiv_round.o -lgmp -lm
 
 statlib.o: statlib.c statlib.h $(GMPLIB)
+
+spect: spect.c zdiv_round.o $(DEP)
+	$(CC) $(CFLAGS) -o $@ $< zdiv_round.o -lgmp -lm
 
 ks: ks.c $(DEP)
 	$(CC) $(CFLAGS) -o $@ $< statlib.o $(LIBS)
