@@ -20,7 +20,7 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
 
 CPP	= @CPP@
@@ -30,6 +30,24 @@ INCLUDES = -I$(top_srcdir) -DOPERATION_$*
 
 GENERIC_SOURCES = mp_bases.c
 OFILES = @mpn_objects@
+
+
+# All possible mpn normal and optional function files are listed here as C
+# sources for a dummy library, to get automake to generate ansi2knr rules
+# for each.  Such rules will be ignored for any that are instead implemented
+# with a .asm (or whatever) for a particular target.
+#
+EXTRA_LTLIBRARIES = libdummy.la
+nodist_libdummy_la_SOURCES =						      \
+  add_n.c addmul_1.c bdivmod.c bz_divrem_n.c cmp.c diveby3.c divrem.c	      \
+  divrem_1.c divrem_2.c dump.c gcd.c gcd_1.c gcdext.c get_str.c hamdist.c     \
+  inlines.c jacbase lshift.c mod_1.c mod_1_rs.c mul.c mul_1.c mul_fft.c	      \
+  mul_n.c mul_basecase.c perfsqr.c popcount.c pre_mod_1.c random.c random2.c  \
+  rshift.c sb_divrem_mn.c scan0.c scan1.c set_str.c sqr_basecase.c sqrtrem.c  \
+  sub_n.c submul_1.c tdiv_qr.c						      \
+  copyi.c copyd.c com_n.c and_n.c andn_n.c nand_n.c ior_n.c iorn_n.c nior_n.c \
+  xor_n.c xnor_n.c
+
 
 noinst_LTLIBRARIES = libmpn.la
 libmpn_la_SOURCES = $(GENERIC_SOURCES)
