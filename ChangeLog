@@ -18,6 +18,16 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-04-30  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_PROG_CC_X86_GOT_EAX_EMITTED,
+	GMP_ASM_X86_GOT_EAX_OK): New macros.
+	(GMP_PROG_CC_WORKS): Use them to detect an old gas bug tickled by
+	recent gcc.  Reported by David Newman.
+
+	* doc/gmp.texi (Reentrancy): Note also gmp_randinit_default as an
+	alternative to gmp_randinit.
+
 2004-04-29  Torbjorn Granlund  <tege@swox.com>
 
 	* configfsf.guess: Update to 2004-03-12.
