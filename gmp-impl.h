@@ -278,8 +278,7 @@ void __gmp_default_free _PROTO ((void *, size_t));
    stack usage is compatible.  __attribute__ ((regparm (N))) helps by
    putting leading parameters in registers, avoiding extra stack.  */
 
-#if defined (__GNUC__) && defined (i386) \
-  && (__GNUC_MAJOR >= 3 || (__GNUC_MAJOR == 2 && __GNUC_MINOR >= 96))
+#if defined (i386) && (__GNUC__-0 >= 3 || (__GNUC__-0 == 2 && __GNUC_MINOR__-0 >= 96))
 #define USE_LEADING_REGPARM 1
 #else
 #define USE_LEADING_REGPARM 0
