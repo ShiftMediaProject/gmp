@@ -240,13 +240,17 @@ EOF
       fi
 
       if test -z "$exact_cpu"; then
-        # Now we know 68020 or up, which is how gmp interprets plain m68k,
-        # so just leave that.
-        # FIXME: Tests for 030, 040 and 060.  But how?
-        :
+        # FIXME: Now we know 68020 or up, but how to detect 030, 040 and 060?
+        exact_cpu=m68020
       fi
     fi
     rm -f $dummy.s $dummy $dummy.core core
+  fi
+  if test -z "$exact_cpu"; then
+    case "$guess_full" in
+      *-*-next* | *-*-openstep*)  # NeXTs are 68020 or better
+        exact_cpu=m68020 ;;
+    esac
   fi
   ;;
 
