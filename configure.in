@@ -859,7 +859,7 @@ case $host in
       powerpc620)   gcc_cflags_cpu="-mcpu=620" ;;
       powerpc630)   gcc_cflags_cpu="-mcpu=630" ;;
       powerpc740)   gcc_cflags_cpu="-mcpu=740" ;;
-      powerpc7400)  gcc_cflags_cpu="-mcpu=7400" ;;
+      powerpc7400)  gcc_cflags_cpu="-mcpu=7400 -mcpu=750" ;;
       powerpc7450)  gcc_cflags_cpu="-mcpu=7450" ;;
       powerpc750)   gcc_cflags_cpu="-mcpu=750" ;;
       powerpc801)   gcc_cflags_cpu="-mcpu=801" ;;
