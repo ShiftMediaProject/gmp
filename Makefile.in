@@ -253,7 +253,9 @@ ACLOCAL_AMFLAGS = -I mpfr
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
 #
-SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) demos tune
+SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) \
+  demos tune doc
+
 
 
 # The ansi2knr setups for the build programs are the same as the normal
@@ -274,7 +276,7 @@ SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) demos tune
 # build-system stuff over and done with at the start.  Also, dependencies on
 # the .h files are not properly expressed for the various objects that use
 # them.
-EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf gmpxx.h libmp.sym dumbmp.c gen-fac_ui.c gen-fib.c gen-bases.c gen-psqr.c
+EXTRA_DIST = macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf gmpxx.h libmp.sym dumbmp.c gen-fac_ui.c gen-fib.c gen-bases.c gen-psqr.c
 
 @WANT_CXX_TRUE@GMPXX_HEADERS_OPTION = gmpxx.h
 
@@ -477,9 +479,6 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE) \
   -export-symbols $(srcdir)/libmp.sym
 
-
-info_TEXINFOS = gmp.texi
-gmp_TEXINFOS = fdl.texi
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -522,12 +521,6 @@ CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libgmp_la_SOURCES) $(EXTRA_libgmp_la_SOURCES) \
 	$(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
-am__TEXINFO_TEX_DIR = $(srcdir)
-INFO_DEPS = gmp.info
-DVIS = gmp.dvi
-PDFS = gmp.pdf
-PSS = gmp.ps
-TEXINFOS = gmp.texi
 HEADERS = $(include_HEADERS) $(nodist_includeexec_HEADERS)
 
 
@@ -536,21 +529,20 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	all-recursive install-data-recursive install-exec-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
-DIST_COMMON = README $(gmp_TEXINFOS) $(include_HEADERS) AUTHORS COPYING \
-	COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in NEWS \
-	acinclude.m4 aclocal.m4 ansi2knr.1 ansi2knr.c config.guess \
-	config.in config.sub configure configure.in gmp-h.in install-sh \
-	ltmain.sh mdate-sh missing mkinstalldirs mp-h.in stamp-vti \
-	texinfo.tex version.texi
+DIST_COMMON = README $(include_HEADERS) AUTHORS COPYING COPYING.LIB \
+	ChangeLog INSTALL Makefile.am Makefile.in NEWS acinclude.m4 \
+	aclocal.m4 ansi2knr.1 ansi2knr.c config.guess config.in \
+	config.sub configure configure.in gmp-h.in install-sh ltmain.sh \
+	missing mkinstalldirs mp-h.in
 DIST_SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd mpfr demos \
-	tune
+	tune doc
 SOURCES = $(libgmp_la_SOURCES) $(EXTRA_libgmp_la_SOURCES) $(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
 
 all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .dvi .info .lo .o .obj .pdf .ps .texi
+.SUFFIXES: .c .cc .lo .o .obj
 
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno
@@ -744,94 +736,7 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool
-
-.texi.info:
-	@rm -f $@ $@-[0-9] $@-[0-9][0-9]
-	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
-	 -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
-
-.texi.dvi:
-	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
-	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
-	$(TEXI2DVI) `test -f '$<' || echo '$(srcdir)/'`$<
-
-.texi.pdf:
-	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
-	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
-	$(TEXI2PDF) `test -f '$<' || echo '$(srcdir)/'`$<
-gmp.info: gmp.texi version.texi $(gmp_TEXINFOS)
-gmp.dvi: gmp.texi version.texi $(gmp_TEXINFOS)
-gmp.pdf: gmp.texi version.texi $(gmp_TEXINFOS)
-version.texi: @MAINTAINER_MODE_TRUE@ stamp-vti
-stamp-vti: gmp.texi $(top_srcdir)/configure
-	@(dir=.; test -f ./gmp.texi || dir=$(srcdir); \
-	set `$(SHELL) $(srcdir)/mdate-sh $$dir/gmp.texi`; \
-	echo "@set UPDATED $$1 $$2 $$3"; \
-	echo "@set UPDATED-MONTH $$2 $$3"; \
-	echo "@set EDITION $(VERSION)"; \
-	echo "@set VERSION $(VERSION)") > vti.tmp
-	@cmp -s vti.tmp version.texi \
-	  || (echo "Updating version.texi"; \
-	      cp vti.tmp version.texi)
-	-@rm -f vti.tmp
-	@cp version.texi $@
-
-mostlyclean-vti:
-	-rm -f vti.tmp
-
-maintainer-clean-vti:
-@MAINTAINER_MODE_TRUE@	-rm -f stamp-vti version.texi
-TEXI2DVI = texi2dvi
-
-TEXI2PDF = $(TEXI2DVI) --pdf --batch
-DVIPS = dvips
-.dvi.ps:
-	$(DVIPS) -o $@ $<
-
 uninstall-info-am:
-	$(PRE_UNINSTALL)
-	@if (install-info --version && \
-	     install-info --version | grep -i -v debian) >/dev/null 2>&1; then \
-	  list='$(INFO_DEPS)'; \
-	  for file in $$list; do \
-	    relfile=`echo "$$file" | sed 's|^.*/||'`; \
-	    echo " install-info --info-dir=$(DESTDIR)$(infodir) --remove $(DESTDIR)$(infodir)/$$relfile"; \
-	    install-info --info-dir=$(DESTDIR)$(infodir) --remove $(DESTDIR)$(infodir)/$$relfile; \
-	  done; \
-	else :; fi
-	@$(NORMAL_UNINSTALL)
-	@list='$(INFO_DEPS)'; \
-	for file in $$list; do \
-	  relfile=`echo "$$file" | sed 's|^.*/||'`; \
-	  (if cd $(DESTDIR)$(infodir); then \
-	     echo " rm -f $$relfile $$relfile-[0-9] $$relfile-[0-9][0-9])"; \
-	     rm -f $$relfile $$relfile-[0-9] $$relfile-[0-9][0-9]; \
-	   else :; fi); \
-	done
-
-dist-info: $(INFO_DEPS)
-	list='$(INFO_DEPS)'; \
-	for base in $$list; do \
-	  if test -f $$base; then d=.; else d=$(srcdir); fi; \
-	  for file in $$d/$$base*; do \
-	    relfile=`expr "$$file" : "$$d/\(.*\)"`; \
-	    test -f $(distdir)/$$relfile || \
-	      cp -p $$file $(distdir)/$$relfile; \
-	  done; \
-	done
-
-mostlyclean-aminfo:
-	-rm -f gmp.aux gmp.cp gmp.cps gmp.fn gmp.fns gmp.ky gmp.kys gmp.log gmp.pg \
-	  gmp.pgs gmp.tmp gmp.toc gmp.tp gmp.vr gmp.vrs gmp.dvi gmp.pdf \
-	  gmp.ps
-
-maintainer-clean-aminfo:
-	list='$(INFO_DEPS)'; for i in $$list; do \
-	  rm -f $$i; \
-	  if test "`echo $$i-[0-9]*`" != "$$i-[0-9]*"; then \
-	    rm -f $$i-[0-9]*; \
-	  fi; \
-	done
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
 install-includeHEADERS: $(include_HEADERS)
 	@$(NORMAL_INSTALL)
@@ -1045,7 +950,7 @@ distdir: $(DISTFILES)
 	done
 	$(MAKE) $(AM_MAKEFLAGS) \
 	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
-	  dist-info dist-hook
+	  dist-hook
 	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
 	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
 	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
@@ -1118,10 +1023,10 @@ distcleancheck: distclean
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(INFO_DEPS) $(LTLIBRARIES) $(HEADERS) config.h
+all-am: Makefile $(LTLIBRARIES) $(HEADERS) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(infodir) $(DESTDIR)$(includedir) $(DESTDIR)$(includeexecdir)
+	$(mkinstalldirs) $(DESTDIR)$(libdir) $(DESTDIR)$(includedir) $(DESTDIR)$(includeexecdir)
 
 install: install-recursive
 install-exec: install-exec-recursive
@@ -1161,43 +1066,21 @@ distclean-am: clean-am distclean-compile distclean-generic distclean-hdr \
 
 dvi: dvi-recursive
 
-dvi-am: $(DVIS)
+dvi-am:
 
 info: info-recursive
 
-info-am: $(INFO_DEPS)
+info-am:
 
-install-data-am: install-includeHEADERS install-info-am
+install-data-am: install-includeHEADERS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
 install-exec-am: install-libLTLIBRARIES \
 	install-nodist_includeexecHEADERS
 
 install-info: install-info-recursive
 
-install-info-am: $(INFO_DEPS)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(infodir)
-	@list='$(INFO_DEPS)'; \
-	for file in $$list; do \
-	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
-	  for ifile in $$d/$$file $$d/$$file-[0-9] $$d/$$file-[0-9][0-9]; do \
-	    if test -f $$ifile; then \
-	      relfile=`echo "$$ifile" | sed 's|^.*/||'`; \
-	      echo " $(INSTALL_DATA) $$ifile $(DESTDIR)$(infodir)/$$relfile"; \
-	      $(INSTALL_DATA) $$ifile $(DESTDIR)$(infodir)/$$relfile; \
-	    else : ; fi; \
-	  done; \
-	done
-	@$(POST_INSTALL)
-	@if (install-info --version && \
-	     install-info --version | grep -i -v debian) >/dev/null 2>&1; then \
-	  list='$(INFO_DEPS)'; \
-	  for file in $$list; do \
-	    relfile=`echo "$$file" | sed 's|^.*/||'`; \
-	    echo " install-info --info-dir=$(DESTDIR)$(infodir) $(DESTDIR)$(infodir)/$$relfile";\
-	    install-info --info-dir=$(DESTDIR)$(infodir) $(DESTDIR)$(infodir)/$$relfile || :;\
-	  done; \
-	else : ; fi
 install-man:
 
 installcheck-am:
@@ -1205,22 +1088,20 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf autom4te.cache
-maintainer-clean-am: distclean-am maintainer-clean-aminfo \
-	maintainer-clean-generic maintainer-clean-vti
+maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-aminfo mostlyclean-compile \
-	mostlyclean-generic mostlyclean-kr mostlyclean-libtool \
-	mostlyclean-vti
+mostlyclean-am: mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool
 
 pdf: pdf-recursive
 
-pdf-am: $(PDFS)
+pdf-am:
 
 ps: ps-recursive
 
-ps-am: $(PSS)
+ps-am:
 
 uninstall-am: uninstall-includeHEADERS uninstall-info-am \
 	uninstall-libLTLIBRARIES uninstall-nodist_includeexecHEADERS
@@ -1230,27 +1111,42 @@ uninstall-info: uninstall-info-recursive
 .PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am check check-am clean \
 	clean-generic clean-libLTLIBRARIES clean-libtool \
 	clean-recursive ctags ctags-recursive dist dist-all dist-gzip \
-	dist-info distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-recursive distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am dvi-recursive info info-am \
-	info-recursive install install-am install-data install-data-am \
-	install-data-recursive install-exec install-exec-am \
-	install-exec-recursive install-includeHEADERS install-info \
-	install-info-am install-info-recursive install-libLTLIBRARIES \
-	install-man install-nodist_includeexecHEADERS install-recursive \
+	distcheck distclean distclean-compile distclean-generic \
+	distclean-hdr distclean-libtool distclean-recursive \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am dvi-recursive info info-am info-recursive install \
+	install-am install-data install-data-am install-data-recursive \
+	install-exec install-exec-am install-exec-recursive \
+	install-includeHEADERS install-info install-info-am \
+	install-info-recursive install-libLTLIBRARIES install-man \
+	install-nodist_includeexecHEADERS install-recursive \
 	install-strip installcheck installcheck-am installdirs \
 	installdirs-am installdirs-recursive maintainer-clean \
-	maintainer-clean-aminfo maintainer-clean-generic \
-	maintainer-clean-recursive maintainer-clean-vti mostlyclean \
-	mostlyclean-aminfo mostlyclean-compile mostlyclean-generic \
-	mostlyclean-kr mostlyclean-libtool mostlyclean-recursive \
-	mostlyclean-vti pdf pdf-am pdf-recursive ps ps-am ps-recursive \
-	tags tags-recursive uninstall uninstall-am \
-	uninstall-includeHEADERS uninstall-info-am \
-	uninstall-info-recursive uninstall-libLTLIBRARIES \
-	uninstall-nodist_includeexecHEADERS uninstall-recursive
+	maintainer-clean-generic maintainer-clean-recursive mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
+	mostlyclean-libtool mostlyclean-recursive pdf pdf-am \
+	pdf-recursive ps ps-am ps-recursive tags tags-recursive \
+	uninstall uninstall-am uninstall-includeHEADERS \
+	uninstall-info-am uninstall-info-recursive \
+	uninstall-libLTLIBRARIES uninstall-nodist_includeexecHEADERS \
+	uninstall-recursive
 
+
+install-data-hook:
+	@echo ''
+	@echo '+-------------------------------------------------------------+'
+	@echo '| CAUTION:                                                    |'
+	@echo '|                                                             |'
+	@echo '| If you have not already run "make check", then we strongly  |'
+	@echo '| recommend you do so.                                        |'
+	@echo '|                                                             |'
+	@echo '| GMP has been carefully tested by its authors, but compilers |'
+	@echo '| are all too often released with serious bugs.  GMP tends to |'
+	@echo '| explore interesting corners in compilers and has hit bugs   |'
+	@echo '| on quite a few occasions.                                   |'
+	@echo '|                                                             |'
+	@echo '+-------------------------------------------------------------+'
+	@echo ''
 
 mpz/fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
 	./gen-fac_ui $(BITS_PER_MP_LIMB) $(GMP_NAIL_BITS) >mpz/fac_ui.h || (rm -f mpz/fac_ui.h; exit 1)
