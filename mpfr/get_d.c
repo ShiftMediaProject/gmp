@@ -20,6 +20,8 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stddef.h>  /* needed before math.h by gcc 3.2 on hppa2.0w hpux11 */
+
 #include <float.h>
 #ifndef NO_MATH_DEFS
 #include <math.h>
