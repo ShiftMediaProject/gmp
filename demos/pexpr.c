@@ -103,7 +103,7 @@ jmp_buf errjmpbuf;
 
 enum op_t {NOP, LIT, NEG, NOT, PLUS, MINUS, MULT, DIV, MOD, REM, INVMOD, POW,
 	   AND, IOR, XOR, SLL, SRA, POPCNT, HAMDIST, GCD, LCM, SQRT, ROOT, FAC,
-	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI, RANDOM, NEXTPRIME};
+	   LOG, LOG2, FERMAT, MERSENNE, FIBONACCI, RANDOM, NEXTPRIME, BINOM};
 
 /* Type for the expression tree.  */
 struct expr
@@ -722,6 +722,8 @@ struct functions fns[] =
   {"Fib", FIBONACCI, 1},
   {"random", RANDOM, 1},
   {"nextprime", NEXTPRIME, 1},
+  {"binom", BINOM, 2},
+  {"binomial", BINOM, 2},
   {"", NOP, 0}
 };
 
@@ -1263,6 +1265,23 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
 	mpz_eval_expr (r, e->operands.ops.lhs);
 	mpz_nextprime (r, r);
       }
+      return;
+    case BINOM:
+      mpz_init (lhs); mpz_init (rhs);
+      mpz_eval_expr (lhs, e->operands.ops.lhs);
+      mpz_eval_expr (rhs, e->operands.ops.rhs);
+      {
+	unsigned long int k;
+	if (mpz_cmp_ui (rhs, ~(unsigned long int) 0) > 0)
+	  {
+	    error = "k too large in (n over k) expression";
+	    mpz_clear (lhs); mpz_clear (rhs);
+	    longjmp (errjmpbuf, 1);
+	  }
+	k = mpz_get_ui (rhs);
+	mpz_bin_ui (r, lhs, k);
+      }
+      mpz_clear (lhs); mpz_clear (rhs);
       return;
     default:
       abort ();
