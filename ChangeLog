@@ -1,3 +1,14 @@
+2000-04-05  Linus Nordberg  <linus@swox.se>
+
+	* mpf/urandom.c (mpf_urandomb): Remove SIZE parameter.  Normalize
+	result correctly.
+
+	* gmp.h (mpf_urandomb): Remove SIZE parameter.
+
+	* randraw.c (gmp_rand_getraw): Handle the case where (1) the LC
+	scheme doesn't generate even limbs and (2) more than one LC
+	invokation is necessary to produce the requested number of bits.
+
 2000-04-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/mul_n.c (INVERSE_3): New name for THIRD, define for
