@@ -38,7 +38,7 @@ dnl
 dnl  	        define(foo, `mov $ 123, %eax')
 dnl
 dnl     This is only a problem in macro definitions, not in ordinary text,
-dnl     nor in macro parameters like text passed to forloop() or ifdef().
+dnl     and not in macro parameters like text passed to forloop() or ifdef().
 
 
 deflit(BYTES_PER_MP_LIMB, 4)
@@ -54,7 +54,14 @@ ifdef(`DLL_EXPORT',`undefine(`PIC')')
 dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo)
 dnl
 dnl  In the x86 code we use explicit TEXT and ALIGN() calls in the code,
-dnl  since different alignments are wanted in various circumstances.
+dnl  since different alignments are wanted in various circumstances.  So for
+dnl  instance,
+dnl
+dnl                  TEXT
+dnl                  ALIGN(16)
+dnl          PROLOGUE(mpn_add_n)
+dnl          ...
+dnl          EPILOGUE()
 
 define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
