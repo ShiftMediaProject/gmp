@@ -815,12 +815,17 @@ manual is strongly discouraged.  If you do so your application is guaranteed
 to be incompatible with future versions of GMP.}
 
 @menu
-* Nomenclature and Types::      	Which data types are there?
-* Function Classes::            	How the functions are organized.
-* GMP Variable Conventions::     	Some rules and hints about variables.
-* GMP and Reentrancy::           	What about reentrancy?
-* Useful Macros and Constants::  	Convenient helpers.
-* Compatibility with older versions::	Compatibility issues.
+* Nomenclature and Types::      
+* Function Classes::            
+* Variable Conventions::        
+* Parameter Conventions::       
+* Memory Management::           
+* Reentrancy::                  
+* Useful Macros and Constants::  
+* Compatibility with older versions::  
+* Efficiency::                  
+* Debugging::                   
+* Profiling::                   
 @end menu
 
 @node Nomenclature and Types, Function Classes, GMP Basics, GMP Basics
@@ -869,7 +874,7 @@ digit, only larger, and containing several digits.)  Normally a limb contains
 32 or 64 bits.  The C data type for a limb is @code{mp_limb_t}.
 
 
-@node Function Classes, GMP Variable Conventions, Nomenclature and Types, GMP Basics
+@node Function Classes, Variable Conventions, Nomenclature and Types, GMP Basics
 @section Function Classes
 @cindex Function classes
 
@@ -910,16 +915,14 @@ functions for generating random numbers.
 @end enumerate
 
 
-@node GMP Variable Conventions, GMP and Reentrancy, Function Classes, GMP Basics
-@section GMP Variable Conventions
+@node Variable Conventions, Parameter Conventions, Function Classes, GMP Basics
+@section Variable Conventions
 @cindex Variable conventions
-@cindex Parameter conventions
 @cindex Conventions for variables
 
-As a general rule, all GMP functions expect output arguments before input
-arguments.  This notation is based on an analogy with the assignment operator.
-(The BSD MP compatibility functions disobey this rule, having the output
-argument(s) last.)
+GMP functions generally have output arguments before input arguments.  This
+notation is by analogy with the assignment operator.  The BSD MP compatibility
+functions are exceptions, having the output arguments last.
 
 GMP lets you use the same variable for both input and output in one call.  For
 example, the main function for integer multiplication, @code{mpz_mul}, can be
@@ -940,35 +943,51 @@ A variable should only be initialized once, or at least cleared out between
 each initialization.  After a variable has been initialized, it may be
 assigned to any number of times.
 
-For efficiency reasons, avoid initializing and clearing out a GMP variable in
-a loop.  Instead, initialize it before entering the loop, and clear it out
-after the loop has exited.
-
-GMP variables are small, containing only a couple of sizes, and pointers to
-allocated data.  Once you have initialized a GMP variable, you don't need to
-worry about space allocation.  All functions in GMP automatically allocate
-additional space when a variable does not already have enough.  They do not,
-however, reduce the space when a smaller value is stored.  Most of the time
-this policy is best, since it avoids frequent re-allocation.
-
-When a variable of type @code{mpz_t} is used as a function parameter, it's
-effectively a call-by-reference, meaning anything the function does to it will
-be be done to the original in the caller.  When a function is going to return
-an @code{mpz_t} result, it should provide a separate parameter or parameters
-that it sets, like the GMP library functions do.  A @code{return} of an
-@code{mpz_t} doesn't return the object, only a pointer to it, and this is
-almost certainly not what you want.  All this applies to @code{mpq_t} and
-@code{mpf_t} too.
-
-Here's an example function accepting an @code{mpz_t} parameter, doing a
-certain calculation, and returning a result.
+For efficiency reasons, avoid excessive initializing and clearing.  In
+general, initialize near the start of a function and clear near the end.  For
+example,
 
 @example
 void
-myfunction (mpz_t result, mpz_t param, unsigned long n)
+foo (void)
+@{
+  mpz_t  n;
+  int    i;
+  mpz_init (n);
+  for (i = 1; i < 100; i++)
+    @{
+      mpz_mul (n, @dots{});
+      mpz_fdiv_q (n, @dots{});
+      @dots{}
+    @}
+  mpz_clear (n);
+@}
+@end example
+
+
+@node Parameter Conventions, Memory Management, Variable Conventions, GMP Basics
+@section Parameter Conventions
+@cindex Parameter conventions
+@cindex Conventions for parameters
+
+When an GMP variable is used as a function parameter, it's effectively a
+call-by-reference, meaning if the function stores a value there it will change
+the original in the caller.
+
+When a function is going to return a GMP result, it should designate a
+parameter that it sets, like the library functions do.  More than one value
+can be returned by having more than one output parameter, again like the
+library functions.  A @code{return} of an @code{mpz_t} etc doesn't return the
+object, only a pointer, and this is almost certainly not what's wanted.
+
+Here's an example function accepting an @code{mpz_t} parameter, doing a
+certain calculation, and storing a result to the indicated parameter.
+
+@example
+void
+foo (mpz_t result, mpz_t param, unsigned long n)
 @{
   unsigned long  i;
-  
   mpz_mul_ui (result, param, n);
   for (i = 1; i < n; i++)
     mpz_add_ui (result, result, i*7);
@@ -980,10 +999,8 @@ main (void)
   mpz_t  r, n;
   mpz_init (r);
   mpz_init_set_str (n, "123456", 0);
-
-  myfunction (r, n, 20L);
+  foo (r, n, 20L);
   mpz_out_str (stdout, 10, r); printf ("\n");
-
   return 0;
 @}
 @end example
@@ -992,48 +1009,76 @@ This example will work if @code{result} and @code{param} are the same
 variable, just like the library functions.  But sometimes this is tricky to
 arrange, and an application might not want to bother for its own subroutines.
 
-@code{mpz_t} is actually implemented as a one-element array of a certain
-structure type.  This is why using it to declare a variable gives an object
-with the fields GMP needs, but then using it as a parameter passes a pointer
-to the object.  Note that the actual contents of an @code{mpz_t} are for
-internal use only and you should not access them directly if you want your
-code to be compatible with future GMP releases.
+For interest, the GMP types @code{mpz_t} etc are implemented as one-element
+arrays of certain structure types.  This is why declaring a variable creates
+an object with the fields GMP needs, but then using it as a parameter passes a
+pointer to the object.  Note that the actual fields in each @code{mpz_t} etc
+are for internal use only and should not be accessed directly by code that
+expects to be compatible with future GMP releases.
 
 
-@node GMP and Reentrancy, Useful Macros and Constants, GMP Variable Conventions, GMP Basics
-@section GMP and Reentrancy
+@need 1000
+@node Memory Management, Reentrancy, Parameter Conventions, GMP Basics
+@section Memory Management
+@cindex Memory
+
+GMP variables are small, containing only a couple of sizes, and pointers to
+allocated data.  Once a variable is initialized, GMP takes care of all space
+allocation.  Additional space is allocated whenever a variable doesn't have
+enough.
+
+@code{mpz_t} and @code{mpq_t} variables never reduce their allocated space.
+Normally this is the best policy, since it avoids frequent reallocation.
+Applications that must return memory to the heap at some particular point can
+use @code{_mpz_realloc}, or clear variables no longer needed.
+
+@code{mpf_t} variables, in the current implementation, use a fixed amount of
+space, determined by the chosen precision and allocated at initialization, so
+their size doesn't change.
+
+All memory is allocated using @code{malloc} and friends by default, but this
+can be changed, see @ref{Custom Allocation}.  Temporary memory on the stack is
+also used, but this can be changed at build-time if desired, see @ref{Build
+Options}.
+
+
+@node Reentrancy, Useful Macros and Constants, Memory Management, GMP Basics
+@section Reentrancy
 @cindex Reentrancy
 @cindex Thread safety
 @cindex Multi-threading
 
-The GMP code is reentrant and thread-safe, with some exceptions:
+GMP is reentrant and thread-safe, with some exceptions:
 
 @itemize @bullet
 @item
-The function @code{mpf_set_default_prec} saves the selected precision in
-a global variable.
+@code{mpf_set_default_prec} and @code{mpf_init} use a global variable for the
+selected precision.  @code{mpf_init2} can be used instead.
 
 @item
-The function @code{mp_set_memory_functions} uses several global
-variables for storing the selected memory allocation functions.
+@code{mp_set_memory_functions} uses global variables to store the selected
+memory allocation functions.
+
+@item
+@code{mpz_random} and the other old random number functions use a random
+number generator from the C library, usually @code{mrand48} or @code{random}.
+These routines are not reentrant, since they rely on global state.  The newer
+random number functions that accept a @code{gmp_randstate_t} parameter can be
+used instead.
 
 @item
 If the memory allocation functions set by a call to
 @code{mp_set_memory_functions} (or @code{malloc} and friends by default) are
-not reentrant, GMP will not be reentrant either.
+not reentrant, then GMP will not be reentrant either.
 
 @item
-The old random number functions (@code{mpz_random}, etc) use a random number
-generator from the C library, usually @code{mrand48} or @code{random}.  These
-routines are not reentrant, since they rely on global state.
-(However the newer random number functions that accept a
-@code{gmp_randstate_t} parameter are reentrant.)
+If the standard I/O functions such as @code{fwrite} are not reentrant then the
+GMP I/O functions using them will not be reentrant either.
 
 @item
 If @code{alloca} is not available, or GMP is configured with
 @samp{--disable-alloca}, the library is not reentrant, due to the current
-implementation of @file{stack-alloc.c}.  In the generated @file{config.h},
-@code{USE_STACK_ALLOC} set to 1 will mean not reentrant.
+implementation of @file{stack-alloc.c}.
 
 @item
 On SCO systems the default @code{<ctype.h>} macros use per-file static
@@ -1044,7 +1089,7 @@ away fetches from them.  The functions affected are @code{mpz_set_str},
 
 
 @need 2000
-@node Useful Macros and Constants, Compatibility with older versions, GMP and Reentrancy, GMP Basics
+@node Useful Macros and Constants, Compatibility with older versions, Reentrancy, GMP Basics
 @section Useful Macros and Constants
 @cindex Useful macros and constants
 @cindex Constants
@@ -1066,7 +1111,7 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @end defmac
 
 
-@node Compatibility with older versions,  , Useful Macros and Constants, GMP Basics
+@node Compatibility with older versions, Efficiency, Useful Macros and Constants, GMP Basics
 @section Compatibility with older versions
 @cindex Compatibility with older versions
 @cindex Upward compatibility
@@ -1139,6 +1184,148 @@ see the GMP 2 manual for details.
 @c Note that this is an incompatible change from version 1 of the library.
 
 @c @end enumerate
+
+
+@need 1000
+@node Efficiency, Debugging, Compatibility with older versions, GMP Basics
+@section Efficiency
+
+@table @asis
+@item Small operands
+On small operands, function call overheads and memory allocation can be
+significant in comparison to actual calculating.  This is unavoidable in a
+general purpose variable precision library, although GMP attempts to be as
+efficient as it can on both large and small operands.
+
+@item Initializing and clearing
+Avoid excessive initializing and clearing of variables, since this can be
+quite time consuming, especially in comparison to otherwise fast operations
+like addition.
+
+A language interpreter might want to keep a free list or stack of
+initialized variables ready for use.  It should be possible to integrate
+something like that with a garbage collector.
+
+@item Reallocations
+An @code{mpz_t} or @code{mpq_t} variable useded to hold successively larger
+values may end up with its memory being repeatedly @code{realloc}ed, which
+could be quite slow or could fragment memory, depending on the C library.  If
+an application can estimate the final size then @code{@w{_mpz}_realloc} can be
+used to allocate the necessary space at the start (@pxref{Initializing
+Integers}).
+
+It doesn't matter if a size set with @code{@w{_mpz}_realloc} is too small,
+since all functions will do a further reallocation if necessary.  Badly
+overestimating memory required will waste space though.
+
+@item @code{2exp} functions
+It's up to an application to call functions like @code{mpz_mul_2exp} when
+appropriate.  General purpose functions like @code{mpz_mul} make no attempt to
+identify powers of two or other special forms, because such inputs will
+usually be very rare and testing every time would be wasteful.
+
+@item @code{si} and @code{ui} functions
+The @code{si} and @code{ui} functions exist for convenience and should be used
+where applicable.  But if for example an @code{mpz_t} contains a value that
+fits in an @code{unsigned long} there's no need extract it and call a
+@code{ui} function, just use the regular @code{mpz} function.
+@end table
+
+
+@node Debugging, Profiling, Efficiency, GMP Basics
+@section Debugging
+@cindex Debugging
+
+@table @asis
+@item Stack Overflow
+Depending on the system, a segmentation violation or bus error might be the
+only indication of stack overflow.  See @samp{--disable-alloca} in @ref{Build
+Options}, for ways to address this.
+
+@item Heap Problems
+The most likely cause of application problems with GMP is heap corruption.
+Failing to @code{init} GMP variables will have unpredictable effects, and
+corruption arising elsewhere in a program may well affect GMP.
+
+Initializing GMP variables more than once or failing to clear them will cause
+memory leaks.
+
+In all such cases a malloc debugger is recommended.  On a GNU or BSD system
+the standard C library @code{malloc} has some diagnostic facilities.  Other
+possibilities, in no particular order, include
+
+@display
+@uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc}
+@uref{http://quorum.tamu.edu/jon/gnu} @ @ (debauch)
+@uref{http://dmalloc.com}
+@uref{http://www.perens.com/FreeSoftware} @ @ (electric fence)
+@uref{http://packages.debian.org/fda}
+@uref{http://people.redhat.com/~otaylor/memprof}
+@end display
+
+@item Stack Backtraces
+On some systems the compiler options GMP uses by default can interfere with
+debugging.  In particular on x86 and 68k systems @samp{-fomit-frame-pointer}
+is used and this generally inhibits stack backtracing.  Recompiling without
+such options may help while debugging, though the usual caveats about it
+potentially moving a memory problem or hiding a compiler bug will apply.
+
+@item GNU Debugger
+A sample @file{.gdbinit} is included in the distribution, showing how to call
+some undocumented dump functions to print GMP variables from within GDB.  But
+note that these functions shouldn't be used in final application code since
+they're undocumented and may be subject to incompatible changes in future
+versions of GMP.
+
+@item Assertion Checking
+The build option @option{--enable-assert} is available to add some consistency
+checks to the library (see @ref{Build Options}).  These are likely to be of
+limited value to most applications.  Assertion failures are just as likely to
+indicate a memory corruption as a library or compiler bug.
+
+Applications using the low-level @code{mpn} functions, however, will benefit
+from @option{--enable-assert} since it adds checks on the parameters of most
+such functions, many of which have subtle restrictions on their usage.  Note
+however that only the generic C code has checks, not the assembler code, so
+@samp{--target=none} should be used for maximum checking.
+
+@item Other Problems
+Any suspected bug in GMP itself should be isolated to make sure it's not an
+application problem, see @ref{Reporting Bugs}.
+@end table
+
+
+@node Profiling,  , Debugging, GMP Basics
+@section Profiling
+@cindex Profiling
+
+Running a program under a profiler is a good way to find where it's spending
+most time and where improvements can be best sought.
+
+Depending on the system, it may be possible to get a flat profile, meaning
+simple timer sampling of the program counter, with no special GMP build
+options, just a @samp{-p} when compiling the mainline.  This is a good way to
+ensure minimum interference with normal operation.  The necessary symbol type
+and size information exists in most assembler code.
+
+The @samp{--enable-profiling} build option can be used to add suitable
+compiler flags, either for @command{prof} (@samp{-p}) or @command{gprof}
+(@samp{-pg}), see @ref{Build Options}.  Which of the two is available and what
+they do will depend on the system, and possibly on support available in
+@file{libc}.  For some targets appropriate corresponding @code{mcount} calls
+are added to the assembler code too.
+
+On x86 systems @command{prof} gives call counting, so that average time spent
+in a function can be determined.  @command{gprof}, where supported, adds call
+graph construction, so for instance calls to @code{mpn_add_n} from
+@code{mpz_add} and from @code{mpz_mul} can be differentiated.
+
+On x86 and 68k systems @samp{-pg} and @samp{-fomit-frame-pointer} are
+incompatible, so the latter is not used when @command{gprof} profiling is
+selected, which may result in poorer code generation.  If @command{prof}
+profiling is selected instead it should still be possible to use
+@command{gprof}, but only the @samp{gprof -p} flat profile and call counts can
+be expected to be valid, not the @samp{gprof -q} call graph.
 
 
 @node Reporting Bugs, Integer Functions, GMP Basics, Top
