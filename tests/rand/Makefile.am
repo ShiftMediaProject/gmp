@@ -23,7 +23,7 @@
 AUTOMAKE_OPTIONS = gnu no-dependencies
 
 INCLUDES = -I$(top_srcdir)
-LDADD = libstat.la $(top_builddir)/libgmp.la
+LDADD = $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-rand
 TESTS = $(check_PROGRAMS)
@@ -31,9 +31,12 @@ TESTS = $(check_PROGRAMS)
 EXTRA_PROGRAMS = findlc gen gen.static spect stat
 gen_static_SOURCES = gen.c
 gen_static_LDFLAGS = -static
+spect_LDADD = libstat.la
+stat_LDADD = libstat.la
 
 EXTRA_LTLIBRARIES = libstat.la
 libstat_la_SOURCES = statlib.c zdiv_round.c
+libstat_la_LIBADD = $(top_builddir)/libgmp.la
 
 EXTRA_DIST = gmpstat.h
 
