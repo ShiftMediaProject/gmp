@@ -31,7 +31,6 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 static int isprime _PROTO ((unsigned long int t));
-static int mpz_millerrabin _PROTO ((mpz_srcptr n, int reps));
 
 int
 mpz_probab_prime_p (mpz_srcptr n, int reps)
