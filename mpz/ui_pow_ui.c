@@ -1,7 +1,6 @@
-/* mpz_ui_pow_ui(res, base, exp) -- Set RES to BASE**EXP.
+/* mpz_ui_pow_ui -- ulong raised to ulong.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,103 +21,19 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "longlong.h"
 
 
-static void mpz_pow2 _PROTO ((mpz_ptr r, mp_limb_t blimb, unsigned long int e, mp_limb_t rl));
+/* i386 gcc 2.95.3 doesn't recognise blimb can be eliminated when mp_limb_t
+   is an unsigned long, so only use a separate blimb when necessary.  */
 
 void
-mpz_ui_pow_ui (mpz_ptr r, unsigned long int b, unsigned long int e)
+mpz_ui_pow_ui (mpz_ptr r, unsigned long b, unsigned long e)
 {
-  mp_limb_t blimb = b;
-  mp_limb_t rl;
-
-  if (e == 0)
-    {
-      /* For x^0 we return 1, even if x is 0.  */
-      r->_mp_d[0] = 1;
-      r->_mp_size = 1;
-      return;
-    }
-
-  /* Compute b^e as (b^n)^(e div n) * b^(e mod n), where n is chosen such that
-     the latter factor is the largest number small enough to fit in a limb.  */
-
-  rl = 1;
-  while (e != 0 && blimb < ((mp_limb_t) 1 << BITS_PER_MP_LIMB/2))
-    {
-      if ((e & 1) != 0)
-	rl = rl * blimb;
-      blimb = blimb * blimb;
-      e = e >> 1;
-    }
-
-  /* rl is now b^(e mod n).  (I.e., the latter factor above.)  */
-
-  if (e == 0)
-    {
-      r->_mp_d[0] = rl;
-      r->_mp_size = rl != 0;
-      return;
-    }
-
-  mpz_pow2 (r, blimb, e, rl);
+#ifdef _LONG_LONG_LIMB
+  mp_limb_t  blimb = b;
+  mpz_n_pow_ui (r, &blimb, (mp_size_t) (b != 0), e);
+#else
+  mpz_n_pow_ui (r, &b,     (mp_size_t) (b != 0), e);
+#endif
 }
 
-/* Multi-precision part of expontialization code.  */
-static void
-mpz_pow2 (mpz_ptr r, mp_limb_t blimb, unsigned long int e, mp_limb_t rl)
-{
-  mp_ptr rp, tp;
-  mp_size_t ralloc, rsize;
-  int cnt, i;
-  TMP_DECL (marker);
-
-  TMP_MARK (marker);
-
-  /* Over-estimate temporary space requirements somewhat.  */
-  count_leading_zeros (cnt, blimb);
-  ralloc = e - cnt * e / BITS_PER_MP_LIMB + 1;
-
-  /* The two areas are used to alternatingly hold the input and receive the
-     product for mpn_mul.  (Needed since mpn_mul_n requires that the product
-     is distinct from either input operand.)  */
-  rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
-  tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
-
-  rp[0] = blimb;
-  rsize = 1;
-
-  count_leading_zeros (cnt, e);
-  for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
-    {
-      mpn_mul_n (tp, rp, rp, rsize);
-      rsize = 2 * rsize;
-      rsize -= tp[rsize - 1] == 0;
-      MP_PTR_SWAP (rp, tp);
-
-      if ((e & ((mp_limb_t) 1 << i)) != 0)
-	{
-	  mp_limb_t cy;
-	  cy = mpn_mul_1 (rp, rp, rsize, blimb);
-	  rp[rsize] = cy;
-	  rsize += cy != 0;
-	}
-    }
-
-  /* We will need rsize or rsize+1 limbs for the result.  */
-  if (r->_mp_alloc <= rsize)
-    _mpz_realloc (r, rsize + 1);
-
-  /* Multiply the two factors (in rp,rsize and rl) and put the final result
-     in place.  */
-  {
-    mp_limb_t cy;
-    cy = mpn_mul_1 (r->_mp_d, rp, rsize, rl);
-    (r->_mp_d)[rsize] = cy;
-    rsize += cy != 0;
-  }
-
-  r->_mp_size = rsize;
-  TMP_FREE (marker);
-}
