@@ -127,7 +127,7 @@ mpn_preinv_divrem_1 (mp_ptr qp, mp_size_t xsize,
  done_integer:
   for (i = 0; i < xsize; i++)
     {
-      udiv_qrnnd_preinv (*qp, r, r, 0, d, dinv);
+      udiv_qrnnd_preinv (*qp, r, r, CNST_LIMB(0), d, dinv);
       qp--;
     }
 
