@@ -454,6 +454,35 @@ fi
 ])
 
 
+dnl  GMP_PROG_CC_WORKS_LONGLONG(cc+cflags,[ACTION-YES][,ACTION-NO])
+dnl  --------------------------------------------------------------
+dnl  Check that cc+cflags accepts "long long".
+dnl
+dnl  This test is designed to be run repeatedly with different cc+cflags
+dnl  selections, so the result is not cached.
+
+AC_DEFUN(GMP_PROG_CC_WORKS_LONGLONG,
+[AC_MSG_CHECKING([compiler $1 has long long])
+cat >conftest.c <<EOF
+long long  foo;
+long long  bar () { return foo; }
+int main () { return 0; }
+EOF
+gmp_prog_cc_works=no
+gmp_compile="$1 -c conftest.c >&AC_FD_CC"
+if AC_TRY_EVAL(gmp_compile); then
+  gmp_prog_cc_works=yes
+fi
+rm -f conftest* a.out a.exe a_out.exe
+AC_MSG_RESULT($gmp_prog_cc_works)
+if test $gmp_prog_cc_works = yes; then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+])
+
+
 dnl  GMP_PROG_CC_IS_GNU(CC,[ACTIONS-IF-YES][,ACTIONS-IF-NO])
 dnl  -------------------------------------------------------
 dnl  Determine whether the given compiler is GNU C.
@@ -838,18 +867,28 @@ rm -f conftest*
 
 dnl  GMP_ASM_LABEL_SUFFIX
 dnl  --------------------
-dnl  Should a label have a colon or not?
+dnl  : - is usual.
+dnl  empty - hppa on HP-UX doesn't use a :, just the label name
 
 AC_DEFUN(GMP_ASM_LABEL_SUFFIX,
-[AC_CACHE_CHECK([what assembly label suffix to use],
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_CACHE_CHECK([for assembler label suffix],
                 gmp_cv_asm_label_suffix,
-[case $host in 
-  # Empty is only for the HP-UX hppa assembler; hppa gas requires a colon.
-  *-*-hpux*) gmp_cv_asm_label_suffix=  ;;
-  *)         gmp_cv_asm_label_suffix=: ;;
-esac
+[for i in ":" ""; do
+  echo "trying $i" >&AC_FD_CC
+  GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+somelabel$i],
+    [gmp_cv_asm_label_suffix=$i
+     rm -f conftest*
+     break],
+    [cat conftest.out >&AC_FD_CC])
+done
+if test -z "$gmp_cv_asm_label_suffix"; then
+  AC_MSG_ERROR([Cannot determine label suffix])
+fi
 ])
-echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
+echo ["define(<LABEL_SUFFIX>, <$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
 ])
 
 
@@ -931,6 +970,7 @@ dnl  Is parameter to `.align' logarithmic?
 
 AC_DEFUN(GMP_ASM_ALIGN_LOG,
 [AC_REQUIRE([GMP_ASM_GLOBL])
+AC_REQUIRE([GMP_ASM_BYTE])
 AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
@@ -940,10 +980,10 @@ AC_CACHE_CHECK([if .align assembly directive is logarithmic],
 [      	$gmp_cv_asm_data
       	.align  4
 	$gmp_cv_asm_globl	foo
-	.byte	1
+	$gmp_cv_asm_byte	1
 	.align	4
 foo$gmp_cv_asm_label_suffix
-	.byte	2],
+	$gmp_cv_asm_byte	2],
   [gmp_tmp_val=[`$NM conftest.$OBJEXT | grep foo | \
      sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
@@ -1005,6 +1045,37 @@ fi],
 [gmp_cv_asm_align_fill_0x90=no])])
 
 GMP_DEFINE_RAW(["define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)"])
+])
+
+
+dnl  GMP_ASM_BYTE
+dnl  ------------
+dnl  .byte - is usual.
+dnl  data1 - required by ia64 (on hpux at least).
+dnl
+dnl  This macro is just to support other configure tests, not any actual asm
+dnl  code.
+
+AC_DEFUN(GMP_ASM_BYTE,
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_CACHE_CHECK([for assembler byte directive],
+                gmp_cv_asm_byte,
+[for i in .byte data1; do
+  echo "trying $i" >&AC_FD_CC
+  GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_data
+	$i	0
+],
+    [gmp_cv_asm_byte=$i
+     rm -f conftest*
+     break],
+    [cat conftest.out >&AC_FD_CC])
+done
+if test -z "$gmp_cv_asm_byte"; then
+  AC_MSG_ERROR([Cannot determine how to emit a data byte])
+fi
+])
 ])
 
 
@@ -1120,15 +1191,29 @@ echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_GLOBL
 dnl  -------------
-dnl  Can we say `.globl'?
+dnl  .globl - is usual.
+dnl  .global - required by ia64 (on hpux at least).
+dnl  .export - required by hppa on hpux.
 
 AC_DEFUN(GMP_ASM_GLOBL,
-[AC_CACHE_CHECK([how to export a symbol],
+[AC_REQUIRE([GMP_ASM_TEXT])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_CACHE_CHECK([for assembler global directive],
                 gmp_cv_asm_globl,
-[case $host in
-  *-*-hpux*) gmp_cv_asm_globl=".export" ;;
-  *)         gmp_cv_asm_globl=".globl" ;;
-esac
+[for i in .globl .global .export; do
+  echo "trying $i" >&AC_FD_CC
+  GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	$i	foo
+foo$gmp_cv_asm_label_suffix],
+    [gmp_cv_asm_globl=$i
+     rm -f conftest*
+     break],
+    [cat conftest.out >&AC_FD_CC])
+done
+if test -z "$gmp_cv_asm_globl"; then
+  AC_MSG_ERROR([Cannot determine how to maks a symbol global])
+fi
 ])
 echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 ])
@@ -1139,11 +1224,12 @@ dnl  ------------------
 dnl  Do we need something after `GLOBL symbol'?
 
 AC_DEFUN(GMP_ASM_GLOBL_ATTR,
-[AC_CACHE_CHECK([if the export directive needs an attribute],
+[AC_REQUIRE([GMP_ASM_GLOBL])
+AC_CACHE_CHECK([for assembler global directive attribute],
                 gmp_cv_asm_globl_attr,
-[case $host in
-  *-*-hpux*) gmp_cv_asm_globl_attr=",entry" ;;
-  *)         gmp_cv_asm_globl_attr="" ;;
+[case $gmp_cv_asm_globl in
+  .export) gmp_cv_asm_globl_attr=",entry" ;;
+  *)       gmp_cv_asm_globl_attr="" ;;
 esac
 ])
 echo ["define(<GLOBL_ATTR>, <$gmp_cv_asm_globl_attr>)"] >> $gmp_tmpconfigm4
@@ -1225,24 +1311,30 @@ dnl  For gas, ".L" is normally purely local to the assembler, it doesn't get
 dnl  put into the object file at all.  This style is preferred, to keep the
 dnl  object files nice and clean.
 dnl
-dnl  BSD format nm produces a line like the following.  The lower case "t"
-dnl  indicates a local text segment label.  On OSF with "nm -B", an "N" is
-dnl  printed instead.
+dnl  BSD format nm produces a line like
 dnl
 dnl      00000000 t Lgurkmacka
+dnl
+dnl  The symbol code is normally "t" for text, but any lower case letter
+dnl  indicates a local definition.
+dnl
+dnl  Code "n" is for a debugging symbol, OSF "nm -B" gives that as an upper
+dnl  case "N" for a local.
 dnl
 dnl  HP-UX nm prints an error message (though seems to give a 0 exit) if
 dnl  there's no symbols at all in an object file, hence the use of "dummy".
 
 AC_DEFUN(GMP_ASM_LSYM_PREFIX,
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_PROG_NM])
-AC_CACHE_CHECK([what prefix to use for a local label], 
+AC_CACHE_CHECK([for assembler local label prefix], 
                gmp_cv_asm_lsym_prefix,
 [for gmp_tmp_pre in L .L $ L$; do
   echo "Trying $gmp_tmp_pre" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
-[dummy${gmp_cv_asm_label_suffix}
+[	$gmp_cv_asm_text
+dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}],
   [if $NM conftest.$OBJEXT >conftest.nm 2>&AC_FD_CC; then : ; else
     cat conftest.nm >&AC_FD_CC
@@ -1255,7 +1347,7 @@ ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}],
     gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
     break
   fi
-  if grep [' [Nt] .*gurkmacka'] conftest.nm >/dev/null; then
+  if grep [' [a-zN] .*gurkmacka'] conftest.nm >/dev/null; then
     # symbol mentioned as a local, use this if nothing better
     if test -z "$gmp_cv_asm_lsym_prefix"; then
       gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
@@ -1278,9 +1370,14 @@ AC_DEFINE_UNQUOTED(LSYM_PREFIX, "$gmp_cv_asm_lsym_prefix",
 dnl  GMP_ASM_W32
 dnl  -----------
 dnl  How to define a 32-bit word.
+dnl
+dnl  FIXME: This test is not right for ia64-*-hpux*.  The directive should
+dnl  be "data4", but the W32 macro is not currently used by the mpn/ia64 asm
+dnl  files.
 
 AC_DEFUN(GMP_ASM_W32,
 [AC_REQUIRE([GMP_ASM_DATA])
+AC_REQUIRE([GMP_ASM_BYTE])
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
@@ -1303,7 +1400,7 @@ AC_CACHE_CHECK([how to define a 32-bit word],
 	$gmp_cv_asm_globl	foo
 	$gmp_tmp_op	0
 foo$gmp_cv_asm_label_suffix
-	.byte	0],
+	$gmp_cv_asm_byte	0],
         [gmp_tmp_val=[`$NM conftest.$OBJEXT | grep foo | \
           sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
         if test "$gmp_tmp_val" = 4; then
@@ -1669,8 +1766,7 @@ dnl  ----------------------
 dnl  Determine whether the assembler accepts the ".register" directive.
 dnl  Old versions of solaris "as" don't.
 dnl
-dnl  See also mpn/powerpc32/powerpc-defs.m4 which uses the result of this
-dnl  test.
+dnl  See also mpn/sparc32/sparc-defs.m4 which uses the result of this test.
 
 AC_DEFUN(GMP_ASM_SPARC_REGISTER,
 [AC_REQUIRE([GMP_ASM_TEXT])
