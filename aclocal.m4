@@ -34,6 +34,15 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 
+dnl  Some tests use, or must delete, the default compiler output.  The
+dnl  possible filenames are based on what autoconf looks for, namely
+dnl
+dnl    a.out - normal unix style
+dnl    a.exe - djgpp
+dnl    a_out.exe - OpenVMS DEC C called via GNV wrapper (gnv.sourceforge.net)
+dnl    conftest.exe - Microsoft C, and probably other DOS compilers
+
+
 define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
 
@@ -469,14 +478,14 @@ gmp_prog_cc_works=no
 gmp_compile="$1 conftest.c >&AC_FD_CC"
 if AC_TRY_EVAL(gmp_compile); then
   if test "$cross_compiling" = no; then
-    if AC_TRY_COMMAND([./a.out || ./a.exe || ./conftest]); then
+    if AC_TRY_COMMAND([./a.out || ./a.exe || ./a_out.exe || ./conftest]); then
       gmp_prog_cc_works=yes
     fi
   else
     gmp_prog_cc_works=yes
   fi
 fi
-rm -f conftest* a.out a.exe
+rm -f conftest* a.out a.exe a_out.exe
 AC_MSG_RESULT($gmp_prog_cc_works)
 if test $gmp_prog_cc_works = yes; then
   ifelse([$2],,:,[$2])
@@ -577,26 +586,29 @@ dnl  MAJOR.MINOR.SUBMINOR.  Set $gmp_compare_ge to "yes" or "no"
 dnl  accordingly, or to "error" if the version number string can't be
 dnl  parsed.
 dnl
-dnl  gcc --version is normally just "2.7.2.3" or "2.95.3" or whatever, but
-dnl  egcs gives something like "egcs-2.91".  "[a-z-]*" is used to match that
-dnl  (Solaris 8 sed doesn't support "?" or "*" of a group, like "\(...\)?"
-dnl  or "\(...\)*".)
+dnl  gcc 2.7.2, 2.95 and 3.0 just gave something like "2.7.2.3" or "2.95.3".
+dnl  egcs 2.91 gave something like "egcs-2.91".
+dnl  gcc 3.1 gives something like "gcc-3.1" on GNU/Linux, or something like
+dnl    "gcc.exe (GCC) 3.1" on MINGW.
 dnl
-dnl  There's no caching here, so that different CC's can be tested.
+dnl  "[a-zA-Z(). -]*" is used to match the prefixes.  (Solaris 8 sed doesn't
+dnl  support "?" or "*" of a group, like "\(...\)?"  or "\(...\)*".)
+dnl
+dnl  There's no caching here, so different CC's can be tested.
 
 AC_DEFUN(GMP_GCC_VERSION_GE,
 [tmp_version=`($1 --version) 2>&AC_FD_CC`
 echo "$1 --version '$tmp_version'" >&AC_FD_CC
 
-major=`(echo "$tmp_version" | sed -n ['s/^[a-z-]*\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+major=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
 echo "    major '$major'" >&AC_FD_CC
 
 ifelse([$3],,,
-[minor=`(echo "$tmp_version" | sed -n ['s/^[a-z-]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+[minor=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
 echo "    minor '$minor'" >&AC_FD_CC])
 
 ifelse([$4],,,
-[subminor=`(echo "$tmp_version" | sed -n ['s/^[a-z-]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
+[subminor=`(echo "$tmp_version" | sed -n ['s/^[a-zA-Z(). -]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p']) 2>&AC_FD_CC`
 echo "    subminor '$subminor'" >&AC_FD_CC])
 
 if test -z "$major"; then
@@ -743,7 +755,7 @@ EOF
     fi
   fi
   cat conftest.out >&AC_FD_CC
-  rm -f conftest* a.out
+  rm -f conftest* a.out a.exe a_out.exe
   AC_MSG_RESULT($result)
   if test "$result" = yes; then
       ifelse([$4],,:,[$4])
@@ -1009,7 +1021,7 @@ else
     AC_MSG_ERROR([Test program links neither with nor without underscore.])
   fi
 fi
-rm -f conftes1* conftes2* a.out
+rm -f conftes1* conftes2* a.out a.exe a_out.exe
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])

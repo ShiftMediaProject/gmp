@@ -2868,7 +2868,7 @@ if { (eval echo "$as_me:2865: \"$gmp_compile\"") >&5
   echo "$as_me:2868: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   if test "$cross_compiling" = no; then
-    if { ac_try='./a.out || ./a.exe || ./conftest'
+    if { ac_try='./a.out || ./a.exe || ./a_out.exe || ./conftest'
   { (eval echo "$as_me:2872: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
@@ -2880,7 +2880,7 @@ if { (eval echo "$as_me:2865: \"$gmp_compile\"") >&5
     gmp_prog_cc_works=yes
   fi
 fi
-rm -f conftest* a.out a.exe
+rm -f conftest* a.out a.exe a_out.exe
 echo "$as_me:2884: result: $gmp_prog_cc_works" >&5
 echo "${ECHO_T}$gmp_prog_cc_works" >&6
 if test $gmp_prog_cc_works = yes; then
@@ -2952,13 +2952,13 @@ echo $ECHO_N "checking whether gcc unsigned division works... $ECHO_C" >&6
 tmp_version=`($cc --version) 2>&5`
 echo "$cc --version '$tmp_version'" >&5
 
-major=`(echo "$tmp_version" | sed -n 's/^[a-z-]*\([0-9][0-9]*\).*/\1/p') 2>&5`
+major=`(echo "$tmp_version" | sed -n 's/^[a-zA-Z(). -]*\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    major '$major'" >&5
 
-minor=`(echo "$tmp_version" | sed -n 's/^[a-z-]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
+minor=`(echo "$tmp_version" | sed -n 's/^[a-zA-Z(). -]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    minor '$minor'" >&5
 
-subminor=`(echo "$tmp_version" | sed -n 's/^[a-z-]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
+subminor=`(echo "$tmp_version" | sed -n 's/^[a-zA-Z(). -]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    subminor '$subminor'" >&5
 
 if test -z "$major"; then
@@ -3090,13 +3090,13 @@ else
   tmp_version=`($cc --version) 2>&5`
 echo "$cc --version '$tmp_version'" >&5
 
-major=`(echo "$tmp_version" | sed -n 's/^[a-z-]*\([0-9][0-9]*\).*/\1/p') 2>&5`
+major=`(echo "$tmp_version" | sed -n 's/^[a-zA-Z(). -]*\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    major '$major'" >&5
 
-minor=`(echo "$tmp_version" | sed -n 's/^[a-z-]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
+minor=`(echo "$tmp_version" | sed -n 's/^[a-zA-Z(). -]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    minor '$minor'" >&5
 
-subminor=`(echo "$tmp_version" | sed -n 's/^[a-z-]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
+subminor=`(echo "$tmp_version" | sed -n 's/^[a-zA-Z(). -]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    subminor '$subminor'" >&5
 
 if test -z "$major"; then
@@ -3177,7 +3177,7 @@ EOF
     fi
   fi
   cat conftest.out >&5
-  rm -f conftest* a.out
+  rm -f conftest* a.out a.exe a_out.exe
   echo "$as_me:3181: result: $result" >&5
 echo "${ECHO_T}$result" >&6
   if test "$result" = yes; then
@@ -3225,7 +3225,7 @@ if { (eval echo "$as_me:3222: \"$gmp_compile\"") >&5
   echo "$as_me:3225: \$? = $ac_status" >&5
   (exit $ac_status); }; then
   if test "$cross_compiling" = no; then
-    if { ac_try='./a.out || ./a.exe || ./conftest'
+    if { ac_try='./a.out || ./a.exe || ./a_out.exe || ./conftest'
   { (eval echo "$as_me:3229: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
@@ -3237,7 +3237,7 @@ if { (eval echo "$as_me:3222: \"$gmp_compile\"") >&5
     gmp_prog_cc_works=yes
   fi
 fi
-rm -f conftest* a.out a.exe
+rm -f conftest* a.out a.exe a_out.exe
 echo "$as_me:3241: result: $gmp_prog_cc_works" >&5
 echo "${ECHO_T}$gmp_prog_cc_works" >&6
 if test $gmp_prog_cc_works = yes; then
@@ -19302,7 +19302,7 @@ echo "$as_me: error: Test program links neither with nor without underscore." >&
    { (exit 1); exit 1; }; }
   fi
 fi
-rm -f conftes1* conftes2* a.out
+rm -f conftes1* conftes2* a.out a.exe a_out.exe
 
 fi
 echo "$as_me:19308: result: $gmp_cv_asm_underscore" >&5
