@@ -70,11 +70,11 @@ mpf_out_str (FILE *stream, int base, size_t n_digits, mpf_srcptr op)
 
 #if HAVE_LOCALECONV
   {
-    const char  *dec = localeconv()->decimal_point;
-    size_t      declen = strlen (dec);
+    const char  *point = localeconv()->decimal_point;
+    size_t      pointlen = strlen (point);
     putc ('0', stream);
-    fwrite (dec, 1, declen, stream);
-    written += declen + 1;
+    fwrite (point, 1, pointlen, stream);
+    written += pointlen + 1;
   }
 #else
   fwrite ("0.", 1, 2, stream);
