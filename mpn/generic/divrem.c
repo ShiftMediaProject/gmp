@@ -1,5 +1,6 @@
-/* mpn_divrem_classic -- Divide natural numbers, producing both remainder and
-   quotient.
+/* mpn_divrem -- Divide natural numbers, producing both remainder and
+   quotient.  This is now just a middle layer for calling the new
+   internal mpn_tdiv_qr.
 
    THIS FILE CONTAINS INTERNAL FUNCTIONS WITH MUTABLE INTERFACES.  IT IS
    ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.  IN FACT, IT IS
@@ -31,135 +32,77 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Divide num (NP/NSIZE) by den (DP/DSIZE) and write
-   the NSIZE-DSIZE least significant quotient limbs at QP
-   and the DSIZE long remainder at NP.  If QEXTRA_LIMBS is
-   non-zero, generate that many fraction bits and append them after the
-   other quotient limbs.
-   Return the most significant limb of the quotient, this is always 0 or 1.
-
-   Preconditions:
-   0. NSIZE >= DSIZE.
-   1. The most significant bit of the divisor must be set.
-   2. QP must either not overlap with the input operands at all, or
-      QP + DSIZE >= NP must hold true.  (This means that it's
-      possible to put the quotient in the high part of NUM, right after the
-      remainder in NUM.
-   3. NSIZE >= DSIZE, even if QEXTRA_LIMBS is non-zero.
-   4. DSIZE >= 2.  */
-
-
 mp_limb_t
 #if __STDC__
-mpn_divrem_classic (mp_ptr qp, mp_size_t qxn,
-	    mp_ptr np, mp_size_t nsize,
-	    mp_srcptr dp, mp_size_t dsize)
+mpn_divrem (mp_ptr qp, mp_size_t qxn,
+	    mp_ptr np, mp_size_t nn,
+	    mp_srcptr dp, mp_size_t dn)
 #else
-mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
+mpn_divrem (qp, qxn, np, nn, dp, dn)
      mp_ptr qp;
      mp_size_t qxn;
      mp_ptr np;
-     mp_size_t nsize;
+     mp_size_t nn;
      mp_srcptr dp;
-     mp_size_t dsize;
+     mp_size_t dn;
 #endif
 {
-  mp_limb_t most_significant_q_limb = 0;
-  mp_size_t i;
-  mp_limb_t dx, d1, n0;
-  mp_limb_t dxinv;
-  int have_preinv;
-
-  np += nsize - dsize;
-  dx = dp[dsize - 1];
-  d1 = dp[dsize - 2];
-  n0 = np[dsize - 1];
-
-  if (n0 >= dx)
+  if (dn == 1)
     {
-      if (n0 > dx || mpn_cmp (np, dp, dsize - 1) >= 0)
-	{
-	  mpn_sub_n (np, np, dp, dsize);
-	  n0 = np[dsize - 1];
-	  most_significant_q_limb = 1;
-	}
+      mp_limb_t ret;
+      mp_ptr q2p;
+      mp_size_t qn;
+      TMP_DECL (marker);
+
+      TMP_MARK (marker);
+      q2p = (mp_ptr) TMP_ALLOC ((nn + qxn) * BYTES_PER_MP_LIMB);
+
+      np[0] = mpn_divrem_1 (q2p, qxn, np, nn, dp[0]);
+      qn = nn + qxn - 1;
+      MPN_COPY (qp, q2p, qn);
+      ret = q2p[qn];
+
+      TMP_FREE (marker);
+      return ret;
     }
-
-  /* If multiplication is much faster than division, preinvert the
-	   most significant divisor limb before entering the loop.  */
-  if (UDIV_TIME > 2 * UMUL_TIME + 6)
+  else if (dn == 2)
     {
-      have_preinv = 0;
-      if ((UDIV_TIME - (2 * UMUL_TIME + 6)) * (nsize - dsize) > UDIV_TIME)
-	{
-	  invert_limb (dxinv, dx);
-	  have_preinv = 1;
-	}
+      return mpn_divrem_2 (qp, qxn, np, nn, dp);
     }
-
-  for (i = qxn + nsize - dsize - 1; i >= 0; i--)
+  else
     {
-      mp_limb_t q;
-      mp_limb_t nx;
-      mp_limb_t cy_limb;
+      mp_ptr rp, q2p;
+      mp_limb_t qhl;
+      mp_size_t qn;
+      TMP_DECL (marker);
 
-      nx = np[dsize - 1];
-      if (i >= qxn)
+      TMP_MARK (marker);
+      if (qxn != 0)
 	{
-	  np--;
+	  mp_ptr n2p;
+	  n2p = (mp_ptr) TMP_ALLOC ((nn + qxn) * BYTES_PER_MP_LIMB);
+	  MPN_ZERO (n2p, qxn);
+	  MPN_COPY (n2p + qxn, np, nn);
+	  q2p = (mp_ptr) TMP_ALLOC ((nn - dn + qxn + 1) * BYTES_PER_MP_LIMB);
+	  rp = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
+	  mpn_tdiv_qr (q2p, rp, 0L, n2p, nn + qxn, dp, dn);
+	  MPN_COPY (np, rp, dn);
+	  qn = nn - dn + qxn;
+	  MPN_COPY (qp, q2p, qn);
+	  qhl = q2p[qn];
 	}
       else
 	{
-	  MPN_COPY_DECR (np + 1, np, dsize - 1);
-	  np[0] = 0;
+	  q2p = (mp_ptr) TMP_ALLOC ((nn - dn + 1) * BYTES_PER_MP_LIMB);
+	  rp = (mp_ptr) TMP_ALLOC (dn * BYTES_PER_MP_LIMB);
+	  mpn_tdiv_qr (q2p, rp, 0L, np, nn, dp, dn);
+	  //qhl = mpn_sb_divrem_mn (q2p, np, nn, dp, dn);
+	  MPN_COPY (np, rp, dn);	/* overwrite np area with remainder */
+	  qn = nn - dn;
+	  MPN_COPY (qp, q2p, qn);
+	  qhl = q2p[qn];
 	}
-
-      if (nx == dx)
-	/* This might over-estimate q, but it's probably not worth
-	   the extra code here to find out.  */
-	q = ~(mp_limb_t) 0;
-      else
-	{
-	  mp_limb_t r, p1, p0;
-
-	  if (UDIV_TIME > 2 * UMUL_TIME + 6 && have_preinv)
-	    {
-	      mp_limb_t  nl = np[dsize - 1];  /* avoid gcc 2.7.2.3 bug */
-	      udiv_qrnnd_preinv (q, r, nx, nl, dx, dxinv);
-	    }
-	  else
-	    udiv_qrnnd (q, r, nx, np[dsize - 1], dx);
-	  umul_ppmm (p1, p0, d1, q);
-
-#if 0
-	  while (p1 > r || (p1 == r && p0 > np[dsize - 2]))
-	    {
-	      q--;
-	      r += dx;
-	      if (r < dx)	/* I.e. "carry in previous addition?"  */
-		break;
-	      p1 -= p0 < d1;
-	      p0 -= d1;
-	    }
-#else
-	  q -= p1 > r || (p1 == r && p0 > np[dsize - 2]);
-#endif
-	}
-
-      /* Possible optimization: We already have (q * nx) and (1 * n1)
-	 after the calculation of q.  Taking advantage of that, we
-	 could make this loop make two iterations less.  */
-
-      cy_limb = mpn_submul_1 (np, dp, dsize, q);
-
-      if (nx != cy_limb)
-	{
-	  mpn_add_n (np, np, dp, dsize);
-	  q--;
-	}
-
-      qp[i] = q;
+      TMP_FREE (marker);
+      return qhl;
     }
-
-  return most_significant_q_limb;
 }
