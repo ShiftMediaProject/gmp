@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 1996, 1999, 2000 Free Software Foundation, Inc.
+# Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -22,8 +22,8 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -I$(top_srcdir)
-LDADD = $(top_builddir)/libgmp.la
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
+LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-add t-sub t-conv t-sqrt t-muldiv t-dm2exp reuse t-get_d \
   t-misc
@@ -31,3 +31,6 @@ TESTS = $(check_PROGRAMS)
 
 t_add_SOURCES = t-add.c ref.c
 t_sub_SOURCES = t-sub.c ref.c
+
+$(top_builddir)/tests/libtests.la:
+	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
