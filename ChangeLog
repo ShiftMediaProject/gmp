@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-03-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/sb_divrem_mn.c: Correct header comment.
+
 2004-03-11  Kevin Ryde  <kevin@swox.se>
 
 	* aclocal.m4, configure, ltmain.sh: Downgrade to libtool 1.5, version
