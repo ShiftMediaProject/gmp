@@ -1,5 +1,5 @@
 /*
-Copyright (C) 1996 Free Software Foundation, Inc.
+Copyright (C) 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -22,3 +22,4 @@ MA 02111-1307, USA.
 #define _FORCE_INLINES
 #define _EXTERN_INLINE /* empty */
 #include "gmp.h"
+#include "gmp-impl.h"
