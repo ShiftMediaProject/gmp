@@ -1117,12 +1117,12 @@ dnl  Called: GMP_PROG_CXX_WORKS_PART(CXX+CXXFLAGS, FAIL-MESSAGE [,CODE])
 dnl
 AC_DEFUN(GMP_PROG_CXX_WORKS_PART,
 [if test "$gmp_prog_cxx_works" = yes; then
-  cat >conftest.c <<EOF
+  cat >conftest.cc <<EOF
 [$3]
 int main (void) { return 0; }
 EOF
   echo "Test compile: [$2]" >&AC_FD_CC
-  gmp_cxxcompile="$1 conftest.c >&AC_FD_CC"
+  gmp_cxxcompile="$1 conftest.cc >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_cxxcompile); then
     if test "$cross_compiling" = no; then
       if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then :;
@@ -1136,7 +1136,7 @@ EOF
   case $gmp_prog_cxx_works in
     no*)
       echo "failed program was:" >&AC_FD_CC
-      cat conftest.c >&AC_FD_CC
+      cat conftest.cc >&AC_FD_CC
       ;;
   esac
   rm -f conftest* a.out b.out a.exe a_out.exe
