@@ -162,6 +162,13 @@ strerror (int n)
 #define PROT_WRITE  0
 #endif
 
+/* _SC_PAGESIZE is standard, but hpux 9 and possibly other systems have
+   _SC_PAGE_SIZE instead. */
+#if defined (_SC_PAGE_SIZE) && ! defined (_SC_PAGESIZE)
+#define _SC_PAGESIZE  _SC_PAGE_SIZE
+#endif
+
+
 #ifdef EXTRA_PROTOS
 EXTRA_PROTOS
 #endif
