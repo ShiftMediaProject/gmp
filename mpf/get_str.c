@@ -81,8 +81,8 @@ mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcp
      Also, if 0 digits were requested, give *exactly* as many digits
      as can be accurately represented.  */
   {
-    size_t max_digits = 2 + (size_t) (((prec - 2) * BITS_PER_MP_LIMB)
-				      * __mp_bases[base].chars_per_bit_exactly);
+    size_t max_digits;
+    MPF_SIGNIFICANT_DIGITS (max_digits, base, prec-1);
     if (n_digits == 0 || n_digits > max_digits)
       n_digits = max_digits;
 #if 0
