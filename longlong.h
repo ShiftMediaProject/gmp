@@ -1436,6 +1436,7 @@ unsigned char __clz_tab[128];
   do {									\
     UWtype __ctz_x = (x);						\
     UWtype __ctz_c;							\
+    ASSERT (__ctz_x != 0);                                              \
     count_leading_zeros (__ctz_c, __ctz_x & -__ctz_x);			\
     (count) = W_TYPE_SIZE - 1 - __ctz_c;				\
   } while (0)
