@@ -290,7 +290,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 # would probably work, but might risk missing something out or getting
 # something extra.  The source files for each .lo are listed in the
 # Makefile.am's in the subdirectories.
-libgmp_la_SOURCES = gmp-impl.h longlong.h stack-alloc.h			\
+libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
   rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
@@ -330,7 +330,7 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 # get them in "make dist".
 #
 EXTRA_LTLIBRARIES = libdummy.la
-libdummy_la_SOURCES = stack-alloc.c tal-debug.c
+libdummy_la_SOURCES = stack-alloc.c tal-debug.c tal-reent.c
 
 info_TEXINFOS = gmp.texi
 subdir = .
@@ -342,7 +342,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 
 libdummy_la_LDFLAGS =
 libdummy_la_LIBADD =
-am_libdummy_la_OBJECTS = stack-alloc$U.lo tal-debug$U.lo
+am_libdummy_la_OBJECTS = stack-alloc$U.lo tal-debug$U.lo tal-reent$U.lo
 libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 am_libgmp_la_OBJECTS = assert$U.lo compat$U.lo errno$U.lo \
 	extract-dbl$U.lo insert-dbl$U.lo memory$U.lo mp_bpl$U.lo \
@@ -538,6 +538,8 @@ stack-alloc_.c: stack-alloc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stack-alloc.c; then echo $(srcdir)/stack-alloc.c; else echo stack-alloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stack-alloc_.c || rm -f stack-alloc_.c
 tal-debug_.c: tal-debug.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tal-debug.c; then echo $(srcdir)/tal-debug.c; else echo tal-debug.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tal-debug_.c || rm -f tal-debug_.c
+tal-reent_.c: tal-reent.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tal-reent.c; then echo $(srcdir)/tal-reent.c; else echo tal-reent.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tal-reent_.c || rm -f tal-reent_.c
 version_.c: version.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/version.c; then echo $(srcdir)/version.c; else echo version.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > version_.c || rm -f version_.c
 assert_.$(OBJEXT) assert_.lo compat_.$(OBJEXT) compat_.lo \
@@ -550,7 +552,8 @@ randlc_.$(OBJEXT) randlc_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
 randraw_.$(OBJEXT) randraw_.lo rands_.$(OBJEXT) rands_.lo \
 randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
 stack-alloc_.$(OBJEXT) stack-alloc_.lo tal-debug_.$(OBJEXT) \
-tal-debug_.lo version_.$(OBJEXT) version_.lo : $(ANSI2KNR)
+tal-debug_.lo tal-reent_.$(OBJEXT) tal-reent_.lo version_.$(OBJEXT) \
+version_.lo : $(ANSI2KNR)
 
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-vti
 	@:
