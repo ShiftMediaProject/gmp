@@ -287,11 +287,11 @@ EOF
     NILE:*:*:dcosx)
 	echo pyramid-pyramid-svr4
 	exit 0 ;;
-    sun4m:SunOS:5.*:*)
-	echo sparc8-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+    sun4[md]:SunOS:5.*:*)
+	echo sparcv8-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
 	exit 0 ;;
     sun4u:SunOS:5.*:*)
-	echo sparc9-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+	echo sparcv9-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
 	exit 0 ;;
     sun4*:SunOS:5.*:* | tadpole*:SunOS:5.*:*)
 	echo sparc-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
