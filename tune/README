@@ -1,4 +1,4 @@
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -312,17 +312,6 @@ square,
 
         ./speed -s 10-20 -t 10 -CDE mpn_mul_basecase
         ./speed -s 15-30 -t 15 -CDF mpn_sqr_basecase
-
-Two versions of toom3 interpolation and evaluation are available in
-mpn/generic/mul_n.c, using either a one-pass open-coded style or simple mpn
-subroutine calls.  The former is used on RISCs with lots of registers, the
-latter on other CPUs.  The two can be compared directly to check which is
-best.  Naturally it's sizes where toom3 is faster than karatsuba that are of
-interest.
-
-        ./speed -s 80-120 -c mpn_toom3_mul_n_mpn mpn_toom3_mul_n_open
-        ./speed -s 80-120 -c mpn_toom3_sqr_n_mpn mpn_toom3_sqr_n_open
-
 
 
 
