@@ -845,8 +845,8 @@ echo ["define(<W32>, <$gmp_cv_asm_w32>)"] >> $gmp_tmpconfigm4
 ])
 
 
-dnl  GMP_ASM_MMX([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
-dnl  -----------------------------------------------------
+dnl  GMP_ASM_X86_MMX([ACTION-IF-FOUND][,ACTION-IF-NOT-FOUND])
+dnl  ---------------------------------------------------------
 dnl  Determine whether the assembler supports MMX instructions.
 dnl
 dnl  This macro is wanted before GMP_ASM_TEXT, so ".text" is hard coded
@@ -854,16 +854,16 @@ dnl  here.  ".text" is believed to be correct on all x86 systems, certainly
 dnl  it's all GMP_ASM_TEXT gives currently.  Actually ".text" probably isn't
 dnl  needed at all, at least for just checking instruction syntax.
 
-AC_DEFUN(GMP_ASM_MMX,
+AC_DEFUN(GMP_ASM_X86_MMX,
 [AC_CACHE_CHECK([if the assembler knows about MMX instructions],
-		gmp_cv_asm_mmx,
+		gmp_cv_asm_x86_mmx,
 [GMP_TRY_ASSEMBLE(
 [	.text
 	por	%mm0, %mm0],
-  gmp_cv_asm_mmx=yes,
-  gmp_cv_asm_mmx=no)
+  gmp_cv_asm_x86_mmx=yes,
+  gmp_cv_asm_x86_mmx=no)
 ])
-if test "$gmp_cv_asm_mmx" = "yes"; then
+if test "$gmp_cv_asm_x86_mmx" = "yes"; then
   ifelse([$1], , :, [$1])
 else
   AC_MSG_WARN([+----------------------------------------------------------])
@@ -878,23 +878,23 @@ fi
 ])
 
 
-dnl  GMP_ASM_SHLDL_CL([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
-dnl  ----------------------------------------------------------
+dnl  GMP_ASM_X86_SHLDL_CL
+dnl  --------------------
 
-AC_DEFUN(GMP_ASM_SHLDL_CL,
+AC_DEFUN(GMP_ASM_X86_SHLDL_CL,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler takes cl with shldl],
-		gmp_cv_asm_shldl_cl,
+		gmp_cv_asm_x86_shldl_cl,
 [GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
 	shldl	%cl, %eax, %ebx],
-  gmp_cv_asm_shldl_cl=yes,
-  gmp_cv_asm_shldl_cl=no)
+  gmp_cv_asm_x86_shldl_cl=yes,
+  gmp_cv_asm_x86_shldl_cl=no)
 ])
-if test "$gmp_cv_asm_shldl_cl" = "yes"; then
-  ifelse([$1], , :, [$1])
+if test "$gmp_cv_asm_x86_shldl_cl" = "yes"; then
+  GMP_DEFINE(WANT_SHLDL_CL,1)
 else
-  ifelse([$2], , :, [$2])
+  GMP_DEFINE(WANT_SHLDL_CL,0)
 fi
 ])
 
