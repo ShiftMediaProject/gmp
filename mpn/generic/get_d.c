@@ -53,14 +53,21 @@ union ieee_double_extract {
    The workaround here avoids this bug by ensuring n is not a literal
    constant.  Note that this is alpha specific, the offending transformation
    is/was in alpha.c alpha_emit_conditional_branch() under "We want to use
-   cmpcc/bcc".  */
+   cmpcc/bcc".
 
-#if defined (__GNUC__) && defined (__alpha) && ! __GMP_GNUC_PREREQ(3,4)
-#define ALPHA_WORKAROUND(n)                             \
-  ({static const volatile long __workaround = (n);      \
-    __workaround; })
+   Bizarrely, it turns out this happens also with Cray cc on
+   alphaev5-cray-unicosmk2.0.6.X, and has the same solution.  Don't know why
+   or how.  */
+
+#if (defined (__GNUC__) && defined (__alpha) && ! __GMP_GNUC_PREREQ(3,4))     \
+  || (defined (_CRAY) && defined (__alpha))
+static volatile const long CONST_1024 = 1024;
+static volatile const long CONST_NEG_1023 = -1023;
+static volatile const long CONST_NEG_1022_SUB_53 = -1022 - 53;
 #else
-#define ALPHA_WORKAROUND(n)  (n)
+#define CONST_1024            (1024)
+#define CONST_NEG_1023        (-1023)
+#define CONST_NEG_1022_SUB_53 (-1022 - 53)
 #endif
 
 
@@ -177,7 +184,7 @@ mpn_get_d (mp_srcptr ptr, mp_size_t size, mp_size_t sign, long exp)
           m0 >>= 11;
         }
 
-      if (UNLIKELY (exp >= ALPHA_WORKAROUND (1024)))
+      if (UNLIKELY (exp >= CONST_1024))
         {
           /* overflow, return infinity */
         ieee_infinity:
@@ -185,9 +192,9 @@ mpn_get_d (mp_srcptr ptr, mp_size_t size, mp_size_t sign, long exp)
           m1 = 0;
           exp = 1024;
         }
-      else if (UNLIKELY (exp <= ALPHA_WORKAROUND (-1023)))
+      else if (UNLIKELY (exp <= CONST_NEG_1023))
         {
-          if (LIKELY (exp <= ALPHA_WORKAROUND (-1022-53)))
+          if (LIKELY (exp <= CONST_NEG_1022_SUB_53))
             return 0.0;  /* denorm underflows to zero */
 
           rshift = -1022 - exp;
