@@ -29,7 +29,7 @@ dnl  size	r18
 dnl  s2_limb	r19
 
 dnl  This code runs at 42 cycles/limb on EV4, 18 cycles/limb on EV5, and
-dnl  exactly 3.625 cycles/limb on EV6...
+dnl  exactly 3.5 cycles/limb on EV6...
 
 dnl This code was written in close cooperation with ev6 pipeline expert
 dnl Steve Root (root@toober.hlo.dec.com).  Any errors are tege's fault, though.
@@ -41,7 +41,7 @@ dnl	  8-15    mul results
 dnl	  20,21   carry's
 dnl	  22,23   save for stores
 
-dnl   Sustains 8 mul-adds in 29 cycles in the unrolled inner loop.
+dnl   Sustains 8 mul-adds in 28 cycles in the unrolled inner loop.
 
 dnl   The stores can issue a cycle late so we have paired no-op's to 'catch'
 dnl   them, so that further disturbance to the schedule is damped.
