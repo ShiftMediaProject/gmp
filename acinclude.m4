@@ -1322,6 +1322,10 @@ AC_DEFINE_UNQUOTED(LSYM_PREFIX, "$gmp_cv_asm_lsym_prefix",
 dnl  GMP_ASM_W32
 dnl  -----------
 dnl  How to define a 32-bit word.
+dnl
+dnl  FIXME: This test is not right for ia64-*-hpux*.  The directive should
+dnl  be "data4", but the W32 macro is not currently used by the mpn/ia64 asm
+dnl  files.
 
 AC_DEFUN(GMP_ASM_W32,
 [AC_REQUIRE([GMP_ASM_DATA])
