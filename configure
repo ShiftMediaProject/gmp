@@ -9234,6 +9234,11 @@ cat >>confdefs.h <<EOF
 #define SIZEOF_MP_LIMB_T $ac_cv_sizeof_mp_limb_t
 EOF
 
+  if "$ac_cv_sizeof_mp_limb_t" = 0; then
+    {  echo "$as_me: error: some sort of compiler problem, mp_limb_t doesn't seem to work" >&2
+  { false; exit; }; }
+  fi
+
   if grep "^#define BITS_PER_MP_LIMB"  $gmp_mparam_source >/dev/null; then : ;
   else
 
@@ -9252,13 +9257,13 @@ EOF
   fi
 fi
 
-echo "$as_me:9255: checking whether gcc __attribute__ ((noreturn)) works" >&5
+echo "$as_me:9260: checking whether gcc __attribute__ ((noreturn)) works" >&5
 echo $ECHO_N "checking whether gcc __attribute__ ((noreturn)) works... $ECHO_C" >&6
 if test "${gmp_cv_c_attribute_noreturn+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 9261 "configure"
+#line 9266 "configure"
 #include "confdefs.h"
 void foo (int x) __attribute__ ((noreturn));
 int
@@ -9270,7 +9275,7 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo $as_me:9273: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
+if { (eval echo $as_me:9278: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
   gmp_cv_c_attribute_noreturn=yes
 else
   echo "$as_me: failed program was:" >&5
@@ -9280,7 +9285,7 @@ fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 
 fi
-echo "$as_me:9283: result: $gmp_cv_c_attribute_noreturn" >&5
+echo "$as_me:9288: result: $gmp_cv_c_attribute_noreturn" >&5
 echo "${ECHO_T}$gmp_cv_c_attribute_noreturn" >&6
 if test $gmp_cv_c_attribute_noreturn = yes; then
 
@@ -9290,13 +9295,13 @@ EOF
 
 fi
 
-echo "$as_me:9293: checking whether gcc __attribute__ ((const)) works" >&5
+echo "$as_me:9298: checking whether gcc __attribute__ ((const)) works" >&5
 echo $ECHO_N "checking whether gcc __attribute__ ((const)) works... $ECHO_C" >&6
 if test "${gmp_cv_c_attribute_const+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 9299 "configure"
+#line 9304 "configure"
 #include "confdefs.h"
 int foo (int x) __attribute__ ((const));
 int
@@ -9308,7 +9313,7 @@ main ()
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo $as_me:9311: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
+if { (eval echo $as_me:9316: \"$ac_compile\") >&5; (eval $ac_compile) 2>&5; } && test -s conftest.$ac_objext; then
   gmp_cv_c_attribute_const=yes
 else
   echo "$as_me: failed program was:" >&5
@@ -9318,7 +9323,7 @@ fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 
 fi
-echo "$as_me:9321: result: $gmp_cv_c_attribute_const" >&5
+echo "$as_me:9326: result: $gmp_cv_c_attribute_const" >&5
 echo "${ECHO_T}$gmp_cv_c_attribute_const" >&6
 if test $gmp_cv_c_attribute_const = yes; then
 
@@ -9507,7 +9512,7 @@ sed '/^$/d;s/^/| /' confdefs.h >&5
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:9510: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:9515: creating $CONFIG_STATUS" >&5
 echo "creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<\_ACEOF
 #! /bin/sh
@@ -9991,7 +9996,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:9994: creating $ac_file" >&5
+    { echo "$as_me:9999: creating $ac_file" >&5
 echo "creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -10084,7 +10089,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:10087: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:10092: creating $ac_file" >&5
 echo "creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -10223,7 +10228,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:10226: $ac_file is unchanged" >&5
+      { echo "$as_me:10231: $ac_file is unchanged" >&5
 echo "$ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
@@ -10269,7 +10274,7 @@ for ac_file in : $CONFIG_LINKS; do test "x$ac_file" = x: && continue
   ac_dest=`echo "$ac_file" | sed 's,:.*,,'`
   ac_source=`echo "$ac_file" | sed 's,[^:]*:,,'`
 
-  { echo "$as_me:10272: linking $srcdir/$ac_source to $ac_dest" >&5
+  { echo "$as_me:10277: linking $srcdir/$ac_source to $ac_dest" >&5
 echo "linking $srcdir/$ac_source to $ac_dest" >&6;}
 
   if test ! -r $srcdir/$ac_source; then
