@@ -431,6 +431,20 @@ speed_MPN_COPY_DECR (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_COPY_CALL (MPN_COPY_DECR (wp, s->xp, s->size));
 }
+#if HAVE_NATIVE_mpn_copyi
+double
+speed_mpn_copyi (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY_CALL (mpn_copyi (wp, s->xp, s->size));
+}
+#endif
+#if HAVE_NATIVE_mpn_copyd
+double
+speed_mpn_copyd (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_COPY_CALL (mpn_copyd (wp, s->xp, s->size));
+}
+#endif
 double
 speed_memcpy (struct speed_params *s)
 {
@@ -572,6 +586,12 @@ double
 speed_mpn_preinv_mod_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_PREINV_MOD_1 (mpn_preinv_mod_1);
+}
+
+double
+speed_mpn_divexact_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_DIVEXACT_1 (mpn_divexact_1);
 }
 
 double
