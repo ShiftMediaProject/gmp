@@ -69,7 +69,7 @@ deflit(`FRAME',0)
 	movl	PARAM_CARRY, %ecx
 	pushl	%esi		FRAME_pushl()
 
-	jmp	LF(M4_function_1,start_1c)
+	jmp	L(start_1c)
 
 EPILOGUE()
 

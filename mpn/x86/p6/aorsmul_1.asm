@@ -89,7 +89,7 @@ PROLOGUE(M4_function_1c)
 	pushl	%ebx
 deflit(`FRAME',4)
 	movl	PARAM_CARRY, %ebx
-	jmp	LF(M4_function_1,start_nc)
+	jmp	L(start_nc)
 EPILOGUE()
 
 PROLOGUE(M4_function_1)

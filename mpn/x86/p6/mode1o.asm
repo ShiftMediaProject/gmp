@@ -51,7 +51,7 @@ PROLOGUE(mpn_modexact_1c_odd)
 deflit(`FRAME',0)
 
 	movl	PARAM_CARRY, %ecx
-	jmp	LF(mpn_modexact_1_odd,start_1c)
+	jmp	L(start_1c)
 
 EPILOGUE()
 

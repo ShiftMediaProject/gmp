@@ -73,19 +73,15 @@ ifdef(`PIC',,`
 	RODATA
 	ALIGN(8)
 
-define(LS,
-m4_assert_numargs(1)
-`LF(M4_function,`$1')')
-
-LS(rodata_AAAAAAAAAAAAAAAA):
+L(rodata_AAAAAAAAAAAAAAAA):
 	.long	0xAAAAAAAA
 	.long	0xAAAAAAAA
 
-LS(rodata_3333333333333333):
+L(rodata_3333333333333333):
 	.long	0x33333333
 	.long	0x33333333
 
-LS(rodata_0F0F0F0F0F0F0F0F):
+L(rodata_0F0F0F0F0F0F0F0F):
 	.long	0x0F0F0F0F
 	.long	0x0F0F0F0F
 ')
@@ -116,9 +112,9 @@ ifdef(`PIC',`
 	punpckldq %mm5, %mm5
 
 ',`
-	movq	LS(rodata_AAAAAAAAAAAAAAAA), %mm7
-	movq	LS(rodata_3333333333333333), %mm6
-	movq	LS(rodata_0F0F0F0F0F0F0F0F), %mm5
+	movq	L(rodata_AAAAAAAAAAAAAAAA), %mm7
+	movq	L(rodata_3333333333333333), %mm6
+	movq	L(rodata_0F0F0F0F0F0F0F0F), %mm5
 ')
 	pxor	%mm4, %mm4
 

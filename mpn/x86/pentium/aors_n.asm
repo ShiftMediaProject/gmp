@@ -82,13 +82,13 @@ deflit(`FRAME',16)
 FRAME_pushl()
 	movl	PARAM_CARRY,%eax
 	shrl	$1,%eax			C shift bit 0 into carry
-	jmp	LF(M4_function_n,oop)
+	jmp	L(oop)
 
 L(endgo):
 deflit(`FRAME',16)
 	movl	PARAM_CARRY,%eax
 	shrl	$1,%eax			C shift bit 0 into carry
-	jmp	LF(M4_function_n,end)
+	jmp	L(end)
 
 EPILOGUE()
 

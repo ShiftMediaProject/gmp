@@ -52,7 +52,7 @@ deflit(`FRAME',0)
 	pushl	%esi		FRAME_pushl()
 
 	movl	PARAM_CARRY, %edx
-	jmp	LF(mpn_modexact_1_odd,start_1c)
+	jmp	L(start_1c)
 
 ifdef(`PIC',`
 L(movl_eip_edi):
@@ -81,7 +81,7 @@ L(start_1c):
 	pushl	%ebp		FRAME_pushl()
 
 ifdef(`PIC',`
-	call	LF(mpn_modexact_1c_odd,movl_eip_edi)
+	call	L(movl_eip_edi)
 
 	addl	$_GLOBAL_OFFSET_TABLE_, %edi
 	C

@@ -96,7 +96,7 @@ deflit(`FRAME',STACK_SPACE)
 	movl	PARAM_SRC, %esi
 
 	leal	-4(%edi,%ebx,4), %edi
-	jmp	LF(mpn_divrem_1,start_1c)
+	jmp	L(start_1c)
 
 EPILOGUE()
 

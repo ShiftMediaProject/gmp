@@ -53,7 +53,7 @@ PROLOGUE(mpn_mul_1c)
 	pushl	%esi
 deflit(`FRAME',4)
 	movl	PARAM_CARRY, %esi
-	jmp	LF(mpn_mul_1,start_nc)
+	jmp	L(start_nc)
 EPILOGUE()
 
 

@@ -76,7 +76,7 @@ deflit(`FRAME',0)
 	shrl	$3,%ecx			C compute count for unrolled loop
 	negl	%eax
 	andl	$7,%eax			C get index where to start loop
-	jz	LF(M4_function_n,oopgo)	C necessary special case for 0
+	jz	L(oopgo)		C necessary special case for 0
 	incl	%ecx			C adjust loop count
 	shll	$2,%eax			C adjustment for pointers...
 	subl	%eax,%edi		C ... since they are offset ...
@@ -90,11 +90,11 @@ ifdef(`PIC',`
 	call	L(0a)
 L(0a):	leal	(%eax,%eax,8),%eax
 	addl	(%esp),%eax
-	addl	$LF(M4_function_n,oop)-L(0a)-3,%eax
+	addl	$L(oop)-L(0a)-3,%eax
 	addl	$4,%esp
 ',`
 	C Calculate start address in loop for non-PIC.
- 	leal	LF(M4_function_n,oop)-3(%eax,%eax,8),%eax
+ 	leal	L(oop)-3(%eax,%eax,8),%eax
 ')
 
 	C These lines initialize carry from the 5th parameter.  Should be

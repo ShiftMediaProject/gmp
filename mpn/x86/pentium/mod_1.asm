@@ -105,7 +105,7 @@ deflit(`FRAME',0)
 	movl	$0, VAR_NORM
 	decl	%edx
 
-	jnz	LF(mpn_mod_1,start_preinv)
+	jnz	L(start_preinv)
 
 	subl	%ebp, %edi		C src-divisor
 	popl	%ebx
@@ -137,7 +137,7 @@ deflit(`FRAME',0)
 	movl	PARAM_CARRY, %edx
 
 	orl	%ecx, %ecx
-	jz	LF(mpn_mod_1,done_edx)		C result==carry if size==0
+	jz	L(done_edx)			C result==carry if size==0
 
 	andl	$MUL_NORM_DELTA, %eax
 	pushl	%ebp		FRAME_pushl()
@@ -149,13 +149,13 @@ deflit(`FRAME',0)
 	movl	PARAM_DIVISOR, %ebp
 
 	cmpl	%eax, %ecx
-	jb	LF(mpn_mod_1,divide_top)
+	jb	L(divide_top)
 
 	movl	%edx, %eax		C carry as pretend src high limb
 	leal	1(%ecx), %edx		C size+1
 
 	cmpl	$0x1000000, %ebp
-	jmp	LF(mpn_mod_1,mul_by_inverse_1c)
+	jmp	L(mul_by_inverse_1c)
 
 EPILOGUE()
 

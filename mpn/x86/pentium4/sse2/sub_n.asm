@@ -49,7 +49,7 @@ PROLOGUE(mpn_sub_nc)
 deflit(`FRAME',0)
 
 	movd	PARAM_CARRY, %mm0
-	jmp	LF(mpn_sub_n,start_nc)
+	jmp	L(start_nc)
 
 EPILOGUE()
 

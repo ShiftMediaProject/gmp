@@ -114,10 +114,10 @@ deflit(`FRAME',0)
 	orl	%ecx, %ecx
 
 	movl	PARAM_CARRY, %edx
-	jz	LF(mpn_divrem_1,fraction)
+	jz	L(fraction)
 
 	leal	-4(%ebx,%ebp,4), %ebx	C dst one limb below integer part
-	jmp	LF(mpn_divrem_1,integer_top)
+	jmp	L(integer_top)
 
 EPILOGUE()
 

@@ -101,13 +101,13 @@ deflit(`FRAME',0)
 
 	movl	$32, %ebx			C 32-l
 	decl	%eax
-	jz	LF(mpn_mod_1,inverse_one_left)	C size==2, one divide
+	jz	L(inverse_one_left)		C size==2, one divide
 
 	movd	%ebx, %mm7			C 32-l
 	decl	%eax
-	jz	LF(mpn_mod_1,inverse_two_left)	C size==3, two divides
+	jz	L(inverse_two_left)		C size==3, two divides
 
-	jmp	LF(mpn_mod_1,inverse_top)	C size>=4
+	jmp	L(inverse_top)			C size>=4
 
 
 L(done_edi):
@@ -136,7 +136,7 @@ deflit(`FRAME',STACK_SPACE)
 
 	movl	%esi, SAVE_ESI
 	movl	PARAM_SRC, %esi
-	jmp	LF(mpn_mod_1,start_1c)
+	jmp	L(start_1c)
 
 EPILOGUE()
 

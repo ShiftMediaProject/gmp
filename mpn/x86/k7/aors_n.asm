@@ -95,7 +95,7 @@ deflit(`FRAME',0)
 
 PROLOGUE(M4_function_nc)
 	movl	PARAM_CARRY, %eax
-	jmp	LF(M4_function_n,start)
+	jmp	L(start)
 EPILOGUE()
 
 PROLOGUE(M4_function_n)

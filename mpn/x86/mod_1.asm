@@ -60,7 +60,7 @@ deflit(`FRAME',0)
 	orl	%ecx, %ecx
 
 	movl	PARAM_CARRY, %edx
-	jnz	LF(mpn_mod_1,top)
+	jnz	L(top)
 
 	popl	%esi
 	movl	%edx, %eax

@@ -114,37 +114,6 @@ m4_assert_numargs(1)
 ')')')
 
 
-dnl  Usage: L(labelname)
-dnl         LF(functionname,labelname)
-dnl
-dnl  Generate a local label in the current or given function.  For LF(),
-dnl  functionname gets GSYM_PREFIX added, the same as with PROLOGUE().
-dnl
-dnl  For example, in a function mpn_add_n (and with MPN_PREFIX __gmpn),
-dnl
-dnl         L(bar)          => L__gmpn_add_n__bar
-dnl         LF(somefun,bar) => Lsomefun__bar
-dnl
-dnl  The function name and label name get two underscores between them
-dnl  rather than one to guard against clashing with a separate external
-dnl  symbol that happened to be called functionname_labelname.  (Though this
-dnl  would only happen if the local label prefix is is empty.)  Underscores
-dnl  are used so the whole label will still be a valid C identifier and so
-dnl  can be easily used in gdb.
-
-dnl  LSYM_PREFIX can be L$, so defn() is used to prevent L expanding as the
-dnl  L macro and making an infinite recursion.
-define(LF,
-m4_assert_numargs(2)
-m4_assert_defined(`LSYM_PREFIX')
-`defn(`LSYM_PREFIX')GSYM_PREFIX`'$1`'__$2')
-
-define(`L',
-m4_assert_numargs(1)
-PROLOGUE_assert_inside()
-`LF(PROLOGUE_current_function,`$1')')
-
-
 dnl  Called: PROLOGUE_cpu(gsym)
 dnl          EPILOGUE_cpu(gsym)
 

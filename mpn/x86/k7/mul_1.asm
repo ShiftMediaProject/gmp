@@ -81,7 +81,7 @@ deflit(UNROLL_THRESHOLD, 5)
 PROLOGUE(mpn_mul_1c)
 deflit(`FRAME',0)
 	movl	PARAM_CARRY, %edx
-	jmp	LF(mpn_mul_1,start_nc)
+	jmp	L(start_nc)
 EPILOGUE()
 
 

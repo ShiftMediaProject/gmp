@@ -52,7 +52,7 @@ defframe(PARAM_DST,   4)
 	RODATA
 C multiplicative inverse of 3, modulo 2^32
 	ALIGN(4)
-LF(mpn_divexact_by3c,inverse):
+L(inverse):
 	.long	0xAAAAAAAB
 
 	TEXT

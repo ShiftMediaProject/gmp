@@ -50,7 +50,7 @@ deflit(MAXSHIFT, 6)
 
 	TEXT
 	ALIGN(64)
-LF(mpn_gcd_1,table):
+L(table):
 	.byte	MAXSHIFT
 forloop(i,1,MASK,
 `	.byte	m4_count_trailing_zeros(i)

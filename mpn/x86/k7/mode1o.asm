@@ -55,7 +55,7 @@ PROLOGUE(mpn_modexact_1c_odd)
 deflit(`FRAME',0)
 
 	movl	PARAM_CARRY, %ecx
-	jmp	LF(mpn_modexact_1_odd,start_1c)
+	jmp	L(start_1c)
 
 
 ifdef(`PIC',`
@@ -86,7 +86,7 @@ L(start_1c):
 	andl	$127, %eax
 
 ifdef(`PIC',`
-	call	LF(mpn_modexact_1c_odd,movl_eip_edi)
+	call	L(movl_eip_edi)
 	addl	$_GLOBAL_OFFSET_TABLE_, %edi
 	movl	modlimb_invert_table@GOT(%edi), %edi
 	movzbl	(%eax,%edi), %edi			C inv 8 bits

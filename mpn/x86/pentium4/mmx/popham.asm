@@ -69,13 +69,13 @@ ifdef(`PIC',,`
 	dnl  non-PIC
 	RODATA
 	ALIGN(8)
-LF(M4_function,rodata_AAAAAAAAAAAAAAAA):
+L(rodata_AAAAAAAAAAAAAAAA):
 	.long	0xAAAAAAAA
 	.long	0xAAAAAAAA
-LF(M4_function,rodata_3333333333333333):
+L(rodata_3333333333333333):
 	.long	0x33333333
 	.long	0x33333333
-LF(M4_function,rodata_0F0F0F0F0F0F0F0F):
+L(rodata_0F0F0F0F0F0F0F0F):
 	.long	0x0F0F0F0F
 	.long	0x0F0F0F0F
 ')

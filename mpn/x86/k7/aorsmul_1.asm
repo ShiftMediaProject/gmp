@@ -93,7 +93,7 @@ PROLOGUE(M4_function_1)
 	xorl	%ecx, %ecx
 
 	decl	%edx
-	jnz	LF(M4_function_1c,start_1)
+	jnz	L(start_1)
 
 	movl	(%eax), %eax
 	movl	PARAM_DST, %ecx
