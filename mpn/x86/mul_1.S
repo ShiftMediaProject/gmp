@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
    INPUT PARAMETERS
    res_ptr	(sp + 4)
    s1_ptr	(sp + 8)
-   opsize	(sp + 12)
+   n		(sp + 12)
    s2_limb	(sp + 16)
 */
 
@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 
 #define res_ptr edi
 #define s1_ptr esi
-#define opsize ecx
+#define n ecx
 #define s2_limb ebp
 
 	TEXT

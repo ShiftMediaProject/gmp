@@ -24,7 +24,7 @@ MA 02111-1307, USA. */
    INPUT PARAMETERS
    res_ptr	(sp + 4)
    s1_ptr	(sp + 8)
-   opsize	(sp + 12)
+   n		(sp + 12)
    s2_limb	(sp + 16)
 */
 
@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 
 #define res_ptr edi
 #define s1_ptr esi
-#define opsize ecx
+#define n ecx
 #define s2_limb ebp
 
 	TEXT
@@ -48,24 +48,24 @@ C_SYMBOL_NAME(__mpn_mul_1:)
 
 	INSN2(mov,l	,R(res_ptr),MEM_DISP(esp,20))
 	INSN2(mov,l	,R(s1_ptr),MEM_DISP(esp,24))
-	INSN2(mov,l	,R(opsize),MEM_DISP(esp,28))
+	INSN2(mov,l	,R(n),MEM_DISP(esp,28))
 	INSN2(mov,l	,R(s2_limb),MEM_DISP(esp,32))
 
-	INSN2(lea,l	,R(res_ptr),MEM_INDEX(res_ptr,opsize,4))
-	INSN2(lea,l	,R(s1_ptr),MEM_INDEX(s1_ptr,opsize,4))
-	INSN1(neg,l	,R(opsize))
+	INSN2(lea,l	,R(res_ptr),MEM_INDEX(res_ptr,n,4))
+	INSN2(lea,l	,R(s1_ptr),MEM_INDEX(s1_ptr,n,4))
+	INSN1(neg,l	,R(n))
 	INSN2(xor,l	,R(ebx),R(ebx))
 	ALIGN (3)
 
 Loop:	INSN2(adc,l	,R(ebx),$0)
-	INSN2(mov,l	,R(eax),MEM_INDEX(s1_ptr,opsize,4))
+	INSN2(mov,l	,R(eax),MEM_INDEX(s1_ptr,n,4))
 
 	INSN1(mul,l	,R(s2_limb))
 
 	INSN2(add,l	,R(ebx),R(eax))
 
-	INSN2(mov,l	,MEM_INDEX(res_ptr,opsize,4),R(ebx))
-	INSN1(inc,l	,R(opsize))
+	INSN2(mov,l	,MEM_INDEX(res_ptr,n,4),R(ebx))
+	INSN1(inc,l	,R(n))
 
 	INSN2(mov,l	,R(ebx),R(edx))
 	INSN1(jnz,	,Loop)
