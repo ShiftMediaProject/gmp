@@ -260,10 +260,6 @@
 <li> Cray: Write <code>mpn_mul_basecase</code> and
      <code>mpn_sqr_basecase</code>.  Same comment applies to this as to the
      same functions for Fujitsu VPP.
-<li> Cray T90: In IEEE environment, use _int_mult_upper(x,y).
-     Documented online in "Migration to CRAY T90 IEEE Floating Point".
-<li> Cray with CFP (all vector systems except T90 IEEE): i24mult no longer
-     works.  It is "outmoded".  What else can we use for reasonable speed?
 <li> Cray T3E: Experiment with optimization options.  In particular,
      -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
 <li> Cray: Variable length arrays seem to be faster than the stack-alloc.c
