@@ -64,6 +64,15 @@ main (int argc, char *argv[])
 
   for (base = 2; base < numberof (mp_bases); base++)
     {
+      want_chars_per_limb = refmpn_chars_per_limb (base);
+      if (mp_bases[base].chars_per_limb != want_chars_per_limb)
+        {
+          printf ("mp_bases[%d].chars_per_limb wrong\n", base);
+          printf ("  got  %d\n", mp_bases[base].chars_per_limb);
+          printf ("  want %d\n", want_chars_per_limb);
+          abort ();
+        }
+
       if (POW2_P (base))
         {
           want_bb = refmpn_count_trailing_zeros ((mp_limb_t) base);
@@ -75,13 +84,6 @@ main (int argc, char *argv[])
         }
       else
         {
-          want_chars_per_limb = refmpn_chars_per_limb (base);
-          if (mp_bases[base].chars_per_limb != want_chars_per_limb)
-            {
-              printf ("mp_bases[%d].chars_per_limb wrong\n", base);
-              abort ();
-            }
-
           want_bb = refmpn_big_base (base);
           if (mp_bases[base].big_base != want_bb)
             {
