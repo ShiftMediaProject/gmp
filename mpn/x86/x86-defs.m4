@@ -38,11 +38,27 @@ dnl
 dnl  	        define(foo, `mov $ 123, %eax')
 dnl
 dnl     This is only a problem in macro definitions, not in ordinary text,
-dnl     and not in macro parameters like text passed to forloop() or
-dnl     ifdef().
+dnl     nor in macro parameters like text passed to forloop() or ifdef().
 
 
 deflit(BYTES_PER_MP_LIMB, 4)
+
+
+dnl  Usage: ALIGN(bytes)
+dnl
+dnl  Generate a .align to pad to a multiple of the given boundary (in bytes
+dnl  and which should be a power of 2).
+dnl
+dnl  This definition supplements the plain/logarithmic definition that
+dnl  config.m4 provides by adding `,0x90'.  In old gas (eg. 1.92.3) zeros
+dnl  are generated unless otherwise specified, and the 0x90 makes sure it's
+dnl  nops that are generated.  On newer gas the 0x90 is harmless and the
+dnl  nice multi-byte nops are still automatically generated in .text
+dnl  segments.
+
+define(`ALIGN',
+m4_assert_numargs(1)
+defn(`ALIGN')`,0x90')
 
 
 dnl  --------------------------------------------------------------------------
@@ -278,10 +294,12 @@ dnl  femms_available_p expands to 1 or 0 according to whether the AMD 3DNow
 dnl  femms instruction is available.  emms_or_femms expands to femms if
 dnl  available, or emms if not.
 dnl
-dnl  This is meant for use in the K6 directory where plain K6 (without
-dnl  3DNow) and K6-2 and K6-3 (with 3DNow) are supported together.  In the
-dnl  K7 directory femms can be used unconditionally since all K7s have
-dnl  3DNow.
+dnl  emms_or_femms is meant for use in the K6 directory where plain K6
+dnl  (without femms) and K6-2 and K6-3 (with a slightly faster femms) are
+dnl  supported together.
+dnl
+dnl  On K7 femms is no longer faster and is just an alias for emms, so plain
+dnl  emms may as well be used.
 
 define(femms_available_p,
 m4_assert_numargs(-1)
@@ -300,9 +318,8 @@ dnl
 dnl  The gas 2.9.1 that comes with FreeBSD 3.4 doesn't support femms, so the
 dnl  following is a replacement using .byte.
 dnl
-dnl  If femms isn't available an emms is generated instead.  This is
-dnl  convenient when testing on a machine without femms, but of course emms
-dnl  is a couple of cycles slower than femms.
+dnl  If femms isn't available an emms is generated instead, for convenience
+dnl  when testing on a machine without femms.
 
 define(femms,
 m4_assert_numargs(-1)
