@@ -186,6 +186,9 @@ MA 02111-1307, USA.
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
 
+/* Define if you have the `srand48' function. */
+#undef HAVE_SRAND48
+
 /* Define if you have the `srandom' function. */
 #undef HAVE_SRANDOM
 
