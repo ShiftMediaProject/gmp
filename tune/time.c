@@ -224,7 +224,7 @@ struct timeval_dummy {
   long  tv_usec;
 };
 struct rusage_dummy {
-  struct timeval_dummy ru_utime;
+  struct_timeval ru_utime;
 };
 
 static int  use_cycles;
@@ -772,7 +772,7 @@ speed_endtime (void)
 
   if (use_grus)
     {
-      t_grus = timeval_diff_secs (&end_grus.ru_utime, &start_grus.ru_utime);
+      t_grus = rusage_diff_secs (&end_grus, &start_grus);
 
       /* Use getrusage() if the cycle counter limit would be exceeded, or if
          it provides enough accuracy already. */
