@@ -34,9 +34,13 @@ MA 02111-1307, USA. */
 /* modlimb_invert is already faster than invert_limb or a "%", so the
    modexact style can be used even at size==1.
 
-   The dependent chain is a subtract (1), mul1 (13) and umulh (15), which
-   would suggest 29 is a lower bound, or maybe the measured 30 is already as
-   good as possible, not sure.
+   On ev5, the dependent chain is as follows, and is what the code runs as.
+
+        3  sub    y = x - h
+       13  mulq   q = y * inverse
+       14  umulh  h = q * d
+       --
+       30
 
    For reference, ev6 runs this code at 15 cycles, which is 1 faster than
    the generic loop at 16.  But maybe something better is possible.  */
