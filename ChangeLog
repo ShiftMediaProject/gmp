@@ -19,6 +19,22 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-03  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_PROG_NM): Ensure -B or -p get used when doing a
+	cross compile with the native nm, helps OSF for instance.
+	(GMP_ASM_LSYM_PREFIX): Remove ".byte 0" for the benefit of irix 6,
+	allow "N" from nm for OSF, allow for "t" for other systems, but prefer
+	no mention of the symbol at all.
+
+	* tune/tuneup.c (print_define_remark): New function.
+	Turn some "#if"s into plain "if"s.
+
+	* tune/tuneup.c, gmp-impl.h, tune/Makefile.am
+	(GET_STR_BASECASE_THRESHOLD, GET_STR_PRECOMPUTE_THRESHOLD): Tune these.
+	* mpn/generic/get_str.c [TUNE_PROGRAM_BUILD]: Cope with non-constant
+	GET_STR_PRECOMPUTE_THRESHOLD.
+
 2002-02-02  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/get_str.c (mpn_get_str): Fix typo in a declaration.
