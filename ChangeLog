@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-09-30  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c: Correct documentation of -split.
+	(TIME): Remove cast of result to double.
+	(main): Change timing variables to int.
+	(main): #ifdef LIMIT_RESOURCE_USAGE, don't convert numbers of more than
+	100000 digits.
+
 2003-09-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/*/*.asm: Clean up spacing, tabify.
