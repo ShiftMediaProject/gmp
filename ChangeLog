@@ -1,3 +1,9 @@
+2000-10-29  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/lorrshift.asm: New file.
+
+	* configure.in: New mulfunc `lorrshift' for lshift and rshift.
+
 2000-10-29  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Integer Division): Fix 2exp function descriptions,
@@ -5,6 +11,21 @@
 
 	* configure.in (found_asm, M4): Account for SPEED_CYCLECOUNTER_OBJ,
 	for the benefit of targets whose only .asm is a cycle counter.
+
+2000-10-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/invert_limb.asm: Get return value for 0x800...00 right.
+
+	* tune/Makefile.am (EXTRA_DIST): Add ia64.asm.
+
+	* tune/ia64.asm: Fix typo.
+
+	* add_n.asm addmul_1.asm mul_1.asm popcount.asm sub_n.asm:
+	Preserve ar.lc as required by ABI.
+	* longlong.h (ia64 udiv_qrnnd): New.
+
+	* configure.in [path switch] (ia64*-*-*): Set extra_functions.
+	* mpn/ia64/invert_limb.asm: New file.
 
 2000-10-27  Torbjorn Granlund  <tege@swox.com>
 
