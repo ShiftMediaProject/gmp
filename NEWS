@@ -1,3 +1,15 @@
+Changes between MP version 3.0 and 3.1
+
+* Bug fixes.
+* Tuned algorithm cutoff points.
+* Major 21264 speed improvments.
+* New utility for Auto-tuning.
+* New user-visible mpn division functions.
+* Multiplication now uses FFT for very large operands.
+* New algorithm for square root computation.
+* Support for new systems: Solaris running on x86, FreeBSD 5,
+  HP-UX 11, Cray vector computers, Rhapsody, Nextstep/Openstep.
+
 Changes between MP version 2.0 and 3.0
 
 * Source level compatibility with past releases (except mpn_gcd).

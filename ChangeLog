@@ -1,3 +1,8 @@
+2000-05-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_basecase.c: Call mpn_mul_2 and mpn_addmul_2
+	if available.  Don't include longlong.h.
+
 2000-05-30  Linus Nordberg  <linus@swox.se>
 
 	* configure.in (NM): Use AC_PROG_NM rather than AC_CHECK_TOOL to
@@ -240,10 +245,6 @@
 	is that /usr/ucb/cc on Solaris 7 successfully compiles in 64-bit
 	mode but fails when doing final link.
 	(GMP_PROG_CC_WORKS): Report to user what's happening.
-
-2000-05-18  Torbjorn Granlund  <tege@swox.com>
-
-	* mpn/generic/mul_basecase.c: Don't include longlong.h.
 
 2000-05-17  Linus Nordberg  <linus@swox.se>
 
