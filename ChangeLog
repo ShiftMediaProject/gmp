@@ -19,6 +19,27 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-04  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Known Build Problems): Update to gmp_randinit_lc_2exp_size
+	for the sparc solaris 2.7 problem.
+	(Reentrancy): SCO ctype.h affects all text-based input functions.
+	(Formatted Output Strings): Correction to the mpf example.
+	(Single Limb Division): Correction, should be q-1 not q+1.
+	(Extended GCD): Clarify why single-limb is inferior.
+	(Raw Output Internals): Clarify size is twos complement, note limb
+	order means _mp_d doesn't get directly read or written.
+	(Contributors): Clarify mpz_jacobi.
+	And a couple of formatting tweaks elsewhere.
+
+	* tests/cxx/t-headers.cc: New file.
+	* tests/cxx/Makefile.am: Add it.
+
+	* gmpxx.h: Add <strstream>, needed by mpf_class::get_str2.
+
+	* gmp-h.in (mpq_inp_str, mpn_hamdist): Add __GMP_DECLSPEC.
+
+
 2001-12-01  Torbjorn Granlund  <tege@swox.com>
 
 	* Version 4.0 released.
