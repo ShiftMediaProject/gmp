@@ -2136,6 +2136,8 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
 #define __GMPF_PREC_TO_BITS(n) \
   ((unsigned long) (n) * __GMP_BITS_PER_MP_LIMB - __GMP_BITS_PER_MP_LIMB)
 
+extern mp_size_t __gmp_default_fp_limb_precision;
+
 
 /* Set n to the number of significant digits an mpf of the given _mp_prec
    field, in the given base.  This is a rounded up value, designed to ensure

@@ -392,7 +392,6 @@ extern __gmp_const int __GMP_DECLSPEC mp_bits_per_limb;
 extern void * (* __GMP_DECLSPEC __gmp_allocate_func) _PROTO ((size_t));
 extern void * (* __GMP_DECLSPEC __gmp_reallocate_func) _PROTO ((void *, size_t, size_t));
 extern void   (* __GMP_DECLSPEC __gmp_free_func) _PROTO ((void *, size_t));
-extern mp_size_t __GMP_DECLSPEC __gmp_default_fp_limb_precision;
 
 
 /**************** Random number routines.  ****************/
