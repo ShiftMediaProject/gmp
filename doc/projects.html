@@ -33,8 +33,8 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 26 Oct 2002.  An up-to-date version is available at
-  <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
+  This file current as of 7 Nov 2002.  An up-to-date version is available at
+  <a href="http://swox.com/gmp/projects.html">http://swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
 </comment>
@@ -51,7 +51,7 @@ MA 02111-1307, USA.
 <ul>
 <li> <strong>Faster multiplication</strong>
 
-  <p> The current multiplication code uses Karatsuba, 3-way Toom-Cook,
+  <p> The current multiplication code uses Karatsuba, 3-way Toom,
       or Fermat FFT.  Several new developments are desirable:
 
   <ol>
@@ -59,7 +59,7 @@ MA 02111-1307, USA.
 	 better than today.  We now split the operands in a very
 	 inefficient way, see mpn/generic/mul.c.
 
-    <li> Consider N-way Toom-Cook.  See Knuth's Seminumerical
+    <li> Consider N-way Toom.  See Knuth's Seminumerical
 	 Algorithms for details on the method.  Code implementing it
 	 exists.  This is asymptotically inferior to FFTs, but is finer
 	 grained.  A toom-4 might fit in between toom-3 and the FFTs
