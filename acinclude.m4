@@ -1402,8 +1402,9 @@ if test -n "$__GMP_BITS_PER_MP_LIMB" \
 else
   AC_CHECK_SIZEOF(mp_limb_t,,
 [#include <stdio.h>
-#define __GMP_WITHIN_CONFIGURE 1 /* ignore template stuff */
-#define __GMP_BITS_PER_MP_LIMB 0 /* dummy for mpf_get_prec etc inlines */
+#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
+#define __GMP_BITS_PER_MP_LIMB 123 /* dummy for mpf_get_prec etc inlines */
+$DEFN_LONG_LONG_LIMB
 #include "$srcdir/gmp-h.in"
 ])
   if test "$ac_cv_sizeof_mp_limb_t" = 0; then
@@ -1483,7 +1484,8 @@ AC_DEFUN(GMP_FUNC_ALLOCA,
 AC_CACHE_CHECK([for alloca (via gmp-impl.h)],
                gmp_cv_func_alloca,
 [AC_TRY_LINK(
-[#define __GMP_WITHIN_CONFIGURE 1
+[#define __GMP_WITHIN_CONFIGURE 1   /* ignore template stuff */
+#define  __GMP_BITS_PER_MP_LIMB 123 /* dummy for mpf_get_prec etc inlines */
 #include "$srcdir/gmp-h.in"
 #include "$srcdir/gmp-impl.h"],
   [char *p = (char *) alloca (1);],
