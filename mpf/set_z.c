@@ -1,6 +1,6 @@
 /* mpf_set_z -- Assign a float from an integer.
 
-Copyright 1996, 2001 Free Software Foundation, Inc.
+Copyright 1996, 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -43,6 +43,6 @@ mpf_set_z (mpf_ptr r, mpz_srcptr u)
       asize = prec;
     }
 
-  MPN_COPY (rp, up, asize);
   SIZ (r) = size >= 0 ? asize : -asize;
+  MPN_COPY (rp, up, asize);
 }
