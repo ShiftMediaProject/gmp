@@ -1,4 +1,4 @@
-/* mpf_cmp2 -- Compare two floats up to a specified bit #.
+/* mpf_eq -- Compare two floats up to a specified bit #.
 
 Copyright (C) 1993, 1995, 1996 Free Software Foundation, Inc.
 
@@ -24,9 +24,9 @@ MA 02111-1307, USA. */
 
 int
 #if __STDC__
-mpf_cmp2 (mpf_srcptr u, mpf_srcptr v, unsigned long int n_bits)
+mpf_eq (mpf_srcptr u, mpf_srcptr v, unsigned long int n_bits)
 #else
-mpf_cmp2 (u, v, n_bits)
+mpf_eq (u, v, n_bits)
      mpf_srcptr u;
      mpf_srcptr v;
      unsigned long int n_bits;
