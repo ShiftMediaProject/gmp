@@ -525,14 +525,6 @@ MA 02111-1307, USA.
      &lt;inttypes.h&gt; might be of use to applications printing limbs.  But
      if <code>GMP_LONG_LONG_LIMB</code> or whatever is added then perhaps this
      can easily enough be left to applications.
-<li> <code>mpf_get_ld</code> and <code>mpf_set_ld</code> converting
-     <code>mpf_t</code> to and from <code>long double</code>.  Other
-     <code>long double</code> routines would be desirable too, but these would
-     be a start.  Often <code>long double</code> is the same as
-     <code>double</code>, which is easy but pretty pointless.  Should
-     recognise the Intel 80-bit format on i386, and IEEE 128-bit quad on
-     sparc, hppa and power.  Might like an ABI sub-option or something when
-     it's a compiler option for 64-bit or 128-bit <code>long double</code>.
 <li> <code>gmp_printf</code> could accept <code>%b</code> for binary output.
      It'd be nice if it worked for plain <code>int</code> etc too, not just
      <code>mpz_t</code> etc.
@@ -564,12 +556,20 @@ MA 02111-1307, USA.
      Bagnara.
 <li> <code>mpf_get_ld</code>, <code>mpf_set_ld</code>: Conversions between
      <code>mpf_t</code> and <code>long double</code>, suggested by Dan
-     Christensen.  There'd be some work to be done by <code>configure</code>
-     to recognise the format in use.  xlc on aix for instance apparently has
-     an option for either plain double 64-bit or quad 128-bit precision.  This
-     might mean library contents vary with the compiler used to build, which
-     is undesirable.  It might be possible to detect the mode the application
-     is compiling with, and try to avoid mismatch problems.
+     Christensen.  Other <code>long double</code> routines would be desirable
+     too, but <code>mpf</code> would be a start.
+     <br>
+     There'd be some work to be done by <code>configure</code> to recognise
+     the format in use, MPFR has a start on this.  Often <code>long
+     double</code> is the same as <code>double</code>, which is easy but
+     pretty pointless.  A single float format detector macro could look at
+     <code>double</code> then <code>long double</code>
+     <br>
+     Sometimes there's a compiler option for the size of a <code>long
+     double</code>, eg. xlc on AIX can use either 64-bit or 128-bit.  It's
+     probably simplest to regard this as a compiler compatibility issue, and
+     leave it to users or sysadmins to ensure application and library code is
+     build the same.
 <li> <code>mpz_sqrt_if_perfect_square</code>: When
      <code>mpz_perfect_square_p</code> does its tests it calculates a square
      root and then discards it.  For some applications it might be useful to
@@ -578,14 +578,14 @@ MA 02111-1307, USA.
      <code>mpz_get_sll</code>, <code>mpz_get_sll</code>: Conversions for
      <code>long long</code>.  These would aid interoperability, though a
      mixture of GMP and <code>long long</code> would probably not be too
-     common.  Disadvantages of using <code>long long</code> in libgmp.a would
-     be
+     common.  Since <code>long long</code> is not always available,
+     disadvantages of using <code>long long</code> in libgmp.a would be
      <ul>
      <li> Library contents vary according to the build compiler.
      <li> gmp.h would need an ugly <code>#ifdef</code> block to decide if the
           application compiler could take the <code>long long</code>
           prototypes.
-     <li> Some sort of <code>LIBGMP_HAS_LONGLONG</code> would be wanted to
+     <li> Some sort of <code>LIBGMP_HAS_LONGLONG</code> might be wanted to
           indicate whether the functions are available.  (Applications using
           autoconf could probe the library too.)
      </ul>
@@ -606,7 +606,10 @@ MA 02111-1307, USA.
           uniformity with inferior ones.
      </ul>
      Plain use of <code>long long</code> is probably the lesser evil, if only
-     because it makes best use of gcc.
+     because it makes best use of gcc.  In fact perhaps it would suffice to
+     guarantee <code>long long</code> conversions only when using GCC for both
+     application and library.  That would cover free software, and we can
+     worry about selected vendor compilers later.
 <li> <code>mpz_strtoz</code> parsing the same as <code>strtol</code>.
      Suggested by Alexander Kruppa.
 </ul>
