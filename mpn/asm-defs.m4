@@ -1226,7 +1226,7 @@ dnl  specific m4 files redefine it as necessary.
 define(PROLOGUE,
 m4_assert_defined(`GSYM_PREFIX')
 `	TEXT
-	ALIGN(4)
+	ALIGN(8)
 	GLOBL	GSYM_PREFIX`$1' GLOBL_ATTR
 	TYPE(GSYM_PREFIX`$1',`function')
 GSYM_PREFIX`$1'LABEL_SUFFIX')
