@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2002-11-30  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/divrem_1.asm: Allocate more local registers; put b0 in
+	one of them.
+
 	* mpn/ia64/popcount.asm: Properly restore register ar.lc.
 
 	* longlong.h (umul_ppmm) [ia64]: Form both product parts in asm.
