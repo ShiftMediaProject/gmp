@@ -269,8 +269,8 @@ del libmpq.a
 ar cr libmpq.a *.o
 cd ..
 
-gcc -c -I. -Impn -I.. -g -O extract-double.c
-gcc -c -I. -Impn -I.. -g -O insert-double.c
+gcc -c -I. -Impn -I.. -g -O extract-dbl.c
+gcc -c -I. -Impn -I.. -g -O insert-dbl.c
 gcc -c -I. -Impn -I.. -g -O memory.c
 gcc -c -I. -Impn -I.. -g -O mp_clz_tab.c
 gcc -c -I. -Impn -I.. -g -O mp_set_fns.c
