@@ -1,3 +1,11 @@
+2000-03-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium/mul_basecase.S: Small speedup by avoiding an AGI.
+
+	* mpn/x86/k7/mmx/copyd.asm: Tiny speedup by avoiding popl.
+	* mpn/x86/k7/mmx/copyi.asm: Ditto.
+	* mpn/x86/k7/mul_basecase.asm: Ditto.
+
 2000-03-07  Torbjorn Granlund  <tege@swox.com>
 
 	* config.guess: Better recognize POWER/PowerPC processor type.
@@ -7,8 +15,8 @@
 	* mpn/generic/addsub_n.c: Use HAVE_NATIVE_* now in config.h.
 
 	* mpn/asm-defs.m4: Add comments about SysV m4.
-	* mpn/asm-defs.m4 (m4_log2): Don't use <<.
-	* mpn/asm-defs.m4 (m4_lshift,m4_rshift): New macros.
+	(m4_log2): Don't use <<.
+	(m4_lshift,m4_rshift): New macros.
 
 2000-03-06  Torbjorn Granlund  <tege@swox.com>
 
@@ -58,8 +66,8 @@
 
 2000-03-03  Kevin Ryde  <kevin@swox.se>
 
-	* mpn/lisp/gmpasm-mode.el: Suppress filladapt postscript comment
-	prefixes.
+	* mpn/lisp/gmpasm-mode.el: Suppress postscript comment prefixes in
+	filladapt.
 
 	* mpn/x86/pentium/sqr_basecase.asm: New file.
 	* mpn/x86/pentium/gmp-mparam.h (KARATSUBA_SQR_THRESHOLD): Update.
