@@ -125,8 +125,7 @@ case "${target}" in
     underscore=yes; asm_align=log;;
   m680[234]0*-*-linuxaout* | m68k*-*-linuxaout* | \
   m68k-next-nextstep* | \
-  m68000*-*-* | \
-  m680[234]0*-*-* | m68k*-*-*)
+  m68000*-*-*)
     underscore=yes
     asm_align=log
     syntax=mit;;
@@ -134,6 +133,10 @@ case "${target}" in
     underscore=no
     asm_align=nolog
     syntax=elf;;
+  m680[234]0*-*-* | m68k*-*-*)
+    underscore=yes
+    asm_align=log
+    syntax=mit;;
   *-*-sunos*)
     underscore=yes; asm_align=log;;
   rs6000-*-aix[456789]* | rs6000-*-aix3.2.[456789])
