@@ -18,6 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-07  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (HAVE_HOST_CPU_alpha_CIX): New define.
+	(ULONG_PARITY, popc_limb): Use it, to pick up ev7 as well as 67 and 68.
+	* longlong.h (count_leading_zeros, count_trailing_zeros): Ditto.
+
+	* doc/gmp.texi (Notes for Package Builds): Add notes on multi-ABI
+	system packaging.
+	(ABI and ISA): Add GNU/Linux ABI=64.
+	(Binary GCD): Add notes on 1x1 GCD algorithms.
+
+	* mpn/alpha/README: Add some literature references.
+
+	* mpn/ia64/mode1o.asm: Various corrections to initial checkin.
+	* mpn/ia64/ia64-defs.m4 (ASSERT): Correction to arg quoting.
+
 2003-11-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/linux64.m4: New file.
