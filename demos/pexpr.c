@@ -689,12 +689,13 @@ factor (char *str, expr_t *e)
       s = str;
       while (isalnum (str[0]))
 	str++;
-      sc = alloca (str - s + 1);
+      sc = malloc (str - s + 1);
       memcpy (sc, s, str - s);
       sc[str - s] = 0;
 
       mpz_set_str (res->operands.val, sc, 0);
       *e = res;
+      free (sc);
     }
   else
     {
