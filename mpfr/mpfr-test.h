@@ -1,6 +1,6 @@
 /* auxiliary functions for MPFR tests.
 
-Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -43,7 +43,8 @@ double Ulp _PROTO ((double));
 
 /* generate a random double using the whole range of possible values,
    including denormalized numbers, NaN, infinities, ... */
-double drand ()
+double
+drand ()
 {
   double d; int *i, expo;
 
@@ -59,7 +60,8 @@ double drand ()
 }
 
 /* returns ulp(x) for x a 'normal' double-precision number */
-double Ulp (double x)
+double
+Ulp (double x)
 {
    double y, eps;
 
@@ -78,7 +80,8 @@ double Ulp (double x)
 }
 
 /* returns the number of ulp's between a and b */
-int ulp (double a, double b)
+int
+ulp (double a, double b)
 {
   if (a==0.0) {
     if (b==0.0) return 0;
@@ -89,7 +92,8 @@ int ulp (double a, double b)
 }
 
 /* return double m*2^e */
-double dbl (double m, int e)
+double
+dbl (double m, int e)
 {
   if (e>=0) while (e-->0) m *= 2.0;
   else while (e++<0) m /= 2.0;
