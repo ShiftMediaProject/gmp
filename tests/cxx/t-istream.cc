@@ -108,7 +108,7 @@ check_mpz (void)
   mpz_t      got, want;
   int        got_ok, want_ok;
   long       got_si, want_si;
-  streampos  got_pos, want_pos;
+  streampos  init_tellg, got_pos, want_pos;
 
   mpz_init (got);
   mpz_init (want);
@@ -129,12 +129,13 @@ check_mpz (void)
         {
           istringstream  input (data[i].input);
           input.flags (data[i].flags);
+          init_tellg = input.tellg();
           want_si = mpz_get_si (want);
 
           input >> got_si;
           got_ok = (input ? 1 : 0);
           input.clear();
-          got_pos = input.tellg();
+          got_pos = input.tellg() - init_tellg;
 
           if (got_ok != want_ok)
             {
@@ -159,12 +160,13 @@ check_mpz (void)
       {
         istringstream  input (data[i].input);
         input.flags (data[i].flags);
+        init_tellg = input.tellg();
 
         mpz_set_ui (got, 0xDEAD);
         input >> got;
         got_ok = (input ? 1 : 0);
         input.clear();
-        got_pos = input.tellg();
+        got_pos = input.tellg() - init_tellg;
 
         if (got_ok != want_ok)
           {
@@ -248,7 +250,7 @@ check_mpq (void)
   mpq_t      got, want;
   int        got_ok, want_ok;
   long       got_si, want_si;
-  streampos  got_pos, want_pos;
+  streampos  init_tellg, got_pos, want_pos;
 
   mpq_init (got);
   mpq_init (want);
@@ -271,12 +273,13 @@ check_mpq (void)
         {
           istringstream  input (data[i].input);
           input.flags (data[i].flags);
+          init_tellg = input.tellg();
           want_si = mpz_get_si (mpq_numref(want));
 
           input >> got_si;
           got_ok = (input ? 1 : 0);
           input.clear();
-          got_pos = input.tellg();
+          got_pos = input.tellg() - init_tellg;
 
           if (got_ok != want_ok)
             {
@@ -301,12 +304,13 @@ check_mpq (void)
       {
         istringstream  input (data[i].input);
         input.flags (data[i].flags);
+        init_tellg = input.tellg();
         mpq_set_si (got, 0xDEAD, 0xBEEF);
 
         input >> got;
         got_ok = (input ? 1 : 0);
         input.clear();
-        got_pos = input.tellg();
+        got_pos = input.tellg() - init_tellg;
 
         if (got_ok != want_ok)
           {
@@ -400,7 +404,7 @@ check_mpf (void)
   mpf_t      got, want;
   int        got_ok, want_ok;
   double     got_d, want_d;
-  streampos  got_pos, want_pos;
+  streampos  init_tellg, got_pos, want_pos;
 
   mpf_init (got);
   mpf_init (want);
@@ -422,11 +426,12 @@ check_mpf (void)
         {
           istringstream  input (data[i].input);
           input.flags (data[i].flags);
+          init_tellg = input.tellg();
 
           input >> got_d;
           got_ok = (input ? 1 : 0);
           input.clear();
-          got_pos = input.tellg();
+          got_pos = input.tellg() - init_tellg;
 
           if (got_ok != want_ok)
             {
@@ -451,12 +456,13 @@ check_mpf (void)
       {
         istringstream  input (data[i].input);
         input.flags (data[i].flags);
+        init_tellg = input.tellg();
 
         mpf_set_ui (got, 0xDEAD);
         input >> got;
         got_ok = (input ? 1 : 0);
         input.clear();
-        got_pos = input.tellg();
+        got_pos = input.tellg() - init_tellg;
 
         if (got_ok != want_ok)
           {
