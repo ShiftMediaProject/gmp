@@ -1,3 +1,7 @@
+2000-07-28  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/*/gmp-mparam.h: Add some FFT thresholds.
+
 2000-07-28  Kent Boortz  <kent@swox.se>
 
 	* macos/Asm*, macos/CmnObj, macos/Mp*: Delete directories.
