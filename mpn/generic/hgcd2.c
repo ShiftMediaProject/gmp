@@ -122,14 +122,14 @@ div2 (mp_ptr rp,
       q <<= 1;
       if (nh > dh || (nh == dh && nl >= dl))
        {
-         /* FIXME: We could perhaps optimize this by unrolling the
-            loop 2^GMP_NUMB_BITS - 1 times? */
-         nl -= dl;
-         nh -= dh;
-         nh -= (nl >> (GMP_LIMB_BITS - 1));
-         nl &= GMP_NUMB_MASK;
+	 /* FIXME: We could perhaps optimize this by unrolling the
+	    loop 2^GMP_NUMB_BITS - 1 times? */
+	 nl -= dl;
+	 nh -= dh;
+	 nh -= (nl >> (GMP_LIMB_BITS - 1));
+	 nl &= GMP_NUMB_MASK;
 
-         q |= 1;
+	 q |= 1;
        }
       cnt--;
     }
@@ -475,8 +475,7 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
 	sh = (sl < u2);
       }
 
-    /* FIXME: Seems a little wasteful to use r3l, which is zero */
-    sub_ddmmss (th, tl, rh2, rl2, rh3, rl3);
+    sub_ddmmss (th, tl, rh2, rl2, 0, rl3);
 
     if (th < sh || (th == sh && tl < sl))
       return 3;
@@ -517,7 +516,7 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
       {
        /* Check r3 >= max (-u3, -v3) = |u3| */
        if (rl3 < u3)
-         return 3;
+	 return 3;
 
        /* Check r3 - r2 >= v3 - v2 = |v2| + |v1|*/
        sl = v3 + v2;
@@ -526,7 +525,7 @@ mpn_hgcd2 (struct hgcd2 *hgcd,
       {
        /* Check r3 >= max (-u3, -v3) = |v3| */
        if (rl3 < v3)
-         return 3;
+	 return 3;
 
        /* Check r3 - r2 >= u3 - u2 = |u2| + |u1| */
        sl = u3 + u2;
