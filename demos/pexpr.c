@@ -190,7 +190,11 @@ setup_error_handler (void)
      overflown stack.  */
 #if HAVE_SIGALTSTACK
   {
+#if _AIX
     stack_t s;
+#else
+    struct sigaltstack s;
+#endif
     s.ss_sp = malloc (SIGSTKSZ);
     s.ss_size = SIGSTKSZ;
     s.ss_flags = 0;
