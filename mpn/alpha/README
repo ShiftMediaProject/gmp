@@ -2,12 +2,12 @@ This directory contains mpn functions optimized for DEC Alpha processors.
 
 ALPHA ASSEMBLY RULES AND REGULATIONS
 
-The `.prologue N' pseudo op marks the end of instruction that needs
-special handling by unwinding.  It also says whether $27 is really
-needed for computing the gp.  The `.mask M' pseudo op says which
-registers are saved on the stack, and at what offset in the frame.
+The `.prologue N' pseudo op marks the end of instruction that needs special
+handling by unwinding.  It also says whether $27 is really needed for computing
+the gp.  The `.mask M' pseudo op says which registers are saved on the stack,
+and at what offset in the frame.
 
-Cray code is very very different...
+Cray T3 code is very very different...
 
 
 RELEVANT OPTIMIZATION ISSUES
@@ -28,13 +28,12 @@ EV4
 
 EV5
 
-1. The memory bandwidth of this chip seems excellent, both for loads and
-   stores.  Even when the working set is larger than the on-chip L1 and L2
-   caches, the performance remain almost unaffected.
+1. The memory bandwidth of this chip is good, both for loads and stores.  The
+   L1 cache can handle two loads or one store per cycle, but two cycles after a
+   store, the L1 cache is busy and thus no ld/st can issue.
 
 2. mulq has a latency of 12 cycles and an issue rate of 1 each 8th cycle.
-   umulh has a measured latency of 14 cycles and an issue rate of 1 each
-   10th cycle.  But the exact timing is somewhat confusing.
+   umulh has a latency of 14 cycles and an issue rate of 1 each 10th cycle.
 
 3. mpn_add_n.  With 4-fold unrolling, we need 37 instructions, whereof 12
    are memory operations.  This will take at least
@@ -65,11 +64,20 @@ EV5
      |      \
    cmpult -> cmovne
 
-Montgomery has a slightly different way of computing carry that requires one
-less instruction, but has depth 4 (instead of the current 3).  Since the
-code is currently instruction issue bound, Montgomery's idea should save us
-1/2 cycle per limb, or bring us down to a total of 17 cycles or 4.25
-cycles/limb.  Unfortunately, this method will not be good for the EV6.
+  Montgomery has a slightly different way of computing carry that requires one
+  less instruction, but has depth 4 (instead of the current 3).  Since the
+  code is currently instruction issue bound, Montgomery's idea should save us
+  1/2 cycle per limb, or bring us down to a total of 17 cycles or 4.25
+  cycles/limb.  Unfortunately, this method will not be good for the EV6.
+
+4. addmul_1 and friends: We previously had a scheme for splitting the
+   single-limb operand in 21-bits chunks and the multi-limb operand in 32-bit
+   chunks, and then use FP operations for every 2nd multiply, and integer
+   operations for every 2nd multiply.
+
+   But it seems much better to split the single-limb operand in 16-bit chunks,
+   since we save many integer shifts and adds that way.  See powerpc64/README
+   for some more details.
 
 EV6
 

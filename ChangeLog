@@ -1,3 +1,11 @@
+2001-01-29  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc64/addmul_1.asm: Prefix registers with an `r'.
+	* mpn/powerpc64/submul_1.asm: Likewise.
+	* mpn/powerpc64/mul_1.asm: Likewise.
+
+	* configure.in (alpha*-*-*): Amend last change to handle pca*.
+
 2001-01-29  Kevin Ryde  <kevin@swox.se>
 
 	* tune/speed.h (SPEED_ROUTINE_INVERT_LIMB_CALL): Don't let the
