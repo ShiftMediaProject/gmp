@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 1996, 1999, 2000 Free Software Foundation, Inc.
+# Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -21,9 +21,6 @@
 
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-
-SUBDIRS = tests
-
 
 INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
 	-I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
