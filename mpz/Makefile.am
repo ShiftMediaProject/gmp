@@ -36,11 +36,11 @@ libmpz_la_SOURCES = \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c kronsz.c kronuz.c kronzs.c kronzu.c \
-  lcm.c mod.c mul.c mul_2exp.c neg.c nextprime.c \
+  lcm.c mod.c mul.c mul_2exp.c n_pow_ui.c neg.c nextprime.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c rrandomb.c \
   scan0.c scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
-  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c \
+  set_ui.c setbit.c si_pow_ui.c size.c sizeinbase.c sqrt.c sqrtrem.c \
   swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
