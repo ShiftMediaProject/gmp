@@ -398,6 +398,8 @@ speed_cpu_frequency_measure (void)
 
   if (! gettimeofday_microseconds_p ())
     return 0;
+  if (! cycles_works_p ())
+    return 0;
 
   for (i = 0; i < numberof (t); i++)
     {
