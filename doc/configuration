@@ -306,13 +306,10 @@ This then should be a good full K&R test.
 ** Long long limb testing
 
 On systems where gcc supports long long, but a limb is normally just a
-long, the following can be used to force long long for testing,
+long, the following can be used to force long long for testing.  It
+will probably run very slowly.
 
-	./configure CPPFLAGS="-D_LONG_LONG_LIMB -U__GNUC__" --host=none
-
--DNO_ASM should work in place of -U__GNUC__ too, so that gcc specifics
-will be used, but no assembler code.  Naturally no assembler code can
-be used in such a setup since it'll be using the wrong limb size.
+	./configure --host=none ABI=longlong
 
 ** Function argument conversions
 
@@ -331,6 +328,7 @@ in combination with the long long limb setups above is good.
 Conversions between int and long aren't warned about by gcc when
 they're the same size, which is unfortunate because casts should be
 used in such cases, for the benefit of those (perhaps rare) systems
-where int!=long and the difference matters in function calls.
+where int!=long under a K&R compiler and where the difference matters
+in function calls.
 
 /* eof doc/configuration */
