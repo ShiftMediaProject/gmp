@@ -22,14 +22,10 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-mp_size_t __gmp_default_fp_limb_precision
-  = (53 + 2 * BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
+mp_size_t __gmp_default_fp_limb_precision = MPF_BITS_TO_PREC (53);
 
 void
 mpf_set_default_prec (unsigned long int prec_in_bits)
 {
-  mp_size_t prec;
-
-  prec = (MAX (53, prec_in_bits) + 2 * BITS_PER_MP_LIMB - 1)/BITS_PER_MP_LIMB;
-  __gmp_default_fp_limb_precision = prec;
+  __gmp_default_fp_limb_precision = MPF_BITS_TO_PREC (prec_in_bits);
 }

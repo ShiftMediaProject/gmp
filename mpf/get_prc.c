@@ -25,5 +25,5 @@ MA 02111-1307, USA. */
 unsigned long int
 mpf_get_prec (mpf_srcptr x)
 {
-  return (unsigned long int) x->_mp_prec * BITS_PER_MP_LIMB - BITS_PER_MP_LIMB;
+  return MPF_PREC_TO_BITS ((unsigned long) PREC(x));
 }
