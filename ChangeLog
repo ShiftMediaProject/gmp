@@ -1,3 +1,12 @@
+2000-12-03  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (CRAYIEEE umul_ppmm): New.
+
+	* mpn/cray/gmp-mparam.h (BITS_PER_SHORTINT): 32 => 64.
+	(*_THRESHOLD): Tune.
+	
+	* configure.in: Disable shared libs for *-*-unicos*.
+
 2000-12-03  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in, tune/Makefile.am: Create tune/sqr_basecase.c during
