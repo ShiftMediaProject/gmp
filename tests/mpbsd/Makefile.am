@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000 Free Software Foundation, Inc.
+# Copyright 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -22,11 +22,11 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -I$(top_srcdir)
-LDADD = $(top_builddir)/libmp.la
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
+LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libmp.la
 
 if WANT_MPBSD
-MPBSD_check_OPTION = allfuns t-misc
+MPBSD_check_OPTION = allfuns t-itom
 endif
 
 check_PROGRAMS = $(MPBSD_check_OPTION)
