@@ -30,8 +30,8 @@ mpq_get_str (char *str, int base, mpq_srcptr q)
 {
   size_t  str_alloc, len;
 
-  ASSERT (base >= 2);
-  ASSERT (base <= 36);
+  ASSERT (ABS(base) >= 2);
+  ASSERT (ABS(base) <= 36);
 
   str_alloc = 0;
   if (str == NULL)
@@ -41,7 +41,8 @@ mpq_get_str (char *str, int base, mpq_srcptr q)
          chars per bit of num and den.  +3 for sign, slash and '\0'.  */
       str_alloc = ((size_t) ((ABS (q->_mp_num._mp_size) + q->_mp_den._mp_size)
                              * BITS_PER_MP_LIMB
-                             * __mp_bases[base].chars_per_bit_exactly)) + 5;
+                             * __mp_bases[ABS(base)].chars_per_bit_exactly))
+                   + 5;
       str = (char *) (*__gmp_allocate_func) (str_alloc);
     }
 
@@ -55,10 +56,10 @@ mpq_get_str (char *str, int base, mpq_srcptr q)
     }
 
   ASSERT (len == strlen(str));
-  ASSERT (str_alloc == 0 ? 1 : len+1 <= str_alloc);
+  ASSERT (str_alloc == 0 || len+1 <= str_alloc);
   ASSERT (len+1 <=  /* size recommended to applications */
-          mpz_sizeinbase (mpq_numref(q), base) +
-          mpz_sizeinbase (mpq_denref(q), base) + 3);
+          mpz_sizeinbase (mpq_numref(q), ABS(base)) +
+          mpz_sizeinbase (mpq_denref(q), ABS(base)) + 3);
 
   if (str_alloc != 0 && str_alloc != len+1)
     str = (char *) (*__gmp_reallocate_func) (str, str_alloc, len+1);
