@@ -112,7 +112,7 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t xsize,
 
   qp += (total_size - 1);   /* dest high limb */
 
-  if (d & MP_LIMB_T_HIGHBIT)
+  if ((d & MP_LIMB_T_HIGHBIT) != 0)
     {
       if (size != 0)
         {

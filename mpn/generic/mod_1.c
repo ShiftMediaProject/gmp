@@ -84,7 +84,7 @@ mpn_mod_1 (mp_srcptr ap, mp_size_t size, mp_limb_t d)
   if (size == 0)
     return 0;
 
-  if (d & MP_LIMB_T_HIGHBIT)
+  if ((d & MP_LIMB_T_HIGHBIT) != 0)
     {
       /* High limb is initial remainder, possibly with one subtract of
          d to get r<d.  */
