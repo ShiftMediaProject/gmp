@@ -43,11 +43,11 @@ libmpn.a: Makefile mp_bases.o $(MPN_OBJECTS)
 	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
 
 .s.o:
-	$(CC) -c $(CFLAGS) $<
+	$(CC) -c $(SFLAGS) $(CFLAGS) $<
 
 .S.o:
 	$(CPP) $(SFLAGS) $(INCLUDES) $(CFLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(CC) -c tmp-$*.s -o $@
+	$(CC) -c $(SFLAGS) $(CFLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 
 clean mostlyclean:
@@ -72,6 +72,7 @@ cmp.o: cmp.c $(H)
 divmod_1.o: divmod_1.c $(H) $(L)
 divrem.o: divrem.c $(H) $(L)
 divrem_1.o: divrem_1.c $(H) $(L)
+divrem_newt.o: divrem_newt.c $(H) $(L)
 dump.o: dump.c $(H)
 gcd.o: gcd.c $(H) $(L)
 gcd_1.o: gcd_1.c $(H) $(L)
@@ -85,6 +86,7 @@ mul_n.o: mul_n.c $(H)
 perfsqr.o: perfsqr.c $(H) $(L)
 popcount.o: popcount.c $(H)
 pre_mod_1.o: pre_mod_1.c $(H) $(L)
+random.o: random.c $(H)
 random2.o: random2.c $(H)
 scan0.o: scan0.c $(H) $(L)
 scan1.o: scan1.c $(H) $(L)
