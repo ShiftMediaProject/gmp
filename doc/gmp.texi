@@ -4755,7 +4755,7 @@ a NaN.
 
 @deftypefun int mpf_eq (mpf_t @var{op1}, mpf_t @var{op2}, unsigned long int op3)
 Return non-zero if the first @var{op3} bits of @var{op1} and @var{op2} are
-equal, zero otherwise.  I.e., test of @var{op1} and @var{op2} are approximately
+equal, zero otherwise.  I.e., test if @var{op1} and @var{op2} are approximately
 equal.
 
 Caution: Currently only whole limbs are compared, and only in an exact
