@@ -71,6 +71,7 @@ mpn_bdivmod (qp, up, usize, vp, vsize, d)
 
   ASSERT (usize >= 1);
   ASSERT (vsize >= 1);
+  ASSERT (usize * BITS_PER_MP_LIMB >= d);
   ASSERT (! MPN_OVERLAP_P (up, usize, vp, vsize));
   ASSERT (! MPN_OVERLAP_P (qp, d/BITS_PER_MP_LIMB, vp, vsize));
   ASSERT (MPN_SAME_OR_INCR2_P (qp, d/BITS_PER_MP_LIMB, up, usize));
