@@ -50,7 +50,8 @@ mp_trace_start (const char *name)
     printf ("%s=", name);
 
   switch (ABS (mp_trace_base)) {
-  case  8: printf ("oct");                          break;
+  case  2: printf ("bin:");                         break;
+  case  8: printf ("oct:");                         break;
   case 10:                                          break;
   case 16: printf ("0x");                           break;
   default: printf ("base%d:", ABS (mp_trace_base)); break;
