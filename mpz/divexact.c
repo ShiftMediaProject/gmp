@@ -67,7 +67,7 @@ mpz_divexact (mpz_ptr quot, mpz_srcptr num, mpz_srcptr den)
     {
       if (dsize == 1)
 	{
-	  mpn_divmod_1 (qp, np, nsize, dp[0]);
+	  MPN_DIVREM_OR_DIVEXACT_1 (qp, np, nsize, dp[0]);
 	  qsize -= qp[qsize - 1] == 0;
 	  quot->_mp_size = (num->_mp_size ^ den->_mp_size) >= 0 ? qsize : -qsize;
 	  return;
