@@ -115,8 +115,7 @@ mpz_probab_prime_p (mpz_srcptr n, int reps)
 		while (--nprimes >= 0)
 		  if (r % primes[nprimes] == 0)
 		    {
-		      if (mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) primes[nprimes]) != 0)
-			abort ();
+		      ASSERT_ALWAYS (mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) primes[nprimes]) == 0);
 		      return 0;
 		    }
 		p = q;
