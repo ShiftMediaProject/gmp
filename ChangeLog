@@ -1,7 +1,13 @@
 2000-02-23  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/x86/addmul_1.S: Amend comments, this code no longer used by
+	PentiumPro.
+	* mpn/x86/submul_1.S: Ditto.
+
+	* mpn/x86/k6/com_n.asm: New version, smaller but same speed.
+
 	* mpn/x86/addmul_1.S: Add PROLOGUE and EPILOGUE to get .type and
-	.size for ELF.  Rename #define size to opsize to avoid .size.
+	.size for ELF.  Rename #define size to n to avoid .size.
 	* mpn/x86/lshift.S: Ditto.
 	* mpn/x86/mul_1.S: Ditto.
 	* mpn/x86/mul_basecase.S: Ditto.
