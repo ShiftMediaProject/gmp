@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 7 Dec 2001.  An up-to-date version is available at
+  This file current as of 12 Dec 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -306,10 +306,10 @@ MA 02111-1307, USA.
      bit ugly and/or a bit sub-optimal.
 <pre>
 #define TMP_ALLOC(n)
-  ((ROUND_UP(n) > current->end - current->point ?
+  ((ROUND_UP(n) &gt; current-&gt;end - current-&gt;point ?
      __gmp_tmp_increase (ROUND_UP (n)) : 0),
-     current->point += ROUND_UP (n),
-     current->point - ROUND_UP (n))
+     current-&gt;point += ROUND_UP (n),
+     current-&gt;point - ROUND_UP (n))
 </pre>
 </ul>
 
