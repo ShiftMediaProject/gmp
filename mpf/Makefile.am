@@ -22,8 +22,7 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir) \
-  -DOPERATION_`echo $* | sed 's/_$$//'`
+INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
 noinst_LTLIBRARIES = libmpf.la
 libmpf_la_SOURCES = \
@@ -35,25 +34,8 @@ libmpf_la_SOURCES = \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_dfl_prec.c get_prc.c \
   ui_div.c sqrt_ui.c \
   pow_ui.c urandomb.c swap.c get_si.c get_ui.c int_p.c \
-  ceilfloor.c trunc.c
-
-nodist_libmpf_la_SOURCES = \
+  ceilfloor.c trunc.c \
   fits_sint.c fits_slong.c fits_sshort.c \
   fits_uint.c fits_ulong.c fits_ushort.c
 
-EXTRA_DIST = fits_s.c fits_u.c
-CLEANFILES = $(nodist_libmpf_la_SOURCES)
-
-fits_sint.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_sint.c
-fits_slong.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_slong.c
-fits_sshort.c: $(srcdir)/fits_s.c
-	cp $(srcdir)/fits_s.c fits_sshort.c
-
-fits_uint.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_uint.c
-fits_ulong.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_ulong.c
-fits_ushort.c: $(srcdir)/fits_u.c
-	cp $(srcdir)/fits_u.c fits_ushort.c
+EXTRA_DIST = fits_s.i fits_u.i
