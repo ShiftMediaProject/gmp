@@ -192,7 +192,6 @@ mpn_kara_mul_n(p, a, b, n, ws)
 	      ++i;
 	    } while (x == 0);
 	}
-
     }
   else
     {
@@ -411,7 +410,6 @@ mpn_kara_sqr_n (p, a, n, ws)
 	      ++i;
 	    } while (x == 0);
 	}
-
     }
   else
     {
