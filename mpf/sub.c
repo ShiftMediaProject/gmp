@@ -46,7 +46,8 @@ mpf_sub (mpf_ptr r, mpf_srcptr u, mpf_srcptr v)
     }
   if (vsize == 0)
     {
-      mpf_set (r, u);
+      if (r != u)
+        mpf_set (r, u);
       return;
     }
 
