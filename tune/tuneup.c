@@ -91,7 +91,7 @@ extern int optind, opterr;
 
 
 #define numberof(x)            (sizeof (x) / sizeof ((x)[0]))
-#define SIGNED_TYPE_MAX(type)  (~(((type) 1) << (8*sizeof(type)-1)))
+#define SIGNED_TYPE_MAX(type)  (~(((type) -1) << (8*sizeof(type)-1)))
 #define MP_SIZE_T_MAX          SIGNED_TYPE_MAX (mp_size_t)
 
 
