@@ -39,5 +39,5 @@ mpf_dump (mpf_srcptr u)
     printf ("-0.%se%ld\n", str + 1, exp);
   else
     printf ("0.%se%ld\n", str, exp);
-  (*__gmp_free_func) (str, 0);/* ??? broken alloc interface, pass what size ??? */
+  (*__gmp_free_func) (str, strlen (str) + 1);
 }
