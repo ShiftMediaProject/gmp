@@ -87,8 +87,7 @@ L(start_1c):
 
 ifdef(`PIC',`
 	call	LF(mpn_modexact_1c_odd,movl_eip_edi)
-L(here):
-	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(here)], %edi
+	addl	$_GLOBAL_OFFSET_TABLE_, %edi
 	movl	modlimb_invert_table@GOT(%edi), %edi
 	movzbl	(%eax,%edi), %edi			C inv 8 bits
 
