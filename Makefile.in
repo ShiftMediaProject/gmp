@@ -226,7 +226,12 @@ lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTI
 
 BUILT_SOURCES = gmp.h mp.h fib_table.h mpn/fib_table.c mp_bases.h mpn/mp_bases.c
 
-DISTCLEANFILES = $(BUILT_SOURCES) config.m4 @gmp_srclinks@ gen-fib$(EXEEXT_FOR_BUILD) gen-bases$(EXEEXT_FOR_BUILD)
+
+# configure.lineno is created by configure if the shell doesn't support
+# $LINENO.  FIXME: Hopefully automake will delete this automatically some
+# day.
+#
+DISTCLEANFILES = $(BUILT_SOURCES) config.m4 @gmp_srclinks@ configure.lineno gen-fib$(EXEEXT_FOR_BUILD) gen-bases$(EXEEXT_FOR_BUILD)
 
 # Tell gmp.h it's building gmp, not an application, used by windows DLL stuff.
 INCLUDES = -D__GMP_WITHIN_GMP
