@@ -124,13 +124,13 @@ SUBDIRS = rand
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-constants
+check_PROGRAMS = t-constants t-modlinv
 TESTS = $(check_PROGRAMS)
 subdir = tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
-check_PROGRAMS =  t-constants$(EXEEXT)
+check_PROGRAMS =  t-constants$(EXEEXT) t-modlinv$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
@@ -142,12 +142,17 @@ t_constants_OBJECTS =  t-constants$U.$(OBJEXT)
 t_constants_LDADD = $(LDADD)
 t_constants_DEPENDENCIES =  $(top_builddir)/libgmp.la
 t_constants_LDFLAGS = 
+t_modlinv_SOURCES = t-modlinv.c
+t_modlinv_OBJECTS =  t-modlinv$U.$(OBJEXT)
+t_modlinv_LDADD = $(LDADD)
+t_modlinv_DEPENDENCIES =  $(top_builddir)/libgmp.la
+t_modlinv_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  t-constants.c
+DIST_SOURCES =  t-constants.c t-modlinv.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -155,8 +160,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = t-constants.c
-OBJECTS = t-constants$U.$(OBJEXT)
+SOURCES = t-constants.c t-modlinv.c
+OBJECTS = t-constants$U.$(OBJEXT) t-modlinv$U.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -217,6 +222,10 @@ maintainer-clean-kr:
 t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES)
 	@rm -f t-constants$(EXEEXT)
 	$(LINK) $(t_constants_LDFLAGS) $(t_constants_OBJECTS) $(t_constants_LDADD) $(LIBS)
+
+t-modlinv$(EXEEXT): $(t_modlinv_OBJECTS) $(t_modlinv_DEPENDENCIES)
+	@rm -f t-modlinv$(EXEEXT)
+	$(LINK) $(t_modlinv_LDFLAGS) $(t_modlinv_OBJECTS) $(t_modlinv_LDADD) $(LIBS)
 .c.o:
 	$(COMPILE) -c $<
 .c.obj:
@@ -225,7 +234,10 @@ t-constants$(EXEEXT): $(t_constants_OBJECTS) $(t_constants_DEPENDENCIES)
 	$(LTCOMPILE) -c -o $@ $<
 t-constants_.c: t-constants.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-constants.c; then echo $(srcdir)/t-constants.c; else echo t-constants.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-constants_.c
-t-constants_.$(OBJEXT) t-constants_.lo : $(ANSI2KNR)
+t-modlinv_.c: t-modlinv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-modlinv.c; then echo $(srcdir)/t-modlinv.c; else echo t-modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-modlinv_.c
+t-constants_.$(OBJEXT) t-constants_.lo t-modlinv_.$(OBJEXT) \
+t-modlinv_.lo : $(ANSI2KNR)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
