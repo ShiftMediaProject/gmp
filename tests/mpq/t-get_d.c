@@ -146,12 +146,6 @@ check_onebit (void)
   long    exp, l;
   mpq_t   q;
   double  got, want;
-  /* FIXME: It'd be better to base this on the float format. */
-#ifdef __vax
-  int     limit = 127;  /* vax fp numbers have limited range */
-#else
-  int     limit = 512;
-#endif
 
   mpq_init (q);
 
@@ -183,7 +177,7 @@ check_onebit (void)
 
           if (got != want)
             {
-              printf    ("mpq_get_d wrong on %s2**%d\n", i, neg ? "-" : "");
+              printf    ("mpq_get_d wrong on %s2**%ld\n", neg ? "-" : "", exp);
               mpq_trace ("   q    ", q);
               d_trace   ("   want ", want);
               d_trace   ("   got  ", got);
