@@ -54,10 +54,11 @@
      make it so by default and leave a --enable-alloca=malloc-nonreentrant with
      the current code.  A reentrant version will probably be slower since it
      can't share malloced blocks across function calls.
-<li> <code>mpz_scan0</code> and <code>mpz_scan1</code> only work in quite
-     limited circumstances and could be improved.  Supporting twos complement
-     like the other bitwise functions would be good.  A defined return value
-     for no 0 or 1 found would be good too, perhaps <code>ULONG_MAX</code>.
+<li> <code>_mpz_realloc</code> will reallocate to less than the current size
+     of an mpz.  This is ok internally when a destination size is yet to be
+     updated, but from user code it should probably refuse to go below the
+     size of the current value.  Could switch internal uses across to a new
+     function, and tighten up <code>_mpz_realloc</code>.
 </ul>
 
 
@@ -253,6 +254,16 @@
      works.  It is "outmoded".  What else can we use for reasonable speed?
 <li> Cray T3E: Experiment with optimization options.  In particular,
      -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
+<li> Cray: Variable length arrays seem to be faster than the stack-alloc.c
+     scheme.  Not sure why, maybe they merely give the compiler more
+     information about aliasing (or the lack thereof).  Would like to modify
+     <code>TMP_ALLOC</code> to use them, or introduce a new scheme.  Memory
+     blocks wanted unconditionally are easy enough, those wanted only
+     sometimes are a problem.  Perhaps a special size calculation to ask for a
+     dummy length 1 when unwanted, or perhaps an inlined subroutine
+     duplicating code under each conditional.  Don't really want to turn
+     everything into a dog's dinner just because Cray don't offer an
+     <code>alloca</code>.
 
 <li> Improve <code>count_leading_zeros</code> for 64-bit machines:
   <pre>
@@ -436,7 +447,7 @@ near future, but are at least worth thinking about.
       <font size=2>
       Please send comments about this page to
       <a href="mailto:tege@swox.com">tege@swox.com</a>.<br>
-      Copyright 1999, 2000 Torbjörn Granlund.
+      Copyright 1999, 2000, 2001 Torbjörn Granlund.
       </font>
     </td>
     <td align=right>
