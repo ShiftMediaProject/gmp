@@ -48,7 +48,7 @@ sh_status (int sig)
 int
 main (int argc, char *argv[])
 {
-  const char usage[] = "usage: findcl [-a start_a] [-d] [-i interval-fact] m [low_merit [high_merit]]\n";
+  const char usage[] = "usage: findcl [-a start_a] [-d] [-i interval-fact] [-v] m [low_merit [high_merit]]\n";
   int f;
   int v_lose, m_lose, v_best, m_best;
   int c;
@@ -76,7 +76,7 @@ main (int argc, char *argv[])
   mpf_init_set_d (low_merit, .1);
   mpf_init_set_d (high_merit, .1);
 
-  while ((c = getopt (argc, argv, "a:di:h")) != -1)
+  while ((c = getopt (argc, argv, "a:di:hv")) != -1)
     switch (c)
       {
       case 'a':			/* start_a */
@@ -91,6 +91,10 @@ main (int argc, char *argv[])
       case 'i':			/* interval */
 	intervalfac = (int) strtoul (optarg, NULL, 0);
 	break;
+
+      case 'v':			/* print version */
+	puts (rcsid[1]);
+	exit (0);
 
       case 'h':
       case '?':

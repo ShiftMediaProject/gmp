@@ -1,7 +1,7 @@
 1999-04-29  Linus Nordberg  <linus@swox.se>
 
 	* findcl.c (main): Add option '-i' for interval factor.  Separate
-	v and merit lose figures.
+	v and merit lose figures.  Add '-v' for version.
 
 1999-04-28  Linus Nordberg  <linus@swox.se>
 
