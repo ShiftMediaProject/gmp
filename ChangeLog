@@ -3,6 +3,10 @@
 	* gmp.texi (Random State Initialization): Correct arguments to
 	`gmp_randinit'.
 
+	* acinclude.m4 (GMP_VERSION): Change `eval' --> `m4_eval'.  Fix
+	from Kevin.
+	* aclocal.m4: Regenerate.
+
 2000-04-25  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/aors_n.asm: Remove parentheses around an immediate that
