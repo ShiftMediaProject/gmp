@@ -2961,10 +2961,13 @@ is non-zero.
 
 @deftypefun void mpz_gcdext (mpz_t @var{g}, mpz_t @var{s}, mpz_t @var{t}, mpz_t @var{a}, mpz_t @var{b})
 @cindex Extended GCD
-Compute @var{g}, @var{s}, and @var{t}, such that
-@math{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g} =
-@gcd{}(@var{a}, @var{b})}.  If @var{t} is @code{NULL}, that argument is
-not computed.
+Set @var{g} to the greatest common divisor of @var{a} and @var{b}, and in
+addition set @var{s} and @var{t} to coefficients satisfying
+@math{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g}}.
+@var{g} is always positive, even if one or both of @var{a} and @var{b} are
+negative.
+
+If @var{t} is @code{NULL} then that value is not computed.
 @end deftypefun
 
 @deftypefun void mpz_lcm (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
