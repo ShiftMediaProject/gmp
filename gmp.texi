@@ -1,7 +1,7 @@
 \input texinfo    @c -*-texinfo-*-
 @c %**start of header
 @setfilename gmp.info
-@settitle GNU MP 2.1
+@settitle GNU MP 2.90
 @synindex tp fn
 @iftex
 @afourpaper
@@ -62,7 +62,7 @@ by the Foundation.
 
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
-@subtitle Edition 2.1 SNAPSHOT
+@subtitle Edition 2.90 SNAPSHOT
 @subtitle October 1999
 
 @author by Torbj@"orn Granlund, Swox AB
@@ -109,7 +109,7 @@ by the Foundation.
 @top GNU MP
 
 This manual documents how to install and use the GNU multiple precision
-arithmetic library, version 2.1.
+arithmetic library, version 2.90.
 
 @end ifinfo
 
@@ -449,9 +449,9 @@ A variable should only be initialized once, or at least cleared out between
 each initialization.  After a variable has been initialized, it may be
 assigned to any number of times.
 
-For efficiency reasons, avoid to initialize and clear out a MP variable in
-loops.  Instead, initialize it before entering the loop, and clear it out after
-the loop has exited.
+For efficiency reasons, avoid initializing and clearing out an MP variable in
+a loop.  Instead, initialize it before entering the loop, and clear it out
+after the loop has exited
 
 Once you have initialized an MP variable, you don't need to worry about space
 allocation for that variable.  All functions in MP automatically allocate
@@ -706,8 +706,8 @@ to deallocate any memory allocated by this function.
 @cindex Reporting bugs
 
 If you think you have found a bug in the MP library, please investigate it and
-report it.  We have made this library available to you, and it is not to ask
-too much from you, to ask you to report the bugs that you find.
+report it.  We have made this library available to you, and it is not too much
+to ask you to report the bugs that you find.
 
 But before you report a bug, please check @samp{http://www.swox.com/gmp/} for
 patches for this release.
@@ -3107,14 +3107,14 @@ Robert Harley of Inria, France and David Seal of ARM, England, suggested clever
 improvements for population count.
 
 Robert Harley also wrote a template Karatsuba multiplication function for GMP
-2.1 on which the current implementation is based.
+3 on which the current implementation is based.
 
 Torsten Ekedahl of the Mathematical department of Stockholm University provided
 significant inspiration during several phases of the GMP development.  His
 mathematical expertise helped improve several algorithms.
 
 (This list is chronological, not ordered after significance.  If you have
-contributed to GMP but are not listed above, please tell tege@@gnu.org about
+contributed to GMP but are not listed above, please tell tege@@swox.com about
 the omission!)
 
 @node References, , Contributors, Top
