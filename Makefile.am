@@ -241,7 +241,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 # -export-symbols, since the tune and speed programs, and perhaps some of
 # the test programs, want to access undocumented symbols.
 
-libgmp_la_SOURCES = gmp-impl.h longlong.h				\
+libgmp_la_SOURCES = gmp-impl.h longlong.h randmt.h			\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c invalid.c memory.c   \
   mp_bpl.c mp_clz_tab.c mp_dv_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c \
   rand.c randclr.c randdef.c randiset.c randlc2s.c randlc2x.c randmt.c	\
