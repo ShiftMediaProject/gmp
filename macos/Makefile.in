@@ -124,16 +124,23 @@ all	@dep@ {Lib}
 
 
 clean @dep@
-	Delete -c -i {Lib}
-	Delete    -y {ObjDirs}
-	Delete -c -i config.h
-	Delete -c -i configure.mac
-	Delete -c -i Makefile
-	Delete -c -i RunTests
 	Delete -c -i ::mpz:tests:@wildcard@.o
 	Delete -c -i ::mpq:tests:@wildcard@.o
 	Delete -c -i ::mpf:tests:@wildcard@.o
+	Delete -c -i :@wildcard@:@wildcard@.o
+	Delete -c -i :@wildcard@:@wildcard@.s
 	Delete -c -i @wildcard@~
+
+distclean @dep@ clean
+	Delete -c -i {Lib}
+	Delete -c -i @wildcard@~
+	Delete -c -i @wildcard@.bak
+
+maintainer_clean @dep@ distclean
+	Delete -c -i config.h
+	Delete -c -i configure.mac
+	Delete -c -i Makefile
+	Delete -c -i Makefile.cw
 
 ###########################################################################
 # Test application FIXME: Not ready

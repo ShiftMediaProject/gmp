@@ -115,22 +115,6 @@ my %cfg_cw =
   );
 
 
-# A directory can't be on the right side so this is just a script
-
-my @dirs =
-  (
-   'MpfObj',
-   'MpnObj',
-   'MpqObj',
-   'MpzObj',
-   'CmnObj',
-   'AsmObj',
-   'Asm',
-   'MpfBin',
-   'MpqBin',
-   'MpzBin',
-  );
-
 my $make_in      = 'Makefile.in';
 my $make         = 'Makefile';
 my $configure    = mf("../configure");
@@ -153,17 +137,6 @@ $cfg = \%cfg_apple;		# Default
 if (@ARGV and $ARGV[0] =~ /^cw|co/) {
   $cfg = \%cfg_cw;
   $make .= '.cw';
-}
-
-###########################################################################
-#
-#  Create directories
-#
-###########################################################################
-
-foreach (@dirs) {
-  -d $_ or mkdir $_, 0775
-    or die "Can't create directory \"$_\"\n";
 }
 
 ###########################################################################
