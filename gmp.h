@@ -1056,7 +1056,7 @@ enum
 
 /* Note: major version number is in mp.h too */
 #define __GNU_MP_VERSION 3
-#define __GNU_MP_VERSION_MINOR 0
+#define __GNU_MP_VERSION_MINOR 1
 #define __GNU_MP_VERSION_PATCHLEVEL 0
 #define __GMP_H__
 #endif /* __GMP_H__ */
