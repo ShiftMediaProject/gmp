@@ -90,12 +90,6 @@ all	@dep@ {Lib}
 # Special rules, got them from "mp[fqz]/Makefile.am", and configure.in
 # mulfunc declarations
 
-{MpnObjDir}popcount.o @dep@ ::mpn:popham.c Makefile
-	{C} ::mpn:popham.c -o {Targ} {COptions} -d OPERATION_popcount
-
-{MpnObjDir}hamdist.o @dep@ ::mpn:popham.c Makefile
-	{C} ::mpn:popham.c -o {Targ} {COptions} -d OPERATION_hamdist
-
 
 {MpzObjDir}add.o @dep@ ::mpz:aors.c Makefile
 	{C} ::mpz:aors.c -o {Targ} {COptions} -d OPERATION_add
@@ -126,13 +120,6 @@ all	@dep@ {Lib}
 
 {MpzObjDir}mul_ui.o @dep@ ::mpz:mul_siui.c Makefile
 	{C} ::mpz:mul_siui.c -o {Targ} {COptions} -d OPERATION_mul_ui
-
-
-{MpqObjDir}add.o @dep@ ::mpq:aors.c Makefile
-	{C} ::mpq:aors.c -o {Targ} {COptions} -d OPERATION_add
-
-{MpqObjDir}sub.o @dep@ ::mpq:aors.c Makefile
-	{C} ::mpq:aors.c -o {Targ} {COptions} -d OPERATION_sub
 
 
 {MpfObjDir}fits_sint.o @dep@ ::mpf:fits_s.c Makefile
