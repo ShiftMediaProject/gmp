@@ -43,8 +43,12 @@ LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
 EXTRA_PROGRAMS = speed tuneup
 
 tuneup_SOURCES = tuneup.c
-tuneup_LDADD = libspeed.la libgmptune.a -lm
-tuneup.o: libgmptune.a
+tuneup_DEPENDENCIES = libspeed.la libgmptune.a
+tuneup_LDADD = $(tuneup_DEPENDENCIES) -lm
+
+# Force sqr_basecase.h to be built ready for tuneup.c, using DEPENDENCIES
+# etc doesn't work when ansi2knr gets run
+tuneup.c: sqr_basecase.h
 
 speed_SOURCES = speed.c
 
@@ -81,9 +85,18 @@ SQR_GENERIC_MAX = 200
 
 LIBGMPTUNE_OBJS = mul_n.o mul.o bz_divrem_n.o tdiv_qr.o
 
+sqr_basecase.h: libgmptune.a
+
+
+# "cp -f" is not portable (eg. it fails on SunOS)
+#
+# "ar r" is going to be a bit fragile because there's more than one mul.o in
+# libgmp.a.
+
 libgmptune.a: $(top_builddir)/.libs/libgmp.a $(LIBGMPTUNE_OBJS)
-	cp -f $(top_builddir)/.libs/libgmp.a libgmptmp.a
-	ar r libgmptmp.a $(LIBGMPTUNE_OBJS)
+	rm -f libgmptmp.a
+	cp $(top_builddir)/.libs/libgmp.a libgmptmp.a
+	$(AR) r libgmptmp.a $(LIBGMPTUNE_OBJS)
 	rm -f $(SQR_CLEANFILES)
 	echo "" >sqr_basecase.h
 	if test -f $(top_builddir)/mpn/sqr_basecase.c; then		\
@@ -94,14 +107,16 @@ libgmptune.a: $(top_builddir)/.libs/libgmp.a $(LIBGMPTUNE_OBJS)
 	    $(MAKE) $(AM_MAKEFLAGS) sqr-basecase-asm;			\
 	  fi								\
 	fi
+	$(RANLIB) libgmptmp.a
+	rm -f libgmptune.a
 	mv libgmptmp.a libgmptune.a
 
 sqr-basecase-generic:
 	cp $(top_builddir)/mpn/sqr_basecase.c .
 	$(MAKE) $(AM_MAKEFLAGS) \
-		CFLAGS='$(CFLAGS) -DKARATSUBA_THRESHOLD=$(SQR_GENERIC_MAX)' \
+		CFLAGS='$(CFLAGS) -DKARATSUBA_SQR_THRESHOLD=$(SQR_GENERIC_MAX)' \
 		sqr_basecase.o
-	ar r libgmptmp.a sqr_basecase.o
+	$(AR) r libgmptmp.a sqr_basecase.o
 	echo '#define KARATSUBA_SQR_MAX  $(SQR_GENERIC_MAX)' >sqr_basecase.h
 
 sqr-basecase-asm:
@@ -115,17 +130,17 @@ sqr-basecase-asm:
 
 THRESHOLDS = -DTUNE_PROGRAM_BUILD=1
 
-mul_n.o: $(top_builddir)/mpn/mul_n$U.c
-	$(COMPILE) $(THRESHOLDS) -c $<
+mul_n.o: $(top_builddir)/mpn/mul_n.c
+	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/mul_n.c
 
-mul.o: $(top_builddir)/mpn/mul$U.c
-	$(COMPILE) $(THRESHOLDS) -c $<
+mul.o: $(top_builddir)/mpn/mul.c
+	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/mul.c
 
-bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n$U.c
-	$(COMPILE) $(THRESHOLDS) -c $<
+bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n.c
+	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/bz_divrem_n.c
 
-tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr$U.c
-	$(COMPILE) $(THRESHOLDS) -c $<
+tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr.c
+	$(COMPILE) $(THRESHOLDS) -c $(top_builddir)/mpn/tdiv_qr.c
 
 
 tune: tuneup
@@ -154,6 +169,10 @@ st:
 	./speed $(STS) mpn_kara_sqr_n mpn_toom3_sqr_n | less
 stg:
 	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
+
+
+bz:
+	./speed -s 5-40 -c mpn_bz_divrem_sb mpn_bz_divrem_n mpn_bz_tdiv_qr
 
 
 graph:
