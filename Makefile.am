@@ -144,7 +144,7 @@ MPQ_OBJECTS = mpq/add$U.lo mpq/canonicalize$U.lo mpq/clear$U.lo		\
   mpq/mul$U.lo mpq/neg$U.lo mpq/out_str$U.lo mpq/set$U.lo		\
   mpq/set_den$U.lo mpq/set_num$U.lo mpq/set_si$U.lo mpq/set_ui$U.lo	\
   mpq/sub$U.lo mpq/equal$U.lo mpq/set_z$U.lo mpq/set_d$U.lo		\
-  mpq/swap$U.lo
+  mpq/set_f$U.lo mpq/swap$U.lo
 
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
