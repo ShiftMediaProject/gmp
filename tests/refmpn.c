@@ -111,7 +111,7 @@ refmpn_malloc_limbs (mp_size_t size)
   ASSERT (size >= 0);
   if (size == 0)
     size = 1;
-  p = (mp_ptr) malloc (size * BYTES_PER_MP_LIMB);
+  p = (mp_ptr) malloc ((size_t) (size * BYTES_PER_MP_LIMB));
   ASSERT (p != NULL);
   return p;
 }
@@ -127,7 +127,7 @@ refmpn_memdup_limbs (mp_srcptr ptr, mp_size_t size)
 
 /* malloc n limbs on a multiple of m bytes boundary */
 mp_ptr
-refmpn_malloc_limbs_aligned (size_t n, size_t m)
+refmpn_malloc_limbs_aligned (mp_size_t n, size_t m)
 {
   return (mp_ptr) align_pointer (refmpn_malloc_limbs (n + m-1), m);
 }
@@ -671,7 +671,7 @@ refmpn_mul_2 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_srcptr mult)
   mp_limb_t  c;
 
   ASSERT (refmpn_overlap_fullonly_p (dst, src, size));
-  ASSERT (! refmpn_overlap_p (dst, size+1, mult, 2));
+  ASSERT (! refmpn_overlap_p (dst, size+1, mult, (mp_size_t) 2));
   ASSERT (size >= 1);
   ASSERT_MPN (mult, 2);
 
@@ -1042,7 +1042,7 @@ refmpn_invert_limb (mp_limb_t d)
 {
   mp_limb_t r;
   ASSERT (d & GMP_LIMB_HIGHBIT);
-  return refmpn_udiv_qrnnd (&r, -d-1, -1, d);
+  return refmpn_udiv_qrnnd (&r, -d-1, MP_LIMB_T_MAX, d);
 }
 
 
@@ -1360,8 +1360,8 @@ refmpn_mod2 (mp_limb_t r[2], const mp_limb_t a[2], const mp_limb_t d[2])
   mp_limb_t  D[2];
   int        n;
 
-  ASSERT (! refmpn_overlap_p (r, 2, a, 2));
-  ASSERT (! refmpn_overlap_p (r, 2, d, 2));
+  ASSERT (! refmpn_overlap_p (r, (mp_size_t) 2, a, (mp_size_t) 2));
+  ASSERT (! refmpn_overlap_p (r, (mp_size_t) 2, d, (mp_size_t) 2));
   ASSERT_MPN (a, 2);
   ASSERT_MPN (d, 2);
 
@@ -1373,22 +1373,22 @@ refmpn_mod2 (mp_limb_t r[2], const mp_limb_t a[2], const mp_limb_t d[2])
     {
       if (D[1] & GMP_NUMB_HIGHBIT)
         break;
-      if (refmpn_cmp (r, D, 2) <= 0)
+      if (refmpn_cmp (r, D, (mp_size_t) 2) <= 0)
         break;
-      refmpn_lshift (D, D, 2, 1);
+      refmpn_lshift (D, D, (mp_size_t) 2, 1);
       n++;
       ASSERT (n <= GMP_NUMB_BITS);
     }
 
   while (n >= 0)
     {
-      if (refmpn_cmp (r, D, 2) >= 0)
-        ASSERT_NOCARRY (refmpn_sub_n (r, r, D, 2));
-      refmpn_rshift (D, D, 2, 1);
+      if (refmpn_cmp (r, D, (mp_size_t) 2) >= 0)
+        ASSERT_NOCARRY (refmpn_sub_n (r, r, D, (mp_size_t) 2));
+      refmpn_rshift (D, D, (mp_size_t) 2, 1);
       n--;
     }
 
-  ASSERT (refmpn_cmp (r, d, 2) < 0);
+  ASSERT (refmpn_cmp (r, d, (mp_size_t) 2) < 0);
 }
 
 
@@ -1543,7 +1543,7 @@ refmpn_get_str (unsigned char *dst, int base, mp_ptr src, mp_size_t size)
 
   MPN_SIZEINBASE (dsize, src, size, base);
   ASSERT (dsize >= 1);
-  ASSERT (! byte_overlap_p (dst, dsize, src, size * BYTES_PER_MP_LIMB));
+  ASSERT (! byte_overlap_p (dst, (mp_size_t) dsize, src, size * BYTES_PER_MP_LIMB));
 
   if (size == 0)
     {
@@ -1560,7 +1560,7 @@ refmpn_get_str (unsigned char *dst, int base, mp_ptr src, mp_size_t size)
     {
       d--;
       ASSERT (d >= dst);
-      *d = refmpn_divrem_1 (src, 0, src, size, (mp_limb_t) base);
+      *d = refmpn_divrem_1 (src, (mp_size_t) 0, src, size, (mp_limb_t) base);
       size -= (src[size-1] == 0);
     }
   while (size != 0);
