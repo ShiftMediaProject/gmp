@@ -177,11 +177,11 @@ void
 check_inf (void)
 {
 #if _GMP_IEEE_FLOATS
-  static const int exp_table[] = {
+  static const long exp_table[] = {
     999999L, LONG_MAX,
   };
   static const mp_limb_t  np[4] = { 1, 1, 1, 1 };
-  long       exp = 9999999L;
+  long       exp;
   mp_size_t  nsize, sign, got_sign;
   double     got;
   int        exp_i;
