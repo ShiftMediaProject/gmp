@@ -127,7 +127,6 @@ ifdef(`HAVE_VIS',
 `	mov	-1, %g4
 	wr	%g0, 0xD2, %asi
 	srlx	%g4, 32, xffffffff	C store mask in register `xffffffff'
-	mov	0, cy			C clear cy
 	ldda	[%i3+6] %asi, v000
 	ldda	[%i3+4] %asi, v016
 	ldda	[%i3+2] %asi, v032
@@ -144,6 +143,8 @@ ifdef(`HAVE_VIS',
 	fxtod	v080, v080
 	fxtod	v096, v096
 	fxtod	v112, v112
+	fzero	u00_hi
+	fzero	u32_hi
 ',
 `	mov	-1, %g4
 	ldx	[%i3+0], %l0		C vp[0]
@@ -172,7 +173,6 @@ ifdef(`HAVE_VIS',
 	stx	%g3, [%sp+2223+56]
 
 	srlx	%g4, 32, xffffffff	C store mask in register `xffffffff'
-	mov	0, cy			C clear cy
 
 	ldd	[%sp+2223+0], v000
 	ldd	[%sp+2223+8], v016
@@ -205,50 +205,46 @@ C Start software pipeline.
 	fxtod	u00_hi, u00
 C mid
 	ld	[%i1+0], u32_lo		C read high 32 bits of up[i]
-	fmuld	u00, v000, a000			C fmuld 0
-	fmuld	u00, v016, a016			C fmuld 1
-	fmuld	u00, v032, a032			C fmuld 2
-	fmuld	u00, v048, a048			C fmuld 3
+	fmuld	u00, v000, a000
+	fmuld	u00, v016, a016
+	fmuld	u00, v032, a032
+	fmuld	u00, v048, a048
 	add	%i2, -1, %i2		C BOOKKEEPING
-	fmuld	u00, v064, p064			C fmuld 4
+	fmuld	u00, v064, p064
 	add	%i1, 8, %i1		C BOOKKEEPING
 	fxtod	u32_hi, u32
-	fmuld	u00, v080, p080			C fmuld 5
-	fmuld	u00, v096, p096a		C fmuld 6
+	fmuld	u00, v080, p080
+	fmuld	u00, v096, p096a
 	brnz,pt	%i2, .L_2_or_more
-	fmuld	u00, v112, p112a		C fmuld 7
+	 fmuld	u00, v112, p112a
 
-.L_1_only:
-	fdtox	a000, out000					C fdtox 0
-	fmuld	u32, v000, p000			C fmuld	2
-	fdtox	a016, out016					C fdtox 1
-	fmuld	u32, v016, p016			C fmuld	3
+.L1:	fdtox	a000, out000
+	fmuld	u32, v000, p000
+	fdtox	a016, out016
+	fmuld	u32, v016, p016
 	fmovd	p064, a064
-	fmuld	u32, v032, p032			C fmuld	4
+	fmuld	u32, v032, p032
 	fmovd	p080, a080
-	fmuld	u32, v048, p048			C fmuld	5
+	fmuld	u32, v048, p048
 	std	out000, [%sp+2223+16]
-	faddd	p000, a032, a000			C faddd	2
-	fmuld	u32, v064, p064			C fmuld	6
+	faddd	p000, a032, a000
+	fmuld	u32, v064, p064
 	std	out016, [%sp+2223+24]
 	fxtod	u00_hi, u00
-	faddd	p016, a048, a016			C faddd	3
-	fmuld	u32, v080, p080			C fmuld	7
-	faddd	p032, a064, a032			C faddd	4
-	fmuld	u32, v096, p096b		C fmuld	8
-	faddd	p048, a080, a048			C faddd	5
-	fmuld	u32, v112, p112b		C fmuld	9
+	faddd	p016, a048, a016
+	fmuld	u32, v080, p080
+	faddd	p032, a064, a032
+	fmuld	u32, v096, p096b
+	faddd	p048, a080, a048
+	fmuld	u32, v112, p112b
 C mid
-	fdtox	a000, out000					C fdtox 2
-	fdtox	a016, out016					C fdtox 3
-	faddd	p064, p096a, a064			C faddd	6
-	faddd	p080, p112a, a080			C faddd 7
-	add	%i2, -1, %i2		C BOOKKEEPING
+	fdtox	a000, out000
+	fdtox	a016, out016
+	faddd	p064, p096a, a064
+	faddd	p080, p112a, a080
 	std	out000, [%sp+2223+0]
-	add	%i1, 8, %i1		C BOOKKEEPING
-	std	out016, [%sp+2223+8]
 	b	.L_wd2
-	nop
+	 std	out016, [%sp+2223+8]
 
 .L_2_or_more:
 	ld	[%i1+4], u00_lo		C read low 32 bits of up[i]
@@ -294,9 +290,10 @@ C mid
 	fmuld	u00, v096, p096a
 	faddd	p048, a080, a048
 	brnz,pt	%i2, .L_3_or_more
-	fmuld	u00, v112, p112a
+	 fmuld	u00, v112, p112a
 
-	b,a	.Lend
+	b	.Lend
+	 nop
 
 C  64      32       0
 C   .       .       .
@@ -397,7 +394,7 @@ C
 	stw	%l5, [%i0+0]
 	faddd	p048, a080, a048
 	brnz,pt	%i2, .Loop
-	fmuld	u00, v112, p112a
+	 fmuld	u00, v112, p112a
 C END MAIN LOOP
 
 C WIND-DOWN PHASE 1
@@ -431,7 +428,6 @@ C WIND-DOWN PHASE 1
 	faddd	p032, a064, a032
 	fmuld	u32, v096, p096b
 	stw	%l5, [%i0+4]
-	nop
 	faddd	p048, a080, a048
 	fmuld	u32, v112, p112b
 C mid
