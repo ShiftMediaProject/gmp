@@ -23,12 +23,24 @@ include(`../config.m4')
 
 
 C         cycles/limb
-C Hammer:     2.5	(mpn_lshift + mpn_add_n need 4.125)
+C Hammer:     2.14	(mpn_lshift + mpn_add_n need 4.125)
 
-C The speed is constrained by the recurrency on carry and eax.  There are 10
-C instructions on that chain, therefore 10/4 = 2.5 c/l.  Try breaking the
-C recurrency by keeping acy and scy in different registers.  (Hammer performs
-C renaming on the flags register.)  We might be able to reach 2 c/l.
+C Sometimes speed degenerates to 2.58 c/l, supposedly related to that some
+C operand alignments cause conflicts in the blocked cache.
+
+C The speed is limited by decoding/issue bandwith.  There are 25 instructions
+C in the loop, which corresponds to 25/3/4 = 2.083 c/l.  Better speed could be
+C achieved by using indexed addressing (and thereby saving pointer updates) and
+C by using more unrolling.  Since we save and restore carry using two registers
+C (ebp and eax), carry is irrelevant between these instructions, and that could
+C be used for loop counter update using addq, as required for proper indexed
+C addressing.
+
+C It should be possible to get well under 2 c/l for this operation, to about
+C 38/8/3 = 1.583 c/l.
+
+C FIXME: Use technique of rsh1add_n.asm to handle unrolling.  That will save
+C a register (rbx) and allow for a noticable constant speedup.
 
 C INPUT PARAMETERS
 define(`rp',`%rdi')
@@ -39,17 +51,19 @@ define(`n',`%rcx')
 ASM_START()
 PROLOGUE(mpn_addlsh1_n)
 	pushq	%rbx			C				1
+	pushq	%rbp			C				1
 
-	xorl   %eax, %eax		C				2
+	xorl	%eax, %eax		C				2
 	movl	%ecx, %ebx		C				2
 
-	shrq   $2, n			C				4
+	shrq	$2, n			C				4
 	clc				C				1
-	je     .Lend			C				2
+	je	.Lend			C				2
 	andl	$3, %ebx		C				3
 	ALIGN(16)
 .Loop:
-	rcll	%eax			C save acy, restore scy
+	sbbl	%ebp, %ebp		C save acy
+	addl	%eax, %eax		C restore scy
 
 	leaq	32(up), up
 	leaq	32(rp), rp
@@ -64,7 +78,8 @@ PROLOGUE(mpn_addlsh1_n)
 	adcq	%r11, %r11
 	leaq	32(vp), vp
 
-	rcrl	%eax			C save scy, restore acy
+	sbbl	%eax, %eax		C save scy
+	addl	%ebp, %ebp		C restore acy
 
 	adcq	-32(up), %r8
 	movq	%r8, -32(rp)
@@ -82,36 +97,43 @@ PROLOGUE(mpn_addlsh1_n)
 	decl	%ebx
 	je	.Lret
 
-	rcll	%eax			C save acy, restore scy
+	sbbl	%ebp, %ebp		C save acy
+	addl	%eax, %eax		C restore scy
 	movq	(vp), %r8
 	adcq	%r8, %r8
-	rcrl	%eax			C save scy, restore acy
+	sbbl	%eax, %eax		C save scy
+	addl	%ebp, %ebp		C restore acy
 	adcq	(up), %r8
 	movq	%r8, (rp)
 	decl	%ebx
 	je	.Lret
 
-	rcll	%eax			C save acy, restore scy
+	sbbl	%ebp, %ebp		C save acy
+	addl	%eax, %eax		C restore scy
 	movq	8(vp), %r8
 	adcq	%r8, %r8
-	rcrl	%eax			C save scy, restore acy
+	sbbl	%eax, %eax		C save scy
+	addl	%ebp, %ebp		C restore acy
 	adcq	8(up), %r8
 	movq	%r8, 8(rp)
 	decl	%ebx
 	je	.Lret
 
-	rcll	%eax			C save acy, restore scy
+	sbbl	%ebp, %ebp		C save acy
+	addl	%eax, %eax		C restore scy
 	movq	16(vp), %r8
 	adcq	%r8, %r8
-	rcrl	%eax			C save scy, restore acy
+	sbbl	%eax, %eax		C save scy
+	addl	%ebp, %ebp		C restore acy
 	adcq	16(up), %r8
 	movq	%r8, 16(rp)
 	decl	%ebx
 	je	.Lret
 .Lret:
-	rcll	%eax
-	adcl	$0, %eax
+	sbbl	$0, %eax
+	negl	%eax
 
+	popq	%rbp			C				1
 	popq	%rbx			C				1
 	ret				C				1
 EPILOGUE()
