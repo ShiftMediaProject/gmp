@@ -183,6 +183,7 @@ ifdef(`HAVE_ABI_32',
 .Lb01:	ld8		r19 = [up], 8
 	ld8		r23 = [vp], 8
 	br.cloop.dptk	.grt1
+	;;
 
 	logop(		r15, r19, r23)
 	;;
@@ -202,6 +203,7 @@ ifdef(`HAVE_ABI_32',
 	ld8		r19 = [up], 8
 	ld8		r23 = [vp], 8
 	br.cloop.dptk	.grt5
+	;;
 
 	logop(		r14, r16, r20)
 	notormov(	r9, r15)
