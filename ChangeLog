@@ -1,3 +1,8 @@
+2000-05-26  Torbjorn Granlund  <tege@swox.com>
+
+	* demos/pexpr.c (setup_error_handler): Don't call sigaltstack on
+	Unicos.
+
 2000-05-25  Torbjorn Granlund  <tege@swox.com>
 
 	* insert-dbl.c: Work around GCC 2.8 bug.
