@@ -1,5 +1,8 @@
 Tue Jun  4 03:42:18 1996  Torbjorn Granlund  <tege@noisy.tmg.se>
 
+	* mpn/powerpc32/mul_1.s: Really clear cy before entering loop.
+	* mpn/powerpc32/*.s: Fix power/powerpc syntax issues.
+
 	* mpn/config/t-ppc-aix: New file.
 	* mpn/configure.in: Use t-ppc-aix for powerpc like t-pwr-aix for power.
 

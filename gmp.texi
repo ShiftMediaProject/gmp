@@ -63,7 +63,7 @@ by the Foundation.
 @title GNU MP
 @subtitle The GNU Multiple Precision Arithmetic Library
 @subtitle Edition 2.0
-@subtitle May 1996
+@subtitle June 1996
 
 @author by Torbj@"orn Granlund, TMG Datakonsult
 
@@ -513,15 +513,19 @@ the file format truly portable between machines with different word sizes.
 @item Several @code{mpn} functions have changed.  But they were intentionally
 undocumented in previous releases.
 
+@item The functions @code{mpz_cmp_ui}, @code{mpz_cmp_si}, and @code{mpq_cmp_ui}
+are now implementated as macros, and thereby sometimes evaluate their
+arguments multiple times.
+
 @end enumerate
 
 
 @section Getting the Latest Version of MP
 
-The latest version of the MP library is available by anonymous ftp from from
-@samp{prep.ai.mit.edu}.  The file name is @file{/pub/gnu/gmp-M.N.tar.gz}.
-Many sites around the world mirror @samp{prep}; please use a mirror site near
-you.
+The latest version of the MP library is available by anonymous ftp from
+from @samp{prep.ai.mit.edu}.  The file name is
+@file{/pub/gnu/gmp-M.N.tar.gz}.  Many sites around the world mirror
+@samp{prep}; please use a mirror site near you.
 
 @node Reporting Bugs, Integer Functions, MP Basics, Top
 @comment  node-name,  next,  previous,  up
@@ -1139,8 +1143,6 @@ Compute the Jacobi and Legendre symbols, respectively.
 @section Comparison Functions
 
 @deftypefun int mpz_cmp (mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx int mpz_cmp_ui (mpz_t @var{op1}, unsigned long int @var{op2})
-@deftypefunx int mpz_cmp_si (mpz_t @var{op1}, signed long int @var{op2})
 @ifinfo
 Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
 @var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
@@ -1155,7 +1157,26 @@ Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
 @end iftex
 @end deftypefun
 
-@deftypefun int mpz_sgn (mpz_t @var{op})
+@deftypefn Macro int mpz_cmp_ui (mpz_t @var{op1}, unsigned long int @var{op2})
+@deftypefnx Macro int mpz_cmp_si (mpz_t @var{op1}, signed long int @var{op2})
+@ifinfo
+Compare @var{op1} and @var{op2}.  Return a positive value if @var{op1} >
+@var{op2}, zero if @var{op1} = @var{op2}, and a negative value if @var{op1} <
+@var{op2}.
+@end ifinfo
+@iftex
+@tex
+Compare @var{op1} and @var{op2}.  Return a positive value if $@var{op1} >
+@var{op2}$, zero if $@var{op1} = @var{op2}$, and a negative value if $@var{op1}
+< @var{op2}$.
+@end tex
+@end iftex
+
+These functions are actually implemented as macros.  They evaluate their
+arguments multiple times.
+@end deftypefn
+
+@deftypefn Macro int mpz_sgn (mpz_t @var{op})
 @ifinfo
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
 @end ifinfo
@@ -1164,7 +1185,10 @@ Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
 Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
 @end tex
 @end iftex
-@end deftypefun
+
+This function is actually implemented as a macro.  It evaluates its
+arguments multiple times.
+@end deftypefn
 
 @node Integer Logic and Bit Fiddling, I/O of Integers, Comparison Functions, Integer Functions
 @comment  node-name,  next,  previous,  up
@@ -1445,7 +1469,7 @@ To determine if two rationals are equal, @code{mpq_equal} is faster than
 @code{mpq_cmp}.
 @end deftypefun
 
-@deftypefun int mpq_cmp_ui (mpq_t @var{op1}, unsigned long int @var{num2}, unsigned long int @var{den2})
+@deftypefn Macro int mpq_cmp_ui (mpq_t @var{op1}, unsigned long int @var{num2}, unsigned long int @var{den2})
 @ifinfo
 Compare @var{op1} and @var{num2}/@var{den2}.  Return a positive value if
 @var{op1} > @var{num2}/@var{den2}, zero if @var{op1} = @var{num2}/@var{den2},
@@ -1461,9 +1485,12 @@ $@var{op1} > @var{num2}/@var{den2}$, zero if $@var{op1} =
 @end iftex
 
 This routine allows that @var{num2} and @var{den2} have common factors.
-@end deftypefun
 
-@deftypefun int mpq_sgn (mpq_t @var{op})
+This function is actually implemented as a macro.  It evaluates its
+arguments multiple times.
+@end deftypefn
+
+@deftypefn Macro int mpq_sgn (mpq_t @var{op})
 @ifinfo
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
 @end ifinfo
@@ -1472,7 +1499,10 @@ Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
 Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
 @end tex
 @end iftex
-@end deftypefun
+
+This function is actually implemented as a macro.  It evaluates its
+arguments multiple times.
+@end deftypefn
 
 @deftypefun int mpq_equal (mpq_t @var{op1}, mpq_t @var{op2})
 Return non-zero if @var{op1} and @var{op2} are equal, zero if they are
@@ -1905,7 +1935,7 @@ Compute the relative difference between @var{op1} and @var{op2} and store the
 result in @var{rop}.
 @end deftypefun
 
-@deftypefun int mpf_sgn (mpf_t @var{op})
+@deftypefn Macro int mpf_sgn (mpf_t @var{op})
 @ifinfo
 Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
 @end ifinfo
@@ -1914,7 +1944,10 @@ Return +1 if @var{op} > 0, 0 if @var{op} = 0, and @minus{}1 if @var{op} < 0.
 Return $+1$ if $@var{op} > 0$, 0 if $@var{op} = 0$, and $-1$ if $@var{op} < 0$.
 @end tex
 @end iftex
-@end deftypefun
+
+This function is actually implemented as a macro.  It evaluates its
+arguments multiple times.
+@end deftypefn
 
 @node I/O of Floats, Miscellaneous Float Functions, Float Comparison, Floating-point Functions
 @comment  node-name,  next,  previous,  up
@@ -2566,6 +2599,9 @@ their testing of early versions of the library.
 
 John Amanatides of York University in Canada contributed the function
 @code{mpz_probab_prime_p}.
+
+Paul Zimmermann of Inria sparked the development of GMP 2, with his
+comparisons between bignum packages.
 
 Ken Weber (Kent State University, Universidade Federal do Rio Grande do Sul)
 contributed @code{mpz_gcd}, @code{mpz_divexact}, @code{mpn_gcd}, and
