@@ -1016,47 +1016,6 @@ GMP_DEFINE_RAW(["define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)"])
 ])
 
 
-dnl  GMP_C_ANSI2KNR
-dnl  --------------
-dnl  Setup to use ansi2knr if necessary.
-dnl
-dnl  The test here is simply that if an ANSI style function works then
-dnl  ansi2knr isn't needed.  The normal tests for whether $CC works mean we
-dnl  don't need to worry here about anything badly broken.
-dnl
-dnl  AM_C_PROTOTYPES is the normal way to set up ansi2knr, but (in automake
-dnl  March 2000) it gives the wrong answer on a C++ compiler because its
-dnl  test requires that the compiler accept both ANSI and K&R, or otherwise
-dnl  ansi2knr is used.  A C++ compiler fails on the K&R part, which makes
-dnl  AM_C_PROTOTYPES think it needs ansi2knr!  GMP has no bare K&R so we
-dnl  only need ANSI or K&R to work, not both.
-
-AC_DEFUN(GMP_C_ANSI2KNR,
-[AC_CACHE_CHECK([if ansi2knr should be used],
-                gmp_cv_c_ansi2knr,
-[cat >conftest.c <<EOF
-int main (int argc, char *argv[]) { return 0; }
-EOF
-if AC_TRY_EVAL(ac_compile); then
-  gmp_cv_c_ansi2knr=no
-else
-  gmp_cv_c_ansi2knr=yes
-fi
-rm -f conftest.*
-])
-if test $gmp_cv_c_ansi2knr = no; then
-  U= ANSI2KNR=
-else
-  U=_ ANSI2KNR=./ansi2knr
-  # Ensure some checks needed by ansi2knr itself.
-  AC_HEADER_STDC
-  AC_CHECK_HEADERS(string.h)
-fi
-AC_SUBST(U)
-AC_SUBST(ANSI2KNR)
-])
-
-
 dnl  GMP_C_SIZES
 dnl  -----------
 dnl
