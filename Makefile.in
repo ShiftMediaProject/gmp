@@ -479,10 +479,10 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = README $(gmp_TEXINFOS) $(include_HEADERS) AUTHORS COPYING \
 	COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in NEWS \
-	acconfig.h acinclude.m4 aclocal.m4 ansi2knr.1 ansi2knr.c \
-	config.guess config.in config.sub configure configure.in \
-	gmp-h.in install-sh ltmain.sh mdate-sh missing mkinstalldirs \
-	mp-h.in stamp-vti texinfo.tex version.texi
+	acinclude.m4 aclocal.m4 ansi2knr.1 ansi2knr.c config.guess \
+	config.in config.sub configure configure.in gmp-h.in install-sh \
+	ltmain.sh mdate-sh missing mkinstalldirs mp-h.in stamp-vti \
+	texinfo.tex version.texi
 DIST_SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd mpfr demos \
 	tune
 SOURCES = $(libdummy_la_SOURCES) $(libgmp_la_SOURCES) $(libgmpxx_la_SOURCES) $(libmp_la_SOURCES)
@@ -519,7 +519,7 @@ stamp-h1: $(srcdir)/config.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status config.h
 
-$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@ $(top_srcdir)/configure.in $(ACLOCAL_M4) $(top_srcdir)/acconfig.h
+$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@ $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOHEADER)
 	touch $(srcdir)/config.in
 
