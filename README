@@ -7,7 +7,7 @@ of functions, and the functions have a regular interface.
 
 GNU MP is designed to be as fast as possible, both for small operands and for
 huge operands.  The speed is achieved by using fullwords as the basic
-arithmetic type, by using fast algorithms, by carefully optimized assembly
+arithmetic type, by using fast algorithms, with carefully optimized assembly
 code for the most common inner loops for a lots of CPUs, and by a general
 emphasis on speed (instead of simplicity or elegance).
 
@@ -93,25 +93,25 @@ GNU MP user:
 
 There are five classes of functions in GNU MP.
 
- 1. Signed integer arithmetic functions, mpz_*.  These functions are intended
+ 1. Signed integer arithmetic functions (mpz).  These functions are intended
     to be easy to use, with their regular interface.  The associated type is
     `mpz_t'.
 
- 2. Rational arithmetic functions, mpq_*.  For now, just a small set of
+ 2. Rational arithmetic functions (mpq).  For now, just a small set of
     functions necessary for basic rational arithmetics.  The associated type
     is `mpq_t'.
 
- 3. Floating-point arithmetic functions, mpf_*.  If the C type `double'
+ 3. Floating-point arithmetic functions (mpf).  If the C type `double'
     doesn't give enough precision for your application, declare your
     variables as `mpf_t' instead, set the precision to any number desired,
     and call the functions in the mpf class for the arithmetic operations.
 
  4. Positive-integer, hard-to-use, very low overhead functions are in the
-    mpn_* class.  No memory management is performed.  The caller must ensure
+    mpn class.  No memory management is performed.  The caller must ensure
     enough space is available for the results.  The set of functions is not
     regular, nor is the calling interface.  These functions accept input
     arguments in the form of pairs consisting of a pointer to the least
-    significant word, and a integral size telling how many limbs (= words)
+    significant word, and an integral size telling how many limbs (= words)
     the pointer points to.
 
     Almost all calculations, in the entire package, are made by calling these
@@ -132,6 +132,6 @@ the INSTALL file in this directory.
 
 If you find a bug in the library, please make sure to tell us about it!
 
-Report bugs and propose modifications and enhancements to
-bug-gmp@prep.ai.mit.edu.  What information is needed in a good bug report is
-described in the manual.
+Report bugs to bug-gmp@prep.ai.mit.edu.  What information is needed in a good
+bug report is described in the manual.  The same address can be used for
+suggesting modifications and enhancements.
