@@ -37,6 +37,9 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+/* SunOS 4 stdio.h doesn't provide a prototype for this */
+int vfprintf _PROTO ((FILE *fp, const char *fmt, va_list ap));
+
 
 static int
 gmp_fprintf_memory (FILE *fp, const char *str, size_t len)
