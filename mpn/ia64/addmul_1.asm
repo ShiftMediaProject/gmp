@@ -31,7 +31,10 @@ C  * Further optimize feed-in and wind-down code, both for speed and code size.
 C  * Handle low limb input and results specially, using a common stf8 in the
 C    epilogue.
 C  * Use 1 c/l carry propagation scheme in wind-down code.
-C  * Work out final differences with mul_1.asm.
+C  * Use extra pointer registers for up and rp to speed up feed-in loads.
+C  * Work out final differences with mul_1.asm.  That function is 300 bytes
+C    smaller than this due to better loop scheduling and thus simpler feed-in
+C    code.
 
 C INPUT PARAMETERS
 define(`rp', `r32')
@@ -177,12 +180,7 @@ ifdef(`HAVE_ABI_32',
 	getf.sig	r30 = f42
 	stf8		[r20] = f38, 8
 	getf.sig	r27 = f39
-	getf.sig	r31 = f43
-	;;
-	add		r14 = r30, r27
-	;;
-	cmp.ltu		p8, p9 = r14, r27
-	st8		[r20] = r14, 8
+	getf.sig	r8 = f43
 	br		.Lcj2
 
 .grt2:
@@ -269,9 +267,7 @@ ifdef(`HAVE_ABI_32',
 	getf.sig	r26 = f38
 	getf.sig	r30 = f42
 	getf.sig	r27 = f39
-	getf.sig	r31 = f43
-	;;
-	add		r16 = r29, r26
+	getf.sig	r8 = f43
 	br		.Lcj3
 
 .grt3:
@@ -559,7 +555,7 @@ C *** MAIN LOOP END ***
 	;;
 .Lcj4:
 	.pred.rel "mutex", p6, p7
-	getf.sig	r31 = f43		C
+	getf.sig	r8 = f43		C
    (p6)	add		r14 = r28, r25, 1	C
    (p7)	add		r14 = r28, r25		C
 	;;
@@ -568,16 +564,17 @@ C *** MAIN LOOP END ***
    (p6)	cmp.leu		p8, p9 = r14, r25	C
    (p7)	cmp.ltu		p8, p9 = r14, r25	C
 	;;
+.Lcj3:
 	.pred.rel "mutex", p8, p9
    (p8)	add		r16 = r29, r26, 1	C
    (p9)	add		r16 = r29, r26		C
 	;;
-.Lcj3:
 	.pred.rel "mutex", p8, p9
 	st8		[r20] = r16, 8		C
    (p8)	cmp.leu		p6, p7 = r16, r26	C
    (p9)	cmp.ltu		p6, p7 = r16, r26	C
 	;;
+.Lcj2:
 	.pred.rel "mutex", p6, p7
    (p6)	add		r14 = r30, r27, 1	C
    (p7)	add		r14 = r30, r27		C
@@ -587,11 +584,9 @@ C *** MAIN LOOP END ***
    (p6)	cmp.leu		p8, p9 = r14, r27	C
    (p7)	cmp.ltu		p8, p9 = r14, r27	C
 	;;
-.Lcj2:
 	.pred.rel "mutex", p8, p9
-   (p8)	add		r8 = r31, r0, 1		C M I
+   (p8)	add		r8 = 1, r8		C M I
 	mov.i		ar.lc = r2		C I0
-   (p9)	add		r8 = r31, r0		C M I
 	br.ret.sptk.many b0			C B
 EPILOGUE()
 ASM_END()

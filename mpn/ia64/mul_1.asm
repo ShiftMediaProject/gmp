@@ -31,6 +31,7 @@ C  * Further optimize feed-in and wind-down code, both for speed and code size.
 C  * Handle low limb input and results specially, using a common stf8 in the
 C    epilogue.
 C  * Use 1 c/l carry propagation scheme in wind-down code.
+C  * Use extra pointer register for up to speed up feed-in loads.
 C  * Work out final differences with addmul_1.asm.
 
 C INPUT PARAMETERS
@@ -245,9 +246,7 @@ ifdef(`HAVE_ABI_32',
 	getf.sig	r16 = f38
 	getf.sig	r20 = f42
 	getf.sig	r17 = f39
-	getf.sig	r21 = f43
-	;;
-	add		r24 = r16, r23
+	getf.sig	r8 = f43
 	br		.Lcj3
 
 .grt3:
@@ -512,7 +511,7 @@ C *** MAIN LOOP END ***
 	;;
 .Lcj4:
 	.pred.rel "mutex",p6,p7
-	getf.sig	r21 = f43
+	getf.sig	r8 = f43
    (p6)	add		r24 = r19, r22, 1
    (p7)	add		r24 = r19, r22
 	;;
@@ -521,16 +520,17 @@ C *** MAIN LOOP END ***
    (p6)	cmp.leu		p8, p9 = r24, r19
    (p7)	cmp.ltu		p8, p9 = r24, r19
 	;;
+.Lcj3:
 	.pred.rel "mutex",p8,p9
    (p8)	add		r24 = r16, r23, 1
    (p9)	add		r24 = r16, r23
 	;;
-.Lcj3:
 	.pred.rel "mutex",p8,p9
-   (p8)	cmp.leu		p6, p7 = r24, r16
 	st8		[rp] = r24, 8
+   (p8)	cmp.leu		p6, p7 = r24, r16
    (p9)	cmp.ltu		p6, p7 = r24, r16
 	;;
+.Lcj2:
 	.pred.rel "mutex",p6,p7
    (p6)	add		r24 = r17, r20, 1
    (p7)	add		r24 = r17, r20
@@ -540,11 +540,9 @@ C *** MAIN LOOP END ***
    (p6)	cmp.leu		p8, p9 = r24, r17
    (p7)	cmp.ltu		p8, p9 = r24, r17
 	;;
-.Lcj2:
 	.pred.rel "mutex",p8,p9
-   (p8)	add		r8 = r0, r21, 1
+   (p8)	add		r8 = 1, r8
 	mov.i		ar.lc = r2
-   (p9)	add		r8 = r0, r21
 	br.ret.sptk.many b0
 EPILOGUE()
 ASM_END()
