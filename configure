@@ -17391,7 +17391,7 @@ cat >>confdefs.h <<\EOF
 #define WANT_TMP_NOTREENTRANT 1
 EOF
 
-    TAL_OBJECT=stack_alloc$U.lo
+    TAL_OBJECT=tal-notre$U.lo
     ;;
   debug)
 
