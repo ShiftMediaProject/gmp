@@ -36,7 +36,7 @@ MA 02111-1307, USA. */
 void
 debug_mp (mpz_t x, int base)
 {
-  mpz_out_str (stderr, base, x); fputc ('\n', stderr);
+  mpz_out_str (stdout, base, x); fputc ('\n', stdout);
 }
 
 int
@@ -51,6 +51,7 @@ main (int argc, char **argv)
   gmp_randstate_ptr rands;
   mpz_t bs;
   unsigned long bsi, size_range;
+  size_t nread;
 
   tests_start ();
   rands = RANDS;
@@ -89,26 +90,35 @@ main (int argc, char **argv)
           || putc (' ', fp) == EOF
           || fflush (fp) != 0)
         {
-          fprintf (stderr, "mpz_out_str write error\n");
+          printf ("mpz_out_str write error\n");
           abort ();
         }
 
       rewind (fp);  
-      if (mpz_inp_str (op2, fp, base) == 0)
+      nread = mpz_inp_str (op2, fp, base);
+      if (nread == 0)
         {
           if (ferror (fp))
-            fprintf (stderr, "mpz_inp_str stream read error\n");
+            printf ("mpz_inp_str stream read error\n");
           else
-            fprintf (stderr, "mpz_inp_str data conversion error\n");
+            printf ("mpz_inp_str data conversion error\n");
 	  abort ();
 	}
 
+      if (nread != ftell(fp))
+        {
+          printf ("mpz_inp_str nread doesn't match ftell\n");
+          printf ("  nread  %u\n", nread);
+          printf ("  ftell  %ld\n", ftell(fp));
+          abort ();
+        }
+
       if (mpz_cmp (op1, op2))
 	{
-	  fprintf (stderr, "ERROR\n");
-	  fprintf (stderr, "op1  = "); debug_mp (op1, -16);
-	  fprintf (stderr, "op2  = "); debug_mp (op2, -16);
-	  fprintf (stderr, "base = %d\n", base);
+	  printf ("ERROR\n");
+	  printf ("op1  = "); debug_mp (op1, -16);
+	  printf ("op2  = "); debug_mp (op2, -16);
+	  printf ("base = %d\n", base);
 	  abort ();
 	}
     }
