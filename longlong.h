@@ -142,6 +142,7 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #endif
 #define count_leading_zeros(count, x) \
   ((count) = __MPN(count_leading_zeros) (x))
+#define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #endif /* LONGLONG_STANDALONE */
 #endif /* __alpha */
 
@@ -564,14 +565,43 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	   : "=a" (q), "=d" (r)						\
 	   : "0" ((USItype)(n0)), "1" ((USItype)(n1)), "rm" ((USItype)(dx)))
 
-#if HAVE_HOST_CPU_i586 || HAVE_HOST_CPU_pentium || HAVE_HOST_CPU_pentiummmx
-/* This code should be a fixed 14 or 15 cycles, but possibly plus an L1
-   cache miss reading from __clz_tab.  P5 "bsrl" on the other hand takes
-   between 10 and 72 cycles depending where the most significant 1 bit is.
+/* P5 bsrl takes between 10 and 72 cycles depending where the most
+   significant 1 bit is, hence the use of the alternatives below.  bsfl is
+   slow too, between 18 and 42 depending where the least significant 1 bit
+   is.  The faster count_leading_zeros are pressed into service via the
+   generic count_trailing_zeros at the end of the file.  */
+
+#if HAVE_HOST_CPU_i586 || HAVE_HOST_CPU_pentium
+
+/* The following should be a fixed 14 cycles or so.  Some scheduling
+   opportunities should be available between the float load/store too.  This
+   is used (with "n&-n" to get trailing zeros) in gcc 3 for __builtin_ffs
+   and is apparently suggested by the Intel optimizing manual (don't know
+   exactly where).  gcc 2.95 or up will be best for this, so the "double" is
+   correctly aligned on the stack.  */
+
+#define count_leading_zeros(c,n)                \
+  do {                                          \
+    union {                                     \
+      double    d;                              \
+      unsigned  a[2];                           \
+    } __u;                                      \
+    ASSERT ((n) != 0);                          \
+    __u.d = (UWtype) (n);                       \
+    (c) = 0x3FF + 31 - (__u.a[1] >> 20);        \
+  } while (0)
+
+#else /* ! pentium */
+#if HAVE_HOST_CPU_pentiummmx
+
+/* The following should be a fixed 14 or 15 cycles, but possibly plus an L1
+   cache miss reading from __clz_tab.  It's favoured over the float above so
+   as to avoid mixing MMX and x87, since the penalty for switching between
+   the two is about 100 cycles.
 
    The asm block sets __shift to -3 if the high 24 bits are clear, -2 for
    16, -1 for 8, or 0 otherwise.  This could be written equivalently as
-   follows, but as of gcc 2.95.2 this results in conditional jumps.
+   follows, but as of gcc 2.95.2 it results in conditional jumps.
 
        __shift = -(__n < 0x1000000);
        __shift -= (__n < 0x10000);
@@ -580,16 +610,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    The middle two sbbl and cmpl's pair, and with luck something gcc
    generates might pair with the first cmpl and the last sbbl.  The "32+1"
    constant could be folded into __clz_tab[], but it doesn't seem worth
-   making a different table just for that.
-
-   The Intel suggested method, used in __builtin_ffs of gcc 3,
-
-       double  d = (n);
-       (c) = (((unsigned*)&d)[1] >> 20) & 0x3FF;
-
-   seems to measure about the same, or a touch slower.  We wouldn't want it
-   for P55, since we don't want to mix MMX and x87 any more than can be
-   helped.  */
+   making a different table just for that.  */
 
 #define count_leading_zeros(c,n)                        \
   do {                                                  \
@@ -609,17 +630,12 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #define COUNT_LEADING_ZEROS_0   31   /* n==0 indistinguishable from n==1 */
 
-/* count_trailing_zeros for pentium is done by the generic code below using
-   count_leading_zeros.  This should be a fixed 15 or 16 cycles, possibly
-   plus an L1 miss.  P5 "bsfl" on the other hand takes between 18 and 42
-   depending where the least significant 1 bit is.  */
-
-#else
-/* gcc on p6 prior to 3.0 generates a partial register stall for __cbtmp^31,
-   due to using "xorb $31" instead of "xorl $31", the former being 1 code
-   byte smaller.  "31-__cbtmp" is a workaround, probably at the cost of one
-   extra instruction.  Do this for "i386" too, since that means generic
-   x86.  */
+#else /* !pentiummmx */
+/* On P6, gcc prior to 3.0 generates a partial register stall for
+   __cbtmp^31, due to using "xorb $31" instead of "xorl $31", the former
+   being 1 code byte smaller.  "31-__cbtmp" is a workaround, probably at the
+   cost of one extra instruction.  Do this for "i386" too, since that means
+   generic x86.  */
 #if __GNUC__ < 3                                                \
   && (HAVE_HOST_CPU_i386 || HAVE_HOST_CPU_pentiumpro            \
       || HAVE_HOST_CPU_pentium2 || HAVE_HOST_CPU_pentium3)
@@ -645,7 +661,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     ASSERT ((x) != 0);                                                  \
     __asm__ ("bsfl %1,%0" : "=r" (count) : "rm" ((USItype)(x)));        \
   } while (0)
-#endif
+#endif /* ! pentiummmx */
+#endif /* ! pentium */
 
 #ifndef UMUL_TIME
 #define UMUL_TIME 10
@@ -1533,12 +1550,6 @@ extern mp_limb_t mpn_udiv_qrnnd _PROTO ((mp_limb_t *,
 #define udiv_qrnnd __udiv_qrnnd_c
 #endif
 
-extern
-#if __STDC__
-const
-#endif
-unsigned char __clz_tab[128];
-
 #if !defined (count_leading_zeros)
 #define count_leading_zeros(count, x) \
   do {									\
@@ -1565,6 +1576,10 @@ unsigned char __clz_tab[128];
 /* This version gives a well-defined value for zero. */
 #define COUNT_LEADING_ZEROS_0 (W_TYPE_SIZE - 1)
 #define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+#endif
+
+#ifdef COUNT_LEADING_ZEROS_NEED_CLZ_TAB
+extern const unsigned char __clz_tab[128];
 #endif
 
 #if !defined (count_trailing_zeros)
