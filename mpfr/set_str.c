@@ -122,6 +122,10 @@ mpfr_set_str (mpfr_t x, const char *str, int base, mp_rnd_t rnd)
       return 0;
     }
 
+  /* string "", "+" and "-" are invalid */
+  if (str[0] == '\0')
+    return -1;
+
   /* allocate str1 to store value of characters in str.
      FIXME: we could use str directly here if mpn_set_str would deal
      with real characters. */
