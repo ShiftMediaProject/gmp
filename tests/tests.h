@@ -88,6 +88,8 @@ void mpz_init_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 mp_size_t mpn_diff_highest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n));
 mp_size_t mpn_diff_lowest _PROTO ((mp_srcptr p1, mp_srcptr p2, mp_size_t n));
 
+void mpz_set_str_or_abort _PROTO ((mpz_ptr z, const char *str, int base));
+void mpf_set_str_or_abort _PROTO ((mpf_ptr f, const char *str, int base));
 
 
 mp_limb_t refmpn_add _PROTO ((mp_ptr rp,
