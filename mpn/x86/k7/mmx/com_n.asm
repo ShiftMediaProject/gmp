@@ -30,8 +30,8 @@ C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C The loop form below is necessary for the claimed speed.  It needs to be
 C aligned to a 16 byte boundary and only 16 bytes long.  Maybe that's so it
-C fits in a BTB entry.  The the adjustments to %eax and %edx avoid offsets
-C on the movq's and achieve the necessary size.
+C fits in a BTB entry.  The adjustments to %eax and %edx avoid offsets on
+C the movq's and achieve the necessary size.
 C 
 C If both src and dst are 4mod8, the loop runs at 1.5 c/l.  So long as one
 C of the two is 0mod8, it runs at 1.0 c/l.  On that basis dst is checked
@@ -39,13 +39,13 @@ C (offset by the size, as per the loop addressing) and one high limb
 C processed separately to get alignment.
 C
 C The padding for the nails case is unattractive, but shouldn't cost any
-C cycles.  Explicit .byte's guarantees the desired instructions, at a point
-C where we're probably stalled waiting for loads.
+C cycles.  Explicit .byte's guarantee the desired instructions, at a point
+C where we're probably stalled waiting for loads anyway.
 C
 C Enhancements:
 C
-C The combination of load/pxor/store might be able to be unrolled to
-C approach 0.5 c/l if desired.
+C The combination load/pxor/store might be able to be unrolled to approach
+C 0.5 c/l if desired.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
