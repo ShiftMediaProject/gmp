@@ -34,6 +34,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   unsigned char *str;
   char *return_str;
   size_t str_size;
+  size_t alloc_size = 0;
   char *num_to_text;
   int i;
   TMP_DECL (marker);
@@ -60,6 +61,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     {
       /* We didn't get a string from the user.  Allocate one (and return
 	 a pointer to it).  */
+      alloc_size = str_size;
       res_str = (char *) (*__gmp_allocate_func) (str_size);
       /* Make str, the variable used for raw result from mpn_get_str,
 	 point to the same string, but just after a possible minus sign.  */
@@ -78,8 +80,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     {
       res_str[0] = '0';
       res_str[1] = 0;
-      TMP_FREE (marker);
-      return res_str;
+      goto done;
     }
   if (x_size < 0)
     {
@@ -106,6 +107,16 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     res_str[i] = num_to_text[str[i]];
   res_str[str_size] = 0;
 
+ done:
   TMP_FREE (marker);
+
+  /* If the string was alloced then resize it down to the actual space
+     required.  */
+  if (alloc_size != 0)
+    {
+      size_t  actual_size = strlen (return_str) + 1;
+      if (actual_size != alloc_size)
+        (*__gmp_reallocate_func) (return_str, alloc_size, actual_size);
+    }
   return return_str;
 }
