@@ -217,18 +217,22 @@ static const int have_cgt = 1;
 #define struct_timespec  struct timespec
 #else
 static const int have_cgt = 0;
-#define clock_gettime(id,ts)  (-1)
-#define clock_getres(id,ts)   (-1)
 #define struct_timespec       struct timespec_dummy
+#define clock_gettime(id,ts)  (abort(), -1)
+#define clock_getres(id,ts)   (abort(), -1)
 #endif
 #ifdef CLOCK_PROCESS_CPUTIME_ID
-# define CGT_ID   CLOCK_PROCESS_CPUTIME_ID
+# define CGT_ID        CLOCK_PROCESS_CPUTIME_ID
 #else
 # ifdef CLOCK_VIRTUAL
-#  define CGT_ID  CLOCK_VIRTUAL
-# else
-#  define CGT_ID  -1
+#  define CGT_ID       CLOCK_VIRTUAL
 # endif
+#endif
+#ifdef CGT_ID
+# define HAVE_CGT_ID  1
+#else
+# define HAVE_CGT_ID  0
+# define CGT_ID       (abort(), -1)
 #endif
 
 #if HAVE_GETRUSAGE
@@ -310,9 +314,9 @@ unittime_string (double t)
   int         prec;
 
   /* choose units and scale */
-  if (t < 1e-9)
+  if (t < 1e-6)
     t *= 1e9, unit = "ns";
-  else if (t < 1e-6)
+  else if (t < 1e-3)
     t *= 1e6, unit = "us";
   else if (t < 1.0)
     t *= 1e3, unit = "ms";
@@ -498,7 +502,7 @@ cgt_works_p (void)
   if (! have_cgt)
     return 0;
 
-  if (CGT_ID == -1)
+  if (HAVE_CGT_ID)
     {
       if (speed_option_verbose)
         printf ("clock_gettime don't know what ID to use\n");
@@ -847,47 +851,49 @@ speed_cyclecounter_diff (const unsigned end[2], const unsigned start[2])
 /* Calculate the difference between "start" and "end" using fields "sec" and
    "psec", where each "psec" is a "punit" of a second.
 
-   The high parts are allowed to cancel before being combined with the low
-   parts, in case a simple "sec+psec*punit" exceeds the precision of a
+   The seconds parts are allowed to cancel before being combined with the
+   psec parts, in case a simple "sec+psec*punit" exceeds the precision of a
    double.
 
-   Total time in units of "psec"s are only calculated in a "double" since an
-   integer might overflow.  2^32 microseconds is only a bit over an hour, or
+   Total time is only calculated in a "double" since an integer count of
+   psecs might overflow.  2^32 microseconds is only a bit over an hour, or
    2^32 nanoseconds only about 4 seconds.
 
    The casts to "long" are for the beneifit of timebasestruct_t, where the
-   fields are only "unsigned", but we want a signed difference.  */
+   fields are only "unsigned int", but we want a signed difference.  */
 
-#define DIFF_SECS_ROUTINE(type, sec, psec, punit)               \
+#define DIFF_SECS_ROUTINE(sec, psec, punit)                     \
   {                                                             \
-    long  delta_sec = (long) end->sec - (long) start->sec;      \
-    return (double) delta_sec                                   \
-      + punit * ((long) end->psec - (long) start->psec);        \
-  }                                                             \
-
-double
-timebasestruct_diff_secs (const timebasestruct_t *end,
-                          const timebasestruct_t *start)
-{
-  DIFF_SECS_ROUTINE (unsigned, tb_high, tb_low, 1e-9);
-}
+    long  sec_diff, psec_diff;                                  \
+    sec_diff = (long) end->sec - (long) start->sec;             \
+    psec_diff = (long) end->psec - (long) start->psec;          \
+    return (double) sec_diff + punit * (double) psec_diff;      \
+  }
 
 double
 timeval_diff_secs (const struct_timeval *end, const struct_timeval *start)
 {
-  DIFF_SECS_ROUTINE (long, tv_sec, tv_usec, 1e-6);
+  DIFF_SECS_ROUTINE (tv_sec, tv_usec, 1e-6);
 }
 
 double
 rusage_diff_secs (const struct_rusage *end, const struct_rusage *start)
 {
-  DIFF_SECS_ROUTINE (long, ru_utime.tv_sec, ru_utime.tv_usec, 1e-6);
+  DIFF_SECS_ROUTINE (ru_utime.tv_sec, ru_utime.tv_usec, 1e-6);
 }
 
 double
 timespec_diff_secs (const struct_timespec *end, const struct_timespec *start)
 {
-  DIFF_SECS_ROUTINE (long, tv_sec, tv_nsec, 1e-9);
+  DIFF_SECS_ROUTINE (tv_sec, tv_nsec, 1e-9);
+}
+
+/* This is for use after time_base_to_time, ie. for seconds and nanoseconds. */
+double
+timebasestruct_diff_secs (const timebasestruct_t *end,
+                          const timebasestruct_t *start)
+{
+  DIFF_SECS_ROUTINE (tb_high, tb_low, 1e-9);
 }
 
 
