@@ -335,6 +335,11 @@ case $host in
     # gas 2.10.0 doesn't accept -mev67, but -mev6 is enough for ctlz
     # and cttz, as used by longlong.h on ev67.
     #
+    # OSF `as' accepts ev68 but stupidly treats it as ev4.  -arch only seems
+    # to affect insns like ldbu which are expanded as macros when necessary.
+    # Insns like ctlz which were never available as macros are always
+    # accepted and always generate their plain code.
+    #
     case $host_cpu in
       alpha)        gcc_cflags_asm="-Wa,-arch,ev4 -Wa,-mev4" ;;
       alphaev5)     gcc_cflags_asm="-Wa,-arch,ev5 -Wa,-mev5" ;;
@@ -1550,8 +1555,8 @@ AC_HEADER_TIME
 #   sys/resource.h - not present in mingw
 #   sys/systemcfg.h - AIX specific
 #
-# stdint.h, unistd.h and sys/types.h are already in the autoconf default
-# tests
+# inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
+# default tests
 #
 AC_CHECK_HEADERS(locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
 
@@ -1600,6 +1605,8 @@ case $ac_cv_c_bigendian in
   unknown) ;;
   *)    AC_MSG_ERROR([Oops, unrecognised ac_cv_c_bigendian]) ;;
 esac
+
+GMP_C_DOUBLE_FORMAT
 
 
 # On m68k NetBSD 1.4.1 getrusage() is doubtful.  ru_utime looks microsecond
