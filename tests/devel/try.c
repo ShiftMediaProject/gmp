@@ -268,6 +268,40 @@ validate_fail (void)
 
 
 void
+validate_divexact_1 (void)
+{
+  mp_srcptr  src = s[0].p;
+  mp_srcptr  dst = fun.d[0].p;
+  int  error = 0;
+
+  ASSERT (size >= 1);
+
+  {
+    mp_ptr     tp = refmpn_malloc_limbs (size);
+    mp_limb_t  rem;
+
+    rem = refmpn_divrem_1 (tp, 0, src, size, divisor);
+    if (rem != 0)
+      {
+        printf ("Remainder a%%d == 0x%lX, mpn_divexact_1 undefined\n", rem);
+        error = 1;
+      }
+    if (refmpn_cmp (tp, dst, size) != 0)
+      {
+        printf ("Quotient a/d wrong\n");
+        mpn_trace ("fun ", dst, size);
+        mpn_trace ("want", tp, size);
+        error = 1;
+      }
+    free (tp);
+  }
+  
+  if (error)
+    validate_fail ();
+}
+
+
+void
 validate_modexact_1c_odd (void)
 {
   mp_srcptr  ptr = s[0].p;
@@ -484,11 +518,12 @@ struct try_t  *tr;
 #define TYPE_DIVREM_1C        25
 #define TYPE_PREINV_MOD_1     26
 
-#define TYPE_DIVEXACT_BY3     27
-#define TYPE_DIVEXACT_BY3C    28
+#define TYPE_DIVEXACT_1       27
+#define TYPE_DIVEXACT_BY3     28
+#define TYPE_DIVEXACT_BY3C    29
 
-#define TYPE_MODEXACT_1_ODD   29
-#define TYPE_MODEXACT_1C_ODD  30
+#define TYPE_MODEXACT_1_ODD   30
+#define TYPE_MODEXACT_1C_ODD  31
 
 #define TYPE_GCD              40
 #define TYPE_GCD_1            41
@@ -726,6 +761,15 @@ param_init (void)
   REFERENCE (refmpn_preinv_mod_1);
 
 
+  p = &param[TYPE_DIVEXACT_1];
+  p->dst[0] = 1;
+  p->src[0] = 1;
+  p->divisor = 1;
+  p->data = DATA_MULTIPLE_DIVISOR;
+  VALIDATE (validate_divexact_1);
+  REFERENCE (refmpn_divmod_1);
+
+
   p = &param[TYPE_DIVEXACT_BY3];
   p->retval = 1;
   p->dst[0] = 1;
@@ -846,7 +890,6 @@ param_init (void)
   p = &param[TYPE_POPCOUNT];
   p->retval = 1;
   p->src[0] = 1;
-  p->size = SIZE_ALLOW_ZERO;
   REFERENCE (refmpn_popcount);
 
   p = &param[TYPE_HAMDIST];
@@ -1047,6 +1090,7 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_mod_1c
   { TRY(mpn_mod_1c),       TYPE_MOD_1C },
 #endif
+  { TRY(mpn_divexact_1),          TYPE_DIVEXACT_1 },
   { TRY_FUNFUN(mpn_divexact_by3), TYPE_DIVEXACT_BY3 },
   { TRY(mpn_divexact_by3c),       TYPE_DIVEXACT_BY3C },
 
@@ -1342,7 +1386,7 @@ print_each (const struct each_t *e)
 
   printf ("%s %s\n", e->name, e == &ref ? tr->reference_name : choice->name);
   if (tr->retval)
-    printf ("   retval %08lX\n", e->retval);
+    mpn_trace ("   retval", &e->retval, 1);
 
   for (i = 0; i < NUM_DESTS; i++)
     { 
@@ -1373,13 +1417,13 @@ print_all (void)
       printf ("d[%d].size %ld\n", i, d[i].size);
 
   if (tr->multiplier)
-    printf ("   multiplier 0x%lX\n", multiplier);
+    mpn_trace ("   multiplier", &multiplier, 1);
   if (tr->divisor)
-    printf ("   divisor 0x%lX\n", divisor);
+    mpn_trace ("   divisor", &divisor, 1);
   if (tr->shift)
     printf ("   shift %lu\n", shift);
   if (tr->carry)
-    printf ("   carry %lX\n", carry);
+    mpn_trace ("   carry", &carry, 1);
 
   for (i = 0; i < NUM_DESTS; i++)
     if (tr->dst[i])
@@ -1529,6 +1573,7 @@ call (struct each_t *e, tryfun_t function)
     CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size);
     break;
 
+
   case TYPE_DIVEXACT_BY3:
     e->retval = CALLING_CONVENTIONS (function) (e->d[0].p, e->s[0].p, size);
     break;
@@ -1546,6 +1591,7 @@ call (struct each_t *e, tryfun_t function)
     break;
 
   case TYPE_DIVMOD_1:
+  case TYPE_DIVEXACT_1:
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, size, divisor);
     break;
