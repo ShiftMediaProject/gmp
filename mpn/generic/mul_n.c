@@ -1244,7 +1244,6 @@ mpn_toom3_sqr_n (p, a, n, ws)
 {
   mp_limb_t cB,cC,cD, l,l2,l3,l4,l5,ls, tB,tC,tD;
   mp_limb_t *A,*B,*C,*D,*E, *W;
-  mp_srcptr b = a;
 
   /* Break n words into chunks of size l, l and ls.
    * n = 3*k   => l = k,   ls = k
@@ -1352,8 +1351,13 @@ mpn_mul_n (p, a, b, n)
   else if (n < TOOM3_MUL_THRESHOLD)
     {
       /* Allocate workspace of fixed size on stack: fast! */
+#if TUNE_PROGRAM_BUILD
+      mp_limb_t ws[2 * (500-1) + 2 * BITS_PER_MP_LIMB];
+      mpn_kara_mul_n (p, a, b, n, ws);
+#else
       mp_limb_t ws[2 * (TOOM3_MUL_THRESHOLD-1) + 2 * BITS_PER_MP_LIMB];
       mpn_kara_mul_n (p, a, b, n, ws);
+#endif
     }
   else
     {
