@@ -24,6 +24,9 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
+#ifndef BERKELEY_MP
+
 void
 #if __STDC__
 mpz_tdiv_qr (mpz_ptr quot, mpz_ptr rem, mpz_srcptr num, mpz_srcptr den)
@@ -34,6 +37,21 @@ mpz_tdiv_qr (quot, rem, num, den)
      mpz_srcptr num;
      mpz_srcptr den;
 #endif
+
+#else /* BERKELEY_MP */
+
+void
+#if __STDC__
+mdiv (mpz_srcptr num, mpz_srcptr den, mpz_ptr quot, mpz_ptr rem)
+#else
+mdiv (num, den, quot, rem)
+     mpz_srcptr num;
+     mpz_srcptr den;
+     mpz_ptr    quot;
+     mpz_ptr    rem;
+#endif
+
+#endif /* BERKELEY_MP */
 {
   mp_size_t ql;
   mp_size_t ns, ds, nl, dl;
