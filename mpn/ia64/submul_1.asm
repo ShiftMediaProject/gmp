@@ -1,7 +1,7 @@
 dnl  IA-64 mpn_submul_1 -- Multiply a limb vector with a limb and subtract the
 dnl  result from a second limb vector.
 
-dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -30,6 +30,9 @@ C TODO
 C  * Optimize feed-in and wind-down code, both for speed and code size.
 C  * Handle low limb input and results specially, using a common stf8 in the
 C    epilogue.
+C  * Delay r8, r10 initialization, put cmp-p6 in 1st bundle and br .Ldone in
+C    2nd bundle.  This will allow the bbb bundle to be one cycle earlier and
+C    save a cycle.
 
 C INPUT PARAMETERS
 define(`rp', `r32')
