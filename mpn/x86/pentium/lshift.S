@@ -31,6 +31,7 @@ MA 02111-1307, USA. */
 
 .text
 	ALIGN (3)
+PROLOGUE(C_SYMBOL_NAME(__mpn_lshift))
 	.globl C_SYMBOL_NAME(__mpn_lshift)
 C_SYMBOL_NAME(__mpn_lshift:)
 	pushl	%edi
@@ -214,3 +215,5 @@ LL1:	movl	%edx,(%edi)		/* store last limb */
 	popl	%esi
 	popl	%edi
 	ret
+
+EPILOGUE(C_SYMBOL_NAME(__mpn_lshift))

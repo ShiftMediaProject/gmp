@@ -32,6 +32,7 @@ MA 02111-1307, USA. */
 
 .text
 	ALIGN (3)
+PROLOGUE(C_SYMBOL_NAME(__mpn_sub_nc))
 	.globl C_SYMBOL_NAME(__mpn_sub_nc)
 C_SYMBOL_NAME(__mpn_sub_nc:)
 	pushl	%edi
@@ -62,8 +63,11 @@ Lendgo:	movl	36(%esp),%eax
 	shrl	$1,%eax			/* shift bit 0 into carry */
 	jmp	Lend
 
+EPILOGUE(C_SYMBOL_NAME(__mpn_sub_nc))
+
 
 	ALIGN (3)
+PROLOGUE(C_SYMBOL_NAME(__mpn_sub_n))
 	.globl C_SYMBOL_NAME(__mpn_sub_n)
 C_SYMBOL_NAME(__mpn_sub_n:)
 	pushl	%edi
@@ -159,3 +163,5 @@ Lend2:
 	popl	%esi
 	popl	%edi
 	ret
+
+EPILOGUE(C_SYMBOL_NAME(__mpn_sub_n))
