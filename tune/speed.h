@@ -93,7 +93,7 @@ struct speed_params {
   mp_ptr     xp;        /* first argument */
   mp_ptr     yp;        /* second argument */
   mp_size_t  size;      /* size of both arguments */
-  long       r;         /* user supplied parameter */
+  mp_limb_t  r;         /* user supplied parameter */
   mp_size_t  align_xp;  /* alignment of xp */
   mp_size_t  align_yp;  /* alignment of yp */
   mp_size_t  align_wp;  /* intended alignment of wp */
@@ -123,6 +123,7 @@ double speed_count_trailing_zeros _PROTO ((struct speed_params *s));
 double speed_find_a _PROTO ((struct speed_params *s));
 double speed_gmp_allocate_free _PROTO ((struct speed_params *s));
 double speed_gmp_allocate_reallocate_free _PROTO ((struct speed_params *s));
+double speed_invert_limb _PROTO ((struct speed_params *s));
 double speed_malloc_free _PROTO ((struct speed_params *s));
 double speed_malloc_realloc_free _PROTO ((struct speed_params *s));
 double speed_memcpy _PROTO ((struct speed_params *s));
@@ -157,6 +158,9 @@ double speed_mpn_gcd _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_binary _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext _PROTO ((struct speed_params *s));
+double speed_mpn_gcdext_one_double _PROTO ((struct speed_params *s));
+double speed_mpn_gcdext_one_single _PROTO ((struct speed_params *s));
+double speed_mpn_gcdext_single _PROTO ((struct speed_params *s));
 double speed_mpn_get_str _PROTO ((struct speed_params *s));
 double speed_mpn_hamdist _PROTO ((struct speed_params *s));
 double speed_mpn_ior_n _PROTO ((struct speed_params *s));
@@ -258,9 +262,18 @@ extern int  speed_option_addrs;
 extern int  speed_option_verbose;
 void speed_option_set _PROTO((const char *s));
 
-mp_size_t mpn_gcd_binary _PROTO ((mp_ptr gp,
-                                  mp_ptr up, mp_size_t usize,
-                                  mp_ptr vp, mp_size_t vsize));
+mp_size_t mpn_gcd_binary
+  _PROTO ((mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize));
+mp_size_t mpn_gcdext_one_double
+  _PROTO ((mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
+           mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize));
+mp_size_t mpn_gcdext_one_single
+  _PROTO ((mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
+           mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize));
+mp_size_t mpn_gcdext_single
+  _PROTO ((mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
+           mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize));
+
 void mpn_toom3_mul_n_open _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
                                    mp_ptr));
 void mpn_toom3_sqr_n_open _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
@@ -1073,6 +1086,85 @@ void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
           function (wp, wp2, &wp2size, xtmp, s->size, ytmp, s->size); })
 
 
+#define SPEED_ROUTINE_MPN_GCDEXT_ONE(function)                          \
+  {                                                                     \
+    unsigned  i;                                                        \
+    mp_size_t j, pieces, psize, wp2size;                                \
+    mp_ptr    wp, wp2, xtmp, ytmp, px, py;                              \
+    double    t;                                                        \
+    TMP_DECL (marker);                                                  \
+                                                                        \
+    SPEED_RESTRICT_COND (s->size >= 1);                                 \
+                                                                        \
+    TMP_MARK (marker);                                                  \
+                                                                        \
+    xtmp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_xp);              \
+    ytmp = SPEED_TMP_ALLOC_LIMBS (s->size+1, s->align_yp);              \
+    MPN_COPY (xtmp, s->xp, s->size);                                    \
+    MPN_COPY (ytmp, s->yp, s->size);                                    \
+                                                                        \
+    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);                  \
+    wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);                \
+                                                                        \
+    pieces = SPEED_BLOCK_SIZE / 3;                                      \
+    psize = 3 * pieces;                                                 \
+    px = TMP_ALLOC_LIMBS (psize);                                       \
+    py = TMP_ALLOC_LIMBS (psize);                                       \
+    MPN_COPY (px, s->xp_block, psize);                                  \
+    MPN_COPY (py, s->yp_block, psize);                                  \
+                                                                        \
+    /* x must have at least as many bits as y,                          \
+       high limbs must be non-zero */                                   \
+    for (j = 0; j < pieces; j++)                                        \
+      {                                                                 \
+        mp_ptr  x = px+3*j;                                             \
+        mp_ptr  y = py+3*j;                                             \
+        x[2] += (x[2] == 0);                                            \
+        y[2] += (y[2] == 0);                                            \
+        if (x[2] < y[2])                                                \
+          MP_LIMB_T_SWAP (x[2], y[2]);                                  \
+      }                                                                 \
+                                                                        \
+    speed_operand_src (s, px, psize);                                   \
+    speed_operand_src (s, py, psize);                                   \
+    speed_operand_dst (s, xtmp, s->size);                               \
+    speed_operand_dst (s, ytmp, s->size);                               \
+    speed_operand_dst (s, wp, s->size);                                 \
+    speed_cache_fill (s);                                               \
+                                                                        \
+    speed_starttime ();                                                 \
+    i = s->reps;                                                        \
+    do                                                                  \
+      {                                                                 \
+        mp_ptr  x = px;                                                 \
+        mp_ptr  y = py;                                                 \
+        mp_ptr  xth = &xtmp[s->size-3];                                 \
+        mp_ptr  yth = &ytmp[s->size-3];                                 \
+        j = pieces;                                                     \
+        do                                                              \
+          {                                                             \
+            xth[0] = x[0], xth[1] = x[1], xth[2] = x[2];                \
+            yth[0] = y[0], yth[1] = y[1], yth[2] = y[2];                \
+                                                                        \
+            ytmp[0] |= 1; /* y must be odd, */                          \
+                                                                        \
+            function (wp, wp2, &wp2size, xtmp, s->size, ytmp, s->size); \
+                                                                        \
+            x += 3;                                                     \
+            y += 3;                                                     \
+          }                                                             \
+        while (--j != 0);                                               \
+      }                                                                 \
+    while (--i != 0);                                                   \
+    t = speed_endtime ();                                               \
+                                                                        \
+    TMP_FREE (marker);                                                  \
+                                                                        \
+    s->time_divisor = pieces;                                           \
+    return t;                                                           \
+  }  
+
+
 #define SPEED_ROUTINE_MPN_DIVREM_2(function)            \
   {                                                     \
     mp_ptr    wp, xp;                                   \
@@ -1359,6 +1451,32 @@ void speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 #define SPEED_ROUTINE_COUNT_TRAILING_ZEROS(call,zero)   \
   SPEED_ROUTINE_COUNT_ZEROS (call, 0, zero)
+
+
+#define SPEED_ROUTINE_INVERT_LIMB_CALL(call)    \
+  {                                             \
+    unsigned   i, j;                            \
+    mp_limb_t  d, dinv=0;                       \
+    mp_ptr     xp = s->xp_block - 1;            \
+                                                \
+    s->time_divisor = SPEED_BLOCK_SIZE;         \
+                                                \
+    speed_starttime ();                         \
+    i = s->reps;                                \
+    do                                          \
+      {                                         \
+        j = SPEED_BLOCK_SIZE;                   \
+        do                                      \
+          {                                     \
+            d = dinv ^ xp[j];                   \
+            d |= MP_LIMB_T_HIGHBIT;             \
+            do { call; } while (0);             \
+          }                                     \
+        while (--j != 0);                       \
+      }                                         \
+    while (--i != 0);                           \
+    return speed_endtime();                     \
+  }
 
 
 #endif
