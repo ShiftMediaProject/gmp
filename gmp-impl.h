@@ -703,9 +703,9 @@ typedef __gmp_randstate_struct *gmp_randstate_ptr;
 
 /* Pseudo-random number generator function pointers structure.  */
 typedef struct {
-  int (*randseed_fn) (gmp_randstate_t rstate, mpz_srcptr seed);
-  void (*randget_fn) (gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits);
-  void (*randclear_fn) (gmp_randstate_t rstate);
+  int (*randseed_fn) __GMP_PROTO ((gmp_randstate_t rstate, mpz_srcptr seed));
+  void (*randget_fn) __GMP_PROTO ((gmp_randstate_t rstate, mp_ptr dest, unsigned long int nbits));
+  void (*randclear_fn) __GMP_PROTO ((gmp_randstate_t rstate));
 } gmp_randfnptr_t;
 
 /* Macro to obtain a void pointer to the function pointers structure.
@@ -1108,7 +1108,7 @@ void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
   } while (0)
 
 /* Realloc for an mpz_t WHAT if it has less than NEEDED limbs.  */
-#define MPZ_REALLOC(z,n) ((n) > ALLOC(z) ? _mpz_realloc(z,n) : PTR(z))
+#define MPZ_REALLOC(z,n) ((n) > ALLOC(z) ? (mp_ptr) _mpz_realloc(z,n) : PTR(z))
 
 #define MPZ_EQUAL_1_P(z)  (SIZ(z)==1 && PTR(z)[0] == 1)
 
