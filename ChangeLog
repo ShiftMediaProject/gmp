@@ -2,6 +2,7 @@
 
 	* configure.in (*-*-aix): Pass -qmaxmem=20000 to xlc also for 64-bit
 	compiles.
+	* configure.in: Disable shared libs for *-*-ultrix*.
 
 2000-12-15  Torbjorn Granlund  <tege@swox.com>
 
