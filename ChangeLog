@@ -18,6 +18,35 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-20  Kevin Ryde  <kevin@swox.se>
+
+	* demos/expr/expr.h: Test #ifdef MPFR_VERSION_MAJOR for when mpfr.h is
+	included, not GMP_RNDZ which is now an enum.
+
+	* demos/expr/exprfra.c (e_mpfr_ulong_p): Use mpfr_integer_p and
+	mpfr_fits_ulong_p.
+	(e_mpfr_get_ui_fits): Use mpfr_get_ui.
+
+	* mpfr/*: Update to mpfr cvs head 2003-12-20.
+
+	* configure, config.in: Update to autoconf 2.59.
+	* */Makefile.in, configure, aclocal.m4, ansi2knr.c, install-sh,
+	doc/mdate-sh: Update to automake 1.8.
+	
+	* mkinstalldirs: Remove, not required by automake 1.8.
+	* doc/gmp.texi (Build Options): HTML is a usual target in automake 1.8.
+
+	* configure.in (AC_PREREQ): Require autoconf 2.59.
+	(AM_INIT_AUTOMAKE): Require automake 1.8.
+	(AC_C_INLINE): Use rather than GMP_C_INLINE, now has #ifndef
+	__cplusplus we want.
+	(gettimeofday): Use AC_CHECK_FUNCS rather than our workaround code,
+	autoconf now ok.
+
+	* acinclude.m4 (GMP_C_INLINE): Remove.
+	(GMP_H_EXTERN_INLINE): Use AC_C_INLINE.
+	(GMP_PROG_AR): Comment on automake $ARFLAGS.
+
 2003-12-19  Niels Möller  <nisse@harpo.hack.org>
 
 	* mpn/generic/hgcd.c (mpn_diff_smaller_p): Rewrote function. Tried
