@@ -57,12 +57,9 @@
 ;; Emacsen
 ;; -------
 ;;
-;; FSF Emacs 20.x - gmpasm-mode is designed for this.
-;; XEmacs 20.x - seems to work.
-;;
-;; FSF Emacs 19.x - should work if replacements for some 20.x-isms are
-;;    available.  comment-region with "C" won't really do the right thing
-;;    though.
+;; GNU Emacs 20.x, 21.x and XEmacs 20.x all seem fine.  GNU Emacs 19.x
+;; should work if replacements for the various 20.x-isms are available,
+;; though comment-region with "C" doesn't do the right thing.
 
 
 ;;; Code:
@@ -269,13 +266,12 @@ that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
     ;; Only spaces or tabs match after, so newline isn't included in the
     ;; font lock below.
     (set (make-local-variable 'comment-start-skip)
-	 (concat "\\(^\\|\\s-\\)" comment-regexp "[ \t]*"))
+	 (concat "\\(\\<dnl\\>\\|\\(^\\|\\s-\\)" comment-regexp "\\)[ \t]*"))
 
     ;; Comment fontification based on comment-start, matching through to the
     ;; end of the line.
     (add-to-list (make-local-variable 'gmpasm-font-lock-keywords)
-		 (cons (concat
-			"\\(\\bdnl\\b\\|" comment-start-skip "\\).*$")
+		 (cons (concat comment-start-skip ".*$")
 		       'font-lock-comment-face))
 
     (set (make-local-variable 'font-lock-defaults)
