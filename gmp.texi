@@ -878,7 +878,7 @@ C++ code, only @command{g++} will invoke the linker the right way when
 building an executable or shared library from object files.
 
 @item Temporary Memory, @option{--enable-alloca=<choice>}
-@cindex Stack overflow segfaults
+@cindex Stack overflow
 @cindex @code{alloca}
 
 GMP allocates temporary workspace using one of the following three methods,
@@ -2154,6 +2154,9 @@ as proposed by King Charles XII of Sweden and later reformers.
 
 @table @asis
 @item Stack Overflow
+@cindex Stack overflow
+@cindex Segmentation violation
+@cindex Bus error
 Depending on the system, a segmentation violation or bus error might be the
 only indication of stack overflow.  See @samp{--enable-alloca} choices in
 @ref{Build Options}, for how to address this.
@@ -2275,32 +2278,62 @@ application problem, see @ref{Reporting Bugs}.
 @cindex Profiling
 
 Running a program under a profiler is a good way to find where it's spending
-most time and where improvements can be best sought.
+most time and where improvements can be best sought.  The profiling choices
+for a GMP build are as follows.
 
-Depending on the system, it may be possible to get a flat profile, meaning
-simple timer sampling of the program counter, with no special GMP build
-options, just a @samp{-p} when compiling the mainline.  This is a good way to
-ensure minimum interference with normal operation.  The necessary symbol type
-and size information exists in most of the GMP assembler code.
+@table @asis
+@item @samp{--disable-profiling}
 
-The @samp{--enable-profiling} build option can be used to add suitable
-compiler flags, either for @command{prof} (@samp{-p}) or @command{gprof}
-(@samp{-pg}), see @ref{Build Options}.  Which of the two is available and what
-they do will depend on the system, and possibly on support available in
-@file{libc}.  For some systems appropriate corresponding @code{mcount} calls
-are added to the assembler code too.
+The default is to add nothing special for profiling.
 
-On x86 systems @command{prof} gives call counting, so that average time spent
-in a function can be determined.  @command{gprof}, where supported, adds call
-graph construction, so for instance calls to @code{mpn_add_n} from
-@code{mpz_add} and from @code{mpz_mul} can be differentiated.
+It should be possible to just compile the mainline of a program with @code{-p}
+and use @command{prof} to get a profile consisting of timer-based sampling of
+the program counter.  Most of the GMP assembler code has the necessary symbol
+information.
 
-On x86 and 68k systems @samp{-pg} and @samp{-fomit-frame-pointer} are
-incompatible, so the latter is not used when @command{gprof} profiling is
-selected, which may result in poorer code generation.  If @command{prof}
-profiling is selected instead it should still be possible to use
-@command{gprof}, but only the @samp{gprof -p} flat profile and call counts can
-be expected to be valid, not the @samp{gprof -q} call graph.
+This approach has the advantage of minimizing interference with normal program
+operation, but on most systems the resolution of the sampling is quite low (10
+milliseconds for instance), requiring long runs to get accurate information.
+
+@item @samp{--enable-profiling=prof}
+
+Build with support for the system @command{prof}, which means @samp{-p} added
+to the @samp{CFLAGS}.
+
+This provides call counting in addition to program counter sampling, which
+allows the most frequently called routines to be identified, and an average
+time spent in each routine to be determined.
+
+The x86 assembler code has support for this option, but on other processors
+the assembler routines will be as if compiled without @samp{-p} and therefore
+won't appear in the call counts.
+
+@item @samp{--enable-profiling=gprof}
+
+Build with support for @command{gprof} (@pxref{Top,Profiling a Program
+,Introduction,gprof,GNU gprof}), which means @samp{-pg} added to the
+@samp{CFLAGS}.
+
+This provides call graph construction in addition to call counting and program
+counter sampling, which makes it possible to count calls coming from different
+locations.  For example the number of calls to @code{mpn_mul} from
+@code{mpz_mul} versus the number from @code{mpf_mul}.  The program counter
+sampling is still flat though, so only a total time in @code{mpn_mul} would be
+accumulated, not a separate amount for each call site.
+
+The x86 assembler code has support for this option, but on other processors
+the assembler routines will be as if compiled without @samp{-pg} and therefore
+not be included in the call counts.
+
+On x86 and m68k systems @samp{-pg} and @samp{-fomit-frame-pointer} are
+incompatible, so the latter is omitted from the default flags in that case,
+which might result in poorer code generation.
+
+Incidentally it should be possible to use @command{gprof} with a plain
+@command{prof} build.  But in that case only the @samp{gprof -p} flat profile
+and call counts can be expected to be valid, not the @samp{gprof -q} call
+graph.
+@end table
 
 
 @node Autoconf,  , Profiling, GMP Basics
@@ -2479,6 +2512,7 @@ GMP integers are stored in objects of type @code{mpz_t}.
 * Integer Random Numbers::      
 * Integer Import and Export::   
 * Miscellaneous Integer Functions::  
+* Integer Special Functions::   
 @end menu
 
 @node Initializing Integers, Assigning Integers, Integer Functions, Integer Functions
@@ -2533,56 +2567,6 @@ Change the space allocated for @var{integer} to @var{n} bits.  The value in
 This function can be used to increase the space for a variable in order to
 avoid repeated automatic reallocations, or to decrease it to give memory back
 to the heap.
-@end deftypefun
-
-@deftypefun void mpz_array_init (mpz_t @var{integer_array}[], size_t @var{array_size}, @w{mp_size_t @var{fixed_num_bits}})
-This is a special type of initialization.  @strong{Fixed} space of
-@var{fixed_num_bits} bits is allocated to each of the @var{array_size}
-integers in @var{integer_array}.
-
-The space will not be automatically increased, unlike the normal
-@code{mpz_init}, but instead an application must ensure it's sufficient for
-any value stored.  The following space requirements apply to various
-functions,
-
-@itemize @bullet
-@item
-@code{mpz_abs}, @code{mpz_neg}, @code{mpz_set}, @code{mpz_set_si} and
-@code{mpz_set_ui} need room for the value they store.
-
-@item
-@code{mpz_add}, @code{mpz_add_ui}, @code{mpz_sub} and @code{mpz_sub_ui} need
-room for the larger of the two operands, plus an extra
-@code{mp_bits_per_limb}.
-
-@item
-@code{mpz_mul}, @code{mpz_mul_ui} and @code{mpz_mul_ui} need room for the sum
-of the number of bits in their operands, but each rounded up to a multiple of
-@code{mp_bits_per_limb}.
-
-@item
-@code{mpz_swap} can be used between two array variables, but not between an
-array and a normal variable.
-@end itemize
-
-For other functions, or if in doubt, the suggestion is to calculate in a
-regular @code{mpz_init} variable and copy the result to an array variable with
-@code{mpz_set}.
-
-@code{mpz_array_init} can reduce memory usage in algorithms that need large
-arrays of integers, since it avoids allocating and reallocating lots of small
-memory blocks.  There is no way to free the storage allocated by this
-function.  Don't call @code{mpz_clear}!
-@end deftypefun
-
-@deftypefun {void *} _mpz_realloc (mpz_t @var{integer}, mp_size_t @var{new_alloc})
-Change the space for @var{integer} to @var{new_alloc} limbs.  The value in
-@var{integer} is preserved if it fits, or is set to 0 if not.  The return
-value is not useful to applications and should be ignored.
-
-@code{mpz_realloc2} is the preferred way to accomplish allocation changes like
-this.  @code{mpz_realloc2} and @code{_mpz_realloc} are the same except that
-@code{_mpz_realloc} takes the new size in limbs.
 @end deftypefun
 
 
@@ -2733,15 +2717,6 @@ null-terminator.
 
 A pointer to the result string is returned, being either the allocated block,
 or the given @var{str}.
-@end deftypefun
-
-@deftypefun mp_limb_t mpz_getlimbn (mpz_t @var{op}, mp_size_t @var{n})
-Return limb number @var{n} from @var{op}.  The sign of @var{op} is ignored,
-just the absolute value is used.  The least significant limb is number 0.
-
-@code{mpz_size} can be used to find how many limbs make up @var{op}.
-@code{mpz_getlimbn} returns zero if @var{n} is outside the range 0 to
-@code{mpz_size(@var{op})-1}.
 @end deftypefun
 
 
@@ -3483,7 +3458,7 @@ p = malloc (count * size);
 
 
 @need 2000
-@node Miscellaneous Integer Functions,  , Integer Import and Export, Integer Functions
+@node Miscellaneous Integer Functions, Integer Special Functions, Integer Import and Export, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 @cindex Miscellaneous integer functions
@@ -3506,12 +3481,6 @@ Determine whether @var{op} is odd or even, respectively.  Return non-zero if
 yes, zero if no.  These macros evaluate their argument more than once.
 @end deftypefn
 
-@deftypefun size_t mpz_size (mpz_t @var{op})
-Return the size of @var{op} measured in number of limbs.  If @var{op} is zero,
-the returned value will be zero.
-@c (@xref{Nomenclature}, for an explanation of the concept @dfn{limb}.)
-@end deftypefun
-
 @deftypefun size_t mpz_sizeinbase (mpz_t @var{op}, int @var{base})
 Return the size of @var{op} measured in number of digits in base @var{base}.
 The base may vary from 2 to 36.  The sign of @var{op} is ignored, just the
@@ -3524,6 +3493,82 @@ converting @var{op} to a string.  The right amount of allocation is normally
 two more than the value returned by @code{mpz_sizeinbase} (one extra for a
 minus sign and one for the null-terminator).
 @end deftypefun
+
+
+@node Integer Special Functions,  , Miscellaneous Integer Functions, Integer Functions
+@section Special Functions
+@cindex Special integer functions
+@cindex Integer special functions
+
+The functions in this section are for various special purposes and for most
+applications the things here can be done better or more easily by other means.
+
+@deftypefun void mpz_array_init (mpz_t @var{integer_array}[], size_t @var{array_size}, @w{mp_size_t @var{fixed_num_bits}})
+This is a special type of initialization.  @strong{Fixed} space of
+@var{fixed_num_bits} is allocated to each of the @var{array_size} integers in
+@var{integer_array}.  There is no way to free the storage allocated by this
+function.  Don't call @code{mpz_clear}!
+
+This function is only intended for use by programs that create a large number
+of integers and need to reduce memory usage by avoiding the overheads of
+allocating and reallocating lots of small blocks.  In normal programs this
+function is not recommended.
+
+The space allocated to each integer by this function will not be automatically
+increased, unlike the normal @code{mpz_init}, so an application must ensure it
+is sufficient for any value stored.  The following space requirements apply to
+various routines,
+
+@itemize @bullet
+@item
+@code{mpz_abs}, @code{mpz_neg}, @code{mpz_set}, @code{mpz_set_si} and
+@code{mpz_set_ui} need room for the value they store.
+
+@item
+@code{mpz_add}, @code{mpz_add_ui}, @code{mpz_sub} and @code{mpz_sub_ui} need
+room for the larger of the two operands, plus an extra
+@code{mp_bits_per_limb}.
+
+@item
+@code{mpz_mul}, @code{mpz_mul_ui} and @code{mpz_mul_ui} need room for the sum
+of the number of bits in their operands, but each rounded up to a multiple of
+@code{mp_bits_per_limb}.
+
+@item
+@code{mpz_swap} can be used between two array variables, but not between an
+array and a normal variable.
+@end itemize
+
+For other functions, or if in doubt, the suggestion is to calculate in a
+regular @code{mpz_init} variable and copy the result to an array variable with
+@code{mpz_set}.
+@end deftypefun
+
+@deftypefun {void *} _mpz_realloc (mpz_t @var{integer}, mp_size_t @var{new_alloc})
+Change the space for @var{integer} to @var{new_alloc} limbs.  The value in
+@var{integer} is preserved if it fits, or is set to 0 if not.  The return
+value is not useful to applications and should be ignored.
+
+@code{mpz_realloc2} is the preferred way to accomplish allocation changes like
+this.  @code{mpz_realloc2} and @code{_mpz_realloc} are the same except that
+@code{_mpz_realloc} takes its size in limbs.
+@end deftypefun
+
+@deftypefun mp_limb_t mpz_getlimbn (mpz_t @var{op}, mp_size_t @var{n})
+Return limb number @var{n} from @var{op}.  The sign of @var{op} is ignored,
+just the absolute value is used.  The least significant limb is number 0.
+
+@code{mpz_size} can be used to find how many limbs make up @var{op}.
+@code{mpz_getlimbn} returns zero if @var{n} is outside the range 0 to
+@code{mpz_size(@var{op})-1}.
+@end deftypefun
+
+@deftypefun size_t mpz_size (mpz_t @var{op})
+Return the size of @var{op} measured in number of limbs.  If @var{op} is zero,
+the returned value will be zero.
+@c (@xref{Nomenclature}, for an explanation of the concept @dfn{limb}.)
+@end deftypefun
+
 
 
 @node Rational Number Functions, Floating-point Functions, Integer Functions, Top
