@@ -243,6 +243,7 @@ double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_diagonal _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_n _PROTO ((struct speed_params *s));
 double speed_mpn_sqrtrem _PROTO ((struct speed_params *s));
+double speed_mpn_rootrem _PROTO ((struct speed_params *s));
 double speed_mpn_sub_n _PROTO ((struct speed_params *s));
 double speed_mpn_sublsh1_n _PROTO ((struct speed_params *s));
 double speed_mpn_submul_1 _PROTO ((struct speed_params *s));
@@ -1853,6 +1854,35 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     i = s->reps;                                                \
     do                                                          \
       function (wp, wp2, s->xp, s->size);                       \
+    while (--i != 0);                                           \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+    return t;                                                   \
+  }  
+
+#define SPEED_ROUTINE_MPN_ROOTREM(function)                     \
+  {                                                             \
+    mp_ptr    wp, wp2;                                          \
+    unsigned  i;                                                \
+    double    t;                                                \
+    TMP_DECL (marker);                                          \
+                                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);                         \
+                                                                \
+    TMP_MARK (marker);                                          \
+    SPEED_TMP_ALLOC_LIMBS (wp,  s->size, s->align_wp);          \
+    SPEED_TMP_ALLOC_LIMBS (wp2, s->size, s->align_wp2);         \
+                                                                \
+    speed_operand_src (s, s->xp, s->size);                      \
+    speed_operand_dst (s, wp, s->size);                         \
+    speed_operand_dst (s, wp2, s->size);                        \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      function (wp, wp2, s->xp, s->size, s->r);                 \
     while (--i != 0);                                           \
     t = speed_endtime ();                                       \
                                                                 \
