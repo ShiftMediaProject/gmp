@@ -196,7 +196,7 @@ nodist_libdummy_la_SOURCES = \
 
 
 noinst_LTLIBRARIES = libmpn.la
-nodist_libmpn_la_SOURCES = mp_bases.c
+nodist_libmpn_la_SOURCES = fib_table.c mp_bases.c
 libmpn_la_LIBADD = $(OFILES)
 libmpn_la_DEPENDENCIES = $(OFILES)
 
@@ -260,7 +260,7 @@ nodist_libdummy_la_OBJECTS = add$U.lo add_1$U.lo add_n$U.lo \
 	udiv_qrnnd$U.lo udiv_w_sdiv$U.lo xor_n$U.lo xnor_n$U.lo
 libdummy_la_OBJECTS = $(nodist_libdummy_la_OBJECTS)
 libmpn_la_LDFLAGS =
-nodist_libmpn_la_OBJECTS = mp_bases$U.lo
+nodist_libmpn_la_OBJECTS = fib_table$U.lo mp_bases$U.lo
 libmpn_la_OBJECTS = $(nodist_libmpn_la_OBJECTS)
 
 DEFS = @DEFS@
@@ -360,6 +360,8 @@ dump_.c: dump.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dump.c; then echo $(srcdir)/dump.c; else echo dump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dump_.c || rm -f dump_.c
 fib2_ui_.c: fib2_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib2_ui.c; then echo $(srcdir)/fib2_ui.c; else echo fib2_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib2_ui_.c || rm -f fib2_ui_.c
+fib_table_.c: fib_table.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_table.c; then echo $(srcdir)/fib_table.c; else echo fib_table.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_table_.c || rm -f fib_table_.c
 gcd_.c: gcd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd.c; then echo $(srcdir)/gcd.c; else echo gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_.c || rm -f gcd_.c
 gcd_1_.c: gcd_1.c $(ANSI2KNR)
@@ -464,8 +466,9 @@ copyd_.lo copyi_.$(OBJEXT) copyi_.lo dc_divrem_n_.$(OBJEXT) \
 dc_divrem_n_.lo dive_1_.$(OBJEXT) dive_1_.lo diveby3_.$(OBJEXT) \
 diveby3_.lo divis_.$(OBJEXT) divis_.lo divrem_.$(OBJEXT) divrem_.lo \
 divrem_1_.$(OBJEXT) divrem_1_.lo divrem_2_.$(OBJEXT) divrem_2_.lo \
-dump_.$(OBJEXT) dump_.lo fib2_ui_.$(OBJEXT) fib2_ui_.lo gcd_.$(OBJEXT) \
-gcd_.lo gcd_1_.$(OBJEXT) gcd_1_.lo gcd_finda_.$(OBJEXT) gcd_finda_.lo \
+dump_.$(OBJEXT) dump_.lo fib2_ui_.$(OBJEXT) fib2_ui_.lo \
+fib_table_.$(OBJEXT) fib_table_.lo gcd_.$(OBJEXT) gcd_.lo \
+gcd_1_.$(OBJEXT) gcd_1_.lo gcd_finda_.$(OBJEXT) gcd_finda_.lo \
 gcdext_.$(OBJEXT) gcdext_.lo get_str_.$(OBJEXT) get_str_.lo \
 hamdist_.$(OBJEXT) hamdist_.lo invert_limb_.$(OBJEXT) invert_limb_.lo \
 ior_n_.$(OBJEXT) ior_n_.lo iorn_n_.$(OBJEXT) iorn_n_.lo \
@@ -642,6 +645,14 @@ uninstall-am: uninstall-info-am
 	mostlyclean-libtool tags uninstall uninstall-am \
 	uninstall-info-am
 
+
+# These are BUILT_SOURCES at the top-level, so normally they're built before
+# recursing into this directory.
+#
+fib_table.c:
+	cd ..; $(MAKE) $(AM_MAKEFLAGS) mpn/fib_table.c
+mp_bases.c:
+	cd ..; $(MAKE) $(AM_MAKEFLAGS) mpn/mp_bases.c
 
 # .s assembler, no preprocessing.
 #
