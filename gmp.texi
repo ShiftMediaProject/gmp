@@ -835,9 +835,8 @@ HPPA 2.0 CPUs can run all HPPA 1.0 and 1.1 code in the 32-bit HPPA 1.0 ABI.
 No special compiler options are needed for applications.
 @end table
 
-CPU type @samp{hppa2.0w} forces @samp{ABI=2.0w} and CPU @samp{hppa2.0n} forces
-@samp{ABI=2.0n}.  Plain @samp{hppa2.0} will use whichever of the above is
-available.
+CPU type @samp{hppa2.0w} or @samp{hppa2.0} will use any of the above ABIs,
+@samp{hppa2.0n} uses only 2.0n or 1.0.
 
 @need 1000
 @item MIPS 3 and 4 (@samp{mips[34]})
