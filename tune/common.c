@@ -719,16 +719,6 @@ speed_mpn_sub_n (struct speed_params *s)
 {
 SPEED_ROUTINE_MPN_BINARY_N (mpn_sub_n);
 }
-double
-speed_mpn_add_n_self (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_BINARY_N_SELF (mpn_add_n);
-}
-double
-speed_mpn_add_n_inplace (struct speed_params *s)
-{
-  SPEED_ROUTINE_MPN_BINARY_N_INPLACE (mpn_add_n);
-}
 
 
 /* mpn_and_n etc can be macros and so have to be handled with

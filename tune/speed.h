@@ -130,8 +130,6 @@ double speed_modlimb_invert_arith _PROTO ((struct speed_params *s));
 double speed_mpf_init_clear _PROTO ((struct speed_params *s));
 
 double speed_mpn_add_n _PROTO ((struct speed_params *s));
-double speed_mpn_add_n_self _PROTO ((struct speed_params *s));
-double speed_mpn_add_n_inplace _PROTO ((struct speed_params *s));
 double speed_mpn_and_n _PROTO ((struct speed_params *s));
 double speed_mpn_andn_n _PROTO ((struct speed_params *s));
 double speed_mpn_addmul_1 _PROTO ((struct speed_params *s));
@@ -506,9 +504,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 /* For mpn_add_n, mpn_sub_n, or similar. */
 #define SPEED_ROUTINE_MPN_BINARY_N_CALL(call)           \
   {                                                     \
-    mp_ptr    wp;                                       \
-    unsigned  i;                                        \
-    double    t;                                        \
+    mp_ptr     wp;                                      \
+    mp_ptr     xp, yp;                                  \
+    unsigned   i;                                       \
+    double     t;                                       \
     TMP_DECL (marker);                                  \
                                                         \
     SPEED_RESTRICT_COND (s->size >= 1);                 \
@@ -516,8 +515,26 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     TMP_MARK (marker);                                  \
     wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);  \
                                                         \
-    speed_operand_src (s, s->xp, s->size);              \
-    speed_operand_src (s, s->yp, s->size);              \
+    xp = s->xp;                                         \
+    yp = s->yp;                                         \
+                                                        \
+    switch (s->r) {                                     \
+    case 0:                   break;                    \
+    case 1: xp = wp;          break;                    \
+    case 2:          yp = wp; break;                    \
+    case 3: xp = wp; yp = wp; break;                    \
+    case 4:     yp = xp;      break;                    \
+    default:                                            \
+      TMP_FREE (marker);                                \
+      return -1.0;                                      \
+    }                                                   \
+                                                        \
+    /* initialize wp if operand overlap */              \
+    if (xp == wp || yp == wp)                           \
+      MPN_COPY (wp, s->xp, s->size);                    \
+                                                        \
+    speed_operand_src (s, xp, s->size);                 \
+    speed_operand_src (s, yp, s->size);                 \
     speed_operand_dst (s, wp, s->size);                 \
     speed_cache_fill (s);                               \
                                                         \
@@ -533,17 +550,10 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
   }  
 
 #define SPEED_ROUTINE_MPN_BINARY_N(function) \
-   SPEED_ROUTINE_MPN_BINARY_N_CALL ((*function) (wp, s->xp, s->yp, s->size))
+   SPEED_ROUTINE_MPN_BINARY_N_CALL ((*function) (wp, xp, yp, s->size))
 
 #define SPEED_ROUTINE_MPN_BINARY_NC(function) \
-   SPEED_ROUTINE_MPN_BINARY_N_CALL ((*function) (wp, s->xp, s->yp, s->size, 0))
-
-#define SPEED_ROUTINE_MPN_BINARY_N_SELF(function) \
-   SPEED_ROUTINE_MPN_BINARY_N_CALL ((*function) (wp, s->xp, s->xp, s->size))
-
-/* FIXME: wp is uninitialized here, should start it off from yp or something */
-#define SPEED_ROUTINE_MPN_BINARY_N_INPLACE(function) \
-   SPEED_ROUTINE_MPN_BINARY_N_CALL ((*function) (wp, wp, s->xp, s->size))
+   SPEED_ROUTINE_MPN_BINARY_N_CALL ((*function) (wp, xp, yp, s->size, 0))
 
 
 /* For mpn_lshift, mpn_rshift, mpn_mul_1, with r, or similar. */
