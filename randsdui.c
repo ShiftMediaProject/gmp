@@ -24,14 +24,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 gmp_randseed_ui (gmp_randstate_t rstate,
 		  unsigned long int seed)
-#else
-gmp_randseed_ui (rstate, seed)
-     gmp_randstate_t rstate;
-     mpz_t seed;
-#endif
 {
   mpz_set_ui (rstate->seed, seed);
 }
