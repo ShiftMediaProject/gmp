@@ -1,5 +1,7 @@
 2000-05-24  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/tests/reuse.c: Use mpz_random2 instead of mpz_random.
+
 	* mpz/divexact.c: Read pointers after reallocation.
 	Compare `quot' and `den' instead of `qp' and `dp' in overlap check.
 	Use MPN_COPY_INCR for copying from `np'.
