@@ -22,7 +22,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.
 
 /* This is a simple program, meant only to show one way to use GMP for this
    sort of thing.  There's few features, and error checking is minimal.
-   Expressions are read from standard input.
+   Standard input is read, there's no command line options.
 
    Examples:
        2+3*4        expressions are evaluated
@@ -50,7 +50,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.
        sqrt(n)      square root (rounded down)
 
    Other:
-       hex          \ hex or decimal numbers for input and output
+       hex          \ set hex or decimal for input and output
        decimal      /   ("0x" can be used for hex too)
        quit         exit program (EOF works too)
        ;            statements are separated with a ; or newline
@@ -164,7 +164,8 @@ mpz_t  variable[26];
 %token <var> VARIABLE
 
 /* operators, increasing precedence */
-%left     LAND LOR
+%left     LOR
+%left     LAND
 %nonassoc '<' '>' EQ NE LE GE
 %left     LSHIFT RSHIFT
 %left     '+' '-'
@@ -172,7 +173,6 @@ mpz_t  variable[26];
 %nonassoc UMINUS
 %right    '^'
 %nonassoc '!'
-%nonassoc '('
 
 %%
 
