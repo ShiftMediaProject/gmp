@@ -34,7 +34,7 @@ main (argc, argv)
      int argc;
      char **argv;
 {
-  MP_INT op1, op2;
+  mpz_t op1, op2;
   mp_size_t size;
   int i;
   int reps = 100000;
@@ -44,26 +44,26 @@ main (argc, argv)
   if (argc == 2)
      reps = atoi (argv[1]);
 
-  mpz_init (&op1);
-  mpz_init (&op2);
+  mpz_init (op1);
+  mpz_init (op2);
 
   for (i = 0; i < reps; i++)
     {
       size = urandom () % SIZE - SIZE/2;
 
-      mpz_random2 (&op1, size);
+      mpz_random2 (op1, size);
       base = urandom () % 36 + 1;
       if (base == 1)
 	base = 0;
 
-      str = mpz_get_str ((char *) 0, base, &op1);
-      mpz_set_str (&op2, str, base);
+      str = mpz_get_str ((char *) 0, base, op1);
+      mpz_set_str (op2, str, base);
       free (str);
 
-      if (mpz_cmp (&op1, &op2))
+      if (mpz_cmp (op1, op2))
 	{
 	  fprintf (stderr, "ERROR\n");
-	  fprintf (stderr, "op1  = "); debug_mp (&op1, -16);
+	  fprintf (stderr, "op1  = "); debug_mp (op1, -16);
 	  fprintf (stderr, "base = %d\n", base);
 	  abort ();
 	}
@@ -74,7 +74,7 @@ main (argc, argv)
 
 void
 debug_mp (x, base)
-     MP_INT *x;
+     mpz_t x;
 {
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);
 }
