@@ -1298,24 +1298,30 @@ dnl  For gas, ".L" is normally purely local to the assembler, it doesn't get
 dnl  put into the object file at all.  This style is preferred, to keep the
 dnl  object files nice and clean.
 dnl
-dnl  BSD format nm produces a line like the following.  The lower case "t"
-dnl  indicates a local text segment label.  On OSF with "nm -B", an "N" is
-dnl  printed instead.
+dnl  BSD format nm produces a line like
 dnl
 dnl      00000000 t Lgurkmacka
+dnl
+dnl  The symbol code is normally "t" for text, but any lower case letter
+dnl  indicates a local definition.
+dnl
+dnl  Code "n" is for a debugging symbol, OSF "nm -B" gives that as an upper
+dnl  case "N" for a local.
 dnl
 dnl  HP-UX nm prints an error message (though seems to give a 0 exit) if
 dnl  there's no symbols at all in an object file, hence the use of "dummy".
 
 AC_DEFUN(GMP_ASM_LSYM_PREFIX,
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_PROG_NM])
-AC_CACHE_CHECK([what prefix to use for a local label], 
+AC_CACHE_CHECK([for assembler local label prefix], 
                gmp_cv_asm_lsym_prefix,
 [for gmp_tmp_pre in L .L $ L$; do
   echo "Trying $gmp_tmp_pre" >&AC_FD_CC
   GMP_TRY_ASSEMBLE(
-[dummy${gmp_cv_asm_label_suffix}
+[	$gmp_cv_asm_text
+dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}],
   [if $NM conftest.$OBJEXT >conftest.nm 2>&AC_FD_CC; then : ; else
     cat conftest.nm >&AC_FD_CC
@@ -1328,7 +1334,7 @@ ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}],
     gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
     break
   fi
-  if grep [' [Nt] .*gurkmacka'] conftest.nm >/dev/null; then
+  if grep [' [a-zN] .*gurkmacka'] conftest.nm >/dev/null; then
     # symbol mentioned as a local, use this if nothing better
     if test -z "$gmp_cv_asm_lsym_prefix"; then
       gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
