@@ -20,7 +20,7 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu no-dependencies
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_srcdir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
@@ -31,3 +31,5 @@ LDADD = $(top_builddir)/libgmp.la
 EXTRA_PROGRAMS = factorize isprime pexpr primes
 
 CLEANFILES = $(EXTRA_PROGRAMS)
+
+allprogs: $(EXTRA_PROGRAMS)
