@@ -215,7 +215,7 @@ mp_limb_t refmpn_lshift_or_copy __GMP_PROTO ((mp_ptr wp,
                                          unsigned shift));
 
 mp_ptr refmpn_malloc_limbs __GMP_PROTO ((mp_size_t size));
-mp_ptr refmpn_malloc_limbs_aligned __GMP_PROTO ((size_t n, size_t m));
+mp_ptr refmpn_malloc_limbs_aligned __GMP_PROTO ((mp_size_t n, size_t m));
 mp_limb_t refmpn_msbone __GMP_PROTO ((mp_limb_t x));
 mp_limb_t refmpn_msbone_mask __GMP_PROTO ((mp_limb_t x));
 mp_ptr refmpn_memdup_limbs __GMP_PROTO ((mp_srcptr ptr, mp_size_t size));
