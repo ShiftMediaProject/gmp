@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 6 Jan 2002.  An up-to-date version is available at
+  This file current as of 8 Jan 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -47,8 +47,7 @@ MA 02111-1307, USA.
 <h4>Correctness and Completeness</h4>
 <ul>
 <li> mpn/generic/get_str.c stores <code>mp_size_t</code> data in several int
-     variables.  (It is also really slow.  Perhaps just call
-     <code>mpn_divrem_1</code>.  See also optimization item below.)
+     variables.
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c:
@@ -864,7 +863,7 @@ near future, but are at least worth thinking about.
      allows that attribute on functions, but not function pointers (see info
      node "Attribute Syntax"), so would need a new autoconf test.  This can
      wait until there's a GCC that supports it.
-<li> <code>mpn_add_ui</code> contains two <code>__GMPN_COPY</code>s, one from
+<li> <code>mpz_add_ui</code> contains two <code>__GMPN_COPY</code>s, one from
      <code>mpn_add_1</code> and one from <code>mpn_sub_1</code>.  If those two
      routines were opened up a bit maybe that code could be shared.  When a
      copy needs to be done there's no carry to append for the add, and if the
