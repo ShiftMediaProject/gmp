@@ -151,10 +151,12 @@ noinst_HEADERS = speed.h
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
 libspeed_la_SOURCES = \
-  common.c divrem_1_div.c divrem_1_inv.c freq.c gcd_bin.c gcd_finda_gen.c \
-  gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			  \
-  mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		  \
-  noop.c powm_mod.c powm_redc.c time.c
+  common.c divrem_1_div.c divrem_1_inv.c divrem_2_div.c divrem_2_inv.c	\
+  freq.c gcd_bin.c gcd_finda_gen.c					\
+  gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
+  mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
+  noop.c powm_mod.c powm_redc.c time.c					\
+  sb_div.c sb_inv.c
 
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) \
@@ -209,15 +211,23 @@ DISTCLEANFILES = sqr_basecase.c
 # Generating these little files at build time seems better than including
 # them in the distribution, since the list can be changed more easily.
 #
-# mpn/generic/tdiv_qr.c uses mpn_divrem_1, but only for a 1 limb divisor,
-# which is never used during tuning, so it doesn't matter whether it picks
-# up a tuned or untuned version of that routine.
+# mpn/generic/tdiv_qr.c uses mpn_divrem_1 and mpn_divrem_2, but only for 1
+# and 2 limb divisors, which are never used during tuning, so it doesn't
+# matter whether it picks up a tuned or untuned version of those.
+#
+# divrem_1 and mod_1 are recompiled renamed to "_tune" to avoid a linking
+# problem.  If a native divrem_1 provides an mpn_divrem_1c entrypoint then
+# common.c will want that, but the generic divrem_1 doesn't provide it,
+# likewise for mod_1.  The simplest way around this is to have the tune
+# build versions renamed suitably.
 #
 # FIXME: Would like say mul_n.c to depend on $(top_builddir)/mul_n.c so the
 # recompiled object will be rebuilt if that file changes.
 
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
-TUNE_MPN_SRCS_BASIC = dc_divrem_n.c gcd.c mul_n.c mul_fft.c mul.c tdiv_qr.c
+TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c mul_n.c mul_fft.c mul.c \
+  sb_divrem_mn.c tdiv_qr.c
+
 TUNE_MPZ_SRCS = fib_ui.c
 
 COMPILE_FLAGS = \
@@ -247,10 +257,11 @@ libdummy_la_LIBADD =
 nodist_libdummy_la_OBJECTS =  sqr_basecase$U.lo
 libdummy_la_OBJECTS =  $(nodist_libdummy_la_OBJECTS)
 am_libspeed_la_OBJECTS =  common$U.lo divrem_1_div$U.lo \
-divrem_1_inv$U.lo freq$U.lo gcd_bin$U.lo gcd_finda_gen$U.lo \
-gcdext_single$U.lo gcdext_double$U.lo gcdextod$U.lo gcdextos$U.lo \
-mod_1_div$U.lo mod_1_inv$U.lo modlinv$U.lo mul_n_mpn$U.lo \
-mul_n_open$U.lo noop$U.lo powm_mod$U.lo powm_redc$U.lo time$U.lo
+divrem_1_inv$U.lo divrem_2_div$U.lo divrem_2_inv$U.lo freq$U.lo \
+gcd_bin$U.lo gcd_finda_gen$U.lo gcdext_single$U.lo gcdext_double$U.lo \
+gcdextod$U.lo gcdextos$U.lo mod_1_div$U.lo mod_1_inv$U.lo modlinv$U.lo \
+mul_n_mpn$U.lo mul_n_open$U.lo noop$U.lo powm_mod$U.lo powm_redc$U.lo \
+time$U.lo sb_div$U.lo sb_inv$U.lo
 libspeed_la_OBJECTS =  $(am_libspeed_la_OBJECTS)
 EXTRA_PROGRAMS =  speed$(EXEEXT) speed-dynamic$(EXEEXT) \
 speed-ext$(EXEEXT) tuneup$(EXEEXT)
@@ -269,9 +280,10 @@ speed_ext_LDADD = $(LDADD)
 speed_ext_DEPENDENCIES =  libspeed.la
 am_tuneup_OBJECTS =  tuneup$U.$(OBJEXT)
 nodist_tuneup_OBJECTS =  sqr_basecase$U.$(OBJEXT) \
-dc_divrem_n$U.$(OBJEXT) gcd$U.$(OBJEXT) mul_n$U.$(OBJEXT) \
-mul_fft$U.$(OBJEXT) mul$U.$(OBJEXT) tdiv_qr$U.$(OBJEXT) \
-divrem_1$U.$(OBJEXT) mod_1$U.$(OBJEXT) fib_ui$U.$(OBJEXT)
+dc_divrem_n$U.$(OBJEXT) divrem_2$U.$(OBJEXT) gcd$U.$(OBJEXT) \
+mul_n$U.$(OBJEXT) mul_fft$U.$(OBJEXT) mul$U.$(OBJEXT) \
+sb_divrem_mn$U.$(OBJEXT) tdiv_qr$U.$(OBJEXT) divrem_1$U.$(OBJEXT) \
+mod_1$U.$(OBJEXT) fib_ui$U.$(OBJEXT)
 tuneup_OBJECTS =  $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -376,6 +388,12 @@ divrem_1_div_.c: divrem_1_div.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divrem_1_div.c; then echo $(srcdir)/divrem_1_div.c; else echo divrem_1_div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divrem_1_div_.c
 divrem_1_inv_.c: divrem_1_inv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divrem_1_inv.c; then echo $(srcdir)/divrem_1_inv.c; else echo divrem_1_inv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divrem_1_inv_.c
+divrem_2_.c: divrem_2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divrem_2.c; then echo $(srcdir)/divrem_2.c; else echo divrem_2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divrem_2_.c
+divrem_2_div_.c: divrem_2_div.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divrem_2_div.c; then echo $(srcdir)/divrem_2_div.c; else echo divrem_2_div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divrem_2_div_.c
+divrem_2_inv_.c: divrem_2_inv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divrem_2_inv.c; then echo $(srcdir)/divrem_2_inv.c; else echo divrem_2_inv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divrem_2_inv_.c
 fib_ui_.c: fib_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_ui.c; then echo $(srcdir)/fib_ui.c; else echo fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_ui_.c
 freq_.c: freq.c $(ANSI2KNR)
@@ -418,6 +436,12 @@ powm_mod_.c: powm_mod.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm_mod.c; then echo $(srcdir)/powm_mod.c; else echo powm_mod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_mod_.c
 powm_redc_.c: powm_redc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm_redc.c; then echo $(srcdir)/powm_redc.c; else echo powm_redc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_redc_.c
+sb_div_.c: sb_div.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sb_div.c; then echo $(srcdir)/sb_div.c; else echo sb_div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sb_div_.c
+sb_divrem_mn_.c: sb_divrem_mn.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sb_divrem_mn.c; then echo $(srcdir)/sb_divrem_mn.c; else echo sb_divrem_mn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sb_divrem_mn_.c
+sb_inv_.c: sb_inv.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sb_inv.c; then echo $(srcdir)/sb_inv.c; else echo sb_inv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sb_inv_.c
 speed_.c: speed.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed.c; then echo $(srcdir)/speed.c; else echo speed.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed_.c
 sqr_basecase_.c: sqr_basecase.c $(ANSI2KNR)
@@ -431,6 +455,8 @@ tuneup_.c: tuneup.c $(ANSI2KNR)
 common_.$(OBJEXT) common_.lo dc_divrem_n_.$(OBJEXT) dc_divrem_n_.lo \
 divrem_1_.$(OBJEXT) divrem_1_.lo divrem_1_div_.$(OBJEXT) \
 divrem_1_div_.lo divrem_1_inv_.$(OBJEXT) divrem_1_inv_.lo \
+divrem_2_.$(OBJEXT) divrem_2_.lo divrem_2_div_.$(OBJEXT) \
+divrem_2_div_.lo divrem_2_inv_.$(OBJEXT) divrem_2_inv_.lo \
 fib_ui_.$(OBJEXT) fib_ui_.lo freq_.$(OBJEXT) freq_.lo gcd_.$(OBJEXT) \
 gcd_.lo gcd_bin_.$(OBJEXT) gcd_bin_.lo gcd_finda_gen_.$(OBJEXT) \
 gcd_finda_gen_.lo gcdext_double_.$(OBJEXT) gcdext_double_.lo \
@@ -441,9 +467,11 @@ mod_1_inv_.lo modlinv_.$(OBJEXT) modlinv_.lo mul_.$(OBJEXT) mul_.lo \
 mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo \
 mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) mul_n_open_.lo \
 noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) powm_mod_.lo \
-powm_redc_.$(OBJEXT) powm_redc_.lo speed_.$(OBJEXT) speed_.lo \
-sqr_basecase_.$(OBJEXT) sqr_basecase_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo \
-time_.$(OBJEXT) time_.lo tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
+powm_redc_.$(OBJEXT) powm_redc_.lo sb_div_.$(OBJEXT) sb_div_.lo \
+sb_divrem_mn_.$(OBJEXT) sb_divrem_mn_.lo sb_inv_.$(OBJEXT) sb_inv_.lo \
+speed_.$(OBJEXT) speed_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo \
+tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) time_.lo \
+tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
