@@ -34,7 +34,8 @@ Changes between MP version 3.1.1 and 4.0
 * Updated mpfr (floating-point function set).
 * Speed improvements for mpz_powm and mpz_powm_ui (mainly affecting small
   operands).
-* New gmp_printf and related functions.
+* Float input and output uses locale specific decimal point where available.
+* New gmp_printf, gmp_scanf and related functions.
 * New integer functions: mpz_cmp_d, mpz_cmpabs_d, mpz_lcm_ui.
 * New division functions: mpz_cdiv_q_2exp, mpz_cdiv_r_2exp, mpz_divexact_ui.
 * New mpz_kronecker function, and mpz_jacobi accepts non-positive denominators.
