@@ -23,6 +23,37 @@ MA 02111-1307, USA.
 	* printf/printffuns.c (gmp_fprintf_reps): Make it actually work
 	for padding > 256.
 
+2002-12-17  Kevin Ryde  <kevin@swox.se>
+
+	* tune/freq.c: Add <string.h> for memcmp.
+
+	* mpz/pprime_p.c: Use MPN_MOD_OR_MODEXACT_1_ODD.
+
+	* gmp.texi (Formatted Output Strings): %a and %A are C99 not glibc.
+	(Formatted Input Strings): Type "l" is for double too.  Hex floats are
+	accepted for mpf_t.
+	(Formatted Input Functions): Describe tightened parse rule, clarify
+	return value a bit.
+
+	* scanf/doscan.c: Add hex floats, tighten matching to follow C99, for
+	instance "0x" is no longer acceptable to "%Zi".
+	Rename "invalid" label to avoid "invalid" variable, SunOS cc doesn't
+	like them the same.
+	* tests/misc/t-scanf.c: Update tests.
+	* tests/misc/t-locale.c (check_input): Don't let "0x" appear from fake
+	decimal point.
+
+	* mpn/x86/k6/gcd_1.asm, mpn/x86/k7/gcd_1.asm: Don't use the PLT to
+	call mpn_modexact_1_odd.
+
+	* mpn/x86/README: Update notes on PIC calls.
+
+	* config.guess (sparc*-*-*): Look at BSD sysctl hw.model to recognise
+	ultrasparcs.
+
+	* mpfr/tests/dummy.c: New file.
+	* mpfr/tests/Makefile.am (libfrtests_a_SOURCES): Add it.
+
 2002-12-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpbsd/Makefile.am (nodist_libmpbsd_la_SOURCES): Move these mpz
