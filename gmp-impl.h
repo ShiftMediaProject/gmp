@@ -548,8 +548,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define USE_PREINV_DIVREM_1               0  /* no preinv */
 #define USE_PREINV_MOD_1                  0  /* no preinv */
 #define DIVREM_2_THRESHOLD                MP_SIZE_T_MAX  /* no preinv */
-#define DIVEXACT_1_THRESHOLD              MP_SIZE_T_MAX  /* never */
-#define MODEXACT_1_ODD_THRESHOLD          MP_SIZE_T_MAX  /* never */
 
 #undef GET_STR_DC_THRESHOLD
 #undef GET_STR_PRECOMPUTE_THRESHOLD
