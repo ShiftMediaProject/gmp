@@ -329,34 +329,26 @@ int __gmp_assert_fail _PROTO((const char *filename, int linenum,
 #define mpn_com_n __MPN(com_n)
 void mpn_com_n _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #else
-#define mpn_com_n(d,s,n)	\
-  {				\
-    mp_ptr     __d = (d);	\
-    mp_srcptr  __s = (s);	\
-    mp_size_t  __n = (n);	\
-				\
-    if (__n != 0)		\
-      {				\
-	do			\
-	  *__d++ = *__s++;	\
-	while (--__n);		\
-      }				\
+#define mpn_com_n(d,s,n)        \
+  {                             \
+    mp_ptr     __d = (d);       \
+    mp_srcptr  __s = (s);       \
+    mp_size_t  __n = (n);       \
+    do                          \
+      *__d++ = *__s++;          \
+    while (--__n);              \
   } while (0)
 #endif
 
-#define MPN_LOGOPS_N_INLINE(d,s1,s2,n,dop,op,s2op)		\
-  {								\
-    mp_ptr     __d = (d);					\
-    mp_srcptr  __s1 = (s1);					\
-    mp_srcptr  __s2 = (s2);					\
-    mp_size_t  __n = (n);					\
-								\
-    if (__n != 0)						\
-      {								\
-	do							\
-	  *__d++ = dop (*__s1++ op s2op *__s2++);		\
-	while (--__n);						\
-      }								\
+#define MPN_LOGOPS_N_INLINE(d,s1,s2,n,dop,op,s2op)      \
+  {                                                     \
+    mp_ptr     __d = (d);                               \
+    mp_srcptr  __s1 = (s1);                             \
+    mp_srcptr  __s2 = (s2);                             \
+    mp_size_t  __n = (n);                               \
+    do                                                  \
+      *__d++ = dop (*__s1++ op s2op *__s2++);           \
+    while (--__n);                                      \
   } while (0)
 
 #if HAVE_NATIVE_mpn_and_n
@@ -680,6 +672,9 @@ extern const int __gmp_0;
 #define MPZ_PROVOKE_REALLOC(z)						\
   do { ALLOC(z) = ABSIZ(z); } while (0)
 
-/* From tune program, not present in a normal build. */
+#if TUNE_PROGRAM_BUILD
+/* Some extras wanted when recompiling some .c files for use by the tune
+   program.  Not part of a normal build. */
 extern mp_size_t  tune_mul_threshold[];
 extern mp_size_t  tune_sqr_threshold[];
+#endif
