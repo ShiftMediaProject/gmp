@@ -23,7 +23,6 @@ gmp.log
 gmp.dvi
 gmp.aux
 gmp.cp
-st-*
 t-add
 t-sub
 t-conv
