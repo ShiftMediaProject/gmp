@@ -86,7 +86,6 @@ L(1)	ldd		56(up), %r21
 	add,dc		%r0, %r0, %r29
 	subi		1, %r29, %r29
 	bve		(%r2)
-	.exit
 ifdef(`HAVE_ABI_2_0w',
 `	copy		%r29, %r28
 ',`	ldi		0, %r28
