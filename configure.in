@@ -293,6 +293,9 @@ AH_VERBATIM([HAVE_HOST_CPU_1],
 #   limb                limb size, can be "longlong"
 #   path                mpn search path
 #   extra_functions     extra mpn functions
+#   fat_path            fat binary mpn search path [if fat binary desired]
+#   fat_functions       fat functions
+#   fat_thresholds      fat thresholds
 #
 # Suppose xx_cflags_optlist="arch", then flags from $xx_cflags_arch are
 # tried, and the first flag that works will be used.  An optlist like "arch
@@ -1206,6 +1209,23 @@ case $host in
     esac
 
     case $host in
+      i386-*-*)
+        extra_functions="$extra_functions fat fat_entry"
+        path="x86/fat x86"
+        fat_path="x86 x86/fat x86/i486
+                  x86/k6 x86/k6/mmx x86/k6/k62mmx
+                  x86/k7 x86/k7/mmx
+                  x86/pentium x86/pentium/mmx
+                  x86/p6 x86/p6/mmx x86/p6/p3mmx
+                  x86/pentium4 x86/pentium4/mmx x86/pentium4/sse2"
+        fat_functions="add_n addmul_1 copyd copyi
+                       dive_1 diveby3 divrem_1 gcd_1 lshift
+                       mod_1 mod_34lsub1 mode1o mul_1 mul_basecase
+                       pre_divrem_1 pre_mod_1 rshift
+                       sqr_basecase sub_n submul_1"
+        fat_thresholds="MUL_KARATSUBA_THRESHOLD MUL_TOOM3_THRESHOLD
+                        SQR_KARATSUBA_THRESHOLD SQR_TOOM3_THRESHOLD"
+        ;;
       i486*-*-*)                  path="x86/i486 x86" ;;
       i586*-*-* | pentium-*-*)    path="x86/pentium x86" ;;
       pentiummmx-*-*)             path="x86/pentium/mmx x86/pentium x86" ;;
@@ -1715,15 +1735,26 @@ if test $GMP_NAIL_BITS != 0 && test -z "$MPN_PATH"; then
   path=$new_path
 fi
 
+
+# Put all directories into CPUVEC_list so as to get a full set of
+# CPUVEC_SETUP_$tmp_suffix defines into config.h, even if some of them are
+# empty because mmx and/or sse2 had to be dropped.
+#
+for i in $fat_path; do
+  GMP_FAT_SUFFIX(tmp_suffix, $i)
+  CPUVEC_list="$CPUVEC_list CPUVEC_SETUP_$tmp_suffix"
+done
+
+
 # If there's any sse2 or mmx in the path, check whether the assembler
 # supports it, and remove if not.
 #
 case $host in
   X86_PATTERN)
-    case "$path" in
+    case "$path $fat_path" in
       *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(*mmx*)]) ;;
     esac
-    case "$path" in
+    case "$path $fat_path" in
       *sse2*)  GMP_ASM_X86_SSE2( , [GMP_STRIP_PATH(sse2)]) ;;
     esac
   ;;
@@ -2123,6 +2154,19 @@ gmp_mpn_functions="$extra_functions					   \
   bdivmod gcd_1 gcd gcdext tdiv_qr dc_divrem_n sb_divrem_mn jacbase get_d  \
   $gmp_mpn_functions_optional"
 
+define(GMP_MULFUNC_CHOICES,
+[# functions that can be provided by multi-function files
+tmp_mulfunc=
+case $tmp_fn in
+  add_n|sub_n)       tmp_mulfunc="aors_n"    ;;
+  addmul_1|submul_1) tmp_mulfunc="aorsmul_1" ;;
+  popcount|hamdist)  tmp_mulfunc="popham"    ;;
+  and_n|andn_n|nand_n | ior_n|iorn_n|nior_n | xor_n|xnor_n)
+                     tmp_mulfunc="logops_n"  ;;
+  lshift|rshift)     tmp_mulfunc="lorrshift";;
+esac
+])
+
 # the list of all object files used by mpn/Makefile.in and the
 # top-level Makefile.in, respectively
 mpn_objects=
@@ -2131,7 +2175,249 @@ mpn_objs_in_libgmp=
 # links from the sources, to be removed by "make distclean"
 gmp_srclinks=
 
+
+# mpn_relative_top_srcdir is $top_srcdir, but for use from within the mpn
+# build directory.  If $srcdir is relative then we use a relative path too,
+# so the two trees can be moved together.
+case $srcdir in
+  [[\\/]* | ?:[\\/]*])  # absolute, as per autoconf
+    mpn_relative_top_srcdir=$srcdir ;;
+  *)                    # relative
+    mpn_relative_top_srcdir=../$srcdir ;;
+esac
+
+
 define(MPN_SUFFIXES,[asm S s c])
+
+dnl  Usage: GMP_FILE_TO_FUNCTION_BASE(func,file)
+dnl
+dnl  Set $func to the function base name for $file, eg. dive_1 gives
+dnl  divexact_1.
+dnl
+define(GMP_FILE_TO_FUNCTION,
+[case $$2 in
+  dive_1)    	$1=divexact_1 ;;
+  diveby3)   	$1=divexact_by3c ;;
+  pre_divrem_1) $1=preinv_divrem_1 ;;
+  mode1o)    	$1=modexact_1c_odd ;;
+  pre_mod_1) 	$1=preinv_mod_1 ;;
+  *)         	$1=$$2 ;;
+esac
+])
+
+# Fat binary setups.
+#
+# We proceed through each $fat_path directory, and look for $fat_function
+# routines there.  Those found are incorporated in the build by generating a
+# little mpn/<foo>.asm or mpn/<foo>.c file in the build directory, with
+# suitable function renaming, and adding that to $mpn_objects (the same as a
+# normal mpn file).
+#
+# fat.h is generated with macros to let internal calls to each $fat_function
+# go directly through __gmpn_cpuvec, plus macros and declarations helping to
+# setup that structure, on a per-directory basis ready for
+# mpn/<cpu>/fat/fat.c.
+#
+# fat.h includes thesholds listed in $fat_thresholds, extracted from
+# gmp-mparam.h in each directory.  An overall maximum for each threshold is
+# established, for use in making fixed size arrays of temporary space.
+# (Eg. MUL_TOOM3_THRESHOLD_LIMIT used by mpn/generic/mul.c.)
+#
+# It'd be possible to do some of this manually, but when there's more than a
+# few functions and a few directories it becomes very tedious, and very
+# prone to having some routine accidentally omitted.  On that basis it seems
+# best to automate as much as possible, even if the code to do so is a bit
+# ugly.
+#
+
+if test -n "$fat_path"; then
+  # Usually the mpn build directory is created with mpn/Makefile
+  # instantiation, but we want to write to it sooner.
+  mkdir mpn 2>/dev/null
+
+  echo "/* fat.h - setups for fat binaries." >fat.h
+  echo "   Generated by configure - DO NOT EDIT.  */" >>fat.h
+
+  AC_DEFINE(WANT_FAT_BINARY, 1, [Define to 1 when building a fat binary.])
+  GMP_DEFINE(WANT_FAT_BINARY, yes)
+
+  # Don't want normal copies of fat functions
+  for tmp_fn in $fat_functions; do
+    GMP_REMOVE_FROM_LIST(gmp_mpn_functions, $tmp_fn)
+    GMP_REMOVE_FROM_LIST(gmp_mpn_functions_optional, $tmp_fn)
+  done
+
+  for tmp_fn in $fat_functions; do
+    GMP_FILE_TO_FUNCTION(tmp_fbase,tmp_fn)
+    echo "
+#ifndef OPERATION_$tmp_fn
+#undef  mpn_$tmp_fbase
+#define mpn_$tmp_fbase  (*__gmpn_cpuvec.$tmp_fbase)
+#endif
+DECL_$tmp_fbase (__MPN(${tmp_fbase}_init));" >>fat.h
+    # encourage various macros to use fat functions
+    AC_DEFINE_UNQUOTED(HAVE_NATIVE_$tmp_fbase)
+  done
+
+  echo "" >>fat.h
+  echo "/* variable thresholds */" >>fat.h
+  for tmp_tn in $fat_thresholds; do
+    echo "#undef  $tmp_tn" >>fat.h
+    echo "#define $tmp_tn  CPUVEC_THRESHOLD (`echo $tmp_tn | tr A-Z a-z`)" >>fat.h
+  done
+
+  echo "
+/* A helper to check all fields are filled. */
+#define ASSERT_CPUVEC(vec) \\
+  do { \\" >>fat.h
+  for tmp_fn in $fat_functions; do
+    GMP_FILE_TO_FUNCTION(tmp_fbase,tmp_fn)
+    echo "  ASSERT (vec.$tmp_fbase != NULL); \\" >>fat.h
+  done
+  for tmp_tn in $fat_thresholds; do
+    echo "  ASSERT (vec.`echo $tmp_tn | tr A-Z a-z` != 0); \\" >>fat.h
+  done
+  echo "  } while (0)" >>fat.h
+
+  for tmp_dir in $fat_path; do
+    CPUVEC_SETUP=
+    THRESH_ASM_SETUP=
+    echo "" >>fat.h
+    GMP_FAT_SUFFIX(tmp_suffix, $tmp_dir)
+
+    # In order to keep names unique on a DOS 8.3 filesystem, use a prefix
+    # (rather than a suffix) for the generated file names, and abbreviate.
+    case $tmp_suffix in
+      pentium)       tmp_prefix=p   ;;
+      pentium_mmx)   tmp_prefix=pm  ;;
+      p6_mmx)        tmp_prefix=p2  ;;
+      p6_p3mmx)      tmp_prefix=p3  ;;
+      pentium4)      tmp_prefix=p4  ;;
+      pentium4_mmx)  tmp_prefix=p4m ;;
+      pentium4_sse2) tmp_prefix=p4s ;;
+      k6_mmx)        tmp_prefix=k6m ;;
+      k6_k62mmx)     tmp_prefix=k62 ;;
+      k7_mmx)        tmp_prefix=k7m ;;
+      *)             tmp_prefix=$tmp_suffix ;;
+    esac
+
+    # Extract desired thresholds from gmp-mparam.h file in this directory,
+    # if prsent.
+    tmp_mparam=$srcdir/mpn/$tmp_dir/gmp-mparam.h
+    if test -f $tmp_mparam; then
+      for tmp_tn in $fat_thresholds; do
+        tmp_thresh=`sed -n "s/^#define $tmp_tn[ 	]*\\([0-9][0-9]*\\).*$/\\1/p" $tmp_mparam`
+        if test -n "$tmp_thresh"; then
+          THRESH_ASM_SETUP=["${THRESH_ASM_SETUP}define($tmp_tn,$tmp_thresh)
+"]
+          CPUVEC_SETUP="$CPUVEC_SETUP    decided_cpuvec.`echo $tmp_tn | tr A-Z a-z` = $tmp_thresh; \\
+"
+          eval tmp_limit=\$${tmp_tn}_LIMIT
+          if test -z "$tmp_limit"; then
+            tmp_limit=0
+          fi
+          if test $tmp_thresh -gt $tmp_limit; then
+            eval ${tmp_tn}_LIMIT=$tmp_thresh
+          fi
+        fi
+      done
+    fi
+
+    for tmp_fn in $fat_functions; do
+      GMP_MULFUNC_CHOICES
+
+      for tmp_base in $tmp_fn $tmp_mulfunc; do
+        for tmp_ext in MPN_SUFFIXES; do
+          tmp_file=$srcdir/mpn/$tmp_dir/$tmp_base.$tmp_ext
+          if test -f $tmp_file; then
+    
+            mpn_objects="$mpn_objects ${tmp_prefix}_$tmp_fn.lo"
+            mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_prefix}_$tmp_fn.lo"
+
+            GMP_FILE_TO_FUNCTION(tmp_fbase,tmp_fn)
+
+            # carry-in variant, eg. divrem_1c or modexact_1c_odd
+            case $tmp_fbase in
+              *_1*) tmp_fbasec=`echo $tmp_fbase | sed 's/_1/_1c/'` ;;
+              *)    tmp_fbasec=${tmp_fbase}c ;;
+            esac
+
+            # Create a little file doing an include from srcdir.  The
+            # OPERATION and renamings aren't all needed all the time, but
+            # they don't hurt if unused.
+            #
+            # FIXME: Should generate these via config.status commands.
+            # Would need them all in one AC_CONFIG_COMMANDS though, since
+            # that macro doesn't accept a set of separate commands generated
+            # by shell code.
+            #
+            case $tmp_ext in
+              asm)
+                # hide the d-n-l from autoconf's error checking
+                tmp_d_n_l=d""nl
+                echo ["$tmp_d_n_l  mpn_$tmp_fbase - from $tmp_dir directory for fat binary.
+$tmp_d_n_l  Generated by configure - DO NOT EDIT.
+
+define(OPERATION_$tmp_fn)
+define(__gmpn_$tmp_fbase, __gmpn_${tmp_fbase}_$tmp_suffix)
+define(__gmpn_$tmp_fbasec,__gmpn_${tmp_fbasec}_${tmp_suffix})
+define(__gmpn_preinv_${tmp_fbase},__gmpn_preinv_${tmp_fbase}_${tmp_suffix})
+
+$tmp_d_n_l  For k6 and k7 gcd_1 calling their corresponding mpn_modexact_1_odd
+ifdef(\`__gmpn_modexact_1_odd',,
+\`define(__gmpn_modexact_1_odd,__gmpn_modexact_1_odd_${tmp_suffix})')
+
+$THRESH_ASM_SETUP
+include($mpn_relative_top_srcdir/mpn/$tmp_dir/$tmp_base.asm)
+"] >mpn/${tmp_prefix}_$tmp_fn.asm
+                ;;
+              c)
+                echo ["/* mpn_$tmp_fbase - from $tmp_dir directory for fat binary.
+   Generated by configure - DO NOT EDIT. */
+
+#define OPERATION_$tmp_fn 1
+#define __gmpn_$tmp_fbase           __gmpn_${tmp_fbase}_$tmp_suffix
+#define __gmpn_$tmp_fbasec          __gmpn_${tmp_fbasec}_${tmp_suffix}
+#define __gmpn_preinv_${tmp_fbase}  __gmpn_preinv_${tmp_fbase}_${tmp_suffix}
+
+#include \"$mpn_relative_top_srcdir/mpn/$tmp_dir/$tmp_base.c\"
+"] >mpn/${tmp_prefix}_$tmp_fn.c
+                ;;
+            esac           
+
+            # Prototype, and append to CPUVEC_SETUP for this directory.
+            echo "DECL_$tmp_fbase (__gmpn_${tmp_fbase}_$tmp_suffix);" >>fat.h
+            CPUVEC_SETUP="$CPUVEC_SETUP    decided_cpuvec.$tmp_fbase = __gmpn_${tmp_fbase}_${tmp_suffix}; \\
+"
+            # Ditto for any preinv variant (preinv_divrem_1, preinv_mod_1).
+            if grep "^PROLOGUE(mpn_preinv_$tmp_fn)" $tmp_file >/dev/null; then
+              echo "DECL_preinv_$tmp_fbase (__gmpn_preinv_${tmp_fbase}_$tmp_suffix);" >>fat.h
+              CPUVEC_SETUP="$CPUVEC_SETUP    decided_cpuvec.preinv_$tmp_fbase = __gmpn_preinv_${tmp_fbase}_${tmp_suffix}; \\
+"
+            fi
+          fi
+        done
+      done
+    done
+
+    # Emit CPUVEC_SETUP for this directory
+    echo "" >>fat.h
+    echo "#define CPUVEC_SETUP_$tmp_suffix \\" >>fat.h
+    echo "  do { \\" >>fat.h
+    echo "$CPUVEC_SETUP  } while (0)" >>fat.h
+  done
+
+  # Emit threshold limits
+  echo "" >>fat.h
+  for tmp_tn in $fat_thresholds; do
+    eval tmp_limit=\$${tmp_tn}_LIMIT
+    echo "#define ${tmp_tn}_LIMIT  $tmp_limit" >>fat.h
+  done
+fi
+
+
+# Normal binary setups.
+#
 
 for tmp_ext in MPN_SUFFIXES; do
   eval found_$tmp_ext=no
@@ -2151,16 +2437,7 @@ for tmp_fn in $gmp_mpn_functions; do
     if test "$HAVE_NATIVE_mpn_preinv_mod_1" = yes; then continue; fi ;;
   esac
 
-  # functions that can be provided by multi-function files
-  tmp_mulfunc=
-  case $tmp_fn in
-  add_n|sub_n)       tmp_mulfunc="aors_n"    ;;
-  addmul_1|submul_1) tmp_mulfunc="aorsmul_1" ;;
-  popcount|hamdist)  tmp_mulfunc="popham"    ;;
-  and_n|andn_n|nand_n | ior_n|iorn_n|nior_n | xor_n|xnor_n)
-                     tmp_mulfunc="logops_n"  ;;
-  lshift|rshift)     tmp_mulfunc="lorrshift";;
-  esac
+  GMP_MULFUNC_CHOICES
 
   found=no
   for tmp_dir in $path; do
@@ -2430,9 +2707,13 @@ AC_DEFINE_UNQUOTED(GMP_MPARAM_H_SUGGEST, "$gmp_mparam_source",
 
 # Copy any SQR_KARATSUBA_THRESHOLD from gmp-mparam.h to config.m4.
 # Some versions of sqr_basecase.asm use this.
-tmp_gmp_karatsuba_sqr_threshold=`sed -n 's/^#define SQR_KARATSUBA_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
-if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
-  GMP_DEFINE_RAW(["define(<SQR_KARATSUBA_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
+# Fat binaries do this on a per-file basis, so skip in that case.
+#
+if test -z "$fat_path"; then
+  tmp_gmp_karatsuba_sqr_threshold=`sed -n 's/^#define SQR_KARATSUBA_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
+  if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
+    GMP_DEFINE_RAW(["define(<SQR_KARATSUBA_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
+  fi
 fi
 
 
