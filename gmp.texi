@@ -3430,23 +3430,24 @@ only be passed a value returned by @code{itom} or @code{xtom}.}
 @cindex Memory allocation
 @cindex Allocation of memory
 
-By default, the GMP functions use @code{malloc}, @code{realloc}, and
-@code{free} for memory allocation.  If @code{malloc} or @code{realloc} fails,
-the GMP library terminates execution after printing a fatal error message to
-standard error.
+By default, GMP uses @code{malloc}, @code{realloc} and @code{free} for memory
+allocation.  If @code{malloc} or @code{realloc} fails, GMP prints a message to
+the standard error output and terminates execution.
 
-For some applications, you may wish to allocate memory in other ways, or you
-may not want to have a fatal error when there is no more memory available.  To
-accomplish this, you can specify alternative memory allocation functions.
+Some applications might want to allocate memory in other ways, or might not
+want a fatal error when there is no more memory available.  To accomplish
+this, you can specify alternative memory allocation functions.
+
+This can be done in the Berkeley compatibility library as well as the main GMP
+library.
 
 @deftypefun void mp_set_memory_functions (@* void *(*@var{alloc_func_ptr}) (size_t), @* void *(*@var{realloc_func_ptr}) (void *, size_t, size_t), @* void (*@var{free_func_ptr}) (void *, size_t))
 Replace the current allocation functions from the arguments.  If an argument
 is @code{NULL}, the corresponding default function is retained.
 
-@strong{Make sure to call this function in such a way that there are no active
-GMP objects that were allocated using the previously active allocation
-function!  Usually, that means that you have to call this function before any
-other GMP function.}
+@strong{Be sure to call this function only when there are no active GMP
+objects allocated using the previous memory functions!  Usually, that means
+that you have to call this function before any other GMP function.}
 @end deftypefun
 
 The functions you supply should fit the following declarations:
