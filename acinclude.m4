@@ -241,7 +241,7 @@ rm conftest*
 gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
 gmp_tmp_v2=`echo $gmp_tmp_vs | sed 's/.* .\..*\.\(.*\)\..* HP C.*/\1/'`
 gmp_tmp_v3=`echo $gmp_tmp_vs | sed 's/.* .\..*\..*\.\(.*\) HP C.*/\1/'`
-if test -n "$gmp_tmp_v1"; then
+if test -z "$gmp_tmp_v1"; then
   gmp_hpc_64bit=not-applicable
 else
   GMP_COMPARE_GE($gmp_tmp_v1, 10, $gmp_tmp_v2, 32, $gmp_tmp_v3, 30)
