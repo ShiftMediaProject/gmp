@@ -66,7 +66,7 @@ enum
 
 /* Use binary algorithm to compute V <-- GCD (V, U) for usize, vsize == 2.
    Both U and V must be odd.  */
-static __gmp_inline mp_size_t
+static inline mp_size_t
 #if __STDC__
 gcd_2 (mp_ptr vp, mp_srcptr up)
 #else
@@ -129,7 +129,7 @@ gcd_2 (vp, up)
 #else
 static
 #if ! defined (__i386__)
-__gmp_inline			/* don't inline this for the x86 */
+inline				/* don't inline this for the x86 */
 #endif
 mp_limb_t
 #if __STDC__
