@@ -35,7 +35,7 @@ MA 02111-1307, USA. */
    gmp.h and mp.h to allow both to be included in an application or during
    the library build.  */
 #ifndef __GNU_MP__
-#define __GNU_MP__ 3
+#define __GNU_MP__ 4
 
 #define __need_size_t
 #include <stddef.h>
@@ -2010,8 +2010,8 @@ enum
 };
 
 /* Major version number is the value of __GNU_MP__ too, above and in mp.h. */
-#define __GNU_MP_VERSION 3
-#define __GNU_MP_VERSION_MINOR 2
+#define __GNU_MP_VERSION 4
+#define __GNU_MP_VERSION_MINOR 0
 #define __GNU_MP_VERSION_PATCHLEVEL 0
 
 #define gmp_version __gmp_version
