@@ -318,9 +318,6 @@ mp_limb_t mpn_dc_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 /* #define mpn_tdiv_q  __MPN(tdiv_q) */
 /* void mpn_tdiv_q _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t)); */
 
-#define mpn_redc __MPN(redc)
-void mpn_redc _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr));
-
 #define mpz_divexact_gcd  __gmpz_divexact_gcd
 void mpz_divexact_gcd _PROTO ((mpz_ptr q, mpz_srcptr a, mpz_srcptr d));
 
