@@ -36,7 +36,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-/* kill is not available on mingw, but that's ok since it has raise */
+/* Incidentally, kill is not available on mingw, but that's ok, it has raise
+   and we'll be using that.  */
 #if ! HAVE_RAISE
 #define raise(sig)   kill (getpid(), sig)
 #endif
