@@ -1,6 +1,6 @@
 /* Test MPN_INCR_U and MPN_DECR_U.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -32,7 +32,7 @@ MA 02111-1307, USA.
    compile-time constant 1, so that's exercised explicitly.  */
 
 
-#define M     MP_LIMB_T_MAX
+#define M     GMP_NUMB_MAX
 #define SIZE  ((mp_size_t) 10)
 
 
@@ -41,7 +41,7 @@ check_one (const char *name, int i,
            mp_srcptr src, mp_limb_t n,
            mp_srcptr got, mp_srcptr want, mp_size_t size)
 {
-  if (refmpn_cmp (got, want, size) != 0)
+  if (! refmpn_equal_anynail (got, want, size))
     {
       printf ("Wrong at %s i=%d\n", name, i);
       mpn_trace ("  src", src,  size);

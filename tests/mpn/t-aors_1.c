@@ -1,6 +1,6 @@
 /* Test mpn_add_1 and mpn_sub_1.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,13 +28,13 @@ MA 02111-1307, USA.
 #include "tests.h"
 
 
-#define M      MP_LIMB_T_MAX
+#define M      GMP_NUMB_MAX
 #define ASIZE  10
 #define MAGIC  0x1234
 
 #define SETUP()                         \
   do {                                  \
-    mpn_random (got, data[i].size);     \
+    refmpn_random (got, data[i].size);  \
     got[data[i].size] = MAGIC;          \
   } while (0)
 
@@ -68,7 +68,7 @@ verify (const char *name, int i,
       abort ();
     }
 
-  if (got_c != want_c || refmpn_cmp (got, want, size) != 0)
+  if (got_c != want_c || ! refmpn_equal_anynail (got, want, size))
     {
       printf ("Wrong at %s i=%d size=%ld\n", name, i, size);
       mpn_trace ("   src", src,  size);
