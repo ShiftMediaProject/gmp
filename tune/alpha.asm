@@ -22,7 +22,7 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C void speed_cyclecounter (int p[2]);
+C void speed_cyclecounter (unsigned int p[2]);
 C
 
 ASM_START()
