@@ -1,3 +1,8 @@
+2000-12-14  Kevin Ryde  <kevin@swox.se>
+
+	* config.guess (mips-*-irix[6789]*): Transform to mips64.
+	(m68k-*-nextstep* | m68k-*-openstep*): Transform to m68020.
+
 2000-12-13  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/t-constants.c (main): Conditionalize use of PP_INVERTED.
