@@ -89,7 +89,7 @@ gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt, va_list ap)
       ret = vsnprintf (p, alloc, fmt, ap);
       (*__gmp_free_func) (p, alloc);
     }
-  while (ret <= alloc-1);
+  while (ret == alloc-1 || ret == -1);
 
   return ret;
 }
