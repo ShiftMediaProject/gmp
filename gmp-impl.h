@@ -489,6 +489,13 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
   ((xp) + (xsize) > (yp) && (yp) + (ysize) > (xp))
 
 
+#if HAVE_VOID
+#define CAST_TO_VOID        (void)
+#else
+#define CAST_TO_VOID
+#endif
+
+
 /* ASSERT() is a private assertion checking scheme, similar to <assert.h>.
    ASSERT() does the check only if WANT_ASSERT is selected, ASSERT_ALWAYS()
    does it always.  Generally assertions are meant for development, but
@@ -521,13 +528,11 @@ int __gmp_assert_fail _PROTO((const char *filename, int linenum,
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, "expr")
 #endif
 
-#if HAVE_VOID
-#define CAST_TO_VOID        (void)
-#else
-#define CAST_TO_VOID
-#endif
-
-#define ASSERT_ALWAYS(expr) ((expr) ? 0 : ASSERT_FAIL (expr))
+#define ASSERT_ALWAYS(expr)     \
+  do {                          \
+    if (!(expr))                \
+      ASSERT_FAIL (expr);       \
+  } while (0)
 
 #if WANT_ASSERT
 #define ASSERT(expr)           ASSERT_ALWAYS (expr)
@@ -972,7 +977,7 @@ extern const int __gmp_0;
    is (-1)^((b^2-1)/8) which is 1 if b==1,7mod8 or -1 if b==3,5mod8 and
    hence obtained from (b>>1)^b */
 #define JACOBI_TWO_U_BIT1(b) \
-  (ASSERT (b & 1), (((b) >> 1) ^ (b)))
+  (((b) >> 1) ^ (b))
 
 /* (2/b)^twos, with b unsigned and odd */
 #define JACOBI_TWOS_U_BIT1(twos, b) \
@@ -1006,9 +1011,12 @@ extern const int __gmp_0;
 
 
 /* For testing and debugging.  */
-#define MPZ_CHECK_FORMAT(z)                                     	\
-  (ASSERT_ALWAYS (SIZ(z) == 0 || PTR(z)[ABSIZ(z) - 1] != 0),    	\
-   ASSERT_ALWAYS (ALLOC(z) >= ABSIZ(z)))
+#define MPZ_CHECK_FORMAT(z)                                     \
+  do {                                                          \
+    ASSERT_ALWAYS (SIZ(z) == 0 || PTR(z)[ABSIZ(z) - 1] != 0);   \
+    ASSERT_ALWAYS (ALLOC(z) >= ABSIZ(z));                       \
+  } while (0)
+
 #define MPZ_PROVOKE_REALLOC(z)						\
   do { ALLOC(z) = ABSIZ(z); } while (0)
 
