@@ -1,8 +1,6 @@
-2002-12-10  Torbjorn Granlund  <tege@swox.com>
+2002-04-15  Vincent Lefevre  <lefevre@greux.loria.fr>
 
-	* set_d.c: Don't use TMP_ allocation mechanism for fixed size objects.
-        Resulting streamlining.  Misc addressing changes to work around GNUPro
-        bugs. 
+	* set_d.c: Rewrite.
 
 2002-12-07  Torbjorn Granlund  <tege@swox.com>
 
