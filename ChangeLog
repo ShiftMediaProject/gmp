@@ -1,3 +1,47 @@
+2000-08-25  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/pprime_p.c (mpz_millerrabin): Fix TMP_FREE location.
+
+	* gmp.texi (Copying): Refer to Lesser not Library GPL.
+	(GMP and Reentrancy): Note stack-alloc.c is not reentrant, and
+	that SCO <ctype.h> is potentially not reentrant.
+
+	* acinclude.m4 (GMP_CHECK_ASM_UNDERSCORE): Test by attempting to
+	link with or without an underscore.
+	* gmp.texi (Known Build Problems): Remove SunOS 4 native grep
+	GSYM_PREFIX problem, now fixed.
+
+	* gmp-impl.h (MODLIMB_INVERSE_3): New constant.
+	* mpn/generic/diveby3.c: Use it instead of own INVERSE_3.
+	* mpn/generic/mul_n.c: Ditto.
+	* tests/t-constants.c: Check it, and PP_INVERTED too.
+
+	* acinclude.m4 (GMP_GCC_MARCH_PENTIUMPRO): New macro.
+	* configure.in [p6 and athlon] (gmp_optcflags_gcc): Use it to
+	possibly add -march=pentiumpro.
+
+	* gmp-impl.h (MPZ_SET_STR_OR_ABORT, MPF_SET_STR_OR_ABORT): New macros.
+	* mpz/tests/{t-bin,t-get_si,t-jac,t-misc}.c: Use them.
+	* mpf/tests/{t-conv,t-misc}.c: Ditto.
+	* mpz/tests/convert.c: Ditto and amend diagnostics slightly.
+	* mpz/tests/t-misc.c (check_mpz_set_si): Remove a superfluous init.
+	* mpz/tests/io.c: Differentiate between I/O and data conversion errors.
+
+	* mpn/generic/aors_n.c: New file merging add_n and sub_n, no
+	object code changes.
+	* mpn/generic/add_n.c: Remove file.
+	* mpn/generic/sub_n.c: Remove file.
+
+	* mpn/generic/aorsmul_1.c: New file merging addmul_1 and submul_1,
+	no object code changes.
+	* mpn/generic/addmul_1.c: Remove file.
+	* mpn/generic/submul_1.c: Remove file.
+
+	* mpn/generic/popham.c: New file merging popcount and hamdist, no
+	object code changes.
+	* mpn/generic/popcount.c: Remove file.
+	* mpn/generic/hamdist.c: Remove file.
+	
 2000-08-24  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (mpn_com_n): Fix typo.
@@ -36,7 +80,7 @@
 	* Makefile.am (MPBSD_OBJECTS): Corresponding change.
 	* mpbsd/move.c: Remove file.
 
-	* mp{z,q,f,mpbsd}/Makefile.am (-DOPERATION): Use "foo" even for
+	* mp{n,z,q,f,mpbsd}/Makefile.am (-DOPERATION): Use "foo" even for
 	ansi2knr "foo_" objects.  Do this with the makefiles to keep the
 	sources cleaner.
 	* mpz/mul_siui.c, mpf/integer.c: Revert to plain OPERATION_* forms.
