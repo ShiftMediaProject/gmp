@@ -1,5 +1,17 @@
 2000-06-06  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n):
+	Use mpn_incr_u for final carry propagation.
+
+	* mpz/tests/t-gcd.c: Add calls to mpz_gcdext with argument t == NULL.
+
+	* mpz/tests/reuse.c: Major rewrite; test many more functions.
+
+	* mpz/powm_ui.c: When exp is 0, change res assign order in order
+	to handle argument overlap.
+	* mpz/powm.c: When exp is 0, change res assign order in order
+	to handle argument overlap.  Handle negative exp and mod arguments.
+
 	* mpz/gcdext.c: Rework code after mpn_gcdext call to handle
 	argument overlap.
 
