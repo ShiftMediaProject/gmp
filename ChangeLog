@@ -5076,6 +5076,8 @@ MA 02111-1307, USA.
 	* mpn/generic/mul_basecase.c: Call mpn_mul_2 and mpn_addmul_2
 	if available.  Don't include longlong.h.
 
+	* doc/isa_abi_headache: New file.
+	
 2000-05-30  Linus Nordberg  <linus@swox.se>
 
 	* configure.in (NM): Use AC_PROG_NM rather than AC_CHECK_TOOL to
