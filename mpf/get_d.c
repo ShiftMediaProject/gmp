@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
    doesn't define __hppa as it should.  Here is a workaround:  */
 #if (defined (__hppa) || defined (__hppa__)) && GMP_LIMB_BITS == 64
 #define limb2dbl(limb) \
-    ((limb) >> (GMP_LIMB_BITS - 1) != 0  				\
+    ((limb) >> (GMP_LIMB_BITS - 1) != 0					\
      ? 2.0 * (double) (mp_limb_signed_t) (((limb) >> 1) | ((limb) & 1))	\
      : (double) (mp_limb_signed_t) (limb))
 #else
