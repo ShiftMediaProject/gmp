@@ -8,9 +8,14 @@
 
 
 
-This is an unsupported port of GMP to Power Macintosh and MacOS. It
-will use the optimized 'mpn' assembler routines written for 32 bit
-PowerPC to gain speed. The BSD MP compatible library is not built.
+This is an unsupported port of GMP to Power Macintosh and MacOS. This
+port is *not* for OS X that is a Unix derivate and follow the standard
+GMP installation for Darwin/OS X.
+
+This port will use the optimized 'mpn' assembler routines written for
+32 bit PowerPC to gain speed. The BSD MP compatible library is not
+built. The MacOS configuration uses the '--malloc-notreentrant'
+option to optimize for speed.
 
 The output is a library
 
@@ -30,18 +35,18 @@ REQUIREMENTS
 
 To compile into the library you need
 
-        Apple MPW (free) or CodeWarrior MPW
+        Apple MPW (free)
 	MacPerl 5 for MPW
 
-GMP build was tested with CodeWarrior Pro 5 and MPW Shell 3.5.
-
-For compiling with the free Apple MPW development system you need a
-68K Macintosh with a 68020 or higher microprocessor, or any Power
-Macintosh with at least 8 Mb of memory and MacOS 7.5 or later.
-
-See the CodeWarrior documentation for the CodeWarrior MPW requirements.
+GMP build was tested with MPW Shell 3.5.
 
 MacPerl is free, download and install the MPW tool version from
+any CPAN mirror. There is a list of mirrors at
+
+    http://www.cpan.org/SITES.html
+    http://mirror.cpan.org/
+
+There is also a special site dedicated to MacPerl
 
     http://www.macperl.com
 
@@ -50,15 +55,12 @@ You need the "Appl" and "Tool" archive, for example
     http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_appl.bin
     http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_tool.bin
 
-See the file "Install.MPW_Perl" for MPW Perl installation instructions.
-
 
 
 APPLE MPW INSTALLATION
 ======================
 
-The MPW development system can be found on February 2000 Apple developer
-"tool chest" CD or be downloaded from
+The MPW development system can be downloaded from
 
     http://developer.apple.com/tools/mpw-tools/
 
@@ -67,19 +69,16 @@ You need "StuffIt Expander" to unpack the source. You can download
 
     http://www.aladdinsys.com/expander/expander_mac_login.html
 
-Unpack the installation instructions
-
-    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./About_MPW_etc.sit.hqx
-
 This result is a PDF file that can be read with the free Acrobat Reader
 
     http://www.adobe.com/products/acrobat/readstep.html
 
 From the MPW development environment you need at least
 
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./About_MPW_etc.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/MPW_Shell.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Scripts.sit.hqx
-    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/GetFileName.sit.hqx
+    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/GetFileName.sit.hqx    
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/Make.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/MrC.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/MPW/Tools/PPCAsm.sit.hqx
@@ -87,7 +86,7 @@ From the MPW development environment you need at least
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/Libraries.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/RuntimeLibraries.sit.hqx
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./MPW-GM/Interfaces&Libraries/Interfaces/CIncludes.sit.hqx
-
+    
 Put these into a folder and drag the whole folder to the "StuffIt
 Expander" icon to unpack them.
 
@@ -98,9 +97,9 @@ Create a folder "Tools" inside the "MPW_Shell Folder" and move "Make",
 folder.
 
 Create a folder "Interfaces&Libraries" at the same level as the
-"MPW_Shell Folder". Put Put "RuntimeLibraries", "Libraries" into
-the "Interfaces&Libraries" folder. Inside the "Interfaces&Libraries" folder 
-create a new folder "Interfaces" and put "CInlcudes" into it.
+"MPW_Shell Folder". Put Put "RuntimeLibraries", "Libraries" into the
+"Interfaces&Libraries" folder. Inside the "Interfaces&Libraries"
+folder create a new folder "Interfaces" and put "CInlcudes" into it.
 
 In summary, the manually moved files/folders should be located at
 
@@ -113,35 +112,36 @@ In summary, the manually moved files/folders should be located at
 	:Interfaces&Libraries:Libraries:
 	:Interfaces&Libraries:Interfaces:CInlcudes:
 
-You can see the expected file structure in
-
-    ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./FileList.txt
-
 Follow the rest of the installation instructions in "About MPW etc.".
 
 
 
-CODEWARRIOR MPW INSTALLATION
-============================
+MACPERL MPW INSTALLATION
+========================
 
-The CodeWarrior installer should install everything for you.
+Drag these archives to the "StuffIt Expander" icon to unpack them.
+The result is two installation programs. Run the "Mac_Perl_520r4_appl"
+installer and let it install Perl into the default location, then run
+the "Mac_Perl_520r4_tool" insaller.
 
-The CodeWarrior compiler search for headers in the directory
-"MWCInclude" (located inside the "Interfaces" folder, inside the
-"Interfaces&Libraries" folder inside the "CodeWarrior MPW" folder, if
-it doesn't exist you have to create it)
+To enable MPW to use MacPerl follow the instructions in the first
+comment in the file "Install.MPW_Perl". For MacPerl 520r4 this is
 
-Copy the content of the following folders inside the "MWCInclude" folder:
+  - Double click on the "MPW Shell" icon to start MPW and change the
+    directory to the "MacPerl f" folder using the directory command or
+    the "Set Directory..." menu item.
 
- - "CIncludes" (path: Metrowerks CodeWarrior: MacOS Support:
-   Universal: Interfaces: CIncludes)
+  - Execute the "Install.MPW_Perl" command, i.e. write the name of the
+    command at the end of the "Worksheet" window, select the command
+    text and hit the "Enter" key". This will create a configuration
+    file and open it.
 
- - "Include" (path: Metrowerks CodeWarrior: MSL: MSL_C:
-   MSL_Common: Include)
+  - Execute the "Install.MPW_Perl" command again.
 
-Copy the file "ansi_prefix.mac.h" inside the "MWCInclude" folder
-(path: Metrowerks CodeWarrior: MSL: MSL_C: MSL_MacOS: Include:
-ansi_prefix.mac.h)
+  - Execute the text the script wrote to the "Worksheet" window, i.e.
+    drag select all the lines and hit the "Enter" key.
+
+  - You need to restart MPW to make Perl work.
 
 
 
@@ -163,15 +163,10 @@ You run "configure" in a two step process
 
         % perl unix2mac configure > configure.mac
         % perl configure.mac
-  or    % perl configure.mac cw
-
-If you use CodeWarrior MPW you need to add the argument "cw" to the
-configure script. 
 
 Then run "Make"
 
         % make
-     or % make -f Makefile.cw
 
 This will not execute the commands. It is like "make -n" on Unix, it
 will display the commands to execute. You select the commands and
@@ -179,8 +174,7 @@ hit "enter" to actually execute the commands.
 
 To test the code you execute the output from
 
-        % Make check
-     or % make check -f Makefile.cw
+        % make check
 
 If there is an error the test program will complain. Note that the
 test programs can contain errors so a test failure doesn't always
@@ -188,11 +182,11 @@ mean that the library is broken.
 
 To cleanup to the state before configure you execute the output from
 
-        % Make clean
+        % make clean
 
 To remove the the resulting library as well you do
 
-        % Make distclean
+        % make distclean
 
 
 
@@ -225,9 +219,5 @@ If you mount the GMP source from a Unix netatalk server don't move or
 remove files from the Unix side while MPW is running. MPW cache
 information about what the file system looks like and gets very
 confused or crash.
-
-If you really need a MacOS m68k version of GMP let me know and we may
-take the time to do the port.
-
 
 Kent Boortz <kent@swox.se>

@@ -103,12 +103,24 @@ my %cfg_cw =
 		    ],
   );
 
+# We only set the variables that have a value
+my %vars =
+  (
+   '__GMP_BITS_PER_MP_LIMB' => 32,
+   '__GMP_HAVE_HOST_CPU_FAMILY_power' => 0,
+   '__GMP_HAVE_HOST_CPU_FAMILY_powerpc' => 1,
+   'DEFN_LONG_LONG_LIMB' => '',
+   '__GMP_LIBGMP_STATIC' => 0,
+   '__GMP_LIBGMP_SHARED' => 0,
+  );
 
 my $make_in      = 'Makefile.in';
 my $make         = 'Makefile';
 my $configure    = mf("../configure");
 my $configure_in = mf("../configure.in");
 my $config_in    = mf("../config.in");
+my $gmp_h        = mf('../gmp.h');
+my $gmp_h_in     = mf('../gmp-h.in');
 my $mpn_asm_dir  = "../mpn/powerpc32";
 my $mpn_gen_dir  = "../mpn/generic";
 my $config_h     = 'config.h';
@@ -164,11 +176,21 @@ while (<CONFIG_IN>) {
       print STDERR "Warning: Found asm file \"$1\" but no corresponding C file - ignoring\n";
     }
 
-  } elsif (/^\s*#\s*undef\s+PACKAGE/) {
+  } elsif (/^\s*#\s*undef\s+inline\b/) {
+    print CONFIG_H "\#define inline\n";
+  } elsif (/^\s*#\s*undef\s+HAVE_STDARG\b/) {
+    print CONFIG_H "\#define HAVE_STDARG 1\n";
+  } elsif (/^\s*#\s*undef\s+HAVE_STRCHR\b/) {
+    print CONFIG_H "\#define HAVE_STRCHR 1\n";
+  } elsif (/^\s*#\s*undef\s+HAVE_HOST_CPU_FAMILY_powerpc\b/) {
+    print CONFIG_H "\#define HAVE_HOST_CPU_FAMILY_powerpc 1\n";
+  } elsif (/^\s*#\s*undef\s+WANT_TMP_NOTREENTRANT\b/) {
+    print CONFIG_H "\#define WANT_TMP_NOTREENTRANT 1\n";
+  } elsif (/^\s*#\s*undef\s+PACKAGE\b/) {
     print CONFIG_H "\#define PACKAGE \"$package\"\n";
-  } elsif (/^\s*#\s*undef\s+VERSION/) {
+  } elsif (/^\s*#\s*undef\s+VERSION\b/) {
     print CONFIG_H "\#define VERSION \"$version\"\n";
-  } elsif (/^\s*#\s*undef\s+STDC_HEADERS/) {
+  } elsif (/^\s*#\s*undef\s+STDC_HEADERS\b/) {
     print CONFIG_H "\#define STDC_HEADERS 1\n";
   } else {			# Blank line, leave it
     print CONFIG_H "$_\n";
@@ -177,6 +199,30 @@ while (<CONFIG_IN>) {
 
 close CONFIG_H;
 close CONFIG_IN;
+
+###########################################################################
+#
+#  Create gmp.h from ../gmp-h.in
+#
+###########################################################################
+
+open(GMP_H_IN, $gmp_h_in)
+  or die "Can't open \"$gmp_h_in\"\n";
+open(GMP_H, ">$gmp_h")
+  or die "Can't create \"$gmp_h\"\n";
+
+while (<GMP_H_IN>) {
+  chomp;			# Remove whatever ending it was
+
+  # Do the variable substitution
+
+  s/\@([^\@]+)\@/exists $vars{$1} ? $vars{$1} : ''/ge;
+
+  print GMP_H "$_\n";
+}
+
+close GMP_H;
+close GMP_H_IN;
 
 ###########################################################################
 #
