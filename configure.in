@@ -524,6 +524,9 @@ for tmp_f in $gmp_m4postinc; do
   GMP_INCLUDE($tmp_basename_f)
 done
 
+# After including asm.m4.
+GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')", POST)
+ 
 # Pick the correct source files in `path' and link them to mpn/.
 # `gmp_mpn_functions' lists all functions that we need.  
 
@@ -643,9 +646,6 @@ dnl [AC_SUBST(LTALLOCA)]
 dnl  Create config.m4
 GMP_FINISH
 
-# After include(`asm-defs.m4')
-echo "define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')" >> $gmp_configm4
- 
 dnl  Create Makefiles
 dnl  FIXME: Upcoming version of autoconf/automake may not like broken lines.
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
