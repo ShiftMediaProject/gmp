@@ -55,9 +55,7 @@ MA 02111-1307, USA. */
 
 /* Divide num (NP/NSIZE) by den (DP/DSIZE) and write
    the NSIZE-DSIZE least significant quotient limbs at QP
-   and the DSIZE long remainder at NP.  If QEXTRA_LIMBS is
-   non-zero, generate that many fraction bits and append them after the
-   other quotient limbs.
+   and the DSIZE long remainder at NP.
    Return the most significant limb of the quotient, this is always 0 or 1.
 
    Preconditions:
@@ -67,7 +65,7 @@ MA 02111-1307, USA. */
       QP + DSIZE >= NP must hold true.  (This means that it's
       possible to put the quotient in the high part of NUM, right after the
       remainder in NUM.
-   3. NSIZE >= DSIZE, even if QEXTRA_LIMBS is non-zero.
+   3. NSIZE >= DSIZE.
    4. DSIZE >= 2.  */
 
 
