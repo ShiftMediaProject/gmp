@@ -1,3 +1,9 @@
+2000-06-09  Kevin Ryde  <kevin@swox.se>
+
+	* Makefile.am (libstat_la_LIBADD): Add -lm, no longer on libgmp.la.
+	(findlc_LDADD): Use libstat.la.
+	(AUTOMAKE_OPTIONS): Use ansi2knr.
+
 2000-04-16  Linus Nordberg  <linus@swox.se>
 
 	* t-rand.c (main): Add non-ANSI function declaration.  Don't use
