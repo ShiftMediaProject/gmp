@@ -21,7 +21,7 @@
 
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
-SUBDIRS = calc
+SUBDIRS = calc expr
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
@@ -37,3 +37,4 @@ CLEANFILES = $(EXTRA_PROGRAMS)
 
 allprogs: $(EXTRA_PROGRAMS)
 	cd calc; $(MAKE) $(AM_MAKEFLAGS) allprogs
+	cd expr; $(MAKE) $(AM_MAKEFLAGS) allprogs
