@@ -162,7 +162,7 @@ Zdisp(	movq,	%mm0, disp,(%edi))
 	# now %ecx is -UNROLL_COUNT to -1 representing repectively 0 to
 	# UNROLL_COUNT-1 limbs remaining
 
-	testb	$UNROLL_COUNT/2, %cl
+	testb	$eval(UNROLL_COUNT/2), %cl
 
 	leal	UNROLL_COUNT(%ecx), %ecx
 	jz	L(not_half)
@@ -175,10 +175,10 @@ forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT/2-1, `
 	movq	disp(%esi), %mm0
 	movq	%mm0, disp(%edi)
 ')
-	addl	$UNROLL_BYTES/2, %esi
-	addl	$UNROLL_BYTES/2, %edi
+	addl	$eval(UNROLL_BYTES/2), %esi
+	addl	$eval(UNROLL_BYTES/2), %edi
 
-	subl	$UNROLL_COUNT/2, %ecx
+	subl	$eval(UNROLL_COUNT/2), %ecx
 L(not_half):
 
 
