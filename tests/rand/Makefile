@@ -5,25 +5,32 @@ GMPLIBDIR	= /tmp/linus/gmp-current
 GMPLIB		= $(GMPLIBDIR)/libgmp.a
 GMPH		= $(GMPDIR)/gmp.h $(GMPLIBDIR)/mpn/gmp-mparam.h
 
-DEP	= statlib.o $(GMPLIB) $(GMPH)
+DEP	= libstat.a $(GMPLIB) $(GMPH)
 
-CFLAGS 	= -Wall -g -I$(GMPDIR) -I$(GMPLIBDIR)/mpn -L$(GMPLIBDIR) $(XCFLAGS)
-LIBS	= -lgmp -lm
+CFLAGS 	= -Wall -g -I$(GMPDIR) -I$(GMPLIBDIR)/mpn -L$(GMPLIBDIR) -L. $(XCFLAGS)
+LIBS	= -lstat -lgmp -lm
 
-findcl: findcl.c $(DEP)
+LIBSTAT_FILES = statlib.o zdiv_round.o
+
+#
+findcl: findcl.c spect.o $(DEP)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 gen: gen.c $(DEP)
 stat: stat.c $(DEP)
-	$(CC) $(CFLAGS) -L. -o $@ $< statlib.o $(LIBS)
+	$(CC) $(CFLAGS) -L. -o $@ $< $(LIBS)
 foo: foo.c zdiv_round.o $(DEP)
-	$(CC) $(CFLAGS) -o $@ $< zdiv_round.o -lgmp -lm
+	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
-statlib.o: statlib.c statlib.h $(GMPLIB)
+statlib.o: statlib.c gmpstat.h $(GMPLIB)
 
-spect: spect.c zdiv_round.o $(DEP)
-	$(CC) $(CFLAGS) -o $@ $< zdiv_round.o -lgmp -lm
+libstat.a: $(LIBSTAT_FILES)
+	ar -r $@ $(LIBSTAT_FILES)
+
+spect: spect.c $(DEP)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
 ks: ks.c $(DEP)
-	$(CC) $(CFLAGS) -o $@ $< statlib.o $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
 test: gen stat
 	@(echo -n '16i: '; ./gen -f mpz_urandomb -z 16 1000 | ./stat -i 0xffff | grep ^[0-9])

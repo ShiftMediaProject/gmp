@@ -1,3 +1,14 @@
+1999-04-27  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* spect.c: Move everything but main() to statlib.c.
+
+	* findcl.c: New file.
+
+	* gmpstat.h: New file.
+
+	* statlib.c (merit, merit_u, f_floor, vz_dot, spectral_test): New
+	functions.
+
 1999-03-29  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* stat.c (f_freq): Don't print 2nd level results if doing 1st
