@@ -150,8 +150,16 @@
   therefore sometimes need to choose GMP configuration depending both on
   processor and operating system.
 
-  <p> Other things autoconf needs to care about:
+  <p> Other things autoconf should care about:
   <ol>
+
+   <li> Find out whether there's an alloca available and how to use
+        it.  AC_FUNC_ALLOCA has various system dependencies covered,
+        but we don't want its alloca.c replacement.  (One thing
+        current cpp tests don't cover: HPUX 10 C compiler supports
+        alloca, but cannot find any symbol to test in order to know if
+        we're on HPUX 10.  Damn.)
+
    <li> Identify Mips processor under Irix: `hinv -c processor'
    <li> Identify Alpha processor under OSF: "/usr/sbin/sizer -c".
         Unfortunately, sizer is not available before some revision of Dec Unix
