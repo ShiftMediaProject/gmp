@@ -361,16 +361,21 @@ main ()
   pvr = (*fun) ();
 
   switch (pvr >> 16) {
-  case 1:  puts ("powerpc601");  break;
-  case 3:  puts ("powerpc603");  break;
-  case 4:  puts ("powerpc604");  break;
-  case 6:  puts ("powerpc603e"); break;
-  case 7:  puts ("powerpc603e"); break;  /* 603ev */
-  case 8:  puts ("powerpc750");  break;
-  case 9:  puts ("powerpc604e"); break;
-  case 10: puts ("powerpc604e"); break;  /* 604ev5 */
-  case 50: puts ("powerpc821");  break;
-  case 80: puts ("powerpc860");  break;
+  case 0x0001: puts ("powerpc601");  break;
+  case 0x0003: puts ("powerpc603");  break;
+  case 0x0004: puts ("powerpc604");  break;
+  case 0x0006: puts ("powerpc603e"); break;
+  case 0x0007: puts ("powerpc603e"); break;  /* 603ev */
+  case 0x0008: puts ("powerpc750");  break;
+  case 0x0009: puts ("powerpc604e"); break;
+  case 0x000a: puts ("powerpc604e"); break;  /* 604ev5 */
+  case 0x000c: puts ("powerpc7400");  break;
+  case 0x0041: puts ("powerpc630");  break;
+  case 0x0050: puts ("powerpc860");  break;
+  case 0x8000: puts ("powerpc7450");  break;
+  case 0x8001: puts ("powerpc7455");  break;
+  case 0x8002: puts ("powerpc7457");  break;
+  case 0x800c: puts ("powerpc7410");  break;
   }
   return 0;
 }
