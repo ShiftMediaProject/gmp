@@ -31,7 +31,9 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_add_n               
 #undef HAVE_NATIVE_mpn_add_nc              
 #undef HAVE_NATIVE_mpn_addmul_1            
+#undef HAVE_NATIVE_mpn_addmul_1c
 #undef HAVE_NATIVE_mpn_addsub_n            
+#undef HAVE_NATIVE_mpn_addsub_nc
 #undef HAVE_NATIVE_mpn_and_n               
 #undef HAVE_NATIVE_mpn_andn_n              
 #undef HAVE_NATIVE_mpn_bdivmod             
@@ -40,9 +42,9 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_copyd               
 #undef HAVE_NATIVE_mpn_copyi               
 #undef HAVE_NATIVE_mpn_divexact_by3c
-#undef HAVE_NATIVE_mpn_divmod_1            
 #undef HAVE_NATIVE_mpn_divrem              
 #undef HAVE_NATIVE_mpn_divrem_1            
+#undef HAVE_NATIVE_mpn_divrem_1c
 #undef HAVE_NATIVE_mpn_divrem_2            
 #undef HAVE_NATIVE_mpn_divrem_newton       
 #undef HAVE_NATIVE_mpn_divrem_classic      
@@ -57,8 +59,10 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_iorn_n              
 #undef HAVE_NATIVE_mpn_lshift              
 #undef HAVE_NATIVE_mpn_mod_1               
+#undef HAVE_NATIVE_mpn_mod_1c
 #undef HAVE_NATIVE_mpn_mul                 
 #undef HAVE_NATIVE_mpn_mul_1               
+#undef HAVE_NATIVE_mpn_mul_1c
 #undef HAVE_NATIVE_mpn_mul_basecase        
 #undef HAVE_NATIVE_mpn_mul_n               
 #undef HAVE_NATIVE_mpn_nand_n              
@@ -80,6 +84,7 @@ MA 02111-1307, USA.
 #undef HAVE_NATIVE_mpn_sub_n               
 #undef HAVE_NATIVE_mpn_sub_nc              
 #undef HAVE_NATIVE_mpn_submul_1            
+#undef HAVE_NATIVE_mpn_submul_1c
 #undef HAVE_NATIVE_mpn_udiv_w_sdiv         
 #undef HAVE_NATIVE_mpn_umul_ppmm
 #undef HAVE_NATIVE_mpn_udiv_qrnnd
