@@ -6566,9 +6566,7 @@ algorithms, as the size N increases.
 @end multitable
 @end quotation
 
-Similarly for squaring, with the @code{SQR} thresholds.  Note though that the
-FFT is only used if GMP is configured with @samp{--enable-fft}, @pxref{Build
-Options}.
+Similarly for squaring, with the @code{SQR} thresholds.
 
 N@cross{}M multiplications of operands with different sizes above
 @code{MUL_KARATSUBA_THRESHOLD} are currently done by splitting into M@cross{}M
