@@ -332,18 +332,29 @@ speed_starttime (void)
   speed_cyclecounter (speed_starttime_save);
 }
 
+#ifndef ULONG_BIT
+#define ULONG_BIT  (sizeof (unsigned long) * 8)
+#endif
+#define M_2POWUL  ((double) (1L << (ULONG_BIT-2)) * 4.0)
 #define M_2POW32  4294967296.0
 
 double
 speed_endtime (void)
 {
-  unsigned long  endtime[2];
+  unsigned long  endtime[2], e0;
+  double         t;
+
   speed_cyclecounter (endtime);
 
-  sub_ddmmss (endtime[1], endtime[0], endtime[1], endtime[0], 
-              speed_starttime_save[1], speed_starttime_save[0]);
-  return (M_2POW32 * endtime[1] + endtime[0])
-    * speed_unittime;
+  /* This still works if speed_cyclecounter() puts a value bigger than
+     32-bits in the low word.  The start and end values are allowed to
+     cancel in ulongs in case a ulong is more than the 53 bits that will
+     normally fit in a double. */
+  e0 = endtime[0] - speed_starttime_save[0];
+  t = e0 - (e0 > endtime[0] ? M_2POWUL : 0);
+  t += (endtime[1] - speed_starttime_save[1]) * M_2POW32;
+
+  return t * speed_unittime;
 }
 
 #endif
