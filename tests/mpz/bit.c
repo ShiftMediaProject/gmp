@@ -57,15 +57,15 @@ check_tstbit (void)
   for (zeros = 0; zeros <= MAX_ZEROS; zeros++)
     {
       MPN_ZERO (pos, numberof(pos));
-      mpn_random2 (pos+zeros, NUM_LIMBS);
+      mpn_random2 (pos+zeros, (mp_size_t) NUM_LIMBS);
 
       for (low1 = 0; low1 <= 1; low1++)
         {
           if (low1)
             pos[0] |= 1;
 
-          refmpn_neg_n (neg, pos, numberof(neg));
-          mpz_set_n (z, neg, numberof(neg));
+          refmpn_neg_n (neg, pos, (mp_size_t) numberof(neg));
+          mpz_set_n (z, neg, (mp_size_t) numberof(neg));
           mpz_neg (z, z);
 
           for (i = 0; i < numberof(pos)*GMP_NUMB_BITS; i++)
@@ -76,9 +76,9 @@ check_tstbit (void)
                 {
                   printf ("wrong at bit %lu, with %d zeros\n", i, zeros);
                   printf ("z neg "); debug_mp (z, -16);
-                  mpz_set_n (z, pos, numberof(pos));
+                  mpz_set_n (z, pos, (mp_size_t) numberof(pos));
                   printf ("pos   "); debug_mp (z, -16);
-                  mpz_set_n (z, neg, numberof(neg));
+                  mpz_set_n (z, neg, (mp_size_t) numberof(neg));
                   printf ("neg   "); debug_mp (z, -16);
                   exit (1);
                 }
