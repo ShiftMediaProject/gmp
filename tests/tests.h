@@ -278,6 +278,10 @@ void refmpn_zero _PROTO ((mp_ptr p, mp_size_t s));
 int refmpn_zero_p _PROTO ((mp_srcptr ptr, mp_size_t size));
 
 
+void refmpq_add _PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
+void refmpq_sub _PROTO ((mpq_ptr w, mpq_srcptr x, mpq_srcptr y));
+
+
 int refmpz_kronecker _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
 int refmpz_jacobi _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
 int refmpz_legendre _PROTO ((mpz_srcptr a_orig, mpz_srcptr b_orig));
