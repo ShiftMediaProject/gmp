@@ -538,6 +538,23 @@ param_init ()
 }
 ])
 
+# __builtin_alloca is not available everywhere, check it exists before
+# seeing that it works
+GMP_PROG_CC_WORKS_PART_TEST([$1],[__builtin_alloca availability],
+[int k; int foo () { __builtin_alloca (k); }],
+  [GMP_PROG_CC_WORKS_PART([$1], [alloca array],
+[/* The following provokes an internal compiler error from Itanium HP-UX cc
+    under +O2 or higher.  We use this sort of code in mpn/generic/mul_fft.c. */
+int k;
+int foo ()
+{
+  int i, **a;
+  a = __builtin_alloca (k);
+  for (i = 0; i <= k; i++)
+    a[i] = __builtin_alloca (1 << i);
+}
+])])
+
 AC_MSG_RESULT($gmp_prog_cc_works)
 case $gmp_prog_cc_works in
   yes)
@@ -545,12 +562,23 @@ case $gmp_prog_cc_works in
     ;;
   *)
     [$3]
+    ;;
 esac
 ])
 
 dnl  Called: GMP_PROG_CC_WORKS_PART(CC+CFLAGS,FAIL-MESSAGE [,CODE])
 dnl
 AC_DEFUN(GMP_PROG_CC_WORKS_PART,
+[GMP_PROG_CC_WORKS_PART_TEST([$1],[$2],[$3],
+  [],
+  gmp_prog_cc_works="no[]m4_if([$2],,,[[, ]])[$2]",
+  gmp_prog_cc_works="no[]m4_if([$2],,,[[, ]])[$2][[, program does not run]]")
+])
+
+dnl  Called: GMP_PROG_CC_WORKS_PART_TEST(CC+CFLAGS,TITLE,[CODE],
+dnl            [ACTION-GOOD],[ACTION-BAD][ACTION-NORUN])
+dnl
+AC_DEFUN(GMP_PROG_CC_WORKS_PART_TEST,
 [if test "$gmp_prog_cc_works" = yes; then
   cat >conftest.c <<EOF
 [$3]
@@ -560,21 +588,31 @@ EOF
   gmp_compile="$1 conftest.c >&AC_FD_CC"
   if AC_TRY_EVAL(gmp_compile); then
     if test "$cross_compiling" = no; then
-      if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then :;
+      if AC_TRY_COMMAND([./a.out || ./b.out || ./a.exe || ./a_out.exe || ./conftest]); then
+        cc_works_part=yes
       else
-        gmp_prog_cc_works="no[]m4_if([$2],,,[, ])[$2], program does not run"
+        cc_works_part=norun
       fi
     fi
   else
-    gmp_prog_cc_works="no[]m4_if([$2],,,[, ])[$2]"
+    cc_works_part=no
   fi
-  case $gmp_prog_cc_works in
-    no*)
-      echo "failed program was:" >&AC_FD_CC
-      cat conftest.c >&AC_FD_CC
+  if test "$cc_works_part" != yes; then
+    echo "failed program was:" >&AC_FD_CC
+    cat conftest.c >&AC_FD_CC
+  fi
+  rm -f conftest* a.out b.out a.exe a_out.exe
+  case $cc_works_part in
+    yes)
+      $4
+      ;;
+    no)
+      $5
+      ;;
+    norun)
+      $6
       ;;
   esac
-  rm -f conftest* a.out b.out a.exe a_out.exe
 fi
 ])
 
