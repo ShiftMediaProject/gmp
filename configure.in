@@ -1533,6 +1533,13 @@ esac
 
 AC_LIBTOOL_WIN32_DLL
 
+dnl  FIXME: Libtool _LT_AC_LOCK looks for AC_PROVIDE_AC_LIBTOOL_WIN32_DLL to
+dnl  know if AC_LIBTOOL_WIN32_DLL has been run, but autoconf 2.53 doesn't
+dnl  implement AC_PROVIDE that way any more.  Put a define here until we
+dnl  update to a corrected libtool.
+dnl
+define([AC_PROVIDE_AC_LIBTOOL_WIN32_DLL])
+
 AC_SUBST(LIBGMP_DLL,0)
 case $host in
   *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
