@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 27 Apr 2002.  An up-to-date version is available at
+  This file current as of 7 May 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -506,6 +506,11 @@ MA 02111-1307, USA.
      Does it?  <code>bits_per_digit</code> and the inner loop over bits in a
      limb might prevent it.  Perhaps special cases for binary, octal and hex
      would be worthwhile (very possibly for all processors too).
+<li> Cray: <code>popc_limb</code> could use the Cray <code>_popc</code>
+     intrinsic.  That would help <code>mpz_hamdist</code> and might make the
+     generic C versions of <code>mpn_popcount</code> and
+     <code>mpn_hamdist</code> suffice for Cray (if it vectorizes, or can be
+     given a hint to do so).
 <li> 68000: <code>mpn_mul_1</code> could check for a 16-bit multiplier and use
      two multiplies per limb, not four.  Ditto <code>mpn_addmul_1</code> and
      <code>mpn_submul_1</code>.
