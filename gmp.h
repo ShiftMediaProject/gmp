@@ -469,6 +469,7 @@ void mpq_canonicalize _PROTO ((mpq_ptr));
 #define mpf_mul_ui __gmpf_mul_ui
 #define mpf_neg __gmpf_neg
 #define mpf_out_str __gmpf_out_str
+#define mpf_pow_ui __gmpf_pow_ui
 #define mpf_random2 __gmpf_random2
 #define mpf_reldiff __gmpf_reldiff
 #define mpf_set __gmpf_set
@@ -527,6 +528,7 @@ void mpf_neg _PROTO ((mpf_ptr, mpf_srcptr));
 #ifdef _GMP_H_HAVE_FILE
 size_t mpf_out_str _PROTO ((FILE *, int, size_t, mpf_srcptr));
 #endif
+void mpf_pow_ui (mpf_ptr, mpf_srcptr, unsigned long int);
 void mpf_random2 _PROTO ((mpf_ptr, mp_size_t, mp_exp_t));
 void mpf_reldiff _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_set _PROTO ((mpf_ptr, mpf_srcptr));
