@@ -29,6 +29,7 @@ MA 02111-1307, USA. */
 
 void debug_mp _PROTO ((mpz_t, int));
 
+int
 main (int argc, char **argv)
 {
   mpz_t op1, op2;
@@ -42,6 +43,7 @@ main (int argc, char **argv)
   unsigned long bsi, size_range;
   char *perform_seed;
 
+  tests_start ();
   gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
 
   perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
@@ -84,7 +86,7 @@ main (int argc, char **argv)
 
       str = mpz_get_str ((char *) 0, base, op1);
       mpz_set_str_or_abort (op2, str, base);
-      (*__gmp_free_func) (str, 0);
+      (*__gmp_free_func) (str, strlen (str) + 1);
 
       if (mpz_cmp (op1, op2))
 	{
@@ -97,6 +99,12 @@ main (int argc, char **argv)
 	}
     }
 
+  mpz_clear (bs);
+  mpz_clear (op1);
+  mpz_clear (op2);
+  gmp_randclear (rands);
+
+  tests_end ();
   exit (0);
 }
 
