@@ -321,6 +321,8 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 
 /* From gmp.h, nicer names for internal use. */
 #define MPN_CMP(result, xp, yp, size)  __GMPN_CMP(result, xp, yp, size)
+#define LIKELY(cond)                   __GMP_LIKELY(cond)
+#define UNLIKELY(cond)                 __GMP_UNLIKELY(cond)
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 #define MIN(l,o) ((l) < (o) ? (l) : (o))
