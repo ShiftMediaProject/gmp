@@ -154,6 +154,9 @@ MA 02111-1307, USA. */
 /* bytes per mp_limb_t, if not in gmp-mparam.h */
 #undef BYTES_PER_MP_LIMB
 
+/* Define if you have the `alarm' function. */
+#undef HAVE_ALARM
+
 /* Define if alloca() works (via gmp-impl.h). */
 #undef HAVE_ALLOCA
 
