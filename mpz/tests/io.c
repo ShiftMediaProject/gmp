@@ -1,6 +1,6 @@
 /* Test conversion and I/O using mpz_out_str and mpz_inp_str.
 
-Copyright 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,7 +19,15 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include "config.h"
+
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#if HAVE_UNISTD_H
+#include <unistd.h>		/* for unlink */
+#endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
