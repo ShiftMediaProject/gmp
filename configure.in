@@ -1803,15 +1803,6 @@ case $host in
   #
   [*-*-aix[34]*])
     if test -z "$enable_shared"; then enable_shared=no; fi ;;
-
-  # FIXME: On SCO 5, an explicit -lc is not wanted when making shared
-  # libraries.  Giving it makes strange things happen, like ctype.h macros
-  # not working and profiler mcount calls segfaulting.  Libtool ought to
-  # know about this, but as of Dec 2000 it doesn't, so forcibly disable -lc
-  # on relevant systems.
-  #
-  *-*-sco3.2v5*)
-    lt_cv_archive_cmds_need_lc=no ;;
 esac
 
 
