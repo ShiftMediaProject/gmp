@@ -34,7 +34,7 @@ MPZ_SRCS = abs.c add.c add_ui.c addmul_ui.c and.c array_init.c \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c \
   cdiv_ui.c clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmp_abs.c cmp_abs_ui.c com.c \
-  divexact.c fac_ui.c fdiv_q.c fdiv_q_2exp.c fdiv_q_ui.c \
+  divexact.c dump.c fac_ui.c fdiv_q.c fdiv_q_2exp.c fdiv_q_ui.c \
   fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_2exp.c fdiv_r_ui.c \
   fdiv_ui.c fib_ui.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c get_str.c \
   get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
@@ -51,7 +51,7 @@ MPZ_OBJS = abs.o add.o add_ui.o addmul_ui.o and.o array_init.o \
   cdiv_q_ui.o cdiv_qr.o cdiv_qr_ui.o cdiv_r.o cdiv_r_ui.o \
   cdiv_ui.o clear.o clrbit.o cmp.o cmp_si.o cmp_ui.o cmp_abs.o \
   cmp_abs_ui.o com.o \
-  divexact.o fac_ui.o fdiv_q.o fdiv_q_2exp.o fdiv_q_ui.o \
+  divexact.o dump.o fac_ui.o fdiv_q.o fdiv_q_2exp.o fdiv_q_ui.o \
   fdiv_qr.o fdiv_qr_ui.o fdiv_r.o fdiv_r_2exp.o fdiv_r_ui.o \
   fdiv_ui.o fib_ui.o gcd.o gcd_ui.o gcdext.o get_d.o get_si.o get_str.o \
   get_ui.o getlimbn.o hamdist.o init.o inp_raw.o inp_str.o \
@@ -111,6 +111,7 @@ com.o: $(srcdir)/com.c $(H)
 fdiv_q_2exp.o: $(srcdir)/fdiv_q_2exp.c $(H)
 fdiv_r_2exp.o: $(srcdir)/fdiv_r_2exp.c $(H)
 divexact.o: $(srcdir)/divexact.c $(H) $(srcdir)/../longlong.h
+dump.o: $(srcdir)/dump.c $(H)
 fac_ui.o: $(srcdir)/fac_ui.c $(H) $(srcdir)/../longlong.h
 fdiv_q.o: $(srcdir)/fdiv_q.c $(H)
 fdiv_q_ui.o: $(srcdir)/fdiv_q_ui.c $(H)
