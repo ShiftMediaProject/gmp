@@ -112,6 +112,10 @@ MA 02111-1307, USA. */
 #define ALLOC(x) ((x)->_mp_alloc)
 
 
+#ifndef BITS_PER_MP_LIMB
+#define BITS_PER_MP_LIMB  __GMP_BITS_PER_MP_LIMB
+#endif
+
 /* On Cray vector systems "short" and "unsigned short" might not be the same
    number of bits, making the SHRT_MAX defaults below fail.  (This depends
    on compiler options.)  Instead use limits.h.  */
@@ -1026,18 +1030,6 @@ struct bases
 
 #define __mp_bases __MPN(mp_bases)
 extern const struct bases __mp_bases[256];
-
-
-/* MPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
-   limb and adds an extra limb.  MPF_PREC_TO_BITS drops that extra limb,
-   hence giving back the user's size in bits rounded up.  Notice that
-   converting prec->bits->prec gives an unchanged value.  */
-#define MPF_BITS_TO_PREC(n) \
-  ((MAX (53, n) + 2 * BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB)
-#define MPF_PREC_TO_BITS(n) \
-  ((n) * BITS_PER_MP_LIMB - BITS_PER_MP_LIMB)
-
-extern mp_size_t __gmp_default_fp_limb_precision;
 
 
 #if defined (__i386__)
