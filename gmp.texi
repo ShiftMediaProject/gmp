@@ -116,6 +116,28 @@ times
 @end macro
 @end ifnottex
 
+@c  Usage: @GMPfloor{x}
+@c  Give either \lfloor x\rfloor in tex, or floor(x) in info or html.
+@tex
+\gdef\GMPfloor#1{\lfloor #1\rfloor}
+@end tex
+@ifnottex
+@macro GMPfloor {X}
+floor(\X\)
+@end macro
+@end ifnottex
+
+@c  Usage: @GMPceil{x}
+@c  Give either \lceil x\rceil in tex, or ceil(x) in info or html.
+@tex
+\gdef\GMPceil#1{\lceil #1 \rceil}
+@end tex
+@ifnottex
+@macro GMPceil {X}
+ceil(\X\)
+@end macro
+@end ifnottex
+
 @c  Math operators already available in tex, made available in info too.
 @c  For example @bmod{} can be used in both tex and info.
 @ifnottex
@@ -124,6 +146,12 @@ mod
 @end macro
 @macro gcd
 gcd
+@end macro
+@macro ge
+<=
+@end macro
+@macro le
+<=
 @end macro
 @macro log
 log
@@ -2275,8 +2303,7 @@ as @var{n}.  The @code{t} stands for ``truncate''.
 
 In all cases @var{q} and @var{r} will satisfy
 @m{@var{n}=@var{q}@var{d}+@var{r}, @var{n}=@var{q}*@var{d}+@var{r}}, and
-@var{r} will satisfy @m{0\leq|@var{r}|<|@var{d}|,
-0<=abs(@var{r})<abs(@var{d})}.
+@var{r} will satisfy @ma{0@le{}@GMPabs{@var{r}}<@GMPabs{@var{d}}}.
 
 The @code{q} functions calculate only the quotient, the @code{r} functions
 only the remainder, and the @code{qr} functions calculate both.  Note that for
@@ -3710,7 +3737,7 @@ addition @var{qxn} fraction limbs are developed and written to @{@var{r1p},
 usages, @var{qxn} will be zero.
 
 @code{mpn_divmod_1} exists for upward source compatibility and is simply a
-macro calling @code{mpn_divrem_1} with an @var{qxn} of 0.
+macro calling @code{mpn_divrem_1} with a @var{qxn} of 0.
 
 The areas at @var{r1p} and @var{s2p} have to be identical or completely
 separate, not partially overlapping.
@@ -3752,50 +3779,56 @@ Divide @{@var{s1p}, @var{s1n}@} by @var{s2limb}, and return the remainder.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_bdivmod (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, const mp_limb_t *@var{s2p}, mp_size_t @var{s2n}, unsigned long int @var{d})
-The function puts the low [@var{d}/@var{BITS_PER_MP_LIMB}] limbs of @var{q} =
-@{@var{s1p}, @var{s1n}@}/@{@var{s2p}, @var{s2n}@} mod 2^@var{d} at @var{rp},
-and returns the high @var{d} mod @var{BITS_PER_MP_LIMB} bits of @var{q}.
+This function puts the low
+@ma{@GMPfloor{@var{d}/@nicode{mp\_bits\_per\_limb}}} limbs of @var{q} =
+@{@var{s1p}, @var{s1n}@}/@{@var{s2p}, @var{s2n}@} mod @m{2^d,2^@var{d}} at
+@var{rp}, and returns the high @var{d} mod @code{mp_bits_per_limb} bits of
+@var{q}.
 
-@{@var{s1p}, @var{s1n}@} - @var{q} * @{@var{s2p}, @var{s2n}@} mod
-2^(@var{s1n}*@var{BITS_PER_MP_LIMB}) is placed at @var{s1p}.  Since the low
-[@var{d}/@var{BITS_PER_MP_LIMB}] limbs of this difference are zero, it is
-possible to overwrite the low limbs at @var{s1p} with this difference, provided
-@var{rp} <= @var{s1p}.
+@{@var{s1p}, @var{s1n}@} - @var{q} * @{@var{s2p}, @var{s2n}@} mod @m{2
+\GMPraise{@var{s1n}*@code{mp\_bits\_per\_limb}},
+2^(@var{s1n}*@nicode{mp\_bits\_per\_limb})} is placed at @var{s1p}.  Since the
+low @ma{@GMPfloor{@var{d}/@nicode{mp\_bits\_per\_limb}}} limbs of this
+difference are zero, it is possible to overwrite the low limbs at @var{s1p}
+with this difference, provided @ma{@var{rp} @le{} @var{s1p}}.
 
-This function requires that @var{s1n} * @var{BITS_PER_MP_LIMB} >= @var{D}, and
-that @{@var{s2p}, @var{s2n}@} is odd.
+This function requires that @ma{@var{s1n} * @nicode{mp\_bits\_per\_limb}
+@ge{} @var{D}}, and that @{@var{s2p}, @var{s2n}@} is odd.
 
 @strong{This interface is preliminary.  It might change incompatibly in future
 revisions.}
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_lshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
-Shift @{@var{sp}, @var{n}@} @var{count} bits to the left, and write the @var{n}
-least significant limbs of the result to @var{rp}.  @var{count} must be in the
-range 1 to @code{mp_bits_per_limb}@minus{}1. The bits shifted out to the left
-are returned.
+Shift @{@var{sp}, @var{n}@} left by @var{count} bits, and write the result to
+@{@var{rp}, @var{n}@}.  The bits shifted out at the left are returned in the
+least significant @var{count} bits of the return value (the rest of the return
+value is zero).
 
-Overlapping of the destination space and the source space is allowed in this
-function, provided @var{rp} >= @var{sp}.
+@var{count} must be in the range 1 to @nicode{mp_bits_per_limb}@minus{}1.  The
+regions @{@var{sp}, @var{n}@} and @{@var{rp}, @var{n}@} may overlap, provided
+@ma{@var{rp} @ge{} @var{sp}}.
 
 This function is written in assembly for most CPUs.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_rshift (mp_limb_t *@var{rp}, const mp_limb_t *@var{sp}, mp_size_t @var{n}, unsigned int @var{count})
-Shift @{@var{sp}, @var{n}@} @var{count} bits to the right, and write the
-@var{n} most significant limbs of the result to @var{rp}.  @var{count} must be
-in the range 1 to @code{mp_bits_per_limb}@minus{}1.  The bits shifted out to
-the right are returned.
+Shift @{@var{sp}, @var{n}@} right by @var{count} bits, and write the result to
+@{@var{rp}, @var{n}@}.  The bits shifted out at the right are returned in the
+most significant @var{count} bits of the return value (the rest of the return
+value is zero).
 
-Overlapping of the destination space and the source space is allowed in this
-function, provided @var{rp} <= @var{sp}.
+@var{count} must be in the range 1 to @nicode{mp_bits_per_limb}@minus{}1.  The
+regions @{@var{sp}, @var{n}@} and @{@var{rp}, @var{n}@} may overlap, provided
+@ma{@var{rp} @le{} @var{sp}}.
 
 This function is written in assembly for most CPUs.
 @end deftypefun
 
 @deftypefun int mpn_cmp (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
-Compare @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@} and return a positive
-value if s1 > src2, 0 if they are equal, and a negative value if s1 < src2.
+Compare @{@var{s1p}, @var{n}@} and @{@var{s2p}, @var{n}@} and return a
+positive value if @ma{@var{s1} > @var{s2}}, 0 if they are equal, or a negative
+value if @ma{@var{s1} < @var{s2}}.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_gcd (mp_limb_t *@var{rp}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
@@ -3829,14 +3862,14 @@ destroyed, plus one limb past the end of each.
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
 Compute the square root of @{@var{sp}, @var{n}@} and put the result at
-@{@var{r1p}, @m{\lceil@var{n}/2\rceil, ceil(@var{n}/2)}@} and the remainder at
-@{@var{r2p}, @var{retval}@}.  @var{r2p} needs space for @var{n} limbs, but the
-return value indicates how many are produced.
+@{@var{r1p}, @ma{@GMPceil{@var{n}/2}}@} and the remainder at @{@var{r2p},
+@var{retval}@}.  @var{r2p} needs space for @var{n} limbs, but the return value
+indicates how many are produced.
 
-The most significant limb of @var{sp} must be non-zero.  The areas
-@{@var{r1p}, @m{\lceil@var{n}/2\rceil, ceil(@var{n}/2)}@} and @{@var{sp},
-@var{n}@} must be completely separate.  The areas @{@var{r2p}, @var{n}@} and
-@{@var{sp}, @var{n}@} must be either identical or completely separate.
+The most significant limb of @{@var{sp}, @var{n}@} must be non-zero.  The
+areas @{@var{r1p}, @ma{@GMPceil{@var{n}/2}}@} and @{@var{sp}, @var{n}@} must
+be completely separate.  The areas @{@var{r2p}, @var{n}@} and @{@var{sp},
+@var{n}@} must be either identical or completely separate.
 
 If the remainder is not wanted then @var{r2p} can be @code{NULL}, and in this
 case the return value is zero or non-zero according to whether the remainder
@@ -4947,12 +4980,12 @@ the @ma{k=8} range, somewhere between 3000 and 10000 limbs.
 
 The way @ma{N} is split into @ma{2^k} pieces and then @ma{2M+k+3} is rounded
 up to a multiple of @ma{2^k} and @code{mp_bits_per_limb} means that when
-@m{2^k\ge@code{mp\_bits\_per\_limb}, 2^k>=@nicode{mp_bits_per_limb}} the
-effective @ma{N} is a multiple of @m{2^{2k-1},2^(2k-1)} bits.  The @ma{+k+3}
-means some values of @ma{N} just under such a multiple will be rounded to the
-next.  The complexity calculations above assume that a favourable size is
-used, meaning one which isn't padded through rounding, and it's also assumed
-that the extra @ma{+k+3} bits are negligible at typical FFT sizes.
+@ma{2^k@ge{}@nicode{mp\_bits\_per\_limb}} the effective @ma{N} is a multiple
+of @m{2^{2k-1},2^(2k-1)} bits.  The @ma{+k+3} means some values of @ma{N} just
+under such a multiple will be rounded to the next.  The complexity
+calculations above assume that a favourable size is used, meaning one which
+isn't padded through rounding, and it's also assumed that the extra @ma{+k+3}
+bits are negligible at typical FFT sizes.
 
 The practical effect of the @m{2^{2k-1},2^(2k-1)} constraint is to introduce a
 step-effect into measured speeds.  For example @ma{k=8} will round @ma{N} up
@@ -5155,7 +5188,7 @@ For an N@cross{}M exact division producing Q=N@minus{}M quotient limbs, the
 saving over a normal basecase division is in two parts.  Firstly, each of the
 Q quotient limbs needs only one multiply, not a 2@cross{}1 divide and
 multiply.  Secondly, the crossproducts are reduced when @ma{Q>M} to
-@m{QM-M(M+1)/2,Q*M-M*(M+1)/2}, or when @m{Q\leq M, Q<=M} to @m{Q(Q-1)/2,
+@m{QM-M(M+1)/2,Q*M-M*(M+1)/2}, or when @ma{Q@le{}M} to @m{Q(Q-1)/2,
 Q*(Q-1)/2}.  Notice the savings are complementary.  If Q is big then many
 divisions are saved, or if Q is small then the crossproducts reduce to a small
 number.
@@ -5203,8 +5236,8 @@ a = q*d + r*b^n
 @end ifnottex
 @ma{n} represents the number of zero limbs produced by the subtractions, that
 being the number of limbs produced for @ma{q}.  @ma{r} will be in the range
-@m{0 \leq r < d, 0<=r<d} and can be viewed as a remainder, but one shifted up
-by a factor of @ma{b^n}.
+@ma{0@le{}r<d} and can be viewed as a remainder, but one shifted up by a
+factor of @ma{b^n}.
 
 Carrying out full subtractions at each stage means the same number of cross
 products must be done as a normal division, but there's still some single limb
