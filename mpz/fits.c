@@ -61,8 +61,8 @@ Error, unrecognised OPERATION symbol.
 int
 FUNCTION (mpz_srcptr z)
 {
-  mp_size_t  size = SIZ(z);
-  mp_size_t  data = PTR(z)[0];
+  mp_size_t size = SIZ(z);
+  mp_limbs_t data = PTR(z)[0];
 
   return TEST;
 }
