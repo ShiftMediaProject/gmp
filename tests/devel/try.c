@@ -1247,7 +1247,9 @@ const struct choice_t choice_array[] = {
 #if HAVE_NATIVE_mpn_mod_1c
   { TRY(mpn_mod_1c),       TYPE_MOD_1C },
 #endif
+#if GMP_NUMB_BITS % 4 == 0
   { TRY(mpn_mod_34lsub1),  TYPE_MOD_34LSUB1 },
+#endif
   { TRY_FUNFUN(udiv_qrnnd), TYPE_UDIV_QRNND, 2 },
 
   { TRY(mpn_divexact_1),          TYPE_DIVEXACT_1 },
@@ -2348,7 +2350,7 @@ try_one (void)
 
 #define SIZE2_FIRST                                     \
   (tr->size2 == SIZE_2 ? 2                              \
-   : tr->size2 == SIZE_FRACTION ? 0                     \
+   : tr->size2 == SIZE_FRACTION ? option_firstsize2     \
    : tr->size2 ?                                        \
    MAX (choice->minsize, (option_firstsize2 != 0        \
                           ? option_firstsize2 : 1))     \
