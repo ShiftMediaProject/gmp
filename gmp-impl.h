@@ -1452,6 +1452,7 @@ extern mp_size_t  mul_threshold[];
 extern mp_size_t  fft_modf_mul_threshold;
 extern mp_size_t  sqr_threshold[];
 extern mp_size_t  fft_modf_sqr_threshold;
+extern mp_size_t  sb_preinv_threshold[];
 extern mp_size_t  dc_threshold[];
 extern mp_size_t  fib_threshold[];
 extern mp_size_t  powm_threshold[];
@@ -1459,6 +1460,7 @@ extern mp_size_t  gcd_accel_threshold[];
 extern mp_size_t  gcdext_threshold[];
 extern mp_size_t  divrem_1_norm_threshold[];
 extern mp_size_t  divrem_1_unnorm_threshold[];
+extern mp_size_t  divrem_2_threshold[];
 extern mp_size_t  mod_1_norm_threshold[];
 extern mp_size_t  mod_1_unnorm_threshold[];
 
@@ -1501,6 +1503,13 @@ extern mp_size_t  mod_1_unnorm_threshold[];
 #define DIVREM_1_UNNORM_THRESHOLD divrem_1_unnorm_threshold[0]
 #define MOD_1_NORM_THRESHOLD      mod_1_norm_threshold[0]
 #define MOD_1_UNNORM_THRESHOLD    mod_1_unnorm_threshold[0]
+
+#if ! UDIV_PREINV_ALWAYS
+#undef SB_PREINV_THRESHOLD
+#undef DIVREM_2_THRESHOLD
+#define SB_PREINV_THRESHOLD       sb_preinv_threshold[0]
+#define DIVREM_2_THRESHOLD        divrem_2_threshold[0]
+#endif
 
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
 #define KARATSUBA_SQR_MAX_GENERIC  200
