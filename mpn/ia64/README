@@ -1,4 +1,4 @@
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -218,8 +218,8 @@ load-use delays might help.
 Using 63 separate loops, we could use the double-word shrp instruction.
 That instruction has a plain single-cycle latency.  We need 63 loops
 since this instruction only accept immediate count.  That would lead to
-a somewhat silly code size, but the speed would double on Itanium 1 to
-1 c/l and tripple on Itanium 2 to 0.5 c/l.
+a somewhat silly code size, but the speed would be 1 c/l on both
+itanium and itanium2.  (itanium2 shrp can only issue to port I0.)
 
 ================================================================
 mpn_copyi, mpn_copyd
