@@ -10,7 +10,7 @@
 
 This is an unsupported port of GMP to Power Macintosh and MacOS. It
 will use the optimized 'mpn' assembler routines written for 32 bit
-PowerPC to gain speed.
+PowerPC to gain speed. The BSD MP compatible library is not built.
 
 The output is a library
 
@@ -108,6 +108,23 @@ You can see the expected file structure in
     ftp://ftp.apple.com/developer/Tool_Chest/Core_Mac_OS_Tools/MPW_etc./FileList.txt
 
 Follow the rest of the installation instructions in "About MPW etc.".
+
+The CodeWarrior compiler search for headers in the directory
+"MWCInclude" (located inside the "Interfaces" folder, inside the
+"Interfaces&Libraries" folder inside the "CodeWarrior MPW" folder, if
+it doesn't exist you have to create it)
+
+copy the content of the following folders inside the "MWCInclude" folder:
+- folder "CIncludes" (path: Metrowerks CodeWarrior: MacOS Support:
+Universal: Interfaces: CIncludes)
+
+- folder "Include" (path: Metrowerks CodeWarrior: MSL: MSL_C:
+MSL_Common: Include)
+
+-copy the file "ansi_prefix.mac.h" inside the "MWCInclude" folder
+(path: Metrowerks CodeWarrior: MSL: MSL_C: MSL_MacOS: Include:
+ansi_prefix.mac.h)
+
 
 
 

@@ -1,3 +1,14 @@
+2000-07-20  Kent Boortz  <kent@swox.com>
+
+	* macos/Makefile.in: Removed hard coded targets, added special
+	targets found in Makefile.am files.
+	* macos/configure: Generate targets from top configure script and
+	Makefile.am files. Made script runnable from Unix for testing.
+	* macos/README: Notes about search paths for includes, contributed
+	by Marco Bambini.
+	* configure.in: Added comment about lines that the "macos/configure"
+	script depend on.
+
 2000-07-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/hppa/gmp-mparam.h: Fill in values from `make tune' run.
