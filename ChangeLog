@@ -1,3 +1,11 @@
+2000-05-24  Torbjorn Granlund  <tege@swox.com>
+
+	(*-*-aix4.[3-9]*): Disable shared libs just for problematic AIX
+	versions.
+	* configure.in (*-cray-unicos*): Disable asm syntax checking; set
+	compiler explicitly.
+	* configure.in (hppa*-*-*): Remove code disabling shared libs.
+
 2000-05-24  Linus Nordberg  <linus@swox.se>
 
 	* acinclude.m4 (GMP_PROG_CC_WORKS): Don't report progress to user
@@ -42,7 +50,7 @@
 	* gmp.h (mpn_addmul_1c, mpn_divrem_1c, mpn_mod_1c, mpn_mul_1c,
 	mpn_submul_1c): Add prototypes.
 	(mpz_mod2, mpz_mod4, mpz_mod8, mpz_odd_p, mpz_even_p): New macros.
-	
+
 	* mpn/asm-defs.m4 (m4wrap_prepend): New macro.
 	(m4_error): Use it.
 	(m4_not_for_expansion): Corrections to OPERATION symbols.
@@ -61,7 +69,7 @@
 	* tune/*: Remove mpn_divmod_1 measuring (leave just divrem_1).
 
 	* acconfig.h (HAVE_NATIVE_mpn_*): Add some missing carry-in
-	variants, remove divmod_1.	
+	variants, remove divmod_1.
 
 	* mpn/x86/diveby3.asm: Use imul, update comments.
 
@@ -135,7 +143,11 @@
 	is that /usr/ucb/cc on Solaris 7 successfully compiles in 64-bit
 	mode but fails when doing final link.
 	(GMP_PROG_CC_WORKS): Report to user what's happening.
- 	
+
+2000-05-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/mul_basecase.c: Don't include longlong.h.
+
 2000-05-17  Linus Nordberg  <linus@swox.se>
 
 	* config.guess: Use X86CPU for x86 Cygwin.
@@ -195,7 +207,7 @@
 	* acconfig.h (PACKAGE, VERSION, WANT_ASSERT, USE_STACK_ALLOC,
 	HAVE_PENTIUM_RDTSC): No need for #undefs, autoheader gets them
 	from configure.in.
-	
+
 	* acinclude.m4 (GMP_PROG_M4): Check for broken OpenBSD 2.6 m4
 	eval(), put messages into config.log.
 	* mpn/asm-defs.m4: Add notes and test for OpenBSD 2.6 m4.
