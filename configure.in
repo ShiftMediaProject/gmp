@@ -205,6 +205,8 @@ case "$target" in
 
   # HP
   hppa1.0*-*-*)
+    cclist="gcc c89 cc"
+    gmp_cflags_c89="$gmp_cflags_cc +O2"
     gmp_cflags_cc="$gmp_cflags_cc +O2"
     ;;
   hppa2.0*-*-*)
