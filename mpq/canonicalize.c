@@ -29,6 +29,9 @@ mpq_canonicalize (MP_RAT *op)
   mpz_t gcd;
   TMP_DECL (marker);
 
+  if (op->_mp_den._mp_size == 0)
+    DIVIDE_BY_ZERO;
+
   TMP_MARK (marker);
 
   /* ??? Dunno if the 1+ is needed.  */
