@@ -415,18 +415,6 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 /* Set various *_THRESHOLD values to be used for nails.  Thus we avoid using
    code that has not yet been qualified.  */
 
-#undef MUL_KARATSUBA_THRESHOLD
-#undef MUL_TOOM3_THRESHOLD
-#define MUL_KARATSUBA_THRESHOLD          30
-#define MUL_TOOM3_THRESHOLD             150
-
-#undef SQR_BASECASE_THRESHOLD
-#undef SQR_KARATSUBA_THRESHOLD
-#undef SQR_TOOM3_THRESHOLD
-#define SQR_BASECASE_THRESHOLD            0
-#define SQR_KARATSUBA_THRESHOLD          50
-#define SQR_TOOM3_THRESHOLD             250
-
 #undef DIV_SB_PREINV_THRESHOLD
 #undef DIV_DC_THRESHOLD
 #undef POWM_THRESHOLD
