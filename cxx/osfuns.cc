@@ -1,4 +1,4 @@
-/* Support for mpz_out_ostream etc.
+/* Support for operator<< routines.
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
@@ -30,11 +30,13 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
+using namespace std;
 
-/* Don't need "format" for mpz_out_ostream, mpq_out_ostream and
-   mpf_out_ostream, just "memory" and "reps".  Omitting gmp_asprintf_format
-   lets us avoid dragging vsnprintf into the link.  __gmp_asprintf_final
-   will be called directly and doesn't need to be in the struct.  */
+
+/* Don't need "format" for operator<< routines, just "memory" and "reps".
+   Omitting gmp_asprintf_format lets us avoid dragging vsnprintf into the
+   link.  __gmp_asprintf_final will be called directly and doesn't need to
+   be in the struct.  */
 
 const struct doprnt_funs_t  __gmp_asprintf_funs_noformat = {
   NULL,
