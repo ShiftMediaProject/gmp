@@ -1872,6 +1872,22 @@ __GMP_DECLSPEC extern const struct bases mp_bases[257];
 /* bit count to limb count, rounding up */
 #define BITS_TO_LIMBS(n)  (((n) + (GMP_NUMB_BITS - 1)) / GMP_NUMB_BITS)
 
+/* Create fake mpz_t from ui.  The zl argument must have room for 2 limbs.  */
+#if BITS_PER_ULONG <= GMP_NUMB_BITS
+#define MPZ_FAKE_UI(z, zl, u)   \
+  zl[0] = (u);                  \
+  PTR(z) = zl;                  \
+  SIZ(z) = (zl[0] != 0);        \
+  ASSERT_CODE (ALLOC(z) = 1);
+#else
+#define MPZ_FAKE_UI(z, zl, u)                          \
+  zl[0] = (u) & GMP_NUMB_MASK;                         \
+  zl[1] = (u) >> GMP_NUMB_BITS;                        \
+  SIZ(z) = (zl[1] != 0 ? 2 : zl[0] != 0 ? 1 : 0);      \
+  PTR(z) = zl;                                         \
+  ASSERT_CODE (ALLOC(z) = 2);
+#endif
+
 
 #if HAVE_HOST_CPU_FAMILY_x86
 #define TARGET_REGISTER_STARVED 1
