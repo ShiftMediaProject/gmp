@@ -2033,6 +2033,43 @@ esac
 ])
 
 
+dnl  GMP_C_INLINE
+dnl  ------------
+dnl  Establish an "inline" keyword, if possible.
+dnl
+dnl  This is the same as AC_C_INLINE, but introduing a typedef into the test
+dnl  program.  Some versions of HP C succeed when the return value is a
+dnl  plain builtin type like "int", but fail when it's a typedef.
+dnl
+dnl  FIXME: Hopefully autoconf will do this extra itself one day.
+
+AC_DEFUN(GMP_C_INLINE,
+[AC_CACHE_CHECK([for inline], gmp_cv_c_inline,
+[gmp_cv_c_inline=no
+for i in inline __inline__ __inline; do
+  AC_TRY_COMPILE(
+[#ifndef __cplusplus
+typedef int foo_t;
+$i foo_t func1 () { return 0; }
+static $i foo_t func2 () { return 0; }
+#endif], ,
+    [gmp_cv_c_inline=$i
+    break])
+done
+if test $gmp_cv_c_inline = inline; then
+  gmp_cv_c_inline=yes
+fi
+])
+case $gmp_cv_c_inline in
+  inline | yes) ;;
+  no) AC_DEFINE(inline,,
+                [Define as `__inline' if that's what the C compiler calls it,
+                 or to nothing if it is not supported.]) ;;
+  *)  AC_DEFINE_UNQUOTED(inline, $gmp_cv_c_inline) ;;
+esac
+])
+
+
 dnl  GMP_C_RESTRICT
 dnl  --------------
 dnl  Establish a "restrict" keyword, if possible, like AC_C_INLINE.
@@ -2412,8 +2449,8 @@ dnl  If the compiler has an "inline" of some sort, check whether the
 dnl  #ifdef's in gmp.h recognise it.
 
 AC_DEFUN(GMP_H_EXTERN_INLINE,
-[AC_REQUIRE([AC_C_INLINE])
-case $ac_cv_c_inline in
+[AC_REQUIRE([GMP_C_INLINE])
+case $gmp_cv_c_inline in
 no) ;;
 *)
   AC_TRY_COMPILE(
@@ -2422,9 +2459,9 @@ GMP_INCLUDE_GMP_H
 die die die
 #endif
 ],,,
-  [case $ac_cv_c_inline in
-  "") tmp_inline=inline ;;
-  *)  tmp_inline=$ac_cv_c_inline ;;
+  [case $gmp_cv_c_inline in
+  yes) tmp_inline=inline ;;
+  *)   tmp_inline=$gmp_cv_c_inline ;;
   esac    
   AC_MSG_WARN([gmp.h doesnt recognise compiler "$tmp_inline", inlines will be unavailable])])
   ;;
