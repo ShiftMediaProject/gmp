@@ -44,7 +44,7 @@ ifdef(`OPERATION_popcount',`
   define(`h33333333',	`%r11')
   define(`h0f0f0f0f',	`%rcx')
   define(`h01010101',	`%rdx')
-  define(`HAM',		`')
+  define(`HAM',		`dnl')
 ')
 ifdef(`OPERATION_hamdist',`
   define(`func',`mpn_hamdist')
@@ -76,7 +76,7 @@ PROLOGUE(func)
 	movq	$0x0101010101010101, h01010101
 
 	leaq	(up,n,8), up
- HAM(`	leaq	(vp,n,8), vp ')
+ HAM(`	leaq	(vp,n,8), vp	')
 	negq	n
 
 	xorl	%eax, %eax
@@ -97,15 +97,15 @@ PROLOGUE(func)
 	shrq	$2, %r9
 	andq	h33333333, %r8
 	andq	h33333333, %r9
-	addq	%r8, %r9		C 16 4-bit accumulators (0..4)
+	addq	%r8, %r9		C 16 4-bit fields (0..4)
 
 	movq	%r9, %r8
 	shrq	$4, %r9
 	andq	h0f0f0f0f, %r8
 	andq	h0f0f0f0f, %r9
-	addq	%r8, %r9		C 8 8-bit accumulators (0..16)
+	addq	%r8, %r9		C 8 8-bit fields (0..16)
 
-	imulq	h01010101, %r9
+	imulq	h01010101, %r9		C sum the 8 fields in high 8 bits
 	shrq	$56, %r9
 
 	addq	%r9, %rax		C add to total
@@ -138,17 +138,17 @@ PROLOGUE(func)
 	andq	h33333333, %r9
 	andq	h33333333, %r12
 	andq	h33333333, %r13
-	addq	%r8, %r9		C 16 4-bit accumulators (0..4)
-	addq	%r12, %r13		C 16 4-bit accumulators (0..4)
+	addq	%r8, %r9		C 16 4-bit fields (0..4)
+	addq	%r12, %r13		C 16 4-bit fields (0..4)
 
-	addq	%r13, %r9		C 16 4-bit accumulators (0..8)
+	addq	%r13, %r9		C 16 4-bit fields (0..8)
 	movq	%r9, %r8
 	shrq	$4, %r9
 	andq	h0f0f0f0f, %r8
 	andq	h0f0f0f0f, %r9
-	addq	%r8, %r9		C 8 8-bit accumulators (0..16)
+	addq	%r8, %r9		C 8 8-bit fields (0..16)
 
-	imulq	h01010101, %r9
+	imulq	h01010101, %r9		C sum the 8 fields in high 8 bits
 	shrq	$56, %r9
 
 	addq	%r9, %rax		C add to total
