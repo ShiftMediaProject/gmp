@@ -40,6 +40,8 @@ cputime ()
 #include <sys/time.h>
 #include <sys/resource.h>
 
+static void mpn_print (mp_ptr, mp_size_t);
+
 int
 cputime ()
 {
@@ -63,7 +65,7 @@ cputime ()
 #define SIZE 496
 #endif
 #ifndef TIMES
-#define TIMES OPS/SIZE
+#define TIMES OPS/(SIZE+1)
 #else
 #undef OPS
 #define OPS (SIZE*TIMES)
@@ -238,6 +240,7 @@ main (argc, argv)
     }
 }
 
+static void
 mpn_print (mp_ptr p, mp_size_t size)
 {
   mp_size_t i;

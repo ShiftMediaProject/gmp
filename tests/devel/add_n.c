@@ -27,6 +27,8 @@ MA 02111-1307, USA.
 #if defined (USG) || defined (__SVR4) || defined (_UNICOS) || defined (__hpux)
 #include <time.h>
 
+static void mpn_print (mp_ptr, mp_size_t);
+
 int
 cputime ()
 {
@@ -62,7 +64,7 @@ cputime ()
 #define SIZE 328
 #endif
 #ifndef TIMES
-#define TIMES OPS/SIZE
+#define TIMES OPS/(SIZE+1)
 #else
 #undef OPS
 #define OPS (SIZE*TIMES)
@@ -203,6 +205,7 @@ main (argc, argv)
     }
 }
 
+static void
 mpn_print (mp_ptr p, mp_size_t size)
 {
   mp_size_t i;
