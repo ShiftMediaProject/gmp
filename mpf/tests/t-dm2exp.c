@@ -28,7 +28,9 @@ MA 02111-1307, USA. */
 #define SIZE 16
 #endif
 
-main (int argc, char **argv)
+main (argc, argv)
+     int argc;
+     char **argv;
 {
   int reps = 500000;
   int i;
@@ -86,7 +88,8 @@ main (int argc, char **argv)
   exit (0);
 }
 
-oo (mpf_t x)
+oo (x)
+     mpf_t x;
 {
   mp_size_t i;
   printf (" exp = %ld\n", x->_mp_exp);

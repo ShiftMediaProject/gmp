@@ -28,10 +28,17 @@ MA 02111-1307, USA. */
 #define SIZE 16
 #endif
 
+#if __STDC__
 void ref_mpf_add (mpf_t, const mpf_t, const mpf_t);
 void ref_mpf_sub (mpf_t, const mpf_t, const mpf_t);
+#else
+void ref_mpf_add ();
+void ref_mpf_sub ();
+#endif
 
-main (int argc, char **argv)
+main (argc, argv)
+     int argc;
+     char **argv;
 {
   mp_size_t size;
   mp_exp_t exp;
@@ -97,7 +104,8 @@ main (int argc, char **argv)
   exit (0);
 }
 
-oo (mpf_t x)
+oo (x)
+     mpf_t x;
 {
   mp_size_t i;
   printf (" exp = %ld\n", x->_mp_exp);
