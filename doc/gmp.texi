@@ -7435,7 +7435,7 @@ Toom can be found in Knuth section 4.3.3, with an example 3-way
 calculation after Theorem A.  The 3-way form used in GMP is described here.
 
 The operands are each considered split into 3 pieces of equal length (or the
-most significant part 1 or 2 limbs shorter than the others).
+most significant part 1 or 2 limbs shorter than the other two).
 
 @tex
 \def\GMPbox#1#2#3{%
@@ -7488,10 +7488,10 @@ These parts are treated as the coefficients of two polynomials
 @end group
 @end display
 
-Again let @math{b} equal the power of 2 which is the size of the @ms{x,0},
-@ms{x,1}, @ms{y,0} and @ms{y,1} pieces, ie.@: if they're @math{k} limbs each
-then @m{b=2\GMPraise{$k*$@code{mp\_bits\_per\_limb}},
-b=2^(k*mp_bits_per_limb)}.  With this @math{x=X(b)} and @math{y=Y(b)}.
+Let @math{b} equal the power of 2 which is the size of the @ms{x,0}, @ms{x,1},
+@ms{y,0} and @ms{y,1} pieces, ie.@: if they're @math{k} limbs each then
+@m{b=2\GMPraise{$k*$@code{mp\_bits\_per\_limb}}, b=2^(k*mp_bits_per_limb)}.
+With this @math{x=X(b)} and @math{y=Y(b)}.
 
 Let a polynomial @m{W(t)=X(t)Y(t),W(t)=X(t)*Y(t)} and suppose its coefficients
 are
@@ -7501,7 +7501,6 @@ are
    W(t) = w4*t^4 + w3*t^3 + w2*t^2 + w1*t + w0}
 @end display
 
-@noindent
 The @m{w_i,w[i]} are going to be determined, and when they are they'll give
 the final result using @math{w=W(b)}, since
 @m{xy=X(b)Y(b),x*y=X(b)*Y(b)=W(b)}.  The coefficients will be roughly
@@ -7563,29 +7562,27 @@ nine @m{x_iy_j,x[i]*y[j]} for @math{i,j=0,1,2}, and would be equivalent merely
 to a basecase multiply.  Instead the following approach is used.
 
 @math{X(t)} and @math{Y(t)} are evaluated and multiplied at 5 points, giving
-values of @math{W(t)} at those points.  The points used can be chosen in
-various ways, but in GMP the following are used
+values of @math{W(t)} at those points.  In GMP the following points are used,
 
 @quotation
 @multitable {@m{t=\infty,t=inf}M} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
 @item Point                 @tab Value
-@item @math{t=0}            @tab @m{x_0y_0,x0*y0}, which gives @ms{w,0} immediately
-@item @math{t=2}            @tab @m{(4x_2+2x_1+x_0)(4y_2+2y_1+y_0),(4*x2+2*x1+x0)*(4*y2+2*y1+y0)}
-@item @math{t=1}            @tab @m{(x_2+x_1+x_0)(y_2+y_1+y_0),(x2+x1+x0)*(y2+y1+y0)}
-@item @m{t={1\over2},t=1/2} @tab @m{(x_2+2x_1+4x_0)(y_2+2y_1+4y_0),(x2+2*x1+4*x0)*(y2+2*y1+4*y0)}
-@item @m{t=\infty,t=inf}    @tab @m{x_2y_2,x2*y2}, which gives @ms{w,4} immediately
+@item @math{t=0}            @tab @m{x_0y_0,x0 * y0}, which gives @ms{w,0} immediately
+@item @math{t=1}            @tab @m{(x_2+x_1+x_0)(y_2+y_1+y_0),(x2+x1+x0) * (y2+y1+y0)}
+@item @math{t=-1}           @tab @m{(x_2-x_1+x_0)(y_2-y_1+y_0),(x2-x1+x0) * (y2-y1+y0)}
+@item @math{t=2}            @tab @m{(4x_2+2x_1+x_0)(4y_2+2y_1+y_0),(4*x2+2*x1+x0) * (4*y2+2*y1+y0)}
+@item @m{t=\infty,t=inf}    @tab @m{x_2y_2,x2 * y2}, which gives @ms{w,4} immediately
 @end multitable
 @end quotation
 
-At @m{t={1\over2},t=1/2} the value calculated is actually
-@m{16X({1\over2})Y({1\over2}), 16*X(1/2)*Y(1/2)}, giving a value for
-@m{16W({1\over2}),16*W(1/2)}, and this is always an integer.  At
-@m{t=\infty,t=inf} the value is actually @m{\lim_{t\to\infty} {X(t)Y(t)\over
-t^4}, X(t)*Y(t)/t^4 in the limit as t approaches infinity}, but it's much
-easier to think of as simply @m{x_2y_2,x2*y2} giving @ms{w,4} immediately
-(much like @m{x_0y_0,x0*y0} at @math{t=0} gives @ms{w,0} immediately).
+At @math{t=-1} the values can be negative and that's handled using the
+absolute values and tracking the sign separately.  At @m{t=\infty,t=inf} the
+value is actually @m{\lim_{t\to\infty} {X(t)Y(t)\over t^4}, X(t)*Y(t)/t^4 in
+the limit as t approaches infinity}, but it's much easier to think of as
+simply @m{x_2y_2,x2*y2} giving @ms{w,4} immediately (much like
+@m{x_0y_0,x0*y0} at @math{t=0} gives @ms{w,0} immediately).
 
-Now each of the points substituted into
+Each of the points substituted into
 @m{W(t)=w_4t^4+\cdots+w_0,W(t)=w4*t^4+@dots{}+w0} gives a linear combination
 of the @m{w_i,w[i]} coefficients, and the value of those combinations has just
 been calculated.
@@ -7593,118 +7590,48 @@ been calculated.
 @tex
 \GMPdisplay{%
 $\matrix{%
-W(0)           & = &       &   &      &   &      &   &      &   &   w_0 \cr
-16W({1\over2}) & = &   w_4 & + & 2w_3 & + & 4w_2 & + & 8w_1 & + & 16w_0 \cr
-W(1)           & = &   w_4 & + &  w_3 & + &  w_2 & + &  w_1 & + &   w_0 \cr
-W(2)           & = & 16w_4 & + & 8w_3 & + & 4w_2 & + & 2w_1 & + &   w_0 \cr
-W(\infty)      & = &   w_4 \cr
+W(0)      & = &       &   &      &   &      &   &      &   & w_0 \cr
+W(1)      & = &   w_4 & + &  w_3 & + &  w_2 & + &  w_1 & + & w_0 \cr
+W(-1)     & = &   w_4 & - &  w_3 & + &  w_2 & - &  w_1 & + & w_0 \cr
+W(2)      & = & 16w_4 & + & 8w_3 & + & 4w_2 & + & 2w_1 & + & w_0 \cr
+W(\infty) & = &   w_4 \cr
 }$}
 @end tex
 @ifnottex
 @example
 @group
-   W(0)   =                                 w0
-16*W(1/2) =    w4 + 2*w3 + 4*w2 + 8*w1 + 16*w0
-   W(1)   =    w4 +   w3 +   w2 +   w1 +    w0
-   W(2)   = 16*w4 + 8*w3 + 4*w2 + 2*w1 +    w0
-   W(inf) =    w4
+W(0)   =                              w0
+W(1)   =    w4 +   w3 +   w2 +   w1 + w0
+W(-1)  =    w4 -   w3 +   w2 -   w1 + w0
+W(2)   = 16*w4 + 8*w3 + 4*w2 + 2*w1 + w0
+W(inf) =    w4
 @end group
 @end example
 @end ifnottex
 
 This is a set of five equations in five unknowns, and some elementary linear
-algebra quickly isolates each @m{w_i,w[i]}, by subtracting multiples of one
-equation from another.
-
-In the code the set of five values @math{W(0)},@dots{},@m{W(\infty),W(inf)}
-will represent those certain linear combinations.  By adding or subtracting
-one from another as necessary, values which are each @m{w_i,w[i]} alone are
-arrived at.  This involves only a few subtractions of small multiples (some of
-which are powers of 2), and so is fast.  A couple of divisions remain by
-powers of 2 and one division by 3 (or by 6 rather), and that last uses the
-special @code{mpn_divexact_by3} (@pxref{Exact Division}).
-
-In the code the values @ms{w,4}, @ms{w,2} and @ms{w,0} are formed in the
-destination with pointers @code{E}, @code{C} and @code{A}, and @ms{w,3} and
-@ms{w,1} in temporary space @code{D} and @code{B} are added to them.  There
-are extra limbs @code{tD}, @code{tC} and @code{tB} at the high end of
-@ms{w,3}, @ms{w,2} and @ms{w,1} which are handled separately.  The final
-addition then is as follows.
-
-@tex
-\def\GMPboxT#1{%
-  \vbox{%
-    \hrule
-    \hbox {\GMPvrule\hskip 0.4em #1\hskip 0.4em \vrule}%
-    \hrule
-}}
-\GMPdisplay{%
-\vbox{%
-  \hbox to 6\GMPboxwidth {high \hfil low}%
-  \vskip 0.7ex
-  \vbox{%
-    \hrule
-    \hbox{%
-      \GMPvrule
-      \hbox to 2\GMPboxwidth {\hfil@code{E}\hfil}
-      \vrule
-      \hbox to 2\GMPboxwidth {\hfil@code{C}\hfil}
-      \vrule
-      \hbox to 2\GMPboxwidth {\hfil@code{A}\hfil}
-      \vrule}%
-    \hrule}%
-  \vskip 0.5ex
-  \moveright \GMPboxwidth \vbox{%
-    \hrule
-    \hbox to 4\GMPboxwidth {%
-      \GMPvrule \hfil @code{D}\hfil
-      \vrule \hfil @code{B}\hfil
-      \vrule}
-    \hrule}%
-  \vskip 0.5ex
-  \hbox{%
-    \hbox to \GMPboxwidth{\hfil \GMPboxT{\code{tD}}}%
-    \hbox to \GMPboxwidth{\hfil \GMPboxT{\code{tC}}}%
-    \hbox to \GMPboxwidth{\hfil \GMPboxT{\code{tB}}}}
-}}
-@end tex
-@ifnottex
-@example
-@group
- high                                        low
-+-------+-------+-------+-------+-------+-------+
-|       E       |       C       |       A       |
-+-------+-------+-------+-------+-------+-------+
-         +------+-------++------+-------+
-         |      D       ||      B       |
-         +------+-------++------+-------+
-      --      --      --
-     |tD|    |tC|    |tB|        
-      --      --      --
-@end group
-@end example
-@end ifnottex
+algebra quickly isolates each @m{w_i,w[i]}.  This involves adding or
+subtracting one @math{W(t)} value from another, and a couple of divisions by
+powers of 2 and one division by 3, the latter using the special
+@code{mpn_divexact_by3} (@pxref{Exact Division}).
 
 The conversion of @math{W(t)} values to the coefficients is interpolation.  A
 polynomial of degree 4 like @math{W(t)} is uniquely determined by values known
-at 5 different points.  The points can be chosen to make the linear equations
-come out with a convenient set of steps for isolating the @m{w_i,w[i]}.
-
-In @file{mpn/generic/mul_n.c} the @code{interpolate3} routine performs the
-interpolation.  The open-coded one-pass version may be a bit hard to
-understand, the steps performed can be better seen in the @code{USE_MORE_MPN}
-version.
+at 5 different points.  The points are arbitrary and can be chosen to make the
+linear equations come out with a convenient set of steps for quickly isolating
+the @m{w_i,w[i]}.
 
 Squaring follows the same procedure as multiplication, but there's only one
-@math{X(t)} and it's evaluated at 5 points, and those values squared to give
-values of @math{W(t)}.  The interpolation is then identical, and in fact the
-same @code{interpolate3} subroutine is used for both squaring and multiplying.
+@math{X(t)} and it's evaluated at the 5 points, and those values squared to
+give values of @math{W(t)}.  The interpolation is then identical, and in fact
+the same @code{toom3_interpolate} subroutine is used for both squaring and
+multiplying.
 
 Toom-3 is asymptotically @math{O(N^@W{1.465})}, the exponent being
 @m{\log5/\log3,log(5)/log(3)}, representing 5 recursive multiplies of 1/3 the
-original size.  This is an improvement over Karatsuba at @math{O(N^@W{1.585})},
-though Toom does more work in the evaluation and interpolation and so it
-only realizes its advantage above a certain size.
+original size each.  This is an improvement over Karatsuba at
+@math{O(N^@W{1.585})}, though Toom does more work in the evaluation and
+interpolation and so it only realizes its advantage above a certain size.
 
 Near the crossover between Toom-3 and Karatsuba there's generally a range of
 sizes where the difference between the two is small.
@@ -7721,9 +7648,9 @@ being performed.  Even at large sizes there's a good chance machine dependent
 effects like cache architecture will mean actual performance deviates from
 what might be predicted.
 
-The formula given above for the Karatsuba algorithm has an equivalent for
-Toom-3 involving only five multiplies, but this would be complicated and
-unenlightening.
+The formula given for the Karatsuba algorithm (@pxref{Karatsuba
+Multiplication}) has an equivalent for Toom-3 involving only five multiplies,
+but this would be complicated and unenlightening.
 
 An alternate view of Toom-3 can be found in Zuras (@pxref{References}), using
 a vector to represent the @math{x} and @math{y} splits and a matrix
