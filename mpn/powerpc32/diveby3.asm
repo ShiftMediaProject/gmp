@@ -32,8 +32,14 @@ C void mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C Scheduling the load back a bit gets us down from 11 c/l to 10 c/l.
 C
-C The mulhwu has the "3" multiplier in the second operand, this lets 750 and
-C 7400 use an early-out.  The other way around costs an extra 3.5 c/l or so.
+C The mullw has the inverse in the first operand, since 0xAA..AB won't allow
+C any early-out.  The src[] data normally won't either, but there's at least
+C a chance, whereas 0xAA..AB never will.  If, for instance, src[] is all
+C zeros (not a sensible input of course) we run at 7.0 c/l on ppc750.
+C
+C The mulhwu has the "3" multiplier in the second operand, which lets 750
+C and 7400 use an early-out.  The other way around costs an extra 3.5 c/l or
+C so, on average.
 
 ASM_START()
 PROLOGUE(mpn_divexact_by3c)
@@ -63,7 +69,7 @@ L(top):
 	C r6	carry
 	C r7	l
 
-	mullw	r8, r7, r5	C q = l * inverse
+	mullw	r8, r5, r7	C q = inverse * l
 	lwzu	r7, 4(r4)	C src[i]
 
 	C
