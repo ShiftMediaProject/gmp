@@ -22,6 +22,10 @@ MA 02111-1307, USA. */
 
 #define WANT_TRACE 0
 
+/* Default to binary gcdext_1, since it is best on most current machines.
+   We should teach tuneup to choose the right gcdext_1.  */
+#define GCDEXT_1_USE_BINARY 1
+
 #if WANT_TRACE
 # include <stdio.h>
 # include <stdarg.h>
@@ -64,6 +68,7 @@ trace (const char *format, ...)
 
    We always return with 0 < u <= b, 0 <= v < a.
 */
+#if GCDEXT_1_USE_BINARY
 
 static mp_limb_t
 gcdext_1_odd (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
@@ -99,6 +104,8 @@ gcdext_1_odd (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
 
   while (a != b)
     {
+      mp_limb_t mask;
+
       ASSERT (a % 2 == 1);
       ASSERT (b % 2 == 1);
 
@@ -120,18 +127,11 @@ gcdext_1_odd (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
       /* Makes b even */
       b -= a;
 
-      if (u1 >= u0)
-	{
-	  ASSERT (v1 >= v0);
-	  u1 -= u0;
-	  v1 -= v0;
-	}
-      else
-	{
-	  ASSERT (v1 < v0);
-	  u1 += (B - u0);
-	  v1 += (A - v0);
-	}
+      mask = - (mp_limb_t) (u1 < u0);
+      u1 += B & mask;
+      v1 += A & mask;
+      u1 -= u0;
+      v1 -= v0;
 
       ASSERT (b % 2 == 0);
 
@@ -141,17 +141,10 @@ gcdext_1_odd (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
 	     either both or none of u1, v1 is even */
 
 	  ASSERT (u1 % 2 == v1 % 2);
-	  if (u1 % 2 == 0)
-	    {
-	      u1 /= 2;
-	      v1 /= 2;
-	    }
-	  else
-	    {
-	      /* Overflow-safe way of computing (u1 + B) / 2 */
-	      u1 = u1 / 2 + B / 2 + 1;
-	      v1 = v1 / 2 + A / 2 + 1;
-	    }
+
+	  mask = -(u1 & 1);
+	  u1 = u1 / 2 + ((B / 2) & mask) - mask;
+	  v1 = v1 / 2 + ((A / 2) & mask) - mask;
 
 	  b /= 2;
 	}
@@ -257,6 +250,98 @@ gcdext_1 (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
 
   return g << shift;
 }
+
+#else /* ! GCDEXT_1_USE_BINARY */
+static mp_limb_t
+gcdext_1_u (mp_limb_t *up, mp_limb_t a, mp_limb_t b)
+{
+  /* Maintain
+
+     a =   u0 A mod B
+     b = - u1 A mod B
+  */
+  mp_limb_t u0 = 1;
+  mp_limb_t u1 = 0;
+  mp_limb_t B = b;
+
+  ASSERT (a >= b);
+  ASSERT (b > 0);
+
+  for (;;)
+    {
+      mp_limb_t q;
+
+      q = a / b;
+      a -= q * b;
+
+      if (a == 0)
+	{
+	  *up = B - u1;
+	  return b;
+	}
+      u0 += q * u1;
+
+      q = b / a;
+      b -= q * a;
+
+      if (b == 0)
+	{
+	  *up = u0;
+	  return a;
+	}
+      u1 += q * u0;
+    }
+}
+
+static mp_limb_t
+gcdext_1 (mp_limb_t *up, mp_limb_t *vp, mp_limb_t a, mp_limb_t b)
+{
+  /* Maintain
+
+     a =   u0 A - v0 B
+     b = - u1 A + v1 B = (B - u1) A - (A - v1) B
+  */
+  mp_limb_t u0 = 1;
+  mp_limb_t v0 = 0;
+  mp_limb_t u1 = 0;
+  mp_limb_t v1 = 1;
+
+  mp_limb_t A = a;
+  mp_limb_t B = b;
+
+  ASSERT (a >= b);
+  ASSERT (b > 0);
+
+  for (;;)
+    {
+      mp_limb_t q;
+
+      q = a / b;
+      a -= q * b;
+
+      if (a == 0)
+	{
+	  *up = B - u1;
+	  *vp = A - v1;
+	  return b;
+	}
+      u0 += q * u1;
+      v0 += q * v1;
+
+      q = b / a;
+      b -= q * a;
+
+      if (b == 0)
+	{
+	  *up = u0;
+	  *vp = v0;
+	  return a;
+	}
+      u1 += q * u0;
+      v1 += q * v0;
+    }
+}
+#endif /* ! GCDEXT_1_USE_BINARY */
 
 /* FIXME: Duplicated in gcd.c */
 static mp_size_t
@@ -578,40 +663,27 @@ gcdext_lehmer (mp_ptr gp, mp_ptr up, mp_size_t *usize,
       MPN_NORMALIZE (r[0].uvp[0], rsize);
       MPN_COPY (gp, r[0].rp, r[0].rsize);
       MPN_COPY (up, r[0].uvp[0], rsize);
-      *usize = (rsign >= 0) ? rsize : -rsize;
 
+      *usize = (rsign >= 0) ? rsize : -rsize;
       return r[0].rsize;
     }
   else
     {
       mp_limb_t cy;
-
       mp_limb_t u;
       mp_limb_t v;
 
-      if (rsign >= 0)
-	{
-	  gp[0] = gcdext_1 (&u, &v, r[0].rp[0], r[1].rp[0]);
-
-	  cy = mpn_addmul2_n_1 (up, rsize,
-				r[0].uvp[0], u,
-				r[1].uvp[0], v);
-	}
-      else
-	{
-	  gp[0] = gcdext_1 (&u, &v, r[1].rp[0], r[0].rp[0]);
-	  cy = mpn_addmul2_n_1 (up, rsize,
-				r[1].uvp[0], u,
-				r[0].uvp[0], v);
-	}
+      gp[0] = gcdext_1 (&u, &v, r[0].rp[0], r[1].rp[0]);
+      cy = mpn_addmul2_n_1 (up, rsize,
+			    r[0].uvp[0], u,
+			    r[1].uvp[0], v);
       rsize++;
       if (cy)
 	up[rsize++] = cy;
       else
 	MPN_NORMALIZE (up, rsize);
 
-      *usize = rsize;
-
+      *usize = (rsign >= 0) ? rsize : -rsize;
       return 1;
     }
 }
@@ -715,7 +787,7 @@ hgcd_mul_vector (struct hgcd_row *Y, mp_size_t alloc,
 }
 
 #define COMPUTE_V_ITCH(asize, bsize, usize) \
-((usize) + (asize) + 1 + (bsize))
+  ((usize) + (asize) + 1 + (bsize))
 
 /* Computes |v| = |(c - u a)| / b, where u may be positive or negative,
    and v is of the opposite sign. Requires that b, c, |u| <= a. */
@@ -1197,8 +1269,12 @@ mpn_gcdext (mp_ptr gp, mp_ptr up, mp_size_t *usizep,
 
   if (asize == 1)
     {
+#if GCDEXT_1_USE_BINARY
       mp_limb_t v;
       *gp = gcdext_1 (up, &v, ap[0], bp[0]);
+#else
+      *gp = gcdext_1_u (up, ap[0], bp[0]);
+#endif
       *usizep = (up[0] != 0);
       ASSERT(gp[0] != 0);
       return 1;
