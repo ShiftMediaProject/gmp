@@ -865,6 +865,29 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 	   : "=r" (sh), "=&r" (sl)					\
 	   : "rJ" (ah), "rI" (bh), "rJ" (al), "rI" (bl)	\
 	   __CLOBBER_CC)
+#if defined (__sparc_v9__) || defined (__sparcv9)
+/* Perhaps we should use floating-point operations here?  */
+#if 0
+/* Triggers a bug making mpz/tests/t-gcd.c fail.
+   Perhaps we simply need explicitly zero-extend the inputs?  */
+#define umul_ppmm(w1, w0, u, v) \
+  __asm__ ("mulx %2,%3,%%g1; srl %%g1,0,%1; srlx %%g1,32,%0" :		\
+	   "=r" (w1), "=r" (w0) : "r" (u), "r" (v) : "g1")
+#else
+/* Use v8 umul until above bug is fixed.  */
+#define umul_ppmm(w1, w0, u, v) \
+  __asm__ ("umul %2,%3,%1;rd %%y,%0" : "=r" (w1), "=r" (w0) : "r" (u), "r" (v))
+#endif
+/* Use a plain v8 divide for v9.  */
+#define udiv_qrnnd(q, r, n1, n0, d) \
+  do {									\
+    USItype __q;							\
+    __asm__ ("mov %1,%%y;nop;nop;nop;udiv %2,%3,%0"			\
+	     : "=r" (__q) : "r" (n1), "r" (n0), "r" (d));		\
+    (r) = (n0) - __q * (d);						\
+    (q) = __q;								\
+  } while (0)
+#else
 #if defined (__sparc_v8__)
 /* Don't match immediate range because, 1) it is not often useful,
    2) the 'I' flag thinks of the range as a 13 bit signed interval,
@@ -943,6 +966,7 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
    undefined.  */
 #endif /* __sparclite__ */
 #endif /* __sparc_v8__ */
+#endif /* __sparc_v9__ */
 /* Default to sparc v7 versions of umul_ppmm and udiv_qrnnd.  */
 #ifndef umul_ppmm
 #define umul_ppmm(w1, w0, u, v) \
