@@ -22,10 +22,10 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C INPUT PARAMETERS
-C rp = r32
-C s1p = r33
-C s2p = r34
-C n = r35
+C d = r32
+
+C It should be possible to avoid the xmpy.hu and the following tests by
+C explicitly chopping in the last fma.  That would save about 10 cycles.
 
 ASM_START()
 	.section	.rodata
@@ -39,17 +39,15 @@ PROLOGUE(mpn_invert_limb)
 	ld8		r14 = [r14]
 	cmp.eq		p6,p7 = 0,r8;;			// check for d = 2^63
 	ldfe		f10 = [r14],16			// 2^64
-        setf.sig	f12 = r32
+        setf.sig	f7 = r32
    (p6)	br.cond.spnt.few .L1;;				// branch if d = 2^63
         ldfe		f8 = [r14]			// 2^128
-	fmpy.s1		f11 = f12,f10;;			// scale by 2^64
-	fsub.s1		f8 = f8,f11;;
-        fma.s1		f6 = f8,f1,f0
-        fma.s1		f7 = f12,f1,f0;;
+	fmpy.s1		f11 = f7,f10;;			// scale by 2^64
+	fsub.s1		f6 = f8,f11;;
         frcpa.s1	f8,p6 = f6,f7;;
    (p6) fnma.s1		f9 = f7,f8,f1
-   (p6) fma.s1		f10 = f6,f8,f0;;
-   (p6) fma.s1		f11 = f9,f9,f0
+   (p6) fmpy.s1		f10 = f6,f8;;
+   (p6) fmpy.s1		f11 = f9,f9
    (p6) fma.s1		f10 = f9,f10,f10;;
    (p6) fma.s1		f8 = f9,f8,f8
    (p6) fma.s1		f9 = f11,f10,f10;;
@@ -57,12 +55,12 @@ PROLOGUE(mpn_invert_limb)
    (p6) fnma.s1		f10 = f7,f9,f6;;
    (p6) fma.s1		f8 = f10,f8,f9;;
         fcvt.fxu.trunc.s1 f8 = f8;;
-	xmpy.hu		f10 = f8,f7;;
+	xmpy.hu		f10 = f8,f7;;			// di * d
         getf.sig	r8 = f8
 	getf.sig	r14 = f10;;
 	add		r32 = r32,r14;;
-	cmp.ltu		p6,p7 = r32,r14;;
-   (p6) add		r8 = -1,r8
+	cmp.ltu		p6,p7 = r32,r14;;		// got overflow?
+   (p6) add		r8 = -1,r8			// adjust di down
 .L1:
         br.ret.sptk	b0
 EPILOGUE(mpn_invert_limb)
