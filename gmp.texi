@@ -3389,8 +3389,8 @@ given type, which is usually true, and certainly true for @code{unsigned long}
 everywhere we know of.  However on Cray vector systems it may be noted that
 @code{short} and @code{int} are always stored in 8 bytes (and with
 @code{sizeof} indicating that) but use only 32 or 46 bits.  The @var{nails}
-feature can be used to account for this, by passing for instance
-@code{8*sizeof(a[0])-INT_BIT}.
+feature can account for this, by passing for instance
+@code{8*sizeof(int)-INT_BIT}.
 @end deftypefun
 
 @deftypefun void *mpz_export (void *@var{rop}, size_t *@var{count}, int @var{order}, int @var{size}, int @var{endian}, size_t @var{nails}, mpz_t @var{op})
