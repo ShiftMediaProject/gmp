@@ -1098,9 +1098,6 @@ union ieee_double_extract
 
 /* Use (4.0 * ...) instead of (2.0 * ...) to work around buggy compilers.  */
 #define MP_BASE_AS_DOUBLE (4.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 2)))
-
-               xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-     ...|...|...|...|...|...|...|...|...|...|...|...|...|...|...|...|...|
 /* Maximum number of limbs it will take to store any `double'.
    We assume doubles have 53 mantissam bits.  */
 #define LIMBS_PER_DOUBLE ((53 + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB + 1)
