@@ -1766,7 +1766,6 @@ directories, and some sort of run-time path for a shared library.
 
 @cindex Integer
 @tindex @code{mpz_t}
-@noindent
 In this manual, @dfn{integer} usually means a multiple precision integer, as
 defined by the GMP library.  The C data type for such integers is @code{mpz_t}.
 Here are some examples of how to declare such integers:
@@ -1781,7 +1780,6 @@ mpz_t vec[20];
 
 @cindex Rational number
 @tindex @code{mpq_t}
-@noindent
 @dfn{Rational number} means a multiple precision fraction.  The C data type
 for these fractions is @code{mpq_t}.  For example:
 
@@ -1791,18 +1789,42 @@ mpq_t quotient;
 
 @cindex Floating-point number
 @tindex @code{mpf_t}
-@noindent
 @dfn{Floating point number} or @dfn{Float} for short, is an arbitrary precision
 mantissa with a limited precision exponent.  The C data type for such objects
-is @code{mpf_t}.
+is @code{mpf_t}.  For example:
+
+@example
+mpf_t fp;
+@end example
+
+@tindex @code{mp_exp_t}
+The floating point functions accept and return exponents in the C type
+@code{mp_exp_t}.  Currently this is usually a @code{long}, but on some systems
+it's an @code{int} for efficiency.
 
 @cindex Limb
 @tindex @code{mp_limb_t}
-@noindent
 A @dfn{limb} means the part of a multi-precision number that fits in a single
 machine word.  (We chose this word because a limb of the human body is
 analogous to a digit, only larger, and containing several digits.)  Normally a
 limb is 32 or 64 bits.  The C data type for a limb is @code{mp_limb_t}.
+
+@tindex @code{mp_size_t}
+Counts of limbs are represented in the C type @code{mp_size_t}.  Currently
+this is normally a @code{long}, but on some systems it's an @code{int} for
+efficiency.
+
+@cindex Random state
+@tindex @code{gmp_randstate_t}
+@dfn{Random state} means an algorithm selection and current state data.  The C
+data type for such objects is @code{gmp_randstate_t}.  For example:
+
+@example
+gmp_randstate_t rstate;
+@end example
+
+Also, in general @code{unsigned long} is used for bit counts and ranges, and
+@code{size_t} is used for byte or character counts.
 
 
 @node Function Classes, Variable Conventions, Nomenclature and Types, GMP Basics
@@ -2497,10 +2519,9 @@ checker for x86s.  It translates and emulates machine instructions to do
 strong checks for uninitialized data (at the level of individual bits), memory
 accesses through bad pointers, and memory leaks.
 
-Currently (version 1.0.0) it doesn't support MMX or SSE, so GMP must be
-configured for an x86 without those (eg.@: plain @samp{i386}), or with a
-special @code{MPN_PATH} that excludes those subdirectories (@pxref{Build
-Options}).
+Recent versions of Valgrind are getting support for MMX and SSE/SSE2
+instructions, for past versions GMP will need to be configured not to use
+those, ie.@: for an x86 without them (for instance plain @samp{i386}).
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -3510,8 +3531,9 @@ Compare @var{op1} and @var{op2}.  Return a positive value if @math{@var{op1} >
 @var{op2}}, zero if @math{@var{op1} = @var{op2}}, or a negative value if
 @math{@var{op1} < @var{op2}}.
 
-Note that @code{mpz_cmp_ui} and @code{mpz_cmp_si} are macros and will evaluate
-their arguments more than once.
+@code{mpz_cmp_ui} and @code{mpz_cmp_si} are macros and will evaluate their
+arguments more than once.  @code{mpz_cmp_d} can be called with an infinity,
+but results are undefined for a NaN.
 @end deftypefn
 
 @deftypefn Function int mpz_cmpabs (mpz_t @var{op1}, mpz_t @var{op2})
@@ -3521,6 +3543,9 @@ Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
 value if @math{@GMPabs{@var{op1}} > @GMPabs{@var{op2}}}, zero if
 @math{@GMPabs{@var{op1}} = @GMPabs{@var{op2}}}, or a negative value if
 @math{@GMPabs{@var{op1}} < @GMPabs{@var{op2}}}.
+
+@code{mpz_cmpabs_d} can be called with an infinity, but results are undefined
+for a NaN.
 @end deftypefn
 
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
@@ -4622,6 +4647,9 @@ Set @var{rop} to @m{@var{op1}/2^{op2}, @var{op1} divided by 2 raised to
 Compare @var{op1} and @var{op2}.  Return a positive value if @math{@var{op1} >
 @var{op2}}, zero if @math{@var{op1} = @var{op2}}, and a negative value if
 @math{@var{op1} < @var{op2}}.
+
+@code{mpf_cmp_d} can be called with an infinity, but results are undefined for
+a NaN.
 @end deftypefun
 
 @deftypefun int mpf_eq (mpf_t @var{op1}, mpf_t @var{op2}, unsigned long int op3)
@@ -5186,7 +5214,8 @@ Count the number of set bits in @{@var{s1p}, @var{n}@}.
 
 @deftypefun {unsigned long int} mpn_hamdist (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
 Compute the hamming distance between @{@var{s1p}, @var{n}@} and @{@var{s2p},
-@var{n}@}.
+@var{n}@}, which is the number of bit positions where the two operands have
+different bit values.
 @end deftypefun
 
 @deftypefun int mpn_perfect_square_p (const mp_limb_t *@var{s1p}, mp_size_t @var{n})
@@ -5383,13 +5412,13 @@ random data better suited for use as a seed.
 @node Random State Miscellaneous,  , Random State Seeding, Random Number Functions
 @section Random State Miscellaneous
 
-@deftypefun unsigned long gmp_urandomb_ui (gmp_randstate_t @var{state}, unsigned long @var{n})
+@deftypefun {unsigned long} gmp_urandomb_ui (gmp_randstate_t @var{state}, unsigned long @var{n})
 Return a uniformly distributed random number in the range 0 to
 @m{2^n-1,2^@var{n}-1}, inclusive.  @var{n} must be less than or equal to the
 number of bits in an @code{unsigned long}.
 @end deftypefun
 
-@deftypefun unsigned long gmp_urandomm_ui (gmp_randstate_t @var{state}, unsigned long @var{n})
+@deftypefun {unsigned long} gmp_urandomm_ui (gmp_randstate_t @var{state}, unsigned long @var{n})
 Return a uniformly distributed random number in the range 0 to
 @math{@var{n}-1}, inclusive.
 @end deftypefun
@@ -5420,10 +5449,10 @@ format specification is of the form
 @end example
 
 GMP adds types @samp{Z}, @samp{Q} and @samp{F} for @code{mpz_t}, @code{mpq_t}
-and @code{mpf_t} respectively, and @samp{N} for an @code{mp_limb_t} array.
-@samp{Z}, @samp{Q} and @samp{N} behave like integers.  @samp{Q} will print a
-@samp{/} and a denominator, if needed.  @samp{F} behaves like a float.  For
-example,
+and @code{mpf_t} respectively, @samp{M} for @code{mp_limb_t}, and @samp{N} for
+an @code{mp_limb_t} array.  @samp{Z}, @samp{Q}, @samp{M} and @samp{N} behave
+like integers.  @samp{Q} will print a @samp{/} and a denominator, if needed.
+@samp{F} behaves like a float.  For example,
 
 @example
 mpz_t z;
@@ -5435,6 +5464,9 @@ gmp_printf ("a hex rational: %#40Qx\n", q);
 mpf_t f;
 int   n;
 gmp_printf ("fixed point mpf %.*Ff with %d digits\n", n, f, n);
+
+mp_limb_t l;
+gmp_printf ("limb %Mu\n", limb);
 
 const mp_limb_t *ptr;
 mp_size_t       size;
@@ -5492,6 +5524,7 @@ The GMP types are
 @multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
 @item @nicode{F}  @tab @nicode{mpf_t}, float conversions
 @item @nicode{Q}  @tab @nicode{mpq_t}, integer conversions
+@item @nicode{M}  @tab @nicode{mp_limb_t}, integer conversions
 @item @nicode{N}  @tab @nicode{mp_limb_t} array, integer conversions
 @item @nicode{Z}  @tab @nicode{mpz_t}, integer conversions
 @end multitable
@@ -5523,6 +5556,11 @@ types.  @samp{m} and @samp{p} depend on the C library.
 @samp{o}, @samp{x} and @samp{X} are unsigned for the standard C types, but for
 types @samp{Z}, @samp{Q} and @samp{N} they are signed.  @samp{u} is not
 meaningful for @samp{Z}, @samp{Q} and @samp{N}.
+
+@samp{M} is a proxy for the C library @samp{l} or @samp{L}, according to the
+size of @code{mp_limb_t}.  Unsigned conversions will be usual, but a signed
+conversion can be used and will interpret the value as a twos complement
+negative.
 
 @samp{n} can be used with any type, even the GMP types.
 
@@ -9108,14 +9146,6 @@ various internals described here may change in future GMP releases.
 Applications expecting to be compatible with future releases should use only
 the documented interfaces described in previous chapters.}
 
-In general @code{unsigned long} is used for bit counts and ranges,
-@code{size_t} for byte or character counts, and @code{mp_size_t} for limb
-counts.  @code{mp_size_t} is usually a @code{long} in order to get a native
-machine word, but on Cray vector systems an @code{int} is more efficient.  It
-will be noted that @code{mpz_t} etc use @code{int} rather than
-@code{mp_size_t} for limb counts, this makes it 32-bits on some 64-bit
-systems, saving a few bytes of data space but still providing plenty of range.
-
 @menu
 * Integer Internals::           
 * Rational Internals::          
@@ -9166,6 +9196,11 @@ Some internal temporary variables are setup with @code{MPZ_TMP_INIT} and these
 have @code{_mp_d} space obtained from @code{TMP_ALLOC} rather than the memory
 allocation functions.  Care is taken to ensure that these are big enough that
 no reallocation is necessary (since it would have unpredictable consequences).
+
+@code{_mp_size} and @code{_mp_alloc} are @code{int}, although @code{mp_size_t}
+is usually a @code{long}.  This is done to make the fields just 32 bits on
+some 64 bits systems, thereby saving a few bytes of data space but still
+providing plenty of range.
 
 
 @node Rational Internals, Float Internals, Integer Internals, Internals
@@ -9328,6 +9363,12 @@ limbs as the diagram shows, it can be a long way above or a long way below.
 Limbs other than those included in the @code{@{_mp_d,_mp_size@}} data
 are treated as zero.
 @end table
+
+@code{_mp_size} and @code{_mp_prec} are @code{int}, although @code{mp_size_t}
+is usually a @code{long}.  This is done to make the fields just 32 bits on
+some 64 bits systems, thereby saving a few bytes of data space but still
+providing plenty of range.
+
 
 @sp 1
 @noindent
