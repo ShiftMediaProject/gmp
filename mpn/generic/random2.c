@@ -42,7 +42,15 @@ MA 02111-1307, USA. */
    ranm/ran, and a count of how many bits remaining in ran_nbits.  */
 
 #define LOGBITS_PER_BLOCK 5
+
+/* Ask _gmp_rand for 32 bits per call unless that's more than a limb can hold.
+   Thus, we get the same random number sequence in the common cases.
+   FIXME: We should always generate the same random number sequence!  */
+#if GMP_NUMB_BITS < 32
+#define BITS_PER_RANDCALL GMP_NUMB_BITS
+#else
 #define BITS_PER_RANDCALL 32
+#endif
 
 void
 mpn_random2 (mp_ptr rp, mp_size_t n)
@@ -64,9 +72,9 @@ mpn_random2 (mp_ptr rp, mp_size_t n)
   ran = ranm;
 
   /* Start off at a random bit position in the most significant limb.  */
-  bit_pos = ran % BITS_PER_MP_LIMB;
-  ran >>= 6;				/* Ideally   log2(BITS_PER_MP_LIMB) */
-  ran_nbits = BITS_PER_RANDCALL - 6;	/* Ideally - log2(BITS_PER_MP_LIMB) */
+  bit_pos = ran % GMP_NUMB_BITS;
+  ran >>= 6;				/* Ideally   log2(GMP_NUMB_BITS) */
+  ran_nbits = BITS_PER_RANDCALL - 6;	/* Ideally - log2(GMP_NUMB_BITS) */
 
   /* Bit 0 of ran chooses string of ones/string of zeroes.
      Make most significant limb be non-zero by setting bit 0 of RAN.  */
@@ -91,9 +99,9 @@ mpn_random2 (mp_ptr rp, mp_size_t n)
 	  if (nb > bit_pos)
 	    {
 	      rp[ri--] = acc | (((mp_limb_t) 2 << bit_pos) - 1);
-	      bit_pos += BITS_PER_MP_LIMB;
+	      bit_pos += GMP_NUMB_BITS;
 	      bit_pos -= nb;
-	      acc = (~(mp_limb_t) 1) << bit_pos;
+	      acc = ((~(mp_limb_t) 1) << bit_pos) & GMP_NUMB_MASK;
 	    }
 	  else
 	    {
@@ -108,7 +116,7 @@ mpn_random2 (mp_ptr rp, mp_size_t n)
 	    {
 	      rp[ri--] = acc;
 	      acc = 0;
-	      bit_pos += BITS_PER_MP_LIMB;
+	      bit_pos += GMP_NUMB_BITS;
 	    }
 	  bit_pos -= nb;
 	}
