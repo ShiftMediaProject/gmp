@@ -520,6 +520,43 @@ esac
 ])
 
 
+dnl  GMP_GCC_NO_CPP_PRECOMP(CCBASE,CC,CFLAGS,[ACTIONS-YES][,ACTIONS-NO])
+dnl  -------------------------------------------------------------------
+dnl  Check whether -no-cpp-precomp should be used on this compiler, and
+dnl  execute the corresponding ACTIONS-YES or ACTIONS-NO.
+dnl
+dnl  -no-cpp-precomp is only meant for Apple's hacked version of gcc found
+dnl  on powerpc*-*-darwin*, but we can give it a try on any gcc.  Normal gcc
+dnl  (as of 3.0 at least) only gives a warning, not an actual error, and we
+dnl  watch for that and decide against the option in that case, to avoid
+dnl  confusing the user.
+
+AC_DEFUN(GMP_GCC_NO_CPP_PRECOMP,
+[if test "$ccbase" = gcc; then
+  AC_MSG_CHECKING([compiler $2 $3 -no-cpp-precomp])
+  result=no
+  cat >conftest.c <<EOF
+int main () { return 0; }
+EOF
+  gmp_compile="$2 $3 -no-cpp-precomp conftest.c >conftest.out 2>&1"
+  if AC_TRY_EVAL(gmp_compile); then
+    if grep "unrecognized option.*-no-cpp-precomp" conftest.out >/dev/null; then : ;
+    else
+      result=yes
+    fi
+  fi
+  cat conftest.out >&AC_FD_CC
+  rm -f conftest* a.out
+  AC_MSG_RESULT($result)
+  if test "$result" = yes; then
+      ifelse([$4],,:,[$4])
+  else
+      ifelse([$5],,:,[$5])
+  fi
+fi
+])
+
+
 dnl  GMP_INIT([M4-DEF-FILE])
 dnl  -----------------------
 dnl  Initializations for GMP config.m4 generation.
