@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 14 May 2002.  An up-to-date version is available at
+  This file current as of 16 Sep 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -353,6 +353,67 @@ MA 02111-1307, USA.
       <code>speed_measure</code> may or may not suit, but the basic
       <code>speed_starttime</code> and <code>speed_endtime</code> would cover
       lots of portability and accuracy questions.
+
+
+<p> <li> <strong><code>restrict</code></strong>
+
+  <p> There might be some value in judicious use of C99 style
+      <code>restrict</code> on various pointers, but this would need some
+      careful thought about what it implies for the various operand overlaps
+      permitted in GMP.
+
+  <p> Rumour has it some pre-C99 compilers had <code>restrict</code>, but
+      expressing tighter (or perhaps looser) requirements.  Might be worth
+      investigating that before using <code>restrict</code> unconditionally.
+
+  <p> Loops are presumably where the greatest benefit would be had, by 
+      allowing the compiler to advance reads ahead of writes, perhaps as part
+      of loop unrolling.  However critical loops are generally coded in
+      assembler, so there might not be very much to gain.  And on Cray systems
+      the explicit use of <code>_Pragma</code> gives an equivalent effect.
+
+  <p> One thing to note is that Microsoft C headers (on ia64 at least) contain
+      <code>__declspec(restrict)</code>, so a <code>#define</code> of
+      <code>restrict</code> should be avoided.  It might be wisest to setup a
+      <code>gmp_restrict</code>.
+
+
+<p> <li> <strong>Nx1 Division</strong>
+
+  <p> The limb-by-limb dependencies in the existing Nx1 division (and
+      remainder) code means that chips with multiple execution units or
+      pipelined multipliers are not fully utilized.
+
+  <p> One possibility is to follow the current preinv method but taking two
+      limbs at a time.  That means a 2x2-&gt;4 and a 2x1-&gt;2 multiply for
+      each two limbs processed, and because the 2x2 and 2x1 can each be done
+      in parallel the latency will be not much more than 2 multiplies for two
+      limbs, whereas the single limb method has a 2 multiply latency for just
+      one limb.  A version of <code>mpn_divrem_1</code> doing this has been
+      written in C, but not yet tested on likely chips.  Clearly this scheme
+      would extend to 3x3-&gt;9 and 3x1-&gt;3 etc, though with diminishing
+      returns.
+
+  <p> For <code>mpn_mod_1</code>, Peter L. Montgomery proposes the following
+      scheme.  For a limb R=2^</code>bits_per_mp_limb</code>, pre-calculate
+      values R mod N, R^2 mod N, R^3 mod N, R^4 mod N.  Then take dividend
+      limbs and multiply them by those values, thereby reducing them (moving
+      them down) by the corresponding factor.  The products can be added to
+      produce an intermediate remainder of 2 or 3 limbs to be similarly
+      included in the next step.  The point is that such multiplies can be
+      done in parallel, meaning as little as 1 multiply worth of latency for 4
+      limbs.  If the modulus N is less than R/4 (or is it R/5?) the summed
+      products will fit in 2 limbs, otherwise 3 will be required, but with the
+      high only being small.  Clearly this extends to as many factors of R as
+      a chip can efficiently apply.
+
+  <p> The logical conculsion for powers R^i is a whole array "p[i] = R^i mod
+      N" for i up to k, the size of the dividend.  This could then be applied
+      at multiplier throughput speed like an inner product.  If the powers
+      took roughly k divide steps to calculate then there'd be an advantage
+      any time the same N was used three or more times.  Suggested by Victor
+      Shoup in connection with chinese-remainder style decompositions, but
+      perhaps with other uses.
 
 
 </ul>
