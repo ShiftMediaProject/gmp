@@ -65,7 +65,7 @@ MA 02111-1307, USA. */
    if there's enough registers, which could effectively use float throughput
    to reduce total latency across two limbs.  */
 
-define ASSERT_RETVAL(r)                \
+#define ASSERT_RETVAL(r)                \
   ASSERT (orig_c < d ? r < d : r <= d)
 
 mp_limb_t
