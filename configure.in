@@ -1253,7 +1253,7 @@ case $host in
     fi
     if test "$enable_shared" != no && test "$enable_static" != no; then
       AC_MSG_ERROR([cannot build both static and DLL, since gmp.h is different for each.
-Use --disable-static --enable-shared to build just a DLL.])
+Use "--disable-static --enable-shared" to build just a DLL.])
     fi
     if test "$enable_shared" = yes; then
       GMP_LDFLAGS="$GMP_LDFLAGS -no-undefined"
@@ -1288,6 +1288,19 @@ Use --disable-static --enable-shared to build just a DLL.])
   *-*-ultrix*)
     enable_shared=no ;;
 esac
+
+# Libtool runs an impgen.c program on the build system when making windows
+# DLLs.  If we're cross compiling then look for a suitable build system
+# compiler, since $CC can't be expected to work.
+# FIXME: Libtool ought to do this itself.
+#
+if test "$cross_compiling" != no && test "$enable_shared" != no; then
+  case $host in
+    *-*-cygwin* | *-*-mingw* | *-*-pw32*)
+      GMP_PROG_HOST_CC
+      ;;
+  esac
+fi
 
 # Enable CXX in libtool only if we want it, and never enable GCJ, nor RC on
 # mingw and cygwin.  Under --disable-cxx this avoids some error messages
@@ -1408,7 +1421,7 @@ case $host in
   m68*-*-netbsd1.4*) ac_cv_func_getrusage=no ;;
 esac
 
-AC_CHECK_FUNCS(getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time strchr strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm getpagesize getrusage gettimeofday localeconv memset mmap mprotect obstack_vprintf popen processor_info read_real_time strchr strtoul sysconf sysctl sysctlbyname times)
 GMP_FUNC_VSNPRINTF
 
 
