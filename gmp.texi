@@ -1569,6 +1569,9 @@ There are a number of compatibility issues between GMP 1 and GMP 2 that of
 course also apply when porting applications from GMP 1 to GMP 3.  Please
 see the GMP 2 manual for details.
 
+The Berkeley MP compatibility library (@pxref{BSD Compatible Functions}) is
+source and binary compatible with the standard @file{libmp}.
+
 @c @enumerate
 @c @item Integer division functions round the result differently.  The obsolete
 @c functions (@code{mpz_div}, @code{mpz_divmod}, @code{mpz_mdiv},
