@@ -89,7 +89,7 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, unsigned long d)
           ASSERT (i < csize);  /* always have a non-zero limb on c */
           alimb = ap[i];
           climb = cp[i];
-          sum = alimb + climb;
+          sum = (alimb + climb) & GMP_NUMB_MASK;
 
           if (i >= dlimbs)
             return (sum & dmask) == 0;
@@ -111,7 +111,7 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, unsigned long d)
 
           alimb = ap[i];
           climb = cp[i];
-          sum = alimb + climb + 1;
+          sum = (alimb + climb + 1) & GMP_NUMB_MASK;
 
           if (i >= dlimbs)
             return (sum & dmask) == 0;
@@ -129,7 +129,7 @@ mpz_congruent_2exp_p (mpz_srcptr a, mpz_srcptr c, unsigned long d)
 
       /* whole limbs */
       for ( ; i < dlimbs; i++)
-        if (ap[i] + 1 != 0)
+        if (ap[i] != GMP_NUMB_MAX)
           return 0;
 
       /* if only whole limbs, no further fetches from a */
