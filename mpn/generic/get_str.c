@@ -25,18 +25,20 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/* Conversion of U {up,un} to a string in base b.  Basic algorithms:
+/* Conversion of U {up,un} to a string in base b.  Internally, we convert to
+     base B = b^m, the largest power of b that fits a limb.  Basic algorithms:
 
-  A) Divide U repeatedly by b, generating an integer quotient and remainder.
-     Digits come out from right to left.  (Used in mpn_sb_divrem_mn.)
+  A) Divide U repeatedly by B, generating a quotient and remainder, until the
+     quotient becomes zero.  The remainders hold the converted digits.  Digits
+     come out from right to left.  (Used in mpn_sb_get_str.)
 
   B) Divide U by b^g, for g such that 1/b <= U/b^g < 1, generating a fraction.
      Then develop digits by multiplying the fraction repeatedly by b.  Digits
      come out from left to right.  (Currently not used herein, except for in
-     code for single limbs.)
+     code for converting single limbs to individual digits.)
 
-  C) Compute b^1, b^2, b^4, ..., b^(2^s), for s such that b^(2^s) > sqrt(U).
-     Then divide U by b^(2^k), generating an integer quotient and remainder.
+  C) Compute B^1, B^2, B^4, ..., B^(2^s), for s such that B^(2^s) > sqrt(U).
+     Then divide U by B^(2^k), generating an integer quotient and remainder.
      Recursively convert the quotient, then the remainder, using the
      precomputed powers.  Digits come out from left to right.  (Used in
      mpn_dc_get_str.)
