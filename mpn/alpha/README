@@ -76,7 +76,7 @@ EV6
 Here we have a really parallel pipeline, capable of issuing up to 4 integer
 instructions per cycle.  One integer multiply instruction can issue each
 cycle.  To get optimal speed, we need to pretend we are vectorizing the code,
-i.e., minimize the iterative dependencies.
+i.e., minimize the depth of recurrences.
 
 There are two dependencies to watch out for.  1) Address arithmetic
 dependencies, and 2) carry propagation dependencies.
@@ -90,135 +90,12 @@ accepting carry-in to a vector point until we can generate carry-out.
 Most integer instructions can execute in either the L0, U0, L1, or U1
 pipelines.  Shifts only execute in U0 and U1, and multiply only in U1.
 
-CMOV instructions split into two internal instructions, CMOV1 and CMOV2, but
-the execute efficiently.  But CMOV split the mapping process (see pg 2-26 in
-cmpwrgd.pdf), suggesting the CMOV should always be placed as the last
-instruction of an aligned 4 instruction block (?).
+CMOV instructions split into two internal instructions, CMOV1 and
+CMOV2.  CMOV split the mapping process (see pg 2-26 in cmpwrgd.pdf),
+suggesting the CMOV should always be placed as the last instruction of
+an aligned 4 instruction block (?).
 
 Perhaps the most important issue is the latency between the L0/U0 and L1/U1
 clusters; a result obtained on either cluster has an extra cycle of latency
 for consumers in the opposite cluster.  Because of the dynamic nature of the
 implementation, it is hard to predict where an instruction will execute.
-
-The shift loops need (per limb):
-    1 load (Lx pipes)
-    1 store (Lx pipes)
-    2 shift (Ux pipes)
-    1 iaddlog (Lx pipes, Ux pipes)
-Obviously, since the pipes are very equally loaded, we should get 4 insn/cycle, or 1.25 cycles/limb.
-
-For mpn_add_n, we currently have
-    2 load (Lx pipes)
-    1 store (Lx pipes)
-    5 iaddlog (Lx pipes, Ux pipes)
-
-Again, we have a perfect balance and will be limited by carry propagation
-delays, currently three cycles.  The superoptimizer indicates that ther
-might be sequences that--using a final cmov--have a carry propagation delay
-of just two.  Montgomery's subtraction sequence could perhaps be used, by
-complementing some operands.  All in all, we should get down to 2 cycles
-without much problems.
-
-For mpn_mul_1, we could do, just like for mpn_add_n:
-    not		newlo,notnewlo
-    addq	cylimb,newlo,newlo  ||    cmpult	cylimb,notnewlo,cyout
-    addq	cyout,newhi,cylimb
-and get 2-cycle carry propagation.  The instructions needed will be
-    1 ld (Lx pipes)
-    1 st (Lx pipes)
-    2 mul (U1 pipe)
-    4 iaddlog (Lx pipes, Ux pipes)
-issue1: addq not mul ld
-issue2: cmpult addq mul st
-Conclusion: no cluster delays and 2-cycle carry delays will give us 2 cycles/limb!
-
-Last, we have mpn_addmul_1.  Almost certainly, we will get down to 3
-cycles/limb, which would be absolutely awesome.
-
-Old, perhaps obsolete addmul_1 dependency diagram (needs 175 columns wide screen):
-
-   i  
-   s
-   s  i
-   u  n
-   e  s
-   d  t
-      r
-   i  u
-l  n  c
-i  s  t
-v  t  i
-e  r  o
-   u  n
-v  c	
-a  t  t
-l  i  y
-u  o  p
-e  n  e
-s  s  s
-        issue
-         in
-        cycle
-         -1     ldq
-               /    \
-          0   |      \
-              |       \
-          1   |        |
-              |        |
-          2   |        |                   ldq
-              |        |                  /    \
-          3   |       mulq               |      \
-              |           \              |       \
-          4  umulh         \             |        |
-               |            |            |        |
-          5    |            |            |        |                   ldq
-               |            |            |        |                  /    \
-    4calm 6    |            |   ldq      |       mulq               |      \
-               |            |  /         |           \              |       \
-    4casm 7    |            | /         umulh         \             |        |
-6              |            ||            |            |            |        |
-    3aal  8    |            ||            |            |            |        |                   ldq
-7              |            ||            |            |            |        |                  /    \
-    4calm 9    |            ||            |            |   ldq      |       mulq               |      \
-9              |            ||            |            |  /         |           \              |       \
-    4casm 10   |            ||            |            | /         umulh         \             |        |
-9              |            ||            |            ||            |            |            |        |
-    3aal  11   |           addq           |            ||            |            |            |        |                   ldq
-9              |          //   \          |            ||            |            |            |        |                  /    \
-    4calm 12    \     cmpult    addq<-cy  |            ||            |            |   ldq      |       mulq               |      \
-13               \    /       //   \      |            ||            |            |  /         |           \              |       \
-    4casm 13      addq   cmpult     stq   |            ||            |            | /         umulh         \             |        |
-11                    \  /                |            ||            |            ||            |            |            |        |
-    3aal  14          addq                |           addq           |            ||            |            |            |        |                   ldq
-10                        \               |          //   \          |            ||            |            |            |        |                  /    \
-    4calm 15                cy ---->       \     cmpult    addq<-cy  |            ||            |            |   ldq      |       mulq               |      \
-13                                          \    /       //   \      |            ||            |            |  /         |           \              |       \
-    4casm 16                                 addq   cmpult     stq   |            ||            |            | /         umulh         \             |        |
-11                                               \  /                |            ||            |            ||            |            |            |        |
-    3aal  17                                     addq                |           addq           |            ||            |            |            |        |
-10                                                   \               |          //   \          |            ||            |            |            |        |
-    4calm 18                                           cy ---->       \     cmpult    addq<-cy  |            ||            |            |   ldq      |       mulq
-13                                                                     \    /       //   \      |            ||            |            |  /         |           \
-    4casm 19                                                            addq   cmpult     stq   |            ||            |            | /         umulh         \
-11                                                                          \  /                |            ||            |            ||            |            |
-    3aal  20                                                                addq                |           addq           |            ||            |            |
-10                                                                              \               |          //   \          |            ||            |            |
-    4calm 21                                                                      cy ---->       \     cmpult    addq<-cy  |            ||            |            |   ldq
-                                                                                                  \    /       //   \      |            ||            |            |  /
-          22                                                                                       addq   cmpult     stq   |            ||            |            | /
-                                                                                                       \  /                |            ||            |            ||
-          23                                                                                           addq                |           addq           |            ||
-                                                                                                           \               |          //   \          |            ||
-          24                                                                                                 cy ---->       \     cmpult    addq<-cy  |            ||
-                                                                                                                             \    /       //   \      |            ||
-          25                                                                                                                  addq   cmpult     stq   |            ||
-                                                                                                                                  \  /                |            ||
-          26                                                                                                                      addq                |           addq
-                                                                                                                                      \               |          //   \
-          27                                                                                                                            cy ---->       \     cmpult    addq<-cy
-                                                                                                                                                        \    /       //   \
-          28                                                                                                                                             addq   cmpult     stq
-                                                                                                                                                             \  /
-As many as 6 consecutive points will be under execution simultaneously, or if we                                                                             addq
-schedule loads even further away, maybe 7 or 8.  But the number of live quantities                                                                               \
-is reasonable, and can easily be satisfied.                                                                                                                        cy ---->    
