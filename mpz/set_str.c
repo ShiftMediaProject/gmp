@@ -4,8 +4,8 @@
    the base in the C standard way, i.e.  0xhh...h means base 16,
    0oo...o means base 8, otherwise assume base 10.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2000, 2001, 2002 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2000, 2001, 2002, 2003 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -28,26 +28,9 @@ MA 02111-1307, USA. */
 #include <ctype.h>
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "longlong.h"
 
-static int
-digit_value_in_base (int c, int base)
-{
-  int digit;
-
-  if (isdigit (c))
-    digit = c - '0';
-  else if (islower (c))
-    digit = c - 'a' + 10;
-  else if (isupper (c))
-    digit = c - 'A' + 10;
-  else
-    return -1;
-
-  if (digit < base)
-    return digit;
-  return -1;
-}
+extern const unsigned char __gmp_digit_value_tab[];
+#define digit_value_tab __gmp_digit_value_tab
 
 int
 mpz_set_str (mpz_ptr x, const char *str, int base)
@@ -58,7 +41,18 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
   mp_size_t xsize;
   int c;
   int negative;
+  const unsigned char *digit_value;
   TMP_DECL (marker);
+
+  digit_value = digit_value_tab;
+  if (base > 36)
+    {
+      /* For bases > 36, use the collating sequence
+	 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.  */
+      digit_value += 224;
+      if (base > 62)
+	return -1;		/* too large base */
+    }
 
   /* Skip whitespace.  */
   do
@@ -72,8 +66,8 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
       c = (unsigned char) *str++;
     }
 
-  if (digit_value_in_base (c, base == 0 ? 10 : base) < 0)
-    return -1;			/* error if no digits */
+  if (digit_value[c] >= (base == 0 ? 10 : base))
+    return -1;			/* error if no valid digits */
 
   /* If BASE is 0, try to find out the base by looking at the initial
      characters.  */
@@ -117,8 +111,8 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
     {
       if (!isspace (c))
 	{
-	  int dig = digit_value_in_base (c, base);
-	  if (dig < 0)
+	  int dig = digit_value[c];
+	  if (dig >= base)
 	    {
 	      TMP_FREE (marker);
 	      return -1;
@@ -132,8 +126,7 @@ mpz_set_str (mpz_ptr x, const char *str, int base)
 
   xsize = (((mp_size_t) (str_size / __mp_bases[base].chars_per_bit_exactly))
 	   / GMP_NUMB_BITS + 2);
-  if (x->_mp_alloc < xsize)
-    _mpz_realloc (x, xsize);
+  MPZ_REALLOC (x, xsize);
 
   /* Convert the byte array in base BASE to our bignum format.  */
   xsize = mpn_set_str (x->_mp_d, (unsigned char *) begs, str_size, base);
