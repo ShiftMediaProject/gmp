@@ -1084,7 +1084,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 "	mfs	r10,%1"							\
 	   : "=r" ((USItype)(ph)), "=r" ((USItype)(pl))			\
 	   : "%r" ((USItype)(m0)), "r" ((USItype)(m1))			\
-	   : "r2");							\
+	   : "r2")
 #define UMUL_TIME 20
 #define UDIV_TIME 200
 #define count_leading_zeros(count, x) \
@@ -1214,7 +1214,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 "	bl,a 1f\n"							\
 "	add	%1,%4,%1\n"						\
 "1:	! End of inline udiv_qrnnd"					\
-	   : "=r" (q), "=r" (r) : "r" (n1), "r" (n0), "rI" (d)
+	   : "=r" (q), "=r" (r) : "r" (n1), "r" (n0), "rI" (d)		\
 	   : "%g1" __AND_CLOBBER_CC)
 #define UDIV_TIME 37
 #define count_leading_zeros(count, x) \
