@@ -24,8 +24,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#define swapptr(xp,yp) \
-do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
 
 static void mpz_pow2 _PROTO ((mpz_ptr r, mp_limb_t blimb, unsigned long int e, mp_limb_t rl));
 
@@ -112,7 +110,7 @@ mpz_pow2 (r, blimb, e, rl)
       mpn_mul_n (tp, rp, rp, rsize);
       rsize = 2 * rsize;
       rsize -= tp[rsize - 1] == 0;
-      swapptr (rp, tp);
+      MP_PTR_SWAP (rp, tp);
 
       if ((e & ((mp_limb_t) 1 << i)) != 0)
 	{

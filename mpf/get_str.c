@@ -39,9 +39,6 @@ MA 02111-1307, USA. */
      easily be interrupted when the needed number of digits are generated.
 */
 
-#define swapptr(xp,yp) \
-do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
-
 char *
 #if __STDC__
 mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
@@ -168,7 +165,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 	      rsize = prec;
 	    }
 	  else
-	    swapptr (rp, tp);
+	    MP_PTR_SWAP (rp, tp);
 
 	  if (((exp_in_base >> i) & 1) != 0)
 	    {
@@ -273,7 +270,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 		  rsize = prec;
 		}
 	      else
-		swapptr (rp, tp);
+		MP_PTR_SWAP (rp, tp);
 
 	      if (((exp_in_base >> i) & 1) != 0)
 		{

@@ -58,9 +58,9 @@ madd (u, v, w)
   if (abs_usize < abs_vsize)
     {
       /* Swap U and V. */
-      {const __mpz_struct *t = u; u = v; v = t;}
-      {mp_size_t t = usize; usize = vsize; vsize = t;}
-      {mp_size_t t = abs_usize; abs_usize = abs_vsize; abs_vsize = t;}
+      MPZ_SRCPTR_SWAP (u, v);
+      MP_SIZE_T_SWAP (usize, vsize);
+      MP_SIZE_T_SWAP (abs_usize, abs_vsize);
     }
 
   /* True: ABS_USIZE >= ABS_VSIZE.  */

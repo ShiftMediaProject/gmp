@@ -1,6 +1,7 @@
 /* mpf_sub -- Subtract two floats.
 
-Copyright (C) 1993, 1994, 1995, 1996, 1999 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995, 1996, 1999, 2000 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -141,8 +142,7 @@ mpf_sub (r, u, v)
 		 wouldn't have exited unless up[usize - 1] and vp[vsize - 1]
 		 were non-equal, this if-statement catches all cases where U
 		 is smaller than V.  */
-	      { mp_srcptr tp = up; up = vp; vp = tp; }
-	      { mp_size_t tsize = usize; usize = vsize; vsize = tsize; }
+	      MPN_SRCPTR_SWAP (up,usize, vp,vsize);
 	      negate ^= 1;
 	      /* negating ediff not necessary since it is 0.  */
 	    }

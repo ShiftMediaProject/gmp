@@ -29,9 +29,6 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-#define swapptr(xp,yp) \
-do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
-
 long int strtol _PROTO ((const char *, char **ptr, int));
 
 static int
@@ -242,7 +239,7 @@ mpf_set_str (x, str, base)
 	    rsize = prec;
 	  }
 	else
-	  swapptr (rp, tp);
+	  MP_PTR_SWAP (rp, tp);
 
 	if (((exp_in_base >> i) & 1) != 0)
 	  {
