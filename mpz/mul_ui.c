@@ -22,4 +22,4 @@ MA 02111-1307, USA. */
 
 
 #define OPERATION_mul_ui
-#include "mul_i.i"
+#include "mul_i.h"
