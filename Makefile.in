@@ -88,6 +88,7 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
+STRIP = @STRIP@
 VERSION = @VERSION@
 gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
