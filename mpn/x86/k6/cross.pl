@@ -40,8 +40,6 @@
 # been put in as exceptions.  All that occur in practice in GMP are present
 # though.
 #
-# There's no diagnostic if you don't have the objdump program.
-#
 # There's no messages for using the vector decoded addressing mode (%esi),
 # but that mode is easy to avoid when coding.
 
@@ -51,7 +49,8 @@ sub disassemble {
     my ($file) = @_;
     my ($addr,$b1,$b2,$b3, $prefix,$opcode,$modrm);
 
-    open (IN, "objdump -Srfh $file |");
+    open (IN, "objdump -Srfh $file |")
+	|| die "Cannot open pipe from objdump\n";
     while (<IN>) {
 	print;
 
@@ -111,20 +110,20 @@ sub disassemble {
 	}
 
 	# with an 0F prefix, anything starting at 1f mod 20h
-	if ($addr =~ /[13579bde][f]$/
+	if ($addr =~ /[13579bdf][f]$/
 	    && $prefix =~ /0f/) {
 	    print "ZZ ($file) prefix/opcode cross 32-byte boundary\n";
 	}
 
 	# with an 0F prefix, anything with mod/rm starting at 1e mod 20h
-	if ($addr =~ /[13579bde][e]$/
+	if ($addr =~ /[13579bdf][e]$/
 	    && $prefix =~ /0f/
 	     && $opcode !~ /^8/        # jcond disp32
 	    && $modrm !~ /^$/) {
 	    print "ZZ ($file) prefix/opcode/modrm cross 32-byte boundary\n";
 	}
     }
-    close IN;
+    close IN || die "Error from objdump (or objdump not available)\n";
 }
 
 
