@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 1 Jun 2003.  An up-to-date version is available at
+  This file current as of 16 Sep 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/projects.html">http://swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -630,14 +630,14 @@ MA 02111-1307, USA.
 
 <p> <li> <strong>Intra-Library Calls</strong>
 
-  <p> On various systems, calls within libgmp still go through the PLT or
-      other linkage mechanism, which makes the code bigger and slower than it
-      needs to be.
+  <p> On various systems, calls within libgmp still go through the PLT, TOC or
+      other mechanism, which makes the code bigger and slower than it needs to
+      be.
 
-  <p> The theory would be to have all intra-library calls resolved directly to
-      the routines in the library.  An application wouldn't be able to replace
-      a routine, the way it can normally.  There seems no good basis for
-      wanting to do that, in normal circumstances.
+  <p> The theory would be to have all GMP intra-library calls resolved
+      directly to the routines in the library.  An application wouldn't be
+      able to replace a routine, the way it can normally, but there seems no
+      good reason to do that, in normal circumstances.
 
   <p> The <code>visibility</code> attribute in recent gcc is good for this,
       because it lets gcc omit unnecessary GOT pointer setups or whatever if
@@ -653,15 +653,15 @@ MA 02111-1307, USA.
       2.13.90.0.16-1).
 
   <p> The linker can be told directly (with a link script, or options) to do
-      the same thing.  This doesn't change the code emitted by gcc of course,
-      but it does mean calls are resolved directly to their targets, avoiding
-      a PLT entry.
+      the same sort of thing.  This doesn't change the code emitted by gcc of
+      course, but it does mean calls are resolved directly to their targets,
+      avoiding a PLT entry.
 
   <p> Keeping symbols private to libgmp.so is probably a good thing in general
       too, to stop anyone even attempting to access them.  But some
       undocumented things will need or want to be kept visibible, for use by
       mpfr, or the test and tune programs.  Libtool has a standard option for
-      this (used now for libmp).
+      selecting public symbols (used now for libmp).
 
 
 </ul>
