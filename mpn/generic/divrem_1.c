@@ -1,6 +1,6 @@
 /* mpn_divrem_1 -- mpn by limb division.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2000, 2002 Free Software
+Copyright 1991, 1993, 1994, 1996, 1998, 1999, 2000, 2002, 2003 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -127,7 +127,7 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 	    }
 	  for (i = qxn - 1; i >= 0; i--)
 	    {
-	      udiv_qrnnd (*qp, r, r, 0, d);
+	      udiv_qrnnd (*qp, r, r, CNST_LIMB(0), d);
 	      r >>= GMP_NAIL_BITS;
 	      qp--;
 	    }
@@ -148,7 +148,7 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 	    }
 	  for (i = qxn - 1; i >= 0; i--)
 	    {
-	      udiv_qrnnd_preinv (*qp, r, r, 0, d, dinv);
+	      udiv_qrnnd_preinv (*qp, r, r, CNST_LIMB(0), d, dinv);
 	      r >>= GMP_NAIL_BITS;
 	      qp--;
 	    }
@@ -207,7 +207,7 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 	    }
 	  for (i = qxn - 1; i >= 0; i--)
 	    {
-	      udiv_qrnnd (*qp, r, r, 0, d);
+	      udiv_qrnnd (*qp, r, r, CNST_LIMB(0), d);
 	      r >>= GMP_NAIL_BITS;
 	      qp--;
 	    }
@@ -237,7 +237,7 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 	    }
 	  for (i = qxn - 1; i >= 0; i--)
 	    {
-	      udiv_qrnnd_preinv (*qp, r, r, 0, d, dinv);
+	      udiv_qrnnd_preinv (*qp, r, r, CNST_LIMB(0), d, dinv);
 	      r >>= GMP_NAIL_BITS;
 	      qp--;
 	    }
