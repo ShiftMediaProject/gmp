@@ -2687,11 +2687,10 @@ void __gmp_sqrt_of_negative _PROTO ((void)) ATTRIBUTE_NORETURN;
    limb and adds an extra limb.  __GMPF_PREC_TO_BITS drops that extra limb,
    hence giving back the user's size in bits rounded up.  Notice that
    converting prec->bits->prec gives an unchanged value.  */
-#define __GMPF_BITS_TO_PREC(n)                                          \
-  ((mp_size_t) ((__GMP_MAX (53, n) + 2 * __GMP_BITS_PER_MP_LIMB - 1)    \
-                / __GMP_BITS_PER_MP_LIMB))
+#define __GMPF_BITS_TO_PREC(n)						\
+  ((mp_size_t) ((__GMP_MAX (53, n) + 2 * GMP_NUMB_BITS - 1) / GMP_NUMB_BITS))
 #define __GMPF_PREC_TO_BITS(n) \
-  ((unsigned long) (n) * __GMP_BITS_PER_MP_LIMB - __GMP_BITS_PER_MP_LIMB)
+  ((unsigned long) (n) * GMP_NUMB_BITS - GMP_NUMB_BITS)
 
 extern mp_size_t __gmp_default_fp_limb_precision;
 
