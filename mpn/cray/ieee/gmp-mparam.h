@@ -52,6 +52,8 @@ MA 02111-1307, USA. */
 #define DIVEXACT_1_THRESHOLD           0
 #define MODEXACT_1_ODD_THRESHOLD       0
 
+#define SET_STR_THRESHOLD          26000
+
 #define FFT_MUL_TABLE  { 1264, 2784, 5952, 12032, 25600, 0 }
 #define FFT_MODF_MUL_THRESHOLD       776
 #define FFT_MUL_THRESHOLD           5408
