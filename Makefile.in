@@ -424,11 +424,18 @@ AUTOMAKE_OPTIONS = 1.8 gnu no-dependencies ansi2knr
 #        4.1      6:0:3    3:2:0   4:4:1
 #        4.1.1    6:1:3    3:3:0   4:5:1
 #        4.1.2    6:2:3    3:4:0   4:6:1
+#        4.1.3    6:3:3    3:5:0   4:7:1
 #
 # Starting at 3:0:0 is a slight abuse of the versioning system, but it
 # ensures we're past soname libgmp.so.2, which was used on Debian GNU/Linux
 # packages of gmp 2.  Pretend gmp 2 was 2:0:0, so the interface changes for
 # gmp 3 mean 3:0:0 is right.
+#
+# We interpret "implementation changed" in item "1." above as meaning any
+# release, ie. the REVISION is incremented every time (if nothing else).
+# Even if we thought the code generated will be identical on all systems,
+# it's still good to get the shared library filename (like
+# libgmpxx.so.3.0.4) incrementing, to make it clear which GMP it's from.
 LIBGMP_LT_CURRENT = 6
 LIBGMP_LT_REVISION = 0
 LIBGMP_LT_AGE = 3
