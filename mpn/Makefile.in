@@ -160,7 +160,7 @@ nodist_libdummy_la_SOURCES = \
   add_n.c addmul_1.c and_n.c andn_n.c bdivmod.c com_n.c copyd.c copyi.c	    \
   dc_divrem_n.c cmp.c                                                       \
   dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c		    \
-  dump.c fib_ui.c gcd.c							    \
+  dump.c fib2_ui.c gcd.c						    \
   gcd_finda.c gcd_1.c gcdext.c get_str.c hamdist.c inlines.c invert_limb.c  \
   ior_n.c iorn_n.c jacbase.c lshift.c mod_1.c mode1o.c mul.c mul_1.c	    \
   mul_fft.c mul_n.c mul_basecase.c nand_n.c nior_n.c perfsqr.c popcount.c   \
@@ -211,7 +211,7 @@ libdummy_la_LIBADD =
 nodist_libdummy_la_OBJECTS = add_n$U.lo addmul_1$U.lo and_n$U.lo \
 	andn_n$U.lo bdivmod$U.lo com_n$U.lo copyd$U.lo copyi$U.lo \
 	dc_divrem_n$U.lo cmp$U.lo dive_1$U.lo diveby3$U.lo divis$U.lo \
-	divrem$U.lo divrem_1$U.lo divrem_2$U.lo dump$U.lo fib_ui$U.lo \
+	divrem$U.lo divrem_1$U.lo divrem_2$U.lo dump$U.lo fib2_ui$U.lo \
 	gcd$U.lo gcd_finda$U.lo gcd_1$U.lo gcdext$U.lo get_str$U.lo \
 	hamdist$U.lo inlines$U.lo invert_limb$U.lo ior_n$U.lo \
 	iorn_n$U.lo jacbase$U.lo lshift$U.lo mod_1$U.lo mode1o$U.lo \
@@ -328,8 +328,8 @@ divrem_2_.c: divrem_2.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/divrem_2.c; then echo $(srcdir)/divrem_2.c; else echo divrem_2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > divrem_2_.c || rm -f divrem_2_.c
 dump_.c: dump.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dump.c; then echo $(srcdir)/dump.c; else echo dump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dump_.c || rm -f dump_.c
-fib_ui_.c: fib_ui.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_ui.c; then echo $(srcdir)/fib_ui.c; else echo fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_ui_.c || rm -f fib_ui_.c
+fib2_ui_.c: fib2_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib2_ui.c; then echo $(srcdir)/fib2_ui.c; else echo fib2_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib2_ui_.c || rm -f fib2_ui_.c
 gcd_.c: gcd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd.c; then echo $(srcdir)/gcd.c; else echo gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_.c || rm -f gcd_.c
 gcd_1_.c: gcd_1.c $(ANSI2KNR)
@@ -422,7 +422,7 @@ dc_divrem_n_.$(OBJEXT) dc_divrem_n_.lo dive_1_.$(OBJEXT) dive_1_.lo \
 diveby3_.$(OBJEXT) diveby3_.lo divis_.$(OBJEXT) divis_.lo \
 divrem_.$(OBJEXT) divrem_.lo divrem_1_.$(OBJEXT) divrem_1_.lo \
 divrem_2_.$(OBJEXT) divrem_2_.lo dump_.$(OBJEXT) dump_.lo \
-fib_ui_.$(OBJEXT) fib_ui_.lo gcd_.$(OBJEXT) gcd_.lo gcd_1_.$(OBJEXT) \
+fib2_ui_.$(OBJEXT) fib2_ui_.lo gcd_.$(OBJEXT) gcd_.lo gcd_1_.$(OBJEXT) \
 gcd_1_.lo gcd_finda_.$(OBJEXT) gcd_finda_.lo gcdext_.$(OBJEXT) \
 gcdext_.lo get_str_.$(OBJEXT) get_str_.lo hamdist_.$(OBJEXT) \
 hamdist_.lo inlines_.$(OBJEXT) inlines_.lo invert_limb_.$(OBJEXT) \
