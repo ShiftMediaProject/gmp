@@ -1,6 +1,6 @@
 /* double mpz_get_d_2exp (signed long int *exp, mpz_t src).
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -49,7 +49,8 @@ mpz_get_d_2exp (signed long int *exp2, mpz_srcptr src)
   for (i = 1; i < n_limbs_to_use; i++)
     res = (res + qp[i]) / MP_BASE_AS_DOUBLE;
   count_leading_zeros (cnt, qp[n_limbs_to_use - 1]);
-  *exp2 = size * BITS_PER_MP_LIMB - cnt;
+  cnt -= GMP_NAIL_BITS;
+  *exp2 = size * GMP_NUMB_BITS - cnt;
   res = res * ((mp_limb_t) 1 << cnt);
 
   return negative ? -res : res;
