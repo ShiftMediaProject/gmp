@@ -4,7 +4,7 @@
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
    FUTURE GNU MP RELEASES.
 
-Copyright 1996, 1997, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,174 +27,268 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-
-/* HPPA 8000, 8200, 8500, and 8600 traps FCNV,UDW,DBL for values >= 2^63.  This
-   makes it slow.  Worse, the Linux kernel apparently uses untested code in its
-   trap handling routines, and gets the sign wrong.  Their compiler port
-   doesn't define __hppa as it should.  Here is a workaround:  */
-#if (defined (__hppa) || defined (__hppa__)) && GMP_LIMB_BITS == 64
-#define limb2dbl(limb) \
-    ((limb) >> (GMP_LIMB_BITS - 1) != 0  				\
-     ? 2.0 * (double) (mp_limb_signed_t) (((limb) >> 1) | ((limb) & 1))	\
-     : (double) (mp_limb_signed_t) (limb))
-#else
-#define limb2dbl(limb) \
-    (double) (limb)
+#ifndef _GMP_IEEE_FLOATS
+#define _GMP_IEEE_FLOATS 0
 #endif
 
+#if ! _GMP_IEEE_FLOATS
+/* dummy definition, just to let dead code compile */
+union ieee_double_extract {
+  struct {
+    int manh, manl, sig, exp;
+  } s;
+  double d;
+};
+#endif
 
-/* FIXME: Would prefer to inline this on all compilers, not just those with
-   "inline".  */
-static inline int
-mpn_zero_p (mp_srcptr p, mp_size_t n)
-{
-  mp_size_t i;
-
-  for (i = 0; i < n; i++)
-    if (p[i] != 0)
-      return 0;
-
-  return 1;
-}
+/* To force use of the generic C code for testing, put
+   "#define _GMP_IEEE_FLOATS 0" at this point.  */
 
 
-/* Return the value {ptr,size}*2^exp, negative if sign<0.
-   Must have size>=1, and non-zero high limb ptr[size-1].  */
+
+/* Return the value {ptr,size}*2^exp, and negative if sign<0.
+   Must have size>=1, and a non-zero high limb ptr[size-1].
+
+   {ptr,size} is truncated towards zero.  This is consistent with other gmp
+   conversions, like mpz_set_f or mpz_set_q, and is easy to implement and
+   test.
+
+   In the past conversions had attempted (imperfectly) to let the hardware
+   float rounding mode take effect, but that gets tricky since multiple
+   roundings need to be avoided, or taken into account, and denorms mean the
+   effective precision of the mantissa is not constant.  (For reference,
+   mpz_get_d on IEEE systems was ok, except it operated on the absolute
+   value.  mpf_get_d and mpq_get_d suffered from multiple roundings and from
+   not always using enough bits to get the rounding right.)
+
+   It's felt that GMP is not primarily concerned with hardware floats, and
+   really isn't enhanced by getting involved with hardware rounding modes
+   (which could even be some weird unknown style), so something unambiguous
+   and straightforward is best.
+
+
+   The IEEE code below is the usual case, it knows either a 32-bit or 64-bit
+   limb and is done with shifts and masks.  The 64-bit case in particular
+   should come out nice and compact.
+
+   The generic code works one bit at a time, which will be quite slow, but
+   should support any binary-based "double" and be safe against any rounding
+   mode.  Note in particular it works on IEEE systems too.
+
+
+   Hardware traps for overflow to infinity, underflow to zero, or
+   unsupported denorms may or may not be taken.  The IEEE code works bitwise
+   and so probably won't trigger them, the generic code works by float
+   operations and so probably will.  This difference might be thought less
+   than ideal, but again its felt straightforward code is better than trying
+   to get intimate with hardware exceptions (of perhaps unknown nature).  */
+
 
 double
 mpn_get_d (mp_srcptr ptr, mp_size_t size, mp_size_t sign, long exp)
 {
-  double res;
-  mp_limb_t hz, lz;
-  int cnt;
-
-  ASSERT (size > 0);
-  ASSERT (ptr[size-1] != 0);
+  ASSERT (size >= 0);
   ASSERT_MPN (ptr, size);
+  ASSERT (size == 0 || ptr[size-1] != 0);
 
-  /* Check for a large exp first, to avoid overflow from adding the "size"
-     bits when near LONG_MAX. */
-#if _GMP_IEEE_FLOATS
-  if (UNLIKELY (exp >= 2047))
-    goto infinity;
-#endif
+  if (size == 0)
+    return 0.0;
 
-  if (size == 1)
+  /* Adjust exp to a radix point just above {ptr,size}, guarding against
+     overflow.  After this exp can of course be reduced to anywhere within
+     the {ptr,size} region without underflow.  */
+  if (UNLIKELY ((unsigned long) (GMP_NUMB_BITS * size)
+                > (unsigned long) (LONG_MAX - exp)))
     {
-      res = limb2dbl (ptr[0]);
-    }
-  else if (size == 2)
-    {
-      res = MP_BASE_AS_DOUBLE * limb2dbl (ptr[1]) + limb2dbl (ptr[0]);
+      if (_GMP_IEEE_FLOATS)
+        goto ieee_infinity;
+
+      /* generic */
+      exp = LONG_MAX;
     }
   else
     {
-      count_leading_zeros (cnt, ptr[size - 1]);
-      cnt -= GMP_NAIL_BITS;
-
-#if BITS_PER_MP_LIMB == 32
-      if (cnt == 0)
-	{
-	  hz = ptr[size - 1];
-	  lz = ptr[size - 2];
-	}
-      else
-	{
-	  hz = ((ptr[size - 1] << cnt) | (ptr[size - 2] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
-	  lz = ((ptr[size - 2] << cnt) | (ptr[size - 3] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
-	}
-#if _GMP_IEEE_FLOATS
-      /* Take bits from less significant limbs, but only if they may affect
-	 the result.  */
-      if ((lz & 0x7ff) == 0x400)
-	{
-	  if (cnt != 0)
-	    lz += (((ptr[size - 3] << cnt) & GMP_NUMB_MASK) != 0
-		   || ! mpn_zero_p (ptr, size - 3));
-	  else
-	    lz += (! mpn_zero_p (ptr, size - 2));
-	}
-#endif
-      res = MP_BASE_AS_DOUBLE * limb2dbl (hz) + limb2dbl (lz);
-      exp += (size - 2) * GMP_NUMB_BITS - cnt;
-#endif
-#if BITS_PER_MP_LIMB == 64
-      if (cnt == 0)
-	hz = ptr[size - 1];
-      else
-	hz = ((ptr[size - 1] << cnt) | (ptr[size - 2] >> GMP_NUMB_BITS - cnt)) & GMP_NUMB_MASK;
-#if _GMP_IEEE_FLOATS
-      if ((hz & 0x7ff) == 0x400)
-	{
-	  if (cnt != 0)
-	    hz += (((ptr[size - 2] << cnt) & GMP_NUMB_MASK) != 0
-		   || ! mpn_zero_p (ptr, size - 2));
-	  else
-	    hz += (! mpn_zero_p (ptr, size - 1));
-	}
-#endif
-      res = limb2dbl (hz);
-      exp += (size - 1) * GMP_NUMB_BITS - cnt;
-#endif
+      exp += GMP_NUMB_BITS * size;
     }
 
+#define ONE_LIMB    (GMP_LIMB_BITS == 64 && 2*GMP_NUMB_BITS >= 53)
+#define TWO_LIMBS   (GMP_LIMB_BITS == 32 && 3*GMP_NUMB_BITS >= 53)
 
-#if _GMP_IEEE_FLOATS
-  {
-#if defined (__alpha) && __GNUC__ == 2 && __GNUC_MINOR__ == 8
-    /* Work around alpha-specific bug in GCC 2.8.x.  */
-    volatile
-#endif
-      union ieee_double_extract x;
-    x.d = res;
-    exp += x.s.exp;
-    x.s.exp = exp;
-    if (exp >= 2047)
-      {
-	/* Return +-infinity */
-      infinity:
-	x.s.sig = 0;
-	x.s.exp = 2047;
-	x.s.manl = x.s.manh = 0;
-      }
-    else if (exp < 1)
-      {
-	x.s.exp = 1;		/* smallest exponent (biased) */
-	/* Divide result by 2 until we have scaled it to the right IEEE
-	   denormalized number, but stop if it becomes zero.  */
-	while (exp < 1 && x.d != 0)
-	  {
-	    x.d *= 0.5;
-	    exp++;
-	  }
-      }
-    res = x.d;
-  }
-#else
-  {
-    double factor, r;
+  if (_GMP_IEEE_FLOATS && (ONE_LIMB || TWO_LIMBS))
+    {
+      union ieee_double_extract  u;
+      mp_limb_t  m0, m1, m2, rmask;
+      int        lshift, rshift;
 
-    factor = 2.0;
-    if (exp < 0)
-      {
-	factor = 0.5;
-	exp = -exp;
-      }
-    if (exp != 0)
-      {
-	if ((exp & 1) != 0)
-	  res *= factor;
-	exp >>= 1;
-	while (exp != 0)
-	  {
-	    factor *= factor;
-	    if ((exp & 1) != 0)
-	      res *= factor;
-	    exp >>= 1;
-	  }
-      }
-  }
+      m0 = ptr[size-1];                     /* high limb */
+      m1 = (size >= 2 ? ptr[size-2] : 0);   /* second highest limb */
+      count_leading_zeros (lshift, m0);
+
+      /* relative to just under high non-zero bit */
+      exp -= (lshift - GMP_NAIL_BITS) + 1;
+
+      if (ONE_LIMB)
+        {
+          /* lshift to have high of m0 non-zero, and collapse nails */
+          rshift = GMP_NUMB_BITS - lshift;
+          rmask = (GMP_NAIL_BITS == 0 && lshift == 0 ? 0 : MP_LIMB_T_MAX);
+          m0 = (m0 << lshift) | ((m1 >> rshift) & rmask);
+
+          /* rshift back to have bit 53 of m0 the high non-zero */
+          m0 >>= 11;
+        }
+      else /* TWO_LIMBS */
+        {
+          m2 = (size >= 3 ? ptr[size-3] : 0);  /* third highest limb */
+
+          /* collapse nails from m1 and m2 */
+#if GMP_NAIL_BITS != 0
+          m1 = (m1 << GMP_NAIL_BITS) | (m2 >> (GMP_NUMB_BITS-GMP_NAIL_BITS));
+          m2 <<= 2*GMP_NAIL_BITS;
 #endif
 
-  return (sign >= 0 ? res : -res);
+          /* lshift to have high of m0:m1 non-zero, collapse nails from m0 */
+          rshift = GMP_LIMB_BITS - lshift;
+          rmask = (GMP_NAIL_BITS == 0 && lshift == 0 ? 0 : MP_LIMB_T_MAX);
+          m0 = (m0 << lshift) | ((m1 >> rshift) & rmask);
+          m1 = (m1 << lshift) | ((m2 >> rshift) & rmask);
+
+          /* rshift back to have bit 53 of m0:m1 the high non-zero */
+          m1 = (m1 >> 11) | (m0 << (GMP_LIMB_BITS-11));
+          m0 >>= 11;
+        }
+
+      if (UNLIKELY (exp >= 1024))
+        {
+          /* overflow, return infinity */
+        ieee_infinity:
+          m0 = 0;
+          m1 = 0;
+          exp = 1024;
+        }
+      else if (UNLIKELY (exp <= -1023))
+        {
+          if (LIKELY (exp <= -1022-53))
+            return 0.0;  /* denorm underflows to zero */
+
+          rshift = -1022 - exp;
+          ASSERT (rshift > 0 && rshift < 53);
+          if (ONE_LIMB)
+            {
+              m0 >>= rshift;
+            }
+          else /* TWO_LIMBS */
+            {
+              if (rshift >= 32)
+                {
+                  m1 = m0;
+                  m0 = 0;
+                  rshift -= 32;
+                }
+              lshift = GMP_LIMB_BITS - rshift;
+              m1 = (m1 >> rshift) | (rshift == 0 ? 0 : m0 << lshift);
+              m0 >>= rshift;
+            }
+          exp = -1023;
+        }
+
+      if (ONE_LIMB)
+        {
+#if GMP_LIMB_BITS > 32  /* avoid compiler warning about big shift */
+          u.s.manh = m0 >> 32;
+#endif
+          u.s.manl = m0;
+        }
+      else /* TWO_LIMBS */
+        {
+          u.s.manh = m0;
+          u.s.manl = m1;
+        }
+
+      u.s.exp = exp + 1023;
+      u.s.sig = (sign < 0);
+      return u.d;
+    }
+  else
+    {
+      /* Non-IEEE or strange limb size, do something generic. */
+
+      mp_size_t      i;
+      mp_limb_t      limb, bit;
+      int            shift;
+      double         base, factor, prev_factor, d, new_d, diff;
+
+      /* "limb" is "ptr[i]" the limb being examined, "bit" is a mask for the
+         bit being examined, initially the highest non-zero bit.  */
+      i = size-1;
+      limb = ptr[i];
+      count_leading_zeros (shift, limb);
+      bit = GMP_LIMB_HIGHBIT >> shift;
+
+      /* relative to just under high non-zero bit */
+      exp -= (shift - GMP_NAIL_BITS) + 1;
+
+      /* Power up "factor" to 2^exp, being the value of the "bit" in "limb"
+         being examined.  */
+      base = (exp >= 0 ? 2.0 : 0.5);
+      exp = ABS (exp);
+      factor = 1.0;
+      for (;;)
+        {
+          if (exp & 1)
+            {
+              prev_factor = factor;
+              factor *= base;
+              FORCE_DOUBLE (factor);
+              if (factor == 0.0)
+                return 0.0;     /* underflow */
+              if (factor == prev_factor)
+                {
+                  d = factor;     /* overflow, apparent infinity */
+                  goto generic_done;
+                }
+            }
+          exp >>= 1;
+          if (exp == 0)
+            break;
+          base *= base;
+        }
+
+      /* Add a "factor" for each non-zero bit, working from high to low.
+         Stop if any rounding occurs, hence implementing a truncation.
+
+         Note no attention is paid to DBL_MANT_DIG, since the effective
+         number of bits in the mantissa isn't constant when in denorm range.
+         We also encountered an ARM system with an apparently broken
+         emulator where DBL_MANT_DIG claimed 53 bits but only 32 worked.  */
+
+      d = factor;  /* high bit */
+      for (;;)
+        {
+          factor *= 0.5;  /* next bit */
+          bit >>= 1;
+          if (bit == 0)
+            {
+              /* next limb, if any */
+              i--;
+              if (i < 0)
+                break;
+              limb = ptr[i];
+              bit = GMP_NUMB_HIGHBIT;
+            }
+
+          if (bit & limb)
+            {
+              new_d = d + factor;
+              FORCE_DOUBLE (new_d);
+              diff = new_d - d;
+              if (diff != factor)
+                break;   /* rounding occured, stop now */
+              d = new_d;
+            }
+        }
+
+    generic_done:
+      return (sign >= 0 ? d : -d);
+    }
 }
