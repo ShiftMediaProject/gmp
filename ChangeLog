@@ -43,7 +43,6 @@ MA 02111-1307, USA.
 	functions, shorten some identifiers, put descriptions inside
 	functions, define functions unconditionally and do nothing if
 	requisites not available.
-	(speed_cycletime_need_cycles): Correction to failure condition.
 
 	* mpz/inp_raw.c: Avoid a gcc 3.0 powerpc64 bug on AIX.
 
