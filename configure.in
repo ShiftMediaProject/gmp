@@ -829,6 +829,7 @@ case $host in
 	    nm_aix64_flags="-X64"
             path_aix64="powerpc64"
             extra_functions_aix64="umul"
+            # grab this object, though it's not a true cycle counter routine
             SPEED_CYCLECOUNTER_OBJ_aix64=powerpc64.lo
             cyclecounter_size_aix64=0
             ;;
