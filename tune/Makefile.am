@@ -22,7 +22,7 @@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 
 EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm hppa2w.asm ia64.asm
 noinst_HEADERS = speed.h
@@ -36,9 +36,13 @@ libspeed_la_SOURCES =							  \
   mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		  \
   noop.c powm_mod.c powm_redc.c time.c
 
-libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) $(top_builddir)/libgmp.la
+libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) \
+  $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(LIBM)
 libspeed_la_LDFLAGS = -static
+
+$(top_builddir)/tests/libtests.la:
+	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
 
 # create an ansi2knr rule for sqr_basecase.c in case it's recompiled
 nodist_libdummy_la_SOURCES = sqr_basecase.c
