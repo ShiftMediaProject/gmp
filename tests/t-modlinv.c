@@ -67,13 +67,18 @@ all (void)
 int
 main (int argc, char *argv[])
 {
+  tests_start ();
+
   if (argc >= 2 && strcmp (argv[1], "-a") == 0)
     {
       /* it's feasible to run all values on a 32-bit limb, but not a 64-bit */
       all ();
-      exit (0);
+    }
+  else
+    {
+      some ();
     }
 
-  some ();
+  tests_end ();
   exit (0);
 }
