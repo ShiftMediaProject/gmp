@@ -1,7 +1,7 @@
 /* mpz_root(root, u, nth) --  Set ROOT to floor(U^(1/nth)).
    Return an indication if the result is exact.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,7 +26,8 @@ MA 02111-1307, USA. */
    to some extent.  It would be natural to avoid representing the low zero
    bits mpz_scan1 is counting, and at the same time call mpn directly.  */
 
-#include <stdio.h> /* for NULL */
+#include <stdio.h>  /* for NULL */
+#include <stdlib.h> /* for abort */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
