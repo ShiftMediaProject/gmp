@@ -43,7 +43,7 @@ __gmp_extract_double (mp_ptr rp, double d)
 #define BITS_PER_PART 64	/* somewhat bogus */
   unsigned long long int manh, manl;
 #else
-#define BITS_PER_PART BITS_PER_LONGINT
+#define BITS_PER_PART BITS_PER_MP_LIMB
   unsigned long int manh, manl;
 #endif
 
