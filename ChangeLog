@@ -1,3 +1,20 @@
+2001-02-24  Kevin Ryde  <kevin@swox.se>
+
+	* tune/many.pl: Add mpn_count_{leading,trailing}_zeros and
+	mpn_invert_limb.  Add count_{leading,trailing}_zeros from a .h file.
+	Correction to modexact_1_odd prototype.  Support ansi2knr.
+	* tune/speed.h, tune/common.c: Consequent changes.
+
+	* demos/expr/*: Make a few more functions available in expressions,
+	create only libexpr.a, misc minor updates.
+
+	* mpn/Makeasm.am: Add some comments about suffix ordering.
+
+	* tests/refmpn.c (rshift_make, lshift_make): No need to compare
+	unsigned to zero.
+
+	* mpq/mul.c: Detect and optimize squaring.
+
 2001-02-23  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/mips3: Convert files to `.asm'.
