@@ -371,7 +371,7 @@ ifdef(`PIC',`
 	call	L(pic_calc)
 L(here):
 ',`
-	leal	UNROLL_INNER_END-2*CODE_BYTES_PER_LIMB(%ecx,%edx), %ecx
+	leal	UNROLL_INNER_END-eval(2*CODE_BYTES_PER_LIMB)(%ecx,%edx), %ecx
 ')
 
 
@@ -423,7 +423,7 @@ define(cmovX,`ifelse(eval(UNROLL_COUNT%2),0,`cmovz($@)',`cmovnz($@)')')
 ifdef(`PIC',`
 L(pic_calc):
 	addl	(%esp), %ecx
-	addl	$UNROLL_INNER_END-2*CODE_BYTES_PER_LIMB-L(here), %ecx
+	addl	$UNROLL_INNER_END-eval(2*CODE_BYTES_PER_LIMB)-L(here), %ecx
 	addl	%edx, %ecx
 	ret
 ')
