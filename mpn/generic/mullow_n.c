@@ -77,15 +77,15 @@ mpn_mullow_n (mp_ptr rp, mp_srcptr xp, mp_srcptr yp, mp_size_t n)
   else if (BELOW_THRESHOLD (n, MULLOW_MUL_N_THRESHOLD))
     {
       /* Divide-and-conquer */
-      mp_size_t n1 = (n+1) / 2;
-      mp_size_t n2 = n - n1;	/* = n/2 */
+      mp_size_t n1 = (n+1) >> 1;	/* ceil(n/2) */
+      mp_size_t n2 = n - n1;		/* floor(n/2) */
       mp_ptr tp;
       TMP_DECL (marker);
       TMP_MARK (marker);
       tp = TMP_ALLOC_LIMBS (n1);
 
       /* Split as x = x1 2^(n1 GMP_NUMB_BITS) + x0,
-                  x = y1 2^(n2 GMP_NUMB_BITS) + y0 */
+                  y = y1 2^(n2 GMP_NUMB_BITS) + y0 */
 
       /* x0 * y0 */
       mpn_mul_n (rp, xp, yp, n2);
