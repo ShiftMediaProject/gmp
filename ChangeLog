@@ -18,6 +18,22 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-10-08  Kevin Ryde  <kevin@swox.se>
+
+	* tune/time.c (speed_time_init): Allow for Cray times() apparently
+	being a cycle counter.
+
+	* dumbmp.c (mpz_get_str): Fix buf size allocation.
+
+	* tests/trace.c, tests/tests.h (mp_limb_trace): New function.
+
+	* tune/speed-ext.c (SPEED_EXTRA_PROTOS): Use __GMP_PROTO.
+	* tests/devel/try.c (malloc_region): Add a cast for SunOS cc.
+
+	* configure.in (AC_CHECK_FUNCS): Add strerror.
+	(AC_CHECK_DECLS): Add sys_errlist, sys_nerr.
+	* tune/time.c, tests/devel/try.c: Use them.
+	
 2002-10-05  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (AC_CHECK_HEADERS): Test float.h, not in SunOS cc.
