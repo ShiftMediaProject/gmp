@@ -2144,7 +2144,7 @@ This function is equivalent to
 This chapter describes the GMP functions for performing floating point
 arithmetic.  These functions start with the prefix @code{mpf_}.
 
-GMP integers are stored in objects of type @code{mpf_t}.
+GMP floating point numbers are stored in objects of type @code{mpf_t}.
 
 The GMP floating-point functions have an interface that is similar to the GMP
 integer functions.  The function prefix for floating-point operations is
@@ -3394,7 +3394,8 @@ Robert Harley of Inria, France and David Seal of ARM, England, suggested clever
 improvements for population count.
 
 Robert Harley also wrote highly optimized Karatsuba and 3-way Toom
-multiplication functions for GMP 3.
+multiplication functions for GMP 3.  He also contributed the ARM assembly
+code.
 
 Torsten Ekedahl of the Mathematical department of Stockholm University provided
 significant inspiration during several phases of the GMP development.  His
