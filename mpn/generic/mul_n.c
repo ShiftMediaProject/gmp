@@ -451,7 +451,8 @@ mpn_kara_sqr_n (p, a, n, ws)
 /*-- add2Times -------------------------------------------------------------*/
 
 /* z[] = x[] + 2 * y[]
-   Note that z and x might point to the same vectors. */
+   Note that z and x might point to the same vectors.
+   FIXME: gcc won't inline this because it uses alloca. */
 #if USE_MORE_MPN
 static inline mp_limb_t
 #if __STDC__
