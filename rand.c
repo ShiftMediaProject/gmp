@@ -1,6 +1,6 @@
 /* gmp_randinit (state, algorithm, ...) -- Initialize a random state.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -64,47 +64,3 @@ gmp_randinit (va_alist)
   }
   va_end (ap);
 }
-
-
-
-#if 0
-    case GMP_RAND_ALG_BBS:	/* Blum, Blum, and Shub. */
-      {
-	mpz_t p, q;
-	mpz_t ztmp;
-
-	/* FIXME: Generate p and q.  They must be ``large'' primes,
-           congruent to 3 mod 4.  Should we ensure that they meet some
-           of the criterias for being ``hard primes''?*/
-
-	/* These are around 128 bits. */
-	mpz_init_set_str (p, "148028650191182616877187862194899201391", 10); 
-	mpz_init_set_str (q, "315270837425234199477225845240496832591", 10);
-
-	/* Allocate algorithm specific data. */
-	rstate->data.bbs = (__gmp_rand_data_bbs *)
-	  (*__gmp_allocate_func) (sizeof (__gmp_rand_data_bbs));
-
-	mpz_init (rstate->data.bbs->bi); /* The Blum integer. */
-	mpz_mul (rstate->data.bbs->bi, p, q);
-
-	/* Find a seed, x, with gcd (x, bi) == 1. */
-	mpz_init (ztmp);
-	while (1)
-	  {
-	    mpz_gcd (ztmp, seed, rstate->data.bbs->bi);
-	    if (!mpz_cmp_ui (ztmp, 1))
-	      break;
-	    mpz_add_ui (seed, seed, 1);
-	  }
-
-	rstate->alg = alg;
-	rstate->size = size;		/* FIXME: Remove. */
-	mpz_set (rstate->seed, seed);
-
-	mpz_clear (p);
-	mpz_clear (q);
-	mpz_clear (ztmp);
-	break;
-      }
-#endif /* 0 */
