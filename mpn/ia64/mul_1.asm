@@ -1,7 +1,7 @@
 dnl  IA-64 mpn_mul_1 -- Multiply a limb vector with a limb and store the result
 dnl  in a second limb vector.
 
-dnl  Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -363,7 +363,8 @@ ifdef(`HAVE_ABI_32',
 
 C *** MAIN LOOP START ***
 	ALIGN(32)
-.Loop:	.pred.rel "mutex",p6,p7
+.Loop:
+	.pred.rel "mutex",p6,p7
 	getf.sig	r16 = f38
 	xma.l		f36 = f32, f6, f0
    (p6)	cmp.leu		p8, p9 = r24, r17
@@ -371,7 +372,8 @@ C *** MAIN LOOP START ***
 	xma.hu		f40 = f32, f6, f0
    (p7)	cmp.ltu		p8, p9 = r24, r17
 	;;
-.LL00:	.pred.rel "mutex",p8,p9
+.LL00:
+	.pred.rel "mutex",p8,p9
 	getf.sig	r20 = f42
    (p8)	add		r24 = r18, r21, 1
 	nop.b		0
@@ -387,7 +389,8 @@ C *** MAIN LOOP START ***
 	xma.hu		f41 = f33, f6, f0
    (p9)	cmp.ltu		p6, p7 = r24, r18
 	;;
-.LL11:	.pred.rel "mutex",p6,p7
+.LL11:
+	.pred.rel "mutex",p6,p7
 	getf.sig	r21 = f43
    (p6)	add		r24 = r19, r22, 1
 	nop.b		0
@@ -403,7 +406,8 @@ C *** MAIN LOOP START ***
 	xma.hu		f42 = f34, f6, f0
    (p7)	cmp.ltu		p8, p9 = r24, r19
 	;;
-.LL10:	.pred.rel "mutex",p8,p9
+.LL10:
+	.pred.rel "mutex",p8,p9
 	getf.sig	r22 = f40
    (p8)	add		r24 = r16, r23, 1
 	nop.b		0
@@ -419,7 +423,8 @@ C *** MAIN LOOP START ***
 	xma.hu		f43 = f35, f6, f0
    (p9)	cmp.ltu		p6, p7 = r24, r16
 	;;
-.LL01:	.pred.rel "mutex",p6,p7
+.LL01:
+	.pred.rel "mutex",p6,p7
 	getf.sig	r23 = f41
    (p6)	add		r24 = r17, r20, 1
 	nop.b		0
@@ -428,7 +433,8 @@ C *** MAIN LOOP START ***
 	br.cloop.dptk	.Loop
 C *** MAIN LOOP END ***
 
-.Lcj9:	.pred.rel "mutex",p6,p7
+.Lcj9:
+	.pred.rel "mutex",p6,p7
 	getf.sig	r16 = f38
 	xma.l		f36 = f32, f6, f0
    (p6)	cmp.leu		p8, p9 = r24, r17
@@ -449,7 +455,8 @@ C *** MAIN LOOP END ***
 	xma.hu		f41 = f33, f6, f0
    (p9)	cmp.ltu		p6, p7 = r24, r18
 	;;
-.Lcj8:	.pred.rel "mutex",p6,p7
+.Lcj8:
+	.pred.rel "mutex",p6,p7
 	getf.sig	r21 = f43
    (p6)	add		r24 = r19, r22, 1
    (p7)	add		r24 = r19, r22
@@ -462,7 +469,8 @@ C *** MAIN LOOP END ***
 	xma.hu		f42 = f34, f6, f0
    (p7)	cmp.ltu		p8, p9 = r24, r19
 	;;
-.Lcj7:	.pred.rel "mutex",p8,p9
+.Lcj7:
+	.pred.rel "mutex",p8,p9
 	getf.sig	r22 = f40
    (p8)	add		r24 = r16, r23, 1
    (p9)	add		r24 = r16, r23
@@ -475,7 +483,8 @@ C *** MAIN LOOP END ***
 	xma.hu		f43 = f35, f6, f0
    (p9)	cmp.ltu		p6, p7 = r24, r16
 	;;
-.Lcj6:	.pred.rel "mutex",p6,p7
+.Lcj6:
+	.pred.rel "mutex",p6,p7
 	getf.sig	r23 = f41
    (p6)	add		r24 = r17, r20, 1
    (p7)	add		r24 = r17, r20
@@ -486,7 +495,8 @@ C *** MAIN LOOP END ***
 	st8		[rp] = r24, 8
    (p7)	cmp.ltu		p8, p9 = r24, r17
 	;;
-.Lcj5:	.pred.rel "mutex",p8,p9
+.Lcj5:
+	.pred.rel "mutex",p8,p9
 	getf.sig	r20 = f42
    (p8)	add		r24 = r18, r21, 1
    (p9)	add		r24 = r18, r21
@@ -497,7 +507,8 @@ C *** MAIN LOOP END ***
 	st8		[rp] = r24, 8
    (p9)	cmp.ltu		p6, p7 = r24, r18
 	;;
-.Lcj4:	.pred.rel "mutex",p6,p7
+.Lcj4:
+	.pred.rel "mutex",p6,p7
 	getf.sig	r21 = f43
    (p6)	add		r24 = r19, r22, 1
    (p7)	add		r24 = r19, r22
@@ -511,7 +522,8 @@ C *** MAIN LOOP END ***
    (p8)	add		r24 = r16, r23, 1
    (p9)	add		r24 = r16, r23
 	;;
-.Lcj3:	.pred.rel "mutex",p8,p9
+.Lcj3:
+	.pred.rel "mutex",p8,p9
    (p8)	cmp.leu		p6, p7 = r24, r16
 	st8		[rp] = r24, 8
    (p9)	cmp.ltu		p6, p7 = r24, r16
@@ -520,7 +532,8 @@ C *** MAIN LOOP END ***
    (p6)	add		r24 = r17, r20, 1
    (p7)	add		r24 = r17, r20
 	;;
-.Lcj2:	.pred.rel "mutex",p6,p7
+.Lcj2:
+	.pred.rel "mutex",p6,p7
    (p6)	cmp.leu		p8, p9 = r24, r17
 	st8		[rp] = r24, 8
    (p7)	cmp.ltu		p8, p9 = r24, r17
