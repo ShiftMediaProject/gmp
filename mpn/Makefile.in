@@ -1,99 +1,380 @@
-# Makefile for GNU MP/mpn functions
-# Copyright (C) 1991, 1993, 1994, 1996 Free Software Foundation, Inc.
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
 
-# This file is part of the GNU MP Library.
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
 
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
+SHELL = @SHELL@
 
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
-srcdir = .
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
 
-MPN_OBJECTS = This gets filled in by configure.in.
-MPN_LINKS = This gets filled in by configure.in.
-CC = gcc
-CPP = $(CC) -E
-CFLAGS = -g -O
-INCLUDES = -I. -I.. -I$(srcdir) -I$(srcdir)/..
-AR = ar
-AR_FLAGS = rc
-SFLAGS=
-CCAS = $(CC)
+DESTDIR =
 
-#### host and target specific makefile fragments come in here.
-###
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
 
-libmpn.a: Makefile mp_bases.o $(MPN_OBJECTS)
-	rm -f $@
-	$(AR) $(AR_FLAGS) $@ mp_bases.o $(MPN_OBJECTS)
+top_builddir = ..
 
-.SUFFIXES: .c .s .S
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+
+@SET_MAKE@
+build_alias = @build_alias@
+build_triplet = @build@
+host_alias = @host_alias@
+host_triplet = @host@
+target_alias = @target_alias@
+target_triplet = @target@
+AMDEP = @AMDEP@
+AMTAR = @AMTAR@
+AR = @AR@
+AS = @AS@
+AWK = @AWK@
+CC = @CC@
+CC_TEST = @CC_TEST@
+CPP = @CPP@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+DEPDIR = @DEPDIR@
+DLLTOOL = @DLLTOOL@
+EXEEXT = @EXEEXT@
+LIBTOOL = @LIBTOOL@
+LN_S = @LN_S@
+M4 = @M4@
+MAINT = @MAINT@
+MAKEINFO = @MAKEINFO@
+NM = @NM@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+STRIP = @STRIP@
+VERSION = @VERSION@
+install_sh = @install_sh@
+mpn_objects = @mpn_objects@
+mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
+
+
+AUTOMAKE_OPTIONS = gnu
+
+CPP = @CPP@
+
+# $top_srcdir is needed for `#include "gmp-impl.h"'.  FIXME?
+# FIXME: Need `-I$(srcdir)' and `-I.'?  Where to find config.h?
+INCLUDES = -I$(top_srcdir)
+
+GENERIC_SOURCES = mp_bases.c
+OFILES = @mpn_objects@
+
+noinst_LTLIBRARIES = libmpn.la
+libmpn_la_SOURCES = $(GENERIC_SOURCES)
+libmpn_la_LIBADD = $(OFILES)
+libmpn_la_DEPENDENCIES = $(OFILES)
+
+TARG_DIST = a29k alpha arm clipper cray generic hppa i960 m68k mips2 mips3 \
+  ns32k pa64 power powerpc32 powerpc64 pyr sh sparc32 sparc64 thumb vax x86 \
+  z8000 z8000x
+
+
+EXTRA_DIST = tests underscore.h $(TARG_DIST)
+
+SUFFIXES = .s .S
+
+# COMPILE minus CC:
+COMPILE_FLAGS = \
+	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+
+subdir = mpn
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+LTLIBRARIES =  $(noinst_LTLIBRARIES)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+libmpn_la_LDFLAGS = 
+am_libmpn_la_OBJECTS =  mp_bases.lo
+libmpn_la_OBJECTS =  $(am_libmpn_la_OBJECTS)
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES =  $(libmpn_la_SOURCES)
+DIST_COMMON =  README Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+GZIP_ENV = --best
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+DEP_FILES =  @AMDEP@ $(DEPDIR)/mp_bases.Plo
+SOURCES = $(libmpn_la_SOURCES)
+OBJECTS = $(am_libmpn_la_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .lo .o .obj .s
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu mpn/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-noinstLTLIBRARIES:
+
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+
+distclean-noinstLTLIBRARIES:
+
+maintainer-clean-noinstLTLIBRARIES:
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+
+maintainer-clean-libtool:
+
+libmpn.la: $(libmpn_la_OBJECTS) $(libmpn_la_DEPENDENCIES)
+	$(LINK)  $(libmpn_la_LDFLAGS) $(libmpn_la_OBJECTS) $(libmpn_la_LIBADD) $(LIBS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags  $$unique $(LISP)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pR $$d/$$file $(distdir); \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+
+@AMDEP@include $(DEPDIR)/mp_bases.Plo
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+	-rm -rf $(DEPDIR)
+
+maintainer-clean-depend:
+
+@AMDEP@CCDEPMODE = @CCDEPMODE@
 
 .c.o:
-	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ $<
+
+.c.lo:
+@AMDEP@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LTCOMPILE) -c -o $@ $<
+
+.c.obj:
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `cygpath -w $<`
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am:
+uninstall: uninstall-am
+all-am: Makefile $(LTLIBRARIES)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+installdirs:
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	-rm -f Makefile.in
+mostlyclean-am:  mostlyclean-noinstLTLIBRARIES mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
+		mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-noinstLTLIBRARIES clean-compile clean-libtool \
+		clean-tags clean-depend clean-generic mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-noinstLTLIBRARIES distclean-compile \
+		distclean-libtool distclean-tags distclean-depend \
+		distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-noinstLTLIBRARIES \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-tags maintainer-clean-depend \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-noinstLTLIBRARIES distclean-noinstLTLIBRARIES \
+clean-noinstLTLIBRARIES maintainer-clean-noinstLTLIBRARIES \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile mostlyclean-libtool distclean-libtool \
+clean-libtool maintainer-clean-libtool tags mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir \
+mostlyclean-depend distclean-depend clean-depend \
+maintainer-clean-depend info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all install-strip installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
 
 .s.o:
-	$(CCAS) -c $(SFLAGS) $(CFLAGS) $(XCFLAGS) $<
+	$(COMPILE) -c $<
+.s.obj:
+	$(COMPILE) -c `cygpath -w $<`
+.s.lo:
+	$(LTCOMPILE) -c $<
 
 .S.o:
-	$(CPP) $(SFLAGS) $(INCLUDES) $(CFLAGS) $(XCFLAGS) $< | grep -v '^#' >tmp-$*.s
-	$(CCAS) -c $(SFLAGS) $(CFLAGS) $(XCFLAGS) tmp-$*.s -o $@
+	$(CPP) $(COMPILE_FLAGS) $< | grep -v '^#' >tmp-$*.s
+	$(COMPILE) -c tmp-$*.s -o $@
+	rm -f tmp-$*.s
+.S.obj:
+	$(CPP) $(COMPILE_FLAGS) `cygpath -w $<` | grep -v '^#' >tmp-$*.s
+	$(COMPILE) -c tmp-$*.s -o $@
+	rm -f tmp-$*.s
+.S.lo:
+	$(CPP) $(COMPILE_FLAGS) -DPIC $< | grep -v '^#' >tmp-$*.s
+	$(LTCOMPILE) -c tmp-$*.s -o $@
 	rm -f tmp-$*.s
 
-clean mostlyclean:
-	rm -f *.o tmp-* libmpn.a
-	#@cd tests; $(MAKE) $@
-distclean maintainer-clean: clean
-	rm -f asm-syntax.h Makefile config.status $(MPN_LINKS)
-	#@cd tests; $(MAKE) $@
-
-Makefile: $(srcdir)/Makefile.in
-	$(SHELL) ./config.status
-
-
-# Maybe configure could add dependencies here..?
-
-H = $(srcdir)/../gmp.h $(srcdir)/../gmp-impl.h gmp-mparam.h
-L = $(srcdir)/../longlong.h
-
-mp_bases.o: $(srcdir)/mp_bases.c $(H)
-bdivmod.o: bdivmod.c $(H) $(L)
-cmp.o: cmp.c $(H)
-divmod_1.o: divmod_1.c $(H) $(L)
-divrem.o: divrem.c $(H) $(L)
-divrem_1.o: divrem_1.c $(H) $(L)
-divrem_2.o: divrem_2.c $(H) $(L)
-divrem_newt.o: divrem_newt.c $(H) $(L)
-dump.o: dump.c $(H)
-gcd.o: gcd.c $(H) $(L)
-gcd_1.o: gcd_1.c $(H) $(L)
-gcdext.o: gcdext.c $(H) $(L)
-get_str.o: get_str.c $(H) $(L)
-hamdist.o: hamdist.c $(H)
-inlines.o: inlines.c $(srcdir)/../gmp.h
-mul.o: mul.c $(H)
-mod_1.o: mod_1.c $(H) $(L)
-# mul_basecase.o: mul_basecase.c $(H) $(L)
-mul_n.o: mul_n.c $(H)
-perfsqr.o: perfsqr.c $(H) $(L)
-popcount.o: popcount.c $(H)
-pre_mod_1.o: pre_mod_1.c $(H) $(L)
-random.o: random.c $(H)
-random2.o: random2.c $(H)
-rawrandom.o: rawrandom.c $(H)
-scan0.o: scan0.c $(H) $(L)
-scan1.o: scan1.c $(H) $(L)
-set_str.o: set_str.c $(H)
-sqr_basecase.o: sqr_basecase.c $(H) $(L)
-sqrtrem.o: sqrtrem.c $(H) $(L)
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
