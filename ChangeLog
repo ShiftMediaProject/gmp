@@ -101,7 +101,7 @@
 
 2000-04-04  Torbjorn Granlund  <tege@swox.com>
 
-	* gmp-impl..h (TOOM3_MUL_THRESHOLD): Provide default.
+	* gmp-impl.h (TOOM3_MUL_THRESHOLD): Provide default.
 	(TOOM3_SQR_THRESHOLD): Provide default.
 
 	* mpn/generic/mul_n.c: Rewrite (mostly by Robert Harley).
