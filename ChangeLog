@@ -1,3 +1,17 @@
+1999-12-10  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in: Recognize x86 CPU types known by config.guess.
+	* mpn/configure.in: Likewise.  Add x86/mmx path component as
+	appropriate.
+	(athlon-*-*): Fix typo.
+
+	* config.guess: Update x86 recog code to intiallly match
+	more than just i386.
+	Call K6-2 and K6-III for "k62" and "k63" respectively.
+
+	* config.guess: Recognize x86 CPU types.
+	Update code for FreeBSD, NetBSD, OpenBSD, Linux.
+
 1999-12-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/pow_ui.c: Avoid final squaring in loop.
