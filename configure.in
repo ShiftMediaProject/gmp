@@ -1662,9 +1662,11 @@ if test $enable_cxx != no; then
   # other hand the user didn't specify CXXFLAGS then we get to try here our
   # $cxxflags_list alternatives.
   #
+  # Automake includes $CPPFLAGS in a C++ compile, so we do the same here.
+  #
   for cxxflags_choice in $cxxflags_list; do
     eval CXXFLAGS=\"\$cxxflags_$cxxflags_choice\"
-    GMP_PROG_CXX_WORKS($CXX $CXXFLAGS,
+    GMP_PROG_CXX_WORKS($CXX $CPPFLAGS $CXXFLAGS,
       [want_cxx=yes
       break])
   done
