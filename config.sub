@@ -3,7 +3,7 @@
 # GMP config.sub wrapper.
 
 
-# Copyright 2000 Free Software Foundation, Inc.
+# Copyright 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -95,11 +95,6 @@ sparcv8 | supersparc | microsparc | ultrasparc | ultrasparc[123])
   test_cpu=sparc ;;
 sh2)
   test_cpu=sh ;;
-
-# configfsf.guess gives j90 or t90, but configfsf.sub changes them to c90.
-# We want them preserved.
-j90 | t90)
-  test_cpu=c90 ;;
 
 *)
   # Don't need or want to change the given name, just run configfsf.sub
