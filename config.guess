@@ -99,10 +99,9 @@ fi
 
 case "$guess_full" in
 sparc-*-*)
-  # In absense of a full sparc cpu detection, let sun4m and sun4d mean
-  # sparcv8.  This is a significant improvement for gmp.
   case "`uname -m`" in
   sun4[md]) exact_cpu=sparcv8 ;;
+  sun4u)    exact_cpu=sparcv9 ;;
   esac
   ;;
 
