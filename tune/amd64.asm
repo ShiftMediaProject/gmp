@@ -1,6 +1,6 @@
 dnl  x86 pentium time stamp counter access routine.
 
-dnl  Copyright 1999, 2000, 2003 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2003, 2004 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -32,12 +32,15 @@ C cpuid is used to serialize execution.  On big measurements this won't be
 C significant but it may help make small single measurements more accurate.
 
 PROLOGUE(speed_cyclecounter)
-	pushq	%rbx
+
+	C rdi	p
+
+	movq	%rbx, %r10
 	xorl	%eax, %eax
 	cpuid
 	rdtsc
 	movl	%eax, (%rdi)
 	movl	%edx, 4(%rdi)
-	popq	%rbx
+	movq	%r10, %rbx
 	ret
 EPILOGUE()
