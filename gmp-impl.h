@@ -431,6 +431,7 @@ struct bases
   mp_limb_t big_base_inverted;
 };
 
+#define __mp_bases __MPN(mp_bases)
 extern const struct bases __mp_bases[];
 extern mp_size_t __gmp_default_fp_limb_precision;
 
@@ -635,7 +636,9 @@ int __gmp_extract_double _PROTO ((mp_ptr, double));
 
 extern int __gmp_junk;
 extern const int __gmp_0;
-#define DIVIDE_BY_ZERO (__gmp_junk = 10/__gmp_0)
+#define GMP_ERROR(code)   (gmp_errno |= (code), __gmp_junk = 10/__gmp_0)
+#define DIVIDE_BY_ZERO    GMP_ERROR(GMP_ERROR_DIVISION_BY_ZERO)
+#define SQRT_OF_NEGATIVE  GMP_ERROR(GMP_ERROR_SQRT_OF_NEGATIVE)
 
 #if defined _LONG_LONG_LIMB
 #if defined (__STDC__)
