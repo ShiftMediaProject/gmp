@@ -1032,18 +1032,16 @@ AC_DEFUN(GMP_ASM_POWERPC_R_REGISTERS,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([if the assembler needs r on registers],
                gmp_cv_asm_powerpc_r_registers,
-[cat >conftest.s <<EOF
-      	$gmp_cv_asm_text
-	mtctr	6
-EOF
-gmp_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(gmp_assemble); then
-  gmp_cv_asm_powerpc_r_registers=no
-else 
-  gmp_cv_asm_powerpc_r_registers=yes
-fi
-rm -f conftest*
-])
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	mtctr	6],
+[gmp_cv_asm_powerpc_r_registers=no],
+[GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_text
+	mtctr	r6],
+[gmp_cv_asm_powerpc_r_registers=yes],
+[AC_MSG_ERROR([neither \"mtctr 6\" nor \"mtctr r6\" works])])])])
+
 GMP_DEFINE_RAW(["define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)"])
 ])
 
