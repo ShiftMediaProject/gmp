@@ -71,7 +71,7 @@ C linker treats it.
 	ALIGN(32)
 PROLOGUE(mpn_modexact_1_odd)
 
-	movq	$0, %rcx
+	xorl	%ecx, %ecx
 
 PROLOGUE(mpn_modexact_1c_odd)
 
