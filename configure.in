@@ -600,7 +600,7 @@ case ${target} in
   alpha*-*-*)
     SPEED_CYCLECOUNTER_OBJS=alpha.lo
     ;;
-  [sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-* | athlon-*-*])
+  sparcv9*-*-* | ultrasparc*-*-* | sparc64*-*-*)
     SPEED_CYCLECOUNTER_OBJS=sparcv9.lo
     ;;
 esac
