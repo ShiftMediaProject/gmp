@@ -29,6 +29,6 @@ mpn_hamdist (mp_srcptr p1, mp_srcptr p2, mp_size_t n)
   unsigned long int result = 0;
   mp_size_t i;
   for (i = 0; i < n; i++)
-    result += popcnt (p1[i] ^ p2[i]);
+    result += _popcnt (p1[i] ^ p2[i]);
   return result;
 }

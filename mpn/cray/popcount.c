@@ -29,6 +29,6 @@ mpn_popcount (mp_srcptr p, mp_size_t n)
   unsigned long int result = 0;
   mp_size_t i;
   for (i = 0; i < n; i++)
-    result += popcnt (p[i]);
+    result += _popcnt (p[i]);
   return result;
 }
