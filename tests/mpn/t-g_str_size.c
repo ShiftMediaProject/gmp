@@ -44,7 +44,7 @@ str_size_exact (mp_size_t limbs, int base)
   do
     {
       chars++;
-      refmpn_divrem_1 (xp, 0, xp, limbs, (mp_limb_t) base);
+      refmpn_divrem_1 (xp, (mp_size_t) 0, xp, limbs, (mp_limb_t) base);
       limbs -= (xp[limbs-1] == 0);
     }
   while (limbs != 0);
