@@ -32,10 +32,15 @@ mpn_dump (ptr, size)
      mp_srcptr ptr;
      mp_size_t size;
 {
+  MPN_NORMALIZE (ptr, size);
+
   if (size == 0)
     printf ("0\n");
   else
     {
+      size--;
+      printf ("%lX", ptr[size]);
+
       while (size)
 	{
 	  size--;
