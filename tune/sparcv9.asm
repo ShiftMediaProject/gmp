@@ -29,10 +29,8 @@ C Get the sparc v9 tick counter.
 ASM_START()
 PROLOGUE(speed_cyclecounter)
 	rd	%tick,%g1
+	st	%g1,[%o0]		C low 32 bits
 	srlx	%g1,32,%g4
-	st	%g4,[%o0+4]		C high 32 bits
-	srl	%g1,0,%g4
-	st	%g4,[%o0]		C low 32 bits
 	retl
-	nop
+	st	%g4,[%o0+4]		C high 32 bits
 EPILOGUE(speed_cyclecounter)
