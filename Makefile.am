@@ -91,8 +91,18 @@ GMPXX_HEADERS_OPTION = gmpxx.h
 endif
 EXTRA_DIST += gmpxx.h
 
+# gmp.h and mp.h are architecture dependent, mainly since they encode the
+# limb size used in libgmp.  For that reason they belong under $exec_prefix
+# not $prefix, strictly speaking.
+#
+# $exec_prefix/include is not in the default include path for gcc built to
+# the same $prefix and $exec_prefix, which might mean gmp.h is not found,
+# but anyone knowledgable enough to be playing with exec_prefix will be able
+# to address that.
+#
+includeexecdir = $(exec_prefix)/include
 include_HEADERS = $(GMPXX_HEADERS_OPTION)
-nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
+nodist_includeexec_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(GMPXX_LTLIBRARIES_OPTION) $(MPBSD_LTLIBRARIES_OPTION)
 
 BUILT_SOURCES = gmp.h
