@@ -73,8 +73,8 @@ the terms of the GNU Free Documentation License, Version 1.1 or any later
 version published by the Free Software Foundation; with no Invariant Sections,
 with the Front-Cover Texts being "A GNU Manual", and with the Back-Cover Texts
 being "You have freedom to copy and modify this GNU Manual, like GNU
-software".  A copy of the license is included in the section @ref{GNU Free
-Documentation License}.
+software".  A copy of the license is included in @ref{GNU Free Documentation
+License}.
 
 @iftex
 @end titlepage
@@ -408,7 +408,7 @@ AMD 29000,
 AMD K6, K6-2 and Athlon,
 Hitachi SuperH and SH-2,
 HPPA 1.0, 1.1 and 2.0,
-Intel Pentium, Pentium Pro/II/III, generic x86,
+Intel Pentium, Pentium Pro/II/III, Pentium 4, generic x86,
 Intel IA-64, i960,
 Motorola MC68000, MC68020, MC88100, and MC88110,
 Motorola/IBM PowerPC 32 and 64,
@@ -525,6 +525,10 @@ Cygwin, DJGPP or MINGW can be used.  See
 @uref{http://www.mingw.org}
 @end display
 
+The @file{macos} directory contains an unsupported port to MacOS 9 on Power
+Macintosh.  Note that MacOS X ``Darwin'' on the other hand can use the normal
+@samp{./configure}.
+
 It might be possible to build without the help of @samp{configure}, certainly
 all the code is there, but unfortunately you'll be on your own.
 
@@ -587,10 +591,10 @@ suitable cross-compiling @command{cc} etc.
 
 Compiling for a different CPU in the same family as the build system is a form
 of cross-compilation, though very possibly this would merely be with special
-options on a native compiler.  In any case @samp{./configure} will avoid
-trying to run anything on the build system, and this is important when
-creating binaries for a newer CPU, since they might not run on the build
-system.
+options on a native compiler.  In any case @samp{./configure} avoids depending
+on being able to run code on the build system, which is important when
+creating binaries for a newer CPU since they very possibly won't run on the
+build system.
 
 Currently a warning is given unless an explicit @samp{--build} is used when
 cross-compiling, because it may not be possible to correctly guess the build
@@ -774,14 +778,15 @@ done separately in some configure tests, and in the @samp{ansi2knr} support
 for K&R compilers.
 
 @item C++ Support, @option{--enable-cxx}
-C++ support in GMP can be enabled with @samp{--enable-cxx}, a C++ compiler
-will be required.  As a convenience @samp{--enable-cxx=detect} can be used to
-enable it only if a C++ compiler is in fact available.  The C++ support
-consists of a library @file{libgmpxx.la} and header file @file{gmpxx.h}.
+C++ support in GMP can be enabled with @samp{--enable-cxx}, and for this a C++
+compiler will be required.  As a convenience @samp{--enable-cxx=detect} can be
+used to enable C++ support only if a C++ compiler is in fact available.  The
+C++ support consists of a library @file{libgmpxx.la} and header file
+@file{gmpxx.h}.
 
 Note that in general @file{libgmpxx} will be usuable only with the C++
 compiler that built it, since name mangling and runtime support are usually
-incompatible between different C++ compilers.
+incompatible between different compilers.
 
 @item @option{CXX}, @option{CXXFLAGS}
 When C++ support is enabled, the C++ compiler and its flags can be set with
@@ -796,16 +801,15 @@ usually suit @samp{g++}.
 
 It's important that the C and C++ compilers match, meaning their startup and
 runtime support routines are compatible and that they generate code in the
-same ABI, when there's a choice of ABIs on the system.  @samp{./configure}
+same ABI (if there's a choice of ABIs on the system).  @samp{./configure}
 isn't currently able to check these things very well itself, so for that
 reason @samp{--disable-cxx} is the default, to avoid a build failure due to a
 compiler mismatch.  Perhaps this will change in the future.
 
-Incidentally, it's normally not good enough to set @samp{CXX} to the
-same as @samp{CC}.  Although @command{gcc} for instance recognises
-@file{foo.cc} as C++ code, only @command{g++} will invoke the linker the
-right way when building an executable or shared library out of object
-files.
+Incidentally, it's normally not good enough to set @samp{CXX} to the same as
+@samp{CC}.  Although @command{gcc} for instance recognises @file{foo.cc} as
+C++ code, only @command{g++} will invoke the linker the right way when
+building an executable or shared library from object files.
 
 @item Temporary Memory, @option{--enable-alloca=<choice>}
 @cindex Stack overflow segfaults
@@ -824,7 +828,7 @@ which can be selected with for instance
 @samp{malloc-notreentrant} - the heap, with global variables.
 @end itemize
 
-The following choices are also available, for convenience.
+For convenience, the following choices are also available.
 @samp{--disable-alloca} is the same as @samp{--enable-alloca=no}.
 
 @itemize @bullet
@@ -926,7 +930,7 @@ html,Generating HTML,Generating HTML,texinfo,Texinfo}.  Or alternately
 @samp{texi2html}, see @ref{Top,Texinfo to HTML,About,texi2html,Texinfo To
 HTML}.
 
-PDF can be made with @samp{texi2dvi --pdf} (@pxref{PDF
+PDF can be produced with @samp{texi2dvi --pdf} (@pxref{PDF
 Output,PDF,,texinfo,Texinfo}) or with @samp{pdftex}.
 
 Some supplementary notes can be found in the @file{doc} subdirectory.
@@ -1121,12 +1125,12 @@ distribution.
 @cindex Libtool versioning
 @cindex Shared library versioning
 Libtool is used to build the library and @samp{-version-info} is set
-appropriately, having started from @samp{3:0:0} in GMP 3.0.  The GMP 3 series
-will be upwardly binary compatible in each release, but may be adding
-additional function interfaces.  On systems where libtool versioning is not
-fully checked by the loader, an auxiliary mechanism may be needed to express
-that a dynamic linked application depends on a new enough minor version of
-GMP.
+appropriately, having started from @samp{3:0:0} in GMP 3.0.  The GMP 4 series
+will be upwardly binary compatible in each release and will be upwardly binary
+compatible with all of the GMP 3 series.  Additional function interfaces may
+be added in each release, so on systems where libtool versioning is not fully
+checked by the loader an auxiliary mechanism may be needed to express that a
+dynamic linked application depends on a new enough GMP.
 
 When building a package for a CPU family, care should be taken to use
 @samp{--host} (or @samp{--build}) to choose the least common denominator among
@@ -1302,14 +1306,6 @@ If stripped static libraries are wanted, the suggested workaround is to build
 normally, strip the separate object files, and do another @samp{make all} to
 rebuild.  Alternately @samp{CFLAGS} with @samp{-g} omitted can always be used
 if it's just debugging which is unwanted.
-
-@item @command{make}, @code{$*} and K&R
-
-When using a K&R compiler, GMP relies on @command{make} setting the special
-@code{$*} variable in explicit rules, not just suffix rules.  Some versions of
-@code{make} don't do this, in particular the HP-UX 10 bundled @code{make}
-doesn't, and the bundled @command{cc} on that system only accepts K&R, hence
-triggering the problem.  GNU @code{make} is recommended instead.
 
 @item NeXT prior to 3.3
 
@@ -4538,11 +4534,9 @@ accurately represented by the operand, the same as @code{mpf_get_str} does.
 Zeros will be used if necessary to pad to the requested precision.  This
 happens even for an @samp{f} conversion of an integer value, for instance
 @ma{2^@W{1024}} in an @code{mpf_t} of 128 bits precision will only generate
-about 20 digits, then pad with zeros to the decimal point.
-
-An empty precision field like @samp{%.Fe} can be used to specifically request
-all significant digits, or when using a precision argument via @samp{%.*Fe} by
-setting that parameter to -1.
+about 20 digits, then pad with zeros to the decimal point.  An empty precision
+field like @samp{%.Fe} can be used to specifically request all significant
+digits.
 
 The decimal point character (or string) is taken from the current locale
 settings on systems which provide @code{localeconv} (@pxref{Locales,,Locales
