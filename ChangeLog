@@ -1,3 +1,11 @@
+2001-04-04  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_M4_M4WRAP_SPURIOUS): Fix test so as to actually
+	detect the problem, add notes on m68k netbsd 1.4.1.
+
+	* gmp.texi (Compatibility with older versions): Note libmp
+	compatibility.
+
 2001-04-03  Kevin Ryde  <kevin@swox.se>
 
 	* tests/mpz/reuse.c: Add mpz_cdiv_q_2exp and mpz_cdiv_r_2exp.
