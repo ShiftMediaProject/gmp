@@ -1345,3 +1345,16 @@ speed_mpn_udiv_qrnnd (struct speed_params *s)
   SPEED_ROUTINE_UDIV_QRNND_B;
 }
 #endif
+
+
+double
+speed_mpn_get_str (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GET_STR (mpn_get_str);
+}  
+
+double
+speed_mpn_set_str (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_SET_STR (mpn_set_str);
+}  
