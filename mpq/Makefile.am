@@ -28,6 +28,17 @@ INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
-  add.c canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
+  canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
   get_den.c get_num.c init.c inv.c mul.c neg.c out_str.c set.c set_den.c \
-  set_num.c set_si.c set_ui.c sub.c equal.c set_z.c set_d.c swap.c
+  set_num.c set_si.c set_ui.c equal.c set_z.c set_d.c swap.c
+
+nodist_libmpq_la_SOURCES = add.c sub.c
+
+CLEANFILES = $(nodist_libmpq_la_SOURCES)
+
+EXTRA_DIST = aors.c
+
+add.c: $(srcdir)/aors.c
+	cp $(srcdir)/aors.c add.c
+sub.c: $(srcdir)/aors.c
+	cp $(srcdir)/aors.c sub.c
