@@ -126,7 +126,7 @@ mpz_xor (res, op1, op2)
 	      _mpz_realloc (res, res_alloc);
 	      res_ptr = res->_mp_d;
 	      /* Don't re-read OP1_PTR and OP2_PTR.  They point to
-		 temporary space--never to the space RES->_mp_D used
+		 temporary space--never to the space RES->_mp_d used
 		 to point to before reallocation.  */
 	    }
 
@@ -185,7 +185,7 @@ mpz_xor (res, op1, op2)
 	op1_ptr = op1->_mp_d;
 	res_ptr = res->_mp_d;
 	/* Don't re-read OP2_PTR.  It points to temporary space--never
-	   to the space RES->_mp_D used to point to before reallocation.  */
+	   to the space RES->_mp_d used to point to before reallocation.  */
       }
 
     if (op1_size > op2_size)
