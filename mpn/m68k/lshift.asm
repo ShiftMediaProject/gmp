@@ -24,7 +24,7 @@ include(`../config.m4')
 
 C           cycles/limb
 C        shift==1  shift>1
-C 68040:   3.5       9.5
+C 68040:    5         12
 
 
 C INPUT PARAMETERS

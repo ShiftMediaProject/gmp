@@ -1,10 +1,7 @@
 dnl  mc68020 mpn_mul_1 -- mpn by limb multiply
-dnl
-dnl        cycles/limb
-dnl  68040:   19.5
 
-dnl  Copyright 1992, 1994, 1996, 1999, 2000, 2001 Free Software Foundation,
-dnl  Inc.
+dnl  Copyright 1992, 1994, 1996, 1999, 2000, 2001, 2002 Free Software
+dnl  Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -25,6 +22,8 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C         cycles/limb
+C 68040:     24
 
 C INPUT PARAMETERS
 C res_ptr	(sp + 4)
