@@ -73,7 +73,7 @@ Currently: 2.375 cycles/limb, using 4-way unrolling.
 
 Using integer instructions, it seems 2 cycles/limb is the limit.  It might be
 possible to use 128-bit SSE2 instructions for better performance, but since
-Hammer in practice only execute 1 SSE instruction/cycle, that seem unlikely.
+Hammer in practice only executes 1 SSE instruction/cycle, that seem unlikely.
 
 The mpn_lshift code should have a special case for count=1, since that could be
 done at 1 cycle/limb.
