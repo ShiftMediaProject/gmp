@@ -76,6 +76,17 @@ esac],
 [enable_alloca=reentrant])
 
 
+AC_ARG_ENABLE(cxx,
+AC_HELP_STRING([--enable-cxx],[enable C++ support [default=detect]]),
+[case $enableval in
+yes|no|detect) ;;
+*)
+  AC_MSG_ERROR([bad value $enableval for --enable-alloca, need yes/no/detect])
+  ;;
+esac],
+[enable_cxx=detect])
+
+
 AC_ARG_ENABLE(fft,
 AC_HELP_STRING([--enable-fft],[enable FFTs for multiplication [default=no]]),
 [case $enableval in
@@ -1080,7 +1091,7 @@ echo using ABI=\"$ABI\" CC=\"$CC\" CFLAGS=\"$CFLAGS\" CPPFLAGS=\"$CPPFLAGS\"
 AC_PROG_CC
 AC_PROG_CC_STDC
 AC_PROG_CPP
-
+GMP_OPTION_CXX
 
 case $host_cpu in
   c90 | t90)
@@ -1115,7 +1126,7 @@ case $host in
   #
   # FIXME: This $libname.a problem looks like it might apply to *-*-amigaos*
   # and *-*-os2* too, but wait for someone to test this before worrying
-  # about it.  If there's a problem then of course libtool is the right
+  # about it.  If there is a problem then of course libtool is the right
   # place to fix it.
   #
   [*-*-aix[34]*])
@@ -1244,17 +1255,22 @@ esac
 
 
 # The library and header checks are mostly for the benefit of supplementary
-# programs.  libgmp doesn't use anything weird.
+# programs.  libgmp doesn't use anything too weird.
 
 AC_HEADER_STDC
 AC_HEADER_TIME
-AC_CHECK_HEADERS(unistd.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
+
+# inttypes.h and unistd.h are already in the autoconf default tests
+AC_CHECK_HEADERS(locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
 
 # optarg should be in unistd.h, which is already in the default includes
 AC_CHECK_DECLS(optarg)
 
 AC_TYPE_SIGNAL
-dnl AC_CHECK_TYPES([])
+
+# the default includes are sufficient for all these types
+AC_CHECK_TYPES([intmax_t, long double, long long, ptrdiff_t, quad_t])
+
 AC_C_STRINGIZE
 GMP_C_STDARG
 GMP_C_ATTRIBUTE_CONST
@@ -1287,7 +1303,7 @@ case $host in
   m68*-*-netbsd1.4*) ac_cv_func_getrusage=no ;;
 esac
 
-AC_CHECK_FUNCS(getpagesize getrusage gettimeofday mprotect popen processor_info read_real_time strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(getpagesize getrusage gettimeofday localeconv memset mprotect obstack_vprintf popen processor_info read_real_time snprintf strchr strtoul sysconf sysctl sysctlbyname times vsnprintf)
 
 
 # Pick the correct source files in $path and link them to mpn/.
@@ -1570,11 +1586,11 @@ GMP_FINISH
 
 AC_OUTPUT(Makefile							\
   mpbsd/Makefile mpf/Makefile mpfr/Makefile mpn/Makefile mpq/Makefile	\
-  mpz/Makefile								\
+  mpz/Makefile printf/Makefile						\
   mpfr/tests/Makefile							\
   tests/Makefile tests/devel/Makefile tests/mpbsd/Makefile		\
   tests/mpf/Makefile tests/mpn/Makefile tests/mpq/Makefile		\
-  tests/mpz/Makefile tests/rand/Makefile				\
+  tests/mpz/Makefile tests/rand/Makefile tests/printf/Makefile		\
   tune/Makefile								\
   demos/Makefile demos/calc/Makefile demos/expr/Makefile		\
   gmp.h:gmp-h.in mp.h:mp-h.in						\
