@@ -160,13 +160,13 @@ case $basic_machine in
 		| sparc | sparclet | sparclite | sparc64 | v850)
 		basic_machine=$basic_machine-unknown
 		;;
-	sparc[89] | supersparc | microsparc | ultrasparc) # TMG LOCAL tege
+	sparc[89] | supersparc | microsparc | ultrasparc)
 		basic_machine=$basic_machine-unknown
 		;;
 	# We use `pc' rather than `unknown'
 	# because (1) that's what they normally are, and
 	# (2) the word "unknown" tends to confuse beginning users.
-	i[3456]86 | k5 | k6)
+	i[34]86 | pentium[23] | k5 | k6 | k6[23] | athlon)
 	  basic_machine=$basic_machine-pc
 	  ;;
 	# Object if more than one company name word.
@@ -175,7 +175,7 @@ case $basic_machine in
 		exit 1
 		;;
 	# Recognize the basic CPU types with company name.
-	vax-* | tahoe-* | i[3456]86-* | i860-* | m32r-* | m68k-* | m68000-* \
+	vax-* | tahoe-* | i[34]86-* | pentium[23]-* | i860-* | m32r-* | m68k-* | m68000-* \
 	      | m88k-* | sparc-* | ns32k-* | fx80-* | arc-* | arm-* | c[123]* \
 	      | mips-* | pyramid-* | tron-* | a29k-* | romp-* | rs6000-* \
 	      | power-* | none-* | 580-* | cray2-* | h8300-* | i960-* \
@@ -186,9 +186,9 @@ case $basic_machine in
 	      | sparc64-* | mips64-* | mipsel-* \
 	      | mips64el-* | mips64orion-* | mips64orionel-*  \
 	      | mipstx39-* | mipstx39el-* \
-	      | f301-* | k6-*)
+	      | f301-* | k6-* | k6[23]-* | athlon-*)
 		;;
-	sparc[89]-* | supersparc-* | microsparc-* | ultrasparc-*) # TMG LOCAL tege
+	sparc[89]-* | supersparc-* | microsparc-* | ultrasparc-*)
 		;;
 	# Recognize the various machine names and aliases which stand
 	# for a CPU type and a company and sometimes even an OS.
@@ -478,21 +478,23 @@ case $basic_machine in
         pc532 | pc532-*)
 		basic_machine=ns32k-pc532
 		;;
-	pentium | p5)
-		basic_machine=i586-intel
+	pentiummmx | p55)
+		basic_machine=pentiummmx-pc
+		;;
+	pentium | p5 | i586)
+		basic_machine=pentium-pc
 		;;
 	pentiumpro | p6)
-		basic_machine=i686-intel
+		basic_machine=pentiumpro-pc
 		;;
-	pentium-* | p5-*)
-		basic_machine=i586-`echo $basic_machine | sed 's/^[^-]*-//'`
+	pentiummmx-* | p55-*)
+		basic_machine=pentiummmx-`echo $basic_machine | sed 's/^[^-]*-//'`
+		;;
+	pentium-* | p5-* | i586-*)
+		basic_machine=pentium-`echo $basic_machine | sed 's/^[^-]*-//'`
 		;;
 	pentiumpro-* | p6-*)
-		basic_machine=i686-`echo $basic_machine | sed 's/^[^-]*-//'`
-		;;
-	k5)
-		# We don't have specific support for AMD's K5 yet, so just call it a Pentium
-		basic_machine=i586-amd
+		basic_machine=pentiumpro-`echo $basic_machine | sed 's/^[^-]*-//'`
 		;;
 	nexen)
 		# We don't have specific support for Nexgen yet, so just call it a Pentium
