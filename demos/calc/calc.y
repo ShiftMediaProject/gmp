@@ -171,80 +171,80 @@ top:
 statements:
   statement EOS
   | statements statement EOS
-  | error EOS ={ sp = stack[0]; yyerrok; };
+  | error EOS { sp = stack[0]; yyerrok; };
 
 statement:
   /* empty */
-  | e ={
+  | e {
       mpz_out_str (stdout, obase, sp); putchar ('\n');
       sp--;
       CHECK_EMPTY ();
     }
-  | VARIABLE '=' e ={
+  | VARIABLE '=' e {
       CHECK_VARIABLE ($1);
       mpz_swap (variable[$1], sp);
       sp--;
       CHECK_EMPTY ();
     }
-  | HELP    ={ calc_help (); }
-  | HEX     ={ ibase = 16; obase = -16; }
-  | DECIMAL ={ ibase = 0;  obase = 10; }
-  | QUIT    ={ exit (0); };
+  | HELP    { calc_help (); }
+  | HEX     { ibase = 16; obase = -16; }
+  | DECIMAL { ibase = 0;  obase = 10; }
+  | QUIT    { exit (0); };
 
 /* "e" leaves it's value on the top of the mpz stack.  A rule like "e '+' e"
    will have done a reduction for the first "e" first and the second "e"
    second, so the code receives the values in that order on the stack.  */
 e:
     '(' e ')'     /* value on stack */
-    | e '+' e     ={ sp--; mpz_add    (sp, sp, sp+1); }
-    | e '-' e     ={ sp--; mpz_sub    (sp, sp, sp+1); }
-    | e '*' e     ={ sp--; mpz_mul    (sp, sp, sp+1); }
-    | e '/' e     ={ sp--; mpz_fdiv_q (sp, sp, sp+1); }
-    | e '%' e     ={ sp--; mpz_fdiv_r (sp, sp, sp+1); }
-    | e '^' e     ={ CHECK_UI ("Exponent", sp);
-                     sp--; mpz_pow_ui (sp, sp, mpz_get_ui (sp+1)); }
-    | e LSHIFT e  ={ CHECK_UI ("Shift count", sp);
-                     sp--; mpz_mul_2exp (sp, sp, mpz_get_ui (sp+1)); }
-    | e RSHIFT e  ={ CHECK_UI ("Shift count", sp);
-                     sp--; mpz_fdiv_q_2exp (sp, sp, mpz_get_ui (sp+1)); }
-    | e '!'       ={ CHECK_UI ("Factorial", sp);
-                     mpz_fac_ui (sp, mpz_get_ui (sp)); }
-    | '-' e %prec UMINUS   ={ mpz_neg (sp, sp); }
+    | e '+' e     { sp--; mpz_add    (sp, sp, sp+1); }
+    | e '-' e     { sp--; mpz_sub    (sp, sp, sp+1); }
+    | e '*' e     { sp--; mpz_mul    (sp, sp, sp+1); }
+    | e '/' e     { sp--; mpz_fdiv_q (sp, sp, sp+1); }
+    | e '%' e     { sp--; mpz_fdiv_r (sp, sp, sp+1); }
+    | e '^' e     { CHECK_UI ("Exponent", sp);
+                    sp--; mpz_pow_ui (sp, sp, mpz_get_ui (sp+1)); }
+    | e LSHIFT e  { CHECK_UI ("Shift count", sp);
+                    sp--; mpz_mul_2exp (sp, sp, mpz_get_ui (sp+1)); }
+    | e RSHIFT e  { CHECK_UI ("Shift count", sp);
+                    sp--; mpz_fdiv_q_2exp (sp, sp, mpz_get_ui (sp+1)); }
+    | e '!'       { CHECK_UI ("Factorial", sp);
+                    mpz_fac_ui (sp, mpz_get_ui (sp)); }
+    | '-' e %prec UMINUS   { mpz_neg (sp, sp); }
 
-    | e '<' e     ={ sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <  0); }
-    | e LE  e     ={ sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <= 0); }
-    | e EQ  e     ={ sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) == 0); }
-    | e NE  e     ={ sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) != 0); }
-    | e GE  e     ={ sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >= 0); }
-    | e '>' e     ={ sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >  0); }
+    | e '<' e     { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <  0); }
+    | e LE  e     { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) <= 0); }
+    | e EQ  e     { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) == 0); }
+    | e NE  e     { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) != 0); }
+    | e GE  e     { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >= 0); }
+    | e '>' e     { sp--; mpz_set_ui (sp, mpz_cmp (sp, sp+1) >  0); }
 
-    | e LAND e    ={ sp--; mpz_set_ui (sp, mpz_sgn (sp) && mpz_sgn (sp+1)); }
-    | e LOR e     ={ sp--; mpz_set_ui (sp, mpz_sgn (sp) || mpz_sgn (sp+1)); }
+    | e LAND e    { sp--; mpz_set_ui (sp, mpz_sgn (sp) && mpz_sgn (sp+1)); }
+    | e LOR e     { sp--; mpz_set_ui (sp, mpz_sgn (sp) || mpz_sgn (sp+1)); }
 
-    | ABS '(' e ')'              ={ mpz_abs (sp, sp); }
-    | BIN '(' e ',' e ')'        ={ sp--; CHECK_UI ("Binomial base", sp+1);
-                                    mpz_bin_ui (sp, sp, mpz_get_ui (sp+1)); }
-    | FIB '(' e ')'              ={ CHECK_UI ("Fibonacci", sp);
-                                    mpz_fib_ui (sp, mpz_get_ui (sp)); }
+    | ABS '(' e ')'              { mpz_abs (sp, sp); }
+    | BIN '(' e ',' e ')'        { sp--; CHECK_UI ("Binomial base", sp+1);
+                                   mpz_bin_ui (sp, sp, mpz_get_ui (sp+1)); }
+    | FIB '(' e ')'              { CHECK_UI ("Fibonacci", sp);
+                                   mpz_fib_ui (sp, mpz_get_ui (sp)); }
     | GCD '(' gcdlist ')'        /* value on stack */
-    | KRON '(' e ',' e ')'       ={ sp--; mpz_set_si (sp,
-                                          mpz_kronecker (sp, sp+1)); }
+    | KRON '(' e ',' e ')'       { sp--; mpz_set_si (sp,
+                                         mpz_kronecker (sp, sp+1)); }
     | LCM '(' lcmlist ')'        /* value on stack */
-    | LUCNUM '(' e ')'           ={ CHECK_UI ("Lucas number", sp);
-                                    mpz_lucnum_ui (sp, mpz_get_ui (sp)); }
-    | NEXTPRIME '(' e ')'        ={ mpz_nextprime (sp, sp); }
-    | POWM '(' e ',' e ',' e ')' ={ sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); }
-    | ROOT '(' e ',' e ')'       ={ sp--; CHECK_UI ("Nth-root", sp+1);
-                                    mpz_root (sp, sp, mpz_get_ui (sp+1)); }
-    | SQRT '(' e ')'             ={ mpz_sqrt (sp, sp); }
+    | LUCNUM '(' e ')'           { CHECK_UI ("Lucas number", sp);
+                                   mpz_lucnum_ui (sp, mpz_get_ui (sp)); }
+    | NEXTPRIME '(' e ')'        { mpz_nextprime (sp, sp); }
+    | POWM '(' e ',' e ',' e ')' { sp -= 2; mpz_powm (sp, sp, sp+1, sp+2); }
+    | ROOT '(' e ',' e ')'       { sp--; CHECK_UI ("Nth-root", sp+1);
+                                   mpz_root (sp, sp, mpz_get_ui (sp+1)); }
+    | SQRT '(' e ')'             { mpz_sqrt (sp, sp); }
 
-    | VARIABLE ={
+    | VARIABLE {
         sp++;
         CHECK_OVERFLOW ();
         CHECK_VARIABLE ($1);
         mpz_set (sp, variable[$1]);
       }
-    | NUMBER ={
+    | NUMBER {
         sp++;
         CHECK_OVERFLOW ();
         if (mpz_set_str (sp, $1, ibase) != 0)
@@ -256,11 +256,11 @@ e:
 
 gcdlist:
     e                /* value on stack */
-    | gcdlist ',' e  ={ sp--; mpz_gcd (sp, sp, sp+1); };
+    | gcdlist ',' e  { sp--; mpz_gcd (sp, sp, sp+1); };
 
 lcmlist:
     e                /* value on stack */
-    | lcmlist ',' e  ={ sp--; mpz_lcm (sp, sp, sp+1); };
+    | lcmlist ',' e  { sp--; mpz_lcm (sp, sp, sp+1); };
 
 %%
 
