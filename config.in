@@ -182,17 +182,35 @@ MA 02111-1307, USA.
 /* Define if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
-/* Define if an actual "inline" is available */
-#undef HAVE_INLINE
+/* Define if the system has the type `intmax_t'. */
+#undef HAVE_INTMAX_T
 
 /* Define if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define if you have the `localeconv' function. */
+#undef HAVE_LOCALECONV
+
+/* Define if you have the <locale.h> header file. */
+#undef HAVE_LOCALE_H
+
+/* Define if the system has the type `long double'. */
+#undef HAVE_LONG_DOUBLE
+
+/* Define if the system has the type `long long'. */
+#undef HAVE_LONG_LONG
+
 /* Define if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define if you have the `memset' function. */
+#undef HAVE_MEMSET
+
 /* Define if you have the `mprotect' function. */
 #undef HAVE_MPROTECT
+
+/* Define if you have the `obstack_vprintf' function. */
+#undef HAVE_OBSTACK_VPRINTF
 
 /* Define if you have the `popen' function. */
 #undef HAVE_POPEN
@@ -200,8 +218,17 @@ MA 02111-1307, USA.
 /* Define if you have the `processor_info' function. */
 #undef HAVE_PROCESSOR_INFO
 
+/* Define if the system has the type `ptrdiff_t'. */
+#undef HAVE_PTRDIFF_T
+
+/* Define if the system has the type `quad_t'. */
+#undef HAVE_QUAD_T
+
 /* Define if you have the `read_real_time' function. */
 #undef HAVE_READ_REAL_TIME
+
+/* Define if you have the `snprintf' function. */
+#undef HAVE_SNPRINTF
 
 /* Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits) */
 #undef HAVE_SPEED_CYCLECOUNTER
@@ -211,6 +238,9 @@ MA 02111-1307, USA.
 
 /* Define if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
+
+/* Define if you have the `strchr' function. */
+#undef HAVE_STRCHR
 
 /* Define if cpp supports the ANSI # stringizing operator. */
 #undef HAVE_STRINGIZE
@@ -257,14 +287,17 @@ MA 02111-1307, USA.
 /* Define if you have the <sys/time.h> header file. */
 #undef HAVE_SYS_TIME_H
 
+/* Define if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
 /* Define if you have the `times' function. */
 #undef HAVE_TIMES
 
 /* Define if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define if the system has the type `void'. */
-#undef HAVE_VOID
+/* Define if you have the `vsnprintf' function. */
+#undef HAVE_VSNPRINTF
 
 /* Assembler local label prefix */
 #undef LSYM_PREFIX
