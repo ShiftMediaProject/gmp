@@ -56,8 +56,8 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
   /* We allways allocate space for the string.  If the caller passed a
      NULL pointer for RES_STR, we allocate permanent space and return
      a pointer to that to the caller.  */
-  str_size = ((size_t) (ABS (x_size) * BITS_PER_MP_LIMB
-			* __mp_bases[base].chars_per_bit_exactly)) + 3;
+  MPN_GET_STR_SIZE (str_size, base, ABS (x_size));
+  str_size += 2; /* '\0' and possible '-' */
   if (res_str == 0)
     {
       /* We didn't get a string from the user.  Allocate one (and return
@@ -81,6 +81,7 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     {
       res_str[0] = '0';
       res_str[1] = 0;
+      str_size = 1;
       goto done;
     }
   if (x_size < 0)
@@ -90,9 +91,13 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
     }
 
   /* Move the number to convert into temporary space, since mpn_get_str
-     clobbers its argument + needs one extra high limb....  */
-  xp = (mp_ptr) TMP_ALLOC ((x_size + 1) * BYTES_PER_MP_LIMB);
-  MPN_COPY (xp, x->_mp_d, x_size);
+     clobbers its argument, except on power of 2 bases.  */
+  xp = x->_mp_d;
+  if (! POW2_P (base))
+    {
+      xp = TMP_ALLOC_LIMBS (x_size);
+      MPN_COPY (xp, x->_mp_d, x_size);
+    }
 
   str_size = mpn_get_str (str, base, xp, x_size);
 
@@ -115,7 +120,8 @@ mpz_get_str (char *res_str, int base, mpz_srcptr x)
      required.  */
   if (alloc_size != 0)
     {
-      size_t  actual_size = strlen (return_str) + 1;
+      size_t  actual_size = str_size + 1 + (res_str - return_str);
+      ASSERT (actual_size == strlen (return_str) + 1);
       __GMP_REALLOCATE_FUNC_MAYBE (return_str, alloc_size, actual_size);
     }
   return return_str;
