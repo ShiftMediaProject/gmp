@@ -1,4 +1,4 @@
-Authors if GNU MP (in chronological order)
+Authors of GNU MP (in chronological order)
 Torbjörn Granlund	all except:
 John Amanatides		original version of mpz/pprime_p.c
 Paul Zimmermann		mpn/generic/mul_fft.c, mpn/generic/dc_divrem_n.c,
