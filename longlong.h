@@ -580,7 +580,16 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
    The middle two sbbl and cmpl's pair, and with luck something gcc
    generates might pair with the first cmpl and the last sbbl.  The "32+1"
    constant could be folded into __clz_tab[], but it doesn't seem worth
-   making a different table just for that.  */
+   making a different table just for that.
+
+   The Intel suggested method, used in __builtin_ffs of gcc 3,
+
+       double  d = (n);
+       (c) = (((unsigned*)&d)[1] >> 20) & 0x3FF;
+
+   seems to measure about the same, or a touch slower.  We wouldn't want it
+   for P55, since we don't want to mix MMX and x87 any more than can be
+   helped.  */
 
 #define count_leading_zeros(c,n)                        \
   do {                                                  \
