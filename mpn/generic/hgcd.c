@@ -1075,12 +1075,14 @@ mpn_hgcd2_lehmer_step (struct hgcd2 *hgcd,
 }
 
 /* Only the first row has v = 0, a = 1 * a + 0 * b */
-static int
+static inline int
 hgcd_start_row_p (const struct hgcd_row *r, mp_size_t n)
 {
   mp_size_t i;
+  mp_srcptr vp = r->uvp[1];
+
   for (i = 0; i < n; i++)
-    if (r->uvp[1][i] != 0)
+    if (vp[i] != 0)
       return 0;
 
   return 1;
