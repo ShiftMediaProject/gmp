@@ -352,7 +352,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
 
   ASSERT (blimb != 0);
   count_leading_zeros (cnt, blimb);
-  ralloc = (bsize*GMP_NUMB_BITS - cnt) * e / GMP_NUMB_BITS + 5;
+  ralloc = (bsize*GMP_NUMB_BITS - cnt + GMP_NAIL_BITS) * e / GMP_NUMB_BITS + 5;
   TRACE (printf ("ralloc %ld, from bsize=%ld blimb=0x%lX cnt=%d\n",
                  ralloc, bsize, blimb, cnt));
   MPZ_REALLOC (r, ralloc + rtwos_limbs);
