@@ -39,7 +39,9 @@ MA 02111-1307, USA. */
 #include "gmp-mparam.h"
 #endif
 
-/* #include "longlong.h" */
+#ifdef __cplusplus
+#include <string>
+#endif
 
 
 /* The following tries to get a good version of alloca.  The tests are
@@ -2477,8 +2479,6 @@ class gmp_allocated_string {
   ~gmp_allocated_string() { (*__gmp_free_func) (str, strlen(str)+1); }
 };
 
-#include <iostream>
-#include <string>
 int __gmp_istream_set_base (std::istream &, char &, bool &, bool &);
 void __gmp_istream_set_digits (std::string &, std::istream &, char &, bool &, int);
 void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, std::ios &o);
