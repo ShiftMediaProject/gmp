@@ -984,15 +984,21 @@ case $host in
     	esac
     esac
 
-    # ABI=64 is available for v9 processors on solaris 2.7 or up.  Solaris
-    # 2.6 and earlier doesn't save registers properly and cannot run ABI=64.
+    # Solaris 2.7 and up can run ABI=64, prior versions don't save registers
+    # properly and cannot.
+    #
     # GNU/Linux sparc64 means a v9 cpu, but currently seems to have no
     # support for 64-bit operations in user mode.
     #
-    # FIXME: gcc -Wa,-xarch=v9 is thought to be necessary in some cases, but
-    # it would seem likely that if gcc is going to generate 64-bit code it
-    # will have to add that option itself where it's needed.  An extra copy
-    # of this option should be harmless though, so leave it until we're sure.
+    # FreeBSD/NetBSD/OpenBSD sparc64 ports are 64-bit-only systems and need
+    # no special compiler flags.  Any v9 CPU will be running this, since the
+    # plain 32-bit sparc ports don't run on a v9.
+    #
+    # FIXME: gcc -Wa,-xarch=v9 is thought to be necessary in some cases on
+    # solaris, but it would seem likely that if gcc is going to generate
+    # 64-bit code it will have to add that option itself where it's needed.
+    # An extra copy of this option should be harmless though, so leave it
+    # until we're sure.
     #
     case $host_cpu in
       sparc64 | sparcv9* | ultrasparc*)
@@ -1017,6 +1023,14 @@ case $host in
             #
             cc_64_cflags="-fast -fns=no -fsimple=1 -xarch=v9"
             cc_64_cflags_optlist="cpu"
+            ;;
+
+          *-*-*bsd*)
+            abilist="64"
+            path_64="sparc64"
+            cclist_64="gcc cc"
+            gcc_64_cflags="-g -O2"
+            gcc_64_cflags_optlist="cpu"
             ;;
         esac
       ;;
