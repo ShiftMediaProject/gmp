@@ -109,6 +109,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LDFLAGS_CC_SYMBOLIC = @LDFLAGS_CC_SYMBOLIC@
+LDFLAGS_CXX_SYMBOLIC = @LDFLAGS_CXX_SYMBOLIC@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
@@ -199,7 +201,7 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mpfr
 
 LDADD = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 
-libfrtests_a_SOURCES = 
+libfrtests_a_SOURCES = dummy.c
 
 @WANT_MPFR_TRUE@check_PROGRAMS = reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui tdump teq texp tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos
 @WANT_MPFR_TRUE@check_LIBRARIES = libfrtests.a
@@ -211,7 +213,7 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 libfrtests_a_AR = $(AR) cru
 libfrtests_a_LIBADD =
-am_libfrtests_a_OBJECTS =
+am_libfrtests_a_OBJECTS = dummy$U.$(OBJEXT)
 libfrtests_a_OBJECTS = $(am_libfrtests_a_OBJECTS)
 @WANT_MPFR_TRUE@check_PROGRAMS = reuse$(EXEEXT) tabs$(EXEEXT) \
 @WANT_MPFR_TRUE@	tadd$(EXEEXT) tagm$(EXEEXT) tcan_round$(EXEEXT) \
@@ -894,6 +896,8 @@ mostlyclean-kr:
 
 .c.lo:
 	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
+dummy_.c: dummy.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dummy.c; then echo $(srcdir)/dummy.c; else echo dummy.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 reuse_.c: reuse.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/reuse.c; then echo $(srcdir)/reuse.c; else echo reuse.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tabs_.c: tabs.c $(ANSI2KNR)
@@ -1030,10 +1034,10 @@ tui_pow_.c: tui_pow.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tui_pow.c; then echo $(srcdir)/tui_pow.c; else echo tui_pow.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tui_sub_.c: tui_sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tui_sub.c; then echo $(srcdir)/tui_sub.c; else echo tui_sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
-reuse_.$(OBJEXT) reuse_.lo tabs_.$(OBJEXT) tabs_.lo tacos_.$(OBJEXT) \
-tacos_.lo tacosh_.$(OBJEXT) tacosh_.lo tadd_.$(OBJEXT) tadd_.lo \
-tadd_ui_.$(OBJEXT) tadd_ui_.lo tagm_.$(OBJEXT) tagm_.lo \
-tasin_.$(OBJEXT) tasin_.lo tasinh_.$(OBJEXT) tasinh_.lo \
+dummy_.$(OBJEXT) dummy_.lo reuse_.$(OBJEXT) reuse_.lo tabs_.$(OBJEXT) \
+tabs_.lo tacos_.$(OBJEXT) tacos_.lo tacosh_.$(OBJEXT) tacosh_.lo \
+tadd_.$(OBJEXT) tadd_.lo tadd_ui_.$(OBJEXT) tadd_ui_.lo tagm_.$(OBJEXT) \
+tagm_.lo tasin_.$(OBJEXT) tasin_.lo tasinh_.$(OBJEXT) tasinh_.lo \
 tatan_.$(OBJEXT) tatan_.lo tatanh_.$(OBJEXT) tatanh_.lo \
 tcan_round_.$(OBJEXT) tcan_round_.lo tcmp_.$(OBJEXT) tcmp_.lo \
 tcmp2_.$(OBJEXT) tcmp2_.lo tcmp_ui_.$(OBJEXT) tcmp_ui_.lo \
