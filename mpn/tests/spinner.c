@@ -47,7 +47,7 @@ static int  spinner_tick = 1;     /* 1 ready to print, 0 not */
 
 
 /*ARGSUSED*/
-void
+RETSIGTYPE
 spinner_signal (int signum)
 {
   spinner_tick = 1;
@@ -70,7 +70,7 @@ spinner_signal (int signum)
 void
 spinner_init (void)
 {
-  spinner_wanted = isatty (fileno (stdout));  
+  spinner_wanted = isatty (fileno (stdout));
   if (spinner_wanted == -1)                   
     abort ();                                  
 
@@ -79,6 +79,9 @@ spinner_init (void)
 
   if (signal (SIGALRM, spinner_signal) == SIG_ERR)  abort ();
   alarm (1);
+
+  /* unbufferred output so the spinner will show up */
+  setbuf (stdout, NULL);
 }
 
 
