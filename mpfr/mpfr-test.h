@@ -60,9 +60,6 @@ void x86_fldcw _PROTO ((unsigned short cw));
 
 int mpfr_set_machine_rnd_mode _PROTO ((mp_rnd_t));
 void mpfr_test_init _PROTO ((void));
-double drand48 _PROTO ((void));
-long int lrand48 _PROTO ((void));
-void srand48 _PROTO ((long int));
 mp_limb_t randlimb _PROTO ((void));
 void randseed _PROTO ((unsigned int));
 int ulp _PROTO ((double, double));

@@ -54,8 +54,6 @@ main (int argc, char *argv[])
 
   mpfr_init2 (x, 2);
 
-  randseed (time(NULL));
-  
   nc = (argc > 1) ? atoi(argv[1]) : 53;
   if (nc < 100)
     nc = 100;

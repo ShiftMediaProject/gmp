@@ -193,7 +193,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
       if (MPFR_IS_ZERO (s1))
         {
           mpfr_set_inf (z, 1);
-          return;
+          goto clear_and_return;
         }
       else if (MPFR_GET_EXP (s1) <= -(d-3)/2)
 	/* Branch 1: when s-1 is very small, one
@@ -301,6 +301,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mp_rnd_t rnd_mode)
   mpfr_print_binary (z);
   printf ("\n");
 #endif
+ clear_and_return:
   mpfr_clear (a);
   mpfr_clear (b);
   mpfr_clear (c);

@@ -68,7 +68,11 @@ check_inexact (void)
   for (px=2; px<300; px++)
     {
       mpfr_set_prec (x, px);
-      mpfr_random (x);
+      do
+        {
+          mpfr_random (x);
+        }
+      while (mpfr_cmp_ui (x, 0) == 0);
       u = randlimb ();
       for (py=2; py<300; py++)
 	{

@@ -269,7 +269,6 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
 
-  randseed (time(NULL));
   if (argc==4)
     {   /* tlog x prec rnd */
       check3 (atof(argv[1]), atoi(argv[2]), atoi(argv[3]));

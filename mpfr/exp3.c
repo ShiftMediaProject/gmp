@@ -122,7 +122,7 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   mpfr_t x_copy;
-  int i,k;
+  int i, k;
   mpz_t uk;
   mpfr_t tmp;
   int ttt;
@@ -140,50 +140,58 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   /* we first write x = 1.xxxxxxxxxxxxx
      ----- k bits -- */
   prec_x = __gmpfr_ceil_log2 ((double) (MPFR_PREC(x)) / BITS_PER_MP_LIMB);
-  if (prec_x < 0) prec_x = 0;
+  if (prec_x < 0)
+    prec_x = 0;
+
   logn =  __gmpfr_ceil_log2 ((double) prec_x + MPFR_PREC(y));
-  if (logn < 2) logn = 2;
+  if (logn < 2)
+    logn = 2;
+
   ttt = MPFR_GET_EXP (x);
-  mpfr_init2(x_copy,MPFR_PREC(x));
-  mpfr_set(x_copy,x,GMP_RNDD);
+  mpfr_init2 (x_copy, MPFR_PREC(x));
+  mpfr_set (x_copy, x, GMP_RNDD);
+
   /* we shift to get a number less than 1 */
   if (ttt > 0) 
     {
       shift_x = ttt;
-      mpfr_div_2ui(x_copy, x, ttt, GMP_RNDN);
+      mpfr_div_2ui (x_copy, x, ttt, GMP_RNDN);
       ttt = MPFR_GET_EXP (x_copy);
     }
-  realprec = MPFR_PREC(y)+logn;
+
+  realprec = MPFR_PREC(y) + logn;
   mpz_init (uk);
-  while (!good){      
-    Prec = realprec+shift+2+shift_x;
-    k = __gmpfr_ceil_log2 ((double) Prec / BITS_PER_MP_LIMB);
+  while (!good)
+    {
+      Prec = realprec + shift + 2 + shift_x;
+      k = __gmpfr_ceil_log2 ((double) Prec / BITS_PER_MP_LIMB);
 
-    /* now we have to extract */
-    mpfr_init2 (t, Prec);
-    mpfr_init2 (tmp, Prec);
-    mpfr_set_ui(tmp,1,GMP_RNDN);
-    twopoweri = BITS_PER_MP_LIMB;
-    if (k <= prec_x) iter = k; else iter= prec_x;
-    for(i = 0; i <= iter; i++){
-      mpfr_extract (uk, x_copy, i);
-	if (i)
+      /* now we have to extract */
+      mpfr_init2 (t, Prec);
+      mpfr_init2 (tmp, Prec);
+      mpfr_set_ui (tmp, 1, GMP_RNDN);
+      twopoweri = BITS_PER_MP_LIMB;
+      iter = (k <= prec_x) ? k : prec_x;
+      for (i = 0; i <= iter; i++)
+        {
+          mpfr_extract (uk, x_copy, i);
+          if (i)
 	    mpfr_exp_rational (t, uk, twopoweri - ttt, k  - i + 1);
-	else
-	  {
-	    /* particular case: we have to compute with x/2^., then
-               do squarings (this is faster) */    
-	      mpfr_exp_rational (t, uk, shift + twopoweri - ttt, k+1);
-	    for (loop= 0 ; loop < shift; loop++)
-	      mpfr_mul(t,t,t,GMP_RNDD);
+          else
+            {
+              /* particular case: we have to compute with x/2^., then
+                 do squarings (this is faster) */    
+	      mpfr_exp_rational (t, uk, shift + twopoweri - ttt, k + 1);
+              for (loop = 0 ; loop < shift; loop++)
+                mpfr_mul (t, t, t, GMP_RNDD);
 
-	  }
-	mpfr_mul(tmp,tmp,t,GMP_RNDD); 
-        MPFR_ASSERTN(twopoweri <= INT_MAX/2);
-	twopoweri <<= 1;
-    }
+            }
+          mpfr_mul (tmp, tmp, t, GMP_RNDD); 
+          MPFR_ASSERTN(twopoweri <= INT_MAX/2);
+          twopoweri <<= 1;
+        }
       mpfr_clear (t);
-      for (loop= 0 ; loop < shift_x; loop++)
+      for (loop = 0 ; loop < shift_x; loop++)
 	mpfr_mul (tmp, tmp, tmp, GMP_RNDD);
       if (mpfr_can_round (tmp, realprec, GMP_RNDD, rnd_mode, MPFR_PREC(y)))
 	{
@@ -191,10 +199,10 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 	  good = 1;
 	}
       else
-	realprec += 3*logn;
+	realprec += 3 * logn;
       mpfr_clear (tmp);
   }
   mpz_clear (uk);
-  mpfr_clear(x_copy);
+  mpfr_clear (x_copy);
   return inexact;
 } 

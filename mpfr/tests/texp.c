@@ -169,7 +169,12 @@ check_worst_cases (void)
   mpfr_exp3 (x, x, GMP_RNDD);
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "mpfr_exp_2 and mpfr_exp3 for prec=601\n");
+      fprintf (stderr, "mpfr_exp_2 and mpfr_exp3 differ for prec=601\n");
+      fprintf (stderr, "mpfr_exp_2 gives ");
+      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
+      fprintf (stderr, "\nmpfr_exp_3 gives ");
+      mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
+      fprintf (stderr, "\n");
       exit (1);
     }
 

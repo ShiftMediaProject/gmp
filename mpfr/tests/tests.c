@@ -50,7 +50,6 @@ MA 02111-1307, USA. */
 
 void tests_rand_start _PROTO ((void));
 void tests_rand_end   _PROTO ((void));
-void randseed         _PROTO ((unsigned int));
 
 void
 tests_start_mpfr (void)
@@ -73,12 +72,6 @@ tests_end_mpfr (void)
     {
       mpfr_clear (__mpfr_const_log2);
       __gmpfr_const_log2_prec = 0;
-    }
-
-  if (__gmp_rands_initialized)
-    {
-      gmp_randclear (__gmp_rands);
-      __gmp_rands_initialized = 0;
     }
 
   tests_memory_end ();
@@ -129,6 +122,11 @@ void
 tests_rand_end (void)
 {
   RANDS_CLEAR ();
+  if (__gmp_rands_initialized)
+    {
+      gmp_randclear (__gmp_rands);
+      __gmp_rands_initialized = 0;
+    }
 }
 
 /* initialization function for tests using the hardware floats */
@@ -206,17 +204,6 @@ randlimb (void)
   _gmp_rand (&limb, RANDS, GMP_NUMB_BITS);
   return limb;
 }
-
-void
-randseed (unsigned int s)
-{
-  mpz_t t;
-
-  mpz_init_set_ui (t, s);
-  gmp_randseed (RANDS, t);
-  mpz_clear (t);
-}
-
 
 /* returns ulp(x) for x a 'normal' double-precision number */
 double

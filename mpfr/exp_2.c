@@ -187,7 +187,7 @@ mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     : mpfr_exp2_aux2 (ss, r, q, &exps); /* Brent/Kung method */
 
 #ifdef DEBUG
-  printf("l=%d q=%d (K+l)*q^2=%1.3e\n", l, q, (K+l)*(double)q*q);
+  printf ("l=%d q=%d (K+l)*q^2=%1.3e\n", l, q, (K+l)*(double)q*q);
 #endif
 
   for (k = 0; k < K; k++)
@@ -212,9 +212,6 @@ mpfr_exp_2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 #ifdef DEBUG
     printf("after mult. by 2^n:\n");
     printf("s="); mpfr_print_binary(s); putchar('\n');
-    /* s = 2803359604126772727907*2^711367611 
-=0.100101111111100001101110000000110001111000010111111110011001000001100011
-=0.10010111111110000110111000000011000111011111100001000001100000001001000100100 */
     printf("err=%d bits\n", K);
 #endif
 
@@ -297,7 +294,6 @@ static int
 mpfr_exp2_aux2 (mpz_t s, mpfr_srcptr r, int q, int *exps)
 {
   int expr, l, m, i, sizer, *expR, expt, ql;
-  unsigned long int c;
   mpz_t t, *R, rr, tmp;
   TMP_DECL(marker);
 
@@ -376,18 +372,8 @@ mpfr_exp2_aux2 (mpz_t s, mpfr_srcptr r, int q, int *exps)
       mpz_mul(t, rr, R[m]); /* err(t) <= err(rr) + 2m-1 */
       expr += expR[m];
       mpz_set_ui (tmp, 1);
-      for (i=1, c=1; i<=m; i++)
-        {
-          if (l+i > ~((unsigned long int) 0)/c)
-            {
-              mpz_mul_ui(tmp, tmp, c);
-              c = l+i;
-            }
-          else
-            c *= (unsigned long int) l+i;
-        }
-      if (c != 1)
-        mpz_mul_ui (tmp, tmp, c); /* tmp is exact */
+      for (i=1; i<=m; i++)
+          mpz_mul_ui (tmp, tmp, l + i);
       mpz_fdiv_q(t, t, tmp); /* err(t) <= err(rr) + 2m */
       expr += mpz_normalize(rr, t, ql); /* err_rr(l+1) <= err_rr(l) + 2m+1 */
       ql = q - *exps - mpz_sizeinbase(s, 2) + expr + mpz_sizeinbase(rr, 2);

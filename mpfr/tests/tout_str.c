@@ -137,7 +137,6 @@ main (int argc, char *argv[])
   check (7.02293374921793516813e-84, GMP_RNDN, 10);
 
   /* random tests */
-  randseed (time(NULL));
   for (i=0;i<N;i++)
     {
       do

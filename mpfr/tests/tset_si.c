@@ -29,9 +29,7 @@ MA 02111-1307, USA. */
 #include "mpfr-test.h"
 
 
-/* FIXME: N=1000000 tests as a default is excessive.
-
-   FIXME: Comparing against mpfr_get_si/ui is not ideal, it'd be better to
+/* FIXME: Comparing against mpfr_get_si/ui is not ideal, it'd be better to
    have all tests examine the bits in mpfr_t for what should come out.  */
 
 
@@ -45,27 +43,28 @@ main (int argc, char *argv[])
   
   tests_start_mpfr ();
 
-  mpfr_init2(x, 100);
+  mpfr_init2 (x, 100);
 
-  randseed (time(NULL));
-
-  N = (argc==1) ? 1000000 : atoi(argv[1]);
+  N = (argc==1) ? 500000 : atoi (argv[1]);
 
   for (k = 1; k <= N; k++)
     {
-      z = (long) (randlimb () & LONG_MAX) + LONG_MIN/2;
-      inex = mpfr_set_si(x, z, GMP_RNDZ);
+      z = (long) (randlimb () & LONG_MAX) + LONG_MIN / 2;
+      inex = mpfr_set_si (x, z, GMP_RNDZ);
       d = mpfr_get_si (x, GMP_RNDZ);
-      if (d != z) {
-	fprintf(stderr, "Error in mpfr_set_si: expected %ld got %ld\n", z, d); exit(1);
-      }
+      if (d != z)
+        {
+          fprintf (stderr, "Error in mpfr_set_si: expected %ld got %ld\n",
+                   z, d);
+          exit (1);
+        }
       if (inex)
-      {
-        fprintf(stderr,
-                "Error in mpfr_set_si: inex value incorrect for %ld: %d\n",
-                z, inex);
-        exit(1);
-      }
+        {
+          fprintf (stderr, 
+                   "Error in mpfr_set_si: inex value incorrect for %ld: %d\n",
+                   z, inex);
+          exit (1);
+        }
     }
 
   for (k = 1; k <= N; k++)
@@ -73,16 +72,19 @@ main (int argc, char *argv[])
       zl = randlimb ();
       inex = mpfr_set_ui (x, zl, GMP_RNDZ);
       dl = mpfr_get_ui (x, GMP_RNDZ);
-      if (dl != zl) {
-	fprintf(stderr, "Error in mpfr_set_ui: expected %lu got %lu\n", zl, dl); exit(1);
-      }
+      if (dl != zl)
+        {
+          fprintf (stderr, "Error in mpfr_set_ui: expected %lu got %lu\n",
+                   zl, dl);
+          exit (1);
+        }
       if (inex)
-      {
-        fprintf(stderr,
-                "Error in mpfr_set_ui: inex value incorrect for %lu: %d\n",
-                zl, inex);
-        exit(1);
-      }
+        {
+          fprintf (stderr,
+                   "Error in mpfr_set_ui: inex value incorrect for %lu: %d\n",
+                   zl, inex);
+          exit (1);
+        }
     }
 
   mpfr_set_prec (x, 2);
@@ -100,38 +102,40 @@ main (int argc, char *argv[])
     }
 
   mpfr_set_prec (x, 3);
-  inex = mpfr_set_si(x, 77617, GMP_RNDD); /* should be 65536 */
+  inex = mpfr_set_si (x, 77617, GMP_RNDD); /* should be 65536 */
   if (MPFR_MANT(x)[0] != ((mp_limb_t)1 << (mp_bits_per_limb-1))
       || inex >= 0)
-  {
-    fprintf(stderr, "Error in mpfr_set_si(x:3, 77617, GMP_RNDD)\n");
-    mpfr_print_binary(x); puts ("");
-    exit(1);
-  }
-  inex = mpfr_set_ui(x, 77617, GMP_RNDD); /* should be 65536 */
+    {
+      fprintf (stderr, "Error in mpfr_set_si(x:3, 77617, GMP_RNDD)\n");
+      mpfr_print_binary (x);
+      puts ("");
+      exit (1);
+    }
+  inex = mpfr_set_ui (x, 77617, GMP_RNDD); /* should be 65536 */
   if (MPFR_MANT(x)[0] != ((mp_limb_t)1 << (mp_bits_per_limb-1))
       || inex >= 0)
-  {
-    fprintf(stderr, "Error in mpfr_set_ui(x:3, 77617, GMP_RNDD)\n");
-    mpfr_print_binary(x); puts ("");
-    exit(1);
-  }
+    {
+      fprintf (stderr, "Error in mpfr_set_ui(x:3, 77617, GMP_RNDD)\n");
+      mpfr_print_binary (x);
+      puts ("");
+      exit (1);
+    }
 
-  mpfr_set_prec(x, 2);
-  inex = mpfr_set_si(x, 33096, GMP_RNDU);
+  mpfr_set_prec (x, 2);
+  inex = mpfr_set_si (x, 33096, GMP_RNDU);
   if (mpfr_get_si (x, GMP_RNDZ) != 49152 || inex <= 0)
-  {
-    fprintf(stderr, "Error in mpfr_set_si, expected 49152, got %ld, inex %d\n",
-            mpfr_get_si (x, GMP_RNDZ), inex);
-    exit(1);
-  }
-  inex = mpfr_set_ui(x, 33096, GMP_RNDU);
+    {
+    fprintf (stderr, "Error in mpfr_set_si, exp. 49152, got %ld, inex %d\n",
+             mpfr_get_si (x, GMP_RNDZ), inex);
+    exit (1);
+    }
+  inex = mpfr_set_ui (x, 33096, GMP_RNDU);
   if (mpfr_get_si (x, GMP_RNDZ) != 49152)
-  {
-    fprintf(stderr, "Error in mpfr_set_ui, expected 49152, got %ld, inex %d\n",
-	    mpfr_get_si (x, GMP_RNDZ), inex);
-    exit(1);
-  }
+    {
+      fprintf (stderr, "Error in mpfr_set_ui, exp. 49152, got %ld, inex %d\n",
+               mpfr_get_si (x, GMP_RNDZ), inex);
+      exit (1);
+    }
 
   mpfr_set_si (x, -1, GMP_RNDN);
   mpfr_set_ui (x, 0, GMP_RNDN);
@@ -167,7 +171,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  mpfr_clear(x); 
+  mpfr_clear (x);
 
   tests_end_mpfr ();
   return 0;

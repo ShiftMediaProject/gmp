@@ -161,8 +161,6 @@ main (int argc, char* argv[])
 {
    tests_start_mpfr ();
 
-   randseed (time(NULL));
-
    check_nans ();
 
    if (argc == 3) /* tagm N p : N calculus with precision p*/

@@ -1457,8 +1457,10 @@ Equivalent to @code{mpfr_nexttoward} where @var{y} is plus infinity.
 Equivalent to @code{mpfr_nexttoward} where @var{y} is minus infinity.
 @end deftypefun
 
-@deftypefun void mpfr_urandomb (mpfr_t @var{rop}, gmp_randstate_t @var{state})
+@deftypefun int mpfr_urandomb (mpfr_t @var{rop}, gmp_randstate_t @var{state})
 Generate a uniformly distributed random float in the interval 0 <= X < 1.
+Return 0, unless the exponent is not in the current exponent range, in
+which case @var{rop} is set to NaN and 1 is returned.
 @end deftypefun
 
 @deftypefun void mpfr_random (mpfr_t @var{rop})

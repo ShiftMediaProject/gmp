@@ -362,7 +362,11 @@ check_inexact (void)
       for (pu=2; pu<MAX_PREC; pu++)
 	{
 	  mpfr_set_prec (u, pu);
-	  mpfr_random (u);
+          do
+            {
+              mpfr_random (u);
+            }
+          while (mpfr_cmp_ui (u, 0) == 0);
 	  for (py=2; py<MAX_PREC; py++)
 	    {
 	      mpfr_set_prec (y, py);

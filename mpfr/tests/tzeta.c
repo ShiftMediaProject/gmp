@@ -100,6 +100,8 @@ main (int argc, char *argv[])
   mp_prec_t prec;
   mp_rnd_t rnd_mode;
 
+  tests_start_mpfr ();
+
   if (argc != 1 && argc != 4)
     {
       fprintf (stderr, "Usage: tzeta\n");
@@ -239,5 +241,6 @@ main (int argc, char *argv[])
   mpfr_clear (y);
   mpfr_clear (z);
 
+  tests_end_mpfr ();
   return 0;
 }

@@ -45,7 +45,6 @@ main (void)
   mpfr_set_prec (x, 100);
   mpfr_set_f (x, y, GMP_RNDN);
 
-  randseed (time(NULL));
   mpf_random2(y, 10, 0); 
   mpfr_set_f(x, y, randlimb () & 3);
 

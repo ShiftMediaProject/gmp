@@ -170,7 +170,7 @@ int mpfr_set_ui _PROTO ((mpfr_ptr, unsigned long, mp_rnd_t));
 void mpfr_print_binary _PROTO ((mpfr_srcptr)); 
 void mpfr_random _PROTO ((mpfr_ptr));
 void mpfr_random2 _PROTO ((mpfr_ptr, mp_size_t, mp_exp_t)); 
-void mpfr_urandomb _PROTO ((mpfr_ptr, gmp_randstate_t)); 
+int mpfr_urandomb _PROTO ((mpfr_ptr, gmp_randstate_t));
 void mpfr_clear _PROTO ((mpfr_ptr)); 
 void mpfr_nextabove _PROTO ((mpfr_ptr));
 void mpfr_nextbelow _PROTO ((mpfr_ptr));
