@@ -74,7 +74,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
   TMP_MARK (marker);
   usize = u->_mp_size;
   uexp = u->_mp_exp;
-  prec = u->_mp_prec;
+  prec = u->_mp_prec + 1;
 
   if (base >= 0)
     {
@@ -92,10 +92,19 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
      Also, if 0 digits were requested, give *exactly* as many digits
      as can be accurately represented.  */
   {
-    size_t max_digits = 2 + (size_t) (((prec - 1) * BITS_PER_MP_LIMB)
+    size_t max_digits = 2 + (size_t) (((prec - 2) * BITS_PER_MP_LIMB)
 				      * __mp_bases[base].chars_per_bit_exactly);
     if (n_digits == 0 || n_digits > max_digits)
       n_digits = max_digits;
+#if 0
+/* This seems to work, but check it better before enabling it.  */
+    else
+      /* Limit the computation precision if only a limited digits are
+	 desired.  We could probably decrease both this, and avoid the +1
+	 for setting prec above.  */
+      prec = 2 + (mp_size_t)
+	(n_digits / (BITS_PER_MP_LIMB * __mp_bases[base].chars_per_bit_exactly));
+#endif
   }
 
   if (digit_ptr == 0)
@@ -141,7 +150,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 		     * __mp_bases[base].chars_per_bit_exactly);
       exp_in_base += 1;
 
-      ralloc = uexp + 2;
+      ralloc = (prec + 1) * 2;
       rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
       tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 
@@ -153,7 +162,14 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 	  mpn_mul_n (tp, rp, rp, rsize);
 	  rsize = 2 * rsize;
 	  rsize -= tp[rsize - 1] == 0;
-	  swapptr (rp, tp);
+
+          if (rsize > prec)
+	    {
+	      MPN_COPY (rp, tp + rsize - prec, prec + 1);
+	      rsize = prec;
+	    }
+	  else
+	    swapptr (rp, tp);
 
 	  if (((exp_in_base >> i) & 1) != 0)
 	    {
@@ -217,9 +233,9 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 
       {
 	mp_ptr qp;
-	qp = (mp_ptr) TMP_ALLOC ((prec + 1) * BYTES_PER_MP_LIMB);
-	mpn_divrem (qp, prec + 1 - (usize - rsize), up, usize, rp, rsize);
-	rsize = prec + 1;
+	qp = (mp_ptr) TMP_ALLOC (prec * BYTES_PER_MP_LIMB);
+	mpn_divrem (qp, prec - (usize - rsize), up, usize, rp, rsize);
+	rsize = prec;
 	rp = qp;
       }
     }
@@ -240,7 +256,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 
       if (exp_in_base != 0)
 	{
-	  ralloc = uexp + 2;
+	  ralloc = (prec + 1) * 2;
 	  rp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 	  tp = (mp_ptr) TMP_ALLOC (ralloc * BYTES_PER_MP_LIMB);
 
@@ -252,7 +268,13 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 	      mpn_mul_n (tp, rp, rp, rsize);
 	      rsize = 2 * rsize;
 	      rsize -= tp[rsize - 1] == 0;
-	      swapptr (rp, tp);
+	      if (rsize > prec)
+		{
+		  MPN_COPY (rp, tp + rsize - prec, prec + 1);
+		  rsize = prec;
+		}
+	      else
+		swapptr (rp, tp);
 
 	      if (((exp_in_base >> i) & 1) != 0)
 		{
