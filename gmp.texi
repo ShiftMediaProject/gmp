@@ -1923,10 +1923,10 @@ The function @code{mpz_mod_ui} returns the remainder.
 Set @var{q} to @var{n}/@var{d}.  This function produces correct results only
 when it is known in advance that @var{d} divides @var{n}.
 
-Since mpz_divexact is much faster than any of the other routines that produce
-the quotient (@pxref{References} Jebelean), it is the best choice for instances
-in which exact division is known to occur, such as reducing a rational to
-lowest terms.
+Since @code{mpz_divexact} is much faster than any of the other routines that
+produce the quotient (@pxref{References} Jebelean), it is the best choice for
+instances in which exact division is known to occur, such as reducing a
+rational to lowest terms.
 @end deftypefun
 
 @deftypefun void mpz_tdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
@@ -2156,13 +2156,13 @@ odd and must be positive.
 @deftypefunx int mpz_kronecker_ui (mpz_t @var{a}, unsigned long @var{b});
 @cindex Kronecker symbol functions
 @tex
-Calculate the value of the Kronecker/Jacobi symbol $\left(a \over b\right)$,
-with the Kronecker extension $\left(a \over 2\right) = \left(2 \over a\right)$
-when $a$ odd, or $\left(a \over 2\right) = 0$ when $a$ even.
+Calculate the value of the Jacobi symbol $\left(a \over b\right)$, with the
+Kronecker extension $\left(a \over 2\right) = \left(2 \over a\right)$ when $a$
+odd, or $\left(a \over 2\right) = 0$ when $a$ even.
 @end tex
 @ifnottex
-Calculate the value of the Kronecker/Jacobi symbol (@var{a}/@var{b}), with the
-Kronecker extension (a/2)=(2/a) when a odd, or (a/2)=0 when a even.
+Calculate the value of the Jacobi symbol (@var{a}/@var{b}), with the Kronecker
+extension (a/2)=(2/a) when a odd, or (a/2)=0 when a even.
 @end ifnottex
 All values of @var{a} and @var{b} give a well-defined result.  See Henri
 Cohen, section 1.4.2, for more information (@pxref{References}).  See also the
@@ -2192,12 +2192,12 @@ $\left({n}\atop{k}\right)$
 and store the result in @var{rop}.  Negative values of @var{n} are supported
 by @code{mpz_bin_ui}, using the identity
 @ifnottex
-bin(-n,k) = (-1)^k * bin(n+k-1,k)
+bin(-n,k) = (-1)^k * bin(n+k-1,k),
 @end ifnottex
 @tex
-$\left({-n}\atop{k}\right) = (-1)^k \left({n+k-1}\atop{k}\right)$
+$\left({-n}\atop{k}\right) = (-1)^k \left({n+k-1}\atop{k}\right)$,
 @end tex
-(see Knuth volume 1 section 1.2.6 part G).
+see Knuth volume 1 section 1.2.6 part G.
 @end deftypefun
 
 @deftypefun void mpz_fib_ui (mpz_t @var{rop}, unsigned long int @var{n})
