@@ -225,7 +225,8 @@ typedef unsigned long  stck_t;   /* dummy */
 #endif
 #define STCK_PERIOD      (1.0 / 4096e6)   /* 2^-12 microseconds */
 
-#if HAVE_SYSSGI
+/* Cray vector systems have syssgi(), but not mmap(). */
+#if HAVE_SYSSGI && HAVE_MMAP
 static const int  have_sgi = 1;
 #else
 static const int  have_sgi = 0;
@@ -625,7 +626,7 @@ volatile unsigned  *sgi_addr;
 int
 sgi_works_p (void)
 {
-#if HAVE_SYSSGI
+#if HAVE_SYSSGI && HAVE_MMAP
   static int  result = -1;
 
   size_t          pagesize, offset;
@@ -702,7 +703,7 @@ sgi_works_p (void)
   result = 1;
   return result;
 
-#else /* ! HAVE_SYSSGI */
+#else /* ! (HAVE_SYSSGI && HAVE_MMAP) */
   return 0;
 #endif
 }
