@@ -126,6 +126,7 @@ double speed_modlimb_invert_mul1 _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_loop _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_cond _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_arith _PROTO ((struct speed_params *s));
+double speed_find_a _PROTO ((struct speed_params *s));
 double speed_gmp_allocate_free _PROTO ((struct speed_params *s));
 double speed_gmp_allocate_reallocate_free _PROTO ((struct speed_params *s));
 
@@ -152,6 +153,7 @@ double speed_mpn_divrem_1cf _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_2 _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
+double speed_mpn_gcd_binary _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext _PROTO ((struct speed_params *s));
 double speed_mpn_get_str _PROTO ((struct speed_params *s));
 double speed_mpn_hamdist _PROTO ((struct speed_params *s));
@@ -243,6 +245,9 @@ extern int  speed_option_addrs;
 extern int  speed_option_verbose;
 void speed_option_set _PROTO((const char *s));
 
+mp_size_t mpn_gcd _PROTO ((mp_ptr gp,
+                           mp_ptr up, mp_size_t usize,
+                           mp_ptr vp, mp_size_t vsize));
 void mpn_toom3_mul_n_open _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t,
                                    mp_ptr));
 void mpn_toom3_sqr_n_open _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
@@ -919,7 +924,8 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
     MPN_COPY (px, pieces==1 ? s->xp : s->xp_block, psize);      \
     MPN_COPY (py, pieces==1 ? s->yp : s->yp_block, psize);      \
                                                                 \
-    /* y must be odd, x must have at least as many bits as y */ \
+    /* y must be odd, x must have at least as many bits as y,   \
+       high limbs must be non-zero */                           \
     for (j = 0; j < pieces; j++)                                \
       {                                                         \
         mp_ptr  x = px+j*s->size;                               \
@@ -1168,5 +1174,50 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
     TMP_FREE (marker);                                                       \
     return t;                                                                \
   }  
+
+
+/* Run an accel gcd find_a() function over various data values.  A set of
+   values is used in case some run particularly fast or slow.  The size
+   parameter is ignored, the amount of data tested is fixed.  */
+
+#define SPEED_ROUTINE_MPN_GCD_FINDA(function)                   \
+  {                                                             \
+    unsigned  i, j;                                             \
+    mp_limb_t cp[SPEED_BLOCK_SIZE][2];                          \
+    double    t;                                                \
+    TMP_DECL (marker);                                          \
+                                                                \
+    TMP_MARK (marker);                                          \
+                                                                \
+    /* low must be odd, high must be non-zero */                \
+    for (i = 0; i < SPEED_BLOCK_SIZE; i++)                      \
+      {                                                         \
+        cp[i][0] = s->xp_block[i] | 1;                          \
+        cp[i][1] = s->yp_block[i] + (s->yp_block[i] == 0);      \
+      }                                                         \
+                                                                \
+    speed_operand_src (s, &cp[0][0], 2*SPEED_BLOCK_SIZE);       \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      {                                                         \
+        j = SPEED_BLOCK_SIZE;                                   \
+        do                                                      \
+          {                                                     \
+            function (cp[j-1]);                                 \
+          }                                                     \
+        while (--j != 0);                                       \
+      }                                                         \
+    while (--i != 0);                                           \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+                                                                \
+    s->time_divisor = SPEED_BLOCK_SIZE;                         \
+    return t;                                                   \
+  }  
+
 
 #endif

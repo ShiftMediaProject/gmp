@@ -45,7 +45,8 @@ LDADD = $(DEPENDENCIES)
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
 libspeed_la_SOURCES = \
-  common.c freq.c modlinv.c mul_n_mpn.c mul_n_open.c noop.c time.c
+  common.c freq.c gcd_bin.c gcd_finda_gen.c modlinv.c \
+  mul_n_mpn.c mul_n_open.c noop.c time.c
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la -lm
 

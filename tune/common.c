@@ -810,6 +810,11 @@ speed_mpn_gcd (struct speed_params *s)
   SPEED_ROUTINE_MPN_GCD (mpn_gcd);
 }
 double
+speed_mpn_gcd_binary (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCD (mpn_gcd_binary);
+}
+double
 speed_mpn_gcdext (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCDEXT (mpn_gcdext);

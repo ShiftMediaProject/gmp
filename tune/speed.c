@@ -166,10 +166,12 @@ const struct routine_t {
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
-  { "mpn_gcdext",        speed_mpn_gcdext           },
   { "mpn_gcd",           speed_mpn_gcd              },
-  { "mpn_gcd_1",         speed_mpn_gcd_1, FLAG_R_OPTIONAL },
+  { "mpn_gcd_binary",    speed_mpn_gcd_binary       },
+  { "find_a",            speed_find_a, FLAG_NODATA  },
 
+  { "mpn_gcd_1",         speed_mpn_gcd_1, FLAG_R_OPTIONAL },
+  { "mpn_gcdext",        speed_mpn_gcdext           },
   { "mpn_jacobi_base",   speed_mpn_jacobi_base      },
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R_OPTIONAL },
