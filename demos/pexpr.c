@@ -118,7 +118,7 @@ char *newline = "";
 #define sigaltstack sigstack
 #endif
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__DJGPP__)
 void
 setup_error_handler ()
 {
@@ -171,7 +171,7 @@ setup_error_handler ()
   sigaction (SIGBUS, &act, 0);
   sigaction (SIGFPE, &act, 0);
 }
-#endif /* ! _WIN32 */
+#endif /* ! _WIN32 && ! __DJGPP__ */
 
 main (int argc, char **argv)
 {
@@ -182,7 +182,7 @@ main (int argc, char **argv)
   char *str;
   int base = 10;
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__DJGPP__)
   setup_error_handler ();
 #endif
 
