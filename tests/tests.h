@@ -367,7 +367,14 @@ void refmpz_pow_ui __GMP_PROTO ((mpz_ptr w, mpz_srcptr b, unsigned long e));
 class
 ostringstream : public std::ostrstream {
  public:
-  string str() { return string (ostrstream::str ()); }
+  string str() {
+    int  pcount = ostrstream::pcount ();
+    char *s = (char *) (*__gmp_allocate_func) (pcount + 1);
+    memcpy (s, ostrstream::str(), pcount);
+    s[pcount] = '\0';
+    string ret = string(s);
+    (*__gmp_free_func) (s, pcount + 1);
+    return ret; }
 };
 class
 istringstream : public std::istrstream {
