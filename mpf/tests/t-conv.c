@@ -108,10 +108,10 @@ main (int argc, char **argv)
 oo (mpf_t x)
 {
   int i;
-  printf (" exp = %d\n", x->_mp_exp);
+  printf (" exp = %ld\n", x->_mp_exp);
   printf ("size = %d\n", x->_mp_size);
   for (i = ABS (x->_mp_size) - 1; i >= 0; i--)
-    printf ("%08X ", x->_mp_d[i]);
+    printf ("%08lX ", x->_mp_d[i]);
   printf ("\n");
   mpf_dump (x);
 }
