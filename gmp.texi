@@ -1341,6 +1341,18 @@ assembled by the Ultrix assembler.
 All declarations needed to use GMP are collected in the include file
 @file{gmp.h}.  It is designed to work with both C and C++ compilers.
 
+@example
+#include <gmp.h>
+@end example
+
+Note however that prototypes for GMP functions with @code{FILE *} parameters
+are only provided if @code{<stdio.h>} is included too.
+
+@example
+#include <stdio.h>
+#include <gmp.h>
+@end example
+
 @strong{Using functions, macros, data types, etc.@: not documented in this
 manual is strongly discouraged.  If you do so your application is guaranteed
 to be incompatible with future versions of GMP.}
