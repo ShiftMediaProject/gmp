@@ -407,10 +407,6 @@ For some configurations specific compiler flags are set based on the target
 CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
 choose the best flags.
 
-@c For some configurations specific compiler flags are set based on the target
-@c CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
-@c choose the best flags.
-
 @item @option{--disable-alloca}
 
 By default, GMP allocates temporary workspace using @code{alloca} if that
@@ -429,16 +425,15 @@ might be able to increase the stack space available to programs.
 
 @item @option{--enable-mpbsd}
 
-
 The Berkley MP compatibility library (@file{libmp.a}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
 @item Demonstration Programs
 
-The @file{demos} subdirectory has some sample programs using GMP.  These aren't
-built or installed, but there's @command{make} rules available to compile
-them.  For instance, @samp{make pexpr} and then @samp{./pexpr 68^975+10}.
+The @file{demos} subdirectory has some sample programs using GMP.  These
+aren't built or installed, but there's a @file{Makefile} with rules for them.
+For instance, @samp{make pexpr} and then @samp{./pexpr 68^975+10}.
 
 @item Documentation
 
