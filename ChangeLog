@@ -18,6 +18,21 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-23  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (*sparc*-*-*): Test sizeof(long)==4 or 8 for ABIs, to
+	get the right mode when the user sets the CFLAGS.
+	(testlist): Introduce "any_<abi>_testlist" to apply to all compilers.
+
+	* demos/perl/typemap (MPZ_ASSUME, MPQ_ASSUME, MPF_ASSUME): Remove
+	output rules, these are only meant for inputs.
+	(MPZ_MUTATE): Remove, not used since changes for magic.
+
+	* demos/perl/GMP.xs (mpz_class_hv, mpq_class_hv, mpf_class_hv): New
+	variables, initialized in BOOT.
+	* demos/perl/GMP.xs, demos/perl/typemap: Use them and explicit
+	sv_bless, to save a gv_stashpv for every new object.
+
 2003-12-22  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/alpha/mode1o.c, mpn/alpha/dive_1.c: Moved from ev5/mode1o.c and
