@@ -445,7 +445,7 @@ DJGPP with @command{stubedit} or @code{_stklen}.
 
 By default multiplications are done using Karatsuba and 3-way Toom-Cook
 algorithms, but a Fermat FFT can be enabled, for use on large to very large
-operands.  Currently the FFT is recommended only for knowledgable users who
+operands.  Currently the FFT is recommended only for knowledgeable users who
 check the algorithm thresholds for their CPU.
 
 @item @option{--enable-mpbsd}
@@ -460,7 +460,7 @@ Various assembler versions of mpn subroutines are provided, and, for a given
 CPU target, a search is made though a path to choose a version of each.  For
 example @samp{sparcv8} has path @samp{"sparc32/v8 sparc32 generic"}, which
 means it looks first for v8 code, falls back on plain sparc32, and finally
-falls back on generic C.  Knowledgable users with special requirements can
+falls back on generic C.  Knowledgeable users with special requirements can
 specify a path with @samp{MPN_PATH="dir list"}.  This will normally be
 unnecessary because all sensible paths should be available under one or other
 CPU target.
