@@ -25,13 +25,15 @@
 
 package GMP;
 
+require Symbol;
 require Exporter;
 require DynaLoader;
 @ISA = qw(Exporter DynaLoader);
 
 @EXPORT = qw();
 @EXPORT_OK = qw(version);
-%EXPORT_TAGS = ('all' => [qw(get_d get_si get_str integer_p sgn)],
+%EXPORT_TAGS = ('all' => [qw(get_d get_si get_str integer_p printf sgn
+                             sprintf)],
 		'constants' => [()]);
 Exporter::export_ok_tags('all');
 
@@ -39,34 +41,76 @@ $VERSION = '1';
 bootstrap GMP $VERSION;
 
 
-sub get_str {
-  my ($base, $str, $exp) = get_str_internal (@_);
-  if (! defined $exp) {
-    return $str;
-  } else {
-    return GMP::mpf_get_str_convert ($base, $str, $exp);
+# The format string is cut up into "%" specifiers so GMP types can be
+# passed to GMP::sprintf_internal.  Any "*"s are interpolated before
+# calling sprintf_internal, which saves worrying about variable
+# argument lists there.
+#
+# Because sprintf_internal is only called after the conversion and
+# operand have been checked there won't be any crashes from a bad
+# format string.
+#
+sub sprintf {
+  my $fmt = shift;
+  my $out = '';
+  my ($pre, $dummy, $pat, $rest);
+
+  while (($pre, $dummy, $pat, $rest) = ($fmt =~ /^((%%|[^%])*)(%[- +#.*hlLqv\d]*[bcdfeEgGinopsuxX])(.*)$/s)) {
+
+    $out .= $pre;
+
+    my $pat2 = $pat;    # $pat with "*"s expanded
+    my @params = ();    # arguments per "*"s
+    while ($pat2 =~ /[*]/) {
+      my $arg = shift;
+      $pat2 =~ s/[*]/$arg/;
+      push @params, $arg;
+    }
+
+    if (UNIVERSAL::isa($_[0],"GMP::Mpz")) {
+      if ($pat2 !~ /[dioxX]$/) {
+	die "GMP::sprintf: unsupported output format for mpz: $pat2\n";
+      }
+      $pat2 =~ s/(.)$/Z$1/;
+      $out .= sprintf_internal ($pat2, shift);
+
+    } elsif (UNIVERSAL::isa($_[0],"GMP::Mpq")) {
+      if ($pat2 !~ /[dioxX]$/) {
+	die "GMP::sprintf: unsupported output format for mpq: $pat2\n";
+      }
+      $pat2 =~ s/(.)$/Q$1/;
+      $out .= sprintf_internal ($pat2, shift);
+
+    } elsif (UNIVERSAL::isa($_[0],"GMP::Mpf")) {
+      if ($pat2 !~ /[eEfgG]$/) {
+	die "GMP::sprintf: unsupported output format for mpf: $pat2\n";
+      }
+      $pat2 =~ s/(.)$/F$1/;
+      $out .= sprintf_internal ($pat2, shift);
+
+    } elsif ($pat =~ /n$/) {
+      # do it this way so h, l or V type modifiers are respected, and use a
+      # dummy variable to avoid a warning about discarding the value
+      my $dummy = sprintf "%s$pat", $out, $_[0];
+      shift;
+
+    } else {
+      $out .= sprintf $pat, @params, shift;
+    }
+
+    $fmt = $rest;
   }
+  $out .= $fmt;
+  return $out;
 }
 
-sub mpf_get_str_convert {
-    my ($base, $str, $exp) = @_;
-
-    my $echar = ($base < -10 || $base > 10 ? '@'
-		 : $base < 0               ? 'E'
-		 :                           'e');
-
-    if ($str eq '')   { return '0'; }
-
-    my $sign = '';
-    if ($str =~ /^-/) { $sign = '-'; $str = substr($str,1); }
-
-    my $len = length($str);
-    if ($exp > $len)     { $exp -= $len; $str .= $echar . $exp; }
-    elsif ($len == $exp) { ; }
-    elsif ($exp == 0)    { $str = '0.' . $str; }
-    elsif ($exp >= 0)    { substr($str,$exp,0) = '.'; }
-    else                 { $str = "0." . $str . $echar . $exp; }
-    return $sign . $str;
+sub printf {
+  if (ref($_[0]) eq 'GLOB') {
+    my $h = Symbol::qualify_to_ref(shift, caller);
+    print $h GMP::sprintf(@_);
+  } else {
+    print STDOUT GMP::sprintf(@_);
+  }
 }
 
 1;
@@ -145,17 +189,18 @@ sizeinbase, sqrtrem, tdiv, tdiv_2exp, tstbit
 C<cdiv>, C<fdiv> and C<tdiv> and their C<2exp> variants return a
 quotient/remainder pair.  C<fib2> returns a pair F[n] and F[n-1], similarly
 C<lucnum2>.  C<gcd> and C<lcm> accept a variable number of arguments (one or
-more).  C<gcdext> returns a triplet of gcd and two cofactors.  C<invert>
-returns the inverse, or undef if it doesn't exist.  C<remove> returns a
-remainder/multiplicty pair.  C<root> returns the nth root, and C<roote>
-returns a root/bool pair, the bool indicating whether the root is exact.
-C<sqrtrem> returns a root/remainder pair.  An example C<gcdext> would be
+more).  C<gcdext> returns a triplet of gcd and two cofactors, for example
 
     use GMP::Mpz qw(:all);
     $a = 7257;
     $b = 10701;
     ($g, $x, $y) = gcdext ($a, $b);
     print "gcd($a,$b) is $g, and $g == $a*$x + $b*$y\n";
+
+C<invert> returns the inverse, or undef if it doesn't exist.
+C<remove> returns a remainder/multiplicty pair.  C<root> returns the
+nth root, and C<roote> returns a root/bool pair, the bool indicating
+whether the root is exact.  C<sqrtrem> returns a root/remainder pair.
 
 C<clrbit> and C<setbit> expect a variable which they can modify, it doesn't
 make sense to pass a literal constant.  Only the given variable is modified,
@@ -259,14 +304,12 @@ corresponding GMP mpf functions,
 
 =item
 
-ceil, floor, get_default_prec, get_prec, mpf_eq, mpf_get_str,
-set_default_prec, set_prec, trunc
+ceil, floor, get_default_prec, get_prec, mpf_eq, set_default_prec, set_prec,
+trunc
 
 =back
 
 C<mpf_eq> is so named to avoid clashing with the perl C<eq> operator.
-C<mpf_get_str> is a raw access to that function, returning a string/exponent
-pair, as opposed to GMP::get_str described below.
 
 C<set_prec> expects a variable which it can modify, it doesn't make sense to
 pass a literal constant.  Only the given variable is modified, if other
@@ -281,15 +324,10 @@ binary operator then the precision of the first is used.  For example,
     $b = mpf(2.0, 500);
     $c = $a + $b;         # gives 100 bits precision
 
-Mpf to string conversion via "" or the usual string contexts is in decimal
-and produces all significant digits of the value.  Fixed point or scientific
-format is used according to the value.  For example,
-
-    0.15e-1
-    0.15
-    1.5
-    15
-    15e1
+Mpf to string conversion via "" or the usual string contexts uses C<$#> the
+same as normal float to string conversions, or defaults to C<%.g> if C<$#>
+is not defined.  C<%.g> means all significant digits in the selected
+precision.
 
 =head2 GMP class
 
@@ -299,30 +337,60 @@ The following functions are available in the GMP class,
 
 =item
 
-fits_slong_p, get_d, get_si, get_str, integer_p, sgn, version
+fits_slong_p, get_d, get_si, get_str, integer_p, printf, sgn, sprintf,
+version
 
 =back
 
 C<get_str> accepts an integer, string, float, mpz, mpq or mpf.  The base is
 specified by an optional second parameter, or defaults to decimal.  A
-negative base means upper case, as per the C functions.  For float, float
-strings or mpf the format is as per the "" string conversion described for
-GMP::Mpf above.  When the base is 11 or more an @ is used to mark the
-exponent.  For example,
+negative base means upper case, as per the C functions.  For integer,
+integer string, mpz or mpq operands a string is returned.  For example,
 
     use GMP qw(:all);
     use GMP::Mpq qw(:all);
+    print get_str(mpq(-5,8)),"\n";      # -5/8
+    print get_str(255,16),"\n";         # ff
+
+For float, float strings or mpf operands C<get_str> accepts an optional
+third parameter being how many digits to produce, which defaults to 0
+meaning all digits.  No more digits than can be accurately represented by
+the float precision are ever produced though.  A string/exponent pair is
+returned, as per the C mpf_get_str function.  For example,
+
+    use GMP qw(:all);
     use GMP::Mpf qw(:all);
-    print get_str(mpq(-5,8)),"\n";       # -5/8
-    print get_str(255,16),"\n";          # ff
-    print get_str(1.625,-16),"\n";       # 1.A
-    print get_str(mpf(0x1000),16),"\n";  # 1@3
+    ($s, $e) = get_str(111.111111111, 10, 4);
+    printf ".$se$e\n";                  # .1111e3
+    ($s, $e) = get_str(1.625, 10);
+    print "0.$s*10^$e\n";               # 0.1625*10^1
+    ($s, $e) = get_str(mpf(2)**20, 16);
+    printf ".%s@%x\n", $s, $e;          # .1@14
+
+C<printf> and C<sprintf> allow formatted output of GMP types.  mpz and mpq
+values can be used with integer conversions (d, o, x, X) and mpf with float
+conversions (f, e, E, g, G).  All the standard perl printf features are
+available too.  For example,
+
+    use GMP::Mpz qw(mpz);
+    use GMP::Mpf qw(mpf);
+    GMP::printf ("%d %d %s", 123, mpz(2)**128, 'foo');
+    GMP::printf STDERR "%.40f", mpf(1.234);
+
+In perl 5.6.1 it doesn't seem to work to export C<printf>, the plain builtin
+C<printf> is reached unless calls are C<&printf()> style.  Explicit use of
+C<GMP::printf> is suggested.  C<sprintf> doesn't suffer this problem.
+
+    use GMP qw(sprintf);
+    use GMP::Mpq qw(mpq);
+    $s = sprintf "%x", mpq(15,16);
 
 C<version> is not exported by default or by tag :all, calling it as
 C<GMP::version()> is recommended.  It returns the GMP library version
-string, which is not to be confused with the module version number.  The
-other functions behave as per the corresponding GMP routines, and accept any
-integer, string, float, mpz, mpq or mpf.  For example,
+string, which is not to be confused with the module version number.
+
+The other GMP module functions behave as per the corresponding GMP routines,
+and accept any integer, string, float, mpz, mpq or mpf.  For example,
 
     use GMP qw(:all);
     use GMP::Mpz qw(mpz);
@@ -361,7 +429,7 @@ generator,
 
 A randstate can be seeded with an integer or mpz, using the C<seed> method.
 /dev/random might be a good source of randomness, or time() or
-Time::HiRes::time() may be adequate, depending on the application.
+Time::HiRes::time() might be adequate, depending on the application.
 
     $r->seed(time()));
 
@@ -403,7 +471,7 @@ truncation.  For example,
     $p = mpz(3) + 1.25;       # not allowed
     $p = mpz(3) + mpz(1.25);  # allowed, explicit truncation
 
-Comparisons, however, allow any combination of operands and are always done
+Comparisons, however, accept any combination of operands and are always done
 exactly.  For example,
 
     use GMP::Mpz (mpz);
@@ -419,9 +487,9 @@ mpq or mpf is applied to it.  For example,
 
 =head2 Overloading
 
-Remember the rule for binary operators in the C<overload> mechanism is that
-if both operands are class objects then the method from the first is used.
-This determines the result type when mixing GMP classes.  For example,
+The rule for binary operators in the C<overload> mechanism is that if both
+operands are class objects then the method from the first is used.  This
+determines the result type when mixing GMP classes.  For example,
 
     use GMP::Mpz (mpz);
     use GMP::Mpq (mpq);
@@ -460,9 +528,9 @@ BEGIN blocks can be used to set that precision while the code is parsed.
 For example,
 
     use GMP::Mpf qw(:constants);
-    BEGIN { GMP::Mpf::set_default_prec (256); }
+    BEGIN { GMP::Mpf::set_default_prec(256); }
     print 1/3;
-    BEGIN { GMP::Mpf::set_default_prec (64); }
+    BEGIN { GMP::Mpf::set_default_prec(64); }
     print 5/7;
 
 A similar special tag :noconstants is recognised to turn off the constants
@@ -473,9 +541,9 @@ feature.  For example,
     use GMP::Mpz qw(:noconstants);
     print 438249738748174928193,"\n";   # now a float
 
-All three 'integer', 'binary' and 'float' methods are captured.  'float' is
-captured even for GMP::Mpz and GMP::Mpq, since perl by default treats
-integer strings as floats if they don't fit a plain integer.
+All three 'integer', 'binary' and 'float' constant methods are captured.
+'float' is captured even for GMP::Mpz and GMP::Mpq since perl by default
+treats integer strings as floats if they don't fit a plain integer.
 
 =head1 SEE ALSO
 
@@ -498,8 +566,11 @@ Returning a new object from the various functions is convenient, but
 assignment versions could avoid creating new objects.  Perhaps they could be
 named after the C language functions, eg. mpq_inv($q,$q);
 
-It'd be good if C<num> and C<den> gave lvalues so the underlying mpz's could
-be manipulated directly.
+It'd be good if C<num> and C<den> gave lvalues so the underlying mpq could
+be manipulated.
+
+C<printf> could usefully accept %b for mpz, mpq and mpf, and perhaps %x for
+mpf too.
 
 There's no interface to mpfr.
 
@@ -518,9 +589,9 @@ different each time.
 
 No interface to C<mpf_set_prec_raw> is provided.  It wouldn't be very useful
 since there's no way to make an operation store its result in a particular
-object.  The plain C<mpf_set_prec> on the other hand can be used for a
-truncation to a lower precision, or as a sort of directive that subsequent
-calculations involving that variable should use a higher precision.
+object.  The plain C<set_prec> is useful though, for truncating to a lower
+precision, or as a sort of directive that subsequent calculations involving
+that variable should use a higher precision.
 
 The overheads of perl dynamic typing (operator dispatch, operand type
 checking or coercion) will mean this interface is slower than using C
