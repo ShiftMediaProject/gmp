@@ -28,8 +28,16 @@ MA 02111-1307, USA. */
    In fact consider calling mpz_bin_uiui() when the arguments fit, leaving
    the code here only for big n.
 
-   For the identity bin(n,k) = (-1)^k * bin(-n+k-1,k) see Knuth vol 1
-   section 1.2.6 part G. */
+   The identity bin(n,k) = (-1)^k * bin(-n+k-1,k) can be found in Knuth vol
+   1 section 1.2.6 part G. */
+
+
+/* Enhancement: use mpn_divexact_1 when it exists */
+#define DIVIDE()                                        \
+  ASSERT (SIZ(r) > 0);                                  \
+  ASSERT_NOCARRY (mpn_divrem_1 (PTR(r), (mp_size_t) 0,  \
+                                PTR(r), SIZ(r), kacc)); \
+  SIZ(r) -= (PTR(r)[SIZ(r)-1] == 0);
 
 void
 #if __STDC__
@@ -41,10 +49,11 @@ mpz_bin_ui (r, n, k)
      unsigned long int k;
 #endif
 {
-  mpz_t ni;
-  unsigned long int i;
-  unsigned long int kacc;
-  mpz_t nacc;
+  mpz_t      ni;
+  mp_limb_t  i;
+  mpz_t      nacc;
+  mp_limb_t  kacc;
+  mp_size_t  negate;
   
   if (mpz_sgn (n) < 0)
     {
@@ -52,7 +61,7 @@ mpz_bin_ui (r, n, k)
       mpz_init (ni);
       mpz_neg (ni, n);
       mpz_sub_ui (ni, ni, 1L);
-      mpz_set_si (r, (long) (1 - ((k & 1) << 1)));  /* (-1)^k */
+      negate = (k & 1);   /* (-1)^k */
     }
   else
     {
@@ -67,10 +76,12 @@ mpz_bin_ui (r, n, k)
       /* set ni = n-k */
       mpz_init (ni);
       mpz_sub_ui (ni, n, k);
-      mpz_set_ui (r, 1L);
+      negate = 0;
     }
 
-  /* Now wanting bin(ni+k,k), with ni positive, and r is the sign (1 or -1). */
+  /* Now wanting bin(ni+k,k), with ni positive, and "negate" is the sign (0
+     for positive, 1 for negative). */
+  mpz_set_ui (r, 1L);
 
   /* Rewrite bin(n,k) as bin(n,n-k) if that is smaller.  In this case it's
      whether ni+k-k < k meaning ni<k, and if so change to denominator ni+k-k
@@ -111,7 +122,7 @@ mpz_bin_ui (r, n, k)
 	  /* Accumulator overflow.  Perform bignum step.  */
 	  mpz_mul (r, r, nacc);
 	  mpz_set_ui (nacc, 1);
-	  mpz_tdiv_q_ui (r, r, kacc);
+          DIVIDE ();
 	  kacc = i;
 	}
       else
@@ -122,8 +133,8 @@ mpz_bin_ui (r, n, k)
     }
 
   mpz_mul (r, r, nacc);
-  mpz_set_ui (nacc, 1);
-  mpz_tdiv_q_ui (r, r, kacc);
+  DIVIDE ();
+  SIZ(r) = (SIZ(r) ^ -negate) + negate;
 
   mpz_clear (nacc);
   mpz_clear (ni);
