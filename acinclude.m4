@@ -1740,7 +1740,7 @@ AC_DEFUN(GMP_C_ATTRIBUTE_CONST,
 ])
 if test $gmp_cv_c_attribute_const = yes; then
   AC_DEFINE(HAVE_ATTRIBUTE_CONST, 1,
-  [Define if the compiler accepts gcc style __attribute__ ((const))])
+  [Define to 1 if the compiler accepts gcc style __attribute__ ((const))])
 fi
 ])
 
@@ -1772,7 +1772,7 @@ rm -f conftest*
 ])
 if test $gmp_cv_c_attribute_malloc = yes; then
   AC_DEFINE(HAVE_ATTRIBUTE_MALLOC, 1,
-  [Define if the compiler accepts gcc style __attribute__ ((malloc))])
+  [Define to 1 if the compiler accepts gcc style __attribute__ ((malloc))])
 fi
 ])
 
@@ -1789,7 +1789,7 @@ AC_DEFUN(GMP_C_ATTRIBUTE_MODE,
 ])
 if test $gmp_cv_c_attribute_mode = yes; then
   AC_DEFINE(HAVE_ATTRIBUTE_MODE, 1,
-  [Define if the compiler accepts gcc style __attribute__ ((mode (XX)))])
+  [Define to 1 if the compiler accepts gcc style __attribute__ ((mode (XX)))])
 fi
 ])
 
@@ -1805,7 +1805,7 @@ AC_DEFUN(GMP_C_ATTRIBUTE_NORETURN,
 ])
 if test $gmp_cv_c_attribute_noreturn = yes; then
   AC_DEFINE(HAVE_ATTRIBUTE_NORETURN, 1,
-  [Define if the compiler accepts gcc style __attribute__ ((noreturn))])
+  [Define to 1 if the compiler accepts gcc style __attribute__ ((noreturn))])
 fi
 ])
 
@@ -1982,10 +1982,10 @@ fi
 ])
 
 AH_VERBATIM([HAVE_DOUBLE],
-[/* Define one (and only one) of the following for the format of a `double'.
+[/* Define one of the following to 1 for the format of a `double'.
    If your format is not among these choices, or you don't know what it is,
-   then leave all of them undefined.
-   "IEEE_LITTLE_SWAPPED" means little endian, but with the two 4-byte halves
+   then leave all undefined.
+   IEEE_LITTLE_SWAPPED means little endian, but with the two 4-byte halves
    swapped, as used by ARM CPUs in little endian mode.  */
 #undef HAVE_DOUBLE_IEEE_BIG_ENDIAN
 #undef HAVE_DOUBLE_IEEE_LITTLE_ENDIAN
@@ -2024,7 +2024,7 @@ dnl  This is the same as AC_C_INLINE, but introduing a typedef into the test
 dnl  program.  Some versions of HP C succeed when the return value is a
 dnl  plain builtin type like "int", but fail when it's a typedef.
 dnl
-dnl  FIXME: Hopefully autoconf will do this extra itself one day.
+dnl  FIXME: Autoconf 2.54 will have this in the normal AC_C_INLINE.
 
 AC_DEFUN(GMP_C_INLINE,
 [AC_CACHE_CHECK([for inline], gmp_cv_c_inline,
@@ -2186,7 +2186,7 @@ int foo (int x, ...)
 gmp_cv_c_stdarg=yes, gmp_cv_c_stdarg=no)
 ])
 if test $gmp_cv_c_stdarg = yes; then
-  AC_DEFINE(HAVE_STDARG, 1, [Define if <stdarg.h> exists and works])
+  AC_DEFINE(HAVE_STDARG, 1, [Define to 1 if <stdarg.h> exists and works])
 fi
 ])
 
@@ -2210,8 +2210,7 @@ GMP_INCLUDE_GMP_H
   gmp_cv_func_alloca=yes,
   gmp_cv_func_alloca=no)])
 if test $gmp_cv_func_alloca = yes; then
-  AC_DEFINE(HAVE_ALLOCA, 1,
-    [Define if alloca() works (via gmp-impl.h).])
+  AC_DEFINE(HAVE_ALLOCA, 1, [Define to 1 if alloca() works (via gmp-impl.h).])
 fi
 ])
 
@@ -2226,7 +2225,7 @@ AC_CACHE_CHECK([for working alloca.h],
   gmp_cv_header_alloca=no)])
 if test $gmp_cv_header_alloca = yes; then
   AC_DEFINE(HAVE_ALLOCA_H, 1,
-    [Define if you have <alloca.h> and it should be used (not on Ultrix).])
+  [Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).])
 fi
 ])
 
@@ -2258,23 +2257,32 @@ AC_CACHE_CHECK([how to allocate temporary memory],
     ;;
 esac
 ])
+
+AH_VERBATIM([WANT_TMP],
+[/* Define one of these to 1 for the desired temporary memory allocation
+   method, per --enable-alloca. */
+#undef WANT_TMP_ALLOCA
+#undef WANT_TMP_REENTRANT
+#undef WANT_TMP_NOTREENTRANT
+#undef WANT_TMP_DEBUG])
+
 case $gmp_cv_option_alloca in
   alloca)
     if test $gmp_cv_func_alloca = no; then
       AC_MSG_ERROR([--enable-alloca=alloca specified, but alloca not available])
     fi
-    AC_DEFINE(WANT_TMP_ALLOCA, 1, [--enable-alloca=yes])
+    AC_DEFINE(WANT_TMP_ALLOCA)
     ;;
   malloc-reentrant)
-    AC_DEFINE(WANT_TMP_REENTRANT, 1, [--enable-alloca=malloc-reentrant])
+    AC_DEFINE(WANT_TMP_REENTRANT)
     TAL_OBJECT=tal-reent$U.lo
     ;;
   malloc-notreentrant)
-    AC_DEFINE(WANT_TMP_NOTREENTRANT, 1, [--enable-alloca=malloc-notreentrant])
+    AC_DEFINE(WANT_TMP_NOTREENTRANT)
     TAL_OBJECT=tal-notreent$U.lo
     ;;
   debug)
-    AC_DEFINE(WANT_TMP_DEBUG, 1, [--enable-alloca=debug])
+    AC_DEFINE(WANT_TMP_DEBUG)
     TAL_OBJECT=tal-debug$U.lo
     ;;
   *)
@@ -2303,7 +2311,7 @@ esac
 ])
 case $gmp_cv_func_sscanf_writable_input in
   yes) AC_DEFINE(SSCANF_WRITABLE_INPUT, 1,
-                 [Define if sscanf requires writable inputs]) ;;
+                 [Define to 1 if sscanf requires writable inputs]) ;;
   no)  ;;
   *)   AC_MSG_ERROR([unrecognised \$gmp_cv_func_sscanf_writable_input]) ;;
 esac
@@ -2399,7 +2407,7 @@ $i
   fi
   if test "$gmp_cv_func_vsnprintf" != no; then
     AC_DEFINE(HAVE_VSNPRINTF,1,
-              [Define if you have vsnprintf and it works properly.])
+    [Define to 1 if you have the `vsnprintf' function and it works properly.])
   fi
 fi
 ])
