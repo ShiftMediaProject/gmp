@@ -41,9 +41,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
    use up extensive resources (cpu, memory).  Useful for the GMP demo on the
    GMP web site, since we cannot load the server too much.  */
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#include "pexpr-config.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -52,7 +50,15 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include <signal.h>
 #include <ctype.h>
 
+#include <time.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#if HAVE_SYS_RESOURCE_H
+#include <sys/resource.h>
+#endif
+
 #include "gmp.h"
+
 
 #define TIME(t,func)							\
   do { int __t0, __times, __t, __tmp;					\
@@ -132,47 +138,78 @@ int flag_splitup_output = 0;
 char *newline = "";
 gmp_randstate_t rstate;
 
-#ifdef _AIX
-#define sigaltstack sigstack
-#endif
 
-#define HAVE_sigaltstack
 
-#if (defined (__linux__) && !defined (SA_ONSTACK)) \
-    || defined (_UNICOS)	\
-    || defined (__hpux)
-/* Older Linux have limited signal handling */
-#undef HAVE_sigaltstack
-#endif
-
-#if !defined(_WIN32) && !defined(__DJGPP__)
-void
-setup_error_handler ()
+/* cputime() returns user CPU time measured in milliseconds.  */
+#if ! HAVE_CPUTIME
+#if HAVE_GETRUSAGE
+int
+cputime (void)
 {
-  struct sigaction act;
+  struct rusage rus;
 
-#ifdef HAVE_sigaltstack
-  struct sigaltstack sigstk;
+  getrusage (0, &rus);
+  return rus.ru_utime.tv_sec * 1000 + rus.ru_utime.tv_usec / 1000;
+}
+#else
+#if HAVE_CLOCK
+int
+cputime (void)
+{
+  if (CLOCKS_PER_SEC < 100000)
+    return clock () * 1000 / CLOCKS_PER_SEC;
+  return clock () / (CLOCKS_PER_SEC / 1000);
+}
+#else
+int
+cputime (void)
+{
+  return 0;
+}
+#endif
+#endif
+#endif
+
+
+void
+setup_error_handler (void)
+{
+#if HAVE_SIGACTION
+  struct sigaction act;
+  act.sa_handler = cleanup_and_exit;
+  sigemptyset (&(act.sa_mask));
+#define SIGNAL(sig)  sigaction (sig, &act, NULL)
+#else
+  struct { int sa_flags } act;
+#define SIGNAL(sig)  signal (sig, cleanup_and_exit)
+#endif
+  act.sa_flags = 0;
+
   /* Set up a stack for signal handling.  A typical cause of error is stack
      overflow, and in such situation a signal can not be delivered on the
      overflown stack.  */
-  sigstk.ss_sp = malloc (SIGSTKSZ);
-#ifndef _AIX
-  sigstk.ss_size = SIGSTKSZ;
-  sigstk.ss_flags = 0;
-#endif /* ! _AIX */
-
-  if (sigaltstack (&sigstk, 0) < 0)
-    perror("sigaltstack");
-#endif
-
-  /* Initialize structure for sigaction (called below).  */
-  act.sa_handler = cleanup_and_exit;
-  sigemptyset (&(act.sa_mask));
-#ifdef HAVE_sigaltstack
-  act.sa_flags = SA_ONSTACK;
+#if HAVE_SIGALTSTACK
+  {
+    stack_t s;
+    s.ss_sp = malloc (SIGSTKSZ);
+    s.ss_size = SIGSTKSZ;
+    s.ss_flags = 0;
+    if (sigaltstack (&s, NULL) != 0)
+      perror("sigaltstack");
+    act.sa_flags = SA_ONSTACK;
+  }
 #else
-  act.sa_flags = 0;
+#if HAVE_SIGSTACK
+  {
+    struct sigstack sigstk;
+    s.ss_sp = malloc (SIGSTKSZ);
+    s.ss_onstack = 0;
+    if (sigstack (&s, NULL) != 0)
+      perror("sigstack");
+    act.sa_flags = SA_ONSTACK;
+  }
+#else
+#endif
 #endif
 
 #ifdef LIMIT_RESOURCE_USAGE
@@ -193,18 +230,20 @@ setup_error_handler ()
     limit.rlim_cur = 1 * 1024 * 1024;
     setrlimit (RLIMIT_STACK, &limit);
 
-    sigaction (SIGXCPU, &act, 0);
+    SIGNAL (SIGXCPU);
   }
 #endif /* LIMIT_RESOURCE_USAGE */
 
-  sigaction (SIGILL, &act, 0);
-  sigaction (SIGSEGV, &act, 0);
-  sigaction (SIGBUS, &act, 0);
-  sigaction (SIGFPE, &act, 0);
-  sigaction (SIGABRT, &act, 0);
+  SIGNAL (SIGILL);
+  SIGNAL (SIGSEGV);
+#ifdef SIGBUS /* not in mingw */
+  SIGNAL (SIGBUS);
+#endif
+  SIGNAL (SIGFPE);
+  SIGNAL (SIGABRT);
 }
-#endif /* ! _WIN32 && ! __DJGPP__ */
 
+int
 main (int argc, char **argv)
 {
   struct expr *e;
@@ -214,15 +253,20 @@ main (int argc, char **argv)
   char *str;
   int base = 10;
 
-#if !defined(_WIN32) && !defined(__DJGPP__)
   setup_error_handler ();
-#endif
 
   gmp_randinit (rstate, GMP_RAND_ALG_LC, 128);
+
   {
+#if HAVE_GETTIMEOFDAY
     struct timeval tv;
     gettimeofday (&tv, NULL);
     gmp_randseed_ui (rstate, tv.tv_sec + tv.tv_usec);
+#else
+    time_t t;
+    time (&t);
+    gmp_randseed_ui (rstate, t);
+#endif
   }
 
   mpz_init (r);
@@ -1253,40 +1297,18 @@ mpz_eval_mod_expr (mpz_ptr r, expr_t e, mpz_ptr mod)
 void
 cleanup_and_exit (int sig)
 {
+  switch (sig) {
 #ifdef LIMIT_RESOURCE_USAGE
-  if (sig == SIGXCPU)
+  case SIGXCPU:
     printf ("expression took too long to evaluate%s\n", newline);
-  else if (sig == SIGFPE)
-    printf ("divide by zero%s\n", newline);
-  else
+    break;
 #endif
+  case SIGFPE:
+    printf ("divide by zero%s\n", newline);
+    break;
+  default:
     printf ("expression required too much memory to evaluate%s\n", newline);
+    break;
+  }
   exit (-2);
 }
-
-/* Return user CPU time measured in milliseconds.  */
-
-#if defined (USG) || defined (__SVR4) || defined (_UNICOS) || defined (__hpux)
-#include <time.h>
-
-int
-cputime ()
-{
-  if (CLOCKS_PER_SEC < 100000)
-    return clock () * 1000 / CLOCKS_PER_SEC;
-  return clock () / (CLOCKS_PER_SEC / 1000);
-}
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-
-int
-cputime ()
-{
-  struct rusage rus;
-
-  getrusage (0, &rus);
-  return rus.ru_utime.tv_sec * 1000 + rus.ru_utime.tv_usec / 1000;
-}
-#endif
