@@ -1,6 +1,6 @@
 /* mpf_set_d -- Assign a float from a IEEE double.
 
-Copyright (C) 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -39,8 +39,9 @@ mpf_set_d (r, d)
   union ieee_double_extract x;
   unsigned sc;
 
-  /* ??? This needs more work since it assumes that limbs are 32 bits.
-     See mpz/set_d for ideas on how to handle 64-bit machines.  */
+  /* This code does not read PREC(r), but instead assumes there is enough
+     space.  This is safe, since the precison will never be less than 3 for
+     32-bit machines, and never less than 2 for 64-bit machines.  */
 
   if (d == 0)
     {
@@ -55,8 +56,10 @@ mpf_set_d (r, d)
   exp = x.s.exp;
   sc = (unsigned) (exp + 2) % BITS_PER_MP_LIMB;
 
-  manh = 0x80000000 | (x.s.manh << 11) | (x.s.manl >> 21);
+#if BITS_PER_MP_LIMB == 32
+  manh = ((mp_limb_t) 1 << 31) | (x.s.manh << 11) | (x.s.manl >> 21);
   manl = x.s.manl << 11;
+
   if (sc != 0)
     {
       man2 = manh >> (BITS_PER_MP_LIMB - sc);
@@ -91,6 +94,34 @@ mpf_set_d (r, d)
       rp[1] = man1;
       rp[0] = man0;
     }
+#endif
+#if BITS_PER_MP_LIMB == 64
+  manl = (((mp_limb_t) 1 << 63)
+	  | ((mp_limb_t) x.s.manh << 43) | ((mp_limb_t) x.s.manl << 11));
+
+  if (sc != 0)
+    {
+      man1 = manl >> (BITS_PER_MP_LIMB - sc);
+      man0 = manl << sc;
+    }
+  else
+    {
+      man1 = manl;
+      man0 = 0;
+    }
+
+  if (man0 == 0)
+    {
+      size = 1;
+      rp[0] = man1;
+    }
+  else
+    {
+      size = 2;
+      rp[1] = man1;
+      rp[0] = man0;
+    }
+#endif
 
   r->_mp_exp = (exp + 1) / BITS_PER_MP_LIMB - 1024 / BITS_PER_MP_LIMB + 1;
   r->_mp_size = x.s.sig == 0 ? size : -size;
