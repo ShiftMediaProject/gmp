@@ -44,7 +44,7 @@ mpz_redc (c, a, b, m, Nprim)
   mp_ptr cp, mp = PTR (m);
   mp_limb_t cy, cout = 0;
   mp_limb_t q;
-  size_t j, n = SIZ (m);
+  size_t j, n = ABSIZ (m);
 
   ASSERT (ALLOC (c) >= 2 * n);
 
@@ -120,7 +120,7 @@ pow (base, e, mod, res)
   mpz_init (exp);
 #endif
 
-  n = SIZ (mod);
+  n = ABSIZ (mod);
 
   if (n == 0)
     DIVIDE_BY_ZERO;
@@ -129,8 +129,8 @@ pow (base, e, mod, res)
     {
       /* Exponent is zero, result is 1 mod MOD, i.e., 1 or 0
          depending on if MOD equals 1.  */
-      PTR(res)[0] = 1;
       SIZ(res) = (ABSIZ (mod) == 1 && (PTR(mod))[0] == 1) ? 0 : 1;
+      PTR(res)[0] = 1;
       return;
     }
 
@@ -207,7 +207,7 @@ pow (base, e, mod, res)
   /* now starts the real stuff */
   mask = (mp_limb_t) ((1<<k) - 1);
   ep = PTR (e);
-  i = SIZ (e) - 1;			/* current index */
+  i = ABSIZ (e) - 1;			/* current index */
   c = ep[i];				/* current limb */
   count_leading_zeros (sh, c);
   sh = BITS_PER_MP_LIMB - sh;		/* significant bits in ep[i] */
