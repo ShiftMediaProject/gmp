@@ -498,7 +498,11 @@ case $host in
     ;;
 
 
-  amd64-*-*)
+  amd64-*-* | x86_64-*-*)
+    # "x86_64" is apparently the canonical name for config.sub, but current
+    # versions also allow "amd64" through.  We probably prefer "amd64"
+    # actually, being what AMD likes to call the arch these days.
+    #
     SPEED_CYCLECOUNTER_OBJ=amd64.lo
     path="amd64"
     GMP_INCLUDE_MPN(amd64/amd64-defs.m4)
