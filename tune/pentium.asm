@@ -23,7 +23,7 @@ dnl  Suite 330, Boston, MA 02111-1307, USA.
 include(`../config.m4')
 
 
-C void speed_cyclecounter_2 (mp_limb_t p[2]);
+C void speed_cyclecounter (unsigned long p[2]);
 C
 C Get the pentium rdtsc cycle counter, storing the least significant word in
 C p[0] and the most significant in p[1].
@@ -36,7 +36,7 @@ C significant but it may help make small single measurements more accurate.
 
 defframe(PARAM_P,4)
 
-PROLOGUE(speed_cyclecounter_2)
+PROLOGUE(speed_cyclecounter)
 deflit(`FRAME',0)
 	pushl	%ebx
 FRAME_pushl()
