@@ -25,7 +25,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
 
 
-INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc -I$(top_srcdir)
+INCLUDES = -DBERKELEY_MP -D__gmpz_realloc=_mp_realloc \
+	-I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
 
 nodist_libmpbsd_la_SOURCES = \
 	add.c cmp.c gcd.c mul.c pow_ui.c powm.c realloc.c sqrtrem.c sub.c \
