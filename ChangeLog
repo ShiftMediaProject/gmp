@@ -34,7 +34,7 @@ MA 02111-1307, USA.
 	failure, that's a valid result.
 	(GMP_ASM_GLOBL): Establish this from the host cpu type.
 	(IA64_PATTERN): New macro.
-        (GMP_PROG_EXEEXT_FOR_BUILD, GMP_C_FOR_BUILD_ANSI,
+	(GMP_PROG_EXEEXT_FOR_BUILD, GMP_C_FOR_BUILD_ANSI,
 	GMP_CHECK_LIBM_FOR_BUILD): Remove temporary files created.
 	* configure.in: Use IA64_PATTERN.
 
