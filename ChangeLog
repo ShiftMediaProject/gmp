@@ -104,8 +104,8 @@ MA 02111-1307, USA.
 	* mpf/Makefile.am: Consequent updates.
 	(INCLUDES): Remove -DOPERATION_$*.
 
-	* cxx/osfuns.cc (__gmp_doprnt_params_from_ios): Don't use ios::hex as
-	cases in a switch, they're not constant in g++ 3.0.
+	* cxx/osfuns.cc (__gmp_doprnt_params_from_ios): Don't use ios::hex etc
+	as cases in a switch, they're not constant in g++ 3.0.
 
 	* mpn/Makeasm.am (.s.o, .s.obj, .S.o, .S.obj, .asm.o, .asm.obj):
 	Locate source file with test -f the same as automake.
