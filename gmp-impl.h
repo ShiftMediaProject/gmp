@@ -861,10 +861,10 @@ typedef struct {
 __GMP_DECLSPEC extern char             __gmp_rands_initialized;
 __GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 
-#define RANDS                                   \
-  ((__gmp_rands_initialized ? 0                 \
-    : (__gmp_rands_initialized = 1,             \
-       gmp_randinit_default (__gmp_rands), 0)), \
+#define RANDS                                       \
+  ((__gmp_rands_initialized ? 0                     \
+    : (__gmp_rands_initialized = 1,                 \
+       __gmp_randinit_mt_noseed (__gmp_rands), 0)), \
    __gmp_rands)
 
 /* this is used by the test programs, to free memory */
