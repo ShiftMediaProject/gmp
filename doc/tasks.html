@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 7 Aug 2002.  An up-to-date version is available at
+  This file current as of 12 Aug 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -208,11 +208,6 @@ MA 02111-1307, USA.
      other uses internally, and could even be offered as a one limb prime test
      <code>mpn_probab_prime_1_p</code> or <code>gmp_probab_prime_ui_p</code>
      perhaps.
-<li> <code>mpz_probab_prime_p</code> doesn't need to make a copy of
-     <code>n</code> when the input is negative, it can setup an
-     <code>mpz_t</code> alias, same data pointer but a positive size.  With no
-     need to clear before returning, the recursive function call could be
-     dispensed with too.
 <li> <code>mpf_set_str</code> produces low zero limbs when a string has a
      fraction but is exactly representable, eg. 0.5 in decimal.  These could be
      stripped to save work in later operations.
