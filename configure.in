@@ -813,20 +813,6 @@ case $host in
 
     case $host in
       POWERPC64_PATTERN)
-        # CPU type powerpc64 forces to a 64-bit limb
-        case $host in
-          powerpc64-*-*) abilist="32L" ;;
-          *)             abilist="32L 32" ;;
-        esac
-        cclist_32L="gcc"
-        gcc_32L_cflags="-g -O2 -mpowerpc64"
-        gcc_32L_cflags_optlist="cpu"
-        limb_32L=longlong
-        path_32L="powerpc64"
-        extra_functions_32L="umul"
-        SPEED_CYCLECOUNTER_OBJ_32L=powerpc.lo
-        cyclecounter_size_32L=0
-
         # On AIX a true 64-bit ABI is available.
         case $host in
           *-*-aix*)
