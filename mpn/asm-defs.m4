@@ -1252,13 +1252,13 @@ dnl         INT64(label,first,second)
 define(`INT32',
 m4_assert_defined(`W32')
 `	ALIGN(4)
-$1:
+$1`'LABEL_SUFFIX
 	W32	$2')
 
 define(`INT64',
 m4_assert_defined(`W32')
 `	ALIGN(8)
-$1:
+$1`'LABEL_SUFFIX
 	W32	$2
 	W32	$3')
 
