@@ -170,7 +170,7 @@ speed_cpu_frequency_sysctlbyname (void)
 #endif
 
 #if HAVE_SYSCTL && defined (CTL_HW) && defined (HW_MODEL)
-#define HAVE_CPU_FREQUENCY_SYSCTL
+#define HAVE_CPU_FREQUENCY_SYSCTL 1
 
 int
 speed_cpu_frequency_sysctl (void)
