@@ -471,26 +471,6 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
   ((mp_size_t) ((n) / 32 * 23 / BITS_PER_MP_LIMB) + 2)
 
 
-#define mpn_zero_p  __MPN(zero_p)
-int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
-
-#if HAVE_INLINE || defined (_FORCE_INLINES)
-/* n==0 is allowed and is considered a zero value.  */
-inline int
-mpn_zero_p (mp_srcptr p, mp_size_t n)
-{
-  mp_size_t i;
-
-  ASSERT (n >= 0);
-  for (i = 0; i < n; i++)
-    if (p[i] != 0)
-      return 0;
-
-  return 1;
-}
-#endif
-
-
 /* For a threshold between algorithms A and B, size>=thresh is where B
    should be used.  Special value MP_SIZE_T_MAX means only ever use A, or
    value 0 means only ever use B.  The tests for these special values will
@@ -772,6 +752,26 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #else
 #define mpn_xnor_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n,~,^, )
 #endif
+
+#define mpn_zero_p  __MPN(zero_p)
+int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
+
+#if HAVE_INLINE || defined (_FORCE_INLINES)
+/* n==0 is allowed and is considered a zero value.  */
+inline int
+mpn_zero_p (mp_srcptr p, mp_size_t n)
+{
+  mp_size_t i;
+
+  ASSERT (n >= 0);
+  for (i = 0; i < n; i++)
+    if (p[i] != 0)
+      return 0;
+
+  return 1;
+}
+#endif
+
 
 /* Structure for conversion between internal binary format and
    strings in base 2..36.  */
