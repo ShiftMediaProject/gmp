@@ -3058,6 +3058,14 @@ part of the @var{n}th root of @var{op}.  Return non-zero if the computation
 was exact, i.e., if @var{op} is @var{rop} to the @var{n}th power.
 @end deftypefun
 
+@deftypefun int mpz_rootrem (mpz_t @var{root}, mpz_t @var{rem}, mpz_t @var{u}, unsigned long int @var{n})
+Set @var{root} to @m{\lfloor\root n \of {u}\rfloor@C{},} the truncated
+integer part of the @var{n}th root of @var{u}.  Set @var{rem} to the
+remainder, @m{(@var{u} - @var{root}^n),
+@var{u}@minus{}@var{root}**@var{n}}.  Return non-zero if the computation
+was exact, i.e., if @var{u} is @var{root} to the @var{n}th power.
+@end deftypefun
+
 @deftypefun void mpz_sqrt (mpz_t @var{rop}, mpz_t @var{op})
 Set @var{rop} to @m{\lfloor\sqrt{@var{op}}\rfloor@C{},} the truncated
 integer part of the square root of @var{op}.

@@ -18,6 +18,16 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-10-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/rootrem.c: Avoid overflow problem when n is huge.
+
+	* mpz/root.c: Avoid overflow problems in allocation computation; also
+	simplify it.  Misc cleanups.
+
+	* mpz/rootrem.c: New file.
+	* Makefile.am, mpz/Makefile.am, gmp-h.in: Add them.
+
 2002-10-17  Torbjorn Granlund  <tege@swox.com>
 
 	* gmp-impl.h (popc_limb): Combine variants.
@@ -43,7 +53,7 @@ MA 02111-1307, USA.
 	* configure.in (AC_CHECK_FUNCS): Add strerror.
 	(AC_CHECK_DECLS): Add sys_errlist, sys_nerr.
 	* tune/time.c, tests/devel/try.c: Use them.
-	
+
 2002-10-05  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (AC_CHECK_HEADERS): Test float.h, not in SunOS cc.
@@ -168,13 +178,13 @@ MA 02111-1307, USA.
 	* randmt.c: Some constants made long for K&R compliance; remove UL at
 	the end of other constants; use mp_size_t where appropriate; use
 	mpz_export to split the seed.
-	
+
 	* gmp-impl.h: Remove type cast in RNG_FNPTR and RNG_STATE, to allow
 	them to be used as lvalues.
 	* randclr.c, randlc2x.c, randmt.c, randsd.c: All callers changed.
 
 	* mpz/urandomm.c: Replace mpn_cmp with MPN_CMP.
-	
+
 	* tests/rand/gen.c: Get rid of gmp_errno.
 
 2002-09-24  Kevin Ryde  <kevin@swox.se>
@@ -264,7 +274,7 @@ MA 02111-1307, USA.
 	* gmp.texi (Notes for Particular Systems): Note cl /MD is required for
 	Microsoft C and MINGW to cooperate on I/O.  Explained by David Librik.
 	(Language Bindings): Add linbox.
-	* gmp.texi (Language Bindings): 
+	* gmp.texi (Language Bindings):
 
 2002-09-12  Kevin Ryde  <kevin@swox.se>
 
@@ -528,7 +538,7 @@ MA 02111-1307, USA.
 	* tests/cxx/t-constr.cc, tests/cxx/t-expr.cc: Various updates.
 	* tests/cxx/t-assign.cc, tests/cxx/t-binary.cc,
 	tests/cxx/t-ternary.cc, tests/cxx/t-unary.cc: New files.
-	
+
 2002-07-27  Kevin Ryde  <kevin@swox.se>
 
 	* longlong.h (count_trailing_zeros) [ia64 __GNUC__]: Don't use
@@ -539,7 +549,7 @@ MA 02111-1307, USA.
 
 	* tune/speed.h (SPEED_ROUTINE_MPN_GCD_FINDA): Don't let calls to
 	mpn_gcd_finda go dead.
-	
+
 	* mpn/generic/tdiv_qr.c: Inline mpn_rshift and MPN_COPY of 2 limbs.
 
 2002-07-24  Kevin Ryde  <kevin@swox.se>
@@ -813,7 +823,7 @@ MA 02111-1307, USA.
 	versions accepting "const char *".
 	* mpfrxx.h (mpfr_class::get_str, mpfr_class::set_str): Ditto, and
 	uncommenting set_str and operator=.
-	* gmp.texi (C++ Interface Integers, C++ Interface Rationals) 
+	* gmp.texi (C++ Interface Integers, C++ Interface Rationals)
 	(C++ Interface Floats): Update.
 
 	* gmp-impl.h (modlimb_invert): Merge the <=64bits and general versions.
@@ -951,7 +961,7 @@ MA 02111-1307, USA.
 	* acinclude.m4 (GMP_GCC_VERSION_GE): Recognise mingw gcc 3.1 version.
 	(GMP_PROG_CC_WORKS): Allow for a_out.exe, as per autoconf.
 	(GMP_GCC_NO_CPP_PRECOMP, GMP_ASM_UNDERSCORE): Ditto, plus a.exe.
-	
+
 2002-06-09  Torbjorn Granlund  <tege@swox.com>
 
 	* randraw.c (lc): Remove broken ASSERT_ALWAYS.
