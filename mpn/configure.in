@@ -146,8 +146,12 @@ case "${target}" in
   powerpc*-*-aix[456789]* | powerpc*-*-aix3.2.[456789])
     target_makefile_frag=config/t-ppc-aix
     syntax=aix;;
+  ppc601-apple-mach | \
+  ppc60[234]*-apple-mach | ppc60[234]*-apple-mach | \
+  powerpc*-apple-mach | powerpc*-apple-mach)
+    syntax=macho;;
   ppc601-*-* | \
-  ppc60[234]*-* | ppc60[234]*-*-* | \
+  ppc60[234]*-*-* | ppc60[234]*-*-* | \
   powerpc*-*-* | powerpc*-*-*)
     syntax=elf;;
   sparc9-*-solaris2* | ultrasparc*-*-solaris2*)
@@ -175,9 +179,16 @@ case "${family}-${underscore}-${asm_align}-${syntax}" in
     echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
     echo '#include "'$srcdir'/m68k/syntax.h"' >>asm-syntax.h;;
   ppc-*-*-aix)
-    echo '#define AIX_SYNTAX' >asm-syntax.h;;
+    echo '#define AIX_SYNTAX' >asm-syntax.h
+    echo '#include "'$srcdir'/powerpc32/syntax.h"' >>asm-syntax.h;;
   ppc-*-*-elf)
-    echo '#undef AIX_SYNTAX' >asm-syntax.h;;
+    echo '#undef AIX_SYNTAX' >asm-syntax.h
+    echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
+    echo '#include "'$srcdir'/powerpc32/syntax.h"' >>asm-syntax.h;;
+  ppc-*-*-macho)
+    echo '#define MACHO_SYNTAX' >asm-syntax.h
+    cat $srcdir/underscore.h >>asm-syntax.h
+    echo '#include "'$srcdir'/powerpc32/syntax.h"' >>asm-syntax.h;;
   sparc-yes-log-*)
     cat $srcdir/underscore.h >asm-syntax.h;;
   sparc-*)
