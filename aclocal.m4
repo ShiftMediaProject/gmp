@@ -998,7 +998,7 @@ dnl
 dnl  The compiler output is grepped for the right directive.  It's not
 dnl  considered wise to just probe for ".section .rodata" or whatever works,
 dnl  since arbitrary section names might be accepted, but not necessarily do
-dnl  the right thing when the get to the linker.
+dnl  the right thing when they get to the linker.
 dnl
 dnl  Only a few asm files use RODATA, so this code is perhaps a bit
 dnl  excessive right now, but should find more uses in the future.
@@ -1386,7 +1386,7 @@ dnl  _mcount_ptr, and for PIC it can be called through a GOT entry, or via
 dnl  the PLT.  If a pointer to a counter is required it's passed in %eax or
 dnl  %edx.
 dnl
-dnl  Flags to specify PIC are taken from $ac_cv_prog_cc_pic set by
+dnl  Flags to specify PIC are taken from $lt_prog_compiler_pic set by
 dnl  AC_PROG_LIBTOOL.
 dnl
 dnl  Enhancement: Cache the values determined here. But what's the right way
@@ -1419,10 +1419,18 @@ if test "$enable_static" = yes; then
 fi
 
 if test "$enable_shared" = yes; then
-  gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS $ac_cv_prog_cc_pic -S conftest.c 1>&AC_FD_CC"
+  gmp_asmout_compile="$CC $CFLAGS $CPPFLAGS $lt_prog_compiler_pic -S conftest.c 1>&AC_FD_CC"
   if AC_TRY_EVAL(gmp_asmout_compile); then
     if grep '\.data' conftest.s >/dev/null; then
-      mcount_pic_reg=`sed -n ['s/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p'] conftest.s`
+      case $lt_prog_compiler_pic in
+        *-DDLL_EXPORT*)
+          # Windows DLLs have non-PIC style mcount
+          mcount_pic_reg=`sed -n ['/esp/!s/.*movl.*,\(%[a-z]*\).*$/\1/p'] conftest.s`
+          ;;
+        *)
+          mcount_pic_reg=`sed -n ['s/.*GOTOFF.*,\(%[a-z]*\).*$/\1/p'] conftest.s`
+          ;;
+      esac
     else
       mcount_pic_reg=
     fi
