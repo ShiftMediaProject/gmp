@@ -601,9 +601,6 @@ mp_limb_t mpn_mul_2 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 #define mpn_mul_basecase __MPN(mul_basecase)
 __GMP_DECLSPEC void mpn_mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
-#define mpn_sizeinbase __MPN(sizeinbase)
-size_t mpn_sizeinbase __GMP_PROTO ((mp_srcptr, mp_size_t, int));
-
 #define mpn_sqr_n __MPN(sqr_n)
 __GMP_DECLSPEC void mpn_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
@@ -1623,16 +1620,63 @@ extern const struct bases __mp_bases[256];
 #define MP_BASES_NORMALIZATION_STEPS_10 0
 #endif
 
-/* Set str_size to the size in bytes needed for the byte string output from
-   mpn_get_str.  The +1 rounds up the float expression, irrespective of the
-   hardware rounding mode.  The result ends up being exact, or one too big. */
-#define MPN_GET_STR_SIZE(str_size, base, limbs)                               \
-  do {                                                                        \
-    ASSERT ((limbs) >= 0);                                                    \
-    ASSERT ((base) >= 2);                                                     \
-    ASSERT ((base) < numberof (__mp_bases));                                  \
-    (str_size) = (size_t) ((limbs) * BITS_PER_MP_LIMB                         \
-                           * __mp_bases[(base)].chars_per_bit_exactly) + 1;   \
+
+/* For power of 2 bases this is exact.  For other bases the result is either
+   exact or one too big.
+
+   To be exact always it'd be necessary to examine all the limbs of the
+   operand, since numbers like 100..000 and 99...999 generally differ only
+   in the lowest limb.  It'd be possible to examine just a couple of high
+   limbs to increase the probability of being exact, but that doesn't seem
+   worth bothering with.  */
+
+#define MPN_SIZEINBASE(result, ptr, size, base)                         \
+  do {                                                                  \
+    int       __lb_base, __cnt;                                         \
+    mp_size_t __totbits;                                                \
+                                                                        \
+    ASSERT ((size) >= 0);                                               \
+    ASSERT ((base) >= 2);                                               \
+    ASSERT ((base) < numberof (__mp_bases));                            \
+                                                                        \
+    /* Special case for X == 0.  */                                     \
+    if ((size) == 0)                                                    \
+      (result) = 1;                                                     \
+    else                                                                \
+      {                                                                 \
+        /* Calculate the total number of significant bits of X.  */     \
+        count_leading_zeros (__cnt, (ptr)[(size)-1]);                   \
+        __totbits = (size) * GMP_NUMB_BITS - __cnt;                     \
+                                                                        \
+        if (POW2_P (base))                                              \
+          {                                                             \
+            __lb_base = __mp_bases[base].big_base;                      \
+            (result) = (__totbits + __lb_base - 1) / __lb_base;         \
+          }                                                             \
+        else                                                            \
+          (result) = (size_t)                                           \
+            (__totbits * __mp_bases[base].chars_per_bit_exactly) + 1;   \
+      }                                                                 \
+  } while (0)
+
+/* eliminate __mp_bases lookups for base==16 */
+#define MPN_SIZEINBASE_16(result, ptr, size)                            \
+  do {                                                                  \
+    int       __cnt;                                                    \
+    mp_size_t __totbits;                                                \
+                                                                        \
+    ASSERT ((size) >= 0);                                               \
+                                                                        \
+    /* Special case for X == 0.  */                                     \
+    if ((size) == 0)                                                    \
+      (result) = 1;                                                     \
+    else                                                                \
+      {                                                                 \
+        /* Calculate the total number of significant bits of X.  */     \
+        count_leading_zeros (__cnt, (ptr)[(size)-1]);                   \
+        __totbits = (size) * GMP_NUMB_BITS - __cnt;                     \
+        (result) = (__totbits + 4 - 1) / 4;                             \
+      }                                                                 \
   } while (0)
 
 
