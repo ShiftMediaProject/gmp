@@ -4,7 +4,7 @@
    BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.  */
 
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -101,9 +101,7 @@ MA 02111-1307, USA.
 
 #include "gmp.h"
 #include "gmp-impl.h"
-
-#include "ref.h"
-#include "try.h"
+#include "tests.h"
 
 #if HAVE_SPA_EXTRAS
 #include "spa-out.asm.h"
@@ -114,9 +112,16 @@ extern char *optarg;
 extern int optind, opterr;
 #endif
 
+/* Rumour has it some systems lack a define of PROT_NONE. */
 #ifndef PROT_NONE
 #define PROT_NONE   0
+#endif
+
+/* Dummy defines for when mprotect doesn't exist. */
+#ifndef PROT_READ
 #define PROT_READ   0
+#endif
+#ifndef PROT_WRITE
 #define PROT_WRITE  0
 #endif
 
@@ -364,6 +369,8 @@ mpn_toom3_sqr_n_fun (mp_ptr dst, mp_srcptr src, mp_size_t size)
 }
 
 
+typedef mp_limb_t (*tryfun_t) _PROTO ((ANYARGS));
+
 struct try_t {
   struct try_one_t {
     tryfun_t    function;
@@ -494,54 +501,6 @@ struct region_t {
 int trap_location = TRAP_NOWHERE;
 
 
-/* Find least significant limb position where p1,size and p2,size differ.  */
-mp_size_t
-mpn_diff_lowest (mp_srcptr p1, mp_srcptr p2, mp_size_t size)
-{
-  mp_size_t  i;
-
-  for (i = 0; i < size; i++)
-    if (p1[i] != p2[i])
-      return i;
-
-  /* no differences */
-  return -1;
-}
-
-
-/* Find most significant limb position where p1,size and p2,size differ.  */
-mp_size_t
-mpn_diff_highest (mp_srcptr p1, mp_srcptr p2, mp_size_t size)
-{
-  mp_size_t  i;
-
-  for (i = size-1; i >= 0; i--)
-    if (p1[i] != p2[i])
-      return i;
-
-  /* no differences */
-  return -1;
-}
-
-
-/* Return p advanced to the next multiple of "align" bytes.  "align" must be
-   a power of 2.  Care is taken not to assume sizeof(int)==sizeof(pointer).  */
-void *
-align_pointer (void *p, size_t align)
-{
-  unsigned  d;
-  d = ((unsigned) p) & (align-1);
-  d = (d != 0 ? align-d : 0);
-  return (void *) (((char *) p) + d);
-}
-
-/* malloc n limbs on a multiple of m bytes boundary */
-mp_ptr
-malloc_limbs_aligned (size_t n, size_t m)
-{
-  return (mp_ptr) align_pointer (refmpn_malloc_limbs (n + m-1), m);
-}
-
 void
 mprotect_maybe (void *addr, size_t len, int prot)
 {
@@ -588,7 +547,7 @@ malloc_region (struct region_t *r, mp_size_t n)
   ASSERT ((pagesize % BYTES_PER_MP_LIMB) == 0);
 
   r->size = round_up_multiple (n, PAGESIZE_LIMBS);
-  p = malloc_limbs_aligned (r->size + REDZONE_LIMBS*2, pagesize);
+  p = refmpn_malloc_limbs_aligned (r->size + REDZONE_LIMBS*2, pagesize);
   mprotect_maybe (p, REDZONE_BYTES, PROT_NONE);
 
   r->ptr = p + REDZONE_LIMBS;
