@@ -88,8 +88,9 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
-SPEED_CYCLECOUNTER_OBJS = @SPEED_CYCLECOUNTER_OBJS@
+SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
 STRIP = @STRIP@
+TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
 gmp_srclinks = @gmp_srclinks@
@@ -124,39 +125,51 @@ INCLUDES = -I$(top_srcdir)
 EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm
 noinst_HEADERS = speed.h
 
-# No dependency on libgmp, so can use libgmptune instead for tune program
-EXTRA_LTLIBRARIES = libspeed.la
-libspeed_la_SOURCES = common.c modlinv.c time.c noop.c mul_n_mpn.c mul_n_open.c
-libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJS)
-libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES)
+# The library code is faster static than shared on some systems, so do all
+# tuning and measuring with static, since users who care about maximizing
+# speed will be using that.
+#
+# Libtool doesn't seem to pass -static through to gcc, it only uses it to
+# choose the static versions of libtool libraries.  Rerun the link with
+# -static to get a static link of libc and libm.  This is probably only of
+# interest when measuring libc routines like malloc/free.
 
-# Both libspeed and the programs are built static-only since static is
-# fastest and will be preferred by users who care about maximizing speed.
-#
-# Actually libtool doesn't seem to pass -static through to gcc, it only
-# chooses the ".a" versions of libtool libraries.  Rerun the gcc link
-# invocation with -static if you want a static link of libc and libm.
-#
 LDFLAGS = -static
-LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
+DEPENDENCIES = libspeed.la
+LDADD = $(DEPENDENCIES)
+
+EXTRA_LTLIBRARIES = libspeed.la libdummy.la
+
+libspeed_la_SOURCES = common.c modlinv.c time.c noop.c mul_n_mpn.c mul_n_open.c
+libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
+libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la -lm
+
+# create an ansi2knr rule for sqr_basecase.c in case it's recompiled
+nodist_libdummy_la_SOURCES = sqr_basecase.c
 
 EXTRA_PROGRAMS = speed speed-ext tuneup
 
-tuneup_SOURCES = tuneup.c
-tuneup_DEPENDENCIES = libspeed.la libgmptune.a
-tuneup_LDADD = $(tuneup_DEPENDENCIES) -lm
-
 speed_SOURCES = speed.c
+speed_ext_SOURCES = speed.c
 
-SQR_CLEANFILES = sqr_basecase.c sqr_basecase.h sqr_basecase.asm
+tuneup_SOURCES = tuneup.c
+nodist_tuneup_SOURCES = $(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS)
+tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
+tuneup_LDADD = $(tuneup_DEPENDENCIES)
 
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
-	$(SQR_CLEANFILES) libgmptune.a libgmptmp.a \
+	$(nodist_tuneup_SOURCES) sqr_basecase.c sqr_asm.asm \
 	stg.gnuplot stg.data \
 	mtg.gnuplot mtg.data \
 	fibg.gnuplot fibg.data \
 	graph.gnuplot graph.data
 
+
+# Generating these little files at build time seems better than including
+# them in the distribution, since the list can be changed easily.
+
+TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c bz_divrem_n.c tdiv_qr.c gcd.c gcdext.c
+TUNE_MPZ_SRCS = fib_ui.c powm.c
 
 # This bit like mpn/Makefile.am
 
@@ -166,18 +179,6 @@ COMPILE_FLAGS = \
 
 
 SUFFIXES = .asm
-
-# Recompiled versions of $(LIBGMPTUNE_OBJS) are always used.  sqr_basecase.o
-# is replaced if it's mpn/generic/sqr_basecase.c (due to the fixed size
-# temporary array), or sqr_basecase.asm with a KARATSUBA_SQR_THRESHOLD_MAX
-# (because that says it normally works only up to KARATSUBA_SQR_THRESHOLD).
-
-SQR_GENERIC_MAX = 200
-
-LIBGMPTUNE_OBJS = \
-  mul_n.o mul_fft.o mul.o \
-  bz_divrem_n.o tdiv_qr.o fib_ui.o powm.o gcd.o gcdext.o
-
 
 MTS = -s 50-150 -c
 
@@ -191,6 +192,10 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LIBS = @LIBS@
 ANSI2KNR = $(top_builddir)/ansi2knr
+libdummy_la_LDFLAGS = 
+libdummy_la_LIBADD = 
+nodist_libdummy_la_OBJECTS =  sqr_basecase$U.lo
+libdummy_la_OBJECTS =  $(nodist_libdummy_la_OBJECTS)
 libspeed_la_LDFLAGS = 
 am_libspeed_la_OBJECTS =  common$U.lo modlinv$U.lo time$U.lo noop$U.lo \
 mul_n_mpn$U.lo mul_n_open$U.lo
@@ -199,23 +204,26 @@ EXTRA_PROGRAMS =  speed$(EXEEXT) speed-ext$(EXEEXT) tuneup$(EXEEXT)
 am_speed_OBJECTS =  speed$U.$(OBJEXT)
 speed_OBJECTS =  $(am_speed_OBJECTS)
 speed_LDADD = $(LDADD)
-speed_DEPENDENCIES =  libspeed.la $(top_builddir)/libgmp.la
+speed_DEPENDENCIES =  libspeed.la
 speed_LDFLAGS = 
-speed_ext_SOURCES = speed-ext.c
-speed_ext_OBJECTS =  speed-ext$U.$(OBJEXT)
+am_speed_ext_OBJECTS =  speed$U.$(OBJEXT)
+speed_ext_OBJECTS =  $(am_speed_ext_OBJECTS)
 speed_ext_LDADD = $(LDADD)
-speed_ext_DEPENDENCIES =  libspeed.la $(top_builddir)/libgmp.la
+speed_ext_DEPENDENCIES =  libspeed.la
 speed_ext_LDFLAGS = 
 am_tuneup_OBJECTS =  tuneup$U.$(OBJEXT)
-tuneup_OBJECTS =  $(am_tuneup_OBJECTS)
+nodist_tuneup_OBJECTS =  mul_n$U.$(OBJEXT) mul_fft$U.$(OBJEXT) \
+mul$U.$(OBJEXT) bz_divrem_n$U.$(OBJEXT) tdiv_qr$U.$(OBJEXT) \
+gcd$U.$(OBJEXT) gcdext$U.$(OBJEXT) fib_ui$U.$(OBJEXT) powm$U.$(OBJEXT)
+tuneup_OBJECTS =  $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 tuneup_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(libspeed_la_SOURCES) $(speed_SOURCES) speed-ext.c \
-$(tuneup_SOURCES)
+DIST_SOURCES =  $(libspeed_la_SOURCES) $(speed_SOURCES) \
+$(speed_ext_SOURCES) $(tuneup_SOURCES)
 HEADERS =  $(noinst_HEADERS)
 
 DIST_COMMON =  README $(noinst_HEADERS) Makefile.am Makefile.in
@@ -225,8 +233,8 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = 
-SOURCES = $(libspeed_la_SOURCES) $(speed_SOURCES) speed-ext.c $(tuneup_SOURCES)
-OBJECTS = $(am_libspeed_la_OBJECTS) $(am_speed_OBJECTS) speed-ext$U.$(OBJEXT) $(am_tuneup_OBJECTS)
+SOURCES = $(nodist_libdummy_la_SOURCES) $(libspeed_la_SOURCES) $(speed_SOURCES) $(speed_ext_SOURCES) $(tuneup_SOURCES) $(nodist_tuneup_SOURCES)
+OBJECTS = $(nodist_libdummy_la_OBJECTS) $(am_libspeed_la_OBJECTS) $(am_speed_OBJECTS) $(am_speed_ext_OBJECTS) $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -275,6 +283,9 @@ distclean-kr:
 
 maintainer-clean-kr:
 
+libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES)
+	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
+
 libspeed.la: $(libspeed_la_OBJECTS) $(libspeed_la_DEPENDENCIES)
 	$(LINK)  $(libspeed_la_LDFLAGS) $(libspeed_la_OBJECTS) $(libspeed_la_LIBADD) $(LIBS)
 
@@ -295,29 +306,51 @@ tuneup$(EXEEXT): $(tuneup_OBJECTS) $(tuneup_DEPENDENCIES)
 	$(COMPILE) -c `cygpath -w $<`
 .c.lo:
 	$(LTCOMPILE) -c -o $@ $<
+bz_divrem_n_.c: bz_divrem_n.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/bz_divrem_n.c; then echo $(srcdir)/bz_divrem_n.c; else echo bz_divrem_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > bz_divrem_n_.c
 common_.c: common.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/common.c; then echo $(srcdir)/common.c; else echo common.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > common_.c
+fib_ui_.c: fib_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fib_ui.c; then echo $(srcdir)/fib_ui.c; else echo fib_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fib_ui_.c
+gcd_.c: gcd.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd.c; then echo $(srcdir)/gcd.c; else echo gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcd_.c
+gcdext_.c: gcdext.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdext.c; then echo $(srcdir)/gcdext.c; else echo gcdext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdext_.c
 modlinv_.c: modlinv.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/modlinv.c; then echo $(srcdir)/modlinv.c; else echo modlinv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > modlinv_.c
+mul_.c: mul.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul.c; then echo $(srcdir)/mul.c; else echo mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_.c
+mul_fft_.c: mul_fft.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_fft.c; then echo $(srcdir)/mul_fft.c; else echo mul_fft.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_fft_.c
+mul_n_.c: mul_n.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n.c; then echo $(srcdir)/mul_n.c; else echo mul_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_n_.c
 mul_n_mpn_.c: mul_n_mpn.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n_mpn.c; then echo $(srcdir)/mul_n_mpn.c; else echo mul_n_mpn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_n_mpn_.c
 mul_n_open_.c: mul_n_open.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n_open.c; then echo $(srcdir)/mul_n_open.c; else echo mul_n_open.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_n_open_.c
 noop_.c: noop.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/noop.c; then echo $(srcdir)/noop.c; else echo noop.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > noop_.c
+powm_.c: powm.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm.c; then echo $(srcdir)/powm.c; else echo powm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_.c
 speed_.c: speed.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed.c; then echo $(srcdir)/speed.c; else echo speed.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed_.c
-speed-ext_.c: speed-ext.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed-ext.c; then echo $(srcdir)/speed-ext.c; else echo speed-ext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed-ext_.c
+sqr_basecase_.c: sqr_basecase.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sqr_basecase.c; then echo $(srcdir)/sqr_basecase.c; else echo sqr_basecase.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sqr_basecase_.c
+tdiv_qr_.c: tdiv_qr.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tdiv_qr.c; then echo $(srcdir)/tdiv_qr.c; else echo tdiv_qr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tdiv_qr_.c
 time_.c: time.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/time.c; then echo $(srcdir)/time.c; else echo time.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > time_.c
 tuneup_.c: tuneup.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tuneup.c; then echo $(srcdir)/tuneup.c; else echo tuneup.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tuneup_.c
-common_.$(OBJEXT) common_.lo modlinv_.$(OBJEXT) modlinv_.lo \
+bz_divrem_n_.$(OBJEXT) bz_divrem_n_.lo common_.$(OBJEXT) common_.lo \
+fib_ui_.$(OBJEXT) fib_ui_.lo gcd_.$(OBJEXT) gcd_.lo gcdext_.$(OBJEXT) \
+gcdext_.lo modlinv_.$(OBJEXT) modlinv_.lo mul_.$(OBJEXT) mul_.lo \
+mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo \
 mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) mul_n_open_.lo \
-noop_.$(OBJEXT) noop_.lo speed_.$(OBJEXT) speed_.lo \
-speed-ext_.$(OBJEXT) speed-ext_.lo time_.$(OBJEXT) time_.lo \
-tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
+noop_.$(OBJEXT) noop_.lo powm_.$(OBJEXT) powm_.lo speed_.$(OBJEXT) \
+speed_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo tdiv_qr_.$(OBJEXT) \
+tdiv_qr_.lo time_.$(OBJEXT) time_.lo tuneup_.$(OBJEXT) tuneup_.lo : \
+$(ANSI2KNR)
 
 tags: TAGS
 
@@ -437,13 +470,32 @@ distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
 
-# Don't know how to get tuneup$U.lo to depend on sqr_basecase.h, so just do
-# an explicit make.  A plain "make tuneup" will fail if used directly.
 tune:
-	$(MAKE) $(AM_MAKEFLAGS) sqr_basecase.h tuneup$(EXEEXT)
+	$(MAKE) $(AM_MAKEFLAGS) tuneup$(EXEEXT)
 	./tuneup
 
-allprogs: sqr_basecase.h $(EXTRA_PROGRAMS)
+allprogs: $(EXTRA_PROGRAMS)
+
+$(TUNE_MPN_SRCS):
+	for i in $(TUNE_MPN_SRCS); do \
+	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
+	  echo "#include \"mpn/$$i\"" >>$$i; \
+	done
+
+$(TUNE_MPZ_SRCS):
+	for i in $(TUNE_MPZ_SRCS); do \
+	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
+	  echo "#include \"mpz/$$i\"" >>$$i; \
+	done
+
+sqr_basecase.c:
+	echo '#define TUNE_PROGRAM_BUILD 1' >sqr_basecase.c
+	echo '#define TUNE_PROGRAM_BUILD_SQR 1' >>sqr_basecase.c
+	echo '#include "mpn/sqr_basecase.c"' >>sqr_basecase.c
+
+sqr_asm.asm:
+	echo 'define(KARATSUBA_SQR_THRESHOLD_OVERRIDE,KARATSUBA_SQR_THRESHOLD_MAX)' >sqr_asm.asm
+	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
 .asm.o:
 	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
@@ -453,80 +505,11 @@ allprogs: sqr_basecase.h $(EXTRA_PROGRAMS)
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 .asm.lo:
-	echo "$(COMPILE_FLAGS)"
 	$(M4) $(M4FLAGS) -DPIC -DOPERATION_$* $< >tmp-$*.s
 	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
 	rm -f tmp-$*.s
-
-sqr_basecase.h: libgmptune.a
-
-# "cp -f" is not portable (eg. it fails on SunOS)
-# "ar r" is going to be a bit fragile because there's more than one mul.o in
-# libgmp.a.
-
-libgmptune.a: $(top_builddir)/libgmp.la $(LIBGMPTUNE_OBJS)
-	rm -f libgmptmp.a
-	eval `$(LIBTOOL) --config | grep '^objdir='` ; \
-		cp $(top_builddir)/$$objdir/libgmp.a libgmptmp.a
-	$(AR) r libgmptmp.a $(LIBGMPTUNE_OBJS)
-	rm -f $(SQR_CLEANFILES)
-	echo "" >sqr_basecase.h
-	if test -f $(top_builddir)/mpn/sqr_basecase.c; then		\
-	  $(MAKE) $(AM_MAKEFLAGS) sqr-basecase-generic;			\
-        else								\
-	  if grep KARATSUBA_SQR_THRESHOLD_MAX				\
-	      $(top_builddir)/mpn/sqr_basecase.asm >/dev/null; then	\
-	    $(MAKE) $(AM_MAKEFLAGS) sqr-basecase-asm;			\
-	  fi								\
-	fi
-	$(RANLIB) libgmptmp.a
-	rm -f libgmptune.a
-	mv libgmptmp.a libgmptune.a
-
-sqr-basecase-generic:
-	cp $(top_builddir)/mpn/sqr_basecase.c .
-	$(MAKE) $(AM_MAKEFLAGS) \
-		CFLAGS='$(CFLAGS) -DKARATSUBA_SQR_THRESHOLD=$(SQR_GENERIC_MAX)' \
-		sqr_basecase.o
-	$(AR) r libgmptmp.a sqr_basecase.o
-	echo '#define KARATSUBA_SQR_MAX  $(SQR_GENERIC_MAX)' >sqr_basecase.h
-
-sqr-basecase-asm:
-	cp $(top_builddir)/mpn/sqr_basecase.asm .
-	$(MAKE) $(AM_MAKEFLAGS) \
-		M4FLAGS='$(M4FLAGS) -DKARATSUBA_SQR_THRESHOLD_OVERRIDE=KARATSUBA_SQR_THRESHOLD_MAX' \
-		sqr_basecase.o
-	ar r libgmptmp.a sqr_basecase.o
-	echo "#define KARATSUBA_SQR_MAX  `sed -n 's/def...(KARATSUBA_SQR_THRESHOLD_MAX, *\([0-9]*\))/\1/p' sqr_basecase.asm`" >sqr_basecase.h
-
-mul_n.o: $(top_builddir)/mpn/mul_n.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul_n.c
-
-mul_fft.o: $(top_builddir)/mpn/mul_fft.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul_fft.c
-
-mul.o: $(top_builddir)/mpn/mul.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul.c
-
-bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/bz_divrem_n.c
-
-tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/tdiv_qr.c
-
-fib_ui.o: $(top_srcdir)/mpz/fib_ui.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_srcdir)/mpz/fib_ui.c
-
-powm.o: $(top_srcdir)/mpz/powm.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_srcdir)/mpz/powm.c
-
-gcd.o: $(top_builddir)/mpn/gcd.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/gcd.c
-
-gcdext.o: $(top_builddir)/mpn/gcdext.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/gcdext.c
 
 # "mk" is multiplication in the karatsuba range
 # "st" is squaring in the toom-cook range, etc
