@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 16 Sep 2002.  An up-to-date version is available at
+  This file current as of 18 Sep 2002.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/projects.html">http://www.swox.com/gmp/projects.html</a>.
   Please send comments about this page to
   <a href="mailto:bug-gmp@gnu.org">bug-gmp@gnu.org</a>.
@@ -414,6 +414,18 @@ MA 02111-1307, USA.
       any time the same N was used three or more times.  Suggested by Victor
       Shoup in connection with chinese-remainder style decompositions, but
       perhaps with other uses.
+
+  <p> <code>mpn_modexact_1_odd</code> calculates an x in the range 0<=x<d
+      satisfying a = q*d + x*b^n, where b=2^bits_per_limb.  The factor b^n
+      needed to get the true remainder r could be calculated by a powering
+      algorithm, allowing <code>mpn_modexact_1_odd</code> to be pressed into
+      service for an <code>mpn_mod_1</code>.  <code>modexact_1</code> is
+      simpler and on some chips can run noticably faster than plain
+      <code>mod_1</code>, on Athlon for instance 11 cycles/limb instead of 17.
+      Such a difference could soon overcome the time to calculate b^n.  The
+      requirement for an odd divisor in <code>modexact</code> can be handled
+      by some shifting on-the-fly, or perhaps by an extra partial-limb step at
+      the end.
 
 
 </ul>
