@@ -1,3 +1,11 @@
+2000-03-07  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/addsub_n.c: Use HAVE_NATIVE_* now in config.h.
+
+	* mpn/asm-defs.m4: Add comments about SysV m4.
+	* mpn/asm-defs.m4 (m4_log2): Don't use <<.
+	* mpn/asm-defs.m4 (m4_lshift,m4_rshift): New macros.
+
 2000-03-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc32/regmap.m4: Map cr0 => `0', etc.
