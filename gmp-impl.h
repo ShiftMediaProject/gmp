@@ -471,6 +471,13 @@ void __gmp_default_free _PROTO ((void *, size_t));
       (ptr) = (*__gmp_reallocate_func) (ptr, oldsize, newsize); \
   } while (0)
 
+#define __GMP_REALLOCATE_FUNC_MAYBE_TYPE(ptr, oldsize, newsize, type)   \
+  do {                                                                  \
+    if ((oldsize) != (newsize))                                         \
+      (ptr) = (type *) (*__gmp_reallocate_func)                         \
+        (ptr, (oldsize) * sizeof (type), (newsize) * sizeof (type));    \
+  } while (0)
+
 
 /* const and signed must match __gmp_const and __gmp_signed, so follow the
    decision made for those in gmp.h.    */
@@ -2464,7 +2471,8 @@ struct gmp_asprintf_t {
       {                                                                 \
         newalloc = 2*newsize;                                           \
         (d)->alloc = newalloc;                                          \
-        (d)->buf = (__gmp_reallocate_func) ((d)->buf, alloc, newalloc); \
+        (d)->buf = __GMP_REALLOCATE_FUNC_TYPE ((d)->buf,                \
+                                               alloc, newalloc, char);  \
       }                                                                 \
   } while (0)
 
