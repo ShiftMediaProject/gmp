@@ -1,6 +1,6 @@
 /* Test expression evaluation (print nothing and exit 0 if successful).
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -132,12 +132,6 @@ struct data_t  data_zqfr[] = {
 
 
 const struct data_t  data_z[] = {
-  { 0, "cmpabs(0,0)", "0" },
-  { 0, "cmpabs(1,0)", "1" },
-  { 0, "cmpabs(0,1)", "-1" },
-  { 0, "cmpabs(-1,0)", "1" },
-  { 0, "cmpabs(0,-1)", "-1" },
-
   { 0, "divisible_p(333,3)", "1" },
   { 0, "congruent_p(7,1,3)", "1" },
 
@@ -179,6 +173,12 @@ const struct data_t  data_zq[] = {
 };
 
 const struct data_t  data_zr[] = {
+  { 0, "cmpabs(0,0)", "0" },
+  { 0, "cmpabs(1,0)", "1" },
+  { 0, "cmpabs(0,1)", "-1" },
+  { 0, "cmpabs(-1,0)", "1" },
+  { 0, "cmpabs(0,-1)", "-1" },
+
   { 0, "fac(0)",  "1" },
   { 0, "fac(1)",  "1" },
   { 0, "fac(2)",  "2" },
@@ -274,6 +274,8 @@ const struct data_t  data_r[] = {
   { 0, "atan(1)-pi/4",  "~0" },
   { 0, "atan(-1)+pi/4", "~0" },
 
+  { 0, "cbrt(27)",      "3" },
+
   { 0, "cos(0)",        "1" },
   { 0, "cos(pi/2)",     "~0" },
   { 0, "cos(pi)",       "~-1" },
@@ -294,12 +296,15 @@ const struct data_t  data_r[] = {
   { 0, "eq(0xFF,0xF0,5)", "0" },
 
   { 0, "exp(0)",          "1" },
+  { 0, "exp2(4)",         "16" },
   { 0, "expm1(0)",        "0" },
 
   { 0, "fma(2,3,4)",      "10" },
   { 0, "fma(-2,3,4)",     "-2" },
   { 0, "fma(2,-3,4)",     "-2" },
   { 0, "fma(2,-3,-4)",    "-10" },
+
+  { 0, "gamma(4)",        "6" },
 
   { 0, "hypot(3,4)",      "5" },
 
