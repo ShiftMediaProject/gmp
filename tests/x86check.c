@@ -1,7 +1,7 @@
 /* x86 calling conventions checking. */
 
 /*
-Copyright 2000 Free Software Foundation, Inc.
+Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,11 +24,8 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "try.h"
+#include "tests.h"
 
-
-/* function to call */
-tryfun_t calling_conventions_function;
 
 /* temporaries */
 int  calling_conventions_save_ebx;

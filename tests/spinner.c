@@ -2,7 +2,7 @@
    is being done.  */
 
 /*
-Copyright 1999, 2000 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#include "try.h"
+#include "tests.h"
 
 
 /* An application can update this to get a count printed with the spinner.
