@@ -167,7 +167,7 @@ mp_size_t  powm_threshold               = MP_SIZE_T_MAX;
 mp_size_t  hgcd_schoenhage_threshold    = MP_SIZE_T_MAX;
 mp_size_t  gcd_accel_threshold          = MP_SIZE_T_MAX;
 mp_size_t  gcd_schoenhage_threshold     = MP_SIZE_T_MAX;
-mp_size_t  gcdext_threshold             = MP_SIZE_T_MAX;
+mp_size_t  gcdext_schoenhage_threshold  = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_norm_threshold      = MP_SIZE_T_MAX;
 mp_size_t  divrem_1_unnorm_threshold    = MP_SIZE_T_MAX;
 mp_size_t  mod_1_norm_threshold         = MP_SIZE_T_MAX;
@@ -1039,34 +1039,20 @@ tune_gcd_schoenhage (void)
   param.function = speed_mpn_gcd;
   param.min_size = hgcd_schoenhage_threshold;
   param.max_size = 3000;
-  param.step_factor = 0.2;
+  param.step_factor = 0.1;
   one (&gcd_schoenhage_threshold, &param);
 }
 
-/* A comparison between the speed of a single limb step and a double limb
-   step is made.  On a 32-bit limb the ratio is about 2.2 single steps to
-   equal a double step, or on a 64-bit limb about 2.09.  (These were found
-   from counting the steps on a 10000 limb gcdext.  */
 void
-tune_gcdext (void)
+tune_gcdext_schoenhage (void)
 {
   static struct param_t  param;
-  param.name = "GCDEXT_THRESHOLD";
-  param.function = speed_mpn_gcdext_one_single;
-  param.function2 = speed_mpn_gcdext_one_double;
-  switch (BITS_PER_MP_LIMB) {
-  case 32: param.function_fudge = 2.2; break;
-  case 64: param.function_fudge = 2.09; break;
-  default:
-    printf ("Don't know GCDEXT_THERSHOLD factor for BITS_PER_MP_LIMB == %d\n",
-            BITS_PER_MP_LIMB);
-    abort ();
-  }
-  param.min_size = 5;
-  param.min_is_always = 1;
-  param.max_size = 300;
-  param.check_size = 300;
-  one (&gcdext_threshold, &param);
+  param.name = "GCDEXT_SCHOENHAGE_THRESHOLD";
+  param.function = speed_mpn_gcdext;
+  param.min_size = hgcd_schoenhage_threshold;
+  param.max_size = 3000;
+  param.step_factor = 0.1;
+  one (&gcdext_schoenhage_threshold, &param);
 }
 
 
@@ -1721,7 +1707,7 @@ all (void)
   tune_hgcd ();
   tune_gcd_accel ();
   tune_gcd_schoenhage ();
-  tune_gcdext ();
+  tune_gcdext_schoenhage ();
   tune_jacobi_base ();
   printf("\n");
 
