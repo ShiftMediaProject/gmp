@@ -200,10 +200,11 @@ dnl  Check for the spurious output from m4wrap(), noted in mpn/asm-defs.m4.
 dnl
 dnl  The following systems have been seen with the problem.
 dnl
-dnl  - Alpha Unicos, but its assembler doesn't seem to mind.
-dnl  - MacOS X (darwin), its assembler fails.
-dnl  - NetBSD 1.4.1 m68k, and gas 1.92.3 on that system gives a warning and
-dnl    ignores the last line since it doesn't have a newline.
+dnl  - Unicos alpha, but its assembler doesn't seem to mind.
+dnl  - MacOS X Darwin, its assembler fails.
+dnl  - NetBSD 1.4.1 m68k, and gas 1.92.3 there gives a warning and ignores
+dnl    the bad last line since it doesn't have a newline.
+dnl  - NetBSD 1.4.2 alpha, but its assembler doesn't seem to mind.
 dnl
 dnl  Enhancement: Maybe this could be in GMP_PROG_M4, and attempt to prefer
 dnl  an m4 with a working m4wrap, if it can be found.
@@ -258,11 +259,11 @@ fi
 ])
 
 
-dnl  GMP_PROG_CC_WORKS(cc/cflags,[ACTION-IF-WORKS][,ACTION-IF-NOT-WORKS])
+dnl  GMP_PROG_CC_WORKS(cc+cflags,[ACTION-IF-WORKS][,ACTION-IF-NOT-WORKS])
 dnl  --------------------------------------------------------------------
-dnl  Check if CC/CFLAGS can compile and link.
+dnl  Check if CC+CFLAGS can compile and link.
 dnl
-dnl  This test is designed to be run repeatedly with different cc/cflags
+dnl  This test is designed to be run repeatedly with different cc+cflags
 dnl  selections, so the result is not cached.
 
 AC_DEFUN(GMP_PROG_CC_WORKS,
@@ -823,31 +824,68 @@ echo ["define(<DATA>, <$gmp_cv_asm_data>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_RODATA
 dnl  --------------
+dnl  Find out how to switch to the read-only data section.
 dnl
-dnl  ELF uses .section .rodata, possibly with a ,"a" though in gas the flags
-dnl  default from the section name.
+dnl  The compiler output is grepped for the right directive.  It's not
+dnl  considered wise to just probe for ".section .rodata" or whatever works,
+dnl  since arbitrary section names might be accepted, but not necessarily do
+dnl  the right thing when the get to the linker.
 dnl
-dnl  COFF looks like it might use .section .rdata, possibly with ,"dr"
-dnl  though again gas uses defaults based on the section name.
+dnl  Only a few asm files use RODATA, so this code is perhaps a bit
+dnl  excessive right now, but should find more uses in the future.
 dnl
-dnl  a.out has only text, data and bss.
-dnl
-dnl  FIXME: It's not quite clear how to tell the difference between ELF and
-dnl  COFF, so for the moment RODATA is a synonym for DATA on CPUs with split
-dnl  code and data caching, or TEXT elsewhere.
-dnl
-dnl  i386 and i486 don't have caching but are treated the same as newer x86s
-dnl  since i386 in particular is used to mean generic x86.
+dnl  FIXME: gcc on aix generates something like ".csect _foo.ro_c[RO],3"
+dnl  where foo is the object file.  Might need to check for that if we use
+dnl  RODATA there.
 
 AC_DEFUN(GMP_ASM_RODATA,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_REQUIRE([GMP_ASM_DATA])
+AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_ASM_UNDERSCORE])
 AC_CACHE_CHECK([how to switch to read-only data section],
                gmp_cv_asm_rodata,
-[case $host in
+[
+dnl Default to DATA on CPUs with split code/data caching, and TEXT
+dnl elsewhere.  i386 means generic x86, so use DATA on it.
+case $host in
 X86_PATTERN) gmp_cv_asm_rodata="$gmp_cv_asm_data" ;;
 *)           gmp_cv_asm_rodata="$gmp_cv_asm_text" ;;
 esac
+
+cat >conftest.c <<EOF
+const int foo = 123;
+EOF
+echo "Test program:" >&AC_FD_CC
+cat conftest.c >&AC_FD_CC
+gmp_compile="$CC $CFLAGS $CPPFLAGS -S conftest.c >&AC_FD_CC"
+if AC_TRY_EVAL(gmp_compile); then
+  echo "Compiler output:" >&AC_FD_CC
+  cat conftest.s >&AC_FD_CC
+  # must see our label
+  if test $gmp_cv_asm_underscore = yes; then
+    tmp_gsym_prefix=_
+  else
+    tmp_gsym_prefix=
+  fi
+  if grep "^${tmp_gsym_prefix}foo$gmp_cv_asm_label_suffix" conftest.s >/dev/null 2>&AC_FD_CC; then
+    # take the last directive before our label (hence skipping segments
+    # getting debugging info etc)
+    tmp_match=`sed -n ["/^${tmp_gsym_prefix}foo$gmp_cv_asm_label_suffix/q
+                        /^[. 	]*data/p
+                        /^[. 	]*rdata/p
+                        /^[. 	]*text/p
+                        /^[. 	]*section/p
+                        /^[. 	]*csect/p
+                        /^[. 	]*CSECT/p"] conftest.s | sed -n '$p'`
+    echo "Match: $tmp_match" >&AC_FD_CC
+    if test -n "$tmp_match"; then
+      gmp_cv_asm_rodata=$tmp_match
+    fi
+  else
+    echo "Couldn't find label: ^${tmp_gsym_prefix}foo$gmp_cv_asm_label_suffix" >&AC_FD_CC
+  fi
+fi
 ])
 echo ["define(<RODATA>, <$gmp_cv_asm_rodata>)"] >> $gmp_tmpconfigm4
 ])
