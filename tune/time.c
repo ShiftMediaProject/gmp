@@ -1,0 +1,411 @@
+/* Time routines for speed measurments. */
+
+/*
+Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+
+This file is part of the GNU MP Library.
+
+The GNU MP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+The GNU MP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+MA 02111-1307, USA.
+*/
+
+/* All time measuring methods will need an otherwise idle system for
+   accurate measurements.  The only exception might be times() tms_utime,
+   and only then if you know the kernel accurately accounts for task
+   switches and interrupts, and in that case you'd expect some other
+   accurate time base to be available too.
+
+
+   speed_time_init() - initialize timing things.  speed_starttime() calls
+   this if it hasn't been done yet, so you only need to call this explicitly
+   if you want to use the global variables before the first measurement.
+  
+   speed_starttime() - start a time measurment.
+
+   speed_endtime() - end a time measurment, return time taken, in seconds.
+
+   speed_unittime - global variable with the unit of time measurement
+   accuracy, in seconds.
+
+   speed_precision - global variable which is the intended accuracy of time
+   measurements.  speed_measure() for instance runs target routines with
+   enough repetitions so it takes at least speed_unittime*speed_precision
+   seconds.  Programs can provide options so the user can set this.
+
+   speed_cycletime - the time in seconds for each CPU cycle, for example on
+   a 100 MHz CPU this would be 1.0e-8.  If the CPU frequency is unknown,
+   speed_cycletime is 1.0.  See speed_cycletime_init().
+
+   speed_time_string - a string describing the time method in use.
+
+
+   Enhancements:
+
+   Add support for accurate timing on more CPUs, machines and systems.
+
+   Extend automatic CPU frequency determination to kernels/systems other
+   than FreeBSD and Linux.
+
+ */
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <sys/types.h>
+#if HAVE_SYS_SYSCTL_H
+#include <sys/sysctl.h>
+#endif
+
+#include "gmp.h"
+#include "gmp-impl.h"
+#include "longlong.h"
+
+#include "speed.h"
+
+
+#if HAVE_PENTIUM_RDTSC
+#define SPEED_USE_PENTIUM_RDTSC              1
+#else
+#define SPEED_USE_MICROSECOND_GETTIMEOFDAY   1
+#define SPEED_USE_TMS_UTIME                  0
+#endif
+
+#define numberof(x)   (sizeof (x) / sizeof ((x)[0]))
+
+
+/* Look for an environment variable for CPU clock frequency.
+   GMP_CPU_FREQUENCY should be in Hertz, in floating point form,
+   eg. "450e6". */
+int
+speed_cpu_frequency_environment (void)
+{
+  char  *e;
+
+  e = getenv ("GMP_CPU_FREQUENCY");
+  if (e == NULL)
+    return 0;
+
+  speed_cycletime = 1.0 / atof (e);
+  return 1;
+}
+
+
+/* On FreeBSD 3.3 the headers have #defines like CPU_WALLCLOCK under
+   CTL_MACHDEP but don't seem to have anything for machdep.tsc_freq or
+   machdep.i586_freq.  Using the string forms with sysctlbyname() works
+   though, and lets libc worry about the defines and headers.
+
+   FreeBSD 3.3 has tsc_freq, FreeBSD 2.2.8 has i586_freq instead.
+   The "sysctl -a" command prints everything available. */
+
+#if HAVE_SYSCTLBYNAME
+int
+speed_cpu_frequency_sysctlbyname (void)
+{
+  unsigned  val;
+  size_t    valsize;
+
+  valsize = sizeof(val);
+  if (sysctlbyname ("machdep.tsc_freq", &val, &valsize, NULL, 0) != 0
+      || valsize != sizeof(val))
+    {
+      valsize = sizeof(val);
+      if (sysctlbyname ("machdep.i586_freq", &val, &valsize, NULL, 0) != 0
+          || valsize != sizeof(val))
+        return 0;
+    }
+
+  speed_cycletime = 1.0 / (double) val;
+  return 1;
+}
+#endif
+
+
+/* Linux doesn't seem to have any system call to get the CPU frequency, at
+   least not in 2.0.36 or 2.2.13, so it's necessary to read /proc/cpuinfo.
+
+   Kernel 2.0.36 has "bogomips", and it's the CPU frequency.  Kernel 2.2.13
+   has both a "cpu MHz" and "bogomips", and it's "cpu MHz" which is the
+   frequency.  */
+
+int
+speed_cpu_frequency_proc_cpuinfo (void)
+{
+  FILE    *fp;
+  char    buf[128];
+  double  val;
+  int     ret = 0;
+
+  if ((fp = fopen ("/proc/cpuinfo", "r")) != NULL)
+    {
+      while (fgets (buf, sizeof (buf), fp) != NULL)
+        {
+          if (sscanf (buf, "cpu MHz  : %lf\n", &val) == 1)
+            {
+              speed_cycletime = 1e-6 / val;
+              ret = 1;
+              break;
+            }
+          if (sscanf (buf, "bogomips : %lf\n", &val) == 1)
+            {
+              speed_cycletime = 1e-6 / val;
+              ret = 1;
+              break;
+            }
+        }
+      fclose (fp);
+    }
+  return ret;
+}
+
+
+/* Each function returns 1 if it succeeds in setting speed_cycletime, or 0
+   if not.  */
+
+static const struct {
+  int (*fun) _PROTO ((void));
+  const char *description;
+
+} speed_cpu_frequency_table[] = {
+
+  /* This should be first, so an environment variable can override anything
+     the system gives. */
+  { speed_cpu_frequency_environment,
+    "environment variable GMP_CPU_FREQUENCY (in Hertz)\n" },
+
+#if HAVE_SYSCTLBYNAME
+  { speed_cpu_frequency_sysctlbyname,
+    "sysctlbyname() machdep.tsc_freq or machdep.i586_freq" },
+#endif
+
+  { speed_cpu_frequency_proc_cpuinfo,
+    "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
+};
+
+
+int
+speed_cycletime_init (void)
+{
+  int  i;
+
+  for (i = 0; i < numberof (speed_cpu_frequency_table); i++)
+    if ((*speed_cpu_frequency_table[i].fun)())
+      return 1;
+
+  fprintf (stderr,
+           "Cannot determine CPU frequency, need one of the following\n");
+  for (i = 0; i < numberof (speed_cpu_frequency_table); i++)
+    fprintf (stderr, "\t%s\n", speed_cpu_frequency_table[i].description);
+
+  return 0;
+}
+
+
+/* ---------------------------------------------------------------------- */
+#if SPEED_USE_PENTIUM_RDTSC
+/* This method is for Intel pentium and higher processors with an RDTSC
+   instruction.  */
+
+const char *speed_time_string 
+  = "Time measurements using pentium rdtsc cycle counter.\n";
+
+/* bigish value because we have a fast timer */
+int speed_precision = 10000;
+
+double speed_unittime;
+double speed_cycletime;
+
+static unsigned speed_starttime_save[2];
+static int  speed_time_initialized = 0;
+
+/* Knowing the CPU frequency is mandatory because it's needed to convert
+   RDTSC cycles into seconds.  */
+void
+speed_time_init (void)
+{
+  if (speed_time_initialized)
+    return;
+  speed_time_initialized = 1;
+
+  if (!speed_cycletime_init ())
+    exit (1);
+
+  speed_unittime = speed_cycletime;
+}
+
+void
+speed_starttime (void)
+{
+  if (!speed_time_initialized)
+    speed_time_init ();
+  pentium_rdtsc (speed_starttime_save);
+}
+
+double
+speed_endtime (void)
+{
+  unsigned  endtime[2];
+  pentium_rdtsc (endtime);
+  sub_ddmmss (endtime[1], endtime[0], endtime[1], endtime[0], 
+              speed_starttime_save[1], speed_starttime_save[0]);
+  return (double) (endtime[1] * 65536.0 * 65536.0 + endtime[0])
+    * speed_unittime;
+}
+
+#endif
+
+
+/* ---------------------------------------------------------------------- */
+#if SPEED_USE_MICROSECOND_GETTIMEOFDAY
+/* This method is for systems with a microsecond accurate gettimeofday().
+
+   A dummy timezone parameter is always given to gettimeofday(), in case it
+   doesn't allow NULL.  */
+
+#include <sys/time.h>
+
+const char *speed_time_string 
+  = "Time measurements using microsecond accurate gettimeofday.\n";
+
+/* highish value because we have an accurate timer */
+int speed_precision = 1000;
+
+double speed_unittime = 1.0e-6;
+double speed_cycletime = 1.0;
+
+static struct timeval  speed_starttime_save;
+static int  speed_time_initialized = 0;
+
+void
+speed_time_init (void)
+{
+  if (speed_time_initialized)
+    return;
+  speed_time_initialized = 1;
+
+  speed_cycletime_init ();
+}
+
+void
+speed_starttime (void)
+{
+  struct timezone  tz;
+  if (!speed_time_initialized)
+    speed_time_init ();
+  gettimeofday (&speed_starttime_save, &tz);
+}
+
+double
+speed_endtime (void)
+{
+#define TIMEVAL_SECS(tp) \
+  ((double) (tp)->tv_sec + (double) (tp)->tv_usec * 1.0e-6)
+
+  struct timeval   t;
+  struct timezone  tz;
+
+  gettimeofday (&t, &tz);
+  return TIMEVAL_SECS (&t) - TIMEVAL_SECS (&speed_starttime_save);
+}
+
+#endif
+
+
+/* ---------------------------------------------------------------------- */
+#if SPEED_USE_TMS_UTIME
+/* You're in trouble if you have to use this method.  Speed measurments and
+   threshold tuning are going to take a long time. */
+
+#if STDC_HEADERS
+#include <errno.h>      /* for errno */
+#include <string.h>     /* for strerror */
+#endif
+#if HAVE_UNISTD_H
+#include <unistd.h>     /* for sysconf */
+#endif
+#include <sys/times.h>  /* for times */
+
+const char *speed_time_string 
+  = "Time measurements using tms_utime.\n";
+
+
+/* lowish default value so we don't take days and days to do tuning */
+int  speed_precision = 200;
+
+double  speed_unittime;
+double  speed_cycletime = 1.0;
+
+static struct tms  speed_starttime_save;
+static int  speed_time_initialized = 0;
+
+void
+speed_time_init (void)
+{
+  long  clk_tck;
+
+  if (speed_time_initialized)
+    return;
+  speed_time_initialized = 1;
+
+  speed_cycletime_init ();
+
+#if HAVE_SYSCONF
+  clk_tck = sysconf (_SC_CLK_TCK);
+  if (clk_tck == -1L)
+    {
+      fprintf (stderr, "sysconf(_SC_CLK_TCK) not available: %s\n",
+	       strerror(errno));
+      fprintf (stderr, "\tusing CLK_TCK instead\n");
+      clk_tck = CLK_TCK;
+    }
+#else
+  clk_tck = CLK_TCK;
+#endif
+
+  speed_unittime = 1.0 / (double) clk_tck;
+}
+
+/* Burn up CPU until a times() tms_utime tick boundary.
+   Doing so lets you know a measurement has started on a tick boundary,
+   effectively halving the uncertainty in the measurement.
+   *t1 gets the start times() values the caller should use. */
+void
+times_utime_boundary (struct tms *t1)
+{
+  struct tms  t2;
+  times (&t2);
+  do
+    times (t1);
+  while (t1->tms_utime == t2.tms_utime);
+}
+
+void
+speed_starttime (void)
+{
+  if (!speed_time_initialized)
+    speed_time_init ();
+  times_utime_boundary (&speed_starttime_save);
+}
+
+double
+speed_endtime (void)
+{
+  struct tms  t;
+  times (&t);
+  return (t.tms_utime - speed_starttime_save.tms_utime) * speed_unittime;
+}
+
+#endif
