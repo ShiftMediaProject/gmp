@@ -23,15 +23,13 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-/*
-We could make this work for negative n.  The recursive defintion,
-   k < 0   => bin(n,k) = 0
-   k == 0  => bin(n,k) = 1
-   1       => bin(n,k) = bin(n-1,k-1)*n/k
-defined that situation too.
-*/
 
-/* This is a poor implementation.  Look at bin_uiui.c for improvement ideas.  */
+/* This is a poor implementation.  Look at bin_uiui.c for improvement ideas.
+   In fact consider calling mpz_bin_uiui() when the arguments fit, leaving
+   the code here only for big n.
+
+   For the identity bin(n,k) = bin(-n+k-1,k) see Knuth vol 1 section 1.2.6
+   part G. */
 
 void
 #if __STDC__
@@ -47,18 +45,43 @@ mpz_bin_ui (r, n, k)
   unsigned long int i;
   unsigned long int kacc;
   mpz_t nacc;
-
-  mpz_init (ni);
-  mpz_sub_ui (ni, n, k);
-
-  /* Rewrite bin(n,k) as bin(n,n-k) if that is simpler to compute.  */
-  if (mpz_cmp_ui (ni, k) < 0)
+  
+  if (mpz_sgn (n) < 0)
     {
-      k = mpz_get_ui (ni);
+      /* bin(n,k) = bin(-n+k-1,k), and set ni = -n+k-1 - k = -n-1 */
+      mpz_init (ni);
+      mpz_neg (ni, n);
+      mpz_sub_ui (ni, ni, 1L);
+      mpz_set_si (r, (long) (1 - ((k & 1) << 1)));  /* (-1)^k */
+    }
+  else
+    {
+      /* bin(n,k) == 0 if k>n
+         (no test for this under the n<0 case, since -n+k-1 >= k there) */
+      if (mpz_cmp_ui (n, k) < 0)
+        {
+          mpz_set_ui (r, 0L);
+          return;
+        }
+
+      /* set ni = n-k */
+      mpz_init (ni);
       mpz_sub_ui (ni, n, k);
+      mpz_set_ui (r, 1L);
     }
 
-  mpz_set_ui (r, 1);
+  /* Now wanting bin(ni+k,k), with ni positive, and r is the sign (1 or -1). */
+
+  /* Rewrite bin(n,k) as bin(n,n-k) if that is smaller.  In this case it's
+     whether ni+k-k < k meaning ni<k, and if so change to denominator ni+k-k
+     = ni, and new ni of ni+k-ni = k.  */
+  if (mpz_cmp_ui (ni, k) < 0)
+    {
+      unsigned long  tmp;
+      tmp = k;
+      k = mpz_get_ui (ni);
+      mpz_set_ui (ni, tmp);
+    }
 
   kacc = 1;
   mpz_init_set_ui (nacc, 1);
