@@ -1,49 +1,57 @@
-dnl PowerPC-32 mpn_addmul_1 -- Multiply a limb vector with a limb and add
-dnl the result to a second limb vector.
+dnl  PowerPC-32 mpn_addmul_1 -- Multiply a limb vector with a limb and add the
+dnl  result to a second limb vector.
 
-dnl Copyright 1995, 1997, 1998, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1995, 1997, 1998, 2000, 2001, 2002 Free Software Foundation,
+dnl  Inc.
 
-dnl This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-dnl The GNU MP Library is free software; you can redistribute it and/or modify
-dnl it under the terms of the GNU Lesser General Public License as published by
-dnl the Free Software Foundation; either version 2.1 of the License, or (at your
-dnl option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
 
-dnl The GNU MP Library is distributed in the hope that it will be useful, but
-dnl WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-dnl or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-dnl License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
 
-dnl You should have received a copy of the GNU Lesser General Public License
-dnl along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-dnl the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-dnl MA 02111-1307, USA.
-
-
-dnl INPUT PARAMETERS
-dnl res_ptr	r3
-dnl s1_ptr	r4
-dnl size	r5
-dnl s2_limb	r6
-
-dnl This is optimized for the PPC604.  It has not been tuned for PPC601,
-dnl PPC603, PPC750 (G3), 7400 (G4), 7450 (newer G4).
-dnl
-dnl Loop Analysis for the 604:
-dnl 12 mem insn
-dnl 8 serializing insn
-dnl 8 int multiply
-dnl 25 int reg write
-dnl 9 int ops (8 of which serialize)
-dnl
-dnl The multiply insns need 16 cycles/4limb.
-dnl The integer register writes will need 13 cycles/4limb.
-dnl All-in-all, it should be possible to get to 4 cycles/limb,
-dnl but that will require some clever FPNOPS and BNOPS for exact
-dnl issue control.
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
+
+C                cycles/limb
+C 603e:            ?
+C 604e:            6.75
+C 75x (G3):        8.7-14.3
+C 7400,7410 (G4):  8.7-14.3
+C 744x,745x (G4+): 9.5
+
+C INPUT PARAMETERS
+C rp	r3
+C up	r4
+C n	r5
+C vl	r6
+
+C This is optimized for the PPC604.  It has not been tuned for PPC601,
+C PPC603, PPC750 (G3), 7400 (G4), 7450 (G4+).
+C
+C Loop Analysis for the 604:
+C 12 mem insn
+C 8 serializing insn
+C 8 int multiply
+C 25 int reg write
+C 9 int ops (8 of which serialize)
+C
+C The multiply insns need 16 cycles/4limb.
+C The integer register writes will need 13 cycles/4limb.
+C All-in-all, it should be possible to get to 4 or 5 cycles/limb,
+C but that will require some clever FPNOPS and BNOPS for exact
+C issue control.
+
 
 ASM_START()
 PROLOGUE(mpn_addmul_1)

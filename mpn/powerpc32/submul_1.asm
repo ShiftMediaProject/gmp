@@ -1,36 +1,41 @@
-dnl PowerPC-32 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
-dnl the result from a second limb vector.
+dnl  PowerPC-32 mpn_submul_1 -- Multiply a limb vector with a limb and subtract
+dnl  the result from a second limb vector.
 
-dnl Copyright 1995, 1997, 1998, 2000, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1995, 1997, 1998, 2000, 2002 Free Software Foundation, Inc.
 
-dnl This file is part of the GNU MP Library.
+dnl  This file is part of the GNU MP Library.
 
-dnl The GNU MP Library is free software; you can redistribute it and/or modify
-dnl it under the terms of the GNU Lesser General Public License as published by
-dnl the Free Software Foundation; either version 2.1 of the License, or (at your
-dnl option) any later version.
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
 
-dnl The GNU MP Library is distributed in the hope that it will be useful, but
-dnl WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-dnl or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-dnl License for more details.
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
 
-dnl You should have received a copy of the GNU Lesser General Public License
-dnl along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-dnl the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-dnl MA 02111-1307, USA.
-
-
-dnl INPUT PARAMETERS
-dnl res_ptr	r3
-dnl s1_ptr	r4
-dnl size	r5
-dnl s2_limb	r6
-
-dnl This is optimized for the PPC604.  It has not been tested on PPC601, PPC603
-dnl or PPC750 since I don't have access to any such machines.
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
+
+C                cycles/limb
+C 603e:            ?
+C 604e:            7.5
+C 75x (G3):        9.3-15
+C 7400,7410 (G4):  9.3-15
+C 744x,745x (G4+): 10.5
+
+C INPUT PARAMETERS
+C rp	r3
+C up	r4
+C n	r5
+C vl	r6
+
+C This is optimized for the PPC604.  See addmul_1.asm for additional comments.
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
