@@ -141,7 +141,6 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           s->dst_num = 0;
 
           t[i] = (*fun) (s);
-          t_unsorted[i] = t[i];
 
           if (speed_option_verbose >= 3)
             printf("size=%ld reps=%u r=%ld attempt=%d  %.9f\n", 
@@ -167,6 +166,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           s->reps = (unsigned) reps_d;
         }
       t[i] /= s->reps;
+      t_unsorted[i] = t[i];
 
       if (speed_precision == 0)
         return t[i];
@@ -190,9 +190,11 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
 
   fprintf (stderr, "speed_measure() could not get %d results within %.1f%%\n",
            e, (TOLERANCE-1.0)*100.0);
-  fprintf (stderr, "  %.12f is about 0.5%%\n", t[0]*(TOLERANCE-1.0));
+  fprintf (stderr, "    unsorted         sorted\n");
+  fprintf (stderr, "  %.12f    %.12f    is about 0.5%%\n",
+           t_unsorted[0]*(TOLERANCE-1.0), t[0]*(TOLERANCE-1.0));
   for (i = 0; i < numberof (t); i++)
-    fprintf (stderr, "  %.09f\n", t_unsorted[i]);
+    fprintf (stderr, "  %.09f       %.09f\n", t_unsorted[i], t[i]);
 
   return -1.0;
 }
