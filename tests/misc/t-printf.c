@@ -1,6 +1,6 @@
 /* Test gmp_printf and related functions.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -734,6 +734,43 @@ check_f (void)
 
 
 void
+check_limb (void)
+{
+  int        i;
+  mp_limb_t  limb;
+  mpz_t      z;
+  char       *s;
+
+  check_one ("0", "%Md", CNST_LIMB(0));
+  check_one ("1", "%Md", CNST_LIMB(1));
+
+  /* "i" many 1 bits, tested against mpz_get_str in decimal and hex */
+  limb = 1;
+  mpz_init_set_ui (z, 1L);
+  for (i = 1; i <= GMP_LIMB_BITS; i++)
+    {
+      s = mpz_get_str (NULL, 10, z);
+      check_one (s, "%Mu", limb);
+      (*__gmp_free_func) (s, strlen (s) + 1);
+
+      s = mpz_get_str (NULL, 16, z);
+      check_one (s, "%Mx", limb);
+      (*__gmp_free_func) (s, strlen (s) + 1);
+
+      s = mpz_get_str (NULL, -16, z);
+      check_one (s, "%MX", limb);
+      (*__gmp_free_func) (s, strlen (s) + 1);
+
+      limb = 2*limb + 1;
+      mpz_mul_2exp (z, z, 1L);
+      mpz_add_ui (z, z, 1L);
+    }
+
+  mpz_clear (z);
+}
+
+
+void
 check_n (void)
 {
   {
@@ -770,6 +807,7 @@ check_n (void)
                                                         \
   } while (0)
 
+  CHECK_N (mp_limb_t, "M");
   CHECK_N (char,      "hh");
   CHECK_N (long,      "l");
 #if HAVE_LONG_LONG
@@ -932,6 +970,7 @@ main (int argc, char *argv[])
   check_z ();
   check_q ();
   check_f ();
+  check_limb ();
   check_n ();
   check_misc ();
 
