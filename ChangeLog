@@ -1,5 +1,8 @@
 2001-09-10  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/x86/pentium4/mmx/lshift.asm: New file.
+	* mpn/x86/pentium4/mmx/rshift.asm: New file.
+
 	* tests/mpn/t-iord_u.c (check_incr_data): Work around HP compiler bug.
 	(check_decr_data): Likewise.
 
@@ -43,8 +46,6 @@
 2001-09-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/sse2/addmul_1.asm: New file.
-	* mpn/x86/pentium4/sse2/lshift.asm: New file.
-	* mpn/x86/pentium4/sse2/rshift.asm: New file.
 
 2001-09-04  Kevin Ryde  <kevin@swox.se>
 
