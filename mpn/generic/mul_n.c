@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 
 
 #ifndef USE_MORE_MPN
-#if !defined (__alpha)
+#if !defined (__alpha) && !defined (__mips)
 /* For all other machines, we want to call mpn functions for the compund
    operations instead of open-coding them.  */
 #define USE_MORE_MPN 1
