@@ -65,7 +65,7 @@ mpn_perfect_square_p (up, usize)
      perfect square candidates in O(n) time.  */
 
   /* Firstly, compute REM = A mod PP.  */
-  if (UDIV_TIME > (2 * UMUL_TIME + 6))
+  if (UDIV_TIME > UDIV_PREINV_TIME)
     rem = mpn_preinv_mod_1 (up, usize, (mp_limb_t) PP, (mp_limb_t) PP_INVERTED);
   else
     rem = mpn_mod_1 (up, usize, (mp_limb_t) PP);
