@@ -5,7 +5,7 @@ Changes between MP version 3.1.1 and 3.2
   confusion.
 * New CPU support: IA-64.
 * Improved CPU support: 21264, Cray vector systems.
-* New systems supported: SCO 5, Darwin.
+* New systems supported: SCO 5, Darwin, Windows DLLs.
 * New C++ wrapper.
 * New Karatsuba Square Root algorithm.
 * New algorithms chapter in the manual.
@@ -17,6 +17,8 @@ Changes between MP version 3.1.1 and 3.2
 * New divisibility tests: mpz_divisible_p, mpz_divisible_ui_p,
   mpz_divisible_2exp_p, mpz_congruent_p, mpz_congruent_ui_p,
   mpz_congruent_2exp_p.
+* New Fibonacci function: mpz_fib2_ui.
+* New Lucas number functions: mpz_lucnum_ui, mpz_lucnum2_ui.
 * New rational functions: mpq_abs, mpq_div_2exp, mpq_get_str, mpq_mul_2exp,
   mpq_set_f.
 * New float functions: mpf_cmp_d, mpf_get_default_prec, mpf_get_si, mpf_get_ui.
