@@ -1,5 +1,7 @@
 2000-11-04  Torbjorn Granlund  <tege@swox.com>
 
+	* config.guess: Don't pass "$@" when it is known to be empty.
+
 	* Makefile.am (EXTRA_DIST): List configfsf.guess and configfsf.sub.
 
 2000-11-04  Kevin Ryde  <kevin@swox.se>
