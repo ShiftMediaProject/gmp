@@ -355,3 +355,10 @@ union ieee_double_extract
 };
 #endif
 #endif
+
+#define MP_BASE_AS_DOUBLE (2.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1)))
+#if BITS_PER_MP_LIMB == 64
+#define LIMBS_PER_DOUBLE 2
+#else
+#define LIMBS_PER_DOUBLE 3
+#endif
