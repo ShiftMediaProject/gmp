@@ -34,7 +34,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
    -t        print timing information
    -html     output html
    -wml      output wml
-   -nosplit  do not split long lines each 60th digit
+   -split    split long lines each 80th digit
 */
 
 /* Define LIMIT_RESOURCE_USAGE if you want to make sure the program doesn't
@@ -70,7 +70,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
     __t0 = cputime ();							\
     {func;}								\
     __tmp = cputime () - __t0;						\
-    (t) = (double) __tmp;						\
+    (t) = __tmp;							\
   } while (0)
 
 /* GMP version 1.x compatibility.  */
@@ -413,9 +413,9 @@ main (int argc, char **argv)
 
       if (print_timing)
 	{
-	  double t;
+	  int t;
 	  TIME (t, mpz_eval_expr (r, e));
-	  printf ("computation took %.2f ms%s\n", t, newline);
+	  printf ("computation took %d ms%s\n", t, newline);
 	}
       else
 	mpz_eval_expr (r, e);
@@ -426,14 +426,22 @@ main (int argc, char **argv)
 	  char *tmp, *s;
 
 	  out_len = mpz_sizeinbase (r, base >= 0 ? base : -base) + 2;
+#ifdef LIMIT_RESOURCE_USAGE
+	  if (out_len > 100000)
+	    {
+	      printf ("result is about %ld digits, not printing it%s\n",
+		      (long) out_len - 3, newline);
+	      exit (-2);
+	    }
+#endif
 	  tmp = malloc (out_len);
 
 	  if (print_timing)
 	    {
-	      double t;
+	      int t;
 	      printf ("output conversion ");
 	      TIME (t, mpz_get_str (tmp, base, r));
-	      printf ("took %.2f ms%s\n", t, newline);
+	      printf ("took %d ms%s\n", t, newline);
 	    }
 	  else
 	    mpz_get_str (tmp, base, r);
@@ -441,11 +449,11 @@ main (int argc, char **argv)
 	  out_len = strlen (tmp);
 	  if (flag_splitup_output)
 	    {
-	      for (s = tmp; out_len > 60; s += 60)
+	      for (s = tmp; out_len > 80; s += 80)
 		{
-		  fwrite (s, 1, 60, stdout);
+		  fwrite (s, 1, 80, stdout);
 		  printf ("%s\n", newline);
-		  out_len -= 60;
+		  out_len -= 80;
 		}
 
 	      fwrite (s, 1, out_len, stdout);
