@@ -773,12 +773,13 @@ void mpn_xnor_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 #define mpn_xnor_n(d,s1,s2,n) MPN_LOGOPS_N_INLINE(d,s1,s2,n,~,^, )
 #endif
 
-#define mpn_zero_p  __MPN(zero_p)
-int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
-
-#if HAVE_INLINE || defined (_FORCE_INLINES)
 /* n==0 is allowed and is considered a zero value.  */
-inline int
+#define mpn_zero_p  __MPN(zero_p)
+#if HAVE_INLINE || defined (_FORCE_INLINES)
+#if HAVE_INLINE
+static inline
+#endif
+int
 mpn_zero_p (mp_srcptr p, mp_size_t n)
 {
   mp_size_t i;
@@ -790,6 +791,8 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
 
   return 1;
 }
+#else
+int mpn_zero_p _PROTO ((mp_srcptr p, mp_size_t n));
 #endif
 
 
