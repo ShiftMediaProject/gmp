@@ -29,15 +29,12 @@ include(`../config.m4')
 C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C                      mp_limb_t multiplier);
 C
-C When the multiplier is 16 bits some special case MMX code is used.  This
-C isn't a particularly important in general, but small multipliers might
-C come about reasonably often from mpz_mul_ui etc.
-C
-C In the MMX code, if the size is odd there's roughly a 5 cycle penalty, so
-C times for say size==7 and size==8 end up being quite close.  If src isn't
-C aligned to an 8 byte boundary then one limb is processed separately with
-C roughly a 5 cycle penalty, so in that case it's say size==8 and size==9
-C which are close.
+C When the multiplier is 16 bits some special case MMX code is used.  Small
+C multipliers might arise reasonably often from mpz_mul_ui etc.  If the size
+C is odd there's roughly a 5 cycle penalty, so times for say size==7 and
+C size==8 end up being quite close.  If src isn't aligned to an 8 byte
+C boundary then one limb is processed separately with roughly a 5 cycle
+C penalty, so in that case it's say size==8 and size==9 which are close.
 C
 C Alternatives:
 C
