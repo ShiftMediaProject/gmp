@@ -6458,6 +6458,7 @@ Apart from the incomplete set of functions, the interface for initializing
 with @code{pow} in @file{libm.a}.
 
 @cindex @file{mp.h}
+@tindex MINT
 Include the header @file{mp.h} to get the definition of the necessary types and
 functions.  If you are on a BSD derived system, make sure to include GNU
 @file{mp.h} if you are going to link the GNU @file{libmp.a} to your program.
