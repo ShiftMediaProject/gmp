@@ -1,6 +1,6 @@
 /* gmp_rand_clear (state) -- Clear and deallocate random state STATE.
 
-Copyright (C) 1999 Free Software Foundation, Inc.
+Copyright (C) 1999, 2000  Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,8 +19,8 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdlib.h>		/* FIXME: For free(). */
 #include "gmp.h"
+#include "gmp-impl.h"
 
 void
 #if __STDC__
@@ -36,12 +36,19 @@ gmp_rand_clear (s)
     {
     case GMP_RAND_ALG_LC:
       mpz_clear (s->data.lc->a);
-      mpz_clear (s->data.lc->m);
-      free (s->data.lc);
+      if (s->data.lc->m2exp == 0)
+	mpz_clear (s->data.lc->m);
+      (*_mp_free_func) (s->data.lc, sizeof (*s->data.lc));
       break;
+
+#if 0
     case GMP_RAND_ALG_BBS:
       mpz_clear (s->data.bbs->bi);
-      free (s->data.bbs);
+      (*_mp_free_func) (s->data.bbs, sizeof (*s->data.bbs));
       break;
+#endif /* 0 */
+
+    default:
+      gmp_errno |= GMP_ERROR_UNSUPPORTED_ARGUMENT;
     }
 }
