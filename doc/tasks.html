@@ -279,16 +279,6 @@
 <h4>Configuration</h4>
 
 <ul>
-<li> <code>alloca</code> detection could be improved a bit.  One possible
-     approach would be to bring the code block from <code>AC_FUNC_ALLOCA</code>
-     into gmp-impl.h, then use gmp-impl.h in a test for a working
-     <code>alloca</code>.  The test would correspond to how the build will be
-     done.  gmp-impl.h would probably need to be told to use confdefs.h not
-     config.h during the test.
-     <br> The CPP tests alone make it hard to detect library functions or
-     compiler builtins.  One thing current tests don't cover: HPUX 10 C
-     compiler supports <code>alloca</code>, but cannot find any symbol to test
-     for HPUX 10.  Damn.
 <li> Determine floating-point format with a feature test.  Get rid of large
      #ifdef mess for FP format in gmp-impl.h.
 <li> HPPA: config.guess should recognize 7000, 7100, 7200, and 8x00.
