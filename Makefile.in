@@ -140,6 +140,7 @@ PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
 STRIP = @STRIP@
+TAL_OBJECT = @TAL_OBJECT@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 VERSION = @VERSION@
@@ -293,9 +294,9 @@ libgmp_la_SOURCES = gmp-impl.h longlong.h stack-alloc.h			\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
   rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
-  stack-alloc.c version.c 
+  version.c
 
-libgmp_la_DEPENDENCIES = \
+libgmp_la_DEPENDENCIES = @TAL_OBJECT@ \
   $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 
 libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
@@ -310,10 +311,11 @@ libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 @WANT_MPBSD_TRUE@MPBSD_HEADERS_OPTION = mp.h
 @WANT_MPBSD_TRUE@MPBSD_LTLIBRARIES_OPTION = libmp.la
 libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
-  mp_minv_tab.c mp_set_fns.c stack-alloc.c
+  mp_minv_tab.c mp_set_fns.c
 
 MPN_OBJS_IN_LIBMP = @mpn_objs_in_libmp@
-libmp_la_DEPENDENCIES = $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP) \
+libmp_la_DEPENDENCIES = \
+  @TAL_OBJECT@ $(MPBSD_OBJECTS) $(MPN_OBJS_IN_LIBMP)			\
   mpz/add$U.lo mpz/clear$U.lo mpz/cmp$U.lo mpz/init$U.lo mpz/mod$U.lo	\
   mpz/mul$U.lo mpz/mul_2exp$U.lo mpz/n_pow_ui$U.lo			\
   mpz/realloc$U.lo mpz/set$U.lo						\
@@ -324,6 +326,12 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE)
 
 
+# Optional objects, listed in a dummy library to generate ansi2knr rules and
+# get them in "make dist".
+#
+EXTRA_LTLIBRARIES = libdummy.la
+libdummy_la_SOURCES = stack-alloc.c tal-debug.c
+
 info_TEXINFOS = gmp.texi
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -332,15 +340,18 @@ CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = gmp.h mp.h
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
+libdummy_la_LDFLAGS =
+libdummy_la_LIBADD =
+am_libdummy_la_OBJECTS = stack-alloc$U.lo tal-debug$U.lo
+libdummy_la_OBJECTS = $(am_libdummy_la_OBJECTS)
 am_libgmp_la_OBJECTS = assert$U.lo compat$U.lo errno$U.lo \
 	extract-dbl$U.lo insert-dbl$U.lo memory$U.lo mp_bpl$U.lo \
 	mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo rand$U.lo \
 	randclr$U.lo randlc$U.lo randlc2x$U.lo randraw$U.lo rands$U.lo \
-	randsd$U.lo randsdui$U.lo stack-alloc$U.lo version$U.lo
+	randsd$U.lo randsdui$U.lo version$U.lo
 libgmp_la_OBJECTS = $(am_libgmp_la_OBJECTS)
 am_libmp_la_OBJECTS = assert$U.lo errno$U.lo memory$U.lo mp_bpl$U.lo \
-	mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo \
-	stack-alloc$U.lo
+	mp_clz_tab$U.lo mp_minv_tab$U.lo mp_set_fns$U.lo
 libmp_la_OBJECTS = $(am_libmp_la_OBJECTS)
 
 DEFS = @DEFS@
@@ -357,7 +368,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = $(libgmp_la_SOURCES) $(libmp_la_SOURCES)
+DIST_SOURCES = $(libdummy_la_SOURCES) $(libgmp_la_SOURCES) \
+	$(libmp_la_SOURCES)
 INFO_DEPS = gmp.info
 DVIS = gmp.dvi
 TEXINFOS = gmp.texi
@@ -375,7 +387,7 @@ DIST_COMMON = README ./stamp-h.in AUTHORS COPYING COPYING.LIB ChangeLog \
 	mdate-sh missing mkinstalldirs mp-h.in stamp-vti texinfo.tex \
 	version.texi
 DIST_SUBDIRS = tests mpn mpz mpq mpf mpbsd mpfr demos tune
-SOURCES = $(libgmp_la_SOURCES) $(libmp_la_SOURCES)
+SOURCES = $(libdummy_la_SOURCES) $(libgmp_la_SOURCES) $(libmp_la_SOURCES)
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -445,6 +457,8 @@ uninstall-libLTLIBRARIES:
 
 clean-libLTLIBRARIES:
 	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+libdummy.la: $(libdummy_la_OBJECTS) $(libdummy_la_DEPENDENCIES)
+	$(LINK)  $(libdummy_la_LDFLAGS) $(libdummy_la_OBJECTS) $(libdummy_la_LIBADD) $(LIBS)
 libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libgmp_la_LDFLAGS) $(libgmp_la_OBJECTS) $(libgmp_la_LIBADD) $(LIBS)
 libmp.la: $(libmp_la_OBJECTS) $(libmp_la_DEPENDENCIES)
@@ -522,6 +536,8 @@ randsdui_.c: randsdui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/randsdui.c; then echo $(srcdir)/randsdui.c; else echo randsdui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > randsdui_.c || rm -f randsdui_.c
 stack-alloc_.c: stack-alloc.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/stack-alloc.c; then echo $(srcdir)/stack-alloc.c; else echo stack-alloc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > stack-alloc_.c || rm -f stack-alloc_.c
+tal-debug_.c: tal-debug.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tal-debug.c; then echo $(srcdir)/tal-debug.c; else echo tal-debug.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tal-debug_.c || rm -f tal-debug_.c
 version_.c: version.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/version.c; then echo $(srcdir)/version.c; else echo version.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > version_.c || rm -f version_.c
 assert_.$(OBJEXT) assert_.lo compat_.$(OBJEXT) compat_.lo \
@@ -533,8 +549,8 @@ mp_set_fns_.lo rand_.$(OBJEXT) rand_.lo randclr_.$(OBJEXT) randclr_.lo \
 randlc_.$(OBJEXT) randlc_.lo randlc2x_.$(OBJEXT) randlc2x_.lo \
 randraw_.$(OBJEXT) randraw_.lo rands_.$(OBJEXT) rands_.lo \
 randsd_.$(OBJEXT) randsd_.lo randsdui_.$(OBJEXT) randsdui_.lo \
-stack-alloc_.$(OBJEXT) stack-alloc_.lo version_.$(OBJEXT) version_.lo : \
-$(ANSI2KNR)
+stack-alloc_.$(OBJEXT) stack-alloc_.lo tal-debug_.$(OBJEXT) \
+tal-debug_.lo version_.$(OBJEXT) version_.lo : $(ANSI2KNR)
 
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-vti
 	@:
