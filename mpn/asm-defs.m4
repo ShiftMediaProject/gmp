@@ -9,7 +9,7 @@ dnl  GNU m4 and OpenBSD 2.7 m4 will give filenames and line numbers in error
 dnl  messages.
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl
