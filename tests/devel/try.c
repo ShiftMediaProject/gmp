@@ -722,10 +722,10 @@ param_init (void)
   p = &param[TYPE_MUL_2];
   p->retval = 1;
   p->dst[0] = 1;
-  p->dst_size[0] = SIZE_PLUS_1;
+  p->dst_size[0] = SIZE_PLUS_MSIZE_SUB_1;
   p->src[0] = 1;
   p->src[1] = 1;
-  p->size2 = SIZE_2;
+  p->msize = 2;
   p->overlap = OVERLAP_NOT_SRC2;
   REFERENCE (refmpn_mul_2);
 
@@ -1427,7 +1427,7 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_mul_1c),     TYPE_MUL_1C },
 #endif
 #if HAVE_NATIVE_mpn_mul_2
-  { TRY(mpn_mul_2),      TYPE_MUL_2 },
+  { TRY(mpn_mul_2),      TYPE_MUL_2, 2 },
 #endif
 
   { TRY(mpn_rshift),     TYPE_RSHIFT },
@@ -1945,6 +1945,8 @@ call (struct each_t *e, tryfun_t function)
     break;
 
   case TYPE_MUL_2:
+    if (size == 1)
+      abort ();
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, size, e->s[1].p);
     break;
@@ -1956,6 +1958,8 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_ADDMUL_6:
   case TYPE_ADDMUL_7:
   case TYPE_ADDMUL_8:
+    if (size == 1)
+      abort ();
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p, size, multiplier_N);
     break;
