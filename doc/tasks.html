@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 15 Jul 2001.  An up-to-date version is available at
+  This file current as of 23 Jul 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -366,11 +366,7 @@
      record other temporary memory or temporary variables in use which should
      be freed.  The latter might be difficult, perhaps the C++ destructor
      mechanism would be necessary.
-<li> <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
-     <code>gmp_snprintf</code>.  Think about some sort of wrapper around
-     <code>printf</code> so it and its several variants don't have to be
-     completely reimplemented.
-<li> <code>mpq</code> input and output functions.
+<li> <code>mpq_inp_str</code>
 <li> <code>mpn_and_n</code> ... <code>mpn_copyd</code>: Perhaps make the mpn
      logops and copys available in gmp.h, either as library functions or
      inlines, with the availability of library functions instantiated in the
