@@ -3231,9 +3231,6 @@ Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
 value if @math{@GMPabs{@var{op1}} > @GMPabs{@var{op2}}}, zero if
 @math{@GMPabs{@var{op1}} = @GMPabs{@var{op2}}}, or a negative value if
 @math{@GMPabs{@var{op1}} < @GMPabs{@var{op2}}}.
-
-Note that @code{mpz_cmpabs_si} is a macro and will evaluate its arguments more
-than once.
 @end deftypefn
 
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
