@@ -1,4 +1,4 @@
-/* mpz/lcm.c:   Calculate the least common multiple of two integers.
+/* mpz_lcm -- mpz/mpz least common multiple.
 
 Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 
@@ -34,15 +34,45 @@ mpz_lcm (mpz_ptr r, mpz_srcptr u, mpz_srcptr v)
 
   TMP_MARK (marker);
 
-  usize = ABS (SIZ (u));
-  vsize = ABS (SIZ (v));
-
+  usize = SIZ (u);
+  vsize = SIZ (v);
   if (usize == 0 || vsize == 0)
     {
       SIZ (r) = 0;
       return;
     }
+  usize = ABS (usize);
+  vsize = ABS (vsize);
 
+  if (vsize == 1)
+    {
+      mp_limb_t  vl, gl, c;
+      mp_srcptr  up;
+      mp_ptr     rp;
+
+    one:
+      MPZ_REALLOC (r, usize+1);
+
+      up = PTR(u);
+      vl = PTR(v)[0];
+      gl = mpn_gcd_1 (up, usize, vl);
+      vl /= gl;
+      
+      rp = PTR(r);
+      c = mpn_mul_1 (rp, up, usize, vl);
+      rp[usize] = c;
+      usize += (c != 0);
+      SIZ(r) = usize;
+      return;
+    }
+
+  if (usize == 1)
+    {
+      usize = vsize;
+      MPZ_SRCPTR_SWAP (u, v);
+      goto one;
+    }
+  
   size = MAX (usize, vsize);
   MPZ_TMP_INIT (g, size);
 
