@@ -1,3 +1,16 @@
+2000-03-13  Linus Nordberg  <linus@swox.se>
+
+	* configure.in: Remove some changequote's by quoting the strings
+	containing `[]'.
+	Add support for `alpha*-cray-unicos*'.
+	AC_DEFINE `_LONG_LONG_LIMB' instead of passing it in CFLAGS.
+	Conditionalize the assembler syntax checks.
+	* configure: Regenerate.
+	* config.in: Regenerate.
+
+	* acinclude.m4 (GMP_PROG_CCAS): Remove macro.
+	* aclocal.m4: Regenerate.
+
 2000-03-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/p6/README: New file.
