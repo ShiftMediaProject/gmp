@@ -652,10 +652,37 @@ void mpf_div_2exp _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_div_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_dump _PROTO ((mpf_srcptr));
 int mpf_eq _PROTO ((mpf_srcptr, mpf_srcptr, unsigned long int));
+
+#define mpf_fits_sint_p __gmpf_fits_sint_p
+int mpf_fits_sint_p _PROTO ((mpf_srcptr));
+
+#define mpf_fits_slong_p __gmpf_fits_slong_p
+int mpf_fits_slong_p _PROTO ((mpf_srcptr));
+
+#define mpf_fits_sshort_p __gmpf_fits_sshort_p
+int mpf_fits_sshort_p _PROTO ((mpf_srcptr));
+
+#define mpf_fits_uint_p __gmpf_fits_uint_p
+int mpf_fits_uint_p _PROTO ((mpf_srcptr));
+
+#define mpf_fits_ulong_p __gmpf_fits_ulong_p
+int mpf_fits_ulong_p _PROTO ((mpf_srcptr));
+
+#define mpf_fits_ushort_p __gmpf_fits_ushort_p
+int mpf_fits_ushort_p _PROTO ((mpf_srcptr));
+
 void mpf_floor _PROTO ((mpf_ptr, mpf_srcptr));
 double mpf_get_d _PROTO ((mpf_srcptr));
 unsigned long int mpf_get_prec _PROTO ((mpf_srcptr));
+
+#define mpf_get_si __gmpf_get_si
+long mpf_get_si _PROTO ((mpf_srcptr));
+
 char *mpf_get_str _PROTO ((char *, mp_exp_t *, int, size_t, mpf_srcptr));
+
+#define mpf_get_ui __gmpf_get_ui
+unsigned long mpf_get_ui _PROTO ((mpf_srcptr));
+
 void mpf_init _PROTO ((mpf_ptr));
 void mpf_init2 _PROTO ((mpf_ptr, unsigned long int));
 #ifdef _GMP_H_HAVE_FILE
@@ -666,6 +693,10 @@ void mpf_init_set_d _PROTO ((mpf_ptr, double));
 void mpf_init_set_si _PROTO ((mpf_ptr, signed long int));
 int mpf_init_set_str _PROTO ((mpf_ptr, __gmp_const char *, int));
 void mpf_init_set_ui _PROTO ((mpf_ptr, unsigned long int));
+
+#define mpf_integer_p __gmpf_integer_p
+int mpf_integer_p _PROTO ((mpf_srcptr));
+
 void mpf_mul _PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 void mpf_mul_2exp _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
 void mpf_mul_ui _PROTO ((mpf_ptr, mpf_srcptr, unsigned long int));
