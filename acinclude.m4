@@ -113,6 +113,26 @@ AC_SUBST(M4)
 ])
 
 
+dnl  GMP_PROG_NM
+dnl  -----------
+dnl  A small addition to libtool AC_PROG_NM.
+dnl
+dnl  FIXME: Is this -X specific to what GMP does with powerpc64, or
+dnl  should it be folded into libtool somehow?
+dnl
+dnl  Note that if AC_PROG_NM can't find a working nm it still leaves
+dnl  $NM set to "nm", so $NM can't be assumed to actually work.
+
+AC_DEFUN(GMP_PROG_NM,
+[AC_REQUIRE([AC_PROG_NM])
+case "$target" in
+  powerpc64*-*-aix*)
+    # nm on 64-bit AIX needs to know the object file format
+    NM="$NM -X 64" ;;
+esac
+])
+
+
 dnl  GMP_PROG_CC_FIND([CC_LIST], [REQ_64BIT_CC])
 dnl  Find first working compiler in CC_LIST.
 dnl  If REQ_64BIT_CC is "yes", the compiler is required to be able to 
@@ -471,13 +491,10 @@ AC_DEFUN(GMP_ASM_ALIGN_LOG,
 [AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([if .align assembly directive is logarithmic],
 		gmp_cv_asm_align_log,
-[if test -z "$NM"; then
-  echo; echo ["configure: $0: fatal: need nm"]
-  exit 1
-fi
-cat > conftest.s <<EOF
+[cat > conftest.s <<EOF
       	$gmp_cv_asm_data
       	.align  4
 	$gmp_cv_asm_globl	foo
@@ -688,16 +705,13 @@ echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_LSYM_PREFIX
 dnl  What is the prefix for a local label?
-dnl  Requires NM to be set to nm for target.
+
 AC_DEFUN(GMP_ASM_LSYM_PREFIX,
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([what prefix to use for a local label], 
 gmp_cv_asm_lsym_prefix,
-[if test -z "$NM"; then
-  echo; echo ["$0: fatal: need nm"]
-  exit 1
-fi
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+[ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
 gmp_cv_asm_lsym_prefix="L"
 for gmp_tmp_pre in L .L $ L$; do
   cat > conftest.s <<EOF
@@ -729,19 +743,15 @@ echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 
 dnl  GMP_ASM_W32
 dnl  How to [define] a 32-bit word.
-dnl  Requires NM to be set to nm for target.
+
 AC_DEFUN(GMP_ASM_W32,
 [AC_REQUIRE([GMP_ASM_DATA])
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
+AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([how to [define] a 32-bit word],
 	       gmp_cv_asm_w32,
-[if test -z "$NM"; then
-  echo; echo ["configure: $0: fatal: need nm"]
-  exit 1
-fi
-
-# FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
+[# FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
 # that it's at 0x0.  We'll have to declare another symbol before the
 # .long/.word and look at the distance between the two symbols.  The
 # only problem is that the sed expression(s) barfs (on Solaris, for
