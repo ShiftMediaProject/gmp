@@ -136,7 +136,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 {
   va_list  ap, this_ap, last_ap;
   size_t   alloc_fmt_size;
-  char     *fmt, *alloc_fmt, *last_fmt, *this_fmt;
+  char     *fmt, *alloc_fmt, *last_fmt, *this_fmt, *gmp_str;
   int      retval = 0;
   int      type, fchar, *value, seen_precision;
   struct doprnt_params_t param;
@@ -261,6 +261,23 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
               ASSERT_FAIL (long long not available);
 #endif
               break;
+            case 'N':
+              {
+                mp_ptr     xp;
+                mp_size_t  xsize, abs_xsize;
+                mpz_t      z;
+                FLUSH ();
+                xp = va_arg (ap, mp_ptr);
+                PTR(z) = xp;
+                xsize = (int) va_arg (ap, mp_size_t);
+                abs_xsize = ABS (xsize);
+                MPN_NORMALIZE (xp, abs_xsize);
+                SIZ(z) = (xsize >= 0 ? abs_xsize : -abs_xsize);
+                ASSERT_CODE (ALLOC(z) = abs_xsize);
+                gmp_str = mpz_get_str (NULL, param.base, z);
+                goto gmp_integer;
+              }
+              break;
             case 'q':
               /* quad_t is probably the same as long long, but let's treat
                  it separately just to be sure.  Also let's assume u_quad_t
@@ -272,18 +289,9 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 #endif
               break;
             case 'Q':
-              {
-                int   ret;
-                char  *s;
-                FLUSH ();
-                s = mpq_get_str (NULL, param.base, va_arg (ap, mpq_srcptr));
-                ret = __gmp_doprnt_integer (funs, data, &param, s);
-                (*__gmp_free_func) (s, strlen(s)+1);
-                DOPRNT_ACCUMULATE (ret);
-                last_fmt = fmt;
-                va_copy (last_ap, ap);
-              }
-              break;
+              FLUSH ();
+              gmp_str = mpq_get_str (NULL, param.base, va_arg(ap, mpq_srcptr));
+              goto gmp_integer;
             case 't':
 #if HAVE_PTRDIFF_T
               (void) va_arg (ap, ptrdiff_t);
@@ -297,11 +305,12 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             case 'Z':
               {
                 int   ret;
-                char  *s;
                 FLUSH ();
-                s = mpz_get_str (NULL, param.base, va_arg (ap, mpz_srcptr));
-                ret = __gmp_doprnt_integer (funs, data, &param, s);
-                (*__gmp_free_func) (s, strlen(s)+1);
+                gmp_str = mpz_get_str (NULL, param.base,
+                                       va_arg (ap, mpz_srcptr));
+              gmp_integer:
+                ret = __gmp_doprnt_integer (funs, data, &param, gmp_str);
+                (*__gmp_free_func) (gmp_str, strlen(gmp_str)+1);
                 DOPRNT_ACCUMULATE (ret);
                 va_copy (last_ap, ap);
                 last_fmt = fmt;
@@ -354,13 +363,14 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             param.conv = DOPRNT_CONV_FIXED;
             goto floating;
 
-          case 'F':
-          case 'j':
-          case 'L':
-          case 'q':
-          case 'Q':
-          case 't':
-          case 'Z':
+          case 'F': /* mpf_t     */
+          case 'j': /* intmax_t  */
+          case 'L': /* long long */
+          case 'N': /* mpn       */
+          case 'q': /* quad_t    */
+          case 'Q': /* mpq_t     */
+          case 't': /* ptrdiff_t */
+          case 'Z': /* mpz_t     */
           set_type:
             type = fchar;
             break;
@@ -418,6 +428,18 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
 #else
               case 'L':  ASSERT_FAIL (long long not available); break;
 #endif
+              case 'N':
+                {
+                  mp_size_t  n;
+                  n = va_arg (ap, mp_size_t);
+                  n = ABS (n);
+                  if (n != 0)
+                    {
+                      * (mp_ptr) p = retval;
+                      MPN_ZERO ((mp_ptr) p + 1, n - 1);
+                    }
+                }
+                break;
               case 'Q':  mpq_set_si ((mpq_ptr) p, (long) retval, 1L); break;
 #if HAVE_PTRDIFF_T
               case 't':  * (ptrdiff_t *) p = retval; break;
