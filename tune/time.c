@@ -241,7 +241,6 @@ static struct_timeval   start_gtod;
 static struct_tms       start_times;
 
 static double  cycles_limit = 1e100;
-static double  rrt_unittime;
 static double  grus_unittime;
 static double  gtod_unittime;
 static double  times_unittime;
