@@ -43,8 +43,12 @@ main (int argc, char *argv[])
     }
 #endif
 
+  /* gcc 2.95.2 limits.h on solaris 2.5.1 incorrectly selects a 64-bit
+     LONG_MAX, leading to some integer overflow in ULONG_MAX and a spurious
+     __GMP_ULONG_MAX != ULONG_MAX.  Casting ULONG_MAX to unsigned long is a
+     workaround.  */
 #ifdef ULONG_MAX
-  if (__GMP_ULONG_MAX != ULONG_MAX)
+  if (__GMP_ULONG_MAX != (unsigned long) ULONG_MAX)
     {
       printf ("__GMP_ULONG_MAX incorrect\n");
       printf ("  __GMP_ULONG_MAX  %lu  0x%lX\n", __GMP_ULONG_MAX, __GMP_ULONG_MAX);
