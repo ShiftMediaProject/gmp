@@ -321,6 +321,7 @@ struct try_t {
 #define DATA_SRC1_ODD         3
 #define DATA_SRC1_HIGHBIT     4
 #define DATA_MULTIPLE_DIVISOR 5
+#define DATA_UDIV_QRNND       6
   char  data;
 
 /* Default is allow full overlap. */
@@ -388,7 +389,7 @@ validate_divexact_1 (void)
         printf ("Remainder a%%d == 0x%lX, mpn_divexact_1 undefined\n", rem);
         error = 1;
       }
-    if (refmpn_equal_anynail (tp, dst, size))
+    if (! refmpn_equal_anynail (tp, dst, size))
       {
         printf ("Quotient a/d wrong\n");
         mpn_trace ("fun ", dst, size);
@@ -551,13 +552,14 @@ validate_sqrtrem (void)
 #define TYPE_PREINV_DIVREM_1  31
 #define TYPE_PREINV_MOD_1     32
 #define TYPE_MOD_34LSUB1      33
+#define TYPE_UDIV_QRNND       34
 
-#define TYPE_DIVEXACT_1       34
-#define TYPE_DIVEXACT_BY3     35
-#define TYPE_DIVEXACT_BY3C    36
+#define TYPE_DIVEXACT_1       35
+#define TYPE_DIVEXACT_BY3     36
+#define TYPE_DIVEXACT_BY3C    37
 
-#define TYPE_MODEXACT_1_ODD   37
-#define TYPE_MODEXACT_1C_ODD  38
+#define TYPE_MODEXACT_1_ODD   38
+#define TYPE_MODEXACT_1C_ODD  39
 
 #define TYPE_GCD              40
 #define TYPE_GCD_1            41
@@ -826,7 +828,17 @@ param_init (void)
   p->src[0] = 1;
   VALIDATE (validate_mod_34lsub1);
 
-  
+  p = &param[TYPE_UDIV_QRNND];
+  p->retval = 1;
+  p->src[0] = 1;
+  p->dst[0] = 1;
+  p->dst_size[0] = SIZE_1;
+  p->divisor = DIVISOR_LIMB;
+  p->data = DATA_UDIV_QRNND;
+  p->overlap = OVERLAP_NONE;
+  REFERENCE (refmpn_udiv_qrnnd);
+
+
   p = &param[TYPE_DIVEXACT_1];
   p->dst[0] = 1;
   p->src[0] = 1;
@@ -1091,6 +1103,14 @@ void
 mpn_xnor_n_fun (mp_ptr rp, mp_srcptr s1, mp_srcptr s2, mp_size_t size)
 { mpn_xnor_n (rp, s1, s2, size); }
 
+mp_limb_t
+udiv_qrnnd_fun (mp_limb_t *remptr, mp_limb_t n1, mp_limb_t n0, mp_limb_t d)
+{
+  mp_limb_t  q;
+  udiv_qrnnd (q, *remptr, n1, n0, d);
+  return q;
+}
+
 void
 mpn_divexact_by3_fun (mp_ptr rp, mp_srcptr sp, mp_size_t size)
 { mpn_divexact_by3 (rp, sp, size); }
@@ -1147,7 +1167,6 @@ umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
 mp_limb_t
 mpn_umul_ppmm_fun (mp_limb_t *lowptr, mp_limb_t m1, mp_limb_t m2)
 {
-
   mp_limb_t  high;
   umul_ppmm (high, *lowptr, m1, m2);
   return high;
@@ -1229,6 +1248,8 @@ const struct choice_t choice_array[] = {
   { TRY(mpn_mod_1c),       TYPE_MOD_1C },
 #endif
   { TRY(mpn_mod_34lsub1),  TYPE_MOD_34LSUB1 },
+  { TRY_FUNFUN(udiv_qrnnd), TYPE_UDIV_QRNND, 2 },
+
   { TRY(mpn_divexact_1),          TYPE_DIVEXACT_1 },
   { TRY_FUNFUN(mpn_divexact_by3), TYPE_DIVEXACT_BY3 },
   { TRY(mpn_divexact_by3c),       TYPE_DIVEXACT_BY3C },
@@ -1833,6 +1854,10 @@ call (struct each_t *e, tryfun_t function)
   case TYPE_MOD_34LSUB1:
     e->retval = CALLING_CONVENTIONS (function) (e->s[0].p, size);
     break;
+  case TYPE_UDIV_QRNND:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->s[0].p[1], e->s[0].p[0], divisor);
+    break;
 
   case TYPE_SB_DIVREM_MN:
     refmpn_copyi (e->d[1].p, e->s[0].p, size);        /* dividend */
@@ -2263,6 +2288,10 @@ try_one (void)
               s[i].p[size-1] |= GMP_NUMB_HIGHBIT;
           }
         break;
+
+      case DATA_UDIV_QRNND:
+        s[i].p[1] %= divisor;
+        break;
       }
 
       mprotect_region (&s[i].region, PROT_READ);
@@ -2343,8 +2372,8 @@ try_one (void)
 #define HIGH_ITERATION(w,n,cond) \
   for (w[n].high = 0; w[n].high <= HIGH_LIMIT(cond); w[n].high++)
 
-#define SHIFT_LIMIT                                             \
-  ((unsigned long) (tr->shift ? BITS_PER_MP_LIMB-1 : 1))
+#define SHIFT_LIMIT                                     \
+  ((unsigned long) (tr->shift ? GMP_NUMB_BITS -1 : 1))
 
 #define SHIFT_ITERATION                                 \
   for (shift = 1; shift <= SHIFT_LIMIT; shift++)
@@ -2606,7 +2635,7 @@ main (int argc, char *argv[])
   setbuf (stdout, NULL);
   setbuf (stderr, NULL);
 
-  /* always trace in hex, upper-case so can paste into bc */
+  /* default trace in hex, and in upper-case so can paste into bc */
   mp_trace_base = -16;
 
   param_init ();
@@ -2615,7 +2644,7 @@ main (int argc, char *argv[])
     unsigned  seed = 123;
     int   opt;
 
-    while ((opt = getopt(argc, argv, "19a:HpRr:S:s:Wz")) != EOF)
+    while ((opt = getopt(argc, argv, "19a:b:pRr:S:s:Wz")) != EOF)
       {
         switch (opt) {
         case '1':
@@ -2636,6 +2665,9 @@ main (int argc, char *argv[])
               fprintf (stderr, "unrecognised data option: %s\n", optarg);
               exit (1);
             }
+          break;
+        case 'b':
+          mp_trace_base = atoi (optarg);
           break;
         case 'p':
           option_print = 1;
