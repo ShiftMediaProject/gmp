@@ -37,6 +37,10 @@ dnl  GMP specific
 GMP_INIT(config.m4)
 
 
+define(X86_PATTERN,
+[[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*]])
+
+
 AC_ARG_ENABLE(assert,
 AC_HELP_STRING([--enable-assert],[enable ASSERT checking [default=no]]),
 [case "${enableval}" in
@@ -163,7 +167,7 @@ case "$target" in
     ;;
 
   # AMD and Intel x86 configurations
-  [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
+  X86_PATTERN)
     # Rumour has it -O2 used to give worse register allocation than just -O.
     gmp_cflags_gcc="-g -O -fomit-frame-pointer"
 
@@ -403,21 +407,6 @@ case "$target" in
 esac   
 dnl  FIXME: Find good ld?  /usr/ucb/ld on Solaris won't work.
 
-dnl Checks for assembly syntax.
-if test "$gmp_no_asm_syntax_testing" != "yes"; then
-  GMP_CHECK_ASM_TEXT
-  GMP_CHECK_ASM_DATA
-  GMP_CHECK_ASM_RODATA
-  GMP_CHECK_ASM_GLOBL
-  GMP_CHECK_ASM_LABEL_SUFFIX
-  GMP_CHECK_ASM_TYPE
-  GMP_CHECK_ASM_SIZE
-  GMP_CHECK_ASM_LSYM_PREFIX
-  GMP_CHECK_ASM_W32
-  GMP_CHECK_ASM_UNDERSCORE(underscore=yes, underscore=no)
-  GMP_CHECK_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
-fi
-
 dnl  FIXME: Check for FPU and set `floating_point' appropriately.
 
 dnl  ========================================
@@ -510,16 +499,10 @@ case ${target} in
   a29k*-*-*) path="a29k";;
 
   # AMD and Intel x86 configurations
-
-  [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
+  X86_PATTERN)
     gmp_m4postinc="x86/x86-defs.m4"
     extra_functions="udiv umul"
     CALLING_CONVENTIONS_OBJS="x86call.o x86check.o"
-
-    GMP_CHECK_ASM_SHLDL_CL(
-      [GMP_DEFINE(WANT_SHLDL_CL,1)],
-      [GMP_DEFINE(WANT_SHLDL_CL,0)])
-    GMP_CHECK_ASM_ALIGN_FILL_0x90
 
     # the CPUs below wanting to know about mmx
     case ${target} in
@@ -706,21 +689,6 @@ case "${target}" in
 esac
 changequote([,])dnl
 
-dnl  ----------------------------------------
-# Now build an asm-syntax.h file for targets that include that from the
-# assembly files.
-# FIXME: Remove when conversion to .asm is completed.
-case "${family}-${underscore}-${asm_align}-${syntax}" in
-  m68k-yes-log-mit)
-    echo '#define MIT_SYNTAX' >asm-syntax.h
-    cat $srcdir/mpn/underscore.h >>asm-syntax.h
-    echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
-  m68k-no-nolog-elf)
-    echo '#define ELF_SYNTAX' >asm-syntax.h
-    echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
-    echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
-esac
-
 
 # The pattern here tests for an absolute path the same way as
 # _AC_OUTPUT_FILES in autoconf acgeneral.m4.
@@ -819,12 +787,16 @@ gmp_mpn_functions="${extra_functions} inlines add_n sub_n mul_1 addmul_1   \
 mpn_objects=
 mpn_objs_in_libgmp="mpn/mp_bases.lo"
 
-for tmp_ext in asm S s c; do
+define(MPN_SUFFIXES,[asm S s c])
+
+for tmp_ext in MPN_SUFFIXES; do
   eval found_$tmp_ext=no
 done
 
 for tmp_fn in ${gmp_mpn_functions} ; do
-  [rm -f mpn/${tmp_fn}.[Ssc] mpn/${tmp_fn}.asm]
+  for tmp_ext in MPN_SUFFIXES; do
+    rm -f mpn/$tmp_fn.$tmp_ext
+  done
 
   # functions that can be provided by multi-function files
   tmp_mulfunc=
@@ -839,7 +811,7 @@ for tmp_fn in ${gmp_mpn_functions} ; do
   found=no
   for tmp_dir in $path; do
     for tmp_base in $tmp_fn $tmp_mulfunc; do
-      for tmp_ext in asm S s c; do
+      for tmp_ext in MPN_SUFFIXES; do
         tmp_file=$srcdir/mpn/$tmp_dir/$tmp_base.$tmp_ext
         if test -f $tmp_file; then
           found=yes
@@ -897,6 +869,47 @@ else
   AC_SUBST(M4)
 fi
 
+# Only do the ASM checks if there's a .S or .asm wanting them.
+if test $found_asm = no && test $found_S = no; then
+  gmp_no_asm_syntax_testing=yes
+fi
+
+if test "$gmp_no_asm_syntax_testing" != yes; then
+  GMP_CHECK_ASM_TEXT
+  GMP_CHECK_ASM_DATA
+  GMP_CHECK_ASM_RODATA
+  GMP_CHECK_ASM_GLOBL
+  GMP_CHECK_ASM_LABEL_SUFFIX
+  GMP_CHECK_ASM_TYPE
+  GMP_CHECK_ASM_SIZE
+  GMP_CHECK_ASM_LSYM_PREFIX
+  GMP_CHECK_ASM_W32
+  GMP_CHECK_ASM_UNDERSCORE(underscore=yes, underscore=no)
+  GMP_CHECK_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
+
+  case $target in
+    X86_PATTERN)
+      GMP_CHECK_ASM_SHLDL_CL(
+        [GMP_DEFINE(WANT_SHLDL_CL,1)],[GMP_DEFINE(WANT_SHLDL_CL,0)])
+      GMP_CHECK_ASM_ALIGN_FILL_0x90
+      ;;
+  esac
+
+  # Build an asm-syntax.h file for targets that include that from the
+  # assembly files.
+  # FIXME: Remove when conversion to .asm is completed.
+  case "${family}-${underscore}-${asm_align}-${syntax}" in
+    m68k-yes-log-mit)
+      echo '#define MIT_SYNTAX' >asm-syntax.h
+      cat $srcdir/mpn/underscore.h >>asm-syntax.h
+      echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
+    m68k-no-nolog-elf)
+      echo '#define ELF_SYNTAX' >asm-syntax.h
+      echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
+      echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
+  esac
+fi
+
 
 # Create link for gmp-mparam.h.
 gmp_mparam_source=
@@ -913,14 +926,14 @@ if test -z "$gmp_mparam_source"; then
   AC_MSG_ERROR([no version of gmp-mparam.h found in path: $path])
 fi
 
-GMP_C_SIZES
-
 # Copy any KARATSUBA_SQR_THRESHOLD from gmp-mparam.h to config.m4.
 # Some versions of sqr_basecase.asm use this.
 tmp_gmp_karatsuba_sqr_threshold="`sed -n 's/^#define KARATSUBA_SQR_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`"
 if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
   GMP_DEFINE_RAW(["define(<KARATSUBA_SQR_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
 fi
+
+GMP_C_SIZES
 
 
 # Dig out the links from `gmp_links' for inclusion in DISTCLEANFILES.
