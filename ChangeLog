@@ -1,3 +1,23 @@
+2000-02-23  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/addmul_1.S: Add PROLOGUE and EPILOGUE to get .type and
+	.size for ELF.  Rename #define size to opsize to avoid .size.
+	* mpn/x86/lshift.S: Ditto.
+	* mpn/x86/mul_1.S: Ditto.
+	* mpn/x86/mul_basecase.S: Ditto.
+	* mpn/x86/rshift.S: Ditto.
+	* mpn/x86/submul_1.S: Ditto.
+	* mpn/x86/udiv.S: Ditto.
+	* mpn/x86/umul.S: Ditto.
+	* mpn/x86/pentium/add_n.S: Ditto.
+	* mpn/x86/pentium/addmul_1.S: Ditto.
+	* mpn/x86/pentium/lshift.S: Ditto.
+	* mpn/x86/pentium/mul_1.S: Ditto.
+	* mpn/x86/pentium/mul_basecase.S: Ditto.
+	* mpn/x86/pentium/rshift.S: Ditto.
+	* mpn/x86/pentium/sub_n.S: Ditto.
+	* mpn/x86/pentium/submul_1.S: Ditto.
+
 2000-02-22  Linus Nordberg  <linus@swox.se>
 
 	* acinclude.m4 (GMP_INIT): Use temporary file cnfm4p.tmp for
