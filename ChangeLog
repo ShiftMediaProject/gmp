@@ -1,3 +1,10 @@
+2000-07-30  Kevin Ryde  <kevin@swox.se>
+
+	* tune/time.c (speed_cpu_frequency_proc_cpuinfo): Add support for
+	alpha linux "cycle frequency".
+
+	* mpn/sparc64/gmp-mparam.h: Re-run tune program for FFT thresholds.
+
 2000-07-29  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (ABI and ISA): Add sparc64-*-linux*.
