@@ -1099,7 +1099,7 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 #define SPEED_ROUTINE_MPN_GET_STR(function)                             \
   {                                                                     \
     unsigned char *wp;                                                  \
-    size_t    wsize;                                                    \
+    mp_size_t    wsize;                                                 \
     mp_ptr    xp;                                                       \
     int       base;                                                     \
     unsigned  i;                                                        \
@@ -1114,7 +1114,7 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
     TMP_MARK (marker);                                                  \
     xp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_xp);              \
                                                                         \
-    wsize = ((size_t) (s->size * BITS_PER_MP_LIMB                       \
+    wsize = ((mp_size_t) (s->size * BITS_PER_MP_LIMB                    \
                         * __mp_bases[base].chars_per_bit_exactly)) + 2; \
     wp = TMP_ALLOC (wsize);                                             \
                                                                         \
