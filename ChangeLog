@@ -19,6 +19,20 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-02-15  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Build Options): Note powerpc exact cpu types.
+	(Debugging): Advertise DEBUG in memory.c.
+
+	* config.sub, config.guess: Add some powerpc exact cpus.
+	* configure.in: Add configs for them.
+
+	* memory.c [__NeXT__]: Remove unused #define of "static".
+	(__gmp_default_allocate, __gmp_default_reallocate): Print size if
+	allocation fails, don't use perror.	
+
+	* gmp-h.in: g++ 3 demands __GMP_NOTHROW is before other attributes.
+
 2002-02-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/mul_1.asm: Fix typo preventing build on T3E systems.
