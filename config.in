@@ -152,6 +152,9 @@ MA 02111-1307, USA.
 /* Define if mpn/tests has calling conventions checking for the CPU */
 #undef HAVE_CALLING_CONVENTIONS
 
+/* ./configure --enable-fft option, to enable FFTs for multiplication */
+#undef WANT_FFT
+
 /* Define if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
