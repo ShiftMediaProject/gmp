@@ -363,10 +363,7 @@ ifdef(`HAVE_ABI_32',`
 	br.cloop.dptk	.Lb110_grt6
 	ADDSUB		w3 = u3, v3
 	;;
-	ld8		v3 = [vp], 8
 	cmp.PRED	p9, p0 = w3, u3
-	ld8		u3 = [up], 8
-	;;
 	ADDSUB		w4 = u4, v4
 	br		.Lw67
 
