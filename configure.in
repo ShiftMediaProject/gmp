@@ -175,7 +175,11 @@ case "$target" in
     ;;
 
   # MIPS
-  dnl  FIXME: Need -D_LONG_LONG_LIMB for mips64.
+  [mips-sgi-irix6.[2345]*])
+    os_64bit=yes
+    #gmp_cflags64_gcc=FIXME
+    gmp_cflags64_cc="$gmp_cflags64_cc -64 -D_LONG_LONG_LIMB"
+    ;;
 
   # Motorola 68k family
   m88110*-*-*)
