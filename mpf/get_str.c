@@ -394,7 +394,7 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 	      if (i == 0)
 		{
 		  /* We had something like `bbbbbbb...bd', where 2*d >= base
-		     and `b' denotes digit with significant base - 1.
+		     and `b' denotes digit with significance base - 1.
 		     This rounds up to `1', increasing the exponent.  */
 		  tstr[0] = 1;
 		  digits_computed_so_far = 1;
