@@ -63,7 +63,7 @@ mpz_setbit (d, bit_index)
 
       /* Simulate two's complement arithmetic, i.e. simulate
 	 1. Set OP = ~(OP - 1) [with infinitely many leading ones].
-	 2. set the bit.
+	 2. Set the bit.
 	 3. Set OP = ~OP + 1.  */
 
       dsize = -dsize;
@@ -109,7 +109,7 @@ mpz_setbit (d, bit_index)
 	}
       else
 	{
-	  mpn_sub_1 (dp + limb_index, dp + limb_index, dsize - limb_index,
+	  mpn_decr_u (dp + limb_index,
 		     (mp_limb_t) 1 << (bit_index % BITS_PER_MP_LIMB));
 	  dsize -= dp[dsize - 1] == 0;
 	  d->_mp_size = -dsize;

@@ -56,7 +56,7 @@ mpz_cdiv_q_ui (quot, dividend, divisor)
 
   if (remainder_limb != 0 && dividend_size >= 0)
     {
-      mpn_add_1 (quot_ptr, quot_ptr, size, (mp_limb_t) 1);
+      mpn_incr_u (quot_ptr, (mp_limb_t) 1);
       remainder_limb = divisor - remainder_limb;
     }
 
