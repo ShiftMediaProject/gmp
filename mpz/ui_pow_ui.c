@@ -26,7 +26,8 @@ MA 02111-1307, USA. */
 void
 mpz_ui_pow_ui (mpz_ptr r, unsigned long b, unsigned long e)
 {
-  if (GMP_LIMB_BITS != 0 && b > GMP_NUMB_MAX)
+#if GMP_LIMB_BITS != 0
+  if (b > GMP_NUMB_MAX)
     {
       mp_limb_t bb[2];
       bb[0] = b & GMP_NUMB_MASK;
@@ -34,6 +35,7 @@ mpz_ui_pow_ui (mpz_ptr r, unsigned long b, unsigned long e)
       mpz_n_pow_ui (r, bb, (mp_size_t) 2, e);
     }
   else
+#endif
     {
 #ifdef _LONG_LONG_LIMB
       /* i386 gcc 2.95.3 doesn't recognise blimb can be eliminated when
