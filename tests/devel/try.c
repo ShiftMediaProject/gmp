@@ -774,7 +774,8 @@ param_init (void)
   REFERENCE (refmpn_divrem_1c);
 
   p = &param[TYPE_PREINV_MOD_1];
-  COPY (TYPE_MOD_1);
+  p->retval = 1;
+  p->src[0] = 1;
   p->divisor = DIVISOR_NORM;
   REFERENCE (refmpn_preinv_mod_1);
 
