@@ -878,12 +878,11 @@ default.  @xref{Custom Allocation}.
 An additional choice @samp{--enable-alloca=debug} is available, to help when
 debugging memory related problems (@pxref{Debugging}).
 
-@item FFT Multiplication, @option{--enable-fft}
+@item FFT Multiplication, @option{--disable-fft}
 
-By default multiplications are done using Karatsuba and 3-way Toom-Cook
-algorithms, but a Fermat FFT can be enabled, for use on large to very large
-operands.  Currently the FFT is recommended only for knowledgeable users who
-check the algorithm thresholds for their system.
+By default multiplications are done using Karatsuba, 3-way Toom-Cook, and
+Fermat FFT.  The FFT is only used on large to very large operands and can be
+disabled to save code size if desired.
 
 @item Berkeley MP, @option{--enable-mpbsd}
 
