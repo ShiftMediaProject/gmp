@@ -1746,11 +1746,11 @@ fi
 
 # Create link for gmp-mparam.h.
 gmp_mparam_source=
-for tmp_dir in $path; do
+for gmp_mparam_dir in $path; do
   test "$no_create" = yes || rm -f gmp-mparam.h
-  tmp_file=$srcdir/mpn/$tmp_dir/gmp-mparam.h
+  tmp_file=$srcdir/mpn/$gmp_mparam_dir/gmp-mparam.h
   if test -f $tmp_file; then
-    AC_CONFIG_LINKS(gmp-mparam.h:mpn/$tmp_dir/gmp-mparam.h)
+    AC_CONFIG_LINKS(gmp-mparam.h:mpn/$gmp_mparam_dir/gmp-mparam.h)
     gmp_srclinks="$gmp_srclinks gmp-mparam.h"
     gmp_mparam_source=$tmp_file
     break
@@ -1759,8 +1759,18 @@ done
 if test -z "$gmp_mparam_source"; then
   AC_MSG_ERROR([no version of gmp-mparam.h found in path: $path])
 fi
-AC_DEFINE_UNQUOTED(GMP_MPARAM_H_FILENAME, "$gmp_mparam_source",
-                   [The gmp-mparam.h file compiled-in.])
+
+# For a helpful message from tune/tuneup.c
+gmp_mparam_suggest=$gmp_mparam_source
+if test "$gmp_mparam_dir" = generic; then
+  for i in $path; do break; done
+  if test "$i" != generic; then
+    gmp_mparam_suggest="new file $srcdir/mpn/$i/gmp-mparam.h"
+  fi
+fi
+AC_DEFINE_UNQUOTED(GMP_MPARAM_H_SUGGEST, "$gmp_mparam_source",
+                   [The gmp-mparam.h to update when tuning.])
+
 
 # Copy any KARATSUBA_SQR_THRESHOLD from gmp-mparam.h to config.m4.
 # Some versions of sqr_basecase.asm use this.

@@ -1482,7 +1482,7 @@ all (void)
   mpn_random (s.xp_block, SPEED_BLOCK_SIZE);
   mpn_random (s.yp_block, SPEED_BLOCK_SIZE);
 
-  fprintf (stderr, "Parameters for %s\n", GMP_MPARAM_H_FILENAME);
+  fprintf (stderr, "Parameters for %s\n", GMP_MPARAM_H_SUGGEST);
 
   speed_time_init ();
   fprintf (stderr, "Using: %s\n", speed_time_string);
