@@ -40,11 +40,17 @@ mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
   {
     /* N.B.!  We need the superfluous indirection through argh to work around
        a reloader bug in GCC 2.7.*.  */
-    mp_limb_t x;
-    mp_limb_t argh;
-    x = up[0];
-    umul_ppmm (argh, prodp[0], x, x);
+#if GMP_NAIL_BITS == 0
+    mp_limb_t ul, argh;
+    ul = up[0];
+    umul_ppmm (argh, prodp[0], ul, ul);
     prodp[1] = argh;
+#else
+    mp_limb_t ul, lpl;
+    ul = up[0];
+    umul_ppmm (prodp[1], lpl, ul, ul << GMP_NAIL_BITS);
+    prodp[0] = lpl >> GMP_NAIL_BITS;
+#endif
   }
   if (n > 1)
     {
@@ -68,9 +74,16 @@ mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
 #else
       for (i = 1; i < n; i++)
 	{
-	  mp_limb_t x;
-	  x = up[i];
-	  umul_ppmm (prodp[2 * i + 1], prodp[2 * i], x, x);
+#if GMP_NAIL_BITS == 0
+	  mp_limb_t ul;
+	  ul = up[i];
+	  umul_ppmm (prodp[2 * i + 1], prodp[2 * i], ul, ul);
+#else
+	  mp_limb_t ul, lpl;
+	  ul = up[i];
+	  umul_ppmm (prodp[2 * i + 1], lpl, ul, ul << GMP_NAIL_BITS);
+	  prodp[2 * i] = lpl >> GMP_NAIL_BITS;
+#endif
 	}
 #endif
       {
