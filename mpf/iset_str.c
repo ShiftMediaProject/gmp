@@ -24,11 +24,11 @@ MA 02111-1307, USA. */
 
 int
 #if __STDC__
-mpf_init_set_str (mpf_ptr r, char *s, int base)
+mpf_init_set_str (mpf_ptr r, const char *s, int base)
 #else
 mpf_init_set_str (r, s, base)
      mpf_ptr r;
-     char *s;
+     const char *s;
      int base;
 #endif
 {
