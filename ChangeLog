@@ -1,3 +1,22 @@
+2001-03-06  Kevin Ryde  <kevin@swox.se>
+
+	* tests/devel/try.c (pointer_setup): Allow dst_size == SIZE_SIZE2 for
+	the benefit of mpn_tdiv_qr.
+
+	* tune/tuneup.c (all): Start karatsuba probing at size==4, for the
+	benefit of cray t90 ieee which has speed oddities at size==2.
+
+	* gmp-impl.h (USE_LEADING_REGPARM): Use __GMP_GNUC_PREREQ.
+	Use __GMP_ATTRIBUTE_PURE and ATTRIBUTE_CONST in a few places.
+
+	* gmp-h.in (__GMP_GNUC_PREREQ) New macro.
+	(__GMP_ATTRIBUTE_PURE): New macro, use it in many places.
+
+	* gmp-impl.h, gmp-h.in (mpn_jacobi_base): Move prototype to
+	gmp-impl.h, use ATTRIBUTE_CONST.
+
+	* tune/speed.h (speed_cyclecounter): Inline asm version for i386.
+
 2001-03-05  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/sub_n.c: Rewrite using `majority' logic.
