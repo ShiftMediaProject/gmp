@@ -1,3 +1,4 @@
+#if 0
 /* hgcd.c.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
@@ -2143,3 +2144,4 @@ mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B)
 
   return 1;
 }
+#endif
