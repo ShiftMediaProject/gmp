@@ -727,7 +727,11 @@ union ieee_double_extract
 #endif
 #endif
 
-#define MP_BASE_AS_DOUBLE (2.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1)))
+/* Using "(2.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1)))" doesn't work on
+   SunOS 4.1.4 native /usr/ucb/cc (K&R), it comes out as -4294967296.0,
+   presumably due to treating the mp_limb_t constant as signed rather than
+   unsigned. */
+#define MP_BASE_AS_DOUBLE (4.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 2)))
 #if BITS_PER_MP_LIMB == 64
 #define LIMBS_PER_DOUBLE 2
 #else
