@@ -61,6 +61,7 @@ gcc -c -I. -I.. -g -O cmp.c
 gcc -c -I. -I.. -g -O divmod_1.c
 gcc -c -I. -I.. -g -O divrem.c
 gcc -c -I. -I.. -g -O divrem_1.c
+gcc -c -I. -I.. -g -O divrem_2.c
 gcc -c -I. -I.. -g -O divrem_n.c
 gcc -c -I. -I.. -g -O dump.c
 gcc -E -I. -I.. -g -O lshift.S | grep -v '^#' >tmp-lshift.s
