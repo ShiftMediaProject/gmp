@@ -69,11 +69,11 @@ mpz_probab_prime_p (n, reps)
 #if defined (PP)
   /* Check if n has small factors.  */
 #if defined (PP_INVERTED)
-  if (UDIV_TIME > (2 * UMUL_TIME + 6))
-    r = mpn_preinv_mod_1 (PTR(n), SIZ(n), (mp_limb_t) PP, (mp_limb_t) PP_INVERTED);
-  else
-#endif /* PP_INVERTED */
-    r = mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) PP);
+  r = MPN_MOD_OR_PREINV_MOD_1 (PTR(n), SIZ(n), (mp_limb_t) PP,
+                               (mp_limb_t) PP_INVERTED);
+#else
+  r = mpn_mod_1 (PTR(n), SIZ(n), (mp_limb_t) PP);
+#endif
   if (r % 3 == 0
 #if BITS_PER_MP_LIMB >= 4
       || r % 5 == 0

@@ -78,11 +78,11 @@ mpn_perfect_square_p (up, usize)
 
   /* Firstly, compute REM = A mod PP.  */
 #if defined (PP_INVERTED)
-  if (UDIV_TIME > UDIV_NORM_PREINV_TIME)
-    rem = mpn_preinv_mod_1 (up, usize, (mp_limb_t) PP, (mp_limb_t) PP_INVERTED);
-  else
+  rem = MPN_MOD_OR_PREINV_MOD_1 (up, usize, (mp_limb_t) PP,
+                                 (mp_limb_t) PP_INVERTED);
+#else
+  rem = mpn_mod_1 (up, usize, (mp_limb_t) PP);
 #endif
-    rem = mpn_mod_1 (up, usize, (mp_limb_t) PP);
 
   /* Now decide if REM is a quadratic residue modulo the factors in PP.  */
 
