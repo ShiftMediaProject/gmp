@@ -517,6 +517,10 @@ void  __gmp_tmp_debug_free  _PROTO ((const char *, int, int,
 #define MP_SIZE_T_MIN      LONG_MIN
 #endif
 
+/* mp_exp_t is the same as mp_size_t */
+#define MP_EXP_T_MAX   MP_SIZE_T_MAX
+#define MP_EXP_T_MIN   MP_SIZE_T_MIN
+
 #define LONG_HIGHBIT       LONG_MIN
 #define INT_HIGHBIT        INT_MIN
 #define SHRT_HIGHBIT       SHRT_MIN
