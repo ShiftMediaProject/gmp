@@ -194,29 +194,26 @@ MA 02111-1307, USA. */
 extern "C" {
 #endif
 
-/* FIXME: These are purely internal, so do a search and replace to change
-   them to __gmp forms, rather than using these macros. */
-#define _mp_allocate_func      __gmp_allocate_func
-#define _mp_reallocate_func    __gmp_reallocate_func
-#define _mp_free_func          __gmp_free_func
-#define _mp_default_allocate   __gmp_default_allocate
-#define _mp_default_reallocate __gmp_default_reallocate
-#define _mp_default_free       __gmp_default_free
+extern void * (*__gmp_allocate_func) _PROTO ((size_t));
+extern void * (*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t));
+extern void   (*__gmp_free_func) _PROTO ((void *, size_t));
 
-extern void *	(*_mp_allocate_func) _PROTO ((size_t));
-extern void *	(*_mp_reallocate_func) _PROTO ((void *, size_t, size_t));
-extern void	(*_mp_free_func) _PROTO ((void *, size_t));
+void *__gmp_default_allocate _PROTO ((size_t));
+void *__gmp_default_reallocate _PROTO ((void *, size_t, size_t));
+void __gmp_default_free _PROTO ((void *, size_t));
 
-void *_mp_default_allocate _PROTO ((size_t));
-void *_mp_default_reallocate _PROTO ((void *, size_t, size_t));
-void _mp_default_free _PROTO ((void *, size_t));
+#define __GMP_ALLOCATE_FUNC_TYPE(n,type) \
+  ((type *) (*__gmp_allocate_func) ((n) * sizeof (type)))
+#define __GMP_ALLOCATE_FUNC_LIMBS(n)   __GMP_ALLOCATE_FUNC_TYPE (n, mp_limb_t)
 
-#define _MP_ALLOCATE_FUNC_TYPE(n,type) \
-  ((type *) (*_mp_allocate_func) ((n) * sizeof (type)))
-#define _MP_ALLOCATE_FUNC_LIMBS(n)   _MP_ALLOCATE_FUNC_TYPE(n,mp_limb_t)
+#define __GMP_REALLOCATE_FUNC_TYPE(p, old_size, new_size, type) \
+  ((type *) (*__gmp_reallocate_func)                            \
+   (p, (old_size) * sizeof (type), (new_size) * sizeof (type)))
+#define __GMP_REALLOCATE_FUNC_LIMBS(p, old_size, new_size) \
+  __GMP_REALLOCATE_FUNC_TYPE(p, old_size, new_size, mp_limb_t)
 
-#define _MP_FREE_FUNC_TYPE(p,n,type) (*_mp_free_func) (p, (n) * sizeof (type))
-#define _MP_FREE_FUNC_LIMBS(p,n)     _MP_FREE_FUNC_TYPE(p,n,mp_limb_t)
+#define __GMP_FREE_FUNC_TYPE(p,n,type) (*__gmp_free_func) (p, (n) * sizeof (type))
+#define __GMP_FREE_FUNC_LIMBS(p,n)     __GMP_FREE_FUNC_TYPE (p, n, mp_limb_t)
 
 
 #if (__STDC__-0) || defined (__cplusplus)
