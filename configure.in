@@ -1222,7 +1222,7 @@ case $host in
   # mode, in case -m32 has failed not because it's an old gcc, but because
   # it's a 64-bit gcc without a 32-bit libc, or whatever.
   #
-  X86_PATTERN)
+  X86_PATTERN | x86_64-*-*)
     abilist="32"
     gcc_cflags="-O2 $fomit_frame_pointer"
     gcc_32_cflags_maybe="-m32"
@@ -1906,15 +1906,20 @@ done
 # If there's any sse2 or mmx in the path, check whether the assembler
 # supports it, and remove if not.
 #
+# We only need this in ABI=32, for ABI=64 on x86_64 we can assume a new
+# enough assembler.
+#
 case $host in
-  X86_PATTERN)
-    case "$path $fat_path" in
-      *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(*mmx*)]) ;;
-    esac
-    case "$path $fat_path" in
-      *sse2*)  GMP_ASM_X86_SSE2( , [GMP_STRIP_PATH(sse2)]) ;;
-    esac
-  ;;
+  X86_PATTERN | x86_64-*-*)
+    if test "$ABI" = 32; then
+      case "$path $fat_path" in
+        *mmx*)   GMP_ASM_X86_MMX( , [GMP_STRIP_PATH(*mmx*)]) ;;
+      esac
+      case "$path $fat_path" in
+        *sse2*)  GMP_ASM_X86_SSE2( , [GMP_STRIP_PATH(sse2)]) ;;
+      esac
+    fi
+    ;;
 esac
 
 
@@ -2868,7 +2873,7 @@ if test "$gmp_asm_syntax_testing" != no; then
           ;;
       esac
       ;;
-    X86_PATTERN)
+    X86_PATTERN | x86_64-*-*)
       GMP_ASM_ALIGN_FILL_0x90
       case $ABI in
         32)
