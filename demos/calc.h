@@ -18,8 +18,8 @@ typedef union {
 #define	SQRT	270
 #define	NUMBER	271
 #define	VARIABLE	272
-#define	LAND	273
-#define	LOR	274
+#define	LOR	273
+#define	LAND	274
 #define	EQ	275
 #define	NE	276
 #define	LE	277
