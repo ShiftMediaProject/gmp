@@ -25,6 +25,10 @@ MA 02111-1307, USA.
 	* mpn/sparc64/addmul_1.asm: Rewrite.
 	* mpn/sparc64/submul_1.asm: Rewrite.
 
+	* mpn/sparc64/addmul1h.asm: Remove.
+	* mpn/sparc64/submul1h.asm: Remove.
+	* mpn/sparc64/mul1h.asm: Remove.
+
 2001-12-15  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in (mpn_add, mpn_add_1, mpn_cmp, mpn_sub, mpn_sub_1): Follow
