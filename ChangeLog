@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-12-24  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/gcd.c (gcd_schoenhage_itch): Avoid unary "+".
+	 (mpn_gcd): Allocate scratch space on heap for gcd_schoenhage.
+	(mpn_gcd): Don't invoke MPN_NORMALIZE on in operands.
+
 2003-12-23  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (*sparc*-*-*): Test sizeof(long)==4 or 8 for ABIs, to
@@ -69,7 +75,7 @@ MA 02111-1307, USA.
 	* configure, config.in: Update to autoconf 2.59.
 	* */Makefile.in, configure, aclocal.m4, ansi2knr.c, install-sh,
 	doc/mdate-sh: Update to automake 1.8.
-	
+
 	* mkinstalldirs: Remove, not required by automake 1.8.
 	* doc/gmp.texi (Build Options): HTML is a usual target in automake 1.8.
 
@@ -112,7 +118,7 @@ MA 02111-1307, USA.
 	be recompiled when HGCD_SCHOENHAGE_THRESHOLD is tuned.
 
 	* mpn/generic/qstack.c (mpn_hgcd_max_recursion): ... moved from
-	here. 
+	here.
 
 2003-12-18  Niels Möller  <niels@s3.kth.se>
 
@@ -148,7 +154,7 @@ MA 02111-1307, USA.
 	* mpn/generic/hgcd.c [nails]: Enable the code for GMP_NAIL_BITS > 0.
 	(MPN_EXTRACT_LIMB) [nails]: Handle nails.
 	(__gmpn_hgcd_sanity): Allocate temporaries on the heap, not on the
-	stack. Also check that r[i] >= r[i+1]. 
+	stack. Also check that r[i] >= r[i+1].
 	(mpn_hgcd2_lehmer_step) [nails]: Handle nails.
 	(mpn_hgcd_lehmer): When we temporarily have r3 > r2, avoid
 	trigging that assert in __gmpn_hgcd_sanity.
