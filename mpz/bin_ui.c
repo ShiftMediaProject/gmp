@@ -88,7 +88,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
     }
 
   kacc = 1;
-  mpz_init_set_ui (nacc, 1);
+  mpz_init_set_ui (nacc, 1L);
 
   for (i = 1; i <= k; i++)
     {
@@ -107,7 +107,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
       mpz_div_2exp (nacc, nacc, c);
 #endif
 
-      mpz_add_ui (ni, ni, 1);
+      mpz_add_ui (ni, ni, 1L);
       mpz_mul (nacc, nacc, ni);
       umul_ppmm (k1, k0, kacc, i << GMP_NAIL_BITS);
       k0 >>= GMP_NAIL_BITS;
@@ -115,7 +115,7 @@ mpz_bin_ui (mpz_ptr r, mpz_srcptr n, unsigned long int k)
 	{
 	  /* Accumulator overflow.  Perform bignum step.  */
 	  mpz_mul (r, r, nacc);
-	  mpz_set_ui (nacc, 1);
+	  mpz_set_ui (nacc, 1L);
           DIVIDE ();
 	  kacc = i;
 	}
