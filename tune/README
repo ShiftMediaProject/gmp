@@ -249,10 +249,8 @@ When examining the toom3 threshold, remember it depends on the karatsuba
 threshold, so the right karatsuba threshold needs to be compiled into the
 library first.  The tune program uses special recompiled versions of
 mpn/mul_n.c etc for this reason, but the speed program simply uses the
-normal libgmp.la.
-
-The BZ threshold depends on both the karatsuba and toom3 multiply
-thresholds.
+normal libgmp.la.  The BZ threshold depends on both the karatsuba and toom3
+multiply thresholds.
 
 Note further that the various routines may recurse into themselves on sizes
 far enough above applicable thresholds.  For example, mpn_kara_mul_n will
@@ -262,10 +260,14 @@ KARATSUBA_MUL_THRESHOLD.
 When doing the above comparison between mul_basecase and kara_mul_n what's
 probably of interest is mul_basecase versus a kara_mul_n that does one level
 of karatsuba then calls to mul_basecase, but this only happens on sizes less
-than twice the compiled KARATSUBA_MUL_THRESHOLD.  A large value for that
-setting can be compiled-in to avoid the problem if necessary.
+than twice the compiled KARATSUBA_MUL_THRESHOLD.  A larger value for that
+setting can be compiled-in to avoid the problem if necessary.  The same
+applies to toom3 and BZ, though in a trickier fashion.
 
-The same applies to toom3 and BZ, though in a trickier fashion.
+There are some upper limits on some of the thresholds, arising from arrays
+dimensioned according to a threshold (mpn_mul_n), or asm code with certain
+size displacements (some x86 versions of sqr_basecase).  So putting huge
+values for the thresholds, even just for testing, may fail.
 
 
 
@@ -281,6 +283,11 @@ inverse, so the two can be compared.
 Measuring of udiv_qrnnd, udiv_qrnnd_preinv and udiv_qrnnd_preinv2norm to see
 which is better.  Watch out for function call overhead when udiv_qrnnd is
 actually an mpn_udiv_qrnnd subroutine.
+
+Make an option in struct speed_parameters to specify the overlap, 0 for
+none, 1 for dst=src1, 2 for dst=src2, 3 for dst1=src1 dst2=src2, 4 for
+dst1=src2 dst2=src1.  This would be better than lots of _inplace versions of
+measuring functions.
 
 When speed_measure() does a division of total time measured by repetitions
 performed, it divides the fixed overheads imposed by speed_starttime() and
