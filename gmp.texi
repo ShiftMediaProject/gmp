@@ -1161,11 +1161,10 @@ needed, on a cygwin system the usual cygwin runtime will be required.
 
 @item Motorola 68k CPU Types
 
-CPU @samp{m68k} is taken to mean 68020 or better since that's what most
-systems are.  Use @samp{m68000} or @samp{m68010} if GMP must run on those
-earlier CPUs.  @samp{m68302} can be used for the ``Dragonball'' series chips,
-but this is merely a synonym for @samp{m68000}.  @samp{m68360} can be used for
-CPU32 series chips.
+@samp{m68k} is taken to mean 68000.  @samp{m68020} or higher will give a
+performance increase on applicable CPUs.  @samp{m68360} can be used for CPU32
+series chips.  @samp{m68302} can be used for ``Dragonball'' series chips,
+though this is merely a synonym for @samp{m68000}.
 
 @item OpenBSD 2.6
 
