@@ -28,6 +28,11 @@ MA 02111-1307, USA. */
 #define SIZE 8
 #endif
 
+#if defined (__vax__) && SIZE > 4
+#undef SIZE
+#define SIZE 4
+#endif
+
 main (argc, argv)
      int argc;
      char **argv;
