@@ -35,8 +35,8 @@ MA 02111-1307, USA.
 
 /* Define one (and only one) of these for the CPU target.
    Only targets that are going to be tested for need to be in this list,
-   not everything that can possibly be selected. */
-
+   not everything that can possibly be selected.
+ */
 #undef HAVE_TARGET_CPU_alpha
 #undef HAVE_TARGET_CPU_alphaev5
 #undef HAVE_TARGET_CPU_alphaev6
