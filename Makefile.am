@@ -70,7 +70,6 @@ AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
 
 SUBDIRS = tests mpn mpz mpq mpf mpbsd mpfr demos tune
 
-include_HEADERS = $(MPFR_HEADERS_OPTION)
 nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
@@ -169,33 +168,14 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/min$U.lo mpbsd/mul$U.lo mpbsd/mout$U.lo mpbsd/pow_ui$U.lo	\
   mpbsd/sdiv$U.lo mpbsd/sqrtrem$U.lo mpbsd/xtom$U.lo
 
-# FIXME: Add mpfr/rnd_mode$U.lo when it's clean.
-MPFR_OBJECTS = mpfr/add$U.lo mpfr/div_2exp$U.lo mpfr/neg$U.lo		\
-  mpfr/set_dfl_prec$U.lo mpfr/set_str_raw$U.lo mpfr/agm$U.lo		\
-  mpfr/get_str$U.lo mpfr/print_raw$U.lo mpfr/set_dfl_rnd$U.lo		\
-  mpfr/sqrt$U.lo mpfr/clear$U.lo mpfr/init$U.lo mpfr/set_f$U.lo		\
-  mpfr/sub$U.lo mpfr/cmp$U.lo mpfr/mul$U.lo mpfr/round$U.lo		\
-  mpfr/set_prec$U.lo mpfr/cmp_ui$U.lo mpfr/mul_2exp$U.lo mpfr/set$U.lo	\
-  mpfr/set_si$U.lo mpfr/div$U.lo mpfr/mul_ui$U.lo mpfr/set_d$U.lo	\
-  mpfr/pow$U.lo mpfr/out_str$U.lo mpfr/pi$U.lo mpfr/set_z$U.lo		\
-  mpfr/add_ulp$U.lo mpfr/log2$U.lo mpfr/random$U.lo mpfr/log$U.lo	\
-  mpfr/exp$U.lo mpfr/div_ui$U.lo mpfr/zeta$U.lo mpfr/karadiv$U.lo	\
-  mpfr/karasqrt$U.lo mpfr/print_rnd_mode$U.lo
 
-
-if WANT_MPFR
-MPFR_HEADERS_OPTION = mpfr/mpfr.h
-MPFR_OBJECTS_OPTION = $(MPFR_OBJECTS)
-MPFR_LIBADD_OPTION = $(LIBM)
-endif
 libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
   mp_clz_tab.c mp_minv_tab.c						 \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c		 \
   randsdui.c version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 libgmp_la_DEPENDENCIES = \
-  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS) \
-  $(MPFR_OBJECTS_OPTION)
-libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES) $(MPFR_LIBADD_OPTION)
+  $(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
+libgmp_la_LIBADD = $(libgmp_la_DEPENDENCIES)
 libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBGMP_LT_CURRENT):$(LIBGMP_LT_REVISION):$(LIBGMP_LT_AGE)
 
