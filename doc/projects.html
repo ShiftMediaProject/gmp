@@ -45,31 +45,25 @@
 
 <p> <li> <strong>Faster multiplication</strong>
 
-  <p> The current multiplication code is 3-way Toom-Cook based and
-  runs at O(n^1.465) when the operands are both around n digits large.
-
-  Several new developments are desirable:
+  <p> The current multiplication code uses Karatsuba, 3-way Toom-Cook,
+      or Fermat FFT.  Several new developments are desirable:
 
   <ol>
-    <li> Handle multiplication of operands with different digit count better than
-	 today.  We now split the operands in a very inefficient way, see
-	 mpn/generic/mul.c.
+    <li> Handle multiplication of operands with different digit count
+	 better than today.  We now split the operands in a very
+	 inefficient way, see mpn/generic/mul.c.
 
     <li> Consider N-way Toom-Cook.  See Knuth's Seminumerical
 	 Algorithms for details on the method.  Code implementing it
 	 exists.  This is asyptotically inferior to FFTs, but is finer
-	 grained since it can split into any number of pieces, not
-	 just powers of 2 (or of 2 and 3 or whatever).
-
-    <li> Implement some variant of FFT-based multiplication.  I believe the most
-	 promising variant is the original Schönhage-Strassen mod 2^n+1 algorithm.
-	 Paul Zimmermann and Robert Harley are working on this, Paul Zimmerman
-	 has working code.
+	 grained.  A Toom-4 might fit in between toom-3 and the FFTs,
+	 or it might not.
 
     <li> It's possible CPU dependent effects like cache locality will
          have a greater impact on speed than algorithmic improvements.
 
   </ol>
+
 
 <p> <li> <strong>Assembly routines</strong>
 
@@ -102,73 +96,6 @@
   64-bit operand can be split in just three 21-bit pieces if one allows the
   split operands to be negative!)
 
-<p> <li> <strong>Configuration</strong>
-
-  <p> We want to recognize the processor very accurately, more accurately than
-  other GNU packages.  config.guess does not currently make the distinctions we
-  would like it to do and a --target often needs to be set explicitly.
-
-  <p> For example, "sparc" is not very useful as a machine architecture
-  denotation.  We want to distinguish old 32-bit SPARC without multiply support
-  from newer 32-bit SPARC with such support.  We want to recognize a
-  SuperSPARC, since its implementation of the UDIV instruction is not complete,
-  and will trap to the OS kernel for certain operands.  And we want to
-  recognize 64-bit capable SPARC processors as such.  While the assembly
-  routines can use 64-bit operations on all 64-bit SPARC processors, one can
-  not use 64-bit limbs under all operating system.  E.g., Solaris 2.5 and 2.6
-  doesn't preserve the upper 32 bits of most processor registers.  For SPARC we
-  therefore sometimes need to choose GMP configuration depending both on
-  processor and operating system.
-
-  <p> Other things autoconf should care about:
-  <ol>
-
-   <li> Find out whether there's an alloca available and how to use
-        it.  AC_FUNC_ALLOCA has various system dependencies covered,
-        but we don't want its alloca.c replacement.  (One thing
-        current cpp tests don't cover: HPUX 10 C compiler supports
-        alloca, but cannot find any symbol to test in order to know if
-        we're on HPUX 10.  Damn.)
-
-   <li> Identify Mips processor under Irix: `hinv -c processor'
-   <li> Identify Alpha processor under OSF: "/usr/sbin/sizer -c".
-        Unfortunately, sizer is not available before some revision of Dec Unix
-        4.0, and it also returns some rather cryptic names for processors.
-        Perhaps the <code>implver</code> and <code>amask</code> assembly
-        instructions are better, but that doesn't differentiate between ev5 and
-        ev56.
-   <li> Get lots of information about a Solaris system: prtconf -vp
-   <li> For specific target machines, figure out assembly language variant
-        (like for x86 <code>shldl</code>).
-   <li> For some target machines and some compilers, specific options are needed
-        (sparcv8/gcc needs -mv8, sparcv8/cc needs -cg92, Irix64/cc needs -64,
-        Irix32/cc might need -n32, etc).  Some are set already, add more, see
-	configure.in.
-   <li> Options to be passed to the assembler (via the compiler, using whatever
-        syntax the compiler uses for passing options to the assembler).
-   <li> On Solaris 7, check if gcc supports native v9 64-bit arithmetic.
-        If not compile using "cc -fast -xarch=v9".  (Problem: -fast requires
-	that we link with -fast too, which might not be very good.  Pass
-	"-xO4 -xtarget=native" instead?)
-  </ol>
-
-  <p> In general, getting the exact right configuration, passing the exact right
-  options to the compiler, etc, might mean that the GMP performance more than
-  doubles.
-
-  <p> When testing, make sure to test at least the
-  following for all out target machines: (1) Both gcc and cc (and c89).
-  (2) Both 32-bit mode and 64-bit mode (such as -n32 vs -64 under
-  Irix). (3) Both the system `make' and GNU `make'. (4) With and without
-  GNU binutils.
-
-  <p> We'd ultimately like to build multiple variants of the library
-  under certain systems.  An example is -n32, -o32, and -64 on Irix.
-
-  <p> Improve config.guess.  It should say mips2, mips3, and mips4.
-  It should say supersparc, microsparc, ultrasparc1, ultrasparc2.
-  Etc.  Likewise for HPPA.  (Alpha and x86 work already.  Ensure
-  config.sub accepts the guesses.)
 
 <p> <li> <strong>Faster extended GCD</strong>
 
