@@ -1493,6 +1493,9 @@ mpf_size (mpf_srcptr f)
                                                                 \
   } while (0)
 
+/* The initializers for __dst etc here avoid a bug in egcs 2.91.66 19990314
+   on redhat 6.1, which shows up in tests/mpn/t-aors_1.c check_add_1() as
+   the size parameter to the asm block getting instead the src pointer.  */
 #define __GMPN_ADD_1(cout, dst, src, size, n)                           \
   do {                                                                  \
     /* ASSERT ((size) >= 1); */                                         \
@@ -1510,9 +1513,9 @@ mpf_size (mpf_srcptr f)
           }                                                             \
         else                                                            \
           {                                                             \
-            mp_ptr     __dst;                                           \
-            mp_srcptr  __src;                                           \
-            mp_size_t  __size;                                          \
+            mp_ptr     __dst = (dst);                                   \
+            mp_srcptr  __src = (src);                                   \
+            mp_size_t  __size = (size);                                 \
                                                                         \
             __asm__ __volatile__                                        \
               (__GMP_ASM_L(top) ":\n"                                   \
@@ -1530,9 +1533,9 @@ mpf_size (mpf_srcptr f)
                  "=&r"  (__dst),                                        \
                  "=&r"  (__src),                                        \
                  "=&rm" (__size)                                        \
-               : "1"   (dst),                                           \
-                 "2"   (src),                                           \
-                 "3"   (size),                                          \
+               : "1"   (__dst),                                         \
+                 "2"   (__src),                                         \
+                 "3"   (__size),                                        \
                  "0"   (n)                                              \
                : "memory");                                             \
                                                                         \
