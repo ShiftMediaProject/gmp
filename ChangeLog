@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2003-10-12  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc64/diveby3.asm: New file (trivial edits of
+	powerpc32/diveby3.asm).
+
 	* mpn/powerpc32/diveby3.asm: Update cycle counts with more processors.
 	* mpn/powerpc32/sqr_diagonal.asm: Likewise.
 
@@ -32,7 +35,7 @@ MA 02111-1307, USA.
 
 	* mpn/m68k/README: Correct an URL; add some STATUS comments.
 
-	* mpn/ia64/aorslsh1_n.asm: Avoid shrp when shl/shr.u works just as well.
+	* mpn/ia64/aorslsh1_n.asm: Avoid shrp when shl/shr works just as well.
 
 	* mpn/powerpc32/addlsh1_n.asm: New file.
 	* mpn/powerpc32/sublsh1_n.asm: New file.
