@@ -31,6 +31,12 @@ MA 02111-1307, USA. */
    The way mpn_sqrtrem calculates floor(sqrt(x)) ensures the root is correct
    to the intended accuracy, ie. truncated to prec limbs.
 
+   With nails, u might be two limbs, in which case a total 2*prec limbs is
+   passed to mpn_sqrtrem (still giving a prec limb result).  If uhigh is
+   zero we adjust back to 2*prec-1, since mpn_sqrtrem requires the high
+   non-zero.  2*prec limbs are always allocated, even when uhigh is zero, so
+   the store of uhigh can be done without a conditional.
+
    u==0 is a special case so the rest of the code can assume the result is
    non-zero (ie. will have a non-zero high limb on the result).
 
@@ -47,10 +53,14 @@ MA 02111-1307, USA. */
    input has lots of trailing zeros (apart from the perfect square
    case).  */
 
+
+/* 1 if we (might) need two limbs for u */
+#define U2   (GMP_NUMB_BITS < BITS_PER_ULONG)
+
 void
 mpf_sqrt_ui (mpf_ptr r, unsigned long int u)
 {
-  mp_size_t rsize;
+  mp_size_t rsize, zeros;
   mp_ptr tp;
   mp_size_t prec;
   TMP_DECL (marker);
@@ -65,12 +75,21 @@ mpf_sqrt_ui (mpf_ptr r, unsigned long int u)
   TMP_MARK (marker);
 
   prec = r->_mp_prec;
-  rsize = 2 * prec - 1;
+  zeros = 2 * prec - 2;
+  rsize = zeros + 1 + U2;
 
   tp = (mp_ptr) TMP_ALLOC (rsize * BYTES_PER_MP_LIMB);
 
-  MPN_ZERO (tp, rsize - 1);
-  tp[rsize - 1] = u;
+  MPN_ZERO (tp, zeros);
+  tp[zeros] = u & GMP_NUMB_MASK;
+
+#if U2
+  {
+    mp_limb_t uhigh = u >> GMP_NUMB_BITS;
+    tp[zeros + 1] = uhigh;
+    rsize -= (uhigh == 0);
+  }
+#endif
 
   mpn_sqrtrem (r->_mp_d, NULL, tp, rsize);
 
