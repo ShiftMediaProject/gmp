@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 
    Combinations of alignments and overlaps are tested, with redzones above
    or below the destinations, and with the sources write-protected.
-  
+
    The number of tests performed becomes ridiculously large with all the
    combinations, and for that reason this can't be a part of a "make check",
    it's meant only for development.  The code isn't very pretty either.
@@ -289,9 +289,12 @@ struct try_t {
 #define SIZE_DIFF_PLUS_1 11
 #define SIZE_RETVAL      12
 #define SIZE_CEIL_HALF   13
+#define SIZE_GET_STR     14
   char  size;
   char  size2;
   char  dst_size[2];
+
+  char  dst_bytes[2];
 
   char  dst0_from_src1;
 
@@ -385,7 +388,7 @@ validate_divexact_1 (void)
         printf ("Remainder a%%d == 0x%lX, mpn_divexact_1 undefined\n", rem);
         error = 1;
       }
-    if (refmpn_cmp (tp, dst, size) != 0)
+    if (refmpn_equal_anynail (tp, dst, size))
       {
         printf ("Quotient a/d wrong\n");
         mpn_trace ("fun ", dst, size);
@@ -582,16 +585,18 @@ validate_sqrtrem (void)
 #define TYPE_MUL_N            61
 #define TYPE_SQR              62
 #define TYPE_UMUL_PPMM        63
+#define TYPE_UMUL_PPMM_R      64
 
 #define TYPE_SB_DIVREM_MN     70
 #define TYPE_TDIV_QR          71
 
 #define TYPE_SQRTREM          80
 #define TYPE_ZERO             81
+#define TYPE_GET_STR          82
 
 #define TYPE_EXTRA            90
 
-struct try_t  param[100];
+struct try_t  param[150];
 
 
 void
@@ -941,6 +946,10 @@ param_init (void)
   p->overlap = OVERLAP_NONE;
   REFERENCE (refmpn_umul_ppmm);
 
+  p = &param[TYPE_UMUL_PPMM_R];
+  COPY (TYPE_UMUL_PPMM);
+  REFERENCE (refmpn_umul_ppmm_r);
+
 
   p = &param[TYPE_RSHIFT];
   p->retval = 1;
@@ -1004,6 +1013,16 @@ param_init (void)
   p->dst[0] = 1;
   p->size = SIZE_ALLOW_ZERO;
   REFERENCE (refmpn_zero);
+
+  p = &param[TYPE_GET_STR];
+  p->src[0] = 1;
+  p->size = SIZE_ALLOW_ZERO;
+  p->dst[0] = 1;
+  p->dst[1] = 1;
+  p->dst_size[0] = SIZE_GET_STR;
+  p->dst_bytes[0] = 1;
+  p->overlap = OVERLAP_NONE;
+  REFERENCE (refmpn_get_str);
 
 #ifdef EXTRA_PARAM_INIT
   EXTRA_PARAM_INIT
@@ -1265,6 +1284,8 @@ const struct choice_t choice_array[] = {
 
   { TRY_FUNFUN(MPN_ZERO), TYPE_ZERO },
 
+  { TRY(mpn_get_str),    TYPE_GET_STR },
+
 #ifdef EXTRA_ROUTINES
   EXTRA_ROUTINES
 #endif
@@ -1374,7 +1395,7 @@ mp_limb_t  carry_array[] = {
   4,
   CNST_LIMB(1) << 8,
   CNST_LIMB(1) << 16,
-  MP_LIMB_T_MAX
+  GMP_NUMB_MAX
 };
 int        carry_index;
 
@@ -1387,7 +1408,7 @@ int        carry_index;
    : 1)
 
 #define MPN_RANDOM_ALT(index,dst,size) \
-  (((index) & 1) ? mpn_random (dst, size) : mpn_random2 (dst, size))
+  (((index) & 1) ? refmpn_random (dst, size) : refmpn_random2 (dst, size))
 
 /* The dummy value after MPN_RANDOM_ALT ensures both sides of the ":" have
    the same type */
@@ -1405,9 +1426,9 @@ mp_limb_t  multiplier_array[] = {
   0, 1, 2, 3,
   CNST_LIMB(1) << 8,
   CNST_LIMB(1) << 16,
-  MP_LIMB_T_MAX - 2,
-  MP_LIMB_T_MAX - 1,
-  MP_LIMB_T_MAX
+  GMP_NUMB_MAX - 2,
+  GMP_NUMB_MAX - 1,
+  GMP_NUMB_MAX
 };
 int        multiplier_index;
 
@@ -1415,11 +1436,11 @@ mp_limb_t  divisor_array[] = {
   1, 2, 3,
   CNST_LIMB(1) << 8,
   CNST_LIMB(1) << 16,
-  MP_LIMB_T_HIGHBIT,
-  MP_LIMB_T_HIGHBIT + 1,
-  MP_LIMB_T_MAX - 2,
-  MP_LIMB_T_MAX - 1,
-  MP_LIMB_T_MAX
+  GMP_NUMB_HIGHBIT,
+  GMP_NUMB_HIGHBIT + 1,
+  GMP_NUMB_MAX - 2,
+  GMP_NUMB_MAX - 1,
+  GMP_NUMB_MAX
 };
 
 int        divisor_index;
@@ -1489,6 +1510,8 @@ struct overlap_t  *overlap, *overlap_limit;
     overlap++)
 
 
+int  base = 10;
+
 #define T_RAND_COUNT  2
 int  t_rand;
 
@@ -1501,8 +1524,8 @@ t_random (mp_ptr ptr, mp_size_t n)
   switch (option_data) {
   case DATA_TRAND:
     switch (t_rand) {
-    case 0: mpn_random (ptr, n); break;
-    case 1: mpn_random2 (ptr, n); break;
+    case 0: refmpn_random (ptr, n); break;
+    case 1: refmpn_random2 (ptr, n); break;
     default: abort();
     }
     break;
@@ -1518,7 +1541,7 @@ t_random (mp_ptr ptr, mp_size_t n)
     refmpn_zero (ptr, n);
     break;
   case DATA_FFS:
-    refmpn_fill (ptr, n, (mp_limb_t) -1);
+    refmpn_fill (ptr, n, GMP_NUMB_MAX);
     break;
   case DATA_2FD:
     /* Special value 0x2FFF...FFFD, which divided by 3 gives 0xFFF...FFF,
@@ -1550,7 +1573,10 @@ print_each (const struct each_t *e)
     { 
       if (tr->dst[i])
         {
-          mpn_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
+          if (tr->dst_bytes[i])
+            byte_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
+          else
+            mpn_tracen ("   d[%d]", i, e->d[i].p, d[i].size);
           printf ("        located %p\n", e->d[i].p);
         }
     }
@@ -1649,14 +1675,28 @@ compare (void)
       if (! tr->dst[i])
         continue;
 
-      if (d[i].size != 0
-          && refmpn_cmp (ref.d[i].p, fun.d[i].p, d[i].size) != 0)
+      if (tr->dst_bytes[i])
         {
-          printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
-                  i,
-                  mpn_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
-                  mpn_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
-          error = 1;
+          if (memcmp (ref.d[i].p, fun.d[i].p, d[i].size) != 0)
+            {
+              printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
+                      i,
+                      byte_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
+                      byte_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
+              error = 1;
+            }
+        }
+      else
+        {
+          if (d[i].size != 0
+              && ! refmpn_equal_anynail (ref.d[i].p, fun.d[i].p, d[i].size))
+            {
+              printf ("Different d[%d] data results, low diff at %ld, high diff at %ld\n",
+                      i,
+                      mpn_diff_lowest (ref.d[i].p, fun.d[i].p, d[i].size),
+                      mpn_diff_highest (ref.d[i].p, fun.d[i].p, d[i].size));
+              error = 1;
+            }
         }
     }
 
@@ -1902,6 +1942,10 @@ call (struct each_t *e, tryfun_t function)
     e->retval = CALLING_CONVENTIONS (function)
       (e->d[0].p, e->s[0].p[0], e->s[0].p[1]);
     break;
+  case TYPE_UMUL_PPMM_R:
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->s[0].p[0], e->s[0].p[1], e->d[0].p);
+    break;
 
   case TYPE_LSHIFT:
   case TYPE_RSHIFT:
@@ -1925,6 +1969,38 @@ call (struct each_t *e, tryfun_t function)
 
   case TYPE_ZERO:
     CALLING_CONVENTIONS (function) (e->d[0].p, size);
+    break;
+
+  case TYPE_GET_STR:
+    {
+      size_t  sizeinbase, fill;
+      char    *dst;
+      MPN_SIZEINBASE (sizeinbase, e->s[0].p, size, base);
+      ASSERT_ALWAYS (sizeinbase <= d[0].size);
+      fill = d[0].size - sizeinbase;
+      if (d[0].high)
+        {
+          memset (e->d[0].p, 0xBA, fill);
+          dst = (char *) e->d[0].p + fill;
+        }
+      else
+        {
+          dst = (char *) e->d[0].p;
+          memset (dst + sizeinbase, 0xBA, fill);
+        }
+      if (POW2_P (base))
+        {
+          e->retval = CALLING_CONVENTIONS (function) (dst, base,
+                                                      e->s[0].p, size);
+        }
+      else
+        {
+          refmpn_copy (e->d[1].p, e->s[0].p, size);
+          e->retval = CALLING_CONVENTIONS (function) (dst, base,
+                                                      e->d[1].p, size);
+        }
+      refmpn_zero (e->d[1].p, size);  /* cloberred or unused */
+    }
     break;
 
 #ifdef EXTRA_CALL
@@ -1988,7 +2064,14 @@ pointer_setup (struct each_t *e)
       case SIZE_CEIL_HALF:
         d[i].size = (size+1)/2;
         break;
-        
+
+      case SIZE_GET_STR:
+        {
+          mp_limb_t ff = GMP_NUMB_MAX;
+          MPN_SIZEINBASE (d[i].size, &ff - (size-1), size, base);
+        }
+        break;
+
       default:
         printf ("Unrecognised dst_size type %d\n", tr->dst_size[i]);
         abort ();
@@ -2007,16 +2090,32 @@ pointer_setup (struct each_t *e)
 
       if (d[i].high)
         {
-          e->d[i].p = e->d[i].region.ptr + e->d[i].region.size
-            - d[i].size - d[i].align;
-          if (tr->overlap == OVERLAP_LOW_TO_HIGH)
-            e->d[i].p -= offset;
+          if (tr->dst_bytes[i])
+            {
+              e->d[i].p = (mp_ptr)
+                ((char *) (e->d[i].region.ptr + e->d[i].region.size)
+                 - d[i].size - d[i].align);
+            }
+          else
+            {
+              e->d[i].p = e->d[i].region.ptr + e->d[i].region.size
+                - d[i].size - d[i].align;
+              if (tr->overlap == OVERLAP_LOW_TO_HIGH)
+                e->d[i].p -= offset;
+            }
         }
       else
         {
-          e->d[i].p = e->d[i].region.ptr + d[i].align;
-          if (tr->overlap == OVERLAP_HIGH_TO_LOW)
-            e->d[i].p += offset;
+          if (tr->dst_bytes[i])
+            {
+              e->d[i].p = (mp_ptr) ((char *) e->d[i].region.ptr + d[i].align);
+            }
+          else
+            {
+              e->d[i].p = e->d[i].region.ptr + d[i].align;
+              if (tr->overlap == OVERLAP_HIGH_TO_LOW)
+                e->d[i].p += offset;
+            }
         }
     }
 
@@ -2076,7 +2175,7 @@ try_one (void)
   trap_location = TRAP_SETUPS;
 
   if (tr->divisor == DIVISOR_NORM)
-    divisor |= MP_LIMB_T_HIGHBIT;
+    divisor |= GMP_NUMB_HIGHBIT;
   if (tr->divisor == DIVISOR_ODD)
     divisor |= 1;
 
@@ -2101,6 +2200,11 @@ try_one (void)
           t_random (s[1].region.ptr, d[0].size);
           MPN_COPY (fun.d[0].p, s[1].region.ptr, d[0].size);
           MPN_COPY (ref.d[0].p, s[1].region.ptr, d[0].size);
+        }
+      else if (tr->dst_bytes[i])
+        {
+          memset (ref.d[i].p, 0xBA, d[i].size);
+          memset (fun.d[i].p, 0xBA, d[i].size);
         }
       else
         {
@@ -2154,9 +2258,9 @@ try_one (void)
         if (i == 1)
           {
             if (tr->size2)
-              s[i].p[size2-1] |= MP_LIMB_T_HIGHBIT;
+              s[i].p[size2-1] |= GMP_NUMB_HIGHBIT;
             else
-              s[i].p[size-1] |= MP_LIMB_T_HIGHBIT;
+              s[i].p[size-1] |= GMP_NUMB_HIGHBIT;
           }
         break;
       }
@@ -2472,7 +2576,7 @@ usage (const char *prog)
     -s s1-s2  range of sizes to test\n\
     -W        don't show the spinner (use this in gdb)\n\
     -z        disable mprotect() redzones\n\
-Default data is mpn_random() and mpn_random2().\n\
+Default data is refmpn_random() and refmpn_random2().\n\
 \n\
 Functions that can be tested:\n\
 ", prog, DEFAULT_REPETITIONS);
