@@ -65,8 +65,8 @@ MA 02111-1307, USA. */
    conversion there'd be no way to specify hex, decimal or octal, or
    similarly with F no way to specify fixed point or scientific format.
 
-   It seems wisest to pass float conversions %f, %e and %g of float, double
-   and long double over to the standard printf.  It'd be hard to be sure of
+   It seems wisest to pass conversions %f, %e and %g of float, double and
+   long double over to the standard printf.  It'd be hard to be sure of
    getting the right handling for NaNs, rounding, etc.  Integer conversions
    %d etc and string conversions %s on the other hand could be easily enough
    handled within gmp_doprnt, but if floats are going to libc then it's just
@@ -101,22 +101,20 @@ MA 02111-1307, USA. */
    nothing in between then we'll reach here with this_fmt == last_fmt and we
    can do nothing in that case.  */
 
-#define FLUSH()                                         \
-  do {                                                  \
-    if (this_fmt == last_fmt)                           \
-      {                                                 \
-        TRACE (printf ("nothing to flush\n"));          \
-        ASSERT (this_ap == last_ap);                    \
-      }                                                 \
-    else                                                \
-      {                                                 \
-        ASSERT (*this_fmt == '%');                      \
-        *this_fmt = '\0';                               \
-        TRACE (printf ("flush \"%s\"\n", last_fmt));    \
-        DOPRNT_FORMAT (last_fmt, last_ap);              \
-        last_ap = ap;                                   \
-      }                                                 \
-    last_fmt = fmt+1;                                   \
+#define FLUSH()                                                         \
+  do {                                                                  \
+    if (this_fmt == last_fmt)                                           \
+      {                                                                 \
+        TRACE (printf ("nothing to flush\n"));                          \
+        ASSERT (this_ap == last_ap);                                    \
+      }                                                                 \
+    else                                                                \
+      {                                                                 \
+        ASSERT (*this_fmt == '%');                                      \
+        *this_fmt = '\0';                                               \
+        TRACE (printf ("flush %p \"%s\"\n", last_ap, last_fmt));        \
+        DOPRNT_FORMAT (last_fmt, last_ap);                              \
+      }                                                                 \
   } while (0)
 
 
@@ -135,7 +133,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
   int      type, fchar, *value, seen_precision;
   struct doprnt_params_t param;
 
-  TRACE (printf ("gmp_doprnt \"%s\"\n", orig_fmt));
+  TRACE (printf ("gmp_doprnt %p \"%s\"\n", ap, orig_fmt));
 
   /* The format string is chopped up into pieces to be passed to
      funs->format.  Unfortunately that means it has to be copied so each
@@ -145,22 +143,27 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
   fmt = alloc_fmt;
   strcpy (fmt, orig_fmt);
 
-  last_ap = ap;
+  /* last_fmt and last_ap are just after the last output, and hence where
+     the next output will begin, when that's done */
   last_fmt = fmt;
+  last_ap = ap;
 
   for (;;)
     {
-      TRACE (printf ("next: \"%s\"\n", fmt));
+      TRACE (printf ("next: %p \"%s\"\n", ap, fmt));
 
       fmt = strchr (fmt, '%');
       if (fmt == NULL)
         break;
 
+      /* this_fmt and this_ap are the current '%' sequence being considered */
       this_fmt = fmt;
       this_ap = ap;
+      fmt++; /* skip the '%' */
+
       TRACE (printf ("considering\n");
-             printf ("  last: \"%s\"\n", last_fmt);
-             printf ("  this: \"%s\"\n", this_fmt));
+             printf ("  last: %p \"%s\"\n", last_ap, last_fmt);
+             printf ("  this: %p \"%s\"\n", this_ap, this_fmt));
 
       type = '\0';
       value = &param.width;
@@ -184,8 +187,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
          character has been seen and a new % should be sought.  */
       for (;;)
         {
-          fmt++;
-          fchar = *fmt;
+          fchar = *fmt++;
           if (fchar == '\0')
             break;
 
@@ -259,6 +261,8 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
                 ret = __gmp_doprnt_integer (funs, data, &param, s);
                 (*__gmp_free_func) (s, strlen(s)+1);
                 DOPRNT_ACCUMULATE (ret);
+                last_fmt = fmt;
+                last_ap = ap;
               }
               break;
             case 't':
@@ -280,6 +284,8 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
                 ret = __gmp_doprnt_integer (funs, data, &param, s);
                 (*__gmp_free_func) (s, strlen(s)+1);
                 DOPRNT_ACCUMULATE (ret);
+                last_ap = ap;
+                last_fmt = fmt;
               }
               break;
             default:
@@ -302,6 +308,8 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
               FLUSH ();
               DOPRNT_ACCUMULATE (__gmp_doprnt_mpf (funs, data, &param,
                                                    va_arg (ap, mpf_srcptr)));
+              last_ap = ap;
+              last_fmt = fmt;
               break;
             case 'L':
 #if HAVE_LONG_DOUBLE
@@ -358,6 +366,8 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             case 'l': { long  *p = va_arg (ap, long *);  *p = retval; } break;
             default:  { int   *p = va_arg (ap, int *);   *p = retval; } break;
             }
+            last_ap = ap;
+            last_fmt = fmt;
             goto next;
 
           case 'o':
@@ -407,18 +417,14 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
           case '*':
             {
               int n = va_arg (ap, int);
-              if (value == &param.width)
+
+              /* negative width means left justify */
+              if (value == &param.width && n < 0)
                 {
-                  /* negative width means left justify */
-                  if (n < 0)
-                    param.justify = DOPRNT_JUSTIFY_LEFT;
-                  param.width = ABS (n);
+                  param.justify = DOPRNT_JUSTIFY_LEFT;
+                  n = -n;
                 }
-              else
-                {
-                  /* don't allow negative precision, apart from -1 */
-                  param.prec = MAX (n, -1);
-                }
+              *value = n;
             }                
             break;
 
@@ -445,10 +451,10 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             {
               int  n = 0;
               do {
-                n = n * 10 + (*fmt-'0');
-                fmt++;
-              } while (isascii (*fmt) && isdigit (*fmt));
-              fmt--;
+                n = n * 10 + (fchar-'0');
+                fchar = *fmt++;
+              } while (isascii (fchar) && isdigit (fchar));
+              fmt--; /* unget the non-digit */
               *value = n;
             }
             break;
@@ -465,7 +471,7 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
       ;
     }
 
-  TRACE (printf ("remainder: \"%s\"\n", last_fmt));
+  TRACE (printf ("remainder: %p \"%s\"\n", last_ap, last_fmt));
   if (*last_fmt != '\0')
     DOPRNT_FORMAT (last_fmt, last_ap);
 
