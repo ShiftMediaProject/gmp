@@ -29,7 +29,7 @@ MA 02111-1307, USA. */
 #define UMUL_TIME	 519
 #define UDIV_TIME	2360
 
-#define KARATSUBA_SQR_THRESHOLD   1000 /* failed to determine */
+#define KARATSUBA_MUL_THRESHOLD   1000 /* failed to determine */
 #define TOOM3_MUL_THRESHOLD       2000 /* failed to determine */
 #define KARATSUBA_SQR_THRESHOLD    114 /* small due to sqr_basecase slowness */
 #define TOOM3_SQR_THRESHOLD        228 /* small due to sqr_basecase slowness */
