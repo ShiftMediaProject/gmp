@@ -589,6 +589,12 @@ be manipulated.
 C<printf> could usefully accept %b for mpz, mpq and mpf, and perhaps %x for
 mpf too.
 
+C<get_str> returning different style values for integer versus float is a
+bit unfortunate.  With mpz, mpq and mpf objects there's no doubt what it
+will do, but on a plain scalar its action depends on whether the scalar was
+promoted to a float at any stage, and then on the GMP module rules about
+using the integer or float part.
+
 There's no interface to mpfr.
 
 =head1 INTERNALS
