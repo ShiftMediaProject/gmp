@@ -1,3 +1,20 @@
+1999-11-22  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp.h (mpz_init_set_str): Declare using __gmp_const.
+	(mpz_set_str): Likewise.
+	(mpf_init_set_str): Likewise.
+	(mpf_set_str): Likewise.
+	(mpn_set_str): Likewise.
+	(__gmp_0): Likewise.
+	(mpn_divrem): Remove separate declaration; it's defined later in
+	this file.
+
+	* gmp.h: Replace "defined (__STD__)' by (__STDC__-0) in
+	expressions involving more than one term, to handle Sun's compiler
+	that most helpfully sets __STDC__ to 0.
+	* gmp-impl.h: Likewise.
+	* longlong.h: Likewise.
+
 1999-11-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc64/sub_n.s: Rewrite.
