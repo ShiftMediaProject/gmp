@@ -430,6 +430,21 @@ tests_infinity_d (void)
 }
 
 
+/* Return non-zero if d is an infinity (either positive or negative).
+   Don't want libm, so don't use isinf() or other system tests.  */
+int
+tests_isinf (double d)
+{
+#if _GMP_IEEE_FLOATS
+  union ieee_double_extract x;
+  x.d = d;
+  return (x.s.exp == 2047 && x.s.manl == 0 && x.s.manh == 0);
+#else
+  return 0;
+#endif
+}
+
+
 /* Set the hardware floating point rounding mode.  Same mode values as mpfr,
    namely 0=nearest, 1=tozero, 2=up, 3=down.  Return 1 if successful, 0 if
    not.  */
