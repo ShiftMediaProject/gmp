@@ -31,7 +31,7 @@ MA 02111-1307, USA.
 mp_limb_t
 __MPN (divexact_by3) (mp_ptr dst, mp_srcptr src, mp_size_t size)
 {
-  mpn_divexact_by3 (dst, src, size);
+  return mpn_divexact_by3 (dst, src, size);
 }
 
 
@@ -40,7 +40,7 @@ __MPN (divexact_by3) (mp_ptr dst, mp_srcptr src, mp_size_t size)
 mp_limb_t
 __MPN (divmod_1) (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t divisor)
 {
-  mpn_divmod_1 (dst, src, size, divisor);
+  return mpn_divmod_1 (dst, src, size, divisor);
 }
 
 
