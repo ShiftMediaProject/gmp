@@ -1,0 +1,1 @@
+SFLAGS=-Wa,-xarch=v8plus
