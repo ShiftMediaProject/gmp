@@ -793,7 +793,7 @@ size_t mpz_inp_str_nowhite _PROTO ((mpz_ptr x, FILE *stream, int base, int c, si
 int     mpn_divisible_p _PROTO ((mp_srcptr ap, mp_size_t asize,
                                  mp_srcptr dp, mp_size_t dsize)) __GMP_ATTRIBUTE_PURE;
 
-#define mpn_rootrem __gmpn_rootrem
+#define mpn_rootrem __MPN(rootrem)
 mp_size_t mpn_rootrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 
