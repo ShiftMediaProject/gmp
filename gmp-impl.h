@@ -984,7 +984,19 @@ struct bases
 
 #define __mp_bases __MPN(mp_bases)
 extern const struct bases __mp_bases[256];
+
+
+/* MPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
+   limb and adds an extra limb.  MPF_PREC_TO_BITS drops that extra limb,
+   hence giving back the user's size in bits rounded up.  Notice that
+   converting prec->bits->prec gives an unchanged value.  */
+#define MPF_BITS_TO_PREC(n) \
+  ((MAX (53, n) + 2 * BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB)
+#define MPF_PREC_TO_BITS(n) \
+  ((n) * BITS_PER_MP_LIMB - BITS_PER_MP_LIMB)
+
 extern mp_size_t __gmp_default_fp_limb_precision;
+
 
 #if defined (__i386__)
 #define TARGET_REGISTER_STARVED 1
@@ -1471,6 +1483,7 @@ extern const int __gmp_0;
 #ifndef PP_FIRST_OMITTED
 #define PP_FIRST_OMITTED 3
 #endif
+
 
 
 /* BIT1 means a result value in bit 1 (second least significant bit), with a
