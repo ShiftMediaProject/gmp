@@ -47,19 +47,27 @@ MA 02111-1307, USA. */
    "size-1" would mean sucess from a C99 vsnprintf, and the re-run is
    unnecessary in this case, but we don't bother to try to detect what sort
    of vsnprintf we've got.  size-1 should occur rarely in normal
-   circumstances.  */
+   circumstances.
+
+   vsnprintf might trash it's given ap (it does for instance in glibc 2.1.3
+   on powerpc), so copy it in case we need to use it to probe for the size
+   output that would have been produced.  Note there's no need to preserve
+   it for our callers, just for ourselves.  */
 
 static int
-gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt, va_list ap)
+gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt,
+                     va_list orig_ap)
 {
-  int   ret, step, alloc, avail;
-  char  *p;
+  int      ret, step, alloc, avail;
+  va_list  ap;
+  char     *p;
 
   ASSERT (d->size >= 0);
 
   avail = d->size;
   if (avail > 1)
     {
+      va_copy (ap, orig_ap);
       ret = vsnprintf (d->buf, avail, fmt, ap);
       if (ret == -1)
         {
@@ -87,6 +95,7 @@ gmp_snprintf_format (struct gmp_snprintf_t *d, const char *fmt, va_list ap)
     {
       alloc *= 2;
       p = (*__gmp_allocate_func) (alloc);
+      va_copy (ap, orig_ap);
       ret = vsnprintf (p, alloc, fmt, ap);
       (*__gmp_free_func) (p, alloc);
     }
