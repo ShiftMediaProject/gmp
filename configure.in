@@ -392,8 +392,8 @@ case $host in
     # since the options ordering seems to make our setting override
     # that passed by gcc.
     #
-    # gas 2.10.0 doesn't accept -mev67, but -mev6 is enough for ctlz
-    # and cttz, as used by longlong.h on ev67.
+    # gas prior to 2.14 doesn't accept -mev67, but -mev6 seems enough for
+    # ctlz and cttz (in 2.10.0 at least).
     #
     # OSF `as' accepts ev68 but stupidly treats it as ev4.  -arch only seems
     # to affect insns like ldbu which are expanded as macros when necessary.
@@ -1329,6 +1329,13 @@ if test $found_compiler = yes; then
                                    [cflags="$cflags $flag"
                                    break],
                                    [continue])
+            ;;
+          -Wa,-m*)
+            case $host in
+              alpha*-*-*)
+                GMP_GCC_WA_MCPU($cc $cflags, $flag, , [continue])
+              ;;
+            esac
             ;;
         esac
 
