@@ -1933,26 +1933,24 @@ AC_SUBST(gmp_srclinks)
 # Configs for mpfr.
 #
 if test $enable_mpfr = yes; then
-  # Denorm support is necessary for mpfr_set_d and mpfr_get_d, and for the
-  # various test programs.  On alpha denorms cause SIGFPE by default.
-  # -mieee-with-inexact is for gcc, -ieee_with_inexact is for DEC C.
-  #
-  CFLAGS_IEEE_WITH_INEXACT=
-  case $host in
-    alpha*-*-*)
-      for i in -mieee-with-inexact -ieee_with_inexact; do
-        GMP_PROG_CC_WORKS($CC $CFLAGS $i,
-          [CFLAGS_IEEE_WITH_INEXACT=$i
-          break])
-      done
-      ;;
-  esac
-  AC_SUBST(CFLAGS_IEEE_WITH_INEXACT)  
-
   gmp_save_CFLAGS=$CFLAGS
   MPFR_CONFIGS
   AC_SUBST(MPFR_CFLAGS,$CFLAGS)
   CFLAGS=$gmp_save_CFLAGS
+
+  # Denorm support is necessary for mpfr_set_d and mpfr_get_d, and for the
+  # various test programs.  On alpha denorms cause SIGFPE by default.
+  # -mieee-with-inexact is for gcc, -ieee_with_inexact is for DEC C.
+  #
+  case $host in
+    alpha*-*-*)
+      for i in -mieee-with-inexact -ieee_with_inexact; do
+        GMP_PROG_CC_WORKS($CC $MPFR_CFLAGS $i,
+          [MPFR_CFLAGS="$MPFR_CFLAGS $i"
+          break])
+      done
+      ;;
+  esac
 fi
 
 
