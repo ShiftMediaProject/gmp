@@ -3664,11 +3664,11 @@ zeros and ones in the binary representation.
 routines.
 @end deftypefun
 
-@deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, unsigned long int @var{n})
+@deftypefun {unsigned long int} mpn_popcount (const mp_limb_t *@var{s1p}, mp_size_t @var{n})
 Count the number of set bits in @{@var{s1p}, @var{n}@}.
 @end deftypefun
 
-@deftypefun {unsigned long int} mpn_hamdist (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, unsigned long int @var{n})
+@deftypefun {unsigned long int} mpn_hamdist (const mp_limb_t *@var{s1p}, const mp_limb_t *@var{s2p}, mp_size_t @var{n})
 Compute the hamming distance between @{@var{s1p}, @var{n}@} and @{@var{s2p},
 @var{n}@}.
 @end deftypefun
