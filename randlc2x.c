@@ -77,13 +77,12 @@ lc (mp_ptr rp, gmp_randstate_t rstate)
     tp = (mp_ptr) TMP_ALLOC (ta * BYTES_PER_MP_LIMB);
 
   /* t = a * seed.  NOTE: an is always > 0; see initialization.  */
-  if (seedn > an)
-    mpn_mul (tp, seedp, seedn, ap, an);
-  else
-    mpn_mul (tp, ap, an, seedp, seedn);
+  ASSERT (seedn >= an && an > 0);
+  mpn_mul (tp, seedp, seedn, ap, an);
 
   /* t = t + c.  NOTE: tn is always >= p->_cn (precondition for __GMPN_ADD);
      see initialization.  */
+  ASSERT (tn >= p->_cn);
   __GMPN_ADD (cy, tp, tp, tn, p->_cp, p->_cn);
 
   /* t = t % m */
@@ -247,14 +246,14 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
     (mp_ptr) (*__gmp_allocate_func) (sizeof (gmp_rand_lc_struct));
 
   p = (gmp_rand_lc_struct *) RNG_STATE (rstate);
-  mpz_init2 (p->_mp_seed, m2exp);
+  mpz_init2 (p->_mp_seed, m2exp + 1);
 
   /* Set parameters and default seed.  */
   MPN_ZERO (PTR (p->_mp_seed), seedn);
   SIZ (p->_mp_seed) = seedn;
   PTR (p->_mp_seed)[0] = 1;
 
-  mpz_init2 (p->_mp_a, m2exp);
+  mpz_init2 (p->_mp_a, m2exp + 1);
   /* Avoid negative a.  */
   mpz_fdiv_r_2exp (p->_mp_a, a, m2exp);
 
@@ -269,11 +268,8 @@ gmp_randinit_lc_2exp (gmp_randstate_t rstate,
 
   /* Internally we may discard any bits of c above m2exp.  The following
      code ensures that __GMPN_ADD in lc() will always work.  */
-  if (seedn == 1 && p->_cn == 2) /* Only case to worry about.  */
-    {
-      p->_cp[1] = CNST_LIMB (0); /* Mask out c (probably not needed.) */
-      p->_cn = (p->_cp[0] != 0); /* Fix size.  */
-    }
+  if (seedn < p->_cn)
+    p->_cn = (p->_cp[0] != 0);
 
   p->_mp_m2exp = m2exp;
 }
