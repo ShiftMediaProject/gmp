@@ -23,3 +23,9 @@
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 SUBDIRS = rand
+
+INCLUDES = -I$(top_srcdir)
+LDADD = $(top_builddir)/libgmp.la
+
+check_PROGRAMS = t-constants
+TESTS = $(check_PROGRAMS)
