@@ -1665,7 +1665,7 @@ AC_C_BIGENDIAN(
   [AC_DEFINE(HAVE_LIMB_LITTLE_ENDIAN, 1)],
   [:])
 AH_VERBATIM([HAVE_LIMB],
-[/* Define one (just one) of the following for the endianness of `mp_limb_t'.
+[/* Define one of these to 1 for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
    it is, then leave both of these undefined. */
 #undef HAVE_LIMB_BIG_ENDIAN
@@ -1818,7 +1818,7 @@ for tmp_fn in $gmp_mpn_functions; do
           # all functions in that file, even if they haven't all been
           # nailified.  Not sure what to do about this, it's only really a
           # problem for logops_n, and it's not too terrible to insist those
-          # get nailified alwasy.
+          # get nailified always.
           #
           if test $GMP_NAIL_BITS != 0 && test $tmp_dir != generic; then
             case $tmp_fn in
