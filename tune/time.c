@@ -218,6 +218,13 @@ static const int have_cgt = 0;
 #define clock_gettime(id,ts)  abort()
 #define struct_timespec       struct timespec_dummy
 #endif
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+# define CGT_ID   CLOCK_PROCESS_CPUTIME_ID
+#else
+# ifdef CLOCK_VIRTUAL
+#  define CGT_ID  CLOCK_VIRTUAL
+# endif
+#endif
 
 #if HAVE_GETRUSAGE
 static const int have_grus = 1;
@@ -487,9 +494,8 @@ cgt_works_p (void)
   if (result != -1)
     return result;
 
-  
   /* trial run to see if it works */
-  if (clock_gettime (CLOCK_PROCESS_CPUTIME_ID, &unit) != 0)
+  if (clock_gettime (CGT_ID, &unit) != 0)
     {
       if (speed_option_verbose)
         printf ("clock_gettime doesn't work\n");
@@ -498,7 +504,7 @@ cgt_works_p (void)
     }
 
   /* get the resolution */
-  if (clock_getres (CLOCK_PROCESS_CPUTIME_ID, &unit) != 0)
+  if (clock_getres (CGT_ID, &unit) != 0)
     {
       if (speed_option_verbose)
         printf ("clock_gettime doesn't work\n");
@@ -785,7 +791,7 @@ speed_starttime (void)
     }
 
   if (have_cgt && use_cgt)
-    clock_gettime (CLOCK_PROCESS_CPUTIME_ID, &start_cgt);
+    clock_gettime (CGT_ID, &start_cgt);
 
   if (have_rrt && use_rrt)
     read_real_time (&start_rrt, sizeof(start_rrt));
@@ -919,7 +925,7 @@ speed_endtime (void)
   if (have_cycles && use_cycles)  speed_cyclecounter (end_cycles);
   if (have_stck   && use_stck)    STCK (end_stck);
   if (have_rrt    && use_rrt)     read_real_time (&end_rrt, sizeof(end_rrt));
-  if (have_cgt && use_cgt) clock_gettime (CLOCK_PROCESS_CPUTIME_ID, &end_cgt);
+  if (have_cgt    && use_cgt)     clock_gettime (CGT_ID, &end_cgt);
   if (have_gtod   && use_gtod)    gettimeofday (&end_gtod, NULL);
   if (have_grus   && use_grus)    getrusage (0, &end_grus);
   if (have_times  && use_times)   times (&end_times);
