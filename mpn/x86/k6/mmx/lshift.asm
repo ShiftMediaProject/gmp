@@ -65,7 +65,7 @@ deflit(`FRAME',4)
 	movl	(%ebx), %edx		# src limb
 	movl	PARAM_DST, %ebx
 
-	shldl	%cl, %edx, %eax		# return value
+	shldl(	%cl, %edx, %eax)	# return value
 
  	shll	%cl, %edx
 
