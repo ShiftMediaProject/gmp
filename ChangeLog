@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-09-23  Torbjorn Granlund  <tege@swox.com>
+
+	* mpf/urandomb.c: Don't crash for overlarge nbits argument.
+	Let nbits==0 mean to fill number with random bits.
+
 2002-09-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/mod_34lsub1.asm: Add r31 dummy operand to `br' instruction.
