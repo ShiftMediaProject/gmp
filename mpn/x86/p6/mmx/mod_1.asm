@@ -249,8 +249,8 @@ L(inverse_top):
 
 	C
 
-	addl	%ebx, %eax         C m*(n2+n1) + nadj, low giving carry flag
-	leal	1(%edi), %ebx      C n2<<32 + m*(n2+n1))
+	addl	%ebx, %eax         C low(m*(n2+n1) + nadj), giving carry flag
+	leal	1(%edi), %ebx      C 1+n2
 	movl	%ebp, %eax	   C d
 
 	adcl	%edx, %ebx         C 1 + high(n2<<32 + m*(n2+n1) + nadj) = q1+1
@@ -318,8 +318,8 @@ L(inverse_two_left):
 
 	C
 
-	addl	%ebx, %eax         C m*(n2+n1) + nadj, low giving carry flag
-	leal	1(%edi), %ebx      C n2<<32 + m*(n2+n1))
+	addl	%ebx, %eax         C low(m*(n2+n1) + nadj), giving carry flag
+	leal	1(%edi), %ebx      C 1+n2
 
 	adcl	%edx, %ebx         C 1 + high(n2<<32 + m*(n2+n1) + nadj) = q1+1
 
@@ -380,8 +380,8 @@ C One limb left
 
 	C
 
-	addl	%ebx, %eax         C m*(n2+n1) + nadj, low giving carry flag
-	leal	1(%edi), %ebx      C n2<<32 + m*(n2+n1))
+	addl	%ebx, %eax         C low(m*(n2+n1) + nadj), giving carry flag
+	leal	1(%edi), %ebx      C 1+n2
 
 	adcl	%edx, %ebx         C 1 + high(n2<<32 + m*(n2+n1) + nadj) = q1+1
 
