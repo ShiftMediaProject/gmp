@@ -2286,26 +2286,34 @@ Compute the inverse of @var{op1} modulo @var{op2} and put the result in
 function returns zero, @var{rop} is undefined.
 @end deftypefun
 
-@deftypefun int mpz_jacobi (mpz_t @var{op1}, mpz_t @var{op2})
-@deftypefunx int mpz_legendre (mpz_t @var{op1}, mpz_t @var{op2})
-@cindex Jacobi symbol functions
-Compute the Jacobi and Legendre symbols, respectively.  @var{op2} should be
-odd and must be positive.
-@end deftypefun
-
-@deftypefun int mpz_si_kronecker (long @var{a}, mpz_t @var{b})
-@deftypefunx int mpz_ui_kronecker (unsigned long @var{a}, mpz_t @var{b})
+@deftypefun int mpz_jacobi (mpz_t @var{a}, mpz_t @var{b})
+@deftypefunx int mpz_legendre (mpz_t @var{a}, mpz_t @var{p})
+@deftypefunx int mpz_kronecker (mpz_t @var{a}, mpz_t @var{b})
 @deftypefunx int mpz_kronecker_si (mpz_t @var{a}, long @var{b})
 @deftypefunx int mpz_kronecker_ui (mpz_t @var{a}, unsigned long @var{b})
+@deftypefunx int mpz_si_kronecker (long @var{a}, mpz_t @var{b})
+@deftypefunx int mpz_ui_kronecker (unsigned long @var{a}, mpz_t @var{b})
+@cindex Jacobi symbol functions
 @cindex Kronecker symbol functions
-Calculate the value of the Jacobi symbol @m{\left(a \over b\right),
-(@var{a}/@var{b})}, with the Kronecker extension @m{\left(a \over 2\right) =
-\left(2 \over a\right), (a/2)=(2/a)} when @ma{a} odd, or @m{\left(a \over
-2\right) = 0, (a/2)=0} when @ma{a} even.
+@code{mpz_jacobi} calculates the Jacobi symbol @m{\left(a \over b\right),
+(@var{a}/@var{b})}.  This is undefined if @var{b} is even, but for the
+purposes of this implementation any factors of 2 in @var{b} are simply
+ignored.
 
-All values of @var{a} and @var{b} give a well-defined result.  See Henri
-Cohen, section 1.4.2, for more information (@pxref{References}).  See also the
-example program @file{demos/qcn.c} which uses @code{mpz_kronecker_ui}.
+@code{mpz_legendre} calculates the Legendre symbol @m{\left(a \over p\right),
+(@var{a}/@var{p})}.  This is defined only for @var{p} an odd positive prime,
+but currently @code{mpz_legendre} is simply a synonym for @code{mpz_jacobi}.
+
+@code{mpz_kronecker} etc calculates the Jacobi symbol @m{\left(a \over
+b\right), (@var{a}/@var{b})} with the Kronecker extension @m{\left(a
+\over 2\right) = \left(2 \over a\right), (a/2)=(2/a)} when @ma{a} odd,
+or @m{\left(a \over 2\right) = 0, (a/2)=0} when @ma{a} even.  Note that
+when @var{b} is odd, @code{mpz_jacobi} and @code{mpz_kronecker} are
+identical.
+
+For more information see Henri Cohen section 1.4.2 (@pxref{References}),
+or any number theory textbook.  See also the example program
+@file{demos/qcn.c} which uses @code{mpz_kronecker_ui}.
 @end deftypefun
 
 @deftypefun {unsigned long int} mpz_remove (mpz_t @var{rop}, mpz_t @var{op}, mpz_t @var{f})
