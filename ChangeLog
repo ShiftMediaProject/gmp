@@ -1,5 +1,16 @@
 2000-12-21  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/alpha/invert_limb.asm: Simplify a bit.
+	Add handling of bigend systems.
+	* mpn/alpha/unicos.m4: Define `bigend'.
+	* mpn/alpha/default.m4: Define `bigend' (to expand to nothing).
+
+	* tests/t-constants.c (CHECK_CONSTANT): Print using %lx.
+
+	* mpn/alpha/gmp-mparam.h: Remove sizes for plain C types.
+	* mpn/alpha/ev5/gmp-mparam.h: Likewise.
+	* mpn/alpha/ev6/gmp-mparam.h: Likewise.
+
 	* mpn/alpha/unicos.m4: Define LEA.
 	* mpn/alpha/default.m4: Likewise.
 	* mpn/alpha/invert_limb.asm: Use LEA for loading symbolic addresses.
