@@ -70,11 +70,11 @@ MA 02111-1307, USA. */
 #endif
 
 #ifndef FIB_THRESHOLD
-#define FIB_THRESHOLD            110
+#define FIB_THRESHOLD             99
 #endif
 
 #ifndef POWM_THRESHOLD
-#define POWM_THRESHOLD            56
+#define POWM_THRESHOLD            71
 #endif
 
 #ifndef GCD_ACCEL_THRESHOLD
