@@ -50,7 +50,7 @@ main (int argc, char *argv[])
 {
   const char usage[] = "usage: findcl [-a start_a] [-d] [-i interval-fact] m [low_merit [high_merit]]\n";
   int f;
-  int lose, best;
+  int v_lose, m_lose, v_best, m_best;
   int c;
   int debug = 1;
   int have_start_a = 0;
@@ -161,26 +161,28 @@ main (int argc, char *argv[])
   rem = mpz_mod_ui (z_tmp, a, 8);
   mpz_add_ui (a, a, 8 + (5 - rem));
 
-  best = 2*(DIMS-1);
+  v_best = m_best = 2*(DIMS-1);
   for (; mpz_cmp (a, ulim) <= 0; mpz_add (a, a, interval))
     {
       /* TODO: Reject 'a' with "binary or  decimal simple, regular pattern."  */
 
       /* run spectral test */
       spectral_test (v, DIMS, a, m);
-      for (f = 0, lose = 0, cnt_high_merit = DIMS-1; f < DIMS-1; f++)
+      for (f = 0, v_lose = m_lose = 0, cnt_high_merit = DIMS-1; f < DIMS-1; f++)
 	{
 	  merit (f_merit, f + 2, v[f], m);
 
-	  if (mpf_cmp_ui (v[f], 1 << (30 / (f + 2) + (f == 2))) < 0
-	      || mpf_cmp (f_merit, low_merit) < 0)
-	    lose++;
+	  if (mpf_cmp_ui (v[f], 1 << (30 / (f + 2) + (f == 2))) < 0)
+	    v_lose++;
+	    
+	  if (mpf_cmp (f_merit, low_merit) < 0)
+	    m_lose++;
 
 	  if (mpf_cmp (f_merit, high_merit) >= 0)
 	    cnt_high_merit--;
 	}
 
-      if (0 == lose)
+      if (0 == v_lose && 0 == m_lose)
 	{
 	  mpz_out_str (stdout, 10, a);
 	  puts ("");
@@ -189,10 +191,18 @@ main (int argc, char *argv[])
 	    break;		/* leave loop */
 	}
 
-      if (lose < best)
+      if (v_lose < v_best)
 	{
-	  best = lose;
-	  printf ("best (lose=%d): ", lose);
+	  v_best = v_lose;
+	  printf ("best (v_lose=%d; m_lose=%d): ", v_lose, m_lose);
+	  mpz_out_str (stdout, 10, a);
+	  puts ("");
+	  fflush (stdout);
+	}
+      if (m_lose < m_best)
+	{
+	  m_best = m_lose;
+	  printf ("best (v_lose=%d; m_lose=%d): ", v_lose, m_lose);
 	  mpz_out_str (stdout, 10, a);
 	  puts ("");
 	  fflush (stdout);
