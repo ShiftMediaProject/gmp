@@ -3,7 +3,7 @@ dnl  Process this file with autoconf to produce a configure script.
 
 define(GMP_COPYRIGHT,[[
 
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free Software
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -954,21 +954,27 @@ case $host in
 	    limb_mode32=longlong
 	    ;;
 	  *-*-linux*)
-	    # On Linux, assume the processor is in 64-bit mode.  Unfortunately,
-	    # some Linux environments have a gcc that is always in 64-bit mode,
-	    # while other Linux environments require -m64.  To make matters
-	    # worse.  To avoid tripping a gcc bug (that we have a feature test
-	    # for) we don't pass -mpowerpc64, but that is implied by -m64, and
-	    # is hopefully the default where -m64 is rejected.
-	    #
-	    # FIXME: We should try gcc64 here too, probably after "gcc -m64"
+	    # On Linux, assume the processor is in 64-bit mode.  Some Linux
+	    # environments have a gcc that is always in 64-bit mode, while
+	    # others require -m64, hence the use of cflags_maybe.  The
+	    # sizeof-long-8 test checks the mode is right (for the no option
+	    # case).
+            #
+            # -mpowerpc64 is not used, since it should be the default in
+            # 64-bit mode.  (We need its effect for the various longlong.h
+            # asm macros to be right of course.)
+            #
+            # gcc64 was an early port of gcc to 64-bit mode, but should be
+            # obsolete before too long.  We prefer plain gcc when it knows
+            # 64-bits.
 	    #
 	    abilist="mode64 $abilist"
-	    cclist_mode64="gcc"
+	    cclist_mode64="gcc gcc64"
+	    gcc_mode64_cflags_maybe="-m64"
 	    gcc_mode64_cflags="-O3"
-	    gcc_mode64_cflags_optlist="cpu m64"
+	    gcc_mode64_cflags_optlist="cpu"
 	    path_mode64="powerpc64/mode64 powerpc64"
-	    gcc_cflags_m64="-m64"
+	    any_mode64_testlist="sizeof-long-8"
 	    ;;
         esac
         ;;
