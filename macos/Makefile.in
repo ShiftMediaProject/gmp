@@ -50,7 +50,7 @@ AsmObjs = @asm_objects@
 
 AsmSrc = @asm_sources@
 
-MpnObjs = @c@
+MpnObjs = {MpnObjDir}mp_bases.o @c@
 	@mpn_objects@
 
 MpfObjs = @c@
@@ -161,7 +161,8 @@ check @dep@ check-mpz check-mpq check-mpf
 
 check-mpz @dep@ z-mul z-tdiv z-tdiv_ui z-fdiv z-fdiv_ui @c@
 		z-gcd z-dive z-sqrtrem z-convert z-logic z-bit @c@
-		z-powm z-powm_ui z-pow_ui z-2exp z-reuse z-root
+		z-powm z-powm_ui z-pow_ui z-2exp z-reuse z-root @c@
+		z-jac z-bin z-misc
 
 # FIXME: Left out z-io, can't compile it.
 
@@ -219,6 +220,15 @@ z-reuse @dep@ {MpzBinDir}reuse.exe
 z-root @dep@ {MpzBinDir}t-root.exe
 	{MpzBinDir}t-root.exe
 
+z-jac @dep@ {MpzBinDir}t-jac.exe
+	{MpzBinDir}t-jac.exe
+
+z-bin @dep@ {MpzBinDir}t-bin.exe
+	{MpzBinDir}t-bin.exe
+
+z-misc @dep@ {MpzBinDir}t-misc.exe
+	{MpzBinDir}t-misc.exe
+
 
 check-mpq @dep@ q-cmp q-cmp_ui q-get_d
 
@@ -232,7 +242,8 @@ q-get_d @dep@ {MpqBinDir}t-get_d.exe
 	{MpqBinDir}t-get_d.exe
 
 
-check-mpf @dep@ f-add f-sub f-conv f-sqrt f-muldiv f-dm2exp f-reuse f-get_d
+check-mpf @dep@ f-add f-sub f-conv f-sqrt f-muldiv f-dm2exp f-reuse @c@
+		f-get_d f-misc
 
 {MpfBinDir}t-add.exe @dep@ ::mpf:tests:t-add.o ::mpf:tests:ref.o
 	{Link} {ToolOptions} -o {Targ} {Deps} {Lib} {SysLibs}
@@ -263,3 +274,6 @@ f-reuse @dep@ {MpfBinDir}reuse.exe
 
 f-get_d @dep@ {MpfBinDir}t-get_d.exe
 	{MpfBinDir}t-get_d.exe
+
+f-misc @dep@ {MpfBinDir}t-misc.exe
+	{MpfBinDir}t-misc.exe

@@ -426,24 +426,24 @@ sub what_objects {
 
 sub asm_epilogue {
     my $func = shift;
-    return "\tcsect .__$func\[pr]";
+    return "\tcsect .__g$func\[pr]";
 }
 
 sub asm_prologue {
     my $func = shift;
 
     my $asm = <<HERE;
-	EXPORT __$func\[DS]
-	EXPORT .__$func\[PR]
+	EXPORT __g$func\[DS]
+	EXPORT .__g$func\[PR]
 
-	TC __$func\[TC], __$func\[DS]
+	TC __g$func\[TC], __g$func\[DS]
 			
-	CSECT __$func\[DS]
-	DC.L .__$func\[PR]
+	CSECT __g$func\[DS]
+	DC.L .__g$func\[PR]
 	DC.L TOC[tc0]
 		
-	CSECT .__$func\[PR]
-	FUNCTION .__$func\[PR]	
+	CSECT .__g$func\[PR]
+	FUNCTION .__g$func\[PR]	
 HERE
     return $asm;
 }
