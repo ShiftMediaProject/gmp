@@ -26,10 +26,9 @@ License}.
 @end copying
 
 
-@c  Texinfo version 4.2 or up will be needed to process this into .info files.
+@c  Texinfo version 4.2 or up will be needed to process this file.
 @c
-@c  The supplied texinfo.tex (or newer) should be used when processing into
-@c  .dvi etc.
+@c  A suitable texinfo.tex is supplied, a newer one should work equally well.
 @c
 @c  The version number and edition number are taken from version.texi provided
 @c  by automake (note it's regenerated only if you configure with
@@ -1291,9 +1290,17 @@ in @file{gmp.h} must be different.  @samp{--enable-cxx} cannot be used when
 building a DLL, since libtool doesn't currently support C++ DLLs.  This might
 change in the future.
 
-GCC is recommended for compiling GMP, but the resulting DLL can be used with
-any compiler.  On mingw only the standard Windows libraries will be needed, on
-Cygwin the usual cygwin runtime will be required.
+GCC is recommended for compiling GMP, but a MINGW build will use only the
+standard Windows libraries and should work with Microsoft C.  Libtool doesn't
+currently install @file{.lib} and @file{.exp} files, but this can be done with
+something like the following, where @file{/my/inst/dir} is the install
+directory (with a @file{lib} subdirectory).
+
+@example
+lib /machine:IX86 /def:_libs/libgmp-3.dll-def
+cp libgmp-3.lib /my/inst/dir/lib
+cp _libs/libgmp-3.dll-exp /my/inst/dir/lib/libgmp-3.exp
+@end example
 
 @item Motorola 68k CPU Types
 
@@ -1388,9 +1395,9 @@ script, it exits silently, having died writing a preamble to
 @file{config.log}.  Use @command{bash} 2.04 or higher.
 
 @samp{make all} was found to run out of memory during the final
-@file{libgmp.la} link on one system tested, despite having 64Mb available.  A
-separate @samp{make libgmp.la} helped, perhaps recursing into the various
-subdirectories uses up memory.
+@file{libgmp.la} link on one system tested, despite having 64Mb available.
+Running @samp{make libgmp.la} directly helped, perhaps recursing into the
+various subdirectories uses up memory.
 
 @item @samp{DESTDIR} and shared @file{libgmpxx}
 @cindex @samp{DESTDIR}
@@ -1408,7 +1415,7 @@ directed to look only at the final location, not the staging area, so if
 @file{libgmp} is not already in that final location then the link will fail.
 
 On systems which don't hard-code library paths, for instance SVR4 style
-systems such as GNU/Linux, a workaround is to insert a suitable @code{-L} in
+systems like GNU/Linux, a workaround is to insert a suitable @code{-L} in
 the @code{relink_command} of @file{libgmpxx.la} after building but before
 installing.  This can be automated with something like
 
@@ -1452,6 +1459,12 @@ Either use GNU Make, or as a workaround remove
 build work, but if any recompiling is done @file{libgmp.la} might not be
 rebuilt).
 
+@item MacOS X and GCC
+
+Libtool currently only knows how to create shared libraries with the native
+@command{cc} (which is a modified GCC), not a plain GCC.  A static-only build
+should work though (@samp{--disable-shared}).
+
 @item NeXT prior to 3.3
 
 The system compiler on old versions of NeXT was a massacred and old GCC, even
@@ -1476,7 +1489,7 @@ The system @command{sed} prints an error ``Output line too long'' when libtool
 builds @file{libgmp.la}.  This doesn't seem to cause any obvious ill effects,
 but GNU @command{sed} is recommended, to avoid any doubt.
 
-@item Sparc Solaris 2.7 with gcc 2.95.2 in ABI=32
+@item Sparc Solaris 2.7 with gcc 2.95.2 in @samp{ABI=32}
 
 A shared library build of GMP seems to fail in this combination, it builds but
 then fails the tests, apparently due to some incorrect data relocations within
@@ -3193,7 +3206,7 @@ Set @var{rop} to the one's complement of @var{op}.
 @deftypefun {unsigned long int} mpz_popcount (mpz_t @var{op})
 If @math{@var{op}@ge{}0}, return the population count of @var{op}, which is
 the number of 1 bits in the binary representation.  If @math{@var{op}<0}, the
-number of 1s is infinite, and the return value is @var{MAX_ULONG}, the largest
+number of 1s is infinite, and the return value is @var{ULONG_MAX}, the largest
 possible @code{unsigned long}.
 @end deftypefun
 
@@ -3202,7 +3215,7 @@ If @var{op1} and @var{op2} are both @math{@ge{}0} or both @math{<0}, return
 the hamming distance between the two operands, which is the number of bit
 positions where @var{op1} and @var{op2} have different bit values.  If one
 operand is @math{@ge{}0} and the other @math{<0} then the number of bits
-different is infinite, and the return value is @var{MAX_ULONG}, the largest
+different is infinite, and the return value is @var{ULONG_MAX}, the largest
 possible @code{unsigned long}.
 @end deftypefun
 
@@ -3215,7 +3228,7 @@ the found bit.
 If the bit at @var{starting_bit} is already what's sought, then
 @var{starting_bit} is returned.
 
-If there's no bit found, then @var{MAX_ULONG} is returned.  This will happen
+If there's no bit found, then @var{ULONG_MAX} is returned.  This will happen
 in @code{mpz_scan0} past the end of a positive number, or @code{mpz_scan1}
 past the end of a negative.
 @end deftypefun
@@ -4649,7 +4662,7 @@ Convert @{@var{s1p}, @var{s1n}@} to a raw unsigned char array at @var{str} in
 base @var{base}, and return the number of characters produced.  There may be
 leading zeros in the string.  The string is not in ASCII; to convert it to
 printable format, add the ASCII codes for @samp{0} or @samp{A}, depending on
-the base and range.
+the base and range.  @var{base} can vary from 2 to 256.
 
 The most significant limb of the input @{@var{s1p}, @var{s1n}@} must be
 non-zero.  The input @{@var{s1p}, @var{s1n}@} is clobbered, except when
@@ -5066,9 +5079,10 @@ functions will be unpredictable.  GCC format string checking is not available,
 since it doesn't recognise the GMP extensions.
 
 The file based functions @code{gmp_printf} and @code{gmp_fprintf} will return
-@math{-1} to indicate a write error.  All the functions can return @math{-1}
-if the C library @code{printf} variant in use returns @math{-1}, but this
-shouldn't normally occur.
+@math{-1} to indicate a write error.  Output is not ``atomic'', so partial
+output may be produced if a write error occurs.  All the functions can return
+@math{-1} if the C library @code{printf} variant in use returns @math{-1}, but
+this shouldn't normally occur.
 
 @deftypefun int gmp_printf (const char *@var{fmt}, ...)
 @deftypefunx int gmp_vprintf (const char *@var{fmt}, va_list @var{ap})
@@ -5116,9 +5130,9 @@ if the C library @code{vsnprintf} is the older GLIBC 2.0.x style.
 @deftypefunx int gmp_vasprintf (char *@var{pp}, const char *@var{fmt}, va_list @var{ap})
 Form a null-terminated string in a block of memory obtained from the current
 memory allocation function (@pxref{Custom Allocation}).  The block will be the
-size of the string and null-terminator.  Put the address of the block in
-*@var{pp}.  Return the number of characters produced, excluding the
-null-terminator.
+size of the string and null-terminator.  The address of the block in stored to
+*@var{pp}.  The return value is the number of characters produced, excluding
+the null-terminator.
 
 Unlike the C library @code{asprintf}, @code{gmp_asprintf} doesn't return
 @math{-1} if there's no more memory available, it lets the current allocation
@@ -8417,6 +8431,14 @@ various internals described here may change in future GMP releases.
 Applications expecting to be compatible with future releases should use only
 the documented interfaces described in previous chapters.}
 
+In general @code{unsigned long} is used for bit counts and ranges,
+@code{size_t} for byte or character counts, and @code{mp_size_t} for limb
+counts.  @code{mp_size_t} is a @code{long} normally, to get a native machine
+word, but on Cray vector systems an @code{int} is more efficient.  It will be
+noted that @code{mpz_t} etc use @code{int} rather than @code{mp_size_t} for
+limb counts, this makes it 32-bits on some 64-bit systems, saving a few bytes
+of data space but still providing plenty of range.
+
 @menu
 * Integer Internals::           
 * Rational Internals::          
@@ -8961,7 +8983,7 @@ USA.
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
 about the omission!)
 
-Thanks goes to Hans Thorsen for donating an SGI system for the GMP test system
+Thanks go to Hans Thorsen for donating an SGI system for the GMP test system
 environment.
 
 @node References, GNU Free Documentation License, Contributors, Top
@@ -8981,8 +9003,7 @@ environment.
 @itemize @bullet
 @item
 Jonathan M. Borwein and Peter B. Borwein, ``Pi and the AGM: A Study in
-Analytic Number Theory and Computational Complexity'', Wiley, John & Sons,
-1998.
+Analytic Number Theory and Computational Complexity'', Wiley, 1998.
 
 @item
 Henri Cohen, ``A Course in Computational Algebraic Number Theory'', Graduate
@@ -9021,10 +9042,6 @@ Torbjorn Granlund and Peter L. Montgomery, ``Division by Invariant Integers
 using Multiplication'', in Proceedings of the SIGPLAN PLDI'94 Conference, June
 1994.  Also available @uref{ftp://ftp.cwi.nl/pub/pmontgom/divcnst.psa4.gz}
 (and .psl.gz).
-
-@item
-Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
-Mathematics of Computation, volume 44, number 170, April 1985.
 
 @item
 Tudor Jebelean,
@@ -9067,6 +9084,10 @@ Proceedings of the 13th Annual IEEE Symposium on Switching and Automata
 Theory, October 1972, pp. 90-96.  Reprinted as ``Fast Modular Transforms'',
 Journal of Computer and System Sciences, volume 8, number 3, June 1974,
 pp. 366-386.
+
+@item
+Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
+Mathematics of Computation, volume 44, number 170, April 1985.
 
 @item
 Arnold Sch@"onhage and Volker Strassen, ``Schnelle Multiplikation grosser
