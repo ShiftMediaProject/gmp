@@ -538,8 +538,31 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #endif
 #endif
 
+
 void __gmpz_aorsmul_1 _PROTO ((REGPARM_3_1 (mpz_ptr w, mpz_srcptr u, mp_limb_t v, mp_size_t sub))) REGPARM_ATTR(1);
 #define mpz_aorsmul_1(w,u,v,sub)  __gmpz_aorsmul_1 (REGPARM_3_1 (w, u, v, sub))
+
+#define mpz_n_pow_ui __gmpz_n_pow_ui
+void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
+
+
+#define mpn_add_nc __MPN(add_nc)
+__GMP_DECLSPEC mp_limb_t mpn_add_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_addmul_1c __MPN(addmul_1c)
+__GMP_DECLSPEC mp_limb_t mpn_addmul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+
+#define mpn_addsub_n __MPN(addsub_n)
+__GMP_DECLSPEC mp_limb_t mpn_addsub_n __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+
+#define mpn_addsub_nc __MPN(addsub_nc)
+__GMP_DECLSPEC mp_limb_t mpn_addsub_nc __GMP_PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_divrem_1c __MPN(divrem_1c)
+__GMP_DECLSPEC mp_limb_t mpn_divrem_1c __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+
+#define mpn_dump __MPN(dump)
+__GMP_DECLSPEC void mpn_dump __GMP_PROTO ((mp_srcptr, mp_size_t));
 
 #define mpn_fib2_ui __MPN(fib2_ui)
 mp_size_t mpn_fib2_ui _PROTO ((mp_ptr, mp_ptr, unsigned long));
@@ -547,7 +570,6 @@ mp_size_t mpn_fib2_ui _PROTO ((mp_ptr, mp_ptr, unsigned long));
 /* Remap names of internal mpn functions.  */
 #define __clz_tab               __MPN(clz_tab)
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
-#define mpn_reciprocal		__MPN(reciprocal)
 
 #define mpn_gcd_finda	__MPN(gcd_finda)
 mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2])) __GMP_ATTRIBUTE_PURE;
@@ -555,11 +577,29 @@ mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2])) __GMP_ATTRIBUTE_PURE;
 #define mpn_jacobi_base __MPN(jacobi_base)
 int mpn_jacobi_base _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1)) ATTRIBUTE_CONST;
 
+#define mpn_mod_1c __MPN(mod_1c)
+__GMP_DECLSPEC mp_limb_t mpn_mod_1c __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
+
+#define mpn_mul_1c __MPN(mul_1c)
+__GMP_DECLSPEC mp_limb_t mpn_mul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
+
 #define mpn_mul_2 __MPN(mul_2)
 mp_limb_t mpn_mul_2 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
-#define mpz_n_pow_ui __gmpz_n_pow_ui
-void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
+#define mpn_mul_basecase __MPN(mul_basecase)
+__GMP_DECLSPEC void mpn_mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+
+#define mpn_sqr_n __MPN(sqr_n)
+__GMP_DECLSPEC void mpn_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+
+#define mpn_sqr_basecase __MPN(sqr_basecase)
+__GMP_DECLSPEC void mpn_sqr_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+
+#define mpn_sub_nc __MPN(sub_nc)
+__GMP_DECLSPEC mp_limb_t mpn_sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+#define mpn_submul_1c __MPN(submul_1c)
+__GMP_DECLSPEC mp_limb_t mpn_submul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t));
 
 
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
