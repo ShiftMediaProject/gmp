@@ -185,8 +185,7 @@ case ${target} in
     if test -n "$CC64"; then
       path="sparc64"
     else
-      # FIXME: May use sparc32/v9 and/or sparc32/v8 depnding on CPU.
-      path="sparc32"
+      path="sparc32/v9 sparc32/v8 sparc32"
     fi
     ;;
   sparc8*-*-* | microsparc*-*-*)
