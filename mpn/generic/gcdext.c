@@ -209,8 +209,10 @@ mpn_gcd (gp, up, size, vp, vsize)
 #if EXTEND
   s1p = (mp_ptr) TMP_ALLOC ((size + 1) * BYTES_PER_MP_LIMB);
 
+#if ! WANT_GCDEXT_ONE_STEP
   MPN_ZERO (s0p, size);
   MPN_ZERO (s1p, size);
+#endif
 
   s0p[0] = 1;
   s1p[0] = 0;
