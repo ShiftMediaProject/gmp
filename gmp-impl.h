@@ -356,6 +356,9 @@ mp_limb_t mpn_gcd_finda _PROTO((const mp_limb_t cp[2]));
 #define MPN_TOOM3_MUL_N_MINSIZE   5
 #define MPN_TOOM3_SQR_N_MINSIZE   5
 
+#define mpn_sqr_diagonal __MPN(sqr_diagonal)
+void mpn_sqr_diagonal _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+
 #define mpn_kara_mul_n	__MPN(kara_mul_n)
 void mpn_kara_mul_n _PROTO((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
 
