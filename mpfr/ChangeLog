@@ -1,3 +1,7 @@
+2003-06-09  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/tadd.c: Work around GNUPro bug: putchar => puts.
+
 2003-05-22  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
 
 	* mpfr-impl.h, mul.c, mul_2si.c, mul_2ui.c, mul_ui.c, next.c, pow.c, print_raw.c, random.c, random2.c, rint.c, round_prec.c, set.c, set_d.c, set_exp.c, set_f.c, set_si.c, set_str.c, set_str_raw.c, set_ui.c, set_z.c, setmax.c, setmin.c, sin.c, sin_cos.c, sinh.c, sqrt.c, sqrt_ui.c, sub.c, sub1.c, sub_one_ulp.c, sub_ui.c, swap.c, tan.c, tanh.c, ui_div.c, ui_pow.c, ui_sub.c, urandomb.c, zeta.c, acos.c, acosh.c, add.c, add1.c, add_one_ulp.c, add_ui.c, asin.c, asinh.c, atan.c, atanh.c, cbrt.c, cmp.c, cmp2.c, cmp_abs.c, cmp_si.c, cmp_ui.c, const_log2.c, const_pi.c, cos.c, div.c, div_2si.c, div_2ui.c, div_ui.c, eq.c, exceptions.c, exp.c, exp2.c, exp3.c, exp_2.c, expm1.c, frac.c, generic.c, get_d.c, get_exp.c, get_ld.c, get_si.c, get_str.c, get_ui.c, get_z_exp.c, hypot.c, isinteger.c, log.c, log1p.c, log2.c, BUGS:
