@@ -1,0 +1,36 @@
+This directory contains mpn functions for 64-bit V9 SPARC
+
+The Ultra I pipeline executes up to two simple integer arithmetic operations
+per cycle.  The 64-bit integer multiply instruction mulx takes from 5 cycles
+to 35 cycles, depending on the position of the most significant bit of the
+1st source operand.  It cannot overlap with other instructions.  For our use
+of mulx, it will take from 5 to 20 cycles.
+
+Integer conditional move instructions cannot dual-issue with other integer
+instructions.  In certain instruction mixes, movCC completely degenerate
+performance.  E.g., replacing a single mov with a movcc can add 4 cycles to
+the execution time!!!  (mov;ldc;brnz;add vs movcc;ldc;brnz;add)
+
+Integer branches can issue with two integer arithmetic instructions.
+Likewise for integer loads.
+
+(The V9 architecture manual recommends that the 2nd operand be the smaller
+one.  In Ultra I, they got things backwards and optimize for the wrong
+operand!)
+
+RELEVANT OPTIMIZATION ISSUES
+
+* lshift, rshift: The code is well-optimized.
+
+* add_n, sub_n: Code currently runs at a slow 10 cycles/limb.
+  For each limb, we need two movCC, two ldx, one stx, and two addcc.
+  
+* Xmul_1: Should optimize for when scalar operand < 2^32.
+* Xmul_1: Since mulx is horrendously slow on UltraSPARC I, Karatsuba's
+  method should save up to 16 cycles (i.e. > 20%).
+* mul_1 (and possibly the other multiply functions): Handle carry in the
+  same tricky way as add_n,sub_n.
+
+STATUS
+
+The code in this directory has not been tested on UltraSPARC I.
