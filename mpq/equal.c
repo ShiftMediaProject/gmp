@@ -29,6 +29,10 @@ mpq_equal (mpq_srcptr op1, mpq_srcptr op2)
   int        num1_size, num2_size, den1_size, den2_size, i;
   mp_srcptr  num1_ptr,  num2_ptr,  den1_ptr,  den2_ptr;
 
+  /* need fully canonical for correct results */
+  ASSERT_MPQ_CANONICAL (op1);
+  ASSERT_MPQ_CANONICAL (op2);
+
   num1_size = op1->_mp_num._mp_size;
   num2_size = op2->_mp_num._mp_size;
   if (num1_size != num2_size)
