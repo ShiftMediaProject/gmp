@@ -1,5 +1,7 @@
 2000-03-20  Torbjorn Granlund  <tege@swox.com>
 
+	* demos/pexpr.c (main): Don't allow `-N' for base, require `-bN'.
+
 	* mpn/alpha/unicos.m4 (cvttqc): New define.
 	* mpn/alpha/invert_limb.asm: Use new define for cvttqc.
 

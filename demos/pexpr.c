@@ -189,11 +189,14 @@ main (int argc, char **argv)
     {
       char *arg = argv[1];
 
+      if (arg[1] >= '0' && arg[1] <= '9')
+	break;
+
       if (arg[1] == 't')
 	print_timing = 1;
-      else if (arg[1] >= '0' && arg[1] <= '9')
+      else if (arg[1] == 'b' && arg[2] >= '0' && arg[2] <= '9')
 	{
-	  base = atoi (arg + 1);
+	  base = atoi (arg + 2);
 	  if (base < 2 || base > 36)
 	    {
 	      fprintf (stderr, "error: invalid output base\n");
