@@ -18,10 +18,10 @@
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
-<p> This file lists itemized GMP development tasks.  Not all the tasks listed
-    here are suitable for volunteers, but many of them are.  Please see the
-    file projects, or <a href="projects.html">
-    http://www.swox.com/gmp/projects.html</a> for more sizeable projects.
+<p> This file lists itemized GMP development tasks.  Not all the tasks
+    listed here are suitable for volunteers, but many of them are.
+    Please see the <a href="projects.html">projects file</a> for more
+    sizeable projects.
 
 <h4>Correctness and Completeness</h4>
 <ul>
@@ -194,11 +194,99 @@
 <li> Implement <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
      <code>gmp_snprintf</code>.
 <li> Implement some <code>mpq</code> input and output functions.
-<li> Implement mixed precision Kronecker/Jacobi symbol, extend the
-     normal <code>mpz_jacobi</code> to a full range of inputs.
-     Kevin Ryde is working on this.
+
+<li> Implement mixed precision Kronecker/Jacobi symbol.  Make a new
+     <code>mpz_kronecker</code> for full precision, leave
+     <code>mpz_jacobi</code> for compatibility.  Kevin is working on
+     this.
+
+<li> Make the mpn logops and copys available in gmp.h.  Since they can
+     be either library functions or inlines gmp.h would need to be
+     generated from a gmp.in based on what's in the library.  gmp.h
+     would still be compiler-independent though.
+
 </ul>
 
+
+<h4>Configuration</h4>
+
+  <p> For example, "sparc" is not very useful as a machine architecture
+  denotation.  We want to distinguish old 32-bit SPARC without multiply support
+  from newer 32-bit SPARC with such support.  We want to recognize a
+  SuperSPARC, since its implementation of the UDIV instruction is not complete,
+  and will trap to the OS kernel for certain operands.  And we want to
+  recognize 64-bit capable SPARC processors as such.  While the assembly
+  routines can use 64-bit operations on all 64-bit SPARC processors, one can
+  not use 64-bit limbs under all operating system.  E.g., Solaris 2.5 and 2.6
+  doesn't preserve the upper 32 bits of most processor registers.  For SPARC we
+  therefore sometimes need to choose GMP configuration depending both on
+  processor and operating system.
+
+<ul>
+
+  <li> Find out whether there's an alloca available and how to use it.
+       AC_FUNC_ALLOCA has various system dependencies covered, but we
+       don't want its alloca.c replacement.  (One thing current cpp
+       tests don't cover: HPUX 10 C compiler supports alloca, but
+       cannot find any symbol to test in order to know if we're on
+       HPUX 10.  Damn.)
+
+  <li> Improve config.guess.  We want to recognize the processor very
+       accurately, more accurately than other GNU packages.
+       config.guess does not currently make the distinctions we would
+       like it to do and a --target often needs to be set explicitly.
+       Remember to make sure config.sub accepts the guesses.
+
+  <li> Identify Mips processor under Irix: `hinv -c processor'.
+       config.guess should say mips2, mips3, and mips4.
+
+  <li> Identify Alpha processor under OSF: "/usr/sbin/sizer -c".
+       Unfortunately, sizer is not available before some revision of
+       Dec Unix 4.0, and it also returns some rather cryptic names for
+       processors.  Perhaps the <code>implver</code> and
+       <code>amask</code> assembly instructions are better, but that
+       doesn't differentiate between ev5 and ev56.
+
+  <li> Identify Sparc processors.  config.guess should say supersparc,
+       microsparc, ultrasparc1, ultrasparc2, etc.
+
+  <li> Identify HPPA processors similarly.
+
+  <li> Get lots of information about a Solaris system: prtconf -vp
+
+  <li> For some target machines and some compilers, specific options
+       are needed (sparcv8/gcc needs -mv8, sparcv8/cc needs -cg92,
+       Irix64/cc needs -64, Irix32/cc might need -n32, etc).  Some are
+       set already, add more, see configure.in.
+
+  <li> Options to be passed to the assembler (via the compiler, using
+       whatever syntax the compiler uses for passing options to the
+       assembler).
+
+  <li> On Solaris 7, check if gcc supports native v9 64-bit
+       arithmetic.  If not compile using "cc -fast -xarch=v9".
+       (Problem: -fast requires that we link with -fast too, which
+       might not be very good.  Pass "-xO4 -xtarget=native" instead?)
+
+  <li> Extend the "optional" compiler arguments to choose the first
+       that works from from a set, so K7 can have -mcpu=athlon,
+       -mcpu=pentiumpro, or -mcpu=i486, whichever works.
+
+  <li> Build multiple variants of the library under certain systems.
+       An example is -n32, -o32, and -64 on Irix.
+
+</ul>
+
+<p> In general, getting the exact right configuration, passing the
+exact right options to the compiler, etc, might mean that the GMP
+performance more than doubles.
+
+<p> When testing, make sure to test at least the following for all out
+target machines: (1) Both gcc and cc (and c89).  (2) Both 32-bit mode
+and 64-bit mode (such as -n32 vs -64 under Irix). (3) Both the system
+`make' and GNU `make'. (4) With and without GNU binutils.
+
+  
 <h4>Miscellaneous</h4>
 <ul>
 
@@ -207,7 +295,7 @@
      second time in the top level Makefile.am.
 <li> Get rid of mp[zq]/sub.c, and instead define a compile parameter to
      mp[zq]/add.c to decide whether it will add or subtract.  Will decrease
-     redundancy.  Similarly in many places.
+     redundancy.  Similarly in other places.
 <li> Make <code>mpz_div</code> and <code>mpz_divmod</code> use rounding
      analogous to <code>mpz_mod</code>.  Document, and list as an
      incompatibility.
