@@ -1,7 +1,8 @@
 /* Test mpz_gcd, mpz_gcdext, mpz_mul, mpz_tdiv_r, mpz_add, mpz_cmp,
    mpz_cmp_ui, mpz_init_set, mpz_set, mpz_clear.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
@@ -27,7 +28,8 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void debug_mp ();
+void dump_abort _PROTO ((mpz_t, mpz_t));
+void debug_mp _PROTO ((mpz_t, int));
 
 main (int argc, char **argv)
 {
@@ -123,6 +125,7 @@ main (int argc, char **argv)
   exit (0);
 }
 
+void
 dump_abort (mpz_t op1, mpz_t op2)
 {
   fprintf (stderr, "ERROR\n");

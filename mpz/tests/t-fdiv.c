@@ -27,7 +27,8 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void debug_mp ();
+void dump_abort _PROTO ((mpz_t, mpz_t));
+void debug_mp _PROTO ((mpz_t, int));
 
 main (int argc, char **argv)
 {
@@ -132,6 +133,7 @@ main (int argc, char **argv)
   exit (0);
 }
 
+void
 dump_abort (mpz_t dividend, mpz_t divisor)
 {
   fprintf (stderr, "ERROR\n");
