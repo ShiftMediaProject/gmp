@@ -30,6 +30,8 @@ MA 02111-1307, USA. */
    provided unconditionally so that the contents of libgmp don't depend on
    the setting of --enable-cxx.  */
 
+#include "config.h"
+
 #if HAVE_STDARG
 #include <stdarg.h>
 #else
@@ -50,7 +52,7 @@ __gmp_asprintf_memory (struct gmp_asprintf_t *d, const char *str, size_t len)
   GMP_ASPRINTF_T_NEED (d, len);
   memcpy (d->buf + d->size, str, len);
   d->size += len;
-  return len;  
+  return len;
 }
 
 int
