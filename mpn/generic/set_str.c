@@ -83,12 +83,12 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 	{
 	  int inp_digit = *s;
 
-	  res_digit |= (mp_limb_t) inp_digit << next_bitpos;
+	  res_digit |= ((mp_limb_t) inp_digit << next_bitpos) & GMP_NUMB_MASK;
 	  next_bitpos += bits_per_indigit;
-	  if (next_bitpos >= BITS_PER_MP_LIMB)
+	  if (next_bitpos >= GMP_NUMB_BITS)
 	    {
 	      rp[size++] = res_digit;
-	      next_bitpos -= BITS_PER_MP_LIMB;
+	      next_bitpos -= GMP_NUMB_BITS;
 	      res_digit = inp_digit >> (bits_per_indigit - next_bitpos);
 	    }
 	}
