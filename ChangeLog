@@ -1,3 +1,18 @@
+2000-07-04  Kevin Ryde  <kevin@swox.se>
+
+	* NEWS: Updates.
+	* mpn/x86/*/README: Miscellaneous updates.
+
+	* tune/speed-ext.c: New file.
+	* tune/Makefile.am: Add it.
+	* tune/speed.h (SPEED_ROUTINE_MPN_DIVREM_2): Bug fixes.
+	
+	* demos/calc.y,calclex.l: New files.
+	* demos/calc.c,calc.h,calclex.c: New files, generated from .y and .l.
+	* demos/Makefile.am: Add them.
+	
+	* gmp.h (mpq_swap, mpf_swap): Add prototypes and defines.
+
 2000-07-01  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (ABI and ISA): New section, bringing together ABI notes.
