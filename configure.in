@@ -1867,7 +1867,7 @@ else
   WITH_READLINE_01=0
 fi
 AC_PROG_YACC
-AM_PROG_LEX
+GMP_PROG_LEX
 
 # Configs for demos/expr directory
 AC_CONFIG_FILES(demos/expr/expr-config.h:demos/expr/expr-config-h.in)
