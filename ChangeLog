@@ -18,6 +18,24 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-10-03  Kevin Ryde  <kevin@swox.se>
+
+	* gen-psqr.c: New file.
+	* Makefile.am, mpn/Makefile.am: Use it to generate mpn/perfsqr.h.
+	* mpn/generic/perfsqr.c: Use generated data, put mod 256 data into
+	limbs to save space, use mpn_mod_34lsub1 when good.
+	* tests/mpn/t-perfsqr.c: New file.
+	* tests/mpn/Makefile.am (check_PROGRAMS): Add it.
+	* tests/mpz/t-perfsqr.c (check_modulo): New test.
+	(check_sqrt): New function holding current tests.
+
+	* configure.in (AC_INIT): Modernize to package name and version here
+	rather than AM_INIT_AUTOMAKE, add bug report email.
+	(AC_CONFIG_SRCDIR): New macro.
+
+	* gmp-impl.h (ROUND_UP_MULTIPLE): Fix for non-power-of-2 moduli (not
+	normal in current uses), clarify the comments a bit.
+
 2002-09-30  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/Makeasm.am (.s.lo): Add --tag=CC for the benefit of CCAS!=CC,
