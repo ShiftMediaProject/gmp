@@ -1118,6 +1118,30 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
 #endif
 
 
+#define mpn_divexact_1 __MPN(divexact_1)
+void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+
+/* mpn_divexact_1 takes roughly 2 multiplies, so don't bother unless that's
+   faster than a division.  When divexact is worth doing it has to calculate
+   a modular inverse, so it's probably only above a certain size it'll be
+   best, choose 5 as an guess for that.  */
+#ifndef DIVEXACT_1_THRESHOLD
+#if 2*UMUL_TIME < UDIV_TIME
+#define DIVEXACT_1_THRESHOLD  5
+#else
+#define DIVEXACT_1_THRESHOLD  MP_SIZE_T_MAX
+#endif
+#endif
+
+#define MPN_DIVREM_OR_DIVEXACT_1(dst, src, size, divisor)       \
+  do {                                                          \
+    if (BELOW_THRESHOLD (size, DIVEXACT_1_THRESHOLD))           \
+      mpn_divrem_1 (dst, (mp_size_t) 0, src, size, divisor);    \
+    else                                                        \
+      mpn_divexact_1 (dst, src, size, divisor);                 \
+  } while (0)
+
+
 #define mpn_modexact_1c_odd  __MPN(modexact_1c_odd)
 mp_limb_t mpn_modexact_1c_odd _PROTO ((mp_srcptr src, mp_size_t size,
                                        mp_limb_t divisor, mp_limb_t c)) __GMP_ATTRIBUTE_PURE;
