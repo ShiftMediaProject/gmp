@@ -1,6 +1,6 @@
 /* mpz_get_si(integer) -- Return the least significant digit from INTEGER.
 
-Copyright (C) 1991, 1993, 1994, 1995 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1995, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,10 +34,10 @@ mpz_get_si (op)
   mp_limb_t low_limb = op->_mp_d[0];
 
   if (size > 0)
-    return low_limb % ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1));
+    return (long) low_limb & LONG_MAX;
   else if (size < 0)
-    /* This convoluted expression is necessary to properly handle 0x80000000 */
-    return ~((low_limb - 1) % ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1)));
+    /* This expression is necessary to properly handle 0x80000000 */
+    return ~(((long) low_limb - 1L) & LONG_MAX);
   else
     return 0;
 }
