@@ -1,7 +1,7 @@
 /* Stack allocation routines.  This is intended for machines without support
    for the `alloca' function.
 
-Copyright 1996, 2000 Free Software Foundation, Inc.
+Copyright 1996, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
