@@ -1,6 +1,6 @@
 /* mpn_random -- Generate random numbers.
 
-Copyright 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
+Copyright 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -21,20 +21,22 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "urandom.h"
 
 void
-mpn_random (mp_ptr res_ptr, mp_size_t size)
+mpn_random (mp_ptr ptr, mp_size_t size)
 {
-  mp_size_t i;
+  gmp_randstate_ptr  rands;
 
   /* FIXME: Is size==0 supposed to be allowed? */
   ASSERT (size >= 0);
 
-  for (i = 0; i < size; i++)
-    res_ptr[i] = urandom ();
+  if (size == 0)
+    return;
+
+  rands = RANDS;
+  _gmp_rand (ptr, rands, size * BITS_PER_MP_LIMB);
 
   /* Make sure the most significant limb is non-zero.  */
-  while (res_ptr[size - 1] == 0)
-    res_ptr[size - 1] = urandom ();
+  while (ptr[size-1] == 0)
+    _gmp_rand (&ptr[size-1], rands, BITS_PER_MP_LIMB);
 }
