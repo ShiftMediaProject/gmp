@@ -25,6 +25,35 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
+/* The x86s and m68020 and up have a "div" instruction, and gcc recognises
+   an adjacent "/" and "%" can be combined using that.  Elsewhere "/" and
+   "%" are subroutine calls which unfortunately aren't combined, we think a
+   multiply and subtract will be faster than a "%".  */
+#if HAVE_HOST_CPU_FAMILY_x86            \
+  || HAVE_HOST_CPU_m68020               \
+  || HAVE_HOST_CPU_m68030               \
+  || HAVE_HOST_CPU_m68040               \
+  || HAVE_HOST_CPU_m68060               \
+  || HAVE_HOST_CPU_m68360 /* CPU32 */
+#define udiv_qrnd_unnorm(q,r,n,d)       \
+  do {                                  \
+    mp_limb_t  __q = (n) / (d);         \
+    mp_limb_t  __r = (n) % (d);         \
+    (q) = __q;                          \
+    (r) = __r;                          \
+  } while (0)
+#else
+#define udiv_qrnd_unnorm(q,r,n,d)       \
+  do {                                  \
+    mp_limb_t  __q = (n) / (d);         \
+    mp_limb_t  __r = (n) - __q*(d);     \
+    (q) = __q;                          \
+    (r) = __r;                          \
+  } while (0)
+#endif
+
+
 /* Convert the limb vector pointed to by MPTR and MSIZE long to a
    char array, using base BASE for the result array.  Store the
    result in the character array STR.  STR must point to an array with
@@ -117,7 +146,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
     {
       /* General case.  The base is not a power of 2.  Make conversion
 	 from least significant end.  */
-      mp_limb_t n1;
+      mp_limb_t n1, c;
 #if USE_PREINV_DIVREM_1
       unsigned   normalization_steps;
       mp_limb_t  big_base_inverted;
@@ -141,18 +170,21 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 
 	  /* Convert N1 from BIG_BASE to a string of digits in BASE
 	     using single precision operations.  */
-          for (i = dig_per_u - 1; i >= 0; i--)
+          i = dig_per_u;
+          do
             {
-              *--s = n1 % base;
-              n1 /= base;
+	      udiv_qrnd_unnorm (n1, c, n1, base);
+	      *--s = c;
+              i--;
             }
+          while (i != 0);
 	}
 
       n1 = mptr[0];
       while (n1 != 0)
         {
-          *--s = n1 % base;
-          n1 /= base;
+          udiv_qrnd_unnorm (n1, c, n1, base);
+          *--s = c;
         }
 
       ASSERT (s >= str);
