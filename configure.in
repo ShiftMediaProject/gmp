@@ -650,10 +650,12 @@ AC_C_STRINGIZE
 
 dnl Checks for library functions.
 dnl -----------------------------
+dnl Most of these are only for the benefit of supplementary programs.  The
+dnl library itself doesn't use anything weird.
 dnl AC_FUNC_MEMCMP
 dnl AC_TYPE_SIGNAL
 dnl AC_CHECK_FUNCS(strtol)
-AC_CHECK_FUNCS(getopt_long getpagesize processor_info strtoul sysconf sysctlbyname)
+AC_CHECK_FUNCS(getopt_long getpagesize popen processor_info strtoul sysconf sysctlbyname)
 
 dnl Trick automake into thinking we've run AM_C_PROTOTYPES which it wants
 dnl for ansi2knr, and instead use our own test.  (It's only a warning
