@@ -101,6 +101,7 @@ MA 02111-1307, USA. */
 
 #include "config.h"
 
+#include <errno.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdio.h>
@@ -656,7 +657,7 @@ param_init (void)
 
   p = &param[TYPE_SUBMUL_1];
   COPY (TYPE_ADDMUL_1);
-  REFERENCE (refmpn_submul_1c);
+  REFERENCE (refmpn_submul_1);
 
   p = &param[TYPE_SUBMUL_1C];
   COPY (TYPE_ADDMUL_1C);
@@ -1234,7 +1235,8 @@ mprotect_maybe (void *addr, size_t len, int prot)
 #if HAVE_MPROTECT
   if (mprotect (addr, len, prot) != 0)
     {
-      fprintf (stderr, "Cannot mprotect %p 0x%X 0x%X\n", addr, len, prot);
+      fprintf (stderr, "Cannot mprotect %p 0x%X 0x%X: %s\n",
+               addr, len, prot, strerror (errno));
       exit (1);
     }
 #else
