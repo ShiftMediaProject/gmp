@@ -3,7 +3,6 @@
 
 /* Scanner skeleton version:
  * $Header$
- * $FreeBSD: src/usr.bin/lex/flex.skl,v 1.4 1999/10/27 07:56:44 obrien Exp $
  */
 
 #define FLEX_SCANNER
@@ -11,7 +10,7 @@
 #define YY_FLEX_MINOR_VERSION 5
 
 #include <stdio.h>
-
+#include <errno.h>
 
 /* cfront 1.2 defines "c_plusplus" instead of "__cplusplus" */
 #ifdef c_plusplus
@@ -24,7 +23,9 @@
 #ifdef __cplusplus
 
 #include <stdlib.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 /* Use prototypes in function declarations. */
 #define YY_USE_PROTOS
@@ -387,7 +388,7 @@ char *yytext;
 #define INITIAL 0
 /* Lexical analyzer for calc program.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -404,6 +405,7 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA. */
 #line 21 "calclex.l"
+#include <string.h>
 #include "calc-common.h"
 
 
@@ -438,7 +440,7 @@ const struct calc_keywords_t  calc_keywords[] = {
   { "sqrt",      SQRT },
   { NULL }
 };
-#line 442 "calclex.c"
+#line 444 "calclex.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -538,9 +540,20 @@ YY_MALLOC_DECL
 			YY_FATAL_ERROR( "input in flex scanner failed" ); \
 		result = n; \
 		} \
-	else if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \
-		  && ferror( yyin ) ) \
-		YY_FATAL_ERROR( "input in flex scanner failed" );
+	else \
+		{ \
+		errno=0; \
+		while ( (result = fread(buf, 1, max_size, yyin))==0 && ferror(yyin)) \
+			{ \
+			if( errno != EINTR) \
+				{ \
+				YY_FATAL_ERROR( "input in flex scanner failed" ); \
+				break; \
+				} \
+			errno=0; \
+			clearerr(yyin); \
+			} \
+		}
 #endif
 
 /* No semi-colon after return; correct usage is to write "yyterminate();" -
@@ -589,10 +602,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 57 "calclex.l"
+#line 58 "calclex.l"
 
 
-#line 596 "calclex.c"
+#line 609 "calclex.c"
 
 	if ( yy_init )
 		{
@@ -677,94 +690,94 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 59 "calclex.l"
+#line 60 "calclex.l"
 { /* white space is skipped */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 61 "calclex.l"
+#line 62 "calclex.l"
 { /* semicolon or newline separates statements */
           calc_more_input = 0;
           return EOS; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 64 "calclex.l"
+#line 65 "calclex.l"
 { /* escaped newlines are skipped */ }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 67 "calclex.l"
+#line 68 "calclex.l"
 {
             /* comment through to escaped newline is skipped */ }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 69 "calclex.l"
+#line 70 "calclex.l"
 { /* comment through to newline is a separator */
             calc_more_input = 0;
             return EOS; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 72 "calclex.l"
+#line 73 "calclex.l"
 {   /* comment through to EOF skipped */ }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 75 "calclex.l"
+#line 76 "calclex.l"
 { return yytext[0]; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 76 "calclex.l"
+#line 77 "calclex.l"
 { return LE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 77 "calclex.l"
+#line 78 "calclex.l"
 { return GE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 78 "calclex.l"
+#line 79 "calclex.l"
 { return EQ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 79 "calclex.l"
+#line 80 "calclex.l"
 { return NE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 80 "calclex.l"
+#line 81 "calclex.l"
 { return LSHIFT; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 81 "calclex.l"
+#line 82 "calclex.l"
 { return RSHIFT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 82 "calclex.l"
+#line 83 "calclex.l"
 { return LAND; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 83 "calclex.l"
+#line 84 "calclex.l"
 { return LOR; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 85 "calclex.l"
+#line 86 "calclex.l"
 {
         yylval.str = yytext;
         return NUMBER; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 89 "calclex.l"
+#line 90 "calclex.l"
 {
         int  i;
 
@@ -783,15 +796,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 105 "calclex.l"
+#line 106 "calclex.l"
 { return BAD; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 107 "calclex.l"
+#line 108 "calclex.l"
 ECHO;
 	YY_BREAK
-#line 795 "calclex.c"
+#line 808 "calclex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1355,9 +1368,13 @@ YY_BUFFER_STATE b;
 	}
 
 
+#ifndef _WIN32
+#include <unistd.h>
+#else
 #ifndef YY_ALWAYS_INTERACTIVE
 #ifndef YY_NEVER_INTERACTIVE
 extern int isatty YY_PROTO(( int ));
+#endif
 #endif
 #endif
 
@@ -1677,7 +1694,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 107 "calclex.l"
+#line 108 "calclex.l"
 
 
 int
