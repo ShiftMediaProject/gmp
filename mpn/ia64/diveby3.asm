@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_divexact_by3c -- mpn by 3 exact division.
 
-dnl  Copyright (C) 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 

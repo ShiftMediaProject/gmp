@@ -1,6 +1,6 @@
 dnl  IA-64 mpn_add_n/mpn_sub_n -- mpn addition and subtraction.
 
-dnl  Copyright (C) 2003 Free Software Foundation, Inc.
+dnl  Copyright 2003, 2004 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
