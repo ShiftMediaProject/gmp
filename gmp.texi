@@ -1450,7 +1450,15 @@ higher value lowers the probability for a non-prime to pass as a
 The function uses Miller-Rabin's probabilistic test.
 @end deftypefun
 
-@c Not implemented as of gmp 3.0.
+@deftypefun int mpz_nextprime (mpz_t @var{rop}, mpz_t @var{op})
+Set @var{rop} to the next prime greater than @var{op}.
+
+This function uses a probabilistic algorithm to identify primes, but for for
+practical purposes it's adequate, since the chance of a composite passing will
+be extremely small.
+@end deftypefun
+
+@c mpz_prime_p not implemented as of gmp 3.0.
 
 @c @deftypefun int mpz_prime_p (mpz_t @var{n})
 @c Return non-zero if @var{n} is prime and zero if @var{n} is a non-prime.
