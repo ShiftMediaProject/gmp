@@ -269,8 +269,9 @@ main ()
   exit (0);
 }
 EOF
-  $CC_FOR_BUILD $dummy.c -o $dummy
-  exact_cpu=`./$dummy`
+  if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
+    exact_cpu=`./$dummy`
+  fi
   rm -f $dummy.c $dummy
   ;;
 
