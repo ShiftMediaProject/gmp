@@ -1113,15 +1113,15 @@ main (int argc, char *argv[])
         break;
       case 'y':
         sp.align_yp = atol (optarg);
-        check_align_option ("-x", sp.align_yp);
+        check_align_option ("-y", sp.align_yp);
         break;
       case 'w':
         sp.align_wp = atol (optarg);
-        check_align_option ("-x", sp.align_wp);
+        check_align_option ("-w", sp.align_wp);
         break;
       case 'W':
         sp.align_wp2 = atol (optarg);
-        check_align_option ("-x", sp.align_wp2);
+        check_align_option ("-W", sp.align_wp2);
         break;
       case '?':
         exit(1);
