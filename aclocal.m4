@@ -158,6 +158,7 @@ dnl  GMP_FINISH
 dnl  Create 
 AC_DEFUN(GMP_FINISH,
 [AC_REQUIRE([GMP_INIT])
+echo "creating $gmp_configm4"
 echo [dnl $gmp_configm4.  Generated automatically by configure.] > $gmp_configm4
 if test -f $gmp_tmpconfigm4; then
   echo ["changequote(<,>)dnl"] >> $gmp_configm4
@@ -231,10 +232,10 @@ fi
 rm -f conftest*
 ])
 if test "$gmp_cv_check_asm_underscore" = "yes"; then
-  GMP_DEFINE(GSYM_PREFIX, [_$][1])
+  GMP_DEFINE(GSYM_PREFIX, [_])
   ifelse([$1], , :, [$1])
 else
-  GMP_DEFINE(GSYM_PREFIX, [$][1])
+  GMP_DEFINE(GSYM_PREFIX, [])
   ifelse([$2], , :, [$2])
 fi    
 ])dnl
