@@ -260,7 +260,7 @@ ABI32(` addp4	r32 = 0, r32')		C M1  src entend
 	xma.l	f7 = f7, f12, f14	C i*i*-d + 2*i, inverse 16 bits
 	;;
 
-	xmpy.l	f13 = f14, f7		C 2*i
+	xmpy.l	f14 = f13, f7		C 2*i
 	xmpy.l	f7 = f7, f7		C i*i
 	;;
 	xma.l	f7 = f7, f12, f14	C i*i*-d + 2*i, inverse 32 bits
@@ -274,19 +274,21 @@ ABI32(` addp4	r32 = 0, r32')		C M1  src entend
 	xma.l	f10 = f9, f8, f10	C sc = c * -1 + src[0]
 	;;
 ASSERT(p6, `
-	xmpy.l	f15 = f6, f7 ;;
+	xmpy.l	f15 = f6, f7 ;;	C divisor*inverse
 	getf.sig r31 = f15 ;;
-	cmp.eq	p6,p0 = 1, r31
+	cmp.eq	p6,p0 = 1, r31	C should == 1
 ')
 
-	xma.l	f10 = f9, f8, f10	C q = sc * inverse
+	xmpy.l	f10 = f10, f7		C q = sc * inverse
 	xmpy.l	f8 = f7, f8		C -inverse = inverse * -1
 	br.cloop.sptk.few.clr .Lentry	C main loop, if size > 1
 	;;
 
 	C size==1, finish up now
-	getf.sig r8 = f9		C M2
+	xma.hu	f9 = f10, f6, f9	C c = high(q * divisor + c)
 	mov	ar.lc = r2		C I0
+	;;
+	getf.sig r8 = f9		C M2  return c
 	br.ret.sptk.many b0
 
 
@@ -321,7 +323,7 @@ ASSERT(p6, `
 	;;
 	xma.hu	f9 = f10, f6, f9	C c = high(q * divisor + c)
 	;;
-	getf.sig r8 = f9		C M2
+	getf.sig r8 = f9		C M2  return c
 	br.ret.sptk.many b0
 
 EPILOGUE()
