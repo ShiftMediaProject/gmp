@@ -32,8 +32,8 @@ MA 02111-1307, USA. */
 #define _GMP_IEEE_FLOATS 0
 #endif
 
-inline double
-scal2 (double d, int exp)
+double
+__gmp_scale2 (double d, int exp)
 {
 #if _GMP_IEEE_FLOATS
   {

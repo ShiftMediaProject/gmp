@@ -22,8 +22,6 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-double scal2 ();
-
 double
 #if __STDC__
 mpz_get_d (mpz_srcptr src)
@@ -50,7 +48,7 @@ mpz_get_d (src)
   for (i = 2; i <= n_limbs_to_use; i++)
     res = res * MP_BASE_AS_DOUBLE + qp[size - i];
 
-  res = scal2 (res, (size - n_limbs_to_use) * BITS_PER_MP_LIMB);
+  res = __gmp_scale2 (res, (size - n_limbs_to_use) * BITS_PER_MP_LIMB);
 
   return negative ? -res : res;
 }
