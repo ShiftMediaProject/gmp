@@ -1,3 +1,29 @@
+2000-08-15  Kevin Ryde  <kevin@swox.se>
+
+	* mp.h (mp_set_memory_functions): Add missing #define.
+	* mpbsd/tests/allfuns.c (mp_set_memory_functions): Verify its
+	existance.
+
+	* mpf/tests/t-misc.c (check_mpf_getset_prec): New test, verifying
+	reverted behaviour of mpf_get_prec.
+
+	* mpn/tests/ref.c (refmpn_strip_twos): Use refmpn_copyi, not
+	MPN_COPY_INCR.
+
+	* mpz/mul_siui.c, mpf/integer.c: Recognise OPERATION_*_ forms
+	produced under ansi2knr.
+
+	* configure.in (mpn_objects, mpn_objs_in_libgmp): Add $U to .c
+	objects when ansi2knr in use.
+
+	* mpn/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr.
+	(libdummy.la): Add this, not built, to create ansi2knr style rules
+	for all .c files.
+	* mp{z,q,f,fr,bsd}/Makefile.am, mpq/tests/Makefile.am,
+	tests/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr (now everywhere).
+	* Makefile.am (MP{Z,Q,F,FR,BSD}_OBJECTS, libmp_la_DEPENDENCIES):
+	Add $U to all .lo filenames.
+
 2000-08-02  Torbjorn Granlund  <tege@swox.com>
 
 	* Version 3.1 released.
@@ -121,7 +147,7 @@
 	(Notes for Package Builds): New section.
 	(Compatibility with older versions): Update for 3.1, add mpf_get_prec.
 
-	* demos/factorize.c: Don't declare random() for glibc.
+	* demos/factorize.c [__GLIBC__]: Don't declare random() under glibc.
 
 	* gmp.h (gmp_version): Add prototype and define.
 
