@@ -130,6 +130,7 @@ struct param_t {
   double            step_factor;    /* how much to step sizes (rounded down) */
   double            function_fudge; /* multiplier for "function" speeds */
   int               stop_since_change;
+  double            stop_factor;
   mp_size_t         min_size;
   int               min_is_zero;
   mp_size_t         max_size[MAX_TABLE];
@@ -267,6 +268,7 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
   DEFAULT (function2, param->function);
   DEFAULT (step_factor, 0.01);  /* small steps by default */
   DEFAULT (stop_since_change, 80);
+  DEFAULT (stop_factor, 1.2);
   DEFAULT (min_size, 10);
   for (i = 0; i < numberof (param->max_size); i++)
     DEFAULT (max_size[i], MAX_SIZE);
@@ -386,12 +388,11 @@ one (mp_size_t table[], size_t max_table, struct param_t *param)
               }
 
           /* Stop if method i has become slower by a certain factor. */
-#define STOP_FACTOR   1.2
-          if (ti >= tiplus1 * STOP_FACTOR)
+          if (ti >= tiplus1 * param->stop_factor)
             {
               if (option_trace >= 1)
                 printf ("i=%d stopped due to ti >= tiplus1 * factor (%.1f)\n",
-                        i, STOP_FACTOR);
+                        i, param->stop_factor);
               break;
             }
 
@@ -709,6 +710,11 @@ all (void)
     static struct param_t  param;
     param.name[0] = "FIB_THRESHOLD";
     param.function = speed_mpz_fib_ui;
+
+    /* Bigcase odd and even sizes run at noticably different speeds, so
+       always step by 1, and don't let stop_factor truncate the search.  */
+    param.step_factor = 0.001;
+    param.stop_factor = 5.0;
 
     /* start the search from a point after the table data */
     switch (BITS_PER_MP_LIMB) {
