@@ -313,9 +313,11 @@ case ${target} in
 	gmp_mf_aorsmul_1="addmul_1 submul_1"
 	family=x86;;
   [pentium[23]-*-*])
+	# The pentium/mmx lshift and rshift are good on p6 can be used
+        # until there's something specific for p6.
 	path=
-	GMP_CHECK_ASM_MMX(path="$path x86/p6/mmx")
-	path="x86/p6 x86"
+	GMP_CHECK_ASM_MMX(path="$path x86/p6/mmx x86/pentium/mmx")
+	path="$path x86/p6 x86"
 	gmp_mulfunc_files="aorsmul_1"
 	gmp_mf_aorsmul_1="addmul_1 submul_1"
 	family=x86;;
