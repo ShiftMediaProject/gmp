@@ -299,14 +299,17 @@ MA 02111-1307, USA.
 /* ./configure --enable-fft option, to enable FFTs for multiplication */
 #undef WANT_FFT
 
-/* temporary memory using alloca */
+/* --enable-alloca=yes */
 #undef WANT_TMP_ALLOCA
 
-/* temporary memory for debugging */
+/* --enable-alloca=debug */
 #undef WANT_TMP_DEBUG
 
-/* temporary memory using malloc (or custom allocation function) */
-#undef WANT_TMP_MALLOC
+/* --enable-alloca=malloc-notreentrant */
+#undef WANT_TMP_NOTREENTRANT
+
+/* --enable-alloca=malloc-reentrant */
+#undef WANT_TMP_REENTRANT
 
 /* Define as `__inline' if that's what the C compiler calls it, or to nothing
    if it is not supported. */
