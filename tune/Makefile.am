@@ -47,6 +47,13 @@ nodist_libdummy_la_SOURCES = sqr_basecase.c
 # The library code is faster static than shared on some systems, so do
 # tuning and measuring with static, since users who care about maximizing
 # speed will be using that.  speed-dynamic exists to show the difference.
+#
+# On Solaris 8, gcc 2.95.2 -static is somehow broken (it creates executables
+# that immediately seg fault), so -all-static is not used.  The only thing
+# -all-static does is make libc static linked as well as libgmp, and that
+# makes a difference only when measuring malloc and friends in the speed
+# program.  This can always be forced with "make speed_LDFLAGS=-all-static
+# ..." if desired, see tune/README.
 
 EXTRA_PROGRAMS = speed speed-dynamic speed-ext tuneup
 
@@ -54,18 +61,18 @@ DEPENDENCIES = libspeed.la
 LDADD = $(DEPENDENCIES)
 
 speed_SOURCES = speed.c
-speed_LDFLAGS = -all-static
+speed_LDFLAGS = -static
 
 speed_dynamic_SOURCES = speed.c
 
 speed_ext_SOURCES = speed.c
-speed_ext_LDFLAGS = -all-static
+speed_ext_LDFLAGS = -static
 
 tuneup_SOURCES = tuneup.c
 nodist_tuneup_SOURCES = sqr_basecase.c $(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES)
-tuneup_LDFLAGS = -all-static
+tuneup_LDFLAGS = -static
 
 
 tune:
