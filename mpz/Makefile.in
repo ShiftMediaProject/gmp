@@ -131,7 +131,9 @@ libmpz_la_SOURCES = \
   bin_ui.c bin_uiui.c cdiv_q.c \
   cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c cdiv_ui.c \
   cfdiv_q_2exp.c cfdiv_r_2exp.c \
-  clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_ui.c com.c \
+  clear.c clrbit.c \
+  cmp.c cmp_d.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_d.c cmpabs_ui.c \
+  com.c \
   cong.c cong_2exp.c cong_ui.c \
   divexact.c divegcd.c dive_si.c dive_ui.c divis.c divis_ui.c divis_2exp.c \
   dump.c fac_ui.c fdiv_q.c fdiv_q_ui.c \
@@ -179,26 +181,26 @@ am_libmpz_la_OBJECTS =  abs$U.lo addmul_ui$U.lo and$U.lo array_init$U.lo \
 bin_ui$U.lo bin_uiui$U.lo cdiv_q$U.lo cdiv_q_ui$U.lo cdiv_qr$U.lo \
 cdiv_qr_ui$U.lo cdiv_r$U.lo cdiv_r_ui$U.lo cdiv_ui$U.lo \
 cfdiv_q_2exp$U.lo cfdiv_r_2exp$U.lo clear$U.lo clrbit$U.lo cmp$U.lo \
-cmp_si$U.lo cmp_ui$U.lo cmpabs$U.lo cmpabs_ui$U.lo com$U.lo cong$U.lo \
-cong_2exp$U.lo cong_ui$U.lo divexact$U.lo divegcd$U.lo dive_si$U.lo \
-dive_ui$U.lo divis$U.lo divis_ui$U.lo divis_2exp$U.lo dump$U.lo \
-fac_ui$U.lo fdiv_q$U.lo fdiv_q_ui$U.lo fdiv_qr$U.lo fdiv_qr_ui$U.lo \
-fdiv_r$U.lo fdiv_r_ui$U.lo fdiv_ui$U.lo fib_ui$U.lo gcd$U.lo \
-gcd_ui$U.lo gcdext$U.lo get_d$U.lo get_si$U.lo get_str$U.lo get_ui$U.lo \
-getlimbn$U.lo hamdist$U.lo init$U.lo inp_raw$U.lo inp_str$U.lo \
-invert$U.lo ior$U.lo iset$U.lo iset_d$U.lo iset_si$U.lo iset_str$U.lo \
-iset_ui$U.lo jacobi$U.lo kronsz$U.lo kronuz$U.lo kronzs$U.lo \
-kronzu$U.lo lcm$U.lo mod$U.lo mul$U.lo mul_2exp$U.lo n_pow_ui$U.lo \
-neg$U.lo nextprime$U.lo out_raw$U.lo out_str$U.lo perfpow$U.lo \
-perfsqr$U.lo popcount$U.lo pow_ui$U.lo powm$U.lo powm_ui$U.lo \
-pprime_p$U.lo random$U.lo random2$U.lo realloc$U.lo remove$U.lo \
-root$U.lo rrandomb$U.lo scan0$U.lo scan1$U.lo set$U.lo set_d$U.lo \
-set_f$U.lo set_q$U.lo set_si$U.lo set_str$U.lo set_ui$U.lo setbit$U.lo \
-si_pow_ui$U.lo size$U.lo sizeinbase$U.lo sqrt$U.lo sqrtrem$U.lo \
-swap$U.lo tdiv_ui$U.lo tdiv_q$U.lo tdiv_q_2exp$U.lo tdiv_q_ui$U.lo \
-tdiv_qr$U.lo tdiv_qr_ui$U.lo tdiv_r$U.lo tdiv_r_2exp$U.lo \
-tdiv_r_ui$U.lo tstbit$U.lo ui_pow_ui$U.lo urandomb$U.lo urandomm$U.lo \
-xor$U.lo
+cmp_d$U.lo cmp_si$U.lo cmp_ui$U.lo cmpabs$U.lo cmpabs_d$U.lo \
+cmpabs_ui$U.lo com$U.lo cong$U.lo cong_2exp$U.lo cong_ui$U.lo \
+divexact$U.lo divegcd$U.lo dive_si$U.lo dive_ui$U.lo divis$U.lo \
+divis_ui$U.lo divis_2exp$U.lo dump$U.lo fac_ui$U.lo fdiv_q$U.lo \
+fdiv_q_ui$U.lo fdiv_qr$U.lo fdiv_qr_ui$U.lo fdiv_r$U.lo fdiv_r_ui$U.lo \
+fdiv_ui$U.lo fib_ui$U.lo gcd$U.lo gcd_ui$U.lo gcdext$U.lo get_d$U.lo \
+get_si$U.lo get_str$U.lo get_ui$U.lo getlimbn$U.lo hamdist$U.lo \
+init$U.lo inp_raw$U.lo inp_str$U.lo invert$U.lo ior$U.lo iset$U.lo \
+iset_d$U.lo iset_si$U.lo iset_str$U.lo iset_ui$U.lo jacobi$U.lo \
+kronsz$U.lo kronuz$U.lo kronzs$U.lo kronzu$U.lo lcm$U.lo mod$U.lo \
+mul$U.lo mul_2exp$U.lo n_pow_ui$U.lo neg$U.lo nextprime$U.lo \
+out_raw$U.lo out_str$U.lo perfpow$U.lo perfsqr$U.lo popcount$U.lo \
+pow_ui$U.lo powm$U.lo powm_ui$U.lo pprime_p$U.lo random$U.lo \
+random2$U.lo realloc$U.lo remove$U.lo root$U.lo rrandomb$U.lo \
+scan0$U.lo scan1$U.lo set$U.lo set_d$U.lo set_f$U.lo set_q$U.lo \
+set_si$U.lo set_str$U.lo set_ui$U.lo setbit$U.lo si_pow_ui$U.lo \
+size$U.lo sizeinbase$U.lo sqrt$U.lo sqrtrem$U.lo swap$U.lo tdiv_ui$U.lo \
+tdiv_q$U.lo tdiv_q_2exp$U.lo tdiv_q_ui$U.lo tdiv_qr$U.lo \
+tdiv_qr_ui$U.lo tdiv_r$U.lo tdiv_r_2exp$U.lo tdiv_r_ui$U.lo tstbit$U.lo \
+ui_pow_ui$U.lo urandomb$U.lo urandomm$U.lo xor$U.lo
 nodist_libmpz_la_OBJECTS =  add$U.lo sub$U.lo add_ui$U.lo sub_ui$U.lo \
 fits_sint$U.lo fits_slong$U.lo fits_sshort$U.lo fits_uint$U.lo \
 fits_ulong$U.lo fits_ushort$U.lo mul_si$U.lo mul_ui$U.lo
@@ -323,12 +325,16 @@ clrbit_.c: clrbit.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clrbit.c; then echo $(srcdir)/clrbit.c; else echo clrbit.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clrbit_.c
 cmp_.c: cmp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp.c; then echo $(srcdir)/cmp.c; else echo cmp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_.c
+cmp_d_.c: cmp_d.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_d.c; then echo $(srcdir)/cmp_d.c; else echo cmp_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_d_.c
 cmp_si_.c: cmp_si.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_si.c; then echo $(srcdir)/cmp_si.c; else echo cmp_si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_si_.c
 cmp_ui_.c: cmp_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_ui.c; then echo $(srcdir)/cmp_ui.c; else echo cmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_ui_.c
 cmpabs_.c: cmpabs.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs.c; then echo $(srcdir)/cmpabs.c; else echo cmpabs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_.c
+cmpabs_d_.c: cmpabs_d.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs_d.c; then echo $(srcdir)/cmpabs_d.c; else echo cmpabs_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_d_.c
 cmpabs_ui_.c: cmpabs_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmpabs_ui.c; then echo $(srcdir)/cmpabs_ui.c; else echo cmpabs_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmpabs_ui_.c
 com_.c: com.c $(ANSI2KNR)
@@ -554,8 +560,9 @@ cdiv_qr_ui_.$(OBJEXT) cdiv_qr_ui_.lo cdiv_r_.$(OBJEXT) cdiv_r_.lo \
 cdiv_r_ui_.$(OBJEXT) cdiv_r_ui_.lo cdiv_ui_.$(OBJEXT) cdiv_ui_.lo \
 cfdiv_q_2exp_.$(OBJEXT) cfdiv_q_2exp_.lo cfdiv_r_2exp_.$(OBJEXT) \
 cfdiv_r_2exp_.lo clear_.$(OBJEXT) clear_.lo clrbit_.$(OBJEXT) \
-clrbit_.lo cmp_.$(OBJEXT) cmp_.lo cmp_si_.$(OBJEXT) cmp_si_.lo \
-cmp_ui_.$(OBJEXT) cmp_ui_.lo cmpabs_.$(OBJEXT) cmpabs_.lo \
+clrbit_.lo cmp_.$(OBJEXT) cmp_.lo cmp_d_.$(OBJEXT) cmp_d_.lo \
+cmp_si_.$(OBJEXT) cmp_si_.lo cmp_ui_.$(OBJEXT) cmp_ui_.lo \
+cmpabs_.$(OBJEXT) cmpabs_.lo cmpabs_d_.$(OBJEXT) cmpabs_d_.lo \
 cmpabs_ui_.$(OBJEXT) cmpabs_ui_.lo com_.$(OBJEXT) com_.lo \
 cong_.$(OBJEXT) cong_.lo cong_2exp_.$(OBJEXT) cong_2exp_.lo \
 cong_ui_.$(OBJEXT) cong_ui_.lo dive_si_.$(OBJEXT) dive_si_.lo \
