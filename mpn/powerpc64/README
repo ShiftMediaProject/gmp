@@ -19,6 +19,28 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 
 
 
+                    POWERPC-64 MPN SUBROUTINES
+
+
+This directory contains mpn functions for 64-bit PowerPC chips.
+
+
+CODE ORGANIZATION
+
+	mpn/powerpc64          mode-neutral code
+	mpn/powerpc64/mode32   code for mode32
+	mpn/powerpc64/mode64   code for mode64
+
+
+The mode32 and mode64 sub-directories contain code which is for use in
+the respective chip mode, 32 or 64.  The top-level directory is code
+that's unaffected by the mode.
+
+The "adde" instruction is the main difference between mode32 and
+mode64.  It operates on either on a 32-bit or 64-bit quantity
+according to the chip mode.  Other instructions have an operand size
+in their opcode and hence don't vary.
+
 
 
 POWER3/PPC630 pipeline information:
