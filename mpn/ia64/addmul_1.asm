@@ -29,15 +29,14 @@ C n = r34
 C v = r35
 
 C         cycles/limb
-C Itanium:    4
-C Itanium 2:  7
-
+C Itanium:    3.75
+C Itanium 2:  3.5
 
 ASM_START()
 PROLOGUE(mpn_addmul_1)
 	.prologue
 	.save	ar.pfs, r21
-		alloc		r21 = ar.pfs, 4, 12, 0, 16
+		alloc		r21 = ar.pfs, 4, 4, 0, 8
 	.save	ar.lc, r2
 		mov		r2 = ar.lc
 		mov		r20 = ar.ec
@@ -47,7 +46,7 @@ PROLOGUE(mpn_addmul_1)
 ifdef(`HAVE_ABI_32',
 `		addp4	r32 = 0, r32
 		addp4	r33 = 0, r33
-		sxt4	r34 = r34
+		zxt4	r34 = r34
 		;;
 ')
   { .mib;	setf.sig	f6 = r35
@@ -60,7 +59,7 @@ ifdef(`HAVE_ABI_32',
 		mov		ar.lc = r19
 		nop.b		0
 } { .mib;	mov		r17 = r33
-		mov		ar.ec = 7
+		mov		ar.ec = 8
 		nop.b		0
 } { .mib;	cmp.ne		p6, p7 = r0, r0
 		mov		pr.rot = 1<<16
@@ -77,26 +76,44 @@ ifdef(`HAVE_ABI_32',
 	.pred.rel "mutex",p6,p7
   { .mfi; (p16)	ldf8		f32 = [r17], 8		C  *0,3,6,9,12,15,18
 	  (p19)	xma.l		f40 = f35, f6, f39	C  0,3,6,*9,12,15,18
-	   (p6) add		r14 = r33, r38, 1	C  0,3,6,9,12,15,*18
+	   (p6) add		r14 = r34, r39, 1	C  0,3,6,9,12,15,*18
 } { .mfi; (p16)	ldf8		f36 = [r16], 8		C  *0,3,6,9,12,15,18
 	  (p19)	xma.hu		f44 = f35, f6, f39	C  0,3,6,*9,12,15,18
-	   (p7) add		r14 = r33, r38	;;	C  0,3,6,9,12,15,*18
+	   (p7) add		r14 = r34, r39	;;	C  0,3,6,9,12,15,*18
 } { .mii; (p21)	getf.sig	r32 = f42		C  1,4,7,10,13,*16,19
-	   (p6) cmp.leu		p8, p9 = r14, r33	C  1,4,7,10,13,16,*19
-	   (p7) cmp.ltu		p8, p9 = r14, r33;;	C  1,4,7,10,13,16,*19
+	   (p6) cmp.leu		p8, p9 = r14, r34	C  1,4,7,10,13,16,*19
+	   (p7) cmp.ltu		p8, p9 = r14, r34	C  1,4,7,10,13,16,*19
+} { .mmb; (p21)	getf.sig	r36 = f46		C  2,5,8,11,14,*17,20
+	  (p23)	st8		[r18] = r14, 8		C  2,5,8,11,14,17,*20
+		br.cexit.spnt	.Lend		;;
 }
 	.pred.rel "mutex",p8,p9
-  { .mib; (p21)	getf.sig	r36 = f46		C  2,5,8,11,14,*17,20
-	   (p8) cmp.eq		p6, p7 = r0, r0
-		nop.b		0
-} { .mib; (p22)	st8		[r18] = r14, 8		C  2,5,8,11,14,17,*20
-	   (p9) cmp.ne		p6, p7 = r0, r0
-		br.ctop.sptk	.Loop		;;
+  { .mfi; (p16)	ldf8		f32 = [r17], 8		C  *0,3,6,9,12,15,18
+	  (p19)	xma.l		f40 = f35, f6, f39	C  0,3,6,*9,12,15,18
+	   (p8) add		r14 = r34, r39, 1	C  0,3,6,9,12,15,*18
+} { .mfi; (p16)	ldf8		f36 = [r16], 8		C  *0,3,6,9,12,15,18
+	  (p19)	xma.hu		f44 = f35, f6, f39	C  0,3,6,*9,12,15,18
+	   (p9) add		r14 = r34, r39	;;	C  0,3,6,9,12,15,*18
+} { .mii; (p21)	getf.sig	r32 = f42		C  1,4,7,10,13,*16,19
+	   (p8) cmp.leu		p6, p7 = r14, r34	C  1,4,7,10,13,16,*19
+	   (p9) cmp.ltu		p6, p7 = r14, r34	C  1,4,7,10,13,16,*19
+} { .mmb; (p21)	getf.sig	r36 = f46		C  2,5,8,11,14,*17,20
+	  (p23)	st8		[r18] = r14, 8		C  2,5,8,11,14,17,*20
+		br.ctop.dptk	.Loop		;;
 }
 	.pred.rel "mutex",p6,p7
-	   (p6)	add		r8 = 1, r38
-	   (p7)	mov		r8 = r38
-		mov		pr = r22, 0x1fffe
+	   (p6)	add		r8 = 1, r39
+	   (p7)	mov		r8 = r39
+		mov		pr = r22,0x1fffe
+		mov		ar.lc = r2
+		mov		ar.ec = r20
+		mov		ar.pfs = r21;;
+		br.ret.sptk.many b0
+.Lend:
+	.pred.rel "mutex",p8,p9
+	   (p8)	add		r8 = 1, r39
+	   (p9)	mov		r8 = r39
+		mov		pr = r22,0x1fffe
 		mov		ar.lc = r2
 		mov		ar.ec = r20
 		mov		ar.pfs = r21;;
