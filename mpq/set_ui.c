@@ -39,5 +39,5 @@ mpq_set_ui (MP_RAT *dest, unsigned long int num, unsigned long int den)
     }
 
   dest->_mp_den._mp_d[0] = den;
-  dest->_mp_den._mp_size = 1;
+  dest->_mp_den._mp_size = (den != 0);
 }
