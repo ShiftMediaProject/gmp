@@ -20,15 +20,15 @@
  # MA 02111-1307, USA.
 
 
-        .set noreorder
-        .set noat
+	.set noreorder
+	.set noat
 .text
-        .align	3
-        .globl	__udiv_qrnnd
-        .ent	__udiv_qrnnd
+	.align	3
+	.globl	__udiv_qrnnd
+	.ent	__udiv_qrnnd
 __udiv_qrnnd:
-        .frame $30,0,$26,0
-        .prologue 0
+	.frame $30,0,$26,0
+	.prologue 0
 #define cnt	$2
 #define tmp	$3
 #define rem_ptr	$16
