@@ -167,10 +167,11 @@ will not reflect on our reputation.@refill
 The precise conditions of the license for the GNU MP library are found in the
 Library General Public License that accompany the source code.@refill
 
+
 @node Introduction to GMP, Installing GMP, Copying, Top
 @comment  node-name,  next,  previous,  up
 @chapter Introduction to GNU MP
-
+@cindex Introduction
 
 GNU MP is a portable library written in C for arbitrary precision arithmetic
 on integers, rational numbers, and floating-point numbers.  It aims to provide
@@ -188,6 +189,7 @@ code for the most common inner loops for many different CPUs, and by a general
 emphasis on speed (as opposed to simplicity or elegance).
 
 There is carefully optimized assembly code for these CPUs:
+@cindex CPUs supported
 ARM,
 DEC Alpha 21064, 21164, and 21264,
 AMD 29000, K6 and Athlon,
@@ -205,15 +207,19 @@ DEC VAX,
 and Zilog Z8000.
 Some optimizations also for Clipper, IBM ROMP (RT), and Pyramid AP/XP.
 
+@cindex Mailing list
 There is a mailing list for GMP users.  To join it, send a mail to
 @email{gmp-request@@swox.com} with the word @samp{subscribe} in the message
 @strong{body} (not in the subject line).
 
+@cindex Home page
+@cindex Web page
 For up-to-date information on GMP, please see the GMP Home Pages at
 @uref{http://www.swox.com/gmp/}.
 
 
 @section How to use this Manual
+@cindex About this manual
 
 Everyone should read @ref{GMP Basics}.  If you need to install the library
 yourself, you need to read @ref{Installing GMP}, too.
@@ -225,8 +231,10 @@ probably a good idea to glance through it.
 @node Installing GMP, GMP Basics, Introduction to GMP, Top
 @comment  node-name,  next,  previous,  up
 @chapter Installing GMP
-@cindex Installation
+@cindex Installing GMP
+@cindex Configuring GMP
 
+@noindent
 GMP has an autoconf/automake/libtool based configuration system.  On a
 Unix-like system a basic build can be done with
 
@@ -235,24 +243,37 @@ Unix-like system a basic build can be done with
 make
 @end example
 
+@noindent
 Some self-tests can be run with
 
 @example
 make check
 @end example
 
+@noindent
 And you can install (under @file{/usr/local} by default) with
 
 @example
 make install
 @end example
 
+@noindent
 If you experience problems, please report them to @email{bug-gmp@@gnu.org}.
 (@xref{Reporting Bugs}, for information on what to include in useful bug
 reports.)
 
-@section Build Options
+@menu
+* Build Options::               
+* Notes for Particular Systems::  
+* Known Build Problems::        
+@end menu
 
+
+@node Build Options, Notes for Particular Systems, Installing GMP, Installing GMP
+@section Build Options
+@cindex Build options
+
+@noindent
 All the usual autoconf configure options are available, run @samp{./configure
 --help} for a summary.
 
@@ -306,7 +327,7 @@ The following CPUs have specific assembly code support.  See
 
 @itemize @bullet
 
-@c Leave this formatting, it's easy to read and it can be grepped to
+@c Keep this formatting, it's easy to read and it can be grepped to
 @c automatically test that targets listed get through ./config.sub
 
 @item
@@ -419,6 +440,8 @@ The Berkeley MP compatibility library (@file{libmp.a}) and header file
 @xref{BSD Compatible Functions}.
 
 @item Demonstration Programs
+@cindex Demonstration programs
+@cindex Example programs
 
 The @file{demos} subdirectory has some sample programs using GMP.  These
 aren't built or installed, but there's a @file{Makefile} with rules for them.
@@ -432,7 +455,9 @@ are available to make @file{gmp.ps} and/or @file{gmp.dvi}.
 
 
 @need 2000
+@node Notes for Particular Systems, Known Build Problems, Build Options, Installing GMP
 @section Notes for Particular Systems
+@cindex Build notes for particular systems
 @table @asis
 
 @item AIX
@@ -496,7 +521,10 @@ corresponding plain integer code.
 
 
 @need 2000
+@node Known Build Problems,  , Notes for Particular Systems, Installing GMP
 @section Known Build Problems
+@cindex Build problems known
+
 You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 
 @table @asis
@@ -550,6 +578,7 @@ the Ultrix assembler.
 @node GMP Basics, Reporting Bugs, Installing GMP, Top
 @comment  node-name,  next,  previous,  up
 @chapter GMP Basics
+@cindex Basics
 
 @cindex @file{gmp.h}
 All declarations needed to use GMP are collected in the include file
@@ -563,7 +592,7 @@ to be incompatible with future versions of GMP.}
 * Nomenclature and Types::      	Which data types are there?
 * Function Classes::            	How the functions are organized.
 * GMP Variable Conventions::     	Some rules and hints about variables.
-* GMP and reentrancy::           	What about reentrancy?
+* GMP and Reentrancy::           	What about reentrancy?
 * Useful Macros and Constants::  	Convenient helpers.
 * Compatibility with older versions::	Compatibility issues.
 * Getting the Latest Version of GMP::  	How to get the software.
@@ -571,6 +600,8 @@ to be incompatible with future versions of GMP.}
 
 @node Nomenclature and Types, Function Classes, GMP Basics, GMP Basics
 @section Nomenclature and Types
+@cindex Nomenclature
+@cindex Types
 
 @cindex Integer
 @tindex @code{mpz_t}
@@ -615,6 +646,7 @@ digit, only larger, and containing several digits.)  Normally a limb contains
 
 @node Function Classes, GMP Variable Conventions, Nomenclature and Types, GMP Basics
 @section Function Classes
+@cindex Function classes
 
 There are six classes of functions in the GMP library:
 
@@ -653,8 +685,11 @@ functions for generating random numbers.
 @end enumerate
 
 
-@node GMP Variable Conventions, GMP and reentrancy, Function Classes, GMP Basics
+@node GMP Variable Conventions, GMP and Reentrancy, Function Classes, GMP Basics
 @section GMP Variable Conventions
+@cindex Variable conventions
+@cindex Parameter conventions
+@cindex Conventions for variables
 
 As a general rule, all GMP functions expect output arguments before input
 arguments.  This notation is based on an analogy with the assignment operator.
@@ -688,8 +723,11 @@ not, however, reduce the space when a smaller number is stored in the object.
 Most of the time, this policy is best, since it avoids frequent re-allocation.
 
 
-@node GMP and reentrancy, Useful Macros and Constants, GMP Variable Conventions, GMP Basics
-@section GMP and reentrancy
+@node GMP and Reentrancy, Useful Macros and Constants, GMP Variable Conventions, GMP Basics
+@section GMP and Reentrancy
+@cindex Reentrancy
+@cindex Thread safety
+@cindex Multi-threading
 
 The GMP code is reentrant and thread-safe, with some exceptions:
 
@@ -720,16 +758,21 @@ are not reentrant, GMP will not be reentrant either.
 
 
 @need 2000
-@node Useful Macros and Constants, Compatibility with older versions, GMP and reentrancy, GMP Basics
+@node Useful Macros and Constants, Compatibility with older versions, GMP and Reentrancy, GMP Basics
 @section Useful Macros and Constants
+@cindex Useful Macros and Constants
+@cindex Constants
 
 @deftypevr {Global Constant} {const int} mp_bits_per_limb
+@cindex Bits per limb
 The number of bits per limb.
 @end deftypevr
 
 @defmac __GNU_MP_VERSION
 @defmacx __GNU_MP_VERSION_MINOR
 @defmacx __GNU_MP_VERSION_PATCHLEVEL
+@cindex Version number
+@cindex GMP version number
 The major and minor GMP version, and patch level, respectively, as integers.
 For GMP i.j, these numbers will be i, j, and 0, respectively.
 For GMP i.j.k, these numbers will be i, j, and k, respectively.
@@ -738,6 +781,8 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 
 @node Compatibility with older versions, Getting the Latest Version of GMP, Useful Macros and Constants, GMP Basics
 @section Compatibility with older versions
+@cindex Compatibility with older versions
+@cindex Upward compatibility
 
 This version of GMP is upward compatible with version 2.0, 2.0.1, and 2.0.2 at
 the source level, with the exception of @code{mpn_gcd} which has had its
@@ -792,6 +837,9 @@ see the GMP 2 manual for details.
 
 @node  Getting the Latest Version of GMP,  , Compatibility with older versions, GMP Basics
 @section Getting the Latest Version of GMP
+@cindex Latest version of GMP
+@cindex Anonymous FTP of latest version
+@cindex FTP of latest version
 
 The latest version of the GMP library is available by at
 @uref{ftp://ftp.gnu.org/pub/gnu/gmp}.  Many sites around the world mirror
@@ -803,6 +851,7 @@ The latest version of the GMP library is available by at
 @comment  node-name,  next,  previous,  up
 @chapter Reporting Bugs
 @cindex Reporting bugs
+@cindex Bug reporting
 
 If you think you have found a bug in the GMP library, please investigate it
 and report it.  We have made this library available to you, and it is not too
@@ -870,17 +919,26 @@ GMP integers are stored in objects of type @code{mpz_t}.
 
 @menu
 * Initializing Integers::       
+* Assigning Integers::          
+* Simultaneous Integer Init & Assign::  
 * Converting Integers::         
 * Integer Arithmetic::          
-* Comparison Functions::        
+* Integer Division::            
+* Integer Exponentiation::      
+* Integer Roots::               
+* Number Theoretic Functions::  
+* Integer Comparisons::         
 * Integer Logic and Bit Fiddling::  
 * I/O of Integers::             
+* Integer Random Functions::    
 * Miscellaneous Integer Functions::  
 @end menu
 
-@node Initializing Integers, Converting Integers, Integer Functions, Integer Functions
+@node Initializing Integers, Assigning Integers, Integer Functions, Integer Functions
 @comment  node-name,  next,  previous,  up
-@section Initialization and Assignment Functions
+@section Initialization Functions
+@cindex Integer initialization functions
+@cindex Initialization functions
 
 The functions for integer arithmetic assume that all integer objects are
 initialized.  You do that by calling the function @code{mpz_init}.
@@ -938,15 +996,11 @@ Don't call @code{mpz_clear}!
 @end deftypefun
 
 
-@menu
-* Assigning Integers::          
-* Simultaneous Integer Init & Assign::  
-@end menu
-
-@node Assigning Integers, Simultaneous Integer Init & Assign, Initializing Integers, Initializing Integers
+@node Assigning Integers, Simultaneous Integer Init & Assign, Initializing Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
-@subsection Assignment Functions
+@section Assignment Functions
 @cindex Integer assignment functions
+@cindex Assignment functions
 
 These functions assign new values to already initialized integers
 (@pxref{Initializing Integers}).
@@ -977,10 +1031,11 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @end deftypefun
 
 
-@node Simultaneous Integer Init & Assign,  , Assigning Integers, Initializing Integers
+@node Simultaneous Integer Init & Assign, Converting Integers, Assigning Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
-@subsection Combined Initialization and Assignment Functions
+@section Combined Initialization and Assignment Functions
 @cindex Initialization and assignment functions
+@cindex Integer init and assign
 
 For convenience, GMP provides a parallel series of initialize-and-set functions
 which initialize the output and then store the value there.  These functions'
@@ -1023,7 +1078,7 @@ an error occurs.  (I.e., you have to call @code{mpz_clear} for it.)
 @end deftypefun
 
 
-@node Converting Integers, Integer Arithmetic, Initializing Integers, Integer Functions
+@node Converting Integers, Integer Arithmetic, Simultaneous Integer Init & Assign, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Conversion Functions
 @cindex Integer conversion functions
@@ -1080,7 +1135,7 @@ equal @var{str}, or if that is @code{NULL}, will point to the allocated storage.
 
 
 @need 2000
-@node Integer Arithmetic, Comparison Functions, Converting Integers, Integer Functions
+@node Integer Arithmetic, Integer Division, Converting Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Arithmetic Functions
 @cindex Integer arithmetic functions
@@ -1140,7 +1195,12 @@ Set @var{rop} to @minus{}@var{op}.
 Set @var{rop} to the absolute value of @var{op}.
 @end deftypefun
 
-@subsection Division and mod functions
+
+@need 2000
+@node Integer Division, Integer Exponentiation, Integer Arithmetic, Integer Functions
+@section Division Functions
+@cindex Integer division functions
+@cindex Division functions
 
 Division is undefined if the divisor is zero, and passing a zero divisor to the
 divide or modulo functions, as well passing a zero mod argument to the
@@ -1337,6 +1397,7 @@ The function @code{mpz_mod_ui} returns the remainder.
 @end deftypefun
 
 @deftypefun void mpz_divexact (mpz_t @var{q}, mpz_t @var{n}, mpz_t @var{d})
+@cindex Exact division functions
 Set @var{q} to @var{n}/@var{d}.  This function produces correct results only
 when it is known in advance that @var{d} divides @var{n}.
 
@@ -1391,7 +1452,12 @@ This operation can also be defined as masking of the @var{d} least significant
 bits.
 @end deftypefun
 
-@subsection Exponentiation Functions
+
+@need 2000
+@node Integer Exponentiation, Integer Roots, Integer Division, Integer Functions
+@section Exponentiation Functions
+@cindex Integer exponentiation functions
+@cindex Exponentiation functions
 
 @deftypefun void mpz_powm (mpz_t @var{rop}, mpz_t @var{base}, mpz_t @var{exp}, mpz_t @var{mod})
 @deftypefunx void mpz_powm_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp}, mpz_t @var{mod})
@@ -1410,7 +1476,12 @@ The case of $0^0$ yields 1.
 @end tex
 @end deftypefun
 
-@subsection Root Functions
+
+@need 2000
+@node Integer Roots, Number Theoretic Functions, Integer Exponentiation, Integer Functions
+@section Root Extraction Functions
+@cindex Integer root functions
+@cindex Root extraction functions
 
 @deftypefun int mpz_root (mpz_t @var{rop}, mpz_t @var{op}, unsigned long int @var{n})
 @ifnottex
@@ -1468,9 +1539,13 @@ Return non-zero if @var{op} is a perfect square, i.e., if the square root of
 @end deftypefun
 
 
-@subsection Number Theoretic Functions
+@need 2000
+@node Number Theoretic Functions, Integer Comparisons, Integer Roots, Integer Functions
+@section Number Theoretic Functions
+@cindex Number theoretic functions
 
 @deftypefun int mpz_probab_prime_p (mpz_t @var{n}, int @var{reps})
+@cindex Prime testing functions
 If this function returns 0, @var{n} is definitely not prime.  If it
 returns 1, then @var{n} is `probably' prime.  If it returns 2, then
 @var{n} is surely prime.  Reasonable values of reps vary from 5 to 10; a
@@ -1502,6 +1577,7 @@ be extremely small.
 @c @end deftypefun
 
 @deftypefun void mpz_gcd (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+@cindex Greatest common divisor functions
 Set @var{rop} to the greatest common divisor of @var{op1} and @var{op2}.
 The result is always positive even if either of or both input operands
 are negative.
@@ -1524,10 +1600,12 @@ Compute @var{g}, @var{s}, and @var{t}, such that @var{a}@var{s} +
 @end deftypefun
 
 @deftypefun void mpz_lcm (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+@cindex Least common multiple functions
 Set @var{rop} to the least common multiple of @var{op1} and @var{op2}.
 @end deftypefun
 
 @deftypefun int mpz_invert (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
+@cindex Modular inverse functions
 Compute the inverse of @var{op1} modulo @var{op2} and put the result in
 @var{rop}.  Return non-zero if an inverse exist, zero otherwise.  When the
 function returns zero, @var{rop} is undefined.
@@ -1535,6 +1613,7 @@ function returns zero, @var{rop} is undefined.
 
 @deftypefun int mpz_jacobi (mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx int mpz_legendre (mpz_t @var{op1}, mpz_t @var{op2})
+@cindex Jabobi symbol functions
 Compute the Jacobi and Legendre symbols, respectively.  @var{op2} should be
 odd and must be positive.
 @end deftypefun
@@ -1563,11 +1642,13 @@ result in @var{rop}.  Return the multiplicity of @var{f} in @var{op}.
 @end deftypefun
 
 @deftypefun void mpz_fac_ui (mpz_t @var{rop}, unsigned long int @var{op})
+@cindex Factorial functions
 Set @var{rop} to @var{op}!, the factorial of @var{op}.
 @end deftypefun
 
 @deftypefun void mpz_bin_ui (mpz_t @var{rop}, mpz_t @var{n}, unsigned long int @var{k})
 @deftypefunx void mpz_bin_uiui (mpz_t @var{rop}, unsigned long int @var{n}, unsigned long int @var{k})
+@cindex Binomial coefficient functions
 @ifnottex
 Compute the binomial coefficient @var{n} over @var{k} and store the result in
 @end ifnottex
@@ -1578,13 +1659,16 @@ Compute the binomial coefficient $\left({n}\atop{k}\right)$ and store the result
 @end deftypefun
 
 @deftypefun void mpz_fib_ui (mpz_t @var{rop}, unsigned long int @var{n})
+@cindex Fibonacci sequence functions
 Compute the @var{n}th Fibonacci number and store the result in @var{rop}.
 @end deftypefun
 
 
-@node Comparison Functions, Integer Logic and Bit Fiddling, Integer Arithmetic, Integer Functions
+@node Integer Comparisons, Integer Logic and Bit Fiddling, Number Theoretic Functions, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Comparison Functions
+@cindex Integer comparison functions
+@cindex Comparison functions
 
 @deftypefun int mpz_cmp (mpz_t @var{op1}, mpz_t @var{op2})
 @ifnottex
@@ -1643,11 +1727,12 @@ This function is actually implemented as a macro.  It evaluates its
 arguments multiple times.
 @end deftypefn
 
-@node Integer Logic and Bit Fiddling, I/O of Integers, Comparison Functions, Integer Functions
+@node Integer Logic and Bit Fiddling, I/O of Integers, Integer Comparisons, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Logical and Bit Manipulation Functions
 @cindex Logical functions
 @cindex Bit manipulation functions
+@cindex Integer bit manipulation functions
 
 These functions behave as if two's complement arithmetic were used (although
 sign-magnitude is used by the actual implementation).
@@ -1706,7 +1791,7 @@ Clear bit @var{bit_index} in @var{rop}.
 Check bit @var{bit_index} in @var{op} and return 0 or 1 accordingly.
 @end deftypefun
 
-@node I/O of Integers, Miscellaneous Integer Functions, Integer Logic and Bit Fiddling, Integer Functions
+@node I/O of Integers, Integer Random Numbers, Integer Logic and Bit Fiddling, Integer Functions
 @comment  node-name,  next,  previous,  up
 @section Input and Output Functions
 @cindex Integer input and output functions
@@ -1767,28 +1852,11 @@ machines.
 
 
 @need 2000
-@node Miscellaneous Integer Functions,  , I/O of Integers, Integer Functions
+@node Integer Random Numbers, Miscellaneous Integer Functions, I/O of Integers, Integer Functions
 @comment  node-name,  next,  previous,  up
-@section Miscellaneous Functions
-@cindex Miscellaneous integer functions
-
-@deftypefun int mpz_fits_ulong_p (mpz_t @var{op})
-@deftypefunx int mpz_fits_slong_p (mpz_t @var{op})
-@deftypefunx int mpz_fits_uint_p (mpz_t @var{op})
-@deftypefunx int mpz_fits_sint_p (mpz_t @var{op})
-@deftypefunx int mpz_fits_ushort_p (mpz_t @var{op})
-@deftypefunx int mpz_fits_sshort_p (mpz_t @var{op})
-Return non-zero iff the value of @var{op} fits in an @code{unsigned long int},
-@code{signed long int}, @code{unsigned int}, @code{signed int}, @code{unsigned
-short int}, or @code{signed short int}, respectively.  Otherwise, return zero.
-@end deftypefun
-
-@deftypefn Macro int mpz_odd_p (mpz_t @var{op})
-@deftypefnx Macro int mpz_even_p (mpz_t @var{op})
-Determine whether @var{op} is odd or even, respectively.  Return non-zero if
-yes, zero if no.  These macros evaluate their arguments more than once.
-@end deftypefn
-
+@section Random Number Functions
+@cindex Integer random number functions
+@cindex Random number functions
 
 The random number functions of GMP come in two groups; older function
 that rely on a global state, and newer functions that accept a state
@@ -1811,7 +1879,6 @@ The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization}) before
 invoking this function.
 @end deftypefun
-
 
 @deftypefun void mpz_urandomm (mpz_t @var{rop}, gmp_randstate_t @var{state},
 mpz_t @var{n})
@@ -1846,23 +1913,6 @@ The variable @var{state} must be initialized by calling one of the
 before invoking this function.
 @end deftypefun
 
-@deftypefun size_t mpz_size (mpz_t @var{op})
-Return the size of @var{op} measured in number of limbs.  If @var{op} is zero,
-the returned value will be zero.
-@c (@xref{Nomenclature}, for an explanation of the concept @dfn{limb}.)
-@end deftypefun
-
-@deftypefun size_t mpz_sizeinbase (mpz_t @var{op}, int @var{base})
-Return the size of @var{op} measured in number of digits in base @var{base}.
-The base may vary from 2 to 36.  The returned value will be exact or 1 too
-big.  If @var{base} is a power of 2, the returned value will always be exact.
-
-This function is useful in order to allocate the right amount of space before
-converting @var{op} to a string.  The right amount of allocation is normally
-two more than the value returned by @code{mpz_sizeinbase} (one extra for a
-minus sign and one for the terminating '\0').
-@end deftypefun
-
 @deftypefun void mpz_random (mpz_t @var{rop}, mp_size_t @var{max_size})
 Generate a random integer of at most @var{max_size} limbs.  The generated
 random number doesn't satisfy any particular requirements of randomness.
@@ -1880,6 +1930,48 @@ likely to trigger corner-case bugs.  Negative random numbers are generated
 when @var{max_size} is negative.
 
 This function is obsolete.  Use @code{mpz_rrandomb} instead.
+@end deftypefun
+
+
+@need 2000
+@node Miscellaneous Integer Functions,  , Integer Random Numbers, Integer Functions
+@comment  node-name,  next,  previous,  up
+@section Miscellaneous Functions
+@cindex Miscellaneous integer functions
+@cindex Integer miscellaneous functions
+
+@deftypefun int mpz_fits_ulong_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_slong_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_uint_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_sint_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_ushort_p (mpz_t @var{op})
+@deftypefunx int mpz_fits_sshort_p (mpz_t @var{op})
+Return non-zero iff the value of @var{op} fits in an @code{unsigned long int},
+@code{signed long int}, @code{unsigned int}, @code{signed int}, @code{unsigned
+short int}, or @code{signed short int}, respectively.  Otherwise, return zero.
+@end deftypefun
+
+@deftypefn Macro int mpz_odd_p (mpz_t @var{op})
+@deftypefnx Macro int mpz_even_p (mpz_t @var{op})
+Determine whether @var{op} is odd or even, respectively.  Return non-zero if
+yes, zero if no.  These macros evaluate their arguments more than once.
+@end deftypefn
+
+@deftypefun size_t mpz_size (mpz_t @var{op})
+Return the size of @var{op} measured in number of limbs.  If @var{op} is zero,
+the returned value will be zero.
+@c (@xref{Nomenclature}, for an explanation of the concept @dfn{limb}.)
+@end deftypefun
+
+@deftypefun size_t mpz_sizeinbase (mpz_t @var{op}, int @var{base})
+Return the size of @var{op} measured in number of digits in base @var{base}.
+The base may vary from 2 to 36.  The returned value will be exact or 1 too
+big.  If @var{base} is a power of 2, the returned value will always be exact.
+
+This function is useful in order to allocate the right amount of space before
+converting @var{op} to a string.  The right amount of allocation is normally
+two more than the value returned by @code{mpz_sizeinbase} (one extra for a
+minus sign and one for the terminating '\0').
 @end deftypefun
 
 
@@ -1910,16 +2002,18 @@ Remove any factors that are common to the numerator and denominator of
 
 @menu
 * Initializing Rationals::      
-* Assigning Rationals::         
+* Rational Arithmetic::         
 * Comparing Rationals::         
 * Applying Integer Functions::  
 * I/O of Rationals::            
 * Miscellaneous Rational Functions::  
 @end menu
 
-@node Initializing Rationals, Assigning Rationals, Rational Number Functions, Rational Number Functions
+@node Initializing Rationals, Rational Arithmetic, Rational Number Functions, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Initialization and Assignment Functions
+@cindex Initialization and assignment functions
+@cindex Rational init and assign
 
 @deftypefun void mpq_init (mpq_t @var{dest_rational})
 Initialize @var{dest_rational} and set it to 0/1.  Each variable should
@@ -1949,9 +2043,11 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @end deftypefun
 
 
-@node Assigning Rationals, Comparing Rationals, Initializing Rationals, Rational Number Functions
+@node Rational Arithmetic, Comparing Rationals, Initializing Rationals, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Arithmetic Functions
+@cindex Rational arithmetic functions
+@cindex Arithmetic functions
 
 @deftypefun void mpq_add (mpq_t @var{sum}, mpq_t @var{addend1}, mpq_t @var{addend2})
 Set @var{sum} to @var{addend1} + @var{addend2}.
@@ -1971,6 +2067,7 @@ Set @var{product} to $@var{multiplier} \times @var{multiplicand}$.
 @end deftypefun
 
 @deftypefun void mpq_div (mpq_t @var{quotient}, mpq_t @var{dividend}, mpq_t @var{divisor})
+@cindex Division functions
 Set @var{quotient} to @var{dividend}/@var{divisor}.
 @end deftypefun
 
@@ -1983,9 +2080,11 @@ Set @var{inverted_number} to 1/@var{number}.  If the new denominator is
 zero, this routine will divide by zero.
 @end deftypefun
 
-@node Comparing Rationals, Applying Integer Functions, Assigning Rationals, Rational Number Functions
+@node Comparing Rationals, Applying Integer Functions, Rational Arithmetic, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Comparison Functions
+@cindex Rational comparison functions
+@cindex Comparison functions
 
 @deftypefun int mpq_cmp (mpq_t @var{op1}, mpq_t @var{op2})
 @ifnottex
@@ -2043,6 +2142,8 @@ function is much faster.
 @node Applying Integer Functions, I/O of Rationals, Comparing Rationals, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Applying Integer Functions to Rationals
+@cindex Rational numerator and denominator
+@cindex Numerator and denominator
 
 The set of @code{mpq} functions is quite small.  In particular, there are few
 functions for either input or output.  But there are two macros that allow us
@@ -2088,6 +2189,8 @@ Return the number of bytes written, or if an error occurred, return 0.
 @node Miscellaneous Rational Functions,  , I/O of Rationals, Rational Number Functions
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
+@cindex Rational miscellaneous functions
+@cindex Miscellaneous rational functions
 
 @deftypefun double mpq_get_d (mpq_t @var{op})
 Convert @var{op} to a double.
@@ -2165,6 +2268,7 @@ variable will take place with the precision of the assigned variable; the
 precision of variables used as input is ignored.
 
 @cindex User-defined precision
+@cindex Precision of floats
 The precision of a calculation is defined as follows: Compute the requested
 operation exactly (with ``infinite precision''), and truncate the result to
 the destination variable precision.  Even if the user has asked for a very
@@ -2180,6 +2284,8 @@ different word size.
 
 @menu
 * Initializing Floats::         
+* Assigning Floats::            
+* Simultaneous Float Init & Assign::  
 * Converting Floats::           
 * Float Arithmetic::            
 * Float Comparison::            
@@ -2187,9 +2293,11 @@ different word size.
 * Miscellaneous Float Functions::  
 @end menu
 
-@node Initializing Floats, Converting Floats, Floating-point Functions, Floating-point Functions
+@node Initializing Floats, Assigning Floats, Floating-point Functions, Floating-point Functions
 @comment  node-name,  next,  previous,  up
-@section Initialization and Assignment Functions
+@section Initialization Functions
+@cindex Float initialization functions
+@cindex Initialization functions
 
 @deftypefun void mpf_set_default_prec (unsigned long int @var{prec})
 Set the default precision to be @strong{at least} @var{prec} bits.  All
@@ -2258,15 +2366,12 @@ the first call to @code{mpf_set_prec_raw}.
 @end deftypefun
 
 
-@menu
-* Assigning Floats::            
-* Simultaneous Float Init & Assign::  
-@end menu
-
-@node Assigning Floats, Simultaneous Float Init & Assign, Initializing Floats, Initializing Floats
+@need 2000
+@node Assigning Floats, Simultaneous Float Init & Assign, Initializing Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
-@subsection Assignment Functions
+@section Assignment Functions
 @cindex Float assignment functions
+@cindex Assignment functions
 
 These functions assign new values to already initialized floats
 (@pxref{Initializing Floats}).
@@ -2306,10 +2411,11 @@ Swap the values @var{rop1} and @var{rop2} efficiently.
 @end deftypefun
 
 
-@node Simultaneous Float Init & Assign,  , Assigning Floats, Initializing Floats
+@node Simultaneous Float Init & Assign, Converting Floats, Assigning Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
-@subsection Combined Initialization and Assignment Functions
+@section Combined Initialization and Assignment Functions
 @cindex Initialization and assignment functions
+@cindex Float init and assign functions
 
 For convenience, GMP provides a parallel series of initialize-and-set functions
 which initialize the output and then store the value there.  These functions'
@@ -2342,9 +2448,10 @@ set by @code{mpf_set_default_prec}.
 @end deftypefun
 
 
-@node Converting Floats, Float Arithmetic, Initializing Floats, Floating-point Functions
+@node Converting Floats, Float Arithmetic, Simultaneous Float Init & Assign, Floating-point Functions
 @comment  node-name,  next,  previous,  up
 @section Conversion Functions
+@cindex Float conversion functions
 @cindex Conversion functions
 
 @deftypefun double mpf_get_d (mpf_t @var{op})
@@ -2421,11 +2528,13 @@ manner as other arithmetic exceptions.
 @deftypefun void mpf_div (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_ui_div (mpf_t @var{rop}, unsigned long int @var{op1}, mpf_t @var{op2})
 @deftypefunx void mpf_div_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
+@cindex Division functions
 Set @var{rop} to @var{op1}/@var{op2}.
 @end deftypefun
 
 @deftypefun void mpf_sqrt (mpf_t @var{rop}, mpf_t @var{op})
 @deftypefunx void mpf_sqrt_ui (mpf_t @var{rop}, unsigned long int @var{op})
+@cindex Root extraction functions
 @ifnottex
 Set @var{rop} to the square root of @var{op}.
 @end ifnottex
@@ -2435,6 +2544,7 @@ Set @var{rop} to $\sqrt{@var{op}}$.
 @end deftypefun
 
 @deftypefun void mpf_pow_ui (mpf_t @var{rop}, mpf_t @var{op1}, unsigned long int @var{op2})
+@cindex Exponentiation functions
 @ifnottex
 Set @var{rop} to @var{op1} raised to the power @var{op2}.
 @end ifnottex
@@ -2472,7 +2582,7 @@ Set @var{rop} to $@var{op1}/2^{op2}$.
 @node Float Comparison, I/O of Floats, Float Arithmetic, Floating-point Functions
 @comment  node-name,  next,  previous,  up
 @section Comparison Functions
-@cindex Float comparisons functions
+@cindex Float comparison functions
 @cindex Comparison functions
 
 @deftypefun int mpf_cmp (mpf_t @var{op1}, mpf_t @var{op2})
@@ -2580,6 +2690,7 @@ Return the number of bytes read, or if an error occurred, return 0.
 @comment  node-name,  next,  previous,  up
 @section Miscellaneous Functions
 @cindex Miscellaneous float functions
+@cindex Float miscellaneous functions
 
 @deftypefun void mpf_ceil (mpf_t @var{rop}, mpf_t @var{op})
 @deftypefunx void mpf_floor (mpf_t @var{rop}, mpf_t @var{op})
@@ -3041,7 +3152,7 @@ Return non-zero iff @{@var{s1p}, @var{size}@} is a perfect square.
 
 @node  Random Number Functions, BSD Compatible Functions, Low-level Functions, Top
 @chapter Random Number Functions
-@cindex Random Number Functions
+@cindex Random number functions
 
 There are two groups of random number functions in GNU MP; older
 functions that call C library random number generators, rely on a global
@@ -3086,6 +3197,7 @@ The functions actually generating random functions are documented under
 
 @node  Random State Initialization,  , Random Number Functions, Random Number Functions
 @section Random State Initialization
+@cindex Random number state
 
 See @ref{Random Number Functions} for a discussion on how to choose the
 initial seed value passed to these functions.
@@ -3196,6 +3308,7 @@ them.
 @node BSD Compatible Functions, Custom Allocation, Random Number Functions, Top
 @comment  node-name,  next,  previous,  up
 @chapter Berkeley MP Compatible Functions
+@cindex Berkeley MP compatible functions
 @cindex BSD MP compatible functions
 
 These functions are intended to be fully compatible with the Berkeley MP
@@ -3316,9 +3429,13 @@ De-allocate, the space used by @var{operand}.  @strong{This function should
 only be passed a value returned by @code{itom} or @code{xtom}.}
 @end deftypefun
 
+
 @node Custom Allocation, Contributors, BSD Compatible Functions, Top
 @comment  node-name,  next,  previous,  up
 @chapter Custom Allocation
+@cindex Custom allocation
+@cindex Memory allocation
+@cindex Allocation of memory
 
 By default, the GMP functions use @code{malloc}, @code{realloc}, and
 @code{free} for memory allocation.  If @code{malloc} or @code{realloc} fails,
@@ -3372,6 +3489,7 @@ the size of an object, normally an 8 bit byte.)
 @node Contributors, References, Custom Allocation, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered Contributors
+@cindex Contributors
 
 Torbjorn Granlund wrote the original GMP library and is still developing
 and maintaining it.  Several other individuals and organizations have
@@ -3450,6 +3568,7 @@ about the omission!)
 @node References, Concept Index, Contributors, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered References
+@cindex References
 
 @itemize @bullet
 
