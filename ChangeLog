@@ -1,5 +1,7 @@
 2001-02-19  Torbjorn Granlund  <tege@swox.com>
 
+	* tune/tuneup.c (all): Recognise DECC and MIPSpro compilers.
+
 	* mpn/pa64/sqr_diagonal.asm: Use PROLOGUE/EPILOGUE.
 	* mpn/pa642/sqr_diagonal.asm: Likewise.
 
