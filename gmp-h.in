@@ -239,21 +239,13 @@ typedef enum
   GMP_RAND_ALG_LC = GMP_RAND_ALG_DEFAULT /* Linear congruential.  */
 } gmp_randalg_t;
 
-/* Linear congruential data struct.  */
-typedef struct {
-  mpz_t _mp_a;			/* Multiplier. */
-  unsigned long int _mp_c;	/* Adder. */
-  mpz_t _mp_m;			/* Modulus (valid only if m2exp == 0).  */
-  unsigned long int _mp_m2exp;	/* If != 0, modulus is 2 ^ m2exp.  */
-} __gmp_randata_lc;
-
 /* Random state struct.  */
 typedef struct
 {
-  mpz_t _mp_seed;		/* Current seed.  */
-  gmp_randalg_t _mp_alg;	/* Algorithm used.  */
-  union {			/* Algorithm specific data.  */
-    __gmp_randata_lc *_mp_lc;	/* Linear congruential.  */
+  mpz_t _mp_seed;	  /* _mp_d member points to state of the generator. */
+  gmp_randalg_t _mp_alg;  /* Currently unused. */
+  union {
+    void *_mp_lc;         /* Pointer to function pointers structure.  */
   } _mp_algdata;
 } __gmp_randstate_struct;
 typedef __gmp_randstate_struct gmp_randstate_t[1];
@@ -508,10 +500,6 @@ __GMP_DECLSPEC void gmp_randinit __GMP_PROTO ((gmp_randstate_t, gmp_randalg_t, .
 #define gmp_randinit_default __gmp_randinit_default
 __GMP_DECLSPEC void gmp_randinit_default __GMP_PROTO ((gmp_randstate_t));
 
-#define gmp_randinit_lc __gmp_randinit_lc
-__GMP_DECLSPEC void gmp_randinit_lc __GMP_PROTO ((gmp_randstate_t,
-                              mpz_srcptr, unsigned long int, mpz_srcptr));
-
 #define gmp_randinit_lc_2exp __gmp_randinit_lc_2exp
 __GMP_DECLSPEC void gmp_randinit_lc_2exp __GMP_PROTO ((gmp_randstate_t,
                                    mpz_srcptr, unsigned long int,
@@ -519,6 +507,9 @@ __GMP_DECLSPEC void gmp_randinit_lc_2exp __GMP_PROTO ((gmp_randstate_t,
 
 #define gmp_randinit_lc_2exp_size __gmp_randinit_lc_2exp_size
 __GMP_DECLSPEC int gmp_randinit_lc_2exp_size __GMP_PROTO ((gmp_randstate_t, unsigned long));
+
+#define gmp_randinit_mt __gmp_randinit_mt
+__GMP_DECLSPEC void gmp_randinit_mt __GMP_PROTO ((gmp_randstate_t));
 
 #define gmp_randseed __gmp_randseed
 __GMP_DECLSPEC void gmp_randseed __GMP_PROTO ((gmp_randstate_t, mpz_srcptr));
