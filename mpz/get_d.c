@@ -21,8 +21,6 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-#include "longlong.h"
-
 
 double
 mpz_get_d (mpz_srcptr z)
