@@ -1587,11 +1587,16 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
    different.
 
    The table lookup gives an inverse with the low 8 bits valid, and each
-   multiply step doubles the number of bits.  See Jebelean's exact division
-   paper, end of section 4 (reference in gmp.texi).
+   multiply step doubles the number of bits.  See Jebelean "An algorithm for
+   exact division" end of section 4 (reference in gmp.texi).
 
    Possible enhancement: Could use UHWtype until the last step, if half-size
-   multiplies are faster (might help under _LONG_LONG_LIMB).  */
+   multiplies are faster (might help under _LONG_LONG_LIMB).
+
+   Alternative: As noted in Granlund and Montgomery "Division by Invariant
+   Integers using Multiplication" (reference in gmp.texi), n itself gives a
+   3-bit inverse immediately, and could be used instead of a table lookup.
+   Some bit twiddling could very likely give a 4-bit inverse to start too.  */
 
 #define modlimb_invert_table  __gmp_modlimb_invert_table
 extern const unsigned char  modlimb_invert_table[128];
@@ -2402,7 +2407,7 @@ class gmp_allocated_string {
 int __gmp_istream_set_base (std::istream &, char &, bool &, bool &);
 void __gmp_istream_set_digits (std::string &, std::istream &, char &, bool &, int);
 void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, std::ios &o);
-std::ostream& __gmp_doprnt_integer_ostream (std::ostream &o, const struct doprnt_params_t *p, char *s);
+std::ostream& __gmp_doprnt_integer_ostream (std::ostream &o, struct doprnt_params_t *p, char *s);
 extern const struct doprnt_funs_t  __gmp_asprintf_funs_noformat;
 
 #endif /* __cplusplus */
