@@ -603,11 +603,11 @@ param_init (void)
 
   p = &param[TYPE_ANDN_N];
   COPY (TYPE_AND_N);
-  REFERENCE (refmpn_and_n);
+  REFERENCE (refmpn_andn_n);
 
   p = &param[TYPE_NAND_N];
   COPY (TYPE_AND_N);
-  REFERENCE (refmpn_and_n);
+  REFERENCE (refmpn_nand_n);
 
   p = &param[TYPE_IOR_N];
   COPY (TYPE_AND_N);
