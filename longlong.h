@@ -43,7 +43,7 @@ MA 02111-1307, USA. */
 #endif
 
 #ifndef _PROTO
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 #define _PROTO(x) x
 #else
 #define _PROTO(x) ()
@@ -1213,7 +1213,7 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 
 #if !defined (count_leading_zeros)
 extern
-#ifdef __STDC__
+#if __STDC__
 const
 #endif
 unsigned char __clz_tab[];

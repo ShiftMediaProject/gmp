@@ -81,7 +81,7 @@ MA 02111-1307, USA. */
 #include "gmp-mparam.h"
 /* #include "longlong.h" */
 
-#if defined (__STDC__)  || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 void *malloc (size_t);
 void *realloc (void *, size_t);
 void free (void *);
@@ -457,13 +457,13 @@ extern const int __gmp_0;
 #define DIVIDE_BY_ZERO (__gmp_junk = 10/__gmp_0)
 
 #if defined _LONG_LONG_LIMB
-#if defined (__STDC__)
+#if __STDC__
 #define CNST_LIMB(C) C##LL
 #else
 #define CNST_LIMB(C) C/**/LL
 #endif
 #else /* not _LONG_LONG_LIMB */
-#if defined (__STDC__)
+#if __STDC__
 #define CNST_LIMB(C) C##L
 #else
 #define CNST_LIMB(C) C/**/L

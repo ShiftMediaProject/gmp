@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 #define _LONG_LONG_LIMB
 #endif
 
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 #define __gmp_const const
 #define __gmp_signed signed
 #else
@@ -173,7 +173,7 @@ typedef __gmp_const __mpq_struct *mpq_srcptr;
 typedef __mpq_struct *mpq_ptr;
 
 #ifndef _PROTO
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 #define _PROTO(x) x
 #else
 #define _PROTO(x) ()
@@ -181,7 +181,7 @@ typedef __mpq_struct *mpq_ptr;
 #endif
 
 #ifndef __MPN
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 #define __MPN(x) __mpn_##x
 #else
 #define __MPN(x) __mpn_/**/x
@@ -739,7 +739,7 @@ mp_limb_t mpn_submul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
 _EXTERN_INLINE mp_limb_t
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 mpn_add_1 (register mp_ptr res_ptr,
 	   register mp_srcptr s1_ptr,
 	   register mp_size_t s1_size,
@@ -781,7 +781,7 @@ mpn_add_1 (res_ptr, s1_ptr, s1_size, s2_limb)
 }
 
 _EXTERN_INLINE mp_limb_t
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 mpn_add (register mp_ptr res_ptr,
 	 register mp_srcptr s1_ptr,
 	 register mp_size_t s1_size,
@@ -810,7 +810,7 @@ mpn_add (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 }
 
 _EXTERN_INLINE mp_limb_t
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 mpn_sub_1 (register mp_ptr res_ptr,
 	   register mp_srcptr s1_ptr,
 	   register mp_size_t s1_size,
@@ -852,7 +852,7 @@ mpn_sub_1 (res_ptr, s1_ptr, s1_size, s2_limb)
 }
 
 _EXTERN_INLINE mp_limb_t
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 mpn_sub (register mp_ptr res_ptr,
 	 register mp_srcptr s1_ptr,
 	 register mp_size_t s1_size,
@@ -882,7 +882,7 @@ mpn_sub (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 #endif /* __GNUC__ */
 
 _EXTERN_INLINE mp_limb_t
-#if defined (__STDC__) || defined (__cplusplus)
+#if (__STDC__-0) || defined (__cplusplus)
 mpn_divrem (mp_ptr _gmp_qp, mp_size_t _gmp_qn,
 	    mp_ptr _gmp_np, mp_size_t _gmp_nn,
 	    mp_srcptr _gmp_dp, mp_size_t _gmp_dn)
