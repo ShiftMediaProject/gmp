@@ -94,6 +94,10 @@ MA 02111-1307, USA. */
 #define ALLOC(x) ((x)->_mp_alloc)
 
 
+#define MP_LIMB_T_MAX      (~ (mp_limb_t) 0)
+#define MP_LIMB_T_HIGHBIT  (~ (MP_LIMB_T_MAX >> 1))
+
+
 /* Swap macros. */
 
 #define MP_LIMB_T_SWAP(x, y)                    \
