@@ -481,6 +481,30 @@ else
 fi
 ])dnl
 
+dnl  GMP_CHECK_ASM_SHLDL_CL([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
+AC_DEFUN(GMP_CHECK_ASM_SHLDL_CL,
+[AC_REQUIRE([GMP_CHECK_ASM_TEXT])
+AC_CACHE_CHECK([if the assembler takes cl with shldl],
+		gmp_cv_check_asm_shldl_cl,
+[cat > conftest.s <<EOF
+	$gmp_check_asm_text
+	shldl	%cl, %eax, %ebx
+EOF
+ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+if AC_TRY_EVAL(ac_assemble); then
+  gmp_cv_check_asm_shldl_cl=yes
+else 
+  gmp_cv_check_asm_shldl_cl=no
+fi
+rm -f conftest*
+])
+if test "$gmp_cv_check_asm_shldl_cl" = "yes"; then
+  ifelse([$1], , :, [$1])
+else
+  ifelse([$2], , :, [$2])
+fi
+])dnl
+
 dnl  GMP_PROG_CC_WORKS(CC, CFLAGS, ACTION-IF-WORKS, [ACTION-IF-NOT-WORKS])
 dnl  Check if CC can compile and link.  Perform various target specific tests.
 dnl  FIXME: Require `$target'.
