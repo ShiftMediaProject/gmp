@@ -1,4 +1,4 @@
-dnl  Intel Pentium mpn_mul_1 -- mpn by limb multiplication.
+dnl  Intel Pentium MMX mpn_mul_1 -- mpn by limb multiplication.
 dnl
 dnl     cycles/limb
 dnl  P5:   12.0   for 32-bit multiplier
@@ -30,14 +30,14 @@ C mp_limb_t mpn_mul_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
 C                      mp_limb_t multiplier);
 C
 C When the multiplier is 16 bits some special case MMX code is used.  This
-C isn't a particularly important case in general, but small multipliers
-C might come about reasonably often from mpz_mul_ui etc.
+C isn't a particularly important in general, but small multipliers might
+C come about reasonably often from mpz_mul_ui etc.
 C
 C In the MMX code, if the size is odd there's roughly a 5 cycle penalty, so
 C times for say size==7 and size==8 end up being quite close.  If src isn't
 C aligned to an 8 byte boundary then one limb is processed separately with
-C roughly a 5 cycle penalty, so in that case it's size==8 and size==9 which
-C are close.
+C roughly a 5 cycle penalty, so in that case it's say size==8 and size==9
+C which are close.
 C
 C Alternatives:
 C
@@ -240,8 +240,8 @@ C
 C Trouble has been taken to avoid overlapping successive loop iterations,
 C since that would greatly increase the size of the startup and finishup
 C code.  Actually there's probably not much advantage to be had from
-C overlapping, since the difficulties are mostly with pairing, not with
-C latencies as such.
+C overlapping anyway, since the difficulties are mostly with pairing, not
+C with latencies as such.
 C
 C In the comments x represents the src data and m the multiplier (16
 C bits, but replicated 4 times).
