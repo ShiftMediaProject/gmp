@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.168
+# From configure.in Revision: 1.170
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -1331,20 +1331,10 @@ fi
     ;;
 
   # POWER/PowerPC
-  powerpc64-*-aix*)
+  powerpc64*-*-aix*)
     cclist="gcc xlc"
     gmp_cflags_gcc="$gmp_cflags_gcc -maix64 -mpowerpc64"
     gmp_cflags_xlc="-g -O2 -q64 -qtune=pwr3"
-    ;;
-  powerpc*-*-aix*)
-    cclist="gcc xlc"
-    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
-    gmp_cflags_xlc="$gmp_cflags_cc -qarch=ppc -O2"
-    ;;
-  power-*-aix*)
-    cclist="gcc xlc"
-    gmp_cflags_gcc="$gmp_cflags_gcc -mpower"
-    gmp_cflags_xlc="$gmp_cflags_cc -qarch=pwr -O2"
     ;;
   powerpc64*-*-*)
     gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc64"
@@ -1352,8 +1342,18 @@ fi
 #define _LONG_LONG_LIMB 1
 EOF
 	    ;;
+  powerpc*-*-aix*)
+    cclist="gcc xlc"
+    gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
+    gmp_cflags_xlc="$gmp_cflags_cc -qarch=ppc -O2"
+    ;;
   powerpc*-*-*)
     gmp_cflags_gcc="$gmp_cflags_gcc -mpowerpc"
+    ;;
+  power-*-aix* | power[12]-*-aix* | power2sc-*-aix*)
+    cclist="gcc xlc"
+    gmp_cflags_gcc="$gmp_cflags_gcc -mpower"
+    gmp_cflags_xlc="$gmp_cflags_cc -qarch=pwr -O2"
     ;;
 
   # MIPS
@@ -2323,7 +2323,7 @@ case ${target} in
       pentiummmx-*-* | pentium[23]-*-* | k6*-*-* | athlon-*-*)
 	echo $ECHO_N "checking if the assembler knows about MMX instructions... $ECHO_C" 1>&6
 echo "configure:2326: checking if the assembler knows about MMX instructions" 1>&5
-if test "${gmp_cv_asm_mmx+set}" = set; then
+if test "${gmp_cv_asm_x86_mmx+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
   cat >conftest.s <<EOF
@@ -2332,15 +2332,15 @@ else
 EOF
 gmp_assemble="$CCAS $CFLAGS conftest.s 1>&5"
 if { (eval echo configure:2335: \"$gmp_assemble\") 1>&5; (eval $gmp_assemble) 2>&5; }; then
-  gmp_cv_asm_mmx=yes
+  gmp_cv_asm_x86_mmx=yes
 else
-  gmp_cv_asm_mmx=no
+  gmp_cv_asm_x86_mmx=no
 fi
 rm -f conftest*
 
 fi
-echo "$ECHO_T""$gmp_cv_asm_mmx" 1>&6
-if test "$gmp_cv_asm_mmx" = "yes"; then
+echo "$ECHO_T""$gmp_cv_asm_x86_mmx" 1>&6
+if test "$gmp_cv_asm_x86_mmx" = "yes"; then
   tmp_mmx=yes
 else
   echo "configure: warning: +----------------------------------------------------------" 1>&2
@@ -2440,7 +2440,7 @@ fi
   ppc601-*-*) path="power powerpc32";;
   powerpc64*-*-*) path="powerpc64";;
   powerpc*-*-*) path="powerpc32";;
-  power-*-* | power2-*-*)
+  power-*-* | power[12]-*-* | power2sc-*-*)
     path="power"
     extra_functions="udiv_w_sdiv"
     ;;
@@ -4712,37 +4712,8 @@ echo "define(<WANT_R_REGISTERS>,<$gmp_cv_asm_powerpc_r_registers>)" >> $gmp_tmpc
 
     i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
 
-echo $ECHO_N "checking if the assembler takes cl with shldl... $ECHO_C" 1>&6
-echo "configure:4717: checking if the assembler takes cl with shldl" 1>&5
-if test "${gmp_cv_asm_shldl_cl+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" 1>&6
-else
-  cat >conftest.s <<EOF
-	$gmp_cv_asm_text
-	shldl	%cl, %eax, %ebx
-EOF
-gmp_assemble="$CCAS $CFLAGS conftest.s 1>&5"
-if { (eval echo configure:4726: \"$gmp_assemble\") 1>&5; (eval $gmp_assemble) 2>&5; }; then
-  gmp_cv_asm_shldl_cl=yes
-else
-  gmp_cv_asm_shldl_cl=no
-fi
-rm -f conftest*
-
-fi
-echo "$ECHO_T""$gmp_cv_asm_shldl_cl" 1>&6
-if test "$gmp_cv_asm_shldl_cl" = "yes"; then
-
-echo 'define(<WANT_SHLDL_CL>, <1>)' >> $gmp_tmpconfigm4
-
-else
-
-echo 'define(<WANT_SHLDL_CL>, <0>)' >> $gmp_tmpconfigm4
-
-fi
-
 echo $ECHO_N "checking if the .align directive accepts an 0x90 fill in .text... $ECHO_C" 1>&6
-echo "configure:4746: checking if the .align directive accepts an 0x90 fill in .text" 1>&5
+echo "configure:4717: checking if the .align directive accepts an 0x90 fill in .text" 1>&5
 if test "${gmp_cv_asm_align_fill_0x90+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" 1>&6
 else
@@ -4771,6 +4742,35 @@ fi
 echo "$ECHO_T""$gmp_cv_asm_align_fill_0x90" 1>&6
 
 echo "define(<ALIGN_FILL_0x90>,<$gmp_cv_asm_align_fill_0x90>)" >> $gmp_tmpconfigm4
+
+echo $ECHO_N "checking if the assembler takes cl with shldl... $ECHO_C" 1>&6
+echo "configure:4748: checking if the assembler takes cl with shldl" 1>&5
+if test "${gmp_cv_asm_x86_shldl_cl+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" 1>&6
+else
+  cat >conftest.s <<EOF
+	$gmp_cv_asm_text
+	shldl	%cl, %eax, %ebx
+EOF
+gmp_assemble="$CCAS $CFLAGS conftest.s 1>&5"
+if { (eval echo configure:4757: \"$gmp_assemble\") 1>&5; (eval $gmp_assemble) 2>&5; }; then
+  gmp_cv_asm_x86_shldl_cl=yes
+else
+  gmp_cv_asm_x86_shldl_cl=no
+fi
+rm -f conftest*
+
+fi
+echo "$ECHO_T""$gmp_cv_asm_x86_shldl_cl" 1>&6
+if test "$gmp_cv_asm_x86_shldl_cl" = "yes"; then
+
+echo 'define(<WANT_SHLDL_CL>, <1>)' >> $gmp_tmpconfigm4
+
+else
+
+echo 'define(<WANT_SHLDL_CL>, <0>)' >> $gmp_tmpconfigm4
+
+fi
 
       if test "$enable_profiling" != no; then
 
