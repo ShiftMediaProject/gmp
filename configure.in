@@ -306,8 +306,8 @@ case $host in
 
     # only need ev5 and ev6 for current asm code, nothing more specific
     case $host_cpu in
-      alphaev5* | alphapca5*) gcc_cflags_asm="-Wa,-arch,ev5 -Wa,-mev5" ;;
-      alphaev6)               gcc_cflags_asm="-Wa,-arch,ev6 -Wa,-mev6" ;;
+      alphaev56 | alphapca5*) gcc_cflags_asm="-Wa,-arch,ev56 -Wa,-mev56" ;;
+      alphaev6*)              gcc_cflags_asm="-Wa,-arch,ev6 -Wa,-mev6" ;;
     esac
 
     # It might be better to ask "cc" whether it's Cray C or DEC C,
