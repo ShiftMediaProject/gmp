@@ -24,6 +24,16 @@ include(`../config.m4')
 
 C void speed_cyclecounter (unsigned int p[2]);
 C
+
+C The rpcc instruction returns a 64-bit value split into two 32-bit fields.
+C The lower 32 bits are set by the hardware, and the upper 32 bits are set
+C by the operating system.  The real per-process cycle count is the sum of
+C these halves.
+
+C Unfortunately, some operating systems don't get this right.  NetBSD 1.3 is
+C known to sometimes put garbage in the upper half.  Whether newer NetBSD
+C versions get it right, is unknown to us.
+
 C rpcc measures cycles elapsed in the user program and hence should be very
 C accurate even on a busy system.  Losing cache contents due to task
 C switching may have an effect though.
@@ -31,9 +41,10 @@ C switching may have an effect though.
 ASM_START()
 PROLOGUE(speed_cyclecounter)
 	rpcc	r0
+	srl	r0,32,r1
+	addq	r1,r0,r0
 	stl	r0,0(r16)
-	srl	r0,32,r0
-	stl	r0,4(r16)
+	stl	r31,4(r16)		C zero upper return word
 	ret	r31,(r26),1
 EPILOGUE(speed_cyclecounter)
 ASM_END()
