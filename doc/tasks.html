@@ -25,6 +25,9 @@
 
 <h4>Correctness and Completeness</h4>
 <ul>
+<li> mpn/generic/get_str.c stores mp_size_t data in several int variables.
+     (It is also really slow.  Perhaps just call mpn_divrem_1.  See also
+     optimization item below.)
 <li> mpf{r,}_random2 incorrectly assumes random() returns enough bits
      for an mp_exp_t.
 <li> The various reuse.c tests need to force reallocation by calling

@@ -8,8 +8,8 @@ RELEVANT OPTIMIZATION ISSUES
 On most early SPARC implementations, the ST instructions takes multiple
 cycles, while a STD takes just a single cycle more than an ST.  For the CPUs
 in SPARCstation I and II, the times are 3 and 4 cycles, respectively.
-Therefore, combining two ST instrucitons into a STD when possible is a
-significant optimiation.
+Therefore, combining two ST instructions into a STD when possible is a
+significant optimization.
 
 Later SPARC implementations have single cycle ST.
 
@@ -18,6 +18,9 @@ if up to two integer instructions can be executed in its pipeline.  For
 programs that perform so many memory operations that there are not enough
 non-memory operations to issue in parallel with all memory operations, using
 LDD and STD when possible helps.
+
+UltraSPARC-1/2 has very slow integer multiplication.  In the v9 subdirectory,
+we therefore use floating-point multiplication.
 
 STATUS
 
@@ -31,6 +34,6 @@ STATUS
 3. mpn_mul_1 runs at what is believed to be optimal speed.
 
 4. On SuperSPARC, mpn_addmul_1 and mpn_submul_1 could both be improved by a
-   cycle by avoiding one of the add instrucitons.  See a29k/addmul_1.
+   cycle by avoiding one of the add instructions.  See a29k/addmul_1.
 
 The speed of the code for other SPARC implementations is uncertain.
