@@ -632,27 +632,6 @@ AC_MSG_RESULT([$gmp_gcc_arm_umodsi_result])
 ])
 
 
-dnl  GMP_GCC_M68K_OPTIMIZE(CCBASE,CC,FLAG-VARIABLE)
-dnl  ----------------------------------------------
-dnl  m68k gcc 2.95.x gets an internal compiler error when compiling the
-dnl  current mpn/generic/gcdext.c (swox cvs rev 1.20) under -O2 or higher,
-dnl  so just use -O for the offending gcc versions.  Naturally if gcdext.c
-dnl  gets rearranged or rewritten so the ICE doesn't happen then this can be
-dnl  removed.
-
-AC_DEFUN(GMP_GCC_M68K_OPTIMIZE,
-[case $host in
-M68K_PATTERN)
-  if test $1 = gcc; then
-    case `$2 --version` in
-    2.95*) $3=-O ;;
-    esac
-  fi
-  ;;
-esac
-])
-
-
 dnl  GMP_GCC_MIPS_O32(gcc,[actions-yes][,[actions-no]])
 dnl  -------------------------------------------------
 dnl  Test whether gcc supports o32.
@@ -2728,8 +2707,8 @@ dnl  GMP_PROG_CC_FOR_BUILD
 dnl  ---------------------
 dnl  Establish CC_FOR_BUILD, a C compiler for the build system.
 dnl
-dnl  If CC_FOR_BUILD is set, it's used without testing, likewise the old
-dnl  style HOST_CC, otherwise some likely candidates are tried, as per
+dnl  If CC_FOR_BUILD is set then it's expected to work, likewise the old
+dnl  style HOST_CC, otherwise some likely candidates are tried, the same as
 dnl  configfsf.guess.
 
 AC_DEFUN(GMP_PROG_CC_FOR_BUILD,
