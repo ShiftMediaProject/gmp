@@ -499,14 +499,6 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #define UMUL_TIME 40
 #define UDIV_TIME 80
 #endif
-#ifndef LONGLONG_STANDALONE
-#define udiv_qrnnd(q, r, n1, n0, d) \
-  do { UWtype __r;							\
-    (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
-    (r) = __r;								\
-  } while (0)
-extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
-#endif /* LONGLONG_STANDALONE */
 #define count_leading_zeros(count, x) \
   do {									\
     USItype __tmp;							\
@@ -1455,7 +1447,7 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 #endif
 
 
-/* Note the prototypes are under !define(umul_ppmm) etc too, since the HPPA
+/* Note the prototypes are under !defined(umul_ppmm) etc too, since the pa64
    versions above are different and we don't want to conflict.  */
 
 #if ! defined (umul_ppmm) && HAVE_NATIVE_mpn_umul_ppmm
