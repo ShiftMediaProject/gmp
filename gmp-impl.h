@@ -358,10 +358,10 @@ extern gmp_randstate_t  __gmp_rands;
 
 /* This is the global for the old-style random functions, and it's also used
    in the test programs.  */
-#define RANDS                                                   \
-  ((__gmp_rands_initialized ? 0                                 \
-    : (__gmp_rands_initialized = 1,                             \
-       gmp_randinit (__gmp_rands, GMP_RAND_ALG_LC, 64))),       \
+#define RANDS								\
+  ((__gmp_rands_initialized ? 0						\
+    : (__gmp_rands_initialized = 1,					\
+       gmp_randinit (__gmp_rands, GMP_RAND_ALG_LC, 64), 0)),		\
    __gmp_rands)
 
 #define RANDS_CLEAR()                   \
