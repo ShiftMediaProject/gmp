@@ -18,6 +18,52 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-11-20  Kevin Ryde  <kevin@swox.se>
+
+	* tests/cxx/t-locale.cc: Test with locales imbued into stream, use
+	<sstream>, eliminated some C-isms.  istream tests disabled, not yet
+	locale-ized.
+	* tests/cxx/Makefile.am (t_locale_SOURCES): Remove localeconv.c.
+	* tests/cxx/localeconv.c: Remove file.
+
+	* configure.in (AC_CHECK_TYPES) [C++]: Add std::locale.
+	* printf/doprntf.c: Add decimal point parameter, remove localeconv use.
+	* gmp-impl.h (__gmp_doprnt_mpf): Update prototype, bump symbol to
+	__gmp_doprnt_mpf2 to protect old libgmpxx.
+	* cxx/osmpf.cc: Use this with ostream locale decimal_point facet.
+	* printf/doprnt.c: Ditto, with GMP_DECIMAL_POINT.
+
+	* gmp-h.in: More comments on __declspec for windows DLLs.
+
+	* mpf/set_str.c, scanf/doscan.c: Cast through "unsigned char" for
+	decimal point string, same as input chars.
+
+	* configure.in (AC_CHECK_HEADERS): Add langinfo.h.
+	(AC_CHECK_FUNCS): Add nl_langinfo.
+	* gmp-impl.h (GMP_DECIMAL_POINT): New macro.
+	* mpf/out_str.c, mpf/set_str.c, scanf/doscan.c: Use it, and don't
+	bother with special code for non-locale systems.
+	* tests/misc/t-locale.c: Subvert nl_langinfo too.
+
+	* configure.in, acinclude.m4 (GMP_ASM_X86_GOT_UNDERSCORE): New macro.
+	* mpn/x86/x86-defs.m4 (_GLOBAL_OFFSET_TABLE_): New macro, inserting
+	extra underscore for OpenBSD.
+	* mpn/x86/README (_GLOBAL_OFFSET_TABLE_): Update notes.
+	Reported by Christian Weisgerber.
+
+	* tests/cxx/t-rand.cc (check_randinit): New function, collecting up
+	constructor tests.
+
+	* tests/cxx/t-ostream.cc: Use <sstream> instead of <strstream>, use
+	compare instead of strcmp.
+
+	* gmpxx.h (__gmp_randinit_lc_2exp_size_t): Return type is int.
+
+2002-11-18  Kevin Ryde  <kevin@swox.se>
+
+	* tune/speed.c (r_string): Use CNST_LIMB with <N>bits, spotted by
+	Torbjorn.
+
 2002-11-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/mul_1.asm: Remove redundant cmp from prologue code.
