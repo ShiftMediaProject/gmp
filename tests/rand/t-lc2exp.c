@@ -117,6 +117,48 @@ check_bigc (void)
   gmp_randclear (r);
 }
 
+/* Checks parameters which triggered an assertion failure in the past.
+   Happened when limbs(a)+limbs(c) < bits_to_limbs(m2exp).  */
+void
+check_bigm (void)
+{
+  gmp_randstate_t rstate;
+  mpz_t a;
+
+  mpz_init_set_ui (a, 5L);
+  gmp_randinit_lc_2exp (rstate, a, 1L, 384L);
+
+  mpz_urandomb (a, rstate, 20L);
+
+  gmp_randclear (rstate);
+  mpz_clear (a);
+}
+
+/* Checks for seeds bigger than the modulus.  */
+void
+check_bigs (void)
+{
+  gmp_randstate_t rstate;
+  mpz_t sd, a;
+  int i;
+
+  mpz_init (sd);
+  mpz_setbit (sd, 300L);
+  mpz_sub_ui (sd, sd, 1);
+  mpz_clrbit (sd, 13L);
+  mpz_init_set_ui (a, 123456789L);
+
+  gmp_randinit_lc_2exp (rstate, a, 5L, 64L);
+  gmp_randseed (rstate, sd);
+
+  for (i = 0; i < 20; i++)
+    mpz_urandomb (a, rstate, 80L);
+
+  gmp_randclear (rstate);
+  mpz_clear (a);
+  mpz_clear (sd);
+}
+
 int
 main (void)
 {
@@ -130,6 +172,9 @@ main (void)
 
   check_nega ();
   check_bigc ();
+
+  check_bigm ();
+  check_bigs ();
 
   tests_end ();
   exit (0);
