@@ -13,15 +13,16 @@ CFLAGS = -g -O
 
 TEST_SRCS = t-mul.c t-tdiv.c t-tdiv_ui.c t-fdiv.c t-fdiv_ui.c t-gcd.c \
   dive.c t-sqrtrem.c convert.c io.c logic.c bit.c t-powm.c t-powm_ui.c \
-  reuse.c
+  t-pow_ui.c t-2exp.c reuse.c
 TEST_OBJS = t-mul.o t-tdiv.o t-tdiv_ui.o t-fdiv.o t-fdiv_ui.o t-gcd.o \
  dive.o t-sqrtrem.o convert.o io.o logic.o bit.o t-powm.o t-powm_ui.o \
- reuse.o
+ t-pow_ui.o t-2exp.o reuse.o
 TESTS = t-mul t-tdiv t-tdiv_ui t-fdiv t-fdiv_ui t-gcd \
- dive t-sqrtrem convert io logic bit t-powm t-powm_ui reuse
+ dive t-sqrtrem convert io logic bit t-powm t-powm_ui t-pow_ui t-2exp reuse
 
 check: Makefile st-mul st-tdiv st-tdiv_ui st-fdiv st-fdiv_ui st-gcd st-dive \
-  st-sqrtrem st-convert st-io st-logic st-bit st-powm st-powm_ui st-reuse
+  st-sqrtrem st-convert st-io st-logic st-bit st-powm st-powm_ui st-pow_ui \
+  st-2exp st-reuse
 	@echo "The tests passed."
 
 st-mul: t-mul
@@ -66,6 +67,12 @@ st-powm: t-powm
 st-powm_ui: t-powm_ui
 	./t-powm_ui
 	touch $@
+st-pow_ui: t-pow_ui
+	./t-pow_ui
+	touch $@
+st-2exp: t-2exp
+	./t-2exp
+	touch $@
 st-reuse: reuse
 	./reuse
 	touch $@
@@ -98,6 +105,10 @@ t-powm: t-powm.o $(TEST_LIBS)
 	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
 t-powm_ui: t-powm_ui.o $(TEST_LIBS)
 	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+t-pow_ui: t-pow_ui.o $(TEST_LIBS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
+t-2exp: t-2exp.o $(TEST_LIBS)
+	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
 reuse: reuse.o $(TEST_LIBS)
 	$(CC) -o $@ $@.o $(TEST_LIBS) $(CFLAGS)
 
@@ -115,7 +126,9 @@ logic.o: $(srcdir)/logic.c
 bit.o: $(srcdir)/bit.c
 t-powm.o: $(srcdir)/t-powm.c
 t-powm_ui.o: $(srcdir)/t-powm_ui.c
+t-pow_ui.o: $(srcdir)/t-pow_ui.c
 reuse.o: $(srcdir)/reuse.c
+t-2exp.o: $(srcdir)/t-2exp.c
 
 clean mostlyclean:
 	rm -f *.o st-* $(TESTS)
