@@ -1,3 +1,11 @@
+2001-03-20  Kevin Ryde  <kevin@swox.se>
+
+	* acinclude.m4 (GMP_PROG_M4): Use AC_ARG_VAR on $M4.
+
+	* acinclude.m4 (GMP_M4_M4WRAP_SPURIOUS): New macro.
+	* configure.in: Use it.
+	* mpn/asm-defs.m4: Ditto.
+
 2001-03-18  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/logops_n.asm: New file.
