@@ -54,8 +54,14 @@ PROLOGUE(mpn_addmul_1)
 		mov		ar.ec = 7
 } { .mii	cmp.ne		p6, p7 = r0, r0
 		mov		pr.rot = 1<<16
-		add		r32 = 0, r0		C clear "carry in"
-}		;;
+		mov		r32 = 0			C clear "carry in"
+} { .mib	mov		r33 = 0			C clear for cmp
+		mov		r34 = 0			C clear for cmp
+		nop.b		0
+} { .mib	mov		r35 = 0			C clear for cmp
+		mov		r36 = 0			C clear for cmp
+		nop.b		0		;;
+}
 		.align	32
 .Loop:
   { .mfi  (p16)	ldf8		f32 = [r17], 8		C  *0,3,6,9,12,15,18
@@ -71,6 +77,8 @@ PROLOGUE(mpn_addmul_1)
 	  (p22)	st8		[r18] = r14, 8		C  2,5,8,11,14,17,*20
 		br.ctop.sptk	.Loop		;;
 }
+	   (p6)	add		r8 = 1, r38
+	   (p7)	mov		r8 = r38
 		mov		pr = r22,0xfffffffffffffffe
 		mov		ar.lc = r2
 		mov		ar.ec = r20
