@@ -29,7 +29,8 @@ libmpq_la_SOURCES = \
   abs.c canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
   get_den.c get_num.c get_str.c init.c inv.c md_2exp.c mul.c \
   neg.c out_str.c set.c set_den.c \
-  set_num.c set_si.c set_ui.c equal.c set_z.c set_d.c set_f.c swap.c
+  set_num.c set_si.c set_str.c set_ui.c \
+  equal.c set_z.c set_d.c set_f.c swap.c
 
 nodist_libmpq_la_SOURCES = add.c sub.c
 
