@@ -115,7 +115,7 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu
+AUTOMAKE_OPTIONS = gnu no-dependencies
 
 INCLUDES = -I$(top_srcdir)
 LDADD = libstat.la $(top_builddir)/libgmp.la
@@ -187,10 +187,7 @@ DIST_COMMON =  ChangeLog Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/findlc.Po $(DEPDIR)/gen.Po \
-$(DEPDIR)/spect.Po $(DEPDIR)/stat.Po $(DEPDIR)/statlib.Plo \
-$(DEPDIR)/t-rand.Po $(DEPDIR)/zdiv_round.Plo
+depcomp = 
 SOURCES = $(libstat_la_SOURCES) findlc.c gen.c $(gen_static_SOURCES) spect.c stat.c t-rand.c
 OBJECTS = $(am_libstat_la_OBJECTS) findlc.$(OBJEXT) gen.$(OBJEXT) $(am_gen_static_OBJECTS) spect.$(OBJEXT) stat.$(OBJEXT) t-rand.$(OBJEXT)
 
@@ -200,7 +197,7 @@ all: all-redirect
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/rand/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -261,6 +258,12 @@ stat$(EXEEXT): $(stat_OBJECTS) $(stat_DEPENDENCIES)
 t-rand$(EXEEXT): $(t_rand_OBJECTS) $(t_rand_DEPENDENCIES)
 	@rm -f t-rand$(EXEEXT)
 	$(LINK) $(t_rand_LDFLAGS) $(t_rand_OBJECTS) $(t_rand_LDADD) $(LIBS)
+.c.o:
+	$(COMPILE) -c $<
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+.c.lo:
+	$(LTCOMPILE) -c -o $@ $<
 
 tags: TAGS
 
@@ -307,44 +310,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-
-@AMDEP@include $(DEPDIR)/findlc.Po
-@AMDEP@include $(DEPDIR)/gen.Po
-@AMDEP@include $(DEPDIR)/spect.Po
-@AMDEP@include $(DEPDIR)/stat.Po
-@AMDEP@include $(DEPDIR)/statlib.Plo
-@AMDEP@include $(DEPDIR)/t-rand.Po
-@AMDEP@include $(DEPDIR)/zdiv_round.Plo
-
-mostlyclean-depend:
-
-clean-depend:
-
-distclean-depend:
-	-rm -rf $(DEPDIR)
-
-maintainer-clean-depend:
-
-@AMDEP@CCDEPMODE = @CCDEPMODE@
-
-.c.o:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ $<
-
-.c.lo:
-@AMDEP@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LTCOMPILE) -c -o $@ $<
-
-.c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `cygpath -w $<`
-
 check-TESTS: $(TESTS)
 	@failed=0; all=0; xfail=0; xpass=0; \
 	srcdir=$(srcdir); export srcdir; \
@@ -436,17 +401,17 @@ maintainer-clean-generic:
 	-rm -f Makefile.in
 mostlyclean-am:  mostlyclean-compile mostlyclean-libtool \
 		mostlyclean-checkPROGRAMS mostlyclean-tags \
-		mostlyclean-depend mostlyclean-generic
+		mostlyclean-generic
 
 mostlyclean: mostlyclean-am
 
 clean-am:  clean-compile clean-libtool clean-checkPROGRAMS clean-tags \
-		clean-depend clean-generic mostlyclean-am
+		clean-generic mostlyclean-am
 
 clean: clean-am
 
 distclean-am:  distclean-compile distclean-libtool \
-		distclean-checkPROGRAMS distclean-tags distclean-depend \
+		distclean-checkPROGRAMS distclean-tags \
 		distclean-generic clean-am
 	-rm -f libtool
 
@@ -454,8 +419,7 @@ distclean: distclean-am
 
 maintainer-clean-am:  maintainer-clean-compile maintainer-clean-libtool \
 		maintainer-clean-checkPROGRAMS maintainer-clean-tags \
-		maintainer-clean-depend maintainer-clean-generic \
-		distclean-am
+		maintainer-clean-generic distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -466,11 +430,10 @@ maintainer-clean-compile mostlyclean-libtool distclean-libtool \
 clean-libtool maintainer-clean-libtool mostlyclean-checkPROGRAMS \
 distclean-checkPROGRAMS clean-checkPROGRAMS \
 maintainer-clean-checkPROGRAMS tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend check-TESTS \
-info-am info dvi-am dvi check check-am installcheck-am installcheck \
-install-exec-am install-exec install-data-am install-data install-am \
-install uninstall-am uninstall all-redirect all-am all install-strip \
+clean-tags maintainer-clean-tags distdir check-TESTS info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all install-strip \
 installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 

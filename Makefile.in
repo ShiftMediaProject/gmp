@@ -136,7 +136,7 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 #     listed in the Makefile.am's in the subdirectories.
 
 
-AUTOMAKE_OPTIONS = gnu check-news
+AUTOMAKE_OPTIONS = gnu check-news no-dependencies
 
 SUBDIRS = mpf mpz mpn mpq tests demos mpbsd
 
@@ -265,13 +265,7 @@ mdate-sh missing mkinstalldirs stamp-vti texinfo.tex version.texi
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/assert.Plo $(DEPDIR)/errno.Plo \
-$(DEPDIR)/extract-dbl.Plo $(DEPDIR)/insert-dbl.Plo $(DEPDIR)/memory.Plo \
-$(DEPDIR)/mp_bpl.Plo $(DEPDIR)/mp_clz_tab.Plo $(DEPDIR)/mp_set_fns.Plo \
-$(DEPDIR)/rand.Plo $(DEPDIR)/randclr.Plo $(DEPDIR)/randlc.Plo \
-$(DEPDIR)/randlc2x.Plo $(DEPDIR)/randraw.Plo $(DEPDIR)/randsd.Plo \
-$(DEPDIR)/randsdui.Plo $(DEPDIR)/stack-alloc.Plo $(DEPDIR)/version.Plo
+depcomp = 
 SOURCES = $(libgmp_la_SOURCES) $(libmp_la_SOURCES)
 OBJECTS = $(am_libgmp_la_OBJECTS) $(am_libmp_la_OBJECTS)
 
@@ -281,7 +275,7 @@ all: all-redirect
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -377,6 +371,12 @@ libgmp.la: $(libgmp_la_OBJECTS) $(libgmp_la_DEPENDENCIES)
 
 libmp.la: $(libmp_la_OBJECTS) $(libmp_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libmp_la_LDFLAGS) $(libmp_la_OBJECTS) $(libmp_la_LIBADD) $(LIBS)
+.c.o:
+	$(COMPILE) -c $<
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+.c.lo:
+	$(LTCOMPILE) -c -o $@ $<
 
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@stamp-vti
 	@:
@@ -704,54 +704,6 @@ distdir: $(DISTFILES)
 	done
 	$(MAKE) $(AM_MAKEFLAGS) top_distdir="$(top_distdir)" distdir="$(distdir)" dist-info
 	$(MAKE) $(AM_MAKEFLAGS) top_distdir="$(top_distdir)" distdir="$(distdir)" dist-hook
-
-@AMDEP@include $(DEPDIR)/assert.Plo
-@AMDEP@include $(DEPDIR)/errno.Plo
-@AMDEP@include $(DEPDIR)/extract-dbl.Plo
-@AMDEP@include $(DEPDIR)/insert-dbl.Plo
-@AMDEP@include $(DEPDIR)/memory.Plo
-@AMDEP@include $(DEPDIR)/mp_bpl.Plo
-@AMDEP@include $(DEPDIR)/mp_clz_tab.Plo
-@AMDEP@include $(DEPDIR)/mp_set_fns.Plo
-@AMDEP@include $(DEPDIR)/rand.Plo
-@AMDEP@include $(DEPDIR)/randclr.Plo
-@AMDEP@include $(DEPDIR)/randlc.Plo
-@AMDEP@include $(DEPDIR)/randlc2x.Plo
-@AMDEP@include $(DEPDIR)/randraw.Plo
-@AMDEP@include $(DEPDIR)/randsd.Plo
-@AMDEP@include $(DEPDIR)/randsdui.Plo
-@AMDEP@include $(DEPDIR)/stack-alloc.Plo
-@AMDEP@include $(DEPDIR)/version.Plo
-
-mostlyclean-depend:
-
-clean-depend:
-
-distclean-depend:
-	-rm -rf $(DEPDIR)
-
-maintainer-clean-depend:
-
-@AMDEP@CCDEPMODE = @CCDEPMODE@
-
-.c.o:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ $<
-
-.c.lo:
-@AMDEP@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LTCOMPILE) -c -o $@ $<
-
-.c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `cygpath -w $<`
-
 info-am: $(INFO_DEPS)
 info: info-recursive
 dvi-am: $(DVIS)
@@ -798,21 +750,19 @@ maintainer-clean-generic:
 	-rm -f Makefile.in
 mostlyclean-am:  mostlyclean-hdr mostlyclean-libLTLIBRARIES \
 		mostlyclean-compile mostlyclean-libtool mostlyclean-vti \
-		mostlyclean-aminfo mostlyclean-tags mostlyclean-depend \
-		mostlyclean-generic
+		mostlyclean-aminfo mostlyclean-tags mostlyclean-generic
 
 mostlyclean: mostlyclean-recursive
 
 clean-am:  clean-hdr clean-libLTLIBRARIES clean-compile clean-libtool \
-		clean-vti clean-aminfo clean-tags clean-depend \
-		clean-generic mostlyclean-am
+		clean-vti clean-aminfo clean-tags clean-generic \
+		mostlyclean-am
 
 clean: clean-recursive
 
 distclean-am:  distclean-hdr distclean-libLTLIBRARIES distclean-compile \
 		distclean-libtool distclean-vti distclean-aminfo \
-		distclean-tags distclean-depend distclean-generic \
-		clean-am
+		distclean-tags distclean-generic clean-am
 	-rm -f libtool
 
 distclean: distclean-recursive
@@ -822,8 +772,8 @@ maintainer-clean-am:  maintainer-clean-hdr \
 		maintainer-clean-libLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
 		maintainer-clean-vti maintainer-clean-aminfo \
-		maintainer-clean-tags maintainer-clean-depend \
-		maintainer-clean-generic distclean-am
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -846,12 +796,10 @@ uninstalldirs-recursive all-recursive check-recursive \
 installcheck-recursive info-recursive dvi-recursive \
 mostlyclean-recursive distclean-recursive clean-recursive \
 maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir \
-mostlyclean-depend distclean-depend clean-depend \
-maintainer-clean-depend info-am info dvi-am dvi check check-am \
-installcheck-am installcheck all-recursive-am install-exec-am \
-install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all install-strip \
+distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
+dvi-am dvi check check-am installcheck-am installcheck all-recursive-am \
+install-exec-am install-exec install-data-am install-data install-am \
+install uninstall-am uninstall all-redirect all-am all install-strip \
 installdirs-am installdirs mostlyclean-generic distclean-generic \
 clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean

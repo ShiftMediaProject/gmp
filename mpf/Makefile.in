@@ -115,7 +115,7 @@ mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu
+AUTOMAKE_OPTIONS = gnu no-dependencies
 
 SUBDIRS = tests
 
@@ -173,25 +173,7 @@ DIST_COMMON =  README Makefile.am Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
-depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/abs.Plo $(DEPDIR)/add.Plo \
-$(DEPDIR)/add_ui.Plo $(DEPDIR)/ceil.Plo $(DEPDIR)/clear.Plo \
-$(DEPDIR)/cmp.Plo $(DEPDIR)/cmp_si.Plo $(DEPDIR)/cmp_ui.Plo \
-$(DEPDIR)/div.Plo $(DEPDIR)/div_2exp.Plo $(DEPDIR)/div_ui.Plo \
-$(DEPDIR)/dump.Plo $(DEPDIR)/eq.Plo $(DEPDIR)/floor.Plo \
-$(DEPDIR)/get_d.Plo $(DEPDIR)/get_prc.Plo $(DEPDIR)/get_str.Plo \
-$(DEPDIR)/init.Plo $(DEPDIR)/init2.Plo $(DEPDIR)/inp_str.Plo \
-$(DEPDIR)/iset.Plo $(DEPDIR)/iset_d.Plo $(DEPDIR)/iset_si.Plo \
-$(DEPDIR)/iset_str.Plo $(DEPDIR)/iset_ui.Plo $(DEPDIR)/mul.Plo \
-$(DEPDIR)/mul_2exp.Plo $(DEPDIR)/mul_ui.Plo $(DEPDIR)/neg.Plo \
-$(DEPDIR)/out_str.Plo $(DEPDIR)/pow_ui.Plo $(DEPDIR)/random2.Plo \
-$(DEPDIR)/reldiff.Plo $(DEPDIR)/set.Plo $(DEPDIR)/set_d.Plo \
-$(DEPDIR)/set_dfl_prec.Plo $(DEPDIR)/set_prc.Plo \
-$(DEPDIR)/set_prc_raw.Plo $(DEPDIR)/set_q.Plo $(DEPDIR)/set_si.Plo \
-$(DEPDIR)/set_str.Plo $(DEPDIR)/set_ui.Plo $(DEPDIR)/set_z.Plo \
-$(DEPDIR)/size.Plo $(DEPDIR)/sqrt.Plo $(DEPDIR)/sqrt_ui.Plo \
-$(DEPDIR)/sub.Plo $(DEPDIR)/sub_ui.Plo $(DEPDIR)/trunc.Plo \
-$(DEPDIR)/ui_div.Plo $(DEPDIR)/ui_sub.Plo $(DEPDIR)/urandomb.Plo
+depcomp = 
 SOURCES = $(libmpf_la_SOURCES) $(nodist_libmpf_la_SOURCES)
 OBJECTS = $(am_libmpf_la_OBJECTS) $(nodist_libmpf_la_OBJECTS)
 
@@ -201,7 +183,7 @@ all: all-redirect
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu mpf/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
@@ -238,6 +220,12 @@ maintainer-clean-libtool:
 
 libmpf.la: $(libmpf_la_OBJECTS) $(libmpf_la_DEPENDENCIES)
 	$(LINK)  $(libmpf_la_LDFLAGS) $(libmpf_la_OBJECTS) $(libmpf_la_LIBADD) $(LIBS)
+.c.o:
+	$(COMPILE) -c $<
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+.c.lo:
+	$(LTCOMPILE) -c -o $@ $<
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -351,89 +339,6 @@ distdir: $(DISTFILES)
 	      || exit 1; \
 	  fi; \
 	done
-
-@AMDEP@include $(DEPDIR)/abs.Plo
-@AMDEP@include $(DEPDIR)/add.Plo
-@AMDEP@include $(DEPDIR)/add_ui.Plo
-@AMDEP@include $(DEPDIR)/ceil.Plo
-@AMDEP@include $(DEPDIR)/clear.Plo
-@AMDEP@include $(DEPDIR)/cmp.Plo
-@AMDEP@include $(DEPDIR)/cmp_si.Plo
-@AMDEP@include $(DEPDIR)/cmp_ui.Plo
-@AMDEP@include $(DEPDIR)/div.Plo
-@AMDEP@include $(DEPDIR)/div_2exp.Plo
-@AMDEP@include $(DEPDIR)/div_ui.Plo
-@AMDEP@include $(DEPDIR)/dump.Plo
-@AMDEP@include $(DEPDIR)/eq.Plo
-@AMDEP@include $(DEPDIR)/floor.Plo
-@AMDEP@include $(DEPDIR)/get_d.Plo
-@AMDEP@include $(DEPDIR)/get_prc.Plo
-@AMDEP@include $(DEPDIR)/get_str.Plo
-@AMDEP@include $(DEPDIR)/init.Plo
-@AMDEP@include $(DEPDIR)/init2.Plo
-@AMDEP@include $(DEPDIR)/inp_str.Plo
-@AMDEP@include $(DEPDIR)/iset.Plo
-@AMDEP@include $(DEPDIR)/iset_d.Plo
-@AMDEP@include $(DEPDIR)/iset_si.Plo
-@AMDEP@include $(DEPDIR)/iset_str.Plo
-@AMDEP@include $(DEPDIR)/iset_ui.Plo
-@AMDEP@include $(DEPDIR)/mul.Plo
-@AMDEP@include $(DEPDIR)/mul_2exp.Plo
-@AMDEP@include $(DEPDIR)/mul_ui.Plo
-@AMDEP@include $(DEPDIR)/neg.Plo
-@AMDEP@include $(DEPDIR)/out_str.Plo
-@AMDEP@include $(DEPDIR)/pow_ui.Plo
-@AMDEP@include $(DEPDIR)/random2.Plo
-@AMDEP@include $(DEPDIR)/reldiff.Plo
-@AMDEP@include $(DEPDIR)/set.Plo
-@AMDEP@include $(DEPDIR)/set_d.Plo
-@AMDEP@include $(DEPDIR)/set_dfl_prec.Plo
-@AMDEP@include $(DEPDIR)/set_prc.Plo
-@AMDEP@include $(DEPDIR)/set_prc_raw.Plo
-@AMDEP@include $(DEPDIR)/set_q.Plo
-@AMDEP@include $(DEPDIR)/set_si.Plo
-@AMDEP@include $(DEPDIR)/set_str.Plo
-@AMDEP@include $(DEPDIR)/set_ui.Plo
-@AMDEP@include $(DEPDIR)/set_z.Plo
-@AMDEP@include $(DEPDIR)/size.Plo
-@AMDEP@include $(DEPDIR)/sqrt.Plo
-@AMDEP@include $(DEPDIR)/sqrt_ui.Plo
-@AMDEP@include $(DEPDIR)/sub.Plo
-@AMDEP@include $(DEPDIR)/sub_ui.Plo
-@AMDEP@include $(DEPDIR)/trunc.Plo
-@AMDEP@include $(DEPDIR)/ui_div.Plo
-@AMDEP@include $(DEPDIR)/ui_sub.Plo
-@AMDEP@include $(DEPDIR)/urandomb.Plo
-
-mostlyclean-depend:
-
-clean-depend:
-
-distclean-depend:
-	-rm -rf $(DEPDIR)
-
-maintainer-clean-depend:
-
-@AMDEP@CCDEPMODE = @CCDEPMODE@
-
-.c.o:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ $<
-
-.c.lo:
-@AMDEP@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LTCOMPILE) -c -o $@ $<
-
-.c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c -o $@ `cygpath -w $<`
-
 info-am:
 info: info-recursive
 dvi-am:
@@ -473,27 +378,27 @@ distclean-generic:
 maintainer-clean-generic:
 	-rm -f Makefile.in
 mostlyclean-am:  mostlyclean-noinstLTLIBRARIES mostlyclean-compile \
-		mostlyclean-libtool mostlyclean-tags mostlyclean-depend \
+		mostlyclean-libtool mostlyclean-tags \
 		mostlyclean-generic
 
 mostlyclean: mostlyclean-recursive
 
 clean-am:  clean-noinstLTLIBRARIES clean-compile clean-libtool \
-		clean-tags clean-depend clean-generic mostlyclean-am
+		clean-tags clean-generic mostlyclean-am
 
 clean: clean-recursive
 
 distclean-am:  distclean-noinstLTLIBRARIES distclean-compile \
-		distclean-libtool distclean-tags distclean-depend \
-		distclean-generic clean-am
+		distclean-libtool distclean-tags distclean-generic \
+		clean-am
 	-rm -f libtool
 
 distclean: distclean-recursive
 
 maintainer-clean-am:  maintainer-clean-noinstLTLIBRARIES \
 		maintainer-clean-compile maintainer-clean-libtool \
-		maintainer-clean-tags maintainer-clean-depend \
-		maintainer-clean-generic distclean-am
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
@@ -510,14 +415,13 @@ uninstalldirs-recursive all-recursive check-recursive \
 installcheck-recursive info-recursive dvi-recursive \
 mostlyclean-recursive distclean-recursive clean-recursive \
 maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir \
-mostlyclean-depend distclean-depend clean-depend \
-maintainer-clean-depend info-am info dvi-am dvi check check-am \
-installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs-am installdirs \
-mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+distclean-tags clean-tags maintainer-clean-tags distdir info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs-am installdirs mostlyclean-generic distclean-generic \
+clean-generic maintainer-clean-generic clean mostlyclean distclean \
+maintainer-clean
 
 
 floor.c: $(srcdir)/integer.c
