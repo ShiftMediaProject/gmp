@@ -168,7 +168,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
          valid measurement.  Return smallest among them.  */
       if (i >= e)
         {
-          qsort (t, i, sizeof(t[0]), (qsort_function_t) double_cmp_ptr);
+          qsort (t, i+1, sizeof(t[0]), (qsort_function_t) double_cmp_ptr);
           for (j = e-1; j < i; j++)
             if (t[j] <= t[j-e+1] * TOLERANCE)
               return t[j-e+1] / s->time_divisor;
@@ -177,6 +177,12 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
 
   fprintf (stderr, "speed_measure() could not get %d results within %.1f%%\n",
            e, (TOLERANCE-1.0)*100.0);
+  fprintf (stderr, "  %.09lf is about 0.5%%\n", t[0]*(TOLERANCE-1.0));
+  for (i = 0; i < numberof (t); i++)
+    {
+      fprintf (stderr, "  %.09lf\n", t[i]);
+    }
+
   return -1.0;
 }
 
