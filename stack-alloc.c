@@ -50,6 +50,9 @@ __gmp_tmp_alloc (unsigned long size)
 {
   void *that;
 
+  ASSERT ((size % __TMP_ALIGN) == 0);
+  ASSERT (((unsigned) current->alloc_point % __TMP_ALIGN) == 0);
+
   if (size > (char *) current->end - (char *) current->alloc_point)
     {
       void *chunk;
@@ -87,6 +90,7 @@ __gmp_tmp_alloc (unsigned long size)
 
   that = current->alloc_point;
   current->alloc_point = (char *) that + size;
+  ASSERT (((unsigned) that % __TMP_ALIGN) == 0);
   return that;
 }
 
