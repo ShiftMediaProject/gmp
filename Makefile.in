@@ -48,9 +48,9 @@ LN = ln -s
 ###
 
 SRCS = memory.c mp_set_fns.c mp_clz_tab.c version.c stack-alloc.c mp_bpl.c \
-  extract-double.c
+  extract-double.c insert-double.c
 OBJS = memory.o mp_set_fns.o mp_clz_tab.o version.o stack-alloc.o mp_bpl.o \
-  extract-double.o
+  extract-double.o insert-double.o
 FILES = gmp.h mp.h gmp-impl.h longlong.h urandom.h move-if-change \
  mkinstalldirs INSTALL COPYING.LIB ChangeLog Makefile.in \
  NEWS README SPEED TODO config.guess config.sub configure configure.in \
@@ -192,6 +192,7 @@ Makefile: $(srcdir)/Makefile.in $(host_makefile_frag) $(target_makefile_frag)
 H = $(srcdir)/gmp.h $(srcdir)/gmp-impl.h mpn/gmp-mparam.h
 
 extract-double.o: $(srcdir)/extract-double.c $(H)
+insert-double.o: $(srcdir)/insert-double.c $(H)
 memory.o: $(srcdir)/memory.c $(H)
 mp_bpl.o: $(srcdir)/mp_bpl.c
 mp_clz_tab.o: $(srcdir)/mp_clz_tab.c
