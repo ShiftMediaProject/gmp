@@ -146,6 +146,7 @@ AC_PROVIDE([AC_PROG_CC])
 
 dnl  GMP_CHECK_CC_64BIT(cc, cflags64)
 dnl  Find out if `CC' can produce 64-bit code.
+dnl  FIXME: Cache result.
 AC_DEFUN(GMP_CHECK_CC_64BIT,
 [
   gmp_tmp_CC_save="$CC"
@@ -153,9 +154,42 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
   AC_MSG_CHECKING([whether the C compiler ($CC) is 64-bit capable])
   gmp_tmp_CFLAGS_save="$CFLAGS"
   CFLAGS="[$2]"
-  AC_TRY_RUN([
-    int main() { return (sizeof (void *) != 8); }
-  ], gmp_cv_cc_64bit=yes, gmp_cv_cc_64bit=no, gmp_cv_cc_64bit=no)
+
+  case "$target" in 
+    hppa2.0*-*-*)
+      # FIXME: If the user sets CC=my-gcc at configure time, we will test the 
+      # wrong thing.
+      if test "$CC" != "gcc"; then
+        dnl Let compiler version A.10.32.30 or higher be ok.
+        dnl Bad compiler output:
+        dnl   ccom: HP92453-01 G.10.32.05 HP C Compiler
+        dnl Good compiler output:
+        dnl   ccom: HP92453-01 A.10.32.30 HP C Compiler
+        echo >conftest.c
+        gmp_tmp_vs=`$CC $CFLAGS -V -c -o conftest.o conftest.c 2>&1 | grep "^ccom:"`
+        rm conftest*
+        gmp_tmp_v1=`echo $gmp_tmp_vs | sed 's/.* .\.\(.*\)\..*\..* HP C.*/\1/'`
+        gmp_tmp_v2=`echo $gmp_tmp_vs | sed 's/.* .\..*\.\(.*\)\..* HP C.*/\1/'`
+        gmp_tmp_v3=`echo $gmp_tmp_vs | sed 's/.* .\..*\..*\.\(.*\) HP C.*/\1/'`
+	gmp_cv_cc_64bit=no
+	test -n "$gmp_tmp_v1" && test "$gmp_tmp_v1" -ge "10" \
+  	  && test -n "$gmp_tmp_v2" && test "$gmp_tmp_v2" -ge "32" \
+    	  && test -n "$gmp_tmp_v3" && test "$gmp_tmp_v3" -ge "30" \
+	  && gmp_cv_cc_64bit=yes
+      else	# gcc
+	# FIXME: Compile a minimal file and determine if the resulting object 
+	# file is an ELF file.  If so, gcc can produce 64-bit code.
+	# Do we have file(1) for target?
+	gmp_cv_cc_64bit=no
+      fi
+      ;;
+    *-*-*)
+      AC_TRY_RUN([
+        int main() { return (sizeof (void *) != 8); }
+      ], gmp_cv_cc_64bit=yes, gmp_cv_cc_64bit=no, gmp_cv_cc_64bit=no)
+      ;;
+  esac
+
   CC="$gmp_tmp_CC_save"
   CFLAGS="$gmp_tmp_CFLAGS_save"
   AC_MSG_RESULT($gmp_cv_cc_64bit)
@@ -486,26 +520,41 @@ AC_CACHE_CHECK([how to [define] a 32-bit word],
   echo; echo ["configure: $0: fatal: need nm"]
   exit 1
 fi
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-for gmp_tmp_op in .long .word; do
-  cat > conftest.s <<EOF
-      	$gmp_cv_check_asm_data
+
+# FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
+# that it's at 0x0.  We'll have to declare another symbol before the
+# .long/.word and look at the distance between the two symbols.  The
+# only problem is that the sed expression(s) barfs (on Solaris, for
+# example) for the symbol with value 0.  For now, HPUX uses .word.
+
+case "$target" in 
+  *-*-hpux*)
+    gmp_cv_check_asm_w32=".word"
+    ;;
+  *-*-*)
+    ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+    for gmp_tmp_op in .long .word; do
+      cat > conftest.s <<EOF
+	$gmp_cv_check_asm_data
 	$gmp_cv_check_asm_globl	foo
 	$gmp_tmp_op	0
 foo${gmp_cv_check_asm_label_suffix}
 	.byte	0
 EOF
-  if AC_TRY_EVAL(ac_assemble); then
-    changequote(<,>)
-    gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
-         -e 's;[^1-9]*\([0-9]*\).*;\1;'`
-    changequote([, ])dnl
-    if test "$gmp_tmp_val" = "4"; then
-      gmp_cv_check_asm_w32="$gmp_tmp_op"
-      break
-    fi
-  fi
-done
+      if AC_TRY_EVAL(ac_assemble); then
+        changequote(<,>)
+        gmp_tmp_val=`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
+             -e 's;[^1-9]*\([0-9]*\).*;\1;'`
+        changequote([, ])dnl
+        if test "$gmp_tmp_val" = "4"; then
+          gmp_cv_check_asm_w32="$gmp_tmp_op"
+          break
+        fi
+      fi
+    done
+    ;;
+esac
+
 if test -z "$gmp_cv_check_asm_w32"; then
   echo; echo ["configure: $0: fatal: do not know how to define a 32-bit word"]
   exit 1
@@ -583,8 +632,8 @@ CFLAGS="[$2]"
 AC_TRY_COMPILER([int main(){return(0);}],
                 tmp_works, tmp_cross)
 
+# Target specific tests.
 if test "$tmp_works" = "yes"; then
-  # Target specific tests.
   case "$target" in 
     *-*-aix*)	# Returning a funcptr.
       AC_MSG_CHECKING([if the C compiler ($CC $CFLAGS) works (returning a function pointer)])
@@ -592,17 +641,6 @@ if test "$tmp_works" = "yes"; then
                       tmp_works=yes, tmp_works=no)
       AC_MSG_RESULT($tmp_works)
       ;;
-      
-    hppa2.0*-*-*) 	# Avoid buggy compiler.
-	dnl FIXME:  Do something like this:
-	dnl Let compiler version A.10.32.30 or higher be ok.
-      	dnl bad compiler output:
-	dnl   cpp: HP92453-01 A.10.32.03 HP C Preprocessor
-	dnl   ccom: HP92453-01 G.10.32.05 HP C Compiler
-	dnl good compiler output:
-	dnl   cpp: HP92453-01 A.10.32.03 HP C Preprocessor
-	dnl   ccom: HP92453-01 A.10.32.30 HP C Compiler
-      ;; 
   esac
 fi
 
