@@ -93,17 +93,24 @@ SPEED_EXTRA_PROTOS
       ptr[i] = n;                               \
   } while (0)
 
-enum {
-  CMP_ABSOLUTE, CMP_RATIO, CMP_DIFFERENCE, CMP_DIFFPREV
-} option_cmp = CMP_ABSOLUTE;
+#define CMP_ABSOLUTE     1
+#define CMP_RATIO        2
+#define CMP_DIFFERENCE   3
+#define CMP_DIFFPREV     4
+int  option_cmp = CMP_ABSOLUTE;
 
-enum {
-  UNIT_SECONDS, UNIT_CYCLES, UNIT_CYCLESPERLIMB
-} option_unit = UNIT_SECONDS;
+#define UNIT_SECONDS        1
+#define UNIT_CYCLES         2
+#define UNIT_CYCLESPERLIMB  3
+int  option_unit = UNIT_SECONDS;
 
-enum {
-  DATA_RANDOM, DATA_ZEROS, DATA_FFS
-} option_data = DATA_RANDOM;
+#define DATA_RANDOM   1
+#define DATA_RANDOM2  2
+#define DATA_ZEROS    3
+#define DATA_FFS      4
+#define DATA_2FD      5
+int  option_data = DATA_RANDOM;
+
 int        option_square = 0;
 double     option_factor = 0.0;
 mp_size_t  option_step = 1;
@@ -154,8 +161,8 @@ const struct routine_t {
   { "mpn_bz_divrem_sb",  speed_mpn_bz_divrem_sb     },
   { "mpn_bz_tdiv_qr",    speed_mpn_bz_tdiv_qr       },
 
-  { "mpn_lshift",        speed_mpn_lshift,   FLAG_R },
-  { "mpn_rshift",        speed_mpn_rshift,   FLAG_R },
+  { "mpn_lshift",        speed_mpn_lshift, FLAG_R   },
+  { "mpn_rshift",        speed_mpn_rshift, FLAG_R   },
 
   { "mpn_and_n",         speed_mpn_and_n            },
   { "mpn_andn_n",        speed_mpn_andn_n           },
@@ -176,6 +183,7 @@ const struct routine_t {
 
   { "mpn_gcdext",        speed_mpn_gcdext           },
   { "mpn_gcd",           speed_mpn_gcd              },
+  { "mpn_gcd_1",         speed_mpn_gcd_1            },
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R },
   { "mpn_sqr_basecase",  speed_mpn_sqr_basecase     },
@@ -367,13 +375,39 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
 }
 
 void
+data_fill (mp_ptr ptr, mp_size_t size)
+{
+  switch (option_data) {
+  case DATA_RANDOM:
+    mpn_random (ptr, size);
+    break;
+  case DATA_RANDOM2:
+    mpn_random2 (ptr, size);
+    break;
+  case DATA_ZEROS:
+    MPN_ZERO (ptr, size);
+    break;
+  case DATA_FFS:
+    MPN_FILL (ptr, size, MP_LIMB_T_MAX);
+    break;
+  case DATA_2FD:
+    MPN_FILL (ptr, size, MP_LIMB_T_MAX);
+    ptr[0] -= 2;
+    break;
+  default:
+    abort();
+    /*NOTREACHED*/
+  }
+}
+
+void
 run_all (FILE *fp)
 {
   mp_size_t  prev_size, max_size;
   int        i;
   TMP_DECL (marker);
 
-  max_size = 1;
+  max_size = SPEED_DATA_SIZE;
   for (i = 0; i < size_num; i++)
     max_size = MAX (max_size, size_array[i].end);
 
@@ -384,20 +418,9 @@ run_all (FILE *fp)
   TMP_MARK (marker);
   sp.xp = SPEED_TMP_ALLOC (max_size, sp.align_xp);
   sp.yp = SPEED_TMP_ALLOC (max_size, sp.align_yp);
-  switch (option_data) {
-  case DATA_RANDOM:
-    mpn_random (sp.xp, max_size);
-    mpn_random (sp.yp, max_size);
-    break;
-  case DATA_ZEROS:
-    MPN_ZERO (sp.xp, max_size);
-    MPN_ZERO (sp.yp, max_size);
-    break;
-  case DATA_FFS:
-    MPN_FILL (sp.xp, max_size, MP_LIMB_T_MAX);
-    MPN_FILL (sp.yp, max_size, MP_LIMB_T_MAX);
-    break;
-  }
+
+  data_fill (sp.xp, max_size);
+  data_fill (sp.yp, max_size);
 
   for (i = 0; i < size_num; i++)
     {
@@ -407,8 +430,14 @@ run_all (FILE *fp)
         {
           mp_size_t  step;
 
+          if (option_data == DATA_2FD && sp.size >= 2)
+            sp.xp[sp.size-1] = 2;
+
           run_one (fp, &sp, prev_size);
           prev_size = sp.size;
+
+          if (option_data == DATA_2FD && sp.size >= 2)
+            sp.xp[sp.size-1] = MP_LIMB_T_MAX;
 
           if (option_factor != 0.0)
             {
@@ -629,6 +658,8 @@ Times are in seconds, accuracy is shown.\n\
    -C         show times in cycles per limb\n\
    -u         print resource usage (memory) at end\n\
    -P name    output plot files \"name.gnuplot\" and \"name.data\"\n\
+   -a <type>  use given data: random(default), random2, zeros, ffs\n\
+   -x, -y, -w, -W <align>  specify data alignments, sources and dests\n\
 \n\
 If both -t and -f are used, it means step by the factor or the step, whichever\n\
 is greater.\n\
@@ -717,10 +748,11 @@ main (int argc, char *argv[])
       {
         switch (opt) {
         case 'a':
-          if (strcmp (optarg, "zeros") == 0)
-            option_data = DATA_ZEROS;
-          else if (strcmp (optarg, "ffs") == 0)
-            option_data = DATA_FFS;
+          if (strcmp (optarg, "random") == 0)       option_data = DATA_RANDOM;
+          else if (strcmp (optarg, "random2") == 0) option_data = DATA_RANDOM2;
+          else if (strcmp (optarg, "zeros") == 0)   option_data = DATA_ZEROS;
+          else if (strcmp (optarg, "ffs") == 0)     option_data = DATA_FFS;
+          else if (strcmp (optarg, "2fd") == 0)     option_data = DATA_2FD;
           else
             {
               fprintf (stderr, "unrecognised data option: %s\n", optarg);
@@ -728,8 +760,7 @@ main (int argc, char *argv[])
             }
           break;
         case 'C':
-          if (option_unit  != UNIT_SECONDS)
-            goto bad_unit;
+          if (option_unit  != UNIT_SECONDS) goto bad_unit;
           option_unit = UNIT_CYCLESPERLIMB;
           break;
         case 'c':
@@ -742,8 +773,7 @@ main (int argc, char *argv[])
           option_unit = UNIT_CYCLES;
           break;
         case 'D':
-          if (option_cmp != CMP_ABSOLUTE)
-            goto bad_cmp;
+          if (option_cmp != CMP_ABSOLUTE) goto bad_cmp;
           option_cmp = CMP_DIFFPREV;
           break;
         case 'd':
