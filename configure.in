@@ -229,8 +229,8 @@ case "$target" in
     # options below fail.
     os_64bit=yes
     gmp_cflags64_gcc="$gmp_cflags64_gcc -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9"
-    gmp_cflags_gcc="$gmp_cflags_gcc -m32"
-    gmp_xoptflags_gcc="-mcpu=ultrasparc -mvis"
+    gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
+    gmp_xoptflags_gcc="-mcpu=ultrasparc"
     ;;
   ultrasparc*-*-* | sparcv9-*-*)
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
