@@ -279,6 +279,9 @@ log
 @macro min
 min
 @end macro
+@macro leftarrow
+<-
+@end macro
 @macro rightarrow
 ->
 @end macro
@@ -1166,9 +1169,9 @@ gcc [built for 2.0n]
 cc  +DA2.0 +e
 @end example
 
-Note that current versions of GCC (eg. 3.2) don't generate 64-bit instructions
-for @code{long long} operations and so may be slower than for 2.0w.  (The GMP
-assembler code is the same though.)
+Note that current versions of GCC (eg.@: 3.2) don't generate 64-bit
+instructions for @code{long long} operations and so may be slower than for
+2.0w.  (The GMP assembler code is the same though.)
 
 @item @samp{ABI=1.0}
 HPPA 2.0 CPUs can run all HPPA 1.0 and 1.1 code in the 32-bit HPPA 1.0 ABI.
@@ -1226,8 +1229,8 @@ each.  The default is n32.
 @item @samp{ABI=o32}
 The o32 ABI is 32-bit pointers and integers, and no 64-bit operations.  GMP
 will be slower than in n32 or 64, this option only exists to support old
-compilers, eg. GCC 2.7.2.  Applications can be compiled with no special flags
-on an old compiler, or on a newer compiler with
+compilers, eg.@: GCC 2.7.2.  Applications can be compiled with no special
+flags on an old compiler, or on a newer compiler with
 
 @example
 gcc  -mabi=32
@@ -2418,12 +2421,13 @@ Failing to @code{init} GMP variables will have unpredictable effects, and
 corruption arising elsewhere in a program may well affect GMP.  Initializing
 GMP variables more than once or failing to clear them will cause memory leaks.
 
-In all such cases a malloc debugger is recommended.  On a GNU or BSD system
-the standard C library @code{malloc} has some diagnostic facilities, see
-@GMPrefu{Allocation Debugging,, Allocation Debugging, libc, The GNU C Library
-Reference Manual,
-http://www.gnu.org/manual/glibc-2.2.5/html_node/Allocation-Debugging.html},
-or @samp{man 3 malloc}.  Other possibilities, in no particular order, include
+@cindex Malloc debugger
+In all such cases a @code{malloc} debugger is recommended.  On a GNU or BSD
+system the standard C library @code{malloc} has some diagnostic facilities,
+see @GMPrefu{Allocation Debugging,, Allocation Debugging, libc, The GNU C
+Library Reference Manual,
+http://www.gnu.org/manual/glibc-2.2.5/html_node/Allocation-Debugging.html}, or
+@samp{man 3 malloc}.  Other possibilities, in no particular order, include
 
 @display
 @uref{http://www.inf.ethz.ch/personal/biere/projects/ccmalloc/}
@@ -2534,8 +2538,9 @@ strong checks for uninitialized data (at the level of individual bits), memory
 accesses through bad pointers, and memory leaks.
 
 Currently (version 1.0.0) it doesn't support MMX or SSE, so GMP must be
-configured for an x86 without those (eg. plain @samp{i386}), or with a special
-@code{MPN_PATH} that excludes those subdirectories (@pxref{Build Options}).
+configured for an x86 without those (eg.@: plain @samp{i386}), or with a
+special @code{MPN_PATH} that excludes those subdirectories (@pxref{Build
+Options}).
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -2621,6 +2626,8 @@ function, allowing exact timing and full call graph construction.
 This instrumenting is not normally a standard system feature and will require
 support from an external library, such as
 
+@cindex FunctionCheck
+@cindex fnccheck
 @display
 @uref{http://sourceforge.net/projects/fnccheck/}
 @end display
@@ -5125,7 +5132,7 @@ the cofactor is negative.  @var{r1p} and @var{r2p} should each have room for
 
 @math{@{@var{s1p}, @var{s1n}@} @ge{} @{@var{s2p}, @var{s2n}@}} is required,
 and both must be non-zero.  The regions @{@var{s1p}, @math{@var{s1n}+1}@} and
-@{@var{s2p}, @math{@var{s2n}+1}@} are destroyed (i.e. the operands plus an
+@{@var{s2p}, @math{@var{s2n}+1}@} are destroyed (i.e.@: the operands plus an
 extra limb past the end of each).
 
 The cofactor @var{r1} will satisfy @m{r_2 s_1 + k s_2 = r_1, @var{r2}*@var{s1}
@@ -5323,6 +5330,7 @@ are recommended for applications that care about randomness.
 @node Random State Initialization, Random State Seeding, Random Number Functions, Random Number Functions
 @section Random State Initialization
 @cindex Random number state
+@cindex Initialization functions
 
 @deftypefun void gmp_randinit_default (gmp_randstate_t @var{state})
 Initialize @var{state} with a default algorithm.  This will be a compromise
@@ -5331,11 +5339,13 @@ special requirements.  Currently this is @code{gmp_randinit_mt}.
 @end deftypefun
 
 @deftypefun int gmp_randinit_mt (gmp_randstate_t @var{state})
+@cindex Mersenne twister random numbers
 Initialize @var{state} for a Mersenne Twister algorithm.  This algorithm is
 fast and has good randomness properties.
 @end deftypefun
 
 @deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a}, @w{unsigned long @var{c}}, @w{unsigned long @var{m2exp}})
+@cindex Linear congruential random numbers
 Initialize @var{state} with a linear congruential algorithm @m{X = (@var{a}X +
 @var{c}) @bmod 2^{m2exp}, X = (@var{a}*X + @var{c}) mod 2^@var{m2exp}}.
 
@@ -5350,10 +5360,11 @@ concatenated.
 @end deftypefun
 
 @deftypefun int gmp_randinit_lc_2exp_size (gmp_randstate_t @var{state}, unsigned long @var{size})
+@cindex Linear congruential random numbers
 Initialize @var{state} for a linear congruential algorithm as per
 @code{gmp_randinit_lc_2exp}.  @var{a}, @var{c} and @var{m2exp} are selected
 from a table, chosen so that @var{size} bits (or more) of each @math{X} will
-be used, ie. @math{@var{m2exp}/2 @ge{} @var{size}}.
+be used, ie.@: @math{@var{m2exp}/2 @ge{} @var{size}}.
 
 If successful the return value is non-zero.  If @var{size} is bigger than the
 table data provides then the return value is zero.  The maximum @var{size}
@@ -5377,14 +5388,6 @@ as @code{GMP_RAND_ALG_LC}.
 @code{GMP_ERROR_UNSUPPORTED_ARGUMENT} if @var{alg} is unsupported, or
 @code{GMP_ERROR_INVALID_ARGUMENT} if the @var{size} parameter is too big.
 @end deftypefun
-
-@c  Not yet in the library.
-@ignore
-@deftypefun void gmp_randinit_lc (gmp_randstate_t @var{state}, mpz_t @var{a}, unsigned long int @var{c}, mpz_t @var{m})
-Initialize @var{state} for a linear congruential scheme @m{X = (@var{a}X +
-@var{c}) @bmod @var{m}, X = (@var{a}*X + @var{c}) mod 2^@var{m}}.
-@end deftypefun
-@end ignore
 
 @deftypefun void gmp_randclear (gmp_randstate_t @var{state})
 Free all memory occupied by @var{state}.
@@ -8387,7 +8390,7 @@ calculating a bigger radix power.
 
 Another possible improvement for the sub-quadratic part would be to arrange
 for radix powers that balanced the sizes of quotient and remainder produced,
-ie. the highest power would be an @m{b^{nk},b^(n*k)} approximately equal to
+ie.@: the highest power would be an @m{b^{nk},b^(n*k)} approximately equal to
 @m{\sqrt{t},sqrt(t)}, not restricted to a @math{2^i} factor.  That ought to
 smooth out a graph of times against sizes, but may or may not be a net
 speedup.
@@ -8441,6 +8444,7 @@ much faster than @code{mpn_divrem_1} (often by a factor of 10, or more).
 * Binomial Coefficients Algorithm::  
 * Fibonacci Numbers Algorithm::  
 * Lucas Numbers Algorithm::     
+* Random Number Algorithms::    
 @end menu
 
 
@@ -8614,7 +8618,7 @@ borrow into further limbs, which saves some code size.  See comments with
 @code{mpz_fib_ui} and the internal @code{mpn_fib2_ui} for how this is done.
 
 
-@node Lucas Numbers Algorithm,  , Fibonacci Numbers Algorithm, Other Algorithms
+@node Lucas Numbers Algorithm, Random Number Algorithms, Fibonacci Numbers Algorithm, Other Algorithms
 @subsection Lucas Numbers
 
 @code{mpz_lucnum2_ui} derives a pair of Lucas numbers from a pair of Fibonacci
@@ -8658,6 +8662,50 @@ L[2k+1] = 5*F[k-1]*(2*F[k]+F[k-1]) - 4*(-1)^k
 @end example
 
 @end ifnottex
+
+
+@node Random Number Algorithms,  , Lucas Numbers Algorithm, Other Algorithms
+@subsection Random Numbers
+@cindex Random number algorithms
+
+For the @code{urandomb} functions, random numbers are generated simply by
+concatenating bits produced by the generator.  As long as the generator has
+good randomness properties this will produce well-distributed @math{N} bit
+numbers.
+
+For the @code{urandomm} functions, random numbers in a range @math{0@le{}R<N}
+are generated by taking values @math{R} of @m{\lceil \log_2 N \rceil,
+ceil(log2(N))} bits each until one satisfies @math{R<N}.  This will normally
+require only one or two attempts, but the attempts are limited in case the
+generator is somehow degenerate and produces only 1 bits or similar.
+
+@cindex Mersenne twister algorithm
+The Mersenne Twister generator is by Matsumoto and Nishimura
+(@pxref{References}).  It has a non-repeating period of @math{2^@W{19937}-1},
+which is a Mersenne prime, hence the name of the generator.  The state is 624
+words of 32-bits each, which is iterated with one XOR and shift for each
+32-bit word generated, making the algorithm very fast.  Randomness properties
+are also very good and this is the default algorithm used by GMP.
+
+@cindex Linear congruential algorithm
+Linear congruential generators are described in many text books, for instance
+Knuth volume 2 (@pxref{References}).  With a modulus @math{M} and parameters
+@math{A} and @math{C}, a integer state @math{S} is iterated by the formula
+@math{S @leftarrow{} A@GMPmultiply{}S+C @bmod{} M}.  At each step the new
+state is a linear function of the previous, mod @math{M}, hence the name of
+the generator.
+
+In GMP only moduli of the form @math{2^N} are supported, and the current
+implementation is not as well optimized as it could be.  Overheads are
+significant when @math{N} is small, and when @math{N} is large clearly the
+multiply at each step will become slow.  This is not a big concern, since the
+Mersenne Twister generator is better in every respect and is therefore
+recommended for all normal applications.
+
+For both generators the current state can be deduced by observing enough
+output and applying some linear algebra (over GF(2) in the case of the
+Mersenne Twister).  This generally means raw output is unsuitable for
+cryptographic applications without further hashing or the like.
 
 
 @node Assembler Coding,  , Other Algorithms, Algorithms
@@ -9703,10 +9751,16 @@ the GCC package @uref{ftp://ftp.gnu.org/gnu/gcc/}
 
 @section Papers
 
+
 @itemize @bullet
 @item
+Yves Bertot, Nicolas Magaud and Paul Zimmermann, ``A Proof of GMP Square
+Root'', Journal of Automated Reasoning, volume 29, 2002, pp.@: 225-252,
+
+@item
 Christoph Burnikel and Joachim Ziegler, ``Fast Recursive Division'',
-Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022, @texlinebreak{}
+Max-Planck-Institut fuer Informatik Research Report MPI-I-98-1-022,
+@texlinebreak{}
 @uref{http://data.mpi-sb.mpg.de/internet/reports.nsf/NumberView/1998-1-022}
 
 @item
@@ -9719,7 +9773,7 @@ using Multiplication'', in Proceedings of the SIGPLAN PLDI'94 Conference, June
 Tudor Jebelean,
 ``An algorithm for exact division'',
 Journal of Symbolic Computation,
-volume 15, 1993, pp. 169-180.
+volume 15, 1993, pp.@: 169-180.
 Research report version available @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-35.ps.gz}
 
@@ -9730,32 +9784,36 @@ Abstract'', RISC-Linz technical report 96-31, @texlinebreak{}
 
 @item
 Tudor Jebelean, ``Practical Integer Division with Karatsuba Complexity'',
-ISSAC 97, pp. 339-341.  Technical report available @texlinebreak{}
+ISSAC 97, pp.@: 339-341.  Technical report available @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1996/96-29.ps.gz}
 
 @item
 Tudor Jebelean, ``A Generalization of the Binary GCD Algorithm'', ISSAC 93,
-pp. 111-116.  Technical report version available @texlinebreak{}
+pp.@: 111-116.  Technical report version available @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1993/93-01.ps.gz}
 
 @item
 Tudor Jebelean, ``A Double-Digit Lehmer-Euclid Algorithm for Finding the GCD
 of Long Integers'', Journal of Symbolic Computation, volume 19, 1995,
-pp. 145-157.  Technical report version also available @texlinebreak{}
+pp.@: 145-157.  Technical report version also available @texlinebreak{}
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1992/92-69.ps.gz}
 
 @item
 Werner Krandick and Tudor Jebelean, ``Bidirectional Exact Integer Division'',
-Journal of Symbolic Computation, volume 21, 1996, pp. 441-455.  Early
+Journal of Symbolic Computation, volume 21, 1996, pp.@: 441-455.  Early
 technical report version also available
 @uref{ftp://ftp.risc.uni-linz.ac.at/pub/techreports/1994/94-50.ps.gz}
 
 @item
+Makoto Matsumoto and Takuji Nishimura, ``Mersenne Twister: A 623-dimensionally
+equidistributed unform pseudorandom number generator''.
+
+@item
 R. Moenck and A. Borodin, ``Fast Modular Transforms via Division'',
 Proceedings of the 13th Annual IEEE Symposium on Switching and Automata
-Theory, October 1972, pp. 90-96.  Reprinted as ``Fast Modular Transforms'',
+Theory, October 1972, pp.@: 90-96.  Reprinted as ``Fast Modular Transforms'',
 Journal of Computer and System Sciences, volume 8, number 3, June 1974,
-pp. 366-386.
+pp.@: 366-386.
 
 @item
 Peter L. Montgomery, ``Modular Multiplication Without Trial Division'', in
@@ -9763,12 +9821,12 @@ Mathematics of Computation, volume 44, number 170, April 1985.
 
 @item
 Arnold Sch@"onhage and Volker Strassen, ``Schnelle Multiplikation grosser
-Zahlen'', Computing 7, 1971, pp. 281-292.
+Zahlen'', Computing 7, 1971, pp.@: 281-292.
 
 @item
 Kenneth Weber, ``The accelerated integer GCD algorithm'',
 ACM Transactions on Mathematical Software,
-volume 21, number 1, March 1995, pp. 111-122.
+volume 21, number 1, March 1995, pp.@: 111-122.
 
 @item
 Paul Zimmermann, ``Karatsuba Square Root'', INRIA Research Report 3805,
@@ -9781,9 +9839,9 @@ Implementations'', @texlinebreak{}
 
 @item
 Dan Zuras, ``On Squaring and Multiplying Large Integers'', ARITH-11: IEEE
-Symposium on Computer Arithmetic, 1993, pp. 260 to 271.  Reprinted as ``More
+Symposium on Computer Arithmetic, 1993, pp.@: 260 to 271.  Reprinted as ``More
 on Multiplying and Squaring Large Integers'', IEEE Transactions on Computers,
-volume 43, number 8, August 1994, pp. 899-908.
+volume 43, number 8, August 1994, pp.@: 899-908.
 @end itemize
 
 
