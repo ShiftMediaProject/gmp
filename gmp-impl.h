@@ -43,11 +43,56 @@ MA 02111-1307, USA. */
 #include <intrinsics.h>  /* for _popcnt */
 #endif
 
+/* For fat.h and other fat binary stuff. */
+#define DECL_add_n(name) \
+  mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t))
+#define DECL_addmul_1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_copyd(name) \
+  void name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t))
+#define DECL_copyi(name) \
+  DECL_copyd (name)
+#define DECL_divexact_1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_divexact_by3c(name) \
+  mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_divrem_1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_gcd_1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_lshift(name) \
+  mp_limb_t name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, unsigned))
+#define DECL_mod_1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t))
+#define DECL_mod_34lsub1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t))
+#define DECL_modexact_1c_odd(name) \
+  mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t))
+#define DECL_mul_1(name) \
+  DECL_addmul_1 (name)
+#define DECL_mul_basecase(name) \
+  void name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t))
+#define DECL_preinv_divrem_1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int))
+#define DECL_preinv_mod_1(name) \
+  mp_limb_t name __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t))
+#define DECL_rshift(name) \
+  DECL_lshift (name)
+#define DECL_sqr_basecase(name) \
+  void name __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t))
+#define DECL_sub_n(name) \
+  DECL_add_n (name)
+#define DECL_submul_1(name) \
+  DECL_addmul_1 (name)
+
 #if ! __GMP_WITHIN_CONFIGURE
 #include "config.h"
 #include "gmp-mparam.h"
 #include "fib_table.h"
 #include "mp_bases.h"
+#if WANT_FAT_BINARY
+#include "fat.h"
+#endif
 #endif
 
 #if HAVE_INTTYPES_H      /* for uint_least32_t */
@@ -734,14 +779,18 @@ __GMP_DECLSPEC mp_limb_t mpn_mul_1c __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, 
 #define mpn_mul_2 __MPN(mul_2)
 mp_limb_t mpn_mul_2 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr));
 
+#ifndef mpn_mul_basecase  /* if not done with cpuvec in a fat binary */
 #define mpn_mul_basecase __MPN(mul_basecase)
 __GMP_DECLSPEC void mpn_mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
+#endif
 
 #define mpn_sqr_n __MPN(sqr_n)
 __GMP_DECLSPEC void mpn_sqr_n __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 
+#ifndef mpn_sqr_basecase  /* if not done with cpuvec in a fat binary */
 #define mpn_sqr_basecase __MPN(sqr_basecase)
 __GMP_DECLSPEC void mpn_sqr_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#endif
 
 #define mpn_sub_nc __MPN(sub_nc)
 __GMP_DECLSPEC mp_limb_t mpn_sub_nc __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
@@ -908,8 +957,10 @@ mp_size_t mpn_rootrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t, mp_limb_t))
 #endif
 
 /* used by mpfr and test programs, hence __GMP_DECLSPEC */
+#ifndef mpn_copyi  /* if not done with cpuvec in a fat binary */
 #define mpn_copyi __MPN(copyi)
 __GMP_DECLSPEC void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#endif
 
 #if ! defined (MPN_COPY_INCR) && HAVE_NATIVE_mpn_copyi
 #define MPN_COPY_INCR(dst, src, size)                   \
@@ -977,8 +1028,10 @@ __GMP_DECLSPEC void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #endif
 
 /* used by mpfr and test programs, hence __GMP_DECLSPEC */
+#ifndef mpn_copyd  /* if not done with cpuvec in a fat binary */
 #define mpn_copyd __MPN(copyd)
 __GMP_DECLSPEC void mpn_copyd _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
+#endif
 
 #if ! defined (MPN_COPY_DECR) && HAVE_NATIVE_mpn_copyd
 #define MPN_COPY_DECR(dst, src, size)                   \
@@ -1243,6 +1296,14 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
    value which is good on most machines.  */
 #ifndef MUL_TOOM3_THRESHOLD
 #define MUL_TOOM3_THRESHOLD 256
+#endif
+
+/* MUL_TOOM3_THRESHOLD_LIMIT is the maximum value for MUL_TOOM3_THRESHOLD.
+   In a normal build MUL_TOOM3_THRESHOLD is a constant and we use that.  In
+   a fat binary or tune program build MUL_TOOM3_THRESHOLD is a variable and
+   a separate hard limit will have been defined.  */
+#ifndef MUL_TOOM3_THRESHOLD_LIMIT
+#define MUL_TOOM3_THRESHOLD_LIMIT  MUL_TOOM3_THRESHOLD
 #endif
 
 /* SQR_BASECASE_THRESHOLD is where mpn_sqr_basecase should take over from
@@ -2067,8 +2128,10 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   } while (0)
 
 
+#ifndef mpn_preinv_divrem_1  /* if not done with cpuvec in a fat binary */
 #define mpn_preinv_divrem_1  __MPN(preinv_divrem_1)
 mp_limb_t mpn_preinv_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t, int));
+#endif
 
 
 /* USE_PREINV_DIVREM_1 is whether to use mpn_preinv_divrem_1, as opposed to
@@ -2099,8 +2162,10 @@ mp_limb_t mpn_preinv_divrem_1 _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, 
 #endif
 
 
+#ifndef mpn_mod_34lsub1  /* if not done with cpuvec in a fat binary */
 #define mpn_mod_34lsub1 __MPN(mod_34lsub1)
 mp_limb_t mpn_mod_34lsub1 _PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 
 /* DIVEXACT_1_THRESHOLD is at what size to use mpn_divexact_1, as opposed to
@@ -2115,8 +2180,10 @@ mp_limb_t mpn_mod_34lsub1 _PROTO ((mp_srcptr, mp_size_t)) __GMP_ATTRIBUTE_PURE;
 #define MODEXACT_1_ODD_THRESHOLD  0
 #endif
 
+#ifndef mpn_divexact_1  /* if not done with cpuvec in a fat binary */
 #define mpn_divexact_1 __MPN(divexact_1)
 void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+#endif
 
 #define MPN_DIVREM_OR_DIVEXACT_1(dst, src, size, divisor)                     \
   do {                                                                        \
@@ -2129,9 +2196,11 @@ void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
       }                                                                       \
   } while (0)
 
+#ifndef mpn_modexact_1c_odd  /* if not done with cpuvec in a fat binary */
 #define mpn_modexact_1c_odd  __MPN(modexact_1c_odd)
 mp_limb_t mpn_modexact_1c_odd _PROTO ((mp_srcptr src, mp_size_t size,
                                        mp_limb_t divisor, mp_limb_t c)) __GMP_ATTRIBUTE_PURE;
+#endif
 
 #if HAVE_NATIVE_mpn_modexact_1_odd
 #define mpn_modexact_1_odd   __MPN(modexact_1_odd)
@@ -3186,6 +3255,55 @@ int __gmp_doscan _PROTO ((const struct gmp_doscan_funs_t *, void *,
 
 #define MPZ_PROVOKE_REALLOC(z)					\
   do { ALLOC(z) = ABSIZ(z); } while (0)
+
+
+/* Enhancement: The "mod" and "gcd_1" functions below could have
+   __GMP_ATTRIBUTE_PURE, but currently (gcc 3.3) that's not supported on
+   function pointers, only actual functions.  It probably doesn't make much
+   difference to the gmp code, since hopefully we arrange calls so there's
+   no great need for the compiler to move things around.  */
+
+#if WANT_FAT_BINARY && HAVE_HOST_CPU_FAMILY_x86
+/* NOTE: The function pointers in this struct are also in CPUVEC_FUNCS_LIST
+   in mpn/x86/x86-defs.m4.  Be sure to update that when changing here.  */
+struct cpuvec_t {
+  DECL_add_n           ((*add_n));
+  DECL_addmul_1        ((*addmul_1));
+  DECL_copyd           ((*copyd));
+  DECL_copyi           ((*copyi));
+  DECL_divexact_1      ((*divexact_1));
+  DECL_divexact_by3c   ((*divexact_by3c));
+  DECL_divrem_1        ((*divrem_1));
+  DECL_gcd_1           ((*gcd_1));
+  DECL_lshift          ((*lshift));
+  DECL_mod_1           ((*mod_1));
+  DECL_mod_34lsub1     ((*mod_34lsub1));
+  DECL_modexact_1c_odd ((*modexact_1c_odd));
+  DECL_mul_1           ((*mul_1));
+  DECL_mul_basecase    ((*mul_basecase));
+  DECL_preinv_divrem_1 ((*preinv_divrem_1));
+  DECL_preinv_mod_1    ((*preinv_mod_1));
+  DECL_rshift          ((*rshift));
+  DECL_sqr_basecase    ((*sqr_basecase));
+  DECL_sub_n           ((*sub_n));
+  DECL_submul_1        ((*submul_1));
+  int                  initialized;
+  mp_size_t            mul_karatsuba_threshold;
+  mp_size_t            mul_toom3_threshold;
+  mp_size_t            sqr_karatsuba_threshold;
+  mp_size_t            sqr_toom3_threshold;
+};
+__GMP_DECLSPEC extern struct cpuvec_t __gmpn_cpuvec;
+#endif /* x86 fat binary */
+
+void __gmpn_cpuvec_init __GMP_PROTO ((void));
+
+/* Get a threshold "field" from __gmpn_cpuvec, running __gmpn_cpuvec_init()
+   if that hasn't yet been done (to establish the right values).  */
+#define CPUVEC_THRESHOLD(field)                                               \
+  ((LIKELY (__gmpn_cpuvec.initialized) ? 0 : (__gmpn_cpuvec_init (), 0)),     \
+   __gmpn_cpuvec.field)
+
 
 
 #if TUNE_PROGRAM_BUILD
