@@ -127,6 +127,7 @@ EXTRA_PROGRAMS = \
 
 
 EXTRA_HEADERS = ref.h 
+EXTRA_DIST = ref.c
 subdir = mpn/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
