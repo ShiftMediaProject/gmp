@@ -1,5 +1,13 @@
 2000-04-15  Linus Nordberg  <linus@swox.se>
 
+	* configure.in: Honor `CC' and `CFLAGS' set by user on configure
+	command line.
+	* acinclude.m4: (GMP_PROG_CC_SELECT): Set CFLAGS if not set already.
+	* aclocal.m4: Regenerate.
+	* configure: Regenerate.
+	
+2000-04-15  Linus Nordberg  <linus@swox.se>
+
 	* acinclude.m4 (GMP_PROG_CC_FIND): Remove debug output.  Remove
 	commented out code.
 	* aclocal.m4: Regenerate.
