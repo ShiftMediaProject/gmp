@@ -1,33 +1,56 @@
-/* mpn_set_str (mp_ptr res_ptr, const char *str, size_t str_len, int base)
-   -- Convert a STR_LEN long base BASE byte string pointed to by STR to a
-   limb vector pointed to by RES_PTR.  Return the number of limbs in
-   RES_PTR.
+/* mpn_set_str (mp_ptr res_ptr, const char *str, size_t str_len, int base) --
+   Convert a STR_LEN long base BASE byte string pointed to by STR to a limb
+   vector pointed to by RES_PTR.  Return the number of limbs in RES_PTR.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright (C) 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
-The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or (at your
-option) any later version.
+The GNU MP Library is free software; you can redistribute it and/or modify it
+under the terms of the GNU Library General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your option)
+any later version.
 
 The GNU MP Library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-License for more details.
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public License
+for more details.
 
-You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA. */
+You should have received a copy of the GNU Library General Public License along
+with the GNU MP Library; see the file COPYING.LIB.  If not, write to the Free
+Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
 
+#define swapptr(xp,yp) \
+do { mp_ptr _swapptr_tmp = (xp); (xp) = (yp); (yp) = _swapptr_tmp; } while (0)
+
+static mp_size_t convert_blocks (mp_ptr, const unsigned char *, size_t, int);
+
+/* When to switch to sub-quadratic code.  This counts characters/digits in
+   the input string, not limbs as most other *_THRESHOLD.  */
+#ifndef SET_STR_THRESHOLD
+#define SET_STR_THRESHOLD 4000
+#endif
+
+/* Don't define this to anything but 1 for now.  In order to make other values
+   work well, either the convert_blocks function should be generazed to handle
+   larger blocks than chars_per_limb, or the basecase code should be broken out
+   of the main function.  Also note that this must be a power of 2.  */
+#ifndef SET_STR_BLOCK_SIZE
+#define SET_STR_BLOCK_SIZE 1	/* Must be a power of 2. */
+#endif
+
+#if SET_STR_BLOCK_SIZE >= SET_STR_THRESHOLD
+These values are silly.
+The sub-quadratic code would recurse to itself.
+#endif
+
 mp_size_t
-mpn_set_str (mp_ptr xp, const unsigned char *str, size_t str_len, int base)
+mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 {
   mp_size_t size;
   mp_limb_t big_base;
@@ -41,14 +64,12 @@ mpn_set_str (mp_ptr xp, const unsigned char *str, size_t str_len, int base)
   big_base = __mp_bases[base].big_base;
   indigits_per_limb = __mp_bases[base].chars_per_limb;
 
-/*   size = str_len / indigits_per_limb + 1;  */
-
   size = 0;
 
   if ((base & (base - 1)) == 0)
     {
-      /* The base is a power of 2.  Read the input string from
-	 least to most significant character/digit.  */
+      /* The base is a power of 2.  Read the input string from least to most
+	 significant character/digit.  */
 
       const unsigned char *s;
       int next_bitpos;
@@ -65,91 +86,256 @@ mpn_set_str (mp_ptr xp, const unsigned char *str, size_t str_len, int base)
 	  next_bitpos += bits_per_indigit;
 	  if (next_bitpos >= BITS_PER_MP_LIMB)
 	    {
-	      xp[size++] = res_digit;
+	      rp[size++] = res_digit;
 	      next_bitpos -= BITS_PER_MP_LIMB;
 	      res_digit = inp_digit >> (bits_per_indigit - next_bitpos);
 	    }
 	}
 
       if (res_digit != 0)
-	xp[size++] = res_digit;
+	rp[size++] = res_digit;
+      return size;
     }
   else
     {
       /* General case.  The base is not a power of 2.  */
 
-      size_t i;
-      int j;
-      mp_limb_t cy_limb;
-
-      for (i = indigits_per_limb; i < str_len; i += indigits_per_limb)
+      if (str_len < SET_STR_THRESHOLD)
 	{
+	  size_t i;
+	  int j;
+	  mp_limb_t cy_limb;
+
+	  for (i = indigits_per_limb; i < str_len; i += indigits_per_limb)
+	    {
+	      res_digit = *str++;
+	      if (base == 10)
+		{ /* This is a common case.
+		     Help the compiler to avoid multiplication.  */
+		  for (j = 1; j < indigits_per_limb; j++)
+		    res_digit = res_digit * 10 + *str++;
+		}
+	      else
+		{
+		  for (j = 1; j < indigits_per_limb; j++)
+		    res_digit = res_digit * base + *str++;
+		}
+
+	      if (size == 0)
+		{
+		  if (res_digit != 0)
+		    {
+		      rp[0] = res_digit;
+		      size = 1;
+		    }
+		}
+	      else
+		{
+		  cy_limb = mpn_mul_1 (rp, rp, size, big_base);
+		  cy_limb += mpn_add_1 (rp, rp, size, res_digit);
+		  if (cy_limb != 0)
+		    rp[size++] = cy_limb;
+		}
+	    }
+
+	  big_base = base;
 	  res_digit = *str++;
 	  if (base == 10)
 	    { /* This is a common case.
 		 Help the compiler to avoid multiplication.  */
-	      for (j = 1; j < indigits_per_limb; j++)
-		res_digit = res_digit * 10 + *str++;
+	      for (j = 1; j < str_len - (i - indigits_per_limb); j++)
+		{
+		  res_digit = res_digit * 10 + *str++;
+		  big_base *= 10;
+		}
 	    }
 	  else
 	    {
-	      for (j = 1; j < indigits_per_limb; j++)
-		res_digit = res_digit * base + *str++;
+	      for (j = 1; j < str_len - (i - indigits_per_limb); j++)
+		{
+		  res_digit = res_digit * base + *str++;
+		  big_base *= base;
+		}
 	    }
 
 	  if (size == 0)
 	    {
 	      if (res_digit != 0)
 		{
-		  xp[0] = res_digit;
+		  rp[0] = res_digit;
 		  size = 1;
 		}
 	    }
 	  else
 	    {
-	      cy_limb = mpn_mul_1 (xp, xp, size, big_base);
-	      cy_limb += mpn_add_1 (xp, xp, size, res_digit);
+	      cy_limb = mpn_mul_1 (rp, rp, size, big_base);
+	      cy_limb += mpn_add_1 (rp, rp, size, res_digit);
 	      if (cy_limb != 0)
-		xp[size++] = cy_limb;
+		rp[size++] = cy_limb;
 	    }
+	  return size;
 	}
+      else
+	{
+	  /* Sub-quadratic code.  */
 
-      big_base = base;
+	  mp_ptr dp;
+	  mp_size_t dsize;
+	  mp_ptr xp, tp;
+	  mp_size_t step;
+	  mp_size_t i;
+	  int chars_per_limb;
+	  size_t alloc;
+	  mp_size_t n;
+	  mp_ptr pow_mem;
+
+	  chars_per_limb = __mp_bases[base].chars_per_limb;
+	  alloc = (str_len + chars_per_limb - 1) / chars_per_limb;
+	  alloc = 2 * alloc;
+	  dp = __GMP_ALLOCATE_FUNC_LIMBS (alloc);
+
+#if SET_STR_BLOCK_SIZE == 1
+	  dsize = convert_blocks (dp, str, str_len, base);
+#else
+	  {
+	    const unsigned char *s;
+	    mp_ptr ddp = dp;
+
+	    s = str + str_len;
+	    while (s - str >  SET_STR_BLOCK_SIZE * chars_per_limb)
+	      {
+		s -= SET_STR_BLOCK_SIZE * chars_per_limb;
+		mpn_set_str (ddp, s, SET_STR_BLOCK_SIZE * chars_per_limb, base);
+		ddp += SET_STR_BLOCK_SIZE;
+	      }
+	    ddp += mpn_set_str (ddp, str, s - str, base);
+	    dsize = ddp - dp;
+	  }
+#endif
+
+	  /* Allocate space for powers of big_base.  Could trim this in two
+	     ways:
+	     1. Only really need 2^ceil(log2(dsize)) limbs for the largest
+		power.
+	     2. Only the variable to get the largest power need that much
+		memory.  The other variable needs half as much.
+	     Net space savings would be in the range 3/4 to 3/8 of current
+	     allocation, depending on how close to the next power of 2 that
+	     dsize is.  */
+	  pow_mem = __GMP_ALLOCATE_FUNC_LIMBS (2 * alloc);
+	  xp = pow_mem;
+	  tp = pow_mem + alloc;
+
+	  xp[0] = big_base;
+	  n = 1;
+	  step = 1;
+#if SET_STR_BLOCK_SIZE != 1
+	  for (i = SET_STR_BLOCK_SIZE; i > 1; i >>= 1)
+	    {
+	      mpn_sqr_n (tp, xp, n);
+	      n = 2 * n;
+	      n -= tp[n - 1] == 0;
+
+	      step = 2 * step;
+	      swapptr (tp, xp);
+	    }
+#endif
+
+	  /* Multiply every second limb block, each `step' limbs large by the
+	     base power currently in xp[], then add this to the adjacent block.
+	     We thereby convert from dsize blocks in base big_base, to dsize/2
+	     blocks in base big_base^2, then to dsize/4 blocks in base big_base^4,
+	     etc, etc.  */
+
+	  if (step < dsize)
+	    {
+	      for (;;)
+		{
+		  for (i = 0; i < dsize - step; i += 2 * step)
+		    {
+		      mp_ptr bp = dp + i;
+		      mp_size_t m = dsize - i - step;
+		      mp_size_t hi;
+		      if (n >= m)
+			{
+			  mpn_mul (tp, xp, n, bp + step, m);
+			  mpn_add (bp, tp, n + m, bp, n);
+			  hi = i + n + m;
+			  dsize = hi;
+			  dsize -= dp[dsize - 1] == 0;
+			}
+		      else
+			{
+			  mpn_mul_n (tp, xp, bp + step, n);
+			  mpn_add (bp, tp, n + n, bp, n);
+			}
+		    }
+
+		  step = 2 * step;
+		  if (! (step < dsize))
+		    break;
+
+		  mpn_sqr_n (tp, xp, n);
+		  n = 2 * n;
+		  n -= tp[n - 1] == 0;
+		  swapptr (tp, xp);
+		}
+	    }
+
+	  MPN_NORMALIZE (dp, dsize);
+	  MPN_COPY (rp, dp, dsize);
+	  __GMP_FREE_FUNC_LIMBS (pow_mem, alloc);
+	  __GMP_FREE_FUNC_LIMBS (dp, alloc);
+	  return dsize;
+	}
+    }
+}
+
+static mp_size_t
+convert_blocks (mp_ptr dp, const unsigned char *str, size_t str_len, int base)
+{
+  mp_limb_t big_base;
+  int chars_per_limb;
+  mp_size_t i;
+  int j;
+  int ds;
+  mp_size_t dsize;
+  mp_limb_t res_digit;
+
+  big_base = __mp_bases[base].big_base;
+  chars_per_limb = __mp_bases[base].chars_per_limb;
+
+  dsize = str_len / chars_per_limb;
+  ds = str_len % chars_per_limb;
+
+  if (ds != 0)
+    {
       res_digit = *str++;
-      if (base == 10)
-	{ /* This is a common case.
-	     Help the compiler to avoid multiplication.  */
-	  for (j = 1; j < str_len - (i - indigits_per_limb); j++)
-	    {
-	      res_digit = res_digit * 10 + *str++;
-	      big_base *= 10;
-	    }
-	}
-      else
-	{
-	  for (j = 1; j < str_len - (i - indigits_per_limb); j++)
-	    {
-	      res_digit = res_digit * base + *str++;
-	      big_base *= base;
-	    }
-	}
+      for (j = ds - 1; j != 0; j--)
+	res_digit = res_digit * base + *str++;
+      dp[dsize] = res_digit;
+    }
 
-      if (size == 0)
+  if (base == 10)
+    {
+      for (i = dsize - 1; i >= 0; i--)
 	{
-	  if (res_digit != 0)
-	    {
-	      xp[0] = res_digit;
-	      size = 1;
-	    }
+	  res_digit = *str++;
+	  for (j = chars_per_limb - 1; j != 0; j--)
+	    res_digit = res_digit * 10 + *str++;
+	  dp[i] = res_digit;
 	}
-      else
+    }
+  else
+    {
+      for (i = dsize - 1; i >= 0; i--)
 	{
-	  cy_limb = mpn_mul_1 (xp, xp, size, big_base);
-	  cy_limb += mpn_add_1 (xp, xp, size, res_digit);
-	  if (cy_limb != 0)
-	    xp[size++] = cy_limb;
+	  res_digit = *str++;
+	  for (j = chars_per_limb - 1; j != 0; j--)
+	    res_digit = res_digit * base + *str++;
+	  dp[i] = res_digit;
 	}
     }
 
-  return size;
+  return dsize + (ds != 0);
 }
