@@ -8,11 +8,11 @@ This file has some notes on things common to all the x86 family code.
 
 ASM FILES
 
-The .asm files are BSD style x86 assembler code, first put through m4 for
-macro processing.  The generic mpn/asm-defs.m4 is used, together with
+The x86 .asm files are BSD style x86 assembler code, first put through m4
+for macro processing.  The generic mpn/asm-defs.m4 is used, together with
 mpn/x86/x86-defs.m4.  Detailed notes are in those files.
 
-The code is meant for use with GNU "gas" or the system "as".  There's no
+The code is meant for use with GNU "gas" or a system "as".  There's no
 support for assemblers that demand Intel style, and with gas freely
 available and easy to use that shouldn't be a problem.
 
@@ -20,16 +20,16 @@ available and easy to use that shouldn't be a problem.
 
 STACK FRAME
 
-New code uses m4 macros to define the parameters passed on the stack, and
-these act like comments on what the stack frame looks like too.  For
-example, mpn_divmod_1 has the following.
+m4 macros are used to define the parameters passed on the stack, and these
+act like comments on what the stack frame looks like too.  For example,
+mpn_mul_1() has the following.
 
-        defframe(PARAM_DIVISOR,16)
-        defframe(PARAM_SIZE,   12)
-        defframe(PARAM_SRC,    8)
-        defframe(PARAM_DST,    4)
+        defframe(PARAM_MULTIPLIER, 16)
+        defframe(PARAM_SIZE,       12)
+        defframe(PARAM_SRC,         8)
+        defframe(PARAM_DST,         4)
 
-Here PARAM_DIVISOR gets defined as `FRAME+16(%esp)', and the others
+Here PARAM_MULTIPLIER gets defined as `FRAME+16(%esp)', and the others
 similarly.  The return address is at offset 0, but there's not normally any
 need to access that.
 
@@ -67,50 +67,53 @@ example,
 
 Here STACK_SPACE gets used in a "subl $STACK_SPACE, %esp" to allocate the
 space, and that instruction must be followed by a redefinition of FRAME
-(setting it equal to STACK_SPACE) to reflect the change in esp.
+(setting it equal to STACK_SPACE) to reflect the change in %esp.
 
-Definitions for pushed registers are only put in where they're going to be
-used.  If registers are just restored with pops then definitions aren't
-made.
+Definitions for pushed registers are only put in when they're going to be
+used.  If registers are just saved and restored with pushes and pops then
+definitions aren't made.
 
 
 
-ASSEMBLER DIVIDE OPERATOR
+ASSEMBLER EXPRESSIONS
 
-Divisions can't be done in assembler expressions, because in some versions
-of gas "/" anywhere in a line is a comment character, apparently for SVR4
-compatibility.  If a divide is needed, m4 eval() must be used instead.
+Only addition and subtraction seem to be universally available, certainly
+that's all the Solaris 8 "as" seems to accept.  If expressions are wanted
+then m4 eval() should be used.
 
-The problem shows up on something like the following, which gives an error
-because it's read as just "addl $32".
+In particular note that a "/" anywhere in a line starts a comment in Solaris
+"as", and in some configurations of gas too.
 
-	addl	$32/2, %eax
+	addl	$32/2, %eax           <-- wrong
 
-Binutils gas/config/tc-i386.c has an alternative behaviour where "/" is a
-comment only at the start of a line.  FreeBSD patches binutils 2.9.1 to
-select this, and as of binutils 2.9.5 it's the default for GNU/Linux too.
+	addl	$eval(32/2), %eax     <-- right
+
+Binutils gas/config/tc-i386.c has a choice between "/" being a comment
+anywhere in a line, or only at the start.  FreeBSD patches 2.9.1 to select
+the latter, and as of 2.9.5 it's the default for GNU/Linux too.
 
 
 
 ASSEMBLER COMMENTS
 
-Solaris "as" doesn't support "#" commenting, unfortunately.  For that reason
-"C" commenting is used (from asm-defs.m4) and the intermediate ".s" files
-have no comments.
+Solaris "as" doesn't support "#" commenting, using /* */ instead,
+unfortunately.  For that reason "C" commenting is used (see asm-defs.m4) and
+the intermediate ".s" files have no comments.
 
 
 
 ZERO DISPLACEMENTS
 
 In a couple of places addressing modes like 0(%ebx) with a byte-sized zero
-displacement are wanted, rather than say (%ebx) with no displacement.  These
-are either for computed jumps or to get desirable code alignment.  Explicit
+displacement are wanted, rather than (%ebx) with no displacement.  These are
+either for computed jumps or to get desirable code alignment.  Explicit
 .byte sequences are used to ensure the assembler doesn't turn 0(%ebx) into
-(%ebx).  The Zdisp macro in x86-defs.m4 is used for this.
+(%ebx).  The Zdisp() macro in x86-defs.m4 is used for this.
 
 Current gas 2.9.5 or recent 2.9.1 leave 0(%ebx) as written, but old gas
 1.92.3 changes it.  In general changing would be the sort of "optimization"
-an assembler might perform, hence explicit .bytes are used where necessary.
+an assembler might perform, hence explicit ".byte"s are used where
+necessary.
 
 
 
@@ -118,8 +121,7 @@ SHLD/SHRD INSTRUCTIONS
 
 The %cl count forms of double shift instructions like "shldl %cl,%eax,%ebx"
 must be written "shldl %eax,%ebx" for some assemblers.  gas takes either,
-gcc generates %cl for gas and NeXT (which might be gas), and omits %cl
-elsewhere.
+gcc generates %cl for gas and NeXT (which is gas), and omits %cl elsewhere.
 
 For GMP an autoconf test is used to determine whether %cl should be used and
 the macros shldl, shrdl, shldw and shrdw in mpn/x86/x86-defs.m4 then pass
@@ -135,25 +137,42 @@ function entry and exit.  (See iBCS2 and SVR4 ABI books, references below.)
 Although this has been so since the year dot, it's not absolutely clear
 whether it's universally respected.  Since it's better to be safe than
 sorry, gmp follows glibc and does a "cld" if it depends on the direction
-flag being clear.
+flag being clear.  This happens only in a few places.
 
 
 
 POSITION INDEPENDENT CODE
 
-Defining the symbol PIC in the m4 processing will select position
-independent code.  Calls from assembler code to some other function use the
-normal C procedure linkage table.  Computed jumps do their calculations in a
-self-contained fashion (without using the global offset table).
+Defining the symbol PIC in m4 processing selects position independent code.
+This mainly affects computed jumps, and these are implemented in a
+self-contained fashion (without using the global offset table).  The few
+calls from assembly code to global functions use the normal procedure
+linkage table.
 
-PIC code is necessary for ELF shared libraries that can be mapped into
-different processes at different addresses.  Text relocations in shared
-libraries are supposed to be allowed, but that presumably means a page with
-such a relocation isn't shared.
+PIC is necessary for ELF shared libraries because they can be mapped into
+different processes at different virtual addresses.  Text relocations in
+shared libraries are supposed to be allowed, but that presumably means a
+page with such a relocation isn't shared.  The use of the PLT for PIC adds a
+fixed cost to every function call, which is small but might be noticable
+when working with small operands.
 
-PIC adds a certain fixed cost to each function call, which is small but
-might be noticable when working with smallish size operands.  For maximum
-performance use non-PIC code and the plain static libgmp.a.
+Calls from one library function to another don't need to go through the PLT,
+since of course the call instruction uses a displacement, not an absolute
+address, and the relative locations of object files are known when libgmp.so
+is created.  "ld -Bsymbolic" (or "gcc -Wl,-Bsymbolic") will resolve calls
+this way, so that there's no jump through the PLT, but of course leaving
+setups of the GOT address in %ebx that may be unnecessary.
+
+The %ebx setup could be avoided in assembly if a separate option controlled
+PIC for calls as opposed to computed jumps etc.  But there's only ever
+likely to be a handful of calls out of assembler, and getting the same
+optimization for C intra-library calls would be more important.  There seems
+no easy way to tell gcc that certain functions can be called non-PIC, and
+unfortunately many gmp functions use the global memory allocation variables,
+so they need the GOT anyway.  Object files with no global data references
+and only intra-library calls could go into the library as non-PIC under
+-Bsymbolic.  Integrating this into libtool and automake is left as an
+exercise for the reader.
 
 
 
@@ -163,18 +182,18 @@ The overheads in setting up for an unrolled loop can mean that at small
 sizes a simple loop is faster.  Making small sizes go fast is important,
 even if it adds a cycle or two to bigger sizes.  To this end various
 routines choose between a simple loop and an unrolled loop according to
-operand size.  The execution path to the simple loop, or to special case
-code for small sizes, is always as fast as possible.
+operand size.  The path to the simple loop, or to special case code for
+small sizes, is always as fast as possible.
 
 Adding a simple loop requires a conditional jump to choose between the
 simple and unrolled code.  The size of a branch misprediction penalty
 affects whether a simple loop is worthwhile.
 
-The convention is to for an m4 definition UNROLL_THRESHOLD to set the
-crossover point, with sizes < UNROLL_THRESHOLD using the simple loop, sizes
->= UNROLL_THRESHOLD using the unrolled loop.  If position independent code
-adds a couple of cycles to an unrolled loop setup, the threshold will vary
-with PIC or non-PIC.  Something like the following is typical.
+The convention is for an m4 definition UNROLL_THRESHOLD to set the crossover
+point, with sizes < UNROLL_THRESHOLD using the simple loop, sizes >=
+UNROLL_THRESHOLD using the unrolled loop.  If position independent code adds
+a couple of cycles to an unrolled loop setup, the threshold will vary with
+PIC or non-PIC.  Something like the following is typical.
 
 	ifdef(`PIC',`
 	deflit(UNROLL_THRESHOLD, 10)
@@ -194,9 +213,8 @@ UNROLLED LOOP CODING
 
 The x86 addressing modes allow a byte displacement of -128 to +127, making
 it possible to access 256 bytes, which is 64 limbs, without adjusting
-pointer registers within the loop.  Word sized displacements can be used
-too, but they increase code size, and unrolling to 64 ought to be enough
-anyway.
+pointer registers within the loop.  Dword sized displacements can be used
+too, but they increase code size, and unrolling to 64 ought to be enough.
 
 When unrolling to the full 64 limbs/loop, the limb at the top of the loop
 will have a displacement of -128, so pointers have to have a corresponding
@@ -217,14 +235,14 @@ routines) the computed jump and pointer calculations in preparation for an
 unrolled loop are as follows.
 
 	S = operand size in limbs
-	N = number of limbs per loop (ie. UNROLL_COUNT)
-	L = log2 of unrolling (ie. UNROLL_LOG2)
-	M = mask for unrolling (ie. UNROLL_MASK)
+	N = number of limbs per loop (UNROLL_COUNT)
+	L = log2 of unrolling (UNROLL_LOG2)
+	M = mask for unrolling (UNROLL_MASK)
 	C = code bytes per limb in the loop
-	B = bytes per limb (ie. 4)
+	B = bytes per limb (4 for x86)
 	
 	computed jump            (-S & M) * C + entrypoint
-	subtract from pointers   (-S & M) * 4
+	subtract from pointers   (-S & M) * B
 	initial loop counter     (S-1) >> L
 	displacements            0 to B*(N-1)
 
@@ -232,36 +250,36 @@ The loop counter is decremented at the end of each loop, and the looping
 stops when the decrement takes the counter to -1.  The displacements are for
 the addressing accessing each limb, eg. a load with "movl disp(%ebx), %eax".
 
-Usually the multiply by C can be handled without an imul, using instead an
-lea, or a shift and subtract.
+Usually the multiply by "C" can be handled without an imul, using instead an
+leal, or a shift and subtract.
 
 When working from most significant to least significant limb (eg. mpn_lshift
-and mpn_copyb), the calculations change as follows.
+and mpn_copyd), the calculations change as follows.
 
-	add to pointers          (-S & M) * 4
+	add to pointers          (-S & M) * B
 	displacements            0 to -B*(N-1)
 
 
 
 OLD GAS 1.92.3
 
-This version, which comes with FreeBSD 2.2.8, has a couple of gremlins that
+This version comes with FreeBSD 2.2.8 and has a couple of gremlins that
 affect gmp code.
 
 Firstly, an expression involving two forward references to labels comes out
 as zero.  For example,
 
-		addl	$bar-foo,%eax
+		addl	$bar-foo, %eax
 	foo:
 		nop
 	bar:
 
-This should lead to an "addl $1,%eax", but it actually comes out as "addl
-$0,%eax".  When only one forward reference is involved, it works correctly,
-as for example,
+This should lead to "addl $1, %eax", but it comes out as "addl $0, %eax".
+When only one forward reference is involved, it works correctly, as for
+example,
 
 	foo:
-		addl	$bar-foo,%eax
+		addl	$bar-foo, %eax
 		nop
 	bar:
 
