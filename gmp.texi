@@ -2330,8 +2330,8 @@ same way as for normal C @code{int} arithmetic.
 
 @sp 1
 Divide @var{n} by @var{d}, forming a quotient @var{q} and/or remainder
-@var{r}.  For the @code{2exp} functions, @ma{@var{d}=2^@var{b}}.  The rounding
-is in three styles, each suiting different applications.
+@var{r}.  For the @code{2exp} functions, @m{@var{d}=2^b, @var{d}=2^@var{b}}.
+The rounding is in three styles, each suiting different applications.
 
 @itemize @bullet
 @item
