@@ -65,6 +65,20 @@ if test "$enable_alloca" = "no"; then
 fi
 
 
+AC_ARG_ENABLE(fft,
+AC_HELP_STRING([--enable-fft],[enable FFTs for multiplication [default=no]]),
+[case "${enableval}" in
+yes|no) ;;
+*) AC_MSG_ERROR([bad value ${enableval} for --enable-fft, need yes or no]) ;;
+esac],
+[enable_fft=no])
+
+if test "$enable_fft" = "yes"; then
+  AC_DEFINE(WANT_FFT,1,
+  [./configure --enable-fft option, to enable FFTs for multiplication])
+fi
+
+
 AC_ARG_ENABLE(mpbsd,
 AC_HELP_STRING([--enable-mpbsd],[build Berkley MP compatibility library [default=no]]),
 [case "${enableval}" in
