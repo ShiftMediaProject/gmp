@@ -18,6 +18,10 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-07-16  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/get_d.c: Correction to infinity handling for large exp.
+
 2003-07-14  Kevin Ryde  <kevin@swox.se>
 
 	* mpz/get_d.c, mpz/get_d_2exp.c, mpf/get_d.c, mpf/get_d_2exp.c: Use
