@@ -2315,7 +2315,7 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #endif
 
 /* Cool population count of an mp_limb_t.
-   You have to figure out how this works, I won't tell you!
+   You have to figure out how this works, We won't tell you!
 
    The constants could also be expressed as:
      0xAA... = [2^(N+1) / 3] = [(2^N-1)/3*2]
@@ -2495,10 +2495,10 @@ union ieee_double_extract
 
 /* Use (4.0 * ...) instead of (2.0 * ...) to work around buggy compilers
    that don't convert ulong->double correctly (eg. SunOS 4 native cc).  */
-#define MP_BASE_AS_DOUBLE (4.0 * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 2)))
+#define MP_BASE_AS_DOUBLE (4.0 * ((mp_limb_t) 1 << (GMP_NUMB_BITS - 2)))
 /* Maximum number of limbs it will take to store any `double'.
    We assume doubles have 53 mantissam bits.  */
-#define LIMBS_PER_DOUBLE ((53 + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB + 1)
+#define LIMBS_PER_DOUBLE ((53 + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS + 1)
 
 double __gmp_scale2 _PROTO ((double, int)) ATTRIBUTE_CONST;
 int __gmp_extract_double _PROTO ((mp_ptr, double));
