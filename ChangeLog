@@ -1,5 +1,8 @@
 2000-09-27  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/alpha/ev6/addmul_1.asm: Use explicit offset for all load and
+	store insns.  Helps old gas.
+
 	* longlong.h (count_leading_zeros): Define for ia64.
 
 2000-09-27  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
