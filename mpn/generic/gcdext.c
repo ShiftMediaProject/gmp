@@ -39,18 +39,17 @@ int arr[BITS_PER_MP_LIMB];
 /* mpn_gcdext (GP, SP, SSIZE, UP, USIZE, VP, VSIZE)
 
    Compute the extended GCD of {UP,USIZE} and {VP,VSIZE} and store the
-   greatest common divisor at GP, and the first cofactor at SP.  Write the
-   size of the cofactor through the pointer SSIZE.  Return the size of the
-   value at GP.  Note that SP might be a negative number; this is denoted
-   by storing the negative of the size through SSIZE.
+   greatest common divisor at GP (unless it is 0), and the first cofactor at
+   SP.  Write the size of the cofactor through the pointer SSIZE.  Return the
+   size of the value at GP.  Note that SP might be a negative number; this is
+   denoted by storing the negative of the size through SSIZE.
 
    {UP,USIZE} and {VP,VSIZE} are both clobbered.
 
    The space allocation for all four areas needs to be USIZE+1.
 
    Preconditions: 1) U >= V.
-		  2) V > 0.
-*/
+		  2) V > 0.  */
 
 /* We use Lehmer's algorithm.  The idea is to extract the most significant
    bits of the operands, and compute the continued fraction for them.  We then
@@ -594,7 +593,7 @@ mpn_gcd (gp, up, size, vp, vsize)
 
   if (vsize == 0)
     {
-      if (gp != up)
+      if (gp != up && gp != 0)
 	MPN_COPY (gp, up, size);
 #if EXTEND
       MPN_NORMALIZE (s0p, ssize);
@@ -680,7 +679,8 @@ mpn_gcd (gp, up, size, vp, vsize)
 	  ul = vl;
 	  vl = t;
 	}
-      gp[0] = ul;
+      if (gp != 0)
+	gp[0] = ul;
 #if EXTEND
       MPN_NORMALIZE (s0p, ssize);
       if (orig_s0p != s0p)
