@@ -461,7 +461,7 @@ refmpn_mul_1c (mp_ptr rp, mp_srcptr sp, mp_size_t size, mp_limb_t multiplier,
   mp_size_t  i;
   mp_limb_t  hi, lo;
   
-  ASSERT (refmpn_overlap_fullonly_p (rp, sp, size));
+  ASSERT (refmpn_overlap_low_to_high_p (rp, sp, size));
   ASSERT (size >= 1);
                                                                           
   for (i = 0; i < size; i++)
