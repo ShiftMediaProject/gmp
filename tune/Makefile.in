@@ -142,7 +142,7 @@ EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
 libspeed_la_SOURCES = \
   common.c freq.c gcd_bin.c gcd_finda_gen.c modlinv.c \
-  mul_n_mpn.c mul_n_open.c noop.c time.c
+  mul_n_mpn.c mul_n_open.c noop.c powm_mod.c powm_redc.c time.c
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la -lm
@@ -175,7 +175,7 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 # so the recompiled object will be rebuilt if that file changes.
 
 TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c dc_divrem_n.c tdiv_qr.c gcd.c gcdext.c
-TUNE_MPZ_SRCS = fib_ui.c powm.c
+TUNE_MPZ_SRCS = fib_ui.c
 
 # This bit like mpn/Makefile.am
 
@@ -205,7 +205,7 @@ libdummy_la_OBJECTS =  $(nodist_libdummy_la_OBJECTS)
 libspeed_la_LDFLAGS = 
 am_libspeed_la_OBJECTS =  common$U.lo freq$U.lo gcd_bin$U.lo \
 gcd_finda_gen$U.lo modlinv$U.lo mul_n_mpn$U.lo mul_n_open$U.lo \
-noop$U.lo time$U.lo
+noop$U.lo powm_mod$U.lo powm_redc$U.lo time$U.lo
 libspeed_la_OBJECTS =  $(am_libspeed_la_OBJECTS)
 EXTRA_PROGRAMS =  speed$(EXEEXT) speed-ext$(EXEEXT) tuneup$(EXEEXT)
 am_speed_OBJECTS =  speed$U.$(OBJEXT)
@@ -221,7 +221,7 @@ speed_ext_LDFLAGS =
 am_tuneup_OBJECTS =  tuneup$U.$(OBJEXT)
 nodist_tuneup_OBJECTS =  mul_n$U.$(OBJEXT) mul_fft$U.$(OBJEXT) \
 mul$U.$(OBJEXT) dc_divrem_n$U.$(OBJEXT) tdiv_qr$U.$(OBJEXT) \
-gcd$U.$(OBJEXT) gcdext$U.$(OBJEXT) fib_ui$U.$(OBJEXT) powm$U.$(OBJEXT)
+gcd$U.$(OBJEXT) gcdext$U.$(OBJEXT) fib_ui$U.$(OBJEXT)
 tuneup_OBJECTS =  $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 tuneup_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -343,8 +343,10 @@ mul_n_open_.c: mul_n_open.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n_open.c; then echo $(srcdir)/mul_n_open.c; else echo mul_n_open.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_n_open_.c
 noop_.c: noop.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/noop.c; then echo $(srcdir)/noop.c; else echo noop.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > noop_.c
-powm_.c: powm.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm.c; then echo $(srcdir)/powm.c; else echo powm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_.c
+powm_mod_.c: powm_mod.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm_mod.c; then echo $(srcdir)/powm_mod.c; else echo powm_mod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_mod_.c
+powm_redc_.c: powm_redc.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/powm_redc.c; then echo $(srcdir)/powm_redc.c; else echo powm_redc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > powm_redc_.c
 speed_.c: speed.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/speed.c; then echo $(srcdir)/speed.c; else echo speed.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > speed_.c
 sqr_basecase_.c: sqr_basecase.c $(ANSI2KNR)
@@ -362,9 +364,10 @@ gcd_finda_gen_.lo gcdext_.$(OBJEXT) gcdext_.lo modlinv_.$(OBJEXT) \
 modlinv_.lo mul_.$(OBJEXT) mul_.lo mul_fft_.$(OBJEXT) mul_fft_.lo \
 mul_n_.$(OBJEXT) mul_n_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo \
 mul_n_open_.$(OBJEXT) mul_n_open_.lo noop_.$(OBJEXT) noop_.lo \
-powm_.$(OBJEXT) powm_.lo speed_.$(OBJEXT) speed_.lo \
-sqr_basecase_.$(OBJEXT) sqr_basecase_.lo tdiv_qr_.$(OBJEXT) tdiv_qr_.lo \
-time_.$(OBJEXT) time_.lo tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
+powm_mod_.$(OBJEXT) powm_mod_.lo powm_redc_.$(OBJEXT) powm_redc_.lo \
+speed_.$(OBJEXT) speed_.lo sqr_basecase_.$(OBJEXT) sqr_basecase_.lo \
+tdiv_qr_.$(OBJEXT) tdiv_qr_.lo time_.$(OBJEXT) time_.lo \
+tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
