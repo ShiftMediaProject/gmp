@@ -105,6 +105,17 @@ times
 @end macro
 @end ifnottex
 
+@c  Usage: @GMPmultiply{}
+@c  Give * in info, or nothing in tex.
+@tex
+\gdef\GMPmultiply{}
+@end tex
+@ifnottex
+@macro GMPmultiply
+*
+@end macro
+@end ifnottex
+
 @c  Usage: @GMPabs{x}
 @c  Give either |x| in tex, or abs(x) in info or html.
 @tex
@@ -341,6 +352,7 @@ arithmetic library, version @value{VERSION}.
 * Random Number Functions::    Functions for generating random numbers.
 * BSD Compatible Functions::   All functions found in BSD MP.
 * Custom Allocation::          How to customize the internal allocation.
+* Language Bindings::          Using GMP from other languages.
 * Algorithms::                 What happens behind the scenes.
 * Internals::                  How values are represented behind the scenes.
 
@@ -2631,9 +2643,10 @@ is non-zero.
 
 @deftypefun void mpz_gcdext (mpz_t @var{g}, mpz_t @var{s}, mpz_t @var{t}, mpz_t @var{a}, mpz_t @var{b})
 @cindex Extended GCD
-Compute @var{g}, @var{s}, and @var{t}, such that @var{a}@var{s} +
-@var{b}@var{t} = @var{g} = @code{gcd}(@var{a}, @var{b}).  If @var{t} is
-@code{NULL}, that argument is not computed.
+Compute @var{g}, @var{s}, and @var{t}, such that
+@ma{@var{a}@GMPmultiply{}@var{s} + @var{b}@GMPmultiply{}@var{t} = @var{g} =
+@gcd{}(@var{a}, @var{b})}.  If @var{t} is @code{NULL}, that argument is
+not computed.
 @end deftypefun
 
 @deftypefun void mpz_lcm (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
@@ -2653,29 +2666,31 @@ the return value is zero and @var{rop} is undefined.
 @end deftypefun
 
 @deftypefun int mpz_jacobi (mpz_t @var{a}, mpz_t @var{b})
-@deftypefunx int mpz_legendre (mpz_t @var{a}, mpz_t @var{p})
-@deftypefunx int mpz_kronecker (mpz_t @var{a}, mpz_t @var{b})
+@cindex Jacobi symbol functions
+Calculate the Jacobi symbol @m{\left(a \over b\right),
+(@var{a}/@var{b})}.  This is defined only for @var{b} odd.
+@end deftypefun
+
+@deftypefun int mpz_legendre (mpz_t @var{a}, mpz_t @var{p})
+Calculate the Legendre symbol @m{\left(a \over p\right),
+(@var{a}/@var{p})}.  This is defined only for @var{p} an odd positive
+prime, and for such @var{p} it's identical to the Jacobi symbol.
+@end deftypefun
+
+@deftypefun int mpz_kronecker (mpz_t @var{a}, mpz_t @var{b})
 @deftypefunx int mpz_kronecker_si (mpz_t @var{a}, long @var{b})
 @deftypefunx int mpz_kronecker_ui (mpz_t @var{a}, unsigned long @var{b})
 @deftypefunx int mpz_si_kronecker (long @var{a}, mpz_t @var{b})
 @deftypefunx int mpz_ui_kronecker (unsigned long @var{a}, mpz_t @var{b})
-@cindex Jacobi symbol functions
 @cindex Kronecker symbol functions
-@code{mpz_jacobi} calculates the Jacobi symbol @m{\left(a \over b\right),
-(@var{a}/@var{b})}.  This is undefined if @var{b} is even, but for the
-purposes of this implementation any factors of 2 in @var{b} are simply
-ignored.
+Calculate the Jacobi symbol @m{\left(a \over b\right),
+(@var{a}/@var{b})} with the Kronecker extension @m{\left(a \over
+2\right) = \left(2 \over a\right), (a/2)=(2/a)} when @ma{a} odd, or
+@m{\left(a \over 2\right) = 0, (a/2)=0} when @ma{a} even.
 
-@code{mpz_legendre} calculates the Legendre symbol @m{\left(a \over p\right),
-(@var{a}/@var{p})}.  This is defined only for @var{p} an odd positive prime,
-but currently @code{mpz_legendre} is simply a synonym for @code{mpz_jacobi}.
-
-@code{mpz_kronecker} etc calculates the Jacobi symbol @m{\left(a \over
-b\right), (@var{a}/@var{b})} with the Kronecker extension @m{\left(a
-\over 2\right) = \left(2 \over a\right), (a/2)=(2/a)} when @ma{a} odd,
-or @m{\left(a \over 2\right) = 0, (a/2)=0} when @ma{a} even.  Note that
-when @var{b} is odd, @code{mpz_jacobi} and @code{mpz_kronecker} are
-identical.
+When @var{b} is odd the Jacobi symbol and Kronecker symbol are
+identical, so @code{mpz_kronecker_ui} etc can be used for mixed
+precision Jacobi symbols too.
 
 For more information see Henri Cohen section 1.4.2 (@pxref{References}),
 or any number theory textbook.  See also the example program
@@ -3770,8 +3785,8 @@ truncated to an integer.
 @end deftypefun
 
 @deftypefun void mpf_urandomb (mpf_t @var{rop}, gmp_randstate_t @var{state}, unsigned long int @var{nbits})
-Generate a uniformly distributed random float in @var{rop}, such that 0 <=
-@var{rop} < 1, with @var{nbits} significant bits in the mantissa.
+Generate a uniformly distributed random float in @var{rop}, such that @ma{0
+@le{} @var{rop} < 1}, with @var{nbits} significant bits in the mantissa.
 
 The variable @var{state} must be initialized by calling one of the
 @code{gmp_randinit} functions (@ref{Random State Initialization}) before
@@ -3901,9 +3916,10 @@ most significant limb is zero.
 @end deftypefun
 
 @deftypefun mp_limb_t mpn_mul_1 (mp_limb_t *@var{rp}, const mp_limb_t *@var{s1p}, mp_size_t @var{n}, mp_limb_t @var{s2limb})
-Multiply @{@var{s1p}, @var{n}@} and @var{s2limb}, and write the @var{n} least
-significant limbs of the product to @var{rp}.  Return the most significant limb
-of the product.
+Multiply @{@var{s1p}, @var{n}@} by @var{s2limb}, and write the @var{n} least
+significant limbs of the product to @var{rp}.  Return the most significant
+limb of the product.  @{@var{s1p}, @var{n}@} and @{@var{rp}, @var{n}@} are
+allowed to overlap provided @ma{@var{rp} @le{} @var{s1p}}.
 
 This is a low-level function that is a building block for general
 multiplication as well as other operations in GMP.  It is written in assembly
@@ -4424,7 +4440,7 @@ passed a value returned by @code{itom} or @code{xtom}.}
 @end deftypefun
 
 
-@node Custom Allocation, Algorithms, BSD Compatible Functions, Top
+@node Custom Allocation, Language Bindings, BSD Compatible Functions, Top
 @comment  node-name,  next,  previous,  up
 @chapter Custom Allocation
 @cindex Custom allocation
@@ -4512,7 +4528,146 @@ functions will be linked in even if the first thing a program does is an
 this is a problem.
 
 
-@node Algorithms, Internals, Custom Allocation, Top
+@node Language Bindings, Algorithms, Custom Allocation, Top
+@chapter Language Bindings
+
+The following packages and projects offer access to GMP from languages other
+than C, though perhaps with varying levels of functionality and efficiency.
+
+@c  GNUstep Base Library @uref{http://www.gnustep.org} (version 0.9.1) is
+@c  intending to use GMP for its NSDecimal class, which would be an Objective
+@c  C binding for GMP.  Has some configure stuff ready, but no code.
+
+@c  @spaceuref{U} is the same as @uref{U}, but with a couple of extra spaces
+@c  in tex, just to separate the URL from the preceding text a bit.
+@iftex
+@macro spaceuref {U}
+@ @ @uref{\U\}
+@end macro
+@end iftex
+@ifnottex
+@macro spaceuref {U}
+@uref{\U\}
+@end macro
+@end ifnottex
+
+@sp 1
+@table @asis
+@item C++
+@itemize @bullet
+@item
+GMP++ @spaceuref{http://www.sissa.it/~ballabio/gmp++.html} @* A straight
+interface to GMP, good use of expression templates to eliminate temporaries.
+@item
+CLN @spaceuref{http://clisp.cons.org/~haible/packages-cln.html"} @* High level
+classes for arithmetic.
+@item
+LiDIA @spaceuref{http://www.informatik.tu-darmstadt.de/TI/LiDIA} @* A C++
+library for computational number theory.
+@item
+NTL @spaceuref{http://www.shoup.net/ntl} @* A C++ number theory library.
+@end itemize
+
+@item Fortran
+@itemize @bullet
+@item
+Omni F77 @spaceuref{http://pdplab.trc.rwcp.or.jp/pdperf/Omni/home.html} @*
+Arbitrary precision floats.
+@end itemize
+
+@item Haskell
+@itemize @bullet
+@item
+Glasgow Haskell Compiler @spaceuref{http://www.haskell.org/ghc}
+@end itemize
+
+@item Lisp
+@itemize @bullet
+@item
+GNU Common Lisp @spaceuref{http://www.gnu.org/software/gcl/gcl.html} @* In the
+process of switching to GMP for bignums.
+@item
+Librep @spaceuref{http://librep.sourceforge.net} @* As used in the sawfish
+window manager.
+@end itemize
+
+@item Java
+@itemize @bullet
+@item
+Kaffe @spaceuref{http://www.kaffe.org}
+@item
+Kissme @spaceuref{http://kissme.sourceforge.net}
+@end itemize
+
+@item M4
+@itemize @bullet
+@item
+GNU m4 betas @spaceuref{http://www.seindal.dk/rene/gnu} @* Optionally provides
+an arbitrary precision @code{mpeval}.
+@end itemize
+
+@item Oz
+@itemize @bullet
+@item
+Mozart @spaceuref{http://www.mozart-oz.org}
+@end itemize
+
+@item Perl
+@itemize @bullet
+@item
+GMP module, see @file{demos/perl} in the GMP sources.
+@item
+Math::GMP @spaceuref{http://www.cpan.org} @* Compatible with Math::BigInt, but
+not as many functions as the GMP module above.
+@end itemize
+
+@need 1000
+@item Pike
+@itemize @bullet
+@item
+mpz module in the standard distribution, @uref{http://pike.idonex.com}
+@end itemize
+
+@need 500
+@item Prolog
+@itemize @bullet
+@item
+SWI Prolog @spaceuref{http://www.swi.psy.uva.nl/projects/SWI-Prolog} @*
+Arbitrary precision floats.
+@end itemize
+
+@item Python
+@itemize @bullet
+@item
+mpz module in the standard distribution, @uref{http://www.python.org}
+@end itemize
+
+@item Scheme
+@itemize @bullet
+@item
+RScheme @spaceuref{http://www.rscheme.org}
+@end itemize
+
+@item Other
+@itemize @bullet
+@item
+DrGenius @spaceuref{http://drgenius.seul.org} @* Geometry system and
+mathematical programming language.
+@item
+GiNaC @spaceuref{http://www.ginac.de} @* C++ computer algebra, using GMP via
+CLN.
+@item
+Q @spaceuref{http://www.musikwissenschaft.uni-mainz.de/~ag/q} @* Equational
+programming system.
+@item
+Yacas @spaceuref{http://www.xs4all.nl/~apinkus/yacas.html} @* Computer algebra
+system.
+@end itemize
+
+@end table
+
+
+@node Algorithms, Internals, Language Bindings, Top
 @chapter Algorithms
 @cindex Algorithms
 
@@ -5702,6 +5857,7 @@ In all the routines sign changes for the result are accumulated using some bit
 twiddling, avoiding table lookups or conditional jumps.
 
 
+@need 1000
 @node Powering Algorithms, Root Extraction Algorithms, Greatest Common Divisor Algorithms, Algorithms
 @section Powering Algorithms
 @cindex Powering algorithms
@@ -5908,7 +6064,7 @@ F[2k] = F[2k+1] - F[2k-1]
 @end example
 
 @end ifnottex
-At each stage @ma{k} is the high @ma{b} bits of @ma{n}.  If the next bit of
+At each step, @ma{k} is the high @ma{b} bits of @ma{n}.  If the next bit of
 @ma{n} is 0 then @m{F_{2k},F[2k]},@m{F_{2k-1},F[2k-1]} is used, or if it's a 1
 then @m{F_{2k+1},F[2k+1]},@m{F_{2k},F[2k]} is used, and the process repeated
 until all bits of @ma{n} are incorporated.  Notice these formulas require just
@@ -5928,8 +6084,8 @@ kept compact, with the emphasis primarily on a good powering algorithm.
 
 @code{mpz_fib2_ui} returns both @m{F_n,F[n]} and @m{F_{n-1},F[n-1]}, but
 @code{mpz_fib_ui} is only interested in @m{F_n,F[n]}.  In this case the last
-step of the algorithm can become one multiply rather than two squares.  One of
-the two following formulas is used, according to @ma{n} odd or even.
+step of the algorithm can become one multiply instead of two squares.  One of
+the following two formulas is used, according as @ma{n} is odd or even.
 @tex
 $$\eqalign{
   F_{2k}   &= F_k (F_k + 2F_{k-1}) \cr
@@ -5984,7 +6140,7 @@ L[2n] = = L[k]^2 - 2*(-1)^k
 
 @end ifnottex
 And the lowest 1 bit can be handled with one multiply of a pair of Fibonacci
-numbers, in a way not dissimilar to what @code{mpz_fib_ui} does.
+numbers, similar to what @code{mpz_fib_ui} does.
 @tex
 $$ L_{2k+1} = 5F_{k-1} (2F_k + F_{k-1}) - 4(-1)^k $$
 @end tex
