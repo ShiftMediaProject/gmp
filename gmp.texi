@@ -5371,7 +5371,7 @@ types.  @samp{m} and @samp{p} depend on the C library.
 
 @quotation
 @multitable {(space)} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
-@item @nicode{a} @nicode{A} @tab hex floats, GLIBC style
+@item @nicode{a} @nicode{A} @tab hex floats, C99 style
 @item @nicode{c}            @tab character
 @item @nicode{d}            @tab decimal integer
 @item @nicode{e} @nicode{E} @tab scientific format float
@@ -5650,7 +5650,7 @@ and the C library for the input.
 @item @nicode{h}  @tab @nicode{short}
 @item @nicode{hh} @tab @nicode{char}
 @item @nicode{j}  @tab @nicode{intmax_t} or @nicode{uintmax_t}
-@item @nicode{l}  @tab @nicode{long} or @nicode{wchar_t}
+@item @nicode{l}  @tab @nicode{long int}, @nicode{double} or @nicode{wchar_t}
 @item @nicode{ll} @tab @nicode{long long}
 @item @nicode{L}  @tab @nicode{long double}
 @item @nicode{q}  @tab @nicode{quad_t} or @nicode{u_quad_t}
@@ -5691,8 +5691,12 @@ support from the C library, the rest are standard.
 @end quotation
 
 @samp{e}, @samp{E}, @samp{f}, @samp{g} and @samp{G} are identical, they all
-read either fixed point or scientific format, and either @samp{e} or @samp{E}
-for the exponent in scientific format.
+read either fixed point or scientific format, and either upper or lower case
+@samp{e} for the exponent in scientifc format.
+
+C99 style hex float format (@code{printf %a}, @pxref{Formatted Output
+Strings}) is always accepted for @code{mpf_t}, but for the standard float
+types it will depend on the C library.
 
 @samp{x} and @samp{X} are identical, both accept both upper and lower case
 hexadecimal.
@@ -5771,13 +5775,30 @@ The return value from each of these functions is the same as the standard C99
 @samp{%n} fields and fields read but suppressed by @samp{*} don't count
 towards the return value.
 
-If end of file or file error, or end of string, is reached when a match is
-required, and when no previous non-suppressed fields have matched, then the
-return value is EOF instead of 0.  A match is considered to be required by a
-literal character in the format string or by a field other than @samp{%n}.
-Whitespace in the format string is only an optional match and won't induce an
-EOF in this fashion.  Leading whitespace read and discarded for a field
-doesn't count as a match.
+If end of input (or a file error) is reached before a character for a field or
+a literal, and if no previous non-suppressed fields have matched, then the
+return value is @code{EOF} instead of 0.  A whitespace character in the format
+string is only an optional match and doesn't induce an @code{EOF} in this
+fashion.  Leading whitespace read and discarded for a field don't count as
+characters for that field.
+
+For the GMP types, input parsing follows C99 rules, namely one character of
+lookahead is used and characters are read while they continue to meet the
+format requirements.  If this doesn't provide a complete number then the
+function terminates, with that field not stored nor counted towards the return
+value.  For instance with @code{mpf_t} an input @samp{1.23e-XYZ} would be read
+up to the @samp{X} and that character pushed back since it's not a digit.  The
+string @samp{1.23e-} would then be considered invalid since an @samp{e} must
+be followed by at least one digit.
+
+For the standard C types, in the current implementation GMP calls the C
+library @code{scanf} functions, which might have looser rules about what
+constitutes a valid input.
+
+Note that @code{gmp_sscanf} is the same as @code{gmp_fscanf} and only does one
+character of lookahead when parsing.  Although clearly it could look at its
+entire input, it is deliberately made identical to @code{gmp_fscanf}, the same
+way C99 @code{sscanf} is the same as @code{fscanf}.
 
 
 @node C++ Formatted Input,  , Formatted Input Functions, Formatted Input
