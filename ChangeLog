@@ -1,5 +1,7 @@
 2000-02-11  Torbjorn Granlund  <tege@swox.com>
 
+	* config.sub: Adopt to new config.guess sparc naming conventions.
+
 	* config.guess (sun4u:SunOS:5.*:*): Change `sparc9' to `sparcv9'.
 	* config.guess (sun4m:SunOS:5.*:*): Change to sun4[md]:SunOS:5.*:* and
 	change `sparc8' to `sparcv8'.
