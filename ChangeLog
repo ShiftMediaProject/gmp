@@ -1,3 +1,17 @@
+2000-06-30  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/tests/t-jac.c: Test limbs on mpn_jacobi_base, not just ulongs.
+
+	* gmp-impl.h, mpn/tests/try.c, mpn/tests/spinner.c, tune/speed.c:
+	Use config.h unconditionally, not under HAVE_CONFIG_H.
+	
+	* demos/pexpr.c [__DJGPP__]: Patch by Richard Dawe to not use
+	setup_error_handler on djgpp.
+
+	* tune/*: Locate data to help direct-mapped caches, add measuring
+	of mpz_init/clear, mpz_add and mpz_bin_uiui, various cleanups.
+	* configure.in (AC_CHECK_FUNCS): Add popen.
+
 2000-06-29  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/mul_2exp.c: Streamline criterion for whether to use mpn_lshift or
