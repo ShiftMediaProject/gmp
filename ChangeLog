@@ -23,7 +23,7 @@
 	* configfsf.guess: Update to FSF 2000-10-23.
 	* configfsf.sub: Update to FSF 2000-10-25.
 
-	* acinclude.m4 (GMP_ASM_POWERPC_REGISTERS): New macro.
+	* acinclude.m4 (GMP_ASM_POWERPC_R_REGISTERS): New macro.
 	* mpn/powerpc32/powerpc-defs.m4: New file, regmap.m4 r0 etc macros
 	conditionalized by GMP_ASM_POWERPC_REGISTERS.
 	* mpn/powerpc32/regmap.m4: Remove file.
