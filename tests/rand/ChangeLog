@@ -1,5 +1,7 @@
 2000-04-10  Kevin Ryde  <kevin@swox.se>
 
+	* statlib.c: mpz_cmp_abs => mpz_cmpabs.
+
 	* Makefile.am (LDADD): Don't need -lm (now in libgmp.la).
 	(EXTRA_PROGRAMS): Not noinst_PROGRAMS.
 	(INCLUDES): Shorten to -I$(top_srcdir) now using AM_CONFIG_HEADER.

@@ -26,7 +26,7 @@
 	* mpbsd/Makefile.am: New file, derived from old mpbsd/Makefile.in.
 
 	* gmp.texi (Top): Use @ifnottex, to help makeinfo --html.
-	(Installing MP): Describe --enable-mpbsd.
+	(Installing MP): Describe --enable-mpbsd and demo programs.
 
 2000-04-09  Torbjorn Granlund  <tege@swox.com>
 
