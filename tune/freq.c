@@ -282,8 +282,8 @@ freq_sysctl_hw_model (int help)
   char      str[128];
   unsigned  val;
   size_t    size;
-  char  *p;
-  int   i;
+  char      *p;
+  int       i, end;
 
   HELP ("sysctl() hw.model");
 
@@ -306,7 +306,8 @@ freq_sysctl_hw_model (int help)
             }
         }
 
-      if (sscanf (p, "%u MHz", &val) != 1)
+      end = 0;
+      if (sscanf (p, "%u MHz%n", &val, &end) != 1 && end != 0)
         return 0;
 
       speed_cycletime = 1e-6 / (double) val;
@@ -346,6 +347,7 @@ freq_proc_cpuinfo (int help)
   char    buf[128];
   double  val;
   int     ret = 0;
+  int     end;
 
   HELP ("linux kernel /proc/cpuinfo file, cpu MHz or bogomips");
 
@@ -370,7 +372,8 @@ freq_proc_cpuinfo (int help)
               ret = 1;
               break;
             }
-          if (sscanf (buf, "clock : %lfMHz\n", &val) == 1)
+          end = 0;
+          if (sscanf (buf, "clock : %lfMHz\n%n", &val, &end) == 1 && end != 0)
             {
               speed_cycletime = 1e-6 / val;
               if (speed_option_verbose)
@@ -404,6 +407,7 @@ freq_sunos_sysinfo (int help)
   FILE    *fp;
   char    buf[128];
   double  val;
+  int     end;
 
   HELP ("SunOS /bin/sysinfo program output, cpu0");
 
@@ -413,7 +417,9 @@ freq_sunos_sysinfo (int help)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
-          if (sscanf (buf, " cpu0 is a \"%lf MHz", &val) == 1)
+          end = 0;
+          if (sscanf (buf, " cpu0 is a \"%lf MHz%n", &val, &end) == 1
+              && end != 0)
             {
               speed_cycletime = 1e-6 / val;
               if (speed_option_verbose)
@@ -440,6 +446,7 @@ freq_sco_etchw (int help)
   FILE    *fp;
   char    buf[128];
   double  val;
+  int     end;
 
   HELP ("SCO /etc/hw program output");
 
@@ -449,8 +456,9 @@ freq_sco_etchw (int help)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
-          if (sscanf (buf, " The speed of the CPU is approximately %lfMhz",
-                      &val) == 1)
+          end = 0;
+          if (sscanf (buf, " The speed of the CPU is approximately %lfMhz%n",
+                      &val, &end) == 1 && end != 0)
             {
               speed_cycletime = 1e-6 / val;
               if (speed_option_verbose)
@@ -535,8 +543,7 @@ freq_bsd_dmesg (int help)
               for (p = buf; *p != '\0'; p++)
                 {
                   end = 0;
-                  if (sscanf (p, "(%lf-MHz%n", &val, &end) == 1
-                      && end != 0)
+                  if (sscanf (p, "(%lf-MHz%n", &val, &end) == 1 && end != 0)
                     {
                       speed_cycletime = 1e-6 / val;
                       if (speed_option_verbose)
@@ -571,7 +578,7 @@ freq_irix_hinv (int help)
   FILE    *fp;
   char    buf[128];
   double  val;
-  int     nproc;
+  int     nproc, end;
 
   HELP ("IRIX \"hinv -c processor\" output");
 
@@ -581,15 +588,21 @@ freq_irix_hinv (int help)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
-          if (sscanf (buf, "Processor 0: %lf MHZ", &val) == 1
-              || sscanf (buf, "%d %lf MHZ", &nproc, &val) == 2)
+          end = 0;
+          if (sscanf (buf, "Processor 0: %lf MHZ%n", &val, &end) == 1
+              && end != 0)
             {
+            found:
               speed_cycletime = 1e-6 / val;
               if (speed_option_verbose)
                 printf ("Using hinv -c processor \"%.2f MHZ\" for cycle time %.3g\n", val, speed_cycletime);
               ret = 1;
               break;
             }
+          end = 0;
+          if (sscanf (buf, "%d %lf MHZ%n", &nproc, &val, &end) == 2
+              && end != 0)
+            goto found;
         }
       pclose (fp);
     }
