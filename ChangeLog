@@ -1,7 +1,32 @@
+2000-10-21  Kevin Ryde  <kevin@swox.se>
+
+	* *: Change BZ -> DC.
+	* mpn/generic/dc_divrem_n.c: Renamed from bz_divrem_n.c.
+
+	* doc/multiplication: Remove file, now in the manual.
+	* doc/assembly_code: Ditto.
+	* tune/README: Remove some parts now in the manual.
+
+	* gmp.texi (@m etc): Add and use some new macros.
+	(Integer Division - mpz_[cft]div_*): Merge descriptions, for brevity
+	and to emphasise similarities.
+	(Low-Level Functions - mpn_[lr]shift): Specify count as 1 to
+	mp_bits_per_limb-1.
+	(Algorithms): New chapter.
+	(References): Add some papers.
+
+	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n): Remove some
+	unused variables.
+	* mpn/generic/mul_fft.c (mpn_fft_best_k): Ditto.
+
+	* tune/freq.c: New file, split from time.c.
+	* tune/time.c: Rewrite, now more automated.
+	* configure.in, tune/*: Consequent changes.
+
 2000-10-20  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/default.m4: New file.
-	* configure.in, condig.m4 switch (ia64*-*-*): Use ia64/default.m4.
+	* configure.in, config.m4 switch (ia64*-*-*): Use ia64/default.m4.
 
 	* mpn/ia64/mul_1.asm: New file.
 	* mpn/ia64/addmul_1.asm: New file.
