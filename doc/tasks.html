@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 3 May 2001.  An up-to-date version is available at
+  This file current as of 5 May 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -103,20 +103,26 @@
      could exist for those targets where pre-shifting helps (p6 maybe).
 <li> Copy tricky code for converting a limb from development version of
      <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
-<li> Consider inlining these functions: <code>mpz_size</code>,
-     <code>mpz_set_ui</code>, <code>mpz_set_q</code>, <code>mpz_clear</code>,
-     <code>mpz_init</code>, <code>mpz_get_ui</code>, <code>mpz_getlimbn</code>,
-     <code>mpz_init_set_ui</code>, <code>mpz_perfect_square_p</code>,
-     <code>mpz_popcount</code>, <code>mpf_size</code>,
-     <code>mpf_get_prec</code>, <code>mpf_set_prec_raw</code>,
-     <code>mpf_set_ui</code>, <code>mpf_init</code>, <code>mpf_init2</code>,
-     <code>mpf_clear</code>, <code>mpf_set_si</code>.
+<li> Consider inlining these functions:
+     <code>mpz_init</code>, <code>mpz_clear</code>,
+     <code>mpz_set_ui</code>,
+     <code>mpz_init_set_ui</code>,
+     <code>mpf_get_prec</code>, <code>mpf_get_default_prec</code>,
+     <code>mpf_set_prec_raw</code>,
+     <code>mpf_init</code>, <code>mpf_init2</code>, <code>mpf_clear</code>.
      <br>
      These will want to be done with <code>extern inline</code> in the style
      of the current <code>mpn_add</code> etc, since applications might be
      using them as function pointers.  The GLIBC trick of first defining a
      prototype then a macro looks like it won't work with the GMP
      <code>__gmpz</code> renamings.
+<li> Consider inlining: <code>mpz_[cft]div_ui</code> and maybe
+     <code>mpz_[cft]div_r_ui</code>.  A <code>__gmp_divide_by_zero</code>
+     would be needed for the divide by zero test, unless that could be left
+     <code>mpn_mod_1</code>.
+<li> Consider inlining: <code>mpz_fits_*_p</code>.  The unattractive setups
+     for <code>LONG_MAX</code> etc would need to go into gmp.h as
+     <code>__GMP_LONG_MAX</code>, in case the user hasn't provided <limits.h>.
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> aren't very
      fast on one or two limb moduli, due to a lot of function call
      overheads.  These could perhaps be handled as special cases.
