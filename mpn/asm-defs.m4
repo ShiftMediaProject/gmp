@@ -812,10 +812,10 @@ m4_assert_defined(`BYTES_PER_MP_LIMB')
 dnl  Usage: MPN(name)
 dnl
 dnl  Add MPN_PREFIX to a name.
-dnl  MPN_PREFIX defaults to "__gmpn_" if not defined.
+dnl  MPN_PREFIX defaults to "__mpn_" if not defined.
 
 ifdef(`MPN_PREFIX',,
-`define(`MPN_PREFIX',`__gmpn_')')
+`define(`MPN_PREFIX',`__mpn_')')
 
 define(MPN,
 m4_assert_numargs(1)
