@@ -833,14 +833,14 @@ case $host in
         path="powerpc32" ;;
     esac
 
-    # gcc 2.7.2 knows -mcpu=403, 603, 604.
+    # gcc 2.7.2 knows -mcpu=403, 601, 603, 604.
     # gcc 2.95 adds 401, 505, 602, 603e, ec603e, 604e, 620, 740, 750,
     #   801, 821, 823, 860.
     # gcc 3.0 adds 630, rs64a.
     # gcc 3.1 adds 405, 7400, 7450.
     # gcc 3.2 adds nothing.
-    # gcc pre-release 3.3 adds power3, power4, 8540.  power3 seems to be
-    #   just a synonym for 630.
+    # gcc 3.3 adds power3, power4, 8540.  power3 seems to be a synonym for 630.
+    # gcc pre-release 3.4 adds 405fp, 440, 440fp, 970.
     #
     # FIXME: The way 603e falls back to 603 for gcc 2.7.2 should be
     # done for all the others too.  But what would be the correct
@@ -866,6 +866,7 @@ case $host in
       powerpc821)   gcc_cflags_cpu="-mcpu=821" ;;
       powerpc823)   gcc_cflags_cpu="-mcpu=823" ;;
       powerpc860)   gcc_cflags_cpu="-mcpu=860" ;;
+      powerpc970)   gcc_cflags_cpu="-mcpu=970" ;;
     esac
 
     case $host in
