@@ -123,6 +123,7 @@ main (int argc, char **argv)
       one (i, multiplicand, multiplier);
     }
 
+#if WANT_FFT
   /* Make sure to test the FFT multiply code.  The loop above will generate
      large numbers, up to 32767 bits, but that is typically not large enough
      for the FFT thresholds.  */
@@ -140,6 +141,7 @@ main (int argc, char **argv)
 
       one (-1, multiplicand, multiplier);
     }
+#endif
 
   mpz_clear (bs);
   mpz_clear (multiplier);
