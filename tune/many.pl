@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w
 
-# Copyright 2000, 2001 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -964,8 +964,15 @@ foreach my $file_full (@files) {
       
       my $renaming;
       foreach my $fun (@{$funs}) {
+        if ($mpX eq 'mpn_') {
+          $renaming .= "\t\t-DHAVE_NATIVE_mpn_$fun=1 \\\n";
+        }
+
+        # The carry-in variant is with a "c" appended, unless there's a "_1"
+        # somewhere, eg. "modexact_1_odd", in which case that becomes "_1c".
 	my $fun_carry = $fun;
 	if (! ($fun_carry =~ s/_1/_1c/)) { $fun_carry = "${fun}c"; }
+
 	$renaming .=
 	    "\t\t-D__g$mpX$fun=$mpX${fun}_$suffix$pic->{'suffix'} \\\n" .
 	    "\t\t-D__g$mpX$fun_carry=$mpX${fun_carry}_$suffix$pic->{'suffix'} \\\n";
