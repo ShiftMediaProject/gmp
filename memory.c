@@ -20,6 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h> /* for malloc, realloc, free */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -28,16 +29,12 @@ MA 02111-1307, USA. */
 #define static
 #endif
 
-#if __STDC__
-void *	(*_mp_allocate_func) (size_t) = _mp_default_allocate;
-void *	(*_mp_reallocate_func) (void *, size_t, size_t)
+
+void *	(*_mp_allocate_func) _PROTO ((size_t)) = _mp_default_allocate;
+void *	(*_mp_reallocate_func) _PROTO ((void *, size_t, size_t))
      = _mp_default_reallocate;
-void	(*_mp_free_func) (void *, size_t) = _mp_default_free;
-#else
-void *	(*_mp_allocate_func) () = _mp_default_allocate;
-void *	(*_mp_reallocate_func) () = _mp_default_reallocate;
-void	(*_mp_free_func) () = _mp_default_free;
-#endif
+void	(*_mp_free_func) _PROTO ((void *, size_t)) = _mp_default_free;
+
 
 /* Default allocation functions.  In case of failure to allocate/reallocate
    an error message is written to stderr and the program aborts.  */
