@@ -27,24 +27,8 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-static int
-digit_value_in_base (int c, int base)
-{
-  int digit;
-
-  if (isdigit (c))
-    digit = c - '0';
-  else if (islower (c))
-    digit = c - 'a' + 10;
-  else if (isupper (c))
-    digit = c - 'A' + 10;
-  else
-    return -1;
-
-  if (digit < base)
-    return digit;
-  return -1;
-}
+extern const unsigned char __gmp_digit_value_tab[];
+#define digit_value __gmp_digit_value_tab
 
 MINT *
 xtom (const char *str)
@@ -70,7 +54,7 @@ xtom (const char *str)
       c = (unsigned char) *str++;
     }
 
-  if (digit_value_in_base (c, 16) < 0)
+  if (digit_value[c] >= 16)
     return 0;			/* error if no digits */
 
   TMP_MARK (marker);
@@ -81,8 +65,8 @@ xtom (const char *str)
     {
       if (!isspace (c))
 	{
-	  int dig = digit_value_in_base (c, 16);
-	  if (dig < 0)
+	  int dig = digit_value[c];
+	  if (dig >= 16)
 	    {
 	      TMP_FREE (marker);
 	      return 0;
