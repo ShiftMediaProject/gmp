@@ -214,10 +214,11 @@ SCANF_OBJECTS =							\
   scanf/scanf$U.lo scanf/sscanf$U.lo scanf/sscanffuns$U.lo	\
   scanf/vfscanf$U.lo scanf/vscanf$U.lo scanf/vsscanf$U.lo
 
+# no $U for C++ files
 CXX_OBJECTS =							\
-  cxx/isfuns$U.lo cxx/ismpf$U.lo cxx/ismpq$U.lo cxx/ismpz$U.lo	\
-  cxx/osdoprnti$U.lo cxx/osfuns$U.lo				\
-  cxx/osmpf$U.lo cxx/osmpq$U.lo cxx/osmpz$U.lo
+  cxx/isfuns.lo cxx/ismpf.lo cxx/ismpq.lo cxx/ismpz.lo		\
+  cxx/osdoprnti.lo cxx/osfuns.lo				\
+  cxx/osmpf.lo cxx/osmpq.lo cxx/osmpz.lo
 
 MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
   mpbsd/powm$U.lo mpbsd/sub$U.lo mpbsd/cmp$U.lo mpbsd/mfree$U.lo	\
