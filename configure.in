@@ -532,14 +532,14 @@ case $host in
     # gcc 2.7.2.3 knows -mpa-risc-1-0 and -mpa-risc-1-1
     # gcc 2.95 adds -mpa-risc-2-0, plus synonyms -march=1.0, 1.1 and 2.0
     #
-    # The gcc manual notes that -mpa-risc-2-0 needs a new enough assembler.
-    # We believe gcc always emits a ".level 2.0" directive under this
-    # option, so that should kill an unsuitable assembler, letting us fall
-    # back on 1.1.
+    # We don't use -mpa-risc-2-0 in ABI=1.0 because 64-bit registers may not
+    # be saved by the kernel on an old system.  Actually gcc (as of 3.2)
+    # only adds a few float instructions with -mpa-risc-2-0, so it would
+    # probably be safe, but let's not take the chance.  In any case, a
+    # configuration like --host=hppa2.0 ABI=1.0 is far from optimal.
     #
     case $host_cpu in
       hppa1.0*)           gcc_cflags_arch="-mpa-risc-1-0" ;;
-      hppa2.0* | hppa64)  gcc_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1" ;;
       *)                  # default to 7100
                           gcc_cflags_arch="-mpa-risc-1-1" ;;
     esac
@@ -561,10 +561,11 @@ case $host in
         cyclecounter_size_20n=2
 
         # -mpa-risc-2-0 is only an optional flag, in case an old gcc is
-        # used.  Assembler support for our 2.0 asm files is essential
-        # though.
+        # used.  Assembler support for 2.0 is essential though, for our asm
+        # files.
 	gcc_20n_cflags="-O2"
 	gcc_20n_cflags_optlist="arch"
+        gcc_20n_cflags_arch="-mpa-risc-2-0 -mpa-risc-1-1"
         gcc_20n_testlist="sizeof-long-4 hppa-level-2.0"
 
         # +O3 causes problems with fp rounding in mpfr/tests/tdiv.
