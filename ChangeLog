@@ -1,3 +1,7 @@
+2000-03-07  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Better recognize POWER/PowerPC processor type.
+
 2000-03-07  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/addsub_n.c: Use HAVE_NATIVE_* now in config.h.
