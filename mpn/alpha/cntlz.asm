@@ -22,10 +22,10 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 ASM_START()
-PROLOGUE_GP(MPN(count_leading_zeros))
+PROLOGUE_GP(mpn_count_leading_zeros)
 	.set at		C need the `at' register for expanding ldbu on ev4/ev5
 	cmpbge	r31,  r16, r1
-	lda	r3,   MPN(clz_tab)
+	lda	r3,   __clz_tab
 	sra	r1,   1,   r1
 	xor	r1,   127, r1
 	srl	r16,  1,   r16
@@ -39,7 +39,7 @@ PROLOGUE_GP(MPN(count_leading_zeros))
 	subq	r2,   r1,   r2
 	subq	r2,   r0,   r0
 	ret	r31,  (r26),1
-EPILOGUE(MPN(count_leading_zeros))
+EPILOGUE(mpn_count_leading_zeros)
 ASM_END()
 
 dnl This is an alternative sequence that might be faster, but probably is
