@@ -541,24 +541,10 @@ All the usual autoconf configure options are available, run @samp{./configure
 installation information too.
 
 @table @asis
-@item Non-Unix Systems
+@item Tools
 @cindex Non-Unix systems
-@cindex Cygwin
-@cindex DJGPP
-@cindex MINGW
-@samp{configure} requires various Unix-like tools.  On an MS-DOS system DJGPP
-can be used, and on MS Windows Cygwin or MINGW can be used,
-
-@display
-@uref{http://www.cygnus.com/cygwin}
-@uref{http://www.delorie.com/djgpp}
-@uref{http://www.mingw.org}
-@end display
-
-@cindex MacOS 9
-The @file{macos} directory contains an unsupported port to MacOS 9 on Power
-Macintosh, see @file{macos/README}.  Note that MacOS X ``Darwin'' should use
-the normal Unix-style @samp{./configure}.
+@samp{configure} requires various Unix-like tools.  See @ref{Notes for
+Particular Systems}, for some options on non-Unix systems.
 
 It might be possible to build without the help of @samp{configure}, certainly
 all the code is there, but unfortunately you'll be on your own.
@@ -1324,8 +1310,37 @@ On systems @samp{arm*-*-*}, versions of GCC up to and including 2.95.3 have a
 bug in unsigned division, giving wrong results for some operands.  GMP
 @samp{./configure} will demand GCC 2.95.4 or later.
 
-@item Microsoft Windows
-@cindex Microsoft Windows
+@item MacOS 9
+The @file{macos} directory contains an unsupported port to MacOS 9 on Power
+Macintosh, see @file{macos/README}.  Note that MacOS X ``Darwin'' should use
+the normal Unix-style @samp{./configure}.
+
+@item MS-DOS and MS Windows
+@cindex MS-DOS
+@cindex MS Windows
+@cindex Windows
+@cindex Cygwin
+@cindex DJGPP
+@cindex MINGW
+@cindex Interix
+On an MS-DOS system DJGPP can be used to build GMP, and on an MS Windows
+system Cygwin, DJGPP and MINGW can be used.  All three are excellent ports of
+GCC and the various GNU tools.
+
+@display
+@uref{http://www.cygnus.com/cygwin}
+@uref{http://www.delorie.com/djgpp}
+@uref{http://www.mingw.org}
+@end display
+
+Microsoft also publishes an Interix ``Services for Unix'' which can be used to
+build GMP on Windows (with a normal @samp{./configure}), but it's not free
+software.
+
+@item MS Windows DLLs
+@cindex DLLs
+@cindex MS Windows
+@cindex Windows
 On systems @samp{*-*-cygwin*}, @samp{*-*-mingw*} and @samp{*-*-pw32*} by
 default GMP builds only a static library, but a DLL can be built instead using
 
@@ -1338,7 +1353,6 @@ in @file{gmp.h} must be different.  @samp{--enable-cxx} cannot be used when
 building a DLL, since libtool doesn't currently support C++ DLLs.  This might
 change in the future.
 
-@item Microsoft C
 A MINGW DLL build of GMP can be used with Microsoft C.  Libtool doesn't
 install @file{.lib} and @file{.exp} files, but they can be created with the
 following commands, where @file{/my/inst/dir} is the install directory (with a
@@ -6196,6 +6210,7 @@ For example,
 gmp_randclass r1 (gmp_randinit_default);
 gmp_randclass r2 (gmp_randinit_lc_2exp_size, 32);
 gmp_randclass r3 (gmp_randinit_lc_2exp, a, c, m2exp);
+gmp_randclass r4 (gmp_randinit_mt);
 @end example
 
 @code{gmp_randinit_lc_2exp_size} can fail if the size requested is too big,
