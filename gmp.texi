@@ -342,6 +342,7 @@ arithmetic library, version @value{VERSION}.
 * BSD Compatible Functions::   All functions found in BSD MP.
 * Custom Allocation::          How to customize the internal allocation.
 * Algorithms::                 What happens behind the scenes.
+* Internals::                  How values are represented behind the scenes.
 
 * Contributors::	       Who brings your this library?
 * References::                 Some useful papers and books to read.
@@ -908,6 +909,7 @@ as simple as configuring with a special @samp{libdir}, or it might require
 more than that.
 
 @table @asis
+@sp 1
 @need 1000
 @item HPPA 2.0 (@samp{hppa2.0*})
 
@@ -939,17 +941,16 @@ HPPA 2.0 CPUs can run all HPPA 1.0 and 1.1 code in the 32-bit HPPA 1.0 ABI.
 No special compiler options are needed for applications.
 @end table
 
-CPU type @samp{hppa2.0w} or @samp{hppa2.0} will use any of the above ABIs,
-@samp{hppa2.0n} uses only 2.0n or 1.0.
+All three ABIs are available for CPUs @samp{hppa2.0w} and @samp{hppa2.0}, but
+for CPU @samp{hppa2.0n} only 2.0n or 1.0 are allowed.
 
+@sp 1
 @need 1000
 @item MIPS under IRIX 6 (@samp{mips*-*-irix[6789]}
 
-IRIX 6 and up supports the n32 and 64 ABIs, and always has a MIPS 3 or better
-CPU, so a 64-bit limb is used on that system.  A new enough @command{gcc} is
-required (2.95 for instance).  Note that MIPS GNU/Linux, as of kernel version
-2.2, doesn't have the necessary support for n32 or 64 and so only uses a
-32-bit limb.
+IRIX 6 supports the n32 and 64 ABIs and always has a 64-bit MIPS 3 or better
+CPU.  In both these ABIs GMP uses a 64-bit limb.  A new enough @command{gcc}
+is required (2.95 for instance).
 
 @table @asis
 @item @samp{ABI=64}
@@ -965,7 +966,7 @@ cc   -64
 @item @samp{ABI=n32}
 
 The n32 ABI is 32-bit pointers and integers, but with a 64-bit limb using a
-@code{long long} in the 64-bit registers.  Applications must be compiled with
+@code{long long}.  Applications must be compiled with
 
 @example
 gcc  -mabi=n32
@@ -973,6 +974,10 @@ cc   -n32
 @end example
 @end table
 
+Note that MIPS GNU/Linux, as of kernel version 2.2, doesn't have the necessary
+support for n32 or 64 and so only gets a 32-bit limb and the MIPS 2 code.
+
+@sp 1
 @need 1000
 @item PowerPC 64 (@samp{powerpc64*})
 
@@ -1002,6 +1007,7 @@ This is the basic 32-bit PowerPC ABI.  No special compiler options are needed
 for applications.
 @end table
 
+@sp 1
 @need 1000
 @item Sparc V9 (@samp{sparcv9} and @samp{ultrasparc*})
 
@@ -1032,8 +1038,8 @@ cc   -xarch=v8plus
 @command{gcc} 2.8 and earlier only supports @samp{-mv8} though.
 @end table
 
-Don't be confused by the names of these sparc options, they're called
-@samp{arch} but they effectively control the ABI.
+Don't be confused by the names of these sparc @samp{-m} and @samp{-x} options,
+they're called @samp{arch} but they effectively control the ABI.
 @end table
 
 
@@ -1067,6 +1073,9 @@ a package may be useful.  This could be as simple as making it possible for a
 user to omit @samp{--build} (and @samp{--host}) so @samp{./config.guess} will
 detect the CPU.  But a way to manually specify a @samp{--build} will be wanted
 for systems where @samp{./config.guess} is inexact.
+
+It should be noted that @file{gmp.h} is a generated file, and will be
+architecure and ABI dependent.
 
 
 @need 2000
@@ -1159,14 +1168,14 @@ version 1.92.3 that comes with FreeBSD 2.2.8 doesn't (and unfortunately
 there's no newer assembler for that system).
 
 Solaris 2.6 and 2.7 @command{as} generate incorrect object code for register
-to register @code{movq} instructions, making that assembler unusable.  Install
-a recent @command{gas} if MMX code is wanted on these systems.
+to register @code{movq} instructions, and so can't be used for MMX code.
+Install a recent @command{gas} if MMX code is wanted on these systems.
 
 @item x86 GCC @samp{-march=pentiumpro}
 
-GCC 2.95.2 miscompiled some versions of @file{mpz/powm.c} when
+GCC 2.95.2 and 2.95.3 miscompiled some versions of @file{mpz/powm.c} when
 @samp{-march=pentiumpro} was used, so for relevant CPUs that option is only in
-the default @env{CFLAGS} for GCC 2.96 and up.
+the default @env{CFLAGS} for GCC 2.95.4 and up.
 @end table
 
 
@@ -1515,9 +1524,10 @@ implementation of @file{stack-alloc.c}.
 @item
 It's safe for two threads to read from the same GMP variable simultaneously,
 but it's not safe for one to read while the another might be writing, nor for
-two threads to write simultaneously.  Note that this also applies to the seed
-variables when generating random numbers (@pxref{Random Number Functions}),
-since the seed is updated when a number is generated.
+two threads to write simultaneously.  It's not safe for two threads to
+generate a random number from the same @code{gmp_randstate_t} simultaneously,
+since this involves an update of that variable.
+generated.
 
 @item
 On SCO systems the default @code{<ctype.h>} macros use per-file static
@@ -4446,7 +4456,7 @@ functions will be linked in even if the first thing a program does is an
 this is a problem.
 
 
-@node Algorithms, Contributors, Custom Allocation, Top
+@node Algorithms, Internals, Custom Allocation, Top
 @chapter Algorithms
 @cindex Algorithms
 
@@ -6069,11 +6079,14 @@ corresponding factor, but it can also allow better register usage, for example
 alternately using one register combination and then another.  Judicious use of
 @command{m4} macros can help avoid lots of duplication in the source code.
 
-Unrolling is generally best done to a power of 2 multiple.  This makes it
-possible to calculate the number of unrolled loops and the number of remaining
-limbs using a shift and mask.
+Unrolling is commonly done to a power of 2 multiple so the number of unrolled
+loops and the number of remaining limbs can be calculated with a shift and
+mask.  But other multiples can be used too, just by subtracting each @var{n}
+limbs processed from a counter and waiting for less than @var{n} remaining (or
+offsetting the counter by @var{n} so it goes negative when there's less than
+@var{n} remaining).
 
-Sizes not a multiple of the unrolling can be handled in various ways, for
+The limbs not a multiple of the unrolling can be handled in various ways, for
 example
 
 @itemize @bullet
@@ -6106,7 +6119,364 @@ instructions at the end whose results are unwanted.  Sizes not a multiple of
 the unrolling can then be handled as desired.
 
 
-@node Contributors, References, Algorithms, Top
+@node Internals, Contributors, Algorithms, Top
+@chapter Internals
+
+@strong{This chapter is provided only for informational purposes and the
+various internals described here may change in future GMP releases.
+Applications expecting to be compatible with future releases should use only
+the documented interfaces described in previous chapters.}
+
+@menu
+* Integer Internals::           
+* Rational Internals::          
+* Float Internals::             
+* Raw Output Internals::        
+@end menu
+
+@node Integer Internals, Rational Internals, Internals, Internals
+@section Integer Internals
+
+@code{mpz_t} variables represent integers using sign and magnitude, in space
+dynamically allocated and reallocated.  The fields are as follows.
+
+@table @asis
+@item @code{_mp_size}
+The number of limbs, or the negative of that when representing a negative
+integer.  Zero is represented by @code{_mp_size} set to zero, in which case
+the @code{_mp_d} data is unused.
+
+@item @code{_mp_d}
+A pointer to an array of limbs which is the magnitude.  These are stored
+``little endian'' as per the @code{mpn} functions, so @code{_mp_d[0]} is the
+least significant limb and @code{_mp_d[ABS(_mp_size)-1]} is the most
+significant.  Whenever @code{_mp_size} is non-zero, the most significant limb
+is non-zero.
+
+Currently there's always at least one limb allocated, so for instance
+@code{mpz_set_ui} never needs to reallocate, and @code{mpz_get_ui} can fetch
+@code{_mp_d[0]} unconditionally (though its value is then only wanted if
+@code{_mp_size} is non-zero).
+
+@item @code{_mp_alloc}
+@code{_mp_alloc} is the number of limbs currently allocated at @code{_mp_d},
+and naturally @code{_mp_alloc >= ABS(_mp_size)}.  When an @code{mpz} routine
+is about to (or might be about to) increase @code{_mp_size}, it checks
+@code{_mp_alloc} to see whether there's enough space, and reallocates if not.
+@code{MPZ_REALLOC} is used for this.
+@end table
+
+Various bitwise logical functions like @code{mpz_and} behave as if negative
+values were twos complement.  But sign and magnitude is always used
+internally, and necessary adjustments are made during the calculations.
+Sometimes this isn't pretty, but sign and magnitude are best for other
+routines.
+
+Some internal temporary variables are setup with @code{MPZ_TMP_INIT} and these
+have @code{_mp_d} space obtained from @code{TMP_ALLOC} rather than the memory
+allocation functions.  Care is taken to ensure that these are big enough that
+no reallocation is necessary (since it would have unpredictable consequences).
+
+
+@node Rational Internals, Float Internals, Integer Internals, Internals
+@section Rational Internals
+
+@code{mpq_t} variables represent rationals using an @code{mpz_t} numerator and
+denominator (@pxref{Integer Internals}).
+
+The canonical form adopted is denominator positive (and non-zero), no common
+factors between numerator and denominator, and zero uniquely represented as
+0/1.
+
+It's believed that casting out common factors at each stage of a calculation
+is best in general.  A GCD is an @ma{O(N^2)} operation so it's better to do a
+few small ones immediately than to delay and have to do a big one later.
+Knowing the numerator and denominator have no common factors can be used for
+example in @code{mpq_mul} to make only two cross GCDs necessary, not four.
+
+This general approach to common factors is badly sub-optimal in the presence
+of simple factorizations or little prospect for cancellation, but GMP has no
+way to know when this will occur.  As per @ref{Efficiency}, that's left to
+applications.  The @code{mpq_t} framework might still suit, with
+@code{mpq_numref} and @code{mpq_denref} for direct access to the numerator and
+denominator, or of course @code{mpz_t} variables can be used directly.
+
+
+@node Float Internals, Raw Output Internals, Rational Internals, Internals
+@section Float Internals
+
+Efficient calculation is the primary aim of GMP floats and the use of whole
+limbs and simple rounding facilitates this.
+
+@code{mpf_t} floats have a variable precision mantissa and a single machine
+word exponent.  The mantissa is represented using sign and magnitude.
+
+@c FIXME: The arrow heads don't join to the lines exactly.
+@tex
+\global\newdimen\GMPboxwidth \GMPboxwidth=5em
+\global\newdimen\GMPboxheight \GMPboxheight=3ex
+\def\centreline{\hbox{\raise 0.8ex \vbox{\hrule \hbox{\hfil}}}}
+\GMPdisplay{%
+\vbox{%
+  \hbox to 5\GMPboxwidth {most significant limb \hfil least significant limb}
+  \vskip 0.7ex
+  \def\GMPcentreline#1{\hbox{\raise 0.5 ex \vbox{\hrule \hbox to #1 {}}}}
+  \hbox {
+    \hbox to 3\GMPboxwidth {%
+      \setbox 0 = \hbox{@code{\_mp\_exp}}%
+      \dimen0=3\GMPboxwidth
+      \advance\dimen0 by -\wd0
+      \divide\dimen0 by 2
+      \advance\dimen0 by -1em
+      \setbox1 = \hbox{$\rightarrow$}%
+      \dimen1=\dimen0
+      \advance\dimen1 by -\wd1
+      \GMPcentreline{\dimen0}%
+      \hfil
+      \box0%
+      \hfil
+      \GMPcentreline{\dimen1{}}%
+      \box1}
+    \hbox to 2\GMPboxwidth {\hfil @code{\_mp\_d}}}
+  \vskip 0.5ex
+  \vbox {%
+    \hrule
+    \hbox{%
+      \vrule height 2ex depth 1ex
+      \hbox to \GMPboxwidth {}%
+      \vrule
+      \hbox to \GMPboxwidth {}%
+      \vrule
+      \hbox to \GMPboxwidth {}%
+      \vrule
+      \hbox to \GMPboxwidth {}%
+      \vrule
+      \hbox to \GMPboxwidth {}%
+      \vrule}
+    \hrule
+  }
+  \hbox {%
+    \hbox to 0.8 pt {}
+    \hbox to 3\GMPboxwidth {%
+      \hfil $\cdot$} \hbox {$\leftarrow$ radix point\hfil}}
+  \hbox to 5\GMPboxwidth{%
+    \setbox 0 = \hbox{@code{\_mp\_size}}%
+    \dimen0 = 5\GMPboxwidth
+    \advance\dimen0 by -\wd0
+    \divide\dimen0 by 2
+    \advance\dimen0 by -1em
+    \dimen1 = \dimen0
+    \setbox1 = \hbox{$\leftarrow$}%
+    \setbox2 = \hbox{$\rightarrow$}%
+    \advance\dimen0 by -\wd1
+    \advance\dimen1 by -\wd2
+    \hbox to 0.3 em {}%
+    \box1
+    \GMPcentreline{\dimen0}%
+    \hfil
+    \box0
+    \hfil
+    \GMPcentreline{\dimen1}%
+    \box2}
+}}
+@end tex
+@ifnottex
+@example
+   most                   least
+significant            significant
+   limb                   limb
+
+                            _mp_d
+ |---- _mp_exp --->           |
+  _____ _____ _____ _____ _____
+ |_____|_____|_____|_____|_____|
+                   . <------------ radix point
+
+  <-------- _mp_size --------->
+@sp 1
+@end example
+@end ifnottex
+
+@noindent
+The fields are as follows.
+
+@table @asis
+@item @code{_mp_size}
+The number of limbs currently in use, or the negative of that when
+representing a negative value.  Zero is represented by @code{_mp_size} and
+@code{_mp_exp} both set to zero, and in that case the @code{_mp_d} data is
+unused.  (In the future @code{_mp_exp} might be undefined when representing
+zero.)
+
+@item @code{_mp_prec}
+The precision of the mantissa, in limbs.  In any calculation the aim is to
+produce @code{_mp_prec} limbs of result (the most significant being non-zero).
+
+@item @code{_mp_d}
+A pointer to the array of limbs which is the absolute value of the mantissa.
+These are stored ``little endian'' as per the @code{mpn} functions, so
+@code{_mp_d[0]} is the least significant limb and
+@code{_mp_d[ABS(_mp_size)-1]} the most significant.
+
+The most significant limb is always non-zero, but there are no other
+restrictions on its value, in particular the highest 1 bit can be anywhere
+within the limb.
+
+@code{_mp_prec+1} limbs are allocated, the extra limb being for convenience
+(see below).  There are no reallocations during calculations, only in a change
+of precision with @code{mpf_set_prec}.
+
+@item @code{_mp_exp}
+The exponent, in limbs, determining the location of the implied radix point.
+Zero means the radix point is just above the most significant limb.  Positive
+values mean a radix point offset towards the lower limbs and hence imply a
+value @ma{@ge{} 1}, as for example in the diagram above.  Negative exponents
+mean a radix point further above the highest limb.
+
+Naturally the exponent can be any value, it doesn't have to fall within the
+limbs as the diagram shows, it can be a long way above or a long way below.
+Limbs other than those included in the @code{@{_mp_d,_mp_size@}} data
+are treated as zero.
+@end table
+
+@sp 1
+@noindent
+The following various points should be noted.
+
+@table @asis
+@item Low Zeros
+The least significant limbs @code{_mp_d[0]} etc can be zero, though such low
+zeros can always be ignored.  Routines likely to produce low zeros check and
+avoid them to save time in subsequent calculations, but for most routines
+they're quite unlikely and aren't checked.
+
+@item Mantissa Size Range
+The @code{_mp_size} limbs in use can be less than @code{_mp_prec} if the value
+can be represented in less.  This means low precision values or small integers
+stored in a high precision @code{mpf_t} can still be operated on efficiently.
+
+@code{_mp_size} can also be greater than @code{_mp_prec}.  Firstly a value is
+allowed to use all of the @code{_mp_prec+1} limbs available at @code{_mp_d},
+and secondly when @code{mpf_set_prec_raw} lowers @code{_mp_prec} it leaves
+@code{_mp_size} unchanged and so the size can be arbitrarily bigger than
+@code{_mp_prec}.
+
+@item Rounding
+All rounding is done on limb boundaries.  Calculating @code{_mp_prec} limbs
+with the high non-zero will ensure the application requested minimum precision
+is obtained.
+
+The use of simple ``trunc'' rounding towards zero is efficient, since there's
+no need to examine extra limbs and do an increment or decrement.
+
+@item Bit Shifts
+Since the exponent is in limbs, there are no bit shifts in basic operations
+like @code{mpf_add} and @code{mpf_mul}.  When differing exponents are
+encountered all that's needed is to adjust pointers to line up the relevant
+limbs.
+
+Of course @code{mpf_mul_2exp} and @code{mpf_div_2exp} will require bit shifts,
+but the choice is between an exponent in limbs which requires shifts there, or
+one in bits which requires them almost everywhere else.
+
+@item Use of @code{_mp_prec+1} Limbs
+The extra limb on @code{_mp_d} (@code{_mp_prec+1} rather than just
+@code{_mp_prec}) helps when an @code{mpf} routine might get a carry from its
+operation.  @code{mpf_add} for instance will do an @code{mpn_add} of
+@code{_mp_prec} limbs.  If there's no carry then that's the result, but if
+there is a carry then it's stored in the extra limb of space and
+@code{_mp_size} becomes @code{_mp_prec+1}.
+
+Whenever @code{_mp_prec+1} limbs are held in a variable, the low limb is not
+needed for the intended precision, only the @code{_mp_prec} high limbs.  But
+zeroing it out or moving the rest down is unnecessary.  Subsequent routines
+reading the value will simply take the high limbs they need, and this will be
+@code{_mp_prec} if their target has that same precision.  This is no more than
+a pointer adjustment, and must be checked anyway since the destination
+precision can be different from the sources.
+
+Copy functions like @code{mpf_set} will retain a full @code{_mp_prec+1} limbs
+if available.  This ensures that a variable which has @code{_mp_size} equal to
+@code{_mp_prec+1} will get its full exact value copied.  Strictly speaking
+this is unnecessary since only @code{_mp_prec} limbs are needed for the
+application's requested precision, but it's considered that an @code{mpf_set}
+from one variable into another of the same precision ought to produce an exact
+copy.
+
+@item Application Precisions
+@code{__GMPF_BITS_TO_PREC} converts an application requested precision to an
+@code{_mp_prec}.  The value in bits is rounded up to a whole limb then an
+extra limb is added since the most significant limb of @code{_mp_d} is only
+non-zero and therefore might contain only one bit.
+
+@code{__GMPF_PREC_TO_BITS} does the reverse conversion, and removes the extra
+limb from @code{_mp_prec} before converting to bits.  The net effect of
+reading back with @code{mpf_get_prec} is simply the precision rounded up to a
+multiple of @code{mp_bits_per_limb}.
+
+Note that the extra limb added here for the high limb is in addition to the
+extra limb allocated to @code{_mp_d}.  For example with a 32-bit limb, an
+application request for 250 bits will be rounded up to 8 limbs, then an extra
+added for the high being only non-zero, giving an @code{_mp_prec} of 9.
+@code{_mp_d} then gets 10 limbs allocated.  Reading back with
+@code{mpf_get_prec} will take @code{_mp_prec} subtract 1 limb and multiply by
+32, giving 256 bits.
+
+Strictly speaking, the fact the high limb has at least one bit means that a
+float with, say, 3 limbs of 32-bits each will be holding at least 65 bits, but
+for the purposes of @code{mpf_t} it's considered simply to be 64 bits, a nice
+multiple of the limb size.
+@end table
+
+
+@node Raw Output Internals,  , Float Internals, Internals
+@section Raw Output Internals
+
+@noindent
+@code{mpz_out_raw} uses the following format.
+
+@tex
+\global\newdimen\GMPboxwidth \GMPboxwidth=5em
+\global\newdimen\GMPboxheight \GMPboxheight=3ex
+\def\centreline{\hbox{\raise 0.8ex \vbox{\hrule \hbox{\hfil}}}}
+\GMPdisplay{%
+\vbox{%
+  \def\GMPcentreline#1{\hbox{\raise 0.5 ex \vbox{\hrule \hbox to #1 {}}}}
+  \vbox {%
+    \hrule
+    \hbox{%
+      \vrule height 2.5ex depth 1.5ex
+      \hbox to \GMPboxwidth {\hfil size\hfil}%
+      \vrule
+      \hbox to 3\GMPboxwidth {\hfil data bytes\hfil}%
+      \vrule}
+    \hrule}
+}}
+@end tex
+@ifnottex
+@example
++------+------------------------+
+| size |       data bytes       |
++------+------------------------+
+@end example
+@end ifnottex
+
+The size is 4 bytes written most significant byte first, being the number of
+subsequent data bytes, or the negative of that when a negative integer is
+represented.  The data bytes are the absolute value of the integer, written
+most significant byte first.
+
+The most significant data byte is always non-zero, so the output is the same
+on all systems, irrespective of limb size.
+
+In GMP 1, leading zero bytes were written to pad the data bytes to a multiple
+of the limb size.  @code{mpz_inp_raw} will accept this, for compatibility.
+
+The use of ``big endian'' for both the size and data fields is deliberate, it
+makes the data easy to read in a hex dump of a file.
+
+
+@node Contributors, References, Internals, Top
 @comment  node-name,  next,  previous,  up
 @unnumbered Contributors
 @cindex Contributors
@@ -6329,4 +6699,5 @@ volume 43, number 8, August 1994, pp. 899-908.
 
 @c Local variables:
 @c fill-column: 78
+@c compile-command: "make gmp.info"
 @c End:
