@@ -2860,7 +2860,6 @@ union ieee_double_extract
    We assume doubles have 53 mantissam bits.  */
 #define LIMBS_PER_DOUBLE ((53 + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS + 1)
 
-double __gmp_scale2 _PROTO ((double, int)) ATTRIBUTE_CONST;
 int __gmp_extract_double _PROTO ((mp_ptr, double));
 
 #define mpn_get_d __gmpn_get_d
