@@ -78,6 +78,18 @@ esac],
 [enable_alloca=reentrant])
 
 
+# IMPROVE ME: The default for C++ is disabled.  The tests currently
+# performed below for a working C++ compiler are not particularly strong,
+# and in general can't be expected to get the right setup on their own.  The
+# most significant problem is getting the ABI the same.  Defaulting CXXFLAGS
+# to CFLAGS takes only a small step towards this.  It's also probably worth
+# worrying whether the C and C++ runtimes from say gcc and a vendor C++ can
+# work together.  Some rather broken C++ installations were encountered
+# during testing, and though such things clearly aren't GMP's problem, if
+# --enable-cxx=detect were to be the default then some careful checks of
+# which, if any, C++ compiler on the system is up to scratch would be
+# wanted.
+#
 AC_ARG_ENABLE(cxx,
 AC_HELP_STRING([--enable-cxx],[enable C++ support [default=detect]]),
 [case $enableval in
@@ -1276,6 +1288,22 @@ Use --disable-static --enable-shared to build just a DLL.])
   *-*-ultrix*)
     enable_shared=no ;;
 esac
+
+# Enable CXX in libtool only if we want it, and never enable GCJ, nor RC on
+# mingw and cygwin.  Under --disable-cxx this avoids some error messages
+# from libtool arising from the fact we didn't actually run AC_PROG_CXX.
+# Notice that any user-supplied --with-tags setting takes precedence.
+#
+# FIXME: Is this the right way to get this effect?  Very possibly not, but
+# the current _LT_AC_TAGCONFIG doesn't really suggest an alternative.
+#
+if test "${with_tags+set}" != set; then
+  if test $want_cxx = yes; then
+    with_tags=CXX
+  else
+    with_tags=
+  fi
+fi
 
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
