@@ -24,9 +24,9 @@ MA 02111-1307, USA.
 	* gmp-h.in (gmp_errno, gmp_version): Move into extern "C" block,
 	reported by librik@panix.com.
 
-	* gmp-h.in (__GMP_DECLSPEC_EXPORT, __GMP_DECLSPEC_IMPORT): Use
-	__declspec(dllexport) and __declspec(dllimport) on Borland.
-	(_GMP_H_HAVE_FILE): Test __STDIO_H for Borland.
+	* gmp-h.in, mp-h.in (__GMP_DECLSPEC_EXPORT, __GMP_DECLSPEC_IMPORT):
+	Use __declspec(dllexport) and __declspec(dllimport) on Borland.
+	* gmp-h.in (_GMP_H_HAVE_FILE): Test __STDIO_H for Borland.
 	Reported by "delta trinity".
 
 	* gmp-impl.h (va_copy): Fall back on memcpy, not "=".
