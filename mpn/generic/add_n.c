@@ -1,6 +1,6 @@
-/* mpn_add_n, mpn_sub_n -- add or subtract equal length limb vectors.
+/* mpn_add_n -- Add equal length limb vectors.
 
-Copyright 1992, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
+Copyright 1992, 1993, 1994, 1996, 2000, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,37 +23,59 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
+#if GMP_NAIL_BITS == 0
+
 mp_limb_t
-mpn_add_n (mp_ptr res_ptr, mp_srcptr s1_ptr, mp_srcptr s2_ptr, mp_size_t size)
+mpn_add_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
 {
-  register mp_limb_t x, y, cy;
-  register mp_size_t j;
+  mp_limb_t ul, vl, sl, rl, cy, cy1, cy2;
 
-  ASSERT (size >= 1);
-  ASSERT (MPN_SAME_OR_SEPARATE_P (res_ptr, s1_ptr, size));
-  ASSERT (MPN_SAME_OR_SEPARATE_P (res_ptr, s2_ptr, size));
-
-  /* The loop counter and index J goes from -SIZE to -1.  This way
-     the loop becomes faster.  */
-  j = -size;
-
-  /* Offset the base pointers to compensate for the negative indices.  */
-  s1_ptr -= j;
-  s2_ptr -= j;
-  res_ptr -= j;
+  ASSERT (n >= 1);
+  ASSERT (MPN_SAME_OR_SEPARATE_P (rp, up, n));
+  ASSERT (MPN_SAME_OR_SEPARATE_P (rp, vp, n));
 
   cy = 0;
   do
     {
-      y = s2_ptr[j];
-      x = s1_ptr[j];
-      y += cy;	     	/* previous carry/borrow into second operand */
-      cy = y < cy;	/* new carry from that                       */
-      y = x + y;
-      cy += y < x;
-      res_ptr[j] = y;
+      ul = *up++;
+      vl = *vp++;
+      sl = ul + vl;
+      cy1 = sl < ul;
+      rl = sl + cy;
+      cy2 = rl < sl;
+      cy = cy1 | cy2;
+      *rp++ = rl;
     }
-  while (++j != 0);
+  while (--n != 0);
 
   return cy;
 }
+
+#endif
+
+#if GMP_NAIL_BITS >= 1
+
+mp_limb_t
+mpn_add_n (mp_ptr rp, mp_srcptr up, mp_srcptr vp, mp_size_t n)
+{
+  mp_limb_t ul, vl, rl, cy;
+
+  ASSERT (n >= 1);
+  ASSERT (MPN_SAME_OR_SEPARATE_P (rp, up, n));
+  ASSERT (MPN_SAME_OR_SEPARATE_P (rp, vp, n));
+
+  cy = 0;
+  do
+    {
+      ul = *up++;
+      vl = *vp++;
+      rl = ul + vl + cy;
+      cy = rl >> GMP_NUMB_BITS;
+      *rp++ = rl & GMP_NUMB_MASK;
+    }
+  while (--n != 0);
+
+  return cy;
+}
+
+#endif

@@ -1,8 +1,8 @@
-/* mpn_mul_1 -- Multiply a limb vector with a single limb and
-   store the product in a second limb vector.
+/* mpn_mul_1 -- Multiply a limb vector with a single limb and store the
+   product in a second limb vector.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001 Free Software Foundation,
-Inc.
+Copyright 1991, 1992, 1993, 1994, 1996, 2000, 2001, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,42 +26,63 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-/* For reference, "incr" style overlaps are wanted in mpf_mul_ui, where an
-   mpf_mul_ui(x,x,y) if SIZ(x)>PREC(x) (either SIZ(x)==PREC(x)+1 as occurs
-   normally, or due to an mpf_set_prec_raw).  */
+#if GMP_NAIL_BITS == 0
 
 mp_limb_t
-mpn_mul_1 (mp_ptr res_ptr,
-	   mp_srcptr s1_ptr,
-	   mp_size_t s1_size,
-	   mp_limb_t s2_limb)
+mpn_mul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
 {
-  register mp_limb_t cy_limb;
-  register mp_size_t j;
-  register mp_limb_t prod_high, prod_low;
+  mp_limb_t ul, cl, hpl, lpl;
 
-  ASSERT (s1_size >= 1);
-  ASSERT (MPN_SAME_OR_INCR_P (res_ptr, s1_ptr, s1_size));
+  ASSERT (n >= 1);
+  ASSERT (MPN_SAME_OR_INCR_P (rp, up, n));
 
-  /* The loop counter and index J goes from -S1_SIZE to -1.  This way
-     the loop becomes faster.  */
-  j = -s1_size;
-
-  /* Offset the base pointers to compensate for the negative indices.  */
-  s1_ptr -= j;
-  res_ptr -= j;
-
-  cy_limb = 0;
+  cl = 0;
   do
     {
-      umul_ppmm (prod_high, prod_low, s1_ptr[j], s2_limb);
+      ul = *up++;
+      umul_ppmm (hpl, lpl, ul, vl);
 
-      prod_low += cy_limb;
-      cy_limb = (prod_low < cy_limb) + prod_high;
+      lpl += cl;
+      cl = (lpl < cl) + hpl;
 
-      res_ptr[j] = prod_low;
+      *rp++ = lpl;
     }
-  while (++j != 0);
+  while (--n != 0);
 
-  return cy_limb;
+  return cl;
 }
+
+#endif
+
+#if GMP_NAIL_BITS >= 1
+
+mp_limb_t
+mpn_mul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
+{
+  mp_limb_t shifted_vl, ul, lpl, hpl, prev_hpl, xw, cl, xl;
+
+  ASSERT (vl >> GMP_NAIL_BITS == 0);
+  ASSERT (n >= 1);
+  ASSERT (MPN_SAME_OR_INCR_P (rp, up, n));
+
+  shifted_vl = vl << GMP_NAIL_BITS;
+  cl = 0;
+  prev_hpl = 0;
+  do
+    {
+      ul = *up++;
+
+      umul_ppmm (hpl, lpl, ul, shifted_vl);
+      lpl >>= GMP_NAIL_BITS;
+      xw = prev_hpl + lpl + cl;
+      cl = xw >> GMP_NUMB_BITS;
+      xl = xw & GMP_NUMB_MASK;
+      *rp++ = xl;
+      prev_hpl = hpl;
+    }
+  while (--n != 0);
+
+  return prev_hpl + cl;
+}
+
+#endif
