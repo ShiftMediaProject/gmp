@@ -10,6 +10,29 @@
 @end iftex
 @comment %**end of header
 
+@c  Usage: @GMPabs{x}                                                           
+@c  Give either |x| in tex, or abs(x) in info or html.                          
+@tex
+\gdef\GMPabs#1{|#1|}
+@end tex
+@ifnottex
+@macro GMPabs {X}
+@abs{}(\X\)
+@end macro
+@macro le
+<=
+@end macro
+@end ifnottex
+
+@tex
+\gdef\abs{\mathop{\rm abs}}
+@end tex
+@ifnottex
+@macro abs
+abs
+@end macro
+@end ifnottex
+
 @copying
 This manual documents how to install and use the Multiple Precision
 Floating-Point Reliable Library, version @value{VERSION}.
@@ -233,26 +256,27 @@ probably a good idea to glance through it.
 @chapter Installing MPFR
 @cindex Installation
 
-To build MPFR, you first have to install GNU MP 
-(version 4.1 or higher) on your computer.
-You need a C compiler, preferably GCC, but any reasonable compiler should
-work.  And you need a standard Unix @samp{make} program, plus some other
-standard Unix utility programs.
-
 Here are the steps needed to install the library on Unix systems
 (more details are provided in the @file{INSTALL} file):
 
 @enumerate
 @item
-In most cases, @samp{./configure --with-gmp=/usr/local/gmp} should work,
-where the directory @samp{/usr/local/gmp} is where you have installed
-GNU MP.
-When you install GNU MP, you have to copy the files
-@samp{config.h},
-@samp{gmp-impl.h}, @samp{gmp-mparam.h} and
-@samp{longlong.h} from the GNU MP source directory 
-to @samp{/usr/local/gmp/include};
-these additional files are needed by MPFR.
+To build MPFR, you first have to install GNU MP 
+(version 4.1 or higher) on your computer.
+You need a C compiler, preferably GCC, but any reasonable compiler should
+work.  And you need a standard Unix @samp{make} program, plus some other
+standard Unix utility programs.
+MPFR needs some internal GMP header files that are not installed.
+So, keep the GMP build directory as is, at least until you have
+built MPFR.
+
+@item
+In the MPFR build directory, type
+@samp{./configure --with-gmp-include=GMPBUILD --with-gmp-lib=GMPINSTALL/lib}
+where @samp{GMPBUILD} is the GMP build directory and @samp{GMPINSTALL} the
+directory where you have installed GMP. Because of the internal header files
+required by MPFR, the option @samp{--with-gmp=GMPINSTALL} is not sufficient
+and should not be used.
 If you get error messages, you might check that you use the same compiler
 and compile options as for GNU MP (see the @file{INSTALL} file).
 
@@ -875,6 +899,24 @@ Convert @var{op} to a double, using the default MPFR rounding mode
 (see function @code{mpfr_set_default_rounding_mode}).
 @end deftypefun
 
+@deftypefun double mpfr_get_d_2exp (mp_exp_t *@var{exp}, mpfr_t @var{op}, mp_rnd_t @var{rnd})
+Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
+raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1} equals
+@var{op} rounded to double precision, using the default MPFR rounding mode.
+Note that @var{exp} may exceed the IEEE 754 exponent range.
+@end deftypefun
+
+@deftypefun long mpfr_get_si (mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefunx {unsigned long} mpfr_get_ui (mpfr_t @var{op}, mp_rnd_t @var{op})
+Convert @var{op} to a @code{long} or @code{unsigned long}, after rounding
+it with respect to @var{rnd}.
+If @var{op} is too big for the return type, NaN or Inf,
+the result is undefined.
+
+See also @code{mpfr_fits_slong_p} and @code{mpfr_fits_ulong_p}
+(@pxref{Miscellaneous Float Functions}).
+@end deftypefun
+
 @deftypefun mp_exp_t mpfr_get_z_exp (mpz_t @var{z}, mpfr_t @var{op})
 Puts the mantissa of @var{op} into @var{z}, and returns the exponent
 @var{exp} such that @var{op} equals
@@ -1117,11 +1159,14 @@ it just computes @math{|@var{op1}-@var{op2}|/@var{op1}}, using the
 rounding mode @var{rnd} for all operations.
 @end deftypefun
 
-@deftypefun int mpfr_sgn (mpfr_t @var{op})
+@deftypefn Macro int mpfr_sgn (mpfr_t @var{op})
 Return a positive value if @math{@var{op} > 0}, zero if @math{@var{op} = 0},
 and a negative value if @math{@var{op} < 0}.
-Its result is not specified when @var{op} is NaN (Not-a-Number).
-@end deftypefun
+Its result is undefined when @var{op} is NaN (Not-a-Number).
+
+This function is actually implemented as a macro.  It evaluates its arguments
+multiple times.
+@end deftypefn
 
 @node Special Functions, I/O of Floats, Float Comparison, Floating-point Functions
 @section Special Functions
@@ -1304,10 +1349,12 @@ Return the number of bytes written, or if an error occurred, return 0.
 Input a string in base @var{base} from stdio stream @var{stream},
 rounded in direction @var{rnd}, and put the
 read float in @var{rop}.  The string is of the form @samp{M@@N} or, if the
-base is 10 or less, alternatively @samp{MeN} or @samp{MEN}.
-@samp{M} is the mantissa and
-@samp{N} is the exponent.  The mantissa is always in the specified base.  The
-exponent is read in decimal.
+base is 10 or less, alternatively @samp{MeN} or @samp{MEN}, or, if the base
+is 16, alternatively @samp{MpB} or @samp{MPB}.
+@samp{M} is the mantissa in the specified base, @samp{N} is the exponent
+written in decimal for the specified base, and in base 16, @samp{B} is the
+binary exponent written in decimal (it indicates the power of 2 by which
+the mantissa is to be scaled).
 The argument @var{base} may be in the range 2 to 36.
 
 Unlike the corresponding @code{mpz} function, the base will not be determined
@@ -1329,7 +1376,6 @@ they should always be zero.
 @c Input from stdio stream @var{stream} in the format written by
 @c @code{mpfr_out_raw}, and put the result in @var{float}.
 @c @end deftypefun
-
 
 @node Miscellaneous Float Functions, Internals, I/O of Floats, Floating-point Functions
 @comment  node-name,  next,  previous,  up
@@ -1360,6 +1406,20 @@ Set @var{rop} to the fractional part of @var{op}, having the same sign as
 @var{op}.
 The returned value is zero when the result is exact, positive when it is
 greater than the exact value, and negative when it is smaller.
+@end deftypefun
+
+@deftypefun int mpfr_integer_p (mpfr_t @var{op})
+Return non-zero iff @var{op} is an integer. 
+@end deftypefun
+
+@deftypefun int mpfr_fits_ulong_p (mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_fits_slong_p (mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_fits_uint_p (mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_fits_sint_p (mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_fits_ushort_p (mpfr_t @var{op}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_fits_sshort_p (mpfr_t @var{op}, mp_rnd_t @var{rnd})
+Return non-zero if @var{op} would fit in the respective C data type, when
+rounded to an integer.
 @end deftypefun
 
 @deftypefun void mpfr_nexttoward (mpfr_t @var{x}, mpfr_t @var{y})

@@ -31,7 +31,7 @@ static int mpfr_ui_pow_is_exact _PROTO((unsigned long int, mpfr_srcptr));
 /* return non zero iff x^y is exact.
    Assumes y is a non-zero ordinary number (neither NaN nor Inf).
 */
-int
+static int
 mpfr_ui_pow_is_exact (unsigned long int x, mpfr_srcptr y)
 {
   mp_exp_t d;

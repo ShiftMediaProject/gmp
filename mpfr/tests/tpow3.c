@@ -1,6 +1,6 @@
 /* Test file for mpfr_pow.
 
-Copyright 2001, 2002 Free Software Foundation.
+Copyright 2001, 2002, 2003 Free Software Foundation.
 Adapted from tarctan.c.
 
 This file is part of the MPFR Library.
@@ -33,308 +33,8 @@ MA 02111-1307, USA. */
 int
 main (int argc, char *argv[])
 {
-  mpfr_t x, y, z, ax;
-  long int iy;
+  mpfr_t x, y, z;
 
-  tests_start_mpfr ();
-
-  mpfr_init (x);
-  mpfr_init (ax);
-  mpfr_init2 (y,sizeof(unsigned long int)*CHAR_BIT);
-  mpfr_init (z);
-
-  MPFR_SET_NAN(x);
-  mpfr_random(y);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  if(!MPFR_IS_NAN(z))
-    {
-      printf ("evaluation of function in x=NAN does not return NAN");
-      exit (1);
-    }
-
-  MPFR_SET_NAN(y);
-  mpfr_random(x);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  if(!MPFR_IS_NAN(z))
-    {
-      printf ("evaluation of function in y=NAN does not return NAN");
-      exit (1);
-    }
-
-  MPFR_CLEAR_FLAGS(z); 
-  MPFR_CLEAR_FLAGS(y); 
-  MPFR_CLEAR_FLAGS(x); 
-
-  MPFR_SET_ZERO(y);
-  mpfr_random(x);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  if(mpfr_cmp_ui(z,1)!=0 && !(MPFR_IS_NAN(x)))
-    {
-      printf ("evaluation of function in y=0 does not return 1\n");
-      printf ("x =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      exit (1);
-    }
-
-  MPFR_CLEAR_FLAGS(z); 
-  MPFR_CLEAR_FLAGS(y); 
-  MPFR_CLEAR_FLAGS(x); 
-
-  MPFR_SET_INF(y); 
-  if (MPFR_SIGN(y) < 0)
-    MPFR_CHANGE_SIGN(y);
-  mpfr_random(x);
-  mpfr_set_prec (ax, MPFR_PREC(x));
-  mpfr_abs(ax,x,GMP_RNDN);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  if( !MPFR_IS_INF(z) && (mpfr_cmp_ui(ax,1) > 0) )
-    {
-      printf ("evaluation of function in y=INF (|x|>1) does not return INF");
-      exit (1);
-    }
-  if( !MPFR_IS_ZERO(z) && (mpfr_cmp_ui(ax,1) < 0) )
-    {
-      printf ("\nevaluation of function in y=INF (|x|<1) does not return 0");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-      exit (1);
-    }
-
-
-  MPFR_CLEAR_FLAGS(z); 
-  MPFR_CLEAR_FLAGS(y); 
-  MPFR_CLEAR_FLAGS(x); 
-
-  MPFR_SET_INF(y); 
-  if (MPFR_SIGN(y) > 0)
-    MPFR_CHANGE_SIGN(y);
-  mpfr_random(x);
-  mpfr_set_prec (ax, MPFR_PREC(x));
-  mpfr_abs(ax,x,GMP_RNDN);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  if( !MPFR_IS_INF(z) && (mpfr_cmp_ui(ax,1) < 0) )
-    {
-      printf ("evaluation of function in y=INF (for |x| <0) does not return INF");
-      exit (1);
-    }
-  if( !MPFR_IS_ZERO(z) && (mpfr_cmp_ui(ax,1) > 0) )
-    {
-      printf ("evaluation of function in y=INF (for |x| >0) does not return 0");
-      exit (1);
-    }
-
-  MPFR_CLEAR_FLAGS(z); 
-  MPFR_CLEAR_FLAGS(y); 
-  MPFR_CLEAR_FLAGS(x); 
-
-  MPFR_SET_INF(x);
-  if (MPFR_SIGN(x) < 0)
-    MPFR_CHANGE_SIGN(x);
-  mpfr_random(y);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  if(!MPFR_IS_INF(z) && (MPFR_SIGN(y) > 0))
-    {
-      printf ("evaluation of function in INF does not return INF");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-      exit (1);
-    }
-  if(!MPFR_IS_ZERO(z) && (MPFR_SIGN(y) < 0))
-    {
-      printf ("evaluation of function in INF does not return INF");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-      exit (1);
-    }
-
-
-  MPFR_CLEAR_FLAGS(z); 
-  MPFR_CLEAR_FLAGS(y); 
-  MPFR_CLEAR_FLAGS(x); 
-
-  MPFR_SET_INF(x);
-  if (MPFR_SIGN(x) > 0)
-    MPFR_CHANGE_SIGN(x);
-  mpfr_random(y);
-  if (random() % 2)
-    mpfr_neg (y, y, GMP_RNDN);
-   mpfr_pow (z, x,y, GMP_RNDN);
-  if(!MPFR_IS_INF(z) && (MPFR_SIGN(y) > 0) && (mpfr_isinteger(y)))
-    {
-      printf ("evaluation of function in x=-INF does not return INF");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-      if(mpfr_isinteger(y))
-        printf("y is an integer\n");
-      else
-        printf("y is not an integer\n");
-        
-      exit (1);
-    }
-  if(!MPFR_IS_ZERO(z) && (MPFR_SIGN(y) < 0) && (mpfr_isinteger(y)))
-    {
-      printf ("evaluation of function in x=-INF does not return 0");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-
-      if(mpfr_isinteger(y))
-        printf("y is an integer\n");
-      else
-        printf("y is not an integer\n");
-
-      exit (1);
-    }
-  MPFR_CLEAR_FLAGS(z); 
-  MPFR_CLEAR_FLAGS(y); 
-  MPFR_CLEAR_FLAGS(x); 
-
-  MPFR_SET_INF(x);
-  if (MPFR_SIGN(x) > 0)
-    MPFR_CHANGE_SIGN(x);
-
-  iy=random();
-  mpfr_random(y);
-  if (random() % 2)
-    iy=-iy;
-  mpfr_set_d(y,iy,GMP_RNDN);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  if(!MPFR_IS_INF(z) && (MPFR_SIGN(y) > 0) && (mpfr_isinteger(y)))
-    {
-      printf ("evaluation of function in x=-INF does not return INF");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-      if(mpfr_isinteger(y))
-        printf("y is an integer\n");
-      else
-        printf("y is not an integer\n");
-        
-      exit (1);
-    }
-  if(!MPFR_IS_ZERO(z) && (MPFR_SIGN(y) < 0) && (mpfr_isinteger(y)))
-    {
-      printf ("evaluation of function in x=-INF does not return 0");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-
-      if(mpfr_isinteger(y))
-        printf("y is an integer\n");
-      else
-        printf("y is not an integer\n");
-
-      exit (1);
-    }
-  MPFR_CLEAR_FLAGS(z); 
-  MPFR_CLEAR_FLAGS(y); 
-  MPFR_CLEAR_FLAGS(x); 
-
-  mpfr_set_ui(x,1,GMP_RNDN);
-  MPFR_SET_INF(y);
-  mpfr_pow (z, x,y, GMP_RNDN);
-  if(!MPFR_IS_NAN(z))
-    {
-      printf ("evaluation of function in x=1, y=INF does not return NAN");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-
-      exit (1);
-    }
-
-  MPFR_CLEAR_FLAGS(z); 
-  MPFR_CLEAR_FLAGS(y); 
-  MPFR_CLEAR_FLAGS(x); 
-
-  MPFR_SET_ZERO(x);
-  mpfr_random(y);
-  if (random() % 2)
-    mpfr_neg (y, y, GMP_RNDN);
-
-  mpfr_pow (z, x,y, GMP_RNDN);
-
-  if(!MPFR_IS_ZERO(z) && (MPFR_SIGN(y) < 0) && !(mpfr_isinteger(y)))
-    {
-      printf ("evaluation of function in y<0 does not return 0");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-
-      exit (1);
-    }
-  if(!MPFR_IS_INF(z) && (MPFR_SIGN(y) < 0) && (mpfr_isinteger(y)))
-    {
-      printf ("evaluation of function in y<0 (y integer) does not return INF");
-      printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-      exit (1);
-    }
-  if(!MPFR_IS_ZERO(z) && (MPFR_SIGN(y) > 0) && (mpfr_isinteger(y)))
-    {
-      printf ("evaluation of function in y<0 (y integer) does not return 0");
-       printf ("\nx =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(x), x, GMP_RNDN);
-      printf ("\n y =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(y), y, GMP_RNDN);
-      printf ("\n result =");
-      mpfr_out_str (stdout, 10, MPFR_PREC(z), z, GMP_RNDN);
-      putchar('\n');
-     exit (1);
-    }
-
- 
-  {
   mp_prec_t prec, yprec;
   mpfr_t t, s;
   mp_rnd_t rnd;
@@ -344,6 +44,12 @@ main (int argc, char *argv[])
   int p0=2;
   int p1=100;
   int N=100;
+
+  tests_start_mpfr ();
+
+  mpfr_init (x);
+  mpfr_init2 (y,sizeof(unsigned long int)*CHAR_BIT);
+  mpfr_init (z);
 
   mpfr_init (s);
   mpfr_init (t);
@@ -417,11 +123,9 @@ main (int argc, char *argv[])
   mpfr_clear (s);
   mpfr_clear (t);
 
-  }
   mpfr_clear (x);
   mpfr_clear (y);
   mpfr_clear (z);
-  mpfr_clear (ax);
 
   tests_end_mpfr ();
   return 0;

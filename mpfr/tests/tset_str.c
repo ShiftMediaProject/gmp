@@ -89,13 +89,27 @@ main (int argc, char *argv[])
   mpfr_set_str (y, "4.936a52bc17254@-133", 16, GMP_RNDN);
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "Error in mpfr_set_str (1):\n");
+      fprintf (stderr, "Error in mpfr_set_str (1a):\n");
       mpfr_print_binary (x);
       putchar ('\n');
       mpfr_print_binary (y);
       putchar ('\n');
       mpfr_clear (x);
       mpfr_clear (y); 
+      exit (1);
+    }
+
+  mpfr_set_str_raw (x, "0.111111101101110010111010100110000111011001010100001101E-529");
+  mpfr_set_str (y, "0.fedcba98765434P-529", 16, GMP_RNDN);
+  if (mpfr_cmp (x, y))
+    {
+      fprintf (stderr, "Error in mpfr_set_str (1b):\n");
+      mpfr_print_binary (x);
+      putchar ('\n');
+      mpfr_print_binary (y);
+      putchar ('\n');
+      mpfr_clear (x);
+      mpfr_clear (y);
       exit (1);
     }
 
@@ -169,27 +183,27 @@ main (int argc, char *argv[])
       (*__gmp_free_func) (str, strlen (str) + 1);
     }
 
-  if (mpfr_set_str (x, "NaNgarbage", 10, GMP_RNDN) != 0 || !mpfr_nan_p(x))
+  if (mpfr_set_str (x, "@NaN@garbage", 10, GMP_RNDN) != 0 || !mpfr_nan_p(x))
     {
       fprintf (stderr, "mpfr_set_str failed on NaN\n");
       exit (1);
     }
 
-  if (mpfr_set_str (x, "Infgarbage", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
+  if (mpfr_set_str (x, "@Inf@garbage", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
       MPFR_SIGN(x) < 0)
     {
       fprintf (stderr, "mpfr_set_str failed on Inf\n");
       exit (1);
     }
 
-  if (mpfr_set_str (x, "-Infgarbage", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
+  if (mpfr_set_str (x, "-@Inf@garbage", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
       MPFR_SIGN(x) > 0)
     {
       fprintf (stderr, "mpfr_set_str failed on -Inf\n");
       exit (1);
     }
 
-  if (mpfr_set_str (x, "+Infgarbage", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
+  if (mpfr_set_str (x, "+@Inf@garbage", 10, GMP_RNDN) != 0 || !mpfr_inf_p(x) ||
       MPFR_SIGN(x) < 0)
     {
       fprintf (stderr, "mpfr_set_str failed on +Inf\n");
@@ -384,7 +398,23 @@ main (int argc, char *argv[])
 
   }
 
-   /* end of tests added by Alain Delplanque */
+  /* end of tests added by Alain Delplanque */
+
+  /* check that flags are correctly cleared */
+  mpfr_set_nan (x);
+  mpfr_set_str (x, "+0.0", 10, GMP_RNDN);
+  if (!mpfr_number_p(x) || mpfr_cmp_ui (x, 0) != 0 || mpfr_sgn (x) < 0)
+    {
+      fprintf (stderr, "x <- +0.0 failed after x=NaN\n");
+      exit (1);
+    }
+  mpfr_set_str (x, "-0.0", 10, GMP_RNDN);
+  if (!mpfr_number_p(x) || mpfr_cmp_ui (x, 0) != 0 || mpfr_sgn (x) > 0)
+    {
+      fprintf (stderr, "x <- -0.0 failed after x=NaN\n");
+      exit (1);
+    }
+
 
   mpfr_clear (x);
   mpfr_clear (y);

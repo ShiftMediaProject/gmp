@@ -232,16 +232,16 @@ dnl
 dnl  "od -b" is supported even by Unix V7, and the awk script used doesn't
 dnl  have functions or anything, so even an "old" awk should suffice.
 dnl
-dnl  The 10-byte IEEE extended format is normally padded to either 12 or 16
-dnl  bytes, for alignment purposes.  The SVR4 i386 ABI is 12 bytes, or i386
-dnl  gcc -m128bit-long-double can select 16 bytes.  IA-64 is 16 bytes in
-dnl  LP64 mode, or 12 bytes in ILP32 mode.  The first 10 bytes are the
-dnl  relevant data, even in IA-64 big-endian mode too.
+dnl  The 10-byte IEEE extended format is generally padded to either 12 or 16
+dnl  bytes for alignment purposes.  The SVR4 i386 ABI is 12 bytes, or i386
+dnl  gcc -m128bit-long-double selects 16 bytes.  IA-64 is 16 bytes in LP64
+dnl  mode, or 12 bytes in ILP32 mode.  The first 10 bytes is the relevant
+dnl  part in all cases (big and little endian).
 dnl
 dnl  Enhancements:
 dnl
-dnl  Could match more formats (IEEE quad, or big endian IEEE), but no need
-dnl  to worry until there's code wanting to use them.
+dnl  Could match more formats, but no need to worry until there's code
+dnl  wanting to use them.
 dnl
 dnl  Don't want to duplicate the double matching from GMP_C_DOUBLE_FORMAT,
 dnl  perhaps we should merge with that macro, to match data formats
@@ -252,10 +252,14 @@ AC_DEFUN(MPFR_C_LONG_DOUBLE_FORMAT,
 [AC_REQUIRE([AC_PROG_CC])
 AC_REQUIRE([AC_PROG_AWK])
 AC_REQUIRE([AC_OBJEXT])
+AC_CHECK_TYPES([long double])
 AC_CACHE_CHECK([format of \`long double' floating point],
                 mpfr_cv_c_long_double_format,
 [mpfr_cv_c_long_double_format=unknown
-cat >conftest.c <<\EOF
+if test "$ac_cv_type_long_double" != yes; then
+  mpfr_cv_c_long_double_format="not available"
+else
+  cat >conftest.c <<\EOF
 [
 /* "before" is 16 bytes to ensure there's no padding between it and "x".
    We're not expecting any "long double" bigger than 16 bytes or with
@@ -272,9 +276,9 @@ struct {
 };
 ]
 EOF
-mpfr_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&AC_FD_CC 2>&1"
-if AC_TRY_EVAL(mpfr_compile); then
-cat >conftest.awk <<\EOF
+  mpfr_compile="$CC $CFLAGS $CPPFLAGS -c conftest.c >&AC_FD_CC 2>&1"
+  if AC_TRY_EVAL(mpfr_compile); then
+    cat >conftest.awk <<\EOF
 [
 BEGIN {
   found = 0
@@ -384,6 +388,28 @@ BEGIN {
               found = 1
               exit
             }
+
+          if (got[23] == "300" && \
+	      got[22] == "031" && \
+	      got[21] == "326" && \
+	      got[20] == "363" && \
+	      got[19] == "105" && \
+	      got[18] == "100" && \
+	      got[17] == "000" && \
+	      got[16] == "000" && \
+	      got[15] == "000" && \
+	      got[14] == "000" && \
+	      got[13] == "000" && \
+	      got[12] == "000" && \
+	      got[11] == "000" && \
+	      got[10] == "000" && \
+	      got[9]  == "000" && \
+	      got[8]  == "000")
+            {
+              print "IEEE quad, big endian"
+              found = 1
+              exit
+            }
         }
     }
 }
@@ -394,15 +420,16 @@ END {
 }
 ]
 EOF
-  mpfr_cv_c_long_double_format=`od -b conftest.$OBJEXT | $AWK -f conftest.awk`
-  case $mpfr_cv_c_long_double_format in
-  unknown*)
-    echo "cannot match anything, conftest.$OBJEXT contains" >&AC_FD_CC
-    od -b conftest.$OBJEXT >&AC_FD_CC
-    ;;
-  esac
-else
-  AC_MSG_WARN([oops, cannot compile test program])
+    mpfr_cv_c_long_double_format=`od -b conftest.$OBJEXT | $AWK -f conftest.awk`
+    case $mpfr_cv_c_long_double_format in
+    unknown*)
+      echo "cannot match anything, conftest.$OBJEXT contains" >&AC_FD_CC
+      od -b conftest.$OBJEXT >&AC_FD_CC
+      ;;
+    esac
+  else
+    AC_MSG_WARN([oops, cannot compile test program])
+  fi
 fi
 ])
 
@@ -410,15 +437,20 @@ AH_VERBATIM([HAVE_LDOUBLE],
 [/* Define one of the following to 1 for the format of a `long double'.
    If your format is not among these choices, or you don't know what it is,
    then leave all undefined.
-   IEEE_EXT is the 10-byte IEEE extended format.
+   IEEE_EXT is the 10-byte IEEE extended precision format.
+   IEEE_QUAD is the 16-byte IEEE quadruple precision format.
    LITTLE or BIG is the endianness.  */
-#undef HAVE_LDOUBLE_IEEE_EXT_LITTLE])
+#undef HAVE_LDOUBLE_IEEE_EXT_LITTLE
+#undef HAVE_LDOUBLE_IEEE_QUAD_BIG])
 
 case $mpfr_cv_c_long_double_format in
   "IEEE extended, little endian")
     AC_DEFINE(HAVE_LDOUBLE_IEEE_EXT_LITTLE, 1)
     ;;
-  unknown*)
+  "IEEE quad, big endian")
+    AC_DEFINE(HAVE_LDOUBLE_IEEE_QUAD_BIG, 1)
+    ;;
+  unknown* | "not available")
     ;;
   *) 
     AC_MSG_WARN([oops, unrecognised float format: $mpfr_cv_c_long_double_format])
@@ -436,7 +468,7 @@ AC_DEFUN(MPFR_CHECK_LIBM,
 AC_SUBST(MPFR_LIBM,'')
 case $host in
   *-*-beos* | *-*-cygwin* | *-*-pw32*)
-    # According to libtool AC_CHECK_LIBM, these systems don't have libm
+    # According to libtool AC CHECK LIBM, these systems don't have libm
     ;;
   *-*-hpux*)
     # -lM means something subtly different to -lm, SVID style error handling
@@ -450,7 +482,7 @@ case $host in
     AC_CHECK_LIB(m,   main, MPFR_LIBM="$MPFR_LIBM -lm")
     ;;
   *-ncr-sysv4.3*)
-    # FIXME: What does -lmw mean?  Libtool AC_CHECK_LIBM does it this way.
+    # FIXME: What does -lmw mean?  Libtool AC CHECK LIBM does it this way.
     AC_CHECK_LIB(mw, _mwvalidcheckl, MPFR_LIBM="-lmw")
     AC_CHECK_LIB(m, main, MPFR_LIBM="$MPFR_LIBM -lm")
     ;;

@@ -35,7 +35,7 @@ int
 mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
 {
   if (n > 0)
-    return mpfr_pow_ui(y, x, n, rnd_mode);
+    return mpfr_pow_ui (y, x, n, rnd_mode);
   else
     {
       int inexact = 0;

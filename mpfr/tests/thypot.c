@@ -60,6 +60,13 @@ test_large (void)
       exit (1);
     }
 
+  mpfr_set_prec (x, 53);
+  mpfr_set_prec (t, 53);
+  mpfr_set_prec (y, 53);
+  mpfr_set_str_raw (x, "0.11101100011110000011101000010101010011001101000001100E-1021");
+  mpfr_set_str_raw (t, "0.11111001010011000001110110001101011100001000010010100E-1021");
+  mpfr_hypot (y, x, t, GMP_RNDN);
+
   mpfr_clear (x);
   mpfr_clear (y);
   mpfr_clear (z);

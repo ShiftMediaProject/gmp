@@ -57,3 +57,5 @@ Potential bugs:
 
 * mpfr_hypot may fail for x very large, y very small and a very large
   target precision.
+
+* mpfr_pow fails on (1, 0.5).

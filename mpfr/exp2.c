@@ -76,7 +76,7 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
         return mpfr_set_underflow (y, rnd2, 1);
       }
 
-    if (mpfr_isinteger (x)) /* we know that x >= 2^(emin-1) */
+    if (mpfr_integer_p (x)) /* we know that x >= 2^(emin-1) */
       {
         double xd;
 

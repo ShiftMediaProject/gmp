@@ -1,6 +1,6 @@
-/* mpfr_integer_p -- test if a mpfr variable is integer.
+/* mpfr_get_si -- convert a floating-point number to a signed long.
 
-Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+Copyright 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -24,40 +24,34 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-int 
-mpfr_integer_p (mpfr_srcptr x)
+long
+mpfr_get_si (mpfr_srcptr f, mp_rnd_t rnd)
 {
-  mp_exp_t expo;
   mp_prec_t prec;
-  mp_size_t xn;
-  mp_limb_t *xp;
+  long s;
+  mpfr_t x;
+  mp_size_t n;
+  mp_exp_t exp;
 
-  if (!MPFR_IS_FP(x))
-    return 0;
+  if (!mpfr_fits_slong_p (f, rnd) || MPFR_IS_ZERO(f))
+    return (long) 0;
 
-  if (MPFR_IS_ZERO(x))
-    return 1;
+  /* determine prec of long */
+  for (s = LONG_MIN, prec = 0; s != 0; s /= 2, prec ++);
 
-  expo = MPFR_EXP(x);
-  if (expo <= 0)
-    return 0;
+  /* first round to prec bits */
+  mpfr_init2 (x, prec);
+  mpfr_set (x, f, rnd);
 
-  prec = MPFR_PREC(x);
-  if (expo >= prec)
-    return 1;
+  ASSERT(GMP_NAIL_BITS == 0); /* otherwise we may have to consider two or
+				 more limbs */
 
-  /* 0 < expo < prec */
+  /* now the result is in the most significant limb of x */
+  exp = MPFR_EXP(x); /* since |x| >= 1, exp >= 1 */
+  n = MPFR_ABSSIZE(x);
+  s = MPFR_MANT(x)[n - 1] >> (GMP_NUMB_BITS - exp);
 
-  xn = (prec - 1) / BITS_PER_MP_LIMB;  /* index of last limb */
-  xn -= (mp_size_t) (expo / BITS_PER_MP_LIMB);
-  /* now the index of the last limb containing bits of the fractional part */
+  mpfr_clear (x);
 
-  xp = MPFR_MANT(x);
-  MPFR_ASSERTN(xn >= 0);
-  if (xp[xn] << (expo % BITS_PER_MP_LIMB) != 0)
-    return 0;
-  while (--xn >= 0)
-    if (xp[xn] != 0)
-      return 0;
-  return 1;
+  return MPFR_SIGN(f) * s;
 }

@@ -206,7 +206,7 @@ EXTRA_libfrtests_a_SOURCES = x86.asm
 libfrtests_a_DEPENDENCIES = $(TESTS_ASM_OBJECTS)
 libfrtests_a_LIBADD = $(libfrtests_a_DEPENDENCIES)
 
-@WANT_MPFR_TRUE@check_PROGRAMS = reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui tdump teq texp tfrac tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos tgamma tset_ld tcbrt tsin_cos
+@WANT_MPFR_TRUE@check_PROGRAMS = reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui tdump teq texp tfrac tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos tgamma tset_ld tcbrt tsin_cos mpf_compat mpfr_compat
 @WANT_MPFR_TRUE@check_LIBRARIES = libfrtests.a
 @WANT_MPFR_TRUE@TESTS = $(check_PROGRAMS)
 EXTRA_DIST = tgeneric.c
@@ -251,8 +251,21 @@ libfrtests_a_OBJECTS = $(am_libfrtests_a_OBJECTS)
 @WANT_MPFR_TRUE@	texceptions$(EXEEXT) tfma$(EXEEXT) \
 @WANT_MPFR_TRUE@	thypot$(EXEEXT) tacos$(EXEEXT) tgamma$(EXEEXT) \
 @WANT_MPFR_TRUE@	tset_ld$(EXEEXT) tcbrt$(EXEEXT) \
-@WANT_MPFR_TRUE@	tsin_cos$(EXEEXT)
+@WANT_MPFR_TRUE@	tsin_cos$(EXEEXT) mpf_compat$(EXEEXT) \
+@WANT_MPFR_TRUE@	mpfr_compat$(EXEEXT)
 @WANT_MPFR_FALSE@check_PROGRAMS =
+mpf_compat_SOURCES = mpf_compat.c
+mpf_compat_OBJECTS = mpf_compat$U.$(OBJEXT)
+mpf_compat_LDADD = $(LDADD)
+mpf_compat_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
+mpf_compat_LDFLAGS =
+mpfr_compat_SOURCES = mpfr_compat.c
+mpfr_compat_OBJECTS = mpfr_compat$U.$(OBJEXT)
+mpfr_compat_LDADD = $(LDADD)
+mpfr_compat_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
+mpfr_compat_LDFLAGS =
 reuse_SOURCES = reuse.c
 reuse_OBJECTS = reuse$U.$(OBJEXT)
 reuse_LDADD = $(LDADD)
@@ -670,19 +683,20 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(libfrtests_a_SOURCES) $(EXTRA_libfrtests_a_SOURCES) \
-	reuse.c tabs.c tacos.c tacosh.c tadd.c tadd_ui.c tagm.c tasin.c \
-	tasinh.c tatan.c tatanh.c tcan_round.c tcbrt.c tcmp.c tcmp2.c \
-	tcmp_ui.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c \
-	tcosh.c tdiv.c tdiv_ui.c tdump.c teq.c texceptions.c texp.c \
-	texp2.c texpm1.c tfactorial.c tfma.c tfrac.c tgamma.c tget_d.c \
-	tget_str.c thyperbolic.c thypot.c tisnan.c tlog.c tlog10.c \
-	tlog1p.c tlog2.c tmul.c tmul_2exp.c tmul_ui.c tout_str.c tpow.c \
-	tpow3.c trandom.c trint.c tround_prec.c tset.c tset_d.c \
-	tset_f.c tset_ld.c tset_q.c tset_si.c tset_str.c tset_z.c \
-	tsin.c tsin_cos.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c tsub_ui.c \
-	tswap.c ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c tui_sub.c
+	mpf_compat.c mpfr_compat.c reuse.c tabs.c tacos.c tacosh.c \
+	tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c \
+	tcan_round.c tcbrt.c tcmp.c tcmp2.c tcmp_ui.c tconst_euler.c \
+	tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c tdiv_ui.c \
+	tdump.c teq.c texceptions.c texp.c texp2.c texpm1.c \
+	tfactorial.c tfma.c tfrac.c tgamma.c tget_d.c tget_str.c \
+	thyperbolic.c thypot.c tisnan.c tlog.c tlog10.c tlog1p.c \
+	tlog2.c tmul.c tmul_2exp.c tmul_ui.c tout_str.c tpow.c tpow3.c \
+	trandom.c trint.c tround_prec.c tset.c tset_d.c tset_f.c \
+	tset_ld.c tset_q.c tset_si.c tset_str.c tset_z.c tsin.c \
+	tsin_cos.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c tsub_ui.c tswap.c \
+	ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c tui_sub.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = $(libfrtests_a_SOURCES) $(EXTRA_libfrtests_a_SOURCES) reuse.c tabs.c tacos.c tacosh.c tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c tcan_round.c tcbrt.c tcmp.c tcmp2.c tcmp_ui.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c tdiv_ui.c tdump.c teq.c texceptions.c texp.c texp2.c texpm1.c tfactorial.c tfma.c tfrac.c tgamma.c tget_d.c tget_str.c thyperbolic.c thypot.c tisnan.c tlog.c tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c tmul_ui.c tout_str.c tpow.c tpow3.c trandom.c trint.c tround_prec.c tset.c tset_d.c tset_f.c tset_ld.c tset_q.c tset_si.c tset_str.c tset_z.c tsin.c tsin_cos.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c tui_sub.c
+SOURCES = $(libfrtests_a_SOURCES) $(EXTRA_libfrtests_a_SOURCES) mpf_compat.c mpfr_compat.c reuse.c tabs.c tacos.c tacosh.c tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c tcan_round.c tcbrt.c tcmp.c tcmp2.c tcmp_ui.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c tdiv_ui.c tdump.c teq.c texceptions.c texp.c texp2.c texpm1.c tfactorial.c tfma.c tfrac.c tgamma.c tget_d.c tget_str.c thyperbolic.c thypot.c tisnan.c tlog.c tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c tmul_ui.c tout_str.c tpow.c tpow3.c trandom.c trint.c tround_prec.c tset.c tset_d.c tset_f.c tset_ld.c tset_q.c tset_si.c tset_str.c tset_z.c tsin.c tsin_cos.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c tui_sub.c
 
 all: all-am
 
@@ -707,6 +721,12 @@ clean-checkPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+mpf_compat$(EXEEXT): $(mpf_compat_OBJECTS) $(mpf_compat_DEPENDENCIES) 
+	@rm -f mpf_compat$(EXEEXT)
+	$(LINK) $(mpf_compat_LDFLAGS) $(mpf_compat_OBJECTS) $(mpf_compat_LDADD) $(LIBS)
+mpfr_compat$(EXEEXT): $(mpfr_compat_OBJECTS) $(mpfr_compat_DEPENDENCIES) 
+	@rm -f mpfr_compat$(EXEEXT)
+	$(LINK) $(mpfr_compat_LDFLAGS) $(mpfr_compat_OBJECTS) $(mpfr_compat_LDADD) $(LIBS)
 reuse$(EXEEXT): $(reuse_OBJECTS) $(reuse_DEPENDENCIES) 
 	@rm -f reuse$(EXEEXT)
 	$(LINK) $(reuse_LDFLAGS) $(reuse_OBJECTS) $(reuse_LDADD) $(LIBS)
@@ -950,6 +970,10 @@ mostlyclean-kr:
 	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 memory_.c: memory.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/memory.c; then echo $(srcdir)/memory.c; else echo memory.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+mpf_compat_.c: mpf_compat.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mpf_compat.c; then echo $(srcdir)/mpf_compat.c; else echo mpf_compat.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+mpfr_compat_.c: mpfr_compat.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mpfr_compat.c; then echo $(srcdir)/mpfr_compat.c; else echo mpfr_compat.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 reuse_.c: reuse.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/reuse.c; then echo $(srcdir)/reuse.c; else echo reuse.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 rnd_mode_.c: rnd_mode.c $(ANSI2KNR)
@@ -1100,7 +1124,8 @@ tui_pow_.c: tui_pow.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tui_pow.c; then echo $(srcdir)/tui_pow.c; else echo tui_pow.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 tui_sub_.c: tui_sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tui_sub.c; then echo $(srcdir)/tui_sub.c; else echo tui_sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
-memory_.$(OBJEXT) memory_.lo reuse_.$(OBJEXT) reuse_.lo \
+memory_.$(OBJEXT) memory_.lo mpf_compat_.$(OBJEXT) mpf_compat_.lo \
+mpfr_compat_.$(OBJEXT) mpfr_compat_.lo reuse_.$(OBJEXT) reuse_.lo \
 rnd_mode_.$(OBJEXT) rnd_mode_.lo tabs_.$(OBJEXT) tabs_.lo \
 tacos_.$(OBJEXT) tacos_.lo tacosh_.$(OBJEXT) tacosh_.lo tadd_.$(OBJEXT) \
 tadd_.lo tadd_ui_.$(OBJEXT) tadd_ui_.lo tagm_.$(OBJEXT) tagm_.lo \

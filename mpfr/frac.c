@@ -1,6 +1,6 @@
 /* mpfr_frac -- Fractional part of a floating-point number.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -42,7 +42,7 @@ mpfr_frac (mpfr_ptr r, mpfr_srcptr u, mp_rnd_t rnd_mode)
       MPFR_RET_NAN;
     }
 
-  if (MPFR_IS_INF(u) || mpfr_isinteger(u))
+  if (MPFR_IS_INF(u) || mpfr_integer_p (u))
     {
       MPFR_CLEAR_FLAGS(r);
       MPFR_SET_SAME_SIGN(r, u);

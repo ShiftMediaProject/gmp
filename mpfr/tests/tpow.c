@@ -205,6 +205,100 @@ special ()
   mpfr_clear (t);
 }
 
+static void
+particular_cases (void)
+{
+  mpfr_t t[11], r;
+  int i, j;
+  int error = 0;
+
+  for (i = 0; i < 11; i++)
+    mpfr_init2 (t[i], 2);
+  mpfr_init2 (r, 6);
+
+  mpfr_set_nan (t[0]);
+  mpfr_set_inf (t[1], 1);
+  mpfr_set_ui (t[3], 0, GMP_RNDN);
+  mpfr_set_ui (t[5], 1, GMP_RNDN);
+  mpfr_set_ui (t[7], 2, GMP_RNDN);
+  mpfr_div_2ui (t[9], t[5], 1, GMP_RNDN);
+  for (i = 1; i < 11; i += 2)
+    mpfr_neg (t[i+1], t[i], GMP_RNDN);
+
+  for (i = 0; i < 11; i++)
+    for (j = 0; j < 11; j++)
+      {
+        int p;
+        static int q[11][11] = {
+          /*          NaN +inf -inf  +0   -0   +1   -1   +2   -2  +0.5 -0.5 */
+          /*  NaN */ { 0,   0,   0,  128, 128,  0,   0,   0,   0,   0,   0  },
+          /* +inf */ { 0,   1,   2,  128, 128,  1,   2,   1,   2,   1,   2  },
+          /* -inf */ { 0,   1,   2,  128, 128, -1,  -2,   1,   2,   1,   2  },
+          /*  +0  */ { 0,   2,   1,  128, 128,  2,   1,   2,   1,   2,   1  },
+          /*  -0  */ { 0,   2,   1,  128, 128, -2,  -1,   2,   1,   2,   1  },
+          /*  +1  */ {128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128 },
+          /*  -1  */ { 0,  128, 128, 128, 128,-128,-128, 128, 128,  0,   0  },
+          /*  +2  */ { 0,   1,   2,  128, 128, 256,  64, 512,  32, 180,  90 },
+          /*  -2  */ { 0,   1,   2,  128, 128,-256, -64, 512,  32,  0,   0  },
+          /* +0.5 */ { 0,   2,   1,  128, 128,  64, 256,  32, 512,  90, 180 },
+          /* -0.5 */ { 0,   2,   1,  128, 128, -64,-256,  32, 512,  0,   0  }
+        };
+
+        mpfr_pow (r, t[i], t[j], GMP_RNDN);
+        p = mpfr_nan_p (r) ? 0 : mpfr_inf_p (r) ? 1 :
+          mpfr_cmp_ui (r, 0) == 0 ? 2 :
+          (int) (fabs (mpfr_get_d (r, GMP_RNDN)) * 128.0);
+        if (p != 0 && MPFR_SIGN(r) < 0)
+          p = -p;
+        if (p != q[i][j])
+          {
+            fprintf (stderr,
+                     "Error in mpfr_pow for particular case (%d,%d):\n"
+                     "got %d instead of %d\n", i, j, p, q[i][j]);
+            error = 1;
+          }
+      }
+
+  for (i = 0; i < 11; i++)
+    mpfr_clear (t[i]);
+  mpfr_clear (r);
+
+  if (error)
+    exit (1);
+}
+
+static void
+underflows(void)
+{
+  mpfr_t x, y;
+  int i;
+
+  mpfr_init2 (x, 64);
+  mpfr_init2 (y, 64);
+
+  mpfr_set_ui (x, 1, GMP_RNDN);
+  mpfr_set_exp (x, mpfr_get_emin());
+
+  for (i = 3; i < 10; i++)
+    {
+      mpfr_set_ui (y, i, GMP_RNDN);
+      mpfr_div_2ui (y, y, 1, GMP_RNDN);
+      mpfr_pow (y, x, y, GMP_RNDN);
+      if (!MPFR_IS_FP(y) || mpfr_cmp_ui (y, 0))
+        {
+          fprintf (stderr, "Error in mpfr_pow for ");
+          mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
+          fprintf (stderr, " ^ (%d/2)\nGot ", i);
+          mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
+          fprintf (stderr, " instead of 0.\n");
+          exit (1);
+        }
+    }
+
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 int
 main (void)
 {
@@ -214,10 +308,14 @@ main (void)
 
   special ();
 
+  particular_cases ();
+
   check_pow_ui ();
 
   for (p=2; p<100; p++)
     check_inexact (p);
+
+  underflows ();
 
   tests_end_mpfr ();
   return 0;

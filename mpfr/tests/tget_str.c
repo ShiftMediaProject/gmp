@@ -216,7 +216,7 @@ check_large (void)
 
   mpfr_set_nan (x);
   s = mpfr_get_str (NULL, &e, 10, 1000, x, GMP_RNDN);
-  if (strcmp (s, "NaN"))
+  if (strcmp (s, "@NaN@"))
     {
       fprintf (stderr, "Error for NaN\n");
       exit (1);
@@ -227,7 +227,7 @@ check_large (void)
 
   mpfr_set_inf (x, 1);
   s = mpfr_get_str (NULL, &e, 10, 1000, x, GMP_RNDN);
-  if (strcmp (s, "Inf"))
+  if (strcmp (s, "@Inf@"))
     {
       fprintf (stderr, "Error for Inf\n");
       exit (1);
@@ -238,7 +238,7 @@ check_large (void)
 
   mpfr_set_inf (x, -1);
   s = mpfr_get_str (NULL, &e, 10, 1000, x, GMP_RNDN);
-  if (strcmp (s, "-Inf"))
+  if (strcmp (s, "-@Inf@"))
     {
       fprintf (stderr, "Error for -Inf\n");
       exit (1);

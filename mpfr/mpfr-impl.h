@@ -108,22 +108,57 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define DBL_NAN (0.0/0.0)
 
 
-/* Execute the code "action" if x is a NaN.
-   Under IEEE rules, NaN is not equal to anything, including itself.
+/* LONGDOUBLE_NAN_ACTION executes the code "action" if x is a NaN. */
+
+/* On hppa2.0n-hp-hpux10 with the unbundled HP cc, the test x!=x on a NaN
+   has been seen false, meaning NaNs are not detected.  This seemed to
+   happen only after other comparisons, not sure what's really going on.  In
+   any case we can pick apart the bytes to identify a NaN.  */
+#if HAVE_LDOUBLE_IEEE_QUAD_BIG
+#define LONGDOUBLE_NAN_ACTION(x, action)                        \
+  do {                                                          \
+    union {                                                     \
+      long double    ld;                                        \
+      struct {                                                  \
+        unsigned long  sign : 1;                                \
+        unsigned long  exp  : 15;                               \
+        unsigned long  man3 : 16;                               \
+        unsigned long  man2 : 32;                               \
+        unsigned long  man1 : 32;                               \
+        unsigned long  man0 : 32;                               \
+      } s;                                                      \
+    } u;                                                        \
+    u.ld = (x);                                                 \
+    if (u.s.exp == 0x7FFFL                                      \
+        && (u.s.man0 | u.s.man1 | u.s.man2 | u.s.man3) != 0)    \
+      { action; }                                               \
+  } while (0)
+#endif
+
+/* Under IEEE rules, NaN is not equal to anything, including itself.
    "volatile" here stops "cc" on mips64-sgi-irix6.5 from optimizing away
    x!=x. */
+#ifndef LONGDOUBLE_NAN_ACTION
 #define LONGDOUBLE_NAN_ACTION(x, action)                \
   do {                                                  \
     volatile long double __x = LONGDOUBLE_VOLATILE (x); \
     if ((x) != __x)                                     \
       { action; }                                       \
   } while (0)
+#define WANT_LONGDOUBLE_VOLATILE 1
+#endif
 
+/* If we don't have a proper "volatile" then volatile is #defined to empty,
+   in this case call through an external function to stop the compiler
+   optimizing anything. */
+#if WANT_LONGDOUBLE_VOLATILE
 #ifdef volatile
 long double __gmpfr_longdouble_volatile __GMP_PROTO ((long double)) ATTRIBUTE_CONST;
 #define LONGDOUBLE_VOLATILE(x)  (__gmpfr_longdouble_volatile (x))
+#define WANT_GMPFR_LONGDOUBLE_VOLATILE 1
 #else
 #define LONGDOUBLE_VOLATILE(x)  (x)
+#endif
 #endif
 
 

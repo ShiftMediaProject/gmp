@@ -21,6 +21,8 @@ MA 02111-1307, USA. */
 
 /* types */
 #define mpf_t mpfr_t
+#define mpf_srcptr mpfr_srcptr
+#define mpf_ptr mpfr_ptr
 
 /* functions which don't take as argument the rounding mode */
 #undef mpf_ceil
@@ -37,14 +39,14 @@ MA 02111-1307, USA. */
 #define mpf_eq mpfr_eq
 #undef mpf_floor
 #define mpf_floor mpfr_floor
-#undef mpf_get_d
-#define mpf_get_d mpfr_get_d1
 #undef mpf_get_prec
 #define mpf_get_prec mpfr_get_prec
 #undef mpf_init
 #define mpf_init mpfr_init
 #undef mpf_init2
 #define mpf_init2 mpfr_init2
+#undef mpf_integer_p
+#define mpf_integer_p mpfr_integer_p
 #undef mpf_random2
 #define mpf_random2 mpfr_random2
 #undef mpf_set_default_prec
@@ -52,7 +54,7 @@ MA 02111-1307, USA. */
 #undef mpf_get_default_prec
 #define mpf_get_default_prec mpfr_get_default_prec
 #undef mpf_set_prec
-#define mpf_set_prec(x,p) mpfr_round_prec(x, __gmpfr_default_rounding_mode, p)
+#define mpf_set_prec(x,p) mpfr_set_prec(x, p)
 #undef mpf_set_prec_raw
 #define mpf_set_prec_raw mpfr_set_prec_raw
 #undef mpf_trunc
@@ -81,9 +83,29 @@ MA 02111-1307, USA. */
 #undef mpf_dump
 #define mpf_dump(x,y,z) \
                 mpfr_dump(x,y,z,__gmpfr_default_rounding_mode)
+#undef mpf_fits_slong_p
+#define mpf_fits_slong_p(x) mpfr_fits_ulong_p(x,__gmpfr_default_rounding_mode)
+#undef mpf_fits_ulong_p
+#define mpf_fits_ulong_p(x) mpfr_fits_ulong_p(x,__gmpfr_default_rounding_mode)
+#undef mpf_fits_sint_p
+#define mpf_fits_sint_p(x) mpfr_fits_uint_p(x,__gmpfr_default_rounding_mode)
+#undef mpf_fits_uint_p
+#define mpf_fits_uint_p(x) mpfr_fits_uint_p(x,__gmpfr_default_rounding_mode)
+#undef mpf_fits_sshort_p
+#define mpf_fits_sshort_p(x) mpfr_fits_ushort_p(x,__gmpfr_default_rounding_mode)
+#undef mpf_fits_ushort_p
+#define mpf_fits_ushort_p(x) mpfr_fits_ushort_p(x,__gmpfr_default_rounding_mode)
 #undef mpf_get_str
 #define mpf_get_str(x,y,z,t,u) \
                mpfr_get_str(x,y,z,t,u,__gmpfr_default_rounding_mode)
+#undef mpf_get_d
+#define mpf_get_d(x) mpfr_get_d(x,__gmpfr_default_rounding_mode)
+#undef mpf_get_d_2exp
+#define mpf_get_d_2exp(e,x) mpfr_get_d_2exp(e,x,__gmpfr_default_rounding_mode)
+#undef mpf_get_ui
+#define mpf_get_ui(x) mpfr_get_ui(x,__gmpfr_default_rounding_mode)
+#undef mpf_get_si
+#define mpf_get_si(x) mpfr_get_ui(x,__gmpfr_default_rounding_mode)
 #undef mpf_inp_str
 #define mpf_inp_str(x,y,z) mpfr_inp_str(x,y,z,__gmpfr_default_rounding_mode)
 #undef mpf_set_str

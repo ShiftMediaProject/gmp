@@ -33,10 +33,6 @@ Installation:
   in the times making them cross back and forward between which is
   faster.  Hopefully this will go away with improvements to the exp
   code.
-- install config.h gmp-impl.h gmp-mparam.h longlong.h only in the mpfr
-  build directory ["Nelson H. F. Beebe" <beebe@math.utah.edu>]
-  Alternately, insist on having a gmp build tree for the mpfr build to
-  access.
 
 Changes in existing functions:
 

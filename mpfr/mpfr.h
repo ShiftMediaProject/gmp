@@ -1,6 +1,6 @@
 /* mpfr.h -- Include file for mpfr.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -23,9 +23,17 @@ MA 02111-1307, USA. */
 #define __MPFR_H
 
 /* check if stdio.h is included */
-#if defined (FILE) || defined (H_STDIO) || defined (_H_STDIO) \
- || defined (_STDIO_H) || defined (_STDIO_H_) || defined (__STDIO_H__) \
- || defined (_STDIO_INCLUDED) || defined (__dj_include_stdio_h_)
+#if defined (FILE)                                              \
+  || defined (H_STDIO)                                          \
+  || defined (_H_STDIO)               /* AIX */                 \
+  || defined (_STDIO_H)               /* glibc, Sun, SCO */     \
+  || defined (_STDIO_H_)              /* BSD, OSF */            \
+  || defined (__STDIO_H)              /* Borland */             \
+  || defined (__STDIO_H__)            /* IRIX */                \
+  || defined (_STDIO_INCLUDED)        /* HPUX */                \
+  || defined (__dj_include_stdio_h_)  /* DJGPP */               \
+  || defined (_FILE_DEFINED)          /* Microsoft */           \
+  || defined (__STDIO__)              /* Apple MPW MrC */
 #define _MPFR_H_HAVE_FILE 1
 #endif
 
@@ -150,9 +158,12 @@ void mpfr_set_nan _PROTO ((mpfr_ptr));
 void mpfr_set_inf _PROTO ((mpfr_ptr, int));
 mp_exp_t mpfr_get_z_exp _PROTO ((mpz_ptr, mpfr_srcptr)); 
 int mpfr_set_q _PROTO ((mpfr_ptr, mpq_srcptr, mp_rnd_t)); 
-double mpfr_get_d1 _PROTO ((mpfr_srcptr));
 double mpfr_get_d _PROTO ((mpfr_srcptr, mp_rnd_t));
 long double mpfr_get_ld _PROTO ((mpfr_srcptr, mp_rnd_t));
+double mpfr_get_d1 _PROTO ((mpfr_srcptr));
+double mpfr_get_d_2exp _PROTO ((mp_exp_t *, mpfr_srcptr, mp_rnd_t));
+long mpfr_get_si _PROTO ((mpfr_srcptr, mp_rnd_t));
+unsigned long mpfr_get_ui _PROTO ((mpfr_srcptr, mp_rnd_t));
 int mpfr_set_f _PROTO ((mpfr_ptr, mpf_srcptr, mp_rnd_t));
 int mpfr_set_si _PROTO ((mpfr_ptr, long, mp_rnd_t));
 int mpfr_set_ui _PROTO ((mpfr_ptr, unsigned long, mp_rnd_t));
@@ -166,7 +177,7 @@ void mpfr_nextbelow _PROTO ((mpfr_ptr));
 void mpfr_nexttoward _PROTO ((mpfr_ptr, mpfr_srcptr));
 void mpfr_set_str_raw _PROTO ((mpfr_ptr, char *));
 int mpfr_set_str _PROTO ((mpfr_ptr, __gmp_const char *, int, mp_rnd_t));
-int mpfr_init_set_str _PROTO ((mpfr_ptr, char *, int, mp_rnd_t));
+int mpfr_init_set_str _PROTO ((mpfr_ptr, __gmp_const char *, int, mp_rnd_t));
 char* mpfr_get_str _PROTO ((char *, mp_exp_t *, int, size_t, mpfr_srcptr, mp_rnd_t));
 #ifdef _MPFR_H_HAVE_FILE
 size_t mpfr_inp_str _PROTO ((mpfr_ptr, FILE *, int, mp_rnd_t));
@@ -226,6 +237,12 @@ int mpfr_trunc _PROTO((mpfr_ptr, mpfr_srcptr));
 int mpfr_ceil _PROTO((mpfr_ptr, mpfr_srcptr));
 int mpfr_floor _PROTO((mpfr_ptr, mpfr_srcptr));
 int mpfr_frac _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_ulong_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_slong_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_uint_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_sint_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_ushort_p _PROTO((mpfr_srcptr, mp_rnd_t));
+int mpfr_fits_sshort_p _PROTO((mpfr_srcptr, mp_rnd_t));
 void mpfr_extract _PROTO((mpz_ptr, mpfr_srcptr, unsigned int));
 void mpfr_swap _PROTO((mpfr_ptr, mpfr_ptr));
 void mpfr_dump _PROTO((mpfr_srcptr, mp_rnd_t));
@@ -259,7 +276,7 @@ int mpfr_fma _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t)
 int mpfr_hypot _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_pow _PROTO ((mpfr_ptr, mpfr_srcptr,mpfr_srcptr, mp_rnd_t)); 
 int mpfr_pow_si _PROTO ((mpfr_ptr, mpfr_srcptr, long int, mp_rnd_t)); 
-int mpfr_isinteger _PROTO ((mpfr_srcptr));
+int mpfr_integer_p _PROTO ((mpfr_srcptr));
 int mpfr_log2 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
 int mpfr_log10 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
 int mpfr_log1p _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 

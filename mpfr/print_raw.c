@@ -64,9 +64,9 @@ mpfr_print_binary (mpfr_srcptr x)
   char *str;
   unsigned long alloc_size;
 
-  if (MPFR_IS_NAN(x)) printf("NaN");
+  if (MPFR_IS_NAN(x)) printf("@NaN@");
   else if (MPFR_IS_INF(x)) {
-    if (MPFR_SIGN(x) == 1) { printf("Inf"); } else printf("-Inf"); 
+    if (MPFR_SIGN(x) == 1) { printf("@Inf@"); } else printf("-@Inf@"); 
   }
   else if (!MPFR_NOTZERO(x)) {
     if (MPFR_SIGN(x) < 0) printf("-");

@@ -24,11 +24,9 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-int mpfr_sin_sign _PROTO((mpfr_srcptr));
-
 /* determine the sign of sin(x) using argument reduction.
    Assumes x is not an exact multiple of Pi (this excludes x=0). */
-int
+static int
 mpfr_sin_sign (mpfr_srcptr x)
 {
   mpfr_t c, k;

@@ -29,10 +29,8 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 
-/* Only needed if "volatile" doesn't work, ie. has been #defined to empty in
-   config.h.  */
-
-#ifdef volatile
+/* Only needed sometimes. */
+#if WANT_GMPFR_LONGDOUBLE_VOLATILE
 long double
 __gmpfr_longdouble_volatile (long double x)
 {

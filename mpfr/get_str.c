@@ -560,8 +560,8 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
   if (MPFR_IS_NAN(x))
     {
       if (s == NULL)
-        s = (char*) (*__gmp_allocate_func) (4);
-      strcpy (s, "NaN");
+        s = (char*) (*__gmp_allocate_func) (6);
+      strcpy (s, "@NaN@");
       return s;
     }
 
@@ -570,8 +570,8 @@ mpfr_get_str (char *s, mp_exp_t *e, int b, size_t m, mpfr_srcptr x, mp_rnd_t rnd
   if (MPFR_IS_INF(x))
     {
       if (s == NULL)
-        s = (char*) (*__gmp_allocate_func) (neg + 4);
-      strcpy (s, (neg) ? "-Inf" : "Inf");
+        s = (char*) (*__gmp_allocate_func) (neg + 6);
+      strcpy (s, (neg) ? "-@Inf@" : "@Inf@");
       return s;
     }
 
