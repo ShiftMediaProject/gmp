@@ -51,7 +51,7 @@ mpz_powm_ui (res, base, exp, mod)
   rp = res->_mp_d;
 
   if (msize == 0)
-    msize = 1 / msize;		/* provoke a signal */
+    DIVIDE_BY_ZERO;
 
   if (exp == 0)
     {
