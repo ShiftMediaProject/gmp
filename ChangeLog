@@ -1,5 +1,23 @@
 2000-04-08  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/bin_ui.c: Don't depend on ANSI C features.
+	* mpz/bin_uiui.c: Likewise.
+
+	* Makefile.am (MPZ_OBJECTS): mpz/cmp_abs* => mpz/cmpabs*.
+	(MPQ_OBJECTS): Add mpq/set_d.lo.
+	(MPZ_OBJECTS): Add mpz/fits*.lo.
+	* Makefile.in: Regenerate.
+	
+	* mpz/cmpabs.c: New name for mpz/cmp_abs.c.
+	* mpz/cmpabs_ui.c: New name for mpz/cmp_abs_ui.c.
+	* mpz/Makefile.am: Corresponding changes.
+	* mpz/Makefile.in: Regenerate.
+	* gmp.h: mpz_cmp_abs* => mpz_cmpabs*.
+	
+	* mpz/addmul_ui.c (mpn_neg1): Don't depend on ANSI C features.
+
+	* mpz/invert.c: Use TMP_MARK since we invoke MPZ_TMP_INIT.
+
 	* gmp.h (mpq_set_d): Declare correctly.
 	(mpz_root): Use _PROTO.
 	(mpz_remove): Use _PROTO.
