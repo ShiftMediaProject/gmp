@@ -661,7 +661,7 @@ main ()
   char vendor_string[13];
   char dummy_string[12];
   long fms;
-  int family, model;
+  int family, model, stepping;
   char *modelstr;
 
   cpuid (vendor_string, 0);
@@ -671,6 +671,7 @@ main ()
 
   family = (fms >> 8) & 15;
   model = (fms >> 4) & 15;
+  stepping = fms & 15;
 
   modelstr = "i486";
   if (strcmp (vendor_string, "GenuineIntel") == 0)
@@ -709,6 +710,16 @@ main ()
   else if (strcmp (vendor_string, "CyrixInstead") == 0)
     {
       /* Should recognize Cyrix' processors too.  */
+    }
+  else if (strcmp (vendor_string, "CentaurHauls") == 0)
+    {
+      switch (family)
+	{
+	case 6:
+	  if (model < 9)	modelstr = "viac3";
+	  else			modelstr = "viac32";
+	  break;
+	}
     }
 
   printf ("%s\n", modelstr);
