@@ -21,19 +21,19 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdlib.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
 #if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
 /* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
-long mrand48 ();
 static inline long
 random ()
 {
   return mrand48 ();
 }
 #else
-long random ();
 #endif
 
 void
