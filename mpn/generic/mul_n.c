@@ -425,7 +425,8 @@ add2Times (mp_ptr z, mp_srcptr x, mp_srcptr y, mp_size_t n)
   mp_limb_t c, v, w;
 
   ASSERT (n > 0);
-  v = *x; w = *y;
+  v = *x;
+  w = *y;
   c = w >> (BITS_PER_MP_LIMB - 1);
   w <<= 1;
   v += w;
@@ -476,18 +477,27 @@ evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
   c = mpn_lshift (ph, A, len, 2);
   c += e + mpn_add_n (ph, ph, p1, len);
   d = mpn_add_n (ph, ph, C, len2);
-  if (len2 == len) c += d; else c += mpn_add_1 (ph + len2, ph + len2, len-len2, d);
+  if (len2 == len)
+    c += d;
+  else
+    c += mpn_add_1 (ph + len2, ph + len2, len-len2, d);
   ASSERT (c < 7);
   *pth = c;
 
   c = mpn_lshift (p2, C, len2, 2);
 #if 1
-  if (len2 != len) { p2[len-1] = 0; p2[len2] = c; c = 0; }
+  if (len2 != len)
+    {
+      p2[len-1] = 0;
+      p2[len2] = c;
+      c = 0;
+    }
   c += e + mpn_add_n (p2, p2, p1, len);
 #else
   d = mpn_add_n (p2, p2, p1, len2);
   c += d;
-  if (len2 != len) c = mpn_add_1 (p2+len2, p1+len2, len-len2, c);
+  if (len2 != len)
+    c = mpn_add_1 (p2+len2, p1+len2, len-len2, c);
   c += e;
 #endif
   c += mpn_add_n (p2, p2, A, len);
@@ -496,11 +506,12 @@ evaluate3 (mp_ptr ph, mp_ptr p1, mp_ptr p2, mp_ptr pth, mp_ptr pt1, mp_ptr pt2,
 
   c = mpn_add_n (p1, A, B, len);
   d = mpn_add_n (p1, p1, C, len2);
-  if (len2 == len) c += d;
-  else c += mpn_add_1 (p1+len2, p1+len2, len-len2, d);
+  if (len2 == len)
+    c += d;
+  else
+    c += mpn_add_1 (p1+len2, p1+len2, len-len2, d);
   ASSERT (c < 3);
   *pt1 = c;
-
 }
 
 #else
@@ -628,25 +639,31 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
   t = mpn_lshift (ws, A, len, 4);
   tb -= t + mpn_sub_n (B, B, ws, len);
   t = mpn_sub_n (B, B, E, len2);
-  if (len2 == len) tb -= t;
-  else tb -= mpn_sub_1 (B+len2, B+len2, len-len2, t);
+  if (len2 == len)
+    tb -= t;
+  else
+    tb -= mpn_sub_1 (B+len2, B+len2, len-len2, t);
 
   tc -= mpn_sub_n (C, C, A, len);
   t = mpn_sub_n (C, C, E, len2);
-  if (len2 == len) tc -= t;
-  else tc -= mpn_sub_1 (C+len2, C+len2, len-len2, t);
+  if (len2 == len)
+    tc -= t;
+  else
+    tc -= mpn_sub_1 (C+len2, C+len2, len-len2, t);
 
   t = mpn_lshift (ws, E, len2, 4);
   t += mpn_add_n (ws, ws, A, len2);
 #if 1
-  if (len2 != len) t = mpn_add_1 (ws+len2, A+len2, len-len2, t);
+  if (len2 != len)
+    t = mpn_add_1 (ws+len2, A+len2, len-len2, t);
   td -= t + mpn_sub_n (D, D, ws, len);
 #else
   t += mpn_sub_n (D, D, ws, len2);
-  if (len2 != len) {
-    t = mpn_sub_1 (D+len2, D+len2, len-len2, t);
-    t += mpn_sub_n (D+len2, D+len2, A+len2, len-len2);
-  } /* end if/else */
+  if (len2 != len)
+    {
+      t = mpn_sub_1 (D+len2, D+len2, len-len2, t);
+      t += mpn_sub_n (D+len2, D+len2, A+len2, len-len2);
+    }
   td -= t;
 #endif
 
@@ -657,7 +674,7 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
   /* #error TO DO ... */
 #else
   t = tb + td + mpn_add_n (ws, B, D, len);
-  td = tb - td - mpn_sub_n (D, B, D, len);
+  td = (tb - td - mpn_sub_n (D, B, D, len)) & GMP_NUMB_MASK;
   tb = t;
   MPN_COPY (B, ws, len);
 #endif
@@ -677,8 +694,8 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 #ifdef HAVE_MPN_ADD_SUB_N
   /* #error TO DO ... */
 #else
-  t = tb + td + mpn_add_n (ws, B, D, len);
-  td = tb - td - mpn_sub_n (D, B, D, len);
+  t = (tb + td + mpn_add_n (ws, B, D, len)) & GMP_NUMB_MASK;
+  td = (tb - td - mpn_sub_n (D, B, D, len)) & GMP_NUMB_MASK;
   tb = t;
   MPN_COPY (B, ws, len);
 #endif
@@ -691,19 +708,19 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
 
   ASSERT(!(*B & 3));
   mpn_rshift (B, B, len, 2);
-  B[len-1] |= tb << (GMP_NUMB_BITS - 2);
+  B[len-1] |= (tb << (GMP_NUMB_BITS - 2)) & GMP_NUMB_MASK;
   ASSERT((mp_limb_signed_t)tb >= 0);
   tb >>= 2;
 
   ASSERT(!(*C & 1));
   mpn_rshift (C, C, len, 1);
-  C[len-1] |= tc << (GMP_NUMB_BITS - 1);
+  C[len-1] |= (tc << (GMP_NUMB_BITS - 1)) & GMP_NUMB_MASK;
   ASSERT((mp_limb_signed_t)tc >= 0);
   tc >>= 1;
 
   ASSERT(!(*D & 3));
   mpn_rshift (D, D, len, 2);
-  D[len-1] |= td << (GMP_NUMB_BITS - 2);
+  D[len-1] |= (td << (GMP_NUMB_BITS - 2)) & GMP_NUMB_MASK;
   ASSERT((mp_limb_signed_t)td >= 0);
   td >>= 2;
 
