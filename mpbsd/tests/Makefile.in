@@ -120,13 +120,16 @@ AUTOMAKE_OPTIONS = gnu
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libmp.la
 
-@WANT_MPBSD_TRUE@check_PROGRAMS = @WANT_MPBSD_TRUE@allfuns
-@WANT_MPBSD_TRUE@TESTS = @WANT_MPBSD_TRUE@$(check_PROGRAMS)
+@WANT_MPBSD_TRUE@MPBSD_check_OPTION = @WANT_MPBSD_TRUE@allfuns
+
+check_PROGRAMS = dummy $(MPBSD_check_OPTION)
+TESTS = $(check_PROGRAMS)
 subdir = mpbsd/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-@WANT_MPBSD_TRUE@check_PROGRAMS =  allfuns$(EXEEXT)
+@WANT_MPBSD_FALSE@check_PROGRAMS =  dummy$(EXEEXT)
+@WANT_MPBSD_TRUE@check_PROGRAMS =  dummy$(EXEEXT) allfuns$(EXEEXT)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
@@ -137,12 +140,17 @@ allfuns_OBJECTS =  allfuns.$(OBJEXT)
 allfuns_LDADD = $(LDADD)
 allfuns_DEPENDENCIES =  $(top_builddir)/libmp.la
 allfuns_LDFLAGS = 
+dummy_SOURCES = dummy.c
+dummy_OBJECTS =  dummy.$(OBJEXT)
+dummy_LDADD = $(LDADD)
+dummy_DEPENDENCIES =  $(top_builddir)/libmp.la
+dummy_LDFLAGS = 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CFLAGS = @CFLAGS@
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  allfuns.c
+DIST_SOURCES =  allfuns.c dummy.c
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -150,9 +158,9 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/allfuns.Po
-SOURCES = allfuns.c
-OBJECTS = allfuns.$(OBJEXT)
+DEP_FILES =  @AMDEP@ $(DEPDIR)/allfuns.Po $(DEPDIR)/dummy.Po
+SOURCES = allfuns.c dummy.c
+OBJECTS = allfuns.$(OBJEXT) dummy.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
@@ -198,6 +206,10 @@ maintainer-clean-libtool:
 allfuns$(EXEEXT): $(allfuns_OBJECTS) $(allfuns_DEPENDENCIES)
 	@rm -f allfuns$(EXEEXT)
 	$(LINK) $(allfuns_LDFLAGS) $(allfuns_OBJECTS) $(allfuns_LDADD) $(LIBS)
+
+dummy$(EXEEXT): $(dummy_OBJECTS) $(dummy_DEPENDENCIES)
+	@rm -f dummy$(EXEEXT)
+	$(LINK) $(dummy_LDFLAGS) $(dummy_OBJECTS) $(dummy_LDADD) $(LIBS)
 
 tags: TAGS
 
@@ -246,6 +258,7 @@ distdir: $(DISTFILES)
 	done
 
 @AMDEP@include $(DEPDIR)/allfuns.Po
+@AMDEP@include $(DEPDIR)/dummy.Po
 
 mostlyclean-depend:
 
