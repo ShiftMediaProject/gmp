@@ -78,11 +78,6 @@ define(`ASM_END',
 m4_assert_numargs(0)
 `	.end')
 
-dnl  Unicos assembler lacks unop
-define(`unop',
-m4_assert_numargs(-1)
-`bis r31,r31,r31')
-
 define(`cvttqc',
 m4_assert_numargs(-1)
 `cvttq/c')

@@ -34,4 +34,14 @@ m4_assert_numargs(1)
 `m4_error(`Cannot assemble, unknown limb endianness')')')')
 
 
+dnl  Usage: unop
+dnl
+dnl  The Cray Unicos assembler lacks unop, so give the equivalent ldq_u
+dnl  explicitly.
+
+define(unop,
+m4_assert_numargs(-1)
+`ldq_u	r31, 0(r30)')
+
+
 divert
