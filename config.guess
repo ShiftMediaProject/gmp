@@ -104,7 +104,7 @@ fi
 
 case "$guess_full" in
 
-alpha*-*-netbsd* | alpha*-*-freebsd* | alpha*-*-openbsd*)
+alpha-*-*)
   # configfsf.guess has a block of code not unlike this for OSF and linsux.
   # Perhaps it'll support *BSD too some time, in which case the code here
   # can be removed.
