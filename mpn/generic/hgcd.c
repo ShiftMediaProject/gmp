@@ -1744,7 +1744,7 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
 	  continue;
 	}
       
-      /* We already know the correct q */
+      /* We already know the correct q for computing r2 */
       
       qsize = qstack_get_1 (quotients, &qp);
       ASSERT (qsize < 2);
@@ -1778,10 +1778,10 @@ hgcd_final (struct hgcd *hgcd, mp_size_t M,
       ASSERT (res == 4);
       ASSERT (hgcd->row[2].rsize > M);
 
-      /* We already know the correct q */
+      /* We already know the correct q for computing r3 */
       qsize = qstack_get_0 (quotients, &qp);
       ASSERT (qsize < 2);
-	
+
       ASSERT (qsize + hgcd->size <= hgcd->alloc);
       hgcd_update_r (hgcd->row + 1, qp, qsize);
       hgcd->size = hgcd_update_uv (hgcd->row + 1, hgcd->size,
