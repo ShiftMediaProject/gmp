@@ -1,6 +1,6 @@
 /* mpz_remove -- divide out a factor and return its multiplicity.
 
-Copyright (C) 1998 Free Software Foundation, Inc.
+Copyright (C) 1998, 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
