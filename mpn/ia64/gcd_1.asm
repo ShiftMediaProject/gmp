@@ -101,8 +101,6 @@ C
 ASM_START()
 	.explicit
 
-	.text
-	.align	32
 PROLOGUE(mpn_gcd_1)
 
 		C r32	xp
