@@ -55,7 +55,12 @@ MA 02111-1307, USA. */
 #include <sys/processor.h>  /* for solaris processor_info_t */
 #endif
 
-#if HAVE_SYS_SYSINFO_H
+/* On AIX 5.1 with gcc 2.9-aix51-020209 in -maix64 mode, <sys/sysinfo.h>
+   gets an error about "fill" in "struct cpuinfo" having a negative size,
+   apparently due to __64BIT_KERNEL not being defined because _KERNEL is not
+   defined.  Avoid this file if we don't actually need it, which we don't on
+   AIX since there's no getsysinfo there.  */
+#if HAVE_SYS_SYSINFO_H && HAVE_GETSYSINFO
 #include <sys/sysinfo.h>  /* for OSF getsysinfo */
 #endif
 
