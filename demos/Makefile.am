@@ -28,7 +28,7 @@ LDADD = $(top_builddir)/libgmp.la
 EXTRA_DIST = calc.y calclex.l
 
 calc_SOURCES = calc.c calclex.c calc.h
-qcn_LDADD = $(LDADD) -lm
+qcn_LDADD = $(LDADD) $(LIBM)
 
 # None of these programs are built by default, but "make <whatever>" will
 # build them once libgmp.la is built.

@@ -176,7 +176,7 @@ MPFR_OBJECTS = mpfr/add$U.lo mpfr/div_2exp$U.lo mpfr/neg$U.lo		\
 if WANT_MPFR
 MPFR_HEADERS_OPTION = mpfr/mpfr.h
 MPFR_OBJECTS_OPTION = $(MPFR_OBJECTS)
-MPFR_LIBADD_OPTION = -lm
+MPFR_LIBADD_OPTION = $(LIBM)
 endif
 libgmp_la_SOURCES = assert.c compat.c errno.c memory.c mp_set_fns.c	 \
   mp_clz_tab.c mp_minv_tab.c						 \
