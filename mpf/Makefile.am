@@ -34,7 +34,7 @@ libmpf_la_SOURCES = \
   add.c add_ui.c sub.c sub_ui.c ui_sub.c mul.c mul_ui.c div.c div_ui.c \
   cmp.c cmp_ui.c cmp_si.c mul_2exp.c div_2exp.c abs.c neg.c get_d.c \
   set_dfl_prec.c set_prc.c set_prc_raw.c get_prc.c ui_div.c sqrt_ui.c \
-  pow_ui.c urandomb.c
+  pow_ui.c urandomb.c swap.c
 
 nodist_libmpf_la_SOURCES = floor.c ceil.c trunc.c
 
