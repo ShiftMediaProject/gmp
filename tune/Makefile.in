@@ -242,8 +242,8 @@ DISTCLEANFILES = sqr_basecase.c  $(MANY_DISTCLEAN)
 # FIXME: Would like say mul_n.c to depend on $(top_builddir)/mul_n.c so the
 # recompiled object will be rebuilt if that file changes.
 TUNE_MPN_SRCS = $(TUNE_MPN_SRCS_BASIC) divrem_1.c mod_1.c
-TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c mul_n.c mul_fft.c mul.c \
-  sb_divrem_mn.c tdiv_qr.c
+TUNE_MPN_SRCS_BASIC = dc_divrem_n.c divrem_2.c gcd.c get_str.c \
+  mul_n.c mul_fft.c mul.c sb_divrem_mn.c tdiv_qr.c
 
 
 COMPILE_FLAGS = $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -310,9 +310,10 @@ speed_ext_LDADD = $(LDADD)
 speed_ext_DEPENDENCIES = libspeed.la
 am_tuneup_OBJECTS = tuneup$U.$(OBJEXT)
 nodist_tuneup_OBJECTS = sqr_basecase$U.$(OBJEXT) dc_divrem_n$U.$(OBJEXT) \
-	divrem_2$U.$(OBJEXT) gcd$U.$(OBJEXT) mul_n$U.$(OBJEXT) \
-	mul_fft$U.$(OBJEXT) mul$U.$(OBJEXT) sb_divrem_mn$U.$(OBJEXT) \
-	tdiv_qr$U.$(OBJEXT) divrem_1$U.$(OBJEXT) mod_1$U.$(OBJEXT)
+	divrem_2$U.$(OBJEXT) gcd$U.$(OBJEXT) get_str$U.$(OBJEXT) \
+	mul_n$U.$(OBJEXT) mul_fft$U.$(OBJEXT) mul$U.$(OBJEXT) \
+	sb_divrem_mn$U.$(OBJEXT) tdiv_qr$U.$(OBJEXT) \
+	divrem_1$U.$(OBJEXT) mod_1$U.$(OBJEXT)
 tuneup_OBJECTS = $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 
 DEFS = @DEFS@
@@ -426,6 +427,8 @@ gcdextod_.c: gcdextod.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdextod.c; then echo $(srcdir)/gcdextod.c; else echo gcdextod.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdextod_.c || rm -f gcdextod_.c
 gcdextos_.c: gcdextos.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdextos.c; then echo $(srcdir)/gcdextos.c; else echo gcdextos.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gcdextos_.c || rm -f gcdextos_.c
+get_str_.c: get_str.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_str.c; then echo $(srcdir)/get_str.c; else echo get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > get_str_.c || rm -f get_str_.c
 jacbase1_.c: jacbase1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/jacbase1.c; then echo $(srcdir)/jacbase1.c; else echo jacbase1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > jacbase1_.c || rm -f jacbase1_.c
 jacbase2_.c: jacbase2.c $(ANSI2KNR)
@@ -489,14 +492,14 @@ gcd_.$(OBJEXT) gcd_.lo gcd_bin_.$(OBJEXT) gcd_bin_.lo \
 gcd_finda_gen_.$(OBJEXT) gcd_finda_gen_.lo gcdext_double_.$(OBJEXT) \
 gcdext_double_.lo gcdext_single_.$(OBJEXT) gcdext_single_.lo \
 gcdextod_.$(OBJEXT) gcdextod_.lo gcdextos_.$(OBJEXT) gcdextos_.lo \
-jacbase1_.$(OBJEXT) jacbase1_.lo jacbase2_.$(OBJEXT) jacbase2_.lo \
-jacbase3_.$(OBJEXT) jacbase3_.lo mod_1_.$(OBJEXT) mod_1_.lo \
-mod_1_div_.$(OBJEXT) mod_1_div_.lo mod_1_inv_.$(OBJEXT) mod_1_inv_.lo \
-modlinv_.$(OBJEXT) modlinv_.lo mul_.$(OBJEXT) mul_.lo \
-mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo \
-mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) mul_n_open_.lo \
-noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) powm_mod_.lo \
-powm_redc_.$(OBJEXT) powm_redc_.lo pre_divrem_1_.$(OBJEXT) \
+get_str_.$(OBJEXT) get_str_.lo jacbase1_.$(OBJEXT) jacbase1_.lo \
+jacbase2_.$(OBJEXT) jacbase2_.lo jacbase3_.$(OBJEXT) jacbase3_.lo \
+mod_1_.$(OBJEXT) mod_1_.lo mod_1_div_.$(OBJEXT) mod_1_div_.lo \
+mod_1_inv_.$(OBJEXT) mod_1_inv_.lo modlinv_.$(OBJEXT) modlinv_.lo \
+mul_.$(OBJEXT) mul_.lo mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) \
+mul_n_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) \
+mul_n_open_.lo noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) \
+powm_mod_.lo powm_redc_.$(OBJEXT) powm_redc_.lo pre_divrem_1_.$(OBJEXT) \
 pre_divrem_1_.lo sb_div_.$(OBJEXT) sb_div_.lo sb_divrem_mn_.$(OBJEXT) \
 sb_divrem_mn_.lo sb_inv_.$(OBJEXT) sb_inv_.lo set_strb_.$(OBJEXT) \
 set_strb_.lo set_strs_.$(OBJEXT) set_strs_.lo speed_.$(OBJEXT) \
