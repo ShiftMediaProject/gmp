@@ -93,7 +93,14 @@ check_incr_data (void)
     { 2, { M, M, M, M, 0 },   { 1,   0, 0, 0, 1 } },
     { 2, { M, M, M, M, 123 }, { 1,   0, 0, 0, 124 } },
     { M, { M, M, M, M, 0 },   { M-1, 0, 0, 0, 1 } },
-    { M, { M, M, M, M, 123 }, { M-1, 0, 0, 0, 124 } },
+    { M, { M, M, M, M, 123 }, { M-1, 0, 0, 0, 124
+#if defined (__hpux) && ! defined (__GNUC__)
+    /* Some versions (at least HP92453-01 B.11.11.23709.GP) of the
+       HP C compilers fail to zero-fill aggregates as the ISO C standard
+       requires (cf 6.5.7 Initialization).  Compensate here:  */
+				, 0, 0, 0, 0, 0
+#endif
+    } }
   };
 
   mp_limb_t  got[SIZE];
@@ -172,7 +179,12 @@ check_decr_data (void)
     { 2,   { 0,   0, 0, 0, 0, 123 }, { M-1, M, M, M, M, 122 } },
     { 2,   { 1,   0, 0, 0, 0, 123 }, { M,   M, M, M, M, 122 } },
     { M,   { 0,   0, 0, 0, 0, 123 }, { 1,   M, M, M, M, 122 } },
-    { M,   { M-1, 0, 0, 0, 0, M   }, { M,   M, M, M, M, M-1 } },
+    { M,   { M-1, 0, 0, 0, 0, M   }, { M,   M, M, M, M, M-1
+#if defined (__hpux) && ! defined (__GNUC__)
+    /* For explanation of this garbage, see previous function.  */
+				       , 0, 0, 0, 0
+#endif
+    } }
   };
 
   mp_limb_t  got[SIZE];
