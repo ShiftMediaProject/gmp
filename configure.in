@@ -2115,6 +2115,14 @@ AC_CHECK_FUNCS(alarm attr_get clock clock_gettime cputime getpagesize getrusage 
 GMP_FUNC_VSNPRINTF
 GMP_FUNC_SSCANF_WRITABLE_INPUT
 
+# Reasons for checking:
+#   pst_processor psp_iticksperclktick - not in hpux 9
+#
+AC_CHECK_MEMBER(struct pst_processor.psp_iticksperclktick,
+                [AC_DEFINE(HAVE_PSP_ITICKSPERCLKTICK, 1,
+[Define to 1 if <sys/pstat.h> `struct pst_processor' exists
+and contains `psp_iticksperclktick'.])],,
+                [#include <sys/pstat.h>])
 
 # C++ tests, when required
 #
