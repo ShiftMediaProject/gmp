@@ -258,7 +258,13 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 /* If KARATSUBA_MUL_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
 #ifndef KARATSUBA_MUL_THRESHOLD
-#define KARATSUBA_MUL_THRESHOLD 12
+#define KARATSUBA_MUL_THRESHOLD 32
+#endif
+
+/* If TOOM3_MUL_THRESHOLD is not already defined, define it to a
+   value which is good on most machines.  */
+#ifndef TOOM3_MUL_THRESHOLD
+#define TOOM3_MUL_THRESHOLD 256
 #endif
 
 /* We can't handle KARATSUBA_MUL_THRESHOLD smaller than 2.  */
@@ -269,6 +275,10 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 
 #ifndef KARATSUBA_SQR_THRESHOLD
 #define KARATSUBA_SQR_THRESHOLD (2*KARATSUBA_MUL_THRESHOLD)
+#endif
+
+#ifndef TOOM3_SQR_THRESHOLD
+#define TOOM3_SQR_THRESHOLD (2*TOOM3_MUL_THRESHOLD)
 #endif
 
 /* Return non-zero if xp,xsize and yp,ysize overlap.
