@@ -1,7 +1,7 @@
  # Alpha EV5 __mpn_add_n -- Add two limb vectors of the same length > 0 and
  # store sum in a third limb vector.
 
- # Copyright (C) 1995 Free Software Foundation, Inc.
+ # Copyright (C) 1995, 1999 Free Software Foundation, Inc.
 
  # This file is part of the GNU MP Library.
 
@@ -41,8 +41,8 @@ __mpn_add_n:
 	blt	$19,.Lend2		# if less than 4 limbs, goto 2nd loop
  # Start software pipeline for 1st loop
 	ldq	$0,0($18)
-	ldq	$1,8($18)
 	ldq	$4,0($17)
+	ldq	$1,8($18)
 	ldq	$5,8($17)
 	addq	$17,32,$17		# update s1_ptr
 	ldq	$2,16($18)
@@ -52,10 +52,10 @@ __mpn_add_n:
 	ldq	$6,-16($17)
 	cmpult	$20,$0,$25		# compute cy from last add
 	ldq	$7,-8($17)
-	addq	$1,$25,$28		# cy add
+	addq	$1,$5,$28		# 2nd main add
 	addq	$18,32,$18		# update s2_ptr
-	addq	$5,$28,$21		# 2nd main add
-	cmpult	$28,$25,$8		# compute cy from last add
+	addq	$28,$25,$21		# 2nd carry add
+	cmpult	$28,$5,$8		# compute cy from last add
 	blt	$19,.Lend1		# if less than 4 limbs remain, jump
  # 1st loop handles groups of 4 limbs in a software pipeline
 	.align	4
@@ -63,52 +63,52 @@ __mpn_add_n:
 	ldq	$0,0($18)
 	or	$8,$25,$25		# combine cy from the two adds
 	ldq	$1,8($18)
-	addq	$2,$25,$28		# cy add
+	addq	$2,$6,$28		# 3rd main add
 	ldq	$4,0($17)
-	addq	$28,$6,$22		# 3rd main add
+	addq	$28,$25,$22		# 3rd carry add
 	ldq	$5,8($17)
-	cmpult	$28,$25,$8		# compute cy from last add
+	cmpult	$28,$6,$8		# compute cy from last add
 	cmpult	$22,$28,$25		# compute cy from last add
 	stq	$20,0($16)
 	or	$8,$25,$25		# combine cy from the two adds
 	stq	$21,8($16)
-	addq	$3,$25,$28		# cy add
-	addq	$28,$7,$23		# 4th main add
-	cmpult	$28,$25,$8		# compute cy from last add
+	addq	$3,$7,$28		# 4th main add
+	addq	$28,$25,$23		# 4th carry add
+	cmpult	$28,$7,$8		# compute cy from last add
 	cmpult	$23,$28,$25		# compute cy from last add
-	addq	$17,32,$17		# update s1_ptr
+		addq	$17,32,$17		# update s1_ptr
 	or	$8,$25,$25		# combine cy from the two adds
-	addq	$16,32,$16		# update res_ptr
-	addq	$0,$25,$28		# cy add
+		addq	$16,32,$16		# update res_ptr
+	addq	$0,$4,$28		# 1st main add
 	ldq	$2,16($18)
-	addq	$4,$28,$20		# 1st main add
+	addq	$25,$28,$20		# 1st carry add
 	ldq	$3,24($18)
-	cmpult	$28,$25,$8		# compute cy from last add
+	cmpult	$28,$4,$8		# compute cy from last add
 	ldq	$6,-16($17)
 	cmpult	$20,$28,$25		# compute cy from last add
 	ldq	$7,-8($17)
 	or	$8,$25,$25		# combine cy from the two adds
 	subq	$19,4,$19		# decr loop cnt
 	stq	$22,-16($16)
-	addq	$1,$25,$28		# cy add
+	addq	$1,$5,$28		# 2nd main add
 	stq	$23,-8($16)
-	addq	$5,$28,$21		# 2nd main add
-	addq	$18,32,$18		# update s2_ptr
-	cmpult	$28,$25,$8		# compute cy from last add
+	addq	$25,$28,$21		# 2nd carry add
+		addq	$18,32,$18		# update s2_ptr
+	cmpult	$28,$5,$8		# compute cy from last add
 	bge	$19,.Loop
  # Finish software pipeline for 1st loop
 .Lend1:	cmpult	$21,$28,$25		# compute cy from last add
 	or	$8,$25,$25		# combine cy from the two adds
-	addq	$2,$25,$28		# cy add
-	addq	$28,$6,$22		# 3rd main add
-	cmpult	$28,$25,$8		# compute cy from last add
+	addq	$2,$6,$28		# 3rd main add
+	addq	$28,$25,$22		# 3rd carry add
+	cmpult	$28,$6,$8		# compute cy from last add
 	cmpult	$22,$28,$25		# compute cy from last add
 	stq	$20,0($16)
 	or	$8,$25,$25		# combine cy from the two adds
 	stq	$21,8($16)
-	addq	$3,$25,$28		# cy add
-	addq	$28,$7,$23		# 4th main add
-	cmpult	$28,$25,$8		# compute cy from last add
+	addq	$3,$7,$28		# 4th main add
+	addq	$28,$25,$23		# 4th carry add
+	cmpult	$28,$7,$8		# compute cy from last add
 	cmpult	$23,$28,$25		# compute cy from last add
 	or	$8,$25,$25		# combine cy from the two adds
 	addq	$16,32,$16		# update res_ptr
@@ -123,12 +123,12 @@ __mpn_add_n:
 	beq	$19,.Lend0
  # 2nd loop handles remaining 1-3 limbs
 	.align	4
-.Loop0:	addq	$0,$25,$28		# cy add
+.Loop0:	addq	$0,$4,$28		# main add
 	ldq	$0,8($18)
-	addq	$4,$28,$20		# main add
+	cmpult	$28,$4,$8		# compute cy from last add
 	ldq	$4,8($17)
+	addq	$28,$25,$20		# carry add
 	addq	$18,8,$18
-	cmpult	$28,$25,$8		# compute cy from last add
 	addq	$17,8,$17
 	stq	$20,0($16)
 	cmpult	$20,$28,$25		# compute cy from last add
@@ -136,9 +136,9 @@ __mpn_add_n:
 	or	$8,$25,$25		# combine cy from the two adds
 	addq	$16,8,$16
 	bne	$19,.Loop0
-.Lend0:	addq	$0,$25,$28		# cy add
-	addq	$4,$28,$20		# main add
-	cmpult	$28,$25,$8		# compute cy from last add
+.Lend0:	addq	$0,$4,$28		# main add
+	addq	$28,$25,$20		# carry add
+	cmpult	$28,$4,$8		# compute cy from last add
 	cmpult	$20,$28,$25		# compute cy from last add
 	stq	$20,0($16)
 	or	$8,$25,$25		# combine cy from the two adds
