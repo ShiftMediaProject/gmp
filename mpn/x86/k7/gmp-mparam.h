@@ -39,7 +39,7 @@ MA 02111-1307, USA. */
 #endif
 
 /* A test with gcc 2.95.2 on mpn_sb_divrem_mn suggests that in practice
-   udiv_qrnnd_preinv is about 5 cycles faster than plain division. */
+   udiv_qrnnd_preinv is about 5 cycles faster than plain udiv_qrnnd. */
 #ifndef UDIV_PREINV_TIME
 #define UDIV_PREINV_TIME   34 /* cycles */
 #endif
