@@ -36,10 +36,12 @@ MA 02111-1307, USA.
 /* Define one (and only one) of these for the CPU target.
    Only targets that are going to be tested for need to be in this list,
    not everything that can possibly be selected. */
+
 #undef HAVE_TARGET_CPU_alpha
 #undef HAVE_TARGET_CPU_alphaev5
 #undef HAVE_TARGET_CPU_alphaev6
 #undef HAVE_TARGET_CPU_alphaev67
+
 #undef HAVE_TARGET_CPU_sparc
 #undef HAVE_TARGET_CPU_sparcv8
 #undef HAVE_TARGET_CPU_supersparc
@@ -48,10 +50,26 @@ MA 02111-1307, USA.
 #undef HAVE_TARGET_CPU_ultrasparc1
 #undef HAVE_TARGET_CPU_ultrasparc2
 #undef HAVE_TARGET_CPU_sparc64
+
 #undef HAVE_TARGET_CPU_hppa1_0
 #undef HAVE_TARGET_CPU_hppa1_1
 #undef HAVE_TARGET_CPU_hppa2_0n
 #undef HAVE_TARGET_CPU_hppa2_0w
+
+#undef HAVE_TARGET_CPU_i386
+#undef HAVE_TARGET_CPU_i486
+#undef HAVE_TARGET_CPU_i586
+#undef HAVE_TARGET_CPU_i686
+#undef HAVE_TARGET_CPU_pentium
+#undef HAVE_TARGET_CPU_pentiummmx
+#undef HAVE_TARGET_CPU_pentiumpro
+#undef HAVE_TARGET_CPU_pentium2
+#undef HAVE_TARGET_CPU_pentium3
+#undef HAVE_TARGET_CPU_k5
+#undef HAVE_TARGET_CPU_k6
+#undef HAVE_TARGET_CPU_k62
+#undef HAVE_TARGET_CPU_k63
+#undef HAVE_TARGET_CPU_athlon
 
 /* a dummy to make autoheader happy */
 #undef HAVE_TARGET_CPU_
