@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 11 May 2001.  An up-to-date version is available at
+  This file current as of 13 May 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -81,10 +81,6 @@
      an optimization on all machines, and significant on machines with slow
      <code>count_leading_zeros</code>, though it's possible an already
      normalized operand might not be encountered very often.
-<li> Reorganize longlong.h so that we can inline the operations even for the
-     system compiler.  When there is no such compiler feature, make calls to
-     stub functions.  Write such stub functions for as many machines as
-     possible.
 <li> Rewrite <code>umul_ppmm</code> to use floating-point for generating the
      most significant limb (if <code>BITS_PER_MP_LIMB</code> &lt= 52 bits).
      (Peter Montgomery has some ideas on this subject.)
@@ -93,11 +89,12 @@
 <li> Write new <code>mpn_get_str</code> and <code>mpn_set_str</code> running in
      the sub O(n^2) range, using some divide-and-conquer approach, preferably
      without using division.
-<li> <code>mpn_get_str</code> should use a fast native
-     <code>mpn_divrem_1</code> when available (athlon, p6mmx), possibly via a
-     new <code>mpn_preinv_divrem_1</code> interface.  New functions like
-     <code>mpn_divrem_1_norm</code> or <code>mpn_preinv_divrem_1_norm</code>
-     could exist for those targets where pre-shifting helps (p6 maybe).
+<li> <code>mpn_get_str</code> should use a native <code>mpn_divrem_1</code>
+     when available (athlon, p6mmx).  A new <code>mpn_preinv_divrem_1</code>
+     entrypoint would suit, since the inverse and shift are known from
+     <code>mp_bases</code>.  Don't do an <code>mpn_lshift</code> in
+     <code>mpn_get_str</code>, leave it up to <code>mpn_divrem_1</code> to
+     either make that call or do it on-the-fly.
 <li> Copy tricky code for converting a limb from development version of
      <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
 <li> Consider inlining these functions:
@@ -326,10 +323,6 @@
      <code>mp?_inp_raw</code>.
 <li> <code>mpz_get_nth_ui</code>.  Return the nth word (not necessarily the
      nth limb).
-<li> <code>mpf_getlimbn</code> similar to <code>mpz_getlimbn</code> and
-     accepting negative N for fraction limbs.  <code>mpf_size</code> would
-     want to be documented and an <code>mpf_exponent</code> added so the range
-     of available limbs can be known.
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
 <li> <code>mpz_init</code> and <code>mpq_init</code> could do lazy allocation.
@@ -494,6 +487,10 @@ The following may or may not be feasible, and aren't likely to get done in the
 near future, but are at least worth thinking about.
 
 <ul>
+<li> Reorganize longlong.h so that we can inline the operations even for the
+     system compiler.  When there is no such compiler feature, make calls to
+     stub functions.  Write such stub functions for as many machines as
+     possible.
 <li> Nx1 division (<code>divrem_1</code> or <code>mod_1</code>) could be done
      two limbs at a time, by following <code>udiv_qrnnd_preinv</code> but with
      two limbs everywhere one is used.  This would mean 3 or 4 multiplies each
