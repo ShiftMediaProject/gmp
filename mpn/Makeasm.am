@@ -27,6 +27,17 @@ COMPILE_FLAGS =	\
 	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 
 
+# Recent versions of automake append automake generated suffixes to this
+# $(SUFFIXES) list.  This is essential for us, since .c must come after .s,
+# .S and .asm.  If .c is before .s, for instance, then in the mpn directory
+# "make" will see add_n.c mentioned in an explicit rule (the ansi2knr stuff)
+# and decide it must have add_n.c, even if add_n.c doesn't exist but add_n.s
+# does.  See GNU make documentation (make)Implicit Rule Search, part 5c.
+#
+# On IRIX 6 native make this doesn't work properly though.  Somehow .c
+# remains ahead of .s, perhaps because .c.s is a builtin rule.  .asm works
+# fine though, and mpn/mips3 uses this.
+#
 SUFFIXES = .s .S .asm
 
 
