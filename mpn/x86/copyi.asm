@@ -1,4 +1,9 @@
 dnl  x86 mpn_copyi -- copy limb vector, incrementing.
+dnl
+dnl     cycles/limb
+dnl  P5:  1.0
+dnl  P6:  0.75
+dnl  K6:  1.0
 
 
 dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
@@ -31,14 +36,17 @@ C
 C The code here is very generic and can be expected to be reasonable on all
 C the x86 family.
 C
-C P5 - 1.0 cycles/limb.
+C P6 -  An MMX based copy was tried, but was found to be slower than a rep
+C       movs in all cases.  The fastest MMX found was 0.8 cycles/limb (when
+C       fully aligned).  A rep movs seems to have a startup time of about 15
+C       cycles, but doing something special for small sizes could lead to a
+C       branch misprediction that would destroy any saving.  For now a plain
+C       rep movs seems ok.
 C
-C P6 - 0.75 cycles/limb.  An MMX based copy was tried, but was found to be
-C      slower than a rep movs in all cases.  The fastest MMX found was 0.8
-C      cycles/limb (when fully aligned).  A rep movs seems to have a startup
-C      time of about 15 cycles, but doing something special for small sizes
-C      could lead to a branch misprediction that would destroy any saving.
-C      For now a plain rep movs seems ok for P6.
+C K62 - We used to have a big chunk of code doing an MMX copy at 0.56 c/l if
+C       aligned or a 1.0 rep movs if not.  But that seemed excessive since
+C       it only got an advantage half the time, and even then only showed it
+C       above 50 limbs or so.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
