@@ -119,10 +119,12 @@ mpfr_get_d3 (mpfr_srcptr src, mp_exp_t e, mp_rnd_t rnd_mode)
       d = negative ?
         (rnd_mode == GMP_RNDD ||
          (rnd_mode == GMP_RNDN && mpfr_cmp_si_2exp(src, -1, -1075) < 0)
-         ? -DBL_MIN * DBL_EPSILON : -0.0) :
+         ? -DBL_MIN : -0.0) :
         (rnd_mode == GMP_RNDU ||
          (rnd_mode == GMP_RNDN && mpfr_cmp_si_2exp(src, 1, -1075) > 0)
-         ? DBL_MIN * DBL_EPSILON : 0.0);
+         ? DBL_MIN : 0.0);
+      if (d != 0.0)
+        d *= DBL_EPSILON;
     }
   /* the largest normalized number is 2^1024*(1-2^(-53))=0.111...111e1024 */
   else if (e > 1024)
