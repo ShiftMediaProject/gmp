@@ -1,6 +1,6 @@
-dnl  AMD K6 mpn_mod_1 -- mpn by 1 gcd.
+dnl  AMD K6 mpn_gcd_1 -- mpn by 1 gcd.
 
-dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
