@@ -342,6 +342,9 @@ MA 02111-1307, USA. */
 /* Define if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
+/* Define if you have the `strcasecmp' function. */
+#undef HAVE_STRCASECMP
+
 /* Define if you have the `strchr' function. */
 #undef HAVE_STRCHR
 
