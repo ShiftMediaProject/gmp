@@ -84,9 +84,10 @@ endif
 # "tests" ahead of "mpfr" ensures tests/t-constants is run before the
 # mpfr/tests programs.
 #
-SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) demos tune
+SUBDIRS = tests mpn mpz mpq mpf printf scanf cxx mpbsd $(MPFR_DIR) \
+  demos tune doc
 
-EXTRA_DIST = doc macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf
+EXTRA_DIST = macos configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf
 
 if WANT_CXX
 GMPXX_HEADERS_OPTION = gmpxx.h
@@ -288,10 +289,6 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
   -version-info $(LIBMP_LT_CURRENT):$(LIBMP_LT_REVISION):$(LIBMP_LT_AGE) \
   -export-symbols $(srcdir)/libmp.sym
 EXTRA_DIST += libmp.sym
-
-
-info_TEXINFOS = gmp.texi
-gmp_TEXINFOS = fdl.texi
 
 
 install-data-hook:
