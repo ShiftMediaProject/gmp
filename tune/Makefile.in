@@ -317,12 +317,12 @@ speed_ext_OBJECTS = $(am_speed_ext_OBJECTS)
 speed_ext_LDADD = $(LDADD)
 speed_ext_DEPENDENCIES = libspeed.la
 am_tuneup_OBJECTS = tuneup$U.$(OBJEXT)
-am__objects_2 = dc_divrem_n$U.$(OBJEXT) divrem_2$U.$(OBJEXT) \
+am__objects_3 = dc_divrem_n$U.$(OBJEXT) divrem_2$U.$(OBJEXT) \
 	gcd$U.$(OBJEXT) get_str$U.$(OBJEXT) mul_n$U.$(OBJEXT) \
 	mul_fft$U.$(OBJEXT) mul$U.$(OBJEXT) sb_divrem_mn$U.$(OBJEXT) \
 	tdiv_qr$U.$(OBJEXT)
-am__objects_1 = $(am__objects_2) divrem_1$U.$(OBJEXT) mod_1$U.$(OBJEXT)
-nodist_tuneup_OBJECTS = sqr_basecase$U.$(OBJEXT) $(am__objects_1)
+am__objects_2 = $(am__objects_3) divrem_1$U.$(OBJEXT) mod_1$U.$(OBJEXT)
+nodist_tuneup_OBJECTS = sqr_basecase$U.$(OBJEXT) $(am__objects_2)
 tuneup_OBJECTS = $(am_tuneup_OBJECTS) $(nodist_tuneup_OBJECTS)
 
 DEFS = @DEFS@
