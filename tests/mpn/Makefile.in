@@ -112,6 +112,7 @@ VERSION = @VERSION@
 __GMP_BITS_PER_MP_LIMB = @__GMP_BITS_PER_MP_LIMB@
 __GMP_LIBGMP_SHARED = @__GMP_LIBGMP_SHARED@
 __GMP_LIBGMP_STATIC = @__GMP_LIBGMP_STATIC@
+__GMP_LSYM_PREFIX = @__GMP_LSYM_PREFIX@
 _am_include = @_am_include@
 _am_quote = @_am_quote@
 gmp_srclinks = @gmp_srclinks@
@@ -125,14 +126,20 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
-check_PROGRAMS = t-asmtype t-iord_u
+check_PROGRAMS = t-asmtype t-aors_1 t-iord_u
 
 TESTS = $(check_PROGRAMS)
 subdir = tests/mpn
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-check_PROGRAMS = t-asmtype$(EXEEXT) t-iord_u$(EXEEXT)
+check_PROGRAMS = t-asmtype$(EXEEXT) t-aors_1$(EXEEXT) t-iord_u$(EXEEXT)
+t_aors_1_SOURCES = t-aors_1.c
+t_aors_1_OBJECTS = t-aors_1$U.$(OBJEXT)
+t_aors_1_LDADD = $(LDADD)
+t_aors_1_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_aors_1_LDFLAGS =
 t_asmtype_SOURCES = t-asmtype.c
 t_asmtype_OBJECTS = t-asmtype$U.$(OBJEXT)
 t_asmtype_LDADD = $(LDADD)
@@ -160,9 +167,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
-DIST_SOURCES = t-asmtype.c t-iord_u.c
+DIST_SOURCES = t-aors_1.c t-asmtype.c t-iord_u.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = t-asmtype.c t-iord_u.c
+SOURCES = t-aors_1.c t-asmtype.c t-iord_u.c
 
 all: all-am
 
@@ -178,6 +185,9 @@ Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.s
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+t-aors_1$(EXEEXT): $(t_aors_1_OBJECTS) $(t_aors_1_DEPENDENCIES)
+	@rm -f t-aors_1$(EXEEXT)
+	$(LINK) $(t_aors_1_LDFLAGS) $(t_aors_1_OBJECTS) $(t_aors_1_LDADD) $(LIBS)
 t-asmtype$(EXEEXT): $(t_asmtype_OBJECTS) $(t_asmtype_DEPENDENCIES)
 	@rm -f t-asmtype$(EXEEXT)
 	$(LINK) $(t_asmtype_LDFLAGS) $(t_asmtype_OBJECTS) $(t_asmtype_LDADD) $(LIBS)
@@ -215,12 +225,14 @@ mostlyclean-kr:
 
 .c.lo:
 	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+t-aors_1_.c: t-aors_1.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-aors_1.c; then echo $(srcdir)/t-aors_1.c; else echo t-aors_1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-aors_1_.c || rm -f t-aors_1_.c
 t-asmtype_.c: t-asmtype.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-asmtype.c; then echo $(srcdir)/t-asmtype.c; else echo t-asmtype.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-asmtype_.c || rm -f t-asmtype_.c
 t-iord_u_.c: t-iord_u.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-iord_u.c; then echo $(srcdir)/t-iord_u.c; else echo t-iord_u.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > t-iord_u_.c || rm -f t-iord_u_.c
-t-asmtype_.$(OBJEXT) t-asmtype_.lo t-iord_u_.$(OBJEXT) t-iord_u_.lo : \
-$(ANSI2KNR)
+t-aors_1_.$(OBJEXT) t-aors_1_.lo t-asmtype_.$(OBJEXT) t-asmtype_.lo \
+t-iord_u_.$(OBJEXT) t-iord_u_.lo : $(ANSI2KNR)
 uninstall-info-am:
 
 tags: TAGS
