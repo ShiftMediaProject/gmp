@@ -51,8 +51,8 @@ sp =>	saved reg
 
 .text
 	ALIGN (3)
-	.globl C_SYMBOL_NAME(__gmpn_mul_basecase)
-C_SYMBOL_NAME(__gmpn_mul_basecase:)
+	.globl C_SYMBOL_NAME(__mpn_mul_basecase)
+C_SYMBOL_NAME(__mpn_mul_basecase:)
 	subl	$8,%esp
 	pushl	%esi
 	pushl	%ebp
