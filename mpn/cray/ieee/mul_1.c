@@ -35,6 +35,15 @@ mpn_mul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
   mp_size_t i;
   int more_carries;
 
+  if (up == rp)
+    {
+      /* The algorithm used below cannot handle overlap.  Handle it here by
+	 making a temporary copy of the source vector, then call ourselves.  */
+      mp_limb_t xp[n];
+      MPN_COPY (xp, up, n);
+      return mpn_mul_1 (rp, xp, n, vl);
+    }
+
   a = up[0] * vl;
   rp[0] = a;
   cy[0] = 0;
@@ -55,7 +64,7 @@ mpn_mul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
      store the new sum back to rp[0].  */
   more_carries = 0;
 #pragma _CRI ivdep
-  for (i = 1; i < n; i++)
+  for (i = 2; i < n; i++)
     {
       r = rp[i];
       c0 = cy[i - 1];
@@ -70,7 +79,7 @@ mpn_mul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
       mp_limb_t cyrec = 0;
       /* Look for places where rp[k] is zero and cy[k-1] is non-zero.
 	 These are where we got a recurrency carry.  */
-      for (i = 1; i < n; i++)
+      for (i = 2; i < n; i++)
 	{
 	  r = rp[i];
 	  c0 = (r == 0 && cy[i - 1] != 0);
