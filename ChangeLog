@@ -1,8 +1,11 @@
 2000-02-27  Kevin Ryde  <kevin@swox.se>
 
-	* mpn/x86/k6/aors_n.asm: New version.
-	* mpn/x86/k6/mmx/lshift.asm: New version.
-	* mpn/x86/k6/mmx/rshift.asm: New version.
+	* mpn/generic/divrem.c (mpn_divrem_classic): Patch to avoid gcc
+	2.7.2.3 register handling bug.
+
+	* mpn/x86/k6/aors_n.asm: Rewrite.
+	* mpn/x86/k6/mmx/lshift.asm: Rewrite.
+	* mpn/x86/k6/mmx/rshift.asm: Rewrite.
 	* mpn/x86/k6/README: Update.
 
 	* mpn/x86/k7/mmx/copyd.asm: Support size==0.
@@ -85,7 +88,7 @@
 	PentiumPro.
 	* mpn/x86/submul_1.S: Ditto.
 
-	* mpn/x86/k6/com_n.asm: New version, smaller but same speed.
+	* mpn/x86/k6/com_n.asm: Rewrite, smaller but same speed.
 
 	* mpn/x86/addmul_1.S: Add PROLOGUE and EPILOGUE to get .type and
 	.size for ELF.  Rename #define size to n to avoid .size.
