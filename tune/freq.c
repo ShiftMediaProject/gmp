@@ -24,7 +24,7 @@ MA 02111-1307, USA.
 #include "config.h"
 
 #include <stdio.h>
-#include <stdlib.h> /* for getenv */
+#include <stdlib.h> /* for getenv, qsort */
 #if HAVE_UNISTD_H
 #include <unistd.h> /* for sysconf */
 #endif
@@ -35,6 +35,17 @@ MA 02111-1307, USA.
 #endif
 #if HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>  /* for sysctlbyname() */
+#endif
+
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>  /* for struct timeval */
+# include <time.h>
+#else
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
 #endif
 
 /* Remove definitions from NetBSD <sys/param.h>, to avoid conflicts with
@@ -66,7 +77,7 @@ speed_cpu_frequency_environment (void)
   speed_cycletime = 1.0 / atof (e);
 
   if (speed_option_verbose)
-    printf ("Using GMP_CPU_FREQUENCY %.0f for cycle time %.3g\n",
+    printf ("Using GMP_CPU_FREQUENCY %.2f for cycle time %.3g\n",
             atof (e), speed_cycletime);
 
   return 1;
@@ -158,7 +169,9 @@ speed_cpu_frequency_sysctlbyname (void)
 }
 #endif
 
-#if HAVE_SYSCTL
+#if HAVE_SYSCTL && defined (CTL_HW) && defined (HW_MODEL)
+#define HAVE_CPU_FREQUENCY_SYSCTL
+
 int
 speed_cpu_frequency_sysctl (void)
 {
@@ -339,6 +352,82 @@ speed_cpu_frequency_processor_info (void)
 #endif
 
 
+#if HAVE_SPEED_CYCLECOUNTER && HAVE_GETTIMEOFDAY
+#define HAVE_CPU_FREQUENCY_MEASURE 1
+
+/* The cycle counter is sampled on the same side of gettimeofday for greater
+   accuracy.  The return value is a cycle time period in seconds.  */
+double
+speed_cpu_frequency_measure_one (void)
+{
+  struct timeval  st, et;
+  unsigned        sc[2], ec[2];
+  long            dt;
+  double          dc;
+
+  gettimeofday (&st, NULL);
+  speed_cyclecounter (sc);
+  
+  for (;;)
+    {
+      gettimeofday (&et, NULL);
+      speed_cyclecounter (ec);
+
+      dt = TIMEVAL_DIFF_USEC (&et, &st);
+      if (dt >= 100000)
+        break;
+    }
+
+  dc = speed_cyclecounter_diff (ec, sc);
+  if (speed_option_verbose >= 2)
+    printf ("speed_cpu_frequency_measure_one() dc=%.1f dt=%ld\n", dc, dt);
+  return dt * 1e-6 / dc;
+}
+
+/* MEASURE_MATCH is how many readings within MEASURE_TOLERANCE of each other
+   are required.  This must be at least 2.  */
+int
+speed_cpu_frequency_measure (void)
+{
+#define MEASURE_MAX_ATTEMPTS   20
+#define MEASURE_TOLERANCE      1.005  /* 0.5% */
+#define MEASURE_MATCH          3
+
+  double  t[MEASURE_MAX_ATTEMPTS];
+  int     i, j;
+
+  if (! gettimeofday_microseconds_p ())
+    return 0;
+
+  for (i = 0; i < numberof (t); i++)
+    {
+      t[i] = speed_cpu_frequency_measure_one ();
+      if (speed_option_verbose >= 2)
+        printf ("speed_cpu_frequency_measure() t[%d] is %.6g\n", i, t[i]);
+
+      qsort (t, i+1, sizeof(t[0]), (qsort_function_t) double_cmp_ptr);
+      if (speed_option_verbose >= 3)
+        for (j = 0; j <= i; j++)
+          printf ("   t[%d] is %.6g\n", j, t[j]);
+
+      for (j = 0; j+MEASURE_MATCH-1 <= i; j++)
+        {
+          if (t[j+MEASURE_MATCH-1] <= t[j] * MEASURE_TOLERANCE)
+            {
+              /* use the average of the range found */
+              speed_cycletime = (t[j+MEASURE_MATCH-1] + t[j]) / 2.0;
+              if (speed_option_verbose)
+                printf ("Using gettimeofday() measured cycle counter %.4g (%.2f MHz)\n",
+                        speed_cycletime, 1e-6/speed_cycletime);
+              return 1;
+            }
+        }
+    }
+  return 0;
+}
+#endif
+
+
 /* Each function returns 1 if it succeeds in setting speed_cycletime, or 0
    if not.  */
 
@@ -353,7 +442,7 @@ const struct {
   { speed_cpu_frequency_environment,
     "environment variable GMP_CPU_FREQUENCY (in Hertz)" },
 
-#if HAVE_SYSCTL
+#if HAVE_CPU_FREQUENCY_SYSCTL
   { speed_cpu_frequency_sysctl,
     "sysctl() hw.model" },
 #endif
@@ -368,12 +457,17 @@ const struct {
     "processor_info() pi_clock" },
 #endif
 
-  { speed_cpu_frequency_proc_cpuinfo,
-    "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" },
+/*    { speed_cpu_frequency_proc_cpuinfo, */
+/*      "linux kernel /proc/cpuinfo file, cpu MHz or bogomips" }, */
 
 #if HAVE_POPEN
   { speed_cpu_frequency_sunos_sysinfo,
     "SunOS /bin/sysinfo program cpu0 output" },
+#endif
+
+#if HAVE_CPU_FREQUENCY_MEASURE
+  { speed_cpu_frequency_measure,
+    "cycle counter measured with microsecond gettimeofday()" },
 #endif
 };
 
