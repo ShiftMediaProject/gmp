@@ -175,10 +175,10 @@ case "$target" in
     ;;
 
   # MIPS
-  [mips-sgi-irix6.[2345]*])
+  [mips-sgi-irix6.[2-9]*])
     os_64bit=yes
     #gmp_cflags64_gcc=FIXME
-    gmp_cflags64_cc="$gmp_cflags64_cc -64 -D_LONG_LONG_LIMB"
+    gmp_cflags64_cc="$gmp_cflags64_cc -64"
     ;;
 
   # Motorola 68k family
@@ -190,10 +190,14 @@ case "$target" in
     ;;
 
   # HP
+  hppa1.0*-*-*)
+    gmp_cflags_cc="$gmp_cflags_cc +O2"
+    ;;
   hppa2.0*-*-*)
-    cclist="gcc"	# Don't use buggy system compiler!
-    gmp_cflags_gcc="$gmp_cflags_gcc"
-    AC_DEFINE(_LONG_LONG_LIMB)
+    os_64bit=yes
+    gmp_cflags64_gcc="$gmp_cflags64_gcc -mWHAT -D_LONG_LONG_LIMB"
+    gmp_cflags64_cc="$gmp_cflags64_cc +DA2.0 +e +O2 -D_LONG_LONG_LIMB"
+    gmp_cflags_cc="$gmp_cflags_cc +O2"
     ;;
 
   # VAX
@@ -257,6 +261,8 @@ GMP_PROG_CC_SELECT
 
 # How to assemble.
 CCAS="$CC -c"
+dnl  FIXME: CCAS may change below.  Do we have to move the AC_SUBST until 
+dnl  after that?
 AC_SUBST(CCAS)
 
 dnl Checks for programs.
@@ -346,13 +352,26 @@ case ${target} in
 	  else extra_functions="udiv_fp"
 	fi
 	family=sparc;;
-  hppa7000*-*-*) path="hppa/hppa1_1 hppa"
-		 extra_functions="udiv_qrnnd";;
-  hppa1.0*-*-*) path="hppa"
-		extra_functions="udiv_qrnnd";;
-  hppa2.0*-*-*) path="pa64"
-		target_makefile_frag=config/mt-pa2hpux
-		extra_functions="umul_ppmm udiv_qrnnd";;
+  hppa7000*-*-*)
+    path="hppa/hppa1_1 hppa"
+    extra_functions="udiv_qrnnd"
+    ;;
+  hppa1.0*-*-*)
+    path="hppa"
+    extra_functions="udiv_qrnnd"
+    ;;
+  hppa2.0*-*-*)
+    if test -n "$CC64"; then
+      path="pa64"
+      extra_functions="umul_ppmm udiv_qrnnd"
+      # We need to use the system compiler, or actually the system assembler,
+      # since GAS has not been ported to understand the 2.0 instructions.
+      CCAS="$CC64 -c"
+    else
+      path="hppa"
+      extra_functions="udiv_qrnnd"
+    fi
+    ;;
   hppa*-*-*)					#assume pa7100
     path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
     extra_functions="udiv_qrnnd";;
@@ -654,8 +673,8 @@ for m in $gmp_mulfunc_files; do
     if test -f $srcdir/mpn/$d/$m.asm; then
       # find entry points
 changequote(<<, >>)
-      gmp_ep=`grep -h "^[ 	]*MULFUNC_PROLOGUE" $srcdir/mpn/$d/$m.asm \
-             | sed 's/MULFUNC_PROLOGUE(_*\(.*\))/\1/'`
+      gmp_ep=`grep "^[ 	]*MULFUNC_PROLOGUE" $srcdir/mpn/$d/$m.asm \
+             | sed 's/.*:[ 	]*MULFUNC_PROLOGUE(_*\(.*\))/\1/'`
 changequote([, ])
       for gmp_tmp in $gmp_ep; do
         AC_DEFINE_UNQUOTED(HAVE_NATIVE_${gmp_tmp})
@@ -684,15 +703,15 @@ for tmp_fn in ${gmp_mpn_functions} ; do
     if test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm ; then
       gmp_links="$gmp_links mpn/${tmp_fn}.asm:mpn/${tmp_dir}/${tmp_fn}.asm"
 changequote(<<, >>)
-      gmp_ep=`grep -h "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm \
-             | sed 's/PROLOGUE(_*\(.*\))/\1/'`
+      gmp_ep=`grep "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm \
+             | sed 's/.*:[ 	]*PROLOGUE(_*\(.*\))/\1/'`
 changequote([, ])
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.S ; then
       gmp_links="$gmp_links mpn/${tmp_fn}.S:mpn/${tmp_dir}/${tmp_fn}.S"
 changequote(<<, >>)
-      gmp_ep=`grep -h "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.S \
-             | sed 's/PROLOGUE(C_SYMBOL_NAME(_*\(.*\)))/\1/'`
+      gmp_ep=`grep "^[ 	]*PROLOGUE" $srcdir/mpn/${tmp_dir}/${tmp_fn}.S \
+             | sed 's/.*:[ 	]*PROLOGUE(C_SYMBOL_NAME(_*\(.*\)))/\1/'`
 changequote([, ])
       break
     elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.s ; then
