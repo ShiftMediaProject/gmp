@@ -65,6 +65,6 @@ mtox (const MINT *x)
 
   str_size += 1 + (s - str);
   ASSERT (str_size == strlen (str) + 1);
-  __GMP_REALLOCATE_FUNC_MAYBE (str, alloc_size, str_size);
+  __GMP_REALLOCATE_FUNC_MAYBE_TYPE (str, alloc_size, str_size, char);
   return (char *) str;
 }
