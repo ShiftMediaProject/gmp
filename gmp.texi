@@ -3661,10 +3661,14 @@ first or -1 for least significant first.  Within each word @var{endian} can be
 the native endianness of the host CPU.  The most significant @var{nails} bits
 of each word are skipped, this can be 0 to use the full words.
 
+There is no sign taken from the data, @var{rop} will simply be a positive
+integer.  An application can handle any sign itself, and apply it for instance
+with @code{mpz_neg}.
+
 There are no data alignment restrictions on @var{op}, any address is allowed.
 
 Here's an example converting an array of @code{unsigned long} data, most
-significant element first and host byte order within each value.
+significant element first, and host byte order within each value.
 
 @example
 unsigned long  a[20];
@@ -3697,15 +3701,17 @@ The number of words produced is written to @code{*@var{count}}.  @var{rop}
 must have enough space for the data, or if @var{rop} is @code{NULL} then a
 result array of the necessary size is allocated using the current GMP
 allocation function (@pxref{Custom Allocation}).  In either case the return
-value is the destination used, @var{rop} or the allocated block.
+value is the destination used, either @var{rop} or the allocated block.
 
 If @var{op} is non-zero then the most significant word produced will be
 non-zero.  If @var{op} is zero then the count returned will be zero and
 nothing written to @var{rop}.  If @var{rop} is @code{NULL} in this case, no
 block is allocated, just @code{NULL} is returned.
 
+The sign of @var{op} is ignored, just the absolute value is exported.  An
+application can use @code{mpz_sgn} to get the sign and handle it as desired.
+
 There are no data alignment restrictions on @var{rop}, any address is allowed.
-The sign of @var{op} is ignored, just the absolute value is used.
 
 When an application is allocating space itself the required size can be
 determined with a calculation like the following.  Since @code{mpz_sizeinbase}
