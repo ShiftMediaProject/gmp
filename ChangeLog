@@ -10,6 +10,10 @@
 	mpz_probab_prime_p.
 	(millerrabin): Now simple workhorse for mpz_millerrabin.
 
+2000-04-19  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h: Fix parenthesis error in test for __APPLE_CC__.
+
 2000-04-18  Linus Nordberg  <linus@swox.se>
 
 	* NEWS: Add info about shared libraries.  Remove reference to
