@@ -27,7 +27,6 @@ MA 02111-1307, USA.
 #include "gmp.h"
 #include "gmp-impl.h"
 
-
 void
 #if __STDC__
 mpn_dump (mp_srcptr ptr, mp_size_t size)
@@ -44,12 +43,33 @@ mpn_dump (ptr, size)
   else
     {
       size--;
-      printf ("%lX", ptr[size]);
+      if (BYTES_PER_MP_LIMB > sizeof (long))
+	{
+	  if ((ptr[size] >> BITS_PER_MP_LIMB/2) != 0)
+	    {
+	      printf ("%lX",
+		      (unsigned long) (ptr[size] >> BITS_PER_MP_LIMB/2));
+	      printf ("%0*lX", (int) (BYTES_PER_MP_LIMB),
+		      (unsigned long) ptr[size]);
+	    }
+	  else
+	    printf ("%lX", (unsigned long) ptr[size]);
+	}
+      else
+	printf ("%lX", ptr[size]);
 
       while (size)
 	{
 	  size--;
-	  printf ("%0*lX", (int) (2 * BYTES_PER_MP_LIMB), ptr[size]);
+	  if (BYTES_PER_MP_LIMB > sizeof (long))
+	    {
+	      printf ("%0*lX", (int) (BYTES_PER_MP_LIMB),
+		(unsigned long) (ptr[size] >> BITS_PER_MP_LIMB/2));
+	      printf ("%0*lX", (int) (BYTES_PER_MP_LIMB),
+		(unsigned long) ptr[size]);
+	    }
+	  else
+	    printf ("%0*lX", (int) (2 * BYTES_PER_MP_LIMB), ptr[size]);
 	}
       printf ("\n");
     }
