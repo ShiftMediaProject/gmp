@@ -32,7 +32,7 @@ gmp_randinit_lc (gmp_randstate_t rstate,
 		 mpz_t m)
 #else
 gmp_randinit_lc (rstate, a, c, m)
-     gmp_randstate-t rstate;
+     gmp_randstate_t rstate;
      mpz_t a;
      unsigned long int c;
      mpz_t m;
