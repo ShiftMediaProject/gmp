@@ -508,14 +508,17 @@ case ${target} in
 	if test "$tmp_mmx" = yes; then
           path="x86/k6/mmx $path"
 	  extra_functions="$extra_functions com_n and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n"
-	  gmp_mulfunc_files="$gmp_mulfunc_files logops_n"
+	  gmp_mulfunc_files="$gmp_mulfunc_files logops_n popham"
           gmp_mf_logops_n="and_n andn_n nand_n ior_n iorn_n nior_n xor_n xnor_n"
+          gmp_mf_popham="popcount hamdist"
         fi
         ;;
       athlon-*-*)
 	path="x86/k7 x86"
 	if test "$tmp_mmx" = yes; then
           path="x86/k7/mmx $path"
+	  gmp_mulfunc_files="$gmp_mulfunc_files popham"
+          gmp_mf_popham="popcount hamdist"
         fi
         ;;
     esac
