@@ -54,7 +54,7 @@ cputime ()
 #endif
 
 #ifndef OPS
-#define OPS 10000000
+#define OPS (CLOCK/5)
 #endif
 #ifndef SIZE
 #define SIZE 496
@@ -143,8 +143,12 @@ main (argc, argv)
 	}
 #endif
 
+#if TIMES == 1
+      cnt = random () % (BITS_PER_MP_LIMB - 1) + 1;
+#endif
+
 #ifdef RANDOM
-      size = (random () % SIZE + 1);
+      size = random () % SIZE + 1;
 #else
       size = SIZE;
 #endif
@@ -155,48 +159,50 @@ main (argc, argv)
       dx[0] = 0x87654321;
       dy[0] = 0x87654321;
 
-#ifdef PRINT
-      mpn_print (s1, size);
-#endif
+#if TIMES != 1
+      mpn_random (s1, size);
+
+#ifndef NOCHECK
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
-	cyx = refmpn_lshift (dx+1, s1, size, cnt);
+	refmpn_lshift (dx+1, s1, size, cnt);
       t = cputime() - t0;
-#if TIMES != 1
       printf ("refmpn_lshift: %5ldms (%.2f cycles/limb)\n",
-	      t,
-	      ((double) t * CLOCK) / (OPS * 1000.0));
-#endif
-#ifdef PRINT
-      printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyx); mpn_print (dx+1, size);
+	      t, ((double) t * CLOCK) / (OPS * 1000.0));
 #endif
 
       t0 = cputime();
       for (i = 0; i < TIMES; i++)
-	cyy = mpn_lshift (dx+1, s1, size, cnt);
+	mpn_lshift (dx+1, s1, size, cnt);
       t = cputime() - t0;
-#if TIMES != 1
-      printf ("mpn_lshift:  %5ldms (%.2f cycles/limb)\n",
-	      t,
-	      ((double) t * CLOCK) / (OPS * 1000.0));
-#endif
-#ifdef PRINT
-      printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyy); mpn_print (dx+1, size);
+      printf ("mpn_lshift:    %5ldms (%.2f cycles/limb)\n",
+	      t, ((double) t * CLOCK) / (OPS * 1000.0));
 #endif
 
 #ifndef NOCHECK
+      mpn_random2 (s1, size);
+
+#ifdef PRINT
+      printf ("%-*d ", (int) (2 * sizeof(mp_limb_t)), cnt); mpn_print (s1, size);
+#endif
+
       /* Put garbage in the destination.  */
-      for (i = 1; i <= size; i++)
+      for (i = 0; i < size; i++)
 	{
-	  dx[i] = 0x7654321;
-	  dy[i] = 0x1234567;
+	  dx[i+1] = 0xdead;
+	  dy[i+1] = 0xbeef;
 	}
 
       cyx = refmpn_lshift (dx+1, s1, size, cnt);
       cyy = mpn_lshift (dy+1, s1, size, cnt);
-
+#ifdef PRINT
+      printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyx);
+      mpn_print (dx+1, size);
+      printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyy);
+      mpn_print (dy+1, size);
+#endif
       if (cyx != cyy || mpn_cmp (dx, dy, size+2) != 0
-	  || dx[size+1] != 0x12345678 || dx[0] != 0x87654321)
+	  || dx[0] != 0x87654321 || dx[size+1] != 0x12345678)
 	{
 #ifndef PRINT
 	  printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyx);
@@ -204,6 +210,11 @@ main (argc, argv)
 	  printf ("%*lX ", (int) (2 * sizeof(mp_limb_t)), cyy);
 	  mpn_print (dy+1, size);
 #endif
+	  printf ("TEST NUMBER %d\n", test);
+	  if (dy[size+1] != 0x12345678)
+	    printf ("clobbered at high end\n");
+	  if (dy[0] != 0x87654321)
+	    printf ("clobbered at low end\n");
 	  abort();
 	}
 #endif
