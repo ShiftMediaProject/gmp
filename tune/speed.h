@@ -105,11 +105,14 @@ double speed_MPN_COPY_INCR _PROTO ((struct speed_params *s));
 double speed_mpn_divexact_by3 _PROTO ((struct speed_params *s));
 double speed_mpn_divmod_1 _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1 _PROTO ((struct speed_params *s));
-double speed_mpn_lshift _PROTO ((struct speed_params *s));
+double speed_mpn_gcd _PROTO ((struct speed_params *s));
+double speed_mpn_gcdext _PROTO ((struct speed_params *s));
+double speed_mpn_hamdist _PROTO ((struct speed_params *s));
 double speed_mpn_ior_n _PROTO ((struct speed_params *s));
 double speed_mpn_iorn_n _PROTO ((struct speed_params *s));
 double speed_mpn_kara_mul_n _PROTO ((struct speed_params *s));
 double speed_mpn_kara_sqr_n _PROTO ((struct speed_params *s));
+double speed_mpn_lshift _PROTO ((struct speed_params *s));
 double speed_mpn_mod_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
@@ -503,6 +506,24 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
     return speed_endtime ();                    \
   }  
 
+#define SPEED_ROUTINE_MPN_HAMDIST(function)     \
+  {                                             \
+    unsigned  i;                                \
+                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);         \
+                                                \
+    SPEED_OPERAND_SRC (s, s->xp, s->size);      \
+    SPEED_OPERAND_SRC (s, s->yp, s->size);      \
+    speed_cache_fill (s);                       \
+                                                \
+    speed_starttime ();                         \
+    i = s->reps;                                \
+    do                                          \
+      function (s->xp, s->yp, s->size);         \
+    while (--i != 0);                           \
+    return speed_endtime ();                    \
+  }  
+
 #define SPEED_ROUTINE_MPZ_UI(function)  \
   {                                     \
     mpz_t     z;                        \
@@ -559,5 +580,112 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
   }
 
 /* function (wp1, wp2, wp1, wp2, s->size); */ /*full*/          
+
+
+#define SPEED_ROUTINE_MPN_GCD(function)                                    \
+  {                                                                        \
+    mp_ptr    wp, xp, yp, s1, s2;                                          \
+    unsigned  i;                                                           \
+    double    t;                                                           \
+    TMP_DECL (marker);                                                     \
+                                                                           \
+    SPEED_RESTRICT_COND (s->size >= 1);                                    \
+                                                                           \
+    TMP_MARK (marker);                                                     \
+    xp = TMP_ALLOC_LIMBS (s->size);                                        \
+    yp = TMP_ALLOC_LIMBS (s->size);                                        \
+                                                                           \
+    MPN_COPY (xp, s->xp, s->size);                                         \
+    MPN_COPY (yp, s->yp, s->size);                                         \
+                                                                           \
+    /* does mpn_gcd need non-zero high limbs? */                           \
+    xp[s->size-1] += (xp[s->size-1] == 0);                                 \
+    yp[s->size-1] += (yp[s->size-1] == 0);                                 \
+                                                                           \
+    if (mpn_cmp (xp, yp, s->size) < 0)                                     \
+      MP_PTR_SWAP (xp, yp);                                                \
+                                                                           \
+    /* must have s2 odd */                                                 \
+    yp[0] |= 1;                                                            \
+    ASSERT_ALWAYS (mpn_cmp (xp, yp, s->size) >= 0);                        \
+                                                                           \
+    wp = SPEED_TMP_ALLOC (s->size, s->align_wp);                           \
+    s1 = SPEED_TMP_ALLOC (s->size, s->align_xp);                           \
+    s2 = SPEED_TMP_ALLOC (s->size, s->align_yp);                           \
+                                                                           \
+    SPEED_OPERAND_SRC (s, s1, s->size);                                    \
+    SPEED_OPERAND_SRC (s, s2, s->size);                                    \
+    SPEED_OPERAND_DST (s, wp, s->size);                                    \
+    speed_cache_fill (s);                                                  \
+                                                                           \
+    speed_starttime ();                                                    \
+    i = s->reps;                                                           \
+    do                                                                     \
+      {                                                                    \
+        /* mpn_gcd is destructive, so must copy the data in each time,     \
+           but this should be insignificant compared to the actual gcd. */ \
+        MPN_COPY (s1, xp, s->size);                                        \
+        MPN_COPY (s2, yp, s->size);                                        \
+        function (wp, s1, s->size, s2, s->size);                           \
+      }                                                                    \
+    while (--i != 0);                                                      \
+    t = speed_endtime ();                                                  \
+                                                                           \
+    TMP_FREE (marker);                                                     \
+    return t;                                                              \
+  }  
+
+#define SPEED_ROUTINE_MPN_GCDEXT(function)                                  \
+  {                                                                         \
+    mp_ptr    wp, wp2, xp, yp, s1, s2;                                      \
+    mp_size_t wp2size;                                                      \
+    unsigned  i;                                                            \
+    double    t;                                                            \
+    TMP_DECL (marker);                                                      \
+                                                                            \
+    SPEED_RESTRICT_COND (s->size >= 1);                                     \
+                                                                            \
+    TMP_MARK (marker);                                                      \
+    xp = TMP_ALLOC_LIMBS (s->size);                                         \
+    yp = TMP_ALLOC_LIMBS (s->size);                                         \
+                                                                            \
+    MPN_COPY (xp, s->xp, s->size);                                          \
+    MPN_COPY (yp, s->yp, s->size);                                          \
+                                                                            \
+    /* does mpn_gcdext need non-zero high limbs? */                         \
+    xp[s->size-1] += (xp[s->size-1] == 0);                                  \
+    yp[s->size-1] += (yp[s->size-1] == 0);                                  \
+                                                                            \
+    if (mpn_cmp (xp, yp, s->size) < 0)                                      \
+      MP_PTR_SWAP (xp, yp);                                                 \
+                                                                            \
+    /* mpn_gcdext needs 1 extra limb above each source */                   \
+    s1 = SPEED_TMP_ALLOC (s->size+1, s->align_xp);                          \
+    s2 = SPEED_TMP_ALLOC (s->size+1, s->align_yp);                          \
+    wp = SPEED_TMP_ALLOC (s->size+1, s->align_wp);                          \
+    wp2 = SPEED_TMP_ALLOC (s->size+1, s->align_wp2);                        \
+                                                                            \
+    SPEED_OPERAND_SRC (s, s1, s->size);                                     \
+    SPEED_OPERAND_SRC (s, s2, s->size);                                     \
+    SPEED_OPERAND_DST (s, wp, s->size+1);                                   \
+    SPEED_OPERAND_DST (s, wp2, s->size+1);                                  \
+    speed_cache_fill (s);                                                   \
+                                                                            \
+    speed_starttime ();                                                     \
+    i = s->reps;                                                            \
+    do                                                                      \
+      {                                                                     \
+        /* mpn_gcdext is destructive, so must copy the data in each time,   \
+           but this will be insignificant compared to the actual gcdext. */ \
+        MPN_COPY (s1, xp, s->size);                                         \
+        MPN_COPY (s2, yp, s->size);                                         \
+        function (wp, wp2, &wp2size, s1, s->size, s2, s->size);             \
+      }                                                                     \
+    while (--i != 0);                                                       \
+    t = speed_endtime ();                                                   \
+                                                                            \
+    TMP_FREE (marker);                                                      \
+    return t;                                                               \
+  }  
 
 #endif
