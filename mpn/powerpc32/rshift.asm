@@ -29,11 +29,11 @@ include(`../config.m4')
 
 ASM_START()
 PROLOGUE(mpn_rshift)
-	mtctr	r5		/* copy size into CTR */
-	addi	r7,r3,-4	/* move adjusted res_ptr to free return reg */
+	mtctr	r5		# copy size into CTR
+	addi	r7,r3,-4	# move adjusted res_ptr to free return reg
 	subfic	r8,r6,32
-	lwz	r11,0(r4)	/* load first s1 limb */
-	slw	r3,r11,r8	/* compute function return value */
+	lwz	r11,0(r4)	# load first s1 limb
+	slw	r3,r11,r8	# compute function return value
 	bdz	.Lend1
 
 .Loop:	lwzu	r10,4(r4)

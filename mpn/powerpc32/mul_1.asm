@@ -1,20 +1,20 @@
 # PowerPC-32 __mpn_mul_1 -- Multiply a limb vector with a limb and store
 # the result in a second limb vector.
-# 
+#
 # Copyright (C) 1995, 1997 Free Software Foundation, Inc.
-# 
+#
 # This file is part of the GNU MP Library.
-# 
+#
 # The GNU MP Library is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Library General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at your
 # option) any later version.
-# 
+#
 # The GNU MP Library is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 # or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
 # License for more details.
-# 
+#
 # You should have received a copy of the GNU Library General Public License
 # along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
@@ -25,9 +25,9 @@
 # s1_ptr	r4
 # size		r5
 # s2_limb	r6
-# 
+#
 # This is optimized for the PPC604 but it runs decently even on PPC601.  It
-# has not been tested on a PPC603 since I don't have access to any such 
+# has not been tested on a PPC603 since I don't have access to any such
 # machines.
 
 include(`../config.m4')
