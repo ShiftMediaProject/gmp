@@ -100,7 +100,7 @@ m4_assert_defined(`EPILOGUE_cpu')
 EPILOGUE_cpu(GSYM_PREFIX`'PROLOGUE_current_function)`'dnl
 undefine(`PROLOGUE_current_function')')
 
-m4wrap(
+m4wrap_prepend(
 `ifdef(`PROLOGUE_current_function',
 `m4_error(`EPILOGUE() for PROLOGUE('PROLOGUE_current_function`) never seen
 ')')')
