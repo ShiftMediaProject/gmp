@@ -3013,14 +3013,29 @@ AC_SUBST(HAVE_STACK_T_01)
 
 # Configs for demos/calc directory
 #
-# AC_SUBST is used here since with AM_CONFIG_HEADER automake would put
-# demos/calc in the default $(DEFAULT_INCLUDES) for every directory,
-# which would look very strange.  Likewise demos/expr below.
+# AC_SUBST+AC_CONFIG_FILES is used for calc-config.h, rather than AC_DEFINE+
+# AC_CONFIG_HEADERS, since with the latter automake (1.8) will then put the
+# directory (ie. demos/calc) into $(DEFAULT_INCLUDES) for every Makefile.in,
+# which would look very strange.  Likewise expr-config.h below.
+#
+# -lcurses is required by libreadline.  On a typical SVR4 style system this
+# normally doesn't have to be given explicitly, since libreadline.so will
+# have a NEEDED record for it.  But if someone for some reason is using only
+# a static libreadline.a then we must give -lcurses.  Readline (as of
+# version 4.3) doesn't use libtool, so we can't rely on a .la to cover
+# necessary dependencies.
 #
 AC_CONFIG_FILES(demos/calc/calc-config.h:demos/calc/calc-config-h.in)
+LIBCURSES=
+if test $with_readline != no; then
+  AC_CHECK_LIB(ncurses, tputs, [LIBCURSES=-lncurses],
+    [AC_CHECK_LIB(curses, tputs, [LIBCURSES=-lcurses])])
+fi
+AC_SUBST(LIBCURSES)
 use_readline=$with_readline
 if test $with_readline = detect; then
-  AC_CHECK_LIB(readline, readline, use_readline=yes)
+  AC_CHECK_LIB(readline, readline,
+               use_readline=yes, use_readline=no, $LIBCURSES)
 fi
 if test $use_readline = yes; then
   AC_SUBST(WITH_READLINE_01, 1)
