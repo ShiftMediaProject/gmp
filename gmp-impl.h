@@ -3092,6 +3092,198 @@ void __gmp_invalid_operation _PROTO ((void)) ATTRIBUTE_NORETURN;
   } while (0)
 
 
+/* HGCD definitions */
+
+/* Limited by 2 + twice the bitsize of mp_size_t */
+#define QSTACK_MAX_QUOTIENTS 130
+
+/* Some useful macros */
+
+/* Comparison of _normalized_ numbers. */
+#define MPN_LEQ_P(ap, asize, bp, bsize)				\
+((asize) < (bsize) || ((asize) == (bsize)			\
+		       && mpn_cmp ((ap), (bp), (asize)) <= 0))
+
+/* Extract one limb, shifting count bits left
+    ________  ________
+   |___xh___||___xl___|
+	  |____r____|
+   >count <
+
+   The count includes any nail bits, so it should work fine if
+   count is computed using count_leading_zeros.
+*/
+
+#define MPN_EXTRACT_LIMB(count, xh, xl) \
+  (((xh) << (count)) | ((xl) >> (GMP_LIMB_BITS - (count))))
+
+struct qstack
+{
+  /* Through out the code we represent q = 1 with qsize = 0. */
+  mp_size_t size[QSTACK_MAX_QUOTIENTS];
+  mp_ptr limb;
+  mp_size_t limb_alloc;
+  
+  /* Number of quotients to keep when we discard old quotients */
+  unsigned nkeep;
+
+  /* Top quotient is of size size[size_next-1], and starts at
+     limb+limb_next - size[size_next-1]. We use size_next == 0 for an
+     empty stack.*/ 
+  unsigned size_next;
+  mp_size_t limb_next;
+};
+
+mp_size_t
+qstack_itch (mp_size_t size);
+
+void
+qstack_init (struct qstack *stack,
+	     mp_size_t asize,
+	     mp_limb_t *limbs, mp_size_t alloc);
+
+void
+qstack_reset (struct qstack *stack,
+	      mp_size_t asize);
+
+void
+qstack_rotate (struct qstack *stack,
+	       mp_size_t size);
+
+#if WANT_ASSERT
+void
+qstack_sanity (struct qstack *stack);
+#else
+# define qstack_sanity(stack)
+#endif
+
+struct hgcd2_row
+{
+  /* r = (-)u a + (-)v b */
+  mp_limb_t u;
+  mp_limb_t v;
+};
+
+struct hgcd2
+{
+  /* Sign of the first row, sign >= 0 implies that u >= 0 and v <= 0,
+     sign < 0 implies u <= 0, v >= 0 */
+  int sign;
+  
+  struct hgcd2_row row[4];
+};
+
+int
+mpn_hgcd2 (struct hgcd2 *hgcd,
+	   mp_limb_t ah, mp_limb_t al,
+	   mp_limb_t bh, mp_limb_t bl,
+	   struct qstack *quotients);
+
+mp_size_t
+mpn_hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
+	       int sign,
+	       mp_limb_t u, mp_srcptr ap, mp_size_t asize,
+	       mp_limb_t v, mp_srcptr bp, mp_size_t bsize);
+
+/* What's the right place for this? */
+unsigned
+hgcd_max_recursion (mp_size_t n);
+
+struct hgcd_row
+{
+  /* [rp, rsize] should always be normalized. */
+  mp_ptr rp; mp_size_t rsize;
+  mp_ptr uvp[2];
+};
+
+struct hgcd
+{
+  int sign;
+
+  /* Space allocated for the uv entries, for sanity checking */
+  mp_size_t alloc;
+  
+  /* Size of the largest u,v entry, usually ruw[3].uvp[1]. This
+     element should be normalized. Smaller elements must be zero
+     padded, and all unused limbs must be zero. */
+  mp_size_t size;
+  struct hgcd_row row[4];
+};
+
+mp_size_t
+mpn_hgcd_init_itch (mp_size_t size);
+
+void
+mpn_hgcd_init (struct hgcd *hgcd,
+	       mp_size_t asize,
+	       mp_limb_t *limbs);
+
+mp_size_t
+mpn_hgcd_lehmer_itch (mp_size_t asize);
+
+int
+mpn_hgcd_lehmer (struct hgcd *hgcd,
+		 mp_srcptr ap, mp_size_t asize,
+		 mp_srcptr bp, mp_size_t bsize,
+		 struct qstack *quotients,
+		 mp_ptr tp, mp_size_t talloc);
+
+mp_size_t
+mpn_hgcd_itch (mp_size_t size);
+
+int
+mpn_hgcd (struct hgcd *hgcd,
+	  mp_srcptr ap, mp_size_t asize,
+	  mp_srcptr bp, mp_size_t bsize,
+	  struct qstack *quotients,
+	  mp_ptr tp, mp_size_t talloc);
+
+#if WANT_ASSERT
+void
+hgcd_sanity (const struct hgcd *hgcd,
+	     mp_srcptr ap, mp_size_t asize,
+	     mp_srcptr bp, mp_size_t bsize,
+	     unsigned start, unsigned end);
+#else
+# define hgcd_sanity(hgcd, ap, asize, bp, bsize, start, end)
+#endif
+
+int
+mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B);
+
+/* Computes R = 2^k H + u A' - v B', which must be non-negative.
+   Temporary space needed is k + uvsize.
+
+   H and R must not overlap. */
+
+mp_size_t
+mpn_hgcd_fix (mp_size_t k,
+	      mp_ptr rp, mp_size_t ralloc,
+	      mp_ptr hp, mp_size_t hsize,
+	      int sign,
+	      mp_srcptr up, mp_srcptr ap,
+	      mp_srcptr vp, mp_srcptr bp,
+	      mp_size_t uvsize,
+	      mp_ptr tp, mp_size_t talloc);
+
+/* This should be tuned while looking at performance for large numbers */
+#ifndef HGCD_SCHOENHAGE_THRESHOLD
+# define HGCD_SCHOENHAGE_THRESHOLD 150
+#endif
+
+#ifndef GCD_LEHMER_THRESHOLD
+# define GCD_LEHMER_THRESHOLD 200
+#endif
+
+/* While this is important for small and medium size numbers. */
+#ifndef GCD_SCHOENHAGE_THRESHOLD
+# define GCD_SCHOENHAGE_THRESHOLD 500
+#endif
+
+#ifndef GCDEXT_SCHOENHAGE_THRESHOLD
+# define GCDEXT_SCHOENHAGE_THRESHOLD 40
+#endif
+
 /* __GMPF_BITS_TO_PREC applies a minimum 53 bits, rounds upwards to a whole
    limb and adds an extra limb.  __GMPF_PREC_TO_BITS drops that extra limb,
    hence giving back the user's size in bits rounded up.  Notice that
@@ -3481,9 +3673,21 @@ extern mp_size_t                     div_dc_threshold;
 #define POWM_THRESHOLD               powm_threshold
 extern mp_size_t                     powm_threshold;
 
+#undef  HGCD_SCHOENHAGE_THRESHOLD
+#define HGCD_SCHOENHAGE_THRESHOLD    hgcd_schoenhage_threshold
+extern mp_size_t                     hgcd_schoenhage_threshold;
+
 #undef  GCD_ACCEL_THRESHOLD
 #define GCD_ACCEL_THRESHOLD          gcd_accel_threshold
 extern mp_size_t                     gcd_accel_threshold;
+
+#undef  GCD_LEHMER_THRESHOLD
+#define GCD_LEHMER_THRESHOLD         gcd_lehmer_threshold
+extern mp_size_t                     gcd_lehmer_threshold;
+
+#undef  GCD_SCHOENHAGE_THRESHOLD
+#define GCD_SCHOENHAGE_THRESHOLD     gcd_schoenhage_threshold
+extern mp_size_t                     gcd_schoenhage_threshold;
 
 #undef GCDEXT_THRESHOLD
 #define GCDEXT_THRESHOLD             gcdext_threshold
