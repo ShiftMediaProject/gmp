@@ -138,6 +138,7 @@ long __MPN(count_leading_zeros) ();
 #if defined (__hppa) && W_TYPE_SIZE == 64
 /* We put the result pointer parameter last here, since it makes passing
    of the other parameters more efficient.  */
+#ifndef LONGLONG_STANDALONE
 #define umul_ppmm(wh, wl, u, v) \
   do {									\
     UDItype __p0;							\
@@ -153,6 +154,7 @@ extern UDItype __MPN(umul_ppmm) _PROTO ((UDItype, UDItype, UDItype *));
 extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *));
 #define UMUL_TIME 8
 #define UDIV_TIME 60
+#endif /* LONGLONG_STANDALONE */
 #endif /* hppa */
 
 #if defined (__ia64) && W_TYPE_SIZE == 64
