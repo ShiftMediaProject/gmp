@@ -161,7 +161,7 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
       int norm;
 
       /* Skip a division if high < divisor (high quotient 0).  Testing here
-	 before before normalizing will still skip as often as possible.  */
+	 before normalizing will still skip as often as possible.  */
       if (un != 0)
 	{
 	  n1 = up[un - 1] << GMP_NAIL_BITS;

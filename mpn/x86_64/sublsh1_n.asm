@@ -1,4 +1,4 @@
-dnl  AMD64 mpn_sublsh1_n -- rp[] = up[] + (vp[] << 1)
+dnl  AMD64 mpn_sublsh1_n -- rp[] = up[] - (vp[] << 1)
 
 dnl  Copyright 2003 Free Software Foundation, Inc.
 

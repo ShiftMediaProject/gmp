@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 
 #if HAVE_NATIVE_mpn_sqr_diagonal
 #define MPN_SQR_DIAGONAL(rp, up, n)					\
-  mpn_sqr_diagonal (rp, up, n);
+  mpn_sqr_diagonal (rp, up, n)
 #else
 #define MPN_SQR_DIAGONAL(rp, up, n)					\
   do {									\
