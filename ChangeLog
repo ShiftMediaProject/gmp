@@ -29,10 +29,27 @@ MA 02111-1307, USA.
 	* mpz/kronuz.c: Additional nailify changes.
 	* mpz/kronsz.c: Likewise.
 
-2002-04-22  Kevin Ryde  <kevin@swox.se>
+2002-04-23  Kevin Ryde  <kevin@swox.se>
 
-	Hi Kevin!
-	
+	* demos/expr/Makefile.am (LDADD): Add $(LIBM) for the benefit of mpfr.
+
+	* mpz/divis_ui.c, mpz/cong_ui.c: Nailify.
+	* mpn/generic/bdivmod.c, mpz/divexact.c, mpz/dive_ui.c: Nailify.
+	* mpn/generic/sb_divrem_mn.c, mpn/generic/divrem.c,
+	mpn/generic/divrem_2.c: Nailify ASSERTs.
+	* mpn/x86/k6/mmx/logops_n.asm, mpn/x86/k6/mmx/com_n.asm: Nailify.
+	* mpz/inp_raw.c, mpz/out_raw.c: Nailify.
+	* mpz/kronzu.c, mpz/kronuz.c, mpz/kronzs.c, mpz/kronsz.c: Nailify.
+	* mpn/generic/divis.c, mpz/cong.c, mpz/cong_2exp.c: Nailify.
+	* gmp-impl.h (NEG_MOD): Nailify.
+
+	* gmp-impl.h, mpn/mp_bases.c: Add back GMP_NUMB_BITS==30 bases data.
+
+	* mpfr/get_d.c: Patch from Paul to avoid problem with constant folding
+	in gcc on OSF.
+
+	* mpn/lisp/gmpasm-mode.el: Remove mention of defunct LF macro.
+
 2002-04-22  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c: Handle "binomial" operator.
