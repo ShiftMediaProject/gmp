@@ -2080,7 +2080,7 @@ esac
 # __gmp_replacement_vsnprintf which is not required on AIX since it has a
 # vsnprintf.
 #
-AC_CHECK_FUNCS(alarm clock clock_gettime cputime getpagesize getrusage getsysinfo gettimeofday localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info pstat_getprocessor raise read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(alarm attr_get clock clock_gettime cputime getpagesize getrusage getsysinfo gettimeofday localeconv memset mmap mprotect nl_langinfo obstack_vprintf popen processor_info pstat_getprocessor raise read_real_time sigaction sigaltstack sigstack syssgi strchr strerror strnlen strtol strtoul sysconf sysctl sysctlbyname times)
 
 GMP_FUNC_VSNPRINTF
 GMP_FUNC_SSCANF_WRITABLE_INPUT
