@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-08-24  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (HAVE_HOST_CPU_, HAVE_HOST_CPU_FAMILY_, HAVE_NATIVE_):
+	Setup templates for these using AH_VERBATIM rather than acconfig.h,
+	preferred by latest autoconf.  Prune lists to just things used.
+	* acconfig.h: Remove file.
+
+	* mpn/powerpc32/mode1o.asm: Forgot ASM_START.
+
+	* tune/time.c (have_cgt_id): Renamed from HAVE_CGT_ID so avoid
+	confusion with autoconf outputs, and turn it into a "const" variable.
+
 2002-08-23  Torbjorn Granlund  <tege@swox.com>
 
 	* configure.in: Choose powerpc32/aix.m4 or powerpc64/aix.m4 based on
