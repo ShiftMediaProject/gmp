@@ -1840,3 +1840,106 @@ speed_MPN_ZERO (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_ZERO_CALL (MPN_ZERO (wp, s->size));
 }  
+
+
+int
+speed_randinit (struct speed_params *s, gmp_randstate_ptr rstate)
+{
+  if (s->r == 0)
+    gmp_randinit_default (rstate);
+  else if (s->r == 1)
+    gmp_randinit_mt (rstate);
+  else
+    {
+      return gmp_randinit_lc_2exp_size (rstate, s->r);
+    }
+  return 1;
+}
+
+double
+speed_gmp_randseed (struct speed_params *s)
+{
+  gmp_randstate_t  rstate;
+  unsigned  i;
+  double    t;
+  mpz_t     x;
+
+  SPEED_RESTRICT_COND (s->size >= 1);
+  SPEED_RESTRICT_COND (speed_randinit (s, rstate));
+
+  /* s->size bits of seed */
+  mpz_init_set_n (x, s->xp, s->size);
+  mpz_fdiv_r_2exp (x, x, (unsigned long) s->size);
+
+  /* cache priming */
+  gmp_randseed (rstate, x);
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    gmp_randseed (rstate, x);
+  while (--i != 0);
+  t = speed_endtime ();
+
+  gmp_randclear (rstate);
+  mpz_clear (x);
+  return t;
+}
+
+double
+speed_gmp_randseed_ui (struct speed_params *s)
+{
+  gmp_randstate_t  rstate;
+  unsigned  i, j;
+  double    t;
+
+  SPEED_RESTRICT_COND (speed_randinit (s, rstate));
+
+  /* cache priming */
+  gmp_randseed_ui (rstate, 123L);
+
+  speed_starttime ();
+  i = s->reps;
+  j = 0;
+  do
+    {
+      gmp_randseed_ui (rstate, (unsigned long) s->xp_block[j]);
+      j++;
+      if (j >= SPEED_BLOCK_SIZE)
+        j = 0;
+    }
+  while (--i != 0);
+  t = speed_endtime ();
+
+  gmp_randclear (rstate);
+  return t;
+}
+
+double
+speed_mpz_urandomb (struct speed_params *s)
+{
+  gmp_randstate_t  rstate;
+  mpz_t     z;
+  unsigned  i;
+  double    t;
+
+  SPEED_RESTRICT_COND (s->size >= 0);
+  SPEED_RESTRICT_COND (speed_randinit (s, rstate));
+
+  mpz_init (z);
+
+  /* cache priming */
+  mpz_urandomb (z, rstate, (unsigned long) s->size);
+  mpz_urandomb (z, rstate, (unsigned long) s->size);
+
+  speed_starttime ();
+  i = s->reps;
+  do
+    mpz_urandomb (z, rstate, (unsigned long) s->size);
+  while (--i != 0);
+  t = speed_endtime ();
+
+  mpz_clear (z);
+  gmp_randclear (rstate);
+  return t;
+}

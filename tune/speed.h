@@ -247,6 +247,10 @@ double speed_mpz_powm _PROTO ((struct speed_params *s));
 double speed_mpz_powm_mod _PROTO ((struct speed_params *s));
 double speed_mpz_powm_redc _PROTO ((struct speed_params *s));
 double speed_mpz_powm_ui _PROTO ((struct speed_params *s));
+double speed_mpz_urandomb _PROTO ((struct speed_params *s));
+
+double speed_gmp_randseed _PROTO ((struct speed_params *s));
+double speed_gmp_randseed_ui _PROTO ((struct speed_params *s));
 
 double speed_noop _PROTO ((struct speed_params *s));
 double speed_noop_wxs _PROTO ((struct speed_params *s));

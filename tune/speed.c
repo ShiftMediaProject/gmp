@@ -351,6 +351,10 @@ const struct routine_t {
   { "operator_div",           speed_operator_div,           FLAG_R_OPTIONAL },
   { "operator_mod",           speed_operator_mod,           FLAG_R_OPTIONAL },
 
+  { "gmp_randseed",    speed_gmp_randseed,    FLAG_R_OPTIONAL               },
+  { "gmp_randseed_ui", speed_gmp_randseed_ui, FLAG_R_OPTIONAL | FLAG_NODATA },
+  { "mpz_urandomb",    speed_mpz_urandomb,    FLAG_R_OPTIONAL | FLAG_NODATA },
+
 #ifdef SPEED_EXTRA_ROUTINES
   SPEED_EXTRA_ROUTINES
 #endif
@@ -509,7 +513,7 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
             choice[i].time /= speed_cycletime;
           else if (option_unit == UNIT_CYCLESPERLIMB)
             choice[i].time /= (speed_cycletime * SIZE_TO_DIVISOR(s->size));
-          
+
           if (option_cmp == CMP_RATIO && i > 0)
             {
               /* A ratio isn't affected by the units chosen. */
@@ -541,10 +545,10 @@ run_one (FILE *fp, struct speed_params *s, mp_size_t prev_size)
          the measurements actually. */
 
       if (! (option_cmp == CMP_DIFFPREV && prev_size == -1))
-        {     
+        {
           fprintf (fp, "%-6ld ", s->size);
           for (i = 0; i < num_choices; i++)
-            fprintf (fp, "  %.9e", 
+            fprintf (fp, "  %.9e",
                      choice[i].no_time ? 0.0
                      : (option_cmp == CMP_RATIO && i == 0) ? 1.0
                      : choice[i].time);
