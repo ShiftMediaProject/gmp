@@ -146,7 +146,13 @@ MA 02111-1307, USA.
 /* Define if you have <alloca.h> and it should be used (not on Ultrix). */
 #undef HAVE_ALLOCA_H
 
-/* Define if mpn/tests has calling conventions checking for the CPU */
+/* Define if the compiler accepts gcc style __attribute__ ((const)) */
+#undef HAVE_ATTRIBUTE_CONST
+
+/* Define if the compiler accepts gcc style __attribute__ ((noreturn)) */
+#undef HAVE_ATTRIBUTE_NORETURN
+
+/* Define if tests/libtests has calling conventions checking for the CPU */
 #undef HAVE_CALLING_CONVENTIONS
 
 /* Define to 1 if you have the declaration of `optarg', and to 0 if you don't.
@@ -162,7 +168,7 @@ MA 02111-1307, USA.
 /* Define if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
-/* whether an actual "inline" is available */
+/* Define if an actual "inline" is available */
 #undef HAVE_INLINE
 
 /* Define if you have the `mprotect' function. */
