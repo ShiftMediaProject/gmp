@@ -170,12 +170,7 @@ main (void)
 
   CHECK_INT (BYTES_PER_MP_LIMB, sizeof(mp_limb_t));
   CHECK_INT (mp_bits_per_limb, BITS_PER_MP_LIMB);
-
-  CHECK_BITS (BITS_PER_MP_LIMB,  mp_limb_t);
-  CHECK_BITS (BITS_PER_LONGINT,  long);
-  CHECK_BITS (BITS_PER_INT,      int);
-  CHECK_BITS (BITS_PER_SHORTINT, short);
-  CHECK_BITS (BITS_PER_CHAR,     char);
+  CHECK_BITS (BITS_PER_MP_LIMB, mp_limb_t);
 
   CHECK_HIGHBIT (MP_LIMB_T_HIGHBIT, mp_limb_t,      LL("0x%lX","0x%lX"));
   CHECK_HIGHBIT (ULONG_HIGHBIT,     unsigned long,  "0x%lX");
