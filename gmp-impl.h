@@ -2398,6 +2398,7 @@ class gmp_allocated_string {
 };
 
 class ios;
+class string;
 class istream;
 int __gmp_istream_set_base (istream &, char &, bool &, bool &);
 void __gmp_istream_set_digits (string &, istream &, char &, bool &, int);
