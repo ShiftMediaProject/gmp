@@ -356,10 +356,18 @@ dnl  selections, so the result is not cached.
 AC_DEFUN(GMP_PROG_CC_WORKS,
 [AC_MSG_CHECKING([compiler $1])
 cat >conftest.c <<EOF
+
 /* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
    (without -maix64), hence detecting an unusable compiler */
 void *g() { return (void *) 0; }
 void *f() { return g(); }
+
+/* The following provokes an invalid instruction syntax from i386 gcc
+   -march=pentiumpro on Solaris 2.8.  The native sun assembler
+   requires a non-standard syntax for cmov which gcc (as of 2.95.2 at
+   least) doesn't know.  */
+int n;
+int cmov () { return (n >= 0 ? n : 0); }
 
 int main () { return 0; }
 EOF
