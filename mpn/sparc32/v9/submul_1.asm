@@ -31,12 +31,6 @@ include(`../config.m4')
 
 ASM_START()
 
-ifdef(`PIC',
-`	TEXT
-L(getpc):
-	retl
-	nop')
-
 	TEXT
 	ALIGN(4)
 L(noll):
@@ -46,7 +40,7 @@ PROLOGUE(mpn_submul_1)
 	save %sp,-256,%sp
 
 ifdef(`PIC',
-`L(pc):	call	L(getpc)
+`L(pc):	rd	%pc,%o7
 	ld	[%o7+L(noll)-L(pc)],%f10',
 `	sethi	%hi(L(noll)),%g1
 	ld	[%g1+%lo(L(noll))],%f10')
