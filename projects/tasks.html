@@ -63,7 +63,14 @@
 <li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
      mp?/tests/*.c.
 <li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000.
+
+<li> <code>mpz_cdiv_q_2exp</code> and <code>mpz_cdiv_r_2exp</code>
+     could be implemented to match the corresponding tdiv and fdiv.
+     Maybe some code sharing is possible.
+
 </ul>
+
+
 
 <h4>Machine Independent Optimization</h4>
 <ul>
