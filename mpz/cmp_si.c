@@ -23,14 +23,11 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-/* gmp.h defines a macro for mpz_cmp_si.  */
-#undef mpz_cmp_si
-
 int
 #if __STDC__
-mpz_cmp_si (mpz_srcptr u, signed long int v_digit)
+_mpz_cmp_si (mpz_srcptr u, signed long int v_digit)
 #else
-mpz_cmp_si (u, v_digit)
+_mpz_cmp_si (u, v_digit)
      mpz_srcptr u;
      signed long int v_digit;
 #endif
