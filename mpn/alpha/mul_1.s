@@ -1,4 +1,4 @@
- # Alpha 21064 __mpn_mul_1 -- Multiply a limb vector with a limb and store
+ # Alpha __mpn_mul_1 -- Multiply a limb vector with a limb and store
  # the result in a second limb vector.
 
  # Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
@@ -52,14 +52,14 @@ __mpn_mul_1:
 	mulq	$2,$19,$3	# $3 = prod_low
 	bic	$31,$31,$4	# clear cy_limb
 	umulh	$2,$19,$0	# $0 = prod_high
-	beq	$18,Lend1	# jump if size was == 1
+	beq	$18,.Lend1	# jump if size was == 1
 	ldq	$2,8($17)	# $2 = s1_limb
 	subq	$18,1,$18	# size--
 	stq	$3,0($16)
-	beq	$18,Lend2	# jump if size was == 2
+	beq	$18,.Lend2	# jump if size was == 2
 
 	.align	3
-Loop:	mulq	$2,$19,$3	# $3 = prod_low
+.Loop:	mulq	$2,$19,$3	# $3 = prod_low
 	addq	$4,$0,$0	# cy_limb = cy_limb + 'cy'
 	subq	$18,1,$18	# size--
 	umulh	$2,$19,$4	# $4 = cy_limb
@@ -69,9 +69,9 @@ Loop:	mulq	$2,$19,$3	# $3 = prod_low
 	stq	$3,8($16)
 	cmpult	$3,$0,$0	# $0 = carry from (cy_limb + prod_low)
 	addq	$16,8,$16	# res_ptr++
-	bne	$18,Loop
+	bne	$18,.Loop
 
-Lend2:	mulq	$2,$19,$3	# $3 = prod_low
+.Lend2:	mulq	$2,$19,$3	# $3 = prod_low
 	addq	$4,$0,$0	# cy_limb = cy_limb + 'cy'
 	umulh	$2,$19,$4	# $4 = cy_limb
 	addq	$3,$0,$3	# $3 = cy_limb + prod_low
@@ -79,7 +79,7 @@ Lend2:	mulq	$2,$19,$3	# $3 = prod_low
 	stq	$3,8($16)
 	addq	$4,$0,$0	# cy_limb = prod_high + cy
 	ret	$31,($26),1
-Lend1:	stq	$3,0($16)
+.Lend1:	stq	$3,0($16)
 	ret	$31,($26),1
 
 	.end	__mpn_mul_1
