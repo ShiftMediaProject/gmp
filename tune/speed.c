@@ -165,6 +165,8 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_mod_1c
   { "mpn_mod_1c",        speed_mpn_mod_1c,    FLAG_R },
 #endif
+  { "mpn_preinv_divrem_1",  speed_mpn_preinv_divrem_1,  FLAG_R },
+  { "mpn_preinv_divrem_1f", speed_mpn_preinv_divrem_1f, FLAG_R },
   { "mpn_preinv_mod_1",  speed_mpn_preinv_mod_1, FLAG_R },
 
   { "mpn_divrem_1_div",  speed_mpn_divrem_1_div,  FLAG_R },

@@ -349,14 +349,25 @@ my @table =
        'carrys'=> [''],
        'speed' => 'SPEED_ROUTINE_MPN_COPY',
      },
-     
+
+     # mpn_preinv_divrem_1 is an optional extra entrypoint
      {
        'regexp'=> 'divrem_1',
+       'funs'  => ['divrem_1', 'preinv_divrem_1'],
        'ret'   => 'mp_limb_t',
-       'args'  => 'mp_ptr rp, mp_size_t xsize, mp_srcptr sp, mp_size_t size, mp_limb_t divisor',
-       'speed_flags' => 'FLAG_R',
+       'args_divrem_1' => 'mp_ptr rp, mp_size_t xsize, mp_srcptr sp, mp_size_t size, mp_limb_t divisor',
+       'args_preinv_divrem_1' => 'mp_ptr rp, mp_size_t xsize, mp_srcptr sp, mp_size_t size, mp_limb_t divisor, mp_limb_t inverse, unsigned shift',
+       'speed_flags'=> 'FLAG_R',
        'speed_suffixes' => ['f'],
      },
+     {
+       'regexp'=> 'pre_divrem_1',
+       'funs'  => ['preinv_divrem_1'],
+       'ret'   => 'mp_limb_t',
+       'args'  => 'mp_ptr qp, mp_size_t qxn, mp_srcptr ap, mp_size_t asize, mp_limb_t divisor, mp_limb_t inverse, int shift',
+       'speed_flags' => 'FLAG_R',
+     },
+
      {
        'regexp'=> 'divrem_2',
        'ret'   => 'mp_limb_t',

@@ -35,7 +35,7 @@ libspeed_la_SOURCES =							\
   freq.c gcd_bin.c gcd_finda_gen.c					\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
-  noop.c powm_mod.c powm_redc.c time.c					\
+  noop.c powm_mod.c powm_redc.c pre_divrem_1.c time.c			\
   sb_div.c sb_inv.c
 
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ) \
