@@ -634,11 +634,7 @@ __gmp_doscan (const struct gmp_doscan_funs_t *funs, void *data,
 #else
                 case 't':  ASSERT_FAIL (ptrdiff_t not available); break;
 #endif
-#if HAVE_SIZE_T
                 case 'z':  * (size_t    *) p = chars; break;
-#else
-                case 'z':  ASSERT_FAIL (size_t not available); break;
-#endif
                 case 'Z':  mpz_set_si ((mpz_ptr) p, (long) chars); break;
                 default: ASSERT (0); break;
                 }
