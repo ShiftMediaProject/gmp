@@ -87,13 +87,61 @@ all	@dep@ {Lib}
 
 
 ###########################################################################
-# Special rules, got them from "mp[fqz]/Makefile.am"
+# Special rules, got them from "mp[fqz]/Makefile.am", and configure.in
+# mulfunc declarations
+
+{MpnObjDir}popcount.o @dep@ ::mpn:popham.c Makefile
+	{C} ::mpn:popham.c -o {Targ} {COptions} -d OPERATION_popcount
+
+{MpnObjDir}hamdist.o @dep@ ::mpn:popham.c Makefile
+	{C} ::mpn:popham.c -o {Targ} {COptions} -d OPERATION_hamdist
+
+
+{MpzObjDir}add.o @dep@ ::mpz:aors.c Makefile
+	{C} ::mpz:aors.c -o {Targ} {COptions} -d OPERATION_add
+
+{MpzObjDir}sub.o @dep@ ::mpz:aors.c Makefile
+	{C} ::mpz:aors.c -o {Targ} {COptions} -d OPERATION_sub
+
+
+{MpzObjDir}add_ui.o @dep@ ::mpz:aors_ui.c Makefile
+	{C} ::mpz:aors_ui.c -o {Targ} {COptions} -d OPERATION_add_ui
+
+{MpzObjDir}sub_ui.o @dep@ ::mpz:aors_ui.c Makefile
+	{C} ::mpz:aors_ui.c -o {Targ} {COptions} -d OPERATION_sub_ui
+
+
+{MpzObjDir}fits_sint.o @dep@ ::mpz:fits.c Makefile
+	{C} ::mpz:fits.c -o {Targ} {COptions} -d OPERATION_fits_sint
+
+{MpzObjDir}fits_slong.o @dep@ ::mpz:fits.c Makefile
+	{C} ::mpz:fits.c -o {Targ} {COptions} -d OPERATION_fits_slong
+
+{MpzObjDir}fits_sshort.o @dep@ ::mpz:fits.c Makefile
+	{C} ::mpz:fits.c -o {Targ} {COptions} -d OPERATION_fits_sshort
+
+{MpzObjDir}fits_uint.o @dep@ ::mpz:fits.c Makefile
+	{C} ::mpz:fits.c -o {Targ} {COptions} -d OPERATION_fits_uint
+
+{MpzObjDir}fits_ulong.o @dep@ ::mpz:fits.c Makefile
+	{C} ::mpz:fits.c -o {Targ} {COptions} -d OPERATION_fits_ulong
+
+{MpzObjDir}fits_ushort.o @dep@ ::mpz:fits.c Makefile
+	{C} ::mpz:fits.c -o {Targ} {COptions} -d OPERATION_fits_ushort
+
 
 {MpzObjDir}mul_si.o @dep@ ::mpz:mul_siui.c Makefile
 	{C} ::mpz:mul_siui.c -o {Targ} {COptions} -d OPERATION_mul_si
 
 {MpzObjDir}mul_ui.o @dep@ ::mpz:mul_siui.c Makefile
 	{C} ::mpz:mul_siui.c -o {Targ} {COptions} -d OPERATION_mul_ui
+
+
+{MpqObjDir}add.o @dep@ ::mpq:aors.c Makefile
+	{C} ::mpq:aors.c -o {Targ} {COptions} -d OPERATION_add
+
+{MpqObjDir}sub.o @dep@ ::mpq:aors.c Makefile
+	{C} ::mpq:aors.c -o {Targ} {COptions} -d OPERATION_sub
 
 
 {MpfObjDir}floor.o @dep@ ::mpf:integer.c Makefile
@@ -178,7 +226,7 @@ check @dep@ check-mpz check-mpq check-mpf
 check-mpz @dep@ z-mul z-tdiv z-tdiv_ui z-fdiv z-fdiv_ui @c@
 		z-gcd z-dive z-sqrtrem z-convert z-logic z-bit @c@
 		z-powm z-powm_ui z-pow_ui z-2exp z-reuse z-root @c@
-		z-jac z-bin z-misc
+		z-jac z-bin z-misc z-get_si
 
 # FIXME: Left out z-io, can't compile it.
 
@@ -245,8 +293,11 @@ z-bin @dep@ {MpzBinDir}t-bin.exe
 z-misc @dep@ {MpzBinDir}t-misc.exe
 	{MpzBinDir}t-misc.exe
 
+z-get_si @dep@ {MpzBinDir}t-get_si.exe
+	{MpzBinDir}t-get_si.exe
 
-check-mpq @dep@ q-cmp q-cmp_ui q-get_d
+
+check-mpq @dep@ q-cmp q-cmp_ui q-get_d q-set_f
 
 q-cmp @dep@ {MpqBinDir}t-cmp.exe
 	{MpqBinDir}t-cmp.exe
@@ -256,6 +307,9 @@ q-cmp_ui @dep@ {MpqBinDir}t-cmp_ui.exe
 
 q-get_d @dep@ {MpqBinDir}t-get_d.exe
 	{MpqBinDir}t-get_d.exe
+
+q-set_f @dep@ {MpqBinDir}t-set_f.exe
+	{MpqBinDir}t-set_f.exe
 
 
 check-mpf @dep@ f-add f-sub f-conv f-sqrt f-muldiv f-dm2exp f-reuse @c@
