@@ -234,6 +234,7 @@ void speed_operand_src _PROTO ((struct speed_params *s,
 void speed_operand_dst _PROTO ((struct speed_params *s,
                                 mp_ptr ptr, mp_size_t size));
 void mpz_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
+void mpz_init_set_n _PROTO ((mpz_ptr z, mp_srcptr p, mp_size_t size));
 
 extern int  speed_option_addrs;
 void speed_option_set _PROTO((const char *s));
@@ -690,9 +691,9 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
   }  
 
 
-/* Calculate 2^(m-1) mod m for random odd m of s->size limbs.  Having m odd
-   allows redc to be used.  Actually the exponent (m-1) is cut down to at
-   most 6 limbs so the calculation doesn't take too long.  */
+/* Calculate b^e mod m for random b and m of s->size limbs and random e of 6
+   limbs.  m is forced to odd so that redc can be used.  e is limited in
+   size so the calculation doesn't take too long. */
 #define SPEED_ROUTINE_MPZ_POWM(function)        \
   {                                             \
     mpz_t     r, b, e, m;                       \
@@ -702,18 +703,10 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
     SPEED_RESTRICT_COND (s->size >= 1);         \
                                                 \
     mpz_init (r);                               \
-    mpz_init (b);                               \
-    mpz_set_n (b, s->xp, s->size);              \
-    mpz_sub_ui (b, b, 123L);                    \
-                                                \
-    /* force m to odd */                        \
-    mpz_init (m);                               \
-    mpz_set_n (m, s->xp, s->size);              \
-    mpz_setbit (m, 0);                          \
-                                                \
-    mpz_init_set (e, m);                        \
-    mpz_sub_ui (e, e, 1);                       \
-    SIZ(e) = MIN (SIZ(e), 6);                   \
+    mpz_init_set_n (b, s->xp, s->size);         \
+    mpz_init_set_n (m, s->yp, s->size);         \
+    mpz_setbit (m, 0);  /* force m to odd */    \
+    mpz_init_set_n (e, s->xp_block, 6);         \
                                                 \
     speed_starttime ();                         \
     i = s->reps;                                \

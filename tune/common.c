@@ -378,6 +378,18 @@ mpz_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
   SIZ(z) = size;
 }
 
+void
+mpz_init_set_n (mpz_ptr z, mp_srcptr p, mp_size_t size)
+{
+  ASSERT (size >= 0);
+
+  MPN_NORMALIZE (p, size);
+  ALLOC(z) = MAX (size, 1);
+  PTR(z) = _MP_ALLOCATE_FUNC_LIMBS (ALLOC(z));
+  SIZ(z) = size;
+  MPN_COPY (PTR(z), p, size);
+}
+
 
 /* Miscellanous options accepted by tune and speed programs under -o. */
 
