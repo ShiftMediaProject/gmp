@@ -18,6 +18,33 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-03-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpf/mul_ui.c: Incorporate carry from low limbs, for exactness.
+	* tests/mpf/t-mul_ui.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpf/div.c: Use mpn_tdiv_qr.  Use just one TMP_ALLOC.  Use full
+	divisor, since truncating can lose accuracy.
+	* tests/mpf/t-div.c: New file.
+	* tests/mpf/Makefile.am (check_PROGRAMS): Add it.
+
+	* tests/mpf/t-set_q.c, tests/mpf/t-ui_div.c (check_various): Amend
+	bogus 99/4 test.
+	* tests/mpf/t-ui_div.c (check_rand): Exercise r==v overlap.
+
+	* tests/refmpf.c, tests/tests.h (refmpf_set_overlap): New function.
+
+	* mpf/cmp_si.c [nails]: Correction, cast vval in exp comparisons, for
+	when vval=-0x800..00 and limb==longlong.
+
+	* mpf/cmp_si.c [nails]: Correction, return usign instead of 1 when
+	uexp==2 but value bigger than an mp_limb_t.
+	* tests/mpf/t-cmp_si.c (check_data): Add test cases.
+
+	* tests/trace.c (mpf_trace): Use ABS(mp_trace_base) to allow for
+	negative bases used for upper case hex in integer traces.
+
 2004-03-12  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/sb_divrem_mn.c: Correct header comment.
