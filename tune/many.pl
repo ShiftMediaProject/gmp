@@ -644,6 +644,12 @@ my @table =
      },
 
      {
+       'regexp'=> 'zero',
+       'ret'   => 'void',
+       'args'  => 'mp_ptr ptr, mp_size_t size',
+     },
+
+     {
        'regexp'=> '(powm)(?!_ui)',
        'mpX'   => 'mpz',
        'ret'   => 'void',
