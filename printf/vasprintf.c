@@ -79,18 +79,18 @@ struct gmp_asprintf_t {
    that (and any extra NEED might give) isn't enough then an ISO C99
    standard vsnprintf will tell us what we really need.
 
-   GLIBC 2.0.x vsnprintf only returns "space-1" to indicate overflow,
+   GLIBC 2.0.x vsnprintf returns either -1 or space-1 to indicate overflow,
    without giving any indication how much is really needed.  In this case
    keep trying with double the space each time.
 
-   A return of "space-1" is success on a C99 vsnprintf, but we're not
+   A return of space-1 is success on a C99 vsnprintf, but we're not
    bothering to identify which we've got, so just take the pessimistic
    option and assume it's glibc 2.0.x.
 
-   Notice the use of "ret+2" for the new space in the C99 case.  This
-   ensures the next vsnprintf return value will be "space-2", which is
-   unambiguously successful.  But actually NEED() will realloc to even
-   bigger than that "ret+2".  */
+   Notice the use of ret+2 for the new space in the C99 case.  This ensures
+   the next vsnprintf return value will be space-2, which is unambiguously
+   successful.  But actually NEED() will realloc to even bigger than that
+   ret+2.  */
 
 static int
 gmp_asprintf_format (struct gmp_asprintf_t *d, const char *fmt, va_list ap)
@@ -105,8 +105,8 @@ gmp_asprintf_format (struct gmp_asprintf_t *d, const char *fmt, va_list ap)
       ret = vsnprintf (d->buf + d->size, space, fmt, ap);
       if (ret == -1)
         {
-          __gmp_free_func (d->buf, d->alloc);
-          return -1;
+          ASSERT (strlen (d->buf + d->size) == space-1);
+          ret = space-1;
         }
 
       /* done if output fits in our space */
