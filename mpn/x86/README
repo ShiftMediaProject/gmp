@@ -1,36 +1,40 @@
+
+                      X86 MPN SUBROUTINES
+
+
 This directory contains mpn functions for various x86 chips.
+
 
 CODE ORGANIZATION
 
-The code in the top-level works best with i386, i486, members of the P6
-family (i.e., Pentium Pro, II, III), and the Amd Athlon/K7.
-
-The `pentium' subdirectory contains code optimized for Pentium.  In most
-cases, this is the best choice for Amd K6 too, with the exception of
-add/sub.
-
-The `k6' subdirectory contains code optimized for the K6.
+	x86              i386, i486
+	x86/pentium      Intel Pentium
+	x86/pentium/mmx  Intel Pentium with MMX (P55)
+	x86/p6           Intel Pentium Pro
+	x86/p6/mmx       Intel Pentium II, III
+	x86/k6           AMD K6 (and K6-2, K6-3)
+	x86/k7           AMD Athalon.
+	
 
 STATUS
 
-The code is well-optimized for Intel chips, but not so well-optimized for
-Amd and Cyrix chips.
+The code is well-optimized for AMD and Intel chips, but not so well
+optimized for Cyrix chips.
 
-For implementations with slow double shift instructions (SHLD and SHRD), it
-might be better to mimic their operation with SHL+SHR+OR.  (K6 and M2 are
-likely to benefit from that, but not Pentium due to its slow plain SHL and
-SHR.)
 
 RELEVANT OPTIMIZATION ISSUES
 
-We should use MMX instructions for copying and perhaps shifts.  For shifts,
-we can get a very significant performance boost on the K6 and K7, but we
-need to make sure operands are aligned for full speed, but that can easily
-be achieved by using the full range of shift counts, 1 to 63.
+For implementations with slow double shift instructions (SHLD and
+SHRD), it might be better to mimic their operation with SHL+SHR+OR.
+(M2 is likely to benefit from that, but not Pentium due to its slow
+plain SHL and SHR.)
+
+We should use MMX instructions for copying and perhaps shifts.  For
+shifts, significant performance boosts on the K6 and K7 have been
+obtained.  Operands need to be aligned for full speed, especially on
+Intel chips, but that can easily be achieved by using the full range
+of shift counts, 1 to 63.
 
            current shift speed     mmx shift speed
     P55             5.4                 4.0
     P6              2.5                 2.0
-    K6              3.3                 2.0
-    K7              4.5                 1.35
-
