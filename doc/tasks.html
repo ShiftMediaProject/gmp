@@ -144,6 +144,9 @@
      Should give 2 cycles/limb.  (Torbjörn has code that just needs to be
      finished.)
 
+<li> SPARC32/V9: Find out why the speed of <code>mpn_addmul_1</code>
+     and the other multiplies vary so much on successive sizes.
+
 <li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
      <code>mpn_mul_1</code>.  The current development code runs at 11
      cycles/limb, which is already very good.  But it should be possible to
@@ -223,7 +226,7 @@
      <code>mpz_jacobi</code> for compatibility.
 
 <li> Make the mpn logops and copys available in gmp.h.  Since they can
-     be either library functions or inlines gmp.h would need to be
+     be either library functions or inlines, gmp.h would need to be
      generated from a gmp.in based on what's in the library.  gmp.h
      would still be compiler-independent though.
 
@@ -296,6 +299,10 @@
 
   <li> Build multiple variants of the library under certain systems.
        An example is -n32, -o32, and -64 on Irix.
+
+  <li> Check name conflicts under DOS 8.3 filenames and DJGPP, with a
+       view to avoiding at least the simplest ones.  Similarly old
+       SysV 14 char names.
 
 </ul>
 
