@@ -1,3 +1,12 @@
+2000-02-16  Linus Nordberg  <linus@swox.se>
+
+	* acinclude.m4 (GMP_CHECK_ASM_LSYM_PREFIX): Define LSYM_PREFIX as
+	the prefix only, no argument.
+	* aclocal.m4: Regenerate.
+	* configure: Regenerate.
+
+	* mpn/asm-defs.m4 (L): No argument to LSYM_PREFIX.
+
 2000-02-15  Linus Nordberg  <linus@swox.se>
 
 	* acinclude.m4: Prefix all temporary shell variables with
