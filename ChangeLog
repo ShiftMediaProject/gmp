@@ -1,3 +1,22 @@
+1999-12-14  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/divmod_1.c: Use invert_limb.
+	* mpn/generic/mod_1.c: Use invert_limb.
+
+	* gmp-impl.h (invert_limb): Put definition here.
+	* mpn/generic/divrem.c (invert_limb): Delete definition.
+	* mpn/generic/divrem_2.c (invert_limb): Delete definition.
+
+	* gmp.h (mpn_divrem): Inhibit for non-gcc.
+	But declare (undo 1999-11-22 change).
+
+	* gmp-impl.h (DItype,UDItype): Do these also if _LONG_LONG_LIMB.
+
+	* longlong.h: Move 64-bit hppa code out of __GNUC__ conditional.
+
+	* stack-alloc.c (HSIZ): New #define.
+	(__tmp_alloc): Use HSIZ instead of sizeof(tmp_stack).
+
 1999-12-10  Torbjorn Granlund  <tege@swox.com>
 
 	* config.sub: Clean up handling of x86 CPUs: Properly recognize
