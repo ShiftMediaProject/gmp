@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-26  Niels Möller  <nisse@harpo.hack.org>
+
+	* mpn/generic/hgcd.c (mpn_hgcd2_fix): Deleted duplicate definition
+	(the function belongs to hgcd2.c).
+
 2003-11-26  Torbjorn Granlund  <tege@swox.com>
 
 	* tests/mpz/t-gcd.c: Generate random operands up to 32767 bits;
@@ -32,7 +37,8 @@ MA 02111-1307, USA.
 	* mpn/generic/hgcd.c, mpn/generic/hgcd2.c, mpn/generic/qstack.c:
 	Adapted to name changes.
 
-	* tests/mpz/t-gcd.c: ...
+	* tests/mpz/t-gcd.c (main): Added some tests with non-random
+	input.
 
 2003-11-25  Niels Möller  <nisse@harpo.hack.org>
 

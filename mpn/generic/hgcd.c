@@ -1,4 +1,3 @@
-#if 0
 /* hgcd.c.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL WITH MUTABLE INTERFACES.  IT IS ONLY
@@ -391,49 +390,6 @@ hgcd2_mul (struct hgcd_row *P, mp_size_t alloc,
 }
 
 mp_size_t
-mpn_hgcd2_fix (mp_ptr rp, mp_size_t ralloc,
-	       int sign,
-	       mp_limb_t u, mp_srcptr ap, mp_size_t asize,
-	       mp_limb_t v, mp_srcptr bp, mp_size_t bsize)
-{
-  mp_size_t rsize;
-  mp_limb_t cy;
-
-  if (sign < 0)
-    {
-      MP_LIMB_T_SWAP (u,v);
-      MPN_SRCPTR_SWAP (ap, asize, bp, bsize);
-    }
-
-  ASSERT (u > 0);
-
-  ASSERT (asize <= ralloc);
-  rsize = asize;
-  cy = mpn_mul_1 (rp, ap, asize, u);
-  if (cy)
-    {
-      ASSERT (rsize < ralloc);
-      rp[rsize++] = cy;
-    }
-
-  if (v > 0)
-    {
-      ASSERT (bsize <= rsize);
-      cy = mpn_submul_1 (rp, bp, bsize, v);
-      if (cy)
-	{
-	  ASSERT (bsize < rsize);
-	  ASSERT_NOCARRY (mpn_sub_1 (rp + bsize,
-				   rp + bsize, rsize - bsize, cy));
-	}
-
-      MPN_NORMALIZE (rp, rsize);
-    }
-  return rsize;
-}
-
-
-mp_size_t
 mpn_hgcd_init_itch (mp_size_t size)
 {
   /* r0 <= a, r1, r2, r3 <= b, but for simplicity, we allocate asize +
@@ -446,8 +402,8 @@ mpn_hgcd_init_itch (mp_size_t size)
 
 void
 mpn_hgcd_init (struct hgcd *hgcd,
-	   mp_size_t asize,
-	   mp_limb_t *limbs)
+	       mp_size_t asize,
+	       mp_limb_t *limbs)
 {
   unsigned i;
   unsigned j;
@@ -2144,4 +2100,3 @@ mpn_hgcd_equal (const struct hgcd *A, const struct hgcd *B)
 
   return 1;
 }
-#endif
