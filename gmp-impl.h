@@ -277,9 +277,9 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 
 
 /* ASSERT() is a private assertion checking scheme, similar to <assert.h>.
-   ASSERT() does the check only if DEBUG is selected, ASSERT_ALWAYS() does
-   it always.  Generally assertions are meant for development, but might
-   help when looking for a problem later too.
+   ASSERT() does the check only if WANT_ASSERT is selected, ASSERT_ALWAYS()
+   does it always.  Generally assertions are meant for development, but
+   might help when looking for a problem later too.
 
    ASSERT_NOCARRY() uses ASSERT() to check the expression is zero, but if
    assertion checking is disabled, the expression is still evaluated.  This
@@ -308,7 +308,7 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 
 #define ASSERT_ALWAYS(expr) ((expr) ? 0 : ASSERT_FAIL (expr))
 
-#if DEBUG
+#if WANT_ASSERT
 #define ASSERT(expr)           ASSERT_ALWAYS (expr)
 #define ASSERT_NOCARRY(expr)   ASSERT_ALWAYS ((expr) == 0)
 #else
