@@ -123,38 +123,37 @@ case "$target" in
   [ultrasparc*-*-solaris2.[7-9] | sparcv9-*-solaris2.[7-9]])
     os_64bit=yes
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
-    gmp_optcflags_gcc="-mcpu=v9"
-    gmp_cflags64_gcc="$gmp_cflags_gcc -Wa,-xarch=v9"
-    gmp_optcflags64_gcc="-mcpu=v9"
+    gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
+    gmp_cflags64_gcc="$gmp_cflags_gcc -Wa,-xarch=v9 -mcpu=v9"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     gmp_cflags64_cc="-xtarget=native -xarch=v9 -xO4"
     ;;
   ultrasparc*-*-* | sparcv9-*-*)
     gmp_cflags_gcc="$gmp_cflags_gcc -Wa,-xarch=v8plus"
-    gmp_optcflags_gcc="-mcpu=v9"
+    gmp_xoptcflags_gcc="-mcpu=v9 -mcpu=v8 -mv8"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
   sparcv8*-*-solaris2.* | microsparc*-*-solaris2.*)
     gmp_cflags_gcc="$gmp_cflags_gcc"
-    gmp_optcflags_gcc="-mcpu=v8"
+    gmp_xoptcflags_gcc="-mcpu=v8 -mv8"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4"
     ;;
   sparcv8*-*-* | microsparc*-*-*)		# SunOS, Linux, *BSD
     cclist="gcc acc cc"
     gmp_cflags_gcc="$gmp_cflags_gcc"
-    gmp_optcflags_gcc="-mcpu=v8"
+    gmp_xoptcflags_gcc="-mcpu=v8 -mv8"
     gmp_cflags_acc="-g -O2 -cg92"
     gmp_cflags_cc="-O2"		# FIXME: Flag for v8?
     ;;
   supersparc*-*-solaris2.*)
     gmp_cflags_gcc="$gmp_cflags_gcc -DSUPERSPARC"
-    gmp_optcflags_gcc="-mcpu=v8"
+    gmp_xoptcflags_gcc="-mcpu=v8 -mv8"
     gmp_cflags_cc="-xtarget=native -xarch=v8 -xO4 -DSUPERSPARC"
     ;;
   supersparc*-*-*)		# SunOS, Linux, *BSD
     cclist="gcc acc cc"
     gmp_cflags_gcc="$gmp_cflags_gcc -DSUPERSPARC"
-    gmp_optcflags_gcc="-mcpu=v8"
+    gmp_xoptcflags_gcc="-mcpu=v8 -mv8"
     gmp_cflags_acc="-g -O2 -cg92 -DSUPERSPARC"
     gmp_cflags_cc="-O2 -DSUPERSPARC"	# FIXME: Flag for v8?
     ;;
@@ -249,9 +248,11 @@ case "$target" in
                 # removed -march=pentiumpro, see i686 above for details
 esac
 
+# Save CFLAGS given on command line.
+gmp_user_CFLAGS="$CFLAGS"
+
 if test -z "$CC"; then
   # Find compiler.
-  dnl  NOTE: This is our own [AC_PROG_CC].  See acinclude.m4.
   GMP_PROG_CC_FIND($cclist, $os_64bit)
 
   # If 64-bit OS and we have a 64-bit compiler, use it.
@@ -263,6 +264,7 @@ if test -z "$CC"; then
   fi
 
   # Try compiler flags that may work with only some compiler versions.
+  # gmp_optcflags: All or nothing.
   eval optcflags=\$gmp_optcflags_$CC
   if test -n "$optcflags"; then
     CFLAGS_save="$CFLAGS"
@@ -277,7 +279,37 @@ if test -z "$CC"; then
       CFLAGS="$CFLAGS_save"
     fi
   fi
+  # gmp_xoptcflags: First is best, one has to work.
+  eval xoptcflags=\$gmp_xoptcflags_$CC
+  if test -n "$xoptcflags"; then
+    gmp_found="no"
+    for xopt in $xoptcflags; do
+      CFLAGS_save="$CFLAGS"
+      CFLAGS="$CFLAGS $xopt"
+      AC_MSG_CHECKING([whether $CC accepts $xopt])
+      AC_LANG_C
+      AC_TRY_COMPILER([int main(){return(0);}], optok, cross)
+      if test "$optok" = "yes"; then
+        AC_MSG_RESULT([yes])
+        gmp_found="yes"
+        break
+      else
+        AC_MSG_RESULT([no])
+        CFLAGS="$CFLAGS_save"
+      fi
+    done
+    if test "$gmp_found" = "no"; then
+      echo ["$0: fatal: need a compiler that understands one of $xoptcflags"]
+      exit 1
+    fi
+  fi
 fi
+
+# Restore CFLAGS given on command line.
+# FIXME: We've run through quite some unnecessary code looking for a
+# nice compiler and working flags for it, just to spoil that with user
+# supplied flags.
+test -n "$gmp_user_CFLAGS" && CFLAGS="$gmp_user_CFLAGS"
 
 # Select chosen compiler.
 GMP_PROG_CC_SELECT
@@ -563,6 +595,9 @@ case "${target}" in
   m680[234]0*-*-* | m68k*-*-*)
     syntax=mit
     ;;
+  *-*-cygwin*)		# x86-cygwin kludge
+    syntax=cygwin
+    ;;
 esac
 changequote([,])dnl
 
@@ -579,7 +614,18 @@ case "${family}-${underscore}-${asm_align}-${syntax}" in
     echo '#define ELF_SYNTAX' >asm-syntax.h
     echo '#define C_SYMBOL_NAME(name) name' >>asm-syntax.h
     echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h;;
-  x86-yes-nolog-*)	# FIXME: For x86-cygwin
+  x86-yes-nolog-cygwin)		# x86-cygwin kludge.
+    # Select BSD_SYNTAX to avoid .type/.size in PROLOGUE.
+    echo '#define BSD_SYNTAX' 			 >asm-syntax.h
+    cat $srcdir/mpn/underscore.h 		 >>asm-syntax.h
+    echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h
+    # KLUDGE: Override ALIGN definition.
+    echo '#ifdef ALIGN' 			 >>asm-syntax.h
+    echo '#undef ALIGN' 			 >>asm-syntax.h
+    echo '#endif'        			 >>asm-syntax.h
+    echo '#define ALIGN(log) .align 1<<(log)' 	 >>asm-syntax.h
+    ;;
+  x86-yes-nolog-*)	# FIXME: Anyone using this?
     echo '#define ELF_SYNTAX' >asm-syntax.h
     cat $srcdir/mpn/underscore.h >>asm-syntax.h
     echo '#include "'$srcdir'/mpn/x86/syntax.h"' >>asm-syntax.h
