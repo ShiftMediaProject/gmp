@@ -1,3 +1,44 @@
+2001-06-12  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/divrem_1.asm: Amend some comments about P5 speed.
+
+	* tune/README: Clarify reconfigure on gmp-mparam.h update.
+
+	* mpn/x86/p6/copyd.asm: New file.
+	* mpn/x86/p6/README: Update copyd and mod_1.
+	* mpn/x86/copyd.asm: Amend some comments.
+
+	* gmp-impl.h (__builtin_constant_p): Add dummy for non-gcc.
+	(mpn_incr_u, mpn_decr_u): Recognise incr==1 at compile time in the
+	generic code on gcc.
+
+	* gmp-impl.h (ASSERT_ZERO_P, ASSERT_MPN_NONZERO_P): New macros.
+	* mpn/generic/gcd_1.c, mpn/generic/mul_fft.c: Use them.
+	* mpz/get_d.c: Add a private mpn_zero_p.
+	* mpfr/trunc.c: Use own mpn_zero_p.
+	* tune/speed.h (SPEED_ROUTINE_MPN_GCD_1N): Use refmpn_zero_p.
+	* gmp-impl.h (mpn_zero_p): Remove, no longer needed.
+
+	* gmp-h.in, gmp-impl.h: Move MPN_CMP to gmp.h as __GMPN_CMP, leave an
+	MPN_CMP alias in gmp-impl.h.
+	* gmp-h.in (mpn_cmp): Add an inline version.
+	* mpn/generic/cmp.c: Use __GMP_FORCE_mpn_cmp to get code from gmp.h.
+
+	* acinclude.m4 (GMP_C_ATTRIBUTE_MODE): New macro.
+	* configure.in: Call it.
+	* gmp-impl.h (SItype etc): Use it.
+
+	* randraw.c (lc): Change mpn_mul_basecase->mpn_mul,
+	mpn_incr_u->MPN_INCR_U, abort->ASSERT_ALWAYS(0).
+
+	* longlong.h (count_leading_zeros) [pentiumpro]: Work around a partial
+	register stall on gcc < 3.
+
+	* gmp.texi (Introduction to GMP): Add IA-64.
+	(Notes for Particular Systems): i386 means generic x86.
+
+	* tests/t-modlinv.c: Use tests_start and tests_end.
+
 2001-06-10  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Number Theoretic Functions): mpz_jacobi only defined for b
