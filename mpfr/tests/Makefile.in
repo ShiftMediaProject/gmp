@@ -197,15 +197,22 @@ target_alias = @target_alias@
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mpfr
 
-LDADD = ../libmpfr.a $(top_builddir)/libgmp.la
+LDADD = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
+
+libfrtests_a_SOURCES = 
 
 @WANT_MPFR_TRUE@check_PROGRAMS = reuse tabs tadd tagm tcan_round tcmp tcmp2 tcmp_ui tdiv tdiv_ui tdump teq texp tget_str tlog tconst_log2 tmul tmul_2exp tmul_ui tout_str tconst_pi tpow trandom tround_prec tset_d tset_f tset_q tset_si tset_str tset_z tsqrt tsqrt_ui tui_div tui_sub tswap ttrunc trint tisnan tget_d tatan tcosh tsinh ttanh tacosh tasinh tatanh thyperbolic texp2 tfactorial tsub tasin tconst_euler tcos tsin ttan tsub_ui tset tlog1p texpm1 tlog2 tlog10 tui_pow tpow3 tadd_ui texceptions tfma thypot tacos
+@WANT_MPFR_TRUE@check_LIBRARIES = libfrtests.a
 @WANT_MPFR_TRUE@TESTS = $(check_PROGRAMS)
 EXTRA_DIST = tgeneric.c
 subdir = mpfr/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
+libfrtests_a_AR = $(AR) cru
+libfrtests_a_LIBADD =
+am_libfrtests_a_OBJECTS =
+libfrtests_a_OBJECTS = $(am_libfrtests_a_OBJECTS)
 @WANT_MPFR_TRUE@check_PROGRAMS = reuse$(EXEEXT) tabs$(EXEEXT) \
 @WANT_MPFR_TRUE@	tadd$(EXEEXT) tagm$(EXEEXT) tcan_round$(EXEEXT) \
 @WANT_MPFR_TRUE@	tcmp$(EXEEXT) tcmp2$(EXEEXT) tcmp_ui$(EXEEXT) \
@@ -238,342 +245,379 @@ CONFIG_CLEAN_FILES =
 reuse_SOURCES = reuse.c
 reuse_OBJECTS = reuse$U.$(OBJEXT)
 reuse_LDADD = $(LDADD)
-reuse_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+reuse_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 reuse_LDFLAGS =
 tabs_SOURCES = tabs.c
 tabs_OBJECTS = tabs$U.$(OBJEXT)
 tabs_LDADD = $(LDADD)
-tabs_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tabs_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tabs_LDFLAGS =
 tacos_SOURCES = tacos.c
 tacos_OBJECTS = tacos$U.$(OBJEXT)
 tacos_LDADD = $(LDADD)
-tacos_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tacos_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tacos_LDFLAGS =
 tacosh_SOURCES = tacosh.c
 tacosh_OBJECTS = tacosh$U.$(OBJEXT)
 tacosh_LDADD = $(LDADD)
-tacosh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tacosh_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tacosh_LDFLAGS =
 tadd_SOURCES = tadd.c
 tadd_OBJECTS = tadd$U.$(OBJEXT)
 tadd_LDADD = $(LDADD)
-tadd_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tadd_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tadd_LDFLAGS =
 tadd_ui_SOURCES = tadd_ui.c
 tadd_ui_OBJECTS = tadd_ui$U.$(OBJEXT)
 tadd_ui_LDADD = $(LDADD)
-tadd_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tadd_ui_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tadd_ui_LDFLAGS =
 tagm_SOURCES = tagm.c
 tagm_OBJECTS = tagm$U.$(OBJEXT)
 tagm_LDADD = $(LDADD)
-tagm_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tagm_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tagm_LDFLAGS =
 tasin_SOURCES = tasin.c
 tasin_OBJECTS = tasin$U.$(OBJEXT)
 tasin_LDADD = $(LDADD)
-tasin_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tasin_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tasin_LDFLAGS =
 tasinh_SOURCES = tasinh.c
 tasinh_OBJECTS = tasinh$U.$(OBJEXT)
 tasinh_LDADD = $(LDADD)
-tasinh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tasinh_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tasinh_LDFLAGS =
 tatan_SOURCES = tatan.c
 tatan_OBJECTS = tatan$U.$(OBJEXT)
 tatan_LDADD = $(LDADD)
-tatan_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tatan_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tatan_LDFLAGS =
 tatanh_SOURCES = tatanh.c
 tatanh_OBJECTS = tatanh$U.$(OBJEXT)
 tatanh_LDADD = $(LDADD)
-tatanh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tatanh_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tatanh_LDFLAGS =
 tcan_round_SOURCES = tcan_round.c
 tcan_round_OBJECTS = tcan_round$U.$(OBJEXT)
 tcan_round_LDADD = $(LDADD)
-tcan_round_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tcan_round_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tcan_round_LDFLAGS =
 tcmp_SOURCES = tcmp.c
 tcmp_OBJECTS = tcmp$U.$(OBJEXT)
 tcmp_LDADD = $(LDADD)
-tcmp_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tcmp_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tcmp_LDFLAGS =
 tcmp2_SOURCES = tcmp2.c
 tcmp2_OBJECTS = tcmp2$U.$(OBJEXT)
 tcmp2_LDADD = $(LDADD)
-tcmp2_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tcmp2_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tcmp2_LDFLAGS =
 tcmp_ui_SOURCES = tcmp_ui.c
 tcmp_ui_OBJECTS = tcmp_ui$U.$(OBJEXT)
 tcmp_ui_LDADD = $(LDADD)
-tcmp_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tcmp_ui_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tcmp_ui_LDFLAGS =
 tconst_euler_SOURCES = tconst_euler.c
 tconst_euler_OBJECTS = tconst_euler$U.$(OBJEXT)
 tconst_euler_LDADD = $(LDADD)
-tconst_euler_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tconst_euler_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tconst_euler_LDFLAGS =
 tconst_log2_SOURCES = tconst_log2.c
 tconst_log2_OBJECTS = tconst_log2$U.$(OBJEXT)
 tconst_log2_LDADD = $(LDADD)
-tconst_log2_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tconst_log2_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tconst_log2_LDFLAGS =
 tconst_pi_SOURCES = tconst_pi.c
 tconst_pi_OBJECTS = tconst_pi$U.$(OBJEXT)
 tconst_pi_LDADD = $(LDADD)
-tconst_pi_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tconst_pi_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tconst_pi_LDFLAGS =
 tcos_SOURCES = tcos.c
 tcos_OBJECTS = tcos$U.$(OBJEXT)
 tcos_LDADD = $(LDADD)
-tcos_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tcos_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tcos_LDFLAGS =
 tcosh_SOURCES = tcosh.c
 tcosh_OBJECTS = tcosh$U.$(OBJEXT)
 tcosh_LDADD = $(LDADD)
-tcosh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tcosh_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tcosh_LDFLAGS =
 tdiv_SOURCES = tdiv.c
 tdiv_OBJECTS = tdiv$U.$(OBJEXT)
 tdiv_LDADD = $(LDADD)
-tdiv_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tdiv_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tdiv_LDFLAGS =
 tdiv_ui_SOURCES = tdiv_ui.c
 tdiv_ui_OBJECTS = tdiv_ui$U.$(OBJEXT)
 tdiv_ui_LDADD = $(LDADD)
-tdiv_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tdiv_ui_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tdiv_ui_LDFLAGS =
 tdump_SOURCES = tdump.c
 tdump_OBJECTS = tdump$U.$(OBJEXT)
 tdump_LDADD = $(LDADD)
-tdump_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tdump_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tdump_LDFLAGS =
 teq_SOURCES = teq.c
 teq_OBJECTS = teq$U.$(OBJEXT)
 teq_LDADD = $(LDADD)
-teq_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+teq_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 teq_LDFLAGS =
 texceptions_SOURCES = texceptions.c
 texceptions_OBJECTS = texceptions$U.$(OBJEXT)
 texceptions_LDADD = $(LDADD)
-texceptions_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+texceptions_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 texceptions_LDFLAGS =
 texp_SOURCES = texp.c
 texp_OBJECTS = texp$U.$(OBJEXT)
 texp_LDADD = $(LDADD)
-texp_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+texp_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 texp_LDFLAGS =
 texp2_SOURCES = texp2.c
 texp2_OBJECTS = texp2$U.$(OBJEXT)
 texp2_LDADD = $(LDADD)
-texp2_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+texp2_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 texp2_LDFLAGS =
 texpm1_SOURCES = texpm1.c
 texpm1_OBJECTS = texpm1$U.$(OBJEXT)
 texpm1_LDADD = $(LDADD)
-texpm1_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+texpm1_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 texpm1_LDFLAGS =
 tfactorial_SOURCES = tfactorial.c
 tfactorial_OBJECTS = tfactorial$U.$(OBJEXT)
 tfactorial_LDADD = $(LDADD)
-tfactorial_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tfactorial_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tfactorial_LDFLAGS =
 tfma_SOURCES = tfma.c
 tfma_OBJECTS = tfma$U.$(OBJEXT)
 tfma_LDADD = $(LDADD)
-tfma_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tfma_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tfma_LDFLAGS =
 tget_d_SOURCES = tget_d.c
 tget_d_OBJECTS = tget_d$U.$(OBJEXT)
 tget_d_LDADD = $(LDADD)
-tget_d_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tget_d_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tget_d_LDFLAGS =
 tget_str_SOURCES = tget_str.c
 tget_str_OBJECTS = tget_str$U.$(OBJEXT)
 tget_str_LDADD = $(LDADD)
-tget_str_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tget_str_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tget_str_LDFLAGS =
 thyperbolic_SOURCES = thyperbolic.c
 thyperbolic_OBJECTS = thyperbolic$U.$(OBJEXT)
 thyperbolic_LDADD = $(LDADD)
-thyperbolic_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+thyperbolic_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 thyperbolic_LDFLAGS =
 thypot_SOURCES = thypot.c
 thypot_OBJECTS = thypot$U.$(OBJEXT)
 thypot_LDADD = $(LDADD)
-thypot_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+thypot_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 thypot_LDFLAGS =
 tisnan_SOURCES = tisnan.c
 tisnan_OBJECTS = tisnan$U.$(OBJEXT)
 tisnan_LDADD = $(LDADD)
-tisnan_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tisnan_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tisnan_LDFLAGS =
 tlog_SOURCES = tlog.c
 tlog_OBJECTS = tlog$U.$(OBJEXT)
 tlog_LDADD = $(LDADD)
-tlog_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tlog_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tlog_LDFLAGS =
 tlog10_SOURCES = tlog10.c
 tlog10_OBJECTS = tlog10$U.$(OBJEXT)
 tlog10_LDADD = $(LDADD)
-tlog10_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tlog10_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tlog10_LDFLAGS =
 tlog1p_SOURCES = tlog1p.c
 tlog1p_OBJECTS = tlog1p$U.$(OBJEXT)
 tlog1p_LDADD = $(LDADD)
-tlog1p_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tlog1p_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tlog1p_LDFLAGS =
 tlog2_SOURCES = tlog2.c
 tlog2_OBJECTS = tlog2$U.$(OBJEXT)
 tlog2_LDADD = $(LDADD)
-tlog2_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tlog2_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tlog2_LDFLAGS =
 tmul_SOURCES = tmul.c
 tmul_OBJECTS = tmul$U.$(OBJEXT)
 tmul_LDADD = $(LDADD)
-tmul_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tmul_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tmul_LDFLAGS =
 tmul_2exp_SOURCES = tmul_2exp.c
 tmul_2exp_OBJECTS = tmul_2exp$U.$(OBJEXT)
 tmul_2exp_LDADD = $(LDADD)
-tmul_2exp_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tmul_2exp_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tmul_2exp_LDFLAGS =
 tmul_ui_SOURCES = tmul_ui.c
 tmul_ui_OBJECTS = tmul_ui$U.$(OBJEXT)
 tmul_ui_LDADD = $(LDADD)
-tmul_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tmul_ui_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tmul_ui_LDFLAGS =
 tout_str_SOURCES = tout_str.c
 tout_str_OBJECTS = tout_str$U.$(OBJEXT)
 tout_str_LDADD = $(LDADD)
-tout_str_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tout_str_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tout_str_LDFLAGS =
 tpow_SOURCES = tpow.c
 tpow_OBJECTS = tpow$U.$(OBJEXT)
 tpow_LDADD = $(LDADD)
-tpow_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tpow_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tpow_LDFLAGS =
 tpow3_SOURCES = tpow3.c
 tpow3_OBJECTS = tpow3$U.$(OBJEXT)
 tpow3_LDADD = $(LDADD)
-tpow3_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tpow3_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tpow3_LDFLAGS =
 trandom_SOURCES = trandom.c
 trandom_OBJECTS = trandom$U.$(OBJEXT)
 trandom_LDADD = $(LDADD)
-trandom_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+trandom_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 trandom_LDFLAGS =
 trint_SOURCES = trint.c
 trint_OBJECTS = trint$U.$(OBJEXT)
 trint_LDADD = $(LDADD)
-trint_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+trint_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 trint_LDFLAGS =
 tround_prec_SOURCES = tround_prec.c
 tround_prec_OBJECTS = tround_prec$U.$(OBJEXT)
 tround_prec_LDADD = $(LDADD)
-tround_prec_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tround_prec_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tround_prec_LDFLAGS =
 tset_SOURCES = tset.c
 tset_OBJECTS = tset$U.$(OBJEXT)
 tset_LDADD = $(LDADD)
-tset_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tset_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tset_LDFLAGS =
 tset_d_SOURCES = tset_d.c
 tset_d_OBJECTS = tset_d$U.$(OBJEXT)
 tset_d_LDADD = $(LDADD)
-tset_d_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tset_d_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tset_d_LDFLAGS =
 tset_f_SOURCES = tset_f.c
 tset_f_OBJECTS = tset_f$U.$(OBJEXT)
 tset_f_LDADD = $(LDADD)
-tset_f_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tset_f_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tset_f_LDFLAGS =
 tset_q_SOURCES = tset_q.c
 tset_q_OBJECTS = tset_q$U.$(OBJEXT)
 tset_q_LDADD = $(LDADD)
-tset_q_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tset_q_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tset_q_LDFLAGS =
 tset_si_SOURCES = tset_si.c
 tset_si_OBJECTS = tset_si$U.$(OBJEXT)
 tset_si_LDADD = $(LDADD)
-tset_si_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tset_si_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tset_si_LDFLAGS =
 tset_str_SOURCES = tset_str.c
 tset_str_OBJECTS = tset_str$U.$(OBJEXT)
 tset_str_LDADD = $(LDADD)
-tset_str_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tset_str_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tset_str_LDFLAGS =
 tset_z_SOURCES = tset_z.c
 tset_z_OBJECTS = tset_z$U.$(OBJEXT)
 tset_z_LDADD = $(LDADD)
-tset_z_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tset_z_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tset_z_LDFLAGS =
 tsin_SOURCES = tsin.c
 tsin_OBJECTS = tsin$U.$(OBJEXT)
 tsin_LDADD = $(LDADD)
-tsin_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tsin_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tsin_LDFLAGS =
 tsinh_SOURCES = tsinh.c
 tsinh_OBJECTS = tsinh$U.$(OBJEXT)
 tsinh_LDADD = $(LDADD)
-tsinh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tsinh_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tsinh_LDFLAGS =
 tsqrt_SOURCES = tsqrt.c
 tsqrt_OBJECTS = tsqrt$U.$(OBJEXT)
 tsqrt_LDADD = $(LDADD)
-tsqrt_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tsqrt_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tsqrt_LDFLAGS =
 tsqrt_ui_SOURCES = tsqrt_ui.c
 tsqrt_ui_OBJECTS = tsqrt_ui$U.$(OBJEXT)
 tsqrt_ui_LDADD = $(LDADD)
-tsqrt_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tsqrt_ui_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tsqrt_ui_LDFLAGS =
 tsub_SOURCES = tsub.c
 tsub_OBJECTS = tsub$U.$(OBJEXT)
 tsub_LDADD = $(LDADD)
-tsub_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tsub_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tsub_LDFLAGS =
 tsub_ui_SOURCES = tsub_ui.c
 tsub_ui_OBJECTS = tsub_ui$U.$(OBJEXT)
 tsub_ui_LDADD = $(LDADD)
-tsub_ui_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tsub_ui_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tsub_ui_LDFLAGS =
 tswap_SOURCES = tswap.c
 tswap_OBJECTS = tswap$U.$(OBJEXT)
 tswap_LDADD = $(LDADD)
-tswap_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tswap_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 tswap_LDFLAGS =
 ttan_SOURCES = ttan.c
 ttan_OBJECTS = ttan$U.$(OBJEXT)
 ttan_LDADD = $(LDADD)
-ttan_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+ttan_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 ttan_LDFLAGS =
 ttanh_SOURCES = ttanh.c
 ttanh_OBJECTS = ttanh$U.$(OBJEXT)
 ttanh_LDADD = $(LDADD)
-ttanh_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+ttanh_DEPENDENCIES = libfrtests.a ../libmpfr.a $(top_builddir)/libgmp.la
 ttanh_LDFLAGS =
 ttrunc_SOURCES = ttrunc.c
 ttrunc_OBJECTS = ttrunc$U.$(OBJEXT)
 ttrunc_LDADD = $(LDADD)
-ttrunc_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+ttrunc_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 ttrunc_LDFLAGS =
 tui_div_SOURCES = tui_div.c
 tui_div_OBJECTS = tui_div$U.$(OBJEXT)
 tui_div_LDADD = $(LDADD)
-tui_div_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tui_div_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tui_div_LDFLAGS =
 tui_pow_SOURCES = tui_pow.c
 tui_pow_OBJECTS = tui_pow$U.$(OBJEXT)
 tui_pow_LDADD = $(LDADD)
-tui_pow_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tui_pow_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tui_pow_LDFLAGS =
 tui_sub_SOURCES = tui_sub.c
 tui_sub_OBJECTS = tui_sub$U.$(OBJEXT)
 tui_sub_LDADD = $(LDADD)
-tui_sub_DEPENDENCIES = ../libmpfr.a $(top_builddir)/libgmp.la
+tui_sub_DEPENDENCIES = libfrtests.a ../libmpfr.a \
+	$(top_builddir)/libgmp.la
 tui_sub_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -586,19 +630,20 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = reuse.c tabs.c tacos.c tacosh.c tadd.c tadd_ui.c tagm.c \
-	tasin.c tasinh.c tatan.c tatanh.c tcan_round.c tcmp.c tcmp2.c \
-	tcmp_ui.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c \
-	tcosh.c tdiv.c tdiv_ui.c tdump.c teq.c texceptions.c texp.c \
-	texp2.c texpm1.c tfactorial.c tfma.c tget_d.c tget_str.c \
-	thyperbolic.c thypot.c tisnan.c tlog.c tlog10.c tlog1p.c \
-	tlog2.c tmul.c tmul_2exp.c tmul_ui.c tout_str.c tpow.c tpow3.c \
-	trandom.c trint.c tround_prec.c tset.c tset_d.c tset_f.c \
-	tset_q.c tset_si.c tset_str.c tset_z.c tsin.c tsinh.c tsqrt.c \
-	tsqrt_ui.c tsub.c tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c \
-	tui_div.c tui_pow.c tui_sub.c
+DIST_SOURCES = $(libfrtests_a_SOURCES) reuse.c tabs.c tacos.c tacosh.c \
+	tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c \
+	tcan_round.c tcmp.c tcmp2.c tcmp_ui.c tconst_euler.c \
+	tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c tdiv_ui.c \
+	tdump.c teq.c texceptions.c texp.c texp2.c texpm1.c \
+	tfactorial.c tfma.c tget_d.c tget_str.c thyperbolic.c thypot.c \
+	tisnan.c tlog.c tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c \
+	tmul_ui.c tout_str.c tpow.c tpow3.c trandom.c trint.c \
+	tround_prec.c tset.c tset_d.c tset_f.c tset_q.c tset_si.c \
+	tset_str.c tset_z.c tsin.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c \
+	tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c \
+	tui_sub.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = reuse.c tabs.c tacos.c tacosh.c tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c tcan_round.c tcmp.c tcmp2.c tcmp_ui.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c tdiv_ui.c tdump.c teq.c texceptions.c texp.c texp2.c texpm1.c tfactorial.c tfma.c tget_d.c tget_str.c thyperbolic.c thypot.c tisnan.c tlog.c tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c tmul_ui.c tout_str.c tpow.c tpow3.c trandom.c trint.c tround_prec.c tset.c tset_d.c tset_f.c tset_q.c tset_si.c tset_str.c tset_z.c tsin.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c tui_sub.c
+SOURCES = $(libfrtests_a_SOURCES) reuse.c tabs.c tacos.c tacosh.c tadd.c tadd_ui.c tagm.c tasin.c tasinh.c tatan.c tatanh.c tcan_round.c tcmp.c tcmp2.c tcmp_ui.c tconst_euler.c tconst_log2.c tconst_pi.c tcos.c tcosh.c tdiv.c tdiv_ui.c tdump.c teq.c texceptions.c texp.c texp2.c texpm1.c tfactorial.c tfma.c tget_d.c tget_str.c thyperbolic.c thypot.c tisnan.c tlog.c tlog10.c tlog1p.c tlog2.c tmul.c tmul_2exp.c tmul_ui.c tout_str.c tpow.c tpow3.c trandom.c trint.c tround_prec.c tset.c tset_d.c tset_f.c tset_q.c tset_si.c tset_str.c tset_z.c tsin.c tsinh.c tsqrt.c tsqrt_ui.c tsub.c tsub_ui.c tswap.c ttan.c ttanh.c ttrunc.c tui_div.c tui_pow.c tui_sub.c
 
 all: all-am
 
@@ -609,6 +654,13 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configu
 	  $(AUTOMAKE) --gnu  mpfr/tests/Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
+
+clean-checkLIBRARIES:
+	-test -z "$(check_LIBRARIES)" || rm -f $(check_LIBRARIES)
+libfrtests.a: $(libfrtests_a_OBJECTS) $(libfrtests_a_DEPENDENCIES) 
+	-rm -f libfrtests.a
+	$(libfrtests_a_AR) libfrtests.a $(libfrtests_a_OBJECTS) $(libfrtests_a_LIBADD)
+	$(RANLIB) libfrtests.a
 
 clean-checkPROGRAMS:
 	@list='$(check_PROGRAMS)'; for p in $$list; do \
@@ -1180,7 +1232,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) $(check_LIBRARIES) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 all-am: Makefile
@@ -1213,7 +1265,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-checkPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-checkLIBRARIES clean-checkPROGRAMS clean-generic \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-am
 
@@ -1258,16 +1311,16 @@ ps-am:
 uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
-	clean-checkPROGRAMS clean-generic clean-libtool ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am info info-am install \
-	install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-kr \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-info-am
+	clean-checkLIBRARIES clean-checkPROGRAMS clean-generic \
+	clean-libtool ctags distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-kr mostlyclean-libtool pdf \
+	pdf-am ps ps-am tags uninstall uninstall-am uninstall-info-am
 
 
 ../libmpfr.a:
