@@ -1,3 +1,23 @@
+2000-10-27  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Fibonacci Number Algorithm): New section.
+
+	* mpz/tests/t-fib_ui.c: New file.
+	* mpz/tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpz/fib_ui.c: Rewrite, same formulas but using mpn functions and
+	some lookup tables, much faster at small to moderate sizes.
+	* gmp-impl.h (MPZ_FIB_SIZE): New macro.
+	(FIB_THRESHOLD): Establish default here.
+	* tune/tuneup.c (FIB_THRESHOLD): Start search after the new table
+	data.
+
+	* mpn/x86/x86-defs.m4 (mcount_movl_GOT_ebx): Rename from movl_GOT_ebx,
+	and don't use GSYM_PREFIX with _GLOBAL_OFFSET_TABLE_.
+
+	* tune/freq.c (speed_cpu_frequency_measure): New test comparing
+	gettimeofday and speed_cyclecounter, should cover many systems.
+
 2000-10-27  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/gmp-mparam.h: Retune.
