@@ -732,9 +732,15 @@ main ()
 EOF
 
   if ($CC_FOR_BUILD ${dummy}1.s ${dummy}2.c -o $dummy) >/dev/null 2>&1; then
-    # suppress SIGILL message on 80386
+    # On 80386 and early 80486 cpuid is not available and will result in a
+    # SIGILL message, hence 2>/dev/null.
+    #
+    # On i386-unknown-freebsd4.9, "/bin/sh -c ./dummy" seems to send an
+    # "Illegal instruction (core dumped)" message to stdout, so we test $?
+    # to check if the program run was successful.
+    #
     x=`$SHELL -c ./$dummy 2>/dev/null`
-    if test -n "$x"; then
+    if test $? = 0 && test -n "$x"; then
       exact_cpu=$x
     fi
   fi
