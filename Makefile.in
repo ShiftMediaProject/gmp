@@ -336,8 +336,8 @@ DVIS = gmp.dvi
 TEXINFOS = gmp.texi
 DIST_COMMON =  README AUTHORS COPYING COPYING.LIB ChangeLog INSTALL \
 Makefile.am Makefile.in NEWS acconfig.h acinclude.m4 aclocal.m4 \
-config.guess config.sub configure configure.in install-sh ltconfig \
-ltmain.sh missing mkinstalldirs texinfo.tex
+config.guess config.sub configure configure.in depcomp install-sh \
+ltconfig ltmain.sh missing mkinstalldirs texinfo.tex
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
