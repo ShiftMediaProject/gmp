@@ -53,4 +53,40 @@ forloop(i,0,7, `deflit(`cr'i,i)')
 ')
 
 
+dnl  Usage: ASSERT(cond,instructions)
+dnl
+dnl  If WANT_ASSERT is 1, output the given instructions and expect the given
+dnl  flags condition to then be satisfied.  For example,
+dnl
+dnl         ASSERT(eq, `cmpwi r6, 123')
+dnl
+dnl  The instructions can be omitted to just assert a flags condition with
+dnl  no extra calculation.  For example,
+dnl
+dnl         ASSERT(ne)
+dnl
+dnl  The condition can be omitted to just output the given instructions when
+dnl  assertion checking is wanted.  For example,
+dnl
+dnl         ASSERT(, `mr r11, r0')
+dnl
+dnl  Using a zero word for an illegal instruction is probably not ideal,
+dnl  since it marks the beginning of a traceback table in the 64-bit ABI.
+dnl  But assertions are only for development, so it doesn't matter too much.
+
+define(ASSERT,
+m4_assert_numargs_range(1,2)
+`ifelse(WANT_ASSERT,1,
+	`C ASSERT
+	$2
+ifelse(`$1',,,
+`	b$1	L(ASSERT_ok`'ASSERT_counter)
+	W32	0	C assertion failed
+L(ASSERT_ok`'ASSERT_counter):
+define(`ASSERT_counter',incr(ASSERT_counter))
+')')')
+
+define(ASSERT_counter,1)
+
+
 divert
