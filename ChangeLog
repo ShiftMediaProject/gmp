@@ -1,3 +1,29 @@
+2000-10-15  Kevin Ryde  <kevin@swox.se>
+
+	* doc/configuration: Updates.
+
+	* demos/calc.y: Remove some comments.
+
+2000-10-14  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Parameter Conventions, Memory Management): New sections
+	split from "Variable Conventions".
+	(Efficiency, Debugging, Profiling): New sections in "GMP Basics".
+	(Reentrancy): Some rewording, add note on standard I/O.
+	(Build options): Add --enable-assert and --enable-profiling.
+
+	* configure.in (--enable-profiling): New option.
+	* acinclude.m4 (GMP_ASM_X86_MCOUNT): New macro, finding how to profile.
+	* mpn/x86/x86-defs.m4 (PROLOGUE_cpu, call_mcount): Profiling support.
+
+	* acinclude.m4, configure.in (GMP_ASM_*): Rename from GMP_CHECK_ASM_*,
+	to follow autoconf conventions.
+	
+	* configure.in: Run GMP_CHECK_ASM tests only if needed.
+	* acinclude.m4 (GMP_CHECK_ASM_MMX): Don't use GMP_CHECK_ASM_TEXT.
+
+	* mpn/x86/x86-defs.m4 (ASSERT): Allow no condition, to just emit code.
+
 2000-10-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpq/md_2exp.c: New file.
@@ -24,6 +50,7 @@
 	(Integer Logic and Bit Fiddling): Note bits are numbered from 0.
 
 	* INSTALL.autoconf: New file.
+	* Makefile.am (EXTRA_DIST): Add it.
 
 	* tune/Makefile.am, tune/tuneup.c, configure.in, gmp-impl.h: New
 	scheme for recompiled objects used by tune program.  Don't use
