@@ -1,3 +1,60 @@
+2000-05-14  Kevin Ryde  <kevin@swox.se>
+
+	* tune/speed.h: Run gcd functions on a set of data.
+
+	* mpn/tests/try.c: New file.
+	* mpn/tests/try.h: New file.
+	* mpn/tests/spinner.c: New file.
+	* mpn/tests/trace.c: New file.
+	* mpn/tests/x86call.asm: New file.
+	* mpn/tests/x86check.c: New file.
+	* mpn/tests/ref.c (refmpn_hamdist): Allow size==0;
+	(refmpn_gcd): New function, and other additions supporting it.
+	* mpn/tests/ref.h: More prototypes.
+	* mpn/tests/Makefile.am: Add try program, use ansi2knr.
+
+	* mpn/x86/k7/mmx/popham.asm: New file.
+	* mpn/x86/k6/mmx/popham.asm: New file.
+	* mpn/x86/k6/sqr_basecase.asm: Unroll the addmul, for approx 1.3x
+	speedup above 15 limbs.
+	* mpn/x86/k7/README: Update.
+	* mpn/x86/k6/README: Update, and add notes on plain K6 and pre-CXT
+	K6-2 problems.
+	* configure.in (k6*-*-*, athlon-*-*): Add popham.
+
+	* mpn/x86/pentium/diveby3.asm: New file.
+	* mpn/x86/pentium/README: Update.
+
+	* gmp.texi (Installing GMP): Add note on bad OpenBSD 2.6 m4.
+	(Reporting Bugs): Ask for config.m4 if asm file related.
+	(I/O of Rationals): New section, add mpq_out_str.
+	(References): Add url for on-line gcc manuals.
+	A few node and menu updates.
+
+	* INSTALL: Better command line argument checking for test progs.
+	Change MP -> GMP.
+
+	* configure.in (WANT_ASSERT, USE_STACK_ALLOC, HAVE_PENTIUM_RDTSC):
+	Put description here, not in acconfig.h.
+	(CALLING_CONVENTIONS_OBJS): New AC_SUBST (for mpn/tests/try).
+	(HAVE_CALLING_CONVENTIONS): New AM_CONDITIONAL.
+	(AC_CHECK_HEADERS): Add sys/time.h.
+	(AC_CHECK_FUNCS): Add getpagesize, setitimer.
+	(KARATSUBA_SQR_THRESHOLD): Strip trailing comments from the
+	#define when passing through to config.m4.
+	* acconfig.h (PACKAGE, VERSION, WANT_ASSERT, USE_STACK_ALLOC,
+	HAVE_PENTIUM_RDTSC): No need for #undefs, autoheader gets them
+	from configure.in.
+	
+	* acinclude.m4 (GMP_PROG_M4): Check for broken OpenBSD 2.6 m4
+	eval(), put messages into config.log.
+	* mpn/asm-defs.m4: Add notes and test for OpenBSD 2.6 m4.
+
+	* mpq/out_str.c: New file.
+	* mpq/Makefile.am (libmpq_la_SOURCES): Add it.
+	* Makefile.am (MPQ_OBJECTS): Ditto.
+	* gmp.h (mpq_out_str): New define and prototype.
+
 2000-05-12  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (CONFIG_TOP_SRCDIR): Fix to use $srcdir not
