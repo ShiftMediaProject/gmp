@@ -222,7 +222,7 @@ deflit(`FRAME',8)
 
 	movl	PARAM_DST, %edi
 
-	cld	C better safe than sorry, see mpn/x86/README.family
+	cld	C better safe than sorry, see mpn/x86/README
 
 	rep
 	stosl
