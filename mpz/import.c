@@ -58,7 +58,7 @@ mpz_import (mpz_ptr z, size_t count, int order,
      mask out the nail bits in the input data.  */
   if (nail == 0 && GMP_NAIL_BITS == 0)
     {
-      unsigned  align = ((unsigned long) (char *) data) data % sizeof (mp_limb_t);
+      unsigned  align = ((unsigned long) (char *) data) % sizeof (mp_limb_t);
 
       if (order == -1
           && size == sizeof (mp_limb_t)
