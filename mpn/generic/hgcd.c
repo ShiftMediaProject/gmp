@@ -649,10 +649,14 @@ hgcd_mul (struct hgcd_row *P, mp_size_t alloc,
   unsigned i;
   unsigned j;
 
-  mp_size_t psize = rsize + ssize;
+  mp_size_t psize;
   mp_limb_t h = 0;
   int grow = 0;
 
+  MPN_NORMALIZE (R[1].uvp[1], rsize);
+  ASSERT (S[1].uvp[1][ssize - 1] != 0);
+
+  psize = rsize + ssize;
   ASSERT (psize <= talloc);
 
   if (rsize >= ssize)
@@ -833,32 +837,31 @@ hgcd_update_r (struct hgcd_row *r, mp_srcptr qp, mp_size_t qsize)
   ASSERT (MPN_LESS_P (r2p, r0size, r1p, r1size));
 }
 
-/* Computes (u2, v2) = (u0, v0) + q (u1, v1)
-   Returns the size of the largest u,v element.
+/* Compute (u2, v2) = (u0, v0) + q (u1, v1)
+   Return the size of the largest u,v element.
    Caller must ensure that usize + qsize <= available storage */
 static mp_size_t
 hgcd_update_uv (struct hgcd_row *r, mp_size_t usize,
 		mp_srcptr qp, mp_size_t qsize)
 {
   unsigned i;
+  mp_size_t grow;
 
-  mp_size_t grow = 0;
+  ASSERT (r[1].uvp[1][usize - 1] != 0);
 
   /* Compute u2	 = u0 + q u1 */
 
   if (qsize == 0)
     {
       /* Represents a unit quotient */
-      for (i = 0; i < 2; i++)
-	{
-	  mp_limb_t cy;
-	  cy = mpn_add_n (r[2].uvp[i], r[0].uvp[i], r[1].uvp[i], usize);
-	  if (cy)
-	    {
-	      r[2].uvp[i][usize] = cy;
-	      grow = 1;
-	    }
-	}
+      mp_limb_t cy;
+
+      cy = mpn_add_n (r[2].uvp[0], r[0].uvp[0], r[1].uvp[0], usize);
+      r[2].uvp[0][usize] = cy;
+
+      cy = mpn_add_n (r[2].uvp[1], r[0].uvp[1], r[1].uvp[1], usize);
+      r[2].uvp[1][usize] = cy;
+      grow = cy;
     }
   else if (qsize == 1)
     {
@@ -875,16 +878,12 @@ hgcd_update_uv (struct hgcd_row *r, mp_size_t usize,
 	  cy = mpn_mul_1 (u2p, u1p, usize, q);
 	  cy += mpn_add_n (u2p, u2p, u0p, usize);
 
-	  if (cy)
-	    {
-	      u2p[usize] = cy;
-	      grow = 1;
-	    }
+	  u2p[usize] = cy;
+	  grow = cy != 0;
 	}
     }
   else
     {
-      grow = qsize - 1;
       for (i = 0; i < 2; i++)
 	{
 	  mp_srcptr u0p = r[0].uvp[i];
@@ -897,8 +896,7 @@ hgcd_update_uv (struct hgcd_row *r, mp_size_t usize,
 	    mpn_mul (u2p, qp, qsize, u1p, usize);
 
 	  ASSERT_NOCARRY (mpn_add (u2p, u2p, usize + qsize, u0p, usize));
-	  if (u2p[usize + qsize - 1])
-	    grow = qsize;
+	  grow = qsize - ((u2p[usize + qsize - 1]) == 0);
 	}
     }
 
@@ -907,6 +905,7 @@ hgcd_update_uv (struct hgcd_row *r, mp_size_t usize,
   /* The values should be allocated with one limb margin */
   ASSERT (mpn_cmp (r[1].uvp[0], r[2].uvp[0], usize) <= 0);
   ASSERT (mpn_cmp (r[1].uvp[1], r[2].uvp[1], usize) <= 0);
+  ASSERT (r[2].uvp[1][usize - 1] != 0);
 
   return usize;
 }
@@ -1051,11 +1050,11 @@ hgcd_normalize (struct hgcd *hgcd)
       hgcd->row[0].uvp[0][size] = 0;
       hgcd->row[0].uvp[1][size] = 0;
 
-      ASSERT (hgcd->row[1].uvp[0][size]);
-      ASSERT (hgcd->row[1].uvp[1][size]);
-      ASSERT (hgcd->row[2].uvp[0][size]);
-      ASSERT (hgcd->row[2].uvp[1][size]);
-      ASSERT (hgcd->row[3].uvp[0][size]);
+      ASSERT (hgcd->row[1].uvp[0][size] == 0);
+      ASSERT (hgcd->row[1].uvp[1][size] == 0);
+      ASSERT (hgcd->row[2].uvp[0][size] == 0);
+      ASSERT (hgcd->row[2].uvp[1][size] == 0);
+      ASSERT (hgcd->row[3].uvp[0][size] == 0);
     }
 
   hgcd->size = size;
@@ -1181,18 +1180,15 @@ hgcd_jebelean (const struct hgcd *hgcd, mp_size_t M,
   ASSERT (MPN_LESS_P (hgcd->row[3].rp, hgcd->row[3].rsize,
 		      hgcd->row[2].rp, hgcd->row[2].rsize));
 
-  ASSERT (mpn_cmp (hgcd->row[0].uvp[1], hgcd->row[1].uvp[1],
-		   hgcd->size) <= 0);
-  ASSERT (mpn_cmp (hgcd->row[1].uvp[1], hgcd->row[2].uvp[1],
-		   hgcd->size) <= 0);
-  ASSERT (mpn_cmp (hgcd->row[2].uvp[1], hgcd->row[3].uvp[1],
-		   hgcd->size) <= 0);
+  ASSERT (mpn_cmp (hgcd->row[0].uvp[1], hgcd->row[1].uvp[1], hgcd->size) <= 0);
+  ASSERT (mpn_cmp (hgcd->row[1].uvp[1], hgcd->row[2].uvp[1], hgcd->size) <= 0);
+  ASSERT (mpn_cmp (hgcd->row[2].uvp[1], hgcd->row[3].uvp[1], hgcd->size) <= 0);
 
-  /* The bound is really floor (N/2), which is <= M = ceil (M/2) */
+  /* The bound is really floor (N/2), which is <= M = ceil (N/2) */
   L = hgcd->size;
   ASSERT (L <= M);
 
-  ASSERT (L);
+  ASSERT (L > 0);
   ASSERT (hgcd->row[3].uvp[1][L - 1] != 0);
 
   ASSERT (L < talloc);
@@ -1373,7 +1369,7 @@ hgcd_start (struct hgcd *hgcd,
   hgcd->row[1].rsize = bsize;
 
   hgcd->sign = 0;
-  if (hgcd->size)
+  if (hgcd->size != 0)
     {
       /* We must zero out the uv array */
       unsigned i;
@@ -1472,7 +1468,7 @@ hgcd_adjust (struct hgcd *hgcd,
 			 hgcd->row[2].uvp[1],
 			 hgcd->size, 2);
     }
-  if (c1)
+  if (c1 != 0)
     {
       hgcd->row[3].uvp[0][hgcd->size] = c0;
       hgcd->row[3].uvp[1][hgcd->size] = c1;
