@@ -1,8 +1,33 @@
+2000-03-17  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (union ieee_double_extract): Check _CRAYMPP.
+
+	* mpn/asm-defs.m4 (invert_normalized_limb): Define.
+
+	* mpn/alpha: Translate `.s' files to `.asm'.
+
+	* configure: Regenerate.
+
+	* mpn/alpha/invert_limb.asm: Replace dash in file name with underscore.
+	* configure.in: Corresponding change.
+
+	* configure.in: Assign special "path" for alphaev6.
+
+	* mpn/alpha/unicos.m4: New file.
+	* configure.in (alpha*-cray-unicos*): [This part of the change commited 2000-03-13 by
+	linus]
+	* mpn/alpha/default.m4: New file.
+	* configure.in (alpha*-*-*): Use it.
+	
 2000-03-17  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/rshift.S: Use plain rcrl (not rcrl $1) for
 	shift-by-1 case, significant speedup.
 	* mpn/x86/pentium/README: Add shift-by-1 speed.
+
+2000-03-16  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Handle Cray T3D/E.
 
 2000-03-15  Kevin Ryde  <kevin@swox.se>
 
