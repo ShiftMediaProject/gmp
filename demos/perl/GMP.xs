@@ -286,6 +286,7 @@ typedef SV             *dummy;
 typedef SV             *SV_copy_0;
 typedef unsigned long  ulong_coerce;
 typedef __gmp_randstate_struct *randstate;
+typedef UV             gmp_UV;
 
 #define SvMPX(s,type)  ((type) SvIV((SV*) SvRV(s)))
 #define SvMPZ(s)       SvMPX(s,mpz)
@@ -2195,7 +2196,22 @@ PPCODE:
     PUSHs (MPX_NEWMORTAL (rem,  mpz_class_hv));
 
 
-unsigned long
+# In the past scan0 and scan1 were described as returning ULONG_MAX which
+# could be obtained in perl with ~0.  That wasn't true on 64-bit systems
+# (eg. alpha) with perl 5.005, since in that version IV and UV were still
+# 32-bits.
+#
+# We changed in gmp 4.2 to just say ~0 for the not-found return.  It's
+# likely most people have used ~0 rather than POSIX::ULONG_MAX(), so this
+# change should match existing usage.  It only actually makes a difference
+# in old perl, since recent versions have gone to 64-bits for IV and UV, the
+# same as a ulong.
+#
+# In perl 5.005 we explicitly mask the mpz return down to 32-bits to get ~0.
+# UV_MAX is no good, it reflects the size of the UV type (64-bits), rather
+# than the size of the values one ought to be storing in an SV (32-bits).
+
+gmp_UV
 scan0 (z, start)
     mpz_coerce   z
     ulong_coerce start
@@ -2211,6 +2227,8 @@ PREINIT:
 CODE:
     assert_table (ix);
     RETVAL = (*table[ix].op) (z, start);
+    if (PERL_LT (5,6))
+      RETVAL &= 0xFFFFFFFF;
 OUTPUT:
     RETVAL
 
