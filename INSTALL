@@ -4,7 +4,7 @@
 
 
 These instructions are only for the impatient.  Others should read the install
-instructions in the manual, gmp.info.  Use
+instructions in gmp.info.  Use
 
 	info -f ./gmp.info
 
@@ -14,15 +14,19 @@ or in emacs
 
 
 Here are some brief instructions on how to install GMP, and some examples to
-help you get started using GMP.
+help you get started using it.  First you need to compile.  Since you're
+impatient, try this
 
-First, you need to compile, and optionally install, GMP.  Since you're
-impatient, try this:
-
-	./configure; make
+	./configure
+	make
 
 If that fails, or you care about the performance of GMP, you need to read the
-full instructions in the chapter "Installing GMP", in the manual.
+full instructions in the chapter "Installing GMP" in the manual.
+
+Optionally, you can install with the following.  This will be to /usr/local by
+default, and you'll probably need to be "root" to be able to write there.
+
+	make install
 
 Next, try some small test programs, for example the ones below.
 
@@ -40,7 +44,10 @@ command line, multiplies them, and prints the result to stdout.
       mpz_t a, b, p;
 
       if (argc != 3)
-        { printf ("Usage: %s <number> <number>\n", argv[0]); exit (1); }
+        {
+          printf ("Usage: %s <number> <number>\n", argv[0]);
+          exit (1);
+        }
 
       /* Initialize variables */
       mpz_init (a);
@@ -79,7 +86,10 @@ avoided.  An experienced GMP user might write:
       mpz_t a, b, p;
 
       if (argc != 3)
-        { printf ("Usage: %s <number> <number>\n", argv[0]); exit (1); }
+        {
+          printf ("Usage: %s <number> <number>\n", argv[0]);
+          exit (1);
+        }
 
       /* Initialize and assign a and b from base 10 strings in argv */
       mpz_init_set_str (a, argv[1], 10);
@@ -100,7 +110,7 @@ avoided.  An experienced GMP user might write:
 
 
 Now you have to compile your test program, and link it with the GMP library.
-Assuming your working directory is still the gmp source directory, and your
+Assuming your working directory is still the gmp build directory, and your
 source file is called example.c, enter:
 
 	gcc -g -I. example.c .libs/libgmp.a
@@ -115,7 +125,7 @@ Now try to run the example:
 
 The functions used here all operate on signed integers, and have names
 starting with "mpz_".  There are many more such functions than used in these
-examples.  See the chapter "Integer Functions" in the manual, for a complete
+examples.  See the chapter "Integer Functions" in the manual for a complete
 list.
 
 There are two other main classes of functions in GMP.  They operate on
@@ -127,9 +137,6 @@ To run a set of tests, do "make check".  This will take a while.
 
 To create the printable documentation from the texinfo source, type "make
 gmp.dvi" or "make gmp.ps".  This requires various "tex" commands.
-
-To install the library, do "make install" (then you can use -lgmp instead of
-.libs/libgmp.a).
 
 If you decide to use GMP, it is a good idea you at least read the chapter "GMP
 Basics" in the manual.
