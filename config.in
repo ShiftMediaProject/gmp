@@ -190,6 +190,10 @@ MA 02111-1307, USA. */
    */
 #undef HAVE_DECL_OPTARG
 
+/* Define to 1 if you have the declaration of `sscanf', and to 0 if you don't.
+   */
+#undef HAVE_DECL_SSCANF
+
 /* Define to 1 if you have the declaration of `ungetc', and to 0 if you don't.
    */
 #undef HAVE_DECL_UNGETC
