@@ -126,7 +126,9 @@ noinst_HEADERS = speed.h
 
 # No dependency on libgmp, so can use libgmptune instead for tune program
 EXTRA_LTLIBRARIES = libspeed.la
-libspeed_la_SOURCES = common.c time.c noop.c
+libspeed_la_SOURCES = common.c time.c noop.c \
+  mul_n_mpn.c mul_n_open.c
+
 libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJS)
 libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES)
 
@@ -192,7 +194,8 @@ CPPFLAGS = @CPPFLAGS@
 LIBS = @LIBS@
 ANSI2KNR = $(top_builddir)/ansi2knr
 libspeed_la_LDFLAGS = 
-am_libspeed_la_OBJECTS =  common$U.lo time$U.lo noop$U.lo
+am_libspeed_la_OBJECTS =  common$U.lo time$U.lo noop$U.lo mul_n_mpn$U.lo \
+mul_n_open$U.lo
 libspeed_la_OBJECTS =  $(am_libspeed_la_OBJECTS)
 EXTRA_PROGRAMS =  speed$(EXEEXT) speed-ext$(EXEEXT) tuneup$(EXEEXT)
 am_speed_OBJECTS =  speed$U.$(OBJEXT)
@@ -296,6 +299,10 @@ tuneup$(EXEEXT): $(tuneup_OBJECTS) $(tuneup_DEPENDENCIES)
 	$(LTCOMPILE) -c -o $@ $<
 common_.c: common.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/common.c; then echo $(srcdir)/common.c; else echo common.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > common_.c
+mul_n_mpn_.c: mul_n_mpn.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n_mpn.c; then echo $(srcdir)/mul_n_mpn.c; else echo mul_n_mpn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_n_mpn_.c
+mul_n_open_.c: mul_n_open.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n_open.c; then echo $(srcdir)/mul_n_open.c; else echo mul_n_open.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_n_open_.c
 noop_.c: noop.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/noop.c; then echo $(srcdir)/noop.c; else echo noop.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > noop_.c
 speed_.c: speed.c $(ANSI2KNR)
@@ -306,9 +313,10 @@ time_.c: time.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/time.c; then echo $(srcdir)/time.c; else echo time.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > time_.c
 tuneup_.c: tuneup.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tuneup.c; then echo $(srcdir)/tuneup.c; else echo tuneup.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tuneup_.c
-common_.$(OBJEXT) common_.lo noop_.$(OBJEXT) noop_.lo speed_.$(OBJEXT) \
-speed_.lo speed-ext_.$(OBJEXT) speed-ext_.lo time_.$(OBJEXT) time_.lo \
-tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
+common_.$(OBJEXT) common_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo \
+mul_n_open_.$(OBJEXT) mul_n_open_.lo noop_.$(OBJEXT) noop_.lo \
+speed_.$(OBJEXT) speed_.lo speed-ext_.$(OBJEXT) speed-ext_.lo \
+time_.$(OBJEXT) time_.lo tuneup_.$(OBJEXT) tuneup_.lo : $(ANSI2KNR)
 
 tags: TAGS
 
