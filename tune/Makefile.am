@@ -100,7 +100,7 @@ $(TUNE_MPZ_SRCS):
 	  echo "#include \"mpz/$$i\"" >>$$i; \
 	done
 
-sqr_basecase.c: $(top_srcdir)/mpn/sqr_basecase.c
+sqr_basecase.c: $(top_builddir)/mpn/sqr_basecase.c
 	echo '#define TUNE_PROGRAM_BUILD 1' >sqr_basecase.c
 	echo '#define TUNE_PROGRAM_BUILD_SQR 1' >>sqr_basecase.c
 	echo '#include "mpn/sqr_basecase.c"' >>sqr_basecase.c
