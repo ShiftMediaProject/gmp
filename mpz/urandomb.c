@@ -38,7 +38,7 @@ mpz_urandomb (rop, nbits, s)
   mp_size_t size;
 
   size = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
-  if (size > SIZ (rop))
+  if (size > ABSIZ (rop))
     _mpz_realloc (rop, size);
 
   rp = PTR (rop);
