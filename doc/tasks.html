@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 15 Jan 2004.  An up-to-date version is available at
+  This file current as of 22 Jan 2004.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -185,10 +185,8 @@ MA 02111-1307, USA.
      shift the dividend on-the-fly, since this should cost nothing on
      superscalar processors and avoid the need for temporary copying in
      <code>mpn_tdiv_qr</code>.
-<li> <code>mpf_sqrt_ui</code> calculates prec+1 limbs, whereas just prec would
-     satisfy the application requested precision.  It should suffice to simply
-     reduce the rsize temporary to 2*prec-1 limbs.  <code>mpf_sqrt</code>
-     might be similar.
+<li> <code>mpf_sqrt</code>: If r!=u, and if u doesn't need to be padded with
+     zeros, then there's no need for the tp temporary.
 <li> <code>invert_limb</code> generic C: The division could use dividend
      b*(b-d)-1 which is high:low of (b-1-d):(b-1), instead of the current
      (b-d):0, where b=2^<code>BITS_PER_MP_LIMB</code> and d=divisor.  The
