@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-01-12  Niels Möller  <niels@s3.kth.se>
+
+	* tests/mpn/t-hgcd.c: Try the same kind of random inputs as for
+	mpz/t-gcd.
+
 2004-01-11  Niels Möller  <nisse@harpo.hack.org>
 
 	* mpn/generic/hgcd.c (mpn_hgcd_lehmer): Rewritten, after some more
