@@ -961,16 +961,6 @@ CPU.  In both these ABIs GMP uses a 64-bit limb.  A new enough @command{gcc}
 is required (2.95 for instance).
 
 @table @asis
-@item @samp{ABI=64}
-
-The 64-bit ABI is 64-bit pointers and integers.  Applications must be compiled
-with
-
-@example
-gcc  -mabi=64
-cc   -64
-@end example
-
 @item @samp{ABI=n32}
 
 The n32 ABI is 32-bit pointers and integers, but with a 64-bit limb using a
@@ -979,6 +969,16 @@ The n32 ABI is 32-bit pointers and integers, but with a 64-bit limb using a
 @example
 gcc  -mabi=n32
 cc   -n32
+@end example
+
+@item @samp{ABI=64}
+
+The 64-bit ABI is 64-bit pointers and integers.  Applications must be compiled
+with
+
+@example
+gcc  -mabi=64
+cc   -64
 @end example
 @end table
 
@@ -5868,6 +5868,7 @@ multi-precision multiplication.  This is @ma{O(N^2)} and is certainly
 sub-optimal on sizes above the Karatsuba multiply threshold.
 
 
+@need 1000
 @node Other Algorithms, Assembler Coding, Radix Conversion Algorithms, Algorithms
 @section Other Algorithms
 
