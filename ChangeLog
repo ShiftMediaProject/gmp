@@ -4884,7 +4884,7 @@ MA 02111-1307, USA.
 
 2000-12-10  Kevin Ryde  <kevin@swox.se>
 
-	* tune/Makefile.am ({speed_LDFLAGS, speed_ext_LDFLAGS, tune_LDFLAGS):
+	* tune/Makefile.am (speed_LDFLAGS, speed_ext_LDFLAGS, tune_LDFLAGS):
 	Don't use -all-static, as gcc 2.95.2 on i386 solaris 8 doesn't like
 	it.
 
@@ -5161,16 +5161,17 @@ MA 02111-1307, USA.
 	and double.
 	* tune/Makefile.am (libspeed_la_SOURCES): Add them.
 	(TUNE_MPN_SRCS): Remove gcdext.c.
-	* tune/{speed.h,common.c,speed.c}: Add measuring.
+	* tune/speed.h, tune/common.c, tune/speed.c: Add measuring.
 	* tune/tuneup.c: Use for GCDEXT_THRESHOLD, plus check if double limb
 	is ever better.  Should be more accurate, and hopefully faster.
 
 	* tune/gcdext_single.c: New file, gcdext forced to single limbs.
 	* tune/Makefile.am: Add it.
-	* tune/{speed.h,common.c,speed.c}: Add measuring, and of invert_limb.
+	* tune/speed.h, tune/common.c, tune/speed.c: Add measuring, and of
+	invert_limb.
 
 	* tune/speed.h (speed_params r): Use mp_limb_t, not long.
-	* tune/{speed.h,common.c}: Don't "switch" on "r".
+	* tune/speed.h, tune/common.c: Don't "switch" on "r".
 	* tune/speed.c (r_string): Accept limb sized constants.
 	(choice scale): Add a scale factor (eg. "2.33*mpn_add_n").
 	* tune/common.c (SPEED_ROUTINE_UDIV_QRNND_A): Default r to
@@ -5222,8 +5223,8 @@ MA 02111-1307, USA.
 	* tune/tuneup.c (POWM_THRESHOLD): Slightly bigger size steps.
 
 	* gmp-impl.h (__GMP_IMPL_H__): Protect against multiple inclusion.
-	* tune/{gcd_bin,powm_mod,powm_redc}.c: Use #undef after gmp-impl.h to
-	force thresholds.
+	* tune/gcd_bin.c, tune/powm_mod.c, tune/powm_redc.c: Use #undef after
+	gmp-impl.h to force thresholds.
 	* tune/tuneup.c (print_define, fft): No need for #ifndefs on
 	thresholds any more.
 
@@ -6023,8 +6024,9 @@ MA 02111-1307, USA.
 	possibly add -march=pentiumpro.
 
 	* gmp-impl.h (MPZ_SET_STR_OR_ABORT, MPF_SET_STR_OR_ABORT): New macros.
-	* mpz/tests/{t-bin,t-get_si,t-jac,t-misc}.c: Use them.
-	* mpf/tests/{t-conv,t-misc}.c: Ditto.
+	* mpz/tests/t-bin.c, mpz/tests/t-get_si.c, mpz/tests/t-jac.c,
+	mpz/tests/t-misc.c: Use them.
+	* mpf/tests/t-conv.c, mpf/tests/t-misc.c: Ditto.
 	* mpz/tests/convert.c: Ditto and amend diagnostics slightly.
 	* mpz/tests/t-misc.c (check_mpz_set_si): Remove a superfluous init.
 	* mpz/tests/io.c: Differentiate between I/O and data conversion errors.
@@ -6071,8 +6073,8 @@ MA 02111-1307, USA.
 
 2000-08-21  Kevin Ryde  <kevin@swox.se>
 
-	* mpz/{fdiv_r_2exp.c,lcm.c,urandomm.c}: Add missing TMP_MARK/FREE,
-	avoiding memory leak when using stack-alloc.c.
+	* mpz/fdiv_r_2exp.c, mpz/lcm.c, mpz/urandomm.c: Add missing
+	TMP_MARK/FREE, avoiding memory leak when using stack-alloc.c.
 
 2000-08-20  Kevin Ryde  <kevin@swox.se>
 
@@ -6082,9 +6084,10 @@ MA 02111-1307, USA.
 	* Makefile.am (MPBSD_OBJECTS): Corresponding change.
 	* mpbsd/move.c: Remove file.
 
-	* mp{n,z,q,f,mpbsd}/Makefile.am (-DOPERATION_foo): Use "foo" even
-	for ansi2knr "foo_" objects.  Do this with the makefiles to keep
-	the sources cleaner.
+	* mpn/Makefile.am, mpz/Makefile.am, mpq/Makefile.am, mpf/Makefile.am,
+	mpbsd/Makefile.am (-DOPERATION_foo): Use "foo" even for ansi2knr
+	"foo_" objects.  Do this with the makefiles to keep the sources
+	cleaner.
 	* mpz/mul_siui.c, mpf/integer.c: Revert to plain OPERATION_* forms.
 
 	* mpn/lisp/gmpasm-mode.el (gmpasm-remove-from-list): Renamed from
@@ -6135,10 +6138,11 @@ MA 02111-1307, USA.
 	* mpn/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr.
 	(libdummy.la): Add this, not built, to create ansi2knr style rules
 	for all potential .c files.
-	* mp{z,q,f,fr,bsd}/Makefile.am, mpq/tests/Makefile.am,
-	tests/Makefile.am (AUTOMAKE_OPTIONS): Enable ansi2knr (now everywhere).
-	* Makefile.am (MP{Z,Q,F,FR,BSD}_OBJECTS, libmp_la_DEPENDENCIES):
-	Add $U to all .lo filenames.
+	* mpz/Makefile.am, mpq/Makefile.am, mpf/Makefile.am, mpfr/Makefile.am,
+	mpbsd/Makefile.am, mpq/tests/Makefile.am, tests/Makefile.am
+	(AUTOMAKE_OPTIONS): Enable ansi2knr (now everywhere).
+	* Makefile.am (MPZ_OBJECTS, MPQ_OBJECTS, MPF_OBJECTS, MPFR_OBJECTS,
+	MPBSD_OBJECTS, libmp_la_DEPENDENCIES): Add $U to all .lo filenames.
 
 2000-08-03  Torbjorn Granlund  <tege@swox.com>
 
@@ -6158,7 +6162,8 @@ MA 02111-1307, USA.
 
 	* demos/factorize.c (random): Don't use "inline".
 
-	* mpfr/{log,mul_ui,round,set,set_d}.c: Corrections to K&R parts.
+	* mpfr/log.c, mpfr/mul_ui.c, mpfr/round.c, mpfr/set.c, mpfr/set_d.c:
+	Corrections to K&R parts.
 
 	* Makefile.am (EXTRA_HEADERS): Omit $(MPFR_HEADERS_OPTION).
 	* mpfr/Makefile.am (EXTRA_DIST): Add mpfr.h.
@@ -6247,8 +6252,9 @@ MA 02111-1307, USA.
 	* tune/*: Add FFT threshold tuning and speed measuring.
 	* tune/common.c: Avoid huge macro expansions for umul and udiv.
 
-	* mpz/tests/t-{bin,jac,misc}.c, mp{bsd,f}/tests/t-misc.c,
-	mpn/tests/{try,spinner}.c: Use new gmp-impl.h macros.
+	* mpz/tests/t-bin.c, mpz/tests/t-jac.c, mpz/tests/t-misc.c,
+	mpbsd/tests/t-misc.c, mpf/tests/t-misc.c, mpn/tests/try.c,
+	mpn/tests/spinner.c: Use new gmp-impl.h macros.
 
 	* demos/Makefile.am (BUILT_SOURCES): Don't need calc.c etc under this.
 
@@ -6309,9 +6315,11 @@ MA 02111-1307, USA.
 	* Makefile.am (libmp_la_DEPENDENCIES): Add mpz/cmp.lo, for last
 	mpz/powm.c fix.
 
-	* mpn/sparc64/{add,sub}mul1h.asm: Renamed from {add,sub}mul_1h.asm
-	to avoid name conflicts on an 8.3 filesystem.
-	* mpn/sparc64/{add,sub,}mul_1.asm: Update include_mpn()s.
+	* mpn/sparc64/addmul1h.asm, mpn/sparc64/submul1h.asm: Renamed from
+	addmul_1h.asm, submul_1h.asm to avoid name conflicts on an 8.3
+	filesystem.
+	* mpn/sparc64/addmul_1.asm, mpn/sparc64/submul_1.asm,
+	mpn/sparc64/mul_1.asm: Update include_mpn()s.
 
 2000-07-24  Torbjorn Granlund  <tege@swox.com>
 
@@ -6608,8 +6616,9 @@ MA 02111-1307, USA.
 	* mpz/tests/t-misc.c (check_mpz_set_si, check_mpz_cmp_si):
 	New tests, for mpz_set_si, mpz_init_set_si, and mpz_cmp_si.
 
-	* mpz/{set,iset,cmp}_si.c [_LONG_LONG_LIMB]: Fix handling of -0x80..00.
-	* mpf/{set,iset,cmp}_si.c [_LONG_LONG_LIMB]: Ditto.
+	* mpz/set_si.c, mpz/iset_si.c, mpz/cmp_si.c [_LONG_LONG_LIMB]: Fix
+	handling of -0x80..00.
+	* mpf/set_si.c, mpf/iset_si.c, mpf/cmp_si.c [_LONG_LONG_LIMB]: Ditto.
 
 2000-06-19  Torbjorn Granlund  <tege@swox.com>
 
@@ -7282,8 +7291,9 @@ MA 02111-1307, USA.
 2000-04-28  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/pa64/add_n.s: Add `,entry' to export directive.
-	* mpn/pa64/{addmul_1.S,lshift.s,mul_1.S,rshift.s,sub_n.s,submul_1.S,
-	umul_ppmm.S}: Likewise.
+	* mpn/pa64/addmul_1.S, mpn/pa64/lshift.s, mpn/pa64/mul_1.S,
+	mpn/pa64/rshift.s, mpn/pa64/sub_n.s, mpn/pa64/submul_1.S,
+	mpn/pa64/umul_ppmm.S: Likewise.
 	* mpn/hppa/hppa1_1/udiv_qrnnd.S: New name for udiv_qrnnd.s.
 	Add PIC support.
 
@@ -7486,9 +7496,10 @@ MA 02111-1307, USA.
 	* mpn/x86/aorsmul_1.asm: Ditto for addmul/submul.
 	* mpn/x86/pentium/aorsmul_1.asm: Ditto.
 
-	* mpn/x86/{lshift,mul_1,mul_basecase,rshift}.asm: Convert from .S,
-	no object code change.
-	* mpn/x86/pentium/{lshift,mul_1,mul_basecase,rshift}.asm: Ditto.
+	* mpn/x86/lshift.asm, mpn/x86/mul_1.asm, mpn/x86/mul_basecase.asm,
+	mpn/x86/rshift.asm: Convert from .S, no object code change.
+	* mpn/x86/pentium/lshift.asm, mpn/x86/pentium/mul_1.asm,
+	mpn/x86/pentium/mul_basecase.asm, mpn/x86/pentium/rshift.asm: Ditto.
 
 	* gmp.texi (Reporting Bugs): Itemize the list of things to include.
 	(Miscellaneous Float Functions): Correct typo in mpf_ceil etc
@@ -8031,8 +8042,8 @@ MA 02111-1307, USA.
 
 2000-04-10  Kevin Ryde  <kevin@swox.se>
 
-	* move-if-change: Removed, no longer used.
-	* mp{z,q,f}/tests/move-if-change: Ditto.
+	* move-if-change, mpz/tests/move-if-change, mpq/tests/move-if-change,
+	mpf/tests/move-if-change: Remove, no longer used.
 
 	* Makefile.am (SUBDIRS): Add tests, demos, mpbsd.
 	(libmp.la): New target, conditional on WANT_MPBSD.
