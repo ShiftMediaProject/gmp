@@ -26,8 +26,8 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-int mpfr_aux_pi (mpfr_ptr, mpz_srcptr, int, int);
-int mpfr_pi_machin3 (mpfr_ptr, mp_rnd_t);
+int mpfr_aux_pi _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
+int mpfr_pi_machin3 _PROTO ((mpfr_ptr, mp_rnd_t));
 
 #define A
 #define A1 1

@@ -31,8 +31,8 @@ MA 02111-1307, USA. */
 
 extern void mpfr_add1 _PROTO((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, 
 			      mp_rnd_t, int));
-mp_limb_t mpn_sub_lshift_n (mp_limb_t *, mp_limb_t *, int, int, int);
-void mpfr_sub1 (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t, int);
+mp_limb_t mpn_sub_lshift_n _PROTO ((mp_limb_t *, mp_limb_t *, int, int, int));
+void mpfr_sub1 _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t, int));
 
 /* put in ap[0]..ap[an-1] the value of bp[0]..bp[n-1] shifted by sh bits
    to the left minus ap[0]..ap[n-1], with 0 <= sh < BITS_PER_MP_LIMB, and

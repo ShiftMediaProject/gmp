@@ -20,14 +20,14 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #ifndef GENERIC
-#  error You should specify a name 
+ # error You should specify a name 
 #endif
 
 /* TODO: Reflechir a un traitement generique des infinis ? */
 
 #ifdef B
 #  ifndef A
-#    error B cannot be used without A
+ #   error B cannot be used without A
 #  endif
 #endif
 

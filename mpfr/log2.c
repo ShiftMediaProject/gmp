@@ -30,8 +30,8 @@ mpfr_t __mpfr_const_log2; /* stored value of log(2) */
 int __mpfr_const_log2_prec=0; /* precision of stored value */
 mp_rnd_t __mpfr_const_log2_rnd; /* rounding mode of stored value */
 
-int mpfr_aux_log2 (mpfr_ptr, mpz_srcptr, int, int);
-int mpfr_const_aux_log2 (mpfr_ptr, mp_rnd_t);
+int mpfr_aux_log2 _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
+int mpfr_const_aux_log2 _PROTO ((mpfr_ptr, mp_rnd_t));
 
 #define A
 #define A1 1

@@ -26,7 +26,8 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 /* returns ceil(log(d)/log(2)) */
-long _mpfr_ceil_log2 (double d)
+long
+_mpfr_ceil_log2 (double d)
 {
   long exp;
   union ieee_double_extract x;
@@ -39,7 +40,8 @@ long _mpfr_ceil_log2 (double d)
 }
 
 /* returns floor(log(d)/log(2)) */
-long _mpfr_floor_log2 (double d)
+long
+_mpfr_floor_log2 (double d)
 {
   union ieee_double_extract x;
 
@@ -48,7 +50,8 @@ long _mpfr_floor_log2 (double d)
 }
 
 /* returns y >= 2^d */
-double _mpfr_ceil_exp2 (double d)
+double
+_mpfr_ceil_exp2 (double d)
 {
   long exp;
   union ieee_double_extract x;

@@ -26,14 +26,15 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-int mpfr_exp2_aux      (mpz_t, mpfr_srcptr, int, int*);
-int mpfr_exp2_aux2     (mpz_t, mpfr_srcptr, int, int*);
-mp_exp_t mpz_normalize (mpz_t, mpz_t, int);
-int mpz_normalize2     (mpz_t, mpz_t, int, int);
-int mpfr_exp2          (mpfr_ptr, mpfr_srcptr, mp_rnd_t);
+int mpfr_exp2_aux      _PROTO ((mpz_t, mpfr_srcptr, int, int*));
+int mpfr_exp2_aux2     _PROTO ((mpz_t, mpfr_srcptr, int, int*));
+mp_exp_t mpz_normalize _PROTO ((mpz_t, mpz_t, int));
+int mpz_normalize2     _PROTO ((mpz_t, mpz_t, int, int));
+int mpfr_exp2          _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 /* returns floor(sqrt(n)) */
-unsigned long _mpfr_isqrt (unsigned long n)
+unsigned long
+_mpfr_isqrt (unsigned long n)
 {
   unsigned long s;
 
@@ -45,7 +46,8 @@ unsigned long _mpfr_isqrt (unsigned long n)
 }
 
 /* returns floor(n^(1/3)) */
-unsigned long _mpfr_cuberoot (unsigned long n)
+unsigned long
+_mpfr_cuberoot (unsigned long n)
 {
   double s, is;
 

@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-void mpfr_get_str_raw (char *, mpfr_srcptr);
+void mpfr_get_str_raw _PROTO ((char *, mpfr_srcptr));
 
 void
 #if __STDC__

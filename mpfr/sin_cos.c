@@ -26,8 +26,8 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-int mpfr_sin_aux (mpfr_ptr, mpz_srcptr, int, int);
-int mpfr_cos_aux (mpfr_ptr, mpz_srcptr, int, int);
+int mpfr_sin_aux _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
+int mpfr_cos_aux _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
 
 #undef A
 #undef B

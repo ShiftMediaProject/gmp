@@ -32,8 +32,8 @@ MA 02111-1307, USA. */
 #define MPFR_LIMBS_PER_DOUBLE 1
 #endif
 
-int __mpfr_extract_double (mp_ptr, double, int);
-double __mpfr_scale2 (double, int);
+int __mpfr_extract_double _PROTO ((mp_ptr, double, int));
+double __mpfr_scale2 _PROTO ((double, int));
 
 #define NaN (0./0.) /* ensures a machine-independent NaN */
 #define Infp (1/0.)

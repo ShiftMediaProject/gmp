@@ -27,8 +27,8 @@ MA 02111-1307, USA. */
 
 /* #define DEBUG */
 
-int mpfr_exp_rational (mpfr_ptr, mpz_srcptr, int, int);
-int mpfr_exp3 (mpfr_ptr, mpfr_srcptr, mp_rnd_t);
+int mpfr_exp_rational _PROTO ((mpfr_ptr, mpz_srcptr, int, int));
+int mpfr_exp3 _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
 int
 #if __STDC__
