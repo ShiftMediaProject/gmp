@@ -19,6 +19,48 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-03  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Build Options): Note compiler must be able to fully link,
+	add alphapca57 and alphaev68, give a clearer example of MPN_PATH
+	(Debugging): Add notes on valgrind.
+	(C++ Formatted Output): Clarify mpf showbase handling, in particular
+	note "00.4" in octal.
+
+	* printf/doprntf.c: Do a showbase on octal float fractions, for
+	instance "00.4" where previously it gave "0.4".
+	* tests/cxx/t-ostream.cc: Update.
+
+	* gmp-h.in, mp-h.in (__GMP_DECLSPEC, __GMP_DECLSPEC_XX): Test
+	__WIN32__ for Borland C, reported by "delta trinity".
+
+	* gmp-h.in, mp-h.in: Use <cstddef> for size_t under C++, suggested by
+	Hans Aberg some time ago.
+	* gmp-h.in (<iosfwd>): Move to top of file for clarity.
+
+	* Makefile.am (libgmpxx_la_SOURCES): Use dummy.cc to force C++.
+	(CXX_OBJECTS): Add osfuns$U.lo.
+	* dummy.cc: New file.
+	* cxx/Makefile.am (INCLUDES): Use __GMP_WITHIN_GMPXX.
+	(libcxx_la_SOURCES): Add osfuns.cc.
+	* gmp-h.in (__GMP_DECLSPEC_XX): New define, use it on libgmpxx funs.
+	* gmp-impl.h: Add __GMP_DECLSPEC to libgmp functions used by libgmpxx.
+
+	* longlong.h (COUNT_TRAILING_ZEROS_TIME): Remove, no longer used.
+	
+	* gmp-impl.h (MPN_SIZEINBASE, MPN_SIZEINBASE_16): Correction to
+	__totbits for nails.
+
+	* gmp-impl.h (JACOBI_LS0): Test size before limb, to pacify valgrind.
+	(JACOBI_0LS): Ditto, and fix parens around arguments.
+
+	* mpn/x86/x86-defs.m4 (call_mcount): Add a counter to make data labels
+	unique, since simplified L() scheme no longer gives that effect.
+	(notl_or_xorl_GMP_NUMB_MASK): New macro.
+	Add m4_assert_numargs in a few places.
+
+	* configure.in (*sparc*): Fix cycle counter setups for ABI=64.
+
 2002-02-28  Kevin Ryde  <user42@zip.com.au>
 
 	* gmp-h.in (gmp_errno, gmp_version): Move into extern "C" block,
