@@ -18,6 +18,16 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-05-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpf/sub.c: When one operand cancels high limbs of the other, strip
+	high zeros on the balance before truncating to destination precision.
+	Truncating first loses accuracy and can lead to a result 0 despite
+	operands being not equal.  Reported by John Abbott.
+	Also, ensure exponent is zero when result is zero, for instance if
+	operands are exactly equal.
+	* tests/mpf/t-sub.c (check_data): New function, exercising these.
+
 2004-05-12  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (AC_PROG_RANLIB): New macro, supposedly required by
