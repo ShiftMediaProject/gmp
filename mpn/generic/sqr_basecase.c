@@ -5,8 +5,8 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003 Free
-Software Foundation, Inc.
+Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003, 2004
+Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,19 +29,241 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
+#if HAVE_NATIVE_mpn_sqr_diagonal
+#define MPN_SQR_DIAGONAL(rp, up, n)					\
+  mpn_sqr_diagonal (rp, up, n);
+#else
+#define MPN_SQR_DIAGONAL(rp, up, n)					\
+  do {									\
+    mp_size_t _i;							\
+    for (_i = 0; _i < (n); _i++)					\
+      {									\
+	mp_limb_t ul, lpl;						\
+	ul = (up)[_i];							\
+	umul_ppmm ((rp)[2 * _i + 1], lpl, ul, ul << GMP_NAIL_BITS);	\
+	(rp)[2 * _i] = lpl >> GMP_NAIL_BITS;				\
+      }									\
+  } while (0)
+#endif
+
+
+#undef READY_WITH_mpn_sqr_basecase
+
+
+#if ! defined (READY_WITH_mpn_sqr_basecase) && HAVE_NATIVE_mpn_addmul_2s
 void
-mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
+mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
+{
+  mp_size_t i;
+  mp_limb_t tarr[2 * SQR_KARATSUBA_THRESHOLD];
+  mp_ptr tp = tarr;
+  mp_limb_t cy;
+
+  /* must fit 2*n limbs in tarr */
+  ASSERT (n <= SQR_KARATSUBA_THRESHOLD);
+
+  if ((n & 1) != 0)
+    {
+      if (n == 1)
+	{
+	  mp_limb_t ul, lpl;
+	  ul = up[0];
+	  umul_ppmm (rp[1], lpl, ul, ul << GMP_NAIL_BITS);
+	  rp[0] = lpl >> GMP_NAIL_BITS;
+	  return;
+	}
+
+      MPN_ZERO (tp, n);
+
+      for (i = 0; i <= n - 2; i += 2)
+	{
+	  cy = mpn_addmul_2s (tp + 2 * i, up + i + 1, n - (i + 1), up + i);
+	  tp[n + i] = cy;
+	}
+
+      MPN_SQR_DIAGONAL (rp, up, n);
+
+#if HAVE_NATIVE_mpn_addlsh1_n
+      cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
+#else
+      cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
+      cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
+      rp[2 * n - 1] += cy;
+#endif
+    }
+  else
+    {
+      if (n == 2)
+	{
+	  rp[0] = 0;
+	  rp[1] = 0;
+	  rp[3] = mpn_addmul_2 (rp, up, 2, up);
+	  return;
+	}
+
+      MPN_ZERO (tp, n);
+
+      for (i = 0; i <= n - 4; i += 2)
+	{
+	  cy = mpn_addmul_2s (tp + 2 * i, up + i + 1, n - (i + 1), up + i);
+	  tp[n + i] = cy;
+	}
+      cy = mpn_addmul_1 (tp + 2 * n - 4, up + n - 1, 1, up[n - 2]);
+      tp[2 * n - 3] = cy;
+
+      MPN_SQR_DIAGONAL (rp, up, n);
+
+#if HAVE_NATIVE_mpn_addlsh1_n
+      cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
+#else
+      cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
+      cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
+      rp[2 * n - 1] += cy;
+#endif
+    }
+}
+#define READY_WITH_mpn_sqr_basecase
+#endif
+
+
+#if ! defined (READY_WITH_mpn_sqr_basecase) && HAVE_NATIVE_mpn_addmul_2
+
+/* mpn_sqr_basecase using plain mpn_addmul_2.
+
+   This is tricky, since we have to let mpn_addmul_2 make some undesirable
+   multiplied, u[k]*u[k], that we would like to let mpn_sqr_diagonal handle.
+   This forces us to conditionally add or subtract the mpn_sqr_diagonal
+   results.  Examples of the product we form:
+
+   n = 4              n = 5		n = 6
+   u1u0 * u3u2u1      u1u0 * u4u3u2u1	u1u0 * u5u4u3u2u1
+   u2 * u3	      u3u2 * u4u3	u3u2 * u5u4u3
+					u4 * u5
+   add: u0 u2 u3      add: u0 u2 u4	add: u0 u2 u4 u5
+   sub: u1	      sub: u1 u3	sub: u1 u3
+*/
+
+void
+mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
+{
+  mp_size_t i;
+  mp_limb_t tarr[2 * SQR_KARATSUBA_THRESHOLD];
+  mp_ptr tp = tarr;
+  mp_limb_t cy;
+
+  /* must fit 2*n limbs in tarr */
+  ASSERT (n <= SQR_KARATSUBA_THRESHOLD);
+
+  if ((n & 1) != 0)
+    {
+      mp_limb_t x0, x1;
+
+      if (n == 1)
+	{
+	  mp_limb_t ul, lpl;
+	  ul = up[0];
+	  umul_ppmm (rp[1], lpl, ul, ul << GMP_NAIL_BITS);
+	  rp[0] = lpl >> GMP_NAIL_BITS;
+	  return;
+	}
+
+      MPN_ZERO (tp, n);
+
+      for (i = 0; i <= n - 2; i += 2)
+	{
+	  cy = mpn_addmul_2 (tp + 2 * i, up + i + 1, n - (i + 1), up + i);
+	  tp[n + i] = cy;
+	}
+
+      MPN_SQR_DIAGONAL (rp, up, n);
+
+      for (i = 2; i + 2 <= 2 * n; i += 4)
+	{
+	  x0 = rp[i + 0];
+	  rp[i + 0] = (-x0) & GMP_NUMB_MASK;
+	  x1 = rp[i + 1];
+	  rp[i + 1] = (-x1 - (x0 != 0)) & GMP_NUMB_MASK;
+	  __GMPN_SUB_1 (cy, rp + i + 2, rp + i + 2, 2, (x1 | x0) != 0);
+	  mpn_incr_u (rp + i + 4, cy);
+	}
+
+#if HAVE_NATIVE_mpn_addlsh1_n
+      cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
+#else
+      cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
+      cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
+      rp[2 * n - 1] += cy;
+#endif
+    }
+  else
+    {
+      mp_limb_t x0, x1;
+
+      if (n == 2)
+	{
+	  rp[0] = 0;
+	  rp[1] = 0;
+	  rp[3] = mpn_addmul_2 (rp, up, 2, up);
+	  return;
+	}
+
+      MPN_ZERO (tp, n);
+
+      for (i = 0; i <= n - 4; i += 2)
+	{
+	  cy = mpn_addmul_2 (tp + 2 * i, up + i + 1, n - (i + 1), up + i);
+	  tp[n + i] = cy;
+	}
+      cy = mpn_addmul_1 (tp + 2 * n - 4, up + n - 1, 1, up[n - 2]);
+      tp[2 * n - 3] = cy;
+
+      MPN_SQR_DIAGONAL (rp, up, n);
+
+      for (i = 2;; i += 4)
+	{
+	  x0 = rp[i + 0];
+	  rp[i + 0] = (-x0) & GMP_NUMB_MASK;
+	  x1 = rp[i + 1];
+	  rp[i + 1] = (-x1 - (x0 != 0)) & GMP_NUMB_MASK;
+	  if (i + 6 >= 2 * n)
+	    break;
+	  __GMPN_SUB_1 (cy, rp + i + 2, rp + i + 2, 2, (x1 | x0) != 0);
+	  mpn_incr_u (rp + i + 4, cy);
+	}
+      __GMPN_SUB_1 (cy, rp + i + 2, rp + i + 2, 2, (x1 | x0) != 0);
+      mpn_decr_u (rp + i + 4, cy);
+
+#if HAVE_NATIVE_mpn_addlsh1_n
+      cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
+#else
+      cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
+      cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
+      rp[2 * n - 1] += cy;
+#endif
+    }
+}
+#define READY_WITH_mpn_sqr_basecase
+#endif
+
+
+#if ! defined (READY_WITH_mpn_sqr_basecase)
+
+/* Default mpn_sqr_basecase using mpn_addmul_1.  */
+
+void
+mpn_sqr_basecase (mp_ptr rp, mp_srcptr up, mp_size_t n)
 {
   mp_size_t i;
 
   ASSERT (n >= 1);
-  ASSERT (! MPN_OVERLAP_P (prodp, 2*n, up, n));
+  ASSERT (! MPN_OVERLAP_P (rp, 2*n, up, n));
 
   {
     mp_limb_t ul, lpl;
     ul = up[0];
-    umul_ppmm (prodp[1], lpl, ul, ul << GMP_NAIL_BITS);
-    prodp[0] = lpl >> GMP_NAIL_BITS;
+    umul_ppmm (rp[1], lpl, ul, ul << GMP_NAIL_BITS);
+    rp[0] = lpl >> GMP_NAIL_BITS;
   }
   if (n > 1)
     {
@@ -60,26 +282,18 @@ mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
 	  cy = mpn_addmul_1 (tp + 2 * i - 2, up + i, n - i, up[i - 1]);
 	  tp[n + i - 2] = cy;
 	}
-#if HAVE_NATIVE_mpn_sqr_diagonal
-      mpn_sqr_diagonal (prodp + 2, up + 1, n - 1);
-#else
-      for (i = 1; i < n; i++)
-	{
-	  mp_limb_t ul, lpl;
-	  ul = up[i];
-	  umul_ppmm (prodp[2 * i + 1], lpl, ul, ul << GMP_NAIL_BITS);
-	  prodp[2 * i] = lpl >> GMP_NAIL_BITS;
-	}
-#endif
+      MPN_SQR_DIAGONAL (rp + 2, up + 1, n - 1);
+
       {
 	mp_limb_t cy;
 #if HAVE_NATIVE_mpn_addlsh1_n
-	cy = mpn_addlsh1_n (prodp + 1, prodp + 1, tp, 2 * n - 2);
+	cy = mpn_addlsh1_n (rp + 1, rp + 1, tp, 2 * n - 2);
 #else
 	cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
-	cy += mpn_add_n (prodp + 1, prodp + 1, tp, 2 * n - 2);
+	cy += mpn_add_n (rp + 1, rp + 1, tp, 2 * n - 2);
 #endif
-	prodp[2 * n - 1] += cy;
+	rp[2 * n - 1] += cy;
       }
     }
 }
+#endif
