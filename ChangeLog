@@ -1,5 +1,7 @@
 2000-10-02  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/powerpc32/gmp-mparam.h: Retune.
+	* mpn/powerpc64/gmp-mparam.h: Retune.
 	* mpn/x86/pentium/gmp-mparam.h: Retune.
 	* mpn/x86/pentium/mmx/gmp-mparam.h: Retune.
 	* mpn/sparc32/v9/gmp-mparam.h: Retune.
