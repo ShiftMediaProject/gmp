@@ -102,8 +102,11 @@ int              factor_alloc;  /* entries allocated to factor array */
 
 
 int
-f_cmp_divisor (struct factor_t *p, struct factor_t *q)
+f_cmp_divisor (const void *parg, const void *qarg)
 {
+  const struct factor_t *p, *q;
+  p = parg;
+  q = qarg;
   if (p->divisor > q->divisor)
     return 1;
   else if (p->divisor < q->divisor)
@@ -113,8 +116,11 @@ f_cmp_divisor (struct factor_t *p, struct factor_t *q)
 }
 
 int
-f_cmp_fraction (struct factor_t *p, struct factor_t *q)
+f_cmp_fraction (const void *parg, const void *qarg)
 {
+  const struct factor_t *p, *q;
+  p = parg;
+  q = qarg;
   if (p->fraction > q->fraction)
     return 1;
   else if (p->fraction < q->fraction)
