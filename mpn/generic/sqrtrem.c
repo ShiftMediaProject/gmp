@@ -95,6 +95,17 @@ MA 02111-1307, USA. */
   })
 #endif
 
+#if 0
+#if defined (__i386__) || defined (__i486__)
+#define SQRT(a) \
+  ({									\
+    double __sqrt_res;							\
+    asm ("fsqrt" : "=t" (__sqrt_res) : "0" (a));			\
+    __sqrt_res;								\
+  })
+#endif
+#endif
+
 #endif
 
 #ifndef SQRT
@@ -272,9 +283,7 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
 /* Is there a fast sqrt instruction defined for this machine?  */
 #ifdef SQRT
   {
-    initial_approx = SQRT (t_high0 * 2.0
-			   * ((mp_limb_t) 1 << (BITS_PER_MP_LIMB - 1))
-			   + t_high1);
+    initial_approx = SQRT (t_high0 * MP_BASE_AS_DOUBLE + t_high1);
     /* If t_high0,,t_high1 is big, the result in INITIAL_APPROX might have
        become incorrect due to overflow in the conversion from double to
        mp_limb_t above.  It will typically be zero in that case, but might be
