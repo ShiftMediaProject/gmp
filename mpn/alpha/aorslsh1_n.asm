@@ -76,54 +76,53 @@ PROLOGUE(func)
 	cmpeq	r1, 2, r2
 	bne	r2, $Lb10
 $Lb11:	C n = 3, 7, 11, ...
+	ldq	v0, 0(vp)
+	ldq	u0, 0(up)
+	ldq	v1, 8(vp)
+	ldq	u1, 8(up)
+	ldq	v2, 16(vp)
+	ldq	u2, 16(up)
 	lda	vp, 24(vp)
 	lda	up, 24(up)
-	ldq	v0, -24(vp)
-	ldq	u0, -24(up)
-	ldq	v1, -16(vp)
-	ldq	u1, -16(up)
-	ldq	v2, -8(vp)
-	ldq	u2, -8(up)
 	bge	n, $Loop
 	br	r31, $Lcj3
 $Lb10:	C n = 2, 6, 10, ...
 	bis	r31, r31, cy0
+	ldq	v1, 0(vp)
+	ldq	u1, 0(up)
+	ldq	v2, 8(vp)
+	ldq	u2, 8(up)
+	lda	rp, -8(rp)
+	blt	n, $Lcj2
+	ldq	v3, 16(vp)
+	ldq	u3, 16(up)
 	lda	vp, 48(vp)
 	lda	up, 16(up)
-	lda	rp, -8(rp)
-	ldq	v1, -48(vp)
-	ldq	u1, -16(up)
-	ldq	v2, -40(vp)
-	ldq	u2, -8(up)
-	ldq	v3, -32(vp)
-	ldq	u3, 0(up)
-	bge	n, $LL10
-	br	r31, $Lcj2
+	br	r31, $LL10
 $Lb01:	C n = 1, 5, 9, ...
+	ldq	v2, 0(vp)
+	ldq	u2, 0(up)
+	lda	rp, -16(rp)
+	blt	n, $Lcj1
+	ldq	v3, 8(vp)
+	ldq	u3, 8(up)
+	ldq	v0, 16(vp)
+	ldq	u0, 16(up)
 	lda	vp, 40(vp)
 	lda	up, 8(up)
-	lda	rp, 16(rp)
-	ldq	v2, -40(vp)
-	ldq	u2, -8(up)
-	ldq	v3, -32(vp)
-	ldq	u3, 0(up)
-	ldq	v0, -24(vp)
-	ldq	u0, 8(up)
-	bge	n, $LL01
-	lda	rp, -32(rp)
-	br	r31, $Lcj1
+	lda	rp, 32(rp)
+	br	r31, $LL01
 $Lb00:	C n = 4, 8, 12, ...
 	bis	r31, r31, cy0
+	ldq	v3, 0(vp)
+	ldq	u3, 0(up)
+	ldq	v0, 8(vp)
+	ldq	u0, 8(up)
+	ldq	v1, 16(vp)
+	ldq	u1, 16(up)
 	lda	vp, 32(vp)
-	lda	up, 32(up)
 	lda	rp, 8(rp)
-	ldq	v3, -32(vp)
-	ldq	u3, -32(up)
-	ldq	v0, -24(vp)
-	ldq	u0, -24(up)
-	ldq	v1, -16(vp)
-	ldq	u1, -16(up)
-	br	r31, $LL00
+	br	r31, $LL00-4
 	ALIGN(16)
 C 0
 $Loop:	sll	v0, 1, sl	C left shift vlimb
