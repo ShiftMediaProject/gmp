@@ -21,10 +21,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 */
 
-/* All time measuring methods will need an otherwise idle system for
-   accurate measurements.  The only exception might be times() tms_utime,
-   and only then if you know the kernel accurately accounts for task
-   switches and interrupts, and in that case you'd expect some other
+/* All time measuring methods will need an otherwise idle system to
+   guarantee accurate measurements.  The only exception might be times()
+   tms_utime, and only then if you know the kernel accurately accounts for
+   task switches and interrupts, and in that case you'd expect some other
    accurate time base to be available too.
 
 
@@ -42,7 +42,7 @@ MA 02111-1307, USA.
    speed_precision - global variable which is the intended accuracy of time
    measurements.  speed_measure() for instance runs target routines with
    enough repetitions so it takes at least speed_unittime*speed_precision
-   seconds.  Programs can provide options so the user can set this.
+   seconds.  A program can provide an option so the user can set this.
 
    speed_cycletime - the time in seconds for each CPU cycle, for example on
    a 100 MHz CPU this would be 1.0e-8.  If the CPU frequency is unknown,
