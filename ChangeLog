@@ -1,3 +1,20 @@
+2000-07-21  Kent Boortz  <kent@erix.ericsson.se>
+
+	* macos/Asm*, macos/CmnObj, macos/Mp*: Directories no longer created
+	from configure script, now part of dist.
+	* macos/Makefile
+	* macos/Makefile.cw
+	* macos/config.h
+	* macos/Asm/*.s
+	New files and directories that is the output from configure. This way
+	no Perl installation is required to build on MacOS, just MPW.
+	* macos/configure: Added prefix '__g' to exported assembler labels.
+	Changed to handle new m4 syntax instead of the old cpp syntax in asm.
+	* macos/Makefile.in: Corrected 'clean' target, added 'distclean'
+	and 'maintainer_clean'. Added "mpn/mp_bases.c" to build.
+	* macos/README: Reflect the new build process without configure.
+	Corrected the file structure for Apple MPW installation.
+
 2000-07-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/tests/t-muldiv.c: Relax error limit.  Make precision depend
