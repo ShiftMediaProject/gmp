@@ -492,8 +492,11 @@ links=
 gmp_links=
 
 # Include assembly definition files and link them to mpn/.
-gmp_links="$gmp_links mpn/asm-defs.m4:mpn/asm-defs.m4"
-GMP_INCLUDE(asm-defs.m4)
+# <src>/mpn/asm-defs.m4 gets linked to <build>mpn/asm.m4.  The change
+# of name is necessary if we build in source directory, or the ln will
+# fail.
+gmp_links="$gmp_links mpn/asm.m4:mpn/asm-defs.m4"
+GMP_INCLUDE(asm.m4)
 
 dnl  config.m4 post-includes
 dnl  -----------------------
