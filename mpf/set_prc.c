@@ -22,36 +22,39 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 
-void
-mpf_set_prec (mpf_ptr x, unsigned long int prec_in_bits)
-{
-  mp_size_t prec;
-  mp_size_t size;
 
-  /* Do nothing if we're already the right precision.  This can arise if an
-     application is gradually increasing or decreasing its requested minimum
-     precision.  */
-  prec = __GMPF_BITS_TO_PREC (prec_in_bits);
-  if (prec == PREC(x))
+/* A full new_prec+1 limbs are always retained, even though just new_prec
+   would satisfy the requested precision.  If size==new_prec+1 then
+   certainly new_prec+1 should be kept since no copying is needed in that
+   case.  If just new_prec was kept for size>new_prec+1 it'd be a bit
+   inconsistent.  */
+
+void
+mpf_set_prec (mpf_ptr x, unsigned long int new_prec_in_bits)
+{
+  mp_size_t  old_prec, new_prec, new_prec_plus1;
+  mp_size_t  size, sign;
+  mp_ptr     xp;
+
+  new_prec = __GMPF_BITS_TO_PREC (new_prec_in_bits);
+  old_prec = PREC(x);
+
+  /* do nothing if already the right precision */
+  if (new_prec == old_prec)
     return;
 
-  /* We want the most significant limbs, so move the limbs down if we are
-     about to truncate the value.  */
-  size = ABS (x->_mp_size);
-  if (size > prec + 1)
-    {
-      mp_size_t offset = size - (prec + 1);
-      mp_ptr xp = x->_mp_d;
+  PREC(x) = new_prec;
+  new_prec_plus1 = new_prec + 1;
 
-      MPN_COPY_INCR (xp, xp + offset, prec + 1);
+  /* retain most significant limbs */
+  sign = SIZ(x);
+  size = ABS (sign);
+  xp = PTR(x);
+  if (size > new_prec_plus1)
+    {
+      SIZ(x) = (sign >= 0 ? new_prec_plus1 : -new_prec_plus1);
+      MPN_COPY_INCR (xp, xp + size - new_prec_plus1, new_prec_plus1);
     }
 
-  x->_mp_d = (mp_ptr) (*__gmp_reallocate_func)
-    (x->_mp_d,
-     (x->_mp_prec + 1) * BYTES_PER_MP_LIMB, (prec + 1) * BYTES_PER_MP_LIMB);
-  x->_mp_prec = prec;
-
-  /* If the precision decreased, truncate the number.  */
-  if (size > prec + 1)
-    x->_mp_size = x->_mp_size >= 0 ? (prec + 1) : -(prec + 1);
+  PTR(x) = __GMP_REALLOCATE_FUNC_LIMBS (xp, old_prec+1, new_prec_plus1);
 }
