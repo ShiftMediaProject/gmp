@@ -1,7 +1,6 @@
-/* urandomb (rop, state, size) -- Generate a uniform pseudorandom real
-   number between 0 (inclusive) and 1 (exclusive) with SIZE number of
-   bits, using STATE as the random state previously initialized by a
-   call to gmp_rand_init().  If SIZE is 0, fill ROP.
+/* mpf_urandomb (rop, state) -- Generate a uniform pseudorandom real
+   number between 0 (inclusive) and 1 (exclusive), using STATE as the
+   random state previously initialized by a call to gmp_rand_init().
 
 Copyright (C) 1999, 2000  Free Software Foundation, Inc.
 
@@ -27,32 +26,40 @@ MA 02111-1307, USA. */
 
 /* FIXME: Rename file to urandomb.c. */
 
-/* mpf_urandomb() -- Generate a universally distributed real random
-   number 0 <= X < 1.  See file mpn/generic/rawrandom.c for algorithms
-   used. */
-
 void
 #if __STDC__
-mpf_urandomb (mpf_t rop, gmp_rand_state s, unsigned long int nbits)
+mpf_urandomb (mpf_t rop, gmp_rand_state rstate)
 #else
-mpf_urandomb (rop, s, nbits)
+mpf_urandomb (rop, rstate)
      mpf_t rop;
-     gmp_rand_state s;
-     unsigned long int nbits;
+     gmp_rand_state rstate;
 #endif
 {
   mp_ptr rp;
-  mp_size_t prec;
-
-  /* FIXME: Use NBITS.  NBITS == 0 means fill ROP.  */
+  mp_size_t nlimbs;
+  mp_exp_t exp;
 
   rp = PTR (rop);
-  prec = PREC (rop);
+  nlimbs = PREC (rop);
 
-  gmp_rand_getraw (rp, s, prec * BITS_PER_MP_LIMB);
-  MPN_NORMALIZE (rp, prec);
-  SIZ (rop) = prec;
-  EXP (rop) = 0;
+  gmp_rand_getraw (rp, rstate, nlimbs * BITS_PER_MP_LIMB);
 
-  return;
+  exp = 0;
+  while (nlimbs != 0 && rp[nlimbs - 1] == 0)
+    {
+      nlimbs--;
+      exp--;
+    }
+  EXP (rop) = exp;
+  SIZ (rop) = nlimbs;
+
+#if 0
+  /* If nbits isn't a multiple of BITS_PER_MP_LIMB, shift.  */
+  if (nlimbs != 0)
+    {
+      if (nbits % BITS_PER_MP_LIMB != 0)
+	mpn_lshift (rp, rp, nlimbs,
+		    BITS_PER_MP_LIMB - nbits % BITS_PER_MP_LIMB);
+    }
+#endif
 }
