@@ -6,7 +6,6 @@ Changes between MP version 3.1.1 and 3.2
 * New CPU support: IA-64.
 * Improved CPU support: 21264, Cray vector systems.
 * New systems supported: SCO 5, Darwin, Windows DLLs.
-* New C++ wrapper.
 * New Karatsuba Square Root algorithm.
 * New algorithms chapter in the manual.
 * Updated mpfr.
