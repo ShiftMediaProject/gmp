@@ -1,3 +1,18 @@
+2001-05-07  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-h.in (mpf_set_si, mpf_set_ui): Don't bother setting _mp_exp to 0
+	when n==0 (use 1 unconditionally).
+
+	* mpn/x86/README: Note gas _GLOBAL_OFFSET_TABLE_ with leal problem.
+
+	* gmp-h.in (mpz_fits_uint_p, mpz_fits_ulong_p, mpz_fits_ushort_p):
+	Provide these as "extern inline"s.
+	(__GMP_UINT_MAX, __GMP_ULONG_MAX, __GMP_USHRT_MAX): New macros.
+	(mpz_popcount): Use __GMP_ULONG_MAX.
+	* gmp-impl.h (UINT_MAX, ULONG_MAX, USHRT_MAX): Use __GMP_U*_MAX, if
+	not already defined.
+	* mpz/fits_u.c: Use the code from gmp.h.
+
 2001-05-06  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k7/dive_1.asm: New file.
