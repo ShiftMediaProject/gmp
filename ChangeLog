@@ -18,6 +18,11 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-01-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/copyi.asm: Avoid `nop' mnemonic, unsupported on Cray.
+	* mpn/alpha/copyd.asm: Likewise.
+
 2003-01-05  Kevin Ryde  <kevin@swox.se>
 
 	* demos/expr/t-expr.c (check_r): Tolerate mpfr_set_str new return
