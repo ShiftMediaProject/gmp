@@ -1,3 +1,8 @@
+2001-03-07  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/mpz/t-div_2exp.c (check_various): Start 2nd d loop from 0
+	(avoid problems with Cray compilers).
+
 2001-03-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/cray/ieee/submul_1.c: Don't call mpn_sub_n with size 0.
