@@ -536,6 +536,23 @@ case $host in
     path="ia64"
     GMP_INCLUDE_MPN(ia64/default.m4)
     SPEED_CYCLECOUNTER_OBJ=ia64.lo
+
+    case $host in
+      *-*-hpux*)
+        abilist="32 64"
+
+        cclist_32="gcc cc"
+        path_32="ia64"
+        cc_32_cflags="+O3"
+        gcc_32_cflags="-milp32 -O2"
+        limb_32=longlong
+        SPEED_CYCLECOUNTER_OBJ_32=ia64.lo
+        cyclecounter_size_32=2
+
+        cc_64_cflags="+DD64 +O3"
+        gcc_64_cflags="-mlp64 -O2"
+        ;;
+    esac
     ;;
 
 
