@@ -666,7 +666,7 @@ freq_measure_mftb_one (void)
 #define call_gettimeofday(t)   gettimeofday (&(t), NULL)
 #define timeval_tv_sec(t)      ((t).tv_sec)
 #define timeval_tv_usec(t)     ((t).tv_usec)
-  FREQ_MEASURE_ONE ("mftb", struct timeval,
+  FREQ_MEASURE_ONE ("mftb", struct_timeval,
                     call_gettimeofday, MFTB,
                     timeval_tv_sec, timeval_tv_usec);
 }
@@ -723,6 +723,8 @@ mftb_works_p (void)
   return 0;
 #endif
 
+  /* The time base is normally 1/4 of the bus speed on 6xx and 7xx chips, on
+     other chips it can be driven from an external clock. */
   cycletime = freq_measure ("mftb", freq_measure_mftb_one);
   if (cycletime == -1.0)
     {
