@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.151
+# From configure.in Revision: 1.152
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -4839,6 +4839,8 @@ case ${target} in
     SPEED_CYCLECOUNTER_OBJ=hppa2.lo ;;
   hppa*-*-*)
     SPEED_CYCLECOUNTER_OBJ=hppa.lo ;;
+  ia64*-*-*)
+    SPEED_CYCLECOUNTER_OBJ=ia64.lo ;;
 esac
 
 if test -n "$SPEED_CYCLECOUNTER_OBJ"
@@ -5544,4 +5546,3 @@ rm -fr confdefs* $ac_clean_files
 trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
-
