@@ -256,6 +256,7 @@ unsigned long int mpz_scan1 _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_set _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_set_d _PROTO ((mpz_ptr, double));
 void mpz_set_f _PROTO ((mpz_ptr, mpf_srcptr));
+void mpz_set_q _PROTO ((mpz_ptr, mpq_srcptr));
 void mpz_set_si _PROTO ((mpz_ptr, signed long int));
 int mpz_set_str _PROTO ((mpz_ptr, const char *, int));
 void mpz_set_ui _PROTO ((mpz_ptr, unsigned long int));
