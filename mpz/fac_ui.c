@@ -1,7 +1,7 @@
 /* mpz_fac_ui(result, n) -- Set RESULT to N!.
 
-Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1995, 2000, 2001, 2002, 2003 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -112,7 +112,7 @@ void
 mpz_fac_ui (mpz_ptr x, unsigned long n)
 {
 
-  unsigned long z, z1, stt;
+  unsigned long z, stt;
   int i, j;
   mpz_t t1, st[8 * sizeof (unsigned long) + 1 - APCONST];
   mp_limb_t d[4];
@@ -140,7 +140,6 @@ mpz_fac_ui (mpz_ptr x, unsigned long n)
   /* d[1] is 2n/e , d[0] ignored        */
   count_leading_zeros (z, d[1]);
   z = GMP_LIMB_BITS - z - 1;	/* z=floor(log_2(2n/e))   */
-  z1 = z - 1;			/* z1=floor(log_2(n/e))        */
   umul_ppmm (d[1], d[0], (mp_limb_t) n, (mp_limb_t) z);
   /* d=n*floor(log_2(2n/e))   */
   d[0] = (d[0] >> 2) | (d[1] << (GMP_LIMB_BITS - 2));
