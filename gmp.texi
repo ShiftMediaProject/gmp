@@ -191,7 +191,8 @@ There is carefully optimized assembly code for these CPUs:
 @cindex CPUs supported
 ARM,
 DEC Alpha 21064, 21164, and 21264,
-AMD 29000, K6 and Athlon,
+AMD 29000,
+AMD K6 and Athlon,
 Hitachi SuperH and SH-2,
 HPPA 1.0, 1.1 and 2.0,
 Intel Pentium, Pentium Pro/Pentium II, generic x86,
@@ -263,8 +264,9 @@ reports.)
 
 @menu
 * Build Options::               
-* Notes for Particular Systems::  
 * ABI and ISA::                 
+* Notes for Package Builds::    
+* Notes for Particular Systems::  
 * Known Build Problems::        
 @end menu
 
@@ -318,11 +320,7 @@ the binaries won't run on older members of the family, and might run slower on
 other members, older or newer.  The best idea is always to build GMP for the
 exact machine type you intend to run it on.
 
-If you need to create binaries that will run on several processors in a
-family, GMP should be configured for the lowest common denominator among them,
-something with which all the desired processors are upwardly compatible.
-
-The following CPUs have specific assembly code support.  See
+The following CPU targets have specific assembly code support.  See
 @file{configure.in} for which @file{mpn} subdirectories get used by each.
 
 @itemize @bullet
@@ -437,8 +435,9 @@ selected with @code{mp_set_memory_functions} that's used, this being
 @code{malloc} by default.  @xref{Custom Allocation}.
 
 Depending on your system, the only indication of stack overflow might be a
-segmentation violation.  @command{limit}, @command{ulimit} or @code{setrlimit}
-might be able to increase the stack space available to programs.
+segmentation violation.  It might be possible to increase available stack
+space with @command{limit}, @command{ulimit} or @code{setrlimit}, or under
+DJGPP with @command{stubedit} or @code{_stklen}.
 
 @item @option{--enable-mpbsd}
 
@@ -448,13 +447,14 @@ The Berkeley MP compatibility library (@file{libmp.a}) and header file
 
 @item @option{MPN_PATH}
 
-Various assembler versions of mpn subroutines are provided, and for a given
-CPU target a search is made though a path to choose each.  For example
-@samp{sparcv8} has a path @samp{"sparc32/v8 sparc32 generic"}, which means it
-looks first for v8 code, falls back on plain sparc32, and finally falls back
-on generic C.  Knowledgable users with special requirements can specify a path
-with @samp{MPN_PATH="dir list"}.  This will normally be unnecessary because
-all sensible paths should be available under one or other CPU target.
+Various assembler versions of mpn subroutines are provided, and, for a given
+CPU target, a search is made though a path to choose a version of each.  For
+example @samp{sparcv8} has path @samp{"sparc32/v8 sparc32 generic"}, which
+means it looks first for v8 code, falls back on plain sparc32, and finally
+falls back on generic C.  Knowledgable users with special requirements can
+specify a path with @samp{MPN_PATH="dir list"}.  This will normally be
+unnecessary because all sensible paths should be available under one or other
+CPU target.
 
 @item Demonstration Programs
 @cindex Demonstration programs
@@ -473,9 +473,10 @@ supplementary notes can be found in the @file{doc} subdirectory.
 
 
 @need 2000
-@node ABI and ISA, Notes for Particular Systems, Build Options, Installing GMP
+@node ABI and ISA, Notes for Package Builds, Build Options, Installing GMP
 @section ABI and ISA
 @cindex ABI
+@cindex ISA
 
 ABI (Application Binary Interface) refers to the calling conventions between
 functions, meaning what registers are used and what sizes the various C data
@@ -489,8 +490,8 @@ significantly greater speed.
 
 The burden is on application programs and cooperating libraries to ensure they
 match the ABI chosen by GMP.  Fortunately this presents a difficulty only on a
-few systems, and if you have one then the performance gains are enough to make
-it worth the trouble.
+few systems, and if you have one of them then the performance gains are enough
+to make it worth the trouble.
 
 Some of what's described in this section may change in future releases of GMP.
 
@@ -579,7 +580,38 @@ but they effectively control the ABI.
 
 
 @need 2000
-@node Notes for Particular Systems, Known Build Problems, ABI and ISA, Installing GMP
+@node Notes for Package Builds, Notes for Particular Systems, ABI and ISA, Installing GMP
+@section Notes for Package Builds
+@cindex Build notes for binary packaging
+@cindex Packaged builds
+
+GMP should present no great difficulties for packaging in a binary
+distribution.
+
+@cindex Libtool versioning
+Libtool is used to build the library and @samp{-version-info} is set
+appropriately, having started from @samp{3:0:0} in GMP 3.0.  The GMP 3 series
+will be upwardly binary compatible in each release, but may be adding
+additional function interfaces.  On systems where libtool versioning is not
+fully checked by the loader, an auxiliary mechanism may be needed to express
+that a dynamic linked application depends on a new enough minor version of
+GMP.
+
+When building a package for a CPU family, care should be taken to use
+@samp{--target} to choose the least common denominator among the CPUs which
+might use the package.  For example this might necessitate @samp{i386} for
+x86s, or plain @samp{sparc} (meaning V7) for SPARCs.
+
+Users who care about speed will want GMP built for their exact CPU type, to
+make use of the available optimizations.  Providing a way to suitably rebuild
+a package may be useful.  This could be as simple as making it possible for a
+user to omit @samp{--target} in a build so @samp{./config.guess} will detect
+the CPU.  But a way to manually specify a @samp{--target} will be wanted for
+systems where @samp{./config.guess} is inexact.
+
+
+@need 2000
+@node Notes for Particular Systems, Known Build Problems, Notes for Package Builds, Installing GMP
 @section Notes for Particular Systems
 @cindex Build notes for particular systems
 @table @asis
@@ -606,7 +638,7 @@ is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
 Using CPU target @samp{sparcv8} or @samp{supersparc} on relevant systems will
 give a significant performance increase over the V7 code.
 
-@item SunOS
+@item SunOS 4
 
 @command{/usr/bin/m4} lacks various features needed to process @file{.asm}
 files, and instead @samp{./configure} will automatically use
@@ -650,20 +682,20 @@ You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 
 @table @asis
 
+@item Generic C on a 64-bit system
+
+When making a generic C build using @samp{--target=none} on a 64-bit system
+(meaning where @code{unsigned long} is 64 bits), @code{BITS_PER_MP_LIMB},
+@code{BITS_PER_LONGINT} and @code{BYTES_PER_MP_LIMB} in
+@file{mpn/generic/gmp-mparam.h} need to be changed to 64 and 8.  This will
+hopefully be automated in a future version of GMP.
+
 @item NeXT prior to 3.3
 
 The system compiler on old versions of NeXT was a massacred and old GCC, even
 if it called itself @file{cc}.  This compiler cannot be used to build GMP, you
 need to get a real GCC, and install that before you compile GMP.  (NeXT may
 have fixed this in release 3.3 of their system.)
-
-@item Generic C on a 64-bit system
-
-When making a generic C build using @samp{--target=none} on a 64-bit system
-(meaning where @code{unsigned long} is 64 bits), @code{BITS_PER_MP_LIMB} and
-@code{BYTES_PER_MP_LIMB} in @file{mpn/generic/gmp-mparam.h} need to be changed
-to 64 and 8 respectively.  This will hopefully be automated in a future
-version of GMP.
 
 @item POWER and PowerPC
 
@@ -937,6 +969,7 @@ routines are not reentrant, since they rely on global state.
 
 @deftypevr {Global Constant} {const int} mp_bits_per_limb
 @cindex Bits per limb
+@cindex Limb size
 The number of bits per limb.
 @end deftypevr
 
@@ -956,9 +989,11 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @cindex Compatibility with older versions
 @cindex Upward compatibility
 
-This version of GMP is upward compatible with version 2.0, 2.0.1, and 2.0.2 at
-the source level, with the exception of @code{mpn_gcd} which has had its
-source arguments swapped.
+This version of GMP is binary upward compatible with versions 3.0 and 3.0.1.
+
+This version of GMP is upward compatible with versions 2.0, 2.0.1, and 2.0.2
+at the source level, with the exception of @code{mpn_gcd} which had its source
+arguments swapped in GMP 3.0.
 
 There are a number of compatibility issues between GMP 1 and GMP 2 that of
 course also apply when porting applications from GMP 1 to GMP 3.  Please
@@ -1356,6 +1391,7 @@ Set @var{rop} to $@var{rop} + @var{op1} \times @var{op2}$.
 @end deftypefun
 
 @deftypefun void mpz_mul_2exp (mpz_t @var{rop}, mpz_t @var{op1}, unsigned long int @var{op2})
+@cindex Bit shift left
 @ifnottex
 Set @var{rop} to @var{op1} times 2 raised to @var{op2}.  This operation can
 also be defined as a left shift, @var{op2} steps.
@@ -1587,6 +1623,7 @@ lowest terms.
 @end deftypefun
 
 @deftypefun void mpz_tdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
+@cindex Bit shift right
 @ifnottex
 Set @var{q} to @var{n} divided by 2 raised to @var{d}.  The quotient is truncated
 towards 0.
@@ -1773,6 +1810,7 @@ is non-zero.
 @end deftypefun
 
 @deftypefun void mpz_gcdext (mpz_t @var{g}, mpz_t @var{s}, mpz_t @var{t}, mpz_t @var{a}, mpz_t @var{b})
+@cindex Extended GCD
 Compute @var{g}, @var{s}, and @var{t}, such that @var{a}@var{s} +
 @var{b}@var{t} = @var{g} = @code{gcd}(@var{a}, @var{b}).  If @var{t} is
 @code{NULL}, that argument is not computed.
@@ -1801,6 +1839,7 @@ odd and must be positive.
 @deftypefunx int mpz_ui_kronecker (unsigned long @var{a}, mpz_t @var{b});
 @deftypefunx int mpz_kronecker_si (mpz_t @var{a}, long @var{b});
 @deftypefunx int mpz_kronecker_ui (mpz_t @var{a}, unsigned long @var{b});
+@cindex Kronecker symbol functions
 @tex
 Calculate the value of the Kronecker/Jacobi symbol $\left(a \over b\right)$,
 with the Kronecker extension $\left(a \over 2\right) = \left(2 \over a\right)$
