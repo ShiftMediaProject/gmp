@@ -31,7 +31,10 @@ C cycles/limb.  The xorb is taking 2 cycles, but a separate load and xor
 C would be 1, if the right schedule could be found (not found so far).
 C Wanting to avoid potential cache bank clashes makes it tricky.
 
-deflit(TABLE_NAME,mpn_popcount``'_table')
+C The slightly strange quoting here helps the renaming done by tune/many.pl.
+deflit(TABLE_NAME,
+m4_assert_defined(`GSYM_PREFIX')
+GSYM_PREFIX`'mpn_popcount``'_table')
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC2, 8)
