@@ -289,6 +289,7 @@ AH_VERBATIM([HAVE_HOST_CPU_1],
 #
 #   cclist              the compiler choices
 #   xx_cflags           flags for compiler xx
+#   xx_cflags_maybe     flags for compiler xx, if they work
 #   xx_cppflags         cpp flags for compiler xx
 #   xx_cflags_optlist   list of sets of optional flags
 #   xx_cflags_yyy       set yyy of optional flags for compiler xx
@@ -313,6 +314,7 @@ AH_VERBATIM([HAVE_HOST_CPU_1],
 #   abilist               set of ABI choices
 #   cclist_aa             compiler choices in ABI aa
 #   xx_aa_cflags          flags for xx in ABI aa
+#   xx_aa_cflags_maybe    flags for xx in ABI aa, if they work
 #   xx_aa_cppflags        cpp flags for xx in ABI aa
 #   xx_aa_cflags_optlist  list of sets of optional flags in ABI aa
 #   xx_aa_cflags_yyy      set yyy of optional flags for compiler xx in ABI aa
@@ -1030,20 +1032,19 @@ case $host in
     # our sparc32/v9 asm code without it.  gas accepts -xarch=v8plus too, so
     # it can be in the cflags unconditionally (though gas doesn't need it).
     #
+    # gcc -m32 is needed to force 32-bit mode on a dual-ABI system, but past
+    # gcc doesn't know that flag, hence cflags_maybe.  Note that -m32 cannot
+    # be done through the optlist since the plain cflags would be run first
+    # and we don't want to require the default mode (whatever it is) works.
+    #
     case $host_cpu in
       sparc64 | sparcv9* | ultrasparc*)
         gcc_cflags="-O2 -Wa,-xarch=v8plus" ;;
       *)
         gcc_cflags="-O2" ;;
     esac
-    gcc_cflags_optlist="cpu m32"
-
-    # On versions of GNU/Linux sparc64 which are new enough to support
-    # ABI=64, we need "gcc -m32" to force ABI=32.  On past versions ABI=32
-    # was the only mode and -m32 was not available.  Hence use it only if it
-    # works.
-    #
-    gcc_cflags_m32="-m32"
+    gcc_cflags_maybe="-m32"
+    gcc_cflags_optlist="cpu"
 
     # gcc 2.7.2 knows -mcypress, -msupersparc, -mv8, -msparclite.
     # gcc 2.95 knows -mcpu= v7, hypersparc, sparclite86x, f930, f934,
@@ -1514,55 +1515,67 @@ for abi in $abilist; do
           if test "$ccbase" = acc; then ccbase=cc; fi ;;
       esac
 
-      # Any user CFLAGS, even an empty string, takes precendence
-                           eval cflags=\"\$${ccbase}${abi1}_cflags\"
-      test -n "$cflags" || eval cflags=\"\$${ccbase}${abi2}_cflags\"
-      if test "$test_CFLAGS" = set; then cflags=$CFLAGS; fi
+      for tmp_cflags_maybe in yes no; do
+                             eval cflags=\"\$${ccbase}${abi1}_cflags\"
+        test -n "$cflags" || eval cflags=\"\$${ccbase}${abi2}_cflags\"
 
-      # Any user CPPFLAGS, even an empty string, takes precendence
-                             eval cppflags=\"\$${ccbase}${abi1}_cppflags\"
-      test -n "$cppflags" || eval cppflags=\"\$${ccbase}${abi2}_cppflags\"
-      if test "$test_CPPFLAGS" = set; then cppflags=$CPPFLAGS; fi
+	if test "$tmp_cflags_maybe" = yes; then
+                                     eval cflags_maybe=\"\$${ccbase}${abi1}_cflags_maybe\"
+          test -n "$cflags_maybe" || eval cflags_maybe=\"\$${ccbase}${abi2}_cflags_maybe\"
+          if test -z "$cflags_maybe"; then continue; fi
+          cflags="$cflags_maybe $cflags"
+        fi
+        
+        # Any user CFLAGS, even an empty string, takes precendence
+        if test "$test_CFLAGS" = set; then cflags=$CFLAGS; fi
 
-      # --enable-profiling adds -p/-pg even to user-specified CFLAGS.
-      # This is convenient, but it's perhaps a bit naughty to modify user
-      # CFLAGS.
-      case "$enable_profiling" in
-      prof)  cflags="$cflags -p" ;;
-      gprof) cflags="$cflags -pg" ;;
-      instrument) cflags="$cflags -finstrument-functions" ;;
-      esac
+        # Any user CPPFLAGS, even an empty string, takes precendence
+                               eval cppflags=\"\$${ccbase}${abi1}_cppflags\"
+        test -n "$cppflags" || eval cppflags=\"\$${ccbase}${abi2}_cppflags\"
+        if test "$test_CPPFLAGS" = set; then cppflags=$CPPFLAGS; fi
 
-      GMP_PROG_CC_WORKS($cc $cflags $cppflags,,continue)
-
-      # If we're supposed to be using a "long long" for a limb, check that
-      # it works.
-                                eval limb_chosen=\"\$limb$abi1\"
-      test -n "$limb_chosen" || eval limb_chosen=\"\$limb$abi2\"
-      if test "$limb_chosen" = longlong; then
-        GMP_PROG_CC_WORKS_LONGLONG($cc $cflags $cppflags,,continue)
-      fi
-
-      # The tests to perform on this $cc, if any
-                             eval testlist=\"\$${ccbase}${abi1}_testlist\"
-      test -n "$testlist" || eval testlist=\"\$${ccbase}${abi2}_testlist\"
-
-      testlist_pass=yes
-      for tst in $testlist; do
-        case $tst in
-        hpc-hppa-2-0)   GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
-        gcc-arm-umodsi) GMP_GCC_ARM_UMODSI($cc,,testlist_pass=no) ;;
-        gcc-mips-o32)   GMP_GCC_MIPS_O32($cc,,testlist_pass=no) ;;
-        hppa-level-2.0) GMP_HPPA_LEVEL_20($cc $cflags,,testlist_pass=no) ;;
-        sizeof*)       GMP_C_TEST_SIZEOF($cc $cflags,$tst,,testlist_pass=no) ;;
+        # --enable-profiling adds -p/-pg even to user-specified CFLAGS.
+        # This is convenient, but it's perhaps a bit naughty to modify user
+        # CFLAGS.
+        case "$enable_profiling" in
+          prof)       cflags="$cflags -p" ;;
+          gprof)      cflags="$cflags -pg" ;;
+          instrument) cflags="$cflags -finstrument-functions" ;;
         esac
-        if test $testlist_pass = no; then break; fi
+
+        GMP_PROG_CC_WORKS($cc $cflags $cppflags,,continue)
+
+        # If we're supposed to be using a "long long" for a limb, check that
+        # it works.
+                                  eval limb_chosen=\"\$limb$abi1\"
+        test -n "$limb_chosen" || eval limb_chosen=\"\$limb$abi2\"
+        if test "$limb_chosen" = longlong; then
+          GMP_PROG_CC_WORKS_LONGLONG($cc $cflags $cppflags,,continue)
+        fi
+
+        # The tests to perform on this $cc, if any
+                               eval testlist=\"\$${ccbase}${abi1}_testlist\"
+        test -n "$testlist" || eval testlist=\"\$${ccbase}${abi2}_testlist\"
+
+        testlist_pass=yes
+        for tst in $testlist; do
+          case $tst in
+          hpc-hppa-2-0)   GMP_HPC_HPPA_2_0($cc,,testlist_pass=no) ;;
+          gcc-arm-umodsi) GMP_GCC_ARM_UMODSI($cc,,testlist_pass=no) ;;
+          gcc-mips-o32)   GMP_GCC_MIPS_O32($cc,,testlist_pass=no) ;;
+          hppa-level-2.0) GMP_HPPA_LEVEL_20($cc $cflags,,testlist_pass=no) ;;
+          sizeof*)       GMP_C_TEST_SIZEOF($cc $cflags,$tst,,testlist_pass=no) ;;
+          esac
+          if test $testlist_pass = no; then break; fi
+        done
+
+        if test $testlist_pass = yes; then
+          found_compiler=yes
+          break
+        fi
       done
 
-      if test $testlist_pass = yes; then
-        found_compiler=yes
-        break
-      fi
+      if test $found_compiler = yes; then break; fi
     done
 
     if test $found_compiler = yes; then break; fi
