@@ -25,7 +25,7 @@ the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "gmp-impl.h"
 
 
-void
+int
 #if __STDC__
 __gmp_assert_fail (const char *filename, int linenum,
                    const char *expr)
@@ -45,4 +45,7 @@ char *expr;
 
   fprintf (stderr, "GNU MP assertion failed: %s\n", expr);
   abort();
+
+  /*NOTREACHED*/
+  return 0;
 }
