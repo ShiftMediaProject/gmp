@@ -18,6 +18,25 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-11-15  Kevin Ryde  <kevin@swox.se>
+
+	* tests/devel/try.c (main): Use gmp_randinit_default explicitly on
+	__gmp_rands, since RANDS doesn't allow seeding.
+
+	* doc/gmp.texi (Assigning Integers): Remove notes on possible change
+	to disallow whitespace, this would be an incompatible change and
+	really can't be made.
+	(Toom 3-Way Multiplication): Updates for Paul's new code.
+
+	* mpn/generic/mul_n.c (toom3_interpolate, mpn_toom3_mul_n): Put
+	if/else braces around whole of #if code, for readability.
+
+	* tests/refmpn.c (refmpn_addlsh1_n, refmpn_sublsh1_n,
+	refmpn_rsh1add_n, refmpn_rsh1sub_n): Add ASSERTs for operand overlaps
+	etc.
+
+	* mpfr/*: Update to mpfr-2-0-2-branch 2003-11-15.
+
 2003-11-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/aorslsh1_n.asm: Use Cray-friendly syntax for "br".
