@@ -19,6 +19,17 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-12-19  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/devel/mul_1.c: Improve error message.
+	Accept command line argument for # of tests.
+	* tests/devel/addmul_1.c: Likewise.	
+	* tests/devel/submul_1.c: Likewise.	
+
+2001-12-18  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/mips3/mul_1.asm: Add NOPs to save a cycle on R1x000.
+
 2001-12-18  Kevin Ryde  <kevin@swox.se>
 
 	* gmpxx.h (gmp_randclass): Don't allow copy constructors or "=",
