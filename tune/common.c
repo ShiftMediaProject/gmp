@@ -140,7 +140,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
       memset (&s_dummy, '\0', sizeof (s_dummy));
       s = &s_dummy;
     }
-  
+
   s->reps = 1;
   s->time_divisor = 1.0;
   for (i = 0; i < numberof (t); i++)
@@ -153,7 +153,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           t[i] = (*fun) (s);
 
           if (speed_option_verbose >= 3)
-            gmp_printf("size=%ld reps=%u r=%Md attempt=%d  %.9f\n", 
+            gmp_printf("size=%ld reps=%u r=%Md attempt=%d  %.9f\n",
                        (long) s->size, s->reps, s->r, i, t[i]);
 
           if (t[i] == -1.0)
@@ -196,7 +196,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
             if (t[j] <= t[j-e+1] * TOLERANCE)
               return t[j-e+1] / s->time_divisor;
         }
-    } 
+    }
 
   fprintf (stderr, "speed_measure() could not get %d results within %.1f%%\n",
            e, (TOLERANCE-1.0)*100.0);
@@ -211,7 +211,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
 
 
 /* Read all of ptr,size to get it into the CPU memory cache.
-  
+
    A call to mpn_cache_fill_dummy() is used to make sure the compiler
    doesn't optimize away the whole loop.  Using "volatile mp_limb_t sum"
    would work too, but the function call means we don't rely on every
@@ -297,7 +297,7 @@ speed_cache_fill (struct speed_params *s)
       for (i = 0; i < s->src_num; i++)
         different |= (s->src[i].ptr != prev.src[i].ptr);
 
-      if (different) 
+      if (different)
         {
           if (s->dst_num != 0)
             {
@@ -343,14 +343,14 @@ speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
 {
   /*
   printf("%p %ld -> %p %X %X\n", ptr, align,
-         (mp_ptr) ptr 
+         (mp_ptr) ptr
          + ((align - ((mp_size_t) ptr >> 2)) &
             SPEED_TMP_ALLOC_ADJUST_MASK),
          ((mp_size_t) ptr >> 2) & SPEED_TMP_ALLOC_ADJUST_MASK,
          SPEED_TMP_ALLOC_ADJUST_MASK);
   */
 
-  return (mp_ptr) ptr 
+  return (mp_ptr) ptr
     + ((align - ((mp_size_t) ptr >> 2)) & SPEED_TMP_ALLOC_ADJUST_MASK);
 }
 
@@ -374,7 +374,7 @@ speed_option_set (const char *s)
     {
       speed_option_verbose = n;
     }
-  else 
+  else
     {
       printf ("Unrecognised -o option: %s\n", s);
       exit (1);
@@ -957,7 +957,7 @@ speed_mpn_mul_fft_full_sqr (struct speed_params *s)
                                                         \
     TMP_FREE (marker);                                  \
     return t;                                           \
-  }  
+  }
 
 double
 speed_mpn_mul_fft (struct speed_params *s)
@@ -983,7 +983,8 @@ speed_mpn_hgcd (struct speed_params *s)
   mp_size_t hgcd_scratch = mpn_hgcd_itch (s->size);
   mp_ptr ap;
   mp_ptr bp;
-  
+  mp_ptr tmp1, tmp2;
+
   struct hgcd hgcd;
   struct qstack quotients;
   int res;
@@ -995,7 +996,7 @@ speed_mpn_hgcd (struct speed_params *s)
     return -1;
 
   TMP_MARK (marker);
-  
+
   ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
   bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
 
@@ -1007,24 +1008,23 @@ speed_mpn_hgcd (struct speed_params *s)
   /* We must have a >= b */
   if (mpn_cmp (ap, bp, s->size) < 0)
     MP_PTR_SWAP (ap, bp);
-    
-  mpn_hgcd_init (&hgcd, s->size,
-		 SPEED_TMP_ALLOC_LIMBS (hgcd_init_scratch, s->align_wp));
-  qstack_init (&quotients, s->size,
-	       SPEED_TMP_ALLOC_LIMBS (qstack_scratch, s->align_wp),
-	       qstack_scratch);
+
+  tmp1 = SPEED_TMP_ALLOC_LIMBS (hgcd_init_scratch, s->align_wp);
+  mpn_hgcd_init (&hgcd, s->size, tmp1);
+  tmp2 = SPEED_TMP_ALLOC_LIMBS (qstack_scratch, s->align_wp);
+  qstack_init (&quotients, s->size, tmp2, qstack_scratch);
   wp = SPEED_TMP_ALLOC_LIMBS (hgcd_scratch, s->align_wp);
 
-  speed_starttime (); 
-  i = s->reps; 
+  speed_starttime ();
+  i = s->reps;
   do {
     qstack_reset (&quotients, s->size);
     res = mpn_hgcd (&hgcd, ap, s->size, bp, s->size,
 		    &quotients,
 		    wp, hgcd_scratch);
   }
-  while (--i != 0); 
-  t = speed_endtime (); 
+  while (--i != 0);
+  t = speed_endtime ();
 #if WANT_ASSERT
   if (res)
     ASSERT_HGCD (&hgcd, ap, s->size, bp, s->size, 0, 4);
@@ -1041,7 +1041,8 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   mp_size_t hgcd_scratch = mpn_hgcd_lehmer_itch (s->size);
   mp_ptr ap;
   mp_ptr bp;
-  
+  mp_ptr tmp1, tmp2;
+
   struct hgcd hgcd;
   struct qstack quotients;
   int res;
@@ -1053,7 +1054,7 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
     return -1;
 
   TMP_MARK (marker);
-  
+
   ap = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
   bp = SPEED_TMP_ALLOC_LIMBS (s->size + 1, s->align_wp);
 
@@ -1065,24 +1066,23 @@ speed_mpn_hgcd_lehmer (struct speed_params *s)
   /* We must have a >= b */
   if (mpn_cmp (ap, bp, s->size) < 0)
     MP_PTR_SWAP (ap, bp);
-    
-  mpn_hgcd_init (&hgcd, s->size,
-		 SPEED_TMP_ALLOC_LIMBS (hgcd_init_scratch, s->align_wp));
-  qstack_init (&quotients, s->size,
-	       SPEED_TMP_ALLOC_LIMBS (qstack_scratch, s->align_wp),
-	       qstack_scratch);
+
+  tmp1 = SPEED_TMP_ALLOC_LIMBS (hgcd_init_scratch, s->align_wp);
+  mpn_hgcd_init (&hgcd, s->size, tmp1);
+  tmp2 = SPEED_TMP_ALLOC_LIMBS (qstack_scratch, s->align_wp);
+  qstack_init (&quotients, s->size, tmp2, qstack_scratch);
   wp = SPEED_TMP_ALLOC_LIMBS (hgcd_scratch, s->align_wp);
 
-  speed_starttime (); 
-  i = s->reps; 
+  speed_starttime ();
+  i = s->reps;
   do {
     qstack_reset (&quotients, s->size);
     res = mpn_hgcd_lehmer (&hgcd, ap, s->size, bp, s->size,
 			   &quotients,
 			   wp, hgcd_scratch);
   }
-  while (--i != 0); 
-  t = speed_endtime (); 
+  while (--i != 0);
+  t = speed_endtime ();
 #if WANT_ASSERT
   if (res)
     ASSERT_HGCD (&hgcd, ap, s->size, bp, s->size, 0, 4);
@@ -1112,7 +1112,7 @@ double
 speed_mpn_gcd_finda (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD_FINDA (mpn_gcd_finda);
-}  
+}
 #endif
 
 
@@ -1254,14 +1254,14 @@ double
 speed_noop (struct speed_params *s)
 {
   unsigned  i;
-  
+
   speed_starttime ();
   i = s->reps;
-  do 
+  do
     noop ();
   while (--i != 0);
   return speed_endtime ();
-}  
+}
 
 double
 speed_noop_wxs (struct speed_params *s)
@@ -1283,7 +1283,7 @@ speed_noop_wxs (struct speed_params *s)
 
   TMP_FREE (marker);
   return t;
-}  
+}
 
 double
 speed_noop_wxys (struct speed_params *s)
@@ -1305,7 +1305,7 @@ speed_noop_wxys (struct speed_params *s)
 
   TMP_FREE (marker);
   return t;
-}  
+}
 
 
 #define SPEED_ROUTINE_ALLOC_FREE(variables, calls)      \
@@ -1336,7 +1336,7 @@ speed_malloc_free (struct speed_params *s)
   SPEED_ROUTINE_ALLOC_FREE (void *p,
                             p = malloc (bytes);
                             free (p));
-}  
+}
 
 double
 speed_malloc_realloc_free (struct speed_params *s)
@@ -1346,7 +1346,7 @@ speed_malloc_realloc_free (struct speed_params *s)
                             p = malloc (BYTES_PER_MP_LIMB);
                             p = realloc (p, bytes);
                             free (p));
-}  
+}
 
 double
 speed_gmp_allocate_free (struct speed_params *s)
@@ -1355,7 +1355,7 @@ speed_gmp_allocate_free (struct speed_params *s)
   SPEED_ROUTINE_ALLOC_FREE (void *p,
                             p = (*__gmp_allocate_func) (bytes);
                             (*__gmp_free_func) (p, bytes));
-}  
+}
 
 double
 speed_gmp_allocate_reallocate_free (struct speed_params *s)
@@ -1366,7 +1366,7 @@ speed_gmp_allocate_reallocate_free (struct speed_params *s)
      p = (*__gmp_allocate_func) (BYTES_PER_MP_LIMB);
      p = (*__gmp_reallocate_func) (p, bytes, BYTES_PER_MP_LIMB);
      (*__gmp_free_func) (p, bytes));
-}  
+}
 
 double
 speed_mpz_init_clear (struct speed_params *s)
@@ -1374,7 +1374,7 @@ speed_mpz_init_clear (struct speed_params *s)
   SPEED_ROUTINE_ALLOC_FREE (mpz_t z,
                             mpz_init (z);
                             mpz_clear (z));
-}  
+}
 
 double
 speed_mpz_init_realloc_clear (struct speed_params *s)
@@ -1383,7 +1383,7 @@ speed_mpz_init_realloc_clear (struct speed_params *s)
                             mpz_init (z);
                             _mpz_realloc (z, s->size);
                             mpz_clear (z));
-}  
+}
 
 double
 speed_mpq_init_clear (struct speed_params *s)
@@ -1391,7 +1391,7 @@ speed_mpq_init_clear (struct speed_params *s)
   SPEED_ROUTINE_ALLOC_FREE (mpq_t q,
                             mpq_init (q);
                             mpq_clear (q));
-}  
+}
 
 double
 speed_mpf_init_clear (struct speed_params *s)
@@ -1399,7 +1399,7 @@ speed_mpf_init_clear (struct speed_params *s)
   SPEED_ROUTINE_ALLOC_FREE (mpf_t f,
                             mpf_init (f);
                             mpf_clear (f));
-}  
+}
 
 
 /* Compare this to mpn_add_n to see how much overhead mpz_add adds.  Note
@@ -1423,7 +1423,7 @@ speed_mpz_add (struct speed_params *s)
 
   speed_starttime ();
   i = s->reps;
-  do 
+  do
     {
       mpz_add (w, x, y);
     }
@@ -1434,7 +1434,7 @@ speed_mpz_add (struct speed_params *s)
   mpz_clear (x);
   mpz_clear (y);
   return t;
-}  
+}
 
 
 /* If r==0, calculate (size,size/2),
@@ -1456,7 +1456,7 @@ speed_mpz_bin_uiui (struct speed_params *s)
 
   speed_starttime ();
   i = s->reps;
-  do 
+  do
     {
       mpz_bin_uiui (w, s->size, k);
     }
@@ -1465,7 +1465,7 @@ speed_mpz_bin_uiui (struct speed_params *s)
 
   mpz_clear (w);
   return t;
-}  
+}
 
 
 /* The multiplies are successively dependent so the latency is measured, not
@@ -1736,7 +1736,7 @@ speed_udiv_qrnnd_preinv1 (struct speed_params *s)
     udiv_qrnnd_preinv1 (q, r, r, q, d, dinv);
   }
   SPEED_ROUTINE_UDIV_QRNND_B;
-}  
+}
 
 double
 speed_udiv_qrnnd_preinv2 (struct speed_params *s)
@@ -1774,7 +1774,7 @@ speed_udiv_qrnnd_c (struct speed_params *s)
     __udiv_qrnnd_c (q, r, r, q, d);
   }
   SPEED_ROUTINE_UDIV_QRNND_B;
-}  
+}
 
 #if HAVE_NATIVE_mpn_udiv_qrnnd
 double
@@ -1996,13 +1996,13 @@ double
 speed_mpn_get_str (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GET_STR (mpn_get_str);
-}  
+}
 
 double
 speed_mpn_set_str (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_SET_STR (mpn_set_str);
-}  
+}
 double
 speed_mpn_set_str_basecase (struct speed_params *s)
 {
@@ -2019,7 +2019,7 @@ double
 speed_MPN_ZERO (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_ZERO_CALL (MPN_ZERO (wp, s->size));
-}  
+}
 
 
 int
