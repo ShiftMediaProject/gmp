@@ -124,7 +124,8 @@ case "$target" in
       gmp_optcflags_gcc="-mcpu=$flavour"
     fi
     ;;
-  # Cray vector machines
+  # Cray vector machines.  This must come after alpha* so that we can
+  # recognize present and future vector processors with a wildcard.
   *-cray-unicos*)
     # Don't perform any assembly syntax tests on this beast.
     gmp_no_asm_syntax_testing=yes
@@ -459,14 +460,16 @@ case ${target} in
   hppa*-*-*)					#assume pa7100
     path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
     extra_functions="udiv_qrnnd";;
-  [cray2-cray-unicos* | [xy]mp-cray-unicos* | [ctj]90-cray-unicos*])
-    path="cray"
-    extra_functions="mulww";;
   [f30[01]-fujitsu-sysv*])
     path=fujitsu;;
   alphaev6*-*-*) path="alpha/ev6 alpha"; extra_functions="invert_limb cntlz";;
   alphaev5*-*-*) path="alpha/ev5 alpha"; extra_functions="invert_limb cntlz";;
   alpha*-*-*) path="alpha"; extra_functions="invert_limb cntlz";;
+  # Cray vector machines.  This must come after alpha* so that we can
+  # recognize present and future vector processors with a wildcard.
+  *-cray-unicos*)
+    path="cray"
+    extra_functions="mulww";;
   am29000*-*-*) path="a29k";;
   a29k*-*-*) path="a29k";;
 
