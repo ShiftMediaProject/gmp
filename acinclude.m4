@@ -607,8 +607,8 @@ echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconf
 ])
 
 
-dnl  GMP_ASM_UNDERSCORE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl  -------------------------------------------------------------
+dnl  GMP_ASM_UNDERSCORE
+dnl  ------------------
 dnl  Determine whether global symbols need to be prefixed with an underscore.
 dnl  A test program is linked to an assembler module with or without an
 dnl  underscore to see which works.
@@ -669,16 +669,14 @@ rm -f conftes1* conftes2* a.out
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
-  ifelse([$1],,:,[$1])
 else
   GMP_DEFINE(GSYM_PREFIX, [])
-  ifelse([$2],,:,[$2])
 fi    
 ])
 
 
-dnl  GMP_ASM_ALIGN_LOG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
-dnl  ------------------------------------------------------------
+dnl  GMP_ASM_ALIGN_LOG
+dnl  -----------------
 dnl  Is parameter to `.align' logarithmic?
 
 AC_DEFUN(GMP_ASM_ALIGN_LOG,
@@ -706,11 +704,6 @@ foo$gmp_cv_asm_label_suffix
   [AC_MSG_ERROR([cannot assemble alignment test])])])
 
 GMP_DEFINE_RAW(["define(<ALIGN_LOGARITHMIC>,<$gmp_cv_asm_align_log>)"])
-if test "$gmp_cv_asm_align_log" = "yes"; then
-  ifelse([$1],,:,[$1])
-else
-  ifelse([$2],,:,[$2])
-fi  
 ])
 
 
@@ -883,7 +876,7 @@ echo ["define(<GLOBL>, <$gmp_cv_asm_globl>)"] >> $gmp_tmpconfigm4
 
 
 dnl  GMP_ASM_GLOBL_ATTR
-dnl  -----------------------
+dnl  ------------------
 dnl  Do we need something after `.global symbol'?
 
 AC_DEFUN(GMP_ASM_GLOBL_ATTR,
