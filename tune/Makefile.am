@@ -28,20 +28,6 @@ EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm ia64.asm
 noinst_HEADERS = speed.h
 
 
-# The library code is faster static than shared on some systems, so do all
-# tuning and measuring with static, since users who care about maximizing
-# speed will be using that.
-#
-# Libtool doesn't seem to pass -static through to gcc, it only uses it to
-# choose the static versions of libtool libraries.  Rerun the link with
-# -static to get a static link of libc and libm.  This is probably only of
-# interest when measuring libc routines like malloc/free.
-
-LDFLAGS = -static
-DEPENDENCIES = libspeed.la
-LDADD = $(DEPENDENCIES)
-
-
 EXTRA_LTLIBRARIES = libspeed.la libdummy.la
 
 libspeed_la_SOURCES = \
@@ -54,15 +40,28 @@ libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la $(LIB
 nodist_libdummy_la_SOURCES = sqr_basecase.c
 
 
-EXTRA_PROGRAMS = speed speed-ext tuneup
+# The library code is faster static than shared on some systems, so do
+# tuning and measuring with static, since users who care about maximizing
+# speed will be using that.  speed-dynamic exists to show the difference.
+
+EXTRA_PROGRAMS = speed speed-dynamic speed-ext tuneup
+
+DEPENDENCIES = libspeed.la
+LDADD = $(DEPENDENCIES)
 
 speed_SOURCES = speed.c
+speed_LDFLAGS = -all-static
+
+speed_dynamic_SOURCES = speed.c
+
 speed_ext_SOURCES = speed.c
+speed_ext_LDFLAGS = -all-static
 
 tuneup_SOURCES = tuneup.c
 nodist_tuneup_SOURCES = $(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS)
 tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
 tuneup_LDADD = $(tuneup_DEPENDENCIES)
+tuneup_LDFLAGS = -all-static
 
 
 tune:
