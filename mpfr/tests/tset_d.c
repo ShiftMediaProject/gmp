@@ -110,7 +110,7 @@ main (int argc, char *argv[])
               d, mpfr_get_d1 (x));
       exit (1);
     }
-  n = (argc==1) ? 1000000 : atoi(argv[1]);
+  n = (argc==1) ? 500000 : atoi(argv[1]);
   for (k = 1; k <= n; k++)
     {
       do

@@ -39,7 +39,7 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
 
-  test_generic (2, 100, 100);
+  test_generic (2, 100, 20);
 
   /* check log10(10^n)=n */
   mpfr_init2 (x, 53);

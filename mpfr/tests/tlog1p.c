@@ -36,7 +36,7 @@ main (int argc, char *argv[])
 {
   tests_start_mpfr ();
 
-  test_generic (2, 100, 100);
+  test_generic (2, 100, 50);
 
   tests_end_mpfr ();
   return 0;

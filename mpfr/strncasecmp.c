@@ -30,6 +30,7 @@ Boston, MA 02111-1307, USA.  */
 #endif
 #endif
 
+#include <stddef.h>
 #include <ctype.h>
 
 int mpfr_strncasecmp (const char *, const char *, size_t);

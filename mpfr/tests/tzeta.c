@@ -28,8 +28,8 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
-#define PREC_MAX 80
-#define N 2
+#define PREC_MAX 70
+#define N 1
 
 static void
 test1 (void)

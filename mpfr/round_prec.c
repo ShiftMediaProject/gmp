@@ -33,10 +33,10 @@ MA 02111-1307, USA. */
  * If flag = 0, puts in y the value of xp (with precision xprec and
  * sign 1 if negative=0, -1 otherwise) rounded to precision yprec and
  * direction rnd_mode. Supposes x is not zero nor NaN nor +/- Infinity
- * (i.e. *xp != 0). If inexp != NULL, computes the inexact flag of the
- * rounding.
+ * (i.e. *xp != 0).
  *
- * In case of even rounding when rnd = GMP_RNDN, returns 2 or -2.
+ * If inexp != NULL, computes the inexact flag of the rounding.
+ * (In case of even rounding when rnd = GMP_RNDN, puts 2 or -2 in *inexp.)
  *
  * If flag = 1, just returns whether one should add 1 or not for rounding.
  *

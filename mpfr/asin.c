@@ -19,8 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -40,7 +38,8 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int good = 0;
   int realprec;
   int estimated_delta;
-  int compared; 
+  int compared;
+  int inexact;
 
   /* Trivial cases */
   if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
@@ -68,35 +67,32 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
   if (compared == 0) /* x = 1 or x = -1 */
     {
       if (signe > 0) /* asin(+1) = Pi/2 */
-        mpfr_const_pi (asin, rnd_mode);
+        inexact = mpfr_const_pi (asin, rnd_mode);
       else /* asin(-1) = -Pi/2 */
         {
           if (rnd_mode == GMP_RNDU)
             rnd_mode = GMP_RNDD;
           else if (rnd_mode == GMP_RNDD)
             rnd_mode = GMP_RNDU;
-          mpfr_const_pi (asin, rnd_mode);
+          inexact = -mpfr_const_pi (asin, rnd_mode);
           mpfr_neg (asin, asin, rnd_mode);
         }
       MPFR_SET_EXP (asin, MPFR_GET_EXP (asin) - 1);
       mpfr_clear (xp);
-      return 1; /* inexact */
+      return inexact;
     }
 
   if (MPFR_IS_ZERO(x)) /* x = 0 */
     {
       mpfr_set_ui (asin, 0, GMP_RNDN);
-      mpfr_clear(xp);
+      mpfr_clear (xp);
       return 0; /* exact result */
     }
 
   prec_asin = MPFR_PREC(asin);
   mpfr_ui_sub (xp, 1, xp, GMP_RNDD);
-  
+
   supplement = 2 - MPFR_GET_EXP (xp);
-#ifdef DEBUG
-  printf("supplement=%d\n", supplement);
-#endif
   realprec = prec_asin + 10;
 
   while (!good)
@@ -107,76 +103,25 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
       /* Initialisation    */
       mpfr_init2 (tmp, Prec);
       mpfr_init2 (arcs, Prec);
-
-#ifdef DEBUG
-      printf("Prec=%d\n", Prec);
-      printf("              x=");
-      mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
-      printf ("\n");
-#endif
       mpfr_mul (tmp, x, x, GMP_RNDN);
-#ifdef DEBUG
-      printf("            x^2=");
-      mpfr_out_str (stdout, 2, 0, tmp, GMP_RNDN);
-      printf ("\n");
-#endif
       mpfr_ui_sub (tmp, 1, tmp, GMP_RNDN);
-#ifdef DEBUG
-      printf("          1-x^2=");
-      mpfr_out_str (stdout, 2, 0, tmp, GMP_RNDN);
-      printf ("\n");
-      printf("10:          1-x^2=");
-      mpfr_out_str (stdout, 10, 0, tmp, GMP_RNDN);
-      printf ("\n");
-#endif
       mpfr_sqrt (tmp, tmp, GMP_RNDN);
-#ifdef DEBUG
-      printf("  sqrt(1-x^2)=");
-      mpfr_out_str (stdout, 2, 0, tmp, GMP_RNDN);
-      printf ("\n");
-      printf("10:  sqrt(1-x^2)=");
-      mpfr_out_str (stdout, 10, 0, tmp, GMP_RNDN);
-      printf ("\n");
-#endif
       mpfr_div (tmp, x, tmp, GMP_RNDN);
-#ifdef DEBUG
-      printf("x/sqrt(1-x^2)=");
-      mpfr_out_str (stdout, 2, 0, tmp, GMP_RNDN);
-      printf ("\n");
-#endif
       mpfr_atan (arcs, tmp, GMP_RNDN);
-#ifdef DEBUG
-      printf("atan(x/..x^2)=");
-      mpfr_out_str (stdout, 2, 0, arcs, GMP_RNDN);
-      printf ("\n");
-#endif
       if (mpfr_can_round (arcs, realprec, GMP_RNDN, rnd_mode, MPFR_PREC(asin)))
 	{
-	  mpfr_set (asin, arcs, rnd_mode);
-#ifdef DEBUG
-	  printf("asin         =");
-	  mpfr_out_str (stdout, 2, prec_asin, asin, GMP_RNDN);
-	  printf ("\n");
-#endif
+	  inexact = mpfr_set (asin, arcs, rnd_mode);
 	  good = 1;
 	}
       else
 	{
 	  realprec += __gmpfr_ceil_log2 ((double) realprec);
-#ifdef DEBUG
-	  printf("RETRY\n");
-#endif
 	}
       mpfr_clear (tmp);
       mpfr_clear (arcs);
-  }
+    }
 
   mpfr_clear (xp);
 
-  return 1; /* inexact result */
+  return inexact;
 }
-
-
-
-
-

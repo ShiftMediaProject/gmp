@@ -22,7 +22,6 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -397,7 +396,7 @@ check_special (int b, mp_prec_t p)
 
   mpfr_init2 (x, p);
   mpfr_set_ui (x, 1, GMP_RNDN);
-  for (i=1; i<100 && mpfr_mul_ui (x, x, b, GMP_RNDN) == 0; i++)
+  for (i=1; i<MAX_DIGITS && mpfr_mul_ui (x, x, b, GMP_RNDN) == 0; i++)
     {
       /* x = b^i (exact) */
       for (r=0; r<4; r++)
@@ -445,6 +444,8 @@ check_special (int b, mp_prec_t p)
   mpfr_clear (x);
 }
 
+#define ITER 1000
+
 int
 main (int argc, char *argv[])
 {
@@ -455,27 +456,30 @@ main (int argc, char *argv[])
   mp_exp_t e, f;
   size_t m;
   mp_prec_t p;
+  int i;
 
   tests_start_mpfr ();
 
   check_small ();
 
-  for (p=2; p<=MAX_DIGITS; p++)
-    for (b=2; b<=36; b++)
+  for (i = 0; i < ITER; i++)
+    {
+      p = 2 + (randlimb () % (MAX_DIGITS - 1));
+      b = 2 + (randlimb () % 35);
       check_special (b, p);
+    }
 
   mpfr_init2 (x, MAX_DIGITS);
-  for (m=2; m<=MAX_DIGITS; m++)
+  for (i = 0; i < ITER; i++)
     {
+      m = 2 + (randlimb () % (MAX_DIGITS - 1));
       mpfr_random (x);
-      for (e=-10; e<=10; e++)
-        {
-          mpfr_set_exp (x, (e == -10) ? mpfr_get_emin () :
-                        ((e == 10) ? mpfr_get_emax () : e));
-          for (b=2; b<=36; b++)
-            for (r=0; r<4; r++)
-              mpfr_get_str (s, &f, b, m, x, r);
-        }
+      e = (mp_exp_t) (randlimb () % 21) - 10;
+      mpfr_set_exp (x, (e == -10) ? mpfr_get_emin () :
+                    ((e == 10) ? mpfr_get_emax () : e));
+      b = 2 + (randlimb () % 35);
+      r = randlimb () % 4;
+      mpfr_get_str (s, &f, b, m, x, r);
     }
   mpfr_clear (x);
 

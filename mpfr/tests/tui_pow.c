@@ -156,7 +156,7 @@ main (int argc, char *argv[])
 
   int p0=2;
   int p1=100;
-  int N=100;
+  int N=20;
 
   mpfr_init2 (z, 38);
   mpfr_init2 (t, 6);

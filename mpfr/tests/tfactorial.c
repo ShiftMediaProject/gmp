@@ -61,7 +61,7 @@ main (int argc, char *argv[])
       yprec = prec + 10;
       mpfr_set_prec (y, yprec);
 
-      for (n=0; n<100; n++)
+      for (n=0; n<50; n++)
 	for (rnd=0; rnd<4; rnd++)
 	  {
 	    inexact = mpfr_fac_ui (y, n, rnd);

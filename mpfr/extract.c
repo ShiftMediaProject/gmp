@@ -38,7 +38,7 @@ mpfr_extract (mpz_ptr y, mpfr_srcptr p, unsigned int i)
 {
   int two_i = 1 << i;
   int two_i_2 = i ? two_i / 2 : 1;
-  mp_size_t size_p = MPFR_ABSSIZE(p);
+  mp_size_t size_p = MPFR_ESIZE(p);
 
   /* as 0 <= |p| < 1, we don't have to care with infinities, NaN, ... */
   

@@ -19,8 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -85,7 +83,7 @@ mpfr_acos (mpfr_ptr acos, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   prec_acos = MPFR_PREC(acos);
   mpfr_ui_sub (xp, 1, xp, GMP_RNDD);
-  
+
   if (signe > 0)
     supplement = 2 - 2 * MPFR_GET_EXP (xp);
   else

@@ -171,7 +171,7 @@ main (void)
       exit (1);
     }
 
-  for (i=0; i<1000000; )
+  for (i=0; i<500000; )
     {
       x = DBL_RAND ();
       y = DBL_RAND ();

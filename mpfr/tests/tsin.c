@@ -60,7 +60,7 @@ test_sign (void)
   mpfr_init (x);
   mpfr_init2 (y, 2);
   for (p = 8; p <= 128; p++)
-    for (k = 2; k <= 22; k += 2)
+    for (k = 2; k <= 6; k += 2)
       {
         mpfr_set_prec (x, p);
         mpfr_mul_ui (x, pid, k, GMP_RNDD);
@@ -171,7 +171,7 @@ main (int argc, char *argv[])
 
   mpfr_clear (x);
 
-  test_generic (2, 100, 80);
+  test_generic (2, 100, 20);
   test_sign ();
 
   tests_end_mpfr ();

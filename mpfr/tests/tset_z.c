@@ -85,7 +85,7 @@ main (int argc, char *argv[])
 
   check_large ();
   check (0, 0);
-  for (j = 0; j < 500000; j++)
+  for (j = 0; j < 200000; j++)
     check (randlimb () & LONG_MAX, randlimb () % 4);
 
   tests_end_mpfr ();

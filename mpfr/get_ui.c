@@ -48,7 +48,7 @@ mpfr_get_ui (mpfr_srcptr f, mp_rnd_t rnd)
 
   /* now the result is in the most significant limb of x */
   exp = MPFR_GET_EXP (x); /* since |x| >= 1, exp >= 1 */
-  n = MPFR_ABSSIZE(x);
+  n = MPFR_ESIZE(x);
   s = MPFR_MANT(x)[n - 1] >> (GMP_NUMB_BITS - exp);
 
   mpfr_clear (x);

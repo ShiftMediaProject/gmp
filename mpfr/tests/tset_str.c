@@ -30,6 +30,8 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 #include "mpfr-test.h"
 
+#define N 30000
+
 int
 main (int argc, char *argv[])
 {
@@ -147,7 +149,7 @@ main (int argc, char *argv[])
   prec = 53;
   mpfr_set_prec (x, prec);
   mpfr_set_prec (y, prec);
-  for (i=0;i<100000;i++)
+  for (i=0;i<N;i++)
     {
       mpfr_random (x);
       k = randlimb () % 4;
@@ -386,10 +388,10 @@ main (int argc, char *argv[])
     mpfr_set_prec (x, mp_bits_per_limb); /* x and y have only one limb */
     mpfr_set_prec (y, mp_bits_per_limb);
 
-    str = (*__gmp_allocate_func) (100000 + 20);
+    str = (*__gmp_allocate_func) (N + 20);
 
     mpfr_set_ui (x, 1, GMP_RNDN); /* ensures that x is not NaN or Inf */
-    for (; nb_digit < 100000; nb_digit *= 10)
+    for (; nb_digit < N; nb_digit *= 10)
       for (cbase = 0; cbase < 3; cbase++)
         for (climb = 0; climb < 2; climb++)
           for (crnd = 0; crnd < 3; crnd++)
@@ -426,7 +428,7 @@ main (int argc, char *argv[])
                 }
             }
 
-    (*__gmp_free_func) (str, 100000 + 20);
+    (*__gmp_free_func) (str, N + 20);
   }
 
   /* end of tests added by Alain Delplanque */

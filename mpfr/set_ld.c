@@ -78,7 +78,10 @@ mpfr_set_ld (mpfr_ptr r, long double d, mp_rnd_t rnd_mode)
         {
           long double div9, div10, div11, div12, div13;
 
-          div9 = (long double) (double) 1.34078079299425971e154; /* 2^(2^9) */
+#define TWO_64 18446744073709551616.0 /* 2^64 */
+#define TWO_128 (TWO_64 * TWO_64)
+#define TWO_256 (TWO_128 * TWO_128)
+          div9 = (long double) (double) (TWO_256 * TWO_256); /* 2^(2^9) */
           div10 = div9 * div9;
           div11 = div10 * div10; /* 2^(2^11) */
           div12 = div11 * div11; /* 2^(2^12) */

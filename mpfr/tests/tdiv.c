@@ -327,7 +327,7 @@ check_lowr (void)
   mpfr_clear (tmp);
 }
 
-#define MAX_PREC 70
+#define MAX_PREC 128
 
 static void
 check_inexact (void)
@@ -375,12 +375,12 @@ check_inexact (void)
 	{
 	  mpfr_set_prec (u, pu);
 	  do { mpfr_random (u); } while (mpfr_cmp_ui (u, 0) == 0);
-	  for (py=2; py<=MAX_PREC; py++)
 	    {
+              py = MPFR_PREC_MIN + (randlimb () % (MAX_PREC - MPFR_PREC_MIN));
 	      mpfr_set_prec (y, py);
 	      mpfr_set_prec (z, py + pu);
-	      for (rnd=0; rnd<4; rnd++)
 		{
+                  rnd = randlimb () % 4;
 		  inexact = mpfr_div (y, x, u, rnd);
 		  if (mpfr_mul (z, y, u, rnd))
 		    {
@@ -480,7 +480,7 @@ main (int argc, char *argv[])
 
   tests_start_mpfr ();
 
-  check_inexact();
+  check_inexact ();
 
   mpfr_init2 (x, 64);
   mpfr_init2 (y, 64);

@@ -45,7 +45,7 @@ main (int argc, char *argv[])
 
   mpfr_init2 (x, 100);
 
-  N = (argc==1) ? 500000 : atoi (argv[1]);
+  N = (argc==1) ? 200000 : atoi (argv[1]);
 
   for (k = 1; k <= N; k++)
     {

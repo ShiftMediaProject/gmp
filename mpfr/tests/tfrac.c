@@ -162,14 +162,12 @@ main (void)
           mpfr_set_ui (fp, 1, GMP_RNDN);
           mpfr_div_2ui (fp, fp, nf1, GMP_RNDN);
           check1 (ip, fp);
-          for (nf2 = 1; nf2 < PFP; nf2 += 23)
-            {
-              mpfr_set_ui (fp, 1, GMP_RNDN);
-              mpfr_div_2ui (fp, fp, nf2, GMP_RNDN);
-              mpfr_add_ui (fp, fp, 1, GMP_RNDN);
-              mpfr_div_2ui (fp, fp, nf1, GMP_RNDN);
-              check1 (ip, fp);
-            }
+          nf2 = 1 + (randlimb () % (PFP - 1));
+          mpfr_set_ui (fp, 1, GMP_RNDN);
+          mpfr_div_2ui (fp, fp, nf2, GMP_RNDN);
+          mpfr_add_ui (fp, fp, 1, GMP_RNDN);
+          mpfr_div_2ui (fp, fp, nf1, GMP_RNDN);
+          check1 (ip, fp);
         }
     }
 

@@ -81,6 +81,23 @@ Changes in existing functions:
 - in mpfr_set_str, possibly accept other strings, like those accepted
   by strtod.
 
+- mpfr_can_round:
+1) remove the first rounding mode (rnd1) that was giving the direction of
+   the error. We'll consider now that the sign of the error is unknown.
+   This will simplify the code, should not loose too much since in most
+   cases we call mpfr_can_round with rnd1 = nearest, and should detect cases
+   with exact results that may loop.
+2) change the meaning of the 2nd argument (err). Currently the error is
+   at most 2^(MPFR_EXP(b)-err), i.e. err is the relative shift wrt the
+   most significant bit of the approximation. I propose that the error
+   is now at most 2^err ulps of the approximation, i.e.
+   2^(MPFR_EXP(b)-MPFR_PREC(b)+err).
+3) the current code performs two computations to check if we can round:
+   it checks if both round(approx-error) and round(approx+error) give
+   the same result. One computation is enough: for example in directed
+   rounding, if the round bit is 0 (resp. 1), we just have to check
+   round(approx-error) (resp. round(approx+error)).
+
 New functions to implement:
 
 - modf (to extract integer and fractional parts), suggested by

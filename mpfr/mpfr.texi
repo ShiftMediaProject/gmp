@@ -1056,28 +1056,22 @@ rounded in the direction @var{rnd}.
 
 @deftypefun int mpfr_mul_2ui (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_mul_2si (mpfr_t @var{rop}, mpfr_t @var{op1}, long int @var{op2}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_mul_2exp (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
 Set @var{rop} to @m{@var{op1} \times 2^{op2}, @var{op1} times 2 raised
 to @var{op2}}
 rounded in the direction @var{rnd}. Just increases the exponent by @var{op2}
 when @var{rop} and @var{op1} are identical.
+[@code{mpfr_mul_2exp} is kept for upward compatibility.]
 @end deftypefun
 
 @deftypefun int mpfr_div_2ui (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
 @deftypefunx int mpfr_div_2si (mpfr_t @var{rop}, mpfr_t @var{op1}, long int @var{op2}, mp_rnd_t @var{rnd})
+@deftypefunx int mpfr_div_2exp (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
 Set @var{rop} to @m{@var{op1}/2^{op2}, @var{op1} divided by 2 raised
 to @var{op2}}
 rounded in the direction @var{rnd}. Just decreases the exponent by @var{op2}
 when @var{rop} and @var{op1} are identical.
-@end deftypefun
-
-@deftypefun int mpfr_mul_2exp (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
-[This function is obsolete. Please use @code{mpfr_mul_2ui}
-(or @code{mpfr_mul_2si}) instead.]
-@end deftypefun
-
-@deftypefun int mpfr_div_2exp (mpfr_t @var{rop}, mpfr_t @var{op1}, unsigned long int @var{op2}, mp_rnd_t @var{rnd})
-[This function is obsolete. Please use @code{mpfr_div_2ui}
-(or @code{mpfr_div_2si}) instead.]
+[@code{mpfr_div_2exp} is kept for upward compatibility.]
 @end deftypefun
 
 @node Comparison Functions, Special Functions, Basic Arithmetic Functions, Floating-point Functions
@@ -1112,9 +1106,9 @@ If one of the operands is NaN (Not-a-Number), the behavior is undefined.
 @end deftypefun
 
 @deftypefun int mpfr_eq (mpfr_t @var{op1}, mpfr_t @var{op2}, unsigned long int @var{op3})
-Return non-zero if @var{op1} and @var{op2} are both infinities of the
-same sign, both zero or both non-zero ordinary numbers with the same
-exponent and the same first @var{op3} bits. Return zero otherwise. This
+Return non-zero if @var{op1} and @var{op2} are both non-zero ordinary
+numbers with the same exponent and the same first @var{op3} bits, both
+zero, or both infinities of the same sign. Return zero otherwise. This
 function is defined for compatibility with @code{mpf}, but does not
 make much sense.
 @end deftypefun

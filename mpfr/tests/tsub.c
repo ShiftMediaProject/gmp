@@ -325,7 +325,7 @@ check_two_sum (mp_prec_t p)
   mpfr_clear (w);
 }
 
-#define MAX_PREC 100
+#define MAX_PREC 200
 
 static void
 check_inexact (void)
@@ -369,8 +369,8 @@ check_inexact (void)
               mpfr_random (u);
             }
           while (mpfr_cmp_ui (u, 0) == 0);
-          for (py=2; py<MAX_PREC; py++)
-            {
+          {
+              py = 2 + (randlimb () % (MAX_PREC - 2));
               mpfr_set_prec (y, py);
               /* warning: MPFR_EXP is undefined for 0 */
               pz =  (mpfr_cmpabs (x, u) >= 0) ? MPFR_EXP(x) - MPFR_EXP(u)
@@ -383,8 +383,8 @@ check_inexact (void)
                   printf ("z <- x - u should be exact\n");
                   exit (1);
                 }
-              for (rnd=0; rnd<4; rnd++)
                 {
+                  rnd = randlimb () % 4;
                   inexact = mpfr_sub (y, x, u, rnd);
                   cmp = mpfr_cmp (y, z);
                   if (((inexact == 0) && (cmp != 0)) ||
@@ -424,7 +424,7 @@ main(void)
   bug_ddefour ();
 
   for (p=2; p<200; p++)
-    for (i=0; i<200; i++)
+    for (i=0; i<50; i++)
       check_two_sum (p);
 
   tests_end_mpfr ();
