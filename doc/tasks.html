@@ -293,9 +293,6 @@ MA 02111-1307, USA.
      making <code>configure</code> choose the slower
      <code>malloc-reentrant</code> allocation method.  Is there a better way?
      Maybe variable-length arrays per notes below.
-<li> ARC: gcc longlong.h sets up <code>umul_ppmm</code> to call
-     <code>__umulsidi3</code> in libgcc.  Could be copied straight across, but
-     perhaps ought to be tested.
 <li> ARM: On v5 cpus see if the <code>clz</code> instruction can be used for
      <code>count_leading_zeros</code>.
 <li> Itanium: <code>mpn_hamdist</code> could be put together based on the
