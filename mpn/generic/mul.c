@@ -94,6 +94,12 @@ mpn_sqr_n (mp_ptr prodp,
 #endif
 }
 
+#ifndef MUL_BASECASE_MAX_UN
+#define MUL_BASECASE_MAX_UN 500
+#endif
+
+#include <stdio.h>
+
 mp_limb_t
 mpn_mul (mp_ptr prodp,
 	 mp_srcptr up, mp_size_t un,
@@ -114,8 +120,65 @@ mpn_mul (mp_ptr prodp,
     }
 
   if (vn < MUL_KARATSUBA_THRESHOLD)
-    { /* long multiplication */
-      mpn_mul_basecase (prodp, up, un, vp, vn);
+    { /* plain schoolbook multiplication */
+      if (un <= MUL_BASECASE_MAX_UN)
+	mpn_mul_basecase (prodp, up, un, vp, vn);
+      else
+	{
+	  /* We have un >> MUL_BASECASE_MAX_UN > vn.  For better memory
+	     locality, split up[] into MUL_BASECASE_MAX_UN pieces and multiply
+	     these pieces with the vp[] operand.  After each such partial
+	     multiplication (but the last) we copy the most significant vn
+	     limbs into a temporary buffer since that part would otherwise be
+	     overwritten by the next multiplication.  After the next
+	     multiplication, we that it back from where it was copied.
+	     Picture:
+                                                    -->vn<--
+                                                      |  |<------- un ------->|
+                                                         _____________________|
+                                                        X                    /|
+                                                      /XX__________________/  |
+                                    _____________________                     |
+                                   X                    /                     |
+                                 /XX__________________/                       |
+               _____________________                                          |
+              /                    /                                          |
+            /____________________/                                            |
+	    ==================================================================
+
+	    The parts marked with X are the parts whose product are copied into
+	    the temporary buffer.  */
+
+	  mp_limb_t tp[MUL_KARATSUBA_THRESHOLD];
+	  mp_limb_t cy;
+
+	  mpn_mul_basecase (prodp, up, MUL_BASECASE_MAX_UN, vp, vn);
+	  prodp += MUL_BASECASE_MAX_UN;
+	  MPN_COPY (tp, prodp, vn);		/* preserve high triangle */
+	  up += MUL_BASECASE_MAX_UN;
+	  un -= MUL_BASECASE_MAX_UN;
+	  while (un > MUL_BASECASE_MAX_UN)
+	    {
+	      mpn_mul_basecase (prodp, up, MUL_BASECASE_MAX_UN, vp, vn);
+	      cy = mpn_add_n (prodp, prodp, tp, vn); /* add back preserved triangle */
+	      mpn_incr_u (prodp + vn, cy);		/* safe? */
+	      prodp += MUL_BASECASE_MAX_UN;
+	      MPN_COPY (tp, prodp, vn);		/* preserve high triangle */
+	      up += MUL_BASECASE_MAX_UN;
+	      un -= MUL_BASECASE_MAX_UN;
+	    }
+	  if (un > vn)
+	    {
+	      mpn_mul_basecase (prodp, up, un, vp, vn);
+	    }
+	  else
+	    {
+	      ASSERT_ALWAYS (un > 0);
+	      mpn_mul_basecase (prodp, vp, vn, up, un);
+	    }
+	  cy = mpn_add_n (prodp, prodp, tp, vn); /* add back preserved triangle */
+	  mpn_incr_u (prodp + vn, cy);		/* safe? */
+	}
       return prodp[un + vn - 1];
     }
 
@@ -137,8 +200,7 @@ mpn_mul (mp_ptr prodp,
 	  MPN_SRCPTR_SWAP (up,un, vp,vn);
 	}
 
-      ws = (mp_ptr) TMP_ALLOC (((vn >= MUL_KARATSUBA_THRESHOLD ? vn : un) + vn)
-			       * BYTES_PER_MP_LIMB);
+      ws = TMP_ALLOC_LIMBS ((vn >= MUL_KARATSUBA_THRESHOLD ? vn : un) + vn);
 
       t = 0;
       while (vn >= MUL_KARATSUBA_THRESHOLD)
