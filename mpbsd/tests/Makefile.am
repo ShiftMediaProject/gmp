@@ -24,6 +24,7 @@ AUTOMAKE_OPTIONS = gnu
 
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libmp.la
+dummy_LDADD =
 
 if WANT_MPBSD
 MPBSD_check_OPTION = allfuns
