@@ -20,6 +20,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
@@ -33,6 +36,7 @@ MA 02111-1307, USA. */
 #define SIZE 4
 #endif
 
+void dump _PROTO ((mpq_t));
 
 main (int argc, char **argv)
 {
@@ -106,6 +110,7 @@ main (int argc, char **argv)
   exit (0);
 }
 
+void
 dump (mpq_t x)
 {
   mpz_out_str (stdout, 10, mpq_numref (x));
