@@ -970,7 +970,7 @@ check_align_option (const char *name, mp_size_t align)
     {
       fprintf (stderr, "Alignment request out of range: %s %ld\n",
                name, (long) align);
-      fprintf (stderr, "  should be 0 to %ld (limbs), inclusive\n",
+      fprintf (stderr, "  should be 0 to %d (limbs), inclusive\n",
                SPEED_TMP_ALLOC_ADJUST_MASK);
       exit (1);
     }
