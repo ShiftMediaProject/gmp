@@ -1,7 +1,7 @@
-/* i80386 __mpn_submul_1 -- Multiply a limb vector with a limb and subtract
-   the result from a second limb vector.
+/* x86 __mpn_submul_1 (for 386, 486, and Pentium Pro) -- Multiply a limb vector
+   with a limb and store the result in a second limb vector.
 
-Copyright (C) 1992, 1994 Free Software Foundation, Inc.
+Copyright (C) 1992, 1994, 1997 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -46,28 +46,68 @@ C_SYMBOL_NAME(__mpn_submul_1:)
 	INSN1(push,l	,R(ebx))
 	INSN1(push,l	,R(ebp))
 
-	INSN2(mov,l	,R(res_ptr),MEM_DISP(esp,20))
-	INSN2(mov,l	,R(s1_ptr),MEM_DISP(esp,24))
-	INSN2(mov,l	,R(size),MEM_DISP(esp,28))
-	INSN2(mov,l	,R(s2_limb),MEM_DISP(esp,32))
+	movl	20(%esp),%edi
+	movl	24(%esp),%esi
+	movl	28(%esp),%ecx
 
-	INSN2(lea,l	,R(res_ptr),MEM_INDEX(res_ptr,size,4))
-	INSN2(lea,l	,R(s1_ptr),MEM_INDEX(s1_ptr,size,4))
-	INSN1(neg,l	,R(size))
-	INSN2(xor,l	,R(ebx),R(ebx))
+	xorl	%ebx,%ebx
+	andl	$3,%ecx
+	jz	Lend0
+
+Loop0:	movl	(%esi),%eax
+	mull	32(%esp)
+	leal	4(%esi),%esi
+	addl	%ebx,%eax
+	movl	$0,%ebx
+	adcl	%ebx,%edx
+	subl	%eax,(%edi)
+	adcl	%edx,%ebx		/* propagate carry into cylimb */
+
+	leal	4(%edi),%edi
+	decl	%ecx
+	jnz	Loop0
+
+Lend0:	movl	28(%esp),%ecx
+	shrl	$2,%ecx
+	jz	Lend
+
 	ALIGN (3)
-Loop:
-	INSN2(mov,l	,R(eax),MEM_INDEX(s1_ptr,size,4))
-	INSN1(mul,l	,R(s2_limb))
-	INSN2(add,l	,R(eax),R(ebx))
-	INSN2(adc,l	,R(edx),$0)
-	INSN2(sub,l	,MEM_INDEX(res_ptr,size,4),R(eax))
-	INSN2(adc,l	,R(edx),$0)
-	INSN2(mov,l	,R(ebx),R(edx))
+Loop:	movl	(%esi),%eax
+	mull	32(%esp)
+	addl	%eax,%ebx
+	movl	$0,%ebp
+	adcl	%edx,%ebp
 
-	INSN1(inc,l	,R(size))
-	INSN1(jnz,	,Loop)
-	INSN2(mov,l	,R(eax),R(ebx))
+	movl	4(%esi),%eax
+	mull	32(%esp)
+	subl	%ebx,(%edi)
+	adcl	%eax,%ebp	/* new lo + cylimb */
+	movl	$0,%ebx
+	adcl	%edx,%ebx
+
+	movl	8(%esi),%eax
+	mull	32(%esp)
+	subl	%ebp,4(%edi)
+	adcl	%eax,%ebx	/* new lo + cylimb */
+	movl	$0,%ebp
+	adcl	%edx,%ebp
+
+	movl	12(%esi),%eax
+	mull	32(%esp)
+	subl	%ebx,8(%edi)
+	adcl	%eax,%ebp	/* new lo + cylimb */
+	movl	$0,%ebx
+	adcl	%edx,%ebx
+
+	subl	%ebp,12(%edi)
+	adcl	$0,%ebx		/* propagate carry into cylimb */
+
+	leal	16(%esi),%esi
+	leal	16(%edi),%edi
+	decl	%ecx
+	jnz	Loop
+
+Lend:	movl	%ebx,%eax
 
 	INSN1(pop,l	,R(ebp))
 	INSN1(pop,l	,R(ebx))
