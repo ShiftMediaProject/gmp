@@ -1,4 +1,4 @@
-/* mpn_modexact_1c_odd -- Nx1 modexact style remainder.
+/* mpn_modexact_1c_odd -- mpn by limb exact division style remainder.
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
@@ -30,25 +30,29 @@ MA 02111-1307, USA.
 #include "longlong.h"
 
 
-/* Calculate r, satisfying 0<=r<divisor and
+/* Calculate an r satisfying
 
            r*b^k + a - c == q*d
 
    where b=2^BITS_PER_MP_LIMB, a is {src,size}, k is either size or size-1
-   (the caller won't know which), and q is a quotient (which is discarded).
-   d must be odd, c can be any limb value.
+   (the caller won't know which), and q is the quotient (discarded).  d must
+   be odd, c can be any limb value.
 
-   This slightly strange function suits divisibility and congruence testing
-   since if r=0 then a==c mod d, or GCDs since the factors of 2 in b^k can
-   be discarded leaving -r == (a-c) mod d, and similarly the Jacobi symbol
-   (with the factor of -1 on r accounted for).
+   If c<d then r will be in the range 0<=r<d, or if c>=d then 0<=r<=d.
+
+   This slightly strange function suits the initial Nx1 reduction for GCDs
+   or Jacobi symbols since the factors of 2 in b^k can be ignored, leaving
+   -r == a mod d (by passing c=0).  For a GCD the factor of -1 on r can be
+   ignored, or for the Jacobi symbol it can be accounted for.  The function
+   also suits divisibility and congruence testing since if r=0 (or r=d) is
+   obtained then a==c mod d.
 
 
-   r is like the remainder returned by mpn_divexact_by3c, and is the sort of
-   remainder a hypothetical mpn_divexact_1 might return.  Like
+   r is a bit like the remainder returned by mpn_divexact_by3c, and is the
+   sort of remainder a hypothetical mpn_divexact_1 might return.  Like
    mpn_divexact_by3c, r represents a borrow, since effectively quotient
-   limbs are chosen so that subtracting that multiple of divisor from src at
-   each step will produce a zero limb.
+   limbs are chosen so that subtracting that multiple of d from src at each
+   step will produce a zero limb.
 
    A long calculation can be done piece by piece from low to high by passing
    the return value from one part as the carry parameter to the next part.
@@ -58,27 +62,46 @@ MA 02111-1307, USA.
 
    A similar sort of routine could be constructed based on adding multiples
    of d at each limb, much like redc in mpz_powm does.  Subtracting however
-   has a small advantage that there's never a borrow into h, whereas using
-   an addition to cancel out s would put a carry into h according to
-   src[i]-c ==0 or !=0.
+   has a small advantage that when subtracting to cancel out l there's never
+   a borrow into h, whereas using an addition would put a carry into h
+   depending whether l==0 or l!=0.
 
 
    In terms of efficiency, this function is similar to a mul-by-inverse
-   mpn_mod_1.  Both consist essentially of two multiplies and are best
-   suited to CPUs with low latency multipliers (in comparison to a divide
-   instruction.)  Modexact has a few less supplementary operations, only
+   mpn_mod_1.  Both are essentially of two multiplies and are best suited to
+   CPUs with low latency multipliers (in comparison to a divide instruction
+   at least.)  But modexact has a few less supplementary operations, only
    needs low part and high part multiplies, and has fewer working quantities
    (helping CPUs with few registers).
 
 
-   The special case for size==1 is so that the high<divisor test at the end
-   can assume c<d, that being established only if the main loop runs at
-   least once.  There's also a decent chance one % is faster than a
-   modlimb_invert, though that will depend on the processor.
+   In the main loop it will be noted that the new carry (call it r) is the
+   sum of the high product h and any borrow from l=s-c.  If c<d then we will
+   have r<d too, for the following reasons.  Let q=l*inverse be the quotient
+   limb, so that q*d = b*h + l.  Now if h=d-1 then
 
-   A CPU specific implementation might want to omit either the size==1 code
-   or the high<divisor test.  mpn/x86/k6/mode1o.asm for instance finds
-   neither useful.  */
+       l = q*d - b*(d-1) <= (b-1)*d - b*(d-1) = b-d
+
+   But if l=s-c produces a borrow when c<d, then l>=b-d+1 and hence will
+   never have h=d-1 and so r=h+borrow <= d-1.
+
+   When c>=d, on the other hand, h=d-1 can certainly occur together with a
+   borrow, thereby giving only r<=d, as per the function definition above.
+
+   As a design decision it's left to the caller to check for r=d if it might
+   be passing c>=d.  For several applications c<d initially and the extra
+   test is unnecessary, for example the GCDs or a plain divisibility d|a
+   test will pass c=0.
+
+
+   The special case for size==1 is so that it can be assumed c<=d in the
+   high<=divisor test at the end.  c<=d is only guaranteed after at least
+   one iteration of the main loop.  There's also a decent chance one % is
+   faster than a modlimb_invert, though that will depend on the processor.
+
+   A CPU specific implementation might want to omit the size==1 code or the
+   high<divisor test.  mpn/x86/k6/mode1o.asm for instance finds neither
+   useful.  */
 
 
 mp_limb_t
@@ -108,6 +131,7 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
       return h;
     }
 
+
   modlimb_invert (inverse, d);
 
   i = 0;
@@ -122,10 +146,14 @@ mpn_modexact_1c_odd (mp_srcptr src, mp_size_t size, mp_limb_t d, mp_limb_t c)
     }
   while (++i < size-1);
 
+
   s = src[i];
   if (s <= d)
     {
-      /* With high<d the final step can be a subtract and addback. */
+      /* With high<=d the final step can be a subtract and addback.  If c==0
+         then the addback will restore to l>=0.  If c==d then will get l==d
+         if s==0, but that's ok per the function definition.  */
+
       l = c - s;
       if (l > c)
         l += d;
