@@ -160,7 +160,6 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
     (ph) = _int_mult_upper (m0, m1);					\
     (pl) = __m0 * __m1;							\
   } while (0)
-#if defined (_CRAYMPP)		/* I.e., T3D and T3E alpha-based machines */
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { UWtype __di;							\
@@ -168,11 +167,20 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
     udiv_qrnnd_preinv (q, r, n1, n0, d, __di);				\
   } while (0)
 #endif /* LONGLONG_STANDALONE */
-#endif /* _CRAYMPP */
 #endif /* _CRAYIEEE */
 #endif /* _CRAY */
 
 #if defined (__hppa) && W_TYPE_SIZE == 64
+#if defined (__GNUC__)
+#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
+  __asm__ ("add %4,%5,%1\n\tadd,dc %2,%3,%0"				\
+	   : "=r" (sh), "=&r" (sl)					\
+	   : "%rM" (ah), "rM" (bh), "%rM" (al), "rM" (bl))
+#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
+  __asm__ ("sub %4,%5,%1\n\tsub,db %2,%3,%0"				\
+	   : "=r" (sh), "=&r" (sl)					\
+	   : "rM" (ah), "rM" (bh), "rM" (al), "rM" (bl))
+#endif
 /* We put the result pointer parameter last here, since it makes passing
    of the other parameters more efficient.  */
 #ifndef LONGLONG_STANDALONE
