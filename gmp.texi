@@ -477,11 +477,6 @@ your application you need to pass @option{-maix64} to @command{gcc} or
 @option{-q64} to @command{xlc}.  We hope this will change in a future version
 of GMP.
 
-@item HPPA
-
-The GMP assembly code for HPPA is not currently position-independent, so shared
-libraries are disabled for targets @samp{hppa*-*-*}.
-
 @item OpenBSD 2.6
 
 @command{m4} in this release of OpenBSD has a bug in @code{eval} that makes it
@@ -548,12 +543,6 @@ Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
 
 @item SunOS 4
-
-The system C compiler has a bug that makes it miscompile @file{mpq/get_d.c}
-and @file{mpf/get_d.c}, and causes two corresponding tests to fail.  (You can
-@command{cd} to the @file{mpz} directory to run @samp{make check} there to
-test the rest of the build.)  Use GCC instead if you plan to use the function
-@code{mpq_get_d}.
 
 The setting for @code{GSYM_PREFIX} in @file{config.m4} may be incorrectly
 determined when using the native @command{grep}, leading at link-time to
