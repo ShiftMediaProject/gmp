@@ -143,7 +143,7 @@ mpn_divisible_p (mp_srcptr ap, mp_size_t asize,
   rp = TMP_ALLOC_LIMBS (asize+1);
   qp = rp + dsize;
 
-  mpn_tdiv_qr (qp, rp, 0, ap, asize, dp, dsize);
+  mpn_tdiv_qr (qp, rp, (mp_size_t) 0, ap, asize, dp, dsize);
 
   /* test for {rp,dsize} zero or non-zero */
   i = 0;
