@@ -1,3 +1,26 @@
+2000-04-15  Kevin Ryde  <kevin@swox.se>
+
+	* README: Small updates.
+	* NEWS: Add some things about 3.0.
+
+	* mpz/Makefile.am (EXTRA_DIST): Remove dmincl.c.
+
+	* Makefile.am: Use -version-info on libraries, not -release.
+
+	* mpz/tdiv_qr.c: Add mdiv function header #ifdef BERKELEY_MP.
+	* mpbsd/Makefile.am: Use mpz/tdiv_qr.c, not mdiv.c.
+	* Makefile.am (MPBSD_OBJECTS): Change mdiv.lo to tdiv_qr.lo.
+	(libmp_la_DEPENDENCIES): Add mp_clz_tab.lo.
+	* mpbsd/mdiv.c: Remove file.
+
+	* config/mt-linux,mt-m68k,mt-m88110,mt-ppc,mt-ppc64-aix,mt-pwr,
+	mt-sprc8-gcc,mt-sprc9-gcc,mt-supspc-gcc,mt-vax,mt-x86,
+	mpn/config/mt-pa2hpux,mt-sprc9,t-oldgas,t-ppc-aix,t-pwr-aix:
+	Remove configure fragments not used since change to autoconf.
+
+	* mpn/generic/bz_divrem_n.c,sb_divrem_mn.c: Add comment that
+	internal functions are changeable and shouldn't be used directly.
+	
 2000-04-15  Linus Nordberg  <linus@swox.se>
 
 	* configure.in: Remove debug output.
