@@ -56,6 +56,8 @@ check (unsigned long a, mp_rnd_t rnd_mode, double Q)
   mpfr_clear(q);
 }
 
+double five = 5.0;
+
 int
 main (void)
 {
@@ -65,6 +67,21 @@ main (void)
 
   mpfr_test_init ();
 
+  /* On Debian potato glibc 2.1.3-18, sqrt() doesn't seem to respect
+     fesetround. */
+  {
+    double  a, b;
+    mpfr_set_machine_rnd_mode (GMP_RNDU);
+    a = sqrt (five);
+    mpfr_set_machine_rnd_mode (GMP_RNDD);
+    b = sqrt (five);
+    if (a == b)
+      {
+        printf ("Tests suppressed, mpfr_set_machine_rnd_mode doesn't affect sqrt()\n");
+        goto nogood;
+      }
+  }
+
   SEED_RAND (time(NULL));
   for (i=0;i<1000000;i++)
     {
@@ -73,7 +90,9 @@ main (void)
       if (1.0*a < 9007199254872064.0)
         check(a, LONG_RAND() % 4, -1.0);
     }
+ nogood:
 #endif
+
   check (0, GMP_RNDN, 0.0);
   check (2116118, GMP_RNDU, 1.45468828276026215e3);
 
