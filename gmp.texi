@@ -139,6 +139,7 @@ arithmetic library, version @value{VERSION}.
 @unnumbered GNU MP Copying Conditions
 @cindex Copying conditions
 @cindex Conditions for copying GNU MP
+@cindex License conditions
 
 This library is @dfn{free}; this means that everyone is free to use it and
 free to redistribute it on a free basis.  The library is not in the public
@@ -217,7 +218,22 @@ There is a mailing list for GMP users.  To join it, send a mail to
 @cindex Home page
 @cindex Web page
 For up-to-date information on GMP, please see the GMP web pages at
-@uref{http://swox.com/gmp/}.
+
+@display
+@uref{http://swox.com/gmp/}
+@end display
+
+@cindex Latest version of GMP
+@cindex Anonymous FTP of latest version
+@cindex FTP of latest version
+The latest version of the library is available at
+
+@display
+@uref{ftp://ftp.gnu.org/pub/gnu/gmp}
+@end display
+
+Many sites around the world mirror @samp{ftp.gnu.org}, please use a mirror
+near you, see @uref{http://www.gnu.org/order/ftp.html} for a full list.
 
 
 @section How to use this Manual
@@ -279,15 +295,22 @@ reports.)
 
 @noindent
 All the usual autoconf configure options are available, run @samp{./configure
---help} for a summary.
+--help} for a summary.  The file @file{INSTALL.autoconf} has some generic
+installation information too.
 
 @table @asis
 @item Non-Unix Systems
 
 @samp{configure} needs various Unix-like tools installed.  On an MS-DOS system
-cygwin or djgpp should work.  It might be possible to build without the help
-of @samp{configure}, certainly all the code is there, but unfortunately you'll
-be on your own.
+Cygwin or DJGPP should work.  See
+
+@display
+@uref{http://www.delorie.com/djgpp/}
+@uref{http://www.cygnus.com/cygwin/}
+@end display
+
+It might be possible to build without the help of @samp{configure}, certainly
+all the code is there, but unfortunately you'll be on your own.
 
 @item Object Directory
 
@@ -661,7 +684,7 @@ GNU m4).
 
 The Intel Pentium P5 code is good for its intended P5, but quite slow when run
 on Intel P6 class chips (PPro, P-II, P-III)@.  @samp{i386} is a better choice
-if you're making binaries that must run on both.
+when making binaries that must run on both.
 
 @item x86 MMX and old GAS
 
@@ -674,11 +697,11 @@ is given and non-MMX code is used instead.  This will be an inferior build,
 since the MMX code that's present is there because it's faster than the
 corresponding plain integer code.
 
-@item x86 GCC 2.95.2 @samp{-march=pentiumpro}
+@item x86 GCC @samp{-march=pentiumpro}
 
 GCC 2.95.2 miscompiles @file{mpz/powm.c} when @samp{-march=pentiumpro} is
-used, so that option is omitted from the @env{CFLAGS} chosen for relevant
-CPUs.  The problem is believed to be fixed in GCC 2.96.
+used, so for relevant CPUs that option is in the default @env{CFLAGS} only for
+GCC 2.96 and up.
 @end table
 
 
@@ -693,6 +716,24 @@ CPUs.  The problem is believed to be fixed in GCC 2.96.
 You might find more up-to-date information at @uref{http://swox.com/gmp/}.
 
 @table @asis
+@item GNU binutils @command{strip}
+@cindex Stripped libraries
+
+GNU binutils @command{strip} should not be used on the static libraries
+@file{libgmp.a} and @file{libmp.a}, neither directly nor via @samp{make
+install-strip}.  It can be used on the shared libraries @file{libgmp.so} and
+@file{libmp.so} though.
+
+Currently (binutils 2.10.0), @command{strip} unpacks an archive then operates
+on the files, but GMP contains multiple object files of the same name
+(eg. three versions of @file{init.o}), and they overwrite each other, leaving
+only the one that happens to be last.
+
+If stripped static libraries are wanted, the suggested workaround is to build
+normally, strip the separate object files, and do another @samp{make all} to
+rebuild.  Alternately @samp{CFLAGS} with @samp{-g} omitted can always be used
+if it's just debugging which is unwanted.
+
 @item NeXT prior to 3.3
 
 The system compiler on old versions of NeXT was a massacred and old GCC, even
@@ -711,47 +752,50 @@ later).
 Use the GNU assembler instead of the system assembler, since the latter has
 serious bugs.
 
-@item Stripped Libraries
-@cindex Stripped libraries
-
-GNU binutils @samp{strip} should not be used on the static libraries
-@file{libgmp.a} and @file{libmp.a}, neither directly nor via @samp{make
-install-strip}.  It can be used on the shared libraries @file{libgmp.so} and
-@file{libmp.so} though.
-
-Currently (binutils 2.10.0), @samp{strip} extracts archives into a single
-directory, but GMP contains multiple object files of the same name (eg. three
-versions of @file{init.o}), and they overwrite each other, leaving only the
-one that happens to be last.
-
-If stripped static libraries are wanted, the suggested workaround is to build
-normally, strip the separate object files, and do another @samp{make all} to
-rebuild.  Alternately @samp{CFLAGS} with @samp{-g} omitted can always be used
-if it's just debugging which is unwanted.
-
 @item SCO shared libraries @samp{-lc}
-@cindex SCO shared libraries
 
 Some versions of SCO OpenServer and UnixWare don't allow @samp{-lc} when
 creating a shared library.  One symptom of this is @code{<ctype.h>} macros not
-working, leading to failures from @code{mpz_set_str} and similar functions in
-@samp{make check} and application programs.  Currently the suggested
-workaround is to delete the line @code{deplibs="$deplibs -lc"} from
-@file{ltmain.sh} before running @samp{./configure} (or from @file{libtool}
-after).
+working, leading to failures from @code{mpz_set_str} and similar functions,
+either in @samp{make check} or in application programs.  Currently the
+suggested workaround is to delete the line
+
+@example
+deplibs="$deplibs -lc"
+@end example
+
+from @file{ltmain.sh} before running @samp{./configure} (or from
+@file{libtool} after running it).
 
 @item SunOS 4 Native Tools
 
 The @command{ranlib} command will need to be run manually when building a
 static library with the native @command{ar}.  After @samp{make}, run
-@samp{ranlib .libs/libgmp.a}, and when using @option{--enable-mpbsd} run
-@samp{ranlib .libs/libmp.a} too.
+
+@example
+ranlib .libs/libgmp.a
+@end example
+
+and when using @option{--enable-mpbsd} also run
+
+@example
+ranlib .libs/libmp.a
+@end example
+
+@item @file{version.c} compilation
+
+The current @samp{./configure} relies on certain features of @command{sed}
+that some old systems don't have.  One symptom is @code{VERSION} not being set
+correctly in the generated @file{config.h}, leading to @file{version.c}
+failing to compile.  Irix 5.3, MIPS RISC/OS and Ultrix 4.4 are believed to be
+affected.  GNU @command{sed} is recommended, though it might be possible to
+build by editing @file{config.h} manually instead.
 
 @item VAX running Ultrix
 
-You need to build and install the GNU assembler before you compile GMP.  The VAX
-assembly in GMP uses an instruction (@code{jsobgtr}) that cannot be assembled by
-the Ultrix assembler.
+You need to build and install the GNU assembler before you compile GMP.  The
+VAX assembly in GMP uses an instruction (@code{jsobgtr}) that cannot be
+assembled by the Ultrix assembler.
 @end table
 
 
@@ -776,7 +820,6 @@ to be incompatible with future versions of GMP.}
 * GMP and Reentrancy::           	What about reentrancy?
 * Useful Macros and Constants::  	Convenient helpers.
 * Compatibility with older versions::	Compatibility issues.
-* Getting the Latest Version of GMP::  	How to get the software.
 @end menu
 
 @node Nomenclature and Types, Function Classes, GMP Basics, GMP Basics
@@ -1022,23 +1065,23 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @end defmac
 
 
-@node Compatibility with older versions, Getting the Latest Version of GMP, Useful Macros and Constants, GMP Basics
+@node Compatibility with older versions,  , Useful Macros and Constants, GMP Basics
 @section Compatibility with older versions
 @cindex Compatibility with older versions
 @cindex Upward compatibility
 
-This version of GMP is upwardly binary compatible with versions 3.0 and 3.0.1,
-and upwardly compatible at the source level with versions 2.0, 2.0.1, and
-2.0.2, with the following exceptions.
+This version of GMP is upwardly binary compatible with all 3.x versions, and
+upwardly compatible at the source level with all 2.x versions, with the
+following exceptions.
 
 @itemize @bullet
 @item
-@code{mpn_gcd} had its source arguments swapped as of GMP 3.0 for consistency
+@code{mpn_gcd} had its source arguments swapped as of GMP 3.0, for consistency
 with other @code{mpn} functions.
 
 @item
 @code{mpf_get_prec} counted precision slightly differently in GMP 3.0 and
-3.0.1, but in 3.1 has reverted to the 2.0.x style.
+3.0.1, but in 3.1 has reverted to the 2.x style.
 
 @end itemize
 
@@ -1095,18 +1138,6 @@ see the GMP 2 manual for details.
 @c Note that this is an incompatible change from version 1 of the library.
 
 @c @end enumerate
-
-
-@node  Getting the Latest Version of GMP,  , Compatibility with older versions, GMP Basics
-@section Getting the Latest Version of GMP
-@cindex Latest version of GMP
-@cindex Anonymous FTP of latest version
-@cindex FTP of latest version
-
-The latest version of the GMP library is available at
-@uref{ftp://ftp.gnu.org/pub/gnu/gmp}.  Many sites around the world mirror
-@samp{ftp.gnu.org}; please use a mirror site near you, see
-@uref{http://www.gnu.org/order/ftp.html}.
 
 
 @node Reporting Bugs, Integer Functions, GMP Basics, Top
@@ -1250,18 +1281,43 @@ the heap, or to increase the space of a variable to avoid repeated automatic
 re-allocation.
 @end deftypefun
 
-@deftypefun void mpz_array_init (mpz_t @var{integer_array}[], size_t @var{array_size}, mp_size_t @var{fixed_num_bits})
+@deftypefun void mpz_array_init (mpz_t @var{integer_array}[], size_t @var{array_size}, @w{mp_size_t @var{fixed_num_bits}})
 Allocate @strong{fixed} limb space for all @var{array_size} integers in
-@var{integer_array}.  The fixed allocation for each integer in the array is
-enough to store @var{fixed_num_bits}.  If the fixed space will be insufficient
-for storing the result of a subsequent calculation, the result is
-unpredictable.
+@var{integer_array}.  Each integer in the array will have enough room to store
+@var{fixed_num_bits}.
 
-This function is useful for decreasing the working set for some algorithms
-that use large integer arrays.
-
-There is no way to de-allocate the storage allocated by this function.
+This function can reduce memory usage in algorithms that need large arrays of
+integers, since it can avoid allocating and reallocating lots of small memory
+blocks.  There is no way to free the storage allocated by this function.
 Don't call @code{mpz_clear}!
+
+Since the allocation for each variable is fixed, care must be taken that
+values stored are no bigger than that size.  The following special rules must
+be observed,
+
+@itemize @bullet
+@item
+@code{mpz_abs}, @code{mpz_neg}, @code{mpz_set}, @code{mpz_set_si} and
+@code{mpz_set_ui} need room for the value they copy.
+
+@item
+@code{mpz_add}, @code{mpz_add_ui}, @code{mpz_sub} and @code{mpz_sub_ui} need
+room for the larger of the two operands, plus an extra
+@code{mp_bits_per_limb}.
+
+@item
+@code{mpz_mul}, @code{mpz_mul_ui} and @code{mpz_mul_ui} need room for the sum
+of the number of bits in their operands, but each rounded up to a multiple of
+@code{mp_bits_per_limb}.
+
+@item
+@code{mpz_swap} can be used between two array variables, but not between an
+array and a normal variable.
+@end itemize
+
+For other functions, or if in doubt, the suggestion is to calculate in a
+regular @code{mpz_init} variable and copy the result to an array variable with
+@code{mpz_set}.
 @end deftypefun
 
 
@@ -2032,8 +2088,9 @@ arguments multiple times.
 @cindex Bit manipulation functions
 @cindex Integer bit manipulation functions
 
-These functions behave as if two's complement arithmetic were used (although
-sign-magnitude is used by the actual implementation).
+These functions behave as if twos complement arithmetic were used (although
+sign-magnitude is the actual implementation).  The least significant bit is
+number 0.
 
 @deftypefun void mpz_and (mpz_t @var{rop}, mpz_t @var{op1}, mpz_t @var{op2})
 Set @var{rop} to @var{op1} logical-and @var{op2}.
@@ -2086,7 +2143,7 @@ Clear bit @var{bit_index} in @var{rop}.
 @end deftypefun
 
 @deftypefun int mpz_tstbit (mpz_t @var{op}, unsigned long int @var{bit_index})
-Check bit @var{bit_index} in @var{op} and return 0 or 1 accordingly.
+Test bit @var{bit_index} in @var{op} and return 0 or 1 accordingly.
 @end deftypefun
 
 @node I/O of Integers, Integer Random Numbers, Integer Logic and Bit Fiddling, Integer Functions
@@ -2251,7 +2308,7 @@ short int}, or @code{signed short int}, respectively.  Otherwise, return zero.
 @deftypefn Macro int mpz_odd_p (mpz_t @var{op})
 @deftypefnx Macro int mpz_even_p (mpz_t @var{op})
 Determine whether @var{op} is odd or even, respectively.  Return non-zero if
-yes, zero if no.  These macros evaluate their arguments more than once.
+yes, zero if no.  These macros evaluate their argument more than once.
 @end deftypefn
 
 @deftypefun size_t mpz_size (mpz_t @var{op})
@@ -3374,7 +3431,8 @@ If the remainder is not wanted @var{r2p} can be @code{NULL}, and in this case
 the return value is zero or non-zero according to whether the remainder would
 have been zero or non-zero.
 
-A return value of zero indicates a perfect square.
+A return value of zero indicates a perfect square, see also
+@code{mpz_perfect_square_p}.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_get_str (unsigned char *@var{str}, int @var{base}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n})
