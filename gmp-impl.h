@@ -232,10 +232,6 @@ MA 02111-1307, USA. */
 extern "C" {
 #endif
 
-extern void * (*__gmp_allocate_func) _PROTO ((size_t));
-extern void * (*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t));
-extern void   (*__gmp_free_func) _PROTO ((void *, size_t));
-
 void *__gmp_default_allocate _PROTO ((size_t));
 void *__gmp_default_reallocate _PROTO ((void *, size_t, size_t));
 void __gmp_default_free _PROTO ((void *, size_t));
@@ -261,6 +257,21 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #define const			/* Empty */
 #define signed			/* Empty */
 
+#endif
+
+
+/* See "(gcc)Function Attributes" for what these do. */
+
+#if HAVE_ATTRIBUTE_CONST
+#define ATTRIBUTE_CONST  __attribute__ ((const))
+#else
+#define ATTRIBUTE_CONST
+#endif
+
+#if HAVE_ATTRIBUTE_NORETURN
+#define ATTRIBUTE_NORETURN  __attribute__ ((noreturn))
+#else
+#define ATTRIBUTE_NORETURN
 #endif
 
 
@@ -715,8 +726,8 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define ASSERT_FILE  ""
 #endif
 
-int __gmp_assert_fail _PROTO((const char *filename, int linenum,
-                              const char *expr));
+int __gmp_assert_fail _PROTO ((const char *filename, int linenum,
+                               const char *expr)) ATTRIBUTE_NORETURN;
 
 #if HAVE_STRINGIZE
 #define ASSERT_FAIL(expr)  __gmp_assert_fail (ASSERT_FILE, ASSERT_LINE, #expr)
@@ -882,8 +893,8 @@ extern mp_size_t __gmp_default_fp_limb_precision;
 /* Use a library function for invert_limb, if available. */
 #if ! defined (invert_limb) && HAVE_NATIVE_mpn_invert_limb
 #define mpn_invert_limb  __MPN(invert_limb)
-mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
-#define invert_limb(invxl,xl)  (invxl = __MPN(invert_limb) (xl))
+mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
+#define invert_limb(invxl,xl)  (invxl = mpn_invert_limb (xl))
 #endif
 
 #ifndef invert_limb
