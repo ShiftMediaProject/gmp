@@ -163,7 +163,7 @@ t_assign_SOURCES = t-assign.cc
 t_binary_SOURCES = t-binary.cc
 t_constr_SOURCES = t-constr.cc
 t_headers_SOURCES = t-headers.cc
-t_locale_SOURCES = t-locale.cc localeconv.c
+t_locale_SOURCES = t-locale.cc
 t_misc_SOURCES = t-misc.cc
 t_ops_SOURCES = t-ops.cc
 t_ostream_SOURCES = t-ostream.cc
@@ -234,7 +234,7 @@ t_headers_LDADD = $(LDADD)
 @WANT_MPFR_FALSE@	$(top_builddir)/libgmpxx.la \
 @WANT_MPFR_FALSE@	$(top_builddir)/libgmp.la
 t_headers_LDFLAGS =
-am_t_locale_OBJECTS = t-locale.$(OBJEXT) localeconv$U.$(OBJEXT)
+am_t_locale_OBJECTS = t-locale.$(OBJEXT)
 t_locale_OBJECTS = $(am_t_locale_OBJECTS)
 t_locale_LDADD = $(LDADD)
 @WANT_MPFR_TRUE@t_locale_DEPENDENCIES = \
@@ -337,14 +337,6 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp =
 am__depfiles_maybe =
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
-	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-CFLAGS = @CFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -365,7 +357,7 @@ SOURCES = $(t_assign_SOURCES) $(t_binary_SOURCES) $(t_constr_SOURCES) $(t_header
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .lo .o .obj
+.SUFFIXES: .cc .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  tests/cxx/Makefile
@@ -427,18 +419,6 @@ $(top_builddir)/ansi2knr:
 
 mostlyclean-kr:
 	-test "$U" = "" || rm -f *_.c
-
-.c.o:
-	$(COMPILE) -c `test -f '$<' || echo '$(srcdir)/'`$<
-
-.c.obj:
-	$(COMPILE) -c `cygpath -w $<`
-
-.c.lo:
-	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
-localeconv_.c: localeconv.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/localeconv.c; then echo $(srcdir)/localeconv.c; else echo localeconv.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > localeconv_.c || rm -f localeconv_.c
-localeconv_.$(OBJEXT) localeconv_.lo : $(ANSI2KNR)
 
 .cc.o:
 	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
