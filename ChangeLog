@@ -18,6 +18,20 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-11-09  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in, Makefile.am, printf/Makefile.am,
+	printf/repl-vsnprintf.c: Handle vsnprintf replacement with C
+	conditionals.
+
+	* acinclude.m4 (AC_LANG_FUNC_LINK_TRY(C)): Workaround troubles recent
+	HP cc +O3 causes for AC_CHECK_FUNCS.
+
+	* gmp.texi (Notes for Particular Systems): Add Sparc app regs.
+	(Debugging): Note gcc -fstack options to detect overflow.
+	(Formatted Output Strings, Formatted Input Strings): Format strings
+	are not multibyte.
+
 2002-11-06  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/tdiv_qr.c: Remove a bogus assert.
