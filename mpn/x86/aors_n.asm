@@ -83,7 +83,7 @@ ifdef(`PIC',`
 	call	L(0a)
 L(0a):	leal	(%eax,%eax,8),%eax
 	addl	(%esp),%eax
-	addl	$(LF(M4_function_n,oop)-L(0a)-3),%eax
+	addl	$LF(M4_function_n,oop)-L(0a)-3,%eax
 	addl	$4,%esp
 ',`
 	C Calculate start address in loop for non-PIC.
@@ -132,7 +132,7 @@ ifdef(`PIC',`
 	call	L(0b)
 L(0b):	leal	(%eax,%eax,8),%eax
 	addl	(%esp),%eax
-	addl	$(L(oop)-L(0b)-3),%eax
+	addl	$L(oop)-L(0b)-3,%eax
 	addl	$4,%esp
 ',`
 	C Calculate start address in loop for non-PIC.
