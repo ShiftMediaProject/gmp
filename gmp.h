@@ -176,9 +176,9 @@ typedef __mpq_struct *mpq_ptr;
 #ifndef __MPN
 /* Really use `defined (__STDC__)' here; we want it to be true for Sun C */
 #if defined (__STDC__) || defined (__cplusplus)
-#define __MPN(x) __gmpn_##x
+#define __MPN(x) __mpn_##x
 #else
-#define __MPN(x) __gmpn_/**/x
+#define __MPN(x) __mpn_/**/x
 #endif
 #endif
 
@@ -241,6 +241,12 @@ void gmp_rand_clear _PROTO ((gmp_rand_state));
 #define mpz_fdiv_r_ui __gmpz_fdiv_r_ui
 #define mpz_fdiv_ui __gmpz_fdiv_ui
 #define mpz_fib_ui __gmpz_fib_ui
+#define mpz_fits_sint_p __gmpz_fits_sint_p
+#define mpz_fits_slong_p __gmpz_fits_slong_p
+#define mpz_fits_sshort_p __gmpz_fits_sshort_p
+#define mpz_fits_uint_p __gmpz_fits_uint_p
+#define mpz_fits_ulong_p __gmpz_fits_ulong_p
+#define mpz_fits_ushort_p __gmpz_fits_ushort_p
 #define mpz_gcd __gmpz_gcd
 #define mpz_gcd_ui __gmpz_gcd_ui
 #define mpz_gcdext __gmpz_gcdext
@@ -357,6 +363,12 @@ void mpz_fdiv_r_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int mpz_fdiv_r_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 unsigned long int mpz_fdiv_ui _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_fib_ui _PROTO ((mpz_ptr, unsigned long int));
+int mpz_fits_sint_p _PROTO ((mpz_srcptr));
+int mpz_fits_slong_p _PROTO ((mpz_srcptr));
+int mpz_fits_sshort_p _PROTO ((mpz_srcptr));
+int mpz_fits_uint_p _PROTO ((mpz_srcptr));
+int mpz_fits_ulong_p _PROTO ((mpz_srcptr));
+int mpz_fits_ushort_p _PROTO ((mpz_srcptr));
 void mpz_gcd _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 unsigned long int mpz_gcd_ui _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
 void mpz_gcdext _PROTO ((mpz_ptr, mpz_ptr, mpz_ptr, mpz_srcptr, mpz_srcptr));
