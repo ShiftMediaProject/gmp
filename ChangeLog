@@ -1,3 +1,86 @@
+2001-03-03  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/n_pow_ui.c (ULONG_PARITY): Move to gmp-impl.h.
+	* gmp-impl.h (ULONG_PARITY): i386 part from n_pow_ui.c, new generic
+	form by Torbjorn.
+
+	* tests/mpz/t-div_2exp.c: New file, rewrite of t-2exp.c.
+	* tests/mpz/t-2exp.c: Remove file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Update.
+
+	* gmp-h.in (mpz_cdiv_q_2exp, mpz_cdiv_q_2exp): Add prototypes.
+	* gmp.texi (Integer Division): Add mpz_cdiv_q_2exp and mpz_cdiv_q_2exp.
+
+	* mpz/cfdiv_q_2exp.c: New file, partial rewrite of fdiv_q_2exp.c, add
+	mpz_cdiv_q_2exp entrypoint.
+	* mpz/cfdiv_r_2exp.c: New file, rewrite of fdiv_r_2exp.c, use all mpn,
+	add mpz_cdiv_r_2exp entrypoint.
+	* mpz/fdiv_q_2exp.c, mpz/fdiv_r_2exp.c: Remove files.
+	* mpz/Makefile.am (libmpz_la_SOURCES): Update.
+	* Makefile.am (MPZ_OBJECTS): Ditto.
+
+	* gmp-impl.h (USE_LEADING_REGPARM): Use __i386__ same as longlong.h
+	(REGPARM_2_1, REGPARM_3_1, REGPARM_ATTR): New macros.
+	* mpz/jacobi.c (jac_or_kron): Use them.
+
+	* configure.in (HAVE_ABI_$ABI): Re-enable this for config.m4, with
+	dots changed to underscores (necessary for hppa).
+
+	* tests/mpz/t-divis.c, tests/mpz/t-divis_2exp.c: New files.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Add them.
+
+	* gmp-h.in (mpz_divisible_p, mpz_divisible_ui_p,
+	mpz_divisible_2exp_p): Add prototypes.
+	* gmp.texi (Integer Division): Add mpz_divisible_p.
+	(Efficiency): Add remarks about divisibility testing.
+
+	* mpz/divis.c, mpz/divis_ui.c, mpz/divis_2exp.c: New files.
+	* mpz/Makefile.am (libmpz_la_SOURCES): Add them.
+	* Makefile.am (MPZ_OBJECTS): Ditto.
+
+	* mpn/generic/divis.c: New file.
+	* configure.in (gmp_mpn_functions): Add it.
+	* mpn/Makefile.am (nodist_libdummy_la_SOURCES): Ditto.
+	* gmp-impl.h (mpn_divisible_p): Add prototype.
+
+	* urandom.h: Remove file.
+	* Makefile.am (EXTRA_DIST): Remove it.
+
+	* tests/mpz/convert.c, dive.c, io.c, logic.c, reuse.c, t-2exp.c,
+	t-fdiv.c, t-fdiv_ui.c, t-gcd.c, t-jac.c, t-mul.c, t-pow.c,
+	t-powm.c, t-powm_ui.c, t-root.c, t-sqrtrem.c, t-tdiv.c,
+	t-tdiv_ui.c: Use RANDS, initialized by tests_rand_start.
+
+	* tests/mpz/t-pow.c: New file, being t-pow_ui renamed and with some
+	further tests added.
+	* tests/mpz/t-pow_ui.c: Remove file.
+	* tests/mpz/Makefile.am (check_PROGRAMS): Update.
+
+	* tests/t-modlinv.c: Don't use urandom.h.
+	* tests/mpz/bit.c, tests/mpz/t-scan.c: Ditto.
+	* tests/mpq/t-cmp.c, tests/mpq/t-cmp_ui.c, tests/mpq/t-get_d.c: Ditto.
+	* tests/mpf/reuse.c, t-add.c, t-conv.c, t-dm2exp.c, t-muldiv.c,
+	t-sqrt.c, t-sub.c: Ditto.
+
+	* tests/misc.c (tests_rand_start, tests_rand_end): New functions.
+	(tests_start, tests_end): Use them.
+	(urandom): New function.
+	* tests/tests.h: Add prototypes.
+
+	* mpz/random.c: Rewrite using mpz_urandomb and RANDS.
+	* mpn/generic/random.c: Rewrite using _gmp_rand and RANDS.
+	* mpn/generic/random2.c: Use RANDS not random() etc.
+
+	* gmp-impl.h (__gmp_rands, __gmp_rands_initialized): Add externs.
+	(gmp_randstate_ptr): New typedef.
+	(RANDS, RANDS_CLEAR): New macros.
+
+	* rands.c: New file.
+	* Makefile.am (libgmp_la_SOURCES): Add it.
+
+	* configure.in (mpn_objs_in_libmp): New AC_SUBST.
+	* Makefile.am (libmp_la_DEPENDENCIES): Use it.
+
 2001-03-02  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/pa64/udiv_qrnnd.asm: New file.
