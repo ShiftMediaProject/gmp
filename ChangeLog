@@ -1,5 +1,10 @@
 2001-01-03  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/tests/dive.c: Generate test operands using new random functions.
+	* mpz/tests/io.c: Likewise.
+	* mpz/tests/logic.c: Likewise.
+	* mpz/tests/t-2exp.c: Likewise.
+
 	* stack-alloc.c (__gmp_tmp_alloc): Round `now' to required alignment.
 
 	* stack-alloc.h (__TMP_ALIGN): Append `L'.
@@ -24,8 +29,8 @@
 	* mpz/fac_ui.c (MPZ_SET_1_NZ): Actually use `__z'.
 
 	* mpz/tests/t-jac.c
-	(main, check_squares_zi): Generate test operands numbers using new
-	random functions.
+	(main, check_squares_zi): Generate test operands using new random
+	functions.
 
 	All changes below on this date for enabling `make; make check'
 	with C++ compilers:
