@@ -21,10 +21,12 @@ MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/array_init.lo mpz/bin_ui.lo mpz/bin_uiui.lo mpz/cdiv_q.lo \
   mpz/cdiv_q_ui.lo mpz/cdiv_qr.lo mpz/cdiv_qr_ui.lo mpz/cdiv_r.lo \
   mpz/cdiv_r_ui.lo mpz/cdiv_ui.lo mpz/clear.lo mpz/clrbit.lo mpz/cmp.lo \
-  mpz/cmp_si.lo mpz/cmp_ui.lo mpz/cmp_abs.lo mpz/cmp_abs_ui.lo mpz/com.lo \
+  mpz/cmp_si.lo mpz/cmp_ui.lo mpz/cmpabs.lo mpz/cmpabs_ui.lo mpz/com.lo \
   mpz/divexact.lo mpz/dump.lo mpz/fac_ui.lo mpz/fdiv_q.lo mpz/fdiv_q_2exp.lo \
   mpz/fdiv_q_ui.lo mpz/fdiv_qr.lo mpz/fdiv_qr_ui.lo mpz/fdiv_r.lo \
-  mpz/fdiv_r_2exp.lo mpz/fdiv_r_ui.lo mpz/fdiv_ui.lo mpz/fib_ui.lo mpz/gcd.lo \
+  mpz/fdiv_r_2exp.lo mpz/fdiv_r_ui.lo mpz/fdiv_ui.lo mpz/fib_ui.lo \
+  mpz/fits_sint_p.lo mpz/fits_slong_p.lo mpz/fits_sshort_p.lo \
+  mpz/fits_uint_p.lo mpz/fits_ulong_p.lo mpz/fits_ushort_p.lo mpz/gcd.lo \
   mpz/gcd_ui.lo mpz/gcdext.lo mpz/get_d.lo mpz/get_si.lo mpz/get_str.lo \
   mpz/get_ui.lo mpz/getlimbn.lo mpz/hamdist.lo mpz/init.lo mpz/inp_raw.lo \
   mpz/inp_str.lo mpz/invert.lo mpz/ior.lo mpz/iset.lo mpz/iset_d.lo \
@@ -44,7 +46,7 @@ MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
   mpq/cmp_ui.lo mpq/div.lo mpq/get_d.lo mpq/get_den.lo mpq/get_num.lo \
   mpq/init.lo mpq/inv.lo mpq/mul.lo mpq/neg.lo mpq/set.lo mpq/set_den.lo \
   mpq/set_num.lo mpq/set_si.lo mpq/set_ui.lo mpq/sub.lo mpq/equal.lo \
-  mpq/set_z.lo
+  mpq/set_z.lo mpq/set_d.lo
 MPN_OBJECTS = @mpn_objs_in_libgmp@
 
 ## FIXME: Remove `config.in' when AM_CONFIG_HEADER is used in configure.in.
