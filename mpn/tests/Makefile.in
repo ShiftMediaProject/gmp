@@ -506,21 +506,29 @@ mostlyclean distclean maintainer-clean
 
 allprogs: $(EXTRA_PROGRAMS)
 
-# m4 processing fudged for use in a second-level subdirectory
+# copying the rules straight from mpn/Makefile.am doesn't work because we're
+# in a second-level subdirectory here
 .asm.o:
-	cd ..; $(M4) -DOPERATION_$* tests/$< >tests/tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
+	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
 .asm.obj:
-	cd ..; $(M4) -DOPERATION_$* `cygpath -w tests/$<` >tests/tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	rm -f tmp-$*.s
+	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
 .asm.lo:
-	cd ..; $(M4) -DPIC -DOPERATION_$* tests/$< >tests/tmp-$*.s
-	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
-	cd ..; $(M4) -DOPERATION_$* tests/$< >tests/tmp-$*.s
-	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
-	rm -f tmp-$*.s
+	cp $< ..; cd ..; m $@; rm $*.asm; mv $*.* tests;
+
+# .asm.o:
+# 	cd ..; $(M4) -DOPERATION_$* tests/$< >tests/tmp-$*.s
+# 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+# 	rm -f tmp-$*.s
+# .asm.obj:
+# 	cd ..; $(M4) -DOPERATION_$* `cygpath -w tests/$<` >tests/tmp-$*.s
+# 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+# 	rm -f tmp-$*.s
+# .asm.lo:
+# 	cd ..; $(M4) -DPIC -DOPERATION_$* tests/$< >tests/tmp-$*.s
+# 	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
+# 	cd ..; $(M4) -DOPERATION_$* tests/$< >tests/tmp-$*.s
+# 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
+# 	rm -f tmp-$*.s
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
