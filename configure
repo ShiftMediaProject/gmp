@@ -2677,13 +2677,13 @@ echo $ECHO_N "checking whether gcc unsigned division works... $ECHO_C" >&6
 tmp_version=`($cc --version) 2>&5`
 echo "$cc --version '$tmp_version'" >&5
 
-major=`(echo "$tmp_version" | sed -n 's/^\(egcs-\)*\([0-9][0-9]*\).*/\2/p') 2>&5`
+major=`(echo "$tmp_version" | sed -n 's/^[a-z-]*\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    major '$major'" >&5
 
-minor=`(echo "$tmp_version" | sed -n 's/^\(egcs-\)*[0-9][0-9]*\.\([0-9][0-9]*\).*/\2/p') 2>&5`
+minor=`(echo "$tmp_version" | sed -n 's/^[a-z-]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    minor '$minor'" >&5
 
-subminor=`(echo "$tmp_version" | sed -n 's/^\(egcs-\)*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\2/p') 2>&5`
+subminor=`(echo "$tmp_version" | sed -n 's/^[a-z-]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    subminor '$subminor'" >&5
 
 if test -z "$major"; then
@@ -2788,13 +2788,13 @@ else
   tmp_version=`($cc --version) 2>&5`
 echo "$cc --version '$tmp_version'" >&5
 
-major=`(echo "$tmp_version" | sed -n 's/^\(egcs-\)*\([0-9][0-9]*\).*/\2/p') 2>&5`
+major=`(echo "$tmp_version" | sed -n 's/^[a-z-]*\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    major '$major'" >&5
 
-minor=`(echo "$tmp_version" | sed -n 's/^\(egcs-\)*[0-9][0-9]*\.\([0-9][0-9]*\).*/\2/p') 2>&5`
+minor=`(echo "$tmp_version" | sed -n 's/^[a-z-]*[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    minor '$minor'" >&5
 
-subminor=`(echo "$tmp_version" | sed -n 's/^\(egcs-\)*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\2/p') 2>&5`
+subminor=`(echo "$tmp_version" | sed -n 's/^[a-z-]*[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/p') 2>&5`
 echo "    subminor '$subminor'" >&5
 
 if test -z "$major"; then
