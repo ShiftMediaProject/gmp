@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -240,7 +240,7 @@ libspeed_la_SOURCES = \
   freq.c gcd_bin.c gcd_finda_gen.c					\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
   jacbase1.c jacbase2.c jacbase3.c					\
-  mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
+  mod_1_div.c mod_1_inv.c modlinv.c					\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c				\
   set_strb.c set_strs.c time.c						\
   sb_div.c sb_inv.c
@@ -355,9 +355,8 @@ am_libspeed_la_OBJECTS = common$U.lo divrem1div$U.lo divrem1inv$U.lo \
 	gcd_finda_gen$U.lo gcdext_single$U.lo gcdext_double$U.lo \
 	gcdextod$U.lo gcdextos$U.lo jacbase1$U.lo jacbase2$U.lo \
 	jacbase3$U.lo mod_1_div$U.lo mod_1_inv$U.lo modlinv$U.lo \
-	mul_n_mpn$U.lo mul_n_open$U.lo noop$U.lo powm_mod$U.lo \
-	powm_redc$U.lo pre_divrem_1$U.lo set_strb$U.lo set_strs$U.lo \
-	time$U.lo sb_div$U.lo sb_inv$U.lo
+	noop$U.lo powm_mod$U.lo powm_redc$U.lo pre_divrem_1$U.lo \
+	set_strb$U.lo set_strs$U.lo time$U.lo sb_div$U.lo sb_inv$U.lo
 libspeed_la_OBJECTS = $(am_libspeed_la_OBJECTS)
 EXTRA_PROGRAMS = speed$(EXEEXT) speed-dynamic$(EXEEXT) \
 	speed-ext$(EXEEXT) tuneup$(EXEEXT)
@@ -500,10 +499,6 @@ mul_fft_.c: mul_fft.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_fft.c; then echo $(srcdir)/mul_fft.c; else echo mul_fft.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 mul_n_.c: mul_n.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n.c; then echo $(srcdir)/mul_n.c; else echo mul_n.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
-mul_n_mpn_.c: mul_n_mpn.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n_mpn.c; then echo $(srcdir)/mul_n_mpn.c; else echo mul_n_mpn.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
-mul_n_open_.c: mul_n_open.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_n_open.c; then echo $(srcdir)/mul_n_open.c; else echo mul_n_open.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 noop_.c: noop.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/noop.c; then echo $(srcdir)/noop.c; else echo noop.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 powm_mod_.c: powm_mod.c $(ANSI2KNR)
@@ -548,9 +543,8 @@ jacbase2_.$(OBJEXT) jacbase2_.lo jacbase3_.$(OBJEXT) jacbase3_.lo \
 mod_1_.$(OBJEXT) mod_1_.lo mod_1_div_.$(OBJEXT) mod_1_div_.lo \
 mod_1_inv_.$(OBJEXT) mod_1_inv_.lo modlinv_.$(OBJEXT) modlinv_.lo \
 mul_.$(OBJEXT) mul_.lo mul_fft_.$(OBJEXT) mul_fft_.lo mul_n_.$(OBJEXT) \
-mul_n_.lo mul_n_mpn_.$(OBJEXT) mul_n_mpn_.lo mul_n_open_.$(OBJEXT) \
-mul_n_open_.lo noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) \
-powm_mod_.lo powm_redc_.$(OBJEXT) powm_redc_.lo pre_divrem_1_.$(OBJEXT) \
+mul_n_.lo noop_.$(OBJEXT) noop_.lo powm_mod_.$(OBJEXT) powm_mod_.lo \
+powm_redc_.$(OBJEXT) powm_redc_.lo pre_divrem_1_.$(OBJEXT) \
 pre_divrem_1_.lo sb_div_.$(OBJEXT) sb_div_.lo sb_divrem_mn_.$(OBJEXT) \
 sb_divrem_mn_.lo sb_inv_.$(OBJEXT) sb_inv_.lo set_strb_.$(OBJEXT) \
 set_strb_.lo set_strs_.$(OBJEXT) set_strs_.lo speed_.$(OBJEXT) \
