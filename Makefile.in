@@ -133,7 +133,8 @@ MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/sizeinbase.lo mpz/sqrt.lo mpz/sqrtrem.lo mpz/sub.lo mpz/sub_ui.lo \
   mpz/swap.lo mpz/tdiv_ui.lo mpz/tdiv_q.lo mpz/tdiv_q_2exp.lo mpz/tdiv_q_ui.lo \
   mpz/tdiv_qr.lo mpz/tdiv_qr_ui.lo mpz/tdiv_r.lo mpz/tdiv_r_2exp.lo \
-  mpz/tdiv_r_ui.lo mpz/tstbit.lo mpz/ui_pow_ui.lo mpz/urandom.lo mpz/xor.lo
+  mpz/tdiv_r_ui.lo mpz/tstbit.lo mpz/ui_pow_ui.lo mpz/urandomb.lo \
+  mpz/urandomn.lo mpz/xor.lo
 
 MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
   mpq/cmp_ui.lo mpq/div.lo mpq/get_d.lo mpq/get_den.lo mpq/get_num.lo \
@@ -152,9 +153,9 @@ DISTCLEANFILES = @gmp_srclinks@
 info_TEXINFOS = gmp.texi
 
 lib_LTLIBRARIES = libgmp.la
-libgmp_la_SOURCES = assert.c memory.c mp_set_fns.c mp_clz_tab.c rand.c \
-  randui.c randclr.c randlc.c randlcui.c version.c stack-alloc.c mp_bpl.c \
-  extract-dbl.c insert-dbl.c
+libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
+  rand.c randclr.c randlc.c randlc2x.c randsd.c randsdui.c version.c \
+  stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
 
 libgmp_la_LIBADD = \
 	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
@@ -174,9 +175,10 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-am_libgmp_la_OBJECTS =  assert.lo memory.lo mp_set_fns.lo mp_clz_tab.lo \
-rand.lo randui.lo randclr.lo randlc.lo randlcui.lo version.lo \
-stack-alloc.lo mp_bpl.lo extract-dbl.lo insert-dbl.lo
+am_libgmp_la_OBJECTS =  assert.lo errno.lo memory.lo mp_set_fns.lo \
+mp_clz_tab.lo rand.lo randclr.lo randlc.lo randlc2x.lo randsd.lo \
+randsdui.lo version.lo stack-alloc.lo mp_bpl.lo extract-dbl.lo \
+insert-dbl.lo
 libgmp_la_OBJECTS =  $(am_libgmp_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -199,11 +201,12 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 GZIP_ENV = --best
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/assert.Plo $(DEPDIR)/extract-dbl.Plo \
-$(DEPDIR)/insert-dbl.Plo $(DEPDIR)/memory.Plo $(DEPDIR)/mp_bpl.Plo \
-$(DEPDIR)/mp_clz_tab.Plo $(DEPDIR)/mp_set_fns.Plo $(DEPDIR)/rand.Plo \
-$(DEPDIR)/randclr.Plo $(DEPDIR)/randlc.Plo $(DEPDIR)/randlcui.Plo \
-$(DEPDIR)/randui.Plo $(DEPDIR)/stack-alloc.Plo $(DEPDIR)/version.Plo
+DEP_FILES =  @AMDEP@ $(DEPDIR)/assert.Plo $(DEPDIR)/errno.Plo \
+$(DEPDIR)/extract-dbl.Plo $(DEPDIR)/insert-dbl.Plo $(DEPDIR)/memory.Plo \
+$(DEPDIR)/mp_bpl.Plo $(DEPDIR)/mp_clz_tab.Plo $(DEPDIR)/mp_set_fns.Plo \
+$(DEPDIR)/rand.Plo $(DEPDIR)/randclr.Plo $(DEPDIR)/randlc.Plo \
+$(DEPDIR)/randlc2x.Plo $(DEPDIR)/randsd.Plo $(DEPDIR)/randsdui.Plo \
+$(DEPDIR)/stack-alloc.Plo $(DEPDIR)/version.Plo
 SOURCES = $(libgmp_la_SOURCES)
 OBJECTS = $(am_libgmp_la_OBJECTS)
 
@@ -581,6 +584,7 @@ distdir: $(DISTFILES)
 	$(MAKE) $(AM_MAKEFLAGS) top_distdir="$(top_distdir)" distdir="$(distdir)" dist-hook
 
 @AMDEP@include $(DEPDIR)/assert.Plo
+@AMDEP@include $(DEPDIR)/errno.Plo
 @AMDEP@include $(DEPDIR)/extract-dbl.Plo
 @AMDEP@include $(DEPDIR)/insert-dbl.Plo
 @AMDEP@include $(DEPDIR)/memory.Plo
@@ -590,8 +594,9 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/rand.Plo
 @AMDEP@include $(DEPDIR)/randclr.Plo
 @AMDEP@include $(DEPDIR)/randlc.Plo
-@AMDEP@include $(DEPDIR)/randlcui.Plo
-@AMDEP@include $(DEPDIR)/randui.Plo
+@AMDEP@include $(DEPDIR)/randlc2x.Plo
+@AMDEP@include $(DEPDIR)/randsd.Plo
+@AMDEP@include $(DEPDIR)/randsdui.Plo
 @AMDEP@include $(DEPDIR)/stack-alloc.Plo
 @AMDEP@include $(DEPDIR)/version.Plo
 
