@@ -35,7 +35,13 @@ MA 02111-1307, USA. */
 /* Extract a non-negative double in d.  */
 
 int
+#if __STDC__
 __gmp_extract_double (mp_ptr rp, double d)
+#else
+__gmp_extract_double (rp, d)
+     mp_ptr rp;
+     double d;
+#endif
 {
   long exp;
   unsigned sc;
@@ -59,67 +65,68 @@ __gmp_extract_double (mp_ptr rp, double d)
       return 0;
     }
 
-  if (_GMP_IEEE_FLOATS)
-    {
-      union ieee_double_extract x;
-      x.d = d;
+#if _GMP_IEEE_FLOATS
+  {
+    union ieee_double_extract x;
+    x.d = d;
 
-      exp = x.s.exp;
-      sc = (unsigned) (exp + 2) % BITS_PER_MP_LIMB;
+    exp = x.s.exp;
+    sc = (unsigned) (exp + 2) % BITS_PER_MP_LIMB;
 #if BITS_PER_MP_LIMB == 64
-      manl = (((mp_limb_t) 1 << 63)
-	      | ((mp_limb_t) x.s.manh << 43) | ((mp_limb_t) x.s.manl << 11));
+    manl = (((mp_limb_t) 1 << 63)
+	    | ((mp_limb_t) x.s.manh << 43) | ((mp_limb_t) x.s.manl << 11));
 #else
-      manh = ((mp_limb_t) 1 << 31) | (x.s.manh << 11) | (x.s.manl >> 21);
-      manl = x.s.manl << 11;
+    manh = ((mp_limb_t) 1 << 31) | (x.s.manh << 11) | (x.s.manl >> 21);
+    manl = x.s.manl << 11;
 #endif
-    }
-  else
-    {
-      /* Unknown (or known to be non-IEEE) double format.  */
-      exp = 0;
-      if (d >= 1.0)
-	{
-	  if (d * 0.5 == d)
-	    abort ();
+  }
+#else
+  {
+    /* Unknown (or known to be non-IEEE) double format.  */
+    exp = 0;
+    if (d >= 1.0)
+      {
+	if (d * 0.5 == d)
+	  abort ();
 
-	  while (d >= 32768.0)
-	    {
-	      d *= (1.0 / 65536.0);
-	      exp += 16;
-	    }
-	  while (d >= 1.0)
-	    {
-	      d *= 0.5;
-	      exp += 1;
-	    }
-	}
-      else if (d < 0.5)
-	{
-	  while (d < (1.0 / 65536.0))
-	    {
-	      d *=  65536.0;
-	      exp -= 16;
-	    }
-	  while (d < 0.5)
-	    {
-	      d *= 2.0;
-	      exp -= 1;
-	    }
-	}
+	while (d >= 32768.0)
+	  {
+	    d *= (1.0 / 65536.0);
+	    exp += 16;
+	  }
+	while (d >= 1.0)
+	  {
+	    d *= 0.5;
+	    exp += 1;
+	  }
+      }
+    else if (d < 0.5)
+      {
+	while (d < (1.0 / 65536.0))
+	  {
+	    d *=  65536.0;
+	    exp -= 16;
+	  }
+	while (d < 0.5)
+	  {
+	    d *= 2.0;
+	    exp -= 1;
+	  }
+      }
 
-      sc = (unsigned) exp % BITS_PER_MP_LIMB;
+    sc = (unsigned) exp % BITS_PER_MP_LIMB;
 
-      d *= MP_BASE_AS_DOUBLE;
+    d *= MP_BASE_AS_DOUBLE;
 #if BITS_PER_MP_LIMB == 64
-      manl = d;
+    manl = d;
 #else
-      manh = d;
-      manl = (d - manh) * MP_BASE_AS_DOUBLE;
+    manh = d;
+    manl = (d - manh) * MP_BASE_AS_DOUBLE;
 #endif
 
-      exp += 1022;
-    }
+    exp += 1022;
+  }
+#endif
 
   exp = (unsigned) (exp + 1) / BITS_PER_MP_LIMB - 1024 / BITS_PER_MP_LIMB + 1;
 
