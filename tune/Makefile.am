@@ -87,15 +87,15 @@ tune:
 
 allprogs: $(EXTRA_PROGRAMS)
 
-
+# $(MANY_CLEAN) and $(MANY_DISTCLEAN) are hooks for many.pl
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 	$(TUNE_MPN_SRCS) sqr_asm.asm \
 	stg.gnuplot stg.data \
 	mtg.gnuplot mtg.data \
 	fibg.gnuplot fibg.data \
-	graph.gnuplot graph.data
-
-DISTCLEANFILES = sqr_basecase.c 
+	graph.gnuplot graph.data \
+	$(MANY_CLEAN)
+DISTCLEANFILES = sqr_basecase.c  $(MANY_DISTCLEAN)
 
 
 # Generating these little files at build time seems better than including

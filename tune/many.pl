@@ -1176,8 +1176,11 @@ print "trydeps $trydeps\n" if $opt{'t'};
 print MAKEFILE <<EOF;
 
 MANY_OBJS = $MANY_OBJS
-
-CLEAN = $CLEAN
+MANY_CLEAN = \$(MANY_OBJS) \\
+	speed-many.c speed-many\$U.o speed-many\$(EXEEXT) \\
+	try-many.c try-many\$U.o try-many \\
+	$CLEAN
+MANY_DISTCLEAN = Makefile.many
 
 speed-many: \$(MANY_OBJS) speed-many\$U.o libspeed.la $extra_libraries
 	\$(LINK) \$(LDFLAGS) speed-many\$U.o \$(MANY_OBJS) \$(LDADD) \$(LIBS) $extra_libraries
