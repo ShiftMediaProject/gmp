@@ -157,13 +157,17 @@ mpn_sb_get_str (unsigned char *str, size_t len,
 #define BUF_ALLOC (GET_STR_PRECOMPUTE_THRESHOLD * BITS_PER_MP_LIMB * 7 / 11)
 #endif
   unsigned char buf[BUF_ALLOC];
+#if TUNE_PROGRAM_BUILD
+  mp_limb_t rp[GET_STR_THRESHOLD_LIMIT];
+#else
+  mp_limb_t rp[GET_STR_PRECOMPUTE_THRESHOLD];
+#endif
 
   base = powtab->base;
   if (base == 10)
     {
       /* Special case code for base==10 so that the compiler has a chance to
 	 optimize things.  */
-      mp_limb_t rp[GET_STR_PRECOMPUTE_THRESHOLD];
 
       MPN_COPY (rp + 1, up, un);
 
@@ -201,7 +205,6 @@ mpn_sb_get_str (unsigned char *str, size_t len,
     {
       unsigned chars_per_limb;
       mp_limb_t big_base, big_base_inverted;
-      mp_limb_t rp[GET_STR_PRECOMPUTE_THRESHOLD];
       unsigned normalization_steps;
 
       chars_per_limb = __mp_bases[base].chars_per_limb;
