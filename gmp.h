@@ -290,6 +290,7 @@ void gmp_randclear _PROTO ((gmp_randstate_t));
 #define mpz_random2 __gmpz_random2
 #define mpz_remove __gmpz_remove
 #define mpz_root __gmpz_root
+#define mpz_rrandomb __gmpz_rrandomb
 #define mpz_scan0 __gmpz_scan0
 #define mpz_scan1 __gmpz_scan1
 #define mpz_set __gmpz_set
@@ -417,6 +418,7 @@ void mpz_random _PROTO ((mpz_ptr, mp_size_t));
 void mpz_random2 _PROTO ((mpz_ptr, mp_size_t));
 unsigned long int mpz_remove _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 int mpz_root _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
+void mpz_rrandomb _PROTO ((mpz_ptr, gmp_randstate_t, unsigned long int));
 unsigned long int mpz_scan0 _PROTO ((mpz_srcptr, unsigned long int));
 unsigned long int mpz_scan1 _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_set _PROTO ((mpz_ptr, mpz_srcptr));
