@@ -236,8 +236,6 @@ mpf_get_str (char *dbuf, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
 
       pn = mpn_pow_1_highpart (pp, &ign, (mp_limb_t) base, e, n_limbs_needed, tp);
 
-//      printf ("%d: %ld %ld %ld\n", base, n_less_limbs_needed, pn, ign);
-
       xn = n_limbs_needed + (n_less_limbs_needed-ign);
       xp = TMP_ALLOC_LIMBS (xn);
       off = xn - un;
