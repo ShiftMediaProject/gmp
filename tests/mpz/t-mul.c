@@ -190,8 +190,8 @@ ref_mpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
   __GMP_FREE_FUNC_LIMBS (wp, talloc);
 }
 
-static void mul_kara (mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr);
-static void mul_basecase (mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t);
+static void mul_kara __GMP_PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_ptr));
+static void mul_basecase __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t));
 
 #define KARA_THRES 12
 
