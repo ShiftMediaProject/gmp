@@ -1118,7 +1118,7 @@ main (int argc, char *argv[])
       printf (", precision %d units of %.2e secs",
               speed_precision, speed_unittime);
       
-      if (speed_cycletime == 1.0)
+      if (speed_cycletime == 1.0 || speed_cycletime == 0.0)
         printf (", CPU freq unknown\n");
       else
         printf (", CPU freq %.2f MHz\n", 1e-6/speed_cycletime);

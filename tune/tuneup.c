@@ -1492,7 +1492,7 @@ all (void)
     fprintf (stderr, ", speed_unittime 1 cycle");
   else
     fprintf (stderr, ", speed_unittime %.2e secs", speed_unittime);
-  if (speed_cycletime == 1.0)
+  if (speed_cycletime == 1.0 || speed_cycletime == 0.0)
     fprintf (stderr, ", CPU freq unknown\n");
   else
     fprintf (stderr, ", CPU freq %.2f MHz\n", 1e-6/speed_cycletime);
