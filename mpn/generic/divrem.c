@@ -40,6 +40,22 @@ MA 02111-1307, USA. */
       remainder in NUM.
    3. NSIZE >= DSIZE, even if QEXTRA_LIMBS is non-zero.  */
 
+#if defined (__alpha)
+mp_limb_t __mpn_invert_normalized_limb ();
+#define invert_limb(invxl,xl) invxl = __mpn_invert_normalized_limb (xl)
+#endif
+
+#ifndef invert_limb
+#define invert_limb(invxl,xl) \
+  do {									\
+    mp_limb_t dummy;							\
+    if (xl << 1 == 0)							\
+      invxl = ~(mp_limb_t) 0;						\
+    else								\
+      udiv_qrnnd (invxl, dummy, -xl, 0, xl);				\
+  } while (0)
+#endif
+
 mp_limb_t
 #if __STDC__
 mpn_divrem_classic (mp_ptr qp, mp_size_t qxn,
@@ -78,11 +94,13 @@ mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
 	    most_significant_q_limb = 1;
 	  }
 
+	/* Develop integer part of quotient.  */
 	qp += qxn;
 	for (i = nsize - 2; i >= 0; i--)
 	  udiv_qrnnd (qp[i], n1, n1, np[i], d);
 	qp -= qxn;
 
+	/* Develop fraction part naively.  */
 	for (i = qxn - 1; i >= 0; i--)
 	  udiv_qrnnd (qp[i], n1, n1, 0, d);
 
@@ -95,6 +113,8 @@ mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
 	mp_size_t i;
 	mp_limb_t n1, n0, n2;
 	mp_limb_t d1, d0;
+	mp_limb_t d1inv;
+	int have_preinv;
 
 	np += nsize - 2;
 	d1 = dp[1];
@@ -106,6 +126,18 @@ mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
 	  {
 	    sub_ddmmss (n1, n0, n1, n0, d1, d0);
 	    most_significant_q_limb = 1;
+	  }
+
+	/* If multiplication is much faster than division, preinvert the
+	   most significant divisor limb before entering the loop.  */
+	if (UDIV_TIME > 2 * UMUL_TIME + 6)
+	  {
+	    have_preinv = 0;
+	    if ((UDIV_TIME - (2 * UMUL_TIME + 6)) * (nsize - 2) > UDIV_TIME)
+	      {
+		invert_limb (d1inv, d1);
+		have_preinv = 1;
+	      }
 	  }
 
 	for (i = qxn + nsize - 2 - 1; i >= 0; i--)
@@ -137,7 +169,10 @@ mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
 	      }
 	    else
 	      {
-		udiv_qrnnd (q, r, n1, n0, d1);
+		if (UDIV_TIME > 2 * UMUL_TIME + 6 && have_preinv)
+		  udiv_qrnnd_preinv (q, r, n1, n0, d1, d1inv);
+		else
+		  udiv_qrnnd (q, r, n1, n0, d1);
 		umul_ppmm (n1, n0, d0, q);
 	      }
 
@@ -166,6 +201,8 @@ mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
       {
 	mp_size_t i;
 	mp_limb_t dX, d1, n0;
+	mp_limb_t dXinv;
+	int have_preinv;
 
 	np += nsize - dsize;
 	dX = dp[dsize - 1];
@@ -179,6 +216,18 @@ mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
 		mpn_sub_n (np, np, dp, dsize);
 		n0 = np[dsize - 1];
 		most_significant_q_limb = 1;
+	      }
+	  }
+
+	/* If multiplication is much faster than division, preinvert the
+	   most significant divisor limb before entering the loop.  */
+	if (UDIV_TIME > 2 * UMUL_TIME + 6)
+	  {
+	    have_preinv = 0;
+	    if ((UDIV_TIME - (2 * UMUL_TIME + 6)) * (nsize - dsize) > UDIV_TIME)
+	      {
+		invert_limb (dXinv, dX);
+		have_preinv = 1;
 	      }
 	  }
 
@@ -207,7 +256,10 @@ mpn_divrem_classic (qp, qxn, np, nsize, dp, dsize)
 	      {
 		mp_limb_t r;
 
-		udiv_qrnnd (q, r, n0, np[dsize - 1], dX);
+		if (UDIV_TIME > 2 * UMUL_TIME + 6 && have_preinv)
+		  udiv_qrnnd_preinv (q, r, n0, np[dsize - 1], dX, dXinv);
+		else
+		  udiv_qrnnd (q, r, n0, np[dsize - 1], dX);
 		umul_ppmm (n1, n0, d1, q);
 
 		while (n1 > r || (n1 == r && n0 > np[dsize - 2]))
