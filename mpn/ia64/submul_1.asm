@@ -24,20 +24,18 @@ include(`../config.m4')
 
 C         cycles/limb
 C Itanium:    ?
-C Itanium 2:  2.25 (alignment dependent, sometimes it seems to need 3.5 c/l)
+C Itanium 2:  2.25 (alignment dependent, sometimes it seems to need 3 c/l)
 
 C TODO
 C  * Optimize feed-in and wind-down code, both for speed and code size.
-C  * Load first limbs in prologue (like in mul_1.asm and addmul_1.asm).
 C  * Handle low limb input and results specially, using a common stf8 in the
 C    epilogue.
-C  * Address timing variations by swapping instructions around.
 
 C INPUT PARAMETERS
-define(`rp',`r32')
-define(`up',`r33')
-define(`n',`r34')
-define(`vl',`r35')
+define(`rp', `r32')
+define(`up', `r33')
+define(`n',  `r34')
+define(`vl', `r35')
 
 ASM_START()
 PROLOGUE(mpn_submul_1)
@@ -52,26 +50,31 @@ ifdef(`HAVE_ABI_32',
 	;;
 ')
 {.mmi
-	cmp.eq		p6, p0 = 0, vl		C M I
+	mov		r10 = rp		C M I
+	mov		r9 = up			C M I
 	sub		vl = r0, vl		C M I	negate vl
-	mov		r2 = ar.lc		C I0
 }
-{.mmb
+{.mmi
+	ldf8		f8 = [rp], 8		C M
+	ldf8		f7 = [up], 8		C M
 	add		r19 = -1, n		C M I	n - 1
-	and		r14 = 3, n		C M I
-   (p6)	br.spnt		.Ldone			C B	vl == 0
 	;;
+}
+{.mmi
+	cmp.eq		p6, p0 = 0, vl		C M I
+	mov		r8 = 0			C M I	zero cylimb
+	mov		r2 = ar.lc		C I0
 }
 {.mmi
 	setf.sig	f6 = vl			C M2 M3
-	mov		r9 = up			C M I
+	and		r14 = 3, n		C M I
 	shr.u		r19 = r19, 2		C I
-}
-{.mmi
-	mov		r10 = rp		C M I
-	mov		r8 = 0			C M I	zero cylimb
-	cmp.eq		p10, p0 = 0, r14	C M I
 	;;
+}
+{.mmb
+	nop		0
+	cmp.eq		p10, p0 = 0, r14	C M I
+   (p6)	br.spnt		.Ldone			C B	vl == 0
 }
 {.mmi
 	cmp.eq		p11, p0 = 2, r14	C M I
@@ -85,13 +88,10 @@ ifdef(`HAVE_ABI_32',
 	;;
 }
 
-.Lb01:	ldf8		f47 = [rp], 8
-	ldf8		f35 = [up], 8
-	br.cloop.dptk	.grt1
-	;;
+.Lb01:	br.cloop.dptk	.grt1
 
-	xma.l		f39 = f35, f6, f47
-	xma.hu		f43 = f35, f6, f47
+	xma.l		f39 = f7, f6, f8
+	xma.hu		f43 = f7, f6, f8
 	;;
 	getf.sig	r27 = f39			C lo
 	getf.sig	r31 = f43			C hi
@@ -105,36 +105,37 @@ ifdef(`HAVE_ABI_32',
 	ldf8		f33 = [up], 8
 	;;
 	ldf8		f46 = [rp], 8
+	xma.l		f39 = f7, f6, f8
 	ldf8		f34 = [up], 8
-	xma.l		f39 = f35, f6, f47
-	xma.hu		f43 = f35, f6, f47
+	xma.hu		f43 = f7, f6, f8
 	;;
 	ldf8		f47 = [rp], 8
-	ldf8		f35 = [up], 8
 	xma.l		f36 = f32, f6, f44
+	ldf8		f35 = [up], 8
 	xma.hu		f40 = f32, f6, f44
 	br.cloop.dptk	.grt5
+	;;
 
 	getf.sig	r27 = f39			C lo
 	xma.l		f37 = f33, f6, f45
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
 	;;
 	getf.sig	r31 = f43			C hi
-	;;
 	getf.sig	r24 = f36			C lo
 	xma.l		f38 = f34, f6, f46
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
 	;;
 	getf.sig	r28 = f40			C hi
-	;;
 	getf.sig	r25 = f37			C lo
 	xma.l		f39 = f35, f6, f47
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
 	;;
 	getf.sig	r29 = f41			C hi
-	;;
 	getf.sig	r26 = f38			C lo
-	ld8		r20 = [r9], 8
+	ld8		r23 = [r9], 8
 	br		.Lcj5
 
 .grt5:	ldf8		f44 = [rp], 8
@@ -142,6 +143,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r27 = f39			C lo
 	xma.l		f37 = f33, f6, f45
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
 	;;
 	ldf8		f45 = [rp], 8
@@ -150,6 +152,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r24 = f36			C lo
 	xma.l		f38 = f34, f6, f46
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
 	;;
 	ldf8		f46 = [rp], 8
@@ -158,6 +161,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r25 = f37			C lo
 	xma.l		f39 = f35, f6, f47
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
 	;;
 	ldf8		f47 = [rp], 8
@@ -166,30 +170,29 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r26 = f38			C lo
 	xma.l		f36 = f32, f6, f44
-	ld8		r20 = [r9], 8
+	ld8		r23 = [r9], 8
 	xma.hu		f40 = f32, f6, f44
 	br.cloop.dptk	.Loop
 	br		.Lend
 
 
-.Lb10:	ldf8		f46 = [rp], 8
-	ldf8		f34 = [up], 8
-	;;
-	ldf8		f47 = [rp], 8
+.Lb10:	ldf8		f47 = [rp], 8
 	ldf8		f35 = [up], 8
 	br.cloop.dptk	.grt2
 
-	xma.l		f38 = f34, f6, f46
-	xma.hu		f42 = f34, f6, f46
+	xma.l		f38 = f7, f6, f8
+	xma.hu		f42 = f7, f6, f8
 	;;
 	xma.l		f39 = f35, f6, f47
 	xma.hu		f43 = f35, f6, f47
 	;;
 	getf.sig	r26 = f38			C lo
 	getf.sig	r30 = f42			C hi
+	ld8		r23 = [r9], 8
+	;;
 	getf.sig	r27 = f39			C lo
 	getf.sig	r31 = f43			C hi
-	ld8		r23 = [r9], 8
+	ld8		r20 = [r9], 8
 	br		.Lcj2
 
 .grt2:	ldf8		f44 = [rp], 8
@@ -197,8 +200,8 @@ ifdef(`HAVE_ABI_32',
 	;;
 	ldf8		f45 = [rp], 8
 	ldf8		f33 = [up], 8
-	xma.l		f38 = f34, f6, f46
-	xma.hu		f42 = f34, f6, f46
+	xma.l		f38 = f7, f6, f8
+	xma.hu		f42 = f7, f6, f8
 	;;
 	ldf8		f46 = [rp], 8
 	ldf8		f34 = [up], 8
@@ -210,6 +213,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r26 = f38			C lo
 	xma.l		f36 = f32, f6, f44
+	ld8		r23 = [r9], 8
 	xma.hu		f40 = f32, f6, f44
 	br.cloop.dptk	.grt6
 
@@ -217,19 +221,19 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r27 = f39			C lo
 	xma.l		f37 = f33, f6, f45
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
 	;;
 	getf.sig	r31 = f43			C hi
-	;;
 	getf.sig	r24 = f36			C lo
 	xma.l		f38 = f34, f6, f46
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
 	;;
 	getf.sig	r28 = f40			C hi
-	;;
 	getf.sig	r25 = f37			C lo
 	xma.l		f39 = f35, f6, f47
-	ld8		r23 = [r9], 8
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
 	br		.Lcj6
 
@@ -239,6 +243,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r27 = f39			C lo
 	xma.l		f37 = f33, f6, f45
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
 	;;
 	ldf8		f45 = [rp], 8
@@ -247,6 +252,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r24 = f36			C lo
 	xma.l		f38 = f34, f6, f46
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
 	;;
 	ldf8		f46 = [rp], 8
@@ -255,23 +261,20 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r25 = f37			C lo
 	xma.l		f39 = f35, f6, f47
-	ld8		r23 = [r9], 8
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
 	br		.LL10
 
 
-.Lb11:	ldf8		f45 = [rp], 8
-	ldf8		f33 = [up], 8
-	;;
-	ldf8		f46 = [rp], 8
+.Lb11:	ldf8		f46 = [rp], 8
 	ldf8		f34 = [up], 8
 	;;
 	ldf8		f47 = [rp], 8
 	ldf8		f35 = [up], 8
 	br.cloop.dptk	.grt3
 
-	xma.l		f37 = f33, f6, f45
-	xma.hu		f41 = f33, f6, f45
+	xma.l		f37 = f7, f6, f8
+	xma.hu		f41 = f7, f6, f8
 	;;
 	xma.l		f38 = f34, f6, f46
 	xma.hu		f42 = f34, f6, f46
@@ -281,23 +284,25 @@ ifdef(`HAVE_ABI_32',
 	xma.hu		f43 = f35, f6, f47
 	;;
 	getf.sig	r29 = f41			C hi
+	ld8		r22 = [r9], 8
+	;;
 	getf.sig	r26 = f38			C lo
 	getf.sig	r30 = f42			C hi
+	ld8		r23 = [r9], 8
+	;;
 	getf.sig	r27 = f39			C lo
 	getf.sig	r31 = f43			C hi
-	ld8		r22 = [r9], 8
+	ld8		r20 = [r9], 8
 	br		.Lcj3
 
 .grt3:	ldf8		f44 = [rp], 8
+	xma.l		f37 = f7, f6, f8
 	ldf8		f32 = [up], 8
-	;;
-	xma.l		f37 = f33, f6, f45
-	xma.hu		f41 = f33, f6, f45
+	xma.hu		f41 = f7, f6, f8
 	;;
 	ldf8		f45 = [rp], 8
-	ldf8		f33 = [up], 8
-	;;
 	xma.l		f38 = f34, f6, f46
+	ldf8		f33 = [up], 8
 	xma.hu		f42 = f34, f6, f46
 	;;
 	ldf8		f46 = [rp], 8
@@ -305,6 +310,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r25 = f37			C lo
 	xma.l		f39 = f35, f6, f47
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
 	;;
 	ldf8		f47 = [rp], 8
@@ -313,20 +319,21 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r26 = f38			C lo
 	xma.l		f36 = f32, f6, f44
+	ld8		r23 = [r9], 8
 	xma.hu		f40 = f32, f6, f44
 	br.cloop.dptk	.grt7
+	;;
 
 	getf.sig	r30 = f42			C hi
-	;;
 	getf.sig	r27 = f39			C lo
 	xma.l		f37 = f33, f6, f45
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
 	;;
 	getf.sig	r31 = f43			C hi
-	;;
 	getf.sig	r24 = f36			C lo
 	xma.l		f38 = f34, f6, f46
-	ld8		r22 = [r9], 8
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
 	br		.Lcj7
 
@@ -336,6 +343,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r27 = f39			C lo
 	xma.l		f37 = f33, f6, f45
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
 	;;
 	ldf8		f45 = [rp], 8
@@ -344,24 +352,21 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r24 = f36			C lo
 	xma.l		f38 = f34, f6, f46
-	ld8		r22 = [r9], 8
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
 	br		.LL11
 
 
-.Lb00:	ldf8		f44 = [rp], 8
-	ldf8		f32 = [up], 8
-	;;
-	ldf8		f45 = [rp], 8
+.Lb00:	ldf8		f45 = [rp], 8
 	ldf8		f33 = [up], 8
 	;;
 	ldf8		f46 = [rp], 8
 	ldf8		f34 = [up], 8
 	;;
 	ldf8		f47 = [rp], 8
+	xma.l		f36 = f7, f6, f8
 	ldf8		f35 = [up], 8
-	xma.l		f36 = f32, f6, f44
-	xma.hu		f40 = f32, f6, f44
+	xma.hu		f40 = f7, f6, f8
 	br.cloop.dptk	.grt4
 
 	xma.l		f37 = f33, f6, f45
@@ -369,29 +374,34 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r24 = f36			C lo
 	xma.l		f38 = f34, f6, f46
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
 	;;
 	getf.sig	r28 = f40			C hi
 	xma.l		f39 = f35, f6, f47
 	getf.sig	r25 = f37			C lo
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
 	;;
 	getf.sig	r29 = f41			C hi
 	getf.sig	r26 = f38			C lo
+	ld8		r23 = [r9], 8
+	;;
 	getf.sig	r30 = f42			C hi
 	getf.sig	r27 = f39			C lo
-	ld8		r21 = [r9], 8
+	ld8		r20 = [r9], 8
 	br		.Lcj4
 
 .grt4:	ldf8		f44 = [rp], 8
-	ldf8		f32 = [up], 8
 	xma.l		f37 = f33, f6, f45
+	ldf8		f32 = [up], 8
 	xma.hu		f41 = f33, f6, f45
 	;;
 	ldf8		f45 = [rp], 8
 	ldf8		f33 = [up], 8
-	getf.sig	r24 = f36			C lo
 	xma.l		f38 = f34, f6, f46
+	getf.sig	r24 = f36			C lo
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
 	;;
 	ldf8		f46 = [rp], 8
@@ -399,6 +409,7 @@ ifdef(`HAVE_ABI_32',
 	ldf8		f34 = [up], 8
 	xma.l		f39 = f35, f6, f47
 	getf.sig	r25 = f37			C lo
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
 	;;
 	ldf8		f47 = [rp], 8
@@ -407,14 +418,15 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r26 = f38			C lo
 	xma.l		f36 = f32, f6, f44
+	ld8		r23 = [r9], 8
 	xma.hu		f40 = f32, f6, f44
 	br.cloop.dptk	.grt8
+	;;
 
 	getf.sig	r30 = f42			C hi
-	;;
 	getf.sig	r27 = f39			C lo
 	xma.l		f37 = f33, f6, f45
-	ld8		r21 = [r9], 8
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
 	br		.Lcj8
 
@@ -424,7 +436,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r27 = f39			C lo
 	xma.l		f37 = f33, f6, f45
-	ld8		r21 = [r9], 8
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
 	br		.LL00
 
@@ -447,7 +459,7 @@ ifdef(`HAVE_ABI_32',
 	xma.l		f37 = f33, f6, f45
 }
 {.mfi
-	ld8		r21 = [r9], 8
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
    (p6)	add		r8 = 1, r8
 	;;				C 02
@@ -470,7 +482,7 @@ ifdef(`HAVE_ABI_32',
 	xma.l		f38 = f34, f6, f46
 }
 {.mfi
-	ld8		r22 = [r9], 8
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
    (p6)	add		r8 = 1, r8
 	;;				C 04
@@ -493,7 +505,7 @@ ifdef(`HAVE_ABI_32',
 	xma.l		f39 = f35, f6, f47
 }
 {.mfi
-	ld8		r23 = [r9], 8
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
    (p6)	add		r8 = 1, r8
 	;;				C 06
@@ -516,12 +528,13 @@ ifdef(`HAVE_ABI_32',
 	xma.l		f36 = f32, f6, f44
 }
 {.mfi
-	ld8		r20 = [r9], 8
+	ld8		r23 = [r9], 8
 	xma.hu		f40 = f32, f6, f44
    (p6)	add		r8 = 1, r8
 }
 	br.cloop.dptk	.Loop
 	;;
+
 .Lend:
 	cmp.ltu		p6, p0 = r27, r8
 	sub		r14 = r27, r8
@@ -531,7 +544,7 @@ ifdef(`HAVE_ABI_32',
 	getf.sig	r27 = f39
 	st8		[r10] = r14, 8
 	xma.l		f37 = f33, f6, f45
-	ld8		r21 = [r9], 8
+	ld8		r20 = [r9], 8
 	xma.hu		f41 = f33, f6, f45
    (p6)	add		r8 = 1, r8
 	;;
@@ -544,7 +557,7 @@ ifdef(`HAVE_ABI_32',
 	getf.sig	r24 = f36
 	st8		[r10] = r14, 8
 	xma.l		f38 = f34, f6, f46
-	ld8		r22 = [r9], 8
+	ld8		r21 = [r9], 8
 	xma.hu		f42 = f34, f6, f46
    (p6)	add		r8 = 1, r8
 	;;
@@ -557,7 +570,7 @@ ifdef(`HAVE_ABI_32',
 	getf.sig	r25 = f37
 	st8		[r10] = r14, 8
 	xma.l		f39 = f35, f6, f47
-	ld8		r23 = [r9], 8
+	ld8		r22 = [r9], 8
 	xma.hu		f43 = f35, f6, f47
    (p6)	add		r8 = 1, r8
 	;;
@@ -569,7 +582,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r26 = f38
 	st8		[r10] = r14, 8
-	ld8		r20 = [r9], 8
+	ld8		r23 = [r9], 8
    (p6)	add		r8 = 1, r8
 	;;
 .Lcj5:
@@ -580,7 +593,7 @@ ifdef(`HAVE_ABI_32',
 	;;
 	getf.sig	r27 = f39
 	st8		[r10] = r14, 8
-	ld8		r21 = [r9], 8
+	ld8		r20 = [r9], 8
    (p6)	add		r8 = 1, r8
 	;;
 .Lcj4:
@@ -590,7 +603,6 @@ ifdef(`HAVE_ABI_32',
 	sub		r8 = r21, r28
 	;;
 	st8		[r10] = r14, 8
-	ld8		r22 = [r9], 8
    (p6)	add		r8 = 1, r8
 	;;
 .Lcj3:
@@ -599,7 +611,6 @@ ifdef(`HAVE_ABI_32',
 	sub		r8 = r22, r29
 	;;
 	st8		[r10] = r14, 8
-	ld8		r23 = [r9], 8
    (p6)	add		r8 = 1, r8
 	;;
 .Lcj2:
@@ -608,7 +619,6 @@ ifdef(`HAVE_ABI_32',
 	sub		r8 = r23, r30
 	;;
 	st8		[r10] = r14, 8
-	ld8		r20 = [r9], 8
    (p6)	add		r8 = 1, r8
 	;;
 .Lcj1:
