@@ -60,8 +60,8 @@ dnl
 dnl  Find a working m4, either in $PATH or likely locations, and setup $M4
 dnl  and an AC_SUBST accordingly.  If $M4 is already set then it's a user
 dnl  choice and is accepted with no checks.  GMP_PROG_M4 is like
-dnl  AC_PATH_PROG or AC_CHECK_PROG, but it tests each m4 found to see if
-dnl  it's good enough.
+dnl  AC_PATH_PROG or AC_CHECK_PROG, but tests each m4 found to see if it's
+dnl  good enough.
 dnl 
 dnl  See mpn/asm-defs.m4 for details on the known bad m4s.
 
@@ -457,25 +457,25 @@ AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_CACHE_CHECK([if globals are prefixed by underscore], 
                gmp_cv_asm_underscore,
-[cat > conftes1.c <<EOF
+[cat >conftes1.c <<EOF
 main () { underscore_test(); }
 EOF
 for tmp_underscore in "" "_"; do
-  cat > conftes2.s <<EOF
+  cat >conftes2.s <<EOF
       	$gmp_cv_asm_text
 	$gmp_cv_asm_globl ${tmp_underscore}underscore_test
 ${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
   case "$target" in
   *-*-aix*)
-    cat >> conftes2.s <<EOF
+    cat >>conftes2.s <<EOF
 	$gmp_cv_asm_globl .${tmp_underscore}underscore_test
 .${tmp_underscore}underscore_test$gmp_cv_asm_label_suffix
 EOF
     ;;
   esac
-  tmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s 1>&AC_FD_CC"
-  if AC_TRY_EVAL(tmp_compile); then
+  gmp_compile="$CC $CFLAGS $CPPFLAGS conftes1.c conftes2.s 1>&AC_FD_CC"
+  if AC_TRY_EVAL(gmp_compile); then
     eval tmp_result$tmp_underscore=yes
   else
     eval tmp_result$tmp_underscore=no
@@ -495,7 +495,7 @@ else
     AC_MSG_ERROR([Test program links neither with nor without underscore.])
   fi
 fi
-rm -f conftes* a.out
+rm -f conftes1.* conftes2.* a.out
 ])
 if test "$gmp_cv_asm_underscore" = "yes"; then
   GMP_DEFINE(GSYM_PREFIX, [_])
@@ -782,16 +782,15 @@ AC_DEFUN(GMP_ASM_W32,
 AC_REQUIRE([GMP_ASM_GLOBL])
 AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
-AC_CACHE_CHECK([how to [define] a 32-bit word],
+AC_CACHE_CHECK([how to define a 32-bit word],
 	       gmp_cv_asm_w32,
-[# FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
-# that it's at 0x0.  We'll have to declare another symbol before the
-# .long/.word and look at the distance between the two symbols.  The
-# only problem is that the sed expression(s) barfs (on Solaris, for
-# example) for the symbol with value 0.  For now, HPUX uses .word.
-
-case "$target" in 
+[case "$target" in 
   *-*-hpux*)
+    # FIXME: HPUX puts first symbol at 0x40000000, breaking our assumption
+    # that it's at 0x0.  We'll have to declare another symbol before the
+    # .long/.word and look at the distance between the two symbols.  The
+    # only problem is that the sed expression(s) barfs (on Solaris, for
+    # example) for the symbol with value 0.  For now, HPUX uses .word.
     gmp_cv_asm_w32=".word"
     ;;
   *-*-*)
@@ -1150,6 +1149,10 @@ dnl  put explicit #defines in gmp-mparam.h.  That way if strange compiler
 dnl  options change the size of some type then the mismatch will be detected
 dnl  by t-constants.c rather than only by the code crashing or giving wrong
 dnl  results.
+dnl
+dnl  The lastest AC_CHECK_SIZEOF does something similar to this, with a
+dnl  binary search to probe the size.  Unfortunately it doesn't give a way
+dnl  to include gmp.h to test mp_limb_t.
 
 AC_DEFUN(GMP_C_SIZES,
 [for tmp_pair in BITS_PER_MP_LIMB:mp_limb_t \
