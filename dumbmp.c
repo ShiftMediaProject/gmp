@@ -186,6 +186,13 @@ mpz_set_ui (mpz_t r, unsigned long ui)
 }
 
 void
+mpz_init_set_ui (mpz_t r, unsigned long ui)
+{
+  mpz_init (r);
+  mpz_set_ui (r, ui);
+}
+
+void
 mpz_add (mpz_t r, mpz_t a, mpz_t b)
 {
   int an = ABSIZ (a), bn = ABSIZ (b), rn;
