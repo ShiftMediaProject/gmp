@@ -1,9 +1,10 @@
-/* mpn_addmul_1 -- multiply the S1_SIZE long limb vector pointed to by S1_PTR
-   by S2_LIMB, add the S1_SIZE least significant limbs of the product to the
-   limb vector pointed to by RES_PTR.  Return the most significant limb of
-   the product, adjusted for carry-out from the addition.
+/* mpn_addmul_1, mpn_submul_1 -- multiply the S1_SIZE long limb vector
+   pointed to by S1_PTR by S2_LIMB, add/subtract the S1_SIZE least
+   significant limbs of the product to/from the limb vector pointed to by
+   RES_PTR.  Return the most significant limb of the product, adjusted for
+   carry-out from the addition.
 
-Copyright (C) 1992, 1993, 1994, 1996 Free Software Foundation, Inc.
+Copyright (C) 1992, 1993, 1994, 1996, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -26,12 +27,27 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
+
+#ifdef OPERATION_addmul_1
+#define FUNCTION   mpn_addmul_1
+#define VARIATION  prod_low = x + prod_low; cy_limb += (prod_low < x);
+#endif
+
+#ifdef OPERATION_submul_1
+#define FUNCTION   mpn_submul_1
+#define VARIATION  prod_low = x - prod_low; cy_limb += (prod_low > x);
+#endif
+
+#ifndef FUNCTION
+Error, error, need OPERATION_addmul_1 or OPERATION_submul_1
+#endif
+
+
 mp_limb_t
-mpn_addmul_1 (res_ptr, s1_ptr, s1_size, s2_limb)
-     register mp_ptr res_ptr;
-     register mp_srcptr s1_ptr;
-     mp_size_t s1_size;
-     register mp_limb_t s2_limb;
+FUNCTION (register mp_ptr res_ptr,
+          register mp_srcptr s1_ptr,
+          mp_size_t s1_size,
+          register mp_limb_t s2_limb)
 {
   register mp_limb_t cy_limb;
   register mp_size_t j;
@@ -55,8 +71,7 @@ mpn_addmul_1 (res_ptr, s1_ptr, s1_size, s2_limb)
       cy_limb = (prod_low < cy_limb) + prod_high;
 
       x = res_ptr[j];
-      prod_low = x + prod_low;
-      cy_limb += (prod_low < x);
+      VARIATION;
       res_ptr[j] = prod_low;
     }
   while (++j != 0);
