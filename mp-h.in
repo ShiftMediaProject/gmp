@@ -148,26 +148,26 @@ extern "C" {
 #endif
 
 #define mp_set_memory_functions __gmp_set_memory_functions
-void __GMP_DECLSPEC mp_set_memory_functions _PROTO ((void *(*) (size_t),
+__GMP_DECLSPEC void mp_set_memory_functions _PROTO ((void *(*) (size_t),
                                       void *(*) (void *, size_t, size_t),
                                       void (*) (void *, size_t)));
-MINT __GMP_DECLSPEC *itom _PROTO ((signed short int));
-MINT __GMP_DECLSPEC *xtom _PROTO ((const char *));
-void __GMP_DECLSPEC move _PROTO ((const MINT *, MINT *));
-void __GMP_DECLSPEC madd _PROTO ((const MINT *, const MINT *, MINT *));
-void __GMP_DECLSPEC msub _PROTO ((const MINT *, const MINT *, MINT *));
-void __GMP_DECLSPEC mult _PROTO ((const MINT *, const MINT *, MINT *));
-void __GMP_DECLSPEC mdiv _PROTO ((const MINT *, const MINT *, MINT *, MINT *));
-void __GMP_DECLSPEC sdiv _PROTO ((const MINT *, signed short int, MINT *, signed short int *));
-void __GMP_DECLSPEC msqrt _PROTO ((const MINT *, MINT *, MINT *));
-void __GMP_DECLSPEC pow _PROTO ((const MINT *, const MINT *, const MINT *, MINT *));
-void __GMP_DECLSPEC rpow _PROTO ((const MINT *, signed short int, MINT *));
-void __GMP_DECLSPEC gcd _PROTO ((const MINT *, const MINT *, MINT *));
-int  __GMP_DECLSPEC mcmp _PROTO ((const MINT *, const MINT *));
-void __GMP_DECLSPEC min _PROTO ((MINT *));
-void __GMP_DECLSPEC mout _PROTO ((const MINT *));
-char __GMP_DECLSPEC *mtox _PROTO ((const MINT *));
-void __GMP_DECLSPEC mfree _PROTO ((MINT *));
+__GMP_DECLSPEC MINT *itom _PROTO ((signed short int));
+__GMP_DECLSPEC MINT *xtom _PROTO ((const char *));
+__GMP_DECLSPEC void move _PROTO ((const MINT *, MINT *));
+__GMP_DECLSPEC void madd _PROTO ((const MINT *, const MINT *, MINT *));
+__GMP_DECLSPEC void msub _PROTO ((const MINT *, const MINT *, MINT *));
+__GMP_DECLSPEC void mult _PROTO ((const MINT *, const MINT *, MINT *));
+__GMP_DECLSPEC void mdiv _PROTO ((const MINT *, const MINT *, MINT *, MINT *));
+__GMP_DECLSPEC void sdiv _PROTO ((const MINT *, signed short int, MINT *, signed short int *));
+__GMP_DECLSPEC void msqrt _PROTO ((const MINT *, MINT *, MINT *));
+__GMP_DECLSPEC void pow _PROTO ((const MINT *, const MINT *, const MINT *, MINT *));
+__GMP_DECLSPEC void rpow _PROTO ((const MINT *, signed short int, MINT *));
+__GMP_DECLSPEC void gcd _PROTO ((const MINT *, const MINT *, MINT *));
+__GMP_DECLSPEC int  mcmp _PROTO ((const MINT *, const MINT *));
+__GMP_DECLSPEC void min _PROTO ((MINT *));
+__GMP_DECLSPEC void mout _PROTO ((const MINT *));
+__GMP_DECLSPEC char *mtox _PROTO ((const MINT *));
+__GMP_DECLSPEC void mfree _PROTO ((MINT *));
 
 #if defined (__cplusplus)
 }

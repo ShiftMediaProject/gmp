@@ -552,7 +552,7 @@ void    mpz_n_pow_ui _PROTO ((mpz_ptr, mp_srcptr, mp_size_t, unsigned long));
 typedef __gmp_randstate_struct *gmp_randstate_ptr;
 
 #define _gmp_rand __gmp_rand
-void __GMP_DECLSPEC _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long int));
+__GMP_DECLSPEC void _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long int));
 
 
 /* __gmp_rands is the global state for the old-style random functions, and
@@ -567,8 +567,8 @@ void __GMP_DECLSPEC _gmp_rand _PROTO ((mp_ptr, gmp_randstate_t, unsigned long in
    functions are recommended to applications which care about randomness, so
    the old functions aren't too important.  */
 
-extern char             __GMP_DECLSPEC __gmp_rands_initialized;
-extern gmp_randstate_t  __GMP_DECLSPEC __gmp_rands;
+__GMP_DECLSPEC extern char             __gmp_rands_initialized;
+__GMP_DECLSPEC extern gmp_randstate_t  __gmp_rands;
 
 #define RANDS                                   \
   ((__gmp_rands_initialized ? 0                 \
@@ -1666,7 +1666,7 @@ mp_limb_t mpn_modexact_1_odd _PROTO ((mp_srcptr src, mp_size_t size,
    Some bit twiddling could very likely give a 4-bit inverse to start too.  */
 
 #define modlimb_invert_table  __gmp_modlimb_invert_table
-extern const unsigned char  __GMP_DECLSPEC modlimb_invert_table[128];
+__GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 
 #if BITS_PER_MP_LIMB <= 8
 #define modlimb_invert(inv,n)                                   \
