@@ -44,11 +44,17 @@ MA 02111-1307, USA. */
 #define TMP_ALLOC_LIMBS_ALIGNED(limbs, align) \
   ((mp_ptr) TMP_ALLOC_ALIGNED ((limbs)*sizeof(mp_limb_t), align))
 
-/* 32 for pentium, 64 for athlon, might want to configure this for other
-   CPUs.  In truth though nothing has yet shown up that cares about cache
-   line boundaries.  The only practical effect of this is to restrict the
-   range that s->align_xp can take.  Perhaps this could be a variable
-   instead. */
+/* CACHE_LINE_SIZE is our default alignment for speed operands, and the
+   limit on what s->align_xp etc and then request for off-alignment.  Maybe
+   this should be an option of some sort, but in any case here are some line
+   sizes,
+
+       bytes
+         32   pentium
+         64   athlon
+         64   itanium-2 L1
+        128   itanium-2 L2
+*/
 #define CACHE_LINE_SIZE    64 /* bytes */
 
 #define SPEED_TMP_ALLOC_ADJUST_MASK  (CACHE_LINE_SIZE/BYTES_PER_MP_LIMB - 1)
