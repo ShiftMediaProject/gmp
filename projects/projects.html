@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>
+    GMP Development Projects
+  </title>
+</head>
+<body bgcolor=pink>
+
+<center>
+  <h1>
+    GMP Development Projects
+  </h1>
+</center>
+
+<comment>
+  An up-to-date version of this file is available at
+  http://www.swox.com/gmp/projects.html.
+</comment>
+
+<p> This file lists projects suitable for volunteers.  Please see the file
+    tasks, or <a href="http://www.swox.com/gmp/tasks.html">
+    http://www.swox.com/gmp/tasks.html</a> for smaller tasks.
+
+<p> If you want to work on any of the projects below, please let tege@swox.com
+    know.  If you want to help with a project that already somebody else is
+    working on, please talk to that person too, tege@swox.com can put you in
+    touch.  (There are no email addresses of volunteers below, due to spamming
+    problems.)
+
+<ul>
+<li> <strong>C++ wrapper</strong>
+
+  <p> A C++ wrapper for GMP is highly desirable.  Several people have started
+  writing one, but nobody has so far finished it.  For a wrapper to be useful,
+  one needs to pay attention to efficiency.
+
+  <ol>
+    <li> Write arithmetic functions for direct applications of most
+         elementary C++ types.  This might be necessary to avoid
+         ambiguities, but it is also desirable from an efficiency
+         standpoint.
+    <li> Avoid running constructors/destructors when not necessary.
+         For example, implement <code>a&nbsp+=&nbsp;b</code> by directly applying mpz_add.
+  </ol>
+
+<p> <li> <strong>Faster multiplication</strong>
+
+  <p> The current multiplication code runs at O(n^1.58) when the operand are both
+    around n digits large.  Robert Harley has contributed better code,
+    running at O(n^1.46), based on the 3-way Toom algorithm.
+
+  Several new developments are desirable:
+
+  <ol>
+    <li> Handle multiplication of operands with different digit count better than
+	 today.  We now split the operands in a very inefficient way, see
+	 mpn/generic/mul.c.
+    <li> Implement the n-way Toom algorithm.  See Knuth's Seminumerical
+	 algorithms for details on Toom's algorithm.
+    <li> Implement some variant of FFT-based multiplication.  I believe the most
+	 promising variant is the original Schönhage-Strassen mod 2^n+1 algorithm.
+	 Paul Zimmermann and Robert Harley are working on this.
+  </ol>
+
+<p> <li> <strong>Division and modular multiplication</strong>
+
+  <p> GMP's current division routines are O(n^2), or to be accurate, O(n(m-n))
+  where n is the digit count of the divisor, and m is the digit count of the
+  dividend.  Modular reduction code rely on division, and is thus also slow.
+
+  <p> Desirable new developments:
+
+  <ol>
+  <li> Implement O(n^1.58) division.  There is an algorithm published recently
+       that accomplish this.
+  <li> Implement division based on first computing an approximation to the
+       reciprocal of the divisor, using Newton's algorithm, and then multiplying
+       the dividend by the approximate reciprocal.
+  <li> Implement modular multiplication based on Peter Montgomery's REDC
+       algorithm.  This algorithm is O(n^2) and should therefore be used only for
+       operands under a certain limit.  Operands greater than that limit need to
+       reply on computing the divisor reciprocal, see above.
+  <li> Make <code>mpz_powm</code>, <code>mpz_powm_ui</code>, etc, use modular
+       multiplication for the operand ranges where that helps.  Actually, these
+       functions should probably be implemented at the mpn level as part of
+       this development.
+  <li> Tune the aging plain division functions.  (Mostly done by Torbjörn.)
+       Perhaps write new functions with better interfaces,
+       (<code>mpn_tdiv_q</code>, <code>mpn_tdiv_r</code>,
+       <code>mpn_tdiv_qr</code>) replacing <code>mpn_divmod</code> and (the
+       slow!) <code>mpn_divrem</code>.
+  </ol>
+
+<p> <li> <strong>Assembly routines</strong>
+
+  <p> Write new and tune existing assembly routines.  The functions in
+  mpn/tests are useful for testing and timing the routines you write.  See the
+  README file in that directory for instructions on how to use the various test
+  files.
+
+  <p> Please make sure your new routines are fast for these three situations:
+  <ol>
+    <li> Operands that fit into the cache.
+    <li> Small operands of less than, say, 10 limbs.
+    <li> Huge operands that does not fit into the cache.
+  </ol>
+
+  <p> The most important routines are mpn_addmul_1, mpn_mul_basecase and
+  mpn_sqr_basecase.  The latter two doesn't exist for all machines, while
+  mpn_addmul_1 exists for almost all machines.
+
+  <p> Standard techniques for these routines are unrolling, software
+  pipelining, and specialization for common operand values.  For machines with
+  poor integer multiplication, it is often possible to improve the performance
+  using floating-point operations, or SIMD operations such as MMX or Sun's VIS.
+
+  <p> Using floating-point operations is interesting but somewhat tricky.
+  Since IEEE double has 53 bit of mantissa, one has to split the operands in
+  small prices, so that no result is greater than 2^53.  For 32-bit computers,
+  splitting one operand in 16-bit pieces works.  For 64-bit machines, one
+  operand can be split in 21-bit pieces and the other in 32-bit pieces.  (A
+  64-bit operand can be split in just three 21-bit pieces if one allows the
+  split operands to be negative!)
+
+<p> <li> <strong>Configuration</strong>
+
+  <p> Switching to autoconf is a highly desirable project, but not as simple
+  as one might think.
+
+  <p> We want to recognize the processor very accurately, more accurately than
+  other GNU packages.  config.guess does not currently make the distinctions we
+  would like it to do.
+
+  <p> For example, "sparc" is not very useful as a machine architecture
+  denotation.  We want to distinguish old 32-bit SPARC without multiply support
+  from newer 32-bit SPARC with such support.  We want to recognize a
+  SuperSPARC, since its implementation of the UDIV instruction is not complete,
+  and will trap to the OS kernel for certain operands.  And we want to
+  recognize 64-bit capable SPARC processors as such.  While the assembly
+  routines can use 64-bit operations on all 64-bit SPARC processors, one can
+  not use 64-bit limbs under all operating system.  E.g., Solaris 2.5 and 2.6
+  doesn't preserve the upper 32 bits of most processor registers.  For SPARC we
+  therefore sometimes need to choose GMP configuration depending both on
+  processor and operating system.
+
+  <p> Other examples of things autoconf needs to care about:
+  <ol>
+   <li> Identify Mips processor under Irix: `hinv -c processor'
+   <li> Identify Alpha processor under OSF: "/usr/sbin/sizer -c".
+        Unfortunately, sizer is not available before some revision of Dec Unix
+        4.0, and it also returns some rather cryptic names for processors.
+        Perhaps the <code>implver</code> and <code>amask</code> assembly
+        instructions are better, but that doesn't differeniate between ev5 and
+        ev56.
+   <li> Get lots of information about a Solaris system: prtconf -vp
+   <li> Figure out `local label prefix', the character sequence that makes the
+        chosen assembler omit the label from the object file.
+   <li> Figure out if identifiers need a `_' prefix.
+   <li> For specific target machines, figure out assembly language variant
+        (x86 <code>shld</code>/<code>shrd</code>, and some other).
+   <li> For some target machines and some compilers, specific options are needed
+        (sparcv8/gcc needs -mv8, sparcv8/cc needs -cg92, Irix64/cc needs -64,
+        Irix32/cc might need -n32, etc) see top-level config directory.
+   <li> Options to be passed to the assembler (via the compiler, using whatever
+        syntax the compiler uses for passing options to the assembler).
+   <li> On Solaris 7, check if gcc supports native v9 64-bit arithmetic.
+        If not compile using "cc -fast -xarch=v9".  (Problem: -fast requires
+	that we link with -fast too, which might not be very good.  Pass
+	"-xO4 -xtarget=native" instead?)
+  </ol>
+
+  <p> In general, getting the exact right configuration, passing the exact right
+  options to the compiler, etc, might mean that the GMP performance more than
+  double.
+
+  <p> When testing the ready result, make sure to test at least the
+  following for all out target machines: (1) Both gcc and cc (and c89).
+  (2) Both 32-bit more and 64-bit mode (such as -n32 vs -64 under
+  Irix). (3) Both the system `make' and GNU `make'. (4) With and without
+  GNU binutils.
+
+  <p> We'd ultimately like to build multiple variants of the library
+  under certain systems.  An example is -n32, -o32, and -64 on Irix.
+  
+  <p> Improve config.guess.  It should say mips2, mips3, and mips4.
+  It should say supersparc, microsparc, ultrasparc1, ultrasparc2.  Etc.
+  Likewise for HPPA.  (Alpha and x86 works already.)
+
+<p> <li> <strong>Faster extended GCD</strong>
+
+  <p> We currently have extended GCD based on Lehmer's method in the GMP working
+  sources.  But the binary method can quite easily be improved for bignums
+  in a similar way Lehmer improved Euclid's algorithm.  The result should
+  beat Lehmer's method by about a factor 2.  Furthermore, the multiprecision
+  step of Lehmer's method and the binary method will be identical, so the
+  current code can mostly be reused.
+
+<p> <li> <strong>Math functions for the mpf layer</strong>
+
+  <p> Implement the functions of math.h for the GMP mpf layer!  Check the paper
+  "Pi and the AGM" for ideas how to do this.  These functions are desirable:
+  acos, acosh, asin, asinh, atan, atanh, atan2, cos, cosh, exp, log, log10,
+  pow, sin, sinh, tan, tanh.
+
+<p> <li> <strong>Faster sqrt</strong>
+
+  <p> The current code for computing square roots use a Newton iteration that
+  rely on division.  It is possible to avoid using division by computing
+  1/sqrt(A) using this formula:
+  <pre>
+                                    2
+                   x   = x  (3 - A x )/2.
+                    i+1   i         i  </pre>
+  The final result is then computed without division using,
+  <pre>
+                     sqrt(A) = A x .
+                                  n  </pre>
+  The resulting code should be substantially faster than the current code.
+
+<p> <li> <strong>Nth root</strong>
+
+  <p> Implement, at the mpn level, a routine for computing the nth root of a
+  number.  The routine should use Newton's method, preferably without using
+  division.
+
+  <p> If the routine becomes fast enough, perhaps square roots could be computed
+  using this function.
+
+<p> <li> <strong>Better random number generators</strong>
+
+  <p> Write random number routines that accept bit counts instead of limb
+  counts.  A state should be passed to each random number generator; no global
+  state should be used, since that would be non-reentrant.
+
+  <p> Partially done by Linus Nordberg.  Ask for the current code.
+
+</ul>
+
+<hr>
+
+<table width="100%">
+  <tr>
+    <td>
+      <font size=2>
+      Please send comments about this page to
+      <a href="mailto:tege@swox.com">tege@swox.com</a>.<br>
+      Copyright (C) 1999 Torbjörn Granlund.
+      </font>
+    </td>
+    <td align=right>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

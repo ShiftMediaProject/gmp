@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>
+    GMP Itemized Development Tasks
+  </title>
+</head>
+<body bgcolor=lightgreen>
+
+<center>
+  <h1>
+    GMP Itemized Development Tasks
+  </h1>
+</center>
+
+<comment>
+  An up-to-date html version of this file is available at
+  http://www.swox.com/gmp/tasks.html.
+</comment>
+
+<p> This file lists itemized GMP development tasks.  Not all the tasks listed
+    here are suitable for volunteers, but many of them are.  Please see the
+    file projects, or <a href="http://www.swox.com/gmp/projects.html">
+    http://www.swox.com/gmp/projects.html</a> for more sizeable projects.
+
+<h4>Correctness and Completeness</h4>
+<ul>
+<li> HPUX 10.20 assembler requires a `.LEVEL 1.1' directive for accepting the
+     new instructions.  Unfortunately, HPUX 9 and earlier assemblers rejects
+     that directive.  How very clever of HP.  We will have to pass assembler
+     options, and make sure it works with new and old systems and GNU
+     assembler.
+<li> HPUX 10 C compiler supports alloca.  Cannot find any symbol to test in
+     order to know if we're on HPUX 10.  Damn.
+<li> The various reuse.c tests need to force reallocation by calling
+     <code>_mpz_realloc</code> with a small (1 limb) size.
+<li> One reuse case is missing from mpX/tests/reuse.c: <code>mpz_XXX(a,a,a)</code>.
+<li> Port Alpha assembly to Cray T3 machines.
+<li> When printing mpf_t numbers with exponents > 2^53 on machines with 64-bit
+     <code>mp_exp_t</code>, the precision of
+     <code>__mp_bases[base].chars_per_bit_exactly</code> is insufficient and
+     <code>mpf_get_str</code> aborts.  Detect and compensate.
+<li> Fix <code>mpz_get_si</code> to work properly for MIPS N32 ABI (and other
+     machines that use <code>long long</code> for storing limbs.)
+<li> Make the string reading functions allow the `0x' prefix when the base is
+     explicitly 16.  They currently only allow that prefix when the base is
+     unspecified.
+<li> Rename <code>mpz_cmp_abs</code> -> <code>mpz_cmpabs</code>.
+<li> The probabilistic prime function(s) should never return a different result
+     just because of the state of an independent random generator.  Therefore,
+     make it use the new random number functions (see accompanying projects file.)
+<li> In the development sources, we return abs(a%b) in the
+     <code>mpz_*_ui</code> division routines.  Perhaps make them return the
+     real remainder instead?  Changes return type to <code>signed long int</code>.
+<li> libmp/mout calls strlen with incompatible type.
+<li> libmp/mtox returns from incompatible type.
+<li> libmp.a has references to <code>_mpz_realloc</code>, but doesn't define
+     it.
+<li> <code>mpf_eq</code> is not always correct, when one operand is
+     1000000000... and the other operand is 0111111111..., i.e., extremely
+     close.  There is a special case in <code>mpf_sub</code> for this
+     situation; put similar code in <code>mpf_eq</code>.
+<li> Fix revision numbers in texinfo.tex and configure.
+<li> <code>mpn_divrem</code> cannot throw away the quotient when <code>XSIZE !=
+     0</code>.  Document or fix.
+<li> Install Alpha assembly changes (prec/gmp-alpha-patches).
+<li> NeXT has problems with newlines in asm strings in longlong.h.  Also,
+     <code>__builtin_constant_p</code> is unavailable?  Same problem with MacOS
+     X.
+<li> Solaris/x86 assembler doesn't accept <code>%cl</code> for double-word
+     shift insns.
+<li> Shut up SGI's compiler by declaring <code>dump_abort</code> in
+     mp?/tests/*.c.
+<li> <code>mpz_get_si</code> returns 0x80000000 for -0x100000000.
+</ul>
+
+<h4>Machine Independent Optimization</h4>
+<ul>
+<li> In hundreds of places in the code, we invoke count_leading_zeros and then
+     check if the returned count is zero.  Instead check the most significant
+     bit of the operand, and avoid invoking <code>count_leading_zeros</code> if
+     the bit is set.  This is an optimization on all machines, and significant
+     on machines with slow <code>count_leading_zeros</code>.
+<li> Change all places that use <code>udiv_qrnnd</code> for inverting limbs to
+     instead use <code>mpn_invert_limb</code>.
+<li> Reorganize longlong.h so that we can inline the operations even for the
+     system compiler.  When there is not such compiler feature, make calls to
+     stub functions.  Write such stub functions for as many machines as
+     possible.
+<li> Rewrite <code>umul_ppmm</code> to use floating-point for generating the
+     most significant limb (if <code>BITS_PER_MP_LIMB</code> &lt= 52 bits).
+     (Peter Montgomery has some ideas on this subject.)
+<li> Improve the default <code>umul_ppmm</code> code in longlong.h: Add partial
+     products with fewer operations.
+<li> Write new <code>mpn_get_str</code> and <code>mpn_set_str</code> running in
+     the sub O(n^2) range, using some divide-and-conquer approach, preferably
+     without using division.
+<li> Copy tricky code for converting a limb from development version of
+     <code>mpn_get_str</code> to mpf/get_str.  (Talk to Torbjörn about this.)
+<li> Consider inlining these functions: <code>mpz_size</code>,
+     <code>mpz_set_ui</code>, <code>mpz_set_q</code>, <code>mpz_clear</code>,
+     <code>mpz_init</code>, <code>mpz_get_ui</code>, <code>mpz_scan0</code>,
+     <code>mpz_scan1</code>, <code>mpz_getlimbn</code>,
+     <code>mpz_init_set_ui</code>, <code>mpz_perfect_square_p</code>,
+     <code>mpz_popcount</code>, <code>mpf_size</code>,
+     <code>mpf_get_prec</code>, <code>mpf_set_prec_raw</code>,
+     <code>mpf_set_ui</code>, <code>mpf_init</code>, <code>mpf_init2</code>,
+     <code>mpf_clear</code>, <code>mpf_set_si</code>.
+</ul>
+
+<h4>Machine Dependent Optimization</h4>
+<ul>
+<li> Make special configuration for Amd K6.  Choose mul_1.S, addmul_1.S,
+     submul_1.S from x86/pentium, and add_n.S, sub_n.S from main x86 directory.
+<li> Alpha: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
+     <code>mpn_mul_1</code> for the 21264.  On 21264, they should run at 4, 3,
+     and 3 cycles/limb respectively, if the code is unrolled properly.  (Ask
+     Torbjörn for his xm.s and xam.s skeleton files.)
+<li> Alpha: Rewrite <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
+     <code>mpn_mul_1</code> for the 21164.  This should use both integer
+     multiplies and floating-point multiplies.  For the floating-point
+     operations, the single-limb multiplier should be split into three 21-bit
+     chunks.
+<li> UltraSPARC: Rewrite 64-bit <code>mpn_add_n</code> and
+     <code>mpn_sub_n</code>.  The current sparc64 code uses <code>MOVcc</code>
+     instructions, which take about 6 cycles on UltraSPARC.  The correct
+     approach is probably to use conditional branching.  That should lead to
+     loops that run at 4 cycles/limb.  (Torbjörn has code that just needs to be
+     finished.)
+<li> UltraSPARC: Rewrite 64-bit <code>mpn_addmul_1</code>,
+     <code>mpn_submul_1</code>, and <code>mpn_mul_1</code>.  Should use
+     floating-point operations, and split the invariant single-limb multiplier
+     into 21-bit chunks.  Should give about 18 cycles/limb, but the pipeline
+     will become very deep.  (Torbjörn has C code that is useful as a starting
+     point.)
+<li> UltraSPARC: Rewrite <code>mpn_lshift</code> and <code>mpn_rshift</code>.
+     Should give 2 cycles/limb.  (Torbjörn has code that just needs to be
+     finished.)
+<li> PA64: Improve <code>mpn_addmul_1</code>, <code>mpn_submul_1</code>, and
+     <code>mpn_mul_1</code>.  The current development code runs at 11
+     cycles/limb, which is already very good.  But it should be possible to
+     saturate the cache, which will happen at 7.5 cycles/limb.
+<li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
+     <code>mpn_sqr_basecase</code>.
+<li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
+     for important machines.
+<li> POWER2/POWER2SC: Schedule <code>mpn_lshift</code>/<code>mpn_rshift</code>.
+     Will bring time from 1.75 to 1.25 cycles/limb.
+<li> X86: Optimize <code>mpn_lshift</code> for shifts by 1.  (See Pentium code.)
+<li> Alpha: Optimize <code>count_leading_zeros</code>.
+<li> Alpha: Optimize <code>udiv_qrnnd</code>.  (Ask Torbjörn for the file
+     test-udiv-preinv.c as a starting point.)
+<li> R10000/R12000: Rewrite <code>mpn_add_n</code> and <code>mpn_sub_n</code>.
+     It should just require 3 cycles/limb, but the current code propagates
+     carry poorly.  The trick is to add carry-in later than we do now,
+     decreasing the number of operations used to generate carry-out from 4 to
+     to 3.
+<li> PPC32: Try using fewer registers in the current <code>mpn_lshift</code>.
+     The pipeline is now extremely deep, perhaps unnecessarily deep.  Also, r5
+     is unused.  (Ask Torbjörn for a copy of the current code.)
+<li> PPC32: Write <code>mpn_rshift</code> based on new <code>mpn_lshift</code>.
+<li> PPC32: Rewrite <code>mpn_add_n</code> and <code>mpn_sub_n</code>.  Should
+     run at just 3.25 cycles/limb.  (Ask for xxx-add_n.s as a starting point.)
+<li> Fujitsu VPP: Vectorize main functions, perhaps in assembly language.
+<li> Fujitsu VPP: Write <code>mpn_mul_basecase</code> and
+     <code>mpn_sqr_basecase</code>.  This should use a "vertical multiplication
+     method", to avoid carry propagation.  splitting one of the operands in
+     11-bit chunks.
+<li> Cray: Vectorize main functions, perhaps in assembly language.
+<li> Cray: Write <code>mpn_mul_basecase</code> and
+     <code>mpn_sqr_basecase</code>.  Same comment applies to this as to the
+     same functions for Fujitsu VPP.
+<li> Integrate Rob Harley's Toom3 code.  We need to make it run faster on
+     x86'es and other register-starved architectures by avoiding the current
+     shift-add-subtract code and instead using some temporaries and call the
+     assembly mpn routines.  (If you want to work on this, ask Torbjörn for the
+     code.)
+<li> Integrate Paul Zimmermann's FFT multiply code.  (If you want to work on
+     this, ask Torbjörn for the code.)
+<li> Improve <code>count_leading_zeros</code> for 64-bit machines:
+
+  <pre>
+  if ((x &gt&gt W_TYPE_SIZE-W_TYPE_SIZE/2) == 0) { x &lt&lt= W_TYPE_SIZE/2; cnt += W_TYPE_SIZE/2}
+  if ((x &gt&gt W_TYPE_SIZE-W_TYPE_SIZE/4) == 0) { x &lt&lt= W_TYPE_SIZE/4; cnt += W_TYPE_SIZE/4}
+  ... </pre>
+
+</ul>
+
+<h4>New Functionality</h4>
+<ul>
+<li> <code>mpz_get_nth_ui</code>.  Return the nth word (not necessarily the nth limb).
+<li> Split the 6 functions of mpz/fits_ui.c into separate files.  (Torbjörn
+     will handle this.)
+<li> Make <code>mpn_addmul_1</code> and <code>mpn_submul_1</code> available at
+     the mpz level (per John Abbott's suggestion.)
+<li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
+<li> Let `0b' and `0B' mean binary input everywhere.
+<li> Add <code>mpq_set_f</code> and <code>mpq_set_d</code> for assignment from
+     <code>mpf_t</code> and <code>double</code>, respectively.
+<li> Maybe make <code>mpz_init</code> (and <code>mpq_init</code>) do lazy
+     allocation.  Set <code>ALLOC(var)</code> to 0, and have
+     <code>mpz_realloc</code> special-handle that case.  Update functions that
+     rely on a single limb (like <code>mpz_set_ui</code>,
+     <code>mpz_[tfc]div_r_ui</code>, and others).
+<li> Add <code>mpf_out_raw</code> and <code>mpf_inp_raw</code>.  Make sure
+     format is portable between 32-bit and 64-bit machines, and between
+     little-endian and big-endian machines.
+<li> Handle numeric exceptions: Call an error handler, and/or set
+     <code>gmp_errno</code>.
+<li> Implement <code>gmp_fprintf</code>, <code>gmp_sprintf</code>, and
+     <code>gmp_snprintf</code>.
+<li> Implement mixed precision Kronecker/Jacobi symbol.  Kevin Ryde is working on this.
+</ul>
+
+<h4>Miscellaneous</h4>
+<ul>
+<li> Work on the way we build the library.  We now do it in a slow manner,
+     packing and unpacking archives.
+<li> Modify Makefiles to pass fewer -I options.
+<li> Get rid of mp[zq]/sub.c, and instead define a compile parameter to
+     mp[zq]/add.c to decide whether it will add or subtract.  Will decrease
+     redundancy.
+<li> Make <code>mpz_div</code> and <code>mpz_divmod</code> use rounding
+     analogous to <code>mpz_mod</code>.  Document, and list as an
+     incompatibility.
+<li> Maybe make mpz_pow_ui.c more like mpz/ui_pow_ui.c, or write new
+     mpn/generic/pow_ui.
+<li> Make mpz_invert call mpn_gcdext directly.
+</ul>
+
+<h4>Documentation</h4>
+<ul>
+<li> Document conventions, like that <code> unsigned long int</code> is used for
+     bit counts/ranges, and that <code>mp_size_t</code> is used for limb counts.
+<li> <code>mpz_inp_str</code> (etc) doesn't say when it stops reading digits.
+</ul>
+
+<hr>
+
+<table width="100%">
+  <tr>
+    <td>
+      <font size=2>
+      Please send comments about this page to
+      <a href="mailto:tege@swox.com">tege@swox.com</a>.<br>
+      Copyright (C) 1999 Torbjörn Granlund.
+      </font>
+    </td>
+    <td align=right>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
