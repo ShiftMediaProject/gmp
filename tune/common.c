@@ -121,6 +121,7 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
   int     i, j, e;
   double  t[30];
   double  t_unsorted[30];
+  double  reps_d;
 
   /* Use dummy parameters if caller doesn't provide any.  Only a few special
      "fun"s will cope with this, speed_noop() is one.  */
@@ -149,13 +150,30 @@ speed_measure (double (*fun) _PROTO ((struct speed_params *s)),
           if (t[i] == -1.0)
             return -1.0;
 
+          if (t[i] < 0.0)
+            {
+              fprintf (stderr, "Fatal error: negative time measured: %.9f\n",
+                       t[i]);
+              fprintf (stderr, "  (size=%ld reps=%u r=%ld attempt=%d)\n", 
+                       s->size, s->reps, s->r, i);
+              abort ();
+            }
+
           if (t[i] >= speed_unittime * speed_precision)
             break;
 
           /* go to a value of reps to make t[i] >= precision */
-          s->reps = (unsigned) ceil (1.1 * s->reps
-                                     * speed_unittime * speed_precision
-                                     / MAX (t[i], speed_unittime));
+          reps_d = ceil (1.1 * s->reps
+                         * speed_unittime * speed_precision
+                         / MAX (t[i], speed_unittime));
+          if (reps_d > 2e9 || reps_d < 1.0)
+            {
+              fprintf (stderr, "Fatal error: new reps bad: %.2f\n", reps_d);
+              fprintf (stderr, "  (old reps %u, unittime %.4g, precision %d, t[i] %.4g)\n",
+                       s->reps, speed_unittime, speed_precision, t[i]);
+              abort ();
+            }
+          s->reps = (unsigned) reps_d;
         }
       t[i] /= s->reps;
 
