@@ -1691,8 +1691,8 @@ rm -f conftest*
 char arr[sizeof (void *)]={0};
 char post=0;
 EOF
-      ac_compile="$CC $CFLAGS -c conftest.c 1>&5"
-      if { (eval echo configure:1696: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+      gmp_compile="$CC $CFLAGS -c conftest.c 1>&5"
+      if { (eval echo configure:1696: \"$gmp_compile\") 1>&5; (eval $gmp_compile) 2>&5; }; then
         	gmp_tmp_val=`$NM conftest.o | grep post | sed -e 's;[[][0-9][]]\(.*\);\1;' \
           -e 's;[^1-9]*\([0-9]*\).*;\1;'`
                 if test "$gmp_tmp_val" = "8"; then

@@ -278,8 +278,8 @@ AC_DEFUN(GMP_CHECK_CC_64BIT,
 [char arr[sizeof (void *)]={0};
 char post=0;]
 EOF
-      ac_compile="$CC $CFLAGS -c conftest.c 1>&AC_FD_CC"
-      if AC_TRY_EVAL(ac_compile); then
+      gmp_compile="$CC $CFLAGS -c conftest.c 1>&AC_FD_CC"
+      if AC_TRY_EVAL(gmp_compile); then
         changequote(<,>)dnl
 	gmp_tmp_val=`$NM conftest.o | grep post | sed -e 's;[[][0-9][]]\(.*\);\1;' \
           -e 's;[^1-9]*\([0-9]*\).*;\1;'`
