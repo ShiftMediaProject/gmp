@@ -6,7 +6,7 @@
    between machines with different word sizes.  */
 
 /*
-Copyright 1996 Free Software Foundation, Inc.
+Copyright 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,10 +31,7 @@ MA 02111-1307, USA.
 
 FILE *file;
 
-test (str, binary_len, binary_str)
-     char *str;
-     int binary_len;
-     char *binary_str;
+test (char *str, int binary_len, char *binary_str)
 {
   mpz_t x, y;
   int n_written;

@@ -5,7 +5,7 @@
 	mpz_nextprime
 	mpz_mul_si
 	mpz_addmul_ui (should this really allow a+=a*c?)
-Copyright 1996, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -42,14 +42,7 @@ typedef void (*ds_func) _PROTO ((mpz_ptr, mpz_srcptr));
 
 
 void
-#if __STDC__
 mpz_xinvert (mpz_ptr r, mpz_srcptr a, mpz_srcptr b)
-#else
-mpz_xinvert (r, a, b)
-     mpz_ptr    r;
-     mpz_srcptr a;
-     mpz_srcptr b;
-#endif
 {
   int res;
   res = mpz_invert (r, a, b);

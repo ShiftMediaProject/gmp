@@ -1,6 +1,6 @@
 /* Test mpz_pow_ui and mpz_ui_pow_ui.
 
-Copyright 1997, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,9 +29,7 @@ MA 02111-1307, USA. */
 void debug_mp ();
 void ref_mpz_pow_ui ();
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpz_t base, exp;
   mpz_t result, ref_result;
@@ -119,10 +117,7 @@ main (argc, argv)
 }
 
 void
-ref_mpz_pow_ui (w, u, e)
-     mpz_t w;
-     const mpz_t u;
-     unsigned long int e;
+ref_mpz_pow_ui (mpz_t w, const mpz_t u, unsigned long int e)
 {
   mpz_t s, t;
   unsigned long int i;
@@ -146,10 +141,7 @@ ref_mpz_pow_ui (w, u, e)
 }
 
 void
-debug_mp (str, x, base)
-     char *str;
-     mpz_t x;
-     int base;
+debug_mp (char *str, mpz_t x, int base)
 {
   fprintf (stderr, "%s", str);
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);

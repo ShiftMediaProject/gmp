@@ -1,6 +1,6 @@
 /* Test mpz_mul, mpz_divexact.
 
-Copyright 1996 Free Software Foundation, Inc.
+Copyright 1996, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,9 +30,7 @@ void debug_mp ();
 #define SIZE 32
 #endif
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpz_t op1, op2;
   mpz_t prod, quot;
@@ -70,8 +68,7 @@ main (argc, argv)
   exit (0);
 }
 
-dump_abort (op1, op2)
-     mpz_t op1, op2;
+dump_abort (mpz_t op1, mpz_t op2)
 {
   fprintf (stderr, "ERROR\n");
   fprintf (stderr, "ref = "); debug_mp (op1, -16);
@@ -80,8 +77,7 @@ dump_abort (op1, op2)
 }
 
 void
-debug_mp (x, base)
-     mpz_t x;
+debug_mp (mpz_t x, int base)
 {
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);
 }

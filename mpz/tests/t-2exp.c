@@ -1,7 +1,7 @@
 /* Test mpz_ui_pow_ui, mpz_fdiv_q, mpz_fdiv_q_2exp, mpz_fdiv_r,
    mpz_fdiv_r_2exp, and mpz_mul_2exp.
 
-Copyright 1997, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,9 +30,7 @@ MA 02111-1307, USA. */
 #define SIZE 8
 #endif
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpz_t x, r1, r2, q1, q2, d, t;
   unsigned long int c;

@@ -1,7 +1,7 @@
 /* Test mpz_gcd, mpz_gcdext, mpz_mul, mpz_tdiv_r, mpz_add, mpz_cmp,
    mpz_cmp_ui, mpz_init_set, mpz_set, mpz_clear.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,9 +29,7 @@ MA 02111-1307, USA. */
 
 void debug_mp ();
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpz_t op1, op2, x;
   mpz_t gcd, gcd2, s, t;
@@ -60,7 +58,7 @@ main (argc, argv)
   mpz_init (bs);
 
   if (argc == 2)
-     reps = atoi (argv[1]);
+     gmp_randseed_ui (rands, atoi (argv[1]));
 
   mpz_init (op1);
   mpz_init (op2);
@@ -125,8 +123,7 @@ main (argc, argv)
   exit (0);
 }
 
-dump_abort (op1, op2)
-     mpz_t op1, op2;
+dump_abort (mpz_t op1, mpz_t op2)
 {
   fprintf (stderr, "ERROR\n");
   fprintf (stderr, "op1 = "); debug_mp (op1, -16);
@@ -135,8 +132,7 @@ dump_abort (op1, op2)
 }
 
 void
-debug_mp (x, base)
-     mpz_t x;
+debug_mp (mpz_t x, int base)
 {
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);
 }

@@ -1,6 +1,6 @@
 /* Test mpz_com, mpz_and, mpz_ior, and mpz_xor.
 
-Copyright 1993, 1994, 1996, 1997 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 1997, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,9 +30,7 @@ void debug_mp ();
 #define SIZE 16
 #endif
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpz_t x, y, r1, r2;
   mpz_t t1, t2, t3, t4;
@@ -123,8 +121,7 @@ dump_abort ()
 }
 
 void
-debug_mp (x, base)
-     MP_INT *x;
+debug_mp (mpz_t x, int base)
 {
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);
 }

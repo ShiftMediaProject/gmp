@@ -1,6 +1,6 @@
 /* Test mpz_cmp, mpz_cmp_ui, mpz_tdiv_qr, mpz_mul.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -31,9 +31,7 @@ void debug_mp ();
 static void base_mul ();
 static void ref_mpz_mul ();
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpz_t multiplier, multiplicand;
   mpz_t product, ref_product;
@@ -131,10 +129,7 @@ main (argc, argv)
 }
 
 static void
-ref_mpz_mul (w, u, v)
-     mpz_t w;
-     const mpz_t u;
-     const mpz_t v;
+ref_mpz_mul (mpz_t w, const mpz_t u, const mpz_t v)
 {
   mp_size_t usize = u->_mp_size;
   mp_size_t vsize = v->_mp_size;
@@ -217,12 +212,7 @@ ref_mpz_mul (w, u, v)
 }
 
 static void
-base_mul (wp, up, un, vp, vn)
-     mp_ptr wp;
-     mp_srcptr up;
-     mp_size_t un;
-     mp_srcptr vp;
-     mp_size_t vn;
+base_mul (mp_ptr wp, mp_srcptr up, mp_size_t un, mp_srcptr vp, mp_size_t vn)
 {
   mp_size_t i, j;
   mp_limb_t prod_low, prod_high;
@@ -271,9 +261,8 @@ base_mul (wp, up, un, vp, vn)
     }
 }
 
-dump_abort (s, multiplier, multiplicand, product, ref_product)
-     char *s;
-     mpz_t multiplier, multiplicand, product, ref_product;
+dump_abort (char *s, 
+	    mpz_t multiplier, mpz_t multiplicand, mpz_t product, mpz_t ref_product)
 {
   fprintf (stderr, "ERROR: %s\n", s);
   fprintf (stderr, "multiplier   = "); debug_mp (multiplier, -16);
@@ -284,8 +273,7 @@ dump_abort (s, multiplier, multiplicand, product, ref_product)
 }
 
 void
-debug_mp (x, base)
-     mpz_t x;
+debug_mp (mpz_t x, int base)
 {
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);
 }

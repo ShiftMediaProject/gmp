@@ -1,7 +1,7 @@
 /* Test mpz_abs, mpz_add, mpz_cmp, mpz_cmp_ui, mpz_tdiv_qr, mpz_tdiv_q,
    mpz_tdiv_r, mpz_mul.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -29,9 +29,7 @@ MA 02111-1307, USA. */
 
 void debug_mp ();
 
-main (argc, argv)
-     int argc;
-     char **argv;
+main (int argc, char **argv)
 {
   mpz_t dividend, divisor;
   mpz_t quotient, remainder;
@@ -134,8 +132,7 @@ main (argc, argv)
   exit (0);
 }
 
-dump_abort (dividend, divisor)
-     mpz_t dividend, divisor;
+dump_abort (mpz_t dividend, mpz_t divisor)
 {
   fprintf (stderr, "ERROR\n");
   fprintf (stderr, "dividend = "); debug_mp (dividend, -16);
@@ -144,8 +141,7 @@ dump_abort (dividend, divisor)
 }
 
 void
-debug_mp (x, base)
-     mpz_t x;
+debug_mp (mpz_t x, int base)
 {
   mpz_out_str (stderr, base, x); fputc ('\n', stderr);
 }
