@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2004-03-04  Kevin Ryde  <kevin@swox.se>
 
+	* doc/configuration (Configure): Remove mkinstalldirs, no longer used.
+
 	* acinclude.m4 (GMP_PROG_AR): Remove AR_FLAGS=cq, libtool 1.5.2 now
 	does this itself on detecting duplicate object filenames in piecewise
 	linking mode.
@@ -90,8 +92,8 @@ MA 02111-1307, USA.
 	* longlong.h (count_leading_zeros) [alpha gcc]: New version, inlining
 	mpn/alpha/cntlz.asm cmpbge technique.
 
-	* aclocal.m4, configure, ltmain.sh, */Makefile.in: Update to automake
-	1.8.2 and libtool 1.5.2.
+	* aclocal.m4, configure, install-sh, missing, ltmain.sh,
+	*/Makefile.in: Update to automake 1.8.2 and libtool 1.5.2.
 
 	* doc/gmp.texi (C++ Interface Integers): Note / and % rounding follows
 	C99 / and %.
