@@ -29,8 +29,7 @@ require Exporter;
 @EXPORT_OK = qw();
 %EXPORT_TAGS = ('all' => [qw(
 			     ceil floor get_default_prec get_prec mpf mpf_eq
-			     mpf_get_str reldiff set_default_prec set_prec
-			     trunc)],
+			     reldiff set_default_prec set_prec trunc)],
 		'constants'   => [@EXPORT],
 		'noconstants' => [@EXPORT]);
 Exporter::export_ok_tags('all');
@@ -73,8 +72,23 @@ sub import {
 
 
 sub overload_string {
-  my ($str, $exp) = mpf_get_str($_[0], 10, 0);
-  return GMP::mpf_get_str_convert (10, $str, $exp);
+  my $fmt;
+  {
+    # don't whinge about $# being deprecated
+    local $^W = 0;
+    $fmt = $#;
+  }
+  if (! defined $fmt) {
+    $fmt = '%.Fg';
+  } else {
+    # protect against calling sprintf_internal with a bad format
+    if ($# !~ /^(%%|[^%])*%[-+ .\d]*[eEfgG](%%|[^%])*$/) {
+      die "GMP::Mpf: invalid \$# format: $#\n";
+    }
+    $fmt = $OFMT;
+    $fmt =~ s/(.)$/F$1/;
+  }
+  GMP::sprintf_internal ($fmt, $_[0]);
 }
 
 1;
