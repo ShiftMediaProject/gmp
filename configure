@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.105
+# From configure.in Revision: 1.107
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -989,7 +989,7 @@ fi
 
 PACKAGE=gmp
 
-VERSION=3.1
+VERSION=3.0
 
 if test "`CDPATH=: && cd $srcdir && pwd`" != "`pwd`" &&
    test -f $srcdir/config.status; then
@@ -3961,7 +3961,7 @@ EOF
 fi
 echo "$ECHO_T""${ac_cv_c_stringize}" 1>&6
 
-for ac_func in getopt_long getpagesize processor_info setitimer strtoul sysconf sysctlbyname
+for ac_func in getopt_long getpagesize processor_info strtoul sysconf sysctlbyname
 do
 ac_ac_var=`echo "ac_cv_func_$ac_func" | $ac_tr_sh`
 echo $ECHO_N "checking for $ac_func... $ECHO_C" 1>&6
@@ -5082,3 +5082,4 @@ rm -fr confdefs* $ac_clean_files
 trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
+
