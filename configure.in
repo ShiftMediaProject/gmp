@@ -1162,7 +1162,6 @@ if test $enable_cxx != no; then
 fi
 
 AM_CONDITIONAL(WANT_CXX, test $want_cxx = yes)
-AC_DEFINE(WANT_CXX, 1, [Define if C++ support is wanted])
 
 # FIXME: We're not interested in CXXCPP for ourselves, but if we don't call
 # it here then AC_PROG_LIBTOOL (via _LT_AC_TAGCONFIG) will do so
