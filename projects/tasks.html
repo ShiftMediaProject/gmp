@@ -35,7 +35,6 @@
 <li> The various reuse.c tests need to force reallocation by calling
      <code>_mpz_realloc</code> with a small (1 limb) size.
 <li> One reuse case is missing from mpX/tests/reuse.c: <code>mpz_XXX(a,a,a)</code>.
-<li> Port Alpha assembly to Cray T3 machines.
 <li> When printing mpf_t numbers with exponents > 2^53 on machines with 64-bit
      <code>mp_exp_t</code>, the precision of
      <code>__mp_bases[base].chars_per_bit_exactly</code> is insufficient and
@@ -45,7 +44,6 @@
 <li> Make the string reading functions allow the `0x' prefix when the base is
      explicitly 16.  They currently only allow that prefix when the base is
      unspecified.
-<li> Rename <code>mpz_cmp_abs</code> -> <code>mpz_cmpabs</code>.
 <li> The probabilistic prime function(s) should never return a different result
      just because of the state of an independent random generator.  Therefore,
      make it use the new random number functions (see accompanying projects file.)
