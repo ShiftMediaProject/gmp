@@ -199,7 +199,7 @@ void  __gmp_tmp_reentrant_free _PROTO ((struct tmp_reentrant_t *));
 #endif
 
 #if WANT_TMP_NOTREENTRANT
-/* See stack-alloc.c for some comments. */
+/* See tal-notre.c for some comments. */
 struct tmp_marker
 {
   struct tmp_stack *which_chunk;
