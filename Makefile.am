@@ -195,7 +195,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 # something extra.  The source files for each .lo are listed in the
 # Makefile.am's in the subdirectories.
 
-libgmp_la_SOURCES = gmp-impl.h longlong.h stack-alloc.h			\
+libgmp_la_SOURCES = gmp-impl.h longlong.h				\
   assert.c compat.c errno.c extract-dbl.c insert-dbl.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_minv_tab.c mp_set_fns.c			\
   rand.c randclr.c randlc.c randlc2x.c randraw.c rands.c randsd.c randsdui.c \
@@ -233,7 +233,7 @@ libmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 # get them in "make dist".
 #
 EXTRA_LTLIBRARIES = libdummy.la
-libdummy_la_SOURCES = stack-alloc.c tal-debug.c
+libdummy_la_SOURCES = stack-alloc.c tal-debug.c tal-reent.c
 
 
 info_TEXINFOS = gmp.texi
