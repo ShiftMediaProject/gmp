@@ -1,6 +1,6 @@
-/* mpf_set_d -- Assign a float from a IEEE double.
+/* mpf_set_d -- Assign a float from a double.
 
-Copyright 1993, 1994, 1995, 1996, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1995, 1996, 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,6 +19,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include "config.h"
+
+#if HAVE_FLOAT_H
+#include <float.h>  /* for DBL_MAX */
+#endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
@@ -26,6 +32,10 @@ void
 mpf_set_d (mpf_ptr r, double d)
 {
   int negative;
+
+  DOUBLE_NAN_INF_ACTION (d,
+                         __gmp_invalid_operation (),
+                         __gmp_invalid_operation ());
 
   if (d == 0)
     {

@@ -1,6 +1,6 @@
 /* mpq_set_d(mpq_t q, double d) -- Set q to d without rounding.
 
-Copyright 2000, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -19,6 +19,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include "config.h"
+
+#if HAVE_FLOAT_H
+#include <float.h>  /* for DBL_MAX */
+#endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -36,6 +42,10 @@ mpq_set_d (mpq_ptr dest, double d)
   mp_ptr np, dp;
   mp_size_t nn, dn;
   int c;
+
+  DOUBLE_NAN_INF_ACTION (d,
+                         __gmp_invalid_operation (),
+                         __gmp_invalid_operation ());
 
   negative = d < 0;
   d = ABS (d);
