@@ -1,16 +1,26 @@
+2001-02-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/powerpc32/aix.m4: Use unnamed csects.
+	* mpn/powerpc64/aix.m4: Likewise.
+
+	* acconfig.h: Add #undef of mpn_sqr_diagonal.
+	Remove lots of spacing.
+
+	* configure.in (syntax testing section): Match power* instead of powerpc*.
+	* mpn/power: Convert files to `.asm'.
+	Prefix umul_ppmm and sdiv_qrnnd.
+	Update some comments.
+
 2001-02-09  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (CCAS): Don't override a user selection.
-	
+
 	* mpq/cmp_ui.c: DIVIDE_BY_ZERO if den2==0.
 
 2001-02-08  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/sqr_basecase.c: Use mpn_sqr_diagonal when appropriate.
 
-	* config.in: Add #undef of mpn_sqr_diagonal.
-	Remove lots of spacing.
-	
 2001-02-07  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Low-level Functions): mpn_preinv_mod_1 now undocumented.
