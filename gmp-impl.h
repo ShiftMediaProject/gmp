@@ -2397,13 +2397,12 @@ class gmp_allocated_string {
   inline ~gmp_allocated_string() { (*__gmp_free_func) (str, strlen(str)+1); }
 };
 
-class ios;
-class string;
-class istream;
-int __gmp_istream_set_base (istream &, char &, bool &, bool &);
-void __gmp_istream_set_digits (string &, istream &, char &, bool &, int);
-void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, ios &o);
-ostream& __gmp_doprnt_integer_ostream (ostream &o, const struct doprnt_params_t *p, char *s);
+#include <iostream>
+#include <string>
+int __gmp_istream_set_base (std::istream &, char &, bool &, bool &);
+void __gmp_istream_set_digits (std::string &, std::istream &, char &, bool &, int);
+void __gmp_doprnt_params_from_ios (struct doprnt_params_t *p, std::ios &o);
+std::ostream& __gmp_doprnt_integer_ostream (std::ostream &o, const struct doprnt_params_t *p, char *s);
 extern const struct doprnt_funs_t  __gmp_asprintf_funs_noformat;
 
 #endif /* __cplusplus */
