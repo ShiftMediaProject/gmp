@@ -120,15 +120,6 @@ all	@dep@ {Lib}
 {MpzObjDir}fits_sshort.o @dep@ ::mpz:fits_s.c Makefile
 	{C} ::mpz:fits_s.c -o {Targ} {COptions} -d OPERATION_fits_sshort
 
-{MpzObjDir}fits_uint.o @dep@ ::mpz:fits_u.c Makefile
-	{C} ::mpz:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_uint
-
-{MpzObjDir}fits_ulong.o @dep@ ::mpz:fits_u.c Makefile
-	{C} ::mpz:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_ulong
-
-{MpzObjDir}fits_ushort.o @dep@ ::mpz:fits_u.c Makefile
-	{C} ::mpz:fits_u.c -o {Targ} {COptions} -d OPERATION_fits_ushort
-
 
 {MpzObjDir}mul_si.o @dep@ ::mpz:mul_siui.c Makefile
 	{C} ::mpz:mul_siui.c -o {Targ} {COptions} -d OPERATION_mul_si
