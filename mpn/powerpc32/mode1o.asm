@@ -40,6 +40,7 @@ C
 C Using divwu for size==1 measured about 10 cycles slower on 604e, or about
 C 3-5 cycles faster on 750.  For now it doesn't seem worth bothering with.
 
+ASM_START()
 PROLOGUE(mpn_modexact_1_odd)
 
 	C r3	src
