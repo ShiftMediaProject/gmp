@@ -36,7 +36,7 @@ MA 02111-1307, USA. */
 
 #include <iostream>
 #include <string>
-// #include <strstream>
+#include <strstream>  // for mpf_class::get_str2
 #include <gmp.h>
 
 
