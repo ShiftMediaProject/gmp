@@ -1,3 +1,8 @@
+2001-02-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/sparc64/lshift.asm: Rewrite.
+	* mpn/sparc64/rshift.asm: Rewrite.
+
 2001-02-19  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/sparc64/add_n.asm: Rewrite using `majority' logic.
@@ -12,7 +17,7 @@
 
 	* mpn/asm-defs.m4 (PROLOGUE): Use LABEL_SUFFIX.
 
-	* acinclude.m4 (GMP_ASM_GLOBL): New check, for hppa oddities.
+	* acinclude.m4 (GMP_ASM_ATTR): New check, for hppa oddities.
 
 2001-02-18  Torbjorn Granlund  <tege@swox.com>
 
