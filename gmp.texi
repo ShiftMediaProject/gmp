@@ -105,6 +105,17 @@ times
 @end macro
 @end ifnottex
 
+@c  Usage: @GMPabs{x}
+@c  Give either |x| in tex, or abs(x) in info or html.
+@tex
+\gdef\GMPabs#1{|#1|}
+@end tex
+@ifnottex
+@macro GMPabs {X}
+@abs{}(\X\)
+@end macro
+@end ifnottex
+
 @c  Math operators already available in tex, made available in info too.
 @c  For example @bmod{} can be used in both tex and info.
 @ifnottex
@@ -1416,11 +1427,9 @@ selected precision.  @code{mpf_init2} can be used instead.
 memory allocation functions.
 
 @item
-@code{mpz_random} and the other old random number functions use a random
-number generator from the C library, usually @code{mrand48} or @code{random}.
-These routines are not reentrant, since they rely on global state.  The newer
-random number functions that accept a @code{gmp_randstate_t} parameter can be
-used instead.
+@code{mpz_random} and the other old random number functions use a global
+random state and are hence not reentrant.  The newer random number functions
+that accept a @code{gmp_randstate_t} parameter can be used instead.
 
 @item
 If the memory allocation functions set by a call to
@@ -2540,9 +2549,9 @@ arguments multiple times.
 @deftypefun int mpz_cmpabs (mpz_t @var{op1}, mpz_t @var{op2})
 @deftypefunx int mpz_cmpabs_ui (mpz_t @var{op1}, unsigned long int @var{op2})
 Compare the absolute values of @var{op1} and @var{op2}.  Return a positive
-value if @m{|@var{op1}| > |@var{op2}|, @var{op1} > @var{op2}}, zero if
-@m{|@var{op1}| = |@var{op2}|, @var{op1} = @var{op2}}, and a negative value if
-@m{|@var{op1}| < |@var{op2}|, @var{op1} < @var{op2}}.
+value if @ma{@GMPabs{@var{op1}} > @GMPabs{@var{op2}}}, zero if
+@ma{@GMPabs{@var{op1}} = @GMPabs{@var{op2}}}, and a negative value if
+@ma{@GMPabs{@var{op1}} < @GMPabs{@var{op2}}}.
 @end deftypefun
 
 @deftypefn Macro int mpz_sgn (mpz_t @var{op})
@@ -3378,8 +3387,7 @@ equal.
 
 @deftypefun void mpf_reldiff (mpf_t @var{rop}, mpf_t @var{op1}, mpf_t @var{op2})
 Compute the relative difference between @var{op1} and @var{op2} and store the
-result in @var{rop}.  This is
-@m{|@var{op1}-@var{op2}| / @var{op1}, abs(@var{op1}-@var{op2})/@var{op1}}.
+result in @var{rop}.  This is @ma{@GMPabs{@var{op1}-@var{op2}}/@var{op1}}.
 @end deftypefun
 
 @deftypefn Macro int mpf_sgn (mpf_t @var{op})
@@ -4514,11 +4522,15 @@ multiply at @ma{O(N^2)} and the advantage soon overcomes the extra additions
 Karatsuba performs.
 
 @code{KARATSUBA_MUL_THRESHOLD} can be as little as 10 limbs.  The @code{SQR}
-threshold is usually about twice the @code{MUL}.  A fast @code{mpn_addmul_1}
-or @code{mpn_mul_basecase} can make the thresholds higher by staying faster
-than the Karatsuba overheads for longer.  Unrolling in those functions can
-further raise the thresholds, by becoming proportionally more efficient as the
-size increases.
+threshold is usually about twice the @code{MUL}.  The basecase algorithm will
+take a time of the form @m{M(N) = aN^2 + bN + c, M(N) = a*N^2 + b*N + c} and
+the Karatsuba algorithm @m{K(N) = 3M(N/2) + dN + e, K(N) = 3*M(N/2) + d*N +
+e}.  Clearly per-crossproduct speedups in the basecase code reduce @ma{a} and
+decrease the threshold, but linear style speedups reducing @ma{b} will
+actually increase the threshold.  The latter can be seen for instance when
+adding an optimized @code{mpn_sqr_diagonal} to @code{mpn_sqr_basecase}.  Of
+course all speedups reduce total time, and in that sense the algorithm
+thresholds are merely of academic interest.
 
 
 @node Toom-Cook 3-Way Multiplication, FFT Multiplication, Karatsuba Multiplication, Multiplication Algorithms
