@@ -2,7 +2,7 @@
    of the normal gmp code.  Speed isn't a consideration.  */
 
 /*
-Copyright 1996, 1997, 1998, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1996, 1997, 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,11 +34,12 @@ MA 02111-1307, USA.
 
 #include <stdio.h>  /* for NULL */
 #include <stdlib.h> /* for malloc */
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#include "ref.h"
+#include "tests.h"
 
 
 /* Check overlap for a routine defined to work low to high. */
@@ -91,6 +92,14 @@ refmpn_memdup_limbs (mp_srcptr ptr, mp_size_t size)
   return p;
 }
 
+/* malloc n limbs on a multiple of m bytes boundary */
+mp_ptr
+refmpn_malloc_limbs_aligned (size_t n, size_t m)
+{
+  return (mp_ptr) align_pointer (refmpn_malloc_limbs (n + m-1), m);
+}
+
+
 void
 refmpn_fill (mp_ptr ptr, mp_size_t size, mp_limb_t value)
 {
@@ -133,6 +142,15 @@ refmpn_msbone_mask (mp_limb_t x)
 
   return (refmpn_msbone (x) << 1) - 1;
 }
+
+
+int
+refmpn_tstbit (mp_srcptr ptr, mp_size_t size)
+{
+  return (ptr[size/BITS_PER_MP_LIMB]
+          & (CNST_LIMB(1) << size%BITS_PER_MP_LIMB)) != 0;
+}
+
 
 void
 refmpn_copyi (mp_ptr rp, mp_srcptr sp, mp_size_t size)
@@ -353,6 +371,20 @@ mp_limb_t
 refmpn_sub_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
   return refmpn_sub_nc (rp, s1p, s2p, size, CNST_LIMB(0));
+}
+
+
+/* Twos complement, return borrow. */
+mp_limb_t
+refmpn_neg (mp_ptr dst, mp_srcptr src, mp_size_t size)
+{
+  mp_ptr     zeros = refmpn_malloc_limbs (size);
+  mp_limb_t  ret;
+
+  refmpn_fill (zeros, size, CNST_LIMB(0));
+  ret = refmpn_sub_n (dst, zeros, src, size);
+  free (zeros);
+  return ret;
 }
 
 
