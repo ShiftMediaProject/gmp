@@ -332,8 +332,8 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
   while (i > 0 || sh > 0)
     {
       c = ep[i];
-      sh -= k;
       l = k;				/* number of bits treated */
+      sh -= l;
       if (sh < 0)
 	{
 	  if (i > 0)
@@ -374,13 +374,13 @@ pow (mpz_srcptr b, mpz_srcptr e, mpz_srcptr m, mpz_ptr r)
 	    }
 	}
 
-      /* Replace xx by xx^(2^k)*x^c.  */
+      /* Replace xx by xx^(2^l)*x^c.  */
       if (c != 0)
 	{
 	  for (j = 0; c % 2 == 0; j++)
 	    c >>= 1;
 
-	  /* c0 = c * 2^j, i.e. xx^(2^k)*x^c = (A^(2^(k - j))*c)^(2^j) */
+	  /* c0 = c * 2^j, i.e. xx^(2^l)*x^c = (A^(2^(l - j))*c)^(2^j) */
 	  l -= j;
 	  while (--l >= 0)
 	    {
