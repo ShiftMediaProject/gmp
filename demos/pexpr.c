@@ -190,7 +190,8 @@ setup_error_handler (void)
      overflown stack.  */
 #if HAVE_SIGALTSTACK
   {
-#if _AIX
+    /* AIX uses stack_t, MacOS uses struct sigaltstack. */
+#if HAVE_STACK_T
     stack_t s;
 #else
     struct sigaltstack s;
