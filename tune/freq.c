@@ -96,7 +96,7 @@ speed_cpu_frequency_sysctlbyname (void)
     }
   return 0;
 
- done:
+ success:
   speed_cycletime = 1.0 / (double) val;
 
   if (speed_option_verbose)
