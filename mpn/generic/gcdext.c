@@ -188,6 +188,18 @@ mpn_gcd (gp, up, size, vp, vsize)
   int use_double_flag;
   TMP_DECL (mark);
 
+  ASSERT (size >= vsize);
+  ASSERT (vsize >= 1);
+  ASSERT (up[size-1] != 0);
+  ASSERT (vp[vsize-1] != 0);
+  ASSERT (! MPN_OVERLAP_P (up, size+1, vp, vsize+1));
+#if EXTEND
+  ASSERT (! MPN_OVERLAP_P (s0p, size, up, size+1));
+  ASSERT (! MPN_OVERLAP_P (s0p, size, vp, vsize+1));
+#endif
+  ASSERT (MPN_SAME_OR_SEPARATE_P (gp, up, size));
+  ASSERT (MPN_SAME_OR_SEPARATE2_P (gp, size, vp, vsize));
+
   TMP_MARK (mark);
 
   use_double_flag = (size >= GCDEXT_THRESHOLD);

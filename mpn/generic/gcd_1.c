@@ -1,4 +1,4 @@
-/* mpn_gcd_1 --
+/* mpn_gcd_1 -- mpn and limb greatest common divisor.
 
 Copyright (C) 1994, 1996, 2000 Free Software Foundation, Inc.
 
@@ -38,6 +38,10 @@ mpn_gcd_1 (up, size, vlimb)
 {
   mp_limb_t ulimb;
   unsigned long int u_low_zero_bits, v_low_zero_bits;
+
+  ASSERT (size >= 1);
+  ASSERT (vlimb != 0);
+  ASSERT (! mpn_zero_p (up, size));
 
   if (size > 1)
     {

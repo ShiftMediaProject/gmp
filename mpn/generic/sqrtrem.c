@@ -238,9 +238,16 @@ mpn_sqrtrem (root_ptr, rem_ptr, op_ptr, op_size)
   mp_limb_t cy_limb;
   TMP_DECL (marker);
 
+  ASSERT (op_size >= 0);
+
   /* If OP is zero, both results are zero.  */
   if (op_size == 0)
     return 0;
+
+  ASSERT (op_ptr[op_size-1] != 0);
+  ASSERT (rem_ptr == NULL
+          || MPN_SAME_OR_SEPARATE_P (op_ptr, rem_ptr, op_size));
+  ASSERT (! MPN_OVERLAP_P (root_ptr, (op_size+1)/2, op_ptr, op_size));
 
   count_leading_zeros (cnt, op_ptr[op_size - 1]);
   tsize = op_size;
