@@ -217,8 +217,8 @@ L(here):
 	testl	$1, %ecx
 	movl	%eax, %ecx	C low carry
 
-	cmovnz_ebx_ecx		C high,low carry other way around
-	cmovnz_eax_ebx
+	cmovnz(	%ebx, %ecx)	C high,low carry other way around
+	cmovnz(	%eax, %ebx)
 
 	jmp	*%edx
 

@@ -498,8 +498,8 @@ L(unroll_outer_entry):
 	movl	$0, %ebx
 
 	movl	$0, %ecx
-	cmovz_eax_ecx		C eax into low carry, zero into high carry limb
-	cmovnz_eax_ebx
+	cmovz(	%eax, %ecx)	C eax into low carry, zero into high carry limb
+	cmovnz(	%eax, %ebx)
 
 	C Extra fetch of VAR_JMP is bad, but registers are tight
 	jmp	*VAR_JMP
