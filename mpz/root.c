@@ -1,7 +1,7 @@
 /* mpz_root(root, u, nth) --  Set ROOT to floor(U^(1/nth)).
    Return an indication if the result is exact.
 
-Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -69,7 +69,7 @@ mpz_root (mpz_ptr root, mpz_srcptr u, unsigned long int nth)
     }
   else
     {
-      remn = mpn_rootrem (rootp, NULL, up, un, nth);
+      remn = mpn_rootrem (rootp, NULL, up, un, (mp_limb_t) nth);
     }
 
   if (root != NULL)
