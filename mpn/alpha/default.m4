@@ -3,7 +3,7 @@ divert(-1)
 dnl  m4 macros for alpha assembler (everywhere except unicos).
 
 
-dnl  Copyright 2000, 2002, 2003 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002, 2003, 2004 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -62,6 +62,15 @@ ifelse(`$2',gp,`	ldgp	r29,0(r27)')
 define(`EPILOGUE_cpu',
 m4_assert_numargs(1)
 `	.end	$1')
+
+
+dnl  Usage: LDGP(dst,src)
+dnl
+dnl  Emit an "ldgp dst,src", but only if the system uses a GOT.
+
+define(LDGP,
+m4_assert_numargs(2)
+`ldgp	`$1', `$2'')
 
 
 dnl  Usage: EXTERN(variable_name)
