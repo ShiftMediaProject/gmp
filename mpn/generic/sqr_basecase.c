@@ -5,8 +5,8 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001, 2002 Free Software
-Foundation, Inc.
+Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001, 2002, 2003 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -38,19 +38,10 @@ mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
   ASSERT (! MPN_OVERLAP_P (prodp, 2*n, up, n));
 
   {
-    /* N.B.!  We need the superfluous indirection through argh to work around
-       a reloader bug in GCC 2.7.*.  */
-#if GMP_NAIL_BITS == 0
-    mp_limb_t ul, argh;
-    ul = up[0];
-    umul_ppmm (argh, prodp[0], ul, ul);
-    prodp[1] = argh;
-#else
     mp_limb_t ul, lpl;
     ul = up[0];
     umul_ppmm (prodp[1], lpl, ul, ul << GMP_NAIL_BITS);
     prodp[0] = lpl >> GMP_NAIL_BITS;
-#endif
   }
   if (n > 1)
     {
@@ -74,22 +65,20 @@ mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
 #else
       for (i = 1; i < n; i++)
 	{
-#if GMP_NAIL_BITS == 0
-	  mp_limb_t ul;
-	  ul = up[i];
-	  umul_ppmm (prodp[2 * i + 1], prodp[2 * i], ul, ul);
-#else
 	  mp_limb_t ul, lpl;
 	  ul = up[i];
 	  umul_ppmm (prodp[2 * i + 1], lpl, ul, ul << GMP_NAIL_BITS);
 	  prodp[2 * i] = lpl >> GMP_NAIL_BITS;
-#endif
 	}
 #endif
       {
 	mp_limb_t cy;
+#if HAVE_NATIVE_mpn_addlsh1_n
+	cy = mpn_addlsh1_n (prodp + 1, prodp + 1, tp, 2 * n - 2);
+#else
 	cy = mpn_lshift (tp, tp, 2 * n - 2, 1);
 	cy += mpn_add_n (prodp + 1, prodp + 1, tp, 2 * n - 2);
+#endif
 	prodp[2 * n - 1] += cy;
       }
     }
