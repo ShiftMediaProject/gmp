@@ -1356,7 +1356,7 @@ unsigned char __clz_tab[128];
 	++__a;								\
       }									\
 									\
-    (count) = W_TYPE_SIZE - __a - __clz_tab[__xr >> __a];		\
+    (count) = W_TYPE_SIZE + 1 - __a - __clz_tab[__xr >> __a];		\
   } while (0)
 /* This version gives a well-defined value for zero. */
 #define COUNT_LEADING_ZEROS_0 (W_TYPE_SIZE - 1)
