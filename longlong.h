@@ -120,9 +120,9 @@ MA 02111-1307, USA. */
   } while (0)
 #define UDIV_NEEDS_NORMALIZATION 1
 #define UDIV_TIME 220
-long __count_leading_zeros ();
+long __MPN(count_leading_zeros) ();
 #define count_leading_zeros(count, x) \
-  ((count) = __count_leading_zeros (x))
+  ((count) = __MPN(count_leading_zeros) (x))
 #endif /* LONGLONG_STANDALONE */
 #else /* ! __GNUC__ */
 #include <machine/builtins.h>
@@ -141,16 +141,16 @@ long __count_leading_zeros ();
 #define umul_ppmm(wh, wl, u, v) \
   do {									\
     UDItype __p0;							\
-    (wh) = __umul_ppmm64 (u, v, &__p0);					\
+    (wh) = __MPN(umul_ppmm) (u, v, &__p0);				\
     (wl) = __p0;							\
   } while (0)
-extern UDItype __umul_ppmm64 _PROTO ((UDItype, UDItype, UDItype *));
+extern UDItype __MPN(umul_ppmm) _PROTO ((UDItype, UDItype, UDItype *));
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { UDItype __r;							\
-    (q) = __udiv_qrnnd64 (n1, n0, d, &__r);				\
+    (q) = __MPN(udiv_qrnnd) (n1, n0, d, &__r);				\
     (r) = __r;								\
   } while (0)
-extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
+extern UDItype __MPN(udiv_qrnnd) _PROTO ((UDItype, UDItype, UDItype, UDItype *));
 #define UMUL_TIME 8
 #define UDIV_TIME 60
 #endif /* hppa */
@@ -347,10 +347,10 @@ extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { USItype __r;							\
-    (q) = __udiv_qrnnd (&__r, (n1), (n0), (d));				\
+    (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
     (r) = __r;								\
   } while (0)
-extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
+extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype));
 #endif /* LONGLONG_STANDALONE */
 #define count_leading_zeros(count, x) \
   do {									\
@@ -1033,10 +1033,10 @@ extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
 #ifndef LONGLONG_STANDALONE
 #define udiv_qrnnd(q, r, n1, n0, d) \
   do { USItype __r;							\
-    (q) = __udiv_qrnnd (&__r, (n1), (n0), (d));				\
+    (q) = __MPN(udiv_qrnnd) (&__r, (n1), (n0), (d));			\
     (r) = __r;								\
   } while (0)
-extern USItype __udiv_qrnnd _PROTO ((USItype *, USItype, USItype, USItype));
+extern USItype __MPN(udiv_qrnnd) _PROTO ((USItype *, USItype, USItype, USItype));
 #ifndef UDIV_TIME
 #define UDIV_TIME 140
 #endif
