@@ -66,7 +66,7 @@ main (int argc, char *argv[])
     {
       if (POW2_P (base))
         {
-          want_bb = refmpn_count_trailing_zeros (base);
+          want_bb = refmpn_count_trailing_zeros ((mp_limb_t) base);
           if (mp_bases[base].big_base != want_bb)
             {
               printf ("mp_bases[%d].big_base (log2 of base) wrong\n", base);
