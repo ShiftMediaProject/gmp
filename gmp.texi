@@ -265,11 +265,12 @@ reports.)
 @menu
 * Build Options::               
 * Notes for Particular Systems::  
+* ABI and ISA::                 
 * Known Build Problems::        
 @end menu
 
 
-@node Build Options, Notes for Particular Systems, Installing GMP, Installing GMP
+@node Build Options, ABI and ISA, Installing GMP, Installing GMP
 @section Build Options
 @cindex Build options
 
@@ -282,17 +283,17 @@ All the usual autoconf configure options are available, run @samp{./configure
 
 @samp{configure} needs various Unix-like tools installed.  On an MS-DOS system
 cygwin or djgpp should work.  It might be possible to build without the help
-of @samp{configure}, certainly all the code is there, but you'll be on your
-own.
+of @samp{configure}, certainly all the code is there, but unfortunately you'll
+be on your own.
 
 @item Object Directory
 
 To compile in a separate object directory, @command{cd} to that directory, and
-prefix the configure command with the path to the GMP source directory.  Not
-all @samp{make} programs have the necessary features (@code{VPATH}) to support
-this.  In particular, SunOS and Slowaris @command{make} have bugs that make
-them unable to build from a separate object directory.  Use GNU @command{make}
-instead.
+prefix the configure command with the path to the GMP source directory.  For
+example @samp{../src/gmp/configure}.  Not all @samp{make} programs have the
+necessary features (@code{VPATH}) to support this.  In particular, SunOS and
+Slowaris @command{make} have bugs that make them unable to build from a
+separate object directory.  Use GNU @command{make} instead.
 
 @item @option{--disable-shared}, @option{--disable-static}
 
@@ -307,7 +308,7 @@ The build target can be specified in the usual way, for either native or cross
 compilation.
 
 If @option{--target} isn't given, @samp{./configure} builds for the host
-system as determined by @samp{./config.guess}.  On some systems it can't
+system as determined by @samp{./config.guess}.  On some systems this can't
 distinguish between different CPUs in a family, and you should check the
 guess.  Running @samp{./config.guess} on the target system will also show the
 relevant @samp{VENDOR-OS}, if you don't already know what it should be.
@@ -345,7 +346,8 @@ Hitachi:
 HPPA:
 @samp{hppa1.0},
 @samp{hppa1.1},
-@samp{hppa2.0}
+@samp{hppa2.0},
+@samp{hppa2.0w}
 
 @item
 MIPS:
@@ -368,7 +370,7 @@ POWER:
 @samp{powerpc64}
 
 @item
-Sparc:
+SPARC:
 @samp{sparc},
 @samp{sparcv8},
 @samp{microsparc},
@@ -417,7 +419,13 @@ For some configurations specific compiler flags are set based on the target
 CPU and compiler, for others @samp{CFLAGS="-whatever"} can be used to
 set the best flags.
 
+If @samp{CC} is set then @samp{CFLAGS} must also be set.  This applies even if
+@samp{CC} is merely one of the choices GMP would make itself.  This may change
+in a future release.
+
 @item @option{--disable-alloca}
+@cindex Stack overflow segfaults
+@cindex @code{alloca}
 
 By default, GMP allocates temporary workspace using @code{alloca} if that
 function is available, or @code{malloc} if not.  If you're working with large
@@ -439,6 +447,16 @@ The Berkeley MP compatibility library (@file{libmp.a}) and header file
 (@file{mp.h}) are built and installed only if @option{--enable-mpbsd} is used.
 @xref{BSD Compatible Functions}.
 
+@item @option{MPN_PATH}
+
+Various assembler versions of mpn subroutines are provided, and for a given
+CPU target a search is made though a path to choose each.  For example
+@samp{sparcv8} has a path @samp{"sparc32/v8 sparc32 generic"}, which means it
+looks first for v8 code, falls back on plain sparc32, and finally falls back
+on generic C.  Knowledgable users with special requirements can specify a path
+with @samp{MPN_PATH="dir list"}.  This will normally be unnecessary because
+all sensible paths should be available under one or other CPU target.
+
 @item Demonstration Programs
 @cindex Demonstration programs
 @cindex Example programs
@@ -449,28 +467,133 @@ For instance, @samp{make pexpr} and then @samp{./pexpr 68^975+10}.
 
 @item Documentation
 
-The document you're now reading is @file{gmp.texi}.  The usual automake targets
-are available to make @file{gmp.ps} and/or @file{gmp.dvi}.
+The document you're now reading is @file{gmp.texi}.  The usual automake
+targets are available to make @file{gmp.ps} and/or @file{gmp.dvi}.  Some
+supplementary notes can be found in the @file{doc} subdirectory.
 @end table
 
 
 @need 2000
-@node Notes for Particular Systems, Known Build Problems, Build Options, Installing GMP
+@node ABI and ISA, Notes for Particular Systems, Build Options, Installing GMP
+@section ABI and ISA
+@cindex ABI
+
+ABI (Application Binary Interface) refers to the calling conventions between
+functions, meaning what registers are used and what sizes the various C data
+types are.  ISA (Instruction Set Architecture) refers to the instructions and
+registers a CPU has available.
+
+Some 64-bit ISA CPUs have both a 64-bit ABI and a 32-bit ABI defined, the
+latter for compatibility with older CPUs in the family.  GMP chooses the best
+ABI available for a given target system, and this generally gives
+significantly greater speed.
+
+The burden is on application programs and cooperating libraries to ensure they
+match the ABI chosen by GMP.  Fortunately this presents a difficulty only on a
+few systems, and if you have one then the performance gains are enough to make
+it worth the trouble.
+
+Some of what's described in this section may change in future releases of GMP.
+
+@table @asis
+@need 1000
+@item HPPA 2.0
+
+CPU target @samp{hppa2.0} uses the hppa2.0n 32-bit ABI, but either a 32-bit or
+64-bit limb.
+
+A 64-bit limb is available on HP-UX 10 or up when using @command{c89}.  No
+@command{gcc} support is planned for 64-bit operations in this ABI.
+Applications must be compiled with the same options as GMP, which means
+
+@example
+c89  +DA2.0 +e -D_LONG_LONG_LIMB
+@end example
+
+A 32-bit limb is used in other cases, and no special compiler options are
+needed.
+
+CPU target @samp{hppa2.0w} uses the hppa2.0w 64-bit ABI, which is available on
+HP-UX 11 or up when using @command{c89}.  @command{gcc} support for this is in
+progress.  Applications must be compiled for the same ABI, which means
+
+@example
+c89  +DD64
+@end example
+
+@need 1000
+@item MIPS 3 and 4 under IRIX 6
+
+Targets @samp{mips*-*-irix6*} use the n32 ABI and a 64-bit limb.  Applications
+must be compiled for the same ABI, which means either
+
+@example
+gcc  -mabi=n32
+cc   -n32
+@end example
+
+@need 1000
+@item PowerPC 64
+
+CPU target @samp{powerpc64} uses either the 32-bit ABI or the AIX 64-bit ABI.
+The latter is used on targets @samp{powerpc64-*-aix*} and applications must be
+compiled using either
+
+@example
+gcc  -maix64
+xlc  -q64
+@end example
+
+On other systems the 32-bit ABI is used, but with 64-bit limbs provided by
+@code{long long} in @command{gcc}.  Applications must be compiled using
+
+@example
+gcc  -D_LONG_LONG_LIMB
+@end example
+
+@need 1000
+@item Sparc V9
+
+CPU targets @samp{ultrasparc} and @samp{sparcv9} use either the v8plus 32-bit
+ABI or v9 64-bit ABI.  The v9 ABI is available on Solaris 7 and up, meaning OS
+targets @samp{solaris2.[7-9]}.  Earlier versions of Solaris don't properly
+save all registers and the v8plus ABI must be used (but GMP still uses as much
+of the v9 ISA as it can under the circumstances).
+
+For the v8plus ABI, applications can be compiled with either
+
+@example
+gcc  -mv8plus
+cc   -xarch=v8plus
+@end example
+
+For the v9 ABI, applications must be compiled with either
+
+@example
+gcc  -m64 -mptr64 -Wa,-xarch=v9 -mcpu=v9
+cc   -xarch=v9
+@end example
+
+Don't be confused by the names of these options, they're called @samp{arch}
+but they effectively control the ABI.
+@end table
+
+
+@need 2000
+@node Notes for Particular Systems, Known Build Problems, ABI and ISA, Installing GMP
 @section Notes for Particular Systems
 @cindex Build notes for particular systems
 @table @asis
 
-@item AIX
+@c This section is more or less meant for notes about performance or about
+@c build problems that have been worked around but might leave a user
+@c scratching their head.  Fun with different ABIs on a system belongs in the
+@c above section.
+
+@item AIX 4.3
 
 Targets @samp{*-*-aix4.[3-9]*} have shared libraries disabled since they seem
 to fail on AIX 4.3.
-
-@item AIX with PowerPC 64
-
-Currently only a 64-bit version of the GMP library is built, and when linking
-your application you need to pass @option{-maix64} to @command{gcc} or
-@option{-q64} to @command{xlc}.  We hope this will change in a future version
-of GMP.
 
 @item OpenBSD 2.6
 
@@ -479,10 +602,10 @@ unsuitable for @file{.asm} file processing.  @samp{./configure} will detect
 the problem and either abort or choose another m4 in the @env{PATH}.  The bug
 is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
 
-@item Sparc
+@item Sparc V8
 
-Using @samp{sparcv8} or @samp{supersparc} for the target CPU will give a
-significant performance increase on relevant systems.
+Using CPU target @samp{sparcv8} or @samp{supersparc} on relevant systems will
+give a significant performance increase over the V7 code.
 
 @item SunOS
 
@@ -507,6 +630,12 @@ If the target CPU has MMX code but the assembler doesn't support it, a warning
 is given and non-MMX code is used instead.  This will be an inferior build,
 since the MMX code that's present is there because it's faster than the
 corresponding plain integer code.
+
+@item x86 GCC 2.95.2 @samp{-march=pentiumpro}
+
+GCC 2.95.2 miscompiles @file{mpz/powm.c} when @samp{-march=pentiumpro} is
+used, so that option is omitted from the @env{CFLAGS} chosen for relevant
+CPUs.  The problem is believed to be fixed in GCC 2.96.
 @end table
 
 
@@ -514,6 +643,9 @@ corresponding plain integer code.
 @node Known Build Problems,  , Notes for Particular Systems, Installing GMP
 @section Known Build Problems
 @cindex Build problems known
+
+@c This section is more or less meant for known build problems that are not
+@c otherwise worked around and require some sort of manual intervention.
 
 You might find more up-to-date information at @uref{http://www.swox.com/gmp/}.
 
@@ -525,6 +657,14 @@ The system compiler on old versions of NeXT was a massacred and old GCC, even
 if it called itself @file{cc}.  This compiler cannot be used to build GMP, you
 need to get a real GCC, and install that before you compile GMP.  (NeXT may
 have fixed this in release 3.3 of their system.)
+
+@item Generic C on a 64-bit system
+
+When making a generic C build using @samp{--target=none} on a 64-bit system
+(meaning where @code{unsigned long} is 64 bits), @code{BITS_PER_MP_LIMB} and
+@code{BYTES_PER_MP_LIMB} in @file{mpn/generic/gmp-mparam.h} need to be changed
+to 64 and 8 respectively.  This will hopefully be automated in a future
+version of GMP.
 
 @item POWER and PowerPC
 
@@ -680,10 +820,13 @@ arguments.  This notation is based on an analogy with the assignment operator.
 (The BSD MP compatibility functions disobey this rule, having the output
 argument(s) last.)
 
-GMP allows you to use the same variable for both input and output in the same
-expression.  For example, the main function for integer multiplication,
-@code{mpz_mul}, can be used like this: @code{mpz_mul (x, x, x)}.  This
-computes the square of @var{x} and puts the result back in @var{x}.
+GMP lets you use the same variable for both input and output in one call.  For
+example, the main function for integer multiplication, @code{mpz_mul}, can be
+used to square @code{x} and put the result back in @code{x} with
+
+@example
+mpz_mul (x, x, x);
+@end example
 
 Before you can assign to a GMP variable, you need to initialize it by calling
 one of the special initialization functions.  When you're done with a
@@ -698,13 +841,62 @@ assigned to any number of times.
 
 For efficiency reasons, avoid initializing and clearing out a GMP variable in
 a loop.  Instead, initialize it before entering the loop, and clear it out
-after the loop has exited
+after the loop has exited.
 
-Once you have initialized a GMP variable, you don't need to worry about space
-allocation for that variable.  All functions in GMP automatically allocate
-additional space when a variable does not already have enough space.  They do
-not, however, reduce the space when a smaller number is stored in the object.
-Most of the time, this policy is best, since it avoids frequent re-allocation.
+GMP variables are small, containing only a couple of sizes, and pointers to
+allocated data.  Once you have initialized a GMP variable, you don't need to
+worry about space allocation.  All functions in GMP automatically allocate
+additional space when a variable does not already have enough.  They do not,
+however, reduce the space when a smaller value is stored.  Most of the time
+this policy is best, since it avoids frequent re-allocation.
+
+When a variable of type @code{mpz_t} is used as a function parameter, it's
+effectively a call-by-reference, meaning anything the function does to it will
+be be done to the original in the caller.  When a function is going to return
+an @code{mpz_t} result, it should provide a separate parameter or parameters
+that it sets, like the GMP library functions do.  A @code{return} of an
+@code{mpz_t} doesn't return the object, only a pointer to it, and this is
+almost certainly not what you want.  All this applies to @code{mpq_t} and
+@code{mpf_t} too.
+
+Here's an example function accepting an @code{mpz_t} parameter, doing a
+certain calculation, and returning a result.
+
+@example
+void
+myfunction (mpz_t result, mpz_t param, unsigned long n)
+@{
+  unsigned long  i;
+  
+  mpz_mul_ui (result, param, n);
+  for (i = 1; i < n; i++)
+    mpz_add_ui (result, result, i*7);
+@}
+
+int
+main (void)
+@{
+  mpz_t  r, n;
+  mpz_init (r);
+  mpz_init_set_str (n, "123456", 0);
+
+  myfunction (r, n, 20L);
+  mpz_out_str (stdout, 10, r); printf ("\n");
+
+  return 0;
+@}
+@end example
+
+This example will work if @code{result} and @code{param} are the same
+variable, just like the library functions.  But sometimes this is tricky to
+arrange, and an application might not want to bother for its own subroutines.
+
+@code{mpz_t} is actually implemented as a one-element array of a certain
+structure type.  This is why using it to declare a variable gives an object
+with the fields GMP needs, but then using it as a parameter passes a pointer
+to the object.  Note that the actual contents of an @code{mpz_t} are for
+internal use only and you should not access them directly if you want your
+code to be compatible with future GMP releases.
 
 
 @node GMP and Reentrancy, Useful Macros and Constants, GMP Variable Conventions, GMP Basics
@@ -725,20 +917,17 @@ The function @code{mp_set_memory_functions} uses several global
 variables for storing the selected memory allocation functions.
 
 @item
-The memory allocation functions, @code{malloc} and friends, that GMP
-uses unless directed to use custom allocation, may not be reentrant.
+If the memory allocation functions set by a call to
+@code{mp_set_memory_functions} (or @code{malloc} and friends by default) are
+not reentrant, GMP will not be reentrant either.
 
 @item
-The old random number functions (@code{mpz_random}, etc) use an underlying
-random number generator from the C library, typically @code{mrand48} or
-@code{random}.  These routines are not reentrant, since they rely on global
-state.  (The newer random number functions that accept a
-@code{gmp_randstate_t} parameter are however reentrant.)
+The old random number functions (@code{mpz_random}, etc) use a random number
+generator from the C library, usually @code{mrand48} or @code{random}.  These
+routines are not reentrant, since they rely on global state.
+(However the newer random number functions that accept a
+@code{gmp_randstate_t} parameter are reentrant.)
 @end itemize
-
-If the memory allocation functions (@code{malloc} and friends, or
-whatever functions set by a call to @code{mp_set_memory_functions}),
-are not reentrant, GMP will not be reentrant either.
 
 
 @need 2000
@@ -825,7 +1014,7 @@ see the GMP 2 manual for details.
 @cindex Anonymous FTP of latest version
 @cindex FTP of latest version
 
-The latest version of the GMP library is available by at
+The latest version of the GMP library is available at
 @uref{ftp://ftp.gnu.org/pub/gnu/gmp}.  Many sites around the world mirror
 @samp{ftp.gnu.org}; please use a mirror site near you, see
 @uref{http://www.gnu.org/order/ftp.html}.
@@ -846,25 +1035,29 @@ Please include the following in any report,
 
 @itemize @bullet
 @item
+The GMP version number, and if pre-packaged or patched then say so.
+
+@item
 A test program that makes it possible for us to reproduce the bug.  Include
 instructions on how to run the program.
 
 @item
 A description of what is wrong.  If the results are incorrect, in what way.
-If you get a crash, say so.  If a stack backtrace from the debugger is
-informative (@samp{where} in @command{gdb}), include that.
+If you get a crash, say so.
 
 @item
-@strong{Do not send core dumps, executables or @command{strace}s.}
+If you get a crash, include a stack backtrace from the debugger if it's
+informative (@samp{where} in @command{gdb}, or @samp{$C} in @command{adb}).
+
+@item
+@strong{Please do not send core dumps, executables or @command{strace}s.}
 
 @item
 The configuration options you used when building GMP, if any.
 
 @item
 The name of the compiler and its version.  For @command{gcc}, get the version
-with @samp{gcc -v}, otherwise perhaps @samp{what `which cc`}, or similar.  (It
-is not uncommon that an observed problem is actually due to a bug in the
-compiler; the GMP code tends to explore interesting corners in compilers.)
+with @samp{gcc -v}, otherwise perhaps @samp{what `which cc`}, or similar.
 
 @item
 The output from running @samp{uname -a}.
@@ -881,11 +1074,14 @@ If the bug is related to an @file{asm} file not assembling, then the contents
 of @file{config.m4}.
 @end itemize
 
+It is not uncommon that an observed problem is actually due to a bug in the
+compiler; the GMP code tends to explore interesting corners in compilers.
+
 If your bug report is good, we will do our best to help you get a corrected
 version of the library; if the bug report is poor, we won't do anything about
 it (except maybe ask you to send a better report).
 
-Send your bug report to: @email{bug-gmp@@gnu.org}.
+Send your report to: @email{bug-gmp@@gnu.org}.
 
 If you think something in this manual is unclear, or downright incorrect, or if
 the language needs to be improved, please send a note to the same address.
@@ -2825,7 +3021,7 @@ This function requires that @var{s1size} is greater than or equal to
 Multiply @{@var{s1p}, @var{size}@} and @{@var{s2p}, @var{size}@},
 and write the @strong{entire} result to @var{rp}.
 
-The destination has to have space for 2@var{size} limbs, even if the
+The destination has to have space for 2*@var{size} limbs, even if the
 significant result might be one limb smaller.
 @end deftypefun
 
@@ -3613,7 +3809,7 @@ Applied Cryptography", @uref{http://cacr.math.uwaterloo.ca/hac/}.
 @item
 Henri Cohen, "A Course in Computational Algebraic Number Theory", Graduate
 Texts in Mathematics number 138, Springer-Verlag, 1993.  Errata available
-online @* @uref{ftp://megrez.ceremab.u-bordeaux.fr/pub/cohenbook}
+online @* @uref{http://www.math.u-bordeaux.fr/~cohen}
 @end itemize
 
 @node Concept Index, Function Index, References, Top
