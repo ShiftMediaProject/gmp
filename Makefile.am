@@ -69,14 +69,14 @@ AUTOMAKE_OPTIONS = gnu check-news no-dependencies ansi2knr
 
 SUBDIRS = mpn mpz mpq mpf mpbsd mpfr tests demos tune
 
-include_HEADERS = $(MPBSD_HEADERS_OPTION) $(MPFR_HEADERS_OPTION)
-nodist_include_HEADERS = gmp.h
-EXTRA_HEADERS = mp.h
+include_HEADERS = $(MPFR_HEADERS_OPTION)
+nodist_include_HEADERS = gmp.h mp.h
+EXTRA_HEADERS = 
 
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
 EXTRA_DIST = doc macos \
-  configfsf.guess configfsf.sub .gdbinit gmp-h.in gmp-impl.h \
+  configfsf.guess configfsf.sub .gdbinit gmp-h.in gmp-impl.h mp-h.in \
   INSTALL.autoconf longlong.h stack-alloc.h urandom.h
 
 CLEANFILES= $(nodist_include_HEADERS)
@@ -197,7 +197,6 @@ libgmp_la_LDFLAGS = $(GMP_LDFLAGS) \
 
 
 if WANT_MPBSD
-MPBSD_HEADERS_OPTION = mp.h
 MPBSD_LTLIBRARIES_OPTION = libmp.la
 endif
 libmp_la_SOURCES = assert.c errno.c memory.c mp_bpl.c mp_clz_tab.c	\
