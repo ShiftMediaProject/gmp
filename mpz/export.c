@@ -83,7 +83,7 @@ mpz_export (void *data, size_t *countp, int order,
   if (endian == 0)
     endian = HOST_ENDIAN;
 
-  align = (unsigned) data % sizeof (mp_limb_t);
+  align = (unsigned long) data % sizeof (mp_limb_t);
 
   if (nail == GMP_NAIL_BITS)
     {
