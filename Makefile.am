@@ -129,7 +129,8 @@ MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/urandomm.lo mpz/xor.lo
 MPQ_OBJECTS = mpq/add.lo mpq/canonicalize.lo mpq/clear.lo mpq/cmp.lo \
   mpq/cmp_ui.lo mpq/div.lo mpq/get_d.lo mpq/get_den.lo mpq/get_num.lo \
-  mpq/init.lo mpq/inv.lo mpq/mul.lo mpq/neg.lo mpq/set.lo mpq/set_den.lo \
+  mpq/init.lo mpq/inv.lo mpq/mul.lo mpq/neg.lo mpq/out_str.lo \
+  mpq/set.lo mpq/set_den.lo \
   mpq/set_num.lo mpq/set_si.lo mpq/set_ui.lo mpq/sub.lo mpq/equal.lo \
   mpq/set_z.lo mpq/set_d.lo mpq/swap.lo
 MPN_OBJECTS = @mpn_objs_in_libgmp@
