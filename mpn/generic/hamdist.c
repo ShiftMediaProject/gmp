@@ -46,8 +46,8 @@ popc_limb (x)
   /* We have to go into some trouble to define these constants.
      (For mp_limb_t being `long long'.)  */
   mp_limb_t cnst;
-  cnst = 0x55555555L | ((mp_limb_t) 0x55555555L << BITS_PER_MP_LIMB/2);
-  x = ((x & ~cnst) >> 1) + (x & cnst);
+  cnst = 0xaaaaaaaaL | ((mp_limb_t) 0xaaaaaaaaL << BITS_PER_MP_LIMB/2);
+  x -= (x & cnst) >> 1;
   cnst = 0x33333333L | ((mp_limb_t) 0x33333333L << BITS_PER_MP_LIMB/2);
   x = ((x & ~cnst) >> 2) + (x & cnst);
   cnst = 0x0f0f0f0fL | ((mp_limb_t) 0x0f0f0f0fL << BITS_PER_MP_LIMB/2);
@@ -57,7 +57,7 @@ popc_limb (x)
   x = ((x >> 32) + x) & 0xff;
 #endif
 #if BITS_PER_MP_LIMB == 32
-  x = ((x >> 1) & 0x55555555L) + (x & 0x55555555L);
+  x -= (x & 0xaaaaaaaa) >> 1;
   x = ((x >> 2) & 0x33333333L) + (x & 0x33333333L);
   x = ((x >> 4) + x) & 0x0f0f0f0fL;
   x = ((x >> 8) + x);
