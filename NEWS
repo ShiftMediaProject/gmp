@@ -21,7 +21,8 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 Changes between MP version 4.1.2 and 4.2
 
 * Bug fixes.
-* New systems supported: HP-UX IA-64, HPPA 64-bit gcc.
+* New systems supported: HPPA-2.0 gcc, IA-64 HP-UX, PowerPC-64 Darwin,
+  Sparc64 GNU/Linux, 
 * New i386 fat binaries, selecting optimized code at runtime.
 * New build option: --enable-profiling=instrument.
 * New Mersenne Twister random numbers: gmp_randinit_mt, also now used for
