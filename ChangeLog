@@ -20,6 +20,8 @@ MA 02111-1307, USA.
 
 2004-03-20  Kevin Ryde  <kevin@swox.se>
 
+	* longlong.h (power, powerpc): Add comments on how we select this code.
+
 	* gmp-h.in (mpz_get_ui): Use ?: instead of mask style, gcc treats the
 	two identically but ?: is a bit clearer.
 
