@@ -741,43 +741,6 @@ tmp=`echo $target_cpu | sed 's/\./_/'`
 GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_TARGET_CPU_$tmp')", POST)
 
 
-dnl  config.m4 post-includes
-dnl  -----------------------
-dnl  (Note x86 post include set with $path above.)
-changequote(,)dnl
-case "$target" in
-  alpha*-cray-unicos*)
-    gmp_m4postinc="alpha/unicos.m4"
-    ;;
-  alpha*-*-*)
-    gmp_m4postinc="alpha/default.m4"
-    ;;
-  ia64*-*-*)
-    gmp_m4postinc="ia64/default.m4"
-    ;;
-  power*-*-*)
-    case "$target" in
-      *-*-mach* | *-*-rhapsody* | *-*-nextstep*)
-        ;;	# these use non-conventional assembly syntax.
-      powerpc64-*-aix*)
-	gmp_m4postinc="powerpc32/regmap.m4 powerpc64/aix.m4"
-        ;;
-      *-*-aix*)
-	gmp_m4postinc="powerpc32/regmap.m4 powerpc32/aix.m4"
-        ;;
-      *)
-	gmp_m4postinc="powerpc32/regmap.m4"
-	;;
-    esac
-    ;;
-esac
-changequote([, ])dnl
-
-for tmp_f in $gmp_m4postinc; do
-  GMP_DEFINE_RAW(["include_mpn(\`$tmp_f')"], POST)
-done
-
-
 # Set up `gmp_links'.  It's a list of link:file pairs that configure will
 # process to create link -> file.
 gmp_links=
@@ -956,9 +919,24 @@ if test "$gmp_no_asm_syntax_testing" != yes; then
   GMP_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
 
   case $target in
+    powerpc*-*-*)
+      GMP_ASM_POWERPC_REGISTERS
+      gmp_m4postinc="powerpc32/powerpc-defs.m4"
+
+      case "$target" in
+      powerpc64-*-aix*)
+        gmp_m4postinc="$gmp_m4postinc powerpc64/aix.m4"
+        ;;
+      *-*-aix*)
+        gmp_m4postinc="$gmp_m4postinc powerpc32/aix.m4"
+        ;;
+      esac
+      ;;
+
     X86_PATTERN)
       GMP_ASM_SHLDL_CL(
-        [GMP_DEFINE(WANT_SHLDL_CL,1)],[GMP_DEFINE(WANT_SHLDL_CL,0)])
+        [GMP_DEFINE(WANT_SHLDL_CL,1)],
+        [GMP_DEFINE(WANT_SHLDL_CL,0)])
       GMP_ASM_ALIGN_FILL_0x90
       if test "$enable_profiling" != no; then
         GMP_ASM_X86_MCOUNT
@@ -980,6 +958,27 @@ if test "$gmp_no_asm_syntax_testing" != yes; then
       echo '#include "'$srcdir'/mpn/m68k/syntax.h"' >>asm-syntax.h;;
   esac
 fi
+
+
+dnl  config.m4 post-includes
+dnl  -----------------------
+changequote(,)dnl
+case "$target" in
+  alpha*-cray-unicos*)
+    gmp_m4postinc="alpha/unicos.m4"
+    ;;
+  alpha*-*-*)
+    gmp_m4postinc="alpha/default.m4"
+    ;;
+  ia64*-*-*)
+    gmp_m4postinc="ia64/default.m4"
+    ;;
+esac
+changequote([, ])dnl
+
+for tmp_f in $gmp_m4postinc; do
+  GMP_DEFINE_RAW(["include_mpn(\`$tmp_f')"], POST)
+done
 
 
 # Create link for gmp-mparam.h.

@@ -1,5 +1,8 @@
 divert(-1)
 
+dnl  m4 macros for PowerPC assembler (32 and 64).
+
+
 dnl  Copyright 2000 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
@@ -20,15 +23,15 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
-dnl Map register names r0, r1, etc, to just `0', `1', etc.
-dnl This is needed on all systems but NeXT, Rhapsody, and MacOS-X
-forloop(i,0,31,
-`define(`r'i,i)'
-)
+dnl  Usage: r0 ... r31, cr0 ... cr7
+dnl
+dnl  Registers names, either left as "r0" etc or mapped to plain 0 etc,
+dnl  according to the result of GMP_ASM_POWERPC_REGISTERS.
 
-dnl Likewise for cr0, cr1, etc.
-forloop(i,0,7,
-`define(`cr'i,i)'
-)
+ifelse(WANT_REGISTERS_R,no,`
+forloop(i,0,31,`deflit(`r'i,i)')
+forloop(i,0,7, `deflit(`cr'i,i)')
+')
+
 
 divert
