@@ -34,8 +34,7 @@ libmpz_la_SOURCES = \
   clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmpabs.c cmpabs_ui.c com.c \
   divexact.c dump.c fac_ui.c fdiv_q.c fdiv_q_2exp.c fdiv_q_ui.c \
   fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_2exp.c fdiv_r_ui.c fdiv_ui.c \
-  fib_ui.c fits_sint_p.c fits_slong_p.c fits_sshort_p.c fits_uint_p.c \
-  fits_ulong_p.c fits_ushort_p.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
+  fib_ui.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
   jacobi.c kronsz.c kronuz.c kronzs.c kronzu.c \
@@ -48,14 +47,33 @@ libmpz_la_SOURCES = \
   tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c \
   urandomb.c urandomm.c xor.c
 
-EXTRA_DIST = aors.c mul_siui.c
-nodist_libmpz_la_SOURCES = add.c mul_si.c mul_ui.c sub.c
+EXTRA_DIST = aors.c fits.c mul_siui.c
+
+nodist_libmpz_la_SOURCES =			\
+  add.c sub.c					\
+  fits_sint.c fits_slong.c fits_sshort.c	\
+  fits_uint.c fits_ulong.c fits_ushort.c	\
+  mul_si.c mul_ui.c
+
 CLEANFILES = $(nodist_libmpz_la_SOURCES)
 
 add.c: $(srcdir)/aors.c
 	cp $(srcdir)/aors.c add.c
 sub.c: $(srcdir)/aors.c
 	cp $(srcdir)/aors.c sub.c
+
+fits_sint.c: $(srcdir)/fits.c
+	cp $(srcdir)/fits.c fits_sint.c
+fits_slong.c: $(srcdir)/fits.c
+	cp $(srcdir)/fits.c fits_slong.c
+fits_sshort.c: $(srcdir)/fits.c
+	cp $(srcdir)/fits.c fits_sshort.c
+fits_uint.c: $(srcdir)/fits.c
+	cp $(srcdir)/fits.c fits_uint.c
+fits_ulong.c: $(srcdir)/fits.c
+	cp $(srcdir)/fits.c fits_ulong.c
+fits_ushort.c: $(srcdir)/fits.c
+	cp $(srcdir)/fits.c fits_ushort.c
 
 mul_si.c: $(srcdir)/mul_siui.c
 	cp $(srcdir)/mul_siui.c mul_si.c
