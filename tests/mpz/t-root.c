@@ -32,7 +32,7 @@ int
 main (int argc, char **argv)
 {
   mpz_t x2;
-  mpz_t x;
+  mpz_t root1, root2, rem2;
   mpz_t temp, temp2;
   mp_size_t x2_size;
   int i;
@@ -51,7 +51,9 @@ main (int argc, char **argv)
      reps = atoi (argv[1]);
 
   mpz_init (x2);
-  mpz_init (x);
+  mpz_init (root1);
+  mpz_init (root2);
+  mpz_init (rem2);
   mpz_init (temp);
   mpz_init (temp2);
 
@@ -72,23 +74,26 @@ main (int argc, char **argv)
       if ((bsi & 1) != 0)
 	{
 	  /* With 50% probability, set x2 just below a perfect power.  */
-	  mpz_root (x, x2, nth);
-	  mpz_pow_ui (x2, x, nth);
+	  mpz_root (root1, x2, nth);
+	  mpz_pow_ui (x2, root1, nth);
 	  if (mpz_sgn (x2) != 0)
 	    mpz_sub_ui (x2, x2, 1L);
 	}
 
       /* printf ("%ld %lu\n", SIZ (x2), nth); */
 
-      mpz_root (x, x2, nth);
-      mpz_pow_ui (temp, x, nth);
+      mpz_root (root1, x2, nth);
+      mpz_rootrem (root2, rem2, x2, nth);
+      mpz_pow_ui (temp, root1, nth);
+      mpz_add (temp2, temp, rem2);
 
       /* Is power of result > argument?  */
-      if (mpz_cmp (temp, x2) > 0)
+      if (mpz_cmp (root1, root2) != 0 || mpz_cmp (x2, temp2) != 0 || mpz_cmp (temp, x2) > 0)
 	{
 	  fprintf (stderr, "ERROR after test %d\n", i);
 	  debug_mp (x2, 10);
-	  debug_mp (x, 10);
+	  debug_mp (root1, 10);
+	  debug_mp (root2, 10);
 	  fprintf (stderr, "nth: %lu\n", nth);
 	  abort ();
 	}
@@ -97,7 +102,7 @@ main (int argc, char **argv)
 	{
 	  fprintf (stderr, "ERROR in mpz_perfect_power_p after test %d\n", i);
 	  debug_mp (temp, 10);
-	  debug_mp (x, 10);
+	  debug_mp (root1, 10);
 	  fprintf (stderr, "nth: %lu\n", nth);
 	  abort ();
 	}
@@ -105,7 +110,7 @@ main (int argc, char **argv)
       if (nth > 10000)
 	continue;		/* skip too expensive test */
 
-      mpz_add_ui (temp2, x, 1L);
+      mpz_add_ui (temp2, root1, 1L);
       mpz_pow_ui (temp2, temp2, nth);
 
       /* Is square of (result + 1) <= argument?  */
@@ -113,7 +118,7 @@ main (int argc, char **argv)
 	{
 	  fprintf (stderr, "ERROR after test %d\n", i);
 	  debug_mp (x2, 10);
-	  debug_mp (x, 10);
+	  debug_mp (root1, 10);
 	  fprintf (stderr, "nth: %lu\n", nth);
 	  abort ();
 	}
@@ -121,7 +126,9 @@ main (int argc, char **argv)
 
   mpz_clear (bs);
   mpz_clear (x2);
-  mpz_clear (x);
+  mpz_clear (root1);
+  mpz_clear (root2);
+  mpz_clear (rem2);
   mpz_clear (temp);
   mpz_clear (temp2);
 
