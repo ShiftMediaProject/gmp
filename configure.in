@@ -1829,7 +1829,20 @@ AC_HEADER_TIME
 # inttypes.h, stdint.h, unistd.h and sys/types.h are already in the autoconf
 # default tests
 #
-AC_CHECK_HEADERS(fcntl.h float.h locale.h sys/mman.h sys/param.h sys/processor.h sys/resource.h sys/sysctl.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(fcntl.h float.h locale.h sys/mman.h sys/param.h sys/processor.h sys/sysctl.h sys/syssgi.h sys/systemcfg.h sys/time.h sys/times.h)
+
+# On SunOS, sys/resource.h needs sys/time.h (for struct timeval)
+AC_CHECK_HEADERS(sys/resource.h,,,
+[#if TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif])
 
 # Reasons for testing:
 #   optarg - not declared in mingw
