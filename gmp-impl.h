@@ -2981,89 +2981,128 @@ int __gmp_doscan _PROTO ((const struct gmp_doscan_funs_t *, void *,
 
 #if TUNE_PROGRAM_BUILD
 /* Some extras wanted when recompiling some .c files for use by the tune
-   program.  Not part of a normal build. */
+   program.  Not part of a normal build.
 
-extern mp_size_t  mul_threshold[];
-extern mp_size_t  fft_modf_mul_threshold;
-extern mp_size_t  sqr_threshold[];
-extern mp_size_t  fft_modf_sqr_threshold;
-extern mp_size_t  sb_preinv_threshold[];
-extern mp_size_t  dc_threshold[];
-extern mp_size_t  powm_threshold[];
-extern mp_size_t  gcd_accel_threshold[];
-extern mp_size_t  gcdext_threshold[];
-extern mp_size_t  divrem_1_norm_threshold[];
-extern mp_size_t  divrem_1_unnorm_threshold[];
-extern mp_size_t  divrem_2_threshold[];
-extern mp_size_t  mod_1_norm_threshold[];
-extern mp_size_t  mod_1_unnorm_threshold[];
-extern mp_size_t  get_str_basecase_threshold[];
-extern mp_size_t  get_str_precompute_threshold[];
+   It's necessary to keep these thresholds as #defines (just to an
+   identically named variable), since various defaults are established based
+   on #ifdef in the .c files.  For some this is not so (the defaults are
+   instead establshed above), but all are done this way for consistency. */
 
-#undef MUL_KARATSUBA_THRESHOLD
-#undef MUL_TOOM3_THRESHOLD
-#undef MUL_FFT_TABLE
-#undef MUL_FFT_THRESHOLD
-#undef MUL_FFT_MODF_THRESHOLD
-#undef SQR_BASECASE_THRESHOLD
-#undef SQR_KARATSUBA_THRESHOLD
-#undef SQR_TOOM3_THRESHOLD
-#undef SQR_FFT_TABLE
+#undef  MUL_KARATSUBA_THRESHOLD
+#define MUL_KARATSUBA_THRESHOLD      mul_karatsuba_threshold
+extern mp_size_t                     mul_karatsuba_threshold;
+
+#undef  MUL_TOOM3_THRESHOLD
+#define MUL_TOOM3_THRESHOLD          mul_toom3_threshold
+extern mp_size_t                     mul_toom3_threshold;
+
+#undef  MUL_FFT_THRESHOLD
+#define MUL_FFT_THRESHOLD            mul_fft_threshold
+extern mp_size_t                     mul_fft_threshold;
+
+#undef  MUL_FFT_MODF_THRESHOLD
+#define MUL_FFT_MODF_THRESHOLD       mul_fft_modf_threshold
+extern mp_size_t                     mul_fft_modf_threshold;
+
+#undef  MUL_FFT_TABLE
+#define MUL_FFT_TABLE                { 0 }
+
+/* A native mpn_sqr_basecase is not tuned and SQR_BASECASE_THRESHOLD should
+   remain as zero (always use it). */
+#if ! HAVE_NATIVE_mpn_sqr_basecase
+#undef  SQR_BASECASE_THRESHOLD
+#define SQR_BASECASE_THRESHOLD       sqr_basecase_threshold
+extern mp_size_t                     sqr_basecase_threshold;
+#endif
+
+#if TUNE_PROGRAM_BUILD_SQR
+#undef  SQR_KARATSUBA_THRESHOLD
+#define SQR_KARATSUBA_THRESHOLD      SQR_KARATSUBA_MAX_GENERIC
+#else
+#undef  SQR_KARATSUBA_THRESHOLD
+#define SQR_KARATSUBA_THRESHOLD      sqr_karatsuba_threshold
+extern mp_size_t                     sqr_karatsuba_threshold;
+#endif
+
+#undef  SQR_TOOM3_THRESHOLD
+#define SQR_TOOM3_THRESHOLD          sqr_toom3_threshold
+extern mp_size_t                     sqr_toom3_threshold;
+
 #undef SQR_FFT_THRESHOLD
-#undef SQR_FFT_MODF_THRESHOLD
-#undef DIV_DC_THRESHOLD
-#undef POWM_THRESHOLD
-#undef GCD_ACCEL_THRESHOLD
-#undef GCDEXT_THRESHOLD
-#undef DIVREM_1_NORM_THRESHOLD
-#undef DIVREM_1_UNNORM_THRESHOLD
-#undef MOD_1_NORM_THRESHOLD
-#undef MOD_1_UNNORM_THRESHOLD
-#undef GET_STR_DC_THRESHOLD
-#undef GET_STR_PRECOMPUTE_THRESHOLD
+#define SQR_FFT_THRESHOLD            sqr_fft_threshold
+extern mp_size_t                     sqr_fft_threshold;
 
-#define MUL_KARATSUBA_THRESHOLD   mul_threshold[0]
-#define MUL_TOOM3_THRESHOLD       mul_threshold[1]
-#define MUL_FFT_TABLE             { 0 }
-#define MUL_FFT_THRESHOLD         mul_threshold[2]
-#define MUL_FFT_MODF_THRESHOLD    fft_modf_mul_threshold
-#define SQR_BASECASE_THRESHOLD    sqr_threshold[0]
-#define SQR_KARATSUBA_THRESHOLD   sqr_threshold[1]
-#define SQR_TOOM3_THRESHOLD       sqr_threshold[2]
-#define SQR_FFT_TABLE             { 0 }
-#define SQR_FFT_THRESHOLD         sqr_threshold[3]
-#define SQR_FFT_MODF_THRESHOLD    fft_modf_sqr_threshold
-#define DIV_DC_THRESHOLD              dc_threshold[0]
-#define POWM_THRESHOLD            powm_threshold[0]
-#define GCD_ACCEL_THRESHOLD       gcd_accel_threshold[0]
-#define GCDEXT_THRESHOLD          gcdext_threshold[0]
-#define DIVREM_1_NORM_THRESHOLD   divrem_1_norm_threshold[0]
-#define DIVREM_1_UNNORM_THRESHOLD divrem_1_unnorm_threshold[0]
-#define MOD_1_NORM_THRESHOLD      mod_1_norm_threshold[0]
-#define MOD_1_UNNORM_THRESHOLD    mod_1_unnorm_threshold[0]
-#define GET_STR_DC_THRESHOLD   get_str_basecase_threshold[0]
-#define GET_STR_PRECOMPUTE_THRESHOLD get_str_precompute_threshold[0]
+#undef SQR_FFT_MODF_THRESHOLD
+#define SQR_FFT_MODF_THRESHOLD       sqr_fft_modf_threshold
+extern mp_size_t                     sqr_fft_modf_threshold;
+
+#undef  SQR_FFT_TABLE
+#define SQR_FFT_TABLE                { 0 }
 
 #if ! UDIV_PREINV_ALWAYS
-#undef DIV_SB_PREINV_THRESHOLD
-#undef DIVREM_2_THRESHOLD
-#define DIV_SB_PREINV_THRESHOLD       sb_preinv_threshold[0]
-#define DIVREM_2_THRESHOLD        divrem_2_threshold[0]
+#undef  DIV_SB_PREINV_THRESHOLD
+#define DIV_SB_PREINV_THRESHOLD      div_sb_preinv_threshold
+extern mp_size_t                     div_sb_preinv_threshold;
 #endif
+
+#undef  DIV_DC_THRESHOLD
+#define DIV_DC_THRESHOLD             div_dc_threshold
+extern mp_size_t                     div_dc_threshold;
+
+#undef  POWM_THRESHOLD
+#define POWM_THRESHOLD               powm_threshold
+extern mp_size_t                     powm_threshold;
+
+#undef  GCD_ACCEL_THRESHOLD
+#define GCD_ACCEL_THRESHOLD          gcd_accel_threshold
+extern mp_size_t                     gcd_accel_threshold;
+
+#undef GCDEXT_THRESHOLD
+#define GCDEXT_THRESHOLD             gcdext_threshold
+extern mp_size_t                     gcdext_threshold;
+
+#undef DIVREM_1_NORM_THRESHOLD
+#define DIVREM_1_NORM_THRESHOLD      divrem_1_norm_threshold
+extern mp_size_t                     divrem_1_norm_threshold;
+
+#undef DIVREM_1_UNNORM_THRESHOLD
+#define DIVREM_1_UNNORM_THRESHOLD    divrem_1_unnorm_threshold
+extern mp_size_t                     divrem_1_unnorm_threshold;
+
+#undef MOD_1_NORM_THRESHOLD
+#define MOD_1_NORM_THRESHOLD         mod_1_norm_threshold
+extern mp_size_t                     mod_1_norm_threshold;
+
+#undef MOD_1_UNNORM_THRESHOLD
+#define MOD_1_UNNORM_THRESHOLD       mod_1_unnorm_threshold
+extern mp_size_t                     mod_1_unnorm_threshold;
+
+#if ! UDIV_PREINV_ALWAYS
+#undef  DIVREM_2_THRESHOLD
+#define DIVREM_2_THRESHOLD           divrem_2_threshold
+extern mp_size_t                     divrem_2_threshold;
+#endif
+
+#undef  GET_STR_DC_THRESHOLD
+#define GET_STR_DC_THRESHOLD         get_str_dc_threshold
+extern mp_size_t                     get_str_dc_threshold;
+
+#undef GET_STR_PRECOMPUTE_THRESHOLD
+#define GET_STR_PRECOMPUTE_THRESHOLD get_str_precompute_threshold
+extern mp_size_t                     get_str_precompute_threshold;
+
+#undef  SET_STR_THRESHOLD
+#define SET_STR_THRESHOLD            set_str_threshold
+extern mp_size_t                     SET_STR_THRESHOLD;
+
+#undef  FFT_TABLE_ATTRS
+#define FFT_TABLE_ATTRS
+extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
 #define SQR_KARATSUBA_MAX_GENERIC  200
 #define MUL_TOOM3_THRESHOLD_LIMIT  700
 #define GET_STR_THRESHOLD_LIMIT    500
-
-#undef  FFT_TABLE_ATTRS
-#define FFT_TABLE_ATTRS
-extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
-
-#if TUNE_PROGRAM_BUILD_SQR
-#undef SQR_KARATSUBA_THRESHOLD
-#define SQR_KARATSUBA_THRESHOLD  SQR_KARATSUBA_MAX_GENERIC
-#endif
 
 #endif /* TUNE_PROGRAM_BUILD */
 
