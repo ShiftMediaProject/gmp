@@ -27,9 +27,9 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
-void one_test (mpz_t, mpz_t, mpz_t, int);
-void debug_mp _PROTO ((mpz_t, int));
-void ref_mpz_gcd (mpz_t, mpz_t, mpz_t);
+void one_test __GMP_PROTO ((mpz_t, mpz_t, mpz_t, int));
+void debug_mp __GMP_PROTO ((mpz_t, int));
+void ref_mpz_gcd __GMP_PROTO ((mpz_t, mpz_t, mpz_t));
 
 /* Keep one_test's variables global, so that we don't need
    to reinitialize them for each test.  */
