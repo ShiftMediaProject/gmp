@@ -55,7 +55,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 {
   mp_size_t size;
   mp_limb_t big_base;
-  int indigits_per_limb;
+  int chars_per_limb;
   mp_limb_t res_digit;
 
   ASSERT (base >= 2);
@@ -63,7 +63,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
   ASSERT (str_len >= 1);
 
   big_base = __mp_bases[base].big_base;
-  indigits_per_limb = __mp_bases[base].chars_per_limb;
+  chars_per_limb = __mp_bases[base].chars_per_limb;
 
   size = 0;
 
@@ -107,18 +107,18 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 	  int j;
 	  mp_limb_t cy_limb;
 
-	  for (i = indigits_per_limb; i < str_len; i += indigits_per_limb)
+	  for (i = chars_per_limb; i < str_len; i += chars_per_limb)
 	    {
 	      res_digit = *str++;
 	      if (base == 10)
 		{ /* This is a common case.
 		     Help the compiler to avoid multiplication.  */
-		  for (j = 1; j < indigits_per_limb; j++)
+		  for (j = MP_BASES_CHARS_PER_LIMB_10 - 1; j != 0; j--)
 		    res_digit = res_digit * 10 + *str++;
 		}
 	      else
 		{
-		  for (j = 1; j < indigits_per_limb; j++)
+		  for (j = chars_per_limb - 1; j != 0; j--)
 		    res_digit = res_digit * base + *str++;
 		}
 
@@ -144,7 +144,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 	  if (base == 10)
 	    { /* This is a common case.
 		 Help the compiler to avoid multiplication.  */
-	      for (j = 1; j < str_len - (i - indigits_per_limb); j++)
+	      for (j = str_len - (i - MP_BASES_CHARS_PER_LIMB_10) - 1; j > 0; j--)
 		{
 		  res_digit = res_digit * 10 + *str++;
 		  big_base *= 10;
@@ -152,7 +152,7 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 	    }
 	  else
 	    {
-	      for (j = 1; j < str_len - (i - indigits_per_limb); j++)
+	      for (j = str_len - (i - chars_per_limb) - 1; j > 0; j--)
 		{
 		  res_digit = res_digit * base + *str++;
 		  big_base *= base;
@@ -185,12 +185,10 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 	  mp_ptr xp, tp;
 	  mp_size_t step;
 	  mp_size_t i;
-	  int chars_per_limb;
 	  size_t alloc;
 	  mp_size_t n;
 	  mp_ptr pow_mem;
 
-	  chars_per_limb = __mp_bases[base].chars_per_limb;
 	  alloc = (str_len + chars_per_limb - 1) / chars_per_limb;
 	  alloc = 2 * alloc;
 	  dp = __GMP_ALLOCATE_FUNC_LIMBS (alloc);
@@ -216,11 +214,12 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 
 	  /* Allocate space for powers of big_base.  Could trim this in two
 	     ways:
-	     1. Only really need 2^ceil(log2(dsize)) limbs for the largest
+	     1. Only really need 2^ceil(log2(dsize)) bits for the largest
 		power.
 	     2. Only the variable to get the largest power need that much
-		memory.  The other variable needs half as much.
-	     Net space savings would be in the range 3/4 to 3/8 of current
+		memory.  The other variable needs half as much.  Need just
+		figure out which of xp and tp will hold the last one.
+	     Net space savings would be in the range 1/4 to 5/8 of current
 	     allocation, depending on how close to the next power of 2 that
 	     dsize is.  */
 	  pow_mem = __GMP_ALLOCATE_FUNC_LIMBS (2 * alloc);
@@ -245,8 +244,8 @@ mpn_set_str (mp_ptr rp, const unsigned char *str, size_t str_len, int base)
 	  /* Multiply every second limb block, each `step' limbs large by the
 	     base power currently in xp[], then add this to the adjacent block.
 	     We thereby convert from dsize blocks in base big_base, to dsize/2
-	     blocks in base big_base^2, then to dsize/4 blocks in base big_base^4,
-	     etc, etc.  */
+	     blocks in base big_base^2, then to dsize/4 blocks in base
+	     big_base^4, etc, etc.  */
 
 	  if (step < dsize)
 	    {
@@ -320,7 +319,7 @@ convert_blocks (mp_ptr dp, const unsigned char *str, size_t str_len, int base)
       for (i = dsize - 1; i >= 0; i--)
 	{
 	  res_digit = *str++;
-	  for (j = chars_per_limb - 1; j != 0; j--)
+	  for (j = MP_BASES_CHARS_PER_LIMB_10 - 1; j != 0; j--)
 	    res_digit = res_digit * 10 + *str++;
 	  dp[i] = res_digit;
 	}
