@@ -135,7 +135,7 @@ pow (base, e, mod, res)
   int sh;
   int use_redc;
 
-#ifdef DEBUG
+#ifdef POWM_DEBUG
   mpz_t exp;
   mpz_init (exp);
 #endif
@@ -235,7 +235,7 @@ pow (base, e, mod, res)
     }
   else
     c = c >> sh;
-#ifdef DEBUG
+#ifdef POWM_DEBUG
   printf ("-1/m mod 2^%u = %lu\n", BITS_PER_MP_LIMB, invm);
   mpz_set_ui (exp, c);
 #endif
@@ -257,7 +257,7 @@ pow (base, e, mod, res)
 	}
     }
 
-#ifdef DEBUG
+#ifdef POWM_DEBUG
   printf ("x^"); mpz_out_str (0, 10, exp);
   printf ("*2^%u mod m = ", n * BITS_PER_MP_LIMB); mpz_out_str (0, 10, xx);
   putchar ('\n');
@@ -308,7 +308,7 @@ pow (base, e, mod, res)
 	    }
 	}
 
-#ifdef DEBUG
+#ifdef POWM_DEBUG
       printf ("l=%u c=%lu\n", l, c);
       mpz_mul_2exp (exp, exp, k);
       mpz_add_ui (exp, exp, c);
@@ -352,7 +352,7 @@ pow (base, e, mod, res)
 	      mpz_mod (xx, xx, mod);
 	    }
 	}
-#ifdef DEBUG
+#ifdef POWM_DEBUG
       printf ("x^"); mpz_out_str (0, 10, exp);
       printf ("*2^%u mod m = ", n * BITS_PER_MP_LIMB); mpz_out_str (0, 10, xx);
       putchar ('\n');
