@@ -107,7 +107,7 @@ PROLOGUE(mpn_udiv_qrnnd)
 	bv		0(%r2)
 	 addc		%r28,%r28,%r28
 
-	.label	L(largedivisor)
+LDEF(largedivisor)
 	extru		%r24,31,1,%r19		C r19 = n0 & 1
 	bb,<		%r23,31,L(odd)
 	 extru		%r23,30,31,%r22		C r22 = d >> 1
@@ -186,7 +186,7 @@ PROLOGUE(mpn_udiv_qrnnd)
 	bv		0(%r2)
 	 addc		%r24,%r24,%r28
 
-	.label	L(odd)
+LDEF(odd)
 	addib,sv,n	1,%r22,L(FFFFFFFF)	C r22 = (d / 2 + 1)
 	shd		%r25,%r24,1,%r24	C r24 = new n0
 	extru		%r25,30,31,%r25		C r25 = new n1
@@ -272,7 +272,7 @@ C We have computed (n1,,n0) / (d + 1), q' = r28, r' = r25
 
 C This is just a special case of the code above.
 C We come here when d == 0xFFFFFFFF
-	.label	L(FFFFFFFF)
+LDEF(FFFFFFFF)
 	add,uv		%r25,%r24,%r24
 	sub,<<		%r24,%r23,%r0
 	ldo		1(%r24),%r24

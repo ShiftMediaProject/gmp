@@ -37,7 +37,7 @@ PROLOGUE(mpn_rshift)
 	addib,=		-1,%r24,L(0002)
 	vshd		%r29,%r22,%r20
 
-	.label	L(loop)
+LDEF(loop)
 	ldws,ma		4(0,%r25),%r22
 	stws,ma		%r20,4(0,%r26)
 	addib,=		-1,%r24,L(0003)
@@ -47,16 +47,16 @@ PROLOGUE(mpn_rshift)
 	addib,<>	-1,%r24,L(loop)
 	vshd		%r29,%r22,%r20
 
-	.label	L(0002)
+LDEF(0002)
 	stws,ma		%r20,4(0,%r26)
 	vshd		%r0,%r29,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)
 
-	.label	L(0003)
+LDEF(0003)
 	stws,ma		%r20,4(0,%r26)
 
-	.label	L(0004)
+LDEF(0004)
 	vshd		%r0,%r22,%r20
 	bv		0(%r2)
 	stw		%r20,0(0,%r26)

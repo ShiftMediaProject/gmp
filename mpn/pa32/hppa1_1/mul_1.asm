@@ -65,7 +65,7 @@ C	.callinfo	frame=64,no_calls
 	 ldw		-12(%r30),%r1
 
 C Main loop
-	.label	L(loop)
+LDEF(loop)
 	fldws,ma	4(%r25),%fr5
 	stws,ma		%r19,4(%r26)
 	addc		%r28,%r1,%r19
@@ -75,7 +75,7 @@ C Main loop
 	addib,<>	-1,%r24,L(loop)
 	 ldw		-12(%r30),%r1
 
-	.label	L(end)
+LDEF(end)
 	stws,ma		%r19,4(%r26)
 	addc		%r28,%r1,%r19
 	ldw		-16(%r30),%r28
@@ -84,7 +84,7 @@ C Main loop
 	bv		0(%r2)
 	 ldo		-64(%r30),%r30
 
-	.label	L(just_one_limb)
+LDEF(just_one_limb)
 	xmpyu		%fr4,%fr5,%fr6
 	fstds		%fr6,-16(%r30)
 	ldw		-16(%r30),%r28

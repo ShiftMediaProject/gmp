@@ -66,7 +66,7 @@ ifdef(`PIC',
 	fldds		0(0,%r31),%fr4
 	fadd,dbl	%fr4,%fr5,%fr5
 
-	.label	L(1)
+LDEF(1)
 	fcpy,sgl	%fr0,%fr6L
 	fldws		-12(0,%r30),%fr6R
 	fcnvxf,dbl,dbl	%fr6,%fr4
@@ -88,7 +88,7 @@ ifdef(`PIC',
 	add		%r22,%r23,%r22
 	ldo		-1(%r28),%r28
 
-	.label	L(2)
+LDEF(2)
 	bv		0(%r2)
 	stws		%r22,0(0,%r26)
 	.exit

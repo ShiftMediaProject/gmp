@@ -45,7 +45,7 @@ PROLOGUE(mpn_sqr_diagonal)
 	xmpyu		%fr6r,%fr6r,%fr7
 
 
-	.label	L(loop)
+LDEF(loop)
 	fldws,ma	4(up),%fr6r
 	fstws		%fr5r,-4(rp)
 	fstws,ma	%fr5l,8(rp)
@@ -57,7 +57,7 @@ PROLOGUE(mpn_sqr_diagonal)
 	addib,<>	-1,n,L(loop)
 	xmpyu		%fr6r,%fr6r,%fr7
 
-	.label	L(exito)
+LDEF(exito)
 	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
 	xmpyu		%fr4r,%fr4r,%fr5
@@ -67,7 +67,7 @@ PROLOGUE(mpn_sqr_diagonal)
 	bv		0(%r2)
 	fstws		%fr5l,4(rp)
 
-	.label	L(exite)
+LDEF(exite)
 	fstws		%fr7r,-4(rp)
 	fstws		%fr7l,0(rp)
 	xmpyu		%fr6r,%fr6r,%fr7
@@ -77,13 +77,13 @@ PROLOGUE(mpn_sqr_diagonal)
 	bv		0(%r2)
 	fstws		%fr7l,4(rp)
 
-	.label	L(end1)
+LDEF(end1)
 	xmpyu		%fr4r,%fr4r,%fr5
 	fstws		%fr5r,-4(rp)
 	bv		0(%r2)
 	fstws,ma	%fr5l,8(rp)
 
-	.label	L(end2)
+LDEF(end2)
 	xmpyu		%fr6r,%fr6r,%fr7
 	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
@@ -91,7 +91,7 @@ PROLOGUE(mpn_sqr_diagonal)
 	bv		0(%r2)
 	fstws		%fr7l,8(rp)
 
-	.label	L(end3)
+LDEF(end3)
 	fstws		%fr5r,-4(rp)
 	fstws		%fr5l,0(rp)
 	xmpyu		%fr4r,%fr4r,%fr5

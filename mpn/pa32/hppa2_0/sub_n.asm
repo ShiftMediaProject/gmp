@@ -40,49 +40,49 @@ PROLOGUE(mpn_sub_n)
 	blr		%r28,%r0		C branch into loop
 	sub		%r26,%r22,%r26		C offset res_ptr and set carry
 
-	.label	L(loop)
+LDEF(loop)
 	ldw		0(%r25),%r20
 	ldw		0(%r24),%r31
 	subb		%r20,%r31,%r20
 	stw		%r20,0(%r26)
 
-	.label	L(7)
+LDEF(7)
 	ldw		4(%r25),%r21
 	ldw		4(%r24),%r19
 	subb		%r21,%r19,%r21
 	stw		%r21,4(%r26)
 
-	.label	L(6)
+LDEF(6)
 	ldw		8(%r25),%r20
 	ldw		8(%r24),%r31
 	subb		%r20,%r31,%r20
 	stw		%r20,8(%r26)
 
-	.label	L(5)
+LDEF(5)
 	ldw		12(%r25),%r21
 	ldw		12(%r24),%r19
 	subb		%r21,%r19,%r21
 	stw		%r21,12(%r26)
 
-	.label	L(4)
+LDEF(4)
 	ldw		16(%r25),%r20
 	ldw		16(%r24),%r31
 	subb		%r20,%r31,%r20
 	stw		%r20,16(%r26)
 
-	.label	L(3)
+LDEF(3)
 	ldw		20(%r25),%r21
 	ldw		20(%r24),%r19
 	subb		%r21,%r19,%r21
 	stw		%r21,20(%r26)
 
-	.label	L(2)
+LDEF(2)
 	ldw		24(%r25),%r20
 	ldw		24(%r24),%r31
 	subb		%r20,%r31,%r20
 	stw		%r20,24(%r26)
 
-	.label	L(1)
+LDEF(1)
 	ldw		28(%r25),%r21
 	ldo		32(%r25),%r25
 	ldw		28(%r24),%r19

@@ -40,14 +40,14 @@ PROLOGUE(mpn_add_n)
 	addib,=		-1,%r23,L(end)	C check for (SIZE == 1)
 	 add		%r20,%r19,%r28	C add first limbs ignoring cy
 
-	.label	L(loop)
+LDEF(loop)
 	ldws,ma		4(0,%r25),%r20
 	ldws,ma		4(0,%r24),%r19
 	stws,ma		%r28,4(0,%r26)
 	addib,<>	-1,%r23,L(loop)
 	 addc		%r20,%r19,%r28
 
-	.label	L(end)
+LDEF(end)
 	stws		%r28,0(0,%r26)
 	bv		0(%r2)
 	 addc		%r0,%r0,%r28
