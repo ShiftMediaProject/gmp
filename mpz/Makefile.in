@@ -35,52 +35,73 @@ SHELL = /bin/sh
 #### host and target specific makefile fragments come in here.
 ###
 
-MPZ_SRCS = init.c set.c set_ui.c set_si.c set_str.c set_d.c set_f.c set_q.c \
-  iset.c iset_ui.c iset_si.c iset_str.c iset_d.c clear.c \
-  get_ui.c get_si.c get_str.c get_d.c size.c sizeinbase.c \
-  add.c add_ui.c sub.c sub_ui.c mul.c mul_ui.c \
-  gcd.c gcd_ui.c gcdext.c sqrt.c sqrtrem.c powm.c powm_ui.c \
-  cmp.c cmp_ui.c cmp_si.c mul_2exp.c fdiv_q_2exp.c fdiv_r_2exp.c \
-  tdiv_q_2exp.c tdiv_r_2exp.c abs.c neg.c com.c and.c ior.c \
-  inp_raw.c inp_str.c out_raw.c out_str.c \
-  perfsqr.c random.c random2.c pow_ui.c ui_pow_ui.c setbit.c \
-  clrbit.c fac_ui.c pprime_p.c realloc.c getlimbn.c popcount.c hamdist.c \
-  cdiv_qr.c cdiv_q.c cdiv_r.c cdiv_qr_ui.c cdiv_q_ui.c cdiv_r_ui.c cdiv_ui.c \
-  fdiv_qr.c fdiv_q.c fdiv_r.c fdiv_qr_ui.c fdiv_q_ui.c fdiv_r_ui.c fdiv_ui.c \
-  tdiv_qr.c tdiv_q.c tdiv_r.c tdiv_qr_ui.c tdiv_q_ui.c tdiv_r_ui.c \
-  mod.c divexact.c array_init.c scan0.c scan1.c \
-  jacobi.c legendre.c invert.c
-MPZ_OBJS = init.o set.o set_ui.o set_si.o set_str.o set_d.o set_f.o set_q.o \
-  iset.o iset_ui.o iset_si.o iset_str.o iset_d.o clear.o \
-  get_ui.o get_si.o get_str.o get_d.o size.o sizeinbase.o \
-  add.o add_ui.o sub.o sub_ui.o mul.o mul_ui.o \
-  gcd.o gcd_ui.o gcdext.o sqrt.o sqrtrem.o powm.o powm_ui.o \
-  cmp.o cmp_ui.o cmp_si.o mul_2exp.o fdiv_q_2exp.o fdiv_r_2exp.o \
-  tdiv_q_2exp.o tdiv_r_2exp.o abs.o neg.o com.o and.o ior.o \
-  inp_raw.o inp_str.o out_raw.o out_str.o \
-  perfsqr.o random.o random2.o pow_ui.o ui_pow_ui.o setbit.o \
-  clrbit.o fac_ui.o pprime_p.o realloc.o getlimbn.o popcount.o hamdist.o \
-  cdiv_qr.o cdiv_q.o cdiv_r.o cdiv_qr_ui.o cdiv_q_ui.o cdiv_r_ui.o cdiv_ui.o \
-  fdiv_qr.o fdiv_q.o fdiv_r.o fdiv_qr_ui.o fdiv_q_ui.o fdiv_r_ui.o fdiv_ui.o \
-  tdiv_qr.o tdiv_q.o tdiv_r.o tdiv_qr_ui.o tdiv_q_ui.o tdiv_r_ui.o \
-  mod.o divexact.o array_init.o scan0.o scan1.o \
-  jacobi.o legendre.o invert.o
+MPZ_SRCS = abs.c add.c add_ui.c addmul_ui.c and.c array_init.c cdiv_q.c \
+  cdiv_q_ui.c cdiv_qr.c cdiv_qr_ui.c cdiv_r.c cdiv_r_ui.c \
+  cdiv_ui.c clear.c clrbit.c cmp.c cmp_si.c cmp_ui.c cmp_abs.c cmp_abs_ui.c com.c \
+  divexact.c fac_ui.c fdiv_q.c fdiv_q_2exp.c fdiv_q_ui.c \
+  fdiv_qr.c fdiv_qr_ui.c fdiv_r.c fdiv_r_2exp.c fdiv_r_ui.c \
+  fdiv_ui.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c get_str.c \
+  get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
+  invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
+  jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c mul_ui.c neg.c \
+  out_raw.c out_str.c perfsqr.c popcount.c pow_ui.c powm.c \
+  powm_ui.c pprime_p.c random.c random2.c realloc.c scan0.c \
+  scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
+  set_ui.c setbit.c size.c sizeinbase.c sqrt.c sqrtrem.c sub.c \
+  sub_ui.c swap.c tdiv_ui.c tdiv_q.c tdiv_q_2exp.c tdiv_q_ui.c tdiv_qr.c \
+  tdiv_qr_ui.c tdiv_r.c tdiv_r_2exp.c tdiv_r_ui.c tstbit.c ui_pow_ui.c xor.c
+MPZS_OBJS = zsabs.o zsadd.o zsadd_ui.o zsaddmul_ui.o zsand.o zsarray_init.o zscdiv_q.o \
+  zscdiv_q_ui.o zscdiv_qr.o zscdiv_qr_ui.o zscdiv_r.o zscdiv_r_ui.o \
+  zscdiv_ui.o zsclear.o zsclrbit.o zscmp.o zscmp_si.o zscmp_ui.o zscmp_abs.o \
+  zscmp_abs_ui.o zscom.o \
+  zsdivexact.o zsfac_ui.o zsfdiv_q.o zsfdiv_q_2exp.o zsfdiv_q_ui.o \
+  zsfdiv_qr.o zsfdiv_qr_ui.o zsfdiv_r.o zsfdiv_r_2exp.o zsfdiv_r_ui.o \
+  zsfdiv_ui.o zsgcd.o zsgcd_ui.o zsgcdext.o zsget_d.o zsget_si.o zsget_str.o \
+  zsget_ui.o zsgetlimbn.o zshamdist.o zsinit.o zsinp_raw.o zsinp_str.o \
+  zsinvert.o zsior.o zsiset.o zsiset_d.o zsiset_si.o zsiset_str.o zsiset_ui.o \
+  zsjacobi.o zslcm.o zslegendre.o zsmod.o zsmul.o zsmul_2exp.o zsmul_ui.o \
+  zsneg.o zsout_raw.o zsout_str.o zsperfsqr.o zspopcount.o zspow_ui.o \
+  zspowm.o zspowm_ui.o zspprime_p.o zsrandom.o zsrandom2.o zsrealloc.o \
+  zsscan0.o zsscan1.o zsset.o zsset_d.o zsset_f.o zsset_q.o zsset_si.o \
+  zsset_str.o zsset_ui.o zssetbit.o zssize.o zssizeinbase.o zssqrt.o \
+  zssqrtrem.o zssub.o zssub_ui.o zsswap.o zstdiv_ui.o zstdiv_q.o zstdiv_q_2exp.o \
+  zstdiv_q_ui.o \
+  zstdiv_qr.o zstdiv_qr_ui.o zstdiv_r.o zstdiv_r_2exp.o zstdiv_r_ui.o \
+  zststbit.o zsui_pow_ui.o zsxor.o
+MPZ_OBJS = abs.o add.o add_ui.o addmul_ui.o and.o array_init.o cdiv_q.o \
+  cdiv_q_ui.o cdiv_qr.o cdiv_qr_ui.o cdiv_r.o cdiv_r_ui.o \
+  cdiv_ui.o clear.o clrbit.o cmp.o cmp_si.o cmp_ui.o cmp_abs.o \
+  cmp_abs_ui.o com.o \
+  divexact.o fac_ui.o fdiv_q.o fdiv_q_2exp.o fdiv_q_ui.o \
+  fdiv_qr.o fdiv_qr_ui.o fdiv_r.o fdiv_r_2exp.o fdiv_r_ui.o \
+  fdiv_ui.o gcd.o gcd_ui.o gcdext.o get_d.o get_si.o get_str.o \
+  get_ui.o getlimbn.o hamdist.o init.o inp_raw.o inp_str.o \
+  invert.o ior.o iset.o iset_d.o iset_si.o iset_str.o iset_ui.o \
+  jacobi.o lcm.o legendre.o mod.o mul.o mul_2exp.o mul_ui.o neg.o \
+  out_raw.o out_str.o perfsqr.o popcount.o pow_ui.o powm.o \
+  powm_ui.o pprime_p.o random.o random2.o realloc.o scan0.o \
+  scan1.o set.o set_d.o set_f.o set_q.o set_si.o set_str.o \
+  set_ui.o setbit.o size.o sizeinbase.o sqrt.o sqrtrem.o sub.o \
+  sub_ui.o swap.o tdiv_ui.o tdiv_q.o tdiv_q_2exp.o tdiv_q_ui.o tdiv_qr.o \
+  tdiv_qr_ui.o tdiv_r.o tdiv_r_2exp.o tdiv_r_ui.o tstbit.o ui_pow_ui.o xor.o
 
-INCLUDES = -I. -I.. -I../mpn -I$(srcdir)/..
+INCLUDES = -I. -I.. -I../mpn -I$(srcdir)/.. -I$(srcdir)
 
 libmpz.a: Makefile $(MPZ_OBJS)
 	rm -f $@
-	$(AR) $(AR_FLAGS) $@ $(MPZ_OBJS)
+	$(AR) $(AR_FLAGS) $@ $(MPZS_OBJS) $(MPZ_OBJS)
 
 .c.o:
-	$(CC) -c $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
+	@echo "Compiling $<"
+	@$(CC) -c -DGMP_SMALL $(INCLUDES) $(CFLAGS) $(XCFLAGS) $< -o zs`basename $@`
+	@$(CC) -c -UGMP_SMALL $(INCLUDES) $(CFLAGS) $(XCFLAGS) $<
 
 clean mostlyclean:
-	rm -f *.o libmpz.a
-	-cd tests; $(MAKE) $@
+	rm -f *.o zs*.c libmpz.a
+	@cd tests; $(MAKE) $@
 distclean maintainer-clean: clean
 	rm -f Makefile config.status
-	-cd tests; $(MAKE) $@
+	@cd tests; $(MAKE) $@
 
 Makefile: $(srcdir)/Makefile.in
 	$(SHELL) ./config.status
@@ -90,6 +111,7 @@ H = $(srcdir)/../gmp.h $(srcdir)/../gmp-impl.h ../mpn/gmp-mparam.h
 abs.o: $(srcdir)/abs.c $(H)
 add.o: $(srcdir)/add.c $(H)
 add_ui.o: $(srcdir)/add_ui.c $(H)
+addmul_ui.o: $(srcdir)/addmul_ui.c $(H)
 and.o: $(srcdir)/and.c $(H)
 array_init.o: $(srcdir)/array_init.c $(H)
 cdiv_q.o: $(srcdir)/cdiv_q.c $(H)
@@ -104,6 +126,8 @@ clrbit.o: $(srcdir)/clrbit.c $(H)
 cmp.o: $(srcdir)/cmp.c $(H)
 cmp_si.o: $(srcdir)/cmp_si.c $(H)
 cmp_ui.o: $(srcdir)/cmp_ui.c $(H)
+cmp_abs.o: $(srcdir)/cmp_abs.c $(H)
+cmp_abs_ui.o: $(srcdir)/cmp_abs_ui.c $(H)
 com.o: $(srcdir)/com.c $(H)
 fdiv_q_2exp.o: $(srcdir)/fdiv_q_2exp.c $(H)
 fdiv_r_2exp.o: $(srcdir)/fdiv_r_2exp.c $(H)
@@ -136,6 +160,7 @@ iset_si.o: $(srcdir)/iset_si.c $(H)
 iset_str.o: $(srcdir)/iset_str.c $(H)
 iset_ui.o: $(srcdir)/iset_ui.c $(H)
 jacobi.o: $(srcdir)/jacobi.c $(H)
+lcm.o: $(srcdir)/lcm.c $(H)
 legendre.o: $(srcdir)/legendre.c $(H)
 mod.o: $(srcdir)/mod.c $(H)
 tdiv_q_2exp.o: $(srcdir)/tdiv_q_2exp.c $(H)
@@ -171,10 +196,14 @@ sqrt.o: $(srcdir)/sqrt.c $(H)
 sqrtrem.o: $(srcdir)/sqrtrem.c $(H)
 sub.o: $(srcdir)/sub.c $(H)
 sub_ui.o: $(srcdir)/sub_ui.c $(H)
+swap.o: $(srcdir)/swap.c $(H)
+tdiv_ui.o: $(srcdir)/tdiv_ui.c $(H) $(srcdir)/../longlong.h
 tdiv_q.o: $(srcdir)/tdiv_q.c $(H) $(srcdir)/../longlong.h
 tdiv_q_ui.o: $(srcdir)/tdiv_q_ui.c $(H)
 tdiv_qr.o: $(srcdir)/tdiv_qr.c $(H) $(srcdir)/../longlong.h $(srcdir)/dmincl.c $(H)
 tdiv_qr_ui.o: $(srcdir)/tdiv_qr_ui.c $(H)
 tdiv_r.o: $(srcdir)/tdiv_r.c $(H) $(srcdir)/../longlong.h $(srcdir)/dmincl.c $(H)
 tdiv_r_ui.o: $(srcdir)/tdiv_r_ui.c $(H)
+tstbit.o: $(srcdir)/tstbit.c $(H)
 ui_pow_ui.o: $(srcdir)/ui_pow_ui.c $(H) $(srcdir)/../longlong.h
+xor.o: $(srcdir)/xor.c $(H)
