@@ -4393,7 +4393,8 @@ printable format, add the ASCII codes for @samp{0} or @samp{A}, depending on
 the base and range.
 
 The most significant limb of the input @{@var{s1p}, @var{s1n}@} must be
-non-zero.  The area @{@var{s1p}, @var{s1n}+1@} is clobbered.
+non-zero.  The input @{@var{s1p}, @var{s1n}@} is clobbered, except when
+@var{base} is a power of 2, in which case it's unchanged.
 
 The area at @var{str} has to have space for the largest possible number
 represented by a @var{s1n} long limb array, plus one extra character.
@@ -5719,7 +5720,8 @@ Output @var{src} to @code{stdout}, as a decimal string.  Also output a newline.
 @deftypefun {char *} mtox (MINT *@var{op})
 Convert @var{op} to a hexadecimal string, and return a pointer to the string.
 The returned string is allocated using the default memory allocation function,
-@code{malloc} by default.
+@code{malloc} by default.  It will be @code{strlen(str)+1} bytes, that being
+exactly enough for the string and null-terminator.
 @end deftypefun
 
 @deftypefun void mfree (MINT *@var{op})
@@ -5936,6 +5938,8 @@ Arbitrary precision floats.
 @itemize @bullet
 @item
 mpz module in the standard distribution, @uref{http://www.python.org}
+@item
+GMPY @uref{http://gmpy.sourceforge.net}
 @end itemize
 
 @item Scheme
@@ -8274,13 +8278,13 @@ Kevin Ryde worked on a number of things: optimized x86 code, m4 asm macros,
 parameter tuning, speed measuring, the configure system, function inlining,
 divisibility tests, bit scanning, Jacobi symbols, Fibonacci and Lucas number
 functions, printf and scanf functions, perl interface, demo expression parser,
-the algorithms chapter in the manual, gmpasm-mode.el, and various
+the algorithms chapter in the manual, @file{gmpasm-mode.el}, and various
 miscellaneous improvements elsewhere.
 
 Steve Root helped write the optimized alpha 21264 assembly code.
 
 Gerardo Ballabio wrote the @file{gmpxx.h} C++ class interface and the C++
-istream input routines.
+@code{istream} input routines.
 
 GNU MP 4.0 was finished and released by Torbjorn Granlund and Kevin Ryde.
 Torbjorn's work was partially funded by the IDA Center for Computing Sciences,
