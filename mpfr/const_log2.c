@@ -59,53 +59,53 @@ mpfr_const_aux_log2 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
   mp_prec_t prec;
   mpfr_t tmp1, tmp2, result,tmp3;
   mpz_t cst;
-  int good = 0;
   int logn;
   mp_prec_t prec_i_want = MPFR_PREC(mylog);
   mp_prec_t prec_x;
-  int inexact;
+  int inexact = 0;  /* here, 0 means not set */
 
-  mpz_init(cst);
-  logn =  __gmpfr_ceil_log2 ((double) MPFR_PREC(mylog));
+  mpz_init (cst);
+  logn = __gmpfr_ceil_log2 ((double) MPFR_PREC(mylog));
   prec_x = prec_i_want + logn;
-  while (!good){
-    prec = __gmpfr_ceil_log2 ((double) prec_x);
-    mpfr_init2(tmp1, prec_x);
-    mpfr_init2(result, prec_x);
-    mpfr_init2(tmp2, prec_x);
-    mpfr_init2(tmp3, prec_x);
-    mpz_set_ui(cst, 1);
-    mpfr_aux_log2(tmp1, cst, 4, prec-2);
-    mpfr_div_2ui(tmp1, tmp1, 4, GMP_RNDD);
-    mpfr_mul_ui(tmp1, tmp1, 15, GMP_RNDD);
+  while (!inexact)
+    {
+      prec = __gmpfr_ceil_log2 ((double) prec_x);
+      mpfr_init2 (tmp1, prec_x);
+      mpfr_init2 (result, prec_x);
+      mpfr_init2 (tmp2, prec_x);
+      mpfr_init2 (tmp3, prec_x);
+      mpz_set_ui (cst, 1);
+      mpfr_aux_log2 (tmp1, cst, 4, prec-2);
+      mpfr_div_2ui (tmp1, tmp1, 4, GMP_RNDD);
+      mpfr_mul_ui (tmp1, tmp1, 15, GMP_RNDD);
 
-    mpz_set_ui(cst, 3);
-    mpfr_aux_log2(tmp2, cst, 7, prec-2);
-    mpfr_div_2ui(tmp2, tmp2, 7, GMP_RNDD);
-    mpfr_mul_ui(tmp2, tmp2, 5*3, GMP_RNDD);
-    mpfr_sub(result, tmp1, tmp2, GMP_RNDD);
+      mpz_set_ui (cst, 3);
+      mpfr_aux_log2 (tmp2, cst, 7, prec-2);
+      mpfr_div_2ui (tmp2, tmp2, 7, GMP_RNDD);
+      mpfr_mul_ui (tmp2, tmp2, 5*3, GMP_RNDD);
+      mpfr_sub (result, tmp1, tmp2, GMP_RNDD);
 
-    mpz_set_ui(cst, 13);
-    mpfr_aux_log2(tmp3, cst, 8, prec-2);
-    mpfr_div_2ui(tmp3, tmp3, 8, GMP_RNDD);
-    mpfr_mul_ui(tmp3, tmp3, 3*13, GMP_RNDD);
-    mpfr_sub(result, result, tmp3, GMP_RNDD);
+      mpz_set_ui (cst, 13);
+      mpfr_aux_log2 (tmp3, cst, 8, prec-2);
+      mpfr_div_2ui (tmp3, tmp3, 8, GMP_RNDD);
+      mpfr_mul_ui (tmp3, tmp3, 3*13, GMP_RNDD);
+      mpfr_sub (result, result, tmp3, GMP_RNDD);
 
-    mpfr_clear(tmp1);
-    mpfr_clear(tmp2);
-    mpfr_clear(tmp3);
-    if (mpfr_can_round (result, prec_x, GMP_RNDD, GMP_RNDZ,
-                        prec_i_want + (rnd_mode == GMP_RNDN)))
-      {
-        inexact = mpfr_set (mylog, result, rnd_mode);
-        good = 1;
-      }
-    else
-      {
-	prec_x += logn;
-      }
-    mpfr_clear (result);
-  }
+      mpfr_clear (tmp1);
+      mpfr_clear (tmp2);
+      mpfr_clear (tmp3);
+      if (mpfr_can_round (result, prec_x, GMP_RNDD, GMP_RNDZ,
+                          prec_i_want + (rnd_mode == GMP_RNDN)))
+        {
+          inexact = mpfr_set (mylog, result, rnd_mode);
+          MPFR_ASSERTN (inexact != 0);
+        }
+      else
+        {
+          prec_x += logn;
+        }
+      mpfr_clear (result);
+    }
   mpz_clear (cst);
   return inexact;
 }
@@ -170,7 +170,7 @@ mpfr_const_log2 (mpfr_ptr x, mp_rnd_t rnd_mode)
           mpz_add (s, s, u);
         }
 
-      mpfr_set_z (x, s, rnd_mode);
+      inexact = mpfr_set_z (x, s, rnd_mode);
       MPFR_SET_EXP (x, MPFR_GET_EXP (x) - N);
       mpz_clear (s);
       mpz_clear (t);

@@ -1367,19 +1367,27 @@ Return the number of bytes read, or if an error occurred, return 0.
 @deftypefunx int mpfr_floor (mpfr_t @var{rop}, mpfr_t @var{op})
 @deftypefunx int mpfr_round (mpfr_t @var{rop}, mpfr_t @var{op})
 @deftypefunx int mpfr_trunc (mpfr_t @var{rop}, mpfr_t @var{op})
-Set @var{rop} to @var{op} rounded to an integer. @code{mpfr_ceil} rounds
+Set @var{rop} to @var{op} rounded to an integer.
+@code{mpfr_rint} rounds to the nearest representable integer in the
+given rounding mode, @code{mpfr_ceil} rounds
 to the next higher or equal representable integer, @code{mpfr_floor} to
 the next lower or equal representable integer, @code{mpfr_round} to the
 nearest representable integer, rounding halfway cases away from zero,
 and @code{mpfr_trunc} to the next representable integer towards zero.
-@code{mpfr_rint} behaves like one of these four functions, depending
-on the rounding mode.
+
 The returned value is zero when the result is exact, positive when it is
 greater than the original value of @var{op}, and negative when it is smaller.
 More precisely, the returned value is 0 when @var{op} is an integer
 representable in @var{rop}, 1 or @minus{}1 when @var{op} is an integer
 that is not representable in @var{rop}, 2 or @minus{}2 when @var{op} is
 not an integer.
+
+Note that @code{mpfr_round} is different from @code{mpfr_rint} called with
+the rounding to the nearest mode (where halfway cases are rounded to an even
+integer or mantissa). Note also that no double rounding is performed; for
+instance, 4.5 (100.1 in binary) is rounded by @code{mpfr_round} to 4 (100
+in binary) in 2-bit precision, though @code{round(4.5)} is equal to 5 and
+5 (101 in binary) is rounded to 6 (110 in binary) in 2-bit precision.
 @end deftypefun
 
 @deftypefun int mpfr_frac (mpfr_t @var{rop}, mpfr_t @var{op}, mp_rnd_t @var{rnd})

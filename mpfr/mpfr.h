@@ -336,7 +336,7 @@ int mpfr_unordered_p _PROTO ((mpfr_srcptr, mpfr_srcptr));
 #define mpfr_inexflag_p() \
   ((int) (__gmpfr_flags & MPFR_FLAGS_INEXACT))
 
-#define mpfr_round(a,b) mpfr_rint((a), (b), GMP_RNDN)
+#define mpfr_round(a,b) mpfr_rint((a), (b), -1)
 #define mpfr_trunc(a,b) mpfr_rint((a), (b), GMP_RNDZ)
 #define mpfr_ceil(a,b)  mpfr_rint((a), (b), GMP_RNDU)
 #define mpfr_floor(a,b) mpfr_rint((a), (b), GMP_RNDD)

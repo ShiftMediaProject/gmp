@@ -1,6 +1,6 @@
-/* mpfr_cos -- cosine of a floating-point number
+/* Implementations of operations between mpfr and mpz/mpq data
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -25,8 +25,8 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-int 
-mpfr_mul_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z,mp_rnd_t rnd_mode) 
+int
+mpfr_mul_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z,mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   int res;
@@ -37,8 +37,8 @@ mpfr_mul_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z,mp_rnd_t rnd_mode)
   return(res);
 }
 
-int 
-mpfr_div_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z, mp_rnd_t rnd_mode) 
+int
+mpfr_div_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z, mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   int res;
@@ -49,8 +49,8 @@ mpfr_div_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z, mp_rnd_t rnd_mode)
   return(res);
 }
 
-int 
-mpfr_add_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z, mp_rnd_t rnd_mode) 
+int
+mpfr_add_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z, mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   int res;
@@ -61,8 +61,8 @@ mpfr_add_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z, mp_rnd_t rnd_mode)
   return(res);
 }
 
-int 
-mpfr_sub_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z,mp_rnd_t rnd_mode) 
+int
+mpfr_sub_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z,mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   int res;
@@ -73,8 +73,8 @@ mpfr_sub_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z,mp_rnd_t rnd_mode)
   return(res);
 }
 
-int 
-mpfr_mul_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z,mp_rnd_t rnd_mode) 
+int
+mpfr_mul_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z,mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   int res;
@@ -85,8 +85,8 @@ mpfr_mul_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z,mp_rnd_t rnd_mode)
   return(res);
 }
 
-int 
-mpfr_div_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z, mp_rnd_t rnd_mode) 
+int
+mpfr_div_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z, mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   int res;
@@ -97,8 +97,8 @@ mpfr_div_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z, mp_rnd_t rnd_mode)
   return(res);
 }
 
-int 
-mpfr_add_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z, mp_rnd_t rnd_mode) 
+int
+mpfr_add_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z, mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   int res;
@@ -109,8 +109,8 @@ mpfr_add_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z, mp_rnd_t rnd_mode)
   return(res);
 }
 
-int 
-mpfr_sub_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z,mp_rnd_t rnd_mode) 
+int
+mpfr_sub_q (mpfr_ptr y, mpfr_srcptr x, mpq_srcptr z,mp_rnd_t rnd_mode)
 {
   mpfr_t t;
   int res;

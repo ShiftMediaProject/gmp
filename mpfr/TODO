@@ -173,9 +173,11 @@ Miscellaneous:
 	add one ulp to the mantissa.
 
 - add a new rounding mode: round to nearest, with ties away from zero
-  (will be in 754r)
+  (will be in 754r, could be used by mpfr_round)
 
 - check/define the sign of infinity for gamma(-integer)
+
+- add tests of the ternary value for constants
 
 Reentrancy / Thread-Safety:
 

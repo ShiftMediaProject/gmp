@@ -19,8 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -47,17 +45,17 @@ static int
 mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
 {
   int prec, logn, prec_x;
-  int prec_i_want=MPFR_PREC(mylog);
-  int good = 0;
-  mpfr_t tmp1, tmp2, result,tmp3,tmp4,tmp5,tmp6;
+  int prec_i_want;
+  mpfr_t tmp1, tmp2, result, tmp3, tmp4, tmp5, tmp6;
   mpz_t cst;
-  int inex;
+  int inex = 0;  /* here, 0 means not set */
 
-  MPFR_CLEAR_FLAGS(mylog);
-  logn = __gmpfr_ceil_log2 ((double) MPFR_PREC(mylog));
+  MPFR_CLEAR_FLAGS (mylog);
+  prec_i_want = MPFR_PREC (mylog);
+  logn = __gmpfr_ceil_log2 ((double) prec_i_want);
   prec_x = prec_i_want + logn + 5;
-  mpz_init(cst);
-  while (!good)
+  mpz_init (cst);
+  while (!inex)
     {
       prec = __gmpfr_ceil_log2 ((double) prec_x);
 
@@ -110,7 +108,7 @@ mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
                           prec_i_want + (rnd_mode == GMP_RNDN)))
         {
           inex = mpfr_set (mylog, result, rnd_mode);
-          good = 1;
+          MPFR_ASSERTN (inex != 0);
         }
       else
         {
@@ -218,15 +216,11 @@ mpfr_const_pi (mpfr_ptr x, mp_rnd_t rnd_mode)
           mpz_fdiv_q(tmp, tmp, den);
           mpz_add(pi, pi, tmp);
         }
-      mpfr_set_z (x, pi, rnd_mode);
+      inex = mpfr_set_z (x, pi, rnd_mode);
       mpfr_init2 (y, mpfr_get_prec(x));
       mpz_add_ui (pi, pi, N+1);
       mpfr_set_z (y, pi, rnd_mode);
-      if (mpfr_cmp (x, y) != 0)
-        {
-          fprintf(stderr, "does not converge\n");
-          exit(1);
-        }
+      MPFR_ASSERTN (mpfr_cmp (x, y) == 0);
       MPFR_SET_EXP (x, MPFR_GET_EXP(x) - 4*N);
       mpz_clear(pi);
       mpz_clear(num);

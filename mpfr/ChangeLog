@@ -1,4 +1,45 @@
+2003-10-21  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* const_log2.c, const_pi.c, mpfr.h, TODO:
+	Fixed the mpfr_round bug (the mpfr_round macro hadn't been updated).
+	The ternary value wasn't always set in const_log2.c and const_pi.c.
+	Updated TODO.
+
+	* tests/trint.c: Value of y is displayed when a test fails.
+
+	* tests/trint.c: More tests (showing a bug for mpfr_round).
+
+	* tests/trint.c: More tests for the rounding-to-integer functions.
+
+2003-10-20  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* gmp_op.c: Wrong comment updated.
+
+	* rint.c, tests/trint.c, mpfr.texi:
+	Major update of the function mpfr_rint, including a small semantics
+	change to behave like the C function rint (unless the result is not
+	representable); as a consequence, mpfr_round now calls mpfr_rint with
+	the NEAREST_AWAY internal (to rint.c) rounding mode. Manual updated
+	to reflect this change.
+
+2003-10-17  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* erf.c, tests/terf.c: Fixed ternary value bugs and added tests.
+
 2003-10-16  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* tests/tasin.c, tests/tgamma.c: Added some necessary #include's.
+
+	* tests/trint.c:
+	Added a test against the libc (compiled and performed only when
+	__STDC_VERSION__ >= 199901L), showing a difference between mpfr_rint
+	and the C rint function (the behavior of mpfr_rint will change and
+	the manual will be updated).
+
+	* tests/trint.c:
+	Added mpfr_rint tests (as the behavior of this function will change).
+
+	* ChangeLog: Update.
 
 	* get_d.c, set_d.c: Fixed several bugs.
 
