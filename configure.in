@@ -603,9 +603,18 @@ for tmp_f in $gmp_m4postinc; do
   GMP_INCLUDE($tmp_basename_f)
 done
 
+# Path from mpn build subdirectory to top source directory.
+# The regexp testing for an absolute path is the same as in
+# _AC_OUTPUT_FILES of autoconf acgeneral.m4.
+case "$srcdir" in
+[[/\\]]* | ?:[[/\\]]* )
+     GMP_DEFINE_RAW(["define(\`CONFIG_SRCDIR',\`\`$srcdir'')"])    ;;
+*)   GMP_DEFINE_RAW(["define(\`CONFIG_SRCDIR',\`\`../$srcdir'')"]) ;;
+esac
+ 
 # After including asm.m4.
 GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_TARGET_CPU_$target_cpu')", POST)
- 
+
 # Pick the correct source files in `path' and link them to mpn/.
 # `gmp_mpn_functions' lists all functions that we need.  
 
