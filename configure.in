@@ -182,7 +182,7 @@ fi
 # For multiple ABIs, the scheme extends as follows.
 #
 #   abilist               set of ABI choices
-#   cclist_aa             compiler choices in ABI aa (defaults to cclist)
+#   cclist_aa             compiler choices in ABI aa
 #   xx_aa_cflags          flags for xx in ABI aa
 #   xx_aa_cppflags        cpp flags for xx in ABI aa
 #   xx_aa_cflags_optlist  list of sets of optional flags in ABI aa
@@ -450,13 +450,20 @@ case $host in
   # when generating the shared library.
 
   [mips*-*-irix[6789]*])
-    # n32 uses a long long limb, but setup by _ABIN32 in gmp.h.
     abilist="64 n32"
+
+    # let the $found_compiler test below know that the cpu is recognised
+    path=dummy
+
+    cclist_n32="gcc cc"
     gcc_n32_cflags="-g -O2 -mabi=n32 -mips3"
     gcc_n32_ldflags="-Wc,-mabi=n32"
     cc_n32_cflags="-O2 -n32 -mips3"	# no -g, it disables all optimizations
     cc_n32_ldflags="-Wc,-n32"
+    limb_n32=longlong
     path_n32="mips3"
+
+    cclist_64="gcc cc"
     gcc_64_cflags="-g -O2 -mabi=64 -mips3"
     gcc_64_ldflags="-Wc,-mabi=64"
     cc_64_cflags="-O2 -64 -mips3"	# no -g, it disables all optimizations
@@ -616,8 +623,10 @@ case $host in
 
   # VAX
   vax*-*-*)
-    # FIXME: Is -fomit-frame-pointer accepted by vax gcc?
-    #        gcc/config/vax/vax.h has FRAME_POINTER_REQUIRED=1 always.
+    # Believe that vax gcc always accepts -fomit-frame-pointer, though it
+    # might not do anything.  Cf. gcc/config/vax/vax.h which has
+    # FRAME_POINTER_REQUIRED=1 always.
+    #
     gcc_cflags="-g -O2 $fomit_frame_pointer"
     path="vax"
     extra_functions="udiv_w_sdiv"
@@ -626,8 +635,8 @@ case $host in
 
   # AMD and Intel x86 configurations
   X86_PATTERN)
-    # Rumour has it -O2 used to give worse register allocation than just -O,
-    # but lets assume that's no longer true.
+    # Rumour has it gcc -O2 used to give worse register allocation than just
+    # -O, but lets assume that's no longer true.
     gcc_cflags="-g -O2 $fomit_frame_pointer"
     GMP_INCLUDE_MPN(x86/x86-defs.m4)
     extra_functions="udiv umul"
@@ -636,39 +645,47 @@ case $host in
     # Availability of rdtsc is checked at run-time.
     SPEED_CYCLECOUNTER_OBJ=pentium.lo
 
-    # defaults for anything not otherwise mentioned
+    # gcc 2.7.2 only knows i386 and i486, using -m386 or -m486.  These
+    # represent -mcpu= since -m486 doesn't generate 486 specific insns.  The
+    # -mcpu= and -march= options will fail, leaving just -m486.
+    #
+    # gcc 2.95.2 adds k6, pentium and pentiumpro, and allows -march= and
+    # -mcpu=.
+    #
+    # gcc 2.96 (pre-release gcc 3) adds athlon.
+
+    # Defaults for anything not otherwise mentioned.
     path="x86"
     gcc_cflags_optlist="cpu arch"
-    gcc_cflags_cpu="-mcpu=i486"
+    gcc_cflags_cpu="-mcpu=i486 -m486"
     gcc_cflags_arch="-march=i486"
 
-    # gcc 2.7.2 only knows i386, i486 and pentium
-    # gcc 2.95.2 adds k6 and pentiumpro
-    # gcc 3 will add athlon
     case $host in
       i386*-*-*)
         # Because i386 means generic x86, -mcpu=i486 is used since that
         # should better suit newer processors.
-        gcc_cflags_cpu="-mcpu=i486"
+        # FIXME: How would a user ask for an actual 80386? Currently only by
+        # using CFLAGS="-mcpu=386" or whatever.
+        gcc_cflags_cpu="-mcpu=i486 -m486"
         gcc_cflags_arch="-march=i386"
         ;;
       i586*-*-* | pentium-*-* | pentiummmx-*-*)
-        gcc_cflags_cpu="-mcpu=pentium"
+        gcc_cflags_cpu="-mcpu=pentium -m486"
         gcc_cflags_arch="-march=pentium"
         ;;
       [i686*-*-* | pentiumpro-*-* | pentium[23]-*-*])
-        gcc_cflags_cpu="-mcpu=pentiumpro -mcpu=i486"
+        gcc_cflags_cpu="-mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=pentiumpro -march=i486"
         ;;
       k6*-*-*)
-        gcc_cflags_cpu="-mcpu=k6 -mcpu=i486"
+        gcc_cflags_cpu="-mcpu=k6 -mcpu=i486 -m486"
         gcc_cflags_arch="-march=k6 -march=i486"
         ;;
       athlon-*-*)
         # Athlon instruction costs are close to P6 (3 cycle load latency,
         # 4-6 cycle mul, 40 cycle div, pairable adc, etc) so if gcc doesn't
         # know athlon (eg. 2.95.2 doesn't) then fall back on pentiumpro.
-        gcc_cflags_cpu="-mcpu=athlon -mcpu=pentiumpro -mcpu=i486"
+        gcc_cflags_cpu="-mcpu=athlon -mcpu=pentiumpro -mcpu=i486 -m486"
         gcc_cflags_arch="-march=athlon -march=pentiumpro -march=i486"
         ;;
     esac
@@ -719,6 +736,9 @@ cclist=$cclist
 EOF
 
 
+test_CFLAGS=${CFLAGS+set}
+test_CPPFLAGS=${CPPFLAGS+set}
+
 for abi in $abilist; do
   abi_last="$abi"
 done
@@ -729,7 +749,7 @@ done
 if test -n "$ABI"; then
   found=no
   for abi in $abilist; do
-    if test $abi = "$ABI"; then found=yes; fi
+    if test $abi = "$ABI"; then found=yes; break; fi
   done
   if test $found = no; then
     AC_MSG_ERROR([ABI=$ABI is not among the following valid choices: $abilist])
@@ -749,62 +769,88 @@ for abi in $abilist; do
   abi1=[`echo _$abi | sed 's/[.]//g'`]
   if test $abi = $abi_last; then abi2=; else abi2="$abi1"; fi
 
-  # If the user has specified $CC, then that's the sole choice for $cc.
-  # $ccbase is set from the first word of $CC, stripped of any directory.
-  # This means something like CC="/usr/local/bin/gcc -pipe" will still get
-  # default CFLAGS based on "gcc".
+  # Compiler choices under this ABI
+                              eval cclist_chosen=\"\$cclist$abi1\"
+  test -n "$cclist_chosen" || eval cclist_chosen=\"\$cclist$abi2\"
+
+  # If there's a user specified $CC then don't use a list for
+  # $cclist_chosen, just a single value for $ccbase.
   #
-  # If $cclist_64 isn't set then plain $cclist is used.  This is unlike the
-  # way other variables are handled, but is convenient.
-  #
-  cclist_chosen=
   if test -n "$CC"; then
-    for cclist_chosen in $CC; do break; done
-    cclist_chosen=`echo $cclist_chosen | sed 's:.*/::'`
+
+    # The first word of $CC, stripped of any directory.  For instance
+    # CC="/usr/local/bin/gcc -pipe" will give "gcc".
+    #
+    for ccbase in $CC; do break; done
+    ccbase=`echo $ccbase | sed 's:.*/::'`
+
+    # If this $ccbase is in $cclist_chosen then it's a compiler we know and
+    # we can do flags defaulting with it.  If not, then $cclist_chosen is
+    # set to "unrecognised" so no default flags are used.
+    #
+    # "unrecognised" is used to avoid bad effects with eval if $ccbase has
+    # non-symbol characters.  For instance ccbase=my+cc would end up with
+    # something like cflags="$my+cc_cflags" which would give
+    # cflags="+cc_cflags" rather than the intended empty string for an
+    # unknown compiler.
+    #
+    cclist_chosen=unrecognised
+    for i in $cclist_per_abi; do
+      if test "$ccbase" = $i; then
+        cclist_chosen=$ccbase
+        break
+      fi
+    done
   fi  
-  test -n "$cclist_chosen" || eval cclist_chosen=\"\$cclist$abi1\"
-  test -n "$cclist_chosen" || cclist_chosen="$cclist"
 
   for ccbase in $cclist_chosen; do
 
-    # Any user CFLAGS, even an empty string, takes precendence
-                         eval cflags=\"\$${ccbase}${abi1}_cflags\"
-    test -n "$cflags" || eval cflags=\"\$${ccbase}${abi2}_cflags\"
-    test_CFLAGS=${CFLAGS+set}
-    if test "$test_CFLAGS" = set; then cflags=$CFLAGS; fi
-
-    # Any user CPPFLAGS, even an empty string, takes precendence
-                           eval cppflags=\"\$${ccbase}${abi1}_cppflags\"
-    test -n "$cppflags" || eval cppflags=\"\$${ccbase}${abi2}_cppflags\"
-    test_CPPFLAGS=${CPPFLAGS+set}
-    if test "$test_CPPFLAGS" = set; then cppflags=$CPPFLAGS; fi
-
-    # --enable-profiling adds -p/-pg even if CFLAGS was specified by the user.
-    case "$enable_profiling" in
-    prof)  cflags="$cflags -p" ;;
-    gprof) cflags="$cflags -pg" ;;
-    esac
-
-    # The tests to perform on this $cc, if any
-                           eval testlist=\"\$${ccbase}${abi1}_testlist\"
-    test -n "$testlist" || eval testlist=\"\$${ccbase}${abi2}_testlist\"
-
-    # When cross compiling, look for a compiler with the host alias as a
+    # When cross compiling, look for a compiler with the $host_alias as a
     # prefix, the same way that AC_CHECK_TOOL does.  But don't do this to a
     # user-selected $CC.
     #
-    # $cross_compiling will be yes/no/maybe at this point.  Use the host
-    # prefix for "maybe" as well as "yes".
+    # $cross_compiling will be yes/no/maybe at this point.  Do the host
+    # prefixing for "maybe" as well as "yes".
     #
     if test "$cross_compiling" != no && test -z "$CC"; then
       cross_compiling_prefix="${host_alias}-"
     fi
 
     for ccprefix in $cross_compiling_prefix ""; do
+
       cc="$CC"
       test -n "$cc" || cc="$ccprefix$ccbase"
 
+      # If the compiler is gcc but installed under another name, then change
+      # $ccbase so as to use the flags we know for gcc.  This helps for
+      # instance when specifying CC=gcc272 on Debian GNU/Linux, or the
+      # native cc which is really gcc on NeXT or MacOS-X.
+      #
+      if test $ccbase != gcc; then
+        GMP_PROG_CC_IS_GNU($cc,ccbase=gcc)
+      fi
+
+      # Any user CFLAGS, even an empty string, takes precendence
+                           eval cflags=\"\$${ccbase}${abi1}_cflags\"
+      test -n "$cflags" || eval cflags=\"\$${ccbase}${abi2}_cflags\"
+      if test "$test_CFLAGS" = set; then cflags=$CFLAGS; fi
+
+      # Any user CPPFLAGS, even an empty string, takes precendence
+                             eval cppflags=\"\$${ccbase}${abi1}_cppflags\"
+      test -n "$cppflags" || eval cppflags=\"\$${ccbase}${abi2}_cppflags\"
+      if test "$test_CPPFLAGS" = set; then cppflags=$CPPFLAGS; fi
+
+      # --enable-profiling adds -p/-pg even to user-specified CFLAGS
+      case "$enable_profiling" in
+      prof)  cflags="$cflags -p" ;;
+      gprof) cflags="$cflags -pg" ;;
+      esac
+
       GMP_PROG_CC_WORKS($cc $cflags $cppflags,,continue)
+
+      # The tests to perform on this $cc, if any
+                             eval testlist=\"\$${ccbase}${abi1}_testlist\"
+      test -n "$testlist" || eval testlist=\"\$${ccbase}${abi2}_testlist\"
 
       testlist_pass=yes
       for tst in $testlist; do
@@ -827,9 +873,18 @@ for abi in $abilist; do
 done
 
 
-# If we have flags for a particular CPU and/or system (as indicated by
-# having $path), then insist that they work.  When just using the generic C
-# code ($path empty), let AC_PROG_CC look around for a compiler too.
+# If we recognised the CPU, as indicated by $path being set, then insist
+# that we have a working compiler, either from our $cclist choices or from
+# $CC.  We can't let AC_PROG_CC look around for a compiler because it might
+# find one that we've rejected (for not supporting the modes our asm code
+# demands, etc).
+#
+# If we didn't recognise the CPU (and this includes host_cpu=none), then
+# fall through and let AC_PROG_CC look around for a compiler too.  This is
+# mostly in the interests of following a standard autoconf setup, after all
+# we've already tested cc and gcc adequately (hopefully).  As of autoconf
+# 2.50 the only thing AC_PROG_CC really adds is a check for "cl" (Microsoft
+# C on MS-DOS systems).
 #
 if test $found_compiler = no && test -n "$path"; then
   AC_MSG_ERROR([could not find a working compiler])
@@ -854,7 +909,7 @@ if test $found_compiler = yes; then
         case $flag in
           -march=pentiumpro)
             # buggy on some versions of gcc, exclude as necessary
-            GMP_GCC_MARCH_PENTIUMPRO($cc,,continue)
+            GMP_GCC_MARCH_PENTIUMPRO($ccbase,$cc,,continue)
             ;;
         esac
 
@@ -869,51 +924,51 @@ if test $found_compiler = yes; then
   CC="$cc"
   CFLAGS="$cflags"
   CPPFLAGS="$cppflags"
+
+
+  # GMP_LDFLAGS substitution, selected according to ABI.
+  # These are needed on libgmp.la and libmp.la, but currently not on
+  # convenience libraries like tune/libspeed.la or mpz/libmpz.la.
+  #
+                            eval GMP_LDFLAGS=\"\$${ccbase}${abi1}_ldflags\"
+  test -n "$GMP_LDFLAGS" || eval GMP_LDFLAGS=\"\$${ccbase}${abi1}_ldflags\"
+  AC_SUBST(GMP_LDFLAGS)
+
+  # extra_functions, selected according to ABI
+                    eval tmp=\"\$extra_functions$abi1\"
+  test -n "$tmp" || eval tmp=\"\$extra_functions$abi2\"
+  extra_functions="$tmp"
+
+
+  # Cycle counter, selected according to ABI.
+  #
+                    eval tmp=\"\$SPEED_CYCLECOUNTER_OBJ$abi1\"
+  test -n "$tmp" || eval tmp=\"\$SPEED_CYCLECOUNTER_OBJ$abi2\"
+  SPEED_CYCLECOUNTER_OBJ="$tmp"
+                    eval tmp=\"\$cyclecounter_size$abi1\"
+  test -n "$tmp" || eval tmp=\"\$cyclecounter_size$abi2\"
+  cyclecounter_size="$tmp"
+
+  if test -n "$SPEED_CYCLECOUNTER_OBJ"; then
+    AC_DEFINE_UNQUOTED(HAVE_SPEED_CYCLECOUNTER, $cyclecounter_size,
+    [Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits)])
+  fi
+  AC_SUBST(SPEED_CYCLECOUNTER_OBJ)
+
+
+  # Calling conventions checking, selected according to ABI.
+  #
+                    eval tmp=\"\$CALLING_CONVENTIONS_OBJS$abi1\"
+  test -n "$tmp" || eval tmp=\"\$CALLING_CONVENTIONS_OBJS$abi2\"
+  CALLING_CONVENTIONS_OBJS="$tmp"
+
+  if test -n "$CALLING_CONVENTIONS_OBJS"; then
+    AC_DEFINE(HAVE_CALLING_CONVENTIONS,1,
+    [Define if mpn/tests has calling conventions checking for the CPU])
+  fi
+  AC_SUBST(CALLING_CONVENTIONS_OBJS)
+
 fi
-
-
-# GMP_LDFLAGS substitution, selected according to ABI.
-# These are needed on libgmp.la and libmp.la, but currently not on
-# convenience libraries like tune/libspeed.la or mpz/libmpz.la.
-#
-                          eval GMP_LDFLAGS=\"\$${ccbase}${abi1}_ldflags\"
-test -n "$GMP_LDFLAGS" || eval GMP_LDFLAGS=\"\$${ccbase}${abi1}_ldflags\"
-AC_SUBST(GMP_LDFLAGS)
-
-
-# extra_functions, selected according to ABI
-                  eval tmp=\"\$extra_functions$abi1\"
-test -n "$tmp" || eval tmp=\"\$extra_functions$abi2\"
-extra_functions="$tmp"
-
-
-# Cycle counter, selected according to ABI.
-#
-                  eval tmp=\"\$SPEED_CYCLECOUNTER_OBJ$abi1\"
-test -n "$tmp" || eval tmp=\"\$SPEED_CYCLECOUNTER_OBJ$abi2\"
-SPEED_CYCLECOUNTER_OBJ="$tmp"
-                  eval tmp=\"\$cyclecounter_size$abi1\"
-test -n "$tmp" || eval tmp=\"\$cyclecounter_size$abi2\"
-cyclecounter_size="$tmp"
-
-if test -n "$SPEED_CYCLECOUNTER_OBJ"; then
-  AC_DEFINE_UNQUOTED(HAVE_SPEED_CYCLECOUNTER, $cyclecounter_size,
-  [Tune directory speed_cyclecounter, undef=none, 1=32bits, 2=64bits)])
-fi
-AC_SUBST(SPEED_CYCLECOUNTER_OBJ)
-
-
-# Calling conventions checking, selected according to ABI.
-#
-                  eval tmp=\"\$CALLING_CONVENTIONS_OBJS$abi1\"
-test -n "$tmp" || eval tmp=\"\$CALLING_CONVENTIONS_OBJS$abi2\"
-CALLING_CONVENTIONS_OBJS="$tmp"
-
-if test -n "$CALLING_CONVENTIONS_OBJS"; then
-  AC_DEFINE(HAVE_CALLING_CONVENTIONS,1,
-  [Define if mpn/tests has calling conventions checking for the CPU])
-fi
-AC_SUBST(CALLING_CONVENTIONS_OBJS)
 
 
 # If the user gave an MPN_PATH, use that verbatim, otherwise choose
@@ -1072,9 +1127,11 @@ esac
 
 AC_HEADER_STDC
 AC_HEADER_TIME
-AC_CHECK_HEADERS(getopt.h unistd.h sys/param.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(unistd.h sys/mman.h sys/param.h sys/resource.h sys/sysctl.h sys/systemcfg.h sys/time.h sys/times.h)
 
+# optarg should be in unistd.h, which is already in the default includes
 AC_CHECK_DECLS(optarg)
+
 AC_TYPE_SIGNAL
 AC_CHECK_TYPES(void)
 AC_C_STRINGIZE
@@ -1082,7 +1139,7 @@ AC_C_STRINGIZE
 AC_C_INLINE
 case $ac_cv_c_inline in
 no) ;;
-*)  AC_DEFINE(HAVE_INLINE,1,[whether an "inline" is available]) ;;
+*)  AC_DEFINE(HAVE_INLINE,1,[whether an actual "inline" is available]) ;;
 esac
 
 # from libtool
@@ -1094,7 +1151,7 @@ if test "$enable_alloca" = yes && test "$gmp_cv_func_alloca" = no; then
   AC_MSG_ERROR([--enable-alloca=yes specified, but alloca not available])
 fi
 
-AC_CHECK_FUNCS(getpagesize getrusage gettimeofday popen processor_info read_real_time srandom strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(getpagesize getrusage gettimeofday mprotect popen processor_info read_real_time srandom strtoul sysconf sysctl sysctlbyname times)
 
 
 # Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
