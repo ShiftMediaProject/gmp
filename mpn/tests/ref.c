@@ -847,7 +847,7 @@ refmpn_strip_twos (mp_ptr p, mp_size_t size)
 
   for (limbs = 0; p[0] == 0; limbs++)
     {
-      mpn_copyi (p, p+1, size-1);
+      MPN_COPY_INCR (p, p+1, size-1);
       p[size-1] = 0;
     }
 
