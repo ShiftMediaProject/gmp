@@ -1967,12 +1967,12 @@ mpn_sub_1 (mp_ptr dst, mp_srcptr src, mp_size_t size, mp_limb_t n)
 
 #ifdef __cplusplus
 #include <iosfwd>
-__GMP_DECLSPEC std::ostream& operator<< (std::ostream &o, mpz_srcptr z);
-__GMP_DECLSPEC std::ostream& operator<< (std::ostream &o, mpq_srcptr q);
-__GMP_DECLSPEC std::ostream& operator<< (std::ostream &o, mpf_srcptr f);
-__GMP_DECLSPEC std::istream& operator>> (std::istream &i, mpz_ptr z);
-__GMP_DECLSPEC std::istream& operator>> (std::istream &i, mpq_ptr q);
-__GMP_DECLSPEC std::istream& operator>> (std::istream &i, mpf_ptr f);
+__GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpz_srcptr);
+__GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpq_srcptr);
+__GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpf_srcptr);
+__GMP_DECLSPEC std::istream& operator>> (std::istream &, mpz_ptr);
+__GMP_DECLSPEC std::istream& operator>> (std::istream &, mpq_ptr);
+__GMP_DECLSPEC std::istream& operator>> (std::istream &, mpf_ptr);
 #endif
 
 
