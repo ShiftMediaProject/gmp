@@ -1521,6 +1521,9 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   mpn_mod_1 (src, size, divisor)
 #endif
 
+#define mpn_mod_34lsub1 __MPN(mod_34lsub1)
+void    mpn_mod_34lsub1 _PROTO ((mp_srcptr, mp_size_t));
+
 
 #define mpn_divexact_1 __MPN(divexact_1)
 void    mpn_divexact_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
