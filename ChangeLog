@@ -1,3 +1,31 @@
+2000-07-01  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (ABI and ISA): New section, bringing together ABI notes.
+	(Build Options): Add MPN_PATH, various updates.
+	(Build Options): Add note on setting CFLAGS when setting CC.
+	(Notes for Particular Systems): Add -march=pentiumpro problem.
+	(Known Build Problems): Note on gmp-mparam.h for 64-bit generic C.
+	(GMP Variable Conventions): Add some info on user defined functions.
+	(Reporting Bugs): Minor rewording.
+
+	* configure.in (MPN_PATH): Renamed from mpn_path.
+
+	* gmp-impl.h (ULONG_MAX,ULONG_HIGHBIT,...,SHORT_MAX): New defines.
+	* mp[zf]/tests/t-misc.c: Use them.
+
+	* mpbsd/tests/t-misc.c: New file.
+	* mpbsd/tests/Makefile.am: Add it.
+
+	* Makefile.am (LIBGMP_LT_*, LIBMP_LT_*): Bump version info.
+	* gmp.h (__GNU_MP_VERSION_*): Bump to 3.1.
+
+	* mpf/tests/Makefile.am (AUTOMAKE_OPTIONS): Add ansi2knr.
+
+	* Makefile.am (libmp_la_SOURCES): Add mp_set_fns.c, accidentally
+	omitted in gmp 3.0.x.
+	* gmp.texi (Custom Allocation): Note this is available in mpbsd,
+	and some minor rewording.
+
 2000-06-30  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/factorize.c (random): New function, defined conditionally.
