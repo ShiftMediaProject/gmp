@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include "mp.h"
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "longlong.h"
 
 char *
 mtox (const MINT *x)
@@ -39,7 +40,8 @@ mtox (const MINT *x)
 
   /* digits, plus '\0', plus possible '-', for an exact size */
   xp = x->_mp_d;
-  alloc_size = mpn_sizeinbase (xp, xsize, 16) + 1 + (xsign < 0);
+  MPN_SIZEINBASE_16 (alloc_size, xp, xsize);
+  alloc_size += 1 + (xsign < 0);
 
   str = (unsigned char *) (*__gmp_allocate_func) (alloc_size);
   s = str;
