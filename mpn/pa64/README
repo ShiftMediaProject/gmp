@@ -49,15 +49,15 @@ code needs to handle this problem frequently.
 STATUS
 
 * mpn_lshift and mpn_rshift run at 1.5 cycles/limb on PA8000 and at 1.0
-  cycles/limb on PA8500.  With latency scheduling, the numbers could be
-  improved to 1.0 cycles/limb for all PA8x00 chips.
+  cycles/limb on PA8500.  With latency scheduling, the numbers could
+  probably be improved to 1.0 cycles/limb for all PA8x00 chips.
 
-* mpn_add_n and mpn_sub_n run at 2.0 cycles/limb on PA8000 and at about 1.9
-  cycles/limb on PA8500.  With latency scheduling, this could be improved to
-  1.5 cycles/limb.
+* mpn_add_n and mpn_sub_n run at 2.0 cycles/limb on PA8000 and at about
+  1.6875 cycles/limb on PA8500.  With latency scheduling, this could
+  probably be improved to get close to 1.5 cycles/limb.  A problem is the
+  stalling of carry-inputting instructions after instructions that do not
+  write to carry.
 
-* The mpn_addmul_1 run at 6.25 cycles/limb.  The current code uses ADD,DC for
-  adjacent limbs, and relies heavily on reordering.
-
-* Both mpn_mul_1 and mpn_submul_1 run at around 11 cycles/limb.  There is
-  obviously room for improving these along the lines of mpn_addmul_1.
+* mpn_mul_1, mpn_addmul_1, and mpn_submul_1 run at between 5.625 and 6.375
+  on PA8500 and later, and about a cycle/limb slower on older chips.  The
+  code uses ADD,DC for adjacent limbs, and relies heavily on reordering.
