@@ -408,24 +408,22 @@ C<-E<gt>> style calls work too.
 
 =head2 GMP::Rand
 
-This class provides objects holding a state and selected method for random
-number generation.  C<randstate> will create a new object using a default or
-specified algorithm.
+This class provides objects holding an algorithm and state for random number
+generation.  C<randstate> creates a new object, for example,
 
     use GMP::Rand qw(randstate);
-    $r = randstate();   # default algorithm
+    $r = randstate();
+    $r = randstate('lc_2exp_size', 64);
+    $r = randstate('lc_2exp', 43840821, 1, 32);
 
-The 'lc' linear congruential algorithm iterates X = (aX + c) mod m, with m a
-power of 2 and a and c chosen from an internal table.
+With no parameters this corresponds to the C function
+C<gmp_randinit_default>, and is a compromise between speed and randomness.
+'lc_2exp_size' corresponds to C<gmp_randinit_lc_2exp_size>, and 'lc_2exp'
+corresponds to C<gmp_randinit_lc_2exp>.
 
-    $r = randstate('lc', 64);   # 64-bit linear cong
-
-The 'lc2exp' algorithm is the same, but allows a and c to be specified.  a
-can be an mpz, c must be an unsigned integer.  For example, to iterate X =
-(123*X+3) mod 2**256, which incidentally would be an extremely non-random
-generator,
-
-    $r = randstate('lc2exp', mpz(123), 3, 256);
+'lc_2exp_size' can fail if the requested size is bigger than the internal
+table provides for, in which case undef is returned.  The maximum size
+currently supported is 128.  The other forms always succeed.
 
 A randstate can be seeded with an integer or mpz, using the C<seed> method.
 /dev/random might be a good source of randomness, or time() or

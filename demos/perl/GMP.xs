@@ -2612,18 +2612,15 @@ CODE:
     TRACE_ACTIVE ();
 
     if (items == 0)
-      gmp_randinit (RETVAL, GMP_RAND_ALG_DEFAULT, 128);
+      {
+        gmp_randinit_default (RETVAL);
+      }
     else
       {
         STRLEN      len;
         const char  *method = SvPV (ST(0), len);
-        if (strcmp (method, "lc") == 0)
-          {
-            if (items != 2)
-              goto invalid;
-            gmp_randinit (RETVAL, GMP_RAND_ALG_LC, coerce_ulong (ST(1)));
-          }
-        else if (strncmp (method, "lc2exp", len) == 0)
+        assert (len == strlen (method));
+        if (strcmp (method, "lc_2exp") == 0)
           {
             if (items != 4)
               goto invalid;
@@ -2631,6 +2628,16 @@ CODE:
                                   coerce_mpz (tmp_mpz_0, ST(1)),
                                   coerce_ulong (ST(2)),
                                   coerce_ulong (ST(3)));
+          }
+        else if (strcmp (method, "lc_2exp_size") == 0)
+          {
+            if (items != 2)
+              goto invalid;
+            if (! gmp_randinit_lc_2exp_size (RETVAL, coerce_ulong (ST(1))))
+              {
+                Safefree (RETVAL);
+                XSRETURN_UNDEF;
+              }
           }
         else
           {
