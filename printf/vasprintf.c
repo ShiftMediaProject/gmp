@@ -37,38 +37,6 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 
-/* "buf" is a __gmp_allocate_func block of "alloc" many bytes.  The first
-   "size" of these have been written.  "alloc > size" is maintained, so
-   there's room to store a '\0' at the end.  "result" is where the
-   application wants the final block pointer.  */
-
-struct gmp_asprintf_t {
-  char    **result;
-  char    *buf;
-  size_t  size;
-  size_t  alloc;
-};
-
-
-/* If a realloc is necessary, use twice the size actually required, so as to
-   avoid repeated small reallocs.  */
-
-#define NEED(n)                                                         \
-  do {                                                                  \
-    size_t  alloc, newsize, newalloc;                                   \
-    ASSERT (d->alloc >= d->size + 1);                                   \
-                                                                        \
-    alloc = d->alloc;                                                   \
-    newsize = d->size + (n);                                            \
-    if (alloc <= newsize)                                               \
-      {                                                                 \
-        newalloc = 2*newsize;                                           \
-        d->alloc = newalloc;                                            \
-        d->buf = (__gmp_reallocate_func) (d->buf, alloc, newalloc);     \
-      }                                                                 \
-  } while (0)
-
-
 /* vasprintf isn't used since we prefer all GMP allocs to go through
    __gmp_allocate_func, and in particular we don't want the -1 return from
    vasprintf for out-of-memory, instead __gmp_allocate_func should handle
@@ -76,21 +44,21 @@ struct gmp_asprintf_t {
    our current space is insufficient.
 
    The initial guess for the needed space is an arbitrary 256 bytes.  If
-   that (and any extra NEED might give) isn't enough then an ISO C99
-   standard vsnprintf will tell us what we really need.
+   that (and any extra GMP_ASPRINTF_T_NEED might give) isn't enough then an
+   ISO C99 standard vsnprintf will tell us what we really need.
 
    GLIBC 2.0.x vsnprintf returns either -1 or space-1 to indicate overflow,
    without giving any indication how much is really needed.  In this case
    keep trying with double the space each time.
 
    A return of space-1 is success on a C99 vsnprintf, but we're not
-   bothering to identify which we've got, so just take the pessimistic
-   option and assume it's glibc 2.0.x.
+   bothering to identify which style vsnprintf we've got, so just take the
+   pessimistic option and assume it's glibc 2.0.x.
 
    Notice the use of ret+2 for the new space in the C99 case.  This ensures
    the next vsnprintf return value will be space-2, which is unambiguously
-   successful.  But actually NEED() will realloc to even bigger than that
-   ret+2.
+   successful.  But actually GMP_ASPRINTF_T_NEED() will realloc to even
+   bigger than that ret+2.
 
    vsnprintf might trash it's given ap, so copy it in case we need to use it
    more than once.  See comments with gmp_snprintf_format.  */
@@ -105,7 +73,7 @@ gmp_asprintf_format (struct gmp_asprintf_t *d, const char *fmt,
 
   for (;;)
     {
-      NEED (space);
+      GMP_ASPRINTF_T_NEED (d, space);
       space = d->alloc - d->size;
       va_copy (ap, orig_ap);
       ret = vsnprintf (d->buf + d->size, space, fmt, ap);
@@ -129,52 +97,19 @@ gmp_asprintf_format (struct gmp_asprintf_t *d, const char *fmt,
   return ret;
 }
 
-static int
-gmp_asprintf_memory (struct gmp_asprintf_t *d, const char *str, size_t len)
-{
-  NEED (len);
-  memcpy (d->buf + d->size, str, len);
-  d->size += len;
-  return len;  
-}
-
-static int
-gmp_asprintf_reps (struct gmp_asprintf_t *d, int c, int reps)
-{
-  NEED (reps);
-  memset (d->buf + d->size, c, reps);
-  d->size += reps;
-  return reps;
-}
-
-static int
-gmp_asprintf_final (struct gmp_asprintf_t *d, int c, int reps)
-{
-  char  *buf = d->buf;
-  ASSERT (d->alloc >= d->size + 1);
-  buf[d->size] = '\0';
-  __GMP_REALLOCATE_FUNC_MAYBE (buf, d->alloc, d->size+1);
-  *d->result = buf;
-  return 0;
-}
-
-static const struct doprnt_funs_t  gmp_asprintf_funs = {
+const struct doprnt_funs_t  __gmp_asprintf_funs = {
   (doprnt_format_t) gmp_asprintf_format,
-  (doprnt_memory_t) gmp_asprintf_memory,
-  (doprnt_reps_t)   gmp_asprintf_reps,
-  (doprnt_final_t)  gmp_asprintf_final
+  (doprnt_memory_t) __gmp_asprintf_memory,
+  (doprnt_reps_t)   __gmp_asprintf_reps,
+  (doprnt_final_t)  __gmp_asprintf_final
 };
-
 
 int
 gmp_vasprintf (char **result, const char *fmt, va_list ap)
 {
   struct gmp_asprintf_t  d;
-  d.result = result;
-  d.alloc = 256;
-  d.buf = (__gmp_allocate_func) (d.alloc);
-  d.size = 0;
-  return __gmp_doprnt (&gmp_asprintf_funs, &d, fmt, ap);
+  GMP_ASPRINTF_T_INIT (d, result);
+  return __gmp_doprnt (&__gmp_asprintf_funs, &d, fmt, ap);
 }
 
 #endif /* HAVE_VSNPRINTF */
