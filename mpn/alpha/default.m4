@@ -104,6 +104,11 @@ define(`LEA',
 m4_assert_numargs(2)
 `lda   $1,  $2')
 
+dnl  Need some stuff for extwl just for bigend systems.  Define to empty.
+define(`bigend',
+m4_assert_numargs(1)
+`')
+
 dnl  Usage: ASM_END()
 define(`ASM_END',
 m4_assert_numargs(0)
