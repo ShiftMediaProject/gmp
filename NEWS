@@ -25,12 +25,15 @@ Changes between MP version 4.0.1 and 4.1
   also major speed improvements for tiny operands.
 * mpn_get_str parameter restrictions relaxed.
 * Major speed improvments for HPPA 2.0 systems.
+* Major speed improvments for UltraSPARC systems.
 * Major speed improvments for IA-64 systems (but still sub-optimal code).
-* Various exact PowerPC cpu types.
+* Extended test suite.
 * mpfr is back, with many bug fixes and portability improvements.
 * New function: mpz_ui_sub.
+* Optimization for nth root functions (mpz_root, mpz_perfect_power_p).
+* Optimization for extended gcd (mpz_gcdext, mpz_invert, mpn_gcdext).
 * Generalized low-level number format, reserving a `nails' part of each
-  limb.  (Please note that this is really experimental.  Several functions
+  limb.  (Please note that this is really experimental; some functions
   are likely to compute garbage when nails are enabled.)
 
 Changes between MP version 4.0 and 4.0.1
