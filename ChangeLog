@@ -18,6 +18,14 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-11  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/ia64/rsh1aors_n.asm: New file.
+
+	* mpn/asm-defs.m4: Handle rsh1aors_n.
+
+	* configure.in (tmp_mulfunc): Handle rsh1aors_n.
+
 2003-10-11  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium4/sse2/diveby3.asm: Remove non-PIC RODATA memory
@@ -92,7 +100,7 @@ MA 02111-1307, USA.
 	refmpn_rsh1add_n, refmpn_rsh1sub_n): Add ASSERTs for operand overlaps.
 	* tests/tests.h (refmpn_addlsh1_n, refmpn_sublsh1_n, refmpn_rsh1add_n,
 	refmpn_rsh1sub_n): Add prototypes.
- 
+
 	* tests/devel/try.c, tune/many.pl: Add mpn_addlsh1_n, mpn_sublsh1_n,
 	mpn_rsh1add_n, mpn_rsh1sub_n.
 
