@@ -40,6 +40,8 @@ MA 02111-1307, USA. */
 #include "tests.h"
 
 
+/* Return 1 if the areas [xp,xp+xsize-1] and [yp,yp+ysize-1] overlap,
+   and zero if they don't. */
 int
 refmpn_overlap_p (mp_srcptr xp, mp_size_t xsize, mp_srcptr yp, mp_size_t ysize)
 {
@@ -51,12 +53,12 @@ refmpn_overlap_p (mp_srcptr xp, mp_size_t xsize, mp_srcptr yp, mp_size_t ysize)
   ASSERT (yp+ysize >= yp);
 
   if (xp + xsize <= yp)
-    return 1;
+    return 0;
   
   if (yp + ysize <= xp)
-    return 1;
+    return 0;
 
-  return 0;
+  return 1;
 }
 
 /* Check overlap for a routine defined to work low to high. */
