@@ -1,3 +1,11 @@
+2001-03-05  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/cray/ieee/mul_1.c: Rewrite.  Streamline multiplications;
+	use `majority' logic.
+	* mpn/cray/ieee/addmul_1.c: Likewise.
+
+	* mpn/cray/add_n.c: Rewrite using `majority' logic.
+
 2001-03-04  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h (CRAY udiv_qrnnd): No longer conditional on CRAYMPP.
