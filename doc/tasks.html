@@ -150,7 +150,8 @@
 <li> UltraSPARC: Write <code>umul_ppmm</code>.  Important in particular for
      <code>mpn_sqr_basecase</code>.
 <li> Implement <code>mpn_mul_basecase</code> and <code>mpn_sqr_basecase</code>
-     for important machines.
+     for important machines.  Helping the generic sqr_basecase.c with an
+     <code>mpn_sqr_diagonal</code> might be enough for some of the RISCs.
 <li> POWER2/POWER2SC: Schedule <code>mpn_lshift</code>/<code>mpn_rshift</code>.
      Will bring time from 1.75 to 1.25 cycles/limb.
 <li> X86: Optimize non-MMX <code>mpn_lshift</code> for shifts by 1.  (See Pentium code.)
@@ -218,6 +219,10 @@
      would still be compiler-independent though.
 <li> Make versions of <code>mpz_set_str</code> etc taking string
      lengths rather than null-terminators.
+<li> Consider changing the thresholds to apply the simpler algorithm when
+     "<code>&lt;=</code>" rather than "<code>&lt;</code>", so a threshold can
+     be set to <code>MP_SIZE_T_MAX</code> to get only the simpler code (the
+     compiler will know <code>size &lt;= MP_SIZE_T_MAX</code> is always true).
 </ul>
 
 
