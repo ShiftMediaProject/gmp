@@ -59,5 +59,5 @@ MA 02111-1307, USA. */
 #define MUL_FFT_THRESHOLD              3712
 
 #define SQR_FFT_TABLE  { 432, 864, 3136, 6400, 25600, 0 }
-#define SQR_FFT_MODF_THRESHOLD          232
-#define SQR_FFT_THRESHOLD              1824
+#define SQR_FFT_MODF_THRESHOLD          480
+#define SQR_FFT_THRESHOLD              2976

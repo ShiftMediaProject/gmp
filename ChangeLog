@@ -1,5 +1,5 @@
-Copyright 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999 2000, 2001, 2002
-Free Software Foundation, Inc.
+Copyright 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999 2000, 2001,
+	  2002, 2003 Free Software Foundation, Inc.
 .
 This file is part of the GNU MP Library.
 .
@@ -17,6 +17,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
+
+2003-02-10  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/nails/gmp-mparam.h: Retune.
+	* mpn/sparc64/gmp-mparam.h: Retune.
+	* mpn/pa64/gmp-mparam.h: Retune.
+	* mpn/sparc32/v8/supersparc/gmp-mparam.h: Retune.
+	* mpn/sparc32/v8/gmp-mparam.h: Retune.
+	* mpn/mips64/gmp-mparam.h: Retune.
+	* mpn/alpha/ev6/gmp-mparam.h: Retune.
+	* mpn/powerpc32/gmp-mparam.h: Retune.
+	* mpn/powerpc32/750/gmp-mparam.h: Retune.
+	* mpn/alpha/ev5/gmp-mparam.h: Retune.
+	* mpn/m68k/gmp-mparam.h: Retune.
+	* mpn/cray/gmp-mparam.h: Set GET_STR_PRECOMPUTE_THRESHOLD.
+
+	* configure.in: Undo this, problem doesn't happen any more:
+	(mips64*-*-*): Pass just -O1 to cc, to work around compiler bug.
 
 2003-02-03  Kevin Ryde  <kevin@swox.se>
 
@@ -198,7 +216,7 @@ MA 02111-1307, USA.
 	__gmp_allocate_func etc.
 	* demos/expr/t-expr.c: Don't use gmp-impl.h.
 	(numberof): New macro.
-	
+
 	* gmp-h.in, gmp-impl.h (__gmp_allocate_func, __gmp_reallocate_func,
 	__gmp_free_func): Move declarations to gmp-impl.h
 
@@ -315,10 +333,10 @@ MA 02111-1307, USA.
 	* */Makefile.in, configure, aclocal.m4, install-sh, mkinstalldirs:
 	Update to automake 1.7.2.
 
-        * gmp.texi (Build Options): Add hppa64 to cpu types.
-        (ABI and ISA): Add gcc to hppa 2.0.
+	* gmp.texi (Build Options): Add hppa64 to cpu types.
+	(ABI and ISA): Add gcc to hppa 2.0.
 	(Debugging): Add maximum debuggability config options.
-        (Language Bindings): Add Arithmos, reported by Johan Vervloet.
+	(Language Bindings): Add Arithmos, reported by Johan Vervloet.
 	(Formatted Output Strings): 128 bits is about 40 digits, ll is only
 	for long long not long double.
 	(Formatted Input Strings): ll is only for long long not long double.
@@ -330,13 +348,13 @@ MA 02111-1307, USA.
 
 2002-12-13  Pedro Gimeno  <pggimeno@wanadoo.es>
 
-        * randlc2x.c (lc): Remove check for seedn < an, which is now
+	* randlc2x.c (lc): Remove check for seedn < an, which is now
 	superfluous.  Add ASSERT to ensure it's correct.  Add ASSERT to check
 	precondition of __GMPN_ADD.
-        (gmp_randinit_lc_2exp): Avoid reallocation by allocating one extra bit
+	(gmp_randinit_lc_2exp): Avoid reallocation by allocating one extra bit
 	for both seed and a.  Simplify seedn < p->_cn case.
 
-        * tests/rand/t-lc2exp.c (check_bigs): Test negative seeds.
+	* tests/rand/t-lc2exp.c (check_bigs): Test negative seeds.
 
 2002-12-12  Torbjorn Granlund  <tege@swox.com>
 
