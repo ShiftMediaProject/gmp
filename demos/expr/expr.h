@@ -129,13 +129,4 @@ int mpz_expr_a __GMP_PROTO ((__gmp_const struct mpexpr_operator_t *table,
                         mpz_srcptr var[26]));
 int mpz_expr __GMP_PROTO ((mpz_ptr res, int base, __gmp_const char *e, ...));
 
-/* when mpfr.h has been included */
-#ifdef MPFR_VERSION_MAJOR
-int mpfr_expr_a __GMP_PROTO ((__gmp_const struct mpexpr_operator_t *table,
-                         mpfr_ptr res, int base, unsigned long prec,
-                         __gmp_const char *e, size_t elen,
-                         mpfr_srcptr var[26]));
-int mpfr_expr __GMP_PROTO ((mpfr_ptr res, int base, __gmp_const char *e, ...));
-#endif
-
 #endif

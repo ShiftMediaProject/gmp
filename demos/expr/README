@@ -1,4 +1,4 @@
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -33,7 +33,7 @@ FUTURE VERSIONS OF GMP.
 
 
 The files in this directory implement a simple scheme of string based
-expression parsing and evaluation, supporting mpz, mpq, mpf and mpfr.
+expression parsing and evaluation, supporting mpz, mpq and mpf.
 
 This will be slower than direct GMP library calls, but may be convenient in
 various circumstances, such as while prototyping, or for letting a user
@@ -73,36 +73,19 @@ some of the internal tests/libtests.la.
 
 
 
-OPTIONAL MPFR
-
-The mpfr support in libexpr.a is built if GMP is configured with
---enable-mpfr.  Programs must include mpfr.h before expr.h to get the extra
-prototypes,
-
-	 #include "mpfr.h"
-	 #include "expr.h"
-
-If the expr sources are being compiled outside a GMP build tree, then change
-HAVE_MPFR in expr-impl.h if necessary to indicate whether mpfr is available.
-exprfr.c and exprfra.c are the C files providing mpfr support.
-
-
-
-
 SIMPLE USAGE
 
 int mpz_expr (mpz_t res, int base, const char *e, ...);
 int mpq_expr (mpq_t res, int base, const char *e, ...);
 int mpf_expr (mpf_t res, int base, const char *e, ...);
-int mpfr_expr (mpfr_t res, int base, const char *e, ...);
 
 These functions evaluate simple arithmetic expressions.  For example,
 
 	mpz_expr (result, 0, "123+456", NULL);
 
 Numbers are parsed by mpz_expr and mpq_expr the same as mpz_set_str with the
-given base.  mpf_expr and mpfr_expr follow mpf_set_str and mpfr_set_str
-respectively, but supporting an "0x" prefix for hex when base==0.
+given base.  mpf_expr follows mpf_set_str, but supporting an "0x" prefix for
+hex when base==0.
 
 	mpz_expr (result, 0, "0xAAAA * 0x5555", NULL);
 
@@ -168,22 +151,11 @@ The following is the full set of functions,
             abs, ceil, cmp, eq, floor, integer_p, max, min, reldiff, sgn,
             sqrt, trunc
 
-        mpfr_expr
-            abs, agm, ceil, cmp, cos, eq, exp, floor, inf_p, log, max, min,
-            nan_p, number_p, reldiff, sgn, sin, sqrt, trunc
-
-In addition mpfr_expr has constants "log2" and "pi".  For example,
-
-	mpfr_expr (res, 0, "2 * pi - log2", NULL);
-
 All these are the same as the GMP library functions, except that min and max
 don't exist in the library.  Note also that min, max, gcd and lcm take any
 number of arguments, not just two.
 
-
-mpf_expr and mpfr_expr do all calculations to the precision of the
-destination variable.  mpfr_expr rounds using GMP_RNDZ (but this can be
-changed at build time in expr-impl.h).
+mpf_expr does all calculations to the precision of the destination variable.
 
 
 Expression parsing can succeed or fail.  The return value indicates this,
@@ -221,10 +193,6 @@ int mpf_expr_a (const struct mpexpr_operator_t *table,
                 mpf_ptr res, int base, unsigned long prec,
                 const char *e, size_t elen,
                 mpf_srcptr var[26])
-int mpfr_expr_a (const struct mpexpr_operator_t *table,
-                 mpfr_ptr res, int base, unsigned long prec,
-                 const char *e, size_t elen,
-                 mpfr_srcptr var[26])
 
 These functions are an advanced interface to expression parsing.
 
@@ -244,7 +212,6 @@ available as
 	const struct mpexpr_operator_t * const mpz_expr_standard_table;
 	const struct mpexpr_operator_t * const mpq_expr_standard_table;
 	const struct mpexpr_operator_t * const mpf_expr_standard_table;
-	const struct mpexpr_operator_t * const mpfr_expr_standard_table;
 
 struct mpexpr_operator_t is the following
 
@@ -432,7 +399,6 @@ User definable operator tables will have various uses.  For example,
   - a boolean evaluator with "^" for AND, "v" for OR
   - variables introduced with "%" instead of "$"
   - brackets as "[" and "]" instead of "(" and ")"
-  - new mpfr operators ^+^ or _+_ which round in a particular direction
 
 The only fixed parts of the parsing are the treatment of numbers, whitespace
 and the two styles of operator/function name recognition.

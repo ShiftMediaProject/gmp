@@ -1,6 +1,6 @@
 /* Demo program to run expression evaluation.
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -23,10 +23,9 @@ MA 02111-1307, USA. */
 /* Usage: ./run-expr [-z] [-q] [-f] [-r] [-p prec] [-b base] expression...
 
    Evaluate each argument as a simple expression.  By default this is in mpz
-   integers, but -q selects mpq, -f selects mpf or -r selects mpfr (if
-   available).  For mpf the float precision can be set with -p.  In all
-   cases the input base can be set with -b, or the default is "0" meaning
-   decimal with "0x" allowed.
+   integers, but -q selects mpq or -f selects mpf.  For mpf the float
+   precision can be set with -p.  In all cases the input base can be set
+   with -b, or the default is "0" meaning decimal with "0x" allowed.
 
    This is a pretty trivial program, it's just an easy way to experiment
    with the evaluation functions.  */
@@ -37,10 +36,6 @@ MA 02111-1307, USA. */
 #include <unistd.h>
 
 #include "gmp.h"
-
-/* only to get HAVE_MPFR, not necessary for normal use */
-#include "expr-impl.h"
-
 #include "expr.h"
 
 #if ! HAVE_DECL_OPTARG
@@ -155,30 +150,6 @@ main (int argc, char *argv[])
       mpf_clear (foo);
       mpf_clear (bar);
     }
-    break;
-
-  case 'r':
-#if HAVE_MPFR
-    {
-      mpfr_t  res, foo, bar;
-
-      mpfr_init2 (res, prec);
-      mpfr_init_set_ui (foo, 55L, GMP_RNDZ);
-      mpfr_init_set_ui (bar, 99L, GMP_RNDZ);
-
-      for (i = optind; i < argc; i++)
-        TRY (mpfr_expr,
-             mpfr_out_str (stdout, obase, 0, res, GMP_RNDZ),
-             argv[i]);
-
-      mpfr_clear (res);
-      mpfr_clear (foo);
-      mpfr_clear (bar);
-    }
-#else
-    printf ("mpfr not compiled in\n");
-    exit (1);
-#endif
     break;
   }
 

@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+# Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -20,26 +20,14 @@
 # MA 02111-1307, USA.
 
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests -I$(top_srcdir)/mpfr
-
-if WANT_MPFR
-MPFR_SOURCES_OPTION = exprfr.c exprfra.c
-MPFR_LIBADD_OPTION = $(top_builddir)/mpfr/libmpfr.a
-endif
-
-# ensure these are always distributed
-EXTRA_DIST = exprfr.c exprfra.c
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 
 EXTRA_LIBRARIES = libexpr.a
 libexpr_a_SOURCES = expr.h expr-impl.h \
-  expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c \
-  $(MPFR_SOURCES_OPTION)
+  expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c
 
-# FIXME: Various bits of libmpfr still need -lm, but one day this dependency
-# will be removed.
-#
 EXTRA_PROGRAMS = run-expr t-expr
-LDADD = libexpr.a $(MPFR_LIBADD_OPTION) $(top_builddir)/libgmp.la $(LIBM)
+LDADD = libexpr.a $(top_builddir)/libgmp.la
 t_expr_LDADD = $(top_builddir)/tests/libtests.la $(LDADD)
 
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES)

@@ -38,15 +38,7 @@ MA 02111-1307, USA. */
 #include <varargs.h>
 #endif
 
-#if HAVE_MPFR
-#include "mpfr.h"
-#endif
-
 #include "expr.h"
-
-
-/* Rouding mode for mpfr_expr.  Change as desired.  */
-#define ROUND  GMP_RNDZ
 
 
 #define isasciidigit(c)   (isascii (c) && isdigit (c))
@@ -63,9 +55,6 @@ union mpX_t {
   mpz_t   z;
   mpq_t   q;
   mpf_t   f;
-#if HAVE_MPFR
-  mpfr_t  r;
-#endif
 };
 
 typedef union mpX_t *mpX_ptr;

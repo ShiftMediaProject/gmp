@@ -1,6 +1,6 @@
 /* mpexpr_evaluate -- shared code for simple expression evaluation
 
-Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002, 2004 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,21 +34,7 @@ MA 02111-1307, USA. */
    probably segv).  */
 
 #define TRACE(x) 
-#define MPX_TRACE  mpfr_trace
-
-
-#if 0
-#include "tests.h"
-
-/* Print "name=value\n" to stdout for an mpf_t value. */
-void
-mpfr_trace (__gmp_const char *name, mpfr_srcptr f)
-{
-  mp_trace_start (name);
-  mpfr_out_str (stdout, mp_trace_base, 0, f, GMP_RNDZ);
-  printf ("\n");
-}
-#endif
+#define MPX_TRACE  mpz_trace
 
 
 /* A few helper macros copied from gmp-impl.h */
