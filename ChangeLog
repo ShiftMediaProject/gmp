@@ -1,3 +1,8 @@
+2000-12-31  Torbjorn Granlund  <tege@swox.com>
+
+	* mpbsd/tests/t-misc.c (check_itom): Exclude test for all Cray
+	vector systems.  Correct comment.
+
 2000-12-31  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (ABI and ISA): New enough gcc needed for mips n32 etc, gcc
