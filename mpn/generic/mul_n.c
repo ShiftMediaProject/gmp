@@ -1184,14 +1184,11 @@ mpn_toom3_mul_n (p, a, b, n, ws)
   interpolate3 (A, B, C, D, E, &tB, &tC, &tD, l2, ls << 1);
 
   /** Final stage: add up the coefficients. **/
-  {
-    mp_limb_t i, x, y;
-    tB += mpn_add_n (p + l, p + l, B, l2);
-    tD += mpn_add_n (p + l3, p + l3, D, l2);
-    mpn_incr_u (p + l3, tB);
-    mpn_incr_u (p + l4, tC);
-    mpn_incr_u (p + l5, tD);
-  }
+  tB += mpn_add_n (p + l, p + l, B, l2);
+  tD += mpn_add_n (p + l3, p + l3, D, l2);
+  mpn_incr_u (p + l3, tB);
+  mpn_incr_u (p + l4, tC);
+  mpn_incr_u (p + l5, tD);
 }
 
 /*-- mpn_toom3_sqr_n --------------------------------------------------------------*/
@@ -1284,14 +1281,11 @@ mpn_toom3_sqr_n (p, a, n, ws)
   interpolate3 (A, B, C, D, E, &tB, &tC, &tD, l2, ls << 1);
 
   /** Final stage: add up the coefficients. **/
-  {
-    mp_limb_t i, x, y;
-    tB += mpn_add_n (p + l, p + l, B, l2);
-    tD += mpn_add_n (p + l3, p + l3, D, l2);
-    mpn_incr_u (p + l3, tB);
-    mpn_incr_u (p + l4, tC);
-    mpn_incr_u (p + l5, tD);
-  }
+  tB += mpn_add_n (p + l, p + l, B, l2);
+  tD += mpn_add_n (p + l3, p + l3, D, l2);
+  mpn_incr_u (p + l3, tB);
+  mpn_incr_u (p + l4, tC);
+  mpn_incr_u (p + l5, tD);
 }
 
 void
