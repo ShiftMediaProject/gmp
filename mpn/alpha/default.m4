@@ -45,9 +45,9 @@ define(`PROLOGUE',
 m4_assert_numargs(1)
 `	.text
 	.align	3
-	.globl	GSYM_PREFIX$1
-	.ent	GSYM_PREFIX$1
-GSYM_PREFIX$1:
+	.globl	GSYM_PREFIX`'$1
+	.ent	GSYM_PREFIX`'$1
+GSYM_PREFIX`'$1:
 	.frame r30,0,r26
 	.prologue 0')
 
@@ -56,9 +56,9 @@ define(`PROLOGUE_GP',
 m4_assert_numargs(1)
 `	.text
 	.align	3
-	.globl	GSYM_PREFIX$1
-	.ent	GSYM_PREFIX$1
-GSYM_PREFIX$1:
+	.globl	GSYM_PREFIX`'$1
+	.ent	GSYM_PREFIX`'$1
+GSYM_PREFIX`'$1:
 	ldgp	r29,0(r27)
 	.frame	r30,0,r26
 	.prologue 1')
@@ -66,7 +66,7 @@ GSYM_PREFIX$1:
 dnl  Usage: EPILOGUE(name)
 define(`EPILOGUE',
 m4_assert_numargs(1)
-`	.end	GSYM_PREFIX$1')
+`	.end	GSYM_PREFIX`'$1')
 
 
 dnl  Usage: r0 ... r31
