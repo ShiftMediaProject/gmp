@@ -1,3 +1,14 @@
+2000-06-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/x86/k7/mmx/copyi.asm: Use `testb' instead of `test'.
+	* mpn/x86/k7/mmx/copyd.asm: Likewise.
+
+	* mpn/x86/k7/mmx/lshift.asm: Avoid using `~' (Solaris as problems).
+	* mpn/x86/k7/mmx/rshift.asm: Likewise.
+	* mpn/x86/k6/aors_n.asm: Likewise.
+	* mpn/x86/k7/aors_n.asm: Likewise.
+	* mpn/x86/k7/mul_basecase.asm: Likewise.
+
 2000-06-13  Torbjorn Granlund  <tege@swox.com>
 
 	* tune/sparcv9.asm: Tune, deleting two instructions.
