@@ -297,7 +297,7 @@ m4_assert_numargs(-1)
 
 dnl  Usage: femms
 dnl
-dnl  The gas 2.91 that comes with FreeBSD 3.4 doesn't support femms, so the
+dnl  The gas 2.9.1 that comes with FreeBSD 3.4 doesn't support femms, so the
 dnl  following is a replacement using .byte.
 dnl
 dnl  If femms isn't available an emms is generated instead.  This is
@@ -372,29 +372,35 @@ define(cmov_bytes,
 m4_assert_numargs(4)
 `ifelse(cmov_available_p,1,
 	`.byte	$4	# cmov$1 $2, $3',
-	`j`'cmov_bytes_oppcond(`$1')	1f	# simulated cmov$1 $2, $3
+	`j`'x86_opposite_cond(`$1')	1f	# simulated cmov$1 $2, $3
 	mov	$2, $3
 1:`'dnl
 m4_warning(`warning, simulating cmov with jump, use for testing only
 ')')')
 
-dnl  Expand to an opposite condition, eg. cmov_bytes_oppcond(z) -> nz,
-dnl  or cmov_bytes_oppcond(ns) -> s.
+dnl  Expand to an opposite condition, eg. x86_opposite_cond(z) -> nz,
+dnl  or x86_opposite_cond(ns) -> s.
 dnl
-define(cmov_bytes_oppcond,
+define(x86_opposite_cond,
 m4_assert_numargs(1)
 `ifelse(substr(`$1',0,1),n,
 `substr(`$1',1)',
 `n$1')')
 
 
-dnl  Usage: cmovnz_ecx_ebx
+dnl  Usage: cmovnz_eax_ebx
 dnl         ...
 dnl
-dnl  The gas 2.91 that comes with FreeBSD 3.4 doesn't support cmov, so the
-dnl  following are replacements using .byte.  The byte values are best found
-dnl  from an assembler that does know about cmov, eg. gas 2.95.  Setting
-dnl  these up is tedious, so only what's needed is here.
+dnl  Only recent versions of gas know cmov, so the following are
+dnl  replacements using ".byte".
+
+define(`cmovnz_eax_ebx',
+m4_assert_numargs(-1)
+`cmov_bytes(nz,%eax,%ebx,`15,69,216')')
+
+define(`cmovnz_ebx_ecx',
+m4_assert_numargs(-1)
+`cmov_bytes(nz,%ebx,%ecx,`15,69,203')')
 
 define(`cmovnz_ecx_ebx',
 m4_assert_numargs(-1)
@@ -408,9 +414,6 @@ define(`cmovz_eax_ecx',
 m4_assert_numargs(-1)
 `cmov_bytes(z,%eax,%ecx,`15,68,200')')
 
-define(`cmovnz_eax_ebx',
-m4_assert_numargs(-1)
-`cmov_bytes(nz,%eax,%ebx,`15,69,216')')
 
 
 dnl  Usage: loop_or_decljnz label
