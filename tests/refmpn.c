@@ -1,7 +1,7 @@
 /* Reference mpn functions, designed to be simple, portable and independent
    of the normal gmp code.  Speed isn't a consideration.
 
-Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free Software
+Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -439,6 +439,17 @@ refmpn_xnor_n (mp_ptr rp, mp_srcptr s1p, mp_srcptr s2p, mp_size_t size)
 {
   LOGOPS ((s1p[i] ^ s2p[i]) ^ GMP_NUMB_MASK);
 }
+
+
+/* set *dh,*dl to mh:ml - sh:sl, in full limbs */
+void
+refmpn_sub_ddmmss (mp_limb_t *dh, mp_limb_t *dl,
+                   mp_limb_t mh, mp_limb_t ml, mp_limb_t sh, mp_limb_t sl)
+{
+  *dl = ml - sl;
+  *dh = mh - sh - (ml < sl);
+}
+
 
 /* set *w to x+y, return 0 or 1 carry */
 mp_limb_t
