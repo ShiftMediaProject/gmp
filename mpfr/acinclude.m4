@@ -47,8 +47,8 @@ dnl ------------------------------------------------------------
 
 AC_DEFUN(MPFR_CONFIGS,
 [
-case $OS_TYPE in
-	SunOS*)
+case $host in
+	*-*-solaris*)
 		LM9X="-lm9x"
 		;;
 esac
@@ -56,7 +56,8 @@ esac
 AC_REPLACE_FUNCS(strcasecmp)
 
 dnl Check for IEEE-754 switches on Alpha
-if test "$MACHTYPE" = "alpha"; then
+case $host in
+alpha-*-*)
   saved_CFLAGS="$CFLAGS"
   AC_CACHE_CHECK([for IEEE-754 switches], mpfr_cv_ieee_switches, [
   if test -n "$GCC"; then
@@ -72,7 +73,7 @@ if test "$MACHTYPE" = "alpha"; then
   else
     CFLAGS="$saved_CFLAGS $mpfr_cv_ieee_switches"
   fi
-fi
+esac
 
 AC_CHECK_HEADERS(fpu_control.h)
 
