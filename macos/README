@@ -18,9 +18,9 @@ The output is a library
 
 Not all tests pass
 
-        I never run the 'io' test the source don't compile
+        We never run the 'io' test the source don't compile
 
-        If using Apple's compilers I never run the mpz t-mul, mpf t-add
+        If using Apple's compilers we never run the mpz t-mul, mpf t-add
         and mpf t-sub because they don't compile with MrC 4.1
 
 
@@ -31,13 +31,26 @@ REQUIREMENTS
 To compile into the library you need
 
         Apple MPW (free) or CodeWarrior MPW
-        (GMP build was tested with CodeWarrior Pro 5)
+	MacPerl 5 for MPW
+
+GMP build was tested with CodeWarrior Pro 5 and MPW Shell 3.5.
 
 For compiling with the free Apple MPW development system you need a
 68K Macintosh with a 68020 or higher microprocessor, or any Power
 Macintosh with at least 8 Mb of memory and MacOS 7.5 or later.
 
 See the CodeWarrior documentation for the CodeWarrior MPW requirements.
+
+MacPerl is free, download and install the MPW tool version from
+
+    http://www.macperl.com
+
+You need the "Appl" and "Tool" archive, for example
+
+    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_appl.bin
+    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_tool.bin
+
+See the file "Install.MPW_Perl" for MPW Perl installation instructions.
 
 
 
@@ -136,22 +149,24 @@ BUILD PROCESS
 =============
 
 The "macos" folder/directory should be inside the top directory in the
-GMP source tree and should contain six files and the target directories.
+GMP source tree and should contain four files
 
         README          This file.
         configure       Create files and directories needed.
         unix2mac        Used to convert "configure" end-of-line chars.
         Makefile.in     Source for the final "Makefile".
-        Makefile        Make file for the Apple MPW environment.
-        Makefile.cw     Make file that uses the Metrowerk
-                        CodeWarrior MPW environment.
-        Asm             Contains preprocessed files from the
-                        "::mpn:powerpc32:" directory.
-	*Obj            Target directories for object code.
-        *Bin            Target directories for test programs.
 
 Double click on the "MPW Shell" icon and set the directory using the
 "Directory" menu to the "$GMP_SOURCE_DIR:macos:" folder/directory.
+
+You run "configure" in a two step process
+
+        % perl unix2mac configure > configure.mac
+        % perl configure.mac
+  or    % perl configure.mac cw
+
+If you use CodeWarrior MPW you need to add the argument "cw" to the
+configure script. 
 
 Then run "Make"
 
@@ -178,34 +193,6 @@ To cleanup to the state before configure you execute the output from
 To remove the the resulting library as well you do
 
         % Make distclean
-
-
-
-GMP DEVELOPERS
-==============
-
-If you are a GMP developer, i.e. change any GMP files, you may need to
-recreate the make files and "config.h" file. Then you need MacPerl 5
-for MPW.  MacPerl is free, download and install the MPW tool version
-from
-
-    http://www.macperl.com
-
-You need the "Appl" and "Tool" archive, for example
-
-    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_appl.bin
-    http://www.perl.com/CPAN-local/ports/mac/Mac_Perl_520r4_tool.bin
-
-See the file "Install.MPW_Perl" for MPW Perl installation instructions.
-
-You run "configure" in a two step process
-
-        % perl unix2mac configure > configure.mac
-        % perl configure.mac
-  or    % perl configure.mac cw
-
-If you use CodeWarrior MPW you need to add the argument "cw" to the
-configure script. 
 
 
 
@@ -239,7 +226,7 @@ remove files from the Unix side while MPW is running. MPW cache
 information about what the file system looks like and gets very
 confused or crash.
 
-If you really need a MacOS m68k version of GMP let me know and I may
+If you really need a MacOS m68k version of GMP let me know and we may
 take the time to do the port.
 
 
