@@ -33,7 +33,7 @@ MA 02111-1307, USA.
 <hr>
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 31 Oct 2003.  An up-to-date version is available at
+  This file current as of 12 Nov 2003.  An up-to-date version is available at
   <a href="http://swox.com/gmp/tasks.html">http://swox.com/gmp/tasks.html</a>.
   Please send comments about this page to
   <a href="mailto:gmp-devel@swox.com">gmp-devel@swox.com</a>.
@@ -88,6 +88,20 @@ MA 02111-1307, USA.
 
 <h4>Machine Independent Optimization</h4>
 <ul>
+<li> <code>mpq_add</code>, <code>mpq_add</code>: The division "op1.den / gcd"
+     is done twice, where of course only once is necessary.  Reported by Larry
+     Lambe.
+<li> <code>mpq_add</code>, <code>mpq_add</code>: The gcd fits a single limb
+     with high probability and in this case <code>modlimb_invert</code> could
+     be used to calculate the inverse just once for the two exact divisions
+     "op1.den / gcd" and "op2.den / gcd", rather than letting
+     <code>mpn_divexact_1</code> do it each time.  This would require a new
+     <code>mpn_preinv_divexact_1</code> interface.  Not sure if it'd be worth
+     the trouble.
+<li> <code>mpq_add</code>, <code>mpq_add</code>: The use of
+     <code>mpz_mul(x,y,x)</code> causes temp allocation or copying in
+     <code>mpz_mul</code> which can probably be avoided.  A rewrite using
+     <code>mpn</code> might be best.
 <li> <code>mpn_gcdext</code>: Don't test <code>count_leading_zeros</code> for
      zero, instead check the high bit of the operand and avoid invoking
      <code>count_leading_zeros</code>.  This is an optimization on all
