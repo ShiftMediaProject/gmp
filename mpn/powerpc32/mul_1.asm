@@ -42,7 +42,6 @@ PROLOGUE(mpn_mul_1)
 C Start software pipeline
 	lwz	r8,0(r4)
 	bdz	L(end3)
-	stmw	r30,-8(r1)	C save registers we are supposed to preserve
 	lwzu	r9,4(r4)
 	mullw	r11,r8,r6
 	mulhwu	r0,r8,r6
@@ -50,36 +49,34 @@ C Start software pipeline
 C Software pipelined main loop
 L(oop):	lwz	r8,4(r4)
 	mullw	r10,r9,r6
-	adde	r30,r11,r12
+	adde	r5,r11,r12
 	mulhwu	r12,r9,r6
-	stw	r30,4(r3)
+	stw	r5,4(r3)
 	bdz	L(end2)
 	lwzu	r9,8(r4)
 	mullw	r11,r8,r6
-	adde	r31,r10,r0
+	adde	r7,r10,r0
 	mulhwu	r0,r8,r6
-	stwu	r31,8(r3)
+	stwu	r7,8(r3)
 	bdnz	L(oop)
 C Finish software pipeline
 L(end1):
 	mullw	r10,r9,r6
-	adde	r30,r11,r12
+	adde	r5,r11,r12
 	mulhwu	r12,r9,r6
-	stw	r30,4(r3)
-	adde	r31,r10,r0
-	stwu	r31,8(r3)
+	stw	r5,4(r3)
+	adde	r7,r10,r0
+	stwu	r7,8(r3)
 	addze	r3,r12
-	lmw	r30,-8(r1)	C restore registers from stack
 	blr
 L(end2):
 	mullw	r11,r8,r6
-	adde	r31,r10,r0
+	adde	r7,r10,r0
 	mulhwu	r0,r8,r6
-	stwu	r31,8(r3)
-	adde	r30,r11,r12
-	stw	r30,4(r3)
+	stwu	r7,8(r3)
+	adde	r5,r11,r12
+	stw	r5,4(r3)
 	addze	r3,r0
-	lmw	r30,-8(r1)	C restore registers from stack
 	blr
 L(end3):
 	mullw	r11,r8,r6
