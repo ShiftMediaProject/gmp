@@ -1,9 +1,29 @@
-2000-09-26  Kevin Ryde  <kevin@swox.se>
+2000-09-27  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
 
-	* mpn/generic/zerop.c: New file, extracted from mpf/integer.c.
-	* configure.in (gmp_mpn_functions): Add it.
+	* mpn/generic/bz_divrem_n.c: Fix qhl handling, simplify.
+
+2000-09-27  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/Makefile.in (.SUFFIXES): Regenerate with patched automake to
+	get .s before .c, which is needed to override ansi2knr .c rules.
+
+	* gmp.texi (mpn_sqrtrem): Fix r2p==NULL return value description
+	to match the code (change by Torbjorn).
+	(mpn_gcd, mpn_gcdext, mpn_sqrtrem, mpn_tdiv_qr): Note most
+	significant limbs must be non-zero.
+	(mpn_gcd, mpn_gcdext, mpn_sqrtrem): Clarify destination size
+	requirements.
+	(mpn_gcd_1): Clarify value must be non-zero, not just size.
+
+	* gmp-impl.h (mpn_zero_p): New inline function.
+	* mpn/generic/inlines.c: Add gmp-impl.h.
 	* mpf/integer.c, mpz/get_d.c, mpn/generic/mul_fft.c: Use it.
-	* gmp-impl.h (mpn_zero_p): Add prototype.
+
+	* mpn/generic/gcd.c: Use MPN_COPY_INCR not MPN_COPY.
+	* mpf/add_ui.c: Ditto.
+	* mpf/add.c: Ditto, and fix test to skip copy.
+
+2000-09-26  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-impl.h, longlong.h, mpn/generic/*.c: Add ASSERTs for various
 	parameter restrictions.
