@@ -1,8 +1,8 @@
 ## Process this file with automake to generate Makefile.in
 
 
-# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003 Free
-# Software Foundation, Inc.
+# Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2004
+# Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -250,7 +250,7 @@ MPBSD_OBJECTS = mpbsd/add$U.lo mpbsd/tdiv_qr$U.lo mpbsd/set$U.lo	\
 # the test programs, want to access undocumented symbols.
 
 libgmp_la_SOURCES = gmp-impl.h longlong.h randmt.h			\
-  assert.c compat.c errno.c extract-dbl.c insert-dbl.c invalid.c memory.c   \
+  assert.c compat.c errno.c extract-dbl.c invalid.c memory.c		\
   mp_bpl.c mp_clz_tab.c mp_dv_tab.c mp_minv_tab.c mp_get_fns.c mp_set_fns.c \
   rand.c randclr.c randdef.c randiset.c randlc2s.c randlc2x.c randmt.c	\
   randmts.c rands.c randsd.c randsdui.c randbui.c randmui.c version.c
