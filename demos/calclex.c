@@ -733,9 +733,9 @@ case 17:
 YY_RULE_SETUP
 #line 59 "calclex.l"
 {
-        static const struct {
-          const char *name;
-          int        value;
+        static struct {
+          char  *name;
+          int   value;
         } table[] = {
           { "abs",       ABS },
           { "bin",       BIN },
