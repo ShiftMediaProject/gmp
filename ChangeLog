@@ -1,3 +1,34 @@
+2000-07-14  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/k6/k62mmx: New directory.
+	* configure.in (k6[23]*-*-*): Use it.
+	* mpn/x86/k6/k62mmx/copy{i,d}.asm: Move from mmx directory,
+	improve code alignment a bit.
+	* mpn/x86/k6/k62mmx/{l,r}shift.asm: Ditto, and improve addressing
+	modes for pre-CXT cores.
+	* mpn/x86/x86-defs.m4 (Zdisp): Add an instruction.
+	* mpn/x86/k6/mmx/{l,r}shift.asm: New files, suiting plain K6.
+	* mpn/x86/{README,k6/README}: Updates.
+	* mpn/x86/k6/mmx/*.asm: Update some comments.
+
+	* mpn/tests/Makefile.am: Use $(MAKE) in .asm rules, not "m".
+	* tune/Makefile.am: Use $(EXEEXT) and libtool --config objdir, for
+	the benefit of djgpp.
+
+	* */Makefile.in: Regenerate with patched automake that adds
+	$(EXEEXT) to EXTRA_PROGRAMS.
+
+	* mpn/tests/try.c: Add #ifdef to SIGBUS, for the benefit of djgpp.
+	* config.guess: Recognise pc:*:*:* as an x86, for djgpp.
+
+	* configure: Regenerate with patched autoconf to fix temp file
+	".hdr" which is invalid on a DOS 8.3 filesystem, and to fix two
+	sed substitutes that clobbered a ":" in $srcdir (eg. a DOS drive
+	spec).
+
+	* mpz/tests/io.c: Use one fp opened "w+", since separately opened
+	input and output doesn't work on MS-DOS 6.21.
+
 2000-07-06  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/k6/cross.pl: New file.
