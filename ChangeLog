@@ -1,9 +1,49 @@
+2001-01-27  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (AC_CHECK_FUNCS): Add srand48.
+	* tune/speed.c: Use this test.
+
+	* acinclude.m4 (GMP_GCC_MARCH_PENTIUMPRO): Allow "egcs-" prefix on gcc
+	--version, warn if the format is unrecognised.
+	(GMP_COMPARE_GE): Guard against empty $1 not only on last arg.
+	(GMP_INIT, GMP_FINISH, GMP_PROG_M4): Obscure or eliminate literal
+	"dnl"s since autoconf thinks they indicate faulty macros.
+
+	* mpz/get_str.c, mpf/get_str.c: Make allocated string block exactly
+	strlen(str)+1 bytes.
+	* mpz/dump.c, mpf/dump.c, tests/mpz/convert.c: Use this size when
+	freeing.
+	* tests/mpf/t-conv.c: Ditto, and ensure x==0 is exercised.
+
+	* tests/mpz/t-fits.c: New file.
+	* tests/mpz/Makefile.am: Add it.
+
+	* tests/mpf/t-fits.c: New file.
+	* tests/mpf/t-get_si.c: New file.
+	* tests/mpf/t-int.c: New file.
+	* tests/mpf/Makefile.am: Add them.
+
+	* mpf/fits_s.c: New file.
+	* mpf/fits_u.c: New file.
+	* mpf/get_si.c: New file.
+	* mpf/get_ui.c: New file.
+	* mpf/int_p.c: New file.
+	* Makefile.am, mpf/Makefile.am: Add them.
+
+	* tests/memory.c (tests_allocate, tests_reallocate): Guard against
+	size==0.
+
+	* tests/mpz/*.c, tests/mpq/*.c, tests/mpf/*.c: Uses tests_start and
+	tests_end.
+
+	* gmp-impl.h (USE_LEADING_REGPARM): Fix conditionals.
+
 2001-01-23  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in, mpn/Makeasm.am (ASMFLAGS_PIC): New substitution,
 	allowing -DPIC to be suppressed on cygwin.
-	(CFLAGS_PIC): New substitution, use it and $(CC) directly, rather than
-	$(LIBTOOL), avoiding a problem with FreeBSD 2.2.8.
+	(CFLAGS_PIC): New substitution, use it and $(CCAS) directly, rather
+	than $(LIBTOOL), avoiding a problem with FreeBSD 2.2.8.
 
 	* mpn/x86/k6/mode1o.asm, mpn/x86/k7/mode1o.asm: Remove an unnecessary
 	+[.-L(here)] from _GLOBAL_OFFSET_TABLE_, avoids a segv from gas 1.92.3.
