@@ -540,7 +540,8 @@ gcd_binary (mp_ptr gp, mp_ptr up, mp_size_t usize, mp_ptr vp, mp_size_t vsize)
 /* Sets (a, b, c, d)  <--  (c, d, a, b) */
 #define NHGCD_SWAP4_2(row)			\
 do {						\
-  struct hgcd_row __nhgcd_swap4_2_tmp = row[0];	\
+  struct hgcd_row __nhgcd_swap4_2_tmp;          \
+  __nhgcd_swap4_2_tmp = row[0];                 \
   row[0] = row[2];				\
   row[2] = __nhgcd_swap4_2_tmp;			\
   __nhgcd_swap4_2_tmp = row[1];			\
@@ -551,7 +552,8 @@ do {						\
 /* Sets (a, b, c)  <--  (b, c, a) */
 #define NHGCD_SWAP3_LEFT(row)				\
 do {							\
-  struct hgcd_row __nhgcd_swap4_left_tmp = row[0];	\
+  struct hgcd_row __nhgcd_swap4_left_tmp;               \
+  __nhgcd_swap4_left_tmp = row[0];                      \
   row[0] = row[1];					\
   row[1] = row[2];					\
   row[2] = __nhgcd_swap4_left_tmp;			\
