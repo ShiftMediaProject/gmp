@@ -19,6 +19,13 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2001-11-29  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-h.in: Declare mpz_get_d_2exp and mpf_get_d_2exp.
+	* Makefile.am: Add mpz/get_d_2exp$U.lo and mpf/get_d_2exp$U.lo.
+	* mpf/Makefile.am: Add get_d_2exp.c.
+	* mpz/Makefile.am: Add get_d_2exp.c.
+
 2001-11-29  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/*/gmp-mparam.h: Update measured thresholds.
