@@ -40,8 +40,8 @@ MA 02111-1307, USA. */
    de Matema'tica at Universidade Federal do Rio Grande do Sul (UFRGS).
 
    Refer to
-       K. Weber, The accelerated integer GCD algorithm, ACM Transactions on
-       Mathematical Software, v. 21 (March), 1995, pp. 111-122.  */
+	K. Weber, The accelerated integer GCD algorithm, ACM Transactions on
+	Mathematical Software, v. 21 (March), 1995, pp. 111-122.  */
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -270,7 +270,7 @@ mpn_gcd (gp, vp, vsize, up, usize)
 	    {
 	      mp_limb_t bp[2], cp[2];
 
-	      /* C <-- V/U mod 2^(2*BITS_PER_MP_LIMB).  /
+	      /* C <-- V/U mod 2^(2*BITS_PER_MP_LIMB).  */
 	      cp[0] = vp[0], cp[1] = vp[1];
 	      mpn_bdivmod (cp, cp, 2, up, 2, 2*BITS_PER_MP_LIMB);
 
