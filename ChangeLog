@@ -1,3 +1,7 @@
+2000-12-06  Torbjorn Granlund  <tege@swox.com>
+
+	* mpq/cmp_ui.c: Streamline.
+
 2000-12-06  Kevin Ryde  <kevin@swox.se>
 
 	* tune/{divrem,mod}_1_{div,inv}.c,gcdext_double.c: New files for
