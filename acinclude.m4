@@ -423,6 +423,32 @@ echo [$1] >> ifelse([$2], [POST], $gmp_tmpconfigm4p, $gmp_tmpconfigm4)
 ])
 
 
+dnl  GMP_TRY_ASSEMBLE(asm-code,[action-success][,action-fail])
+dnl  ----------------------------------------------------------
+dnl  Attempt to assemble the given code.
+dnl  Do "action-success" if this succeeds, "action-fail" if not.
+dnl
+dnl  conftest.o is available for inspection in "action-success".  If either
+dnl  action does a "break" out of a loop then an explicit "rm -f conftest*"
+dnl  will be necessary.
+dnl
+dnl  This is not unlike AC_TRY_COMPILE, but there's no default includes or
+dnl  anything in "asm-code", everything wanted must be given explicitly.
+
+AC_DEFUN(GMP_TRY_ASSEMBLE,
+[cat >conftest.s <<EOF
+[$1]
+EOF
+gmp_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+if AC_TRY_EVAL(gmp_assemble); then
+  ifelse([$2],,:,[$2])
+else
+  ifelse([$3],,:,[$3])
+fi
+rm -f conftest*
+])
+
+
 dnl  GMP_ASM_LABEL_SUFFIX
 dnl  --------------------
 dnl  Should a label have a colon or not?
@@ -518,29 +544,22 @@ AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([if .align assembly directive is logarithmic],
                gmp_cv_asm_align_log,
-[cat > conftest.s <<EOF
-      	$gmp_cv_asm_data
+[GMP_TRY_ASSEMBLE(
+[      	$gmp_cv_asm_data
       	.align  4
 	$gmp_cv_asm_globl	foo
 	.byte	1
 	.align	4
 foo$gmp_cv_asm_label_suffix
-	.byte	2
-EOF
-ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-if AC_TRY_EVAL(ac_assemble); then
-  gmp_tmp_val=[`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
-       -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
+	.byte	2],
+  [gmp_tmp_val=[`$NM conftest.o | grep foo | \
+     sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
   if test "$gmp_tmp_val" = "10" || test "$gmp_tmp_val" = "16"; then
     gmp_cv_asm_align_log=yes
   else
     gmp_cv_asm_align_log=no
-  fi
-else 
-  echo "configure: failed program was:" >&AC_FD_CC
-  cat conftest.s >&AC_FD_CC
-fi
-rm -f conftest*
+  fi],
+  [AC_MSG_ERROR([cannot assemble alignment test])])
 ])
 GMP_DEFINE_RAW(["define(<ALIGN_LOGARITHMIC>,<$gmp_cv_asm_align_log>)"])
 if test "$gmp_cv_asm_align_log" = "yes"; then
@@ -698,14 +717,12 @@ dnl  Can we say `.type'?
 AC_DEFUN(GMP_ASM_TYPE,
 [AC_CACHE_CHECK([how the .type assembly directive should be used],
                 gmp_cv_asm_type,
-[ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-for gmp_tmp_prefix in @ \# %; do
-  echo "	.type	sym,${gmp_tmp_prefix}function" > conftest.s
-  if AC_TRY_EVAL(ac_assemble); then
-    gmp_cv_asm_type="[.type	\$][1,${gmp_tmp_prefix}\$][2]"
-    break
-  fi
+[for gmp_tmp_prefix in @ \# %; do
+  GMP_TRY_ASSEMBLE([	.type	sym,${gmp_tmp_prefix}function],
+    [gmp_cv_asm_type=".type	\$][1,${gmp_tmp_prefix}\$][2"
+    break])
 done
+rm -f conftest*
 if test -z "$gmp_cv_asm_type"; then
   gmp_cv_asm_type="[dnl]"
 fi
@@ -720,14 +737,10 @@ dnl  Can we say `.size'?
 
 AC_DEFUN(GMP_ASM_SIZE,
 [AC_CACHE_CHECK([if the .size assembly directive works],
-                 gmp_cv_asm_size,
-[ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-echo '	.size	sym,1' > conftest.s
-if AC_TRY_EVAL(ac_assemble); then
-  gmp_cv_asm_size="[.size	\$][1,\$][2]"
-else
-  gmp_cv_asm_size="[dnl]"
-fi
+                gmp_cv_asm_size,
+[GMP_TRY_ASSEMBLE([	.size	sym,1],
+  [gmp_cv_asm_size=".size	\$][1,\$][2"],
+  [gmp_cv_asm_size="[dnl]"])
 ])
 echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
 ])
@@ -736,38 +749,38 @@ echo ["define(<SIZE>, <$gmp_cv_asm_size>)"] >> $gmp_tmpconfigm4
 dnl  GMP_ASM_LSYM_PREFIX
 dnl  -------------------
 dnl  What is the prefix for a local label?
+dnl
+dnl  FIXME: Consider validating $NM by first requiring that gurkmacka shows
+dnl  up when unprefixed.
 
 AC_DEFUN(GMP_ASM_LSYM_PREFIX,
 [AC_REQUIRE([GMP_ASM_LABEL_SUFFIX])
 AC_REQUIRE([GMP_PROG_NM])
 AC_CACHE_CHECK([what prefix to use for a local label], 
                gmp_cv_asm_lsym_prefix,
-[ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
-gmp_cv_asm_lsym_prefix="L"
+[gmp_cv_asm_lsym_prefix="L"
+gmp_found=no
 for gmp_tmp_pre in L .L $ L$; do
-  cat > conftest.s <<EOF
-dummy${gmp_cv_asm_label_suffix}
+  GMP_TRY_ASSEMBLE(
+[dummy${gmp_cv_asm_label_suffix}
 ${gmp_tmp_pre}gurkmacka${gmp_cv_asm_label_suffix}
-	.byte 0
-EOF
-  if AC_TRY_EVAL(ac_assemble); then
-    $NM conftest.o >/dev/null 2>&1
-    gmp_rc=$?
-    if test "$gmp_rc" != "0"; then
-      echo "configure: $NM failure, using default"
-      break
-    fi
-    if $NM conftest.o | grep gurkmacka >/dev/null; then true; else
-      gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
-      break
-    fi
-  else
-    echo "configure: failed program was:" >&AC_FD_CC
-    cat conftest.s >&AC_FD_CC
-    # Use default.
+	.byte 0],
+  [$NM conftest.o >/dev/null 2>&1
+  if test $? != 0; then
+    AC_MSG_WARN([NM failure, using default local label $gmp_cv_asm_lsym_prefix])
+    gmp_found=yes
+    break
   fi
+  if $NM conftest.o | grep gurkmacka >/dev/null; then : ; else
+    gmp_cv_asm_lsym_prefix="$gmp_tmp_pre"
+    gmp_found=yes
+    break
+  fi])
 done
 rm -f conftest*
+if test $gmp_found = no; then
+  AC_MSG_WARN([cannot determine local label, using default $gmp_cv_asm_lsym_prefix])
+fi
 ])
 echo ["define(<LSYM_PREFIX>, <${gmp_cv_asm_lsym_prefix}>)"] >> $gmp_tmpconfigm4
 ])
@@ -794,32 +807,27 @@ AC_CACHE_CHECK([how to define a 32-bit word],
     gmp_cv_asm_w32=".word"
     ;;
   *-*-*)
-    ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+    gmp_tmp_val=
     for gmp_tmp_op in .long .word; do
-      cat > conftest.s <<EOF
-	$gmp_cv_asm_data
+      GMP_TRY_ASSEMBLE(
+[	$gmp_cv_asm_data
 	$gmp_cv_asm_globl	foo
 	$gmp_tmp_op	0
-foo${gmp_cv_asm_label_suffix}
-	.byte	0
-EOF
-      if AC_TRY_EVAL(ac_assemble); then
-        gmp_tmp_val=[`$NM conftest.o | grep foo | sed -e 's;[[][0-9][]]\(.*\);\1;' \
-             -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
-        if test "$gmp_tmp_val" = "4"; then
+foo$gmp_cv_asm_label_suffix
+	.byte	0],
+        [gmp_tmp_val=[`$NM conftest.o | grep foo | \
+          sed -e 's;[[][0-9][]]\(.*\);\1;' -e 's;[^1-9]*\([0-9]*\).*;\1;'`]
+        if test "$gmp_tmp_val" = 4; then
           gmp_cv_asm_w32="$gmp_tmp_op"
           break
-        fi
-      fi
+        fi])
     done
+    rm -f conftest*
     ;;
 esac
-
 if test -z "$gmp_cv_asm_w32"; then
-  echo; echo ["configure: $0: fatal: do not know how to define a 32-bit word"]
-  exit 1
+  AC_MSG_ERROR([cannot determine how to define a 32-bit word])
 fi
-rm -f conftest*
 ])
 echo ["define(<W32>, <$gmp_cv_asm_w32>)"] >> $gmp_tmpconfigm4
 ])
