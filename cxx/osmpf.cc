@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
    an ASSERT.  */
 
 ostream&
-mpf_out_ostream (ostream &o, mpf_srcptr f)
+operator<< (ostream &o, mpf_srcptr f)
 {
   struct doprnt_params_t  param;
   struct gmp_asprintf_t   d;

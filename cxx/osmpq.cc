@@ -28,7 +28,7 @@ MA 02111-1307, USA. */
 
 
 ostream&
-mpq_out_ostream (ostream &o, mpq_srcptr q)
+operator<< (ostream &o, mpq_srcptr q)
 {
   struct doprnt_params_t  param;
   __gmp_doprnt_params_from_ios (&param, o);
