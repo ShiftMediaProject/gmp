@@ -89,16 +89,37 @@ MA 02111-1307, USA. */
    cycle counter.  gethrvtime() seems to be relevant only to LWP, it doesn't
    for instance give nanosecond virtual time.  So neither of these are used.
 
-*/
+
+   Bugs:
+
+   getrusage_microseconds_p is fundamentally flawed, getrusage and
+   gettimeofday can have resolutions other than clock ticks or microseconds,
+   for instance IRIX 5 has a tick of 10 ms but a getrusage of 1 ms.
+
+   Enhancements:
+
+   The SGI hardware counter has 64 bits on some machines, which could be
+   used when available.  But perhaps 32 bits is enough range, and then rely
+   on the getrusage supplement.
+
+   Maybe getrusage (or times) should be used as a supplement for any
+   wall-clock measuring method.  Currently a wall clock with a good range
+   (eg. a 64-bit cycle counter) is used without a supplement.  */
+
 
 #include "config.h"
 
 #include <errno.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> /* for getenv() */
+
+#if HAVE_FCNTL_H
+#include <fcntl.h>  /* for open() */
+#endif
 
 #if HAVE_STDINT_H
 #include <stdint.h> /* for uint64_t */
@@ -121,16 +142,24 @@ MA 02111-1307, USA. */
 # endif
 #endif
 
-#if HAVE_SYS_TIMES_H
-#include <sys/times.h>  /* for times() and struct tms */
+#if HAVE_SYS_MMAN_H
+#include <sys/mman.h>      /* for mmap() */
 #endif
 
 #if HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>  /* for struct rusage */
 #endif
 
+#if HAVE_SYS_SYSSGI_H
+#include <sys/syssgi.h>    /* for syssgi() */
+#endif
+
 #if HAVE_SYS_SYSTEMCFG_H
 #include <sys/systemcfg.h> /* for RTC_POWER on AIX */
+#endif
+
+#if HAVE_SYS_TIMES_H
+#include <sys/times.h>  /* for times() and struct tms */
 #endif
 
 #include "gmp.h"
@@ -174,7 +203,7 @@ double  speed_cycletime = 0.0;
 static const int have_cycles = HAVE_SPEED_CYCLECOUNTER;
 #else
 static const int have_cycles = 0;
-#define speed_cyclecounter(p)  abort()
+#define speed_cyclecounter(p)  ASSERT_FAIL (speed_cyclecounter not available)
 #endif
 
 /* "stck" returns ticks since 1 Jan 1900 00:00 GMT, where each tick is 2^-12
@@ -192,16 +221,22 @@ typedef uint64_t  stck_t; /* gcc for s390 is quite new, always has uint64_t */
 static const int  have_stck = 0;
 static const int  use_stck = 0;
 typedef unsigned long  stck_t;   /* dummy */
-#define STCK(timestamp)  abort()
+#define STCK(timestamp)  ASSERT_FAIL (stck instruction not available)
 #endif
 #define STCK_PERIOD      (1.0 / 4096e6)   /* 2^-12 microseconds */
+
+#if HAVE_SYSSGI
+static const int  have_sgi = 1;
+#else
+static const int  have_sgi = 0;
+#endif
 
 #if HAVE_READ_REAL_TIME
 static const int have_rrt = 1;
 #else
 static const int have_rrt = 0;
-#define read_real_time(t,s)     abort()
-#define time_base_to_time(t,s)  abort()
+#define read_real_time(t,s)     ASSERT_FAIL (read_real_time not available)
+#define time_base_to_time(t,s)  ASSERT_FAIL (time_base_to_time not available)
 #define RTC_POWER     1
 #define RTC_POWER_PC  2
 #define timebasestruct_t   struct timebasestruct_dummy
@@ -218,21 +253,8 @@ static const int have_cgt = 1;
 #else
 static const int have_cgt = 0;
 #define struct_timespec       struct timespec_dummy
-#define clock_gettime(id,ts)  (abort(), -1)
-#define clock_getres(id,ts)   (abort(), -1)
-#endif
-#ifdef CLOCK_PROCESS_CPUTIME_ID
-# define CGT_ID        CLOCK_PROCESS_CPUTIME_ID
-#else
-# ifdef CLOCK_VIRTUAL
-#  define CGT_ID       CLOCK_VIRTUAL
-# endif
-#endif
-#ifdef CGT_ID
-# define HAVE_CGT_ID  1
-#else
-# define HAVE_CGT_ID  0
-# define CGT_ID       (abort(), -1)
+#define clock_gettime(id,ts)  (ASSERT_FAIL (clock_gettime not available), -1)
+#define clock_getres(id,ts)   (ASSERT_FAIL (clock_getres not available), -1)
 #endif
 
 #if HAVE_GETRUSAGE
@@ -240,7 +262,7 @@ static const int have_grus = 1;
 #define struct_rusage   struct rusage
 #else
 static const int have_grus = 0;
-#define getrusage(n,ru)  abort()
+#define getrusage(n,ru)  ASSERT_FAIL (getrusage not available)
 #define struct_rusage    struct rusage_dummy
 #endif
 
@@ -249,7 +271,7 @@ static const int have_gtod = 1;
 #define struct_timeval   struct timeval
 #else
 static const int have_gtod = 0;
-#define gettimeofday(tv,tz)  abort()
+#define gettimeofday(tv,tz)  ASSERT_FAIL (gettimeofday not available)
 #define struct_timeval   struct timeval_dummy
 #endif
 
@@ -258,7 +280,7 @@ static const int have_times = 1;
 #define struct_tms   struct tms
 #else
 static const int have_times = 0;
-#define times(tms)  abort()
+#define times(tms)   ASSERT_FAIL (times not available)
 #define struct_tms   struct tms_dummy
 #endif
 
@@ -278,15 +300,17 @@ struct timespec_dummy {
 };
 
 static int  use_cycles;
+static int  use_sgi;
 static int  use_rrt;
+static int  use_cgt;
 static int  use_gtod;
 static int  use_grus;
-static int  use_cgt;
 static int  use_times;
 static int  use_tick_boundary;
 
 static unsigned         start_cycles[2];
 static stck_t           start_stck;
+static unsigned         start_sgi;
 static timebasestruct_t start_rrt;
 static struct_timespec  start_cgt;
 static struct_rusage    start_grus;
@@ -294,6 +318,7 @@ static struct_timeval   start_gtod;
 static struct_tms       start_times;
 
 static double  cycles_limit = 1e100;
+static double  sgi_unittime;
 static double  cgt_unittime;
 static double  grus_unittime;
 static double  gtod_unittime;
@@ -529,6 +554,26 @@ getrusage_microseconds_p (void)
 }
 
 
+/* CLOCK_PROCESS_CPUTIME_ID looks like it's going to be in a future version
+   of glibc (some time post 2.2).
+
+   CLOCK_VIRTUAL is process time, available in BSD systems (though sometimes
+   defined, but returning -1 for an error).  */
+
+#ifdef CLOCK_PROCESS_CPUTIME_ID
+# define CGT_ID        CLOCK_PROCESS_CPUTIME_ID
+#else
+# ifdef CLOCK_VIRTUAL
+#  define CGT_ID       CLOCK_VIRTUAL
+# endif
+#endif
+#ifdef CGT_ID
+# define HAVE_CGT_ID  1
+#else
+# define HAVE_CGT_ID  0
+# define CGT_ID       (ASSERT_FAIL (CGT_ID not determined), -1)
+#endif
+
 int
 cgt_works_p (void)
 {
@@ -572,6 +617,94 @@ cgt_works_p (void)
           unittime_string (cgt_unittime));
   result = 1;
   return result;
+}
+
+
+volatile unsigned  *sgi_addr;
+
+int
+sgi_works_p (void)
+{
+#if HAVE_SYSSGI
+  static int  result = -1;
+
+  size_t          pagesize, offset;
+  __psunsigned_t  phys, physpage;
+  void            *virtpage;
+  unsigned        period_picoseconds;
+  int             size, fd;
+
+  if (result != -1)
+    return result;
+
+  phys = syssgi (SGI_QUERY_CYCLECNTR, &period_picoseconds);
+  if (phys == (__psunsigned_t) -1)
+    {
+      /* ENODEV is the error when a counter is not available */
+      if (speed_option_verbose)
+        printf ("syssgi SGI_QUERY_CYCLECNTR error: %s\n", strerror (errno));
+      result = 0;
+      return result;
+    }
+  sgi_unittime = period_picoseconds * 1e-12;
+
+  /* IRIX 5 doesn't have SGI_CYCLECNTR_SIZE, assume 4 bytes in that case.
+     Challenge/ONYX hardware has an 8 byte counter, but there's no obvious
+     way to identify that without SGI_CYCLECNTR_SIZE.  */
+#ifdef SGI_CYCLECNTR_SIZE
+  size = syssgi (SGI_CYCLECNTR_SIZE);
+  if (size == -1)
+    {
+      if (speed_option_verbose)
+        {
+          printf ("syssgi SGI_CYCLECNTR_SIZE error: %s\n", strerror (errno));
+          printf ("    will assume size==4\n");
+        }
+      size = 4;
+    }
+#else
+  size = 4;
+#endif
+
+  if (size < 4)
+    {
+      printf ("syssgi SGI_CYCLECNTR_SIZE gives %d, expected 4 or 8\n", size);
+      result = 0;
+      return result;
+    }
+
+  pagesize = getpagesize();
+  offset = (size_t) phys & (pagesize-1);
+  physpage = phys - offset;
+
+  /* shouldn't cross over a page boundary */
+  ASSERT_ALWAYS (offset + size <= pagesize);
+
+  fd = open("/dev/mmem", O_RDONLY);
+  if (fd == -1)
+    {
+      if (speed_option_verbose)
+        printf ("open /dev/mmem: %s\n", strerror (errno));
+      result = 0;
+      return result;
+    }
+
+  virtpage = mmap (0, pagesize, PROT_READ, MAP_PRIVATE, fd, (off_t) physpage);
+  if (virtpage == (void *) -1)
+    {
+      if (speed_option_verbose)
+        printf ("mmap /dev/mmem: %s\n", strerror (errno));
+      result = 0;
+      return result;
+    }
+
+  sgi_addr = (unsigned *) ((char *) virtpage + offset);
+  result = 1;
+  return result;
+
+#else /* ! HAVE_SYSSGI */
+  return 0;
+#endif
 }
 
 
@@ -671,6 +804,17 @@ speed_time_init (void)
           ("Need to know CPU frequency for effective stck unit");
       speed_unittime = MAX (speed_cycletime, STCK_PERIOD);
       DEFAULT (speed_precision, 10000);
+    }
+  else if (have_sgi && sgi_works_p ())
+    {
+      use_sgi = 1;
+      DEFAULT (speed_precision, 10000);
+      speed_unittime = sgi_unittime;
+      sprintf (speed_time_string, "syssgi() mmap counter (%s), supplemented by millisecond getrusage()",
+               unittime_string (speed_unittime));
+      /* supplemented with getrusage, which we assume to have 1ms resolution */
+      use_grus = 1;
+      supplement_unittime = 1e-3;
     }
   else if (have_rrt)
     {
@@ -846,6 +990,9 @@ speed_starttime (void)
   if (have_rrt && use_rrt)
     read_real_time (&start_rrt, sizeof(start_rrt));
 
+  if (have_sgi && use_sgi)
+    start_sgi = *sgi_addr;
+
   if (have_stck && use_stck)
     STCK (start_stck);
 
@@ -963,12 +1110,14 @@ speed_endtime (void)
 
   unsigned          end_cycles[2];
   stck_t            end_stck;
+  unsigned          end_sgi;
   timebasestruct_t  end_rrt;
   struct_timespec   end_cgt;
   struct_timeval    end_gtod;
   struct_rusage     end_grus;
   struct_tms        end_times;
-  double            t_gtod, t_grus, t_times, t_cgt, t_rrt, t_stck, t_cycles;
+  double            t_gtod, t_grus, t_times, t_cgt;
+  double            t_rrt, t_sgi, t_stck, t_cycles;
   double            result;
 
   /* Cycles sampled first for maximum accuracy.
@@ -976,6 +1125,7 @@ speed_endtime (void)
 
   if (have_cycles && use_cycles)  speed_cyclecounter (end_cycles);
   if (have_stck   && use_stck)    STCK (end_stck);
+  if (have_sgi    && use_sgi)     end_sgi = *sgi_addr;
   if (have_rrt    && use_rrt)     read_real_time (&end_rrt, sizeof(end_rrt));
   if (have_cgt    && use_cgt)     clock_gettime (CGT_ID, &end_cgt);
   if (have_gtod   && use_gtod)    gettimeofday (&end_gtod, NULL);
@@ -983,11 +1133,6 @@ speed_endtime (void)
   if (have_times  && use_times)   times (&end_times);
 
   result = -1.0;
-
-  /* suppress warnings about unused variables */
-  t_gtod = 0.0;
-  t_grus = 0.0;
-  t_times = 0.0;
 
   if (speed_option_verbose >= 4)
     {
@@ -999,6 +1144,9 @@ speed_endtime (void)
 
       if (use_stck)
         printf ("   stck  0x%lX -> 0x%lX\n", start_stck, end_stck);
+
+      if (use_sgi)
+        printf ("   sgi  0x%X -> 0x%X\n", start_sgi, end_sgi);
 
       if (use_rrt)
         printf ("   read_real_time  (%d)%u,%u -> (%d)%u,%u\n",
@@ -1086,6 +1234,12 @@ speed_endtime (void)
     {
       t_stck = (end_stck - start_stck) * STCK_PERIOD;
       END_USE ("stck", t_stck);
+    }
+
+  if (use_sgi)
+    {
+      t_sgi = (end_sgi - start_sgi) * sgi_unittime;
+      END_USE ("SGI hardware counter", t_sgi);
     }
 
   if (use_cycles)  
