@@ -1,7 +1,6 @@
-/* Demo program to run expression evaluation. */
+/* Demo program to run expression evaluation.
 
-/*
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 
 /* Usage: ./run-expr [-z] [-q] [-f] [-r] [-p prec] [-b base] expression...
@@ -45,6 +43,10 @@ MA 02111-1307, USA.
 
 #include "expr.h"
 
+#if ! HAVE_DECL_OPTARG
+extern char *optarg;
+extern int optind, opterr;
+#endif
 
 
 #define TRY(exprfun, outfun, str)                       \
