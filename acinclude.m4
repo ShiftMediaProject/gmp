@@ -1632,6 +1632,83 @@ AC_SUBST(TAL_OBJECT)
 ])
 
 
+dnl  GMP_FUNC_VSNPRINTF
+dnl  ------------------
+dnl  Check whether vsnprintf exists, and works properly.
+dnl
+dnl  SunOS 4 (or some versions at least) have vsnprintf as an alias for
+dnl  vsprintf, which is completely useless.
+dnl
+dnl  FIXME: Some glibc 2.0.x versions of snprintf return -1 for buffer
+dnl  overflow (and put a null-terminated string), eg. on redhat 5.2.  It
+dnl  doesn't seem wise to allow -1 in general, in case that indicates a
+dnl  fatal error and only garbage has been produced, sending us into an
+dnl  infinite loop in gmp_snprintf.  But if we were sure that wouldn't
+dnl  happen then we could allow -1 here (and in the printf/*.c code).
+
+AC_DEFUN(GMP_FUNC_VSNPRINTF,
+[AC_REQUIRE([GMP_C_STDARG])
+AC_CHECK_FUNC(vsnprintf,
+              [gmp_vsnprintf_exists=yes],
+              [gmp_vsnprintf_exists=no])
+if test "$gmp_vsnprintf_exists" = yes; then
+  AC_CACHE_CHECK([whether vsnprintf works],
+                 gmp_cv_func_vsnprintf,
+  [AC_TRY_RUN([
+#if HAVE_STDARG
+#include <stdarg.h>
+#else
+#include <varargs.h>
+#endif
+
+#if HAVE_STDARG
+check (const char *fmt, ...)
+#else
+check (va_alist)
+     va_dcl
+#endif
+{
+  static char  buf[128];
+  va_list  ap;
+  int      ret;
+
+#if HAVE_STDARG
+  va_start (ap, fmt);
+#else
+  char *fmt;
+  va_start (ap);
+  fmt = va_arg (ap, char *);
+#endif
+
+  ret = vsnprintf (buf, 4, fmt, ap);
+  if (ret == -1)
+    exit (1);
+  if (strlen (buf) > 3)
+    exit (2);
+}
+
+int
+main ()
+{
+  check ("hello world\n");
+  exit (0);
+}
+],
+    [gmp_cv_func_vsnprintf=yes],
+    [gmp_cv_func_vsnprintf=no],
+    [gmp_cv_func_vsnprintf=probably])
+  ])
+  if test "$gmp_cv_func_vsnprintf" = probably; then
+    AC_MSG_WARN([cannot check for properly working vsnprintf when cross compiling, will assume it's ok])
+  fi
+  if test "$gmp_cv_func_vsnprintf" != no; then
+    AC_DEFINE(HAVE_VSNPRINTF,1,
+              [Define if you have vsnprintf and it works properly.])
+  fi
+fi
+])
+
+
 dnl  GMP_PROG_CXX
 dnl  ------------
 dnl  Attempt to locate a C++ compiler.
