@@ -19,6 +19,26 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-13  Kevin Ryde  <kevin@swox.se>
+
+	* demos/expr/exprfr.c: More mpfr functions, corrections to agm, cos,
+	sin, rename log2 constant to loge2 to make room for log2 function.
+	* demos/expr/t-expr.c: More tests.
+
+	* mpz/inp_raw.c (NTOH_LIMB_FETCH) [generic 16bit]: Remove spurious "+".
+
+	* mpfr/acos.c: Avoid a memory leak for certain operands.
+
+	* acinclude.m4, configure.in (GMP_C_DOUBLE_FORMAT): New macro.
+
+	* acinclude.m4 (GMP_HPC_HPPA_2_0, GMP_ASM_UNDERSCORE,
+	GMP_ASM_ALIGN_LOG, GMP_ASM_LSYM_PREFIX, GMP_ASM_W32, GMP_ASM_X86_MMX):
+	Change ac_objext to OBJEXT, which is the documented variable.
+
+	* config.guess (powerpc*-*-*): Use #ifdef on constants POWER_630 etc
+	in the AIX test, since old versions don't have them all.
+
+
 2002-03-11  Kevin Ryde  <kevin@swox.se>
 
 	* configure.in (LIBC211): New AC_DEFINE, for mpfr.
