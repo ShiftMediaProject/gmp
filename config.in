@@ -411,9 +411,6 @@ MA 02111-1307, USA.
    */
 #undef MPFR_HAVE_FESETROUND
 
-/* Define if you have the `isnan' function via the <math.h> header file. */
-#undef MPFR_HAVE_ISNAN
-
 /* Define to 1 if mpfr x86 test routines are available. */
 #undef MPFR_HAVE_TESTS_x86
 

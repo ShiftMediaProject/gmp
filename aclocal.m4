@@ -8180,6 +8180,34 @@ AC_DEFUN([LT_AC_PROG_RC],
 [AC_CHECK_TOOL(RC, windres, no)
 ])
 
+dnl  MPFR specific autoconf macros
+
+dnl  Copyright 2000, 2002, 2003 Free Software Foundation.
+dnl  Contributed by the Spaces project, INRIA Lorraine.
+dnl  
+dnl  This file is part of the MPFR Library.
+dnl  
+dnl  The MPFR Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Lesser General Public License as published
+dnl  by the Free Software Foundation; either version 2.1 of the License, or (at
+dnl  your option) any later version.
+dnl  
+dnl  The MPFR Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+dnl  License for more details.
+dnl  
+dnl  You should have received a copy of the GNU Lesser General Public License
+dnl  along with the MPFR Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
+
+dnl  autoconf 2.50 is necessary because of the use of AH_VERBATIM,
+dnl  but it would be better to make the config file compatible with
+dnl  both autoconf 2.13 and autoconf 2.50.
+dnl  The following line allows the autoconf wrapper (when installed)
+dnl  to work as expected.
+AC_PREREQ(2.50)
 
 AC_DEFUN(AC_MY_LIBS,
 [
@@ -8229,11 +8257,8 @@ dnl ------------------------------------------------------------
 
 AC_DEFUN(MPFR_CONFIGS,
 [
-case $host in
-	*-*-solaris*)
-		LM9X="-lm9x"
-		;;
-esac
+AC_REQUIRE([AC_OBJEXT])
+AC_REQUIRE([MPFR_CHECK_LIBM])
 
 # CPU-dependent objects for the test programs
 case $host in
@@ -8276,23 +8301,13 @@ AC_CHECK_HEADERS(sys/fpu.h)
 dnl Check for fesetround
 AC_CACHE_CHECK([for fesetround], mpfr_cv_have_fesetround, [
 saved_LIBS="$LIBS"
-LIBS="$LIBS $LM9X"
+LIBS="$LIBS $MPFR_LIBM"
 AC_TRY_LINK([#include <fenv.h>], [fesetround(FE_TONEAREST);],
   mpfr_cv_have_fesetround=yes, mpfr_cv_have_fesetround=no)
 LIBS="$saved_LIBS"
 ])
 if test "$mpfr_cv_have_fesetround" = "yes"; then
-  LIBS="$LIBS $LM9X"
   AC_DEFINE(MPFR_HAVE_FESETROUND,1,[Define if you have the `fesetround' function via the <fenv.h> header file.])
-fi
-
-dnl Check for isnan
-AC_CACHE_CHECK([for isnan], mpfr_cv_have_isnan, [
-AC_TRY_LINK([#include <math.h>], [isnan(0.0);],
-  mpfr_cv_have_isnan=yes, mpfr_cv_have_isnan=no)
-])
-if test "$mpfr_cv_have_isnan" = "yes"; then
-  AC_DEFINE(MPFR_HAVE_ISNAN,1,[Define if you have the `isnan' function via the <math.h> header file.])
 fi
 
 dnl Check random functions
@@ -8321,6 +8336,8 @@ dnl the double-rounding problem (x86 processors still have to be set to the
 dnl IEEE-754 compatible rounding mode).
 if test -n "$GCC"; then
   AC_CACHE_CHECK([for gcc float-conversion bug], mpfr_cv_gcc_floatconv_bug, [
+  saved_LIBS="$LIBS"
+  LIBS="$LIBS $MPFR_LIBM"
   AC_TRY_RUN([
 #include <float.h>
 #ifdef MPFR_HAVE_FESETROUND
@@ -8347,6 +8364,7 @@ int main()
   ], [mpfr_cv_gcc_floatconv_bug="no"],
      [mpfr_cv_gcc_floatconv_bug="yes, use -ffloat-store"],
      [mpfr_cv_gcc_floatconv_bug="cannot test, use -ffloat-store"])
+  LIBS="$saved_LIBS"
   ])
   if test "$mpfr_cv_gcc_floatconv_bug" != "no"; then
     CFLAGS="$CFLAGS -ffloat-store"
@@ -8415,7 +8433,8 @@ dnl  use DOUBLE macros when sizeof(double)==sizeof(long double).
 AC_DEFUN(MPFR_C_LONG_DOUBLE_FORMAT,
 [AC_REQUIRE([AC_PROG_CC])
 AC_REQUIRE([AC_PROG_AWK])
-AC_CACHE_CHECK([format of `long double' floating point],
+AC_REQUIRE([AC_OBJEXT])
+AC_CACHE_CHECK([format of \`long double' floating point],
                 mpfr_cv_c_long_double_format,
 [mpfr_cv_c_long_double_format=unknown
 cat >conftest.c <<\EOF
@@ -8585,6 +8604,40 @@ case $mpfr_cv_c_long_double_format in
     ;;
   *) 
     AC_MSG_WARN([oops, unrecognised float format: $mpfr_cv_c_long_double_format])
+    ;;
+esac
+])
+
+
+dnl  MPFR_CHECK_LIBM
+dnl  ---------------
+dnl  Determine a math library -lm to use.
+
+AC_DEFUN(MPFR_CHECK_LIBM,
+[AC_REQUIRE([AC_CANONICAL_HOST])
+AC_SUBST(MPFR_LIBM,'')
+case $host in
+  *-*-beos* | *-*-cygwin* | *-*-pw32*)
+    # According to libtool AC_CHECK_LIBM, these systems don't have libm
+    ;;
+  *-*-hpux*)
+    # -lM means something subtly different to -lm, SVID style error handling
+    # or something.  FIXME: Why exactly do we want this?
+    AC_CHECK_LIB(M, main, MPFR_LIBM="-lM")
+    ;;
+  *-*-solaris*)
+    # On Solaris the math functions new in C99 are in -lm9x.
+    # FIXME: Do we need -lm9x as well as -lm, or just instead of?
+    AC_CHECK_LIB(m9x, main, MPFR_LIBM="-lm9x")
+    AC_CHECK_LIB(m,   main, MPFR_LIBM="$MPFR_LIBM -lm")
+    ;;
+  *-ncr-sysv4.3*)
+    # FIXME: What does -lmw mean?  Libtool AC_CHECK_LIBM does it this way.
+    AC_CHECK_LIB(mw, _mwvalidcheckl, MPFR_LIBM="-lmw")
+    AC_CHECK_LIB(m, main, MPFR_LIBM="$MPFR_LIBM -lm")
+    ;;
+  *)
+    AC_CHECK_LIB(m, main, MPFR_LIBM="-lm")
     ;;
 esac
 ])

@@ -484,7 +484,7 @@ ac_includes_default="\
 #endif"
 
 ac_config_libobj_dir=mpfr
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT WANT_MPBSD_TRUE WANT_MPBSD_FALSE WANT_MPFR_TRUE WANT_MPFR_FALSE GMP_NAIL_BITS ABI HAVE_HOST_CPU_FAMILY_power HAVE_HOST_CPU_FAMILY_powerpc GMP_LDFLAGS SPEED_CYCLECOUNTER_OBJ CALLING_CONVENTIONS_OBJS DEFN_LONG_LONG_LIMB CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP CC_FOR_BUILD CPP_FOR_BUILD EXEEXT_FOR_BUILD U_FOR_BUILD LIBM_FOR_BUILD CCAS CXX CXXFLAGS ac_ct_CXX WANT_CXX_TRUE WANT_CXX_FALSE CXXCPP EGREP U ANSI2KNR AR ac_ct_AR LIBGMP_DLL LN_S ECHO RANLIB ac_ct_RANLIB DLLTOOL ac_ct_DLLTOOL AS ac_ct_AS OBJDUMP ac_ct_OBJDUMP LIBTOOL ENABLE_STATIC_TRUE ENABLE_STATIC_FALSE LIBM TAL_OBJECT M4 BITS_PER_MP_LIMB mpn_objs_in_libmp mpn_objects mpn_objs_in_libgmp gmp_srclinks TESTS_ASM_OBJECTS LIBOBJS MPFR_CFLAGS MPFR_LIBS TUNE_SQR_OBJ HAVE_CLOCK_01 HAVE_CPUTIME_01 HAVE_GETRUSAGE_01 HAVE_GETTIMEOFDAY_01 HAVE_SIGACTION_01 HAVE_SIGALTSTACK_01 HAVE_SIGSTACK_01 HAVE_SYS_RESOURCE_H_01 HAVE_STACK_T_01 WITH_READLINE_01 LIBREADLINE YACC LEX LEXLIB LEX_OUTPUT_ROOT HAVE_MPFR_01 HAVE_DECL_OPTARG LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT WANT_MPBSD_TRUE WANT_MPBSD_FALSE WANT_MPFR_TRUE WANT_MPFR_FALSE GMP_NAIL_BITS ABI HAVE_HOST_CPU_FAMILY_power HAVE_HOST_CPU_FAMILY_powerpc GMP_LDFLAGS SPEED_CYCLECOUNTER_OBJ CALLING_CONVENTIONS_OBJS DEFN_LONG_LONG_LIMB CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP CC_FOR_BUILD CPP_FOR_BUILD EXEEXT_FOR_BUILD U_FOR_BUILD LIBM_FOR_BUILD CCAS CXX CXXFLAGS ac_ct_CXX WANT_CXX_TRUE WANT_CXX_FALSE CXXCPP EGREP U ANSI2KNR AR ac_ct_AR LIBGMP_DLL LN_S ECHO RANLIB ac_ct_RANLIB DLLTOOL ac_ct_DLLTOOL AS ac_ct_AS OBJDUMP ac_ct_OBJDUMP LIBTOOL ENABLE_STATIC_TRUE ENABLE_STATIC_FALSE LIBM TAL_OBJECT M4 BITS_PER_MP_LIMB mpn_objs_in_libmp mpn_objects mpn_objs_in_libgmp gmp_srclinks MPFR_LIBM TESTS_ASM_OBJECTS LIBOBJS MPFR_CFLAGS MPFR_LIBS TUNE_SQR_OBJ HAVE_CLOCK_01 HAVE_CPUTIME_01 HAVE_GETRUSAGE_01 HAVE_GETTIMEOFDAY_01 HAVE_SIGACTION_01 HAVE_SIGALTSTACK_01 HAVE_SIGSTACK_01 HAVE_SYS_RESOURCE_H_01 HAVE_STACK_T_01 WITH_READLINE_01 LIBREADLINE YACC LEX LEXLIB LEX_OUTPUT_ROOT HAVE_MPFR_01 HAVE_DECL_OPTARG LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -24399,11 +24399,348 @@ if test $enable_mpfr = yes; then
   LIBS="$LIBS $LIBM"
 
 
+MPFR_LIBM=''
+
 case $host in
-	*-*-solaris*)
-		LM9X="-lm9x"
-		;;
+  *-*-beos* | *-*-cygwin* | *-*-pw32*)
+    # According to libtool AC_CHECK_LIBM, these systems don't have libm
+    ;;
+  *-*-hpux*)
+    # -lM means something subtly different to -lm, SVID style error handling
+    # or something.  FIXME: Why exactly do we want this?
+    echo "$as_me:$LINENO: checking for main in -lM" >&5
+echo $ECHO_N "checking for main in -lM... $ECHO_C" >&6
+if test "${ac_cv_lib_M_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lM  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_M_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_M_main=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_M_main" >&5
+echo "${ECHO_T}$ac_cv_lib_M_main" >&6
+if test $ac_cv_lib_M_main = yes; then
+  MPFR_LIBM="-lM"
+fi
+
+    ;;
+  *-*-solaris*)
+    # On Solaris the math functions new in C99 are in -lm9x.
+    # FIXME: Do we need -lm9x as well as -lm, or just instead of?
+    echo "$as_me:$LINENO: checking for main in -lm9x" >&5
+echo $ECHO_N "checking for main in -lm9x... $ECHO_C" >&6
+if test "${ac_cv_lib_m9x_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lm9x  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_m9x_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_m9x_main=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_m9x_main" >&5
+echo "${ECHO_T}$ac_cv_lib_m9x_main" >&6
+if test $ac_cv_lib_m9x_main = yes; then
+  MPFR_LIBM="-lm9x"
+fi
+
+    echo "$as_me:$LINENO: checking for main in -lm" >&5
+echo $ECHO_N "checking for main in -lm... $ECHO_C" >&6
+if test "${ac_cv_lib_m_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lm  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_m_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_m_main=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_m_main" >&5
+echo "${ECHO_T}$ac_cv_lib_m_main" >&6
+if test $ac_cv_lib_m_main = yes; then
+  MPFR_LIBM="$MPFR_LIBM -lm"
+fi
+
+    ;;
+  *-ncr-sysv4.3*)
+    # FIXME: What does -lmw mean?  Libtool AC_CHECK_LIBM does it this way.
+    echo "$as_me:$LINENO: checking for _mwvalidcheckl in -lmw" >&5
+echo $ECHO_N "checking for _mwvalidcheckl in -lmw... $ECHO_C" >&6
+if test "${ac_cv_lib_mw__mwvalidcheckl+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lmw  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char _mwvalidcheckl ();
+int
+main ()
+{
+_mwvalidcheckl ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_mw__mwvalidcheckl=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_mw__mwvalidcheckl=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_mw__mwvalidcheckl" >&5
+echo "${ECHO_T}$ac_cv_lib_mw__mwvalidcheckl" >&6
+if test $ac_cv_lib_mw__mwvalidcheckl = yes; then
+  MPFR_LIBM="-lmw"
+fi
+
+    echo "$as_me:$LINENO: checking for main in -lm" >&5
+echo $ECHO_N "checking for main in -lm... $ECHO_C" >&6
+if test "${ac_cv_lib_m_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lm  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_m_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_m_main=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_m_main" >&5
+echo "${ECHO_T}$ac_cv_lib_m_main" >&6
+if test $ac_cv_lib_m_main = yes; then
+  MPFR_LIBM="$MPFR_LIBM -lm"
+fi
+
+    ;;
+  *)
+    echo "$as_me:$LINENO: checking for main in -lm" >&5
+echo $ECHO_N "checking for main in -lm... $ECHO_C" >&6
+if test "${ac_cv_lib_m_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lm  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_m_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_m_main=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_m_main" >&5
+echo "${ECHO_T}$ac_cv_lib_m_main" >&6
+if test $ac_cv_lib_m_main = yes; then
+  MPFR_LIBM="-lm"
+fi
+
+    ;;
 esac
+
+
+
+
 
 # CPU-dependent objects for the test programs
 case $host in
@@ -24724,7 +25061,7 @@ if test "${mpfr_cv_have_fesetround+set}" = set; then
 else
 
 saved_LIBS="$LIBS"
-LIBS="$LIBS $LM9X"
+LIBS="$LIBS $MPFR_LIBM"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 /* confdefs.h.  */
@@ -24767,64 +25104,9 @@ fi
 echo "$as_me:$LINENO: result: $mpfr_cv_have_fesetround" >&5
 echo "${ECHO_T}$mpfr_cv_have_fesetround" >&6
 if test "$mpfr_cv_have_fesetround" = "yes"; then
-  LIBS="$LIBS $LM9X"
 
 cat >>confdefs.h <<\_ACEOF
 #define MPFR_HAVE_FESETROUND 1
-_ACEOF
-
-fi
-
-echo "$as_me:$LINENO: checking for isnan" >&5
-echo $ECHO_N "checking for isnan... $ECHO_C" >&6
-if test "${mpfr_cv_have_isnan+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-
-cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <math.h>
-int
-main ()
-{
-isnan(0.0);
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  mpfr_cv_have_isnan=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-mpfr_cv_have_isnan=no
-fi
-rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-
-fi
-echo "$as_me:$LINENO: result: $mpfr_cv_have_isnan" >&5
-echo "${ECHO_T}$mpfr_cv_have_isnan" >&6
-if test "$mpfr_cv_have_isnan" = "yes"; then
-
-cat >>confdefs.h <<\_ACEOF
-#define MPFR_HAVE_ISNAN 1
 _ACEOF
 
 fi
@@ -24980,6 +25262,8 @@ if test "${mpfr_cv_gcc_floatconv_bug+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
+  saved_LIBS="$LIBS"
+  LIBS="$LIBS $MPFR_LIBM"
   if test "$cross_compiling" = yes; then
   mpfr_cv_gcc_floatconv_bug="cannot test, use -ffloat-store"
 else
@@ -25037,6 +25321,7 @@ mpfr_cv_gcc_floatconv_bug="yes, use -ffloat-store"
 fi
 rm -f core core.* *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
 fi
+  LIBS="$saved_LIBS"
 
 fi
 echo "$as_me:$LINENO: result: $mpfr_cv_gcc_floatconv_bug" >&5
@@ -25160,6 +25445,7 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
 
 
 
@@ -26687,6 +26973,7 @@ s,@mpn_objs_in_libmp@,$mpn_objs_in_libmp,;t t
 s,@mpn_objects@,$mpn_objects,;t t
 s,@mpn_objs_in_libgmp@,$mpn_objs_in_libgmp,;t t
 s,@gmp_srclinks@,$gmp_srclinks,;t t
+s,@MPFR_LIBM@,$MPFR_LIBM,;t t
 s,@TESTS_ASM_OBJECTS@,$TESTS_ASM_OBJECTS,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@MPFR_CFLAGS@,$MPFR_CFLAGS,;t t
