@@ -6541,7 +6541,7 @@ By default GMP uses @code{malloc}, @code{realloc} and @code{free} for memory
 allocation, and if they fail GMP prints a message to the standard error output
 and terminates the program.
 
-Alternate functions can be specified to allocate memory in a different way or
+Alternate functions can be specified, to allocate memory in a different way or
 to have a different error action on running out of memory.
 
 This feature is available in the Berkeley compatibility library (@pxref{BSD
@@ -6580,7 +6580,7 @@ new location if moved or just @var{ptr} if not.
 @var{new_size} may be bigger or smaller than @var{old_size}.
 @end deftypevr
 
-@deftypevr Function void deallocate_function (void *@var{ptr}, size_t @var{size})
+@deftypevr Function void free_function (void *@var{ptr}, size_t @var{size})
 De-allocate the space pointed to by @var{ptr}.
 
 @var{ptr} is never @code{NULL}, it's always a previously allocated block of
@@ -6590,9 +6590,9 @@ De-allocate the space pointed to by @var{ptr}.
 A @dfn{byte} here means the unit used by the @code{sizeof} operator.
 
 The @var{old_size} parameters to @var{reallocate_function} and
-@var{deallocate_function} are passed for convenience, but of course can be
-ignored if not needed.  The default functions using @code{malloc} and friends
-for instance don't use them.
+@var{free_function} are passed for convenience, but of course can be ignored
+if not needed.  The default functions using @code{malloc} and friends for
+instance don't use them.
 
 No error return is allowed from any of these functions, if they return then
 they must have performed the specified operation.  In particular note that
@@ -6617,6 +6617,21 @@ functions will be linked in even if the first thing a program does is an
 @code{mp_set_memory_functions}.  It's necessary to change the GMP sources if
 this is a problem.
 
+@sp 1
+@deftypefun void mp_get_memory_functions (@* void *(**@var{alloc_func_ptr}) (size_t), @* void *(**@var{realloc_func_ptr}) (void *, size_t, size_t), @* void (**@var{free_func_ptr}) (void *, size_t))
+Get the current allocation functions, storing function pointers to the
+locations given by the arguments.  If an argument is @code{NULL}, that
+function pointer is not stored.
+
+@need 1000
+For example, to get just the current free function,
+
+@example
+void (*freefunc) (void *, size_t);
+
+mp_get_memory_functions (NULL, NULL, &freefunc);
+@end example
+@end deftypefun
 
 @node Language Bindings, Algorithms, Custom Allocation, Top
 @chapter Language Bindings
