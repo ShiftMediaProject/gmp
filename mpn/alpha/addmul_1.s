@@ -1,4 +1,4 @@
- # Alpha 21064 __mpn_addmul_1 -- Multiply a limb vector with a limb and add
+ # Alpha __mpn_addmul_1 -- Multiply a limb vector with a limb and add
  # the result to a second limb vector.
 
  # Copyright (C) 1992, 1994, 1995 Free Software Foundation, Inc.
