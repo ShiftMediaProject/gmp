@@ -1,6 +1,5 @@
-/* Time routines for speed measurments. */
+/* Time routines for speed measurments.
 
-/*
 Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,8 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
+
 
 /* speed_time_init() - initialize timing things.  speed_starttime() calls
    this if it hasn't been done yet, so you only need to call this explicitly
@@ -99,6 +98,10 @@ MA 02111-1307, USA.
 #include <stdio.h>
 #include <stdlib.h> /* for getenv() */
 
+#if HAVE_STDINT_H
+#include <stdint.h> /* for uint64_t */
+#endif
+
 #if HAVE_UNISTD_H
 #include <unistd.h> /* for sysconf() */
 #endif
@@ -149,8 +152,8 @@ double      speed_cycletime = 0.0;
 #define M_2POW64  (M_2POW32 * M_2POW32)
 
 
-/* Conditionals for which time functions are available are done with normal
-   C code, which is a lot easier than wildly nested preprocessor directives.
+/* Conditionals for the time functions available are done with normal C
+   code, which is a lot easier than wildly nested preprocessor directives.
 
    The choice of what to use is partly made at run-time, according to
    whether the cycle counter works and the measured accuracy of getrusage
@@ -171,6 +174,25 @@ static const int have_cycles = HAVE_SPEED_CYCLECOUNTER;
 static const int have_cycles = 0;
 #define speed_cyclecounter(p)  abort()
 #endif
+
+/* "stck" returns ticks since 1 Jan 1900 00:00 GMT, where each tick is 2^-12
+   microseconds.  Same #ifdefs here as in longlong.h.  */
+#if defined (__GNUC__) && ! defined (NO_ASM)                            \
+  && (defined (__i370__) || defined (__s390__) || defined (__mvs__))
+static const int  have_stck = 1;
+static const int  use_stck = 1;  /* always use when available */
+typedef uint64_t  stck_t; /* gcc for s390 is quite new, always has uint64_t */
+#define STCK(timestamp)                 \
+  do {                                  \
+    asm ("stck %0" : "=m" (timestamp)); \
+  } while (0)
+#else
+static const int  have_stck = 0;
+static const int  use_stck = 0;
+typedef unsigned long  stck_t;   /* dummy */
+#define STCK(timestamp)  abort()
+#endif
+#define STCK_PERIOD      (1.0 / 4096e6)   /* 2^-12 microseconds */
 
 #if HAVE_READ_REAL_TIME
 static const int have_rrt = 1;
@@ -234,6 +256,7 @@ static int  use_times;
 static int  use_tick_boundary;
 
 static unsigned         start_cycles[2];
+static stck_t           start_stck;
 static timebasestruct_t start_rrt;
 static struct_rusage    start_grus;
 static struct_timeval   start_gtod;
@@ -243,6 +266,9 @@ static double  cycles_limit = 1e100;
 static double  grus_unittime;
 static double  gtod_unittime;
 static double  times_unittime;
+
+/* for RTC_POWER format, ie. seconds and nanoseconds */
+#define TIMEBASESTRUCT_SECS(t)  ((t)->tb_high + (t)->tb_low * 1e-9)
 
 
 static jmp_buf  cycles_works_buf;
@@ -484,95 +510,98 @@ speed_time_init (void)
             }
         }
     }
+  else if (have_stck)
+    {
+      speed_time_string = "STCK timestamp";
+      /* stck is in units of 2^-12 microseconds, which is very likely higher
+         resolution than a cpu cycle */
+      if (speed_cycletime == 0.0)
+        speed_cycletime_fail
+          ("Need to know CPU frequency for effective stck unit");
+      speed_unittime = MAX (speed_cycletime, STCK_PERIOD);
+      DEFAULT (speed_precision, 10000);
+    }
+  else if (have_rrt)
+    {
+      timebasestruct_t  t;
+      use_rrt = 1;
+      DEFAULT (speed_precision, 10000);
+      read_real_time (&t, sizeof(t));
+      switch (t.flag) {
+      case RTC_POWER:
+        /* FIXME: What's the actual RTC resolution? */
+        speed_unittime = 1e-7;
+        speed_time_string = "read_real_time() power nanoseconds";
+        break;
+      case RTC_POWER_PC:
+        t.tb_high = 1;
+        t.tb_low = 0;
+        time_base_to_time (&t, sizeof(t));
+        speed_unittime = TIMEBASESTRUCT_SECS(&t) / M_2POW32;
+        speed_time_string = "read_real_time() powerpc ticks";
+        break;
+      default:
+        fprintf (stderr, "ERROR: Unrecognised timebasestruct_t flag=%d\n",
+                 t.flag);
+        abort ();
+      }
+    }
+  else if (have_grus && getrusage_microseconds_p())
+    {
+      use_grus = 1;
+      speed_unittime = grus_unittime = 1.0e-6;
+      DEFAULT (speed_precision, 1000);
+      speed_time_string = "microsecond accurate getrusage()";
+    }
+  else if (have_gtod && gettimeofday_microseconds_p())
+    {
+      use_gtod = 1;
+      speed_unittime = gtod_unittime = 1.0e-6;
+      DEFAULT (speed_precision, 1000);
+      speed_time_string = "microsecond accurate gettimeofday()";
+    }
+  else if (have_times)
+    {
+      use_times = 1;
+      use_tick_boundary = 1;
+      speed_unittime = times_unittime = 1.0 / (double) clk_tck ();
+      DEFAULT (speed_precision, 200);
+      speed_time_string = "clock tick times()";
+    }
+  else if (have_grus)
+    {
+      use_grus = 1;
+      use_tick_boundary = 1;
+      speed_unittime = grus_unittime = 1.0 / (double) clk_tck ();
+      DEFAULT (speed_precision, 200);
+      speed_time_string = "clock tick accurate getrusage()\n";
+    }
+  else if (have_gtod)
+    {
+      use_gtod = 1;
+      use_tick_boundary = 1;
+      speed_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
+      DEFAULT (speed_precision, 200);
+      speed_time_string = "clock tick accurate gettimeofday()";
+    }
   else
     {
-      /* No cycle counter */
-
-/* for RTC_POWER format */
-#define TIMEBASESTRUCT_SECS(t)  ((t)->tb_high + (t)->tb_low * 1e-9)
-
-      if (have_rrt)
-        {
-          timebasestruct_t  t;
-          use_rrt = 1;
-          DEFAULT (speed_precision, 10000);
-          read_real_time (&t, sizeof(t));
-          switch (t.flag) {
-          case RTC_POWER:
-            /* FIXME: What's the actual RTC resolution? */
-            speed_unittime = 1e-7;
-            speed_time_string = "read_real_time() power nanoseconds";
-            break;
-          case RTC_POWER_PC:
-            t.tb_high = 1;
-            t.tb_low = 0;
-            time_base_to_time (&t, sizeof(t));
-            speed_unittime = TIMEBASESTRUCT_SECS(&t) / M_2POW32;
-            speed_time_string = "read_real_time() powerpc ticks";
-            break;
-          default:
-            fprintf (stderr, "ERROR: Unrecognised timebasestruct_t flag=%d\n",
-                     t.flag);
-            abort ();
-          }            
-        }
-      else if (have_grus && getrusage_microseconds_p())
-        {
-          use_grus = 1;
-          speed_unittime = grus_unittime = 1.0e-6;
-          DEFAULT (speed_precision, 1000);
-          speed_time_string = "microsecond accurate getrusage()";
-        }
-      else if (have_gtod && gettimeofday_microseconds_p())
-        {
-          use_gtod = 1;
-          speed_unittime = gtod_unittime = 1.0e-6;
-          DEFAULT (speed_precision, 1000);
-          speed_time_string = "microsecond accurate gettimeofday()";
-        }
-      else if (have_times)
-        {
-          use_times = 1;
-          use_tick_boundary = 1;
-          speed_unittime = times_unittime = 1.0 / (double) clk_tck ();
-          DEFAULT (speed_precision, 200);
-          speed_time_string = "clock tick times()";
-        }
-      else if (have_grus)
-        {
-          use_grus = 1;
-          use_tick_boundary = 1;
-          speed_unittime = grus_unittime = 1.0 / (double) clk_tck ();
-          DEFAULT (speed_precision, 200);
-          speed_time_string = "clock tick accurate getrusage()\n";
-        }
-      else if (have_gtod)
-        {
-          use_gtod = 1;
-          use_tick_boundary = 1;
-          speed_unittime = gtod_unittime = 1.0 / (double) clk_tck ();
-          DEFAULT (speed_precision, 200);
-          speed_time_string = "clock tick accurate gettimeofday()";
-        }
-      else
-        {
-          fprintf (stderr, "No time measuring method available\n");
-          fprintf (stderr, "None of: speed_cyclecounter(), getrusage(), gettimeofday(), times()\n");
-          abort ();
-        }
+      fprintf (stderr, "No time measuring method available\n");
+      fprintf (stderr, "None of: speed_cyclecounter(), STCK(), getrusage(), gettimeofday(), times()\n");
+      abort ();
     }
 
-    if (speed_option_verbose)
-      {
-        printf ("speed_time_init: %s\n", speed_time_string);
-        printf ("    speed_precision     %d\n", speed_precision);
-        printf ("    speed_unittime      %.2g\n", speed_unittime);
-        if (supplement_unittime)
-          printf ("    supplement_unittime %.2g\n", supplement_unittime);
-        printf ("    use_tick_boundary   %d\n", use_tick_boundary);
-        if (have_cycles)
-          printf ("    cycles_limit        %.2g seconds\n", cycles_limit);
-      }
+  if (speed_option_verbose)
+    {
+      printf ("speed_time_init: %s\n", speed_time_string);
+      printf ("    speed_precision     %d\n", speed_precision);
+      printf ("    speed_unittime      %.2g\n", speed_unittime);
+      if (supplement_unittime)
+        printf ("    supplement_unittime %.2g\n", supplement_unittime);
+      printf ("    use_tick_boundary   %d\n", use_tick_boundary);
+      if (have_cycles)
+        printf ("    cycles_limit        %.2g seconds\n", cycles_limit);
+    }
 }
 
 
@@ -611,12 +640,14 @@ times_tick_boundary (void)
 }
 
 
+/* "have_" values are tested to let unused code go dead.  */
+
 void
 speed_starttime (void)
 {
   speed_time_init ();
 
-  if (use_grus)
+  if (have_grus && use_grus)
     {
       if (use_tick_boundary)
         grus_tick_boundary ();
@@ -624,7 +655,7 @@ speed_starttime (void)
         getrusage (0, &start_grus);
     }
 
-  if (use_gtod)
+  if (have_gtod && use_gtod)
     {
       if (use_tick_boundary)
         gtod_tick_boundary ();
@@ -632,7 +663,7 @@ speed_starttime (void)
         gettimeofday (&start_gtod, NULL);
     }
 
-  if (use_times)
+  if (have_times && use_times)
     {
       if (use_tick_boundary)
         times_tick_boundary ();
@@ -640,11 +671,14 @@ speed_starttime (void)
         times (&start_times);
     }
 
-  if (use_rrt)
+  if (have_rrt && use_rrt)
     read_real_time (&start_rrt, sizeof(start_rrt));
 
+  if (have_stck && use_stck)
+    STCK (start_stck);
+
   /* Cycles sampled last for maximum accuracy. */
-  if (use_cycles)
+  if (have_cycles && use_cycles)
     speed_cyclecounter (start_cycles);
 }
 
@@ -748,21 +782,23 @@ speed_endtime (void)
   } while (0)
 
   unsigned          end_cycles[2];
+  stck_t            end_stck;
   timebasestruct_t  end_rrt;
   struct_timeval    end_gtod;
   struct_rusage     end_grus;
   struct_tms        end_times;
-  double            t_gtod, t_grus, t_times, t_rrt, t_cycles;
+  double            t_gtod, t_grus, t_times, t_rrt, t_stck, t_cycles;
   double            result = -1.0;
 
-  /* Cycles sampled first for maximum accuracy. */
+  /* Cycles sampled first for maximum accuracy.
+     "have_" values tested to let unused code go dead.  */
 
-  if (use_cycles)  speed_cyclecounter (end_cycles);
-  if (use_rrt)     read_real_time (&end_rrt, sizeof(end_rrt));
-  if (use_gtod)    gettimeofday (&end_gtod, NULL);
-  if (use_grus)    getrusage (0, &end_grus);
-  if (use_times)   times (&end_times);
-
+  if (have_cycles && use_cycles)  speed_cyclecounter (end_cycles);
+  if (have_stck   && use_stck)    STCK (end_stck);
+  if (have_rrt    && use_rrt)     read_real_time (&end_rrt, sizeof(end_rrt));
+  if (have_gtod   && use_gtod)    gettimeofday (&end_gtod, NULL);
+  if (have_grus   && use_grus)    getrusage (0, &end_grus);
+  if (have_times  && use_times)   times (&end_times);
 
   if (speed_option_verbose >= 4)
     {
@@ -771,6 +807,9 @@ speed_endtime (void)
         printf ("   cycles  0x%X,0x%X -> 0x%X,0x%X\n",
                 start_cycles[1], start_cycles[0],
                 end_cycles[1], end_cycles[0]);
+
+      if (use_stck)
+        printf ("   stck  0x%lX -> 0x%lX\n", start_stck, end_stck);
 
       if (use_rrt)
         printf ("   read_real_time  (%d)%u,%u (%d)%u,%u\n",
@@ -843,6 +882,12 @@ speed_endtime (void)
         }
     }
   
+  if (use_stck)  
+    {
+      t_stck = (end_stck - start_stck) * STCK_PERIOD;
+      END_USE ("stck", t_stck);
+    }
+
   if (use_cycles)  
     {
       t_cycles = speed_cyclecounter_diff (end_cycles, start_cycles)
