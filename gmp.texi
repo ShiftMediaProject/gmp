@@ -427,7 +427,7 @@ AMD K6, K6-2 and Athlon,
 Hitachi SuperH and SH-2,
 HPPA 1.0, 1.1 and 2.0,
 Intel Pentium, Pentium Pro/II/III, generic x86,
-Intel i960,
+Intel IA-64, i960,
 Motorola MC68000, MC68020, MC88100, and MC88110,
 Motorola/IBM PowerPC 32 and 64,
 National NS32000,
@@ -1147,7 +1147,7 @@ GCC is recommended for compiling GMP, but the resulting DLLs can be used with
 any compiler.  On a mingw system only the standard Windows libraries will be
 needed, on a cygwin system the usual cygwin runtime will be required.
 
-@item Motorola 68k Family
+@item Motorola 68k CPU Types
 
 CPU @samp{m68k} is taken to mean 68020 or better since that's what most
 systems are.  Use @samp{m68000} or @samp{m68010} if GMP must run on those
@@ -1162,7 +1162,7 @@ unsuitable for @file{.asm} file processing.  @samp{./configure} will detect
 the problem and either abort or choose another m4 in the @env{PATH}.  The bug
 is fixed in OpenBSD 2.7, so either upgrade or use GNU m4.
 
-@item Power Variants
+@item Power CPU Types
 
 In GMP, CPU types @samp{power} and @samp{powerpc} will each use instructions
 not available on the other, so it's important to choose the right one for the
@@ -1174,10 +1174,10 @@ with appropriate compiler options (like @samp{-mcpu=common} for
 workstations) is accepted by @file{config.sub}, but is currently equivalent to
 @samp{none}.
 
-@item Sparc V8
+@item Sparc CPU Types
 
-Using CPU type @samp{sparcv8} or @samp{supersparc} on relevant systems will
-give a significant performance increase over the V7 code.
+@samp{sparcv8} or @samp{supersparc} on relevant systems will give a
+significant performance increase over the V7 code.
 
 @item SunOS 4
 
@@ -1186,13 +1186,17 @@ files, and instead @samp{./configure} will automatically use
 @command{/usr/5bin/m4}, which we believe is always available (if not then use
 GNU m4).
 
-@item x86 Pentium and PentiumPro
+@item x86 CPU Types
 
-The Intel Pentium P5 code is good for its intended P5, but quite slow when run
-on Intel P6 class chips (PPro, P-II, P-III)@.  @samp{i386} is a better choice
-when making binaries that must run on both.
+@samp{i386} selects generic code which will run reasonably well on all x86
+chips.
 
-@item x86 MMX Assembler Code
+@samp{i586}, @samp{pentium} or @samp{pentiummmx} code is good for the intended
+P5 Pentium chips, but quite slow when run on Intel P6 class chips (PPro, P-II,
+P-III)@.  @samp{i386} is a better choice when making binaries that must run on
+both.
+
+@item x86 MMX Code
 
 If the CPU selected has MMX code but the assembler doesn't support it, a
 warning is given and non-MMX code is used instead.  This will be an inferior
@@ -1226,7 +1230,7 @@ the default @env{CFLAGS} for GCC 2.95.4 and up.
 You might find more up-to-date information at @uref{http://swox.com/gmp/}.
 
 @table @asis
-@item DJGPP bash
+@item DJGPP bash 2.03
 
 The DJGPP port of @command{bash} 2.03 is unable to run the @samp{configure}
 script, it exits silently, having died writing a preamble to
@@ -4537,6 +4541,9 @@ than C, though perhaps with varying levels of functionality and efficiency.
 @c  GNUstep Base Library @uref{http://www.gnustep.org} (version 0.9.1) is
 @c  intending to use GMP for its NSDecimal class, which would be an Objective
 @c  C binding for GMP.  Has some configure stuff ready, but no code.
+@c
+@c  Maxima @uref{http://www.ma.utexas.edu/users/wfs/maxima.html} will reach
+@c  gmp when gcl switches across.
 
 @c  @spaceuref{U} is the same as @uref{U}, but with a couple of extra spaces
 @c  in tex, just to separate the URL from the preceding text a bit.
