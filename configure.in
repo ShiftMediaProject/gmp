@@ -645,7 +645,7 @@ esac
 # The regexp here tests for an absolute path the same way as
 # _AC_OUTPUT_FILES in autoconf acgeneral.m4.
 GMP_DEFINE_RAW(["dnl  CONFIG_TOP_SRCDIR is a path from the mpn builddir to the top srcdir"])
-case "$top_srcdir" in
+case "$srcdir" in
 [[\\/]]* | ?:[[\\/]]* )
      GMP_DEFINE_RAW(["define(<CONFIG_TOP_SRCDIR>,<\`$srcdir'>)"])    ;;
 *)   GMP_DEFINE_RAW(["define(<CONFIG_TOP_SRCDIR>,<\`../$srcdir'>)"]) ;;
