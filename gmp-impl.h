@@ -2136,6 +2136,9 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
 #define NEG_MOD(r, a, d)                                        \
   do {                                                          \
     ASSERT ((d) != 0);                                          \
+    ASSERT_LIMB (a);                                            \
+    ASSERT_LIMB (d);                                            \
+                                                                \
     if ((a) <= (d))                                             \
       {                                                         \
         /* small a is reasonably likely */                      \
@@ -2146,9 +2149,12 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
         unsigned   __twos;                                      \
         mp_limb_t  __dnorm;                                     \
         count_leading_zeros (__twos, d);                        \
+        __twos -= GMP_NAIL_BITS;                                \
         __dnorm = (d) << __twos;                                \
         (r) = ((a) <= __dnorm ? __dnorm : 2*__dnorm) - (a);     \
       }                                                         \
+                                                                \
+    ASSERT_LIMB (r);                                            \
   } while (0)
 
 /* A bit mask of all the least significant zero bits of n, or -1 if n==0. */
