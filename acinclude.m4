@@ -1085,7 +1085,8 @@ gmp_prog_cxx_works=yes
 GMP_PROG_CXX_WORKS_PART([$1], [])
 
 GMP_PROG_CXX_WORKS_PART([$1], [namespace],
-[using namespace std;
+[namespace foo { }
+using namespace foo;
 ])
 
 GMP_PROG_CXX_WORKS_PART([$1], [std iostream],
