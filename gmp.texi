@@ -5156,32 +5156,29 @@ produced but with a remainder in the high limbs.  For dividend @ma{a}, divisor
 @ma{d}, quotient @ma{q}, and @m{b = 2 \GMPraise{@code{mp\_bits\_per\_limb}}, b
 = 2^mp_bits_per_limb}, then this remainder @ma{r} is of the form
 @tex
-$$ r b^n + a = qd $$
+$$ a = qd + r b^n $$
 @end tex
 @ifnottex
 
 @example
-r*b^n + a = q*d
+a = q*d + r*b^n
 @end example
 
 @end ifnottex
 @ma{n} represents the number of zero limbs produced by the subtractions, that
-generally being the number of limbs produced for @ma{q}.
+being the number of limbs produced for @ma{q}.  @ma{r} will be in the range
+@m{0 \leq r < d, 0<=r<d} and can be viewed as a remainder, but one shifted up
+by a factor of @ma{b^n}.
 
 Carrying out full subtractions at each stage means the same number of cross
-products must be done as a normal division, but as noted for the exact
-division there's still some single limb divisions saved.  When @ma{d} is a
-single limb the simplifications also provide good speedups on a number of
-processors, see the internal function @code{mpn_modexact_1c_odd}.
+products must be done as a normal division, but there's still some single limb
+divisions saved.  When @ma{d} is a single limb some simplifications arise,
+providing good speedups on a number of processors.
 
 @code{mpn_bdivmod}, @code{mpn_divexact_by3}, @code{mpn_modexact_1_odd} and the
 @code{redc} function in @code{mpz_powm} differ subtly in how they return
-@ma{r} but are all essentially the same.  @code{redc} is based on additions
-though, so it ends up with @m{r b^n = a + qd, r*b^n = a + q*d}.
-
-In all cases @ma{r} is in the range @m{0 \leq r < d, 0<=r<d} (or possibly
-@m{\leq d, <=d}) and can be viewed as a remainder, but one shifted up by a
-factor of @ma{b^n}.
+@ma{r}, leading to some negations in the above formula, but all are
+essentially the same.
 
 Clearly @ma{r} is zero when @ma{a} is a multiple of @ma{d}, and this leads to
 divisibility or congruence tests which are potentially more efficient than a
@@ -5189,8 +5186,14 @@ normal division.  Code implementing this is in progress.
 
 The factor of @ma{b^n} on @ma{r} can be ignored in a GCD (with @ma{d} odd),
 hence the use of @code{mpn_bdivmod} by @code{mpn_gcd}, and the use of
-@code{mpn_modexact_1_odd} by @code{mpn_gcd_1}, @code{mpz_kronecker_ui} etc.
-(@pxref{Greatest Common Divisor Algorithms})
+@code{mpn_modexact_1_odd} by @code{mpn_gcd_1} and @code{mpz_kronecker_ui} etc
+(@pxref{Greatest Common Divisor Algorithms}).
+
+Montgomery's REDC method for modular multiplications uses operands of the form
+of @m{xb^{-n}, x*b^-n} and @m{yb^{-n}, y*b^-n} and on calculating @m{(xb^{-n})
+(yb^{-n}), (x*b^-n)*(y*b^-n)} uses the factor of @ma{b^n} in the exact
+remainder to reach a product in the same form @m{(xy)b^{-n},
+(x*y)*b^-n} (@pxref{Modular Powering Algorithm}).
 
 Notice that @ma{r} generally gives no useful information about the ordinary
 remainder @ma{a @bmod d} since @ma{b^n @bmod d} could be anything.  If however
