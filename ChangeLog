@@ -24,6 +24,8 @@
 
 2000-04-16  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/generic/dump.c: Suppress output of leadign zeros.
+
 	* mpz/inp_str.c: Fix memory leakage.
 
 	* mpz/tests/reuse.c (dss_func_division): Add a final 1.
