@@ -48,19 +48,60 @@ define(X86_PATTERN,
 [[i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-* | viac3*-*-*]])
 
 
+dnl  GMP_FAT_SUFFIX(DSTVAR, DIRECTORY)
+dnl  ---------------------------------
+dnl  Emit code to set shell variable DSTVAR to the suffix for a fat binary
+dnl  routine from DIRECTORY.  DIRECTORY can be a shell expression like $foo
+dnl  etc.
+dnl
+dnl  The suffix is directory separators / or \ changed to underscores, and
+dnl  if there's more than one directory part, then the first is dropped.
+dnl
+dnl  For instance,
+dnl
+dnl      x86         ->  x86
+dnl      x86/k6      ->  k6
+dnl      x86/k6/mmx  ->  k6_mmx
+
+define(GMP_FAT_SUFFIX,
+[[$1=`echo $2 | sed -e '/\//s:^[^/]*/::' -e 's:[\\/]:_:g'`]])
+
+
+dnl  GMP_REMOVE_FROM_LIST(listvar,item)
+dnl  ----------------------------------
+dnl  Emit code to remove any occurance of ITEM from $LISTVAR.  ITEM can be a
+dnl  shell expression like $foo if desired.
+
+define(GMP_REMOVE_FROM_LIST,
+[remove_from_list_tmp=
+for remove_from_list_i in $[][$1]; do
+  if test $remove_from_list_i = [$2]; then :;
+  else
+     remove_from_list_tmp="$remove_from_list_tmp $remove_from_list_i"
+  fi
+done
+[$1]=$remove_from_list_tmp
+])
+
+
 dnl  GMP_STRIP_PATH(subdir)
 dnl  ----------------------
-dnl  Strip entries */subdir from $path.
+dnl  Strip entries */subdir from $path and $fat_path.
 
 define(GMP_STRIP_PATH,
+[GMP_STRIP_PATH_VAR(path, [$1])
+GMP_STRIP_PATH_VAR(fat_path, [$1])
+])
+
+define(GMP_STRIP_PATH_VAR,
 [tmp_path=
-for i in $path; do
+for i in $[][$1]; do
   case $i in
-    */$1) ;;
+    */[$2]) ;;
     *) tmp_path="$tmp_path $i" ;;
   esac
 done
-path="$tmp_path"
+[$1]="$tmp_path"
 ])
 
 
