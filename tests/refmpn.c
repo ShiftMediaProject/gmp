@@ -255,6 +255,15 @@ refmpn_cmp (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
 }
 
 int
+refmpn_cmp_allowzero (mp_srcptr xp, mp_srcptr yp, mp_size_t size)
+{
+  if (size == 0)
+    return 0;
+  else
+    return refmpn_cmp (xp, yp, size);
+}
+
+int
 refmpn_cmp_twosizes (mp_srcptr xp, mp_size_t xsize,
                      mp_srcptr yp, mp_size_t ysize)
 {
@@ -539,12 +548,16 @@ refmpn_umul_ppmm (mp_limb_t *lo, mp_limb_t x, mp_limb_t y)
   hi = HIGHPART(x) * HIGHPART(y);
 
   s = LOWPART(x) * HIGHPART(y);
-  ASSERT_NOCARRY (add (&hi, hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
-  ASSERT_NOCARRY (add (&hi, hi, HIGHPART(s)));
+  hi += HIGHPART(s);
+  s = SHIFTHIGH(LOWPART(s));
+  *lo += s;
+  hi += (*lo < s);
 
   s = HIGHPART(x) * LOWPART(y);
-  ASSERT_NOCARRY (add (&hi, hi, add (lo, *lo, SHIFTHIGH(LOWPART(s)))));
-  ASSERT_NOCARRY (add (&hi, hi, HIGHPART(s)));
+  hi += HIGHPART(s);
+  s = SHIFTHIGH(LOWPART(s));
+  *lo += s;
+  hi += (*lo < s);
 
   return hi;
 }
@@ -705,7 +718,7 @@ lshift_make (mp_limb_t hi, mp_limb_t lo, unsigned shift)
   if (shift == 0)
     return hi;
   else
-    return ((hi << shift) | (lo >> (BITS_PER_MP_LIMB-shift))) & GMP_NUMB_MASK;
+    return ((hi << shift) | (lo >> (GMP_NUMB_BITS-shift))) & GMP_NUMB_MASK;
 }
 
 
