@@ -398,6 +398,16 @@ dnl  --------------------------------------------------------------------------
 dnl  Various generic m4 things.
 
 
+dnl  Usage: m4_ifdef_anyof_p(symbol,...)
+dnl
+dnl  Expand to 1 if any of the symbols in the argument list is defined, or
+dnl  expand to 0 if not.
+
+define(m4_ifdef_anyof_p,
+`ifelse(eval($#<=1 && m4_length(`$1')==0),1, 0,
+`ifdef(`$1',1,`m4_ifdef_anyof_p(shift($@))')')')
+
+
 dnl  Usage: m4_length(string)
 dnl
 dnl  Determine the length of a string.  This is the same as len(), but
