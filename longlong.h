@@ -136,6 +136,9 @@ MA 02111-1307, USA. */
 #define UDIV_NEEDS_NORMALIZATION 1
 #define UDIV_TIME 220
 #endif /* LONGLONG_STANDALONE */
+/* clz_tab is required by mpn/alpha/cntlz.asm, and that file is built for
+   all alphas, even though ev67 and ev68 don't need it. */
+#define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #if HAVE_HOST_CPU_alphaev67 || HAVE_HOST_CPU_alphaev68
 #define count_leading_zeros(COUNT,X) \
   __asm__("ctlz %1,%0" : "=r"(COUNT) : "r"(X))
@@ -150,7 +153,6 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #endif
 #define count_leading_zeros(count, x) \
   ((count) = __MPN(count_leading_zeros) (x))
-#define COUNT_LEADING_ZEROS_NEED_CLZ_TAB
 #endif /* LONGLONG_STANDALONE */
 #endif /* ! (ev67 || ev68) */
 #endif /* __alpha */
@@ -217,6 +219,15 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
       _x >>= 2, _c += 2;						\
     _c += _x >> 1;							\
     (count) =  W_TYPE_SIZE - 1 - _c;					\
+  } while (0)
+/* similar to what gcc does for __builtin_ffs, but 0 based rather than 1
+   based, and we don't need a special case for x==0 here */
+#define count_trailing_zeros(count, x)                                  \
+  do {									\
+    UWtype __ctz_x = (x);						\
+    __asm__ ("popcnt %0 = %1"                                           \
+             : "=r" (count)                                             \
+             : "r" ((__ctz_x-1) & ~__ctz_x));                           \
   } while (0)
 #endif
 #ifndef LONGLONG_STANDALONE
