@@ -1,3 +1,37 @@
+2000-10-13  Kevin Ryde  <kevin@swox.se>
+
+	* mpq/md_2exp.c: New file.
+	* mpq/Makefile.am (libmpq_la_SOURCES): Add it.
+	* Makefile.am (MPQ_OBJECTS): Ditto.
+	* gmp.h (mpq_mul_2exp, mpq_div_2exp): Add prototypes.
+	* gmp.texi (Rational Arithmetic): Add documentation.
+
+	* mpq/tests/t-md_2exp.c: New file.
+	* mpq/tests/Makefile.am (check_PROGRAMS): Add it.
+
+	* mpn/generic/perfsqr.c: Add/amend some comments.
+
+	* gmp.texi (Known Build Problems): Note VERSION problem with old
+	sed, do some minor rewording.
+	(Build Options): Add cygwin and djgpp URLs, mention INSTALL.autoconf,
+	mention HTML.
+	(Getting the Latest Version of GMP): Move this ...
+	(Introduction to GMP): ... to here.
+	(Compatibility with older versions): Just refer to 2.x and 3.x, not
+	every minor version.
+	(Initializing Integers): Note restrictions on mpz_array_init'ed
+	variables.
+	(Integer Logic and Bit Fiddling): Note bits are numbered from 0.
+
+	* INSTALL.autoconf: New file.
+
+	* tune/Makefile.am, tune/tuneup.c, configure.in, gmp-impl.h: New
+	scheme for recompiled objects used by tune program.  Don't use
+	libgmptune.a, make better use of libtool, work with ansi2knr.
+
+	* tune/speed.h,common.c (SPEED_ROUTINE_MPZ_POWM): Use s->yp and
+	s->xp_block, make exponent a fixed size.
+
 2000-10-07  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/mips3/gmp-mparam.h: Retune.
