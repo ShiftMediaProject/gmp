@@ -842,7 +842,18 @@ $1:
 	')
 
 
-dnl  MULFUNC_PROLOGUE expands to nothing.
-define(`MULFUNC_PROLOGUE', `')
+dnl  Usage: MULFUNC_PROLOGUE(function function...)
+dnl
+dnl  A dummy macro which is grepped for by ./configure to know what
+dnl  functions a multi-function file is providing.  Use this if there aren't
+dnl  explicit PROLOGUE()s for each possible function.
+dnl
+dnl  Multiple MULFUNC_PROLOGUEs can be used, or just one with the function
+dnl  names separated by spaces.
+
+define(`MULFUNC_PROLOGUE',
+m4_assert_numargs(1)
+`')
+
 
 divert`'dnl
