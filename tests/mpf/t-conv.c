@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 #endif
 
 #ifndef EXPO
-#define EXPO 20
+#define EXPO 200
 #endif
 
 int
@@ -85,7 +85,7 @@ main (int argc, char **argv)
           size = urandom () % (2 * SIZE) - SIZE;
           exp = urandom () % EXPO;
           mpf_random2 (x, size, exp);
-          base = urandom () % 35 + 2;
+          base = urandom () % 61 + 2;
         }
 
       str = mpf_get_str (0, &bexp, base, 0, x);

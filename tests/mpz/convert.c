@@ -71,7 +71,7 @@ main (int argc, char **argv)
 
       mpz_urandomb (bs, rands, 32);
       bsi = mpz_get_ui (bs);
-      base = bsi % 36 + 1;
+      base = bsi % 62 + 1;
       if (base == 1)
 	base = 0;
 
