@@ -88,7 +88,9 @@ MA 02111-1307, USA. */
 #define __GMP_DECLSPEC  __GMP_DECLSPEC_EXPORT
 #endif
 #else
-#if defined (_WIN32) && __GMP_LIBGMP_SHARED
+#if (defined (_WIN32)        /* Microsoft C */  \
+     || defined (__WIN32__)  /* Borland C */    \
+    && __GMP_LIBGMP_SHARED
 #define __GMP_DECLSPEC  __GMP_DECLSPEC_IMPORT
 #endif
 #endif
