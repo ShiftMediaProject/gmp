@@ -419,7 +419,7 @@ case $host in
   *-cray-unicos*)
     gmp_asm_syntax_testing=no
     cclist="cc"
-    cc_cflags="-O3 -htask0 -Wa,-B"
+    cc_cflags="-O3 -hscalar0 -htask0 -Wa,-B"
     path="cray"
     ;;
 
