@@ -25,7 +25,6 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 INCLUDES = -I$(top_srcdir)
 LDADD = $(top_builddir)/libgmp.la
 
-BUILT_SOURCES = calc.c calc.h calclex.c
 EXTRA_DIST = calc.y calclex.l
 
 calc_SOURCES = calc.c calclex.c calc.h
