@@ -21,6 +21,8 @@ MA 02111-1307, USA.
 
 2002-05-07  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/powerpc32/README: New file.
+
 	* mpz/root.c: Use unsigned long with mpz_sub_ui not mp_limb_t.
 
 	* tune/README: Misc updates including sparc32/v9 smoothness, low res
