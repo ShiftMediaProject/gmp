@@ -559,41 +559,55 @@ dnl  displacement argument is eval()ed.
 dnl
 dnl  Because there aren't many places a 0(reg) form is wanted, Zdisp is
 dnl  implemented with a table of instructions and encodings.  A new entry is
-dnl  needed for any different operation or registers.
+dnl  needed for any different operation or registers.  The table is split
+dnl  into separate macros to avoid overflowing BSD m4 macro expansion space.
 
 define(Zdisp,
 `define(`Zdisp_found',0)dnl
+Zdisp_1($@)dnl
+Zdisp_2($@)dnl
+Zdisp_3($@)dnl
+Zdisp_4($@)dnl
+ifelse(Zdisp_found,0,
+`m4_error(`unrecognised instruction in Zdisp: $1 $2 $3 $4
+')')')
+
+define(Zdisp_1,`dnl
 Zdisp_match( adcl, 0,(%edx), %eax,        `0x13,0x42,0x00',           $@)`'dnl
 Zdisp_match( adcl, 0,(%edx), %esi,        `0x13,0x72,0x00',           $@)`'dnl
-Zdisp_match( addl, %ebx, 0,(%edi),        `1,95,0',                   $@)`'dnl
-Zdisp_match( addl, %ecx, 0,(%edi),        `1,79,0',                   $@)`'dnl
-Zdisp_match( addl, %esi, 0,(%edi),        `1,119,0',                  $@)`'dnl
+Zdisp_match( addl, %ebx, 0,(%edi),        `0x01,0x5f,0x00',           $@)`'dnl
+Zdisp_match( addl, %ecx, 0,(%edi),        `0x01,0x4f,0x00',           $@)`'dnl
+Zdisp_match( addl, %esi, 0,(%edi),        `0x01,0x77,0x00',           $@)`'dnl
+Zdisp_match( sbbl, 0,(%edx), %eax,        `0x1b,0x42,0x00',           $@)`'dnl
+Zdisp_match( sbbl, 0,(%edx), %esi,        `0x1b,0x72,0x00',           $@)`'dnl
+Zdisp_match( subl, %ecx, 0,(%edi),        `0x29,0x4f,0x00',           $@)`'dnl
+')
+define(Zdisp_2,`dnl
+Zdisp_match( movl, %eax, 0,(%edi),        `0x89,0x47,0x00',           $@)`'dnl
+Zdisp_match( movl, %ebx, 0,(%edi),        `0x89,0x5f,0x00',           $@)`'dnl
+Zdisp_match( movl, %esi, 0,(%edi),        `0x89,0x77,0x00',           $@)`'dnl
+Zdisp_match( movl, 0,(%ebx), %eax,        `0x8b,0x43,0x00',           $@)`'dnl
+Zdisp_match( movl, 0,(%ebx), %esi,        `0x8b,0x73,0x00',           $@)`'dnl
+Zdisp_match( movl, 0,(%esi), %eax,        `0x8b,0x46,0x00',           $@)`'dnl
+Zdisp_match( movl, 0,(%esi,%ecx,4), %eax, `0x8b,0x44,0x8e,0x00',      $@)`'dnl
+')
+define(Zdisp_3,`dnl
+Zdisp_match( movq, 0,(%eax,%ecx,8), %mm0, `0x0f,0x6f,0x44,0xc8,0x00', $@)`'dnl
+Zdisp_match( movq, 0,(%ebx,%eax,4), %mm0, `0x0f,0x6f,0x44,0x83,0x00', $@)`'dnl
+Zdisp_match( movq, 0,(%ebx,%eax,4), %mm2, `0x0f,0x6f,0x54,0x83,0x00', $@)`'dnl
+Zdisp_match( movq, 0,(%esi), %mm0,        `0x0f,0x6f,0x46,0x00',      $@)`'dnl
+Zdisp_match( movq, %mm0, 0,(%edi),        `0x0f,0x7f,0x47,0x00',      $@)`'dnl
+Zdisp_match( movq, %mm2, 0,(%ecx,%eax,4), `0x0f,0x7f,0x54,0x81,0x00', $@)`'dnl
+Zdisp_match( movq, %mm2, 0,(%edx,%eax,4), `0x0f,0x7f,0x54,0x82,0x00', $@)`'dnl
+Zdisp_match( movq, %mm0, 0,(%edx,%ecx,8), `0x0f,0x7f,0x44,0xca,0x00', $@)`'dnl
+')
+define(Zdisp_4,`dnl
 Zdisp_match( movd, 0,(%eax,%ecx,8), %mm1, `0x0f,0x6e,0x4c,0xc8,0x00', $@)`'dnl
 Zdisp_match( movd, 0,(%edx,%ecx,8), %mm0, `0x0f,0x6e,0x44,0xca,0x00', $@)`'dnl
 Zdisp_match( movd, %mm0, 0,(%eax,%ecx,4), `0x0f,0x7e,0x44,0x88,0x00', $@)`'dnl
 Zdisp_match( movd, %mm0, 0,(%ecx,%eax,4), `0x0f,0x7e,0x44,0x81,0x00', $@)`'dnl
 Zdisp_match( movd, %mm2, 0,(%ecx,%eax,4), `0x0f,0x7e,0x54,0x81,0x00', $@)`'dnl
-Zdisp_match( movl, %eax, 0,(%edi),        `137,71,0',                 $@)`'dnl
-Zdisp_match( movl, %ebx, 0,(%edi),        `137,95,0',                 $@)`'dnl
-Zdisp_match( movl, %esi, 0,(%edi),        `137,119,0',                $@)`'dnl
-Zdisp_match( movl, 0,(%ebx), %eax,        `139,67,0',                 $@)`'dnl
-Zdisp_match( movl, 0,(%ebx), %esi,        `139,115,0',                $@)`'dnl
-Zdisp_match( movl, 0,(%esi), %eax,        `139,70,0',                 $@)`'dnl
-Zdisp_match( movl, 0,(%esi,%ecx,4), %eax, `0x8b,0x44,0x8e,0x00',      $@)`'dnl
-Zdisp_match( movq, 0,(%eax,%ecx,8), %mm0, `0x0f,0x6f,0x44,0xc8,0x00', $@)`'dnl
-Zdisp_match( movq, 0,(%ebx,%eax,4), %mm0, `0x0f,0x6f,0x44,0x83,0x00', $@)`'dnl
-Zdisp_match( movq, 0,(%ebx,%eax,4), %mm2, `0x0f,0x6f,0x54,0x83,0x00', $@)`'dnl
-Zdisp_match( movq, 0,(%esi), %mm0,        `15,111,70,0',              $@)`'dnl
-Zdisp_match( movq, %mm0, 0,(%edi),        `15,127,71,0',              $@)`'dnl
-Zdisp_match( movq, %mm2, 0,(%ecx,%eax,4), `0x0f,0x7f,0x54,0x81,0x00', $@)`'dnl
-Zdisp_match( movq, %mm2, 0,(%edx,%eax,4), `0x0f,0x7f,0x54,0x82,0x00', $@)`'dnl
-Zdisp_match( movq, %mm0, 0,(%edx,%ecx,8), `0x0f,0x7f,0x44,0xca,0x00', $@)`'dnl
-Zdisp_match( sbbl, 0,(%edx), %eax,        `0x1b,0x42,0x00',           $@)`'dnl
-Zdisp_match( sbbl, 0,(%edx), %esi,        `0x1b,0x72,0x00',           $@)`'dnl
-Zdisp_match( subl, %ecx, 0,(%edi),        `41,79,0',                  $@)`'dnl
-ifelse(Zdisp_found,0,
-`m4_error(`unrecognised instruction in Zdisp: $1 $2 $3 $4
-')')')
+')
 
 define(Zdisp_match,
 `ifelse(eval(m4_stringequal_p(`$1',`$6')
