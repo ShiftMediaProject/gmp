@@ -43,11 +43,9 @@ define(`c2',`r6')
 
 ASM_START()
 PROLOGUE(mpn_mod_34lsub1)
-
 	bis	r31, r31, c0
 	bis	r31, r31, c1
 	bis	r31, r31, c2
-
 
 	lda	r17, -3(r17)
 	bge	r17, $L_3_or_more
@@ -75,6 +73,7 @@ $L_6_or_more:
 	blt	r17, $L_end
 
 	ALIGN(16)
+C Main loop
 $L_9_or_more:
 $Loop:	cmpult	a0, l0, r0
 	ldq	l0, 0(r16)
@@ -101,19 +100,21 @@ $L_end:	cmpult	a0, l0, r0
 	cmpult	a2, l2, r0
 	addq	r0, c2, c2
 
+C Handle the last (n mod 3) limbs
 $L_012:	lda	r17, 2(r17)
-	blt	r17, $L_0_more
+	blt	r17, $L_0
 	ldq	l0, 0(r16)
 	addq	l0, a0, a0
 	cmpult	a0, l0, r0
 	addq	r0, c0, c0
-	beq	r17, $L_0_more
+	beq	r17, $L_0
 	ldq	l1, 8(r16)
 	addq	l1, a1, a1
 	cmpult	a1, l1, r0
 	addq	r0, c1, c1
-$L_0_more:
-	srl	a0, 48, r2
+
+C Align and sum our 3 main accumulators and 3 carry accumulators
+$L_0:	srl	a0, 48, r2
 	srl	a1, 32, r4
 	insll	a1, 2, r1
 	zapnot	a0, 63, r0
