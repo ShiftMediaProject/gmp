@@ -44,26 +44,7 @@ tmp_host=`echo $host_cpu | sed 's/\./_/'`
 AC_DEFINE_UNQUOTED(HAVE_HOST_CPU_$tmp_host)
 GMP_DEFINE_RAW("define_not_for_expansion(\`HAVE_HOST_CPU_$tmp_host')", POST)
 
-# gmp.h and mp.h are generated in order to instantiate _LONG_LONG_LIMB,
-# expr-impl.h so as to set HAVE_MPFR.
-#
-# FIXME: Current autoheader warns that these defines don't get into
-# config.in.  Probably it wouldn't hurt to have duplicate defines, if we
-# wanted to get rid of the warnings.
-#
-# FIXME: gmp.h wants a #undef __need_size_t, but AM_CONFIG_HEADER will
-# comment that out as usual for a config.in.  Right now this is avoided by
-# having a "NOTATEMPLATE" marker in gmp-h.in and patching autoconf to leave
-# such a line alone.  Maybe in the future autoconf will offer a standard way
-# to do this sort of thing, or failing that we might prefer to switch to
-# AC_CONFIG_HEADERS and add commands to tweak gmp.h appropriately (this
-# can't be done yet as automake insists on AM_CONFIG_HEADER).
-
 AM_INIT_AUTOMAKE(gmp, GMP_VERSION)
-AM_CONFIG_HEADER(gmp.h:gmp-h.in)
-AM_CONFIG_HEADER(mp.h:mp-h.in)
-AM_CONFIG_HEADER(demos/expr/expr-impl.h:demos/expr/expr-impl-h.in)
-dnl  autoheader requires config.in to be the last AM_CONFIG_HEADER here
 AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
 
@@ -1064,8 +1045,11 @@ fi
                           eval limb_chosen=\"\$limb$abi1\"
 test -n "$limb_chosen" || eval limb_chosen=\"\$limb$abi2\"
 case $limb_chosen in
-longlong) AC_DEFINE(_LONG_LONG_LIMB) ;;
+longlong) DEFN_LONG_LONG_LIMB="#define _LONG_LONG_LIMB 1"    ;;
+*)        DEFN_LONG_LONG_LIMB="/* #undef _LONG_LONG_LIMB */" ;;
+;;
 esac
+AC_SUBST(DEFN_LONG_LONG_LIMB)
 
 
 cat >&AC_FD_CC <<EOF
@@ -1515,10 +1499,11 @@ AC_SUBST(TUNE_SQR_OBJ)
 
 # Configs for demos/expr directory
 if test $enable_mpfr = yes; then
-  AC_DEFINE(HAVE_MPFR,1)
+  HAVE_MPFR=1
 else
-  AC_DEFINE(HAVE_MPFR,0)
+  HAVE_MPFR=0
 fi
+AC_SUBST(HAVE_MPFR)
 
 
 # Create config.m4.
@@ -1536,4 +1521,6 @@ AC_OUTPUT(Makefile							\
   tests/mpf/Makefile tests/mpq/Makefile tests/mpz/Makefile		\
   tests/rand/Makefile							\
   tune/Makefile								\
-  demos/Makefile demos/calc/Makefile demos/expr/Makefile)
+  demos/Makefile demos/calc/Makefile demos/expr/Makefile		\
+  gmp.h:gmp-h.in mp.h:mp-h.in						\
+  demos/expr/expr-impl.h:demos/expr/expr-impl-h.in)
