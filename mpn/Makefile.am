@@ -38,7 +38,7 @@ nodist_libdummy_la_SOURCES =						    \
   add_n.c addmul_1.c and_n.c andn_n.c bdivmod.c com_n.c copyd.c copyi.c	    \
   dc_divrem_n.c cmp.c                                                       \
   dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c		    \
-  dump.c fib_ui.c gcd.c							    \
+  dump.c fib2_ui.c gcd.c						    \
   gcd_finda.c gcd_1.c gcdext.c get_str.c hamdist.c inlines.c invert_limb.c  \
   ior_n.c iorn_n.c jacbase.c lshift.c mod_1.c mode1o.c mul.c mul_1.c	    \
   mul_fft.c mul_n.c mul_basecase.c nand_n.c nior_n.c perfsqr.c popcount.c   \
