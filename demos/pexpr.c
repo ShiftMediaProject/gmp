@@ -59,7 +59,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #include "gmp.h"
 
-/* SunOS 4 doesn't define a canonical SIGSTKSZ, provide a default. */
+/* SunOS 4 and HPUX 9 don't define a canonical SIGSTKSZ, use a default. */
 #ifndef SIGSTKSZ
 #define SIGSTKSZ  4096
 #endif
