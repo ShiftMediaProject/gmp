@@ -73,11 +73,13 @@ CFLAGS_PIC = @CFLAGS_PIC@
 CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+DEFN_LONG_LONG_LIMB = @DEFN_LONG_LONG_LIMB@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 ECHO = @ECHO@
 EXEEXT = @EXEEXT@
 GMP_LDFLAGS = @GMP_LDFLAGS@
+HAVE_MPFR = @HAVE_MPFR@
 LIBM = @LIBM@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
@@ -128,7 +130,7 @@ LDADD = ../libmpfr.a $(top_builddir)/libgmp.la $(LIBM)
 @WANT_MPFR_TRUE@TESTS = @WANT_MPFR_TRUE@$(check_PROGRAMS)
 subdir = mpfr/tests
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../../gmp.h ../../mp.h ../../demos/expr/expr-impl.h ../../config.h
+CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 @WANT_MPFR_TRUE@check_PROGRAMS =  reuse$(EXEEXT) tabs$(EXEEXT) \
 @WANT_MPFR_TRUE@tadd$(EXEEXT) tagm$(EXEEXT) tcan_round$(EXEEXT) \
@@ -144,7 +146,7 @@ CONFIG_CLEAN_FILES =
 @WANT_MPFR_TRUE@tui_div$(EXEEXT) tui_sub$(EXEEXT) tsin_cos$(EXEEXT) \
 @WANT_MPFR_TRUE@tswap$(EXEEXT) ttrunc$(EXEEXT)
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I../.. -I../.. -I../../demos/expr -I../..
+DEFS = @DEFS@ -I. -I$(srcdir) -I../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
