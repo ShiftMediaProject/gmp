@@ -66,7 +66,8 @@ MA 02111-1307, USA. */
     mp_ptr     __ptr;                                                   \
     mp_size_t  __ptr_align, __ptr_add;                                  \
                                                                         \
-    __ptr = TMP_ALLOC_LIMBS ((limbs) + SPEED_TMP_ALLOC_ADJUST_MASK-1);  \
+    ASSERT ((CACHE_LINE_SIZE % BYTES_PER_MP_LIMB) == 0);                \
+    __ptr = TMP_ALLOC_LIMBS ((limbs) + SPEED_TMP_ALLOC_ADJUST_MASK);    \
     __ptr_align = (__ptr - (mp_ptr) NULL);                              \
     __ptr_add = ((align) - __ptr_align) & SPEED_TMP_ALLOC_ADJUST_MASK;  \
     (ptr) = __ptr + __ptr_add;                                          \
