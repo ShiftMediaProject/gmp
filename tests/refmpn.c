@@ -1224,7 +1224,7 @@ refmpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
       refmpn_sb_divrem_mn (qp, n2p, nsize+1, d2p, dsize);
       refmpn_rshift_or_copy (rp, n2p, dsize, norm);
 
-      // ASSERT (refmpn_zero_p (tp+dsize, nsize-dsize));
+      /* ASSERT (refmpn_zero_p (tp+dsize, nsize-dsize)); */
       free (n2p);
       free (d2p);
     }
