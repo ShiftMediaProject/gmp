@@ -1336,3 +1336,10 @@ unsigned char __clz_tab[];
 #ifndef UDIV_TIME
 #define UDIV_TIME UMUL_TIME
 #endif
+
+/* count_trailing_zeros is often on the slow side, so make that the default */
+#ifndef COUNT_TRAILING_ZEROS_TIME
+#define COUNT_TRAILING_ZEROS_TIME  15  /* cycles */
+#endif
+
+
