@@ -19,6 +19,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-19  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/mpfr.h (_PROTO): Use __GMP_PROTO, for compatibility with
+	gmp-impl.h.
+
 2002-01-17  Torbjorn Granlund  <tege@swox.com>
 
 	* mpfr/mpfr-test.h: Test "__hpux", not "hpux".  Mask off mrand48
