@@ -42,6 +42,17 @@ C the first time through it must wait for the cvtqt result.  Once that
 C result is ready (a 1 cycle stall) then both the branch and following loads
 C can issue together.
 C
+C The main loop handles an odd count of limbs, being two limbs loaded before
+C each size test, plus one pipelined around from the previous iteration (or
+C setup in the entry sequence).
+C
+C An even number of limbs is handled by an explicit dst[0]=~src[0] in the
+C entry sequence, and an increment of the pointers.  For an odd size there's
+C no increment and the first store in the loop (r24) is a repeat of dst[0].
+C
+C Note that the load for r24 after the possible pointer increment is done
+C before the explicit store to dst[0], in case src==dst.
+C 
 
 ASM_START()
 DATASTART(L(dat))
@@ -69,7 +80,7 @@ PROLOGUE(mpn_com_n)
 	LEA(	r8, L(dat))
 	s8addq	r5, r17, r17		C skip src[0] if even
 
-	not	r20, r20		C ~src[0]
+	ornot	r31, r20, r20		C ~src[0]
 	unop
 
 	ldt	f0, 8(r30)		C (size-3)/2
@@ -85,7 +96,7 @@ PROLOGUE(mpn_com_n)
 	unop
 	cvtqt	f0, f0			C (size-3)/2 as float
 
-	not	r24, r24
+	ornot	r31, r24, r24
 	blt	r7, L(done_1)		C if size<=2
 	unop
 	unop
@@ -110,20 +121,20 @@ L(top):
 	ldq	r23, 32(r17)		C src[i+4]
 
 	stq	r24, 0(r19)		C dst[i]
-	not	r20, r20
+	ornot	r31, r20, r20
 	subt	f0, f1, f0		C count -= 2
 	unop
 
 	stq	r20, 8(r19)		C dst[i+1]
-	not	r21, r21
+	ornot	r31, r21, r21
 	unop
 	unop
 
 	stq	r21, 16(r19)		C dst[i+2]
-	not	r22, r22
+	ornot	r31, r22, r22
 
 	stq	r22, 24(r19)		C dst[i+3]
-	not	r23, r24
+	ornot	r31, r23, r24
 
 	lda	r17, 32(r17)		C src += 4
 	lda	r19, 32(r19)		C dst += 4
@@ -146,10 +157,10 @@ L(done_2):
 	C r24	result for dst[size-3]
 
 	stq	r24, 0(r19)		C dst[size-3]
-	not	r20, r20
+	ornot	r31, r20, r20
 
 	stq	r20, 8(r19)		C dst[size-2]
-	not	r21, r21
+	ornot	r31, r21, r21
 
 	stq	r21, 16(r19)		C dst[size-1]
 	ret	r31, (r26), 1
