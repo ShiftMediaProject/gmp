@@ -640,7 +640,7 @@ void
 speed_cycletime_need_cycles (void)
 {
   speed_time_init ();
-  if (speed_cycletime == 0.0)
+  if (speed_cycletime == 1.0)
     speed_cycletime_fail
       ("Need to know CPU frequency to give times in cycles");
 }
