@@ -26,11 +26,13 @@ MA 02111-1307, USA. */
 #define __GNU_MP__ 3
 #define __need_size_t
 #include <stddef.h>
-#undef __need_size_t
+#undef __need_size_t /*NOTATEMPLATE*/
 
 
-/* The following is instantiated at configure time.  */
-@define_LONG_LONG_LIMB@
+/* The following instantiated by configure, for internal use only */
+#if ! __GMP_WITHIN_CONFIGURE
+#undef _LONG_LONG_LIMB
+#endif
 
 
 #if (__STDC__-0) || defined (__cplusplus)
