@@ -17,6 +17,7 @@ sh_status (int sig)
   printf ("  a = ");
   mpz_out_str (stdout, 10, a);
   printf ("\n");
+  fflush (stdout);
 
   if (SIGSEGV == sig)		/* remove SEGV handler */
     signal (SIGSEGV, SIG_DFL);
