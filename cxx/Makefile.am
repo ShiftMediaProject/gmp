@@ -29,4 +29,6 @@ noinst_LTLIBRARIES = libcxx.la
 endif
 
 # osfuns.cc is handled from the top-level Makefile.am
-libcxx_la_SOURCES = osdoprnti.cc osmpf.cc osmpq.cc osmpz.cc
+libcxx_la_SOURCES = \
+  isfuns.cc ismpf.cc ismpq.cc ismpz.cc \
+  osdoprnti.cc osmpf.cc osmpq.cc osmpz.cc
