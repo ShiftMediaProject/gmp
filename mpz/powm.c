@@ -154,8 +154,8 @@ pow (base, e, mod, res)
       return;
     }
 
-  /* Use REDC instead of usual reduction for small sizes, more precisely using
-     REDC each modular multiplication cost about 2*n^2 limbs operations,
+  /* Use REDC instead of usual reduction for sizes < POWM_THRESHOLD.
+     In REDC each modular multiplication costs about 2*n^2 limbs operations,
      whereas using usual reduction it costs 3*K(n), where K(n) is the cost of a
      multiplication using Karatsuba, and a division is assumed to cost 2*K(n),
      for example using Burnikel-Ziegler's algorithm. This gives a theoretical
@@ -164,7 +164,11 @@ pow (base, e, mod, res)
   /* For now, also disable REDC when MOD is even, as mpz_dmprepare cannot cope
      with that.  */
 
-  use_redc = (3 * n < 8 * KARATSUBA_SQR_THRESHOLD && PTR(mod)[0] % 2 != 0);
+#ifndef POWM_THRESHOLD
+#define POWM_THRESHOLD  ((8 * KARATSUBA_SQR_THRESHOLD) / 3)
+#endif
+
+  use_redc = (n < POWM_THRESHOLD && PTR(mod)[0] % 2 != 0);
   if (use_redc)
     invm = mpz_dmprepare (mod);
 
