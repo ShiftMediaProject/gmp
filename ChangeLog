@@ -1,8 +1,31 @@
+2000-04-01  Linus Nordberg  <linus@swox.se>
+
+	* gmp.h: Fix function prototypes for randomization functions.
+	(__gmp_rand_lc_scheme_struct): Replace `m' with `m2exp'. Remove
+	unused `bits'.
+	(__gmp_rand_data_lc): Add `m2exp' as another way of representing
+	the modulus.
+	(__gmp_rand_state_struct): Remove unused `size'.
+
+	* mpn/generic/rawrandom.c (mpn_rawrandom): Rewrite.
+	(mpn_lc): New static function.
+
 2000-04-01  Kevin Ryde  <kevin@swox.se>
 
 	* acinclude.m4 (GMP_CHECK_ASM_DATA): Plain .data for hpux.
 	* configure.in (CCAS): No CFLAGS, they're added when it's used.
 	(CONFIG_SRCDIR): New define for config.m4.
+
+2000-03-31  Linus Nordberg  <linus@swox.se>
+	
+	* mpz/urandom.c: Rename to...
+	* mpz/urandomb.c: ...this.
+
+	* mpz/urandomb.c (mpz_urandomb): Change operand order in call to
+	mpn_rawrandom().  Use ABSIZ() instead of SIZ() when checking size
+	of ROP.
+
+	* mpz/urandomm.c: New file.
 
 2000-03-31  Kevin Ryde  <kevin@swox.se>
 
