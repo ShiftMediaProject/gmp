@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-# Copyright 2001 Free Software Foundation, Inc.
+# Copyright 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -73,7 +73,7 @@ sub process {
   }
 }
 
-# Ensure we're using the right KARATSUBA_SQR_THRESHOLD for the part of the
+# Ensure we're using the right SQR_KARATSUBA_THRESHOLD for the part of the
 # tree being processed.
 sub process_mparam {
   my $file = "$File::Find::dir/gmp-mparam.h";
@@ -81,10 +81,10 @@ sub process_mparam {
     print "$file\n" if $opt{'t'};
     open MPARAM, "<$file" or die;
     while (<MPARAM>) {
-      if (/^#define KARATSUBA_SQR_THRESHOLD[ \t]*([0-9][0-9]*)/) {
+      if (/^#define SQR_KARATSUBA_THRESHOLD[ \t]*([0-9][0-9]*)/) {
         open KARA, ">$tempfile" or die;
-        print KARA "define(\`KARATSUBA_SQR_THRESHOLD',$1)\n\n";
-        print "define(\`KARATSUBA_SQR_THRESHOLD',$1)\n" if $opt{'t'};
+        print KARA "define(\`SQR_KARATSUBA_THRESHOLD',$1)\n\n";
+        print "define(\`SQR_KARATSUBA_THRESHOLD',$1)\n" if $opt{'t'};
         close KARA or die;
         last;
       }

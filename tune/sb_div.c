@@ -1,7 +1,7 @@
 /* mpn/generic/sb_divrem_mn.c forced to use plain udiv_qrnnd. */
 
 /*
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -24,10 +24,10 @@ MA 02111-1307, USA.
 #include "gmp.h"
 #include "gmp-impl.h"
 
-#ifdef SB_PREINV_THRESHOLD
-#undef SB_PREINV_THRESHOLD
+#ifdef DIV_SB_PREINV_THRESHOLD
+#undef DIV_SB_PREINV_THRESHOLD
 #endif
-#define SB_PREINV_THRESHOLD  MP_SIZE_T_MAX
+#define DIV_SB_PREINV_THRESHOLD  MP_SIZE_T_MAX
 #define __gmpn_sb_divrem_mn  mpn_sb_divrem_mn_div
 
 #include "mpn/generic/sb_divrem_mn.c"

@@ -6,8 +6,8 @@
    THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001 Free Software
-Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 1998, 1999, 2000, 2001, 2002 Free
+Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -138,9 +138,9 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
       p[n] = w;
 
       n1 = n + 1;
-      if (n2 < KARATSUBA_MUL_THRESHOLD)
+      if (n2 < MUL_KARATSUBA_THRESHOLD)
 	{
-	  if (n3 < KARATSUBA_MUL_THRESHOLD)
+	  if (n3 < MUL_KARATSUBA_THRESHOLD)
 	    {
 	      mpn_mul_basecase (ws, p, n3, p + n3, n3);
 	      mpn_mul_basecase (p, a, n3, b, n3);
@@ -230,7 +230,7 @@ mpn_kara_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
       mpn_sub_n (p + n2, x, y, n2);
 
       /* Pointwise products. */
-      if (n2 < KARATSUBA_MUL_THRESHOLD)
+      if (n2 < MUL_KARATSUBA_THRESHOLD)
 	{
 	  mpn_mul_basecase (ws, p, n2, p + n2, n2);
 	  mpn_mul_basecase (p, a, n2, b, n2);
@@ -304,12 +304,12 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       /* n2 is always either n3 or n3-1 so maybe the two sets of tests here
          could be combined.  But that's not important, since the tests will
          take a miniscule amount of time compared to the function calls.  */
-      if (BELOW_THRESHOLD (n3, BASECASE_SQR_THRESHOLD))
+      if (BELOW_THRESHOLD (n3, SQR_BASECASE_THRESHOLD))
         {
           mpn_mul_basecase (ws, p, n3, p, n3);
           mpn_mul_basecase (p,  a, n3, a, n3);
         }
-      else if (BELOW_THRESHOLD (n3, KARATSUBA_SQR_THRESHOLD))
+      else if (BELOW_THRESHOLD (n3, SQR_KARATSUBA_THRESHOLD))
         {
           mpn_sqr_basecase (ws, p, n3);
           mpn_sqr_basecase (p,  a, n3);
@@ -319,9 +319,9 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
           mpn_kara_sqr_n   (ws, p, n3, ws + n1);	 /* (x-y)^2 */
           mpn_kara_sqr_n   (p,  a, n3, ws + n1);	 /* x^2	    */
         }
-      if (BELOW_THRESHOLD (n2, BASECASE_SQR_THRESHOLD))
+      if (BELOW_THRESHOLD (n2, SQR_BASECASE_THRESHOLD))
         mpn_mul_basecase (p + n1, a + n3, n2, a + n3, n2);
-      else if (BELOW_THRESHOLD (n2, KARATSUBA_SQR_THRESHOLD))
+      else if (BELOW_THRESHOLD (n2, SQR_KARATSUBA_THRESHOLD))
         mpn_sqr_basecase (p + n1, a + n3, n2);
       else
         mpn_kara_sqr_n   (p + n1, a + n3, n2, ws + n1);	 /* y^2	    */
@@ -377,13 +377,13 @@ mpn_kara_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
       mpn_sub_n (p, x, y, n2);
 
       /* Pointwise products. */
-      if (BELOW_THRESHOLD (n2, BASECASE_SQR_THRESHOLD))
+      if (BELOW_THRESHOLD (n2, SQR_BASECASE_THRESHOLD))
 	{
 	  mpn_mul_basecase (ws,    p,      n2, p,      n2);
 	  mpn_mul_basecase (p,     a,      n2, a,      n2);
 	  mpn_mul_basecase (p + n, a + n2, n2, a + n2, n2);
 	}
-      else if (BELOW_THRESHOLD (n2, KARATSUBA_SQR_THRESHOLD))
+      else if (BELOW_THRESHOLD (n2, SQR_KARATSUBA_THRESHOLD))
 	{
 	  mpn_sqr_basecase (ws,    p,      n2);
 	  mpn_sqr_basecase (p,     a,      n2);
@@ -913,16 +913,16 @@ interpolate3 (mp_srcptr A, mp_ptr B, mp_ptr C, mp_ptr D, mp_srcptr E,
  * ws is workspace.
  */
 
-/* TO DO: If TOOM3_MUL_THRESHOLD is much bigger than KARATSUBA_MUL_THRESHOLD then the
+/* TO DO: If MUL_TOOM3_THRESHOLD is much bigger than MUL_KARATSUBA_THRESHOLD then the
  *	  recursion in mpn_toom3_mul_n() will always bottom out with mpn_kara_mul_n()
- *	  because the "n < KARATSUBA_MUL_THRESHOLD" test here will always be false.
+ *	  because the "n < MUL_KARATSUBA_THRESHOLD" test here will always be false.
  */
 
 #define TOOM3_MUL_REC(p, a, b, n, ws) \
   do {								\
-    if (n < KARATSUBA_MUL_THRESHOLD)				\
+    if (n < MUL_KARATSUBA_THRESHOLD)				\
       mpn_mul_basecase (p, a, n, b, n);				\
-    else if (n < TOOM3_MUL_THRESHOLD)				\
+    else if (n < MUL_TOOM3_THRESHOLD)				\
       mpn_kara_mul_n (p, a, b, n, ws);				\
     else							\
       mpn_toom3_mul_n (p, a, b, n, ws);				\
@@ -944,7 +944,7 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
     mp_limb_t m;
 
     /* this is probably unnecessarily strict */
-    ASSERT (n >= TOOM3_MUL_THRESHOLD);
+    ASSERT (n >= MUL_TOOM3_THRESHOLD);
 
     l = ls = n / 3;
     m = n - l * 3;
@@ -1020,15 +1020,15 @@ mpn_toom3_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n, mp_ptr ws)
 
 /* Like previous function but for squaring */
 
-/* FIXME: If TOOM3_SQR_THRESHOLD is big enough it might never get into the
+/* FIXME: If SQR_TOOM3_THRESHOLD is big enough it might never get into the
    basecase range.  Try to arrange those conditonals go dead.  */
 #define TOOM3_SQR_REC(p, a, n, ws)                              \
   do {                                                          \
-    if (BELOW_THRESHOLD (n, BASECASE_SQR_THRESHOLD))            \
+    if (BELOW_THRESHOLD (n, SQR_BASECASE_THRESHOLD))            \
       mpn_mul_basecase (p, a, n, a, n);                         \
-    else if (BELOW_THRESHOLD (n, KARATSUBA_SQR_THRESHOLD))      \
+    else if (BELOW_THRESHOLD (n, SQR_KARATSUBA_THRESHOLD))      \
       mpn_sqr_basecase (p, a, n);                               \
-    else if (BELOW_THRESHOLD (n, TOOM3_SQR_THRESHOLD))          \
+    else if (BELOW_THRESHOLD (n, SQR_TOOM3_THRESHOLD))          \
       mpn_kara_sqr_n (p, a, n, ws);                             \
     else                                                        \
       mpn_toom3_sqr_n (p, a, n, ws);                            \
@@ -1050,7 +1050,7 @@ mpn_toom3_sqr_n (mp_ptr p, mp_srcptr a, mp_size_t n, mp_ptr ws)
     mp_limb_t m;
 
     /* this is probably unnecessarily strict */
-    ASSERT (n >= TOOM3_SQR_THRESHOLD);
+    ASSERT (n >= SQR_TOOM3_THRESHOLD);
 
     l = ls = n / 3;
     m = n - l * 3;
@@ -1121,26 +1121,26 @@ mpn_mul_n (mp_ptr p, mp_srcptr a, mp_srcptr b, mp_size_t n)
   ASSERT (! MPN_OVERLAP_P (p, 2*n, a, n));
   ASSERT (! MPN_OVERLAP_P (p, 2*n, b, n));
 
-  if (n < KARATSUBA_MUL_THRESHOLD)
+  if (n < MUL_KARATSUBA_THRESHOLD)
     mpn_mul_basecase (p, a, n, b, n);
-  else if (n < TOOM3_MUL_THRESHOLD)
+  else if (n < MUL_TOOM3_THRESHOLD)
     {
       /* Allocate workspace of fixed size on stack: fast! */
 #if TUNE_PROGRAM_BUILD
-      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (TOOM3_MUL_THRESHOLD_LIMIT-1)];
+      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (MUL_TOOM3_THRESHOLD_LIMIT-1)];
 #else
-      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (TOOM3_MUL_THRESHOLD-1)];
+      mp_limb_t ws[MPN_KARA_MUL_N_TSIZE (MUL_TOOM3_THRESHOLD-1)];
 #endif
       mpn_kara_mul_n (p, a, b, n, ws);
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
-  else if (n < FFT_MUL_THRESHOLD)
+  else if (n < MUL_FFT_THRESHOLD)
 #else
   else
 #endif
     {
       /* Use workspace of unknown size in heap, as stack space may
-       * be limited.  Since n is at least TOOM3_MUL_THRESHOLD, the
+       * be limited.  Since n is at least MUL_TOOM3_THRESHOLD, the
        * multiplication will take much longer than malloc()/free().  */
       mp_limb_t wsLen, *ws;
       wsLen = MPN_TOOM3_MUL_N_TSIZE (n);

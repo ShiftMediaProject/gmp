@@ -1,7 +1,7 @@
 /* mpz_powm(res,base,exp,mod) -- Set RES to (base**exp) mod MOD.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001 Free Software Foundation,
-Inc.  Contributed by Paul Zimmermann.
+Copyright 1991, 1993, 1994, 1996, 1997, 2000, 2001, 2002 Free Software
+Foundation, Inc.  Contributed by Paul Zimmermann.
 
 This file is part of the GNU MP Library.
 
@@ -134,14 +134,14 @@ phi (mp_limb_t t)
    using usual reduction it costs 3*K(n), where K(n) is the cost of a
    multiplication using Karatsuba, and a division is assumed to cost 2*K(n),
    for example using Burnikel-Ziegler's algorithm. This gives a theoretical
-   threshold of a*KARATSUBA_SQR_THRESHOLD, with a=(3/2)^(1/(2-ln(3)/ln(2))) ~
+   threshold of a*SQR_KARATSUBA_THRESHOLD, with a=(3/2)^(1/(2-ln(3)/ln(2))) ~
    2.66.  */
 /* For now, also disable REDC when MOD is even, as the inverse can't handle
    that.  At some point, we might want to make the code faster for that case,
    perhaps using CRR.  */
 
 #ifndef POWM_THRESHOLD
-#define POWM_THRESHOLD  ((8 * KARATSUBA_SQR_THRESHOLD) / 3)
+#define POWM_THRESHOLD  ((8 * SQR_KARATSUBA_THRESHOLD) / 3)
 #endif
 
 #define HANDLE_NEGATIVE_EXPONENT 1

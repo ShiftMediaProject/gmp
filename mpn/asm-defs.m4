@@ -9,7 +9,7 @@ dnl  GNU m4 and OpenBSD 2.7 m4 will give filenames and line numbers in error
 dnl  messages.
 
 
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -986,7 +986,7 @@ dnl  Check that `symbol' is defined.  If it isn't, issue an error and
 dnl  terminate immediately.  The error message explains that the symbol
 dnl  should be in config.m4, copied from gmp-mparam.h.
 dnl
-dnl  Termination is immediate since missing say KARATSUBA_SQR_THRESHOLD can
+dnl  Termination is immediate since missing say SQR_KARATSUBA_THRESHOLD can
 dnl  lead to infinite loops and endless error messages.
 
 define(m4_config_gmp_mparam,

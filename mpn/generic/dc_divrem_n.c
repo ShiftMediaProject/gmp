@@ -6,7 +6,7 @@
    FUTURE GNU MP RELEASE.
 
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 Contributed by Paul Zimmermann.
 
 This file is part of the GNU MP Library.
@@ -112,7 +112,7 @@ mpn_dc_div_3_halves_by_2 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
   TMP_DECL (marker);
 
   TMP_MARK (marker);
-  if (n < DC_THRESHOLD)
+  if (n < DIV_DC_THRESHOLD)
     qhl = mpn_sb_divrem_mn (qp, np + n, twon, dp + n, n);
   else
     qhl = mpn_dc_divrem_n (qp, np + n, dp + n, n);

@@ -6113,9 +6113,9 @@ algorithms, as the size N increases.
 @multitable {KaratsubaMMM} {MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM}
 @item Algorithm @tab Threshold
 @item Basecase  @tab (none)
-@item Karatsuba @tab @code{KARATSUBA_MUL_THRESHOLD}
-@item Toom-3    @tab @code{TOOM3_MUL_THRESHOLD}
-@item FFT       @tab @code{FFT_MUL_THRESHOLD}
+@item Karatsuba @tab @code{MUL_KARATSUBA_THRESHOLD}
+@item Toom-3    @tab @code{MUL_TOOM3_THRESHOLD}
+@item FFT       @tab @code{MUL_FFT_THRESHOLD}
 @end multitable
 @end quotation
 
@@ -6124,7 +6124,7 @@ FFT is only used if GMP is configured with @samp{--enable-fft}, @pxref{Build
 Options}.
 
 N@cross{}M multiplications of operands with different sizes above
-@code{KARATSUBA_MUL_THRESHOLD} are currently done by splitting into M@cross{}M
+@code{MUL_KARATSUBA_THRESHOLD} are currently done by splitting into M@cross{}M
 pieces.  The Karatsuba and Toom-3 routines then operate only on equal size
 operands.  This is not very efficient, and is slated for improvement in the
 future.
@@ -6222,7 +6222,7 @@ usually around 1.5@cross{}.  Less than 1.5@cross{} probably indicates
 @code{mpn_sqr_basecase} wants improving on that CPU.
 
 On some CPUs @code{mpn_mul_basecase} can be faster than the generic C
-@code{mpn_sqr_basecase}.  @code{BASECASE_SQR_THRESHOLD} is the size at which
+@code{mpn_sqr_basecase}.  @code{SQR_BASECASE_THRESHOLD} is the size at which
 to use @code{mpn_sqr_basecase}, this will be zero if that routine should be
 used always.
 
@@ -6373,7 +6373,7 @@ each 1/2 the size of the inputs.  This is a big improvement over the basecase
 multiply at @ma{O(N^2)} and the advantage soon overcomes the extra additions
 Karatsuba performs.
 
-@code{KARATSUBA_MUL_THRESHOLD} can be as little as 10 limbs.  The @code{SQR}
+@code{MUL_KARATSUBA_THRESHOLD} can be as little as 10 limbs.  The @code{SQR}
 threshold is usually about twice the @code{MUL}.  The basecase algorithm will
 take a time of the form @m{M(N) = aN^2 + bN + c, M(N) = a*N^2 + b*N + c} and
 the Karatsuba algorithm @m{K(N) = 3M(N/2) + dN + e, K(N) = 3*M(N/2) + d*N +
@@ -6667,7 +6667,7 @@ only realizes its advantage above a certain size.
 
 Near the crossover between Toom-3 and Karatsuba there's generally a range of
 sizes where the difference between the two is small.
-@code{TOOM3_MUL_THRESHOLD} is a somewhat arbitrary point in that range and
+@code{MUL_TOOM3_THRESHOLD} is a somewhat arbitrary point in that range and
 successive runs of the tune program can give different values due to small
 variations in measuring.  A graph of time versus size for the two shows the
 effect, see @file{tune/README}.
@@ -6756,16 +6756,16 @@ For a mod @ma{2^N+1} product, an FFT-@ma{k} is an @m{O(N^{k/(k-1)}),
 O(N^(k/(k-1)))} algorithm, the exponent representing @ma{2^k} recursed modular
 multiplies each @m{1/2^{k-1},1/2^(k-1)} the size of the original.  Each
 successive @ma{k} is an asymptotic improvement, but overheads mean each is
-only faster at bigger and bigger sizes.  In the code, @code{FFT_MUL_TABLE} and
-@code{FFT_SQR_TABLE} are the thresholds where each @ma{k} is used.  Each new
+only faster at bigger and bigger sizes.  In the code, @code{MUL_FFT_TABLE} and
+@code{SQR_FFT_TABLE} are the thresholds where each @ma{k} is used.  Each new
 @ma{k} effectively swaps some multiplying for some shifts, adds and overheads.
 
 A mod @ma{2^N+1} product can be formed with a normal
 @ma{N@cross{}N@rightarrow{}2N} bit multiply plus a subtraction, so an FFT and
 Toom-3 etc can be compared directly.  A @ma{k=4} FFT at @ma{O(N^@W{1.333})}
 can be expected to be the first faster than Toom-3 at @ma{O(N^@W{1.465})}.  In
-practice this is what's found, with @code{FFT_MODF_MUL_THRESHOLD} and
-@code{FFT_MODF_SQR_THRESHOLD} being between 300 and 1000 limbs, depending on
+practice this is what's found, with @code{MUL_FFT_MODF_THRESHOLD} and
+@code{SQR_FFT_MODF_THRESHOLD} being between 300 and 1000 limbs, depending on
 the CPU.  So far it's been found that only very large FFTs recurse into
 pointwise multiplies above these sizes.
 
@@ -6776,7 +6776,7 @@ recursing into a normal multiply and that on that basis it's doing @ma{2^k}
 recursed multiplies each @m{1/2^{k-2},1/2^(k-2)} the size of the inputs,
 making it @m{O(N^{k/(k-2)}), O(N^(k/(k-2)))}.  This would mean @ma{k=7} at
 @ma{O(N^@W{1.4})} would be the first FFT faster than Toom-3.  In practice
-@code{FFT_MUL_THRESHOLD} and @code{FFT_SQR_THRESHOLD} have been found to be in
+@code{MUL_FFT_THRESHOLD} and @code{SQR_FFT_THRESHOLD} have been found to be in
 the @ma{k=8} range, somewhere between 3000 and 10000 limbs.
 
 The way @ma{N} is split into @ma{2^k} pieces and then @ma{2M+k+3} is rounded
@@ -6799,7 +6799,7 @@ and so the step effect is quite noticeable in a time versus size graph.
 The threshold determinations currently measure at the mid-points of size
 steps, but this is sub-optimal since at the start of a new step it can happen
 that it's better to go back to the previous @ma{k} for a while.  Something
-more sophisticated for @code{FFT_MUL_TABLE} and @code{FFT_SQR_TABLE} will be
+more sophisticated for @code{MUL_FFT_TABLE} and @code{SQR_FFT_TABLE} will be
 needed.
 
 
@@ -6938,7 +6938,7 @@ divide for each of the Q quotient limbs.
 @node Divide and Conquer Division, Exact Division, Basecase Division, Division Algorithms
 @subsection Divide and Conquer Division
 
-For divisors larger than @code{DC_THRESHOLD}, division is done by dividing.
+For divisors larger than @code{DIV_DC_THRESHOLD}, division is done by dividing.
 Or to be precise by a recursive divide and conquer algorithm based on work by
 Moenck and Borodin, Jebelean, and Burnikel and Ziegler (@pxref{References}).
 
@@ -6954,11 +6954,11 @@ If the (N/2)@cross{}(N/2) multiplies are done with a basecase multiplication
 then the work is about the same as a basecase division, but with more function
 call overheads and with some subtractions separated from the multiplies.
 These overheads mean that it's only when N/2 is above
-@code{KARATSUBA_MUL_THRESHOLD} that divide and conquer is of use.
+@code{MUL_KARATSUBA_THRESHOLD} that divide and conquer is of use.
 
-@code{DC_THRESHOLD} is based on the divisor size N, so it will be somewhere
-above twice @code{KARATSUBA_MUL_THRESHOLD}, but how much above depends on the
-CPU.  An optimized @code{mpn_mul_basecase} can lower @code{DC_THRESHOLD} a
+@code{DIV_DC_THRESHOLD} is based on the divisor size N, so it will be somewhere
+above twice @code{MUL_KARATSUBA_THRESHOLD}, but how much above depends on the
+CPU.  An optimized @code{mpn_mul_basecase} can lower @code{DIV_DC_THRESHOLD} a
 little by offering a ready-made advantage over repeated @code{mpn_submul_1}
 calls.
 

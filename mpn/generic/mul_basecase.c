@@ -5,7 +5,7 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001 Free Software
+Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001, 2002 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -35,7 +35,7 @@ MA 02111-1307, USA. */
    Note that prodp gets usize+vsize limbs stored, even if the actual result
    only needs usize+vsize-1.
 
-   There's no good reason to call here with vsize>=KARATSUBA_MUL_THRESHOLD.
+   There's no good reason to call here with vsize>=MUL_KARATSUBA_THRESHOLD.
    Currently this is allowed, but it might not be in the future.
 
    This is the most critical code for multiplication.  All multiplies rely

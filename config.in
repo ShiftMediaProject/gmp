@@ -1,7 +1,7 @@
 /* config.in.  Generated automatically from configure.in by autoheader.  */
 /* Templates for defines setup by configure.
 
-Copyright 2000, 2001 Free Software Foundation, Inc.
+Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -397,8 +397,8 @@ MA 02111-1307, USA. */
 /* Define if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
 
-/* Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD */
-#undef TUNE_KARATSUBA_SQR_MAX
+/* Maximum size the tune program can test for SQR_KARATSUBA_THRESHOLD */
+#undef TUNE_SQR_KARATSUBA_MAX
 
 /* Version number of package */
 #undef VERSION

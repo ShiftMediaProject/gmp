@@ -12,7 +12,7 @@
    The time complexity of this is O(qn*qn+M(dn,qn)), where M(m,n) is the time
    complexity of multiplication.
 
-Copyright 1997, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1997, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -140,7 +140,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 
 	    if (dn == 2)
 	      mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
-	    else if (dn < DC_THRESHOLD)
+	    else if (dn < DIV_DC_THRESHOLD)
 	      mpn_sb_divrem_mn (qp, n2p, nn, d2p, dn);
 	    else
 	      {
@@ -294,7 +294,7 @@ mpn_tdiv_qr (mp_ptr qp, mp_ptr rp, mp_size_t qxn,
 	      }
 	    else if (qn == 2)
 	      mpn_divrem_2 (qp, 0L, n2p, 4L, d2p);
-	    else if (qn < DC_THRESHOLD)
+	    else if (qn < DIV_DC_THRESHOLD)
 	      mpn_sb_divrem_mn (qp, n2p, 2 * qn, d2p, qn);
 	    else
 	      mpn_dc_divrem_n (qp, n2p, d2p, qn);

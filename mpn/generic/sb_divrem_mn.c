@@ -40,8 +40,8 @@ MA 02111-1307, USA. */
    tuned thresholds.  Note in particular that preinv should certainly be
    used if that's the only division available (USE_PREINV_ALWAYS).  */
 
-#ifndef SB_PREINV_THRESHOLD
-#define SB_PREINV_THRESHOLD  0
+#ifndef DIV_SB_PREINV_THRESHOLD
+#define DIV_SB_PREINV_THRESHOLD  0
 #endif
 
 
@@ -96,7 +96,7 @@ mpn_sb_divrem_mn (mp_ptr qp,
 
   /* use_preinv is possibly a constant, but it's left to the compiler to
      optimize away the unused code in that case.  */
-  use_preinv = ABOVE_THRESHOLD (qsize, SB_PREINV_THRESHOLD);
+  use_preinv = ABOVE_THRESHOLD (qsize, DIV_SB_PREINV_THRESHOLD);
   if (use_preinv)
     invert_limb (dxinv, dx);
 

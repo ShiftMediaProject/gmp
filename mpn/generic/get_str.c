@@ -81,11 +81,11 @@ MA 02111-1307, USA. */
 
     mpn_dc_get_str:
 	mpn_tdiv_qr
-	if (qn < GET_STR_BASECASE_THRESHOLD)
+	if (qn < GET_STR_DC_THRESHOLD)
 	  mpn_sb_get_str
 	else
 	  mpn_dc_get_str
-	if (rn < GET_STR_BASECASE_THRESHOLD)
+	if (rn < GET_STR_DC_THRESHOLD)
 	  mpn_sb_get_str
 	else
 	  mpn_dc_get_str
@@ -126,8 +126,8 @@ MA 02111-1307, USA. */
 #endif
 
 /* When to stop divide-and-conquer and call the basecase mpn_get_str.  */
-#ifndef GET_STR_BASECASE_THRESHOLD
-#define GET_STR_BASECASE_THRESHOLD 15
+#ifndef GET_STR_DC_THRESHOLD
+#define GET_STR_DC_THRESHOLD 15
 #endif
 /* Whether to bother at all with precomputing powers of the base, or go
    to the basecase mpn_get_str directly.  */
@@ -317,7 +317,7 @@ mpn_dc_get_str (unsigned char *str, size_t len,
 		mp_ptr up, mp_size_t un,
 		powers_t *powtab)
 {
-  if (un < GET_STR_BASECASE_THRESHOLD)
+  if (un < GET_STR_DC_THRESHOLD)
     {
       if (un != 0)
 	str = mpn_sb_get_str (str, len, up, un, powtab);

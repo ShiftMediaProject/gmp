@@ -352,7 +352,7 @@ MA 02111-1307, USA.
 	#if __GNUC__ == 2 && __GNUC_MINOR__ == 8
 	...
 	#endif
-	#ifndef KARATSUBA_MUL_THRESHOLD
+	#ifndef MUL_KARATSUBA_THRESHOLD
 	/* Default GNUC values */
 	...
 	#endif
@@ -854,7 +854,7 @@ MA 02111-1307, USA.
      <code>mftbu</code>) could be used for the speed and tune programs.  Would
      need to know its frequency though, for instance it seemed to be 25 MHz on
      a couple of Apples (compared to the CPU speed of 350 or 450 MHz).
-<li> <code>FFT_MUL_THRESHOLD</code> etc: the FFT thresholds should allow a
+<li> <code>MUL_FFT_THRESHOLD</code> etc: the FFT thresholds should allow a
      return to a previous k at certain sizes.  This arises basically due to
      the step effect caused by size multiples effectively used for each k.
      Looking at a graph makes it fairly clear.

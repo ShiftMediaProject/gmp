@@ -5,7 +5,7 @@
    SAFE TO REACH THIS FUNCTION THROUGH DOCUMENTED INTERFACES.
 
 
-Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001 Free Software
+Copyright 1991, 1992, 1993, 1994, 1996, 1997, 2000, 2001, 2002 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -48,12 +48,12 @@ mpn_sqr_basecase (mp_ptr prodp, mp_srcptr up, mp_size_t n)
   }
   if (n > 1)
     {
-      mp_limb_t tarr[2 * KARATSUBA_SQR_THRESHOLD];
+      mp_limb_t tarr[2 * SQR_KARATSUBA_THRESHOLD];
       mp_ptr tp = tarr;
       mp_limb_t cy;
 
       /* must fit 2*n limbs in tarr */
-      ASSERT (n <= KARATSUBA_SQR_THRESHOLD);
+      ASSERT (n <= SQR_KARATSUBA_THRESHOLD);
 
       cy = mpn_mul_1 (tp, up + 1, n - 1, up[0]);
       tp[n - 1] = cy;

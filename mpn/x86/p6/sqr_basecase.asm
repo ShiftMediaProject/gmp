@@ -5,7 +5,7 @@ dnl  product (measured on the speed difference between 20 and 40 limbs,
 dnl  which is the Karatsuba recursing range).
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -30,15 +30,15 @@ include(`../config.m4')
 
 dnl  These are the same as in mpn/x86/k6/sqr_basecase.asm, see that file for
 dnl  a description.  The only difference here is that UNROLL_COUNT can go up
-dnl  to 64 (not 63) making KARATSUBA_SQR_THRESHOLD_MAX 67.
+dnl  to 64 (not 63) making SQR_KARATSUBA_THRESHOLD_MAX 67.
 
-deflit(KARATSUBA_SQR_THRESHOLD_MAX, 67)
+deflit(SQR_KARATSUBA_THRESHOLD_MAX, 67)
 
-ifdef(`KARATSUBA_SQR_THRESHOLD_OVERRIDE',
-`define(`KARATSUBA_SQR_THRESHOLD',KARATSUBA_SQR_THRESHOLD_OVERRIDE)')
+ifdef(`SQR_KARATSUBA_THRESHOLD_OVERRIDE',
+`define(`SQR_KARATSUBA_THRESHOLD',SQR_KARATSUBA_THRESHOLD_OVERRIDE)')
 
-m4_config_gmp_mparam(`KARATSUBA_SQR_THRESHOLD')
-deflit(UNROLL_COUNT, eval(KARATSUBA_SQR_THRESHOLD-3))
+m4_config_gmp_mparam(`SQR_KARATSUBA_THRESHOLD')
+deflit(UNROLL_COUNT, eval(SQR_KARATSUBA_THRESHOLD-3))
 
 
 C void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);

@@ -137,7 +137,7 @@ mod_1.c:
 	echo "#include \"mpn/generic/mod_1.c\""     >>mod_1.c
 
 sqr_asm.asm: $(top_builddir)/mpn/sqr_basecase.asm
-	echo 'define(KARATSUBA_SQR_THRESHOLD_OVERRIDE,KARATSUBA_SQR_THRESHOLD_MAX)' >sqr_asm.asm
+	echo 'define(SQR_KARATSUBA_THRESHOLD_OVERRIDE,SQR_KARATSUBA_THRESHOLD_MAX)' >sqr_asm.asm
 	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
 
 

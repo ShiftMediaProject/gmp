@@ -1061,16 +1061,16 @@ extern const mp_limb_t __gmp_fib_table[];
 #define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
 
 
-/* If KARATSUBA_MUL_THRESHOLD is not already defined, define it to a
+/* If MUL_KARATSUBA_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
-#ifndef KARATSUBA_MUL_THRESHOLD
-#define KARATSUBA_MUL_THRESHOLD 32
+#ifndef MUL_KARATSUBA_THRESHOLD
+#define MUL_KARATSUBA_THRESHOLD 32
 #endif
 
-/* If TOOM3_MUL_THRESHOLD is not already defined, define it to a
+/* If MUL_TOOM3_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
-#ifndef TOOM3_MUL_THRESHOLD
-#define TOOM3_MUL_THRESHOLD 256
+#ifndef MUL_TOOM3_THRESHOLD
+#define MUL_TOOM3_THRESHOLD 256
 #endif
 
 /* This is the threshold at which mpn_sqr_basecase should take over from
@@ -1078,21 +1078,21 @@ extern const mp_limb_t __gmp_fib_table[];
    always.
 
    If it turns out that mpn_kara_sqr_n becomes faster than mpn_mul_basecase
-   before mpn_sqr_basecase does, then BASECASE_SQR_THRESHOLD is the
-   karatsuba threshold and KARATSUBA_SQR_THRESHOLD is 0.  This oddity arises
-   more or less because KARATSUBA_SQR_THRESHOLD represents the size up to
+   before mpn_sqr_basecase does, then SQR_BASECASE_THRESHOLD is the
+   karatsuba threshold and SQR_KARATSUBA_THRESHOLD is 0.  This oddity arises
+   more or less because SQR_KARATSUBA_THRESHOLD represents the size up to
    which mpn_sqr_basecase should be used, and that may be never.  */
 
-#ifndef BASECASE_SQR_THRESHOLD
-#define BASECASE_SQR_THRESHOLD 0
+#ifndef SQR_BASECASE_THRESHOLD
+#define SQR_BASECASE_THRESHOLD 0
 #endif
 
-#ifndef KARATSUBA_SQR_THRESHOLD
-#define KARATSUBA_SQR_THRESHOLD (2*KARATSUBA_MUL_THRESHOLD)
+#ifndef SQR_KARATSUBA_THRESHOLD
+#define SQR_KARATSUBA_THRESHOLD (2*MUL_KARATSUBA_THRESHOLD)
 #endif
 
-#ifndef TOOM3_SQR_THRESHOLD
-#define TOOM3_SQR_THRESHOLD (2*TOOM3_MUL_THRESHOLD)
+#ifndef SQR_TOOM3_THRESHOLD
+#define SQR_TOOM3_THRESHOLD (2*MUL_TOOM3_THRESHOLD)
 #endif
 
 /* First k to use for an FFT modF multiply.  A modF FFT is an order
@@ -1101,11 +1101,11 @@ extern const mp_limb_t __gmp_fib_table[];
 #define FFT_FIRST_K  4
 
 /* Threshold at which FFT should be used to do a modF NxN -> N multiply. */
-#ifndef FFT_MODF_MUL_THRESHOLD
-#define FFT_MODF_MUL_THRESHOLD   (TOOM3_MUL_THRESHOLD * 3)
+#ifndef MUL_FFT_MODF_THRESHOLD
+#define MUL_FFT_MODF_THRESHOLD   (MUL_TOOM3_THRESHOLD * 3)
 #endif
-#ifndef FFT_MODF_SQR_THRESHOLD
-#define FFT_MODF_SQR_THRESHOLD   (TOOM3_SQR_THRESHOLD * 3)
+#ifndef SQR_FFT_MODF_THRESHOLD
+#define SQR_FFT_MODF_THRESHOLD   (SQR_TOOM3_THRESHOLD * 3)
 #endif
 
 /* Threshold at which FFT should be used to do an NxN -> 2N multiply.  This
@@ -1113,34 +1113,34 @@ extern const mp_limb_t __gmp_fib_table[];
    NxN->2N multiply and not recursing into itself is an order
    log(2^k)/log(2^(k-2)) algorithm, so it'll be at least k=7 at 1.39 which
    is the first better than toom3.  */
-#ifndef FFT_MUL_THRESHOLD
-#define FFT_MUL_THRESHOLD   (FFT_MODF_MUL_THRESHOLD * 10)
+#ifndef MUL_FFT_THRESHOLD
+#define MUL_FFT_THRESHOLD   (MUL_FFT_MODF_THRESHOLD * 10)
 #endif
-#ifndef FFT_SQR_THRESHOLD
-#define FFT_SQR_THRESHOLD   (FFT_MODF_SQR_THRESHOLD * 10)
+#ifndef SQR_FFT_THRESHOLD
+#define SQR_FFT_THRESHOLD   (SQR_FFT_MODF_THRESHOLD * 10)
 #endif
 
 /* Table of thresholds for successive modF FFT "k"s.  The first entry is
    where FFT_FIRST_K+1 should be used, the second FFT_FIRST_K+2,
    etc.  See mpn_fft_best_k(). */
-#ifndef FFT_MUL_TABLE
-#define FFT_MUL_TABLE                           \
-  { TOOM3_MUL_THRESHOLD * 4,   /* k=5 */        \
-    TOOM3_MUL_THRESHOLD * 8,   /* k=6 */        \
-    TOOM3_MUL_THRESHOLD * 16,  /* k=7 */        \
-    TOOM3_MUL_THRESHOLD * 32,  /* k=8 */        \
-    TOOM3_MUL_THRESHOLD * 96,  /* k=9 */        \
-    TOOM3_MUL_THRESHOLD * 288, /* k=10 */       \
+#ifndef MUL_FFT_TABLE
+#define MUL_FFT_TABLE                           \
+  { MUL_TOOM3_THRESHOLD * 4,   /* k=5 */        \
+    MUL_TOOM3_THRESHOLD * 8,   /* k=6 */        \
+    MUL_TOOM3_THRESHOLD * 16,  /* k=7 */        \
+    MUL_TOOM3_THRESHOLD * 32,  /* k=8 */        \
+    MUL_TOOM3_THRESHOLD * 96,  /* k=9 */        \
+    MUL_TOOM3_THRESHOLD * 288, /* k=10 */       \
     0 }
 #endif
-#ifndef FFT_SQR_TABLE
-#define FFT_SQR_TABLE                           \
-  { TOOM3_SQR_THRESHOLD * 4,   /* k=5 */        \
-    TOOM3_SQR_THRESHOLD * 8,   /* k=6 */        \
-    TOOM3_SQR_THRESHOLD * 16,  /* k=7 */        \
-    TOOM3_SQR_THRESHOLD * 32,  /* k=8 */        \
-    TOOM3_SQR_THRESHOLD * 96,  /* k=9 */        \
-    TOOM3_SQR_THRESHOLD * 288, /* k=10 */       \
+#ifndef SQR_FFT_TABLE
+#define SQR_FFT_TABLE                           \
+  { SQR_TOOM3_THRESHOLD * 4,   /* k=5 */        \
+    SQR_TOOM3_THRESHOLD * 8,   /* k=6 */        \
+    SQR_TOOM3_THRESHOLD * 16,  /* k=7 */        \
+    SQR_TOOM3_THRESHOLD * 32,  /* k=8 */        \
+    SQR_TOOM3_THRESHOLD * 96,  /* k=9 */        \
+    SQR_TOOM3_THRESHOLD * 288, /* k=10 */       \
     0 }
 #endif
 
@@ -1153,13 +1153,13 @@ extern const mp_limb_t __gmp_fib_table[];
 
 /* mpn_dc_divrem_n(n) calls 2*mul(n/2)+2*div(n/2), thus to be faster than
    div(n) = 4*div(n/2), we need mul(n/2) to be faster than the classic way,
-   i.e. n/2 >= KARATSUBA_MUL_THRESHOLD
+   i.e. n/2 >= MUL_KARATSUBA_THRESHOLD
 
-   Measured values are between 2 and 4 times KARATSUBA_MUL_THRESHOLD, so go
+   Measured values are between 2 and 4 times MUL_KARATSUBA_THRESHOLD, so go
    for 3 as an average.  */
 
-#ifndef DC_THRESHOLD
-#define DC_THRESHOLD    (3 * KARATSUBA_MUL_THRESHOLD)
+#ifndef DIV_DC_THRESHOLD
+#define DIV_DC_THRESHOLD    (3 * MUL_KARATSUBA_THRESHOLD)
 #endif
 
 
@@ -2701,18 +2701,18 @@ extern mp_size_t  mod_1_unnorm_threshold[];
 extern mp_size_t  get_str_basecase_threshold[];
 extern mp_size_t  get_str_precompute_threshold[];
 
-#undef KARATSUBA_MUL_THRESHOLD
-#undef TOOM3_MUL_THRESHOLD
-#undef FFT_MUL_TABLE
-#undef FFT_MUL_THRESHOLD
-#undef FFT_MODF_MUL_THRESHOLD
-#undef BASECASE_SQR_THRESHOLD
-#undef KARATSUBA_SQR_THRESHOLD
-#undef TOOM3_SQR_THRESHOLD
-#undef FFT_SQR_TABLE
-#undef FFT_SQR_THRESHOLD
-#undef FFT_MODF_SQR_THRESHOLD
-#undef DC_THRESHOLD
+#undef MUL_KARATSUBA_THRESHOLD
+#undef MUL_TOOM3_THRESHOLD
+#undef MUL_FFT_TABLE
+#undef MUL_FFT_THRESHOLD
+#undef MUL_FFT_MODF_THRESHOLD
+#undef SQR_BASECASE_THRESHOLD
+#undef SQR_KARATSUBA_THRESHOLD
+#undef SQR_TOOM3_THRESHOLD
+#undef SQR_FFT_TABLE
+#undef SQR_FFT_THRESHOLD
+#undef SQR_FFT_MODF_THRESHOLD
+#undef DIV_DC_THRESHOLD
 #undef POWM_THRESHOLD
 #undef GCD_ACCEL_THRESHOLD
 #undef GCDEXT_THRESHOLD
@@ -2720,21 +2720,21 @@ extern mp_size_t  get_str_precompute_threshold[];
 #undef DIVREM_1_UNNORM_THRESHOLD
 #undef MOD_1_NORM_THRESHOLD
 #undef MOD_1_UNNORM_THRESHOLD
-#undef GET_STR_BASECASE_THRESHOLD
+#undef GET_STR_DC_THRESHOLD
 #undef GET_STR_PRECOMPUTE_THRESHOLD
 
-#define KARATSUBA_MUL_THRESHOLD   mul_threshold[0]
-#define TOOM3_MUL_THRESHOLD       mul_threshold[1]
-#define FFT_MUL_TABLE             { 0 }
-#define FFT_MUL_THRESHOLD         mul_threshold[2]
-#define FFT_MODF_MUL_THRESHOLD    fft_modf_mul_threshold
-#define BASECASE_SQR_THRESHOLD    sqr_threshold[0]
-#define KARATSUBA_SQR_THRESHOLD   sqr_threshold[1]
-#define TOOM3_SQR_THRESHOLD       sqr_threshold[2]
-#define FFT_SQR_TABLE             { 0 }
-#define FFT_SQR_THRESHOLD         sqr_threshold[3]
-#define FFT_MODF_SQR_THRESHOLD    fft_modf_sqr_threshold
-#define DC_THRESHOLD              dc_threshold[0]
+#define MUL_KARATSUBA_THRESHOLD   mul_threshold[0]
+#define MUL_TOOM3_THRESHOLD       mul_threshold[1]
+#define MUL_FFT_TABLE             { 0 }
+#define MUL_FFT_THRESHOLD         mul_threshold[2]
+#define MUL_FFT_MODF_THRESHOLD    fft_modf_mul_threshold
+#define SQR_BASECASE_THRESHOLD    sqr_threshold[0]
+#define SQR_KARATSUBA_THRESHOLD   sqr_threshold[1]
+#define SQR_TOOM3_THRESHOLD       sqr_threshold[2]
+#define SQR_FFT_TABLE             { 0 }
+#define SQR_FFT_THRESHOLD         sqr_threshold[3]
+#define SQR_FFT_MODF_THRESHOLD    fft_modf_sqr_threshold
+#define DIV_DC_THRESHOLD              dc_threshold[0]
 #define POWM_THRESHOLD            powm_threshold[0]
 #define GCD_ACCEL_THRESHOLD       gcd_accel_threshold[0]
 #define GCDEXT_THRESHOLD          gcdext_threshold[0]
@@ -2742,19 +2742,19 @@ extern mp_size_t  get_str_precompute_threshold[];
 #define DIVREM_1_UNNORM_THRESHOLD divrem_1_unnorm_threshold[0]
 #define MOD_1_NORM_THRESHOLD      mod_1_norm_threshold[0]
 #define MOD_1_UNNORM_THRESHOLD    mod_1_unnorm_threshold[0]
-#define GET_STR_BASECASE_THRESHOLD   get_str_basecase_threshold[0]
+#define GET_STR_DC_THRESHOLD   get_str_basecase_threshold[0]
 #define GET_STR_PRECOMPUTE_THRESHOLD get_str_precompute_threshold[0]
 
 #if ! UDIV_PREINV_ALWAYS
-#undef SB_PREINV_THRESHOLD
+#undef DIV_SB_PREINV_THRESHOLD
 #undef DIVREM_2_THRESHOLD
-#define SB_PREINV_THRESHOLD       sb_preinv_threshold[0]
+#define DIV_SB_PREINV_THRESHOLD       sb_preinv_threshold[0]
 #define DIVREM_2_THRESHOLD        divrem_2_threshold[0]
 #endif
 
 /* Sizes the tune program tests up to, used in a couple of recompilations. */
-#define KARATSUBA_SQR_MAX_GENERIC  200
-#define TOOM3_MUL_THRESHOLD_LIMIT  700
+#define SQR_KARATSUBA_MAX_GENERIC  200
+#define MUL_TOOM3_THRESHOLD_LIMIT  700
 #define GET_STR_THRESHOLD_LIMIT    500
 
 #undef  FFT_TABLE_ATTRS
@@ -2762,8 +2762,8 @@ extern mp_size_t  get_str_precompute_threshold[];
 extern mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 
 #if TUNE_PROGRAM_BUILD_SQR
-#undef KARATSUBA_SQR_THRESHOLD
-#define KARATSUBA_SQR_THRESHOLD  KARATSUBA_SQR_MAX_GENERIC
+#undef SQR_KARATSUBA_THRESHOLD
+#define SQR_KARATSUBA_THRESHOLD  SQR_KARATSUBA_MAX_GENERIC
 #endif
 
 #endif /* TUNE_PROGRAM_BUILD */

@@ -6,7 +6,7 @@
    THAT THEY'LL CHANGE OR DISAPPEAR IN A FUTURE GNU MP RELEASE.
 
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001 Free Software
+Copyright 1991, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -52,15 +52,15 @@ mpn_sqr_n (mp_ptr prodp,
   if (un == 0)
     return;
 
-  if (BELOW_THRESHOLD (un, BASECASE_SQR_THRESHOLD))
+  if (BELOW_THRESHOLD (un, SQR_BASECASE_THRESHOLD))
     { /* mul_basecase is faster than sqr_basecase on small sizes sometimes */
       mpn_mul_basecase (prodp, up, un, up, un);
     }
-  else if (BELOW_THRESHOLD (un, KARATSUBA_SQR_THRESHOLD))
+  else if (BELOW_THRESHOLD (un, SQR_KARATSUBA_THRESHOLD))
     { /* plain schoolbook multiplication */
       mpn_sqr_basecase (prodp, up, un);
     }
-  else if (BELOW_THRESHOLD (un, TOOM3_SQR_THRESHOLD))
+  else if (BELOW_THRESHOLD (un, SQR_TOOM3_THRESHOLD))
     { /* karatsuba multiplication */
       mp_ptr tspace;
       TMP_DECL (marker);
@@ -70,13 +70,13 @@ mpn_sqr_n (mp_ptr prodp,
       TMP_FREE (marker);
     }
 #if WANT_FFT || TUNE_PROGRAM_BUILD
-  else if (BELOW_THRESHOLD (un, FFT_SQR_THRESHOLD))
+  else if (BELOW_THRESHOLD (un, SQR_FFT_THRESHOLD))
 #else
   else
 #endif
     { /* Toom3 multiplication.
          Use workspace from the heap, as stack may be limited.  Since n is
-         at least TOOM3_MUL_THRESHOLD, the multiplication will take much
+         at least MUL_TOOM3_THRESHOLD, the multiplication will take much
          longer than malloc()/free().  */
       mp_ptr     tspace;
       mp_size_t  tsize;
@@ -113,7 +113,7 @@ mpn_mul (mp_ptr prodp,
       return prodp[2 * un - 1];
     }
 
-  if (vn < KARATSUBA_MUL_THRESHOLD)
+  if (vn < MUL_KARATSUBA_THRESHOLD)
     { /* long multiplication */
       mpn_mul_basecase (prodp, up, un, vp, vn);
       return prodp[un + vn - 1];
@@ -137,11 +137,11 @@ mpn_mul (mp_ptr prodp,
 	  MPN_SRCPTR_SWAP (up,un, vp,vn);
 	}
 
-      ws = (mp_ptr) TMP_ALLOC (((vn >= KARATSUBA_MUL_THRESHOLD ? vn : un) + vn)
+      ws = (mp_ptr) TMP_ALLOC (((vn >= MUL_KARATSUBA_THRESHOLD ? vn : un) + vn)
 			       * BYTES_PER_MP_LIMB);
 
       t = 0;
-      while (vn >= KARATSUBA_MUL_THRESHOLD)
+      while (vn >= MUL_KARATSUBA_THRESHOLD)
 	{
 	  mpn_mul_n (ws, up, vp, vn);
 	  if (l <= 2*vn)

@@ -1773,11 +1773,11 @@ AC_DEFINE_UNQUOTED(GMP_MPARAM_H_SUGGEST, "$gmp_mparam_source",
                    [The gmp-mparam.h to update when tuning.])
 
 
-# Copy any KARATSUBA_SQR_THRESHOLD from gmp-mparam.h to config.m4.
+# Copy any SQR_KARATSUBA_THRESHOLD from gmp-mparam.h to config.m4.
 # Some versions of sqr_basecase.asm use this.
-tmp_gmp_karatsuba_sqr_threshold=`sed -n 's/^#define KARATSUBA_SQR_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
+tmp_gmp_karatsuba_sqr_threshold=`sed -n 's/^#define SQR_KARATSUBA_THRESHOLD[ 	]*\([0-9][0-9]*\).*$/\1/p' $gmp_mparam_source`
 if test -n "$tmp_gmp_karatsuba_sqr_threshold"; then
-  GMP_DEFINE_RAW(["define(<KARATSUBA_SQR_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
+  GMP_DEFINE_RAW(["define(<SQR_KARATSUBA_THRESHOLD>,<$tmp_gmp_karatsuba_sqr_threshold>)"])
 fi
 
 # This must come after gmp-mparam.h has been chosen.
@@ -1820,11 +1820,11 @@ TUNE_SQR_OBJ=
 test -d tune || mkdir tune
 case $sqr_basecase_source in
   *.asm)
-    sqr_max=[`sed -n 's/^def...(KARATSUBA_SQR_THRESHOLD_MAX, *\([0-9]*\))/\1/p' $sqr_basecase_source`]
+    sqr_max=[`sed -n 's/^def...(SQR_KARATSUBA_THRESHOLD_MAX, *\([0-9]*\))/\1/p' $sqr_basecase_source`]
     if test -n "$sqr_max"; then
       TUNE_SQR_OBJ=sqr_asm.o
-      AC_DEFINE_UNQUOTED(TUNE_KARATSUBA_SQR_MAX,$sqr_max,
-      [Maximum size the tune program can test for KARATSUBA_SQR_THRESHOLD])
+      AC_DEFINE_UNQUOTED(TUNE_SQR_KARATSUBA_MAX,$sqr_max,
+      [Maximum size the tune program can test for SQR_KARATSUBA_THRESHOLD])
     fi
     cat >tune/sqr_basecase.c <<EOF
 /* not sure that an empty file can compile, so put in a dummy */
@@ -1833,7 +1833,7 @@ EOF
     ;;
   *.c)
     TUNE_SQR_OBJ=
-    AC_DEFINE(TUNE_KARATSUBA_SQR_MAX,KARATSUBA_SQR_MAX_GENERIC)
+    AC_DEFINE(TUNE_SQR_KARATSUBA_MAX,SQR_KARATSUBA_MAX_GENERIC)
     cat >tune/sqr_basecase.c <<EOF
 #define TUNE_PROGRAM_BUILD 1
 #define TUNE_PROGRAM_BUILD_SQR 1

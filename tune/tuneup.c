@@ -147,8 +147,8 @@ mp_size_t  set_str_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
 mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
 
-#ifndef TUNE_KARATSUBA_SQR_MAX
-#define TUNE_KARATSUBA_SQR_MAX  0 /* meaning no limit */
+#ifndef TUNE_SQR_KARATSUBA_MAX
+#define TUNE_SQR_KARATSUBA_MAX  0 /* meaning no limit */
 #endif
 
 struct param_t {
@@ -382,7 +382,7 @@ print_define_remark (const char *name, mp_size_t value, const char *remark)
 
 
 /* table[i+1] needs to be set to a sensible value when testing method i+1
-   because mpn_mul_n uses TOOM3_MUL_THRESHOLD to size the temporary
+   because mpn_mul_n uses MUL_TOOM3_THRESHOLD to size the temporary
    workspace for mpn_kara_mul_n. */
 
 void
@@ -836,16 +836,16 @@ void
 tune_mul (void)
 {
   static struct param_t  param;
-  param.name[0] = "KARATSUBA_MUL_THRESHOLD";
-  param.name[1] = "TOOM3_MUL_THRESHOLD";
+  param.name[0] = "MUL_KARATSUBA_THRESHOLD";
+  param.name[1] = "MUL_TOOM3_THRESHOLD";
   param.function = speed_mpn_mul_n;
   param.min_size[0] = MAX (4, MPN_KARA_MUL_N_MINSIZE);
-  param.max_size[0] = TOOM3_MUL_THRESHOLD_LIMIT-1;
-  param.max_size[1] = TOOM3_MUL_THRESHOLD_LIMIT-1;
+  param.max_size[0] = MUL_TOOM3_THRESHOLD_LIMIT-1;
+  param.max_size[1] = MUL_TOOM3_THRESHOLD_LIMIT-1;
   one (mul_threshold, 2, &param);
 
   /* disabled until tuned */
-  FFT_MUL_THRESHOLD = MP_SIZE_T_MAX;
+  MUL_FFT_THRESHOLD = MP_SIZE_T_MAX;
 }
 
 
@@ -856,21 +856,21 @@ void
 tune_sqr (void)
 {
   static struct param_t  param;
-  param.name[0] = "BASECASE_SQR_THRESHOLD";
-  param.name[1] = "KARATSUBA_SQR_THRESHOLD";
-  param.name[2] = "TOOM3_SQR_THRESHOLD";
+  param.name[0] = "SQR_BASECASE_THRESHOLD";
+  param.name[1] = "SQR_KARATSUBA_THRESHOLD";
+  param.name[2] = "SQR_TOOM3_THRESHOLD";
   param.function = speed_mpn_sqr_n;
   param.min_is_always = 1;
   param.second_start_min = 1;
   param.min_size[0] = 3;
   param.min_size[1] = MAX (4, MPN_KARA_SQR_N_MINSIZE);
   param.min_size[2] = MPN_TOOM3_SQR_N_MINSIZE;
-  param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
-  param.max_size[1] = TUNE_KARATSUBA_SQR_MAX;
+  param.max_size[0] = TUNE_SQR_KARATSUBA_MAX;
+  param.max_size[1] = TUNE_SQR_KARATSUBA_MAX;
   one (sqr_threshold, 3, &param);
 
   /* disabled until tuned */
-  FFT_SQR_THRESHOLD = MP_SIZE_T_MAX;
+  SQR_FFT_THRESHOLD = MP_SIZE_T_MAX;
 }
 
 
@@ -881,7 +881,7 @@ tune_sb_preinv (void)
 
   if (UDIV_PREINV_ALWAYS)
     {
-      print_define_remark ("SB_PREINV_THRESHOLD", 0L, "preinv always");
+      print_define_remark ("DIV_SB_PREINV_THRESHOLD", 0L, "preinv always");
       return;
     }
 
@@ -890,7 +890,7 @@ tune_sb_preinv (void)
   param.min_is_always = 1;
   param.size_extra = 3;
   param.stop_factor = 2.0;
-  param.name[0] = "SB_PREINV_THRESHOLD";
+  param.name[0] = "DIV_SB_PREINV_THRESHOLD";
   param.function = speed_mpn_sb_divrem_m3;
   one (sb_preinv_threshold, 1, &param);
 }
@@ -900,7 +900,7 @@ void
 tune_dc (void)
 {
   static struct param_t  param;
-  param.name[0] = "DC_THRESHOLD";
+  param.name[0] = "DIV_DC_THRESHOLD";
   param.function = speed_mpn_dc_tdiv_qr;
   one (dc_threshold, 1, &param);
 }
@@ -1398,7 +1398,7 @@ tune_get_str (void)
   {
     static struct param_t  param;
     get_str_precompute_threshold[0] = 0;
-    param.name[0] = "GET_STR_BASECASE_THRESHOLD";
+    param.name[0] = "GET_STR_DC_THRESHOLD";
     param.function = speed_mpn_get_str;
     param.min_size[0] = 2;
     param.max_size[0] = GET_STR_THRESHOLD_LIMIT;
@@ -1439,12 +1439,12 @@ tune_fft_mul (void)
   if (option_fft_max_size == 0)
     return;
 
-  param.table_name          = "FFT_MUL_TABLE";
-  param.threshold_name      = "FFT_MUL_THRESHOLD";
-  param.p_threshold         = &FFT_MUL_THRESHOLD;
-  param.modf_threshold_name = "FFT_MODF_MUL_THRESHOLD";
-  param.p_modf_threshold    = &FFT_MODF_MUL_THRESHOLD;
-  param.first_size          = TOOM3_MUL_THRESHOLD / 2;
+  param.table_name          = "MUL_FFT_TABLE";
+  param.threshold_name      = "MUL_FFT_THRESHOLD";
+  param.p_threshold         = &MUL_FFT_THRESHOLD;
+  param.modf_threshold_name = "MUL_FFT_MODF_THRESHOLD";
+  param.p_modf_threshold    = &MUL_FFT_MODF_THRESHOLD;
+  param.first_size          = MUL_TOOM3_THRESHOLD / 2;
   param.max_size            = option_fft_max_size;
   param.function            = speed_mpn_mul_fft;
   param.mul_function        = speed_mpn_mul_n;
@@ -1461,12 +1461,12 @@ tune_fft_sqr (void)
   if (option_fft_max_size == 0)
     return;
 
-  param.table_name          = "FFT_SQR_TABLE";
-  param.threshold_name      = "FFT_SQR_THRESHOLD";
-  param.p_threshold         = &FFT_SQR_THRESHOLD;
-  param.modf_threshold_name = "FFT_MODF_SQR_THRESHOLD";
-  param.p_modf_threshold    = &FFT_MODF_SQR_THRESHOLD;
-  param.first_size          = TOOM3_SQR_THRESHOLD / 2;
+  param.table_name          = "SQR_FFT_TABLE";
+  param.threshold_name      = "SQR_FFT_THRESHOLD";
+  param.p_threshold         = &SQR_FFT_THRESHOLD;
+  param.modf_threshold_name = "SQR_FFT_MODF_THRESHOLD";
+  param.p_modf_threshold    = &SQR_FFT_MODF_THRESHOLD;
+  param.first_size          = SQR_TOOM3_THRESHOLD / 2;
   param.max_size            = option_fft_max_size;
   param.function            = speed_mpn_mul_fft_sqr;
   param.mul_function        = speed_mpn_sqr_n;

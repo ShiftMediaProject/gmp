@@ -5,7 +5,7 @@ dnl  (measured on the speed difference between 25 and 50 limbs, which is
 dnl  roughly the Karatsuba recursing range).
 
 
-dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -31,18 +31,18 @@ include(`../config.m4')
 dnl  These are the same as mpn/x86/k6/sqr_basecase.asm, see that code for
 dnl  some comments.
 
-deflit(KARATSUBA_SQR_THRESHOLD_MAX, 66)
+deflit(SQR_KARATSUBA_THRESHOLD_MAX, 66)
 
-ifdef(`KARATSUBA_SQR_THRESHOLD_OVERRIDE',
-`define(`KARATSUBA_SQR_THRESHOLD',KARATSUBA_SQR_THRESHOLD_OVERRIDE)')
+ifdef(`SQR_KARATSUBA_THRESHOLD_OVERRIDE',
+`define(`SQR_KARATSUBA_THRESHOLD',SQR_KARATSUBA_THRESHOLD_OVERRIDE)')
 
-m4_config_gmp_mparam(`KARATSUBA_SQR_THRESHOLD')
-deflit(UNROLL_COUNT, eval(KARATSUBA_SQR_THRESHOLD-3))
+m4_config_gmp_mparam(`SQR_KARATSUBA_THRESHOLD')
+deflit(UNROLL_COUNT, eval(SQR_KARATSUBA_THRESHOLD-3))
 
 
 C void mpn_sqr_basecase (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
-C With a KARATSUBA_SQR_THRESHOLD around 50 this code is about 1500 bytes,
+C With a SQR_KARATSUBA_THRESHOLD around 50 this code is about 1500 bytes,
 C which is quite a bit, but is considered good value since squares big
 C enough to use most of the code will be spending quite a few cycles in it.
 

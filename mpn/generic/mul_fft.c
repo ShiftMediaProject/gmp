@@ -62,8 +62,8 @@ MA 02111-1307, USA. */
 
 
 FFT_TABLE_ATTRS mp_size_t mpn_fft_table[2][MPN_FFT_TABLE_SIZE] = {
-  FFT_MUL_TABLE,
-  FFT_SQR_TABLE
+  MUL_FFT_TABLE,
+  SQR_FFT_TABLE
 };
 
 
@@ -332,7 +332,7 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 
   TMP_MARK(marker);
 
-  if (n >= (sqr ? FFT_MODF_SQR_THRESHOLD : FFT_MODF_MUL_THRESHOLD))
+  if (n >= (sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
     {
       int k, K2,nprime2,Nprime2,M2,maxLK,l,Mp2;
       int **_fft_l;
@@ -629,7 +629,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   nprime = Nprime / BITS_PER_MP_LIMB;
   TRACE (printf ("N=%d K=%d, M=%d, l=%d, maxLK=%d, Np=%d, np=%d\n",
 		 N, K, M, l, maxLK, Nprime, nprime));
-  if (nprime >= (sqr ? FFT_MODF_SQR_THRESHOLD : FFT_MODF_MUL_THRESHOLD))
+  if (nprime >= (sqr ? SQR_FFT_MODF_THRESHOLD : MUL_FFT_MODF_THRESHOLD))
     {
       maxLK = (1 << mpn_fft_best_k (nprime,n == m)) * BITS_PER_MP_LIMB;
       if (Nprime % maxLK)
