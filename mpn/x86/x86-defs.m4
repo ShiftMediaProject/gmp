@@ -739,31 +739,6 @@ forloop(i,1,7,
 ')
 
 
-dnl  Usage: loop_or_decljnz label
-dnl
-dnl  Generate either a "loop" instruction or a "decl %ecx / jnz", whichever
-dnl  is better.  "loop" is better on K6 and probably on 386, on other chips
-dnl  separate decl/jnz is better.
-dnl
-dnl  This macro is just for mpn/x86/divrem_1.asm and mpn/x86/mod_1.asm where
-dnl  this loop_or_decljnz variation is enough to let the code be shared by
-dnl  all chips.
-
-define(loop_or_decljnz,
-m4_assert_numargs(-1)
-`ifelse(loop_is_better_p,1,
-	`loop',
-	`decl	%ecx
-	jnz')')
-
-define(loop_is_better_p,
-m4_assert_numargs(-1)
-`m4_ifdef_anyof_p(`HAVE_HOST_CPU_k6',
-                  `HAVE_HOST_CPU_k62',
-                  `HAVE_HOST_CPU_k63',
-                  `HAVE_HOST_CPU_i386')')
-
-
 dnl  Usage: Zdisp(inst,op,op,op)
 dnl
 dnl  Generate explicit .byte sequences if necessary to force a byte-sized
