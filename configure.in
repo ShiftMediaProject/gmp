@@ -1011,7 +1011,14 @@ case $host in
       *)
         gcc_cflags="-O2" ;;
     esac
-    gcc_cflags_optlist="cpu"
+    gcc_cflags_optlist="cpu m32"
+
+    # On versions of GNU/Linux sparc64 which are new enough to support
+    # ABI=64, we need "gcc -m32" to force ABI=32.  On past versions ABI=32
+    # was the only mode and -m32 was not available.  Hence use it only if it
+    # works.
+    #
+    gcc_cflags_m32="-m32"
 
     # gcc 2.7.2 knows -mcypress, -msupersparc, -mv8, -msparclite.
     # gcc 2.95 knows -mcpu= v7, hypersparc, sparclite86x, f930, f934,
@@ -1071,9 +1078,6 @@ case $host in
     	esac
     esac
 
-    # GNU/Linux sparc64 means a v9 cpu, but currently seems to have no
-    # support for 64-bit operations in user mode.
-    #
     case $host_cpu in
       sparc64 | sparcv9* | ultrasparc*)
         case $host in
@@ -1119,6 +1123,20 @@ case $host in
             path="sparc64"
             gcc_cflags="-O2"
             cyclecounter_size=2
+            ;;
+
+          # Only recent versions of GNU/Linux sparc64 support 64-bit mode.
+          # In the past sparc64 had meant a v9 cpu, but there were no 64-bit
+          # operations in user mode.  We assume that if "gcc -m64" works
+          # then the system is suitable.
+          #
+          *-*-linux*)
+            abilist="64 32"
+            path_64="sparc64"
+            cclist_64="gcc cc"
+            gcc_64_cflags="-O2 -m64"
+            gcc_64_ldflags="-Wc,-m64"
+            gcc_64_cflags_optlist="cpu"
             ;;
         esac
       ;;
