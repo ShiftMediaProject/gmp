@@ -1,3 +1,8 @@
+2000-10-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6/gmp-mparam.h (DC_THRESHOLD): Update.
+	* mpn/alpha/ev6/submul_1.asm: New file.
+
 2000-10-22  Kevin Ryde  <kevin@swox.se>
 
 	* tune/gcd_bin.c: New file.
