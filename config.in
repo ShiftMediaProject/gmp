@@ -382,6 +382,9 @@ MA 02111-1307, USA.
 /* Define to 1 if you have the `times' function. */
 #undef HAVE_TIMES
 
+/* Define to 1 if the system has the type `uint_least32_t'. */
+#undef HAVE_UINT_LEAST32_T
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
@@ -427,6 +430,9 @@ MA 02111-1307, USA.
 
 /* The size of a `unsigned long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG
+
+/* The size of a `unsigned short', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED_SHORT
 
 /* Define to 1 if sscanf requires writable inputs */
 #undef SSCANF_WRITABLE_INPUT
