@@ -65,11 +65,14 @@ dnl          EPILOGUE()
 
 define(`PROLOGUE_cpu',
 m4_assert_numargs(1)
+m4_assert_defined(`WANT_PROFILING')
 	`GLOBL	$1
 	TYPE($1,`function')
 $1:
-ifelse(WANT_PROFILING,`no',,`call_mcount
-')')
+ifelse(WANT_PROFILING,`prof',      `	call_mcount')
+ifelse(WANT_PROFILING,`gprof',     `	call_mcount')
+ifelse(WANT_PROFILING,`instrument',`	call_instrument(enter)')
+')
 
 
 dnl  Usage: call_mcount
@@ -92,7 +95,7 @@ m4_assert_defined(`MCOUNT_NONPIC_CALL')
 `ifelse(ifdef(`PIC',`MCOUNT_PIC_REG',`MCOUNT_NONPIC_REG'),,,
 `	DATA
 	ALIGN(4)
-L(mcount_data_`'mcount_data_counter):
+L(mcount_data_`'mcount_counter):
 	W32	0
 	TEXT
 ')dnl
@@ -102,42 +105,170 @@ ifelse(WANT_PROFILING,`gprof',
 ')dnl
 ifdef(`PIC',
 `	pushl	%ebx
-	mcount_movl_GOT_ebx
+	call_movl_eip_to_ebx
+L(mcount_here_`'mcount_counter):
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(mcount_here_`'mcount_counter)], %ebx
 ifelse(MCOUNT_PIC_REG,,,
-`	leal	L(mcount_data_`'mcount_data_counter)@GOTOFF(%ebx), MCOUNT_PIC_REG')
+`	leal	L(mcount_data_`'mcount_counter)@GOTOFF(%ebx), MCOUNT_PIC_REG')
 MCOUNT_PIC_CALL
 	popl	%ebx
 ',`dnl non-PIC
 ifelse(MCOUNT_NONPIC_REG,,,
-`	movl	`$'L(mcount_data_`'mcount_data_counter), MCOUNT_NONPIC_REG
+`	movl	`$'L(mcount_data_`'mcount_counter), MCOUNT_NONPIC_REG
 ')dnl
 MCOUNT_NONPIC_CALL
 ')dnl
 ifelse(WANT_PROFILING,`gprof',
 `	popl	%ebp
 ')
-define(`mcount_data_counter',eval(mcount_data_counter+1))')
+define(`mcount_counter',incr(mcount_counter))
+')
 
-define(mcount_data_counter,1)
+define(mcount_counter,1)
 
-dnl  Called: mcount_movl_GOT_ebx
-dnl  Label H is "here", the %eip obtained from the call.  C is the called
-dnl  subroutine.  J is the jump across that subroutine.  A fetch and "ret"
-dnl  is always done so calls and returns are balanced for the benefit of the
-dnl  various x86s that have return stack branch prediction.
-define(mcount_movl_GOT_ebx,
+
+dnl  Usage: call_instrument(enter|exit)
+dnl
+dnl  Call __cyg_profile_func_enter or __cyg_profile_func_exit.
+dnl
+dnl  For PIC, most routines don't require _GLOBAL_OFFSET_TABLE_ themselves
+dnl  so %ebx is just setup for these calls.  It's a bit wasteful to repeat
+dnl  the setup for the exit call having done it earlier for the enter, but
+dnl  there's nowhere very convenient to hold %ebx through the length of a
+dnl  routine, in general.
+dnl
+dnl  For PIC, because instrument_current_function will be within the current
+dnl  object file we can get it just as an offset from %eip, there's no need
+dnl  to use the GOT.
+dnl
+dnl  No attempt is made to maintain the stack alignment gcc generates with
+dnl  -mpreferred-stack-boundary.  This wouldn't be hard, but it seems highly
+dnl  unlikely the instrumenting functions would be doing anything that'd
+dnl  benefit from alignment, in particular they're unlikely to be using
+dnl  doubles or long doubles on the stack.
+dnl
+dnl  The FRAME scheme is used to conveniently account for the register saves
+dnl  before accessing the return address.  Any previous value is saved and
+dnl  restored, since plenty of code keeps a value across a "ret" in the
+dnl  middle of a routine.
+
+define(call_instrument,
+m4_assert_numargs(1)
+`	pushdef(`FRAME',0)
+ifelse($1,exit,
+`	pushl	%eax	FRAME_pushl()	C return value
+')
+ifdef(`PIC',
+`	pushl	%ebx	FRAME_pushl()
+	call_movl_eip_to_ebx
+L(instrument_here_`'instrument_count):
+	movl	%ebx, %ecx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(instrument_here_`'instrument_count)], %ebx
+	C use addl rather than leal to avoid old gas bugs, see mpn/x86/README
+	addl	$instrument_current_function-L(instrument_here_`'instrument_count), %ecx
+	pushl	m4_empty_if_zero(FRAME)(%esp)	FRAME_pushl()	C return addr
+	pushl	%ecx				FRAME_pushl()	C this function
+	call	GSYM_PREFIX`'__cyg_profile_func_$1@PLT
+	addl	$`'8, %esp
+	popl	%ebx
+',
+`	C non-PIC
+	pushl	m4_empty_if_zero(FRAME)(%esp)	FRAME_pushl()	C return addr
+	pushl	$instrument_current_function	FRAME_pushl()	C this function
+	call	GSYM_PREFIX`'__cyg_profile_func_$1
+	addl	$`'8, %esp
+')
+ifelse($1,exit,
+`	popl	%eax			C return value
+')
+	popdef(`FRAME')
+define(`instrument_count',incr(instrument_count))
+')
+define(instrument_count,1)
+
+
+dnl  Usage: instrument_current_function
+dnl
+dnl  Return the current function name for instrumenting purposes.  This is
+dnl  PROLOGUE_current_function, but it sticks at the first such name seen.
+dnl
+dnl  Sticking to the first name seen ensures that multiple-entrypoint
+dnl  functions like mpn_add_nc and mpn_add_n will make enter and exit calls
+dnl  giving the same function address.
+
+define(instrument_current_function,
 m4_assert_numargs(-1)
-`	call	L(mcount_movl_GOT_ebx_C`'mcount_movl_GOT_ebx_counter)
-L(mcount_movl_GOT_ebx_H`'mcount_movl_GOT_ebx_counter):
-	jmp	L(mcount_movl_GOT_ebx_J`'mcount_movl_GOT_ebx_counter)
-L(mcount_movl_GOT_ebx_C`'mcount_movl_GOT_ebx_counter):
-	movl	(%esp), %ebx
-	ret
-L(mcount_movl_GOT_ebx_J`'mcount_movl_GOT_ebx_counter):
-	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(mcount_movl_GOT_ebx_H`'mcount_movl_GOT_ebx_counter)], %ebx
-define(`mcount_movl_GOT_ebx_counter',incr(mcount_movl_GOT_ebx_counter))')
+`ifdef(`instrument_current_function_seen',
+`instrument_current_function_seen',
+`define(`instrument_current_function_seen',PROLOGUE_current_function)dnl
+PROLOGUE_current_function')')
 
-define(mcount_movl_GOT_ebx_counter,1)
+
+dnl  Usage: call_movl_eip_to_ebx
+dnl
+dnl  Generate a call to L(movl_eip_to_ebx), and record the need for that
+dnl  routine.
+
+define(call_movl_eip_to_ebx,
+m4_assert_numargs(-1)
+`call	L(movl_eip_to_ebx)
+define(`movl_eip_to_ebx_needed',1)')
+
+dnl  Usage: generate_movl_eip_to_ebx
+dnl
+dnl  Emit a L(movl_eip_to_ebx) routine, if needed and not already generated.
+
+define(generate_movl_eip_to_ebx,
+m4_assert_numargs(-1)
+`ifelse(movl_eip_to_ebx_needed,1,
+`ifelse(movl_eip_to_ebx_done,1,,
+`L(movl_eip_to_ebx):
+	movl	(%esp), %ebx
+	ret_internal
+define(`movl_eip_to_ebx_done',1)
+')')')
+
+
+dnl  Usage: ret
+dnl
+dnl  Generate a "ret", but if doing instrumented profiling then call
+dnl  __cyg_profile_func_exit first.
+
+define(ret,
+m4_assert_numargs(-1)
+m4_assert_defined(`WANT_PROFILING')
+`ifelse(WANT_PROFILING,instrument,
+`ret_instrument',
+`ret_internal')
+generate_movl_eip_to_ebx
+')
+
+
+dnl  Usage: ret_internal
+dnl
+dnl  A plain "ret", without any __cyg_profile_func_exit call.  This can be
+dnl  used for a return which is internal to some function, such as when
+dnl  getting %eip for PIC.
+
+define(ret_internal,
+m4_assert_numargs(-1)
+``ret'')
+
+
+dnl  Usage: ret_instrument
+dnl
+dnl  Generate call to __cyg_profile_func_exit and then a ret.  If a ret has
+dnl  already been seen from this function then jump to that chunk of code,
+dnl  rather than emitting it again.
+
+define(ret_instrument,
+m4_assert_numargs(-1)
+`ifelse(m4_unquote(ret_instrument_seen_`'instrument_current_function),1,
+`jmp	L(instrument_exit_`'instrument_current_function)',
+`define(ret_instrument_seen_`'instrument_current_function,1)
+L(instrument_exit_`'instrument_current_function):
+call_instrument(exit)
+	ret_internal')')
 
 
 dnl  --------------------------------------------------------------------------
