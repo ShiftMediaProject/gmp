@@ -581,7 +581,7 @@ void __gmp_default_free _PROTO ((void *, size_t));
    stack usage is compatible.  __attribute__ ((regparm (N))) helps by
    putting leading parameters in registers, avoiding extra stack.  */
 
-#if HAVE_HOST_CPU_FAMILY_x86 && __GMP_GNUC_PREREQ (2,96)
+#if HAVE_HOST_CPU_FAMILY_x86 && __GMP_GNUC_PREREQ (2,96) && ! PIC
 #define USE_LEADING_REGPARM 1
 #else
 #define USE_LEADING_REGPARM 0
