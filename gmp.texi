@@ -989,11 +989,19 @@ For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @cindex Compatibility with older versions
 @cindex Upward compatibility
 
-This version of GMP is binary upward compatible with versions 3.0 and 3.0.1.
+This version of GMP is upwardly binary compatible with versions 3.0 and 3.0.1,
+and upwardly compatible at the source level with versions 2.0, 2.0.1, and
+2.0.2, with the following exceptions.
 
-This version of GMP is upward compatible with versions 2.0, 2.0.1, and 2.0.2
-at the source level, with the exception of @code{mpn_gcd} which had its source
-arguments swapped in GMP 3.0.
+@itemize @bullet
+@item
+@code{mpn_gcd} had its source arguments swapped as of GMP 3.0.
+
+@item
+@code{mpf_get_prec} counted precision slightly differently in GMP 3.0 and
+3.0.1, but in 3.1 has reverted to the 2.0.x style.
+
+@end itemize
 
 There are a number of compatibility issues between GMP 1 and GMP 2 that of
 course also apply when porting applications from GMP 1 to GMP 3.  Please
