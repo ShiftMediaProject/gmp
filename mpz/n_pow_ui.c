@@ -40,7 +40,8 @@ MA 02111-1307, USA. */
    there's an even number.  */
 
 #if BITS_PER_ULONG == 32
-#if defined (__GNUC__) && defined (i386) && ! defined (NO_ASM)
+#if defined (__GNUC__) && ! defined (NO_ASM) \
+  && (defined (__i386__) || defined (__i486__))
 #define ULONG_PARITY(p, n)              \
   do {                                  \
     char           __p;                 \
