@@ -136,6 +136,8 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
 
   digits_computed_so_far = 0;
 
+  /* See if we are to convert only part of a the entire integral part of the
+     number, i.e., no fractional digits.  */
   if (uexp > usize)
     {
       /* The number has just an integral part.  */
@@ -269,23 +271,38 @@ mpf_get_str (digit_ptr, exp, base, n_digits, u)
       up = u->_mp_d + usize - uexp;
       MPN_COPY (rp, up, uexp);
 
-      str_size = mpn_get_str (tstr, base, rp, uexp);
+      /* There is a bug in that too many digits are generated here.  We
+	 should really only generate somewhat more than n_digits digits, by
+	 first dividing rp,uexp by 10^n, where n is chosen to make the quotient
+	 have just enough limbs to generate n_digits digits.  */
+      /* For now, we make a gross hack: Allocate lots of temp space,
+	 and convert to that, and then chop off the excessive digits...  */
+      {
+	unsigned char *tmpstr;
+	size_t tmpstr_size
+	  = 2 + (size_t) uexp * BITS_PER_MP_LIMB * __mp_bases[base].chars_per_bit_exactly;
+	tmpstr = (unsigned char *) TMP_ALLOC (tmpstr_size);
 
-      start_str = 0;
-      while (tstr[start_str] == 0)
-	start_str++;
+	str_size = mpn_get_str (tmpstr, base, rp, uexp);
 
-      for (i = start_str; i < str_size; i++)
-	{
-	  tstr[digits_computed_so_far++] = tstr[i];
-	  if (digits_computed_so_far > n_digits)
-	    {
-	      exp_in_base = str_size - start_str;
-	      goto finish_up;
-	    }
-	}
+	/* mpn_get_str might return some initial \0 characters.  Skip them.  */
+	start_str = 0;
+	while (tmpstr[start_str] == 0)
+	  start_str++;
 
-      exp_in_base = str_size - start_str;
+	exp_in_base = str_size - start_str;
+	str_size -= start_str;
+
+	if (str_size > n_digits + 1)
+	  str_size = n_digits + 1;
+	for (i = 0; i < str_size; i++)
+	  tstr[i] = tmpstr[start_str + i];
+	digits_computed_so_far = str_size;
+      }
+
+      if (digits_computed_so_far > n_digits)
+	goto finish_up;
+
       /* Modify somewhat and fall out to convert fraction... */
       usize -= uexp;
       uexp = 0;
