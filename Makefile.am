@@ -80,7 +80,7 @@ nodist_include_HEADERS = gmp.h $(MPBSD_HEADERS_OPTION)
 lib_LTLIBRARIES = libgmp.la $(MPBSD_LTLIBRARIES_OPTION)
 
 EXTRA_DIST = doc macos \
-  configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf libmp.sym \
+  configfsf.guess configfsf.sub .gdbinit INSTALL.autoconf libmp.sym
 
 DISTCLEANFILES = $(nodist_include_HEADERS) config.m4 @gmp_srclinks@
 
