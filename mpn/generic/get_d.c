@@ -153,7 +153,7 @@ mpn_get_d (mp_srcptr ptr, mp_size_t size, mp_size_t sign, long exp)
       {
 	/* Return +-infinity */
       infinity:
-	x.s.sign = 0;
+	x.s.sig = 0;
 	x.s.exp = 2047;
 	x.s.manl = x.s.manh = 0;
       }
