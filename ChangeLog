@@ -1,3 +1,11 @@
+2000-10-27  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in [compiler switch]:
+	Get rid of c89 for all hppa flavours--it is an evil compiler!
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_SET_STR): Fix type of xp.
+	(SPEED_ROUTINE_MPN_GET_STR): Fix type of wp.
+
 2000-10-27  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Fibonacci Number Algorithm): New section.
@@ -93,7 +101,7 @@
 	* gmp-impl.h (DC_THRESHOLD): Establish default here, set to 3*KARA
 	since that's the measured average.
 	* mpn/generic/{dc_divrem_n.c,tdiv_qr.c} (DC_THRESHOLD): Remove default.
-	
+
 2000-10-21  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/Makefile.am (TARG_DIST): Add ia64.
