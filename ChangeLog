@@ -19,6 +19,10 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-03-04  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/pow_1.c: New file.
+
 2002-03-03  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options): Note compiler must be able to fully link,
@@ -60,6 +64,10 @@ MA 02111-1307, USA.
 	Add m4_assert_numargs in a few places.
 
 	* configure.in (*sparc*): Fix cycle counter setups for ABI=64.
+
+2002-02-28  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/vax/gmp-mparam.h: New file.
 
 2002-02-28  Kevin Ryde  <user42@zip.com.au>
 
