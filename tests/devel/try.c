@@ -1,9 +1,8 @@
 /* Run some tests on various mpn routines.
 
    THIS IS A TEST PROGRAM USED ONLY FOR DEVELOPMENT.  IT'S ALMOST CERTAIN TO
-   BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.  */
+   BE SUBJECT TO INCOMPATIBLE CHANGES IN FUTURE VERSIONS OF GMP.
 
-/*
 Copyright 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -916,7 +915,6 @@ param_init (void)
   p->data = DATA_SRC1_HIGHBIT;
   p->size2 = 1;
   p->dst_size[0] = SIZE_DIFF;
-  p->dst_size[1] = SIZE_SIZE2;
   p->overlap = OVERLAP_NONE;
   REFERENCE (refmpn_sb_divrem_mn);
 
@@ -1648,11 +1646,11 @@ call (struct each_t *e, tryfun_t function)
     break;
 
   case TYPE_SB_DIVREM_MN:
-    refmpn_copyi (e->d[1].p, e->s[0].p, size);
-    refmpn_fill (e->d[0].p, size-size2, 0x98765432);
-    e->retval = CALLING_CONVENTIONS (function) (e->d[0].p,
-                                                e->d[1].p, size,
-                                                e->s[1].p, size2);
+    refmpn_copyi (e->d[1].p, e->s[0].p, size);        /* dividend */
+    refmpn_fill (e->d[0].p, size-size2, 0x98765432);  /* quotient */
+    e->retval = CALLING_CONVENTIONS (function)
+      (e->d[0].p, e->d[1].p, size, e->s[1].p, size2);
+    refmpn_zero (e->d[1].p+size2, size-size2);        /* excess remainder */
     break;
   case TYPE_TDIV_QR:
     CALLING_CONVENTIONS (function) (e->d[0].p, e->d[1].p, 0,
