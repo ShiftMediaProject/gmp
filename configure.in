@@ -599,8 +599,8 @@ fi
 case ${target} in
   [i[5-8]86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
     # rdtsc is in pentium and up, but not in i386 and i486
-    AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 2,
-    [How many limbs in a speed measuring cycle counter, if one exists])
+    AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 1,
+    [Whether a speed_cyclecounter exists for the tune programs])
     SPEED_CYCLECOUNTER_OBJS=pentium.lo
     ;;
   alpha*-*-*)
@@ -612,7 +612,7 @@ case ${target} in
       AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 1)
       SPEED_CYCLECOUNTER_OBJS=sparc64.lo
     else
-      AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 2)
+      AC_DEFINE(HAVE_SPEED_CYCLECOUNTER, 1)
       SPEED_CYCLECOUNTER_OBJS=sparcv9.lo
     fi
     ;;
