@@ -28,7 +28,9 @@ MA 02111-1307, USA.
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#if 0
 #include <sys/ioctl.h>
+#endif
 
 #include "gmp.h"
 #include "gmp-impl.h"
@@ -204,16 +206,16 @@ mpn_cache_fill_write (mp_ptr ptr, mp_size_t size)
 {
   mpn_cache_fill (ptr, size);
 
-  /*
+#if 0
   mpn_random (ptr, size);
-  */
+#endif
 
-  /*
+#if 0
   mp_size_t  i;
 
   for (i = 0; i < size; i++)
     ptr[i] = i;
-  */
+#endif
 }
 
 
@@ -280,9 +282,8 @@ speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
    speed_starttime() and speed_endtime() are put tight around the code to be
    measured.  Any setups are done outside the timed portion.
 
-   speed_measure() does an mpn_cache_fill() on the two source operands, but
-   a routine is free to prime the CPU cache however it wants.
-
+   Each routine is responsible for its own cache priming.
+   speed_cache_fill() is a good way to do this, see examples in speed.h.
    One cache priming possibility, for CPUs with write-allocate cache, and
    functions that don't take too long, is to do one dummy call before timing
    so as to cache everything that gets used.  But speed_measure() runs a
@@ -290,9 +291,9 @@ speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
    be necessary.
 
    Data alignment will be important, for source, destination and temporary
-   workspace.  A routine here can align its destination and workspace.
-   Programs using these routines should ensure s->xp and s->yp are aligned.
-   Aligning onto a CACHE_LINE_SIZE boundary is suggested.
+   workspace.  A routine can align its destination and workspace.  Programs
+   using the routines will ensure s->xp and s->yp are aligned.  Aligning
+   onto a CACHE_LINE_SIZE boundary is suggested.
 
    The effects of cache priming and data alignment are particularly
    noticable on fast routines.  Ensure these are consistent between routines
@@ -312,12 +313,9 @@ speed_tmp_alloc_adjust (void *ptr, mp_size_t align)
    future.  Routines should ignore anything they don't use.
 
    s->size can be used creatively, and s->xp and s->yp can be ignored.  For
-   example, speed_mpz_fac_ui() uses s->size as n for the factorial, and
-   speed_jacobi_base() uses s->size as a size in bits.
-
-   s->r is just a user-supplied parameter.  speed_mpn_lshift() uses it as a
-   shift, speed_mpn_mul_1() uses it as a multiplier, speed_mpn_mul_n_toom()
-   uses it as a split etc.
+   example, speed_mpz_fac_ui() uses s->size as n for the factorial.  s->r is
+   just a user-supplied parameter.  speed_mpn_lshift() uses it as a shift,
+   speed_mpn_mul_1() uses it as a multiplier.
 
   */
 
@@ -348,17 +346,26 @@ SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_sub_n, mpn_sub_n, 1)
 SPEED_ROUTINE_MPN_BINARY_N_SELF (speed_mpn_add_n_self, mpn_add_n, 1)
 SPEED_ROUTINE_MPN_BINARY_N_INPLACE (speed_mpn_add_n_inplace, mpn_add_n, 1)
 
-SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_and_n, 0,
-                                 mpn_and_n (wp,s->xp,s->yp,s->size))
-#if 0
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_andn_n, mpn_andn_n, 1)
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_nand_n, mpn_nand_n, 1)
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_ior_n,  mpn_ior_n,  1)
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_iorn_n, mpn_iorn_n, 1)
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_nior_n, mpn_nior_n, 1)
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_xor_n,  mpn_xor_n,  1)
-SPEED_ROUTINE_MPN_BINARY_N (speed_mpn_xnor_n, mpn_xnor_n, 1)
-#endif
+/* mpn_and_n etc can be macros and so have to be handled with
+   SPEED_ROUTINE_MPN_BINARY_N_CALL forms */
+SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_and_n,  0,
+                                 mpn_and_n  (wp,s->xp,s->yp,s->size))
+SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_andn_n, 0,
+                                 mpn_andn_n (wp,s->xp,s->yp,s->size))
+SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_nand_n, 0,
+                                 mpn_nand_n (wp,s->xp,s->yp,s->size))
+
+SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_ior_n,  0,
+                                 mpn_ior_n  (wp,s->xp,s->yp,s->size))
+SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_iorn_n, 0,
+                                 mpn_iorn_n (wp,s->xp,s->yp,s->size))
+SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_nior_n, 0,
+                                 mpn_nior_n (wp,s->xp,s->yp,s->size))
+
+SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_xor_n,  0,
+                                 mpn_xor_n  (wp,s->xp,s->yp,s->size))
+SPEED_ROUTINE_MPN_BINARY_N_CALL (speed_mpn_xnor_n, 0,
+                                 mpn_xnor_n (wp,s->xp,s->yp,s->size))
 
 SPEED_ROUTINE_MPZ_UI (speed_mpz_fac_ui, mpz_fac_ui)
 SPEED_ROUTINE_MPZ_UI (speed_mpz_fib_ui, mpz_fib_ui)
@@ -370,10 +377,11 @@ SPEED_ROUTINE_MPN_SQR   (speed_mpn_sqr_n, mpn_sqr_n, 1)
 SPEED_ROUTINE_MPN_SQR_CALL (speed_mpn_mul_n_sqr, 1,
                             mpn_mul_n(wp,s->xp,s->xp,s->size), 1)
 
-/* FIXME: The generic basecase code has size restrictions. */
+/* FIXME: size restrictions on some sqr_basecase versions */
 SPEED_ROUTINE_MPN_MUL_BASECASE(speed_mpn_mul_basecase, mpn_mul_basecase, 1)
 SPEED_ROUTINE_MPN_SQR (speed_mpn_sqr_basecase, mpn_sqr_basecase, 1)
 
+/* FIXME: size restrictions on kara */
 SPEED_ROUTINE_MPN_MUL_N_CALL (speed_mpn_kara_mul_n, 1,
                               mpn_kara_mul_n(wp,s->xp,s->xp,s->size,tspace),
                               MPN_KARA_MUL_N_TSIZE (s->size))
