@@ -935,7 +935,7 @@ the two malloc methods will need to be used.  Alternately it might be possible
 to increase available stack with @command{limit}, @command{ulimit} or
 @code{setrlimit}, or under DJGPP with @command{stubedit} or
 @code{@w{_stklen}}.  Note that depending on the system the only indication of
-stack overflow might be a segmentation violation.
+stack overflow might be a segmentation violation (@pxref{Debugging}).
 
 @samp{malloc-reentrant} is, as the name suggests, reentrant and thread safe,
 but @samp{malloc-notreentrant} is faster and should be used if reentrancy is
@@ -1387,6 +1387,19 @@ workstations) is accepted by @file{config.sub}, but is currently equivalent to
 @cindex Sparc
 @samp{sparcv8} or @samp{supersparc} on relevant systems will give a
 significant performance increase over the V7 code.
+
+@item Sparc App Regs
+@cindex Sparc
+The GMP assembler code for both 32-bit and 64-bit Sparc clobbers the
+``application registers'' @code{g2}, @code{g3} and @code{g4}, the same way
+that the GCC default @samp{-mapp-regs} does (@pxref{SPARC Options,,, gcc,
+Using the GNU Compiler Collection (GCC)}).
+
+This makes that code unsuitable for use with the special V9
+@samp{-mcmodel=embmedany} (which uses @code{g4} as a data segment pointer),
+and for applications wanting to use those registers for special purposes.  In
+these cases the only suggestion currently is to build GMP with CPU @samp{none}
+to avoid the assembler code.
 
 @item SunOS 4
 @cindex SunOS
@@ -2235,6 +2248,16 @@ Depending on the system, a segmentation violation or bus error might be the
 only indication of stack overflow.  See @samp{--enable-alloca} choices in
 @ref{Build Options}, for how to address this.
 
+In new enough versions of GCC, @samp{-fstack-check} may be able to ensure an
+overflow is recognised by the system before too much damage is done, or
+@samp{-fstack-limit-symbol} or @samp{-fstack-limit-register} may be able to
+add checking if the system itself doesn't do any (@pxref{Code Gen Options,,
+Options for Code Generation, gcc, Using the GNU Compiler Collection (GCC)}).
+These options must be added to the @samp{CFLAGS} used in the GMP build
+(@pxref{Build Options}), adding them just to an application will have no
+effect.  Note also they're a slowdown, adding overhead to each function call
+and each stack allocation.
+
 @item Heap Problems
 The most likely cause of application problems with GMP is heap corruption.
 Failing to @code{init} GMP variables will have unpredictable effects, and
@@ -2322,12 +2345,12 @@ nowhere near any malloc debugger hooks.
 @item Checker
 @cindex Checker
 @cindex GCC Checker
-The checker program (@uref{http://savannah.gnu.org/projects/checker}) can be
-used with GMP.  It contains a stub library which means GMP applications
-compiled with checker can use a normal GMP build.
+The GCC checker (@uref{http://savannah.gnu.org/projects/checker}) can be used
+with GMP.  It contains a stub library which means GMP applications compiled
+with checker can use a normal GMP build.
 
 A build of GMP with checking within GMP itself can be made.  This will run
-very very slowly.  Configure with
+very very slowly.  On GNU/Linux for example,
 
 @example
 ./configure --host=none-pc-linux-gnu CC=checkergcc
@@ -5330,6 +5353,9 @@ settings on systems which provide @code{localeconv} (@pxref{Locales,,Locales
 and Internationalization,libc,The GNU C Library Reference Manual}).  The C
 library will normally do the same for standard float output.
 
+The format string is only interpreted as plain @code{char}s, multibyte
+characters are not recognised.  Perhaps this will change in the future.
+
 
 @node Formatted Output Functions, C++ Formatted Output, Formatted Output Strings, Formatted Output
 @section Functions
@@ -5635,6 +5661,9 @@ taken from the current locale settings on systems which provide
 @code{localeconv} (@pxref{Locales,,Locales and Internationalization,libc,The
 GNU C Library Reference Manual}).  The C library will normally do the same for
 standard float input.
+
+The format string is only interpreted as plain @code{char}s, multibyte
+characters are not recognised.  Perhaps this will change in the future.
 
 
 @node Formatted Input Functions, C++ Formatted Input, Formatted Input Strings, Formatted Input
