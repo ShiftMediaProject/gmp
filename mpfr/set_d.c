@@ -30,11 +30,9 @@ MA 02111-1307, USA. */
 #define MPFR_LIMBS_PER_DOUBLE 2
 #elif (BITS_PER_MP_LIMB >= 64)
 #define MPFR_LIMBS_PER_DOUBLE 1
-#elif (BITS_PER_MP_LIMB == 16)
-#define MPFR_LIMBS_PER_DOUBLE 4
+#else
+#error "Unsupported value of BITS_PER_MP_LIMB"
 #endif
-
-static int __mpfr_extract_double _PROTO ((mp_ptr, double));
 
 /* Included from gmp-2.0.2, patched to support denorms */
 
@@ -57,10 +55,9 @@ __mpfr_extract_double (mp_ptr rp, double d)
 #endif
 
   /* BUGS
-
      1. Should handle Inf and NaN in IEEE specific code.
      2. Handle Inf and NaN also in default code, to avoid hangs.
-     3. Generalize to handle all BITS_PER_MP_LIMB >= 32.
+     3. Generalize to handle all BITS_PER_MP_LIMB.
      4. This lits is incomplete and misspelled.
    */
 
@@ -71,6 +68,7 @@ __mpfr_extract_double (mp_ptr rp, double d)
     }
 
 #if _GMP_IEEE_FLOATS
+
   {
     union ieee_double_extract x;
     x.d = d;
@@ -96,16 +94,21 @@ __mpfr_extract_double (mp_ptr rp, double d)
 	manl = x.s.manl << 11; /* low 21 bits */
 #endif
       }
+
+    if (exp)
+      exp -= 1022;
+    else
+      exp = -1021;
   }
-#else
+
+#else /* _GMP_IEEE_FLOATS */
+
   {
     /* Unknown (or known to be non-IEEE) double format.  */
     exp = 0;
     if (d >= 1.0)
       {
-        if (d * 0.5 == d)
-          abort ();
-
+        MPFR_ASSERTN (d * 0.5 != d);
         while (d >= 32768.0)
           {
             d *= (1.0 / 65536.0);
@@ -138,12 +141,9 @@ __mpfr_extract_double (mp_ptr rp, double d)
     manh = d;
     manl = (d - manh) * MP_BASE_AS_DOUBLE;
 #endif
-
-    exp += 1022;
   }
-#endif
 
-  if (exp) exp = (unsigned) exp - 1022; else exp = -1021;
+#endif /* _GMP_IEEE_FLOATS */
 
 #if BITS_PER_MP_LIMB == 64
   rp[0] = manl;

@@ -36,6 +36,7 @@ int
 main (int argc, char *argv[])
 {
   mpfr_t x, y;
+  int inex;
 
   tests_start_mpfr ();
 
@@ -156,6 +157,44 @@ main (int argc, char *argv[])
       printf ("got      ");
       mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
       printf ("\n");
+      exit (1);
+    }
+
+  mpfr_set_prec (x, 8);
+  mpfr_set_prec (y, 8);
+  mpfr_set_ui (x, 50, GMP_RNDN);
+  inex = mpfr_erf (y, x, GMP_RNDN);
+  if (mpfr_cmp_ui (y, 1))
+    {
+      printf ("mpfr_erf failed for x=50, rnd=GMP_RNDN\n");
+      printf ("expected 1, got ");
+      mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+      printf ("\n");
+      exit (1);
+    }
+  if (inex <= 0)
+    {
+      printf ("mpfr_erf failed for x=50, rnd=GMP_RNDN: wrong ternary value\n"
+              "expected positive, got %d\n", inex);
+      exit (1);
+    }
+  inex = mpfr_erf (x, x, GMP_RNDZ);
+  mpfr_nextbelow (y);
+  if (mpfr_cmp (x, y))
+    {
+      printf ("mpfr_erf failed for x=50, rnd=GMP_RNDZ\n");
+      printf ("expected ");
+      mpfr_out_str (stdout, 2, 0, y, GMP_RNDN);
+      printf ("\n");
+      printf ("got      ");
+      mpfr_out_str (stdout, 2, 0, x, GMP_RNDN);
+      printf ("\n");
+      exit (1);
+    }
+  if (inex >= 0)
+    {
+      printf ("mpfr_erf failed for x=50, rnd=GMP_RNDN: wrong ternary value\n"
+              "expected negative, got %d\n", inex);
       exit (1);
     }
 

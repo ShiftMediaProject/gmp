@@ -46,8 +46,6 @@ mpfr_compare (mpfr_t a, mpfr_t b)
     (MPFR_IS_NAN(b) || mpfr_cmp(a, b));
 }
 
-#define DEBUG
-
 void
 test3 (char *foo, mp_prec_t prec, mp_rnd_t rnd)
 {

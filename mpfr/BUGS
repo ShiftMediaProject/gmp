@@ -28,11 +28,6 @@ Known bugs:
   partially implemented. For instance, mpfr_pow (z, x, y, rnd) fails for
   very small x and some values of y.
 
-* Elementary functions may return an incorrect ternary value (e.g.
-  in the rounding to nearest mode, when the exact value is close to
-  a representable number). A rewrite of mpfr_can_round (as proposed
-  by Paul Zimmermann) can help to fix this bug.
-
 * The mpfr_set_ld function assumes that the long double type has an
   exponent of at most 15 bits.
 
@@ -73,5 +68,3 @@ Problems due to compiler bugs:
 
   This results in a problem in the mpfr_set_ld function. A workaround is
   to compile set_ld.c with -O0 (no optimization).
-
-  

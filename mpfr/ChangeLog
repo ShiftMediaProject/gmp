@@ -1,4 +1,203 @@
+2003-10-16  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* get_d.c, set_d.c: Fixed several bugs.
+
+	* get_d.c: Added XDEBUG support (like in set_d.c).
+
+2003-10-15  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.texi:
+	Replaced all non-ASCII characters by an equivalent 7-bit sequence
+	to support unpatched texinfo.tex files.
+
+2003-10-15  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/reuse.c: removed #define DEBUG (turned on accidentally)
+
+2003-10-15  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* BUGS:
+	Bug on the ternary value was fixed by Paul Zimmermann on 2003-10-14.
+
+2003-10-14  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr.texi: added preamble about ternary flag for special functions
+
+	* tests/reuse.c, tests/tacos.c, tests/tagm.c, tests/tasin.c, tests/tatan.c, tests/terf.c, tests/texp.c, tests/tgamma.c, tests/tgeneric.c, tests/thypot.c, tests/tzeta.c:
+	now uses #include "tgeneric.c" everywhere
+	(and modified test_generic to check also the inexact flag)
+
+	* tests/tui_div.c: check_nan() is back
+
+	* tests/tlog.c: removed old unused code
+
+	* tests/thyperbolic.c: fixed tests for x=0
+	removed composition tests (were already in-between #if 0 ... #endif)
+
+	* pow.c, pow_si.c, pow_ui.c, sin.c, sinh.c, sqrt.c, tan.c, tanh.c, ui_pow_ui.c, zeta.c, factorial.c, gamma.c, hypot.c, log.c, log10.c, log1p.c, log2.c, asinh.c, atan.c, atanh.c, const_euler.c, const_log2.c, const_pi.c, cos.c, cosh.c, erf.c, exp2.c, expm1.c, acos.c, acosh.c, agm.c, asin.c:
+	replaced mpfr_can_round (approx, err, rnd1, GMP_RNDN, prec)
+	by       mpfr_can_round (approx, err, rnd1, GMP_RNDZ, prec + 1)
+	which in addition guarantees a correct inexact flag
+
+	* TODO: added new items (version number, rounding modes)
+
+	* README.dev: added comment about --enable-alloca=debug
+
+2003-10-13  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* BUGS: added section "Problems due to compiler bugs"
+
+	* exp3.c, exp_2.c:
+	change in can_round calls to get correct inexact flag for rounding to nearest
+
+2003-10-10  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* pow.c, tests/tpow.c:
+	fixed bug in mpfr_pow found by Ming J. Tsai (overflow)
+
+2003-10-08  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* acos.c, asin.c, atan.c:
+	Removed useless inclusion of standard headers and some #ifdef DEBUG
+	code. Partial reindentation.
+
+	* strncasecmp.c: Added a #include <stddef.h> because size_t is used.
+
+2003-10-07  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* tests/tabs.c, tests/tacos.c, tests/tadd.c, tests/tasin.c, tests/tatan.c, tests/tcmp.c, tests/tconst_log2.c, tests/tdiv.c, tests/tfactorial.c, tests/tfrac.c, tests/tgamma.c, tests/tget_str.c, tests/tlog10.c, tests/tlog1p.c, tests/tpow3.c, tests/tset_d.c, tests/tset_si.c, tests/tset_str.c, tests/tset_z.c, tests/tsub.c, tests/tui_pow.c, tests/tzeta.c, tests/tsin.c:
+	reduced test time
+
+2003-10-06  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* round_prec.c: fixed comment of mpfr_round_raw_generic
+
+	* add1.c, extract.c, get_si.c, get_ui.c:
+	replaced ABSSIZE by ESIZE (ABSSIZE is the allocated size, and should be
+	used only in functions init, set_prec, round_prec)
+
+	* tests/tadd.c: fixed bug in allocation for in-place operation
+
+	* asin.c, atan.c:
+	inexact flag should now be correct for directed rounding
+	fixed a bug for mpfr_atan(-Inf) [gave +Pi/2 instead of -Pi/2]
+
+	* tests/tatan.c: added test for atan(-Inf)
+
+	* set_ld.c: use macros to avoid possible problem with float input
+
+	* TODO: new proposal for mpfr_can_round
+
+	* mpfr.texi: mpfr_mul_2exp/mpfr_div_2exp are not obsolete
+
+2003-10-05  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.texi:
+	Clearer mpfr_eq documentation (thanks to Kevin Ryde for the remark).
+
+2003-10-03  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr-impl.h:
+	MPFR_ASSERTN rewritten to avoid "statement with no effect" warnings
+	with gcc when the assertion is always true.
+
+	* add1.c:
+	Optimization (thanks to Patrick Pelissier), as the allocated size
+	may be larger than the size used by the significant bits.
+
+	* mpfr.texi, INSTALL: Updated installation notes.
+
+	* cmp_abs.c, mpfr.texi:
+	Infinities are now accepted in mpfr_cmpabs. Updated its definition
+	in the source (no longer sign(abs(b) - abs(c))).
+
+2003-10-02  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.texi: Use @url{} for URLs.
+
+	* mpfr.texi: As suggested by PZ:
+	  o documentation of mpfr_fits_* functions moved to the section
+	    on conversions;
+	  o grouped some mpfr_pow special cases;
+	  o explanation concerning the meaning of rnd in mpfr_frac.
+
+	* tests/tset_str.c, tests/tset_z.c, tests/tsinh.c, tests/tsqrt.c, tests/tsub.c, tests/ttanh.c, tests/tui_pow.c, tests/tui_sub.c, tests/tzeta.c, tests/tmul.c, tests/tmul_ui.c, tests/tout_str.c, tests/tpow.c, tests/tset.c, tests/tset_d.c, tests/tlog.c, tests/tlog10.c, tests/tlog1p.c, tests/tlog2.c, tests/texpm1.c, tests/tfma.c, tests/tget_str.c, tests/thypot.c, tests/tadd.c, tests/tadd_ui.c, tests/tagm.c, tests/tasinh.c, tests/tatan.c, tests/tatanh.c, tests/tcan_round.c, tests/tcmp.c, tests/tcmp2.c, tests/tcos.c, tests/tcosh.c, tests/tdiv.c, tests/tdiv_ui.c, tests/terf.c, tests/texceptions.c, tests/texp.c, mpfr.h, mpfr.texi, print_raw.c, set_str_raw.c, tests/tacosh.c, BUGS, mpfr-impl.h:
+	Updated documentation. In particular, mpfr_set_str_raw renamed
+	as mpfr_set_str_binary. This function and mpfr_print_binary are
+	now internal functions. mpfr_print_binary no longer prints the
+	non-significant 0 bits. Updated the source to match the manual.
+	mpfr_print_binary has been completely rewritten (now directly
+	prints to stdout, without using an intermediate string). In
+	mpfr_set_str_binary, replaced atol by strtol + error checking.
+
+2003-10-02  Paul Zimmermann  <Paul.Zimmermann@loria.fr>
+
+	* mpfr.texi: added paragraph on support/grants
+	added help for mpfr_erf
+
+2003-10-02  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.texi:
+	Make node titles match section titles, and updated menus and xrefs.
+	Added a line break after @samp{uninstall}.
+
+2003-10-01  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* TODO, const_log2.c, const_pi.c, mpfr.h, mpfr.texi, zeta.c:
+	Corrections in the MPFR manual (PZ & VL). Functions mpfr_const_pi,
+	mpfr_const_log2 and mpfr_zeta now return a ternary value. Updated
+	TODO file.
+
+2003-09-30  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* BUGS: Added a bug related to the ternary value and worst cases.
+
+	* pow_si.c, pow_ui.c: Added exponent range support.
+
+	* mpfr.texi: Corrections up to Section 5.6 (PZ & VL).
+
+	* get_z_exp.c:
+	Re-added the assert on the exponent, but replacing MPFR_EMIN_MIN by
+	MP_EXP_T_MIN (this makes more sense): an assertion failed would mean
+	that the exponent is not representable (an undefined behavior in the
+	ISO C standard). If need be, we could choose to return MP_EXP_T_MIN
+	in such a case, or perhaps MP_EXP_T_MAX to signal an error. The
+	mantissa would still be meaningful.
+
+2003-09-30  Patrick Pelissier  <Patrick.Pelissier@loria.fr>
+
+	* TODO: Update TODO & mpfr_set_prec.
+
+2003-09-29  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.texi: Corrections up to Section 4.
+
+	* AUTHORS: Added authors Kevin Ryde and Patrick Pelissier.
+
+	* INSTALL: Removed "known problems" that are no longer problems.
+
+2003-09-26  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* BUGS: Removed bugs related to the tests and to the exponents
+	as they no longer occur. Updated some potentials bugs.
+
 2003-09-25  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr-impl.h, mpfr.h, mpfr.texi, tests/tinits.c:
+	Removed mpfr_inits, mpfr_inits2, mpfr_clears from the documentation.
+	Moved their prototypes to mpfr-impl.h (internal functions until
+	decided otherwise).
+
+2003-09-25  Patrick Pelissier  <Patrick.Pelissier@loria.fr>
+
+	* const_log2.c, const_pi.c, generic.c, atan.c:
+	Modify 'r' arg of GENERIC from int to long (min 32 bits).
+
+2003-09-25  Vincent Lefevre  <Vincent.Lefevre@loria.fr>
+
+	* mpfr.texi: 8-bit ISO-8859-1 characters + consistent spelling.
+
+	* ChangeLog: Update.
 
 	* tests/tgeneric.c, tests/tget_d.c, tests/tget_str.c, tests/thypot.c, tests/tisnan.c, tests/tlog.c, tests/tlog10.c, tests/tmul.c, tests/tmul_2exp.c, tests/tmul_ui.c, tests/tout_str.c, tests/tpow.c, tests/tpow3.c, tests/trandom.c, tests/tconst_pi.c, tests/tcos.c, tests/tdiv.c, tests/tdiv_ui.c, tests/teq.c, tests/terf.c, tests/tests.c, tests/texceptions.c, tests/texp.c, tests/texp2.c, tests/tfactorial.c, tests/tfma.c, tests/tfrac.c, tests/tgamma.c, tests/mpf_compat.h, tests/reuse.c, tests/tabs.c, tests/tacos.c, tests/tadd.c, tests/tagm.c, tests/tasin.c, tests/tatan.c, tests/tcan_round.c, tests/tcbrt.c, tests/tcmp.c, tests/tcmp2.c, tests/tcmp_d.c, tests/tcmp_ui.c, tests/tconst_log2.c:
 	Changed the remaining stderr to stdout.

@@ -181,6 +181,15 @@ log
 @end macro
 @end ifnottex
 
+@c  @pom{} definition
+@tex
+\gdef\pom{\ifmmode\pm\else$\pm$\fi}
+@end tex
+@ifnottex
+@macro pom
+±
+@end macro
+@end ifnottex
 
 @node Copying, Introduction to MPFR, Top, Top
 @comment  node-name, next, previous,  up
@@ -1026,11 +1035,11 @@ rounded in the direction @var{rnd}.
 Special values are currently handled as described in the ISO C99 standard
 for the @code{pow} function:
 @itemize @bullet
-@item @code{pow(±0, @var{y})} returns plus or minus infinity for @var{y} a negative odd integer.
-@item @code{pow(±0, @var{y})} returns plus infinity for @var{y} negative and not an odd integer.
-@item @code{pow(±0, @var{y})} returns plus or minus zero for @var{y} a positive odd integer.
-@item @code{pow(±0, @var{y})} returns plus zero for @var{y} positive and not an odd integer.
-@item @code{pow(-1, ±inf)} returns 1.
+@item @code{pow(@pom{}0, @var{y})} returns plus or minus infinity for @var{y} a negative odd integer.
+@item @code{pow(@pom{}0, @var{y})} returns plus infinity for @var{y} negative and not an odd integer.
+@item @code{pow(@pom{}0, @var{y})} returns plus or minus zero for @var{y} a positive odd integer.
+@item @code{pow(@pom{}0, @var{y})} returns plus zero for @var{y} positive and not an odd integer.
+@item @code{pow(-1, @pom{}inf)} returns 1.
 @item @code{pow(+1, @var{y})} returns 1 for any @var{x}, even a NaN.
 @item @code{pow(@var{x}, @var{y})} returns NaN for finite negative @var{x} and finite non-integer @var{y}.
 @item @code{pow(@var{x}, -inf)} returns plus infinity for @math{0 < @GMPabs{x} < 1}, and plus zero for @math{@GMPabs{x} > 1}.
@@ -1537,11 +1546,11 @@ in raw binary format (the exponent is written in decimal, yet).
 @comment  node-name,  next,  previous,  up
 @unnumbered Contributors
 
-The main developers consist of Guillaume Hanrot, Vincent Lefèvre,
+The main developers consist of Guillaume Hanrot, Vincent Lef@`evre,
 Kevin Ryde and Paul Zimmermann.
 
 We would like to thank Jean-Michel Muller and Joris van der Hoeven for very
-fruitful discussions at the beginning of that project, Torbjörn Granlund
+fruitful discussions at the beginning of that project, Torbj@"orn Granlund
 and Kevin Ryde
 for their help about design issues
 and their suggestions for an easy integration into GNU MP,
@@ -1561,13 +1570,13 @@ David Daney contributed the hyperbolic and inverse hyperbolic functions,
 the base-2 exponential, and the factorial function. Fabrice Rouillier
 contributed the original version of @file{mul_ui.c}, the @file{gmp_op.c}
 file, and helped to the Windows porting.
-Jean-Luc Rémy contributed the @code{mpfr_zeta} code.
+Jean-Luc R@'emy contributed the @code{mpfr_zeta} code.
 Ludovic Meunier helped in the design of the @code{mpfr_erf} code.
 
 The development of the MPFR library would not have been possible without the
 continuous support of LORIA, INRIA and INRIA Lorraine.
 The development of MPFR was also supported by a grant 
-(202F0659 00 MPN 121) from the Conseil Régional de Lorraine in 2002.
+(202F0659 00 MPN 121) from the Conseil R@'egional de Lorraine in 2002.
 
 @node References, GNU Free Documentation License, Contributors, Top
 @comment  node-name,  next,  previous,  up
@@ -1576,7 +1585,7 @@ The development of MPFR was also supported by a grant
 @itemize @bullet
 
 @item
-Torbjörn Granlund, "GNU MP: The GNU Multiple Precision Arithmetic Library",
+Torbj@"orn Granlund, "GNU MP: The GNU Multiple Precision Arithmetic Library",
   version 4.1.2, 2002.
 
 @item

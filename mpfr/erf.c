@@ -29,14 +29,14 @@ MA 02111-1307, USA. */
 
 #define EXP1 2.71828182845904523536 /* exp(1) */
 
-int mpfr_erf_0 _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
+int mpfr_erf_0 _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 #if 0
-int mpfr_erf_inf _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
+int mpfr_erf_inf _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_erfc_inf _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 #endif
 
-int 
-mpfr_erf (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode) 
+int
+mpfr_erf (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 {
   double xf;
   int sign_x;
@@ -80,11 +80,15 @@ mpfr_erf (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   if (xf > n * LOG2) /* |erf x| = 1 or 1- */
     {
-      mpfr_set_ui (y, 1, rnd2);
-      if (rnd2 == GMP_RNDD || rnd2 == GMP_RNDZ)
+      if (rnd2 == GMP_RNDN || rnd2 == GMP_RNDU)
         {
-          mpfr_sub_one_ulp (y, GMP_RNDZ); /* 1 - 2^(1-n) */
-          mpfr_add_one_ulp (y, GMP_RNDU);
+          mpfr_set_ui (y, 1, rnd2);
+          inex = 1;
+        }
+      else
+        {
+          mpfr_setmax (y, 0);
+          inex = -1;
         }
     }
   else  /* use Taylor */
@@ -93,9 +97,14 @@ mpfr_erf (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
     }
 
   if (sign_x < 0)
-    MPFR_CHANGE_SIGN(y);
-
-  return inex;
+    {
+      MPFR_CHANGE_SIGN (y);
+      return - inex;
+    }
+  else
+    {
+      return inex;
+    }
 }
 
 /* return x*2^e */
@@ -104,7 +113,7 @@ double mul_2exp (double x, mp_exp_t e)
 {
   if (e > 0)
     {
-      while (e--) 
+      while (e--)
         x *= 2.0;
     }
   else
@@ -123,8 +132,8 @@ double mul_2exp (double x, mp_exp_t e)
    Assumes x is neither NaN nor infinite nor zero.
    Assumes also that e*x^2 <= n (target precision).
  */
-int 
-mpfr_erf_0 (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd_mode) 
+int
+mpfr_erf_0 (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd_mode)
 {
   mp_prec_t n, m;
   mp_exp_t nuk, sigmak;
@@ -178,7 +187,7 @@ mpfr_erf_0 (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd_mode)
             break;
 
           /* tauk <- 1/2 + tauk * 2^sigmak + (1+8k)*2^nuk */
-          tauk = 0.5 + mul_2exp (tauk, sigmak) 
+          tauk = 0.5 + mul_2exp (tauk, sigmak)
             + mul_2exp (1.0 + 8.0 * (double) k, nuk);
         }
 
@@ -224,7 +233,7 @@ mpfr_erf_0 (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd_mode)
    f(x) >= f(sqrt(2/e)) ~ 0.7142767512, thus the final partial sum
    should be > 0.5, and MPFR_EXP(s) should always be >= 0.
  */
-int 
+int
 mpfr_erfc_inf (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd)
 {
   mp_prec_t n, m;
@@ -236,7 +245,7 @@ mpfr_erfc_inf (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd)
   double xf = mpfr_get_d1 (x);
 
   n = MPFR_PREC(res); /* target precision */
-  
+
   mpfr_init2 (y, 2);
   mpfr_init2 (s, 2);
   mpfr_init2 (t, 2);
@@ -286,7 +295,7 @@ mpfr_erfc_inf (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd)
             break;
 
           /* tauk <- 1/2 + tauk * 2^sigmak + 2^(2k+2+nuk) */
-          tauk = 0.5 + mul_2exp (tauk, sigmak) 
+          tauk = 0.5 + mul_2exp (tauk, sigmak)
             + mul_2exp (1.0, 2 * k + 2 + nuk);
         }
 
@@ -301,7 +310,7 @@ mpfr_erfc_inf (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd)
       mpfr_sqrt (y, y, GMP_RNDD);
       mpfr_mul (t, t, y, GMP_RNDN);
       mpfr_div (s, s, t, GMP_RNDN);
-      
+
       /* final error bound on s */
       tauk = mul_2exp (3.0, nuk + 5) + 2.0 * tauk + 115.0;
       log2tauk = __gmpfr_ceil_log2 (tauk);
@@ -321,7 +330,7 @@ mpfr_erfc_inf (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd)
    Assumes x is neither NaN nor infinite nor zero.
    Assumes also that e*x^2 > n (target precision).
  */
-int 
+int
 mpfr_erf_inf (mpfr_ptr res, mpfr_srcptr x, mp_rnd_t rnd)
 {
   mp_prec_t n, m;
