@@ -1,6 +1,6 @@
 dnl  SPARC v9 mpn_copyi -- Copy a limb vector, incrementing.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
 dnl  This file is part of the GNU MP Library.
 
@@ -21,12 +21,14 @@ dnl  MA 02111-1307, USA.
 
 include(`../config.m4')
 
+C      		   cycles/limb
+C UltraSPARC 1&2:     2
+C UltraSPARC 3:	      2.5
+
 C INPUT PARAMETERS
 C rptr	%o0
 C sptr	%o1
 C n	%o2
-
-C This code runs at 2 cycles/limb on UltraSPARC 1 and 2.
 
 ASM_START()
 	REGISTER(%g2,#scratch)
