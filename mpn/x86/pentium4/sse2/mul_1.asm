@@ -51,13 +51,9 @@ deflit(`FRAME',0)
 	pxor	%mm0, %mm0
 L(start_1c):
 	movl	PARAM_SRC, %eax
-	movl	PARAM_SIZE, %ecx
-	movl	PARAM_DST, %edx
 	movd	PARAM_MULTIPLIER, %mm7
-
-	leal	(%eax,%ecx,4), %eax	C src end
-	leal	(%edx,%ecx,4), %edx	C dst end
-	negl	%ecx			C -size
+	movl	PARAM_DST, %edx
+	movl	PARAM_SIZE, %ecx
 
 L(top):
 	C eax	src end
@@ -68,15 +64,17 @@ L(top):
 	C mm0	carry limb
 	C mm7	multiplier
 
-	movd	(%eax,%ecx,4), %mm1
+	movd	(%eax), %mm1
+	addl	$4, %eax
 	pmuludq	%mm7, %mm1
 
 	paddq	%mm1, %mm0
-	movd	%mm0, (%edx,%ecx,4)
+	movd	%mm0, (%edx)
+	addl	$4, %edx
 
 	psrlq	$32, %mm0
 
-	addl	$1, %ecx
+	subl	$1, %ecx
 	jnz	L(top)
 
 
