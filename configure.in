@@ -544,8 +544,9 @@ case $host in
 
 
   hppa*-*-*)
-    # HP cc is K&R by default, but AM_C_PROTOTYPES will add "-Ae", or "-Aa
-    # -D_HPUX_SOURCE", to put it into ansi mode, if possible.
+    # HP cc (the one sold separately) is K&R by default, but AM_C_PROTOTYPES
+    # will add "-Ae", or "-Aa -D_HPUX_SOURCE", to put it into ansi mode, if
+    # possible.
     #
     # gcc for hppa 2.0 can be built either for 2.0n (32-bit) or 2.0w
     # (64-bit), but not both, so there's no option to choose the desired
@@ -1220,7 +1221,7 @@ case $host in
   # -m32 is not available in gcc 2.95 and earlier, hence cflags_maybe to use
   # it when it works.  We check sizeof(long)==4 to ensure we get the right
   # mode, in case -m32 has failed not because it's an old gcc, but because
-  # it's a 64-bit gcc without a 32-bit libc, or whatever.
+  # it's a dual 32/64-bit gcc without a 32-bit libc, or whatever.
   #
   X86_PATTERN | x86_64-*-*)
     abilist="32"
