@@ -369,7 +369,6 @@ mpn_fft_mul_modF_K(ap, bp, n, K)
     Mp2 = Nprime2/K2;
 
     Ap = TMP_ALLOC_MP_PTRS (K2);
-    Ap = TMP_ALLOC_MP_PTRS (K2);
     Bp = TMP_ALLOC_MP_PTRS (K2);
     A = TMP_ALLOC_LIMBS (2*K2*(nprime2+1));
     T = TMP_ALLOC_LIMBS (nprime2+1);
