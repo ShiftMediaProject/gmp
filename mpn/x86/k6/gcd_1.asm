@@ -315,7 +315,7 @@ ifdef(`PIC',`
 	nop	C code alignment
 	call	L(movl_eip_ebx)
 L(here):
-	addl	$_GLOBAL_OFFSET_TABLE_+[.-L(here)], %ebx
+	addl	$_GLOBAL_OFFSET_TABLE_, %ebx
         call	GSYM_PREFIX`'mpn_modexact_1_odd@PLT
 ',`
 	call	GSYM_PREFIX`'mpn_modexact_1_odd
