@@ -1,3 +1,41 @@
+2001-07-07  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (powerpc*-*-*): Use -no-cpp-precomp for Darwin.
+
+	* tests/mpbsd/t-itom.c: Renamed from t-misc.c.
+	* tests/mpbsd/t-misc.c: Remove file.
+	* tests/mpbsd/Makefile.am: Update.p
+
+	* tests/mpf/t-set_si.c,t-cmp_si.c,t-gsprec.c: Split from t-misc.c.
+	* tests/mpf/t-misc.c: Remove file.
+	* tests/mpf/Makefile.am: Update.	
+
+	* tests/mpz/t-oddeven.c,t-set_si.c,t-cmp_si.c: Split from t-misc.c.
+	* tests/mpz/t-misc.c: Remove file.
+	* tests/mpz/Makefile.am: Update.	
+
+	* stack-alloc.c: Add some alignment ASSERTs.
+
+	* gmp-impl.h (MPN_NORMALIZE): Add notes on x86 repe/scasl slow.
+
+	* tests/devel/try.c (MPN_ZERO): Add testing.
+	* tune/speed.c,speed.h,common.c,many.pl (MPN_ZERO): Add measuring.
+
+	* mpn/x86/divrem_1.asm: Update a remark about gcc and "loop".
+
+	* tests/mpq/t-cmp_si.c: New file.
+	* tests/mpq/Makefile.am: Add it.
+
+	* tests/misc.c,tests.h (mpq_set_str_or_abort): New function.
+
+	* mpq/cmp_si.c: New file.
+	* Makefile.am, mpq/Makefile.am: Add it.
+	* gmp-h.in (mpq_cmp_si): Add prototype.
+	* gmp.texi (Comparing Rationals): Add doco.
+
+	* gmp-h.in (_GMP_H_HAVE_FILE): Add _FILE_DEFINED for microsoft, add
+	notes on what symbols are for what systems.
+
 2001-07-06  Torbjorn Granlund  <tege@swox.com>
 
 	* longlong.h (ibm032 umul_ppmm): Fix typo.
