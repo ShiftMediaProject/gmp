@@ -79,6 +79,12 @@ case "${target}" in
       target_makefile_frag=config/mt-ppc64-aix
     fi
     ;;
+  vax*-*-*)
+    if [ x$with_gcc != xno ]
+    then
+      target_makefile_frag=config/mt-vax
+    fi
+    ;;
   *-*-linux*)
     target_makefile_frag=config/mt-linux ;;
   f30[01]-fujitsu-sysv*)
