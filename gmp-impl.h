@@ -127,8 +127,9 @@ MA 02111-1307, USA. */
    and give a return value, it doesn't read or write any memory (neither
    global nor pointed to by arguments), and has no other side-effects.  This
    is more restrictive than "pure".  See info node "(gcc)Function
-   Attributes".  */
-#if HAVE_ATTRIBUTE_CONST
+   Attributes".  __GMP_NO_ATTRIBUTE_CONST_PURE lets tune/common.c etc turn
+   this off when trying to write timing loops.  */
+#if HAVE_ATTRIBUTE_CONST && ! defined (__GMP_NO_ATTRIBUTE_CONST_PURE)
 #define ATTRIBUTE_CONST  __attribute__ ((const))
 #else
 #define ATTRIBUTE_CONST
