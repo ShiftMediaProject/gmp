@@ -1969,7 +1969,14 @@ GMP_FUNC_SSCANF_WRITABLE_INPUT
 #
 if test $enable_cxx = yes; then
   AC_LANG_PUSH(C++)
+
+  # Reasons for testing:
+  #   <sstream> - not in g++ 2.95.2
+  #   std::locale - not in g++ 2.95.4
+  #
+  AC_CHECK_HEADERS([sstream])
   AC_CHECK_TYPES([std::locale],,,[#include <locale>])
+
   AC_LANG_POP(C++)
 fi
 
