@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
+# Copyright 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -61,8 +61,8 @@ subdir = demos/expr
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/expr-config-h.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/mpfr/acinclude.m4 \
-	$(top_srcdir)/acinclude.m4 $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(mkdir_p)
@@ -70,27 +70,19 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES = expr-config.h
 libexpr_a_AR = $(AR) $(ARFLAGS)
 libexpr_a_LIBADD =
-am__libexpr_a_SOURCES_DIST = expr.h expr-impl.h expr.c exprv.c exprz.c \
-	exprza.c exprq.c exprqa.c exprf.c exprfa.c exprfr.c exprfra.c
-@WANT_MPFR_TRUE@am__objects_1 = exprfr$U.$(OBJEXT) exprfra$U.$(OBJEXT)
 am_libexpr_a_OBJECTS = expr$U.$(OBJEXT) exprv$U.$(OBJEXT) \
 	exprz$U.$(OBJEXT) exprza$U.$(OBJEXT) exprq$U.$(OBJEXT) \
-	exprqa$U.$(OBJEXT) exprf$U.$(OBJEXT) exprfa$U.$(OBJEXT) \
-	$(am__objects_1)
+	exprqa$U.$(OBJEXT) exprf$U.$(OBJEXT) exprfa$U.$(OBJEXT)
 libexpr_a_OBJECTS = $(am_libexpr_a_OBJECTS)
 run_expr_SOURCES = run-expr.c
 run_expr_OBJECTS = run-expr$U.$(OBJEXT)
 run_expr_LDADD = $(LDADD)
-@WANT_MPFR_TRUE@am__DEPENDENCIES_1 = $(top_builddir)/mpfr/libmpfr.a
-am__DEPENDENCIES_2 =
-run_expr_DEPENDENCIES = libexpr.a $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libgmp.la $(am__DEPENDENCIES_2)
+run_expr_DEPENDENCIES = libexpr.a $(top_builddir)/libgmp.la
 t_expr_SOURCES = t-expr.c
 t_expr_OBJECTS = t-expr$U.$(OBJEXT)
-am__DEPENDENCIES_3 = libexpr.a $(am__DEPENDENCIES_1) \
-	$(top_builddir)/libgmp.la $(am__DEPENDENCIES_2)
+am__DEPENDENCIES_1 = libexpr.a $(top_builddir)/libgmp.la
 t_expr_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
-	$(am__DEPENDENCIES_3)
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -103,7 +95,7 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libexpr_a_SOURCES) run-expr.c t-expr.c
-DIST_SOURCES = $(am__libexpr_a_SOURCES_DIST) run-expr.c t-expr.c
+DIST_SOURCES = $(libexpr_a_SOURCES) run-expr.c t-expr.c
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -150,7 +142,6 @@ HAVE_GETRUSAGE_01 = @HAVE_GETRUSAGE_01@
 HAVE_GETTIMEOFDAY_01 = @HAVE_GETTIMEOFDAY_01@
 HAVE_HOST_CPU_FAMILY_power = @HAVE_HOST_CPU_FAMILY_power@
 HAVE_HOST_CPU_FAMILY_powerpc = @HAVE_HOST_CPU_FAMILY_powerpc@
-HAVE_MPFR_01 = @HAVE_MPFR_01@
 HAVE_SIGACTION_01 = @HAVE_SIGACTION_01@
 HAVE_SIGALTSTACK_01 = @HAVE_SIGALTSTACK_01@
 HAVE_SIGSTACK_01 = @HAVE_SIGSTACK_01@
@@ -181,9 +172,6 @@ MAINT = @MAINT@
 MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
 MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
 MAKEINFO = @MAKEINFO@
-MPFR_CFLAGS = @MPFR_CFLAGS@
-MPFR_LIBM = @MPFR_LIBM@
-MPFR_LIBS = @MPFR_LIBS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -199,7 +187,6 @@ SHELL = @SHELL@
 SPEED_CYCLECOUNTER_OBJ = @SPEED_CYCLECOUNTER_OBJ@
 STRIP = @STRIP@
 TAL_OBJECT = @TAL_OBJECT@
-TESTS_ASM_OBJECTS = @TESTS_ASM_OBJECTS@
 TUNE_SQR_OBJ = @TUNE_SQR_OBJ@
 U = @U@
 U_FOR_BUILD = @U_FOR_BUILD@
@@ -208,8 +195,6 @@ WANT_CXX_FALSE = @WANT_CXX_FALSE@
 WANT_CXX_TRUE = @WANT_CXX_TRUE@
 WANT_MPBSD_FALSE = @WANT_MPBSD_FALSE@
 WANT_MPBSD_TRUE = @WANT_MPBSD_TRUE@
-WANT_MPFR_FALSE = @WANT_MPFR_FALSE@
-WANT_MPFR_TRUE = @WANT_MPFR_TRUE@
 WITH_READLINE_01 = @WITH_READLINE_01@
 YACC = @YACC@
 ac_ct_AR = @ac_ct_AR@
@@ -253,18 +238,12 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests -I$(top_srcdir)/mpfr
-@WANT_MPFR_TRUE@MPFR_SOURCES_OPTION = exprfr.c exprfra.c
-@WANT_MPFR_TRUE@MPFR_LIBADD_OPTION = $(top_builddir)/mpfr/libmpfr.a
-
-# ensure these are always distributed
-EXTRA_DIST = exprfr.c exprfra.c
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 EXTRA_LIBRARIES = libexpr.a
 libexpr_a_SOURCES = expr.h expr-impl.h \
-  expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c \
-  $(MPFR_SOURCES_OPTION)
+  expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c
 
-LDADD = libexpr.a $(MPFR_LIBADD_OPTION) $(top_builddir)/libgmp.la $(LIBM)
+LDADD = libexpr.a $(top_builddir)/libgmp.la
 t_expr_LDADD = $(top_builddir)/tests/libtests.la $(LDADD)
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES)
 all: all-am
@@ -338,10 +317,6 @@ exprf_.c: exprf.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/exprf.c; then echo $(srcdir)/exprf.c; else echo exprf.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 exprfa_.c: exprfa.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/exprfa.c; then echo $(srcdir)/exprfa.c; else echo exprfa.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
-exprfr_.c: exprfr.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/exprfr.c; then echo $(srcdir)/exprfr.c; else echo exprfr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
-exprfra_.c: exprfra.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/exprfra.c; then echo $(srcdir)/exprfra.c; else echo exprfra.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 exprq_.c: exprq.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/exprq.c; then echo $(srcdir)/exprq.c; else echo exprq.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 exprqa_.c: exprqa.c $(ANSI2KNR)
@@ -357,8 +332,7 @@ run-expr_.c: run-expr.c $(ANSI2KNR)
 t-expr_.c: t-expr.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-expr.c; then echo $(srcdir)/t-expr.c; else echo t-expr.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 expr_.$(OBJEXT) expr_.lo exprf_.$(OBJEXT) exprf_.lo exprfa_.$(OBJEXT) \
-exprfa_.lo exprfr_.$(OBJEXT) exprfr_.lo exprfra_.$(OBJEXT) exprfra_.lo \
-exprq_.$(OBJEXT) exprq_.lo exprqa_.$(OBJEXT) exprqa_.lo \
+exprfa_.lo exprq_.$(OBJEXT) exprq_.lo exprqa_.$(OBJEXT) exprqa_.lo \
 exprv_.$(OBJEXT) exprv_.lo exprz_.$(OBJEXT) exprz_.lo \
 exprza_.$(OBJEXT) exprza_.lo run-expr_.$(OBJEXT) run-expr_.lo \
 t-expr_.$(OBJEXT) t-expr_.lo : $(ANSI2KNR)

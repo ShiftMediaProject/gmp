@@ -94,9 +94,6 @@ MA 02111-1307, USA.
    don't. */
 #undef HAVE_DECL_VFPRINTF
 
-/* Define if denormalized floats work. */
-#undef HAVE_DENORMS
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -163,12 +160,6 @@ MA 02111-1307, USA.
 #undef HAVE_HOST_CPU_pentium2
 #undef HAVE_HOST_CPU_pentium3
 
-/* Define if HUGE_VAL can be used without the need of a specific library. */
-#undef HAVE_HUGE_VAL
-
-/* Define if 0/0, 1/0, -1/0 and sqrt(-1) work to generate NaN/infinities. */
-#undef HAVE_INFS
-
 /* Define to 1 if the system has the type `intmax_t'. */
 #undef HAVE_INTMAX_T
 
@@ -180,15 +171,6 @@ MA 02111-1307, USA.
 
 /* Define to 1 if you have the <langinfo.h> header file. */
 #undef HAVE_LANGINFO_H
-
-/* Define one of the following to 1 for the format of a `long double'.
-   If your format is not among these choices, or you don't know what it is,
-   then leave all undefined.
-   IEEE_EXT is the 10-byte IEEE extended precision format.
-   IEEE_QUAD is the 16-byte IEEE quadruple precision format.
-   LITTLE or BIG is the endianness.  */
-#undef HAVE_LDOUBLE_IEEE_EXT_LITTLE
-#undef HAVE_LDOUBLE_IEEE_QUAD_BIG
 
 /* Define one of these to 1 for the endianness of `mp_limb_t'.
    If the endianness is not a simple big or little, or you don't know what
@@ -342,9 +324,6 @@ MA 02111-1307, USA.
 /* Define to 1 if the system has the type `std::locale'. */
 #undef HAVE_STD__LOCALE
 
-/* Define to 1 if you have the `strcasecmp' function. */
-#undef HAVE_STRCASECMP
-
 /* Define to 1 if you have the `strchr' function. */
 #undef HAVE_STRCHR
 
@@ -359,9 +338,6 @@ MA 02111-1307, USA.
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
-
-/* Define to 1 if you have the `strncasecmp' function. */
-#undef HAVE_STRNCASECMP
 
 /* Define to 1 if you have the `strnlen' function. */
 #undef HAVE_STRNLEN
@@ -386,9 +362,6 @@ MA 02111-1307, USA.
 
 /* Define to 1 if you have the <sys/attributes.h> header file. */
 #undef HAVE_SYS_ATTRIBUTES_H
-
-/* Define to 1 if you have the <sys/fpu.h> header file. */
-#undef HAVE_SYS_FPU_H
 
 /* Define to 1 if you have the <sys/iograph.h> header file. */
 #undef HAVE_SYS_IOGRAPH_H
@@ -446,13 +419,6 @@ MA 02111-1307, USA.
 
 /* Assembler local label prefix */
 #undef LSYM_PREFIX
-
-/* Define if you have the `fesetround' function via the <fenv.h> header file.
-   */
-#undef MPFR_HAVE_FESETROUND
-
-/* Define to 1 if mpfr x86/amd64 test routines are available. */
-#undef MPFR_HAVE_TESTS_x86
 
 /* Name of package */
 #undef PACKAGE
@@ -513,9 +479,6 @@ MA 02111-1307, USA.
 
 /* Define to 1 to enable FFTs for multiplication, per --enable-fft */
 #undef WANT_FFT
-
-/* Define to 1 if --enable-mpfr */
-#undef WANT_MPFR
 
 /* Define to 1 if --enable-profiling=gprof */
 #undef WANT_PROFILING_GPROF
