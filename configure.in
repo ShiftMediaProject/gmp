@@ -2032,6 +2032,7 @@ AC_SUBST(gmp_srclinks)
 if test $enable_mpfr = yes; then
   gmp_CFLAGS=$CFLAGS
   gmp_LIBS=$LIBS
+  LIBS="$LIBS $LIBM"
 
   MPFR_CONFIGS
 
