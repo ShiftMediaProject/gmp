@@ -1,6 +1,6 @@
 /* operator>> -- C++-style input of mpf_t.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -30,11 +30,6 @@ MA 02111-1307, USA. */
 using namespace std;
 
 
-/* Perhaps the decimal point should be taken from the C++ <locale> stuff,
-   but that doesn't exist in g++ 2.95.x.  In any case, using plain C
-   localeconv will ensure we parse exactly what mpf_set_str will expect, and
-   what the current operator<< implementation produces.  */
-
 istream &
 operator>> (istream &i, mpf_ptr f)
 {
@@ -42,6 +37,17 @@ operator>> (istream &i, mpf_ptr f)
   char c = 0;
   string s;
   bool ok = false;
+
+  /* C decimal point, as expected by mpf_set_str */
+  const char *lconv_point = localeconv()->decimal_point;
+
+  /* C++ decimal point */
+#if HAVE_STD__LOCALE
+  char point_char = use_facet< numpunct<char> >(i.getloc()).decimal_point();
+#else
+  const char *point = lconv_point;
+  char point_char = *point;
+#endif
 
   i.get(c); // start reading
 
@@ -62,13 +68,14 @@ operator>> (istream &i, mpf_ptr f)
   base = 10; // octal/hex floats currently unsupported
   __gmp_istream_set_digits(s, i, c, ok, base); // read the number
 
-#if HAVE_LOCALECONV
-  const char  *point = localeconv()->decimal_point;
-  if (c == *point) // radix point
+  // look for the C++ radix point, but put the C one in for mpf_set_str
+  if (c == point_char)
     {
+#if HAVE_STD__LOCALE
+      i.get(c);
+#else // lconv point can be multi-char
       for (;;)
         {
-          s += c;
           i.get(c);
           point++;
           if (*point == '\0')
@@ -76,16 +83,10 @@ operator>> (istream &i, mpf_ptr f)
           if (c != *point)
             goto fail;
         }
-      __gmp_istream_set_digits(s, i, c, ok, base); // read the mantissa
-    }
-#else
-  if (c == '.') // radix point
-    {
-      s += '.';
-      i.get(c);
-      __gmp_istream_set_digits(s, i, c, ok, base); // read the mantissa
-    }
 #endif
+      s += lconv_point;
+      __gmp_istream_set_digits(s, i, c, ok, base); // read the mantissa
+    }
 
   if (ok && (c == 'e' || c == 'E' || c == '@')) // exponent
     {
