@@ -1,6 +1,6 @@
 /* Support for diagnostic traces.
 
-Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -63,13 +63,13 @@ void
 mpq_trace (const char *name, mpq_srcptr q)
 {
   mp_trace_start (name);
+  if (q == NULL)
+    {
+      printf ("NULL\n");
+      return;
+    }
+
   mpq_out_str (stdout, mp_trace_base, q);
-
-  /* It's not very interesting to know when numbers are unnormalized.
-     mpz's should always be and ought to be checked with ASSERT() if in doubt.
-     mpn's can often be unnormalized without affecting anything.  */
-  /* if (!mpq_normalized_p (z))  printf (" (unnorm)"); */
-
   printf ("\n");
 }
 
@@ -80,6 +80,12 @@ mpz_trace (const char *name, mpz_srcptr z)
 {
   mpq_t      q;
   mp_limb_t  one;
+
+  if (z == NULL)
+    {
+      mpq_trace (name, NULL);
+      return;
+    }
 
   q->_mp_num._mp_alloc = ALLOC(z);
   q->_mp_num._mp_size = SIZ(z);
@@ -99,6 +105,12 @@ void
 mpf_trace (const char *name, mpf_srcptr f)
 {
   mp_trace_start (name);
+  if (f == NULL)
+    {
+      printf ("NULL\n");
+      return;
+    }
+
   mpf_out_str (stdout, mp_trace_base, 0, f);
   printf ("\n");
 }
@@ -123,6 +135,11 @@ void
 mpn_trace (const char *name, mp_srcptr ptr, mp_size_t size)
 {
   mpz_t  z;
+  if (ptr == NULL)
+    {
+      mpz_trace (name, NULL);
+      return;
+    }
   MPN_NORMALIZE (ptr, size);
   PTR(z) = (mp_ptr) ptr;
   SIZ(z) = size;
@@ -229,4 +246,37 @@ mpn_tracea_file (const char *filename,
     }
 
   TMP_FREE (marker);
+}
+
+
+void
+byte_trace (const char *name, const void *ptr, mp_size_t size)
+{
+  char       *fmt;
+  mp_size_t  i;
+
+  mp_trace_start (name);
+
+  switch (mp_trace_base) {
+  case   8: fmt = " %o"; break;
+  case  10: fmt = " %d"; break;
+  case  16: fmt = " %x"; break;
+  case -16: fmt = " %X"; break;
+  default: printf ("Oops, unsupported base in byte_trace\n"); abort (); break;
+  }
+
+  for (i = 0; i < size; i++)
+    printf (fmt, (int) ((unsigned char *) ptr)[i]);
+  printf ("\n");
+}
+
+void
+byte_tracen (const char *name, int num, const void *ptr, mp_size_t size)
+{
+  if (name != NULL && name[0] != '\0')
+    {
+      printf (name, num);
+      putchar ('=');
+    }
+  byte_trace (NULL, ptr, size);
 }
