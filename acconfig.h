@@ -40,6 +40,11 @@ MA 02111-1307, USA. */
 #undef HAVE_HOST_CPU_m68302
 #undef HAVE_HOST_CPU_m68360
 
+#undef HAVE_HOST_CPU_powerpc604
+#undef HAVE_HOST_CPU_powerpc604e
+#undef HAVE_HOST_CPU_powerpc750
+#undef HAVE_HOST_CPU_powerpc7400
+
 #undef HAVE_HOST_CPU_sparc
 #undef HAVE_HOST_CPU_sparcv8
 #undef HAVE_HOST_CPU_supersparc
