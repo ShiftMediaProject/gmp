@@ -14,8 +14,8 @@
 
 @SET_MAKE@
 
-# Copyright 1996, 1997, 1999, 2000, 2001, 2002 Free Software Foundation,
-# Inc.
+# Copyright 1996, 1997, 1999, 2000, 2001, 2002, 2003 Free Software
+# Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -202,7 +202,7 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
 LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
 check_PROGRAMS = t-addsub t-cmp t-mul t-mul_i t-tdiv t-tdiv_ui t-fdiv   \
-  t-fdiv_ui t-cdiv_ui t-gcd t-lcm dive dive_ui t-sqrtrem convert io     \
+  t-fdiv_ui t-cdiv_ui t-gcd t-gcd_ui t-lcm dive dive_ui t-sqrtrem convert io \
   t-inp_str logic bit t-powm t-powm_ui t-pow t-div_2exp reuse           \
   t-root t-perfsqr t-jac t-bin t-get_d t-get_si t-set_si                \
   t-fac_ui t-fib_ui t-lucnum_ui t-scan t-fits                           \
@@ -224,20 +224,21 @@ CONFIG_CLEAN_FILES =
 check_PROGRAMS = t-addsub$(EXEEXT) t-cmp$(EXEEXT) t-mul$(EXEEXT) \
 	t-mul_i$(EXEEXT) t-tdiv$(EXEEXT) t-tdiv_ui$(EXEEXT) \
 	t-fdiv$(EXEEXT) t-fdiv_ui$(EXEEXT) t-cdiv_ui$(EXEEXT) \
-	t-gcd$(EXEEXT) t-lcm$(EXEEXT) dive$(EXEEXT) dive_ui$(EXEEXT) \
-	t-sqrtrem$(EXEEXT) convert$(EXEEXT) io$(EXEEXT) \
-	t-inp_str$(EXEEXT) logic$(EXEEXT) bit$(EXEEXT) t-powm$(EXEEXT) \
-	t-powm_ui$(EXEEXT) t-pow$(EXEEXT) t-div_2exp$(EXEEXT) \
-	reuse$(EXEEXT) t-root$(EXEEXT) t-perfsqr$(EXEEXT) \
-	t-jac$(EXEEXT) t-bin$(EXEEXT) t-get_d$(EXEEXT) \
-	t-get_si$(EXEEXT) t-set_si$(EXEEXT) t-fac_ui$(EXEEXT) \
-	t-fib_ui$(EXEEXT) t-lucnum_ui$(EXEEXT) t-scan$(EXEEXT) \
-	t-fits$(EXEEXT) t-divis$(EXEEXT) t-divis_2exp$(EXEEXT) \
-	t-cong$(EXEEXT) t-cong_2exp$(EXEEXT) t-sizeinbase$(EXEEXT) \
-	t-set_str$(EXEEXT) t-aorsmul$(EXEEXT) t-cmp_d$(EXEEXT) \
-	t-cmp_si$(EXEEXT) t-hamdist$(EXEEXT) t-oddeven$(EXEEXT) \
-	t-popcount$(EXEEXT) t-set_f$(EXEEXT) t-io_raw$(EXEEXT) \
-	t-import$(EXEEXT) t-export$(EXEEXT) t-pprime_p$(EXEEXT)
+	t-gcd$(EXEEXT) t-gcd_ui$(EXEEXT) t-lcm$(EXEEXT) dive$(EXEEXT) \
+	dive_ui$(EXEEXT) t-sqrtrem$(EXEEXT) convert$(EXEEXT) \
+	io$(EXEEXT) t-inp_str$(EXEEXT) logic$(EXEEXT) bit$(EXEEXT) \
+	t-powm$(EXEEXT) t-powm_ui$(EXEEXT) t-pow$(EXEEXT) \
+	t-div_2exp$(EXEEXT) reuse$(EXEEXT) t-root$(EXEEXT) \
+	t-perfsqr$(EXEEXT) t-jac$(EXEEXT) t-bin$(EXEEXT) \
+	t-get_d$(EXEEXT) t-get_si$(EXEEXT) t-set_si$(EXEEXT) \
+	t-fac_ui$(EXEEXT) t-fib_ui$(EXEEXT) t-lucnum_ui$(EXEEXT) \
+	t-scan$(EXEEXT) t-fits$(EXEEXT) t-divis$(EXEEXT) \
+	t-divis_2exp$(EXEEXT) t-cong$(EXEEXT) t-cong_2exp$(EXEEXT) \
+	t-sizeinbase$(EXEEXT) t-set_str$(EXEEXT) t-aorsmul$(EXEEXT) \
+	t-cmp_d$(EXEEXT) t-cmp_si$(EXEEXT) t-hamdist$(EXEEXT) \
+	t-oddeven$(EXEEXT) t-popcount$(EXEEXT) t-set_f$(EXEEXT) \
+	t-io_raw$(EXEEXT) t-import$(EXEEXT) t-export$(EXEEXT) \
+	t-pprime_p$(EXEEXT)
 bit_SOURCES = bit.c
 bit_OBJECTS = bit$U.$(OBJEXT)
 bit_LDADD = $(LDADD)
@@ -394,6 +395,12 @@ t_gcd_LDADD = $(LDADD)
 t_gcd_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
 	$(top_builddir)/libgmp.la
 t_gcd_LDFLAGS =
+t_gcd_ui_SOURCES = t-gcd_ui.c
+t_gcd_ui_OBJECTS = t-gcd_ui$U.$(OBJEXT)
+t_gcd_ui_LDADD = $(LDADD)
+t_gcd_ui_DEPENDENCIES = $(top_builddir)/tests/libtests.la \
+	$(top_builddir)/libgmp.la
+t_gcd_ui_LDFLAGS =
 t_get_d_SOURCES = t-get_d.c
 t_get_d_OBJECTS = t-get_d$U.$(OBJEXT)
 t_get_d_LDADD = $(LDADD)
@@ -571,14 +578,14 @@ DIST_SOURCES = bit.c convert.c dive.c dive_ui.c io.c logic.c reuse.c \
 	t-addsub.c t-aorsmul.c t-bin.c t-cdiv_ui.c t-cmp.c t-cmp_d.c \
 	t-cmp_si.c t-cong.c t-cong_2exp.c t-div_2exp.c t-divis.c \
 	t-divis_2exp.c t-export.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c \
-	t-fib_ui.c t-fits.c t-gcd.c t-get_d.c t-get_si.c t-hamdist.c \
-	t-import.c t-inp_str.c t-io_raw.c t-jac.c t-lcm.c t-lucnum_ui.c \
-	t-mul.c t-mul_i.c t-oddeven.c t-perfsqr.c t-popcount.c t-pow.c \
-	t-powm.c t-powm_ui.c t-pprime_p.c t-root.c t-scan.c t-set_f.c \
-	t-set_si.c t-set_str.c t-sizeinbase.c t-sqrtrem.c t-tdiv.c \
-	t-tdiv_ui.c
+	t-fib_ui.c t-fits.c t-gcd.c t-gcd_ui.c t-get_d.c t-get_si.c \
+	t-hamdist.c t-import.c t-inp_str.c t-io_raw.c t-jac.c t-lcm.c \
+	t-lucnum_ui.c t-mul.c t-mul_i.c t-oddeven.c t-perfsqr.c \
+	t-popcount.c t-pow.c t-powm.c t-powm_ui.c t-pprime_p.c t-root.c \
+	t-scan.c t-set_f.c t-set_si.c t-set_str.c t-sizeinbase.c \
+	t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
 DIST_COMMON = Makefile.am Makefile.in
-SOURCES = bit.c convert.c dive.c dive_ui.c io.c logic.c reuse.c t-addsub.c t-aorsmul.c t-bin.c t-cdiv_ui.c t-cmp.c t-cmp_d.c t-cmp_si.c t-cong.c t-cong_2exp.c t-div_2exp.c t-divis.c t-divis_2exp.c t-export.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-fits.c t-gcd.c t-get_d.c t-get_si.c t-hamdist.c t-import.c t-inp_str.c t-io_raw.c t-jac.c t-lcm.c t-lucnum_ui.c t-mul.c t-mul_i.c t-oddeven.c t-perfsqr.c t-popcount.c t-pow.c t-powm.c t-powm_ui.c t-pprime_p.c t-root.c t-scan.c t-set_f.c t-set_si.c t-set_str.c t-sizeinbase.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
+SOURCES = bit.c convert.c dive.c dive_ui.c io.c logic.c reuse.c t-addsub.c t-aorsmul.c t-bin.c t-cdiv_ui.c t-cmp.c t-cmp_d.c t-cmp_si.c t-cong.c t-cong_2exp.c t-div_2exp.c t-divis.c t-divis_2exp.c t-export.c t-fac_ui.c t-fdiv.c t-fdiv_ui.c t-fib_ui.c t-fits.c t-gcd.c t-gcd_ui.c t-get_d.c t-get_si.c t-hamdist.c t-import.c t-inp_str.c t-io_raw.c t-jac.c t-lcm.c t-lucnum_ui.c t-mul.c t-mul_i.c t-oddeven.c t-perfsqr.c t-popcount.c t-pow.c t-powm.c t-powm_ui.c t-pprime_p.c t-root.c t-scan.c t-set_f.c t-set_si.c t-set_str.c t-sizeinbase.c t-sqrtrem.c t-tdiv.c t-tdiv_ui.c
 
 all: all-am
 
@@ -674,6 +681,9 @@ t-fits$(EXEEXT): $(t_fits_OBJECTS) $(t_fits_DEPENDENCIES)
 t-gcd$(EXEEXT): $(t_gcd_OBJECTS) $(t_gcd_DEPENDENCIES) 
 	@rm -f t-gcd$(EXEEXT)
 	$(LINK) $(t_gcd_LDFLAGS) $(t_gcd_OBJECTS) $(t_gcd_LDADD) $(LIBS)
+t-gcd_ui$(EXEEXT): $(t_gcd_ui_OBJECTS) $(t_gcd_ui_DEPENDENCIES) 
+	@rm -f t-gcd_ui$(EXEEXT)
+	$(LINK) $(t_gcd_ui_LDFLAGS) $(t_gcd_ui_OBJECTS) $(t_gcd_ui_LDADD) $(LIBS)
 t-get_d$(EXEEXT): $(t_get_d_OBJECTS) $(t_get_d_DEPENDENCIES) 
 	@rm -f t-get_d$(EXEEXT)
 	$(LINK) $(t_get_d_LDFLAGS) $(t_get_d_OBJECTS) $(t_get_d_LDADD) $(LIBS)
@@ -829,6 +839,8 @@ t-fits_.c: t-fits.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-fits.c; then echo $(srcdir)/t-fits.c; else echo t-fits.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-gcd_.c: t-gcd.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gcd.c; then echo $(srcdir)/t-gcd.c; else echo t-gcd.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+t-gcd_ui_.c: t-gcd_ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-gcd_ui.c; then echo $(srcdir)/t-gcd_ui.c; else echo t-gcd_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-get_d_.c: t-get_d.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/t-get_d.c; then echo $(srcdir)/t-get_d.c; else echo t-get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 t-get_si_.c: t-get_si.c $(ANSI2KNR)
@@ -895,21 +907,21 @@ t-div_2exp_.lo t-divis_.$(OBJEXT) t-divis_.lo t-divis_2exp_.$(OBJEXT) \
 t-divis_2exp_.lo t-export_.$(OBJEXT) t-export_.lo t-fac_ui_.$(OBJEXT) \
 t-fac_ui_.lo t-fdiv_.$(OBJEXT) t-fdiv_.lo t-fdiv_ui_.$(OBJEXT) \
 t-fdiv_ui_.lo t-fib_ui_.$(OBJEXT) t-fib_ui_.lo t-fits_.$(OBJEXT) \
-t-fits_.lo t-gcd_.$(OBJEXT) t-gcd_.lo t-get_d_.$(OBJEXT) t-get_d_.lo \
-t-get_si_.$(OBJEXT) t-get_si_.lo t-hamdist_.$(OBJEXT) t-hamdist_.lo \
-t-import_.$(OBJEXT) t-import_.lo t-inp_str_.$(OBJEXT) t-inp_str_.lo \
-t-io_raw_.$(OBJEXT) t-io_raw_.lo t-jac_.$(OBJEXT) t-jac_.lo \
-t-lcm_.$(OBJEXT) t-lcm_.lo t-lucnum_ui_.$(OBJEXT) t-lucnum_ui_.lo \
-t-mul_.$(OBJEXT) t-mul_.lo t-mul_i_.$(OBJEXT) t-mul_i_.lo \
-t-oddeven_.$(OBJEXT) t-oddeven_.lo t-perfsqr_.$(OBJEXT) t-perfsqr_.lo \
-t-popcount_.$(OBJEXT) t-popcount_.lo t-pow_.$(OBJEXT) t-pow_.lo \
-t-powm_.$(OBJEXT) t-powm_.lo t-powm_ui_.$(OBJEXT) t-powm_ui_.lo \
-t-pprime_p_.$(OBJEXT) t-pprime_p_.lo t-root_.$(OBJEXT) t-root_.lo \
-t-scan_.$(OBJEXT) t-scan_.lo t-set_f_.$(OBJEXT) t-set_f_.lo \
-t-set_si_.$(OBJEXT) t-set_si_.lo t-set_str_.$(OBJEXT) t-set_str_.lo \
-t-sizeinbase_.$(OBJEXT) t-sizeinbase_.lo t-sqrtrem_.$(OBJEXT) \
-t-sqrtrem_.lo t-tdiv_.$(OBJEXT) t-tdiv_.lo t-tdiv_ui_.$(OBJEXT) \
-t-tdiv_ui_.lo : $(ANSI2KNR)
+t-fits_.lo t-gcd_.$(OBJEXT) t-gcd_.lo t-gcd_ui_.$(OBJEXT) t-gcd_ui_.lo \
+t-get_d_.$(OBJEXT) t-get_d_.lo t-get_si_.$(OBJEXT) t-get_si_.lo \
+t-hamdist_.$(OBJEXT) t-hamdist_.lo t-import_.$(OBJEXT) t-import_.lo \
+t-inp_str_.$(OBJEXT) t-inp_str_.lo t-io_raw_.$(OBJEXT) t-io_raw_.lo \
+t-jac_.$(OBJEXT) t-jac_.lo t-lcm_.$(OBJEXT) t-lcm_.lo \
+t-lucnum_ui_.$(OBJEXT) t-lucnum_ui_.lo t-mul_.$(OBJEXT) t-mul_.lo \
+t-mul_i_.$(OBJEXT) t-mul_i_.lo t-oddeven_.$(OBJEXT) t-oddeven_.lo \
+t-perfsqr_.$(OBJEXT) t-perfsqr_.lo t-popcount_.$(OBJEXT) t-popcount_.lo \
+t-pow_.$(OBJEXT) t-pow_.lo t-powm_.$(OBJEXT) t-powm_.lo \
+t-powm_ui_.$(OBJEXT) t-powm_ui_.lo t-pprime_p_.$(OBJEXT) t-pprime_p_.lo \
+t-root_.$(OBJEXT) t-root_.lo t-scan_.$(OBJEXT) t-scan_.lo \
+t-set_f_.$(OBJEXT) t-set_f_.lo t-set_si_.$(OBJEXT) t-set_si_.lo \
+t-set_str_.$(OBJEXT) t-set_str_.lo t-sizeinbase_.$(OBJEXT) \
+t-sizeinbase_.lo t-sqrtrem_.$(OBJEXT) t-sqrtrem_.lo t-tdiv_.$(OBJEXT) \
+t-tdiv_.lo t-tdiv_ui_.$(OBJEXT) t-tdiv_ui_.lo : $(ANSI2KNR)
 
 mostlyclean-libtool:
 	-rm -f *.lo
