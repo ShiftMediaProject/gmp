@@ -20,6 +20,9 @@ MA 02111-1307, USA.
 
 2002-11-30  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/ia64/copyi.asm: Add `;' after bundle declarators.
+	* mpn/ia64/copyd.asm: Likewise.
+
 	* mpn/ia64/divrem_1.asm: Add some syntax to placid the HP-UX assembler.
 
 2002-11-30  Kevin Ryde  <kevin@swox.se>
