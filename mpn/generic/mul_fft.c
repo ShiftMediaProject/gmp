@@ -297,10 +297,10 @@ static void
 mpn_fft_add_modF (mp_ptr r, mp_srcptr a, mp_srcptr b, int n)
 {
   r[n] = a[n] + b[n] + mpn_add_n (r, a, b, n);
-  if (r[n] > CNST_LIMB(1))
+  while (r[n] > 1)
     {
-      r[n] --;
-      mpn_decr_u (r, CNST_LIMB(1));
+      MPN_DECR_U (r, n + 1, CNST_LIMB(1));
+      r[n]--;
     }
 }
 
