@@ -324,11 +324,11 @@ check_mpf (void)
 
     { "123",   "7.b@+01", ios::hex | ios::scientific, 0, 1 },
     { "123",   "7.B@+01", ios::hex | ios::scientific | ios::uppercase, 0, 1 },
-    { "123", "0x7.b@+0x01", ios::hex | ios::scientific | ios::showbase, 0, 1 },
-    { "123", "0X7.B@+0X01", ios::hex | ios::scientific | ios::showbase | ios::uppercase, 0, 1 },
+    { "123", "0x7.b@+01", ios::hex | ios::scientific | ios::showbase, 0, 1 },
+    { "123", "0X7.B@+01", ios::hex | ios::scientific | ios::showbase | ios::uppercase, 0, 1 },
 
-    { "1099511627776", "1.0@+0a", ios::hex | ios::scientific, 0, 1 },
-    { "1099511627776", "1.0@+0A", ios::hex | ios::scientific | ios::uppercase, 0, 1 },
+    { "1099511627776", "1.0@+10", ios::hex | ios::scientific, 0, 1 },
+    { "1099511627776", "1.0@+10", ios::hex | ios::scientific | ios::uppercase, 0, 1 },
 
     { "0.0625", "1.00@-01", ios::hex | ios::scientific, 0, 2 },
 
@@ -355,14 +355,14 @@ check_mpf (void)
     { "256",  "4.000E+02", ios::oct | ios::scientific | ios::uppercase, 0, 3 },
     { "256", "04.000E+02", ios::oct | ios::scientific | ios::showbase | ios::uppercase, 0, 3 },
 
-    { "16777216",    "1.000000e+10", ios::oct | ios::scientific },
-    { "16777216",    "1.000000E+10", ios::oct | ios::scientific | ios::uppercase },
-    { "16777216",   "01.000000e+010", ios::oct | ios::scientific | ios::showbase },
-    { "16777216",   "01.000000E+010", ios::oct | ios::scientific | ios::showbase | ios::uppercase },
-    { "16777216",  "+01.000000e+010", ios::oct | ios::scientific | ios::showbase | ios::showpos },
-    { "16777216",  "+01.000000E+010", ios::oct | ios::scientific | ios::showbase | ios::showpos | ios::uppercase },
-    { "-16777216", "-01.000000e+010", ios::oct | ios::scientific | ios::showbase | ios::showpos },
-    { "-16777216", "-01.000000E+010", ios::oct | ios::scientific | ios::showbase | ios::showpos | ios::uppercase },
+    { "16777216",    "1.000000e+08", ios::oct | ios::scientific },
+    { "16777216",    "1.000000E+08", ios::oct | ios::scientific | ios::uppercase },
+    { "16777216",   "01.000000e+08", ios::oct | ios::scientific | ios::showbase },
+    { "16777216",   "01.000000E+08", ios::oct | ios::scientific | ios::showbase | ios::uppercase },
+    { "16777216",  "+01.000000e+08", ios::oct | ios::scientific | ios::showbase | ios::showpos },
+    { "16777216",  "+01.000000E+08", ios::oct | ios::scientific | ios::showbase | ios::showpos | ios::uppercase },
+    { "-16777216", "-01.000000e+08", ios::oct | ios::scientific | ios::showbase | ios::showpos },
+    { "-16777216", "-01.000000E+08", ios::oct | ios::scientific | ios::showbase | ios::showpos | ios::uppercase },
 
   };
 
