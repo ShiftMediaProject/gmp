@@ -1,3 +1,15 @@
+2000-12-11  Torbjorn Granlund  <tege@swox.com>
+
+	* gmp-impl.h (PP): #define for machines with BITS_PER_MP_LIMB
+	of 2, 4, 8, and 16.
+	(PP_FIRST_OMITTED): New, define for various BITS_PER_MP_LIMB.
+	(PP_MASK): Remove.
+	(PP_MAXPRIME): Remove.
+	
+	* mpn/generic/perfsqr.c: Generalize PP handling for machines with
+	limbs of < 32 bits.  Allow PP_INVERTED to be undefined.
+	* mpz/pprime_p.c: Likewise.
+
 2000-12-10  Kevin Ryde  <kevin@swox.se>
 
 	* tune/Makefile.am ({speed,speed_ext,tune}_LDFLAGS): Don't use
