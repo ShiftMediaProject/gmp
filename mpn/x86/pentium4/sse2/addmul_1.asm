@@ -80,7 +80,7 @@ L(start_1c):
 	psrlq		$32, %mm4
 
 	testl	%ecx, %ecx
-	jz	L(ret)
+	jz	L(rtn)
 	leal	4(%edx), %edx
 
 	movd		(%eax), %mm2	C ul = up[i]
@@ -123,7 +123,7 @@ L(end):
 	paddq		%mm3, %mm4	C mm4 = prod + cy
 	movd		%mm4, 4(%edx)
 	psrlq		$32, %mm4
-L(ret):
+L(rtn):
 	movd	%mm4, %eax
 	emms
 	ret
