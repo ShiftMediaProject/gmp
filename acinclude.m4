@@ -317,7 +317,7 @@ dnl This sometimes fails to find confdefs.h, for some reason.
 dnl [#]line __oline__ "[$]0"
 [#]line __oline__ "configure"
 #include "confdefs.h"
-void underscore_test(void) {
+int underscore_test() {
 return; }
 EOF
 if AC_TRY_EVAL(ac_compile); then
