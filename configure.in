@@ -792,7 +792,9 @@ case $host in
     ;;
 
 
-  # Darwin (powerpc-apple-darwin1.3) has gcc installed as cc.
+  # Darwin (powerpc-apple-darwin1.3) has it's hacked gcc installed as cc.
+  # Our usual "gcc in disguise" detection means gcc_cflags etc here gets
+  # used.
   #
   # The darwin pre-compiling preprocessor is disabled with -no-cpp-precomp
   # since it doesn't like "__attribute__ ((mode (SI)))" etc in gmp-impl.h,
