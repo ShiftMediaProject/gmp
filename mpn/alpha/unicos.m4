@@ -47,7 +47,7 @@ dnl  Called: PROLOGUE_cpu(GSYM_PREFIX`'foo[,gp])
 dnl          EPILOGUE_cpu(GSYM_PREFIX`'foo)
 
 define(`PROLOGUE_cpu',
-m4_assert_numargs(1)
+m4_assert_numargs_range(1,2)
 `ifelse(`$2',gp,,`ifelse(`$2',,,`m4_error(`Unrecognised PROLOGUE parameter
 ')')')dnl
 	.stack	192		; What does this mean?  Only Cray knows.
