@@ -1,3 +1,8 @@
+2000-11-30  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/t-mul.c: Increase max operand size from 2^17 bits
+	to 2^19 bits.  Misc cleanups.
+
 2000-11-26  Kevin Ryde  <kevin@swox.se>
 
 	* tune/tuneup.c (FIB_THRESHOLD): Cope better with different speeds of
@@ -8,6 +13,12 @@
 
 	* pre_mod_1.c: Use conditional subtract to always skip a division.
 	(UMUL_TIME, UDIV_TIME): Remove defaults, now in longlong.h.
+
+2000-11-22  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/pa64w/gmp-mparam.h: Retune.
+	* mpn/pa64/gmp-mparam.h: Retune.
+	* mpn/sparc64/gmp-mparam.h: Retune.
 
 2000-11-22  Kevin Ryde  <kevin@swox.se>
 
