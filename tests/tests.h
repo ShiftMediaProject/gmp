@@ -162,6 +162,8 @@ mp_limb_t ref_subc_limb __GMP_PROTO ((mp_limb_t *, mp_limb_t, mp_limb_t));
 
 
 void refmpf_add __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
+void refmpf_add_ulp __GMP_PROTO ((mpf_ptr f));
+void refmpf_set_prec_limbs __GMP_PROTO ((mpf_ptr f, unsigned long prec));
 void refmpf_sub __GMP_PROTO ((mpf_ptr, mpf_srcptr, mpf_srcptr));
 
 
