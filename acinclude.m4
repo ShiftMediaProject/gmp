@@ -8,9 +8,10 @@ dnl  is the name of the compiler.
 dnl  Set CC to the name of the first working compiler.
 dnl  If a 64-bit compiler is found, set CC64 to the name of the compiler and
 dnl  CFLAGS64 to flags to use.
-dnl  This macro does not test that any of the compilers found realy work, 
-dnl  nor if it is a GNU compiler.  To do this, when you have finally made
-dnl  up your mind on which one to use, invoke [GMP_PROG_CC_SELECT]
+dnl  This macro does not test if any of the compilers found is a GNU compiler.
+dnl  To do this, when you have finally made up your mind on which one to use, 
+dnl  and set CC accordingly, invoke [GMP_PROG_CC_SELECT].  That macro will 
+dnl  also make sure that your selection of CFLAGS is valid.
 dnl
 AC_DEFUN(GMP_PROG_CC_FIND,
 [AC_BEFORE([$0], [CC_PROG_CPP])
@@ -20,28 +21,54 @@ ifelse([$2], , gmp_req_64bit_cc="no", gmp_req_64bit_cc="[$2]")
 [echo "***DEBUG*** GMP_PROG_CC_FIND: gmp_cc_list=>$gmp_cc_list<"]
 [echo "***DEBUG*** GMP_PROG_CC_FIND: gmp_req_64bit_cc=$gmp_req_64bit_cc"]
 
-for gmp_tmp_compiler in $gmp_cc_list; do
-  AC_CHECK_PROG(CC_TEST, $gmp_tmp_compiler, $gmp_tmp_compiler, , , /usr/ucb/cc)
-  if test -n "$CC_TEST"; then
-    CC=$CC_TEST
+CC32=
+CC64=
+for c in $gmp_cc_list; do
+  # Avoid cache hits.
+  unset CC
+  unset ac_cv_prog_CC
+  AC_CHECK_TOOL(CC, $c, $c)
+  if test -n "$CC"; then
+    eval c_flags=\$gmp_cflags_$c
+    GMP_PROG_CC_WORKS($CC, $c_flags,
+		      gmp_prog_cc_works=yes, 
+		      gmp_prog_cc_works=no)
+
+dnl   replaced by GMP_PROG_CC_WORKS:
+dnl    CC="$gmp_CC_TEST"
+dnl    AC_LANG_C
+dnl    AC_TRY_COMPILER([int main(){return(0);}],
+dnl                    gmp_prog_cc_works, gmp_prog_cc_cross)
+
+    if test "$gmp_prog_cc_works" != "yes"; then
+      continue
+    fi
+
+    # Save first working compiler, whether 32- or 64-bit capable.
+    if test -z "$CC32"; then
+      CC32="$CC"
+    fi
     if test "$gmp_req_64bit_cc" = "yes"; then
-      eval gmp_tmp_compiler_flags=\$gmp_cflags64_${gmp_tmp_compiler}
-      GMP_CHECK_CC_64BIT($gmp_tmp_compiler, $gmp_tmp_compiler_flags)
+      eval c_flags=\$gmp_cflags64_$c
+      GMP_CHECK_CC_64BIT($c, $c_flags)
       if test "$gmp_cv_cc_64bit" = "yes"; then
-        if test -z "$CC64"; then CC64=$gmp_tmp_compiler; fi
-        if test -z "$CFLAGS64"; then CFLAGS64=$gmp_tmp_compiler_flags; fi
+        test -z "$CC64" && CC64=$c
+        test -z "$CFLAGS64" && CFLAGS64=$c_flags
+	# We have CC64 so we're done.
         break
       fi
     else
+      # We have CC32, and we don't need a 64-bit compiler so we're done.
       break
     fi
   fi
 done
+CC="$CC32"
 [echo "***DEBUG*** GMP_PROG_CC_FIND: CC=$CC, CC64=$CC64, CFLAGS64=$CFLAGS64"]
 ])dnl
 
 dnl  GMP_PROG_CC_SELECT
-dnl  Check that `CC' works with `CFLAGS'.
+dnl  Check that `CC' works with `CFLAGS'.  Check if `CC' is a GNU compiler.
 AC_DEFUN(GMP_PROG_CC_SELECT,
 [AC_BEFORE([$0], [CC_PROG_CPP])
 AC_PROG_CC_WORKS
@@ -82,7 +109,6 @@ AC_DEFUN(GMP_PROG_CCAS,
 AC_CACHE_CHECK([for CC ($CC) invoking assembler],
                gmp_cv_prog_ccas,
 [ac_assemble="$CC -c $CFLAGS conftest.s 1>&AC_FD_CC"
-rm -f conftest*
 echo "	.byte	1" > conftest.s
 if AC_TRY_EVAL(ac_assemble); then
   if test -f conftest.o; then
@@ -462,3 +488,71 @@ rm -f conftest*
 ])
 echo ["define(<W32>, <$gmp_cv_check_asm_w32>)"] >> $gmp_tmpconfigm4
 ])
+
+dnl  GMP_CHECK_ASM_MMX([ACTION-IF-FOUND, [ACTION-IF-NOT-FOUND]])
+dnl  Can we assemble MMX insns?
+AC_DEFUN(GMP_CHECK_ASM_MMX,
+[AC_REQUIRE([GMP_PROG_CCAS])
+AC_REQUIRE([GMP_CHECK_ASM_TEXT])
+AC_CACHE_CHECK([if the assembler knows about MMX instructions],
+		gmp_cv_check_asm_mmx,
+[cat > conftest.s <<EOF
+	$gmp_check_asm_text
+	por	%mm0, %mm0
+EOF
+ac_assemble="$CCAS $CFLAGS conftest.s 1>&AC_FD_CC"
+if AC_TRY_EVAL(ac_assemble); then
+  gmp_cv_check_asm_mmx=yes
+else 
+  gmp_cv_check_asm_mmx=no
+fi
+rm -f conftest*
+])
+if test "$gmp_cv_check_asm_mmx" = "yes"; then
+  ifelse([$1], , :, [$1])
+else
+  ifelse([$2], , :, [$2])
+fi
+])dnl
+
+dnl  GMP_PROG_CC_WORKS(CC, CFLAGS, ACTION-IF-WORKS, [ACTION-IF-NOT-WORKS])
+dnl  Check if CC can compile and link.  Perform various target specific tests.
+dnl  FIXME: Require `$target'.
+AC_DEFUN(GMP_PROG_CC_WORKS,
+[AC_LANG_C	dnl  Note: Destructive.
+CC="[$1]"
+CFLAGS="[$2]"
+
+# Simple test for all targets.
+AC_TRY_COMPILER([int main(){return(0);}],
+                tmp_works, tmp_cross)
+
+if test "$tmp_works" = "yes"; then
+  # Target specific tests.
+  case "$target" in 
+    *-*-aix*)	# Returning a funcptr.
+      AC_MSG_CHECKING([if the C compiler ($CC $CFLAGS) works (returning a function pointer)])
+      AC_TRY_COMPILE( , [} void *g(); void *f() { return g(); } int bar(){],
+                      tmp_works=yes, tmp_works=no)
+      AC_MSG_RESULT($tmp_works)
+      ;;
+      
+    hppa2.0*-*-*) 	# Avoid buggy compiler.
+	dnl FIXME:  Do something like this:
+	dnl Let compiler version A.10.32.30 or higher be ok.
+      	dnl bad compiler output:
+	dnl   cpp: HP92453-01 A.10.32.03 HP C Preprocessor
+	dnl   ccom: HP92453-01 G.10.32.05 HP C Compiler
+	dnl good compiler output:
+	dnl   cpp: HP92453-01 A.10.32.03 HP C Preprocessor
+	dnl   ccom: HP92453-01 A.10.32.30 HP C Compiler
+      ;; 
+  esac
+fi
+
+if test "$tmp_works" = "yes"; then
+  [$3]
+else
+  ifelse([$4], , :, [$4])
+fi
+])dnl
