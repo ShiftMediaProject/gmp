@@ -146,6 +146,9 @@ MA 02111-1307, USA.
 /* Name of package */
 #undef PACKAGE
 
+/* Define if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
+
 /* Define if you have the `sysctlbyname' function. */
 #undef HAVE_SYSCTLBYNAME
 
@@ -214,6 +217,9 @@ MA 02111-1307, USA.
 
 /* Define if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* Define if you have the `sysctl' function. */
+#undef HAVE_SYSCTL
 
 /* Define if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H

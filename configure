@@ -1,5 +1,5 @@
 #! /bin/sh
-# From configure.in Revision: 1.152
+# From configure.in Revision: 1.153
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using Autoconf version 2.14a.
 # Copyright (C) 1992, 93, 94, 95, 96, 98, 99, 2000
@@ -3626,7 +3626,7 @@ EOF
 
 fi
 
-for ac_header in getopt.h unistd.h sys/resource.h sys/sysctl.h sys/time.h sys/times.h
+for ac_header in getopt.h unistd.h sys/resource.h sys/sysctl.h sys/param.h sys/time.h sys/times.h
 do
 ac_ac_Header=`echo "ac_cv_header_$ac_header" | $ac_tr_sh`
 echo $ECHO_N "checking for $ac_header... $ECHO_C" 1>&6
@@ -3782,7 +3782,7 @@ EOF
 fi
 echo "$ECHO_T""${ac_cv_c_stringize}" 1>&6
 
-for ac_func in getopt_long getpagesize getrusage gettimeofday popen processor_info strtoul sysconf sysctlbyname times
+for ac_func in getopt_long getpagesize getrusage gettimeofday popen processor_info strtoul sysconf sysctl sysctlbyname times
 do
 ac_ac_var=`echo "ac_cv_func_$ac_func" | $ac_tr_sh`
 echo $ECHO_N "checking for $ac_func... $ECHO_C" 1>&6
@@ -5546,3 +5546,4 @@ rm -fr confdefs* $ac_clean_files
 trap 'exit 1' 1 2 15
 
 test "$no_create" = yes || $SHELL $CONFIG_STATUS || exit 1
+
