@@ -70,6 +70,8 @@ fib_table.c:
 	cd ..; $(MAKE) $(AM_MAKEFLAGS) mpn/fib_table.c
 mp_bases.c:
 	cd ..; $(MAKE) $(AM_MAKEFLAGS) mpn/mp_bases.c
+perfsqr.h:
+	cd ..; $(MAKE) $(AM_MAKEFLAGS) mpn/perfsqr.h
 
 
 include Makeasm.am
