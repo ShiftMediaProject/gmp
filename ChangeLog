@@ -18,6 +18,15 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-02  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (ia64*-*-hpux*): For cc, let +O optimization level
+	fallback if +O3 doesn't work.
+
+	* acinclude.m4 (GMP_PROG_CC_WORKS): Add a test of __builtin_alloca
+	when available, to pick up Itanium HP-UX cc internal errors in +O2.
+	Provoking code by Torbjorn.
+
 2003-10-01  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/gmp-mparam.h: Retune.
