@@ -27,38 +27,22 @@
 AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 SUBDIRS = tests
 
-INCLUDES = -I$(top_srcdir) -DOPERATION_`echo $* | sed 's/_$$//'`
+INCLUDES = -I$(top_srcdir)
 
 if WANT_MPFR
 lib_LIBRARIES = libmpfr.a
 include_HEADERS = mpfr.h
 endif
 
-# FIXME: As of automake 1.4f info_TEXINFOS can't be conditionalized, see top
-# level Makefile.am for the workaround.
+# FIXME: Automake (version 1.5) doesn't allow conditionalized info_TEXINFOS,
+# see top level Makefile.am for the workaround.
 info_TEXINFOS = mpfr.texi
 TEXINFO_TEX = ../texinfo.tex
 
 # Override automake default AR=ar with the value from GMP_PROG_AR.
 AR = @AR@
 
-libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h sin_cos.c extract.c	     \
-  add.c add_ui.c add_ulp.c agm.c clear.c cmp.c cmp_ui.c div_2exp.c	     \
-  div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_str.c init.c	     \
-  inp_str.c isnan.c log2.c log.c mul_2exp.c mul.c mul_ui.c neg.c out_str.c   \
-  pi.c pow.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c	     \
-  rnd_mode.c round.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c	     \
-  set_prc_raw.c set_prec.c set_q.c set_si.c set_ui.c set_str.c set_str_raw.c \
-  set_z.c sqrt.c sqrt_ui.c sub.c sub_ui.c trunc.c ui_div.c ui_sub.c	     \
-  urandomb.c mpz_set_fr.c swap.c
-
-nodist_libmpfr_a_SOURCES = floor.c ceil.c
+libmpfr_a_SOURCES= cputime.h mpfr.h mpfr-impl.h exceptions.c save_expo.c extract.c add.c add1.c add_ui.c add_ulp.c agm.c clear.c cmp.c cmp_abs.c cmp_ui.c div_2exp.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c log2.c log.c mul_2exp.c mul.c mul_ui.c neg.c out_str.c pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c rnd_mode.c round.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_ui.c trunc.c ui_div.c ui_sub.c urandomb.c mpz_set_fr.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c euler.c cos.c sin.c tan.c fma.c hypot.c log1p.c expm1.c log_base_2.c ui_pow.c ui_pow_ui.c log_base_10.c minmax.c dim.c copysign.c gmp_op.c init2.c \
+  floor.c ceil.c
 
 EXTRA_DIST = generic.c mpfr-test.h mpf2mpfr.h
-
-CLEANFILES = $(nodist_libmpfr_a_SOURCES)
-
-floor.c: $(srcdir)/trunc.c
-	cp $(srcdir)/trunc.c floor.c
-ceil.c: $(srcdir)/trunc.c
-	cp $(srcdir)/trunc.c ceil.c
