@@ -1,3 +1,11 @@
+2000-05-16  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/p6/mmx/divrem_1.asm: New file.
+	* mpn/x86/p6/mmx/mod_1.asm: New file.
+	* mpn/x86/p6/README: Update.
+	* mpn/x86/divrem_1.asm: Update comments.
+	* mpn/x86/mod_1.asm: Ditto.
+
 2000-05-14  Kevin Ryde  <kevin@swox.se>
 
 	* tune/speed.h: Run gcd functions on a set of data.
