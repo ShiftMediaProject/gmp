@@ -49,7 +49,7 @@ mpz_kronecker_si (mpz_srcptr a, long b)
   if (a_size == 0)
     return JACOBI_0S (b);
 
-  if (b & 1)
+  if ((b & 1) != 0)
     {
       result_bit1 = JACOBI_BSGN_SS_BIT1 (a_size, b);
     }
