@@ -8,9 +8,12 @@ AC_CANONICAL_SYSTEM
 
 dnl  Automake
 AM_INIT_AUTOMAKE(gmp, 2.99)
-dnl  FIXME: [AM_CONFIG_HEADER invokes obsolete macro [AC_OUTPUT_COMMANDS].
+dnl  FIXME: [AM_CONFIG_HEADER] invokes obsolete macro [AC_OUTPUT_COMMANDS].
 AM_CONFIG_HEADER(config.h:config.in)
 AM_MAINTAINER_MODE
+
+dnl  GMP specific
+GMP_INIT(config.m4)
 
 dnl Switch on OS and determine what compiler to use.
 dnl
@@ -163,7 +166,6 @@ AR=ar		dnl  FIXME: Move.
 
 dnl  FIXME: Check for FPU and set `floating_point' appropriately.
 
-dnl  FIXME: Move to after we have chosen compiler.
 dnl  ========================================
 dnl  Configuring mpn.
 dnl  ----------------------------------------
@@ -275,10 +277,9 @@ case ${target} in
       path="powerpc64"
       dnl  FIXME: Make libtool pass `-X 64' to ar(1).  A workaround would be to
       dnl  export environment variable `OBJECT_MODE=64'.
-      dnl  FIXME: Is shell command `export' safe to use?
       dnl [OBJECT_MODE=64]
       dnl [export OBJECT_MODE]
-      AR='ar -X 64'
+      AR="ar -X 64"
       dnl  FIXME: Shared libs fail on aix4.3.2.
       dnl  FIXME: Should invoke [AC_DISABLE_SHARED], but gm4 recurses to death.
       enable_shared=no
@@ -324,37 +325,52 @@ if test -n "$optcflags"; then
   fi
 fi
 
-dnl  ``Select'' chosen compiler.
+dnl ``Select'' chosen compiler.
+dnl ----------------------------
 GMP_PROG_CC_SELECT
+dnl  Check that CC can assemble.
+GMP_PROG_CCAS
 
-dnl  FIXME: Set CCAS.
-CCAS="$CC -c"
-
-dnl  Checks for programs.
+dnl Checks for programs.
+dnl --------------------
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
-dnl  FIXME: Find m4 and nm.  What nm to use if we're cross-compiling?
-M4=m4
-AC_SUBST(M4)
-NM=nm
-AC_SUBST(NM)
+AC_CHECK_PROG(M4, m4, m4, :)
+if test "$M4" = ":"; then
+  dnl  FIXME: Better fatal exit.
+  echo ["$0: fatal: need m4"]
+  exit 1
+fi  
 
-dnl  Extensions for executable and object files.
+AC_CHECK_TOOL(NM, nm, :)
+if test "$NM" = ":"; then
+  # FIXME: Better fatal exit.
+  echo ["$0: fatal: need nm"]
+  exit 1
+fi  
+case "$target" in
+  ppc620-*-* | powerpc64*-*-*)
+    test -n "$CC64" && NM="$NM -X 64" ;;
+esac   
+
+dnl Extensions for executable and object files.
+dnl -------------------------------------------
 AC_EXEEXT
 AC_OBJEXT
 
-dnl  Use Libtool.
-dnl [AC_DISABLE_SHARED]
-dnl [automake-1.4 / libtool-1.3.4: [AM_PROG_LIBTOOL]
+dnl Use Libtool.
+dnl ------------
 GMP_PROG_LIBTOOL
 
 dnl Checks for libraries.
+dnl ---------------------
 dnl libm
 dnl FIXME: need libm?
 dnl [AC_CHECK_LIB(m, acos)]
 
 dnl Checks for header files.
+dnl ------------------------
 AC_HEADER_STDC
 dnl FIXME: need more header files?
 dnl [AC_CHECK_HEADERS(unistd.h)]
@@ -369,21 +385,40 @@ dnl AC_FUNC_MEMCMP
 dnl AC_TYPE_SIGNAL
 dnl AC_CHECK_FUNCS(strtol strtoul)
 
+dnl Checks for assembly syntax.
+GMP_CHECK_ASM_TEXT
+GMP_CHECK_ASM_DATA
+GMP_CHECK_ASM_GLOBL
+GMP_CHECK_ASM_LABEL_SUFFIX
+
+GMP_CHECK_ASM_TYPE
+GMP_CHECK_ASM_SIZE
+GMP_CHECK_ASM_LSYM_PREFIX
+GMP_CHECK_ASM_W32
+
 dnl  ----------------------------------------
-dnl  The following variables are used later when creating asm-syntax.h.
+dnl  The following variables are used later when creating asm-syntax.h 
+dnl  and asm-syntax.m4.
 dnl
 dnl  Set `underscore' to "yes" if globals are prefixed by `_'.
-GMP_CHECK_ASM_UNDERSCORE(underscore=yes, underscore=no)
+GMP_CHECK_ASM_UNDERSCORE(
+  [GMP_DEFINE(GSYM_PREFIX, [_$1])
+  underscore=yes],
+  [GMP_DEFINE(GSYM_PREFIX, [$1])
+  underscore=no])
 
 dnl  Set `asm_align' to "log" or "nolog".
 dnl  Used for picking which *_SYNTAX to define.
 dnl    Example: x86 + log -> BSD_SYNTAX
-GMP_CHECK_ASM_ALIGN_LOG(asm_align=log, asm_align=nolog)
+GMP_CHECK_ASM_ALIGN_LOG(
+  [GMP_DEFINE(ALIGN, [.align m4_log2($1)])
+  asm_align=log],
+  [GMP_DEFINE(ALIGN, [.align $1])
+  asm_align=nolog])
 
 dnl  Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
 syntax=
-
-dnl  FIXME: For now, we use the old switch
+# For now, we use the old switch for setting syntax.  FIXME.
 changequote(,)dnl
 case "${target}" in
   m680[234]0*-*-linuxaout* | m68k*-*-linuxaout* | \
@@ -456,7 +491,7 @@ case "${family}-${underscore}-${asm_align}-${syntax}" in
     echo '#define C_SYMBOL_NAME(name) name' >asm-syntax.h;;
 esac
 
-
+GMP_INCLUDE(asm-defs.m4)
 
 dnl  ----------------------------------------
 functions="${extra_functions} inlines add_n sub_n mul_1 addmul_1 submul_1 \
@@ -473,41 +508,41 @@ links=
 sources=
 gmp_links=
 
-for fn in $functions ; do
-  mpn_objects="$mpn_objects $fn.lo"
-  mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/$fn.lo"
-  for dir in $path ; do
-    rm -f $fn.[Ssc] $fn.asm
-    if test -f $srcdir/mpn/$dir/$fn.asm ; then
-      files="$files mpn/$dir/$fn.asm"
-      links="$links mpn/$fn.asm"
-      gmp_links="$gmp_links mpn/$fn.asm:mpn/$dir/$fn.asm"
+for tmp_fn in $functions ; do
+  mpn_objects="$mpn_objects ${tmp_fn}.lo"
+  mpn_objs_in_libgmp="$mpn_objs_in_libgmp mpn/${tmp_fn}.lo"
+  for tmp_dir in $path ; do
+    rm -f ${tmp_fn}.[Ssc] ${tmp_fn}.asm
+    if test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.asm ; then
+      files="$files mpn/${tmp_dir}/${tmp_fn}.asm"
+      links="$links mpn/${tmp_fn}.asm"
+      gmp_links="$gmp_links mpn/${tmp_fn}.asm:mpn/${tmp_dir}/${tmp_fn}.asm"
       break
-    elif test -f $srcdir/mpn/$dir/$fn.S ; then
-      files="$files mpn/$dir/$fn.S"
-      links="$links mpn/$fn.S"
-      gmp_links="$gmp_links mpn/$fn.S:mpn/$dir/$fn.S"
+    elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.S ; then
+      files="$files mpn/${tmp_dir}/${tmp_fn}.S"
+      links="$links mpn/${tmp_fn}.S"
+      gmp_links="$gmp_links mpn/${tmp_fn}.S:mpn/${tmp_dir}/${tmp_fn}.S"
       break
-    elif test -f $srcdir/mpn/$dir/$fn.s ; then
-      files="$files mpn/$dir/$fn.s"
-      links="$links mpn/$fn.s"
-      gmp_links="$gmp_links mpn/$fn.s:mpn/$dir/$fn.s"
+    elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.s ; then
+      files="$files mpn/${tmp_dir}/${tmp_fn}.s"
+      links="$links mpn/${tmp_fn}.s"
+      gmp_links="$gmp_links mpn/${tmp_fn}.s:mpn/${tmp_dir}/${tmp_fn}.s"
       break
-    elif test -f $srcdir/mpn/$dir/$fn.c ; then
-      files="$files mpn/$dir/$fn.c"
-      links="$links mpn/$fn.c"
-      gmp_links="$gmp_links mpn/$fn.c:mpn/$dir/$fn.c"
+    elif test -f $srcdir/mpn/${tmp_dir}/${tmp_fn}.c ; then
+      files="$files mpn/${tmp_dir}/${tmp_fn}.c"
+      links="$links mpn/${tmp_fn}.c"
+      gmp_links="$gmp_links mpn/${tmp_fn}.c:mpn/${tmp_dir}/${tmp_fn}.c"
       break
     fi
   done
 done
 
-for dir in $path ; do
+for tmp_dir in $path ; do
   rm -f gmp-mparam.h
-  if test -f $srcdir/mpn/$dir/gmp-mparam.h ; then
-    files="$files mpn/$dir/gmp-mparam.h"
+  if test -f $srcdir/mpn/${tmp_dir}/gmp-mparam.h ; then
+    files="$files mpn/${tmp_dir}/gmp-mparam.h"
     links="$links gmp-mparam.h"
-    gmp_links="$gmp_links gmp-mparam.h:mpn/$dir/gmp-mparam.h"
+    gmp_links="$gmp_links gmp-mparam.h:mpn/${tmp_dir}/gmp-mparam.h"
     break
   fi
 done
@@ -541,6 +576,9 @@ dnl LTLIBOBJS=`echo "$LIBOBJS" | sed 's/\.o/.lo/g'`
 dnl [AC_SUBST(LTLIBOBJS)]
 dnl LTALLOCA=`echo "$ALLOCA" | sed 's/\.o/.lo/g'`
 dnl [AC_SUBST(LTALLOCA)]
+
+dnl  Create config.m4
+GMP_FINISH
 
 dnl  Create Makefiles
 AC_OUTPUT(Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile \
