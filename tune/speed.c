@@ -1,6 +1,5 @@
-/* Speed measuring program. */
+/* Speed measuring program.
 
-/*
 Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
@@ -18,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 /* Usage message is in the code below, run with no arguments to print it.
    See README for interesting applications.
@@ -84,11 +82,12 @@ SPEED_EXTRA_PROTOS2
 #endif
 
 
-#define MPN_FILL(ptr, size, n)                  \
-  do {                                          \
-    mp_size_t  i;                               \
-    for (i = 0; i < size; i++)                  \
-      ptr[i] = n;                               \
+#define MPN_FILL(ptr, size, n)          \
+  do {                                  \
+    mp_size_t __i;                      \
+    ASSERT ((size) >= 0);               \
+    for (__i = 0; __i < (size); __i++)  \
+      (ptr)[__i] = (n);                 \
   } while (0)
 
 #define CMP_ABSOLUTE     1
@@ -287,6 +286,8 @@ const struct routine_t {
 #if HAVE_NATIVE_mpn_copyd
   { "mpn_copyd",         speed_mpn_copyd            },
 #endif
+
+  { "MPN_ZERO",          speed_MPN_ZERO             },
 
   { "modlimb_invert",       speed_modlimb_invert,       FLAG_NODATA },
   { "modlimb_invert_mul1",  speed_modlimb_invert_mul1,  FLAG_NODATA },
