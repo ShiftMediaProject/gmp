@@ -2,26 +2,19 @@ This directory contains mpn functions for various x86 chips.
 
 RELEVANT OPTIMIZATION ISSUES
 
-The code in the top-level works best with i386, i486, and members of the P6
-family (i.e., Pentium Pro, II, III).
+The code in the top-level works best with i386, i486, members of the P6
+family (i.e., Pentium Pro, II, III), and the Amd Athlon/K7.
 
 The `pentium' subdirectory contains code optimized for Pentium.  In most
 cases, this is the best choice for Amd K6 too, with the exception of
 add/sub.
 
-For Cyrix M2 the situation is more complex:
-
-		shift	add_n	mul_1	addmul_1
-generic x86	9	2.4	16	14.8
-pentium		6.5	2.4	15	16
-
-The odd addmul_1 timing can probably be explained by that the generic x86
-version is 4-way unrolled.
+The `k6' subdirectory contains code optimized for the K6.
 
 STATUS
 
 The code is well-optimized for Intel chips, but not so well-optimized for
-Amd and Cyrix chips, since they have not published timing information.
+Amd and Cyrix chips.
 
 For implementations with slow double shift instructions (SHLD and SHRD), it
 might be better to mimic their operation with SHL+SHR+OR.  (K6 and M2 are
