@@ -30,8 +30,8 @@ mpf_init_set_si (mpf_ptr r, long int val)
   mp_size_t size;
   mp_limb_t vl;
 
-  r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);
   r->_mp_prec = prec;
+  r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);
 
   vl = (mp_limb_t) (unsigned long int) (val >= 0 ? val : -val);
 
