@@ -116,11 +116,13 @@ check_various (void)
 int
 main (int argc, char *argv[])
 {
+#if GMP_NAIL_BITS == 0
   tests_start ();
   mp_trace_base = 16;
 
   check_various ();
 
   tests_end ();
+#endif
   exit (0);
 }
