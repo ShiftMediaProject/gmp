@@ -357,9 +357,9 @@ dnl  emms may as well be used.
 define(femms_available_p,
 m4_assert_numargs(-1)
 `m4_ifdef_anyof_p(
-	`HAVE_TARGET_CPU_k62',
-	`HAVE_TARGET_CPU_k63',
-	`HAVE_TARGET_CPU_athlon')')
+	`HAVE_HOST_CPU_k62',
+	`HAVE_HOST_CPU_k63',
+	`HAVE_HOST_CPU_athlon')')
 
 define(emms_or_femms,
 m4_assert_numargs(-1)
@@ -420,10 +420,10 @@ dnl  Expand to 1 if cmov is available, 0 if not.
 
 define(cmov_available_p,
 `m4_ifdef_anyof_p(
-	`HAVE_TARGET_CPU_pentiumpro',
-	`HAVE_TARGET_CPU_pentium2',
-	`HAVE_TARGET_CPU_pentium3',
-	`HAVE_TARGET_CPU_athlon')')
+	`HAVE_HOST_CPU_pentiumpro',
+	`HAVE_HOST_CPU_pentium2',
+	`HAVE_HOST_CPU_pentium3',
+	`HAVE_HOST_CPU_athlon')')
 
 
 dnl  Usage: x86_lookup(target, key,value, key,value, ...)
@@ -507,7 +507,7 @@ define(x86_opcode_tttn_list,
 
 dnl  Usage: cmovCC(srcreg,dstreg)
 dnl
-dnl  Generate a cmov instruction if the target supports cmov, or simulate it
+dnl  Generate a cmov instruction if the host supports cmov, or simulate it
 dnl  with a conditional jump if not (the latter being meant only for
 dnl  testing).  For example,
 dnl
@@ -592,10 +592,10 @@ define(loop_or_decljnz,
 	jnz')')
 
 define(loop_is_better_p,
-`m4_ifdef_anyof_p(`HAVE_TARGET_CPU_k6',
-                  `HAVE_TARGET_CPU_k62',
-                  `HAVE_TARGET_CPU_k63',
-                  `HAVE_TARGET_CPU_i386')')
+`m4_ifdef_anyof_p(`HAVE_HOST_CPU_k6',
+                  `HAVE_HOST_CPU_k62',
+                  `HAVE_HOST_CPU_k63',
+                  `HAVE_HOST_CPU_i386')')
 
 
 dnl  Usage: Zdisp(inst,op,op,op)
