@@ -3062,6 +3062,7 @@ to deallocate any memory allocated by this function.
 @end deftypefun
 
 
+@ignore
 @deftypefun void gmp_randinit_lc (gmp_randstate_t @var{state}, mpz_t @var{a}, 
 unsigned long int @var{c}, mpz_t @var{m})
 
@@ -3074,6 +3075,7 @@ for the linear congruential scheme to use, respectively.
 When you're done with a @var{state} variable, call @code{gmp_randclear}
 to deallocate any memory allocated by this function.
 @end deftypefun
+@end ignore
 
 @deftypefun void gmp_randinit_lc_2exp (gmp_randstate_t @var{state}, mpz_t @var{a},
 unsigned long int @var{c}, unsigned long int @var{m2exp})
