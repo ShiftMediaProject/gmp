@@ -84,7 +84,7 @@ main (argc, argv)
 	sprintf (buf, "0.%s@%ld", str, bexp);
 
       mpf_set_str (y, buf, -base);
-      free (str);
+      (*_mp_free_func) (str, 0);
 
       mpf_reldiff (rerr, x, y);
       if (mpf_cmp (rerr, max_rerr) > 0)
