@@ -1,3 +1,52 @@
+dnl  autoconf macros specific to gmp
+
+
+dnl  Copyright (C) 2000 Free Software Foundation, Inc.
+dnl
+dnl  This file is part of the GNU MP Library.
+dnl
+dnl  The GNU MP Library is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU Library General Public License as published
+dnl  by the Free Software Foundation; either version 2 of the License, or (at
+dnl  your option) any later version.
+dnl
+dnl  The GNU MP Library is distributed in the hope that it will be useful, but
+dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+dnl  License for more details.
+dnl
+dnl  You should have received a copy of the GNU Library General Public License
+dnl  along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
+dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+dnl  MA 02111-1307, USA.
+
+
+dnl  GMP_HEADER_GETVAL(NAME,FILE)
+dnl  ---------------------------------
+dnl  Expand to the value of a "#define NAME" from the given FILE.
+dnl  The regexps here aren't very rugged, but are enough for gmp.
+dnl  /dev/null as a parameter prevents a hang if $2 is accidentally omitted.
+
+define(GMP_HEADER_GETVAL,
+[patsubst(patsubst(
+esyscmd([grep "^#define $1 " $2 /dev/null 2>/dev/null]),
+[^.*$1[ 	]+],[]),
+[[
+ 	]*$],[])])
+
+dnl  GMP_VERSION
+dnl  -----------
+dnl  The gmp version number, extracted from the #defines in gmp.h.
+dnl  Two digits like 3.0 if patchlevel <= 0, or three digits like 3.0.1 if
+dnl  patchlevel > 0.
+dnl  Using AC_DEFUN here causes an error, so plain define is used.
+
+define(GMP_VERSION,
+[GMP_HEADER_GETVAL(__GNU_MP_VERSION,gmp.h)[]dnl
+.GMP_HEADER_GETVAL(__GNU_MP_VERSION_MINOR,gmp.h)[]dnl
+ifelse(eval(GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h) > 0),1,
+[.GMP_HEADER_GETVAL(__GNU_MP_VERSION_PATCHLEVEL,gmp.h)])])
+
 dnl  GMP_PROG_CC_FIND([CC_LIST], [REQ_64BIT_CC])
 dnl  Find first working compiler in CC_LIST.
 dnl  If REQ_64BIT_CC is "yes", the compiler is required to be able to 
