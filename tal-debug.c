@@ -76,6 +76,8 @@ __gmp_tmp_debug_alloc (const char *file, int line,
   struct tmp_debug_t        *mark = *markp;
   struct tmp_debug_entry_t  *p;
 
+  ASSERT_ALWAYS (size >= 1);
+
   if (mark == NULL)
     {
       __gmp_assert_header (file, line);
