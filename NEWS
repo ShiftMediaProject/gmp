@@ -51,6 +51,7 @@ Changes between MP version 3.1.1 and 4.0
 * New float functions: mpf_cmp_d, mpf_get_default_prec, mpf_get_si, mpf_get_ui.
 * New float tests: mpf_integer_p, mpf_fits_sint_p, mpf_fits_slong_p,
   mpf_fits_sshort_p, mpf_fits_uint_p, mpf_fits_ulong_p, mpf_fits_ushort_p.
+* New random functions: gmp_randinit_default, gmp_randinit_lc_2exp_size.
 * New demo expression string parser (see demos/expr).
 * New preliminary perl interface (see demos/perl).
 * More tuned algorithm thresholds.
