@@ -1127,6 +1127,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 	   : "=r" (sh), "=&r" (sl)					\
 	   : "rJ" (ah), "rI" (bh), "rJ" (al), "rI" (bl)	\
 	   __CLOBBER_CC)
+/* FIXME: When gcc -mcpu=v9 is used on solaris, gcc/config/sol2-sld-64.h
+   doesn't define anything to indicate that to us, it only sets __sparcv8. */
 #if defined (__sparc_v9__) || defined (__sparcv9)
 /* Perhaps we should use floating-point operations here?  */
 #if 0
@@ -1150,7 +1152,8 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
     (q) = __q;								\
   } while (0)
 #else
-#if defined (__sparc_v8__)
+#if defined (__sparc_v8__)   /* gcc normal */           \
+  || defined (__sparcv8)     /* gcc solaris */
 /* Don't match immediate range because, 1) it is not often useful,
    2) the 'I' flag thinks of the range as a 13 bit signed interval,
    while we want to match a 13 bit interval, sign extended to 32 bits,
