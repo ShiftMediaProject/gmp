@@ -27,23 +27,23 @@
 # size		r5
 # s2_limb	r6
 
-# The RS/6000 has no unsigned 32x32->64 bit multiplication instruction.  To
-# obtain that operation, we have to use the 32x32->64 signed multiplication
-# instruction, and add the appropriate compensation to the high limb of the
-# result.  We add the multiplicand if the multiplier has its most significant
-# bit set, and we add the multiplier if the multiplicand has its most
-# significant bit set.  We need to preserve the carry flag between each
+# The POWER architecture has no unsigned 32x32->64 bit multiplication
+# instruction.  To obtain that operation, we have to use the 32x32->64 signed
+# multiplication instruction, and add the appropriate compensation to the high
+# limb of the result.  We add the multiplicand if the multiplier has its most
+# significant bit set, and we add the multiplier if the multiplicand has its
+# most significant bit set.  We need to preserve the carry flag between each
 # iteration, so we have to compute the compensation carefully (the natural,
-# srai+and doesn't work).  Since the POWER architecture has a branch unit
-# we can branch in zero cycles, so that's how we perform the additions.
+# srai+and doesn't work).  Since the POWER architecture has a branch unit we
+# can branch in zero cycles, so that's how we perform the additions.
 
 	.toc
 	.globl	__gmpn_submul_1
 	.globl	.__gmpn_submul_1
 	.csect	__gmpn_submul_1[DS]
 __gmpn_submul_1:
-	.long	.__gmpn_submul_1[PR], TOC[tc0], 0
-	.csect	.__gmpn_submul_1[PR]
+	.long	.__gmpn_submul_1, TOC[tc0], 0
+	.csect	.text[PR]
 	.align	2
 .__gmpn_submul_1:
 
