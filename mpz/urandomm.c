@@ -31,7 +31,7 @@ mpz_urandomm (mpz_t rop, gmp_randstate_t rstate, mpz_t n)
 #else
 mpz_urandomm (rop, rstate, n)
      mpz_t rop;
-     gmp_rand_state rstate;
+     gmp_randstate_t rstate;
      mpz_t n;
 #endif
 {
