@@ -1,4 +1,13 @@
 dnl  x86 mpn_copyd -- copy limb vector, decrementing.
+dnl
+dnl      cycles/limb  startup (approx)
+dnl  P5:     1.0         40
+dnl  P6      2.4         70
+dnl  K6      1.0         55
+dnl  K7:     1.3         75
+dnl  P4:     3          175
+dnl
+dnl  (Startup time includes some function call overheads.)
 
 dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
@@ -20,14 +29,6 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 include(`../config.m4')
-
-C     cycles/limb
-C P5:   1.0
-C
-C The following have their own optimized code, but for reference run as
-C
-C P6    2.4, approx 40 cycles startup
-C K6    1.0, approx 30 cycles startup
 
 
 C void mpn_copyd (mp_ptr dst, mp_srcptr src, mp_size_t size);

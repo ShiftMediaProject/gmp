@@ -1,9 +1,13 @@
 dnl  x86 mpn_copyi -- copy limb vector, incrementing.
 dnl
-dnl     cycles/limb
-dnl  P5:  1.0
-dnl  P6:  0.75
-dnl  K6:  1.0
+dnl      cycles/limb  startup (approx)
+dnl  P5:     1.0         35
+dnl  P6      0.75        45
+dnl  K6      1.0         30
+dnl  K7:     1.3         65
+dnl  P4:     1.0        120
+dnl
+dnl  (Startup time includes some function call overheads.)
 
 
 dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.

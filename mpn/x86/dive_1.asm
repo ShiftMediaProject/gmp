@@ -1,4 +1,4 @@
-dnl  x86 mpn_divexact_1c -- mpn by limb exact division.
+dnl  x86 mpn_divexact_1 -- mpn by limb exact division.
 dnl 
 dnl      cycles/limb
 dnl  P54    30.0
@@ -6,6 +6,7 @@ dnl  P55    29.0
 dnl  P6     13.0 odd divisor, 12.0 even (strangely)
 dnl  K6     14.0  
 dnl  K7     12.0
+dnl  P4     42.0
 
 dnl  Copyright 2001 Free Software Foundation, Inc.
 dnl 
