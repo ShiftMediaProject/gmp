@@ -193,6 +193,7 @@ dnl too).")
 (defun gmpasm-mode ()
   "A major mode for editing GNU MP asm and m4 files.
 
+\\{gmpasm-mode-map}
 `comment-start' and `comment-end' are set buffer-local to assembler
 commenting appropriate for the CPU by looking for something matching
 `gmpasm-comment-start-regexp' at the start of a line, or \"#\" is used if
@@ -212,8 +213,7 @@ to start with `C'.  Also it's only the particular `comment-start' determined
 that's added for filling etc, not the whole `gmpasm-comment-start-regexp'.
 
 `gmpasm-mode-hook' is run after initializations are complete.
-
-\\{gmpasm-mode-map}"
+"
 
   (interactive)
   (kill-all-local-variables)
