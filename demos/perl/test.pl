@@ -1,3 +1,5 @@
+#!/usr/bin/perl -w
+
 # GMP perl module tests
 
 # Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
@@ -94,7 +96,7 @@ package main;
 # Return x forced to a string, not a PVIV.
 #
 sub str {
-  my $s = "@_[0]" . "";
+  my $s = "$_[0]" . "";
   return $s;
 }
 
@@ -166,6 +168,13 @@ ok (mpz($uv_max) > 0);
 ok (mpz($uv_max) == mpz($uv_max_str));
 { tie my $t, 'Mytie', $uv_max; ok (mpz($t) > 0); }
 { tie my $t, 'Mytie', $uv_max; ok (mpz($t) == mpz($uv_max_str)); }
+
+{ my $s = '999999999999999999999999999999';
+  kill (0, $s);
+  ok (mpz($s) == '999999999999999999999999999999');
+  tie my $t, 'Mytie', $s;
+  ok (mpz($t) == '999999999999999999999999999999');
+}
 
 #------------------------------------------------------------------------------
 # GMP::Mpz::overload_abs
@@ -1144,6 +1153,13 @@ ok (mpq($uv_max) == mpq($uv_max_str));
 { tie my $t, 'Mytie', $uv_max; ok (mpq($t) > 0); }
 { tie my $t, 'Mytie', $uv_max; ok (mpq($t) == mpq($uv_max_str)); }
 
+{ my $x = 123.5;
+  kill (0, $x);
+  ok (mpq($x) == 123.5);
+  tie my $t, 'Mytie', $x;
+  ok (mpq($t) == 123.5);
+}
+
 #------------------------------------------------------------------------------
 # GMP::Mpq::overload_abs
 
@@ -1432,6 +1448,13 @@ ok (mpf($uv_max) > 0);
 ok (mpf($uv_max) == mpf($uv_max_str));
 { tie my $t, 'Mytie', $uv_max; ok (mpf($t) > 0); }
 { tie my $t, 'Mytie', $uv_max; ok (mpf($t) == mpf($uv_max_str)); }
+
+{ my $x = 123.5;
+  kill (0, $x);
+  ok (mpf($x) == 123.5);
+  tie my $t, 'Mytie', $x;
+  ok (mpf($t) == 123.5);
+}
 
 #------------------------------------------------------------------------------
 # GMP::Mpf::overload_abs
@@ -2052,7 +2075,7 @@ ok (sprintf ("%#X", mpq(15,16))  eq '0XF/0X10');
 
 ok (sprintf ("%*.*f", 10, 3, 1.25) eq '     1.250');
 ok (sprintf ("%*.*f", 10, 3, mpf(1.5))   eq '     1.500');
- 
+
 ok (via_printf ("%d", mpz(123)) eq '123');
 ok (via_printf ("%d %d %d", 456, mpz(123), 789) eq '456 123 789');
 ok (via_printf ("%d", mpq(15,16)) eq '15/16');
@@ -2126,6 +2149,20 @@ if ($^V > 5.00503) {
     die "Cannot run test2.pl\n";
   }
 }
+
+
+
+
+#------------------------------------------------------------------------------
+# $# stuff
+#
+# For some reason "local $#" doesn't leave $# back at its default undefined
+# state when exiting the block.
+
+{ local $# = 'hi %.0f there';
+  my $f = mpf(123);
+  ok ("$f" eq 'hi 123 there'); }
+
 
 
 # Local variables:
