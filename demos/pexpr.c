@@ -360,9 +360,8 @@ main (int argc, char **argv)
 	{
 	  size_t out_len;
 	  char *tmp, *s;
-	  int t0;
 
-	  out_len = mpz_sizeinbase (r, base) + 1;
+	  out_len = mpz_sizeinbase (r, base) + 2;
 	  tmp = malloc (out_len);
 
 	  if (print_timing)
@@ -1158,7 +1157,7 @@ mpz_eval_expr (mpz_ptr r, expr_t e)
       return;
     case RANDOM:
       {
-	unsigned long int n, i;
+	unsigned long int n;
 	mpz_init (lhs);
 	mpz_eval_expr (lhs, e->operands.ops.lhs);
 	if (mpz_sgn (lhs) <= 0 || mpz_cmp_si (lhs, 1000000000) > 0)
