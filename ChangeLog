@@ -18,6 +18,12 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-10-14  Kevin Ryde  <kevin@swox.se>
+
+	* configure.in (AC_CHECK_HEADERS): Add sys/time.h for sys/resource.h
+	test, needed by SunOS, and next autoconf will insist headers actually
+	compile.
+
 2002-10-08  Kevin Ryde  <kevin@swox.se>
 
 	* tune/time.c (speed_time_init): Allow for Cray times() apparently
