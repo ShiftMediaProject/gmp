@@ -22,26 +22,53 @@ MA 02111-1307, USA. */
 
 #ifndef __GMP_H__
 
-#ifndef __GNU_MP__		/* to allow inclusion of both gmp.h and mp.h */
+
+/* The following (everything under ifndef __GNU_MP__) must be identical in
+   gmp.h and mp.h to allow both to be included in an application or during
+   the library build.  */
+#ifndef __GNU_MP__
 #define __GNU_MP__ 3
+
 #define __need_size_t
 #include <stddef.h>
 #undef __need_size_t
 
 
-/* The following instantiated by configure, for internal use only */
+/* Instantiated by configure, for internal use only */
 #if ! __GMP_WITHIN_CONFIGURE
 @DEFN_LONG_LONG_LIMB@
 #endif
 
 
-#if (__STDC__-0) || defined (__cplusplus)
-#define __gmp_const const
-#define __gmp_signed signed
+/* Microsoft C (identified by _MSC_VER) is ANSI, but __STDC__ is undefined
+   unless the /Za option is given (in which case it's 1).
+
+   Sun workshop C 5.0 requires "##" for token pasting, but defines __STDC__
+   to 0, hence the use of defined(__STDC__).  */
+
+#if (__STDC__-0) || defined (__cplusplus) || defined (_MSC_VER)
+#define __GMP_HAVE_CONST      1
+#define __GMP_HAVE_PROTOTYPES 1
+#else
+#define __GMP_HAVE_CONST      0
+#define __GMP_HAVE_PROTOTYPES 0
+#endif
+
+#if defined (__STDC__) || defined (__cplusplus) || defined (_MSC_VER)
+#define __GMP_HAVE_TOKEN_PASTE  1
+#else
+#define __GMP_HAVE_TOKEN_PASTE  0
+#endif
+
+
+#if __GMP_HAVE_CONST
+#define __gmp_const   const
+#define __gmp_signed  signed
 #else
 #define __gmp_const
 #define __gmp_signed
 #endif
+
 
 /* FIXME: When gmp.h is used within the gmp build, it'd be good to take the
    definition of inline from config.h.  That would let mpn_add etc below get
@@ -158,17 +185,15 @@ typedef __gmp_const __mpq_struct *mpq_srcptr;
 typedef __mpq_struct *mpq_ptr;
 
 #ifndef _PROTO
-#if (__STDC__-0) || defined (__cplusplus)
+#if __GMP_HAVE_PROTOTYPES
 #define _PROTO(x) x
 #else
 #define _PROTO(x) ()
 #endif
 #endif
 
-/* Sun workshop C 5.0 requires "##" for token pasting, but defines __STDC__
-   to 0, hence the use of defined(__STDC__) rather than __STDC__-0.  */
 #ifndef __MPN
-#if defined (__STDC__) || defined (__cplusplus)
+#if __GMP_HAVE_TOKEN_PASTE
 #define __MPN(x) __gmpn_##x
 #else
 #define __MPN(x) __gmpn_/**/x
@@ -975,18 +1000,10 @@ void mpn_tdiv_qr _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_sr
 
 #if defined (__GNUC__) || defined (_FORCE_INLINES)
 _EXTERN_INLINE mp_limb_t
-#if (__STDC__-0) || defined (__cplusplus)
 mpn_add_1 (register mp_ptr res_ptr,
 	   register mp_srcptr s1_ptr,
 	   register mp_size_t s1_size,
 	   register mp_limb_t s2_limb)
-#else
-mpn_add_1 (res_ptr, s1_ptr, s1_size, s2_limb)
-     register mp_ptr res_ptr;
-     register mp_srcptr s1_ptr;
-     register mp_size_t s1_size;
-     register mp_limb_t s2_limb;
-#endif
 {
   register mp_limb_t x;
 
@@ -1017,20 +1034,11 @@ mpn_add_1 (res_ptr, s1_ptr, s1_size, s2_limb)
 }
 
 _EXTERN_INLINE mp_limb_t
-#if (__STDC__-0) || defined (__cplusplus)
 mpn_add (register mp_ptr res_ptr,
 	 register mp_srcptr s1_ptr,
 	 register mp_size_t s1_size,
 	 register mp_srcptr s2_ptr,
 	 register mp_size_t s2_size)
-#else
-mpn_add (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
-     register mp_ptr res_ptr;
-     register mp_srcptr s1_ptr;
-     register mp_size_t s1_size;
-     register mp_srcptr s2_ptr;
-     register mp_size_t s2_size;
-#endif
 {
   mp_limb_t cy_limb = 0;
 
@@ -1046,18 +1054,10 @@ mpn_add (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 }
 
 _EXTERN_INLINE mp_limb_t
-#if (__STDC__-0) || defined (__cplusplus)
 mpn_sub_1 (register mp_ptr res_ptr,
 	   register mp_srcptr s1_ptr,
 	   register mp_size_t s1_size,
 	   register mp_limb_t s2_limb)
-#else
-mpn_sub_1 (res_ptr, s1_ptr, s1_size, s2_limb)
-     register mp_ptr res_ptr;
-     register mp_srcptr s1_ptr;
-     register mp_size_t s1_size;
-     register mp_limb_t s2_limb;
-#endif
 {
   register mp_limb_t x;
 
@@ -1088,20 +1088,11 @@ mpn_sub_1 (res_ptr, s1_ptr, s1_size, s2_limb)
 }
 
 _EXTERN_INLINE mp_limb_t
-#if (__STDC__-0) || defined (__cplusplus)
 mpn_sub (register mp_ptr res_ptr,
 	 register mp_srcptr s1_ptr,
 	 register mp_size_t s1_size,
 	 register mp_srcptr s2_ptr,
 	 register mp_size_t s2_size)
-#else
-mpn_sub (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
-     register mp_ptr res_ptr;
-     register mp_srcptr s1_ptr;
-     register mp_size_t s1_size;
-     register mp_srcptr s2_ptr;
-     register mp_size_t s2_size;
-#endif
 {
   mp_limb_t cy_limb = 0;
 
