@@ -34,6 +34,7 @@ libspeed_la_SOURCES =							\
   common.c divrem1div.c divrem1inv.c divrem2div.c divrem2inv.c		\
   freq.c gcd_bin.c gcd_finda_gen.c					\
   gcdext_single.c gcdext_double.c gcdextod.c gcdextos.c			\
+  jacbase1.c jacbase2.c jacbase3.c					\
   mod_1_div.c mod_1_inv.c modlinv.c mul_n_mpn.c mul_n_open.c		\
   noop.c powm_mod.c powm_redc.c pre_divrem_1.c time.c			\
   sb_div.c sb_inv.c

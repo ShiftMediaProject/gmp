@@ -991,6 +991,21 @@ speed_mpn_jacobi_base (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_JACBASE (mpn_jacobi_base);
 }
+double
+speed_mpn_jacobi_base_1 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_JACBASE (mpn_jacobi_base_1);
+}
+double
+speed_mpn_jacobi_base_2 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_JACBASE (mpn_jacobi_base_2);
+}
+double
+speed_mpn_jacobi_base_3 (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_JACBASE (mpn_jacobi_base_3);
+}
 
 
 double

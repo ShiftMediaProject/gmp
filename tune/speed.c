@@ -242,6 +242,9 @@ const struct routine_t {
 
   { "mpz_jacobi",        speed_mpz_jacobi           },
   { "mpn_jacobi_base",   speed_mpn_jacobi_base      },
+  { "mpn_jacobi_base_1", speed_mpn_jacobi_base_1    },
+  { "mpn_jacobi_base_2", speed_mpn_jacobi_base_2    },
+  { "mpn_jacobi_base_3", speed_mpn_jacobi_base_3    },
 
   { "mpn_mul_basecase",  speed_mpn_mul_basecase, FLAG_R_OPTIONAL },
   { "mpn_sqr_basecase",  speed_mpn_sqr_basecase     },

@@ -176,6 +176,9 @@ double speed_mpn_hamdist _PROTO ((struct speed_params *s));
 double speed_mpn_ior_n _PROTO ((struct speed_params *s));
 double speed_mpn_iorn_n _PROTO ((struct speed_params *s));
 double speed_mpn_jacobi_base _PROTO ((struct speed_params *s));
+double speed_mpn_jacobi_base_1 _PROTO ((struct speed_params *s));
+double speed_mpn_jacobi_base_2 _PROTO ((struct speed_params *s));
+double speed_mpn_jacobi_base_3 _PROTO ((struct speed_params *s));
 double speed_mpn_kara_mul_n _PROTO ((struct speed_params *s));
 double speed_mpn_kara_sqr_n _PROTO ((struct speed_params *s));
 double speed_mpn_lshift _PROTO ((struct speed_params *s));
@@ -339,6 +342,11 @@ mp_limb_t mpn_divrem_2_div _PROTO ((mp_ptr qp, mp_size_t qxn,
 mp_limb_t mpn_divrem_2_inv _PROTO ((mp_ptr qp, mp_size_t qxn,
                                     mp_ptr np, mp_size_t nsize,
                                     mp_srcptr dp));
+
+int mpn_jacobi_base_1 _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1));
+int mpn_jacobi_base_2 _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1));
+int mpn_jacobi_base_3 _PROTO ((mp_limb_t a, mp_limb_t b, int result_bit1));
+
 mp_limb_t mpn_mod_1_div _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d)) __GMP_ATTRIBUTE_PURE;
 mp_limb_t mpn_mod_1_inv _PROTO ((mp_srcptr ap, mp_size_t size, mp_limb_t d)) __GMP_ATTRIBUTE_PURE;
 
