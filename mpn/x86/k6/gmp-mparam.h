@@ -30,17 +30,41 @@ MA 02111-1307, USA. */
 #define UMUL_TIME   3   /* cycles */
 #define UDIV_TIME   20  /* cycles */
 
+/* bsf takes 12-27 cycles, put an average for uniform random numbers */
+#ifndef COUNT_TRAILING_ZEROS_TIME
+#define COUNT_TRAILING_ZEROS_TIME   14  /* cycles */
+#endif
+
 
 #ifndef KARATSUBA_MUL_THRESHOLD
 #define KARATSUBA_MUL_THRESHOLD   19
 #endif
 #ifndef TOOM3_MUL_THRESHOLD
-#define TOOM3_MUL_THRESHOLD      129
+#define TOOM3_MUL_THRESHOLD      130
 #endif
 
 #ifndef KARATSUBA_SQR_THRESHOLD
-#define KARATSUBA_SQR_THRESHOLD   22
+#define KARATSUBA_SQR_THRESHOLD   34
 #endif
 #ifndef TOOM3_SQR_THRESHOLD
-#define TOOM3_SQR_THRESHOLD      141
+#define TOOM3_SQR_THRESHOLD      117
+#endif
+
+#ifndef BZ_THRESHOLD
+#define BZ_THRESHOLD              76
+#endif
+
+#ifndef FIB_THRESHOLD
+#define FIB_THRESHOLD             98
+#endif
+
+#ifndef POWM_THRESHOLD
+#define POWM_THRESHOLD            12
+#endif
+
+#ifndef GCD_ACCEL_THRESHOLD
+#define GCD_ACCEL_THRESHOLD        6
+#endif
+#ifndef GCDEXT_THRESHOLD
+#define GCDEXT_THRESHOLD          70
 #endif
