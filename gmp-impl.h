@@ -2207,7 +2207,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
     add_ssaaaa (_xh, _xl, _xh, _xl, 0, _nadj);				\
     _q1 = ~(_n2 + _xh);							\
     umul_ppmm (_xh, _xl, _q1, d);					\
-    add_ssaaaa (_xh, _xl, _xh, _xl, _n2, _n10);				\
+    add_ssaaaa (_xh, _xl, _xh, _xl, nh, nl);				\
     _xh -= (d);								\
     (r) = _xl + ((d) & _xh);						\
     (q) = _xh - _q1;							\
@@ -2219,7 +2219,7 @@ mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t)) ATTRIBUTE_CONST;
   do {									\
     mp_limb_t _n2, _n10, _n1, _nadj, _q1;				\
     mp_limb_t _xh, _xl;							\
-    _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (lgup - 1));\
+    _n2 = ((nh) << (BITS_PER_MP_LIMB - (lgup))) + ((nl) >> 1 >> (l - 1));\
     _n10 = (nl) << (BITS_PER_MP_LIMB - (lgup));				\
     _n1 = LIMB_HIGHBIT_TO_MASK (_n10);                                  \
     _nadj = _n10 + (_n1 & (dnorm));					\
@@ -3803,8 +3803,8 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #undef MUL_KARATSUBA_THRESHOLD_LIMIT
 #undef MUL_TOOM3_THRESHOLD_LIMIT
 #define SQR_KARATSUBA_MAX_GENERIC      200
-#define MUL_KARATSUBA_THRESHOLD_LIMIT  150
-#define MUL_TOOM3_THRESHOLD_LIMIT      300
+#define MUL_KARATSUBA_THRESHOLD_LIMIT  700
+#define MUL_TOOM3_THRESHOLD_LIMIT      700
 #define GET_STR_THRESHOLD_LIMIT        150
 
 #if TUNE_PROGRAM_BUILD
