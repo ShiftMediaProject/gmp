@@ -184,8 +184,6 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
       d <<= norm;
       r <<= norm;
 
-#define EXTRACT	  ((n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm)))
-
       if (UDIV_NEEDS_NORMALIZATION
 	  && BELOW_THRESHOLD (n, DIVREM_1_UNNORM_THRESHOLD))
 	{
@@ -196,7 +194,9 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 	      for (i = un - 2; i >= 0; i--)
 		{
 		  n0 = up[i] << GMP_NAIL_BITS;
-		  udiv_qrnnd (*qp, r, r, EXTRACT, d);
+		  udiv_qrnnd (*qp, r, r,
+			      ((n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm))),
+			      d);
 		  r >>= GMP_NAIL_BITS;
 		  qp--;
 		  n1 = n0;
@@ -224,7 +224,9 @@ mpn_divrem_1 (mp_ptr qp, mp_size_t qxn,
 	      for (i = un - 2; i >= 0; i--)
 		{
 		  n0 = up[i] << GMP_NAIL_BITS;
-		  udiv_qrnnd_preinv (*qp, r, r, EXTRACT, d, dinv);
+		  udiv_qrnnd_preinv (*qp, r, r, 
+				     ((n1 << norm) | (n0 >> (BITS_PER_MP_LIMB - norm))),
+				     d, dinv);
 		  r >>= GMP_NAIL_BITS;
 		  qp--;
 		  n1 = n0;
