@@ -33,7 +33,7 @@ static void ref_mpn_mul _PROTO ((mp_ptr,mp_srcptr,mp_size_t,mp_srcptr,mp_size_t)
 static void ref_mpz_mul _PROTO ((mpz_t, const mpz_t, const mpz_t));
 void dump_abort _PROTO ((int, char *, mpz_t, mpz_t, mpz_t, mpz_t));
 
-#define FFT_MIN_BITSIZE 50000
+#define FFT_MIN_BITSIZE 100000
 
 char *extra_fft;
 
@@ -87,10 +87,10 @@ main (int argc, char **argv)
   mpz_init (op2);
 
   fsize_range = 4 << 8;		/* a fraction 1/256 of size_range */
-  for (i = 0; fsize_range >> 8 < 18; i++)
+  for (i = 0; fsize_range >> 8 < (extra_fft ? 27 : 22); i++)
     {
       size_range = fsize_range >> 8;
-      fsize_range = fsize_range * 257 / 256;
+      fsize_range = fsize_range * 33 / 32;
 
       mpz_urandomb (bs, rands, size_range);
       mpz_rrandomb (op1, rands, mpz_get_ui (bs));
@@ -108,20 +108,21 @@ main (int argc, char **argv)
       one (i, op2, op1);
     }
 
-  for (i = extra_fft ? -20 : -2; i < 0; i++)
-    {
-      mpz_urandomb (bs, rands, 32);
-      size_range = mpz_get_ui (bs) % 21 + (extra_fft ? 6 : 1);
+  if (extra_fft)
+    for (i = -50; i < 0; i++)
+      {
+	mpz_urandomb (bs, rands, 32);
+	size_range = mpz_get_ui (bs) % 27;
 
-      mpz_urandomb (bs, rands, size_range);
-      mpz_rrandomb (op1, rands, mpz_get_ui (bs) + FFT_MIN_BITSIZE);
-      mpz_urandomb (bs, rands, size_range);
-      mpz_rrandomb (op2, rands, mpz_get_ui (bs) + FFT_MIN_BITSIZE);
+	mpz_urandomb (bs, rands, size_range);
+	mpz_rrandomb (op1, rands, mpz_get_ui (bs) + FFT_MIN_BITSIZE);
+	mpz_urandomb (bs, rands, size_range);
+	mpz_rrandomb (op2, rands, mpz_get_ui (bs) + FFT_MIN_BITSIZE);
 
-      printf ("%d: %d %d\n", i, SIZ (op1), SIZ (op2));
-      fflush (stdout);
-      one (-1, op2, op1);
-    }
+	/* printf ("%d: %d %d\n", i, SIZ (op1), SIZ (op2)); */
+	fflush (stdout);
+	one (-1, op2, op1);
+      }
 
   mpz_clear (bs);
   mpz_clear (op1);
