@@ -1,5 +1,17 @@
 2000-04-16  Linus Nordberg  <linus@swox.se>
 
+	* configure.in (*-*-cygwin*): Select BSD_SYNTAX to avoid
+	.type/.size in PROLOGUE for ELF_SYNTAX.  Override ALIGN definition
+	from x86/syntax.h.
+	(gmp_xoptcflags_${CC}): New set of variables, indicating
+	``exclusive optional cflags''.
+	(most sparcs): Use gmp_xoptcflags instead of gmp_optcflags to
+	ensure that we pass CPU type to older gcc.
+	(CFLAGS): CFLAGS on the command line was spoiled.
+	* configure: Regenerate.
+
+2000-04-16  Linus Nordberg  <linus@swox.se>
+
 	* configure.in: Invoke AC_PROG_LIBTOOL directly.
 
 	* acinclude.m4 (GMP_PROG_CC_FIND): Quote source variable when
