@@ -261,7 +261,7 @@ void mpn_copyi _PROTO ((mp_ptr, mp_srcptr, mp_size_t));
 #define mpn_reciprocal		__MPN(reciprocal)
 
 #define mpn_sb_divrem_mn	__MPN(sb_divrem_mn)
-#define mpn_bz_divrem_n		__MPN(bz_divrem_n)
+#define mpn_dc_divrem_n		__MPN(dc_divrem_n)
 /* #define mpn_tdiv_q		__MPN(tdiv_q) */
 
 #define mpn_kara_mul_n	__MPN(kara_mul_n)
@@ -294,7 +294,7 @@ void mpn_mul_fft_full _PROTO ((mp_ptr op,
 mp_size_t mpn_fft_next_size _PROTO ((mp_size_t pl, int k));
 
 mp_limb_t mpn_sb_divrem_mn _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t));
-mp_limb_t mpn_bz_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
+mp_limb_t mpn_dc_divrem_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 /* void mpn_tdiv_q _PROTO ((mp_ptr, mp_size_t, mp_srcptr, mp_size_t, mp_srcptr, mp_size_t)); */
 
 
@@ -1147,7 +1147,7 @@ extern mp_size_t  mul_threshold[];
 extern mp_size_t  fft_modf_mul_threshold;
 extern mp_size_t  sqr_threshold[];
 extern mp_size_t  fft_modf_sqr_threshold;
-extern mp_size_t  bz_threshold[];
+extern mp_size_t  dc_threshold[];
 extern mp_size_t  fib_threshold[];
 extern mp_size_t  powm_threshold[];
 extern mp_size_t  gcd_accel_threshold[];
@@ -1163,7 +1163,7 @@ extern mp_size_t  gcdext_threshold[];
 #undef FFT_SQR_TABLE
 #undef FFT_SQR_THRESHOLD
 #undef FFT_MODF_SQR_THRESHOLD
-#undef BZ_THRESHOLD
+#undef DC_THRESHOLD
 #undef FIB_THRESHOLD
 #undef POWM_THRESHOLD
 #undef GCD_ACCEL_THRESHOLD
@@ -1179,7 +1179,7 @@ extern mp_size_t  gcdext_threshold[];
 #define FFT_SQR_TABLE            { 0 }
 #define FFT_SQR_THRESHOLD        sqr_threshold[2]
 #define FFT_MODF_SQR_THRESHOLD   fft_modf_sqr_threshold
-#define BZ_THRESHOLD             bz_threshold[0]
+#define DC_THRESHOLD             dc_threshold[0]
 #define FIB_THRESHOLD            fib_threshold[0]
 #define POWM_THRESHOLD           powm_threshold[0]
 #define GCD_ACCEL_THRESHOLD      gcd_accel_threshold[0]

@@ -109,7 +109,7 @@ mp_size_t  mul_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
 mp_size_t  fft_modf_mul_threshold = MP_SIZE_T_MAX;
 mp_size_t  sqr_threshold[MAX_TABLE+1] = { MP_SIZE_T_MAX };
 mp_size_t  fft_modf_sqr_threshold = MP_SIZE_T_MAX;
-mp_size_t  bz_threshold[2] = { MP_SIZE_T_MAX };
+mp_size_t  dc_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  fib_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  powm_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcd_accel_threshold[2] = { MP_SIZE_T_MAX };
@@ -652,8 +652,8 @@ all (void)
 
   {
     static struct param_t  param;
-    param.name[0] = "BZ_THRESHOLD";
-    one (speed_mpn_bz_tdiv_qr, bz_threshold, 1, &param);
+    param.name[0] = "DC_THRESHOLD";
+    one (speed_mpn_dc_tdiv_qr, dc_threshold, 1, &param);
   }
   printf("\n");
 

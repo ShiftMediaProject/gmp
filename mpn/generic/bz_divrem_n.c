@@ -1,4 +1,4 @@
-/* mpn_bz_divrem_n and auxilliary routines.
+/* mpn_dc_divrem_n and auxilliary routines.
 
    THE FUNCTIONS IN THIS FILE ARE INTERNAL FUNCTIONS WITH MUTABLE
    INTERFACES.  IT IS ONLY SAFE TO REACH THEM THROUGH DOCUMENTED INTERFACES.
@@ -35,15 +35,15 @@ MA 02111-1307, USA. */
     http://www.mpi-sb.mpg.de/~ziegler/TechRep.ps.gz
 */
 
-static mp_limb_t mpn_bz_div_3_halves_by_2
+static mp_limb_t mpn_dc_div_3_halves_by_2
   _PROTO ((mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n));
 
 
-/* mpn_bz_divrem_n(n) calls 2*mul(n/2)+2*div(n/2), thus to be faster than
+/* mpn_dc_divrem_n(n) calls 2*mul(n/2)+2*div(n/2), thus to be faster than
    div(n) = 4*div(n/2), we need mul(n/2) to be faster than the classic way,
    i.e. n/2 >= KARATSUBA_MUL_THRESHOLD */
-#ifndef BZ_THRESHOLD
-#define BZ_THRESHOLD (7 * KARATSUBA_MUL_THRESHOLD)
+#ifndef DC_THRESHOLD
+#define DC_THRESHOLD (7 * KARATSUBA_MUL_THRESHOLD)
 #endif
 
 #if 0
@@ -72,16 +72,16 @@ unused_mpn_divrem (qp, qxn, np, nn, dp, dn)
 #endif
 
 
-/* mpn_bz_divrem_n - Implements algorithm of page 8 in [1]: divides (np,2n)
+/* mpn_dc_divrem_n - Implements algorithm of page 8 in [1]: divides (np,2n)
    by (dp,n) and puts the quotient in (qp,n), the remainder in (np,n).
    Returns most significant limb of the quotient, which is 0 or 1.
    Requires that the most significant bit of the divisor is set.  */
 
 mp_limb_t
 #if __STDC__
-mpn_bz_divrem_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
+mpn_dc_divrem_n (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
 #else
-mpn_bz_divrem_n (qp, np, dp, n)
+mpn_dc_divrem_n (qp, np, dp, n)
      mp_ptr qp;
      mp_ptr np;
      mp_srcptr dp;
@@ -92,7 +92,7 @@ mpn_bz_divrem_n (qp, np, dp, n)
 
   if (n % 2 != 0)
     {
-      qhl = mpn_bz_divrem_n (qp + 1, np + 2, dp + 1, n - 1);
+      qhl = mpn_dc_divrem_n (qp + 1, np + 2, dp + 1, n - 1);
       cc = mpn_submul_1 (np + 1, qp + 1, n - 1, dp[0]);
       cc = mpn_sub_1 (np + n, np + n, 1, cc);
       if (qhl) cc += mpn_sub_1 (np + n, np + n, 1, dp[0]);
@@ -107,9 +107,9 @@ mpn_bz_divrem_n (qp, np, dp, n)
   else
     {
       mp_size_t n2 = n/2;
-      qhl = mpn_bz_div_3_halves_by_2 (qp + n2, np + n2, dp, n2);
+      qhl = mpn_dc_div_3_halves_by_2 (qp + n2, np + n2, dp, n2);
       qhl += mpn_add_1 (qp + n2, qp + n2, n2,
-                        mpn_bz_div_3_halves_by_2 (qp, np, dp, n2));
+                        mpn_dc_div_3_halves_by_2 (qp, np, dp, n2));
     }
   return qhl;
 }
@@ -120,9 +120,9 @@ mpn_bz_divrem_n (qp, np, dp, n)
 
 static mp_limb_t
 #if __STDC__
-mpn_bz_div_3_halves_by_2 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
+mpn_dc_div_3_halves_by_2 (mp_ptr qp, mp_ptr np, mp_srcptr dp, mp_size_t n)
 #else
-mpn_bz_div_3_halves_by_2 (qp, np, dp, n)
+mpn_dc_div_3_halves_by_2 (qp, np, dp, n)
      mp_ptr qp;
      mp_ptr np;
      mp_srcptr dp;
@@ -135,10 +135,10 @@ mpn_bz_div_3_halves_by_2 (qp, np, dp, n)
   TMP_DECL (marker);
 
   TMP_MARK (marker);
-  if (n < BZ_THRESHOLD)
+  if (n < DC_THRESHOLD)
     qhl = mpn_sb_divrem_mn (qp, np + n, twon, dp + n, n);
   else
-    qhl = mpn_bz_divrem_n (qp, np + n, dp + n, n);
+    qhl = mpn_dc_divrem_n (qp, np + n, dp + n, n);
   tmp = (mp_ptr) TMP_ALLOC (twon * BYTES_PER_MP_LIMB);
   mpn_mul_n (tmp, qp, dp, n);
   cc = mpn_sub_n (np, np, tmp, twon);

@@ -361,7 +361,7 @@ probably of interest is mul_basecase versus a kara_mul_n that does one level
 of Karatsuba then calls to mul_basecase, but this only happens on sizes less
 than twice the compiled KARATSUBA_MUL_THRESHOLD.  A larger value for that
 setting can be compiled-in to avoid the problem if necessary.  The same
-applies to toom3 and BZ, though in a trickier fashion.
+applies to toom3 and DC, though in a trickier fashion.
 
 There are some upper limits on some of the thresholds, arising from arrays
 dimensioned according to a threshold (mpn_mul_n), or asm code with certain

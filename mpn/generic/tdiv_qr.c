@@ -35,8 +35,8 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "longlong.h"
 
-#ifndef BZ_THRESHOLD
-#define BZ_THRESHOLD (7 * KARATSUBA_MUL_THRESHOLD)
+#ifndef DC_THRESHOLD
+#define DC_THRESHOLD (7 * KARATSUBA_MUL_THRESHOLD)
 #endif
 
 /* Extract the middle limb from ((h,,l) << cnt) */
@@ -154,7 +154,7 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 
 	    if (dn == 2)
 	      mpn_divrem_2 (qp, 0L, n2p, nn, d2p);
-	    else if (dn < BZ_THRESHOLD)
+	    else if (dn < DC_THRESHOLD)
 	      mpn_sb_divrem_mn (qp, n2p, nn, d2p, dn);
 	    else
 	      {
@@ -162,13 +162,13 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 		   in np last.  */
 		mp_ptr q2p = qp + nn - 2 * dn;
 		n2p += nn - 2 * dn;
-		mpn_bz_divrem_n (q2p, n2p, d2p, dn);
+		mpn_dc_divrem_n (q2p, n2p, d2p, dn);
 		nn -= dn;
 		while (nn >= 2 * dn)
 		  {
 		    mp_limb_t c;
 		    q2p -= dn;  n2p -= dn;
-		    c = mpn_bz_divrem_n (q2p, n2p, d2p, dn);
+		    c = mpn_dc_divrem_n (q2p, n2p, d2p, dn);
 		    ASSERT_ALWAYS (c == 0);
 		    nn -= dn;
 		  }
@@ -307,10 +307,10 @@ mpn_tdiv_qr (qp, rp, qxn, np, nn, dp, dn)
 	      }
 	    else if (qn == 2)
 	      mpn_divrem_2 (qp, 0L, n2p, 4L, d2p);
-	    else if (qn < BZ_THRESHOLD)
+	    else if (qn < DC_THRESHOLD)
 	      mpn_sb_divrem_mn (qp, n2p, qn * 2, d2p, qn);
 	    else
-	      mpn_bz_divrem_n (qp, n2p, d2p, qn);
+	      mpn_dc_divrem_n (qp, n2p, d2p, qn);
 
 	    rn = qn;
 	    /* Multiply the first ignored divisor limb by the most significant

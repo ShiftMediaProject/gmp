@@ -137,9 +137,9 @@ double speed_mpn_add_n_inplace _PROTO ((struct speed_params *s));
 double speed_mpn_and_n _PROTO ((struct speed_params *s));
 double speed_mpn_andn_n _PROTO ((struct speed_params *s));
 double speed_mpn_addmul_1 _PROTO ((struct speed_params *s));
-double speed_mpn_bz_divrem_n _PROTO ((struct speed_params *s));
-double speed_mpn_bz_divrem_sb _PROTO ((struct speed_params *s));
-double speed_mpn_bz_tdiv_qr _PROTO ((struct speed_params *s));
+double speed_mpn_dc_divrem_n _PROTO ((struct speed_params *s));
+double speed_mpn_dc_divrem_sb _PROTO ((struct speed_params *s));
+double speed_mpn_dc_tdiv_qr _PROTO ((struct speed_params *s));
 double speed_MPN_COPY _PROTO ((struct speed_params *s));
 double speed_MPN_COPY_DECR _PROTO ((struct speed_params *s));
 double speed_MPN_COPY_INCR _PROTO ((struct speed_params *s));
@@ -597,7 +597,7 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
 
 /* A division of 2*s->size by s->size limbs */
 
-#define SPEED_ROUTINE_MPN_BZ_DIVREM_CALL(call)                  \
+#define SPEED_ROUTINE_MPN_DC_DIVREM_CALL(call)                  \
   {                                                             \
     unsigned   i;                                               \
     mp_ptr     a, d, q, r;                                      \
@@ -638,15 +638,15 @@ void mpn_toom3_sqr_n_mpn _PROTO((mp_ptr, mp_srcptr, mp_size_t, mp_ptr));
     return t;                                                   \
   }  
 
-#define SPEED_ROUTINE_MPN_BZ_DIVREM_N(function) \
-  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL((*function) (q, a, d, s->size))
+#define SPEED_ROUTINE_MPN_DC_DIVREM_N(function) \
+  SPEED_ROUTINE_MPN_DC_DIVREM_CALL((*function) (q, a, d, s->size))
 
-#define SPEED_ROUTINE_MPN_BZ_DIVREM_SB(function)        \
-  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL                      \
+#define SPEED_ROUTINE_MPN_DC_DIVREM_SB(function)        \
+  SPEED_ROUTINE_MPN_DC_DIVREM_CALL                      \
     ((*function) (q, a, 2*s->size, d, s->size))
 
-#define SPEED_ROUTINE_MPN_BZ_TDIV_QR(function)          \
-  SPEED_ROUTINE_MPN_BZ_DIVREM_CALL                      \
+#define SPEED_ROUTINE_MPN_DC_TDIV_QR(function)          \
+  SPEED_ROUTINE_MPN_DC_DIVREM_CALL                      \
     ((*function) (q, r, 0, a, 2*s->size, d, s->size))
 
 

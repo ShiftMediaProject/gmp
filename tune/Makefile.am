@@ -85,7 +85,7 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 # FIXME: Would like for example mul_n.c to depend on $(top_builddir)/mul_n.c
 # so the recompiled object will be rebuilt if that file changes.
 
-TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c bz_divrem_n.c tdiv_qr.c gcd.c gcdext.c
+TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c dc_divrem_n.c tdiv_qr.c gcd.c gcdext.c
 TUNE_MPZ_SRCS = fib_ui.c powm.c
 
 $(TUNE_MPN_SRCS):
@@ -157,8 +157,8 @@ st:
 stg:
 	./speed $(STS) -P stg mpn_kara_sqr_n mpn_toom3_sqr_n
 
-bz:
-	./speed -s 5-40 -c mpn_bz_divrem_sb mpn_bz_divrem_n mpn_bz_tdiv_qr
+dc:
+	./speed -s 5-40 -c mpn_dc_divrem_sb mpn_dc_divrem_n mpn_dc_tdiv_qr
 
 fib:
 	./speed -s 80-120 -c mpz_fib_ui

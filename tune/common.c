@@ -569,19 +569,19 @@ speed_mpn_divexact_by3 (struct speed_params *s)
 
 
 double
-speed_mpn_bz_divrem_n (struct speed_params *s)
+speed_mpn_dc_divrem_n (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BZ_DIVREM_N (mpn_bz_divrem_n);
+  SPEED_ROUTINE_MPN_DC_DIVREM_N (mpn_dc_divrem_n);
 }
 double
-speed_mpn_bz_divrem_sb (struct speed_params *s)
+speed_mpn_dc_divrem_sb (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BZ_DIVREM_SB (mpn_sb_divrem_mn);
+  SPEED_ROUTINE_MPN_DC_DIVREM_SB (mpn_sb_divrem_mn);
 }
 double
-speed_mpn_bz_tdiv_qr (struct speed_params *s)
+speed_mpn_dc_tdiv_qr (struct speed_params *s)
 {
-  SPEED_ROUTINE_MPN_BZ_TDIV_QR (mpn_tdiv_qr);
+  SPEED_ROUTINE_MPN_DC_TDIV_QR (mpn_tdiv_qr);
 }
 
 

@@ -65,8 +65,8 @@ MA 02111-1307, USA. */
 #define TOOM3_SQR_THRESHOLD      153
 #endif
 
-#ifndef BZ_THRESHOLD
-#define BZ_THRESHOLD              44
+#ifndef DC_THRESHOLD
+#define DC_THRESHOLD              44
 #endif
 
 #ifndef FIB_THRESHOLD

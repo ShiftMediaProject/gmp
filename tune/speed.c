@@ -147,9 +147,9 @@ const struct routine_t {
   { "mpn_divrem_2",      speed_mpn_divrem_2,        },
   { "mpn_divexact_by3",  speed_mpn_divexact_by3     },
 
-  { "mpn_bz_divrem_n",   speed_mpn_bz_divrem_n      },
-  { "mpn_bz_divrem_sb",  speed_mpn_bz_divrem_sb     },
-  { "mpn_bz_tdiv_qr",    speed_mpn_bz_tdiv_qr       },
+  { "mpn_dc_divrem_n",   speed_mpn_dc_divrem_n      },
+  { "mpn_dc_divrem_sb",  speed_mpn_dc_divrem_sb     },
+  { "mpn_dc_tdiv_qr",    speed_mpn_dc_tdiv_qr       },
 
   { "mpn_lshift",        speed_mpn_lshift, FLAG_R   },
   { "mpn_rshift",        speed_mpn_rshift, FLAG_R   },
