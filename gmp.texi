@@ -4134,7 +4134,7 @@ set by @code{mpf_set_default_prec}.
 Convert @var{op} to a @code{double}.
 @end deftypefun
 
-@deftypefun double mpf_get_d_2exp (signed long int @var{exp}, mpf_t @var{op})
+@deftypefun double mpf_get_d_2exp (signed long int *@var{exp}, mpf_t @var{op})
 Find @var{d} and @var{exp} such that @m{@var{d}\times 2^{exp}, @var{d} times 2
 raised to @var{exp}}, with @math{0.5@le{}@GMPabs{@var{d}}<1}, is a good
 approximation to @var{op}.  This is similar to the standard C function
