@@ -24,17 +24,14 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -I$(top_srcdir)
 
-EXTRA_DIST = rdtsc.asm
+EXTRA_DIST = pentium.asm sparcv9.asm sparc64.asm
 noinst_HEADERS = speed.h
-
-if HAVE_PENTIUM_RDTSC
-PENTIUM_RDTSC_OBJ = rdtsc.lo
-endif
 
 # No dependency on libgmp, so can use libgmptune instead for tune program
 EXTRA_LTLIBRARIES = libspeed.la
 libspeed_la_SOURCES = common.c time.c noop.c
-libspeed_la_LIBADD = $(PENTIUM_RDTSC_OBJ)
+libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJS)
+libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES)
 
 # Both libspeed and the programs are built static-only since static is
 # fastest and will be preferred by users who care about maximizing speed.
@@ -69,6 +66,11 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
 
 
 # This bit like mpn/Makefile.am
+
+# COMPILE minus CC.  FIXME: Really pass *_CFLAGS to CPP?
+COMPILE_FLAGS =	\
+	$(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+
 SUFFIXES = .asm
 .asm.o:
 	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
@@ -79,6 +81,7 @@ SUFFIXES = .asm
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 .asm.lo:
+	echo "$(COMPILE_FLAGS)"
 	$(M4) $(M4FLAGS) -DPIC -DOPERATION_$* $< >tmp-$*.s
 	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
@@ -181,7 +184,7 @@ mtg:
 	./speed $(MTS) -P mtg mpn_kara_mul_n mpn_toom3_mul_n
 
 sk:
-	./speed -s 5-40 -c mpn_sqr_basecase mpn_kara_sqr_n mpn_sqr_n
+	./speed -s 5-40 -c mpn_sqr_basecase mpn_kara_sqr_n
 
 STS = -s 50-150 -c
 st:
