@@ -29,6 +29,7 @@ AC_REVISION($Revision$)
 AC_PREREQ(2.52)
 AC_INIT(gmp-impl.h)
 m4_pattern_forbid([^[ \t]*GMP_])
+m4_pattern_forbid([^[ \t]*MPFR_CONFIGS])
 m4_pattern_allow(GMP_LDFLAGS)
 m4_pattern_allow(GMP_LIMB_BITS)
 m4_pattern_allow(GMP_MPARAM_H_SUGGEST)
@@ -1299,11 +1300,7 @@ if test -n "$MPN_PATH"; then
 else
                     eval tmp=\"\$path$abi1\"
   test -n "$tmp" || eval tmp=\"\$path$abi2\"
-  case $enable_nails in
-  no | 0)  path="$tmp generic" ;;
-  *)       # FIXME: Where will assembler code for nails live?
-           path="generic" ;;
-  esac
+  path="$tmp generic"
 fi
 
 
@@ -1376,6 +1373,36 @@ if test $want_cxx = yes; then
   AC_PROG_CXXCPP
 fi
 
+case $host_cpu in
+  c90 | t90)
+    AC_EGREP_CPP(yes,
+[#ifdef _CRAYIEEE
+yes
+#endif],
+    [add_path="cray/ieee"],
+    [add_path="cray/cfp"; extra_functions="mulwwc90"]) ;;
+  j90 | sv1)
+    extra_functions="mulwwj90"
+    add_path="cray/cfp" ;;
+esac
+
+if test -z "$MPN_PATH"; then
+  path="$add_path $path"
+fi
+
+# for a nail build, also look in "nails" subdirectories
+if test $GMP_NAIL_BITS != 0 && test -z "$MPN_PATH"; then
+  new_path=
+  for i in $path; do
+    case $i in
+    generic) new_path="$new_path $i" ;;
+    *)       new_path="$new_path $i/nails $i" ;;
+    esac
+  done
+  path=$new_path
+fi
+
+
 cat >&AC_FD_CC <<EOF
 configure:__line__: Decided:
 ABI=$ABI
@@ -1395,30 +1422,7 @@ if test $want_cxx = yes; then
   echo "      CXX=\"$CXX\""
   echo "      CXXFLAGS=\"$CXXFLAGS\""
 fi
-
-case $host_cpu in
-  c90 | t90)
-    AC_EGREP_CPP(yes,
-[#ifdef _CRAYIEEE
-yes
-#endif],
-    [add_path="cray/ieee"],
-    [add_path="cray/cfp"; extra_functions="mulwwc90"]) ;;
-  j90 | sv1)
-    extra_functions="mulwwj90"
-    add_path="cray/cfp" ;;
-esac
-
-if test -z "$MPN_PATH"; then
-  path="$add_path $path"
-fi
-
-
-# TEMPORARY HACK
-case $enable_nails in
-  no | 0)  ;;
-  *)       extra_functions="" ;;
-  esac
+echo "      MPN_PATH=\"$path\""
 
 
 # Automake ansi2knr support.
@@ -1759,6 +1763,33 @@ for tmp_fn in $gmp_mpn_functions; do
       for tmp_ext in MPN_SUFFIXES; do
         tmp_file=$srcdir/mpn/$tmp_dir/$tmp_base.$tmp_ext
         if test -f $tmp_file; then
+
+          # For a nails build, check if the file supports our nail bits.
+          # Generic code always supports all nails.
+          #
+          if test $GMP_NAIL_BITS != 0 && test $tmp_dir != generic; then
+            nails=[`sed -n 's/^[ 	]*NAILS_SUPPORT(\(.*\))/\1/p' $tmp_file `]
+            for n in $nails; do
+              case $n in
+              *-*)
+                n_start=`echo "$n" | sed -n 's/\(.*\)-.*/\1/p'`
+                n_end=`echo "$n" | sed -n 's/.*-\(.*\)/\1/p'`
+                ;;
+              *)
+                n_start=$n
+                n_end=$n
+                ;;
+              esac
+              if test $GMP_NAIL_BITS -ge $n_start && test $GMP_NAIL_BITS -le $n_end; then
+                found=yes
+                break
+              fi
+            done
+            if test $found != yes; then
+              continue
+            fi
+          fi
+
           found=yes
           eval found_$tmp_ext=yes
 
