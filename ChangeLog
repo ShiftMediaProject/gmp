@@ -4,7 +4,7 @@
 
 	* tests/mpbsd/t-itom.c: Renamed from t-misc.c.
 	* tests/mpbsd/t-misc.c: Remove file.
-	* tests/mpbsd/Makefile.am: Update.p
+	* tests/mpbsd/Makefile.am: Update.
 
 	* tests/mpf/t-set_si.c,t-cmp_si.c,t-gsprec.c: Split from t-misc.c.
 	* tests/mpf/t-misc.c: Remove file.
