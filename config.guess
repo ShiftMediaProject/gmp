@@ -313,8 +313,9 @@ main ()
 }
 EOF
   if ($CC_FOR_BUILD $dummy.c -o $dummy) >/dev/null 2>&1; then
-    # use $SHELL -c to avoid a segv message when this program is run on AIX
-    x=`$SHELL -c ./$dummy 2>/dev/null`
+    # This style construct is needed on AIX 4.3 to suppress the SIGILL error
+    # from (*fun)().  Using $SHELL -c ./$dummy 2>/dev/null doesn't work.
+    { x=`./$dummy`; } 2>/dev/null
     if test -n "$x"; then
       exact_cpu=$x
     fi
