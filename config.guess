@@ -135,7 +135,7 @@ EOF
   $CC_FOR_BUILD $dummy.s -o $dummy 2>/dev/null
   if test "$?" = 0 ; then
     case `./$dummy` in
-     0-0)	exact_cpu=alpha      ;;
+    0-0)	exact_cpu=alpha      ;;
     1-0)	exact_cpu=alphaev5   ;;
     1-1)	exact_cpu=alphaev56  ;;
     1-101)	exact_cpu=alphapca56 ;;
