@@ -18,6 +18,23 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2004-10-10  Torbjorn Granlund  <tege@swox.com>
+
+	* tests/devel/logops_n.c: New file.
+
+	* tests/devel/anymul_1.c: New file.
+	* tests/devel/mul_1.c: Remove.
+	* tests/devel/addmul_1.c: Remove.
+	* tests/devel/submul_1.c: Remove.
+
+	* tests/devel/shift.c: New file.
+	* tests/devel/lshift.c: Remove.
+	* tests/devel/rshift.c: Remove.
+
+	* tests/devel/aors_n.c: New file.
+	* tests/devel/add_n.c: Remove.
+	* tests/devel/sub_n.c: Remove.
+
 2004-10-09  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/powerpc64/linux64.m4: Define DEF_OBJECT, END_OBJECT, and TOCREF.
