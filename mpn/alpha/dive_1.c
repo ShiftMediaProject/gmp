@@ -1,4 +1,4 @@
-/* Alpha ev5 mpn_divexact_1 -- mpn by limb exact division.
+/* Alpha mpn_divexact_1 -- mpn by limb exact division.
 
    THE FUNCTIONS IN THIS FILE ARE FOR INTERNAL USE ONLY.  THEY'RE ALMOST
    CERTAIN TO BE SUBJECT TO INCOMPATIBLE CHANGES OR DISAPPEAR COMPLETELY IN
