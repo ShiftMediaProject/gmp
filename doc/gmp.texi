@@ -2298,6 +2298,15 @@ The @samp{perl} subdirectory is a comprehensive perl interface to GMP.  See
 format in @file{demos/perl/GMP.pm}.
 @end itemize
 
+As an aside, consideration has been given at various times to some sort of
+expression evaluation within the main GMP library.  Going beyond something
+minimal quickly leads to matters like user-defined functions, looping, fixnums
+for control variables, etc, which are considered outside the scope of GMP
+(much closer to language interpreters or compilers, @xref{Language Bindings}.)
+Something simple for program input convenience may yet be a possibility, a
+combination of the @file{expr} demo and the @file{pexpr} tree back-end
+perhaps.  But for now the above evaluators are offered as illustrations.
+
 
 @need 1000
 @node Efficiency, Debugging, Demonstration Programs, GMP Basics
