@@ -196,6 +196,10 @@ const struct routine_t {
 #endif
   { "mpn_modexact_1c_odd", speed_mpn_modexact_1c_odd, FLAG_R },
 
+#if GMP_NUMB_BITS % 4 == 0
+  { "mpn_mod_34lsub1",   speed_mpn_mod_34lsub1 },
+#endif
+
   { "mpn_dc_tdiv_qr",       speed_mpn_dc_tdiv_qr       },
   { "mpn_dc_divrem_n",      speed_mpn_dc_divrem_n      },
   { "mpn_dc_divrem_sb",     speed_mpn_dc_divrem_sb     },
