@@ -1,11 +1,11 @@
-# mpn_com_n -- mpn bitwise one's complement.
+# AMD K6 mpn_com_n -- mpn bitwise one's complement.
 #  
-#     alignment dst/src, A=0mod8 N=4mod8
-#        A/A   A/N   N/A   N/N
-# K6     1.0  1.135  1.18  1.26  cycles/limb
+#    alignment dst/src, A=0mod8 N=4mod8
+#       A/A   A/N   N/A   N/N
+# K6    1.0   1.18  1.18  1.18  cycles/limb
 
 
-# Copyright (C) 2000 Free Software Foundation, Inc.
+# Copyright (C) 1999-2000 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -29,7 +29,7 @@ include(`../config.m4')
 
 # void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
 #
-# Bitwise ones-complement of src,size, storing result in dst,size.
+# Take the bitwise ones-complement of src,size and write it to dst,size.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
@@ -41,106 +41,49 @@ PROLOGUE(mpn_com_n)
 deflit(`FRAME',0)
 
 	movl	PARAM_SIZE, %ecx
-	pushl	%edi
-FRAME_pushl()
+	movl	PARAM_SRC, %eax
+	movl	PARAM_DST, %edx
+	shrl	%ecx
+	jnz	L(two_or_more)
 
-	movl	PARAM_DST, %edi
-	pushl	%ebx
-FRAME_pushl()
-
-	movl	PARAM_SRC, %ebx
-	cmpl	$1, %ecx
-
-	movl	%ecx, %eax
-	jne	L(two_or_more)
-
-
-	movl	(%ebx), %eax
-	popl	%ebx
-
+	movl	(%eax), %eax
 	notl	%eax
-
-	movl	%eax, (%edi)
-	popl	%edi
-
+	movl	%eax, (%edx)
 	ret
 
 
 L(two_or_more):
-	shrl	$2, %ecx
-	jnz	L(four_or_more)
+	pushl	%ebx
+FRAME_pushl()
+	movl	%ecx, %ebx
 
-	movl	(%ebx), %ecx
-	testb	$1, %al
-	movl	4(%ebx), %edx
-	notl	%ecx
-	notl	%edx
-	movl	%ecx, (%edi)
-	movl	%edx, 4(%edi)
-
-	jz	L(two_only)
-	movl	8(%ebx), %eax
-	notl	%eax
-	movl	%eax, 8(%edi)
-L(two_only):
-
-	popl	%ebx
-	popl	%edi
-
-	ret
-
-
-L(four_or_more):
-	xorl	%edx, %edx
 	pcmpeqd	%mm7, %mm7	# all ones
-	jmp	L(entry)
+
 
 	ALIGN(16)
 L(top):
-	# eax	size
-	# ebx	src end
+	# eax	src
+	# ebx	floor(size/2)
 	# ecx	counter
-	# edx	offset
+	# edx	dst
 	# esi
-	# edi	dst end
+	# edi
 	# ebp
 
-	movq	%mm1, -8(%edi,%edx)
-L(entry):
-	movq	(%ebx,%edx), %mm0
-
-	movq	8(%ebx,%edx), %mm1
-	addl	$16, %edx
-
+	movq	(%eax,%ecx,8), %mm0
 	pxor	%mm7, %mm0
-	movq	%mm0, -16(%edi,%edx)
-
-	pxor	%mm7, %mm1
+	movq	%mm0, (%edx,%ecx,8)
 	loop	L(top)
 
 
-	testb	$2, %al
-	movq	%mm1, -8(%edi,%edx)
-
-	jz	L(no_extra_2)
-	movq	(%ebx,%edx), %mm0
-	addl	$8, %edx
-	pxor	%mm7, %mm0
-	movq	%mm0, -8(%edi,%edx)
-L(no_extra_2):
-
-	testb	$1, %al
-	jz	L(no_extra_1)
-	movl	(%ebx,%edx), %eax
+	jnc	L(no_extra)
+	movl	(%eax,%ebx,8), %eax
 	notl	%eax
-	movl	%eax, (%edi,%edx)
-L(no_extra_1):
+	movl	%eax, (%edx,%ebx,8)
+L(no_extra):
 
 	popl	%ebx
-	popl	%edi
-
 	emms_or_femms
-
 	ret
 
 EPILOGUE()
