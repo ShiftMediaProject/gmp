@@ -33,9 +33,12 @@ PROLOGUE(mpn_umul_ppmm)
 	C r5	m2
 
 	mulld	r0, r4, r5
-	mulhdu	r9, r4, r5
+	mulhdu	r4, r4, r5
 	std	r0, 0(r3)
-	mr	r3, r9
+ifdef(`HAVE_ABI_mode32',
+`	srdi	r3, r4, 32
+',`	mr	r3, r4
+')
 	blr
 
 EPILOGUE(mpn_umul_ppmm)

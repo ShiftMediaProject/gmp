@@ -87,7 +87,11 @@ PROLOGUE(mpn_rshift)
 	or	h1, v0, h1
 	std	h1, 8(rp)
 .L1:	std	h0, 16(rp)
-	mr	r3, r12
+ifdef(`HAVE_ABI_mode32',
+`	srdi	r3, r12, 32
+	mr	r4, r12
+',`	mr	r3, r12
+')
 	blr
 
 .Lexit:	sld	v0, u0, tnc
@@ -99,6 +103,10 @@ PROLOGUE(mpn_rshift)
 	or	h0, v1, h0
 	stdu	h0, 16(rp)
 	std	h1, 8(rp)
-	mr	r3, r12
+ifdef(`HAVE_ABI_mode32',
+`	srdi	r3, r12, 32
+	mr	r4, r12
+',`	mr	r3, r12
+')
 	blr
 EPILOGUE()
