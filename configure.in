@@ -678,8 +678,9 @@ case $host in
     case $host in
       *-*-linux*)
 	cclist="gcc icc"
+	icc_cflags="-no-gcc"
 	icc_cflags_optlist="opt"
-	# FIXME: Check if -O3 is really right.  The manual wanrs it is for
+	# FIXME: Check if -O3 is really right.  The manual warns it is for
 	# large data sets, for which GMP uses assembly loops.
 	icc_cflags_opt="-O3 -O2 -O1"
 	;;
@@ -1241,8 +1242,12 @@ case $host in
   #
   X86_PATTERN | x86_64-*-*)
     abilist="32"
+    cclist="gcc icc"
     gcc_cflags="-O2 $fomit_frame_pointer"
     gcc_32_cflags_maybe="-m32"
+    icc_cflags="-no-gcc"
+    icc_cflags_optlist="opt"
+    icc_cflags_opt="-O3 -O2 -O1"
     any_32_testlist="sizeof-long-4"
     CALLING_CONVENTIONS_OBJS='x86call.lo x86check$U.lo'
 
