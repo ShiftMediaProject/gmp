@@ -282,17 +282,11 @@ randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
   gmp_rand_mt_struct *p;
   mpz_t mod;    /* Modulus.  */
   mpz_t seed1;  /* Intermediate result.  */
-  TMP_DECL (marker);
 
   p = (gmp_rand_mt_struct *) RNG_STATE (rstate);
 
-  TMP_MARK (marker);
-
-  /* Both `mod' and `seed1' need room for 19938 bits.  The
-     addition/substraction code needs an additional limb, as does the
-     remainder operation.  */
-  MPZ_TMP_INIT (mod, BITS_TO_LIMBS (19938) + 1);
-  MPZ_TMP_INIT (seed1, BITS_TO_LIMBS (19938) + 1);
+  mpz_init (mod);
+  mpz_init (seed1);
 
   mpz_set_ui (mod, 0);
   mpz_setbit (mod, 19937);
@@ -309,7 +303,8 @@ randseed_mt (gmp_randstate_t rstate, mpz_srcptr seed)
       mpz_tdiv_q_2exp (seed1, seed1, 32);
     }
 
-  TMP_FREE (marker);
+  mpz_clear (mod);
+  mpz_clear (seed1);
 
   /* The last bit should be placed at the left.  */
   if (p->mt[N - 1] != 0)
