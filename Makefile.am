@@ -306,7 +306,7 @@ mpz/fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
 BUILT_SOURCES += mpz/fac_ui.h
 
 gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c dumbmp.c
-	$(CC_FOR_BUILD) `test -f gen-fac_ui$(U_FOR_BUILD).c || echo '$(srcdir)/'`gen-fac_ui$(U_FOR_BUILD).c -o gen-fac_ui$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
+	$(CC_FOR_BUILD) `test -f gen-fac_ui$(U_FOR_BUILD).c || echo '$(srcdir)/'`gen-fac_ui$(U_FOR_BUILD).c -o gen-fac_ui$(EXEEXT_FOR_BUILD)
 DISTCLEANFILES += gen-fac_ui$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-fac_ui.c
 
