@@ -28,26 +28,35 @@ C n1		gr25
 C n0		gr24
 C d		gr23
 
+C This file has caused a lot of trouble, since it demands PIC reference to
+C static data, which triggers bugs in gas (at least version 2.7 through
+C 2.11.2).  When the bug is triggered, many bogus relocs are generated.  The
+C current solution is to stuff data right into the code, and refer it using
+C absolute offsets.  Fragile to be sure, but nothing else seems to work.
+
 ASM_START()
-	RODATA
-	INT64(L(0000), 0x43f00000, 0x0)	C 2^64
+ifdef(`PIC',`',
+`	RODATA
+	INT64(L(0000), 0x43f00000, 0x0)		C 2^64
+')
 
 PROLOGUE(mpn_udiv_qrnnd)
-C	.callinfo	frame=64,no_calls
+	.proc
+	.callinfo	frame=64,no_calls
+	.entry
 
 	ldo		64(%r30),%r30
 
 	stws		%r25,-16(0,%r30)	C n_hi
 	stws		%r24,-12(0,%r30)	C n_lo
-ifdef(`PIC',
-`	bl		L(0),%r31
-	dep		%r0,31,2,%r31
 
-	.label	L(0)
-	addil		LR%L(0000)-L(0),%r31
-	ldo		RR%L(0000)-L(0)(%r1),%r31',
-`
-	ldil		`L'%L(0000),%r31
+ifdef(`PIC',
+`	bl		.+20,%r31
+	dep		%r0,31,2,%r31
+	.word	0x0				C padding for alignment
+	.word	0x43f00000, 0x0			C 2^64
+	ldo		4(%r31),%r31',
+`	ldil		`L'%L(0000),%r31
 	ldo		R%L(0000)(%r31),%r31')
 
 	fldds		-16(0,%r30),%fr5
@@ -82,4 +91,6 @@ ifdef(`PIC',
 	.label	L(2)
 	bv		0(%r2)
 	stws		%r22,0(0,%r26)
+	.exit
+	.procend
 EPILOGUE(mpn_udiv_qrnnd)
