@@ -54,7 +54,7 @@ if test $# != 0; then
 fi
 
 
-guess_full=`$SHELL $configfsf_guess "$@"`
+guess_full=`$SHELL $configfsf_guess`
 if test $? != 0; then
   exit 1
 fi
