@@ -32,9 +32,5 @@ mpz_set_q (w, u)
      mpq_srcptr u;
 #endif
 {
-  mp_ptr wp, up;
-  mp_size_t usize, size;
-  mp_exp_t exp;
-
   mpz_tdiv_q (w, mpq_numref (u), mpq_denref (u));
 }
