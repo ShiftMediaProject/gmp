@@ -2168,41 +2168,6 @@ esac
 ])
 
 
-dnl  GMP_C_RESTRICT
-dnl  --------------
-dnl  Establish a "restrict" keyword, if possible, like AC_C_INLINE.
-dnl
-dnl  If restrict works already, then do nothing.  Otherwise AC_DEFINE it to
-dnl  __restrict__ or __restrict if they work, or to empty otherwise.
-dnl
-dnl  "restrict" is in C99.  GCC 2.95 and up has it in c99 mode, and also as
-dnl  __restrict__ and __restrict in all modes.
-dnl
-dnl  "yes" is used in the cache variable if plain "restrict" works, to make
-dnl  the configure message look nicer.
-
-AC_DEFUN(GMP_C_RESTRICT,
-[AC_CACHE_CHECK([for restrict], gmp_cv_c_restrict,
-[gmp_cv_c_restrict=no
-for r in restrict __restrict__ __restrict; do
-  AC_TRY_COMPILE(, [char * $r foo;],
-    [gmp_cv_c_restrict=$r
-    break])
-done
-if test $gmp_cv_c_restrict = restrict; then
-  gmp_cv_c_restrict=yes
-fi
-])
-case $gmp_cv_c_restrict in
-  restrict | yes) ;;
-  no) AC_DEFINE(restrict,,
-                [Define as `__restrict' if that's what the C compiler calls it,
-                 or to nothing if it is not supported.]) ;;
-  *)  AC_DEFINE_UNQUOTED(restrict, $gmp_cv_c_restrict) ;;
-esac
-])
-
-
 dnl  GMP_C_STDARG
 dnl  ------------
 dnl  Test whether to use <stdarg.h> or <varargs.h>.
