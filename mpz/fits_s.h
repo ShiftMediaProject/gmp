@@ -26,10 +26,15 @@ MA 02111-1307, USA. */
 int
 FUNCTION (mpz_srcptr z)
 {
-  mp_size_t size = SIZ(z);
-  mp_limb_t data = PTR(z)[0];
+  mp_size_t n = SIZ(z);
+  mp_ptr p = PTR(z);
 
-  return (size == 0
-          || (size == 1  && data <= MAXIMUM)
-          || (size == -1 && data <= - (mp_limb_t) MINIMUM));
+  return (n == 0
+          || (n == 1  && p[0] <= MAXIMUM)
+          || (n == -1 && p[0] <= - (mp_limb_t) MINIMUM)
+#if GMP_NAIL_BITS != 0
+	  || (n == 2 && (p[0] + (p[1] << GMP_NUMB_BITS)) <= MAXIMUM)
+	  || (n == -2 && (p[0] + (p[1] << GMP_NUMB_BITS)) <= - (mp_limb_t) MINIMUM)
+#endif
+	  );
 }
