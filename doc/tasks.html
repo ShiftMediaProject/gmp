@@ -314,7 +314,7 @@ MA 02111-1307, USA.
      the <code>mpn_get_str</code> output to convert to ASCII.  Perhaps combine
      that with the bit extractions.
 <li> <code>mpz_gcdext</code>: If the caller requests only the S cofactor (of
-     A), and A<B, then the code ends up generating the cofactor T (of B) and
+     A), and A&lt;B, then the code ends up generating the cofactor T (of B) and
      deriving S from that.  Perhaps it'd be possible to arrange to get S in
      the first place by calling <code>mpn_gcdext</code> with A+B,B.  This
      might only be an advantage if A and B are about the same size.
