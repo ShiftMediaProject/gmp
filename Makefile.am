@@ -290,15 +290,24 @@ gmp_TEXINFOS = fdl.texi
 
 
 # The ansi2knr setups for the build programs are the same as the normal
-# automake ansi2knr rules, but using $(CC_FOR_BUILD) instead of $(CC).  The
-# "test -f" support for srcdir!=builddir is likewise the same as automake
-# generates.
+# automake ansi2knr rules, but using $(CC_FOR_BUILD) instead of $(CC).
 #
-# The generated .h files are BUILT_SOURCES since they're used by gmp-impl.h
-# and hence must exist before compiling anything.  The .c files don't have
-# to be BUILT_SOURCES, but are done that way to get all the built-time stuff
-# over with at the start.
+# The "test -f" support for srcdir!=builddir is similar to the automake .c.o
+# etc rules, but with each foo.c explicitly, since $< is not portable
+# outside an inference rule.
 #
+# A quoted 'foo.c' is used with the "test -f"'s to avoid Sun make rewriting
+# it as part of its VPATH support.  See the autoconf manual "Limitations of
+# Make".
+#
+# Generated .h files which are used by gmp-impl.h are BUILT_SOURCES since
+# they must exist before anything can be compiled.
+#
+# Other generated .h files are also BUILT_SOURCES so as to get all the
+# build-system stuff over and done with at the start.  Also, dependencies on
+# the .h files are not properly expressed for the various objects that use
+# them.
+
 EXTRA_DIST += dumbmp.c
 
 mpz/fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
@@ -306,7 +315,7 @@ mpz/fac_ui.h: gen-fac_ui$(EXEEXT_FOR_BUILD)
 BUILT_SOURCES += mpz/fac_ui.h
 
 gen-fac_ui$(EXEEXT_FOR_BUILD): gen-fac_ui$(U_FOR_BUILD).c dumbmp.c
-	$(CC_FOR_BUILD) `test -f gen-fac_ui$(U_FOR_BUILD).c || echo '$(srcdir)/'`gen-fac_ui$(U_FOR_BUILD).c -o gen-fac_ui$(EXEEXT_FOR_BUILD)
+	$(CC_FOR_BUILD) `test -f 'gen-fac_ui$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-fac_ui$(U_FOR_BUILD).c -o gen-fac_ui$(EXEEXT_FOR_BUILD)
 DISTCLEANFILES += gen-fac_ui$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-fac_ui.c
 
@@ -323,7 +332,7 @@ mpn/fib_table.c: gen-fib$(EXEEXT_FOR_BUILD)
 BUILT_SOURCES += mpn/fib_table.c
 
 gen-fib$(EXEEXT_FOR_BUILD): gen-fib$(U_FOR_BUILD).c dumbmp.c
-	$(CC_FOR_BUILD) `test -f gen-fib$(U_FOR_BUILD).c || echo '$(srcdir)/'`gen-fib$(U_FOR_BUILD).c -o gen-fib$(EXEEXT_FOR_BUILD)
+	$(CC_FOR_BUILD) `test -f 'gen-fib$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-fib$(U_FOR_BUILD).c -o gen-fib$(EXEEXT_FOR_BUILD)
 DISTCLEANFILES += gen-fib$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-fib.c
 
@@ -340,7 +349,7 @@ mpn/mp_bases.c: gen-bases$(EXEEXT_FOR_BUILD)
 BUILT_SOURCES += mpn/mp_bases.c
 
 gen-bases$(EXEEXT_FOR_BUILD): gen-bases$(U_FOR_BUILD).c dumbmp.c
-	$(CC_FOR_BUILD) `test -f gen-bases$(U_FOR_BUILD).c || echo '$(srcdir)/'`gen-bases$(U_FOR_BUILD).c -o gen-bases$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
+	$(CC_FOR_BUILD) `test -f 'gen-bases$(U_FOR_BUILD).c' || echo '$(srcdir)/'`gen-bases$(U_FOR_BUILD).c -o gen-bases$(EXEEXT_FOR_BUILD) $(LIBM_FOR_BUILD)
 DISTCLEANFILES += gen-bases$(EXEEXT_FOR_BUILD)
 EXTRA_DIST += gen-bases.c
 
