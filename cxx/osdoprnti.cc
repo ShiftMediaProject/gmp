@@ -24,13 +24,11 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <iostream>
-#include <stdarg.h>    /* for va_list and hence doprnt_funs_t */
-#include <string.h>
+#include <cstdarg>    /* for va_list and hence doprnt_funs_t */
+#include <cstring>    /* for strlen */
 
 #include "gmp.h"
 #include "gmp-impl.h"
-
-#include <stdio.h>
 
 using namespace std;
 
@@ -49,7 +47,7 @@ __gmp_doprnt_integer_ostream (ostream &o, struct doprnt_params_t *p,
 
   /* don't show leading zeros the way printf does */
   p->prec = -1;
-  
+
   GMP_ASPRINTF_T_INIT (d, &result);
   ret = __gmp_doprnt_integer (&__gmp_asprintf_funs_noformat, &d, p, s);
   ASSERT (ret != -1);
