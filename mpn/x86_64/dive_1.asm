@@ -40,17 +40,15 @@ PROLOGUE(mpn_divexact_1)
 	pushq	%rbx
 
 	movq	%rcx, %rax
-	movl	$-1, %ecx		C shift count
+	movl	$0, %ecx		C shift count
 	movq	%rdx, %r8
 
-	C Strip low zero bits (optimized for few bits)
-L(strip_twos):
-	incl	%ecx
-	shrq	%rax
-	jnc	L(strip_twos)
-
-	leaq	1(%rax,%rax), %rbx	C d without twos
-	andq	$127, %rax		C d/2, 7 bits
+	btl	$0, %eax
+	jnc	L(evn)			C skip bsfq unless divisor is even
+	
+L(odd):	movq	%rax, %rbx
+	shrl	%eax
+	andl	$127, %eax		C d/2, 7 bits
 
 ifdef(`PIC',`
 	movq	modlimb_invert_table@GOTPCREL(%rip), %rdx
@@ -93,17 +91,21 @@ ifdef(`PIC',`
 	xorl	%ebx, %ebx
 	jmp	L(entry)
 
+L(evn):	bsfq	%rax, %rcx
+	shrq	%cl, %rax
+	jmp	L(odd)
+
 	ALIGN(8)
 L(top):
-	C eax	q
-	C ebx	carry bit, 0 or 1
-	C ecx	shift
-	C edx
-	C esi	up end
-	C edi	rp end
-	C ebp	counter, limbs, negative
+	C rax	q
+	C rbx	carry bit, 0 or 1
+	C rcx	shift
+	C rdx
+	C rsi	up end
+	C rdi	rp end
+	C r8	counter, limbs, negative
 
-	mulq	%r11			C carry limb in edx
+	mulq	%r11			C carry limb in rdx
 
 	movq	-8(%rsi,%r8,8), %rax
 	movq	(%rsi,%r8,8), %r9
@@ -125,7 +127,7 @@ L(entry):
 	jnz	L(top)
 
 
-	mulq	%r11			C carry limb in edx
+	mulq	%r11			C carry limb in rdx
 
 	movq	-8(%rsi), %rax		C up high limb
 	shrq	%cl, %rax
