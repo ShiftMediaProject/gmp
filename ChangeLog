@@ -18,6 +18,13 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-10-09  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to mpfr cvs 2003-10-09.
+
+	* tests/devel/try.c (_SC_PAGESIZE): Define from _SC_PAGE_SIZE on
+	systems which use that, eg. hpux 9.
+
 2003-10-07  Kevin Ryde  <kevin@swox.se>
 
 	* tune/freq.c (freq_sysctl_hw_model): Correction to last sscanf	change.
