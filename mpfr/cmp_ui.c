@@ -97,7 +97,7 @@ mpfr_cmp_si_2exp (mpfr_srcptr b, long int i, int f)
     return MPFR_SIGN(b);
   /* both signs differ */
   else if (MPFR_IS_ZERO(b) || i == 0)
-    return i == 0 ? (MPFR_IS_ZERO(b) ? 0 : MPFR_SIGN(b)) : si;
+    return i == 0 ? (MPFR_IS_ZERO(b) ? 0 : MPFR_SIGN(b)) : -si;
   else
     { /* b and i are of same sign */
       e = MPFR_EXP(b); /* 2^(e-1) <= b < 2^e */
