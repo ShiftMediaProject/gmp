@@ -1,45 +1,45 @@
-# x86 mpn_mod_1 -- mpn by limb remainder.
-#
-#       cycles/limb
-# K7        42
-# K6        20
-# P6        40
-# P5        44
-# 486   approx 42 maybe
+dnl  x86 mpn_mod_1 -- mpn by limb remainder.
+dnl 
+dnl        cycles/limb
+dnl  K7        42
+dnl  K6        20
+dnl  P6        40
+dnl  P5        44
+dnl  486   approx 42 maybe
 
 
-# Copyright (C) 1999, 2000 Free Software Foundation, Inc.
-#
-# This file is part of the GNU MP Library.
-#
-# The GNU MP Library is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or (at your
-# option) any later version.
-#
-# The GNU MP Library is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-# MA 02111-1307, USA.
+dnl  Copyright (C) 1999, 2000 Free Software Foundation, Inc.
+dnl 
+dnl  This file is part of the GNU MP Library.
+dnl 
+dnl  The GNU MP Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Library General Public License as
+dnl  published by the Free Software Foundation; either version 2 of the
+dnl  License, or (at your option) any later version.
+dnl 
+dnl  The GNU MP Library is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+dnl  Library General Public License for more details.
+dnl 
+dnl  You should have received a copy of the GNU Library General Public
+dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
+dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
+dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
 include(`../config.m4')
 
 
-# mp_limb_t mpn_mod_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
-#                      mp_limb_t divisor);
-# mp_limb_t mpn_mod_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
-#                       mp_limb_t divisor, mp_limb_t carry);
-#
-# Divide src,size by divisor and return the remainder.  The quotient is
-# discarded.
-#
-# See mpn/x86/divrem_1.asm for some comments.
+C mp_limb_t mpn_mod_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                      mp_limb_t divisor);
+C mp_limb_t mpn_mod_1c (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                       mp_limb_t divisor, mp_limb_t carry);
+C
+C Divide src,size by divisor and return the remainder.  The quotient is
+C discarded.
+C
+C See mpn/x86/divrem_1.asm for some comments.
 
 defframe(PARAM_CARRY,  16)
 defframe(PARAM_DIVISOR,12)
@@ -93,11 +93,11 @@ FRAME_pushl()
 	movl	$0, %edx
 	jz	L(done)
 
-	movl	-4(%ebx,%ecx,4), %eax	# src high limb
+	movl	-4(%ebx,%ecx,4), %eax	C src high limb
 	cmpl	%esi, %eax
 	jae	L(entry)
 
-	# high<divisor, so avoid one div
+	C high<divisor, so avoid one div
 
 	decl	%ecx
 	movl	%eax, %edx
@@ -105,13 +105,13 @@ FRAME_pushl()
 	jz	L(done)
 
 L(top):
-	# eax	scratch (quotient)
-	# ebx	src
-	# ecx	counter
-	# edx	carry (remainder)
-	# esi	divisor
-	# edi
-	# ebp
+	C eax	scratch (quotient)
+	C ebx	src
+	C ecx	counter
+	C edx	carry (remainder)
+	C esi	divisor
+	C edi
+	C ebp
 
 	movl	-4(%ebx,%ecx,4), %eax
 L(entry):
