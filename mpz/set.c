@@ -25,18 +25,18 @@ MA 02111-1307, USA. */
 
 #ifdef BERKELEY_MP
 #include "mp.h"
-#undef  mpz_set
-#define mpz_set    move
+#define FUNCTION   move
 #define ARGUMENTS  mpz_srcptr u, mpz_ptr w
 
 #else
+#define FUNCTION   mpz_set
 #define ARGUMENTS  mpz_ptr w, mpz_srcptr u
 
 #endif
 
 
 void
-mpz_set (ARGUMENTS)
+FUNCTION (ARGUMENTS)
 {
   mp_ptr wp, up;
   mp_size_t usize, size;
