@@ -64,9 +64,9 @@ main (void)
   for (j=0;j<1000;j++) {
 
     mpfr_random(x); 
-    MPFR_EXP(x) = 1; 
+    MPFR_EXP(x) = 2;
         
-    for (k = 1; k <= SIZEX; k++) 
+    for (k = 2; k <= SIZEX; k++) 
       {
 	mpfr_set_prec(y, k); 
 	mpfr_set_prec(y2, k); 
@@ -86,9 +86,9 @@ main (void)
 
 	if (!mpfr_eq(y, y2, k))
 	  {
-	    printf("Error in floor, x = "); mpfr_print_raw(x); printf("\n"); 
-	    printf("floor(x) = "); mpfr_print_raw(y); printf("\n"); 
-	    printf("round(x, RNDD) = "); mpfr_print_raw(y2); printf("\n"); 
+	    printf("Error in floor, x = "); mpfr_print_binary(x); printf("\n"); 
+	    printf("floor(x) = "); mpfr_print_binary(y); printf("\n"); 
+	    printf("round(x, RNDD) = "); mpfr_print_binary(y2); printf("\n"); 
 	    mpfr_clear(x); 
 	    mpfr_clear(y); 
 	    mpfr_clear(y2); 
@@ -101,9 +101,9 @@ main (void)
 
 	if (!mpfr_eq(z, z2, k))
 	  {
-	    printf("Error in trunc, x = "); mpfr_print_raw(x); printf("\n"); 
-	    printf("trunc(x) = "); mpfr_print_raw(z); printf("\n"); 
-	    printf("round(x, RNDZ) = "); mpfr_print_raw(z2); printf("\n"); 
+	    printf("Error in trunc, x = "); mpfr_print_binary(x); printf("\n"); 
+	    printf("trunc(x) = "); mpfr_print_binary(z); printf("\n"); 
+	    printf("round(x, RNDZ) = "); mpfr_print_binary(z2); printf("\n"); 
 	    mpfr_clear(x); 
 	    mpfr_clear(y); 
 	    mpfr_clear(y2); 
@@ -116,9 +116,9 @@ main (void)
 
 	if (!mpfr_eq(y, y2, k))
 	  {
-	    printf("Error in ceil, x = "); mpfr_print_raw(x); printf("\n"); 
-	    printf("ceil(x) = "); mpfr_print_raw(t); printf("\n"); 
-	    printf("round(x, RNDU) = "); mpfr_print_raw(t2); printf("\n"); 
+	    printf("Error in ceil, x = "); mpfr_print_binary(x); printf("\n"); 
+	    printf("ceil(x) = "); mpfr_print_binary(t); printf("\n"); 
+	    printf("round(x, RNDU) = "); mpfr_print_binary(t2); printf("\n"); 
 	    mpfr_clear(x); 
 	    mpfr_clear(y); 
 	    mpfr_clear(y2); 

@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_d and mpfr_get_d.
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -26,8 +26,6 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-test.h"
 
-extern int isnan();
-
 int
 main (int argc, char *argv[])
 {
@@ -40,18 +38,43 @@ main (int argc, char *argv[])
     set_fpc_csr(exp.fc_word);
 #endif
 
-  mpfr_init(x);
+   mpfr_init2 (x, 2);
+
+   /* checks that rounds to nearest sets the last
+     bit to zero in case of equal distance */
+   mpfr_set_d (x, 5.0, GMP_RNDN);
+   if (mpfr_get_d (x) != 4.0)
+     {
+       fprintf (stderr, "Error in tset_d: got %g instead of 4.0\n",
+	       mpfr_get_d (x));
+       exit (1);
+     }
+   mpfr_set_d (x, -5.0, GMP_RNDN);
+   if (mpfr_get_d (x) != -4.0)
+     {
+       fprintf (stderr, "Error in tset_d: got %g instead of -4.0\n",
+	       mpfr_get_d (x));
+       exit (1);
+     }
+
+   mpfr_set_d (x, 9.84891017624509146344e-01, GMP_RNDU); 
+   if (mpfr_get_d (x) != 1.0)
+     {
+       fprintf (stderr, "Error in tset_d: got %g instead of 1.0\n",
+		mpfr_get_d (x));
+       exit (1);
+     }
 
   mpfr_init2(z, 32);
   mpfr_set_d(z, 1.0, 0);
   if (mpfr_get_d(z) != 1.0) {
-    mpfr_print_raw(z); putchar('\n');
+    mpfr_print_binary(z); putchar('\n');
     printf("Error: 1.0 != 1.0\n"); exit(1);
   }
   mpfr_set_prec(x, 53); mpfr_init2(y, 53);
   mpfr_set_d(x, d=-1.08007920352320089721e+150, 0);
   if (mpfr_get_d(x) != d) {
-    mpfr_print_raw(x); putchar('\n');
+    mpfr_print_binary(x); putchar('\n');
     printf("Error: get_d o set_d <> identity for d = %1.20e %1.20e\n",d,
 	   mpfr_get_d(x)); exit(1);
   }
@@ -60,7 +83,7 @@ main (int argc, char *argv[])
   d = -6.72658901114033715233e-165;
   mpfr_set_d(x, d, 0);
   if (d != mpfr_get_d(x)) {
-    mpfr_print_raw(x); putchar('\n');
+    mpfr_print_binary(x); putchar('\n');
     printf("Error: get_d o set_d <> identity for d = %1.20e %1.20e\n",d,
 	   mpfr_get_d(x)); exit(1);
   }
@@ -74,7 +97,7 @@ main (int argc, char *argv[])
 	{ 
 	  fprintf(stderr, 
 		  "Mismatch on : %1.18g != %1.18g\n", d, mpfr_get_d(x)); 
-	  mpfr_print_raw(x); putchar('\n');
+	  mpfr_print_binary(x); putchar('\n');
 	  exit(1);
 	}
     }

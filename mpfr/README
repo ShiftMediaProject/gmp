@@ -1,15 +1,27 @@
-The mpfr functions have been removed from the public GMP 4.0
-release.  This was made since paperwork was not ready in
-time for the release.  The mpfr developers also wanted to
-address some known issues, before a new mpfr is released
-with GMP.
+The MPFR distribution contains the following files:
 
-While we could have kept the old mpfr code that was included
-with GMP 3, the mpfr developers felt that that code is
-obsolete.
 
-If you need to use the mpfr functions now, please see:
-<http://www.mpfr.org/>.
-
-We expect that the next GMP release (4.1) or a possible
-patch release (4.0.1) will again include mpfr.
+AUTHORS     - the authors of the library
+BUGS        - bugs in MPFR - please read this file!
+COPYING     - the license under which the MPFR library is distributed
+ChangeLog   - the log of changes
+INSTALL     - how to install MPFR (see also mpfr.texi)
+Makefile*   - files for building the library
+NEWS        - new features with respect to previous versions
+README      - this file
+TODO        - what remains to do (any help is welcome!)
+ac*         - automatic configuration files
+*.c         - source files
+config*     - configuration files
+cputime.h   - header file for timings
+install*    - installation files
+missing     - auxiliary installation file
+mkinst*     - auxiliary installation file
+mpf2mpfr.h  - header file for compatibility with MPF
+mpfr-impl.h - internal header file for MPFR
+mpfr.h      - external header file for MPFR
+mpfr-test.h - header file for test files
+mpfr.info   - info file for MPFR
+mpfr.texi   - texinfo documentation for MPFR
+tests/      - test directory
+texinfo.tex - TeX macros to handle mpfr.texi

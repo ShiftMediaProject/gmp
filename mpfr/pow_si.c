@@ -1,6 +1,6 @@
 /* mpfr_pow_si -- power function x^y with y an unsigned int 
 
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -34,76 +34,46 @@ MA 02111-1307, USA. */
 int
 mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
 {
-
-  if (n>0)
-      return mpfr_pow_ui(y,x,(unsigned long int)n,rnd_mode);
+  if (n > 0)
+    return mpfr_pow_ui(y, x, n, rnd_mode);
   else
     {
-
       int inexact = 0;
 
-      n=-n;
-
-      /* x is NaN*/
-      if (MPFR_IS_NAN(x)) 
+      if (MPFR_IS_NAN(x))
         {
-          MPFR_SET_NAN(y); 
-          return 1; 
+          MPFR_SET_NAN(y);
+          MPFR_RET_NAN;
         }
+
       MPFR_CLEAR_NAN(y);
 
-      /* n=0 */
-      if(n==0)
-        return mpfr_set_ui(y,1,GMP_RNDN);;
+      if (n == 0)
+        return mpfr_set_ui(y, 1, GMP_RNDN);
 
-      /* case x is INF */
-      if(MPFR_IS_INF(x))
+      if (MPFR_IS_INF(x))
         {
-          if(MPFR_SIGN(x)>0) /* +Inf */
-            {
-              MPFR_SET_ZERO(y);
-              if(MPFR_SIGN(y) < 0)
-                MPFR_CHANGE_SIGN(y);
-              return 0;
-            }
+          MPFR_SET_ZERO(y);
+          if (MPFR_SIGN(x) > 0 || ((unsigned) n & 1) == 0)
+            MPFR_SET_POS(y);
           else
-            {
-              MPFR_SET_ZERO(y); /* -Inf */
-              if(!(n%2))        /* n is odd */
-                {
-                  if(MPFR_SIGN(y) > 0)
-                    MPFR_CHANGE_SIGN(y);
-                }
-              else              /* n is not odd */
-                {
-                  if(MPFR_SIGN(y) < 0)
-                    MPFR_CHANGE_SIGN(y);
-                }
-              return 0;
-            }
+            MPFR_SET_NEG(y);
+          MPFR_RET(0);
         }
 
-      /* case x=0 */
-      if(mpfr_cmp_ui(x,0) == 0)
+      if (MPFR_IS_ZERO(x))
         {
-          if(!(n%2))             /* n is odd */
-           {
-             MPFR_SET_INF(y);
-             MPFR_SET_SAME_SIGN(y,x);
-             DIVIDE_BY_ZERO;    /* Execption GMP*/
-             return 0;
-           }
-         else                   /* n is not odd */
-           {
-             MPFR_SET_INF(y);
-             if(MPFR_SIGN(y) < 0)
-               MPFR_CHANGE_SIGN(y);
-             DIVIDE_BY_ZERO;    /* Execption GMP*/
-             return 0;
-           }
+          MPFR_SET_INF(y);
+          if (MPFR_SIGN(x) > 0 || ((unsigned) n & 1) == 0)
+            MPFR_SET_POS(y);
+          else
+            MPFR_SET_NEG(y);
+          MPFR_RET(0);
         }
 
       MPFR_CLEAR_INF(y);
+
+      n = -n;
 
       /* General case */
       {
@@ -133,7 +103,7 @@ mpfr_pow_si (mpfr_ptr y, mpfr_srcptr x, long int n, mp_rnd_t rnd_mode)
           mpfr_set_prec(ti,Nt);             
 
           /* compute 1/(x^n) n>0*/
-          mpfr_pow_ui(ti,y,(unsigned long int)(n),GMP_RNDN);
+          mpfr_pow_ui(ti,x,(unsigned long int)(n),GMP_RNDN);
           mpfr_ui_div(t,1,ti,GMP_RNDN);
 
           /* estimation of the error -- see pow function in algorithms.ps*/

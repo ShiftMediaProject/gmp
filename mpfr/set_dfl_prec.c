@@ -20,20 +20,22 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include "gmp.h"
-#include "mpfr.h"
 #include "gmp-impl.h"
+#include "mpfr.h"
+#include "mpfr-impl.h"
 
 /* default is 53 bits */
 mp_prec_t __mpfr_default_fp_bit_precision = 53;
 
 void
-mpfr_set_default_prec (mp_prec_t prec_in_bits)
+mpfr_set_default_prec (mp_prec_t prec)
 {
-  __mpfr_default_fp_bit_precision = prec_in_bits;
+  MPFR_ASSERTN(prec >= MPFR_PREC_MIN && prec <= MPFR_PREC_MAX);
+  __mpfr_default_fp_bit_precision = prec;
 }
 
 mp_prec_t
-mpfr_get_default_prec ()
+mpfr_get_default_prec (void)
 {
   return __mpfr_default_fp_bit_precision;
 }

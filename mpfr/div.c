@@ -19,8 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -53,62 +51,61 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
    *                                                                        *
    **************************************************************************/
 
-  if (MPFR_IS_NAN(u) || MPFR_IS_NAN(v)) 
-    { 
-      MPFR_SET_NAN(q); MPFR_RET_NAN; 
+  if (MPFR_IS_NAN(u) || MPFR_IS_NAN(v))
+    {
+      MPFR_SET_NAN(q);
+      MPFR_RET_NAN;
     }
 
   MPFR_CLEAR_NAN(q);
 
-  if (MPFR_IS_INF(u)) 
-    { 
-      if (MPFR_IS_INF(v)) 
-	{ 
-	  MPFR_SET_NAN(q); MPFR_RET_NAN; 
+  sign_quotient = MPFR_SIGN(u) * MPFR_SIGN(v);
+  if (MPFR_SIGN(q) != sign_quotient)
+    MPFR_CHANGE_SIGN(q);
+
+  if (MPFR_IS_INF(u))
+    {
+      if (MPFR_IS_INF(v))
+	{
+	  MPFR_SET_NAN(q);
+          MPFR_RET_NAN;
 	}
       else
-	{ 
-	  MPFR_SET_INF(q); 
-	  if (MPFR_SIGN(q) != MPFR_SIGN(u) * MPFR_SIGN(v)) 
-	    MPFR_CHANGE_SIGN(q);
-	  MPFR_RET(0); 
+	{
+          MPFR_SET_INF(q);
+          MPFR_RET(0);
 	}
     }
   else 
     if (MPFR_IS_INF(v)) 
       {
-	MPFR_CLEAR_INF(q);
-	MPFR_SET_ZERO(q); 
-	if (MPFR_SIGN(q) != MPFR_SIGN(u) * MPFR_SIGN(v)) 
-	  MPFR_CHANGE_SIGN(q);
-	MPFR_RET(0); 
+        MPFR_CLEAR_INF(q);
+        MPFR_SET_ZERO(q);
+        MPFR_RET(0);
       }
 
   MPFR_CLEAR_INF(q); /* clear Inf flag */
 
-  if (!MPFR_NOTZERO(v))
+  if (MPFR_IS_ZERO(v))
     {
-      if (!MPFR_NOTZERO(u)) 
-	{ 
-	  MPFR_SET_NAN(q); MPFR_RET(1); 
+      if (MPFR_IS_ZERO(u))
+	{
+          MPFR_SET_NAN(q);
+          MPFR_RET_NAN;
 	}
       else
 	{
-	  MPFR_SET_INF(q); 
-	  if (MPFR_SIGN(q) != MPFR_SIGN(v) * MPFR_SIGN(u)) 
-	    MPFR_CHANGE_SIGN(q); 
-	  MPFR_RET(0); 
+          MPFR_SET_INF(q);
+          MPFR_RET(0);
 	}
     }
-  
-  if (!MPFR_NOTZERO(u)) 
-    { 
-      MPFR_SET_ZERO(q); MPFR_RET(0); 
+
+  if (MPFR_IS_ZERO(u))
+    {
+      MPFR_SET_ZERO(q);
+      MPFR_RET(0);
     }
 
-  sign_quotient = ((MPFR_SIGN(u) * MPFR_SIGN(v) > 0) ? 1 : -1); 
-  if (sign_quotient * MPFR_SIGN(q) < 0) { MPFR_CHANGE_SIGN(q); } 
-  
   /**************************************************************************
    *                                                                        *
    *              End of the part concerning special values.                *
@@ -234,8 +231,8 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
    *                                                                        *
    *   The attempt to use only part of u and v failed. We first compute a   *
    *   correcting term, then perform the full division.                     *
-   *   Put u = uhi + ulo, v = vhi + vlo. We have uhi = vhi * rp + tp,       *
-   *   thus u - v * rp = tp + ulo - rp*vlo, that we shall divide by v.      *
+   *   Put u = uhi + ulo, v = vhi + vlo. We have uhi = vhi * qp + rp,       *
+   *   thus u - qp * v = rp + ulo - qp * vlo, that we shall divide by v.    *
    *                                                                        *
    **************************************************************************/
 
@@ -447,4 +444,3 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mp_rnd_t rnd_mode)
 
   MPFR_RET(inex); 
 }
-

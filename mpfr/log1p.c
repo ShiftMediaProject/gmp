@@ -1,6 +1,6 @@
 /* mpfr_log1p -- Compute log(1+x)
 
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -30,62 +30,57 @@ MA 02111-1307, USA. */
  */
 
 int
-mpfr_log1p (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode) 
+mpfr_log1p (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 {
   int comp, inexact = 0;
 
   if (MPFR_IS_NAN(x)) 
     {
       MPFR_SET_NAN(y); 
-      return 1; 
+      MPFR_RET_NAN;
     }
+
   MPFR_CLEAR_NAN(y);
 
   /* check for inf or -inf (result is not defined) */
   if (MPFR_IS_INF(x))
-    { 
-      if(MPFR_SIGN(x) > 0)
+    {
+      if (MPFR_SIGN(x) > 0)
         {
           MPFR_SET_INF(y);
-          
-          if (MPFR_SIGN(y) < 0) 
-            MPFR_CHANGE_SIGN(y);
-          
-          return 0;
+          MPFR_SET_POS(y);
+          MPFR_RET(0);
         }
       else
         {
           MPFR_SET_NAN(y);
-          return 1;
+          MPFR_RET_NAN;
         }
     }
 
   comp = mpfr_cmp_si(x,-1);
   /* x<-1 undefined */
-  if(comp < 0) 
-    {     
-      MPFR_SET_NAN(y); 
-      return 1;
+  if (comp < 0) 
+    {
+      MPFR_SET_NAN(y);
+      MPFR_RET_NAN;
     }
   /* x=0: log1p(-1)=-inf (division by zero) */
-  if(comp == 0)
+  if (comp == 0)
     {
-      DIVIDE_BY_ZERO; /* Exception GMP */
-      MPFR_SET_INF(y); 
-      if (MPFR_SIGN(y) > 0) 
-        MPFR_CHANGE_SIGN(y);
-      return 1;
+      MPFR_SET_INF(y);
+      MPFR_SET_POS(y);
+      MPFR_RET_NAN;
     }
 
   MPFR_CLEAR_INF(y);
 
-  if(!MPFR_NOTZERO(x))
+  if (MPFR_IS_ZERO(x))
     {
       MPFR_SET_ZERO(y);   /* log1p(+/- 0) = +/- 0 */
       MPFR_SET_SAME_SIGN(y, x);
-      return 0;
+      MPFR_RET(0);
     }
-
 
   /* General case */
   {

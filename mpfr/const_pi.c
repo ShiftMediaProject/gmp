@@ -97,7 +97,7 @@ mpfr_pi_machin3 (mpfr_ptr mylog, mp_rnd_t rnd_mode)
   mpfr_sub(result, result, tmp4, GMP_RNDD);
   mpfr_add(result, result, tmp5, GMP_RNDD);
   mpfr_add(result, result, tmp6, GMP_RNDD);
-  mpfr_mul_2exp(result, result, 2, GMP_RNDD);
+  mpfr_mul_2ui(result, result, 2, GMP_RNDD);
   mpfr_clear(tmp1);
   mpfr_clear(tmp2);
   mpfr_clear(tmp3);

@@ -43,23 +43,30 @@ mpfr_set_str_raw (mpfr_ptr x, char *str)
   xsize = 1 + (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
   alloc = (strlen(str)+1) * sizeof(char);
 
-  if (*str == '-') { negative = 1; str++; }
-  else if (*str == '+') str++;
+  if (*str == '-')
+    {
+      negative = 1;
+      str++;
+    }
+  else if (*str == '+')
+    str++;
   
+  if (*str == 'N')
+    {
+      MPFR_SET_NAN(x);
+      __mpfr_flags |= MPFR_FLAGS_NAN;
+      return;
+    }
+
   if (*str == 'I') 
     { 
+      MPFR_CLEAR_NAN(x);
       MPFR_SET_INF(x);
       if (MPFR_ISNEG(x) != negative)
 	MPFR_CHANGE_SIGN(x);
       return; 
     }
      
-  if (*str == 'N')
-    {
-      MPFR_SET_NAN(x);
-      return;
-    }
-
   MPFR_CLEAR_FLAGS(x);
  
   str0 = str2 = (char *) (*__gmp_allocate_func) (alloc);

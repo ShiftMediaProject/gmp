@@ -71,15 +71,15 @@ main (void)
 
   for (k = 1; k <= 100000; k++)
     {
-      pr = 1 + (rand()&255);
-      mpf_set_prec(z, pr);
-      mpf_random2(z, z->_mp_prec, 0);
-      mpfr_init2(x, pr);
-      mpfr_set_f(x, z, 0);
-      mpfr_clear(x);
+      pr = 2 + (rand()&255);
+      mpf_set_prec (z, pr);
+      mpf_random2 (z, z->_mp_prec, 0);
+      mpfr_init2 (x, pr);
+      mpfr_set_f (x, z, 0);
+      mpfr_clear (x);
     }
-  mpf_clear(y);
-  mpf_clear(z);
+  mpf_clear (y);
+  mpf_clear (z);
 
   return 0;
 }

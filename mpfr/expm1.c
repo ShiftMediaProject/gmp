@@ -1,6 +1,6 @@
 /* mpfr_expm1 -- Compute exp(x)-1
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -32,38 +32,36 @@ MA 02111-1307, USA. */
 int
 mpfr_expm1 (mpfr_ptr y, mpfr_srcptr x , mp_rnd_t rnd_mode) 
 {
-    
   int inexact = 0;
 
-  if (MPFR_IS_NAN(x)) 
+  if (MPFR_IS_NAN(x))
     {
-      MPFR_SET_NAN(y); 
-      return 1; 
+      MPFR_SET_NAN(y);
+      MPFR_RET_NAN;
     }
-  MPFR_CLEAR_NAN(y);
 
+  MPFR_CLEAR_NAN(y);
 
   /* check for inf or -inf (expm1(-inf)=-1) */
   if (MPFR_IS_INF(x))
     { 
-      if(MPFR_SIGN(x) > 0)
+      if (MPFR_SIGN(x) > 0)
         {
           MPFR_SET_INF(y);
-	  MPFR_SET_SAME_SIGN(y,x);    
+          MPFR_SET_POS(y);
           return 0;
         }
-      else  
-        return mpfr_set_ui(y,-1,rnd_mode);  
+      else
+        return mpfr_set_si(y, -1, rnd_mode);
     }
 
   MPFR_CLEAR_INF(y);
 
-
-  if(!MPFR_NOTZERO(x))
+  if(MPFR_IS_ZERO(x))
     {
       MPFR_SET_ZERO(y);   /* expm1(+/- 0) = +/- 0 */
       MPFR_SET_SAME_SIGN(y,x);
-      return 0;
+      MPFR_RET(0);
     }
 
   /* General case */

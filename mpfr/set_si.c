@@ -37,8 +37,7 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
   if (i == 0)
     {
       MPFR_SET_ZERO(x);
-      if (MPFR_SIGN(x) < 0)
-        MPFR_CHANGE_SIGN(x);
+      MPFR_SET_POS(x);
       MPFR_RET(0);
     }
 
@@ -75,7 +74,6 @@ mpfr_set_si (mpfr_ptr x, long i, mp_rnd_t rnd_mode)
         }
     }
 
-  /* warning: don't change the precision of x! */
   if ((i < 0) ^ (MPFR_SIGN(x) < 0))
     MPFR_CHANGE_SIGN(x);
 

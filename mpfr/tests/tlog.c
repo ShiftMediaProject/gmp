@@ -43,7 +43,7 @@ void special _PROTO((void));
 
 
 double
-drand_log ()
+drand_log (void)
 {
   double d; INT32 *i;
 
@@ -107,7 +107,7 @@ check3 (double d, unsigned long prec, mp_rnd_t rnd)
   mpfr_set_d(x, d, rnd);
   mpfr_log(y, x, rnd);
   mpfr_out_str(stdout, 10, 0, y, rnd); putchar('\n');
-  mpfr_print_raw(y); putchar('\n');
+  mpfr_print_binary(y); putchar('\n');
   mpfr_clear(x); mpfr_clear(y);
 }
 
@@ -155,7 +155,7 @@ slave (int N, int p)
 */
 
 void
-check_worst_cases ()
+check_worst_cases (void)
 { 
   check2(1.00089971802309629645, GMP_RNDD, 8.99313519443722736088e-04); 
   check2(1.00089971802309629645, GMP_RNDN, 8.99313519443722844508e-04);
@@ -239,7 +239,7 @@ check_worst_cases ()
 }
 
 void
-special ()
+special (void)
 {
   mpfr_t x, y;
 
@@ -352,7 +352,7 @@ main (int argc, char *argv[])
   check2(6.09969788341579732815e+00,GMP_RNDD,1.80823924264386204363e+00);
   }
 
-  test_generic (1, 100, 40);
+  test_generic (2, 100, 40);
 
   return 0;
 }

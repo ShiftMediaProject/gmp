@@ -36,6 +36,7 @@ main (void)
   double x, y;
   mpfr_t xx, yy;
   int i, c;
+  mp_prec_t p;
 
   mpfr_init (xx);
   mpfr_init (yy);
@@ -54,18 +55,30 @@ main (void)
   mpfr_set_prec (yy, 65);
   mpfr_set_str_raw(xx, "0.10011010101000110101010000000011001001001110001011101011111011101E623");
   mpfr_set_str_raw(yy, "0.10011010101000110101010000000011001001001110001011101011111011100E623");
-  if (mpfr_cmp2(xx,yy)!=64) { printf("Error (1) in mpfr_cmp\n"); exit(1); }
+  p = 0;
+  if (mpfr_cmp2(xx, yy, &p) <= 0 || p != 64)
+    {
+      printf("Error (1) in mpfr_cmp2\n");
+      exit(1);
+    }
   mpfr_set_str_raw(xx, "0.10100010001110110111000010001000010011111101000100011101000011100");
   mpfr_set_str_raw(yy, "0.10100010001110110111000010001000010011111101000100011101000011011");
-  if (mpfr_cmp2(xx,yy)!=64) { printf("Error (2) in mpfr_cmp\n"); exit(1); }
+  p = 0;
+  if (mpfr_cmp2(xx, yy, &p) <= 0 || p != 64)
+    {
+      printf("Error (2) in mpfr_cmp2\n");
+      exit(1);
+    }
 
   mpfr_set_prec (xx, 160); mpfr_set_prec (yy, 160);
   mpfr_set_str_raw (xx, "0.1E1");
   mpfr_set_str_raw (yy, "0.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000110001110100");
-  if (mpfr_cmp2 (xx, yy) != 144) {
-    printf("Error (3) in mpfr_cmp\n");
-    exit(1);
-  }
+  p = 0;
+  if (mpfr_cmp2 (xx, yy, &p) <= 0 || p != 144)
+    {
+      printf("Error (3) in mpfr_cmp2\n");
+      exit(1);
+    }
 
   mpfr_set_prec(xx, 53); mpfr_set_prec(yy, 200);
   mpfr_set_d(xx, 1.0, 0);

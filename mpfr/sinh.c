@@ -1,6 +1,6 @@
 /* mpfr_sinh -- hyperbolic sine
 
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -31,7 +31,7 @@ MA 02111-1307, USA. */
  */
 
 int
-mpfr_sinh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode) 
+mpfr_sinh (mpfr_ptr y, mpfr_srcptr xt, mp_rnd_t rnd_mode)
 {
     /****** Declaration ******/
     mpfr_t x;
@@ -41,7 +41,7 @@ mpfr_sinh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
     if (MPFR_IS_NAN(xt))
       {
         MPFR_SET_NAN(y); 
-        return 1;
+        MPFR_RET_NAN;
       }
     MPFR_CLEAR_NAN(y);
 
@@ -49,16 +49,16 @@ mpfr_sinh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
       { 
         MPFR_SET_INF(y);
         MPFR_SET_SAME_SIGN(y,xt);
-        return 0;
+        MPFR_RET(0);
       }
 
     MPFR_CLEAR_INF(y);
   
-    if(!MPFR_NOTZERO(xt))
+    if (MPFR_IS_ZERO(xt))
       {
         MPFR_SET_ZERO(y);   /* sinh(0) = 0 */
         MPFR_SET_SAME_SIGN(y,xt);
-        return(0);
+        MPFR_RET(0);
       }
 
     mpfr_init2(x,Nxt);
@@ -107,7 +107,7 @@ mpfr_sinh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
 	mpfr_exp(te,x,GMP_RNDD);         /* exp(x) */
 	mpfr_ui_div(ti,1,te,GMP_RNDU);   /* 1/exp(x) */
 	mpfr_sub(t,te,ti,GMP_RNDN);      /* exp(x) - 1/exp(x)*/
-	mpfr_div_2exp(t,t,1,GMP_RNDN);   /* 1/2(exp(x) - 1/exp(x))*/
+	mpfr_div_2ui(t,t,1,GMP_RNDN);    /* 1/2(exp(x) - 1/exp(x))*/
 
         /* calculation of the error*/
         d = MPFR_EXP(te)-MPFR_EXP(t)+2;

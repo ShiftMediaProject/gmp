@@ -70,7 +70,7 @@ test_generic (int p0, int p1, int N)
 		  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
 		  putchar ('\n');
 		  printf ("approx  ");
-		  mpfr_print_raw (y);
+		  mpfr_print_binary (y);
 		  putchar ('\n');
 		  exit (1);
 		}
@@ -87,9 +87,9 @@ test_generic (int p0, int p1, int N)
 		{
 		  fprintf (stderr, "Wrong inexact flag for rnd=%s: expected %d, got %d\n",
 			   mpfr_print_rnd_mode (rnd), compare, inexact);
-		  printf ("x="); mpfr_print_raw (x); putchar ('\n');
-		  printf ("y="); mpfr_print_raw (y); putchar ('\n');
-		  printf ("t="); mpfr_print_raw (t); putchar ('\n');
+		  printf ("x="); mpfr_print_binary (x); putchar ('\n');
+		  printf ("y="); mpfr_print_binary (y); putchar ('\n');
+		  printf ("t="); mpfr_print_binary (t); putchar ('\n');
 		  exit (1);
 		}
 	    }

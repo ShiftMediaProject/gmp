@@ -34,7 +34,7 @@ MA 02111-1307, USA. */
 int
 main (int argc, char *argv[])
 {
-  unsigned int prec, err, yprec, n, p0 = 1, p1 = 100, N = 100;
+  unsigned int prec, err, yprec, n, p0 = 2, p1 = 100, N = 100;
   mp_rnd_t rnd;
   mpfr_t x1, x2, y, z, t;
   int inexact, compare, compare2;
@@ -92,7 +92,7 @@ main (int argc, char *argv[])
 		  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
 		  putchar ('\n');
 		  printf ("   approximation was ");
-		  mpfr_print_raw (y);
+		  mpfr_print_binary (y);
 		  putchar ('\n');
 		  exit (1);
 		}
@@ -109,9 +109,9 @@ main (int argc, char *argv[])
               {
 		  fprintf (stderr, "Wrong inexact flag for rnd=%s: expected %d, got %d\n",
 			   mpfr_print_rnd_mode (rnd), compare, inexact);
-		  printf ("x1="); mpfr_print_raw (x1); putchar ('\n');
-		  printf ("x2="); mpfr_print_raw (x2); putchar ('\n');
-		  printf ("t="); mpfr_print_raw (t); putchar ('\n');
+		  printf ("x1="); mpfr_print_binary (x1); putchar ('\n');
+		  printf ("x2="); mpfr_print_binary (x2); putchar ('\n');
+		  printf ("t="); mpfr_print_binary (t); putchar ('\n');
 		  exit (1);
               }
 	    }

@@ -102,7 +102,7 @@ check_large (double d, int n, mp_rnd_t rnd)
   else printf("exp(%1.20e)=",d); 
   mpfr_out_str(stdout, 10, 0, y, rnd);
   putchar('\n');
-  printf(" ="); mpfr_print_raw(y); putchar('\n');
+  printf(" ="); mpfr_print_binary(y); putchar('\n');
   if (n==53) printf(" =%1.20e\n", mpfr_get_d(y));
 
   mpfr_clear(x); mpfr_clear(y);
@@ -124,7 +124,7 @@ check_worst_case (double X, double expx)
   mpfr_exp(x, x, GMP_RNDN);
   mpfr_set_d(x, X, GMP_RNDN);
   mpfr_exp(x, x, GMP_RNDU);
-  mpfr_add_one_ulp(y);
+  mpfr_add_one_ulp(y, GMP_RNDN);
   if (mpfr_cmp(x,y)) {
     fprintf(stderr, "exp(x) rounded towards +infinity is wrong\n"); exit(1);
   }
@@ -134,7 +134,7 @@ check_worst_case (double X, double expx)
 
 /* worst cases communicated by Jean-Michel Muller and Vincent Lefevre */
 int
-check_worst_cases ()
+check_worst_cases (void)
 {
   mpfr_t x; mpfr_t y;
 
@@ -178,23 +178,36 @@ compare_exp2_exp3 (int n)
 {
   mpfr_t x, y, z; int prec; mp_rnd_t rnd;
 
-  mpfr_init(x); mpfr_init(y); mpfr_init(z);
-  for (prec=20;prec<=n;prec++) {
-    mpfr_set_prec(x, prec); mpfr_set_prec(y, prec); mpfr_set_prec(z, prec);
-    mpfr_random(x);
-    rnd = rand() % 4;
-    mpfr_exp_2 (y, x, rnd);
-    mpfr_exp3 (z, x, rnd);
-    if (mpfr_cmp(y,z)) {
-      printf("mpfr_exp_2 and mpfr_exp3 disagree for rnd=%s and\nx=",
-	     mpfr_print_rnd_mode(rnd));
-      mpfr_print_raw(x); putchar('\n');
-      printf("mpfr_exp_2 gives  "); mpfr_print_raw(y); putchar('\n');
-      printf("mpfr_exp3 gives "); mpfr_print_raw(z); putchar('\n');
-      exit(1);
-    }
+  mpfr_init (x);
+  mpfr_init (y);
+  mpfr_init (z);
+  for (prec=20; prec<=n; prec++)
+    {
+      mpfr_set_prec (x, prec);
+      mpfr_set_prec (y, prec);
+      mpfr_set_prec (z, prec);
+      mpfr_random (x);
+      rnd = rand() % 4;
+      mpfr_exp_2 (y, x, rnd);
+      mpfr_exp3 (z, x, rnd);
+      if (mpfr_cmp (y,z))
+        {
+          printf ("mpfr_exp_2 and mpfr_exp3 disagree for rnd=%s and\nx=",
+                  mpfr_print_rnd_mode (rnd));
+          mpfr_print_binary (x);
+          putchar ('\n');
+          printf ("mpfr_exp_2 gives  ");
+          mpfr_print_binary (y);
+          putchar ('\n');
+          printf ("mpfr_exp3 gives ");
+          mpfr_print_binary (z);
+          putchar ('\n');
+          exit (1);
+        }
   }
-  mpfr_clear(x); mpfr_clear(y); mpfr_clear(z);
+  mpfr_clear (x);
+  mpfr_clear (y);
+  mpfr_clear (z);
 }
 
 #define TEST_FUNCTION mpfr_exp
@@ -207,7 +220,7 @@ main (int argc, char *argv[])
   int i, N, s=0, e, maxe=0; double d, lo, hi;
 #endif
 
-  test_generic (1, 100, 100);
+  test_generic (2, 100, 100);
 
   if (argc == 4)
     {

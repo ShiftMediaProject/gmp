@@ -50,53 +50,57 @@ check4(double d, mp_rnd_t rnd, int base, int prec)
 }
 
 void
-check_large ()
+check_large (void)
 {
   mpfr_t x; mp_exp_t e; char *s;
 
   mpfr_init(x);
 
-  mpfr_set_prec(x, 7);
-  mpfr_set_str_raw(x, "0.1010101E10");
-  s = mpfr_get_str(NULL, &e, 10, 2, x, GMP_RNDU);
-  free(s); 
+  mpfr_set_prec (x, 7);
+  mpfr_set_str_raw (x, "0.1010101E10");
+  s = mpfr_get_str (NULL, &e, 10, 2, x, GMP_RNDU);
+  free (s);
 
   /* checks rounding of negative numbers */
-  mpfr_set_d(x, -1.5, GMP_RNDN);
-  s = mpfr_get_str(NULL, &e, 10, 1, x, GMP_RNDD);
-  if (strcmp(s, "-2")) {
-    fprintf(stderr, "Error in mpfr_get_str for x=-1.5 and rnd=GMP_RNDD\n");
-    free(s); mpfr_clear(x); 
-    exit(1);
+  mpfr_set_prec (x, 7);
+  mpfr_set_d (x, -11.5, GMP_RNDN);
+  s = mpfr_get_str (NULL, &e, 10, 2, x, GMP_RNDD);
+  if (strcmp (s, "-12"))
+    {
+      fprintf (stderr, "Error in mpfr_get_str for x=-11.5 and rnd=GMP_RNDD\n");
+      free (s);
+      mpfr_clear (x);
+      exit (1);
   }
-  free(s); 
+  free (s);
 
-  s = mpfr_get_str(NULL, &e, 10, 1, x, GMP_RNDU);
-  if (strcmp(s, "-1")) {
-    fprintf(stderr, "Error in mpfr_get_str for x=-1.5 and rnd=GMP_RNDU\n");
-    free(s); 
-    mpfr_clear(x); 
-    exit(1);
-  }
-
-  free(s); 
+  s = mpfr_get_str (NULL, &e, 10, 2, x, GMP_RNDU);
+  if (strcmp (s, "-11"))
+    {
+      fprintf (stderr, "Error in mpfr_get_str for x=-11.5 and rnd=GMP_RNDU\n");
+      free (s);
+      mpfr_clear (x);
+      exit (1);
+    }
+  free (s);
 
   /* bug found by Jean-Pierre Merlet, produced error in mpfr_get_str */
-  mpfr_set_prec(x, 128);
-  mpfr_set_str_raw(x, "0.10111001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011010E3");
-  s = mpfr_get_str(NULL, &e, 10, 0, x, GMP_RNDU);
-  free(s); 
+  mpfr_set_prec (x, 128);
+  mpfr_set_str_raw (x, "0.10111001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011001100110011010E3");
+  s = mpfr_get_str (NULL, &e, 10, 0, x, GMP_RNDU);
+  free (s);
 
-  mpfr_set_prec(x, 381);
-  mpfr_set_str_raw(x, "0.111111111111111111111111111111111111111111111111111111111111111111101110110000100110011101101101001010111000101111000100100011110101010110101110100000010100001000110100000100011111001000010010000010001010111001011110000001110010111101100001111000101101100000010110000101100100000101010110010110001010100111001111100011100101100000100100111001100010010011110011011010110000001000010");
+  mpfr_set_prec (x, 381);
+  mpfr_set_str_raw (x, "0.111111111111111111111111111111111111111111111111111111111111111111101110110000100110011101101101001010111000101111000100100011110101010110101110100000010100001000110100000100011111001000010010000010001010111001011110000001110010111101100001111000101101100000010110000101100100000101010110010110001010100111001111100011100101100000100100111001100010010011110011011010110000001000010");
   s = mpfr_get_str (NULL, &e, 10, 0, x, GMP_RNDD);
-  if (e != 0) {
-    fprintf(stderr, "Error in mpfr_get_str for x=0.999999..., exponent is %d instead of 0\n", (int) e);
-    exit(1);
-  }
-  free(s);
+  if (e != 0)
+    {
+      fprintf (stderr, "Error in mpfr_get_str for x=0.999999..., exponent is %d instead of 0\n", (int) e);
+      exit (1);
+    }
+  free (s);
 
-  mpfr_clear(x);
+  mpfr_clear (x);
 }
 
 int
@@ -128,12 +132,16 @@ main (int argc, char *argv[])
 
   /* random tests */
   srand(getpid());
-  for (i=0;i<N;i++) {
-    do { d = drand(); } while (isnan(d));
-    r = rand()%4;
-    p = 2 + rand()%35;
-    check(d, r, p);
-  }
+  for (i=0;i<N;i++)
+    {
+      do
+        {
+          d = drand();
+        } while (isnan(d));
+      r = rand() % 4;
+      p = 2 + rand() % 35;
+      check (d, r, p);
+    }
 
   return 0;
 }

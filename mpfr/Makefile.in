@@ -13,7 +13,7 @@
 
 @SET_MAKE@
 
-# Copyright 2000, 2001 Free Software Foundation, Inc.
+# Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -150,9 +150,7 @@ INCLUDES = -I$(top_srcdir)
 info_TEXINFOS = mpfr.texi
 TEXINFO_TEX = ../texinfo.tex
 
-libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h exceptions.c save_expo.c extract.c add.c add1.c add_ui.c add_ulp.c agm.c clear.c cmp.c cmp_abs.c cmp_ui.c div_2exp.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c log2.c log.c mul_2exp.c mul.c mul_ui.c neg.c out_str.c pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c rnd_mode.c round.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_ui.c trunc.c ui_div.c ui_sub.c urandomb.c mpz_set_fr.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c euler.c cos.c sin.c tan.c fma.c hypot.c log1p.c expm1.c log_base_2.c ui_pow.c ui_pow_ui.c log_base_10.c minmax.c dim.c copysign.c gmp_op.c init2.c \
-  floor.c ceil.c
-
+libmpfr_a_SOURCES = cputime.h mpfr.h mpfr-impl.h exceptions.c save_expo.c extract.c i_ceil_exp2.c i_ceil_log2.c i_floor_log2.c add.c add1.c add_one_ulp.c add_ui.c agm.c clear.c cmp.c cmp_abs.c cmp_ui.c div_2exp.c div_2si.c div_2ui.c div.c div_ui.c dump.c eq.c exp2.c exp3.c exp.c get_str.c init.c inp_str.c isinteger.c isinf.c isnan.c isnum.c const_log2.c log.c mul_2exp.c mul_2si.c mul_2ui.c mul.c mul_ui.c neg.c out_str.c const_pi.c pow.c pow_si.c pow_ui.c print_raw.c print_rnd_mode.c random2.c random.c reldiff.c rnd_mode.c round_prec.c set.c set_d.c set_dfl_prec.c set_rnd.c set_f.c set_prc_raw.c set_prec.c set_q.c set_si.c set_str.c set_str_raw.c set_ui.c set_z.c sqrt.c sqrt_ui.c sub.c sub1.c sub_one_ulp.c sub_ui.c rint.c ui_div.c ui_sub.c urandomb.c mpz_set_fr.c swap.c  factorial.c cosh.c sinh.c tanh.c acosh.c asinh.c atanh.c atan.c cmp2.c exp_2.c asin.c const_euler.c cos.c sin.c tan.c fma.c hypot.c log1p.c expm1.c log2.c log10.c ui_pow.c ui_pow_ui.c minmax.c dim.c copysign.c gmp_op.c init2.c acos.c
 
 EXTRA_DIST = generic.c mpfr-test.h mpf2mpfr.h
 subdir = mpfr
@@ -164,39 +162,42 @@ LIBRARIES = $(lib_LIBRARIES)
 libmpfr_a_AR = $(AR) cru
 libmpfr_a_LIBADD =
 am_libmpfr_a_OBJECTS = exceptions$U.$(OBJEXT) save_expo$U.$(OBJEXT) \
-	extract$U.$(OBJEXT) add$U.$(OBJEXT) add1$U.$(OBJEXT) \
-	add_ui$U.$(OBJEXT) add_ulp$U.$(OBJEXT) agm$U.$(OBJEXT) \
-	clear$U.$(OBJEXT) cmp$U.$(OBJEXT) cmp_abs$U.$(OBJEXT) \
-	cmp_ui$U.$(OBJEXT) div_2exp$U.$(OBJEXT) div$U.$(OBJEXT) \
-	div_ui$U.$(OBJEXT) dump$U.$(OBJEXT) eq$U.$(OBJEXT) \
-	exp2$U.$(OBJEXT) exp3$U.$(OBJEXT) exp$U.$(OBJEXT) \
-	get_str$U.$(OBJEXT) init$U.$(OBJEXT) inp_str$U.$(OBJEXT) \
-	isinteger$U.$(OBJEXT) isinf$U.$(OBJEXT) isnan$U.$(OBJEXT) \
-	isnum$U.$(OBJEXT) log2$U.$(OBJEXT) log$U.$(OBJEXT) \
-	mul_2exp$U.$(OBJEXT) mul$U.$(OBJEXT) mul_ui$U.$(OBJEXT) \
-	neg$U.$(OBJEXT) out_str$U.$(OBJEXT) pi$U.$(OBJEXT) \
+	extract$U.$(OBJEXT) i_ceil_exp2$U.$(OBJEXT) \
+	i_ceil_log2$U.$(OBJEXT) i_floor_log2$U.$(OBJEXT) \
+	add$U.$(OBJEXT) add1$U.$(OBJEXT) add_one_ulp$U.$(OBJEXT) \
+	add_ui$U.$(OBJEXT) agm$U.$(OBJEXT) clear$U.$(OBJEXT) \
+	cmp$U.$(OBJEXT) cmp_abs$U.$(OBJEXT) cmp_ui$U.$(OBJEXT) \
+	div_2exp$U.$(OBJEXT) div_2si$U.$(OBJEXT) div_2ui$U.$(OBJEXT) \
+	div$U.$(OBJEXT) div_ui$U.$(OBJEXT) dump$U.$(OBJEXT) \
+	eq$U.$(OBJEXT) exp2$U.$(OBJEXT) exp3$U.$(OBJEXT) \
+	exp$U.$(OBJEXT) get_str$U.$(OBJEXT) init$U.$(OBJEXT) \
+	inp_str$U.$(OBJEXT) isinteger$U.$(OBJEXT) isinf$U.$(OBJEXT) \
+	isnan$U.$(OBJEXT) isnum$U.$(OBJEXT) const_log2$U.$(OBJEXT) \
+	log$U.$(OBJEXT) mul_2exp$U.$(OBJEXT) mul_2si$U.$(OBJEXT) \
+	mul_2ui$U.$(OBJEXT) mul$U.$(OBJEXT) mul_ui$U.$(OBJEXT) \
+	neg$U.$(OBJEXT) out_str$U.$(OBJEXT) const_pi$U.$(OBJEXT) \
 	pow$U.$(OBJEXT) pow_si$U.$(OBJEXT) pow_ui$U.$(OBJEXT) \
 	print_raw$U.$(OBJEXT) print_rnd_mode$U.$(OBJEXT) \
 	random2$U.$(OBJEXT) random$U.$(OBJEXT) reldiff$U.$(OBJEXT) \
-	rnd_mode$U.$(OBJEXT) round$U.$(OBJEXT) set$U.$(OBJEXT) \
+	rnd_mode$U.$(OBJEXT) round_prec$U.$(OBJEXT) set$U.$(OBJEXT) \
 	set_d$U.$(OBJEXT) set_dfl_prec$U.$(OBJEXT) set_rnd$U.$(OBJEXT) \
 	set_f$U.$(OBJEXT) set_prc_raw$U.$(OBJEXT) set_prec$U.$(OBJEXT) \
 	set_q$U.$(OBJEXT) set_si$U.$(OBJEXT) set_str$U.$(OBJEXT) \
 	set_str_raw$U.$(OBJEXT) set_ui$U.$(OBJEXT) set_z$U.$(OBJEXT) \
 	sqrt$U.$(OBJEXT) sqrt_ui$U.$(OBJEXT) sub$U.$(OBJEXT) \
-	sub1$U.$(OBJEXT) sub_ui$U.$(OBJEXT) trunc$U.$(OBJEXT) \
-	ui_div$U.$(OBJEXT) ui_sub$U.$(OBJEXT) urandomb$U.$(OBJEXT) \
-	mpz_set_fr$U.$(OBJEXT) swap$U.$(OBJEXT) factorial$U.$(OBJEXT) \
-	cosh$U.$(OBJEXT) sinh$U.$(OBJEXT) tanh$U.$(OBJEXT) \
-	acosh$U.$(OBJEXT) asinh$U.$(OBJEXT) atanh$U.$(OBJEXT) \
-	atan$U.$(OBJEXT) cmp2$U.$(OBJEXT) exp_2$U.$(OBJEXT) \
-	asin$U.$(OBJEXT) euler$U.$(OBJEXT) cos$U.$(OBJEXT) \
-	sin$U.$(OBJEXT) tan$U.$(OBJEXT) fma$U.$(OBJEXT) \
+	sub1$U.$(OBJEXT) sub_one_ulp$U.$(OBJEXT) sub_ui$U.$(OBJEXT) \
+	rint$U.$(OBJEXT) ui_div$U.$(OBJEXT) ui_sub$U.$(OBJEXT) \
+	urandomb$U.$(OBJEXT) mpz_set_fr$U.$(OBJEXT) swap$U.$(OBJEXT) \
+	factorial$U.$(OBJEXT) cosh$U.$(OBJEXT) sinh$U.$(OBJEXT) \
+	tanh$U.$(OBJEXT) acosh$U.$(OBJEXT) asinh$U.$(OBJEXT) \
+	atanh$U.$(OBJEXT) atan$U.$(OBJEXT) cmp2$U.$(OBJEXT) \
+	exp_2$U.$(OBJEXT) asin$U.$(OBJEXT) const_euler$U.$(OBJEXT) \
+	cos$U.$(OBJEXT) sin$U.$(OBJEXT) tan$U.$(OBJEXT) fma$U.$(OBJEXT) \
 	hypot$U.$(OBJEXT) log1p$U.$(OBJEXT) expm1$U.$(OBJEXT) \
-	log_base_2$U.$(OBJEXT) ui_pow$U.$(OBJEXT) ui_pow_ui$U.$(OBJEXT) \
-	log_base_10$U.$(OBJEXT) minmax$U.$(OBJEXT) dim$U.$(OBJEXT) \
+	log2$U.$(OBJEXT) log10$U.$(OBJEXT) ui_pow$U.$(OBJEXT) \
+	ui_pow_ui$U.$(OBJEXT) minmax$U.$(OBJEXT) dim$U.$(OBJEXT) \
 	copysign$U.$(OBJEXT) gmp_op$U.$(OBJEXT) init2$U.$(OBJEXT) \
-	floor$U.$(OBJEXT) ceil$U.$(OBJEXT)
+	acos$U.$(OBJEXT)
 libmpfr_a_OBJECTS = $(am_libmpfr_a_OBJECTS)
 
 DEFS = @DEFS@
@@ -301,16 +302,18 @@ mostlyclean-kr:
 
 .c.lo:
 	$(LTCOMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+acos_.c: acos.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/acos.c; then echo $(srcdir)/acos.c; else echo acos.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > acos_.c || rm -f acos_.c
 acosh_.c: acosh.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/acosh.c; then echo $(srcdir)/acosh.c; else echo acosh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > acosh_.c || rm -f acosh_.c
 add_.c: add.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add.c; then echo $(srcdir)/add.c; else echo add.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_.c || rm -f add_.c
 add1_.c: add1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add1.c; then echo $(srcdir)/add1.c; else echo add1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add1_.c || rm -f add1_.c
+add_one_ulp_.c: add_one_ulp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add_one_ulp.c; then echo $(srcdir)/add_one_ulp.c; else echo add_one_ulp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_one_ulp_.c || rm -f add_one_ulp_.c
 add_ui_.c: add_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add_ui.c; then echo $(srcdir)/add_ui.c; else echo add_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_ui_.c || rm -f add_ui_.c
-add_ulp_.c: add_ulp.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/add_ulp.c; then echo $(srcdir)/add_ulp.c; else echo add_ulp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > add_ulp_.c || rm -f add_ulp_.c
 agm_.c: agm.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/agm.c; then echo $(srcdir)/agm.c; else echo agm.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > agm_.c || rm -f agm_.c
 asin_.c: asin.c $(ANSI2KNR)
@@ -321,8 +324,6 @@ atan_.c: atan.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/atan.c; then echo $(srcdir)/atan.c; else echo atan.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > atan_.c || rm -f atan_.c
 atanh_.c: atanh.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/atanh.c; then echo $(srcdir)/atanh.c; else echo atanh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > atanh_.c || rm -f atanh_.c
-ceil_.c: ceil.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ceil.c; then echo $(srcdir)/ceil.c; else echo ceil.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ceil_.c || rm -f ceil_.c
 clear_.c: clear.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/clear.c; then echo $(srcdir)/clear.c; else echo clear.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > clear_.c || rm -f clear_.c
 cmp_.c: cmp.c $(ANSI2KNR)
@@ -333,6 +334,12 @@ cmp_abs_.c: cmp_abs.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_abs.c; then echo $(srcdir)/cmp_abs.c; else echo cmp_abs.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_abs_.c || rm -f cmp_abs_.c
 cmp_ui_.c: cmp_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/cmp_ui.c; then echo $(srcdir)/cmp_ui.c; else echo cmp_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > cmp_ui_.c || rm -f cmp_ui_.c
+const_euler_.c: const_euler.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/const_euler.c; then echo $(srcdir)/const_euler.c; else echo const_euler.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > const_euler_.c || rm -f const_euler_.c
+const_log2_.c: const_log2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/const_log2.c; then echo $(srcdir)/const_log2.c; else echo const_log2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > const_log2_.c || rm -f const_log2_.c
+const_pi_.c: const_pi.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/const_pi.c; then echo $(srcdir)/const_pi.c; else echo const_pi.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > const_pi_.c || rm -f const_pi_.c
 copysign_.c: copysign.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/copysign.c; then echo $(srcdir)/copysign.c; else echo copysign.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > copysign_.c || rm -f copysign_.c
 cos_.c: cos.c $(ANSI2KNR)
@@ -345,14 +352,16 @@ div_.c: div.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/div.c; then echo $(srcdir)/div.c; else echo div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > div_.c || rm -f div_.c
 div_2exp_.c: div_2exp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/div_2exp.c; then echo $(srcdir)/div_2exp.c; else echo div_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > div_2exp_.c || rm -f div_2exp_.c
+div_2si_.c: div_2si.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/div_2si.c; then echo $(srcdir)/div_2si.c; else echo div_2si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > div_2si_.c || rm -f div_2si_.c
+div_2ui_.c: div_2ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/div_2ui.c; then echo $(srcdir)/div_2ui.c; else echo div_2ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > div_2ui_.c || rm -f div_2ui_.c
 div_ui_.c: div_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/div_ui.c; then echo $(srcdir)/div_ui.c; else echo div_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > div_ui_.c || rm -f div_ui_.c
 dump_.c: dump.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/dump.c; then echo $(srcdir)/dump.c; else echo dump.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > dump_.c || rm -f dump_.c
 eq_.c: eq.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/eq.c; then echo $(srcdir)/eq.c; else echo eq.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > eq_.c || rm -f eq_.c
-euler_.c: euler.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/euler.c; then echo $(srcdir)/euler.c; else echo euler.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > euler_.c || rm -f euler_.c
 exceptions_.c: exceptions.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/exceptions.c; then echo $(srcdir)/exceptions.c; else echo exceptions.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > exceptions_.c || rm -f exceptions_.c
 exp_.c: exp.c $(ANSI2KNR)
@@ -369,8 +378,6 @@ extract_.c: extract.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/extract.c; then echo $(srcdir)/extract.c; else echo extract.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > extract_.c || rm -f extract_.c
 factorial_.c: factorial.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/factorial.c; then echo $(srcdir)/factorial.c; else echo factorial.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > factorial_.c || rm -f factorial_.c
-floor_.c: floor.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/floor.c; then echo $(srcdir)/floor.c; else echo floor.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > floor_.c || rm -f floor_.c
 fma_.c: fma.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/fma.c; then echo $(srcdir)/fma.c; else echo fma.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > fma_.c || rm -f fma_.c
 get_str_.c: get_str.c $(ANSI2KNR)
@@ -379,6 +386,12 @@ gmp_op_.c: gmp_op.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gmp_op.c; then echo $(srcdir)/gmp_op.c; else echo gmp_op.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > gmp_op_.c || rm -f gmp_op_.c
 hypot_.c: hypot.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/hypot.c; then echo $(srcdir)/hypot.c; else echo hypot.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > hypot_.c || rm -f hypot_.c
+i_ceil_exp2_.c: i_ceil_exp2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/i_ceil_exp2.c; then echo $(srcdir)/i_ceil_exp2.c; else echo i_ceil_exp2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > i_ceil_exp2_.c || rm -f i_ceil_exp2_.c
+i_ceil_log2_.c: i_ceil_log2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/i_ceil_log2.c; then echo $(srcdir)/i_ceil_log2.c; else echo i_ceil_log2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > i_ceil_log2_.c || rm -f i_ceil_log2_.c
+i_floor_log2_.c: i_floor_log2.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/i_floor_log2.c; then echo $(srcdir)/i_floor_log2.c; else echo i_floor_log2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > i_floor_log2_.c || rm -f i_floor_log2_.c
 init_.c: init.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/init.c; then echo $(srcdir)/init.c; else echo init.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > init_.c || rm -f init_.c
 init2_.c: init2.c $(ANSI2KNR)
@@ -395,14 +408,12 @@ isnum_.c: isnum.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/isnum.c; then echo $(srcdir)/isnum.c; else echo isnum.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > isnum_.c || rm -f isnum_.c
 log_.c: log.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/log.c; then echo $(srcdir)/log.c; else echo log.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > log_.c || rm -f log_.c
+log10_.c: log10.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/log10.c; then echo $(srcdir)/log10.c; else echo log10.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > log10_.c || rm -f log10_.c
 log1p_.c: log1p.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/log1p.c; then echo $(srcdir)/log1p.c; else echo log1p.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > log1p_.c || rm -f log1p_.c
 log2_.c: log2.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/log2.c; then echo $(srcdir)/log2.c; else echo log2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > log2_.c || rm -f log2_.c
-log_base_10_.c: log_base_10.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/log_base_10.c; then echo $(srcdir)/log_base_10.c; else echo log_base_10.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > log_base_10_.c || rm -f log_base_10_.c
-log_base_2_.c: log_base_2.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/log_base_2.c; then echo $(srcdir)/log_base_2.c; else echo log_base_2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > log_base_2_.c || rm -f log_base_2_.c
 minmax_.c: minmax.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/minmax.c; then echo $(srcdir)/minmax.c; else echo minmax.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > minmax_.c || rm -f minmax_.c
 mpz_set_fr_.c: mpz_set_fr.c $(ANSI2KNR)
@@ -411,14 +422,16 @@ mul_.c: mul.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul.c; then echo $(srcdir)/mul.c; else echo mul.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_.c || rm -f mul_.c
 mul_2exp_.c: mul_2exp.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_2exp.c; then echo $(srcdir)/mul_2exp.c; else echo mul_2exp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_2exp_.c || rm -f mul_2exp_.c
+mul_2si_.c: mul_2si.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_2si.c; then echo $(srcdir)/mul_2si.c; else echo mul_2si.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_2si_.c || rm -f mul_2si_.c
+mul_2ui_.c: mul_2ui.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_2ui.c; then echo $(srcdir)/mul_2ui.c; else echo mul_2ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_2ui_.c || rm -f mul_2ui_.c
 mul_ui_.c: mul_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/mul_ui.c; then echo $(srcdir)/mul_ui.c; else echo mul_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > mul_ui_.c || rm -f mul_ui_.c
 neg_.c: neg.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/neg.c; then echo $(srcdir)/neg.c; else echo neg.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > neg_.c || rm -f neg_.c
 out_str_.c: out_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/out_str.c; then echo $(srcdir)/out_str.c; else echo out_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > out_str_.c || rm -f out_str_.c
-pi_.c: pi.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pi.c; then echo $(srcdir)/pi.c; else echo pi.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pi_.c || rm -f pi_.c
 pow_.c: pow.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/pow.c; then echo $(srcdir)/pow.c; else echo pow.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > pow_.c || rm -f pow_.c
 pow_si_.c: pow_si.c $(ANSI2KNR)
@@ -435,10 +448,12 @@ random2_.c: random2.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/random2.c; then echo $(srcdir)/random2.c; else echo random2.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > random2_.c || rm -f random2_.c
 reldiff_.c: reldiff.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/reldiff.c; then echo $(srcdir)/reldiff.c; else echo reldiff.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > reldiff_.c || rm -f reldiff_.c
+rint_.c: rint.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rint.c; then echo $(srcdir)/rint.c; else echo rint.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rint_.c || rm -f rint_.c
 rnd_mode_.c: rnd_mode.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/rnd_mode.c; then echo $(srcdir)/rnd_mode.c; else echo rnd_mode.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > rnd_mode_.c || rm -f rnd_mode_.c
-round_.c: round.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/round.c; then echo $(srcdir)/round.c; else echo round.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > round_.c || rm -f round_.c
+round_prec_.c: round_prec.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/round_prec.c; then echo $(srcdir)/round_prec.c; else echo round_prec.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > round_prec_.c || rm -f round_prec_.c
 save_expo_.c: save_expo.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/save_expo.c; then echo $(srcdir)/save_expo.c; else echo save_expo.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > save_expo_.c || rm -f save_expo_.c
 set_.c: set.c $(ANSI2KNR)
@@ -479,6 +494,8 @@ sub_.c: sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub.c; then echo $(srcdir)/sub.c; else echo sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_.c || rm -f sub_.c
 sub1_.c: sub1.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub1.c; then echo $(srcdir)/sub1.c; else echo sub1.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub1_.c || rm -f sub1_.c
+sub_one_ulp_.c: sub_one_ulp.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub_one_ulp.c; then echo $(srcdir)/sub_one_ulp.c; else echo sub_one_ulp.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_one_ulp_.c || rm -f sub_one_ulp_.c
 sub_ui_.c: sub_ui.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/sub_ui.c; then echo $(srcdir)/sub_ui.c; else echo sub_ui.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > sub_ui_.c || rm -f sub_ui_.c
 swap_.c: swap.c $(ANSI2KNR)
@@ -487,8 +504,6 @@ tan_.c: tan.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tan.c; then echo $(srcdir)/tan.c; else echo tan.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tan_.c || rm -f tan_.c
 tanh_.c: tanh.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/tanh.c; then echo $(srcdir)/tanh.c; else echo tanh.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > tanh_.c || rm -f tanh_.c
-trunc_.c: trunc.c $(ANSI2KNR)
-	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/trunc.c; then echo $(srcdir)/trunc.c; else echo trunc.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > trunc_.c || rm -f trunc_.c
 ui_div_.c: ui_div.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ui_div.c; then echo $(srcdir)/ui_div.c; else echo ui_div.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ui_div_.c || rm -f ui_div_.c
 ui_pow_.c: ui_pow.c $(ANSI2KNR)
@@ -499,50 +514,54 @@ ui_sub_.c: ui_sub.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/ui_sub.c; then echo $(srcdir)/ui_sub.c; else echo ui_sub.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > ui_sub_.c || rm -f ui_sub_.c
 urandomb_.c: urandomb.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/urandomb.c; then echo $(srcdir)/urandomb.c; else echo urandomb.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > urandomb_.c || rm -f urandomb_.c
-acosh_.$(OBJEXT) acosh_.lo add_.$(OBJEXT) add_.lo add1_.$(OBJEXT) \
-add1_.lo add_ui_.$(OBJEXT) add_ui_.lo add_ulp_.$(OBJEXT) add_ulp_.lo \
-agm_.$(OBJEXT) agm_.lo asin_.$(OBJEXT) asin_.lo asinh_.$(OBJEXT) \
-asinh_.lo atan_.$(OBJEXT) atan_.lo atanh_.$(OBJEXT) atanh_.lo \
-ceil_.$(OBJEXT) ceil_.lo clear_.$(OBJEXT) clear_.lo cmp_.$(OBJEXT) \
+acos_.$(OBJEXT) acos_.lo acosh_.$(OBJEXT) acosh_.lo add_.$(OBJEXT) \
+add_.lo add1_.$(OBJEXT) add1_.lo add_one_ulp_.$(OBJEXT) add_one_ulp_.lo \
+add_ui_.$(OBJEXT) add_ui_.lo agm_.$(OBJEXT) agm_.lo asin_.$(OBJEXT) \
+asin_.lo asinh_.$(OBJEXT) asinh_.lo atan_.$(OBJEXT) atan_.lo \
+atanh_.$(OBJEXT) atanh_.lo clear_.$(OBJEXT) clear_.lo cmp_.$(OBJEXT) \
 cmp_.lo cmp2_.$(OBJEXT) cmp2_.lo cmp_abs_.$(OBJEXT) cmp_abs_.lo \
-cmp_ui_.$(OBJEXT) cmp_ui_.lo copysign_.$(OBJEXT) copysign_.lo \
-cos_.$(OBJEXT) cos_.lo cosh_.$(OBJEXT) cosh_.lo dim_.$(OBJEXT) dim_.lo \
-div_.$(OBJEXT) div_.lo div_2exp_.$(OBJEXT) div_2exp_.lo \
-div_ui_.$(OBJEXT) div_ui_.lo dump_.$(OBJEXT) dump_.lo eq_.$(OBJEXT) \
-eq_.lo euler_.$(OBJEXT) euler_.lo exceptions_.$(OBJEXT) exceptions_.lo \
-exp_.$(OBJEXT) exp_.lo exp2_.$(OBJEXT) exp2_.lo exp3_.$(OBJEXT) \
-exp3_.lo exp_2_.$(OBJEXT) exp_2_.lo expm1_.$(OBJEXT) expm1_.lo \
-extract_.$(OBJEXT) extract_.lo factorial_.$(OBJEXT) factorial_.lo \
-floor_.$(OBJEXT) floor_.lo fma_.$(OBJEXT) fma_.lo get_str_.$(OBJEXT) \
-get_str_.lo gmp_op_.$(OBJEXT) gmp_op_.lo hypot_.$(OBJEXT) hypot_.lo \
+cmp_ui_.$(OBJEXT) cmp_ui_.lo const_euler_.$(OBJEXT) const_euler_.lo \
+const_log2_.$(OBJEXT) const_log2_.lo const_pi_.$(OBJEXT) const_pi_.lo \
+copysign_.$(OBJEXT) copysign_.lo cos_.$(OBJEXT) cos_.lo cosh_.$(OBJEXT) \
+cosh_.lo dim_.$(OBJEXT) dim_.lo div_.$(OBJEXT) div_.lo \
+div_2exp_.$(OBJEXT) div_2exp_.lo div_2si_.$(OBJEXT) div_2si_.lo \
+div_2ui_.$(OBJEXT) div_2ui_.lo div_ui_.$(OBJEXT) div_ui_.lo \
+dump_.$(OBJEXT) dump_.lo eq_.$(OBJEXT) eq_.lo exceptions_.$(OBJEXT) \
+exceptions_.lo exp_.$(OBJEXT) exp_.lo exp2_.$(OBJEXT) exp2_.lo \
+exp3_.$(OBJEXT) exp3_.lo exp_2_.$(OBJEXT) exp_2_.lo expm1_.$(OBJEXT) \
+expm1_.lo extract_.$(OBJEXT) extract_.lo factorial_.$(OBJEXT) \
+factorial_.lo fma_.$(OBJEXT) fma_.lo get_str_.$(OBJEXT) get_str_.lo \
+gmp_op_.$(OBJEXT) gmp_op_.lo hypot_.$(OBJEXT) hypot_.lo \
+i_ceil_exp2_.$(OBJEXT) i_ceil_exp2_.lo i_ceil_log2_.$(OBJEXT) \
+i_ceil_log2_.lo i_floor_log2_.$(OBJEXT) i_floor_log2_.lo \
 init_.$(OBJEXT) init_.lo init2_.$(OBJEXT) init2_.lo inp_str_.$(OBJEXT) \
 inp_str_.lo isinf_.$(OBJEXT) isinf_.lo isinteger_.$(OBJEXT) \
 isinteger_.lo isnan_.$(OBJEXT) isnan_.lo isnum_.$(OBJEXT) isnum_.lo \
-log_.$(OBJEXT) log_.lo log1p_.$(OBJEXT) log1p_.lo log2_.$(OBJEXT) \
-log2_.lo log_base_10_.$(OBJEXT) log_base_10_.lo log_base_2_.$(OBJEXT) \
-log_base_2_.lo minmax_.$(OBJEXT) minmax_.lo mpz_set_fr_.$(OBJEXT) \
-mpz_set_fr_.lo mul_.$(OBJEXT) mul_.lo mul_2exp_.$(OBJEXT) mul_2exp_.lo \
-mul_ui_.$(OBJEXT) mul_ui_.lo neg_.$(OBJEXT) neg_.lo out_str_.$(OBJEXT) \
-out_str_.lo pi_.$(OBJEXT) pi_.lo pow_.$(OBJEXT) pow_.lo \
-pow_si_.$(OBJEXT) pow_si_.lo pow_ui_.$(OBJEXT) pow_ui_.lo \
+log_.$(OBJEXT) log_.lo log10_.$(OBJEXT) log10_.lo log1p_.$(OBJEXT) \
+log1p_.lo log2_.$(OBJEXT) log2_.lo minmax_.$(OBJEXT) minmax_.lo \
+mpz_set_fr_.$(OBJEXT) mpz_set_fr_.lo mul_.$(OBJEXT) mul_.lo \
+mul_2exp_.$(OBJEXT) mul_2exp_.lo mul_2si_.$(OBJEXT) mul_2si_.lo \
+mul_2ui_.$(OBJEXT) mul_2ui_.lo mul_ui_.$(OBJEXT) mul_ui_.lo \
+neg_.$(OBJEXT) neg_.lo out_str_.$(OBJEXT) out_str_.lo pow_.$(OBJEXT) \
+pow_.lo pow_si_.$(OBJEXT) pow_si_.lo pow_ui_.$(OBJEXT) pow_ui_.lo \
 print_raw_.$(OBJEXT) print_raw_.lo print_rnd_mode_.$(OBJEXT) \
 print_rnd_mode_.lo random_.$(OBJEXT) random_.lo random2_.$(OBJEXT) \
-random2_.lo reldiff_.$(OBJEXT) reldiff_.lo rnd_mode_.$(OBJEXT) \
-rnd_mode_.lo round_.$(OBJEXT) round_.lo save_expo_.$(OBJEXT) \
-save_expo_.lo set_.$(OBJEXT) set_.lo set_d_.$(OBJEXT) set_d_.lo \
-set_dfl_prec_.$(OBJEXT) set_dfl_prec_.lo set_f_.$(OBJEXT) set_f_.lo \
-set_prc_raw_.$(OBJEXT) set_prc_raw_.lo set_prec_.$(OBJEXT) set_prec_.lo \
-set_q_.$(OBJEXT) set_q_.lo set_rnd_.$(OBJEXT) set_rnd_.lo \
-set_si_.$(OBJEXT) set_si_.lo set_str_.$(OBJEXT) set_str_.lo \
-set_str_raw_.$(OBJEXT) set_str_raw_.lo set_ui_.$(OBJEXT) set_ui_.lo \
-set_z_.$(OBJEXT) set_z_.lo sin_.$(OBJEXT) sin_.lo sinh_.$(OBJEXT) \
-sinh_.lo sqrt_.$(OBJEXT) sqrt_.lo sqrt_ui_.$(OBJEXT) sqrt_ui_.lo \
-sub_.$(OBJEXT) sub_.lo sub1_.$(OBJEXT) sub1_.lo sub_ui_.$(OBJEXT) \
+random2_.lo reldiff_.$(OBJEXT) reldiff_.lo rint_.$(OBJEXT) rint_.lo \
+rnd_mode_.$(OBJEXT) rnd_mode_.lo round_prec_.$(OBJEXT) round_prec_.lo \
+save_expo_.$(OBJEXT) save_expo_.lo set_.$(OBJEXT) set_.lo \
+set_d_.$(OBJEXT) set_d_.lo set_dfl_prec_.$(OBJEXT) set_dfl_prec_.lo \
+set_f_.$(OBJEXT) set_f_.lo set_prc_raw_.$(OBJEXT) set_prc_raw_.lo \
+set_prec_.$(OBJEXT) set_prec_.lo set_q_.$(OBJEXT) set_q_.lo \
+set_rnd_.$(OBJEXT) set_rnd_.lo set_si_.$(OBJEXT) set_si_.lo \
+set_str_.$(OBJEXT) set_str_.lo set_str_raw_.$(OBJEXT) set_str_raw_.lo \
+set_ui_.$(OBJEXT) set_ui_.lo set_z_.$(OBJEXT) set_z_.lo sin_.$(OBJEXT) \
+sin_.lo sinh_.$(OBJEXT) sinh_.lo sqrt_.$(OBJEXT) sqrt_.lo \
+sqrt_ui_.$(OBJEXT) sqrt_ui_.lo sub_.$(OBJEXT) sub_.lo sub1_.$(OBJEXT) \
+sub1_.lo sub_one_ulp_.$(OBJEXT) sub_one_ulp_.lo sub_ui_.$(OBJEXT) \
 sub_ui_.lo swap_.$(OBJEXT) swap_.lo tan_.$(OBJEXT) tan_.lo \
-tanh_.$(OBJEXT) tanh_.lo trunc_.$(OBJEXT) trunc_.lo ui_div_.$(OBJEXT) \
-ui_div_.lo ui_pow_.$(OBJEXT) ui_pow_.lo ui_pow_ui_.$(OBJEXT) \
-ui_pow_ui_.lo ui_sub_.$(OBJEXT) ui_sub_.lo urandomb_.$(OBJEXT) \
-urandomb_.lo : $(ANSI2KNR)
+tanh_.$(OBJEXT) tanh_.lo ui_div_.$(OBJEXT) ui_div_.lo ui_pow_.$(OBJEXT) \
+ui_pow_.lo ui_pow_ui_.$(OBJEXT) ui_pow_ui_.lo ui_sub_.$(OBJEXT) \
+ui_sub_.lo urandomb_.$(OBJEXT) urandomb_.lo : $(ANSI2KNR)
 
 mpfr.info: mpfr.texi
 mpfr.dvi: mpfr.texi

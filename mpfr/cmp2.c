@@ -25,72 +25,124 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-/* returns the number of cancelled bits when one subtracts abs(c) from abs(b). 
-   Assumes |b| >= |c|, which implies MPFR_EXP(b)>=MPFR_EXP(c).
-   if |b| = |c|, returns prec(b).
+/* Returns the number of canceled bits when one subtracts |c| from |b|
+   if |b| != |c|, and the sign.
 
    Assumes neither of b or c is NaN or +/- infinity.
 
-   In other terms mpfr_cmp2 (b, c) returns EXP(b) - EXP(b-c).
+   In other terms, if |b| != |c|, mpfr_cmp2 (b, c) returns
+   EXP(max(|b|,|c|)) - EXP(|b| - |c|).
 */
-mp_prec_t
-mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c)
+
+int
+mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c, mp_prec_t *cancel)
 {
   mp_limb_t *bp, *cp, bb, cc = 0, lastc = 0, dif, high_dif = 0;
   mp_size_t bn, cn;
   mp_exp_unsigned_t diff_exp;
   mp_prec_t res = 0;
+  int sign;
 
   MPFR_ASSERTN(MPFR_IS_FP(b));
   MPFR_ASSERTN(MPFR_IS_FP(c));
 
-  if (MPFR_IS_ZERO(c))
+  /* Optimized case x - x */
+  if (b == c)
     return 0;
 
-  MPFR_ASSERTN(MPFR_NOTZERO(b));
-
-  bp = MPFR_MANT(b);
-  cp = MPFR_MANT(c);
-
-  bn = (MPFR_PREC(b) - 1) / BITS_PER_MP_LIMB;
-  cn = (MPFR_PREC(c) - 1) / BITS_PER_MP_LIMB;
-
-  MPFR_ASSERTN(MPFR_EXP(b) >= MPFR_EXP(c));
-  diff_exp = (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c);
-  
-  if (diff_exp == 0) /* otherwise the shifted most significant limb of c
-			cannot match bp[bn] */
+  if (MPFR_IS_ZERO(b))
     {
-      while (bn>=0 && cn>=0 && bp[bn] == cp[cn])
-	{
-	  bn--;
-	  cn--;
-	  res += BITS_PER_MP_LIMB;
-	}
+      if (MPFR_IS_ZERO(c))
+        return 0;
 
-      if (bn < 0) /* b = c */
-	return MPFR_PREC(b);
+      *cancel = 0;
+      return -1;
+    }
 
-      if (cn < 0) /* c discards exactly the upper part of b */
-	{
-          unsigned int z;
+  if (MPFR_IS_ZERO(c))
+    {
+      *cancel = 0;
+      return 1;
+    }
 
-	  while (bn>=0 && bp[bn]==0)
-	    {
-	      bn--;
-	      res += BITS_PER_MP_LIMB;
-	    }
+  if (MPFR_EXP(b) >= MPFR_EXP(c))
+    {
+      sign = 1;
+      diff_exp = (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c);
 
-	  if (bn < 0) /* b = c */
-	    return MPFR_PREC(b);
+      bp = MPFR_MANT(b);
+      cp = MPFR_MANT(c);
 
-	  count_leading_zeros(z, bp[bn]); /* bp[bn] <> 0 */
-	  return res + z;
-	}
+      bn = (MPFR_PREC(b) - 1) / BITS_PER_MP_LIMB;
+      cn = (MPFR_PREC(c) - 1) / BITS_PER_MP_LIMB;
+
+      if (diff_exp == 0)
+        {
+          while (bn >= 0 && cn >= 0 && bp[bn] == cp[cn])
+            {
+              bn--;
+              cn--;
+              res += BITS_PER_MP_LIMB;
+            }
+
+          if (bn < 0)
+            {
+              if (cn < 0) /* b = c */
+                return 0;
+
+              bp = cp;
+              bn = cn;
+              cn = -1;
+              sign = -1;
+            }
+
+          if (cn < 0) /* c discards exactly the upper part of b */
+            {
+              unsigned int z;
+
+              MPFR_ASSERTN(bn >= 0);
+
+              while (bp[bn] == 0)
+                {
+                  if (--bn < 0) /* b = c */
+                    return 0;
+                  res += BITS_PER_MP_LIMB;
+                }
+
+              count_leading_zeros(z, bp[bn]); /* bp[bn] <> 0 */
+              *cancel = res + z;
+              return sign;
+            }
+
+          MPFR_ASSERTN(bn >= 0);
+          MPFR_ASSERTN(cn >= 0);
+          MPFR_ASSERTN(bp[bn] != cp[cn]);
+          if (bp[bn] < cp[cn])
+            {
+              mp_limb_t *tp;
+              mp_size_t tn;
+
+              tp = bp; bp = cp; cp = tp;
+              tn = bn; bn = cn; cn = tn;
+              sign = -1;
+            }
+        }
+    } /* MPFR_EXP(b) >= MPFR_EXP(c) */
+  else /* MPFR_EXP(b) < MPFR_EXP(c) */
+    {
+      sign = -1;
+      diff_exp = (mp_exp_unsigned_t) MPFR_EXP(c) - MPFR_EXP(b);
+
+      bp = MPFR_MANT(c);
+      cp = MPFR_MANT(b);
+
+      bn = (MPFR_PREC(c) - 1) / BITS_PER_MP_LIMB;
+      cn = (MPFR_PREC(b) - 1) / BITS_PER_MP_LIMB;
     }
 
   /* now we have removed the identical upper limbs of b and c
-     (can happen only when diff_exp = 0): bp[bn] > cc, bn>=0, cn>=0 */
+     (can happen only when diff_exp = 0), and after the possible
+     swap, we have |b| > |c|: bp[bn] > cc, bn >= 0, cn >= 0 */
 
   if (diff_exp < BITS_PER_MP_LIMB)
     {
@@ -135,7 +187,10 @@ mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c)
     {
       res--;
       if (dif != 0)
-	return res;
+        {
+          *cancel = res;
+          return sign;
+        }
     }
   else /* high_dif = 0 */
     {
@@ -144,7 +199,10 @@ mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c)
       count_leading_zeros(z, dif); /* dif > 1 here */
       res += z;
       if (dif != (MP_LIMB_T_ONE << (BITS_PER_MP_LIMB - z - 1)))
-	return res; /* dif is not a power of two */
+        { /* dif is not a power of two */
+          *cancel = res;
+          return sign;
+        }
     }
 
   /* now result is res + (low(b) < low(c)) */
@@ -166,18 +224,26 @@ mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c)
 	  cn--;
 	}
       if (bp[bn] != cc)
-	return res + (bp[bn] < cc);
+        {
+          *cancel = res + (bp[bn] < cc);
+          return sign;
+        }
       bn--;
     }
 
   if (bn < 0)
     {
       if (lastc != 0)
-	return res + 1;
-      while (cn >= 0 && cp[cn] == 0)
-        cn--;
-      return res + (cn >= 0);
+        res++;
+      else
+        {
+          while (cn >= 0 && cp[cn] == 0)
+            cn--;
+          if (cn >= 0)
+            res++;
+        }
     }
 
-  return res; /* remainder from c is 0 */
+  *cancel = res;
+  return sign;
 }

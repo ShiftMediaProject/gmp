@@ -19,21 +19,17 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
+/* Obsolete function, use mpfr_div_2ui or mpfr_div_2si instead. */
+
+#undef mpfr_div_2exp
+
 int
 mpfr_div_2exp (mpfr_ptr y, mpfr_srcptr x, unsigned long int n, mp_rnd_t rnd_mode)
 {
-  int inexact = 0;
-
-  /* Important particular case */ 
-  if (y != x)
-    inexact = mpfr_set (y, x, rnd_mode);
-  return ((MPFR_EXP(y) -= n) < __mpfr_emin)
-    ? mpfr_set_underflow (y, rnd_mode, MPFR_SIGN(y)) : inexact;
+  return mpfr_div_2ui (y, x, n, rnd_mode);
 }
-

@@ -1,6 +1,6 @@
 /* mpfr_agm -- arithmetic-geometric mean of two floating-point numbers
 
-Copyright (C) 1999, 2001 Free Software Foundation.
+Copyright (C) 1999-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -19,56 +19,10 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
-
-/* returns ceil(log(d)/log(2)) */
-long
-_mpfr_ceil_log2 (double d)
-{
-  long exp;
-  union ieee_double_extract x;
-
-  x.d = d;
-  exp = x.s.exp - 1023;
-  x.s.exp = 1023; /* value for 1 <= d < 2 */
-  if (x.d != 1.0) exp++;
-  return exp;
-}
-
-/* returns floor(log(d)/log(2)) */
-long
-_mpfr_floor_log2 (double d)
-{
-  union ieee_double_extract x;
-
-  x.d = d;
-  return (long) x.s.exp - 1023;
-}
-
-/* returns y >= 2^d */
-double
-_mpfr_ceil_exp2 (double d)
-{
-  long exp;
-  union ieee_double_extract x;
-
-  exp = (long) d;
-  if (d != (double) exp) exp++;
-  /* now exp = ceil(d) */
-  x.d = 1.0;
-  if (exp < -1022) exp = -1022;
-  else if (exp > 1024) {
-    fprintf (stderr, "Overflow in _mpfr_ceil_exp2\n");
-    exit (1);
-  }
-  x.s.exp = 1023 + exp;
-  return x.d;
-}
 
 void 
 mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
@@ -79,11 +33,14 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
   mp_limb_t *up, *vp, *tmpp, *tmpup, *tmpvp, *ap, *bp;
   mpfr_t u, v, tmp, tmpu, tmpv, a, b;
   TMP_DECL(marker1);
+  {
+  TMP_DECL(marker2);
 
   /* If a or b is NaN, the result is NaN */
   if (MPFR_IS_NAN(op1) || MPFR_IS_NAN(op2))
     {
       MPFR_SET_NAN(r);
+      __mpfr_flags |= MPFR_FLAGS_NAN;
       return;
     }
 
@@ -91,6 +48,7 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
   if ((MPFR_SIGN(op1) < 0) || (MPFR_SIGN(op2) < 0))
     {
       MPFR_SET_NAN(r);
+      __mpfr_flags |= MPFR_FLAGS_NAN;
       return;
     }
 
@@ -124,8 +82,6 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
   s=(p-1)/BITS_PER_MP_LIMB+1;
   MPFR_INIT(ap, a, p, s);  
   MPFR_INIT(bp, b, p, s);
-  {
-  TMP_DECL(marker2);
   TMP_MARK(marker2);
   MPFR_INIT(up, u, p, s);
   MPFR_INIT(vp, v, p, s);   
@@ -162,9 +118,8 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
   /* Main loop */
 
   while (go_on) {
-    int err,  eq, can_round;
-    
-    eq=0;
+    int err, can_round;
+    mp_prec_t eq;
     
     err=1 + (int) ((3.0/2.0*(double)_mpfr_ceil_log2((double)p)+1.0)*_mpfr_ceil_exp2(-(double)p)
 	     +3.0*_mpfr_ceil_exp2(-2.0*(double)p*uo/(vo-uo)));
@@ -176,18 +131,16 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
     }
 
     /* Calculus of un and vn */
-    while (eq<=p-2) {
-      mpfr_mul(tmp,u,v,GMP_RNDN);
-      mpfr_sqrt (tmpu, tmp, GMP_RNDN); 
-      mpfr_add(tmp,u,v,GMP_RNDN);
-      mpfr_div_2exp(tmpv,tmp,1,GMP_RNDN);
-      mpfr_set(u,tmpu,GMP_RNDN);
-      mpfr_set(v,tmpv,GMP_RNDN);
-      if (mpfr_cmp(v,u) >= 0)
-	eq = mpfr_cmp2(v,u);
-      else
-	eq = mpfr_cmp2(u,v);
-    }
+    do
+      {
+        mpfr_mul(tmp, u, v, GMP_RNDN);
+        mpfr_sqrt (tmpu, tmp, GMP_RNDN); 
+        mpfr_add(tmp, u, v, GMP_RNDN);
+        mpfr_div_2ui(tmpv, tmp, 1, GMP_RNDN);
+        mpfr_set(u, tmpu, GMP_RNDN);
+        mpfr_set(v, tmpv, GMP_RNDN);
+      }
+    while (mpfr_cmp2(u, v, &eq) != 0 && eq <= p - 2);
 
     /* Roundability of the result */
       can_round=mpfr_can_round(v,p-err-3,GMP_RNDN,rnd_mode,q);
@@ -222,4 +175,3 @@ mpfr_agm (mpfr_ptr r, mpfr_srcptr op2, mpfr_srcptr op1, mp_rnd_t rnd_mode)
   
   return ;
 }
-

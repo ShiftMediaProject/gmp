@@ -1,6 +1,6 @@
 /* Utilities for MPFR developers, not exported.
 
-Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,6 +19,11 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+/* Test if X (positive) is a power of 2 */
+
+#define IS_POW2(X) (((X) & ((X) - 1)) == 0)
+#define NOT_POW2(X) (((X) & ((X) - 1)) != 0)
+
 /* This unsigned type must correspond to the signed one defined in gmp.h */
 #if defined (_CRAY) && ! defined (_CRAYMPP)
 typedef unsigned int            mp_exp_unsigned_t;
@@ -28,17 +33,32 @@ typedef unsigned long int       mp_exp_unsigned_t;
 typedef unsigned long int       mp_size_unsigned_t;
 #endif
 
+#define MP_EXP_T_MAX ((mp_exp_t) ((~ (mp_exp_unsigned_t) 0) >> 1))
+#define MP_EXP_T_MIN (-MP_EXP_T_MAX-1)
+
 #define MP_LIMB_T_ONE ((mp_limb_t) 1)
+
+#if (BITS_PER_MP_LIMB & (BITS_PER_MP_LIMB - 1))
+#error "BITS_PER_MP_LIMB must be a power of 2"
+#endif
+
+#define MPFR_INTPREC_MAX (ULONG_MAX & ~(unsigned long) (BITS_PER_MP_LIMB - 1))
 
 /* Assertions */
 
 /* Compile with -DWANT_ASSERT to check all assert statements */
 
-/* MPFR_ASSERTN(expr): assertion checked in the normal debug level */
-#define MPFR_ASSERTN(expr) ASSERT_ALWAYS(expr)
+/* MPFR_ASSERTN(expr): assertions that should always be checked */
+/* #define MPFR_ASSERTN(expr) ASSERT_ALWAYS(expr) */
+#define MPFR_ASSERTN(expr)  ((expr) ? (void) 0 : (void) ASSERT_FAIL (expr))
 
-/* MPFR_ASSERTD(expr): assertion checked in debug level 33 or higher */
-#define MPFR_ASSERTD(expr) ASSERT(expr)
+/* MPFR_ASSERTD(expr): assertions that should be checked when testing */
+/* #define MPFR_ASSERTD(expr) ASSERT(expr) */
+#if WANT_ASSERT
+#define MPFR_ASSERTD(expr)  ASSERT_ALWAYS (expr)
+#else
+#define MPFR_ASSERTD(expr)  ((void) 0)
+#endif
 
 /* Definition of constants */
 
@@ -77,6 +97,9 @@ typedef union ieee_double_extract Ieee_double_extract;
 #define MPFR_IS_FP(x) ((((x) -> _mpfr_size >> 29) & 3) == 0)
 #define MPFR_ABSSIZE(x) \
   ((x)->_mpfr_size & (((mp_size_unsigned_t) 1 << 29) - 1))
+#define MPFR_SET_ABSSIZE(x, n) \
+  ((x)->_mpfr_size = ((x)->_mpfr_size & ((mp_size_unsigned_t) 7 << 29)) \
+                     | (mp_size_unsigned_t) (n))
 #define MPFR_SIZE(x) ((x)->_mpfr_size)
 #define MPFR_EXP(x) ((x)->_mpfr_exp)
 #define MPFR_MANT(x) ((x)->_mpfr_d)
@@ -105,15 +128,33 @@ typedef union ieee_double_extract Ieee_double_extract;
   (I) ? ((__mpfr_flags |= MPFR_FLAGS_INEXACT), (I)) : 0
 #define MPFR_RET_NAN return (__mpfr_flags |= MPFR_FLAGS_NAN), 0
 
+/* The following macro restores the exponent range and the flags,
+   checks that the result is in the exponent range and returns the
+   ternary inexact value. */
+#define MPFR_RESTORE_RET(inex, x, rnd_mode) \
+  do \
+    { \
+      int inex_cr; \
+      mpfr_restore_emin_emax(); \
+      inex_cr = mpfr_check_range(x, rnd_mode); \
+      if (inex_cr) \
+        return inex_cr; /* underflow or overflow */ \
+      MPFR_RET(inex); \
+    } \
+  while(0)
+
 /* Memory gestion */
 
 /* temporary allocate s limbs at xp, and initialize mpfr variable x */
 #define MPFR_INIT(xp, x, p, s) \
-  (xp = (mp_ptr) TMP_ALLOC((s)*BYTES_PER_MP_LIMB), \
-   MPFR_PREC(x) = p, MPFR_MANT(x) = xp, MPFR_SIZE(x) = s, MPFR_EXP(x) = 0)
+  (xp = (mp_ptr) TMP_ALLOC((size_t) (s) * BYTES_PER_MP_LIMB), \
+   MPFR_PREC(x) = (p), \
+   MPFR_MANT(x) = (xp), \
+   MPFR_SIZE(x) = (s), \
+   MPFR_EXP(x) = 0)
 /* same when xp is already allocated */
 #define MPFR_INIT1(xp, x, p, s) \
-  (MPFR_PREC(x) = p, MPFR_MANT(x) = xp, MPFR_SIZE(x) = s)
+  (MPFR_PREC(x) = (p), MPFR_MANT(x) = (xp), MPFR_SIZE(x) = (s))
 
 #ifndef _PROTO
 #if defined (__STDC__) || defined (__cplusplus)
@@ -134,15 +175,15 @@ void mpfr_restore_emin_emax _PROTO ((void));
 int mpfr_add1 _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr,
                        mp_rnd_t, mp_exp_unsigned_t));
 int mpfr_sub1 _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr,
-                       mp_rnd_t, mp_exp_unsigned_t));
+                       mp_rnd_t, int));
 int mpfr_round_raw_generic _PROTO ((mp_limb_t *, mp_limb_t *, mp_prec_t, int,
 				    mp_prec_t, mp_rnd_t, int *, int));
-int mpfr_can_round_raw _PROTO ((mp_limb_t *, mp_prec_t, int, mp_prec_t, 
+int mpfr_can_round_raw _PROTO ((mp_limb_t *, mp_size_t, int, mp_exp_t,
 				mp_rnd_t, mp_rnd_t, mp_prec_t));
-double mpfr_get_d2 _PROTO ((mpfr_srcptr, long)); 
+double mpfr_get_d2 _PROTO ((mpfr_srcptr, mp_exp_t));
 mp_size_t mpn_sqrtrem_new _PROTO ((mp_limb_t *, mp_limb_t *, mp_limb_t *, mp_size_t));
 int mpfr_cmp_abs _PROTO ((mpfr_srcptr, mpfr_srcptr));
-mp_prec_t mpfr_cmp2 _PROTO ((mpfr_srcptr, mpfr_srcptr));
+int mpfr_cmp2 _PROTO ((mpfr_srcptr, mpfr_srcptr, mp_prec_t *));
 long _mpfr_ceil_log2 _PROTO ((double));
 long _mpfr_floor_log2 _PROTO ((double));
 double _mpfr_ceil_exp2 _PROTO ((double));
@@ -153,10 +194,9 @@ unsigned long _mpfr_cuberoot _PROTO ((unsigned long));
   mpfr_round_raw_generic((yp), (xp), (xprec), (neg), (yprec), (r), (inexp), 0)
 
 #define mpfr_round_raw2(xp, xn, neg, r, prec) \
-  mpfr_round_raw_generic(NULL, (xp), (xn) * BITS_PER_MP_LIMB, (neg), \
+  mpfr_round_raw_generic(0, (xp), (xn) * BITS_PER_MP_LIMB, (neg), \
 			 (prec), (r), 0, 1); 
 
 #if defined (__cplusplus)
 }
 #endif  
-

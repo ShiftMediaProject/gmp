@@ -1,4 +1,4 @@
-/* mpfr_add_one_ulp, mpfr_sub_one_ulp -- add/subtract one unit in last place
+/* mpfr_sub_one_ulp -- subtract one unit in last place
 
 Copyright (C) 1999, 2001 Free Software Foundation, Inc.
 
@@ -20,50 +20,43 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
-#include "gmp-impl.h"
-
-/* sets x to x+sign(x)*2^(MPFR_EXP(x)-MPFR_PREC(x)) */
-void
-mpfr_add_one_ulp (mpfr_ptr x)
-{
-  int xn, sh;
-  mp_limb_t *xp;
-
-  if (MPFR_IS_INF(x))
-    return;
-
-  xn = 1 + (MPFR_PREC(x) - 1) / BITS_PER_MP_LIMB;
-  sh = xn * BITS_PER_MP_LIMB - MPFR_PREC(x);
-  xp = MPFR_MANT(x);
-  if (mpn_add_1 (xp, xp, xn, MP_LIMB_T_ONE << sh)) /* got 1.0000... */
-    {
-      MPFR_EXP(x)++;
-      xp[xn-1] = MP_LIMB_T_HIGHBIT;
-  }
-  return;
-}
 
 /* sets x to x-sign(x)*ulp(x) */
-void
-mpfr_sub_one_ulp(mpfr_ptr x)
+int
+mpfr_sub_one_ulp(mpfr_ptr x, mp_rnd_t rnd_mode)
 {
-  int xn, sh;
+  mp_size_t xn;
+  int sh;
   mp_limb_t *xp;
 
-  if (MPFR_IS_INF(x))
-    return;
+  if (MPFR_IS_NAN(x))
+    MPFR_RET_NAN;
+
+  if (MPFR_IS_INF(x) || MPFR_IS_ZERO(x))
+    return 0;
+
+  MPFR_ASSERTN(MPFR_PREC_MIN > 1);
 
   xn = 1 + (MPFR_PREC(x) - 1) / BITS_PER_MP_LIMB;
   sh = xn * BITS_PER_MP_LIMB - MPFR_PREC(x);
   xp = MPFR_MANT(x);
   mpn_sub_1 (xp, xp, xn, MP_LIMB_T_ONE << sh);
-  if (xp[xn-1] >> (BITS_PER_MP_LIMB - 1) == 0) {
-    /* was an exact power of two: not normalized any more */
-    MPFR_EXP(x)--;
-    mpn_lshift (xp, xp, xn, 1);
-    *xp |= MP_LIMB_T_ONE << sh;
-  }
-  return;
+  if (xp[xn-1] >> (BITS_PER_MP_LIMB - 1) == 0)
+    { /* was an exact power of two: not normalized any more */
+      mp_exp_t exp = MPFR_EXP(x);
+      if (exp == __mpfr_emin)
+        return mpfr_set_underflow(x, rnd_mode, MPFR_SIGN(x));
+      else
+        {
+          int i;
+          MPFR_EXP(x)--;
+          xp[0] = (sh + 1 == BITS_PER_MP_LIMB) ? 0 : MP_LIMB_T_MAX << (sh + 1);
+          for (i = 1; i < xn; i++)
+            xp[i] = MP_LIMB_T_MAX;
+        }
+    }
+  return 0;
 }

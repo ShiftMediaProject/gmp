@@ -1,6 +1,6 @@
 /* mpfr_log -- natural logarithm of a floating-point number
 
-Copyright (C) 1999, 2001 Free Software Foundation.
+Copyright (C) 1999-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -55,7 +55,7 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
   if (MPFR_IS_NAN(a))
     {
       MPFR_SET_NAN(r);
-      return 1; /* NaN is inexact */
+      MPFR_RET_NAN;
     }
 
   MPFR_CLEAR_NAN(r);
@@ -66,40 +66,39 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
       if (MPFR_SIGN(a) < 0) /* log(-Inf) = NaN */
 	{
 	  MPFR_SET_NAN(r);
-	  return 1;
+          MPFR_RET_NAN;
 	}
       else /* log(+Inf) = +Inf */
 	{
 	  MPFR_SET_INF(r);
-	  if (MPFR_SIGN(r) < 0)
-	    MPFR_CHANGE_SIGN(r);
-	  return 0;
+          MPFR_SET_POS(r);
+          MPFR_RET(0);
 	}
     }
 
   /* Now we can clear the flags without damage even if r == a */
-  MPFR_CLEAR_INF(r); 
+  MPFR_CLEAR_INF(r);
 
-  if (MPFR_IS_ZERO(a)) 
+  if (MPFR_IS_ZERO(a))
     {
-      MPFR_SET_INF(r); 
-      if (MPFR_SIGN(r) > 0)
-	MPFR_CHANGE_SIGN(r);
-      return 0; /* log(0) is an exact infinity */
+      MPFR_SET_INF(r);
+      MPFR_SET_POS(r);
+      MPFR_RET(0); /* log(0) is an exact infinity */
     }
 
   /* If a is negative, the result is NaN */
   if (MPFR_SIGN(a) < 0)
     {
       MPFR_SET_NAN(r);
-      return 1;
+      MPFR_RET_NAN;
     }
 
   /* If a is 1, the result is 0 */
-  if (mpfr_cmp_ui_2exp (a, 1, 0) == 0)
+  if (mpfr_cmp_ui (a, 1) == 0)
     {
       MPFR_SET_ZERO(r);
-      return 0; /* only "normal" case where the result is exact */
+      MPFR_SET_POS(r);
+      MPFR_RET(0); /* only "normal" case where the result is exact */
     }
 
   q=MPFR_PREC(r);
@@ -118,7 +117,7 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
 
   while (bool==1) {
 #ifdef DEBUG
-    printf("a="); mpfr_print_raw(a); putchar('\n');
+    printf("a="); mpfr_print_binary(a); putchar('\n');
     printf("p=%d\n", p);
 #endif
     /* Calculus of m (depends on p) */
@@ -138,10 +137,10 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
     mpfr_set_si (mm, m, GMP_RNDN);        /* I have m, supposed exact */
     mpfr_set_si (tmp1, 1, GMP_RNDN);      /* I have 1, exact */
     mpfr_set_si (tmp2, 4, GMP_RNDN);      /* I have 4, exact */
-    mpfr_mul_2exp (s, a, m, GMP_RNDN);    /* I compute s=a*2^m, err <= 1 ulp */
+    mpfr_mul_2si (s, a, m, GMP_RNDN);    /* I compute s=a*2^m, err <= 1 ulp */
     mpfr_div (rapport, tmp2, s, GMP_RNDN);/* I compute 4/s, err <= 2 ulps */
     mpfr_agm (agm, tmp1, rapport, GMP_RNDN); /* AG(1,4/s), err<=3 ulps */
-    mpfr_mul_2exp (tmp1, agm, 1, GMP_RNDN);  /* 2*AG(1,4/s), still err<=3 ulps */
+    mpfr_mul_2ui (tmp1, agm, 1, GMP_RNDN); /* 2*AG(1,4/s), still err<=3 ulps */
     mpfr_const_pi (cst, GMP_RNDN);        /* compute pi, err<=1ulp */
     mpfr_div (tmp2, cst, tmp1, GMP_RNDN); /* pi/2*AG(1,4/s), err<=5ulps */
     mpfr_const_log2 (cst, GMP_RNDN);      /* compute log(2), err<=1ulp */
@@ -150,8 +149,8 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
     mpfr_sub(cst,tmp2,tmp1,GMP_RNDN);     /* log(a), err<=7ulps+cancel */ 
     cancel -= MPFR_EXP(cst);
 #ifdef DEBUG
-    printf("cancelled bits=%d\n", cancel);
-    printf("approx="); mpfr_print_raw(cst); putchar('\n');
+    printf("canceled bits=%d\n", cancel);
+    printf("approx="); mpfr_print_binary(cst); putchar('\n');
 #endif
     if (cancel<0) cancel=0;
 
@@ -159,11 +158,11 @@ mpfr_log (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
 
     /* we have 7 ulps of error from the above roundings,
        4 ulps from the 4/s^2 second order term,
-       plus the cancelled bits */
+       plus the canceled bits */
     if (mpfr_can_round (cst, p - cancel - 4, GMP_RNDN, rnd_mode, q) == 1) {
       inexact = mpfr_set (r, cst, rnd_mode);
 #ifdef DEBUG
-      printf("result="); mpfr_print_raw(r); putchar('\n');
+      printf("result="); mpfr_print_binary(r); putchar('\n');
 #endif
       bool=0;
     }

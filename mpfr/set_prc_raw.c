@@ -29,16 +29,13 @@ MA 02111-1307, USA. */
 void
 mpfr_set_prec_raw (mpfr_ptr x, mp_prec_t p)
 {
-  if (p==0) {
-    fprintf(stderr, "*** cannot set precision to 0 bits\n"); exit(1);
-  }
+  MPFR_ASSERTN(p >= MPFR_PREC_MIN && p <= MPFR_PREC_MAX);
 
-  if (p > MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB) {
-    fprintf(stderr, "*** precision too large for allocated space\n");
-    exit(1);
-  }
+  if (p > (mp_prec_t) MPFR_ABSSIZE(x) * BITS_PER_MP_LIMB)
+    {
+      fprintf (stderr, "*** precision too large for allocated space\n");
+      exit (1);
+    }
 
   MPFR_PREC(x) = p;
 }
-
-

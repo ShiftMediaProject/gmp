@@ -32,7 +32,7 @@ MA 02111-1307, USA. */
 int
 main (int argc, char *argv[])
 {
-  test_generic (1, 100, 100);
+  test_generic (2, 100, 100);
 
   return 0;
 }

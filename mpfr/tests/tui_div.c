@@ -58,7 +58,7 @@ check (unsigned long y, double x, mp_rnd_t rnd_mode, double z1)
 }
 
 void
-check_inexact ()
+check_inexact (void)
 {
   mpfr_t x, y, z;
   mp_prec_t px, py;
@@ -70,12 +70,12 @@ check_inexact ()
   mpfr_init (y);
   mpfr_init (z);
 
-  for (px=1; px<300; px++)
+  for (px=2; px<300; px++)
     {
       mpfr_set_prec (x, px);
       mpfr_random (x);
       u = lrand48 ();
-      for (py=1; py<300; py++)
+      for (py=2; py<300; py++)
 	{
 	  mpfr_set_prec (y, py);
 	  mpfr_set_prec (z, py + px);
@@ -95,9 +95,9 @@ check_inexact ()
 		  fprintf (stderr, "Wrong inexact flag for u=%lu, rnd=%s\n", u,
 			   mpfr_print_rnd_mode(rnd));
 		  printf ("expected %d, got %d\n", cmp, inexact);
-		  printf ("x="); mpfr_print_raw (x); putchar ('\n');
-		  printf ("y="); mpfr_print_raw (y); putchar ('\n');
-		  printf ("y*x="); mpfr_print_raw (z); putchar ('\n');
+		  printf ("x="); mpfr_print_binary (x); putchar ('\n');
+		  printf ("y="); mpfr_print_binary (y); putchar ('\n');
+		  printf ("y*x="); mpfr_print_binary (z); putchar ('\n');
 		  exit (1);
 		}
 	    }

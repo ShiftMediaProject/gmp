@@ -1,7 +1,7 @@
 /* mpfr_pow_ui-- compute the power of a floating-point
                                   by a machine integer
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -20,7 +20,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
@@ -46,24 +45,22 @@ mpfr_pow_ui (mpfr_ptr x, mpfr_srcptr y, unsigned long int n, mp_rnd_t rnd)
 
   if (n == 0) /* x^0 = 1 for any x */
     {
-      mpfr_set_ui (x, 1, rnd);
-      return 0;
+      /* The return mpfr_set_ui is important as 1 isn't necessarily
+         in the exponent range. */
+      return mpfr_set_ui (x, 1, rnd);
     }
 
-  if (MPFR_IS_INF(y)) 
+  if (MPFR_IS_INF(y))
     {
       /* Inf^n = Inf, (-Inf)^n = Inf for n even, -Inf for n odd */
       if ((MPFR_SIGN(y) < 0) && (n % 2 == 1))
-	{
-	  if (MPFR_SIGN(x) > 0)
-	    MPFR_CHANGE_SIGN(x);
-	}
-      else if (MPFR_SIGN(x) < 0)
-	MPFR_CHANGE_SIGN(x);
+        MPFR_SET_NEG(x);
+      else
+        MPFR_SET_POS(x);
       MPFR_SET_INF(x);
-      return 0;
+      MPFR_RET(0);
     }
-  
+
   MPFR_CLEAR_INF(x);
 
   mpfr_init (res);

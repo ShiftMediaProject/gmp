@@ -1,6 +1,6 @@
 /* mpfr_exp -- exponential of a floating-point number
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright (C) 1999-2002 Free Software Foundation.
 Contributed by the Spaces project.
 
 This file is part of the MPFR Library.
@@ -44,36 +44,30 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   if (MPFR_IS_NAN(x))
     {
       MPFR_SET_NAN(y);
-      return 1;
+      MPFR_RET_NAN;
     }
 
   MPFR_CLEAR_NAN(y);
 
-  if (MPFR_IS_INF(x)) 
-    { 
+  if (MPFR_IS_INF(x))
+    {
       if (MPFR_SIGN(x) > 0)
 	{
 	  MPFR_SET_INF(y);
-	  if (MPFR_SIGN(y) < 0)
-	    MPFR_CHANGE_SIGN(y);
 	}
       else
 	{
 	  MPFR_CLEAR_INF(y);
 	  MPFR_SET_ZERO(y);
-	  if (MPFR_SIGN(y) < 0)
-	    MPFR_CHANGE_SIGN(y);
 	}
-      return 0;
+      MPFR_SET_POS(y);
+      MPFR_RET(0);
     }
 
   MPFR_CLEAR_INF(y);
-      
-  if (!MPFR_NOTZERO(x))
-    {
-      mpfr_set_ui (y, 1, GMP_RNDN);
-      return 0;
-    }
+
+  if (MPFR_IS_ZERO(x))
+    return mpfr_set_ui (y, 1, GMP_RNDN);
 
   expx = MPFR_EXP(x);
   precy = MPFR_PREC(y);
@@ -82,22 +76,12 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
      x >= __mpfr_emax * log(2) */
   d = mpfr_get_d (x);
   if (d >= (double) __mpfr_emax * LOG2)
-    {
-          MPFR_SET_INF(y);
-          if (MPFR_SIGN(y) < 0)
-            MPFR_CHANGE_SIGN(y);
-	  return 1; /* overflow */
-    }
+    return mpfr_set_overflow(y, rnd_mode, 1);
 
   /* result is 0 when exp(x) < 1/2*2^(__mpfr_emin), i.e.
      x < (__mpfr_emin-1) * LOG2 */
   if (d < ((double) __mpfr_emin - 1.0) * LOG2)
-    {
-      MPFR_SET_ZERO(y);
-      if (MPFR_SIGN(y) < 0)
-            MPFR_CHANGE_SIGN(y);
-      return 1; /* underflow */
-    }
+    return mpfr_set_underflow(y, rnd_mode, 1);
 
   /* if x < 2^(-precy), then exp(x) i.e. gives 1 +/- 1 ulp(1) */
   if (expx < -precy)
@@ -107,12 +91,12 @@ mpfr_exp (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       mpfr_set_ui (y, 1, rnd_mode);
       if (signx > 0 && rnd_mode == GMP_RNDU)
 	{
-	  mpfr_add_one_ulp (y);
+	  mpfr_add_one_ulp (y, rnd_mode);
 	  return 1;
 	}
       else if (signx < 0 && (rnd_mode == GMP_RNDD || rnd_mode == GMP_RNDZ))
 	{
-	  mpfr_sub_one_ulp (y);
+	  mpfr_sub_one_ulp (y, rnd_mode);
 	  return -1;
 	}
       return -signx;

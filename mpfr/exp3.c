@@ -110,7 +110,7 @@ mpfr_exp_rational (mpfr_ptr y, mpz_srcptr p, int r, int m)
   mpfr_set_z(y,S[0], GMP_RNDD);
   MPFR_EXP(y) += expo;
 
-  mpfr_div_2exp(y, y, r*(i-1),GMP_RNDN); 
+  mpfr_div_2ui(y, y, r*(i-1),GMP_RNDN); 
   for (i=0;i<=m;i++) { mpz_clear(P[i]); mpz_clear(S[i]); mpz_clear(ptoj[i]); }
   TMP_FREE (marker);
   return 0;
@@ -151,7 +151,7 @@ mpfr_exp3 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   if (ttt > 0) 
     {
       shift_x = ttt;
-      mpfr_mul_2exp(x_copy,x,-ttt, GMP_RNDN); 
+      mpfr_div_2ui(x_copy, x, ttt, GMP_RNDN);
       ttt = MPFR_EXP(x_copy);
     }
   realprec = MPFR_PREC(y)+logn;

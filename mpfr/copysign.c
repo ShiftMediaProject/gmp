@@ -1,6 +1,6 @@
 /* mpfr_copysign -- Produce a value with the magnitude of x and sign of y
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -19,7 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -31,46 +30,13 @@ MA 02111-1307, USA. */
  */
 
 int
-mpfr_copysign (mpfr_ptr z, mpfr_srcptr x ,mpfr_srcptr y , mp_rnd_t rnd_mode) 
+mpfr_copysign (mpfr_ptr z, mpfr_srcptr x ,mpfr_srcptr y , mp_rnd_t rnd_mode)
 {
-    
-    if (MPFR_IS_NAN(y)) 
-    {  
-      MPFR_SET_NAN(z);
-      return 1; 
-    }
-
-    if (MPFR_IS_NAN(x)) 
-    {  
-      MPFR_SET_NAN(z);
-      MPFR_SET_SAME_SIGN(z,y);
-      return 1; 
-    }
-
-    MPFR_CLEAR_NAN(z);
-
-    if (MPFR_IS_INF(x)) {  
-    
-      MPFR_SET_INF(z);
-      MPFR_SET_SAME_SIGN(z,y);
-      return 0; 
-    }
-
-    MPFR_CLEAR_INF(z);
-    
-    if (!MPFR_NOTZERO(x)) 
-    {  
-      MPFR_SET_ZERO(z);
-      MPFR_SET_SAME_SIGN(z,y);      
-      return 0; 
-    }
-    
-    /* GENERAL CASE*/
+  if (MPFR_IS_NAN(y))
     {
-      int inexact=0;
-      inexact =mpfr_set(z,x,rnd_mode);
-      MPFR_SET_SAME_SIGN(z,y);
-      return inexact; 
+      MPFR_SET_NAN(z);
+      MPFR_RET_NAN;
     }
-
+  else
+    return mpfr_set4(z, x, rnd_mode, MPFR_SIGN(y));
 }

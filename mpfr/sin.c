@@ -1,6 +1,6 @@
 /* mpfr_sin -- sine of a floating-point number
 
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,7 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -34,13 +33,15 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
     {
       MPFR_SET_NAN(y);
-      return 1; /* inexact */
+      MPFR_RET_NAN;
     }
 
-  if (!MPFR_NOTZERO(x))
+  if (MPFR_IS_ZERO(x))
     {
-      mpfr_set_ui (y, 0, GMP_RNDN);
-      return 0; /* exact */
+      MPFR_CLEAR_FLAGS(y);
+      MPFR_SET_ZERO(y);
+      MPFR_SET_SAME_SIGN(y, x);
+      MPFR_RET(0);
     }
 
   precy = MPFR_PREC(y);
@@ -51,7 +52,7 @@ mpfr_sin (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   /* first determine sign */
   mpfr_const_pi (c, GMP_RNDN);
-  mpfr_mul_2exp (c, c, 1, GMP_RNDN); /* 2*Pi */
+  mpfr_mul_2ui (c, c, 1, GMP_RNDN); /* 2*Pi */
   mpfr_div (k, x, c, GMP_RNDN);      /* x/(2*Pi) */
   mpfr_floor (k, k);                 /* floor(x/(2*Pi)) */
   mpfr_mul (c, k, c, GMP_RNDN);

@@ -42,7 +42,7 @@ main (int argc, char *argv[])
   mpfr_set_str_raw (x, "0.111001101100000110011001010000101");
   mpfr_asinh (y, x, GMP_RNDZ);
 
-  test_generic (1, 100, 25);
+  test_generic (2, 100, 25);
 
   mpfr_clear (x);
   mpfr_clear (y);

@@ -19,7 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -84,10 +83,16 @@ special (void)
   mpfr_set_prec (x, 110);
   mpfr_set_prec (y, 60);
   mpfr_set_str_raw (x, "0.110101110011111110011111001110011001110111000000111110001000111011000011E-44");
-  mpfr_div_ui(y, x, 17, __gmp_default_rounding_mode);
-  if (mpfr_get_d (y) != 2.8114572543455207632e-15)
+  mpfr_div_ui (y, x, 17, GMP_RNDN);
+  mpfr_set_str_raw (x, "0.11001010100101100011101110000001100001010110101001010011011E-48");
+  if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "Error in x / 17 for x=1/16!\n");
+      fprintf (stderr, "Error in x/17 for x=1/16!\n");
+      fprintf (stderr, "Expected ");
+      mpfr_out_str (stderr, 2, 0, x, GMP_RNDN);
+      fprintf (stderr, "\nGot      ");
+      mpfr_out_str (stderr, 2, 0, y, GMP_RNDN);
+      fprintf (stderr, "\n");
       exit (1);
     }
 
@@ -102,8 +107,8 @@ special (void)
 	  if (mpfr_get_d (x) != mpfr_get_d (y))
 	    {
 	      fprintf (stderr, "division by 1.0 fails for xprec=%u, yprec=%u\n", xprec, yprec);
-	      printf ("expected "); mpfr_print_raw (x); putchar ('\n');
-	      printf ("got      "); mpfr_print_raw (y); putchar ('\n');
+	      printf ("expected "); mpfr_print_binary (x); putchar ('\n');
+	      printf ("got      "); mpfr_print_binary (y); putchar ('\n');
 	      exit (1);
 	    }
 	}
@@ -114,7 +119,7 @@ special (void)
 }
 
 void
-check_inexact ()
+check_inexact (void)
 {
   mpfr_t x, y, z;
   mp_prec_t px, py;
@@ -126,12 +131,12 @@ check_inexact ()
   mpfr_init (y);
   mpfr_init (z);
 
-  for (px=1; px<300; px++)
+  for (px=2; px<300; px++)
     {
       mpfr_set_prec (x, px);
       mpfr_random (x);
       do { u = lrand48 (); } while (u == 0);
-      for (py=1; py<300; py++)
+      for (py=2; py<300; py++)
 	{
 	  mpfr_set_prec (y, py);
 	  mpfr_set_prec (z, py + mp_bits_per_limb);
@@ -141,8 +146,8 @@ check_inexact ()
 	      if (mpfr_mul_ui (z, y, u, rnd))
 		{
 		  fprintf (stderr, "z <- y * u should be exact for u=%lu\n", u);
-		  printf ("y="); mpfr_print_raw (y); putchar ('\n');
-		  printf ("z="); mpfr_print_raw (z); putchar ('\n');
+		  printf ("y="); mpfr_print_binary (y); putchar ('\n');
+		  printf ("z="); mpfr_print_binary (z); putchar ('\n');
 		  exit (1);
 		}
 	      cmp = mpfr_cmp (z, x);
@@ -152,8 +157,8 @@ check_inexact ()
 		{
 		  fprintf (stderr, "Wrong inexact flag for u=%lu, rnd=%s\n", u,
 			   mpfr_print_rnd_mode(rnd));
-		  printf ("x="); mpfr_print_raw (x); putchar ('\n');
-		  printf ("y="); mpfr_print_raw (y); putchar ('\n');
+		  printf ("x="); mpfr_print_binary (x); putchar ('\n');
+		  printf ("y="); mpfr_print_binary (y); putchar ('\n');
 		  exit (1);
 		}
 	    }
@@ -175,7 +180,7 @@ main (int argc, char **argv)
   srand(getpid());
   for (i=0;i<1000000;i++) {
     do { u = lrand48(); } while (u==0);
-    do { d = drand(); } while (fabs(d/u)<2.2e-307);
+    do { d = drand(); } while (ABS(d/u)<2.2e-307);
     check(d, u, rand() % 4, 0.0);
   }
 #endif

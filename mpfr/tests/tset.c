@@ -26,7 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 
 int
-main ()
+main (void)
 {
   mp_prec_t p, q;
   mpfr_t x, y, z, u;
@@ -41,22 +41,22 @@ main ()
 
   mpfr_set_prec (y, 11);
   mpfr_set_str_raw (y, "0.11111111100E-8");
-  mpfr_set_prec (x, 1);
+  mpfr_set_prec (x, 2);
   mpfr_set (x, y, GMP_RNDN);
   mpfr_set_str_raw (y, "1.0E-8");
   if (mpfr_cmp (x, y))
     {
-      fprintf (stderr, "Error for y=0.11111111100E-8, prec=1, rnd=GMP_RNDN\n");
+      fprintf (stderr, "Error for y=0.11111111100E-8, prec=2, rnd=GMP_RNDN\n");
       exit (1);
     }
   
-  for (p=1; p<500; p++)
+  for (p=2; p<500; p++)
     {
       mpfr_set_prec (x, p);
       mpfr_random (x);
       if (rand () % 2)
 	mpfr_neg (x, x, GMP_RNDN);
-      for (q=1; q<2*p; q++)
+      for (q=2; q<2*p; q++)
 	{
 	  mpfr_set_prec (y, q);
 	  for (rnd=0; rnd<4; rnd++)

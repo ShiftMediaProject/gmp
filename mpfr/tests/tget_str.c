@@ -51,19 +51,20 @@ check3 (double d, mp_rnd_t rnd, char *res)
 {
   mpfr_t x; char *str; mp_exp_t e;
 
-  mpfr_init2(x, 53);
-  mpfr_set_d(x, d, rnd);
-  str = mpfr_get_str(NULL, &e, 10, 5, x, rnd);
-  if (strcmp(str, res)) {
-    fprintf(stderr, "Error in mpfr_get_str for x=%1.20e\n", d);
-    fprintf(stderr, "got %s instead of %s\n", str, res);
-  }
-  mpfr_clear(x);
-  free(str);
+  mpfr_init2 (x, 53);
+  mpfr_set_d (x, d, rnd);
+  str = mpfr_get_str (NULL, &e, 10, 5, x, rnd);
+  if (strcmp(str, res))
+    {
+      fprintf (stderr, "Error in mpfr_get_str for x=%1.20e\n", d);
+      fprintf (stderr, "got %s instead of %s\n", str, res);
+    }
+  mpfr_clear (x);
+  free (str);
 }
 
 void
-check_small ()
+check_small (void)
 {
   mpfr_t x;
   char *s;

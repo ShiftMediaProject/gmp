@@ -33,7 +33,7 @@ void check _PROTO ((unsigned long, double, mp_rnd_t, double));
 void check_two_sum _PROTO ((mp_prec_t));
 
 void
-special ()
+special (void)
 {
   mpfr_t x, y, res;
   int inexact;
@@ -186,10 +186,10 @@ check_two_sum (mp_prec_t p)
       fprintf (stderr, "Wrong inexact flag for prec=%u, rnd=%s\n", (unsigned)p,
 	       mpfr_print_rnd_mode (rnd));
       printf ("x=%u\n", x);
-      printf ("y="); mpfr_print_raw(y); putchar('\n');
-      printf ("u="); mpfr_print_raw(u); putchar('\n');
-      printf ("v="); mpfr_print_raw(v); putchar('\n');
-      printf ("w="); mpfr_print_raw(w); putchar('\n');
+      printf ("y="); mpfr_print_binary(y); putchar('\n');
+      printf ("u="); mpfr_print_binary(u); putchar('\n');
+      printf ("v="); mpfr_print_binary(v); putchar('\n');
+      printf ("w="); mpfr_print_binary(w); putchar('\n');
       printf ("inexact = %d\n", inexact);
       exit (1);
     }
@@ -230,7 +230,7 @@ main (int argc, char *argv[])
   }
 #endif
   special ();
-  for (p=1; p<100; p++)
+  for (p=2; p<100; p++)
     for (k=0; k<100; k++)
       check_two_sum (p);
   check(1, 1.0/0.0, GMP_RNDN, -1.0/0.0); 

@@ -71,9 +71,7 @@ mpfr_set_ui (mpfr_ptr x, unsigned long i, mp_rnd_t rnd_mode)
         }
     }
 
-  /* warning: don't change the precision of x! */
-  if (MPFR_SIGN(x) < 0)
-    MPFR_CHANGE_SIGN(x);
+  MPFR_SET_POS(x);
 
   MPFR_RET(inex);
 }

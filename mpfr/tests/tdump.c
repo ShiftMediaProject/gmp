@@ -30,11 +30,11 @@ main (void)
 {
   mpfr_t z;
 
-  mpfr_init2(z, 100);
-  mpfr_set_ui(z, 0, GMP_RNDN);
-  mpfr_dump(z, GMP_RNDD);
-  printf("   ^--- 0.e1 printed above is ok\n");
-  mpfr_clear(z);
+  mpfr_init2 (z, 2);
+  mpfr_set_ui (z, 0, GMP_RNDN);
+  mpfr_dump (z, GMP_RNDD);
+  printf ("   ^--- 0.00e0 printed above is ok\n");
+  mpfr_clear (z);
 
   return 0;
 }

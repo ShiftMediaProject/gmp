@@ -1,7 +1,6 @@
-/* Test file for mpfr_log2.
+/* _mpfr_ceil_exp2 - returns y >= 2^d
 
-Copyright (C) 2001 Free Software Foundation.
-Adapted from tsinh.c.
+Copyright (C) 1999-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -20,19 +19,24 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
-#include "mpfr-test.h"
+#include "mpfr-impl.h"
 
-#define TEST_FUNCTION mpfr_log2
-#include "tgeneric.c"
-
-int
-main (int argc, char *argv[])
+/* returns y >= 2^d, assuming that d <= 1024 */
+double
+_mpfr_ceil_exp2 (double d)
 {
-  test_generic (1, 100, 30);
+  long exp;
+  union ieee_double_extract x;
 
-  return 0;
+  MPFR_ASSERTN(d <= 1024.0);
+  exp = (long) d;
+  if (d != (double) exp)
+    exp++;
+  /* now exp = ceil(d) */
+  x.d = 1.0;
+  x.s.exp = exp <= -1022 ? 1 : 1023 + exp;
+  return x.d;
 }

@@ -1,6 +1,6 @@
 /* mpfr_dim -- dim of x, y  
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -19,7 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -32,24 +31,22 @@ MA 02111-1307, USA. */
  */
 
 int
-mpfr_dim (mpfr_ptr z, mpfr_srcptr x ,mpfr_srcptr y , mp_rnd_t rnd_mode) 
+mpfr_dim (mpfr_ptr z, mpfr_srcptr x ,mpfr_srcptr y , mp_rnd_t rnd_mode)
 {
-
-    if (MPFR_IS_NAN(x) || MPFR_IS_NAN(y) ) 
-    {  
-      MPFR_SET_NAN(z); 
-      return 1; 
+  if (MPFR_IS_NAN(x) || MPFR_IS_NAN(y))
+    {
+      MPFR_SET_NAN(z);
+      MPFR_RET_NAN;
     }
-    MPFR_CLEAR_NAN(z);
 
-    if(mpfr_cmp(x,y) > 0)
-      return mpfr_sub(z,x,y,rnd_mode);
-    else
+  MPFR_CLEAR_NAN(z);
+
+  if (mpfr_cmp(x,y) > 0)
+    return mpfr_sub(z, x, y, rnd_mode);
+  else
     {
       MPFR_SET_ZERO(z);
-      if(MPFR_SIGN(z) < 0) 
-        MPFR_CHANGE_SIGN(z);
-      return 0;
+      MPFR_SET_POS(z);
+      MPFR_RET(0);
     }
 }
-

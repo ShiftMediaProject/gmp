@@ -35,7 +35,7 @@ void check_large _PROTO((void));
 void slave _PROTO((int, int)); 
 
 double
-drand_agm()
+drand_agm(void)
 {
   double d; long int *i;
 
@@ -109,7 +109,8 @@ if (ck==0) printf("%1.20e\n", res1);
   mpfr_clear(ta); mpfr_clear(tb); mpfr_clear(tres); 
 }
 
-void check_large ()
+void
+check_large (void)
 {
   mpfr_t a, b, agm;
 

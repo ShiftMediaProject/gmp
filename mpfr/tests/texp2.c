@@ -39,7 +39,7 @@ main (int argc, char *argv[])
   mpfr_init (x);
   mpfr_init (y);
 
-
+  MPFR_CLEAR_NAN(x);
   MPFR_SET_INF(x);
   mpfr_exp2 (y, x, GMP_RNDN);
   if(!MPFR_IS_INF(y))
@@ -64,7 +64,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  test_generic (1, 100, 100);
+  test_generic (2, 100, 100);
 
   mpfr_clear (x);
   mpfr_clear (y);

@@ -90,8 +90,8 @@ check4 (double a, mp_rnd_t rnd_mode, char *Q)
   if (mpfr_cmp(q, res)) {
       printf("mpfr_sqrt failed for a=%1.20e, rnd_mode=%s\n",
 	     a, mpfr_print_rnd_mode(rnd_mode));
-      printf("expected "); mpfr_print_raw(res); putchar('\n');
-      printf("got      "); mpfr_print_raw(q); putchar('\n');
+      printf("expected "); mpfr_print_binary(res); putchar('\n');
+      printf("got      "); mpfr_print_binary(q); putchar('\n');
       mpfr_clear(q); mpfr_clear(res); 
       exit(1);
   }
@@ -120,7 +120,7 @@ check24 (float a, mp_rnd_t rnd_mode, float Q)
 /* the following examples come from the paper "Number-theoretic Test 
    Generation for Directed Rounding" from Michael Parks, Table 3 */
 void
-check_float ()
+check_float (void)
 {
   float b = 8388608.0; /* 2^23 */
 
@@ -170,7 +170,7 @@ check_float ()
 }
 
 void
-special ()
+special (void)
 {
   mpfr_t x, z;
   int inexact;
@@ -187,17 +187,17 @@ special ()
       exit (1);
     }
 
-  mpfr_set_prec (x, 1);
-  for (p=1; p<1000; p++)
+  mpfr_set_prec (x, 2);
+  for (p=2; p<1000; p++)
     {
       mpfr_set_prec (z, p);
       mpfr_set_ui (z, 1, GMP_RNDN);
-      mpfr_add_one_ulp (z);
+      mpfr_add_one_ulp (z, GMP_RNDN);
       mpfr_sqrt (x, z, GMP_RNDU);
-      if (mpfr_cmp_ui (x, 2))
+      if (mpfr_get_d (x) != 1.5)
 	{
-	  fprintf (stderr, "Error: sqrt(1+ulp(1), up) should give 2 (prec=%u)\n", (unsigned) p);
-	  printf ("got "); mpfr_print_raw (x); putchar ('\n');
+	  fprintf (stderr, "Error: sqrt(1+ulp(1), up) should give 1.5 (prec=%u)\n", (unsigned) p);
+	  printf ("got "); mpfr_print_binary (x); putchar ('\n');
 	  exit (1);
 	}
     }
@@ -211,8 +211,8 @@ special ()
       exit (1);
     }
 
-  mpfr_set_prec (x, 1);
-  mpfr_set_prec (z, 1);
+  mpfr_set_prec (x, 2);
+  mpfr_set_prec (z, 2);
 
   /* checks the sign is correctly set */
   mpfr_set_d (x, 1.0, GMP_RNDN);
@@ -227,7 +227,7 @@ special ()
   mpfr_set_prec (x, 192);
   mpfr_set_prec (z, 160);
   mpfr_set_str_raw (z, "0.1011010100000100100100100110011001011100100100000011000111011001011101101101110000110100001000100001100001011000E1");
-  mpfr_set_prec(x, 160);
+  mpfr_set_prec (x, 160);
   mpfr_sqrt(x, z, GMP_RNDN);
   mpfr_sqrt(z, x, GMP_RNDN);
 
@@ -262,9 +262,9 @@ check_inexact (mp_prec_t p)
       fprintf (stderr, "Error: wrong inexact flag, expected %d, got %d\n",
 	       sign, inexact);
       printf ("x=");
-      mpfr_print_raw (x);
+      mpfr_print_binary (x);
       printf (" rnd=%s\n", mpfr_print_rnd_mode (rnd));
-      printf ("y="); mpfr_print_raw (y); putchar ('\n');
+      printf ("y="); mpfr_print_binary (y); putchar ('\n');
       exit (1);
     }
   mpfr_clear (x);
@@ -295,7 +295,7 @@ main (void)
     check(a, rand() % 4);
   }
 #endif
-  for (p=1; p<200; p++)
+  for (p=2; p<200; p++)
     for (k=0; k<200; k++)
       check_inexact (p);
   special ();

@@ -28,7 +28,7 @@ void check_pow_ui _PROTO ((void));
 void check_inexact _PROTO ((mp_prec_t));
 
 void
-check_pow_ui ()
+check_pow_ui (void)
 {
   mpfr_t a, b;
 
@@ -78,7 +78,7 @@ check_inexact (mp_prec_t p)
   mpfr_init (t);
   mpfr_random (x);
   u = lrand48() % 2;
-  for (q=1; q<=p; q++)
+  for (q=2; q<=p; q++)
     for (rnd=0; rnd<4; rnd++)
       {
 	mpfr_set_prec (y, q);
@@ -93,10 +93,10 @@ check_inexact (mp_prec_t p)
 	      {
 		fprintf (stderr, "results differ for u=%lu rnd=%s\n", u,
 			 mpfr_print_rnd_mode(rnd));
-		printf ("x="); mpfr_print_raw (x); putchar ('\n');
-		printf ("y="); mpfr_print_raw (y); putchar ('\n');
-		printf ("t="); mpfr_print_raw (t); putchar ('\n');
-		printf ("z="); mpfr_print_raw (z); putchar ('\n');
+		printf ("x="); mpfr_print_binary (x); putchar ('\n');
+		printf ("y="); mpfr_print_binary (y); putchar ('\n');
+		printf ("t="); mpfr_print_binary (t); putchar ('\n');
+		printf ("z="); mpfr_print_binary (z); putchar ('\n');
 		exit (1);
 	      }
 	    if (((inexact == 0) && (cmp != 0)) ||
@@ -105,8 +105,8 @@ check_inexact (mp_prec_t p)
 		fprintf (stderr, "Wrong inexact flag for p=%u, q=%u, rnd=%s\n",
 			 (unsigned) p, (unsigned) q, mpfr_print_rnd_mode (rnd));
 		printf ("expected %d, got %d\n", cmp, inexact);
-		printf ("u=%lu x=", u); mpfr_print_raw (x); putchar ('\n');
-                printf ("y="); mpfr_print_raw (y); putchar ('\n');
+		printf ("u=%lu x=", u); mpfr_print_binary (x); putchar ('\n');
+                printf ("y="); mpfr_print_binary (y); putchar ('\n');
 		exit (1);
 	      }
 	  }
@@ -125,7 +125,7 @@ main (void)
 
   check_pow_ui ();
 
-  for (p=1; p<100; p++)
+  for (p=2; p<100; p++)
     check_inexact (p);
 
   return 0;

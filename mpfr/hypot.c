@@ -1,6 +1,6 @@
 /* mpfr_hypot -- Euclidean distance
 
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -41,27 +41,26 @@ mpfr_hypot (mpfr_ptr z, mpfr_srcptr x ,mpfr_srcptr y , mp_rnd_t rnd_mode)
   /* particular cases */
 
   if (MPFR_IS_NAN(x) || MPFR_IS_NAN(y))
-  {
-    MPFR_SET_NAN(z);
-    return 1;
-  }
+    {
+      MPFR_SET_NAN(z);
+      MPFR_RET_NAN;
+    }
 
   MPFR_CLEAR_NAN(z);
 
   if (MPFR_IS_INF(x) || MPFR_IS_INF(y))
-  {
-    MPFR_SET_INF(z);
-    if (MPFR_SIGN(z) < 0)
-      MPFR_CHANGE_SIGN(z);
-    return 0;
-  }
+    {
+      MPFR_SET_INF(z);
+      MPFR_SET_POS(z);
+      MPFR_RET(0);
+    }
 
   MPFR_CLEAR_INF(z);
-  
-  if(!MPFR_NOTZERO(x))
+
+  if(MPFR_IS_ZERO(x))
     return mpfr_abs (z, y, rnd_mode);
-  
-  if(!MPFR_NOTZERO(y))
+
+  if(MPFR_IS_ZERO(y))
     return mpfr_abs (z, x, rnd_mode);
 
   /* General case */

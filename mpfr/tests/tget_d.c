@@ -1,6 +1,6 @@
 /* Test file for mpfr_get_d
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright (C) 1999-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -22,34 +22,88 @@ MA 02111-1307, USA. */
 #include <stdio.h>
 #include <stdlib.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
+
+#define TEST
+#include "rnd_mode.c"
 
 int
 main (void)
 {
-   mpfr_t x;
+   mpfr_t half, x, y;
+   mp_rnd_t rnd_mode;
 
-   mpfr_init2 (x, 2);
+   mpfr_init2(half, 2);
+   mpfr_set_ui(half, 1, GMP_RNDZ);
+   mpfr_div_2ui(half, half, 1, GMP_RNDZ); /* has exponent 0 */
 
-   /* checks that rounds to nearest sets the last
-     bit to zero in case of equal distance */
-   mpfr_set_d (x, 5.0, GMP_RNDN);
-   if (mpfr_get_d (x) != 4.0)
+   mpfr_init2(x, 128);
+   mpfr_init2(y, 128);
+
+   for (rnd_mode = 0; rnd_mode <= 3; rnd_mode++)
      {
-       fprintf (stderr, "Error in tget_d: got %1.1f instead of 4.0\n",
-	       mpfr_get_d (x));
-       exit (1);
+       int i, j, si, sj;
+       double di, dj;
+
+       mpfr_set_machine_rnd_mode(rnd_mode);
+       for (i = 1, di = 0.25; i < 127; i++, di *= 0.5)
+         for (si = 0; si <= 1; si++)
+           {
+             mpfr_div_2ui(x, half, i, GMP_RNDZ);
+             (si ? mpfr_sub : mpfr_add)(x, half, x, GMP_RNDZ);
+             for (j = i+1, dj = di * 0.5; j < 128 && j < i+53; j++, dj *= 0.5)
+               for (sj = 0; sj <= 1; sj++)
+                 {
+                   double c, d, dd;
+                   int exp;
+                   char *f;
+
+                   mpfr_div_2ui(y, half, j, GMP_RNDZ);
+                   (sj ? mpfr_sub : mpfr_add)(y, x, y, GMP_RNDZ);
+                   exp = (rand() % 47) - 23;
+                   mpfr_mul_2si(y, y, exp, GMP_RNDZ);
+                   if (mpfr_inexflag_p())
+                     {
+                       fprintf(stderr, "Error in tget_d: inexact flag for "
+                               "(i,si,j,sj,rnd,exp) = (%d,%d,%d,%d,%d,%d)\n",
+                               i, si, j, sj, rnd_mode, exp);
+                       exit(1);
+                     }
+                   dd = si != sj ? di - dj : di + dj;
+                   d = si ? 0.5 - dd : 0.5 + dd;
+                   if ((rand() / 1024) & 1)
+                     {
+                       c = mpfr_get_d(y);
+                       f = "mpfr_get_d";
+                     }
+                   else
+                     {
+                       exp = (rand() % 47) - 23;
+                       c = mpfr_get_d2(y, exp);
+                       f = "mpfr_get_d2";
+                       if (si) /* then real d < 0.5 */
+                         d *= sj && i == 1 ? 4 : 2; /* normalize real d */
+                     }
+                   if (exp > 0)
+                     d *= 1 << exp;
+                   if (exp < 0)
+                     d /= 1 << -exp;
+                   if (c != d)
+                     {
+                       fprintf(stderr, "Error in tget_d (%s) for "
+                               "(i,si,j,sj,rnd,exp) = (%d,%d,%d,%d,%d,%d)\n"
+                               "got %.17g instead of %.17g\n",
+                               f, i, si, j, sj, rnd_mode, exp, c, d);
+                       exit(1);
+                     }
+                 }
+           }
      }
 
-   mpfr_set_d (x, 9.84891017624509146344e-01, GMP_RNDU); 
-   if (mpfr_get_d (x) != 1.0)
-     {
-       fprintf (stderr, "Error in tround: got %f instead of 1.0\n",
-		mpfr_get_d (x));
-       exit (1);
-     }
-   
+   mpfr_clear(half);
    mpfr_clear(x);
-
+   mpfr_clear(y);
    return 0;
 }

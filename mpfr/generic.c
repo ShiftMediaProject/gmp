@@ -188,7 +188,7 @@ GENERIC (mpfr_ptr y, mpz_srcptr p, int r, int m)
   mpfr_div (y, y, tmp, GMP_RNDD);
   mpfr_clear (tmp);
 #else
-  mpfr_div_2exp(y, y, r*(i-1), GMP_RNDN);
+  mpfr_div_2ui(y, y, r*(i-1), GMP_RNDN);
 #endif
   for (i=0;i<=m;i++)
     {

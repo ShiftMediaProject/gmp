@@ -1,6 +1,7 @@
-/* Test file for mpfr_const_euler.
+/* Test file for mpfr_acos.
 
 Copyright (C) 2001 Free Software Foundation.
+Contributed by Mathieu Dutour.
 
 This file is part of the MPFR Library.
 
@@ -26,65 +27,69 @@ MA 02111-1307, USA. */
 #include "mpfr-impl.h"
 
 int
-main (int argc, char *argv[])
+main (void)
 {
-  mpfr_t gamma, y, z, t;
-  unsigned int err, prec, yprec, p0 = 1, p1 = 200;
+  unsigned int prec, err, yprec, n;
   mp_rnd_t rnd;
+  mpfr_t x, y, z;
 
-  prec = (argc < 2) ? 53 : atoi(argv[1]);
-
-  if (argc > 1)
-    {
-      mpfr_init2 (gamma, prec);
-      mpfr_const_euler (gamma, GMP_RNDN);
-      printf("gamma="); mpfr_out_str (stdout, 10, 0, gamma, GMP_RNDD);
-      putchar ('\n');
-      mpfr_clear (gamma);
-      return 0;
-    }
-
+  mpfr_init (x);
   mpfr_init (y);
   mpfr_init (z);
-  mpfr_init (t);
 
-  for (prec = p0; prec <= p1; prec++)
+  MPFR_SET_NAN(x);
+  mpfr_acos (y, x, GMP_RNDN);
+  if (mpfr_nan_p(y) == 0)
     {
+      fprintf (stderr, "Error: acos(NaN) != NaN\n");
+      exit (1);
+    }
+
+  mpfr_set_ui (x, 2, GMP_RNDN);
+  mpfr_acos (y, x, GMP_RNDN);
+  if (mpfr_nan_p(y) == 0)
+    {
+      fprintf (stderr, "Error: acos(2) != NaN\n");
+      exit (1);
+    }
+
+  for (prec = 2; prec <= 100; prec++)
+    {
+      mpfr_set_prec (x, prec);
       mpfr_set_prec (z, prec);
-      mpfr_set_prec (t, prec);
       yprec = prec + 10;
 
-      for (rnd=0; rnd<4; rnd++)
+      for (n=0; n<10; n++)
 	{
+	  mpfr_random (x);
+	  rnd = random () % 4;
 	  mpfr_set_prec (y, yprec);
-	  mpfr_const_euler (y, rnd);
+	  mpfr_acos (y, x, rnd);
 	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
 	  if (mpfr_can_round (y, err, rnd, rnd, prec))
 	    {
-	      mpfr_set (t, y, rnd);
-	      mpfr_const_euler (z, rnd);
-	      if (mpfr_cmp (t, z))
+	      mpfr_round_prec (y, rnd, prec);
+	      mpfr_acos (z, x, rnd);
+	      if (mpfr_cmp (y, z))
 		{
-		  printf ("results differ for prec=%u rnd_mode=%s\n", prec,
+		  printf ("results differ for x=");
+		  mpfr_out_str (stdout, 2, prec, x, GMP_RNDN);
+		  printf (" prec=%u rnd_mode=%s\n", prec,
 			  mpfr_print_rnd_mode (rnd));
-		  printf ("   got      ");
+		  printf ("   got ");
 		  mpfr_out_str (stdout, 2, prec, z, GMP_RNDN);
 		  putchar ('\n');
 		  printf ("   expected ");
-		  mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
+		  mpfr_out_str (stdout, 2, prec, y, GMP_RNDN);
 		  putchar ('\n');
-		  printf ("   approximation was ");
-		  mpfr_print_raw (y);
-		  putchar ('\n');
-		  exit (1);
 		}
 	    }
 	}
     }
 
+  mpfr_clear (x);
   mpfr_clear (y);
   mpfr_clear (z);
-  mpfr_clear (t);
 
   return 0;
 }

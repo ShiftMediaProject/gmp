@@ -84,9 +84,9 @@ main (int argc, char *argv[])
   if (mpfr_cmp (x, y))
     {
       fprintf (stderr, "Error in mpfr_set_str\n");
-      mpfr_print_raw(x);
+      mpfr_print_binary(x);
       putchar('\n');
-      mpfr_print_raw(y);
+      mpfr_print_binary(y);
       putchar('\n');
       mpfr_clear(x);
       mpfr_clear(y); 
@@ -150,11 +150,11 @@ main (int argc, char *argv[])
 	  fprintf (stderr, "mpfr_set_str o mpfr_get_str <> id for rnd_mode=%s\n",
 		   mpfr_print_rnd_mode (k));
 	  printf ("x=");
-	  mpfr_print_raw (x);
+	  mpfr_print_binary (x);
 	  putchar('\n');
 	  printf ("s=%s, exp=%d, base=%d\n", str, (int) e, base);
 	  printf ("y=");
-	  mpfr_print_raw (y);
+	  mpfr_print_binary (y);
 	  putchar('\n');
 	  mpfr_clear (x);
 	  mpfr_clear (y);

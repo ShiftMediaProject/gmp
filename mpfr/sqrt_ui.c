@@ -1,6 +1,6 @@
 /* mpfr_sqrt_ui -- square root of a machine integer
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 2000-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,8 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -35,18 +33,22 @@ mpfr_sqrt_ui (mpfr_ptr r, unsigned long u, mp_rnd_t rnd_mode)
       mpfr_t uu;
       mp_limb_t up[1];
       unsigned long cnt;
-      
+      int inex;
+
       MPFR_INIT1(up, uu, BITS_PER_MP_LIMB, 1);
       count_leading_zeros (cnt, (mp_limb_t) u);
       *up = (mp_limb_t) u << cnt;
       MPFR_EXP(uu) = BITS_PER_MP_LIMB - cnt;
-      
-      return mpfr_sqrt(r, uu, rnd_mode);
+
+      mpfr_save_emin_emax();
+      inex = mpfr_sqrt(r, uu, rnd_mode);
+      MPFR_RESTORE_RET(inex, r, rnd_mode);
     }
   else /* sqrt(0) = 0 */
     {
       MPFR_CLEAR_FLAGS(r);
       MPFR_SET_ZERO(r);
-      return 0;
+      MPFR_SET_POS(r);
+      MPFR_RET(0);
     }
 }

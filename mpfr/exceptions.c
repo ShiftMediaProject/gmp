@@ -39,14 +39,10 @@ mpfr_get_emin (void)
 
 #undef mpfr_set_emin
 
-/* this strangely written form avoids a powerpc64 gcc 3.0 -O2 bug */
 int
 mpfr_set_emin (mp_exp_t exponent)
 {
-  if (exponent < MPFR_EMIN_MIN)
-    return 1;
-
-  if (exponent <= MPFR_EMIN_MAX)
+  if (exponent >= MPFR_EMIN_MIN && exponent <= MPFR_EMIN_MAX)
     {
       __mpfr_emin = exponent;
       return 0;
@@ -67,14 +63,10 @@ mpfr_get_emax (void)
 
 #undef mpfr_set_emax
 
-/* this strangely written form avoids a powerpc64 gcc 3.0 -O2 bug */
 int
 mpfr_set_emax (mp_exp_t exponent)
 {
-  if (exponent < MPFR_EMAX_MIN)
-    return 1;
-
-  if (exponent <= MPFR_EMAX_MAX)
+  if (exponent >= MPFR_EMAX_MIN && exponent <= MPFR_EMAX_MAX)
     {
       __mpfr_emax = exponent;
       return 0;
@@ -217,12 +209,15 @@ mpfr_set_overflow (mpfr_ptr x, mp_rnd_t rnd_mode, int sign)
    || (rnd_mode == GMP_RNDD && sign > 0))
     {
       mp_size_t xn, i;
+      int sh;
       mp_limb_t *xp;
 
       MPFR_EXP(x) = __mpfr_emax;
-      xn = (MPFR_PREC(x)-1)/BITS_PER_MP_LIMB;
+      xn = 1 + (MPFR_PREC(x) - 1) / BITS_PER_MP_LIMB;
+      sh = xn * BITS_PER_MP_LIMB - MPFR_PREC(x);
       xp = MPFR_MANT(x);
-      for (i = 0; i <= xn; i++)
+      xp[0] = MP_LIMB_T_MAX << sh;
+      for (i = 1; i < xn; i++)
         xp[i] = MP_LIMB_T_MAX;
       inex = -1;
     }

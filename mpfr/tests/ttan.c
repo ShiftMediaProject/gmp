@@ -61,17 +61,17 @@ main(int argc, char *argv[])
   check53(-1.0/0.0, 0.0/0.0, GMP_RNDN); 
 
   mpfr_init (x);
-  mpfr_set_prec (x, 1);
+  mpfr_set_prec (x, 2);
   mpfr_set_d (x, 0.5, GMP_RNDN);
   mpfr_tan (x, x, GMP_RNDD);
-  if (mpfr_get_d(x) != 0.50)
+  if (mpfr_get_d(x) != 0.5)
     {
       fprintf (stderr, "mpfr_tan(0.5, GMP_RNDD) failed\n");
       exit (1);
     }
   mpfr_clear (x);
 
-  test_generic (1, 100, 100);
+  test_generic (2, 100, 100);
 
   return 0;
 }

@@ -1,6 +1,6 @@
-/* mpfr_log2 -- log base 2
+/* mpfr_log10 -- log in base 10
 
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -25,81 +25,67 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
- /* The computation of r=log2(a)
+ /* The computation of r=log10(a)
 
-    r=log2(a)=log(a)/log(2)
+    r=log10(a)=log(a)/log(10)
  */
 
 int
-mpfr_log2 (mpfr_ptr r, mpfr_srcptr a , mp_rnd_t rnd_mode) 
+mpfr_log10 (mpfr_ptr r, mpfr_srcptr a, mp_rnd_t rnd_mode)
 {
-
   int inexact = 0;
 
   /* If a is NaN, the result is NaN */
   if (MPFR_IS_NAN(a))
-    {  
+    {
       MPFR_SET_NAN(r);
       MPFR_RET_NAN;
     }
 
   MPFR_CLEAR_NAN(r);
 
-  /* If a is negative, the result is NaN */
-  if (MPFR_SIGN(a) < 0)
-    {
-      if (!MPFR_IS_INF(a) && MPFR_IS_ZERO(a)) 
-      {
-        MPFR_SET_INF(r); 
-        if (MPFR_SIGN(r) > 0)
-          MPFR_CHANGE_SIGN(r);
-        return 0; 
-      }
-      else
-      {
-        MPFR_SET_NAN(r);
-        MPFR_RET_NAN;
-      }
-    }
-
   /* check for infinity before zero */
   if (MPFR_IS_INF(a))
-    {      
-      MPFR_SET_INF(r);
-      if(MPFR_SIGN(r) < 0)
-        MPFR_CHANGE_SIGN(r);
-      return 0;
+    {
+      if (MPFR_SIGN(a) < 0) /* log10(-Inf) = NaN */
+        {
+          MPFR_SET_NAN(r);
+          MPFR_RET_NAN;
+        }
+      else /* log10(+Inf) = +Inf */
+        {
+          MPFR_SET_INF(r);
+          MPFR_SET_POS(r);
+          MPFR_RET(0);
+        }
     }
 
   /* Now we can clear the flags without damage even if r == a */
+  MPFR_CLEAR_INF(r);
 
-  MPFR_CLEAR_INF(r); 
-
-  if (MPFR_IS_ZERO(a)) 
+  if (MPFR_IS_ZERO(a))
     {
-      MPFR_CLEAR_FLAGS(r);
-      MPFR_SET_INF(r); 
-      if (MPFR_SIGN(r) > 0)
-	MPFR_CHANGE_SIGN(r);
-       /* Execption GMP*/
-      return 0; 
+      MPFR_SET_INF(r);
+      MPFR_SET_POS(r);
+      MPFR_RET(0); /* log10(0) is an exact infinity */
+    }
+
+  /* If a is negative, the result is NaN */
+  if (MPFR_SIGN(a) < 0)
+    {
+      MPFR_SET_NAN(r);
+      MPFR_RET_NAN;
     }
 
   /* If a is 1, the result is 0 */
-  if (mpfr_cmp_ui(a,1) == 0)
+  if (mpfr_cmp_ui(a, 1) == 0)
     {
-      MPFR_CLEAR_FLAGS(r);
-      MPFR_SET_SAME_SIGN(r,a);
       MPFR_SET_ZERO(r);
-      return 0; 
+      MPFR_SET_POS(r);
+      MPFR_RET(0); /* only "normal" case where the result is exact */
     }
 
-  /* If a is integer, log2(a) is exact*/
-  if (mpfr_cmp_ui_2exp(a,1,MPFR_EXP(a)-1) == 0)
-      return mpfr_set_si(r,MPFR_EXP(a)-1,rnd_mode); 
-
-
- /* General case */
+  /* General case */
   {
     /* Declaration of the intermediary variable */
     mpfr_t t, tt;
@@ -111,32 +97,32 @@ mpfr_log2 (mpfr_ptr r, mpfr_srcptr a , mp_rnd_t rnd_mode)
     mp_prec_t Nt;   /* Precision of the intermediary variable */
     long int err;  /* Precision of error */
                 
-
     /* compute the precision of intermediary variable */
     Nt=MAX(Nx,Ny);
     /* the optimal number of bits : see algorithms.ps */
-    Nt=Nt+3+_mpfr_ceil_log2(Nt);
+    Nt=Nt+4+_mpfr_ceil_log2(Nt);
 
     /* initialise of intermediary	variable */
     mpfr_init(t);             
     mpfr_init(tt);             
 
     
-    /* First computation of log2 */
+    /* First computation of log10 */
     do {
 
       /* reactualisation of the precision */
       mpfr_set_prec(t,Nt);             
       mpfr_set_prec(tt,Nt);             
       
-      /* compute log2 */
-      mpfr_const_log2(t,GMP_RNDD); /* log(2) */
-      mpfr_log(tt,a,GMP_RNDN);     /* log(a) */
-      mpfr_div(t,tt,t,GMP_RNDN); /* log(a)/log(2) */
+      /* compute log10 */
+      mpfr_set_ui(t,10,GMP_RNDN);  /* 10 */
+      mpfr_log(t,t,GMP_RNDD);       /* log(10) */
+      mpfr_log(tt,a,GMP_RNDN);      /* log(a) */
+      mpfr_div(t,tt,t,GMP_RNDN);    /* log(a)/log(10) */
 
 
       /* estimation of the error */
-      err=Nt-3;
+      err=Nt-4;
 
       /* actualisation of the precision */
       Nt += 10;

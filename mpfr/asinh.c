@@ -1,6 +1,6 @@
 /* mpfr_asinh -- Inverse Hyperbolic Sinus of Unsigned Integer Number
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -29,51 +29,45 @@ MA 02111-1307, USA. */
     asinh= ln(x+sqrt(x^2+1))
  */
 int
-mpfr_asinh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode) 
+mpfr_asinh (mpfr_ptr y, mpfr_srcptr xt, mp_rnd_t rnd_mode)
 {
-  int inexact =0;
+  int inexact;
   mpfr_t x;
   int flag_neg=0;
+  mp_prec_t Nx;
 
-  mp_prec_t Nx=MPFR_PREC(xt);   /* Precision of input variable */
-  mpfr_init2(x,Nx);
-  mpfr_set(x,xt,GMP_RNDN); 
- 
-  if (MPFR_SIGN(x) < 0)
-    {
-      MPFR_CHANGE_SIGN(x);
-      flag_neg=1;
-    }
-
-  if (MPFR_IS_NAN(x)) 
+  if (MPFR_IS_NAN(xt)) 
     {  
       MPFR_SET_NAN(y); 
-      mpfr_clear(x);
-      return 1; 
+      MPFR_RET_NAN;
     }
-  MPFR_CLEAR_NAN(y);
-  
 
-  if (MPFR_IS_INF(x))
+  MPFR_CLEAR_NAN(y);
+
+  if (MPFR_IS_INF(xt))
     { 
       MPFR_SET_INF(y);
-      MPFR_SET_SAME_SIGN(y,x);
-      if(flag_neg)
-	MPFR_CHANGE_SIGN(y);
-      mpfr_clear(x);
-      return 1;
+      MPFR_SET_SAME_SIGN(y, xt);
+      MPFR_RET(0);
     }
 
   MPFR_CLEAR_INF(y);
 
-  if(!MPFR_NOTZERO(x))
+  if (MPFR_IS_ZERO(xt))
     {
       MPFR_SET_ZERO(y);   /* asinh(0) = 0 */
-      MPFR_SET_SAME_SIGN(y,x);
-      if(flag_neg)
-	MPFR_CHANGE_SIGN(y);
-      mpfr_clear(x);
-      return 0;
+      MPFR_SET_SAME_SIGN(y, xt);
+      MPFR_RET(0);
+    }
+
+  Nx = MPFR_PREC(xt);   /* Precision of input variable */
+  mpfr_init2(x, Nx);
+  mpfr_set(x, xt, GMP_RNDN);
+
+  if (MPFR_SIGN(x) < 0)
+    {
+      MPFR_CHANGE_SIGN(x);
+      flag_neg=1;
     }
 
   /* General case */
@@ -132,5 +126,5 @@ mpfr_asinh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
     mpfr_clear(te);
   }
   mpfr_clear(x);
-  return inexact;
+  MPFR_RET(inexact);
 }

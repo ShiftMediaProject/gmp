@@ -1,6 +1,6 @@
 /* mpfr_tanh -- hyperbolic tangent
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -50,13 +50,13 @@ mpfr_tanh (y, xt, rnd_mode)
     if (MPFR_IS_NAN(xt)) 
       {
         MPFR_SET_NAN(y); 
-        return 1; 
+        MPFR_RET_NAN;
       }
     MPFR_CLEAR_NAN(y);
 
     if (MPFR_IS_INF(xt))
       {
-        if(MPFR_SIGN(xt) > 0)
+        if (MPFR_SIGN(xt) > 0)
           return mpfr_set_si(y,1,rnd_mode); /* tanh(inf) = 1 */
         else
           return mpfr_set_si(y,-1,rnd_mode); /* tanh(-inf) = -1 */
@@ -64,17 +64,17 @@ mpfr_tanh (y, xt, rnd_mode)
     MPFR_CLEAR_INF(y);
 
     /* tanh(0) = 0 */
-    if(!MPFR_NOTZERO(xt))
+    if (MPFR_IS_ZERO(xt))
       {              
         MPFR_SET_ZERO(y);
         MPFR_SET_SAME_SIGN(y,xt);
-        return 0;
+        MPFR_RET(0);
       }
-    
+
     mpfr_init2(x,Nxt);
     mpfr_set(x,xt,GMP_RNDN);
 
-    if(MPFR_SIGN(x)<0)
+    if (MPFR_SIGN(x) < 0)
       {
         MPFR_CHANGE_SIGN(x);
         flag_neg=1;
@@ -115,7 +115,7 @@ mpfr_tanh (y, xt, rnd_mode)
 	mpfr_set_prec(tb,Nt);             
 
         /* compute tanh */
-        mpfr_mul_2exp(te,x,1,GMP_RNDN); /* 2x */
+        mpfr_mul_2ui(te,x,1,GMP_RNDN);  /* 2x */
         mpfr_exp(te,te,GMP_RNDN);       /* exp(2x) */
         mpfr_add_ui(ta,te,1,GMP_RNDD);  /* exp(2x) + 1*/
         mpfr_sub_ui(tb,te,1,GMP_RNDU);  /* exp(2x) - 1*/

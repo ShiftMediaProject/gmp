@@ -50,7 +50,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  for (prec = 1; prec <= 100; prec++)
+  for (prec = 2; prec <= 100; prec++)
     {
       mpfr_set_prec (x, prec);
       mpfr_set_prec (z, prec);
@@ -84,7 +84,7 @@ main (int argc, char *argv[])
 		      {
 			fprintf (stderr, "Wrong inexact flag: expected inexact\n");
 			printf ("n=%u prec=%u\n", n, prec);
-			mpfr_print_raw(z); putchar('\n');
+			mpfr_print_binary(z); putchar('\n');
 			exit (1);
 		      }
 		  }
@@ -101,7 +101,7 @@ main (int argc, char *argv[])
 		    mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
 		    putchar ('\n');
 		    printf ("   approximation was ");
-		    mpfr_print_raw (y);
+		    mpfr_print_binary (y);
 		    putchar ('\n');
 		    exit (1);
 		  }

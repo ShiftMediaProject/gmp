@@ -1,6 +1,6 @@
 /* Test file for mpfr_abs.
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 2000-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -21,7 +21,6 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-test.h"
@@ -31,7 +30,7 @@ MA 02111-1307, USA. */
 void check_inexact _PROTO((void));
 
 void
-check_inexact ()
+check_inexact (void)
 {
   mp_prec_t p, q;
   mpfr_t x, y, absx;
@@ -42,7 +41,7 @@ check_inexact ()
   mpfr_init (y);
   mpfr_init (absx);
   
-  for (p=1; p<500; p++)
+  for (p=2; p<500; p++)
     {
       mpfr_set_prec (x, p);
       mpfr_set_prec (absx, p);
@@ -54,7 +53,7 @@ check_inexact ()
 	}
       else
 	mpfr_set (absx, x, GMP_RNDN);
-      for (q=1; q<2*p; q++)
+      for (q=2; q<2*p; q++)
 	{
 	  mpfr_set_prec (y, q);
 	  for (rnd=0; rnd<4; rnd++)
@@ -66,9 +65,9 @@ check_inexact ()
 		  ((inexact < 0) && (cmp >= 0)))
 		{
 		  fprintf (stderr, "Wrong inexact flag: expected %d, got %d\n", cmp, inexact);
-		  printf ("x="); mpfr_print_raw (x); putchar ('\n');
-		  printf ("absx="); mpfr_print_raw (absx); putchar ('\n');
-		  printf ("y="); mpfr_print_raw (y); putchar ('\n');
+		  printf ("x="); mpfr_print_binary (x); putchar ('\n');
+		  printf ("absx="); mpfr_print_binary (absx); putchar ('\n');
+		  printf ("y="); mpfr_print_binary (y); putchar ('\n');
 		  exit (1);
 		}
 	    }
@@ -129,11 +128,11 @@ main (int argc, char *argv[])
        mpfr_set_d(x, d, 0);
        mpfr_abs(x, x, rnd);
        dd = mpfr_get_d(x);
-       if (dd != fabs(d) && !isnan(d))
+       if (!isnan(d) && dd != ABS(d))
 	 { 
 	   fprintf(stderr, 
 		   "Mismatch on d = %1.18g\n", d); 
-	   mpfr_print_raw(x); putchar('\n');
+	   mpfr_print_binary(x); putchar('\n');
 	   exit(1);
 	 } 
      }

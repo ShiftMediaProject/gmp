@@ -44,7 +44,7 @@ check(long i, unsigned char rnd)
 }
 
 void
-check_large ()
+check_large (void)
 {
   mpz_t z; mpfr_t x,y;
 

@@ -25,9 +25,9 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-/* signs of b and c are supposed equal,
+/* compute sign(b) * (|b| + |c|)
    diff_exp is the difference between the exponents of b and c,
-   which is supposed >= 0 */
+   which is >= 0 */
 
 int
 mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
@@ -42,7 +42,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
   MPFR_ASSERTN(MPFR_IS_FP(b) && MPFR_NOTZERO(b));
   MPFR_ASSERTN(MPFR_IS_FP(c) && MPFR_NOTZERO(c));
-  
+
   TMP_MARK(marker);
   ap = MPFR_MANT(a);
   bp = MPFR_MANT(b);
@@ -50,14 +50,14 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
   if (ap == bp)
     {
-      bp = (mp_ptr) TMP_ALLOC(MPFR_ABSSIZE(b) * BYTES_PER_MP_LIMB);
+      bp = (mp_ptr) TMP_ALLOC((size_t) MPFR_ABSSIZE(b) * BYTES_PER_MP_LIMB);
       MPN_COPY (bp, ap, MPFR_ABSSIZE(b));
       if (ap == cp)
         { cp = bp; }
     }
   else if (ap == cp)
     {
-      cp = (mp_ptr) TMP_ALLOC (MPFR_ABSSIZE(c) * BYTES_PER_MP_LIMB);
+      cp = (mp_ptr) TMP_ALLOC ((size_t) MPFR_ABSSIZE(c) * BYTES_PER_MP_LIMB);
       MPN_COPY(cp, ap, MPFR_ABSSIZE(c));
     }
 
@@ -210,7 +210,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
 
   /* determine rounding and sticky bits (and possible carry) */
 
-  difw = an - diff_exp / BITS_PER_MP_LIMB;
+  difw = (mp_exp_t) an - (mp_exp_t) (diff_exp / BITS_PER_MP_LIMB);
   /* difw is the number of limbs from b (regarded as having an infinite
      precision) that have already been combined with c; -n if the next
      n limbs from b won't be combined with c. */
@@ -454,7 +454,7 @@ mpfr_add1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c,
             {
               mp_limb_t cc;
 
-              cc = difs ? (/*MPFR_ASSERTN(ck < cn),*/
+              cc = difs ? (MPFR_ASSERTN(ck < cn),
                            cp[ck] << (BITS_PER_MP_LIMB - difs)) : cp[--ck];
               if (rb < 0)
                 {

@@ -33,14 +33,18 @@ mpfr_dump (mpfr_srcptr u, mp_rnd_t rnd_mode)
   mp_exp_t exp;
   char *str;
 
-  if (MPFR_IS_INF(u)) 
-    {
-      if (MPFR_SIGN(u) == 1) printf("Inf\n"); else printf("-Inf\n"); 
-      return; 
-    }
   if (MPFR_IS_NAN(u)) 
     {
-      printf("NaN\n"); 
+      printf ("NaN\n"); 
+      return; 
+    }
+
+  if (MPFR_IS_INF(u)) 
+    {
+      if (MPFR_SIGN(u) == 1)
+        printf ("Inf\n");
+      else
+        printf ("-Inf\n"); 
       return; 
     }
 

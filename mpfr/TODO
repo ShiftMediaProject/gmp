@@ -13,11 +13,15 @@ Installation:
 
 New functions to implement:
 
+- those from LIA: missing secant, cosecant, cotangent (trigo/hyperbolic)
+
 Rounding:
 
 Efficiency:
 
 Miscellaneous:
+
+- initialize variables to signalling NaN (TG)
 
 - change Library GPL to Lesser GPL, and mention INRIA and/or SPACES
 
@@ -54,3 +58,12 @@ i.e.0.10101011100001010011001101100101110011101110010001011000000000000000000000
 	(PUTOT Sylvie <sputot@aigle.saclay.cea.fr>, Tue, 20 Mar 2001)
 
 - check correctness of +/-0 - +/-0 with different rounding modes.
+
+- rename mpz_set_fr to mpfr_get_mantissa_exp.
+	(Kevin Ryde <user42@zip.com.au>, 22 Jan 2002)
+	(Vincent Lefevre, 03 Feb 2002)
+
+- rewrite mpfr_get_str and mpfr_set_str to use mpn_get_str and mpn_set_str.
+	(Torbjorn Granlund <tege@swox.com>, 30 Jan 2002)
+
+- mpfr_pow isn't completely specified (concerning signed zeros).

@@ -38,7 +38,7 @@ MA 02111-1307, USA. */
 
 /* Definition of exponent limits */
 
-#define MPFR_EMAX_DEFAULT ((mp_exp_t) (((unsigned long) 1 <<31)-1))
+#define MPFR_EMAX_DEFAULT ((mp_exp_t) (((unsigned long) 1 << 31) - 1))
 #define MPFR_EMIN_DEFAULT (-(MPFR_EMAX_DEFAULT))
 
 #define MPFR_EMIN_MIN MPFR_EMIN_DEFAULT
@@ -57,7 +57,11 @@ MA 02111-1307, USA. */
 /* Definitions of types and their semantics */
 
 typedef unsigned long int mp_prec_t; /* easy to change if necessary */
-typedef int mp_rnd_t;                /* preferred to char */
+#define MPFR_PREC_MIN 2
+#define MPFR_PREC_MAX (ULONG_MAX >> 1)
+/* Limit mainly due to the multiplication code. */
+
+typedef int mp_rnd_t;
 
 typedef struct {  
   mp_prec_t _mpfr_prec; /* WARNING : for the mpfr type, the precision */
@@ -98,7 +102,16 @@ typedef __gmp_const __mpfr_struct *mpfr_srcptr;
 /* Prototypes */
 
 #ifndef _PROTO
-#define _PROTO(x)  __GMP_PROTO(x)
+#if defined (__STDC__) || defined (__cplusplus)
+#define _PROTO(x) x
+#else
+#define _PROTO(x) ()
+#endif
+#endif
+
+/* _PROTO will be renamed __GMP_PROTO in gmp 4.1 */
+#ifndef __GMP_PROTO
+#define __GMP_PROTO(x) _PROTO(x)
 #endif
 
 #if defined (__cplusplus)
@@ -125,18 +138,18 @@ int mpfr_inexflag_p _PROTO ((void));
 
 void mpfr_init2 _PROTO ((mpfr_ptr, mp_prec_t));
 void mpfr_init _PROTO ((mpfr_ptr));
-int mpfr_round _PROTO ((mpfr_ptr, mp_rnd_t, mp_prec_t)); 
-int mpfr_can_round _PROTO ((mpfr_ptr, mp_prec_t, mp_rnd_t, mp_rnd_t,
+int mpfr_round_prec _PROTO ((mpfr_ptr, mp_rnd_t, mp_prec_t));
+int mpfr_can_round _PROTO ((mpfr_ptr, mp_exp_t, mp_rnd_t, mp_rnd_t,
 			    mp_prec_t));
 int mpfr_set_d _PROTO ((mpfr_ptr, double, mp_rnd_t)); 
 int mpfr_set_z _PROTO ((mpfr_ptr, mpz_srcptr, mp_rnd_t)); 
-mp_exp_t mpz_set_fr _PROTO ((mpz_ptr, mpfr_srcptr)); 
+mp_exp_t mpfr_get_z_exp _PROTO ((mpz_ptr, mpfr_srcptr)); 
 int mpfr_set_q _PROTO ((mpfr_ptr, mpq_srcptr, mp_rnd_t)); 
 double mpfr_get_d _PROTO ((mpfr_srcptr)); 
 int mpfr_set_f _PROTO ((mpfr_ptr, mpf_srcptr, mp_rnd_t));
 int mpfr_set_si _PROTO ((mpfr_ptr, long, mp_rnd_t));
 int mpfr_set_ui _PROTO ((mpfr_ptr, unsigned long, mp_rnd_t));
-void mpfr_print_raw _PROTO ((mpfr_srcptr)); 
+void mpfr_print_binary _PROTO ((mpfr_srcptr)); 
 void mpfr_random _PROTO ((mpfr_ptr));
 void mpfr_random2 _PROTO ((mpfr_ptr, mp_size_t, mp_exp_t)); 
 void mpfr_urandomb _PROTO ((mpfr_ptr, gmp_randstate_t)); 
@@ -160,7 +173,7 @@ int mpfr_sqrt_ui _PROTO ((mpfr_ptr, unsigned long, mp_rnd_t));
 int mpfr_add _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_add_ui _PROTO ((mpfr_ptr, mpfr_srcptr, unsigned long, mp_rnd_t));
 int mpfr_sub_ui _PROTO ((mpfr_ptr, mpfr_srcptr, unsigned long, mp_rnd_t));
-void mpfr_add_one_ulp _PROTO ((mpfr_ptr));
+int mpfr_add_one_ulp _PROTO ((mpfr_ptr, mp_rnd_t));
 int mpfr_sub _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_ui_sub _PROTO ((mpfr_ptr, unsigned long, mpfr_srcptr, mp_rnd_t));
 void mpfr_reldiff _PROTO ((mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mp_rnd_t));
@@ -179,6 +192,10 @@ int mpfr_cmp_ui_2exp _PROTO ((mpfr_srcptr, unsigned long int, int));
 int mpfr_cmp_si_2exp _PROTO ((mpfr_srcptr, long int, int));
 int mpfr_mul_2exp _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
 int mpfr_div_2exp _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
+int mpfr_mul_2ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
+int mpfr_div_2ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t));
+int mpfr_mul_2si _PROTO((mpfr_ptr, mpfr_srcptr, long int, mp_rnd_t));
+int mpfr_div_2si _PROTO((mpfr_ptr, mpfr_srcptr, long int, mp_rnd_t));
 int mpfr_set_prec _PROTO((mpfr_ptr, mp_prec_t));
 void mpfr_set_prec_raw _PROTO((mpfr_ptr, mp_prec_t));
 void mpfr_set_default_prec _PROTO((mp_prec_t));
@@ -187,15 +204,17 @@ extern mp_prec_t __mpfr_default_fp_bit_precision;
 extern mp_rnd_t __gmp_default_rounding_mode;
 char * mpfr_print_rnd_mode _PROTO((mp_rnd_t)); 
 int mpfr_neg _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t)); 
-void mpfr_sub_one_ulp _PROTO((mpfr_ptr)); 
+int mpfr_sub_one_ulp _PROTO((mpfr_ptr, mp_rnd_t));
 int mpfr_div_ui _PROTO((mpfr_ptr, mpfr_srcptr, unsigned long int, mp_rnd_t)); 
 int mpfr_ui_div _PROTO((mpfr_ptr, unsigned long int, mpfr_srcptr, mp_rnd_t)); 
 mp_prec_t mpfr_get_prec _PROTO((mpfr_srcptr));
 void mpfr_set_default_rounding_mode _PROTO((mp_rnd_t));
 int mpfr_eq _PROTO((mpfr_srcptr, mpfr_srcptr, unsigned long));
-void mpfr_floor _PROTO((mpfr_ptr, mpfr_srcptr));
-void mpfr_trunc _PROTO((mpfr_ptr, mpfr_srcptr));
-void mpfr_ceil _PROTO((mpfr_ptr, mpfr_srcptr));
+int mpfr_rint _PROTO((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
+int mpfr_round _PROTO((mpfr_ptr, mpfr_srcptr));
+int mpfr_trunc _PROTO((mpfr_ptr, mpfr_srcptr));
+int mpfr_ceil _PROTO((mpfr_ptr, mpfr_srcptr));
+int mpfr_floor _PROTO((mpfr_ptr, mpfr_srcptr));
 void mpfr_extract _PROTO((mpz_ptr, mpfr_srcptr, unsigned int));
 void mpfr_swap _PROTO((mpfr_ptr, mpfr_ptr));
 void mpfr_dump _PROTO((mpfr_srcptr, mp_rnd_t));
@@ -204,6 +223,7 @@ int mpfr_cmp3 _PROTO ((mpfr_srcptr, mpfr_srcptr, int));
 int mpfr_nan_p _PROTO((mpfr_srcptr));
 int mpfr_inf_p _PROTO((mpfr_srcptr));
 int mpfr_number_p _PROTO((mpfr_srcptr));
+int mpfr_acos _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_asin _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 int mpfr_atan _PROTO ((mpfr_ptr, mpfr_srcptr, mp_rnd_t));
 
@@ -275,12 +295,19 @@ int mpfr_sub_q _PROTO ((mpfr_ptr, mpfr_srcptr, mpq_srcptr, mp_rnd_t));
 #define mpfr_inexflag_p() \
   ((int) (__mpfr_flags & MPFR_FLAGS_INEXACT))
 
+#define mpfr_round(a,b) mpfr_rint((a), (b), GMP_RNDN)
+#define mpfr_trunc(a,b) mpfr_rint((a), (b), GMP_RNDZ)
+#define mpfr_ceil(a,b)  mpfr_rint((a), (b), GMP_RNDU)
+#define mpfr_floor(a,b) mpfr_rint((a), (b), GMP_RNDD)
+
 #define mpfr_cmp_ui(b,i) mpfr_cmp_ui_2exp((b),(i),0)
 #define mpfr_cmp_si(b,i) mpfr_cmp_si_2exp((b),(i),0)
 #define mpfr_set(a,b,r) mpfr_set4(a,b,r,MPFR_SIGN(b))
 #define mpfr_abs(a,b,r) mpfr_set4(a,b,r,1)
 #define mpfr_cmp(b, c) mpfr_cmp3(b, c, 1)
 #define mpfr_sgn(x) mpfr_cmp_ui(x,0)
+#define mpfr_mul_2exp(y,x,n,r) mpfr_mul_2ui((y),(x),(n),(r))
+#define mpfr_div_2exp(y,x,n,r) mpfr_div_2ui((y),(x),(n),(r))
 
 #define mpfr_init_set_si(x, i, rnd) \
  ( mpfr_init(x), mpfr_set_si((x), (i), (rnd)) )

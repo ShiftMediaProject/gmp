@@ -39,6 +39,15 @@ main (int argc, char *argv[])
   mpfr_init (y);
   mpfr_init (z);
 
+  /* check special cases */
+  mpfr_set_prec (x, 2);
+  mpfr_set_prec (y, 2);
+  mpfr_set_prec (z, 2);
+  mpfr_set_prec (s, 2);
+  mpfr_set_d (x, -0.75, GMP_RNDN);
+  mpfr_set_d (y, 0.5, GMP_RNDN);
+  mpfr_set_d (z, 0.375, GMP_RNDN);
+  mpfr_fma (s, x, y, z, GMP_RNDU); /* result is 0 */
 
   MPFR_SET_NAN(x);
   mpfr_random(y);
@@ -46,7 +55,7 @@ main (int argc, char *argv[])
   mpfr_fma (s,x, y,z, GMP_RNDN);
   if(!MPFR_IS_NAN(s))
     {
-      printf ("evaluation of function in x=NAN does not return NAN");
+      fprintf (stderr, "evaluation of function in x=NAN does not return NAN");
       exit (1);
     }
 
@@ -220,7 +229,7 @@ main (int argc, char *argv[])
     int inexact, compare;
     unsigned int n;
 
-    int p0=1;
+    int p0=2;
     int p1=200;
     int N=200;
     
@@ -238,7 +247,6 @@ main (int argc, char *argv[])
 
       for (n=0; n<N; n++)
 	{
-
           mpfr_random (x);
 	  mpfr_random (y);
 	  mpfr_random (z);
@@ -276,7 +284,7 @@ main (int argc, char *argv[])
 	      mpfr_out_str (stdout, 2, prec, t, GMP_RNDN);
 	      putchar ('\n');
 	      printf ("approx  ");
-	      mpfr_print_raw (slong);
+	      mpfr_print_binary (slong);
 	      putchar ('\n');
 	      exit (1);
 	    }

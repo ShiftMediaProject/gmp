@@ -29,124 +29,83 @@ int
 mpfr_sub (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
 {
   if (MPFR_IS_NAN(b) || MPFR_IS_NAN(c))
-  {
-    MPFR_SET_NAN(a);
-    MPFR_RET_NAN;
-  }
-
-  MPFR_CLEAR_NAN(a);
-
-  if (MPFR_IS_INF(b))
-  {
-    if (!MPFR_IS_INF(c) || MPFR_SIGN(b) != MPFR_SIGN(c))
-    {
-      MPFR_SET_INF(a);
-      MPFR_SET_SAME_SIGN(a, b);
-      MPFR_RET(0); /* exact */
-    }
-    else
     {
       MPFR_SET_NAN(a);
       MPFR_RET_NAN;
     }
-  }
+
+  MPFR_CLEAR_NAN(a);
+
+  if (MPFR_IS_INF(b))
+    {
+      if (!MPFR_IS_INF(c) || MPFR_SIGN(b) != MPFR_SIGN(c))
+        {
+          MPFR_SET_INF(a);
+          MPFR_SET_SAME_SIGN(a, b);
+          MPFR_RET(0); /* exact */
+        }
+      else
+        {
+          MPFR_SET_NAN(a);
+          MPFR_RET_NAN;
+        }
+    }
   else
     if (MPFR_IS_INF(c))
-    {
-      MPFR_SET_INF(a);
-      if (MPFR_SIGN(c) == MPFR_SIGN(a))
-        MPFR_CHANGE_SIGN(a);
-      MPFR_RET(0); /* exact */
-    }
+      {
+        MPFR_SET_INF(a);
+        if (MPFR_SIGN(c) == MPFR_SIGN(a))
+          MPFR_CHANGE_SIGN(a);
+        MPFR_RET(0); /* exact */
+      }
 
   MPFR_ASSERTN(MPFR_IS_FP(b) && MPFR_IS_FP(c));
 
   if (MPFR_IS_ZERO(b))
-  {
-    if (MPFR_IS_ZERO(c))
     {
-      if (MPFR_SIGN(a) !=
-          (rnd_mode != GMP_RNDD ?
-           ((MPFR_SIGN(b) < 0 && MPFR_SIGN(c) > 0) ? -1 : 1) :
-           ((MPFR_SIGN(b) > 0 && MPFR_SIGN(c) < 0) ? 1 : -1)))
-        MPFR_CHANGE_SIGN(a);
-      MPFR_CLEAR_INF(a);
-      MPFR_SET_ZERO(a);
-      MPFR_RET(0); /* 0 - 0 is exact */
+      if (MPFR_IS_ZERO(c))
+        {
+          if (MPFR_SIGN(a) !=
+              (rnd_mode != GMP_RNDD ?
+               ((MPFR_SIGN(b) < 0 && MPFR_SIGN(c) > 0) ? -1 : 1) :
+               ((MPFR_SIGN(b) > 0 && MPFR_SIGN(c) < 0) ? 1 : -1)))
+            MPFR_CHANGE_SIGN(a);
+          MPFR_CLEAR_INF(a);
+          MPFR_SET_ZERO(a);
+          MPFR_RET(0); /* 0 - 0 is exact */
+        }
+      return mpfr_neg (a, c, rnd_mode);
     }
-    return mpfr_neg (a, c, rnd_mode);
-  }
 
   if (MPFR_IS_ZERO(c))
-  {
-    return mpfr_set (a, b, rnd_mode);
-  }
+    {
+      return mpfr_set (a, b, rnd_mode);
+    }
 
   MPFR_CLEAR_INF(a);
 
   if (MPFR_SIGN(b) == MPFR_SIGN(c))
-  { /* signs are equal, it's a real subtraction */
-    if (MPFR_EXP(b) < MPFR_EXP(c))
-    { /* exchange rounding modes towards +/- infinity */
-      int inexact;
-      if (rnd_mode == GMP_RNDU)
-        rnd_mode = GMP_RNDD;
-      else if (rnd_mode == GMP_RNDD)
-        rnd_mode = GMP_RNDU;
-      inexact = - mpfr_sub1(a, c, b, rnd_mode,
-                            (mp_exp_unsigned_t) MPFR_EXP(c) - MPFR_EXP(b));
-      MPFR_CHANGE_SIGN(a);
-      return inexact;
+    { /* signs are equal, it's a real subtraction */
+      return mpfr_sub1(a, b, c, rnd_mode, 1);
     }
-    else if (MPFR_EXP(b) > MPFR_EXP(c))
-      return mpfr_sub1(a, b, c, rnd_mode,
-                       (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c));
-    else
-    { /* MPFR_EXP(b) == MPFR_EXP(c) */
-      int d = mpfr_cmp_abs (b, c);
-
-      if (d == 0)
-      {
-        if (rnd_mode == GMP_RNDD)
-          MPFR_SET_NEG(a);
-        else
-          MPFR_SET_POS(a);
-        MPFR_SET_ZERO(a);
-        MPFR_RET(0);
-      }
-      else if (d > 0)
-        return mpfr_sub1 (a, b, c, rnd_mode, 0);
-      else
-      { /* exchange rounding modes towards +/- infinity */
-        int inexact;
-        if (rnd_mode == GMP_RNDU)
-          rnd_mode = GMP_RNDD;
-        else if (rnd_mode == GMP_RNDD)
-          rnd_mode = GMP_RNDU;
-	inexact = - mpfr_sub1 (a, c, b, rnd_mode, 0);
-	MPFR_CHANGE_SIGN(a);
-        return inexact;
-      }
-    }
-  }
   else
-  { /* signs differ, it's an addition */
-    if (MPFR_EXP(b) < MPFR_EXP(c))
-    { /* exchange rounding modes towards +/- infinity */
-      int inexact;
-      if (rnd_mode == GMP_RNDU)
-        rnd_mode = GMP_RNDD;
-      else if (rnd_mode == GMP_RNDD)
-        rnd_mode = GMP_RNDU;
-      inexact = mpfr_add1(a, c, b, rnd_mode,
-                          (mp_exp_unsigned_t) MPFR_EXP(c) - MPFR_EXP(b));
-      MPFR_CHANGE_SIGN(a);
-      return inexact;
+    { /* signs differ, it's an addition */
+      if (MPFR_EXP(b) < MPFR_EXP(c))
+        { /* exchange rounding modes towards +/- infinity */
+          int inexact;
+          if (rnd_mode == GMP_RNDU)
+            rnd_mode = GMP_RNDD;
+          else if (rnd_mode == GMP_RNDD)
+            rnd_mode = GMP_RNDU;
+          inexact = mpfr_add1(a, c, b, rnd_mode,
+                              (mp_exp_unsigned_t) MPFR_EXP(c) - MPFR_EXP(b));
+          MPFR_CHANGE_SIGN(a);
+          return inexact;
+        }
+      else
+        {
+          return mpfr_add1(a, b, c, rnd_mode,
+                           (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c));
+        }
     }
-    else
-    {
-      return mpfr_add1(a, b, c, rnd_mode,
-                       (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c));
-    }
-  }
 }

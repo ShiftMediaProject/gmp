@@ -1,6 +1,6 @@
 /* mpfr_cosh -- hyperbolic cosine
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -42,7 +42,7 @@ mpfr_cosh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
     if (MPFR_IS_NAN(xt)) 
       {
         MPFR_SET_NAN(y); 
-        return 1; 
+        MPFR_RET_NAN;
       }
     MPFR_CLEAR_NAN(y);
 
@@ -51,21 +51,16 @@ mpfr_cosh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
         MPFR_SET_INF(y);
         if (MPFR_SIGN(y) < 0) 
           MPFR_CHANGE_SIGN(y);
-        return 0;
+        MPFR_RET(0);
       }   
     
     MPFR_CLEAR_INF(y);
 
-    if(!MPFR_NOTZERO(xt))
-        return mpfr_set_ui(y,1,rnd_mode); /* cosh(0) = 1 */
+    if (MPFR_IS_ZERO(xt))
+      return mpfr_set_ui(y,1,rnd_mode); /* cosh(0) = 1 */
 
     mpfr_init2(x,Nxt);
-    mpfr_set(x,xt,GMP_RNDN);
-
-    if(MPFR_SIGN(x)<0)
-      {
-        MPFR_CHANGE_SIGN(x);
-      }
+    mpfr_set4(x, xt, GMP_RNDN, 1);
 
     /* General case */
     {
@@ -104,7 +99,7 @@ mpfr_cosh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
 	mpfr_exp(te,x,GMP_RNDD);         /* exp(x) */
 	mpfr_ui_div(ti,1,te,GMP_RNDU);   /* 1/exp(x) */
 	mpfr_add(t,te,ti,GMP_RNDN);      /* exp(x) + 1/exp(x)*/
-	mpfr_div_2exp(t,t,1,GMP_RNDN);   /* 1/2(exp(x) + 1/exp(x))*/
+	mpfr_div_2ui(t,t,1,GMP_RNDN);    /* 1/2(exp(x) + 1/exp(x))*/
 
 	/* estimation of the error */
 	err=Nt-3;

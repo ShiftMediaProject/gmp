@@ -1,6 +1,6 @@
 /* mpfr_exp2 -- power of 2 function 2^y 
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -37,35 +37,30 @@ mpfr_exp2 (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
     if (MPFR_IS_NAN(x))
       {
-        MPFR_SET_NAN(y); 
-        return 1; 
+        MPFR_SET_NAN(y);
+        MPFR_RET_NAN;
       }
 
     MPFR_CLEAR_NAN(y);
 
     if (MPFR_IS_INF(x))
       {
-        if (MPFR_SIGN(x) < 0)
+        if (MPFR_SIGN(x) > 0)
           {
-            MPFR_SET_ZERO(y);
-            if (MPFR_SIGN(y) < 0)
-              MPFR_CHANGE_SIGN(y);
-            return 0;
+            MPFR_SET_INF(y);
           }
         else
           {
-            MPFR_SET_INF(y);
-            if(MPFR_SIGN(y) < 0) 
-              MPFR_CHANGE_SIGN(y);
-            return 0;
+            MPFR_CLEAR_INF(y);
+            MPFR_SET_ZERO(y);
           }
+        MPFR_SET_POS(y);
+        MPFR_RET(0);
       }
 
     /* 2^0 = 1 */
-    if(mpfr_cmp_ui(x,0)==0)
-      {
-        return mpfr_set_ui(y,1,rnd_mode); 
-      }
+    if (MPFR_IS_ZERO(x))
+      return mpfr_set_ui (y, 1, rnd_mode);
 
     /* General case */
     {

@@ -52,7 +52,7 @@ check_NAN (void)
   /******cosh********/
 
   tester=mpfr_cosh(ch,t,GMP_RNDD);
-  if (!MPFR_IS_NAN(ch) || !tester )
+  if (!MPFR_IS_NAN(ch) || tester!=0 )
   {
     printf("cosh NAN \n");
     mpfr_clear(t);
@@ -68,7 +68,7 @@ check_NAN (void)
   /******sinh********/
 
   tester=mpfr_sinh(sh,t,GMP_RNDD);
-  if (!MPFR_IS_NAN(sh) || !tester )
+  if (!MPFR_IS_NAN(sh) || tester!=0 )
   {
     printf("sinh NAN \n");
     mpfr_clear(t);
@@ -84,7 +84,7 @@ check_NAN (void)
   /******tanh********/
 
   tester=mpfr_tanh(th,t,GMP_RNDD);
-  if (!MPFR_IS_NAN(th) || !tester )
+  if (!MPFR_IS_NAN(th) || tester!=0 )
   {
     printf("tanh NAN \n");
     mpfr_clear(t);
@@ -100,7 +100,7 @@ check_NAN (void)
   /******acosh********/
 
   tester=mpfr_acosh(ach,t,GMP_RNDD);
-  if (!MPFR_IS_NAN(ach) || !tester )
+  if (!MPFR_IS_NAN(ach) || tester!=0 )
   {
     printf("acosh NAN \n");
     return(1);
@@ -109,7 +109,7 @@ check_NAN (void)
   /******asinh********/
 
   tester=mpfr_asinh(ash,t,GMP_RNDD);
-  if (!MPFR_IS_NAN(ash) || !tester )
+  if (!MPFR_IS_NAN(ash) || tester!=0 )
   {
     printf("asinh NAN \n");
     mpfr_clear(t);
@@ -125,7 +125,7 @@ check_NAN (void)
   /******atanh********/
 
   tester=mpfr_atanh(ath,t,GMP_RNDD);
-  if (!MPFR_IS_NAN(ath) || !tester )
+  if (!MPFR_IS_NAN(ath) || tester!=0 )
   {
     printf("atanh NAN \n");
     mpfr_clear(t);
@@ -291,7 +291,7 @@ check_INF (void)
  mpfr_init2(ash,200);
  mpfr_init2(ath,200);
 
-
+ MPFR_CLEAR_NAN(t);
  MPFR_SET_INF(t);
 
  if(MPFR_SIGN(t)<0)
@@ -300,7 +300,7 @@ check_INF (void)
   /******cosh********/
 
   tester = mpfr_cosh(ch,t,GMP_RNDD);
-  if (!MPFR_IS_INF(ch) || MPFR_SIGN(ch) < 0 || tester )
+  if (!MPFR_IS_INF(ch) || MPFR_SIGN(ch) < 0 || tester!=0 )
   {
     printf("cosh(INF) \n");
     mpfr_clear(t);
@@ -316,7 +316,7 @@ check_INF (void)
   /******sinh********/
 
   tester=mpfr_sinh(sh,t,GMP_RNDD);
-  if (!MPFR_IS_INF(sh) || MPFR_SIGN(sh) < 0  || tester )
+  if (!MPFR_IS_INF(sh) || MPFR_SIGN(sh) < 0  || tester!=0 )
   {
     printf("sinh(INF) \n");
     mpfr_clear(t);
@@ -332,7 +332,7 @@ check_INF (void)
   /******tanh********/
 
   tester=mpfr_tanh(th,t,GMP_RNDD);
-  if (mpfr_cmp_ui(th,1) != 0 || tester )
+  if (mpfr_cmp_ui(th,1) != 0 || tester!=0 )
   {
     printf("tanh(INF) \n");
     mpfr_clear(t);
@@ -348,7 +348,7 @@ check_INF (void)
   /******acosh********/
 
   tester=mpfr_acosh(ach,t,GMP_RNDD);
-  if (!MPFR_IS_INF(ach) || MPFR_SIGN(ach) < 0  || !tester )
+  if (!MPFR_IS_INF(ach) || MPFR_SIGN(ach) < 0  || tester!=0 )
   {
     printf("acosh(INF) \n");
     mpfr_clear(t);
@@ -364,7 +364,7 @@ check_INF (void)
   /******asinh********/
 
   tester=mpfr_asinh(ash,t,GMP_RNDD);
-  if (!MPFR_IS_INF(ash) || MPFR_SIGN(ash) < 0  || !tester )
+  if (!MPFR_IS_INF(ash) || MPFR_SIGN(ash) < 0  || tester!=0 )
   {
     printf("asinh(INF) \n");
     mpfr_clear(t);
@@ -398,7 +398,7 @@ check_INF (void)
   /******cosh********/
 
   tester=mpfr_cosh(ch,t,GMP_RNDD);
-  if (!MPFR_IS_INF(ch) || MPFR_SIGN(ch) < 0  || tester )
+  if (!MPFR_IS_INF(ch) || MPFR_SIGN(ch) < 0  || tester!=0 )
   {
     printf("cosh(-INF) \n");
     mpfr_clear(t);
@@ -414,7 +414,7 @@ check_INF (void)
   /******sinh********/
 
   tester=mpfr_sinh(sh,t,GMP_RNDD);
-  if (!MPFR_IS_INF(sh)  || MPFR_SIGN(sh) > 0 || tester )
+  if (!MPFR_IS_INF(sh)  || MPFR_SIGN(sh) > 0 || tester!=0 )
   {
     printf("sinh(-INF) \n");
     mpfr_clear(t);
@@ -430,7 +430,7 @@ check_INF (void)
   /******tanh********/
 
   tester=mpfr_tanh(th,t,GMP_RNDD);
-  if (!mpfr_cmp_ui(th,-1) || tester )
+  if (!mpfr_cmp_ui(th,-1) || tester!=0 )
   {
     printf("tanh(-INF) \n");
     mpfr_clear(t);
@@ -446,7 +446,7 @@ check_INF (void)
   /******acosh********/
 
   tester=mpfr_acosh(ach,t,GMP_RNDD);
-  if (!MPFR_IS_INF(ach) || MPFR_SIGN(ach) < 0  || !tester )
+  if (!MPFR_IS_INF(ach) || MPFR_SIGN(ach) < 0  || tester!=0 )
   {
     printf("acosh(-INF) \n");
     mpfr_clear(t);
@@ -462,7 +462,7 @@ check_INF (void)
   /******asinh********/
 
   tester=mpfr_asinh(ash,t,GMP_RNDD);
-  if (!MPFR_IS_INF(ash) || MPFR_SIGN(ash) > 0  || !tester )
+  if (!MPFR_IS_INF(ash) || MPFR_SIGN(ash) > 0  || tester!=0 )
   {
     printf("asinh(-INF) \n");
     mpfr_clear(t);
@@ -594,7 +594,7 @@ check_O (void)
 }
 
 int
-main()
+main(void)
 {
 
 if (check_INF())printf("Error in evaluation of INF\n");

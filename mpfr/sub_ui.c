@@ -1,6 +1,6 @@
 /* mpfr_sub_ui -- subtract a floating-point number and a machine integer
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 2000-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,7 +19,6 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -34,22 +33,18 @@ mpfr_sub_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
     mpfr_t uu;
     mp_limb_t up[1];
     unsigned long cnt;
-    int inex_sub, inex_cr;
+    int inex;
 
     MPFR_INIT1(up, uu, BITS_PER_MP_LIMB, 1);
     count_leading_zeros(cnt, (mp_limb_t) u);
     *up = (mp_limb_t) u << cnt;
-    MPFR_EXP(uu) = BITS_PER_MP_LIMB-cnt;
+    MPFR_EXP(uu) = BITS_PER_MP_LIMB - cnt;
 
     /* Optimization note: Exponent operations may be removed
-     if mpfr_add works even when uu is out-of-range. */
+       if mpfr_sub works even when uu is out-of-range. */
     mpfr_save_emin_emax();
-    inex_sub = mpfr_sub (y, x, uu, rnd_mode);
-    mpfr_restore_emin_emax();
-    inex_cr = mpfr_check_range(y, rnd_mode);
-    if (inex_cr)
-      return inex_cr; /* underflow or overflow */
-    MPFR_RET(inex_sub);
+    inex = mpfr_sub(y, x, uu, rnd_mode);
+    MPFR_RESTORE_RET(inex, y, rnd_mode);
   }
   else
     return mpfr_set (y, x, rnd_mode);

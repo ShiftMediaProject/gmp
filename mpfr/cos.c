@@ -1,6 +1,6 @@
 /* mpfr_cos -- cosine of a floating-point number
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -30,16 +30,16 @@ static int mpfr_cos2_aux       _PROTO ((mpfr_ptr, mpfr_srcptr));
 int 
 mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode) 
 {
-  int K, precy, m, k, l, inexact;
+  int K0, K, precy, m, k, l, inexact;
   mpfr_t r, s;
 
   if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
     {
       MPFR_SET_NAN(y);
-      return 1;
+      MPFR_RET_NAN;
     }
 
-  if (!MPFR_NOTZERO(x))
+  if (MPFR_IS_ZERO(x))
     {
       mpfr_set_ui (y, 1, GMP_RNDN);
       return 0;
@@ -47,11 +47,9 @@ mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
 
   precy = MPFR_PREC(y);
 
-  K = _mpfr_isqrt(precy / 2);
-  if (MPFR_EXP(x) > 0)
-    K += MPFR_EXP(x);
+  K0 = _mpfr_isqrt(precy / 2);
   /* we need at least K + log2(precy/K) extra bits */
-  m = precy + 3 * K + 3;
+  m = precy + 3 * K0 + 3;
 
   mpfr_init2 (r, m);
   mpfr_init2 (s, m);
@@ -59,7 +57,11 @@ mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
   do
     {
       mpfr_mul (r, x, x, GMP_RNDU); /* err <= 1 ulp */
-      mpfr_div_2exp (r, r, 2 * K, GMP_RNDN); /* r = (x/2^K)^2, err <= 1 ulp */
+
+      /* we need that |r| < 1 for mpfr_cos2_aux, i.e. up(x^2)/2^(2K) < 1 */
+      K = K0 + MAX(MPFR_EXP(r), 0);
+
+      mpfr_div_2ui (r, r, 2 * K, GMP_RNDN); /* r = (x/2^K)^2, err <= 1 ulp */
 
       /* s <- 1 - r/2! + ... + (-1)^l r^l/(2l)! */
       l = mpfr_cos2_aux (s, r);
@@ -67,7 +69,7 @@ mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mp_rnd_t rnd_mode)
       for (k = 0; k < K; k++)
 	{
 	  mpfr_mul (s, s, s, GMP_RNDU); /* err <= 2*olderr */
-	  mpfr_mul_2exp (s, s, 1, GMP_RNDU); /* err <= 4*olderr */
+	  mpfr_mul_2ui (s, s, 1, GMP_RNDU); /* err <= 4*olderr */
 	  mpfr_sub_ui (s, s, 1, GMP_RNDN);
 	}
 
@@ -103,7 +105,7 @@ static int
 mpfr_cos2_aux (mpfr_ptr s, mpfr_srcptr r)
 {
   unsigned int l, b = 2;
-  int prec_t, m = MPFR_PREC(s);
+  long int prec_t, m = MPFR_PREC(s);
   mpfr_t t;
 
   MPFR_ASSERTN (MPFR_EXP(r) <= 0);
@@ -111,7 +113,7 @@ mpfr_cos2_aux (mpfr_ptr s, mpfr_srcptr r)
   mpfr_set_ui (t, 1, GMP_RNDN);
   mpfr_set_ui(s, 1, GMP_RNDN);
 
-  for (l = 1; MPFR_EXP(t) >= -m; l++)
+  for (l = 1; MPFR_EXP(t) + m >= 0; l++)
     {
       mpfr_mul (t, t, r, GMP_RNDU); /* err <= (3l-1) ulp */
       mpfr_div_ui (t, t, (2*l-1)*(2*l), GMP_RNDU); /* err <= 3l ulp */
@@ -126,8 +128,8 @@ mpfr_cos2_aux (mpfr_ptr s, mpfr_srcptr r)
       /* now 3l <= 2^b, we want 3l*ulp(t) <= 2^(-m)
 	 i.e. b+EXP(t)-PREC(t) <= -m */
       prec_t = m + MPFR_EXP(t) + b;
-      if (prec_t > 0)
-	mpfr_round (t, GMP_RNDN, prec_t);
+      if (prec_t >= MPFR_PREC_MIN)
+	mpfr_round_prec (t, GMP_RNDN, prec_t);
     }
 
   mpfr_clear (t);

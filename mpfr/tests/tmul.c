@@ -23,7 +23,9 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <unistd.h>
 #include "gmp.h"
+#include "gmp-impl.h"
 #include "mpfr.h"
+#include "mpfr-impl.h"
 #include "mpfr-test.h"
 
 void check _PROTO((double, double, mp_rnd_t, unsigned int,
@@ -33,6 +35,8 @@ void check24 _PROTO((float, float, mp_rnd_t, float));
 void check_float _PROTO((void));
 void check_sign _PROTO((void));
 void check_exact _PROTO((void));
+void check_max _PROTO((void));
+void check_min _PROTO((void));
 
 /* checks that x*y gives the same results in double
    and with mpfr with 53 bits of precision */
@@ -42,9 +46,9 @@ check (double x, double y, mp_rnd_t rnd_mode, unsigned int px,
 {
   double z1, z2; mpfr_t xx, yy, zz;
 
-  mpfr_init2(xx, px);
-  mpfr_init2(yy, py);
-  mpfr_init2(zz, pz);
+  mpfr_init2 (xx, px);
+  mpfr_init2 (yy, py);
+  mpfr_init2 (zz, pz);
   mpfr_set_d(xx, x, rnd_mode);
   mpfr_set_d(yy, y, rnd_mode);
   mpfr_mul(zz, xx, yy, rnd_mode);
@@ -69,13 +73,13 @@ check53 (double x, double y, mp_rnd_t rnd_mode, double z1)
 {
   double z2; mpfr_t xx, yy, zz;
 
-  mpfr_init2(xx, 53);
-  mpfr_init2(yy, 53);
-  mpfr_init2(zz, 53);
-  mpfr_set_d(xx, x, rnd_mode);
-  mpfr_set_d(yy, y, rnd_mode);
-  mpfr_mul(zz, xx, yy, rnd_mode);
-  z2 = mpfr_get_d(zz);
+  mpfr_init2 (xx, 53);
+  mpfr_init2 (yy, 53);
+  mpfr_init2 (zz, 53);
+  mpfr_set_d (xx, x, rnd_mode);
+  mpfr_set_d (yy, y, rnd_mode);
+  mpfr_mul (zz, xx, yy, rnd_mode);
+  z2 = mpfr_get_d (zz);
   if (z1!=z2 && (!isnan(z1) || !isnan(z2))) {
     printf("mpfr_mul failed for x=%1.20e y=%1.20e with rnd_mode=%s\n",
 	   x, y, mpfr_print_rnd_mode(rnd_mode));
@@ -92,13 +96,13 @@ check24 (float x, float y, mp_rnd_t rnd_mode, float z1)
 {
   float z2; mpfr_t xx, yy, zz;
 
-  mpfr_init2(xx, 24);
-  mpfr_init2(yy, 24);
-  mpfr_init2(zz, 24);
-  mpfr_set_d(xx, x, rnd_mode);
-  mpfr_set_d(yy, y, rnd_mode);
-  mpfr_mul(zz, xx, yy, rnd_mode);
-  z2 = (float) mpfr_get_d(zz);
+  mpfr_init2 (xx, 24);
+  mpfr_init2 (yy, 24);
+  mpfr_init2 (zz, 24);
+  mpfr_set_d (xx, x, rnd_mode);
+  mpfr_set_d (yy, y, rnd_mode);
+  mpfr_mul (zz, xx, yy, rnd_mode);
+  z2 = (float) mpfr_get_d (zz);
   if (z1!=z2) {
     printf("mpfr_mul failed for x=%1.0f y=%1.0f with prec=24 and rnd_mode=%s\n", x, y, mpfr_print_rnd_mode(rnd_mode));
     printf("libm.a gives %1.0f, mpfr_mul gives %1.0f\n", z1, z2);
@@ -110,7 +114,7 @@ check24 (float x, float y, mp_rnd_t rnd_mode, float z1)
 /* the following examples come from the paper "Number-theoretic Test 
    Generation for Directed Rounding" from Michael Parks, Table 1 */
 void
-check_float ()
+check_float (void)
 {
   check24(8388609.0,  8388609.0, GMP_RNDN, 70368760954880.0);
   check24(16777213.0, 8388609.0, GMP_RNDN, 140737479966720.0);
@@ -155,11 +159,12 @@ check_float ()
 
 /* check sign of result */
 void
-check_sign ()
+check_sign (void)
 {
   mpfr_t a, b;
 
-  mpfr_init2(a, 53); mpfr_init2(b, 53);
+  mpfr_init2 (a, 53);
+  mpfr_init2 (b, 53);
   mpfr_set_d(a, -1.0, GMP_RNDN);
   mpfr_set_d(b, 2.0, GMP_RNDN);
   mpfr_mul(a, b, b, GMP_RNDN);
@@ -171,7 +176,7 @@ check_sign ()
 
 /* checks that the inexact return value is correct */
 void
-check_exact ()
+check_exact (void)
 {
   mpfr_t a, b, c, d;
   mp_prec_t prec;
@@ -240,6 +245,99 @@ check_exact ()
   mpfr_clear (d);
 }
 
+void
+check_max(void)
+{
+  mpfr_t xx, yy, zz;
+
+  mpfr_init2(xx, 4);
+  mpfr_init2(yy, 4);
+  mpfr_init2(zz, 4);
+  mpfr_set_d(xx, 11.0/16, GMP_RNDN);
+  mpfr_mul_2si(xx, xx, MPFR_EMAX_DEFAULT/2, GMP_RNDN);
+  mpfr_set_d(yy, 11.0/16, GMP_RNDN);
+  mpfr_mul_2si(yy, yy, MPFR_EMAX_DEFAULT - MPFR_EMAX_DEFAULT/2 + 1, GMP_RNDN);
+  mpfr_clear_flags();
+  mpfr_mul(zz, xx, yy, GMP_RNDU);
+  if (!(mpfr_overflow_p() && MPFR_IS_INF(zz)))
+    {
+      printf("check_max failed (should be an overflow)\n");
+      exit(1);
+    }
+
+  mpfr_clear_flags();
+  mpfr_mul(zz, xx, yy, GMP_RNDD);
+  if (mpfr_overflow_p() || MPFR_IS_INF(zz))
+    {
+      printf("check_max failed (should NOT be an overflow)\n");
+      exit(1);
+    }
+  mpfr_set_d(xx, 15.0/16, GMP_RNDN);
+  mpfr_mul_2si(xx, xx, MPFR_EMAX_DEFAULT, GMP_RNDN);
+  if (!(MPFR_IS_FP(xx) && MPFR_IS_FP(zz)))
+    {
+      printf("check_max failed (internal error)\n");
+      exit(1);
+    }
+  if (mpfr_cmp(xx, zz) != 0)
+    {
+      printf("check_max failed: got ");
+      mpfr_out_str(stdout, 2, 0, zz, GMP_RNDZ);
+      printf(" instead of ");
+      mpfr_out_str(stdout, 2, 0, xx, GMP_RNDZ);
+      printf("\n");
+      exit(1);
+    }
+
+  mpfr_clear(xx);
+  mpfr_clear(yy);
+  mpfr_clear(zz);
+}
+
+void
+check_min(void)
+{
+  mpfr_t xx, yy, zz;
+
+  mpfr_init2(xx, 4);
+  mpfr_init2(yy, 4);
+  mpfr_init2(zz, 3);
+  mpfr_set_d(xx, 15.0/16, GMP_RNDN);
+  mpfr_mul_2si(xx, xx, MPFR_EMIN_DEFAULT/2, GMP_RNDN);
+  mpfr_set_d(yy, 15.0/16, GMP_RNDN);
+  mpfr_mul_2si(yy, yy, MPFR_EMIN_DEFAULT - MPFR_EMIN_DEFAULT/2 - 1, GMP_RNDN);
+  mpfr_mul(zz, xx, yy, GMP_RNDD);
+  if (mpfr_sgn(zz) != 0)
+    {
+      printf("check_min failed: got ");
+      mpfr_out_str(stdout, 2, 0, zz, GMP_RNDZ);
+      printf(" instead of 0\n");
+      exit(1);
+    }
+
+  mpfr_mul(zz, xx, yy, GMP_RNDU);
+  mpfr_set_d(xx, 0.5, GMP_RNDN);
+  mpfr_mul_2si(xx, xx, MPFR_EMIN_DEFAULT, GMP_RNDN);
+  if (mpfr_sgn(xx) <= 0)
+    {
+      printf("check_min failed (internal error)\n");
+      exit(1);
+    }
+  if (mpfr_cmp(xx, zz) != 0)
+    {
+      printf("check_min failed: got ");
+      mpfr_out_str(stdout, 2, 0, zz, GMP_RNDZ);
+      printf(" instead of ");
+      mpfr_out_str(stdout, 2, 0, xx, GMP_RNDZ);
+      printf("\n");
+      exit(1);
+    }
+
+  mpfr_clear(xx);
+  mpfr_clear(yy);
+  mpfr_clear(zz);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -263,7 +361,7 @@ main (int argc, char *argv[])
   check53(0.31869277231188065, 0.88642843322303122, GMP_RNDZ,
 	  2.8249833483992453642e-1);
   check(8.47622108205396074254e-01, 3.24039313247872939883e-01, GMP_RNDU,
-	28, 45, 1, 0.5);
+	28, 45, 2, 0.375);
   check(2.63978122803639081440e-01, 6.8378615379333496093e-1, GMP_RNDN,
 	34, 23, 31, 0.180504585267044603);
   check(1.0, 0.11835170935876249132, GMP_RNDU, 6, 41, 36, 0.1183517093595583);
@@ -275,7 +373,9 @@ main (int argc, char *argv[])
   check(3.90798504668055102229e-14, 9.85394674650308388664e-04, GMP_RNDN,
 	46, 22, 12, 0.385027296503914762e-16);
   check(4.58687081072827851358e-01, 2.20543551472118792844e-01, GMP_RNDN,
-	49, 3, 1, 0.125);
+	49, 3, 2, 0.09375);
+  check_max();
+  check_min();
 #ifdef TEST
   srand48(getpid());
   prec = (argc<2) ? 53 : atoi(argv[1]);

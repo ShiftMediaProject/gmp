@@ -20,7 +20,6 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -29,20 +28,22 @@ MA 02111-1307, USA. */
 int
 mpfr_set_prec (mpfr_ptr x, mp_prec_t p)
 {
-  mp_prec_t xsize;
+  mp_size_t xsize;
 
-  if (p == 0)
-    return 1;
+  MPFR_ASSERTN(p >= MPFR_PREC_MIN && p <= MPFR_PREC_MAX);
 
-  xsize = (p - 1)/BITS_PER_MP_LIMB + 1; /* new limb size */
+  xsize = (p - 1) / BITS_PER_MP_LIMB + 1; /* new limb size */
 
-  if (xsize > MPFR_ABSSIZE(x)) {
-    MPFR_MANT(x) = (mp_ptr) (*__gmp_reallocate_func) (MPFR_MANT(x), 
-		 MPFR_ABSSIZE(x)*BYTES_PER_MP_LIMB, xsize * BYTES_PER_MP_LIMB);
-    MPFR_SIZE(x) = xsize; /* new number of allocated limbs */
-  }
+  if (xsize > MPFR_ABSSIZE(x))
+    {
+      MPFR_MANT(x) = (mp_ptr) (*__gmp_reallocate_func)
+        (MPFR_MANT(x), (size_t) MPFR_ABSSIZE(x) * BYTES_PER_MP_LIMB,
+         (size_t) xsize * BYTES_PER_MP_LIMB);
+      MPFR_SIZE(x) = xsize; /* new number of allocated limbs */
+    }
 
   MPFR_PREC(x) = p;
+  MPFR_SET_NAN(x); /* initializes to NaN */
 
   return MPFR_MANT(x) == NULL;
 }

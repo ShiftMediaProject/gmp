@@ -1,6 +1,6 @@
 /* mpfr_div_ui -- divide a floating-point number by a machine integer
 
-Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -45,13 +45,12 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 
   if (MPFR_IS_INF(x)) 
     { 
-      MPFR_SET_INF(y); 
-      if (MPFR_SIGN(y) * MPFR_SIGN(x) < 0) /* consider u=0 as +0 */
-	MPFR_CHANGE_SIGN(y); 
-      return 0; 
+      MPFR_SET_INF(y);
+      MPFR_SET_SAME_SIGN(y, x);
+      MPFR_RET(0);
     }
 
-  if (u == 0) 
+  if (u == 0)
     {
       if (MPFR_IS_ZERO(x)) /* 0/0 is NaN */
 	{
@@ -59,19 +58,20 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 	  MPFR_RET_NAN;
 	}
       else /* x/0 is Inf */
-	{ 
+	{
 	  MPFR_SET_INF(y);
 	  MPFR_SET_SAME_SIGN(y, x);
-	  return 0;
+          MPFR_RET(0);
 	}
     }
 
   MPFR_CLEAR_INF(y);
-  
+  MPFR_SET_SAME_SIGN(y, x);
+
   if (MPFR_IS_ZERO(x))
     {
       MPFR_SET_ZERO(y);
-      return 0;
+      MPFR_RET(0);
     }
 
   TMP_MARK(marker);
@@ -81,8 +81,6 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
   xp = MPFR_MANT(x);
   yp = MPFR_MANT(y);
   MPFR_EXP(y) = MPFR_EXP(x);
-  if (MPFR_SIGN(x) * MPFR_SIGN(y) < 0)
-    MPFR_CHANGE_SIGN(y);
 
   dif = yn + 1 - xn;
 
@@ -149,12 +147,12 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 
     case GMP_RNDU:
       if (MPFR_SIGN(y) > 0)
-	mpfr_add_one_ulp (y);
+	mpfr_add_one_ulp (y, rnd_mode);
       MPFR_RET(1); /* result is inexact */
 
     case GMP_RNDD:
       if (MPFR_SIGN(y) < 0)
-	mpfr_add_one_ulp (y);
+	mpfr_add_one_ulp (y, rnd_mode);
       MPFR_RET(-1); /* result is inexact */
 
     case GMP_RNDN:
@@ -162,7 +160,7 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 	MPFR_RET(-MPFR_SIGN(x));
       else if (sh && d > (MP_LIMB_T_ONE << (sh - 1)))
 	{
-	  mpfr_add_one_ulp (y);
+	  mpfr_add_one_ulp (y, rnd_mode);
 	  MPFR_RET(MPFR_SIGN(x));
 	}
     else /* sh = 0 or d = 1 << (sh-1) */
@@ -173,7 +171,7 @@ mpfr_div_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mp_rnd_t rnd_mode)
 	 */
 	if ((sh && inexact) || (!sh && (middle > 0)) || (*yp & (MP_LIMB_T_ONE << sh)))
 	  {
-	    mpfr_add_one_ulp (y);
+	    mpfr_add_one_ulp (y, rnd_mode);
 	    MPFR_RET(MPFR_SIGN(x));
 	  }
 	    else

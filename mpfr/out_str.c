@@ -21,6 +21,7 @@ MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "mpfr.h"
@@ -42,7 +43,7 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
 
   if (MPFR_IS_INF(op)) 
     { 
-      if (MPFR_SIGN(op) == 1)
+      if (MPFR_SIGN(op) > 0)
 	{
 	  fprintf (stream, "Inf");
 	  return 3;
@@ -54,20 +55,27 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
 	}
     }
 
-  if (!MPFR_NOTZERO(op))
+  if (MPFR_IS_ZERO(op))
     {
-      l = (MPFR_SIGN(op) < 0) ? fprintf (stream, "-") : 0;
-      fprintf(stream, "0");
-      return l + 1;
+      if (MPFR_SIGN(op) > 0)
+        {
+          fprintf(stream, "0");
+          return 1;
+        }
+      else
+        {
+          fprintf(stream, "-0");
+          return 2;
+        }
     }
-  if (!MPFR_NOTZERO(op)) { fprintf(stream, "0"); return 1; }
 
   s = mpfr_get_str (NULL, &e, base, n_digits, op, rnd_mode);
 
   s0 = s;
   /* for op=3.1416 we have s = "31416" and e = 1 */
-  
-  l = strlen (s) + 1; /* size of allocated block returned by mpfr_get_str */
+
+  l = strlen (s) + 1; /* size of allocated block returned by mpfr_get_str
+                         - may be incorrect, as only an upper bound? */
   if (*s == '-')
     fputc (*s++, stream);
 
@@ -78,9 +86,12 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
   (*__gmp_free_func) (s0, l);
 
   /* outputs exponent */
-  if (e) {
-    l += fprintf (stream, (base <= 10 ? "e%ld" : "@%ld"), e);
-  }
+  if (e)
+    {
+      MPFR_ASSERTN(e >= LONG_MIN);
+      MPFR_ASSERTN(e <= LONG_MAX);
+      l += fprintf (stream, (base <= 10 ? "e%ld" : "@%ld"), (long) e);
+    }
 
   return l;
 }

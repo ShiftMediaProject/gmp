@@ -37,7 +37,7 @@ main (void)
   mpfr_init (y);
   mpfr_init (z);
 
-  for (prec = 1; prec <= 100; prec++)
+  for (prec = 2; prec <= 100; prec++)
     {
       mpfr_set_prec (x, prec);
       mpfr_set_prec (z, prec);
@@ -52,7 +52,7 @@ main (void)
 	  err = (rnd == GMP_RNDN) ? yprec + 1 : yprec;
 	  if (mpfr_can_round (y, err, rnd, rnd, prec))
 	    {
-	      mpfr_round (y, rnd, prec);
+	      mpfr_round_prec (y, rnd, prec);
 	      mpfr_asin (z, x, rnd);
 	      if (mpfr_cmp (y, z))
 		{

@@ -1,6 +1,6 @@
 /* mpfr_atanh -- Inverse Hyperbolic Tangente of Unsigned Integer Number
 
-Copyright (C) 2001 Free Software Foundation.
+Copyright (C) 2001-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -50,7 +50,7 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
     {  
       MPFR_SET_NAN(y); 
       mpfr_clear(x);
-      return 1; 
+      MPFR_RET_NAN;
     }
   MPFR_CLEAR_NAN(y);
   
@@ -62,19 +62,19 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
       if(flag_neg)
 	MPFR_CHANGE_SIGN(y);
       mpfr_clear(x);
-      return 0;
+      MPFR_RET(0);
     }
 
   MPFR_CLEAR_INF(y);
 
-  if(!MPFR_NOTZERO(x))
+  if (MPFR_IS_ZERO(x))
     {
       MPFR_SET_ZERO(y);   /* atanh(0) = 0 */
       MPFR_SET_SAME_SIGN(y,x);
       if(flag_neg)
 	MPFR_CHANGE_SIGN(y);
       mpfr_clear(x); 
-     return 0;
+      MPFR_RET(0);
     }
 
   /* General case */
@@ -110,9 +110,9 @@ mpfr_atanh (mpfr_ptr y, mpfr_srcptr xt , mp_rnd_t rnd_mode)
       /* compute atanh */
       mpfr_ui_sub(te,1,x,GMP_RNDU);   /* (1-xt)*/
       mpfr_add_ui(ti,x,1,GMP_RNDD);   /* (xt+1)*/
-      mpfr_div(te,ti,te,GMP_RNDN);     /* (1+xt)/(1-xt)*/
-      mpfr_log(te,te,GMP_RNDN);        /* ln((1+xt)/(1-xt))*/
-      mpfr_div_2exp(t,te,1,GMP_RNDN);  /* (1/2)*ln((1+xt)/(1-xt))*/
+      mpfr_div(te,ti,te,GMP_RNDN);    /* (1+xt)/(1-xt)*/
+      mpfr_log(te,te,GMP_RNDN);       /* ln((1+xt)/(1-xt))*/
+      mpfr_div_2ui(t,te,1,GMP_RNDN);  /* (1/2)*ln((1+xt)/(1-xt))*/
 	
       /* estimation of the error see- algorithms.ps*/
       /* err=Nt-_mpfr_ceil_log2(1+5*pow(2,1-MPFR_EXP(t)));*/

@@ -43,10 +43,10 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
   int compared; 
 
   /* Trivial cases */
-  if (MPFR_IS_NAN(x))
+  if (MPFR_IS_NAN(x) || MPFR_IS_INF(x))
     {
       MPFR_SET_NAN(asin);
-      return 1;
+      MPFR_RET_NAN;
     }
 
   /* Set x_p=|x| */
@@ -54,7 +54,7 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
   mpfr_init2 (xp, MPFR_PREC(x));
   mpfr_set (xp, x, rnd_mode);
   if (signe == -1)
-      MPFR_CHANGE_SIGN(xp);
+    MPFR_CHANGE_SIGN(xp);
 
   compared = mpfr_cmp_ui (xp, 1);
 
@@ -62,7 +62,7 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
     {
       MPFR_SET_NAN(asin);
       mpfr_clear(xp);
-      return 1;
+      MPFR_RET_NAN;
     }
 
   if (compared == 0) /* x = 1 or x = -1 */
@@ -82,7 +82,7 @@ mpfr_asin (mpfr_ptr asin, mpfr_srcptr x, mp_rnd_t rnd_mode)
       return 1; /* inexact */
     }
 
-  if (!MPFR_NOTZERO(x)) /* x = 0 */
+  if (MPFR_IS_ZERO(x)) /* x = 0 */
     {
       mpfr_set_ui (asin, 0, GMP_RNDN);
       mpfr_clear(xp);

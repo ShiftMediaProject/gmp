@@ -1,6 +1,6 @@
 /* mpfr_set_str -- set a floating-point number from a string
 
-Copyright (C) 2000, 2001 Free Software Foundation, Inc.
+Copyright (C) 2000-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -22,7 +22,8 @@ MA 02111-1307, USA. */
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <limits.h>
+#include <errno.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
@@ -32,104 +33,141 @@ MA 02111-1307, USA. */
 int
 mpfr_set_str (mpfr_ptr x, __gmp_const char *str, int base, mp_rnd_t rnd_mode)
 {
-  char negative = 0, *endptr;
-  unsigned long k = 0, l, q;
-  long expn = 0, e;
   mpz_t mantissa;
+  int negative, inex;
+  long k = 0;
+  unsigned char c;
+  long e;
+  mp_prec_t q;
   mpfr_t y, z;
 
-  mpz_init(mantissa); mpz_set_ui(mantissa, 0);
-  l = strlen(str);
-  if (*str == '-') { negative = 1; str++; l--; }
-  else if (*str == '+') { str++; l--; }
+  if (base < 2 || base > 36)
+    return 1;
 
-  while (*str == '0') { str++; l--; } /* skip initial zeros */
+  mpz_init(mantissa);
+  mpz_set_ui(mantissa, 0);
+
+  negative = *str == '-';
+  if (negative || *str == '+')
+    str++;
+
+  while (*str == '0')
+    str++; /* skip initial zeros */
 
   /* allowed characters are '0' to '0'+base-1 if base <= 10,
      and '0' to '9' plus 'a' to 'a'+base-11 if 10 < base <= 36 */
-  while ((isdigit((unsigned char) *str) && (unsigned char) *str < '0'+base)
-      || (islower((unsigned char) *str) && (unsigned char) *str < 'a'+base-10))
-    { 
+  while (c = *str,
+         (isdigit(c) && c < '0' + base) ||
+         (islower(c) && c < 'a'-10 + base))
+    {
+      str++;
       mpz_mul_ui(mantissa, mantissa, base);
-      mpz_add_ui(mantissa, mantissa, isdigit((unsigned char) *str) ?
-		 (*str)-'0' : (*str)-'a'+10);
-      str++; l--;
+      mpz_add_ui(mantissa, mantissa, isdigit(c) ? c - '0' : c - ('a'-10));
     }
 
   /* k is the number of non-zero digits before the decimal point */
 
-  if (*str == '.') 
+  if (*str == '.')
     {
-      str++; l--;
-      while ((isdigit((unsigned char) *str) && (unsigned char) *str < '0'+base)
-      || (islower((unsigned char) *str) && (unsigned char) *str < 'a'+base-10))
-	{ 
-	  mpz_mul_ui(mantissa, mantissa, base);
-	  mpz_add_ui(mantissa, mantissa, isdigit((unsigned char) *str) ?
-		     (*str)-'0' : (*str)-'a'+10);
-	  str++; l--;
+      str++;
+      while (c = *str,
+             (isdigit(c) && c < '0' + base) ||
+             (islower(c) && c < 'a'-10 + base))
+	{
+          if (k == LONG_MAX)
+            {
+              mpz_clear(mantissa);
+              return -1;
+            }
 	  k++;
+	  str++;
+          mpz_mul_ui(mantissa, mantissa, base);
+          mpz_add_ui(mantissa, mantissa, isdigit(c) ? c - '0' : c - ('a'-10));
 	}
     }
-    
-  if ((base <= 10 && (*str == 'e' || *str == 'E')) || *str == '@')
+
+  if (*str == '\0') /* no exponent */
     {
-      str++; l--;
-      e = strtol(str, &endptr, 10); /* signed exponent after 'e', 'E' or '@' */
-      expn = e - k; 
-      if (expn > e)
-	  fprintf(stderr, "Warning: exponent underflow in mpfr_set_str\n"); 
+      e = -k;
     }
-  else if (l) {
-    /* unexpected end of string */
-    return -1;
-  }
-  else {
-    expn = -k;
-    endptr = (char*) str;
-  }
+  else if ((base <= 10 && (*str == 'e' || *str == 'E')) || *str == '@')
+    {
+      char *endptr;
+
+      if (*++str == '\0') /* exponent character but no exponent */
+        {
+          mpz_clear(mantissa);
+          return 1;
+        }
+
+      errno = 0;
+      e = strtol(str, &endptr, 10); /* signed exponent after 'e', 'E' or '@' */
+      if (*endptr != '\0')
+        {
+          mpz_clear(mantissa);
+          return 1;
+        }
+      if (errno)
+        {
+          mpz_clear(mantissa);
+          return -1;
+        }
+
+      if (e < 0 && (unsigned long) e - k < (unsigned long) LONG_MIN)
+        {
+          mpz_clear(mantissa);
+          return -1;
+        }
+      e -= k;
+    }
+  else /* unexpected character */
+    {
+      mpz_clear(mantissa);
+      return 1;
+    }
 
   /* the number is mantissa*base^expn */
 
-  q = (MPFR_PREC(x)/BITS_PER_MP_LIMB)*BITS_PER_MP_LIMB;
+  q = MPFR_PREC(x) & ~(mp_prec_t) (BITS_PER_MP_LIMB - 1);
   mpfr_init(y);
   mpfr_init(z);
 
-  do {
-    q += BITS_PER_MP_LIMB;
-    mpfr_set_prec(y, q);
-    mpfr_set_z(y, mantissa, GMP_RNDN); /* error <= 1/2*ulp(y) */
+  do
+    {
+      q += BITS_PER_MP_LIMB;
+      mpfr_set_prec(y, q);
+      mpfr_set_z(y, mantissa, GMP_RNDN); /* error <= 1/2*ulp(y) */
 
-    mpfr_set_prec(z, q);
-    if (expn>0) {
-      e = mpfr_ui_pow_ui(z, base, expn, GMP_RNDN);
-      mpfr_mul(y, y, z, GMP_RNDN);
+      mpfr_set_prec(z, q);
+      if (e > 0)
+        {
+          inex = mpfr_ui_pow_ui(z, base, e, GMP_RNDN);
+          mpfr_mul(y, y, z, GMP_RNDN);
+        }
+      else if (e < 0)
+        {
+          inex = mpfr_ui_pow_ui(z, base, -e, GMP_RNDN);
+          mpfr_div(y, y, z, GMP_RNDN);
+        }
+      else
+        inex = 1;
+      if (negative)
+        mpfr_neg(y, y, GMP_RNDN);
     }
-    else if (expn<0) {
-      e = mpfr_ui_pow_ui(z, base, -expn, GMP_RNDN);
-      mpfr_div(y, y, z, GMP_RNDN);
-    }
-    else e=1;
-    if (negative) mpfr_neg(y, y, GMP_RNDN);
-
-    /* now y is an approximation of mantissa*base^expn with error at most
-       2^e*ulp(y) */
-
-  } while (mpfr_can_round(y, q-e, GMP_RNDN, rnd_mode, MPFR_PREC(x))==0
-	   && q<=2*MPFR_PREC(x));
+  while (mpfr_can_round(y, q-inex, GMP_RNDN, rnd_mode, MPFR_PREC(x))==0
+         && q<=2*MPFR_PREC(x));
 
   mpfr_set(x, y, rnd_mode);
 
   mpz_clear(mantissa);
   mpfr_clear(y);
   mpfr_clear(z);
-  return ((*endptr=='\0') ? 0 : -1);
+  return 0;
 }
 
 int
 mpfr_init_set_str (mpfr_ptr x, char *str, int base, mp_rnd_t rnd_mode)
-{ 
+{
   mpfr_init (x);
   return mpfr_set_str (x, str, base, rnd_mode);
 }
-

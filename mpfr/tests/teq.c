@@ -26,6 +26,7 @@ MA 02111-1307, USA. */
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
+void teq _PROTO ((mpfr_t));
 
 void
 teq (mpfr_t x)
@@ -47,8 +48,8 @@ teq (mpfr_t x)
 	  !mpfr_eq(y, x, k - 1))
 	{
 	  fprintf(stderr, "Error in eq.\n"); 	  
-	  printf("x = "); mpfr_print_raw(x); printf("\n"); 
-	  printf("y = "); mpfr_print_raw(y); printf("\n"); 	
+	  printf("x = "); mpfr_print_binary(x); printf("\n"); 
+	  printf("y = "); mpfr_print_binary(y); printf("\n"); 	
 	  printf("k = %ld\n", k); 
 	  printf("mpfr_eq(y, x, k) = %d\nmpfr_eq(y, x, k - 1) = %d\n", mpfr_eq(y, x, k),mpfr_eq(y, x, k - 1)); 
 	  mpfr_clear(x); mpfr_clear(y); 

@@ -87,33 +87,7 @@ mpfr_add (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode)
 
   if (MPFR_SIGN(b) != MPFR_SIGN(c))
     { /* signs differ, it's a subtraction */
-      if (MPFR_EXP(b) < MPFR_EXP(c))
-        {
-          return mpfr_sub1(a, c, b, rnd_mode,
-                           (mp_exp_unsigned_t) MPFR_EXP(c) - MPFR_EXP(b));
-        }
-      else if (MPFR_EXP(b) > MPFR_EXP(c))
-        {
-          return mpfr_sub1(a, b, c, rnd_mode,
-                           (mp_exp_unsigned_t) MPFR_EXP(b) - MPFR_EXP(c));
-        }
-      else
-        { /* MPFR_EXP(b) == MPFR_EXP(c) */
-          int d = mpfr_cmp_abs(b,c);
-          if (d == 0)
-            {
-              if (rnd_mode == GMP_RNDD)
-                MPFR_SET_NEG(a);
-              else
-                MPFR_SET_POS(a);
-              MPFR_SET_ZERO(a);
-              MPFR_RET(0);
-            }
-          else if (d > 0)
-            return mpfr_sub1(a, b, c, rnd_mode, 0);
-          else
-            return mpfr_sub1(a, c, b, rnd_mode, 0);
-        }
+      return mpfr_sub1(a, b, c, rnd_mode, 0);
     }
   else
     { /* signs are equal, it's an addition */

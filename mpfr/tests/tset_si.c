@@ -75,14 +75,14 @@ main (int argc, char *argv[])
       }
     }
 
-  mpfr_set_prec (x, 1);
+  mpfr_set_prec (x, 2);
   if (mpfr_set_si (x, 5, GMP_RNDZ) >= 0)
     {
       fprintf (stderr, "Wrong inexact flag for x=5, rnd=GMP_RNDZ\n");
       exit (1);
     }
 
-  mpfr_set_prec (x, 1);
+  mpfr_set_prec (x, 2);
   if (mpfr_set_si (x, -5, GMP_RNDZ) <= 0)
     {
       fprintf (stderr, "Wrong inexact flag for x=-5, rnd=GMP_RNDZ\n");
@@ -95,7 +95,7 @@ main (int argc, char *argv[])
       || inex >= 0)
   {
     fprintf(stderr, "Error in mpfr_set_si(x:3, 77617, GMP_RNDD)\n");
-    mpfr_print_raw(x); putchar('\n');
+    mpfr_print_binary(x); putchar('\n');
     exit(1);
   }
   inex = mpfr_set_ui(x, 77617, GMP_RNDD); /* should be 65536 */
@@ -103,22 +103,22 @@ main (int argc, char *argv[])
       || inex >= 0)
   {
     fprintf(stderr, "Error in mpfr_set_ui(x:3, 77617, GMP_RNDD)\n");
-    mpfr_print_raw(x); putchar('\n');
+    mpfr_print_binary(x); putchar('\n');
     exit(1);
   }
 
-  mpfr_set_prec(x, 1);
+  mpfr_set_prec(x, 2);
   inex = mpfr_set_si(x, 33096, GMP_RNDU);
-  if (mpfr_get_d(x) != 65536.0 || inex <= 0)
+  if (mpfr_get_d(x) != 49152.0 || inex <= 0)
   {
-    fprintf(stderr, "Error in mpfr_set_si, expected 65536, got %lu, inex %d\n",
+    fprintf(stderr, "Error in mpfr_set_si, expected 49152, got %lu, inex %d\n",
 	    (unsigned long) mpfr_get_d(x), inex);
     exit(1);
   }
   inex = mpfr_set_ui(x, 33096, GMP_RNDU);
-  if (mpfr_get_d(x) != 65536.0)
+  if (mpfr_get_d(x) != 49152.0)
   {
-    fprintf(stderr, "Error in mpfr_set_ui, expected 65536, got %lu, inex %d\n",
+    fprintf(stderr, "Error in mpfr_set_ui, expected 49152, got %lu, inex %d\n",
 	    (unsigned long) mpfr_get_d(x), inex);
     exit(1);
   }

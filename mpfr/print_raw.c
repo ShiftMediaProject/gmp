@@ -1,4 +1,4 @@
-/* mpfr_print_raw -- print the internal binary representation of a 
+/* mpfr_print_binary -- print the internal binary representation of a 
                      floating-point number
 
 Copyright (C) 1999, 2000, 2001 Free Software Foundation, Inc.
@@ -59,7 +59,7 @@ mpfr_get_str_raw (char *digit_ptr, mpfr_srcptr x)
 }
  
 void
-mpfr_print_raw (mpfr_srcptr x)
+mpfr_print_binary (mpfr_srcptr x)
 {
   char *str;
   unsigned long alloc_size;

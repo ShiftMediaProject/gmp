@@ -1,6 +1,6 @@
 /*  mpfr_ui_pow_ui -- compute the power beetween two machine integer
 
-Copyright (C) 1999, 2001 Free Software Foundation, Inc.
+Copyright (C) 1999-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -19,17 +19,15 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#include <stdio.h>
 #include "gmp.h"
 #include "mpfr.h"
 #include "mpfr-impl.h"
 
-
 int
 mpfr_ui_pow_ui (mpfr_ptr x, unsigned long int y, unsigned long int n,
-		     mp_rnd_t rnd)
+                mp_rnd_t rnd)
 {
-  long int i, err;
+  long int err;
   unsigned long m;
   mpfr_t res;
   mp_prec_t prec;
@@ -37,20 +35,24 @@ mpfr_ui_pow_ui (mpfr_ptr x, unsigned long int y, unsigned long int n,
 
   MPFR_CLEAR_FLAGS(x);
 
-  if (n == 0) /* x^0 = 1 for any x */
-    {
-      mpfr_set_ui (x, 1, rnd);
-      return 0;
-    }
+  if (n == 0) /* y^0 = 1 for any y */
+    return mpfr_set_ui (x, 1, rnd);
 
+  if (y == 0) /* 0^n = 0 for any n > 0 */
+    return mpfr_set_ui (x, 0, rnd);
+
+  mpfr_save_emin_emax ();
   mpfr_init (res);
 
   prec = MPFR_PREC(x);
 
   do
     {
+      int i;
+
       prec += 3;
-      for (m=n, i=0; m; i++, m>>=1, prec++);
+      for (i = 0, m = n; m; i++, m >>= 1)
+        prec++;
       mpfr_set_prec (res, prec);
       inexact = mpfr_set_ui (res, y, GMP_RNDU);
       err = 1;
@@ -69,12 +71,12 @@ mpfr_ui_pow_ui (mpfr_ptr x, unsigned long int y, unsigned long int n,
 	err = 0;
     }
   while (inexact && (mpfr_can_round (res, err,
-	  (MPFR_SIGN(res) > 0) ? GMP_RNDU : GMP_RNDD, rnd, MPFR_PREC(x)) == 0));
+          MPFR_SIGN(res) > 0 ? GMP_RNDU : GMP_RNDD, rnd, MPFR_PREC(x)) == 0));
 
   if (mpfr_set (x, res, rnd))
     inexact = 1;
 
   mpfr_clear (res);
 
-  return inexact;
+  MPFR_RESTORE_RET(inexact, x, rnd);
 }

@@ -1,6 +1,6 @@
-/* Test file for mpfr_round.
+/* Test file for mpfr_round_prec.
 
-Copyright (C) 1999-2001 Free Software Foundation.
+Copyright (C) 1999-2002 Free Software Foundation.
 
 This file is part of the MPFR Library.
 
@@ -32,7 +32,7 @@ main (void)
    mpfr_init2 (x, 3);
 
    mpfr_set_ui (x, 5, GMP_RNDN);
-   mpfr_round (x, GMP_RNDN, 2);
+   mpfr_round_prec (x, GMP_RNDN, 2);
    if (mpfr_cmp_ui(x, 4))
      {
        fprintf (stderr, "Error in tround: got %1.1f instead of 4\n",
@@ -43,7 +43,7 @@ main (void)
    /* check case when reallocation is needed */
    mpfr_set_prec (x, 3);
    mpfr_set_ui (x, 5, GMP_RNDN); /* exact */
-   mpfr_round (x, GMP_RNDN, mp_bits_per_limb + 1);
+   mpfr_round_prec (x, GMP_RNDN, mp_bits_per_limb + 1);
    if (mpfr_cmp_ui(x, 5))
      {
        fprintf (stderr, "Error in tround: got %1.1f instead of 5\n",
@@ -51,10 +51,21 @@ main (void)
        exit (1);
      }
 
+   mpfr_clear(x);
+   mpfr_init2 (x, 3);
+   mpfr_set_si (x, -5, GMP_RNDN); /* exact */
+   mpfr_round_prec (x, GMP_RNDN, mp_bits_per_limb + 1);
+   if (mpfr_cmp_si(x, -5))
+     {
+       fprintf (stderr, "Error in tround: got %1.1f instead of -5\n",
+		mpfr_get_d (x));
+       exit (1);
+     }
+
    /* check case when new precision needs less limbs */
    mpfr_set_prec (x, mp_bits_per_limb + 1);
    mpfr_set_ui (x, 5, GMP_RNDN); /* exact */
-   mpfr_round (x, GMP_RNDN, 3); /* exact */
+   mpfr_round_prec (x, GMP_RNDN, 3); /* exact */
    if (mpfr_cmp_ui(x, 5))
      {
        fprintf (stderr, "Error in tround: got %1.1f instead of 5\n",

@@ -106,7 +106,7 @@ mpfr_const_euler_S (mpfr_t x, unsigned long n)
      thus that the error on x is at most one ulp */
 
   mpfr_set_z (x, s, GMP_RNDD);
-  mpfr_div_2exp (x, x, m, GMP_RNDD);
+  mpfr_div_2ui (x, x, m, GMP_RNDD);
 
   mpz_clear (a);
   mpz_clear (s);
@@ -152,7 +152,7 @@ mpfr_const_euler_R (mpfr_t x, unsigned long n)
       exit (1);
     }
   mpfr_set_z (x, s, GMP_RNDD); /* exact */
-  mpfr_div_2exp (x, x, m, GMP_RNDD);
+  mpfr_div_2ui (x, x, m, GMP_RNDD);
   /* now x = 1/n * sum(k!/(-n)^k, k=0..n-2) <= 1/n */
   /* err(x) <= (n+1)/2^m <= (n+1)*exp(n)/2^PREC(x) */
 

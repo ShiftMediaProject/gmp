@@ -1,6 +1,6 @@
 /* mpfr_ui_pow -- power of n function n^x
 
-Copyright (C) 2001 Free Software Foundation, Inc.
+Copyright (C) 2001-2002 Free Software Foundation, Inc.
 
 This file is part of the MPFR Library.
 
@@ -31,14 +31,14 @@ MA 02111-1307, USA. */
  */
 
 int
-mpfr_ui_pow (mpfr_ptr y, unsigned long int n,mpfr_srcptr x, mp_rnd_t rnd_mode) 
-{    
+mpfr_ui_pow (mpfr_ptr y, unsigned long int n, mpfr_srcptr x, mp_rnd_t rnd_mode)
+{
     int inexact;
 
     if (MPFR_IS_NAN(x))
       {
         MPFR_SET_NAN(y); 
-        return 1; 
+        MPFR_RET_NAN;
       }
 
     MPFR_CLEAR_NAN(y);
@@ -47,22 +47,19 @@ mpfr_ui_pow (mpfr_ptr y, unsigned long int n,mpfr_srcptr x, mp_rnd_t rnd_mode)
       {
         if (MPFR_SIGN(x) < 0)
           {
+            MPFR_CLEAR_INF(y);
             MPFR_SET_ZERO(y);
-            if (MPFR_SIGN(y) < 0)
-              MPFR_CHANGE_SIGN(y);
-            return 0;
           }
         else
           {
             MPFR_SET_INF(y);
-            if(MPFR_SIGN(y) < 0) 
-              MPFR_CHANGE_SIGN(y);
-            return 0;
           }
+        MPFR_SET_POS(y);
+        MPFR_RET(0);
       }
 
     /* n^0 = 1 */
-    if(mpfr_cmp_ui(x,0)==0)
+    if (MPFR_IS_ZERO(x))
       {
         return mpfr_set_ui(y,1,rnd_mode); 
       }
