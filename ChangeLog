@@ -23,6 +23,13 @@ MA 02111-1307, USA.
 
 	* Version 4.0 released.
 
+2001-12-01  Kevin Ryde  <kevin@swox.se>
+
+	* Makefile.am, configure.in: Temporarily remove mpfr, just leave a
+	README.
+
+	* mpn/Makefile.am (EXTRA_DIST): Add Makeasm.am.
+
 2001-11-30  Gerardo Ballabio  <ballabio@sissa.it>
 
 	* tests/cxx/t-constr.cc, tests/cxx/t-expr.cc: New files.
