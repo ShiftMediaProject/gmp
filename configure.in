@@ -1191,7 +1191,7 @@ if test "$enable_alloca" = yes && test "$gmp_cv_func_alloca" = no; then
   AC_MSG_ERROR([--enable-alloca=yes specified, but alloca not available])
 fi
 
-AC_CHECK_FUNCS(getpagesize getrusage gettimeofday mprotect popen processor_info read_real_time srand48 srandom strtoul sysconf sysctl sysctlbyname times)
+AC_CHECK_FUNCS(getpagesize getrusage gettimeofday mprotect popen processor_info read_real_time strtoul sysconf sysctl sysctlbyname times)
 
 
 # Set `syntax' to one of <blank>, "mit", "elf", "aix", "macho".
