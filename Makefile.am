@@ -48,7 +48,7 @@ MPN_OBJECTS = @mpn_objs_in_libgmp@
 
 ## FIXME: Remove `config.in' when AM_CONFIG_HEADER is used in configure.in.
 EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h \
-  config.in
+  config.in tests
 
 DISTCLEANFILES = @gmp_srclinks@
 
