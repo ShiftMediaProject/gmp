@@ -35,9 +35,6 @@ dnl  Maximum possible with the current code is 64.
 deflit(UNROLL_COUNT, 16)
 
 
-MULFUNC_PROLOGUE(mpn_addmul_1c)
-MULFUNC_PROLOGUE(mpn_submul_1c)
-
 ifdef(`OPERATION_addmul_1', `
 	define(M4_inst,        addl)
 	define(M4_function_1,  mpn_addmul_1)
@@ -52,6 +49,8 @@ ifdef(`OPERATION_addmul_1', `
 	define(M4_desc_retval, borrow)
 ',`m4_error(`Need OPERATION_addmul_1 or OPERATION_submul_1
 ')')')
+
+MULFUNC_PROLOGUE(mpn_addmul_1 mpn_addmul_1c mpn_submul_1 mpn_submul_1c)
 
 
 `#' mp_limb_t M4_function_1 (mp_ptr dst, mp_srcptr src, mp_size_t size,
