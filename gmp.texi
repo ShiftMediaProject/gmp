@@ -1691,6 +1691,7 @@ away fetches from them.  The GMP functions affected are @code{mpz_set_str},
 @cindex Constants
 
 @deftypevr {Global Constant} {const int} mp_bits_per_limb
+@findex mp_bits_per_limb
 @cindex Bits per limb
 @cindex Limb size
 The number of bits per limb.
@@ -1705,6 +1706,12 @@ The major and minor GMP version, and patch level, respectively, as integers.
 For GMP i.j, these numbers will be i, j, and 0, respectively.
 For GMP i.j.k, these numbers will be i, j, and k, respectively.
 @end defmac
+
+@deftypevr {Global Constant} {const char * const} gmp_version
+@findex gmp_version
+The GMP version number, as a null-terminated string, in the form ``i.j'' or
+``i.j.k''.  This release is @nicode{"@value{VERSION}"}.
+@end deftypevr
 
 
 @node Compatibility with older versions, Efficiency, Useful Macros and Constants, GMP Basics
