@@ -1,5 +1,5 @@
-This is Info file gmp.info, produced by Makeinfo-1.64 from the input
-file gmp.texi.
+This is Info file gmp.info, produced by Makeinfo version 1.68 from the
+input file gmp.texi.
 
 START-INFO-DIR-ENTRY
 * gmp: (gmp.info).               GNU Multiple Precision Arithmetic Library.
@@ -8,8 +8,8 @@ END-INFO-DIR-ENTRY
    This file documents GNU MP, a library for arbitrary-precision
 arithmetic.
 
-   Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation,
-Inc.
+   Copyright (C) 1991, 1993, 1994, 1995, 1996, 1998 Free Software
+Foundation, Inc.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -32,7 +32,7 @@ GNU MP
 ******
 
    This manual documents how to install and use the GNU multiple
-precision arithmetic library, version 2.0.2.
+precision arithmetic library, version 2.1.
 
 * Menu:
 
@@ -124,6 +124,9 @@ previous versions.  It is now permitted to link MP to non-free
 programs, as long as MP source code is provided when distributing the
 non-free program.
 
+   For up-to-date information on MP,
+`http://www.matematik.su.se/~tege/gmp/', is a good place to look.
+
 How to use this Manual
 ======================
 
@@ -144,7 +147,7 @@ operating system.  You need a C compiler, preferably GCC, but any
 reasonable compiler should work.  And you need a standard Unix `make'
 program, plus some other standard Unix utility programs.
 
-   (If you're on an MS-DOS machine, your can build MP using `make.bat'.
+   (If you're on an MS-DOS machine, you can build MP using `make.bat'.
 It requires that djgpp is installed.  It does not require
 configuration, nor is `make' needed; `make.bat' both configures and
 builds the library.)
@@ -158,9 +161,9 @@ builds the library.)
      If you want to compile in a separate object directory, cd to that
      directory, and prefix the configure command with the path to the
      MP source directory.  Not all `make' programs have the necessary
-     features to support this.  In particular, SunOS and Slowaris
-     `make' have bugs that makes them unable to build from a separate
-     object directory.  Use GNU `make' instead.
+     features (VPATH) to support this.  In particular, SunOS and
+     Slowaris `make' have bugs that makes them unable to build from a
+     separate object directory.  Use GNU `make' instead.
 
      In addition to the standard cpu-vendor-os tuples, MP recognizes
      sparc8 and supersparc as valid CPU names.  Specifying these CPU
@@ -181,7 +184,7 @@ builds the library.)
   3. `make check'
 
      This will make sure MP was built correctly.  If you get error
-     messages, please report this to `bug-gmp@prep.ai.mit.edu'.  (*Note
+     messages, please report this to `bug-gmp@gnu.org'.  (*Note
      Reporting Bugs::, for information on what to include in useful bug
      reports.)
 
@@ -225,24 +228,28 @@ If you wish to build and install the BSD MP compatible functions, use
 Known Build Problems
 ====================
 
-   GCC 2.7.2 (as well as 2.6.3) for the RS/6000 and PowerPC can not be
-used to compile MP, due to a bug in GCC.  If you want to use GCC for
-these machines, you need to apply the patch below to GCC, or use a
-later version of the compiler.
+   (You might find more up-to-date information at
+`http://www.matematik.su.se/~tege/gmp/'.)
+
+   GCC 2.7.2 (or 2.6.3) for the POWER and PowerPC can not be used to
+compile MP, due to a bug in GCC.  If you want to use GCC for these
+machines, get GCC 2.7.2.1 (or later), or apply the patch below to GCC
+and recompile GCC.
 
    If you are on a Sequent Symmetry, use the GNU assembler instead of
-the system's assembler, since the latter has serious bugs.
+the system assembler, since the latter has serious bugs.
 
-   The system compiler on NeXT is a massacred and old gcc, even if the
+   The system compiler on NeXT is a massacred and old GCC, even if the
 compiler calls itself `cc'.  This compiler cannot be used to build MP.
-You need to get a real gcc, and install that before you compile MP.
-(NeXT might have fixed this in newer releases of their system.)
+You need to get a real GCC, and install that before you compile MP.
+(NeXT have fixed this in release 3.3 of their system.)
 
    The system C compiler under SunOS 4 has a bug that makes it
-miscompile mpq/get_d.c.  This will make `make check' fail.
+miscompile mpq/get_d.c.  Use GCC instead if plan to use the function
+`mpq_get_d'.
 
-   Please report other problems to `bug-gmp@prep.ai.mit.edu'.  *Note
-Reporting Bugs::.
+   Please report other problems to `bug-gmp@gnu.org'.  *Note Reporting
+Bugs::.
 
    Patch to apply to GCC 2.6.3 and 2.7.2:
 
@@ -271,6 +278,10 @@ File: gmp.info,  Node: MP Basics,  Next: Reporting Bugs,  Prev: Installing MP,  
 
 MP Basics
 *********
+
+* Menu:
+
+* Random Number Functions::
 
    All declarations needed to use MP are collected in the include file
 `gmp.h'.  It is designed to work with both C and C++ compilers.
@@ -360,16 +371,40 @@ functions, and floating-point functions for details.
 between each initialization.  After a variable has been initialized, it
 may be assigned to any number of times.
 
-   For efficiency reasons, avoid to initialize and clear out a variable
-in loops.  Instead, initialize it before entering the loop, and clear
-it out after the loop has exited.
+   For efficiency reasons, avoid to initialize and clear out a MP
+variables in loops.  Instead, initialize it before entering the loop,
+and clear it out after the loop has exited.
 
-   You don't need to be concerned about allocating additional space for
-MP variables.  All functions in MP automatically allocate additional
-space when a variable does not already have enough space.  They do not,
-however, reduce the space when a smaller number is stored in the
-object.  Most of the time, this policy is best, since it avoids
-frequent re-allocation.
+   Once you have initialized an MP variable, you don't need to worry
+about space allocation for that variable.  All functions in MP
+automatically allocate additional space when a variable does not
+already have enough space.  They do not, however, reduce the space when
+a smaller number is stored in the object.  Most of the time, this
+policy is best, since it avoids frequent re-allocation.
+
+MP and reentrancy
+=================
+
+   The MP code is reentrant and thred-safe, with some exceptions:
+
+   * The function `mpf_set_default_prec' saves the selected precision in
+     a global variable.
+
+   * The function `mp_set_memory_functions' uses several global
+     variables for storing the selected memory allocation functions.
+
+   * The memory allocation functions, `malloc' and friends, that GMP
+     uses unless directed to uses custom allocation, may not be
+     reentrant.
+
+   * The random number functions (`mpz_random', etc) use an underlying
+     random number generator from the C library, typically `mrand48' or
+     `random'.  These routines are not reentrant, since they rely on
+     global state.
+
+   If the memory allocation functions (`malloc' and friends, or
+whatever functions set by a call to `mp_set_memory_functions'), are not
+reentrant, MP will not be reentrant either.
 
 Useful Macros and Constants
 ===========================
@@ -379,7 +414,11 @@ Useful Macros and Constants
 
  - Macro: __GNU_MP_VERSION
  - Macro: __GNU_MP_VERSION_MINOR
-     The major and minor MP version, respectively, as integers.
+ - Macro: __GNU_MP_VERSION_PATCHLEVEL
+     The major and minor MP version, and patch level, respectively, as
+     integers.  For GMP i.j, these numbers will be i, j, and 0,
+     respectively.  For GMP i.j.k, these numbers will be i, j, and k,
+     respectively.
 
 Compatibility with Version 1.x
 ==============================
@@ -387,11 +426,12 @@ Compatibility with Version 1.x
    This version of MP is upward compatible with previous versions of
 MP, with a few exceptions.
 
-  1. Integer division functions round the result differently.  The old
-     functions (`mpz_div', `mpz_divmod', `mpz_mdiv', `mpz_mdivmod',
-     etc) now all use floor rounding (i.e., they round the quotient to
-     -infinity).  There are a lot of new functions for integer
-     division, giving the user better control over the rounding.
+  1. Integer division functions round the result differently.  The
+     obsolete functions (`mpz_div', `mpz_divmod', `mpz_mdiv',
+     `mpz_mdivmod', etc) now all use floor rounding (i.e., they round
+     the quotient towards -infinity).  There are a lot of new functions
+     for integer division, giving the user better control over the
+     rounding.
 
   2. The function `mpz_mod' now compute the true *mod* function.
 
@@ -420,13 +460,27 @@ MP, with a few exceptions.
      0^0.  (In version 1, they yielded 0.)
 
 
+Compatibility with Version 2.0.x
+================================
+
+   This version of MP is upward compatible with version 2.0, 2.0.1, and
+2.0.2.
+
 Getting the Latest Version of MP
 ================================
 
-   The latest version of the MP library is available by anonymous ftp
-from from `prep.ai.mit.edu'.  The file name is
-`/pub/gnu/gmp-M.N.tar.gz'.  Many sites around the world mirror `prep';
+   The latest version of the MP library is available by at
+`ftp://ftp.gnu.org/pub/gnu'.  The file name will be `gmp-I.J.tar.gz' or
+`gmp-I.J.K.tar.gz'.  Many sites around the world mirror `ftp.gnu.org';
 please use a mirror site near you.
+
+
+File: gmp.info,  Node: Random Number Functions,  Up: MP Basics
+
+Random Number Functions
+=======================
+
+   Hey, write something smart here!
 
 
 File: gmp.info,  Node: Reporting Bugs,  Next: Integer Functions,  Prev: MP Basics,  Up: Top
@@ -459,7 +513,7 @@ the output from `uname -a'.
 corrected version of the library; if the bug report is poor, we won't
 do anything about it (aside of chiding you to send better bug reports).
 
-   Send your bug report to: `bug-gmp@prep.ai.mit.edu'.
+   Send your bug report to: `bug-gmp@gnu.org'.
 
    If you think something in this manual is unclear, or downright
 incorrect, or if the language needs to be improved, please send a note
@@ -474,7 +528,7 @@ Integer Functions
    This chapter describes the MP functions for performing integer
 arithmetic.  These functions start with the prefix `mpz_'.
 
-   Arbitrary precision integers are stored in objects of type `mpz_t'.
+   MP integers are stored in objects of type `mpz_t'.
 
 * Menu:
 
@@ -573,6 +627,9 @@ Assignment Functions
      This function returns 0 if the entire string up to the '\0' is a
      valid number in base BASE.  Otherwise it returns -1.
 
+ - Function: void mpz_swap (mpz_t ROP1, mpz_t ROP2)
+     Swap the values ROP1 and ROP2 efficiently.
+
 
 File: gmp.info,  Node: Simultaneous Integer Init & Assign,  Next: Converting Integers,  Prev: Assigning Integers,  Up: Integer Functions
 
@@ -620,16 +677,22 @@ File: gmp.info,  Node: Converting Integers,  Next: Integer Arithmetic,  Prev: Si
 Conversion Functions
 ====================
 
-   This section describes functions for converting arbitrary precision
-integers to standard C types.  Functions for converting *to* arbitrary
-precision integers are described in *Note Assigning Integers:: and
-*Note I/O of Integers::.
+   This section describes functions for converting MP integers to
+standard C types.  Functions for converting *to* MP integers are
+described in *Note Assigning Integers:: and *Note I/O of Integers::.
+
+ - Function: mp_limb_t mpz_getlimbn (mpz_t OP, mp_size_t N)
+     Return limb #N from OP.  This function allows for very efficient
+     decomposition of a number in its limbs.
+
+     The function `mpz_size' can be used to determine the useful range
+     for N.
 
  - Function: unsigned long int mpz_get_ui (mpz_t OP)
      Return the least significant part from OP.  This function combined
      with
      `mpz_tdiv_q_2exp(..., OP, CHAR_BIT*sizeof(unsigned long int))' can
-     be used to extract the limbs of an integer.
+     be used to decompose an integer into unsigned longs.
 
  - Function: signed long int mpz_get_si (mpz_t OP)
      If OP fits into a `signed long int' return the value of OP.
@@ -677,6 +740,10 @@ Arithmetic Functions
           OP2)
      Set ROP to OP1 times OP2.
 
+ - Function: void mpz_addmul_ui (mpz_t ROP, mpz_t OP1, unsigned long
+          int OP2)
+     Add OP1 times OP2 to ROP.
+
  - Function: void mpz_mul_2exp (mpz_t ROP, mpz_t OP1, unsigned long int
           OP2)
      Set ROP to OP1 times 2 raised to OP2.  This operation can also be
@@ -688,11 +755,8 @@ Arithmetic Functions
  - Function: void mpz_abs (mpz_t ROP, mpz_t OP)
      Set ROP to the absolute value of OP.
 
- - Function: void mpz_fac_ui (mpz_t ROP, unsigned long int OP)
-     Set ROP to OP!, the factorial of OP.
-
-Division functions
-------------------
+Division and mod functions
+--------------------------
 
    Division is undefined if the divisor is zero, and passing a zero
 divisor to the divide or modulo functions, as well passing a zero mod
@@ -702,12 +766,12 @@ possibility to handle arithmetic exceptions in these functions in the
 same manner as other arithmetic exceptions.
 
    There are three main groups of division functions:
-   * Functions that truncate the quotient towards 0.  The names of these
-     functions start with `mpz_tdiv'.  The `t' in the name is short for
-     `truncate'.
+   * Functions that truncate the quotient towards 0.  The names of
+     these functions start with `mpz_tdiv'.  The `t' in the name is
+     short for `truncate'.
 
-   * Functions that round the quotient towards -infinity.  The names of
-     these routines start with `mpz_fdiv'.  The `f' in the name is
+   * Functions that round the quotient towards -infinity).  The names
+     of these routines start with `mpz_fdiv'.  The `f' in the name is
      short for `floor'.
 
    * Functions that round the quotient towards +infinity.  The names of
@@ -719,135 +783,139 @@ means that the quotient is computed, while `r' means that the remainder
 is computed.  Functions that compute both the quotient and remainder
 have `qr' in the name.
 
- - Function: void mpz_tdiv_q (mpz_t ROP, mpz_t OP1, mpz_t OP2)
- - Function: void mpz_tdiv_q_ui (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Set ROP to [OP1/OP2].  The quotient is truncated towards 0.
+ - Function: void mpz_tdiv_q (mpz_t Q, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_tdiv_q_ui (mpz_t Q, mpz_t N,
+          unsigned long int D)
+     Set Q to [N/D], truncated towards 0.  The function `mpz_tdiv_q_ui'
+     returns the absolute value of remainder.
 
- - Function: void mpz_tdiv_r (mpz_t ROP, mpz_t OP1, mpz_t OP2)
- - Function: void mpz_tdiv_r_ui (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Set ROP to (OP1 - [OP1/OP2] * OP2).  Unless the remainder is zero,
-     it has the same sign as the dividend.
+     The function `mpz_tdiv_q_ui' returns the absolute value of the
+     remainder.
 
- - Function: void mpz_tdiv_qr (mpz_t ROP1, mpz_t ROP2, mpz_t OP1, mpz_t
-          OP2)
- - Function: void mpz_tdiv_qr_ui (mpz_t ROP1, mpz_t ROP2, mpz_t OP1,
-          unsigned long int OP2)
-     Divide OP1 by OP2 and put the quotient in ROP1 and the remainder
-     in ROP2.  The quotient is rounded towards 0.  Unless the remainder
-     is zero, it has the same sign as the dividend.
+ - Function: void mpz_tdiv_r (mpz_t R, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_tdiv_r_ui (mpz_t R, mpz_t N,
+          unsigned long int D)
+     Set R to (N - [N/D] * D), where the quotient is truncated towards
+     0.  Unless R becomes zero, it will get the same sign as N.
 
-     If ROP1 and ROP2 are the same variable, the results are undefined.
+     The function `mpz_tdiv_r_ui' returns the absolute value of the
+     remainder.
 
- - Function: void mpz_fdiv_q (mpz_t ROP1, mpz_t OP1, mpz_t OP2)
- - Function: void mpz_fdiv_q_ui (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Set ROP to OP1/OP2.  The quotient is rounded towards -infinity.
+ - Function: void mpz_tdiv_qr (mpz_t Q, mpz_t R, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_tdiv_qr_ui (mpz_t Q, mpz_t R, mpz_t
+          N, unsigned long int D)
+     Set Q to [N/D], truncated towards 0.  Set R to (N - [N/D] * D).
+     Unless R becomes zero, it will get the same sign as N.  If Q and R
+     are the same variable, the results are undefined.
 
- - Function: void mpz_fdiv_r (mpz_t ROP, mpz_t OP1, mpz_t OP2)
- - Function: unsigned long int mpz_fdiv_r_ui (mpz_t ROP, mpz_t OP1,
-          unsigned long int OP2)
-     Divide OP1 by OP2 and put the remainder in ROP.  Unless the
-     remainder is zero, it has the same sign as the divisor.
+     The function `mpz_tdiv_qr_ui' returns the absolute value of the
+     remainder.
 
-     For `mpz_fdiv_r_ui' the remainder is small enough to fit in an
-     `unsigned long int', and is therefore returned.
+ - Function: unsigned long int mpz_tdiv_ui (mpz_t N, unsigned long int
+          D)
+     Like `mpz_tdiv_r_ui', but the remainder is not stored anywhere; its
+     absolute value is just returned.
 
- - Function: void mpz_fdiv_qr (mpz_t ROP1, mpz_t ROP2, mpz_t OP1, mpz_t
-          OP2)
- - Function: unsigned long int mpz_fdiv_qr_ui (mpz_t ROP1, mpz_t ROP2,
-          mpz_t OP1, unsigned long int OP2)
-     Divide OP1 by OP2 and put the quotient in ROP1 and the remainder
-     in ROP2.  The quotient is rounded towards -infinity.  Unless the
-     remainder is zero, it has the same sign as the divisor.
+ - Function: void mpz_fdiv_q (mpz_t Q, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_fdiv_q_ui (mpz_t Q, mpz_t N,
+          unsigned long int D)
+     Set Q to N/D, rounded towards -infinity.
 
-     For `mpz_fdiv_qr_ui' the remainder is small enough to fit in an
-     `unsigned long int', and is therefore returned.
+     The function `mpz_fdiv_q_ui' returns the remainder.
 
-     If ROP1 and ROP2 are the same variable, the results are undefined.
+ - Function: void mpz_fdiv_r (mpz_t R, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_fdiv_r_ui (mpz_t R, mpz_t N,
+          unsigned long int D)
+     Set R to (N - N/D * D), where the quotient is rounded towards
+     -infinity.  Unless R becomes zero, it will get the same sign as D.
 
- - Function: unsigned long int mpz_fdiv_ui (mpz_t OP1, unsigned long
-          int OP2)
-     This function is similar to `mpz_fdiv_r_ui', but the remainder is
-     only returned; it is not stored anywhere.
+     The function `mpz_fdiv_r_ui' returns the remainder.
 
- - Function: void mpz_cdiv_q (mpz_t ROP1, mpz_t OP1, mpz_t OP2)
- - Function: void mpz_cdiv_q_ui (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Set ROP to OP1/OP2.  The quotient is rounded towards +infinity.
+ - Function: void mpz_fdiv_qr (mpz_t R, mpz_t R, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_fdiv_qr_ui (mpz_t Q, mpz_t R, mpz_t
+          N, unsigned long int D)
+     Set Q to N/D, rounded towards -infinity.  Set R to (N - N/D * D).
+     Unless R becomes zero, it will get the same sign as D.  If Q and R
+     are the same variable, the results are undefined.
 
- - Function: void mpz_cdiv_r (mpz_t ROP, mpz_t OP1, mpz_t OP2)
- - Function: unsigned long int mpz_cdiv_r_ui (mpz_t ROP, mpz_t OP1,
-          unsigned long int OP2)
-     Divide OP1 by OP2 and put the remainder in ROP.  Unless the
-     remainder is zero, it has the opposite sign as the divisor.
+     The function `mpz_fdiv_qr_ui' returns the remainder.
 
-     For `mpz_cdiv_r_ui' the negated remainder is small enough to fit
-     in an `unsigned long int', and it is therefore returned.
+ - Function: unsigned long int mpz_fdiv_ui (mpz_t N, unsigned long int
+          D)
+     Like `mpz_fdiv_r_ui', but the remainder is not stored anywhere; it
+     is just returned.
 
- - Function: void mpz_cdiv_qr (mpz_t ROP1, mpz_t ROP2, mpz_t OP1, mpz_t
-          OP2)
- - Function: unsigned long int mpz_cdiv_qr_ui (mpz_t ROP1, mpz_t ROP2,
-          mpz_t OP1, unsigned long int OP2)
-     Divide OP1 by OP2 and put the quotient in ROP1 and the remainder
-     in ROP2.  The quotient is rounded towards +infinity.  Unless the
-     remainder is zero, it has the opposite sign as the divisor.
+ - Function: void mpz_cdiv_q (mpz_t Q, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_cdiv_q_ui (mpz_t Q, mpz_t N,
+          unsigned long int D)
+     Set Q to N/D, rounded towards +infinity.
 
-     For `mpz_cdiv_qr_ui' the negated remainder is small enough to fit
-     in an `unsigned long int', and it is therefore returned.
+     The function `mpz_cdiv_q_ui' returns the negated remainder.
 
-     If ROP1 and ROP2 are the same variable, the results are undefined.
+ - Function: void mpz_cdiv_r (mpz_t R, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_cdiv_r_ui (mpz_t R, mpz_t N,
+          unsigned long int D)
+     Set R to (N - N/D * D), where the quotient is rounded towards
+     +infinity.  Unless R becomes zero, it will get the opposite sign
+     as D.
 
- - Function: unsigned long int mpz_cdiv_ui (mpz_t OP1, unsigned long
-          int OP2)
-     Return the negated remainder, similar to `mpz_cdiv_r_ui'.  (The
-     difference is that this function doesn't store the remainder
-     anywhere.)
+     The function `mpz_cdiv_r_ui' returns the negated remainder.
 
- - Function: void mpz_mod (mpz_t ROP, mpz_t OP1, mpz_t OP2)
- - Function: unsigned long int mpz_mod_ui (mpz_t ROP, mpz_t OP1,
-          unsigned long int OP2)
-     Set ROP to OP1 `mod' OP2.  The sign of the divisor is ignored, and
-     the result is always non-negative.
+ - Function: void mpz_cdiv_qr (mpz_t Q, mpz_t R, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_cdiv_qr_ui (mpz_t Q, mpz_t R, mpz_t
+          N, unsigned long int D)
+     Set Q to N/D, rounded towards +infinity.  Set R to (N - N/D * D).
+     Unless R becomes zero, it will get the opposite sign as D.  If Q
+     and R are the same variable, the results are undefined.
 
-     For `mpz_mod_ui' the remainder is small enough to fit in an
-     `unsigned long int', and is therefore returned.
+     The function `mpz_cdiv_qr_ui' returns the negated remainder.
 
- - Function: void mpz_divexact (mpz_t ROP, mpz_t OP1, mpz_t OP2)
-     Set ROP to OP1/OP2.  This function produces correct results only
-     when it is known in advance that OP2 divides OP1.
+ - Function: unsigned long int mpz_cdiv_ui (mpz_t N, unsigned long int
+          D)
+     Like `mpz_tdiv_r_ui', but the remainder is not stored anywhere; its
+     negated value is just returned.
+
+ - Function: void mpz_mod (mpz_t R, mpz_t N, mpz_t D)
+ - Function: unsigned long int mpz_mod_ui (mpz_t R, mpz_t N, unsigned
+          long int D)
+     Set R to N `mod' D.  The sign of the divisor is ignored; the
+     result is always non-negative.
+
+     The function `mpz_mod_ui' returns the remainder.
+
+ - Function: void mpz_divexact (mpz_t Q, mpz_t N, mpz_t D)
+     Set Q to N/D.  This function produces correct results only when it
+     is known in advance that D divides N.
 
      Since mpz_divexact is much faster than any of the other routines
      that produce the quotient (*note References::. Jebelean), it is
      the best choice for instances in which exact division is known to
      occur, such as reducing a rational to lowest terms.
 
- - Function: void mpz_tdiv_q_2exp (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Set ROP to OP1 divided by 2 raised to OP2.  The quotient is
-     rounded towards 0.
+ - Function: void mpz_tdiv_q_2exp (mpz_t Q, mpz_t N, unsigned long int
+          D)
+     Set Q to N divided by 2 raised to D.  The quotient is truncated
+     towards 0.
 
- - Function: void mpz_tdiv_r_2exp (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Divide OP1 by (2 raised to OP2) and put the remainder in ROP.
-     Unless it is zero, ROP will have the same sign as OP1.
+ - Function: void mpz_tdiv_r_2exp (mpz_t R, mpz_t N, unsigned long int
+          D)
+     Divide N by (2 raised to D) and put the remainder in R.  Unless it
+     is zero, R will have the same sign as N.
 
- - Function: void mpz_fdiv_q_2exp (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Set ROP to OP1 divided by 2 raised to OP2.  The quotient is
-     rounded towards -infinity.
+ - Function: void mpz_fdiv_q_2exp (mpz_t Q, mpz_t N, unsigned long int
+          D)
+     Set Q to N divided by 2 raised to D, rounded towards -infinity.
 
- - Function: void mpz_fdiv_r_2exp (mpz_t ROP, mpz_t OP1, unsigned long
-          int OP2)
-     Divide OP1 by (2 raised to OP2) and put the remainder in ROP.  The
-     sign of ROP will always be positive.
+ - Function: void mpz_fdiv_r_2exp (mpz_t R, mpz_t N, unsigned long int
+          D)
+     Divide N by (2 raised to D) and put the remainder in R.  The sign
+     of R will always be positive.
 
-     This operation can also be defined as masking of the OP2 least
+     This operation can also be defined as masking of the D least
      significant bits.
 
-Exponentialization Functions
-----------------------------
+Exponentiation Functions
+------------------------
 
  - Function: void mpz_powm (mpz_t ROP, mpz_t BASE, mpz_t EXP, mpz_t MOD)
  - Function: void mpz_powm_ui (mpz_t ROP, mpz_t BASE, unsigned long int
@@ -861,8 +929,11 @@ Exponentialization Functions
           unsigned long int EXP)
      Set ROP to BASE raised to EXP.  The case of 0^0 yields 1.
 
-Square Root Functions
----------------------
+Root Functions
+--------------
+
+ - Function: void mpz_root (mpz_t ROP, mpz_t OP, unsigned long int N)
+     Set ROP to the truncated integer part of the Nth root of OP.
 
  - Function: void mpz_sqrt (mpz_t ROP, mpz_t OP)
      Set ROP to the truncated integer part of the square root of OP.
@@ -874,6 +945,11 @@ Square Root Functions
 
      If ROP1 and ROP2 are the same variable, the results are undefined.
 
+ - Function: int mpz_perfect_power_p (mpz_t OP)
+     Return non-zero if OP is a perfect power, i.e., if there exist
+     integers A and B, with B > 1, such that OP equals a raised to b.
+     Return zero otherwise.
+
  - Function: int mpz_perfect_square_p (mpz_t OP)
      Return non-zero if OP is a perfect square, i.e., if the square
      root of OP is an integer.  Return zero otherwise.
@@ -881,16 +957,30 @@ Square Root Functions
 Number Theoretic Functions
 --------------------------
 
- - Function: int mpz_probab_prime_p (mpz_t OP, int REPS)
-     If this function returns 0, OP is definitely not prime.  If it
-     returns 1, then OP is `probably' prime.  The probability of a
-     false positive is (1/4)**REPS.  A reasonable value of reps is 25.
+ - Function: int mpz_probab_prime_p (mpz_t N, int REPS)
+     If this function returns 0, N is definitely not prime.  If it
+     returns 1, then N is `probably' prime.  If it returns 2, then N is
+     surely prime.  Reasonable values of reps vary from 5 to 10; a
+     higher value lowers the probability for a non-prime to pass as a
+     `probable' prime.
 
-     An implementation of the probabilistic primality test found in
-     Seminumerical Algorithms (*note References::. Knuth).
+     The function uses Miller-Rabin's probabilistic test.
+
+ - Function: int mpz_prime_p (mpz_t N)
+     Return non-zero if N is prime and zero if N is a non-prime.  This
+     function is far slower than `mpz_probab_prime_p', but then it
+     never returns non-zero for composite numbers.
+
+     (For practical purposes, using `mpz_probab_prime_p' is adequate.
+     The likelyhood of a programming error or hardware malfunction is
+     orders of magnitudes greater than the likelyhood for a composite
+     to pass as a prime, if the REPS argument is in the suggested
+     range.)
 
  - Function: void mpz_gcd (mpz_t ROP, mpz_t OP1, mpz_t OP2)
-     Set ROP to the greatest common divisor of OP1 and OP2.
+     Set ROP to the greatest common divisor of OP1 and OP2.  The result
+     is always positive even if either of or both input operands are
+     negative.
 
  - Function: unsigned long int mpz_gcd_ui (mpz_t ROP, mpz_t OP1,
           unsigned long int OP2)
@@ -904,18 +994,36 @@ Number Theoretic Functions
 
  - Function: void mpz_gcdext (mpz_t G, mpz_t S, mpz_t T, mpz_t A, mpz_t
           B)
-     Compute G, S, and T, such that AS + BT = G = `gcd' (A, B).  If T is
+     Compute G, S, and T, such that AS + BT = G = `gcd'(A, B).  If T is
      NULL, that argument is not computed.
+
+ - Function: void mpz_lcm (mpz_t ROP, mpz_t OP1, mpz_t OP2)
+     Set ROP to the least common multiple of OP1 and OP2.
 
  - Function: int mpz_invert (mpz_t ROP, mpz_t OP1, mpz_t OP2)
      Compute the inverse of OP1 modulo OP2 and put the result in ROP.
      Return non-zero if an inverse exist, zero otherwise.  When the
-     function returns zero, do not assume anything about the value in
-     ROP.
+     function returns zero, ROP is undefined.
 
  - Function: int mpz_jacobi (mpz_t OP1, mpz_t OP2)
  - Function: int mpz_legendre (mpz_t OP1, mpz_t OP2)
      Compute the Jacobi and Legendre symbols, respectively.
+
+ - Function: unsigned long int mpz_remove (mpz_t ROP, mpz_t OP, mpz_t F)
+     Remove all occurences of the factor F from OP and store the result
+     in ROP.  Return the multiplicity of F in OP.
+
+ - Function: void mpz_fac_ui (mpz_t ROP, unsigned long int OP)
+     Set ROP to OP!, the factorial of OP.
+
+ - Function: void mpz_bin_ui (mpz_t ROP, mpz_t N, unsigned long int K)
+ - Function: void mpz_bin_uiui (mpz_t ROP, unsigned long int N,
+          unsigned long int K)
+     Compute the binomial coefficient N over K and store the result in
+     ROP.
+
+ - Function: void mpz_fib_ui (mpz_t ROP, unsigned long int N)
+     Compute the Nth Fibonacci number and store the result in ROP.
 
 
 File: gmp.info,  Node: Comparison Functions,  Next: Integer Logic and Bit Fiddling,  Prev: Integer Arithmetic,  Up: Integer Functions
@@ -934,6 +1042,12 @@ Comparison Functions
 
      These functions are actually implemented as macros.  They evaluate
      their arguments multiple times.
+
+ - Function: int mpz_cmp_abs (mpz_t OP1, mpz_t OP2)
+ - Function: int mpz_cmp_abs_ui (mpz_t OP1, unsigned long int OP2)
+     Compare the absolute values of OP1 and OP2.  Return a positive
+     value if OP1 > OP2, zero if OP1 = OP2, and a negative value if OP1
+     < OP2.
 
  - Macro: int mpz_sgn (mpz_t OP)
      Return +1 if OP > 0, 0 if OP = 0, and -1 if OP < 0.
@@ -956,6 +1070,9 @@ Logical and Bit Manipulation Functions
  - Function: void mpz_ior (mpz_t ROP, mpz_t OP1, mpz_t OP2)
      Set ROP to OP1 inclusive-or OP2.
 
+ - Function: void mpz_xor (mpz_t ROP, mpz_t OP1, mpz_t OP2)
+     Set ROP to OP1 exclusive-or OP2.
+
  - Function: void mpz_com (mpz_t ROP, mpz_t OP)
      Set ROP to the one's complement of OP.
 
@@ -971,8 +1088,7 @@ Logical and Bit Manipulation Functions
      It is possible to extend this function to return a useful value
      when the operands are both negative, but the current
      implementation returns MAX_ULONG in this case.  *Do not depend on
-     this behavior, since it will change in future versions of the
-     library.*
+     this behavior, since it will change in a future release.*
 
  - Function: unsigned long int mpz_scan0 (mpz_t OP, unsigned long int
           STARTING_BIT)
@@ -987,10 +1103,13 @@ Logical and Bit Manipulation Functions
      found bit.
 
  - Function: void mpz_setbit (mpz_t ROP, unsigned long int BIT_INDEX)
-     Set bit BIT_INDEX in OP1.
+     Set bit BIT_INDEX in ROP.
 
  - Function: void mpz_clrbit (mpz_t ROP, unsigned long int BIT_INDEX)
-     Clear bit BIT_INDEX in OP1.
+     Clear bit BIT_INDEX in ROP.
+
+ - Function: int mpz_tstbit (mpz_t OP, unsigned long int BIT_INDEX)
+     Check bit BIT_INDEX in OP and return 0 or 1 accordingly.
 
 
 File: gmp.info,  Node: I/O of Integers,  Next: Miscellaneous Integer Functions,  Prev: Integer Logic and Bit Fiddling,  Up: Integer Functions
@@ -1056,11 +1175,20 @@ File: gmp.info,  Node: Miscellaneous Integer Functions,  Prev: I/O of Integers, 
 Miscellaneous Functions
 =======================
 
+   The random number functions of GMP come in two groups; older function
+that rely on a global state, and newer functions that accept a state
+parameter that is read and modified.  Please see the *Note Random
+Number Functions:: for more information on how to use and not to use
+random number functions.
+
  - Function: void mpz_random (mpz_t ROP, mp_size_t MAX_SIZE)
      Generate a random integer of at most MAX_SIZE limbs.  The generated
      random number doesn't satisfy any particular requirements of
      randomness.  Negative random numbers are generated when MAX_SIZE
      is negative.
+
+     This function is obsolete.  Use `mpz_urandomb' or `mpz_urandomm'
+     instead.
 
  - Function: void mpz_random2 (mpz_t ROP, mp_size_t MAX_SIZE)
      Generate a random integer of at most MAX_SIZE limbs, with long
@@ -1069,12 +1197,40 @@ Miscellaneous Functions
      numbers have proven to be more likely to trigger corner-case bugs.
      Negative random numbers are generated when MAX_SIZE is negative.
 
+     This function is obsolete.  Use `mpz_rrandomb' instead.
+
+ - Function: void mpz_urandomb (mpz_t ROP, unsigned long int N, mpz_t
+          STATE)
+     Generate a uniform random integer in the range 0 to 2^N - 1,
+     inclusive.
+
+     The variable STATE is used as a seed for generating the random
+     number.  It is updated with a new seed.
+
+ - Function: void mpz_urandomm (mpz_t ROP, mpz_t N, mpz_t STATE)
+     Generate a uniform random integer in the range 0 to N
+
+     The variable STATE is used as a seed for generating the random
+     number.  It is updated with a new seed.
+
+ - Function: void mpz_rrandomb (mpz_t ROP, unsigned long int N, mpz_t
+          STATE)
+     Generate a random integer with long strings of zeros and ones in
+     the binary representation.  Useful for testing functions and
+     algorithms, since this kind of random numbers have proven to be
+     more likely to trigger corner-case bugs.  The random number will
+     be in the range 0 to 2^N - 1, inclusive.
+
+     The variable STATE is used as a seed for generating the random
+     number.  It is updated with a new seed.  Unlike other random number
+     functions, the STATE variable should probably be much smaller than
+     the generated numbers, since the generated random numbers are of
+     such special nature.  In fact, it should probably be kept under
+     2^100.
+
  - Function: size_t mpz_size (mpz_t OP)
      Return the size of OP measured in number of limbs.  If OP is zero,
      the returned value will be zero.
-
-     *This function is obsolete.  It will disappear from future MP
-     releases.*
 
  - Function: size_t mpz_sizeinbase (mpz_t OP, int BASE)
      Return the size of OP measured in number of digits in base BASE.
@@ -1122,162 +1278,4 @@ the library.*
 * Comparing Rationals::
 * Applying Integer Functions::
 * Miscellaneous Rational Functions::
-
-
-File: gmp.info,  Node: Initializing Rationals,  Next: Assigning Rationals,  Prev: Rational Number Functions,  Up: Rational Number Functions
-
-Initialization and Assignment Functions
-=======================================
-
- - Function: void mpq_init (mpq_t DEST_RATIONAL)
-     Initialize DEST_RATIONAL and set it to 0/1.  Each variable should
-     normally only be initialized once, or at least cleared out (using
-     the function `mpq_clear') between each initialization.
-
- - Function: void mpq_clear (mpq_t RATIONAL_NUMBER)
-     Free the space occupied by RATIONAL_NUMBER.  Make sure to call this
-     function for all `mpq_t' variables when you are done with them.
-
- - Function: void mpq_set (mpq_t ROP, mpq_t OP)
- - Function: void mpq_set_z (mpq_t ROP, mpz_t OP)
-     Assign ROP from OP.
-
- - Function: void mpq_set_ui (mpq_t ROP, unsigned long int OP1,
-          unsigned long int OP2)
- - Function: void mpq_set_si (mpq_t ROP, signed long int OP1, unsigned
-          long int OP2)
-     Set the value of ROP to OP1/OP2.  Note that if OP1 and OP2 have
-     common factors, ROP has to be passed to `mpq_canonicalize' before
-     any operations are performed on ROP.
-
-
-File: gmp.info,  Node: Assigning Rationals,  Next: Comparing Rationals,  Prev: Initializing Rationals,  Up: Rational Number Functions
-
-Arithmetic Functions
-====================
-
- - Function: void mpq_add (mpq_t SUM, mpq_t ADDEND1, mpq_t ADDEND2)
-     Set SUM to ADDEND1 + ADDEND2.
-
- - Function: void mpq_sub (mpq_t DIFFERENCE, mpq_t MINUEND, mpq_t
-          SUBTRAHEND)
-     Set DIFFERENCE to MINUEND - SUBTRAHEND.
-
- - Function: void mpq_mul (mpq_t PRODUCT, mpq_t MULTIPLIER, mpq_t
-          MULTIPLICAND)
-     Set PRODUCT to MULTIPLIER times MULTIPLICAND.
-
- - Function: void mpq_div (mpq_t QUOTIENT, mpq_t DIVIDEND, mpq_t
-          DIVISOR)
-     Set QUOTIENT to DIVIDEND/DIVISOR.
-
- - Function: void mpq_neg (mpq_t NEGATED_OPERAND, mpq_t OPERAND)
-     Set NEGATED_OPERAND to -OPERAND.
-
- - Function: void mpq_inv (mpq_t INVERTED_NUMBER, mpq_t NUMBER)
-     Set INVERTED_NUMBER to 1/NUMBER.  If the new denominator is zero,
-     this routine will divide by zero.
-
-
-File: gmp.info,  Node: Comparing Rationals,  Next: Applying Integer Functions,  Prev: Assigning Rationals,  Up: Rational Number Functions
-
-Comparison Functions
-====================
-
- - Function: int mpq_cmp (mpq_t OP1, mpq_t OP2)
-     Compare OP1 and OP2.  Return a positive value if OP1 > OP2, zero
-     if OP1 = OP2, and a negative value if OP1 < OP2.
-
-     To determine if two rationals are equal, `mpq_equal' is faster than
-     `mpq_cmp'.
-
- - Macro: int mpq_cmp_ui (mpq_t OP1, unsigned long int NUM2, unsigned
-          long int DEN2)
-     Compare OP1 and NUM2/DEN2.  Return a positive value if OP1 >
-     NUM2/DEN2, zero if OP1 = NUM2/DEN2, and a negative value if OP1 <
-     NUM2/DEN2.
-
-     This routine allows that NUM2 and DEN2 have common factors.
-
-     This function is actually implemented as a macro.  It evaluates its
-     arguments multiple times.
-
- - Macro: int mpq_sgn (mpq_t OP)
-     Return +1 if OP > 0, 0 if OP = 0, and -1 if OP < 0.
-
-     This function is actually implemented as a macro.  It evaluates its
-     arguments multiple times.
-
- - Function: int mpq_equal (mpq_t OP1, mpq_t OP2)
-     Return non-zero if OP1 and OP2 are equal, zero if they are
-     non-equal.  Although `mpq_cmp' can be used for the same purpose,
-     this function is much faster.
-
-
-File: gmp.info,  Node: Applying Integer Functions,  Next: Miscellaneous Rational Functions,  Prev: Comparing Rationals,  Up: Rational Number Functions
-
-Applying Integer Functions to Rationals
-=======================================
-
-   The set of `mpq' functions is quite small.  In particular, there are
-no functions for either input or output.  But there are two macros that
-allow us to apply any `mpz' function on the numerator or denominator of
-a rational number.  If these macros are used to assign to the rational
-number, `mpq_canonicalize' normally need to be called afterwards.
-
- - Macro: mpz_t mpq_numref (mpq_t OP)
- - Macro: mpz_t mpq_denref (mpq_t OP)
-     Return a reference to the numerator and denominator of OP,
-     respectively.  The `mpz' functions can be used on the result of
-     these macros.
-
-
-File: gmp.info,  Node: Miscellaneous Rational Functions,  Prev: Applying Integer Functions,  Up: Rational Number Functions
-
-Miscellaneous Functions
-=======================
-
- - Function: double mpq_get_d (mpq_t OP)
-     Convert OP to a double.
-
-   These functions assign between either the numerator or denominator
-of a rational, and an integer.  Instead of using these functions, it is
-preferable to use the more general mechanisms `mpq_numref' and
-`mpq_denref', together with `mpz_set'.
-
- - Function: void mpq_set_num (mpq_t RATIONAL, mpz_t NUMERATOR)
-     Copy NUMERATOR to the numerator of RATIONAL.  When this risks to
-     make the numerator and denominator of RATIONAL have common
-     factors, you have to pass RATIONAL to `mpq_canonicalize' before
-     any operations are performed on RATIONAL.
-
-     This function is equivalent to `mpz_set (mpq_numref (RATIONAL),
-     NUMERATOR)'.
-
- - Function: void mpq_set_den (mpq_t RATIONAL, mpz_t DENOMINATOR)
-     Copy DENOMINATOR to the denominator of RATIONAL.  When this risks
-     to make the numerator and denominator of RATIONAL have common
-     factors, or if the denominator might be negative, you have to pass
-     RATIONAL to `mpq_canonicalize' before any operations are performed
-     on RATIONAL.
-
-     *In version 1 of the library, negative denominators were handled by
-     copying the sign to the numerator.  That is no longer done.*
-
-     This function is equivalent to `mpz_set (mpq_denref (RATIONAL),
-     DENOMINATORS)'.
-
- - Function: void mpq_get_num (mpz_t NUMERATOR, mpq_t RATIONAL)
-     Copy the numerator of RATIONAL to the integer NUMERATOR, to
-     prepare for integer operations on the numerator.
-
-     This function is equivalent to `mpz_set (NUMERATOR, mpq_numref
-     (RATIONAL))'.
-
- - Function: void mpq_get_den (mpz_t DENOMINATOR, mpq_t RATIONAL)
-     Copy the denominator of RATIONAL to the integer DENOMINATOR, to
-     prepare for integer operations on the denominator.
-
-     This function is equivalent to `mpz_set (DENOMINATOR, mpq_denref
-     (RATIONAL))'.
 
