@@ -114,7 +114,8 @@ the most-significant bits. */
    number of valid bits in the result.  NOTE: If 'm' is a power of 2
    (m2exp != 0), discard the lower half of the result.  */
 
-static mp_size_t
+static
+unsigned long int
 #if __STDC__
 lc (mp_ptr rp, gmp_randstate_t rstate)
 #else
@@ -123,78 +124,105 @@ lc (rp, rstate)
      gmp_randstate_t rstate;
 #endif
 {
-  mp_ptr t1p, t2p, seedp, ap;
-  mp_size_t t1n, t2n, seedn, an;
-  mp_size_t shiftcount, retval;
+  mp_ptr tp, seedp, ap;
+  mp_size_t ta;
+  mp_size_t tn, seedn, an, mn;
+  mp_size_t retval;
+  int shiftcount = 0;
   mp_limb_t tlimb;
   unsigned long int m2exp;
+  mp_limb_t c;
   TMP_DECL (mark);
+
+  m2exp = rstate->algdata.lc->m2exp;
+  c = (mp_limb_t) rstate->algdata.lc->c;
 
   seedp = PTR (rstate->seed);
   seedn = SIZ (rstate->seed);
-  /* An mpz with value 0 is represented with SIZ() == 0, which
-     confuses the code below.  Say that SIZ() = 1 instead.  */
+
   if (seedn == 0)
-    seedn = 1;
+    {
+      /* Seed is 0.  Result is C % M.  */
+      *rp = c;
+
+      if (m2exp != 0)
+	{
+	  /* M is a power of 2.  */
+	  if (m2exp < BITS_PER_MP_LIMB)
+	    {
+	      /* Only necessary when M may be smaller than C.  */
+	      *rp &= (((mp_limb_t) 1 << m2exp) - 1);
+	    }
+	}
+      else
+	{
+	  /* M is not a power of 2.  */
+	  abort ();		/* FIXME.  */
+	}
+
+      /* Save result as next seed.  */
+      *seedp = *rp;
+      SIZ (rstate->seed) = 1;
+      return BITS_PER_MP_LIMB;
+    }
 
   ap = PTR (rstate->algdata.lc->a);
   an = SIZ (rstate->algdata.lc->a);
 
-  m2exp = rstate->algdata.lc->m2exp;
+  /* Allocate temporary storage.  Let there be room for calculation of
+     (A * seed + C) % M, or M if bigger than that.  */
 
-  /* Allocate temporary storage.  t1 = a * seed, t2 = t1 + c % m.  */
-  
+  ASSERT_ALWAYS (m2exp != 0);	/* FIXME.  */
+
   TMP_MARK (mark);
-  t1n = an + seedn;
-  t1p = TMP_ALLOC (t1n * BYTES_PER_MP_LIMB);
+  mn = (m2exp + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
+  ta = MAX (an + seedn + 1, mn);
+  tp = TMP_ALLOC (ta * BYTES_PER_MP_LIMB);
+  MPN_ZERO (tp, ta);
 
-  t2n = MAX (t1n, an) + 1;	/* One extra for the add.  */
-  if (m2exp == 0)
-    t2n++;			/* One extra for the normalizing
-                                   shift.  */
-  t2p = TMP_ALLOC (t2n * BYTES_PER_MP_LIMB);
-  /* Clear destination.  FIXME: Only necessary when SIZ (a*seed+c) <
-     SIZ ((a*seed+c)%m), which happens in optimized modulo calculation
-     where m is a power of two.  */
-  MPN_ZERO (t2p, t2n);
-
-  /* t1 = a * seed */
+  /* t = a * seed */
   if (seedn >= an)
-    tlimb = mpn_mul (t1p, seedp, seedn, ap, an);
+    tlimb = mpn_mul (tp, seedp, seedn, ap, an);
   else
-    tlimb = mpn_mul (t1p, ap, an, seedp, seedn);
-  t1n = an + seedn - (tlimb == 0);
+    tlimb = mpn_mul (tp, ap, an, seedp, seedn);
+  tn = an + seedn - (tlimb == 0);
 
-  /* t2 = t1 + c */
-  t2n = t1n;
-  if (mpn_add_1 (t2p, t1p, t1n, (mp_limb_t) rstate->algdata.lc->c))
+  /* t = t + c */
+  if (mpn_add_1 (tp, tp, tn, c))
     {
-      t2p[t2n] = 1;	/* Add carry. */
-      t2n++;
+      tp[tn] = 1;	/* Store carry. */
+      tn++;
     }
-      
-  /* t2 = t2 % m */
+
+  /* t = t % m */
   if (m2exp != 0)
     {
-      /* 'm' is a power of 2.  No need for a division, just trim the
-	 size and clear some bits in (new) most significant limb.  */
-      mp_size_t msli = m2exp / BITS_PER_MP_LIMB;
-      mp_size_t savebits = m2exp % BITS_PER_MP_LIMB;
+      /* M is a power of 2.  There is no need for a division.  Trim
+	 the size and clear some of the bits in the (new) most
+	 significant limb.  */
 
-      /* FIXME: Avoid shifting if all bits to be cleared are 0
-         already?  */
-      if (savebits != 0)
-	t2p[msli] &= (((mp_limb_t) 1 << savebits) - 1);
-      else
-	msli--;			/* Correction.  */
+      /* If M is bigger than the maximum possible size of T, nothing
+         has to be done at all.  */
+      if (m2exp < tn * BITS_PER_MP_LIMB)
+	{
+	  mp_size_t msli = m2exp / BITS_PER_MP_LIMB;
+	  mp_size_t savebits = m2exp % BITS_PER_MP_LIMB;
 
-      t2n = msli + 1;
+	  if (savebits != 0)
+	    tp[msli] &= (((mp_limb_t) 1 << savebits) - 1);
+	  else
+	    msli--;			/* Correction.  */
+
+	  tn = msli + 1;
+	}
     }
   else
     {
-      /* 'm' is not a power of 2.  The modulus operation is done with
-	 mpn_divrem() after normalizing 'm' and compensating this by
+      /* M is not a power of 2.  The modulus operation is done with
+	 mpn_divrem() after normalizing M and compensating this by
 	 shifting 't2'.  */
+      abort ();			/* FIXME.  */
+#if 0
       mp_ptr mp, mcopyp;
       mp_size_t mn;
 
@@ -202,7 +230,7 @@ lc (rp, rstate)
       /* FIXME: Assumption: m != 0  */
       mp = PTR (rstate->algdata.lc->m);
       mn = SIZ (rstate->algdata.lc->m);
-      count_leading_zeros (shiftcount, mp[mn - 1]); 
+      count_leading_zeros (shiftcount, mp[mn - 1]);
       if (shiftcount != 0)
 	{
 	  mcopyp = TMP_ALLOC (mn * BYTES_PER_MP_LIMB);
@@ -232,11 +260,12 @@ lc (rp, rstate)
 	  mpn_rshift (t2p, t2p, t2n, shiftcount);
 	  MPN_NORMALIZE (t2p, t2n);
 	}
+#endif /* 0 */
     }
 
   /* Save result as next seed.  */
-  MPN_COPY (PTR (rstate->seed), t2p, t2n);
-  SIZ (rstate->seed) = t2n;
+  MPN_COPY (PTR (rstate->seed), tp, tn);
+  SIZ (rstate->seed) = tn;
 
   if (m2exp != 0)
     {
@@ -244,12 +273,19 @@ lc (rp, rstate)
       mp_size_t discardb = m2exp / 2;
       mp_size_t discardl = discardb / BITS_PER_MP_LIMB;
 
-      t2n -= discardl;
-      mpn_rshift (t2p, t2p + discardl, t2n, discardb % BITS_PER_MP_LIMB);
+      tn -= discardl;
+      if (tn > 0)
+	{
+	  if (discardb % BITS_PER_MP_LIMB != 0)
+	    mpn_rshift (rp, tp + discardl, tn, discardb % BITS_PER_MP_LIMB);
+	  else			/* Even limb boundary.  */
+	    MPN_COPY_INCR (rp, tp + discardl, tn);
+	}
     }
-
-  /* Store result at destination.  */
-  MPN_COPY (rp, t2p, t2n);
+  else
+    {
+      MPN_COPY (rp, tp, tn);
+    }
 
   TMP_FREE (mark);
 
@@ -260,6 +296,31 @@ lc (rp, rstate)
     retval = SIZ (rstate->algdata.lc->m) * BITS_PER_MP_LIMB - shiftcount;
   return retval;
 }
+
+#ifdef RAWRANDEBUG
+/* Set even bits to EVENBITS and odd bits to ! EVENBITS in RP.
+   Number of bits is m2exp in state.  */
+/* FIXME: Remove.  */
+unsigned long int
+lc_test (mp_ptr rp, gmp_randstate_t s, const int evenbits)
+{
+  unsigned long int rn, nbits;
+  int f;
+
+  nbits = s->algdata.lc->m2exp / 2;
+  rn = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
+  MPN_ZERO (rp, rn);
+
+  for (f = 0; f < nbits; f++)
+    {
+      mpn_lshift (rp, rp, rn, 1);
+      if (f % 2 == ! evenbits)
+        rp[0] += 1;
+    }
+
+  return nbits;
+}
+#endif /* RAWRANDEBUG */
 
 void
 #if __STDC__
@@ -274,8 +335,13 @@ _gmp_rand (rp, rstate, nbits)
   mp_size_t rn;			/* Size of R.  */
   mp_size_t nbits_stored;	/* Bits stored in R so far.  */
   mp_size_t ri;			/* Index for current limb in R.  */
+#ifdef RAWRANDEBUG
+  static int evenbit = 0;
 
-  rn = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
+  evenbit = ! evenbit;
+#endif
+
+  rn = (nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
   MPN_ZERO (rp, rn);		/* Clear destination. */
 
   switch (rstate->alg)
@@ -284,11 +350,11 @@ _gmp_rand (rp, rstate, nbits)
       {
 	mp_ptr tp;
 	mp_size_t tn;
-	mp_size_t nrandbits;
+	unsigned long int nrandbits;
 	mp_size_t shiftc;
 	mp_limb_t tlimb;
 	TMP_DECL (lcmark);
-  
+
 	/* Temp space. */
 	TMP_MARK (lcmark);
 	tp = TMP_ALLOC ((rn + 1) * BYTES_PER_MP_LIMB);
@@ -301,7 +367,7 @@ _gmp_rand (rp, rstate, nbits)
      RI is the index in RP to currently most significant limb,
      i.e. where next chunk of random bits are to be copied.
 
-     i) Get random bits from lc() and store them in TP.  
+     i) Get random bits from lc() and store them in TP.
      NRANDBITS is the number of random bits in TP.
      TN is the number of limbs in TP.
 
@@ -316,9 +382,13 @@ _gmp_rand (rp, rstate, nbits)
 	nbits_stored = 0;
 	while (nbits_stored < nbits)
 	  {
+#ifndef RAWRANDEBUG
 	    nrandbits = lc (tp, rstate);
-	    tn = nrandbits / BITS_PER_MP_LIMB
-	      + (nrandbits % BITS_PER_MP_LIMB != 0);
+#else
+	    nrandbits = lc_test (tp, rstate, evenbit);
+#endif
+
+	    tn = (nrandbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
 
 	    /* Shift the bits in place for copying into
                destination. */
@@ -370,13 +440,13 @@ _gmp_rand (rp, rstate, nbits)
 	if (nbits_stored > nbits)
 	  {
 	    mp_size_t nsave = nbits % BITS_PER_MP_LIMB;
-	    rp[rn - 1] &= (((mp_size_t) 1 << nsave) - 1);
+	    rp[rn - 1] &= (((mp_limb_t) 1 << nsave) - 1);
 	  }
 
 	TMP_FREE (lcmark);
 	break;
       }
-      
+
     default:
       gmp_errno |= GMP_ERROR_UNSUPPORTED_ARGUMENT;
       break;
