@@ -48,7 +48,7 @@ sh_status (int sig)
 int
 main (int argc, char *argv[])
 {
-  const char usage[] = "usage: findcl [-a start_a] [-d] m [low_merit [high_merit]]\n";
+  const char usage[] = "usage: findcl [-a start_a] [-d] [-i interval-fact] m [low_merit [high_merit]]\n";
   int f;
   int lose, best;
   int c;
@@ -56,8 +56,10 @@ main (int argc, char *argv[])
   int have_start_a = 0;
   int cnt_high_merit;
   unsigned long int rem;
+  unsigned int intervalfac = 1;	/* interval factor for increasing 'a' */
   mpz_t m;
   mpz_t ulim, z_tmp;
+  mpz_t interval;
 #define DIMS 6			/* dimensions run in spectral test */
   mpf_t v[DIMS-1];		/* spectral test result (there's no v
                                    for 1st dimension */
@@ -67,13 +69,14 @@ main (int argc, char *argv[])
   mpz_init (a);
   mpz_init (ulim);
   mpz_init (z_tmp);
+  mpz_init (interval);
   for (f = 0; f < DIMS-1; f++)
     mpf_init (v[f]);
   mpf_init (f_merit);
   mpf_init_set_d (low_merit, .1);
   mpf_init_set_d (high_merit, .1);
 
-  while ((c = getopt (argc, argv, "a:dh")) != -1)
+  while ((c = getopt (argc, argv, "a:di:h")) != -1)
     switch (c)
       {
       case 'a':			/* start_a */
@@ -83,6 +86,10 @@ main (int argc, char *argv[])
 
       case 'd':			/* debug */
 	g_debug++;
+	break;
+
+      case 'i':			/* interval */
+	intervalfac = (int) strtoul (optarg, NULL, 0);
 	break;
 
       case 'h':
@@ -119,6 +126,12 @@ main (int argc, char *argv[])
   mpz_out_str (stdout, 16, m);
   puts ("");
 
+  mpz_set_ui (interval, intervalfac);
+  mpz_mul_ui (interval, interval, 8);
+  printf ("interval = ");
+  mpz_out_str (stdout, 10, interval);
+  puts ("");
+
   if (argc > 1)			/* have low_merit */
     mpf_set_str (low_merit, argv[1], 0);
   if (argc > 2)			/* have high_merit */
@@ -149,7 +162,7 @@ main (int argc, char *argv[])
   mpz_add_ui (a, a, 8 + (5 - rem));
 
   best = 2*(DIMS-1);
-  for (; mpz_cmp (a, ulim) <= 0; mpz_add_ui (a, a, 8))
+  for (; mpz_cmp (a, ulim) <= 0; mpz_add (a, a, interval))
     {
       /* TODO: Reject 'a' with "binary or  decimal simple, regular pattern."  */
 
@@ -191,6 +204,7 @@ main (int argc, char *argv[])
   mpz_clear (a);
   mpz_clear (ulim);
   mpz_clear (z_tmp);
+  mpz_clear (interval);
   for (f = 0; f < DIMS-1; f++)
     mpf_clear (v[f]);
   mpf_clear (f_merit);
