@@ -65,10 +65,12 @@ MA 02111-1307, USA. */
 
 int   option_libc_scanf = 0;
 
-typedef int (*fun1_t) _PROTO ((const char *, const char *, void *));
-typedef int (*fun2_t) _PROTO ((const char *, const char *, void *, void *));
+typedef int (*fun_t) _PROTO ((const char *, const char *, void *, void *));
 
 
+/* Convert fmt from a GMP scanf format string to an equivalent for a plain
+   libc scanf, for example "%Zd" becomes "%ld".  Return 1 if this succeeds,
+   0 if it cannot (or should not) be done.  */
 int
 libc_scanf_convert (char *fmt)
 {
@@ -99,6 +101,7 @@ libc_scanf_convert (char *fmt)
 long  got_ftell;
 int   fromstring_next_c;
 
+/* Call gmp_fscanf, reading the "input" string data provided. */
 int
 #if HAVE_STDARG
 fromstring_gmp_fscanf (const char *input, const char *fmt, ...)
@@ -133,11 +136,32 @@ fromstring_gmp_fscanf (va_alist)
   fromstring_next_c = getc (fp);
 
   ASSERT_ALWAYS (fclose (fp) == 0);
+  va_end (ap);
   return ret;
 }
 
+
 int
-fromstring_fscanf1 (const char *input, const char *fmt, void *a1)
+fun_gmp_sscanf (const char *input, const char *fmt, void *a1, void *a2)
+{
+  if (a2 == NULL)
+    return gmp_sscanf (input, fmt, a1);
+  else
+    return gmp_sscanf (input, fmt, a1, a2);
+}
+
+int
+fun_gmp_fscanf (const char *input, const char *fmt, void *a1, void *a2)
+{
+  if (a2 == NULL)
+    return fromstring_gmp_fscanf (input, fmt, a1);
+  else
+    return fromstring_gmp_fscanf (input, fmt, a1, a2);
+}
+
+
+int
+fun_fscanf (const char *input, const char *fmt, void *a1, void *a2)
 {
   FILE  *fp;
   int   ret;
@@ -148,29 +172,11 @@ fromstring_fscanf1 (const char *input, const char *fmt, void *a1)
   ASSERT_ALWAYS (fflush (fp) == 0);
   rewind (fp);
 
-  ret = fscanf (fp, fmt, a1);
-  got_ftell = ftell (fp);
-  ASSERT_ALWAYS (got_ftell != -1L);
+  if (a2 == NULL)
+    ret = fscanf (fp, fmt, a1);
+  else
+    ret = fscanf (fp, fmt, a1, a2);
 
-  fromstring_next_c = getc (fp);
-
-  ASSERT_ALWAYS (fclose (fp) == 0);
-  return ret;
-}
-
-int
-fromstring_fscanf2 (const char *input, const char *fmt, void *a1, void *a2)
-{
-  FILE  *fp;
-  int   ret;
-
-  fp = fopen (TEMPFILE, "w+");
-  ASSERT_ALWAYS (fp != NULL);
-  ASSERT_ALWAYS (fputs (input, fp) != EOF);
-  ASSERT_ALWAYS (fflush (fp) == 0);
-  rewind (fp);
-
-  ret = fscanf (fp, fmt, a1, a2);
   got_ftell = ftell (fp);
   ASSERT_ALWAYS (got_ftell != -1L);
 
@@ -185,34 +191,26 @@ fromstring_fscanf2 (const char *input, const char *fmt, void *a1, void *a2)
    to be able to write into the input string.  Ensure that this is possible,
    when gcc is putting the test data into a read-only section.
 
-   Actually we ought to only need this under SSCANF_WRITABLE_INPUT, but it's
-   just as easy to do it unconditionally, and in any case this code is only
-   executed under the -s option.  */
+   Actually we ought to only need this under SSCANF_WRITABLE_INPUT from
+   configure, but it's just as easy to do it unconditionally, and in any
+   case this code is only executed under the -s option.  */
 
 int
-wrap_sscanf1 (const char *input, const char *fmt, void *a1)
+fun_sscanf (const char *input, const char *fmt, void *a1, void *a2)
 {
   char    *input_writable;
   size_t  size;
   int     ret;
-  size = strlen (input) + 1;
-  input_writable = (*__gmp_allocate_func) (size);
-  memcpy (input_writable, input, size);
-  ret = sscanf (input_writable, fmt, a1);
-  (*__gmp_free_func) (input_writable, size);
-  return ret;
-}
 
-int
-wrap_sscanf2 (const char *input, const char *fmt, void *a1, void *a2)
-{
-  char    *input_writable;
-  size_t  size;
-  int     ret;
   size = strlen (input) + 1;
   input_writable = (*__gmp_allocate_func) (size);
   memcpy (input_writable, input, size);
-  ret = sscanf (input_writable, fmt, a1, a2);
+
+  if (a2 == NULL)
+    ret = sscanf (input_writable, fmt, a1);
+  else
+    ret = sscanf (input_writable, fmt, a1, a2);
+
   (*__gmp_free_func) (input_writable, size);
   return ret;
 }
@@ -452,8 +450,7 @@ check_z (void)
   mpz_t       got, want;
   long        got_l, want_ftell;
   int         error = 0;
-  fun1_t      fun1;
-  fun2_t      fun2;
+  fun_t       fun;
   const char  *name;
   char        fmt[128];
 
@@ -485,13 +482,11 @@ check_z (void)
           switch (j) {
           case 0:
             name = "gmp_sscanf";
-            fun1 = (fun1_t) gmp_sscanf;
-            fun2 = (fun2_t) gmp_sscanf;
+            fun = fun_gmp_sscanf;
             break;
           case 1:
             name = "gmp_fscanf";
-            fun1 = (fun1_t) fromstring_gmp_fscanf;
-            fun2 = (fun2_t) fromstring_gmp_fscanf;
+            fun = fun_gmp_fscanf;
             break;
           case 2:
 #ifdef __GLIBC__
@@ -501,8 +496,7 @@ check_z (void)
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard sscanf";
-            fun1 = (fun1_t) wrap_sscanf1;
-            fun2 = (fun2_t) wrap_sscanf2;
+            fun = fun_sscanf;
             break;
           case 3:
 #ifdef __GLIBC__
@@ -512,8 +506,7 @@ check_z (void)
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard fscanf";
-            fun1 = fromstring_fscanf1;
-            fun2 = fromstring_fscanf2;
+            fun = fun_fscanf;
             break;
           default:
             ASSERT_ALWAYS (0);
@@ -528,17 +521,17 @@ check_z (void)
           case 1:
             mpz_set_si (got, -999L);
             if (ignore)
-              got_ret = (*fun1) (data[i].input, fmt, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_upto, NULL);
             else
-              got_ret = (*fun2) (data[i].input, fmt, got, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, got, &got_upto);
             break;
           case 2:
           case 3:
             got_l = -999L;
             if (ignore)
-              got_ret = (*fun1) (data[i].input, fmt, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_upto, NULL);
             else
-              got_ret = (*fun2) (data[i].input, fmt, &got_l, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_l, &got_upto);
             mpz_set_si (got, got_l);
             break;
           default:
@@ -838,8 +831,7 @@ check_q (void)
   mpq_t       got, want;
   long        got_l, want_ftell;
   int         error = 0;
-  fun1_t      fun1;
-  fun2_t      fun2;
+  fun_t       fun;
   const char  *name;
   char        fmt[128];
 
@@ -874,13 +866,11 @@ check_q (void)
           switch (j) {
           case 0:
             name = "gmp_sscanf";
-            fun1 = (fun1_t) gmp_sscanf;
-            fun2 = (fun2_t) gmp_sscanf;
+            fun = fun_gmp_sscanf;
             break;
           case 1:
             name = "gmp_fscanf";
-            fun1 = (fun1_t) fromstring_gmp_fscanf;
-            fun2 = (fun2_t) fromstring_gmp_fscanf;
+            fun = fun_gmp_fscanf;
             break;
           case 2:
             if (strchr (data[i].input, '/') != NULL)
@@ -888,8 +878,7 @@ check_q (void)
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard sscanf";
-            fun1 = (fun1_t) wrap_sscanf1;
-            fun2 = (fun2_t) wrap_sscanf2;
+            fun = fun_sscanf;
             break;
           case 3:
             if (strchr (data[i].input, '/') != NULL)
@@ -897,8 +886,7 @@ check_q (void)
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard fscanf";
-            fun1 = fromstring_fscanf1;
-            fun2 = fromstring_fscanf2;
+            fun = fun_fscanf;
             break;
           default:
             ASSERT_ALWAYS (0);
@@ -913,17 +901,17 @@ check_q (void)
           case 1:
             mpq_set_si (got, -999L, 121L);
             if (ignore)
-              got_ret = (*fun1) (data[i].input, fmt, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_upto, NULL);
             else
-              got_ret = (*fun2) (data[i].input, fmt, got, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, got, &got_upto);
             break;
           case 2:
           case 3:
             got_l = -999L;
             if (ignore)
-              got_ret = (*fun1) (data[i].input, fmt, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_upto, NULL);
             else
-              got_ret = (*fun2) (data[i].input, fmt, &got_l, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_l, &got_upto);
             mpq_set_si (got, got_l, (got_l == -999L ? 121L : 1L));
             break;
           default:
@@ -1094,8 +1082,7 @@ check_f (void)
   double      got_d;
   long        want_ftell;
   int         error = 0;
-  fun1_t      fun1;
-  fun2_t      fun2;
+  fun_t       fun;
   const char  *name;
   char        fmt[128];
 
@@ -1130,27 +1117,23 @@ check_f (void)
           switch (j) {
           case 0:
             name = "gmp_sscanf";
-            fun1 = (fun1_t) gmp_sscanf;
-            fun2 = (fun2_t) gmp_sscanf;
+            fun = fun_gmp_sscanf;
             break;
           case 1:
             name = "gmp_fscanf";
-            fun1 = (fun1_t) fromstring_gmp_fscanf;
-            fun2 = (fun2_t) fromstring_gmp_fscanf;
+            fun = fun_gmp_fscanf;
             break;
           case 2:
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard sscanf";
-            fun1 = (fun1_t) wrap_sscanf1;
-            fun2 = (fun2_t) wrap_sscanf2;
+            fun = fun_sscanf;
             break;
           case 3:
             if (! libc_scanf_convert (fmt))
               continue;
             name = "standard fscanf";
-            fun1 = fromstring_fscanf1;
-            fun2 = fromstring_fscanf2;
+            fun = fun_fscanf;
             break;
           default:
             ASSERT_ALWAYS (0);
@@ -1165,17 +1148,17 @@ check_f (void)
           case 1:
             mpf_set_si (got, -999L);
             if (ignore)
-              got_ret = (*fun1) (data[i].input, fmt, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_upto, NULL);
             else
-              got_ret = (*fun2) (data[i].input, fmt, got, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, got, &got_upto);
             break;
           case 2:
           case 3:
             got_d = -999L;
             if (ignore)
-              got_ret = (*fun1) (data[i].input, fmt, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_upto, NULL);
             else
-              got_ret = (*fun2) (data[i].input, fmt, &got_d, &got_upto);
+              got_ret = (*fun) (data[i].input, fmt, &got_d, &got_upto);
             mpf_set_d (got, got_d);
             break;
           default:
@@ -1426,7 +1409,7 @@ check_misc (void)
       {
         ret = sscanf ("   ", "%s", buf);
         ASSERT_ALWAYS (ret == -1);
-        ret = fromstring_fscanf1 ("   ", "%s", buf);
+        ret = fun_fscanf ("   ", "%s", buf, NULL);
         ASSERT_ALWAYS (ret == -1);
       }
   }
@@ -1442,7 +1425,7 @@ check_misc (void)
       {
         ret = sscanf ("123", "%*d%d", &x);
         ASSERT_ALWAYS (ret == -1);
-        ret = fromstring_fscanf1 ("123", "%*d%d", &x);
+        ret = fun_fscanf ("123", "%*d%d", &x, NULL);
         ASSERT_ALWAYS (ret == -1);
       }
   }
