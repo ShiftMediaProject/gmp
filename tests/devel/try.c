@@ -345,7 +345,7 @@ struct try_t  *tr;
 void
 validate_mod_34lsub1 (void)
 {
-#define CNST_34LSUB1   ((CNST_LIMB(1) << (3 * (BITS_PER_MP_LIMB / 4))) - 1)
+#define CNST_34LSUB1   ((CNST_LIMB(1) << (3 * (GMP_NUMB_BITS / 4))) - 1)
   
   mp_srcptr  ptr = s[0].p;
   int        error = 0;
