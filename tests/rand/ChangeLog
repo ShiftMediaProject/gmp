@@ -1,3 +1,17 @@
+1999-03-29  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* stat.c (f_freq): Don't print 2nd level results if doing 1st
+	level.
+
+	* gen.c (main): Set default algorithm to mpz_urandomb.
+	(main): Add option -c.
+
+1999-03-24  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* Makefile (GMPINC): Rename to GMPH.
+	(GMPH):	Add gmp-mparam.h.
+	(CFLAGS): Add -I$(GMPLIBDIR)/mpn
+
 1999-03-16  Linus Nordberg  <linus.nordberg@canit.se>
 
 	* statlib.c (ks_table): Use mpf_pow_ui() and exp().

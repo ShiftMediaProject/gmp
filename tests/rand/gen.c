@@ -33,12 +33,14 @@ int main (argc, argv)
      char *argv[];
 {
   const char usage[] =
-    "usage: gen [-abhx] [-f func] [-s #] [-z #] n\n" \
+    "usage: gen [-abchx] [-f func] [-s #] [-z #] n\n" \
     "  n        number of numbers to generate\n" \
     "  -a       ASCII output in radix 10 (default)\n" \
     "  -b       binary output\n" \
+    "  -c a,c,m use supplied LC scheme\n" \
     "  -f func  random function, one of\n" \
-    "           mpz_urandomb, mpf_urandomb (default), rand, random\n" \
+    "           mpz_urandomb (default), mpf_urandomb, rand, random\n" \
+    "  -g       algorithm, one of lc (default), bbs\n" \
     "  -h       print this text and exit\n" \
     "  -s #     initial seed (default: output from time(3))\n" \
     "  -z #     size in bits of generated integer numbers (0<= X <2^#) \n" \
@@ -49,7 +51,9 @@ int main (argc, argv)
   unsigned long int f;
   unsigned long int n;
   unsigned long int seed;
-  int seed_from_user = 0;
+  mpz_t z_seed;
+  int seed_from_user = 0,
+    lc_scheme_from_user = 0;
   unsigned int size = 32;
   mpz_t z1;
   mpf_t f1;
@@ -61,19 +65,29 @@ int main (argc, argv)
   int do_exclude = 0;
   mpf_t f_xf, f_xt;		/* numbers to exclude from sequence */
   char *str_xf, *str_xt;	/* numbers to exclude from sequence */
+  char *str_a, *str_adder, *str_m;
+  mpz_t z_a, z_m;
+  unsigned long int ul_adder;
+  
   enum 
   {
     RFUNC_mpz_urandomb = 0,
     RFUNC_mpf_urandomb,
     RFUNC_rand,
     RFUNC_random,
-  } rfunc = RFUNC_mpf_urandomb;
+  } rfunc = RFUNC_mpz_urandomb;
   char *rfunc_str[] =  { "mpz_urandomb", "mpf_urandomb", "rand", "random" };
-  gmp_rand_algorithm rand_alg = GMP_RAND_ALG_DEFAULT;
+  gmp_rand_algorithm ralg = GMP_RAND_ALG_DEFAULT;
+  char *ralg_str[] = { "lc", "bbs" };
 
-  mpf_init (f_xf); mpf_init (f_xt);
+  mpf_init (f_xf);
+  mpf_init (f_xt);
+  mpf_init (f1);
+  mpz_init (z1);
+  mpz_init (z_seed);
 
-  while ((c = getopt (argc, argv, "abf:hn:s:z:x:")) != -1)
+
+  while ((c = getopt (argc, argv, "abc:f:g:hn:s:z:x:")) != -1)
     switch (c)
       {
       case 'a':
@@ -86,11 +100,44 @@ int main (argc, argv)
 	binout = 1;
 	break;
 
+      case 'c':			/* User supplied LC scheme: a,c,m */
+	if (NULL == (str_a = strtok (optarg, ","))
+	    || NULL == (str_adder = strtok (NULL, ","))
+	    || NULL == (str_m = strtok (NULL, ",")))
+	  {
+	    fprintf (stderr, "gen: bad LC scheme parameters: %s\n", optarg);
+	    exit (1);
+	  }
+	ul_adder = strtoul (str_adder, NULL, 0);
+	if (mpz_init_set_str (z_a, str_a, 0))
+	  {
+	    fprintf (stderr, "gen: bad LC scheme parameter `a': %s\n", str_a);
+	    exit (1);
+	  }
+	if (ULONG_MAX == ul_adder)
+	  {
+	    fprintf (stderr, "gen: bad LC scheme parameter `c': %s\n",
+		     str_adder);
+	    exit (1);
+	  }
+	if (mpz_init_set_str (z_m, str_m, 0))
+	  {
+	    fprintf (stderr, "gen: bad LC scheme parameter `m': %s\n", str_m);
+	    exit (1);
+	  }
+
+
+	lc_scheme_from_user = 1;
+	break;
+
       case 'f':
 	rfunc = -1;
 	for (f = 0; f < sizeof (rfunc_str) / sizeof (*rfunc_str); f++)
 	    if (!strcmp (optarg, rfunc_str[f]))
+	      {
 		rfunc = f;
+		break;
+	      }
 	if (rfunc == -1)
 	  {
 	    fputs (usage, stderr);
@@ -98,8 +145,27 @@ int main (argc, argv)
 	  }
 	break;
 
-      case 's':
-	seed = strtoul (optarg, NULL, 10);
+      case 'g':			/* algorithm */
+	ralg = -1;
+	for (f = 0; f < sizeof (ralg_str) / sizeof (*ralg_str); f++)
+	    if (!strcmp (optarg, ralg_str[f]))
+	      {
+		ralg = f;
+		break;
+	      }
+	if (ralg == -1)
+	  {
+	    fputs (usage, stderr);
+	    exit (1);
+	  }
+	break;
+
+      case 's':			/* user provided seed */
+	if (mpz_set_str (z_seed, optarg, 0))
+	  {
+	    fprintf (stderr, "gen: bad seed argument %s\n", optarg);
+	    exit (1);
+	  }
 	seed_from_user = 1;
 	break;
 
@@ -112,7 +178,7 @@ int main (argc, argv)
 	  }
 	break;
 
-      case 'x':			/* exclude */
+      case 'x':			/* Exclude. from,to */
 	str_xf = optarg;
 	str_xt = strchr (optarg, ',');
 	if (NULL == str_xt)
@@ -139,19 +205,26 @@ int main (argc, argv)
       exit (1);
     }
 
-  mpz_init (z1);
-  mpf_init (f1);
-
   if (!seed_from_user)
-    seed = (unsigned long int) time (NULL);
+    mpz_set_ui (z_seed, (unsigned long int) time (NULL));
   
-  /* set seed */
+  seed = mpz_get_ui (z_seed);
+  
+  /* plant seed */
   switch (rfunc)
     {
     case RFUNC_mpz_urandomb:
     case RFUNC_mpf_urandomb:
-      mpz_set_ui (z1, seed);
-      gmp_rand_init (&s, rand_alg, size, z1);
+      if (!lc_scheme_from_user)
+	{
+	  if (gmp_rand_init (&s, ralg, size, z_seed))
+	    {
+	      fprintf (stderr, "gen: invalid algorithm\n");
+	      exit (1);
+	    }
+	}
+      else
+	gmp_rand_init_lc (&s, size, z_seed, z_a, ul_adder, z_m);
       break;
 
     case RFUNC_rand:
@@ -159,8 +232,10 @@ int main (argc, argv)
       break;
 
     case RFUNC_random:
-      /* srandom (seed); */
-      srandomdev ();
+      if (seed_from_user)
+	srandom (seed);
+      else
+	srandomdev ();
       break;
 
     default:
@@ -196,7 +271,7 @@ int main (argc, argv)
       switch (rfunc)
 	{
 	case RFUNC_mpz_urandomb:
-	  mpz_urandomb (z1, &s);
+	  mpz_urandomb (z1, size, &s);
 	  if (binout)
 	    {
 	      /*fwrite ((unsigned int *) z1->_mp_d, 4, 1, stdout);*/
@@ -277,13 +352,24 @@ int main (argc, argv)
     default:
       break;
     }
-  mpz_clear (z1);
   mpf_clear (f1);
-  mpf_clear (f_xf); mpf_clear (f_xt);
+  mpf_clear (f_xf); 
+  mpf_clear (f_xt);
+  mpz_clear (z1);
+  mpz_clear (z_seed);
 
   return 0;
 }
 
+void 
+debug_foo()
+{
+  if (0)
+    {
+      mpz_dump (0);
+      mpf_dump (0);
+    }
+}
 
 
 

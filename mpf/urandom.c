@@ -22,6 +22,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include "gmp.h"
+#include "gmp-impl.h"
 
 /* mpf_urandomb() -- Generate a universally distributed real random
 number 0 <= X < 1.  See file mpz/urandom.c for algorithms used. */
@@ -35,27 +36,16 @@ mpf_urandomb (rop, s)
      gmp_rand_state *s;
 #endif
 {
-  mpz_t z_rand;
-  mpf_t f_tmp;
+  mp_ptr rp;
+  mp_size_t prec;
 
-  switch (s->alg)
-    {
-    case GMP_RAND_ALG_LC:
-      mpz_init (z_rand);
-      mpf_init (f_tmp);
+  rp = PTR (rop);
+  prec = PREC (rop);
 
-      /* FIXME: mpz_urandomb() will most often do a division and a
-	 multiplication in order to produce 0 <= z < 2^size-1.  We
-	 only need the division.  Break up mpz_urandomb(). */
+  mpn_rawrandom (rp, prec * BITS_PER_MP_LIMB, s);
+  MPN_NORMALIZE (rp, prec);
+  SIZ (rop) = prec;
+  EXP (rop) = 0;
 
-      mpz_urandomb (z_rand, s);
-      mpf_set_z (rop, z_rand);
-      mpf_set_z (f_tmp, s->scheme->m);
-      mpf_div (rop, rop, f_tmp);
-
-      mpz_clear (z_rand);
-      mpf_clear (f_tmp);
-
-      break;
-    }
+  return;
 }

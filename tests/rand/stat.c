@@ -106,40 +106,48 @@ f_freq (const unsigned l1runs, const unsigned l2runs,
 
   for (f = 0; f < l2runs; f++)
     {
-      printf ("%u:\t", f + 1);
       /*  f_printvec (fvec, n); */
       mpf_freqt (f_p, f_m, fvec + f * n, n);
-
-      /* save result */
-      mpf_init_set (l1res[f], f_p);
-      mpf_init_set (l1res[f + l2runs], f_m);
 
       /* what's the probability of getting these results? */
       ks_table (f_p_prob, f_p, n);
       ks_table (f_m_prob, f_m, n);
 
-      print_ks_results (f_p, f_p_prob, f_m, f_m_prob, stdout);
+      if (l1runs == 0)
+	{
+	  /*printf ("%u:\t", f + 1);*/
+	  print_ks_results (f_p, f_p_prob, f_m, f_m_prob, stdout);
+	}
+      else
+	{
+	  /* save result */
+	  mpf_init_set (l1res[f], f_p);
+	  mpf_init_set (l1res[f + l2runs], f_m);
+	}
     }
 
   /* Now, apply the KS test on the results from the 1st level rounds
      with the distribution
      F(x) = 1 - pow(e, -2*x^2)	[Knuth, vol 2, p.51] */
 
-  printf ("-------------------------------------\n");
+  if (l1runs != 0)
+    {
+      /*printf ("-------------------------------------\n");*/
 
-  /* The Kp's. */
-  ks (f_p, f_m, l1res, Pks, l2runs);
-  ks_table (f_p_prob, f_p, l2runs);
-  ks_table (f_m_prob, f_m, l2runs);
-  printf ("Kp:\t");
-  print_ks_results (f_p, f_p_prob, f_m, f_m_prob, stdout);
+      /* The Kp's. */
+      ks (f_p, f_m, l1res, Pks, l2runs);
+      ks_table (f_p_prob, f_p, l2runs);
+      ks_table (f_m_prob, f_m, l2runs);
+      printf ("Kp:\t");
+      print_ks_results (f_p, f_p_prob, f_m, f_m_prob, stdout);
 
-  /* The Km's. */
-  ks (f_p, f_m, l1res + l2runs, Pks, l2runs);
-  ks_table (f_p_prob, f_p, l2runs);
-  ks_table (f_m_prob, f_m, l2runs);
-  printf ("Km:\t");
-  print_ks_results (f_p, f_p_prob, f_m, f_m_prob, stdout);
+      /* The Km's. */
+      ks (f_p, f_m, l1res + l2runs, Pks, l2runs);
+      ks_table (f_p_prob, f_p, l2runs);
+      ks_table (f_m_prob, f_m, l2runs);
+      printf ("Km:\t");
+      print_ks_results (f_p, f_p_prob, f_m, f_m_prob, stdout);
+    }
 
   mpf_clear (f_p);  mpf_clear (f_m);
   mpf_clear (f_p_prob);  mpf_clear (f_m_prob);

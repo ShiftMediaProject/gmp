@@ -22,7 +22,9 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-/* We use (1)
+/* For linear congruental (LC), we use one of algorithms (1) or (2).
+
+LC algorithm (1).
 
 	X = (aX + c) mod m
 
@@ -54,7 +56,8 @@ Don't generate more than about m/1000 numbers without changing a, c, or m.
 The sequence length depends on chosen a,c,m.
 
 
-Or, we use (2)
+LC algorithm (2).
+
 	X = a * (X mod q) - r * (long) (X/q)
 	if X<0 then X+=m
 
@@ -73,202 +76,92 @@ which gives
 	    (M % a) * ((long) (X / ((long) m / a)))
 
 Since m is prime, the least-significant bits of X are just as random as 
-the most-significant bits.
+the most-significant bits. */
 
-*/
+/* Blum, Blum, and Shub. 
+
+   [Bruce Schneier, "Applied Cryptography", Second Edition, John Wiley
+   & Sons, Inc., 1996, pp. 417-418.]
+
+   "Find two large prime numbers, p and q, which are congruent to 3
+   modulo 4.  The product of those numbers, n, is a blum integer.
+   Choose another random integer, x, which is relatively prime to n.
+   Compute
+   	x[0] = x^2 mod n
+   That's the seed for the generator."
+
+   To generate a random bit, compute
+   	x[i] = x[i-1]^2 mod n
+   The least significant bit of x[i] is the one we want.
+
+   We can use more than one bit from x[i], namely the
+   	log2(bitlength of x[i])
+   least significant bits of x[i].
+
+   So, for a 32-bit seed we get 5 bits per computation.
+
+   The non-predictability of this generator is based on the difficulty
+   of factoring n.
+
+ */
+
 
 #include "gmp.h"
+#include "gmp-impl.h"
 
-/* Array of CL-schemes, ordered in increasing order for the first
-   member (the 'bits' value).  The 'm' entry is converted by
-   mpz_set_str() with BASE=0.  See its documentation for syntax of
-   'm'.  End of array is indicated with an entry containing all
-   zeros. */
-static __gmp_rand_scheme_struct __gmp_rand_scheme[] =
-{
-  {31,				/* Knuth, p. 185 */
-   "48271", {0},		/* a */
-   0,				/* c = 0 */
-   "0x7fffffff", {0}},		/* m = 2^31 - 1 */
-  
-  {31,				/* fbsd random(3), lazy */
-   "16807", {0},		/* a = 7^5 */
-   0,				/* c = 0 */
-   "0x7fffffff", {0}},		/* m = 2^31 - 1 */
 
-  {31,				/* fbsd rand(3) */
-   "1103515245", {0},		/* a (multiplier) */
-   12345,			/* c (adder) */
-   "0x80000000", {0}},		/* m (modulo) = 2^31 */
-
-  {32, "42949685", 	{0}, 1, "0x100000000", {0}},
-  {33, "85899357", 	{0}, 1, "0x200000000", {0}},
-  {34, "171798701", 	{0}, 1, "0x400000000", {0}},
-  {35, "343597397", 	{0}, 1, "0x800000000", {0}},
-  {36, "687194781", 	{0}, 1, "0x1000000000", {0}},
-  {37, "1374389541", 	{0}, 1, "0x2000000000", {0}},
-  {38, "2748779077", 	{0}, 1, "0x4000000000", {0}},
-  {39, "5497558149", 	{0}, 1, "0x8000000000", {0}},
-  {40, "10995116285", 	{0}, 1, "0x10000000000", {0}},
-
-  {56, "720575940379293",
-   {0}, 1, "0x100000000000000", {0}},
-  {64, "184467440737095525",
-   {0}, 1, "0x10000000000000000", {0}},
-  {100, "12676506002282294014967032061",
-   {0}, 1, "0x10000000000000000000000000", {0}},
-  {128, "3402823669209384634633746074317682125",
-   {0}, 1, "0x100000000000000000000000000000000", {0}},
-  {156, "913438523331814323877303020447676887284957853",
-   {0}, 1, "0x1000000000000000000000000000000000000000", {0}},
-  {196, "1004336277661868922213726307713226626576376871114245522077",
-   {0}, 1, "0x10000000000000000000000000000000000000000000000000", {0}},
-  {200, "16069380442589902755419620923411626025222029937827928353021",
-   {0}, 1, "0x100000000000000000000000000000000000000000000000000", {0}},
-  {256, "1157920892373161954235709850086879078532699846656405640394575840079131296413",
-   {0}, 1, "0x10000000000000000000000000000000000000000000000000000000000000000", {0}},
-
-  /*  {, "", 	{0}, 1, "0x", {0}}, */
-  {0, NULL, {0}, 0, NULL, {0}}	/* End of array. */
-};
-
-/* gmp_rand_init() -- Initialize a gmp_rand_state struct.  Return 0 on
-   success and 1 on failure. */
-
-int
-#if __STDC__
-gmp_rand_init (gmp_rand_state *s,
-	       gmp_rand_algorithm alg,
-	       unsigned long int size,
-	       mpz_t seed)
-#else
-gmp_rand_init (s, alg, size, seed)
-     gmp_rand_state *s;
-     gmp_rand_algorithm alg;
-     unsigned long int size;
-     mpz_t seed;
-#endif
-{
-  __gmp_rand_scheme_struct *sp;
-
-  switch (alg)
-    {
-    case GMP_RAND_ALG_LC:	/* Linear congruental. */
-      /* Convert the 'a' and 'm' strings to mpz_t's. */
-      for (sp = __gmp_rand_scheme; sp->bits; sp++)
-	{
-	  mpz_init_set_str (sp->a, sp->astr, 0);
-	  mpz_init_set_str (sp->m, sp->mstr, 0);
-	}
-      /* Pick a scheme. */
-      s->scheme = NULL;
-      for (sp = __gmp_rand_scheme; sp->bits; sp++)
-	if (sp->bits >= size)
-	  {
-	    s->scheme = sp;
-	    break;
-	  }
-      if (NULL ==  s->scheme)	/* Nothing big enough found. */
-	s->scheme = --sp;	/* Use biggest available. */
-
-      mpz_init (s->n);
-      mpz_tdiv_q_ui (s->n, s->scheme->m, 1000UL);
-      break;
-    case GMP_RAND_ALG_BBS:
-      return 1;			/* Not implemented yet. */
-      break;
-    default:			/* Bad choice. */
-      return 1;
-    }
-
-  /* Common. */
-  s->alg = alg;
-  s->size = size;
-  mpz_init_set_ui (s->maxval, 1);
-  mpz_mul_2exp (s->maxval, s->maxval, s->size);
-  mpz_init_set (s->seed, seed);
-
-  return 0;
-}
+/* Generate a random mpz_t.  The number will be in the range
+   [0,2^nbits).  */
 
 void
 #if __STDC__
-gmp_rand_clear (gmp_rand_state *s)
+mpz_urandomb (mpz_t rop, unsigned long int nbits, gmp_rand_state *s)
 #else
-gmp_rand_clear (s)
-     gmp_rand_state *s;
-#endif
-{
-  __gmp_rand_scheme_struct *sp;
-
-
-  mpz_clear (s->seed);
-  mpz_clear (s->maxval);
-
-  switch (s->alg)
-    {
-    case GMP_RAND_ALG_LC:
-      mpz_clear (s->n);
-      for (sp = __gmp_rand_scheme; sp->bits; sp++)
-	{
-	  mpz_clear (sp->a);
-	  mpz_clear (sp->m);
-	}
-      break;
-    case GMP_RAND_ALG_BBS:
-      break;
-    }
-}
-
-void
-#if __STDC__
-mpz_urandomb (mpz_t rop, gmp_rand_state *s)
-#else
-mpz_urandomb (rop, s)
+mpz_urandomb (rop, nbits, s)
      mpz_t rop;
+     unsigned long int nbits;
      gmp_rand_state *s;
 #endif
 {
-  switch (s->alg)
-    {
-    case GMP_RAND_ALG_LC:
-      if (mpz_cmp_ui (s->n, 0) == 0)
-	{
-	  if ((s->scheme + 1)->bits)
-	    s->scheme++;
-	  mpz_tdiv_q_ui (s->n, s->scheme->m, 1000UL);
-	}
-      else
-	mpz_sub_ui (s->n, s->n, 1);
+  mp_ptr rp;
+  mp_size_t size;
 
-      /* rop = (seed * a + c) % m */
-      mpz_mul (rop, s->seed, s->scheme->a);
-      mpz_add_ui (rop, rop, s->scheme->c);
-      mpz_mod (rop, rop, s->scheme->m);
-  
-      if (mpz_cmp (s->scheme->m, s->maxval))
-	{
-	  /* rop = (rop / m) * maxval, truncate result */
-	  mpf_t ft1, ft2;
+  size = nbits / BITS_PER_MP_LIMB + (nbits % BITS_PER_MP_LIMB != 0);
+  if (size > SIZ (rop))
+    _mpz_realloc (rop, size);
 
-	  mpf_init (ft1);
-	  mpf_init (ft2);
-	  
-	  mpf_set_z (ft1, rop);
-	  mpf_set_z (ft2, s->scheme->m);
-	  mpf_div (ft1, ft1, ft2);
-	  mpf_set_z (ft2, s->maxval);
-	  mpf_mul (ft1, ft1, ft2);
-	  mpz_set_f (rop, ft1);	/* Truncating. */
-	  
-	  mpf_clear (ft1);
-	  mpf_clear (ft2);
-	}
-      break;			/* GMP_RAND_ALG_LC */
-    case GMP_RAND_ALG_BBS:
-      break;
-    }
+  rp = PTR (rop);
 
-  /* Save result for next seed. */
-  mpz_set (s->seed, rop);
+  mpn_rawrandom (rp, nbits, s);
+  MPN_NORMALIZE (rp, size);
+  SIZ (rop) = size;
 }
+
+#if 0
+/* Generate a random mpz_t.  The number will be in the range [0,n).  */
+void
+#if __STDC__
+mpz_urandomn (mpz_t rop, mpz_t n, gmp_rand_state *s)
+#else
+mpz_urandomn (rop, n, s)
+     mpz_t rop;
+     mpz_t n;
+     gmp_rand_state *s;
+#endif
+{
+  mp_ptr rp;
+  mp_size_t size, bsize;
+  unsigned cnt;			/* FIXME: type? */
+
+  rp = PTR (rop);
+  size = SIZ (n);
+  count_leading_zeros (cnt, rp[size - 1]);
+  bsize = BITS_PER_MP_LIMP * size - cnt;
+
+  mpn_rawrandom (tp, bsize + 20, s);
+  MPN_NORMALIZE (tp, size);	
+  SIZ (rop) = size;
+
+  mpz_tdiv_r (rop, rop, n);	/* reduce to spec'd interval */
+}
+#endif

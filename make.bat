@@ -17,6 +17,7 @@ copy x86\pentium\mul_1.S mul_1.S
 copy generic\mul_n.c mul_n.c
 copy generic\random.c random.c
 copy generic\random2.c random2.c
+copy generic\rawrandom.c rawrandom.c
 copy x86\pentium\rshift.S rshift.S
 copy generic\sqrtrem.c sqrtrem.c
 copy x86\pentium\sub_n.S sub_n.S
@@ -305,6 +306,7 @@ gcc -c -I. -Impn -I.. -fomit-frame-pointer -O memory.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O mp_clz_tab.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O mp_set_fns.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O stack-alloc.c
+gcc -c -I. -Impn -I.. -fomit-frame-pointer -O urandom.c
 gcc -c -I. -Impn -I.. -fomit-frame-pointer -O version.c
 deltree/y tmpdir
 

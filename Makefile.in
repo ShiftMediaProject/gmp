@@ -47,10 +47,10 @@ LN = ln -s
 #### host and target specific makefile fragments come in here.
 ###
 
-SRCS = memory.c mp_set_fns.c mp_clz_tab.c version.c stack-alloc.c mp_bpl.c \
-  extract-dbl.c insert-dbl.c
-OBJS = memory.o mp_set_fns.o mp_clz_tab.o version.o stack-alloc.o mp_bpl.o \
-  extract-dbl.o insert-dbl.o
+SRCS = memory.c mp_set_fns.c mp_clz_tab.c urandom.c version.c stack-alloc.c \
+  mp_bpl.c extract-dbl.c insert-dbl.c
+OBJS = memory.o mp_set_fns.o mp_clz_tab.o urandom.o version.o stack-alloc.o \
+  mp_bpl.o extract-dbl.o insert-dbl.o
 FILES = gmp.h mp.h gmp-impl.h longlong.h urandom.h move-if-change \
  mkinstalldirs INSTALL COPYING.LIB ChangeLog Makefile.in \
  NEWS README SPEED TODO config.guess config.sub configure configure.in \
@@ -203,6 +203,7 @@ mp_bpl.o: $(srcdir)/mp_bpl.c
 mp_clz_tab.o: $(srcdir)/mp_clz_tab.c
 mp_set_fns.o: $(srcdir)/mp_set_fns.c $(H)
 stack-alloc.o: $(srcdir)/stack-alloc.c $(srcdir)/stack-alloc.h
+urandom.o: $(srcdir)/urandom.c $(H)
 version.o: $(srcdir)/version.c
 
 force:

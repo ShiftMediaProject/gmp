@@ -1,3 +1,43 @@
+1999-03-29  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* gmp.h (__gmp_rand_data_lc): Now holds a, c, m instead of scheme
+	struct.
+	(__gmp_rand_lc_scheme_struct): Remove mpz_t's a and m.
+
+1999-03-23  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* Makefile.in: Compile top-dir/urandom.c.
+	* make.bat: Ditto.
+
+	* mpn/Makefile.in: Compile rawrandom.c.
+	* make.bat: Ditto.
+
+	* mpn/configure.in (functions): Add rawrandom.
+
+	* gmp.h (__gmp_rand_scheme_struct): Rename to
+	__gmp_rand_lc_scheme_struct.
+	(__gmp_rand_data_lc): Remove member 'n'.  Allocate a
+	__gmp_rand_lc_scheme_struct instead of a pointer to one.
+	Add prototype for gmp_rand_init_lc(), mpn_rawrandom().
+	New prototype for mpz_urandomb().
+
+	* urandom.c: New file.
+	(__gmp_rand_init_common): New function.
+	(gmp_rand_init_lc): New function.
+	(gmp_rand_init): Don't init data_lc->n.  Call gmp_rand_init_lc()
+	and __gmp_rand_init_common().
+	(gmp_rand_clear): Remove reference to data_lc->n.
+
+	* mpz/urandom.c (gmp_rand_init, gmp_rand_clear): Move to new file
+	urandom.c in top-dir.
+	(mpz_urandomb): Add function parameter nbits.  Call
+	mpn_rawrandom().
+
+	* mpf/urandom.c (mpf_urandomb): Call mpn_rawrandom().
+
+	* mpn/generic/rawrandom.c: New file.
+	(mpn_rawrandom): New function.
+
 1999-03-17  Torbjorn Granlund  <tege@matematik.su.se>
 
 	* extract-dbl.c: When packing result, adjust exp when sc == 0.
@@ -6,6 +46,9 @@
 	* mpf/tests/Makefile.in: Compile t-get_d.c.
 
 1999-03-16  Linus Nordberg  <linus.nordberg@canit.se>
+
+	* mpz/urandom.c (__gmp_rand_scheme): Add extra braces around the
+	mpz_t members.
 
 	* make.bat: Compile mpz/urandomc and mpf/urandom.c
 
