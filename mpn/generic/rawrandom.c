@@ -2,7 +2,7 @@
    length NBITS in RP.  RP must have enough space allocated to hold
    NBITS.
 
-Copyright (C) 1999 Free Software Foundation, Inc.
+Copyright (C) 1999, 2000 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -71,14 +71,24 @@ mpn_rawrandom (rp, nbits, s)
       mpn_lshift (mcopyp, mp, msize, shiftcount);
     }
   else
-    mcopyp = mp;
+    {
+      mcopyp = mp;
+    }
 
   /* rp = (seed * a + c) % m */
   dstp = rp;
   genbits = savecount = 0;
   while (1)
     {
+      /* The seed may grow in the loop.  */
       seedsize = SIZ (s->seed);
+
+      /* An mpz with value 0 is represented with SIZ() == 0, which
+	 confuses the code below.  Say that SIZ() = 1 instead.  FIXME:
+	 Correct?  */
+      if (seedsize == 0)
+	seedsize = 1;
+
       if (seedsize >= asize)
 	tlimb = mpn_mul (tp, seedp, seedsize, ap, asize);
       else
@@ -115,7 +125,9 @@ mpn_rawrandom (rp, nbits, s)
 
       /* Save result as next seed.  Make sure it's space for it. */
       if (sumsize > SIZ (s->seed))
-	_mpz_realloc (s->seed, sumsize);
+	{
+	  _mpz_realloc (s->seed, sumsize);
+	}
       MPN_COPY (PTR (s->seed), sump, sumsize);
       SIZ (s->seed) = sumsize;
 
@@ -149,8 +161,10 @@ mpn_rawrandom (rp, nbits, s)
 
   /* Mask off excess bits.  Save least significant bits. */
   n = nbits % BITS_PER_MP_LIMB;
-  if (n)
-    rp[rpsize - 1] &= ((~(mp_limb_t) 0) >> (BITS_PER_MP_LIMB - n));
+  if (n != 0)
+    {
+      rp[rpsize - 1] &= ((~(mp_limb_t) 0) >> (BITS_PER_MP_LIMB - n));
+    }
 
   TMP_FREE (mark);
 }
