@@ -106,6 +106,10 @@ MPBSD_OBJECTS = mpbsd/add.lo mpbsd/mdiv.lo mpbsd/move.lo mpbsd/powm.lo	  \
   mpbsd/pow_ui.lo mpbsd/sdiv.lo mpbsd/sqrtrem.lo mpbsd/xtom.lo 
 
 
+# -lgmp needs -lm for floor() and sqrt() used by mpn/generic/sqrtrem.c.
+# Some compilers (eg. gcc on i386) might in-line these, making -lm
+# unnecessary, but we don't try to detect that.
+#
 libgmp_la_SOURCES = assert.c errno.c memory.c mp_set_fns.c mp_clz_tab.c \
   rand.c randclr.c randlc.c randlc2x.c randraw.c randsd.c randsdui.c \
   version.c stack-alloc.c mp_bpl.c extract-dbl.c insert-dbl.c
@@ -114,7 +118,6 @@ libgmp_la_LIBADD = \
 libgmp_la_DEPENDENCIES = \
 	$(MPF_OBJECTS) $(MPZ_OBJECTS) $(MPN_OBJECTS) $(MPQ_OBJECTS)
 libgmp_la_LDFLAGS = -release @VERSION@
-
 
 
 if WANT_MPBSD
