@@ -473,9 +473,11 @@ extern mp_size_t __gmp_default_fp_limb_precision;
 #define TARGET_REGISTER_STARVED 0
 #endif
 
-#if defined (__alpha)
-mp_limb_t __MPN(invert_limb) ();
-#define invert_limb(invxl,xl) invxl = __MPN(invert_limb) (xl)
+/* Use a library function for invert_limb, if available. */
+#if ! defined (invert_limb) && HAVE_NATIVE_mpn_invert_limb
+#define mpn_invert_limb  __MPN(invert_limb)
+mp_limb_t mpn_invert_limb _PROTO ((mp_limb_t));
+#define invert_limb(invxl,xl)  (invxl = __MPN(invert_limb) (xl))
 #endif
 
 #ifndef invert_limb
