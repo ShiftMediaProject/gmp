@@ -117,7 +117,13 @@ case "$target" in
       gmp_optcflags_gcc="-mcpu=$flavour"
     fi
     ;;
-
+  # Cray vector machines
+  *-cray-unicos*)
+    # Don't perform any assembly syntax tests on this beast.
+    gmp_no_asm_syntax_testing=yes
+    cclist=cc
+    gmp_cflags_cc="$gmp_cflags_cc -O"
+    ;;
   # AMD and Intel x86 configurations
   [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
     # Rumour has it -O2 used to give worse register allocation than just -O.
@@ -599,7 +605,6 @@ AC_OBJEXT
 dnl Use Libtool.
 dnl ------------
 dnl  FIXME: Shared libs seem to fail on aix4.3.
-dnl  FIXME: HP assembly code not PIC aware yet.
 dnl  FIXME: Should invoke [AC_DISABLE_SHARED], but m4 recurses to death.
 case "$target" in
   *-*-aix*) enable_shared=no ;;
