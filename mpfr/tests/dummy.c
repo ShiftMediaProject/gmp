@@ -19,4 +19,4 @@ along with the MPFR Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-static int dummy = 0;
+int libfrtests_dummy = 0;
