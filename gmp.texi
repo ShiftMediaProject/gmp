@@ -459,6 +459,12 @@ serious bugs.
 The system C compiler has a bug that makes it miscompile @file{mpq/get_d.c}.
 Use GCC instead if plan to use the function @code{mpq_get_d}.
 
+@item SunOS 4.1.4 m4
+The SunOS system m4 fails when processing @file{mpn/asm-defs.m4} with the
+message "m4: arg stack overflow".  It's not known what's causing this, but for
+now GNU m4 is recommended instead.  Pass @samp{M4=/usr/local/bin/m4} (or
+wherever GNU m4 is) on the @samp{configure} command line.
+
 @item VAX running Ultrix
 You need to build and install the GNU assembler before you compile MP.  The VAX
 assembly in MP uses an instruction (@samp{jsobgtr}) that cannot be assembled by
