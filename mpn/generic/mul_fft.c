@@ -709,7 +709,7 @@ mpn_mul_fft_full (mp_ptr op,
   pad_op = __GMP_ALLOCATE_FUNC_LIMBS (pl + 1);
   mpn_mul_fft (pad_op, pl, n, nl, m, ml, k);
 
-  ASSERT (mpn_zero_p (pad_op + nl + ml, pl + 1 - (nl + ml)));
+  ASSERT_MPN_ZERO_P (pad_op + nl + ml, pl + 1 - (nl + ml));
   MPN_COPY (op, pad_op, nl + ml);
 
   __GMP_FREE_FUNC_LIMBS (pad_op, pl + 1);

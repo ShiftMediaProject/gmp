@@ -39,7 +39,7 @@ mpn_gcd_1 (mp_srcptr up, mp_size_t size, mp_limb_t vlimb)
 
   ASSERT (size >= 1);
   ASSERT (vlimb != 0);
-  ASSERT (! mpn_zero_p (up, size));
+  ASSERT_MPN_NONZERO_P (up, size);
 
   ulimb = up[0];
 
