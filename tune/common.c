@@ -838,6 +838,21 @@ speed_mpn_gcdext (struct speed_params *s)
   SPEED_ROUTINE_MPN_GCDEXT (mpn_gcdext);
 }
 double
+speed_mpn_gcdext_single (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCDEXT (mpn_gcdext_single);
+}
+double
+speed_mpn_gcdext_one_double (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCDEXT_ONE (mpn_gcdext_one_double);
+}
+double
+speed_mpn_gcdext_one_single (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCDEXT_ONE (mpn_gcdext_one_single);
+}
+double
 speed_mpn_gcd_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD_1 (mpn_gcd_1);
@@ -1288,7 +1303,7 @@ speed_mpn_umul_ppmm (struct speed_params *s)
     /* divisor from "r" parameter, or a default */      \
     d = s->r;                                           \
     if (d == 0)                                         \
-      d = 0x12345678;                                   \
+      d = __mp_bases[10].big_base;                      \
                                                         \
     if (normalize)                                      \
       {                                                 \
@@ -1405,7 +1420,6 @@ speed_udiv_qrnnd_c (struct speed_params *s)
 double
 speed_mpn_udiv_qrnnd (struct speed_params *s)
 {
-
   SPEED_ROUTINE_UDIV_QRNND_A (1);
   {
     CALL_MPN_UDIV_QRNND;
@@ -1422,6 +1436,13 @@ speed_mpn_udiv_qrnnd (struct speed_params *s)
   SPEED_ROUTINE_UDIV_QRNND_B;
 }
 #endif
+
+
+double
+speed_invert_limb (struct speed_params *s)
+{
+  SPEED_ROUTINE_INVERT_LIMB_CALL (invert_limb (dinv, d));
+}
 
 
 /* r==0 measures on data with the values uniformly distributed.  This will
