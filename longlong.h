@@ -743,7 +743,7 @@ extern UDItype __udiv_qrnnd64 _PROTO ((UDItype, UDItype, UDItype, UDItype *));
 	       : "r" (ah), "r" (bh), "rI" (al), "r" (bl));		\
   } while (0)
 #define count_leading_zeros(count, x) \
-  __asm__ ("{cntlzd} %0,%1" : "=r" (count) : "r" (x))
+  __asm__ ("cntlzd %0,%1" : "=r" (count) : "r" (x))
 #define COUNT_LEADING_ZEROS_0 64
 #define umul_ppmm(ph, pl, m0, m1) \
   do {									\
