@@ -135,9 +135,13 @@ speed_cpu_frequency_sysctlbyname (void)
 /* Linux doesn't seem to have any system call to get the CPU frequency, at
    least not in 2.0.x or 2.2.x, so it's necessary to read /proc/cpuinfo.
 
-   Kernel 2.0.36 has "bogomips", and it's the CPU frequency.  Kernel 2.2.13
-   has both a "cpu MHz" and "bogomips", and it's "cpu MHz" which is the
-   frequency.  */
+   i386 2.0.36 - "bogomips" is the CPU frequency.
+
+   i386 2.2.13 - has both "cpu MHz" and "bogomips", and it's "cpu MHz" which
+                 is the frequency.
+
+   alpha 2.2.5 - "cycle frequency [Hz]" seems to be right, "BogoMIPS" is
+                 very slightly different.  */
 
 int
 speed_cpu_frequency_proc_cpuinfo (void)
@@ -151,6 +155,12 @@ speed_cpu_frequency_proc_cpuinfo (void)
     {
       while (fgets (buf, sizeof (buf), fp) != NULL)
         {
+          if (sscanf (buf, "cycle frequency [Hz]    : %lf est.\n", &val) == 1)
+            {
+              speed_cycletime = 1.0 / val;
+              ret = 1;
+              break;
+            }
           if (sscanf (buf, "cpu MHz  : %lf\n", &val) == 1)
             {
               speed_cycletime = 1e-6 / val;
