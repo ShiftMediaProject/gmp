@@ -520,6 +520,10 @@ void mpz_xor _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 #if defined (__cplusplus)
 extern "C" {
 #endif
+
+#define mpq_abs __gmpq_abs
+void mpq_abs _PROTO ((mpq_ptr, mpq_srcptr));
+
 void mpq_init _PROTO ((mpq_ptr));
 void mpq_clear _PROTO ((mpq_ptr));
 void mpq_set _PROTO ((mpq_ptr, mpq_srcptr));
