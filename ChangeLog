@@ -26,6 +26,8 @@ MA 02111-1307, USA.
 	assembler.
 	* mpn/ia64/aors_n.asm: Likewise.
 
+	* mpn/ia64/divrem_2.asm: Add ".prologue".
+
 	* mpn/ia64/hamdist.asm: Put alloc first in bundle, enforced by the
 	Intel assembler.
 
