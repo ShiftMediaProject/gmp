@@ -1,3 +1,7 @@
+2001-01-20  Torbjorn Granlund  <tege@swox.com>
+
+	* configure.in (alpha*-*-*): Default `flavour' to ev4.
+
 2001-01-19  Kevin Ryde  <kevin@swox.se>
 
 	* assert.c, gmp-impl.h (__gmp_assert_fail): Change return type to
