@@ -1,3 +1,7 @@
+1999-05-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/configure.in: Put generic m68k alternative last.
+
 1999-05-04  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/pexpr.c (setup_error_handler): Use sigemptyset to create
