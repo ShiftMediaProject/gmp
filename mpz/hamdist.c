@@ -97,7 +97,7 @@ mpz_hamdist (mpz_srcptr u, mpz_srcptr v)
          might be zero) */
       ulimb = -ulimb;
       vlimb = -vlimb;
-      popc_limb (count, ulimb ^ vlimb);
+      popc_limb (count, (ulimb ^ vlimb) & GMP_NUMB_MASK);
 
       if (vlimb == 0)
         {
