@@ -995,7 +995,8 @@ and upwardly compatible at the source level with versions 2.0, 2.0.1, and
 
 @itemize @bullet
 @item
-@code{mpn_gcd} had its source arguments swapped as of GMP 3.0.
+@code{mpn_gcd} had its source arguments swapped as of GMP 3.0 for consistency
+with other @code{mpn} functions.
 
 @item
 @code{mpf_get_prec} counted precision slightly differently in GMP 3.0 and
@@ -1637,19 +1638,20 @@ Set @var{q} to @var{n} divided by 2 raised to @var{d}.  The quotient is truncate
 towards 0.
 @end ifnottex
 @tex
-Set @var{q} to $@var{n}/2^{d}$.  The quotient is truncated towards 0.
+Set @var{q} to ${n}/2^{d}$.  The quotient is truncated towards 0.
 @end tex
 @end deftypefun
 
 @deftypefun void mpz_tdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
 @ifnottex
-Divide @var{n} by (2 raised to @var{d}) and put the remainder in @var{r}.
-Unless it is zero, @var{r} will have the same sign as @var{n}.
+Divide @var{n} by (2 raised to @var{d}), rounding the quotient towards 0, and
+put the remainder in @var{r}.
 @end ifnottex
 @tex
-Divide @var{n} by $2^{d}$ and put the remainder in @var{r}.  Unless it is zero,
-@var{r} will have the same sign as @var{n}.
+Set @var{r} to $n - [n / 2^{d}] \times 2^{d}$, where [ ] indicates rounding towards
+0.
 @end tex
+Unless it is zero, @var{r} will have the same sign as @var{n}.
 @end deftypefun
 
 @deftypefun void mpz_fdiv_q_2exp (mpz_t @var{q}, mpz_t @var{n}, unsigned long int @var{d})
@@ -1658,20 +1660,21 @@ Set @var{q} to @var{n} divided by 2 raised to @var{d}, rounded towards
 @minus{}infinity.
 @end ifnottex
 @tex
-Set @var{q} to $\lfloor@var{n}/2^{d}\rfloor$.
+Set @var{q} to $\lfloor{n}/2^{d}\rfloor$.
 @end tex
+This operation can also be defined as arithmetic right shift @var{d} bit
+positions.
 @end deftypefun
 
 @deftypefun void mpz_fdiv_r_2exp (mpz_t @var{r}, mpz_t @var{n}, unsigned long int @var{d})
 @ifnottex
-Divide @var{n} by (2 raised to @var{d}) and put the remainder in @var{r}.  The
-sign of @var{r} will always be positive.
+Divide @var{n} by (2 raised to @var{d}), rounding the quotient towards
+@minus{}infinity, and put the remainder in @var{r}.
 @end ifnottex
 @tex
-Divide @var{n} by $2^{d}$ and put the remainder in @var{r}.  The sign of
-@var{r} will always be positive.
+Set @var{r} to $n - \lfloor{n}/2^{d}\rfloor \times 2^{d}$.
 @end tex
-
+The sign of @var{r} will always be positive.
 This operation can also be defined as masking of the @var{d} least significant
 bits.
 @end deftypefun
@@ -1685,18 +1688,24 @@ bits.
 
 @deftypefun void mpz_powm (mpz_t @var{rop}, mpz_t @var{base}, mpz_t @var{exp}, mpz_t @var{mod})
 @deftypefunx void mpz_powm_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp}, mpz_t @var{mod})
+@ifnottex
 Set @var{rop} to (@var{base} raised to @var{exp}) @code{mod} @var{mod}.  If
 @var{exp} is negative, the result is undefined.
+@end ifnottex
+@tex
+Set @var{rop} to $base^{exp} \bmod mod$.  If
+@var{exp} is negative, the result is undefined.
+@end tex
+
 @end deftypefun
 
 @deftypefun void mpz_pow_ui (mpz_t @var{rop}, mpz_t @var{base}, unsigned long int @var{exp})
 @deftypefunx void mpz_ui_pow_ui (mpz_t @var{rop}, unsigned long int @var{base}, unsigned long int @var{exp})
-Set @var{rop} to @var{base} raised to @var{exp}.
 @ifnottex
-The case of 0^0 yields 1.
+Set @var{rop} to @var{base} raised to @var{exp}.  The case of 0^0 yields 1.
 @end ifnottex
 @tex
-The case of $0^0$ yields 1.
+Set @var{rop} to $base^{exp}$.  The case of $0^0$ yields 1.
 @end tex
 @end deftypefun
 
@@ -3745,9 +3754,9 @@ the size of an object, normally an 8 bit byte.)
 @unnumbered Contributors
 @cindex Contributors
 
-Torbjorn Granlund wrote the original GMP library and is still developing
-and maintaining it.  Several other individuals and organizations have
-contributed to GMP in various ways.  Here is a list in chronological order:
+Torbjorn Granlund wrote the original GMP library and is still developing and
+maintaining it.  Several other individuals and organizations have contributed
+to GMP in various ways.  Here is a list in chronological order:
 
 Gunnar Sjoedin and Hans Riesel helped with mathematical problems in early
 versions of the library.
@@ -3799,9 +3808,10 @@ Torsten Ekedahl of the Mathematical department of Stockholm University provided
 significant inspiration during several phases of the GMP development.  His
 mathematical expertise helped improve several algorithms.
 
-Paul Zimmermann wrote the Burnikel-Ziegler division code, the REDC code, and
-the new mpz_powm code that uses Hensel lifting.  The ECMNET project Paul is
-organizing has been a driving force behind many of the optimization of GMP 3.
+Paul Zimmermann wrote the Burnikel-Ziegler division code, the REDC code, the
+REDC-based mpz_powm code, and the FFT multiply code.  The ECMNET project Paul
+is organizing has been a driving force behind many of the optimization of GMP
+3.
 
 Linus Nordberg wrote the new configure system based on autoconf and
 implemented the new random functions.
@@ -3811,9 +3821,9 @@ Kent Boortz made the Macintosh port.
 Kevin Ryde wrote a lot of very high quality x86 code, optimized for most CPU
 variants.  He also made countless other valuable contributions.
 
-GNU MP 3 was finished and released by Torbjorn Granlund and Linus Nordberg of
-SWOX AB, and volunteer Kevin Ryde.  The work was partially funded by the IDA
-Center for Computing Sciences, USA.
+GNU MP 3.1 was finished and released by Torbjorn Granlund and Kevin Ryde.
+Torbjorn's work was partially funded by the IDA Center for Computing Sciences,
+USA.
 
 (This list is chronological, not ordered after significance.  If you have
 contributed to GMP but are not listed above, please tell @email{tege@@swox.com}
