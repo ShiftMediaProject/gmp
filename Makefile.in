@@ -283,6 +283,9 @@ MACOS_DEPS = $(srcdir)/macos/configure			\
   $(srcdir)/mpq/Makefile.am $(srcdir)/mpf/Makefile.am	\
   $(srcdir)/mpn/powerpc32/*.asm
 
+
+# Keep the macos directory up-to-date during any development build.
+@MAINTAINER_MODE_TRUE@ALL_LOCAL_MACOS_GENERATED = @MAINTAINER_MODE_TRUE@$(MACOS_GENERATED)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -944,9 +947,7 @@ install-strip installdirs-am installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
-
-# Keep the macos directory up-to-date during any development build.
-@MAINTAINER_MODE_TRUE@all-local: $(MACOS_GENERATED)
+all-local: $(ALL_LOCAL_MACOS_GENERATED)
 
 $(srcdir)/macos/Makefile: $(MACOS_MAKEFILE_DEPS)
 	cd $(srcdir)/macos; perl configure
