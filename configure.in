@@ -1182,7 +1182,7 @@ AC_SUBST(__GMP_LIBGMP_STATIC)
 # Tell gmp.h it's building gmp, not an application.
 # Currently only used to help the windows DLL stuff.
 #
-DEFS="$DEFS -D__GMP_WITHIN_GMP"
+CPPFLAGS="$CPPFLAGS -D__GMP_WITHIN_GMP"
 
 
 # libtool $pic_flag for use by mpn/Makeasm.am.
