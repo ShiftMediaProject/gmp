@@ -1,9 +1,4 @@
 dnl  x86 mpn_divexact_by3 -- mpn division by 3, expecting no remainder.
-dnl 
-dnl       cycles/limb
-dnl  P5      17.0
-dnl  P6      13.5
-dnl  K7      10.0
 
 
 dnl  Copyright (C) 2000 Free Software Foundation, Inc.
@@ -26,19 +21,26 @@ dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
 
+dnl  The following all have their own optimized versions of this routine,
+dnl  but for reference the code here runs as follows.
+dnl
+dnl       cycles/limb
+dnl  P5      17.0
+dnl  P6      13.5
+dnl  K6      14.0
+dnl  K7      10.0
+
+
 include(`../config.m4')
 
 
-C mp_limb_t mpn_divexact_by3 (mp_ptr dst, mp_srcptr src, mp_size_t size);
-C
-C Divide src,size by 3 and store the quotient in dst,size.  If src,size
-C isn't exactly divisible by 3 the result in dst,size won't be very useful.
-C The return value is 0 if src,size was divisible by 3, or non-zero if not.
+C mp_limb_t mpn_divexact_by3c (mp_ptr dst, mp_srcptr src, mp_size_t size,
+C                              mp_limb_t carry);
 
-defframe(PARAM_SIZE,12)
-defframe(PARAM_SRC, 8)
-defframe(PARAM_DST, 4)
-deflit(`FRAME',0)
+defframe(PARAM_CARRY,16)
+defframe(PARAM_SIZE, 12)
+defframe(PARAM_SRC,   8)
+defframe(PARAM_DST,   4)
 
 dnl  multiplicative inverse of 3, modulo 2^32
 deflit(INVERSE_3,       0xAAAAAAAB)
@@ -50,30 +52,26 @@ deflit(TWO_THIRDS_CEIL, 0xAAAAAAAB)
 	.text
 	ALIGN(8)
 
-PROLOGUE(mpn_divexact_by3)
+PROLOGUE(mpn_divexact_by3c)
+deflit(`FRAME',0)
 
 	movl	PARAM_SRC, %ecx
-	pushl	%ebp
-FRAME_pushl()
+	pushl	%ebp		FRAME_pushl()
 
 	movl	PARAM_SIZE, %ebp
-	pushl	%edi
-FRAME_pushl()
+	pushl	%edi		FRAME_pushl()
 
 	movl	PARAM_DST, %edi
-	pushl	%esi
-FRAME_pushl()
+	pushl	%esi		FRAME_pushl()
 
 	movl	$INVERSE_3, %esi
-	pushl	%ebx
-FRAME_pushl()
+	pushl	%ebx		FRAME_pushl()
 
 	leal	(%ecx,%ebp,4), %ecx
-	xorl	%ebx, %ebx
+	movl	PARAM_CARRY, %ebx
 
 	leal	(%edi,%ebp,4), %edi
 	negl	%ebp
-
 
 
 	ALIGN(8)
