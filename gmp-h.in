@@ -1428,6 +1428,9 @@ __GMP_DECLSPEC int mpn_perfect_square_p __GMP_PROTO ((mp_srcptr, mp_size_t)) __G
 #define mpn_popcount __MPN(popcount)
 __GMP_DECLSPEC unsigned long int mpn_popcount __GMP_PROTO ((mp_srcptr, mp_size_t)) __GMP_NOTHROW __GMP_ATTRIBUTE_PURE;
 
+#define mpn_pow_1 __MPN(pow_1)
+__GMP_DECLSPEC mp_size_t mpn_pow_1 __GMP_PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t, mp_ptr));
+
 /* undocumented now, but retained here for upward compatibility */
 #define mpn_preinv_mod_1 __MPN(preinv_mod_1)
 __GMP_DECLSPEC mp_limb_t mpn_preinv_mod_1 __GMP_PROTO ((mp_srcptr, mp_size_t, mp_limb_t, mp_limb_t)) __GMP_ATTRIBUTE_PURE;
