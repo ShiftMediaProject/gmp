@@ -1,3 +1,27 @@
+2001-09-23  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/x86/pentium4/sse2/mul_basecase.asm: Some simple but real code.
+
+	* printf/doprnt.c: Use va_copy for va_list variables, copy function
+	parameter in case it's call-by-reference.
+
+	* tune/freq.c (speed_cpu_frequency_bsd_dmesg): New function.
+	(speed_cpu_frequency_table): Use it.
+
+        * tune/many.pl (popcount, hamdist): Fix declared return value.
+	(sb_divrem_mn): Remove a spurious duplicate entry.
+	(CLEAN): Add tmp-$objbase.c when using that for .h files.
+	(macro_speed): Give a default for .h files.
+	Add ATTRIBUTE_CONST or __GMP_ATTRIBUTE_PURE as appropriate.
+
+	* tune/speed.h (SPEED_ROUTINE_MPN_MOD_CALL,
+	SPEED_ROUTINE_MPN_PREINV_MOD_1, SPEED_ROUTINE_MPN_POPCOUNT,
+	SPEED_ROUTINE_MPN_HAMDIST, SPEED_ROUTINE_MPN_GCD_1N,
+	SPEED_ROUTINE_MPN_GCD_1_CALL, SPEED_ROUTINE_MPZ_JACOBI): Use return
+	values so gcc 3 won't discard calls to pure or const functions.
+	(mpn_mod_1_div, mpn_mod_1_inv): Add __GMP_ATTRIBUTE_PURE.
+
+
 2001-09-22  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/x86/pentium4/sse2/mul_basecase.asm: New file, placeholder
