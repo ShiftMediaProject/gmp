@@ -50,6 +50,8 @@ MPN_OBJECTS = @mpn_objs_in_libgmp@
 EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h \
   config.in
 
+DISTCLEANFILES = @gmp_srclinks@
+
 info_TEXINFOS = gmp.texi
 
 lib_LTLIBRARIES = libgmp.la

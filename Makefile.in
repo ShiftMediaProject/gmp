@@ -90,6 +90,7 @@ PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 STRIP = @STRIP@
 VERSION = @VERSION@
+gmp_srclinks = @gmp_srclinks@
 install_sh = @install_sh@
 mpn_objects = @mpn_objects@
 mpn_objs_in_libgmp = @mpn_objs_in_libgmp@
@@ -145,6 +146,8 @@ MPN_OBJECTS = @mpn_objs_in_libgmp@
 EXTRA_DIST = demos gmp-impl.h gmp.h longlong.h mp.h stack-alloc.h urandom.h \
   config.in
 
+
+DISTCLEANFILES = @gmp_srclinks@
 
 info_TEXINFOS = gmp.texi
 
@@ -634,6 +637,7 @@ clean-generic:
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	-rm -f Makefile.in
