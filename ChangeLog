@@ -1,3 +1,13 @@
+2000-11-20  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/hppa/hppa1_1/udiv_qrnnd.S: Reference data using PC relative
+	addressing (was r19 relative addressing).
+
+2000-11-18  Torbjorn Granlund  <tege@swox.com>
+
+	* rand.c: (__gmp_rand_lc_scheme): Convert strings to hexadecimal.
+	(gmp_randinit): Expect strings in hexadecimal.
+
 2000-11-18  Kevin Ryde  <kevin@swox.se>
 
 	* configfsf.guess, configfsf.sub: Update to 2000-11-16.
