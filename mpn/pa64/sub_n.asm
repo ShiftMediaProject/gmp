@@ -36,7 +36,7 @@ define(`n',`%r23')
 
 ifdef(`HAVE_ABI_2_0w',
 `       .level  2.0W
-',`     .level  2.0N
+',`     .level  2.0
 ')
 PROLOGUE(mpn_sub_n)
 	sub		%r0, n, %r22

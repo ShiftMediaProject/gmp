@@ -37,7 +37,7 @@ define(`m1',`%r24')
 
 ifdef(`HAVE_ABI_2_0w',
 `	.level	2.0W
-',`	.level	2.0N
+',`	.level	2.0
 ')
 PROLOGUE(mpn_umul_ppmm_r)
 	ldo		128(%r30),%r30

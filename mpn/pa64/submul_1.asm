@@ -95,7 +95,7 @@ define(`climb',`%r23')	dnl
 
 ifdef(`HAVE_ABI_2_0w',
 `	.level	2.0W
-',`	.level	2.0N
+',`	.level	2.0
 ')
 PROLOGUE(mpn_submul_1)
 
