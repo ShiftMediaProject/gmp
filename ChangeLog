@@ -1,5 +1,7 @@
 2000-03-19  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/x86/k6/sqr_basecase.asm: Tiny amendments for 3x3 case.
+
 	* gmp.texi: Use @include version.texi.
 	Use @email and @uref.
 	(Installing MP): Rewrite for new configure.
