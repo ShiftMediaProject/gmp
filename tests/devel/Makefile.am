@@ -1,6 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-# Copyright 2000 Free Software Foundation, Inc.
+# Copyright 2000, 2001 Free Software Foundation, Inc.
 #
 # This file is part of the GNU MP Library.
 #
@@ -20,36 +20,17 @@
 # MA 02111-1307, USA.
 
 
-AUTOMAKE_OPTIONS = gnu $(top_builddir)/ansi2knr no-dependencies
+AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
-INCLUDES = -I$(top_srcdir)
-LDADD = $(top_builddir)/libgmp.la
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/tests
+LDADD = $(top_builddir)/tests/libtests.la $(top_builddir)/libgmp.la
 
+# addsub_n addsub_n_2 not yet built since mpn_addsub_n doesn't yet exist
+#
 EXTRA_PROGRAMS = \
   add_n addmul_1 copy divmod_1 divrem lshift mul_1 rshift \
   sub_n submul_1 tst-addsub try
 
-# addsub_n addsub_n_2 not yet built since mpn_addsub_n doesn't yet exist
-
-EXTRA_HEADERS = ref.h try.h
-EXTRA_DIST = x86call.asm x86check.c
-
-try_SOURCES = try.c ref.c trace.c spinner.c
-try_LDADD = @CALLING_CONVENTIONS_OBJS@ $(top_builddir)/libgmp.la
-try_DEPENDENCIES = $(try_LDADD)
-
 allprogs: $(EXTRA_PROGRAMS)
 
 CLEANFILES = $(EXTRA_PROGRAMS)
-
-
-SUFFIXES = .asm
-
-# Relative paths don't work out right when running m4 from a second level
-# subdirectory, so copy the necessary files up to build them.
-.asm.o:
-	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
-.asm.obj:
-	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
-.asm.lo:
-	cp $< ..; cd ..; $(MAKE) $(AM_MAKEFLAGS) $@; rm $*.asm; mv $*.* tests;
