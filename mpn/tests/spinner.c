@@ -45,8 +45,6 @@ unsigned long  spinner_count = 0;
 static int  spinner_wanted = -1;  /* -1 uninitialized, 1 wanted, 0 not */
 static int  spinner_tick = 1;     /* 1 ready to print, 0 not */
 
-#define numberof(x)   (sizeof (x) / sizeof ((x)[0]))
-
 
 /*ARGSUSED*/
 void

@@ -146,7 +146,6 @@ mp_size_t  pagesize;
 #define REDZONE_LIMBS   (REDZONE_BYTES / BYTES_PER_MP_LIMB)
 
 
-#define numberof(x)   ((int) (sizeof (x) / sizeof ((x)[0])))
 #define MAX3(x,y,z)   (MAX (x, MAX (y, z)))
 
 #if BITS_PER_MP_LIMB == 32
