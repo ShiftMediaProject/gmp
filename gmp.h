@@ -881,6 +881,7 @@ mpn_sub (res_ptr, s1_ptr, s1_size, s2_ptr, s2_size)
 }
 #endif /* __GNUC__ */
 
+#if defined (__GNUC__) || defined (_FORCE_INLINES)
 _EXTERN_INLINE mp_limb_t
 #if (__STDC__-0) || defined (__cplusplus)
 mpn_divrem (mp_ptr _gmp_qp, mp_size_t _gmp_qn,
@@ -926,6 +927,7 @@ mpn_divrem (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn)
   /* In the remaining cases, use classic division.  */
   return mpn_divrem_classic (_gmp_qp, _gmp_qn, _gmp_np, _gmp_nn, _gmp_dp, _gmp_dn);
 }
+#endif
 
 /* Allow faster testing for negative, zero, and positive.  */
 #define mpz_sgn(Z) ((Z)->_mp_size < 0 ? -1 : (Z)->_mp_size > 0)
