@@ -1,5 +1,8 @@
 2000-03-14  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/sparc32/v8/mul_1.asm: Use m4 ifdef, not cpp #if.
+	* mpn/sparc32/v8/addmul_1.asm: Likewise.
+
 	* mpn/asm-defs.m4 (C): New define for comments.
 	* mpn/sparc32: Start comments with `C'.
 
