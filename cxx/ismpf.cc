@@ -19,14 +19,26 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include "config.h"
+
 #include <cctype>
 #include <iostream>
 #include <string>
+
+#if HAVE_LOCALE_H
+#include <locale.h>    /* for localeconv */
+#endif
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
 using namespace std;
 
+
+/* Perhaps the decimal point should be taken from the C++ <locale> stuff,
+   but that doesn't exist in g++ 2.95.x.  In any case, using plain C
+   localeconv will ensure we parse exactly what mpf_set_str will expect, and
+   what the current operator<< implementation produces.  */
 
 istream &
 operator>> (istream &i, mpf_ptr f)
@@ -55,12 +67,30 @@ operator>> (istream &i, mpf_ptr f)
   base = 10; // octal/hex floats currently unsupported
   __gmp_istream_set_digits(s, i, c, ok, base); // read the number
 
+#if HAVE_LOCALECONV
+  const char  *point = localeconv()->decimal_point;
+  if (c == *point) // radix point
+    {
+      for (;;)
+        {
+          s += c;
+          i.get(c);
+          point++;
+          if (*point == '\0')
+            break;
+          if (c != *point)
+            goto fail;
+        }
+      __gmp_istream_set_digits(s, i, c, ok, base); // read the mantissa
+    }
+#else
   if (c == '.') // radix point
     {
       s += '.';
       i.get(c);
       __gmp_istream_set_digits(s, i, c, ok, base); // read the mantissa
     }
+#endif
 
   if (ok && (c == 'e' || c == 'E' || c == '@')) // exponent
     {
@@ -88,7 +118,10 @@ operator>> (istream &i, mpf_ptr f)
   if (ok)
     mpf_set_str(f, s.c_str(), base); // extract the number
   else
-    i.setstate(ios::failbit); // read failed
+    {
+    fail:
+      i.setstate(ios::failbit); // read failed
+    }
 
   return i;
 }
