@@ -24,7 +24,8 @@ AUTOMAKE_OPTIONS = gnu no-dependencies $(top_builddir)/ansi2knr
 
 INCLUDES = -D__GMP_WITHIN_GMP -I$(top_srcdir)
 
-noinst_LTLIBRARIES = libdummy.la libprintf.la
+noinst_LTLIBRARIES = libprintf.la
+EXTRA_LTLIBRARIES = libdummy.la
 
 libprintf_la_SOURCES =							 \
   asprintf.c asprntffuns.c doprnt.c doprntf.c doprnti.c			 \
