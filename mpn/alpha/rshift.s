@@ -1,4 +1,4 @@
- # Alpha 21064 __mpn_rshift --
+ # Alpha __mpn_rshift --
 
  # Copyright (C) 1994, 1995 Free Software Foundation, Inc.
 
