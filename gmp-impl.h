@@ -1194,6 +1194,30 @@ extern const unsigned char  modlimb_invert_table[128];
 #define MODLIMB_INVERSE_3   ((MP_LIMB_T_MAX / 3) * 2 + 1)
 
 
+/* Set r to -a mod d.  a>=d is allowed.  Can give r>d.  All should be limbs.
+
+   It's not clear whether this is the best way to do this calculation.
+   Anything congruent to -a would be fine for the one limb congruence
+   tests.  */ 
+
+#define NEG_MOD(r, a, d)                                        \
+  do {                                                          \
+    ASSERT ((d) != 0);                                          \
+    if ((a) <= (d))                                             \
+      {                                                         \
+        /* small a is reasonably likely */                      \
+        (r) = (d) - (a);                                        \
+      }                                                         \
+    else                                                        \
+      {                                                         \
+        unsigned       __twos;                                  \
+        unsigned long  __dnorm;                                 \
+        count_leading_zeros (__twos, d);                        \
+        __dnorm = (d) << __twos;                                \
+        (r) = ((a) <= __dnorm ? __dnorm : 2*__dnorm) - (a);     \
+      }                                                         \
+  } while (0)
+
 /* A bit mask of all the least significant zero bits of n, or -1 if n==0. */
 #define LOW_ZEROS_MASK(n)  (((n) & -(n)) - 1)
 
