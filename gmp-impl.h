@@ -232,6 +232,10 @@ MA 02111-1307, USA. */
 extern "C" {
 #endif
 
+extern void * (*__gmp_allocate_func) _PROTO ((size_t));
+extern void * (*__gmp_reallocate_func) _PROTO ((void *, size_t, size_t));
+extern void   (*__gmp_free_func) _PROTO ((void *, size_t));
+
 void *__gmp_default_allocate _PROTO ((size_t));
 void *__gmp_default_reallocate _PROTO ((void *, size_t, size_t));
 void __gmp_default_free _PROTO ((void *, size_t));
