@@ -1,3 +1,8 @@
+2001-03-26  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/gcdext.c: Handle carry overflow after m*n multiply code
+	in both arms.  Partially combine multiply arms.
+
 2001-03-24  Kevin Ryde  <kevin@swox.se>
 
 	* demos/expr/exprz.c,t-expr.c,README: Add congruent_p and divisible_p.
@@ -128,7 +133,7 @@
 
 	* mpn/cray/cfp/mul_1.c: Don't call mpn_add_n with size 0.
 	* mpn/cray/cfp/addmul_1.c: Likewise.
-	* mpn/cray/cfp/submul_1.c: Don't call mpn_sub_n with size 0..
+	* mpn/cray/cfp/submul_1.c: Don't call mpn_sub_n with size 0.
 
 	* tests/mpz/t-div_2exp.c (check_various): Start 2nd d loop from 0
 	(avoid problems with Cray compilers).
@@ -309,7 +314,7 @@
 	* mpn/generic/mul_basecase.c: ... to here.
 
 	* mpn/x86/README: Note "%=" as an alternative to "1:" in __asm__.
-	
+
 	* tests/trace.c (mp_trace_start): Print "bin" for binary.
 
 	* mpn/generic/dump.c: Add a couple of casts to keep gcc quiet.
