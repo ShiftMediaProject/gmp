@@ -1,6 +1,6 @@
 /* Test mp*_class operators and functions.
 
-Copyright 2001, 2002 Free Software Foundation, Inc.
+Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -127,30 +127,54 @@ check_mpz (void)
     c = a * b; ASSERT_ALWAYS(c == -8);
   }
 
-  // operator/
+  // operator/ and operator%
   {
     mpz_class a(12), b(4);
     mpz_class c;
     c = a / b; ASSERT_ALWAYS(c == 3);
+    c = a % b; ASSERT_ALWAYS(c == 0);
   }
-
-  // operator%
   {
     mpz_class a(7), b(5);
     mpz_class c;
+    c = a / b; ASSERT_ALWAYS(c == 1);
     c = a % b; ASSERT_ALWAYS(c == 2);
   }
   {
     mpz_class a(-10);
-    signed int b = 3;
+    signed int ai = -10;
+    mpz_class b(3);
+    signed int bi = 3;
     mpz_class c;
-    c = a % b; ASSERT_ALWAYS(c == 2);
+    c = a / b;  ASSERT_ALWAYS(c == -3);
+    c = a % b;  ASSERT_ALWAYS(c == -1);
+    c = a / bi; ASSERT_ALWAYS(c == -3);
+    c = a % bi; ASSERT_ALWAYS(c == -1);
+    c = ai / b; ASSERT_ALWAYS(c == -3);
+    c = ai % b; ASSERT_ALWAYS(c == -1);
   }
   {
-    mpz_class a(5);
-    unsigned int b = 12;
+    mpz_class a(-10);
+    signed int ai = -10;
+    mpz_class b(-3);
+    signed int bi = -3;
     mpz_class c;
-    c = b % a; ASSERT_ALWAYS(c == 2);
+    c = a / b;  ASSERT_ALWAYS(c == 3);
+    c = a % b;  ASSERT_ALWAYS(c == -1);
+    c = a / bi; ASSERT_ALWAYS(c == 3);
+    c = a % bi; ASSERT_ALWAYS(c == -1);
+    c = ai / b; ASSERT_ALWAYS(c == 3);
+    c = ai % b; ASSERT_ALWAYS(c == -1);
+  }
+  {
+    mpz_class a (LONG_MIN);
+    signed long ai = LONG_MIN;
+    mpz_class b = - mpz_class (LONG_MIN);
+    mpz_class c;
+    c = a / b;  ASSERT_ALWAYS(c == -1);
+    c = a % b;  ASSERT_ALWAYS(c == 0);
+    c = ai / b; ASSERT_ALWAYS(c == -1);
+    c = ai % b; ASSERT_ALWAYS(c == 0);
   }
 
   // operator&
