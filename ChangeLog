@@ -59,6 +59,18 @@
 	* acinclude.m4 (GMP_CHECK_ASM_UNDERSCORE): Don't depend on C
 	having "void".
 
+2000-04-13  Linus Nordberg  <linus@swox.se>
+
+	* mpn/pa64/udiv_qrnnd.c (__udiv_qrnnd64): Add K&R function
+	definition.
+
+	* configure.in: Disable shared libraries for hppa*.
+	(mips-sgi-irix6.*): Fix flags for 64-bit gcc.
+	(hppa2.0*-*-*): Prefer c89 to cc.
+	* configure: Regenerate.
+
+	* gmp.h (gmp_randalg_t): Remove comma after last element.
+
 2000-04-13  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/generic/mul_n.c, mpn/generic/gcdext.c, mpz/nextprime.c,
