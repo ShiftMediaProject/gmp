@@ -1,3 +1,12 @@
+2000-09-12  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (mpn_tdiv_qr): Move prototype from here ...
+	* gmp.h (mpn_tdiv_qr): ... to here.
+
+	* gmp.texi (Miscellaneous Rational Functions): Comment-out and
+	move version 1 compatibility note to "Compatibility" section.
+	(Rational Number Functions): Ditto for canonicalization note.
+
 2000-09-10  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/pentium/com_n.asm: New file.
