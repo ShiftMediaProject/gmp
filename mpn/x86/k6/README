@@ -18,10 +18,9 @@ STATUS
 Times for the loops, with all code and data in L1 cache, are as follows.
 
                                  cycles/limb
-	mpn_add/sub_n              3.25 normal, 2.75 in-place
+	mpn_add_n/sub_n            3.25 normal, 2.75 in-place
 
-	mpn_copyd                  1.0
-	mpn_copyi                  0.56 or 1.0  \
+	mpn_copyi/copyd            0.56 or 1.0  \
                                                 |
 	mpn_com_n                  1.0-1.2      | varying with
 	mpn_and/andn/ior/xor_n     1.2-1.5      | data alignment
@@ -70,12 +69,11 @@ OPTIMIZATIONS
 Unrolled loops are used to reduce looping overhead.  The unrolling is
 configurable up to 32 limbs/loop for most routines, up to 64 for some.
 
-Computed jumps into the unrolling are used to handle sizes not a multiple of
-the unrolling.  An attractive feature of this is that times smoothly
-increase with operand size, but an indirect jump is about 6 cycles and the
-setups about another 6, so it depends on how much the unrolled code is
-faster than a simple loop as to whether a computed jump ought to be used.
-(Using simple vs computed might need looking at in a couple of places.)
+Sometimes computed jumps into the unrolling are used to handle sizes not a
+multiple of the unrolling.  An attractive feature of this is that times
+smoothly increase with operand size, but an indirect jump is about 6 cycles
+and the setups about another 6, so it depends on how much the unrolled code
+is faster than a simple loop as to whether a computed jump ought to be used.
 
 Position independent code is implemented using a call to get eip for
 computed jumps and a ret is always done, rather than an addl $4,%esp or a
@@ -97,8 +95,6 @@ the less likely or less important case is under a taken forward jump.
 
 MMX
 
-Several routines are much improved by the use of MMX instructions.
-
 Putting emms_or_femms as late as possible in a routine seems to be fastest.
 Perhaps an emms or femms stalls until all outstanding MMX instructions have
 completed, so putting it later gives them a chance to complete on their own,
@@ -116,10 +112,12 @@ CODING
 
 Instructions in general code are shown paired if they can decode and execute
 together, meaning two short decode instructions with the second not
-depending on the first and only the first using the shifter.  K6 does some
-out of order execution so this isn't essential, it just shows what slots are
-available.  When decoding is the limiting factor things can be scheduled
-that might not execute until later.
+depending on the first, only the first using the shifter, no more than one
+load and no more than one store.
+
+K6 does some out of order execution so this isn't essential, it just shows
+what slots are available.  When decoding is the limiting factor things can
+be scheduled that might not execute until later.
 
 
 
