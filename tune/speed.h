@@ -126,8 +126,8 @@ double speed_modlimb_invert_mul1 _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_loop _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_cond _PROTO ((struct speed_params *s));
 double speed_modlimb_invert_arith _PROTO ((struct speed_params *s));
-double speed__gmp_allocate_free _PROTO ((struct speed_params *s));
-double speed__gmp_allocate_reallocate_free _PROTO ((struct speed_params *s));
+double speed_gmp_allocate_free _PROTO ((struct speed_params *s));
+double speed_gmp_allocate_reallocate_free _PROTO ((struct speed_params *s));
 
 double speed_mpf_init_clear _PROTO ((struct speed_params *s));
 

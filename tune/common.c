@@ -960,7 +960,7 @@ speed_malloc_realloc_free (struct speed_params *s)
 }  
 
 double
-speed__gmp_allocate_free (struct speed_params *s)
+speed_gmp_allocate_free (struct speed_params *s)
 {
   size_t  bytes = s->size * BYTES_PER_MP_LIMB;
   SPEED_ROUTINE_ALLOC_FREE (void *p,
@@ -969,7 +969,7 @@ speed__gmp_allocate_free (struct speed_params *s)
 }  
 
 double
-speed__gmp_allocate_reallocate_free (struct speed_params *s)
+speed_gmp_allocate_reallocate_free (struct speed_params *s)
 {
   size_t  bytes = s->size * BYTES_PER_MP_LIMB;
   SPEED_ROUTINE_ALLOC_FREE
