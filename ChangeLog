@@ -1,5 +1,7 @@
 2001-01-03  Torbjorn Granlund  <tege@swox.com>
 
+	* mpz/fac_ui.c (MPZ_SET_1_NZ): Actually use `__z'.
+
 	* mpz/tests/t-jac.c
 	(main, check_squares_zi): Generate test operands numbers using new
 	random functions.
