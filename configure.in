@@ -947,32 +947,42 @@ GMP_PROG_NM
 
 # FIXME: Find good ld?  /usr/ucb/ld on Solaris won't work.
 
-# FIXME: On SCO 5, an explicit -lc is not wanted when making shared
-# libraries.  Giving it makes strange things happen, like ctype.h macros not
-# working and profiler mcount calls segfaulting.  Libtool ought to know
-# about this, but as of Dec 2000 it doesn't, so forcibly disable -lc on
-# relevant systems.
-#
 case $host in
-*-*-sco3.2v5*) ac_cv_archive_cmds_need_lc=no
-esac
+  # FIXME: On AIX 3 and 4, $libname.a is included in libtool
+  # $library_names_spec, so libgmp.a becomes a symlink to libgmp.so, making
+  # it impossible to build shared and static libraries simultaneously.
+  # Disable shared libraries by default, but let the user override with
+  # --enable-shared --disable-static.
+  #
+  # FIXME: This $libname.a problem looks like it might apply to *-*-amigaos*
+  # and *-*-os2* too, but wait for someone to test this before worrying
+  # about it.  If there's a problem then of course libtool is the right
+  # place to fix it.
+  #
+  [*-*-aix[34]*])
+    if test -z "$enable_shared"; then enable_shared=no; fi ;;
 
-# FIXME: Shared libraries aren't supported on unicos, but
-# libtool doesn't seem to detect this correctly, so forcibly
-# disable them.
-#
-case $host in
-  *-*-unicos*) enable_shared=no ;;
-esac
+  # FIXME: On SCO 5, an explicit -lc is not wanted when making shared
+  # libraries.  Giving it makes strange things happen, like ctype.h macros
+  # not working and profiler mcount calls segfaulting.  Libtool ought to
+  # know about this, but as of Dec 2000 it doesn't, so forcibly disable -lc
+  # on relevant systems.
+  #
+  *-*-sco3.2v5*)
+    ac_cv_archive_cmds_need_lc=no ;;
 
+  # FIXME: Shared libraries aren't supported on unicos, but as of Dec 2000
+  # libtool doesn't seem to detect this correctly, so forcibly disable them.
+  #
+  *-*-unicos*)
+    enable_shared=no ;;
+esac
 
 AC_PROG_LIBTOOL
 
-# FIXME: On AIX, libtool has $libname.a in $library_names_spec, so foo.a
-# becomes a symlink to foo.so.  This is supposedly a fix for AIX 4.1 "ld"
-# which didn't like a ".so" extension, but it makes it impossible to create
-# both shared and static libraries on say AIX 4.3 which looks like it ought
-# to be able to build both.
+# Generate an error here if attempting to build both shared and static when
+# $libname.a is in $library_names_spec (as mentioned above), rather than
+# wait for ar or ld to fail.
 #
 if test "$enable_shared" = yes && test "$enable_static" = yes; then
   case $library_names_spec in
