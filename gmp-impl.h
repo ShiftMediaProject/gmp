@@ -580,6 +580,20 @@ _MPN_COPY (d, s, n) mp_ptr d; mp_srcptr s; mp_size_t n;
 #define TOOM3_MUL_THRESHOLD 256
 #endif
 
+/* This is the threshold at which mpn_sqr_basecase should take over from
+   mpn_mul_basecase in mpn_sqr_n.  Default is to use mpn_sqr_basecase
+   always.
+
+   If it turns out that mpn_kara_sqr_n becomes faster than mpn_mul_basecase
+   before mpn_sqr_basecase does, then BASECASE_SQR_THRESHOLD is the
+   karatsuba threshold and KARATSUBA_SQR_THRESHOLD is 0.  This oddity arises
+   more or less because KARATSUBA_SQR_THRESHOLD represents the size up to
+   which mpn_sqr_basecase should be used, and that may be never.  */
+
+#ifndef BASECASE_SQR_THRESHOLD
+#define BASECASE_SQR_THRESHOLD 0
+#endif
+
 #ifndef KARATSUBA_SQR_THRESHOLD
 #define KARATSUBA_SQR_THRESHOLD (2*KARATSUBA_MUL_THRESHOLD)
 #endif
@@ -1472,6 +1486,7 @@ extern mp_size_t  mod_1_unnorm_threshold[];
 #undef FFT_MUL_TABLE
 #undef FFT_MUL_THRESHOLD
 #undef FFT_MODF_MUL_THRESHOLD
+#undef BASECASE_SQR_THRESHOLD
 #undef KARATSUBA_SQR_THRESHOLD
 #undef TOOM3_SQR_THRESHOLD
 #undef FFT_SQR_TABLE
@@ -1492,10 +1507,11 @@ extern mp_size_t  mod_1_unnorm_threshold[];
 #define FFT_MUL_TABLE             { 0 }
 #define FFT_MUL_THRESHOLD         mul_threshold[2]
 #define FFT_MODF_MUL_THRESHOLD    fft_modf_mul_threshold
-#define KARATSUBA_SQR_THRESHOLD   sqr_threshold[0]
-#define TOOM3_SQR_THRESHOLD       sqr_threshold[1]
+#define BASECASE_SQR_THRESHOLD    sqr_threshold[0]
+#define KARATSUBA_SQR_THRESHOLD   sqr_threshold[1]
+#define TOOM3_SQR_THRESHOLD       sqr_threshold[2]
 #define FFT_SQR_TABLE             { 0 }
-#define FFT_SQR_THRESHOLD         sqr_threshold[2]
+#define FFT_SQR_THRESHOLD         sqr_threshold[3]
 #define FFT_MODF_SQR_THRESHOLD    fft_modf_sqr_threshold
 #define DC_THRESHOLD              dc_threshold[0]
 #define FIB_THRESHOLD             fib_threshold[0]
