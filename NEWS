@@ -21,6 +21,8 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 Changes between MP version 4.0.1 and 4.1
 
 * Bug fixes.
+* Speed improvements.
+* Upwardly binary compatible with 4.0, 4.0.1, and 3.x versions.
 * Asymptotically fast conversion to/from strings (mpz, mpq, mpn levels), but
   also major speed improvements for tiny operands.
 * mpn_get_str parameter restrictions relaxed.
@@ -30,6 +32,7 @@ Changes between MP version 4.0.1 and 4.1
 * Extended test suite.
 * mpfr is back, with many bug fixes and portability improvements.
 * New function: mpz_ui_sub.
+* New functions: mpz_export, mpz_import.
 * Optimization for nth root functions (mpz_root, mpz_perfect_power_p).
 * Optimization for extended gcd (mpz_gcdext, mpz_invert, mpn_gcdext).
 * Generalized low-level number format, reserving a `nails' part of each

@@ -2,7 +2,7 @@
    quotient.  This is now just a middle layer for calling the new
    internal mpn_tdiv_qr.
 
-Copyright 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001 Free Software
+Copyright 1993, 1994, 1995, 1996, 1997, 1999, 2000, 2001, 2002 Free Software
 Foundation, Inc.
 
 This file is part of the GNU MP Library.

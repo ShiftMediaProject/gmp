@@ -1,6 +1,6 @@
 /* double mpq_get_d (mpq_t src) -- Return the double approximation to SRC.
 
-Copyright 1995, 1996, 2001 Free Software Foundation, Inc.
+Copyright 1995, 1996, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

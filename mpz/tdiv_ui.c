@@ -1,7 +1,7 @@
 /* mpz_tdiv_ui(dividend, divisor_limb) -- Return DIVDEND mod DIVISOR_LIMB.
 
-Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2001 Free Software Foundation,
-Inc.
+Copyright 1991, 1993, 1994, 1996, 1997, 1998, 2001, 2002 Free Software
+Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

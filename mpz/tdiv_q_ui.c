@@ -1,7 +1,8 @@
 /* mpz_tdiv_q_ui(quot, dividend, divisor_limb)
    -- Divide DIVIDEND by DIVISOR_LIMB and store the result in QUOT.
 
-Copyright 1991, 1993, 1994, 1996, 1998, 2001 Free Software Foundation, Inc.
+Copyright 1991, 1993, 1994, 1996, 1998, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 

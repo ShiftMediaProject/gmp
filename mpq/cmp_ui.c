@@ -2,7 +2,7 @@
    negative based on if U > V, U == V, or U < V.  Vn and Vd may have
    common factors.
 
-Copyright 1993, 1994, 1996, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1996, 2000, 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 

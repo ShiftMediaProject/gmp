@@ -1,6 +1,7 @@
 /* mpf_cmp_si -- Compare a float with a signed integer.
 
-Copyright 1993, 1994, 1995, 1999, 2000, 2001 Free Software Foundation, Inc.
+Copyright 1993, 1994, 1995, 1999, 2000, 2001, 2002 Free Software Foundation,
+Inc.
 
 This file is part of the GNU MP Library.
 
