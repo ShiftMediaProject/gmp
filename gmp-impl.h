@@ -2914,12 +2914,19 @@ double mpn_get_d __GMP_PROTO ((mp_srcptr, mp_size_t, mp_size_t, long)) __GMP_ATT
   } while (0)
 #endif
 
-/* On m68k and x86, gcc (and maybe other compilers) can hold doubles in the
-   coprocessor, which means a bigger exponent range than normal, and
+/* On m68k, x86 and amd64, gcc (and maybe other compilers) can hold doubles
+   in the coprocessor, which means a bigger exponent range than normal, and
    depending on the rounding mode, a bigger mantissa than normal.  (See
    "Disappointments" in the gcc manual.)  FORCE_DOUBLE stores and fetches
-   "d" through memory to force any rounding and overflows to occur.  */
-#if (HAVE_HOST_CPU_FAMILY_m68k || HAVE_HOST_CPU_FAMILY_x86)
+   "d" through memory to force any rounding and overflows to occur.
+
+   On amd64, and on x86s with SSE2, gcc (depending on options) uses the xmm
+   registers, where there's no such extra precision and no need for the
+   FORCE_DOUBLE.  We don't bother to detect this since the present uses for
+   FORCE_DOUBLE are only in test programs and default generic C code.  */
+
+#if (HAVE_HOST_CPU_FAMILY_m68k || HAVE_HOST_CPU_FAMILY_x86      \
+     || defined (__amd64__))
 #ifdef __GNUC__
 #define FORCE_DOUBLE(d)  do { __asm__ ("" : "=m" (d) : "0" (d)); } while (0)
 #else
