@@ -89,7 +89,14 @@ MA 02111-1307, USA.  */
    relaxed.  All the places this is used currently call with a<=b though.  */
 
 int
+#if __STDC__
 mpn_jacobi_base (mp_limb_t a, mp_limb_t b, int result_bit1)
+#else
+mpn_jacobi_base (a, b, result_bit1)
+     mp_limb_t a;
+     mp_limb_t b;
+     int       result_bit1;
+#endif
 {
   ASSERT (b & 1);  /* b odd */
   ASSERT (b != 1);
