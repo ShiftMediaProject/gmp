@@ -1,6 +1,6 @@
 /* mpz_invert (inv, x, n).  Find multiplicative inverse of X in Z(N).
    If X has an inverse, return non-zero and store inverse in INVERSE,
-   otherwise, return 0 and put garbage in X.
+   otherwise, return 0 and put garbage in INVERSE.
 
 Copyright (C) 1996 Free Software Foundation, Inc.
 
