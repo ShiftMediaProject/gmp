@@ -22,7 +22,7 @@
 
 AUTOMAKE_OPTIONS = gnu
 
-INCLUDES = -I$(top_srcdir) -I$(top_builddir)
+INCLUDES = -I$(top_srcdir)
 LDADD = libstat.la $(top_builddir)/libgmp.la
 
 EXTRA_PROGRAMS = findlc gen gen.static spect stat
