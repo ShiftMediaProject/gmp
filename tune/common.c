@@ -558,6 +558,20 @@ speed_mpn_divexact_by3 (struct speed_params *s)
   SPEED_ROUTINE_MPN_COPY_CALL(mpn_divexact_by3 (wp, s->xp, s->size));
 }
 
+#if HAVE_NATIVE_mpn_modexact_1_odd
+double
+speed_mpn_modexact_1_odd (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MODEXACT_1_ODD (mpn_modexact_1_odd);
+}
+#endif
+
+double
+speed_mpn_modexact_1c_odd (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_MODEXACT_1C_ODD (mpn_modexact_1c_odd);
+}
+
 
 double
 speed_mpn_dc_divrem_n (struct speed_params *s)
@@ -816,6 +830,15 @@ speed_mpn_gcd_binary (struct speed_params *s)
   SPEED_ROUTINE_MPN_GCD (mpn_gcd_binary);
 }
 
+#if HAVE_NATIVE_mpn_gcd_finda
+double
+speed_mpn_gcd_finda (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCD_FINDA (mpn_gcd_finda);
+}  
+#endif
+
+
 double
 speed_mpn_gcdext (struct speed_params *s)
 {
@@ -845,6 +868,11 @@ double
 speed_mpn_gcd_1 (struct speed_params *s)
 {
   SPEED_ROUTINE_MPN_GCD_1 (mpn_gcd_1);
+}
+double
+speed_mpn_gcd_1N (struct speed_params *s)
+{
+  SPEED_ROUTINE_MPN_GCD_1N (mpn_gcd_1);
 }
 
 

@@ -63,8 +63,9 @@ MA 02111-1307, USA.
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"  /* for the benefit of speed-many.c */
-
+#include "tests.h"
 #include "speed.h"
+
 
 #if !HAVE_DECL_OPTARG
 extern char *optarg;
@@ -173,6 +174,11 @@ const struct routine_t {
   { "mpn_divrem_2",      speed_mpn_divrem_2,        },
   { "mpn_divexact_by3",  speed_mpn_divexact_by3     },
 
+#if HAVE_NATIVE_mpn_modexact_1c_odd
+  { "mpn_modexact_1_odd",  speed_mpn_modexact_1_odd,  FLAG_R },
+#endif
+  { "mpn_modexact_1c_odd", speed_mpn_modexact_1c_odd, FLAG_R },
+
   { "mpn_dc_divrem_n",   speed_mpn_dc_divrem_n      },
   { "mpn_dc_divrem_sb",  speed_mpn_dc_divrem_sb     },
   { "mpn_dc_tdiv_qr",    speed_mpn_dc_tdiv_qr       },
@@ -192,11 +198,15 @@ const struct routine_t {
   { "mpn_popcount",      speed_mpn_popcount         },
   { "mpn_hamdist",       speed_mpn_hamdist          },
 
-  { "mpn_gcd_1",         speed_mpn_gcd_1, FLAG_R_OPTIONAL },
+  { "mpn_gcd_1",         speed_mpn_gcd_1,  FLAG_R_OPTIONAL },
+  { "mpn_gcd_1N",        speed_mpn_gcd_1N, FLAG_R_OPTIONAL },
 
-  { "mpn_gcd",           speed_mpn_gcd              },
-  { "mpn_gcd_binary",    speed_mpn_gcd_binary       },
-  { "find_a",            speed_find_a,        FLAG_NODATA  },
+  { "mpn_gcd",           speed_mpn_gcd                    },
+  { "mpn_gcd_binary",    speed_mpn_gcd_binary             },
+  { "find_a",            speed_find_a,        FLAG_NODATA },
+#if HAVE_NATIVE_mpn_gcd_finda
+  { "mpn_gcd_finda",     speed_mpn_gcd_finda, FLAG_NODATA },
+#endif
 
   { "mpn_gcdext",            speed_mpn_gcdext            },
   { "mpn_gcdext_single",     speed_mpn_gcdext_single     },

@@ -150,11 +150,11 @@ double speed_mpn_divrem_1_div _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1f_div _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1_inv _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1f_inv _PROTO ((struct speed_params *s));
-double speed_mpn_mod_1_div _PROTO ((struct speed_params *s));
-double speed_mpn_mod_1_inv _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_2 _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
+double speed_mpn_gcd_finda _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
+double speed_mpn_gcd_1N _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_binary _PROTO ((struct speed_params *s));
 double speed_mpn_gcd_finda _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext _PROTO ((struct speed_params *s));
@@ -172,6 +172,10 @@ double speed_mpn_kara_sqr_n _PROTO ((struct speed_params *s));
 double speed_mpn_lshift _PROTO ((struct speed_params *s));
 double speed_mpn_mod_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mod_1c _PROTO ((struct speed_params *s));
+double speed_mpn_mod_1_div _PROTO ((struct speed_params *s));
+double speed_mpn_mod_1_inv _PROTO ((struct speed_params *s));
+double speed_mpn_modexact_1_odd _PROTO ((struct speed_params *s));
+double speed_mpn_modexact_1c_odd _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_mul_fft _PROTO ((struct speed_params *s));
@@ -278,6 +282,9 @@ mp_size_t mpn_gcdext_one_single
   _PROTO ((mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
            mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize));
 mp_size_t mpn_gcdext_single
+  _PROTO ((mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
+           mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize));
+mp_size_t mpn_gcdext_double
   _PROTO ((mp_ptr gp, mp_ptr s0p, mp_size_t *s0size,
            mp_ptr up, mp_size_t size, mp_ptr vp, mp_size_t vsize));
 
@@ -640,7 +647,13 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
    SPEED_ROUTINE_MPN_MOD_CALL ((*function) (s->xp, s->size, s->r))
 
 #define SPEED_ROUTINE_MPN_MOD_1C(function) \
-   SPEED_ROUTINE_MPN_MOD_CALL ((*function) (s->xp, s->size, s->r, 0))
+   SPEED_ROUTINE_MPN_MOD_CALL ((*function)(s->xp, s->size, s->r, CNST_LIMB(0)))
+
+#define SPEED_ROUTINE_MPN_MODEXACT_1_ODD(function) \
+  SPEED_ROUTINE_MPN_MOD_CALL (function (s->xp, s->size, s->r));
+
+#define SPEED_ROUTINE_MPN_MODEXACT_1C_ODD(function) \
+  SPEED_ROUTINE_MPN_MOD_CALL (function (s->xp, s->size, s->r, CNST_LIMB(0)));
 
 
 #define SPEED_ROUTINE_MPN_PREINV_MOD_1(function)        \
@@ -973,29 +986,33 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
 
 
 /* Doing an Nx1 gcd with the given r. */
-#define SPEED_ROUTINE_MPN_GCD_1N(function)      \
-  {                                             \
-    unsigned  i;                                \
-    double    t;                                \
-    TMP_DECL (marker);                          \
-                                                \
-    SPEED_RESTRICT_COND (s->size >= 1);         \
-    SPEED_RESTRICT_COND (s->r != 0);            \
-                                                \
-    TMP_MARK (marker);                          \
-                                                \
-    speed_operand_src (s, s->xp, s->size);      \
-    speed_cache_fill (s);                       \
-                                                \
-    speed_starttime ();                         \
-    i = s->reps;                                \
-    do                                          \
-      function (s->xp, s->size, s->r);          \
-    while (--i != 0);                           \
-    t = speed_endtime ();                       \
-                                                \
-    TMP_FREE (marker);                          \
-    return t;                                   \
+#define SPEED_ROUTINE_MPN_GCD_1N(function)              \
+  {                                                     \
+    mp_ptr    xp;                                       \
+    unsigned  i;                                        \
+    double    t;                                        \
+    TMP_DECL (marker);                                  \
+                                                        \
+    SPEED_RESTRICT_COND (s->size >= 1);                 \
+    SPEED_RESTRICT_COND (s->r != 0);                    \
+                                                        \
+    TMP_MARK (marker);                                  \
+    xp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_xp);  \
+    MPN_COPY (xp, s->xp, s->size);                      \
+    xp[0] |= mpn_zero_p (xp, s->size);                  \
+                                                        \
+    speed_operand_src (s, s->xp, s->size);              \
+    speed_cache_fill (s);                               \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      function (xp, s->size, s->r);                     \
+    while (--i != 0);                                   \
+    t = speed_endtime ();                               \
+                                                        \
+    TMP_FREE (marker);                                  \
+    return t;                                           \
   }  
 
 
@@ -1370,7 +1387,7 @@ int speed_routine_count_zeros_setup _PROTO ((struct speed_params *s,
     SPEED_RESTRICT_COND (s->size >= 1);                         \
                                                                 \
     TMP_MARK (marker);                                          \
-    wp = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);          \
+    wp  = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp);         \
     wp2 = SPEED_TMP_ALLOC_LIMBS (s->size, s->align_wp2);        \
                                                                 \
     speed_operand_src (s, s->xp, s->size);                      \
