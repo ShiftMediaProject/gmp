@@ -1,3 +1,12 @@
+2000-04-13  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/rrandomb.c: New file.
+	* mpz/Makefile.am: List it.
+	* mpz/Makefile.in: Regenerate.
+	* Makefile.am: Here too.
+	* Makefile.in: Regenerate.
+	* gmp.h: Declare mpz_rrandomb.
+
 2000-04-12  Linus Nordberg  <linus@swox.se>
 
 	* Makefile.am, demos/Makefile.am, mpbsd/Makefile.am,
