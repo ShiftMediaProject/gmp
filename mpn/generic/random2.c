@@ -20,19 +20,24 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
+#include <stdlib.h>		/* for random(), mrand48() */
+
 #include "gmp.h"
 #include "gmp-impl.h"
 
 #if defined (__hpux) || defined (__alpha)  || defined (__svr4__) || defined (__SVR4)
 /* HPUX lacks random().  DEC OSF/1 1.2 random() returns a double.  */
-long mrand48 ();
 static inline long
-random ()
+myrandom ()
 {
   return mrand48 ();
 }
 #else
-long random ();
+static inline long
+myrandom ()
+{
+  return random ();
+}
 #endif
 
 /* It's a bit tricky to get this right, so please test the code well
@@ -55,11 +60,11 @@ mpn_random2 (mp_ptr res_ptr, mp_size_t size)
   limb = 0;
 
   /* Start off in a random bit position in the most significant limb.  */
-  bit_pos = random () & (BITS_PER_MP_LIMB - 1);
+  bit_pos = myrandom () & (BITS_PER_MP_LIMB - 1);
 
   /* Least significant bit of RAN chooses string of ones/string of zeroes.
      Make most significant limb be non-zero by setting bit 0 of RAN.  */
-  ran = random () | 1;
+  ran = myrandom () | 1;
 
   for (limb_pos = size - 1; limb_pos >= 0; )
     {
@@ -89,6 +94,6 @@ mpn_random2 (mp_ptr res_ptr, mp_size_t size)
 	    }
 	}
       bit_pos -= n_bits;
-      ran = random ();
+      ran = myrandom ();
     }
 }
