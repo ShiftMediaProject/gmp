@@ -41,6 +41,14 @@ mpz_ui_pow_ui (r, b, e)
   mp_limb_t blimb = b;
   mp_limb_t rl;
 
+  if (e == 0)
+    {
+      /* For x^0 we return 1, even if x is 0.  */
+      r->_mp_d[0] = 1;
+      r->_mp_size = 1;
+      return;
+    }
+
   /* Compute b^e as (b^n)^(e div n) * b^(e mod n), where n is chosen such that
      the latter factor is the largest number small enough to fit in a limb.  */
 
@@ -57,17 +65,8 @@ mpz_ui_pow_ui (r, b, e)
 
   if (e == 0)
     {
-      if (blimb == 0)
-	{
-	  /* For 0^x we return 0, unless x is 0.  */
-	  r->_mp_size = 0;
-	}
-      else
-	{
-	  /* For x^0 we return 1, even if x is 0.  */
-	  r->_mp_d[0] = rl;
-	  r->_mp_size = 1;
-	}
+      r->_mp_d[0] = rl;
+      r->_mp_size = rl != 0;
       return;
     }
 
