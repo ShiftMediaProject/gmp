@@ -219,20 +219,22 @@ public:
   { mpfr_set_d(mp, ld, __gmp_default_rounding_mode); return *this; }
   */
 
-  /*
   __gmp_expr & operator=(const char *s)
   { mpfr_set_str(mp, s, mpfr_default_base); return *this; }
   __gmp_expr & operator=(const std::string &s)
   { mpfr_set_str(mp, s.c_str(), mpfr_default_base); return *this; }
 
   // string input/output functions
-  int set_str(const std::string &s, int base)
+  int set_str(const char *s, int base,
+              mp_rnd_t rmode = __gmp_default_rounding_mode)
+  { return mpfr_set_str(mp, s, base); }
+  int set_str(const std::string &s, int base,
+              mp_rnd_t rmode = __gmp_default_rounding_mode)
   { return mpfr_set_str(mp, s.c_str(), base); }
-  */
-  std::string get_str(mp_exp_t *expo, int base, size_t size,
+  std::string get_str(mp_exp_t& expo, int base = 10, size_t size = 0,
 		      mp_rnd_t rmode = __gmp_default_rounding_mode) const
   {
-    __gmp_alloc_cstring temp(mpfr_get_str(0, expo, base, size, mp, rmode));
+    __gmp_alloc_cstring temp(mpfr_get_str(0, &expo, base, size, mp, rmode));
     return std::string(temp.str);
   }
 
