@@ -1,3 +1,19 @@
+2000-07-29  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (ABI and ISA): Add sparc64-*-linux*.
+	* configure.in [sparc64-*-linux*] (gmp_cflags64_gcc): Same flags
+	as under solaris.
+
+	* configure.in (--enable-fft): New option, default "no".
+	* gmp.texi (Build Options): Describe it.
+	* mpn/generic/{mul,mul_n}.c [WANT_FFT]: Use it.
+	* tune/tuneup.c [WANT_FFT]: By default don't probe FFTs if not enabled.
+	* NEWS: Multiplication optionally using FFT.
+
+	* tune/README: Notes on FFT and GCD thresholds, other minor updates.
+
+	* Makefile.am: Expunge the macos generated files update stuff.
+
 2000-07-28  Kevin Ryde  <kevin@swox.se>
 
 	* mpn/x86/*/gmp-mparam.h: Add some FFT thresholds.
@@ -25,7 +41,8 @@
 	* doc/multiplication: Describe it (briefly).
 
 	* gmp-impl.h (FFT_MUL_THRESHOLD etc): New thresholds.
-	(mpn_fft_best_k, mpn_mul_fft, mpn_mul_fft_full): New functions.
+	(mpn_fft_best_k, mpn_fft_next_size, mpn_mul_fft, mpn_mul_fft_full):
+	New functions.
 	(numberof, TMP_ALLOC_TYPE etc, _MP_ALLOCATE_FUNC_TYPE etc,
 	UNSIGNED_TYPE_MAX etc): New macros.
 	
