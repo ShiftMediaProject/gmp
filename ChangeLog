@@ -1,3 +1,8 @@
+2000-08-01  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/tests/try.c (try_init): Account for ALIGNMENTS when sizing
+	source and dest regions.
+
 2000-07-31  Torbjorn Granlund  <tege@swox.com>
 
 	* mpf/get_str.c: Develop three extra digits, not just one.
