@@ -42,6 +42,9 @@ UltraSPARC-1/2 can issue four instructions per cycle, with these restrictions:
 * IANY/IADDLOG/MEM must be insn 1, 2, or 3 in an issue bundle.  Taken branches
   should not be in slot 4, since that makes the delay insn come from separate
   bundle.
+* If two IANY/IADDLOG instructions are to be executed in the same cycle and one
+  of these is setting the condition codes, that instruction must be the second
+  one.
 
 To summarize, ignoring branches, these are the bundles that can reach the peak
 execution speed:
