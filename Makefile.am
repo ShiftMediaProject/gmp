@@ -98,7 +98,7 @@ DISTCLEANFILES = $(nodist_include_HEADERS) asm-syntax.h config.m4 \
 MOSTLYCLEANFILES= gmp.tmp
 
 # Tell gmp.h it's building gmp, not an application, used by windows DLL stuff.
-AM_CPPFLAGS=-D__GMP_WITHIN_GMP
+INCLUDES=-D__GMP_WITHIN_GMP
 
 
 MPF_OBJECTS = mpf/init$U.lo mpf/init2$U.lo mpf/set$U.lo mpf/set_ui$U.lo	    \
