@@ -1,12 +1,14 @@
-INSTALLING GMP
-==============
+
+                          INSTALLING GNU MP
+                          =================
+
 
 These instructions are only for the impatient.  Others should read the install
 instructions in the manual, gmp.info.  Use "info -f gmp.info", or, if you
-don't have info, use type "C-h i g (gmp.info)Top" in emacs.
+don't have info, type "C-u C-h i gmp.info" in emacs.
 
-Here are short instructions how to install MP, and some examples that help you
-get started using MP.
+Here are some brief instructions on how to install MP, and some examples to
+help you get started using MP.
 
 First, you need to compile, and optionally install, MP.  Since you're
 impatient, try this:
@@ -19,9 +21,10 @@ full instructions in the chapter "Installing MP", in the manual.
 Next, you need to try some small test programs, for example the ones below.
 
 In MP programs, all variables need to be initialized before they are assigned,
-and cleared out before program flow leaves the scope in which it was declared.
-Here is an example of a program that reads two numbers from the command line,
-multiplies them, and prints the result to stdout.
+and cleared out before program flow leaves the scope in which they were
+declared.  Here is an example of a program that reads two numbers from the
+command line, multiplies them, and prints the result to stdout.
+
 
     #include <stdio.h>
     #include <gmp.h>         /* All MP programs need to include gmp.h */
@@ -54,7 +57,11 @@ multiplies them, and prints the result to stdout.
     }
 
 
-In practice, that example would be written like this instead:
+This might look tedious, with all the initializing and clearing.  Fortunately
+some of these operations can be combined, and other operations can often be
+avoided.  The example above would be written differently by an experienced GNU
+MP user:
+
 
     #include <stdio.h>
     #include <gmp.h>
@@ -80,26 +87,29 @@ In practice, that example would be written like this instead:
       exit (0);
     }
 
-Finally, you have to compile your test program, and link it with the MP
-library.  Assuming your working directory is still the gmp source directory,
-and that your source file is called example.c, enter:
+Now you have to compile your test program, and link it with the MP library.
+Assuming your working directory is still the gmp source directory, and your
+source file is called example.c, enter:
 
-	gcc -g -I. example.c .libs/libgmp.a
+	gcc -g -I. example.c .libs/libgmp.a -lm
 
+The -lm is normally not needed, since only a few functions in MP use the math
+library.  After installing, the command becomes: gcc -g example.c -lgmp -lm
+MP is libtool based, and you can use that to link if you want.
 
 Now try to run the example:
 
 	./a.out 98365871231256752134 319378318340103345227
 	31415926535897932384618573336104570964418
 
-The functions used here all operate on the domain of signed integers.
-Functions operating on that domain have names starting with "mpz_".  There are
-many more such functions than used in these examples.  See the chapter
-"Integer Functions" in the manual, for a complete list.
+The functions used here all operate on signed integers, and have names
+starting with "mpz_".  There are many more such functions than used in these
+examples.  See the chapter "Integer Functions" in the manual, for a complete
+list.
 
 There are two other main classes of functions in MP.  They operate on rational
 numbers and floating-point numbers, respectively.  The chapters "Rational
-Number Functions", and "Floating-point Functions" documents these classes.
+Number Functions", and "Floating-point Functions" document these classes.
 
 To run a set of tests, do "make check".  This will take a while.
 
@@ -114,3 +124,11 @@ Basics" in the manual.
 
 Some known build problems are noted in the "Installing MP" chapter of
 the manual.  Please report other problems to bug-gmp@gnu.org.
+
+
+
+----------------
+Local variables:
+mode: text
+fill-column: 78
+End:
