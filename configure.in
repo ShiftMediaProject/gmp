@@ -590,6 +590,7 @@ case $host in
     gcc_cflags_abi="-mabi=32"
     gcc_testlist="gcc-mips-o32"
     path="mips32"
+    cc_cflags="-O2 -o32"   # no -g, it disables all optimizations
     extra_functions="umul"
     # this suits both mips32 and mips64
     GMP_INCLUDE_MPN(mips32/mips-defs.m4)
