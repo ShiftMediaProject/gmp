@@ -1,3 +1,8 @@
+2000-04-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/divrem.c: Remove C++ style `//' commented-out code.
+	* mpn/generic/sb_divrem_mn.c: Likewise.
+
 2000-04-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/cdiv_q.c: Change temp allocation for new requirements of
