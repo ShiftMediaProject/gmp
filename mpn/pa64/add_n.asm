@@ -21,7 +21,7 @@ dnl  the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 dnl  MA 02111-1307, USA.
 
 
-dnl  This runs at 2 cycles/limb on PA8000 and 1.75 cycles/limb on PA8500.  It
+dnl  This runs at 2 cycles/limb on PA8000 and 1.6875 cycles/limb on PA8500.  It
 dnl  should be possible to reach the cache bandwith 1.5 cycles/limb at least
 dnl  with PA8500.  The problem now is stalling of the first ADD,DC after LDO,
 dnl  where the processor gets confused about where carry comes from.
