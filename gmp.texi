@@ -1486,9 +1486,9 @@ following commands, where @file{/my/inst/dir} is the install directory (with a
 @file{lib} subdirectory).
 
 @example
-lib /machine:IX86 /def:_libs/libgmp-3.dll-def
+lib /machine:IX86 /def:.libs/libgmp-3.dll-def
 cp libgmp-3.lib /my/inst/dir/lib
-cp _libs/libgmp-3.dll-exp /my/inst/dir/lib/libgmp-3.exp
+cp .libs/libgmp-3.dll-exp /my/inst/dir/lib/libgmp-3.exp
 @end example
 
 MINGW uses the C runtime library @samp{msvcrt.dll} for I/O, so applications
