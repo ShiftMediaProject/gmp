@@ -31,10 +31,6 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 
-/* Multiplicative inverse of 3, modulo 2^BITS_PER_MP_LIMB.
-   0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
-#define INVERSE_3      ((MP_LIMB_T_MAX / 3) * 2 + 1)
-
 #ifndef USE_MORE_MPN
 #if !defined (__alpha) && !defined (__mips)
 /* For all other machines, we want to call mpn functions for the compund
@@ -835,7 +831,7 @@ interpolate3 (A, B, C, D, E,
   tc -= tb + mpn_sub_n (C, C, B, len);
 
   /* d := d/3 */
-  td = (td - mpn_divexact_by3 (D, D, len)) * INVERSE_3;
+  td = (td - mpn_divexact_by3 (D, D, len)) * MODLIMB_INVERSE_3;
 
   /* b, d := b + d, b - d */
 #ifdef HAVE_MPN_ADD_SUB_N
@@ -976,9 +972,9 @@ interpolate3 (A, B, C, D, E,
       c = t - b;
 
       /* d := d/3 */
-      d *= INVERSE_3;
+      d *= MODLIMB_INVERSE_3;
       td = td - (d >> (BITS_PER_MP_LIMB - 1)) - (d*3 < d);
-      td *= INVERSE_3;
+      td *= MODLIMB_INVERSE_3;
 
       /* b, d := b + d, b - d */
       t = b + d;
@@ -1042,7 +1038,7 @@ interpolate3 (A, B, C, D, E,
   b = t;
   b -= c << 3;
   c = (c << 1) - b;
-  d *= INVERSE_3;
+  d *= MODLIMB_INVERSE_3;
   t = b + d;
   d = b - d;
   b = t;
