@@ -681,7 +681,7 @@ getrusage_backwards_p (void)
 
       /* stop after 0.1 seconds and at least 1000 attempts */
       d = 1000000 * (next.ru_utime.tv_sec - start.ru_utime.tv_sec)
-        - (next.ru_utime.tv_usec - start.ru_utime.tv_usec);
+        + (next.ru_utime.tv_usec - start.ru_utime.tv_usec);
       i++;
       if (d > 100000 && i > 1000)
         break;
