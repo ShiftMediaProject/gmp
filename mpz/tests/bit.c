@@ -1,6 +1,6 @@
 /* Test mpz_setbit, mpz_clrbit, mpz_tstbit.
 
-Copyright 1997, 2000 Free Software Foundation, Inc.
+Copyright 1997, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -20,6 +20,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
