@@ -105,7 +105,7 @@ static struct rt zarr[] =
   {z65, 65},
   {z127, 127},
   {z128, 128},
-  {0, NULL}
+  {NULL, 0}
 };
 
 static struct rt farr[] =
@@ -127,7 +127,7 @@ static struct rt farr[] =
   {f65, 65},
   {f127, 127},
   {f128, 128},
-  {0, NULL}
+  {NULL, 0}
 };
   
 
