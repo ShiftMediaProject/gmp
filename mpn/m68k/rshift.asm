@@ -115,8 +115,8 @@ ifelse(scale_available_p,1,`
 ',`
 	movel	s_size, d0
 	asll	#2, d0
-	addl	s_size, s_ptr
-	addl	s_size, res_ptr
+	addl	d0, s_ptr
+	addl	d0, res_ptr
 ')
 
 	clrl	d0			C initialize carry
