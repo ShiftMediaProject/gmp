@@ -684,6 +684,10 @@ AC_TYPE_SIGNAL
 AC_CHECK_TYPES((void))
 AC_C_STRINGIZE
 
+dnl from libtool
+AC_CHECK_LIBM
+AC_SUBST(LIBM)
+
 dnl Checks for library functions.
 dnl -----------------------------
 dnl These are mainly for the benefit of supplementary programs.  The library
