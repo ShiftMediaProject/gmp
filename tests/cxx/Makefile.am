@@ -27,12 +27,14 @@ LDADD = $(top_builddir)/tests/libtests.la \
   $(top_builddir)/libgmpxx.la $(top_builddir)/libgmp.la
 
 if WANT_CXX
-check_PROGRAMS = t-ostream t-locale
+check_PROGRAMS = t-ostream t-locale t-constr t-expr
 TESTS = $(check_PROGRAMS)
 endif
 
 t_ostream_SOURCES = t-ostream.cc
 t_locale_SOURCES = t-locale.cc
+t_constr_SOURCES = t-constr.cc
+t_expr_SOURCES = t-expr.cc
 
 $(top_builddir)/tests/libtests.la:
 	cd $(top_builddir)/tests; $(MAKE) $(AM_MAKEFLAGS) libtests.la
