@@ -3428,7 +3428,7 @@ template <class T>
 inline void __gmp_set_expr
 (mpfr_ptr f, const __gmp_expr<mpf_t, T> &expr)
 {
-  mpq_class temp(expr);
+  mpf_class temp(expr);
   mpfr_set_f(f, temp.get_mpf_t(), __gmpfr_default_rounding_mode);
 }
 
