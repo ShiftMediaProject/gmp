@@ -72,7 +72,6 @@ MA 02111-1307, USA.
 #include "gmp-impl.h"
 
 #include "speed.h"
-#include "sqr_basecase.h"
 
 #if !HAVE_DECL_OPTARG
 extern char *optarg;
@@ -117,8 +116,8 @@ mp_size_t  gcd_accel_threshold[2] = { MP_SIZE_T_MAX };
 mp_size_t  gcdext_threshold[2] = { MP_SIZE_T_MAX };
 
 
-#ifndef KARATSUBA_SQR_MAX
-#define KARATSUBA_SQR_MAX  0 /* meaning no limit */
+#ifndef TUNE_KARATSUBA_SQR_MAX
+#define TUNE_KARATSUBA_SQR_MAX  0 /* meaning no limit */
 #endif
 
 struct param_t {
@@ -626,7 +625,7 @@ all (void)
     static struct param_t  param;
     param.name[0] = "KARATSUBA_SQR_THRESHOLD";
     param.name[1] = "TOOM3_SQR_THRESHOLD";
-    param.max_size[0] = KARATSUBA_SQR_MAX;
+    param.max_size[0] = TUNE_KARATSUBA_SQR_MAX;
     one (speed_mpn_sqr_n, sqr_threshold, numberof(sqr_threshold)-1, &param);
   }
   printf("\n");

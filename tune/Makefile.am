@@ -27,47 +27,84 @@ INCLUDES = -I$(top_srcdir)
 EXTRA_DIST = alpha.asm pentium.asm sparcv9.asm hppa.asm hppa2.asm
 noinst_HEADERS = speed.h
 
-# No dependency on libgmp, so can use libgmptune instead for tune program
-EXTRA_LTLIBRARIES = libspeed.la
-libspeed_la_SOURCES = common.c modlinv.c time.c noop.c mul_n_mpn.c mul_n_open.c
-libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJS)
-libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES)
 
-# Both libspeed and the programs are built static-only since static is
-# fastest and will be preferred by users who care about maximizing speed.
+# The library code is faster static than shared on some systems, so do all
+# tuning and measuring with static, since users who care about maximizing
+# speed will be using that.
 #
-# Actually libtool doesn't seem to pass -static through to gcc, it only
-# chooses the ".a" versions of libtool libraries.  Rerun the gcc link
-# invocation with -static if you want a static link of libc and libm.
-#
+# Libtool doesn't seem to pass -static through to gcc, it only uses it to
+# choose the static versions of libtool libraries.  Rerun the link with
+# -static to get a static link of libc and libm.  This is probably only of
+# interest when measuring libc routines like malloc/free.
+
 LDFLAGS = -static
-LDADD = libspeed.la $(top_builddir)/libgmp.la -lm
+DEPENDENCIES = libspeed.la
+LDADD = $(DEPENDENCIES)
+
+
+EXTRA_LTLIBRARIES = libspeed.la libdummy.la
+
+libspeed_la_SOURCES = common.c modlinv.c time.c noop.c mul_n_mpn.c mul_n_open.c
+libspeed_la_DEPENDENCIES = $(SPEED_CYCLECOUNTER_OBJ)
+libspeed_la_LIBADD = $(libspeed_la_DEPENDENCIES) $(top_builddir)/libgmp.la -lm
+
+# create an ansi2knr rule for sqr_basecase.c in case it's recompiled
+nodist_libdummy_la_SOURCES = sqr_basecase.c
+
 
 EXTRA_PROGRAMS = speed speed-ext tuneup
 
-tuneup_SOURCES = tuneup.c
-tuneup_DEPENDENCIES = libspeed.la libgmptune.a
-tuneup_LDADD = $(tuneup_DEPENDENCIES) -lm
+speed_SOURCES = speed.c
+speed_ext_SOURCES = speed.c
 
-# Don't know how to get tuneup$U.lo to depend on sqr_basecase.h, so just do
-# an explicit make.  A plain "make tuneup" will fail if used directly.
+tuneup_SOURCES = tuneup.c
+nodist_tuneup_SOURCES = $(TUNE_MPN_SRCS) $(TUNE_MPZ_SRCS)
+tuneup_DEPENDENCIES = $(TUNE_SQR_OBJ) libspeed.la
+tuneup_LDADD = $(tuneup_DEPENDENCIES)
+
+
 tune:
-	$(MAKE) $(AM_MAKEFLAGS) sqr_basecase.h tuneup$(EXEEXT)
+	$(MAKE) $(AM_MAKEFLAGS) tuneup$(EXEEXT)
 	./tuneup
 
-allprogs: sqr_basecase.h $(EXTRA_PROGRAMS)
+allprogs: $(EXTRA_PROGRAMS)
 
-
-speed_SOURCES = speed.c
-
-SQR_CLEANFILES = sqr_basecase.c sqr_basecase.h sqr_basecase.asm
 
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LTLIBRARIES) \
-	$(SQR_CLEANFILES) libgmptune.a libgmptmp.a \
+	$(nodist_tuneup_SOURCES) sqr_basecase.c sqr_asm.asm \
 	stg.gnuplot stg.data \
 	mtg.gnuplot mtg.data \
 	fibg.gnuplot fibg.data \
 	graph.gnuplot graph.data
+
+
+# Generating these little files at build time seems better than including
+# them in the distribution, since the list can be changed easily.
+
+TUNE_MPN_SRCS = mul_n.c mul_fft.c mul.c bz_divrem_n.c tdiv_qr.c gcd.c gcdext.c
+TUNE_MPZ_SRCS = fib_ui.c powm.c
+
+$(TUNE_MPN_SRCS):
+	for i in $(TUNE_MPN_SRCS); do \
+	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
+	  echo "#include \"mpn/$$i\"" >>$$i; \
+	done
+
+$(TUNE_MPZ_SRCS):
+	for i in $(TUNE_MPZ_SRCS); do \
+	  echo "#define TUNE_PROGRAM_BUILD 1" >$$i; \
+	  echo "#include \"mpz/$$i\"" >>$$i; \
+	done
+
+sqr_basecase.c:
+	echo '#define TUNE_PROGRAM_BUILD 1' >sqr_basecase.c
+	echo '#define TUNE_PROGRAM_BUILD_SQR 1' >>sqr_basecase.c
+	echo '#include "mpn/sqr_basecase.c"' >>sqr_basecase.c
+
+sqr_asm.asm:
+	echo 'define(KARATSUBA_SQR_THRESHOLD_OVERRIDE,KARATSUBA_SQR_THRESHOLD_MAX)' >sqr_asm.asm
+	echo 'include(../mpn/sqr_basecase.asm)' >>sqr_asm.asm
+
 
 
 # This bit like mpn/Makefile.am
@@ -86,95 +123,11 @@ SUFFIXES = .asm
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	rm -f tmp-$*.s
 .asm.lo:
-	echo "$(COMPILE_FLAGS)"
 	$(M4) $(M4FLAGS) -DPIC -DOPERATION_$* $< >tmp-$*.s
 	$(LIBTOOL) --mode=compile $(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $@
 	$(M4) $(M4FLAGS) -DOPERATION_$* $< >tmp-$*.s
 	$(CCAS) $(COMPILE_FLAGS) tmp-$*.s -o $*.o
 	rm -f tmp-$*.s
-
-
-# Recompiled versions of $(LIBGMPTUNE_OBJS) are always used.  sqr_basecase.o
-# is replaced if it's mpn/generic/sqr_basecase.c (due to the fixed size
-# temporary array), or sqr_basecase.asm with a KARATSUBA_SQR_THRESHOLD_MAX
-# (because that says it normally works only up to KARATSUBA_SQR_THRESHOLD).
-
-SQR_GENERIC_MAX = 200
-
-LIBGMPTUNE_OBJS = \
-  mul_n.o mul_fft.o mul.o \
-  bz_divrem_n.o tdiv_qr.o fib_ui.o powm.o gcd.o gcdext.o
-
-sqr_basecase.h: libgmptune.a
-
-
-# "cp -f" is not portable (eg. it fails on SunOS)
-# "ar r" is going to be a bit fragile because there's more than one mul.o in
-# libgmp.a.
-
-libgmptune.a: $(top_builddir)/libgmp.la $(LIBGMPTUNE_OBJS)
-	rm -f libgmptmp.a
-	eval `$(LIBTOOL) --config | grep '^objdir='` ; \
-		cp $(top_builddir)/$$objdir/libgmp.a libgmptmp.a
-	$(AR) r libgmptmp.a $(LIBGMPTUNE_OBJS)
-	rm -f $(SQR_CLEANFILES)
-	echo "" >sqr_basecase.h
-	if test -f $(top_builddir)/mpn/sqr_basecase.c; then		\
-	  $(MAKE) $(AM_MAKEFLAGS) sqr-basecase-generic;			\
-        else								\
-	  if grep KARATSUBA_SQR_THRESHOLD_MAX				\
-	      $(top_builddir)/mpn/sqr_basecase.asm >/dev/null; then	\
-	    $(MAKE) $(AM_MAKEFLAGS) sqr-basecase-asm;			\
-	  fi								\
-	fi
-	$(RANLIB) libgmptmp.a
-	rm -f libgmptune.a
-	mv libgmptmp.a libgmptune.a
-
-sqr-basecase-generic:
-	cp $(top_builddir)/mpn/sqr_basecase.c .
-	$(MAKE) $(AM_MAKEFLAGS) \
-		CFLAGS='$(CFLAGS) -DKARATSUBA_SQR_THRESHOLD=$(SQR_GENERIC_MAX)' \
-		sqr_basecase.o
-	$(AR) r libgmptmp.a sqr_basecase.o
-	echo '#define KARATSUBA_SQR_MAX  $(SQR_GENERIC_MAX)' >sqr_basecase.h
-
-sqr-basecase-asm:
-	cp $(top_builddir)/mpn/sqr_basecase.asm .
-	$(MAKE) $(AM_MAKEFLAGS) \
-		M4FLAGS='$(M4FLAGS) -DKARATSUBA_SQR_THRESHOLD_OVERRIDE=KARATSUBA_SQR_THRESHOLD_MAX' \
-		sqr_basecase.o
-	ar r libgmptmp.a sqr_basecase.o
-	echo "#define KARATSUBA_SQR_MAX  `sed -n 's/def...(KARATSUBA_SQR_THRESHOLD_MAX, *\([0-9]*\))/\1/p' sqr_basecase.asm`" >sqr_basecase.h
-
-
-mul_n.o: $(top_builddir)/mpn/mul_n.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul_n.c
-
-mul_fft.o: $(top_builddir)/mpn/mul_fft.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul_fft.c
-
-mul.o: $(top_builddir)/mpn/mul.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/mul.c
-
-bz_divrem_n.o: $(top_builddir)/mpn/bz_divrem_n.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/bz_divrem_n.c
-
-tdiv_qr.o: $(top_builddir)/mpn/tdiv_qr.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/tdiv_qr.c
-
-fib_ui.o: $(top_srcdir)/mpz/fib_ui.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_srcdir)/mpz/fib_ui.c
-
-powm.o: $(top_srcdir)/mpz/powm.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_srcdir)/mpz/powm.c
-
-gcd.o: $(top_builddir)/mpn/gcd.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/gcd.c
-
-gcdext.o: $(top_builddir)/mpn/gcdext.c
-	$(COMPILE) -DTUNE_PROGRAM_BUILD=1 -c $(top_builddir)/mpn/gcdext.c
-
 
 
 
