@@ -28,7 +28,9 @@ MA 02111-1307, USA. */
 
 /* Tell the toom3 multiply implementation to call low-level mpn
    functions instead of open-coding operations in C.  */
+#ifndef USE_MORE_MPN
 #define USE_MORE_MPN 1
+#endif
 
 
 /* Run on sun workshop cc. */
