@@ -18,13 +18,17 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2003-01-25  Kevin Ryde  <kevin@swox.se>
+
+	* config.guess (powerpc*-*-*): Remove $dummy.core file when mfpvr
+	fails on NetBSD.
+	(trap): Remove $dummy.core on abnormal termination too.
+
+	* mpfr/*: Update to mpfr cvs 2003-01-25.
+
 2003-01-24  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/ia64/README: Update cycle counts to match current code.
-
-2003-01-25  Kevin Ryde  <kevin@swox.se>
-
-	* mpfr/*: Update to mpfr cvs 2003-01-25.
 
 2003-01-18  Kevin Ryde  <kevin@swox.se>
 
