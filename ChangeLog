@@ -19,7 +19,38 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-04-15  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/generic/divrem_1.c (EXTRACT): Remove.
+
+	* tests/mpz/t-tdiv_ui.c (dump_abort): Accept argument for error string.
+
+	* mpz/rrandomb.c: Nailify.  Needs further work.
+
+	* mpn/generic/mod_1.c: Nailify.
+
+	* gmp-impl.h: Set various *_THRESHOLD values to be used for nails to
+	avoid not yet qualified algorithms.
+	(MPZ_CHECK_FORMAT): Check that nail part is zero.
+
+	* tests/mpz/t-mul.c (main): Test squaring even for huge operands.
+	(base_mul): Nailify.
+	(dump_abort): Accept argument for error string.  Print product
+	difference.
+
+	* mpn/generic/set_str.c: Nailify.
+
+	* gmp-h.in (__GMPN_ADD, __GMPN_SUB): Nailify.
+
 2002-04-14  Torbjorn Granlund  <tege@swox.com>
+
+	* randraw.c (lc): Return non-nonsense return value for seed=0 case.
+	Check for m2exp being non-zero early; remove all other tests of m2exp.
+	Remove redundant MPN_ZERO call.
+	Let mpn_rshift put result in place to avoid extra MPN_COPY.
+	Remove confusing comment before function `lc' describing BBS algorithm.
+	Misc simplification and cleanups.
+	Nailify.  Needs further work.
 
 	* mpz/set_si.c: Nailify.
 	* mpz/set_ui.c: Nailify.
