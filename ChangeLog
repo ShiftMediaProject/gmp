@@ -19,9 +19,53 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
+2002-01-31  Kevin Ryde  <kevin@swox.se>
+
+	* gmpxx.h (cmp): Renamed from "compare".
+
+	* configure.in (AC_C_BIGENDIAN): Don't abort when cross compiling.
+	(PROLOGUE): Allow new style optional second parameter when grepping.
+
+	* acinclude.m4 (GMP_HPC_HPPA_2_0, GMP_ASM_UNDERSCORE,
+	GMP_ASM_ALIGN_LOG, GMP_ASM_LSYM_PREFIX, GMP_ASM_W32, GMP_ASM_X86_MMX):
+	Use $ac_objext for object filenames.
+	(GMP_ASM_UNDERSCORE): Use CCAS to assemble.
+
+	* demos/pexpr-config-h.in: New file.
+	* configure.in: Generate demos/pexpr-config.h.
+	(AC_CHECK_FUNCS): Add clock, cputime, setrlimit, sigaction,
+	sigaltstack, sigstack.
+	* acinclude.m4 (GMP_SUBST_CHECK_FUNCS, GMP_SUBST_CHECK_HEADERS): New
+	macros.
+	* demos/pexpr.c: Use pexpr-config.h, not various #ifdefs.
+	(setup_error_handler): Use signal if sigaction not available, allow
+	for SIGBUS missing on mingw.
+	(main): Use time() for random seed if gettimeofday not available.
+	(cleanup_and_exit): Move SIGFPE out of LIMIT_RESOURCE_USAGE.
+
 2002-01-30  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/set_str.c: Add sub-quadratic code.
+
+2002-01-30  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (GMP_NUMB_MASK, GMP_NAIL_MASK, GMP_NUMB_HIGHBIT,
+	ASSERT_MPN, ASSERT_MP_LIMB_T): New macros.
+
+	* mpn/generic/fib2_ui.c: Use GMP_NUMB_BITS, simplify the data
+	generator program, share __gmp_fib_table initializers between bit
+	sizes, cope with bit sizes other than those specifically setup.
+	* gmp-impl.h (FIB_TABLE_LIMIT, FIB_TABLE_LUCNUM_LIMIT): Corresponding
+	rearrangement of conditionals.
+	* tests/mpz/t-fib_ui.c (check_fib_table): New test.
+
+2002-01-28  Kevin Ryde  <kevin@swox.se>
+
+	* mpz/set_si.c, mpz/iset_si.c: Store to _mp_d[0] unconditionally, use
+	an expression for _mp_size.
+
+	* mpz/init.c, mpz/init2.c, mpz/iset.c, mpq/init.c [__CHECKER__]: Store
+	dummy values to low limbs to stop them appearing uninitialized.
 
 2002-01-26  Kevin Ryde  <kevin@swox.se>
 
