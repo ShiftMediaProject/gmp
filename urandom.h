@@ -19,28 +19,30 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#if defined (__hpux) || defined (__svr4__) || defined (__SVR4)
-/* HPUX lacks random().  */
-static inline mp_limb_t
-urandom ()
-{
-  return mrand48 ();
-}
-#define __URANDOM
-#endif
+/* Use mrand48 on systems that either lacks the function `random',
+   or are known to have non-standard `random'.  */
+#if defined (__hpux) || defined (__svr4__) || defined (__SVR4) \
+ || defined (__osf__)
 
-#if defined (__alpha) && !defined (__URANDOM)
-/* DEC OSF/1 1.2 random() returns a double.  */
+#if defined (__cplusplus)
+extern "C" {
+#endif
 long mrand48 ();
+#if defined (__cplusplus)
+}
+#endif
 static inline mp_limb_t
 urandom ()
 {
-  return mrand48 () | (mrand48 () << 32);
-}
-#define __URANDOM
+#if BITS_PER_MP_LIMB <= 32
+  return mrand48 ();
+#else
+  return mrand48 () ^ ((mp_limb_t) mrand48 () << 32);
 #endif
+}
 
-#if BITS_PER_MP_LIMB == 32 && !defined (__URANDOM)
+#else
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -51,26 +53,16 @@ long random ();
 static inline mp_limb_t
 urandom ()
 {
-  /* random() returns 31 bits, we want 32.  */
-  return random () ^ (random () << 1);
-}
-#define __URANDOM
-#endif
-
-#if BITS_PER_MP_LIMB == 64 && !defined (__URANDOM)
-#if defined (__cplusplus)
-extern "C" {
-#endif
-long random ();
-#if defined (__cplusplus)
-}
-#endif
-static inline mp_limb_t
-urandom ()
-{
-  /* random() returns 31 bits, we want 64.  */
+  /* random() returns 31 bits.  */
+#if BITS_PER_MP_LIMB <= 31
+  return random ();
+#else
+#if BITS_PER_MP_LIMB <= 62
+  return random () ^ ((mp_limb_t) random () << 31);
+#else
   return random () ^ ((mp_limb_t) random () << 31) ^ ((mp_limb_t) random () << 62);
-}
-#define __URANDOM
 #endif
+#endif
+}
 
+#endif
