@@ -27,6 +27,11 @@
 #include <time.h>
 #include <string.h>
 
+#if !HAVE_DECL_OPTARG
+extern char *optarg;
+extern int optind, opterr;
+#endif
+
 #include "gmp.h"
 
 #define MIN(a, b) (a < b ? a : b)
@@ -67,7 +72,7 @@ int main (argc, argv)
   mpz_t z_seed;
   mpz_t z1;
   mpf_t f1;
-  gmp_rand_state s;
+  gmp_randstate_t rstate;
   int c, i;
   double drand;
   long lrand;
@@ -88,7 +93,7 @@ int main (argc, argv)
   } rfunc = RFUNC_mpz_urandomb;
   char *rfunc_str[] =  { "mpz_urandomb", "mpz_urandomm", "mpf_urandomb",
 			 "rand", "random" };
-  gmp_rand_algorithm ralg = GMP_RAND_ALG_DEFAULT;
+  gmp_randalg_t ralg = GMP_RAND_ALG_DEFAULT;
   char *ralg_str[] = { "lc", "bbs" };
 
   mpf_init (f_xf);
@@ -122,7 +127,14 @@ int main (argc, argv)
 	    fprintf (stderr, "gen: bad LC scheme parameters: %s\n", optarg);
 	    exit (1);
 	  }
+#ifdef HAVE_STRTOUL
 	ul_adder = strtoul (str_adder, NULL, 0);
+#elif HAVE_STRTOL
+	ul_adder = (unsigned long int) strtol (str_adder, NULL, 0);
+#else
+	ul_adder = (unsigned long int) atoi (str_adder);
+#endif
+	
 	if (mpz_init_set_str (z_a, str_a, 0))
 	  {
 	    fprintf (stderr, "gen: bad LC scheme parameter `a': %s\n", str_a);
@@ -251,14 +263,14 @@ int main (argc, argv)
     case RFUNC_mpz_urandomm:
       if (! lc_scheme_from_user)
 	{
-	  gmp_rand_init (s, MIN (128, size), ralg);
+	  gmp_randinit (rstate, ralg, MIN (128, size));
 	}
       else
 	{
 	  if (m2exp != 0)
-	    gmp_rand_init_lc_2exp (s, z_a, ul_adder, m2exp);
+	    gmp_randinit_lc_2exp (rstate, z_a, ul_adder, m2exp);
 	  else
-	    gmp_rand_init_lc (s, z_a, ul_adder, z_m);
+	    gmp_randinit_lc (rstate, z_a, ul_adder, z_m);
 	}
       
       if (gmp_errno != GMP_ERROR_NONE)
@@ -269,7 +281,7 @@ int main (argc, argv)
 	    fprintf (stderr, "gen: unsupported algorithm\n");
 	  exit (1);
 	}
-      gmp_rand_seed (s, z_seed);
+      gmp_randseed (rstate, z_seed);
       break;
 
     case RFUNC_rand:
@@ -277,10 +289,14 @@ int main (argc, argv)
       break;
 
     case RFUNC_random:
+#ifdef __FreeBSD__		/* FIXME */
       if (seed_from_user)
 	srandom (seed);
       else
 	srandomdev ();
+#else
+      fprintf (stderr, "gen: unsupported algorithm\n");
+#endif      
       break;
 
     default:
@@ -310,13 +326,19 @@ int main (argc, argv)
       }
   
   /* generate and print */
+#ifdef HAVE_STRTOUL
   n = strtoul (argv[0], (char **) NULL, 10);
+#elif HAVE_STRTOL
+  n = (unsigned long int) strtoul (argv[0], (char **) NULL, 10);
+#else
+  n = (unsigned long int) atoi (argv[0]);
+#endif
   for (f = 0; f < n; f++)
     {
       switch (rfunc)
 	{
 	case RFUNC_mpz_urandomb:
-	  mpz_urandomb (z1, s, size);
+	  mpz_urandomb (z1, rstate, size);
 	  if (binout)
 	    {
 	      /*fwrite ((unsigned int *) z1->_mp_d, 4, 1, stdout);*/
@@ -331,7 +353,7 @@ int main (argc, argv)
 	  break;
 
 	case RFUNC_mpz_urandomm:
-	  mpz_urandomm (z1, s, z_mmax);
+	  mpz_urandomm (z1, rstate, z_mmax);
 	  if (binout)
 	    {
 	      /*fwrite ((unsigned int *) z1->_mp_d, 4, 1, stdout);*/
@@ -346,7 +368,7 @@ int main (argc, argv)
 	  break;
 
 	case RFUNC_mpf_urandomb:
-	  mpf_urandomb (f1, s);
+	  mpf_urandomb (f1, rstate);
 	  if (do_exclude)
 	    if (mpf_cmp (f1, f_xf) >= 0 && mpf_cmp (f1, f_xt) <= 0)
 		break;
@@ -406,7 +428,7 @@ int main (argc, argv)
     {
     case RFUNC_mpz_urandomb:
     case RFUNC_mpf_urandomb:
-      gmp_rand_clear (s);
+      gmp_randclear (rstate);
       break;
     default:
       break;
