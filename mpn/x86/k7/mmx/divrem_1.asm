@@ -383,7 +383,7 @@ L(integer_top):
 	C
 
 	addl	%ebx, %eax         C m*(n2+n1) + nadj, low giving carry flag
-	leal	1(%edi), %ebx      C n2<<32 + m*(n2+n1)
+	leal	1(%edi), %ebx      C n2+1
 	movl	%ebp, %eax	   C d
 
 	C
@@ -458,7 +458,7 @@ L(integer_two_left):
 	C
 
 	addl	%ebx, %eax         C m*(n2+n1) + nadj, low giving carry flag
-	leal	1(%edi), %ebx      C n2<<32 + m*(n2+n1)
+	leal	1(%edi), %ebx      C n2+1
 	movl	%ebp, %eax	   C d
 
 	adcl	%edx, %ebx         C 1 + high(n2<<32 + m*(n2+n1) + nadj) = q1+1
@@ -519,7 +519,7 @@ L(integer_one_left):
 	C
 
 	addl	%ebx, %eax         C m*(n2+n1) + nadj, low giving carry flag
-	leal	1(%edi), %ebx      C n2<<32 + m*(n2+n1)
+	leal	1(%edi), %ebx      C n2+1
 	movl	%ebp, %eax	   C d
 
 	C
