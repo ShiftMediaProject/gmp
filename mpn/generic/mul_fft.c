@@ -6,7 +6,7 @@
    INTERFACES.  IT IS ALMOST GUARANTEED THAT THEY'LL CHANGE OR DISAPPEAR IN
    A FUTURE GNU MP RELEASE.
 
-Copyright 1998, 1999, 2000 Free Software Foundation, Inc.
+Copyright 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -122,7 +122,7 @@ mpn_fft_initl (int **l, int k)
   l[0][0] = 0;
   for (i = 1,K = 2; i <= k; i++,K *= 2)
     {
-      for (j = 0; j < K / 2; j++) 
+      for (j = 0; j < K / 2; j++)
 	{
 	  l[i][j] = 2 * l[i - 1][j];
 	  l[i][K / 2 + j] = 1 + l[i][j];
@@ -146,13 +146,13 @@ mpn_fft_mul_2exp_modF (mp_ptr ap, int e, mp_size_t n, mp_ptr tp)
     MPN_COPY (tp, ap, n + 1);
   d /= BITS_PER_MP_LIMB;		/* now shift of d limbs to the left */
   if (d)
-    { 
+    {
       /* ap[d..n-1] = tp[0..n-d-1], ap[0..d-1] = -tp[n-d..n-1] */
       /* mpn_xor would be more efficient here */
       for (i = d - 1; i >= 0; i--)
 	ap[i] = ~tp[n - d + i];
       cc = 1 - mpn_add_1 (ap, ap, d, 1);
-      if (cc)
+      if (cc != 0)
 	cc = mpn_sub_1 (ap + d, tp, n - d, 1);
       else
 	MPN_COPY (ap + d, tp, n - d);
@@ -185,13 +185,17 @@ mpn_fft_add_modF (mp_ptr ap, mp_ptr bp, int n)
 
   c = ap[n] + bp[n] + mpn_add_n (ap, ap, bp, n);
   if (c > 1)
-    c -= 1 + mpn_sub_1 (ap, ap, n, 1);
-  ap[n] = c;
+    {
+      ap[n] = c - 1;
+      mpn_decr_u (ap, 1);
+    }
+  else
+    ap[n] = c;
 }
 
 
 /* input: A[0] ... A[inc*(K-1)] are residues mod 2^N+1 where
-          N=n*BITS_PER_MP_LIMB 
+          N=n*BITS_PER_MP_LIMB
           2^omega is a primitive root mod 2^N+1
    output: A[inc*l[k][i]] <- \sum (2^omega)^(ij) A[inc*j] mod 2^N+1 */
 
@@ -203,12 +207,12 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
     {
 #ifdef ADDSUB
       if (mpn_addsub_n (Ap[0], Ap[inc], Ap[0], Ap[inc], n + 1) & 1)
-      	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, 1);
+	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, 1);
 #else
       MPN_COPY (tp, Ap[0], n + 1);
       mpn_add_n (Ap[0], Ap[0], Ap[inc],n + 1);
       if (mpn_sub_n (Ap[inc], tp, Ap[inc],n + 1))
-      	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, 1);
+	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, 1);
 #endif
     }
   else
@@ -238,8 +242,8 @@ mpn_fft_fft_sqr (mp_ptr *Ap, mp_size_t K, int **ll,
 
 
 /* input: A[0] ... A[inc*(K-1)] are residues mod 2^N+1 where
-          N=n*BITS_PER_MP_LIMB 
-         2^omega is a primitive root mod 2^N+1 
+          N=n*BITS_PER_MP_LIMB
+         2^omega is a primitive root mod 2^N+1
    output: A[inc*l[k][i]] <- \sum (2^omega)^(ij) A[inc*j] mod 2^N+1 */
 
 static void
@@ -250,21 +254,21 @@ mpn_fft_fft (mp_ptr *Ap, mp_ptr *Bp, mp_size_t K, int **ll,
     {
 #ifdef ADDSUB
       if (mpn_addsub_n (Ap[0], Ap[inc], Ap[0], Ap[inc], n + 1) & 1)
-      	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, 1);
+	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, 1);
 #else
       MPN_COPY (tp, Ap[0], n + 1);
       mpn_add_n (Ap[0], Ap[0], Ap[inc],n + 1);
       if (mpn_sub_n (Ap[inc], tp, Ap[inc],n + 1))
-      	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, 1);
+	Ap[inc][n] = mpn_add_1 (Ap[inc], Ap[inc], n, 1);
 #endif
 #ifdef ADDSUB
       if (mpn_addsub_n (Bp[0], Bp[inc], Bp[0], Bp[inc], n + 1) & 1)
-      	Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, 1);
+	Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, 1);
 #else
       MPN_COPY (tp, Bp[0], n + 1);
       mpn_add_n (Bp[0], Bp[0], Bp[inc],n + 1);
       if (mpn_sub_n (Bp[inc], tp, Bp[inc],n + 1))
-      	Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, 1);
+	Bp[inc][n] = mpn_add_1 (Bp[inc], Bp[inc], n, 1);
 #endif
     }
   else
@@ -320,13 +324,13 @@ mpn_fft_norm (mp_ptr ap, mp_size_t n)
 
 /* a[i] <- a[i]*b[i] mod 2^(n*BITS_PER_MP_LIMB)+1 for 0 <= i < K */
 static void
-mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K) 
+mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 {
   int i;
   int sqr = (ap == bp);
   TMP_DECL(marker);
-  
-  TMP_MARK(marker); 
+
+  TMP_MARK(marker);
 
   if (n >= (sqr ? FFT_MODF_SQR_THRESHOLD : FFT_MODF_MUL_THRESHOLD))
     {
@@ -390,10 +394,10 @@ mpn_fft_mul_modF_K (mp_ptr *ap, mp_ptr *bp, mp_size_t n, int K)
 	      cc = mpn_add_1 (tp, tp, n2, cc);
 	      ASSERT_NOCARRY (mpn_add_1 (tp, tp, n2, cc));
 	    }
-	  a[n] = mpn_sub_n (a, tp, tpn, n) && mpn_add_1 (a, a, n, 1); 
+	  a[n] = mpn_sub_n (a, tp, tpn, n) && mpn_add_1 (a, a, n, 1);
 	}
     }
-  TMP_FREE(marker); 
+  TMP_FREE(marker);
 }
 
 
@@ -418,7 +422,7 @@ mpn_fft_fftinv (mp_ptr *Ap, int K, mp_size_t omega, mp_size_t n, mp_ptr tp)
   else
     {
       int j, K2 = K / 2;
-      mp_ptr *Bp = Ap + K2, tmp; 
+      mp_ptr *Bp = Ap + K2, tmp;
       TMP_DECL(marker);
 
       TMP_MARK(marker);
@@ -445,7 +449,7 @@ static void
 mpn_fft_div_2exp_modF (mp_ptr ap, int k, mp_size_t n, mp_ptr tp)
 {
   int i;
-    
+
   i = 2 * n * BITS_PER_MP_LIMB;
   i = (i - k) % i;
   mpn_fft_mul_2exp_modF (ap, i, n, tp);
@@ -457,7 +461,7 @@ mpn_fft_div_2exp_modF (mp_ptr ap, int k, mp_size_t n, mp_ptr tp)
 
 /* R <- A mod 2^(n*BITS_PER_MP_LIMB)+1, n<=an<=3*n */
 static void
-mpn_fft_norm_modF (mp_ptr rp, mp_ptr ap, mp_size_t n, mp_size_t an) 
+mpn_fft_norm_modF (mp_ptr rp, mp_ptr ap, mp_size_t n, mp_size_t an)
 {
   mp_size_t l;
 
@@ -538,7 +542,7 @@ mpn_mul_fft_internal (mp_ptr op, mp_srcptr n, mp_srcptr m, mp_size_t pl,
     mpn_fft_div_2exp_modF (Ap[i], k + ((K - i) % K) * Mp, nprime, T);
 
   /* addition of terms in result p */
-  MPN_ZERO (T, nprime + 1); 
+  MPN_ZERO (T, nprime + 1);
   pla = l * (K - 1) + nprime + 1; /* number of required limbs for p */
   p = B; /* B has K*(n' + 1) limbs, which is >= pla, i.e. enough */
   MPN_ZERO (p, pla);
@@ -622,7 +626,7 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
   maxLK = (K>BITS_PER_MP_LIMB) ? K : BITS_PER_MP_LIMB;
 
   Nprime = ((2 * M + k + 2 + maxLK) / maxLK) * maxLK; /* ceil((2*M+k+3)/maxLK)*maxLK; */
-  nprime = Nprime / BITS_PER_MP_LIMB; 
+  nprime = Nprime / BITS_PER_MP_LIMB;
   TRACE (printf ("N=%d K=%d, M=%d, l=%d, maxLK=%d, Np=%d, np=%d\n",
 		 N, K, M, l, maxLK, Nprime, nprime));
   if (nprime >= (sqr ? FFT_MODF_SQR_THRESHOLD : FFT_MODF_MUL_THRESHOLD))
@@ -645,8 +649,8 @@ mpn_mul_fft (mp_ptr op, mp_size_t pl,
 
   A = __GMP_ALLOCATE_FUNC_LIMBS (2 * K * (nprime + 1));
   B = A + K * (nprime + 1);
-  Ap = TMP_ALLOC_MP_PTRS (K); 
-  Bp = TMP_ALLOC_MP_PTRS (K); 
+  Ap = TMP_ALLOC_MP_PTRS (K);
+  Bp = TMP_ALLOC_MP_PTRS (K);
   /* special decomposition for main call */
   for (i = 0; i < K; i++)
     {
