@@ -69,16 +69,8 @@ cputime ()
 
 
 mp_limb_t
-#if __STDC__
 refmpn_add_n (mp_ptr res_ptr,
-	       mp_srcptr s1_ptr, mp_srcptr s2_ptr, mp_size_t size)
-#else
-refmpn_add_n (res_ptr, s1_ptr, s2_ptr, size)
-     register mp_ptr res_ptr;
-     register mp_srcptr s1_ptr;
-     register mp_srcptr s2_ptr;
-     mp_size_t size;
-#endif
+	      mp_srcptr s1_ptr, mp_srcptr s2_ptr, mp_size_t size)
 {
   register mp_limb_t x, y, cy;
   register mp_size_t j;
@@ -97,10 +89,10 @@ refmpn_add_n (res_ptr, s1_ptr, s2_ptr, size)
     {
       y = s2_ptr[j];
       x = s1_ptr[j];
-      y += cy;			/* add previous carry to one addend */
-      cy = (y < cy);		/* get out carry from that addition */
-      y = x + y;		/* add other addend */
-      cy = (y < x) + cy;	/* get out carry from that add, combine */
+      y = (y + cy) & GMP_NUMB_MASK;	/* add previous carry to one addend */
+      cy = (y < cy);			/* get out carry from that addition */
+      y = (x + y) & GMP_NUMB_MASK;	/* add other addend */
+      cy = (y < x) + cy;		/* get out carry from that add, combine */
       res_ptr[j] = y;
     }
   while (++j != 0);

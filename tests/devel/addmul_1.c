@@ -89,15 +89,17 @@ refmpn_addmul_1 (res_ptr, s1_ptr, s1_size, s2_limb)
   s1_ptr -= j;
 
   cy_limb = 0;
+  s2_limb <<= GMP_NAIL_BITS;
   do
     {
       umul_ppmm (prod_high, prod_low, s1_ptr[j], s2_limb);
+      prod_low >>= GMP_NAIL_BITS;
 
-      prod_low += cy_limb;
+      prod_low = (prod_low + cy_limb) & GMP_NUMB_MASK;
       cy_limb = (prod_low < cy_limb) + prod_high;
 
       x = res_ptr[j];
-      prod_low = x + prod_low;
+      prod_low = (x + prod_low) & GMP_NUMB_MASK;
       cy_limb += (prod_low < x);
       res_ptr[j] = prod_low;
     }
