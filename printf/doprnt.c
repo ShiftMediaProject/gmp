@@ -252,12 +252,10 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
               break;
             case 'Q':
               {
-                mpq_srcptr q;
-                int        ret;
-                char       *s;
+                int   ret;
+                char  *s;
                 FLUSH ();
-                q = va_arg (ap, mpq_srcptr);
-                s = mpq_get_str (NULL, param.base, q);
+                s = mpq_get_str (NULL, param.base, va_arg (ap, mpq_srcptr));
                 ret = __gmp_doprnt_integer (funs, data, &param, s);
                 (*__gmp_free_func) (s, strlen(s)+1);
                 DOPRNT_ACCUMULATE (ret);
@@ -275,12 +273,10 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
               break;
             case 'Z':
               {
-                mpz_srcptr z;
-                int        ret;
-                char       *s;
+                int   ret;
+                char  *s;
                 FLUSH ();
-                z = va_arg (ap, mpz_srcptr);
-                s = mpz_get_str (NULL, param.base, z);
+                s = mpz_get_str (NULL, param.base, va_arg (ap, mpz_srcptr));
                 ret = __gmp_doprnt_integer (funs, data, &param, s);
                 (*__gmp_free_func) (s, strlen(s)+1);
                 DOPRNT_ACCUMULATE (ret);
@@ -303,20 +299,9 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
           floating:
             switch (type) {
             case 'F':
-              {
-                mpf_srcptr f;
-                char       *s;
-                mp_exp_t   exp;
-                int        ndigits, ret;
-                FLUSH ();
-                f = va_arg (ap, mpf_srcptr);
-                ndigits = __gmp_doprnt_float_digits (&param, f);
-                s = mpf_get_str (NULL, &exp, param.base, ndigits, f);
-                ASSERT_DOPRNT_NDIGITS (param, ndigits, exp);
-                ret = __gmp_doprnt_float (funs, data, &param, s, exp);
-                (*__gmp_free_func) (s, strlen(s)+1);
-                DOPRNT_ACCUMULATE (ret);
-              }
+              FLUSH ();
+              DOPRNT_ACCUMULATE (__gmp_doprnt_mpf (funs, data, &param,
+                                                   va_arg (ap, mpf_srcptr)));
               break;
             case 'L':
 #if HAVE_LONG_DOUBLE
@@ -367,11 +352,11 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             goto next;
             
           case 'n':
-            {
-              int  *p;
-              FLUSH ();
-              p = va_arg (ap, int *);
-              *p = retval;
+            FLUSH ();
+            switch (type) {
+            case 'h': { short *p = va_arg (ap, short *); *p = retval; } break;
+            case 'l': { long  *p = va_arg (ap, long *);  *p = retval; } break;
+            default:  { int   *p = va_arg (ap, int *);   *p = retval; } break;
             }
             goto next;
 
@@ -415,11 +400,26 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
             break;
           case '.':
             seen_precision = 1;
+            param.prec = -1; /* "." alone means all necessary digits */
             value = &param.prec;
             break;
 
           case '*':
-            *value = va_arg (ap, int);
+            {
+              int n = va_arg (ap, int);
+              if (value == &param.width)
+                {
+                  /* negative width means left justify */
+                  if (n < 0)
+                    param.justify = DOPRNT_JUSTIFY_LEFT;
+                  param.width = ABS (n);
+                }
+              else
+                {
+                  /* don't allow negative precision, apart from -1 */
+                  param.prec = MAX (n, -1);
+                }
+            }                
             break;
 
           case '0':
