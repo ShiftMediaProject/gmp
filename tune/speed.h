@@ -40,6 +40,11 @@ MA 02111-1307, USA.
     MPN_ZERO ((ptr)+(oldsize), (newsize)-(oldsize));    \
   } while (0)
 
+/* A mask of the least significant n bits.  Note 1<<32 doesn't give zero on
+   x86 family CPUs, hence the separate case for BITS_PER_MP_LIMB. */
+#define MP_LIMB_T_LOWBITMASK(n) \
+  ((n) == BITS_PER_MP_LIMB ? ~0 : ((mp_limb_t) 1 << (n)) - 1)
+
 
 /* align must be a power of 2 here, usually CACHE_LINE_SIZE is a good choice */
 
@@ -57,6 +62,9 @@ MA 02111-1307, USA.
   (speed_tmp_alloc_adjust \
     (TMP_ALLOC_LIMBS((limbs) + SPEED_TMP_ALLOC_ADJUST_MASK), (align)))
 
+/* Minimum source data limbs available in s.xp and y.sp from speed program.
+   1024 means 4kbytes of data, which should fit in any L1 data cache. */
+#define SPEED_DATA_SIZE   1024
 
 extern double  speed_unittime;
 extern double  speed_cycletime;
@@ -76,6 +84,8 @@ struct speed_params {
   mp_size_t  align_yp;  /* alignment of yp */
   mp_size_t  align_wp;  /* intended alignment of wp */
   mp_size_t  align_wp2; /* intended alignment of wp2 */
+
+  double     time_divisor; /* optionally set by the speed routine */
 
   int        cache;
   unsigned   src_num, dst_num;
@@ -106,6 +116,7 @@ double speed_mpn_divexact_by3 _PROTO ((struct speed_params *s));
 double speed_mpn_divmod_1 _PROTO ((struct speed_params *s));
 double speed_mpn_divrem_1 _PROTO ((struct speed_params *s));
 double speed_mpn_gcd _PROTO ((struct speed_params *s));
+double speed_mpn_gcd_1 _PROTO ((struct speed_params *s));
 double speed_mpn_gcdext _PROTO ((struct speed_params *s));
 double speed_mpn_hamdist _PROTO ((struct speed_params *s));
 double speed_mpn_ior_n _PROTO ((struct speed_params *s));
@@ -686,6 +697,79 @@ void pentium_rdtsc _PROTO ((mp_limb_t p[2]));
                                                                             \
     TMP_FREE (marker);                                                      \
     return t;                                                               \
+  }  
+
+
+#define SPEED_ROUTINE_MPN_GCD_1xN(function)     \
+  {                                             \
+    unsigned  i;                                \
+    double    t;                                \
+    TMP_DECL (marker);                          \
+                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);         \
+    SPEED_RESTRICT_COND (s->r != 0);            \
+                                                \
+    TMP_MARK (marker);                          \
+                                                \
+    SPEED_OPERAND_SRC (s, s->xp, s->size);      \
+    speed_cache_fill (s);                       \
+                                                \
+    speed_starttime ();                         \
+    i = s->reps;                                \
+    do                                          \
+      function (s->xp, s->size, s->r);          \
+    while (--i != 0);                           \
+    t = speed_endtime ();                       \
+                                                \
+    TMP_FREE (marker);                          \
+    return t;                                   \
+  }  
+
+
+/* "function" is run doing 1x1 gcds of "s->size" bits each.  A total of
+   SPEED_DATA_SIZE/2 gcds are run. */
+#define SPEED_ROUTINE_MPN_GCD_1(function)                       \
+  {                                                             \
+    unsigned  i, j;                                             \
+    mp_ptr    p;                                                \
+    mp_limb_t mask;                                             \
+    double    t;                                                \
+    TMP_DECL (marker);                                          \
+                                                                \
+    SPEED_RESTRICT_COND (s->size >= 1);                         \
+    SPEED_RESTRICT_COND (s->size <= mp_bits_per_limb);          \
+                                                                \
+    TMP_MARK (marker);                                          \
+    p = SPEED_TMP_ALLOC (SPEED_DATA_SIZE, s->align_xp);         \
+    MPN_COPY (p, s->xp, SPEED_DATA_SIZE);                       \
+                                                                \
+    mask = MP_LIMB_T_LOWBITMASK (s->size);                      \
+    for (i = 0; i < SPEED_DATA_SIZE; i++)                       \
+      {                                                         \
+        p[i] &= mask;                                           \
+        if (p[i] == 0)                                          \
+          p[i] = 1;                                             \
+      }                                                         \
+                                                                \
+    SPEED_OPERAND_SRC (s, p, SPEED_DATA_SIZE);                  \
+    speed_cache_fill (s);                                       \
+                                                                \
+    speed_starttime ();                                         \
+    i = s->reps;                                                \
+    do                                                          \
+      {                                                         \
+        j = SPEED_DATA_SIZE/2;                                  \
+        do                                                      \
+          function (&p[j-1], 1, p[j+SPEED_DATA_SIZE/2-1]);      \
+        while (--j != 0);                                       \
+      }                                                         \
+    while (--i != 0);                                           \
+    t = speed_endtime ();                                       \
+                                                                \
+    TMP_FREE (marker);                                          \
+                                                                \
+    s->time_divisor = SPEED_DATA_SIZE/2;                        \
+    return t;                                                   \
   }  
 
 #endif
