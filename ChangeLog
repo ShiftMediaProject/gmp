@@ -1,3 +1,13 @@
+2000-01-11  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/configure.in (hppa2.0*-*-*): Move assignment of
+	target_makefile_frag to where it belongs.
+
+1999-12-21  Torbjorn Granlund  <tege@swox.com>
+
+	* longlong.h (v9 umul_ppmm): New #define.
+	(v9 udiv_qrnnd): New #define.
+
 1999-12-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/generic/divmod_1.c: Use invert_limb.
