@@ -1030,9 +1030,12 @@ speed_mpz_bin_uiui (struct speed_params *s)
    the issue rate.  There's only 10 per loop so the code doesn't get too big
    since umul_ppmm is several instructions on some cpus.
 
-   Putting the arguments as "h,l,l,h" gives slightly better code from gcc
+   Putting the arguments as "h,l,l,h" gets slightly better code from gcc
    2.95.2 on x86, it puts only one mov between each mul, not two.  That mov
    though will probably show up as a bogus extra cycle though.
+
+   The measuring function macros are into three parts to avoid overflowing
+   preprocessor expansion space if umul_ppmm is big.
 
    Limitations:
 
@@ -1044,53 +1047,37 @@ speed_mpz_bin_uiui (struct speed_params *s)
    will want to use umul_ppmm.1 to get some randomization into the
    calculation.  The extra xors and fetches will be a slowdown of course.  */
 
-#define SPEED_MACRO_UMUL_PPMM(call)                                     \
-  {                                                                     \
-    mp_limb_t  h, l;                                                    \
-    unsigned   i;                                                       \
-    double     t;                                                       \
-                                                                        \
-    s->time_divisor = 10;                                               \
-                                                                        \
-    h = s->xp[0];                                                       \
-    l = s->yp[0];                                                       \
-                                                                        \
-    switch (s->r) {                                                     \
-    case 1:                                                             \
-      speed_starttime ();                                               \
-      i = s->reps;                                                      \
-      do                                                                \
-        {                                                               \
-          call;  h ^= s->xp_block[0]; l ^= s->yp_block[0];              \
-           call; h ^= s->xp_block[1]; l ^= s->yp_block[1];              \
-           call; h ^= s->xp_block[2]; l ^= s->yp_block[2];              \
-          call;  h ^= s->xp_block[3]; l ^= s->yp_block[3];              \
-           call; h ^= s->xp_block[4]; l ^= s->yp_block[4];              \
-           call; h ^= s->xp_block[5]; l ^= s->yp_block[5];              \
-          call;  h ^= s->xp_block[6]; l ^= s->yp_block[6];              \
-           call; h ^= s->xp_block[7]; l ^= s->yp_block[7];              \
-           call; h ^= s->xp_block[8]; l ^= s->yp_block[8];              \
-          call;  h ^= s->xp_block[9]; l ^= s->yp_block[9];              \
-        }                                                               \
-      while (--i != 0);                                                 \
-      t = speed_endtime ();                                             \
-      break;                                                            \
-                                                                        \
-    default:                                                            \
-      speed_starttime ();                                               \
-      i = s->reps;                                                      \
-      do                                                                \
-        {                                                               \
-          call;                                                         \
-           call;                                                        \
-           call;                                                        \
-          call;                                                         \
-           call;                                                        \
-           call;                                                        \
-          call;                                                         \
-           call;                                                        \
-           call;                                                        \
-          call;                                                         \
+#define SPEED_MACRO_UMUL_PPMM_A \
+  {                             \
+    mp_limb_t  h, l;            \
+    unsigned   i;               \
+    double     t;               \
+                                \
+    s->time_divisor = 10;       \
+                                \
+    h = s->xp[0];               \
+    l = s->yp[0];               \
+                                \
+    switch (s->r) {             \
+    case 1:                     \
+      speed_starttime ();       \
+      i = s->reps;              \
+      do                        \
+        {
+
+#define SPEED_MACRO_UMUL_PPMM_B \
+        }                       \
+      while (--i != 0);         \
+      t = speed_endtime ();     \
+      break;                    \
+                                \
+    default:                    \
+      speed_starttime ();       \
+      i = s->reps;              \
+      do                        \
+        {
+
+#define SPEED_MACRO_UMUL_PPMM_C                                         \
         }                                                               \
       while (--i != 0);                                                 \
       t = speed_endtime ();                                             \
@@ -1104,21 +1091,78 @@ speed_mpz_bin_uiui (struct speed_params *s)
     return t;                                                           \
   }
 
+
 double
 speed_umul_ppmm (struct speed_params *s)
 {
-  SPEED_MACRO_UMUL_PPMM (umul_ppmm (h, l, l, h));
+  SPEED_MACRO_UMUL_PPMM_A;
+  {
+    umul_ppmm (h, l, l, h);  h ^= s->xp_block[0]; l ^= s->yp_block[0];
+     umul_ppmm (h, l, l, h); h ^= s->xp_block[1]; l ^= s->yp_block[1];
+     umul_ppmm (h, l, l, h); h ^= s->xp_block[2]; l ^= s->yp_block[2];
+    umul_ppmm (h, l, l, h);  h ^= s->xp_block[3]; l ^= s->yp_block[3];
+     umul_ppmm (h, l, l, h); h ^= s->xp_block[4]; l ^= s->yp_block[4];
+     umul_ppmm (h, l, l, h); h ^= s->xp_block[5]; l ^= s->yp_block[5];
+    umul_ppmm (h, l, l, h);  h ^= s->xp_block[6]; l ^= s->yp_block[6];
+     umul_ppmm (h, l, l, h); h ^= s->xp_block[7]; l ^= s->yp_block[7];
+     umul_ppmm (h, l, l, h); h ^= s->xp_block[8]; l ^= s->yp_block[8];
+    umul_ppmm (h, l, l, h);  h ^= s->xp_block[9]; l ^= s->yp_block[9];
+  }
+  SPEED_MACRO_UMUL_PPMM_B;
+  {
+    umul_ppmm (h, l, l, h);
+     umul_ppmm (h, l, l, h);
+     umul_ppmm (h, l, l, h);
+    umul_ppmm (h, l, l, h);
+     umul_ppmm (h, l, l, h);
+     umul_ppmm (h, l, l, h);
+    umul_ppmm (h, l, l, h);
+     umul_ppmm (h, l, l, h);
+     umul_ppmm (h, l, l, h);
+    umul_ppmm (h, l, l, h);
+  }
+  SPEED_MACRO_UMUL_PPMM_C;
 }
 
+
 #if HAVE_NATIVE_mpn_umul_ppmm
+
+#if defined (__hppa) && W_TYPE_SIZE == 64
+#define CALL_MPN_UMUL_PPMM  (h = __MPN (umul_ppmm) (h, l, &l))
+#else
+#define CALL_MPN_UMUL_PPMM  (h = __MPN (umul_ppmm) (&l, h, l))
+#endif
+
 double
 speed_mpn_umul_ppmm (struct speed_params *s)
 {
-#if defined (__hppa) && W_TYPE_SIZE == 64
-  SPEED_MACRO_UMUL_PPMM (h = __MPN (umul_ppmm) (h, l, &l));
-#else
-  SPEED_MACRO_UMUL_PPMM (h = __MPN (umul_ppmm) (&l, h, l));
-#endif
+  SPEED_MACRO_UMUL_PPMM_A;
+  {
+    CALL_MPN_UMUL_PPMM;  h ^= s->xp_block[0]; l ^= s->yp_block[0];
+     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[1]; l ^= s->yp_block[1];
+     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[2]; l ^= s->yp_block[2];
+    CALL_MPN_UMUL_PPMM;  h ^= s->xp_block[3]; l ^= s->yp_block[3];
+     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[4]; l ^= s->yp_block[4];
+     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[5]; l ^= s->yp_block[5];
+    CALL_MPN_UMUL_PPMM;  h ^= s->xp_block[6]; l ^= s->yp_block[6];
+     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[7]; l ^= s->yp_block[7];
+     CALL_MPN_UMUL_PPMM; h ^= s->xp_block[8]; l ^= s->yp_block[8];
+    CALL_MPN_UMUL_PPMM;  h ^= s->xp_block[9]; l ^= s->yp_block[9];
+  }
+  SPEED_MACRO_UMUL_PPMM_B;
+  {
+    CALL_MPN_UMUL_PPMM;
+     CALL_MPN_UMUL_PPMM;
+     CALL_MPN_UMUL_PPMM;
+    CALL_MPN_UMUL_PPMM;
+     CALL_MPN_UMUL_PPMM;
+     CALL_MPN_UMUL_PPMM;
+    CALL_MPN_UMUL_PPMM;
+     CALL_MPN_UMUL_PPMM;
+     CALL_MPN_UMUL_PPMM;
+    CALL_MPN_UMUL_PPMM;
+  }
+  SPEED_MACRO_UMUL_PPMM_C;
 }
 #endif
 
@@ -1129,10 +1173,13 @@ speed_mpn_umul_ppmm (struct speed_params *s)
    instructions each.
 
    Note that it's only the division which is measured here, there's no data
-   fetching and no shifting (if the divisor is normalized).
+   fetching and no shifting if the divisor gets normalized.
 
    In speed_udiv_qrnnd with gcc 2.95.2 on x86 the parameters "q,r,r,q,d"
    generate x86 div instructions with nothing in between.
+
+   The measuring function macros are in two parts to avoid overflowing
+   preprocessor expansion space if udiv_qrnnd etc are big.
 
    Limitations:
 
@@ -1143,37 +1190,37 @@ speed_mpn_umul_ppmm (struct speed_params *s)
    randomness of the data used.  Probably the measurement wanted is over
    uniformly distributed numbers, but what's here might not be giving that.  */
 
-#define SPEED_ROUTINE_UDIV_QRNND(normalize, call)                       \
-  {                                                                     \
-    double     t;                                                       \
-    unsigned   i;                                                       \
-    mp_limb_t  q, r, d;                                                 \
-    mp_limb_t  dinv;                                                    \
-                                                                        \
-    s->time_divisor = 10;                                               \
-                                                                        \
-    /* divisor from "r" parameter, or a default */                      \
-    d = s->r;                                                           \
-    if (d == 0)                                                         \
-      d = 0x12345678;                                                   \
-                                                                        \
-    if (normalize)                                                      \
-      {                                                                 \
-        unsigned  norm;                                                 \
-        count_leading_zeros (norm, d);                                  \
-        d <<= norm;                                                     \
-        invert_limb (dinv, d);                                          \
-      }                                                                 \
-                                                                        \
-    q = s->xp[0];                                                       \
-    r = s->yp[0] % d;                                                   \
-                                                                        \
-    speed_starttime ();                                                 \
-    i = s->reps;                                                        \
-    do                                                                  \
-      {                                                                 \
-        call; call; call; call; call;                                   \
-        call; call; call; call; call;                                   \
+#define SPEED_ROUTINE_UDIV_QRNND_A(normalize)           \
+  {                                                     \
+    double     t;                                       \
+    unsigned   i;                                       \
+    mp_limb_t  q, r, d;                                 \
+    mp_limb_t  dinv;                                    \
+                                                        \
+    s->time_divisor = 10;                               \
+                                                        \
+    /* divisor from "r" parameter, or a default */      \
+    d = s->r;                                           \
+    if (d == 0)                                         \
+      d = 0x12345678;                                   \
+                                                        \
+    if (normalize)                                      \
+      {                                                 \
+        unsigned  norm;                                 \
+        count_leading_zeros (norm, d);                  \
+        d <<= norm;                                     \
+        invert_limb (dinv, d);                          \
+      }                                                 \
+                                                        \
+    q = s->xp[0];                                       \
+    r = s->yp[0] % d;                                   \
+                                                        \
+    speed_starttime ();                                 \
+    i = s->reps;                                        \
+    do                                                  \
+      {
+
+#define SPEED_ROUTINE_UDIV_QRNND_B                                      \
       }                                                                 \
     while (--i != 0);                                                   \
     t = speed_endtime ();                                               \
@@ -1188,30 +1235,85 @@ speed_mpn_umul_ppmm (struct speed_params *s)
 double
 speed_udiv_qrnnd (struct speed_params *s)
 {
-  SPEED_ROUTINE_UDIV_QRNND (UDIV_NEEDS_NORMALIZATION,
-                            udiv_qrnnd (q, r, r, q, d));
+  SPEED_ROUTINE_UDIV_QRNND_A (UDIV_NEEDS_NORMALIZATION);
+  {
+    udiv_qrnnd (q, r, r, q, d);
+     udiv_qrnnd (q, r, r, q, d);
+     udiv_qrnnd (q, r, r, q, d);
+    udiv_qrnnd (q, r, r, q, d);
+     udiv_qrnnd (q, r, r, q, d);
+     udiv_qrnnd (q, r, r, q, d);
+    udiv_qrnnd (q, r, r, q, d);
+     udiv_qrnnd (q, r, r, q, d);
+     udiv_qrnnd (q, r, r, q, d);
+    udiv_qrnnd (q, r, r, q, d);
+  }
+  SPEED_ROUTINE_UDIV_QRNND_B;
 }
 
 double
 speed_udiv_qrnnd_preinv (struct speed_params *s)
 {
-  SPEED_ROUTINE_UDIV_QRNND (1, udiv_qrnnd_preinv (q, r, r, q, d, dinv));
+  SPEED_ROUTINE_UDIV_QRNND_A (1);
+  {
+    udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+    udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+    udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+    udiv_qrnnd_preinv (q, r, r, q, d, dinv);
+  }
+  SPEED_ROUTINE_UDIV_QRNND_B;
 }  
 
 double
 speed_udiv_qrnnd_preinv2norm (struct speed_params *s)
 {
-  SPEED_ROUTINE_UDIV_QRNND (1, udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv));
+  SPEED_ROUTINE_UDIV_QRNND_A (1);
+  {
+    udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+    udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+    udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+     udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+    udiv_qrnnd_preinv2norm (q, r, r, q, d, dinv);
+  }
+  SPEED_ROUTINE_UDIV_QRNND_B;
 }
 
 #if HAVE_NATIVE_mpn_udiv_qrnnd
+
+#if defined (__hppa) && W_TYPE_SIZE == 64
+#define CALL_MPN_UDIV_QRNND  (q = __MPN (udiv_qrnnd) (r, q, d, &r))
+#else
+#define CALL_MPN_UDIV_QRNND  (q = __MPN (udiv_qrnnd) (&r, r, q, d))
+#endif
+
 double
 speed_mpn_udiv_qrnnd (struct speed_params *s)
 {
-#if defined (__hppa) && W_TYPE_SIZE == 64
-  SPEED_ROUTINE_UDIV_QRNND (1, q = __MPN (udiv_qrnnd) (r, q, d, &r));
-#else
-  SPEED_ROUTINE_UDIV_QRNND (1, q = __MPN (udiv_qrnnd) (&r, r, q, d));
-#endif
+
+  SPEED_ROUTINE_UDIV_QRNND_A (1);
+  {
+    CALL_MPN_UDIV_QRNND;
+     CALL_MPN_UDIV_QRNND;
+     CALL_MPN_UDIV_QRNND;
+    CALL_MPN_UDIV_QRNND;
+     CALL_MPN_UDIV_QRNND;
+     CALL_MPN_UDIV_QRNND;
+    CALL_MPN_UDIV_QRNND;
+     CALL_MPN_UDIV_QRNND;
+     CALL_MPN_UDIV_QRNND;
+    CALL_MPN_UDIV_QRNND;
+  }
+  SPEED_ROUTINE_UDIV_QRNND_B;
 }
 #endif
