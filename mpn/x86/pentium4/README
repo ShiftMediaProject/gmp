@@ -78,7 +78,7 @@ previous flags-setting instructions.
 
 shll and shrl have a 4 cycle latency, or 8 times the latency of the fastest
 integer instructions (addl, subl, orl, andl, and some more).  shldl and
-shrdl seem to have around 13 cycle latency.
+shrdl seem to have 13 and 15 cycles latency, respectively.  Bizarre.
 
 movq mmx -> mmx does have 6 cycle latency, as noted in the documentation.
 pxor/por or similar combination at 2 cycles latency can be used instead.
