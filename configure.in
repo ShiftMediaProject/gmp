@@ -688,7 +688,7 @@ dnl Checks for header files.
 dnl ------------------------
 AC_HEADER_STDC
 AC_HEADER_TIME
-AC_CHECK_HEADERS(getopt.h unistd.h sys/resource.h sys/sysctl.h sys/time.h sys/times.h)
+AC_CHECK_HEADERS(getopt.h unistd.h sys/resource.h sys/sysctl.h sys/param.h sys/time.h sys/times.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl --------------------------------------------------------------
@@ -701,7 +701,7 @@ dnl -----------------------------
 dnl These are mainly for the benefit of supplementary programs.  The library
 dnl itself doesn't use anything weird.
 
-AC_CHECK_FUNCS(getopt_long getpagesize getrusage gettimeofday popen processor_info strtoul sysconf sysctlbyname times)
+AC_CHECK_FUNCS(getopt_long getpagesize getrusage gettimeofday popen processor_info strtoul sysconf sysctl sysctlbyname times)
 
 dnl Trick automake into thinking we've run AM_C_PROTOTYPES which it wants
 dnl for ansi2knr, and instead use our own test.  (It's only a warning
