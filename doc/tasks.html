@@ -15,7 +15,7 @@
 
 <!-- NB. timestamp updated automatically by emacs -->
 <comment>
-  This file current as of 5 May 2001.  An up-to-date version is available at
+  This file current as of 11 May 2001.  An up-to-date version is available at
   <a href="http://www.swox.com/gmp/tasks.html">http://www.swox.com/gmp/tasks.html</a>.
 </comment>
 
@@ -75,15 +75,12 @@
 
 <h4>Machine Independent Optimization</h4>
 <ul>
-<li> <code>count_leading_zeros</code> returned count is checked for zero in
-     hundreds of places.  Instead check the most significant bit of the
-     operand, and avoid invoking <code>count_leading_zeros</code> if the bit is
-     set.  This is an optimization on all machines, and significant on machines
-     with slow <code>count_leading_zeros</code>.
-<li> <code>count_trailing_zeros</code> is used on more or less uniformly
-     distributed numbers in a couple of places.  For some CPUs
-     <code>count_trailing_zeros</code> is slow and it's probably worth handling
-     the frequently occurring 0 to 2 trailing zeros cases specially.
+<li> <code>mpn_gcdext</code>, <code>mpz_get_d</code>: Don't test
+     <code>count_leading_zeros</code> for zero, instead check the high bit of
+     the operand and avoid invoking <code>count_leading_zeros</code>.  This is
+     an optimization on all machines, and significant on machines with slow
+     <code>count_leading_zeros</code>, though it's possible an already
+     normalized operand might not be encountered very often.
 <li> Reorganize longlong.h so that we can inline the operations even for the
      system compiler.  When there is no such compiler feature, make calls to
      stub functions.  Write such stub functions for as many machines as
@@ -118,11 +115,15 @@
      <code>__gmpz</code> renamings.
 <li> Consider inlining: <code>mpz_[cft]div_ui</code> and maybe
      <code>mpz_[cft]div_r_ui</code>.  A <code>__gmp_divide_by_zero</code>
-     would be needed for the divide by zero test, unless that could be left
-     <code>mpn_mod_1</code>.
-<li> Consider inlining: <code>mpz_fits_*_p</code>.  The unattractive setups
-     for <code>LONG_MAX</code> etc would need to go into gmp.h as
-     <code>__GMP_LONG_MAX</code>, in case the user hasn't provided <limits.h>.
+     would be needed for the divide by zero test, unless that could be left to
+     <code>mpn_mod_1</code> (not sure currently whether all the risc chips
+     provoke the right exception there if using mul-by-inverse).
+<li> Consider inlining: <code>mpz_fits_s*_p</code>.  The setups for
+     <code>LONG_MAX</code> etc would need to go into gmp.h, and on Cray it
+     might, unfortunately, be necessary to forcibly include &lt;limits.h&gt;
+     since there's no apparent way to get <code>SHRT_MAX</code> with an
+     expression (since <code>short</code> and <code>unsigned short</code> can
+     be different sizes).
 <li> <code>mpz_powm</code> and <code>mpz_powm_ui</code> aren't very
      fast on one or two limb moduli, due to a lot of function call
      overheads.  These could perhaps be handled as special cases.
@@ -194,6 +195,13 @@
      gcc 3 doesn't like attaching function attributes to function pointers
      like <code>__gmp_allocate_func</code> (see "(gcc)Attribute Syntax"), this
      has to wait for the future.
+<li> <code>mpf_add</code>: Don't do a copy to avoid overlapping operands
+     unless it's really necessary (currently only sizes are tested, not
+     whether r really is u or v).
+<li> <code>mpf_add</code>: Under the check for v having no effect on the
+     result, perhaps test for r==u and do nothing in that case, rather than
+     currently it looks like an <code>MPN_COPY_INCR</code> will be done to
+     reduce prec+1 limbs to prec.
 </ul>
 
 
@@ -287,6 +295,11 @@
      <code>mpn_sqr_basecase</code>.  This should use a "vertical multiplication
      method", to avoid carry propagation.  splitting one of the operands in
      11-bit chunks.
+<li> 68k, Pentium: <code>mpn_lshift</code> by 31 should use the special rshift
+     by 1 code, and vice versa <code>mpn_rshift</code> by 31 should use the
+     special lshift by 1.  This would be best as a jump across to the other
+     routine, could let both live in lshift.asm and omit rshift.asm on finding
+     <code>mpn_rshift</code> already provided.
 <li> Cray T3E: Experiment with optimization options.  In particular,
      -hpipeline3 seems promising.  We should at least up -O to -O2 or -O3.
 <li> Cray: Variable length arrays seem to be faster than the stack-alloc.c
@@ -314,8 +327,9 @@
 <li> <code>mpz_get_nth_ui</code>.  Return the nth word (not necessarily the
      nth limb).
 <li> <code>mpf_getlimbn</code> similar to <code>mpz_getlimbn</code> and
-     accepting negative N for fraction limbs.  Functions to get the range of
-     limbs available would be wanted before this would be useful.
+     accepting negative N for fraction limbs.  <code>mpf_size</code> would
+     want to be documented and an <code>mpf_exponent</code> added so the range
+     of available limbs can be known.
 <li> Maybe add <code>mpz_crr</code> (Chinese Remainder Reconstruction).
 <li> Let `0b' and `0B' mean binary input everywhere.
 <li> <code>mpz_init</code> and <code>mpq_init</code> could do lazy allocation.
@@ -443,6 +457,10 @@
      possible some attention could be paid to the order of the tests, so a
      main <code>libgmp</code> is only used to construct tests once it seems to
      be good.
+<li> <code>mpf_set_q</code> is very similar to <code>mpf_div</code>, it'd be
+     good for the two to share code.  Perhaps <code>mpf_set_q</code> should
+     make some <code>mpf_t</code> aliases for its numerator and denominator
+     and just call <code>mpf_div</code>.
 </ul>
 
 
@@ -523,6 +541,17 @@ near future, but are at least worth thinking about.
 <li> <code>mpq</code> functions could perhaps check for numerator or
      denominator equal to 1, on the assumption that integers or
      denominator-only values might be expected to occur reasonably often.
+<li> <code>count_trailing_zeros</code> is used on more or less uniformly
+     distributed numbers in a couple of places.  For some CPUs
+     <code>count_trailing_zeros</code> is slow and it's probably worth handling
+     the frequently occurring 0 to 2 trailing zeros cases specially.
+<li> <code>mpf_t</code> might like to let the exponent be undefined when
+     size==0, instead of requiring it 0 as now.  It should be possible to do
+     size==0 tests before paying attention to the exponent.  The advantage is
+     not needing to set exp in the various places a zero result can arise,
+     which avoids some tedium but is otherwise perhaps not too important.
+     Currently <code>mpz_set_f</code> and <code>mpf_cmp_ui</code> depend on
+     exp==0, maybe elsewhere too.
 </ul>
 
 
