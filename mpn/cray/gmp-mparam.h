@@ -23,5 +23,18 @@ MA 02111-1307, USA. */
 #define BYTES_PER_MP_LIMB 8
 #define BITS_PER_LONGINT 64
 #define BITS_PER_INT 64
-#define BITS_PER_SHORTINT 32
+#define BITS_PER_SHORTINT 64
 #define BITS_PER_CHAR 8
+
+#define UMUL_TIME	 519
+#define UDIV_TIME	2360
+
+#define KARATSUBA_SQR_THRESHOLD   1000 /* failed to determine */
+#define TOOM3_MUL_THRESHOLD       2000 /* failed to determine */
+#define KARATSUBA_SQR_THRESHOLD    114 /* small due to sqr_basecase slowness */
+#define TOOM3_SQR_THRESHOLD        228 /* small due to sqr_basecase slowness */
+#define DC_THRESHOLD              5000 /* failed to determine */
+#define POWM_THRESHOLD              55
+#define FIB_THRESHOLD              225
+#define GCD_ACCEL_THRESHOLD          3
+#define GCDEXT_THRESHOLD            86
