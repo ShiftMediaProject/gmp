@@ -145,9 +145,6 @@ MA 02111-1307, USA.
 #undef HAVE_MPFR
 #endif
 
-/* bits per mp_limb_t, if not in gmp-mparam.h */
-#undef BITS_PER_MP_LIMB
-
 /* bits per unsigned long, if not in gmp-mparam.h */
 #undef BITS_PER_ULONG
 

@@ -1378,18 +1378,24 @@ fi
 
 dnl  GMP_C_SIZES
 dnl  -----------
-dnl  Determine some sizes, if not alredy provided by gmp-mparam.h.  These
-dnl  are needed by GMP at preprocessing time, for use in #if conditionals.
+dnl  Determine some sizes, if not alredy provided by gmp-mparam.h.
 dnl  $gmp_mparam_source is the selected gmp-mparam.h.
 dnl
-dnl  If some assembler code depends on a particular limb size it's probably
+dnl  BITS_PER_MP_LIMB, BYTES_PER_MP_LIMB and BITS_PER_ULONG are needed at
+dnl  preprocessing time when building the library, for use in #if
+dnl  conditionals.
+dnl
+dnl  BITS_PER_MP_LIMB is also wanted as a plain constant for some macros in
+dnl  the generated gmp.h, and is instantiated as __GMP_BITS_PER_MP_LIMB.
+dnl
+dnl  If some assembler code depends on a particular type size it's probably
 dnl  best to put explicit #defines for these in gmp-mparam.h.  That way if
 dnl  strange compiler options change the size then a mismatch will be
 dnl  detected by t-constants.c rather than only by the code crashing or
 dnl  giving wrong results.
 dnl
 dnl  None of the assembler code depends on BITS_PER_ULONG currently, so it's
-dnl  just as easy to let configure find it's size as put in explicit values.
+dnl  just as easy to let configure find its size as to put explicit values.
 dnl
 dnl  The tests here assume bits=8*sizeof, but that might not be universally
 dnl  true.  It'd be better to probe for how many bits seem to work, like
@@ -1399,26 +1405,25 @@ dnl  always have the right values put in gmp-mparam.h explicitly.
 dnl
 dnl  Notice the use of gmp-h.in, since gmp.h isn't instantiated yet.
 dnl  AC_CHECK_SIZEOF includes confdefs.h, which gives the right
-dnl  _LONG_LONG_LIMB setting.  __GMP_WITHIN_CONFIGURE ensures the #undef
-dnl  template in gmp-h.in doesn't undo it.
+dnl  _LONG_LONG_LIMB setting.  __GMP_WITHIN_CONFIGURE ensures the template
+dnl  parts of gmp-h.in don't get used.
 
 AC_DEFUN(GMP_C_SIZES,
-[if   grep "^#define BITS_PER_MP_LIMB"  $gmp_mparam_source >/dev/null \
+[__GMP_BITS_PER_MP_LIMB=[`sed -n 's/^#define BITS_PER_MP_LIMB[ 	][ 	]*\([0-9]*\).*$/\1/p' $gmp_mparam_source`]
+if test -n "$__GMP_BITS_PER_MP_LIMB" \
    && grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
 else
   AC_CHECK_SIZEOF(mp_limb_t,,
 [#include <stdio.h>
-#define __GMP_WITHIN_CONFIGURE 1
+#define __GMP_WITHIN_CONFIGURE 1 /* ignore template stuff */
+#define __GMP_BITS_PER_MP_LIMB 0 /* dummy for mpf_get_prec etc inlines */
 #include "$srcdir/gmp-h.in"
 ])
   if test "$ac_cv_sizeof_mp_limb_t" = 0; then
     AC_MSG_ERROR([some sort of compiler problem, mp_limb_t doesn't seem to work])
   fi
-
-  if grep "^#define BITS_PER_MP_LIMB"  $gmp_mparam_source >/dev/null; then : ;
-  else
-    AC_DEFINE_UNQUOTED(BITS_PER_MP_LIMB,  (8 * $ac_cv_sizeof_mp_limb_t),
-                       [bits per mp_limb_t, if not in gmp-mparam.h])  
+  if test -z "$__GMP_BITS_PER_MP_LIMB"; then
+    __GMP_BITS_PER_MP_LIMB="(8*$ac_cv_sizeof_mp_limb_t)"
   fi
   if grep "^#define BYTES_PER_MP_LIMB" $gmp_mparam_source >/dev/null; then : ;
   else
@@ -1426,6 +1431,7 @@ else
                        [bytes per mp_limb_t, if not in gmp-mparam.h])
   fi
 fi
+AC_SUBST(__GMP_BITS_PER_MP_LIMB)
 
 if grep "^#define BITS_PER_ULONG" $gmp_mparam_source >/dev/null; then : ;
 else
