@@ -4428,7 +4428,7 @@ cat >$CONFIG_STATUS <<EOF
 config_files="\\
   Makefile mpf/Makefile mpz/Makefile mpn/Makefile mpq/Makefile
   mpf/tests/Makefile mpz/tests/Makefile mpq/tests/Makefile tests/Makefile
-  tests/rand/Makefile demos/Makefile mpbsd/Makefile"
+  tests/rand/Makefile demos/Makefile mpbsd/Makefile mpbsd/tests/Makefile"
 config_headers="\\
   config.h:config.in"
 config_links="\\
@@ -4529,6 +4529,7 @@ Try \\\`$CONFIG_STATUS --help' for more information."; exit 1 ;;
   'tests/rand/Makefile' ) CONFIG_FILES="\$CONFIG_FILES tests/rand/Makefile" ;;
   'demos/Makefile' ) CONFIG_FILES="\$CONFIG_FILES demos/Makefile" ;;
   'mpbsd/Makefile' ) CONFIG_FILES="\$CONFIG_FILES mpbsd/Makefile" ;;
+  'mpbsd/tests/Makefile' ) CONFIG_FILES="\$CONFIG_FILES mpbsd/tests/Makefile" ;;
   '$gmp_links' ) CONFIG_LINKS="\$CONFIG_LINKS $gmp_links" ;;
   'default-1' ) CONFIG_COMMANDS="\$CONFIG_COMMANDS default-1" ;;
   'default-2' ) CONFIG_COMMANDS="\$CONFIG_COMMANDS default-2" ;;
