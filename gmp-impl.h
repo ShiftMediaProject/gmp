@@ -980,28 +980,14 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
   } while (0)
 
 
-/* mpn +/- limb, in-place and expecting no carry (or borrow). */
+/* MPN_INCR_U does {ptr,size} += n, expecting no carry out.  In a normal
+   build the size isn't checked, the carry is propagated as far as it needs
+   to go.  MPN_DECR_U is similar, doing {ptr,size} -= n, expecting no borrow
+   out.
 
-#define mpn_incr_u(p,incr) \
-  do { mp_limb_t __x; mp_ptr __p = (p);			\
-    __x = *__p + (incr);				\
-    *__p = __x;						\
-    if (__x < (incr))					\
-      while (++(*(++__p)) == 0)				\
-        ;						\
-  } while (0)
-
-#define mpn_decr_u(p,incr) \
-  do { mp_limb_t __x; mp_ptr __p = (p);			\
-    __x = *__p;						\
-    *__p = __x - (incr);				\
-    if (__x < (incr))					\
-      while ((*(++__p))-- == 0)				\
-        ;						\
-  } while (0)
-
-/* The following take an intended size for the mpn being incremented, so
-   assertions can guard against a carry or borrow out.
+   On random data, usually only one or two limbs of {ptr,size} need to be
+   used, so there's no need for any sophisticated looping, just something
+   compact and sensible.
 
    FIXME: Implement MPN_{INCR,DECR}_U with a block of code like mpn_incr_u
    with the assertions builtin, rather than using the separate add_1 and
@@ -1010,14 +996,82 @@ mpn_zero_p (mp_srcptr p, mp_size_t n)
    FIXME: Switch all code from mpn_{incr,decr}_u to MPN_{INCR,DECR}_U,
    declaring their operand sizes, then remove the former.  */
 
+#if defined (__GNUC__) && (defined (__i386__) || defined (__i486__))    \
+  && W_TYPE_SIZE == 32 && ! defined (NO_ASM) && ! WANT_ASSERT
+/* Better flags handling than the generic C gives on i386, saving a few
+   bytes of code and maybe a cycle or two.  aors is an add or sub, iord is
+   an inc or dec, and jiord is a jump for overflow of iord.  */
+
+#define MPN_IORD_U(ptr, n, aors, iord, jiord)                   \
+  do {                                                          \
+    mp_ptr  __dummy;                                            \
+    if (__builtin_constant_p (n) && (n) == 1)                   \
+      {                                                         \
+        __asm__ __volatile__                                    \
+          (ASM_L(top) ":\n"                                     \
+              iord  "   (%0)\n"                                 \
+           "  leal      4(%0), %0\n"                            \
+              jiord " " ASM_L(top) "\n"                         \
+           : "=r" (__dummy) : "0" (ptr) : "memory");            \
+      }                                                         \
+    else                                                        \
+      {                                                         \
+        __asm__ __volatile__                                    \
+          (   aors  "   %2, (%0)\n"                             \
+           "  jnc   "   ASM_L(done) "\n"                        \
+           ASM_L(top) ":\n"                                     \
+           "  addl      $4, %0\n"                               \
+              iord  "   (%0)\n"                                 \
+              jiord " " ASM_L(top) "\n"                         \
+           ASM_L(done) ":\n"                                    \
+           : "=r" (__dummy) : "0" (ptr), "ri" (n) : "memory");  \
+      }                                                         \
+  } while (0)
+
+#define MPN_INCR_U(ptr, size, n)  MPN_IORD_U (ptr, n, "addl", "incl",     "jz")
+#define MPN_DECR_U(ptr, size, n)  MPN_IORD_U (ptr, n, "subl", "subl $1,", "jc")
+#define mpn_incr_u(ptr, n)  MPN_INCR_U (ptr, 0, n)
+#define mpn_decr_u(ptr, n)  MPN_DECR_U (ptr, 0, n)
+#endif
+
+#ifndef mpn_incr_u
+#define mpn_incr_u(p,incr) \
+  do { mp_limb_t __x; mp_ptr __p = (p);			\
+    __x = *__p + (incr);				\
+    *__p = __x;						\
+    if (__x < (incr))					\
+      while (++(*(++__p)) == 0)				\
+        ;						\
+  } while (0)
+#endif
+
+#ifndef mpn_decr_u
+#define mpn_decr_u(p,incr) \
+  do { mp_limb_t __x; mp_ptr __p = (p);			\
+    __x = *__p;						\
+    *__p = __x - (incr);				\
+    if (__x < (incr))					\
+      while ((*(++__p))-- == 0)				\
+        ;						\
+  } while (0)
+#endif
+
+#ifndef MPN_INCR_U
 #if WANT_ASSERT
 #define MPN_INCR_U(ptr, size, n) \
   ASSERT_NOCARRY (mpn_add_1 (ptr, ptr, size, n))
+#else
+#define MPN_INCR_U(ptr, size, n)   mpn_incr_u (ptr, n)
+#endif
+#endif
+
+#ifndef MPN_DECR_U
+#if WANT_ASSERT
 #define MPN_DECR_U(ptr, size, n) \
   ASSERT_NOCARRY (mpn_sub_1 (ptr, ptr, size, n))
 #else
-#define MPN_INCR_U(ptr, size, n)   mpn_incr_u (ptr, n)
 #define MPN_DECR_U(ptr, size, n)   mpn_decr_u (ptr, n)
+#endif
 #endif
 
 
