@@ -1,5 +1,10 @@
 2000-11-09  Kevin Ryde  <kevin@swox.se>
 
+	* mpn/x86/pentium/mul_1.asm: Unroll 2x, saving 1 c/l when in L1.
+	Add 1c entrypoint.
+	* mpn/x86/pentium/aorsmul_1.asm: Add 1c entrypoints, shave a couple
+	of cycles at entry and exit.
+
 	* configure.in (power1,2,2sc): Support these as synonyms for plain
 	power.
 
