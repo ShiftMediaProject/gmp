@@ -1,6 +1,6 @@
 /* Test assembler support for --enable-profiling=instrument.
 
-Copyright 2002 Free Software Foundation, Inc.
+Copyright 2002, 2003 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -147,6 +147,12 @@ check (void)
 #if HAVE_NATIVE_mpn_add_nc
   pre ("mpn_add_nc");
   mpn_add_nc (wp, xp, yp, size, CNST_LIMB(0));
+  post ();
+#endif
+
+#if HAVE_NATIVE_mpn_addlsh1_n
+  pre ("mpn_addlsh1_n");
+  mpn_addlsh1_n (wp, xp, yp, size);
   post ();
 #endif
 
@@ -306,10 +312,22 @@ check (void)
                                refmpn_invert_limb (GMP_NUMB_MAX));
   post ();
 
-#if USE_preINV_DIVREM_1 || HAVE_NATIVE_mpn_preinv_divrem_1
+#if USE_PREINV_DIVREM_1 || HAVE_NATIVE_mpn_preinv_divrem_1
   pre ("mpn_preinv_divrem_1");
   mpn_preinv_divrem_1 (wp, (mp_size_t) 0, xp, size, GMP_NUMB_MAX,
                        refmpn_invert_limb (GMP_NUMB_MAX), 0);
+  post ();
+#endif
+
+#if HAVE_NATIVE_mpn_rsh1add_n
+  pre ("mpn_rsh1add_n");
+  mpn_rsh1add_n (wp, xp, yp, size);
+  post ();
+#endif
+
+#if HAVE_NATIVE_mpn_rsh1sub_n
+  pre ("mpn_rsh1sub_n");
+  mpn_rsh1sub_n (wp, xp, yp, size);
   post ();
 #endif
 
@@ -334,6 +352,18 @@ check (void)
   pre ("mpn_sub_n");
   mpn_sub_n (wp, xp, yp, size);
   post ();
+
+#if HAVE_NATIVE_mpn_sub_nc
+  pre ("mpn_sub_nc");
+  mpn_sub_nc (wp, xp, yp, size, CNST_LIMB(0));
+  post ();
+#endif
+
+#if HAVE_NATIVE_mpn_sublsh1_n
+  pre ("mpn_sublsh1_n");
+  mpn_sublsh1_n (wp, xp, yp, size);
+  post ();
+#endif
 
 #if HAVE_NATIVE_mpn_udiv_qrnnd
   pre ("mpn_udiv_qrnnd");
