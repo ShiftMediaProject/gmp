@@ -1,6 +1,6 @@
 2001-04-13  Kevin Ryde  <kevin@swox.se>
 
-	* ltmain.sh, aclocal.m4, configure: Update to libtool 1.3d.
+	* ltmain.sh, aclocal.m4, configure, config.in: Update to libtool 1.3d.
 	* configure.in: Change ac_ to lt_ in lt_cv_archive_cmds_need_lc and
 	lt_cv_proc_cc_pic.
 
