@@ -46,6 +46,11 @@ MA 02111-1307, USA. */
 #define __gmp_signed
 #endif
 
+/* FIXME: When gmp.h is used within the gmp build, it'd be good to take the
+   definition of inline from config.h.  That would let mpn_add etc below get
+   inlined on non-gcc compilers.  Of course in user programs gmp.h can only
+   rely on preprocessor defines to detect support for inline.  */
+
 #if defined (__GNUC__)
 #define __gmp_inline __inline__
 #else
