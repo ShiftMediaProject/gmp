@@ -247,9 +247,7 @@ case ${target} in
   arm*-*-*)
     path="arm"
     ;;
-changequote(,)dnl
-  sparcv9*-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*)
-changequote([, ])dnl
+  [sparcv9*-*-solaris2.[789]* | sparc64*-*-solaris2.[789]* | ultrasparc*-*-solaris2.[789]*])
     family=sparc
     if test -n "$CC64"; then
       path="sparc64"
@@ -288,46 +286,36 @@ changequote([, ])dnl
   hppa*-*-*)					#assume pa7100
     path="hppa/hppa1_1/pa7100 hppa/hppa1_1 hppa"
     extra_functions="udiv_qrnnd";;
-changequote(,)dnl
-  cray2-cray-unicos* | [xy]mp-cray-unicos* | [ctj]90-cray-unicos*)
-changequote([, ])dnl
+  [cray2-cray-unicos* | [xy]mp-cray-unicos* | [ctj]90-cray-unicos*])
     path="cray";;
-changequote(,)dnl
-  f30[01]-fujitsu-sysv*)
-changequote([, ])dnl
+  [f30[01]-fujitsu-sysv*])
     path=fujitsu;;
   alphaev5*-*-*) path="alpha/ev5 alpha"; extra_functions="invert-limb cntlz";;
   alpha*-*-*) path="alpha"; extra_functions="invert-limb cntlz";;
   am29000*-*-*) path="am29000";;
   a29k*-*-*) path="am29000";;
 
-
-
 # Amd and Intel x86 configurations
-changequote(,)dnl
-  i[34]86*-*-*)
-changequote([, ])dnl
+  [i[34]86*-*-*])
 	path="x86"
 	family=x86;;
   i586*-*-* | pentium-*-*)
 	path="x86/pentium x86"
 	family=x86;;
   pentiummmx-*-*)
-	path="x86/pentium"
-	GMP_CHECK_ASM_MMX(path="$path x86/mmx")
-	path="$path x86"
+	path=
+	GMP_CHECK_ASM_MMX(path="$path x86/pentium/mmx")
+	path="$path x86/pentium x86"
 	family=x86;;
   i686*-*-* | pentiumpro-*-*)
 	path="x86/p6 x86"
 	gmp_mulfunc_files="aorsmul_1"
 	gmp_mf_aorsmul_1="addmul_1 submul_1"
 	family=x86;;
-changequote(,)dnl
-  pentium[23]-*-*)
-changequote([, ])dnl
-	path="x86/p6"
-	GMP_CHECK_ASM_MMX(path="$path x86/mmx")
-	path="$path x86"
+  [pentium[23]-*-*])
+	path=
+	GMP_CHECK_ASM_MMX(path="$path x86/p6/mmx")
+	path="x86/p6 x86"
 	gmp_mulfunc_files="aorsmul_1"
 	gmp_mf_aorsmul_1="addmul_1 submul_1"
 	family=x86;;
@@ -335,10 +323,8 @@ changequote([, ])dnl
 	GMP_CHECK_ASM_MMX(tmp_mmx=yes, tmp_mmx=no)
 
 	path=
-	test "$tmp_mmx" = "yes" && path="x86/k6/mmx"
-	path="$path x86/k6"
-	test "$tmp_mmx" = "yes" && path="$path x86/mmx"
-	path="$path x86"
+	test "$tmp_mmx" = "yes" && path="$path x86/k6/mmx"
+	path="$path x86/k6 x86"
 
 	gmp_mulfunc_files="aors_n aorsmul_1"
 	gmp_mf_aors_n="add_n sub_n"
@@ -352,9 +338,9 @@ changequote([, ])dnl
 
 	family=x86;;
   athlon-*-*)
-	path="x86/k7"
-	GMP_CHECK_ASM_MMX(path="$path x86/mmx")
-	path="$path x86"
+	path=
+	GMP_CHECK_ASM_MMX(path="$path x86/k7/mmx")
+	path="x86/k7 x86"
 	gmp_mulfunc_files="aors_n aorsmul_1"
 	gmp_mf_aors_n="add_n sub_n"
 	gmp_mf_aorsmul_1="addmul_1 submul_1"
@@ -362,10 +348,8 @@ changequote([, ])dnl
   i960*-*-*) path="i960";;
 
 # Motorola 68k configurations.  Let m68k mean 68020-68040.
-changequote(,)dnl
-  m680[234]0*-*-* | m68k*-*-* | \
-changequote([, ])dnl
-  m68*-next-nextstep*)		# Nexts are at least '020
+  [m680[234]0*-*-* | m68k*-*-* | \
+  m68*-next-nextstep*])		# Nexts are at least '020
     path="m68k/mc68020 m68k"
     family=m68k
     ;;
@@ -391,9 +375,7 @@ changequote([, ])dnl
   sh-*-*) path="sh";;
   sh2-*-*) path="sh/sh2 sh";;
 
-changequote(,)dnl
-  mips[34]*-*-*) path="mips3";;
-changequote([, ])dnl
+  [mips[34]*-*-*]) path="mips3";;
   mips*-*-irix6*) path="mips3";;
   mips*-*-*) path="mips2";;
 
@@ -406,9 +388,7 @@ changequote([, ])dnl
 esac
 
 case ${target} in
-changequote(,)dnl
-  i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*)
-changequote([, ])dnl
+  [i?86*-*-* | k[5-8]*-*-* | pentium*-*-* | athlon-*-*])
     extra_functions="$extra_functions copyi copyd";;
 esac
 
