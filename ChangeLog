@@ -1,5 +1,11 @@
 2000-10-02  Torbjorn Granlund  <tege@swox.com>
 
+	* mpn/mips3/gmp-mparam.h: Retune for both gcc and cc.
+
+	* mpn/generic/mul_n.c (USE_MORE_MPN): Remove exception for __mips.
+	(interpolate3): Cast mp_limb_t variables to mp_limb_signed_t
+	when testing sign bit.
+
 	* mpn/alpha/ev6/gmp-mparam.h: Retune.
 	* mpn/powerpc32/gmp-mparam.h: Retune.
 	* mpn/powerpc64/gmp-mparam.h: Retune.
