@@ -27,6 +27,10 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include <string.h>
 
+#if HAVE_NL_TYPES_H
+#include <nl_types.h>  /* for nl_item (on netbsd 1.4.1 at least) */
+#endif
+
 #if HAVE_LANGINFO_H
 #include <langinfo.h>  /* for nl_langinfo */
 #endif
