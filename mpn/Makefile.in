@@ -237,7 +237,7 @@ nodist_EXTRA_libmpn_la_SOURCES = \
   cmp.c com_n.c copyd.c copyi.c						    \
   dc_divrem_n.c dive_1.c diveby3.c divis.c divrem.c divrem_1.c divrem_2.c   \
   dump.c fib2_ui.c gcd.c						    \
-  gcd_finda.c gcd_1.c gcdext.c get_str.c hamdist.c invert_limb.c	    \
+  gcd_finda.c gcd_1.c gcdext.c get_d.c get_str.c hamdist.c invert_limb.c    \
   ior_n.c iorn_n.c jacbase.c lshift.c mod_1.c mod_34lsub1.c mode1o.c	    \
   mul.c mul_1.c mul_2.c mul_fft.c mul_n.c mul_basecase.c		    \
   nand_n.c nior_n.c perfsqr.c popcount.c				    \
@@ -418,6 +418,8 @@ gcd_finda_.c: gcd_finda.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcd_finda.c; then echo $(srcdir)/gcd_finda.c; else echo gcd_finda.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 gcdext_.c: gcdext.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/gcdext.c; then echo $(srcdir)/gcdext.c; else echo gcdext.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
+get_d_.c: get_d.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_d.c; then echo $(srcdir)/get_d.c; else echo get_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 get_str_.c: get_str.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/get_str.c; then echo $(srcdir)/get_str.c; else echo get_str.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > $@ || rm -f $@
 hamdist_.c: hamdist.c $(ANSI2KNR)
@@ -520,15 +522,16 @@ divrem_.$(OBJEXT) divrem_.lo divrem_1_.$(OBJEXT) divrem_1_.lo \
 divrem_2_.$(OBJEXT) divrem_2_.lo dump_.$(OBJEXT) dump_.lo \
 fib2_ui_.$(OBJEXT) fib2_ui_.lo fib_table_.$(OBJEXT) fib_table_.lo \
 gcd_.$(OBJEXT) gcd_.lo gcd_1_.$(OBJEXT) gcd_1_.lo gcd_finda_.$(OBJEXT) \
-gcd_finda_.lo gcdext_.$(OBJEXT) gcdext_.lo get_str_.$(OBJEXT) \
-get_str_.lo hamdist_.$(OBJEXT) hamdist_.lo invert_limb_.$(OBJEXT) \
-invert_limb_.lo ior_n_.$(OBJEXT) ior_n_.lo iorn_n_.$(OBJEXT) iorn_n_.lo \
-jacbase_.$(OBJEXT) jacbase_.lo lshift_.$(OBJEXT) lshift_.lo \
-mod_1_.$(OBJEXT) mod_1_.lo mod_34lsub1_.$(OBJEXT) mod_34lsub1_.lo \
-mode1o_.$(OBJEXT) mode1o_.lo mp_bases_.$(OBJEXT) mp_bases_.lo \
-mul_.$(OBJEXT) mul_.lo mul_1_.$(OBJEXT) mul_1_.lo mul_2_.$(OBJEXT) \
-mul_2_.lo mul_basecase_.$(OBJEXT) mul_basecase_.lo mul_fft_.$(OBJEXT) \
-mul_fft_.lo mul_n_.$(OBJEXT) mul_n_.lo nand_n_.$(OBJEXT) nand_n_.lo \
+gcd_finda_.lo gcdext_.$(OBJEXT) gcdext_.lo get_d_.$(OBJEXT) get_d_.lo \
+get_str_.$(OBJEXT) get_str_.lo hamdist_.$(OBJEXT) hamdist_.lo \
+invert_limb_.$(OBJEXT) invert_limb_.lo ior_n_.$(OBJEXT) ior_n_.lo \
+iorn_n_.$(OBJEXT) iorn_n_.lo jacbase_.$(OBJEXT) jacbase_.lo \
+lshift_.$(OBJEXT) lshift_.lo mod_1_.$(OBJEXT) mod_1_.lo \
+mod_34lsub1_.$(OBJEXT) mod_34lsub1_.lo mode1o_.$(OBJEXT) mode1o_.lo \
+mp_bases_.$(OBJEXT) mp_bases_.lo mul_.$(OBJEXT) mul_.lo \
+mul_1_.$(OBJEXT) mul_1_.lo mul_2_.$(OBJEXT) mul_2_.lo \
+mul_basecase_.$(OBJEXT) mul_basecase_.lo mul_fft_.$(OBJEXT) mul_fft_.lo \
+mul_n_.$(OBJEXT) mul_n_.lo nand_n_.$(OBJEXT) nand_n_.lo \
 nior_n_.$(OBJEXT) nior_n_.lo perfsqr_.$(OBJEXT) perfsqr_.lo \
 popcount_.$(OBJEXT) popcount_.lo pow_1_.$(OBJEXT) pow_1_.lo \
 pre_divrem_1_.$(OBJEXT) pre_divrem_1_.lo pre_mod_1_.$(OBJEXT) \
