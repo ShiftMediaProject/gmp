@@ -90,10 +90,10 @@ header (int limb_bits, int nail_bits)
   printf ("/* mp_bases[10] data, as literal values */\n");
   printf ("#define MP_BASES_CHARS_PER_LIMB_10      %d\n", chars_per_limb);
   printf ("#define MP_BASES_BIG_BASE_10            CNST_LIMB(0x");
-  mpz_out_str (0, 16, big_base);
+  mpz_out_str (stdout, 16, big_base);
   printf (")\n");
   printf ("#define MP_BASES_BIG_BASE_INVERTED_10   CNST_LIMB(0x");
-  mpz_out_str (0, 16, big_base_inverted);
+  mpz_out_str (stdout, 16, big_base_inverted);
   printf (")\n");
   printf ("#define MP_BASES_NORMALIZATION_STEPS_10 %d\n", normalization_steps);
 }
@@ -130,9 +130,9 @@ table (int limb_bits, int nail_bits)
 	{
           printf ("%u, %.16f, CNST_LIMB(0x",
                   chars_per_limb, chars_per_bit_exactly);
-	  mpz_out_str (0, 16, big_base);
+	  mpz_out_str (stdout, 16, big_base);
           printf ("), CNST_LIMB(0x");
-	  mpz_out_str (0, 16, big_base_inverted);
+	  mpz_out_str (stdout, 16, big_base_inverted);
           printf (") },\n");
 	}
     }
