@@ -32,6 +32,9 @@ MA 02111-1307, USA.
 	* mpz/set_str.c: Allow bases <= 62.  Return error for invalid bases.
 	* mpz/inp_str.c: Likewise.
 	* mpf/set_str.c: Likewise.
+	* mpz/out_str.c: Likewise.
+	* mpz/get_str.c: Likewise.
+	* mpf/get_str.c: Likewise.
 
 	* mpz/inp_str.c: Restucture to allocate more string space just
 	before needed.
