@@ -1254,7 +1254,7 @@ AC_CHECK_HEADERS(unistd.h sys/mman.h sys/param.h sys/processor.h sys/resource.h 
 AC_CHECK_DECLS(optarg)
 
 AC_TYPE_SIGNAL
-AC_CHECK_TYPES(void)
+dnl AC_CHECK_TYPES([])
 AC_C_STRINGIZE
 GMP_C_STDARG
 GMP_C_ATTRIBUTE_CONST
@@ -1263,10 +1263,6 @@ GMP_C_ATTRIBUTE_MODE
 GMP_C_ATTRIBUTE_NORETURN
 
 AC_C_INLINE
-case $ac_cv_c_inline in
-no) ;;
-*)  AC_DEFINE(HAVE_INLINE,1,[Define if an actual "inline" is available]) ;;
-esac
 GMP_H_EXTERN_INLINE
 
 # from libtool
