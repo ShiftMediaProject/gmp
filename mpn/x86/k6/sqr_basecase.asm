@@ -5,7 +5,7 @@ dnl  product (measured on the speed difference between 17 and 33 limbs,
 dnl  which is roughly the Karatsuba recursing range).
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -661,7 +661,7 @@ L(diag):
 C -----------------------------------------------------------------------------
 ifdef(`PIC',`
 L(pic_calc):
-        C See README.family about old gas bugs
+        C See mpn/x86/README about old gas bugs
 	addl	(%esp), %ecx
 	addl	$L(unroll_inner_end)-L(here)-eval(2*CODE_BYTES_PER_LIMB), %ecx
 	addl	%edx, %ecx

@@ -4,7 +4,7 @@ dnl  K6: approx 9.0 cycles per cross product on 30x30 limbs (with 16 limbs/loop
 dnl      unrolling).
 
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -482,7 +482,7 @@ L(unroll_here):
 
 ifdef(`PIC',`
 L(pic_calc):
-	C See README.family about old gas bugs
+	C See mpn/x86/README about old gas bugs
 	leal	(%ecx,%esi,1), %ecx
 	addl	$L(unroll_entry)-L(unroll_here), %ecx
 	addl	(%esp), %ecx
