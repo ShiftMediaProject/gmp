@@ -1,5 +1,13 @@
 2000-06-29  Torbjorn Granlund  <tege@swox.com>
 
+	* mpf/mul_2exp.c: Streamline criterion for whether to use mpn_lshift or
+	mpn_rshift.  Increase precision when exp is a multiple of
+	BITS_PER_MP_LIMB primarily to make exp==0 be a noop.
+	* mpf/div_2exp.c: Analogous changes.
+
+	* mpf/tests/t-dm2exp.c: Set u randomly in loop.  Perform more
+	mpf_mul_2exp testing.
+
 	* configure.in: Recognize cray vector processors with a broad `*';
 	move after alpha* not to match that.
 
@@ -11,8 +19,8 @@
 
 2000-06-27  Torbjorn Granlund  <tege@swox.com>
 
-	* mpf/tests/t-get_d.c: Be more lax about relative error, to
-	handle Cray floating point format.
+	* mpf/tests/t-get_d.c: Be more lax about relative error, to handle Cray
+	floating point format.
 
 	* mpq/tests/t-get_d.c: Decrease default reps to 1000.
 
@@ -48,7 +56,7 @@
 	(mpn_toom3_mul_n, mpn_toom3_sqr_n): Use mp_size_t for size
 	parameters and "l" variables.
 	* gmp-impl.h (mpn_toom3_mul_n, mpn_toom3_sqr_n): Update prototypes.
-	
+
 	* mpbsd/{itom,sdiv}.c: Add casts for correct handling of -0x80...00
 	on systems with sizeof(short)==sizeof(int).
 	
@@ -60,7 +68,7 @@
 	a limb not a ulong.
 	* mpz/bin_uiui.c [_LONG_LONG_LIMB]: Ditto, and use mpn_mul_1 too,
 	since nacc is a limb.
-	
+
 	* mpf/tests/t-misc.c (check_mpf_set_si, check_mpf_cmp_si):
 	New file, testing mpf_set_si, mpf_init_set_si, and mpf_cmp_si.
 	* mpf/tests/Makefile.am (check_PROGRAMS): Add it.
@@ -74,7 +82,7 @@
 2000-06-19  Torbjorn Granlund  <tege@swox.com>
 
 	* demos/primes.c: Properly handle arguments `m +n'.
-	
+
 2000-06-17  Torbjorn Granlund  <tege@swox.com>
 
 	* config.sub: Recognize k5 and k6 with common pattern.
