@@ -2739,9 +2739,14 @@ case $gmp_cv_c_double_format in
     AC_DEFINE(HAVE_DOUBLE_VAX_G, 1) ;;
   "Cray CFP")
     AC_DEFINE(HAVE_DOUBLE_CRAY_CFP, 1) ;;
+  "bad ARM software floats")
+    ;;
   unknown*)
     AC_MSG_WARN([Could not determine float format.])
     AC_MSG_WARN([Conversions to and from "double" may be slow.])
+    ;;
+  *)
+    AC_MSG_WARN([oops, unrecognised float format: $gmp_cv_c_double_format])
     ;;
 esac
 ])
