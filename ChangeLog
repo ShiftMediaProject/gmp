@@ -1,3 +1,7 @@
+2001-07-23  Torbjorn Granlund  <tege@swox.com>
+
+	* config.guess: Recognize pentium4.
+
 2001-07-17  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in (__GMPN_AORS_1): Remove x86 and gcc versions, leave just
