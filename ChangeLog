@@ -18,6 +18,21 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-06-20  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/ia64/submul_1.c: Add missing TMP_DECL, TMP_MARK, TMP_FREE.
+	Reported by Paul Zimmermann.
+
+	* configure.in, acinclude.m4 (AC_DEFINE): Make templates read "Define
+	to 1", for clarity as per autoconf.
+	* acinclude.m4 (GMP_OPTION_ALLOCA): Group WANT_TMP templates.
+
+2002-06-20  Gerardo Ballabio <gerardo.ballabio@unimib.it>
+
+	* gmpxx.h, mpfrxx.h: Remove mpz_classref, let mpq_class::get_num and
+	mpq_class::get_den return mpz_class& as per the documentation.
+	Reported by Roberto Bagnara.
+
 2002-06-18  Kevin Ryde  <kevin@swox.se>
 
 	* tests/rand/t-lc2exp.c: New file.
