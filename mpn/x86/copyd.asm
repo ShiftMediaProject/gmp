@@ -1,9 +1,6 @@
 dnl  x86 mpn_copyd -- copy limb vector, decrementing.
-dnl 
-dnl  Future: On P6 an MMX loop should be able to go faster than this code.
 
-
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -22,8 +19,15 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+C     cycles/limb
+C P5:   1.0
+C
+C The following have their own optimized code, but for reference run as
+C
+C P6    2.4, approx 40 cycles startup
+C K6    1.0, approx 30 cycles startup
 
 
 C void mpn_copyd (mp_ptr dst, mp_srcptr src, mp_size_t size);
@@ -32,10 +36,6 @@ C Copy src,size to dst,size, working from high to low addresses.
 C
 C The code here is very generic and can be expected to be reasonable on all
 C the x86 family.
-C
-C P5 - 1.0 cycles/limb.
-C
-C P6 - 2.4 cycles/limb, approx 40 cycles startup.
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
