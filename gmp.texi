@@ -94,6 +94,20 @@
 @end macro
 @end ifnotinfo
 
+@c  @nisamp{S} is plain S in info, or @samp{S} elsewhere.  This can be used
+@c  when the quotes that @samp{} gives in info aren't wanted, but the
+@c  fontification in tex or html is wanted.
+@ifinfo
+@macro nisamp {S}
+\S\
+@end macro
+@end ifinfo
+@ifnotinfo
+@macro nisamp {S}
+@samp{\S\}
+@end macro
+@end ifnotinfo
+
 @c  Usage: @GMPtimes{}
 @c  Give either \times or the word "times".
 @tex
@@ -638,94 +652,94 @@ of what code and compiler options they select.
 
 @item
 Alpha:
-@samp{alpha},
-@samp{alphaev5},
-@samp{alphaev56},
-@samp{alphapca56},
-@samp{alphaev6},
-@samp{alphaev67}
+@nisamp{alpha},
+@nisamp{alphaev5},
+@nisamp{alphaev56},
+@nisamp{alphapca56},
+@nisamp{alphaev6},
+@nisamp{alphaev67}
 
 @item
 Cray:
-@samp{c90},
-@samp{j90},
-@samp{t90},
-@samp{sv1}
+@nisamp{c90},
+@nisamp{j90},
+@nisamp{t90},
+@nisamp{sv1}
 
 @item
 HPPA:
-@samp{hppa1.0},
-@samp{hppa1.1},
-@samp{hppa2.0},
-@samp{hppa2.0n},
-@samp{hppa2.0w}
+@nisamp{hppa1.0},
+@nisamp{hppa1.1},
+@nisamp{hppa2.0},
+@nisamp{hppa2.0n},
+@nisamp{hppa2.0w}
 
 @item
 MIPS:
-@samp{mips},
-@samp{mips3},
-@samp{mips64}
+@nisamp{mips},
+@nisamp{mips3},
+@nisamp{mips64}
 
 @item
 Motorola:
-@samp{m68k},
-@samp{m68000},
-@samp{m68010},
-@samp{m68020},
-@samp{m68030},
-@samp{m68040},
-@samp{m68060},
-@samp{m68302},
-@samp{m68360},
-@samp{m88k},
-@samp{m88110}
+@nisamp{m68k},
+@nisamp{m68000},
+@nisamp{m68010},
+@nisamp{m68020},
+@nisamp{m68030},
+@nisamp{m68040},
+@nisamp{m68060},
+@nisamp{m68302},
+@nisamp{m68360},
+@nisamp{m88k},
+@nisamp{m88110}
 
 @item
 POWER: 
-@samp{power},
-@samp{power1},
-@samp{power2},
-@samp{power2sc},
-@samp{powerpc},
-@samp{powerpc64}
+@nisamp{power},
+@nisamp{power1},
+@nisamp{power2},
+@nisamp{power2sc},
+@nisamp{powerpc},
+@nisamp{powerpc64}
 
 @item
 SPARC:
-@samp{sparc},
-@samp{sparcv8},
-@samp{microsparc},
-@samp{supersparc},
-@samp{sparcv9},
-@samp{ultrasparc},
-@samp{sparc64}
+@nisamp{sparc},
+@nisamp{sparcv8},
+@nisamp{microsparc},
+@nisamp{supersparc},
+@nisamp{sparcv9},
+@nisamp{ultrasparc},
+@nisamp{sparc64}
 
 @item
 80x86 family:
-@samp{i386},
-@samp{i486},
-@samp{i586},
-@samp{pentium},
-@samp{pentiummmx},
-@samp{pentiumpro},
-@samp{pentium2},
-@samp{pentium3},
-@samp{k6},
-@samp{k62},
-@samp{k63},
-@samp{athlon}
+@nisamp{i386},
+@nisamp{i486},
+@nisamp{i586},
+@nisamp{pentium},
+@nisamp{pentiummmx},
+@nisamp{pentiumpro},
+@nisamp{pentium2},
+@nisamp{pentium3},
+@nisamp{k6},
+@nisamp{k62},
+@nisamp{k63},
+@nisamp{athlon}
 
 @item
 Other:
-@samp{a29k},
-@samp{arm},
-@samp{clipper},
-@samp{i960},
-@samp{ns32k},
-@samp{pyramid},
-@samp{sh},
-@samp{sh2},
-@samp{vax},
-@samp{z8k}
+@nisamp{a29k},
+@nisamp{arm},
+@nisamp{clipper},
+@nisamp{i960},
+@nisamp{ns32k},
+@nisamp{pyramid},
+@nisamp{sh},
+@nisamp{sh2},
+@nisamp{vax},
+@nisamp{z8k}
 @end itemize
 
 CPUs not listed will use generic C code.
@@ -790,30 +804,57 @@ preprocessors won't accept all the flags the compiler does.  Preprocessing is
 done separately in some configure tests, and in the @samp{ansi2knr} support
 for K&R compilers.
 
-@item @option{--enable-alloca=yes/no/detect}, @option{--disable-alloca}
+@item @option{--enable-alloca=<choice>}
 @cindex Stack overflow segfaults
 @cindex @code{alloca}
 
-GMP allocates temporary workspace using either @code{alloca} or @code{malloc}.
-The default @samp{--enable-alloca=detect} uses @code{alloca} if available, or
-@code{malloc} if not.  @option{--disable-alloca} or @samp{--enable-alloca=no}
-always uses @code{malloc}.  @samp{--enable-alloca=yes} always uses
-@code{alloca} (generating an error if that function isn't available).
+GMP allocates temporary workspace using one of the following three methods,
+which can be selected with for instance
+@samp{--enable-alloca=malloc-reentrant}.
 
-@code{alloca} is fast and is recommended, but when working with large numbers
-it can overflow the available stack space.  It might be possible to increase
-available stack with @command{limit}, @command{ulimit} or @code{setrlimit}, or
-under DJGPP with @command{stubedit} or @code{@w{_stklen}}.  Note that
-depending on the system, the only indication of stack overflow might be a
-segmentation violation.
+@itemize @bullet
+@item
+@samp{alloca} - C library or compiler builtin.
+@item
+@samp{malloc-reentrant} - the heap, in a re-entrant fashion.
+@item
+@samp{malloc-notreentrant} - the heap, with global variables.
+@end itemize
 
-When @code{malloc} is used, it's actually the memory allocation functions
-selected by @code{mp_set_memory_functions} that are used, these being
-@code{malloc} and friends by default.  @xref{Custom Allocation}.
+The following selections are also available, for convenience.
+@samp{--disable-alloca} is the same as @samp{--enable-alloca=no}.
 
-Currently when @code{malloc} is used the library is not re-entrant and not
-thread safe, due to the implementation of @file{stack-alloc.c}.
-@xref{Reentrancy}.
+@itemize @bullet
+@item
+@samp{yes} - a synonym for @samp{alloca}.
+@item
+@samp{no} - a synonym for @samp{malloc-reentrant}.
+@item
+@samp{reentrant} - @code{alloca} if available, otherwise
+@samp{malloc-reentrant}.  This is the default.
+@item
+@samp{notreentrant} - @code{alloca} if available, otherwise
+@samp{malloc-notreentrant}.
+@end itemize
+
+@code{alloca} is reentrant and fast, and is recommended, but when working with
+large numbers it can overflow the available stack space, in which case one of
+the malloc methods will need to be used.  Alternately it might be possible to
+increase available stack with @command{limit}, @command{ulimit} or
+@code{setrlimit}, or under DJGPP with @command{stubedit} or
+@code{@w{_stklen}}.  Note that depending on the system the only indication of
+stack overflow might be a segmentation violation.
+
+@samp{malloc-reentrant} is, as the name suggests, reentrant and thread safe,
+but @samp{malloc-notreentrant} is faster and should be used if reentrancy is
+not required.
+
+The two malloc methods in fact use the memory allocation functions selected by
+@code{mp_set_memory_functions}, these being @code{malloc} and friends by
+default.  @xref{Custom Allocation}.
+
+An additional choice @samp{--enable-alloca=debug} is available, to help when
+debugging memory related problems (@pxref{Debugging}).
 
 @item @option{--enable-fft}
 
@@ -877,9 +918,10 @@ The document you're now reading is @file{gmp.texi}.  The usual automake
 targets are available to make PostScript @file{gmp.ps} and/or DVI
 @file{gmp.dvi}.
 
-HTML can be made with @samp{makeinfo --html} (@pxref{makeinfo html,Generating
-HTML,Generating HTML,texinfo,Texinfo}) or @samp{texi2html}
-(@pxref{Top,Texinfo to HTML,About,texi2html,Texinfo To HTML}).
+HTML can be produced with @samp{makeinfo --html}, see @ref{makeinfo
+html,Generating HTML,Generating HTML,texinfo,Texinfo}.  Or alternately
+@samp{texi2html}, see @ref{Top,Texinfo to HTML,About,texi2html,Texinfo To
+HTML}.
 
 PDF can be made with @samp{texi2dvi --pdf} (@pxref{PDF
 Output,PDF,,texinfo,Texinfo}) or with @samp{pdftex}.
@@ -916,17 +958,18 @@ application requirements.  In all cases it's vital that all object code used
 in a given program is compiled for the same ABI.
 
 Usually a limb is implemented as a @code{long}.  When a @code{long long} limb
-is used, this is encoded in a generated @file{gmp.h}.  This is convenient for
-applications, but it does mean @file{gmp.h} will vary from system to system,
-and can't be just copied around.  Note that whether a limb is a @code{long} or
-a @code{long long} for a particular ABI, it will be the same for all compilers
-on that system in that ABI.
+is used in a particular ABI, this is encoded in a generated @file{gmp.h}.
+This is convenient for applications, but it does mean that @file{gmp.h} will
+vary, and can't be just copied around.  @file{gmp.h} remains compiler
+independent though, since all compilers for a particular ABI will be expected
+to use the same limb type.
 
 Currently no attempt is made to follow whatever conventions a system has for
 installing library or header files built for a particular ABI.  This will
 probably only matter when installing multiple builds of GMP, and it might be
 as simple as configuring with a special @samp{libdir}, or it might require
-more than that.
+more than that.  Note that builds for different ABIs need to done separately,
+with a fresh @command{./configure} and @command{make} each.
 
 @table @asis
 @sp 1
@@ -1541,6 +1584,11 @@ GMP is reentrant and thread-safe, with some exceptions:
 
 @itemize @bullet
 @item
+If configured with @option{--enable-alloca=malloc-notreentrant} (or with
+@option{--enable-alloca=notreentrant} when @code{alloca} is not available),
+then naturally GMP is not reentrant.
+
+@item
 @code{mpf_set_default_prec} and @code{mpf_init} use a global variable for the
 selected precision.  @code{mpf_init2} can be used instead.
 
@@ -1561,11 +1609,6 @@ not reentrant, then GMP will not be reentrant either.
 @item
 If the standard I/O functions such as @code{fwrite} are not reentrant then the
 GMP I/O functions using them will not be reentrant either.
-
-@item
-If @code{alloca} is not available, or GMP is configured with
-@samp{--disable-alloca}, the library is not reentrant, due to the current
-implementation of @file{stack-alloc.c}.
 
 @item
 It's safe for two threads to read from the same GMP variable simultaneously,
@@ -1835,8 +1878,8 @@ it's probably best to call to get a starting point and iterate from there.
 @table @asis
 @item Stack Overflow
 Depending on the system, a segmentation violation or bus error might be the
-only indication of stack overflow.  See @samp{--disable-alloca} in @ref{Build
-Options}, for ways to address this.
+only indication of stack overflow.  See @samp{--enable-alloca} choices in
+@ref{Build Options}, for how to address this.
 
 @item Heap Problems
 The most likely cause of application problems with GMP is heap corruption.
@@ -1867,10 +1910,10 @@ potentially moving a memory problem or hiding a compiler bug will apply.
 
 @item GNU Debugger
 A sample @file{.gdbinit} is included in the distribution, showing how to call
-some undocumented dump functions to print GMP variables from within GDB.  But
-note that these functions shouldn't be used in final application code since
-they're undocumented and may be subject to incompatible changes in future
-versions of GMP.
+some undocumented dump functions to print GMP variables from within GDB.  Note
+that these functions shouldn't be used in final application code since they're
+undocumented and may be subject to incompatible changes in future versions of
+GMP.
 
 @item Source File Paths
 GMP has multiple source files with the same name, in different directories.
@@ -1899,6 +1942,17 @@ from @option{--enable-assert} since it adds checks on the parameters of most
 such functions, many of which have subtle restrictions on their usage.  Note
 however that only the generic C code has checks, not the assembler code, so
 CPU @samp{none} should be used for maximum checking.
+
+@item Temporary Memory Checking
+The build option @option{--enable-alloca=debug} arranges that each block of
+temporary memory in GMP is allocated with a separate call to @code{malloc} (or
+the allocation function set with @code{mp_set_memory_functions}).
+
+This can help a malloc debugger detect accesses outside the intended bounds,
+or detect memory not released.  In a normal build, on the other hand,
+temporary memory is allocated in blocks which GMP divides up for its own use,
+or of course with the preferred compiler builtin @code{alloca} goes nowhere
+near any malloc hooks.
 
 @item Other Problems
 Any suspected bug in GMP itself should be isolated to make sure it's not an
@@ -2046,7 +2100,7 @@ If you get a crash, include a stack backtrace from the debugger if it's
 informative (@samp{where} in @command{gdb}, or @samp{$C} in @command{adb}).
 
 @item
-@strong{Please do not send core dumps, executables or @command{strace}s.}
+Please do not send core dumps, executables or @command{strace}s.
 
 @item
 The configuration options you used when building GMP, if any.
@@ -2510,7 +2564,7 @@ the return value is wanted.
 Set @var{q} to @var{n}/@var{d}.  These functions produce correct results only
 when it is known in advance that @var{d} divides @var{n}.
 
-These functions are much faster than the other division functions, and are the
+These routines are much faster than the other division functions, and are the
 best choice when exact division is known to occur, for example reducing a
 rational to lowest terms.
 @end deftypefun
@@ -3016,8 +3070,9 @@ the returned value will be zero.
 
 @deftypefun size_t mpz_sizeinbase (mpz_t @var{op}, int @var{base})
 Return the size of @var{op} measured in number of digits in base @var{base}.
-The base may vary from 2 to 36.  The returned value will be exact or 1 too
-big.  If @var{base} is a power of 2, the returned value will always be exact.
+The base may vary from 2 to 36.  The sign of @var{op} is ignored, just the
+absolute value is used.  The returned value will be exact or 1 too big.  If
+@var{base} is a power of 2, the returned value will always be exact.
 
 This function is useful in order to allocate the right amount of space before
 converting @var{op} to a string.  The right amount of allocation is normally
@@ -3576,9 +3631,9 @@ allocation function (@pxref{Custom Allocation}).  The block will be
 @code{strlen(str)+1} bytes, that being exactly enough for the string and
 null-terminator.
 
-If @var{str} is not @code{NULL}, it should point to a block of storage enough
-large for the mantissa, that being @var{n_digits} + 2.  The two extra bytes
-are for a possible minus sign, and for the null-terminator.
+If @var{str} is not @code{NULL}, it should point to a block of
+@ma{@var{n\_digits} + 2} bytes, that being enough for the mantissa, a possible
+minus sign, and a null-terminator.
 
 When @var{n_digits} is 0, to get all significant digits, an application won't
 be able to know the space required, and @var{str} should be @code{NULL} in
@@ -4123,16 +4178,22 @@ Return the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
 @end deftypefun
 
 @deftypefun mp_size_t mpn_gcdext (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, mp_size_t *@var{r2n}, mp_limb_t *@var{s1p}, mp_size_t @var{s1n}, mp_limb_t *@var{s2p}, mp_size_t @var{s2n})
-Compute the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
-@{@var{s2p}, @var{s2n}@}.  Store the gcd at @{@var{r1p}, @var{retval}@}.
-Store the first cofactor at @{@var{r2p}, *@var{r2n}@}.  If the cofactor is
-negative, *@var{r2n} is negative.  @var{r1p} and @var{r2p} should each have
-room for @var{s1n} limbs, the return value and value stored through @var{r2n}
+Calculate the greatest common divisor of @{@var{s1p}, @var{s1n}@} and
+@{@var{s2p}, @var{s2n}@}.  Store the gcd at @{@var{r1p}, @var{retval}@} and
+the first cofactor at @{@var{r2p}, *@var{r2n}@}, with *@var{r2n} negative if
+the cofactor is negative.  @var{r1p} and @var{r2p} should each have room for
+@var{s1n} limbs, but the return value and value stored through @var{r2n}
 indicate the actual number produced.
 
-@{@var{s1p}, @var{s1n}@} must be greater than or equal to @{@var{s2p},
-@var{s2n}@}.  Both operands must be non-zero.  Both source regions are
-destroyed, plus one limb past the end of each.
+@ma{@{@var{s1p}, @var{s1n}@} @ge{} @{@var{s2p}, @var{s2n}@}} is required, and
+both must be non-zero.  The regions @{@var{s1p}, @ma{@var{s1n}+1}@} and
+@{@var{s2p}, @ma{@var{s2n}+1}@} are destroyed (i.e. the operands plus an extra
+limb past the end of each).
+
+The cofactor @var{r1} will satisfy @m{r_2 s_1 + k s_2 = r_1, @var{r2}*@var{s1}
++ @var{k}*@var{s2} = @var{r1}}.  The second cofactor @var{k} is not calculated
+but can easily be obtained from @m{(r_1 - r_2 s_1) / s_2, (@var{r1} -
+@var{r2}*@var{s1}) / @var{s2}}.
 @end deftypefun
 
 @deftypefun mp_size_t mpn_sqrtrem (mp_limb_t *@var{r1p}, mp_limb_t *@var{r2p}, const mp_limb_t *@var{sp}, mp_size_t @var{n})
@@ -4541,9 +4602,6 @@ than C, though perhaps with varying levels of functionality and efficiency.
 @c  GNUstep Base Library @uref{http://www.gnustep.org} (version 0.9.1) is
 @c  intending to use GMP for its NSDecimal class, which would be an Objective
 @c  C binding for GMP.  Has some configure stuff ready, but no code.
-@c
-@c  Maxima @uref{http://www.ma.utexas.edu/users/wfs/maxima.html} will reach
-@c  gmp when gcl switches across.
 
 @c  @spaceuref{U} is the same as @uref{U}, but with a couple of extra spaces
 @c  in tex, just to separate the URL from the preceding text a bit.
@@ -4594,8 +4652,7 @@ Glasgow Haskell Compiler @spaceuref{http://www.haskell.org/ghc}
 GNU Common Lisp @spaceuref{http://www.gnu.org/software/gcl/gcl.html} @* In the
 process of switching to GMP for bignums.
 @item
-Librep @spaceuref{http://librep.sourceforge.net} @* As used in the sawfish
-window manager.
+Librep @spaceuref{http://librep.sourceforge.net}
 @end itemize
 
 @item Java
@@ -4661,8 +4718,10 @@ RScheme @spaceuref{http://www.rscheme.org}
 DrGenius @spaceuref{http://drgenius.seul.org} @* Geometry system and
 mathematical programming language.
 @item
-GiNaC @spaceuref{http://www.ginac.de} @* C++ computer algebra, using GMP via
-CLN.
+GiNaC @spaceuref{http://www.ginac.de} @* C++ computer algebra using CLN.
+@item
+Maxima @uref{http://www.ma.utexas.edu/users/wfs/maxima.html} @* Macsyma
+computer algebra using GCL.
 @item
 Q @spaceuref{http://www.musikwissenschaft.uni-mainz.de/~ag/q} @* Equational
 programming system.
@@ -5498,14 +5557,14 @@ N@cross{}1 division is implemented using repeated 2@cross{}1 divisions from
 high to low, either with a hardware divide instruction or a multiplication by
 inverse, whichever is best on a given CPU.
 
-The multiply by inverse used follows section 8 of ``Division by Invariant
-Integers using Multiplication'' by Granlund and Montgomery
-(@pxref{References}) and is implemented as @code{udiv_qrnnd_preinv} in
-@file{gmp-impl.h}.  The idea is to have a fixed-point approximation to
-@ma{1/d} (see @code{invert_limb}) and then multiply by the high limb (plus one
-bit) of the dividend to get a quotient @ma{q}.  With @ma{d} normalized (high
-bit set), @ma{q} is no more than 1 too small.  Subtracting @m{qd,q*d} from the
-dividend gives a remainder, and reveals whether a correction is necessary.
+The multiply by inverse follows section 8 of ``Division by Invariant Integers
+using Multiplication'' by Granlund and Montgomery (@pxref{References}) and is
+implemented as @code{udiv_qrnnd_preinv} in @file{gmp-impl.h}.  The idea is to
+have a fixed-point approximation to @ma{1/d} (see @code{invert_limb}) and then
+multiply by the high limb (plus one bit) of the dividend to get a quotient
+@ma{q}.  With @ma{d} normalized (high bit set), @ma{q} is no more than 1 too
+small.  Subtracting @m{qd,q*d} from the dividend gives a remainder, and
+reveals whether @ma{q} or @ma{q+1} is correct.
 
 The result is a division done with two multiplications and four or five
 arithmetic operations.  On CPUs with low latency multipliers this can be much
@@ -5532,19 +5591,19 @@ the same 2@cross{}1 divisions find a use.
 @node Basecase Division, Divide and Conquer Division, Single Limb Division, Division Algorithms
 @subsection Basecase Division
 
-Basecase N@cross{}M division is like long division done by hand, but done in
-base @m{2\GMPraise{@code{mp\_bits\_per\_limb}}, 2^mp_bits_per_limb}.  See
-Knuth section 4.3.1 algorithm D, and @file{mpn/generic/sb_divrem_mn.c}.
+Basecase N@cross{}M division is like long division done by hand, but in base
+@m{2\GMPraise{@code{mp\_bits\_per\_limb}}, 2^mp_bits_per_limb}.  See Knuth
+section 4.3.1 algorithm D, and @file{mpn/generic/sb_divrem_mn.c}.
 
 Briefly stated, while the dividend remains larger than the divisor, a high
 quotient limb is formed and the N@cross{}1 product @m{qd,q*d} subtracted at
-the top end of the dividend.  As noted in Knuth, with a normalized divisor
-(most significant bit set), each quotient limb can be formed using a
-2@cross{}1 division and a 1@cross{}1 multiplication plus some subtractions.
-The 2@cross{}1 division is by the high limb of the divisor and is done either
-with a hardware divide or a multiply by inverse (the same as in @ref{Single
-Limb Division}) whichever is faster.  Such a quotient is sometimes one too
-big, requiring an addback of the divisor, but that happens rarely.
+the top end of the dividend.  With a normalized divisor (most significant bit
+set), each quotient limb can be formed with a 2@cross{}1 division and a
+1@cross{}1 multiplication plus some subtractions.  The 2@cross{}1 division is
+by the high limb of the divisor and is done either with a hardware divide or a
+multiply by inverse (the same as in @ref{Single Limb Division}) whichever is
+faster.  Such a quotient is sometimes one too big, requiring an addback of the
+divisor, but that happens rarely.
 
 With Q=N@minus{}M being the number of quotient limbs, this is an
 @m{O(QM),O(Q*M)} algorithm and will run at a speed similar to a basecase
@@ -5631,9 +5690,9 @@ Q*(Q-1)/2}.  Notice the savings are complementary.  If Q is big then many
 divisions are saved, or if Q is small then the crossproducts reduce to a small
 number.
 
-The modular inverse used is calculated efficiently using @code{modlimb_invert}
-in @file{gmp-impl.h}.  This does four multiplies for a 32-bit limb, or six for
-a 64-bit limb.  @file{tune/modlinv.c} has some alternate implementations that
+The modular inverse used is calculated efficiently by @code{modlimb_invert} in
+@file{gmp-impl.h}.  This does four multiplies for a 32-bit limb, or six for a
+64-bit limb.  @file{tune/modlinv.c} has some alternate implementations that
 might suit processors better at bit twiddling than multiplying.
 
 The sub-quadratic exact division described by Jebelean in ``Exact Division
@@ -5649,7 +5708,7 @@ A special case exact division by 3 exists in @code{mpn_divexact_by3},
 supporting Toom-3 multiplication and @code{mpq} canonicalizations.  It forms
 quotient digits with a multiply by the modular inverse of 3 (which is
 @code{0xAA..AAB}) and uses two comparisons to determine a borrow for the next
-limb.  The multiplications don't need to be on the dependent chain, so long as
+limb.  The multiplications don't need to be on the dependent chain, as long as
 the effect of the borrows is applied.  Only a few optimized assembler
 implementations currently exist.
 
@@ -5691,8 +5750,8 @@ Clearly @ma{r} is zero when @ma{a} is a multiple of @ma{d}, and this leads to
 divisibility or congruence tests which are potentially more efficient than a
 normal division.
 
-The factor of @ma{b^n} on @ma{r} can be ignored in a GCD (with @ma{d} odd),
-hence the use of @code{mpn_bdivmod} by @code{mpn_gcd}, and the use of
+The factor of @ma{b^n} on @ma{r} can be ignored in a GCD when @ma{d} is odd,
+hence the use of @code{mpn_bdivmod} in @code{mpn_gcd}, and the use of
 @code{mpn_modexact_1_odd} by @code{mpn_gcd_1} and @code{mpz_kronecker_ui} etc
 (@pxref{Greatest Common Divisor Algorithms}).
 
@@ -6036,11 +6095,75 @@ sub-optimal on sizes above the Karatsuba multiply threshold.
 @section Other Algorithms
 
 @menu
+* Factorial Algorithm::         
+* Binomial Coefficients Algorithm::  
 * Fibonacci Numbers Algorithm::  
 * Lucas Numbers Algorithm::     
 @end menu
 
-@node Fibonacci Numbers Algorithm, Lucas Numbers Algorithm, Other Algorithms, Other Algorithms
+
+@node Factorial Algorithm, Binomial Coefficients Algorithm, Other Algorithms, Other Algorithms
+@subsection Factorial
+
+Factorials @ma{n!} are calculated by a simple product from @ma{1} to @ma{n},
+but arranged into certain sub-products.
+
+First as many factors as fit in a limb are accumulated, then two of those
+multiplied to give a 2-limb product.  When two 2-limb products are ready
+they're multiplied to a 4-limb product, and when two 4-limbs are ready they're
+multiplied to an 8-limb product, etc.  A stack of outstanding products is
+built up, with two of the same size multiplied together when ready.
+
+Arranging for multiplications to have operands the same (or nearly the same)
+size means the Karatsuba and higher multiplication algorithms can be used.
+And even on sizes below the Karatsuba threshold an NxN multiply will give an
+optimized basecase multiply more to work on.
+
+An obvious improvement not currently implemented would be to strip factors of
+2 from the products and apply them at the end with a bit shift.  Another
+possibility would be to determine the prime factorization of the result (which
+can be done easily), and use a powering method, at each stage squaring then
+multiplying in those primes with a 1 in their exponent at that point.  The
+advantage would be some multiplies turned into squares.
+
+
+@node Binomial Coefficients Algorithm, Fibonacci Numbers Algorithm, Factorial Algorithm, Other Algorithms
+@subsection Binomial Coefficients
+
+Binomial coefficients @m{\left({n}\atop{k}\right), C(n@C{}k)} are calculated
+by first arranging @ma{k @le{} n/2} using @m{\left({n}\atop{k}\right) =
+\left({n}\atop{n-k}\right), C(n@C{}k) = C(n@C{}n-k)} if necessary, and then
+evaluating the following product simply from @ma{i=2} to @ma{i=k}.
+@tex
+$$ \left({n}\atop{k}\right) = (n-k+1) \prod_{i=2}^{k} {{n-k+i} \over i} $$
+@end tex
+@ifnottex
+
+@example
+                      k  (n-k+i)
+C(n,k) =  (n-k+1) * prod -------
+                     i=2    i
+@end example
+
+@end ifnottex
+It's easy to show that each denominator @ma{i} will divide the product so far,
+so the exact division algorithm is used (@pxref{Exact Division}).
+
+The numerators @ma{n-k+i} and denominators @ma{i} are first accumulated into
+as many fit a limb, to save multi-precision operations, though for
+@code{mpz_bin_ui} this applies only to the divisors, since @ma{n} is an
+@code{mpz_t} and @ma{n-k+i} in general won't fit in a limb at all.
+
+An obvious improvement would be to strip factors of 2 from each multiplier and
+divisor and count them separately, to be applied with a bit shift at the end.
+Factors of 3 and perhaps 5 could even be handled similarly.  Another
+possibility, if @ma{n} is not too big, would be to determine the prime
+factorization of the result based on the factorials involved, and power up
+those primes appropriately.  This would help most when @ma{k} is near
+@ma{n/2}.
+
+
+@node Fibonacci Numbers Algorithm, Lucas Numbers Algorithm, Binomial Coefficients Algorithm, Other Algorithms
 @subsection Fibonacci Numbers
 
 The Fibonacci functions @code{mpz_fib_ui} and @code{mpz_fib2_ui} are designed
@@ -6142,7 +6265,7 @@ $$ L_{2k} = L_k^2 - 2(-1)^k $$
 @ifnottex
 
 @example
-L[2n] = = L[k]^2 - 2*(-1)^k
+L[2k] = = L[k]^2 - 2*(-1)^k
 @end example
 
 @end ifnottex
@@ -6231,7 +6354,7 @@ generally best.  AMD K6 @code{mpn_addmul_1} however is an example of an
 unusual set of circumstances where a branch works out better.
 
 On RISC processors generally an add and compare for overflow is used.  This
-sort of thing can be seen in @file{mpn/generic/aors_n.c} too.  Some carry
+sort of thing can be seen in @file{mpn/generic/aors_n.c}.  Some carry
 propagation schemes require 4 instructions, meaning at least 4 cycles per
 limb, but other schemes may use just 1 or 2.  On wide superscalar processors
 performance may be completely determined by the number of dependent
@@ -6249,7 +6372,7 @@ On the x86s, GCC (as of version 2.95.2) doesn't generate particularly good code
 for the RISC style idioms that are necessary to handle carry bits in
 C.  Often conditional jumps are generated where @code{adc} or @code{sbb} forms
 would be better.  And so unfortunately almost any loop involving carry bits
-eventually needs to be coded in assembler for best results.
+needs to be coded in assembler for best results.
 
 
 @node Assembler Cache Handling, Assembler Floating Point, Assembler Carry Propagation, Assembler Coding
@@ -6439,11 +6562,11 @@ Currently there's always at least one limb allocated, so for instance
 and naturally @code{_mp_alloc >= ABS(_mp_size)}.  When an @code{mpz} routine
 is about to (or might be about to) increase @code{_mp_size}, it checks
 @code{_mp_alloc} to see whether there's enough space, and reallocates if not.
-@code{MPZ_REALLOC} is used for this.
+@code{MPZ_REALLOC} is generally used for this.
 @end table
 
-Various bitwise logical functions like @code{mpz_and} behave as if negative
-values were twos complement.  But sign and magnitude is always used
+The various bitwise logical functions like @code{mpz_and} behave as if
+negative values were twos complement.  But sign and magnitude is always used
 internally, and necessary adjustments are made during the calculations.
 Sometimes this isn't pretty, but sign and magnitude are best for other
 routines.
@@ -6485,7 +6608,7 @@ Efficient calculation is the primary aim of GMP floats and the use of whole
 limbs and simple rounding facilitates this.
 
 @code{mpf_t} floats have a variable precision mantissa and a single machine
-word exponent.  The mantissa is represented using sign and magnitude.
+word signed exponent.  The mantissa is represented using sign and magnitude.
 
 @c FIXME: The arrow heads don't join to the lines exactly.
 @tex
@@ -6598,16 +6721,16 @@ The most significant limb is always non-zero, but there are no other
 restrictions on its value, in particular the highest 1 bit can be anywhere
 within the limb.
 
-@code{_mp_prec+1} limbs are allocated, the extra limb being for convenience
-(see below).  There are no reallocations during calculations, only in a change
-of precision with @code{mpf_set_prec}.
+@code{_mp_prec+1} limbs are allocated to @code{_mp_d}, the extra limb being
+for convenience (see below).  There are no reallocations during a calculation,
+only in a change of precision with @code{mpf_set_prec}.
 
 @item @code{_mp_exp}
 The exponent, in limbs, determining the location of the implied radix point.
 Zero means the radix point is just above the most significant limb.  Positive
-values mean a radix point offset towards the lower limbs and hence imply a
-value @ma{@ge{} 1}, as for example in the diagram above.  Negative exponents
-mean a radix point further above the highest limb.
+values mean a radix point offset towards the lower limbs and hence a value
+@ma{@ge{} 1}, as for example in the diagram above.  Negative exponents mean a
+radix point further above the highest limb.
 
 Naturally the exponent can be any value, it doesn't have to fall within the
 limbs as the diagram shows, it can be a long way above or a long way below.
@@ -6627,9 +6750,10 @@ avoid them to save time in subsequent calculations, but for most routines
 they're quite unlikely and aren't checked.
 
 @item Mantissa Size Range
-The @code{_mp_size} limbs in use can be less than @code{_mp_prec} if the value
-can be represented in less.  This means low precision values or small integers
-stored in a high precision @code{mpf_t} can still be operated on efficiently.
+The @code{_mp_size} count of limbs in use can be less than @code{_mp_prec} if
+the value can be represented in less.  This means low precision values or
+small integers stored in a high precision @code{mpf_t} can still be operated
+on efficiently.
 
 @code{_mp_size} can also be greater than @code{_mp_prec}.  Firstly a value is
 allowed to use all of the @code{_mp_prec+1} limbs available at @code{_mp_d},
@@ -6643,7 +6767,7 @@ with the high non-zero will ensure the application requested minimum precision
 is obtained.
 
 The use of simple ``trunc'' rounding towards zero is efficient, since there's
-no need to examine extra limbs and do an increment or decrement.
+no need to examine extra limbs and increment or decrement.
 
 @item Bit Shifts
 Since the exponent is in limbs, there are no bit shifts in basic operations
@@ -6690,8 +6814,8 @@ limb from @code{_mp_prec} before converting to bits.  The net effect of
 reading back with @code{mpf_get_prec} is simply the precision rounded up to a
 multiple of @code{mp_bits_per_limb}.
 
-Note that the extra limb added here for the high limb only being non-zero is
-in addition to the extra limb allocated to @code{_mp_d}.  For example with a
+Note that the extra limb added here for the high only being non-zero is in
+addition to the extra limb allocated to @code{_mp_d}.  For example with a
 32-bit limb, an application request for 250 bits will be rounded up to 8
 limbs, then an extra added for the high being only non-zero, giving an
 @code{_mp_prec} of 9.  @code{_mp_d} then gets 10 limbs allocated.  Reading
