@@ -160,8 +160,9 @@ __mpfr_extract_double (mp_ptr rp, double d)
 int
 mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
 {
-  int signd, sizetmp, inexact;
-  unsigned int cnt, k;
+  int signd, inexact;
+  unsigned int cnt;
+  mp_size_t i, k;
   mpfr_t tmp;
   mp_limb_t tmpmant[MPFR_LIMBS_PER_DOUBLE];
 
@@ -198,22 +199,30 @@ mpfr_set_d (mpfr_ptr r, double d, mp_rnd_t rnd_mode)
   MPFR_MANT(tmp) = tmpmant;
   MPFR_PREC(tmp) = 53;
   MPFR_SIZE(tmp) = MPFR_LIMBS_PER_DOUBLE;
-  sizetmp = MPFR_LIMBS_PER_DOUBLE;
 
   signd = (d < 0) ? -1 : 1;
   d = ABS (d);
 
   MPFR_EXP(tmp) = __mpfr_extract_double (tmpmant, d);
 
-  /* determine number k of zero high limbs */
-  for (k = 0; k < sizetmp && tmpmant[sizetmp - k - 1] == 0; k++);
+  /* determine the index i of the most significant non-zero limb
+     and the number k of zero high limbs */
+  i = MPFR_LIMBS_PER_DOUBLE - 1;
+  k = 0;
+  while (tmpmant[i] == 0)
+    {
+      MPFR_ASSERTN(i > 0);
+      i--;
+      k++;
+    }
 
-  count_leading_zeros (cnt, tmpmant[sizetmp - k - 1]);
+  count_leading_zeros (cnt, tmpmant[i]);
 
   if (cnt)
-    mpn_lshift (tmpmant + k, tmpmant, sizetmp - k, cnt);
+    mpn_lshift (tmpmant + k, tmpmant, i + 1, cnt);
   else if (k)
-    MPN_COPY (tmpmant + k, tmpmant, sizetmp - k);
+    MPN_COPY (tmpmant + k, tmpmant, i + 1);
+
   if (k)
     MPN_ZERO (tmpmant, k);
 
