@@ -45,7 +45,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
   mp_limb_t big_base;
   unsigned int dig_per_u;
   mp_size_t out_len;
-  register unsigned char *s;
+  unsigned char *s;
 
   ASSERT (msize >= 0);
   ASSERT (base >= 2);
@@ -68,10 +68,10 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
       /* The base is a power of 2.  Make conversion from most
 	 significant side.  */
       mp_limb_t n1, n0;
-      register int bits_per_digit = big_base;
-      register int x;
-      register int bit_pos;
-      register int i;
+      int bits_per_digit = big_base;
+      int x;
+      int bit_pos;
+      int i;
 
       n1 = mptr[msize - 1];
       count_leading_zeros (x, n1);
@@ -129,7 +129,7 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
 		 * __mp_bases[base].chars_per_bit_exactly) + 1;
       s += out_len;
 
-      while (msize != 0)
+      for (;;)
 	{
 	  int i;
 	  mp_limb_t n1;
@@ -138,25 +138,33 @@ mpn_get_str (unsigned char *str, int base, mp_ptr mptr, mp_size_t msize)
                                               mptr, msize, big_base,
                                               big_base_inverted,
                                               normalization_steps);
-          msize -= (mptr[msize-1] == 0);
+          msize -= mptr[msize-1] == 0;
 
 	  /* Convert N1 from BIG_BASE to a string of digits in BASE
 	     using single precision operations.  */
-	  for (i = dig_per_u - 1; i >= 0; i--)
+	  if (msize == 0)
 	    {
-              ASSERT (s >= str);
-	      *--s = n1 % base;
-	      n1 /= base;
-	      if (n1 == 0 && msize == 0)
-		break;
+	      while (n1 != 0)
+		{
+		  *--s = n1 % base;
+		  n1 /= base;
+		}
+	      break;
+	    }
+	  else
+	    {
+	      for (i = dig_per_u - 1; i >= 0; i--)
+		{
+		  *--s = n1 % base;
+		  n1 /= base;
+		}
 	    }
 	}
 
       while (s != str)
-        {
-          ASSERT (s >= str);
-          *--s = 0;
-        }
+	*--s = 0;
+
+      ASSERT (s >= str);
       return out_len;
     }
 }
