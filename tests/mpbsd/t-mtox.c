@@ -49,8 +49,8 @@ check_random (void)
           printf ("  want \"%s\"\n", want);
           abort ();
         }
-      (*__gmp_free_func) (want, strlen (want) + 1);
       (*__gmp_free_func) (got, strlen (got) + 1);
+      (*__gmp_free_func) (want, strlen (want) + 1);
     }
 
   mpz_clear (z);
