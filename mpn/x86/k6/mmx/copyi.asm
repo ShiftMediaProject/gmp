@@ -1,9 +1,7 @@
-# AMD K6 mpn_copyi -- copy limb vector.
+# AMD K6 mpn_copyi -- copy limb vector, incrementing.
 #
 # K6: 0.56 or 1.0 cycles/limb (at 32 limbs/loop), depending on data
-# alignment.  PIC adds 4 cycles at the start of the unrolled loop.
-#
-# Future: Maybe it's not necessary to unroll quite so much.
+# alignment.
 
 
 # Copyright (C) 1999-2000 Free Software Foundation, Inc.
@@ -31,56 +29,41 @@ include(`../config.m4')
 dnl  K6 aligned:
 dnl  UNROLL_COUNT cycles/limb
 dnl        8          0.75
-dnl       16          0.63
-dnl       32          0.56
+dnl       16          0.625
+dnl       32          0.5625
 dnl       64          0.53
 dnl  Maximum possible with the current code is 64, the minimum is 2.
 
-define(UNROLL_COUNT, 32)
+deflit(UNROLL_COUNT, 32)
 
 
 # void mpn_copyi (mp_ptr dst, mp_srcptr src, mp_size_t size);
 #
-# Copy src,size to dst,size.
+# Copy src,size to dst,size, processing limbs from low to high addresses.
 #
-# Sizes less than REP_MOVS_THRESHOLD are handled by a "movsl loop", which
-# avoids the setup time for the "rep movsl".  The code to reach this case is
-# as fast as possible, to minimize overhead.  A "rep movsl" is 1 cycle/limb
-# but takes about 9 cycles to start, a "movs loop" is 2 cycles/limb but has
-# no startup time.
+# The MMX loop is faster than a rep movs when src and dst are both 0mod8.
+# With one 0mod8 and one 4mod8 it's 1.056 c/l and the rep movs at 1.0 c/l is
+# used instead.
 #
-# Sizes over UNROLL_THRESHOLD are handled by an unrolled MMX based loop.
-# This is 0.5 cycles/limb plus loop overhead, provided source and
-# destination are aligned to 8 byte boundaries.  If not, the rep movs is the
-# same speed.  The alignment cases modulo 8 bytes are as follows,
+#         mod8
+#	src  dst
+#	 0    0	   both aligned, use mmx
+#	 0    4    unaligned, use rep movs
+#	 4    0    unaligned, use rep movs
+#	 4    4    do one movs, then both aligned, use mmx
 #
-#	src   dst
-#	 0     0	both aligned, use mmx
-#	 0     4        unaligned, use rep movs
-#	 4     0        unaligned, use rep movs
-#	 4     4	do one movs, then both aligned, use mmx
+# The MMX on aligned data is 0.5 c/l, plus loop overhead of 2 cycles/loop,
+# which is 0.0625 c/l at 32 limbs/loop.
+#
+# Addressing modes like disp(%esi,%ecx,4) aren't used.  They'd make it
+# possible to avoid incrementing %esi and %edi in the loop and hence get
+# loop overhead down to 1 cycle, but they come out slower (about 0.7 c/l),
+# possibly because they're 5 code bytes rather than 4 and so don't fall
+# nicely on 16 byte boundaries.
 #
 # A pattern of two movq loads and two movq stores (or four and four) was
 # tried, but found to be the same speed as just one of each.
 
-deflit(REP_MOVS_THRESHOLD, 6)
-
-dnl  emms is a couple of cycles slower than femms, hence the different
-dnl  thresholds when it's available (K6-2,K6-3) or not (K6)
-
-ifelse(femms_available_p,1,`
-ifdef(`PIC',`
-deflit(UNROLL_THRESHOLD, 54)
-',`
-deflit(UNROLL_THRESHOLD, 46)
-')
-',`
-ifdef(`PIC',`
-deflit(UNROLL_THRESHOLD, 58)
-',`
-deflit(UNROLL_THRESHOLD, 51)
-')
-')
 
 defframe(PARAM_SIZE,12)
 defframe(PARAM_SRC, 8)
@@ -88,12 +71,7 @@ defframe(PARAM_DST, 4)
 deflit(`FRAME',0)
 
 	.text
-
-	# Aligning to 64 bytes, rather than 32, saves a couple of cycles and
-	# smooths out the times so that an n+1 limb operation isn't faster
-	# than an n limb operation.  Maybe it's because with 64 the unrolled
-	# loop is in 3 rather than 4 cache sectors (of 64 bytes each).
-	ALIGN(64)
+	ALIGN(32)
 
 PROLOGUE(mpn_copyi)
 	movl	PARAM_SIZE, %ecx
@@ -102,156 +80,121 @@ PROLOGUE(mpn_copyi)
 	movl	PARAM_SRC, %esi
 	movl	%edi, %edx
 
-	cmpl	$REP_MOVS_THRESHOLD, %ecx
+	cld
+
 	movl	PARAM_DST, %edi
+	cmpl	$UNROLL_COUNT, %ecx
 
-	jae	L(rep_movs_maybe)
-	orl	%ecx, %ecx
+	ja	L(unroll)
 
-	jz	L(simple_done)
-
-	# eax	saved esi
-	# ebx
-	# ecx	counter
-	# edx	saved edi
-	# esi	src
-	# edi	dst
-	# ebp
 L(simple):
-	movsl
-	loop	L(simple)
-
-L(simple_done):
-	movl	%eax, %esi
-	movl	%edx, %edi
-	ret
-
-
-# --------------------------------------------------
-	ALIGN(16)
-L(rep_movs_maybe):
-	cmpl	$UNROLL_THRESHOLD, %ecx
-	jae	L(unroll_maybe)
-
-L(rep_movs):
 	rep
 	movsl
 
 	movl	%eax, %esi
 	movl	%edx, %edi
+
 	ret
 
 
-# --------------------------------------------------
-	ALIGN(16)
-L(unroll_maybe):
-	# different alignments mod 8 are no good
-	pushl	%eax	# saved esi
-deflit(`FRAME',4)
-	leal	(%esi,%edi,1), %eax
-	testb	$4, %al
-	jz	L(unroll)
-
-	rep
-	movsl
-
-	popl	%esi
-	movl	%edx, %edi
-	ret
-
-
-# --------------------------------------------------
-	ALIGN(16)
 L(unroll):
-	# step src and dst to 0 mod 8 if not already
-	testl	$4, %esi
-	pushl	%edx	# saved edi
-deflit(`FRAME',8)
+	# if src and dst are different alignments mod8, then use rep movs
+	# if src and dst are both 4mod8 then process one limb to get 0mod8
 
+	pushl	%ebx
+	leal	(%esi,%edi), %ebx
+
+	testb	$4, %bl
+	popl	%ebx
+	
+	jnz	L(simple)
+	testl	$4, %esi
+
+	leal	-UNROLL_COUNT(%ecx), %ecx
 	jz	L(already_aligned)
+
 	decl	%ecx
 
 	movsl
 L(already_aligned):
 
-	movl	%ecx, PARAM_SIZE	# new size
-	andl	$~1, %ecx		# handle even part only in unrolled
 
-	movl	%ecx, %eax
-	negl	%ecx
-
-	decl	%eax
-	andl	$UNROLL_MASK, %ecx
-
-	shll	$2, %ecx
-	shrl	$UNROLL_LOG2, %eax
-	
-	# 4 code bytes per limb processed
-ifdef(`PIC',`
-	call	L(pic_calc)
-L(here):
-',`
-	leal	L(entry) (%ecx), %edx
-')
-	subl	%ecx, %edi
-
-	subl	%ecx, %esi
 ifelse(UNROLL_BYTES,256,`
-	addl	$128, %edi
+	# for testing speed at 64 limbs/loop unrolling
 	addl	$128, %esi
-')
-	jmp	*%edx
-
-
-ifdef(`PIC',`
-L(pic_calc):
-	movl	(%esp), %edx
-	leal	L(entry)-L(here) (%edx,%ecx), %edx
-	ret
+	addl	$128, %edi
 ')
 
+	# avoid executing through a bunch of nops if the assembler doesn't
+	# generate multi-byte do-nothings
+	jmp	L(top)
 
-# ----------------------------------------------
+	# aligning to 16 here isn't enough, 32 is needed to get the speeds
+	# claimed
 	ALIGN(32)
+
 L(top):
-	# eax	unroll counter
+	# eax	saved esi
 	# ebx
-	# ecx	scratch
-	# edx	was computed jump
-	# esi	src
-	# edi	dst
+	# ecx	counter, limbs
+	# edx	saved edi
+	# esi	src, incrementing
+	# edi	dst, incrementing
 	# ebp
 	#
-	# 4 code bytes per limb processed
+	# Zdisp gets 0(%esi) left that way to avoid vector decode, and with
+	# 0(%edi) keeps code aligned to 16 byte boundaries.
 
-L(entry):
 deflit(CHUNK_COUNT, 2)
 forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT-1, `
-	deflit(`disp', eval(i*CHUNK_COUNT*4 ifelse(UNROLL_BYTES,256, -128)))
-
-	movq	disp(%esi), %mm0
-	movq	%mm0, disp(%edi)
+	deflit(`disp', eval(i*CHUNK_COUNT*4 ifelse(UNROLL_BYTES,256,-128)))
+Zdisp(	movq,	disp,(%esi), %mm0)
+Zdisp(	movq,	%mm0, disp,(%edi))
 ')
 
 	addl	$UNROLL_BYTES, %esi
-	addl	$UNROLL_BYTES, %edi
+	subl	$UNROLL_COUNT, %ecx
 
-	decl	%eax
+	leal	UNROLL_BYTES(%edi), %edi
 	jns	L(top)
 
 
-	testb	$1, PARAM_SIZE	# possible odd limb
-	jz	L(no_extra)
+	# now %ecx is -UNROLL_COUNT to -1 representing repectively 0 to
+	# UNROLL_COUNT-1 limbs remaining
 
+	testb	$UNROLL_COUNT/2, %cl
+
+	leal	UNROLL_COUNT(%ecx), %ecx
+	jz	L(not_half)
+
+	# at an unroll count of 32 this block of code is 16 cycles faster than
+	# the rep movs, less 3 or 4 to test whether to do it
+
+forloop(`i', 0, UNROLL_COUNT/CHUNK_COUNT/2-1, `
+	deflit(`disp', eval(i*CHUNK_COUNT*4 ifelse(UNROLL_BYTES,256,-128)))
+	movq	disp(%esi), %mm0
+	movq	%mm0, disp(%edi)
+')
+	addl	$UNROLL_BYTES/2, %esi
+	addl	$UNROLL_BYTES/2, %edi
+
+	subl	$UNROLL_COUNT/2, %ecx
+L(not_half):
+
+
+ifelse(UNROLL_BYTES,256,`
+	# for testing speed at 64 limbs/loop unrolling
+	subl	$128, %esi
+	subl	$128, %edi
+')
+
+	rep
 	movsl
-L(no_extra):
 
-	popl	%edi
-	popl	%esi
+	movl	%eax, %esi
+	movl	%edx, %edi
 
 	emms_or_femms
-
 	ret
-
 
 EPILOGUE()
