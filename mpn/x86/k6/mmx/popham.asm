@@ -1,7 +1,7 @@
 dnl  AMD K6-2 mpn_popcount, mpn_hamdist -- mpn bit population count and
 dnl  hamming distance.
 
-dnl  Copyright 2000, 2001 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2001, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -26,6 +26,8 @@ include(`../config.m4')
 C        popcount  hamdist
 C K6-2:    9.0       11.5   cycles/limb
 C K6:      12.5      13.0
+
+NAILS_SUPPORT(0-31)
 
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);

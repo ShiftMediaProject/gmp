@@ -24,6 +24,8 @@ include(`../config.m4')
 
 C P5: 8.0 cycles/limb
 
+NAILS_SUPPORT(0-31)
+
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C

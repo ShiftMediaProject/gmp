@@ -26,6 +26,8 @@ include(`../config.m4')
 C P4: popcount 8.5 cycles/limb
 C     hamdist  9.5 cycles/limb
 
+NAILS_SUPPORT(0-31)
+
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C unsigned long mpn_hamdist (mp_srcptr src, mp_srcptr src2, mp_size_t size);

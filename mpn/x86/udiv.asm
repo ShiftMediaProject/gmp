@@ -1,6 +1,6 @@
 dnl  x86 mpn_udiv_qrnnd -- 2 by 1 limb division
 
-dnl  Copyright 1999, 2000 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -19,8 +19,9 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-
 include(`../config.m4')
+
+NAILS_SUPPORT(0-31)
 
 
 C mp_limb_t mpn_udiv_qrnnd (mp_limb_t *remptr, mp_limb_t high, mp_limb_t low,

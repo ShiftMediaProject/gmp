@@ -25,6 +25,9 @@ include(`../config.m4')
 C P5: 1.75 cycles/limb
 
 
+NAILS_SUPPORT(0-31)
+
+
 C void mpn_com_n (mp_ptr dst, mp_srcptr src, mp_size_t size);
 C
 C This code is similar to mpn_copyi, basically there's just some "xorl

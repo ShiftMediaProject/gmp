@@ -25,6 +25,8 @@ include(`../config.m4')
 
 C P55: popcount 11.5 cycles/limb, hamdist 12.0 cycles/limb
 
+NAILS_SUPPORT(0-31)
+
 
 MULFUNC_PROLOGUE(mpn_popcount mpn_hamdist)
 include_mpn(`x86/k6/mmx/popham.asm')

@@ -51,6 +51,8 @@ ifdef(`M4_function',,
 
 MULFUNC_PROLOGUE(mpn_and_n mpn_andn_n mpn_nand_n mpn_ior_n mpn_iorn_n mpn_nior_n mpn_xor_n mpn_xnor_n)
 
+NAILS_SUPPORT(0-31)
+
 
 C void M4_function (mp_ptr wp, mp_srcptr xp, mp_srcptr yp, mp_size_t size);
 C

@@ -25,6 +25,8 @@ include(`../config.m4')
 
 C K7: popcount 5.0 cycles/limb, hamdist 6.0 cycles/limb
 
+NAILS_SUPPORT(0-31)
+
 
 C unsigned long mpn_popcount (mp_srcptr src, mp_size_t size);
 C unsigned long mpn_hamdist (mp_srcptr src, mp_srcptr src2, mp_size_t size);
