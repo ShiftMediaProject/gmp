@@ -437,38 +437,45 @@ x_mpz_cmp_f (mpz_srcptr x, mpf_srcptr y)
 #define USE_MPQ      6
 #define USE_MPF      7
 
-/* An NV used as an IV will leave IOK set, but with a rounded value in the
-   IV.  So when both IOK and NOK are set we check the NV and if it's not an
-   integer then rounding will have occurred and the NV is the true value.
-
-   Prior to perl 5.8, an NV too big for an IV leaves IOK set and a truncated
-   value 0xFFFFFFFF.  So when both IOK and NOK are set we check the NV and
-   if it's bigger than an IV, then truncation will have occured and the NV
-   is the true value.
-
-   Perl 5.8 and up is good in that a truncation doesn't set IOK (only IOKp),
-   so the range check is not required.  But when going via a tie or other
-   magic, 5.8 and indeed all versions leave both IOKp and NOKp, and the
-   range check is needed in that case.
-
-   We don't simply use the NV unconditionally, firstly because on a 64-bit
-   perl an NV converted from an IV may have lost some bits, and secondly
-   because we can use an IV more efficiently in various places.
-
-   If IOK or NOK is set and POK too, then we prefer the IV or NV.  This
-   means we take the numerical part of dual-type scalars like $!.  It seems
-   sensible to prefer the number part in the context of a numerical
-   operation.
-
-   mg_get is called every time we get a value, even if the private flags are
+/* mg_get is called every time we get a value, even if the private flags are
    still set from a previous such call.  This is the same as as SvIV and
    friends do.
+
+   When POK, we use the PV, even if there's an IV or NV available.  This is
+   because it's hard to be sure there wasn't any rounding in establishing
+   the IV and/or NV.  Cases of overflow, where the PV should definitely be
+   used, are easy enough to spot, but rounding is hard.  So although IV or
+   NV would be more efficient, we must use the PV to be sure of getting all
+   the data.  Applications should convert once to mpz, mpq or mpf when using
+   a value repeatedly.
+
+   Zany dual-type scalars like $! where the IV is an error code and the PV
+   is an error description string won't work with this preference for PV,
+   but that's too bad.  Such scalars should be rare, and unlikely to be used
+   in bignum calculations.
+
+   When IOK and NOK are both set, we would prefer to use the IV since it can
+   be converted more efficiently, and because on a 64-bit system the NV may
+   have less bits than the IV.  The following rules are applied,
+
+   - If the NV is not an integer, then we must use that NV, since clearly
+     the IV was merely established by rounding and is not the full value.
+
+   - In perl prior to 5.8, an NV too big for an IV leaves an overflow value
+     0xFFFFFFFF.  If the NV is too big to fit an IV then clearly it's the NV
+     which is the true value and must be used.
+
+   - In perl 5.8 and up, such an overflow doesn't set IOK, so that test is
+     unnecessary.  However when coming from get-magic, IOKp _is_ set, and we
+     must check for overflow the same as in older perl.
+
+   FIXME:
 
    We'd like to call mg_get just once, but unfortunately sv_derived_from()
    will call it for each of our checks.  We could do a string compare like
    sv_isa ourselves, but that only tests the exact class, it doesn't
    recognise subclassing.  There doesn't seem to be a public interface to
-   the subclassing tests in the internal isa_lookup().  */
+   the subclassing tests (in the internal isa_lookup() function).  */
 
 int
 use_sv (SV *sv)
@@ -478,6 +485,9 @@ use_sv (SV *sv)
   if (SvGMAGICAL(sv))
     {
       mg_get(sv);
+
+      if (SvPOKp(sv))
+        return USE_PVX;
 
       if (SvIOKp(sv))
         {
@@ -498,11 +508,11 @@ use_sv (SV *sv)
       if (SvNOKp(sv))
         return USE_NVX;
 
-      if (SvPOKp(sv))
-        return USE_PVX;
-
       goto rok_or_unknown;
     }
+
+  if (SvPOK(sv))
+    return USE_PVX;
 
   if (SvIOK(sv))
     {
@@ -518,7 +528,7 @@ use_sv (SV *sv)
                     return USE_NVX;
                 }
               d = SvNVX(sv);
-              if (d == floor (d))
+              if (d != floor (d))
                 return USE_NVX;
             }
           return USE_UVX;
@@ -535,7 +545,7 @@ use_sv (SV *sv)
                     return USE_NVX;
                 }
               d = SvNVX(sv);
-              if (d == floor (d))
+              if (d != floor (d))
                 return USE_NVX;
             }
           return USE_IVX;
@@ -544,9 +554,6 @@ use_sv (SV *sv)
 
   if (SvNOK(sv))
     return USE_NVX;
-
-  if (SvPOK(sv))
-    return USE_PVX;
 
  rok_or_unknown:
   if (SvROK(sv))
