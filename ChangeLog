@@ -18,6 +18,18 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
+2002-08-22  Kevin Ryde  <kevin@swox.se>
+
+	* gmp-impl.h (MUL_FFT_THRESHOLD, SQR_FFT_THRESHOLD): Note
+	mpn/generic/mul_fft.c is not nails-capable, and don't bother setting
+	other FFT data for nails.
+
+	* configfsf.guess: Update to 2002-08-19.
+	* configfsf.sub: Update to 2002-08-20.
+
+	* config.guess (powerpc*-*-*): Use a { } construct to supress SIGILL
+	message on AIX.
+
 2002-08-20  Kevin Ryde  <kevin@swox.se>
 
 	* gmp.texi (Build Options): Add ia64 under cpu types.
