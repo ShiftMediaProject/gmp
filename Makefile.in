@@ -175,7 +175,7 @@ MPZ_OBJECTS = mpz/abs.lo mpz/add.lo mpz/add_ui.lo mpz/addmul_ui.lo mpz/and.lo \
   mpz/inp_str.lo mpz/invert.lo mpz/ior.lo mpz/iset.lo mpz/iset_d.lo \
   mpz/iset_si.lo mpz/iset_str.lo mpz/iset_ui.lo mpz/jacobi.lo mpz/lcm.lo \
   mpz/legendre.lo mpz/mod.lo mpz/mul.lo mpz/mul_2exp.lo mpz/mul_ui.lo \
-  mpz/neg.lo mpz/out_raw.lo mpz/out_str.lo mpz/perfpow.lo mpz/perfsqr.lo \
+  mpz/neg.lo mpz/nextprime.lo mpz/out_raw.lo mpz/out_str.lo mpz/perfpow.lo mpz/perfsqr.lo \
   mpz/popcount.lo mpz/pow_ui.lo mpz/powm.lo mpz/powm_ui.lo mpz/pprime_p.lo \
   mpz/random.lo mpz/random2.lo mpz/realloc.lo mpz/remove.lo mpz/root.lo \
   mpz/scan0.lo mpz/scan1.lo mpz/set.lo mpz/set_d.lo mpz/set_f.lo mpz/set_q.lo \

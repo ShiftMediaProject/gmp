@@ -135,7 +135,7 @@ libmpz_la_SOURCES = \
   fits_ulong_p.c fits_ushort_p.c gcd.c gcd_ui.c gcdext.c get_d.c get_si.c \
   get_str.c get_ui.c getlimbn.c hamdist.c init.c inp_raw.c inp_str.c \
   invert.c ior.c iset.c iset_d.c iset_si.c iset_str.c iset_ui.c \
-  jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c mul_ui.c neg.c \
+  jacobi.c lcm.c legendre.c mod.c mul.c mul_2exp.c mul_ui.c neg.c nextprime.c \
   out_raw.c out_str.c perfpow.c perfsqr.c popcount.c pow_ui.c powm.c \
   powm_ui.c pprime_p.c random.c random2.c realloc.c remove.c root.c scan0.c \
   scan1.c set.c set_d.c set_f.c set_q.c set_si.c set_str.c \
@@ -168,12 +168,12 @@ fits_uint_p.lo fits_ulong_p.lo fits_ushort_p.lo gcd.lo gcd_ui.lo \
 gcdext.lo get_d.lo get_si.lo get_str.lo get_ui.lo getlimbn.lo \
 hamdist.lo init.lo inp_raw.lo inp_str.lo invert.lo ior.lo iset.lo \
 iset_d.lo iset_si.lo iset_str.lo iset_ui.lo jacobi.lo lcm.lo \
-legendre.lo mod.lo mul.lo mul_2exp.lo mul_ui.lo neg.lo out_raw.lo \
-out_str.lo perfpow.lo perfsqr.lo popcount.lo pow_ui.lo powm.lo \
-powm_ui.lo pprime_p.lo random.lo random2.lo realloc.lo remove.lo \
-root.lo scan0.lo scan1.lo set.lo set_d.lo set_f.lo set_q.lo set_si.lo \
-set_str.lo set_ui.lo setbit.lo size.lo sizeinbase.lo sqrt.lo sqrtrem.lo \
-sub.lo sub_ui.lo swap.lo tdiv_ui.lo tdiv_q.lo tdiv_q_2exp.lo \
+legendre.lo mod.lo mul.lo mul_2exp.lo mul_ui.lo neg.lo nextprime.lo \
+out_raw.lo out_str.lo perfpow.lo perfsqr.lo popcount.lo pow_ui.lo \
+powm.lo powm_ui.lo pprime_p.lo random.lo random2.lo realloc.lo \
+remove.lo root.lo scan0.lo scan1.lo set.lo set_d.lo set_f.lo set_q.lo \
+set_si.lo set_str.lo set_ui.lo setbit.lo size.lo sizeinbase.lo sqrt.lo \
+sqrtrem.lo sub.lo sub_ui.lo swap.lo tdiv_ui.lo tdiv_q.lo tdiv_q_2exp.lo \
 tdiv_q_ui.lo tdiv_qr.lo tdiv_qr_ui.lo tdiv_r.lo tdiv_r_2exp.lo \
 tdiv_r_ui.lo tstbit.lo ui_pow_ui.lo urandomb.lo urandomm.lo xor.lo
 libmpz_la_OBJECTS =  $(am_libmpz_la_OBJECTS)
@@ -214,22 +214,22 @@ $(DEPDIR)/iset.Plo $(DEPDIR)/iset_d.Plo $(DEPDIR)/iset_si.Plo \
 $(DEPDIR)/iset_str.Plo $(DEPDIR)/iset_ui.Plo $(DEPDIR)/jacobi.Plo \
 $(DEPDIR)/lcm.Plo $(DEPDIR)/legendre.Plo $(DEPDIR)/mod.Plo \
 $(DEPDIR)/mul.Plo $(DEPDIR)/mul_2exp.Plo $(DEPDIR)/mul_ui.Plo \
-$(DEPDIR)/neg.Plo $(DEPDIR)/out_raw.Plo $(DEPDIR)/out_str.Plo \
-$(DEPDIR)/perfpow.Plo $(DEPDIR)/perfsqr.Plo $(DEPDIR)/popcount.Plo \
-$(DEPDIR)/pow_ui.Plo $(DEPDIR)/powm.Plo $(DEPDIR)/powm_ui.Plo \
-$(DEPDIR)/pprime_p.Plo $(DEPDIR)/random.Plo $(DEPDIR)/random2.Plo \
-$(DEPDIR)/realloc.Plo $(DEPDIR)/remove.Plo $(DEPDIR)/root.Plo \
-$(DEPDIR)/scan0.Plo $(DEPDIR)/scan1.Plo $(DEPDIR)/set.Plo \
-$(DEPDIR)/set_d.Plo $(DEPDIR)/set_f.Plo $(DEPDIR)/set_q.Plo \
-$(DEPDIR)/set_si.Plo $(DEPDIR)/set_str.Plo $(DEPDIR)/set_ui.Plo \
-$(DEPDIR)/setbit.Plo $(DEPDIR)/size.Plo $(DEPDIR)/sizeinbase.Plo \
-$(DEPDIR)/sqrt.Plo $(DEPDIR)/sqrtrem.Plo $(DEPDIR)/sub.Plo \
-$(DEPDIR)/sub_ui.Plo $(DEPDIR)/swap.Plo $(DEPDIR)/tdiv_q.Plo \
-$(DEPDIR)/tdiv_q_2exp.Plo $(DEPDIR)/tdiv_q_ui.Plo $(DEPDIR)/tdiv_qr.Plo \
-$(DEPDIR)/tdiv_qr_ui.Plo $(DEPDIR)/tdiv_r.Plo $(DEPDIR)/tdiv_r_2exp.Plo \
-$(DEPDIR)/tdiv_r_ui.Plo $(DEPDIR)/tdiv_ui.Plo $(DEPDIR)/tstbit.Plo \
-$(DEPDIR)/ui_pow_ui.Plo $(DEPDIR)/urandomb.Plo $(DEPDIR)/urandomm.Plo \
-$(DEPDIR)/xor.Plo
+$(DEPDIR)/neg.Plo $(DEPDIR)/nextprime.Plo $(DEPDIR)/out_raw.Plo \
+$(DEPDIR)/out_str.Plo $(DEPDIR)/perfpow.Plo $(DEPDIR)/perfsqr.Plo \
+$(DEPDIR)/popcount.Plo $(DEPDIR)/pow_ui.Plo $(DEPDIR)/powm.Plo \
+$(DEPDIR)/powm_ui.Plo $(DEPDIR)/pprime_p.Plo $(DEPDIR)/random.Plo \
+$(DEPDIR)/random2.Plo $(DEPDIR)/realloc.Plo $(DEPDIR)/remove.Plo \
+$(DEPDIR)/root.Plo $(DEPDIR)/scan0.Plo $(DEPDIR)/scan1.Plo \
+$(DEPDIR)/set.Plo $(DEPDIR)/set_d.Plo $(DEPDIR)/set_f.Plo \
+$(DEPDIR)/set_q.Plo $(DEPDIR)/set_si.Plo $(DEPDIR)/set_str.Plo \
+$(DEPDIR)/set_ui.Plo $(DEPDIR)/setbit.Plo $(DEPDIR)/size.Plo \
+$(DEPDIR)/sizeinbase.Plo $(DEPDIR)/sqrt.Plo $(DEPDIR)/sqrtrem.Plo \
+$(DEPDIR)/sub.Plo $(DEPDIR)/sub_ui.Plo $(DEPDIR)/swap.Plo \
+$(DEPDIR)/tdiv_q.Plo $(DEPDIR)/tdiv_q_2exp.Plo $(DEPDIR)/tdiv_q_ui.Plo \
+$(DEPDIR)/tdiv_qr.Plo $(DEPDIR)/tdiv_qr_ui.Plo $(DEPDIR)/tdiv_r.Plo \
+$(DEPDIR)/tdiv_r_2exp.Plo $(DEPDIR)/tdiv_r_ui.Plo $(DEPDIR)/tdiv_ui.Plo \
+$(DEPDIR)/tstbit.Plo $(DEPDIR)/ui_pow_ui.Plo $(DEPDIR)/urandomb.Plo \
+$(DEPDIR)/urandomm.Plo $(DEPDIR)/xor.Plo
 SOURCES = $(libmpz_la_SOURCES)
 OBJECTS = $(am_libmpz_la_OBJECTS)
 
@@ -459,6 +459,7 @@ distdir: $(DISTFILES)
 @AMDEP@include $(DEPDIR)/mul_2exp.Plo
 @AMDEP@include $(DEPDIR)/mul_ui.Plo
 @AMDEP@include $(DEPDIR)/neg.Plo
+@AMDEP@include $(DEPDIR)/nextprime.Plo
 @AMDEP@include $(DEPDIR)/out_raw.Plo
 @AMDEP@include $(DEPDIR)/out_str.Plo
 @AMDEP@include $(DEPDIR)/perfpow.Plo
