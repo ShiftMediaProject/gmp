@@ -26,19 +26,13 @@ MA 02111-1307, USA.  */
 mp_limb_t
 mpn_mul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t limb)
 {
-  mp_ptr p0, p1;
+  mp_limb_t p0[n], p1[n];
   mp_limb_t cy_limb;
-  TMP_DECL (marker);
-  TMP_MARK (marker);
-
-  p1 = TMP_ALLOC (n * BYTES_PER_MP_LIMB);
-  p0 = TMP_ALLOC (n * BYTES_PER_MP_LIMB);
 
   GMPN_MULWW (p1, p0, up, &n, &limb);
   rp[0] = p0[0];
   cy_limb = mpn_add_n (rp + 1, p0 + 1, p1, n - 1);
   cy_limb += p1[n - 1];
 
-  TMP_FREE (marker);
   return cy_limb;
 }

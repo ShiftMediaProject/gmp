@@ -40,25 +40,20 @@ mpn_sub_n (c, a, b, n)
 
   if (a == c || b == c)
     {
-      TMP_DECL (marker);
-      TMP_MARK (marker);
-      if (c == a)
+      if (a == c)
 	{
 	  /* allocate temp space for a */
-	  mp_ptr ax = (mp_ptr) TMP_ALLOC (n * BYTES_PER_MP_LIMB);
+	  mp_limb_t ax[n];
 	  MPN_COPY (ax, a, n);
-	  a = (mp_srcptr) ax;
+	  return mpn_sub_n (c, ax, b, n);
 	}
-      if (c == b)
+      if (b == c)
 	{
 	  /* allocate temp space for b */
-	  mp_ptr bx = (mp_ptr) TMP_ALLOC (n * BYTES_PER_MP_LIMB);
+	  mp_limb_t bx[n];
 	  MPN_COPY (bx, b, n);
-	  b = (mp_srcptr) bx;
+	  return mpn_sub_n (c, a, bx, n);
 	}
-      carry_out = mpn_sub_n (c, a, b, n);
-      TMP_FREE (marker);
-      return carry_out;
     }
 
   carry_out = a[nm1] < b[nm1];
