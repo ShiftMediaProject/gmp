@@ -1,7 +1,7 @@
 ;;; gmpasm-mode.el -- GNU MP asm and m4 editing mode.
 
 
-;; Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+;; Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 ;;
 ;; This file is part of the GNU MP Library.
 ;;
@@ -185,7 +185,7 @@ should be treated by emacs.")
   "`font-lock-keywords' for `gmpasm-mode'.
 
 The keywords are m4 builtins and some of the GMP macros used in asm files.
-L and LF don't look good fontified, so they're omitted.
+L doesn't look good fontified, so it's omitted.
 
 The right assembler comment regexp is added dynamically buffer-local (with
 dnl too).")
