@@ -28,6 +28,8 @@ Documentation:
 - support for accented characters when converting the texi file to
   the dvi file
 
+- web page: add a html version of the documentation
+
 Installation:
 
 - from Kevin Ryde <user42@zip.com.au>:
@@ -38,16 +40,6 @@ Installation:
   code.
 
 Changes in existing functions:
-
-- use (LDBL_MAX/2)+(LDBL_MAX/4*LDBL_EPSILON) instead of loop in tset_ld
-	to get largest power of 2 that fits in a long double
-	[and avoid overflow exceptions in tests, for example adding
-	#if MPFR_HAVE_TESTS_x86
-	  x86_fldcw (x86_fstcw () & ~8);
-	#endif
-	in mpfr_test_init to enable overflow exceptions]
-	
-- allow the ISO C "P" exponent separator for base 16 in input functions
 
 - merge mpfr_inp_str and mpfr_set_str (cf glibc sscanf/fscanf)
 	[mpfr_set_str -> with final '\0',
@@ -98,6 +90,9 @@ New functions to implement:
 	Dmitry Antipov <dmitry.antipov@mail.ru> Thu, 13 Jun 2002
 - mpz_set_fr (to set a mpz from a mpfr, with a rounding mode)
 	-> cf code in leibniz:mpfr/mpz_set_fr.c
+	[Kevin: mpz_set_fr will be the name when integrated.  Any other name
+	 won't be wanted and will be quietly dropped.  Feel free to just leave
+	 it at mpz_set_fr right now, it won't cause any conflicts or anything.]
 - those from LIA: missing secant, cosecant, cotangent (trigo/hyperbolic)
 - atan2
 - implement accurate summation algorithms from Demmel

@@ -1072,8 +1072,8 @@ Return zero iff the result is exact.
 @deftypefun int mpfr_pow (mpfr_t @var{rop}, mpfr_t @var{op1}, mpfr_t @var{op2}, mp_rnd_t @var{rnd})
 Set @var{rop} to @m{@var{op1}^{op2}, @var{op1} raised to the power @var{op2}},
 rounded to the direction @var{rnd} with the precision of @var{rop}.
-If @var{op1} is negative then @var{rop} is set to NaN,
-even if @var{op2} is an integer.
+Special values are currently handled as described in Section F.9.4.4
+of the ISO C99 standard.
 Return zero iff the result is exact.
 @end deftypefun
 

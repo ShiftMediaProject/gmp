@@ -75,7 +75,6 @@ int
 main (int argc, char *argv[])
 {
   long double d, e;
-  double f;
   mpfr_t x;
   int i;
 
@@ -127,15 +126,8 @@ main (int argc, char *argv[])
   check_set_get (d, x);
   check_set_get (-d, x);
 
-  /* checks largest 2^(2^k) that is representable as a double */
-  f = 1.3407807929942597100e155; /* 2^512 */
-  i = 512;
-  d = (long double) f;
-  while (2 * i < LDBL_MAX_EXP)
-    {
-      d = d * d;
-      i = 2 * i;
-    }
+  /* checks largest 2^(2^k) that is representable as a long double */
+  d = (LDBL_MAX / 2) + (LDBL_MAX / 4 * LDBL_EPSILON);
   check_set_get (d, x);
 
   /* checks that 2^i, 2^i+1 and 2^i-1 are correctly converted */

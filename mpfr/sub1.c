@@ -114,15 +114,18 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mp_rnd_t rnd_mode,
     {
       bp = (mp_ptr) TMP_ALLOC(bn * BYTES_PER_MP_LIMB);
       MPN_COPY (bp, ap, bn);
-      /* ap == cp cannot occur since we would have b=c, which is detected
-	 in mpfr_add or mpfr_sub */
+      /* ap == cp cannot occur since we would have b = c, and this case
+         has already been processed (in mpfr_add or mpfr_sub if there is
+         a special value, else earlier in this function: sign == 0). */
     }
   else if (ap == cp)
     {
       cp = (mp_ptr) TMP_ALLOC (cn * BYTES_PER_MP_LIMB);
       MPN_COPY(cp, ap, cn);
     }
-  
+  MPFR_ASSERTN (ap != cp);
+  MPFR_ASSERTN (bp != cp);
+
   /* here we have shift_c = (diff_exp - cancel) % BITS_PER_MP_LIMB,
      thus we want cancel2 = ceil((cancel - diff_exp) / BITS_PER_MP_LIMB) */
 

@@ -33,7 +33,7 @@ MA 02111-1307, USA. */
    to hold all the bits of str. */
 
 void
-mpfr_set_str_raw (mpfr_ptr x, __gmp_const char *str)
+mpfr_set_str_raw (mpfr_ptr x, const char *str)
 {
   char *str2, *str0, negative = 0; 
   unsigned long j, l, k = 0, xsize, cnt, alloc;

@@ -22,7 +22,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "mpfr.h"
 
-__gmp_const char *
+const char *
 mpfr_print_rnd_mode (mp_rnd_t rnd_mode)
 {
   switch (rnd_mode)
