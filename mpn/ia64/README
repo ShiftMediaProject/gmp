@@ -132,53 +132,9 @@ with the same basic structure:
 ================================================================
 mpn_submul_1:
 
-The current code just calls mpn_mul_1 and mpn_sub_n and thus needs
-about 7 cycles/limb.
-
-We could implement this much like mpn_addmul_1, if we first complement
-v.  When v is complemented, the low product limb becomes complement of
-true product.  This should allow us to use the accumulation of xma.
-Here is how it works:
-
-
-  #define umul_ppmma(ph, pl, m0, m1, a) \
-    do {								\
-      UDItype __m0 = (m0), __m1 = (m1), __a = (a);			\
-      __asm__ ("xma.hu %0 = %1, %2, %3"					\
-	       : "=f" (ph)						\
-	       : "f" (m0), "f" (m1), "f" (__a));			\
-      (pl) = __m0 * __m1 + __a;						\
-    } while (0)
-
-  mp_limb_t
-  mpn_submul_1 (mp_ptr rp, mp_srcptr up, mp_size_t n, mp_limb_t vl)
-  {
-    mp_limb_t cl, cy;
-    mp_size_t i;
-    mp_limb_t phi, plo;
-    mp_limb_t x;
-    mp_limb_t ul, vln;
-
-    vln = -vl;
-
-    cl = 0;
-    for (i = n; i != 0; i--)
-      {
-	ul = *up++;		/* will need this in both fregs and gregs */
-	x = *rp;
-	umul_ppmma (phi, plo, ul, vln, x);
-
-	cy = plo < cl;
-	plo -= cl;
-
-	cl = ul - phi;
-	cl += cy;
-
-	*rp++ = plo;
-      }
-
-    return cl;
-  }
+The current code runs at 4 cycles/limb.  Getting to 3 cycles/limb
+would not be hard.  Getting to 2 cycles/limb might be harder, but
+at any rate, something close to 2 cycles/limb should be possible.
 
 ================================================================
 mpn_mul_1:
@@ -187,12 +143,13 @@ The current code runs at 4 cycles/limb.  The code is very similar to
 the mpn_addmul_1 code.  See comments above.
 
 Faster code wouldn't be too hard to write.  This is one possible
-pattern:
+pattern (here unrolled 2x, needs >= 6x, or modulo scheduling, for full
+speed):
 
   { .mfi	getf.sig
 		xma.l
 	   (p6) cmp.leu		p8, p9 =
-} { .mfi	stf8
+} { .mfi	stf8		[rp] =
 		xma.hu
 	   (p7) cmp.ltu		p8, p9 =
 		;;
@@ -207,7 +164,7 @@ pattern:
   { .mfi	getf.sig
 		xma.l
 	   (p8) cmp.leu		p6, p7 =
-} { .mfi	stf8
+} { .mfi	stf8		[rp] =
 		xma.hu
 	   (p9) cmp.ltu		p6, p7 =
 		;;
