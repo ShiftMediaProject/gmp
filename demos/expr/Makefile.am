@@ -29,6 +29,9 @@ MPFR_SOURCES_OPTION = exprfr.c exprfra.c
 MPFR_LIBADD_OPTION = $(top_builddir)/mpfr/libmpfr.a
 endif
 
+# ensure these are always distributed
+EXTRA_DIST = exprfr.c exprfra.c
+
 EXTRA_LIBRARIES = libexpr.a
 libexpr_a_SOURCES = expr.h \
   expr.c exprv.c exprz.c exprza.c exprq.c exprqa.c exprf.c exprfa.c \
