@@ -590,7 +590,7 @@ sparc-*-* | sparc64-*-*)
     rm -f conftest.dat
   fi  
 
-  # Grep the output from sysctl hw.model on sparc64 *BSD.
+  # Grep the output from sysctl hw.model on sparc or sparc64 *BSD.
   # Use an explicit /sbin, since that directory might not be in a normal
   # user's path.  Example outputs,
   #
