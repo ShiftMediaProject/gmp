@@ -2509,6 +2509,13 @@ __GMP_DECLSPEC extern const unsigned char  modlimb_invert_table[128];
   } while (0)
 #endif
 
+#if defined (__amd64__) && BITS_PER_MP_LIMB == 64
+#define BSWAP_LIMB(dst, src)						\
+  do {									\
+    __asm__ ("bswap %q0" : "=r" (dst) : "0" (src));			\
+  } while (0)
+#endif
+
 #if defined (__GNUC__) && ! defined (NO_ASM)    \
   && defined (__ia64) && BITS_PER_MP_LIMB == 64
 #define BSWAP_LIMB(dst, src)						\
