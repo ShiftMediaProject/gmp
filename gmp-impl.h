@@ -457,13 +457,13 @@ extern const int __gmp_0;
 #define DIVIDE_BY_ZERO (__gmp_junk = 10/__gmp_0)
 
 #if defined _LONG_LONG_LIMB
-#if __STDC__
+#if defined (__STDC__)
 #define CNST_LIMB(C) C##LL
 #else
 #define CNST_LIMB(C) C/**/LL
 #endif
 #else /* not _LONG_LONG_LIMB */
-#if __STDC__
+#if defined (__STDC__)
 #define CNST_LIMB(C) C##L
 #else
 #define CNST_LIMB(C) C/**/L
