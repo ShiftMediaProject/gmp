@@ -42,6 +42,34 @@ using namespace std;
 int   option_check_standard = 0;
 
 
+// On some versions of g++ 2.96 it's been observed that putback() may leave
+// tellg() unchanged.  We believe this is incorrect and presumably the
+// result of a bug, since for instance it's ok in g++ 2.95 and g++ 3.3.  We
+// detect the problem at runtime and disable affected checks.
+
+int putback_tellg_works = 1;
+
+void
+check_putback_tellg (void)
+{
+  istringstream input ("hello");
+  streampos  old_pos, new_pos;
+  char  c;
+
+  input.get(c);
+  old_pos = input.tellg();
+  input.putback(c);
+  new_pos = input.tellg();
+
+  if (old_pos == new_pos)
+    {
+      cout << "Warning, istringstream has a bug: putback() doesn't update tellg().\n";;
+      cout << "Tests on tellg() will be skipped.\n";
+      putback_tellg_works = 0;
+    }
+}
+
+
 #define WRONG(str)                                              \
   do {                                                          \
     cout << str ", data[" << i << "]\n";                        \
@@ -149,7 +177,7 @@ check_mpz (void)
               cout << "  got_si:  " << got_si << "\n";
               cout << "  want_si: " << want_si << "\n";
             }
-          if (got_pos != want_pos)
+          if (putback_tellg_works && got_pos != want_pos)
             {
               WRONG ("stdc++ operator>> wrong position, check_mpz");
               cout << "  want_pos: " << want_pos << "\n";
@@ -182,7 +210,7 @@ check_mpz (void)
             mpz_trace ("  want", want);
             abort ();
           }
-        if (got_pos != want_pos)
+        if (putback_tellg_works && got_pos != want_pos)
           {
             WRONG ("mpz operator>> wrong position");
             cout << "  want_pos: " << want_pos << "\n";
@@ -293,7 +321,7 @@ check_mpq (void)
               cout << "  got_si:  " << got_si << "\n";
               cout << "  want_si: " << want_si << "\n";
             }
-          if (got_pos != want_pos)
+          if (putback_tellg_works && got_pos != want_pos)
             {
               WRONG ("stdc++ operator>> wrong position, check_mpq");
               cout << "  want_pos: " << want_pos << "\n";
@@ -329,7 +357,7 @@ check_mpq (void)
             mpq_trace ("  want", want);
             abort ();
           }
-        if (got_pos != want_pos)
+        if (putback_tellg_works && got_pos != want_pos)
           {
             WRONG ("mpq operator>> wrong position");
             cout << "  want_pos: " << want_pos << "\n";
@@ -445,7 +473,7 @@ check_mpf (void)
               cout << "  got:   " << got_d << "\n";
               cout << "  want:  " << want_d << "\n";
             }
-          if (got_pos != want_pos)
+          if (putback_tellg_works && got_pos != want_pos)
             {
               WRONG ("stdc++ operator>> wrong position, check_mpf");
               cout << "  want_pos: " << want_pos << "\n";
@@ -478,7 +506,7 @@ check_mpf (void)
             mpf_trace ("  want", want);
             abort ();
           }
-        if (got_pos != want_pos)
+        if (putback_tellg_works && got_pos != want_pos)
           {
             WRONG ("mpf operator>> wrong position");
             cout << "  want_pos: " << want_pos << "\n";
@@ -502,6 +530,7 @@ main (int argc, char *argv[])
 
   tests_start ();
 
+  check_putback_tellg ();
   check_mpz ();
   check_mpq ();
   check_mpf ();
