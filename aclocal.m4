@@ -68,9 +68,7 @@ dnl  an AC_SUBST accordingly.  If $M4 is already set then it's from the user
 dnl  and is accepted with no checks.  GMP_PROG_M4 is like AC_PATH_PROG or
 dnl  AC_CHECK_PROG, but testing each m4 found to see if it's good enough.
 dnl 
-dnl  SunOS /usr/bin/m4 is old and lacks features we need, like $# and
-dnl  command line -D.  SunOS has a /usr/5bin/m4 which is a SysV m4 and will
-dnl  work.  We think /usr/5bin is always present.
+dnl  See mpn/asm-defs.m4 for details on the known bad m4s.
 
 AC_DEFUN(GMP_PROG_M4,
 [AC_CACHE_CHECK([for suitable m4],
@@ -79,14 +77,24 @@ AC_DEFUN(GMP_PROG_M4,
   gmp_cv_prog_m4="$M4"
 else
   cat >conftest.m4 <<\EOF
-dnl  must protect against this being expanded during autoconf m4!
-[define(foo,``$][#'')ifelse(foo(x),1,good,bad)]
+dnl  must protect this against being expanded during autoconf m4!
+[define(dollarhash,``$][#'')dnl
+ifelse(dollarhash(x),1,`define(t1,Y)',
+``bad: $][# not supported (SunOS /usr/bin/m4)
+'')dnl
+ifelse(eval(89),89,`define(t2,Y)',
+`bad: eval() doesnt support 8 and 9 in a constant (OpenBSD 2.6 m4)
+')dnl
+ifelse(t1`'t2,YY,`good
+')dnl]
 EOF
-  # 2>/dev/null avoids an error message if there's no "m4" at all in $PATH
-  gmp_tmp_val="`(m4 conftest.m4) 2>/dev/null`"
+  echo "trying m4" 1>&AC_FD_CC
+  gmp_tmp_val="`(m4 conftest.m4) 2>&AC_FD_CC`"
   if test "$gmp_tmp_val" = good; then
     gmp_cv_prog_m4="m4"
   else
+    echo "$gmp_tmp_val" 1>&AC_FD_CC
+
     IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
 dnl $ac_dummy forces splitting on constant user-supplied paths.
 dnl POSIX.2 word splitting is done only on the output of word expansions,
@@ -94,17 +102,17 @@ dnl not every word.  This closes a longstanding sh security hole.
     ac_dummy="$PATH:/usr/5bin"
     for ac_dir in $ac_dummy; do
       test -z "$ac_dir" && ac_dir=.
-      if test -f "$ac_dir/m4"; then
-        gmp_tmp_val="`$ac_dir/m4 conftest.m4`"
-        if test "$gmp_tmp_val" = good; then
-	  gmp_cv_prog_m4="$ac_dir/m4"
-          break
-        fi
+      echo "trying $ac_dir/m4" 1>&AC_FD_CC
+      gmp_tmp_val="`($ac_dir/m4 conftest.m4) 2>&AC_FD_CC`"
+      if test "$gmp_tmp_val" = good; then
+        gmp_cv_prog_m4="$ac_dir/m4"
+        break
       fi
+      echo "$gmp_tmp_val" 1>&AC_FD_CC
     done
     IFS="$ac_save_ifs"
     if test -z "$gmp_cv_prog_m4"; then
-      AC_MSG_ERROR([no usable m4 in \$PATH or /usr/5bin])
+      AC_MSG_ERROR([No usable m4 in \$PATH or /usr/5bin (see config.log for reasons).])
     fi
   fi
   rm -f conftest.m4
