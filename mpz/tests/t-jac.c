@@ -584,8 +584,8 @@ check_data (void)
 
   for (i = 0; i < numberof (data); i++)
     {
-      mpz_set_str (a, data[i].a, 0);
-      mpz_set_str (b, data[i].b, 0);
+      MPZ_SET_STR_OR_ABORT (a, data[i].a, 0);
+      MPZ_SET_STR_OR_ABORT (b, data[i].b, 0);
 
       answer = data[i].answer;
       try_all (a, b, data[i].answer);

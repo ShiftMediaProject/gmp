@@ -83,7 +83,7 @@ main (argc, argv)
       else
 	sprintf (buf, "0.%s@%ld", str, bexp);
 
-      mpf_set_str (y, buf, -base);
+      MPF_SET_STR_OR_ABORT (y, buf, -base);
       (*_mp_free_func) (str, 0);
 
       mpf_reldiff (rerr, x, y);

@@ -121,8 +121,8 @@ check_mpf_cmp_si (void)
   mpz_init (bz);
   for (i = 0; i < numberof (data); i++)
     {
-      mpf_set_str (a, data[i].a, data[i].a_base);
-      mpz_set_str (bz, data[i].b, 0);
+      MPF_SET_STR_OR_ABORT (a, data[i].a, data[i].a_base);
+      MPZ_SET_STR_OR_ABORT (bz, data[i].b, 0);
 
       if (mpz_fits_slong_p (bz))
         {

@@ -165,8 +165,8 @@ samples (void)
 
   for (i = 0; i < numberof (data); i++)
     {
-      mpz_set_str (n, data[i].n, 0);
-      mpz_set_str (want, data[i].want, 0);
+      MPZ_SET_STR_OR_ABORT (n, data[i].n, 0);
+      MPZ_SET_STR_OR_ABORT (want, data[i].want, 0);
 
       try_mpz_bin_ui (want, n, data[i].k);
 

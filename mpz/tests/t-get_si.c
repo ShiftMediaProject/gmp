@@ -70,11 +70,7 @@ main (void)
   mpz_init (n);
   for (i = 0; i < numberof (data); i++)
     {
-      if (mpz_set_str (n, data[i].n, 0) != 0)
-        {
-          printf ("Cannot mpz_set_str at data[%d]\n", i); 
-          abort();
-        }
+      MPZ_SET_STR_OR_ABORT (n, data[i].n, 0);
 
       got = mpz_get_si (n);
       if (got != data[i].want)
