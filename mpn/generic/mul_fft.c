@@ -97,20 +97,11 @@ mpn_fft_best_k (n, sqr)
     if (n < mpn_fft_table[sqr][i])
       return i + FFT_FIRST_K;
 
-  /* a zero is the end of the table, and further thresholds are the last
-     entry successively doubled */
-  t = mpn_fft_table[sqr][i-1];
-  for (;;)
-    {
-      if (t > MP_SIZE_T_MAX/2)
-        break;
-      t *= 2;
-
-      if (n < t)
-        break;
-      i++;
-    }
-  return i + FFT_FIRST_K;
+  /* treat 4*last as one further entry */
+  if (i == 0 || n < 4*mpn_fft_table[sqr][i-1])
+    return i + FFT_FIRST_K;
+  else
+    return i + FFT_FIRST_K + 1;
 }
 
 
