@@ -1,6 +1,6 @@
 /* gmp_randinit (state, algorithm, ...) -- Initialize a random state.
 
-Copyright 1999, 2000  Free Software Foundation, Inc.
+Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -41,11 +41,11 @@ They all pass the spectral test with Vt >= 2^(30/t) and merit >= 1.
 struct __gmp_rand_lc_scheme_struct
 {
   unsigned long int m2exp;	/* Modulus is 2 ^ m2exp. */
-  char *astr;			/* Multiplier in string form. */
+  const char *astr;		/* Multiplier in string form. */
   unsigned long int c;		/* Addend. */
 };
 
-struct __gmp_rand_lc_scheme_struct __gmp_rand_lc_scheme[] =
+const struct __gmp_rand_lc_scheme_struct __gmp_rand_lc_scheme[] =
 {
   {32, "29CF535", 	     1},
   {33, "51F666D", 	     1},
@@ -98,7 +98,7 @@ gmp_randinit (va_alist)
     case GMP_RAND_ALG_LC:	/* Linear congruential.  */
       {
 	unsigned long int size;
-	struct __gmp_rand_lc_scheme_struct *sp;
+	const struct __gmp_rand_lc_scheme_struct *sp;
 	mpz_t a;
 
 	size = va_arg (ap, unsigned long int);
