@@ -701,6 +701,18 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
   __asm__ ("divq %4"		     /* stringification in K&R C */	\
 	   : "=a" (q), "=d" (r)						\
 	   : "0" ((UDItype)(n0)), "1" ((UDItype)(n1)), "rm" ((UDItype)(dx)))
+#define count_leading_zeros(count, x)					\
+  do {									\
+    USItype __cbtmp;							\
+    ASSERT ((x) != 0);							\
+    __asm__ ("bsrq %1,%0" : "=r" (__cbtmp) : "rm" ((USItype)(x)));	\
+    (count) = __cbtmp ^ 63;						\
+  } while (0)
+#define count_trailing_zeros(count, x)					\
+  do {									\
+    ASSERT ((x) != 0);							\
+    __asm__ ("bsfq %1,%0" : "=r" (count) : "rm" ((USItype)(x)));	\
+  } while (0)
 #endif /* x86_64 */
 
 #if defined (__i860__) && W_TYPE_SIZE == 32
