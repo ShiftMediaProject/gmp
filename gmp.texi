@@ -1604,7 +1604,7 @@ variable doesn't have enough.
 @code{mpz_t} and @code{mpq_t} variables never reduce their allocated space.
 Normally this is the best policy, since it avoids frequent reallocation.
 Applications that need to return memory to the heap at some particular point
-can use @code{_mpz_realloc}, or clear variables no longer needed.
+can use @code{mpz_realloc2}, or clear variables no longer needed.
 
 @code{mpf_t} variables, in the current implementation, use a fixed amount of
 space, determined by the chosen precision and allocated at initialization, so
@@ -1799,13 +1799,13 @@ something like that with a garbage collector too.
 An @code{mpz_t} or @code{mpq_t} variable used to hold successively increasing
 values will have its memory repeatedly @code{realloc}ed, which could be quite
 slow or could fragment memory, depending on the C library.  If an application
-can estimate the final size then @code{@w{_mpz}_realloc} can be called to
-allocate the necessary space from the beginning (@pxref{Initializing
-Integers}).
+can estimate the final size then @code{mpz_init2} or @code{mpz_realloc2} can
+be called to allocate the necessary space from the beginning
+(@pxref{Initializing Integers}).
 
-It doesn't matter if a size set with @code{@w{_mpz}_realloc} is too small,
-since all functions will do a further reallocation if necessary.  Badly
-overestimating memory required will waste space though.
+It doesn't matter if a size set with @code{mpz_init2} or @code{mpz_realloc2}
+is too small, since all functions will do a further reallocation if necessary.
+Badly overestimating memory required will waste space though.
 
 @item @code{2exp} functions
 It's up to an application to call functions like @code{mpz_mul_2exp} when
@@ -2222,15 +2222,8 @@ GMP integers are stored in objects of type @code{mpz_t}.
 @cindex Initialization functions
 
 The functions for integer arithmetic assume that all integer objects are
-initialized.  You do that by calling the function @code{mpz_init}.
-
-@deftypefun void mpz_init (mpz_t @var{integer})
-Initialize @var{integer} with limb space and set the initial numeric value to
-0.  Each variable should normally only be initialized once, or at least cleared
-out (using @code{mpz_clear}) between each initialization.
-@end deftypefun
-
-Here is an example of using @code{mpz_init}:
+initialized.  You do that by calling the function @code{mpz_init}.  For
+example,
 
 @example
 @{
@@ -2246,40 +2239,52 @@ Here is an example of using @code{mpz_init}:
 @}
 @end example
 
-@noindent
 As you can see, you can store new values any number of times, once an
 object is initialized.
 
-@deftypefun void mpz_clear (mpz_t @var{integer})
-Free the limb space occupied by @var{integer}.  Make sure to call this
-function for all @code{mpz_t} variables when you are done with them.
+@deftypefun void mpz_init (mpz_t @var{integer})
+Initialize @var{integer}, and set its value to 0.
 @end deftypefun
 
-@deftypefun {void *} _mpz_realloc (mpz_t @var{integer}, mp_size_t @var{new_alloc})
-Change the limb space allocation to @var{new_alloc} limbs.  This function is
-not normally called from user code, but it can be used to give memory back to
-the heap, or to increase the space of a variable to avoid repeated automatic
-re-allocation.
+@deftypefun void mpz_init2 (mpz_t @var{integer}, unsigned long @var{n})
+Initialize @var{integer}, initially with space for @var{n} bits, and set its
+value to 0.
+
+@var{n} is only the initial space, @var{integer} will grow automatically in
+the normal way if necessary for subsequent values stored.  @code{mpz_init2}
+makes it possible to avoid such reallocations if a maximum size is known in
+advance.
+@end deftypefun
+
+@deftypefun void mpz_clear (mpz_t @var{integer})
+Free the space occupied by @var{integer}.  Call this function for all
+@code{mpz_t} variables when you are done with them.
+@end deftypefun
+
+@deftypefun void mpz_realloc2 (mpz_t @var{integer}, unsigned long @var{n})
+Change the space allocated for @var{integer} to @var{n} bits.  If the current
+value in @var{integer} requires more than @var{n} bits then the space is just
+changed down to that required size.
+
+This function can be used to increase the space for a variable in order to
+avoid repeated automatic reallocations, or to decrease it to give memory back
+to the heap.
 @end deftypefun
 
 @deftypefun void mpz_array_init (mpz_t @var{integer_array}[], size_t @var{array_size}, @w{mp_size_t @var{fixed_num_bits}})
-Allocate @strong{fixed} limb space for all @var{array_size} integers in
-@var{integer_array}.  Each integer in the array will have enough room to store
-@var{fixed_num_bits}.
+This is a special type of initialization.  @strong{Fixed} space of
+@var{fixed_num_bits} bits is allocated to each of the @var{array_size}
+integers in @var{integer_array}.
 
-This function can reduce memory usage in algorithms that need large arrays of
-integers, since it can avoid allocating and reallocating lots of small memory
-blocks.  There is no way to free the storage allocated by this function.
-Don't call @code{mpz_clear}!
-
-Since the allocation for each variable is fixed, care must be taken that
-values stored are no bigger than that size.  The following special rules must
-be observed,
+The space will not be automatically increased, unlike the normal
+@code{mpz_init}, but instead an application must ensure it's sufficient for
+any value stored.  The following space requirements apply to various
+functions,
 
 @itemize @bullet
 @item
 @code{mpz_abs}, @code{mpz_neg}, @code{mpz_set}, @code{mpz_set_si} and
-@code{mpz_set_ui} need room for the value they copy.
+@code{mpz_set_ui} need room for the value they store.
 
 @item
 @code{mpz_add}, @code{mpz_add_ui}, @code{mpz_sub} and @code{mpz_sub_ui} need
@@ -2299,6 +2304,21 @@ array and a normal variable.
 For other functions, or if in doubt, the suggestion is to calculate in a
 regular @code{mpz_init} variable and copy the result to an array variable with
 @code{mpz_set}.
+
+@code{mpz_array_init} can reduce memory usage in algorithms that need large
+arrays of integers, since it avoids allocating and reallocating lots of small
+memory blocks.  There is no way to free the storage allocated by this
+function.  Don't call @code{mpz_clear}!
+@end deftypefun
+
+@deftypefun {void *} _mpz_realloc (mpz_t @var{integer}, mp_size_t @var{new_alloc})
+Change the space for @var{integer} to @var{new_alloc} limbs.  The return value
+is not useful to applications and should be ignored.  @code{mpz_realloc2} is
+the preferred way to accomplish size changes like this.
+
+Note that currently there is no protection against @var{new_alloc} being
+smaller than the current value in @var{integer}.  This might change in the
+future.
 @end deftypefun
 
 
