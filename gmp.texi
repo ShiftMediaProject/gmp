@@ -1648,7 +1648,7 @@ Set @var{q} to @var{n} divided by 2 raised to @var{d}.  The quotient is truncate
 towards 0.
 @end ifnottex
 @tex
-Set @var{q} to ${n}/2^{d}$.  The quotient is truncated towards 0.
+Set @var{q} to $[{n}/2^{d}]$, truncated towards 0.
 @end tex
 @end deftypefun
 

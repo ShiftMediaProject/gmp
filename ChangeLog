@@ -1,3 +1,9 @@
+2000-08-02  Torbjorn Granlund  <tege@swox.com>
+
+	* mpn/alpha/ev6: New directory with ev6/21264 optimize code.
+	* mpn/alpha/ev6/addmul_1.asm: New file.
+	* mpn/alpha/ev6/gmp-mparam.h: New file.
+	
 2000-08-02  Kent Boortz  <kent@swox.com>
 
 	* mpfr: Integrated experimental version of mpfr-0.4.
