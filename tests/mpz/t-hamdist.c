@@ -1,6 +1,6 @@
 /* Test mpz_hamdist.
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -34,9 +34,9 @@ check_twobits (void)
 
   mpz_init (x);
   mpz_init (y);
-  for (i = 32; i < 5 * BITS_PER_MP_LIMB; i++)
+  for (i = 0; i < 5 * GMP_NUMB_BITS; i++)
     {
-      for (j = 0; j < 5 * BITS_PER_MP_LIMB; j++)
+      for (j = 0; j < 5 * GMP_NUMB_BITS; j++)
         {
           mpz_set_ui (x, 0L);
           mpz_setbit (x, i);
@@ -55,7 +55,7 @@ check_twobits (void)
               printf    ("  want %lu\n", want);
               mpz_trace ("  x   ", x);
               mpz_trace ("  y   ", y);
-              abort();                                    
+              abort();
             }
 
           mpz_neg (x, x);
@@ -88,13 +88,13 @@ check_rand (void)
 
   for (i = 0; i < 2000; i++)
     {
-      mpz_erandomb (x, rands, 6 * BITS_PER_MP_LIMB);
+      mpz_erandomb (x, rands, 6 * GMP_NUMB_BITS);
       mpz_negrandom (x, rands);
-      mpz_mul_2exp (x, x, urandom() % (4 * BITS_PER_MP_LIMB));
+      mpz_mul_2exp (x, x, urandom() % (4 * GMP_NUMB_BITS));
 
-      mpz_erandomb (y, rands, 6 * BITS_PER_MP_LIMB);
+      mpz_erandomb (y, rands, 6 * GMP_NUMB_BITS);
       mpz_negrandom (y, rands);
-      mpz_mul_2exp (y, y, urandom() % (4 * BITS_PER_MP_LIMB));
+      mpz_mul_2exp (y, y, urandom() % (4 * GMP_NUMB_BITS));
 
       want = refmpz_hamdist (x, y);
       got = mpz_hamdist (x, y);
@@ -105,7 +105,7 @@ check_rand (void)
           printf    ("  want %lu\n", want);
           mpz_trace ("  x   ", x);
           mpz_trace ("  y   ", y);
-          abort();                                    
+          abort();
         }
     }
   mpz_clear (x);
