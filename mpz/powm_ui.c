@@ -57,8 +57,8 @@ mpz_powm_ui (res, base, exp, mod)
     {
       /* Exponent is zero, result is 1 mod MOD, i.e., 1 or 0
 	 depending on if MOD equals 1.  */
-      rp[0] = 1;
       res->_mp_size = (msize == 1 && (mod->_mp_d)[0] == 1) ? 0 : 1;
+      rp[0] = 1;
       return;
     }
 
