@@ -1595,8 +1595,7 @@ AC_DEFUN(GMP_ASM_M68K_INSTRUCTION,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([assembler instruction and register style],
 		gmp_cv_asm_m68k_instruction,
-[gmp_cv_asm_m68k_instruction=unknown
-for i in "addl %d0,%d1" "add.l %d0,%d1" "addl d0,d1" "add.l d0,d1"; do
+[for i in "addl %d0,%d1" "add.l %d0,%d1" "addl d0,d1" "add.l d0,d1"; do
   GMP_TRY_ASSEMBLE(
     [	$gmp_cv_asm_text
 	$i],
@@ -1604,13 +1603,16 @@ for i in "addl %d0,%d1" "add.l %d0,%d1" "addl d0,d1" "add.l d0,d1"; do
     rm -f conftest*
     break])
 done
+if test -z "$gmp_cv_asm_m68k_instruction"; then
+  AC_MSG_ERROR([cannot determine assembler instruction and register style])
+fi
 ])
 case $gmp_cv_asm_m68k_instruction in
 "addl d0,d1")    want_dot_size=no;  want_register_percent=no  ;;
 "addl %d0,%d1")  want_dot_size=no;  want_register_percent=yes ;;
 "add.l d0,d1")   want_dot_size=yes; want_register_percent=no  ;;
 "add.l %d0,%d1") want_dot_size=yes; want_register_percent=yes ;;
-*) AC_MSG_ERROR([cannot determine assembler instruction and register style]) ;;
+*) AC_MSG_ERROR([oops, unrecognised instruction and register style]) ;;
 esac
 GMP_DEFINE_RAW(["define(<WANT_REGISTER_PERCENT>, <\`$want_register_percent'>)"])
 GMP_DEFINE_RAW(["define(<WANT_DOT_SIZE>, <\`$want_dot_size'>)"])
@@ -1661,8 +1663,7 @@ AC_DEFUN(GMP_ASM_M68K_BRANCHES,
 [AC_REQUIRE([GMP_ASM_TEXT])
 AC_CACHE_CHECK([assembler shortest branches],
 		gmp_cv_asm_m68k_branches,
-[gmp_cv_asm_m68k_branches=unknown
-for i in jra jbra bra; do
+[for i in jra jbra bra; do
   GMP_TRY_ASSEMBLE(
 [	$gmp_cv_asm_text
 foo$gmp_cv_asm_label_suffix
@@ -1671,10 +1672,10 @@ foo$gmp_cv_asm_label_suffix
   rm -f conftest*
   break])
 done
-])
-if test "$gmp_cv_asm_m68k_branches" = unknown; then
+if test -z "$gmp_cv_asm_m68k_branches"; then
   AC_MSG_ERROR([cannot determine assembler branching style])
 fi
+])
 GMP_DEFINE_RAW(["define(<WANT_BRANCHES>, <\`$gmp_cv_asm_m68k_branches'>)"])
 ])
 
