@@ -1,3 +1,11 @@
+2001-02-07  Kevin Ryde  <kevin@swox.se>
+
+	* gmp.texi (Low-level Functions): mpn_preinv_mod_1 now undocumented.
+
+	* mpn/generic/random2.c (myrandom): Use rand() on mingw.
+
+	* mpn/alpha/gmp-mparam.h: Update tuned parameters.
+
 2001-02-05  Kevin Ryde  <kevin@swox.se>
 
 	* Makefile.am (libgmp, libmp): Construct from mpn/libmpn.la etc rather
