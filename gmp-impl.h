@@ -1139,9 +1139,10 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
 #define MUL_TOOM3_THRESHOLD 256
 #endif
 
-/* This is the threshold at which mpn_sqr_basecase should take over from
+/* SQR_BASECASE_THRESHOLD is where mpn_sqr_basecase should take over from
    mpn_mul_basecase in mpn_sqr_n.  Default is to use mpn_sqr_basecase
-   always.
+   always.  (Note that we certainly always want it if there's a native
+   assembler mpn_sqr_basecase.)
 
    If it turns out that mpn_kara_sqr_n becomes faster than mpn_mul_basecase
    before mpn_sqr_basecase does, then SQR_BASECASE_THRESHOLD is the
