@@ -35,17 +35,17 @@ dnl  Maximum possible with the current code is 64.
 deflit(UNROLL_COUNT, 16)
 
 
-ifdef(`OPERATION_ADD', `
+ifdef(`OPERATION_add_n', `
 	define(M4_inst,        adcl)
 	define(M4_function_n,  mpn_add_n)
 	define(M4_function_nc, mpn_add_nc)
 	define(M4_description, add)
-',`ifdef(`OPERATION_SUB', `
+',`ifdef(`OPERATION_sub_n', `
 	define(M4_inst,        sbbl)
 	define(M4_function_n,  mpn_sub_n)
 	define(M4_function_nc, mpn_sub_nc)
 	define(M4_description, subtract)
-',`m4_error(`Need OPERATION_ADD or OPERATION_SUB
+',`m4_error(`Need OPERATION_add_n or OPERATION_sub_n
 ')')')
 
 
