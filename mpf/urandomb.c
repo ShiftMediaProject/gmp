@@ -26,14 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_urandomb (mpf_t rop, gmp_randstate_t rstate, unsigned long int nbits)
-#else
-mpf_urandomb (rop, rstate, nbits)
-     mpf_t rop;
-     gmp_randstate_t rstate;
-     unsigned long int nbits;
-#endif
 {
   mp_ptr rp;
   mp_size_t nlimbs;

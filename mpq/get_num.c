@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpq_get_num (MP_INT *num, const MP_RAT *src)
-#else
-mpq_get_num (num, src)
-     MP_INT *num;
-     const MP_RAT *src;
-#endif
 {
   mp_size_t size = src->_mp_num._mp_size;
   mp_size_t abs_size = ABS (size);

@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 void
-#if __STDC__
 mpf_set_q (mpf_t r, mpq_srcptr q)
-#else
-mpf_set_q (r, q)
-     mpf_t r;
-     mpq_srcptr q;
-#endif
 {
   mp_ptr np, dp;
   mp_ptr rp;

@@ -24,12 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_clear (mpf_ptr m)
-#else
-mpf_clear (m)
-     mpf_ptr m;
-#endif
 {
   (*__gmp_free_func) (m->_mp_d, (m->_mp_prec + 1) * BYTES_PER_MP_LIMB);
 }

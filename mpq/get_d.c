@@ -49,12 +49,7 @@ MA 02111-1307, USA. */
 */
 
 double
-#if __STDC__
 mpq_get_d (const MP_RAT *src)
-#else
-mpq_get_d (src)
-     const MP_RAT *src;
-#endif
 {
   mp_ptr np, dp;
   mp_ptr rp;

@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_set_d (mpf_ptr r, double d)
-#else
-mpf_set_d (r, d)
-     mpf_ptr r;
-     double d;
-#endif
 {
   int negative;
 

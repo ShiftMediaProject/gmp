@@ -26,14 +26,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 size_t
-#if __STDC__
 mpf_inp_str (mpf_ptr rop, FILE *stream, int base)
-#else
-mpf_inp_str (rop, stream, base)
-     mpf_ptr rop;
-     FILE *stream;
-     int base;
-#endif
 {
   char *str;
   size_t alloc_size, str_size;

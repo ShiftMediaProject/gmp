@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 int
-#if __STDC__
 mpq_equal (mpq_srcptr op1, mpq_srcptr op2)
-#else
-mpq_equal (op1, op2)
-     mpq_srcptr op1;
-     mpq_srcptr op2;
-#endif
 {
   mp_size_t num1_size = op1->_mp_num._mp_size;
   mp_size_t den1_size = op1->_mp_den._mp_size;

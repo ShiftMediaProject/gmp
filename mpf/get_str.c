@@ -40,16 +40,7 @@ MA 02111-1307, USA. */
 */
 
 char *
-#if __STDC__
 mpf_get_str (char *digit_ptr, mp_exp_t *exp, int base, size_t n_digits, mpf_srcptr u)
-#else
-mpf_get_str (digit_ptr, exp, base, n_digits, u)
-     char *digit_ptr;
-     mp_exp_t *exp;
-     int base;
-     size_t n_digits;
-     mpf_srcptr u;
-#endif
 {
   mp_ptr up;
   mp_size_t usize;

@@ -23,12 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpq_clear (MP_RAT *m)
-#else
-mpq_clear (m)
-     MP_RAT *m;
-#endif
 {
   (*__gmp_free_func) (m->_mp_num._mp_d,
 		    m->_mp_num._mp_alloc * BYTES_PER_MP_LIMB);

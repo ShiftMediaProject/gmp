@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_swap (mpf_ptr u, mpf_ptr v)
-#else
-mpf_swap (u, v)
-     mpf_ptr u;
-     mpf_ptr v;
-#endif
 {
   mp_ptr up, vp;
   mp_size_t usize, vsize;

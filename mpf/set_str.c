@@ -32,13 +32,7 @@ MA 02111-1307, USA. */
 long int strtol _PROTO ((const char *, char **ptr, int));
 
 static int
-#if __STDC__
 digit_value_in_base (int c, int base)
-#else
-digit_value_in_base (c, base)
-     int c;
-     int base;
-#endif
 {
   int digit;
 
@@ -57,14 +51,7 @@ digit_value_in_base (c, base)
 }
 
 int
-#if __STDC__
 mpf_set_str (mpf_ptr x, const char *str, int base)
-#else
-mpf_set_str (x, str, base)
-     mpf_ptr x;
-     char *str;
-     int base;
-#endif
 {
   size_t str_size;
   char *s, *begs;

@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 int
-#if __STDC__
 mpf_cmp_si (mpf_srcptr u, long int vslimb)
-#else
-mpf_cmp_si (u, vslimb)
-     mpf_srcptr u;
-     long int vslimb;
-#endif
 {
   mp_srcptr up;
   mp_size_t usize;

@@ -24,13 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_sqrt_ui (mpf_ptr r, unsigned long int u)
-#else
-mpf_sqrt_ui (r, u)
-     mpf_ptr r;
-     unsigned long int u;
-#endif
 {
   mp_size_t rsize;
   mp_ptr tp;

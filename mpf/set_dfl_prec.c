@@ -26,12 +26,7 @@ mp_size_t __gmp_default_fp_limb_precision
   = (53 + 2 * BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
 
 void
-#if __STDC__
 mpf_set_default_prec (unsigned long int prec_in_bits)
-#else
-mpf_set_default_prec (prec_in_bits)
-     unsigned long int prec_in_bits;
-#endif
 {
   mp_size_t prec;
 

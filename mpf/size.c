@@ -24,12 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 size_t
-#if __STDC__
 mpf_size (mpf_srcptr x)
-#else
-mpf_size (x)
-     mpf_srcptr x;
-#endif
 {
   return ABS (x->_mp_size);
 }

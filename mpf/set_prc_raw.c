@@ -25,13 +25,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_set_prec_raw (mpf_ptr x, unsigned long int prec_in_bits)
-#else
-mpf_set_prec_raw (x, prec_in_bits)
-     mpf_ptr x;
-     unsigned long int prec_in_bits;
-#endif
 {
   mp_size_t prec;
   prec = (MAX (53, prec_in_bits) + 2 * BITS_PER_MP_LIMB - 1)/BITS_PER_MP_LIMB;

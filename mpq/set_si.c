@@ -24,14 +24,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpq_set_si (MP_RAT *dest, signed long int num, unsigned long int den)
-#else
-mpq_set_si (dest, num, den)
-     MP_RAT *dest;
-     signed long int num;
-     unsigned long int den;
-#endif
 {
   unsigned long int abs_num;
 

@@ -29,12 +29,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_dump (mpf_srcptr u)
-#else
-mpf_dump (u)
-     mpf_srcptr u;
-#endif
 {
   mp_exp_t exp;
   char *str;

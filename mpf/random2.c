@@ -37,14 +37,7 @@ long random ();
 #endif
 
 void
-#if __STDC__
 mpf_random2 (mpf_ptr x, mp_size_t size, mp_exp_t exp)
-#else
-mpf_random2 (x, size, exp)
-     mpf_ptr x;
-     mp_size_t size;
-     mp_exp_t exp;
-#endif
 {
   mp_size_t asize;
   mp_size_t prec = x->_mp_prec;

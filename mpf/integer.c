@@ -45,13 +45,7 @@ Error, error, unrecognised OPERATION
 
 
 void
-#if __STDC__
 FUNC_NAME (mpf_ptr r, mpf_srcptr u)
-#else
-FUNC_NAME (r, u)
-     mpf_ptr r;
-     mpf_srcptr u;
-#endif
 {
   mp_ptr rp, up;
   mp_size_t size, asize;

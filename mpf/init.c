@@ -23,12 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_init (mpf_ptr r)
-#else
-mpf_init (r)
-     mpf_ptr r;
-#endif
 {
   mp_size_t prec = __gmp_default_fp_limb_precision;
   r->_mp_d = (mp_ptr) (*__gmp_allocate_func) ((prec + 1) * BYTES_PER_MP_LIMB);

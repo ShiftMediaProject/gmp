@@ -23,13 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 
 void
-#if __STDC__
 mpf_init2 (mpf_ptr r, unsigned long int prec_in_bits)
-#else
-mpf_init2 (r, prec_in_bits)
-     mpf_ptr r;
-     unsigned long int prec_in_bits;
-#endif
 {
   mp_size_t prec;
 

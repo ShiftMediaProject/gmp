@@ -24,14 +24,7 @@ MA 02111-1307, USA. */
 #include "longlong.h"
 
 void
-#if __STDC__
 mpf_div_ui (mpf_ptr r, mpf_srcptr u, unsigned long int v)
-#else
-mpf_div_ui (r, u, v)
-     mpf_ptr r;
-     mpf_srcptr u;
-     unsigned long int v;
-#endif
 {
   mp_srcptr up;
   mp_ptr rp, tp, rtp;

@@ -24,14 +24,7 @@ MA 02111-1307, USA. */
 
 
 void
-#if __STDC__
 mpq_mul (mpq_ptr prod, mpq_srcptr op1, mpq_srcptr op2)
-#else
-mpq_mul (prod, op1, op2)
-     mpq_ptr prod;
-     mpq_srcptr op1;
-     mpq_srcptr op2;
-#endif
 {
   mpz_t gcd1, gcd2;
   mpz_t tmp1, tmp2;
