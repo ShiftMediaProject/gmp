@@ -875,7 +875,7 @@ if test -z "$gmp_cv_asm_label_suffix"; then
   AC_MSG_ERROR([Cannot determine label suffix])
 fi
 ])
-echo ["define(<LABEL_SUFFIX>, <\$][1$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
+echo ["define(<LABEL_SUFFIX>, <$gmp_cv_asm_label_suffix>)"] >> $gmp_tmpconfigm4
 ])
 
 
