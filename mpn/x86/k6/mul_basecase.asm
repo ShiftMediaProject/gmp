@@ -1,6 +1,6 @@
 dnl  AMD K6 mpn_mul_basecase -- multiply two mpn numbers.
 
-dnl  Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+dnl  Copyright 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 dnl
 dnl  This file is part of the GNU MP Library.
 dnl
@@ -51,11 +51,14 @@ C it's faster because it does most of the mpn_addmul_1() entry code only
 C once.  The saving is about 10-20% on typical sizes coming from the
 C Karatsuba multiply code.
 C
-C Future:
+C Enhancements:
 C
-C The unrolled loop could be shared by mpn_addmul_1, with some extra stack
-C setups and maybe 2 or 3 wasted cycles at the end.  Code saving would be
-C 256 bytes.
+C The mul_1 loop is about 8.5 c/l, which is slower than mpn_mul_1 at 6.25
+C c/l.  Could call mpn_mul_1 when ysize is big enough to make it worthwhile.
+C
+C The main unrolled addmul loop could be shared by mpn_addmul_1, using some
+C extra stack setups and maybe 2 or 3 wasted cycles at the end.  Code saving
+C would be 256 bytes.
 
 ifdef(`PIC',`
 deflit(UNROLL_THRESHOLD, 8)
