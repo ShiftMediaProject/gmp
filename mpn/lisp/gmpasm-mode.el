@@ -1,7 +1,7 @@
 ;;; gmpasm-mode.el -- GNU MP asm and m4 editing mode.
 
 
-;; Copyright 1999, 2000 Free Software Foundation, Inc.
+;; Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
 ;;
 ;; This file is part of the GNU MP Library.
 ;;
@@ -77,7 +77,7 @@
   :type 'hook
   :group 'gmpasm)
 
-(defcustom gmpasm-comment-start-regexp "[#;!@*C]"
+(defcustom gmpasm-comment-start-regexp "[#;!@*|C]"
   "*Regexp matching possible comment styles.
 See `gmpasm-mode' docstring for how this is used."
   :type 'regexp
@@ -147,10 +147,18 @@ aren't affected."
     table)
   "Syntax table used in `gmpasm-mode'.
 
-m4 ignores quote marks in # comments at the top level, but inside quotes #
-isn't special and all quotes are active.  There seems no easy way to express
-this in the syntax table, so nothing is done for comments.  Usually this is
-best, since it picks up invalid apostrophes in comments inside quotes.")
+No table entry is made for the `comment-start' character, since doing so can
+make emacs quote and parenthesis matching differ from how m4 will interpret
+the code.
+
+- The m4 comment character (#, or as set by changecom()) is recognised
+  outside quotes, but not inside.  Omitting a syntax table entry seems best,
+  since then emacs detects invalid apostrophes in comments inside quotes.
+
+- Assembler comment characters like *, ! or | are not set in m4 changecom()
+  since that would prevent eval() expressions from using them, but they're
+  not wanted in the syntax table since there's no way to know if they're an
+  operator or an actual assembler comment.")
 
 
 (defvar gmpasm-font-lock-keywords
