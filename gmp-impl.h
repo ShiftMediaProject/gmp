@@ -255,7 +255,11 @@ void __gmp_default_free _PROTO ((void *, size_t));
 #ifdef _FORCE_INLINES
 #define _EXTERN_INLINE
 #else
+#ifdef __GNUC__
 #define _EXTERN_INLINE extern inline
+#else
+#define _EXTERN_INLINE static inline
+#endif
 #endif
 
 
