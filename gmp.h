@@ -1,6 +1,6 @@
 /* gmp.h -- Definitions for GNU multiple precision functions.
 
-Copyright (C) 1991, 1993, 1994, 1995, 1996 Free Software Foundation, Inc.
+Copyright (C) 1991, 1993, 1994, 1995, 1996, 1999 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -631,7 +631,9 @@ void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state s));
 #define mpn_add			__MPN(add)
 #define mpn_add_1		__MPN(add_1)
 #define mpn_add_n		__MPN(add_n)
+#define mpn_add_nc		__MPN(add_nc)
 #define mpn_addmul_1		__MPN(addmul_1)
+#define mpn_addsub_n		__MPN(addsub_n)
 #define mpn_bdivmod		__MPN(bdivmod)
 #define mpn_cmp			__MPN(cmp)
 #define mpn_divmod_1		__MPN(divmod_1)
@@ -665,6 +667,7 @@ void mpf_urandomb _PROTO ((mpf_t rop, gmp_rand_state s));
 #define mpn_sub			__MPN(sub)
 #define mpn_sub_1		__MPN(sub_1)
 #define mpn_sub_n		__MPN(sub_n)
+#define mpn_sub_nc		__MPN(sub_nc)
 #define mpn_submul_1		__MPN(submul_1)
 #define mpn_udiv_w_sdiv		__MPN(udiv_w_sdiv)
 
@@ -674,7 +677,9 @@ extern "C" {
 mp_limb_t mpn_add _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t));
 mp_limb_t mpn_add_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_add_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+mp_limb_t mpn_add_nc _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_addmul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
+mp_limb_t mpn_addsub_n _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_bdivmod _PROTO ((mp_ptr, mp_ptr, mp_size_t, mp_srcptr, mp_size_t, unsigned long int));
 int mpn_cmp _PROTO ((mp_srcptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_divmod_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
@@ -708,6 +713,7 @@ mp_size_t mpn_sqrtrem _PROTO ((mp_ptr, mp_ptr, mp_srcptr, mp_size_t));
 mp_limb_t mpn_sub _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_srcptr,mp_size_t));
 mp_limb_t mpn_sub_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_sub_n _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t));
+mp_limb_t mpn_sub_nc _PROTO ((mp_ptr, mp_srcptr, mp_srcptr, mp_size_t, mp_limb_t));
 mp_limb_t mpn_submul_1 _PROTO ((mp_ptr, mp_srcptr, mp_size_t, mp_limb_t));
 #if defined (__cplusplus)
 }
