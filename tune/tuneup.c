@@ -20,7 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 
-/* Usage: tune [-t] [-t] [-p precision]
+/* Usage: tuneup [-t] [-t] [-p precision]
 
    -t turns on some diagnostic traces, a second -t turns on more traces.
 
