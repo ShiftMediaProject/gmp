@@ -127,7 +127,7 @@ noinst_LTLIBRARIES = libmpq.la
 libmpq_la_SOURCES = \
   canonicalize.c clear.c cmp.c cmp_ui.c div.c get_d.c \
   get_den.c get_num.c init.c inv.c mul.c neg.c out_str.c set.c set_den.c \
-  set_num.c set_si.c set_ui.c equal.c set_z.c set_d.c swap.c
+  set_num.c set_si.c set_ui.c equal.c set_z.c set_d.c set_f.c swap.c
 
 
 nodist_libmpq_la_SOURCES = add.c sub.c
@@ -153,7 +153,7 @@ am_libmpq_la_OBJECTS =  canonicalize$U.lo clear$U.lo cmp$U.lo \
 cmp_ui$U.lo div$U.lo get_d$U.lo get_den$U.lo get_num$U.lo init$U.lo \
 inv$U.lo mul$U.lo neg$U.lo out_str$U.lo set$U.lo set_den$U.lo \
 set_num$U.lo set_si$U.lo set_ui$U.lo equal$U.lo set_z$U.lo set_d$U.lo \
-swap$U.lo
+set_f$U.lo swap$U.lo
 nodist_libmpq_la_OBJECTS =  add$U.lo sub$U.lo
 libmpq_la_OBJECTS =  $(am_libmpq_la_OBJECTS) $(nodist_libmpq_la_OBJECTS)
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -272,6 +272,8 @@ set_d_.c: set_d.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_d.c; then echo $(srcdir)/set_d.c; else echo set_d.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_d_.c
 set_den_.c: set_den.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_den.c; then echo $(srcdir)/set_den.c; else echo set_den.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_den_.c
+set_f_.c: set_f.c $(ANSI2KNR)
+	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_f.c; then echo $(srcdir)/set_f.c; else echo set_f.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_f_.c
 set_num_.c: set_num.c $(ANSI2KNR)
 	$(CPP) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) `if test -f $(srcdir)/set_num.c; then echo $(srcdir)/set_num.c; else echo set_num.c; fi` | sed 's/^# \([0-9]\)/#line \1/' | $(ANSI2KNR) > set_num_.c
 set_si_.c: set_si.c $(ANSI2KNR)
@@ -291,10 +293,10 @@ get_d_.$(OBJEXT) get_d_.lo get_den_.$(OBJEXT) get_den_.lo \
 get_num_.$(OBJEXT) get_num_.lo init_.$(OBJEXT) init_.lo inv_.$(OBJEXT) \
 inv_.lo mul_.$(OBJEXT) mul_.lo neg_.$(OBJEXT) neg_.lo \
 out_str_.$(OBJEXT) out_str_.lo set_.$(OBJEXT) set_.lo set_d_.$(OBJEXT) \
-set_d_.lo set_den_.$(OBJEXT) set_den_.lo set_num_.$(OBJEXT) set_num_.lo \
-set_si_.$(OBJEXT) set_si_.lo set_ui_.$(OBJEXT) set_ui_.lo \
-set_z_.$(OBJEXT) set_z_.lo sub_.$(OBJEXT) sub_.lo swap_.$(OBJEXT) \
-swap_.lo : $(ANSI2KNR)
+set_d_.lo set_den_.$(OBJEXT) set_den_.lo set_f_.$(OBJEXT) set_f_.lo \
+set_num_.$(OBJEXT) set_num_.lo set_si_.$(OBJEXT) set_si_.lo \
+set_ui_.$(OBJEXT) set_ui_.lo set_z_.$(OBJEXT) set_z_.lo sub_.$(OBJEXT) \
+sub_.lo swap_.$(OBJEXT) swap_.lo : $(ANSI2KNR)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
