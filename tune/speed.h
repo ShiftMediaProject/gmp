@@ -157,10 +157,12 @@ double speed_mpn_mod_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mod_1c _PROTO ((struct speed_params *s));
 double speed_mpn_mul_1 _PROTO ((struct speed_params *s));
 double speed_mpn_mul_basecase _PROTO ((struct speed_params *s));
+double speed_mpn_mul_fft _PROTO ((struct speed_params *s));
+double speed_mpn_mul_fft_sqr _PROTO ((struct speed_params *s));
+double speed_mpn_mul_fft_full _PROTO ((struct speed_params *s));
+double speed_mpn_mul_fft_full_sqr _PROTO ((struct speed_params *s));
 double speed_mpn_mul_n _PROTO ((struct speed_params *s));
-double speed_mpn_mul_n_recurse _PROTO ((struct speed_params *s));
 double speed_mpn_mul_n_sqr _PROTO ((struct speed_params *s));
-double speed_mpn_mul_n_toom _PROTO ((struct speed_params *s));
 double speed_mpn_mul_n_toom3 _PROTO ((struct speed_params *s));
 double speed_mpn_nand_n _PROTO ((struct speed_params *s));
 double speed_mpn_nior_n _PROTO ((struct speed_params *s));
@@ -168,8 +170,6 @@ double speed_mpn_popcount _PROTO ((struct speed_params *s));
 double speed_mpn_rshift _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_basecase _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_n _PROTO ((struct speed_params *s));
-double speed_mpn_sqr_recurse _PROTO ((struct speed_params *s));
-double speed_mpn_sqr_toom _PROTO ((struct speed_params *s));
 double speed_mpn_sqr_toom3 _PROTO ((struct speed_params *s));
 double speed_mpn_sub_n _PROTO ((struct speed_params *s));
 double speed_mpn_submul_1 _PROTO ((struct speed_params *s));
@@ -389,7 +389,7 @@ void speed_option_set _PROTO((const char *s));
   }  
 
 
-#define SPEED_ROUTINE_MPN_MUL_N(function)                       \
+#define SPEED_ROUTINE_MPN_MUL_N_CALL(call)                      \
   {                                                             \
     mp_ptr    wp;                                               \
     unsigned  i;                                                \
@@ -409,13 +409,16 @@ void speed_option_set _PROTO((const char *s));
     speed_starttime ();                                         \
     i = s->reps;                                                \
     do                                                          \
-      function (wp, s->xp, s->yp, s->size);                     \
+      call;                                                     \
     while (--i != 0);                                           \
     t = speed_endtime ();                                       \
                                                                 \
     TMP_FREE (marker);                                          \
     return t;                                                   \
   }  
+
+#define SPEED_ROUTINE_MPN_MUL_N(function) \
+  SPEED_ROUTINE_MPN_MUL_N_CALL (function (wp, s->xp, s->yp, s->size));
 
 
 #define SPEED_ROUTINE_MPN_MUL_N_TSPACE(call, tsize)             \
