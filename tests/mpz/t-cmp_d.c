@@ -17,8 +17,7 @@ License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
-MA 02111-1307, USA.
-*/
+MA 02111-1307, USA. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -164,7 +163,14 @@ check_low_z_one (void)
 
   mpz_init (x);
 
-  for (i = 1; i < 512; i++)
+  /* FIXME: It'd be better to base this on the float format. */
+#ifdef __vax
+#define LIM 127			/* vax fp numbers have limited range */
+#else
+#define LIM 512
+#endif
+
+  for (i = 1; i < LIM; i++)
     {
       mpz_set_ui (x, 1L);
       mpz_mul_2exp (x, x, i);
