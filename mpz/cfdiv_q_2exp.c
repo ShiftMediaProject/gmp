@@ -35,7 +35,7 @@ cfdiv_q_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
   mp_size_t  wsize, usize, abs_usize, limb_cnt, i;
   mp_srcptr  up;
   mp_ptr     wp;
-  mp_limb_t  round;
+  mp_limb_t  round, rmask;
 
   usize = SIZ (u);
   abs_usize = ABS (usize);
@@ -52,24 +52,26 @@ cfdiv_q_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
   /* +1 limb to allow for mpn_add_1 below */
   MPZ_REALLOC (w, wsize+1);
 
-  /* Set round if we're about to skip some non-zero limbs.  */
+  /* Check for rounding if direction matches u sign.
+     Set round if we're skipping non-zero limbs.  */
   up = PTR(u);
   round = 0;
-  for (i = 0; i < limb_cnt && round == 0; i++)
-    round = up[i];
+  rmask = ((usize ^ dir) >= 0 ? MP_LIMB_T_MAX : 0);
+  if (rmask != 0)
+    for (i = 0; i < limb_cnt && round == 0; i++)
+      round = up[i];
 
   wp = PTR(w);
   cnt %= BITS_PER_MP_LIMB;
   if (cnt != 0)
     {
-      round |= mpn_rshift (wp, up + limb_cnt, wsize, cnt);
+      round |= rmask & mpn_rshift (wp, up + limb_cnt, wsize, cnt);
       wsize -= (wp[wsize - 1] == 0);
     }
   else
     MPN_COPY_INCR (wp, up + limb_cnt, wsize);
 
-  /* Round if direction matches u sign. */
-  if (round != 0 && (usize ^ dir) >= 0)
+  if (round != 0)
     {
       if (wsize != 0)
 	{
