@@ -1,3 +1,7 @@
+2000-11-18  Kevin Ryde  <kevin@swox.se>
+
+	* configfsf.guess, configfsf.sub: Update to 2000-11-16.
+
 2000-11-14  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/tests/t-fdiv.c: Analogous changes as made 2000-11-12 to t-mul.c.
