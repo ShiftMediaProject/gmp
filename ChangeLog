@@ -1,3 +1,32 @@
+2000-04-10  Linus Nordberg  <linus@swox.se>
+
+	* rand.c (gmp_randinit): Change parameter list to (rstate, alg, ...).
+	* gmp.h: Change prototype accordingly.
+	* mpz/pprime_p.c (millerrabin): Change call accordingly.
+	
+	* configure.in: Check for `optarg'.
+	* configure: Regenerate.
+
+	* mpn/Makefile.am: Remove incorrect comment.
+	* mpn/Makefile.in: Regenerate.
+
+	* gmp.h: Rename most of the random number functions, structs and
+	  some of the struct members.
+	* rand.c (gmp_randinit): Likewise.
+	* randclr.c (gmp_randclear): Likewise.
+	* randlc.c (gmp_randinit_lc): Likewise.
+	* randlc2x.c (gmp_randinit_lc_2exp): Likewise.
+	* randraw.c (lc): Likewise.
+	(_gmp_rand_getraw): Likewise.
+	* randsd.c (gmp_randseed): Likewise.
+	* randsdui.c (gmp_randseed_ui): Likewise.
+	* gmp.texi: Likewise.
+	
+	* gmp.texi: Use three hyphens for a dash.
+	(Low-level Functions): Remove documentation for gmp_rand_getraw.
+	(Random Number Functions): Add info on where to find documentation
+	on the random number functions.
+
 2000-04-10  Torbjorn Granlund  <tege@swox.com>
 
 	* mpz/pprime_p.c: Pass 0L for mpz_scan1.  mpz_mmod => mpz_mod.
