@@ -197,9 +197,12 @@ check_mpz_cmp_si (void)
 int
 main (void)
 {
+  tests_start ();
+
   check_oddeven ();
   check_mpz_set_si ();
   check_mpz_cmp_si ();
 
+  tests_end ();
   exit (0);
 }

@@ -30,6 +30,7 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 void dump (char *, mpz_t, mpz_t, mpz_t);
 
@@ -161,6 +162,7 @@ char *ds_func_names[] =
 #endif
 
 
+int
 main (int argc, char **argv)
 {
   int i;
@@ -178,6 +180,7 @@ main (int argc, char **argv)
   unsigned long bsi, size_range;
   char *perform_seed;
 
+  tests_start ();
   gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
 
   perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
@@ -546,6 +549,20 @@ main (int argc, char **argv)
       exit (1);
     }
 
+  mpz_clear (bs);
+  mpz_clear (in1);
+  mpz_clear (in2);
+  mpz_clear (in3);
+  mpz_clear (ref1);
+  mpz_clear (ref2);
+  mpz_clear (ref3);
+  mpz_clear (res1);
+  mpz_clear (res2);
+  mpz_clear (res3);
+  mpz_clear (t);
+  gmp_randclear (rands);
+
+  tests_end ();
   exit (0);
 }
 

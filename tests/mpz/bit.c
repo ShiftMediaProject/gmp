@@ -101,6 +101,8 @@ main (int argc, char *argv[])
   unsigned long int bitindex;
   const char  *s = "";
 
+  tests_start ();
+
   if (argc == 2)
     reps = atoi (argv[1]);
 
@@ -174,6 +176,14 @@ main (int argc, char *argv[])
 	abort ();
     }
 
+  mpz_clear (x);
+  mpz_clear (s0);
+  mpz_clear (s1);
+  mpz_clear (s2);
+  mpz_clear (s3);
+  mpz_clear (m);
+
+  tests_end ();
   exit (0);
 
 

@@ -628,7 +628,6 @@ check_squares_zi (void)
   mpz_t bs;
 
   mpz_init (bs);
-
   mpz_init (a);
   mpz_init (b);
   mpz_init (g);
@@ -657,6 +656,7 @@ check_squares_zi (void)
       try_all (a, b, answer);
     }
 
+  mpz_clear (bs);
   mpz_clear (a);
   mpz_clear (b);
   mpz_clear (g);
@@ -669,6 +669,7 @@ void
 check_a_zero (void)
 {
   mpz_t  a, b;
+
   mpz_init_set_ui (a, 0);
   mpz_init (b);
 
@@ -697,6 +698,7 @@ check_a_zero (void)
   try_all (a, b, 0);   /* (0/2)=0 */
 
   mpz_clear (a);
+  mpz_clear (b);
 }
 
 
@@ -704,6 +706,8 @@ int
 main (int argc, char *argv[])
 {
   char *perform_seed;
+
+  tests_start ();
 
   gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
 
@@ -736,5 +740,8 @@ try(a,b,answer) =\n\
   check_squares_zi ();
   check_a_zero ();
 
+  gmp_randclear (rands);
+
+  tests_end ();
   exit (0);
 }

@@ -25,10 +25,12 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 void dump_abort _PROTO ((mpz_t, mpz_t));
 void debug_mp _PROTO ((mpz_t, int));
 
+int
 main (int argc, char **argv)
 {
   mpz_t base, exp, mod;
@@ -41,6 +43,8 @@ main (int argc, char **argv)
   mpz_t bs;
   unsigned long bsi, size_range;
   char *perform_seed;
+
+  tests_start ();
 
   gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
 
@@ -133,6 +137,16 @@ main (int argc, char **argv)
 	abort ();
     }
 
+  mpz_clear (bs);
+  mpz_clear (base);
+  mpz_clear (exp);
+  mpz_clear (mod);
+  mpz_clear (r1);
+  mpz_clear (r2);
+  mpz_clear (base2);
+  gmp_randclear (rands);
+
+  tests_end ();
   exit (0);
 }
 

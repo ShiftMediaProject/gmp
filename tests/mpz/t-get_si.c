@@ -115,7 +115,11 @@ check_max (void)
 int
 main (void)
 {
+  tests_start ();
+
   check_data ();
   check_max ();
+
+  tests_end ();
   exit (0);
 }

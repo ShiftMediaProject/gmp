@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
+#include "tests.h"
 
 
 unsigned long
@@ -110,6 +111,10 @@ check_ref (void)
 int
 main (int argc, char *argv[])
 {
+  tests_start ();
+
   check_ref ();
+
+  tests_end ();
   exit (0);
 }

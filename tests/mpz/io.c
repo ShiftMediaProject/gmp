@@ -30,6 +30,7 @@ MA 02111-1307, USA. */
 
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 #define FILENAME  "io.tmp"
 
@@ -53,6 +54,7 @@ main (int argc, char **argv)
   unsigned long bsi, size_range;
   char *perform_seed;
 
+  tests_start ();
   gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
 
   perform_seed = getenv ("GMP_CHECK_RANDOMIZE");
@@ -128,5 +130,11 @@ main (int argc, char **argv)
 
   unlink (FILENAME);
 
+  mpz_clear (bs);
+  mpz_clear (op1);
+  mpz_clear (op2);
+  gmp_randclear (rands);
+
+  tests_end ();
   exit (0);
 }

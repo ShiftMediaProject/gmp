@@ -23,6 +23,7 @@ MA 02111-1307, USA. */
 #include <stdlib.h>
 #include "gmp.h"
 #include "gmp-impl.h"
+#include "tests.h"
 
 
 /* Usage: t-fib_ui [x|num]
@@ -46,6 +47,8 @@ main (int argc, char *argv[])
   unsigned long  n;
   unsigned long  limit = MAX (2000, 32*FIB_THRESHOLD);
   mpz_t          fn, fn1, r;
+
+  tests_start ();
 
   if (argc > 1 && argv[1][0] == 'x')
     limit = ULONG_MAX;
@@ -99,5 +102,10 @@ main (int argc, char *argv[])
       mpz_swap (fn1, fn);
     }
 
+  mpz_clear (fn1);
+  mpz_clear (fn);
+  mpz_clear (r);
+
+  tests_end ();
   exit (0);
 }

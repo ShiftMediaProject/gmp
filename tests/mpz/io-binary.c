@@ -28,9 +28,11 @@ MA 02111-1307, USA.
 
 #include <stdio.h>
 #include "gmp.h"
+#include "tests.h"
 
 FILE *file;
 
+void
 test (char *str, int binary_len, char *binary_str)
 {
   mpz_t x, y;
@@ -59,10 +61,14 @@ test (char *str, int binary_len, char *binary_str)
     abort ();
 
   mpz_clear (x);
+  mpz_clear (y);
 }
 
+int
 main ()
 {
+  tests_start ();
+
   file = fopen ("xtmpfile", "w+");
 
   test ("0", 4,
@@ -90,5 +96,6 @@ main ()
   test ("-0x123456789facade0", 12,
 	"\377\377\377\370\022\064\126\170\237\254\255\340");
 
+  tests_end ();
   exit (0);
 }

@@ -27,12 +27,14 @@ MA 02111-1307, USA. */
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "longlong.h"
+#include "tests.h"
 
 void debug_mp _PROTO ((mpz_t, int));
 static void base_mul _PROTO ((mp_ptr,mp_srcptr,mp_size_t,mp_srcptr,mp_size_t));
 static void ref_mpz_mul _PROTO ((mpz_t, const mpz_t, const mpz_t));
 void dump_abort _PROTO ((char *, mpz_t, mpz_t, mpz_t, mpz_t));
 
+int
 main (int argc, char **argv)
 {
   mpz_t multiplier, multiplicand;
@@ -45,6 +47,8 @@ main (int argc, char **argv)
   mpz_t bs;
   unsigned long bsi, size_range;
   char *perform_seed;
+
+  tests_start ();
 
   gmp_randinit (rands, GMP_RAND_ALG_LC, 64);
 
@@ -127,6 +131,16 @@ main (int argc, char **argv)
 	}
     }
 
+  mpz_clear (bs);
+  mpz_clear (multiplier);
+  mpz_clear (multiplicand);
+  mpz_clear (product);
+  mpz_clear (ref_product);
+  mpz_clear (quotient);
+  mpz_clear (remainder);
+  gmp_randclear (rands);
+
+  tests_end ();
   exit (0);
 }
 

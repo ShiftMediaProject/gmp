@@ -211,8 +211,11 @@ twos (void)
 int
 main (void)
 {
+  tests_start ();
+
   samples ();
   twos ();
 
+  tests_end ();
   exit (0);
 }
