@@ -19,74 +19,85 @@ along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
 the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
-#ifdef __hpux
-/* Need this braindamage to get the declaration for fdopen.
-   Would be nice if HP documented such things in their man pages...  */
-#define _INCLUDE_POSIX_SOURCE
-#endif
-
 #include <stdio.h>
 #include "gmp.h"
 #include "gmp-impl.h"
 #include "urandom.h"
 
-void debug_mp ();
+#define FILENAME  "io.tmp"
 
 #ifndef SIZE
 #define SIZE 16
 #endif
 
-main (argc, argv)
-     int argc;
-     char **argv;
+void
+debug_mp (mpz_t x, int base)
 {
-  MP_INT op1, op2;
+  mpz_out_str (stderr, base, x); fputc ('\n', stderr);
+}
+
+int
+main (int argc, char **argv)
+{
+  mpz_t  op1, op2;
   mp_size_t size;
   int i;
   int reps = 10000;
   FILE *fsin, *fsout;
-  int fd[2];
   int base;
 
   if (argc == 2)
-     reps = atoi (argv[1]);
+    reps = atoi (argv[1]);
 
-  mpz_init (&op1);
-  mpz_init (&op2);
+  mpz_init (op1);
+  mpz_init (op2);
 
-  pipe (fd);
-  fsin = fdopen (fd[0], "r");
-  fsout = fdopen (fd[1], "w");
+  fsout = fopen (FILENAME, "w"); 
+  fsin = fopen (FILENAME, "r");
+
+  /* unbuffered, so old buffered data isn't read after the rewind */
+  setbuf (fsin, NULL); 
 
   for (i = 0; i < reps; i++)
     {
+      rewind (fsin);  
+      rewind (fsout); 
+
       size = urandom () % SIZE - SIZE/2;
 
-      mpz_random2 (&op1, size);
+      mpz_random2 (op1, size);
       base = urandom () % 36 + 1;
       if (base == 1)
 	base = 0;
 
-      mpz_out_str (fsout, base, &op1);
+      if (mpz_out_str (fsout, base, op1) == 0)
+        {
+          fprintf (stderr, "mpz_out_str write error\n");
+          abort ();
+        }
       putc (' ', fsout);
       fflush (fsout);
-      mpz_inp_str (&op2, fsin, base);
 
-      if (mpz_cmp (&op1, &op2))
+      if (mpz_inp_str (op2, fsin, base) == 0)
+        {
+	  fprintf (stderr, "mpz_inp_str read error\n");
+	  abort ();
+	}
+
+      if (mpz_cmp (op1, op2))
 	{
 	  fprintf (stderr, "ERROR\n");
-	  fprintf (stderr, "op1  = "); debug_mp (&op1, -16);
+	  fprintf (stderr, "op1  = "); debug_mp (op1, -16);
+	  fprintf (stderr, "op2  = "); debug_mp (op2, -16);
 	  fprintf (stderr, "base = %d\n", base);
 	  abort ();
 	}
     }
 
-  exit (0);
-}
+  fclose (fsout);
+  fclose (fsin);
 
-void
-debug_mp (x, base)
-     MP_INT *x;
-{
-  mpz_out_str (stderr, base, x); fputc ('\n', stderr);
+  unlink (FILENAME);
+
+  exit (0);
 }
