@@ -61,5 +61,3 @@ MA 02111-1307, USA. */
 #ifndef GCDEXT_THRESHOLD
 #define GCDEXT_THRESHOLD          33
 #endif
-
-tune in progress
