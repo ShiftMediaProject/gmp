@@ -57,8 +57,15 @@ Misc pipeline limitations (Itanium 2):
 
 ASSEMBLY SYNTAX
 
-gas doesn't accept "foo::" to create a global symbol, use separate
-".global foo" and "foo:" instead.
+.align pads with nops in a text segment, but gas 2.14 and earlier
+incorrectly byte-swaps its nop bundle in big endian mode (eg. hpux),
+making it come out as break instructions.  We use the ALIGN() macro in
+mpn/ia64/ia64-defs.m4 when it might be executed across.  That macro
+suppresses any .align if the problem is detected by configure.  Lack
+of alignment might hurt performance but will at least be correct.
+
+foo:: to create a global symbol is not accepted by gas.  Use
+separate ".global foo" and "foo:" instead.
 
 .global is the standard global directive.  gas accepts .globl, but
 hpux "as" doesn't.
@@ -66,10 +73,12 @@ hpux "as" doesn't.
 .proc / .endp generates the appropriate .type and .size information
 for ELF, so the latter directives don't need to be given explicitly.
 
-gas accepts .pred.rel.mutex, but HP as demands .pred.rel "mutex".
+.pred.rel "mutex"... is standard for annotating predicate register
+relationships.  gas also accepts .pred.rel.mutex, but hpux "as"
+doesn't.
 
-Although "//" is standardized as the comment sequence we prefer "C"
-since it inhibits m4 macro expansion.  See comments in ia64-defs.m4.
+// is the standard comment sequence, but we prefer "C" since it
+inhibits m4 macro expansion.  See comments in ia64-defs.m4.
 
 
 
