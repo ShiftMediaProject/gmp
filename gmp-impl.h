@@ -1136,6 +1136,23 @@ __GMP_DECLSPEC extern const mp_limb_t __gmp_fib_table[];
        && (size) >= (thresh)))
 #define BELOW_THRESHOLD(size,thresh)  (! ABOVE_THRESHOLD (size, thresh))
 
+/* Usage: int  use_foo = BELOW_THRESHOLD (size, FOO_THRESHOLD);
+          ...
+          if (CACHED_BELOW_THRESHOLD (use_foo, size, FOO_THRESHOLD))
+
+   When "use_foo" is a constant (thresh is 0 or MP_SIZE_T), it seems gcc (as
+   of version 3.1) can't optimize away a test "if (use_foo)" when within a
+   loop.  CACHED_BELOW_THRESHOLD helps it do so.  */
+
+#define CACHED_ABOVE_THRESHOLD(cache, thresh)           \
+  ((thresh) == 0 || (thresh) == MP_SIZE_T_MAX           \
+   ? ABOVE_THRESHOLD (0, thresh)                        \
+   : (cache))
+#define CACHED_BELOW_THRESHOLD(cache, thresh)           \
+  ((thresh) == 0 || (thresh) == MP_SIZE_T_MAX           \
+   ? BELOW_THRESHOLD (0, thresh)                        \
+   : (cache))
+
 
 /* If MUL_KARATSUBA_THRESHOLD is not already defined, define it to a
    value which is good on most machines.  */
@@ -3094,6 +3111,13 @@ extern mp_size_t  mpn_fft_table[2][MPN_FFT_TABLE_SIZE];
 #define SQR_KARATSUBA_MAX_GENERIC  200
 #define MUL_TOOM3_THRESHOLD_LIMIT  700
 #define GET_STR_THRESHOLD_LIMIT    500
+
+#if TUNE_PROGRAM_BUILD
+/* "thresh" will normally be a variable when tuning, so use the cached
+   result.  This helps mpn_sb_divrem_mn for instance.  */
+#define CACHED_ABOVE_THRESHOLD(cache, thresh)  (cache)
+#define CACHED_BELOW_THRESHOLD(cache, thresh)  (cache)
+#endif
 
 #endif /* TUNE_PROGRAM_BUILD */
 
