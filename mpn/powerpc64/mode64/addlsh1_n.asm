@@ -22,8 +22,8 @@ dnl  MA 02111-1307, USA.
 include(`../config.m4')
 
 C		cycles/limb
-C POWER3/PPC630:     2.0	(1.5 c/l should be possible)
-C POWER4/PPC970:     4.25	(2.0 c/l should be possible)
+C POWER3/PPC630:     2		(1.5 c/l should be possible)
+C POWER4/PPC970:     4		(2.0 c/l should be possible)
 
 C INPUT PARAMETERS
 C rp	r3
