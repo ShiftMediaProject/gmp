@@ -27,41 +27,34 @@ registers and then use setf.sig to move it to a fp register.
 ================================================================
 mpn_addmul_1:
 
-  { .mfi
-		getf.sig
-		xma.l
-		cmp.leu
-} { .mfi
-		getf.sig
-		xma.hu
-		cmp.ltu
+.Loop:
+  { .mfi	getf.sig	r16 = f48
+		xma.l		f48 = f32, f97, f40
+	   (p6)	cmp.leu
+} { .mfi	getf.sig	r24 = f56
+		xma.hu		f56 = f32, f97, f40
+	   (p7)	cmp.ltu
 		;;
-} { .mib
-		ldfp8
-		add 1
+} { .mib	ldfp8		f32, f33 = [r33], 8
+	   (p6)	add 1
 		nop.b
-} { .mib
-		stf8
-		add
+} { .mib	stf8
+	   (p7)	add
 		nop.b
 		;;
-} { .mfi
-		getf.sig
-		xma.l
-		cmp.leu
-} { .mfi
-		getf.sig
-		xma.hu
-		cmp.ltu
+} { .mfi	getf.sig	r17 = f49
+		xma.l		f49 = f33, f97, f41
+	   (p6)	cmp.leu
+} { .mfi	getf.sig	r25 = f57
+		xma.hu		f57 = f33, f97, f41
+	   (p7)	cmp.ltu
 		;;
-} { .mib
-		ldfp8
-		add 1
+} { .mib	ldfp8		f40, f41 = [r32], 8
+	   (p6)	add 1
 		nop.b
-} { .mib
-		stf8
-		add
-		nop.b
+} { .mib	stf8
+	   (p7)	add
+		br.cloop	.Loop
 		;;
 } 
 
