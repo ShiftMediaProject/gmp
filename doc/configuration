@@ -71,14 +71,18 @@ When adding a completely new mpn function file, do the following,
 
      c) `extra_functions' for some targets, if it's a special function
         that only ever needs to exist for certain targets.  Code
-        wanting to use it will generally look for the target, but
+        wanting to use it will generally test the target, but
         HAVE_NATIVE_func can be used if desired.
 
-  ii) If you want `HAVE_NATIVE_func' defined in config.h, add 
+  ii) If you want `HAVE_NATIVE_func' defined in config.h, add
       `#undef HAVE_NATIVE_func' to acconfig.h.
 
-  iii) If the function can be provided by a multi-function file,
-       then follow the directions above for them too.
+  iii) If it might be implemented in C, either sometimes or always, add
+       it to nodist_libdummy_la_SOURCES in mpn/Makefile.am (to get an
+       ansi2knr rule).
+
+  iv) If the function can be provided by a multi-function file, then
+      follow the directions above for them too.
 
 ** Add a file in any other directory
 
@@ -92,7 +96,8 @@ When adding an mpz file,
 
   i) Add file.c to libmpz_la_SOURCES in mpz/Makefile.am.
 
-  ii) Add mpz/file.lo to MPZ_OBJECTS in the top-level Makefile.am.
+  ii) In the top-level Makefile.am, add mpz/file$U.lo to MPZ_OBJECTS.
+      If libmp.la needs it, then add the same to libmp_la_DEPENDENCIES.
 
 If a multi-function mpz file is being added,
 
@@ -105,16 +110,20 @@ If a multi-function mpz file is being added,
 
      c) Add each such func.c to nodist_libmpz_la_SOURCES.
 
-  ii) Add each c) above also as mpz/func.lo in MPZ_OBJECTS in the
+  ii) Add each c) above also as mpz/func$U.lo in MPZ_OBJECTS in the
       top-level Makefile.am.
 
   iii) In the multi-function file, expect a preprocessor symbol
        OPERATION_func to indicate what form is being compiled.
 
-The same applies to mpf and mpq (except that multi-function support
-doesn't exist in mpq/Makefile.am at the moment).
+The same applies to mpq, mpf and mpfr.  See mpz/mul_siui.c or
+mpf/integer.c for example multi-function files.
 
-See mpz/mul_siui.c or mpf/integer.c for example multi-function files.
+** Macos directory
+
+The macos/configure script will automatically pick up additions to
+MPZ_OBJECTS or gmp_mpn_functions, but multi-function files and test
+programs need to be added to Makefile.in manually.
 
 * Selecting compiler and its flags by hand
 
