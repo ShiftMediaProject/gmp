@@ -182,6 +182,7 @@ extern __gmp_const int mp_bits_per_limb;
 #define mpz_cmp_abs_ui __gmpz_cmp_abs_ui
 #define mpz_com __gmpz_com
 #define mpz_divexact __gmpz_divexact
+#define mpz_dump __gmpz_dump
 #define mpz_fac_ui __gmpz_fac_ui
 #define mpz_fdiv_q __gmpz_fdiv_q
 #define mpz_fdiv_q_2exp __gmpz_fdiv_q_2exp
@@ -295,6 +296,7 @@ int mpz_cmp_abs _PROTO ((mpz_srcptr, mpz_srcptr));
 int mpz_cmp_abs_ui _PROTO ((mpz_srcptr, unsigned long int));
 void mpz_com _PROTO ((mpz_ptr, mpz_srcptr));
 void mpz_divexact _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
+void mpz_dump _PROTO ((mpz_srcptr));
 void mpz_fac_ui _PROTO ((mpz_ptr, unsigned long int));
 void mpz_fdiv_q _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
 void mpz_fdiv_q_2exp _PROTO ((mpz_ptr, mpz_srcptr, unsigned long int));
