@@ -19,7 +19,15 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA.
 
 
-2002-04-11  Kevin Ryde  <user42@zip.com.au>
+2002-04-13  Kevin Ryde  <kevin@swox.se>
+
+	* mpfr/*: Update to another new mpfr 2.0.1.
+	* configure.in, Makefile.am, mpfr/Makefile.am, mpfr/tests/Makefile.am:
+	Use MPFR_CONFIGS macro, establish separate MPFR_CFLAGS for mpfr build.
+
+	* mpfr/tests/Makefile.am: Correction to convenience rule for libmpfr.a.
+
+2002-04-11  Kevin Ryde  <kevin@swox.se>
 
 	* mpfr/set_q.c: gmp-impl.h before mpfr.h to avoid _PROTO redefine.
 
@@ -514,7 +522,7 @@ MA 02111-1307, USA.
 
 	* mpn/vax/gmp-mparam.h: New file.
 
-2002-02-28  Kevin Ryde  <user42@zip.com.au>
+2002-02-28  Kevin Ryde  <kevin@swox.se>
 
 	* gmp-h.in (gmp_errno, gmp_version): Move into extern "C" block,
 	reported by librik@panix.com.
