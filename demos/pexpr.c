@@ -434,7 +434,7 @@ main (int argc, char **argv)
 	  size_t out_len;
 	  char *tmp, *s;
 
-	  out_len = mpz_sizeinbase (r, base) + 2;
+	  out_len = mpz_sizeinbase (r, base >= 0 ? base : -base) + 2;
 	  tmp = malloc (out_len);
 
 	  if (print_timing)
