@@ -1714,6 +1714,10 @@ pointer_setup (struct each_t *e)
           d[i].size = 2*size;
         break;
 
+      case SIZE_SIZE2:
+        d[i].size = size2;
+        break;
+
       case SIZE_DIFF:
         d[i].size = size - size2;
         break;
