@@ -50,5 +50,7 @@ mpz_lcm (mpz_ptr r, mpz_srcptr u, mpz_srcptr v)
   mpz_divexact (g, u, g);
   mpz_mul (r, g, v);
 
+  SIZ (r) = ABS (SIZ (r));	/* result always positive */
+
   TMP_FREE (marker);
 }
