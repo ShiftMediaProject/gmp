@@ -1,4 +1,4 @@
-/* mpz_cmp_abs_ui.c -- Compare a mpz_t a with an mp_limb_t b.  Return positive,
+/* mpz_cmpabs_ui.c -- Compare a mpz_t a with an mp_limb_t b.  Return positive,
   zero, or negative based on if a > b, a == b, or a < b.
 
 Copyright (C) 1991, 1993, 1994, 1995, 1997 Free Software Foundation, Inc.
@@ -25,9 +25,9 @@ MA 02111-1307, USA. */
 
 int
 #if __STDC__
-mpz_cmp_abs_ui (mpz_srcptr u, unsigned long int v_digit)
+mpz_cmpabs_ui (mpz_srcptr u, unsigned long int v_digit)
 #else
-mpz_cmp_abs_ui (u, v_digit)
+mpz_cmpabs_ui (u, v_digit)
      mpz_srcptr u;
      unsigned long int v_digit;
 #endif

@@ -1,4 +1,4 @@
-/* mpz_cmp_abs(u,v) -- Compare U, V.  Return postive, zero, or negative
+/* mpz_cmpabs(u,v) -- Compare U, V.  Return postive, zero, or negative
    based on if U > V, U == V, or U < V.
 
 Copyright (C) 1991, 1993, 1994, 1996, 1997 Free Software Foundation, Inc.
@@ -25,9 +25,9 @@ MA 02111-1307, USA. */
 
 int
 #if __STDC__
-mpz_cmp_abs (mpz_srcptr u, mpz_srcptr v)
+mpz_cmpabs (mpz_srcptr u, mpz_srcptr v)
 #else
-mpz_cmp_abs (u, v)
+mpz_cmpabs (u, v)
      mpz_srcptr u;
      mpz_srcptr v;
 #endif
