@@ -1,6 +1,6 @@
 dnl  HPPA 64-bit time stamp counter access routine.
 
-dnl  Copyright 2000 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002 Free Software Foundation, Inc.
 dnl 
 dnl  This file is part of the GNU MP Library.
 dnl 
@@ -19,25 +19,17 @@ dnl  License along with the GNU MP Library; see the file COPYING.LIB.  If
 dnl  not, write to the Free Software Foundation, Inc., 59 Temple Place -
 dnl  Suite 330, Boston, MA 02111-1307, USA.
 
-dnl Don't include this, it's not ready for hppa
-dnl include(`../config.m4')
+include(`../config.m4')
 
 dnl void speed_cyclecounter (unsigned p[2]);
 dnl
 dnl Get the HPPA interval timer.
 
 	.level 2.0n
-	.code
-	.export speed_cyclecounter,entry
-speed_cyclecounter
-	.proc
-	.callinfo	frame=0,args_saved
-	.entry
-
+PROLOGUE(speed_cyclecounter)
 	mfctl	%cr16,%r28
 	stw	%r28,0(0,%r26)		; low word
 	extrd,u	%r28,31,32,%r28
-	bv	0(%r2)
-	.exit
+	bve	(%r2)
 	stw	%r28,4(0,%r26)		; high word
-	.procend
+EPILOGUE(speed_cyclecounter)
