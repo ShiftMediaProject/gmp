@@ -1358,11 +1358,6 @@ from the same GMP version, since this is not done by the libtool versioning,
 nor otherwise.  A mismatch will result in unresolved symbols from the linker,
 or perhaps the loader.
 
-@cindex @code{DESTDIR}
-Using @samp{DESTDIR} or a @samp{prefix} override with @samp{make install} and
-a shared @file{libgmpxx} may run into a libtool relinking problem, see
-@ref{Known Build Problems}.
-
 When building a package for a CPU family, care should be taken to use
 @samp{--host} (or @samp{--build}) to choose the least common denominator among
 the CPUs which might use the package.  For example this might necessitate
@@ -1615,30 +1610,6 @@ script, it exits silently, having died writing a preamble to
 @file{libgmp.la} link on one system tested, despite having 64Mb available.
 Running @samp{make libgmp.la} directly helped, perhaps recursing into the
 various subdirectories uses up memory.
-
-@item @samp{DESTDIR} and shared @file{libgmpxx}
-@cindex @code{DESTDIR}
-@samp{make install DESTDIR=/my/staging/area}, or the same with a @samp{prefix}
-override, to install to a temporary directory is not fully supported by
-current versions of libtool when building a shared version of a library which
-depends on another being built at the same time, like @file{libgmpxx} and
-@file{libgmp}.
-
-The problem is that @file{libgmpxx} is relinked at the install stage to ensure
-that if the system puts a hard-coded path to @file{libgmp} within
-@file{libgmpxx} then that path will be correct.  Naturally the linker is
-directed to look only at the final location, not the staging area, so if
-@file{libgmp} is not already in that final location then the link will fail.
-
-A workaround for this on SVR4 style systems, such as GNU/Linux, where paths
-are not hard-coded, is to include the staging area in the linker's search
-using @code{LD_LIBRARY_PATH}.  For example with @samp{--prefix=/usr} but
-installing under @samp{/my/staging/area},
-
-@example
-LD_LIBRARY_PATH=/my/staging/area/usr/lib \
-  make install DESTDIR=/my/staging/area
-@end example
 
 @item GNU binutils @command{strip} prior to 2.12
 @cindex Stripped libraries
