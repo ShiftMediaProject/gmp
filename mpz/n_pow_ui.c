@@ -67,11 +67,11 @@ MA 02111-1307, USA. */
    than it's worth.  */
 
 
-/* floor(sqrt(MP_LIMB_T_MAX)), ie. the biggest value that can be squared in
+/* floor(sqrt(GMP_NUMB_MAX)), ie. the biggest value that can be squared in
    a limb without overflowing.
    FIXME: This formula is an underestimate when GMP_NUMB_BITS is odd. */
 
-#define MP_LIMB_T_HALFMAX  (((mp_limb_t) 1 << GMP_NUMB_BITS/2) - 1)
+#define GMP_NUMB_HALFMAX  (((mp_limb_t) 1 << GMP_NUMB_BITS/2) - 1)
 
 
 /* The following are for convenience, they update the size and check the
@@ -221,7 +221,7 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
          but if e is small then we might reach e==0 and the whole b^e in rl.
          Notice this code works when blimb==1 too, reaching e==0.  */
 
-      while (blimb <= MP_LIMB_T_HALFMAX)
+      while (blimb <= GMP_NUMB_HALFMAX)
         {
           TRACE (printf ("small e=0x%lX blimb=0x%lX rl=0x%lX\n",
                          e, blimb, rl));
@@ -242,9 +242,13 @@ mpz_n_pow_ui (mpz_ptr r, mp_srcptr bp, mp_size_t bsize, unsigned long int e)
       bsize = 2;
       ASSERT (e != 0);
       if ((e & 1) != 0)
-        umul_ppmm (rl_high, rl, rl, blimb);
+	{
+	  umul_ppmm (rl_high, rl, rl, blimb << GMP_NAIL_BITS);
+	  rl >>= GMP_NAIL_BITS;
+	}
       e >>= 1;
-      umul_ppmm (blimb, blimb_low, blimb, blimb);
+      umul_ppmm (blimb, blimb_low, blimb, blimb << GMP_NAIL_BITS);
+      blimb_low >>= GMP_NAIL_BITS;
 
     got_rl:
       TRACE (printf ("double power e=0x%lX blimb=0x%lX:0x%lX rl=0x%lX:%lX\n",
