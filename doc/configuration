@@ -258,9 +258,9 @@ INSTALL.autoconf can be copied from INSTALL in autoconf.
 ltmain.sh comes from libtool.  Remove it and run "libtoolize --copy",
 or just copy the file by hand.
 
-ansi2knr.c, ansi2knr.1, install.sh, mdate-sh and mkinstalldirs come
-from automake and can be updated by copying or by removing and running
-"automake --add-missing --copy".
+ansi2knr.c, ansi2knr.1, install.sh, mkinstalldirs and doc/mdate-sh
+come from automake and can be updated by copying or by removing and
+running "automake --add-missing --copy".
 
 texinfo.tex can be updated from ftp.gnu.org.  Check it still works
 with "make gmp.dvi", "make gmp.ps" and "make gmp.pdf".
@@ -305,7 +305,8 @@ At build time:
     config.in      | -------------> | config.h
     gmp-h.in       |                | config.m4
     mp-h.in        /                | gmp.h
-                                    \ mp.h
+                                    | mp.h
+                                    \ fat.h  (fat binary build only)
 
 When configured with --enable-maintainer-mode the Makefiles include
 rules to re-run the necessary tools if the input files are changed.
@@ -383,7 +384,7 @@ and where the difference matters in function calls.
 ** K&R support
 
 Function definitions must be in the GNU stylized form to work.  See
-the ansi2knr.1 man page.
+the ansi2knr.1 man page (included in the GMP sources).
 
 __GMP_PROTO is used for function prototypes, other ANSI / K&R
 differences are conditionalized in various places.
