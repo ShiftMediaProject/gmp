@@ -203,13 +203,13 @@ long __MPN(count_leading_zeros) _PROTO ((UDItype));
 #if defined (__hppa) && W_TYPE_SIZE == 64
 #if defined (__GNUC__)
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
-  __asm__ ("add %4,%5,%1\n\tadd,dc %2,%3,%0"				\
+  __asm__ ("add%I5 %5,%r4,%1\n\tadd,dc %r2,%r3,%0"			\
 	   : "=r" (sh), "=&r" (sl)					\
-	   : "rM" (ah), "rM" (bh), "%rM" (al), "rM" (bl))
+	   : "rM" (ah), "rM" (bh), "%rM" (al), "rI" (bl))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
-  __asm__ ("sub %4,%5,%1\n\tsub,db %2,%3,%0"				\
+  __asm__ ("sub%I4 %4,%r5,%1\n\tsub,db %r2,%r3,%0"			\
 	   : "=r" (sh), "=&r" (sl)					\
-	   : "rM" (ah), "rM" (bh), "rM" (al), "rM" (bl))
+	   : "rM" (ah), "rM" (bh), "rI" (al), "rM" (bl))
 #endif
 #endif /* hppa */
 
@@ -485,13 +485,13 @@ extern UWtype __MPN(udiv_qrnnd) _PROTO ((UWtype *, UWtype, UWtype, UWtype));
 
 #if defined (__hppa) && W_TYPE_SIZE == 32
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
-  __asm__ ("add %4,%5,%1\n\taddc %2,%3,%0"				\
+  __asm__ ("add%I5 %5,%r4,%1\n\taddc %r2,%r3,%0"			\
 	   : "=r" (sh), "=&r" (sl)					\
-	   : "rM" (ah), "rM" (bh), "%rM" (al), "rM" (bl))
+	   : "rM" (ah), "rM" (bh), "%rM" (al), "rI" (bl))
 #define sub_ddmmss(sh, sl, ah, al, bh, bl) \
-  __asm__ ("sub %4,%5,%1\n\tsubb %2,%3,%0"				\
+  __asm__ ("sub%I4 %4,%r5,%1\n\tsubb %r2,%r3,%0"			\
 	   : "=r" (sh), "=&r" (sl)					\
-	   : "rM" (ah), "rM" (bh), "rM" (al), "rM" (bl))
+	   : "rM" (ah), "rM" (bh), "rI" (al), "rM" (bl))
 #if defined (_PA_RISC1_1)
 #define umul_ppmm(wh, wl, u, v) \
   do {									\
