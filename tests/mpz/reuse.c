@@ -33,6 +33,23 @@ MA 02111-1307, USA. */
 #include "gmp-impl.h"
 #include "tests.h"
 
+#if defined (_WIN32) && __GMP_LIBGMP_SHARED
+
+/* FIXME: When linking to a DLL libgmp, mpz_add etc can't be used as
+   initializers for global variables because they're effectively a global
+   variables (function pointers) themselves.  Perhaps calling a test
+   function successively with mpz_add etc would be better.  */
+
+int
+main (void)
+{
+  printf ("Test suppressed for windows DLL\n");
+  exit (0);
+}
+
+
+#else /* ! DLL_EXPORT */
+
 void dump _PROTO ((char *, mpz_t, mpz_t, mpz_t));
 
 typedef void (*dss_func) _PROTO ((mpz_ptr, mpz_srcptr, mpz_srcptr));
@@ -573,3 +590,5 @@ dump (char *name, mpz_t in1, mpz_t in2, mpz_t in3)
     }
   printf (")\n");
 }
+
+#endif /* ! DLL_EXPORT */
