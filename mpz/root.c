@@ -78,9 +78,9 @@ mpz_root (r, c, nth)
 	{
 	  if (r != NULL)
 	    SIZ(r) = -SIZ(r);
-	  return mpz_cmp_si (c, -1L);
+	  return mpz_cmp_si (c, -1L) == 0;
 	}
-      return mpz_cmp_ui (c, 1L);
+      return mpz_cmp_ui (c, 1L) == 0;
     }
 
   mpz_init (x);
