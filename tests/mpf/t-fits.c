@@ -1,6 +1,6 @@
 /* Test mpf_fits_*_p
 
-Copyright 2001 Free Software Foundation, Inc.
+Copyright 2001, 2002 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
@@ -49,13 +49,18 @@ MA 02111-1307, USA. */
 int
 main (void)
 {
-  mpf_t       f;
+  mpf_t       f, f0p5;
   int         got;
   const char  *expr;
   int         error = 0;
 
   tests_start ();
   mpf_init2 (f, 200L);
+  mpf_init2 (f0p5, 200L);
+
+  /* 0.5 */
+  mpf_set_ui (f0p5, 1L);
+  mpf_div_2exp (f0p5, f0p5, 1L);
 
   mpf_set_ui (f, 0L);
   expr = "0";
@@ -92,6 +97,13 @@ main (void)
   EXPECT (mpf_fits_ushort_p, 1);
 
   mpf_set_ui (f, (unsigned long) USHRT_MAX);
+  mpf_add (f, f, f0p5);
+  expr = "USHRT_MAX + 0.5";
+  EXPECT (mpf_fits_ulong_p, 1);
+  EXPECT (mpf_fits_uint_p, 1);
+  EXPECT (mpf_fits_ushort_p, 1);
+
+  mpf_set_ui (f, (unsigned long) USHRT_MAX);
   mpf_add_ui (f, f, 1L);
   expr = "USHRT_MAX + 1";
   EXPECT (mpf_fits_ushort_p, 0);
@@ -99,6 +111,12 @@ main (void)
 
   mpf_set_ui (f, (unsigned long) UINT_MAX);
   expr = "UINT_MAX";
+  EXPECT (mpf_fits_ulong_p, 1);
+  EXPECT (mpf_fits_uint_p, 1);
+
+  mpf_set_ui (f, (unsigned long) UINT_MAX);
+  mpf_add (f, f, f0p5);
+  expr = "UINT_MAX + 0.5";
   EXPECT (mpf_fits_ulong_p, 1);
   EXPECT (mpf_fits_uint_p, 1);
 
@@ -113,6 +131,11 @@ main (void)
   EXPECT (mpf_fits_ulong_p, 1);
 
   mpf_set_ui (f, ULONG_MAX);
+  mpf_add (f, f, f0p5);
+  expr = "ULONG_MAX + 0.5";
+  EXPECT (mpf_fits_ulong_p, 1);
+
+  mpf_set_ui (f, ULONG_MAX);
   mpf_add_ui (f, f, 1L);
   expr = "ULONG_MAX + 1";
   EXPECT (mpf_fits_ulong_p, 0);
@@ -120,6 +143,13 @@ main (void)
 
   mpf_set_si (f, (long) SHRT_MAX);
   expr = "SHRT_MAX";
+  EXPECT (mpf_fits_slong_p, 1);
+  EXPECT (mpf_fits_sint_p, 1);
+  EXPECT (mpf_fits_sshort_p, 1);
+
+  mpf_set_si (f, (long) SHRT_MAX);
+  expr = "SHRT_MAX + 0.5";
+  mpf_add (f, f, f0p5);
   EXPECT (mpf_fits_slong_p, 1);
   EXPECT (mpf_fits_sint_p, 1);
   EXPECT (mpf_fits_sshort_p, 1);
@@ -136,6 +166,12 @@ main (void)
   EXPECT (mpf_fits_sint_p, 1);
 
   mpf_set_si (f, (long) INT_MAX);
+  mpf_add (f, f, f0p5);
+  expr = "INT_MAX + 0.5";
+  EXPECT (mpf_fits_slong_p, 1);
+  EXPECT (mpf_fits_sint_p, 1);
+
+  mpf_set_si (f, (long) INT_MAX);
   mpf_add_ui (f, f, 1L);
   expr = "INT_MAX + 1";
   EXPECT (mpf_fits_sint_p, 0);
@@ -146,6 +182,11 @@ main (void)
   EXPECT (mpf_fits_slong_p, 1);
 
   mpf_set_si (f, LONG_MAX);
+  mpf_add (f, f, f0p5);
+  expr = "LONG_MAX + 0.5";
+  EXPECT (mpf_fits_slong_p, 1);
+
+  mpf_set_si (f, LONG_MAX);
   mpf_add_ui (f, f, 1L);
   expr = "LONG_MAX + 1";
   EXPECT (mpf_fits_slong_p, 0);
@@ -153,6 +194,13 @@ main (void)
 
   mpf_set_si (f, (long) SHRT_MIN);
   expr = "SHRT_MIN";
+  EXPECT (mpf_fits_slong_p, 1);
+  EXPECT (mpf_fits_sint_p, 1);
+  EXPECT (mpf_fits_sshort_p, 1);
+
+  mpf_set_si (f, (long) SHRT_MIN);
+  mpf_sub (f, f, f0p5);
+  expr = "SHRT_MIN - 0.5";
   EXPECT (mpf_fits_slong_p, 1);
   EXPECT (mpf_fits_sint_p, 1);
   EXPECT (mpf_fits_sshort_p, 1);
@@ -169,6 +217,12 @@ main (void)
   EXPECT (mpf_fits_sint_p, 1);
 
   mpf_set_si (f, (long) INT_MIN);
+  mpf_sub (f, f, f0p5);
+  expr = "INT_MIN - 0.5";
+  EXPECT (mpf_fits_slong_p, 1);
+  EXPECT (mpf_fits_sint_p, 1);
+
+  mpf_set_si (f, (long) INT_MIN);
   mpf_sub_ui (f, f, 1L);
   expr = "INT_MIN + 1";
   EXPECT (mpf_fits_sint_p, 0);
@@ -179,6 +233,11 @@ main (void)
   EXPECT (mpf_fits_slong_p, 1);
 
   mpf_set_si (f, LONG_MIN);
+  mpf_sub (f, f, f0p5);
+  expr = "LONG_MIN - 0.5";
+  EXPECT (mpf_fits_slong_p, 1);
+
+  mpf_set_si (f, LONG_MIN);
   mpf_sub_ui (f, f, 1L);
   expr = "LONG_MIN + 1";
   EXPECT (mpf_fits_slong_p, 0);
@@ -186,15 +245,34 @@ main (void)
 
   mpf_set_str_or_abort (f, "0.5", 10);
   expr = "0.5";
+  EXPECT (mpf_fits_ulong_p, 1);
+  EXPECT (mpf_fits_uint_p, 1);
+  EXPECT (mpf_fits_ushort_p, 1);
+  EXPECT (mpf_fits_slong_p, 1);
+  EXPECT (mpf_fits_sint_p, 1);
+  EXPECT (mpf_fits_sshort_p, 1);
+
+  mpf_set_str_or_abort (f, "-0.5", 10);
+  expr = "-0.5";
   EXPECT (mpf_fits_ulong_p, 0);
   EXPECT (mpf_fits_uint_p, 0);
   EXPECT (mpf_fits_ushort_p, 0);
-  EXPECT (mpf_fits_slong_p, 0);
-  EXPECT (mpf_fits_sint_p, 0);
-  EXPECT (mpf_fits_sshort_p, 0);
+  EXPECT (mpf_fits_slong_p, 1);
+  EXPECT (mpf_fits_sint_p, 1);
+  EXPECT (mpf_fits_sshort_p, 1);
+
 
   mpf_set_str_or_abort (f, "1.000000000000000000000000000000000001", 16);
   expr = "1.000000000000000000000000000000000001 base 16";
+  EXPECT (mpf_fits_ulong_p, 1);
+  EXPECT (mpf_fits_uint_p, 1);
+  EXPECT (mpf_fits_ushort_p, 1);
+  EXPECT (mpf_fits_slong_p, 1);
+  EXPECT (mpf_fits_sint_p, 1);
+  EXPECT (mpf_fits_sshort_p, 1);
+
+  mpf_set_str_or_abort (f, "1@1000", 16);
+  expr = "1@1000 base 16";
   EXPECT (mpf_fits_ulong_p, 0);
   EXPECT (mpf_fits_uint_p, 0);
   EXPECT (mpf_fits_ushort_p, 0);
@@ -202,8 +280,34 @@ main (void)
   EXPECT (mpf_fits_sint_p, 0);
   EXPECT (mpf_fits_sshort_p, 0);
 
-  mpf_set_str_or_abort (f, "1@1000", 16);
-  expr = "1@1000 base 16";
+
+  mpf_set_ui (f, 1L);
+  mpf_mul_2exp (f, f, BITS_PER_ULONG + 1);
+  mpf_sub_ui (f, f, 1L);
+  expr = "2^(BITS_PER_ULONG+1) - 1";
+  EXPECT (mpf_fits_ulong_p, 0);
+  EXPECT (mpf_fits_uint_p, 0);
+  EXPECT (mpf_fits_ushort_p, 0);
+  EXPECT (mpf_fits_slong_p, 0);
+  EXPECT (mpf_fits_sint_p, 0);
+  EXPECT (mpf_fits_sshort_p, 0);
+
+  mpf_set_ui (f, 1L);
+  mpf_mul_2exp (f, f, BITS_PER_ULONG + 1);
+  mpf_sub_ui (f, f, 1L);
+  mpf_neg (f, f);
+  expr = "- (2^(BITS_PER_ULONG+1) - 1)";
+  EXPECT (mpf_fits_ulong_p, 0);
+  EXPECT (mpf_fits_uint_p, 0);
+  EXPECT (mpf_fits_ushort_p, 0);
+  EXPECT (mpf_fits_slong_p, 0);
+  EXPECT (mpf_fits_sint_p, 0);
+  EXPECT (mpf_fits_sshort_p, 0);
+
+  mpf_set_ui (f, 1L);
+  mpf_mul_2exp (f, f, BITS_PER_ULONG + 5);
+  mpf_sub_ui (f, f, 1L);
+  expr = "2^(BITS_PER_ULONG+5) - 1";
   EXPECT (mpf_fits_ulong_p, 0);
   EXPECT (mpf_fits_uint_p, 0);
   EXPECT (mpf_fits_ushort_p, 0);
@@ -216,6 +320,7 @@ main (void)
     abort ();
 
   mpf_clear (f);
+  mpf_clear (f0p5);
   tests_end ();
   exit (0);
 }
