@@ -27,11 +27,6 @@ mpz_set_ui (mpz_ptr dest, unsigned long int val)
 {
   /* We don't check if the allocation is enough, since the rest of the
      package ensures it's at least 1, which is what we need here.  */
-  if (val > 0)
-    {
-      dest->_mp_d[0] = val;
-      dest->_mp_size = 1;
-    }
-  else
-    dest->_mp_size = 0;
+  dest->_mp_d[0] = val;
+  dest->_mp_size = (val != 0);
 }
