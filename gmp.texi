@@ -3261,7 +3261,7 @@ is non-zero and the result won't be anything useful.
 
 @code{mpn_divexact_by3c} takes an initial carry parameter, which can be the
 return value from a previous call, so a large calculation can be done piece by
-piece.  @code{mpn_divexact_by3} is simply a macro calling
+piece from low to high.  @code{mpn_divexact_by3} is simply a macro calling
 @code{mpn_divexact_by3c} with a 0 carry parameter.
 
 These routines use a multiply-by-inverse and will be faster than
@@ -3654,8 +3654,8 @@ with @code{pow} in @file{libm.a}.
 Include the header @file{mp.h} to get the definition of the necessary types
 and functions.  If you are on a BSD derived system, make sure to include GNU
 @file{mp.h} if you are going to link the GNU @file{libmp.a} to your program.
-This means that you probably need to give the -I<dir> option to the compiler,
-where <dir> is the directory where you have GNU @file{mp.h}.
+This means that you probably need to give the @samp{-I<dir>} option to the
+compiler, where @samp{<dir>} is the directory where you have GNU @file{mp.h}.
 
 @deftypefun {MINT *} itom (signed short int @var{initial_value})
 Allocate an integer consisting of a @code{MINT} object and dynamic limb space.
