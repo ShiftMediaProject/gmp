@@ -1,3 +1,15 @@
+2000-11-12  Torbjorn Granlund  <tege@swox.com>
+
+	* mpz/tests/t-mul.c
+	(main): Generate random numbers using gmp_rand* functions.
+	(main): Distribute random numbers non-uniformly.
+	(main): Seed by current time if GMP_CHECK_RANDOMIZE is set.
+	(_mpn_mul_classic): Streamline.
+	* mpz/tests/t-tdiv.c: Analogous changes.
+
+	* demos/pexpr.c (HAVE_sigaltstack): Fix typo in testing for _UNICOS.
+	Also test for __hpux.
+
 2000-11-11  Torbjorn Granlund  <tege@swox.com>
 
 	* mpn/alpha/ev5/gmp-mparam.h: Retune.
