@@ -3103,6 +3103,15 @@ fi
 AC_PROG_YACC
 AM_PROG_LEX
 
+# Configs for demos/expr directory
+#
+# Libtool already runs an AC_CHECK_TOOL for ranlib, but we give
+# AC_PROG_RANLIB anyway since automake is supposed to complain if it's not
+# called.  (Automake 1.8.4 doesn't, at least not when the only library is in
+# an EXTRA_LIBRARIES.)
+#
+AC_PROG_RANLIB
+
 
 # Create config.m4.
 GMP_FINISH
