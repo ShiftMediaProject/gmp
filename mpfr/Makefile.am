@@ -38,7 +38,7 @@ endif
 # see top level Makefile.am for the workaround.
 info_TEXINFOS = mpfr.texi
 mpfr_TEXINFOS = ../fdl.texi
-AM_MAKEINFOFLAGS = -I..
+AM_MAKEINFOFLAGS = -I$(top_srcdir)
 TEXINFO_TEX = ../texinfo.tex
 
 # Override automake default AR=ar with the value from GMP_PROG_AR.
