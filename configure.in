@@ -288,7 +288,7 @@ case $host in
     # Don't perform any assembly syntax tests on this beast.
     gmp_asm_syntax_testing=no
     cclist="cc"
-    cc_cflags="-O3 -Wa,-B"	# no -g, it silently disables all optimizations
+    cc_cflags="-O3 -htask0 -Wa,-B"
     path="cray"
     extra_functions="mulww"
     ;;
