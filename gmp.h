@@ -543,6 +543,9 @@ double mpq_get_d _PROTO ((mpq_srcptr));
 void mpq_set_d _PROTO ((mpq_ptr, double));
 void mpq_canonicalize _PROTO ((mpq_ptr));
 
+#define mpq_set_f __gmpq_set_f
+void mpq_set_f _PROTO ((mpq_ptr, mpf_srcptr));
+
 #define mpq_swap __gmpq_swap
 void mpq_swap _PROTO ((mpq_ptr, mpq_ptr));
 
