@@ -3951,6 +3951,12 @@ for tmp_dir in $path ; do
   fi
 done
 
+# Dig out the links from `gmp_links' for inclusion in DISTCLEANFILES.
+gmp_srclinks=
+for f in $gmp_links; do
+  gmp_srclinks="$gmp_srclinks `echo $f | sed 's/\(.*\):.*/\1/'`"
+done
+
 echo "***DEBUG*** target=$target"
 echo "***DEBUG*** CC=$CC, CFLAGS=$CFLAGS"
 echo "***DEBUG*** CC64=$CC64, CFLAGS64=$CFLAGS64"
@@ -4274,6 +4280,7 @@ s%@STRIP@%$STRIP%;t t
 s%@LIBTOOL@%$LIBTOOL%;t t
 s%@mpn_objects@%$mpn_objects%;t t
 s%@mpn_objs_in_libgmp@%$mpn_objs_in_libgmp%;t t
+s%@gmp_srclinks@%$gmp_srclinks%;t t
 CEOF
 
 EOF
