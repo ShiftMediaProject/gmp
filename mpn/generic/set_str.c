@@ -36,6 +36,7 @@ mpn_set_str (mp_ptr xp, const unsigned char *str, size_t str_len, int base)
 
   ASSERT (base >= 2);
   ASSERT (base < numberof (__mp_bases));
+  ASSERT (str_len >= 1);
 
   big_base = __mp_bases[base].big_base;
   indigits_per_limb = __mp_bases[base].chars_per_limb;
