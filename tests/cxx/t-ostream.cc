@@ -195,6 +195,19 @@ check_mpq (void)
 
     { "5/8", "5/8", ios::dec },
     { "5/8", "0X5/0X8", ios::hex | ios::showbase | ios::uppercase },
+
+    /* zero denominator with showbase */
+    { "0/0",   "       0/0", ios::oct | ios::showbase, 10 },
+    { "0/0",   "       0/0", ios::dec | ios::showbase, 10 },
+    { "0/0",   "   0x0/0x0", ios::hex | ios::showbase, 10 },
+    { "123/0", "    0173/0", ios::oct | ios::showbase, 10 },
+    { "123/0", "     123/0", ios::dec | ios::showbase, 10 },
+    { "123/0", "  0x7b/0x0", ios::hex | ios::showbase, 10 },
+    { "123/0", "  0X7B/0X0", ios::hex | ios::showbase | ios::uppercase, 10 },
+    { "0/123", "    0/0173", ios::oct | ios::showbase, 10 },
+    { "0/123", "     0/123", ios::dec | ios::showbase, 10 },
+    { "0/123", "  0x0/0x7b", ios::hex | ios::showbase, 10 },
+    { "0/123", "  0X0/0X7B", ios::hex | ios::showbase | ios::uppercase, 10 },
   };
 
   size_t  i;
@@ -207,6 +220,8 @@ check_mpq (void)
   for (i = 0; i < numberof (data); i++)
     {
       mpq_set_str_or_abort (q, data[i].q, 0);
+      MPZ_CHECK_FORMAT (mpq_numref (q));
+      MPZ_CHECK_FORMAT (mpq_denref (q));
 
       if (option_check_standard
           && mpz_fits_slong_p (mpq_numref(q))
@@ -226,7 +241,6 @@ check_mpq (void)
 
       {
         ostrstream  got;
-        MPQ_CHECK_FORMAT (q);
         CALL (operator<< (got, q) << '\0');
         if (strcmp (got.str(), data[i].want) != 0)
           {
