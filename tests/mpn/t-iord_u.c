@@ -28,6 +28,10 @@ MA 02111-1307, USA.
 #include "tests.h"
 
 
+/* The i386 MPN_INCR_U and MPN_DECR_U have special cases for "n" being a
+   compile-time constant 1, so that's exercised explicitly.  */
+
+
 #define M     MP_LIMB_T_MAX
 #define SIZE  ((mp_size_t) 10)
 
@@ -48,78 +52,6 @@ check_one (const char *name, int i,
     }
 }
 
-
-/* The i386 MPN_INCR_U and MPN_DECR_U have special cases for "n" being a
-   compile-time constant 1, so exercise that explicitly.  */
-
-void
-check_incr_const_1 (void)
-{
-  static const struct {
-    const mp_limb_t  src[SIZE];
-    const mp_limb_t  want[SIZE];
-  } data[] = {
-    { { 0 },   { 1 } },
-    { { 123 }, { 124 } },
-    { { M, 0 },   { 0, 1 } },
-    { { M, 123 }, { 0, 124 } },
-    { { M, M, 0 },   { 0, 0, 1 } },
-    { { M, M, 123 }, { 0, 0, 124 } },
-    { { M, M, M, 0 },   { 0, 0, 0, 1 } },
-    { { M, M, M, 123 }, { 0, 0, 0, 124 } },
-    { { M, M, M, M, 0 },   { 0, 0, 0, 0, 1 } },
-    { { M, M, M, M, 123 }, { 0, 0, 0, 0, 124 } },
-  };
-
-  mp_limb_t  got[SIZE];
-  int   i;
-
-  for (i = 0; i < numberof (data); i++)
-    {
-      refmpn_copyi (got, data[i].src, SIZE);
-      MPN_INCR_U (got, SIZE, CNST_LIMB(1));
-      check_one ("check_incr_const_1", i,
-                 data[i].src, CNST_LIMB(1),
-                 got, data[i].want, SIZE);
-    }
-}
-
-void
-check_decr_const_1 (void)
-{
-  static const struct {
-    const mp_limb_t  src[SIZE];
-    const mp_limb_t  want[SIZE];
-  } data[] = {
-    { { 1 },   { 0 } },
-    { { 123 }, { 122 } },
-    { { M },   { M-1 } },
-    { { 0, 1 },   { M, 0 } },
-    { { 0, 123 }, { M, 122 } },
-    { { 0, M },   { M, M-1 } },
-    { { 0, 0, 1 },   { M, M, 0 } },
-    { { 0, 0, 123 }, { M, M, 122 } },
-    { { 0, 0, M },   { M, M, M-1 } },
-    { { 0, 0, 0, 1 },   { M, M, M, 0 } },
-    { { 0, 0, 0, 123 }, { M, M, M, 122 } },
-    { { 0, 0, 0, M },   { M, M, M, M-1 } },
-    { { 0, 0, 0, 0, 1 },   { M, M, M, M, 0 } },
-    { { 0, 0, 0, 0, 123 }, { M, M, M, M, 122 } },
-    { { 0, 0, 0, 0, M },   { M, M, M, M, M-1 } },
-  };
-
-  mp_limb_t  got[SIZE];
-  int   i;
-
-  for (i = 0; i < numberof (data); i++)
-    {
-      refmpn_copyi (got, data[i].src, SIZE);
-      MPN_DECR_U (got, SIZE, CNST_LIMB(1));
-      check_one ("check_incr_const_1", i,
-                 data[i].src, CNST_LIMB(1),
-                 got, data[i].want, SIZE);
-    }
-}
 
 void
 check_incr_data (void)
@@ -171,9 +103,18 @@ check_incr_data (void)
     {
       refmpn_copyi (got, data[i].src, SIZE);
       MPN_INCR_U (got, SIZE, data[i].n);
-      check_one ("check_incr_data", i,
+      check_one ("check_incr (general)", i,
                  data[i].src, data[i].n,
                  got, data[i].want, SIZE);
+
+      if (data[i].n == 1)
+        {
+          refmpn_copyi (got, data[i].src, SIZE);
+          MPN_INCR_U (got, SIZE, CNST_LIMB(1));
+          check_one ("check_incr (const 1)", i,
+                     data[i].src, data[i].n,
+                     got, data[i].want, SIZE);
+        }
     }
 }
 
@@ -185,22 +126,25 @@ check_decr_data (void)
     const mp_limb_t  src[SIZE];
     const mp_limb_t  want[SIZE];
   } data[] = {
-    { 1,   { 1 },   { 0 } },
+    { 1,   { 1 },   { 0   } },
     { 1,   { 123 }, { 122 } },
-    { 2,   { 2 },   { 0 } },
+    { 1,   { M },   { M-1 } },
+    { 2,   { 2 },   { 0   } },
     { 2,   { 123 }, { 121 } },
-    { M,   { M },   { 0 } },
-    { M-1, { M },   { 1 } },
+    { M,   { M },   { 0   } },
+    { M-1, { M },   { 1   } },
 
-    { 1,   { 0,   1 },   { M,   0   } },
+    { 1,   { 0,   1   }, { M,   0   } },
     { 1,   { 0,   123 }, { M,   122 } },
+    { 1,   { 0,   M   }, { M,   M-1 } },
     { 2,   { 0,   123 }, { M-1, 122 } },
     { 2,   { 1,   123 }, { M,   122 } },
     { M,   { 0,   123 }, { 1,   122 } },
-    { M,   { M-1, M },   { M,   M-1 } },
+    { M,   { M-1, M   }, { M,   M-1 } },
 
     { 1,   { 0,   0, 1   }, { M,   M, 0   } },
     { 1,   { 0,   0, 123 }, { M,   M, 122 } },
+    { 1,   { 0,   0, M   }, { M,   M, M-1 } },
     { 2,   { 0,   0, 123 }, { M-1, M, 122 } },
     { 2,   { 1,   0, 123 }, { M,   M, 122 } },
     { M,   { 0,   0, 123 }, { 1,   M, 122 } },
@@ -208,6 +152,7 @@ check_decr_data (void)
 
     { 1,   { 0,   0, 0, 1   }, { M,   M, M, 0   } },
     { 1,   { 0,   0, 0, 123 }, { M,   M, M, 122 } },
+    { 1,   { 0,   0, 0, M   }, { M,   M, M, M-1 } },
     { 2,   { 0,   0, 0, 123 }, { M-1, M, M, 122 } },
     { 2,   { 1,   0, 0, 123 }, { M,   M, M, 122 } },
     { M,   { 0,   0, 0, 123 }, { 1,   M, M, 122 } },
@@ -215,6 +160,7 @@ check_decr_data (void)
 
     { 1,   { 0,   0, 0, 0, 1   }, { M,   M, M, M, 0   } },
     { 1,   { 0,   0, 0, 0, 123 }, { M,   M, M, M, 122 } },
+    { 1,   { 0,   0, 0, 0, M   }, { M,   M, M, M, M-1 } },
     { 2,   { 0,   0, 0, 0, 123 }, { M-1, M, M, M, 122 } },
     { 2,   { 1,   0, 0, 0, 123 }, { M,   M, M, M, 122 } },
     { M,   { 0,   0, 0, 0, 123 }, { 1,   M, M, M, 122 } },
@@ -222,6 +168,7 @@ check_decr_data (void)
 
     { 1,   { 0,   0, 0, 0, 0, 1   }, { M,   M, M, M, M, 0   } },
     { 1,   { 0,   0, 0, 0, 0, 123 }, { M,   M, M, M, M, 122 } },
+    { 1,   { 0,   0, 0, 0, 0, M   }, { M,   M, M, M, M, M-1 } },
     { 2,   { 0,   0, 0, 0, 0, 123 }, { M-1, M, M, M, M, 122 } },
     { 2,   { 1,   0, 0, 0, 0, 123 }, { M,   M, M, M, M, 122 } },
     { M,   { 0,   0, 0, 0, 0, 123 }, { 1,   M, M, M, M, 122 } },
@@ -238,6 +185,15 @@ check_decr_data (void)
       check_one ("check_decr_data", i,
                  data[i].src, data[i].n,
                  got, data[i].want, SIZE);
+
+      if (data[i].n == 1)
+        {
+          refmpn_copyi (got, data[i].src, SIZE);
+          MPN_DECR_U (got, SIZE, CNST_LIMB(1));
+          check_one ("check_decr (const 1)", i,
+                     data[i].src, data[i].n,
+                     got, data[i].want, SIZE);
+        }
     }
 }
 
@@ -250,9 +206,6 @@ main (void)
 
   check_incr_data ();
   check_decr_data ();
-
-  check_incr_const_1 ();
-  check_decr_const_1 ();
 
   tests_end ();
   exit (0);
