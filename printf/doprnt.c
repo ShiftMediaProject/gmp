@@ -396,15 +396,38 @@ __gmp_doprnt (const struct doprnt_funs_t *funs, void *data,
               FLUSH ();
               p = va_arg (ap, void *);
               switch (type) {
-              case 'H': * (char      *) p = retval; break;
-              case 'h': * (short     *) p = retval; break;
-              case 'l': * (long      *) p = retval; break;
-              default:  * (int       *) p = retval; break;
-#if HAVE_LONG_LONG
-              case 'L': * (long long *) p = retval; break;
+              case '\0': * (int       *) p = retval; break;
+              case 'F':  mpf_set_si ((mpf_ptr) p, (long) retval); break;
+              case 'H':  * (char      *) p = retval; break;
+              case 'h':  * (short     *) p = retval; break;
+#if HAVE_INTMAX_T
+              case 'j':  * (intmax_t  *) p = retval; break;
 #else
-              case 'L': ASSERT_FAIL (long long not available); break;
+              case 'j':  ASSERT_FAIL (intmax_t not available); break;
 #endif
+              case 'l':  * (long      *) p = retval; break;
+#if HAVE_LONG_LONG
+              case 'L':  * (long long *) p = retval; break;
+#else
+              case 'L':  ASSERT_FAIL (long long not available); break;
+#endif
+#if HAVE_QUAD_T
+              case 'q':  * (quad_t    *) p = retval; break;
+#else
+              case 'q':  ASSERT_FAIL (quad_t not available); break;
+#endif
+              case 'Q':  mpq_set_si ((mpq_ptr) p, (long) retval, 1L); break;
+#if HAVE_PTRDIFF_T
+              case 't':  * (ptrdiff_t *) p = retval; break;
+#else
+              case 't':  ASSERT_FAIL (ptrdiff_t not available); break;
+#endif
+#if HAVE_SIZE_T
+              case 'z':  * (size_t    *) p = retval; break;
+#else
+              case 'z':  ASSERT_FAIL (size_t not available); break;
+#endif
+              case 'Z':  mpz_set_si ((mpz_ptr) p, (long) retval); break;
               }
             }
             va_copy (last_ap, ap);
