@@ -29,7 +29,10 @@ C
 C An arithmetic approach has been found to be slower than the table lookup,
 C due to needing too many instructions.
 
-deflit(TABLE_NAME,mpn_popcount``'_table')
+C The slightly strange quoting here helps the renaming done by tune/many.pl.
+deflit(TABLE_NAME,
+m4_assert_defined(`GSYM_PREFIX')
+GSYM_PREFIX`'mpn_popcount``'_table')
 
 	RODATA
 	ALIGN(8)
