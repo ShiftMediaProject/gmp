@@ -28,8 +28,8 @@ gmp_randseed_ui (gmp_randstate_t rstate,
                  unsigned long int seed)
 {
   mpz_t zseed;
+  mp_limb_t zlimbs[LIMBS_PER_ULONG];
 
-  mpz_init_set_ui (zseed, seed);
+  MPZ_FAKE_UI (zseed, zlimbs, seed);
   gmp_randseed (rstate, zseed);
-  mpz_clear (zseed);
 }
