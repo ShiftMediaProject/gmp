@@ -1,3 +1,8 @@
+2000-05-19  Kevin Ryde  <kevin@swox.se>
+
+	* mpn/generic/mul_n.c (mpn_toom3_mul_n, mpn_toom3_sqr_n): Fix
+	carry propagation in final coefficient additions.
+
 2000-05-18  Linus Nordberg  <linus@swox.se>
 
 	* configure.in: Set NM before looking for compiler since
