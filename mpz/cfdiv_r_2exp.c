@@ -67,7 +67,6 @@ cfdiv_r_2exp (mpz_ptr w, mpz_srcptr u, unsigned long cnt, int dir)
         {
           i = MIN (abs_usize, limb_cnt+1);
           MPZ_REALLOC (w, i);
-	  up = PTR(u);
           wp = PTR(w);
           MPN_COPY (wp, up, i);
 
