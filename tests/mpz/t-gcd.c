@@ -29,11 +29,12 @@ MA 02111-1307, USA. */
 
 void one_test __GMP_PROTO ((mpz_t, mpz_t, mpz_t, int));
 void debug_mp __GMP_PROTO ((mpz_t, int));
-void ref_mpz_gcd __GMP_PROTO ((mpz_t, mpz_t, mpz_t));
+
+static int gcdext_valid_p __GMP_PROTO ((const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s));
 
 /* Keep one_test's variables global, so that we don't need
    to reinitialize them for each test.  */
-mpz_t gcd, s, t, temp1, temp2;
+mpz_t gcd1, gcd2, s, t, temp1, temp2;
 
 /* Define this to make all operands be large enough for Schoenhage gcd
    to be used.  */
@@ -61,7 +62,8 @@ main (int argc, char **argv)
   mpz_init (op1);
   mpz_init (op2);
   mpz_init (ref);
-  mpz_init (gcd);
+  mpz_init (gcd1);
+  mpz_init (gcd2);
   mpz_init (temp1);
   mpz_init (temp2);
   mpz_init (s);
@@ -90,8 +92,7 @@ main (int argc, char **argv)
       if ((bsi & 2) != 0)
 	mpz_neg (op2, op2);
 
-      ref_mpz_gcd (ref, op1, op2);
-      one_test (op1, op2, ref, i);
+      one_test (op1, op2, NULL, i);
 
       /* Generate a division chain backwards, allowing otherwise unlikely huge
 	 quotients.  */
@@ -141,7 +142,8 @@ main (int argc, char **argv)
   mpz_clear (op1);
   mpz_clear (op2);
   mpz_clear (ref);
-  mpz_clear (gcd);
+  mpz_clear (gcd1);
+  mpz_clear (gcd2);
   mpz_clear (temp1);
   mpz_clear (temp2);
   mpz_clear (s);
@@ -170,15 +172,38 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
   fprintf (stderr, "op2=");  debug_mp (op2, -16);
   */
 
-  mpz_gcd (gcd, op1, op2);
-  if (mpz_cmp (ref, gcd) != 0)
+  mpz_gcdext (gcd1, s, NULL, op1, op2);
+
+  if (ref && mpz_cmp (ref, gcd1) != 0)
+    {
+      fprintf (stderr, "ERROR in test %d\n", i);
+      fprintf (stderr, "mpz_gcdext returned incorrect result\n");
+      fprintf (stderr, "op1=");                 debug_mp (op1, -16);
+      fprintf (stderr, "op2=");                 debug_mp (op2, -16);
+      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
+      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd1, -16);
+      abort ();
+    }
+
+  if (!gcdext_valid_p(op1, op2, gcd1, s))
+    {
+      fprintf (stderr, "ERROR in test %d\n", i);
+      fprintf (stderr, "mpz_gcdext returned invalid result\n");
+      fprintf (stderr, "op1=");                 debug_mp (op1, -16);
+      fprintf (stderr, "op2=");                 debug_mp (op2, -16);
+      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd1, -16);
+      abort ();
+    }
+
+  mpz_gcd (gcd2, op1, op2);
+  if (mpz_cmp (gcd2, gcd1) != 0)
     {
       fprintf (stderr, "ERROR in test %d\n", i);
       fprintf (stderr, "mpz_gcd returned incorrect result\n");
       fprintf (stderr, "op1=");                 debug_mp (op1, -16);
       fprintf (stderr, "op2=");                 debug_mp (op2, -16);
-      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
-      fprintf (stderr, "mpz_gcd returns:\n");   debug_mp (gcd, -16);
+      fprintf (stderr, "expected result:\n");   debug_mp (gcd1, -16);
+      fprintf (stderr, "mpz_gcd returns:\n");   debug_mp (gcd2, -16);
       abort ();
     }
 
@@ -186,114 +211,72 @@ one_test (mpz_t op1, mpz_t op2, mpz_t ref, int i)
   if (mpz_fits_ulong_p (op1) || mpz_fits_ulong_p (op2))
     {
       if (mpz_fits_ulong_p (op1))
-	mpz_gcd_ui (gcd, op2, mpz_get_ui (op1));
+	mpz_gcd_ui (gcd2, op2, mpz_get_ui (op1));
       else
-	mpz_gcd_ui (gcd, op1, mpz_get_ui (op2));
-      if (mpz_cmp (ref, gcd))
+	mpz_gcd_ui (gcd2, op1, mpz_get_ui (op2));
+      if (mpz_cmp (gcd2, gcd1))
 	{
 	  fprintf (stderr, "ERROR in test %d\n", i);
 	  fprintf (stderr, "mpz_gcd_ui returned incorrect result\n");
 	  fprintf (stderr, "op1=");                 debug_mp (op1, -16);
 	  fprintf (stderr, "op2=");                 debug_mp (op2, -16);
-	  fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
-	  fprintf (stderr, "mpz_gcd returns:\n");   debug_mp (gcd, -16);
+	  fprintf (stderr, "expected result:\n");   debug_mp (gcd1, -16);
+	  fprintf (stderr, "mpz_gcd_ui returns:\n");   debug_mp (gcd2, -16);
 	  abort ();
 	}
     }
 
-  mpz_gcdext (gcd, s, t, op1, op2);
-  if (mpz_cmp (ref, gcd))
+  mpz_gcdext (gcd2, temp1, temp2, op1, op2);
+  mpz_mul (temp1, temp1, op1);
+  mpz_mul (temp2, temp2, op2);
+  mpz_add (temp1, temp1, temp2);
+  
+  if (mpz_cmp (gcd1, gcd2) != 0
+      || mpz_cmp (gcd2, temp1) != 0)
     {
       fprintf (stderr, "ERROR in test %d\n", i);
       fprintf (stderr, "mpz_gcdext returned incorrect result\n");
       fprintf (stderr, "op1=");                 debug_mp (op1, -16);
       fprintf (stderr, "op2=");                 debug_mp (op2, -16);
-      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
-      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd, -16);
-      abort ();
-    }
-
-  mpz_gcdext (gcd, s, NULL, op1, op2);
-  if (mpz_cmp (ref, gcd))
-    {
-      fprintf (stderr, "ERROR in test %d\n", i);
-      fprintf (stderr, "mpz_gcdext returned incorrect result\n");
-      fprintf (stderr, "op1=");                 debug_mp (op1, -16);
-      fprintf (stderr, "op2=");                 debug_mp (op2, -16);
-      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
-      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd, -16);
-      fprintf (stderr, "                  s:\n");debug_mp (s, -16);
-      fprintf (stderr, "                  t:\n");debug_mp (t, -16);
-      abort ();
-    }
-
-  mpz_mul (temp1, s, op1);
-  mpz_mul (temp2, t, op2);
-  mpz_add (gcd, temp1, temp2);
-  if (mpz_cmp (ref, gcd))
-    {
-      fprintf (stderr, "ERROR in test %d\n", i);
-      fprintf (stderr, "mpz_gcdext returned incorrect result\n");
-      fprintf (stderr, "op1=");                 debug_mp (op1, -16);
-      fprintf (stderr, "op2=");                 debug_mp (op2, -16);
-      fprintf (stderr, "expected result:\n");   debug_mp (ref, -16);
-      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd, -16);
-      fprintf (stderr, "                  s:\n");debug_mp (s, -16);
-      fprintf (stderr, "                  t:\n");debug_mp (t, -16);
+      fprintf (stderr, "expected result:\n");   debug_mp (gcd1, -16);
+      fprintf (stderr, "mpz_gcdext returns:\n");debug_mp (gcd2, -16);
       abort ();
     }
 }
 
-void
-ref_mpz_gcd (mpz_t r, mpz_t u_in, mpz_t v_in)
+/* Called when g is supposed to be gcd(a,b), and g = s a + t b, for some t.
+   Uses temp1 and temp2 */
+static int
+gcdext_valid_p (const mpz_t a, const mpz_t b, const mpz_t g, const mpz_t s)
 {
-  mpz_t u, v;
-  unsigned long uzeros, vzeros, cnt;
-  int cmp;
-
-  if (mpz_cmp_ui (u_in, 0) == 0)
+  /* It's not clear that gcd(0,0) is well defined, but we allow it and require that
+     allow gcd(0,0) = 0. */
+  if (mpz_sgn (g) < 0)
+    return 0;
+  
+  if (mpz_sgn (a) == 0)
     {
-      mpz_abs (r, v_in);
-      return;
+      /* Must have g == abs (b). Any value for s is in some sense "correct",
+	 but it makes sense to require that s == 0. */
+      return mpz_cmpabs (g, b) == 0 && mpz_sgn (s) == 0;
     }
-  if (mpz_cmp_ui (v_in, 0) == 0)
+  else if (mpz_sgn (b) == 0)
     {
-      mpz_abs (r, u_in);
-      return;
-    }
-
-  mpz_init (u);
-  mpz_init (v);
-
-  uzeros = mpz_scan1 (u_in, 0);
-  mpz_tdiv_q_2exp (u, u_in, uzeros);
-  mpz_abs (u, u);
-
-  vzeros = mpz_scan1 (v_in, 0);
-  mpz_tdiv_q_2exp (v, v_in, vzeros);
-  mpz_abs (v, v);
-
-  for (;;)
-    {
-      cmp = mpz_cmp (u, v);
-
-      if (cmp > 0)
-	{
-	  mpz_sub (u, u, v);
-	  cnt = mpz_scan1 (u, 0);
-	  mpz_tdiv_q_2exp (u, u, cnt);
-	}
-      else if (cmp < 0)
-	{
-	  mpz_sub (v, v, u);
-	  cnt = mpz_scan1 (v, 0);
-	  mpz_tdiv_q_2exp (v, v, cnt);
-	}
-      else
-	break;
+      /* Must have g == abs (a), s == sign (a) */
+      return mpz_cmpabs (g, a) == 0 && mpz_cmp_si (s, mpz_sgn (a)) == 0;
     }
 
-  mpz_mul_2exp (r, u, MIN (uzeros, vzeros));
-  mpz_clear (u);
-  mpz_clear (v);
+  if (mpz_sgn (g) <= 0)
+    return 0;
+
+  if (! (mpz_divisible_p (a, g)
+	 && mpz_divisible_p (b, g)
+	 && mpz_cmpabs (s, b) <= 0))
+    return 0;
+      
+  mpz_mul(temp1, s, a);
+  mpz_sub(temp1, g, temp1);
+  mpz_tdiv_qr(temp1, temp2, temp1, b);
+
+  return mpz_sgn (temp2) == 0 && mpz_cmpabs (temp1, a) <= 0;
 }
