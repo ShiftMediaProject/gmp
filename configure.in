@@ -608,6 +608,7 @@ case $host in
         abilist="2.0n 1.0"
         path_20n="pa64"
 	limb_20n=longlong
+        any_20n_testlist="sizeof-long-4"
         SPEED_CYCLECOUNTER_OBJ_20n=hppa2.lo
         cyclecounter_size_20n=2
 
@@ -638,11 +639,11 @@ case $host in
 
           cclist_20w="gcc cc"
 	  gcc_20w_cflags="-O2 -mpa-risc-2-0"
-	  gcc_20w_testlist="sizeof-long-8"
 	  # +O3 causes problems with fp rounding in mpfr/tests/tdiv.
           cc_20w_cflags="+DD64 +O2"
           cc_20w_testlist="hpc-hppa-2-0"
           path_20w="pa64"
+	  any_20w_testlist="sizeof-long-8"
           SPEED_CYCLECOUNTER_OBJ_20w=hppa2w.lo
           cyclecounter_size_20w=2
 	  ;;
