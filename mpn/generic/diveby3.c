@@ -25,7 +25,7 @@ the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "gmp-impl.h"
 
 
-#define MP_LIMB_T_MAX  (((mp_limb_t) 0) - 1)
+#define MP_LIMB_T_MAX  (~((mp_limb_t) 0))
 
 /* Multiplicative inverse of 3, modulo 2^BITS_PER_MP_LIMB.
    0xAAAAAAAB for 32 bits, 0xAAAAAAAAAAAAAAAB for 64 bits. */
@@ -40,7 +40,12 @@ the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
    with a fast mul but slowish div.
 
    The c += is adding the high word of 3*l to c.  That high word will be 0,
-   1 or 2. */
+   1 or 2.
+
+   The quotient q and return value r satisfy r*b^n+a == 3*q, where a is the
+   dividend, n is the size of a and q, and b is the limb size, 2^32 or 2^64.
+   Clearly when r==0 this gives q==a/3, but the actual result when r!=0
+   isn't documented at the moment.  */
 
 mp_limb_t
 #if __STDC__
