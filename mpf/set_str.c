@@ -244,7 +244,7 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
     rp[0] = base;
     rsize = 1;
     count_leading_zeros (cnt, exp_in_base);
-    for (i = BITS_PER_MP_LIMB - cnt - 2; i >= 0; i--)
+    for (i = GMP_LIMB_BITS - cnt - 2; i >= 0; i--)
       {
 	mpn_sqr_n (tp, rp, rsize);
 	rsize = 2 * rsize;
@@ -290,10 +290,11 @@ mpf_set_str (mpf_ptr x, const char *str, int base)
 	    madj -= rsize - msize;
 	    msize = rsize;
 	  }
-	if (! (rp[rsize-1] & MP_LIMB_T_HIGHBIT))
+	if ((rp[rsize - 1] & GMP_NUMB_HIGHBIT) == 0)
 	  {
 	    mp_limb_t cy;
             count_leading_zeros (cnt, rp[rsize - 1]);
+	    cnt -= GMP_NAIL_BITS;
 	    mpn_lshift (rp, rp, rsize, cnt);
 	    cy = mpn_lshift (mp, mp, msize, cnt);
 	    if (cy)

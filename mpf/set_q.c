@@ -78,13 +78,14 @@ mpf_set_q (mpf_t r, mpq_srcptr q)
   /* Normalize the denominator, i.e. make its most significant bit set by
      shifting it NORMALIZATION_STEPS bits to the left.  Also shift the
      numerator the same number of steps (to keep the quotient the same!).  */
-  if (! (dp[dsize-1] & MP_LIMB_T_HIGHBIT))
+  if ((dp[dsize - 1] & GMP_NUMB_HIGHBIT) == 0)
     {
       mp_ptr tp;
       mp_limb_t nlimb;
       unsigned normalization_steps;
 
       count_leading_zeros (normalization_steps, dp[dsize - 1]);
+      normalization_steps -= GMP_NAIL_BITS;
 
       /* Shift up the denominator setting the most significant bit of
 	 the most significant limb.  Use temporary storage not to clobber

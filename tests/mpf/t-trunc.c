@@ -228,11 +228,11 @@ check_various (void)
   /* F.F, carry out of ceil */
   EXP(src) = 1;
   SIZ(src) = 2;
-  PTR(src)[0] = MP_LIMB_T_MAX;
-  PTR(src)[1] = MP_LIMB_T_MAX;
+  PTR(src)[0] = GMP_NUMB_MAX;
+  PTR(src)[1] = GMP_NUMB_MAX;
   EXP(trunc) = 1;
   SIZ(trunc) = 1;
-  PTR(trunc)[0] = MP_LIMB_T_MAX;
+  PTR(trunc)[0] = GMP_NUMB_MAX;
   mpf_set (floor, trunc);
   EXP(ceil) = 2;
   SIZ(ceil) = 1;
@@ -242,13 +242,13 @@ check_various (void)
   /* FF.F, carry out of ceil */
   EXP(src) = 2;
   SIZ(src) = 3;
-  PTR(src)[0] = MP_LIMB_T_MAX;
-  PTR(src)[1] = MP_LIMB_T_MAX;
-  PTR(src)[2] = MP_LIMB_T_MAX;
+  PTR(src)[0] = GMP_NUMB_MAX;
+  PTR(src)[1] = GMP_NUMB_MAX;
+  PTR(src)[2] = GMP_NUMB_MAX;
   EXP(trunc) = 2;
   SIZ(trunc) = 2;
-  PTR(trunc)[0] = MP_LIMB_T_MAX;
-  PTR(trunc)[1] = MP_LIMB_T_MAX;
+  PTR(trunc)[0] = GMP_NUMB_MAX;
+  PTR(trunc)[1] = GMP_NUMB_MAX;
   mpf_set (floor, trunc);
   EXP(ceil) = 3;
   SIZ(ceil) = 1;

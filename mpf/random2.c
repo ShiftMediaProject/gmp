@@ -43,7 +43,7 @@ mpf_random2 (mpf_ptr x, mp_size_t size, mp_exp_t exp)
 
   if (exp != 0)
     {
-      _gmp_rand (&elimb, RANDS, BITS_PER_MP_LIMB);
+      _gmp_rand (&elimb, RANDS, GMP_NUMB_BITS);
       exp = elimb % (2 * exp) - exp;
     }
   x->_mp_exp = asize == 0 ? 0 : exp;

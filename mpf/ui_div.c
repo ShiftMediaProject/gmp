@@ -67,15 +67,15 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
   tp = (mp_ptr) TMP_ALLOC ((tsize + 1) * BYTES_PER_MP_LIMB);
   MPN_ZERO (tp, tsize);
 
-
   /* Normalize the divisor and the dividend.  */
-  if (! (vp[vsize - 1] & MP_LIMB_T_HIGHBIT))
+  if ((vp[vsize - 1] & GMP_NUMB_HIGHBIT) == 0)
     {
       mp_ptr tmp;
       mp_limb_t dividend_high, dividend_low;
       unsigned normalization_steps;
 
       count_leading_zeros (normalization_steps, vp[vsize - 1]);
+      normalization_steps -= GMP_NAIL_BITS;
 
       /* Shift up the divisor setting the most significant bit of
 	 the most significant limb.  Use temporary storage not to clobber
@@ -86,15 +86,26 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
 
       /* Shift up the dividend, possibly introducing a new most
 	 significant word.  */
-      dividend_high = (mp_limb_t) u >> (BITS_PER_MP_LIMB - normalization_steps);
-      dividend_low = (mp_limb_t) u << normalization_steps;
+      dividend_high = (mp_limb_t) u >> (GMP_NUMB_BITS - normalization_steps);
+      dividend_low = ((mp_limb_t) u << normalization_steps) & GMP_NUMB_MASK;
 
       tp[tsize - 1] = dividend_low;
       if (dividend_high != 0)
 	{
-	  tp[tsize] = dividend_high;
-	  tsize++;
-	  rexp++;
+	  if (GMP_NAIL_BITS != 0 && dividend_high > vp[vsize - 1])
+	    {
+	      tp[tsize - 2] = dividend_low;
+	      tp[tsize - 1] = dividend_high & GMP_NUMB_MASK;
+	      tp[tsize] = dividend_high >> GMP_NUMB_BITS;
+	      tsize++;
+	      rexp += 2;
+	    }
+	  else
+	    {
+	      tp[tsize] = dividend_high;
+	      tsize++;
+	      rexp++;
+	    }
 	}
     }
   else
@@ -108,7 +119,15 @@ mpf_ui_div (mpf_ptr r, unsigned long int u, mpf_srcptr v)
 	  vp = (mp_srcptr) tmp;
 	}
 
-      tp[tsize - 1] = u;
+      tp[tsize - 1] = u & GMP_NUMB_MASK;
+#if GMP_NAIL_BITS != 0
+      if (u > GMP_NUMB_MAX)
+	{
+	  tp[tsize] = u >> GMP_NUMB_BITS;
+	  tsize++;
+	  rexp++;
+	}
+#endif
     }
 
   q_limb = mpn_divmod (rp, tp, tsize, vp, vsize);

@@ -33,16 +33,15 @@ mpf_urandomb (mpf_t rop, gmp_randstate_t rstate, unsigned long int nbits)
   mp_exp_t exp;
 
   rp = PTR (rop);
-  nlimbs = (nbits + BITS_PER_MP_LIMB - 1) / BITS_PER_MP_LIMB;
+  nlimbs = (nbits + GMP_NUMB_BITS - 1) / GMP_NUMB_BITS;
 
   _gmp_rand (rp, rstate, nbits);
 
-  /* If nbits isn't a multiple of BITS_PER_MP_LIMB, shift up.  */
+  /* If nbits isn't a multiple of GMP_NUMB_BITS, shift up.  */
   if (nlimbs != 0)
     {
-      if (nbits % BITS_PER_MP_LIMB != 0)
-	mpn_lshift (rp, rp, nlimbs,
-		    BITS_PER_MP_LIMB - nbits % BITS_PER_MP_LIMB);
+      if (nbits % GMP_NUMB_BITS != 0)
+	mpn_lshift (rp, rp, nlimbs, GMP_NUMB_BITS - nbits % GMP_NUMB_BITS);
     }
 
   exp = 0;
@@ -53,5 +52,4 @@ mpf_urandomb (mpf_t rop, gmp_randstate_t rstate, unsigned long int nbits)
     }
   EXP (rop) = exp;
   SIZ (rop) = nlimbs;
-
 }
